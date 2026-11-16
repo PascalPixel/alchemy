@@ -13,7 +13,7 @@ void Actor_GrowDown(struct Actor *actor) {
   actor->scaleX = scale;
   actor->scaleY = -scale;
 
-  rise = 0x10000;
+  rise = toFIXED(1);
   actor->x.fixed = parent->x.fixed;
   actor->y.fixed += rise;
   actor->z.fixed = parent->z.fixed - (rise - scale) * 5 + toFIXED(16);

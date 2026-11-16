@@ -1,10 +1,14 @@
+/// The actor id that ends a list of actors or of (actor, kind, flag) entries.
+#define ACTOR_LIST_END 0xffff
+
 /// Pound's work on a listed actor, an entry of (actor, kind, flag) ended by
-/// 0xffff: while it is the target, it sinks a step a frame for the first eight
-/// frames, and on the last (mode 1) its flag is set and its cell opened.
+/// ACTOR_LIST_END: while it is the target, it sinks a step a frame for the
+/// first eight frames, and on the last (mode 1) its flag is set and its cell
+/// opened.
 void Pound_SinkTarget(u16 *list, s32 mode, s32 count) {
   struct FieldEffectWork *work = Ram_HeapSlots->fieldEffectWork;
 
-  while (*list != 0xffff) {
+  while (*list != ACTOR_LIST_END) {
     u32 entry = *list;
     s32 id = work->secondActorId;
 

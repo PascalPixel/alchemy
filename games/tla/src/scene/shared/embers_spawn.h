@@ -15,7 +15,7 @@ next:
       FIXED scale;
 
       rise = speed + (Random16() >> 4) - (Random16() >> 4);
-      angle = 0x4000 + rise;
+      angle = DEGtoANG(90) + rise;
       radius = Random16() * 8;
       size = Random16();
       Actor_StartScript(object, gEmbers_Script);

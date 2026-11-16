@@ -18,10 +18,10 @@ void Actor_SteerByPad(struct Actor *actor) {
     return;
   }
   turn = (s16)(angle - actor->facing);
-  if (turn > 0x1000)
-    turn = 0x1000;
-  if (turn < -0x1000)
-    turn = -0x1000;
+  if (turn > TRIG_TURN / 16)
+    turn = TRIG_TURN / 16;
+  if (turn < -(TRIG_TURN / 16))
+    turn = -(TRIG_TURN / 16);
   actor->facing += turn;
   Actor_SelectAnimation(actor, 2);
   Actor_SetAnimationSpeed(actor, 48);

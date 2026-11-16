@@ -1,12 +1,15 @@
+/// The actor id that ends a list of actors or of (actor, kind, flag) entries.
+#define ACTOR_LIST_END 0xffff
+
 /// Raises the pillars of a list out of the ground, making their cells solid.
 void Pillar_Raise(u16 *list) {
   struct MapWork *map = Ram_HeapSlots->mapGrid;
   struct Actor *leader;
   s32 height;
 
-  /* FAKEMATCH(signature): the form kept; as *list != 0xffff and *shapes =
-   * newShape, 6 of 123 instructions differ in tla-en. */
-  while (((struct ListedActor *)list)->id != 0xffff) {
+  /* FAKEMATCH(signature): the form kept; as *list != ACTOR_LIST_END and *shapes
+   * = newShape, 6 of 123 instructions differ in tla-en. */
+  while (((struct ListedActor *)list)->id != ACTOR_LIST_END) {
     struct Actor *actor = Actor_GetById(*list);
     u8 *layer = &actor->layer;
     s32 shape = MapGrid_GetTerrainKind(*layer, actor->x.fixed, actor->z.fixed);
@@ -33,7 +36,7 @@ void Pillar_Raise(u16 *list) {
     ((struct ShapeCell *)shapes)->shape = newShape;
     cells += index;
     ((struct MapCell *)cells)->attributeB |= 192;
-    cells += 0x200;
+    cells += MAPGRID_SIZE * sizeof(struct MapCell);
     ((struct MapCell *)cells)->attributeB |= 64;
     list++;
   }

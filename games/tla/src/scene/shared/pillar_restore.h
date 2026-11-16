@@ -1,3 +1,6 @@
+/// The actor id that ends a list of actors or of (actor, kind, flag) entries.
+#define ACTOR_LIST_END 0xffff
+
 /// Puts the pillars of a list back where their flags left them.
 void MagmaRockInside_RestorePillars(u16 *list) {
   struct MapWork *map = Ram_HeapSlots->mapGrid;
@@ -24,7 +27,7 @@ void MagmaRockInside_RestorePillars(u16 *list) {
   Actor_SetPosition(9, 0, 0);
   Actor_SetPosition(10, 0, 0);
   System_Wait(1);
-  if (*list == 0xffff)
+  if (*list == ACTOR_LIST_END)
     goto done;
 next:
   id = list[0];
@@ -54,7 +57,7 @@ next:
       Actor_CopyGraphics(id, 9);
   }
   list += 2;
-  if (*list != 0xffff)
+  if (*list != ACTOR_LIST_END)
     goto next;
 done:
   System_Wait(10);

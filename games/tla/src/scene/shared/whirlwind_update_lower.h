@@ -22,9 +22,9 @@ void Whirlwind_Update(struct Actor *self) {
     position[2] = self->z.fixed;
     Camera_WorldToScreen(position);
     distance = position[0];
-    if (distance > 0x1100000)
+    if (distance > toFIXED(272))
       goto stop;
-    if (distance < -0x200000)
+    if (distance < -toFIXED(32))
       goto stop;
     {
       if (self->riseCounter == 0) {
@@ -33,7 +33,7 @@ void Whirlwind_Update(struct Actor *self) {
           distance = self->y.fixed - leader->y.fixed;
         near = 0;
         if (Position_FlatDistance(&leader->x.fixed, &self->x.fixed) <= 12 &&
-            distance < 0xc0000)
+            distance < toFIXED(12))
           near = 1;
         if (near && !Event_GetFlag(260)) {
           leader->facing = self->facing;

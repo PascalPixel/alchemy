@@ -1,10 +1,13 @@
+/// The actor id that ends a list of actors or of (actor, kind, flag) entries.
+#define ACTOR_LIST_END 0xffff
+
 /// Places each pillar of a list of three-halfword entries (actor, kind,
-/// flag) ended by 0xffff, its collision bit cleared, raised or sunk by its
-/// flag (Actor_SetCellOpen).
+/// flag) ended by ACTOR_LIST_END, its collision bit cleared, raised or sunk by
+/// its flag (Actor_SetCellOpen).
 void Pillar_Place(const u16 *list) {
   const u16 *entry;
 
-  if (list[0] == 0xffff)
+  if (list[0] == ACTOR_LIST_END)
     return;
   entry = list;
   do {
@@ -17,5 +20,5 @@ void Pillar_Place(const u16 *list) {
     Actor_SetSpriteFlags(actor, 0);
     Actor_SetCellOpen(id, (u16)kind, (u16)flag, actor->layer);
     entry += 3;
-  } while (entry[0] != 0xffff);
+  } while (entry[0] != ACTOR_LIST_END);
 }

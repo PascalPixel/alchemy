@@ -182,13 +182,13 @@ void WorldMap_QueueBlend(void) {
     IO_WRITE_QUEUE_PUSH((u32)&REG_BLDCNT,
                         BLDCNT_TGT1_BG1 | BLDCNT_TGT1_BG2 | BLDCNT_TGT1_BG3 |
                             BLDCNT_EFFECT_LIGHTEN | BLDCNT_TGT2_ALL,
-                        0x20000);
-    IO_WRITE_QUEUE_PUSH((u32)&REG_BLDY, 12, 0x20000);
+                        IO_WRITE_HALFWORD);
+    IO_WRITE_QUEUE_PUSH((u32)&REG_BLDY, 12, IO_WRITE_HALFWORD);
   }
 }
 
 void WorldMap_StartPlacedActors(void) {
-  Iwram_ClearWords(gWorldMap_PlacedActors, 0x200);
+  Iwram_ClearWords(gWorldMap_PlacedActors, 128 * sizeof(struct Actor *));
   Task_AddFrame(WorldMap_UpdatePlacedActors, TASK_PASS_VBLANK);
 }
 

@@ -18,8 +18,8 @@ void GroundParticles_Draw(void) {
     if (GameFlag_Get(FLAG_WEATHER_HELD))
       particle->timer++;
     frame = &gGroundParticleFrames[5 * particle->timer];
-    x = (particle->posX - cameraX) / 0x10000 + *frame++;
-    y = (particle->posZ - particle->posY - cameraZ) / 0x10000 + *frame++;
+    x = (particle->posX - cameraX) / toFIXED(1) + *frame++;
+    y = (particle->posZ - particle->posY - cameraZ) / toFIXED(1) + *frame++;
     if ((x >= -16 && x <= 239) && y >= -32 && y <= 159) {
       particle->priority = 1;
       particle->x = x;
@@ -34,8 +34,8 @@ void GroundParticles_Draw(void) {
       s32 *leader = work->leader;
 
       if (leader != NULL) {
-        x = leader[0] + Random16() * 240 - 0x780000;
-        y = leader[2] + Random16() * 160 - 0x500000;
+        x = leader[0] + Random16() * 240 - toFIXED(120);
+        y = leader[2] + Random16() * 160 - toFIXED(80);
         particle->posX = x;
         particle->posZ = y;
         particle->posY = Map_GetTerrainHeight(0, x, y);

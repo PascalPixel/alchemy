@@ -34,7 +34,7 @@ void Rubble_Spray(s32 spread) {
         effect->velocity.z = spread;
       }
       effect->velocity.y = -(((Random16() << 14) >> 16) + (toFIXED(3) / 8));
-      effect->spin = ((Random16() << 9) >> 16) - 0x100;
+      effect->spin = ((Random16() << 9) >> 16) - (TRIG_TURN / 256);
       effect->scaleRateX = -(FIXED_ONE / 32);
       effect->scaleRateY = -(FIXED_ONE * 3 / 128);
       effect->update = Effect_AdvanceMotionAtLeaderPriority;
@@ -73,7 +73,7 @@ void Rubble_Burst(void) {
       effect->velocity.x += effect->velocity.x >> 1;
       effect->velocity.x += ((Random16() * 3) << 14 >> 16) - (toFIXED(3) / 8);
       effect->velocity.z += ((Random16() * 3) << 13 >> 16) - (toFIXED(3) / 16);
-      effect->spin = ((Random16() << 12) >> 16) - 0x800;
+      effect->spin = ((Random16() << 12) >> 16) - (TRIG_TURN / 32);
       effect->scaleRateX = 0;
       effect->scaleRateY = 0;
       effect->update = Effect_AdvanceMotionAtLeaderPriority;

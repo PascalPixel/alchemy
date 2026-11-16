@@ -46,9 +46,9 @@ s32 PushTarget_FindSlide(struct PushTarget *target) {
         for (col = 0; col < width; col++) {
           if (FieldActor_CheckMovementCollision(actor, position) == 2)
             goto blocked;
-          position[0] += 0x100000;
+          position[0] += toFIXED(16);
         }
-        position[2] += 0x100000;
+        position[2] += toFIXED(16);
       }
       target->x += dx;
       count++;

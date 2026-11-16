@@ -3,7 +3,7 @@ void Actor_EmitWaterDrop(struct Actor *actor) {
   s32 phase = gFrameCount & 15;
 
   if (phase == 0) {
-    struct Actor *child = Import_ActorCreate_(0x10d, actor->x.fixed,
+    struct Actor *child = Import_ActorCreate_(269, actor->x.fixed,
                                               actor->y.fixed, actor->z.fixed);
 
     if (child != 0) {

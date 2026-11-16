@@ -93,7 +93,7 @@ s32 CrackedTile_FindLower(u32 kind, s32 flag, s32 flagByte, s32 x, s32 z) {
       } while (k < *(s16 *)&table->count);
     }
   }
-  buffer = Heap_Alloc(0x100);
+  buffer = Heap_Alloc(256);
   {
     u32 *word = buffer;
     s32 count = 63;
@@ -105,8 +105,8 @@ s32 CrackedTile_FindLower(u32 kind, s32 flag, s32 flagByte, s32 x, s32 z) {
       goto fill;
   }
   table->tile = VramCache_FindFreeEntry();
-  Vram_Load(table->tile, 0x100, buffer);
+  Vram_Load(table->tile, 256, buffer);
   Heap_Release(buffer);
-  Task_AddFrame(CrackedTile_Update, 0x480);
+  Task_AddFrame(CrackedTile_Update, TASK_PASS_VBLANK);
   return table->count;
 }

@@ -1,3 +1,6 @@
+/// The actor id that ends a list of actors or of (actor, kind, flag) entries.
+#define ACTOR_LIST_END 0xffff
+
 /// Pillar_Restore without the reset, lifting the leader onto the ground.
 void MagmaRockInside_RestoreCrumblingPillars(const u16 *table) {
   struct MapWork *map = Ram_HeapSlots->mapGrid;
@@ -12,7 +15,7 @@ void MagmaRockInside_RestoreCrumblingPillars(const u16 *table) {
   struct Actor *leader;
   s32 ground;
 
-  if (*table == 0xffff)
+  if (*table == ACTOR_LIST_END)
     goto done;
 next:
   id = table[0];
@@ -41,7 +44,7 @@ next:
       Actor_SelectAnimation(actor, 0);
   }
   table += 2;
-  if (*table != 0xffff)
+  if (*table != ACTOR_LIST_END)
     goto next;
 done:
   leader = Actor_Get(gMainRoutineWork.leaderActorId);

@@ -25,7 +25,7 @@ void Flame_UpdateLanding(struct Actor *actor) {
       if (actor->riseBaseY > 0)
         direction->x = 1;
       else
-        direction->x = 0xffff;
+        direction->x = -1;
     }
     actor->priorityFlags = ACTOR_PRIORITY_UNDERFOOT;
     actor->z.fixed -= actor->bounce;

@@ -20,35 +20,35 @@ void JupiterLighthouse_PlaceRaisedActors(void) {
   rightAngel->motionFlags = 0;
   rightAngel->y.fixed = rightAngel->groundHeight;
   if (Event_GetFlag(FLAG_JUPITER_LIGHTHOUSE_LEFT_ANGEL_ENERGIZED)) {
-    leftAngel->y.fixed += 0x66640;
+    leftAngel->y.fixed += 64 * (toFIXED(1) / 10);
     {
-      s32 step = 0x1eb80;
+      s32 step = 64 * (toFIXED(3) / 100);
 
       lid->y.fixed += step;
     }
-    lid->x.fixed -= 0x28f40;
+    lid->x.fixed -= 64 * (toFIXED(1) / 25);
     sprite->rotation += TRIG_TURN / 32;
     Actor_SetSpriteColorMode(Actor_Get(9), 4);
     Actor_SetSpriteColorMode(Actor_Get(11), 4);
   }
   if (Event_GetFlag(FLAG_JUPITER_LIGHTHOUSE_RIGHT_ANGEL_ENERGIZED)) {
-    rightAngel->y.fixed += 0x66640;
+    rightAngel->y.fixed += 64 * (toFIXED(1) / 10);
     {
-      s32 step = 0x1eb80;
+      s32 step = 64 * (toFIXED(3) / 100);
 
       lid->y.fixed += step;
     }
-    lid->x.fixed += 0x28f40;
+    lid->x.fixed += 64 * (toFIXED(1) / 25);
     sprite->rotation -= TRIG_TURN / 32;
     Actor_SetSpriteColorMode(Actor_Get(10), 4);
     Actor_SetSpriteColorMode(Actor_Get(12), 4);
   }
   if (Event_GetFlag(FLAG_JUPITER_LIGHTHOUSE_LEFT_ANGEL_ENERGIZED) &&
       Event_GetFlag(FLAG_JUPITER_LIGHTHOUSE_RIGHT_ANGEL_ENERGIZED)) {
-    leftAngel->y.fixed += toFIXED(6553) / 256;
-    rightAngel->y.fixed += toFIXED(6553) / 256;
+    leftAngel->y.fixed += 256 * (toFIXED(1) / 10);
+    rightAngel->y.fixed += 256 * (toFIXED(1) / 10);
     {
-      FIXED step = 0x1b8480;
+      FIXED step = 64 * (toFIXED(3) / 100) + 256 * (toFIXED(1) / 10);
 
       lid->y.fixed += step;
     }

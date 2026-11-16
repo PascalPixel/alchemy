@@ -8,7 +8,7 @@ struct Actor *Scene_CreateActor(s32 a0, s32 a1, s32 a2, s32 a3) {
     t0->motionFlags = 0;
     t0->collisionFlags = ACTOR_NOT_TARGETED;
     Actor_SetSpriteFlags(t0, 0);
-    FieldActor_SetSpriteColor(t0, 0xf);
+    FieldActor_SetSpriteColor(t0, SPRITE_COLOR_HIDDEN);
     t0->priorityFlags = ACTOR_PRIORITY_UNDERFOOT |
                         ACTOR_PRIORITY_IGNORES_RISES | t0->priorityFlags;
     return t0;

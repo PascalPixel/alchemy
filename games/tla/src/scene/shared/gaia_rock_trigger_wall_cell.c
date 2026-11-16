@@ -10,7 +10,8 @@ void GaiaRock_TriggerWallCell(void) {
     struct MapWork *map = Ram_HeapSlots->mapGrid;
     struct Actor *actor = Actor_Get(gMainRoutineWork.leaderActorId);
     s32 x = actor->x.fixed / toFIXED(16);
-    s32 z = (actor->z.fixed - actor->y.fixed + 0x7fff) / toFIXED(16);
+    s32 z =
+        (actor->z.fixed - actor->y.fixed + (toFIXED(0.5) - 1)) / toFIXED(16);
     struct MapCell *cells = map->layers[2].cells;
     struct MapCell *cell = &cells[x + (z << 7)];
     s32 code = cell->collisionCode;

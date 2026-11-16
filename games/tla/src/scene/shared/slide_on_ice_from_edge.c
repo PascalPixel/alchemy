@@ -43,10 +43,10 @@ retry:
   startCell = MapGrid_GetCellBehaviorAt(*layer, targetX, targetZ);
   dz = targetZ - actor->z.fixed;
   dx = targetX - actor->x.fixed;
-  if (Iwram_MulFX(dx, dx) + Iwram_MulFX(dz, dz) < 0x40000) {
+  if (Iwram_MulFX(dx, dx) + Iwram_MulFX(dz, dz) < toFIXED(4)) {
     angle = gSlideOnIce_AnglesByKey[(gInput.held >> 4) & 15];
     // -1 for no direction, tested as its halfword.
-    if ((u16)angle == 0xffff)
+    if ((u16)angle == DPAD_ANGLE_NONE)
 #if !TLA_PATCH_1
       return;
 #else
@@ -54,7 +54,7 @@ retry:
 #endif
   } else {
     angle = Trig_Atan(targetZ - actor->z.fixed, targetX - actor->x.fixed);
-    angle = (angle + 0x2000) & 0xc000;
+    angle = (angle + DEGtoANG(45)) & 0xc000;
   }
   FieldVector_AddPolarOffset(16, angle, position);
   cell = MapGrid_GetCellBehaviorAt(*layer, p[0], p[2]);

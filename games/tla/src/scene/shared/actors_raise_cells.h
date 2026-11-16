@@ -1,6 +1,9 @@
+/// The actor id that ends a list of actors or of (actor, kind, flag) entries.
+#define ACTOR_LIST_END 0xffff
+
 /// Raises the cells of a list's actors.
 void MagmaRockInside_RaiseActorCells(u16 *list) {
-  for (; *list != 0xffff; list += 3) {
+  for (; *list != ACTOR_LIST_END; list += 3) {
     struct Actor *actor = Actor_Get(*list);
     s32 height =
         Map_GetTerrainHeight(actor->layer, actor->x.fixed, actor->z.fixed);

@@ -302,7 +302,7 @@ s32 NameEntry_EditMemberName(s32 member) {
   union NameCursor nameCaret;
   s32 keyColumn, keyRow, vramSlot, x;
   struct WindowSprite *output;
-  struct NameCursorMotion *keyMotion;
+  struct MenuCursor *keyMotion;
   u32 letter;
   u8 *end;
   u16 *palette;
@@ -591,7 +591,7 @@ s32 NameEntry_EditMemberName(s32 member) {
   union NameCursor nameCaret;
   s32 keyColumn, keyRow, vramSlot;
   struct WindowSprite *output;
-  struct NameCursorMotion *keyMotion;
+  struct MenuCursor *keyMotion;
   u8 *end;
   u16 *palette;
 

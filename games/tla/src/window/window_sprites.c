@@ -110,7 +110,7 @@ s32 Glyph_Draw(struct Window *window, s32 character, s32 x, s32 y, s32 mode) {
     output = WindowSprite_AcquireFree();
     if (output == NULL)
       return 0;
-    index = (output - work->outputs) * 4;
+    index = (output - work->sprites) * 4;
     output->motion = WINDOW_SPRITE_MOTION_STILL;
     output->kind = WINDOW_SPRITE_GLYPH;
     if (mode == GLYPH_DRAW_PAGE_ARROW) {
@@ -218,7 +218,7 @@ s32 Glyph_DrawAsSprite(struct Window *window, s32 character, s32 x, s32 y) {
   output = WindowSprite_AcquireFree();
   if (output == NULL)
     return 0;
-  index = (output - work->outputs) * 4;
+  index = (output - work->sprites) * 4;
   output->motion = WINDOW_SPRITE_MOTION_STILL;
   output->kind = 0;
   width = Text_DrawGlyphPair(character, tiles);
@@ -278,7 +278,7 @@ void *Glyph_AddBlankSprite(struct Window *window, s32 character, s32 x, s32 y) {
   output = WindowSprite_AcquireFree();
   if (output == NULL)
     return NULL;
-  index = (output - work->outputs) * 4;
+  index = (output - work->sprites) * 4;
   output->motion = WINDOW_SPRITE_MOTION_STILL;
   output->kind = 0;
   vram = (void *)(0x06010000 + (work->glyphTiles + index) * 32);
@@ -335,7 +335,7 @@ void Window_PutGlyph(struct Window *win, u32 tile, u32 x, u32 y, s32 mode) {
     out = WindowSprite_AcquireFree();
     if (out == NULL)
       return;
-    idx = (out - base->outputs) * 4;
+    idx = (out - base->sprites) * 4;
     out->motion = WINDOW_SPRITE_MOTION_PAGE_ARROW;
     sprite = &out->sprite;
     slot = &base->glyphResource;
@@ -577,7 +577,7 @@ void WindowSprite_UpdateAll(void) {
     struct PopTransform packed;
   } effect;
 
-  for (no = 0; no != UI_WINDOW_COUNT; window++, no++) {
+  for (no = 0; no != WINDOW_COUNT; window++, no++) {
     struct AnimOutput *output;
     u32 phase;
 

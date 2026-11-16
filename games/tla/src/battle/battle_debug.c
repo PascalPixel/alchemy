@@ -148,7 +148,7 @@ void Unit_UpdateClassFar(s32 owner);
 /// table ends before that set.
 s32 DebugParameterSet_Load(s32 preset) {
   s32 nextDjinn[ELEMENT_COUNT];
-  void *state;
+  struct Unit *state;
   s32 owner;
   s32 done;
   s32 row;
@@ -194,13 +194,13 @@ s32 DebugParameterSet_Load(s32 preset) {
     Unit_LevelUpToFar(owner, gDebug_ParameterSets[row].level);
     state = Unit_Get(owner);
     for (i = 0; i < ELEMENT_COUNT; i++) {
-      ((struct OwnerDjinnState *)state)->counts.banks.owned[i] = 0;
-      ((struct OwnerDjinnState *)state)->counts.banks.active[i] = 0;
-      ((struct OwnerDjinnState *)state)->flags.banks.owned[i] = 0;
-      ((struct OwnerDjinnState *)state)->flags.banks.active[i] = 0;
+      state->djinnOwnedCounts[i] = 0;
+      state->djinnActiveCounts[i] = 0;
+      state->djinnHeld[i] = 0;
+      state->djinnSet[i] = 0;
     }
     for (i = 0; i < PSYNERGY_SLOTS; i++)
-      *(u16 *)&((struct OwnerActionState *)state)->actionSlots[i] = 0;
+      *&state->psynergy[i].encodedAction = 0;
     for (i = 0; i < 2; i++) {
       if (gDebug_ParameterSets[row].actions[i] != 0)
         Unit_LearnPsynergyFar(owner, gDebug_ParameterSets[row].actions[i]);

@@ -26,8 +26,8 @@ struct SelectionSprite {
 /// An icon of the selection screen: its list links, the entry it shows, its
 /// place and its slide toward a target, its zoom and its sprite.
 struct SelectionNode {
-  struct SelectionNode *prev; ///< the icon before it in its row
-  struct SelectionNode *next; ///< the icon after it in its row
+  struct SelectionNode *previous; ///< the icon before it in its row
+  struct SelectionNode *next;     ///< the icon after it in its row
   u16 base; ///< the entry's id, as listed in SelectionScreen.bases
   u16 kind; ///< the entry's kind, as listed in SelectionScreen.kinds
   u16 slot;

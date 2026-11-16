@@ -246,8 +246,7 @@ s32 BattleItemMenu_Run(s32 member, u16 *entries, s32 count) {
     /* FAKEMATCH(dead): sprite set again to the &cursorStorage it holds. */
     sprite = &cursorStorage;
     MENU_PLACE_CURSOR(cursorPosition, window, selectedRow, 2, sprite);
-    sprite->oam.index =
-        VramCache_Reload(cursorHandle, gResource_FixedBlockBTiles);
+    sprite->oam.index = VramCache_Reload(cursorHandle, gPointingHandTiles);
     sprite->oam.x = cursorPosition.x + ((gFrameCount & 4) >> 1) - 4;
     sprite->oam.y = cursorPosition.y - ((gFrameCount & 4) >> 2) - 8;
     if (count != 0)

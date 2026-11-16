@@ -12,12 +12,10 @@
 #define ITEM_COMMAND_STATE_AVAILABLE 1
 
 // Defined below or in later parts of the menu object.
-struct OwnerInventoryState;
 s32 ItemMenu_ChooseCommand(void);
 /// Copies the unit's items into the list items (32 entries), skipping empty
 /// slots and clearing the rest. Returns how many there are. mode is not used.
-s32 ItemMenu_CollectItems(struct OwnerInventoryState *owner, u16 *items,
-                          s32 mode);
+s32 ItemMenu_CollectItems(struct Unit *owner, u16 *items, s32 mode);
 s32 ItemMenu_ConfirmDrop(s32 item);
 s32 ItemMenu_ConfirmEquip(s32 unused);
 s32 ItemMenu_CountItems(s32 owner_id);
@@ -946,8 +944,7 @@ void ItemMenu_Close(void) {
   Window_CloseIfOpen((void **)&menu->secondUnopenedWindow, 1);
 }
 
-s32 ItemMenu_CollectItems(struct OwnerInventoryState *owner, u16 *items,
-                          s32 mode);
+s32 ItemMenu_CollectItems(struct Unit *owner, u16 *items, s32 mode);
 s32 ItemMenu_RunMemberSelection(u16 *ownerIds, u16 *items);
 
 /// Lets the player choose a party member in side (0 or 1), starting from the
@@ -1324,7 +1321,7 @@ void Menu_HideEmptyEntryIcons(const u16 *items) {
 /// Counts the nonempty slots in the owner's inventory.
 s32 ItemMenu_CountItems(s32 owner_id) {
   s32 count = 0;
-  struct OwnerInventoryState *state = Unit_Get(owner_id);
+  struct Unit *state = Unit_Get(owner_id);
   s32 i;
 
   for (i = 0; i < INVENTORY_SLOTS; i++) {
@@ -1337,7 +1334,7 @@ s32 ItemMenu_CountItems(s32 owner_id) {
 }
 
 s32 ItemMenu_GetItemQuantity(s32 owner, s32 item) {
-  struct OwnerInventoryState *state;
+  struct Unit *state;
   s32 i;
   s32 quantity;
 
@@ -1356,8 +1353,7 @@ s32 ItemMenu_GetItemQuantity(s32 owner, s32 item) {
   return quantity;
 }
 
-s32 ItemMenu_CollectItems(struct OwnerInventoryState *owner, u16 *items,
-                          s32 mode) {
+s32 ItemMenu_CollectItems(struct Unit *owner, u16 *items, s32 mode) {
   s32 count;
   s32 i;
 
@@ -1407,7 +1403,7 @@ void ItemMenu_DrawIcons(u16 *inventoryEntries, s32 iconStyle) {
 /// mode (see ItemMenu_RefreshEntry), or "no items" when there are none.
 void ItemMenu_RefreshMember(s32 ownerId, s32 mode) {
   struct ItemMenuWork *menu;
-  struct OwnerInventoryState *owner;
+  struct Unit *owner;
   u16 *items;
 
   menu = Ram_HeapSlots->menuWork;

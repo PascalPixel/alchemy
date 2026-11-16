@@ -58,7 +58,7 @@ void Window_UpdateZooms(void) {
     }
     index++;
     work++;
-  } while (index != UI_WINDOW_COUNT);
+  } while (index != WINDOW_COUNT);
 }
 
 /// Scratch values for a stage of a window's zoom, as in The Broken Seal: the

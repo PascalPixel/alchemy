@@ -213,7 +213,7 @@ struct ShopWork {
   /// The item picker's check: 0 for an item to drop, 1 for one to remove.
   s8 itemMode;
   struct FieldParticle effects[24]; ///< the sanctum service's particles
-  u8 menuIcons[0x48]; ///< ItemMenuWork's five menu icons; not named here
+  u8 menuIcons[72]; ///< ItemMenuWork's five menu icons; not named here
   /// The item icon grid (ItemIconGrid_ShowInventory): a sprite and a VRAM
   /// cache slot (ICON_NONE when empty) for each inventory slot.
   struct IconSprite iconSprites[INVENTORY_SLOTS];
@@ -248,8 +248,11 @@ STATIC_ASSERT(sizeof(struct ShopWork) == 0xcec);
 #define SHOP_QUANTITY_CURSOR_X 128
 #endif
 
-extern const u8 gShop_QuantityTiles[];
+/// The shop's price label, sprite tiles beside an item's price (price.4bpp).
 extern const u8 gShop_PriceTiles[];
+/// The shop's quantity label, beside the count of an item bought
+/// (quantity.4bpp).
+extern const u8 gShop_QuantityTiles[];
 
 extern const u16 gShop_SelectorTileOffsets[30];
 extern const u16 gShop_PriceDigitTileOffsets[5];

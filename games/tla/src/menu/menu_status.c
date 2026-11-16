@@ -1163,9 +1163,6 @@ void PsynergyMenu_DrawRange(s32 window, s32 x, s32 y, s32 range, s32 unused) {
 
 #undef RANGE_ICON_TILE
 
-// The psynergy menu work block, as this function reads it.
-#define ACTION_ID_MASK PSYNERGY_ABILITY_MASK
-
 // The Japanese page lists six abilities rather than five, a row higher, and
 // says where the chosen ability can be used in short lines stacked at the
 // window's left edge rather than in one sentence across it. FIRST_TILE_ROW is

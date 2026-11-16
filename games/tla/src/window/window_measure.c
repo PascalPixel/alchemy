@@ -146,7 +146,7 @@ void Text_MeasureDecoded(s32 entryIndex, u32 *outWidth, u32 *outHeight,
   count = 0;
   for (;;) {
     code = work->textBuffer[entryIndex];
-    entryIndex = (entryIndex + 1) & (UI_TEXT_ENTRY_COUNT - 1);
+    entryIndex = (entryIndex + 1) & TEXT_BUFFER_MASK;
 #if LANGUAGE != LANGUAGE_JAPANESE
     if (code > 31 && code != 176) {
       if (code == TEXT_SPACE) {
@@ -218,16 +218,16 @@ void Text_MeasureDecoded(s32 entryIndex, u32 *outWidth, u32 *outHeight,
       goto done;
     case 14:
     case 28:
-      entryIndex = (entryIndex + 1) & (UI_TEXT_ENTRY_COUNT - 1);
+      entryIndex = (entryIndex + 1) & TEXT_BUFFER_MASK;
     case TEXT_COLOR:
     case TEXT_LINE_SPACING:
     case TEXT_WINDOW_STATE:
     case TEXT_ACTOR_NAME:
-      entryIndex = (entryIndex + 1) & (UI_TEXT_ENTRY_COUNT - 1);
+      entryIndex = (entryIndex + 1) & TEXT_BUFFER_MASK;
       break;
     case TEXT_OUTLINE:
       work->outline = work->textBuffer[entryIndex];
-      entryIndex = (entryIndex + 1) & (UI_TEXT_ENTRY_COUNT - 1);
+      entryIndex = (entryIndex + 1) & TEXT_BUFFER_MASK;
       break;
     }
   }
@@ -348,7 +348,7 @@ void Text_MeasureAllPages(s32 entryIndex, u32 *outWidth, u32 *outHeight,
   page = 0;
   for (;;) {
     code = work->textBuffer[entryIndex];
-    entryIndex = (entryIndex + 1) & (UI_TEXT_ENTRY_COUNT - 1);
+    entryIndex = (entryIndex + 1) & TEXT_BUFFER_MASK;
 #if LANGUAGE != LANGUAGE_JAPANESE
     if (code >= 32 && code != 176) {
       if (code == TEXT_SPACE) {
@@ -426,16 +426,16 @@ void Text_MeasureAllPages(s32 entryIndex, u32 *outWidth, u32 *outHeight,
       break;
     case 14:
     case 28:
-      entryIndex = (entryIndex + 1) & (UI_TEXT_ENTRY_COUNT - 1);
+      entryIndex = (entryIndex + 1) & TEXT_BUFFER_MASK;
     case TEXT_COLOR:
     case TEXT_LINE_SPACING:
     case TEXT_WINDOW_STATE:
     case TEXT_ACTOR_NAME:
-      entryIndex = (entryIndex + 1) & (UI_TEXT_ENTRY_COUNT - 1);
+      entryIndex = (entryIndex + 1) & TEXT_BUFFER_MASK;
       break;
     case TEXT_OUTLINE:
       work->outline = work->textBuffer[entryIndex];
-      entryIndex = (entryIndex + 1) & (UI_TEXT_ENTRY_COUNT - 1);
+      entryIndex = (entryIndex + 1) & TEXT_BUFFER_MASK;
       break;
     }
   }

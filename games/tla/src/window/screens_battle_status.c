@@ -576,8 +576,7 @@ s32 BattleStatusScreen_Run(u16 *list, s32 listCount, s32 member) {
     cursorSprite.oam.word.attr23 = 0;
     /* FAKEMATCH(barrier): counted as 4 bytes. */
     asm("");
-    cursorSprite.oam.f.tile =
-        VramCache_Reload(cursorSlot, gResource_FixedBlockBTiles);
+    cursorSprite.oam.f.tile = VramCache_Reload(cursorSlot, gPointingHandTiles);
     {
       s32 bob = gFrameCount & 4;
       s32 x = (s16)statusWindow->x * 8 + cursorPosition.x + 16;

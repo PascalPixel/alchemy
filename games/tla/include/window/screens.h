@@ -5,6 +5,7 @@
 /// What the screens object defines for the code outside it.
 
 #include "types.h"
+#include "window/cursor.h"
 
 struct RenderInput;
 struct WindowSprite;
@@ -35,16 +36,6 @@ struct BattleSummaryCursor {
 struct BarPatternRow {
   u32 firstTile;
   u32 secondTile;
-};
-
-struct NameCursorMotion {
-  struct WindowSprite *anchor;
-  u16 x;
-  u16 y;
-  s16 targetX;
-  s16 targetY;
-  s8 active;
-  s8 kind;
 };
 
 void PartyStatus_CreateWindow(s32 flags);
@@ -81,22 +72,27 @@ struct WindowSprite *Portrait_Create(s32 speaker, s32 option, s32 side,
 struct WindowSprite *MenuTitle_Create(s32 group, struct RenderInput *input,
                                       s32 x, s32 y);
 s32 FileList_SelectAction(void);
-struct ArrowSprite {
-  u32 link;
+
+/// The OAM entry of a window sprite, as the Djinn preview places its stat
+/// arrows (DjinnMenu_DrawStatArrow): from the output's byte 16 on.
+struct PreviewSprite {
+  u32 link; ///< the output's depth-queue link (WindowSprite.link)
+  /// OAM attributes 0 and 1, written whole as 0x40000400 first.
   union {
     u32 word;
     struct {
-      unsigned y : 8;
-      unsigned flags : 8;
-      unsigned x : 9;
-      unsigned high : 7;
+      unsigned y : 8;     ///< screen pixels
+      unsigned flags : 8; ///< attribute 0's high byte: 0x04, semi-transparent
+      unsigned x : 9;     ///< screen pixels
+      unsigned high : 7;  ///< attribute 1's flip and size bits: 16 by 16
     } bits;
   } attributes;
+  /// OAM attribute 2: the arrow's VRAM tile.
   union {
     u32 value;
     struct {
-      unsigned index : 10;
-      unsigned high : 6;
+      unsigned index : 10; ///< the tile in object VRAM
+      unsigned high : 6;   ///< priority and palette, 0 here
     } bits;
   } tile;
 };

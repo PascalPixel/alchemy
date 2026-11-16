@@ -156,9 +156,10 @@ enum {
 // with declarations of their own that disagree.
 void Window_DrawBorder(s32 x, s32 y, u32 width, u32 height);
 void Text_ResetStyle();
-void Window_FitOnScreen(s32 no, s32 *px, s32 *py, u32 *pw, u32 *ph,
-                        u16 *spacing, u32 flags);
-s32 Text_GetMessageSize(s32 no, s32 *x, s32 *y, u32 *width, u32 *height);
+void Window_FitOnScreen(s32 message, s32 *windowX, s32 *windowY,
+                        u32 *windowWidth, u32 *windowHeight, u16 *spacing,
+                        u32 flags);
+s32 Text_GetMessageSize(s32 message, s32 *x, s32 *y, u32 *width, u32 *height);
 s32 Glyph_Draw(struct Window *window, s32 character, s32 x, s32 y, s32 mode);
 void Window_DrawDividerLine(struct Window *win, u32 x1, u32 y1, u32 x2, u32 y2);
 void Text_DrawMessage(s32 message, s32 window, s32 x, s32 y);

@@ -151,10 +151,10 @@ void SelectionMenu_BuildEntries(u32 unused) {
     SelectionMenu_SetupIcon(kind, base, node, 0);
     if (screen->head == 0) {
       screen->head = node;
-      node->prev = 0;
+      node->previous = 0;
     } else {
       previous->next = node;
-      node->prev = previous;
+      node->previous = previous;
     }
     node->next = 0;
     rowPosition++;
@@ -1014,7 +1014,7 @@ void SelectionMenu_Scroll(struct SelectionScreen *screen, s32 forward) {
     }
     p->next = last;
     last->next = NULL;
-    last->prev = p;
+    last->previous = p;
     p = screen->head;
     do {
       wait(1);
@@ -1023,7 +1023,7 @@ void SelectionMenu_Scroll(struct SelectionScreen *screen, s32 forward) {
     VramCache_FreeEntry(p->slot);
     p->kind = ICON_KIND_NONE;
     p = p->next;
-    p->prev = NULL;
+    p->previous = NULL;
   } else {
     index = screen->top;
     base = screen->bases[index];
@@ -1042,9 +1042,9 @@ void SelectionMenu_Scroll(struct SelectionScreen *screen, s32 forward) {
     p->scaleEnd = Q_8_8(1);
     first = p;
     p = screen->head;
-    p->prev = first;
+    p->previous = first;
     first->next = p;
-    first->prev = NULL;
+    first->previous = NULL;
     screen->head = first;
     p = first;
     for (;;) {
@@ -1064,7 +1064,7 @@ void SelectionMenu_Scroll(struct SelectionScreen *screen, s32 forward) {
       p = p->next;
     VramCache_FreeEntry(p->slot);
     p->kind = ICON_KIND_NONE;
-    p->prev->next = NULL;
+    p->previous->next = NULL;
   }
 }
 
@@ -1229,7 +1229,7 @@ u32 Menu_ConfirmSelection(struct SelectionScreen *screen) {
     }
   }
   screen->head = node;
-  node->prev = NULL;
+  node->previous = NULL;
   node->next = NULL;
   node->targetX = 4;
   for (other = screen->path, cnt = 0; other != NULL; other = other->next) {
@@ -1274,11 +1274,11 @@ u32 Menu_ConfirmSelection(struct SelectionScreen *screen) {
     while (node->next != NULL)
       node = node->next;
     node->next = other;
-    other->prev = node;
+    other->previous = node;
     other->next = NULL;
   } else {
     screen->path = other;
-    other->prev = NULL;
+    other->previous = NULL;
     other->next = NULL;
   }
   return index;

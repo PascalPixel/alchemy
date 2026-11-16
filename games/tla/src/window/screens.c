@@ -114,10 +114,10 @@ struct StatusCursor {
 };
 
 /// The name entry screen's cursors: the hand on the keyboard and the caret
-/// under the name, each a window sprite moved as a NameCursorMotion.
+/// under the name, each a window sprite moved as a MenuCursor.
 union NameCursor {
   struct WindowSprite *sprite;
-  struct NameCursorMotion cursor;
+  struct MenuCursor cursor;
 };
 
 /// The first two words of gMainRoutineWork as the save writes them: the build

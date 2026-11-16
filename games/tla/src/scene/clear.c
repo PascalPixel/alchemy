@@ -865,7 +865,7 @@ void Resource_CopyFixedBlockB(void);
 void Resource_CopyFixedBlockA(void);
 void Graphics_ExpandVramTilesByColorTable(void *vram);
 void MenuCursor_Advance(struct MenuCursor *cursor);
-void MenuCursor_Set(struct MenuCursor *cursor, s32 x, s32 y, s32 kind);
+void MenuCursor_Set(struct MenuCursor *cursor, s32 x, s32 y, s32 frames);
 void MenuCursor_SetPositionImmediate(struct MenuCursor *cursor, s32 x, s32 y);
 
 /// Gives a cursor its sprite.

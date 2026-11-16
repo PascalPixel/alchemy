@@ -6,50 +6,6 @@
 #include "battle/battle_side.h"
 #include "static_assert.h"
 
-/// A view of struct Unit: its inventory, and as classId who the unit is
-/// (Unit.enemyId). The item menus and the debug battle still read it;
-/// the game object reads struct Unit.
-struct OwnerInventoryState {
-  u8 unk000[0xd8];
-  u16 inventory[15];
-  u8 unk0f6[0x54];
-  u16 classId;
-};
-
-/// A view of struct Unit's Psynergy list (Unit.psynergy).
-struct OwnerActionState {
-  u8 unk000[0x58];
-  struct PsynergyEntry actionSlots[32];
-};
-
-/// The Djinn held and set, each a word an element (Unit.djinnHeld and
-/// djinnSet), read as one array of eight.
-union OwnerDjinnFlags {
-  struct {
-    u32 owned[4];
-    u32 active[4];
-  } banks;
-  u32 slots[8];
-};
-
-/// The Djinn held and set, counted by element (Unit.djinnHeldCounts and
-/// djinnSetCounts), read as one array of eight.
-union OwnerDjinnCounts {
-  struct {
-    u8 owned[4];
-    u8 active[4];
-  } banks;
-  u8 slots[8];
-};
-
-/// A view of struct Unit's Djinn: the flags and counts of those held
-/// and set.
-struct OwnerDjinnState {
-  u8 unk000[0xf8];
-  union OwnerDjinnFlags flags;
-  union OwnerDjinnCounts counts;
-};
-
 /// An ability a class teaches, and the level it is learned at; The Broken
 /// Seal's holds the ability in one byte.
 struct ClassAbility {
@@ -99,14 +55,8 @@ enum ClassSeries {
 #define UNIT_GAUGE_SHIFT 14
 #define UNIT_GAUGE_FULL (1 << UNIT_GAUGE_SHIFT)
 
-/// How many actions a unit's list holds (Unit.psynergy), and how
-/// many a class teaches (ClassDefinition.abilities).
-#define PSYNERGY_SLOTS 32
 /// How many actions a class can teach (ClassDefinition.abilities).
 #define CLASS_ABILITY_SLOTS 16
-
-/// Unit ids from 128 are the enemies', as The Broken Seal's.
-#define FIRST_ENEMY_UNIT 128
 
 /// How many classes gClass_DefinitionTable holds.
 #define CLASS_COUNT 244
@@ -114,26 +64,23 @@ enum ClassSeries {
 /// A class: its series, the element levels it needs, its stat multipliers and
 /// the abilities it teaches.
 struct ClassDefinition {
-  long series;                       ///< the series Class_Determine picks from
-  u8 required[4];                    ///< each element's level needed, in tens
-  u8 hp;                             ///< tenths of the base stat
-  u8 pp;                             ///< tenths of the base stat
-  u8 atk;                            ///< tenths of the base stat
-  u8 def;                            ///< tenths of the base stat
-  u8 agi;                            ///< tenths of the base stat
-  u8 luck;                           ///< tenths of the base stat
-  u8 padding[2];                     ///< padding
-  struct ClassAbility abilities[16]; ///< the Psynergy the class teaches
+  long series;    ///< the series Class_Determine picks from
+  u8 required[4]; ///< each element's level needed, in tens
+  u8 hp;          ///< tenths of the base stat
+  u8 pp;          ///< tenths of the base stat
+  u8 atk;         ///< tenths of the base stat
+  u8 def;         ///< tenths of the base stat
+  u8 agi;         ///< tenths of the base stat
+  u8 luck;        ///< tenths of the base stat
+  u8 padding[2];  ///< padding
+  /// The Psynergy the class teaches.
+  struct ClassAbility abilities[CLASS_ABILITY_SLOTS];
   u8 weakEffects[4]; ///< the ability effects the class is weak to
 };
 
 extern const struct ClassDefinition gClass_DefinitionTable[];
 
 STATIC_ASSERT(sizeof(struct ClassDefinition) == 0x54);
-STATIC_ASSERT(offsetof(struct OwnerDjinnState, flags.banks.owned) == 0xf8);
-STATIC_ASSERT(offsetof(struct OwnerDjinnState, flags.banks.active) == 0x108);
-STATIC_ASSERT(offsetof(struct OwnerDjinnState, counts.banks.owned) == 0x118);
-STATIC_ASSERT(offsetof(struct OwnerDjinnState, counts.banks.active) == 0x11c);
 STATIC_ASSERT(offsetof(struct DjinnRecoveryTable, list) == 8);
 STATIC_ASSERT(offsetof(struct DjinnRecoveryTable, list.count) == 0x128);
 

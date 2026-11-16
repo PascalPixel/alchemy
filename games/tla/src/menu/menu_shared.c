@@ -803,7 +803,7 @@ void ItemMenu_ShowMessage(s32 message, s32 x, s32 y) {
              !(gInput.pressed & KEY_START));
     WindowSprite_ClearListFar(window);
   } else {
-    GameFlag_Set(FLAG_MENU_INFO_KEPT);
+    GameFlag_Set(FLAG_INFO_WINDOW_HOLDS_MESSAGE);
   }
   menu->completionFlag = 1;
   menu->sideIcons[0]->motion = ICON_SHOWN;
@@ -1195,7 +1195,7 @@ void Menu_WatchStart(void) {
   // DEAD: walks the free window sprites to the end of their list and keeps
   // nothing; the ROM keeps the loop.
   node = (u32 *)&((struct WindowWork *)Ram_HeapSlots->windowWork)
-             ->freeOutputs.head;
+             ->freeSprites.head;
   while ((node = (u32 *)*node) != 0)
     ;
 }

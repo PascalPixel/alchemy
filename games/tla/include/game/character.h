@@ -21,12 +21,12 @@ struct CharacterDefinition {
   u8 reserved[80]; ///< twenty words, 0 in every row
   /// The growth curves: each stat at levels 0, 20, 40, 60, 80 and 100.
   ///@{
-  s16 hp[6];
-  s16 pp[6];
-  u16 atk[6];
-  u16 def[6];
-  u16 agi[6];
-  u8 luck[6];
+  s16 hp[GROWTH_POINTS];
+  s16 pp[GROWTH_POINTS];
+  u16 atk[GROWTH_POINTS];
+  u16 def[GROWTH_POINTS];
+  u16 agi[GROWTH_POINTS];
+  u8 luck[GROWTH_POINTS];
   ///@}
   /// Added to ten times the Djinn set in each element to give the
   /// character's element levels.

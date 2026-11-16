@@ -102,7 +102,6 @@ s32 Text_CheckTextDismissed(struct UiChannelSlot *channel);
 void WindowSprite_PrepareForRedraw(struct Window *window);
 
 #define TEXT_SPEED gMainRoutineWork.messageSpeed
-#define ENTRY_MASK (UI_TEXT_ENTRY_COUNT - 1)
 
 /// Types one frame's share of a message's text: runs control codes (new
 /// line, new page, pauses, colours) and draws characters, playing the speaker's
@@ -210,7 +209,7 @@ s32 Message_Type(struct UiChannelSlot *channel) {
         if (channel->flags == 0 && (window->width | window->height) != 0)
           Window_EraseBorderRect((s16)window->x, (s16)window->y, window->width,
                                  window->height);
-        entryIndex = (entryIndex + 1) & ENTRY_MASK;
+        entryIndex = (entryIndex + 1) & TEXT_BUFFER_MASK;
         if (work->textBuffer[entryIndex] != 0 &&
             (window->width | window->height) != 0) {
           if (channel->flags != 0) {
@@ -280,19 +279,19 @@ s32 Message_Type(struct UiChannelSlot *channel) {
         break;
 
       case TEXT_COLOR:
-        channel->entry = (channel->entry + 1) & ENTRY_MASK;
+        channel->entry = (channel->entry + 1) & TEXT_BUFFER_MASK;
         channel->colour = work->textBuffer[channel->entry];
         Message_ApplyStyle(channel);
         break;
 
       case TEXT_OUTLINE:
-        channel->entry = (channel->entry + 1) & ENTRY_MASK;
+        channel->entry = (channel->entry + 1) & TEXT_BUFFER_MASK;
         channel->outline = work->textBuffer[channel->entry];
         Message_ApplyStyle(channel);
         break;
 
       case TEXT_LINE_SPACING:
-        channel->entry = (channel->entry + 1) & ENTRY_MASK;
+        channel->entry = (channel->entry + 1) & TEXT_BUFFER_MASK;
         channel->lineSpacing = work->textBuffer[channel->entry];
         Message_ApplyStyle(channel);
         break;
@@ -305,10 +304,10 @@ s32 Message_Type(struct UiChannelSlot *channel) {
         break;
 
       case TEXT_WINDOW_STATE:
-        channel->entry = (channel->entry + 1) & ENTRY_MASK;
+        channel->entry = (channel->entry + 1) & TEXT_BUFFER_MASK;
         channel->work->animation = work->textBuffer[channel->entry];
         channel->countdown = 11;
-        channel->entry = (channel->entry + 1) & ENTRY_MASK;
+        channel->entry = (channel->entry + 1) & TEXT_BUFFER_MASK;
         break;
 
       case TEXT_END:
@@ -328,15 +327,15 @@ s32 Message_Type(struct UiChannelSlot *channel) {
       if (work->mindRead != 0)
         pixelX += 8;
 #endif
-      nextEntryIndex = (nextEntryIndex + 1) & ENTRY_MASK;
+      nextEntryIndex = (nextEntryIndex + 1) & TEXT_BUFFER_MASK;
       nextCode = work->textBuffer[nextEntryIndex];
 #if LANGUAGE == LANGUAGE_JAPANESE || LANGUAGE == LANGUAGE_ENGLISH
       if (nextCode == TEXT_MARK_VOICED) {
         code |= 1 << 14;
-        channel->entry = (channel->entry + 1) & ENTRY_MASK;
+        channel->entry = (channel->entry + 1) & TEXT_BUFFER_MASK;
       } else if (nextCode == TEXT_MARK_SEMIVOICED) {
         code |= 2 << 14;
-        channel->entry = (channel->entry + 1) & ENTRY_MASK;
+        channel->entry = (channel->entry + 1) & TEXT_BUFFER_MASK;
       }
 #endif
 #if LANGUAGE != LANGUAGE_JAPANESE
@@ -349,11 +348,11 @@ s32 Message_Type(struct UiChannelSlot *channel) {
         if (work->outline == TEXT_STYLE_OUTLINED) {
           if ((u16)pairWidth <= 14) {
             code |= nextCode << 8;
-            channel->entry = (channel->entry + 1) & ENTRY_MASK;
+            channel->entry = (channel->entry + 1) & TEXT_BUFFER_MASK;
           }
         } else if ((u16)pairWidth <= 15) {
           code |= nextCode << 8;
-          channel->entry = (channel->entry + 1) & ENTRY_MASK;
+          channel->entry = (channel->entry + 1) & TEXT_BUFFER_MASK;
         }
       }
 #else
@@ -362,7 +361,7 @@ s32 Message_Type(struct UiChannelSlot *channel) {
           (u16)(gFont_Glyphs[code - TEXT_SPACE].width +
                 gFont_Glyphs[nextCode - TEXT_SPACE].width) <= 15) {
         code |= nextCode << 8;
-        channel->entry = (channel->entry + 1) & ENTRY_MASK;
+        channel->entry = (channel->entry + 1) & TEXT_BUFFER_MASK;
       }
 #endif
 #endif
@@ -400,7 +399,7 @@ s32 Message_Type(struct UiChannelSlot *channel) {
       if (channel->countdown != 0)
         continue;
     }
-    channel->entry = (channel->entry + 1) & ENTRY_MASK;
+    channel->entry = (channel->entry + 1) & TEXT_BUFFER_MASK;
   } while (--glyphsLeft != 0);
 
   return CHANNEL_STEP_RUNNING;
@@ -410,4 +409,3 @@ s32 Message_Type(struct UiChannelSlot *channel) {
 #undef CANVAS_COLUMN_WORDS
 #undef CANVAS_KEPT_ROWS
 #undef TEXT_SPEED
-#undef ENTRY_MASK

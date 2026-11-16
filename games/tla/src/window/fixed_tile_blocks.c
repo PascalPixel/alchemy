@@ -7,5 +7,5 @@
 
 /// The pointer's tiles, the one block WindowSprite_GetPointerTiles returns.
 s32 gWindow_FixedTileBlocks[] = {
-    (s32)gResource_FixedBlockBTiles,
+    (s32)gPointingHandTiles,
 };

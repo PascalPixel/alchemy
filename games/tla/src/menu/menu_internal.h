@@ -131,9 +131,9 @@ enum DjinnSelectMode {
   (BG_CHAR_BLOCK(1) + DJINN_BACKDROP_BORDER_TILE * TILE_SIZE_4BPP)
 
 /// A Djinn list entry's party member, element and index, shifted down.
-#define DJINN_MEMBER(v) (((v) & 0xf00) >> 8)
-#define DJINN_ELEMENT(v) (((v) & 0xe0) >> 5)
-#define DJINN_NUMBER(v) ((v) & 0x1f)
+#define DJINN_MEMBER(v) (((v) & DJINN_ENTRY_MEMBER) >> 8)
+#define DJINN_ELEMENT(v) (((v) & DJINN_ENTRY_ELEMENT) >> 5)
+#define DJINN_NUMBER(v) ((v) & DJINN_ENTRY_INDEX)
 
 /// The preview loop's four operations, as its confirmation text describes them
 /// (PsynergyList_RunCompareLoop's mode).
@@ -271,7 +271,7 @@ struct ItemMenuWork {
   void *figures[4];
   s16 figureX[4];
   s16 figureY[4];
-  s32 figureScales[4];
+  FIXED figureScales[4];
   u16 figureDepths[4];
   ///@}
   u8 unusedAfterFigures[6]; ///< DjinnMenuWork's pair; not named here
@@ -282,16 +282,16 @@ struct ItemMenuWork {
   s8 selectedIndexByMember[8]; ///< each party member's entry chosen last
   u8 mode;                     ///< PsynergyMenuWork's; not named here
   u8 unusedAfterMode[3];       ///< no view of the menu work names it
-  u8 shopStock[0x27e];         ///< ShopWork's stock and party; not named here
+  u8 shopStock[638];           ///< ShopWork's stock and party; not named here
   u16 resourceSlots[2];        ///< VRAM cache slots of two arrow pictures
-  u8 shopKeeper[0x17];         ///< ShopWork's cursor and keeper; not named here
+  u8 shopKeeper[23];           ///< ShopWork's cursor and keeper; not named here
   /// Nonzero while Menu_UpdateEntryObjectTransforms places the party figures
   /// (memberSprites); the shops clear it while a details window covers them.
   s8 memberSpritesShown;
   /// Nonzero while the row of four figures is drawn
   /// (DjinnFigures_SetShown).
   s8 figuresShown;
-  u8 shopEffects[0x6c1]; ///< ShopWork's particles; not named here
+  u8 shopEffects[1729]; ///< ShopWork's particles; not named here
   /// The five menu icons (MenuIcon_LoadSlots): a sprite and a VRAM cache
   /// slot each, queued while menuIconsShown is nonzero.
   ///@{
@@ -445,7 +445,7 @@ struct PsynergyMenuWork {
   u16 flags;
   u16 skipSlide; ///< 1 skips the cursor's next slide once
   /// ItemMenuWork's row of figures and the pair after it; not named here.
-  u8 figureRow[0x3e];
+  u8 figureRow[62];
   s16 useResult; ///< the use's result message, after MsgItemUseResult
   /// ItemMenuWork's equipPreview and listMode; not named here.
   u8 listState[4];
@@ -493,9 +493,8 @@ void Menu_CreateOwnerEntryObjects(s32 first);
 void Menu_HighlightPageEntry(s32 unused, s32 index, s32 count);
 s32 Menu_MoveGridCursor(s32 *selection, s32 count, s32 columns);
 void Resource_LoadByModeIntoSlotFar(s32 mode, s32 id, s32 slot, s32 flags);
-extern u8 MsgShortcutHelp[];
 s32 Sprite_StartAnimationFar(void *object, s32 argument);
-void Link_DrawPageArrowsFar(s32 addr);
+void Link_DrawPageArrowsFar(s32 offset);
 void Menu_UpdateEntryObjectTransforms(void);
 void Input_ResetKeyRepeat(void);
 s32 StatusScreen_BuildAvailability(u8 *ailments, s32 requested, s32 owner);
@@ -505,6 +504,9 @@ s32 Ability_PlayUseAnimation(s32 action);
 void DjinnFigures_InitializeTopRow(void);
 void DjinnFigures_ReleaseTopRow(void);
 void Menu_ResetTwoResourceEntries(void);
+/// One 4-bit tile (backdrop.4bpp) the Djinn menus copy into the backdrop's
+/// frame; the Djinn preview blinks it, drawing it and a fill of the window
+/// background in turn every four frames.
 extern u8 gMenu_BackdropBorderTile[];
 void WindowSprite_PrepareForRedrawFar(s32 window);
 s32 Message_AllTypedFar(void);
@@ -594,9 +596,6 @@ enum UnitStatus {
 #else
 #define MENU_DRAW_STATUS_LABEL Text_DrawStringAtOffsetFar
 #endif
-
-/// The info window holds a message the next selection must not draw over.
-#define FLAG_MENU_INFO_KEPT 0x151
 
 /// PsynergyList_RunCompareLoop's pages for a give or trade, which R cycles; the
 /// first two also index its per-member page counts.

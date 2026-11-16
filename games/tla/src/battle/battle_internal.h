@@ -143,7 +143,10 @@
 // Far calls the parts make, each passing its own view of the record:
 // Sprite_AddAnimation and SpriteAnimation_Start (field.c, resource_slot/)
 // take the metadata slot state and the animation entry.
+/// Adds a sprite animation to a sprite in its first free slot; returns it, 0
+/// when none could be taken, or -1 when all four are in use.
 s32 Sprite_AddAnimationFar(void *state, s32 id);
+/// Removes a sprite animation from a sprite and clears it.
 void Sprite_RemoveAnimationFar(void *state, s32 handle);
 
 #include "battle/battle_type.h"

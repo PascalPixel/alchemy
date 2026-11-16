@@ -141,6 +141,7 @@ void ScriptedBattle_RestoreUnits(void) {
   }
 }
 
+/// Works out a character's class, Psynergy and base elements again.
 void Unit_UpdateClassFar(s32 owner);
 
 /// Debug: replaces the party with parameter set number preset, each member at

@@ -479,6 +479,7 @@ s32 BattleStaging_RunAttack(struct BattlePlan *plan, s32 mode) {
   return 0;
 }
 
+/// Marks the item in `slot` broken; returns -1 for an empty slot.
 s32 Inventory_BreakFar(s32 owner, s32 slot);
 
 /// Plays an item's use: the camera turns to the user's side, the user raises

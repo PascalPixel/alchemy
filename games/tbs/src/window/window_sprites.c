@@ -201,7 +201,7 @@ void Window_PutGlyph(struct Window *win, u32 tile, u32 x, u32 y, s32 mode) {
   if (x > (win->width - 2))
     return;
   if (mode == GLYPH_DRAW_PAGE_ARROW) {
-    s32 column = 0xfffe;
+    s32 column = (u16)-2;
     work = WindowSprite_AcquireFree();
     if (work == NULL)
       return;
@@ -262,7 +262,7 @@ void Window_PutGlyph(struct Window *win, u32 tile, u32 x, u32 y, s32 mode) {
   if (x > (win->width - 2))
     return;
   if (mode == GLYPH_DRAW_PAGE_ARROW) {
-    s32 column = 0xfffe;
+    s32 column = (u16)-2;
     u16 left;
     out = (struct WindowSpriteCellView *)WindowSprite_AcquireFree();
     if (out == NULL)

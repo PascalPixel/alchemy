@@ -143,8 +143,7 @@ void BattleEffect_RunGatheringLights(struct BattleEffectParams *args,
               mote->velocityX += dx;
               mote->velocityY += dy;
               mote->velocityZ += dz;
-              if ((dx >= -0xfff && dx <= 0xfff) &&
-                  (dz >= -0xfff && dz <= 0xfff))
+              if ((dx >= -4095 && dx <= 4095) && (dz >= -4095 && dz <= 4095))
                 mote->variant = -1;
             }
           }

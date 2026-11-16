@@ -751,7 +751,7 @@ UNREAD_RESULT BattleObject_SetColorMode(struct Actor *actor, s32 colorMode) {
     for (childIndex = 1; childIndex < entryCount; childIndex++) {
       child = *children++;
       child->colorMode = 0;
-      child->picture = 0xff;
+      child->picture = SPRITE_PICTURE_NONE;
     }
     recordIndex++;
   }
@@ -951,7 +951,7 @@ void BattleMotion_ShowDowned(s32 unitId) {
       entry = record->entries[0];
       records[recordCount] = record;
       entry->colorMode = SPRITE_COLOR_GREY;
-      entry->picture = 0xff;
+      entry->picture = SPRITE_PICTURE_NONE;
       recordCount++;
     }
     wait(4);

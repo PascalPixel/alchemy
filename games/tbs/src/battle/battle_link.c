@@ -99,7 +99,7 @@ UNREAD_RESULT LinkBattle_SendParty(void) {
   size = LINK_PARTY_UNIT_BYTES;
   buffer = Heap_AllocEwram(size);
   {
-    s32 noSlot = 0xff;
+    s32 noSlot = 255;
 
     battle = gBattleWork;
     for (i = 7; i >= 0; i--)

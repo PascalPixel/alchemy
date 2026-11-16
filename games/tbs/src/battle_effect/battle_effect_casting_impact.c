@@ -759,8 +759,7 @@ void BattleEffect_RunCastingImpact(struct BattleEffectParams *args, s32 mode) {
                 step->velocityX += dx;
                 step->velocityY += dy;
                 step->velocityZ += dz;
-                if ((dx >= -0xfff && dx <= 0xfff) &&
-                    (dz >= -0xfff && dz <= 0xfff))
+                if ((dx >= -4095 && dx <= 4095) && (dz >= -4095 && dz <= 4095))
                   step->variant = -1;
               }
             }

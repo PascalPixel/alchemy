@@ -269,7 +269,7 @@ s32 ItemMenu_RunCommands(s32 *memberOut, s32 *targetOut, s32 *itemOut) {
       if (selection == -1) {
         break;
       }
-      menu->listMode = 0xff;
+      menu->listMode = -1;
       state = ITEM_STEP_COMMAND;
       break;
 

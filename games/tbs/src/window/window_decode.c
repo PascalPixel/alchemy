@@ -481,7 +481,7 @@ s32 Message_Decode(s32 script, s32 clear) {
           case MESSAGE_TEXT_EFFECT:
           case MESSAGE_ARTICLE_CLASS:
             TEXT_APPEND(entry, writePosition, (u16)code);
-            TEXT_APPEND(entry, writePosition, decode(messageReader) + 0xFFFFU);
+            TEXT_APPEND(entry, writePosition, decode(messageReader) + 65535U);
             break;
           case MESSAGE_ARGUMENT_SIGNED_NUMBER:
             value = (s32)MessageArgument_Lookup(MESSAGE_ARGUMENT_NUMBER, clear);
@@ -928,7 +928,7 @@ s32 Message_Decode(s32 script, s32 clear) {
           case MESSAGE_TEXT_COLOR:
           case MESSAGE_TEXT_EFFECT:
             TEXT_APPEND(entry, writePosition, (u16)code);
-            TEXT_APPEND(entry, writePosition, decode(messageReader) + 0xffffU);
+            TEXT_APPEND(entry, writePosition, decode(messageReader) + 65535U);
             break;
           case MESSAGE_ARGUMENT_SIGNED_NUMBER:
             value = MessageArgument_Lookup(MESSAGE_ARGUMENT_NUMBER, clear);

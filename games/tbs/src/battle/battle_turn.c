@@ -557,7 +557,7 @@ s32 Battle_GatherActions(struct BattleAction *actions) {
     for (actionIndex = 0; actionIndex < BATTLE_ACTION_CAPACITY; actionIndex++) {
       record[actionIndex].unitId = BATTLE_UNIT_LIST_END;
       // The lowest priority.
-      record[actionIndex].priority = 0x8000;
+      record[actionIndex].priority = 32768;
     }
   }
 

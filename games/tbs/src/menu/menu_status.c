@@ -1440,7 +1440,7 @@ s32 PsynergyMenu_DrawListPage(struct Window *window, s32 unused,
 
       // ABILITY_RANGE_ALL takes the last range icon, 11; range n takes n - 1.
       range = action->range;
-      if (range == 0xff) {
+      if (range == ABILITY_RANGE_ALL) {
         range = 11;
       } else {
         range--;

@@ -55,9 +55,9 @@ void Message_DecodeRaw(s32 message, u16 *text, s32 capacity) {
                ->slots[HEAP_SLOT_MESSAGE_DECODER];
   Message_Find(&reader, message);
 #if !defined(DECODE_EUROPEAN)
-  delta = 0xffff;
+  delta = (u16)-1;
 #endif
-  // Operands are stored one above their value; adding 0xffff takes the one off
+  // Operands are stored one above their value; adding (u16)-1 takes the one off
   // in 16 bits.
   while ((value = decode(&reader)) != 0) {
     switch (value) {
@@ -67,9 +67,9 @@ void Message_DecodeRaw(s32 message, u16 *text, s32 capacity) {
         goto done;
       *text++ = value;
 #if defined(DECODE_EUROPEAN)
-      value = decode(&reader) + 0xffff;
+      value = decode(&reader) + (u16)-1;
       *text++ = value;
-      value = decode(&reader) + 0xffff;
+      value = decode(&reader) + (u16)-1;
 #else
       *text++ = decode(&reader) + delta;
       value = decode(&reader) + delta;
@@ -88,7 +88,7 @@ void Message_DecodeRaw(s32 message, u16 *text, s32 capacity) {
       if (capacity <= 0)
         goto done;
       *text++ = value;
-      value = decode(&reader) + 0xffff;
+      value = decode(&reader) + (u16)-1;
       break;
     default:
       capacity--;

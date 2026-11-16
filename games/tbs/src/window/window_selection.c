@@ -280,8 +280,8 @@ void SelectionMenu_Draw(void) {
       state->transform.angle = 0;
       commandSprite->matrix = OamMatrix_AllocFromTransform(&state->transform);
       commandSprite->affine = 3;
-      commandSprite->x += 0xfff0;
-      commandSprite->y += 0xf0;
+      commandSprite->x += (u16)-16;
+      commandSprite->y += (u8)-16;
       transfer->scale += transfer->scaleStep;
     }
     if (GameFlag_GetFar(FLAG_IN_BATTLE) != 0) {
@@ -310,8 +310,8 @@ void SelectionMenu_Draw(void) {
       state->transform.angle = 0;
       sprite->matrix = OamMatrix_AllocFromTransform(&state->transform);
       sprite->affine = 3;
-      sprite->x += 0xfff8;
-      sprite->y += 0xf8;
+      sprite->x += (u16)-8;
+      sprite->y += (u8)-8;
     } else {
       sprite->affine = 0;
       sprite->matrix = 0;
@@ -1365,7 +1365,7 @@ s32 FieldMenu_Run(void) {
     case 0:
       ret = Actor_GetTriggerCellAheadOfCurrentFar();
       if (ret == 0)
-        ret = 0xff;
+        ret = 255;
       ((struct FieldWork *)state)->examineCell = ret;
       break;
     case FIELD_MENU_PSYNERGY:

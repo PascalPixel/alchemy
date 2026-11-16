@@ -1495,7 +1495,7 @@ void VenusLighthouseEntrance_StartDust(void) {
   work->resource = resource;
   state = work->particles;
   sprite = work->sprites;
-  for (i = 95; i >= 0; i--) {
+  for (i = 0; i < 96; i++) {
     EffectSprite_Init(sprite, 8, 8, OBJ_SIZE_16X16, tileBase);
     sprite->oam.fullColor = 1;
     sprite->oam.palette = 0;

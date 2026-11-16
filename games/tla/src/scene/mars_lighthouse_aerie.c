@@ -2037,7 +2037,6 @@ void MarsLighthouseAerie_LightBeacon(void) {
   MarsLighthouseAerie_HoldStill(ACTOR_JENNA);
   MarsLighthouseAerie_HoldStill(ACTOR_SHEBA);
   firstBeam = 23;
-  zero = 0;
   MarsLighthouseAerie_HoldStill(ACTOR_KRADEN);
   MarsLighthouseAerie_HoldStill(ACTOR_ISAAC);
   MarsLighthouseAerie_HoldStill(ACTOR_MIA);
@@ -2061,11 +2060,11 @@ void MarsLighthouseAerie_LightBeacon(void) {
   if (created != 0) {
     sprite = (struct OverlaySprite *)object->sprite;
     sprite->fullColor = 0;
-    sprite->layerCount = zero;
+    sprite->layerCount = 0;
     sprite->palette = 0;
     sprite->priority = 2;
     object->priorityFlags &= ~ACTOR_PRIORITY_AUTOMATIC;
-    object->motionFlags = zero;
+    object->motionFlags = 0;
     object->retainSpriteCache = 1;
     object->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
     Actor_SetSpriteFlags(created, 0);
@@ -2077,12 +2076,12 @@ void MarsLighthouseAerie_LightBeacon(void) {
     tiles = block + offsetof(GlyphTransfer, tiles);
     Vram_Load(sprite->vramBlock, 128, tiles);
     HeapSlot_Release(HEAP_SLOT_GLYPH_TRANSFER);
-    object->motionFlags = zero;
+    object->motionFlags = 0;
     FieldActor_SetMoveTarget(object, 512, 128, 280);
     FieldActor_WaitForMove(object);
     object->motionFlags = ACTOR_FLOATS;
     FieldEvent_Wait(60);
-    object->motionFlags = zero;
+    object->motionFlags = 0;
     FieldActor_SetMoveTarget(object, 512, 128, 264);
     FieldActor_WaitForMove(object);
     FieldEvent_Wait(20);
@@ -2103,14 +2102,14 @@ void MarsLighthouseAerie_LightBeacon(void) {
   bottomBeam = Actor_Get(ACTOR_BEAM_BOTTOM);
   bottomBeam->scaleX = FIXED_ONE / 10;
   bottomBeam->scaleY = -FIXED_ONE;
-  bottomBeam->motionFlags = zero;
+  bottomBeam->motionFlags = 0;
   FieldActor_SetPositionAndResetMotion(bottomBeam, toFIXED(512), toFIXED(64),
                                        toFIXED(204));
   FieldActor_SetSpriteColor(Actor_Get(ACTOR_BEAM_LOWER), SPRITE_COLOR_WHITE);
   lowerBeam = Actor_Get(ACTOR_BEAM_LOWER);
   lowerBeam->scaleX = FIXED_ONE / 10;
   lowerBeam->scaleY = -FIXED_ONE;
-  lowerBeam->motionFlags = zero;
+  lowerBeam->motionFlags = 0;
   FieldActor_SetPositionAndResetMotion(lowerBeam, toFIXED(512), toFIXED(96),
                                        toFIXED(204));
   Task_AddFrame(Orb_SpawnRising, TASK_PASS_VBLANK);
@@ -2140,21 +2139,21 @@ void MarsLighthouseAerie_LightBeacon(void) {
   middleBeam = Actor_Get(ACTOR_BEAM_MIDDLE);
   middleBeam->scaleY = -FIXED_ONE;
   middleBeam->scaleX = (Actor_Get(ACTOR_BEAM_BOTTOM)->scaleX);
-  middleBeam->motionFlags = zero;
+  middleBeam->motionFlags = 0;
   FieldActor_SetPositionAndResetMotion(middleBeam, toFIXED(512), toFIXED(8),
                                        toFIXED(204));
   FieldActor_SetSpriteColor(Actor_Get(ACTOR_BEAM_UPPER), SPRITE_COLOR_WHITE);
   upperBeam = Actor_Get(ACTOR_BEAM_UPPER);
   upperBeam->scaleY = -FIXED_ONE;
   upperBeam->scaleX = (Actor_Get(ACTOR_BEAM_BOTTOM)->scaleX);
-  upperBeam->motionFlags = zero;
+  upperBeam->motionFlags = 0;
   FieldActor_SetPositionAndResetMotion(upperBeam, toFIXED(512), toFIXED(40),
                                        toFIXED(204));
   FieldActor_SetSpriteColor(Actor_Get(ACTOR_BEAM_TOP), SPRITE_COLOR_WHITE);
   topBeam = Actor_Get(ACTOR_BEAM_TOP);
   topBeam->scaleY = -FIXED_ONE;
   topBeam->scaleX = (Actor_Get(ACTOR_BEAM_BOTTOM)->scaleX);
-  topBeam->motionFlags = zero;
+  topBeam->motionFlags = 0;
   FieldActor_SetPositionAndResetMotion(topBeam, toFIXED(512), toFIXED(72),
                                        toFIXED(204));
   MapGrid_CopyCellsTo(106, 36, 87, 7, 17, firstBeam);
@@ -2211,11 +2210,11 @@ void MarsLighthouseAerie_LightBeacon(void) {
                          gMarsLighthouseAerie_BeamRiseScript);
   FieldTask_Remove(glowTask);
   actor = Actor_Get(ACTOR_BEACON_FIRE);
-  actor->motionFlags = zero;
+  actor->motionFlags = 0;
   Actor_SetBlendMode(actor, 1);
   FieldActor_SetSpriteColor(Actor_Get(ACTOR_BEACON_FIRE), SPRITE_COLOR_WHITE);
   FieldActor_SetSpritePriority(ACTOR_BEACON_FIRE, 2);
-  gMarsLighthouseAerie_BeaconFireFrame = zero;
+  gMarsLighthouseAerie_BeaconFireFrame = 0;
   gMarsLighthouseAerie_BeaconFireFrames = 240;
   Task_AddFrame(MarsLighthouseAerie_RaiseBeaconFire, TASK_PASS_VBLANK);
   do {

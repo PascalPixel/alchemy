@@ -1552,7 +1552,7 @@ void GaiaRockInside_PlaceDollOnFirstAltar(void) {
   FieldEvent_Wait(40);
   Event_PlaySound(SE_191);
   if (!Event_GetFlag(FLAG_FIRST_ALTAR_FACES_MOVED)) {
-    for (i = 19; i >= 0; i--) {
+    for (i = 0; i < 20; i++) {
       westFace->velocityY = Random16();
       eastFace->velocityY = Random16();
       System_Wait(1);
@@ -1566,7 +1566,7 @@ void GaiaRockInside_PlaceDollOnFirstAltar(void) {
       eastFace->velocityY = Random16();
       System_Wait(1);
     }
-    for (i = 9; i >= 0; i--) {
+    for (i = 0; i < 10; i++) {
       westFace->velocityY = Random16();
       eastFace->velocityY = Random16();
       System_Wait(1);
@@ -1576,7 +1576,7 @@ void GaiaRockInside_PlaceDollOnFirstAltar(void) {
     MapGrid_CopyCells(119, 31, 1, 2, 100, i);
     Event_SetFlag(FLAG_FIRST_ALTAR_FACES_MOVED);
   } else {
-    for (i = 119; i >= 0; i--) {
+    for (i = 0; i < 120; i++) {
       westFace->velocityY = Random16();
       eastFace->velocityY = Random16();
       System_Wait(1);
@@ -1630,7 +1630,7 @@ void GaiaRockInside_PlaceDollOnWestAltar(void) {
   Event_Wait(40);
   Sound_Play(SE_191);
   if (!GameFlag_Get(FLAG_WEST_ALTAR_STREAM_OPEN)) {
-    for (i = 19; i >= 0; i--) {
+    for (i = 0; i < 20; i++) {
       actor->velocityY = Random16();
       wait(1);
     }
@@ -1648,7 +1648,7 @@ void GaiaRockInside_PlaceDollOnWestAltar(void) {
       } while (actor->arrivalAxis != 0);
     }
     MapGrid_CopyCells(2, 93, 1, 5, 28, 85);
-    for (i = 9; i >= 0; i--) {
+    for (i = 0; i < 10; i++) {
       actor->velocityY = Random16();
       wait(1);
     }
@@ -1673,7 +1673,7 @@ void GaiaRockInside_PlaceDollOnWestAltar(void) {
       Event_End();
     }
   } else {
-    for (i = 119; i >= 0; i--) {
+    for (i = 0; i < 120; i++) {
       actor->velocityY = Random16();
       wait(1);
     }
@@ -1723,7 +1723,7 @@ void GaiaRockInside_PlaceDollOnEastAltar(void) {
   Event_Wait(40);
   Sound_Play(SE_191);
   if (!GameFlag_Get(FLAG_EAST_ALTAR_STREAM_OPEN)) {
-    for (i = 19; i >= 0; i--) {
+    for (i = 0; i < 20; i++) {
       actor->velocityY = Random16();
       wait(1);
     }
@@ -1741,7 +1741,7 @@ void GaiaRockInside_PlaceDollOnEastAltar(void) {
       } while (actor->arrivalAxis != 0);
     }
     MapGrid_CopyCells(2, 93, 1, 5, 36, 85);
-    for (i = 9; i >= 0; i--) {
+    for (i = 0; i < 10; i++) {
       actor->velocityY = Random16();
       wait(1);
     }
@@ -1766,7 +1766,7 @@ void GaiaRockInside_PlaceDollOnEastAltar(void) {
       Event_End();
     }
   } else {
-    for (i = 119; i >= 0; i--) {
+    for (i = 0; i < 120; i++) {
       actor->velocityY = Random16();
       wait(1);
     }
@@ -1816,7 +1816,7 @@ void GaiaRockInside_PlaceDollOnAltarAltar(void) {
   Event_Wait(40);
   Sound_Play(SE_191);
   if (!GameFlag_Get(FLAG_ALTAR_ROOM_STREAM_OPEN)) {
-    for (i = 19; i >= 0; i--) {
+    for (i = 0; i < 20; i++) {
       actor->velocityY = Random16();
       wait(1);
     }
@@ -1834,7 +1834,7 @@ void GaiaRockInside_PlaceDollOnAltarAltar(void) {
       } while (actor->arrivalAxis != 0);
     }
     MapGrid_CopyCells(1, 85, 1, 4, 25, 85);
-    for (i = 9; i >= 0; i--) {
+    for (i = 0; i < 10; i++) {
       actor->velocityY = Random16();
       wait(1);
     }
@@ -1858,7 +1858,7 @@ void GaiaRockInside_PlaceDollOnAltarAltar(void) {
       Event_End();
     }
   } else {
-    for (i = 119; i >= 0; i--) {
+    for (i = 0; i < 120; i++) {
       actor->velocityY = Random16();
       wait(1);
     }
@@ -3219,7 +3219,7 @@ void GaiaRockInside_DrawMazeRoom(void) {
     struct MapLayer *layer = map->layers;
     s32 i;
 
-    for (i = 1; i >= 0; i--, layer++) {
+    for (i = 0; i < 2; i++, layer++) {
       s32 x = FIELD_CELL(layer->offsetX);
       s32 z = FIELD_CELL(layer->offsetY);
 

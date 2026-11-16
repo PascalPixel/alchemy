@@ -284,7 +284,7 @@ void Loho_FireCannon(void) {
     Heap_Release(buffer);
   }
   timer = &table->age;
-  for (i = LOHO_SPARK_COUNT - 1; i >= 0; i--) {
+  for (i = 0; i < LOHO_SPARK_COUNT; i++) {
     *timer = -(Random16() << 5 >> 16);
     timer += 4;
   }

@@ -2101,14 +2101,13 @@ void Islets_InitializePier(void) {
   struct Actor *actor = Actor_Get(ACTOR_BIRD);
   struct Actor *last;
   s32 set;
-  s32 zero = 0;
 
-  map->layers[2].speedX = zero;
-  map->layers[2].speedY = zero;
+  map->layers[2].speedX = 0;
+  map->layers[2].speedY = 0;
   if (gMainRoutineWork.entrance == 11)
     Event_ClearFlag(FLAG_SHOW_AREA_NAME);
   if (!Event_GetFlag(FLAG_KEEP_PARTY_POSITION)) {
-    actor->motionFlags = zero;
+    actor->motionFlags = 0;
     FieldActor_SetSpritePriority(ACTOR_BIRD, 1);
   }
   Actor_SetPosition(11, 0, 0);
@@ -2119,8 +2118,8 @@ void Islets_InitializePier(void) {
     struct Actor *first = Actor_Get(ACTOR_CRATE_A);
     struct Actor *second = Actor_Get(ACTOR_CRATE_B);
 
-    first->motionFlags = zero;
-    second->motionFlags = zero;
+    first->motionFlags = 0;
+    second->motionFlags = 0;
     first->riseCounter = 1;
     second->riseCounter = 1;
     {

@@ -1471,7 +1471,6 @@ void TundariaTower_SpawnDustRing(void) {
   struct Actor *leader = Actor_GetById(gMainRoutineWork.leaderActorId);
   s32 state;
   u32 i;
-  s32 zero = 0;
 
   if (leader != NULL) {
     state = 0;
@@ -1484,22 +1483,21 @@ void TundariaTower_SpawnDustRing(void) {
         s32 angle;
 
         state = Sprite_ShareVramCacheEntry(effect->sprite, state);
-        zero = 0;
-        effect->motionFlags = zero;
-        effect->collisionFlags = zero;
+        effect->motionFlags = 0;
+        effect->collisionFlags = 0;
         Actor_SetSpriteFlags(effect, 0);
         Actor_SelectAnimation(effect, 2);
         TundariaTower_StartEffectScript(effect, gTundariaTower_DustRingScript);
         angle = i << 12;
         effect->velocity.x = Trig_Cos(angle);
-        effect->velocity.y = zero;
+        effect->velocity.y = 0;
         effect->velocity.z = Trig_Sin(angle);
         effect->velocity.x += effect->velocity.x >> 1;
         effect->velocity.x += ((Random16() * 3) << 14 >> 16) - toFIXED(3) / 8;
         effect->velocity.z += ((Random16() * 3) << 13 >> 16) - toFIXED(3) / 16;
         effect->spin = ((Random16() << 12) >> 16) - (TRIG_TURN / 32);
-        effect->scaleRateX = zero;
-        effect->scaleRateY = zero;
+        effect->scaleRateX = 0;
+        effect->scaleRateY = 0;
         effect->update = Effect_AdvanceMotionAtLeaderPriority;
         effect->sprite->priority =
             ((struct FieldSprite *)leader->sprite)->priority;
@@ -1575,7 +1573,7 @@ void TundariaTower_StartFallingRocks(void) {
   work->resource = resource;
   rock = work->rocks;
   sprite = work->sprites;
-  for (i = 63; i >= 0; i--) {
+  for (i = 0; i < 64; i++) {
     EffectSprite_Init(sprite, 8, 8, OBJ_SIZE_16X16, tile);
     sprite->oam.fullColor = 1;
     sprite->oam.palette = 0;

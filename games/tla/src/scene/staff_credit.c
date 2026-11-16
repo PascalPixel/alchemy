@@ -345,7 +345,6 @@ void StaffCredit_ShowBeacon(s32 stage) {
       }
     }
     if (stage == BEACON_BEAMS_MEET) {
-      s32 zero;
 
       {
         s16 *camera = (s16 *)gStaffCredit_FlightEnds;
@@ -353,8 +352,6 @@ void StaffCredit_ShowBeacon(s32 stage) {
         s32 left;
         FIXED z;
         FIXED x0;
-
-        zero = 0;
         top = camera[8];
         left = camera[9];
         z = toFIXED(-30);
@@ -364,8 +361,8 @@ void StaffCredit_ShowBeacon(s32 stage) {
       }
       Actor_SetBlendMode(Actor_GetById(ACTOR_BEACON), 1);
       Actor_SetAnimation(ACTOR_BEACON, 0);
-      Actor_GetById(ACTOR_BEACON)->scaleX = zero;
-      Actor_GetById(ACTOR_BEACON)->scaleY = zero;
+      Actor_GetById(ACTOR_BEACON)->scaleX = 0;
+      Actor_GetById(ACTOR_BEACON)->scaleY = 0;
       if (frame > 22) {
         s32 scale = (frame << 10) - (21 << 10);
 

@@ -2938,7 +2938,7 @@ void MagmaRockInside_StartFallingRocks(void) {
   work->resource = entry;
   rock = work->rocks;
   sprite = work->sprites;
-  for (i = 63; i >= 0; i--, sprite++, rock++) {
+  for (i = 0; i < 64; i++, sprite++, rock++) {
     MagmaRockInside_InitRockSprite(sprite, 8, 8, OBJ_SIZE_16X16, tile);
     sprite->oam.fullColor = 1;
     sprite->oam.palette = SPRITE_COLOR_NORMAL;

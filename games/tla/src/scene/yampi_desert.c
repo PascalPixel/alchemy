@@ -649,8 +649,7 @@ void YampiDesert_UnblockStakes(u16 *list) {
   struct MapCell *cell;
   s32 collisionCode;
 
-  if (*list != STAKE_LIST_END) {
-  loop:
+  while (*list != STAKE_LIST_END) {
     cell = &map->layers[2].cells[Actor_GetCellIndex(Actor_GetById(*list))];
     collisionCode = 232;
     /* FAKEMATCH(dead): the advance in a once-only block. */
@@ -658,8 +657,6 @@ void YampiDesert_UnblockStakes(u16 *list) {
       list += 3;
     } while (0);
     cell->collisionCode = collisionCode;
-    if (*list != STAKE_LIST_END)
-      goto loop;
   }
 }
 
@@ -2591,35 +2588,28 @@ void YampiDesert_DrawRisingSand(void) {
       continue;
     actor = Actor_GetById(entry->id);
     frame = (gFrameCount % 12) / 3 * 8 + 32;
-    h = 0;
-    if (h >= entry->height)
-      goto top;
-  again:
-    if (count > 79)
-      goto next;
-    x = actor->x.fixed - viewX;
-    y = actor->y.fixed + INTtoFIXED(h) - originY;
-    z = actor->z.fixed - viewZ - originY;
-    sy = z - y;
-    x = FIXEDtoINT(x) - 8;
-    sy = (sy >> 16) - 16;
-    depth = ((y + z) >> 16) + 58;
-    if ((u32)(x + 15) > 334 || sy <= -16 || sy > 239)
-      goto next;
-    x &= 511;
-    sy &= 255;
-    p = oam;
-    *p++ = 0;
-    *p++ = sy | OBJ_X(x) | OBJ_SIZE_16X16 | OBJ_256_COLORS;
-    *p = (tile + frame) | OBJ_PRIORITY(2);
-    Oam_AddSpriteAtDepthClamped(oam, depth);
-    oam += 3;
-    count++;
-  next:
-    h += 16;
-    if (h < entry->height)
-      goto again;
-  top:
+    for (h = 0; h < entry->height; h += 16) {
+      if (count > 79)
+        continue;
+      x = actor->x.fixed - viewX;
+      y = actor->y.fixed + INTtoFIXED(h) - originY;
+      z = actor->z.fixed - viewZ - originY;
+      sy = z - y;
+      x = FIXEDtoINT(x) - 8;
+      sy = (sy >> 16) - 16;
+      depth = ((y + z) >> 16) + 58;
+      if ((u32)(x + 15) > 334 || sy <= -16 || sy > 239)
+        continue;
+      x &= 511;
+      sy &= 255;
+      p = oam;
+      *p++ = 0;
+      *p++ = sy | OBJ_X(x) | OBJ_SIZE_16X16 | OBJ_256_COLORS;
+      *p = (tile + frame) | OBJ_PRIORITY(2);
+      Oam_AddSpriteAtDepthClamped(oam, depth);
+      oam += 3;
+      count++;
+    }
     if (count > 79)
       continue;
     x = actor->x.fixed - viewX;

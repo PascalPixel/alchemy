@@ -1,6 +1,9 @@
 #ifndef ALCHEMY_GAME_FLAGS_H
 #define ALCHEMY_GAME_FLAGS_H
 
+/// @file
+/// The byte and bit of gGameFlagBytes that hold a flag.
+
 #include "edition.h"
 #include "types.h"
 

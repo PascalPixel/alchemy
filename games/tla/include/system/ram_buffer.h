@@ -71,4 +71,9 @@ extern void (*gVBlankCallback)(void);
 /// A scene's own state in EWRAM, which each scene lays out as it needs.
 extern s8 gSceneLocalState[];
 
+/// Where gSceneLocalState keeps, by element, the reunion's pick of a Djinni
+/// of The Broken Seal the party lacks, plus one (0 when it lacks none): the
+/// Djinni an element's last Djinn slot stands for (Party_AddIsaacsParty).
+#define SCENE_STATE_REUNION_DJINN 0x1950
+
 #endif

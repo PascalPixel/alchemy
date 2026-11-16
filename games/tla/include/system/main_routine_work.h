@@ -31,6 +31,10 @@ enum BattleType {
 /// The most coins the party carries, and the most shop credit.
 #define COINS_MAX 999999
 
+/// The most Game Tickets counted in MainRoutineWork.shopGifts, the last of
+/// gShop_GameTicketCreditCosts' prices that is used.
+#define SHOP_GIFTS_MAX 28
+
 /// The first pending Djinni battle event: DJINNI_BATTLE_EVENT_FIRST plus the
 /// Djinni's number (Field_RequestDjinnBattle).
 #define DJINNI_BATTLE_EVENT_FIRST 300

@@ -31,8 +31,10 @@ s32 BattleUnit_Set(s32 unitId, s32 enemyId, s32 suffix) {
   s32 count;
 
   index = enemyId - ENEMY_ID_FIRST;
-  if (unitId <= FIRST_ENEMY_UNIT - 1)
+  if (unitId < FIRST_ENEMY_UNIT)
     return 0;
+  // BUG: one too many: unit FIRST_ENEMY_UNIT + 6 passes, but Unit_Get has no
+  // seventh enemy unit and gives NULL. No caller passes it.
   if (unitId > FIRST_ENEMY_UNIT + 6)
     return 0;
   if (index > 992)
@@ -195,10 +197,10 @@ s32 Party_AdjustCoins(s32 amount) {
   }
 
 PARTY_DEFINE_ADJUST(Party_AdjustShopCredit, shopCredit, COINS_MAX)
-PARTY_DEFINE_ADJUST(Party_AdjustShopGifts, shopGifts, 28)
+PARTY_DEFINE_ADJUST(Party_AdjustShopGifts, shopGifts, SHOP_GIFTS_MAX)
 
-/// Lists the summons, in the game's order, whose bit is set in the state's
-/// first word, ends the list with 32 and returns how many it listed.
+/// Writes the summons the party can call to output, in menu order, ending with
+/// SUMMON_END, and returns how many.
 s32 Summon_ListLearned(u8 *output) {
   const u8 *summon = gSummon_OrderList;
   const u8 *last = &gSummon_OrderList[SUMMON_COUNT - 1];
@@ -207,7 +209,8 @@ s32 Summon_ListLearned(u8 *output) {
   do {
     u8 summonId = *summon++;
 
-    if (Djinn_GetRecoveryTable(0)->summonMask & (1 << summonId)) {
+    if (Djinn_GetRecoveryTable(DJINN_RECOVERY_PARTY)->summonMask &
+        (1 << summonId)) {
       *output++ = summonId;
       count++;
     }
@@ -218,18 +221,15 @@ s32 Summon_ListLearned(u8 *output) {
 
 /// Returns summon `summonId`'s definition, or NULL past the last.
 const struct SummonDefinition *SummonDefinition_GetNear(u32 summonId) {
-  if (summonId > 28)
+  if (summonId > SUMMON_COUNT - 1)
     return NULL;
   return &gSummon_DefinitionTable[summonId];
 }
 
-/// Returns the class series of a character whose strongest element is
-/// `primaryElement` and second `secondaryElement`, from the 4 by 4 table.
-/// Called by Class_Determine.
-void Class_GetSeries(s32 bit) {
-  u32 *state = (u32 *)Djinn_GetRecoveryTable(0);
-
-  *state |= 1 << bit;
+/// Lets the party call summon `summonId` from now on, setting its bit in the
+/// party's summon mask: a summon tablet's contents and Lemuria's spring.
+void Class_GetSeries(s32 summonId) {
+  Djinn_GetRecoveryTable(DJINN_RECOVERY_PARTY)->summonMask |= 1 << summonId;
 }
 
 #undef SUFFIX_BASE

@@ -93,6 +93,11 @@ enum {
 
 /// The village's shaman who asks the party to look over the mountain.
 #define ACTOR_MOUNTAIN_SIDE_SHAMAN (ACTOR_FIRST_PLACED + 5)
+/// The poles of the village's rope, which Lash ties.
+enum {
+  ACTOR_VILLAGE_ROPE_POLE = ACTOR_FIRST_PLACED + 11,
+  ACTOR_VILLAGE_ROPE_OTHER_POLE
+};
 /// The sanctum's two shamans after the priest, there once Moapa is beaten.
 enum {
   ACTOR_SANCTUM_SHAMAN_A = ACTOR_FIRST_PLACED + 1,
@@ -115,6 +120,9 @@ enum {
 /// and blown the sand away.
 #define FLAG_SHAMAN_VILLAGE_SAND_CLEARED 0x94c
 /// Set once Move has dropped the pillar onto cell (32, 11) as a bridge.
+/// Set as the party comes back from beating Moapa: the village's locked doors
+/// and its way north open.
+#define FLAG_SHAMAN_VILLAGE_DOORS_OPEN 0x94d
 #define FLAG_SHAMAN_VILLAGE_PILLAR_BRIDGE_DROPPED 0x94e
 /// Set as Moapa comes out of his cabin to meet the party
 /// (ShamanVillage_MeetMoapa).
@@ -132,6 +140,13 @@ enum {
 #define FLAG_MOAPA_BEATEN 0x9fe
 /// Set once the fortune-teller has read the party's fortune, for this visit.
 #define FLAG_SHAMAN_VILLAGE_FORTUNE_TOLD FLAG_AREA_TEMP_01
+/// Set once Lash has tied the village's rope.
+#define FLAG_SHAMAN_VILLAGE_ROPE_TIED FLAG_SCENE_TEMP_04
+/// Set once Growth has grown the village's vine.
+#define FLAG_SHAMAN_VILLAGE_VINE_GROWN FLAG_SCENE_TEMP_05
+/// Set once the party has shown the Shaman's Rod
+/// (ShamanVillage_ShowShamansRod): Moapa's door stays open.
+#define FLAG_SHAMAN_VILLAGE_MOAPAS_DOOR_OPEN FLAG_SCENE_TEMP_02
 
 #include "../field/field_effect_move.c"
 
@@ -190,7 +205,7 @@ extern s16 gShamanVillage_LetteringSlideScript[];
 extern s16 gShamanVillage_LetteringCountScript[];
 extern s16 gShamanVillage_LetteringGoScript[];
 extern s16 gShamanVillage_LetteringThrobScript[];
-extern u32 gShamanVillage_LetteringThrobFadeScript[];
+extern s16 gShamanVillage_LetteringThrobFadeScript[];
 extern u8 gShamanVillage_LetteringPalettes[];
 
 void ShamanVillage_CastWhirlwindOnSand(void);
@@ -338,7 +353,8 @@ void ShamanVillage_BlowAwaySand(void);
 void ShamanVillage_HopFortuneTeller(void);
 void ShamanVillage_StartLettering(s32 a, s32 b);
 void ShamanVillage_LoadLettering(s32 a);
-void ShamanVillage_EnterDoor(s32 a, s32 b, s32 c, s32 d, s32 mode, s32 f);
+void ShamanVillage_EnterDoor(s32 sourceX, s32 sourceY, s32 destinationX,
+                             s32 destinationY, s32 width, s32 height);
 s32 ShamanVillage_IsFacingCounter(void);
 void ShamanVillage_ExplainTrialRules(void);
 void ShamanVillage_StepBackFromTrial(void);
@@ -436,45 +452,47 @@ void ShamanVillage_WaveWhirlwindLines(void) {
   Dma_Set(source, scroll, 0xa2600001, (volatile u32 *)dma);
 }
 
+/// Scrolls the sand layer, the third, while Whirlwind blows: its offset moves
+/// two pixels a frame, back in x and on in z, and starts again once z passes
+/// 1040.
 void ShamanVillage_ScrollSandLayer(void) {
-  s32 *view = (s32 *)((u8 *)Ram_HeapSlots->mapGrid + 376);
+  struct MapLayer *sand = &Ram_HeapSlots->mapGrid->layers[2];
 
-  view[2] -= toFIXED(2);
+  sand->offsetX -= toFIXED(2);
 
-  view[3] += toFIXED(2);
-  if (view[3] > toFIXED(1040)) {
-    view[2] = 0;
-    view[3] = toFIXED(1024);
+  sand->offsetY += toFIXED(2);
+  if (sand->offsetY > toFIXED(1040)) {
+    sand->offsetX = 0;
+    sand->offsetY = toFIXED(1024);
   }
 }
 
+/// The sand mound's update while Whirlwind blows: its colour flickers.
 void ShamanVillage_FlickerRock(struct Actor *object) {
-  s32 bit = (((u32)gFrameCount & 3) >> *((u8 *)object + 99)) & 1;
+  s32 bit = (((u32)gFrameCount & 3) >> object->flickerShift) & 1;
 
-  FieldActor_SetSpriteColor(object, (u8)(bit * *((u8 *)object + 98)));
+  FieldActor_SetSpriteColor(object, (u8)(bit * object->flickerColor));
 }
 
-#define WORD_AT(base, offset) (*(s32 *)((u8 *)(base) + (offset)))
-
-/// Circles the object around the centre in words 68 and 76, twice as wide
-/// as it is deep, the radius growing with its height, one step of 256 per
-/// lap, and blinks the part attribute every other frame.
+/// Circles the object around the centre it keeps in bounce and riseBaseY (x,
+/// z), twice as wide as it is deep, the radius growing with its height, rising
+/// by gravity a frame, its step counted in speedLimit, 256 to a lap; it blinks
+/// every other two frames.
 void Effect_CircleAndBlink(struct Actor *object) {
   s32 radius = object->y.fixed;
-  s32 step = WORD_AT(object, 48);
+  s32 step = object->speedLimit;
 
   radius >>= 2;
   radius += toFIXED(12);
-  object->x.fixed = WORD_AT(object, 68) +
-                    Iwram_MulFX(Trig_Cos((step & 255) << 11), radius) * 2;
+  object->x.fixed =
+      object->bounce + Iwram_MulFX(Trig_Cos((step & 255) << 11), radius) * 2;
   object->z.fixed =
-      WORD_AT(object, 76) +
-      Iwram_MulFX(Trig_Sin((WORD_AT(object, 48) & 255) << 11), radius);
-  object->y.fixed += WORD_AT(object, 72);
-  WORD_AT(object, 48)++;
+      object->riseBaseY +
+      Iwram_MulFX(Trig_Sin((object->speedLimit & 255) << 11), radius);
+  object->y.fixed += object->gravity;
+  object->speedLimit++;
   FieldActor_SetSpriteColor(object, ((gFrameCount & 2) >> 1) * 9);
 }
-#undef WORD_AT
 
 /// Swings an object about x = 168: left of it the object speeds up rightward
 /// and grows, right of it leftward and shrinks. It takes sprite priority 1
@@ -482,7 +500,7 @@ void Effect_CircleAndBlink(struct Actor *object) {
 void ShamanVillage_SwirlSandGrain(struct Actor *object) {
   object->x.fixed += object->bounce;
   object->y.fixed += object->gravity;
-  object->z.fixed += *(s32 *)((u8 *)object + 76);
+  object->z.fixed += object->riseBaseY;
   if (FIXEDtoINT(object->x.fixed) < 168) {
     object->bounce += FIXED_ONE * 3 / 2;
     object->scaleY = object->scaleX += FIXED_ONE * 5 / 100;
@@ -503,8 +521,6 @@ void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
                        s32 velocityZ, u32 flags,
                        const struct EffectOptions *options);
 void ShamanVillage_ScrollSandLayer(void);
-
-#define OBJ14_BYTE(offset) (((u8 *)Actor_GetById(14))[offset])
 
 void ShamanVillage_BlowAwaySand(void) {
   u16 *buffer;
@@ -528,34 +544,21 @@ void ShamanVillage_BlowAwaySand(void) {
   Dma_Fill16(16, (void *)0x06002000, 0x500);
   buffer = Heap_Alloc(576);
   Decompress_TaggedLz(Resource_GetTableEntry(RESOURCE_WHIRLWIND_MAP), buffer);
-  i = 0;
-  cell = buffer;
-mask:
-  {
+  for (i = 0, cell = buffer; i != 288; i++, cell++) {
     s32 t = (*cell + 0xff40) & 0xfff;
     *cell = t | 0x1000;
   }
-  i++;
-  cell++;
-  if (i != 288)
-    goto mask;
-  cell = buffer;
-  i = 0;
-row:
-  Dma_Set(cell, (void *)(0x0600200f + (i << 6)), DMA_COPY_WORDS(8), REG_DMA3);
-  i++;
-  cell += 16;
-  if (i != 18)
-    goto row;
+  for (cell = buffer, i = 0; i != 18; i++, cell += 16)
+    Dma_Set(cell, (void *)(0x0600200f + (i << 6)), DMA_COPY_WORDS(8), REG_DMA3);
   Heap_Release(buffer);
   Event_PlaySound(SE_GLITTER);
-  OBJ14_BYTE(98) = 9;
-  OBJ14_BYTE(99) = 1;
+  Actor_GetById(ACTOR_SAND_MOUND)->flickerColor = 9;
+  Actor_GetById(ACTOR_SAND_MOUND)->flickerShift = 1;
   Actor_GetById(ACTOR_SAND_MOUND)->update = ShamanVillage_FlickerRock;
   for (i = 0; i != 45; i++) {
     if ((gFrameCount & 3) == 0) {
       spark = (struct Actor *)Import_ActorCreate(
-          0x2a0, Actor_GetById(ACTOR_SAND_MOUND)->x.fixed,
+          SPRITE_PARTICLE, Actor_GetById(ACTOR_SAND_MOUND)->x.fixed,
           Actor_GetById(ACTOR_SAND_MOUND)->y.fixed,
           Actor_GetById(ACTOR_SAND_MOUND)->z.fixed);
       ((struct SpriteAttr2High *)spark->sprite)->priority =
@@ -586,13 +589,12 @@ row:
   REG_DISPCNT |= DISPCNT_BG0_ON;
   MapGrid_SetShake(1, 1, 1);
   i = 0;
-rise:
-  REG_BLDALPHA = ((15 - (i >> 2)) << 8) | (i >> 2);
-  OBJ14_BYTE(98) = Random16() & 7;
-  i++;
-  Event_Wait(1);
-  if (i != 64)
-    goto rise;
+  do {
+    REG_BLDALPHA = ((15 - (i >> 2)) << 8) | (i >> 2);
+    Actor_GetById(ACTOR_SAND_MOUND)->flickerColor = Random16() & 7;
+    i++;
+    Event_Wait(1);
+  } while (i != 64);
   Event_Wait(60);
   MapGrid_SetShake(3, 3, 1);
   REG_BLDALPHA = BLEND_ALPHA(0, BLEND_WEIGHT_MAX);
@@ -602,13 +604,12 @@ rise:
   REG_BG1CNT &= ~3;
   Task_Add(ShamanVillage_ScrollSandLayer, TASK_PASS_VBLANK);
   i = 0;
-swirl:
-  REG_BLDALPHA = ((BLEND_WEIGHT_MAX - (i >> 2)) << 8) | (i >> 2);
-  OBJ14_BYTE(98) = Random16() & 7;
-  i++;
-  Event_Wait(1);
-  if (i != 68)
-    goto swirl;
+  do {
+    REG_BLDALPHA = ((BLEND_WEIGHT_MAX - (i >> 2)) << 8) | (i >> 2);
+    Actor_GetById(ACTOR_SAND_MOUND)->flickerColor = Random16() & 7;
+    i++;
+    Event_Wait(1);
+  } while (i != 68);
   {
     s32 width = 13;
     s32 height = 11;
@@ -621,41 +622,39 @@ swirl:
   REG_BLDALPHA = BLEND_ALPHA(BLEND_WEIGHT_MAX, 0);
   REG_BLDCNT = 0xa44;
   i = 0;
-stage:
-  MapGrid_CopyCellsTo((i - (i / 4) * 4) * 14 + 45, (i / 4) * 12 + 90, 4, 19, 13,
-                      11);
-  j = 0;
-frame:
-  if ((j & 3) == 0) {
-    s32 velocity[3];
-    struct EffectOptions options;
-    s32 *v = velocity;
+  do {
+    MapGrid_CopyCellsTo((i - (i / 4) * 4) * 14 + 45, (i / 4) * 12 + 90, 4, 19,
+                        13, 11);
+    j = 0;
+    do {
+      if ((j & 3) == 0) {
+        s32 velocity[3];
+        struct EffectOptions options;
+        s32 *v = velocity;
 
-    options.priority = 1;
-    options.update = ShamanVillage_SwirlSandGrain;
-    v[0] = 0;
-    v[2] = -toFIXED(2);
-    v[1] = 0;
-    {
-      FIXED x = ((Random16() & 127) << 16) + (208 << 15);
+        options.priority = 1;
+        options.update = ShamanVillage_SwirlSandGrain;
+        v[0] = 0;
+        v[2] = -toFIXED(2);
+        v[1] = 0;
+        {
+          FIXED x = ((Random16() & 127) << 16) + (208 << 15);
 
-      FieldEffect_Spawn(x, 0, (472 - (Random16() & 127)) << 16, v[0], v[1],
-                        v[2], EFFECT_USE_UPDATE | EFFECT_USE_PRIORITY | 1,
-                        &options);
-    }
-  }
-  REG_BLDALPHA = ((j >> 2) << 8) | (BLEND_WEIGHT_MAX - (j >> 2));
-  OBJ14_BYTE(98) = Random16() & 7;
-  wait(1);
-  j++;
-  if (j != 64)
-    goto frame;
-  Dma_Set(BG_SCREEN_BLOCK(5), BG_SCREEN_BLOCK(6), DMA_COPY_WORDS(512),
-          REG_DMA3);
-  REG_BLDALPHA = BLEND_ALPHA(BLEND_WEIGHT_MAX, 0);
-  i++;
-  if (i != 8)
-    goto stage;
+          FieldEffect_Spawn(x, 0, (472 - (Random16() & 127)) << 16, v[0], v[1],
+                            v[2], EFFECT_USE_UPDATE | EFFECT_USE_PRIORITY | 1,
+                            &options);
+        }
+      }
+      REG_BLDALPHA = ((j >> 2) << 8) | (BLEND_WEIGHT_MAX - (j >> 2));
+      Actor_GetById(ACTOR_SAND_MOUND)->flickerColor = Random16() & 7;
+      wait(1);
+      j++;
+    } while (j != 64);
+    Dma_Set(BG_SCREEN_BLOCK(5), BG_SCREEN_BLOCK(6), DMA_COPY_WORDS(512),
+            REG_DMA3);
+    REG_BLDALPHA = BLEND_ALPHA(BLEND_WEIGHT_MAX, 0);
+    i++;
+  } while (i != 8);
   {
     s32 control = 0x60a;
 
@@ -671,13 +670,12 @@ frame:
   REG_BLDALPHA = BLEND_ALPHA(BLEND_WEIGHT_MAX, 0);
   REG_BLDCNT = 0x3f42;
   i = 0;
-clear:
-  REG_BLDALPHA = ((i >> 2) << 8) | (BLEND_WEIGHT_MAX - (i >> 2));
-  OBJ14_BYTE(98) = Random16() & 7;
-  i++;
-  Event_Wait(1);
-  if (i != 68)
-    goto clear;
+  do {
+    REG_BLDALPHA = ((i >> 2) << 8) | (BLEND_WEIGHT_MAX - (i >> 2));
+    Actor_GetById(ACTOR_SAND_MOUND)->flickerColor = Random16() & 7;
+    i++;
+    Event_Wait(1);
+  } while (i != 68);
   Task_Remove(ShamanVillage_ScrollSandLayer);
   REG_BG1CNT &= ~3;
   REG_BG1CNT |= 1;
@@ -686,23 +684,18 @@ clear:
   REG_BLDALPHA = BLEND_ALPHA(15, 0);
   MapGrid_SetShake(SHAKE_KEEP, SHAKE_KEEP, 0.9);
   Event_PlaySound(SOUND_FADE_OUT_ACTION_SE);
-  OBJ14_BYTE(98) = 6;
-  i = 0;
-fade:
-  {
+  Actor_GetById(ACTOR_SAND_MOUND)->flickerColor = 6;
+  for (i = 0; i != 65; i++) {
     u32 q = i >> 2;
 
     REG_BLDALPHA = (q << 8) | (BLEND_WEIGHT_MAX - q);
+    Event_Wait(1);
   }
-  Event_Wait(1);
-  i++;
-  if (i != 65)
-    goto fade;
   Task_Remove(ShamanVillage_WaveWhirlwindLines);
   {
     s32 zero = 0;
 
-    OBJ14_BYTE(99) = zero;
+    Actor_GetById(ACTOR_SAND_MOUND)->flickerShift = zero;
     wait(30);
     Actor_GetById(ACTOR_SAND_MOUND)->update = (void *)zero;
     FieldActor_SetSpriteColor(Actor_GetById(ACTOR_SAND_MOUND), 6);
@@ -731,7 +724,6 @@ fade:
   }
   Event_SetFlag(FLAG_SHAMAN_VILLAGE_SAND_CLEARED);
 }
-#undef OBJ14_BYTE
 
 extern struct Trigger gShamanVillage_Triggers[];
 extern struct Trigger gShamanVillageTrialGroundsTriggers[];
@@ -900,7 +892,7 @@ enum { SHAMAN_VILLAGE_INN = 11 };
 void ShamanVillage_TalkToInnkeeper(void) {
   if (Event_GetFlag(FLAG_MOAPA_BEATEN)) {
     if (ShamanVillage_IsFacingCounter()) {
-      Inn_CheckIn(SHAMAN_VILLAGE_INN, 13);
+      Inn_CheckIn(SHAMAN_VILLAGE_INN, ACTOR_INNKEEPER);
     } else {
       Event_Start();
       Event_ResolvePendingActions(0);
@@ -912,7 +904,7 @@ void ShamanVillage_TalkToInnkeeper(void) {
     Event_Start();
     Event_ResolvePendingActions(0);
     if (ShamanVillage_IsFacingCounter()) {
-      u32 price = Inn_QuoteRoomPrice(11);
+      u32 price = Inn_QuoteRoomPrice(SHAMAN_VILLAGE_INN);
 
       Actor_SetAnimation(ACTOR_INNKEEPER, 5);
       Event_Wait(30);
@@ -1000,7 +992,7 @@ void ShamanVillage_TalkToMoapa(void) {
 /// Across the counter the shop; elsewhere a welcome for the hero.
 void ShamanVillage_TalkToShopkeeper(void) {
   if (ShamanVillage_IsFacingCounter()) {
-    Shop_Run(SHOP_SHAMAN_VILLAGE, 12);
+    Shop_Run(SHOP_SHAMAN_VILLAGE, ACTOR_SHOPKEEPER);
   } else {
     Event_Start();
     Event_ResolvePendingActions(0);
@@ -1155,7 +1147,7 @@ void ShamanVillage_ExplainTrialRules(void) {
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();
   Event_SetFlag(FLAG_SHAMAN_VILLAGE_TRIAL_RULES_HEARD);
-  Event_SetFlag(0x11b);
+  Event_SetFlag(FLAG_KEEP_MUSIC_HELD);
   Import_EventSetExitRequest(10);
 }
 
@@ -1472,7 +1464,7 @@ void ShamanVillage_MeetMoapa(void) {
 /// The Shaman's Rod (item 65) drawn as an actor over the leader.
 struct Actor *ShamanVillage_CreateRodIcon(void) {
   struct Actor *object = ((struct Actor *)Import_ActorCreate(
-      489, toFIXED(120), toFIXED(64), toFIXED(264)));
+      SPRITE_UNSEEN_MARKER, toFIXED(120), toFIXED(64), toFIXED(264)));
   u8 *buffer = NULL;
 
   if (object == NULL)
@@ -1709,7 +1701,7 @@ void ShamanVillage_ShowShamansRod(void) {
   Actor_RunScriptAndWait(ACTOR_KRADEN,
                          gShamanVillage_RejoinLeaderAtHouseScript);
   Event_Wait(20);
-  Event_SetFlag(FLAG_SCENE_TEMP_02);
+  Event_SetFlag(FLAG_SHAMAN_VILLAGE_MOAPAS_DOOR_OPEN);
   Event_SetFlag(FLAG_SHAMAN_VILLAGE_SHAMANS_ROD_SHOWN);
   Event_End();
 }
@@ -1758,11 +1750,11 @@ void ShamanVillage_GreetFortuneSeeker(void) {
   }
 }
 
-/// Growth on the sprout, actor 21: its cells become climbable, toward the
-/// Spirit Gloves' chest (flag 0x205).
+/// Growth on the sprout, actor 21: its cells become climbable
+/// (FLAG_SHAMAN_VILLAGE_VINE_GROWN).
 void ShamanVillage_GrowVine(void) {
   MapGrid_CopyCellAttributes(0, 0, 1, 2, 2, 17);
-  Event_SetFlag(FLAG_SCENE_TEMP_05);
+  Event_SetFlag(FLAG_SHAMAN_VILLAGE_VINE_GROWN);
 }
 
 void ShamanVillage_StepBackFromTrial(void) {
@@ -1829,9 +1821,8 @@ void ShamanVillage_CheckTrialEntry(void) {
   }
 }
 
-// The portrait mode task: reads its command script, eases the portrait's scale,
-// blend and position, and queues its sprites.
-
+/// One OAM entry's three attribute halfwords and its rotation word, as the
+/// lettering task writes them.
 struct SpriteView {
   u32 words[3];
 };
@@ -2484,21 +2475,28 @@ void ShamanVillage_CastWhirlwindOnSand(void) {
   Actor_SetSpritePriority(ACTOR_SHEBA, 2);
 }
 
-void ShamanVillage_EnterDoor(s32 a, s32 b, s32 c, s32 d, s32 mode, s32 f) {
+/// Opens a door by copying its open picture (width by height cells from
+/// sourceX, sourceY to destinationX, destinationY), with a thump for a door two
+/// cells wide and SE_DOOR_OPEN for one; through a door one cell wide the leader
+/// first steps to the middle of its cell, faces north and walks in, and the
+/// party leaves by the step trigger it stood on.
+void ShamanVillage_EnterDoor(s32 sourceX, s32 sourceY, s32 destinationX,
+                             s32 destinationY, s32 width, s32 height) {
   struct FieldWork *work = Ram_HeapSlots->fieldWork;
   struct Actor *object;
   s32 cell;
 
   Event_Start();
   Event_ResolvePendingActions(0);
-  if (mode == 2)
+  if (width == 2)
     Event_PlaySound(SE_THUMP);
   else
     Event_PlaySound(SE_DOOR_OPEN);
-  MapGrid_CopyCellsTo(a, b, c, d, mode, f);
+  MapGrid_CopyCellsTo(sourceX, sourceY, destinationX, destinationY, width,
+                      height);
   Event_Wait(20);
   Actor_SetSpeed(gMainRoutineWork.leaderActorId, 0.5);
-  if (mode == 1) {
+  if (width == 1) {
     object = ((struct Actor *)Actor_GetById(gMainRoutineWork.leaderActorId));
     cell = FIXEDtoINT(object->x.fixed);
     Actor_SetMoveTarget(object, toFIXED(8 - cell % 16) + object->x.fixed,
@@ -2515,6 +2513,7 @@ void ShamanVillage_EnterDoor(s32 a, s32 b, s32 c, s32 d, s32 mode, s32 f) {
   Import_EventSetExitRequest(work->stepTrigger);
 }
 
+/// The village's houses' doors, each opened by ShamanVillage_EnterDoor.
 void ShamanVillage_EnterDoorA(void) {
   ShamanVillage_EnterDoor(43, 40, 8, 22, 1, 2);
 }
@@ -2535,8 +2534,10 @@ void ShamanVillage_EnterDoorE(void) {
   ShamanVillage_EnterDoor(43, 42, 10, 8, 1, 2);
 }
 
+/// Moapa's door, left open once the party has shown the Shaman's Rod, is walked
+/// through at once; until then it opens as the other doors do.
 void ShamanVillage_EnterMoapasHouse(void) {
-  if (Event_GetFlag(FLAG_SCENE_TEMP_02)) {
+  if (Event_GetFlag(FLAG_SHAMAN_VILLAGE_MOAPAS_DOOR_OPEN)) {
     Event_Start();
     Event_ResolvePendingActions(0);
     Event_PlaySound(SE_MAP_EXIT);
@@ -2552,7 +2553,7 @@ void ShamanVillage_EnterMoapasHouse(void) {
 void ShamanVillage_RestartTrial(void) {
   s32 angle;
 
-  Event_ClearFlag(0x11b);
+  Event_ClearFlag(FLAG_KEEP_MUSIC_HELD);
   Event_Start();
   Event_ResolvePendingActions(0);
   Actor_SetPosition(ACTOR_WEST_GUARD, 0, 0);
@@ -2728,7 +2729,7 @@ void ShamanVillage_SetUpAromaRoom(void) {
     MapGrid_CopyCellsTo(64, 0, 76, 2, 3, 3);
     MapGrid_CopyCellAttributes(12, 5, 3, 1, 12, 6);
   }
-  if (Event_GetFlag(0x94d))
+  if (Event_GetFlag(FLAG_SHAMAN_VILLAGE_DOORS_OPEN))
     MapGrid_CopyCellsTo(48, 40, 101, 11, 1, 2);
   else
     Actor_SetPosition(ACTOR_FORTUNE_TELLER, 0, 0);
@@ -2740,6 +2741,9 @@ void ShamanVillage_SetUpAromaRoom(void) {
       ((struct Actor *)Actor_GetById(ACTOR_FORTUNE_TELLERS_FLAME)), 0);
 }
 
+/// A smoke puff's update: it drifts on in x ever faster, rises half a pixel a
+/// frame and grows, and is released when the frames its creator counted into
+/// watchedActor run out.
 void ShamanVillage_DriftSmoke(struct Actor *object) {
   s32 step;
 
@@ -2755,6 +2759,8 @@ void ShamanVillage_DriftSmoke(struct Actor *object) {
     Actor_Release(object);
 }
 
+/// Puffs a blended cloud of smoke at x, y, z, half its size, that
+/// ShamanVillage_DriftSmoke moves for 60 frames.
 void ShamanVillage_SpawnSmoke(s32 x, s32 y, s32 z) {
   struct Actor *object =
       ((struct Actor *)Import_ActorCreate(SPRITE_DUST_CLOUD, x, y, z));
@@ -2763,7 +2769,7 @@ void ShamanVillage_SpawnSmoke(s32 x, s32 y, s32 z) {
     object->retainSpriteCache = 2;
     object->motionFlags = 0;
     object->timer = 0;
-    object->priorityFlags &= ~1;
+    object->priorityFlags &= ~ACTOR_PRIORITY_AUTOMATIC;
     FieldActor_SetSpriteColor(object, 7);
     ((struct FieldSprite *)object->sprite)->priority = 1;
     object->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
@@ -2777,10 +2783,11 @@ void ShamanVillage_SpawnSmoke(s32 x, s32 y, s32 z) {
   }
 }
 
+/// Every 64th frame, a puff of smoke from each of the village's two chimneys.
 void ShamanVillage_PuffChimneySmoke(void) {
   if ((gFrameCount & 63) == 0) {
-    ShamanVillage_SpawnSmoke(0x480000, 0x420000, 0x1780000);
-    ShamanVillage_SpawnSmoke(0x680000, 0x620000, 0x980000);
+    ShamanVillage_SpawnSmoke(toFIXED(72), toFIXED(66), toFIXED(376));
+    ShamanVillage_SpawnSmoke(toFIXED(104), toFIXED(98), toFIXED(152));
   }
 }
 
@@ -2813,9 +2820,9 @@ void ShamanVillage_SetUpVillage(void) {
       wait(1);
     }
   }
-  if (Event_GetFlag(FLAG_SCENE_TEMP_02))
+  if (Event_GetFlag(FLAG_SHAMAN_VILLAGE_MOAPAS_DOOR_OPEN))
     MapGrid_CopyCellsTo(43, 40, 7, 6, 1, 2);
-  if (Event_GetFlag(0x94d)) {
+  if (Event_GetFlag(FLAG_SHAMAN_VILLAGE_DOORS_OPEN)) {
     s32 width = 1;
     s32 height = 2;
 
@@ -2823,8 +2830,9 @@ void ShamanVillage_SetUpVillage(void) {
     MapGrid_CopyCellsTo(48, 40, 81, 25, width, height);
   }
   Rope_Initialize();
-  Rope_Place(0, 0x204, 19, 20);
-  if (Event_GetFlag(FLAG_SCENE_TEMP_05))
+  Rope_Place(0, FLAG_SHAMAN_VILLAGE_ROPE_TIED, ACTOR_VILLAGE_ROPE_POLE,
+             ACTOR_VILLAGE_ROPE_OTHER_POLE);
+  if (Event_GetFlag(FLAG_SHAMAN_VILLAGE_VINE_GROWN))
     ShamanVillage_GrowVine();
   REG_BLDALPHA = BLEND_ALPHA(8, 12);
   REG_BLDCNT = BLDCNT_TGT1_OBJ | BLDCNT_TGT2_ALL;
@@ -2861,27 +2869,17 @@ void ShamanVillage_SetUpInn(void) {
     Event_StartScreenTransition();
     Event_WaitTransitionFrames();
     Event_Wait(20);
-    i = 0;
-    goto test_stand;
-  next_stand:
-    i++;
-  test_stand:
-    if (i < 60) {
+    for (i = 0; i < 60; i++) {
       wait(1);
-      if (gInput.held == 0)
-        goto next_stand;
+      if (gInput.held != 0)
+        break;
     }
     Actor_SetAnimation(gMainRoutineWork.leaderActorId, 42);
     Event_Wait(10);
-    i = 0;
-    goto test_turn;
-  next_turn:
-    i++;
-  test_turn:
-    if (i < 30) {
+    for (i = 0; i < 30; i++) {
       wait(1);
-      if (gInput.held == 0)
-        goto next_turn;
+      if (gInput.held != 0)
+        break;
     }
     Actor_Jump(gMainRoutineWork.leaderActorId, 4, 0);
     Actor_SetAnimation(gMainRoutineWork.leaderActorId, ANIM_STAND);
@@ -2892,7 +2890,7 @@ void ShamanVillage_SetUpInn(void) {
     Event_End();
     if (gMainRoutineWork.entrance == 30) {
       Event_SetFlag(FLAG_MOAPA_BEATEN);
-      Event_SetFlag(0x94d);
+      Event_SetFlag(FLAG_SHAMAN_VILLAGE_DOORS_OPEN);
     }
   }
 }
@@ -3278,13 +3276,32 @@ void ShamanVillage_ReadTrialRoadSign(void);
 void ShamanVillage_TalkToOtherGuard(void);
 
 // clang-format off
-u32 gShamanVillage_LetteringThrobFadeScript[] = {
-    0x801000, 0x20000001, 0x10000, 0x1001000, 0x20000006, 0x60010,
-    0x3c7fff, 0x1801000, 0x7fff0006, 0x10000006, 0x60110, 0x67fff,
-    0x1901000, 0x7fff0006, 0x10000006, 0x60120, 0x67fff, 0x2000,
-    0x1000001e, 0x601a0, 0x67fff, 0x1301000, 0x7fff0006, 0x10000006,
-    0x601b0, 0x67fff, 0x1401000, 0x7fff0006, 0x10000006, 0x601c0,
-    0x67fff, 0xffff,
+s16 gShamanVillage_LetteringThrobFadeScript[] ALIGNED(4) = {
+    LETTERING_SCALE, 128, 1,
+    LETTERING_BLEND, 0, 1,
+    LETTERING_SCALE, 256, 6,
+    LETTERING_BLEND, 16, 6,
+    LETTERING_WAIT, 60,
+    LETTERING_SCALE, 384, 6,
+    LETTERING_WAIT, 6,
+    LETTERING_SCALE, 272, 6,
+    LETTERING_WAIT, 6,
+    LETTERING_SCALE, 400, 6,
+    LETTERING_WAIT, 6,
+    LETTERING_SCALE, 288, 6,
+    LETTERING_WAIT, 6,
+    LETTERING_BLEND, 0, 30,
+    LETTERING_SCALE, 416, 6,
+    LETTERING_WAIT, 6,
+    LETTERING_SCALE, 304, 6,
+    LETTERING_WAIT, 6,
+    LETTERING_SCALE, 432, 6,
+    LETTERING_WAIT, 6,
+    LETTERING_SCALE, 320, 6,
+    LETTERING_WAIT, 6,
+    LETTERING_SCALE, 448, 6,
+    LETTERING_WAIT, 6,
+    LETTERING_END,
 };
 
 struct SceneEntrance gShamanVillage_Entrances[] = {
@@ -3421,7 +3438,7 @@ struct ActorPlacement gShamanVillageInnActorPlacements[] = {
     ACTOR_PLACEMENT(136, CONDITION_ALWAYS, MOVEMENT_TYPE_WANDER_NEAR, 110, 0, 172, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
     ACTOR_PLACEMENT(138, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 232, 0, 126, FACING_SOUTH_SOUTHEAST, TALK_FACING_PARTY_AND_BACK, 0),
     ACTOR_PLACEMENT(41, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_SOUTH, TALK_FACING_PARTY_THEN_WATCH, 0),
-    ACTOR_PLACEMENT(489, CONDITION_ALWAYS, 7, 264, 0, 381, FACING_SOUTH_SOUTHWEST, TALK_FACING_PARTY, 0),
+    ACTOR_PLACEMENT(SPRITE_UNSEEN_MARKER, CONDITION_ALWAYS, 7, 264, 0, 381, FACING_SOUTH_SOUTHWEST, TALK_FACING_PARTY, 0),
     ACTOR_PLACEMENT(134, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 264, 0, 381, FACING_SOUTH_SOUTHWEST, TALK_FACING_PARTY, 0),
     ACTOR_PLACEMENT(135, CONDITION_ALWAYS, MOVEMENT_TYPE_WANDER_NEAR, 140, 0, 388, FACING_SOUTH_SOUTHEAST, TALK_FACING_PARTY_AND_BACK, 0),
     ACTOR_PLACEMENT(114, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 88, 0, 694, FACING_WEST, TALK_FACING_PARTY, 0),
@@ -3499,14 +3516,14 @@ struct Trigger gShamanVillageAromaRoomTriggers[] = {
     {TRIGGER_EXIT, 3, CONDITION_ALWAYS, 3},
     {TRIGGER_EXIT | STEP_TRIGGER_FLAG_WALKING | STEP_TRIGGER_FLAG_QUICK |
          TRIGGER_FLAG_FACING | FACING_NORTH,
-     4, 0x194d, 4},
+     4, IF_FLAG_SET(FLAG_SHAMAN_VILLAGE_DOORS_OPEN), 4},
     {TRIGGER_EXIT, 5, CONDITION_ALWAYS, 5},
     {TRIGGER_EXIT, 6, CONDITION_ALWAYS, 6},
     {TRIGGER_TALK, 18, CONDITION_ALWAYS, EVENT(ShamanVillage_MeetAroma)},
     {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 14,
      FLAG_SHAMAN_VILLAGE_PILLAR_BRIDGE_DROPPED,
      EVENT(ShamanVillage_DropPillar)},
-    {EXAMINE_TRIGGER_FACING(FACING_NORTH), 22, 0x94d,
+    {EXAMINE_TRIGGER_FACING(FACING_NORTH), 22, FLAG_SHAMAN_VILLAGE_DOORS_OPEN,
      EVENT(ShamanVillage_StopAtClosedEntrance)},
     {TRIGGER_EXAMINE, 10, CONDITION_ALWAYS,
      EVENT(ShamanVillage_ReadTrialRoadSign)},
@@ -3530,17 +3547,19 @@ struct Trigger gShamanVillageVillageTriggers[] = {
     {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
     {TRIGGER_EXIT | STEP_TRIGGER_FLAG_WALKING | STEP_TRIGGER_FLAG_QUICK |
          TRIGGER_FLAG_FACING | FACING_NORTH,
-     2, 0x194d, 2},
+     2, IF_FLAG_SET(FLAG_SHAMAN_VILLAGE_DOORS_OPEN), 2},
     {TRIGGER_EXIT | STEP_TRIGGER_FLAG_WALKING | STEP_TRIGGER_FLAG_QUICK |
          TRIGGER_FLAG_FACING | FACING_NORTH,
-     3, 0x194d, 3},
+     3, IF_FLAG_SET(FLAG_SHAMAN_VILLAGE_DOORS_OPEN), 3},
     {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 4, CONDITION_ALWAYS,
      EVENT(ShamanVillage_EnterDoorA)},
     {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 5, CONDITION_ALWAYS,
      EVENT(ShamanVillage_EnterDoorB)},
-    {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 6, 0x194d,
+    {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 6,
+     IF_FLAG_SET(FLAG_SHAMAN_VILLAGE_DOORS_OPEN),
      EVENT(ShamanVillage_EnterDoorC)},
-    {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 7, 0x194d,
+    {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 7,
+     IF_FLAG_SET(FLAG_SHAMAN_VILLAGE_DOORS_OPEN),
      EVENT(ShamanVillage_EnterDoorD)},
     {TRIGGER_EXIT, 8, CONDITION_ALWAYS, 8},
     {TRIGGER_EXIT, 9, CONDITION_ALWAYS, 9},
@@ -3555,12 +3574,13 @@ struct Trigger gShamanVillageVillageTriggers[] = {
     {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 13, CONDITION_ALWAYS,
      EVENT(ShamanVillage_EnterMoapasHouse)},
     {TRIGGER_EXIT, 14, CONDITION_ALWAYS, 14},
-    {PSYNERGY_ON_ACTOR(ABILITY_LASH), 19, 0x204, 0},
-    {PSYNERGY_ON_ACTOR(ABILITY_GROWTH), 21, 0x205,
+    {PSYNERGY_ON_ACTOR(ABILITY_LASH), ACTOR_VILLAGE_ROPE_POLE,
+     FLAG_SHAMAN_VILLAGE_ROPE_TIED, 0},
+    {PSYNERGY_ON_ACTOR(ABILITY_GROWTH), 21, FLAG_SHAMAN_VILLAGE_VINE_GROWN,
      EVENT(ShamanVillage_GrowVine)},
-    {EXAMINE_TRIGGER_FACING(FACING_NORTH), 20, 0x94d,
+    {EXAMINE_TRIGGER_FACING(FACING_NORTH), 20, FLAG_SHAMAN_VILLAGE_DOORS_OPEN,
      EVENT(Scene_ShowEntranceLocked)},
-    {EXAMINE_TRIGGER_FACING(FACING_NORTH), 22, 0x94d,
+    {EXAMINE_TRIGGER_FACING(FACING_NORTH), 22, FLAG_SHAMAN_VILLAGE_DOORS_OPEN,
      EVENT(ShamanVillage_StopAtClosedEntrance)},
     {EXAMINE_TRIGGER_FACING(FACING_NORTH), 21, FLAG_SHAMAN_VILLAGE_MOAPA_MET,
      EVENT(ShamanVillage_MeetMoapa)},
@@ -3786,6 +3806,4 @@ u32 gDriftScene_SpawnScript[] = {
     SC_RELEASE,
 };
 #undef TLA_SHAMAN_VILLAGE_H
-#undef WORD_AT
-#undef OBJ14_BYTE
 #undef gShamanVillageVillageActorPlacements

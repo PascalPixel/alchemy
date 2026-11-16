@@ -294,7 +294,7 @@ void Field_RequestBattleFromEncounterTable(s32 row, s32 column);
 
 /// The columns of ENCOUNTER_TABLE_HIDDEN_BOSSES.
 enum HiddenBoss {
-  HIDDEN_BOSS_TREASURE_ISLE, ///< the guardian at the end of Treasure Isle
+  HIDDEN_BOSS_TREASURE_ISLE, ///< the Star Magician, at the end of Treasure Isle
   HIDDEN_BOSS_VALUKAR,       ///< Valukar, in the Yampi Desert Cave
   HIDDEN_BOSS_SENTINEL,      ///< the Sentinel, at the end of the Islet Cave
   /// The shadow at the entrance of the Anemos Inner Sanctum.

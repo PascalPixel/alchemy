@@ -181,6 +181,7 @@ s32 Scene_Initialize(void) {
 
 s32 Scene_PrepareMap(void) { return 0; }
 
+/// Loads the logo's lettering sprites and their palette.
 void Title_LoadSprites(s32 unused) {
   u8 *buffer;
   volatile s32 *dma;
@@ -202,7 +203,6 @@ void Title_LoadSprites(s32 unused) {
 /// Rebuilds the row of 18 sprites under the logo and pushes those the reveal
 /// has reached, hiding the two newest on odd frames, then counts the reveal
 /// on.
-// ☀️'s Title_UpdateSpriteReveal.
 void Title_UpdateSpriteReveal(void) {
   u32 *attributes;
   struct TitleSprite *sprite;
@@ -260,12 +260,10 @@ static void Title_RevealScreen(s32 unused) {
   IO_WRITE_QUEUE_PUSH((u32)&REG_BLDALPHA, BLEND_ALPHA(16, 16),
                       IO_WRITE_HALFWORD);
   Event_Wait(120);
-  i = 0;
-fade:
-  IO_WRITE_QUEUE_PUSH((u32)&REG_BLDY, 16 - i, IO_WRITE_HALFWORD);
-  wait(3);
-  if (++i <= 16)
-    goto fade;
+  for (i = 0; i <= 16; i++) {
+    IO_WRITE_QUEUE_PUSH((u32)&REG_BLDY, 16 - i, IO_WRITE_HALFWORD);
+    wait(3);
+  }
   gFieldWork->transition = 0;
   gFieldWork->transitionFrames = 1;
   Event_StartScreenTransition();
@@ -297,33 +295,20 @@ static void Title_LoadBackground(void) {
   FieldDecompress_TaggedLz(encodedGraphics, Ram_MapCellBuffer);
   Dma_Set((void *)Ram_MapCellBuffer, LOGO_TILES, DMA_COPY_WORDS(9600),
           REG_DMA3);
-
-  // Fill the visible 30 columns and pad each 32-entry tilemap row.
   tilemap = LOGO_MAP;
   tileIndex = LOGO_FIRST_TILE;
-  screenY = 0;
-row:
-  screenX = 0;
-column:
-  *tilemap++ = tileIndex++;
-  screenX++;
-  if (screenX <= 29)
-    goto column;
-  *tilemap++ = blankTile;
-  *tilemap++ = blankTile;
-  screenY++;
-  if (screenY <= 19)
-    goto row;
-  // Reset all four background scroll pairs.
+  for (screenY = 0; screenY <= 19; screenY++) {
+    for (screenX = 0; screenX <= 29; screenX++)
+      *tilemap++ = tileIndex++;
+    *tilemap++ = blankTile;
+    *tilemap++ = blankTile;
+  }
   bgScroll = gBgScroll;
-  screenY = 0;
-scroll_pair:
-  bgScroll->y = 0;
-  bgScroll->x = 0;
-  bgScroll++;
-  screenY++;
-  if (screenY <= 3)
-    goto scroll_pair;
+  for (screenY = 0; screenY <= 3; screenY++) {
+    bgScroll->y = 0;
+    bgScroll->x = 0;
+    bgScroll++;
+  }
   Dma_Set(gBgScroll, REG_BG0HOFS, DMA_COPY_WORDS(4), REG_DMA3);
   Ram_HeapSlots->mapGrid->dispcnt = DISPCNT_BG2_ON | DISPCNT_OBJ_ON;
 }

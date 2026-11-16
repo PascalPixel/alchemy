@@ -102,6 +102,43 @@ enum TaopoSwampStarDustActorId {
 #define FLAG_TAOPO_SWAMP_STAR_DUST_DUG_UP FLAG_AREA_TEMP_48
 /// Set once the Mad Plant hiding in the bush has been beaten.
 #define FLAG_TAOPO_SWAMP_MAD_PLANT_BEATEN 0x9b6
+/// Set once Growth has grown the mud room's sprout into a vine.
+#define FLAG_TAOPO_SWAMP_VINE_GROWN FLAG_SCENE_TEMP_20
+/// The round spot over a vent (ACTOR_GAP_PUDDLE, ACTOR_DRIP_PUDDLE): set while
+/// it holds water, a puddle or an ice pillar.
+#define FLAG_TAOPO_SWAMP_SPOT_WET FLAG_SCENE_TEMP_20
+/// Set while Frost has turned the spot's water into an ice pillar.
+#define FLAG_TAOPO_SWAMP_SPOT_FROZEN FLAG_SCENE_TEMP_21
+/// Set while the spot holds a puddle Frost can freeze.
+#define FLAG_TAOPO_SWAMP_SPOT_PUDDLE FLAG_SCENE_TEMP_22
+/// The drops the drip room's spot has caught, up to four: a byte of flags.
+#define FLAG_BYTE_TAOPO_SWAMP_DROPS_CAUGHT FLAG_SCENE_TEMP_30
+/// Set once Scoop has dug up the item under treasure actor n (0 or 1) of the
+/// tear stones' room.
+#define FLAG_TAOPO_SWAMP_TREASURE_DUG_UP(n) (FLAG_AREA_TEMP_00 + (n))
+/// Set once Flower has been blown off its ledge into its own room.
+#define FLAG_TAOPO_SWAMP_FLOWER_OFF_LEDGE FLAG_AREA_TEMP_10
+/// Set once Tremor has opened the passage and the pool has drained.
+#define FLAG_TAOPO_SWAMP_PASSAGE_OPEN FLAG_AREA_TEMP_30
+/// Each red rock's flags: _COOLED once Douse has cooled it, _UNMOVABLE while
+/// Move cannot push it (until it is cooled, and once it has sunk), _SUNK once
+/// it has sunk into the lava as a stepping stone.
+#define FLAG_TAOPO_SWAMP_TREMOR_LAVA_ROCK_COOLED FLAG_AREA_TEMP_31
+#define FLAG_TAOPO_SWAMP_TREMOR_LAVA_ROCK_UNMOVABLE FLAG_AREA_TEMP_32
+#define FLAG_TAOPO_SWAMP_TREMOR_LAVA_ROCK_SUNK FLAG_AREA_TEMP_33
+#define FLAG_TAOPO_SWAMP_PILLAR_ROCK_COOLED FLAG_AREA_TEMP_34
+#define FLAG_TAOPO_SWAMP_PILLAR_ROCK_UNMOVABLE FLAG_AREA_TEMP_35
+#define FLAG_TAOPO_SWAMP_PILLAR_ROCK_SUNK FLAG_AREA_TEMP_36
+#define FLAG_TAOPO_SWAMP_CHEST_ROCK_COOLED FLAG_AREA_TEMP_38
+#define FLAG_TAOPO_SWAMP_CHEST_ROCK_UNMOVABLE FLAG_AREA_TEMP_39
+#define FLAG_TAOPO_SWAMP_CHEST_ROCK_SUNK FLAG_AREA_TEMP_3A
+#define FLAG_TAOPO_SWAMP_EXIT_ROCK_COOLED FLAG_AREA_TEMP_3B
+#define FLAG_TAOPO_SWAMP_EXIT_ROCK_UNMOVABLE FLAG_AREA_TEMP_3C
+#define FLAG_TAOPO_SWAMP_EXIT_ROCK_SUNK FLAG_AREA_TEMP_3D
+#define FLAG_TAOPO_SWAMP_DARK_ROCK_COOLED FLAG_AREA_TEMP_40
+#define FLAG_TAOPO_SWAMP_DARK_ROCK_UNMOVABLE FLAG_AREA_TEMP_41
+#define FLAG_TAOPO_SWAMP_LAST_ROCK_COOLED FLAG_AREA_TEMP_42
+#define FLAG_TAOPO_SWAMP_LAST_ROCK_UNMOVABLE FLAG_AREA_TEMP_43
 
 void GameFlag_SetByte(s32 flag, s32 value);
 void Vent_SetGust(s32 id, s32 a);
@@ -124,6 +161,8 @@ void Vent_SetActive(s32 index, s32 active);
 #endif
 s32 Vents_AdvanceCounter(s32 a);
 
+/// The mud room's state: whether the leader is in the mud, how deep they have
+/// sunk (256 to a row of the sprite) and the last firm ground they stood on.
 struct SceneState {
   s16 mode;
   s16 timer;
@@ -135,11 +174,14 @@ extern struct SceneState gSceneState;
 
 typedef volatile u16 vu16;
 
+/// A 16-bit I/O register.
 struct IoReg16 {
   u16 value;
 };
 
 #define REG_BLDALPHA ((struct IoReg16 *)0x04000052)
+/// One vent: whether it blows, its place in the cycle, its position and its
+/// gust's speed, 16.16 pixels.
 struct VentEntry {
   s16 active;
   s16 timer;
@@ -149,12 +191,26 @@ struct VentEntry {
   s32 value;
 };
 
+/// The vents of the room: their frame counter, the room's hook, up to sixteen
+/// vents and the ids of up to four.
 struct VentWork {
   s32 counter;
   s32 (*hook)(void);
   struct VentEntry entries[16];
   u16 ids[4];
 };
+
+/// MapWork as far as groundEffects, read through its bits, the footprints and
+/// the kind of wading, as Shrine of the Sea God reads it.
+struct MapWorkGroundEffects {
+  u8 before[offsetof(struct MapWork, groundEffects)];
+  u8 footprints : 2;
+  u8 wading : 2;
+  u8 unused : 4;
+};
+
+/// The mud room's kind of wading: the leader sinks into the mud.
+enum { MAP_WADING_MUD = 2 };
 
 extern u8 gInventorySnapshot[];
 #define VENT_WORK ((struct VentWork *)(gInventorySnapshot + 0x188))
@@ -185,22 +241,27 @@ static __inline__ void TaopoSwamp_CopyCellAttributes(s32 a, s32 b, s32 c, s32 d,
   MapGrid_CopyCellAttributes(a, b, c, d, e, f);
 }
 
+/// Actor id jumps down a ledge (Actor_JumpDownLedge).
 static __inline__ void TaopoSwamp_JumpDownLedge(s32 id, s32 a, s32 b) {
   Actor_JumpDownLedge(id, a, b);
 }
 
+/// Copies the map cells the leader's Psynergy touches
+/// (TileCopies_CopyTouchedCells).
 static __inline__ void TileCopies_CopyTouchedCells_(s32 a, s32 b, s32 c, s32 d,
                                                     s32 e, s32 f, s32 g) {
   TileCopies_CopyTouchedCells(a, b, c, d, e, f, g);
 }
 
+/// Creates an actor of sprite type at x, y, z.
 static __inline__ struct Actor *TaopoSwamp_CreateActor(s32 type, s32 x, s32 y,
                                                        s32 z) {
   return Import_ActorCreate(type, x, y, z);
 }
 
-static __inline__ void MadPlant_LeapAtLeader_(s32 a, s32 b, s32 c) {
-  MadPlant_LeapAtLeader(a, b, c);
+/// The Mad Plant leaps out of its bush at the leader (MadPlant_LeapAtLeader).
+static __inline__ void MadPlant_LeapAtLeader_(s32 sprite, s32 x, s32 z) {
+  MadPlant_LeapAtLeader(sprite, x, z);
 }
 
 s32 Vent_IsActive(s32 hole);
@@ -269,8 +330,8 @@ const struct ActorPlacement *Scene_GetActorPlacements(void) {
   return gTaopoSwamp_Placements;
 }
 
-/// Whirlwind on one of the bushes 8 to 12: its flag (0x8d8 plus its id) keeps
-/// it gone.
+/// Whirlwind on one of the bushes 8 to 12: its flag
+/// (FLAG_TAOPO_SWAMP_BUSH_BLOWN plus its id) keeps it gone.
 void TaopoSwamp_BlowAwayBush(s32 a, s32 b) {
   GameFlag_Set(FLAG_TAOPO_SWAMP_BUSH_BLOWN + b);
 }
@@ -278,7 +339,7 @@ void TaopoSwamp_BlowAwayBush(s32 a, s32 b) {
 /// Growth on the sprout, actor 13: the vine's cells become climbable.
 void TaopoSwamp_GrowVine(void) {
   MapGrid_CopyCellAttributes(50, 16, 1, 2, 47, 16);
-  Event_SetFlag(FLAG_SCENE_TEMP_20);
+  Event_SetFlag(FLAG_TAOPO_SWAMP_VINE_GROWN);
 }
 
 struct ChildGroup;
@@ -289,9 +350,11 @@ void Sprite_SetAnimationColorModes(struct FieldSprite *record, u32 value);
 void Sprite_SetAnimationSpeed(struct ChildGroup *group, s32 value);
 
 // When actor id stands at x 12, inside an event: the actor drops in place, then
-// for 25 frames throws splashes, then two sparks, and sets flag 0x8e5.
+// for 25 frames throws splashes, then two sparks, and sets
+// FLAG_TAOPO_SWAMP_STUMP_SUNK.
 /// Move on the small pillar, actor 14, once it stands at cell x 12: it sinks
-/// into the mud with splashes and two sparks, and flag 0x8e5 keeps it gone.
+/// into the mud with splashes and two sparks, and FLAG_TAOPO_SWAMP_STUMP_SUNK
+/// keeps it gone.
 void TaopoSwamp_SinkPillar(s32 unused, s32 id) {
   struct Actor *actor = Actor_GetById(id);
   struct Actor *splash, *spark;
@@ -370,14 +433,16 @@ void TaopoSwamp_SinkPillar(s32 unused, s32 id) {
   Event_SetFlag(FLAG_TAOPO_SWAMP_STUMP_SUNK);
 }
 
-/// Scoop on the spot under actor 65 digs up its item (flag 0x301).
+/// Scoop on the spot under treasure actor 1 digs up its item.
 void TaopoSwamp_ScoopHiddenItem(s32 a) {
-  Event_DigUpTreasure(a, 65, FLAG_AREA_TEMP_01);
+  Event_DigUpTreasure(a, FIELD_TREASURE_ACTOR + 1,
+                      FLAG_TAOPO_SWAMP_TREASURE_DUG_UP(1));
 }
 
-/// Scoop on the spot under actor 64 digs up its item (flag 0x300).
+/// Scoop on the spot under treasure actor 0 digs up its item.
 void TaopoSwamp_ScoopOtherHiddenItem(s32 a) {
-  Event_DigUpTreasure(a, 64, FLAG_AREA_TEMP_00);
+  Event_DigUpTreasure(a, FIELD_TREASURE_ACTOR,
+                      FLAG_TAOPO_SWAMP_TREASURE_DUG_UP(0));
 }
 
 /// Scoop digs into the mud at one of the two spots of the lowest level.
@@ -392,7 +457,7 @@ void TaopoSwamp_DigHoleUnderfoot(void) {
 
   TileCopies_CopyTouchedCells_(76, 70, 14, 8, 14, 37, 0);
   if (Event_GetFlag(0xf99) == 0) {
-    Actor_SetPosition(64, 264, 664);
+    Actor_SetPosition(FIELD_TREASURE_ACTOR, 264, 664);
     if (FIELD_CELL(leader->x.fixed) == 16 &&
         FIELD_CELL(leader->z.fixed) == 41) {
       Event_Start();
@@ -412,11 +477,11 @@ void TaopoSwamp_DigHoleUnderfoot(void) {
 void TaopoSwamp_StartMadPlantBattle(void) {
   TileCopies_CopyTouchedCells_(76, 70, 14, 8, 14, 37, 0);
   if (!Event_GetFlag(FLAG_TAOPO_SWAMP_MAD_PLANT_BEATEN)) {
-    MadPlant_LeapAtLeader_(249, 344, 648);
+    MadPlant_LeapAtLeader_(SPRITE_MAD_PLANT, 344, 648);
     gMainRoutineWork.pendingDjinni =
         IF_FLAG_SET(FLAG_TAOPO_SWAMP_MAD_PLANT_BEATEN);
     Battle_SetType(BATTLE_TYPE_NO_ESCAPE);
-    Field_RequestBattleFromEncounterTable(106, 1);
+    Field_RequestBattleFromEncounterTable(ENCOUNTER_TABLE_MAD_PLANTS, 1);
   }
 }
 
@@ -425,22 +490,22 @@ void TaopoSwamp_FallThroughHole(s32 a) {
   FieldActor_SetSpritePriority(gMainRoutineWork.leaderActorId, 3);
   TaopoSwamp_JumpDownLedge(gMainRoutineWork.leaderActorId, 6, 0x1000);
   Event_PlaySound(SE_FALL);
-  Event_SetFlag(0x122);
+  Event_SetFlag(FLAG_ARRIVE_FALLING);
   FieldEvent_SetExitRequest(a);
 }
 
-/// Move on pillar 9 or 10 to the cell over its vent: the vent's gust is
-/// redirected, and flag 0xa6d or 0xa6e keeps the pillar there.
+/// Move on the vents room's west or east pillar to the cell over its vent: the
+/// vent's gust is redirected, and the pillar's flag keeps it there.
 void TaopoSwamp_PushPillarOverVent(s32 a, s32 id) {
   struct Actor *object = Actor_Get(id);
 
-  if (id == 9) {
+  if (id == ACTOR_WEST_VENT_PILLAR) {
     if (FIELD_CELL(object->x.fixed) == 17) {
       object->z.fixed += toFIXED(1);
       Vent_SetGust(2, toFIXED(8));
       Event_SetFlag(FLAG_TAOPO_SWAMP_WEST_PILLAR_OVER_VENT);
     }
-  } else if (id == 10) {
+  } else if (id == ACTOR_EAST_VENT_PILLAR) {
     if (FIELD_CELL(object->x.fixed) == 29) {
       object->z.fixed += toFIXED(1);
       Vent_SetGust(8, toFIXED(8));
@@ -470,14 +535,14 @@ void TaopoSwamp_StepOnVent(s32 hole) {
     u8 *table = gTaopoSwampPillarGapHoleVents + 1;
     s32 at = hole - 10;
     found = Vent_IsActive(table[at]);
-    if (hole == 10 && Event_GetFlag(FLAG_SCENE_TEMP_21))
+    if (hole == 10 && Event_GetFlag(FLAG_TAOPO_SWAMP_SPOT_FROZEN))
       return;
-    if (hole == 12 && Event_GetFlag(FLAG_SCENE_TEMP_21))
+    if (hole == 12 && Event_GetFlag(FLAG_TAOPO_SWAMP_SPOT_FROZEN))
       return;
   }
   if (gMainRoutineWork.next == SCENE_TAOPO_SWAMP_DRIPS) {
     found = Vent_IsActive(hole - 10);
-    if (hole == 10 && Event_GetFlag(FLAG_SCENE_TEMP_21))
+    if (hole == 10 && Event_GetFlag(FLAG_TAOPO_SWAMP_SPOT_FROZEN))
       return;
   }
   if (gMainRoutineWork.next == SCENE_TAOPO_SWAMP_LAVA_ROCKS)
@@ -517,8 +582,8 @@ test:
     goto sink;
 }
 
-/// The gust from the covered vent knocks the Venus Djinni, actor 8, down one
-/// level in three hops (flag 0x310).
+/// The gust from the covered vent knocks Flower, the Venus Djinni, down one
+/// level in three hops (FLAG_TAOPO_SWAMP_FLOWER_OFF_LEDGE).
 void TaopoSwamp_BlowFlowerOffLedge(void) {
   struct Actor *object = Actor_Get(ACTOR_FLOWER);
   FIXED speed;
@@ -547,13 +612,14 @@ void TaopoSwamp_BlowFlowerOffLedge(void) {
   object->velocityY = toFIXED(4);
   Actor_WalkByAndWait(ACTOR_FLOWER, 0, 8);
   FieldEvent_Wait(60);
-  Event_SetFlag(FLAG_AREA_TEMP_10);
+  Event_SetFlag(FLAG_TAOPO_SWAMP_FLOWER_OFF_LEDGE);
   Event_End();
 }
 
 #include "shared/actor_wait_to_land.h"
 
-/// Moved to column 16, the pillar drops into the gap there (flag 0xa6f).
+/// Moved to column 16, the pillar drops into the gap there
+/// (FLAG_TAOPO_SWAMP_PILLAR_IN_GAP).
 void TaopoSwamp_DropPillarIntoGap(s32 a, s32 id) {
   struct Actor *object = Actor_Get(id);
 
@@ -570,8 +636,8 @@ void TaopoSwamp_DouseVentSpot(s32 a, s32 id) {
   FieldActor_SetSpritePriority(id, 3);
   Actor_Get(id)->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
   Actor_SetAnimation(id, 1);
-  Event_SetFlag(FLAG_SCENE_TEMP_20);
-  Event_SetFlag(FLAG_SCENE_TEMP_22);
+  Event_SetFlag(FLAG_TAOPO_SWAMP_SPOT_WET);
+  Event_SetFlag(FLAG_TAOPO_SWAMP_SPOT_PUDDLE);
 }
 
 /// Ice on a spot: the two copies differ only in their cells.
@@ -581,8 +647,8 @@ void TaopoSwamp_DouseVentSpot(s32 a, s32 id) {
     FieldActor_SetSpritePriority(id, 2);                                       \
     Actor_Get(id)->priorityFlags &= ~ACTOR_PRIORITY_UNDERFOOT;                 \
     Vents_SetId(0, id);                                                        \
-    Event_SetFlag(FLAG_SCENE_TEMP_21);                                         \
-    Event_ClearFlag(FLAG_SCENE_TEMP_22);                                       \
+    Event_SetFlag(FLAG_TAOPO_SWAMP_SPOT_FROZEN);                               \
+    Event_ClearFlag(FLAG_TAOPO_SWAMP_SPOT_PUDDLE);                             \
   }
 
 DEFINE_TAOPO_SWAMP_FREEZE_SPOT(TaopoSwamp_FreezeVentSpot, 28, 8, 26)
@@ -599,9 +665,9 @@ void TaopoSwamp_ShatterIcePillar(s32 id) {
   Actor_Get(id)->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
   Actor_Get(id)->update = (void (*)(void))zero;
   Vents_SetId(0, 0);
-  Event_ClearFlag(FLAG_SCENE_TEMP_20);
-  Event_ClearFlag(FLAG_SCENE_TEMP_21);
-  Event_ClearFlag(FLAG_SCENE_TEMP_22);
+  Event_ClearFlag(FLAG_TAOPO_SWAMP_SPOT_WET);
+  Event_ClearFlag(FLAG_TAOPO_SWAMP_SPOT_FROZEN);
+  Event_ClearFlag(FLAG_TAOPO_SWAMP_SPOT_PUDDLE);
   leader = Actor_Get(gMainRoutineWork.leaderActorId);
   object = Actor_Get(id);
   if (FIELD_CELL(object->x.fixed) == FIELD_CELL(leader->x.fixed) &&
@@ -623,8 +689,8 @@ void TaopoSwamp_BlowAwayPuddle(s32 id) {
   Actor_Get(id)->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
   Actor_Get(id)->update = 0;
   Vents_SetId(0, 0);
-  Event_ClearFlag(FLAG_SCENE_TEMP_20);
-  Event_ClearFlag(FLAG_SCENE_TEMP_22);
+  Event_ClearFlag(FLAG_TAOPO_SWAMP_SPOT_WET);
+  Event_ClearFlag(FLAG_TAOPO_SWAMP_SPOT_PUDDLE);
 }
 
 /// A drop or Douse on the spot under the drip: the puddle is frozen solid by
@@ -633,16 +699,16 @@ void TaopoSwamp_FillDripSpot(s32 a, s32 id) {
   FieldActor_SetSpritePriority(id, 3);
   Actor_Get(id)->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
   Actor_SetAnimation(id, 1);
-  if (a == 5 || FieldGameFlag_GetByte(0x230) > 3) {
-    Event_SetFlag(FLAG_SCENE_TEMP_20);
-    Event_SetFlag(FLAG_SCENE_TEMP_22);
+  if (a == 5 || FieldGameFlag_GetByte(FLAG_BYTE_TAOPO_SWAMP_DROPS_CAUGHT) > 3) {
+    Event_SetFlag(FLAG_TAOPO_SWAMP_SPOT_WET);
+    Event_SetFlag(FLAG_TAOPO_SWAMP_SPOT_PUDDLE);
   }
 }
 
 DEFINE_TAOPO_SWAMP_FREEZE_SPOT(TaopoSwamp_FreezeDripSpot, 23, 27, 25)
 
 /// As TaopoSwamp_ShatterIcePillar, for the spot the ceiling drips onto, whose
-/// puddle size (byte flag 0x230) starts again.
+/// puddle size (FLAG_BYTE_TAOPO_SWAMP_DROPS_CAUGHT) starts again.
 void TaopoSwamp_ShatterDripIcePillar(s32 id) {
   struct Actor *leader;
   struct Actor *object;
@@ -652,10 +718,10 @@ void TaopoSwamp_ShatterDripIcePillar(s32 id) {
   Actor_Get(id)->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
   Actor_Get(id)->update = 0;
   Vents_SetId(0, 0);
-  Event_ClearFlag(FLAG_SCENE_TEMP_20);
-  Event_ClearFlag(FLAG_SCENE_TEMP_21);
-  Event_ClearFlag(FLAG_SCENE_TEMP_22);
-  GameFlag_SetByte(0x230, 0);
+  Event_ClearFlag(FLAG_TAOPO_SWAMP_SPOT_WET);
+  Event_ClearFlag(FLAG_TAOPO_SWAMP_SPOT_FROZEN);
+  Event_ClearFlag(FLAG_TAOPO_SWAMP_SPOT_PUDDLE);
+  GameFlag_SetByte(FLAG_BYTE_TAOPO_SWAMP_DROPS_CAUGHT, 0);
   leader = Actor_Get(gMainRoutineWork.leaderActorId);
   object = Actor_Get(id);
   if (FIELD_CELL(object->x.fixed) == FIELD_CELL(leader->x.fixed) &&
@@ -679,16 +745,16 @@ void TaopoSwamp_BlowAwayDripPuddle(s32 id) {
   Actor_Get(id)->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
   Actor_Get(id)->update = (void (*)(void))zero;
   Vents_SetId(0, 0);
-  Event_ClearFlag(FLAG_SCENE_TEMP_20);
-  GameFlag_SetByte(0x230, 0);
+  Event_ClearFlag(FLAG_TAOPO_SWAMP_SPOT_WET);
+  GameFlag_SetByte(FLAG_BYTE_TAOPO_SWAMP_DROPS_CAUGHT, 0);
 }
 
 /// Douse on the red glowing rock by the lava, actor 9: it cools, and Move can
 /// push it.
 void TaopoSwamp_CoolLavaRock(s32 a, s32 id) {
   Actor_SetAnimation(id, 2);
-  Event_SetFlag(FLAG_AREA_TEMP_31);
-  Event_ClearFlag(FLAG_AREA_TEMP_32);
+  Event_SetFlag(FLAG_TAOPO_SWAMP_TREMOR_LAVA_ROCK_COOLED);
+  Event_ClearFlag(FLAG_TAOPO_SWAMP_TREMOR_LAVA_ROCK_UNMOVABLE);
 }
 
 /// Move on the cooled rock at cell x 7: it sinks into the lava as a stepping
@@ -700,8 +766,8 @@ void TaopoSwamp_PushLavaRockIn(s32 a, s32 id) {
     Actor_SetAnimation(id, 3);
     object->collisionFlags = 0;
     object->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
-    Event_SetFlag(FLAG_AREA_TEMP_32);
-    Event_SetFlag(FLAG_AREA_TEMP_33);
+    Event_SetFlag(FLAG_TAOPO_SWAMP_TREMOR_LAVA_ROCK_UNMOVABLE);
+    Event_SetFlag(FLAG_TAOPO_SWAMP_TREMOR_LAVA_ROCK_SUNK);
     MapGrid_CopyCellAttributes(7, 17, 1, 1, 7, 15);
   }
 }
@@ -709,8 +775,8 @@ void TaopoSwamp_PushLavaRockIn(s32 a, s32 id) {
 /// Douse on the red rock Tremor knocked out of the pillar, actor 10.
 void TaopoSwamp_CoolPillarRock(s32 a, s32 id) {
   Actor_SetAnimation(id, 2);
-  Event_SetFlag(FLAG_AREA_TEMP_34);
-  Event_ClearFlag(FLAG_AREA_TEMP_35);
+  Event_SetFlag(FLAG_TAOPO_SWAMP_PILLAR_ROCK_COOLED);
+  Event_ClearFlag(FLAG_TAOPO_SWAMP_PILLAR_ROCK_UNMOVABLE);
   MapGrid_CopyCellAttributes(27, 14, 1, 1, 27, 13);
 }
 
@@ -723,8 +789,8 @@ void TaopoSwamp_PushPillarRockIn(s32 a, s32 id) {
     Actor_SetAnimation(id, 3);
     object->collisionFlags = 0;
     object->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
-    Event_SetFlag(FLAG_AREA_TEMP_35);
-    Event_SetFlag(FLAG_AREA_TEMP_36);
+    Event_SetFlag(FLAG_TAOPO_SWAMP_PILLAR_ROCK_UNMOVABLE);
+    Event_SetFlag(FLAG_TAOPO_SWAMP_PILLAR_ROCK_SUNK);
     Actor_SetSpeed(id, 0.5);
     Actor_SetDestinationOffset(id, -32, 0);
     FieldActor_WaitForMoveById(id);
@@ -733,8 +799,10 @@ void TaopoSwamp_PushPillarRockIn(s32 a, s32 id) {
   }
 }
 
+/// The update of the boulder Tremor knocks off the pillar: it turns back a
+/// thirty-second of a turn each frame as it rolls.
 void TaopoSwamp_SpinBoulder(struct Actor *object) {
-  *(s16 *)((u8 *)object->sprite + 18) -= 0x800;
+  ((struct FieldSprite *)object->sprite)->rotation -= TRIG_TURN / 32;
 }
 
 /// One puff of steam from the cooling lava, until the count runs out.
@@ -746,9 +814,9 @@ void TaopoSwamp_PuffSteam(void) {
 
   gTaopoSwamp_SteamPuffs--;
   a = Random16() * 32;
-  x = Random16() * 16 + a + 0x12c0000;
-  z = Random16() * 16 + a + 0x1040000;
-  object = FieldActor_Create(0x11d, x, 0, z);
+  x = Random16() * 16 + a + toFIXED(300);
+  z = Random16() * 16 + a + toFIXED(260);
+  object = FieldActor_Create(SPRITE_DUST_CLOUD, x, 0, z);
   Actor_StartScript(object, gTaopoSwamp_PuffSteamScript);
   Actor_SetSpriteFlags(object, 0);
   Actor_SetBlendMode(object, 1);
@@ -818,31 +886,29 @@ void TaopoSwamp_TremorPillar(void) {
   Actor_Get(ACTOR_TREMOR_PILLAR_ROCK)->velocityY = toFIXED(10);
   rock->update = 0;
   i = 15;
-burst:
-  clod = (FieldActor_Create(SPRITE_ROCK, rock->x.fixed,
-                            rock->y.fixed + toFIXED(16), rock->z.fixed));
-  if (clod == 0)
-    goto next;
-  angle = Random16();
-  speed = Random16();
-  scale = (Random16() >> 2) + 0x1000;
-  Actor_StartScript(clod, gTaopoSwamp_TremorPillarScript);
-  Actor_SetSpriteFlags(clod, 0);
-  clod->velocityY = (angle << 2) + toFIXED(2);
-  cosine = Trig_Cos(angle);
-  mul = Iwram_MulFX;
-  speed <<= 3;
-  clod->velocityZ = mul(speed, cosine);
-  clod->velocityX = mul(speed, Math_Sin(angle));
-  clod->acceleration = 0;
-  clod->gravity = 0x547a;
-  clod->scaleX = scale;
-  clod->scaleY = scale;
-  clod->bounce = FIXED_ONE / 2;
-next:
-  i--;
-  if (i >= 0)
-    goto burst;
+  do {
+    clod = (FieldActor_Create(SPRITE_ROCK, rock->x.fixed,
+                              rock->y.fixed + toFIXED(16), rock->z.fixed));
+    if (clod != 0) {
+
+      angle = Random16();
+      speed = Random16();
+      scale = (Random16() >> 2) + FIXED_ONE / 16;
+      Actor_StartScript(clod, gTaopoSwamp_TremorPillarScript);
+      Actor_SetSpriteFlags(clod, 0);
+      clod->velocityY = (angle << 2) + toFIXED(2);
+      cosine = Trig_Cos(angle);
+      mul = Iwram_MulFX;
+      speed <<= 3;
+      clod->velocityZ = mul(speed, cosine);
+      clod->velocityX = mul(speed, Math_Sin(angle));
+      clod->acceleration = 0;
+      clod->gravity = 0x547a;
+      clod->scaleX = scale;
+      clod->scaleY = scale;
+      clod->bounce = FIXED_ONE / 2;
+    }
+  } while (--i >= 0);
   FieldMapGrid_WaitForShakeToSettle();
   Task_AddFrame(TaopoSwamp_OpenPassage, TASK_PASS_VBLANK);
   System_Wait(40);
@@ -850,28 +916,26 @@ next:
   FieldCamera_MoveTo(336, CAMERA_KEEP, 280, 1);
   i = 11;
   row = 114;
-drain:
-  MapGrid_CopyCells(50, row, 13, 5, 18, 15);
-  System_Wait(8);
-  row -= 5;
-  i--;
-  if (i > 0)
-    goto drain;
+  do {
+    MapGrid_CopyCells(50, row, 13, 5, 18, 15);
+    System_Wait(8);
+    row -= 5;
+  } while (--i > 0);
   Task_AddFrame(TaopoSwamp_PuffSteam, TASK_PASS_VBLANK);
   System_Wait(60);
   Task_AddFrame(TaopoSwamp_FlickerPool, TASK_PASS_VBLANK);
   System_Wait(24);
   FieldEvent_Wait(120);
   Event_End();
-  Event_SetFlag(FLAG_AREA_TEMP_30);
+  Event_SetFlag(FLAG_TAOPO_SWAMP_PASSAGE_OPEN);
 }
 
 /// Douse on the red rock in the lower left corner, actor 8, on the way to the
 /// Vial's chest.
 void TaopoSwamp_CoolChestRock(s32 a, s32 id) {
   Actor_SetAnimation(id, 2);
-  Event_SetFlag(FLAG_AREA_TEMP_38);
-  Event_ClearFlag(FLAG_AREA_TEMP_39);
+  Event_SetFlag(FLAG_TAOPO_SWAMP_CHEST_ROCK_COOLED);
+  Event_ClearFlag(FLAG_TAOPO_SWAMP_CHEST_ROCK_UNMOVABLE);
 }
 
 /// Move on the cooled rock at cell z 21: it sinks into the lava.
@@ -882,8 +946,8 @@ void TaopoSwamp_PushChestRockIn(s32 a, s32 id) {
     Actor_SetAnimation(id, 3);
     object->collisionFlags = 0;
     object->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
-    Event_SetFlag(FLAG_AREA_TEMP_39);
-    Event_SetFlag(FLAG_AREA_TEMP_3A);
+    Event_SetFlag(FLAG_TAOPO_SWAMP_CHEST_ROCK_UNMOVABLE);
+    Event_SetFlag(FLAG_TAOPO_SWAMP_CHEST_ROCK_SUNK);
     MapGrid_CopyCellAttributes(11, 19, 1, 1, 11, 21);
   }
 }
@@ -892,8 +956,8 @@ void TaopoSwamp_PushChestRockIn(s32 a, s32 id) {
 /// out.
 void TaopoSwamp_CoolExitRock(s32 a, s32 id) {
   Actor_SetAnimation(id, 2);
-  Event_SetFlag(FLAG_AREA_TEMP_3B);
-  Event_ClearFlag(FLAG_AREA_TEMP_3C);
+  Event_SetFlag(FLAG_TAOPO_SWAMP_EXIT_ROCK_COOLED);
+  Event_ClearFlag(FLAG_TAOPO_SWAMP_EXIT_ROCK_UNMOVABLE);
 }
 
 /// Move on the cooled rock at cell x 31: it slides two cells and sinks into the
@@ -905,8 +969,8 @@ void TaopoSwamp_PushExitRockIn(s32 a, s32 id) {
     Actor_SetAnimation(id, 3);
     object->collisionFlags = 0;
     object->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
-    Event_SetFlag(FLAG_AREA_TEMP_3C);
-    Event_SetFlag(FLAG_AREA_TEMP_3D);
+    Event_SetFlag(FLAG_TAOPO_SWAMP_EXIT_ROCK_UNMOVABLE);
+    Event_SetFlag(FLAG_TAOPO_SWAMP_EXIT_ROCK_SUNK);
     Actor_SetSpeed(id, 0.5);
     Actor_SetDestinationOffset(id, 0, -32);
     FieldActor_WaitForMoveById(id);
@@ -916,6 +980,7 @@ void TaopoSwamp_PushExitRockIn(s32 a, s32 id) {
 }
 
 #if TLA_PATCH_1 /* Absent from the Japanese edition. */
+/// The leader jumps across to the next rock if there is ground to land on.
 void TaopoSwamp_JumpForward(void) { Field_TryJumpForward(); }
 #endif
 
@@ -923,8 +988,8 @@ void TaopoSwamp_JumpForward(void) { Field_TryJumpForward(); }
 /// out and Move can push it aside.
 void TaopoSwamp_CoolDarkRock(s32 a, s32 id) {
   Actor_SetAnimation(id, 2);
-  Event_SetFlag(FLAG_AREA_TEMP_40);
-  Event_ClearFlag(FLAG_AREA_TEMP_41);
+  Event_SetFlag(FLAG_TAOPO_SWAMP_DARK_ROCK_COOLED);
+  Event_ClearFlag(FLAG_TAOPO_SWAMP_DARK_ROCK_UNMOVABLE);
   MapGrid_CopyCellAttributes(7, 39, 1, 1, 7, 38);
   TaopoSwamp_DarkenRoom(1);
 }
@@ -933,16 +998,19 @@ void TaopoSwamp_CoolDarkRock(s32 a, s32 id) {
 /// and the Star Dust's sparkle shows in the dark.
 void TaopoSwamp_CoolLastRock(s32 a, s32 id) {
   Actor_SetAnimation(id, 2);
-  Event_SetFlag(FLAG_AREA_TEMP_42);
-  Event_ClearFlag(FLAG_AREA_TEMP_43);
+  Event_SetFlag(FLAG_TAOPO_SWAMP_LAST_ROCK_COOLED);
+  Event_ClearFlag(FLAG_TAOPO_SWAMP_LAST_ROCK_UNMOVABLE);
   TaopoSwamp_DarkenRoom(1);
 }
 
-/// Scoop on the sparkle in the dark chamber digs up the Star Dust (flag 0x348).
+/// Scoop on the sparkle in the dark chamber digs up the Star Dust
+/// (FLAG_TAOPO_SWAMP_STAR_DUST_DUG_UP).
 void TaopoSwamp_ScoopStarDust(s32 a) {
   Event_DigUpTreasure(a, 64, FLAG_TAOPO_SWAMP_STAR_DUST_DUG_UP);
 }
 
+/// Searching the Star Dust's sparkle before it is dug up: "I thought I saw
+/// something sparkling in the ground!"
 void TaopoSwamp_ShowSparkleMessage(void) {
   TaopoSwamp_ShowMessage((s32)&MsgIThoughtI);
 }
@@ -957,7 +1025,7 @@ extern struct Trigger gTaopoSwampPoolTriggers[];
 extern struct Trigger gTaopoSwampPillarGapTriggers[];
 extern struct Trigger gTaopoSwampDripsTriggers[];
 extern struct Trigger gTaopoSwampTremorTriggers[];
-extern s32 gTaopoSwampLavaRocksTriggers[];
+extern struct Trigger gTaopoSwampLavaRocksTriggers[];
 extern struct Trigger gTaopoSwampStarDustTriggers[];
 
 const struct Trigger *Scene_GetTriggers(void) {
@@ -980,7 +1048,7 @@ const struct Trigger *Scene_GetTriggers(void) {
   if (scene == SCENE_TAOPO_SWAMP_DRIPS)
     return (const struct Trigger *)gTaopoSwampDripsTriggers;
   if (scene == SCENE_TAOPO_SWAMP_LAVA_ROCKS)
-    return (const struct Trigger *)gTaopoSwampLavaRocksTriggers;
+    return gTaopoSwampLavaRocksTriggers;
   if (scene == SCENE_TAOPO_SWAMP_TREMOR)
     return (const struct Trigger *)gTaopoSwampTremorTriggers;
   if (scene == SCENE_TAOPO_SWAMP_STAR_DUST)
@@ -995,7 +1063,7 @@ s32 TaopoSwamp_LandDrop(struct Actor *object) {
   FIXED scale;
 
   if (y + object->velocityY < object->groundHeight) {
-    spark = TaopoSwamp_CreateActor(0x10d, object->x.fixed, y, object->z.fixed);
+    spark = TaopoSwamp_CreateActor(269, object->x.fixed, y, object->z.fixed);
     scale = FIXED_ONE * 55 / 100;
     if (spark) {
       spark->scaleX = scale;
@@ -1018,7 +1086,7 @@ void TaopoSwamp_DripAtRandom(void) {
     s32 x = (Random16() << 5) + 0x2080000;
     s32 z = 0xb00000 - (Random16() << 3);
     FIXED y = toFIXED(160);
-    struct Actor *object = FieldActor_Create(0x12d, x, y, z);
+    struct Actor *object = FieldActor_Create(SPRITE_DROPLET, x, y, z);
     FIXED scale = FIXED_ONE * 33 / 100;
 
     if (object != NULL) {
@@ -1073,7 +1141,8 @@ void TaopoSwamp_CycleDjinniVents(void) {
   }
   if ((u32)(timer - 251) <= 178 &&
       Event_GetFlag(FLAG_TAOPO_SWAMP_EAST_PILLAR_OVER_VENT) &&
-      !Event_GetFlag(59) && !Event_GetFlag(FLAG_AREA_TEMP_10))
+      !Event_GetFlag(FLAG_DJINNI(DJINNI_FLOWER)) &&
+      !Event_GetFlag(FLAG_TAOPO_SWAMP_FLOWER_OFF_LEDGE))
     gFieldWork->raisedTrigger = 100;
   Vents_AdvanceCounter(480);
 }
@@ -1096,9 +1165,9 @@ void TaopoSwamp_CycleSpotVent(void) {
     break;
   }
   if ((u32)(timer - 11) <= 118) {
-    if (Event_GetFlag(FLAG_SCENE_TEMP_21))
+    if (Event_GetFlag(FLAG_TAOPO_SWAMP_SPOT_FROZEN))
       TaopoSwamp_ShatterIcePillar(8);
-    else if (Event_GetFlag(FLAG_SCENE_TEMP_20))
+    else if (Event_GetFlag(FLAG_TAOPO_SWAMP_SPOT_WET))
       TaopoSwamp_BlowAwayPuddle(8);
   }
   Vents_AdvanceCounter(480);
@@ -1121,10 +1190,10 @@ void TaopoSwamp_CycleDripVent(void) {
     break;
   }
   if ((u32)(timer - 11) <= 118) {
-    if (Event_GetFlag(FLAG_SCENE_TEMP_21))
-      TaopoSwamp_ShatterDripIcePillar(10);
-    else if (Event_GetFlag(FLAG_SCENE_TEMP_20))
-      TaopoSwamp_BlowAwayDripPuddle(10);
+    if (Event_GetFlag(FLAG_TAOPO_SWAMP_SPOT_FROZEN))
+      TaopoSwamp_ShatterDripIcePillar(ACTOR_DRIP_PUDDLE);
+    else if (Event_GetFlag(FLAG_TAOPO_SWAMP_SPOT_WET))
+      TaopoSwamp_BlowAwayDripPuddle(ACTOR_DRIP_PUDDLE);
   }
   Vents_AdvanceCounter(480);
 }
@@ -1156,12 +1225,12 @@ s32 TaopoSwamp_LandDrip(struct Actor *object) {
   FIXED scale;
 
   if (object->y.fixed + object->velocityY < object->groundHeight) {
-    flag = Event_GetFlag(FLAG_SCENE_TEMP_21);
+    flag = Event_GetFlag(FLAG_TAOPO_SWAMP_SPOT_FROZEN);
     if (flag) {
       Event_PlaySound(SE_DRIP);
       return 0;
     }
-    spark = TaopoSwamp_CreateActor(0x10d, object->x.fixed, object->y.fixed,
+    spark = TaopoSwamp_CreateActor(269, object->x.fixed, object->y.fixed,
                                    object->z.fixed);
     scale = FIXED_ONE * 55 / 100;
     if (spark) {
@@ -1175,13 +1244,13 @@ s32 TaopoSwamp_LandDrip(struct Actor *object) {
     object->y.fixed = object->groundHeight;
     object->velocityY = 0;
     if (Event_GetFlag(FLAG_FIELD_HANDLING_REQUESTS) == 0) {
-      count = FieldGameFlag_GetByte(0x230);
+      count = FieldGameFlag_GetByte(FLAG_BYTE_TAOPO_SWAMP_DROPS_CAUGHT);
       if (count <= 3) {
         count++;
-        GameFlag_SetByte(0x230, count);
+        GameFlag_SetByte(FLAG_BYTE_TAOPO_SWAMP_DROPS_CAUGHT, count);
       }
       if (count != 0)
-        TaopoSwamp_FillDripSpot(0, 10);
+        TaopoSwamp_FillDripSpot(0, ACTOR_DRIP_PUDDLE);
       object = Actor_Get(ACTOR_DRIP_PUDDLE);
       object->scaleX = count << 14;
       object->scaleY = count << 14;
@@ -1197,7 +1266,7 @@ void TaopoSwamp_DripFromCeiling(void) {
     FIXED x = toFIXED(408);
     FIXED z = toFIXED(440);
     FIXED y = toFIXED(160);
-    struct Actor *object = FieldActor_Create(0x12d, x, y, z);
+    struct Actor *object = FieldActor_Create(SPRITE_DROPLET, x, y, z);
     FIXED scale = FIXED_ONE * 33 / 100;
 
     if (object != NULL) {
@@ -1225,7 +1294,7 @@ s32 TaopoSwamp_IsDropFalling(struct Actor *object) {
       s32 x = offset + n1;                                                     \
       s32 z = n2 - offset;                                                     \
       s32 y = toFIXED(160);                                                    \
-      struct Actor *object = FieldActor_Create(0x12d, x, y, z);                \
+      struct Actor *object = FieldActor_Create(SPRITE_DROPLET, x, y, z);       \
       s32 scale = FIXED_ONE * 33 / 100;                                        \
                                                                                \
       if (object != NULL) {                                                    \
@@ -1244,11 +1313,11 @@ DEFINE_DRIP_AT_RANDOM(TaopoSwamp_DripInPillarGap, 0x1800000, 0x1900000)
 
 DEFINE_DRIP_AT_RANDOM(TaopoSwamp_DripInDripRoom, 0x1a00000, 0x1600000)
 
-extern u8 gTaopoSwampVentsVents[];
-extern u8 gTaopoSwampVentsVentPair[];
-extern u8 gTaopoSwampPillarGapVents[];
-extern u8 gTaopoSwampDripsVents[];
-extern u8 gTaopoSwamp_RockRoomVents[];
+extern u16 gTaopoSwampVentsVents[];
+extern u16 gTaopoSwampVentsVentPair[];
+extern u16 gTaopoSwampPillarGapVents[];
+extern u16 gTaopoSwampDripsVents[];
+extern u16 gTaopoSwamp_RockRoomVents[];
 void TaopoSwamp_ResetMud(void);
 void Actor_SetWideSprite(s32 id, s32 wide);
 void TaopoSwamp_StartVents(u16 *points, u16 *values, s32 arg);
@@ -1256,7 +1325,7 @@ void TaopoSwamp_StartVents(u16 *points, u16 *values, s32 arg);
 #if !TLA_PATCH_1
 s32 Scene_Initialize(void) {
   s32 scene = gMainRoutineWork.next;
-  u8 *map = (u8 *)Ram_HeapSlots->mapGrid;
+  struct MapWork *map = Ram_HeapSlots->mapGrid;
   struct Actor *object, *dummy, *piece;
   s32 id, entrance;
 
@@ -1273,7 +1342,7 @@ s32 Scene_Initialize(void) {
     }
     Actor_SetSpritePriority(ACTOR_MUD_SPROUT, 3);
     Actor_GetById(ACTOR_MUD_SPROUT)->collisionFlags = 0;
-    if (Event_GetFlag(FLAG_SCENE_TEMP_20))
+    if (Event_GetFlag(FLAG_TAOPO_SWAMP_VINE_GROWN))
       MapGrid_CopyCellAttributes(50, 16, 1, 2, 47, 16);
     dummy = Actor_GetById(ACTOR_MUD_STUMP);
     if (dummy != 0) {
@@ -1282,20 +1351,20 @@ s32 Scene_Initialize(void) {
       dummy->motionFlags = 0;
     }
     Task_Add(TaopoSwamp_DripAtRandom, TASK_PASS_VBLANK);
-    ((s8 *)map)[23] = (((s8 *)map)[23] & ~12) | 8;
+    ((struct MapWorkGroundEffects *)map)->wading = MAP_WADING_MUD;
     gDecodeFillByte = 93;
   } else if (scene == SCENE_TAOPO_SWAMP_TEAR_STONES) {
-    if (!Event_GetFlag(FLAG_AREA_TEMP_00))
-      Actor_SetWideSprite(64, 1);
-    if (!Event_GetFlag(FLAG_AREA_TEMP_01))
-      Actor_SetWideSprite(65, 1);
+    if (!Event_GetFlag(FLAG_TAOPO_SWAMP_TREASURE_DUG_UP(0)))
+      Actor_SetWideSprite(FIELD_TREASURE_ACTOR, 1);
+    if (!Event_GetFlag(FLAG_TAOPO_SWAMP_TREASURE_DUG_UP(1)))
+      Actor_SetWideSprite(FIELD_TREASURE_ACTOR + 1, 1);
   } else if (scene == SCENE_TAOPO_SWAMP_FLOWER) {
     FieldEffect_StartBlankOverlay(0);
-    if (!Event_GetFlag(FLAG_AREA_TEMP_10))
+    if (!Event_GetFlag(FLAG_TAOPO_SWAMP_FLOWER_OFF_LEDGE))
       Actor_SetPosition(ACTOR_FLOWER, 0, 0);
   } else if (scene == SCENE_TAOPO_SWAMP_VENTS) {
     FieldEffect_StartBlankOverlay(0);
-    if (Event_GetFlag(FLAG_AREA_TEMP_10))
+    if (Event_GetFlag(FLAG_TAOPO_SWAMP_FLOWER_OFF_LEDGE))
       Actor_SetPosition(ACTOR_FLOWER, 0, 0);
     if (Event_GetFlag(FLAG_TAOPO_SWAMP_WEST_PILLAR_OVER_VENT))
       Actor_SetPosition(ACTOR_WEST_VENT_PILLAR, 280, 232);
@@ -1312,14 +1381,14 @@ s32 Scene_Initialize(void) {
     piece = Actor_GetById(ACTOR_GAP_PUDDLE);
     piece->motionFlags = 0;
     Actor_SetSpriteFlags(piece, 0);
-    if (Event_GetFlag(FLAG_SCENE_TEMP_21)) {
+    if (Event_GetFlag(FLAG_TAOPO_SWAMP_SPOT_FROZEN)) {
       MapGrid_CopyCellAttributes(28, 8, 1, 1, 26, 8);
       Actor_SelectAnimation(piece, 0);
     } else {
       MapGrid_CopyCellAttributes(22, 8, 1, 1, 26, 8);
       Actor_SetSpritePriority(ACTOR_GAP_PUDDLE, 3);
       piece->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
-      if (!Event_GetFlag(FLAG_SCENE_TEMP_20))
+      if (!Event_GetFlag(FLAG_TAOPO_SWAMP_SPOT_WET))
         Actor_SelectAnimation(piece, 7);
     }
     piece = Actor_GetById(ACTOR_GAP_PILLAR);
@@ -1345,12 +1414,12 @@ s32 Scene_Initialize(void) {
       object = Actor_GetById(ACTOR_DRIP_PUDDLE);
       object->motionFlags = 0;
       Actor_SetSpriteFlags(object, 0);
-      if (Event_GetFlag(FLAG_SCENE_TEMP_21)) {
+      if (Event_GetFlag(FLAG_TAOPO_SWAMP_SPOT_FROZEN)) {
         Actor_SelectAnimation(object, 0);
       } else {
         Actor_SetSpritePriority(ACTOR_DRIP_PUDDLE, 3);
         object->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
-        if (!Event_GetFlag(FLAG_SCENE_TEMP_20))
+        if (!Event_GetFlag(FLAG_TAOPO_SWAMP_SPOT_WET))
           Actor_SelectAnimation(object, 7);
       }
       MapGrid_CopyCells(50, 36, 13, 13, 60, 5);
@@ -1358,9 +1427,9 @@ s32 Scene_Initialize(void) {
   } else if (scene == SCENE_TAOPO_SWAMP_LAVA_ROCKS) {
     TaopoSwamp_StartVents(gTaopoSwamp_RockRoomVents, 0,
                           TaopoSwamp_CycleRockRoomVents);
-    if (!Event_GetFlag(FLAG_AREA_TEMP_38)) {
-      Event_SetFlag(FLAG_AREA_TEMP_39);
-    } else if (Event_GetFlag(FLAG_AREA_TEMP_3A)) {
+    if (!Event_GetFlag(FLAG_TAOPO_SWAMP_CHEST_ROCK_COOLED)) {
+      Event_SetFlag(FLAG_TAOPO_SWAMP_CHEST_ROCK_UNMOVABLE);
+    } else if (Event_GetFlag(FLAG_TAOPO_SWAMP_CHEST_ROCK_SUNK)) {
       Actor_SetAnimation(ACTOR_CHEST_ROCK, 3);
       Actor_SetPosition(ACTOR_CHEST_ROCK, 184, 344);
       Actor_GetById(ACTOR_CHEST_ROCK)->collisionFlags = 0;
@@ -1369,9 +1438,9 @@ s32 Scene_Initialize(void) {
       Actor_SetSpritePriority(ACTOR_CHEST_ROCK, 3);
       MapGrid_CopyCellAttributes(11, 19, 1, 1, 11, 21);
     }
-    if (!Event_GetFlag(FLAG_AREA_TEMP_3B)) {
-      Event_SetFlag(FLAG_AREA_TEMP_3C);
-    } else if (Event_GetFlag(FLAG_AREA_TEMP_3D)) {
+    if (!Event_GetFlag(FLAG_TAOPO_SWAMP_EXIT_ROCK_COOLED)) {
+      Event_SetFlag(FLAG_TAOPO_SWAMP_EXIT_ROCK_UNMOVABLE);
+    } else if (Event_GetFlag(FLAG_TAOPO_SWAMP_EXIT_ROCK_SUNK)) {
       Actor_SetAnimation(ACTOR_EXIT_ROCK, 3);
       Actor_SetPosition(ACTOR_EXIT_ROCK, 504, 184);
       Actor_GetById(ACTOR_EXIT_ROCK)->collisionFlags = 0;
@@ -1380,7 +1449,7 @@ s32 Scene_Initialize(void) {
     }
   } else if (scene == SCENE_TAOPO_SWAMP_TREMOR) {
     piece = Actor_GetById(ACTOR_TREMOR_BOULDER);
-    if (Event_GetFlag(FLAG_AREA_TEMP_30)) {
+    if (Event_GetFlag(FLAG_TAOPO_SWAMP_PASSAGE_OPEN)) {
       Actor_SetPosition(ACTOR_TREMOR_BOULDER, 480, 248);
       if (!Event_GetFlag(FLAG_KEEP_PARTY_POSITION))
         Actor_SetPosition(ACTOR_TREMOR_PILLAR_ROCK, 440, 232);
@@ -1390,9 +1459,9 @@ s32 Scene_Initialize(void) {
       piece->motionFlags = 0;
       piece->y.fixed = toFIXED(32);
     }
-    if (!Event_GetFlag(FLAG_AREA_TEMP_31)) {
-      Event_SetFlag(FLAG_AREA_TEMP_32);
-    } else if (Event_GetFlag(FLAG_AREA_TEMP_33)) {
+    if (!Event_GetFlag(FLAG_TAOPO_SWAMP_TREMOR_LAVA_ROCK_COOLED)) {
+      Event_SetFlag(FLAG_TAOPO_SWAMP_TREMOR_LAVA_ROCK_UNMOVABLE);
+    } else if (Event_GetFlag(FLAG_TAOPO_SWAMP_TREMOR_LAVA_ROCK_SUNK)) {
       Actor_SetAnimation(ACTOR_TREMOR_LAVA_ROCK, 3);
       Actor_SetPosition(ACTOR_TREMOR_LAVA_ROCK, 120, 248);
       Actor_GetById(ACTOR_TREMOR_LAVA_ROCK)->collisionFlags = 0;
@@ -1402,11 +1471,11 @@ s32 Scene_Initialize(void) {
     } else {
       Actor_SetAnimation(ACTOR_TREMOR_LAVA_ROCK, 0);
     }
-    if (!Event_GetFlag(FLAG_AREA_TEMP_34)) {
-      Event_SetFlag(FLAG_AREA_TEMP_35);
+    if (!Event_GetFlag(FLAG_TAOPO_SWAMP_PILLAR_ROCK_COOLED)) {
+      Event_SetFlag(FLAG_TAOPO_SWAMP_PILLAR_ROCK_UNMOVABLE);
     } else {
       MapGrid_CopyCellAttributes(27, 14, 1, 1, 27, 13);
-      if (Event_GetFlag(FLAG_AREA_TEMP_36)) {
+      if (Event_GetFlag(FLAG_TAOPO_SWAMP_PILLAR_ROCK_SUNK)) {
         Actor_SetAnimation(ACTOR_TREMOR_PILLAR_ROCK, 3);
         Actor_SetPosition(ACTOR_TREMOR_PILLAR_ROCK, 408, 264);
         Actor_GetById(ACTOR_TREMOR_PILLAR_ROCK)->collisionFlags = 0;
@@ -1418,27 +1487,27 @@ s32 Scene_Initialize(void) {
       }
     }
   } else if (scene == SCENE_TAOPO_SWAMP_STAR_DUST) {
-    if (!Event_GetFlag(FLAG_AREA_TEMP_40)) {
-      Event_SetFlag(FLAG_AREA_TEMP_41);
+    if (!Event_GetFlag(FLAG_TAOPO_SWAMP_DARK_ROCK_COOLED)) {
+      Event_SetFlag(FLAG_TAOPO_SWAMP_DARK_ROCK_UNMOVABLE);
     } else {
       Actor_SetAnimation(ACTOR_DARK_ROCK, 0);
       MapGrid_CopyCellAttributes(7, 39, 1, 1, 7, 38);
     }
-    if (!Event_GetFlag(FLAG_AREA_TEMP_42))
-      Event_SetFlag(FLAG_AREA_TEMP_43);
+    if (!Event_GetFlag(FLAG_TAOPO_SWAMP_LAST_ROCK_COOLED))
+      Event_SetFlag(FLAG_TAOPO_SWAMP_LAST_ROCK_UNMOVABLE);
     else
       Actor_SetAnimation(ACTOR_LAST_ROCK, 0);
-    if (!Event_GetFlag(FLAG_AREA_TEMP_48))
-      Actor_SetWideSprite(64, 0);
+    if (!Event_GetFlag(FLAG_TAOPO_SWAMP_STAR_DUST_DUG_UP))
+      Actor_SetWideSprite(FIELD_TREASURE_ACTOR, 0);
     entrance = gMainRoutineWork.entrance;
     if ((u32)(entrance - 2) <= 1) {
-      if (Event_GetFlag(FLAG_AREA_TEMP_40))
+      if (Event_GetFlag(FLAG_TAOPO_SWAMP_DARK_ROCK_COOLED))
         TaopoSwamp_DarkenRoom(0);
       else
         TaopoSwamp_FocusMapMiddle(0);
     }
     if (entrance == 6) {
-      if (Event_GetFlag(FLAG_AREA_TEMP_42))
+      if (Event_GetFlag(FLAG_TAOPO_SWAMP_LAST_ROCK_COOLED))
         TaopoSwamp_DarkenRoom(0);
       else
         TaopoSwamp_FocusMapMiddle(0);
@@ -1451,7 +1520,7 @@ s32 Scene_Initialize(void) {
 #else
 s32 Scene_Initialize(void) {
   s32 scene = gMainRoutineWork.next;
-  u8 *map = (u8 *)Ram_HeapSlots->mapGrid;
+  struct MapWork *map = Ram_HeapSlots->mapGrid;
   s32 *effect = &gFieldWork->transition;
   struct Actor *object, *dummy, *piece;
   s32 id, entrance;
@@ -1469,7 +1538,7 @@ s32 Scene_Initialize(void) {
     }
     Actor_SetSpritePriority(ACTOR_MUD_SPROUT, 3);
     Actor_GetById(ACTOR_MUD_SPROUT)->collisionFlags = 0;
-    if (Event_GetFlag(FLAG_SCENE_TEMP_20))
+    if (Event_GetFlag(FLAG_TAOPO_SWAMP_SPOT_WET))
       MapGrid_CopyCellAttributes(50, 16, 1, 2, 47, 16);
     dummy = Actor_GetById(ACTOR_MUD_STUMP);
     if (dummy != 0) {
@@ -1478,23 +1547,23 @@ s32 Scene_Initialize(void) {
       dummy->motionFlags = 0;
     }
     Task_Add(TaopoSwamp_DripAtRandom, TASK_PASS_VBLANK);
-    ((s8 *)map)[23] = (((s8 *)map)[23] & ~12) | 8;
+    ((struct MapWorkGroundEffects *)map)->wading = MAP_WADING_MUD;
     gDecodeFillByte = 93;
   } else if (scene == SCENE_TAOPO_SWAMP_TEAR_STONES) {
     *effect = 516;
-    if (!Event_GetFlag(FLAG_AREA_TEMP_00))
-      Actor_SetWideSprite(64, 1);
-    if (!Event_GetFlag(FLAG_AREA_TEMP_01))
-      Actor_SetWideSprite(65, 1);
+    if (!Event_GetFlag(FLAG_TAOPO_SWAMP_TREASURE_DUG_UP(0)))
+      Actor_SetWideSprite(FIELD_TREASURE_ACTOR, 1);
+    if (!Event_GetFlag(FLAG_TAOPO_SWAMP_TREASURE_DUG_UP(1)))
+      Actor_SetWideSprite(FIELD_TREASURE_ACTOR + 1, 1);
   } else if (scene == SCENE_TAOPO_SWAMP_FLOWER) {
     *effect = 516;
     FieldEffect_StartBlankOverlay(0);
-    if (!Event_GetFlag(FLAG_AREA_TEMP_10))
+    if (!Event_GetFlag(FLAG_TAOPO_SWAMP_FLOWER_OFF_LEDGE))
       Actor_SetPosition(ACTOR_FLOWER, 0, 0);
   } else if (scene == SCENE_TAOPO_SWAMP_VENTS) {
     *effect = 516;
     FieldEffect_StartBlankOverlay(0);
-    if (Event_GetFlag(FLAG_AREA_TEMP_10))
+    if (Event_GetFlag(FLAG_TAOPO_SWAMP_FLOWER_OFF_LEDGE))
       Actor_SetPosition(ACTOR_FLOWER, 0, 0);
     if (Event_GetFlag(FLAG_TAOPO_SWAMP_WEST_PILLAR_OVER_VENT))
       Actor_SetPosition(ACTOR_WEST_VENT_PILLAR, 280, 232);
@@ -1514,14 +1583,14 @@ s32 Scene_Initialize(void) {
     piece = Actor_GetById(ACTOR_GAP_PUDDLE);
     piece->motionFlags = 0;
     Actor_SetSpriteFlags(piece, 0);
-    if (Event_GetFlag(FLAG_SCENE_TEMP_21)) {
+    if (Event_GetFlag(FLAG_TAOPO_SWAMP_SPOT_FROZEN)) {
       MapGrid_CopyCellAttributes(28, 8, 1, 1, 26, 8);
       Actor_SelectAnimation(piece, 0);
     } else {
       MapGrid_CopyCellAttributes(22, 8, 1, 1, 26, 8);
       Actor_SetSpritePriority(ACTOR_GAP_PUDDLE, 3);
       piece->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
-      if (!Event_GetFlag(FLAG_SCENE_TEMP_20))
+      if (!Event_GetFlag(FLAG_TAOPO_SWAMP_SPOT_WET))
         Actor_SelectAnimation(piece, 7);
     }
     piece = Actor_GetById(ACTOR_GAP_PILLAR);
@@ -1548,12 +1617,12 @@ s32 Scene_Initialize(void) {
       object = Actor_GetById(ACTOR_DRIP_PUDDLE);
       object->motionFlags = 0;
       Actor_SetSpriteFlags(object, 0);
-      if (Event_GetFlag(FLAG_SCENE_TEMP_21)) {
+      if (Event_GetFlag(FLAG_TAOPO_SWAMP_SPOT_FROZEN)) {
         Actor_SelectAnimation(object, 0);
       } else {
         Actor_SetSpritePriority(ACTOR_DRIP_PUDDLE, 3);
         object->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
-        if (!Event_GetFlag(FLAG_SCENE_TEMP_20))
+        if (!Event_GetFlag(FLAG_TAOPO_SWAMP_SPOT_WET))
           Actor_SelectAnimation(object, 7);
       }
       MapGrid_CopyCells(50, 36, 13, 13, 60, 5);
@@ -1562,9 +1631,9 @@ s32 Scene_Initialize(void) {
     *effect = 516;
     TaopoSwamp_StartVents(gTaopoSwamp_RockRoomVents, 0,
                           TaopoSwamp_CycleRockRoomVents);
-    if (!Event_GetFlag(FLAG_AREA_TEMP_38)) {
-      Event_SetFlag(FLAG_AREA_TEMP_39);
-    } else if (Event_GetFlag(FLAG_AREA_TEMP_3A)) {
+    if (!Event_GetFlag(FLAG_TAOPO_SWAMP_CHEST_ROCK_COOLED)) {
+      Event_SetFlag(FLAG_TAOPO_SWAMP_CHEST_ROCK_UNMOVABLE);
+    } else if (Event_GetFlag(FLAG_TAOPO_SWAMP_CHEST_ROCK_SUNK)) {
       Actor_SetAnimation(ACTOR_CHEST_ROCK, 3);
       Actor_SetPosition(ACTOR_CHEST_ROCK, 184, 344);
       Actor_GetById(ACTOR_CHEST_ROCK)->collisionFlags = 0;
@@ -1573,9 +1642,9 @@ s32 Scene_Initialize(void) {
       Actor_SetSpritePriority(ACTOR_CHEST_ROCK, 3);
       MapGrid_CopyCellAttributes(11, 19, 1, 1, 11, 21);
     }
-    if (!Event_GetFlag(FLAG_AREA_TEMP_3B)) {
-      Event_SetFlag(FLAG_AREA_TEMP_3C);
-    } else if (Event_GetFlag(FLAG_AREA_TEMP_3D)) {
+    if (!Event_GetFlag(FLAG_TAOPO_SWAMP_EXIT_ROCK_COOLED)) {
+      Event_SetFlag(FLAG_TAOPO_SWAMP_EXIT_ROCK_UNMOVABLE);
+    } else if (Event_GetFlag(FLAG_TAOPO_SWAMP_EXIT_ROCK_SUNK)) {
       Actor_SetAnimation(ACTOR_EXIT_ROCK, 3);
       Actor_SetPosition(ACTOR_EXIT_ROCK, 504, 184);
       Actor_GetById(ACTOR_EXIT_ROCK)->collisionFlags = 0;
@@ -1585,7 +1654,7 @@ s32 Scene_Initialize(void) {
   } else if (scene == SCENE_TAOPO_SWAMP_TREMOR) {
     *effect = 516;
     piece = Actor_GetById(ACTOR_TREMOR_BOULDER);
-    if (Event_GetFlag(FLAG_AREA_TEMP_30)) {
+    if (Event_GetFlag(FLAG_TAOPO_SWAMP_PASSAGE_OPEN)) {
       Actor_SetPosition(ACTOR_TREMOR_BOULDER, 480, 248);
       if (!Event_GetFlag(FLAG_KEEP_PARTY_POSITION))
         Actor_SetPosition(ACTOR_TREMOR_PILLAR_ROCK, 440, 232);
@@ -1595,9 +1664,9 @@ s32 Scene_Initialize(void) {
       piece->motionFlags = 0;
       piece->y.fixed = toFIXED(32);
     }
-    if (!Event_GetFlag(FLAG_AREA_TEMP_31)) {
-      Event_SetFlag(FLAG_AREA_TEMP_32);
-    } else if (Event_GetFlag(FLAG_AREA_TEMP_33)) {
+    if (!Event_GetFlag(FLAG_TAOPO_SWAMP_TREMOR_LAVA_ROCK_COOLED)) {
+      Event_SetFlag(FLAG_TAOPO_SWAMP_TREMOR_LAVA_ROCK_UNMOVABLE);
+    } else if (Event_GetFlag(FLAG_TAOPO_SWAMP_TREMOR_LAVA_ROCK_SUNK)) {
       Actor_SetAnimation(ACTOR_TREMOR_LAVA_ROCK, 3);
       Actor_SetPosition(ACTOR_TREMOR_LAVA_ROCK, 120, 248);
       Actor_GetById(ACTOR_TREMOR_LAVA_ROCK)->collisionFlags = 0;
@@ -1607,11 +1676,11 @@ s32 Scene_Initialize(void) {
     } else {
       Actor_SetAnimation(ACTOR_TREMOR_LAVA_ROCK, 0);
     }
-    if (!Event_GetFlag(FLAG_AREA_TEMP_34)) {
-      Event_SetFlag(FLAG_AREA_TEMP_35);
+    if (!Event_GetFlag(FLAG_TAOPO_SWAMP_PILLAR_ROCK_COOLED)) {
+      Event_SetFlag(FLAG_TAOPO_SWAMP_PILLAR_ROCK_UNMOVABLE);
     } else {
       MapGrid_CopyCellAttributes(27, 14, 1, 1, 27, 13);
-      if (Event_GetFlag(FLAG_AREA_TEMP_36)) {
+      if (Event_GetFlag(FLAG_TAOPO_SWAMP_PILLAR_ROCK_SUNK)) {
         Actor_SetAnimation(ACTOR_TREMOR_PILLAR_ROCK, 3);
         Actor_SetPosition(ACTOR_TREMOR_PILLAR_ROCK, 408, 264);
         Actor_GetById(ACTOR_TREMOR_PILLAR_ROCK)->collisionFlags = 0;
@@ -1624,27 +1693,27 @@ s32 Scene_Initialize(void) {
     }
   } else if (scene == SCENE_TAOPO_SWAMP_STAR_DUST) {
     *effect = 516;
-    if (!Event_GetFlag(FLAG_AREA_TEMP_40)) {
-      Event_SetFlag(FLAG_AREA_TEMP_41);
+    if (!Event_GetFlag(FLAG_TAOPO_SWAMP_DARK_ROCK_COOLED)) {
+      Event_SetFlag(FLAG_TAOPO_SWAMP_DARK_ROCK_UNMOVABLE);
     } else {
       Actor_SetAnimation(ACTOR_DARK_ROCK, 0);
       MapGrid_CopyCellAttributes(7, 39, 1, 1, 7, 38);
     }
-    if (!Event_GetFlag(FLAG_AREA_TEMP_42))
-      Event_SetFlag(FLAG_AREA_TEMP_43);
+    if (!Event_GetFlag(FLAG_TAOPO_SWAMP_LAST_ROCK_COOLED))
+      Event_SetFlag(FLAG_TAOPO_SWAMP_LAST_ROCK_UNMOVABLE);
     else
       Actor_SetAnimation(ACTOR_LAST_ROCK, 0);
-    if (!Event_GetFlag(FLAG_AREA_TEMP_48))
-      Actor_SetWideSprite(64, 0);
+    if (!Event_GetFlag(FLAG_TAOPO_SWAMP_STAR_DUST_DUG_UP))
+      Actor_SetWideSprite(FIELD_TREASURE_ACTOR, 0);
     entrance = gMainRoutineWork.entrance;
     if ((u32)(entrance - 2) <= 1) {
-      if (Event_GetFlag(FLAG_AREA_TEMP_40))
+      if (Event_GetFlag(FLAG_TAOPO_SWAMP_DARK_ROCK_COOLED))
         TaopoSwamp_DarkenRoom(0);
       else
         TaopoSwamp_FocusMapMiddle(0);
     }
     if (entrance == 6) {
-      if (Event_GetFlag(FLAG_AREA_TEMP_42))
+      if (Event_GetFlag(FLAG_TAOPO_SWAMP_LAST_ROCK_COOLED))
         TaopoSwamp_DarkenRoom(0);
       else
         TaopoSwamp_FocusMapMiddle(0);
@@ -1658,11 +1727,12 @@ s32 Scene_Initialize(void) {
 
 s32 Scene_PrepareMap(void) { return 0; }
 
-/// The Star Dust's sparkle in the dark, until it is dug up (flag 0x348).
+/// The Star Dust's sparkle in the dark, until it is dug up
+/// (FLAG_TAOPO_SWAMP_STAR_DUST_DUG_UP).
 void TaopoSwamp_TwinkleStarDust(void) {
   s32 frame = -1;
 
-  if (Event_GetFlag(FLAG_AREA_TEMP_48)) {
+  if (Event_GetFlag(FLAG_TAOPO_SWAMP_STAR_DUST_DUG_UP)) {
     frame = 62;
   } else {
     switch (gTaopoSwamp_SparkleFrame) {
@@ -1742,11 +1812,13 @@ void TaopoSwamp_DarkenRoom(s32 fade) {
 /// Points the map's followed point at cell (100, 100).
 void TaopoSwamp_FocusMapMiddle(void) { TaopoSwamp_FocusMapOn(100, 100); }
 
+/// Entering the mud room afresh (not returning from a menu or battle), the
+/// leader starts out of the mud.
 void TaopoSwamp_ResetMud(void) {
   struct SceneState *state = &gSceneState;
 
   if (Event_GetFlag(FLAG_KEEP_PARTY_POSITION) == 0)
-    Iwram_ClearWordsEntry(state, 12);
+    Iwram_ClearWordsEntry(state, sizeof(struct SceneState));
 }
 
 /// volatile: the VBlank handler sets the held keys, as gKeysHeld in The Broken
@@ -1869,9 +1941,10 @@ void TaopoSwamp_SaveFirmGround(void) {
 
 #include "shared/actor_start_scripted.h"
 
+/// A puff of dust from a vent at position, as its gust blows.
 void Vent_Puff(s32 *position, s32 base) {
-  struct Actor *object = TaopoSwamp_CreateActor(0x11d, position[0], position[1],
-                                                position[2] - toFIXED(2));
+  struct Actor *object = TaopoSwamp_CreateActor(
+      SPRITE_DUST_CLOUD, position[0], position[1], position[2] - toFIXED(2));
 
   if (object != 0) {
     object->bounce = Trig_Cos((Random_Below(0x3000)) + 0x3000);
@@ -1901,7 +1974,7 @@ void TaopoSwamp_StartVents(u16 *points, u16 *values, s32 arg) {
     s32 x;
     s32 i;
 
-    Iwram_ClearWordsEntry(work, 0x150);
+    Iwram_ClearWordsEntry(work, sizeof(struct VentWork));
     x = *points++;
     i = 0;
     while (x > 0) {
@@ -1924,16 +1997,14 @@ void TaopoSwamp_StartVents(u16 *points, u16 *values, s32 arg) {
       x = *values++;
       i = 0;
       if (x > 0) {
-      next_value:
-        work->ids[i++] = x;
-        if (i > 3)
-          goto values_done;
-        x = *values++;
-        if (x > 0)
-          goto next_value;
+        do {
+          work->ids[i++] = x;
+          if (i > 3)
+            break;
+          x = *values++;
+        } while (x > 0);
       }
     }
-  values_done:;
   }
   work->hook = (s32 (*)(void))arg;
   if (REG_BLDCNT == 0) {
@@ -1954,6 +2025,7 @@ void TaopoSwamp_StartVents(u16 *points, u16 *values, s32 arg) {
 #define VENT_AT(work, index)                                                   \
   ((struct VentWork *)((u8 *)(work) + (index) * sizeof(struct VentEntry)))
 
+/// Whether vent index is blowing now.
 s32 Vent_IsActive(s32 index) {
   struct VentWork *work;
 
@@ -1961,6 +2033,7 @@ s32 Vent_IsActive(s32 index) {
   return VENT_AT(work, index)->entries[0].active;
 }
 
+/// Starts or stops vent index's gust.
 void Vent_SetActive(s32 index, s32 active) {
   struct VentWork *work;
 
@@ -1973,9 +2046,10 @@ s32 Vents_GetCounter(void) { return VENT_WORK->counter; }
 
 #include "shared/vents_advance_counter.h"
 
-/// The accessors step the work pointer by whole entries and then take entry 0:
-/// the bytes add the base to index * 20 before the field offset.
+/// The accessors step the work pointer by whole entries and then take entry
+/// 0: the bytes add the base to index * 20 before the field offset.
 
+/// Sets the speed of vent index's gust, in 16.16 pixels a frame.
 void Vent_SetGust(s32 index, s32 value) {
   struct VentWork *work;
 
@@ -2017,13 +2091,19 @@ u32 gTaopoSwamp_PuffSteamScript[] = {
 };
 
 u32 gTaopoSwamp_TremorPillarScript[] = {
-    0, 40, 0x80010000, 22, 25, 0,
-    0, 1, 22, 25, 1, 0,
-    1, 13, 10, 0xc0010000, 38,
+    SC_WAIT(40),
+    SC_LABEL(1),
+    SC_SET(SW_SPRITE_KIND, ACTOR_SPRITE_NONE),
+    SC_WAIT(1),
+    SC_SET(SW_SPRITE_KIND, ACTOR_SPRITE_ONE),
+    SC_WAIT(1),
+    SC_LOOP(10, SC_TO(1)),
+    SC_RELEASE,
 };
 
 u32 gTaopoSwamp_SparkFades[] = {
-    0, 30, 38,
+    SC_WAIT(30),
+    SC_RELEASE,
 };
 
 s32 gTaopoSwamp_DripAtRandomScript[] = {
@@ -2037,23 +2117,50 @@ s32 gTaopoSwamp_DripFromCeilingScript[] = {
 };
 
 s32 gTaopoSwamp_DropFalls[] = {
-    46,
-    (s32)TaopoSwamp_IsDropFalling,
-    38,
+    SC_CALL(TaopoSwamp_IsDropFalling),
+    SC_RELEASE,
 };
 
-u8 gTaopoSwampVentsVents[] = {200, 0, 200, 0, 4, 0, 8, 1, 200, 0, 4, 0, 232, 0, 216, 0, 4, 0, 24, 1, 216, 0, 4, 0, 56, 2, 200, 0, 4, 0, 120, 2, 200, 0, 4, 0, 24, 2, 216, 0, 4, 0, 88, 2, 216, 0, 4, 0, 152, 1, 232, 0, 4, 0, 216, 1, 232, 0, 4, 0, 0, 0};
+/// Each room's vents for TaopoSwamp_StartVents: a vent's x and z in pixels and
+/// the speed of its gust, ended by 0.
+u16 gTaopoSwampVentsVents[] = {
+    200, 200, 4,
+    264, 200, 4,
+    232, 216, 4,
+    280, 216, 4,
+    568, 200, 4,
+    632, 200, 4,
+    536, 216, 4,
+    600, 216, 4,
+    408, 232, 4,
+    472, 232, 4,
+    0,
+};
 
-u8 gTaopoSwampVentsVentPair[] = {9, 0, 10, 0, 0, 0};
+/// The ids TaopoSwamp_StartVents keeps for the vents room, ended by 0.
+u16 gTaopoSwampVentsVentPair[] = {9, 10, 0};
 
-u8 gTaopoSwampPillarGapVents[] = {168, 1, 104, 0, 4, 0, 24, 2, 136, 0, 4, 0, 0, 0};
+u16 gTaopoSwampPillarGapVents[] = {
+    424, 104, 4,
+    536, 136, 4,
+    0,
+};
 
-u8 gTaopoSwampDripsVents[] = {152, 1, 152, 1, 4, 0, 216, 1, 104, 1, 4, 0, 0, 0};
+u16 gTaopoSwampDripsVents[] = {
+    408, 408, 4,
+    472, 360, 4,
+    0,
+};
 
-u8 gTaopoSwamp_RockRoomVents[] = {216, 0, 184, 0, 4, 0, 56, 1, 136, 0, 4, 0, 0, 0, 0, 0};
+u16 gTaopoSwamp_RockRoomVents[] = {
+    216, 184, 4,
+    312, 136, 4,
+    0, 0,
+};
 
 u32 gTaopoSwamp_SplashFades[] = {
-    0, 32, 38,
+    SC_WAIT(32),
+    SC_RELEASE,
 };
 
 u32 gTaopoSwamp_PuffRises[] = {
@@ -2144,7 +2251,7 @@ struct ActorPlacement gTaopoSwampMudActorPlacements[] = {
     ACTOR_PLACEMENT(SPRITE_IVY, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 600, 0, 176, FACING_NORTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(SPRITE_IVY, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 712, 0, 256, FACING_NORTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(SPRITE_SPROUT, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 760, 0, 272, FACING_NORTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(SPRITE_STUMP, 0x8e5, MOVEMENT_TYPE_STAND, 216, 0, 264, FACING_NORTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_STUMP, FLAG_TAOPO_SWAMP_STUMP_SUNK, MOVEMENT_TYPE_STAND, 216, 0, 264, FACING_NORTH, TALK_FACING_KEEP, 0),
     {SCENE_TABLE_END},
 };
 
@@ -2238,8 +2345,8 @@ struct Trigger gTaopoSwampTearStonesTriggers[] = {
     {TRIGGER_EXIT | EXIT_STYLE_STAIRS_UP, 7, CONDITION_ALWAYS, 7},
     {TRIGGER_EXIT | EXIT_STYLE_STAIRS_DOWN, 8, CONDITION_ALWAYS, 8},
     {TRIGGER_EXIT | EXIT_STYLE_STAIRS_UP, 9, CONDITION_ALWAYS, 9},
-    {PSYNERGY_PHASE_ON_CELL(ABILITY_SCOOP, PSYNERGY_PHASE_ACTS), 51, 0x301, EVENT(TaopoSwamp_ScoopHiddenItem)},
-    {PSYNERGY_PHASE_ON_CELL(ABILITY_SCOOP, PSYNERGY_PHASE_ACTS), 50, 0x300, EVENT(TaopoSwamp_ScoopOtherHiddenItem)},
+    {PSYNERGY_PHASE_ON_CELL(ABILITY_SCOOP, PSYNERGY_PHASE_ACTS), 51, FLAG_TAOPO_SWAMP_TREASURE_DUG_UP(1), EVENT(TaopoSwamp_ScoopHiddenItem)},
+    {PSYNERGY_PHASE_ON_CELL(ABILITY_SCOOP, PSYNERGY_PHASE_ACTS), 50, FLAG_TAOPO_SWAMP_TREASURE_DUG_UP(0), EVENT(TaopoSwamp_ScoopOtherHiddenItem)},
     {TRIGGER_TABLE_END},
 };
 
@@ -2274,10 +2381,10 @@ struct Trigger gTaopoSwampVentsTriggers[] = {
     {TRIGGER_STEP, 16, CONDITION_ALWAYS, EVENT(TaopoSwamp_StepOnVent)},
     {TRIGGER_STEP, 17, CONDITION_ALWAYS, EVENT(TaopoSwamp_StepOnVent)},
     {TRIGGER_STEP, 18, CONDITION_ALWAYS, EVENT(TaopoSwamp_StepOnVent)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 9, 0xa6d, EVENT(TaopoSwamp_PushPillarOverVent)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 10, 0xa6e, EVENT(TaopoSwamp_PushPillarOverVent)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_WEST_VENT_PILLAR, FLAG_TAOPO_SWAMP_WEST_PILLAR_OVER_VENT, EVENT(TaopoSwamp_PushPillarOverVent)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_EAST_VENT_PILLAR, FLAG_TAOPO_SWAMP_EAST_PILLAR_OVER_VENT, EVENT(TaopoSwamp_PushPillarOverVent)},
     {TRIGGER_PUSHED, 0, CONDITION_ALWAYS, EVENT(TaopoSwamp_PushPillarOverVent)},
-    {TRIGGER_RAISED, 100, 0x310, EVENT(TaopoSwamp_BlowFlowerOffLedge)},
+    {TRIGGER_RAISED, 100, FLAG_TAOPO_SWAMP_FLOWER_OFF_LEDGE, EVENT(TaopoSwamp_BlowFlowerOffLedge)},
     {TRIGGER_TABLE_END},
 };
 
@@ -2299,12 +2406,14 @@ struct Trigger gTaopoSwampPillarGapTriggers[] = {
     {TRIGGER_STEP, 10, CONDITION_ALWAYS, EVENT(TaopoSwamp_StepOnVent)},
     {TRIGGER_STEP, 12, CONDITION_ALWAYS, EVENT(TaopoSwamp_StepOnVent)},
     {TRIGGER_STEP, 11, CONDITION_ALWAYS, EVENT(TaopoSwamp_StepOnVent)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 9, 0xa6f,
-     EVENT(TaopoSwamp_DropPillarIntoGap)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_GAP_PILLAR,
+     FLAG_TAOPO_SWAMP_PILLAR_IN_GAP, EVENT(TaopoSwamp_DropPillarIntoGap)},
     {TRIGGER_PUSHED, 0, CONDITION_ALWAYS, EVENT(TaopoSwamp_DropPillarIntoGap)},
-    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_DOUSE, PSYNERGY_PHASE_ACTS), 8, 0x220,
+    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_DOUSE, PSYNERGY_PHASE_ACTS),
+     ACTOR_GAP_PUDDLE, FLAG_TAOPO_SWAMP_SPOT_WET,
      EVENT(TaopoSwamp_DouseVentSpot)},
-    {PSYNERGY_ON_ACTOR(ABILITY_FROST), 8, IF_FLAG_SET(0x222),
+    {PSYNERGY_ON_ACTOR(ABILITY_FROST), ACTOR_GAP_PUDDLE,
+     IF_FLAG_SET(FLAG_TAOPO_SWAMP_SPOT_PUDDLE),
      EVENT(TaopoSwamp_FreezeVentSpot)},
     {TRIGGER_TABLE_END},
 };
@@ -2317,9 +2426,11 @@ struct Trigger gTaopoSwampDripsTriggers[] = {
     {TRIGGER_EXIT, 5, CONDITION_ALWAYS, 5},
     {TRIGGER_STEP, 10, CONDITION_ALWAYS, EVENT(TaopoSwamp_StepOnVent)},
     {PSYNERGY_ON_ACTOR(ABILITY_LASH), 8, 0x308, 0},
-    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_DOUSE, PSYNERGY_PHASE_ACTS), 10, 0x220,
+    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_DOUSE, PSYNERGY_PHASE_ACTS),
+     ACTOR_DRIP_PUDDLE, FLAG_TAOPO_SWAMP_SPOT_WET,
      EVENT(TaopoSwamp_FillDripSpot)},
-    {PSYNERGY_ON_ACTOR(ABILITY_FROST), 10, IF_FLAG_SET(0x222),
+    {PSYNERGY_ON_ACTOR(ABILITY_FROST), ACTOR_DRIP_PUDDLE,
+     IF_FLAG_SET(FLAG_TAOPO_SWAMP_SPOT_PUDDLE),
      EVENT(TaopoSwamp_FreezeDripSpot)},
     {TRIGGER_TABLE_END},
 };
@@ -2335,53 +2446,41 @@ struct Trigger gTaopoSwampTremorTriggers[] = {
     {TRIGGER_EXIT | EXIT_STYLE_STAIRS_DOWN, 2, CONDITION_ALWAYS, 2},
     {TRIGGER_EXIT, 3, CONDITION_ALWAYS, 3},
     {TRIGGER_EXIT, 4, CONDITION_ALWAYS, 4},
-    {PSYNERGY_ON_ACTOR(ABILITY_DOUSE), 9, 0x331,
-     EVENT(TaopoSwamp_CoolLavaRock)},
-    {PSYNERGY_ON_ACTOR(ABILITY_DOUSE), 10, 0x334,
-     EVENT(TaopoSwamp_CoolPillarRock)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 9, 0x332,
+    {PSYNERGY_ON_ACTOR(ABILITY_DOUSE), ACTOR_TREMOR_LAVA_ROCK,
+     FLAG_TAOPO_SWAMP_TREMOR_LAVA_ROCK_COOLED, EVENT(TaopoSwamp_CoolLavaRock)},
+    {PSYNERGY_ON_ACTOR(ABILITY_DOUSE), ACTOR_TREMOR_PILLAR_ROCK,
+     FLAG_TAOPO_SWAMP_PILLAR_ROCK_COOLED, EVENT(TaopoSwamp_CoolPillarRock)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_TREMOR_LAVA_ROCK,
+     FLAG_TAOPO_SWAMP_TREMOR_LAVA_ROCK_UNMOVABLE,
      EVENT(TaopoSwamp_PushLavaRockIn)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 10, 0x335,
+    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_TREMOR_PILLAR_ROCK,
+     FLAG_TAOPO_SWAMP_PILLAR_ROCK_UNMOVABLE,
      EVENT(TaopoSwamp_PushPillarRockIn)},
-    {TRIGGER_PUSHED, 0, 0x335, EVENT(TaopoSwamp_PushPillarRockIn)},
-    {PSYNERGY_ON_ACTOR(ABILITY_TREMOR), 11, 0x330,
-     EVENT(TaopoSwamp_TremorPillar)},
+    {TRIGGER_PUSHED, 0, FLAG_TAOPO_SWAMP_PILLAR_ROCK_UNMOVABLE,
+     EVENT(TaopoSwamp_PushPillarRockIn)},
+    {PSYNERGY_ON_ACTOR(ABILITY_TREMOR), ACTOR_TREMOR_PILLAR,
+     FLAG_TAOPO_SWAMP_PASSAGE_OPEN, EVENT(TaopoSwamp_TremorPillar)},
     {TRIGGER_TABLE_END},
 };
 
-s32 gTaopoSwampLavaRocksTriggers[] = {
-    1,
-    (s32)0xffff0003,
-    3,
-    1,
-    (s32)0xffff0004,
-    4,
-    2,
-    (s32)0xffff000a,
-    (s32)TaopoSwamp_StepOnVent,
-    2,
-    (s32)0xffff000b,
-    (s32)TaopoSwamp_StepOnVent,
-#if TLA_PATCH_1 /* Absent from the Japanese edition. */
-    0x602,
-    (s32)0xffff0040,
-    (s32)TaopoSwamp_JumpForward,
+struct Trigger gTaopoSwampLavaRocksTriggers[] = {
+    {TRIGGER_EXIT, 3, CONDITION_ALWAYS, 3},
+    {TRIGGER_EXIT, 4, CONDITION_ALWAYS, 4},
+    {TRIGGER_STEP, 10, CONDITION_ALWAYS, EVENT(TaopoSwamp_StepOnVent)},
+    {TRIGGER_STEP, 11, CONDITION_ALWAYS, EVENT(TaopoSwamp_StepOnVent)},
+#if TLA_PATCH_1
+    {STEP_TRIGGER_WALKING_INTO(FACING_EAST), 64, CONDITION_ALWAYS,
+     EVENT(TaopoSwamp_JumpForward)},
 #endif
-    0x2115,
-    0x3380008,
-    (s32)TaopoSwamp_CoolChestRock,
-    0x2115,
-    0x33b0009,
-    (s32)TaopoSwamp_CoolExitRock,
-    0x8c15,
-    0x3390008,
-    (s32)TaopoSwamp_PushChestRockIn,
-    0x8c15,
-    0x33c0009,
-    (s32)TaopoSwamp_PushExitRockIn,
-    -1,
-    0,
-    0,
+    {PSYNERGY_ON_ACTOR(ABILITY_DOUSE), ACTOR_CHEST_ROCK,
+     FLAG_TAOPO_SWAMP_CHEST_ROCK_COOLED, EVENT(TaopoSwamp_CoolChestRock)},
+    {PSYNERGY_ON_ACTOR(ABILITY_DOUSE), ACTOR_EXIT_ROCK,
+     FLAG_TAOPO_SWAMP_EXIT_ROCK_COOLED, EVENT(TaopoSwamp_CoolExitRock)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_CHEST_ROCK,
+     FLAG_TAOPO_SWAMP_CHEST_ROCK_UNMOVABLE, EVENT(TaopoSwamp_PushChestRockIn)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_EXIT_ROCK,
+     FLAG_TAOPO_SWAMP_EXIT_ROCK_UNMOVABLE, EVENT(TaopoSwamp_PushExitRockIn)},
+    {TRIGGER_TABLE_END},
 };
 
 struct Trigger gTaopoSwampStarDustTriggers[] = {
@@ -2390,16 +2489,18 @@ struct Trigger gTaopoSwampStarDustTriggers[] = {
     {TRIGGER_EXIT, 4, CONDITION_ALWAYS, 4},
     {TRIGGER_EXIT, 5, CONDITION_ALWAYS, 5},
     {TRIGGER_EXIT, 6, CONDITION_ALWAYS, 6},
-    {EXAMINE_TRIGGER(EXAMINE_GROUND), 50, 0x348,
+    {EXAMINE_TRIGGER(EXAMINE_GROUND), 50, FLAG_TAOPO_SWAMP_STAR_DUST_DUG_UP,
      EVENT(TaopoSwamp_ShowSparkleMessage)},
-    {PSYNERGY_ON_ACTOR(ABILITY_DOUSE), 8, 0x340,
-     EVENT(TaopoSwamp_CoolDarkRock)},
-    {PSYNERGY_ON_ACTOR(ABILITY_DOUSE), 9, 0x342,
-     EVENT(TaopoSwamp_CoolLastRock)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 8, 0x341, 0},
-    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 9, 0x343, 0},
-    {PSYNERGY_PHASE_ON_CELL(ABILITY_SCOOP, PSYNERGY_PHASE_ACTS), 50, 0x348,
-     EVENT(TaopoSwamp_ScoopStarDust)},
+    {PSYNERGY_ON_ACTOR(ABILITY_DOUSE), ACTOR_DARK_ROCK,
+     FLAG_TAOPO_SWAMP_DARK_ROCK_COOLED, EVENT(TaopoSwamp_CoolDarkRock)},
+    {PSYNERGY_ON_ACTOR(ABILITY_DOUSE), ACTOR_LAST_ROCK,
+     FLAG_TAOPO_SWAMP_LAST_ROCK_COOLED, EVENT(TaopoSwamp_CoolLastRock)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_DARK_ROCK,
+     FLAG_TAOPO_SWAMP_DARK_ROCK_UNMOVABLE, 0},
+    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_LAST_ROCK,
+     FLAG_TAOPO_SWAMP_LAST_ROCK_UNMOVABLE, 0},
+    {PSYNERGY_PHASE_ON_CELL(ABILITY_SCOOP, PSYNERGY_PHASE_ACTS), 50,
+     FLAG_TAOPO_SWAMP_STAR_DUST_DUG_UP, EVENT(TaopoSwamp_ScoopStarDust)},
     {TRIGGER_TABLE_END},
 };
 

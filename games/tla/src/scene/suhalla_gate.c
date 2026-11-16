@@ -24,6 +24,7 @@
 #include "types.h"
 #include "battle/battle.h"
 #include "field/actor.h"
+#include "field/actor_script.h"
 #include "field/event_commands.h"
 #include "field/event_inline.h"
 #include "field/field.h"
@@ -184,6 +185,8 @@ void SuhallaGate_SetUpCave(void) {
     SuhallaGate_AfterPunchAntBattle();
 }
 
+/// Suhalla Gate's setup for each of its rooms: the road by the house, the
+/// cliffs of the ambush, and the cave of the Psynergy Stone.
 s32 Scene_Initialize(void) {
   struct FieldWork *work;
   s16 scene;
@@ -320,6 +323,7 @@ void SuhallaGate_RuffiansAmbushParty(void) {
   Event_End();
 }
 
+/// The Punch Ant leaps at the leader and its battle begins.
 void SuhallaGate_FightPunchAnt(void) {
   struct Actor *owner;
 
@@ -459,30 +463,61 @@ void SuhallaGate_PointToMeetingSpot(void) {
 /// Unused: a script that squashes and stretches its actor over and over;
 /// nothing runs it.
 s32 gSuhallaGate_SquashLoop[] = {
-    (s32)0x80010000, 23, 9, -0x4000, 23, 10,
-    0x2000, 0, 2, 23, 9, 0x2000,
-    23, 10, -4096, 0, 2, 23,
-    9, 0x1000, 23, 10, -2048, 0,
-    2, 23, 9, 0x1000, 23, 10,
-    -2048, 0, 4, (s32)0x80010000, 23, 9,
-    -0x4000, 23, 10, 0x2000, 0, 2,
-    23, 9, 0x2000, 23, 10, -4096,
-    0, 2, 23, 9, 0x1000, 23,
-    10, -2048, 0, 2, 23, 9,
-    0x1000, 23, 10, -2048, 0, 8,
-    13, 0xffff, (s32)0xc0010000, 0, 5, (s32)0x80010000,
-    23, 9, -0x4000, 23, 10, 0x2000,
-    0, 2, 23, 9, 0x2000, 23,
-    10, -4096, 0, 2, 23, 9,
-    0x1000, 23, 10, -2048, 0, 2,
-    23, 9, 0x1000, 23, 10, -2048,
-    0, 4, (s32)0x80010000, 23, 9, -0x4000,
-    23, 10, 0x2000, 0, 2, 23,
-    9, 0x2000, 23, 10, -4096, 0,
-    2, 23, 9, 0x1000, 23, 10,
-    -2048, 0, 2, 23, 9, 0x1000,
-    23, 10, -2048, 0, 8, 13,
-    0xffff, (s32)0xc0010000,
+    SC_LABEL(1),
+    SC_ADD(SW_SCALE_X, -FIXED_ONE / 4),
+    SC_ADD(SW_SCALE_Y, FIXED_ONE / 8),
+    SC_WAIT(2),
+    SC_ADD(SW_SCALE_X, FIXED_ONE / 8),
+    SC_ADD(SW_SCALE_Y, -FIXED_ONE / 16),
+    SC_WAIT(2),
+    SC_ADD(SW_SCALE_X, FIXED_ONE / 16),
+    SC_ADD(SW_SCALE_Y, -FIXED_ONE / 32),
+    SC_WAIT(2),
+    SC_ADD(SW_SCALE_X, FIXED_ONE / 16),
+    SC_ADD(SW_SCALE_Y, -FIXED_ONE / 32),
+    SC_WAIT(4),
+    SC_LABEL(1),
+    SC_ADD(SW_SCALE_X, -FIXED_ONE / 4),
+    SC_ADD(SW_SCALE_Y, FIXED_ONE / 8),
+    SC_WAIT(2),
+    SC_ADD(SW_SCALE_X, FIXED_ONE / 8),
+    SC_ADD(SW_SCALE_Y, -FIXED_ONE / 16),
+    SC_WAIT(2),
+    SC_ADD(SW_SCALE_X, FIXED_ONE / 16),
+    SC_ADD(SW_SCALE_Y, -FIXED_ONE / 32),
+    SC_WAIT(2),
+    SC_ADD(SW_SCALE_X, FIXED_ONE / 16),
+    SC_ADD(SW_SCALE_Y, -FIXED_ONE / 32),
+    SC_WAIT(8),
+    SC_LOOP(SC_FOREVER, SC_TO(1)),
+    SC_WAIT(5),
+    SC_LABEL(1),
+    SC_ADD(SW_SCALE_X, -FIXED_ONE / 4),
+    SC_ADD(SW_SCALE_Y, FIXED_ONE / 8),
+    SC_WAIT(2),
+    SC_ADD(SW_SCALE_X, FIXED_ONE / 8),
+    SC_ADD(SW_SCALE_Y, -FIXED_ONE / 16),
+    SC_WAIT(2),
+    SC_ADD(SW_SCALE_X, FIXED_ONE / 16),
+    SC_ADD(SW_SCALE_Y, -FIXED_ONE / 32),
+    SC_WAIT(2),
+    SC_ADD(SW_SCALE_X, FIXED_ONE / 16),
+    SC_ADD(SW_SCALE_Y, -FIXED_ONE / 32),
+    SC_WAIT(4),
+    SC_LABEL(1),
+    SC_ADD(SW_SCALE_X, -FIXED_ONE / 4),
+    SC_ADD(SW_SCALE_Y, FIXED_ONE / 8),
+    SC_WAIT(2),
+    SC_ADD(SW_SCALE_X, FIXED_ONE / 8),
+    SC_ADD(SW_SCALE_Y, -FIXED_ONE / 16),
+    SC_WAIT(2),
+    SC_ADD(SW_SCALE_X, FIXED_ONE / 16),
+    SC_ADD(SW_SCALE_Y, -FIXED_ONE / 32),
+    SC_WAIT(2),
+    SC_ADD(SW_SCALE_X, FIXED_ONE / 16),
+    SC_ADD(SW_SCALE_Y, -FIXED_ONE / 32),
+    SC_WAIT(8),
+    SC_LOOP(SC_FOREVER, SC_TO(1)),
 };
 
 struct SceneEntrance gSuhallaGate_RoadEntrances[] = {

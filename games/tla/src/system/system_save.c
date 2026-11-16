@@ -181,9 +181,7 @@ s32 Save_WritePart(s32 partId, void *source) {
   u32 sector;
 
   zero = 0;
-  SAVE_START_DMA(&zero, work->slot,
-                 (DMA_ENABLE | DMA_32BIT | DMA_SRC_FIXED) << 16 |
-                     (sizeof(work->slot) / 4));
+  SAVE_START_DMA(&zero, work->slot, DMA_FILL_WORDS(sizeof(work->slot) / 4));
   WAIT_DMA();
   current = Save_FindLatestSector(partId);
   sector = Save_SelectWriteSector(partId);
@@ -307,8 +305,7 @@ s32 Save_InvalidateSector(s32 index) {
   volatile u32 zero;
 
   zero = 0;
-  SAVE_START_DMA(&zero, &header,
-                 (DMA_ENABLE | DMA_32BIT | DMA_SRC_FIXED) << 16 | 4);
+  SAVE_START_DMA(&zero, &header, DMA_FILL_WORDS(4));
   WAIT_DMA();
   SAVE_START_DMA(gSave_HeaderTemplate, &header, DMA_COPY_WORDS(2));
   WAIT_DMA();

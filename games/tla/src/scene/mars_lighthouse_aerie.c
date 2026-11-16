@@ -3188,15 +3188,25 @@ u32 gMarsLighthouseAerie_GaretReadyScript[] =
   };
 
 u32 gMarsLighthouseAerie_ShebaToBodiesScript[] = {
-    39, 2, 4, 0x1d80000, 0, 0x1400000,
-    1, 4, 0x1d80000, 0, 0x1300000, 1,
-    39, 1, 22, 39, 1, 17,
+    SC_ANIMATION(2),
+    SC_MOVE(472, 0, 320),
+    SC_SYNC,
+    SC_MOVE(472, 0, 304),
+    SC_SYNC,
+    SC_ANIMATION(1),
+    SC_SET(SW_RISE_COUNTER, 1),
+    SC_END,
 };
 
 u32 gMarsLighthouseAerie_JennaToBodiesScript[] = {
-    39, 2, 4, 0x1dc0000, 0, 0x1480000,
-    1, 4, 0x1d80000, 0, 0x1400000, 1,
-    39, 1, 22, 39, 1, 17,
+    SC_ANIMATION(2),
+    SC_MOVE(476, 0, 328),
+    SC_SYNC,
+    SC_MOVE(472, 0, 320),
+    SC_SYNC,
+    SC_ANIMATION(1),
+    SC_SET(SW_RISE_COUNTER, 1),
+    SC_END,
 };
 
 u32 gMarsLighthouseAerie_JennaTurnScript[] =                                                                 

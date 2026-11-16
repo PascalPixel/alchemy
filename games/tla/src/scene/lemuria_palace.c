@@ -250,7 +250,7 @@ void LemuriaPalace_DrawMaps(void) {
 /// Loads the two maps the council shows the party, the ancient world and
 /// Lunpa's, and starts drawing them.
 void LemuriaPalace_LoadMaps(void) {
-  void *buffer = Heap_CallAlternatePool(Heap_Alloc, 0x1000);
+  void *buffer = Heap_CallAlternatePool(Heap_Alloc, 4096);
   s32 *firstSlot;
   s32 *firstTile;
   s32 *secondSlot;
@@ -262,7 +262,7 @@ void LemuriaPalace_LoadMaps(void) {
   firstSlot = &gLemuriaPalace_FirstMapVram;
   *firstSlot = VramCache_FindFreeEntry();
   firstTile = &gLemuriaPalace_FirstMapTile;
-  *firstTile = Vram_Load(gLemuriaPalace_FirstMapVram, 0x1000, buffer);
+  *firstTile = Vram_Load(gLemuriaPalace_FirstMapVram, 4096, buffer);
   EffectSprite_Init(&gLemuriaPalace_FirstMapSprite, 0, 0, 0xc0000000,
                     gLemuriaPalace_FirstMapTile);
   gLemuriaPalace_FirstMapSprite.depth = 1;
@@ -274,7 +274,7 @@ void LemuriaPalace_LoadMaps(void) {
   secondSlot = &gLemuriaPalace_SecondMapVram;
   *secondSlot = VramCache_FindFreeEntry();
   secondTile = &gLemuriaPalace_SecondMapTile;
-  *secondTile = Vram_Load(gLemuriaPalace_SecondMapVram, 0x1000, buffer);
+  *secondTile = Vram_Load(gLemuriaPalace_SecondMapVram, 4096, buffer);
   EffectSprite_Init(&gLemuriaPalace_SecondMapSprite, 0, 0, 0xc0000000,
                     gLemuriaPalace_SecondMapTile);
   gLemuriaPalace_SecondMapSprite.depth = 2;
@@ -1291,8 +1291,9 @@ struct Trigger gSceneEvents[] = {
 
 /// The twelve colours of the glow, in turn.
 s16 gLemuriaPalace_GlowColors[] = {
-    0x7b00, 0x76c0, 0x7280, 0x6e40, 0x6a00, 0x65c0,
-    0x6180, 0x65c0, 0x6a00, 0x6e40, 0x7280, 0x76c0,
+    RGB(0, 24, 30), RGB(0, 22, 29), RGB(0, 20, 28), RGB(0, 18, 27),
+    RGB(0, 16, 26), RGB(0, 14, 25), RGB(0, 12, 24), RGB(0, 14, 25),
+    RGB(0, 16, 26), RGB(0, 18, 27), RGB(0, 20, 28), RGB(0, 22, 29),
 };
 // clang-format on
 #undef BLEND_SET_ALPHA

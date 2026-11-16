@@ -676,8 +676,8 @@ void LemuriaSpring_UpdateTossSimulation(void) {
         deltaX >>= 8;
         deltaZ >>= 8;
         distance = Iwram_Sqrt(deltaX * deltaX + deltaZ * deltaZ);
-        toss->velocity.x += (0x1999 * deltaX) / distance;
-        toss->velocity.z += (0x1999 * deltaZ) / distance;
+        toss->velocity.x += (toFIXED(0.1) * deltaX) / distance;
+        toss->velocity.z += (toFIXED(0.1) * deltaZ) / distance;
         toss->velocity.x = toss->velocity.x * 253 / 256;
         toss->velocity.z = toss->velocity.z * 253 / 256;
         toss->attractionFrames = toss->attractionFrames - 1;
@@ -816,7 +816,7 @@ void LemuriaSpring_UpdateTossSimulation(void) {
     }
     if (index <= 1) {
       speedMode = obstacle->speedMode;
-      motionStep = 0x10000;
+      motionStep = toFIXED(1);
       if (speedMode == 1) {
         motionStep = motionStep * 2;
       }
@@ -850,7 +850,7 @@ void LemuriaSpring_UpdateTossSimulation(void) {
               obstacle->pauseOrPhase = 30;
             }
           }
-          if (obstacle->position.x > 0xafffff) {
+          if (obstacle->position.x > toFIXED(176) - 1) {
             obstacle->heading = 1;
             if (index == 1) {
               obstacle->pauseOrPhase = 30;
@@ -960,14 +960,14 @@ void LemuriaSpring_UpdateTossSimulation(void) {
     case 2:
       LemuriaSpring_SetActorAppearance(
           ACTOR_LEMURIA_SPRING_TURTLE_A, &obstacle->position.x,
-          0x8000 - obstacle->heading,
+          DEGtoANG(180) - obstacle->heading,
           gLemuriaSpring_TurtleColorModes[obstacle->speedMode],
           ANIMATION_STEP_NORMAL * (obstacle->speedMode + 1));
       break;
     case 3:
       LemuriaSpring_SetActorAppearance(
           ACTOR_LEMURIA_SPRING_TURTLE_B, &obstacle->position.x,
-          0xffff - obstacle->heading,
+          TRIG_TURN - 1 - obstacle->heading,
           gLemuriaSpring_TurtleColorModes[obstacle->speedMode],
           ANIMATION_STEP_NORMAL * (obstacle->speedMode + 1));
       break;
@@ -1198,9 +1198,11 @@ struct ActorPlacement gActorPlacements[] = {
 
 // clang-format off
 /// The blend weights the spring fades in through, eight steps from 10/9 to
-/// 16/0 (first target over second, in sixteenths).
+/// 0/16 (first target over second, in sixteenths).
 u16 gLemuriaSpring_AlphaSteps[] = {
-    0x090a, 0x0a08, 0x0b06, 0x0c04, 0x0d03, 0x0e02, 0x0f01, 0x1000,
+    BLEND_ALPHA(10, 9), BLEND_ALPHA(8, 10), BLEND_ALPHA(6, 11), BLEND_ALPHA(4, 12),
+    BLEND_ALPHA(3, 13), BLEND_ALPHA(2, 14), BLEND_ALPHA(1, 15),
+    BLEND_ALPHA(0, BLEND_WEIGHT_MAX),
 };
 
 struct Trigger gSceneEvents[] = {
@@ -1250,6 +1252,6 @@ u8 gLemuriaSpring_ObstacleStartZ[] = {
 
 /// The way each obstacle starts heading.
 u16 gLemuriaSpring_ObstacleHeadings[] = {
-    0, 1, 0, 0x8000,
+    0, 1, 0, DEGtoANG(180),
 };
 // clang-format on

@@ -134,7 +134,7 @@ void LemuriaDock_AskSettingOff(void) {
     Event_Wait(5);
     party = &gMainRoutineWork;
     z = Actor_GetById(party->leaderActorId)->z.fixed;
-    limit = 0x1880000;
+    limit = toFIXED(392);
     id = party->leaderActorId;
     if (z < limit)
       Actor_WalkToAndWait(id, 472, 376);

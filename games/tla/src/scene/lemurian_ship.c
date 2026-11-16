@@ -143,7 +143,7 @@ enum LemurianShipRaisedTrigger {
 /// The first of sixteen: the battle with jelly n is on.
 #define FLAG_FIGHTING_JELLY FLAG_AREA_TEMP_00
 
-extern s16 gLemurianShip_AquaHydraEntrances[];
+extern struct SceneEntrance gLemurianShip_AquaHydraEntrances[];
 
 u8 *Scene_GetEntrances(void) {
   s16 scene = gMainRoutineWork.next;
@@ -151,7 +151,7 @@ u8 *Scene_GetEntrances(void) {
   if (scene == SCENE_LEMURIAN_SHIP_CABINS)
     return gLemurianShip_CabinsEntrances;
   if (scene == SCENE_LEMURIAN_SHIP_AQUA_HYDRA)
-    return gLemurianShip_AquaHydraEntrances;
+    return (u8 *)gLemurianShip_AquaHydraEntrances;
   return gLemurianShip_Entrances;
 }
 
@@ -1889,24 +1889,18 @@ u32 gLemurianShip_CabinsEntrances[] = {
 };
 
 /// The lower deck's entrances.
-s16 gLemurianShip_AquaHydraEntrances[] = {
-    0, -1, 72, 0, 72, 0x4000, 0, -1,
-    -1, -1, -1, 0, 1, -1, 72, 0,
-    72, 0x4000, 0, 8, 16, 248, 256, 0,
-    2, -1, 168, 0, 72, 0x4000, 0, 8,
-    16, 248, 256, 0, 3, -1, 72, 0,
-    216, 0xc000, 0, 8, 16, 248, 256, 0,
-    4, -1, 184, 0, 216, 0xc000, 0, 8,
-    16, 248, 256, 0, 11, -1, 72, 0,
-    376, 0x4000, 0, 8, 320, 248, 560, 0,
-    12, -1, 168, 0, 376, 0x4000, 0, 8,
-    320, 248, 560, 0, 13, -1, 72, 0,
-    512, 0xc000, 0, 8, 320, 248, 560, 0,
-    14, -1, 184, 0, 512, 0xc000, 0, 8,
-    320, 248, 560, 0, 15, -1, 120, 0,
-    440, 0xc000, 0, 8, 320, 248, 560, 0,
-    -1, 0, 0, 0, 0, 0, 0, 0,
-    0, 0, 0, 0,
+struct SceneEntrance gLemurianShip_AquaHydraEntrances[] = {
+    {0, CONDITION_ALWAYS, 72, 0, 72, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
+    {1, CONDITION_ALWAYS, 72, 0, 72, FACING_SOUTH, 0, 8, 16, 248, 256, 0},
+    {2, CONDITION_ALWAYS, 168, 0, 72, FACING_SOUTH, 0, 8, 16, 248, 256, 0},
+    {3, CONDITION_ALWAYS, 72, 0, 216, FACING_NORTH, 0, 8, 16, 248, 256, 0},
+    {4, CONDITION_ALWAYS, 184, 0, 216, FACING_NORTH, 0, 8, 16, 248, 256, 0},
+    {11, CONDITION_ALWAYS, 72, 0, 376, FACING_SOUTH, 0, 8, 320, 248, 560, 0},
+    {12, CONDITION_ALWAYS, 168, 0, 376, FACING_SOUTH, 0, 8, 320, 248, 560, 0},
+    {13, CONDITION_ALWAYS, 72, 0, 512, FACING_NORTH, 0, 8, 320, 248, 560, 0},
+    {14, CONDITION_ALWAYS, 184, 0, 512, FACING_NORTH, 0, 8, 320, 248, 560, 0},
+    {15, CONDITION_ALWAYS, 120, 0, 440, FACING_NORTH, 0, 8, 320, 248, 560, 0},
+    {SCENE_TABLE_END},
 };
 
 /// The cabins' exit regions.

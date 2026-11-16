@@ -346,7 +346,8 @@ s32 Scene_Initialize(void) {
   if (state->entrance == 90) {
     Event_SetFlag(FLAG_SHIP_CARRIES_CANNON);
     state->ownerOverride = 1;
-    Event_SetDestination(SCENE_NORTHERN_REACHES, 4);
+    Event_SetDestination(SCENE_NORTHERN_REACHES,
+                         NORTHERN_REACHES_FROM_WORLD_MAP_NORTH);
   }
   RisingParticles_Start();
   return 0;

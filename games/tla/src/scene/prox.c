@@ -1372,7 +1372,7 @@ void Prox_OpenUpperHouseDoor(void) { Prox_EnterDoor(89, 0, 77, 16, 1, 2); }
 
 void Prox_ClimbStairs(void) {
   struct FieldWork *work = Ram_HeapSlots->fieldWork;
-  s32 entrance = work->stepTrigger;
+  s32 stairsExit = work->stepTrigger;
   struct Actor *object = Actor_Get(gMainRoutineWork.leaderActorId);
   s32 cell;
   s32 id;
@@ -1386,14 +1386,14 @@ void Prox_ClimbStairs(void) {
   Event_PlaySound(SE_STAIRS_UP);
   Actor_SetSpriteFlags(Actor_Get(gMainRoutineWork.leaderActorId), 0);
   id = gMainRoutineWork.leaderActorId;
-  if (entrance == 6)
-    Actor_SetAnimation(id, 25);
+  if (stairsExit == PROX_CAVE_HOMES_TO_PROX_HOUSES_NORTH)
+    Actor_SetAnimation(id, ANIM_LEADER_LEAVE_ALTERNATE);
   else
-    Actor_SetAnimation(id, 26);
+    Actor_SetAnimation(id, ANIM_LEADER_LEAVE);
   System_Wait(4);
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();
-  FieldEvent_SetExitRequest(entrance);
+  FieldEvent_SetExitRequest(stairsExit);
 }
 
 /// Arrives down the stairs into the cave homes: the leader appears beside the
@@ -2377,7 +2377,7 @@ void Prox_SayFarewell(void) {
     PaletteFade_Interpolate(16);
     System_Wait(16);
     Event_SetFlag(FLAG_SAID_FAREWELL);
-    FieldEvent_SetExitRequest(3);
+    FieldEvent_SetExitRequest(PROX_SOUTH_GATE_TO_STAFF_CREDIT);
   }
 }
 
@@ -2978,10 +2978,10 @@ struct Trigger gProx_HousesTriggers[] = {
 };
 
 struct Trigger gProx_CaveHomesTriggers[] = {
-    {0xca02, 6, CONDITION_ALWAYS, EVENT(Prox_ClimbStairs)},
-    {0xca02, 7, CONDITION_ALWAYS, EVENT(Prox_ClimbStairs)},
-    {0xca02, ACTOR_VILLAGER_ON_PROXS_PURPOSE, CONDITION_ALWAYS, EVENT(Prox_ClimbStairs)},
-    {TRIGGER_EXIT, ACTOR_VILLAGER_REMEMBERING_YOUNG_FELIX, CONDITION_ALWAYS, 9},
+    {STEP_TRIGGER_WALKING | STEP_TRIGGER_FLAG_QUICK | FACING_NORTH, 6, CONDITION_ALWAYS, EVENT(Prox_ClimbStairs)},
+    {STEP_TRIGGER_WALKING | STEP_TRIGGER_FLAG_QUICK | FACING_NORTH, 7, CONDITION_ALWAYS, EVENT(Prox_ClimbStairs)},
+    {STEP_TRIGGER_WALKING | STEP_TRIGGER_FLAG_QUICK | FACING_NORTH, 8, CONDITION_ALWAYS, EVENT(Prox_ClimbStairs)},
+    {TRIGGER_EXIT, 9, CONDITION_ALWAYS, 9},
     {TRIGGER_TALK, ACTOR_VILLAGER_ON_PROXS_PURPOSE, FLAG_MARS_BEACON_LIT, MSGNO(MsgProxProxOriginallyFlourishedBecauseConcerned)},
     {TRIGGER_TALK, ACTOR_VILLAGER_ON_PROXS_PURPOSE, CONDITION_ALWAYS, MSGNO(MsgProxIveBeenToldThatLighting)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_VILLAGER_ON_PROXS_PURPOSE, FLAG_MARS_BEACON_LIT, MSGNO(MsgProxWhenLighthousesWereAllExtinguished)},

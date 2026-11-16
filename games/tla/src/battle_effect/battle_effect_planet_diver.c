@@ -19,7 +19,7 @@ enum GatheringLightsMode {
 
 /// The skulls live in the map buffer, 64 for each target.
 
-#define SKULLS 8 ///< per target
+#define HAUNT_SKULLS 8 ///< skulls drawn around each target
 #define SKULL_SIZE 24
 #define SKULL_CELL (24 * 24)
 
@@ -99,7 +99,7 @@ void BattleEffect_RunHaunt(struct BattleEffectParams *args) {
 
         // A skull moves one part in its distance toward the centre each
         // frame, and is gone once it arrives.
-        for (i = 0; i != SKULLS; i++) {
+        for (i = 0; i != HAUNT_SKULLS; i++) {
           struct Particle *skull = &PARTICLES[k * HAUNT_SLOTS + i];
 
           if (frame > (k * 8 + i) * 4) {

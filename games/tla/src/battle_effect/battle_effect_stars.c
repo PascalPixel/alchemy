@@ -199,7 +199,7 @@ void BattleEffect_RunAstralBlast(struct BattleEffectParams *args) {
 
 #define RING_STEPS 12 // dots drawn between two ring points
 #define DOT_SIZE 2
-#define GROUND_Y 0x1dffff
+#define GROUND_Y (toFIXED(30) - 1)
 
 #define SHINING_STAR_FRAMES 128
 

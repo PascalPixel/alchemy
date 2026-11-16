@@ -103,7 +103,10 @@ enum AquaRockSlopesActorId {
   ACTOR_SECOND_PILLAR,
   ///@}
   /// The Water Stone that turns the stream when Doused.
-  ACTOR_WATER_STONE
+  ACTOR_WATER_STONE,
+  /// The three drifters in the water (sprite 401), on gAquaRock_DriftScript and
+  /// gAquaRock_SlowDriftScript.
+  ACTOR_FIRST_DRIFTER
 };
 
 /// The Mist Sabre chest's room (gAquaRock_MistSabreChestPlacements).
@@ -272,8 +275,8 @@ const u8 *Scene_GetExitRegions(void) {
 
 const u32 *Scene_GetExits(void) { return gSceneExits; }
 
-/// A drifting fish's script call: picks a random spot ahead within 16 pixels of
-/// its home and swims there; after three misses it turns around.
+/// A drifter's script call: picks a random spot ahead within 16 pixels of its
+/// home and moves there; after three misses it turns around.
 s32 AquaRock_PickRandomSpot(struct Actor *object) {
   struct Vector3 spot;
   /* LEFTOVER(frame): an unused local the ROM's frame reserves and never
@@ -1149,7 +1152,7 @@ s32 Scene_Initialize(void) {
     Actor_GetById(Party_GetLeaderActor())->priorityFlags |=
         ACTOR_PRIORITY_IGNORES_RISES;
     Task_Add(AquaRock_KeepLeaderPriority, TASK_PASS_VBLANK);
-    Actor_SetSpritePriority(28, 1);
+    Actor_SetSpritePriority(ACTOR_FIRST_DRIFTER + 1, 1);
     Value2((s32 (*)())Actor_SetSpritePriority, ACTOR_FIRST_PILLAR, 1);
     AquaRock_StartCellMarkers();
     AquaRock_StartSparkles();
@@ -1701,7 +1704,7 @@ u32 gFieldEffect_LongScript[] = {
     SC_END,
 };
 
-/// A fish's script: it swims to random spots, resting between.
+/// A drifter's script: it moves to random spots, resting between.
 s32 gAquaRock_DriftScript[] = {
     SC_CALL((s32)AquaRock_StartDrifter),
     SC_LABEL(1),
@@ -1724,7 +1727,7 @@ s32 gAquaRock_DriftScript[] = {
     SC_END,
 };
 
-/// A fish's script: it swims to random spots, resting longer between.
+/// A drifter's script: it moves to random spots, resting longer between.
 s32 gAquaRock_SlowDriftScript[] = {
     SC_CALL((s32)AquaRock_StartDrifter),
     SC_LABEL(1),

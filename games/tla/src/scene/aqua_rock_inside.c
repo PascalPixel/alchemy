@@ -918,40 +918,39 @@ void AquaRockInside_StepIntoRapids(s32 trigger) {
   object = Actor_Get(gMainRoutineWork.leaderActorId);
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
-  goto test;
-step:
-  if (result < 0) {
-    object->facing = FACING_SOUTH;
-    AquaRockInside_JumpDownLedge(trigger);
-    return;
-  }
-  {
-    s32 offset;
-    FIXED x;
-
-    object->z.fixed += toFIXED(2);
-    x = object->x.fixed;
-    offset = (x & 0xfffff) - toFIXED(8);
-    {
-      s32 limit = 0x10001;
-
-      if (offset >= limit)
-        offset = toFIXED(1);
-      limit = -0x10001;
-      if (offset <= limit)
-        offset = -toFIXED(1);
+  for (;;) {
+    target.x = object->x.fixed;
+    target.y = object->y.fixed;
+    target.z = object->z.fixed + toFIXED(8);
+    result = MapGrid_CheckCollision(object, &target);
+    if (result > 0)
+      break;
+    if (result < 0) {
+      object->facing = FACING_SOUTH;
+      AquaRockInside_JumpDownLedge(trigger);
+      return;
     }
-    object->x.fixed = x - offset;
+    {
+      s32 offset;
+      FIXED x;
+
+      object->z.fixed += toFIXED(2);
+      x = object->x.fixed;
+      offset = (x & 0xfffff) - toFIXED(8);
+      {
+        s32 limit = 0x10001;
+
+        if (offset >= limit)
+          offset = toFIXED(1);
+        limit = -0x10001;
+        if (offset <= limit)
+          offset = -toFIXED(1);
+      }
+      object->x.fixed = x - offset;
+    }
+    object->facing += 0x1000;
+    System_Wait(1);
   }
-  object->facing += 0x1000;
-  System_Wait(1);
-test:
-  target.x = object->x.fixed;
-  target.y = object->y.fixed;
-  target.z = object->z.fixed + toFIXED(8);
-  result = MapGrid_CheckCollision(object, &target);
-  if (result <= 0)
-    goto step;
 }
 
 /// Douse on the Crystal Powder chest's room's Water Stone: its stream runs five
@@ -2324,45 +2323,43 @@ void AquaRockInside_AddSpouts(u32 first, s32 level, s32 baseLevel) {
   if (row < depth) {
     struct MapCell *cell;
     s16 column;
-  rowTop:
-    cell = cells + ((u16)row << 7);
-    column = 0;
-    if (column < width) {
-    columnTop:
-      {
-        u32 kind = cell->collisionCode;
+    FIXED nextRow;
 
-        if (kind != 0 && kind >= first && kind < first + 8) {
-          spout->x = ((u16)column << 20) + originX + toFIXED(8);
-          spout->z = ((u16)row << 20) + originZ + toFIXED(8);
-          spout->base = baseLevel << 19;
-          spout->height = level << 19;
-          spout->kind = kind - first;
-          spout->position = 0;
-          spout->state = 1;
-          spout++;
-          work->count++;
+    do {
+      cell = cells + ((u16)row << 7);
+      column = 0;
+      if (column < width) {
+        s32 nextColumn;
+
+        do {
           {
-            u8 *terrain = map->layers[0].terrainIds + corner;
+            u32 kind = cell->collisionCode;
 
-            terrain[(u16)column + ((u16)row << 7)] = MAP_SHAPE_MARKED;
+            if (kind != 0 && kind >= first && kind < first + 8) {
+              spout->x = ((u16)column << 20) + originX + toFIXED(8);
+              spout->z = ((u16)row << 20) + originZ + toFIXED(8);
+              spout->base = baseLevel << 19;
+              spout->height = level << 19;
+              spout->kind = kind - first;
+              spout->position = 0;
+              spout->state = 1;
+              spout++;
+              work->count++;
+              {
+                u8 *terrain = map->layers[0].terrainIds + corner;
+
+                terrain[(u16)column + ((u16)row << 7)] = MAP_SHAPE_MARKED;
+              }
+            }
           }
-        }
+          nextColumn = (column << 16) + toFIXED(1);
+          column = nextColumn >> 16;
+          cell++;
+        } while ((s32)((u32)nextColumn >> 16) < width);
       }
-      {
-        s32 next = (column << 16) + 0x10000;
-        column = next >> 16;
-        cell++;
-        if ((s32)((u32)next >> 16) < width)
-          goto columnTop;
-      }
-    }
-    {
-      FIXED next = (row << 16) + 0x10000;
-      row = next >> 16;
-      if ((s32)((u32)next >> 16) < depth)
-        goto rowTop;
-    }
+      nextRow = (row << 16) + toFIXED(1);
+      row = nextRow >> 16;
+    } while ((s32)((u32)nextRow >> 16) < depth);
   }
 }
 

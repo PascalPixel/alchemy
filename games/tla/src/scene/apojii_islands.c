@@ -999,37 +999,35 @@ void ApojiiIslands_AddCellMarkers(u32 base, s32 level, s32 restLevel) {
   cells += origin;
   z = 0;
   if (z < height) {
-  outer:
-    cell = cells + ((u16)z << 7);
-    x = 0;
-    if (x < width) {
-    inner:
-      value = cell->collisionCode;
-      if (value != 0 && value >= base && value < base + 4) {
-        entry->x = ((u16)x << 20) + left + toFIXED(8);
-        entry->z = ((u16)z << 20) + top + toFIXED(8);
-        entry->rest = restLevel << 19;
-        entry->y = level << 19;
-        entry->kind = value - base;
-        entry->state = 1;
-        entry++;
-        markers->count++;
-        // Layer 0's row base in its own local (written inline, 10 of 159
-        // differ).
-        {
-          u8 *terrain = map->layers[0].terrainIds + origin;
+    do {
+      cell = cells + ((u16)z << 7);
+      x = 0;
+      if (x < width) {
+        do {
+          value = cell->collisionCode;
+          if (value != 0 && value >= base && value < base + 4) {
+            entry->x = ((u16)x << 20) + left + toFIXED(8);
+            entry->z = ((u16)z << 20) + top + toFIXED(8);
+            entry->rest = restLevel << 19;
+            entry->y = level << 19;
+            entry->kind = value - base;
+            entry->state = 1;
+            entry++;
+            markers->count++;
+            // Layer 0's row base in its own local (written inline, 10 of 159
+            // differ).
+            {
+              u8 *terrain = map->layers[0].terrainIds + origin;
 
-          terrain[(u16)x + ((u16)z << 7)] = MAP_SHAPE_MARKED;
-        }
+              terrain[(u16)x + ((u16)z << 7)] = MAP_SHAPE_MARKED;
+            }
+          }
+          x = (toFIXED(x) + toFIXED(1)) >> 16;
+          cell++;
+        } while ((u16)x < width);
       }
-      x = (toFIXED(x) + toFIXED(1)) >> 16;
-      cell++;
-      if ((u16)x < width)
-        goto inner;
-    }
-    z = (toFIXED(z) + toFIXED(1)) >> 16;
-    if ((u16)z < height)
-      goto outer;
+      z = (toFIXED(z) + toFIXED(1)) >> 16;
+    } while ((u16)z < height);
   }
 }
 

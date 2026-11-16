@@ -1599,7 +1599,7 @@ s32 Scene_Initialize(s32 a0) {
       }
     }
     if ((u16)(gMainRoutineWork.entrance - 13) <= 3)
-      goto task;
+      Task_AddFrame(AnkohlRuins_FlowWithSand, TASK_PASS_VBLANK);
   } else if (scene == SCENE_ANKOHL_RUINS_CRYSTAL_POWDER_CHEST) {
     if (GameFlag_Get(FLAG_FACE_HALF_PUSHED_INTO_GAP))
       Actor_SetPosition(ACTOR_FACE_HALF_FOR_THE_GAP, 0, 0);
@@ -1609,7 +1609,6 @@ s32 Scene_Initialize(s32 a0) {
     }
     if (work->entrance == 1 || work->entrance == 12) {
       Event_PlaySound(SE_ANKOHL_RUINS_PIECE);
-    task:
       Task_AddFrame(AnkohlRuins_FlowWithSand, TASK_PASS_VBLANK);
     }
   } else if (scene == SCENE_ANKOHL_RUINS_SAND_DOORS) {
@@ -1864,7 +1863,7 @@ s32 Scene_Initialize(s32 a0) {
       }
     }
     if ((u16)(gMainRoutineWork.entrance - 13) <= 3)
-      goto task;
+      Task_AddFrame(AnkohlRuins_FlowWithSand, TASK_PASS_VBLANK);
   } else if (scene == SCENE_ANKOHL_RUINS_CRYSTAL_POWDER_CHEST) {
     if (GameFlag_Get(FLAG_FACE_HALF_PUSHED_INTO_GAP))
       Actor_SetPosition(ACTOR_FACE_HALF_FOR_THE_GAP, 0, 0);
@@ -1874,7 +1873,6 @@ s32 Scene_Initialize(s32 a0) {
     }
     if (work->entrance == 1 || work->entrance == 12) {
       Event_PlaySound(SE_ANKOHL_RUINS_PIECE);
-    task:
       Task_AddFrame(AnkohlRuins_FlowWithSand, TASK_PASS_VBLANK);
     }
   } else if (scene == SCENE_ANKOHL_RUINS_SAND_DOORS) {

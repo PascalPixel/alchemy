@@ -347,7 +347,8 @@ void BattleEffect_RunMegiddo(struct BattleEffectParams *args) {
       asm("" : "+m"(*t));
       /* FAKEMATCH(barrier): the third asm on *t. */
       asm("" : "+m"(*t));
-      /* FAKEMATCH(dead): a once-only block. */
+      /* FAKEMATCH(dead): the pixels' store alone in a once-only block; as the
+       * plain store, 733 of 1361 instructions differ in tla-en. */
       do {
         t->pixels =
             work->sheet + MEGIDDO_FIRE_STRIPES + ((frame / 2) % 5) * 1024;

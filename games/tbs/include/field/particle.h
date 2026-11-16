@@ -74,14 +74,14 @@ static inline s32 *ScreenPoint_Coordinates(struct ScreenPoint *position) {
 #endif
 }
 
-STATIC_ASSERT(offsetof(struct Particle, x) == 0x00);
-STATIC_ASSERT(offsetof(struct Particle, y) == 0x04);
-STATIC_ASSERT(offsetof(struct Particle, z) == 0x08);
-STATIC_ASSERT(offsetof(struct Particle, velocityX) == 0x0c);
-STATIC_ASSERT(offsetof(struct Particle, velocityY) == 0x10);
-STATIC_ASSERT(offsetof(struct Particle, velocityZ) == 0x14);
-STATIC_ASSERT(offsetof(struct Particle, variant) == 0x18);
-STATIC_ASSERT(sizeof(struct Particle) == 0x1c);
-STATIC_ASSERT(sizeof(struct ScreenPoint) == 0x0c);
+STATIC_ASSERT(offsetof(struct Particle, x) == 0);
+STATIC_ASSERT(offsetof(struct Particle, y) == 4);
+STATIC_ASSERT(offsetof(struct Particle, z) == 8);
+STATIC_ASSERT(offsetof(struct Particle, velocityX) == 12);
+STATIC_ASSERT(offsetof(struct Particle, velocityY) == 16);
+STATIC_ASSERT(offsetof(struct Particle, velocityZ) == 20);
+STATIC_ASSERT(offsetof(struct Particle, variant) == 24);
+STATIC_ASSERT(sizeof(struct Particle) == 28);
+STATIC_ASSERT(sizeof(struct ScreenPoint) == 12);
 
 #endif

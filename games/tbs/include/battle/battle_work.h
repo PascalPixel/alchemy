@@ -152,23 +152,23 @@ struct BattleWork {
   s32 debugValue;
 };
 
-STATIC_ASSERT(sizeof(struct BattleWork) == 0x82c);
+STATIC_ASSERT(sizeof(struct BattleWork) == 2092);
 
-STATIC_ASSERT(offsetof(struct BattleWork, partyStatus) == 0x041);
-STATIC_ASSERT(offsetof(struct BattleWork, challengeFlag) == 0x043);
-STATIC_ASSERT(offsetof(struct BattleWork, partyUnits) == 0x058);
-STATIC_ASSERT(offsetof(struct BattleWork, enemyIds) == 0x066);
-STATIC_ASSERT(offsetof(struct BattleWork, objects) == 0x074);
-STATIC_ASSERT(offsetof(struct BattleWork, objectIndex) == 0x2dc);
-STATIC_ASSERT(offsetof(struct BattleWork, actions) == 0x2ec);
-STATIC_ASSERT(offsetof(struct BattleWork, spoils) == 0x530);
-STATIC_ASSERT(offsetof(struct BattleWork, palette) == 0x544);
-STATIC_ASSERT(offsetof(struct BattleWork, brightness) == 0x644);
-STATIC_ASSERT(offsetof(struct BattleWork, background) == 0x648);
-STATIC_ASSERT(offsetof(struct BattleWork, actionRun) == 0x654);
-STATIC_ASSERT(offsetof(struct BattleWork, playback) == 0x6b8);
-STATIC_ASSERT(offsetof(struct BattlePlaybackWork, phase) == 0x148);
-STATIC_ASSERT(offsetof(struct BattlePlaybackWork, flags) == 0x16c);
+STATIC_ASSERT(offsetof(struct BattleWork, partyStatus) == 65);
+STATIC_ASSERT(offsetof(struct BattleWork, challengeFlag) == 67);
+STATIC_ASSERT(offsetof(struct BattleWork, partyUnits) == 88);
+STATIC_ASSERT(offsetof(struct BattleWork, enemyIds) == 102);
+STATIC_ASSERT(offsetof(struct BattleWork, objects) == 116);
+STATIC_ASSERT(offsetof(struct BattleWork, objectIndex) == 732);
+STATIC_ASSERT(offsetof(struct BattleWork, actions) == 748);
+STATIC_ASSERT(offsetof(struct BattleWork, spoils) == 1328);
+STATIC_ASSERT(offsetof(struct BattleWork, palette) == 1348);
+STATIC_ASSERT(offsetof(struct BattleWork, brightness) == 1604);
+STATIC_ASSERT(offsetof(struct BattleWork, background) == 1608);
+STATIC_ASSERT(offsetof(struct BattleWork, actionRun) == 1620);
+STATIC_ASSERT(offsetof(struct BattleWork, playback) == 1720);
+STATIC_ASSERT(offsetof(struct BattlePlaybackWork, phase) == 328);
+STATIC_ASSERT(offsetof(struct BattlePlaybackWork, flags) == 364);
 
 /// The battle's work: gHeapSlots[HEAP_SLOT_BATTLE] under its own name.
 #define gBattleWork (*(struct BattleWork **)&gHeapSlots[HEAP_SLOT_BATTLE])

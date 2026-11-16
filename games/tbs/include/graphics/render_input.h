@@ -20,7 +20,7 @@ struct GlyphRect {
   u16 y;
 };
 
-STATIC_ASSERT(sizeof(struct GlyphRect) == 0x10);
+STATIC_ASSERT(sizeof(struct GlyphRect) == 16);
 STATIC_ASSERT(offsetof(struct GlyphRect, width) == 8);
 STATIC_ASSERT(offsetof(struct GlyphRect, x) == 12);
 
@@ -98,10 +98,10 @@ struct WindowSpriteList {
 STATIC_ASSERT(sizeof(struct WindowSpriteList) == 8);
 STATIC_ASSERT(offsetof(struct WindowSpriteList, tailLink) == 4);
 
-STATIC_ASSERT(offsetof(struct WindowSprite, animationStep) == 0x0c);
+STATIC_ASSERT(offsetof(struct WindowSprite, animationStep) == 12);
 
-STATIC_ASSERT(offsetof(struct WindowSprite, depth) == 0x0f);
-STATIC_ASSERT(offsetof(struct WindowSprite, oam) == 0x14);
-STATIC_ASSERT(sizeof(struct WindowSprite) == 0x1c);
+STATIC_ASSERT(offsetof(struct WindowSprite, depth) == 15);
+STATIC_ASSERT(offsetof(struct WindowSprite, oam) == 20);
+STATIC_ASSERT(sizeof(struct WindowSprite) == 28);
 
 #endif

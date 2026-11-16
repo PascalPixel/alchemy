@@ -36,9 +36,9 @@ static inline const s32 *Vector3_Coordinates(const struct Vector3 *vector) {
 #endif
 }
 
-STATIC_ASSERT(sizeof(struct Vector3) == 0x0c);
-STATIC_ASSERT(offsetof(struct Vector3, x) == 0x00);
-STATIC_ASSERT(offsetof(struct Vector3, y) == 0x04);
-STATIC_ASSERT(offsetof(struct Vector3, z) == 0x08);
+STATIC_ASSERT(sizeof(struct Vector3) == 12);
+STATIC_ASSERT(offsetof(struct Vector3, x) == 0);
+STATIC_ASSERT(offsetof(struct Vector3, y) == 4);
+STATIC_ASSERT(offsetof(struct Vector3, z) == 8);
 
 #endif

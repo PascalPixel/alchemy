@@ -64,15 +64,15 @@ struct FieldEffectWork {
   u8 paddingAtEnd[3]; ///< up to the struct's word-aligned size
 };
 
-STATIC_ASSERT(sizeof(struct FieldEffectWork) == 0x720);
-STATIC_ASSERT(offsetof(struct FieldEffectWork, mainActor) == 0x10);
-STATIC_ASSERT(offsetof(struct FieldEffectWork, action) == 0x1c);
-STATIC_ASSERT(offsetof(struct FieldEffectWork, savedCallback) == 0x38);
-STATIC_ASSERT(offsetof(struct FieldEffectWork, tileSlot) == 0x46);
-STATIC_ASSERT(offsetof(struct FieldEffectWork, savedShakeX) == 0x4c);
-STATIC_ASSERT(offsetof(struct FieldEffectWork, particles) == 0x58);
-STATIC_ASSERT(offsetof(struct FieldEffectWork, arcTileSlot) == 0x71a);
-STATIC_ASSERT(offsetof(struct FieldEffectWork, messageMode) == 0x71c);
+STATIC_ASSERT(sizeof(struct FieldEffectWork) == 1824);
+STATIC_ASSERT(offsetof(struct FieldEffectWork, mainActor) == 16);
+STATIC_ASSERT(offsetof(struct FieldEffectWork, action) == 28);
+STATIC_ASSERT(offsetof(struct FieldEffectWork, savedCallback) == 56);
+STATIC_ASSERT(offsetof(struct FieldEffectWork, tileSlot) == 70);
+STATIC_ASSERT(offsetof(struct FieldEffectWork, savedShakeX) == 76);
+STATIC_ASSERT(offsetof(struct FieldEffectWork, particles) == 88);
+STATIC_ASSERT(offsetof(struct FieldEffectWork, arcTileSlot) == 1818);
+STATIC_ASSERT(offsetof(struct FieldEffectWork, messageMode) == 1820);
 
 /// Returns the value step tenths of the way from `from` to `to`; the field
 /// Psynergy that uses it steps from 0 to 10, one a frame.

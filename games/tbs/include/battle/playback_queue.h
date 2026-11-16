@@ -35,10 +35,10 @@ struct BattlePlaybackQueue {
   s32 count;       ///< commands queued
 };
 
-STATIC_ASSERT(sizeof(struct BattlePlaybackQueue) == 0x148);
-STATIC_ASSERT(offsetof(struct BattlePlaybackQueue, operands) == 0x040);
-STATIC_ASSERT(offsetof(struct BattlePlaybackQueue, targetIndex) == 0x140);
-STATIC_ASSERT(offsetof(struct BattlePlaybackQueue, count) == 0x144);
+STATIC_ASSERT(sizeof(struct BattlePlaybackQueue) == 328);
+STATIC_ASSERT(offsetof(struct BattlePlaybackQueue, operands) == 64);
+STATIC_ASSERT(offsetof(struct BattlePlaybackQueue, targetIndex) == 320);
+STATIC_ASSERT(offsetof(struct BattlePlaybackQueue, count) == 324);
 
 /// The playback commands BattlePlayback_Push queues, each with one operand, for
 /// BattlePlayback_Run (or BattlePlayback_RunAll) to play in order. The

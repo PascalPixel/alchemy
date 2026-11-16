@@ -62,9 +62,9 @@ struct BattleActionRun {
 };
 
 STATIC_ASSERT(sizeof(struct BattleActionRun) == BATTLE_ACTION_RUN_SIZE);
-STATIC_ASSERT(offsetof(struct BattleActionRun, targetIds) == 0x02);
-STATIC_ASSERT(offsetof(struct BattleActionRun, targetMultiplier) == 0x1e);
-STATIC_ASSERT(offsetof(struct BattleActionRun, abilityId) == 0x4c);
-STATIC_ASSERT(offsetof(struct BattleActionRun, hauntDamage) == 0x60);
+STATIC_ASSERT(offsetof(struct BattleActionRun, targetIds) == 2);
+STATIC_ASSERT(offsetof(struct BattleActionRun, targetMultiplier) == 30);
+STATIC_ASSERT(offsetof(struct BattleActionRun, abilityId) == 76);
+STATIC_ASSERT(offsetof(struct BattleActionRun, hauntDamage) == 96);
 
 #endif

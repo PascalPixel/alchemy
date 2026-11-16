@@ -37,10 +37,10 @@ struct PushedActorFootprint {
   s32 z1; ///< bottom edge, pixels from the thing's position
 };
 
-STATIC_ASSERT(sizeof(struct PushedActorProbe) == 0x18);
-STATIC_ASSERT(offsetof(struct PushedActorProbe, position.x) == 0x08);
-STATIC_ASSERT(offsetof(struct PushedActorProbe, position.z) == 0x10);
+STATIC_ASSERT(sizeof(struct PushedActorProbe) == 24);
+STATIC_ASSERT(offsetof(struct PushedActorProbe, position.x) == 8);
+STATIC_ASSERT(offsetof(struct PushedActorProbe, position.z) == 16);
 
-STATIC_ASSERT(sizeof(struct PushedActorFootprint) == 0x10);
+STATIC_ASSERT(sizeof(struct PushedActorFootprint) == 16);
 
 #endif

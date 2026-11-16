@@ -45,8 +45,8 @@ struct OptionMenuWork {
   struct WindowSprite *icon[6];
 };
 
-STATIC_ASSERT(sizeof(struct OptionMenuWork) == 0x628);
-STATIC_ASSERT(offsetof(struct OptionMenuWork, entries) == 0x400);
+STATIC_ASSERT(sizeof(struct OptionMenuWork) == 1576);
+STATIC_ASSERT(offsetof(struct OptionMenuWork, entries) == 1024);
 
 /// The settings menu's work, HEAP_SLOT_SETTINGS_MENU under its own name.
 #define gOptionMenuWork                                                        \

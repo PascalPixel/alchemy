@@ -18,7 +18,7 @@ struct WorldMapView {
             ///< sprites at load
   u8 fadeStep; ///< MapGridScrollWork's wideTiles, 0x80 at load
   /// As MapGridScrollWork: footprints, tileset animations and blend script.
-  u8 animationsAndBlend[0xe4 - 0x17];
+  u8 animationsAndBlend[228 - 23];
   FIXED view[2]; ///< the view's top left, x then y, 16.16 fixed-point pixels
   FIXED scaleX;  ///< 32 in 16.16 at load
   FIXED scaleY;  ///< 64 in 16.16 at load
@@ -59,17 +59,17 @@ struct WorldMapView {
   s16 zoomTransitionStep;   ///< frames of the transition done
 };
 
-STATIC_ASSERT(sizeof(struct WorldMapView) == 0x35c);
-STATIC_ASSERT(offsetof(struct WorldMapView, view) == 0xe4);
-STATIC_ASSERT(offsetof(struct WorldMapView, pitch) == 0x118);
-STATIC_ASSERT(offsetof(struct WorldMapView, animationActive) == 0xfc);
-STATIC_ASSERT(offsetof(struct WorldMapView, resources) == 0x11c);
-STATIC_ASSERT(offsetof(struct WorldMapView, tileIds) == 0x138);
-STATIC_ASSERT(offsetof(struct WorldMapView, quarterTiles) == 0x338);
-STATIC_ASSERT(offsetof(struct WorldMapView, farPlane) == 0x348);
-STATIC_ASSERT(offsetof(struct WorldMapView, zoom) == 0x354);
-STATIC_ASSERT(offsetof(struct WorldMapView, previousZoom) == 0x350);
-STATIC_ASSERT(offsetof(struct WorldMapView, zoomTransitionFrames) == 0x358);
-STATIC_ASSERT(offsetof(struct WorldMapView, zoomTransitionStep) == 0x35a);
+STATIC_ASSERT(sizeof(struct WorldMapView) == 860);
+STATIC_ASSERT(offsetof(struct WorldMapView, view) == 228);
+STATIC_ASSERT(offsetof(struct WorldMapView, pitch) == 280);
+STATIC_ASSERT(offsetof(struct WorldMapView, animationActive) == 252);
+STATIC_ASSERT(offsetof(struct WorldMapView, resources) == 284);
+STATIC_ASSERT(offsetof(struct WorldMapView, tileIds) == 312);
+STATIC_ASSERT(offsetof(struct WorldMapView, quarterTiles) == 824);
+STATIC_ASSERT(offsetof(struct WorldMapView, farPlane) == 840);
+STATIC_ASSERT(offsetof(struct WorldMapView, zoom) == 852);
+STATIC_ASSERT(offsetof(struct WorldMapView, previousZoom) == 848);
+STATIC_ASSERT(offsetof(struct WorldMapView, zoomTransitionFrames) == 856);
+STATIC_ASSERT(offsetof(struct WorldMapView, zoomTransitionStep) == 858);
 
 #endif

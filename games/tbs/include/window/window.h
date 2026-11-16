@@ -48,10 +48,10 @@ struct Window {
   s16 previousHeight; ///< tiles
 };
 
-STATIC_ASSERT(sizeof(struct Window) == 0x24);
+STATIC_ASSERT(sizeof(struct Window) == 36);
 STATIC_ASSERT(offsetof(struct Window, width) == 8);
-STATIC_ASSERT(offsetof(struct Window, zoomStage) == 0x18);
-STATIC_ASSERT(offsetof(struct Window, previousHeight) == 0x22);
+STATIC_ASSERT(offsetof(struct Window, zoomStage) == 24);
+STATIC_ASSERT(offsetof(struct Window, previousHeight) == 34);
 
 /// A message, one of three, which types decoded text into a window a few
 /// characters a frame and runs its control codes.
@@ -76,11 +76,11 @@ struct Message {
   u16 unused;
 };
 
-STATIC_ASSERT(sizeof(struct Message) == 0x28);
-STATIC_ASSERT(offsetof(struct Message, textIndex) == 0x12);
-STATIC_ASSERT(offsetof(struct Message, countdown) == 0x14);
-STATIC_ASSERT(offsetof(struct Message, transition) == 0x1c);
-STATIC_ASSERT(offsetof(struct Message, flags) == 0x24);
+STATIC_ASSERT(sizeof(struct Message) == 40);
+STATIC_ASSERT(offsetof(struct Message, textIndex) == 18);
+STATIC_ASSERT(offsetof(struct Message, countdown) == 20);
+STATIC_ASSERT(offsetof(struct Message, transition) == 28);
+STATIC_ASSERT(offsetof(struct Message, flags) == 36);
 
 /// Requests transfer of the four-row tilemap band containing window row y.
 #define Window_MarkTilemapRow(render, y)                                       \

@@ -81,12 +81,12 @@ struct FieldEffect {
   void (*update)(struct Actor *actor);
 };
 
-STATIC_ASSERT(offsetof(struct FieldEffect, scaleRateX) == 0x30);
-STATIC_ASSERT(offsetof(struct FieldEffect, velocity) == 0x44);
-STATIC_ASSERT(offsetof(struct FieldEffect, sprite) == 0x50);
-STATIC_ASSERT(offsetof(struct FieldEffect, spin) == 0x64);
-STATIC_ASSERT(offsetof(struct FieldEffect, countdown) == 0x68);
-STATIC_ASSERT(offsetof(struct FieldEffect, update) == 0x6c);
+STATIC_ASSERT(offsetof(struct FieldEffect, scaleRateX) == 48);
+STATIC_ASSERT(offsetof(struct FieldEffect, velocity) == 68);
+STATIC_ASSERT(offsetof(struct FieldEffect, sprite) == 80);
+STATIC_ASSERT(offsetof(struct FieldEffect, spin) == 100);
+STATIC_ASSERT(offsetof(struct FieldEffect, countdown) == 104);
+STATIC_ASSERT(offsetof(struct FieldEffect, update) == 108);
 
 /// An actor read as an actor and as a field effect at once, as
 /// Babi Lighthouse's Scene_Initialize writes one.
@@ -155,8 +155,8 @@ struct EffectOptions {
   void (*update)(struct Actor *actor); ///< replaces the update routine
 };
 
-STATIC_ASSERT(offsetof(struct EffectOptions, type) == 0x18);
-STATIC_ASSERT(offsetof(struct EffectOptions, update) == 0x24);
+STATIC_ASSERT(offsetof(struct EffectOptions, type) == 24);
+STATIC_ASSERT(offsetof(struct EffectOptions, update) == 36);
 
 void FieldEffect_SpawnResident(s32 x, s32 y, s32 z, s32 velocityX,
                                s32 velocityY, s32 velocityZ, u32 flags,

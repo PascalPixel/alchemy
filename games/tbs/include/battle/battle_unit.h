@@ -438,32 +438,32 @@ struct Unit {
 };
 
 STATIC_ASSERT(sizeof(struct AbilityDefinition) == ABILITY_DEFINITION_SIZE);
-STATIC_ASSERT(offsetof(struct AbilityDefinition, effect) == 0x03);
-STATIC_ASSERT(offsetof(struct AbilityDefinition, power) == 0x0a);
-STATIC_ASSERT(offsetof(struct AbilityDefinition, fieldPsynergy) == 0x0c);
+STATIC_ASSERT(offsetof(struct AbilityDefinition, effect) == 3);
+STATIC_ASSERT(offsetof(struct AbilityDefinition, power) == 10);
+STATIC_ASSERT(offsetof(struct AbilityDefinition, fieldPsynergy) == 12);
 
 STATIC_ASSERT(sizeof(struct PsynergyEntry) == 4);
 STATIC_ASSERT(sizeof(struct BattleElementStats) == 4);
 STATIC_ASSERT(sizeof(struct Unit) == BATTLE_UNIT_SIZE);
-STATIC_ASSERT(offsetof(struct Unit, baseHp) == 0x10);
-STATIC_ASSERT(offsetof(struct Unit, baseAttack) == 0x18);
-STATIC_ASSERT(offsetof(struct Unit, psynergy) == 0x58);
-STATIC_ASSERT(offsetof(struct Unit, djinnHeld) == 0xf8);
-STATIC_ASSERT(offsetof(struct Unit, djinnSet) == 0x108);
-STATIC_ASSERT(offsetof(struct Unit, aiState) == 0x120);
-STATIC_ASSERT(offsetof(struct Unit, hp) == 0x038);
-STATIC_ASSERT(offsetof(struct Unit, baseElement) == 0x024);
-STATIC_ASSERT(offsetof(struct Unit, level) == 0x00f);
-STATIC_ASSERT(offsetof(struct Unit, element) == 0x048);
-STATIC_ASSERT(offsetof(struct Unit, ready) == 0x144);
-STATIC_ASSERT(offsetof(struct Unit, inventory) == 0x0d8);
-STATIC_ASSERT(offsetof(struct Unit, djinnHeldCounts) == 0x118);
-STATIC_ASSERT(offsetof(struct Unit, djinnSetCounts) == 0x11c);
-STATIC_ASSERT(offsetof(struct Unit, defendLevel) == 0x12b);
-STATIC_ASSERT(offsetof(struct Unit, charm) == 0x13a);
-STATIC_ASSERT(offsetof(struct Unit, haunt) == 0x140);
+STATIC_ASSERT(offsetof(struct Unit, baseHp) == 16);
+STATIC_ASSERT(offsetof(struct Unit, baseAttack) == 24);
+STATIC_ASSERT(offsetof(struct Unit, psynergy) == 88);
+STATIC_ASSERT(offsetof(struct Unit, djinnHeld) == 248);
+STATIC_ASSERT(offsetof(struct Unit, djinnSet) == 264);
+STATIC_ASSERT(offsetof(struct Unit, aiState) == 288);
+STATIC_ASSERT(offsetof(struct Unit, hp) == 56);
+STATIC_ASSERT(offsetof(struct Unit, baseElement) == 36);
+STATIC_ASSERT(offsetof(struct Unit, level) == 15);
+STATIC_ASSERT(offsetof(struct Unit, element) == 72);
+STATIC_ASSERT(offsetof(struct Unit, ready) == 324);
+STATIC_ASSERT(offsetof(struct Unit, inventory) == 216);
+STATIC_ASSERT(offsetof(struct Unit, djinnHeldCounts) == 280);
+STATIC_ASSERT(offsetof(struct Unit, djinnSetCounts) == 284);
+STATIC_ASSERT(offsetof(struct Unit, defendLevel) == 299);
+STATIC_ASSERT(offsetof(struct Unit, charm) == 314);
+STATIC_ASSERT(offsetof(struct Unit, haunt) == 320);
 
-STATIC_ASSERT(offsetof(struct Unit, enemyId) == 0x14a);
+STATIC_ASSERT(offsetof(struct Unit, enemyId) == 330);
 
 /// Clamps a gauge ratio to 0..UNIT_GAUGE_FULL.
 static __inline__ s32 Unit_ClampGauge(s32 ratio) {

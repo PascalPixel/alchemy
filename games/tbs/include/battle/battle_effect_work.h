@@ -20,8 +20,8 @@ struct BattleBg2Origin {
   s32 queued;
 };
 
-STATIC_ASSERT(sizeof(struct BattleBg2Origin) == 0x0c);
-STATIC_ASSERT(offsetof(struct BattleBg2Origin, y) == 0x04);
+STATIC_ASSERT(sizeof(struct BattleBg2Origin) == 12);
+STATIC_ASSERT(offsetof(struct BattleBg2Origin, y) == 4);
 
 /// How BattleEffect_ProcessPendingGraphicsTransfer moves the effect's
 /// 128x128 canvas into VRAM once a frame (work->transferMode); the canvas
@@ -135,30 +135,28 @@ struct BattleEffectWork {
   struct BattleEffectParams *args; ///< the command being run
 };
 
-STATIC_ASSERT(offsetof(struct BattleEffectWork, bg2xLines) == 0x6980);
+STATIC_ASSERT(offsetof(struct BattleEffectWork, bg2xLines) == 27008);
 STATIC_ASSERT(offsetof(struct BattleEffectWork, imageStorage) == 0);
-STATIC_ASSERT(offsetof(struct BattleEffectWork, trackedCanvas.origin) ==
-              0x13c4);
-STATIC_ASSERT(offsetof(struct BattleEffectWork, particles) == 0x7080);
-STATIC_ASSERT(offsetof(struct BattleEffectWork, transferMode) == 0x7780);
-STATIC_ASSERT(offsetof(struct BattleEffectWork, transferValue) == 0x7784);
-STATIC_ASSERT(offsetof(struct BattleEffectWork, frame) == 0x778c);
-STATIC_ASSERT(offsetof(struct BattleEffectWork, scrollTimer) == 0x7790);
-STATIC_ASSERT(offsetof(struct BattleEffectWork, scrollStepX) == 0x7798);
-STATIC_ASSERT(offsetof(struct BattleEffectWork, savedBg1X) == 0x77a0);
-STATIC_ASSERT(offsetof(struct BattleEffectWork, shakeFrames) == 0x77a8);
-STATIC_ASSERT(offsetof(struct BattleEffectWork, cameraDelta) == 0x77ac);
-STATIC_ASSERT(offsetof(struct BattleEffectWork, fadeFrames) == 0x77b4);
-STATIC_ASSERT(offsetof(struct BattleEffectWork, fadeStep) == 0x77b8);
-STATIC_ASSERT(offsetof(struct BattleEffectWork, win0h) == 0x77bc);
-STATIC_ASSERT(offsetof(struct BattleEffectWork, bg2x) == 0x77d0);
-STATIC_ASSERT(offsetof(struct BattleEffectWork, sprites) == 0x77d8);
-STATIC_ASSERT(offsetof(struct BattleEffectWork, actorTimers) == 0x7818);
-STATIC_ASSERT(offsetof(struct BattleEffectWork, vblanksSinceTransfer) ==
-              0x7820);
-STATIC_ASSERT(offsetof(struct BattleEffectWork, transferPending) == 0x7824);
-STATIC_ASSERT(offsetof(struct BattleEffectWork, args) == 0x7828);
-STATIC_ASSERT(sizeof(struct BattleEffectWork) == 0x782c);
+STATIC_ASSERT(offsetof(struct BattleEffectWork, trackedCanvas.origin) == 5060);
+STATIC_ASSERT(offsetof(struct BattleEffectWork, particles) == 28800);
+STATIC_ASSERT(offsetof(struct BattleEffectWork, transferMode) == 30592);
+STATIC_ASSERT(offsetof(struct BattleEffectWork, transferValue) == 30596);
+STATIC_ASSERT(offsetof(struct BattleEffectWork, frame) == 30604);
+STATIC_ASSERT(offsetof(struct BattleEffectWork, scrollTimer) == 30608);
+STATIC_ASSERT(offsetof(struct BattleEffectWork, scrollStepX) == 30616);
+STATIC_ASSERT(offsetof(struct BattleEffectWork, savedBg1X) == 30624);
+STATIC_ASSERT(offsetof(struct BattleEffectWork, shakeFrames) == 30632);
+STATIC_ASSERT(offsetof(struct BattleEffectWork, cameraDelta) == 30636);
+STATIC_ASSERT(offsetof(struct BattleEffectWork, fadeFrames) == 30644);
+STATIC_ASSERT(offsetof(struct BattleEffectWork, fadeStep) == 30648);
+STATIC_ASSERT(offsetof(struct BattleEffectWork, win0h) == 30652);
+STATIC_ASSERT(offsetof(struct BattleEffectWork, bg2x) == 30672);
+STATIC_ASSERT(offsetof(struct BattleEffectWork, sprites) == 30680);
+STATIC_ASSERT(offsetof(struct BattleEffectWork, actorTimers) == 30744);
+STATIC_ASSERT(offsetof(struct BattleEffectWork, vblanksSinceTransfer) == 30752);
+STATIC_ASSERT(offsetof(struct BattleEffectWork, transferPending) == 30756);
+STATIC_ASSERT(offsetof(struct BattleEffectWork, args) == 30760);
+STATIC_ASSERT(sizeof(struct BattleEffectWork) == 30764);
 
 // The pixel fragments BattleEffect_BuildBlitter copies into its blitters, from
 // blitter_fragments.s: Forward reads the picture left to right and

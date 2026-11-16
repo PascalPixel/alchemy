@@ -62,6 +62,6 @@
 /// the three slots from HEAP_SLOT_FIELD to HEAP_SLOT_FIELD_BLEND.
 // Kept as a number: the scene overlays that use it do not include heap.h,
 // where the slot numbers are.
-#define Ram_FieldBlendWorkOffset FIXED_OFFSET(0xc, gFieldBlendWork, gFieldWork)
+#define Ram_FieldBlendWorkOffset FIXED_OFFSET(12, gFieldBlendWork, gFieldWork)
 
 #endif

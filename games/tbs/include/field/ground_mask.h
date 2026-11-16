@@ -58,8 +58,8 @@ struct GroundParticle {
   u16 timer;       ///< Frames left; zero frees the particle.
 };
 
-STATIC_ASSERT(offsetof(struct GroundParticle, positionX) == 0x0c);
-STATIC_ASSERT(sizeof(struct GroundParticle) == 0x20);
+STATIC_ASSERT(offsetof(struct GroundParticle, positionX) == 12);
+STATIC_ASSERT(sizeof(struct GroundParticle) == 32);
 
 /// HEAP_SLOT_WEATHER while ground particles, motes or sparkles run.
 struct WeatherWork {
@@ -70,7 +70,7 @@ struct WeatherWork {
   s32 stopped; ///< Nonzero stops new sparkle bursts.
 };
 
-STATIC_ASSERT(sizeof(struct WeatherWork) == 0x410);
+STATIC_ASSERT(sizeof(struct WeatherWork) == 1040);
 
 /// HEAP_SLOT_WEATHER: the running ground particles, motes or sparkles.
 #define gWeatherWork (*(struct WeatherWork **)&gHeapSlots[HEAP_SLOT_WEATHER])

@@ -45,8 +45,8 @@ STATIC_ASSERT(sizeof(struct WorldMapScanline) == 20);
 STATIC_ASSERT(offsetof(struct WorldMapScanline, pa) == 16);
 STATIC_ASSERT(sizeof(struct WorldMapAffineLine) == 16);
 STATIC_ASSERT(sizeof(struct WorldMapAffinePair) == 32);
-STATIC_ASSERT(offsetof(struct WorldMapAffineWork, pages) == 0xc80);
-STATIC_ASSERT(offsetof(struct WorldMapAffineWork, unused) == 0x3480);
-STATIC_ASSERT(sizeof(struct WorldMapAffineWork) == 0x3484);
+STATIC_ASSERT(offsetof(struct WorldMapAffineWork, pages) == 3200);
+STATIC_ASSERT(offsetof(struct WorldMapAffineWork, unused) == 13440);
+STATIC_ASSERT(sizeof(struct WorldMapAffineWork) == 13444);
 
 #endif

@@ -53,14 +53,14 @@ struct MapGridScrollWork {
 
 #include "field/perspective.h"
 
-STATIC_ASSERT(sizeof(struct MapGridLayerScroll) == 0x30);
-STATIC_ASSERT(offsetof(struct MapGridLayerScroll, cells) == 0x2c);
-STATIC_ASSERT(sizeof(struct MapGridScrollWork) == 0x194);
-STATIC_ASSERT(offsetof(struct MapGridScrollWork, animations) == 0x18);
-STATIC_ASSERT(offsetof(struct MapGridScrollWork, blend) == 0xd8);
-STATIC_ASSERT(offsetof(struct MapGridScrollWork, view) == 0xe4);
-STATIC_ASSERT(offsetof(struct MapGridScrollWork, animationActive) == 0xfc);
-STATIC_ASSERT(offsetof(struct MapGridScrollWork, layers) == 0x104);
+STATIC_ASSERT(sizeof(struct MapGridLayerScroll) == 48);
+STATIC_ASSERT(offsetof(struct MapGridLayerScroll, cells) == 44);
+STATIC_ASSERT(sizeof(struct MapGridScrollWork) == 404);
+STATIC_ASSERT(offsetof(struct MapGridScrollWork, animations) == 24);
+STATIC_ASSERT(offsetof(struct MapGridScrollWork, blend) == 216);
+STATIC_ASSERT(offsetof(struct MapGridScrollWork, view) == 228);
+STATIC_ASSERT(offsetof(struct MapGridScrollWork, animationActive) == 252);
+STATIC_ASSERT(offsetof(struct MapGridScrollWork, layers) == 260);
 
 /// A background's hardware scroll offsets.
 struct BgScroll {

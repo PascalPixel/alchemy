@@ -66,19 +66,19 @@ struct ScriptOperands {
   u32 update;           ///< SW_HOOK, the routine run each frame
 };
 
-STATIC_ASSERT(offsetof(struct ScriptOperands, scriptAddress) == 0x00);
-STATIC_ASSERT(offsetof(struct ScriptOperands, cursor) == 0x04);
-STATIC_ASSERT(offsetof(struct ScriptOperands, facing) == 0x06);
-STATIC_ASSERT(offsetof(struct ScriptOperands, radius) == 0x20);
-STATIC_ASSERT(offsetof(struct ScriptOperands, riseBaseY) == 0x4c);
-STATIC_ASSERT(offsetof(struct ScriptOperands, spriteStorageKind) == 0x54);
-STATIC_ASSERT(offsetof(struct ScriptOperands, repeatCount) == 0x5d);
-STATIC_ASSERT(offsetof(struct ScriptOperands, refused) == 0x60);
-STATIC_ASSERT(offsetof(struct ScriptOperands, conditionResult) == 0x57);
-STATIC_ASSERT(offsetof(struct ScriptOperands, wait) == 0x5e);
-STATIC_ASSERT(offsetof(struct ScriptOperands, timer) == 0x64);
-STATIC_ASSERT(offsetof(struct ScriptOperands, watchedActor) == 0x68);
-STATIC_ASSERT(offsetof(struct ScriptOperands, update) == 0x6c);
-STATIC_ASSERT(sizeof(struct ScriptOperands) == 0x70);
+STATIC_ASSERT(offsetof(struct ScriptOperands, scriptAddress) == 0);
+STATIC_ASSERT(offsetof(struct ScriptOperands, cursor) == 4);
+STATIC_ASSERT(offsetof(struct ScriptOperands, facing) == 6);
+STATIC_ASSERT(offsetof(struct ScriptOperands, radius) == 32);
+STATIC_ASSERT(offsetof(struct ScriptOperands, riseBaseY) == 76);
+STATIC_ASSERT(offsetof(struct ScriptOperands, spriteStorageKind) == 84);
+STATIC_ASSERT(offsetof(struct ScriptOperands, repeatCount) == 93);
+STATIC_ASSERT(offsetof(struct ScriptOperands, refused) == 96);
+STATIC_ASSERT(offsetof(struct ScriptOperands, conditionResult) == 87);
+STATIC_ASSERT(offsetof(struct ScriptOperands, wait) == 94);
+STATIC_ASSERT(offsetof(struct ScriptOperands, timer) == 100);
+STATIC_ASSERT(offsetof(struct ScriptOperands, watchedActor) == 104);
+STATIC_ASSERT(offsetof(struct ScriptOperands, update) == 108);
+STATIC_ASSERT(sizeof(struct ScriptOperands) == 112);
 
 #endif

@@ -63,8 +63,8 @@ struct SceneEntryPoints {
 };
 
 STATIC_ASSERT(sizeof(struct SceneEntryPoints) == 48);
-STATIC_ASSERT(offsetof(struct SceneEntryPoints, exits) == 0x14);
-STATIC_ASSERT(offsetof(struct SceneEntryPoints, regions) == 0x2c);
+STATIC_ASSERT(offsetof(struct SceneEntryPoints, exits) == 20);
+STATIC_ASSERT(offsetof(struct SceneEntryPoints, regions) == 44);
 
 /// A position on the field.
 struct FieldPosition {

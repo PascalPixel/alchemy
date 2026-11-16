@@ -44,13 +44,13 @@ struct IconMenuWork {
   s16 previousMode;
 };
 
-STATIC_ASSERT(sizeof(struct IconMenuEntry) == 0x14);
-STATIC_ASSERT(offsetof(struct IconMenuEntry, slot) == 0x12);
-STATIC_ASSERT(sizeof(struct IconMenuWork) == 0x98);
-STATIC_ASSERT(offsetof(struct IconMenuWork, window) == 0x78);
-STATIC_ASSERT(offsetof(struct IconMenuWork, selection) == 0x8c);
-STATIC_ASSERT(offsetof(struct IconMenuWork, labelBase) == 0x92);
-STATIC_ASSERT(offsetof(struct IconMenuWork, previousMode) == 0x96);
+STATIC_ASSERT(sizeof(struct IconMenuEntry) == 20);
+STATIC_ASSERT(offsetof(struct IconMenuEntry, slot) == 18);
+STATIC_ASSERT(sizeof(struct IconMenuWork) == 152);
+STATIC_ASSERT(offsetof(struct IconMenuWork, window) == 120);
+STATIC_ASSERT(offsetof(struct IconMenuWork, selection) == 140);
+STATIC_ASSERT(offsetof(struct IconMenuWork, labelBase) == 146);
+STATIC_ASSERT(offsetof(struct IconMenuWork, previousMode) == 150);
 
 /// Heap slot 58: the icon menu while one is open.
 #define gIconMenuWork                                                          \

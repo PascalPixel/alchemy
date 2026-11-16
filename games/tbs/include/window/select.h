@@ -105,14 +105,14 @@ struct SelectionMenuWork {
 /// first entry.
 #define SELECTION_CURSOR_RESET 0x80
 
-STATIC_ASSERT(sizeof(struct SelectionSprite) == 0x0c);
-STATIC_ASSERT(sizeof(struct SelectionNode) == 0x34);
-STATIC_ASSERT(offsetof(struct SelectionNode, message) == 0x20);
-STATIC_ASSERT(offsetof(struct SelectionNode, sprite) == 0x28);
-STATIC_ASSERT(offsetof(struct SelectionMenuWork, head) == 0x348);
-STATIC_ASSERT(offsetof(struct SelectionMenuWork, kinds) == 0x354);
-STATIC_ASSERT(offsetof(struct SelectionMenuWork, cursorIndex) == 0x39e);
-STATIC_ASSERT(offsetof(struct SelectionMenuWork, locked) == 0x3b8);
-STATIC_ASSERT(sizeof(struct SelectionMenuWork) == 0x3e4);
+STATIC_ASSERT(sizeof(struct SelectionSprite) == 12);
+STATIC_ASSERT(sizeof(struct SelectionNode) == 52);
+STATIC_ASSERT(offsetof(struct SelectionNode, message) == 32);
+STATIC_ASSERT(offsetof(struct SelectionNode, sprite) == 40);
+STATIC_ASSERT(offsetof(struct SelectionMenuWork, head) == 840);
+STATIC_ASSERT(offsetof(struct SelectionMenuWork, kinds) == 852);
+STATIC_ASSERT(offsetof(struct SelectionMenuWork, cursorIndex) == 926);
+STATIC_ASSERT(offsetof(struct SelectionMenuWork, locked) == 952);
+STATIC_ASSERT(sizeof(struct SelectionMenuWork) == 996);
 
 #endif

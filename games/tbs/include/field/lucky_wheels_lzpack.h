@@ -37,9 +37,9 @@ struct LzPackWork {
 };
 
 STATIC_ASSERT(sizeof(struct LzPackNode) == 12);
-STATIC_ASSERT(sizeof(struct LzPackWork) == 0x4444);
-STATIC_ASSERT(offsetof(struct LzPackWork, bucket) == 0x3000);
-STATIC_ASSERT(offsetof(struct LzPackWork, inputCursor) == 0x4438);
+STATIC_ASSERT(sizeof(struct LzPackWork) == 17476);
+STATIC_ASSERT(offsetof(struct LzPackWork, bucket) == 12288);
+STATIC_ASSERT(offsetof(struct LzPackWork, inputCursor) == 17464);
 
 /// The packer has no cell of its own for its work pointer: it borrows the flash
 /// library's, which IdentifyFlash sets again before the flash code reads it.

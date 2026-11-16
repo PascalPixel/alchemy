@@ -87,17 +87,17 @@ struct BattleSpoils {
   u16 items[4];
 };
 
-STATIC_ASSERT(sizeof(struct BattleObject) == 0x2c);
-STATIC_ASSERT(offsetof(struct BattleObject, anchorX) == 0x0c);
-STATIC_ASSERT(offsetof(struct BattleObject, activeStatuses) == 0x1c);
-STATIC_ASSERT(offsetof(struct BattleObject, cycleTimer) == 0x1f);
-STATIC_ASSERT(offsetof(struct BattleObject, active) == 0x28);
+STATIC_ASSERT(sizeof(struct BattleObject) == 44);
+STATIC_ASSERT(offsetof(struct BattleObject, anchorX) == 12);
+STATIC_ASSERT(offsetof(struct BattleObject, activeStatuses) == 28);
+STATIC_ASSERT(offsetof(struct BattleObject, cycleTimer) == 31);
+STATIC_ASSERT(offsetof(struct BattleObject, active) == 40);
 
-STATIC_ASSERT(sizeof(struct BattleAction) == 0x10);
-STATIC_ASSERT(offsetof(struct BattleAction, priority) == 0x04);
-STATIC_ASSERT(offsetof(struct BattleAction, command) == 0x06);
-STATIC_ASSERT(offsetof(struct BattleAction, parameter) == 0x08);
-STATIC_ASSERT(offsetof(struct BattleAction, target) == 0x0a);
-STATIC_ASSERT(sizeof(struct BattleSpoils) == 0x14);
+STATIC_ASSERT(sizeof(struct BattleAction) == 16);
+STATIC_ASSERT(offsetof(struct BattleAction, priority) == 4);
+STATIC_ASSERT(offsetof(struct BattleAction, command) == 6);
+STATIC_ASSERT(offsetof(struct BattleAction, parameter) == 8);
+STATIC_ASSERT(offsetof(struct BattleAction, target) == 10);
+STATIC_ASSERT(sizeof(struct BattleSpoils) == 20);
 
 #endif

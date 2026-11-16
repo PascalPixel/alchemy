@@ -99,14 +99,14 @@ struct ActorArmView {
   void (*update)(struct Actor *actor);
 };
 
-STATIC_ASSERT(sizeof(struct ActorArmView) == 0x70);
-STATIC_ASSERT(offsetof(struct ActorArmView, script) == 0x00);
-STATIC_ASSERT(offsetof(struct ActorArmView, scriptCursor) == 0x04);
-STATIC_ASSERT(offsetof(struct ActorArmView, facing) == 0x06);
-STATIC_ASSERT(offsetof(struct ActorArmView, vertical) == 0x44);
-STATIC_ASSERT(offsetof(struct ActorArmView, arrivalAxis) == 0x56);
-STATIC_ASSERT(offsetof(struct ActorArmView, wait) == 0x5e);
-STATIC_ASSERT(offsetof(struct ActorArmView, frozen) == 0x61);
-STATIC_ASSERT(offsetof(struct ActorArmView, update) == 0x6c);
+STATIC_ASSERT(sizeof(struct ActorArmView) == 112);
+STATIC_ASSERT(offsetof(struct ActorArmView, script) == 0);
+STATIC_ASSERT(offsetof(struct ActorArmView, scriptCursor) == 4);
+STATIC_ASSERT(offsetof(struct ActorArmView, facing) == 6);
+STATIC_ASSERT(offsetof(struct ActorArmView, vertical) == 68);
+STATIC_ASSERT(offsetof(struct ActorArmView, arrivalAxis) == 86);
+STATIC_ASSERT(offsetof(struct ActorArmView, wait) == 94);
+STATIC_ASSERT(offsetof(struct ActorArmView, frozen) == 97);
+STATIC_ASSERT(offsetof(struct ActorArmView, update) == 108);
 
 #endif

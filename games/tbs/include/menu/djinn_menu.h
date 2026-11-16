@@ -109,14 +109,14 @@ struct DjinnMenuWork {
   ///@}
 };
 
-STATIC_ASSERT(offsetof(struct DjinnMenuWork, statusWindow) == 0x10);
-STATIC_ASSERT(offsetof(struct DjinnMenuWork, selectedColumn) == 0x1c);
-STATIC_ASSERT(offsetof(struct DjinnMenuWork, memberX) == 0x134);
-STATIC_ASSERT(offsetof(struct DjinnMenuWork, memberY) == 0x144);
-STATIC_ASSERT(offsetof(struct DjinnMenuWork, selection) == 0x174);
-STATIC_ASSERT(offsetof(struct DjinnMenuWork, pending) == 0x220);
-STATIC_ASSERT(offsetof(struct DjinnMenuWork, pairIndex) == 0x254);
-STATIC_ASSERT(offsetof(struct DjinnMenuBackdrop, tutorialTimer) == 0x2128);
-STATIC_ASSERT(offsetof(struct DjinnMenuBackdrop, tutorialStep) == 0x212c);
+STATIC_ASSERT(offsetof(struct DjinnMenuWork, statusWindow) == 16);
+STATIC_ASSERT(offsetof(struct DjinnMenuWork, selectedColumn) == 28);
+STATIC_ASSERT(offsetof(struct DjinnMenuWork, memberX) == 308);
+STATIC_ASSERT(offsetof(struct DjinnMenuWork, memberY) == 324);
+STATIC_ASSERT(offsetof(struct DjinnMenuWork, selection) == 372);
+STATIC_ASSERT(offsetof(struct DjinnMenuWork, pending) == 544);
+STATIC_ASSERT(offsetof(struct DjinnMenuWork, pairIndex) == 596);
+STATIC_ASSERT(offsetof(struct DjinnMenuBackdrop, tutorialTimer) == 8488);
+STATIC_ASSERT(offsetof(struct DjinnMenuBackdrop, tutorialStep) == 8492);
 
 #endif

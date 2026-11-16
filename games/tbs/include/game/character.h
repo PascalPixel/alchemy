@@ -220,26 +220,26 @@ struct LevelUpResult {
   ///@}
 };
 
-STATIC_ASSERT(sizeof(struct CharacterDefinition) == 0xb4);
-STATIC_ASSERT(offsetof(struct CharacterDefinition, hp) == 0x50);
-STATIC_ASSERT(offsetof(struct CharacterDefinition, startingLevel) == 0x96);
-STATIC_ASSERT(offsetof(struct CharacterDefinition, items) == 0x98);
-STATIC_ASSERT(sizeof(struct ClassDefinition) == 0x54);
+STATIC_ASSERT(sizeof(struct CharacterDefinition) == 180);
+STATIC_ASSERT(offsetof(struct CharacterDefinition, hp) == 80);
+STATIC_ASSERT(offsetof(struct CharacterDefinition, startingLevel) == 150);
+STATIC_ASSERT(offsetof(struct CharacterDefinition, items) == 152);
+STATIC_ASSERT(sizeof(struct ClassDefinition) == 84);
 STATIC_ASSERT(offsetof(struct ClassDefinition, hp) == 8);
 STATIC_ASSERT(sizeof(struct ClassAbility) == 4);
-STATIC_ASSERT(offsetof(struct ClassDefinition, abilities) == 0x10);
-STATIC_ASSERT(sizeof(struct DjinnDefinition) == 0xc);
+STATIC_ASSERT(offsetof(struct ClassDefinition, abilities) == 16);
+STATIC_ASSERT(sizeof(struct DjinnDefinition) == 12);
 STATIC_ASSERT(offsetof(struct DjinnDefinition, abilityId) == 0);
 STATIC_ASSERT(offsetof(struct DjinnDefinition, reservedAfterAbility) == 2);
 STATIC_ASSERT(offsetof(struct DjinnDefinition, hp) == 4);
-STATIC_ASSERT(sizeof(struct EnemyDefinition) == 0x54);
-STATIC_ASSERT(offsetof(struct EnemyDefinition, aiState) == 0x20);
-STATIC_ASSERT(offsetof(struct EnemyDefinition, actionStrategy) == 0x36);
-STATIC_ASSERT(offsetof(struct EnemyDefinition, itemActions) == 0x37);
-STATIC_ASSERT(offsetof(struct EnemyDefinition, abilities) == 0x38);
-STATIC_ASSERT(offsetof(struct EnemyDefinition, coins) == 0x4c);
-STATIC_ASSERT(offsetof(struct EnemyDefinition, experience) == 0x52);
-STATIC_ASSERT(sizeof(struct LevelUpResult) == 0x10);
+STATIC_ASSERT(sizeof(struct EnemyDefinition) == 84);
+STATIC_ASSERT(offsetof(struct EnemyDefinition, aiState) == 32);
+STATIC_ASSERT(offsetof(struct EnemyDefinition, actionStrategy) == 54);
+STATIC_ASSERT(offsetof(struct EnemyDefinition, itemActions) == 55);
+STATIC_ASSERT(offsetof(struct EnemyDefinition, abilities) == 56);
+STATIC_ASSERT(offsetof(struct EnemyDefinition, coins) == 76);
+STATIC_ASSERT(offsetof(struct EnemyDefinition, experience) == 82);
+STATIC_ASSERT(sizeof(struct LevelUpResult) == 16);
 
 /// The eight characters' definitions, by character id (game/character_table.c).
 extern const struct CharacterDefinition gCharacter_DefinitionTable[];

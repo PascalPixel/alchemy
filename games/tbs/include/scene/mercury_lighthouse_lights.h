@@ -38,7 +38,7 @@ struct MercuryLighthouseLights {
   struct Actor *stepEffect;
 };
 
-STATIC_ASSERT(sizeof(struct MercuryLighthouseLights) == 0x1c);
+STATIC_ASSERT(sizeof(struct MercuryLighthouseLights) == 28);
 
 void MercuryLighthouse_RestoreLights(s32 region,
                                      struct MercuryLighthouseLights *st);

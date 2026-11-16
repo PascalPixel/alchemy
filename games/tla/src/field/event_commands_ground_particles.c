@@ -106,10 +106,10 @@ void RisingParticles_Update(void) {
 }
 
 /// Starts the rising particles: allocates and clears heap slot
-/// 0x74, decodes the particle tiles into VRAM, sets each of the 64 particles'
-/// sprite words and places it on the ground at a random point of the strip
-/// (x 288 to 488 pixels, z 60 to 80), staggering their timers by 2 frames, and
-/// schedules the update.
+/// HEAP_SLOT_WEATHER, decodes the particle tiles into VRAM, sets each of the 64
+/// particles' sprite words and places it on the ground at a random point of the
+/// strip (x 288 to 488 pixels, z 60 to 80), staggering their timers by 2
+/// frames, and schedules the update.
 void RisingParticles_Start(void) {
   struct RisingParticleWork *work =
       HeapSlot_AllocEwram(HEAP_SLOT_WEATHER, 0x814);
@@ -137,7 +137,7 @@ void RisingParticles_Start(void) {
     *sprite++ = 0;
     *sprite++ = OBJ_SIZE_16X16 | OBJ_MODE(1);
     *sprite = OBJ_PRIORITY(1) | OBJ_PALETTE(13);
-    x = Random16() * 200 + 0x1200000;
+    x = Random16() * 200 + toFIXED(288);
     z = toFIXED(80) - Random16() * 20;
     particle->posX = x;
     particle->posZ = z;

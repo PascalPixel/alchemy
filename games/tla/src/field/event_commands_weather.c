@@ -45,10 +45,10 @@ void GroundParticles_Update(void) {
       Oam_AddSpriteAtDepthClamped(particle, 240);
     }
     if (particle->timer == 0) {
-      s32 *focus = *(s32 **)map;
+      s32 *focus = map->origin;
 
-      x = focus[0] + (Random16() << 8) - 0x800000;
-      y = focus[2] + (Random16() << 8) - 0x800000;
+      x = focus[0] + (Random16() << 8) - toFIXED(128);
+      y = focus[2] + (Random16() << 8) - toFIXED(128);
       particle->posX = x;
       particle->posZ = y;
       particle->posY = MapGrid_GetTerrainHeightFar(0, x, y);
@@ -95,10 +95,10 @@ void Weather_UpdateRain(void) {
       Oam_AddSpriteAtDepthClamped(particle, 240);
     }
     if (particle->timer == 0) {
-      s32 *focus = *(s32 **)map;
+      s32 *focus = map->origin;
 
       x = focus[0] + (Random16() << 8) - toFIXED(64);
-      y = focus[2] + (Random16() << 8) - 0x800000;
+      y = focus[2] + (Random16() << 8) - toFIXED(128);
       particle->posX = x;
       particle->posZ = y;
       particle->posY = MapGrid_GetTerrainHeightFar(0, x, y);

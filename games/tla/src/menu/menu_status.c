@@ -324,8 +324,9 @@ void DjinnMenu_ShowCurrentList(void) {
           djinn =
               element * DJINN_PER_ELEMENT + (row + (page * 8 + page) + 7) % 18;
           if (GameFlag_Get(FLAG_DJINNI(djinn))) {
-            Window_SetTilemapEntryFar(window, element + 0x1001, element * 7 + 1,
-                                      row + 1, 0);
+            // The element icons are tiles 1 to 4, drawn in palette 1.
+            Window_SetTilemapEntryFar(window, BG_TILE_PALETTE(1) + 1 + element,
+                                      element * 7 + 1, row + 1, 0);
             Text_DrawMessageAsTilesFar(djinn + MsgDjinnName, window,
                                        element * 56 + 16, row * 8 + 8);
           }

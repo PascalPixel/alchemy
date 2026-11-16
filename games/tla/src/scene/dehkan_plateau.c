@@ -1673,10 +1673,8 @@ void DehkanPlateau_InitializeTightropes(void) {
   Actor_SetSpritePriority(ACTOR_TIGHTROPES_SECOND_RAISED_PILLAR, 1);
   DehkanPlateau_RestoreTightropesCracks();
   if (GameFlag_Get(FLAG_CANNON_LEAPT_AWAY) != 0) {
-    s32 angle = FACING_SOUTH;
-
     Actor_SetPositionAndFacing(ACTOR_TIGHTROPES_CANNON, toFIXED(424),
-                               toFIXED(104), angle);
+                               toFIXED(104), FACING_SOUTH);
   }
   Actor_SetAnimationById(ACTOR_TIGHTROPES_POUND_PILLAR, 3);
   if (GameFlag_Get(FLAG_CANNON_POUNDED_PILLAR) != 0) {
@@ -1689,10 +1687,8 @@ void DehkanPlateau_InitializeTightropes(void) {
     GameFlag_Set(FLAG_SCENE_TEMP_41);
     MapGrid_CopyCellPictureIndicesRect(69, 51, 92, 11, 1, 1);
     {
-      s32 angle = FACING_SOUTH;
-
       Actor_SetPositionAndFacing(ACTOR_TIGHTROPES_CANNON, toFIXED(616),
-                                 toFIXED(280), angle);
+                                 toFIXED(280), FACING_SOUTH);
     }
   }
   if (GameFlag_Get(FLAG_CANNON_CRUMBLED_PILLARS) != 0) {

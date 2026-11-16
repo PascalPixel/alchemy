@@ -1131,10 +1131,8 @@ void WorldMap_FightBanditAndThieves(s32 entrance) {
     Actor_SetPositionAndFacing(ACTOR_THIEF_B, toFIXED(10184), toFIXED(9616),
                                facingSouth);
     {
-      s32 facingNortheast = FACING_NORTHEAST;
-
       Actor_SetPositionAndFacing(ACTOR_KRADEN, toFIXED(10152), toFIXED(9664),
-                                 facingNortheast);
+                                 FACING_NORTHEAST);
     }
     Actor_SetPositionAndFacing(ACTOR_FELIX, toFIXED(10168), toFIXED(9648),
                                FACING_NORTHWEST);
@@ -1361,14 +1359,12 @@ void WorldMap_DeliverLohoCannon(void) {
   Actor_Get(ACTOR_LOHO_WORKER_B)->motionFlags = ACTOR_FALLS;
   Actor_Get(ACTOR_LOHO_WORKER_C)->motionFlags = ACTOR_FALLS;
   {
-    s32 facing = FACING_NORTHEAST;
-
     Actor_SetPositionAndFacing(ACTOR_LOHO_WORKER_A, toFIXED(8913),
-                               toFIXED(5853), facing);
+                               toFIXED(5853), FACING_NORTHEAST);
     Actor_SetPositionAndFacing(ACTOR_LOHO_WORKER_B, toFIXED(8929),
-                               toFIXED(5869), facing);
+                               toFIXED(5869), FACING_NORTHEAST);
     Actor_SetPositionAndFacing(ACTOR_LOHO_WORKER_C, toFIXED(8929),
-                               toFIXED(5885), facing);
+                               toFIXED(5885), FACING_NORTHEAST);
   }
   Event_StartScreenTransition();
   Actor_SetSpeed(ACTOR_LOHO_WORKER_A, 0.2);

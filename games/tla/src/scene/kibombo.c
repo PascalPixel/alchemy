@@ -3378,9 +3378,7 @@ void Kibombo_InitializeStatueGroundsCeremony(void) {
   if (GameFlag_Get(FLAG_KIBOMBO_PIERS_WITH_PARTY))
     Actor_SetPosition(ACTOR_PIERS, 0, 0);
   else if (GameFlag_Get(FLAG_KIBOMBO_PIERS_STAYED_BEHIND)) {
-    s32 angle = FACING_SOUTHEAST;
-
-    Actor_SetPositionAndFacing(7, toFIXED(304), toFIXED(88), angle);
+    Actor_SetPositionAndFacing(7, toFIXED(304), toFIXED(88), FACING_SOUTHEAST);
   }
   if (GameFlag_Get(FLAG_AKAFUBU_OFFERED_HELP)) {
     Kibombo_SetStatueTongue(1, 6);
@@ -3465,15 +3463,11 @@ void Kibombo_InitializeHouses(void) {
     if (GameFlag_Get(FLAG_GABOMBA_CEREMONY_ENDED)) {
       Actor_SetPosition(ACTOR_KRADEN_AT_HOME, 0, 0);
       if (GameFlag_Get(0x8ee)) {
-        s32 angle = FACING_NORTH_NORTHWEST;
-
         Actor_SetPositionAndFacing(ACTOR_AKAFUBU_AT_HOME, toFIXED(434),
-                                   toFIXED(634), angle);
+                                   toFIXED(634), FACING_NORTH_NORTHWEST);
       } else {
-        s32 angle = FACING_NORTH_NORTHWEST;
-
         Actor_SetPositionAndFacing(ACTOR_AKAFUBU_AT_HOME, toFIXED(364),
-                                   toFIXED(576), angle);
+                                   toFIXED(576), FACING_NORTH_NORTHWEST);
       }
     } else {
       Kibombo_CeremonyEnds();

@@ -2584,16 +2584,13 @@ void KandoreanTemple_StartGate(void) {
     Actor_SetPositionAndFacing(ACTOR_STUDENT_WARY_OF_OUTSIDERS, toFIXED(374),
                                toFIXED(282), FACING_EAST);
     {
-      s32 angle = FACING_NORTH_NORTHEAST;
-
       Actor_SetPositionAndFacing(ACTOR_STUDENT_ON_THE_FAILED_TEST, toFIXED(272),
-                                 toFIXED(296), angle);
+                                 toFIXED(296), FACING_NORTH_NORTHEAST);
     }
     {
-      s32 angle = FACING_SOUTH_SOUTHEAST;
-
       Actor_SetPositionAndFacing(ACTOR_STUDENT_WHO_WOULD_BE_A_MONK,
-                                 toFIXED(216), toFIXED(264), angle);
+                                 toFIXED(216), toFIXED(264),
+                                 FACING_SOUTH_SOUTHEAST);
     }
   } else {
     KandoreanTemple_StartMeditating(ACTOR_STUDENT_WARY_OF_OUTSIDERS, 0);
@@ -2619,9 +2616,8 @@ void KandoreanTemple_PoiWaitsByTheNorthRope(void) {
           ACTOR_NORTH_ROPE_WEST_POLE);
   }
   {
-    s32 angle = FACING_SOUTH_SOUTHEAST;
-
-    Actor_SetPositionAndFacing(ACTOR_POI, toFIXED(392), toFIXED(360), angle);
+    Actor_SetPositionAndFacing(ACTOR_POI, toFIXED(392), toFIXED(360),
+                               FACING_SOUTH_SOUTHEAST);
   }
 }
 
@@ -2644,9 +2640,8 @@ void KandoreanTemple_StartPoisHall(void) {
   if ((gMainRoutineWork.entrance >= 4 && gMainRoutineWork.entrance <= 6) ||
       gMainRoutineWork.entrance == ENTRANCE_THROUGH_THE_CAVE) {
     if (GameFlag_Get(FLAG_LASH_RECEIVED)) {
-      s32 angle = FACING_SOUTH_SOUTHWEST;
-
-      Actor_SetPositionAndFacing(ACTOR_POI, toFIXED(432), toFIXED(394), angle);
+      Actor_SetPositionAndFacing(ACTOR_POI, toFIXED(432), toFIXED(394),
+                                 FACING_SOUTH_SOUTHWEST);
     } else {
       KandoreanTemple_CreateLashPebble();
       if (GameFlag_Get(FLAG_MET_POI))
@@ -2660,10 +2655,8 @@ void KandoreanTemple_StartPoisHall(void) {
     if (GameFlag_Get(FLAG_MET_POI)) {
       Actor_SetPosition(ACTOR_POI, 0, 0);
       {
-        s32 facing = FACING_NORTH_NORTHWEST;
-
         Actor_SetPositionAndFacing(ACTOR_THIRD_TESTED_STUDENT, toFIXED(408),
-                                   toFIXED(664), facing);
+                                   toFIXED(664), FACING_NORTH_NORTHWEST);
       }
     } else if (GameFlag_Get(FLAG_STUDENTS_TESTED)) {
       Actor_SetPosition(ACTOR_POI, 0, 0);
@@ -2912,9 +2905,8 @@ void KandoreanTemple_PraiseTheLevitator(void) {
   wait(1);
   Actor_SetPosition(gMainRoutineWork.leaderActorId, 328, 360);
   {
-    s32 facing = FACING_SOUTH_SOUTHWEST;
-
-    Actor_SetPositionAndFacing(ACTOR_POI, toFIXED(472), toFIXED(408), facing);
+    Actor_SetPositionAndFacing(ACTOR_POI, toFIXED(472), toFIXED(408),
+                               FACING_SOUTH_SOUTHWEST);
   }
   Actor_GetById(ACTOR_HALL_KRADEN)->facing = FACING_NORTH;
   wait(1);
@@ -3024,8 +3016,8 @@ void KandoreanTemple_MeetPoi(void) {
   Actor_SetHorizontalPositionAndAngleWithTerrain(
       gMainRoutineWork.leaderActorId, toFIXED(376), toFIXED(408), FACING_EAST);
   {
-    s32 angle = FACING_NORTH_NORTHWEST;
-    Actor_SetPositionAndFacing(ACTOR_POI, toFIXED(472), toFIXED(454), angle);
+    Actor_SetPositionAndFacing(ACTOR_POI, toFIXED(472), toFIXED(454),
+                               FACING_NORTH_NORTHWEST);
   }
   WORK->transition =
       SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_NOISE);

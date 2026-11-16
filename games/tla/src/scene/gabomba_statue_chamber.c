@@ -947,10 +947,10 @@ void GabombaStatueChamber_AkafubuOffersToHelp(void) {
   owner = (s32 *)&gMainRoutineWork;
   owner += offsetof(struct MainRoutineWork, leaderActorId) / sizeof(s32);
   {
-    s32 angleA = FACING_NORTHEAST;
-
-    Actor_SetPositionAndFacing(*owner, toFIXED(360), toFIXED(216), angleA);
-    Actor_SetPositionAndFacing(ACTOR_PIERS, toFIXED(376), toFIXED(216), angleA);
+    Actor_SetPositionAndFacing(*owner, toFIXED(360), toFIXED(216),
+                               FACING_NORTHEAST);
+    Actor_SetPositionAndFacing(ACTOR_PIERS, toFIXED(376), toFIXED(216),
+                               FACING_NORTHEAST);
   }
   facing = FACING_NORTHWEST;
   zero = 0;
@@ -959,10 +959,8 @@ void GabombaStatueChamber_AkafubuOffersToHelp(void) {
   angleC = FACING_WEST;
   Actor_SetPositionAndFacing(ACTOR_SHEBA, toFIXED(424), toFIXED(200), angleC);
   {
-    s32 angleB = FACING_NORTH_NORTHWEST;
-
     Actor_SetPositionAndFacing(ACTOR_AKAFUBU, toFIXED(392), toFIXED(200),
-                               angleB);
+                               FACING_NORTH_NORTHWEST);
   }
   heap = Ram_HeapSlots;
   System_Wait(1);

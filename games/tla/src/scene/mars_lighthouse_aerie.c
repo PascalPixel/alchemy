@@ -2164,8 +2164,8 @@ void MarsLighthouseAerie_LightBeacon(void) {
   MarsLighthouseAerie_StepBackRight(ACTOR_MIA);
   owner = gMainRoutineWork.leaderActorId;
   {
-    s32 facing = FACING_NORTHEAST;
-    Actor_SetPositionAndFacing(owner, toFIXED(484), toFIXED(312), facing);
+    Actor_SetPositionAndFacing(owner, toFIXED(484), toFIXED(312),
+                               FACING_NORTHEAST);
   }
   FieldActor_SetSpritePriority(gMainRoutineWork.leaderActorId, 1);
   System_Wait(1);

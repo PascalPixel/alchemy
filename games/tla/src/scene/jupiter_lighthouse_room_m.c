@@ -1205,21 +1205,18 @@ void JupiterLighthouse_IsaacAndIvanFall(void) {
   Party_AddMember(FELIX);
   Actor_SetSpeed(ACTOR_FELIX, 1);
   {
-    s32 angle = FACING_SOUTH;
-
-    Actor_SetPositionAndFacing(ACTOR_FELIX, toFIXED(664), toFIXED(88), angle);
+    Actor_SetPositionAndFacing(ACTOR_FELIX, toFIXED(664), toFIXED(88),
+                               FACING_SOUTH);
   }
   {
-    s32 angle = FACING_SOUTHEAST;
-
-    Actor_SetPositionAndFacing(ACTOR_KARST, toFIXED(717), toFIXED(208), angle);
+    Actor_SetPositionAndFacing(ACTOR_KARST, toFIXED(717), toFIXED(208),
+                               FACING_SOUTHEAST);
   }
   Actor_SetPositionAndFacing(ACTOR_AGATIO, toFIXED(737), toFIXED(195),
                              FACING_SOUTHEAST);
   {
-    s32 angle = FACING_NORTHWEST;
-
-    Actor_SetPositionAndFacing(ACTOR_ISAAC, toFIXED(761), toFIXED(219), angle);
+    Actor_SetPositionAndFacing(ACTOR_ISAAC, toFIXED(761), toFIXED(219),
+                               FACING_NORTHWEST);
   }
   Actor_SetPositionAndFacing(ACTOR_IVAN, toFIXED(741), toFIXED(232),
                              FACING_NORTHWEST);

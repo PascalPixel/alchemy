@@ -2054,10 +2054,8 @@ void Islets_InitializePrettyStone(void) {
     other->facing = FACING_SOUTH_SOUTHWEST;
     other->collisionFlags |= ACTOR_BLOCKED_BY_SOLID;
     {
-      s32 facing = FACING_SOUTH_SOUTHEAST;
-
       Actor_SetPositionAndFacing(ACTOR_PENGULINA, toFIXED(234), toFIXED(204),
-                                 facing);
+                                 FACING_SOUTH_SOUTHEAST);
     }
     Actor_Get(ACTOR_PENGULINA)->collisionFlags |= ACTOR_BLOCKED_BY_SOLID;
     Actor_SetSpeed(ACTOR_PENGUS, 2);
@@ -2176,10 +2174,8 @@ void Islets_InitializeTurtle(void) {
     Event_SetFlag(FLAG_SCENE_TEMP_17);
     if (!Event_GetFlag(FLAG_KEEP_PARTY_POSITION)) {
       {
-        s32 south = FACING_SOUTH;
-
         Actor_SetPositionAndFacing(ACTOR_LONESOME_GEORGE, toFIXED(152),
-                                   toFIXED(768), south);
+                                   toFIXED(768), FACING_SOUTH);
       }
       Actor_SetPosition(ACTOR_LIL_TURTLE, 176, 777);
       System_Wait(1);

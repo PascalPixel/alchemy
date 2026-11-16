@@ -609,9 +609,8 @@ s32 Scene_Initialize(void) {
     FieldActor_SetSpritePriority(ACTOR_FIRE_A, 1);
     FieldActor_SetSpritePriority(ACTOR_FIRE_B, 1);
     if (Event_GetFlag(FLAG_GAROH_HEARD_MAHA)) {
-      s32 angle = FACING_SOUTH;
-
-      Actor_SetPositionAndFacing(ACTOR_MAHA, toFIXED(328), toFIXED(162), angle);
+      Actor_SetPositionAndFacing(ACTOR_MAHA, toFIXED(328), toFIXED(162),
+                                 FACING_SOUTH);
     }
     gFieldWork->transition = SCENE_TRANSITION(TRANSITION_WINDOW, 4);
     FieldEffect_StartBlankOverlay(0);

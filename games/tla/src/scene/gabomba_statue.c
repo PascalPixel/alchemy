@@ -1693,9 +1693,8 @@ void GabombaStatue_WatchTheChargesStick(void) {
                              toFIXED(312), speed);
   Actor_SetPositionAndFacing(ACTOR_PIERS, toFIXED(330), toFIXED(312), speed);
   {
-    s32 slow = FACING_SOUTH_SOUTHEAST;
-
-    Actor_SetPositionAndFacing(ACTOR_KRADEN, toFIXED(432), toFIXED(312), slow);
+    Actor_SetPositionAndFacing(ACTOR_KRADEN, toFIXED(432), toFIXED(312),
+                               FACING_SOUTH_SOUTHEAST);
   }
   Actor_SetPositionAndFacing(ACTOR_SHEBA, toFIXED(448), toFIXED(312), speed);
   Actor_SetPositionAndFacing(ACTOR_JENNA, toFIXED(468), toFIXED(312), speed);
@@ -1773,10 +1772,8 @@ void GabombaStatue_SeeHowItWorks(void) {
   }
   Actor_SetPositionAndFacing(ACTOR_PIERS, toFIXED(330), toFIXED(312), north);
   {
-    s32 facing = FACING_NORTH_NORTHWEST;
-
     Actor_SetPositionAndFacing(ACTOR_KRADEN, toFIXED(432), toFIXED(312),
-                               facing);
+                               FACING_NORTH_NORTHWEST);
   }
   Actor_SetPositionAndFacing(ACTOR_SHEBA, toFIXED(448), toFIXED(312), north);
   Actor_SetPositionAndFacing(ACTOR_JENNA, toFIXED(468), toFIXED(312), north);

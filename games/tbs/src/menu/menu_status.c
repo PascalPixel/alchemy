@@ -1102,12 +1102,10 @@ void StatusScreen_DrawStatusAilments(struct Window *window, s32 memberId,
 #if TBS_PATCH_1
 /// Spins for 256 loop passes (international editions only). Nothing calls it.
 void Menu_BusyWait(void) {
-  s32 count = 255;
+  s16 count;
 
-spin:
-  count--;
-  if (count >= 0)
-    goto spin;
+  for (count = 0; count < 256; count++) {
+  }
 }
 
 #endif

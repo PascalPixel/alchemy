@@ -28,8 +28,6 @@ struct LinkSignature {
 void UpdateLinkSessionCountdown(void) {
   struct BattleMenuWork *state = gBattleMenuWork;
   struct BattleWork *runtime;
-  struct MenuSprite *entry;
-  u8 *active;
   struct LinkSignature *signature;
   s32 target;
   s32 current;

@@ -475,18 +475,17 @@ void ShamanVillageCave_FightGladiators(void) {
 /// Back in the cave after losing the rematch, the gladiators crow over the
 /// party: "Hey, these guys aren't very strong at all!"
 void ShamanVillageCave_LoseToColossoFans(void) {
-  s32 angle = FACING_NORTHWEST;
-
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
   FieldCamera_MoveTo(199, CAMERA_KEEP, 273, 0);
   FieldEvent_SetMessageId((s32)MsgHeyTheseGuys);
-  Actor_SetPositionAndFacing(ACTOR_FELIX, toFIXED(184), toFIXED(229), angle);
-  Actor_SetPositionAndFacing(ACTOR_ISAAC, toFIXED(200), toFIXED(221), angle);
+  Actor_SetPositionAndFacing(ACTOR_FELIX, toFIXED(184), toFIXED(229),
+                             FACING_NORTHWEST);
+  Actor_SetPositionAndFacing(ACTOR_ISAAC, toFIXED(200), toFIXED(221),
+                             FACING_NORTHWEST);
   {
-    s32 turn = FACING_NORTH;
-
-    Actor_SetPositionAndFacing(ACTOR_KRADEN, toFIXED(218), toFIXED(320), turn);
+    Actor_SetPositionAndFacing(ACTOR_KRADEN, toFIXED(218), toFIXED(320),
+                               FACING_NORTH);
   }
   Actor_SetAnimation(ACTOR_FELIX, ANIM_COLLAPSE);
   Actor_SetAnimation(ACTOR_ISAAC, 39);
@@ -532,7 +531,6 @@ void ShamanVillageCave_LoseToColossoFans(void) {
 /// guys were phenomenal!"
 void ShamanVillageCave_BeatColossoFans(void) {
   s16 *target;
-  s32 angle = FACING_NORTHEAST;
 
   Event_ClearFlag(FLAG_SHAMAN_VILLAGE_CAVE_LOST_TO_GLADIATORS);
   Event_SetFlag(FLAG_SHAMAN_VILLAGE_CAVE_BEAT_GLADIATORS);
@@ -540,9 +538,12 @@ void ShamanVillageCave_BeatColossoFans(void) {
   FieldEvent_ResolvePendingActions(0);
   FieldCamera_MoveTo(199, CAMERA_KEEP, 273, 0);
   FieldEvent_SetMessageId((s32)MsgTheseGuysWere);
-  Actor_SetPositionAndFacing(ACTOR_FELIX, toFIXED(184), toFIXED(229), angle);
-  Actor_SetPositionAndFacing(ACTOR_ISAAC, toFIXED(200), toFIXED(221), angle);
-  Actor_SetPositionAndFacing(ACTOR_KRADEN, toFIXED(208), toFIXED(237), angle);
+  Actor_SetPositionAndFacing(ACTOR_FELIX, toFIXED(184), toFIXED(229),
+                             FACING_NORTHEAST);
+  Actor_SetPositionAndFacing(ACTOR_ISAAC, toFIXED(200), toFIXED(221),
+                             FACING_NORTHEAST);
+  Actor_SetPositionAndFacing(ACTOR_KRADEN, toFIXED(208), toFIXED(237),
+                             FACING_NORTHEAST);
   Actor_SetAnimation(ACTOR_AZART, 8);
   Actor_SetAnimation(ACTOR_SATRAGE, 8);
   Actor_SetAnimation(ACTOR_NAVAMPA, 8);

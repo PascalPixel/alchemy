@@ -2618,13 +2618,12 @@ void ShamanVillage_SetUpTrialGrounds(void) {
     FieldActor_SetSpriteColor(((struct Actor *)Actor_GetById(ACTOR_SAND_MOUND)),
                               6);
   } else if (!Event_GetFlag(FLAG_KEEP_PARTY_POSITION)) {
-    s32 angle = FACING_SOUTH;
-
-    Actor_SetPositionAndFacing(ACTOR_MOAPA, toFIXED(168), toFIXED(568), angle);
+    Actor_SetPositionAndFacing(ACTOR_MOAPA, toFIXED(168), toFIXED(568),
+                               FACING_SOUTH);
     Actor_SetPositionAndFacing(ACTOR_EAST_GUARD, toFIXED(216), toFIXED(536),
-                               angle);
+                               FACING_SOUTH);
     Actor_SetPositionAndFacing(ACTOR_WEST_GUARD, toFIXED(120), toFIXED(536),
-                               angle);
+                               FACING_SOUTH);
     wait(1);
   }
   Actor_SetAnimation(ACTOR_FIRST_TORCH, 2);
@@ -2791,10 +2790,8 @@ void ShamanVillage_SetUpInn(void) {
   ((struct Actor *)Actor_GetById(ACTOR_INN_COUNTER))->collisionFlags =
       ACTOR_NOT_TARGETED;
   if (Event_GetFlag(FLAG_MOAPA_BEATEN)) {
-    s32 angle = FACING_SOUTH_SOUTHEAST;
-
     Actor_SetPositionAndFacing(ACTOR_MOAPAS_MAN_A, toFIXED(88), toFIXED(92),
-                               angle);
+                               FACING_SOUTH_SOUTHEAST);
     Actor_SetPosition(ACTOR_MOAPA_AT_HOME, 156, 72);
   } else {
     Actor_SetPosition(ACTOR_PICNIC_SHAMAN_A, 0, 0);

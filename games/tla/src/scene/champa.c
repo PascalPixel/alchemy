@@ -399,10 +399,8 @@ void Champa_TakeFeizhisGift(s32 actor) {
 void Champa_FeizhiHoldsHerGift(void) {
   FieldActor_ShowItemIconById(ACTOR_FEIZHIS_GIFT, ITEM_GOLDEN_RING);
   {
-    s32 facing = FACING_NORTH;
-
     Actor_SetPositionAndFacing(ACTOR_FEIZHIS_GIFT, toFIXED(312), toFIXED(593),
-                               facing);
+                               FACING_NORTH);
   }
   Event_SetFlag(FLAG_FEIZHIS_GIFT_WAITING);
 }
@@ -428,10 +426,8 @@ void Champa_FeizhiArrives(void) {
       FieldEvent_ResolvePendingActions(0);
       FieldEvent_SetMessageId((s32)MsgChampaIsaac);
       {
-        s32 angle = FACING_NORTH;
-
         Actor_SetPositionAndFacing(ACTOR_FEIZHI, toFIXED(314), toFIXED(679),
-                                   angle);
+                                   FACING_NORTH);
       }
       // "Isaac!"
       FieldEvent_ShowMessageThenWait(ACTOR_FEIZHI, 0, 5);

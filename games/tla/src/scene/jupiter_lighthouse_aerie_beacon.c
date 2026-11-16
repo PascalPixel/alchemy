@@ -858,8 +858,8 @@ void JupiterLighthouse_FightKarstAndAgatio(void) {
                                southeast);
   }
   {
-    s32 north = FACING_NORTH;
-    Actor_SetPositionAndFacing(ACTOR_JENNA, toFIXED(552), toFIXED(392), north);
+    Actor_SetPositionAndFacing(ACTOR_JENNA, toFIXED(552), toFIXED(392),
+                               FACING_NORTH);
   }
   Actor_SetAnimation(ACTOR_AGATIO, 9);
   Actor_SetAnimation(ACTOR_KARST, 8);
@@ -1785,8 +1785,8 @@ void JupiterLighthouse_WeBeatThem(void) {
   Event_PlaySound(SOUND_FADE_OUT_BGM);
   FieldEvent_ShowMessageThenWait(ACTOR_KRADEN, 0, 0);
   {
-    s32 north = FACING_NORTH;
-    Actor_SetPositionAndFacing(ACTOR_KRADEN, toFIXED(512), toFIXED(328), north);
+    Actor_SetPositionAndFacing(ACTOR_KRADEN, toFIXED(512), toFIXED(328),
+                               FACING_NORTH);
   }
   Actor_SetPositionAndFacing(ACTOR_ISAAC, toFIXED(536), toFIXED(336),
                              FACING_NORTH);

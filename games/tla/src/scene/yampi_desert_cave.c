@@ -9,6 +9,7 @@
 #include "flags.h"
 #include "macros.h"
 #include "scene_ids.h"
+#include "sprite_ids.h"
 #include "types.h"
 #include "version.h"
 #include "battle/battle.h"
@@ -71,7 +72,7 @@ enum YampiDesertCaveChestRoomActorId {
   ACTOR_CHEST_ROOM_FIRST_LOG = ACTOR_FIRST_PLACED,
   ACTOR_CHEST_ROOM_SECOND_LOG,
   ACTOR_CHEST_ROOM_THIRD_LOG,
-  /// The pillar Burst breaks (SPRITE 404).
+  /// The pillar Burst breaks (SPRITE_BURST_PILLAR).
   ACTOR_CHEST_ROOM_BURST_PILLAR
 };
 
@@ -103,6 +104,10 @@ enum YampiDesertCaveCrystalActorId {
   /// (YampiDesertCave_FightCrystal).
   ACTOR_CRYSTAL
 };
+
+/// Valukar's room's hidden treasure, the first actor of its item table, as
+/// the desert's.
+enum { ACTOR_HIDDEN_TREASURE = 64 };
 
 struct Actor;
 
@@ -353,7 +358,7 @@ inner:
 extern struct ActorPlacement gYampiDesertCave_Placements[];
 extern struct ActorPlacement gYampiDesertCaveGuardianPlacements[];
 extern struct ActorPlacement gYampiDesertCaveCrystalPlacements[];
-extern u32 gYampiDesertCaveCrystalStakes[];
+extern u16 gYampiDesertCaveCrystalStakes[];
 extern struct Trigger gYampiDesertCave_Triggers[];
 extern struct Trigger gYampiDesertCaveGuardianTriggers[];
 extern struct Trigger gYampiDesertCaveCrystalTriggers[];
@@ -624,8 +629,8 @@ void YampiDesertCave_ArriveByTeleport(void) {
 
 void Actor_SetCellOpen(s32 id, u32 kind, s32 flag, s32 layer);
 
-/// Places the stakes already sunk: each entry of the list (actor id, column,
-/// row) loses its collision, and its cell opens. A struct of three halfwords
+/// Places the stakes already sunk: each entry of the list (actor, kind,
+/// flag) loses its collision, and its cell opens. A struct of three halfwords
 /// would be padded to 8 bytes, so the list is read as u16 triples.
 void YampiDesertCave_PlaceStakes(const u16 *list) {
   const u16 *entry;
@@ -637,12 +642,12 @@ loop:
   {
     u32 id = entry[0];
     struct Actor *object = Actor_GetById(id);
-    s16 column = entry[1];
-    s16 row = entry[2];
+    s16 kind = entry[1];
+    s16 flag = entry[2];
 
     object->collisionFlags &= ~1;
     Actor_SetSpriteFlags(object, 0);
-    Actor_SetCellOpen(id, (u16)column, (u16)row, object->layer);
+    Actor_SetCellOpen(id, (u16)kind, (u16)flag, object->layer);
     entry += 3;
   }
   if (entry[0] != 0xffff)
@@ -711,17 +716,10 @@ DEFINE_TELEPORT_FROM_MARK(YampiDesertCave_TeleportFromSecondMark, 9)
 /// Burst breaks a pillar for good (flag) as it acts (phase 3).
 #define DEFINE_BURST_PILLAR(name, flag, actorId)                               \
   void name(s32 phase) {                                                       \
-    s32 burst;                                                                 \
-                                                                               \
-    burst = Event_GetFlag(flag);                                               \
-    if (burst != 0)                                                            \
-      goto done;                                                               \
-    if (phase != 3)                                                            \
-      goto done;                                                               \
-    Actor_SetPosition(actorId, 0, 0);                                          \
-    GameFlag_Set(flag);                                                        \
-  done:                                                                        \
-    return;                                                                    \
+    if (!Event_GetFlag(flag) && phase == 3) {                                  \
+      Actor_SetPosition(actorId, 0, 0);                                        \
+      GameFlag_Set(flag);                                                      \
+    }                                                                          \
   }
 
 DEFINE_BURST_PILLAR(YampiDesertCave_BurstChestRoomPillar,
@@ -829,8 +827,8 @@ void YampiDesertCave_EndSand(void) {
 }
 
 /// Pound sinks the stake in Crystal's room and opens its cell.
-void YampiDesertCave_PoundStake(s32 a, s32 b) {
-  Pound_SinkTarget(gYampiDesertCaveCrystalStakes, a, b);
+void YampiDesertCave_PoundStake(s32 mode, s32 count) {
+  Pound_SinkTarget(gYampiDesertCaveCrystalStakes, mode, count);
   MapGrid_CopyCellAttributes(47, 12, 1, 1, 46, 12);
 }
 
@@ -901,15 +899,8 @@ void YampiDesertCave_ScoopDjinni(s32 mode) {
   }
 }
 
-#define FIELD_AT(base, type, off)                                              \
-  (((struct {                                                                  \
-     u8 pad[off];                                                              \
-     type v;                                                                   \
-   } *)(base))                                                                 \
-       ->v)
-
-/// Valukar, the guardian, speaks, and its battle begins; afterwards the party
-/// leaves for overlay 664's fourth room.
+/// Valukar, the guardian of fire, speaks in a warm glow and comes at the
+/// leader, and its battle begins; there is no escape from it.
 void YampiDesertCave_MeetGuardianOfFire(void) {
   struct Actor *leader;
 
@@ -940,8 +931,10 @@ void YampiDesertCave_MeetGuardianOfFire(void) {
   Field_RequestBattleFromEncounterTable(103, 1);
 }
 
-void YampiDesertCave_ScoopTreasure(s32 a) {
-  Event_DigUpTreasure(a, 64, FLAG_YAMPI_DESERT_CAVE_TREASURE_DUG_UP);
+/// Scoop digs up the treasure hidden in Valukar's room.
+void YampiDesertCave_ScoopTreasure(s32 mode) {
+  Event_DigUpTreasure(mode, ACTOR_HIDDEN_TREASURE,
+                      FLAG_YAMPI_DESERT_CAVE_TREASURE_DUG_UP);
 }
 
 const struct Trigger *Scene_GetTriggers(void) {
@@ -951,10 +944,6 @@ const struct Trigger *Scene_GetTriggers(void) {
     return gYampiDesertCaveCrystalTriggers;
   return gYampiDesertCave_Triggers;
 }
-
-// Sets up Yampi Desert Cave's three rooms as each one loads: the first
-// room's palette cycle and Retreat destination, the third room's background
-// priorities, and in each room the objects its flags place.
 
 extern s16 gYampiDesertCave_MarkPaletteSlots[];
 extern u16 gYampiDesertCave_MarkColorsLit[];
@@ -1005,7 +994,7 @@ s32 Scene_Initialize(void) {
       MapGrid_CopyCellAttributes(32, 13, 1, 1, 34, 12);
     }
     if (!Event_GetFlag(FLAG_YAMPI_DESERT_CAVE_TREASURE_DUG_UP))
-      Actor_SetWideSprite(64, 1);
+      Actor_SetWideSprite(ACTOR_HIDDEN_TREASURE, 1);
   }
   if (gMainRoutineWork.next == SCENE_YAMPI_DESERT_CAVE_CRYSTAL) {
     if ((u16)(gMainRoutineWork.entrance - 3) <= 2) {
@@ -1078,21 +1067,27 @@ s32 Scene_PrepareMap(void) { return 0; }
 #undef PIXEL_PART
 #undef DEFINE_TELEPORT_FROM_MARK
 #undef DEFINE_BURST_PILLAR
-#undef FIELD_AT
 
 void YampiDesertCave_MeetGuardianOfFire(void);
 
 // clang-format off
+/// The sprites pushed as logs, in the order of their footprints.
 u16 gYampiDesertCave_LogSprites[] = {
-    258, 259, 293, 294, 332, 331,
+    SPRITE_LOG_WEST_EAST, SPRITE_LOG_NORTH_SOUTH,
+    SPRITE_PIPE_WEST_EAST, SPRITE_PIPE_NORTH_SOUTH,
+    SPRITE_FALLEN_COLUMN_WEST_EAST, SPRITE_FALLEN_COLUMN_NORTH_SOUTH,
 };
 
+/// Each log's footprint around its position, in pixels: left, top, right and
+/// bottom.
 s8 gYampiDesertCave_LogFootprints[] = {
     -32, -8, 32, 8, -8, -32, 8, 32,
     -32, -16, 32, 0, -8, -32, 8, 32,
     -32, -8, 32, 8, -8, -32, 8, 32,
 };
 
+/// The leader's step against a log for each of the sixteen facings: a cell
+/// along the nearest of the four directions.
 s32 gPushLeaderSteps[] = {                                                               
       PUSH_STEP(16, 0),  PUSH_STEP(16, 0),  PUSH_STEP(16, 0),                  
       PUSH_STEP(0, 16),  PUSH_STEP(0, 16),  PUSH_STEP(0, 16),                  
@@ -1102,27 +1097,33 @@ s32 gPushLeaderSteps[] = {
       PUSH_STEP(16, 0),                                                        
   };
 
+/// The ripple's path, in half cells: a column and a row for each stop, then a
+/// pair the ripple never reaches.
 s16 gYampiDesertCave_RipplePath[] = {
     101, 39, 0, 0, 97, 35, 0, 0,
     99, 37, 0, 0, 95, 33, 0, 0,
 };
 
+/// The background palette entries the Teleport marks are drawn in.
 s16 gYampiDesertCave_MarkPaletteSlots[] = {
     9, 10, 11, 12, 13, 14, 15, -1,
 };
 
+/// The marks' bright colours, as red, green and blue for each entry.
 u16 gYampiDesertCave_MarkColorsLit[] = {
     23, 25, 22, 23, 25, 22, 23, 25,
     22, 23, 25, 22, 23, 25, 22, 23,
     25, 22, 23, 25, 22, -1,
 };
 
+/// The marks' dim colours, which the glow moves round the entries.
 u16 gYampiDesertCave_MarkColorsDim[] = {
     30, 27, 31, 22, 21, 31, 20, 18,
     31, 13, 11, 27, 11, 8, 24, 8,
     5, 21, 31, 31, 31, -1,
 };
 
+/// The glow's steps: for each, the palette entries the dim colours go to.
 u16 gYampiDesertCave_MarkCycle[] = {                                                               
       14, 9, 10, 11, 12, 13, 13, 14, 9, 10, 11, 12, 12, 13, 14, 9, 10, 11,  
       11, 12, 13, 14, 9, 10, 10, 11, 12, 13, 14, 9, 9, 10, 11, 12, 13, 14,  
@@ -1167,29 +1168,33 @@ u32 gSceneExits[] = {
     SCENE_EXITS_END,
 };
 
+/// A pushed pillar or stake stands still where it was placed.
 u32 gYampiDesertCave_Settle[] = {
     SC_SET(SW_MOTION, 0),
     SC_END,
 };
 
+/// The Water of Life chest's room: three logs and the pillar Burst breaks.
 struct ActorPlacement gYampiDesertCave_Placements[] = {
     ACTOR_PLACEMENT(SPRITE_FALLEN_COLUMN_NORTH_SOUTH, CONDITION_ALWAYS, MOVEMENT_TYPE_CLEAR_COLLISION, 888, 0, 336, FACING_SOUTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(SPRITE_FALLEN_COLUMN_WEST_EAST, CONDITION_ALWAYS, MOVEMENT_TYPE_CLEAR_COLLISION, 832, 0, 312, FACING_SOUTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(SPRITE_FALLEN_COLUMN_WEST_EAST, CONDITION_ALWAYS, MOVEMENT_TYPE_CLEAR_COLLISION, 912, 0, 168, FACING_SOUTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(404, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 120, 0, 712, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_BURST_PILLAR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 120, 0, 712, FACING_SOUTH, TALK_FACING_KEEP, 0),
     {SCENE_TABLE_END},
 };
 // clang-format on
 
+/// Valukar's room: the pillar Move pushes, and Valukar until he is beaten.
 struct ActorPlacement gYampiDesertCaveGuardianPlacements[] = {
     ACTOR_PLACEMENT(SPRITE_STONE_PILLAR, CONDITION_ALWAYS,
                     (s32)gYampiDesertCave_Settle, 552, 0, 200, FACING_SOUTH,
                     TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(177, FLAG_VALUKAR_BEATEN, MOVEMENT_TYPE_STAND, 200, 0, 152,
-                    FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_VALUKAR, FLAG_VALUKAR_BEATEN, MOVEMENT_TYPE_STAND,
+                    200, 0, 152, FACING_SOUTH, TALK_FACING_KEEP, 0),
     {SCENE_TABLE_END},
 };
 
+/// Crystal's room, in YampiDesertCaveCrystalActorId order.
 struct ActorPlacement gYampiDesertCaveCrystalPlacements[] = {
     ACTOR_PLACEMENT(SPRITE_FALLEN_COLUMN_NORTH_SOUTH, CONDITION_ALWAYS,
                     MOVEMENT_TYPE_CLEAR_COLLISION, 712, 0, 752, FACING_SOUTH,
@@ -1209,23 +1214,30 @@ struct ActorPlacement gYampiDesertCaveCrystalPlacements[] = {
     ACTOR_PLACEMENT(SPRITE_STONE_PILLAR, CONDITION_ALWAYS,
                     (s32)gYampiDesertCave_Settle, 136, 0, 168, FACING_SOUTH,
                     TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(406, CONDITION_ALWAYS, (s32)gYampiDesertCave_Settle, 744, 0,
-                    200, FACING_SOUTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(404, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 264, 0, 632,
-                    FACING_SOUTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(251, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0, 0,
-                    FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_STAKE, CONDITION_ALWAYS,
+                    (s32)gYampiDesertCave_Settle, 744, 0, 200, FACING_SOUTH,
+                    TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_BURST_PILLAR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
+                    264, 0, 632, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_SAND_RIPPLE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
+                    0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(SPRITE_VENUS_DJINNI, FLAG_DJINNI(DJINNI_CRYSTAL),
                     MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_SOUTH,
                     TALK_FACING_PARTY, 0),
     {SCENE_TABLE_END},
 };
 
-u32 gYampiDesertCaveCrystalStakes[] = {
-    14,
-    0xffff0206,
+/// The stake Pound sinks in Crystal's room: its actor, its kind and the flag
+/// set once it is sunk, as Pound_SinkTarget reads them.
+u16 gYampiDesertCaveCrystalStakes[] ALIGNED(4) = {
+    ACTOR_STAKE,
+    0,
+    FLAG_YAMPI_DESERT_CAVE_STAKE_POUNDED,
+    0xffff,
 };
 
+/// The Water of Life chest's room: its exits, the logs, the pillar, the two
+/// Teleport marks and Sand.
 struct Trigger gYampiDesertCave_Triggers[] = {
     {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
     {TRIGGER_EXIT | EXIT_STYLE_STAIRS_DOWN, 2, CONDITION_ALWAYS, 2},
@@ -1251,6 +1263,8 @@ struct Trigger gYampiDesertCave_Triggers[] = {
     {TRIGGER_TABLE_END},
 };
 
+/// Valukar's room: its exits, Valukar's step, the pillar, Sand and the hidden
+/// treasure.
 struct Trigger gYampiDesertCaveGuardianTriggers[] = {
     {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
     {TRIGGER_EXIT | EXIT_STYLE_STAIRS_DOWN, 2, CONDITION_ALWAYS, 2},
@@ -1260,8 +1274,8 @@ struct Trigger gYampiDesertCaveGuardianTriggers[] = {
     {TRIGGER_EXIT | EXIT_STYLE_STAIRS_UP, 17, CONDITION_ALWAYS, 17},
     {TRIGGER_STEP, 52, FLAG_VALUKAR_BEATEN,
      EVENT(YampiDesertCave_MeetGuardianOfFire)},
-    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), 8,
-     FLAG_YAMPI_DESERT_CAVE_GUARDIAN_PILLAR_MOVED,
+    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST),
+     ACTOR_GUARDIAN_ROOM_PILLAR, FLAG_YAMPI_DESERT_CAVE_GUARDIAN_PILLAR_MOVED,
      EVENT(YampiDesertCave_StartMovingPillar)},
     {PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_GUARDIAN_ROOM_PILLAR,
      FLAG_YAMPI_DESERT_CAVE_GUARDIAN_PILLAR_MOVED,
@@ -1276,6 +1290,8 @@ struct Trigger gYampiDesertCaveGuardianTriggers[] = {
     {TRIGGER_TABLE_END},
 };
 
+/// Crystal's room: its exits, the ripple and Crystal, the logs, the pillars,
+/// the stake, Sand and Scoop on the ripple.
 struct Trigger gYampiDesertCaveCrystalTriggers[] = {
     {TRIGGER_EXIT | EXIT_STYLE_STAIRS_UP, 1, CONDITION_ALWAYS, 1},
     {TRIGGER_EXIT, 2, CONDITION_ALWAYS, 2},
@@ -1299,14 +1315,14 @@ struct Trigger gYampiDesertCaveCrystalTriggers[] = {
     {PSYNERGY_PHASE_ON_CELL(ABILITY_BURST, PSYNERGY_PHASE_ACTS), 33,
      FLAG_YAMPI_DESERT_CAVE_CRYSTAL_ROOM_PILLAR_BURST,
      EVENT(YampiDesertCave_BurstCrystalRoomPillar)},
-    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), 12,
-     FLAG_YAMPI_DESERT_CAVE_EAST_PILLAR_MOVED,
+    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST),
+     ACTOR_EAST_PILLAR, FLAG_YAMPI_DESERT_CAVE_EAST_PILLAR_MOVED,
      EVENT(YampiDesertCave_StartMovingPillar)},
     {PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_EAST_PILLAR,
      FLAG_YAMPI_DESERT_CAVE_EAST_PILLAR_MOVED,
      EVENT(YampiDesertCave_FinishMovingPillar)},
-    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), 13,
-     FLAG_YAMPI_DESERT_CAVE_WEST_PILLAR_MOVED,
+    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST),
+     ACTOR_WEST_PILLAR, FLAG_YAMPI_DESERT_CAVE_WEST_PILLAR_MOVED,
      EVENT(YampiDesertCave_StartMovingPillar)},
     {PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_WEST_PILLAR,
      FLAG_YAMPI_DESERT_CAVE_WEST_PILLAR_MOVED,
@@ -1322,6 +1338,7 @@ struct Trigger gYampiDesertCaveCrystalTriggers[] = {
     {PSYNERGY_ANYWHERE(ABILITY_SAND, PSYNERGY_PHASE_FADES), 0, CONDITION_ALWAYS,
      EVENT(YampiDesertCave_EndSand)},
     {PSYNERGY_PHASE_ON_CELL(ABILITY_SCOOP, PSYNERGY_PHASE_ACTS), 33,
-     IF_FLAG_SET(0x270), EVENT(YampiDesertCave_ScoopDjinni)},
+     IF_FLAG_SET(FLAG_YAMPI_DESERT_CAVE_RIPPLE_RUNNING),
+     EVENT(YampiDesertCave_ScoopDjinni)},
     {TRIGGER_TABLE_END},
 };

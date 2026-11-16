@@ -1,7 +1,7 @@
 /// @file
 /// The link battle timer, and a localized message shown until the player reads
 /// it.
-// Part of window.c.
+// Part of screens.c.
 
 #include "window_internal.h"
 #include "sounds.h"

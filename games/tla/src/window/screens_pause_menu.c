@@ -1,7 +1,7 @@
 /// @file
-/// The save screen's selection, the portrait browser, and the flag grid drawn
-/// into a tilemap.
-// Part of window.c.
+/// The Pause menu's selection, a tilemap palette-bit rectangle, and the debug
+/// browsers of icons and portraits.
+// Part of screens.c.
 
 #include "window_internal.h"
 #include "window/item_icon.h"
@@ -19,11 +19,11 @@ again:
     return -1;
   if (selection == PAUSE_MENU_SAVE_QUEST) {
     if (GameFlag_Get(FLAG_CANNOT_SAVE_HERE)) {
-      FieldMessage_Show((s32)MsgCannotSaveHere, 1);
+      FieldMessage_Show((s32)MsgCannotSaveHere, FIELD_MESSAGE_ZOOM);
       goto again;
     }
     if (GameFlag_Get(FLAG_NO_PLACE_TO_SAVE)) {
-      FieldMessage_Show((s32)MsgNoPlaceForThat, 1);
+      FieldMessage_Show((s32)MsgNoPlaceForThat, FIELD_MESSAGE_ZOOM);
       goto again;
     }
     if (Save_ToChosenFile() == -1)
@@ -38,39 +38,49 @@ again:
   return 0;
 }
 
-void Render_SetTilemapFlagBitRect(const struct Window *object, s32 x, s32 y,
-                                  s32 width, s32 height, u32 field) {
+/// Sets (`set` 1) or clears (0) bit 12 of the tilemap entries of the `width` x
+/// `height` tile rectangle at (x, y) inside `window`, clipped to the screen:
+/// bit 12 is the lowest bit of the entry's palette number, so this switches the
+/// rectangle between two palettes, such as 15 and 14. Nothing calls it.
+UNUSED void Window_SetTextTileBitRect(const struct Window *window, s32 x, s32 y,
+                                      s32 width, s32 height, u32 set) {
   struct WindowWork *work = (struct WindowWork *)Ram_HeapSlots->windowWork;
 
-  x += (s16)object->x + 1;
-  y += (s16)object->y + 1;
-  field &= 1;
-  field <<= 12;
+  x += (s16)window->x + 1;
+  y += (s16)window->y + 1;
+  set &= 1;
+  set = BG_TILE_PALETTE(set);
   if (x < 0) {
     width += x;
     x = 0;
   }
-  if (x + width > (DISPLAY_TILE_WIDTH - 1)) {
+  if (x + width > DISPLAY_TILE_WIDTH - 1) {
     width = DISPLAY_TILE_WIDTH - x;
   }
   if (y < 0) {
     height += y;
     y = 0;
   }
-  if (y + height > 29) {
+  // BUG: tests the bottom against the screen's width, so a window reaching
+  // below the screen draws into the map's unseen rows.
+#ifdef BUGFIX
+  if (y + height > DISPLAY_TILE_HEIGHT - 1) {
+#else
+  if (y + height > DISPLAY_TILE_WIDTH - 1) {
+#endif
     height = DISPLAY_TILE_HEIGHT - y;
   }
   if (width > 0 && height > 0) {
     do {
-      u16 *pixel = &work->tilemap[y][x];
+      u16 *cell = &work->tilemap[y][x];
       s32 remaining = width;
       while (remaining != 0) {
-        u32 value = *pixel;
-        value &= 0xFFFFEFFF;
-        value |= field;
+        u32 entry = *cell;
+        entry &= ~0x1000;
+        entry |= set;
         remaining--;
-        *pixel = value;
-        pixel++;
+        *cell = entry;
+        cell++;
       }
       height--;
       y++;

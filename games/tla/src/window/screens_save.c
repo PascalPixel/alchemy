@@ -1,6 +1,6 @@
 /// @file
 /// Save files, the file list and the saving screen's progress bar.
-// Part of window.c.
+// Part of screens.c.
 
 #include "window_internal.h"
 #include "fixed_math.h"

@@ -1,6 +1,6 @@
 /// @file
 /// Window sprites, portraits and the window spans.
-// Part of window.c.
+// Part of screens.c.
 
 #include "window_internal.h"
 #include "window/screens.h"

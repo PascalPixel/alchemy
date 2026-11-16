@@ -1,7 +1,7 @@
 /// @file
 /// An ability classified for target selection, and a reserve member chosen for
 /// a party slot.
-// Part of window.c.
+// Part of screens.c.
 
 #include "window_internal.h"
 #include "sounds.h"

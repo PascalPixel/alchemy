@@ -1,7 +1,7 @@
 /// @file
 /// The debug menus' keys, the flag browser, and hexadecimal numbers written as
 /// text.
-// Part of window.c.
+// Part of screens.c.
 
 #include "window_internal.h"
 #include "field/flag_call.h"

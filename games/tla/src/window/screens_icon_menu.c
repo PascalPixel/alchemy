@@ -4,7 +4,7 @@
 /// bouncing, and fits the window's lines around it. Then the resource selection
 /// menus: shop commands, sanctum services, Yes or No, coins or medals, and the
 /// save screen's actions.
-// Part of window.c.
+// Part of screens.c.
 
 #include "window_internal.h"
 #include "flags.h"

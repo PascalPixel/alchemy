@@ -1,6 +1,6 @@
 /// @file
 /// The name entry screen.
-// Part of window.c.
+// Part of screens.c.
 
 #include "window_internal.h"
 #include "resource_ids.h"

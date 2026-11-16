@@ -1,6 +1,6 @@
 /// @file
 /// The battle summon menu.
-// Part of window.c.
+// Part of screens.c.
 
 #include "window_internal.h"
 #include "sounds.h"

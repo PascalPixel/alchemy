@@ -1,6 +1,6 @@
 /// @file
 /// The row of command icons the player picks a command from.
-// Part of window.c.
+// Part of screens.c.
 
 #include "window_internal.h"
 #include "sounds.h"

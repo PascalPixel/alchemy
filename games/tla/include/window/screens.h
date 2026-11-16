@@ -56,13 +56,21 @@ s32 ItemIcon_LoadIntoSlot(s32 item, s32 slot);
 void IconMenu_DrawIcons(void);
 void Link_DrawPageArrows(s32 destination);
 s32 Link_CreateCountdownLabelWindow(void);
+/// Shows the advance cursor bobbing at (x, y) and waits for A, B, L or R.
 void BattleMessage_WaitForAdvanceAtFar(s32 x, s32 y);
+/// Sets the BGM volume target (BGM_UNITY_SCALE full) and its step a VBlank.
 void Sound_SetBgmVolumeTargetFar(s32 target, s32 step);
+/// Plays the music Scene_QueueMusic remembered, if any.
 void Scene_PlayQueuedMusicFar(void);
+/// Saves up to 32 actors into gSnapshotObjects so that they can be put back.
 void ObjectTable_SnapshotFar(void);
+/// Creates the four Djinn figures of the file list's top row.
 void DjinnFigures_InitializeTopRowFar(void);
+/// Destroys the four Djinn figures and stops placing them.
 void DjinnFigures_ReleaseTopRowFar(void);
+/// Shows the Djinn figures (nonzero) or hides them (0).
 void DjinnFigures_SetShownFar(s32 shown);
+/// Moves Djinn figure `index` to screen pixel (x, y), if it exists.
 void DjinnFigures_SetSlotPositionFar(s32 index, s32 x, s32 y);
 s32 FileList_SelectFile(s32 selectedFile, s32 menuMode);
 void MenuTitle_Bob(struct WindowSprite *object);

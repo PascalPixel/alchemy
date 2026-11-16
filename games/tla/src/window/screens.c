@@ -23,7 +23,11 @@
 #include "game/character_ids.h"
 #include "field/scene_tables.h"
 
+/// A bounce of 32 steps, 8.8 fixed-point scales: the selected icons pulse by
+/// it.
 extern const u16 gWindowSprite_BounceScales[];
+/// The portraits of the characters and of the other speakers, {who, portrait}
+/// pairs ending in -1.
 extern const s16 gPortrait_CharacterMap[];
 extern const s16 gPortrait_SpriteMap[];
 
@@ -147,25 +151,32 @@ struct FileListWork {
 /// the one after it stays (gDjinnMenu_BlinkTile).
 #define DJINN_MENU_ARROW_TILE 808
 
+/// The arrow tile BattleDjinnMenu_Run copies to the two BG tiles from
+/// DJINN_MENU_ARROW_TILE each frame: the first blinks (four frames shown, four
+/// blank), the second stays.
 extern const u8 gDjinnMenu_BlinkTile[32];
 
+/// Where each element's icon and standby count sit in the party status
+/// window's Djinn column, in tiles, for the Djinn menu to blink them.
 extern u8 gDjinnMenu_ElementXOffsets[4];
-
 extern u8 gDjinnMenu_ElementYOffsets[4];
 
+/// The Status screen's cursor stops: the stats, the equipment and the
+/// conditions.
 extern const struct BattleSummaryStatCursor gOwnerStatus_StatCursors[];
-
 extern const struct BattleSummaryCursor gOwnerStatus_EquipmentCursors[];
-
 extern const struct BattleSummaryCursor gOwnerStatus_ConditionCursors[];
-
+/// "Lv", before the level on the Status screen.
 extern const u8 gOwnerStatus_LevelString[];
 
 /// The ability of each summon, by its number.
 extern const u16 gSummon_Abilities[];
 
+/// The heading pair's bob (MenuTitle_Bob), in pixels, a step every four
+/// VBlanks.
 extern const u8 gWindow_PairBobOffsets[];
 
+/// The rows the range icons are marked with (Menu_BuildLocalizedPatternTiles).
 extern const struct BarPatternRow gMenu_BarPatternRows[];
 
 /// The standby Djinn counts 10 to 18, one tile each, from BG tile
@@ -181,10 +192,12 @@ extern const u8 gPartyStatus_DigitTiles[];
   ((n) > 9 ? (n) + WINDOW_TILE(DJINN_COUNT_TENS_TILE - 10)                     \
            : WINDOW_TILE((n) + '0'))
 
+/// The saving screen's progress bar: its seven stages, a row of tile numbers
+/// each, and its tiles, compressed.
 extern const u8 gWindow_ProgressBarRows[];
-
 extern const u8 gWindow_ProgressBarTiles[];
 
+/// The cell picture routine, copied to RAM before it runs.
 extern u8 Tile_BuildCellPicturesCode[];
 
 // The parts, in ROM order (The Broken Seal's src/README.md, "Objects and
@@ -230,16 +243,18 @@ struct WindowLine {
 /// A page of the icon menu's window shape: one WindowLine for each of the
 /// screen's 160 lines.
 struct WindowBuffer {
-  u8 unk000[4];
+  u8 winInOut[4]; ///< WININ and WINOUT, not touched here
   struct WindowLine lines[160];
 };
 
+/// The Pause menu's headings and page label.
 extern const u8 gWorkspace_ItemTitle[];
 extern const u8 gWorkspace_EnergyTitle[];
 extern const u8 gWorkspace_StatusTitle[];
 extern const u8 gWorkspace_PageLabel[];
 extern const u8 gWorkspace_RangeDash[];
 
+/// The save screen's icon menu: the action at each icon position.
 extern s8 gMenu_SaveSlotActionByPosition[];
 
 // The parts, in ROM order.

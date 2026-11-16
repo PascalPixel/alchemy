@@ -1,6 +1,6 @@
 /// @file
 /// The joined-party and found-Djinni messages.
-// Part of window.c.
+// Part of screens.c.
 
 #include "window_internal.h"
 #include "sounds.h"
@@ -62,7 +62,7 @@ void Djinn_ShowJoinedMessage(s32 member, s32 element, s32 djinn) {
     p = entry;
     *p++ = zero;
     *p++ = OBJ_SIZE_32X32 | OBJ_X(DJINN_JOIN_X * 8 + 4) | 12;
-    *p = tile | (14 << 12);
+    *p = tile | OBJ_PALETTE(PORTRAIT_PALETTE);
 
     work->speakerVoiceSound = zero;
     work->speakerVoiceCountdown = zero;
@@ -94,6 +94,8 @@ void Djinn_ShowJoinedMessage(s32 member, s32 element, s32 djinn) {
   }
 }
 
+/// Returns the portrait character of party member `index` (0-8), from
+/// gCharacter_SpriteTable; 0 for any other.
 s32 Party_GetMemberPortraitSprite(u32 index) {
   if (index > 8)
     return 0;
@@ -123,7 +125,7 @@ void Party_ShowJoinedMessage(s32 member) {
     p = entry;
     *p++ = 0;
     *p++ = OBJ_SIZE_32X32 | OBJ_X(2 * 8 + 4) | 12;
-    *p = tile | (14 << 12);
+    *p = tile | OBJ_PALETTE(PORTRAIT_PALETTE);
     work->speakerVoiceSound = 0;
     work->speakerVoiceCountdown = 0;
     MessageArgument_Push(member, MESSAGE_ARGUMENT_ACTOR);
@@ -227,8 +229,6 @@ void Party_ShowPairJoinedMessage(s32 first, s32 second) {
 #define TO_SUMMON_WINDOW_WIDTH 24
 #define TO_SUMMON_WINDOW_HEIGHT 7
 #endif
-
-extern u8 MsgCanNowSummon[], MsgToSummon[];
 
 /// Announces a summon the party can now use: "... can now summon ..."
 /// (MsgCanNowSummon) until the jingle ends or a button is pressed, then

@@ -1,6 +1,6 @@
 /// @file
 /// Choosing a battle target.
-// Part of window.c.
+// Part of screens.c.
 
 #include "window_internal.h"
 #include "flags.h"

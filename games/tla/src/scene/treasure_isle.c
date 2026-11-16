@@ -6,6 +6,7 @@
 #include "flags.h"
 #include "scene_ids.h"
 #include "types.h"
+#include "version.h"
 #include "macros.h"
 #include "battle/battle.h"
 #include "field/actor.h"
@@ -60,6 +61,71 @@
 // Lift raises, Gale the Jupiter Djinni, a Venus Djinni, and the guardian of
 // water.
 
+/// Set as Move pushes the entrance room's pillar n (0 to 2) onto its switch.
+#define FLAG_TREASURE_ISLE_ENTRANCE_PILLAR_MOVED(n) (FLAG_AREA_TEMP_00 + (n))
+/// Set as spiky rock n (0 to 4) of the chests' room rises, cleared as Grind
+/// breaks it (gTreasureIsle_Room2SpikyRocks).
+#define FLAG_TREASURE_ISLE_CHESTS_ROCK_RISEN(n) (FLAG_AREA_TEMP_03 + (n))
+/// Set as Move pushes the chests' room's stone pillar onto its switch.
+#define FLAG_TREASURE_ISLE_CHESTS_PILLAR_MOVED FLAG_AREA_TEMP_08
+/// Set as Move pushes the Jester's Armlet room's stone pillar onto its switch.
+#define FLAG_TREASURE_ISLE_ARMLET_PILLAR_MOVED FLAG_AREA_TEMP_09
+/// Set as spiky rock n (0 to 2) of the Jester's Armlet room rises, cleared as
+/// Grind breaks it (gTreasureIsle_Room3SpikyRocks).
+#define FLAG_TREASURE_ISLE_ARMLET_ROCK_RISEN(n) (FLAG_AREA_TEMP_0A + (n))
+/// Set as Move pushes the stone pillar of Gale's room onto its switch.
+#define FLAG_TREASURE_ISLE_GALE_ROOM_PILLAR_MOVED FLAG_AREA_TEMP_0D
+/// Set as Lift raises boulder n (0 to 7) of Gale's room; while it is clear the
+/// boulder stands and the party can jump onto it.
+#define FLAG_TREASURE_ISLE_BOULDER_LIFTED(n) (FLAG_SCENE_TEMP_00 + (n))
+/// Set once the Star Magician, the guardian of water, has been beaten; it is
+/// gone.
+#define FLAG_STAR_MAGICIAN_BEATEN 0x9bb
+
+/// Gale answers from any side in the Japanese edition; from the international
+/// editions on, only while the leader faces east.
+#if TLA_PATCH_1
+#define GALE_TALK_TRIGGER TALK_TRIGGER_FACING(FACING_EAST)
+#else
+#define GALE_TALK_TRIGGER TRIGGER_TALK
+#endif
+
+/// The first room's three pillars, set where Move pushed them.
+enum {
+  ACTOR_PUSHED_PILLAR_A = ACTOR_FIRST_PLACED,
+  ACTOR_PUSHED_PILLAR_B,
+  ACTOR_PUSHED_PILLAR_C
+};
+
+/// The second and third rooms' tightrope posts and the stone pillar Move
+/// pushes; the second room has a second pillar.
+enum {
+  ACTOR_POST_A = ACTOR_FIRST_PLACED,
+  ACTOR_POST_B,
+  ACTOR_STONE_PILLAR,
+  ACTOR_SECOND_STONE_PILLAR
+};
+
+/// Gale's room (gTreasureIsle_Room4Placements): its stone pillar, the eight
+/// boulders Lift raises, the posts of its three tightropes, and Gale.
+enum TreasureIsleGaleRoomActorId {
+  ACTOR_GALE_ROOM_PILLAR = ACTOR_FIRST_PLACED,
+  ACTOR_FIRST_BOULDER,
+  ACTOR_LAST_BOULDER = ACTOR_FIRST_BOULDER + 7,
+  ACTOR_GALE_ROOM_POST_A,
+  ACTOR_GALE_ROOM_POST_B,
+  ACTOR_GALE_ROOM_POST_C,
+  ACTOR_GALE_ROOM_POST_D,
+  ACTOR_GALE_ROOM_POST_E,
+  ACTOR_GALE_ROOM_POST_F,
+  ACTOR_GALE
+};
+
+/// The Star Magician, the guardian of water, in the last room
+/// (gTreasureIsle_Room5Placements), and the Venus Djinni Earth19 waiting
+/// there.
+enum { ACTOR_STAR_MAGICIAN = ACTOR_FIRST_PLACED, ACTOR_EARTH19 };
+
 struct TreasureIsleCell;
 
 extern struct ActorPlacement gTreasureIsle_Placements[];
@@ -78,7 +144,7 @@ extern struct TreasureIsleCell gTreasureIsle_Room2SpikyRocks[];
 extern struct TreasureIsleCell gTreasureIsle_Room3SpikyRocks[];
 extern struct Trigger gTreasureIsle_Room2Triggers[];
 extern struct Trigger gTreasureIsle_Room3Triggers[];
-extern s32 gTreasureIsle_Room4Triggers[];
+extern struct Trigger gTreasureIsle_Room4Triggers[];
 extern struct Trigger gTreasureIsle_Room5Triggers[];
 
 void TreasureIsle_SetSpikyRock(struct TreasureIsleCell *cells, s16 index);
@@ -106,7 +172,7 @@ void TreasureIsle_LiftSeventhRock(void);
 
 void TreasureIsle_LiftEighthRock(void);
 
-void TreasureIsle_MeetWaterGuardian(void);
+void TreasureIsle_MeetStarMagician(void);
 extern u32 gFieldEffect_ShortScript[];
 extern u32 gFieldEffect_MediumScript[];
 extern u32 gFieldEffect_LongScript[];
@@ -146,7 +212,9 @@ const u8 *Scene_GetActorPlacements(void) {
 
 extern struct MapCell gMapGridCellBuffer[];
 
-s32 TreasureIsle_SwapCells(u32 layer, s32 x, s32 y, s32 value) {
+/// Unused: stores value as the collision code and attribute of the cell at x, y
+/// of a map layer (the cell buffer above layer 2) and returns what it held.
+UNUSED s32 TreasureIsle_SwapCells(u32 layer, s32 x, s32 y, s32 value) {
   struct MapWork *map = Ram_HeapSlots->mapGrid;
   struct MapCell *cell;
   s32 old;
@@ -166,7 +234,7 @@ s32 TreasureIsle_SwapCells(u32 layer, s32 x, s32 y, s32 value) {
 
 /// Draws a spiky rock risen at its cell, blocks the cell and sets its flag.
 void TreasureIsle_SetSpikyRock(struct TreasureIsleCell *cells, s16 index) {
-  MapGrid_CopyCellsLayered(0, 100, 3, 4, cells[index].x + 0x3f,
+  MapGrid_CopyCellsLayered(0, 100, 3, 4, cells[index].x + 63,
                            cells[index].z - 2);
   MapGrid_CopyCellAttributes(1, 0, 1, 1, cells[index].x, cells[index].z);
   Event_SetFlag(cells[index].flag);
@@ -191,7 +259,7 @@ void TreasureIsle_RaiseSpikyRock(struct TreasureIsleCell *cells, s16 index) {
   options.startScaleX = FIXED_ONE * 12 / 10;
   options.startScaleY = FIXED_ONE * 3 / 2;
   options.priority = 1;
-  options.type = 0x115;
+  options.type = SPRITE_WATER_SPRAY;
   options.script = gTreasureIsle_RockDust;
   FieldEffect_Spawn(FIELD_CELL_CENTER(cell->x), 0,
                     (cell->z << 20) + toFIXED(20), 0, 0, 0,
@@ -217,158 +285,122 @@ void TreasureIsle_RaiseSpikyRock(struct TreasureIsleCell *cells, s16 index) {
   TreasureIsle_SetSpikyRock(cells, index);
 }
 
-/// For each of cells 0 to 3 of gTreasureIsle_Room2SpikyRocks whose flag (0x303
-/// to 0x306) is still clear, calls TreasureIsle_RaiseSpikyRock and sets the
-/// flag; the event is begun before the first and ended after the last.
+/// The chests' room's button: each of its first four spiky rocks not yet risen
+/// rises in turn (TreasureIsle_RaiseSpikyRock), all in one event, and its flag
+/// is set.
 void TreasureIsle_PressRoom2Button(void) {
   s16 count = 0;
 
-  if (!Event_GetFlag(FLAG_AREA_TEMP_03)) {
+  if (!Event_GetFlag(FLAG_TREASURE_ISLE_CHESTS_ROCK_RISEN(0))) {
     Event_Start();
     FieldEvent_ResolvePendingActions(0);
     TreasureIsle_RaiseSpikyRock(gTreasureIsle_Room2SpikyRocks, 0);
-    Event_SetFlag(FLAG_AREA_TEMP_03);
+    Event_SetFlag(FLAG_TREASURE_ISLE_CHESTS_ROCK_RISEN(0));
     count = 1;
   }
-  if (!Event_GetFlag(FLAG_AREA_TEMP_04)) {
+  if (!Event_GetFlag(FLAG_TREASURE_ISLE_CHESTS_ROCK_RISEN(1))) {
     if (count == 0)
       Event_Start();
     FieldEvent_ResolvePendingActions(0);
     TreasureIsle_RaiseSpikyRock(gTreasureIsle_Room2SpikyRocks, 1);
-    Event_SetFlag(FLAG_AREA_TEMP_04);
+    Event_SetFlag(FLAG_TREASURE_ISLE_CHESTS_ROCK_RISEN(1));
     count++;
   }
-  if (!Event_GetFlag(FLAG_AREA_TEMP_05)) {
+  if (!Event_GetFlag(FLAG_TREASURE_ISLE_CHESTS_ROCK_RISEN(2))) {
     if (count == 0)
       Event_Start();
     FieldEvent_ResolvePendingActions(0);
     TreasureIsle_RaiseSpikyRock(gTreasureIsle_Room2SpikyRocks, 2);
-    Event_SetFlag(FLAG_AREA_TEMP_05);
+    Event_SetFlag(FLAG_TREASURE_ISLE_CHESTS_ROCK_RISEN(2));
     count++;
   }
-  if (!Event_GetFlag(FLAG_AREA_TEMP_06)) {
+  if (!Event_GetFlag(FLAG_TREASURE_ISLE_CHESTS_ROCK_RISEN(3))) {
     if (count == 0)
       Event_Start();
     FieldEvent_ResolvePendingActions(0);
     TreasureIsle_RaiseSpikyRock(gTreasureIsle_Room2SpikyRocks, 3);
-    Event_SetFlag(FLAG_AREA_TEMP_06);
+    Event_SetFlag(FLAG_TREASURE_ISLE_CHESTS_ROCK_RISEN(3));
     count++;
   }
   if (count != 0)
     Event_End();
 }
 
-/// For each of cells 0 to 2 of gTreasureIsle_Room3SpikyRocks whose flag (0x30a
-/// to 0x30c) is still clear, calls TreasureIsle_RaiseSpikyRock and sets the
-/// flag; the event is begun before the first and ended after the last.
+/// The Jester's Armlet room's button: each of its three spiky rocks not yet
+/// risen rises in turn (TreasureIsle_RaiseSpikyRock), all in one event, and its
+/// flag is set.
 void TreasureIsle_PressRoom3Button(void) {
   s16 count = 0;
 
-  if (!Event_GetFlag(FLAG_AREA_TEMP_0A)) {
+  if (!Event_GetFlag(FLAG_TREASURE_ISLE_ARMLET_ROCK_RISEN(0))) {
     Event_Start();
     FieldEvent_ResolvePendingActions(0);
     TreasureIsle_RaiseSpikyRock(gTreasureIsle_Room3SpikyRocks, 0);
-    Event_SetFlag(FLAG_AREA_TEMP_0A);
+    Event_SetFlag(FLAG_TREASURE_ISLE_ARMLET_ROCK_RISEN(0));
     count = 1;
   }
-  if (!Event_GetFlag(FLAG_AREA_TEMP_0B)) {
+  if (!Event_GetFlag(FLAG_TREASURE_ISLE_ARMLET_ROCK_RISEN(1))) {
     if (count == 0)
       Event_Start();
     FieldEvent_ResolvePendingActions(0);
     TreasureIsle_RaiseSpikyRock(gTreasureIsle_Room3SpikyRocks, 1);
-    Event_SetFlag(FLAG_AREA_TEMP_0B);
+    Event_SetFlag(FLAG_TREASURE_ISLE_ARMLET_ROCK_RISEN(1));
     count++;
   }
-  if (!Event_GetFlag(FLAG_AREA_TEMP_0C)) {
+  if (!Event_GetFlag(FLAG_TREASURE_ISLE_ARMLET_ROCK_RISEN(2))) {
     if (count == 0)
       Event_Start();
     FieldEvent_ResolvePendingActions(0);
     TreasureIsle_RaiseSpikyRock(gTreasureIsle_Room3SpikyRocks, 2);
-    Event_SetFlag(FLAG_AREA_TEMP_0C);
+    Event_SetFlag(FLAG_TREASURE_ISLE_ARMLET_ROCK_RISEN(2));
     count++;
   }
   if (count != 0)
     Event_End();
 }
 
+/// The chests' room's fifth spiky rock rises, once, as Move pushes the second
+/// stone pillar onto its switch.
 void TreasureIsle_RaiseLastSpikyRock(void) {
-  if (!Event_GetFlag(FLAG_AREA_TEMP_07)) {
+  if (!Event_GetFlag(FLAG_TREASURE_ISLE_CHESTS_ROCK_RISEN(4))) {
     Event_Start();
     FieldEvent_ResolvePendingActions(0);
     TreasureIsle_RaiseSpikyRock(gTreasureIsle_Room2SpikyRocks, 4);
-    Event_SetFlag(FLAG_AREA_TEMP_07);
+    Event_SetFlag(FLAG_TREASURE_ISLE_CHESTS_ROCK_RISEN(4));
     Event_End();
   }
 }
 
-/// Called through the scene table with an object id: in each of the first
-/// four rooms, sets a flag when object 8 to 11 is at a given x; object 11 at
-/// a given x and z in the second room runs TreasureIsle_RaiseLastSpikyRock
-/// instead.
+/// After Move or a push moves a stone pillar: a pillar that has reached its
+/// switch sets its flag, and the chests' room's second pillar on its switch
+/// raises the last spiky rock (TreasureIsle_RaiseLastSpikyRock).
 void TreasureIsle_SettleMovedPillar(s32 unused, s32 id) {
   struct Actor *object = Actor_Get(id);
 
   if (gMainRoutineWork.next == SCENE_TREASURE_ISLE_ENTRANCE) {
-    if (id == 8 && FIELD_CELL(object->x.fixed) == 16)
-      Event_SetFlag(FLAG_AREA_TEMP_00);
-    if (id == 9 && FIELD_CELL(object->x.fixed) == 20)
-      Event_SetFlag(FLAG_AREA_TEMP_01);
-    if (id == 10 && FIELD_CELL(object->x.fixed) == 27)
-      Event_SetFlag(FLAG_AREA_TEMP_02);
+    if (id == ACTOR_PUSHED_PILLAR_A && FIELD_CELL(object->x.fixed) == 16)
+      Event_SetFlag(FLAG_TREASURE_ISLE_ENTRANCE_PILLAR_MOVED(0));
+    if (id == ACTOR_PUSHED_PILLAR_B && FIELD_CELL(object->x.fixed) == 20)
+      Event_SetFlag(FLAG_TREASURE_ISLE_ENTRANCE_PILLAR_MOVED(1));
+    if (id == ACTOR_PUSHED_PILLAR_C && FIELD_CELL(object->x.fixed) == 27)
+      Event_SetFlag(FLAG_TREASURE_ISLE_ENTRANCE_PILLAR_MOVED(2));
   }
   if (gMainRoutineWork.next == SCENE_TREASURE_ISLE_CHESTS) {
-    if (id == 10 && object->x.fixed >> 19 == 33)
-      Event_SetFlag(FLAG_AREA_TEMP_08);
-    if (id == 11 && object->x.fixed >> 19 == 85 && object->z.fixed >> 19 == 83)
+    if (id == ACTOR_STONE_PILLAR && object->x.fixed >> 19 == 33)
+      Event_SetFlag(FLAG_TREASURE_ISLE_CHESTS_PILLAR_MOVED);
+    if (id == ACTOR_SECOND_STONE_PILLAR && object->x.fixed >> 19 == 85 &&
+        object->z.fixed >> 19 == 83)
       TreasureIsle_RaiseLastSpikyRock();
   }
   if (gMainRoutineWork.next == SCENE_TREASURE_ISLE_JESTERS_ARMLET_CHEST) {
-    if (id == 10 && object->x.fixed >> 19 == 83)
-      Event_SetFlag(FLAG_AREA_TEMP_09);
+    if (id == ACTOR_STONE_PILLAR && object->x.fixed >> 19 == 83)
+      Event_SetFlag(FLAG_TREASURE_ISLE_ARMLET_PILLAR_MOVED);
   }
   if (gMainRoutineWork.next == SCENE_TREASURE_ISLE_GALE) {
-    if (id == 8 && object->x.fixed >> 19 == 87)
-      Event_SetFlag(FLAG_AREA_TEMP_0D);
+    if (id == ACTOR_GALE_ROOM_PILLAR && object->x.fixed >> 19 == 87)
+      Event_SetFlag(FLAG_TREASURE_ISLE_GALE_ROOM_PILLAR_MOVED);
   }
 }
-
-#define FIELD_AT(base, type, off)                                              \
-  (((struct {                                                                  \
-     u8 pad[off];                                                              \
-     type v;                                                                   \
-   } *)(base))                                                                 \
-       ->v)
-
-/// The first room's three pillars, set where Move pushed them.
-enum {
-  ACTOR_PUSHED_PILLAR_A = ACTOR_FIRST_PLACED,
-  ACTOR_PUSHED_PILLAR_B,
-  ACTOR_PUSHED_PILLAR_C
-};
-
-/// The second and third rooms' tightrope posts and the stone pillar Move
-/// pushes.
-enum { ACTOR_POST_A = ACTOR_FIRST_PLACED, ACTOR_POST_B, ACTOR_STONE_PILLAR };
-
-/// Gale's room (gTreasureIsle_Room4Placements): its stone pillar, the eight
-/// boulders Lift raises, the posts of its three tightropes, and Gale.
-enum TreasureIsleGaleRoomActorId {
-  ACTOR_GALE_ROOM_PILLAR = ACTOR_FIRST_PLACED,
-  ACTOR_FIRST_BOULDER,
-  ACTOR_LAST_BOULDER = ACTOR_FIRST_BOULDER + 7,
-  ACTOR_GALE_ROOM_POST_A,
-  ACTOR_GALE_ROOM_POST_B,
-  ACTOR_GALE_ROOM_POST_C,
-  ACTOR_GALE_ROOM_POST_D,
-  ACTOR_GALE_ROOM_POST_E,
-  ACTOR_GALE_ROOM_POST_F,
-  ACTOR_GALE
-};
-
-/// The guardian of water, in the last room (gTreasureIsle_Room5Placements),
-/// and the Venus Djinni Earth19 waiting there.
-enum { ACTOR_WATER_GUARDIAN = ACTOR_FIRST_PLACED, ACTOR_EARTH19 };
-
 /// Talking to Gale, the Jupiter Djinni, starts its battle.
 void TreasureIsle_FightGale(void) {
   Field_RequestDjinnBattle(ACTOR_GALE, DJINNI_GALE);
@@ -403,43 +435,43 @@ void TreasureIsle_GrindSpikyRock(s32 unused, s32 frame, s32 id) {
   }
 }
 
-/// Lift raises one of Room4's rocks out of the way for good (flag n2).
-#define DEFINE_LIFT_ROCK(name, n1, n2)                                         \
+/// Lift raises boulder n of Gale's room out of the way for good: its sprite is
+/// drawn at priority 1 from now on, no longer taken from the map, and its flag
+/// is set.
+#define DEFINE_LIFT_ROCK(name, n)                                              \
   void name(void) {                                                            \
-    s32 t0;                                                                    \
+    struct Actor *boulder = Actor_Get(ACTOR_FIRST_BOULDER + (n));              \
                                                                                \
-    t0 = ((s32)Actor_Get(n1));                                                 \
-    FIELD_AT(FIELD_AT(t0, s32, 80), s8, 9) =                                   \
-        ((-13 & FIELD_AT(FIELD_AT(t0, s32, 80), s8, 9)) | 4);                  \
-    FIELD_AT((t0 + 0x23), u8, 0) = (0xfe & FIELD_AT((t0 + 0x23), u8, 0));      \
-    Event_SetFlag(n2);                                                         \
+    ((struct FieldSprite *)boulder->sprite)->priority = 1;                     \
+    boulder->priorityFlags &= ~ACTOR_PRIORITY_AUTOMATIC;                       \
+    Event_SetFlag(FLAG_TREASURE_ISLE_BOULDER_LIFTED(n));                       \
   }
 
-DEFINE_LIFT_ROCK(TreasureIsle_LiftFirstRock, ACTOR_FIRST_BOULDER, 0x200)
+DEFINE_LIFT_ROCK(TreasureIsle_LiftFirstRock, 0)
 
-DEFINE_LIFT_ROCK(TreasureIsle_LiftSecondRock, ACTOR_FIRST_BOULDER + 1, 0x201)
+DEFINE_LIFT_ROCK(TreasureIsle_LiftSecondRock, 1)
 
-DEFINE_LIFT_ROCK(TreasureIsle_LiftThirdRock, ACTOR_FIRST_BOULDER + 2, 0x202)
+DEFINE_LIFT_ROCK(TreasureIsle_LiftThirdRock, 2)
 
-DEFINE_LIFT_ROCK(TreasureIsle_LiftFourthRock, ACTOR_FIRST_BOULDER + 3, 0x203)
+DEFINE_LIFT_ROCK(TreasureIsle_LiftFourthRock, 3)
 
-DEFINE_LIFT_ROCK(TreasureIsle_LiftFifthRock, ACTOR_FIRST_BOULDER + 4, 0x204)
+DEFINE_LIFT_ROCK(TreasureIsle_LiftFifthRock, 4)
 
-DEFINE_LIFT_ROCK(TreasureIsle_LiftSixthRock, ACTOR_FIRST_BOULDER + 5, 0x205)
+DEFINE_LIFT_ROCK(TreasureIsle_LiftSixthRock, 5)
 
-DEFINE_LIFT_ROCK(TreasureIsle_LiftSeventhRock, ACTOR_FIRST_BOULDER + 6, 0x206)
+DEFINE_LIFT_ROCK(TreasureIsle_LiftSeventhRock, 6)
 
-DEFINE_LIFT_ROCK(TreasureIsle_LiftEighthRock, ACTOR_FIRST_BOULDER + 7, 0x207)
+DEFINE_LIFT_ROCK(TreasureIsle_LiftEighthRock, 7)
 
-/// The guardian of water challenges the party to prove its worth.
-/// "I am the guardian of water. If you would claim my power, you must prove
-/// your worth."
-void TreasureIsle_MeetWaterGuardian(void) {
-  s32 t12;
+/// The Star Magician, the guardian of water, glows and speaks ("I am the
+/// guardian of water. If you would claim my power, you must prove your
+/// worth."), turns to the leader and starts its battle, which cannot be fled.
+void TreasureIsle_MeetStarMagician(void) {
+  struct Actor *leader;
 
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
-  FieldActor_StartRepeatedMotion(ACTOR_WATER_GUARDIAN, 2);
+  FieldActor_StartRepeatedMotion(ACTOR_STAR_MAGICIAN, 2);
   FieldEvent_Wait(20);
   PaletteFade_ApplySource(FIXED_ONE, 0);
   PaletteFade_ApplyTarget(PALETTE_TINT_WARM, 1);
@@ -449,15 +481,15 @@ void TreasureIsle_MeetWaterGuardian(void) {
   PaletteFade_ApplyTarget(FIXED_ONE, 0);
   PaletteFade_Interpolate(60);
   FieldEvent_Wait(60);
-  t12 = Actor_Get(gMainRoutineWork.leaderActorId);
-  if (t12 != 0) {
-    Actor_SetDestination(ACTOR_WATER_GUARDIAN, FIELD_AT(t12, s16, 10),
-                         FIELD_AT(t12, s16, 18));
+  leader = Actor_Get(gMainRoutineWork.leaderActorId);
+  if (leader != 0) {
+    Actor_SetDestination(ACTOR_STAR_MAGICIAN, leader->x.part[0].integer,
+                         leader->z.part[0].integer);
   }
   FieldEvent_Wait(20);
-  gMainRoutineWork.pendingDjinni = 0x19bb;
+  gMainRoutineWork.pendingDjinni = IF_FLAG_SET(FLAG_STAR_MAGICIAN_BEATEN);
   Battle_SetType(BATTLE_TYPE_NO_ESCAPE);
-  Field_RequestBattleFromEncounterTable(0x67, 0);
+  Field_RequestBattleFromEncounterTable(ENCOUNTER_TABLE_GUARDIANS, 0);
 }
 
 extern struct Trigger gTreasureIsle_Room1Triggers[];
@@ -495,13 +527,15 @@ void TreasureIsle_CycleWaterColors(void) {
     return;
   if (gTreasureIsle_ColorCycleFrame[0] == -1) {
     Iwram_CopyWords(gTreasureIsle_SavedBgColors.colors,
-                    (void *)&BG_PLTT_COLOR(3, 0), 32);
+                    (void *)&BG_PLTT_COLOR(3, 0), sizeof(struct Palette));
     Iwram_CopyWordsEntry(gTreasureIsle_BgColors.colors,
-                         gTreasureIsle_SavedBgColors.colors, 32);
+                         gTreasureIsle_SavedBgColors.colors,
+                         sizeof(struct Palette));
     Iwram_CopyWordsEntry(gTreasureIsle_SavedObjColors.colors,
-                         (void *)&BG_PLTT_COLOR(10, 0), 32);
+                         (void *)&BG_PLTT_COLOR(10, 0), sizeof(struct Palette));
     Iwram_CopyWordsEntry(gTreasureIsle_ObjColors.colors,
-                         gTreasureIsle_SavedObjColors.colors, 32);
+                         gTreasureIsle_SavedObjColors.colors,
+                         sizeof(struct Palette));
     gTreasureIsle_ColorCycleFrame[0] = 0;
   }
   phase = gTreasureIsle_ColorCycleFrame[0] / 8 % 4;
@@ -519,94 +553,74 @@ void TreasureIsle_CycleWaterColors(void) {
                       DMA_COPY_WORDS(PALETTE_COLORS / 2));
   gTreasureIsle_ColorCycleFrame[0]++;
 }
-#undef FIELD_AT
 
-// its code, then the overlay's data.
-
-/// Treasure Isle's setup for each of its four rooms: places the objects whose
-/// flags are set, schedules TreasureIsle_CycleWaterColors in rooms 2 and 3 and
-/// opens again the cells already opened there (TreasureIsle_SetSpikyRock), and
-/// in room 4 raises the part priority of objects 9 to 16.
+/// Treasure Isle's setup for each of its rooms: places the pillars already
+/// pushed onto their switches, cycles the water colours in the chests' and the
+/// Jester's Armlet rooms and stands their risen spiky rocks again, and in
+/// Gale's room strings the tightropes and draws the boulders' shadows at the
+/// lowest priority.
 s32 Scene_Initialize(void) {
   s32 i;
 
   gFieldWork->transition = SCENE_TRANSITION(TRANSITION_WINDOW, 4);
   Tightrope_Initialize();
   if (gMainRoutineWork.next == SCENE_TREASURE_ISLE_ENTRANCE) {
-    Event_SetFlag(FLAG_AREA_TEMP_00);
-    Event_SetFlag(FLAG_AREA_TEMP_01);
-    Event_SetFlag(FLAG_AREA_TEMP_02);
-    if (Event_GetFlag(FLAG_AREA_TEMP_00))
+    Event_SetFlag(FLAG_TREASURE_ISLE_ENTRANCE_PILLAR_MOVED(0));
+    Event_SetFlag(FLAG_TREASURE_ISLE_ENTRANCE_PILLAR_MOVED(1));
+    Event_SetFlag(FLAG_TREASURE_ISLE_ENTRANCE_PILLAR_MOVED(2));
+    if (Event_GetFlag(FLAG_TREASURE_ISLE_ENTRANCE_PILLAR_MOVED(0)))
       Actor_SetPosition(ACTOR_PUSHED_PILLAR_A, 264, 440);
-    if (Event_GetFlag(FLAG_AREA_TEMP_01))
+    if (Event_GetFlag(FLAG_TREASURE_ISLE_ENTRANCE_PILLAR_MOVED(1)))
       Actor_SetPosition(ACTOR_PUSHED_PILLAR_B, 328, 440);
-    if (Event_GetFlag(FLAG_AREA_TEMP_02))
+    if (Event_GetFlag(FLAG_TREASURE_ISLE_ENTRANCE_PILLAR_MOVED(2)))
       Actor_SetPosition(ACTOR_PUSHED_PILLAR_C, 440, 344);
   }
   if (gMainRoutineWork.next == SCENE_TREASURE_ISLE_CHESTS) {
     Task_AddFrame(TreasureIsle_CycleWaterColors, TASK_PASS_VBLANK);
     Tightrope_Place(0, ACTOR_POST_A, ACTOR_POST_B);
-    if (Event_GetFlag(FLAG_AREA_TEMP_08))
+    if (Event_GetFlag(FLAG_TREASURE_ISLE_CHESTS_PILLAR_MOVED))
       Actor_SetPosition(ACTOR_STONE_PILLAR, 264, 184);
-    if (Event_GetFlag(FLAG_AREA_TEMP_03))
+    if (Event_GetFlag(FLAG_TREASURE_ISLE_CHESTS_ROCK_RISEN(0)))
       TreasureIsle_SetSpikyRock(gTreasureIsle_Room2SpikyRocks, 0);
-    if (Event_GetFlag(FLAG_AREA_TEMP_04))
+    if (Event_GetFlag(FLAG_TREASURE_ISLE_CHESTS_ROCK_RISEN(1)))
       TreasureIsle_SetSpikyRock(gTreasureIsle_Room2SpikyRocks, 1);
-    if (Event_GetFlag(FLAG_AREA_TEMP_05))
+    if (Event_GetFlag(FLAG_TREASURE_ISLE_CHESTS_ROCK_RISEN(2)))
       TreasureIsle_SetSpikyRock(gTreasureIsle_Room2SpikyRocks, 2);
-    if (Event_GetFlag(FLAG_AREA_TEMP_06))
+    if (Event_GetFlag(FLAG_TREASURE_ISLE_CHESTS_ROCK_RISEN(3)))
       TreasureIsle_SetSpikyRock(gTreasureIsle_Room2SpikyRocks, 3);
-    if (Event_GetFlag(FLAG_AREA_TEMP_07))
+    if (Event_GetFlag(FLAG_TREASURE_ISLE_CHESTS_ROCK_RISEN(4)))
       TreasureIsle_SetSpikyRock(gTreasureIsle_Room2SpikyRocks, 4);
   }
   if (gMainRoutineWork.next == SCENE_TREASURE_ISLE_JESTERS_ARMLET_CHEST) {
     Task_AddFrame(TreasureIsle_CycleWaterColors, TASK_PASS_VBLANK);
     Tightrope_Place(0, ACTOR_POST_A, ACTOR_POST_B);
-    if (Event_GetFlag(FLAG_AREA_TEMP_09))
+    if (Event_GetFlag(FLAG_TREASURE_ISLE_ARMLET_PILLAR_MOVED))
       Actor_SetPosition(ACTOR_STONE_PILLAR, 664, 248);
-    if (Event_GetFlag(FLAG_AREA_TEMP_0A))
+    if (Event_GetFlag(FLAG_TREASURE_ISLE_ARMLET_ROCK_RISEN(0)))
       TreasureIsle_SetSpikyRock(gTreasureIsle_Room3SpikyRocks, 0);
-    if (Event_GetFlag(FLAG_AREA_TEMP_0B))
+    if (Event_GetFlag(FLAG_TREASURE_ISLE_ARMLET_ROCK_RISEN(1)))
       TreasureIsle_SetSpikyRock(gTreasureIsle_Room3SpikyRocks, 1);
-    if (Event_GetFlag(FLAG_AREA_TEMP_0C))
+    if (Event_GetFlag(FLAG_TREASURE_ISLE_ARMLET_ROCK_RISEN(2)))
       TreasureIsle_SetSpikyRock(gTreasureIsle_Room3SpikyRocks, 2);
   }
   if (gMainRoutineWork.next == SCENE_TREASURE_ISLE_GALE) {
-    if (Event_GetFlag(FLAG_AREA_TEMP_0D))
+    if (Event_GetFlag(FLAG_TREASURE_ISLE_GALE_ROOM_PILLAR_MOVED))
       Actor_SetPosition(ACTOR_GALE_ROOM_PILLAR, 696, 600);
     Tightrope_Place(0, ACTOR_GALE_ROOM_POST_A, ACTOR_GALE_ROOM_POST_B);
     Tightrope_Place(1, ACTOR_GALE_ROOM_POST_C, ACTOR_GALE_ROOM_POST_D);
     Tightrope_Place(2, ACTOR_GALE_ROOM_POST_E, ACTOR_GALE_ROOM_POST_F);
-    i = 0;
-  next:
-    {
-      u8 *flags = (u8 *)Actor_Get(i + ACTOR_FIRST_BOULDER)->sprite + 37;
-
-      *flags |= 12;
-    }
-    if (++i <= 7)
-      goto next;
+    for (i = 0; i <= 7; i++)
+      ((struct FieldSprite *)Actor_Get(i + ACTOR_FIRST_BOULDER)->sprite)
+          ->partPriority = 3;
   }
   return 0;
 }
 
 s32 Scene_PrepareMap(void) { return 0; }
 
-#define FIELD_AT(base, type, off)                                              \
-  (((struct {                                                                  \
-     u8 pad[off];                                                              \
-     type v;                                                                   \
-   } *)(base))                                                                 \
-       ->v)
-
+/// Steps onto a pillar top, a post or a boulder: the leader jumps ahead if it
+/// can land.
 void TreasureIsle_JumpForward(void) { Field_TryJumpForward(); }
-
-// The Rusty Sword's name; the Japanese edition holds message 0 in its place.
-#if LANGUAGE == LANGUAGE_JAPANESE
-#define RUSTY_SWORD_MESSAGE 0
-#else
-#define RUSTY_SWORD_MESSAGE MSGNO(MsgRustySword)
-#endif
 
 void TreasureIsle_LiftSecondRock(void);
 void TreasureIsle_LiftThirdRock(void);
@@ -655,17 +669,17 @@ const s32 *gFieldEffect_DurationScripts[] = {
 };
 
 struct TreasureIsleCell gTreasureIsle_Room2SpikyRocks[] = {
-    {7, 21, 12, 0x303},
-    {7, 17, 13, 0x304},
-    {12, 15, 14, 0x305},
-    {9, 11, 15, 0x306},
-    {46, 38, 16, 0x307},
+    {7, 21, 12, FLAG_TREASURE_ISLE_CHESTS_ROCK_RISEN(0)},
+    {7, 17, 13, FLAG_TREASURE_ISLE_CHESTS_ROCK_RISEN(1)},
+    {12, 15, 14, FLAG_TREASURE_ISLE_CHESTS_ROCK_RISEN(2)},
+    {9, 11, 15, FLAG_TREASURE_ISLE_CHESTS_ROCK_RISEN(3)},
+    {46, 38, 16, FLAG_TREASURE_ISLE_CHESTS_ROCK_RISEN(4)},
 };
 
 struct TreasureIsleCell gTreasureIsle_Room3SpikyRocks[] = {
-    {41, 23, 11, 0x30a},
-    {47, 23, 12, 0x30b},
-    {53, 23, 13, 0x30c},
+    {41, 23, 11, FLAG_TREASURE_ISLE_ARMLET_ROCK_RISEN(0)},
+    {47, 23, 12, FLAG_TREASURE_ISLE_ARMLET_ROCK_RISEN(1)},
+    {53, 23, 13, FLAG_TREASURE_ISLE_ARMLET_ROCK_RISEN(2)},
 };
 
 struct SceneEntrance gSceneEntrances[] = {
@@ -773,7 +787,7 @@ struct ActorPlacement gTreasureIsle_Room4Placements[] = {
 };
 
 struct ActorPlacement gTreasureIsle_Room5Placements[] = {
-    ACTOR_PLACEMENT(169, 0x9bb, MOVEMENT_TYPE_STAND, 792, 0, 136, FACING_SOUTH, TALK_FACING_PARTY, 0),
+    ACTOR_PLACEMENT(169, FLAG_STAR_MAGICIAN_BEATEN, MOVEMENT_TYPE_STAND, 792, 0, 136, FACING_SOUTH, TALK_FACING_PARTY, 0),
     ACTOR_PLACEMENT(SPRITE_VENUS_DJINNI, FLAG_DJINNI(DJINNI_EARTH19), MOVEMENT_TYPE_STAND, 200, 0, 136, FACING_SOUTH, TALK_FACING_PARTY, 0),
     {SCENE_TABLE_END},
 };
@@ -790,11 +804,14 @@ struct Trigger gTreasureIsle_Room1Triggers[] = {
     {TRIGGER_EXIT, 8, CONDITION_ALWAYS, 8},
     {TRIGGER_PUSHED, 0, CONDITION_ALWAYS,
      EVENT(TreasureIsle_SettleMovedPillar)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 8, 0x300,
+    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_PUSHED_PILLAR_A,
+     FLAG_TREASURE_ISLE_ENTRANCE_PILLAR_MOVED(0),
      EVENT(TreasureIsle_SettleMovedPillar)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 9, 0x301,
+    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_PUSHED_PILLAR_B,
+     FLAG_TREASURE_ISLE_ENTRANCE_PILLAR_MOVED(1),
      EVENT(TreasureIsle_SettleMovedPillar)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 10, 0x302,
+    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_PUSHED_PILLAR_C,
+     FLAG_TREASURE_ISLE_ENTRANCE_PILLAR_MOVED(2),
      EVENT(TreasureIsle_SettleMovedPillar)},
     {TRIGGER_TABLE_END},
 };
@@ -810,20 +827,26 @@ struct Trigger gTreasureIsle_Room2Triggers[] = {
      EVENT(TreasureIsle_RaiseLastSpikyRock)},
     {STEP_TRIGGER_WALKING_INTO(FACING_EAST), 35, CONDITION_ALWAYS,
      EVENT(TreasureIsle_JumpForward)},
-    {PSYNERGY_PHASE_ON_CELL(ABILITY_GRIND, PSYNERGY_PHASE_ACTS), 40, 0x1303,
+    {PSYNERGY_PHASE_ON_CELL(ABILITY_GRIND, PSYNERGY_PHASE_ACTS), 40,
+     IF_FLAG_SET(FLAG_TREASURE_ISLE_CHESTS_ROCK_RISEN(0)),
      EVENT(TreasureIsle_GrindSpikyRock)},
-    {PSYNERGY_PHASE_ON_CELL(ABILITY_GRIND, PSYNERGY_PHASE_ACTS), 41, 0x1304,
+    {PSYNERGY_PHASE_ON_CELL(ABILITY_GRIND, PSYNERGY_PHASE_ACTS), 41,
+     IF_FLAG_SET(FLAG_TREASURE_ISLE_CHESTS_ROCK_RISEN(1)),
      EVENT(TreasureIsle_GrindSpikyRock)},
-    {PSYNERGY_PHASE_ON_CELL(ABILITY_GRIND, PSYNERGY_PHASE_ACTS), 42, 0x1305,
+    {PSYNERGY_PHASE_ON_CELL(ABILITY_GRIND, PSYNERGY_PHASE_ACTS), 42,
+     IF_FLAG_SET(FLAG_TREASURE_ISLE_CHESTS_ROCK_RISEN(2)),
      EVENT(TreasureIsle_GrindSpikyRock)},
-    {PSYNERGY_PHASE_ON_CELL(ABILITY_GRIND, PSYNERGY_PHASE_ACTS), 43, 0x1306,
+    {PSYNERGY_PHASE_ON_CELL(ABILITY_GRIND, PSYNERGY_PHASE_ACTS), 43,
+     IF_FLAG_SET(FLAG_TREASURE_ISLE_CHESTS_ROCK_RISEN(3)),
      EVENT(TreasureIsle_GrindSpikyRock)},
-    {PSYNERGY_PHASE_ON_CELL(ABILITY_GRIND, PSYNERGY_PHASE_ACTS), 44, 0x1307,
+    {PSYNERGY_PHASE_ON_CELL(ABILITY_GRIND, PSYNERGY_PHASE_ACTS), 44,
+     IF_FLAG_SET(FLAG_TREASURE_ISLE_CHESTS_ROCK_RISEN(4)),
      EVENT(TreasureIsle_GrindSpikyRock)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 10, 0x308,
+    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_STONE_PILLAR,
+     FLAG_TREASURE_ISLE_CHESTS_PILLAR_MOVED,
      EVENT(TreasureIsle_SettleMovedPillar)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 11, CONDITION_ALWAYS,
-     EVENT(TreasureIsle_SettleMovedPillar)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_SECOND_STONE_PILLAR,
+     CONDITION_ALWAYS, EVENT(TreasureIsle_SettleMovedPillar)},
     {TRIGGER_PUSHED, 0, CONDITION_ALWAYS,
      EVENT(TreasureIsle_SettleMovedPillar)},
     {TRIGGER_TABLE_END},
@@ -840,117 +863,89 @@ struct Trigger gTreasureIsle_Room3Triggers[] = {
     {STEP_TRIGGER_WALKING_INTO(FACING_EAST), 35, CONDITION_ALWAYS,
      EVENT(TreasureIsle_JumpForward)},
     {TRIGGER_STEP, 30, CONDITION_ALWAYS, EVENT(TreasureIsle_PressRoom3Button)},
-    {PSYNERGY_PHASE_ON_CELL(ABILITY_GRIND, PSYNERGY_PHASE_ACTS), 50, 0x130a,
+    {PSYNERGY_PHASE_ON_CELL(ABILITY_GRIND, PSYNERGY_PHASE_ACTS), 50,
+     IF_FLAG_SET(FLAG_TREASURE_ISLE_ARMLET_ROCK_RISEN(0)),
      EVENT(TreasureIsle_GrindSpikyRock)},
-    {PSYNERGY_PHASE_ON_CELL(ABILITY_GRIND, PSYNERGY_PHASE_ACTS), 51, 0x130b,
+    {PSYNERGY_PHASE_ON_CELL(ABILITY_GRIND, PSYNERGY_PHASE_ACTS), 51,
+     IF_FLAG_SET(FLAG_TREASURE_ISLE_ARMLET_ROCK_RISEN(1)),
      EVENT(TreasureIsle_GrindSpikyRock)},
-    {PSYNERGY_PHASE_ON_CELL(ABILITY_GRIND, PSYNERGY_PHASE_ACTS), 52, 0x130c,
+    {PSYNERGY_PHASE_ON_CELL(ABILITY_GRIND, PSYNERGY_PHASE_ACTS), 52,
+     IF_FLAG_SET(FLAG_TREASURE_ISLE_ARMLET_ROCK_RISEN(2)),
      EVENT(TreasureIsle_GrindSpikyRock)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 10, 0x309,
+    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_STONE_PILLAR,
+     FLAG_TREASURE_ISLE_ARMLET_PILLAR_MOVED,
      EVENT(TreasureIsle_SettleMovedPillar)},
     {TRIGGER_PUSHED, 0, CONDITION_ALWAYS,
      EVENT(TreasureIsle_SettleMovedPillar)},
     {TRIGGER_TABLE_END},
 };
 
-s32 gTreasureIsle_Room4Triggers[] = {
-    33,
-    (s32)0xffff0001,
-    1,
-    1,
-    (s32)0xffff0002,
-    2,
-    1,
-    (s32)0xffff0003,
-    3,
-    1,
-    (s32)0xffff0004,
-    4,
-    1,
-    (s32)0xffff0005,
-    5,
-    1,
-    (s32)0xffff0006,
-    6,
-    0x8602,
-    0x200001f,
-    (s32)TreasureIsle_JumpForward,
-    0x602,
-    0x2000020,
-    (s32)TreasureIsle_JumpForward,
-    0x8602,
-    0x2010021,
-    (s32)TreasureIsle_JumpForward,
-    0x602,
-    0x2010022,
-    (s32)TreasureIsle_JumpForward,
-    0x8602,
-    0x2020023,
-    (s32)TreasureIsle_JumpForward,
-    0x602,
-    0x2020024,
-    (s32)TreasureIsle_JumpForward,
-    0x8602,
-    0x2030025,
-    (s32)TreasureIsle_JumpForward,
-    0x602,
-    0x2030026,
-    (s32)TreasureIsle_JumpForward,
-    0x8602,
-    0x2040027,
-    (s32)TreasureIsle_JumpForward,
-    0x602,
-    0x2040028,
-    (s32)TreasureIsle_JumpForward,
-    0x8602,
-    0x2050029,
-    (s32)TreasureIsle_JumpForward,
-    0x602,
-    0x205002a,
-    (s32)TreasureIsle_JumpForward,
-    RUSTY_SWORD_MESSAGE,
-    (s32)0xffff0017,
-    (s32)TreasureIsle_FightGale,
-    0x8c15,
-    0x30d0008,
-    (s32)TreasureIsle_SettleMovedPillar,
-    9,
-    -0x10000,
-    (s32)TreasureIsle_SettleMovedPillar,
-    0x8f15,
-    0x2000009,
-    (s32)TreasureIsle_LiftFirstRock,
-    0x8f15,
-    0x201000a,
-    (s32)TreasureIsle_LiftSecondRock,
-    0x8f15,
-    0x202000b,
-    (s32)TreasureIsle_LiftThirdRock,
-    0x8f15,
-    0x203000c,
-    (s32)TreasureIsle_LiftFourthRock,
-    0x8f15,
-    0x204000d,
-    (s32)TreasureIsle_LiftFifthRock,
-    0x8f15,
-    0x205000e,
-    (s32)TreasureIsle_LiftSixthRock,
-    0x8f15,
-    0x206000f,
-    (s32)TreasureIsle_LiftSeventhRock,
-    0x8f15,
-    0x2070010,
-    (s32)TreasureIsle_LiftEighthRock,
-    -1,
-    0,
-    0,
+/// Gale's room: its exits, the jumps between the pillar tops and boulders
+/// while each boulder stands, Gale, the stone pillar Move pushes and the
+/// boulders Lift raises.
+struct Trigger gTreasureIsle_Room4Triggers[] = {
+    {TRIGGER_EXIT | EXIT_STYLE_STAIRS_UP, 1, CONDITION_ALWAYS, 1},
+    {TRIGGER_EXIT, 2, CONDITION_ALWAYS, 2},
+    {TRIGGER_EXIT, 3, CONDITION_ALWAYS, 3},
+    {TRIGGER_EXIT, 4, CONDITION_ALWAYS, 4},
+    {TRIGGER_EXIT, 5, CONDITION_ALWAYS, 5},
+    {TRIGGER_EXIT, 6, CONDITION_ALWAYS, 6},
+    {STEP_TRIGGER_WALKING_INTO(FACING_WEST), 31, FLAG_SCENE_TEMP_00,
+     EVENT(TreasureIsle_JumpForward)},
+    {STEP_TRIGGER_WALKING_INTO(FACING_EAST), 32, FLAG_SCENE_TEMP_00,
+     EVENT(TreasureIsle_JumpForward)},
+    {STEP_TRIGGER_WALKING_INTO(FACING_WEST), 33, FLAG_SCENE_TEMP_01,
+     EVENT(TreasureIsle_JumpForward)},
+    {STEP_TRIGGER_WALKING_INTO(FACING_EAST), 34, FLAG_SCENE_TEMP_01,
+     EVENT(TreasureIsle_JumpForward)},
+    {STEP_TRIGGER_WALKING_INTO(FACING_WEST), 35, FLAG_SCENE_TEMP_02,
+     EVENT(TreasureIsle_JumpForward)},
+    {STEP_TRIGGER_WALKING_INTO(FACING_EAST), 36, FLAG_SCENE_TEMP_02,
+     EVENT(TreasureIsle_JumpForward)},
+    {STEP_TRIGGER_WALKING_INTO(FACING_WEST), 37, FLAG_SCENE_TEMP_03,
+     EVENT(TreasureIsle_JumpForward)},
+    {STEP_TRIGGER_WALKING_INTO(FACING_EAST), 38, FLAG_SCENE_TEMP_03,
+     EVENT(TreasureIsle_JumpForward)},
+    {STEP_TRIGGER_WALKING_INTO(FACING_WEST), 39, FLAG_SCENE_TEMP_04,
+     EVENT(TreasureIsle_JumpForward)},
+    {STEP_TRIGGER_WALKING_INTO(FACING_EAST), 40, FLAG_SCENE_TEMP_04,
+     EVENT(TreasureIsle_JumpForward)},
+    {STEP_TRIGGER_WALKING_INTO(FACING_WEST), 41, FLAG_SCENE_TEMP_05,
+     EVENT(TreasureIsle_JumpForward)},
+    {STEP_TRIGGER_WALKING_INTO(FACING_EAST), 42, FLAG_SCENE_TEMP_05,
+     EVENT(TreasureIsle_JumpForward)},
+    {GALE_TALK_TRIGGER, ACTOR_GALE, CONDITION_ALWAYS,
+     EVENT(TreasureIsle_FightGale)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_GALE_ROOM_PILLAR,
+     FLAG_TREASURE_ISLE_GALE_ROOM_PILLAR_MOVED,
+     EVENT(TreasureIsle_SettleMovedPillar)},
+    {TRIGGER_PUSHED, 0, CONDITION_ALWAYS,
+     EVENT(TreasureIsle_SettleMovedPillar)},
+    {PSYNERGY_ON_ACTOR(ABILITY_LIFT), ACTOR_FIRST_BOULDER,
+     FLAG_TREASURE_ISLE_BOULDER_LIFTED(0), EVENT(TreasureIsle_LiftFirstRock)},
+    {PSYNERGY_ON_ACTOR(ABILITY_LIFT), ACTOR_FIRST_BOULDER + 1,
+     FLAG_TREASURE_ISLE_BOULDER_LIFTED(1), EVENT(TreasureIsle_LiftSecondRock)},
+    {PSYNERGY_ON_ACTOR(ABILITY_LIFT), ACTOR_FIRST_BOULDER + 2,
+     FLAG_TREASURE_ISLE_BOULDER_LIFTED(2), EVENT(TreasureIsle_LiftThirdRock)},
+    {PSYNERGY_ON_ACTOR(ABILITY_LIFT), ACTOR_FIRST_BOULDER + 3,
+     FLAG_TREASURE_ISLE_BOULDER_LIFTED(3), EVENT(TreasureIsle_LiftFourthRock)},
+    {PSYNERGY_ON_ACTOR(ABILITY_LIFT), ACTOR_FIRST_BOULDER + 4,
+     FLAG_TREASURE_ISLE_BOULDER_LIFTED(4), EVENT(TreasureIsle_LiftFifthRock)},
+    {PSYNERGY_ON_ACTOR(ABILITY_LIFT), ACTOR_FIRST_BOULDER + 5,
+     FLAG_TREASURE_ISLE_BOULDER_LIFTED(5), EVENT(TreasureIsle_LiftSixthRock)},
+    {PSYNERGY_ON_ACTOR(ABILITY_LIFT), ACTOR_FIRST_BOULDER + 6,
+     FLAG_TREASURE_ISLE_BOULDER_LIFTED(6), EVENT(TreasureIsle_LiftSeventhRock)},
+    {PSYNERGY_ON_ACTOR(ABILITY_LIFT), ACTOR_LAST_BOULDER,
+     FLAG_TREASURE_ISLE_BOULDER_LIFTED(7), EVENT(TreasureIsle_LiftEighthRock)},
+    {TRIGGER_TABLE_END},
 };
 
 struct Trigger gTreasureIsle_Room5Triggers[] = {
     {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
     {TRIGGER_EXIT, 2, CONDITION_ALWAYS, 2},
     {TRIGGER_EXIT, 3, CONDITION_ALWAYS, 3},
-    {TRIGGER_STEP, 42, 0x9bb, EVENT(TreasureIsle_MeetWaterGuardian)},
+    {TRIGGER_STEP, 42, FLAG_STAR_MAGICIAN_BEATEN,
+     EVENT(TreasureIsle_MeetStarMagician)},
     {TRIGGER_TALK, 9, CONDITION_ALWAYS, EVENT(TreasureIsle_VenusDjinniJoins)},
     {TRIGGER_TABLE_END},
 };
@@ -958,8 +953,8 @@ struct Trigger gTreasureIsle_Room5Triggers[] = {
 s32 gTreasureIsle_ColorCycleFrame[] = {
     -1,
 };
-#undef FIELD_AT
-#undef RUSTY_SWORD_MESSAGE
+
+#undef GALE_TALK_TRIGGER
 #undef EFFECT_SPAWN
 #undef EFFECT_CREATE
 #undef EFFECT_SET_MODE

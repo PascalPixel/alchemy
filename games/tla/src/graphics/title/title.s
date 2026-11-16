@@ -28,8 +28,8 @@ Title_WorldMapPicture:
 Title_WorldMapPictureLarge:
 	.incbin "games/tla/src/graphics/title/world_map_picture_large.strips"
 @ A copy of The Broken Seal's Title_IntroTilesB, the "To be continued" lettering.
-	.global Resource_Data025
-Resource_Data025:
+	.global Title_IntroTilesB
+Title_IntroTilesB:
 	.incbin "games/tla/src/graphics/title/to_be_continued.parts.lz"
 	.section .rodata.c
 	.global Title_ScreenPicture

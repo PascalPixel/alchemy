@@ -26,7 +26,7 @@ s32 Field_GetPsynergyTargetRange(s32 kind) {
 
 /// Returns the actor nearest to actor id that it could talk to, or -1: within
 /// 48 pixels of height and 32 pixels of distance and, beyond 11 pixels, within
-/// 0x2fff (about 67 degrees) of the direction it faces.
+/// 3/16 of a turn (67.5 degrees) of the direction it faces.
 s32 Field_FindNearbyTalkTarget(s32 id) {
   struct Actor *source;
   struct Actor *candidate;
@@ -87,15 +87,15 @@ s32 Field_FindNearbyTalkTarget(s32 id) {
         continue;
 
       // Close actors count from any side; further ones must be within
-      // 0x2fff (about 67 degrees) of where the actor faces.
+      // 3/16 of a turn (67.5 degrees) of where the actor faces.
       angle = (u16)Trig_Atan(candidate->z.fixed - source->z.fixed,
                              candidate->x.fixed - source->x.fixed);
       if (distance > 11) {
         s32 angleDifference = (s16)(angle - source->facing);
 
-        if (angleDifference < -0x2fff)
+        if (angleDifference < -(TRIG_TURN * 3 / 16 - 1))
           continue;
-        if (angleDifference > 0x2fff)
+        if (angleDifference > TRIG_TURN * 3 / 16 - 1)
           continue;
       }
 

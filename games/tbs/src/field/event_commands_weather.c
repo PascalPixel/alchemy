@@ -4,6 +4,10 @@
 
 #include "event_commands_internal.h"
 
+/// A free ground particle's timer (0) after the decrement that counts a
+/// live one down: the u16 wraps.
+#define GROUND_PARTICLE_FREED 0xffff
+
 /// Task: animates the ground particles.
 void Weather_UpdateRain(void) {
   struct MapGridScrollWork *grid = gMapGridWork[0];
@@ -19,7 +23,7 @@ void Weather_UpdateRain(void) {
     s32 x;
     s32 y;
 
-    if (--particle->timer == 0xffff)
+    if (--particle->timer == GROUND_PARTICLE_FREED)
       continue;
     // BUG: freezing a timer of 16 indexes past the 16-frame table.
     if (GameFlag_GetFar(FLAG_WEATHER_HELD))
@@ -161,7 +165,7 @@ void FieldMotes_Update(void) {
     s32 x;
     s32 y;
 
-    if (--mote->timer != 0xffff) {
+    if (--mote->timer != GROUND_PARTICLE_FREED) {
       s32 *camera = grid->view;
       s32 cameraX = camera[0];
       s32 cameraZ = camera[1];
@@ -425,11 +429,11 @@ void Weather_StartLightning(void) {
   Task_Add(Weather_UpdateLightning, TASK_PASS_FRAME);
 }
 
-/// Stops the lightning: no flash for 0x7fff frames, and none after.
+/// Stops the lightning: no flash for 32767 frames, and none after.
 void Weather_StopLightning(void) {
   struct FieldBlendWork *state =
       HeapSlot_AllocEwram(HEAP_SLOT_FIELD_BLEND, sizeof(struct FieldBlendWork));
-  state->timer = 0x7FFF;
+  state->timer = 32767;
   state->enabled = 0;
 }
 

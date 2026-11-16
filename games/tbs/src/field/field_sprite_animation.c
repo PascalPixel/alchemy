@@ -4,6 +4,10 @@
 
 #include "field_internal.h"
 
+/// A sprite size as one number, width in the high byte and height in the low,
+/// to pick its OAM shape and size with one switch.
+#define SPRITE_SIZE_KEY(width, height) (((width) << 8) + (height))
+
 enum {
   ANIM_SHADOW_TILE_BYTES = 16 * 8, ///< 16x8 pixels, 256 colours
   /// Priority 2, the field's for its sprites: in front of a map layer at 3, or
@@ -511,35 +515,35 @@ struct Sprite *Sprite_Create(s32 id) {
 
   // The OAM shape and size bits (attributes 0 and 1) for the image's width
   // and height in pixels.
-  switch ((u32)((metadata->width << 8) + metadata->height)) {
-  case 0x0808:
+  switch ((u32)SPRITE_SIZE_KEY(metadata->width, metadata->height)) {
+  case SPRITE_SIZE_KEY(8, 8):
     shape = OBJ_SIZE_8X8;
     break;
-  case 0x0810:
+  case SPRITE_SIZE_KEY(8, 16):
     shape = OBJ_SIZE_8X16;
     break;
-  case 0x1008:
+  case SPRITE_SIZE_KEY(16, 8):
     shape = OBJ_SIZE_16X8;
     break;
-  case 0x1010:
+  case SPRITE_SIZE_KEY(16, 16):
     shape = OBJ_SIZE_16X16;
     break;
-  case 0x1020:
+  case SPRITE_SIZE_KEY(16, 32):
     shape = OBJ_SIZE_16X32;
     break;
-  case 0x2010:
+  case SPRITE_SIZE_KEY(32, 16):
     shape = OBJ_SIZE_32X16;
     break;
-  case 0x2020:
+  case SPRITE_SIZE_KEY(32, 32):
     shape = OBJ_SIZE_32X32;
     break;
-  case 0x2040:
+  case SPRITE_SIZE_KEY(32, 64):
     shape = OBJ_SIZE_32X64;
     break;
-  case 0x4020:
+  case SPRITE_SIZE_KEY(64, 32):
     shape = OBJ_SIZE_64X32;
     break;
-  case 0x4040:
+  case SPRITE_SIZE_KEY(64, 64):
     shape = OBJ_SIZE_64X64;
     break;
   default:

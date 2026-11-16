@@ -131,14 +131,16 @@ const struct Trigger *Scene_FindTrigger(s32 kind, s32 target) {
         break;
       case TRIGGER_FLAG_FACING:
         // Bits 15 to 12 are a facing in sixteenths of a turn; the leader's
-        // facing must be within 0x1fff (an eighth of a turn) of it.
+        // facing must be within an eighth of a turn of it.
         flags &= TRIGGER_FACING_MASK;
-        matches = (u16)((flags - facing) + 0x1fff) <= 0x3ffe;
+        matches =
+            (u16)((flags - facing) + (DEGtoANG(45) - 1)) <= DEGtoANG(90) - 2;
         break;
       case STEP_TRIGGER_FLAG_WALKING | TRIGGER_FLAG_FACING:
         if (work->blockedSteps > minimumPushFrames) {
           flags &= TRIGGER_FACING_MASK;
-          matches = (u16)((flags - facing) + 0x1fff) <= 0x3ffe;
+          matches =
+              (u16)((flags - facing) + (DEGtoANG(45) - 1)) <= DEGtoANG(90) - 2;
         }
         break;
       }

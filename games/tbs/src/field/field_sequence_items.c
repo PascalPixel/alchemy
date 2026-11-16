@@ -31,7 +31,8 @@ const struct Trigger *Field_FindItemTrigger(s32 item) {
     if ((trigger->kind & TRIGGER_KIND_MASK) == TRIGGER_ITEM &&
         GameFlag_IsConditionActive(trigger->condition) != 0 &&
         (requiresFacing == 0 ||
-         (u16)(eventFacing - facing + 0x17ff) <= 0x2ffe)) {
+         (u16)(eventFacing - facing + (TRIG_TURN * 3 / 32 - 1)) <=
+             TRIG_TURN * 3 / 16 - 2)) {
       u32 flags = trigger->kind;
       s32 eventItem = ((const u8 *)&trigger->kind)[1];
 
@@ -209,7 +210,8 @@ void *Scene_FindPsynergyTrigger(s32 eventFlags, s32 group, s32 *target) {
     if ((trigger->kind & TRIGGER_KIND_MASK) == TRIGGER_PSYNERGY &&
         GameFlag_IsConditionActive(trigger->condition) != 0 &&
         (requiresFacing == 0 ||
-         (u16)(eventFacing - facing + 0x17ff) <= 0x2ffe) &&
+         (u16)(eventFacing - facing + (TRIG_TURN * 3 / 32 - 1)) <=
+             TRIG_TURN * 3 / 16 - 2) &&
         Ability_Get(((const u8 *)&trigger->kind)[1])->fieldPsynergy == group &&
         (anyPhase || (trigger->kind & (PSYNERGY_PHASE_MASK |
                                        TRIGGER_KIND_MASK)) == eventFlags)) {

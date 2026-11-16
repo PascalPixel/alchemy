@@ -431,7 +431,7 @@ void FieldEffect_UpdateDustPuff(struct Actor *particle) {
 
   roundedZ = velocityZ;
   if (velocityZ < 0) {
-    roundedZ += 0xF;
+    roundedZ += 15;
   }
   particle->acceleration = (velocityZ - (roundedZ >> 4));
 }

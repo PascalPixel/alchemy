@@ -886,9 +886,9 @@ void LuckyWheels_Update(void) {
 #if LANGUAGE == LANGUAGE_SPANISH
       if (i == 0)
         work->oam[sprite].attr01 =
-            ((((s16)FIXEDtoINT(p->x) + 0x1f0) & 0x1ff) << 16) | objMode |
-            (((s16)FIXEDtoINT(p->y) + 0x108) & 255) | OBJ_SIZE_32X32 |
-            OBJ_HFLIP | OBJ_VFLIP;
+            ((((s16)FIXEDtoINT(p->x) + 496) & 0x1ff) << 16) | objMode |
+            (((s16)FIXEDtoINT(p->y) + 264) & 255) | OBJ_SIZE_32X32 | OBJ_HFLIP |
+            OBJ_VFLIP;
       else
 #endif
         work->oam[sprite].attr01 = ((s16)FIXEDtoINT(p->x) << 16) | objMode |
@@ -954,7 +954,7 @@ void LuckyWheels_Update(void) {
   }
 
   for (col = 0; col != LUCKY_WHEELS_PAYLINES; col++) {
-    work->oam[sprite].attr01 = (((0x204 - ((col & 1) << 3)) & 0x1ff) << 16) |
+    work->oam[sprite].attr01 = (((516 - ((col & 1) << 3)) & 0x1ff) << 16) |
                                objMode | (col * 16 + 5) | OBJ_SIZE_32X32 |
                                OBJ_256_COLORS;
     if (col > LUCKY_WHEELS_MIDDLE_LINE - work->bet &&
@@ -1341,10 +1341,10 @@ void LuckyWheels_Run(void) {
 
             spark->variant--;
             x = spark->x;
-            if (x >= 0 && x <= 0xffffff) {
+            if (x >= 0 && x <= toFIXED(256) - 1) {
               s32 y = spark->y;
 
-              if (y <= 0x7fffff) {
+              if (y <= toFIXED(128) - 1) {
                 if (y >= 0) {
                   s32 drawX = FIXEDtoINT(x);
                   s32 drawY = FIXEDtoINT(y);

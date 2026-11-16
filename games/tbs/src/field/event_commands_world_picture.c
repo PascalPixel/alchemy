@@ -55,8 +55,8 @@ struct WorldPictureWork {
   struct AnimationSpritePart markers[WORLD_MAP_MARKER_CAPACITY + 1];
 };
 
-STATIC_ASSERT(offsetof(struct WorldPictureWork, markers) == 0x20);
-STATIC_ASSERT(sizeof(struct WorldPictureWork) == 0x344);
+STATIC_ASSERT(offsetof(struct WorldPictureWork, markers) == 32);
+STATIC_ASSERT(sizeof(struct WorldPictureWork) == 836);
 STATIC_ASSERT(WORLD_MAP_MARKER_CAPACITY ==
               sizeof(((struct FieldWork *)0)->actors) /
                   sizeof(((struct FieldWork *)0)->actors[0]));
@@ -232,7 +232,7 @@ void WorldPicture_UpdateMarkers(void) {
   } else {
     // The d-pad: faster the longer it is held.
     angle = gWorldMap_CursorDirectionAngles[DPAD_INDEX(gKeysHeld)];
-    if (angle != 0xffff) {
+    if (angle != DPAD_ANGLE_NONE) {
       position.x = work->cursorX.fixed;
       position.y = 0;
       position.z = work->cursorY.fixed;

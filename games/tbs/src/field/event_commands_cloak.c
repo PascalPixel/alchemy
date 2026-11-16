@@ -32,12 +32,12 @@ void FieldPsynergy_CheckCloakTile(void) {
 
     x = leader->x.fixed;
     if (x < 0)
-      x += 0x1fffff;
+      x += toFIXED(32) - 1;
     tx = (x >> 21) & 31;
 
     y = leader->z.fixed;
     if (y < 0)
-      y += 0x1fffff;
+      y += toFIXED(32) - 1;
     ty = (y >> 21) & 31;
 
     tile = (u8 *)gCellPictures + ((tx + (ty << 5)) << 2);

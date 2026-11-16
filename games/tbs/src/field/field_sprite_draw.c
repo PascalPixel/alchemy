@@ -323,7 +323,8 @@ void Render_PlaceSpritePartPair(struct Sprite *sprite, FIXED screenX,
   // raised by half the height less offsetY, scaled and rounded up to a whole
   // pixel.
   y = FIXEDtoINT(screenY - height) - halfHeight -
-      ((((sprite->height >> 1) - sprite->offsetY) * scaleY + 0xffff) >> 16);
+      FIXEDtoINT(((sprite->height >> 1) - sprite->offsetY) * scaleY +
+                 (FIXED_ONE - 1));
   sprite->image.affine = affine;
   sprite->image.x = x;
   sprite->image.y = y;
@@ -410,9 +411,10 @@ void Render_ApplyProjectedPlacement(struct Sprite *sprite,
     }
   }
   x = FIXEDtoINT(screenX) - halfWidth +
-      FIXEDtoINT(sprite->offsetX * scaleX + 0xffff);
+      FIXEDtoINT(sprite->offsetX * scaleX + (FIXED_ONE - 1));
   y = FIXEDtoINT(screenY - height) - halfHeight -
-      ((scaleY * ((sprite->height >> 1) - sprite->offsetY) + 0xffff) >> 16);
+      FIXEDtoINT(scaleY * ((sprite->height >> 1) - sprite->offsetY) +
+                 (FIXED_ONE - 1));
   // Only the right and bottom edges are tested; OAM wraps a negative
   // position.
   if (x < DISPLAY_WIDTH && y < DISPLAY_HEIGHT) {
@@ -461,17 +463,17 @@ void Render_PlaceProjectedSprite(struct Sprite *sprite, s32 *point, s32 *scale,
       halfHeight = sprite->height >> 1;
       size = 8;
       flip = Sprite_ComposePicture(sprite, facing);
-      // Round the perspective scale to the nearest 1/32 (0x800) before
+      // Round the perspective scale to the nearest 1/32 before
       // combining it with the sprite's own scale.
-      roundedScale = (z + 0x400) & -0x800;
+      roundedScale = (z + FIXED_ONE / 64) & -(FIXED_ONE / 32);
       scaleX = Iwram_MulFX(roundedScale, *scale++);
       scaleY = Iwram_MulFX(roundedScale, *scale);
       // Hold each scale below 2 (FIXED_ONE * 63 / 32, 2 less 1/32): a scaled
       // sprite is drawn in a double-size box, which the picture exactly fills
       // at 2 and would overflow, cut off at its edges, beyond it.
-      if (scaleX > 0x1f7ff)
+      if (scaleX >= FIXED_ONE * 63 / 32)
         scaleX = FIXED_ONE * 63 / 32;
-      if (scaleY > 0x1f7ff)
+      if (scaleY >= FIXED_ONE * 63 / 32)
         scaleY = FIXED_ONE * 63 / 32;
       offsetX = Iwram_MulFX(sprite->offsetX, scaleX);
       offsetY = -Iwram_MulFX((sprite->height >> 1) - sprite->offsetY, scaleY);

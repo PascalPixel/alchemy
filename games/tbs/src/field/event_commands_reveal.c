@@ -44,11 +44,11 @@ void FieldPsynergy_WatchLeaderDistance(void) {
       work->revealFrames--;
   }
 
-  // On screen pixels (y is z less the height). x is scaled by 0xd105 (about
-  // 0.82) for the comparison, so the edge is an ellipse 60 pixels up and
-  // down from the centre and about 73 to either side.
-  distanceX =
-      Iwram_MulFX(work->revealCenterX - actor->x.fixed / FIXED_ONE, 0xd105);
+  // On screen pixels (y is z less the height). x is scaled by 0.81649 (about
+  // the square root of 2/3) for the comparison, so the edge is an ellipse 60
+  // pixels up and down from the centre and about 73 to either side.
+  distanceX = Iwram_MulFX(work->revealCenterX - actor->x.fixed / FIXED_ONE,
+                          toFIXED(0.81649));
   distanceZ =
       work->revealCenterY - (actor->z.fixed - actor->y.fixed) / FIXED_ONE;
   if (distanceX * distanceX + distanceZ * distanceZ >= 3600 ||

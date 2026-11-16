@@ -129,6 +129,11 @@ struct TransitionSpan {
 #define TRANSITION_CLOSED 64
 /// WININ or WINOUT showing every layer in both windows (bits 6 and 14 set too).
 #define TRANSITION_SHOW_ALL 0x7f7f
+/// WININ or WINOUT showing every layer in its low byte (window 0, or outside
+/// both windows; bit 6 set too) and nothing in its high byte.
+#define TRANSITION_SHOW_LOW_BYTE 0x007f
+/// WININ or WINOUT showing BG0 alone, in both bytes.
+#define TRANSITION_SHOW_BG0 0x0101
 
 /// One step of WINDOW_TRANSITION_SHAPE, a row of
 /// gScreenTransition_Shapes chosen by the progress: the WININ and WINOUT

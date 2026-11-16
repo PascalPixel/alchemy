@@ -4,7 +4,7 @@
 
 #include "event_commands_internal.h"
 
-STATIC_ASSERT(sizeof(struct Vector3) == 0x0c);
+STATIC_ASSERT(sizeof(struct Vector3) == 12);
 
 /// Task while Carry holds its target: drops one particle a
 /// frame round the lifted actor, 8 to 24 pixels above it and 0 to 48 pixels

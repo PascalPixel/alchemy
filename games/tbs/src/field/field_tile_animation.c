@@ -231,8 +231,8 @@ again:
     blend->cursor += 2;
     goto again;
   }
-  // Adding 0xffff to the halfword counts the wait down by one.
-  blend->delay = delayOrJumpIndex + 0xffff;
+  // Counts the wait down by one.
+  blend->delay = delayOrJumpIndex - 1;
 }
 
 /// Starts a map's blend script, unless it is empty. Clears the map work's

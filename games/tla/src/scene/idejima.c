@@ -1144,7 +1144,7 @@ void Idejima_FindFelixAndSheba(void) {
   MapGrid_CenterOnFollowedPoint();
   System_Wait(1);
   Actor_SetPosition(ACTOR_JENNA, 208, 218);
-  Actor_SetAnimation(ACTOR_JENNA, 19);
+  Actor_SetAnimation(ACTOR_JENNA, ANIM_COLLAPSE);
   Actor_SetSpriteFlags(Actor_Get(ACTOR_JENNA), 0);
   Actor_SetPosition(ACTOR_KRADEN, 176, 204);
   Actor_SetAnimation(ACTOR_KRADEN, 5);
@@ -1267,7 +1267,7 @@ void Idejima_RideTheTidalWave(void) {
   Actor_SetPositionAndFacing(ACTOR_JENNA, toFIXED(340), toFIXED(200), south);
   Actor_SetPositionAndFacing(ACTOR_SHEBA, toFIXED(342), toFIXED(230),
                              FACING_EAST);
-  Actor_SetAnimation(ACTOR_SHEBA, 19);
+  Actor_SetAnimation(ACTOR_SHEBA, ANIM_COLLAPSE);
   Actor_SetSpriteFlags(Actor_Get(ACTOR_SHEBA), 0);
   west = FACING_WEST;
   Actor_SetPositionAndFacing(gMainRoutineWork.leaderActorId, toFIXED(312),
@@ -1706,7 +1706,7 @@ void Idejima_PlaceTheSleepers(void) {
     actor = Actor_Get(ACTOR_SHEBA);
     Actor_SetPosition(ACTOR_SHEBA, 240, 648);
     MapGrid_CopyCellAttributes(38, 34, 2, 1, 14, 40);
-    Actor_SetAnimation(ACTOR_SHEBA, 19);
+    Actor_SetAnimation(ACTOR_SHEBA, ANIM_COLLAPSE);
     Actor_SetSpriteFlags(Actor_Get(ACTOR_SHEBA), 0);
     actor->motionFlags = 0;
     actor->y.fixed = toFIXED(12);

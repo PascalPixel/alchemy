@@ -4,7 +4,7 @@
 /// breaks it (SceneId_GondowanCliffsPass). Kindle, a Mars Djinni, waits at the
 /// end of the cliffs (GondowanCliffs_FightKindle); Frost, Whirlwind, Move and
 /// Scoop each open a way (GondowanCliffs_FreezeFirstPuddle,
-/// GondowanCliffs_BlowAwayFoliage, GondowanCliffs_PushPillarIntoWater,
+/// GondowanCliffs_BlowAwayFoliage, GondowanCliffs_LeapStumpIntoWater,
 /// GondowanCliffs_ScoopUpGeyser); and if the party heads west before helping
 /// Piers recover his Black Orb, Kraden turns them back
 /// (GondowanCliffs_TurnBackToHelpPiers).
@@ -65,7 +65,7 @@ enum {
   ACTOR_SECOND_PUDDLE = 13,
   ACTOR_IVY,
   /// The stump that stands in the stream once
-  /// FLAG_GONDOWAN_CLIFFS_PILLAR_IN_WATER is set.
+  /// FLAG_GONDOWAN_CLIFFS_STUMP_IN_WATER is set.
   ACTOR_STUMP,
   ACTOR_DOG = 16,
   ACTOR_GEYSER, ///< the unseen point the geyser rises from
@@ -149,8 +149,8 @@ u32 gFieldEffect_LongScript[] = {
 #include "../field/field_effect_spawn.c"
 
 /// Set as Frost freezes each puddle into a pillar of ice, for this visit.
-#define FLAG_FIRST_PUDDLE_FROZEN 0x201
-#define FLAG_SECOND_PUDDLE_FROZEN 0x202
+#define FLAG_FIRST_PUDDLE_FROZEN FLAG_SCENE_TEMP_01
+#define FLAG_SECOND_PUDDLE_FROZEN FLAG_SCENE_TEMP_02
 
 struct Actor;
 struct EffectOptions;
@@ -201,9 +201,8 @@ void Rope_Initialize(void);
 void Geysers_Start(s32 unused, s32 firstTerrain);
 void Tightrope_Initialize(void);
 
-/// The leaping stump's update routine turns its sprite a fixed amount per
-/// frame.
-void GondowanCliffs_RollPillar(struct Actor *object) {
+/// The leaping stump's update: its sprite turns a 32nd of a turn a frame.
+void GondowanCliffs_SpinStump(struct Actor *object) {
   struct FieldSprite *sprite = object->sprite;
 
   sprite->rotation -= TRIG_TURN / 32;
@@ -223,7 +222,7 @@ void GondowanCliffs_WaitToLand(struct Actor *object, s32 height) {
 
 /// Move on the stump at the stream's edge: it rolls, leaps into the stream
 /// and lands upright in the water with a splash, a step across for the party.
-void GondowanCliffs_PushPillarIntoWater(s32 mode, s32 id) {
+void GondowanCliffs_LeapStumpIntoWater(s32 mode, s32 id) {
   struct Actor *actor = Actor_GetById(id);
   s32 unused[3]; // Unused: gives the stack frame its 12 bytes.
   struct EffectOptions options;
@@ -246,7 +245,7 @@ void GondowanCliffs_PushPillarIntoWater(s32 mode, s32 id) {
           Trig_Cos(((struct FieldSprite *)actor->sprite)->rotation) / 2;
       actor->targetX = TARGET_UNSET;
     }
-    actor->update = GondowanCliffs_RollPillar;
+    actor->update = GondowanCliffs_SpinStump;
     Actor_SetSpeed(id, 3);
     Actor_SetDestination(id, 1193, 530);
     actor->gravity = toFIXED(4) / 5;
@@ -275,7 +274,7 @@ void GondowanCliffs_PushPillarIntoWater(s32 mode, s32 id) {
     Actor_SetAnimation(id, STUMP_ANIMATION_SPLASH);
     FieldMapGrid_WaitForShakeToSettle();
     Actor_GetById(ACTOR_STUMP)->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
-    Event_SetFlag(FLAG_GONDOWAN_CLIFFS_PILLAR_IN_WATER);
+    Event_SetFlag(FLAG_GONDOWAN_CLIFFS_STUMP_IN_WATER);
   }
   Event_End();
 }
@@ -309,7 +308,7 @@ void GondowanCliffs_BlowAwayFoliage(void) {
   GameFlag_Set(FLAG_GONDOWAN_CLIFFS_FOLIAGE_BLOWN);
 }
 
-/// Scoop on the yellow sand of cell behaviour 30 digs up the geyser for good.
+/// Scoop on the sand of cell behaviour 30 digs up the geyser for good.
 void GondowanCliffs_ScoopUpGeyser(s32 unused, s32 cell) {
   struct Actor *object;
 
@@ -509,7 +508,7 @@ s32 Scene_Initialize(void) {
       actor->groundHeight = height;
     }
     Actor_SetAnimation(ACTOR_DOG, 4);
-    if (GameFlag_Get(FLAG_GONDOWAN_CLIFFS_PILLAR_IN_WATER)) {
+    if (GameFlag_Get(FLAG_GONDOWAN_CLIFFS_STUMP_IN_WATER)) {
       MapGrid_CopyCellAttributes(74, 31, 1, 1, 74, 33);
       Actor_SetPosition(ACTOR_STUMP, 1193, 530);
       Actor_GetById(ACTOR_STUMP)->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
@@ -765,17 +764,11 @@ struct Geyser *Geyser_Add(s32 slot, s32 id, s32 timer, s32 low, s32 high) {
 #undef EFFECT_SET_SCRIPT
 #undef EFFECT_SCRIPTS
 #undef EFFECT_SPRITE_PRIORITY
-#undef FLAG_FIRST_PUDDLE_FROZEN
-#undef FLAG_SECOND_PUDDLE_FROZEN
 #undef PIXEL_PART
 
 // The Gondowan Cliffs' tables, which the scene's getters return.
 
 #include "text/msg_ids.h"
-
-/// Set as Frost freezes each puddle into a pillar of ice, for this visit.
-#define FLAG_FIRST_PUDDLE_FROZEN 0x201
-#define FLAG_SECOND_PUDDLE_FROZEN 0x202
 
 void GondowanCliffs_FreezeSecondPuddle(void);
 void GondowanCliffs_BlowAwayFoliage(void);
@@ -877,7 +870,7 @@ LATE_DATA struct Trigger gGondowanCliffs_Triggers[] = {
     {PSYNERGY_ON_ACTOR(ABILITY_FROST), 12, FLAG_FIRST_PUDDLE_FROZEN, EVENT(GondowanCliffs_FreezeFirstPuddle)},
     {PSYNERGY_ON_ACTOR(ABILITY_FROST), 13, FLAG_SECOND_PUDDLE_FROZEN, EVENT(GondowanCliffs_FreezeSecondPuddle)},
     {PSYNERGY_ON_ACTOR(ABILITY_WHIRLWIND), 14, CONDITION_ALWAYS, EVENT(GondowanCliffs_BlowAwayFoliage)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 15, FLAG_GONDOWAN_CLIFFS_PILLAR_IN_WATER, EVENT(GondowanCliffs_PushPillarIntoWater)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 15, FLAG_GONDOWAN_CLIFFS_STUMP_IN_WATER, EVENT(GondowanCliffs_LeapStumpIntoWater)},
     {PSYNERGY_PHASE_ON_CELL(ABILITY_SCOOP, PSYNERGY_PHASE_ACTS), 10, FLAG_GONDOWAN_CLIFFS_GEYSER_DUG, EVENT(GondowanCliffs_ScoopUpGeyser)},
     {TRIGGER_TABLE_END},
 };

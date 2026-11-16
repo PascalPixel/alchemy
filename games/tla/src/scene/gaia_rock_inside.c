@@ -1473,17 +1473,17 @@ void GaiaRockInside_EndSand(void) {
 }
 
 /// The Cloud Brand's treasure spot is raised to where the party can reach it,
-/// and its chest is opened as if talked to.
+/// and its chest is opened without the message of checking it.
 void GaiaRockInside_FindCloudBrand(void) {
   struct Actor *object;
 
   object = Actor_Get(FIELD_TREASURE_ACTOR + 2);
   object->x.fixed = toFIXED(552);
   object->z.fixed = toFIXED(296);
-  object->y.fixed = -toFIXED(30);
-  object->groundHeight = -toFIXED(32);
+  object->y.fixed = toFIXED(-30);
+  object->groundHeight = toFIXED(-32);
   Event_ClearFlag(FLAG_NOTHING_HAPPENS);
-  Scene_TalkToActor(4162);
+  Scene_TalkToActor(TALK_WITHOUT_CHECK_MESSAGE | (FIELD_TREASURE_ACTOR + 2));
 }
 
 /// Examines the altar.

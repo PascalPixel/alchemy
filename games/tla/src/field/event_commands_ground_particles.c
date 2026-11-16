@@ -84,7 +84,7 @@ void RisingParticles_Update(void) {
     x = screen[0].part[0].integer;
     y = screen[2].part[0].integer - particle->timer - 8;
     particle->drift += Random16() + FIXED_ONE / 2;
-    if ((u32)(x + 16) < 256 && y >= -32 && y < 160) {
+    if (x >= -16 && x < DISPLAY_WIDTH && y >= -32 && y < DISPLAY_HEIGHT) {
       if (particle->timer < 60)
         particle->sprite.attributes.tile = work->tile + 16;
       else if (particle->timer < 90)
@@ -179,7 +179,7 @@ void FieldMotes_Update(void) {
       x = FIXEDtoINT(mote->posX - cameraX) +
           (((firstJitterDraw & 1) + (secondJitterDraw & 1)) >> 1) - 1;
       y = FIXEDtoINT(mote->posZ - mote->posY - cameraZ) - (u16)age;
-      if ((u32)(x + 16) <= 255 && y >= -32 && y <= 159) {
+      if (x >= -16 && x < DISPLAY_WIDTH && y >= -32 && y < DISPLAY_HEIGHT) {
         if (mote->timer < 60) {
           mote->tile = work->tileBase + 16;
           mote->delay += 3;

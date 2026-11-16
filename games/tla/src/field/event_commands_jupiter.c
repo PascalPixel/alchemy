@@ -82,17 +82,13 @@ void Djinn_RunJupiterJoinEffect(s32 djinniId) {
 
 /// Per-frame update: makes an actor pulse, switching its scale between the two
 /// values of gBattleEffect_PulseScales every 4 frames.
-void FieldEffect_PulseActorScale(u8 *object) {
-  u32 *vblankCount = &gVBlankCount;
-  const u32 *table;
-  u32 index;
-  u32 value;
+void FieldEffect_PulseActorScale(struct Actor *actor) {
+  const u32 *table = gBattleEffect_PulseScales;
+  u32 index = ((u32)gVBlankCount >> 2) & 1;
+  u32 scale = table[index];
 
-  table = gBattleEffect_PulseScales;
-  index = (*vblankCount >> 2) & 1;
-  value = index[table];
-  ((struct MotionObject *)object)->scaleX = value;
-  ((struct MotionObject *)object)->scaleY = value;
+  actor->scaleX = scale;
+  actor->scaleY = scale;
 }
 
 /// Per-frame update: spins an actor ever faster, from 1/16 turn a frame up to

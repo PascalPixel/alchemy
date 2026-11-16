@@ -34,7 +34,7 @@ void GroundParticles_Update(void) {
     frame = &gFieldEffect_GroundParticleFrames[particle->timer * 5];
     x = (particle->posX - originX) / FIXED_ONE + *frame++;
     y = (particle->posZ - particle->posY - originZ) / FIXED_ONE + *frame++;
-    if ((u32)(x + 16) < 256 && y >= -32 && y < 160) {
+    if (x >= -16 && x < DISPLAY_WIDTH && y >= -32 && y < DISPLAY_HEIGHT) {
       particle->priority = 1;
       particle->x = x;
       particle->y = y;
@@ -85,7 +85,7 @@ void Weather_UpdateRain(void) {
     frame = &gGroundParticle_Offsets[2 * particle->timer];
     x = (particle->posX - originX) / FIXED_ONE + *frame++;
     y = (particle->posZ - particle->posY - originZ) / FIXED_ONE + *frame++;
-    if ((x >= -16 && x <= 239) && y >= -32 && y <= 159) {
+    if (x >= -16 && x < DISPLAY_WIDTH && y >= -32 && y < DISPLAY_HEIGHT) {
       particle->priority = 1;
       particle->x = x;
       particle->y = y;

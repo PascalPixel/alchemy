@@ -118,7 +118,7 @@ void FieldEffect_UpdateRadialSpread(struct FieldParticle *effect);
 void FieldEffect_InitializeSlots(void);
 void FieldEffect_ReleaseSlots(void);
 
-void FieldEffect_PulseActorScale(u8 *object);
+void FieldEffect_PulseActorScale(struct Actor *actor);
 void FieldEffect_AdvanceAngleWithRamp(struct Actor *actor);
 void FieldEffect_ShrinkActorAndDestroySlow(void *obj);
 void FieldEffect_UpdateMarsSpark(struct FieldParticle *effect);

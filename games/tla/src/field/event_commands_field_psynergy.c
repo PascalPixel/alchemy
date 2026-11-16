@@ -168,20 +168,20 @@ u8 MapGrid_SetAttributeBAt(s32 x, s32 z, s32 layer, s32 value) {
 /// Sets bits in the attribute byte of the map cell at x, z in layer.
 u8 MapGrid_SetAttributeBBitsAt(s32 x, s32 z, s32 layer, s32 bits) {
   s32 flags = MapGrid_GetAttributeBAt(x, z, layer);
-  u8 *cell = (u8 *)MapGrid_GetCellAt(x, z, layer);
+  struct MapCell *cell = MapGrid_GetCellAt(x, z, layer);
 
   flags |= bits;
-  cell[3] = flags;
+  cell->attributeB = flags;
   return flags;
 }
 
 /// Clears bits in the attribute byte of the map cell at x, z in layer.
 u8 MapGrid_ClearAttributeBBitsAt(s32 x, s32 z, s32 layer, s32 bits) {
   s32 flags = MapGrid_GetAttributeBAt(x, z, layer);
-  u8 *cell = (u8 *)MapGrid_GetCellAt(x, z, layer);
+  struct MapCell *cell = MapGrid_GetCellAt(x, z, layer);
 
   flags &= ~bits;
-  cell[3] = flags;
+  cell->attributeB = flags;
   return flags;
 }
 

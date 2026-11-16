@@ -14,6 +14,7 @@
 #include "field/scene_call.h"
 #include "macros.h"
 
+#define MERCURY_PARTICLE_MAX 24  ///< droplets (one a field effect sprite)
 #define MERCURY_AFTERIMAGE_MAX 8 ///< afterimages of the rising Djinni
 
 /// Moves the actor halfway to the actor it watches; a copy of
@@ -34,10 +35,10 @@ void Djinn_RunMercuryJoinEffect(s32 djinniId) {
   struct Actor *copy;
   struct Actor *previous;
   struct Sprite *resource;
-  void *effectSlots;
+  struct FieldEffectWork *effectWork;
   struct Actor **cursor;
   struct Actor **list;
-  u8 *slot;
+  struct FieldParticle *effect;
   s8 *slotState;
   s32 kind;
   s32 remaining;
@@ -54,7 +55,7 @@ void Djinn_RunMercuryJoinEffect(s32 djinniId) {
     return;
 
   FieldEffect_InitializeSlots();
-  effectSlots = Ram_HeapSlots->fieldEffectWork;
+  effectWork = Ram_HeapSlots->fieldEffectWork;
   Shop_SaveAndTintFieldPaletteFar(PALETTE_TINT_CUSTOM | RGB(4, 4, 16));
   wait(30);
   // Unpause the Djinni, so its script and motion run.
@@ -120,37 +121,28 @@ void Djinn_RunMercuryJoinEffect(s32 djinniId) {
   SET_POSITION(&position, djinni->x.fixed, djinni->y.fixed, djinni->z.fixed);
   Camera_WorldToScreen(&position.x);
 
-  slot = (u8 *)effectSlots + 80;
-  remaining = 23;
+  effect = effectWork->particles;
+  remaining = MERCURY_PARTICLE_MAX - 1;
   do {
-    FieldParticle_Initialize(slot, SPRITE_DROPLET, position.x, position.z);
-    FieldParticle_SetCallback(slot,
+    FieldParticle_Initialize(effect, SPRITE_DROPLET, position.x, position.z);
+    FieldParticle_SetCallback(effect,
                               (void *)FieldEffect_UpdateRandomTargetParticle);
-    FieldParticle_SetActorMode(slot, 7);
-    Sprite_SetAnimationColorModesFar(*(struct Sprite **)slot,
-                                     SPRITE_COLOR_BLUE_TINT);
+    FieldParticle_SetActorMode(effect, 7);
+    Sprite_SetAnimationColorModesFar(effect->object, SPRITE_COLOR_BLUE_TINT);
     remaining--;
     wait(1);
-    slot += 72;
+    effect++;
   } while (remaining >= 0);
 
+  // After 120 frames every droplet still in use takes its last fall.
   wait(120);
-  {
-    s32 nextState;
-
-    nextState = 2;
-    slotState = effectSlots;
-    slotState += 144;
-    remaining = 23;
-    do {
-      if (slotState[5] != 0)
-        slotState[0] = nextState;
-      remaining--;
-      slotState += 72;
-    } while (remaining >= 0);
-  }
+  FIELD_PARTICLES_SET_ACTIVE_STATE(slotState, remaining, effectWork, particles,
+                                   MERCURY_DROPLET_LAST_FALL);
 
   wait(50);
   Shop_RestoreFieldPaletteFar();
   FieldEffect_ReleaseSlots();
 }
+
+#undef MERCURY_PARTICLE_MAX
+#undef MERCURY_AFTERIMAGE_MAX

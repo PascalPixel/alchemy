@@ -25,8 +25,6 @@
 #define BATTLE_MENU_MESSAGE_COPY Message_DecodeRaw
 #endif
 
-#define SUMMON_END 32
-
 /// The battle summon list: the summons the party holds enough Djinn for
 /// (Summon_ListLearnedFar, DjinnRecoveryTable.summonMask), four to a page,
 /// those `standby` can pay for first, each with its Djinn cost by element, the
@@ -384,4 +382,3 @@ s32 BattleSummonMenu_Run(s32 unusedA, s32 unusedB, const u8 *standby) {
 #undef SUMMON_COST_X
 #undef BATTLE_MENU_MESSAGE_CAPACITY
 #undef BATTLE_MENU_MESSAGE_COPY
-#undef SUMMON_END

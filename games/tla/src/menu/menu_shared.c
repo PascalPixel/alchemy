@@ -803,7 +803,7 @@ void ItemMenu_ShowMessage(s32 message, s32 x, s32 y) {
              !(gInput.pressed & KEY_START));
     WindowSprite_ClearListFar(window);
   } else {
-    GameFlag_Set(FLAG_MENU_INFO_KEPT);
+    GameFlag_Set(FLAG_INFO_WINDOW_HOLDS_MESSAGE);
   }
   menu->completionFlag = 1;
   menu->sideIcons[0]->motion = ICON_SHOWN;

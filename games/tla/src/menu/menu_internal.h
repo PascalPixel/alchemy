@@ -131,9 +131,9 @@ enum DjinnSelectMode {
   (BG_CHAR_BLOCK(1) + DJINN_BACKDROP_BORDER_TILE * TILE_SIZE_4BPP)
 
 /// A Djinn list entry's party member, element and index, shifted down.
-#define DJINN_MEMBER(v) (((v) & 0xf00) >> 8)
-#define DJINN_ELEMENT(v) (((v) & 0xe0) >> 5)
-#define DJINN_NUMBER(v) ((v) & 0x1f)
+#define DJINN_MEMBER(v) (((v) & DJINN_ENTRY_MEMBER) >> 8)
+#define DJINN_ELEMENT(v) (((v) & DJINN_ENTRY_ELEMENT) >> 5)
+#define DJINN_NUMBER(v) ((v) & DJINN_ENTRY_INDEX)
 
 /// The preview loop's four operations, as its confirmation text describes them
 /// (PsynergyList_RunCompareLoop's mode).
@@ -596,9 +596,6 @@ enum UnitStatus {
 #else
 #define MENU_DRAW_STATUS_LABEL Text_DrawStringAtOffsetFar
 #endif
-
-/// The info window holds a message the next selection must not draw over.
-#define FLAG_MENU_INFO_KEPT 0x151
 
 /// PsynergyList_RunCompareLoop's pages for a give or trade, which R cycles; the
 /// first two also index its per-member page counts.

@@ -181,6 +181,12 @@ struct Actor {
       u8 unusedBeforeSavedPriority[2]; ///< refused and frozen
       u8 savedSpritePriority; ///< its sprite's priority, given back after
     };
+    /// An actor whose update flickers its colour (ShamanVillage_FlickerRock).
+    struct {
+      u8 unusedBeforeFlicker[2]; ///< refused and frozen
+      u8 flickerColor; ///< the colour attribute shown on its lit frames
+      u8 flickerShift; ///< lit every other frame at 0, every other two at 1
+    };
   };
   /// Two halfwords whose meaning depends on what runs the actor.
   union {

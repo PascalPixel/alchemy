@@ -41,15 +41,13 @@ void BattleEffect_RunDeathPlunge(struct BattleEffectParams *args) {
   // Set up the canvas, the flash sheet, the jaw's texture and a clipped MAX
   // blitter.
   BattleEffect_StartCanvasLayer(0);
-  Resource_LoadAndDecompress((s32)&ResourceId_FlashBurstSheet, work->sheet, 1,
-                             1);
+  Resource_LoadAndDecompress(RESOURCE_FLASH_BURST_SHEET, work->sheet, 1, 1);
   pixels = Ram_MapCellBuffer;
-  Resource_LoadAndDecompress((s32)&ResourceId_FireRingTexture, pixels, 0, 0);
+  Resource_LoadAndDecompress(RESOURCE_FIRE_RING_TEXTURE, pixels, 0, 0);
   if (args->variant == EFFECT_VARIANT_STRONGER) {
-    Iwram_CopyWordsEntry(
-        (void *)BG_PLTT,
-        Resource_GetTableEntry((s32)&ResourceId_VioletPaletteF),
-        SHEET_PALETTE_BYTES);
+    Iwram_CopyWordsEntry((void *)BG_PLTT,
+                         Resource_GetTableEntry(RESOURCE_VIOLET_PALETTE_F),
+                         SHEET_PALETTE_BYTES);
     work->transferValue = CANVAS_FADE_HALF;
     EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, BLITTER_MAX);
     REG_BLDALPHA = EFFECT_BLEND_ADD;

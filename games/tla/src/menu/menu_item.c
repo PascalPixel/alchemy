@@ -2756,11 +2756,10 @@ void Resource_LoadPairedBlocks(void) {
   s32 value = VramCache_FindFreeEntry();
 
   state->resourceSlots[0] = value;
-  VramBlock_LoadResourceFar(value, 128, (s32)&ResourceId_MenuArrowTiles);
+  VramBlock_LoadResourceFar(value, 128, RESOURCE_MENU_ARROW_TILES);
   value = VramCache_FindFreeEntry();
   state->resourceSlots[1] = value;
-  VramBlock_LoadResourceFar(value, 128,
-                            (s32)&ResourceId_MenuSmallDownArrowTiles);
+  VramBlock_LoadResourceFar(value, 128, RESOURCE_MENU_SMALL_DOWN_ARROW_TILES);
 }
 
 /// Splits the selected slot owner's items into pages of five rows.

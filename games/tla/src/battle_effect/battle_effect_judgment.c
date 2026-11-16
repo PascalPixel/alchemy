@@ -98,9 +98,9 @@ void BattleEffect_RunJudgment(struct BattleEffectParams *args) {
   BattleEffect_WipeCanvas(CANVAS_WIPE_DOWN, CANVAS_WIPE_FILL);
   BattleEffect_SelectLivingTargets(work->args);
   BattleBackground_LoadFar(BATTLE_BACKGROUND_FIXED,
-                           (s32)&ResourceId_VioletSkyBackdrop, 0);
+                           RESOURCE_VIOLET_SKY_BACKDROP, 0);
 
-  pal = Resource_GetTableEntry((s32)&ResourceId_WingedKnightATiles);
+  pal = Resource_GetTableEntry(RESOURCE_WINGED_KNIGHT_A_TILES);
   Iwram_CopyWords((void *)OBJ_PLTT, pal, OBJ_PLTT_SIZE);
   pal += OBJ_PLTT_SIZE;
   Decompress_TaggedLz(pal, cells);
@@ -122,14 +122,13 @@ void BattleEffect_RunJudgment(struct BattleEffectParams *args) {
   EFFECT_SHOW_WIDE_CANVAS(BLEND_WEIGHT_MAX);
   depth = -toFIXED(64);
   zoom = FIXED_ONE * 8;
-  Resource_LoadAndDecompress((s32)&ResourceId_PinkBurstSheet, work->sheet, 1,
-                             1);
-  Resource_LoadAndDecompress((s32)&ResourceId_TornadoSheet,
+  Resource_LoadAndDecompress(RESOURCE_PINK_BURST_SHEET, work->sheet, 1, 1);
+  Resource_LoadAndDecompress(RESOURCE_TORNADO_SHEET,
                              work->sheet + JUDGMENT_TORNADO_PICTURES, 1, 0);
-  Resource_LoadAndDecompress((s32)&ResourceId_FireRingTexture,
+  Resource_LoadAndDecompress(RESOURCE_FIRE_RING_TEXTURE,
                              Ram_MapCellBuffer + JUDGMENT_FIRE_RING, 0, 0);
-  Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, sprites, 0, 0);
-  pal = Resource_GetTableEntry((s32)&ResourceId_BlueCrescentSheet);
+  Resource_LoadAndDecompress(RESOURCE_PARTICLE_SPRITES_A, sprites, 0, 0);
+  pal = Resource_GetTableEntry(RESOURCE_BLUE_CRESCENT_SHEET);
   Iwram_CopyWordsEntry((void *)BG_PLTT, pal, SHEET_PALETTE_BYTES);
   EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
   REG_BG2CNT = BGCNT_CHAR_BASE(1) | BGCNT_256_COLORS | BGCNT_SCREEN_BASE(7);
@@ -146,7 +145,7 @@ void BattleEffect_RunJudgment(struct BattleEffectParams *args) {
         p->velocityY = Random16() & TRIG_ANGLE_MASK;
         p->velocityY = Random16() & TRIG_ANGLE_MASK;
       }
-      pal = Resource_GetTableEntry((s32)&ResourceId_WingedKnightATiles);
+      pal = Resource_GetTableEntry(RESOURCE_WINGED_KNIGHT_A_TILES);
       Iwram_CopyWordsEntry((void *)OBJ_PLTT, pal, OBJ_PLTT_SIZE);
       pal += OBJ_PLTT_SIZE;
       Decompress_TaggedLz(pal, Ram_MapCellBuffer);
@@ -234,7 +233,7 @@ void BattleEffect_RunJudgment(struct BattleEffectParams *args) {
     }
 
     if (frame == 72) {
-      pal = Resource_GetTableEntry((s32)&ResourceId_WingedKnightBTiles);
+      pal = Resource_GetTableEntry(RESOURCE_WINGED_KNIGHT_B_TILES);
       Iwram_CopyWordsEntry((void *)OBJ_PLTT, pal, OBJ_PLTT_SIZE);
       pal += OBJ_PLTT_SIZE;
       Decompress_TaggedLz(pal, Ram_MapCellBuffer);
@@ -248,7 +247,7 @@ void BattleEffect_RunJudgment(struct BattleEffectParams *args) {
       }
     }
     if (frame == 76) {
-      pal = Resource_GetTableEntry((s32)&ResourceId_WingedKnightCTiles);
+      pal = Resource_GetTableEntry(RESOURCE_WINGED_KNIGHT_C_TILES);
       Iwram_CopyWordsEntry((void *)OBJ_PLTT, pal, OBJ_PLTT_SIZE);
       pal += OBJ_PLTT_SIZE;
       Decompress_TaggedLz(pal, Ram_MapCellBuffer);
@@ -310,7 +309,7 @@ void BattleEffect_RunJudgment(struct BattleEffectParams *args) {
         flag = 1;
       }
       if (flag == 1) {
-        u16 *src = Resource_GetTableEntry((s32)&ResourceId_WingedKnightCTiles);
+        u16 *src = Resource_GetTableEntry(RESOURCE_WINGED_KNIGHT_C_TILES);
         volatile u16 *dst = (volatile u16 *)OBJ_PLTT;
 
         for (i = 0; i != 256; i++, src++, dst++) {
@@ -408,7 +407,7 @@ void BattleEffect_RunJudgment(struct BattleEffectParams *args) {
   HeapSlot_Release(HEAP_SLOT_RAM_CODE);
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, BLITTER_MAX);
   draw[0] = (DrawRectangle)Ram_HeapSlots->ramCode;
-  Resource_LoadAndDecompress((s32)&ResourceId_BlueCrescentSheet,
+  Resource_LoadAndDecompress(RESOURCE_BLUE_CRESCENT_SHEET,
                              work->sheet + JUDGMENT_SHEET_FLARE_A, 1, 1);
   {
     u8 *c = sprites;
@@ -424,7 +423,7 @@ void BattleEffect_RunJudgment(struct BattleEffectParams *args) {
   work->fadeFrames = 0;
   work->fadeStep = 0;
   BattleBackground_LoadFar(BATTLE_BACKGROUND_FIXED,
-                           (s32)&ResourceId_AerialViewBackdrop, 0);
+                           RESOURCE_AERIAL_VIEW_BACKDROP, 0);
   REG_BG2PA = Q_8_8(1);
   REG_BG2X = -(60 << 8);
   REG_BG2CNT = BGCNT_CHAR_BASE(1) | BGCNT_256_COLORS | BGCNT_SCREEN_BASE(7);
@@ -467,7 +466,7 @@ void BattleEffect_RunJudgment(struct BattleEffectParams *args) {
         frame = JUDGMENT_SWEEP_BEACH;
         IO_WRITE_QUEUE_PUSH((u32)&REG_BG2PA, Q_8_8(0.5), IO_WRITE_HALFWORD);
         IO_WRITE_QUEUE_PUSH((u32)&REG_BG2X, 0, IO_WRITE_WORD);
-        Resource_LoadAndDecompress((s32)&ResourceId_ExplosionSheet,
+        Resource_LoadAndDecompress(RESOURCE_EXPLOSION_SHEET,
                                    work->sheet + JUDGMENT_SHEET_EXPLOSION, 1,
                                    0);
       } else if ((u32)(frame - 155) <= 58) {
@@ -488,9 +487,9 @@ void BattleEffect_RunJudgment(struct BattleEffectParams *args) {
       IO_WRITE_QUEUE_PUSH((u32)&REG_BG2PA, Q_8_8(0.5), IO_WRITE_HALFWORD);
       IO_WRITE_QUEUE_PUSH((u32)&REG_BG2X, 0, IO_WRITE_WORD);
       IWRAM_FILL_WORDS(canvas, CANVAS_BYTES, 0);
-      Resource_LoadAndDecompress((s32)&ResourceId_ExplosionSheet,
+      Resource_LoadAndDecompress(RESOURCE_EXPLOSION_SHEET,
                                  work->sheet + JUDGMENT_SHEET_EXPLOSION, 1, 0);
-      Resource_LoadAndDecompress((s32)&ResourceId_OverlayImageA,
+      Resource_LoadAndDecompress(RESOURCE_OVERLAY_IMAGE_A,
                                  work->sheet + JUDGMENT_SHEET_FLASH_SMALL, 0,
                                  0);
     }
@@ -507,7 +506,7 @@ void BattleEffect_RunJudgment(struct BattleEffectParams *args) {
     }
     if (frame == 70) {
       BattleBackground_SetModeFar(BATTLE_BACKGROUND_FIXED,
-                                  (s32)&ResourceId_AerialViewBackdrop, 7);
+                                  RESOURCE_AERIAL_VIEW_BACKDROP, 7);
     }
     if (frame == JUDGMENT_SWEEP_BEACH) {
       cx = 112;
@@ -518,15 +517,15 @@ void BattleEffect_RunJudgment(struct BattleEffectParams *args) {
       IWRAM_FILL_WORDS(work->sheet, PICTURE_BYTES(JUDGMENT_RINGS), 0);
       IWRAM_FILL_WORDS(canvas, CANVAS_BYTES,
                        CANVAS_FILL_WORD(CANVAS_LEVEL_BRIGHTEST));
-      BattleBackground_LoadFar(BATTLE_BACKGROUND_FIXED,
-                               (s32)&ResourceId_BeachBackdrop, 0);
+      BattleBackground_LoadFar(BATTLE_BACKGROUND_FIXED, RESOURCE_BEACH_BACKDROP,
+                               0);
     }
     if (frame == JUDGMENT_SWEEP_FOREST) {
       IWRAM_FILL_WORDS(work->sheet, PICTURE_BYTES(JUDGMENT_RINGS), 0);
       IWRAM_FILL_WORDS(canvas, CANVAS_BYTES,
                        CANVAS_FILL_WORD(CANVAS_LEVEL_BRIGHTEST));
       BattleBackground_LoadFar(BATTLE_BACKGROUND_FIXED,
-                               (s32)&ResourceId_ForestBackdrop, 0);
+                               RESOURCE_FOREST_BACKDROP, 0);
       {
         struct Particle *p = work->particles;
 

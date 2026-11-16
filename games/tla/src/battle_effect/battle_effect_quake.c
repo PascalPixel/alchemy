@@ -42,7 +42,7 @@ void BattleEffect_RunQuake(struct BattleEffectParams *args) {
   camera = Ram_HeapSlots->cameraWork;
   EFFECT_START_NARROW_CANVAS(BGCNT_PRIORITY(1)); // no horizontal stretch
   REG_BLDCNT = 0;                                // no blending
-  Resource_LoadAndDecompress((s32)&ResourceId_RockWallSheet,
+  Resource_LoadAndDecompress(RESOURCE_ROCK_WALL_SHEET,
                              work->sheet + ROCK_OFFSET, 1, 1);
 
   // Copy the background's characters and cut the band out of them.

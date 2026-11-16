@@ -40,8 +40,8 @@ void BattleEffect_RunFrost(struct BattleEffectParams *args) {
   canvas = Ram_HeapSlots->battleCanvas;
   dots = Ram_HeapSlots->battleSheet;
   EFFECT_START_NARROW_CANVAS(BGCNT_PRIORITY(1));
-  Resource_LoadAndDecompress((s32)&ResourceId_IceChipSheet, work->sheet, 1, 1);
-  Resource_LoadAndDecompress((s32)&ResourceId_SparkleDots, dots, 0, 0);
+  Resource_LoadAndDecompress(RESOURCE_ICE_CHIP_SHEET, work->sheet, 1, 1);
+  Resource_LoadAndDecompress(RESOURCE_SPARKLE_DOTS, dots, 0, 0);
   BattleEffect_FetchRectangleBlitters(0, draw = pair);
 
   // A mote: x holds its angle, z its radius, y its height.

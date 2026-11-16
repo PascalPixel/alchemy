@@ -430,8 +430,8 @@ Resource_DirectoryTable:
 	resource WorldMapTilesA5, WorldMap_TilesA5
 	resource WorldMapTilesA6, WorldMap_TilesA6
 	resource WorldMapPaletteB, WorldMap_PaletteB
-	resource Data1A4, Resource_Data1A4
-	resource Data1A5, Resource_Data1A5
+	resource WorldMapAnimationB, WorldMap_AnimationB
+	resource WorldMapCellPictureAttributesB, WorldMap_CellPictureAttributesB
 	resource WorldMapTilesB1, WorldMap_TilesB1
 	resource WorldMapTilesB2, WorldMap_TilesB2
 	resource WorldMapTilesB3, WorldMap_TilesB3
@@ -439,8 +439,8 @@ Resource_DirectoryTable:
 	resource WorldMapTilesB5, WorldMap_TilesB5
 	resource WorldMapTilesB6, WorldMap_TilesB6
 	resource WorldMapPaletteC, WorldMap_PaletteC
-	resource Data1AD, Resource_Data1AD
-	resource Data1AE, Resource_Data1AE
+	resource WorldMapAnimationC, WorldMap_AnimationC
+	resource WorldMapCellPictureAttributesC, WorldMap_CellPictureAttributesC
 	resource WorldMapTilesC1, WorldMap_TilesC1
 	resource WorldMapTilesC2, WorldMap_TilesC2
 	resource WorldMapTilesC3, WorldMap_TilesC3
@@ -448,8 +448,8 @@ Resource_DirectoryTable:
 	resource WorldMapTilesC5, WorldMap_TilesC5
 	resource WorldMapTilesC6, WorldMap_TilesC6
 	resource WorldMapPaletteD, WorldMap_PaletteD
-	resource Data1B6, Resource_Data1B6
-	resource Data1B7, Resource_Data1B7
+	resource WorldMapAnimationD, WorldMap_AnimationD
+	resource WorldMapCellPictureAttributesD, WorldMap_CellPictureAttributesD
 	resource WorldMapTilesD1, WorldMap_TilesD1
 	resource WorldMapTilesD2, WorldMap_TilesD2
 	resource WorldMapTilesD3, WorldMap_TilesD3

@@ -46,18 +46,18 @@ void BattleEffect_RunCrystal(struct BattleEffectParams *args) {
     discOffsets[i] = offset;
     offset += (i * 2 + 3) * size / 2;
   }
-  Resource_LoadAndDecompress((s32)&ResourceId_CogTexture, work->sheet, 0, 0);
+  Resource_LoadAndDecompress(RESOURCE_COG_TEXTURE, work->sheet, 0, 0);
   Picture_MirrorIntoQuadrants(work->sheet, Ram_MapCellBuffer + 0x4000, 64, 64);
   BattleEffect_StartCanvasLayer(0);
   BattleEffect_RunDjinniEntrance(
       args,
       DJINNI_ENTRANCE(ELEMENT_VENUS, args->side ^ 1, DJINNI_ANCHOR_TARGET_X),
       center, other);
-  Resource_LoadAndDecompress((s32)&ResourceId_VenusDjinnSmallSheet,
+  Resource_LoadAndDecompress(RESOURCE_VENUS_DJINN_SMALL_SHEET,
                              work->sheet + CRYSTAL_VENUS_DJINN_SMALL_PICTURES,
                              1, 0);
   Iwram_CopyWordsEntry((void *)BG_PLTT,
-                       Resource_GetTableEntry((s32)&ResourceId_BlastSheet),
+                       Resource_GetTableEntry(RESOURCE_BLAST_SHEET),
                        SHEET_PALETTE_BYTES);
   REG_BLDALPHA = EFFECT_BLEND_CANVAS(14);
   if (args->side == EFFECT_SIDE_PARTY) {

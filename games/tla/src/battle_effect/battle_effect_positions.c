@@ -139,34 +139,32 @@ void BattleEffect_RunAttackSlash(struct BattleEffectParams *args) {
 
   // The beam's sheet for the kind.
   if (kind == 4) {
-    Resource_LoadAndDecompress((s32)&ResourceId_WaveSheet, work->sheet, 1, 1);
+    Resource_LoadAndDecompress(RESOURCE_WAVE_SHEET, work->sheet, 1, 1);
   } else if (kind == 3) {
-    Resource_LoadAndDecompress((s32)&ResourceId_BeamImage, work->sheet, 0, 0);
+    Resource_LoadAndDecompress(RESOURCE_BEAM_IMAGE, work->sheet, 0, 0);
   } else {
     switch (kind) {
     case 0:
     case 1:
     case 5:
     case 6:
-      Resource_LoadAndDecompress((s32)&ResourceId_BlueArcSheetA, work->sheet, 1,
-                                 1);
+      Resource_LoadAndDecompress(RESOURCE_BLUE_ARC_SHEET_A, work->sheet, 1, 1);
       break;
     case 2:
-      Resource_LoadAndDecompress((s32)&ResourceId_BlueArcSheetB, work->sheet, 1,
-                                 1);
+      Resource_LoadAndDecompress(RESOURCE_BLUE_ARC_SHEET_B, work->sheet, 1, 1);
       break;
     }
   }
   // An enemy's sparks take the Mars Djinn's colours, a party member's the
   // star crescent's.
   Dma_Set(Resource_GetTableEntry(args->user > 7
-                                     ? (s32)&ResourceId_MarsDjinnSmallSheet
-                                     : (s32)&ResourceId_StarCrescentSheet),
+                                     ? RESOURCE_MARS_DJINN_SMALL_SHEET
+                                     : RESOURCE_STAR_CRESCENT_SHEET),
           (void *)BG_PLTT, DMA_COPY_WORDS(SHEET_PALETTE_BYTES / 4), REG_DMA3);
   wait(1);
-  Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesD, sheet, 0, 0);
-  Resource_LoadAndDecompress((s32)&ResourceId_YellowOrbSheet, Ram_MapCellBuffer,
-                             1, 0);
+  Resource_LoadAndDecompress(RESOURCE_PARTICLE_SPRITES_D, sheet, 0, 0);
+  Resource_LoadAndDecompress(RESOURCE_YELLOW_ORB_SHEET, Ram_MapCellBuffer, 1,
+                             0);
   // Each transfer leaves half the last frame behind.
   EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
 
@@ -369,19 +367,18 @@ void BattleEffect_RunCriticalHit(struct BattleEffectParams *args) {
   draw[1] = slots[HEAP_SLOT_RAM_CODE_PAIRED / 4];
   BattleCamera_SetViewAtPairMidpointFar(args->user, args->firstTarget, 130);
   wait(1);
-  Resource_LoadAndDecompress((s32)&ResourceId_StarCrescentSheet, work->sheet, 1,
-                             0);
+  Resource_LoadAndDecompress(RESOURCE_STAR_CRESCENT_SHEET, work->sheet, 1, 0);
   BattleCamera_SetViewAtPairMidpointFar(args->user, args->firstTarget, 130);
   wait(1);
-  Resource_LoadAndDecompress((s32)&ResourceId_GreyCrescentSheet,
-                             Ram_MapCellBuffer, 1, 1);
+  Resource_LoadAndDecompress(RESOURCE_GREY_CRESCENT_SHEET, Ram_MapCellBuffer, 1,
+                             1);
   // An enemy caster's sparks take the Mars Djinn's colours.
   if (args->user > 7)
-    Dma_Set(Resource_GetTableEntry((s32)&ResourceId_MarsDjinnSmallSheet),
+    Dma_Set(Resource_GetTableEntry(RESOURCE_MARS_DJINN_SMALL_SHEET),
             (void *)BG_PLTT, DMA_COPY_WORDS(SHEET_PALETTE_BYTES / 4), REG_DMA3);
   BattleCamera_SetViewAtPairMidpointFar(args->user, args->firstTarget, 130);
   wait(1);
-  Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesD, sheet, 0, 0);
+  Resource_LoadAndDecompress(RESOURCE_PARTICLE_SPRITES_D, sheet, 0, 0);
   BattleCamera_SetViewAtPairMidpointFar(args->user, args->firstTarget, 130);
   wait(1);
   EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_CLEAR, 0);

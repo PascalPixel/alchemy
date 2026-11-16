@@ -11,7 +11,7 @@ void Window_OverlayTilePattern(u16 *entry, u16 *mirror, s32 pattern,
                                u8 *remap) {
   struct WindowWork *work = (struct WindowWork *)Ram_HeapSlots->windowWork;
   u8 pixels[128];
-  u8 *sheet = Resource_GetTableEntry((s32)&ResourceId_WindowTiles);
+  u8 *sheet = Resource_GetTableEntry(RESOURCE_WINDOW_TILES);
   u32 slot = *(u8 *)entry;
   u8 *src;
   u8 *dst;
@@ -120,7 +120,7 @@ s32 Text_DrawStringAsTiles(u16 *script, u16 *tiles, u16 *mirror, s32 x) {
 
   work = (struct WindowWork *)Ram_HeapSlots->windowWork;
   canvas = Heap_Alloc(0x800);
-  glyphs = Resource_GetTableEntry((s32)&ResourceId_WindowTiles);
+  glyphs = Resource_GetTableEntry(RESOURCE_WINDOW_TILES);
   attr = work->textPalette << 12;
   Iwram_ClearWords(pens, 16);
   if (attr == BG_TILE_PALETTE(WINDOW_PALETTE)) {

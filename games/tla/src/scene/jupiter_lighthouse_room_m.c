@@ -229,14 +229,12 @@ void JupiterLighthouse_FlashSky(void) {
   REG_DISPCNT &= ~DISPCNT_BG0_ON;
   Io_Write16(BGCNT_SCREEN_BASE(4), &REG_BG0CNT);
   buffer = Heap_Alloc(0x800);
-  Decompress_TaggedLz(Resource_GetTableEntry((s32)&ResourceId_LightningTiles),
-                      buffer);
+  Decompress_TaggedLz(Resource_GetTableEntry(RESOURCE_LIGHTNING_TILES), buffer);
   Dma_Set(buffer, (void *)VRAM, DMA_COPY_WORDS(512), REG_DMA3);
   Heap_Release(buffer);
   Dma_Fill16(0, (void *)(VRAM + 0x2000), 0x800);
   buffer = Heap_Alloc(128);
-  Decompress_TaggedLz(Resource_GetTableEntry((s32)&ResourceId_LightningMap),
-                      buffer);
+  Decompress_TaggedLz(Resource_GetTableEntry(RESOURCE_LIGHTNING_MAP), buffer);
   p = buffer;
   for (i = 0; i != 64; i++)
     *p++ &= 0xfcff;

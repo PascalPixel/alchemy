@@ -65,11 +65,10 @@ void BattleEffect_RunFume(struct BattleEffectParams *args) {
   endY = 0;
   EffectPosition_ProjectBattler(args->user, &caster);
   EffectPosition_ProjectBattler(args->targets[0], &target);
-  Resource_LoadAndDecompress((s32)&ResourceId_SmokeBandSheet, work->sheet, 1,
-                             1);
-  Resource_LoadAndDecompress((s32)&ResourceId_FlashBurstSheet,
+  Resource_LoadAndDecompress(RESOURCE_SMOKE_BAND_SHEET, work->sheet, 1, 1);
+  Resource_LoadAndDecompress(RESOURCE_FLASH_BURST_SHEET,
                              work->sheet + FUME_FLASH_BURST_PICTURES, 1, 0);
-  Resource_LoadAndDecompress((s32)&ResourceId_ClawSlashSheet,
+  Resource_LoadAndDecompress(RESOURCE_CLAW_SLASH_SHEET,
                              work->sheet + FUME_CLAW_SLASH_PICTURES, 1, 0);
   REG_BG2PA = Q_8_8(0.5);
   Render_BuildQuadStrip(Ram_MapCellBuffer + 0x2000, 4, 32, 32);

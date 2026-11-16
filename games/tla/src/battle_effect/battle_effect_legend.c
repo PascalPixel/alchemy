@@ -58,14 +58,14 @@ void BattleEffect_RunLegend(struct BattleEffectParams *args) {
                         EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X,
                         BLITTER_ADDITIVE);
   draw[0] = (DrawRectangle)Ram_HeapSlots->ramCode;
-  Resource_LoadAndDecompress((s32)&ResourceId_CornerRuneASheet, cells, 1, 1);
+  Resource_LoadAndDecompress(RESOURCE_CORNER_RUNE_A_SHEET, cells, 1, 1);
   Picture_MirrorIntoQuadrants(cells, work->sheet, 64, 64);
-  Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, graphics, 0, 0);
-  Resource_LoadAndDecompress((s32)&ResourceId_BladeSheet,
+  Resource_LoadAndDecompress(RESOURCE_PARTICLE_SPRITES_A, graphics, 0, 0);
+  Resource_LoadAndDecompress(RESOURCE_BLADE_SHEET,
                              work->sheet + LEGEND_BLADE_PICTURES, 1, 1);
-  Resource_LoadAndDecompress((s32)&ResourceId_FlameGradientTexture,
+  Resource_LoadAndDecompress(RESOURCE_FLAME_GRADIENT_TEXTURE,
                              work->sheet + LEGEND_FLAME_GRADIENT, 0, 0);
-  Resource_LoadAndDecompress((s32)&ResourceId_FireRingTexture, cells, 0, 0);
+  Resource_LoadAndDecompress(RESOURCE_FIRE_RING_TEXTURE, cells, 0, 0);
   EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
 
   for (frame = 0; frame != args->variant * 16 + 86; frame++) {
@@ -328,26 +328,22 @@ void BattleEffect_RunElementCards(struct BattleEffectParams *args, s32 mode) {
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, BLITTER_ADDITIVE);
   draw[0] = (DrawRectangle)Ram_HeapSlots->ramCode;
   scale = 0;
-  Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, graphics, 0, 0);
+  Resource_LoadAndDecompress(RESOURCE_PARTICLE_SPRITES_A, graphics, 0, 0);
   if (mode == CARD_BRAMBLE) {
-    Resource_LoadAndDecompress((s32)&ResourceId_VineCardSheet, work->sheet, 1,
-                               1);
+    Resource_LoadAndDecompress(RESOURCE_VINE_CARD_SHEET, work->sheet, 1, 1);
   } else if (mode == CARD_FROST) {
-    Resource_LoadAndDecompress((s32)&ResourceId_DragonCardSheet, work->sheet, 1,
-                               1);
-    Resource_LoadAndDecompress((s32)&ResourceId_CrystalSheet,
+    Resource_LoadAndDecompress(RESOURCE_DRAGON_CARD_SHEET, work->sheet, 1, 1);
+    Resource_LoadAndDecompress(RESOURCE_CRYSTAL_SHEET,
                                work->sheet + ELEMENT_CARDS_PICTURES, 1, 0);
   } else if (mode == CARD_FLAME) {
-    Resource_LoadAndDecompress((s32)&ResourceId_SunCardSheet, work->sheet, 1,
-                               1);
-    Resource_LoadAndDecompress((s32)&ResourceId_FlashBurstSheet,
+    Resource_LoadAndDecompress(RESOURCE_SUN_CARD_SHEET, work->sheet, 1, 1);
+    Resource_LoadAndDecompress(RESOURCE_FLASH_BURST_SHEET,
                                work->sheet + ELEMENT_CARDS_PICTURES, 1, 0);
-    Resource_LoadAndDecompress((s32)&ResourceId_SmokeSheet,
+    Resource_LoadAndDecompress(RESOURCE_SMOKE_SHEET,
                                work->sheet + ELEMENT_CARDS_PICTURES, 1, 0);
   } else {
-    Resource_LoadAndDecompress((s32)&ResourceId_BoltCardSheet, work->sheet, 1,
-                               1);
-    Resource_LoadAndDecompress((s32)&ResourceId_JaggedStreakSheet,
+    Resource_LoadAndDecompress(RESOURCE_BOLT_CARD_SHEET, work->sheet, 1, 1);
+    Resource_LoadAndDecompress(RESOURCE_JAGGED_STREAK_SHEET,
                                work->sheet + ELEMENT_CARDS_PICTURES, 0, 0);
   }
   REG_BLDCNT = 0;
@@ -404,11 +400,11 @@ void BattleEffect_RunElementCards(struct BattleEffectParams *args, s32 mode) {
       // The background steps toward the card's colours.
       if (mode != CARD_BRAMBLE) {
         if (mode == CARD_FROST)
-          BattleEffect_StepPaletteToResource((s32)&ResourceId_CrystalSheet);
+          BattleEffect_StepPaletteToResource(RESOURCE_CRYSTAL_SHEET);
         else if (mode == CARD_THUNDER)
-          BattleEffect_StepPaletteToResource((s32)&ResourceId_VioletPaletteF);
+          BattleEffect_StepPaletteToResource(RESOURCE_VIOLET_PALETTE_F);
         else
-          BattleEffect_StepPaletteToResource((s32)&ResourceId_OrangePaletteB);
+          BattleEffect_StepPaletteToResource(RESOURCE_ORANGE_PALETTE_B);
       }
 
       // The Frost and Flame cards throw one particle a frame at a target in

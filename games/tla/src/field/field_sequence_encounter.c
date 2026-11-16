@@ -381,9 +381,9 @@ void BattleBackground_SelectForMap(void) {
       entry = *table++;
     } while (entry != 0 && entry != target);
   }
-  if (result == (s32)&ResourceId_DragonHallBBackdrop &&
+  if (result == RESOURCE_DRAGON_HALL_B_BACKDROP &&
       GameFlag_Get(FLAG_MARS_LIGHTHOUSE_THAWED))
-    result = (s32)&ResourceId_DragonHallABackdrop;
+    result = RESOURCE_DRAGON_HALL_A_BACKDROP;
   gMainRoutineWork.battleBackground = result;
 }
 
@@ -393,28 +393,28 @@ void BattleBackground_SelectForEnvironment(s32 behavior) {
 
   switch (behavior - 1) {
   case 0:
-    value = (u32)&ResourceId_GrasslandBBackdrop;
+    value = RESOURCE_GRASSLAND_B_BACKDROP;
     break;
   case 1:
-    value = (u32)&ResourceId_DenseForestBackdrop;
+    value = RESOURCE_DENSE_FOREST_BACKDROP;
     break;
   case 2:
-    value = (u32)&ResourceId_DesertBackdrop;
+    value = RESOURCE_DESERT_BACKDROP;
     break;
   case 3:
   case 6:
-    value = (u32)&ResourceId_RockyBeachBackdrop;
+    value = RESOURCE_ROCKY_BEACH_BACKDROP;
     break;
   case 4:
   case 5:
-    value = (u32)&ResourceId_SnowfieldBBackdrop;
+    value = RESOURCE_SNOWFIELD_B_BACKDROP;
     break;
   case 10:
   case 11:
-    value = (u32)&ResourceId_BlizzardBackdrop;
+    value = RESOURCE_BLIZZARD_BACKDROP;
     break;
   default:
-    value = (u32)&ResourceId_ShipDeckBackdrop;
+    value = RESOURCE_SHIP_DECK_BACKDROP;
     break;
   }
   gMainRoutineWork.battleBackground = value;

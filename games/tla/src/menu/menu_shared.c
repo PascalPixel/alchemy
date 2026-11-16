@@ -504,8 +504,7 @@ s32 Icon_CreateWithResource(struct RenderInput *window, s32 x, s32 y) {
   icon = 0;
   slot = VramCache_FindFreeEntry();
   if (slot != 0) {
-    VramBlock_LoadResourceFar(slot, ICON_TILE_BYTES,
-                              (s32)&ResourceId_UiIconTiles);
+    VramBlock_LoadResourceFar(slot, ICON_TILE_BYTES, RESOURCE_UI_ICON_TILES);
     icon = (s32)WindowSprite_CreateFar(slot, OUTPUT_SIZE_16X16, window, x, y);
   }
   return icon;
@@ -556,14 +555,14 @@ struct RenderInput *MenuCursor_Create(void *source) {
   work->sideIcon[1]->depth = sentinel;
   slot = VramCache_FindFreeEntry();
   if (slot < VRAM_CACHE_ENTRY_COUNT) {
-    VramBlock_LoadResourceFar(slot, 128, (s32)&ResourceId_ShopUpArrowTiles);
+    VramBlock_LoadResourceFar(slot, 128, RESOURCE_SHOP_UP_ARROW_TILES);
     icon = WindowSprite_CreateFar(slot, OUTPUT_SIZE_16X16, window, 84, -4);
     icon->motion = ICON_HIDDEN;
     work->pageArrows[0] = icon;
   }
   slot = VramCache_FindFreeEntry();
   if (slot < VRAM_CACHE_ENTRY_COUNT) {
-    VramBlock_LoadResourceFar(slot, 128, (s32)&ResourceId_ShopDownArrowTiles);
+    VramBlock_LoadResourceFar(slot, 128, RESOURCE_SHOP_DOWN_ARROW_TILES);
     icon = WindowSprite_CreateFar(slot, OUTPUT_SIZE_16X16, window, 84, 8);
     icon->motion = ICON_HIDDEN;
     work->pageArrows[1] = icon;

@@ -163,11 +163,10 @@ void BattleEffect_RunFlurry(struct BattleEffectParams *args, s32 mode) {
         screen, otherPoint);
 
   // The pictures and the palette.
-  Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, sheet, 0, 0);
+  Resource_LoadAndDecompress(RESOURCE_PARTICLE_SPRITES_A, sheet, 0, 0);
   // The orb (40x288) packed to half width in the map cell buffer: the
   // canvas is shown twice as wide.
-  Resource_LoadAndDecompress((s32)&ResourceId_YellowOrbSheet, work->sheet, 1,
-                             0);
+  Resource_LoadAndDecompress(RESOURCE_YELLOW_ORB_SHEET, work->sheet, 1, 0);
   cels = FLURRY_WAVE_PICTURES;
   for (row = 0; row != 288; row++) {
     for (col = 0; col != YELLOW_ORB_WIDTH; col++) {
@@ -178,29 +177,27 @@ void BattleEffect_RunFlurry(struct BattleEffectParams *args, s32 mode) {
     }
   }
   // The glints' sheet takes the orb's place.
-  Resource_LoadAndDecompress((s32)&ResourceId_TornadoSheet, work->sheet, 1, 0);
+  Resource_LoadAndDecompress(RESOURCE_TORNADO_SHEET, work->sheet, 1, 0);
   if (gFlurry_Styles[mode][FLURRY_ARC_SHEET] == FLURRY_ARCS_AND_WAVES)
-    Resource_LoadAndDecompress((s32)&ResourceId_BlueArcSheetA,
-                               work->sheet + 0xc80, 1, 1);
+    Resource_LoadAndDecompress(RESOURCE_BLUE_ARC_SHEET_A, work->sheet + 0xc80,
+                               1, 1);
   else
-    Resource_LoadAndDecompress((s32)&ResourceId_BlueArcSheetB,
-                               work->sheet + 0xc80, 1, 1);
-  Resource_LoadAndDecompress((s32)&ResourceId_WaveSheet, FLURRY_WAVE_PICTURES,
-                             1, 0);
-  Resource_LoadAndDecompress((s32)&ResourceId_SmokeSheet, FLURRY_SMOKE_PICTURES,
-                             1, 0);
+    Resource_LoadAndDecompress(RESOURCE_BLUE_ARC_SHEET_B, work->sheet + 0xc80,
+                               1, 1);
+  Resource_LoadAndDecompress(RESOURCE_WAVE_SHEET, FLURRY_WAVE_PICTURES, 1, 0);
+  Resource_LoadAndDecompress(RESOURCE_SMOKE_SHEET, FLURRY_SMOKE_PICTURES, 1, 0);
   switch (gFlurry_Styles[mode][FLURRY_PALETTE]) {
   case FLURRY_PALETTE_MARS_DJINNI:
-    resource = (s32)&ResourceId_MarsDjinnSheet;
+    resource = RESOURCE_MARS_DJINN_SHEET;
     break;
   case FLURRY_PALETTE_LIME:
-    resource = (s32)&ResourceId_LimePalette;
+    resource = RESOURCE_LIME_PALETTE;
     break;
   case FLURRY_PALETTE_BLUE_ARC:
-    resource = (s32)&ResourceId_BlueArcSheetB;
+    resource = RESOURCE_BLUE_ARC_SHEET_B;
     break;
   default:
-    resource = (s32)&ResourceId_EmberStreakSheet;
+    resource = RESOURCE_EMBER_STREAK_SHEET;
     break;
   }
   Iwram_CopyWordsEntry((void *)BG_PLTT, Resource_GetTableEntry(resource),

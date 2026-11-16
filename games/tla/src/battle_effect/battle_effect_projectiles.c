@@ -58,32 +58,32 @@ void BattleEffect_RunDjinniEntrance(struct BattleEffectParams *args, u32 packed,
   // The Djinn's palette, then its small picture.
   switch (element) {
   case ELEMENT_VENUS:
-    resource = (s32)&ResourceId_BlastSheet;
+    resource = RESOURCE_BLAST_SHEET;
     break;
   case ELEMENT_MERCURY:
-    resource = (s32)&ResourceId_MercuryDjinnSmallSheet;
+    resource = RESOURCE_MERCURY_DJINN_SMALL_SHEET;
     break;
   case ELEMENT_MARS:
-    resource = (s32)&ResourceId_MarsDjinnSmallSheet;
+    resource = RESOURCE_MARS_DJINN_SMALL_SHEET;
     break;
   default:
-    resource = (s32)&ResourceId_JupiterDjinnSmallSheet;
+    resource = RESOURCE_JUPITER_DJINN_SMALL_SHEET;
     break;
   }
   palette = Resource_GetTableEntry(resource);
   Iwram_CopyWords((void *)BG_PLTT, palette, SHEET_PALETTE_BYTES);
   switch (element) {
   case ELEMENT_VENUS:
-    resource = (s32)&ResourceId_VenusDjinnSmallSheet;
+    resource = RESOURCE_VENUS_DJINN_SMALL_SHEET;
     break;
   case ELEMENT_MERCURY:
-    resource = (s32)&ResourceId_MercuryDjinnSmallSheet;
+    resource = RESOURCE_MERCURY_DJINN_SMALL_SHEET;
     break;
   case ELEMENT_MARS:
-    resource = (s32)&ResourceId_MarsDjinnSmallSheet;
+    resource = RESOURCE_MARS_DJINN_SMALL_SHEET;
     break;
   default:
-    resource = (s32)&ResourceId_JupiterDjinnSmallSheet;
+    resource = RESOURCE_JUPITER_DJINN_SMALL_SHEET;
     break;
   }
   palette = Resource_GetTableEntry(resource);
@@ -92,7 +92,7 @@ void BattleEffect_RunDjinniEntrance(struct BattleEffectParams *args, u32 packed,
   asm("");
   palette += SHEET_PALETTE_BYTES;
   Decompress_TaggedLz(palette, work->sheet);
-  Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, sheet, 0, 0);
+  Resource_LoadAndDecompress(RESOURCE_PARTICLE_SPRITES_A, sheet, 0, 0);
 
   // Additive and max blitters, clipped (flipped for side 1).
   if (side == EFFECT_SIDE_PARTY) {
@@ -568,7 +568,7 @@ void BattleEffect_RunProjectileVolley(struct BattleEffectParams *args,
   draw[0] = (DrawRectangle)Ram_HeapSlots->ramCode;
 
   // The shot pictures.
-  Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, sheet, 0, 0);
+  Resource_LoadAndDecompress(RESOURCE_PARTICLE_SPRITES_A, sheet, 0, 0);
   if (mode == PROJECTILE_VOLLEY_SLASH ||
       mode == PROJECTILE_VOLLEY_CUTTING_EDGE ||
       mode == PROJECTILE_VOLLEY_IMPACT_COMETS) {
@@ -577,22 +577,22 @@ void BattleEffect_RunProjectileVolley(struct BattleEffectParams *args,
     if (mode == PROJECTILE_VOLLEY_IMPACT_COMETS)
       kind = 0;
     if (kind == 0)
-      Resource_LoadAndDecompress((s32)&ResourceId_CometSheetA,
+      Resource_LoadAndDecompress(RESOURCE_COMET_SHEET_A,
                                  work->sheet + PROJECTILE_VOLLEY_COMET_PICTURES,
                                  1, 1);
     else if (kind == 1)
-      Resource_LoadAndDecompress((s32)&ResourceId_CometSheetB,
+      Resource_LoadAndDecompress(RESOURCE_COMET_SHEET_B,
                                  work->sheet + PROJECTILE_VOLLEY_COMET_PICTURES,
                                  1, 1);
     else
-      Resource_LoadAndDecompress((s32)&ResourceId_CometSheetC,
+      Resource_LoadAndDecompress(RESOURCE_COMET_SHEET_C,
                                  work->sheet + PROJECTILE_VOLLEY_COMET_PICTURES,
                                  1, 1);
     if (mode == PROJECTILE_VOLLEY_CUTTING_EDGE) {
       LOAD_BG_PALETTE(ResourceId_IceBlockSheet);
     }
     Resource_LoadAndDecompress(
-        (s32)&ResourceId_WindStreakSheet,
+        RESOURCE_WIND_STREAK_SHEET,
         work->sheet + PROJECTILE_VOLLEY_WIND_STREAK_PICTURES, 1, 0);
     if (mode == PROJECTILE_VOLLEY_CUTTING_EDGE) {
       LOAD_BG_PALETTE(ResourceId_IceBlockSheet);
@@ -602,69 +602,63 @@ void BattleEffect_RunProjectileVolley(struct BattleEffectParams *args,
              mode <= PROJECTILE_VOLLEY_STUN_STING) {
     for (i = 0; i != 8; i++)
       work->sheet[i] = 60;
-    Resource_LoadAndDecompress((s32)&ResourceId_ShortStreakPicture, work->sheet,
-                               1, 1);
+    Resource_LoadAndDecompress(RESOURCE_SHORT_STREAK_PICTURE, work->sheet, 1,
+                               1);
     EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_CLEAR, 0);
     if (mode == PROJECTILE_VOLLEY_BEAST_NEEDLE) {
       REG_BLDCNT = 0;
     } else if (mode == PROJECTILE_VOLLEY_POISON_STING) {
       Iwram_CopyWordsEntry((void *)BG_PLTT,
-                           Resource_GetTableEntry((s32)&ResourceId_LimePalette),
+                           Resource_GetTableEntry(RESOURCE_LIME_PALETTE),
                            SHEET_PALETTE_BYTES);
-      Resource_LoadAndDecompress((s32)&ResourceId_SmokeSheet,
-                                 work->sheet + 0x22, 1, 0);
+      Resource_LoadAndDecompress(RESOURCE_SMOKE_SHEET, work->sheet + 0x22, 1,
+                                 0);
     } else {
-      Iwram_CopyWordsEntry(
-          (void *)BG_PLTT,
-          Resource_GetTableEntry((s32)&ResourceId_WaterSpraySheet),
-          SHEET_PALETTE_BYTES);
-      Resource_LoadAndDecompress((s32)&ResourceId_TornadoSheet,
-                                 work->sheet + 0x22, 1, 0);
+      Iwram_CopyWordsEntry((void *)BG_PLTT,
+                           Resource_GetTableEntry(RESOURCE_WATER_SPRAY_SHEET),
+                           SHEET_PALETTE_BYTES);
+      Resource_LoadAndDecompress(RESOURCE_TORNADO_SHEET, work->sheet + 0x22, 1,
+                                 0);
     }
   } else if (mode == PROJECTILE_VOLLEY_SHURIKEN) {
-    Resource_LoadAndDecompress((s32)&ResourceId_ShurikenSheet, work->sheet, 1,
-                               1);
+    Resource_LoadAndDecompress(RESOURCE_SHURIKEN_SHEET, work->sheet, 1, 1);
     REG_BLDCNT = 0;
     EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_CLEAR, 0);
   } else if (mode == PROJECTILE_VOLLEY_CRAZY_VOICE) {
     Iwram_CopyWordsEntry((void *)BG_PLTT,
-                         Resource_GetTableEntry((s32)&ResourceId_CometSheetA),
+                         Resource_GetTableEntry(RESOURCE_COMET_SHEET_A),
                          SHEET_PALETTE_BYTES);
-    Resource_LoadAndDecompress((s32)&ResourceId_ProjectileVolleyImage,
-                               work->sheet, 0, 0);
+    Resource_LoadAndDecompress(RESOURCE_PROJECTILE_VOLLEY_IMAGE, work->sheet, 0,
+                               0);
     EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
   } else if (mode == PROJECTILE_VOLLEY_WING_FLUTTER ||
              mode == PROJECTILE_VOLLEY_WING_BEAT ||
              mode == PROJECTILE_VOLLEY_WING_STROKE) {
-    Resource_LoadAndDecompress((s32)&ResourceId_YellowSparkSheet, work->sheet,
-                               1, 1);
+    Resource_LoadAndDecompress(RESOURCE_YELLOW_SPARK_SHEET, work->sheet, 1, 1);
     EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
   } else if (mode == PROJECTILE_VOLLEY_HEAT_WAVE ||
              mode == PROJECTILE_VOLLEY_BLAZE_RUSH) {
-    Resource_LoadAndDecompress((s32)&ResourceId_FireballSheet, work->sheet, 1,
-                               1);
+    Resource_LoadAndDecompress(RESOURCE_FIREBALL_SHEET, work->sheet, 1, 1);
     EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
   } else if (mode == PROJECTILE_VOLLEY_DIAMOND_DUST) {
-    Resource_LoadAndDecompress((s32)&ResourceId_CrystalSheet, work->sheet, 1,
-                               1);
+    Resource_LoadAndDecompress(RESOURCE_CRYSTAL_SHEET, work->sheet, 1, 1);
     EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_CLEAR, 0);
   } else if (mode == PROJECTILE_VOLLEY_HYDRO_SLASH) {
     // The beam is unpacked once and then halved, every second byte, into
     // place at 0x1000.
     u8 *beam;
 
-    Resource_LoadAndDecompress((s32)&ResourceId_BlueBeamSheet,
-                               beam = work->sheet, 1, 1);
+    Resource_LoadAndDecompress(RESOURCE_BLUE_BEAM_SHEET, beam = work->sheet, 1,
+                               1);
     for (i = 0; i != 0x5b2; i++) {
       work->sheet[0x1000 + i] = *beam;
       beam += 2;
     }
     EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
   } else {
-    Resource_LoadAndDecompress((s32)&ResourceId_IceChipSheet, work->sheet, 1,
-                               1);
+    Resource_LoadAndDecompress(RESOURCE_ICE_CHIP_SHEET, work->sheet, 1, 1);
     Resource_LoadAndDecompress(
-        (s32)&ResourceId_MercuryDjinnSmallSheet,
+        RESOURCE_MERCURY_DJINN_SMALL_SHEET,
         work->sheet + PROJECTILE_VOLLEY_MERCURY_DJINN_SMALL_PICTURES, 1, 0);
     EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
   }

@@ -56,15 +56,14 @@ void BattleEffect_RunRagingHeat(struct BattleEffectParams *args) {
   centerX =
       targets[0].x + (targets[args->targetCount - 1].x - targets[0].x) / 2;
   baseY = targets[0].y - 48;
-  Resource_LoadAndDecompress((s32)&ResourceId_CornerRuneBSheet, buffer, 1, 1);
+  Resource_LoadAndDecompress(RESOURCE_CORNER_RUNE_B_SHEET, buffer, 1, 1);
   Picture_MirrorIntoQuadrants(buffer, work->sheet, 64, 64);
-  Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, sprites, 0, 0);
-  Resource_LoadAndDecompress((s32)&ResourceId_FlashBurstSheet,
+  Resource_LoadAndDecompress(RESOURCE_PARTICLE_SPRITES_A, sprites, 0, 0);
+  Resource_LoadAndDecompress(RESOURCE_FLASH_BURST_SHEET,
                              work->sheet + RAGING_HEAT_FLASH_BURST_PICTURES, 1,
                              0);
-  Resource_LoadAndDecompress((s32)&ResourceId_PinkBurstSheet, buffer, 1, 0);
-  Resource_LoadAndDecompress((s32)&ResourceId_FireRingTexture, TEXTURE_PIXELS,
-                             0, 0);
+  Resource_LoadAndDecompress(RESOURCE_PINK_BURST_SHEET, buffer, 1, 0);
+  Resource_LoadAndDecompress(RESOURCE_FIRE_RING_TEXTURE, TEXTURE_PIXELS, 0, 0);
   EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
 
   for (frame = 0; frame != RAGING_HEAT_FRAMES; frame++) {
@@ -78,7 +77,7 @@ void BattleEffect_RunRagingHeat(struct BattleEffectParams *args) {
       Sound_PlayFar(SE_SPIN);
     }
     if ((u32)(frame - 40) <= 15) {
-      BattleEffect_StepPaletteToResource((s32)&ResourceId_OrangePaletteB);
+      BattleEffect_StepPaletteToResource(RESOURCE_ORANGE_PALETTE_B);
     }
     if (frame == 56) {
       Sound_PlayFar(SE_CLATTER);
@@ -283,10 +282,8 @@ void BattleEffect_RunJuggle(struct BattleEffectParams *args) {
 
   BattleEffect_StartCanvasLayer(BGCNT_PRIORITY(1));
   REG_BLDALPHA = EFFECT_BLEND_ADD;
-  Resource_LoadAndDecompress((s32)&ResourceId_SmallFlameSheet, work->sheet, 1,
-                             1);
-  Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, sparkCels, 0,
-                             0);
+  Resource_LoadAndDecompress(RESOURCE_SMALL_FLAME_SHEET, work->sheet, 1, 1);
+  Resource_LoadAndDecompress(RESOURCE_PARTICLE_SPRITES_A, sparkCels, 0, 0);
   if (args->variant == EFFECT_VARIANT_STRONGEST) {
     LOAD_BG_PALETTE(ResourceId_OrangePaletteB);
   }

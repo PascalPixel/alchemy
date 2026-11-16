@@ -58,8 +58,7 @@ void BattleEffect_RunDragonCloud(struct BattleEffectParams *args) {
 
   // The pillar sheet, and darker copies of the trail picture, for the trail's
   // tail.
-  Resource_LoadAndDecompress((s32)&ResourceId_FirePillarSheetB, work->sheet, 1,
-                             1);
+  Resource_LoadAndDecompress(RESOURCE_FIRE_PILLAR_SHEET_B, work->sheet, 1, 1);
   for (i = 1; i != 20; i++) {
     for (j = 0; j != DRAGON_CLOUD_TRAIL_PICTURE_BYTES; j++) {
       s32 shade = work->sheet[DRAGON_CLOUD_TRAIL_PICTURE + j];
@@ -73,11 +72,11 @@ void BattleEffect_RunDragonCloud(struct BattleEffectParams *args) {
       }
     }
   }
-  Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, graphics, 0, 0);
-  Resource_LoadAndDecompress((s32)&ResourceId_EmberStreakSheet,
+  Resource_LoadAndDecompress(RESOURCE_PARTICLE_SPRITES_A, graphics, 0, 0);
+  Resource_LoadAndDecompress(RESOURCE_EMBER_STREAK_SHEET,
                              &work->sheet[DRAGON_CLOUD_PUFF_PICTURES], 1, 1);
-  Resource_LoadAndDecompress((s32)&ResourceId_FlashBurstSheet,
-                             Ram_MapCellBuffer, 1, 0);
+  Resource_LoadAndDecompress(RESOURCE_FLASH_BURST_SHEET, Ram_MapCellBuffer, 1,
+                             0);
   if (args->variant == EFFECT_VARIANT_STRONGER) {
     LOAD_BG_PALETTE(ResourceId_OrangePaletteB);
   }
@@ -125,7 +124,7 @@ void BattleEffect_RunDragonCloud(struct BattleEffectParams *args) {
     Io_Write32((FIXEDtoINT(Trig_Cos(angle) * 16)) + 40, &step->y);
     step->variant = -(i * 2);
   }
-  path = Resource_GetTableEntry((s32)&ResourceId_DualStreamPath);
+  path = Resource_GetTableEntry(RESOURCE_DUAL_STREAM_PATH);
 
   for (frame = 0; frame != DRAGON_CLOUD_FRAMES; frame++) {
     struct BattleCamera *camera = Ram_HeapSlots->cameraWork;

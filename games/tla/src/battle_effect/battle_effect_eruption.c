@@ -48,7 +48,7 @@ void BattleEffect_RunEruption(struct BattleEffectParams *args, s32 mode) {
   canvas = Ram_HeapSlots->battleCanvas;
   BattleEffect_StartCanvasLayer(BGCNT_PRIORITY(1));
   REG_BLDALPHA = EFFECT_BLEND_ADD;
-  Resource_LoadAndDecompress((s32)&ResourceId_BlastSheet, work->sheet, 1, 0);
+  Resource_LoadAndDecompress(RESOURCE_BLAST_SHEET, work->sheet, 1, 0);
   if (mode == ERUPTION_SMOKE_BOMB) {
     for (i = 0; i != 64; i++) {
       s32 level = i / 2;
@@ -57,10 +57,9 @@ void BattleEffect_RunEruption(struct BattleEffectParams *args, s32 mode) {
     }
     variant = 1;
   } else {
-    Iwram_CopyWordsEntry(
-        (void *)BG_PLTT,
-        Resource_GetTableEntry((s32)&ResourceId_FireStreakSheet),
-        SHEET_PALETTE_BYTES);
+    Iwram_CopyWordsEntry((void *)BG_PLTT,
+                         Resource_GetTableEntry(RESOURCE_FIRE_STREAK_SHEET),
+                         SHEET_PALETTE_BYTES);
     variant = args->variant;
   }
 

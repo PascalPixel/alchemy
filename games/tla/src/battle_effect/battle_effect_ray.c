@@ -49,9 +49,9 @@ void BattleEffect_RunRay(struct BattleEffectParams *args) {
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED,
                       EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X, BLITTER_ADDITIVE);
   draw[1] = (DrawRectangle)Ram_HeapSlots->ramCodePaired;
-  Resource_LoadAndDecompress((s32)&ResourceId_LightningBoltSheet,
+  Resource_LoadAndDecompress(RESOURCE_LIGHTNING_BOLT_SHEET,
                              work->sheet + BOLT_SHEET, 1, 1);
-  Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, sheet, 0, 0);
+  Resource_LoadAndDecompress(RESOURCE_PARTICLE_SPRITES_A, sheet, 0, 0);
 
   // Scroll the canvas: a fixed offset for the wide variant, else onto the
   // targets' midpoint.

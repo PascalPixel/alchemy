@@ -500,7 +500,7 @@ void Menu_OpenBackdropScreen(void) {
   menu->cursor = icon;
   entry = VramCache_FindFreeEntry();
   if (entry < 96) {
-    VramBlock_LoadResourceFar(entry, 128, (s32)&ResourceId_ShopGemTiles);
+    VramBlock_LoadResourceFar(entry, 128, RESOURCE_SHOP_GEM_TILES);
     icon = WindowSprite_CreateFar(entry, OUTPUT_SIZE_16X16, window, 0, 0);
     icon->motion = ICON_HIDDEN;
     menu->pageArrows[0] = icon;

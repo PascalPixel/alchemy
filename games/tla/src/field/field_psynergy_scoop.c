@@ -307,8 +307,7 @@ void FieldPsynergy_Scoop(void) {
   }
 
   if (work->mode == 0) {
-    Decompress_TaggedLz(Resource_GetTableEntry((s32)&ResourceId_DustPuffA),
-                        work);
+    Decompress_TaggedLz(Resource_GetTableEntry(RESOURCE_DUST_PUFF_A), work);
     particleEntry = VramCache_FindFreeEntry();
     particleTile = VramCache_Load(particleEntry, 0x800, work);
     work->particleTile = particleTile;
@@ -332,9 +331,9 @@ void FieldPsynergy_Scoop(void) {
     }
   } else if (work->mode == 2) {
     if (*alternate == 0)
-      data = Resource_GetTableEntry((s32)&ResourceId_DustPuffA);
+      data = Resource_GetTableEntry(RESOURCE_DUST_PUFF_A);
     else
-      data = Resource_GetTableEntry((s32)&ResourceId_DustPuffB);
+      data = Resource_GetTableEntry(RESOURCE_DUST_PUFF_B);
     Decompress_TaggedLz(data, work);
     particleEntry = VramCache_FindFreeEntry();
     particleTile = VramCache_Load(particleEntry, 0x800, work);
@@ -357,8 +356,7 @@ void FieldPsynergy_Scoop(void) {
       particle->timer = -i;
     }
   } else if (work->mode == 3) {
-    Decompress_TaggedLz(Resource_GetTableEntry((s32)&ResourceId_WhiteSparkle),
-                        work);
+    Decompress_TaggedLz(Resource_GetTableEntry(RESOURCE_WHITE_SPARKLE), work);
     particleEntry = VramCache_FindFreeEntry();
     particleTile = VramCache_Load(particleEntry, 0x80, work);
     work->particleTile = particleTile;
@@ -381,8 +379,7 @@ void FieldPsynergy_Scoop(void) {
   }
 
   if (work->mode == 0) {
-    Decompress_TaggedLz(Resource_GetTableEntry((s32)&ResourceId_ScoopEarth),
-                        work);
+    Decompress_TaggedLz(Resource_GetTableEntry(RESOURCE_SCOOP_EARTH), work);
     pictureEntry = VramCache_FindFreeEntry();
     pictureTile = VramCache_Load(pictureEntry, 0x400, NULL);
     work->pictureTile = pictureTile;

@@ -127,7 +127,7 @@ void BattleEffect_RunAtalanta(struct BattleEffectParams *args) {
 
   // Atalanta: eleven sprite objects with their tiles.
   Ram_HeapSlots->battleWork->keepBackdropPalette = 1;
-  picture = Resource_GetTableEntry((s32)&ResourceId_LeafWarriorTiles);
+  picture = Resource_GetTableEntry(RESOURCE_LEAF_WARRIOR_TILES);
   Iwram_CopyWords(OBJ_PLTT, picture, OBJ_PLTT_SIZE);
   // Two steps: one `+= 512` reuses the size's constant across the call.
   picture += 256;
@@ -145,11 +145,11 @@ void BattleEffect_RunAtalanta(struct BattleEffectParams *args) {
   }
 
   // The shafts, the sky and Atalanta's path.
-  Resource_LoadAndDecompress((s32)&ResourceId_SlashSheet, work->sheet, 1, 1);
-  picture = Resource_GetTableEntry((s32)&ResourceId_LimePalette);
+  Resource_LoadAndDecompress(RESOURCE_SLASH_SHEET, work->sheet, 1, 1);
+  picture = Resource_GetTableEntry(RESOURCE_LIME_PALETTE);
   Iwram_CopyWordsEntry((void *)BG_PLTT, picture, SHEET_PALETTE_BYTES);
-  Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, sheet, 0, 0);
-  path = Resource_GetTableEntry((s32)&ResourceId_StagedParticlePath);
+  Resource_LoadAndDecompress(RESOURCE_PARTICLE_SPRITES_A, sheet, 0, 0);
+  path = Resource_GetTableEntry(RESOURCE_STAGED_PARTICLE_PATH);
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, BLITTER_MAX);
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED, EFFECT_CLIP_BOUNDS,
                       BLITTER_ADDITIVE);
@@ -158,7 +158,7 @@ void BattleEffect_RunAtalanta(struct BattleEffectParams *args) {
   gProjection.centerY = SUMMON_PROJECTION_CENTER_Y;
   wait(1);
   BattleBackground_LoadFar(BATTLE_BACKGROUND_FIXED,
-                           (s32)&ResourceId_VioletSkyBackdrop, 0);
+                           RESOURCE_VIOLET_SKY_BACKDROP, 0);
   work->scrollTimer = 0;
   work->scrollInterval = 4;
   work->scrollStepX = -1;
@@ -317,8 +317,8 @@ void BattleEffect_RunAtalanta(struct BattleEffectParams *args) {
     Sprite_DestroyFar(work->sprites[i]);
   REG_BG2PA = Q_8_8(0.5);
   REG_DISPCNT = EFFECT_DISPCNT;
-  Resource_LoadAndDecompress((s32)&ResourceId_EmberStreakSheet,
-                             Ram_MapCellBuffer, 1, 0);
+  Resource_LoadAndDecompress(RESOURCE_EMBER_STREAK_SHEET, Ram_MapCellBuffer, 1,
+                             0);
 
   // 32 shafts fall from the sky, over the targets where there are any.
   for (i = 0; i != 32; i++) {

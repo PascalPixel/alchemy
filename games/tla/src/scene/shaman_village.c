@@ -515,8 +515,7 @@ void ShamanVillage_BlowAwaySand(void) {
 
   buffer = Heap_Alloc(0x680);
   REG_DISPCNT &= ~DISPCNT_BG0_ON;
-  Decompress_TaggedLz(Resource_GetTableEntry((s32)&ResourceId_WhirlwindTiles),
-                      buffer);
+  Decompress_TaggedLz(Resource_GetTableEntry(RESOURCE_WHIRLWIND_TILES), buffer);
   Dma_Set(buffer, BG_SCREEN_BLOCK(29), DMA_COPY_WORDS(208), REG_DMA3);
   Dma_Set(buffer + 0x1a0, (void *)0x0600ec00, DMA_COPY_WORDS(208), REG_DMA3);
   Heap_Release(buffer);
@@ -528,8 +527,7 @@ void ShamanVillage_BlowAwaySand(void) {
   REG_BG0CNT |= 1;
   Dma_Fill16(16, (void *)0x06002000, 0x500);
   buffer = Heap_Alloc(576);
-  Decompress_TaggedLz(Resource_GetTableEntry((s32)&ResourceId_WhirlwindMap),
-                      buffer);
+  Decompress_TaggedLz(Resource_GetTableEntry(RESOURCE_WHIRLWIND_MAP), buffer);
   i = 0;
   cell = buffer;
 mask:
@@ -2106,8 +2104,7 @@ void ShamanVillage_LoadLettering(s32 graphic) {
   palette = gShamanVillage_LetteringPalettes[graphic];
   if (graphic == 8)
     graphic = 4;
-  Decompress_TaggedLz(Resource_GetTableEntry((s32)&ResourceId_LetteringBanner),
-                      sheet);
+  Decompress_TaggedLz(Resource_GetTableEntry(RESOURCE_LETTERING_BANNER), sheet);
   Dma_Set(sheet->palettes[0] + palette, (void *)&OBJ_PLTT_COLOR(15, 0),
           (DMA_ENABLE | DMA_32BIT) << 16 | 32 / 4, REG_DMA3);
   Vram_Load(gShamanVillage_LetteringVramEntry[0], sizeof(sheet->graphics[0]),

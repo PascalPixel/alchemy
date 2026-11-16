@@ -53,10 +53,9 @@ void BattleEffect_RunOdyssey(struct BattleEffectParams *args) {
   graphics = Ram_HeapSlots->battleSheet;
   BattleEffect_StartCanvasLayer(0);
   REG_BLDALPHA = EFFECT_BLEND_ADD;
-  Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, graphics, 0, 0);
-  Resource_LoadAndDecompress((s32)&ResourceId_GiantSwordSheet, work->sheet, 0,
-                             0);
-  Resource_LoadAndDecompress((s32)&ResourceId_DustBlobSheet,
+  Resource_LoadAndDecompress(RESOURCE_PARTICLE_SPRITES_A, graphics, 0, 0);
+  Resource_LoadAndDecompress(RESOURCE_GIANT_SWORD_SHEET, work->sheet, 0, 0);
+  Resource_LoadAndDecompress(RESOURCE_DUST_BLOB_SHEET,
                              work->sheet + ODYSSEY_DUST_BLOB_PICTURES, 1, 0);
   EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
   // The blitter faces the caster's side.
@@ -77,9 +76,9 @@ void BattleEffect_RunOdyssey(struct BattleEffectParams *args) {
     if (frame == 0) {
       Iwram_FillWordsEntry(canvas, CANVAS_VIEW_BYTES,
                            CANVAS_FILL_WORD(CANVAS_LEVEL_BRIGHTEST));
-      Resource_LoadAndDecompress((s32)&ResourceId_FireRingTexture,
-                                 gMapGridCellBuffer, 0, 0);
-      Resource_LoadAndDecompress((s32)&ResourceId_FlameGradientTexture,
+      Resource_LoadAndDecompress(RESOURCE_FIRE_RING_TEXTURE, gMapGridCellBuffer,
+                                 0, 0);
+      Resource_LoadAndDecompress(RESOURCE_FLAME_GRADIENT_TEXTURE,
                                  Ram_MapCellBuffer + ODYSSEY_FLAME_GRADIENT, 0,
                                  0);
       Graphics_LoadGreyRamp();
@@ -97,7 +96,7 @@ void BattleEffect_RunOdyssey(struct BattleEffectParams *args) {
       list[2] = 0xff;
       BattleActor_SpawnObjectsForListFar(list, 0);
       BattleBackground_LoadFar(BATTLE_BACKGROUND_FIXED,
-                               (s32)&ResourceId_RedHazeBackdrop, 0);
+                               RESOURCE_RED_HAZE_BACKDROP, 0);
       BattleEffect_BuildRepeatingTilemap();
       palette = (u16 *)&BG_PLTT_COLOR(6, 0);
       for (i = 0; i != BATTLE_BACKGROUND_COLORS; i++) {
@@ -135,7 +134,7 @@ void BattleEffect_RunOdyssey(struct BattleEffectParams *args) {
       }
     }
     if (frame == 86)
-      Resource_LoadAndDecompress((s32)&ResourceId_GiantSwordBladeSheet,
+      Resource_LoadAndDecompress(RESOURCE_GIANT_SWORD_BLADE_SHEET,
                                  work->sheet + ODYSSEY_SWORD_BLADE, 1, 1);
 
     // Frame 84: the caster charges at the target.
@@ -468,11 +467,11 @@ void BattleEffect_RunCloudSwirl(struct BattleEffectParams *args) {
   // canvas through the copy blitter.
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, BLITTER_MAX);
   sheetDraw[0] = (DrawRectangle)Ram_HeapSlots->ramCode;
-  palette = Resource_GetTableEntry((s32)&ResourceId_CloudSwirlSheet);
+  palette = Resource_GetTableEntry(RESOURCE_CLOUD_SWIRL_SHEET);
   Iwram_CopyWords((void *)&BG_PLTT_COLOR(6, 0), palette, 128);
   palette += SHEET_PALETTE_BYTES;
   Decompress_TaggedLz(palette, work->sheet);
-  palette = Resource_GetTableEntry((s32)&ResourceId_EmberStreakSheet);
+  palette = Resource_GetTableEntry(RESOURCE_EMBER_STREAK_SHEET);
   Iwram_CopyWords((void *)&BG_PLTT_COLOR(6, 0), palette, 128);
   for (i = 0; i != 0x4000; i++)
     work->sheet[i] += 96;
@@ -484,7 +483,7 @@ void BattleEffect_RunCloudSwirl(struct BattleEffectParams *args) {
 
   // The swirl itself in the canvas (colour 0 made 1, so none is clear),
   // copied twice side by side into the map buffer.
-  Resource_LoadAndDecompress((s32)&ResourceId_CloudSwirlSheet, canvas, 1, 1);
+  Resource_LoadAndDecompress(RESOURCE_CLOUD_SWIRL_SHEET, canvas, 1, 1);
   for (i = 0; i != 0x4000; i++) {
     if (canvas[i] == 0)
       canvas[i] = 1;
@@ -516,7 +515,7 @@ void BattleEffect_RunCloudSwirl(struct BattleEffectParams *args) {
     if (frame > 119)
       Palette_BrightenBgEntries(-1, -1, -1);
     else if ((frame & 3) == 1)
-      BattleEffect_StepPaletteToResource((s32)&ResourceId_BlueFlameSheet);
+      BattleEffect_StepPaletteToResource(RESOURCE_BLUE_FLAME_SHEET);
     gBgScroll[1].x = frame / 2;
 
     // BG2 turns a 1024th of a circle a frame, at 1/532 of the sine's scale

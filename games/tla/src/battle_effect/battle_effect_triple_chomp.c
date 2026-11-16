@@ -54,10 +54,10 @@ void BattleEffect_RunTripleChomp(struct BattleEffectParams *args) {
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X,
                       BLITTER_MAX);
   draw[0] = (DrawRectangle)Ram_HeapSlots->ramCode;
-  Resource_LoadAndDecompress((s32)&ResourceId_FireRingTexture, pixels, 0, 0);
-  Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, graphics, 0, 0);
+  Resource_LoadAndDecompress(RESOURCE_FIRE_RING_TEXTURE, pixels, 0, 0);
+  Resource_LoadAndDecompress(RESOURCE_PARTICLE_SPRITES_A, graphics, 0, 0);
   Iwram_CopyWordsEntry((void *)BG_PLTT,
-                       Resource_GetTableEntry((s32)&ResourceId_BlueFlameSheet),
+                       Resource_GetTableEntry(RESOURCE_BLUE_FLAME_SHEET),
                        SHEET_PALETTE_BYTES);
 
   for (frame = 0; frame != TRIPLE_CHOMP_FRAMES; frame++) {

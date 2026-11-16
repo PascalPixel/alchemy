@@ -47,9 +47,9 @@ void BattleEffect_RunHaunt(struct BattleEffectParams *args) {
   // max and additive blitters, the wave's HBlank DMA and a transfer that
   // fades the canvas by 4 each frame.
   BattleEffect_StartCanvasLayer(0);
-  Resource_LoadAndDecompress((s32)&ResourceId_SkullSheet, work->sheet, 1, 1);
+  Resource_LoadAndDecompress(RESOURCE_SKULL_SHEET, work->sheet, 1, 1);
   Iwram_CopyWordsEntry((void *)BG_PLTT,
-                       Resource_GetTableEntry((s32)&ResourceId_PinkBurstSheet),
+                       Resource_GetTableEntry(RESOURCE_PINK_BURST_SHEET),
                        SHEET_PALETTE_BYTES);
   BattleEffect_FetchRectangleBlitters(0, draw);
   Task_Add(BattleEffect_ArmBg2AffineHBlankDma, TASK_PASS_FRAME);
@@ -159,7 +159,7 @@ void BattleEffect_RunUnusedOrbitingSpirals(struct BattleEffectParams *args) {
   // Set up: the spiral sheet with its palette, the two blitters, the wave's
   // HBlank DMA and the transfer at half strength.
   EFFECT_START_NARROW_CANVAS(0);
-  Resource_LoadAndDecompress((s32)&ResourceId_SpiralSheet, work->sheet, 1, 1);
+  Resource_LoadAndDecompress(RESOURCE_SPIRAL_SHEET, work->sheet, 1, 1);
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, BLITTER_MAX);
   draw[0] = (DrawRectangle)Ram_HeapSlots->ramCode;
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED,
@@ -306,15 +306,14 @@ void BattleEffect_RunGatheringLights(struct BattleEffectParams *args,
   // Set up: the mote picture, the mode's palette, and the max and additive
   // blitters for the caster's side.
   BattleEffect_StartCanvasLayer(BGCNT_PRIORITY(1));
-  Resource_LoadAndDecompress((s32)&ResourceId_MemberBurstImage, work->sheet, 0,
-                             0);
+  Resource_LoadAndDecompress(RESOURCE_MEMBER_BURST_IMAGE, work->sheet, 0, 0);
   if (mode == GATHERING_LIGHTS_DEMON_NIGHT ||
       mode == GATHERING_LIGHTS_THORNY_GRAVE)
-    palette = (s32)&ResourceId_PinkBurstSheet;
+    palette = RESOURCE_PINK_BURST_SHEET;
   else if (mode == GATHERING_LIGHTS_RUMBLE)
-    palette = (s32)&ResourceId_MarsDjinnSheet;
+    palette = RESOURCE_MARS_DJINN_SHEET;
   else
-    palette = (s32)&ResourceId_MercuryDjinnSheet;
+    palette = RESOURCE_MERCURY_DJINN_SHEET;
   {
     const void *colors = Resource_GetTableEntry(palette);
     s32 (*copy)(void *, const void *, s32) = Iwram_CopyWordsEntry;

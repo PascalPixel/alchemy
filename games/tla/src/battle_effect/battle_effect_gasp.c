@@ -66,10 +66,9 @@ void BattleEffect_RunGaspFamily(struct BattleEffectParams *args, s32 mode) {
                                                    args->side ^ 1,
                                                    DJINNI_ANCHOR_TARGET_X),
                                    screen, other);
-    Resource_LoadAndDecompress((s32)&ResourceId_JupiterDjinnSmallSheet,
-                               FIGURE(work), 1, 1);
-    Resource_LoadAndDecompress((s32)&ResourceId_BurningSkullSheet, work->sheet,
-                               0, 0);
+    Resource_LoadAndDecompress(RESOURCE_JUPITER_DJINN_SMALL_SHEET, FIGURE(work),
+                               1, 1);
+    Resource_LoadAndDecompress(RESOURCE_BURNING_SKULL_SHEET, work->sheet, 0, 0);
     REG_BG2CNT = BGCNT_PRIORITY(1) | BGCNT_CHAR_BASE(1) | BGCNT_256_COLORS |
                  BGCNT_SCREEN_BASE(7);
     frames = 84;
@@ -79,10 +78,9 @@ void BattleEffect_RunGaspFamily(struct BattleEffectParams *args, s32 mode) {
                                                    args->side ^ 1,
                                                    DJINNI_ANCHOR_TARGET_X),
                                    screen, other);
-    Resource_LoadAndDecompress((s32)&ResourceId_LightBurstSheet, work->sheet, 1,
-                               0);
-    Resource_LoadAndDecompress((s32)&ResourceId_MercuryDjinnSmallSheet,
-                               FIGURE(work), 1, 1);
+    Resource_LoadAndDecompress(RESOURCE_LIGHT_BURST_SHEET, work->sheet, 1, 0);
+    Resource_LoadAndDecompress(RESOURCE_MERCURY_DJINN_SMALL_SHEET, FIGURE(work),
+                               1, 1);
     LOAD_BG_PALETTE(ResourceId_OrangePaletteB);
     frames = 48;
   } else if (mode == GASP_MODE_MOLD) {
@@ -94,9 +92,9 @@ void BattleEffect_RunGaspFamily(struct BattleEffectParams *args, s32 mode) {
                                                    args->side ^ 1,
                                                    DJINNI_ANCHOR_HIGH_TARGET_X),
                                    screen, other);
-    Resource_LoadAndDecompress((s32)&ResourceId_VenusDjinnSmallSheet,
-                               FIGURE(work), 1, 0);
-    Resource_LoadAndDecompress((s32)&ResourceId_VenusDjinnSheet,
+    Resource_LoadAndDecompress(RESOURCE_VENUS_DJINN_SMALL_SHEET, FIGURE(work),
+                               1, 0);
+    Resource_LoadAndDecompress(RESOURCE_VENUS_DJINN_SHEET,
                                work->sheet + GASP_FAMILY_VENUS_DJINN_PICTURES,
                                1, 0);
     {
@@ -113,31 +111,27 @@ void BattleEffect_RunGaspFamily(struct BattleEffectParams *args, s32 mode) {
         args,
         DJINNI_ENTRANCE(ELEMENT_JUPITER, args->side ^ 1, DJINNI_ANCHOR_CENTRE),
         screen, other);
-    Resource_LoadAndDecompress((s32)&ResourceId_JupiterDjinnSmallSheet,
-                               FIGURE(work), 1, 1);
-    Resource_LoadAndDecompress((s32)&ResourceId_MusicNoteSheet, work->sheet, 0,
-                               0);
+    Resource_LoadAndDecompress(RESOURCE_JUPITER_DJINN_SMALL_SHEET, FIGURE(work),
+                               1, 1);
+    Resource_LoadAndDecompress(RESOURCE_MUSIC_NOTE_SHEET, work->sheet, 0, 0);
     frames = 80;
     Sound_PlayFar(MUS_CURE);
   } else if (mode == GASP_MODE_BEAT_DANCE) {
-    Resource_LoadAndDecompress((s32)&ResourceId_MusicNoteSheet, work->sheet, 0,
-                               0);
+    Resource_LoadAndDecompress(RESOURCE_MUSIC_NOTE_SHEET, work->sheet, 0, 0);
     LOAD_BG_PALETTE(ResourceId_MarsDjinnSmallSheet);
     frames = 64;
   } else if (mode == GASP_MODE_CLARION_CRY) {
-    Resource_LoadAndDecompress((s32)&ResourceId_MusicNoteSheet, work->sheet, 0,
-                               0);
+    Resource_LoadAndDecompress(RESOURCE_MUSIC_NOTE_SHEET, work->sheet, 0, 0);
     LOAD_BG_PALETTE(ResourceId_MercuryDjinnSmallSheet);
     work->fadeFrames = BACKGROUND_DARKEN_FRAMES;
     work->fadeStep = 0;
     frames = 64;
   } else if (mode == GASP_MODE_CAGE) {
-    Resource_LoadAndDecompress((s32)&ResourceId_SmokeBandSheet, work->sheet, 1,
-                               1);
+    Resource_LoadAndDecompress(RESOURCE_SMOKE_BAND_SHEET, work->sheet, 1, 1);
     frames = 40;
   } else if (mode == GASP_MODE_ELEMENT_SWAP) {
-    Resource_LoadAndDecompress((s32)&ResourceId_FireRingTexture, cells, 0, 0);
-    Resource_LoadAndDecompress((s32)&ResourceId_CornerGlowSheet,
+    Resource_LoadAndDecompress(RESOURCE_FIRE_RING_TEXTURE, cells, 0, 0);
+    Resource_LoadAndDecompress(RESOURCE_CORNER_GLOW_SHEET,
                                work->sheet + GASP_FAMILY_CORNER_GLOW_PICTURES,
                                1, 1);
     Picture_MirrorIntoQuadrants(work->sheet + GASP_FAMILY_CORNER_GLOW_PICTURES,
@@ -146,8 +140,8 @@ void BattleEffect_RunGaspFamily(struct BattleEffectParams *args, s32 mode) {
     work->fadeStep = 0;
     frames = 48;
   } else if (mode == GASP_MODE_PSY_BOOST) {
-    Resource_LoadAndDecompress((s32)&ResourceId_FireRingTexture, cells, 0, 0);
-    Resource_LoadAndDecompress((s32)&ResourceId_CornerGlowSheet,
+    Resource_LoadAndDecompress(RESOURCE_FIRE_RING_TEXTURE, cells, 0, 0);
+    Resource_LoadAndDecompress(RESOURCE_CORNER_GLOW_SHEET,
                                work->sheet + GASP_FAMILY_CORNER_GLOW_PICTURES,
                                1, 1);
     Picture_MirrorIntoQuadrants(work->sheet + GASP_FAMILY_CORNER_GLOW_PICTURES,
@@ -162,22 +156,20 @@ void BattleEffect_RunGaspFamily(struct BattleEffectParams *args, s32 mode) {
         screen, other);
     REG_BG2CNT = BGCNT_PRIORITY(1) | BGCNT_CHAR_BASE(1) | BGCNT_256_COLORS |
                  BGCNT_SCREEN_BASE(7);
-    Resource_LoadAndDecompress((s32)&ResourceId_MarsDjinnSmallSheet,
-                               FIGURE(work), 1, 0);
-    Resource_LoadAndDecompress((s32)&ResourceId_FlameBandTexture, work->sheet,
-                               0, 0);
-    Resource_LoadAndDecompress((s32)&ResourceId_GlowBandTextureA,
+    Resource_LoadAndDecompress(RESOURCE_MARS_DJINN_SMALL_SHEET, FIGURE(work), 1,
+                               0);
+    Resource_LoadAndDecompress(RESOURCE_FLAME_BAND_TEXTURE, work->sheet, 0, 0);
+    Resource_LoadAndDecompress(RESOURCE_GLOW_BAND_TEXTURE_A,
                                work->sheet + GASP_FAMILY_CORNER_GLOW_PICTURES,
                                0, 0);
-    Resource_LoadAndDecompress((s32)&ResourceId_FireRingTexture, cells, 0, 0);
+    Resource_LoadAndDecompress(RESOURCE_FIRE_RING_TEXTURE, cells, 0, 0);
     LOAD_BG_PALETTE(ResourceId_OrangePaletteB);
     frames = 82;
   } else if (mode == GASP_MODE_CALL_DULLAHAN) {
     s32 j;
     s32 k;
 
-    Resource_LoadAndDecompress((s32)&ResourceId_LightningBoltSheet, cells, 1,
-                               1);
+    Resource_LoadAndDecompress(RESOURCE_LIGHTNING_BOLT_SHEET, cells, 1, 1);
     Iwram_ClearWordsEntry(work->sheet, 0x4000);
     for (i = 0; i != 4; i++)
       for (k = 0; k != 120; k++)
@@ -187,12 +179,11 @@ void BattleEffect_RunGaspFamily(struct BattleEffectParams *args, s32 mode) {
     LOAD_BG_PALETTE(ResourceId_VioletPaletteF);
     frames = 60;
   } else if (mode == GASP_MODE_COUNTER_RUSH) {
-    Resource_LoadAndDecompress((s32)&ResourceId_SwirlTexture, work->sheet, 0,
-                               0);
+    Resource_LoadAndDecompress(RESOURCE_SWIRL_TEXTURE, work->sheet, 0, 0);
     LOAD_BG_PALETTE(ResourceId_MercuryDjinnSmallSheet);
     frames = 76;
   } else if (mode == GASP_MODE_DEMON_EYE) {
-    Resource_LoadAndDecompress((s32)&ResourceId_CornerGlowSheet,
+    Resource_LoadAndDecompress(RESOURCE_CORNER_GLOW_SHEET,
                                work->sheet + GASP_FAMILY_CORNER_GLOW_PICTURES,
                                1, 1);
     Picture_MirrorIntoQuadrants(work->sheet + GASP_FAMILY_CORNER_GLOW_PICTURES,
@@ -205,9 +196,9 @@ void BattleEffect_RunGaspFamily(struct BattleEffectParams *args, s32 mode) {
 
     REG_BG2CNT = BGCNT_PRIORITY(1) | BGCNT_CHAR_BASE(1) | BGCNT_256_COLORS |
                  BGCNT_SCREEN_BASE(7);
-    Resource_LoadAndDecompress((s32)&ResourceId_FireRingTexture,
+    Resource_LoadAndDecompress(RESOURCE_FIRE_RING_TEXTURE,
                                work->sheet + GASP_FIRE_RING, 0, 0);
-    Resource_LoadAndDecompress((s32)&ResourceId_SmokeSheet, work->sheet, 1, 0);
+    Resource_LoadAndDecompress(RESOURCE_SMOKE_SHEET, work->sheet, 1, 0);
     for (i = 0, p = work->sheet; i != 0x1b00; i++, p++) {
       *p <<= 1;
       if (*p > CANVAS_LEVEL_BRIGHTEST)
@@ -233,13 +224,12 @@ void BattleEffect_RunGaspFamily(struct BattleEffectParams *args, s32 mode) {
       work->fadeStep = 0;
       frames = 70;
     }
-    Resource_LoadAndDecompress((s32)&ResourceId_SwirlTexture, work->sheet, 0,
-                               0);
-    Resource_LoadAndDecompress((s32)&ResourceId_MarsDjinnSmallSheet,
-                               FIGURE(work), 1, 1);
+    Resource_LoadAndDecompress(RESOURCE_SWIRL_TEXTURE, work->sheet, 0, 0);
+    Resource_LoadAndDecompress(RESOURCE_MARS_DJINN_SMALL_SHEET, FIGURE(work), 1,
+                               1);
     LOAD_BG_PALETTE(ResourceId_OrangePaletteB);
   }
-  Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, sprites, 0, 0);
+  Resource_LoadAndDecompress(RESOURCE_PARTICLE_SPRITES_A, sprites, 0, 0);
   EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
   if (mode == GASP_MODE_GASP || mode == GASP_MODE_LULL)
     Task_Add(BattleEffect_ArmBg2AffineHBlankDma, TASK_PASS_FRAME);
@@ -1219,13 +1209,11 @@ void BattleEffect_RunGaspFamily(struct BattleEffectParams *args, s32 mode) {
       for (i = 0; i != 3; i++) {
         if (frame > 7) {
           if (frame <= 15)
-            BattleEffect_StepPaletteToResource(
-                (s32)&ResourceId_MercuryDjinnSheet);
+            BattleEffect_StepPaletteToResource(RESOURCE_MERCURY_DJINN_SHEET);
           else if (frame <= 23)
-            BattleEffect_StepPaletteToResource((s32)&ResourceId_MarsDjinnSheet);
+            BattleEffect_StepPaletteToResource(RESOURCE_MARS_DJINN_SHEET);
           else
-            BattleEffect_StepPaletteToResource(
-                (s32)&ResourceId_JupiterDjinnSheet);
+            BattleEffect_StepPaletteToResource(RESOURCE_JUPITER_DJINN_SHEET);
         }
       }
       if (frame == 16) {

@@ -108,23 +108,23 @@ void BattleEffect_RunStreakVolley(struct BattleEffectParams *args, s32 mode) {
   }
 
   // The streak pictures, and the mode's colours.
-  Resource_LoadAndDecompress((s32)&ResourceId_FiveModeImage, work->sheet, 0, 0);
+  Resource_LoadAndDecompress(RESOURCE_FIVE_MODE_IMAGE, work->sheet, 0, 0);
   switch (mode) {
   case 0:
-    resource = (s32)&ResourceId_EmberStreakSheet;
+    resource = RESOURCE_EMBER_STREAK_SHEET;
     break;
   case 1:
-    resource = (s32)&ResourceId_LimePalette;
+    resource = RESOURCE_LIME_PALETTE;
     break;
   case 2:
-    resource = (s32)&ResourceId_VioletPaletteD;
+    resource = RESOURCE_VIOLET_PALETTE_D;
     break;
   case 3:
-    resource = (s32)&ResourceId_RedPaletteB;
+    resource = RESOURCE_RED_PALETTE_B;
     break;
   case 4:
   default:
-    resource = (s32)&ResourceId_CyanPalette;
+    resource = RESOURCE_CYAN_PALETTE;
     break;
   }
   Iwram_CopyWordsEntry((void *)BG_PLTT, Resource_GetTableEntry(resource),
@@ -325,13 +325,13 @@ void BattleEffect_RunMoteFountain(struct BattleEffectParams *args, s32 mode) {
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED,
                       EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_Y, BLITTER_MAX);
   draw[1] = (DrawRectangle)Ram_HeapSlots->ramCodePaired;
-  Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, sheet, 0, 0);
+  Resource_LoadAndDecompress(RESOURCE_PARTICLE_SPRITES_A, sheet, 0, 0);
   if (mode == MOTE_FOUNTAIN_FOUNTAIN_HEALING)
-    resource = (s32)&ResourceId_OrangePaletteA;
+    resource = RESOURCE_ORANGE_PALETTE_A;
   else if (mode == MOTE_FOUNTAIN_DRIFTING)
-    resource = (s32)&ResourceId_EarthWallSheet;
+    resource = RESOURCE_EARTH_WALL_SHEET;
   else
-    resource = (s32)&ResourceId_GreenPalette;
+    resource = RESOURCE_GREEN_PALETTE;
   Iwram_CopyWordsEntry((void *)BG_PLTT, Resource_GetTableEntry(resource),
                        SHEET_PALETTE_BYTES);
   EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_THREE_QUARTERS);

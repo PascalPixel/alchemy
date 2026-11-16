@@ -1362,7 +1362,7 @@ void SelectionMenu_LoadLargeIcon(void) {
                                            sizeof(GlyphTransfer));
   transfer = &state->records[SELECTION_RECORD_LARGE_ICON];
   no = selection->base;
-  table = Resource_GetTableEntry((s32)&ResourceId_CommandIcons);
+  table = Resource_GetTableEntry(RESOURCE_COMMAND_ICONS);
   {
     u8 **destination = &buffer->encoded;
     resource = table + *(u16 *)(table + selection->base * 2);

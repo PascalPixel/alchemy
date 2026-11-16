@@ -26,7 +26,7 @@ void BattleEffect_RunNirvana(struct BattleEffectParams *args) {
   view = Ram_HeapSlots->cameraWork;
   sheet = Ram_HeapSlots->battleSheet;
   BattleEffect_StartCanvasLayer(BGCNT_PRIORITY(1));
-  Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, sheet, 0, 0);
+  Resource_LoadAndDecompress(RESOURCE_PARTICLE_SPRITES_A, sheet, 0, 0);
   LOAD_BG_PALETTE(ResourceId_PinkBurstSheet);
   object = BattleObject_GetFar(args->targets[0])->object;
   half = BattleUnit_GetEffectHeightFar(args->targets[0]) / 2;
@@ -151,7 +151,7 @@ void BattleEffect_RunStoneJustice(struct BattleEffectParams *args) {
   canvas = Ram_HeapSlots->battleCanvas;
   EFFECT_START_NARROW_CANVAS(BGCNT_PRIORITY(1));
   REG_BLDCNT = 0;
-  Resource_LoadAndDecompress((s32)&ResourceId_BoulderSheet, work->sheet, 1, 1);
+  Resource_LoadAndDecompress(RESOURCE_BOULDER_SHEET, work->sheet, 1, 1);
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS,
                       BLITTER_TRANSPARENT);
   blit = (DrawRectangle)Ram_HeapSlots->ramCode;
@@ -306,11 +306,10 @@ void BattleEffect_RunSoulShatter(struct BattleEffectParams *args) {
   sheet = Ram_HeapSlots->battleSheet;
   BattleEffect_StartCanvasLayer(BGCNT_PRIORITY(1));
   REG_BLDALPHA = BLEND_ALPHA(16, 12);
-  Resource_LoadAndDecompress((s32)&ResourceId_LimeColumnSheet, work->sheet, 1,
-                             1);
-  Resource_LoadAndDecompress((s32)&ResourceId_BlastSheet,
-                             work->sheet + SPARK_OFFSET, 1, 0);
-  Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, sheet, 0, 0);
+  Resource_LoadAndDecompress(RESOURCE_LIME_COLUMN_SHEET, work->sheet, 1, 1);
+  Resource_LoadAndDecompress(RESOURCE_BLAST_SHEET, work->sheet + SPARK_OFFSET,
+                             1, 0);
+  Resource_LoadAndDecompress(RESOURCE_PARTICLE_SPRITES_A, sheet, 0, 0);
   LOAD_BG_PALETTE(ResourceId_OrangePaletteB);
   EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_THREE_QUARTERS);
   target = BattleObject_GetFar(args->targets[0])->object;
@@ -560,12 +559,11 @@ void BattleEffect_RunSerac(struct BattleEffectParams *args) {
   BattleEffect_FetchRectangleBlitters(0, (void **)blitters);
   EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
   mistSheet = Ram_MapCellBuffer + 0x4000;
-  Resource_LoadAndDecompress((s32)&ResourceId_FlameBandTexture, mistSheet, 0,
-                             0);
-  Resource_LoadAndDecompress((s32)&ResourceId_DustBlobSheet, work->sheet, 1, 1);
-  Resource_LoadAndDecompress((s32)&ResourceId_BlueCloudPuffSheet,
+  Resource_LoadAndDecompress(RESOURCE_FLAME_BAND_TEXTURE, mistSheet, 0, 0);
+  Resource_LoadAndDecompress(RESOURCE_DUST_BLOB_SHEET, work->sheet, 1, 1);
+  Resource_LoadAndDecompress(RESOURCE_BLUE_CLOUD_PUFF_SHEET,
                              work->sheet + SERAC_CLOUD_PUFFS, 0, 0);
-  Resource_LoadAndDecompress((s32)&ResourceId_MercuryDjinnSheet,
+  Resource_LoadAndDecompress(RESOURCE_MERCURY_DJINN_SHEET,
                              work->sheet + SERAC_MERCURY_DJINN_PICTURES, 1, 0);
   LOAD_BG_PALETTE(ResourceId_BlueFlameSheet);
   // A block of its own: camera, savedYaw and target take their stack slots

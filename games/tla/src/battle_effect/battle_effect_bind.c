@@ -154,11 +154,11 @@ void BattleEffect_RunBind(struct BattleEffectParams *args) {
         DJINNI_ENTRANCE(ELEMENT_JUPITER, args->side, DJINNI_ANCHOR_OVER_TARGET),
         origin, originSize);
   REG_BG2PA = Q_8_8(1);
-  Resource_LoadAndDecompress((s32)&ResourceId_RuneSheet, work->sheet, 1, 1);
-  Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, graphics, 0, 0);
-  Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesD,
+  Resource_LoadAndDecompress(RESOURCE_RUNE_SHEET, work->sheet, 1, 1);
+  Resource_LoadAndDecompress(RESOURCE_PARTICLE_SPRITES_A, graphics, 0, 0);
+  Resource_LoadAndDecompress(RESOURCE_PARTICLE_SPRITES_D,
                              work->sheet + FLARE_SHEET, 0, 0);
-  Resource_LoadAndDecompress((s32)&ResourceId_JupiterDjinnSheet,
+  Resource_LoadAndDecompress(RESOURCE_JUPITER_DJINN_SHEET,
                              work->sheet + DJINN_SHEET, 1, 0);
   EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_DARKEN, CANVAS_FILL_WORD(4));
 
@@ -310,9 +310,9 @@ void BattleEffect_RunUnusedTriangleStrike(struct BattleEffectParams *args) {
   // Set up: the rune picture with its palette, the dots, the flares, and a
   // transfer that fades the canvas by 4 each frame.
   EFFECT_START_NARROW_CANVAS(0);
-  Resource_LoadAndDecompress((s32)&ResourceId_RuneSheet, work->sheet, 1, 1);
-  Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, graphics, 0, 0);
-  Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesD,
+  Resource_LoadAndDecompress(RESOURCE_RUNE_SHEET, work->sheet, 1, 1);
+  Resource_LoadAndDecompress(RESOURCE_PARTICLE_SPRITES_A, graphics, 0, 0);
+  Resource_LoadAndDecompress(RESOURCE_PARTICLE_SPRITES_D,
                              work->sheet + FLARE_SHEET, 0, 0);
   EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_DARKEN, CANVAS_FILL_WORD(4));
 

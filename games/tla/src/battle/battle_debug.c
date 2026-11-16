@@ -295,7 +295,7 @@ restart:
       if (input->held & KEY_DOWN)
         GameFlag_Set(FLAG_LINK_BATTLE);
       Unit_CalculateFar(0);
-      *backdropId = (s32)&ResourceId_ColossoBackdrop;
+      *backdropId = RESOURCE_COLOSSO_BACKDROP;
       m = &gMainRoutineWork;
       if (encounter == 28)
         GameFlag_Set(FLAG_DJINN_LESSON);

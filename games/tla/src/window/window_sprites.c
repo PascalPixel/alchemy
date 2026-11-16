@@ -59,7 +59,7 @@ s32 Glyph_Draw(struct Window *window, s32 character, s32 x, s32 y, s32 mode) {
     // The small font, and the kana's voicing mark drawn as a second glyph
     // after it.
     if (*(struct Window **)Ram_HeapSlots->battleMessage == window) {
-      font = Resource_GetTableEntry((s32)&ResourceId_SmallFont);
+      font = Resource_GetTableEntry(RESOURCE_SMALL_FONT);
       width = 3;
       if (character == ' ')
         goto done;
@@ -85,12 +85,12 @@ s32 Glyph_Draw(struct Window *window, s32 character, s32 x, s32 y, s32 mode) {
     s32 result;
 
     if (*(struct Window **)Ram_HeapSlots->battleMessage == window) {
-      Resource_GetTableEntry((s32)&ResourceId_WindowTiles);
+      Resource_GetTableEntry(RESOURCE_WINDOW_TILES);
       width = 3;
       if (character == ' ')
         goto done;
     }
-    font = Resource_GetTableEntry((s32)&ResourceId_WindowTiles);
+    font = Resource_GetTableEntry(RESOURCE_WINDOW_TILES);
     width = 4;
     if (character != ' ') {
       RamCode_Load(draw, Glyph_DrawCode, Glyph_DrawCodeSize);

@@ -45,16 +45,15 @@ void BattleEffect_RunBreaths(struct BattleEffectParams *args, s32 mode) {
     BattleEffect_StartCanvasLayer(0);
   else
     BattleEffect_StartCanvasLayer(BGCNT_PRIORITY(1));
-  Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, graphics, 0, 0);
+  Resource_LoadAndDecompress(RESOURCE_PARTICLE_SPRITES_A, graphics, 0, 0);
   if (mode == BREATH_PIKE) {
     LOAD_BG_PALETTE(ResourceId_BlueFlameSheet);
   } else {
     LOAD_BG_PALETTE(ResourceId_OrangePaletteB);
   }
-  Resource_LoadAndDecompress((s32)&ResourceId_FireRingTexture,
-                             Ram_MapCellBuffer, 0, 0);
-  Resource_LoadAndDecompress((s32)&ResourceId_FlameBandTexture, JAW_TEXTURE, 0,
+  Resource_LoadAndDecompress(RESOURCE_FIRE_RING_TEXTURE, Ram_MapCellBuffer, 0,
                              0);
+  Resource_LoadAndDecompress(RESOURCE_FLAME_BAND_TEXTURE, JAW_TEXTURE, 0, 0);
   if (mode == BREATH_BEAM) {
     for (i = 0; i != 16; i++) {
       u8 *pixel = work->sheet + i * 0x400;
@@ -77,11 +76,9 @@ void BattleEffect_RunBreaths(struct BattleEffectParams *args, s32 mode) {
       }
     }
   } else if (mode == BREATH_BLAST) {
-    Resource_LoadAndDecompress((s32)&ResourceId_GlowBandTextureA, work->sheet,
-                               0, 0);
+    Resource_LoadAndDecompress(RESOURCE_GLOW_BAND_TEXTURE_A, work->sheet, 0, 0);
   } else {
-    Resource_LoadAndDecompress((s32)&ResourceId_DustCloudSheet, work->sheet, 1,
-                               0);
+    Resource_LoadAndDecompress(RESOURCE_DUST_CLOUD_SHEET, work->sheet, 1, 0);
   }
 
   // A clipped MAX blitter facing the targets, and a clipped additive one.
@@ -515,14 +512,12 @@ void BattleEffect_RunCrescentSlash(struct BattleEffectParams *args, s32 mode) {
   draw[0] = (DrawRectangle)Ram_HeapSlots->ramCode;
 
   // Load both crescents and set the blend.
-  Resource_LoadAndDecompress((s32)&ResourceId_GreyCrescentSheet, cells, 1, 1);
-  Resource_LoadAndDecompress((s32)&ResourceId_StarCrescentSheet, work->sheet, 1,
-                             0);
+  Resource_LoadAndDecompress(RESOURCE_GREY_CRESCENT_SHEET, cells, 1, 1);
+  Resource_LoadAndDecompress(RESOURCE_STAR_CRESCENT_SHEET, work->sheet, 1, 0);
   if (mode == CRESCENT_SLASH_HUMAN_HUNT) {
-    Iwram_CopyWordsEntry(
-        (void *)BG_PLTT,
-        Resource_GetTableEntry((s32)&ResourceId_MarsDjinnSheet),
-        SHEET_PALETTE_BYTES);
+    Iwram_CopyWordsEntry((void *)BG_PLTT,
+                         Resource_GetTableEntry(RESOURCE_MARS_DJINN_SHEET),
+                         SHEET_PALETTE_BYTES);
     REG_BLDALPHA = BLEND_ALPHA(16, 8);
     EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
   } else {

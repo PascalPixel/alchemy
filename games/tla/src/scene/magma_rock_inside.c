@@ -2966,7 +2966,7 @@ void MagmaRockInside_StartFallingRocks(void) {
   struct RockSprite *sprite;
 
   MagmaRockInside_DecompressTaggedLz(
-      Resource_GetTableEntry((s32)&ResourceId_FallingRock), work);
+      Resource_GetTableEntry(RESOURCE_FALLING_ROCK), work);
   entry = VramCache_FindFreeEntry();
   tile = Vram_Load(entry, 0x500, work);
   work->tileBase = tile;

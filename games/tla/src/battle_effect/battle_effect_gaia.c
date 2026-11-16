@@ -80,10 +80,10 @@ void BattleEffect_RunGaia(struct BattleEffectParams *args) {
   REG_BG2X = gGaia_Bg2Shifts[args->side][args->variant] << 8;
 
   // The palette: BG colours 1-63 darkened eight steps in each channel.
-  Resource_LoadAndDecompress((s32)&ResourceId_EarthWallSheet, Ram_MapCellBuffer,
-                             1, 0);
+  Resource_LoadAndDecompress(RESOURCE_EARTH_WALL_SHEET, Ram_MapCellBuffer, 1,
+                             0);
   Iwram_CopyWordsEntry(palette,
-                       Resource_GetTableEntry((s32)&ResourceId_OrangePaletteA),
+                       Resource_GetTableEntry(RESOURCE_ORANGE_PALETTE_A),
                        SHEET_PALETTE_BYTES);
   color = (u16 *)&BG_PLTT_COLOR(0, 1);
   for (i = 0; i != 63; i++) {
@@ -133,7 +133,7 @@ void BattleEffect_RunGaia(struct BattleEffectParams *args) {
     for (k = 0; k != gGaia_FlameWidths[i] * gGaia_FlameHeights[i]; k++)
       work->sheet[offset++] = *source++;
   }
-  Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, sheet, 0, 0);
+  Resource_LoadAndDecompress(RESOURCE_PARTICLE_SPRITES_A, sheet, 0, 0);
 
   // The rocks: eleven animated objects, four of each size.
   for (i = 0; i != GAIA_ROCKS; i++) {

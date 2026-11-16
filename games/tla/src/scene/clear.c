@@ -120,7 +120,7 @@ void Clear_LoadBackground(void) {
   struct BgScroll *scroll;
   s32 blank;
 
-  id = (s32)&ResourceId_LogoOnBlack;
+  id = RESOURCE_LOGO_ON_BLACK;
   ScreenFade_ToBlack(0);
   REG_BG2CNT = BGCNT_PRIORITY(1) | BGCNT_256_COLORS | BGCNT_SCREEN_BASE(6);
   gBgScroll[2].y = 0;

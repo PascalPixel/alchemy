@@ -375,8 +375,8 @@ void FieldPsynergy_Burst(void) {
     particle++;
   }
 
-  Decompress_TaggedLz(
-      Resource_GetTableEntry((s32)&ResourceId_FieldEffectExplosion), work);
+  Decompress_TaggedLz(Resource_GetTableEntry(RESOURCE_FIELD_EFFECT_EXPLOSION),
+                      work);
   burstEntry = VramCache_FindFreeEntry();
   tile = VramCache_Load(burstEntry, 0x400, work);
   work->burstTile = tile;
@@ -392,7 +392,7 @@ void FieldPsynergy_Burst(void) {
     burstSprite++;
     particle++;
   }
-  Decompress_TaggedLz(Resource_GetTableEntry((s32)&ResourceId_GlowDisc),
+  Decompress_TaggedLz(Resource_GetTableEntry(RESOURCE_GLOW_DISC),
                       Ram_HeapSlots->battleCanvas);
   canvas->command = CANVAS_UPLOAD;
   Sound_PlayFar(SE_PSYNERGY_START);

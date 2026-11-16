@@ -2438,8 +2438,7 @@ UNUSED void Prox_StartFallingRocks(void) {
   struct Rock *rock;
   struct EffectSprite *sprite;
 
-  Decompress_TaggedLz(Resource_GetTableEntry((s32)&ResourceId_FallingRock),
-                      work);
+  Decompress_TaggedLz(Resource_GetTableEntry(RESOURCE_FALLING_ROCK), work);
   entry = VramCache_FindFreeEntry();
   tile = Vram_Load(entry, 0x500, work);
   work->tileBase = tile;

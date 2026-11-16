@@ -128,7 +128,7 @@ void FieldPsynergy_Parch(void) {
   }
 loaded:
   {
-    void *source = Resource_GetTableEntry((s32)&ResourceId_GlowDisc);
+    void *source = Resource_GetTableEntry(RESOURCE_GLOW_DISC);
     dst = (u8 *)0x06011000 + vramWork->glyphTiles * 32;
     Decompress_TaggedLz(source, work);
   }
@@ -141,7 +141,7 @@ loaded:
   work->discY = screen[2];
   work->discScaleX = 0;
   work->discScaleY = 0;
-  Decompress_TaggedLz(Resource_GetTableEntry((s32)&ResourceId_WhitePuff), work);
+  Decompress_TaggedLz(Resource_GetTableEntry(RESOURCE_WHITE_PUFF), work);
   entry = VramCache_FindFreeEntry();
   tile = VramCache_Load(entry, 0x800, work);
   particle = work->particles;

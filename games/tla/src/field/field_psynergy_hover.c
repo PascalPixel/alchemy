@@ -173,7 +173,7 @@ void FieldPsynergy_Hover(void) {
   pending = Scene_FindPsynergyTrigger(
       PSYNERGY_TRIGGER(PSYNERGY_PHASE_ACTS), scene->fieldPsynergy,
       Scene_SelectPsynergyTarget(scene->fieldPsynergy));
-  Decompress_TaggedLz(Resource_GetTableEntry((s32)&ResourceId_RingOrb), work);
+  Decompress_TaggedLz(Resource_GetTableEntry(RESOURCE_RING_ORB), work);
   slot = VramCache_FindFreeEntry();
   tile = VramCache_Load(slot, 0x800, work);
   work->resource = slot;

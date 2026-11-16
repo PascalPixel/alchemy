@@ -55,11 +55,10 @@ void BattleEffect_RunMoloch(struct BattleEffectParams *args) {
   BattleEffect_StartCanvasLayer(0);
   REG_BLDALPHA = EFFECT_BLEND_ADD;
   BattleEffect_FetchRectangleBlitters(0, draw);
-  Resource_LoadAndDecompress((s32)&ResourceId_FlashBurstSheet, work->sheet, 1,
-                             0);
-  Resource_LoadAndDecompress((s32)&ResourceId_FlameBandTexture,
+  Resource_LoadAndDecompress(RESOURCE_FLASH_BURST_SHEET, work->sheet, 1, 0);
+  Resource_LoadAndDecompress(RESOURCE_FLAME_BAND_TEXTURE,
                              work->sheet + MOLOCH_RING_TEXTURE, 0, 0);
-  Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, graphics, 0, 0);
+  Resource_LoadAndDecompress(RESOURCE_PARTICLE_SPRITES_A, graphics, 0, 0);
   Graphics_LoadGreyRamp();
   EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
   {
@@ -375,7 +374,7 @@ void Iris_ChangeBackdrop(void) {
   list[0] = BATTLE_UNIT_LIST_END;
   BattleActor_SpawnObjectsForListFar(list, 0);
   BattleBackground_LoadFar(BATTLE_BACKGROUND_FIXED,
-                           (s32)&ResourceId_VioletSkyBackdrop, 0);
+                           RESOURCE_VIOLET_SKY_BACKDROP, 0);
 
   palette = (u16 *)&BG_PLTT_COLOR(6, 0);
   for (i = 0; i != BATTLE_BACKGROUND_COLORS; i++) {
@@ -1032,9 +1031,8 @@ void BattleEffect_RunIris(struct BattleEffectParams *args) {
                       BLITTER_ADDITIVE);
   draw[0] = Ram_HeapSlots->ramCode;
   draw[1] = Ram_HeapSlots->ramCodePaired;
-  Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, tileBuffer, 0,
-                             0);
-  Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, sprites, 0, 0);
+  Resource_LoadAndDecompress(RESOURCE_PARTICLE_SPRITES_A, tileBuffer, 0, 0);
+  Resource_LoadAndDecompress(RESOURCE_PARTICLE_SPRITES_A, sprites, 0, 0);
   for (i = 0; i != MOTE_SET_BYTES; i++)
     sprites[i] >>= 1;
   BattleEffect_DrawShadedCircles(work->sheet, 32, FIXED_ONE);
@@ -1222,8 +1220,8 @@ void BattleEffect_RunIris(struct BattleEffectParams *args) {
       EFFECT_PRESENT_CANVAS(work);
       battle[0x867] = 1;
       BattleBackground_LoadFar(BATTLE_BACKGROUND_FIXED,
-                               (s32)&ResourceId_SunsetBackdrop, 0);
-      colors = Resource_GetTableEntry((s32)&ResourceId_RobedGoddessTiles);
+                               RESOURCE_SUNSET_BACKDROP, 0);
+      colors = Resource_GetTableEntry(RESOURCE_ROBED_GODDESS_TILES);
       Dma_Set(colors, (void *)OBJ_PLTT, DMA_COPY_WORDS(128), REG_DMA3);
       colors += 0x200;
       Decompress_TaggedLz(colors, tileBuffer);
@@ -1237,7 +1235,7 @@ void BattleEffect_RunIris(struct BattleEffectParams *args) {
         Dma_Set(tiles + i * 0x400, (void *)OBJ_TILES(obj), DMA_COPY_WORDS(256),
                 REG_DMA3);
       }
-      colors = Resource_GetTableEntry((s32)&ResourceId_PinkPetalsTiles);
+      colors = Resource_GetTableEntry(RESOURCE_PINK_PETALS_TILES);
       IWRAM_FILL_WORDS((void *)&OBJ_PLTT_COLOR(15, 0), 32, -1);
       colors += 32;
       Decompress_TaggedLz(colors, work->sheet);
@@ -1275,8 +1273,8 @@ void BattleEffect_RunIris(struct BattleEffectParams *args) {
         petals->vx[i] = ((Random16() & 63) - 32) << 12;
         petals->vy[i] = ((Random16() & 63) - 32) << 12;
       }
-      Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, work->sheet,
-                                 0, 0);
+      Resource_LoadAndDecompress(RESOURCE_PARTICLE_SPRITES_A, work->sheet, 0,
+                                 0);
       for (i = 0; i != 6; i++) {
         work->particles[i].x = INTtoFIXED(Random16() % 15) + toFIXED(33);
         work->particles[i].y = INTtoFIXED(Random16() % 15) + toFIXED(57);
@@ -1440,8 +1438,7 @@ void BattleEffect_RunIris(struct BattleEffectParams *args) {
       }
       for (i = 0; i != IRIS_PETALS; i++)
         petals->life[i] = 0;
-      Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, sprites, 0,
-                                 0);
+      Resource_LoadAndDecompress(RESOURCE_PARTICLE_SPRITES_A, sprites, 0, 0);
       for (i = 0; i != 32; i++)
         for (j = 0; j != 8; j++)
           sprites[IRIS_SPRAY + i * IRIS_SPRAY_WIDTH + j] = gIris_LineShades[j];
@@ -1618,7 +1615,7 @@ void BattleEffect_RunIris(struct BattleEffectParams *args) {
       }
     }
     if ((u32)(frame - 401) <= 30 && (frame & 1)) {
-      Resource_GetTableEntry((s32)&ResourceId_VioletSkyBackdrop);
+      Resource_GetTableEntry(RESOURCE_VIOLET_SKY_BACKDROP);
       {
         u16 *fade = FADE_PLTT;
 
@@ -1649,7 +1646,7 @@ void BattleEffect_RunIris(struct BattleEffectParams *args) {
                            CANVAS_FILL_WORD(CANVAS_LEVEL_BRIGHTEST));
       Matrix_Initialize();
       BattleBackground_LoadFar(BATTLE_BACKGROUND_FIXED,
-                               (s32)&ResourceId_StarfieldFlareBackdrop, 0);
+                               RESOURCE_STARFIELD_FLARE_BACKDROP, 0);
       off = MOTE_SET_BYTES;
       {
         u16 *fade = FADE_PLTT;

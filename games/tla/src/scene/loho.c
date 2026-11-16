@@ -281,7 +281,7 @@ inPlace:
   MapGrid_SetShake(7, 7, 1);
   table = (struct LohoSpark *)Heap_AllocEwram(0x600);
   p = (struct LohoSpark *)Heap_Alloc(0x1000);
-  t38 = Resource_GetTableEntry((s32)&ResourceId_FieldEffectExplosion);
+  t38 = Resource_GetTableEntry(RESOURCE_FIELD_EFFECT_EXPLOSION);
   Decompress_TaggedLz(t38, p);
   entry = VramCache_FindFreeEntry();
   tiles = VramCache_Load(entry, 0x400, p);

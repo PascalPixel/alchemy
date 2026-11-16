@@ -93,18 +93,18 @@ void SettingsMenu_AnimateCursors(void) {
 
   if (selection == 0) {
     firstMarkerPicture =
-        (work->cursorFrame & 7) + (s32)&ResourceId_ShopCursorPictures;
+        (work->cursorFrame & 7) + RESOURCE_SHOP_CURSOR_PICTURES;
   } else {
-    firstMarkerPicture = (s32)&ResourceId_ShopCursorPictures;
+    firstMarkerPicture = RESOURCE_SHOP_CURSOR_PICTURES;
   }
   VramCache_Load((u8)work->marker[0].sprite->index, 0x100,
                  Resource_GetTableEntry(firstMarkerPicture));
 
   if (selection == 1) {
     secondMarkerPicture =
-        (work->cursorFrame & 7) + (s32)&ResourceId_ShopCursorPictures;
+        (work->cursorFrame & 7) + RESOURCE_SHOP_CURSOR_PICTURES;
   } else {
-    secondMarkerPicture = (s32)&ResourceId_ShopCursorPictures;
+    secondMarkerPicture = RESOURCE_SHOP_CURSOR_PICTURES;
   }
   VramCache_Load((u8)work->marker[1].sprite->index, 0x100,
                  Resource_GetTableEntry(secondMarkerPicture));

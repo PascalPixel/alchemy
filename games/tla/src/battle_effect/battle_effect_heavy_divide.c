@@ -44,8 +44,7 @@ void BattleEffect_RunHeavyBlow(struct BattleEffectParams *args, s32 mode) {
   caster = BattleObject_GetFar(args->user)->object;
   if (mode == HEAVY_BLOW_HEAVY_DIVIDE) {
     frames = 80;
-    Resource_LoadAndDecompress((s32)&ResourceId_GreatSwordSheet, work->sheet, 1,
-                               1);
+    Resource_LoadAndDecompress(RESOURCE_GREAT_SWORD_SHEET, work->sheet, 1, 1);
 
     // Four after-images, each in its own dimmer colour.
     for (k = 1; k != 5; k++) {
@@ -59,7 +58,7 @@ void BattleEffect_RunHeavyBlow(struct BattleEffectParams *args, s32 mode) {
       }
     }
   } else {
-    Resource_LoadAndDecompress((s32)&ResourceId_AxeSheet, work->sheet, 1, 1);
+    Resource_LoadAndDecompress(RESOURCE_AXE_SHEET, work->sheet, 1, 1);
     frames = 64;
   }
   Sound_PlayFar(SE_POWER_UP);
@@ -282,11 +281,11 @@ void BattleEffect_RunCool(struct BattleEffectParams *args) {
   canvas = Ram_HeapSlots->battleCanvas;
   EFFECT_START_NARROW_CANVAS(BGCNT_PRIORITY(1));
   REG_BLDALPHA = EFFECT_BLEND_ADD;
-  Resource_LoadAndDecompress((s32)&ResourceId_CrestSheet, work->sheet, 0, 0);
-  Resource_LoadAndDecompress((s32)&ResourceId_BlastSheet,
-                             work->sheet + SPARK_OFFSET, 1, 0);
+  Resource_LoadAndDecompress(RESOURCE_CREST_SHEET, work->sheet, 0, 0);
+  Resource_LoadAndDecompress(RESOURCE_BLAST_SHEET, work->sheet + SPARK_OFFSET,
+                             1, 0);
   Iwram_CopyWordsEntry((void *)BG_PLTT,
-                       Resource_GetTableEntry((s32)&ResourceId_BlueFlameSheet),
+                       Resource_GetTableEntry(RESOURCE_BLUE_FLAME_SHEET),
                        SHEET_PALETTE_BYTES);
   EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
   {
@@ -534,8 +533,8 @@ void BattleEffect_RunWyrdCurse(struct BattleEffectParams *args) {
       goto nextRow;
     }
   }
-  Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, sprites, 0, 0);
-  Resource_LoadAndDecompress((s32)&ResourceId_BurningSkullSheet,
+  Resource_LoadAndDecompress(RESOURCE_PARTICLE_SPRITES_A, sprites, 0, 0);
+  Resource_LoadAndDecompress(RESOURCE_BURNING_SKULL_SHEET,
                              work->sheet + WYRD_CURSE_BURNING_SKULLS, 0, 0);
 
   zero = 0;
@@ -738,10 +737,10 @@ void BattleEffect_RunRadiantFire(struct BattleEffectParams *args) {
   BattleEffect_StartCanvasLayer(0);
   REG_BLDALPHA = EFFECT_BLEND_ADD;
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, BLITTER_MAX);
-  Resource_LoadAndDecompress((s32)&ResourceId_FireRingTexture,
+  Resource_LoadAndDecompress(RESOURCE_FIRE_RING_TEXTURE,
                              work->sheet + RADIANT_FIRE_FIRE_RING, 0, 0);
   Iwram_CopyWordsEntry((void *)BG_PLTT,
-                       Resource_GetTableEntry((s32)&ResourceId_OrangePaletteB),
+                       Resource_GetTableEntry(RESOURCE_ORANGE_PALETTE_B),
                        SHEET_PALETTE_BYTES);
   EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_THREE_QUARTERS);
   camera = Ram_HeapSlots->cameraWork;
@@ -916,7 +915,7 @@ void BattleEffect_RunHurricane(struct BattleEffectParams *args) {
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, BLITTER_ADDITIVE);
   blit[0] = (DrawRectangle)Ram_HeapSlots->ramCode;
   Iwram_CopyWordsEntry((void *)BG_PLTT,
-                       Resource_GetTableEntry((s32)&ResourceId_CyanPalette),
+                       Resource_GetTableEntry(RESOURCE_CYAN_PALETTE),
                        SHEET_PALETTE_BYTES);
   EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
   EffectPosition_ProjectBattler(args->targets[0], &position);
@@ -935,8 +934,8 @@ void BattleEffect_RunHurricane(struct BattleEffectParams *args) {
     else
       work->sheet[i * 4 + i / 16] = 24;
   }
-  Resource_LoadAndDecompress((s32)&ResourceId_SmokeSheet,
-                             work->sheet + SPLASH_OFFSET, 1, 0);
+  Resource_LoadAndDecompress(RESOURCE_SMOKE_SHEET, work->sheet + SPLASH_OFFSET,
+                             1, 0);
   REG_BG2PA = Q_8_8(1);
 
   for (frame = 0; frame != HURRICANE_FRAMES; frame++) {

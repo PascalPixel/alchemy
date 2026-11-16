@@ -44,15 +44,12 @@ void BattleEffect_RunLiquifier(struct BattleEffectParams *args) {
   BattleEffect_StartCanvasLayer(0);
   REG_BLDALPHA = EFFECT_BLEND_ADD;
   BattleEffect_FetchRectangleBlitters(0, draw);
-  Resource_LoadAndDecompress((s32)&ResourceId_FlashBurstSheet, EFFECT_PICTURES,
-                             1, 0);
-  Resource_LoadAndDecompress((s32)&ResourceId_FlameWallTexture, work->sheet, 0,
-                             0);
-  Resource_LoadAndDecompress((s32)&ResourceId_GlowBandTextureA,
+  Resource_LoadAndDecompress(RESOURCE_FLASH_BURST_SHEET, EFFECT_PICTURES, 1, 0);
+  Resource_LoadAndDecompress(RESOURCE_FLAME_WALL_TEXTURE, work->sheet, 0, 0);
+  Resource_LoadAndDecompress(RESOURCE_GLOW_BAND_TEXTURE_A,
                              work->sheet + LIQUIFIER_GLOW_BAND, 0, 0);
-  Resource_LoadAndDecompress((s32)&ResourceId_FireRingTexture, gData_02014000,
-                             0, 0);
-  Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, graphics, 0, 0);
+  Resource_LoadAndDecompress(RESOURCE_FIRE_RING_TEXTURE, gData_02014000, 0, 0);
+  Resource_LoadAndDecompress(RESOURCE_PARTICLE_SPRITES_A, graphics, 0, 0);
   LOAD_BG_PALETTE(ResourceId_OrangePaletteB);
   EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
   EffectPosition_ProjectBattler(args->user, &from);
@@ -439,7 +436,7 @@ void BattleEffect_RunCanvasBurst(struct BattleEffectParams *args, u32 mode) {
   else
     frames = 66;
   EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
-  Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, graphics, 0, 0);
+  Resource_LoadAndDecompress(RESOURCE_PARTICLE_SPRITES_A, graphics, 0, 0);
 
   // Discs of sizes 2 to 64 one after another in the map cell buffer, with
   // their offsets at the start of the sheet.
@@ -453,13 +450,13 @@ void BattleEffect_RunCanvasBurst(struct BattleEffectParams *args, u32 mode) {
   }
   if (mode == 3)
     Iwram_CopyWords((void *)BG_PLTT,
-                    Resource_GetTableEntry((s32)&ResourceId_BlueFlameSheet),
+                    Resource_GetTableEntry(RESOURCE_BLUE_FLAME_SHEET),
                     SHEET_PALETTE_BYTES);
   else
     Iwram_CopyWords((void *)BG_PLTT,
-                    Resource_GetTableEntry((s32)&ResourceId_OrangePaletteB),
+                    Resource_GetTableEntry(RESOURCE_ORANGE_PALETTE_B),
                     SHEET_PALETTE_BYTES);
-  Resource_LoadAndDecompress((s32)&ResourceId_FlashBurstSheet,
+  Resource_LoadAndDecompress(RESOURCE_FLASH_BURST_SHEET,
                              work->sheet + CANVAS_BURST_FLASH_BURST_PICTURES, 1,
                              0);
 

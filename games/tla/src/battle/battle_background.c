@@ -885,22 +885,22 @@ s32 ElementGlow_InitializeStarField(s32 mode) {
   work->originPending = 0;
   Iwram_ClearWordsEntry(Ram_HeapSlots->battleCanvas,
                         STAR_FIELD_SIZE * STAR_FIELD_SIZE);
-  data = Resource_GetTableEntry((s32)&ResourceId_BlueRingSheet);
+  data = Resource_GetTableEntry(RESOURCE_BLUE_RING_SHEET);
   Iwram_CopyWordsEntry((void *)BG_PLTT, data, 128);
   data += 128;
   Decompress_TaggedLz(data, work);
   switch (mode) {
   case ELEMENT_VENUS:
-    data = Resource_GetTableEntry((s32)&ResourceId_YellowPaletteB);
+    data = Resource_GetTableEntry(RESOURCE_YELLOW_PALETTE_B);
     break;
   case ELEMENT_MERCURY:
-    data = Resource_GetTableEntry((s32)&ResourceId_BlueRingSheet);
+    data = Resource_GetTableEntry(RESOURCE_BLUE_RING_SHEET);
     break;
   case ELEMENT_MARS:
-    data = Resource_GetTableEntry((s32)&ResourceId_RedPaletteC);
+    data = Resource_GetTableEntry(RESOURCE_RED_PALETTE_C);
     break;
   default:
-    data = Resource_GetTableEntry((s32)&ResourceId_VioletPaletteD);
+    data = Resource_GetTableEntry(RESOURCE_VIOLET_PALETTE_D);
     break;
   }
   Dma_Set(data, (void *)BG_PLTT, DMA_COPY_WORDS(32), REG_DMA3);

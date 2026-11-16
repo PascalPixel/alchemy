@@ -1655,8 +1655,8 @@ void ChampaCliffCaves_StartFlash(s32 id, s32 mode) {
   Actor_SetSpriteFlags(object, 0);
   Dma_Set(Field_ExplosionPalette, (void *)0x050003e0, DMA_COPY_HALFWORDS(16),
           REG_DMA3);
-  Decompress_TaggedLz(
-      Resource_GetTableEntry((s32)&ResourceId_FieldEffectExplosion), work);
+  Decompress_TaggedLz(Resource_GetTableEntry(RESOURCE_FIELD_EFFECT_EXPLOSION),
+                      work);
   slot = VramCache_FindFreeEntry();
   tile = Vram_Load(slot, 0x400, work);
   sprite = &work->sprite;
@@ -1719,7 +1719,7 @@ void ChampaCliffCaves_DrawSparks(void) {
   s32 entry;
   s32 vram;
 
-  Decompress_TaggedLz(Resource_GetTableEntry((s32)&ResourceId_GlowDisc), work);
+  Decompress_TaggedLz(Resource_GetTableEntry(RESOURCE_GLOW_DISC), work);
   i = 0;
   tile = work->tiles;
 next:
@@ -1752,8 +1752,7 @@ void ChampaCliffCaves_DrawFallingSparks(void) {
   s32 entry;
   s32 vram;
 
-  Decompress_TaggedLz(Resource_GetTableEntry((s32)&ResourceId_FireColumn),
-                      work);
+  Decompress_TaggedLz(Resource_GetTableEntry(RESOURCE_FIRE_COLUMN), work);
   i = 0;
   tile = work->tiles;
 next:

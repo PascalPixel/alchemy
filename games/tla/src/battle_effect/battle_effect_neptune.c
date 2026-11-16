@@ -84,7 +84,7 @@ void BattleEffect_RunNeptune(struct BattleEffectParams *args) {
   // Build the serpent: its palette, its tiles, and eight sprites.
   Ram_HeapSlots->battleWork->keepBackdropPalette = 1;
   {
-    u8 *sheet = Resource_GetTableEntry((s32)&ResourceId_SeaSerpentTiles);
+    u8 *sheet = Resource_GetTableEntry(RESOURCE_SEA_SERPENT_TILES);
     Iwram_CopyWords((void *)OBJ_PLTT, sheet, OBJ_PLTT_SIZE);
     sheet += OBJ_PLTT_SIZE;
     Decompress_TaggedLz(sheet, tiles);
@@ -102,11 +102,10 @@ void BattleEffect_RunNeptune(struct BattleEffectParams *args) {
   gProjection.centerY = SUMMON_PROJECTION_CENTER_Y;
   wait(1);
   BattleBackground_LoadFar(BATTLE_BACKGROUND_FIXED,
-                           (s32)&ResourceId_DuskCloudsBackdrop, 0);
-  Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, cells, 0, 0);
-  Resource_LoadAndDecompress((s32)&ResourceId_WaterSpraySheet, work->sheet, 1,
-                             1);
-  Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesD,
+                           RESOURCE_DUSK_CLOUDS_BACKDROP, 0);
+  Resource_LoadAndDecompress(RESOURCE_PARTICLE_SPRITES_A, cells, 0, 0);
+  Resource_LoadAndDecompress(RESOURCE_WATER_SPRAY_SHEET, work->sheet, 1, 1);
+  Resource_LoadAndDecompress(RESOURCE_PARTICLE_SPRITES_D,
                              work->sheet + NEPTUNE_PARTICLE_SPRITES_D_PICTURES,
                              0, 0);
   REG_DISPCNT = EFFECT_DISPCNT;
@@ -454,8 +453,7 @@ void BattleEffect_RunNeptune(struct BattleEffectParams *args) {
                                         (struct ScreenPoint *)target);
     work->particles[i].x = target[0] / 2;
   }
-  Resource_LoadAndDecompress((s32)&ResourceId_BlueFlameSheet, work->sheet, 1,
-                             1);
+  Resource_LoadAndDecompress(RESOURCE_BLUE_FLAME_SHEET, work->sheet, 1, 1);
   Sound_PlayFar(SOUND_FADE_OUT_ACTION_SE);
   REG_BG2PA = Q_8_8(0.5);
   REG_BLDALPHA = EFFECT_BLEND_ADD;

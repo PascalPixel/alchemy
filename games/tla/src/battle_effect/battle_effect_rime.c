@@ -48,9 +48,9 @@ void BattleEffect_RunDjinniSign(struct BattleEffectParams *args, s32 mode) {
                                                    args->side ^ 1,
                                                    DJINNI_ANCHOR_OVER_TARGET),
                                    center, base);
-    Resource_LoadAndDecompress((s32)&ResourceId_MercuryDjinnSheet,
+    Resource_LoadAndDecompress(RESOURCE_MERCURY_DJINN_SHEET,
                                work->sheet + DJINNI_OFFSET, 1, 1);
-    Resource_LoadAndDecompress((s32)&ResourceId_RuneSheet, work->sheet, 1, 0);
+    Resource_LoadAndDecompress(RESOURCE_RUNE_SHEET, work->sheet, 1, 0);
 
     // Mirror the rune's 24x48 left half into a 48x48 crystal.
     Iwram_ClearWordsEntry(work->sheet + CRYSTAL_OFFSET, 0x4000);
@@ -71,10 +71,9 @@ void BattleEffect_RunDjinniSign(struct BattleEffectParams *args, s32 mode) {
                                                    args->side ^ 1,
                                                    DJINNI_ANCHOR_OVER_TARGET),
                                    center, haze);
-    Resource_LoadAndDecompress((s32)&ResourceId_JupiterDjinnSheet,
+    Resource_LoadAndDecompress(RESOURCE_JUPITER_DJINN_SHEET,
                                work->sheet + DJINNI_OFFSET, 1, 1);
-    Resource_LoadAndDecompress((s32)&ResourceId_StarCrossSheet, work->sheet, 1,
-                               0);
+    Resource_LoadAndDecompress(RESOURCE_STAR_CROSS_SHEET, work->sheet, 1, 0);
     EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_THREE_QUARTERS);
   }
   Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_FRAME);
@@ -110,7 +109,7 @@ void BattleEffect_RunDjinniSign(struct BattleEffectParams *args, s32 mode) {
         Sound_PlayFar(SE_POWER_UP);
     } else {
       if (frame > 7)
-        BattleEffect_StepPaletteToResource((s32)&ResourceId_StarCrossSheet);
+        BattleEffect_StepPaletteToResource(RESOURCE_STAR_CROSS_SHEET);
       if (frame == 32)
         BattleEffect_TintBattler(args->targets[0], SPRITE_COLOR_WHITE,
                                  TINT_KEEP, 0, 24);

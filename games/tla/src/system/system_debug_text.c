@@ -130,7 +130,7 @@ void DebugText_Clear(void) {
 /// palette into palette 15 with its gradient colours, and the basic sprite
 /// palettes.
 void Window_LoadGraphics(void) {
-  Dma_Set(Resource_GetTableEntry((s32)&ResourceId_WindowTiles),
+  Dma_Set(Resource_GetTableEntry(RESOURCE_WINDOW_TILES),
           (void *)BG_CHAR_BLOCK(0), DMA_COPY_WORDS(2048), REG_DMA3);
   Dma_Set((const void *)gWindow_Palette,
           (void *)&BG_PLTT_COLOR(WINDOW_PALETTE, 0), DMA_COPY_HALFWORDS(16),

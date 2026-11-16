@@ -86,22 +86,20 @@ void BattleEffect_RunDjinniCharge(struct BattleEffectParams *args, s32 mode) {
     work->particles[DJINNI_CHARGE_START].x = focus[0];
     work->particles[DJINNI_CHARGE_START].y = focus[1];
     work->particles[DJINNI_CHARGE_START].z = focus[2];
-    Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, sprites, 0,
-                               0);
+    Resource_LoadAndDecompress(RESOURCE_PARTICLE_SPRITES_A, sprites, 0, 0);
     Resource_LoadAndDecompress(
-        (s32)&ResourceId_MarsDjinnSmallSheet,
+        RESOURCE_MARS_DJINN_SMALL_SHEET,
         work->sheet + DJINNI_CHARGE_MARS_DJINN_SMALL_PICTURES, 1, 1);
     if (mode == DJINNI_CHARGE_CORE) {
-      Resource_LoadAndDecompress((s32)&ResourceId_DustBlobSheet, work->sheet, 1,
-                                 1);
-      Resource_LoadAndDecompress((s32)&ResourceId_GlowOrbSheet,
+      Resource_LoadAndDecompress(RESOURCE_DUST_BLOB_SHEET, work->sheet, 1, 1);
+      Resource_LoadAndDecompress(RESOURCE_GLOW_ORB_SHEET,
                                  work->sheet + DJINNI_CHARGE_BURST_PICTURES, 1,
                                  1);
       LOAD_BG_PALETTE(ResourceId_OrangePaletteB);
       frames = 102;
     } else {
-      Resource_LoadAndDecompress((s32)&ResourceId_PetalSheet, cells, 1, 0);
-      Resource_LoadAndDecompress((s32)&ResourceId_FlashBurstSheet,
+      Resource_LoadAndDecompress(RESOURCE_PETAL_SHEET, cells, 1, 0);
+      Resource_LoadAndDecompress(RESOURCE_FLASH_BURST_SHEET,
                                  work->sheet + DJINNI_CHARGE_BURST_PICTURES, 1,
                                  0);
       frames = 50;

@@ -376,8 +376,7 @@ void Actor_VanishInSparks(s32 objectId) {
   s32 frame;
   s32 position[3];
 
-  Decompress_TaggedLz(Resource_GetTableEntry((s32)&ResourceId_SparkleFade),
-                      work);
+  Decompress_TaggedLz(Resource_GetTableEntry(RESOURCE_SPARKLE_FADE), work);
   entry = VramCache_FindFreeEntry();
   tiles = VramCache_Load(entry, sizeof(work->picture), work);
 

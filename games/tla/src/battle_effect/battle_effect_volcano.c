@@ -39,9 +39,8 @@ void BattleEffect_RunVolcano(struct BattleEffectParams *args) {
   sheet = Ram_HeapSlots->battleSheet;
   BattleEffect_StartCanvasLayer(BGCNT_PRIORITY(1));
   REG_BLDALPHA = EFFECT_BLEND_ADD;
-  Resource_LoadAndDecompress((s32)&ResourceId_FirePillarSheetA, work->sheet, 1,
-                             1);
-  Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, sheet, 0, 0);
+  Resource_LoadAndDecompress(RESOURCE_FIRE_PILLAR_SHEET_A, work->sheet, 1, 1);
+  Resource_LoadAndDecompress(RESOURCE_PARTICLE_SPRITES_A, sheet, 0, 0);
   if (args->variant == EFFECT_VARIANT_BASIC) {
     LOAD_BG_PALETTE(ResourceId_RedPaletteB);
   } else if (args->variant == EFFECT_VARIANT_STRONGEST) {

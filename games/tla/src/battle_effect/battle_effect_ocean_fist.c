@@ -40,11 +40,9 @@ void BattleEffect_RunOceanFist(struct BattleEffectParams *args) {
   BattleEffect_StartCanvasLayer(BGCNT_PRIORITY(1));
   REG_BLDALPHA = EFFECT_BLEND_ADD;
   BattleEffect_FetchRectangleBlitters(0, (void **)blitters);
-  Resource_LoadAndDecompress((s32)&ResourceId_FlashBurstSheet, spraySheet, 1,
-                             0);
-  Resource_LoadAndDecompress((s32)&ResourceId_WhirlBeamSheet, work->sheet, 1,
-                             0);
-  Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, sprites, 0, 0);
+  Resource_LoadAndDecompress(RESOURCE_FLASH_BURST_SHEET, spraySheet, 1, 0);
+  Resource_LoadAndDecompress(RESOURCE_WHIRL_BEAM_SHEET, work->sheet, 1, 0);
+  Resource_LoadAndDecompress(RESOURCE_PARTICLE_SPRITES_A, sprites, 0, 0);
   LOAD_BG_PALETTE(ResourceId_BlueFlameSheet);
   EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
   EffectPosition_ProjectBattler(args->targets[0], &target);
@@ -59,8 +57,8 @@ void BattleEffect_RunOceanFist(struct BattleEffectParams *args) {
           *life = -1;
           life += 7;
         }
-        Resource_LoadAndDecompress((s32)&ResourceId_WhirlBeamSheet, work->sheet,
-                                   1, 0);
+        Resource_LoadAndDecompress(RESOURCE_WHIRL_BEAM_SHEET, work->sheet, 1,
+                                   0);
         Sound_PlayFar(SE_CRASH);
         work->shakeFrames = 4;
         halfWidth = 48;

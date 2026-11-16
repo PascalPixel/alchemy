@@ -46,9 +46,9 @@ void BattleEffect_RunPlasma(struct BattleEffectParams *args) {
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED,
                       EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X, BLITTER_MAX);
   draw[1] = (DrawRectangle)Ram_HeapSlots->ramCodePaired;
-  Resource_LoadAndDecompress((s32)&ResourceId_LightningPillarSheet, work->sheet,
-                             1, 1);
-  Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, sprites, 0, 0);
+  Resource_LoadAndDecompress(RESOURCE_LIGHTNING_PILLAR_SHEET, work->sheet, 1,
+                             1);
+  Resource_LoadAndDecompress(RESOURCE_PARTICLE_SPRITES_A, sprites, 0, 0);
   if (args->variant != EFFECT_VARIANT_STRONGEST) {
     LOAD_BG_PALETTE(ResourceId_VioletPaletteB);
   }
@@ -234,9 +234,8 @@ void BattleEffect_RunSparkGroups(struct BattleEffectParams *args, s32 kind) {
   // The flash sheet, the particle sprites and the kind's palette.
   REG_BLDALPHA = EFFECT_BLEND_ADD;
   BattleEffect_FetchRectangleBlitters(0, draw);
-  Resource_LoadAndDecompress((s32)&ResourceId_FlashBurstSheet, work->sheet, 1,
-                             1);
-  Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, graphics, 0, 0);
+  Resource_LoadAndDecompress(RESOURCE_FLASH_BURST_SHEET, work->sheet, 1, 1);
+  Resource_LoadAndDecompress(RESOURCE_PARTICLE_SPRITES_A, graphics, 0, 0);
   if (kind == SPARK_GROUPS_DYNAMITE) {
     LOAD_BG_PALETTE(ResourceId_OrangePaletteB);
   } else if (kind == SPARK_GROUPS_RISING) {

@@ -169,7 +169,7 @@ void ParticleBurst_Start(void) {
 
   work->frame = 0;
   work->active = 1;
-  Decompress_TaggedLz(Resource_GetTableEntry((s32)&ResourceId_Leaves), work);
+  Decompress_TaggedLz(Resource_GetTableEntry(RESOURCE_LEAVES), work);
   resource = VramCache_FindFreeEntry();
   vram = VramCache_Load(resource, 384, work);
   work->cacheEntry = resource;

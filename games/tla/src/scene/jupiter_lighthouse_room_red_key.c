@@ -823,8 +823,7 @@ void JupiterLighthouse_StartSparkRing(const s32 *from, const s32 *to) {
   work->to[0] = to[0];
   work->to[1] = to[1];
   work->to[2] = to[2];
-  Decompress_TaggedLz(Resource_GetTableEntry((s32)&ResourceId_ColouredOrbs),
-                      work);
+  Decompress_TaggedLz(Resource_GetTableEntry(RESOURCE_COLOURED_ORBS), work);
   entry = VramCache_FindFreeEntry();
   tile = Vram_Load(entry, 0x400, work);
   work->tile = tile;

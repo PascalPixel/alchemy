@@ -45,8 +45,7 @@ void Teleport_PlayWhirl(void) {
   s32 frame;
   FIXED radius;
 
-  Decompress_TaggedLz(Resource_GetTableEntry((s32)&ResourceId_ColouredOrbs),
-                      work);
+  Decompress_TaggedLz(Resource_GetTableEntry(RESOURCE_COLOURED_ORBS), work);
   entry = VramCache_FindFreeEntry();
   tiles = VramCache_Load(entry, 0x400, work);
   for (i = 0, spark = work->sparks; i < WHIRL_COUNT; i++, spark++) {
@@ -186,8 +185,7 @@ void Teleport_PlaySparks(void) {
 
   wait(20);
   FieldPsynergy_FadeToCastColor();
-  Decompress_TaggedLz(Resource_GetTableEntry((s32)&ResourceId_ColouredOrbs),
-                      work);
+  Decompress_TaggedLz(Resource_GetTableEntry(RESOURCE_COLOURED_ORBS), work);
   entry = VramCache_FindFreeEntry();
   tiles = VramCache_Load(entry, 0x400, work);
   for (i = 0, particle = work->particles; i < SPARK_COUNT; i++, particle++) {

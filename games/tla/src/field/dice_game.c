@@ -517,7 +517,7 @@ void SuperLuckyDice_Run(void) {
   dice = HeapSlot_AllocEwram(HEAP_SLOT_BATTLE_EFFECT, 0x7b7c);
   sprites = HeapSlot_AllocEwram(HEAP_SLOT_CANVAS_MAP, 0x614);
   camera = HeapSlot_AllocEwram(HEAP_SLOT_CAMERA, 76);
-  Resource_ReservedNoOp((s32)&ResourceId_BattleEffectFarCalls);
+  Resource_ReservedNoOp(RESOURCE_BATTLE_EFFECT_FAR_CALLS);
   SuperLuckyDice_ResetViewDefaults();
   Task_ResetAll();
   gOamCopyEnabled = 0;
@@ -536,19 +536,19 @@ void SuperLuckyDice_Run(void) {
     }
   }
 
-  resourceAddress = Resource_GetTableEntry((s32)&ResourceId_SlotsDomePicture);
+  resourceAddress = Resource_GetTableEntry(RESOURCE_SLOTS_DOME_PICTURE);
   Dma_Set((void *)BG_PLTT, bgPalette, DMA_COPY_WORDS(128), REG_DMA3);
   Dma_Set(resourceAddress, bgPalette, DMA_COPY_WORDS(112), REG_DMA3);
   resourceAddress += 0x1c0;
   Decompress_TaggedLz(resourceAddress, cellBuffer);
   Dma_Set(cellBuffer, (void *)BG_CHAR_BLOCK(1), DMA_COPY_WORDS(9600), REG_DMA3);
-  resourceAddress = Resource_GetTableEntry((s32)&ResourceId_DiceFaces);
+  resourceAddress = Resource_GetTableEntry(RESOURCE_DICE_FACES);
   Dma_Set(resourceAddress, spritePalette, DMA_COPY_WORDS(48), REG_DMA3);
   resourceAddress += 128;
   Decompress_TaggedLz(resourceAddress, cellBuffer);
   Dma_Set(cellBuffer, (void *)OBJ_VRAM0, DMA_COPY_WORDS(1216), REG_DMA3);
   resourceAddress =
-      Resource_GetTableEntry((s32)&ResourceId_SlotsSmallDoubleUpBanner);
+      Resource_GetTableEntry(RESOURCE_SLOTS_SMALL_DOUBLE_UP_BANNER);
   Dma_Set(resourceAddress,
           spritePalette + DICE_PALETTE_SMALL_DOUBLE_UP * PALETTE_COLORS,
           DMA_COPY_WORDS(8), REG_DMA3);
@@ -557,8 +557,7 @@ void SuperLuckyDice_Run(void) {
   Dma_Set(cellBuffer,
           (void *)(OBJ_VRAM0 + SMALL_DOUBLE_UP_TILES * TILE_SIZE_4BPP),
           DMA_COPY_WORDS(128), REG_DMA3);
-  resourceAddress =
-      Resource_GetTableEntry((s32)&ResourceId_SlotsFinalGameBanner);
+  resourceAddress = Resource_GetTableEntry(RESOURCE_SLOTS_FINAL_GAME_BANNER);
   Dma_Set(resourceAddress,
           spritePalette + DICE_PALETTE_FINAL_GAME * PALETTE_COLORS,
           DMA_COPY_WORDS(8), REG_DMA3);
@@ -566,7 +565,7 @@ void SuperLuckyDice_Run(void) {
   Decompress_TaggedLz(resourceAddress, cellBuffer);
   Dma_Set(cellBuffer, (void *)(OBJ_VRAM0 + FINAL_GAME_TILES * TILE_SIZE_4BPP),
           DMA_COPY_WORDS(256), REG_DMA3);
-  resourceAddress = Resource_GetTableEntry((s32)&ResourceId_SlotsOrangeDigits);
+  resourceAddress = Resource_GetTableEntry(RESOURCE_SLOTS_ORANGE_DIGITS);
   Dma_Set(resourceAddress,
           spritePalette + DICE_PALETTE_ORANGE_DIGITS * PALETTE_COLORS,
           DMA_COPY_WORDS(8), REG_DMA3);
@@ -574,7 +573,7 @@ void SuperLuckyDice_Run(void) {
   Decompress_TaggedLz(resourceAddress, cellBuffer);
   Dma_Set(cellBuffer, (void *)(OBJ_VRAM0 + ORANGE_DIGIT_TILES * TILE_SIZE_4BPP),
           DMA_COPY_WORDS(640), REG_DMA3);
-  resourceAddress = Resource_GetTableEntry((s32)&ResourceId_SlotsTimesSign);
+  resourceAddress = Resource_GetTableEntry(RESOURCE_SLOTS_TIMES_SIGN);
   Dma_Set(resourceAddress,
           spritePalette + DICE_PALETTE_TIMES_SIGN * PALETTE_COLORS,
           DMA_COPY_WORDS(8), REG_DMA3);
@@ -582,7 +581,7 @@ void SuperLuckyDice_Run(void) {
   Decompress_TaggedLz(resourceAddress, cellBuffer);
   Dma_Set(cellBuffer, (void *)(OBJ_VRAM0 + TIMES_SIGN_TILES * TILE_SIZE_4BPP),
           DMA_COPY_WORDS(96), REG_DMA3);
-  resourceAddress = Resource_GetTableEntry((s32)&ResourceId_SlotsPinkDigits);
+  resourceAddress = Resource_GetTableEntry(RESOURCE_SLOTS_PINK_DIGITS);
   Dma_Set(resourceAddress,
           spritePalette + DICE_PALETTE_PINK_DIGITS * PALETTE_COLORS,
           DMA_COPY_WORDS(8), REG_DMA3);
@@ -1180,8 +1179,7 @@ void SuperLuckyDice_Run(void) {
     // Load the pictures the state asked for.
     if (paletteRequest != DICE_PICTURES_NONE) {
       if (paletteRequest == DICE_PICTURES_HIGHER_LOWER) {
-        resourceAddress =
-            Resource_GetTableEntry((s32)&ResourceId_SlotsHigherBanner);
+        resourceAddress = Resource_GetTableEntry(RESOURCE_SLOTS_HIGHER_BANNER);
         Dma_Set(resourceAddress,
                 (void *)&OBJ_PLTT_COLOR(DICE_PALETTE_RELOADED_A, 0),
                 DMA_COPY_WORDS(8), REG_DMA3);
@@ -1192,8 +1190,7 @@ void SuperLuckyDice_Run(void) {
         Decompress_TaggedLz(resourceAddress, cellBuffer);
         Dma_Set(cellBuffer, (void *)(OBJ_VRAM0 + HIGHER_TILES * TILE_SIZE_4BPP),
                 DMA_COPY_WORDS(384), REG_DMA3);
-        resourceAddress =
-            Resource_GetTableEntry((s32)&ResourceId_SlotsLowerBanner);
+        resourceAddress = Resource_GetTableEntry(RESOURCE_SLOTS_LOWER_BANNER);
         Dma_Set(resourceAddress,
                 (void *)&OBJ_PLTT_COLOR(DICE_PALETTE_RELOADED_B, 0),
                 DMA_COPY_WORDS(8), REG_DMA3);
@@ -1204,8 +1201,7 @@ void SuperLuckyDice_Run(void) {
         Decompress_TaggedLz(resourceAddress, cellBuffer);
         Dma_Set(cellBuffer, (void *)(OBJ_VRAM0 + LOWER_TILES * TILE_SIZE_4BPP),
                 DMA_COPY_WORDS(384), REG_DMA3);
-        resourceAddress =
-            Resource_GetTableEntry((s32)&ResourceId_SlotsPinkDigits);
+        resourceAddress = Resource_GetTableEntry(RESOURCE_SLOTS_PINK_DIGITS);
         {
           u16 *src;
           u16 *dst;
@@ -1239,27 +1235,27 @@ void SuperLuckyDice_Run(void) {
         switch (resultKind) {
         case DICE_RESULT_LOSE:
           resourceAddress =
-              Resource_GetTableEntry((s32)&ResourceId_SlotsYouLoseBanner);
+              Resource_GetTableEntry(RESOURCE_SLOTS_YOU_LOSE_BANNER);
           break;
         case DICE_RESULT_WIN:
           resourceAddress =
-              Resource_GetTableEntry((s32)&ResourceId_SlotsYouWinBanner);
+              Resource_GetTableEntry(RESOURCE_SLOTS_YOU_WIN_BANNER);
           break;
         case DICE_RESULT_ONE_PAIR:
           resourceAddress =
-              Resource_GetTableEntry((s32)&ResourceId_SlotsOnePairBanner);
+              Resource_GetTableEntry(RESOURCE_SLOTS_ONE_PAIR_BANNER);
           break;
         case DICE_RESULT_TWO_PAIR:
           resourceAddress =
-              Resource_GetTableEntry((s32)&ResourceId_SlotsTwoPairBanner);
+              Resource_GetTableEntry(RESOURCE_SLOTS_TWO_PAIR_BANNER);
           break;
         case DICE_RESULT_TRIPLE:
           resourceAddress =
-              Resource_GetTableEntry((s32)&ResourceId_SlotsTripleBanner);
+              Resource_GetTableEntry(RESOURCE_SLOTS_TRIPLE_BANNER);
           break;
         case DICE_RESULT_PERFECT:
           resourceAddress =
-              Resource_GetTableEntry((s32)&ResourceId_SlotsPerfectBanner);
+              Resource_GetTableEntry(RESOURCE_SLOTS_PERFECT_BANNER);
           break;
         }
         Dma_Set(resourceAddress,
@@ -1270,8 +1266,7 @@ void SuperLuckyDice_Run(void) {
         Dma_Set(cellBuffer,
                 (void *)(OBJ_VRAM0 + RESULT_BANNER_TILES * TILE_SIZE_4BPP),
                 DMA_COPY_WORDS(1024), REG_DMA3);
-        resourceAddress =
-            Resource_GetTableEntry((s32)&ResourceId_SlotsGreenDigits);
+        resourceAddress = Resource_GetTableEntry(RESOURCE_SLOTS_GREEN_DIGITS);
         Dma_Set(resourceAddress,
                 (void *)&OBJ_PLTT_COLOR(DICE_PALETTE_RELOADED_A, 0),
                 DMA_COPY_WORDS(8), REG_DMA3);
@@ -1282,7 +1277,7 @@ void SuperLuckyDice_Run(void) {
                 DMA_COPY_WORDS(1280), REG_DMA3);
       } else if (paletteRequest == DICE_PICTURES_DOUBLE_UP) {
         resourceAddress =
-            Resource_GetTableEntry((s32)&ResourceId_SlotsDoubleUpBanner);
+            Resource_GetTableEntry(RESOURCE_SLOTS_DOUBLE_UP_BANNER);
         Dma_Set(resourceAddress,
                 (void *)&OBJ_PLTT_COLOR(DICE_PALETTE_RELOADED_C, 0),
                 DMA_COPY_WORDS(8), REG_DMA3);
@@ -1295,7 +1290,7 @@ void SuperLuckyDice_Run(void) {
                 (void *)(OBJ_VRAM0 + DOUBLE_UP_TILES * TILE_SIZE_4BPP),
                 DMA_COPY_WORDS(640), REG_DMA3);
         resourceAddress =
-            Resource_GetTableEntry((s32)&ResourceId_SlotsCashOutBanner);
+            Resource_GetTableEntry(RESOURCE_SLOTS_CASH_OUT_BANNER);
         Dma_Set(resourceAddress,
                 (void *)&OBJ_PLTT_COLOR(DICE_PALETTE_RELOADED_D, 0),
                 DMA_COPY_WORDS(8), REG_DMA3);

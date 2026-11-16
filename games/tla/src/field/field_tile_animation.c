@@ -264,7 +264,7 @@ s32 WorldMap_LoadAreaGraphics(void) {
   perspective->windowTop = 0;
   perspective->windowBottom = 159;
   wait(1);
-  Decompress_TaggedLz(Resource_GetTableEntry((s32)&ResourceId_DefaultMapCells),
+  Decompress_TaggedLz(Resource_GetTableEntry(RESOURCE_DEFAULT_MAP_CELLS),
                       buffer);
   WorldMap_UpdateCurrentTileBlock();
   perspective->animationActive = 0;
@@ -285,7 +285,7 @@ void WorldMap_LoadDefaultCellsAndUpdateBlock(void) {
   perspective->windowTop = 0;
   perspective->windowBottom = 0x9f;
   wait(1);
-  Decompress_TaggedLz(Resource_GetTableEntry((s32)&ResourceId_DefaultMapCells),
+  Decompress_TaggedLz(Resource_GetTableEntry(RESOURCE_DEFAULT_MAP_CELLS),
                       Ram_MapCellBuffer);
   WorldMap_UpdateCurrentTileBlock();
   Task_ResumeAll(TilesetAnim_Update);

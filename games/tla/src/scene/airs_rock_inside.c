@@ -1798,14 +1798,12 @@ void AirsRockInside_WakeHallStatue(void) {
   Event_ResolvePendingActions(0);
   REG_DISPCNT &= ~DISPCNT_BG0_ON;
   Io_Write16(BGCNT_SCREEN_BASE(4), &REG_BG0CNT);
-  Decompress_TaggedLz(Resource_GetTableEntry((s32)&ResourceId_LightningTiles),
-                      buffer);
+  Decompress_TaggedLz(Resource_GetTableEntry(RESOURCE_LIGHTNING_TILES), buffer);
   Dma_Set(buffer, (void *)BG_CHAR_BLOCK(0), DMA_COPY_WORDS(512), REG_DMA3);
   Heap_Release(buffer);
   Dma_Fill16(0, (void *)BG_SCREEN_BLOCK(4), 0x800);
   buffer = Heap_Alloc(0x80);
-  Decompress_TaggedLz(Resource_GetTableEntry((s32)&ResourceId_LightningMap),
-                      buffer);
+  Decompress_TaggedLz(Resource_GetTableEntry(RESOURCE_LIGHTNING_MAP), buffer);
   i = 0;
   cell = buffer;
 mask:
@@ -2098,14 +2096,12 @@ void AirsRockInside_WakeVialChestStatue(void) {
   Event_ResolvePendingActions(0);
   REG_DISPCNT &= ~DISPCNT_BG0_ON;
   Io_Write16(BGCNT_SCREEN_BASE(4), &REG_BG0CNT);
-  Decompress_TaggedLz(Resource_GetTableEntry((s32)&ResourceId_LightningTiles),
-                      buffer);
+  Decompress_TaggedLz(Resource_GetTableEntry(RESOURCE_LIGHTNING_TILES), buffer);
   Dma_Set(buffer, (void *)BG_CHAR_BLOCK(0), DMA_COPY_WORDS(512), REG_DMA3);
   Heap_Release(buffer);
   Dma_Fill16(0, (void *)BG_SCREEN_BLOCK(4), 0x800);
   buffer = Heap_Alloc(0x80);
-  Decompress_TaggedLz(Resource_GetTableEntry((s32)&ResourceId_LightningMap),
-                      buffer);
+  Decompress_TaggedLz(Resource_GetTableEntry(RESOURCE_LIGHTNING_MAP), buffer);
   i = 0;
   cell = buffer;
 mask:

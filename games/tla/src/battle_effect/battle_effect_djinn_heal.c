@@ -52,26 +52,26 @@ void BattleEffect_RunTumblingQuads(struct BattleEffectParams *args, s32 mode) {
                                                    args->side ^ 1,
                                                    DJINNI_ANCHOR_TARGET_X),
                                    anchor, size);
-    Resource_LoadAndDecompress((s32)&ResourceId_CometTexture,
+    Resource_LoadAndDecompress(RESOURCE_COMET_TEXTURE,
                                work->sheet + SHEET_TEXTURE, 0, 0);
-    Resource_LoadAndDecompress((s32)&ResourceId_MercuryDjinnSheet,
+    Resource_LoadAndDecompress(RESOURCE_MERCURY_DJINN_SHEET,
                                work->sheet + SHEET_DJINN, 1, 0);
     Iwram_CopyWords((void *)BG_PLTT,
-                    Resource_GetTableEntry((s32)&ResourceId_BlueFlameSheet),
+                    Resource_GetTableEntry(RESOURCE_BLUE_FLAME_SHEET),
                     SHEET_PALETTE_BYTES);
   } else if (mode == TUMBLING_QUADS_TINDER) {
     BattleEffect_RunDjinniEntrance(args,
                                    DJINNI_ENTRANCE(ELEMENT_MARS, args->side ^ 1,
                                                    DJINNI_ANCHOR_OVER_TARGET),
                                    anchor, size);
-    Resource_LoadAndDecompress((s32)&ResourceId_MarsDjinnSheet,
+    Resource_LoadAndDecompress(RESOURCE_MARS_DJINN_SHEET,
                                work->sheet + SHEET_DJINN, 1, 1);
-    Resource_LoadAndDecompress((s32)&ResourceId_FeatherSheet,
+    Resource_LoadAndDecompress(RESOURCE_FEATHER_SHEET,
                                work->sheet + SHEET_TEXTURE, 1, 1);
   } else {
     EffectPosition_ProjectBattler(args->targets[0], &pos);
     anchor[0] = pos.x;
-    Resource_LoadAndDecompress((s32)&ResourceId_FeatherSheet,
+    Resource_LoadAndDecompress(RESOURCE_FEATHER_SHEET,
                                work->sheet + SHEET_TEXTURE, 1, 1);
   }
   EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
@@ -284,8 +284,8 @@ void BattleEffect_RunZagan(struct BattleEffectParams *args) {
       transition[4] = 1;
       Iwram_FillWordsEntry((void *)&BG_PLTT_COLOR(6, 0), 256,
                            COLOR_PAIR(RGB_WHITE));
-      Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, work->sheet,
-                                 0, 0);
+      Resource_LoadAndDecompress(RESOURCE_PARTICLE_SPRITES_A, work->sheet, 0,
+                                 0);
       // Ten ever-fainter copies of one mote.
       for (j = 0; j != 10; j++) {
         size = 4;
@@ -302,8 +302,7 @@ void BattleEffect_RunZagan(struct BattleEffectParams *args) {
           sprites[size * size * j * 2 + i] = value;
         }
       }
-      Resource_LoadAndDecompress((s32)&ResourceId_PetalSheet, work->sheet, 1,
-                                 1);
+      Resource_LoadAndDecompress(RESOURCE_PETAL_SHEET, work->sheet, 1, 1);
       for (i = 0; i != 32; i++) {
         work->sheet[0x5dc0 + i] = i + 16;
         work->sheet[0x5de0 + i] = i + 16;
@@ -319,7 +318,7 @@ void BattleEffect_RunZagan(struct BattleEffectParams *args) {
   EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
   skip = 0;
   Iwram_CopyWordsEntry((void *)BG_PLTT,
-                       Resource_GetTableEntry((s32)&ResourceId_OrangePaletteB),
+                       Resource_GetTableEntry(RESOURCE_ORANGE_PALETTE_B),
                        SHEET_PALETTE_BYTES);
   BattleEffect_SelectLivingTargets(work->args);
   wait(1);
@@ -371,12 +370,10 @@ void BattleEffect_RunZagan(struct BattleEffectParams *args) {
       gProjection.centerX = -968;
       gProjection.centerY = BATTLE_PROJECTION_CENTER_Y;
       gBgScroll[1].x = savedScroll + 1128;
-      Resource_LoadAndDecompress((s32)&ResourceId_PetalSheet, work->sheet, 1,
-                                 1);
-      Iwram_CopyWordsEntry(
-          (void *)BG_PLTT,
-          Resource_GetTableEntry((s32)&ResourceId_OrangePaletteB),
-          SHEET_PALETTE_BYTES);
+      Resource_LoadAndDecompress(RESOURCE_PETAL_SHEET, work->sheet, 1, 1);
+      Iwram_CopyWordsEntry((void *)BG_PLTT,
+                           Resource_GetTableEntry(RESOURCE_ORANGE_PALETTE_B),
+                           SHEET_PALETTE_BYTES);
       EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
     }
     gProjection.centerX -= work->scrollStepX;
@@ -435,8 +432,8 @@ void BattleEffect_RunZagan(struct BattleEffectParams *args) {
                            CANVAS_FILL_WORD(CANVAS_LEVEL_BRIGHTEST));
     }
     if (frame == 157) {
-      Resource_LoadAndDecompress((s32)&ResourceId_CrescentRowSheet, work->sheet,
-                                 1, 0);
+      Resource_LoadAndDecompress(RESOURCE_CRESCENT_ROW_SHEET, work->sheet, 1,
+                                 0);
       work->shakeFrames = 16;
       for (i = 0; i != ZAGAN_PARTS - 1; i++) {
         Sprite_StartAnimationFar(work->sprites[i], i + 24);
@@ -543,8 +540,7 @@ void BattleEffect_RunZagan(struct BattleEffectParams *args) {
               60, 100);
     }
     if (frame == 157) {
-      Resource_LoadAndDecompress((s32)&ResourceId_FlameBandTexture, ringPixels,
-                                 0, 0);
+      Resource_LoadAndDecompress(RESOURCE_FLAME_BAND_TEXTURE, ringPixels, 0, 0);
     }
     if ((frame & 1) && skip) {
       goto shake;

@@ -90,15 +90,15 @@ UNUSED void BattleEffect_RunNereidCopy(struct BattleEffectParams *args) {
   BattleEffect_FetchRectangleBlitters(0, draw);
 
   // The spray's palette and picture, the pillar's picture, the ember cells.
-  palette = Resource_GetTableEntry((s32)&ResourceId_WaterSpraySheet);
+  palette = Resource_GetTableEntry(RESOURCE_WATER_SPRAY_SHEET);
   Dma_Set(palette, (void *)BG_PLTT, DMA_COPY_WORDS(SHEET_PALETTE_BYTES / 4),
           REG_DMA3);
   palette += SHEET_PALETTE_BYTES;
   Decompress_TaggedLz(palette, work->sheet);
-  palette = Resource_GetTableEntry((s32)&ResourceId_FirePillarSheetA);
+  palette = Resource_GetTableEntry(RESOURCE_FIRE_PILLAR_SHEET_A);
   palette += SHEET_PALETTE_BYTES;
   Decompress_TaggedLz(palette, work->sheet + PILLAR_SHEET);
-  Decompress_TaggedLz(Resource_GetTableEntry((s32)&ResourceId_ParticleSpritesA),
+  Decompress_TaggedLz(Resource_GetTableEntry(RESOURCE_PARTICLE_SPRITES_A),
                       cells);
   EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_THREE_QUARTERS);
   {
@@ -408,10 +408,9 @@ void BattleEffect_RunImpactBurst(s32 formation, s32 x, FIXED y) {
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED, EFFECT_CLIP_BOUNDS,
                       BLITTER_ADDITIVE);
   additive = (DrawRectangle)Ram_HeapSlots->ramCodePaired;
-  Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, sheet, 0, 0);
-  Resource_LoadAndDecompress((s32)&ResourceId_FlareSheet, work->sheet, 1, 0);
-  Resource_LoadAndDecompress((s32)&ResourceId_FlareImage, work->sheet + SHARD_E,
-                             0, 0);
+  Resource_LoadAndDecompress(RESOURCE_PARTICLE_SPRITES_A, sheet, 0, 0);
+  Resource_LoadAndDecompress(RESOURCE_FLARE_SHEET, work->sheet, 1, 0);
+  Resource_LoadAndDecompress(RESOURCE_FLARE_IMAGE, work->sheet + SHARD_E, 0, 0);
   EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
 
   for (i = 0; i != IMPACT_BURST_LARGE_SPARKS; i++) {
@@ -774,10 +773,10 @@ void BattleEffect_RunParticleStreams(struct BattleEffectParams *args,
   } else {
     BattleEffect_SpawnObjects(1, SPRITE_METEOR, 3);
   }
-  Resource_LoadAndDecompress((s32)&ResourceId_FlameSheetB, work->sheet, 1, 1);
+  Resource_LoadAndDecompress(RESOURCE_FLAME_SHEET_B, work->sheet, 1, 1);
   if (mode == PARTICLE_STREAMS_OUTER_SPACE)
     Iwram_CopyWords((void *)BG_PLTT,
-                    Resource_GetTableEntry((s32)&ResourceId_LightningBoltSheet),
+                    Resource_GetTableEntry(RESOURCE_LIGHTNING_BOLT_SHEET),
                     SHEET_PALETTE_BYTES);
 
   // BG1 shows the ground: the map cell buffer filled with colour 1.
@@ -1070,7 +1069,7 @@ void BattleEffect_RunParticleStreams(struct BattleEffectParams *args,
       BGCNT_CHAR_BASE(1) | BGCNT_256_COLORS | BGCNT_SCREEN_BASE(7) | BGCNT_WRAP;
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, BLITTER_MAX);
   draw = (DrawRectangle)Ram_HeapSlots->ramCode;
-  Resource_LoadAndDecompress((s32)&ResourceId_BlastSheet, work->sheet, 1, 0);
+  Resource_LoadAndDecompress(RESOURCE_BLAST_SHEET, work->sheet, 1, 0);
   for (i = 0; i != 32; i++) {
     struct Particle *mote = &work->particles[i];
 

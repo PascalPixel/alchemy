@@ -80,10 +80,8 @@ void BattleEffect_RunProcne(struct BattleEffectParams *args) {
   {
     struct Point2D wave;
     struct Point2D drift;
-    Resource_LoadAndDecompress((s32)&ResourceId_WhirlwindSheet, work->sheet, 1,
-                               1);
-    Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, graphics, 0,
-                               0);
+    Resource_LoadAndDecompress(RESOURCE_WHIRLWIND_SHEET, work->sheet, 1, 1);
+    Resource_LoadAndDecompress(RESOURCE_PARTICLE_SPRITES_A, graphics, 0, 0);
     EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
     wave.x = toFIXED(128);
     wave.y = toFIXED(40);
@@ -261,12 +259,12 @@ void BattleEffect_RunProcne(struct BattleEffectParams *args) {
         s32 angle;
 
         BattleBackground_LoadFar(BATTLE_BACKGROUND_FIXED,
-                                 (s32)&ResourceId_VioletSkyBackdrop, 0);
+                                 RESOURCE_VIOLET_SKY_BACKDROP, 0);
         BattleBackground_SetModeFar(BATTLE_BACKGROUND_FIXED,
-                                    (s32)&ResourceId_VioletSkyBackdrop, 8);
+                                    RESOURCE_VIOLET_SKY_BACKDROP, 8);
         BattleEffect_SelectLivingTargets(work->args);
         BattleEffect_SpawnObjects(PROCNE_SPRITES, SPRITE_PROCNE, 2);
-        Resource_LoadAndDecompress((s32)&ResourceId_VioletCometSheet,
+        Resource_LoadAndDecompress(RESOURCE_VIOLET_COMET_SHEET,
                                    work->sheet + COMET_SHEET, 1, 1);
 
         index = 0;
@@ -585,11 +583,10 @@ void BattleEffect_RunDragonFire(struct BattleEffectParams *args, s32 mode) {
   REG_BLDALPHA = EFFECT_BLEND_ADD;
   REG_BG2CNT = BGCNT_CHAR_BASE(1) | BGCNT_256_COLORS | BGCNT_SCREEN_BASE(7);
   BattleEffect_FetchRectangleBlitters(0, draw);
-  Resource_LoadAndDecompress((s32)&ResourceId_FlashBurstSheet, work->sheet, 1,
-                             1);
-  Resource_LoadAndDecompress((s32)&ResourceId_EmberStreakSheet,
+  Resource_LoadAndDecompress(RESOURCE_FLASH_BURST_SHEET, work->sheet, 1, 1);
+  Resource_LoadAndDecompress(RESOURCE_EMBER_STREAK_SHEET,
                              work->sheet + STREAK_SHEET, 1, 0);
-  Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, sheet, 0, 0);
+  Resource_LoadAndDecompress(RESOURCE_PARTICLE_SPRITES_A, sheet, 0, 0);
   if (mode == DRAGON_FIRE_DRAGON_DRIVER) {
     LOAD_BG_PALETTE(ResourceId_LightningBoltSheet);
   }
@@ -681,7 +678,7 @@ void BattleEffect_RunDragonFire(struct BattleEffectParams *args, s32 mode) {
         EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_DARKEN, CANVAS_FILL_WORD(2));
         Iwram_CopyWordsEntry(
             (void *)BG_PLTT,
-            Resource_GetTableEntry((s32)&ResourceId_EmberStreakSheet),
+            Resource_GetTableEntry(RESOURCE_EMBER_STREAK_SHEET),
             SHEET_PALETTE_BYTES);
       } else if (frame >= DRAGON_FIRE_FLASH_FRAME && frame <= 175) {
         EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_CLEAR, CANVAS_FILL_WORD(16));

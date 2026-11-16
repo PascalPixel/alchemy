@@ -99,8 +99,7 @@ void BattleEffect_RunShatteringOpening(struct BattleEffectParams *args) {
   IO_WRITE_QUEUE_PUSH((u32)&REG_DISPCNT, EFFECT_DISPCNT, IO_WRITE_HALFWORD);
   REG_BLDALPHA = EFFECT_BLEND_ADD;
   REG_BLDCNT = 0;
-  Resource_LoadAndDecompress((s32)&ResourceId_TileAnimationMask, work->sheet, 1,
-                             1);
+  Resource_LoadAndDecompress(RESOURCE_TILE_ANIMATION_MASK, work->sheet, 1, 1);
   work->transferMode = CANVAS_COPY_AND_CLEAR; // each transfer clears the canvas
   work->transferValue = 0;
   Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_FRAME);
@@ -309,8 +308,7 @@ void BattleEffect_RunShatteringOpening(struct BattleEffectParams *args) {
     // Frame 51: the flash pictures and colours, and 32 flashes placed at
     // x 32-63, y 80-111.
     if (frame == 51) {
-      Resource_LoadAndDecompress((s32)&ResourceId_FlashBurstSheet, work->sheet,
-                                 1, 0);
+      Resource_LoadAndDecompress(RESOURCE_FLASH_BURST_SHEET, work->sheet, 1, 0);
       for (i = 1; i != 64; i++) {
         s32 v;
 
@@ -417,21 +415,20 @@ void BattleEffect_RunElementBurst(struct BattleEffectParams *args) {
   work->fadeStep = 0;
   REG_BLDALPHA = EFFECT_BLEND_CANVAS(12);
   REG_BG2PA = Q_8_8(1);
-  Resource_LoadAndDecompress((s32)&ResourceId_CyanSparkSheet, work->sheet, 1,
-                             0);
-  Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesD, sheet, 0, 0);
+  Resource_LoadAndDecompress(RESOURCE_CYAN_SPARK_SHEET, work->sheet, 1, 0);
+  Resource_LoadAndDecompress(RESOURCE_PARTICLE_SPRITES_D, sheet, 0, 0);
   switch (args->kind) {
   case 0:
-    palette = Resource_GetTableEntry((s32)&ResourceId_YellowPaletteA);
+    palette = Resource_GetTableEntry(RESOURCE_YELLOW_PALETTE_A);
     break;
   case 1:
-    palette = Resource_GetTableEntry((s32)&ResourceId_IceTileSheet);
+    palette = Resource_GetTableEntry(RESOURCE_ICE_TILE_SHEET);
     break;
   case 2:
-    palette = Resource_GetTableEntry((s32)&ResourceId_RedPaletteA);
+    palette = Resource_GetTableEntry(RESOURCE_RED_PALETTE_A);
     break;
   default:
-    palette = Resource_GetTableEntry((s32)&ResourceId_VioletPaletteA);
+    palette = Resource_GetTableEntry(RESOURCE_VIOLET_PALETTE_A);
     break;
   }
   {
@@ -691,20 +688,20 @@ void BattleEffect_StartElementStreaks(s32 kind) {
 
   switch (kind) {
   case 0:
-    id = (s32)&ResourceId_YellowPaletteB;
+    id = RESOURCE_YELLOW_PALETTE_B;
     break;
   case 1:
-    id = (s32)&ResourceId_CrystalSheet;
+    id = RESOURCE_CRYSTAL_SHEET;
     break;
   case 2:
-    id = (s32)&ResourceId_EmberStreakSheet;
+    id = RESOURCE_EMBER_STREAK_SHEET;
     break;
   case 3:
-    id = (s32)&ResourceId_VioletPaletteD;
+    id = RESOURCE_VIOLET_PALETTE_D;
     break;
   case 4:
   default:
-    id = (s32)&ResourceId_DustPuffSheet;
+    id = RESOURCE_DUST_PUFF_SHEET;
     break;
   }
   Iwram_CopyWordsEntry((void *)BG_PLTT, Resource_GetTableEntry(id),
@@ -829,25 +826,24 @@ void BattleEffect_RunCruelRuin(struct BattleEffectParams *args) {
   gProjection.centerY = SUMMON_PROJECTION_CENTER_Y;
   BattleEffect_SelectLivingTargets(work->args);
   BattleBackground_LoadFar(BATTLE_BACKGROUND_FIXED,
-                           (s32)&ResourceId_SunbeamCloudsBackdrop, 0);
+                           RESOURCE_SUNBEAM_CLOUDS_BACKDROP, 0);
   transition[4] = 1;
   gBgScroll[1].x = 0;
   REG_BG2PA = Q_8_8(0.5);
   REG_BG2X = 0;
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, BLITTER_ADDITIVE);
   draw[0] = Ram_HeapSlots->ramCode;
-  Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, sprites, 0, 0);
-  Resource_LoadAndDecompress((s32)&ResourceId_FireRingTexture,
-                             gMapGridCellBuffer, 0, 0);
-  Resource_LoadAndDecompress((s32)&ResourceId_CornerRuneASheet, work->sheet, 1,
+  Resource_LoadAndDecompress(RESOURCE_PARTICLE_SPRITES_A, sprites, 0, 0);
+  Resource_LoadAndDecompress(RESOURCE_FIRE_RING_TEXTURE, gMapGridCellBuffer, 0,
                              0);
+  Resource_LoadAndDecompress(RESOURCE_CORNER_RUNE_A_SHEET, work->sheet, 1, 0);
   Picture_MirrorIntoQuadrants(
       work->sheet, Ram_MapCellBuffer + CRUEL_RUIN_RUNE_CIRCLE, 64, 64);
-  Resource_LoadAndDecompress((s32)&ResourceId_SwirlTexture,
+  Resource_LoadAndDecompress(RESOURCE_SWIRL_TEXTURE,
                              work->sheet + CRUEL_RUIN_SWIRL, 0, 0);
-  Resource_LoadAndDecompress((s32)&ResourceId_GlowBandTextureA,
+  Resource_LoadAndDecompress(RESOURCE_GLOW_BAND_TEXTURE_A,
                              work->sheet + CRUEL_RUIN_BAND_A, 0, 0);
-  Resource_LoadAndDecompress((s32)&ResourceId_GlowBandTextureB,
+  Resource_LoadAndDecompress(RESOURCE_GLOW_BAND_TEXTURE_B,
                              work->sheet + CRUEL_RUIN_BAND_B, 0, 0);
   for (i = 0; i != 10; i++) {
     s32 size = i * 2 + 2;
@@ -1230,15 +1226,15 @@ void BattleEffect_RunCruelRuin(struct BattleEffectParams *args) {
     REG_BG2CNT = BGCNT_PRIORITY(2) | BGCNT_CHAR_BASE(1) | BGCNT_256_COLORS |
                  BGCNT_SCREEN_BASE(7);
     BattleBackground_LoadFar(BATTLE_BACKGROUND_FIXED,
-                             (s32)&ResourceId_VioletSkyBackdrop, 0);
+                             RESOURCE_VIOLET_SKY_BACKDROP, 0);
     Palette_BrightenBattleBg(RGB_LEVEL_MAX, RGB_LEVEL_MAX, RGB_LEVEL_MAX);
-    Resource_LoadAndDecompress((s32)&ResourceId_GlowBandTextureB,
+    Resource_LoadAndDecompress(RESOURCE_GLOW_BAND_TEXTURE_B,
                                work->sheet + CRUEL_RUIN_BAND_A, 0, 0);
-    Resource_LoadAndDecompress((s32)&ResourceId_PinkBarSheet,
+    Resource_LoadAndDecompress(RESOURCE_PINK_BAR_SHEET,
                                work->sheet + CRUEL_RUIN_PINK_BAR, 0, 0);
     Graphics_LoadGreyRamp();
     {
-      u8 *e = Resource_GetTableEntry((s32)&ResourceId_ForestCanopyTiles);
+      u8 *e = Resource_GetTableEntry(RESOURCE_FOREST_CANOPY_TILES);
 
       Iwram_FillWords((void *)&OBJ_PLTT_COLOR(15, 0), 32,
                       COLOR_PAIR(RGB_WHITE));
@@ -1302,7 +1298,7 @@ void BattleEffect_RunCruelRuin(struct BattleEffectParams *args) {
         }
         Palette_BrightenSavedBattleBg(r, g, b);
         if (frame <= 16) {
-          u16 *e = Resource_GetTableEntry((s32)&ResourceId_ForestCanopyTiles);
+          u16 *e = Resource_GetTableEntry(RESOURCE_FOREST_CANOPY_TILES);
           u16 *dst = (u16 *)&OBJ_PLTT_COLOR(15, 0);
           s32 add;
 
@@ -1609,7 +1605,7 @@ void BattleEffect_RunCruelRuin(struct BattleEffectParams *args) {
   REG_BG2CNT = BGCNT_CHAR_BASE(1) | BGCNT_256_COLORS | BGCNT_SCREEN_BASE(7);
   args->targets[args->targetCount] = 0xff;
   BattleActor_SpawnObjectsForListFar(args->targets, 0);
-  Resource_LoadAndDecompress((s32)&ResourceId_GlowBandTextureB,
+  Resource_LoadAndDecompress(RESOURCE_GLOW_BAND_TEXTURE_B,
                              work->sheet + CRUEL_RUIN_BURST_BAND, 0, 0);
   REG_BLDALPHA = EFFECT_BLEND_ADD;
   for (i = 0; i != 120; i++) {

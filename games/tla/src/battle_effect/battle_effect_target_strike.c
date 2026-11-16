@@ -223,52 +223,51 @@ void BattleEffect_RunTargetStrike(struct BattleEffectParams *args, s32 mode) {
 
   // The sheets: motes, the tornado, the strikes or columns, the mode's
   // colours and the wisps (smoke, flash or star).
-  Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, sheet, 0, 0);
-  Resource_LoadAndDecompress((s32)&ResourceId_TornadoSheet, work->sheet, 1, 0);
+  Resource_LoadAndDecompress(RESOURCE_PARTICLE_SPRITES_A, sheet, 0, 0);
+  Resource_LoadAndDecompress(RESOURCE_TORNADO_SHEET, work->sheet, 1, 0);
   if (RECORD(mode, TARGET_STRIKE_KIND) == STRIKE_KIND_SLASH)
-    Resource_LoadAndDecompress((s32)&ResourceId_BeamImage,
+    Resource_LoadAndDecompress(RESOURCE_BEAM_IMAGE,
                                work->sheet + TARGET_STRIKE_BITE_PICTURES, 0, 0);
   else
-    Resource_LoadAndDecompress((s32)&ResourceId_TwelveModeImage,
+    Resource_LoadAndDecompress(RESOURCE_TWELVE_MODE_IMAGE,
                                work->sheet + TARGET_STRIKE_BITE_PICTURES, 0, 0);
   switch (RECORD(mode, TARGET_STRIKE_COLOR)) {
   case STRIKE_COLOR_BLUE:
-    resource = (s32)&ResourceId_BlueBeamSheet;
+    resource = RESOURCE_BLUE_BEAM_SHEET;
     break;
   case STRIKE_COLOR_LIME:
-    resource = (s32)&ResourceId_LimePalette;
+    resource = RESOURCE_LIME_PALETTE;
     break;
   case STRIKE_COLOR_PINK:
-    resource = (s32)&ResourceId_PinkPalette;
+    resource = RESOURCE_PINK_PALETTE;
     break;
   case STRIKE_COLOR_EMBER:
-    resource = (s32)&ResourceId_EmberStreakSheet;
+    resource = RESOURCE_EMBER_STREAK_SHEET;
     break;
   case STRIKE_COLOR_MARS:
-    resource = (s32)&ResourceId_MarsDjinnSheet;
+    resource = RESOURCE_MARS_DJINN_SHEET;
     break;
   case STRIKE_COLOR_LIGHTNING:
   default:
-    resource = (s32)&ResourceId_LightningBoltSheet;
+    resource = RESOURCE_LIGHTNING_BOLT_SHEET;
     break;
   case STRIKE_COLOR_ORANGE:
-    resource = (s32)&ResourceId_OrangePaletteB;
+    resource = RESOURCE_ORANGE_PALETTE_B;
     break;
   }
   Iwram_CopyWordsEntry((void *)BG_PLTT, Resource_GetTableEntry(resource),
                        SHEET_PALETTE_BYTES);
   if (RECORD(mode, TARGET_STRIKE_FLAGS) & STRIKE_FLASH)
-    Resource_LoadAndDecompress((s32)&ResourceId_FlashBurstSheet,
+    Resource_LoadAndDecompress(RESOURCE_FLASH_BURST_SHEET,
                                work->sheet + TARGET_STRIKE_SMOKE_PICTURES, 1,
                                0);
   else if (RECORD(mode, TARGET_STRIKE_FLAGS) & STRIKE_STAR)
-    Resource_LoadAndDecompress((s32)&ResourceId_StarCrossSheet,
+    Resource_LoadAndDecompress(RESOURCE_STAR_CROSS_SHEET,
                                work->sheet + TARGET_STRIKE_SMOKE_PICTURES, 1,
                                0);
   else
-    Resource_LoadAndDecompress((s32)&ResourceId_SmokeSheet,
-                               work->sheet + TARGET_STRIKE_SMOKE_PICTURES, 1,
-                               0);
+    Resource_LoadAndDecompress(
+        RESOURCE_SMOKE_SHEET, work->sheet + TARGET_STRIKE_SMOKE_PICTURES, 1, 0);
 
   for (k = 0; k != 1; k++) {
     // The wisps start at the target's feet, waiting (-1) until a hit.
@@ -750,8 +749,7 @@ void BattleEffect_RunBladeRain(struct BattleEffectParams *args) {
                       BLITTER_TRANSPARENT);
   draw[1] = (DrawRectangle)Ram_HeapSlots->ramCodePaired;
   blit = draw;
-  Resource_LoadAndDecompress((s32)&ResourceId_CrossedDaggersSheet, work->sheet,
-                             1, 1);
+  Resource_LoadAndDecompress(RESOURCE_CROSSED_DAGGERS_SHEET, work->sheet, 1, 1);
   work->transferMode = CANVAS_COPY_AND_CLEAR; // each transfer clears the canvas
   work->transferValue = 0;
   Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_FRAME);
@@ -889,20 +887,20 @@ void BattleEffect_RunElementPillar(struct BattleEffectParams *args) {
   work->fadeStep = 0;
   REG_BLDALPHA = EFFECT_BLEND_CANVAS(12);
   REG_BG2PA = Q_8_8(1);
-  Resource_LoadAndDecompress((s32)&ResourceId_IceTileSheet, work->sheet, 1, 0);
-  Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesD, sheet, 0, 0);
+  Resource_LoadAndDecompress(RESOURCE_ICE_TILE_SHEET, work->sheet, 1, 0);
+  Resource_LoadAndDecompress(RESOURCE_PARTICLE_SPRITES_D, sheet, 0, 0);
   switch (args->kind) {
   case 0:
-    palette = Resource_GetTableEntry((s32)&ResourceId_YellowPaletteA);
+    palette = Resource_GetTableEntry(RESOURCE_YELLOW_PALETTE_A);
     break;
   case 1:
-    palette = Resource_GetTableEntry((s32)&ResourceId_IceTileSheet);
+    palette = Resource_GetTableEntry(RESOURCE_ICE_TILE_SHEET);
     break;
   case 2:
-    palette = Resource_GetTableEntry((s32)&ResourceId_RedPaletteA);
+    palette = Resource_GetTableEntry(RESOURCE_RED_PALETTE_A);
     break;
   default:
-    palette = Resource_GetTableEntry((s32)&ResourceId_VioletPaletteA);
+    palette = Resource_GetTableEntry(RESOURCE_VIOLET_PALETTE_A);
     break;
   }
   Iwram_CopyWordsEntry((void *)BG_PLTT, palette, SHEET_PALETTE_BYTES);

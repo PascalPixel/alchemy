@@ -76,7 +76,7 @@ void BattleEffect_RunMegiddo(struct BattleEffectParams *args) {
   BattleMotion_ApproachTargetFar(args->user, args->user, 150, toFIXED(5));
   BattleEffect_StartCanvasLayer(0);
   REG_BLDALPHA = EFFECT_BLEND_ADD;
-  Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, sprites, 0, 0);
+  Resource_LoadAndDecompress(RESOURCE_PARTICLE_SPRITES_A, sprites, 0, 0);
   EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, BLITTER_MAX);
   blit[0] = (DrawRectangle)Ram_HeapSlots->ramCode;
@@ -131,15 +131,15 @@ void BattleEffect_RunMegiddo(struct BattleEffectParams *args) {
     if (frame == 0) {
       Iwram_FillWordsEntry(canvas, CANVAS_VIEW_BYTES,
                            CANVAS_FILL_WORD(CANVAS_LEVEL_BRIGHTEST));
-      Resource_LoadAndDecompress((s32)&ResourceId_FireRingTexture,
+      Resource_LoadAndDecompress(RESOURCE_FIRE_RING_TEXTURE,
                                  Ram_MapCellBuffer + MEGIDDO_FIRE_RING, 0, 0);
-      Resource_LoadAndDecompress((s32)&ResourceId_FlameGradientTexture,
-                                 work->sheet, 0, 0);
-      Resource_LoadAndDecompress((s32)&ResourceId_GlowBandTextureA,
+      Resource_LoadAndDecompress(RESOURCE_FLAME_GRADIENT_TEXTURE, work->sheet,
+                                 0, 0);
+      Resource_LoadAndDecompress(RESOURCE_GLOW_BAND_TEXTURE_A,
                                  work->sheet + MEGIDDO_GLOW_BAND, 0, 0);
-      Resource_LoadAndDecompress((s32)&ResourceId_FireStripesTexture,
+      Resource_LoadAndDecompress(RESOURCE_FIRE_STRIPES_TEXTURE,
                                  work->sheet + MEGIDDO_FIRE_STRIPES, 1, 1);
-      Resource_LoadAndDecompress((s32)&ResourceId_DustBlobSheet,
+      Resource_LoadAndDecompress(RESOURCE_DUST_BLOB_SHEET,
                                  work->sheet + MEGIDDO_DUST_BLOB_PICTURES, 1,
                                  0);
       Graphics_LoadGreyRamp();
@@ -161,7 +161,7 @@ void BattleEffect_RunMegiddo(struct BattleEffectParams *args) {
       list[1] = 255;
       BattleActor_SpawnObjectsForListFar(list, 0);
       BattleBackground_LoadFar(BATTLE_BACKGROUND_FIXED,
-                               (s32)&ResourceId_RedHazeBackdrop, 0);
+                               RESOURCE_RED_HAZE_BACKDROP, 0);
       BattleEffect_BuildRepeatingTilemap();
       Palette_BrightenBattleBg(8, 2, 2);
       BattleEffect_SpawnObjects(1, 0x299, 2);
@@ -232,7 +232,7 @@ void BattleEffect_RunMegiddo(struct BattleEffectParams *args) {
     }
     if ((u32)(frame - 42) <= 37) {
       z += toFIXED(2);
-      BattleEffect_StepPaletteToResource((s32)&ResourceId_OrangePaletteB);
+      BattleEffect_StepPaletteToResource(RESOURCE_ORANGE_PALETTE_B);
     }
     if ((u32)(frame - 84) <= 58) {
       if (!args->side) {

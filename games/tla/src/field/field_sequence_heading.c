@@ -19,7 +19,7 @@
 /// for 24 frames.
 void Heading_Show(s32 heading) {
   u16 tile;
-  s32 *headings = Resource_GetTableEntry((s32)&ResourceId_Headings);
+  s32 *headings = Resource_GetTableEntry(RESOURCE_HEADINGS);
   u8 *tiles;
   u16 *cell;
   u32 row, column;
@@ -136,7 +136,7 @@ void Heading_Close(void) {
   }
   REG_DISPCNT ^= DISPCNT_BG0_ON | DISPCNT_WIN0_ON;
   Dma_Fill32Cell(fill, HEADING_BLANK_CELL, (void *)BG_SCREEN_BLOCK(4), 2048);
-  Dma_Set(Resource_GetTableEntry((s32)&ResourceId_WindowTiles),
+  Dma_Set(Resource_GetTableEntry(RESOURCE_WINDOW_TILES),
           (void *)BG_CHAR_BLOCK(0), DMA_COPY_WORDS(0x800), REG_DMA3);
   REG_DISPCNT ^= DISPCNT_BG0_ON;
 }

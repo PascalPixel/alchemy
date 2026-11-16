@@ -43,37 +43,35 @@ void BattleEffect_RunRushingStrike(struct BattleEffectParams *args, s32 mode) {
   BattleEffect_StartCanvasLayer(0);
   REG_BLDALPHA = EFFECT_BLEND_ADD;
   BattleEffect_FetchRectangleBlitters(0, draw);
-  Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, sparkCels, 0,
+  Resource_LoadAndDecompress(RESOURCE_PARTICLE_SPRITES_A, sparkCels, 0, 0);
+  Resource_LoadAndDecompress(RESOURCE_FIRE_RING_TEXTURE, Ram_MapCellBuffer, 0,
                              0);
-  Resource_LoadAndDecompress((s32)&ResourceId_FireRingTexture,
-                             Ram_MapCellBuffer, 0, 0);
 
   // The streak: the 32x32 flare, then the same flare upside down below it.
-  Resource_LoadAndDecompress((s32)&ResourceId_FlamePlumeSheet, work->sheet, 0,
-                             0);
+  Resource_LoadAndDecompress(RESOURCE_FLAME_PLUME_SHEET, work->sheet, 0, 0);
   for (row = 0; row != 32; row++)
     for (column = 0; column != 32; column++)
       work->sheet[0x400 + (31 - row) * 32 + column] =
           work->sheet[row * 32 + column];
-  Resource_LoadAndDecompress((s32)&ResourceId_FlashBurstSheet,
+  Resource_LoadAndDecompress(RESOURCE_FLASH_BURST_SHEET,
                              work->sheet + RUSHING_STRIKE_FLASH_BURST_PICTURES,
                              1, 0);
   switch (mode) {
   case RUSHING_STRIKE_BONE_CHARGE:
-    resource = (s32)&ResourceId_FirePillarSheetB;
+    resource = RESOURCE_FIRE_PILLAR_SHEET_B;
     break;
   case RUSHING_STRIKE_BRUTE_FORCE:
-    resource = (s32)&ResourceId_IceBlockSheet;
+    resource = RESOURCE_ICE_BLOCK_SHEET;
     break;
   case RUSHING_STRIKE_ONSLAUGHT:
-    resource = (s32)&ResourceId_PinkBurstSheet;
+    resource = RESOURCE_PINK_BURST_SHEET;
     break;
   case RUSHING_STRIKE_HEADBUTT:
   case RUSHING_STRIKE_LIVING_ARMOR:
-    resource = (s32)&ResourceId_BlastSheet;
+    resource = RESOURCE_BLAST_SHEET;
     break;
   default:
-    resource = (s32)&ResourceId_OrangePaletteB;
+    resource = RESOURCE_ORANGE_PALETTE_B;
     break;
   }
   Iwram_CopyWordsEntry((void *)BG_PLTT, Resource_GetTableEntry(resource),

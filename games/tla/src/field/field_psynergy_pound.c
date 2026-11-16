@@ -240,7 +240,7 @@ void FieldPsynergy_Pound(void) {
   Camera_WorldToScreen(pos);
   canvas->x = (s16)FIXEDtoINT(pos[0]);
   canvas->y = (s16)FIXEDtoINT(pos[2]);
-  Decompress_TaggedLz(Resource_GetTableEntry((s32)&ResourceId_GlowDisc),
+  Decompress_TaggedLz(Resource_GetTableEntry(RESOURCE_GLOW_DISC),
                       Ram_HeapSlots->battleCanvas);
   canvas->command = CANVAS_UPLOAD;
 
@@ -261,7 +261,7 @@ void FieldPsynergy_Pound(void) {
   glow->x = pos[0];
   glow->y = pos[2];
 
-  Decompress_TaggedLz(Resource_GetTableEntry((s32)&ResourceId_GoldStar), work);
+  Decompress_TaggedLz(Resource_GetTableEntry(RESOURCE_GOLD_STAR), work);
   starEntry = VramCache_FindFreeEntry();
   starTile = VramCache_Load(starEntry, 0x100, work);
   for (j = 0, particle = work->particles; j < 32; j++, particle++) {

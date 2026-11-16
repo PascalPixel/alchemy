@@ -1545,7 +1545,7 @@ void VenusLighthouseEntrance_StartDust(void) {
   struct SparkState *state;
   struct EffectSprite *sprite;
 
-  Decompress_TaggedLz(Resource_GetTableEntry((s32)&ResourceId_DustPuffA), work);
+  Decompress_TaggedLz(Resource_GetTableEntry(RESOURCE_DUST_PUFF_A), work);
   resource = VramCache_FindFreeEntry();
   tileBase = Vram_Load(resource, 0x800, work);
   work->tileBase = tileBase;

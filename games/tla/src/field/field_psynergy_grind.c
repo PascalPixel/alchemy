@@ -94,7 +94,7 @@ void FieldPsynergy_GrindOnTarget(void) {
     radius = toFIXED(21);
 
   FieldPsynergy_FadeToCastColor();
-  source = Resource_GetTableEntry((s32)&ResourceId_WaterSplash);
+  source = Resource_GetTableEntry(RESOURCE_WATER_SPLASH);
   picture = work->picture;
   Decompress_TaggedLz(source, picture);
   entry = VramCache_FindFreeEntry();

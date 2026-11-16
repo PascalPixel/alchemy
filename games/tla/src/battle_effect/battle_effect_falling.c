@@ -49,8 +49,8 @@ void BattleEffect_RunIce(struct BattleEffectParams *args) {
 
   // Set up the canvas, the shard pictures in the sheet and the puffs.
   EFFECT_START_NARROW_CANVAS(BGCNT_WRAP | BGCNT_PRIORITY(1));
-  Resource_LoadAndDecompress((s32)&ResourceId_IceShardSheet, work->sheet, 1, 1);
-  Resource_LoadAndDecompress((s32)&ResourceId_SparkleDots, graphics, 0, 0);
+  Resource_LoadAndDecompress(RESOURCE_ICE_SHARD_SHEET, work->sheet, 1, 1);
+  Resource_LoadAndDecompress(RESOURCE_SPARKLE_DOTS, graphics, 0, 0);
   BattleEffect_ConfigureEffectDisplay();
   REG_BLDCNT = BLDCNT_TGT1_BG2 | BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_ALL;
   REG_WININ = EFFECT_WIN0_LAYERS | WININ_WIN1_BG0 | WININ_WIN1_BG1 |
@@ -267,10 +267,9 @@ void BattleEffect_RunDouse(struct BattleEffectParams *args) {
 
   // Set up the canvas, the drop pictures and the droplets.
   EFFECT_START_NARROW_CANVAS(BGCNT_WRAP | BGCNT_PRIORITY(1));
-  Resource_LoadAndDecompress((s32)&ResourceId_BlueBeamSheet,
+  Resource_LoadAndDecompress(RESOURCE_BLUE_BEAM_SHEET,
                              work->sheet + DOUSE_BLUE_BEAM_PICTURES, 1, 1);
-  Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesD, work->sheet, 0,
-                             0);
+  Resource_LoadAndDecompress(RESOURCE_PARTICLE_SPRITES_D, work->sheet, 0, 0);
   BattleEffect_ConfigureEffectDisplay();
   REG_BLDCNT = BLDCNT_TGT1_BG2 | BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_ALL;
   REG_WININ = EFFECT_WIN0_LAYERS | WININ_WIN1_BG0 | WININ_WIN1_BG1 |

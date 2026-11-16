@@ -68,24 +68,23 @@ void Shop_InitializeWork(void) {
   // Each icon is 128 bytes: four tiles of 4 bits a pixel, a 16x16 sprite
   resourceSlot = VramCache_FindFreeEntry();
   shop->cursorIcon = resourceSlot;
-  VramBlock_LoadResource(resourceSlot, 128, (s32)&ResourceId_UiIconTiles);
+  VramBlock_LoadResource(resourceSlot, 128, RESOURCE_UI_ICON_TILES);
   resourceSlot = VramCache_FindFreeEntry();
   shop->previousPageIcon = resourceSlot;
-  VramBlock_LoadResource(resourceSlot, 128, (s32)&ResourceId_ShopUpArrowTiles);
+  VramBlock_LoadResource(resourceSlot, 128, RESOURCE_SHOP_UP_ARROW_TILES);
   resourceSlot = VramCache_FindFreeEntry();
   shop->nextPageIcon = resourceSlot;
-  VramBlock_LoadResource(resourceSlot, 128,
-                         (s32)&ResourceId_ShopDownArrowTiles);
+  VramBlock_LoadResource(resourceSlot, 128, RESOURCE_SHOP_DOWN_ARROW_TILES);
   resourceSlot = VramCache_FindFreeEntry();
   shop->gemIcon = resourceSlot;
-  VramBlock_LoadResource(resourceSlot, 128, (s32)&ResourceId_ShopGemTiles);
+  VramBlock_LoadResource(resourceSlot, 128, RESOURCE_SHOP_GEM_TILES);
   resourceSlot = VramCache_FindFreeEntry();
   shop->statDownIcon = resourceSlot;
   VramBlock_LoadResource(resourceSlot, 128,
-                         (s32)&ResourceId_MenuSmallDownArrowTiles);
+                         RESOURCE_MENU_SMALL_DOWN_ARROW_TILES);
   resourceSlot = VramCache_FindFreeEntry();
   shop->statUpIcon = resourceSlot;
-  VramBlock_LoadResource(resourceSlot, 128, (s32)&ResourceId_MenuArrowTiles);
+  VramBlock_LoadResource(resourceSlot, 128, RESOURCE_MENU_ARROW_TILES);
   Task_Add(MenuCursor_Step, TASK_PASS_VBLANK);
   ItemIconGrid_Initialize();
 }

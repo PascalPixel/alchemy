@@ -87,9 +87,8 @@ void BattleEffect_RunMeteorBlow(struct BattleEffectParams *args) {
   Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_FRAME);
   BattleEffect_WipeCanvas(CANVAS_WIPE_DOWN, CANVAS_WIPE_FILL);
   Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
-  Resource_LoadAndDecompress((s32)&ResourceId_GlowOrbSetSheet, work->sheet, 1,
-                             1);
-  Resource_LoadAndDecompress((s32)&ResourceId_DustBlobSheet,
+  Resource_LoadAndDecompress(RESOURCE_GLOW_ORB_SET_SHEET, work->sheet, 1, 1);
+  Resource_LoadAndDecompress(RESOURCE_DUST_BLOB_SHEET,
                              work->sheet + METEOR_BLOW_DUST_BLOB_PICTURES, 1,
                              1);
   Iwram_CopyWordsEntry(sprites, work->sheet + 0x1c2, 30);
@@ -201,7 +200,7 @@ void BattleEffect_RunMeteorBlow(struct BattleEffectParams *args) {
       IO_WRITE_QUEUE_PUSH((u32)&REG_BG2CNT, 0x784, IO_WRITE_HALFWORD);
     }
     if (frame > 128) {
-      BattleEffect_StepPaletteToResource((s32)&ResourceId_OrangePaletteB);
+      BattleEffect_StepPaletteToResource(RESOURCE_ORANGE_PALETTE_B);
     }
     if (frame == 117) {
       work->frame = 45;
@@ -410,12 +409,11 @@ void BattleEffect_RunMeteorBlow(struct BattleEffectParams *args) {
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, BLITTER_MAX);
   blit[0] = (DrawRectangle)Ram_HeapSlots->ramCode;
   EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
-  Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, sprites, 0, 0);
-  Resource_LoadAndDecompress((s32)&ResourceId_FlashBurstSheet, work->sheet, 1,
-                             0);
-  Resource_LoadAndDecompress((s32)&ResourceId_BillowTexture,
+  Resource_LoadAndDecompress(RESOURCE_PARTICLE_SPRITES_A, sprites, 0, 0);
+  Resource_LoadAndDecompress(RESOURCE_FLASH_BURST_SHEET, work->sheet, 1, 0);
+  Resource_LoadAndDecompress(RESOURCE_BILLOW_TEXTURE,
                              work->sheet + METEOR_BLOW_BILLOW, 0, 0);
-  Resource_LoadAndDecompress((s32)&ResourceId_FlameBandTexture,
+  Resource_LoadAndDecompress(RESOURCE_FLAME_BAND_TEXTURE,
                              work->sheet + METEOR_BLOW_FLAME_BAND, 0, 0);
   LOAD_BG_PALETTE(ResourceId_OrangePaletteB);
   {

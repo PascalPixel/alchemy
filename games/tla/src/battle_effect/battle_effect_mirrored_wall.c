@@ -103,18 +103,17 @@ void BattleEffect_RunDjinnBeams(struct BattleEffectParams *args, s32 mode) {
                                                    args->side ^ args->prelude,
                                                    DJINNI_ANCHOR_OVER_TARGET),
                                    djinn, djinnSize);
-  Resource_LoadAndDecompress((s32)&ResourceId_EarthWallSheet, work->sheet, 1,
-                             1);
-  Resource_LoadAndDecompress((s32)&ResourceId_CrescentMoonSheet,
+  Resource_LoadAndDecompress(RESOURCE_EARTH_WALL_SHEET, work->sheet, 1, 1);
+  Resource_LoadAndDecompress(RESOURCE_CRESCENT_MOON_SHEET,
                              work->sheet + PIC_MOTE, 1, 1);
   if (mode == ELEMENT_VENUS)
-    Resource_LoadAndDecompress((s32)&ResourceId_VenusDjinnSheet,
+    Resource_LoadAndDecompress(RESOURCE_VENUS_DJINN_SHEET,
                                work->sheet + PIC_DJINN, 1, 1);
   else if (mode == ELEMENT_MERCURY)
-    Resource_LoadAndDecompress((s32)&ResourceId_MercuryDjinnSheet,
+    Resource_LoadAndDecompress(RESOURCE_MERCURY_DJINN_SHEET,
                                work->sheet + PIC_DJINN, 1, 1);
   else
-    Resource_LoadAndDecompress((s32)&ResourceId_MarsDjinnSheet,
+    Resource_LoadAndDecompress(RESOURCE_MARS_DJINN_SHEET,
                                work->sheet + PIC_DJINN, 1, 1);
 
   // The motes start 80 pixels up, each at its own phase of the sway.
@@ -374,28 +373,27 @@ void BattleEffect_RunLobbedShells(struct BattleEffectParams *args, s32 mode) {
     BattleEffect_StartCanvasLayer(BGCNT_PRIORITY(1));
     REG_BLDALPHA = EFFECT_BLEND_ADD;
   }
-  Resource_LoadAndDecompress((s32)&ResourceId_GoldShellSheet, work->sheet, 1,
+  Resource_LoadAndDecompress(RESOURCE_GOLD_SHELL_SHEET, work->sheet, 1, 1);
+  Resource_LoadAndDecompress(RESOURCE_SMOKE_SHEET, work->sheet + SMOKE_SHEET, 1,
                              1);
-  Resource_LoadAndDecompress((s32)&ResourceId_SmokeSheet,
-                             work->sheet + SMOKE_SHEET, 1, 1);
   if (mode == LOBBED_SHELLS_BONE_CHILLER)
-    palette = Resource_GetTableEntry((s32)&ResourceId_BluePalette);
+    palette = Resource_GetTableEntry(RESOURCE_BLUE_PALETTE);
   else if (mode == LOBBED_SHELLS_STICKY_GOO)
-    palette = Resource_GetTableEntry((s32)&ResourceId_SpiderWebSheet);
+    palette = Resource_GetTableEntry(RESOURCE_SPIDER_WEB_SHEET);
   else if (mode == LOBBED_SHELLS_STICKY_POISON)
-    palette = Resource_GetTableEntry((s32)&ResourceId_LimePalette);
+    palette = Resource_GetTableEntry(RESOURCE_LIME_PALETTE);
   else if (mode == LOBBED_SHELLS_RISING_VENOM)
-    palette = Resource_GetTableEntry((s32)&ResourceId_LimePalette);
+    palette = Resource_GetTableEntry(RESOURCE_LIME_PALETTE);
   else if (mode == LOBBED_SHELLS_ROTTEN_BLOOD)
-    palette = Resource_GetTableEntry((s32)&ResourceId_GreenPalette);
+    palette = Resource_GetTableEntry(RESOURCE_GREEN_PALETTE);
   else if (mode == LOBBED_SHELLS_MAD_SPATTER || mode == LOBBED_SHELLS_MUD)
-    palette = Resource_GetTableEntry((s32)&ResourceId_GoldShellSheet);
+    palette = Resource_GetTableEntry(RESOURCE_GOLD_SHELL_SHEET);
   else if (mode == LOBBED_SHELLS_POISON_INK)
-    palette = Resource_GetTableEntry((s32)&ResourceId_MarsDjinnSheet);
+    palette = Resource_GetTableEntry(RESOURCE_MARS_DJINN_SHEET);
   else if (mode == LOBBED_SHELLS_FORMIC_ACID)
-    palette = Resource_GetTableEntry((s32)&ResourceId_PinkBurstSheet);
+    palette = Resource_GetTableEntry(RESOURCE_PINK_BURST_SHEET);
   else
-    palette = Resource_GetTableEntry((s32)&ResourceId_GreenPalette);
+    palette = Resource_GetTableEntry(RESOURCE_GREEN_PALETTE);
   Iwram_CopyWordsEntry((void *)BG_PLTT, palette, SHEET_PALETTE_BYTES);
 
   // The shots leave the caster at the mode's height, each aimed at its

@@ -73,11 +73,18 @@ void BattleEffect_RunDrown(struct BattleEffectParams *args) {
 
 // The motes live in the map cell buffer, 64 for each target.
 
-/// Modes whose motes close in on the target and start again; the others
-/// drift up and are thrown back at random. Mode 7 closes in once.
-#define CONVERGES(mode)                                                        \
-  ((mode) <= 1 || (mode) == 4 || (mode) == 5 || (mode) == 6 || (mode) == 7)
-#define DECAYS(mode) ((mode) <= 1 || (mode) == 4 || (mode) == 5 || (mode) == 6)
+/// Styles whose motes start in a wide ball and last 32 frames more.
+#define TARGET_MOTES_START_WIDE(mode)                                          \
+  ((mode) <= TARGET_MOTES_PINK_SMOKE || (mode) == TARGET_MOTES_HEARTRENDER ||  \
+   (mode) == TARGET_MOTES_MYSTIC_FLAME || (mode) == TARGET_MOTES_DROWN ||      \
+   (mode) == TARGET_MOTES_DEMON_FIRE)
+/// Styles whose motes close in on the target; the others rise.
+#define TARGET_MOTES_CLOSE_IN(mode)                                            \
+  ((mode) <= TARGET_MOTES_PINK_SMOKE || (mode) == TARGET_MOTES_HEARTRENDER ||  \
+   (mode) == TARGET_MOTES_MYSTIC_FLAME || (mode) == TARGET_MOTES_DROWN)
+/// Every style but Taint's smokes and Paralyze ripples the canvas.
+#define TARGET_MOTES_RIPPLE(mode)                                              \
+  (!((mode) <= TARGET_MOTES_PINK_SMOKE || (mode) == TARGET_MOTES_PARALYZE))
 
 #define TARGET_MOTES_SLOTS 64 ///< particles reserved for each target
 #define TARGET_MOTES_CYCLE 24 ///< frames of a mote's image cycle
@@ -138,7 +145,7 @@ void BattleEffect_RunTargetMotes(struct BattleEffectParams *args, u32 mode) {
   for (i = 0; i != MOTE_MAX; i++) {
     struct Particle *mote = &PARTICLES[i];
 
-    if (CONVERGES(mode)) {
+    if (TARGET_MOTES_START_WIDE(mode)) {
       SET_POSITION(mote, ((Random16() & 0xff) - 127) << 15,
                    ((Random16() & 0xff) - 127) << 14,
                    ((Random16() & 0xff) - 127) << 15);
@@ -150,11 +157,11 @@ void BattleEffect_RunTargetMotes(struct BattleEffectParams *args, u32 mode) {
     mote->variant = 0;
   }
 
-  if (CONVERGES(mode))
+  if (TARGET_MOTES_START_WIDE(mode))
     total = args->targetCount * 8 + 64;
   else
     total = args->targetCount * 8 + 32;
-  if (!(mode <= TARGET_MOTES_PINK_SMOKE || mode == TARGET_MOTES_PARALYZE))
+  if (TARGET_MOTES_RIPPLE(mode))
     Task_Add(BattleEffect_ArmBg2AffineHBlankDma, TASK_PASS_FRAME);
   EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_THREE_QUARTERS);
   Sound_PlayFar(SE_SWIRL);
@@ -162,7 +169,7 @@ void BattleEffect_RunTargetMotes(struct BattleEffectParams *args, u32 mode) {
   for (frame = 0; frame != total; frame++) {
     struct BattleCamera *camera = Ram_HeapSlots->cameraWork;
 
-    // Mode 7 sends the caster at the first target 46 frames before the
+    // Demon Fire sends the caster at the first target 46 frames before the
     // end and strikes it 14 frames later; the others let the battle show the
     // damage.
     if (mode == TARGET_MOTES_DEMON_FIRE) {
@@ -271,7 +278,7 @@ void BattleEffect_RunTargetMotes(struct BattleEffectParams *args, u32 mode) {
                     VORTEX_WIDTH, VORTEX_HEIGHT);
 
               // Close in by a step of the distance, or drift up.
-              if (DECAYS(mode)) {
+              if (TARGET_MOTES_CLOSE_IN(mode)) {
                 mote->x -= mote->x / distance;
                 mote->y -= mote->y / distance;
                 mote->z -= mote->z / distance;
@@ -280,7 +287,7 @@ void BattleEffect_RunTargetMotes(struct BattleEffectParams *args, u32 mode) {
               }
               mote->variant++;
               if (mote->variant == TARGET_MOTES_CYCLE) {
-                if (DECAYS(mode)) {
+                if (TARGET_MOTES_CLOSE_IN(mode)) {
                   mote->variant = 0;
                 } else {
                   SET_POSITION(mote, ((Random16() & 0xff) - 127) << 13,
@@ -311,7 +318,7 @@ void BattleEffect_RunTargetMotes(struct BattleEffectParams *args, u32 mode) {
 
   // Tear down.
   Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
-  if (!(mode <= TARGET_MOTES_PINK_SMOKE || mode == TARGET_MOTES_PARALYZE))
+  if (TARGET_MOTES_RIPPLE(mode))
     Task_Remove(BattleEffect_ArmBg2AffineHBlankDma);
   BattleEffect_EndCanvasLayer();
 }
@@ -795,8 +802,9 @@ void BattleEffect_RunPhoenix(struct BattleEffectParams *args) {
 #undef BLITTER
 #undef GROUND_Y
 #undef MOTE_MAX
-#undef CONVERGES
-#undef DECAYS
+#undef TARGET_MOTES_START_WIDE
+#undef TARGET_MOTES_CLOSE_IN
+#undef TARGET_MOTES_RIPPLE
 #undef SHEEP_COUNT
 #undef SHEEP_FRAMES
 #undef MARKER_FRAMES

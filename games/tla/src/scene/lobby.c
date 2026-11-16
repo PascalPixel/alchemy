@@ -940,10 +940,10 @@ s32 LinkLobby_ChooseDebugParameterSet(s32 actorId) {
     if (choice < 0) {
       choice = 0;
     }
-    if (((struct InputState *)&gInput)->pressed & 1) {
+    if (gInput.pressed & KEY_A) {
       break;
     }
-    if (((volatile struct InputState *)&gInput)->pressed & 2) {
+    if (gInput.pressed & KEY_B) {
       choice = -1;
       break;
     }

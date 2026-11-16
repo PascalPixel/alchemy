@@ -271,7 +271,7 @@ struct ItemMenuWork {
   void *figures[4];
   s16 figureX[4];
   s16 figureY[4];
-  s32 figureScales[4];
+  FIXED figureScales[4];
   u16 figureDepths[4];
   ///@}
   u8 unusedAfterFigures[6]; ///< DjinnMenuWork's pair; not named here

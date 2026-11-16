@@ -55,14 +55,8 @@ enum ClassSeries {
 #define UNIT_GAUGE_SHIFT 14
 #define UNIT_GAUGE_FULL (1 << UNIT_GAUGE_SHIFT)
 
-/// How many actions a unit's list holds (Unit.psynergy), and how
-/// many a class teaches (ClassDefinition.abilities).
-#define PSYNERGY_SLOTS 32
 /// How many actions a class can teach (ClassDefinition.abilities).
 #define CLASS_ABILITY_SLOTS 16
-
-/// Unit ids from 128 are the enemies', as The Broken Seal's.
-#define FIRST_ENEMY_UNIT 128
 
 /// How many classes gClass_DefinitionTable holds.
 #define CLASS_COUNT 244
@@ -70,16 +64,17 @@ enum ClassSeries {
 /// A class: its series, the element levels it needs, its stat multipliers and
 /// the abilities it teaches.
 struct ClassDefinition {
-  long series;                       ///< the series Class_Determine picks from
-  u8 required[4];                    ///< each element's level needed, in tens
-  u8 hp;                             ///< tenths of the base stat
-  u8 pp;                             ///< tenths of the base stat
-  u8 atk;                            ///< tenths of the base stat
-  u8 def;                            ///< tenths of the base stat
-  u8 agi;                            ///< tenths of the base stat
-  u8 luck;                           ///< tenths of the base stat
-  u8 padding[2];                     ///< padding
-  struct ClassAbility abilities[16]; ///< the Psynergy the class teaches
+  long series;    ///< the series Class_Determine picks from
+  u8 required[4]; ///< each element's level needed, in tens
+  u8 hp;          ///< tenths of the base stat
+  u8 pp;          ///< tenths of the base stat
+  u8 atk;         ///< tenths of the base stat
+  u8 def;         ///< tenths of the base stat
+  u8 agi;         ///< tenths of the base stat
+  u8 luck;        ///< tenths of the base stat
+  u8 padding[2];  ///< padding
+  /// The Psynergy the class teaches.
+  struct ClassAbility abilities[CLASS_ABILITY_SLOTS];
   u8 weakEffects[4]; ///< the ability effects the class is weak to
 };
 

@@ -7,6 +7,7 @@
 
 #include "static_assert.h"
 #include "types.h"
+#include "fixed_math.h"
 
 // A Djinni's list entry, as Djinn_ListUnitEntries writes it into
 // DjinnMenuBackdrop.ids. bits: 15 set | 11..8 member | 7..5 element | 4..0
@@ -109,7 +110,7 @@ struct DjinnMenuWork {
   void *memberSprites[8]; ///< the party members' figures
   s16 memberX[8];
   s16 memberY[8];
-  s32 memberScale[8];     ///< ItemMenuWork's; not named here
+  FIXED memberScale[8];   ///< ItemMenuWork's; not named here
   s16 memberSpriteIds[8]; ///< ItemMenuWork's; not named here
   u16 selection[2];
   u16 pairEntries[2];

@@ -166,7 +166,7 @@ gMenu_PpString:
 	.asciz "EP"
 	.endif
 	.balign 4, 0
-@ 4bpp rows in colour 5 that grow by one pixel at a time
+@ 4bpp rows of dots in colour 5, each reaching further right than the last
 	.global gMenu_PatternRowMasks
 gMenu_PatternRowMasks:
 	.4byte 0x00055000, 0x00000000

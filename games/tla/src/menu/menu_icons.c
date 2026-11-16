@@ -407,9 +407,9 @@ void DjinnFigures_UpdateTopRow(void) {
 extern s32 gDjinnFigures_SpriteIds[];
 
 /// Replaces the four Djinn figures with one Djinni of each element
-/// (gDjinnFigures_SpriteIds) walking (animation 2), at (16, 200) until the
-/// screen moves them, and starts placing them each frame
-/// (DjinnFigures_UpdateTopRow).
+/// (gDjinnFigures_SpriteIds) walking (ANIM_WALK), at x 16 and
+/// MENU_FIGURE_HIDDEN_Y until the screen moves them, and starts placing them
+/// each frame (DjinnFigures_UpdateTopRow).
 void DjinnFigures_InitializeTopRow(void) {
   struct ItemMenuWork *menu = Ram_HeapSlots->menuWork;
   struct Sprite *object;
@@ -429,7 +429,7 @@ void DjinnFigures_InitializeTopRow(void) {
     }
     menu->figures[i] = object;
     menu->figureX[i] = 16;
-    menu->figureY[i] = 200;
+    menu->figureY[i] = MENU_FIGURE_HIDDEN_Y;
     menu->figureScales[i] = FIXED_ONE;
     menu->figureFacings[i] = FACING_SOUTH;
   }

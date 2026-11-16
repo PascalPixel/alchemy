@@ -218,7 +218,7 @@ s32 DjinnMenu_RunScreen(void) {
       break;
     case DJINN_STEP_SELECT_DJINN:
       Menu_SetFirstActorRowCoordinates(0);
-      DjinnFigures_SetSlotPosition(1, 0, 200);
+      DjinnFigures_SetSlotPosition(1, 0, MENU_FIGURE_HIDDEN_Y);
       result = DjinnMenu_SelectDjinn(DJINN_SELECT_DJINNI);
       step = DJINN_STEP_SHOW_HELP;
       if (result == DJINN_RESULT_HELP)
@@ -1068,7 +1068,7 @@ s32 DjinnMenu_SelectDjinn(s32 mode) {
                 GRID_CELL_WIDTH, height, 6);
             menu->slotY[0] = 54;
           } else {
-            menu->slotY[0] = 200;
+            menu->slotY[0] = MENU_FIGURE_HIDDEN_Y;
           }
           for (i = 0, x = 8; i <= 3; i++, x += 56) {
             if (menu->memberSprites[i] != NULL) {
@@ -1101,7 +1101,7 @@ s32 DjinnMenu_SelectDjinn(s32 mode) {
       number = DJINN_NUMBER(djinn);
       state = DjinnMenu_GetEntryState(djinn);
       if (selectedRow == -1) {
-        DjinnFigures_SetSlotPosition(mode, 0, 200);
+        DjinnFigures_SetSlotPosition(mode, 0, MENU_FIGURE_HIDDEN_Y);
       } else {
         s32 facing;
         s32 animation;

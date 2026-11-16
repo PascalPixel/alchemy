@@ -57,7 +57,7 @@ s32 PsynergyList_RunCompareLoop(u32 mode) {
   second = owners[menu->selectedColumn[1]];
   Menu_CreatePairEntryObjects(first, second);
   for (memberIndex = 3; memberIndex >= 0; memberIndex--)
-    menu->memberY[memberIndex] = 200;
+    menu->memberY[memberIndex] = MENU_FIGURE_HIDDEN_Y;
   menu->memberX[0] = 16;
   menu->memberY[0] = 32;
   if (first != second) {
@@ -366,7 +366,7 @@ s32 PsynergyList_RunCompareLoop(u32 mode) {
       FIXED rise;
       s32 slide;
 
-      rise = -Iwram_MulFX(16, Trig_Sin(step % 30 * 0x444));
+      rise = -Iwram_MulFX(16, Trig_Sin(step % 30 * DEGtoANG(6)));
       if (rise < -6)
         rise = -6;
       if (rise > 12)
@@ -499,7 +499,7 @@ s32 DjinnMenu_ShowMemberStatus(void) {
   selected = selectedPages;
   selected[1] = selected[0] = result;
   for (side = 3; side >= 0; side--)
-    menu->memberY[side] = 200;
+    menu->memberY[side] = MENU_FIGURE_HIDDEN_Y;
   WindowSprite_ClearListFar(menu->listWindow);
   wait(1);
   /* FAKEMATCH(temporary): counts = pageCounts, the count array read through a
@@ -575,7 +575,7 @@ s32 DjinnMenu_ShowMemberStatus(void) {
     frame++;
     blink = frame % 60 - 5;
     CLAMP(blink, 0, 29);
-    DjinnFigures_SetSlotPosition(0, 32, 200);
+    DjinnFigures_SetSlotPosition(0, 32, MENU_FIGURE_HIDDEN_Y);
     // DEAD: the test cannot change the result, redraw = 0 alone does the same;
     // the ROM keeps the compare (its twin also steps a phase under it).
     if (redraw)
@@ -583,7 +583,7 @@ s32 DjinnMenu_ShowMemberStatus(void) {
     if ((frame & 3) == 0) {
       if (frame & 4)
         Iwram_CopyWordsEntry((void *)DJINN_BACKDROP_BORDER_VRAM,
-                             gMenu_BackdropBorderTile, 32);
+                             gMenu_BackdropBorderTile, TILE_SIZE_4BPP);
       else
         Iwram_FillWordsEntry((void *)DJINN_BACKDROP_BORDER_VRAM, TILE_SIZE_4BPP,
                              TEXT_CANVAS_BACKGROUND_WORD);

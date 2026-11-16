@@ -2188,7 +2188,7 @@ void Leader_SpinAway(s32 entrance) {
       Event_FinishScreenTransition();
     leader->y.fixed -= toFIXED(1) / 4;
     angle = leader->facing;
-    leader->facing = angle + 0x1000;
+    leader->facing = angle + TRIG_TURN / 16;
     if ((i & 7) == 0)
       AquaRockInside_SpawnSplash(Actor_Get(ACTOR_VIAL_CHEST_PUDDLE_C));
     System_Wait(1);

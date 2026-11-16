@@ -7,8 +7,6 @@
 #include "flags.h"
 #include "sounds.h"
 
-#define PSYNERGY_PROMPT_TILES_SIZE 8192
-
 /// A Psynergy shortcut, and the field's Psynergy request packed the same way:
 /// its party member above bit 10, the Psynergy's id below.
 #define PSYNERGY_SHORTCUT_MEMBER_SHIFT 10
@@ -37,7 +35,7 @@ s32 PsynergyMenu_Run(void) {
 
   screen = HeapSlot_Alloc(HEAP_SLOT_MENU, MENU_WORK_SIZE);
 #if TLA_PATCH_2
-  savedTiles = Heap_AllocEwram(0x2000);
+  savedTiles = Heap_AllocEwram(MENU_SAVED_TILE_BYTES);
 #endif
   Ram_HeapSlots->actorSystem->suspended = 1;
   Window_DrawBorderFar(0, 0, 30, 20);
@@ -45,8 +43,9 @@ s32 PsynergyMenu_Run(void) {
   Window_InitializeWork(0);
 #if TLA_PATCH_2
   Menu_SuspendFieldTasks();
-  Iwram_CopyWords(savedTiles, (void *)BG_CHAR_BLOCK(1), 0x2000);
-  Iwram_FillWords((void *)BG_CHAR_BLOCK(1), 0x2000, PIXELS_4BPP(3));
+  Iwram_CopyWords(savedTiles, (void *)BG_CHAR_BLOCK(1), MENU_SAVED_TILE_BYTES);
+  Iwram_FillWords((void *)BG_CHAR_BLOCK(1), MENU_SAVED_TILE_BYTES,
+                  PIXELS_4BPP(3));
   Text_UseExtraTilesFar(1);
 #endif
   screen->partyCount = Party_ListMembersFar(screen->memberIds);
@@ -68,7 +67,7 @@ s32 PsynergyMenu_Run(void) {
   }
 
   WindowSprite_ClearListFar(screen->statusWindow);
-  Ram_HeapSlots->windowWork[6] = 1;
+  ((struct WindowWork *)Ram_HeapSlots->windowWork)->holdTilemapUpload = 1;
   ItemMenu_Close();
   Window_DrawBorderFar(0, 0, 30, 20);
   HeapSlot_Release(HEAP_SLOT_MENU);
@@ -76,16 +75,15 @@ s32 PsynergyMenu_Run(void) {
 #if TLA_PATCH_2
   Window_MarkVisibleTextTilesFar();
   Text_UseExtraTilesFar(0);
-  Iwram_CopyWords((void *)BG_CHAR_BLOCK(1), savedTiles,
-                  PSYNERGY_PROMPT_TILES_SIZE);
-  Ram_HeapSlots->windowWork[6] = 0;
+  Iwram_CopyWords((void *)BG_CHAR_BLOCK(1), savedTiles, MENU_SAVED_TILE_BYTES);
+  ((struct WindowWork *)Ram_HeapSlots->windowWork)->holdTilemapUpload = 0;
   Heap_Release(savedTiles);
   wait(1);
   Menu_ResumeFieldTasks();
 #endif
   wait(1);
   Window_EraseBorderRectFar(0, 0, 30, 20);
-  Ram_HeapSlots->windowWork[6] = 0;
+  ((struct WindowWork *)Ram_HeapSlots->windowWork)->holdTilemapUpload = 0;
   Party_ClearUnusableShortcutsFar();
   return result;
 }

@@ -30,6 +30,10 @@
 /// The y a party or Djinn figure is parked at below the screen, where the
 /// projected placement does not draw it.
 #define MENU_FIGURE_HIDDEN_Y 200
+/// The bytes of BG character block 1 the Item menu (from patch 1) and the
+/// event's item picker (from patch 2) keep aside and fill with a pattern while
+/// they are open.
+#define MENU_SAVED_TILE_BYTES 8192
 
 /// The bytes of the menu work, heap block HEAP_SLOT_MENU: ShopWork's size, the
 /// largest of the screens' views of it. Each screen's run function takes the

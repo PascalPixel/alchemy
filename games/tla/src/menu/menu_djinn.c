@@ -118,7 +118,8 @@ s32 DjinnMenu_Run(void) {
   Text_UseExtraTilesFar(0);
   Iwram_CopyWords((void *)BG_CHAR_BLOCK(1), backdrop->tiles,
                   sizeof(backdrop->tiles));
-  Iwram_CopyWords((void *)&BG_PLTT_COLOR(4, 0), backdrop->palette, 128);
+  Iwram_CopyWords((void *)&BG_PLTT_COLOR(4, 0), backdrop->palette,
+                  sizeof(backdrop->palette));
   wait(1);
   Menu_ResumeFieldTasks();
   Window_EraseBorderRectFar(0, 0, 30, 20);
@@ -478,11 +479,14 @@ void Menu_OpenBackdropScreen(void) {
 
   Window_UpdateOrCreate(&menu->listWindow, 0, 5, 30, 15, 2);
   wait(1);
-  Iwram_CopyWords(backdrop->tiles, BG_CHAR_BLOCK(1), 0x2000);
-  Iwram_CopyWords(backdrop->palette, (void *)&BG_PLTT_COLOR(4, 0), 128);
-  Iwram_FillWords(BG_CHAR_BLOCK(1), 0x2000, PIXELS_4BPP(3));
-  Iwram_FillWords((void *)&BG_PLTT_COLOR(4, 0), 128, PIXELS_4BPP(5));
-  Graphics_ExpandVramTilesByColorTableFar(BG_CHAR_BLOCK(1) + 0x1000);
+  Iwram_CopyWords(backdrop->tiles, BG_CHAR_BLOCK(1), sizeof(backdrop->tiles));
+  Iwram_CopyWords(backdrop->palette, (void *)&BG_PLTT_COLOR(4, 0),
+                  sizeof(backdrop->palette));
+  Iwram_FillWords(BG_CHAR_BLOCK(1), sizeof(backdrop->tiles), PIXELS_4BPP(3));
+  Iwram_FillWords((void *)&BG_PLTT_COLOR(4, 0), sizeof(backdrop->palette),
+                  PIXELS_4BPP(5));
+  Graphics_ExpandVramTilesByColorTableFar(BG_CHAR_BLOCK(1) +
+                                          128 * TILE_SIZE_4BPP);
   Iwram_CopyWords(BG_CHAR_BLOCK(1) + 150 * TILE_SIZE_4BPP,
                   gMenu_BackdropBorderTile, TILE_SIZE_4BPP);
   Dma_Set(Palette_GetBasicSpriteColors(),
@@ -647,7 +651,7 @@ void DjinnMenu_DrawEntry(s32 window, s32 x, s32 y, s32 entry) {
 /// labels the unleash effects when the party has few enough Djinn to show them.
 void DjinnMenu_DrawPage(struct DjinnMenuBackdrop *backdrop, s32 page) {
   struct DjinnMenuWork *menu = Ram_HeapSlots->menuWork;
-  u8 *tiles = Ram_HeapSlots->windowWork;
+  struct WindowWork *work = Ram_HeapSlots->windowWork;
   s32 window = menu->listWindow;
   s32 owners;
   s32 column;
@@ -657,7 +661,7 @@ void DjinnMenu_DrawPage(struct DjinnMenuBackdrop *backdrop, s32 page) {
   s32 y;
   s32 djinn;
 
-  tiles[6] = 1;
+  work->holdTilemapUpload = 1;
   WindowSprite_RedrawSavedRectFar(window);
   owners = Party_CountMembersFar();
   djinn = Party_SumDjinnCountsFar(-1);
@@ -699,12 +703,12 @@ void DjinnMenu_DrawPage(struct DjinnMenuBackdrop *backdrop, s32 page) {
   // The Japanese release reads the window tiles again for the first store
   // and does not wait; from patch 1 the page waits three frames.
 #if TLA_PATCH_1
-  tiles[3] = 1;
-  tiles[6] = 0;
+  work->dirty = 1;
+  work->holdTilemapUpload = 0;
   wait(3);
 #else
-  Ram_HeapSlots->windowWork[3] = 1;
-  tiles[6] = 0;
+  ((struct WindowWork *)Ram_HeapSlots->windowWork)->dirty = 1;
+  work->holdTilemapUpload = 0;
 #endif
 }
 

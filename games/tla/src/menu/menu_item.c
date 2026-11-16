@@ -102,7 +102,7 @@ s32 ItemMenu_Run(void) {
 
   screen = HeapSlot_Alloc(HEAP_SLOT_MENU, MENU_WORK_SIZE);
 #if TLA_PATCH_1
-  size = 0x2000;
+  size = MENU_SAVED_TILE_BYTES;
   backup = Heap_AllocEwram(size);
 #endif
   Ram_HeapSlots->actorSystem->suspended = 1;
@@ -135,7 +135,7 @@ s32 ItemMenu_Run(void) {
   }
 
   WindowSprite_ClearListFar(screen->statusWindow);
-  Ram_HeapSlots->windowWork[6] = 1;
+  ((struct WindowWork *)Ram_HeapSlots->windowWork)->holdTilemapUpload = 1;
   ItemMenu_Close();
   Window_DrawBorderFar(0, 0, 30, 20);
   Menu_ResetTwoResourceEntries();
@@ -145,14 +145,14 @@ s32 ItemMenu_Run(void) {
   Window_MarkVisibleTextTilesFar();
   Text_UseExtraTilesFar(0);
   Iwram_CopyWords((void *)BG_CHAR_BLOCK(1), backup, size);
-  Ram_HeapSlots->windowWork[6] = 0;
+  ((struct WindowWork *)Ram_HeapSlots->windowWork)->holdTilemapUpload = 0;
   Heap_Release(backup);
   wait(1);
   Menu_ResumeFieldTasks();
 #endif
   wait(1);
   Window_EraseBorderRectFar(0, 0, 30, 20);
-  Ram_HeapSlots->windowWork[6] = 0;
+  ((struct WindowWork *)Ram_HeapSlots->windowWork)->holdTilemapUpload = 0;
   Party_ClearUnusableShortcutsFar();
   return result;
 }
@@ -1818,8 +1818,6 @@ void ItemMenu_BuildCommands(s8 *commandStates) {
 }
 
 #undef COMMAND_AVAILABLE
-
-#define FIELD_AT_OFFSET(base, type, offset) (*(type *)((u8 *)(base) + (offset)))
 
 /// An item command's state when the selected item refuses it.
 #define ITEM_COMMAND_STATE_DISABLED (-1)

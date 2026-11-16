@@ -362,7 +362,7 @@ void BattleEffect_RunJuggle(struct BattleEffectParams *args) {
       y = ((s16 *)place)[3];
       place[1] = y + 64;
       blitters[gJuggle_Styles[args->variant][RING_BLITTER]](
-          canvas, work->sheet + cel * 1024, x + 56, y + 16, 16, 64);
+          canvas, work->sheet + cel * (16 * 64), x + 56, y + 16, 16, 64);
     }
 
     // The strike: sparks burst from every target.

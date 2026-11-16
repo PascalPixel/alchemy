@@ -235,9 +235,9 @@ void BattleEffect_RunProcne(struct BattleEffectParams *args) {
             if (point[index].velocityY > toFIXED(1))
               point[index].velocityY -= toFIXED(1);
             point[index].velocityX += 50;
-            if (point[index].velocityX > 4096)
-              point[index].velocityX = 4096;
-            point[index].velocityY += 2048;
+            if (point[index].velocityX > toFIXED(1) / 16)
+              point[index].velocityX = toFIXED(1) / 16;
+            point[index].velocityY += toFIXED(1) / 32;
             point[index].y += point[index].velocityY * 2;
             if (point[index].y > toFIXED(48)) {
               point[index].y = 0;
@@ -466,8 +466,8 @@ void BattleEffect_RunProcne(struct BattleEffectParams *args) {
               mark->y += 2;
 
               if (frame < threshold + 8) {
-                Matrix_RotateZ(-2048);
-                Matrix_RotateY(-4096);
+                Matrix_RotateZ(-DEGtoANG(11.25));
+                Matrix_RotateY(-DEGtoANG(22.5));
 
                 slot = 0;
                 spark = &work->particles[32];

@@ -311,13 +311,10 @@ void LemuriaPalace_FadeMapsIn(void) {
 
   BLEND_SET_ALPHA(BLEND_ALPHA(0, BLEND_WEIGHT_MAX));
   gLemuriaPalace_MapMode = 0;
-  i = 0;
-loop:
-  BLEND_SET_ALPHA(BLEND_ALPHA(i, BLEND_WEIGHT_MAX - i));
-  System_Wait(4);
-  i++;
-  if (i < BLEND_WEIGHT_MAX)
-    goto loop;
+  for (i = 0; i < BLEND_WEIGHT_MAX; i++) {
+    BLEND_SET_ALPHA(BLEND_ALPHA(i, BLEND_WEIGHT_MAX - i));
+    System_Wait(4);
+  }
   BLEND_SET_ALPHA(BLEND_ALPHA(BLEND_WEIGHT_MAX, 0));
   gLemuriaPalace_MapMode = 1;
 }
@@ -328,13 +325,10 @@ void LemuriaPalace_FadeMapsOut(void) {
 
   BLEND_SET_ALPHA(BLEND_ALPHA(BLEND_WEIGHT_MAX, 0));
   gLemuriaPalace_MapMode = 0;
-  i = 0;
-loop:
-  BLEND_SET_ALPHA((i << 8) | (BLEND_WEIGHT_MAX - i));
-  System_Wait(3);
-  i++;
-  if (i < BLEND_WEIGHT_MAX)
-    goto loop;
+  for (i = 0; i < BLEND_WEIGHT_MAX; i++) {
+    BLEND_SET_ALPHA((i << 8) | (BLEND_WEIGHT_MAX - i));
+    System_Wait(3);
+  }
   BLEND_SET_ALPHA(BLEND_ALPHA(0, BLEND_WEIGHT_MAX));
 }
 
@@ -347,7 +341,6 @@ void Field_StartPaletteTransition();
 /// "You are Lord Felix, correct?"
 s32 LemuriaPalace_MeetKingHydros(s32 a0, s32 a1, s32 a2, s32 a3) {
   s32 answer, frame, i;
-  s32 result;
   struct Actor *target;
 
   Event_Start();
@@ -360,18 +353,16 @@ s32 LemuriaPalace_MeetKingHydros(s32 a0, s32 a1, s32 a2, s32 a3) {
   // "You are Lord Felix, correct?"
   Event_OpenMessage(ACTOR_PALACE_GUARD, 0);
   answer = Event_AskYesNoWithActorAnimation(ACTOR_FELIX, 0);
-  if (answer == 0)
-    goto answeredYes;
-  Event_Wait(30);
-  Actor_SetAnimationAndWait(ACTOR_PALACE_GUARD, 4);
-  // "Then you have no business here! His Majesty is involved in a most..."
-  Event_ShowMessageThenWait(ACTOR_PALACE_GUARD, 0, 5);
-  Actor_WalkByAndWait(gMainRoutineWork.leaderActorId, 0, 16);
-  Actor_WalkByAndWait(ACTOR_PALACE_GUARD, 24, 0);
-  Actor_FaceDirectionAndWait(ACTOR_PALACE_GUARD, FACING_SOUTH_SOUTHWEST);
-  result = Event_End();
-  goto done;
-answeredYes:
+  if (answer != 0) {
+    Event_Wait(30);
+    Actor_SetAnimationAndWait(ACTOR_PALACE_GUARD, 4);
+    // "Then you have no business here! His Majesty is involved in a most..."
+    Event_ShowMessageThenWait(ACTOR_PALACE_GUARD, 0, 5);
+    Actor_WalkByAndWait(gMainRoutineWork.leaderActorId, 0, 16);
+    Actor_WalkByAndWait(ACTOR_PALACE_GUARD, 24, 0);
+    Actor_FaceDirectionAndWait(ACTOR_PALACE_GUARD, FACING_SOUTH_SOUTHWEST);
+    return Event_End();
+  }
   Actor_SetAnimationAndWait(ACTOR_PALACE_GUARD, 3);
   Event_Wait(10);
   Actor_WalkByAndWait(ACTOR_PALACE_GUARD, 24, 0);
@@ -1169,9 +1160,7 @@ answeredYes:
   Actor_FaceDirectionAndWait(ACTOR_LUNPA, FACING_SOUTH_SOUTHEAST);
   Actor_FaceDirection(ACTOR_PALACE_GUARD, FACING_SOUTH_SOUTHWEST, 0);
   Event_Wait(10);
-  result = Event_End();
-done:
-  return result;
+  return Event_End();
 }
 
 struct SceneEntrance gSceneEntrances[] = {

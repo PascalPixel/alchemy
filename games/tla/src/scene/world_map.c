@@ -341,7 +341,7 @@ s32 WorldMap_SetIslandTile(struct Actor *object) {
   struct FieldSprite *sprite = object->sprite;
 
   sprite->rotation = *tile;
-  sprite->nextFrame = 0;
+  sprite->flags = 0;
   return 1;
 }
 
@@ -2281,7 +2281,7 @@ s32 WorldMap_SetPlacedActorTile(struct Actor *object) {
   struct FieldSprite *sprite = object->sprite;
 
   sprite->rotation = *tile;
-  sprite->nextFrame = 0;
+  sprite->flags = 0;
   return 1;
 }
 

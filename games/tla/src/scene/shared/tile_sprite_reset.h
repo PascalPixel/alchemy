@@ -4,6 +4,6 @@ s32 TileSprite_Reset(struct Actor *object) {
   struct FieldSprite *sprite = object->sprite;
 
   sprite->rotation = *tile;
-  sprite->nextFrame = 0;
+  sprite->flags = 0;
   return 1;
 }

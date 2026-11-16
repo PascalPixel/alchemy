@@ -1751,15 +1751,10 @@ void ChampaCliffCaves_LoadDisc(void) {
   s32 vram;
 
   Decompress_TaggedLz(Resource_GetTableEntry(RESOURCE_GLOW_DISC), work);
-  i = 0;
-  tile = work->tiles;
-next:
-  if ((*tile & 0xf0) == 0xf0)
-    *tile = (*tile & 0xf) + 0x60;
-  tile++;
-  i++;
-  if (i < (s32)sizeof(work->tiles))
-    goto next;
+  for (i = 0, tile = work->tiles; i < (s32)sizeof(work->tiles); tile++, i++) {
+    if ((*tile & 0xf0) == 0xf0)
+      *tile = (*tile & 0xf) + 0x60;
+  }
   entry = VramCache_FindFreeEntry();
   vram = VramCache_Load(entry, 64 * 64, work);
   work->discEntry = entry;
@@ -1786,15 +1781,10 @@ void ChampaCliffCaves_LoadColumn(void) {
   s32 vram;
 
   Decompress_TaggedLz(Resource_GetTableEntry(RESOURCE_FIRE_COLUMN), work);
-  i = 0;
-  tile = work->tiles;
-next:
-  if ((*tile & 0xf0) == 0xf0)
-    *tile = (*tile & 0xf) + 0x60;
-  i++;
-  tile++;
-  if (i < (s32)sizeof(work->tiles))
-    goto next;
+  for (i = 0, tile = work->tiles; i < (s32)sizeof(work->tiles); i++, tile++) {
+    if ((*tile & 0xf0) == 0xf0)
+      *tile = (*tile & 0xf) + 0x60;
+  }
   entry = VramCache_FindFreeEntry();
   vram = VramCache_Load(entry, 32 * 64, work);
   work->columnEntry = entry;
@@ -1819,9 +1809,7 @@ void ChampaCliffCaves_DrawGlow(void) {
   struct EffectSprite *sprite;
   s32 i;
 
-  i = 0;
-loop:
-  {
+  for (i = 0; i <= 31; i++) {
     s32 red = 31;
     s16 *frame = &work->frame;
     s32 wave = Trig_Sin((*frame + i) << 11) * 6;
@@ -1838,10 +1826,7 @@ loop:
       colour = blue << 10 | wave << 5 | red;
       ((u16 *)&OBJ_PLTT_COLOR(0, 0))[255 - i] = colour;
     }
-    i++;
   }
-  if (i <= 31)
-    goto loop;
   position[0] = work->position[0];
   position[1] = work->position[1];
   position[2] = work->position[2];

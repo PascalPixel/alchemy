@@ -2905,17 +2905,43 @@ s32 gFieldEffect_DurationScripts[] = {
     (s32)gContigo_LongScript,
 };
 
-u32 gContigo_WandererScript[] = {                                                               
-      39, 2,  22, 15, 0x10000, 22, 16, 0x6666, 4,  0x1520000, 0,  0x34c0000,     1,  4,      
-      0x13e0000, 0,  0x34c0000, 1,  4,       0x1300000, 0,  0x3680000,     1,  4,  0x1400000, 0,      0x3740000, 1,      
-      4,  0x1500000, 0,  0x3740000, 1,       4,  0x1600000, 0,      0x3680000, 1,  13, 0xffff, 0,          
-  };
+u32 gContigo_WandererScript[] = {
+    SC_ANIMATION(ANIM_WALK),
+    SC_SPEED(1),
+    SC_ACCELERATION(0.4),
+    SC_MOVE(338, 0, 844),
+    SC_SYNC,
+    SC_MOVE(318, 0, 844),
+    SC_SYNC,
+    SC_MOVE(304, 0, 872),
+    SC_SYNC,
+    SC_MOVE(320, 0, 884),
+    SC_SYNC,
+    SC_MOVE(336, 0, 884),
+    SC_SYNC,
+    SC_MOVE(352, 0, 872),
+    SC_SYNC,
+    SC_LOOP(SC_FOREVER, SC_TOP),
+};
 
-u32 gContigo_PacerScript[] = {                                                               
-      39, 2,  22, 15, 0x10000, 22, 16, 0x6666, 4,  0x13e0000, 0,  0x3740000,     1,  4,      
-      0x1520000, 0,  0x3740000, 1,  4,       0x1600000, 0,  0x3680000,     1,  4,  0x1520000, 0,      0x34c0000, 1,      
-      4,  0x13e0000, 0,  0x34c0000, 1,       4,  0x1300000, 0,      0x3680000, 1,  13, 0xffff, 0,          
-  };
+u32 gContigo_PacerScript[] = {
+    SC_ANIMATION(ANIM_WALK),
+    SC_SPEED(1),
+    SC_ACCELERATION(0.4),
+    SC_MOVE(318, 0, 884),
+    SC_SYNC,
+    SC_MOVE(338, 0, 884),
+    SC_SYNC,
+    SC_MOVE(352, 0, 872),
+    SC_SYNC,
+    SC_MOVE(338, 0, 844),
+    SC_SYNC,
+    SC_MOVE(318, 0, 844),
+    SC_SYNC,
+    SC_MOVE(304, 0, 872),
+    SC_SYNC,
+    SC_LOOP(SC_FOREVER, SC_TOP),
+};
 
 u32 gContigo_JennaReunionScript[] = {
     SC_ANIMATION(2),

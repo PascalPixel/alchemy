@@ -99,8 +99,8 @@ s32 Djinn_GiveFar(s32, s32, s32);
 /// Clears each button shortcut whose Psynergy can no longer be cast
 /// (Party_ClearUnusableShortcuts).
 void Party_ClearUnusableShortcutsFar(void);
-/// Gives a unit one item, joining its first matching stack (up to 30) or taking
-/// the first free slot.
+/// Gives a unit one item, joining its first matching stack (up to
+/// INVENTORY_STACK_MAX) or taking the first free slot.
 s32 Inventory_AddItemFar(s32, s32);
 /// Takes one item out of slot, closing up the inventory when it was the last.
 s32 Inventory_RemoveFar(s32 owner, s32 slot);

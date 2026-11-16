@@ -714,7 +714,7 @@ void Party_RestorePpOfLitElements(void) {
 
 /// Writes the element and index of unit's last Djinni and returns 0, or
 /// returns -1 when it has none.
-s32 Unit_FindLastDjinn(s32 unit, s32 *element_out, s32 *index_out) {
+s32 Unit_FindLastDjinn(s32 unit, s32 *elementOut, s32 *indexOut) {
   u32 *sets = Unit_Get(unit)->djinnHeld;
   s32 element = -1;
   s32 index = -1;
@@ -731,8 +731,8 @@ s32 Unit_FindLastDjinn(s32 unit, s32 *element_out, s32 *index_out) {
   }
   if (element == -1)
     return element;
-  *element_out = element;
-  *index_out = index;
+  *elementOut = element;
+  *indexOut = index;
   return 0;
 }
 

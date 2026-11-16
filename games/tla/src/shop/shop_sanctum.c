@@ -393,9 +393,9 @@ void Sanctum_HighlightMembers(struct Window *window, s32 selected) {
 
       if (shop->partyMemberIcons[i] != 0) {
         if (first + i == selected)
-          Sprite_StartAnimationFar(shop->partyMemberIcons[i], 30);
+          Sprite_StartAnimationFar(shop->partyMemberIcons[i], ANIM_PARTY_RUN);
         else
-          Sprite_StartAnimationFar(shop->partyMemberIcons[i], 1);
+          Sprite_StartAnimationFar(shop->partyMemberIcons[i], ANIM_STAND);
         shop->partyMemberScale[i] = FIXED_ONE;
         if (!Sanctum_NeedsService(unitId, serviceKind))
           shop->partyMemberScale[i] = FIXED_ONE * 7 / 10;

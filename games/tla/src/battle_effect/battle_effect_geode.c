@@ -17,6 +17,10 @@ struct MeshTriangle;
 
 /// Where BillowTexture is decoded in the effect's pictures.
 #define GEODE_BILLOW 0x4710
+/// The dome's projected corners, its corners and its mesh, in the effect's
+/// pictures.
+#define GEODE_VERTICES 0x800
+#define GEODE_MESH 0xc00
 
 /// The Venus Djinni tears up the battlefield itself: the screen is copied
 /// into a texture and peeled up into a spinning dome over the target as the
@@ -81,8 +85,8 @@ void BattleEffect_RunGeode(struct BattleEffectParams *args) {
   Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_FRAME + 15);
   Task_Add(Display_ApplyBg2Affine, TASK_PASS_FRAME + 127);
   projected = work->sheet;
-  vertices = (struct ModelVertex *)(work->sheet + 0x800);
-  mesh = work->sheet + 0xc00;
+  vertices = (struct ModelVertex *)(work->sheet + GEODE_VERTICES);
+  mesh = work->sheet + GEODE_MESH;
   pitch = 0;
   battle = Ram_HeapSlots->battleWork;
   caster = BattleObject_GetFar(args->user)->object;
@@ -169,8 +173,8 @@ void BattleEffect_RunGeode(struct BattleEffectParams *args) {
       Iwram_ClearWordsEntry(canvas, CANVAS_VIEW_BYTES);
       gBgScroll[1].y = 78;
       gBgScroll[1].x = 64 - source.x;
-      REG_BG1CNT &= 0xfffc;
-      REG_BG1CNT |= 1;
+      REG_BG1CNT &= ~BGCNT_PRIORITY(3);
+      REG_BG1CNT |= BGCNT_PRIORITY(1);
       REG_BG2CNT = BGCNT_CHAR_BASE(1) | BGCNT_256_COLORS | BGCNT_SCREEN_BASE(7);
     }
     if (frame == 35) {
@@ -179,9 +183,13 @@ void BattleEffect_RunGeode(struct BattleEffectParams *args) {
       Task_Add(BattleEffect_ProcessPendingGraphicsTransfer,
                TASK_PASS_FRAME + 15);
       IO_WRITE_QUEUE_PUSH((u32)&REG_BG2X, 0, IO_WRITE_WORD);
-      IO_WRITE_QUEUE_PUSH((u32)&REG_BG2Y, -0x1000, IO_WRITE_WORD);
+      IO_WRITE_QUEUE_PUSH((u32)&REG_BG2Y, -(BATTLE_VIEW_TOP << 8),
+                          IO_WRITE_WORD);
       IO_WRITE_QUEUE_PUSH((u32)&REG_BG2PA, Q_8_8(0.5), IO_WRITE_HALFWORD);
-      IO_WRITE_QUEUE_PUSH((u32)&REG_BLDCNT, 0x3f44, IO_WRITE_HALFWORD);
+      IO_WRITE_QUEUE_PUSH((u32)&REG_BLDCNT,
+                          BLDCNT_TGT1_BG2 | BLDCNT_EFFECT_BLEND |
+                              BLDCNT_TGT2_ALL,
+                          IO_WRITE_HALFWORD);
     }
     if (frame == 18) {
       BattleEffect_TintBattler(args->user, TINT_KEEP, 2, 0, -1);

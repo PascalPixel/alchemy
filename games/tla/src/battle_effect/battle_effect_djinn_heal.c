@@ -228,6 +228,9 @@ void BattleEffect_RunTumblingQuads(struct BattleEffectParams *args, s32 mode) {
 #define ZAGAN_PARTS 12
 
 #define ZAGAN_FRAMES 200 ///< frames of the gallop, the swing and the dust
+/// Three rows of a 32-shade ramp in the effect's pictures, drawn as the
+/// streaks that blow across the field.
+#define ZAGAN_BAND 24000
 
 /// The screen slides over to a white field and petals blow across it; Zagan
 /// (twelve objects) gallops in from the right as the backdrop darkens, rears,
@@ -290,8 +293,8 @@ void BattleEffect_RunZagan(struct BattleEffectParams *args) {
       for (j = 0; j != 10; j++) {
         size = 4;
         for (i = 0; i != size * size * 2; i++) {
-          s32 offset = gBattleEffect_MotePictures[size - 1] + i + 0x700;
-          s32 value = ((u8 *)work)[offset];
+          s32 offset = gBattleEffect_MotePictures[size - 1] + i;
+          s32 value = work->sheet[offset];
 
           if (value != 0) {
             value -= j * 7;
@@ -304,9 +307,9 @@ void BattleEffect_RunZagan(struct BattleEffectParams *args) {
       }
       Resource_LoadAndDecompress(RESOURCE_PETAL_SHEET, work->sheet, 1, 1);
       for (i = 0; i != 32; i++) {
-        work->sheet[0x5dc0 + i] = i + 16;
-        work->sheet[0x5de0 + i] = i + 16;
-        work->sheet[0x5e00 + i] = i + 16;
+        work->sheet[ZAGAN_BAND + i] = i + 16;
+        work->sheet[ZAGAN_BAND + 32 + i] = i + 16;
+        work->sheet[ZAGAN_BAND + 64 + i] = i + 16;
       }
     }
     scroll += 4;
@@ -474,7 +477,7 @@ void BattleEffect_RunZagan(struct BattleEffectParams *args) {
 
       for (i = 0, odd = frame & 1, p = work->particles; i != 20; i++, p++) {
         if (!odd || !skip) {
-          blitters[0](canvas, work->sheet + 0x5dc0, p->x, p->y, 32,
+          blitters[0](canvas, work->sheet + ZAGAN_BAND, p->x, p->y, 32,
                       p->variant + 1);
         }
         p->x += p->velocityX;
@@ -517,7 +520,7 @@ void BattleEffect_RunZagan(struct BattleEffectParams *args) {
       velocity.x = velocity.x * 63 / DAMPING_SCALE;
       velocity.y = velocity.y * 63 / DAMPING_SCALE;
     } else if (frame > 149) {
-      if (position.y > 0x37ffff) {
+      if (position.y >= toFIXED(56)) {
         velocity.x = 0;
         velocity.y = 0;
       }

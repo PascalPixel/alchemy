@@ -172,8 +172,9 @@ s32 MapGrid_GetScreenRelativePosition(struct Actor *actor,
 
 /// Sets up the actor system: allocates and zeroes the 64 actors and the
 /// system's work, sets the outline's colours and registers the per-frame
-/// updates. The battle's mode, 4, moves the actors with Actor_UpdateAllMotion;
-/// modes 3 and 4 place their sprites with the fixed camera.
+/// updates (mode is an enum ActorSystemMode). A battle moves its actors with
+/// Actor_UpdateAllMotion; the World Map and a battle place their sprites with
+/// the fixed camera.
 void ActorSystem_Initialize(s32 mode) {
   struct ActorSystemWork *system;
   struct Actor *pool;
@@ -185,13 +186,13 @@ void ActorSystem_Initialize(s32 mode) {
   ActorSystem_Configure(mode);
   Dma_Fill32Cell(zero, 0, pool, ACTOR_COUNT * sizeof(*pool));
   Dma_Fill32Cell(zero, 0, system, sizeof(*system));
-  if (mode == 4) {
+  if (mode == ACTOR_SYSTEM_BATTLE) {
     Task_Add(Actor_UpdateAllMotion, TASK_PASS_VBLANK + 10);
   } else {
     Task_Add(Actor_UpdateAllThumb, TASK_PASS_VBLANK + 11);
     Task_Add(Actor_MoveWithCarriers, TASK_PASS_VBLANK + 10);
   }
-  if (mode == 3 || mode == 4)
+  if (mode == ACTOR_SYSTEM_WORLD_MAP || mode == ACTOR_SYSTEM_BATTLE)
     Task_Add(ActorSystem_ProjectSprites, TASK_PASS_VBLANK);
   else
     Task_Add(ActorSystem_PlaceSprites, TASK_PASS_VBLANK);

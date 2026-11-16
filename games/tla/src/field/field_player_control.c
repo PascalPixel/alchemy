@@ -47,18 +47,6 @@ enum FieldShortcutKind {
 /// The world map camera turns toward the pad's yaw by at most about 2.8
 /// degrees a frame.
 #define WORLD_MAP_YAW_STEP_MAX (TRIG_TURN / 128)
-/// What stopped the leader's step this frame (Actor_UpdatePlayerControl,
-/// Actor_MoveOnWorldMap).
-enum PlayerStepBlock {
-  PLAYER_STEP_BLOCKED_BY_MAP = 1, ///< every heading tried runs into the map
-  /// A solid actor ahead, or one with no room to be pushed.
-  PLAYER_STEP_BLOCKED_BY_ACTOR = 2,
-  PLAYER_STEP_BLOCKED = 3, ///< either of the two
-  /// No step, and none counted as blocked: the pad is not held, or a climb
-  /// meets a wall.
-  PLAYER_STEP_STOPPED = 4
-};
-
 /// The footprints the leader leaves in snow and sand, and the leader's
 /// userValue that asks for the pair next.
 enum FootprintAnimation {
@@ -241,7 +229,7 @@ push_objects:
     radius = object->radius - 2;
     if (other->script == NULL)
       continue;
-    if (!(other->collisionFlags & 1))
+    if (!(other->collisionFlags & ACTOR_SOLID))
       continue;
     if (other == object)
       continue;
@@ -456,7 +444,8 @@ void Actor_SpawnWaterSplash(struct Actor *object, s32 mode) {
       child->flags = 0;
       child->layer = sprite->layer;
       if (mode == 2) {
-        Sprite_SetAnimationColorModes((struct Sprite *)child, 13);
+        Sprite_SetAnimationColorModes((struct Sprite *)child,
+                                      SPRITE_COLOR_FILL);
         Sprite_SetAnimationSpeed((struct Sprite *)child, 8);
       }
     }
@@ -655,7 +644,7 @@ push_objects:
     radius = object->radius - 2;
     if (other->script == NULL)
       continue;
-    if (!(other->collisionFlags & 1))
+    if (!(other->collisionFlags & ACTOR_SOLID))
       continue;
     if (other == object)
       continue;

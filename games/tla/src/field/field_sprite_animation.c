@@ -401,16 +401,16 @@ void Sprite_SetAnimationSpeed(struct Sprite *sprite, s32 step) {
   }
 }
 
-/// Takes the sprite and layer pools (from the fixed heap blocks in mode 3,
-/// the heap otherwise) and clears them, loads the shadow tiles into VRAM cache
-/// entry VRAM_CACHE_ENTRY_ACTOR_SHADOW and copies the strided tile copier into
-/// RAM.
+/// Takes the sprite and layer pools (from EWRAM first on the World Map,
+/// ACTOR_SYSTEM_WORLD_MAP, and IWRAM first otherwise) and clears them, loads
+/// the shadow tiles into VRAM cache entry VRAM_CACHE_ENTRY_ACTOR_SHADOW and
+/// copies the strided tile copier into RAM.
 void ActorSystem_Configure(s32 mode) {
   void *sprites;
   void *layers;
   volatile u32 zero;
 
-  if (mode == 3) {
+  if (mode == ACTOR_SYSTEM_WORLD_MAP) {
     sprites = HeapSlot_AllocEwram(HEAP_SLOT_SPRITES,
                                   ANIM_OBJECT_COUNT * sizeof(struct Sprite));
     layers =

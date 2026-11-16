@@ -79,7 +79,7 @@ restart:
   Task_ResetAll();
   ring = HeapSlot_AllocEwram(HEAP_SLOT_BATTLE, 160);
   VramCache_Reset();
-  ActorSystem_Initialize(2);
+  ActorSystem_Initialize(ACTOR_SYSTEM_MAP);
   SpritePictureCache_Load(0, gMapGridCellBuffer, layers[0].spriteId, 0);
   if (Resource_GetMetadataRecordFar(layers[0].spriteId)->drawKind ==
       ANIM_FACING_TWO_PART)

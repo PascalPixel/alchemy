@@ -396,7 +396,7 @@ push_objects:
     radius = object->radius - 2;
     if (other->script == NULL)
       continue;
-    if (!(other->collisionFlags & 1))
+    if (!(other->collisionFlags & ACTOR_SOLID))
       continue;
     if (other == object)
       continue;
@@ -851,7 +851,7 @@ check_objects:
   other = Ram_HeapSlots->actors;
   for (angleIndex = ACTOR_COUNT - 1; angleIndex >= 0;
        angleIndex -= 1, other++) {
-    if (other->script != NULL && (other->collisionFlags & 1) &&
+    if (other->script != NULL && (other->collisionFlags & ACTOR_SOLID) &&
         other != object &&
         Field_CheckSpheresOverlap(&other->x.fixed, other->radius, &position.x,
                                   object->radius) >= 0)

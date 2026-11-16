@@ -127,17 +127,17 @@ void Actor_UpdateAllMotion(void) {
     // Arrived: the watched axis reached the target, or crossed it.
     if (actor->arrivalAxis != 0)
       switch (actor->arrivalAxis) {
-      case 16:
+      case ARRIVAL_AXIS_X:
         if (x == actor->targetX ||
             ((actor->x.fixed - actor->targetX) ^ (x - actor->targetX)) < 0)
           arrivedAtTarget = 1;
         break;
-      case 17:
+      case ARRIVAL_AXIS_Y:
         if (y == actor->targetY ||
             ((actor->y.fixed - actor->targetY) ^ (y - actor->targetY)) < 0)
           arrivedAtTarget = 1;
         break;
-      case 18:
+      case ARRIVAL_AXIS_Z:
         if (z == actor->targetZ ||
             ((actor->z.fixed - actor->targetZ) ^ (z - actor->targetZ)) < 0)
           arrivedAtTarget = 1;
@@ -1189,21 +1189,21 @@ s32 Actor_UpdateHoverControl(struct Actor *actor) {
   struct Actor *other;
   s32 pressed;
 
-  movementAnimation = 2;
+  movementAnimation = ANIM_WALK;
   collision = 0;
   actor->motionFlags = ACTOR_FLOATS;
   if (gInput.held & gMainRoutineWork.dashKeys) {
     actor->speedLimit = toFIXED(1) / 2;
     actor->acceleration = toFIXED(1) / 8;
-    movementAnimation = 5;
+    movementAnimation = ANIM_LEADER_RUN;
   } else {
     actor->speedLimit = toFIXED(1) / 2;
     actor->acceleration = toFIXED(1) / 8;
   }
 
-  angle = gWorldMap_KeyHeadings[(gInput.held >> 4) & 15];
-  if ((u16)angle == 0xffff) {
-    collision |= 4;
+  angle = gWorldMap_KeyHeadings[DPAD_INDEX(gInput.held)];
+  if ((u16)angle == WORLD_MAP_KEY_HEADING_NONE) {
+    collision |= PLAYER_STEP_STOPPED;
   } else {
     collision = 0;
     SET_POSITION(&position, actor->x.fixed, actor->y.fixed, actor->z.fixed);
@@ -1279,26 +1279,27 @@ s32 Actor_UpdateHoverControl(struct Actor *actor) {
           goto check_objects;
       }
       SET_POSITION(&position, actor->x.fixed, actor->y.fixed, actor->z.fixed);
-      collision |= 1;
+      collision |= PLAYER_STEP_BLOCKED_BY_MAP;
 
     check_objects:
       SET_POSITION(&contact, actor->x.fixed, actor->y.fixed, actor->z.fixed);
       Vector_AddPolarOffset(toFIXED(4), (u16)heading, &contact);
       other = Ram_HeapSlots->actors;
-      for (angleIndex = 63; angleIndex >= 0; angleIndex -= 1, other++) {
+      for (angleIndex = ACTOR_COUNT - 1; angleIndex >= 0;
+           angleIndex -= 1, other++) {
         s32 radius;
 
         radius = actor->radius - 2;
         if (other->script == 0)
           continue;
-        if ((other->collisionFlags & 1) == 0)
+        if ((other->collisionFlags & ACTOR_SOLID) == 0)
           continue;
         if (other == actor)
           continue;
         if (Field_CheckSpheresOverlap(&other->x.fixed, radius, &contact.x,
                                       other->radius - 2) < 0)
           continue;
-        collision |= 2;
+        collision |= PLAYER_STEP_BLOCKED_BY_ACTOR;
       }
     }
   }
@@ -1306,7 +1307,7 @@ s32 Actor_UpdateHoverControl(struct Actor *actor) {
   if (Ram_HeapSlots->fieldWork != NULL) {
     struct FieldWork *work = Ram_HeapSlots->fieldWork;
 
-    if (collision & 3)
+    if (collision & PLAYER_STEP_BLOCKED)
       work->blockedSteps++;
     else
       work->blockedSteps = 0;
@@ -1314,9 +1315,9 @@ s32 Actor_UpdateHoverControl(struct Actor *actor) {
   if (collision != 0) {
     s32 action;
 
-    action = 9;
+    action = ANIM_LEADER_LOOK_AROUND;
     if (Unit_Get(gMainRoutineWork.leaderActorId)->hp == 0)
-      action = 22;
+      action = ANIM_LEADER_LEAN_BACK;
     Actor_SelectAnimation(actor, action);
   } else {
     Actor_SelectAnimation(actor, movementAnimation);
@@ -1326,7 +1327,7 @@ s32 Actor_UpdateHoverControl(struct Actor *actor) {
     actor->targetX = TARGET_UNSET;
     actor->targetY = TARGET_UNSET;
     actor->targetZ = TARGET_UNSET;
-    if (collision & 3) {
+    if (collision & PLAYER_STEP_BLOCKED) {
       s32 difference;
 
       difference = (u16)angle - actor->facing;

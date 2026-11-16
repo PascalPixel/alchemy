@@ -3185,68 +3185,65 @@ void TrialRoad_StepOnTrap(const u16 *table) {
   position[2] = leader->z.fixed;
   trap = Actor_FindAtCell(position, 0);
   if (trap != 0) {
-    goto test;
-  next:
-    id = table[0];
-    if (Actor_GetById(id) != trap) {
-      table += 2;
-      goto test;
-    }
-    flag = table[1];
-    Event_Start();
-    if (!GameFlag_Get(flag)) {
-      Actor_SelectAnimation(partner, 1);
-      TrialRoad_TakePlaceOf(partner, trap);
-      wait(1);
-      Sound_Play(SE_CHEST_CLOSE);
-      Actor_SetSpriteColor(Actor_GetById(ACTOR_MOAPA), 7);
-      wait(2);
-      Actor_SelectAnimation(partner, 0);
-      Actor_CopyGraphics(id, 9);
-      Actor_SetSpriteColor(Actor_GetById(ACTOR_MOAPA), 0);
-      wait(2);
-      Actor_SetSpriteColor(Actor_GetById(ACTOR_MOAPA), 7);
-      wait(4);
-      Actor_SetSpriteColor(Actor_GetById(ACTOR_MOAPA), 0);
-      Rubble_Scatter(0);
-      TrialRoad_TakePlaceOf(trap, partner);
-      wait(1);
-      GameFlag_Set(flag);
-    } else {
-      second = flag + 1;
-      if (!GameFlag_Get(second)) {
-        Actor_SelectAnimation(partner, 0);
-        TrialRoad_TakePlaceOf(partner, trap);
-        motion = &leader->motionFlags;
-        wait(1);
-        *motion = 0;
-        Sound_Play(SE_PUSH);
-        MapGrid_SetShake(1, 4, 1);
-        Rubble_Scatter(0);
-        wait(8);
-        Actor_SelectAnimation(partner, 2);
-        MagmaRockInside_SetLeaderCellShape(-2, trap->layer);
-        Rubble_Scatter(1);
-        wait(16);
-        MagmaRockInside_SetLeaderCellShape(-2, trap->layer);
-        wait(4);
-        MapGrid_SetShake(SHAKE_KEEP, SHAKE_KEEP, 0.9);
-        wait(8);
-        *motion = 3;
-        wait(5);
-        Actor_SetPositionAndResetMotion(partner, 0, 0, 0);
-        wait(2);
-        Sound_Play(SE_THUMP);
-        MagmaRockInside_SpawnDustRing();
-        wait(20);
-        GameFlag_Set(second);
+    while (*table != ACTOR_LIST_END) {
+      id = table[0];
+      if (Actor_GetById(id) != trap) {
+        table += 2;
+        continue;
       }
+      flag = table[1];
+      Event_Start();
+      if (!GameFlag_Get(flag)) {
+        Actor_SelectAnimation(partner, 1);
+        TrialRoad_TakePlaceOf(partner, trap);
+        wait(1);
+        Sound_Play(SE_CHEST_CLOSE);
+        Actor_SetSpriteColor(Actor_GetById(ACTOR_MOAPA), 7);
+        wait(2);
+        Actor_SelectAnimation(partner, 0);
+        Actor_CopyGraphics(id, 9);
+        Actor_SetSpriteColor(Actor_GetById(ACTOR_MOAPA), 0);
+        wait(2);
+        Actor_SetSpriteColor(Actor_GetById(ACTOR_MOAPA), 7);
+        wait(4);
+        Actor_SetSpriteColor(Actor_GetById(ACTOR_MOAPA), 0);
+        Rubble_Scatter(0);
+        TrialRoad_TakePlaceOf(trap, partner);
+        wait(1);
+        GameFlag_Set(flag);
+      } else {
+        second = flag + 1;
+        if (!GameFlag_Get(second)) {
+          Actor_SelectAnimation(partner, 0);
+          TrialRoad_TakePlaceOf(partner, trap);
+          motion = &leader->motionFlags;
+          wait(1);
+          *motion = 0;
+          Sound_Play(SE_PUSH);
+          MapGrid_SetShake(1, 4, 1);
+          Rubble_Scatter(0);
+          wait(8);
+          Actor_SelectAnimation(partner, 2);
+          MagmaRockInside_SetLeaderCellShape(-2, trap->layer);
+          Rubble_Scatter(1);
+          wait(16);
+          MagmaRockInside_SetLeaderCellShape(-2, trap->layer);
+          wait(4);
+          MapGrid_SetShake(SHAKE_KEEP, SHAKE_KEEP, 0.9);
+          wait(8);
+          *motion = 3;
+          wait(5);
+          Actor_SetPositionAndResetMotion(partner, 0, 0, 0);
+          wait(2);
+          Sound_Play(SE_THUMP);
+          MagmaRockInside_SpawnDustRing();
+          wait(20);
+          GameFlag_Set(second);
+        }
+      }
+      Event_End();
+      return;
     }
-    Event_End();
-    return;
-  test:
-    if (*table != ACTOR_LIST_END)
-      goto next;
   }
 }
 

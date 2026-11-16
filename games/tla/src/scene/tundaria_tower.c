@@ -110,8 +110,8 @@ void TundariaTower_StartEffectScript(struct FieldEffect *effect,
 #define FLAG_ICY_WALL_REVEALED FLAG_SCENE_TEMP_12
 
 void TundariaTower_AdvanceIceShard(union FieldObject *object);
-void TundariaTower_ScatterIceShards(struct Vector3 *position,
-                                    s32 count, FIXED scale);
+void TundariaTower_ScatterIceShards(struct Vector3 *position, s32 count,
+                                    FIXED scale);
 void TundariaTower_UpdateFallingRocks(void);
 void TundariaTower_StartFallingRocks(void);
 void TundariaTower_EndFallingRocks(void);
@@ -331,8 +331,8 @@ void TundariaTower_AdvanceIceShard(union FieldObject *object) {
 
 /// Scatters shards of ice (effect 279) around a position, each turned at
 /// random and thrown off to fall under TundariaTower_AdvanceIceShard.
-void TundariaTower_ScatterIceShards(struct Vector3 *position,
-                                    s32 count, FIXED scale) {
+void TundariaTower_ScatterIceShards(struct Vector3 *position, s32 count,
+                                    FIXED scale) {
   struct EffectOptions options;
   s32 i;
   s32 velocityX;

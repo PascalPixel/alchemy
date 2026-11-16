@@ -572,8 +572,8 @@ void EasternAlhafra_StepOntoMast(void) {
 
 /// Stepping into a door: it opens, the leader walks through and the scene
 /// leaves by the exit given.
-void EasternAlhafra_OpenDoorAndEnter(struct MapGridCellAnimation *step, s32 countdown,
-                                     s32 unused) {
+void EasternAlhafra_OpenDoorAndEnter(struct MapGridCellAnimation *step,
+                                     s32 countdown, s32 unused) {
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
   Event_PlaySound(SE_DOOR_OPEN);

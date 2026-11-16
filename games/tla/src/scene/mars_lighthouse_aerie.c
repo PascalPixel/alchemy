@@ -2294,8 +2294,7 @@ L_0200bcea:
       SPEAKER_WINDOW_ABOVE | SPEAKER_PORTRAIT_RIGHT | ACTOR_MIA, FACING_SOUTH);
   ((struct OverlayActor *)Actor_Get(ACTOR_MIA))->update = NULL;
   // Read as a word, so the store to the actor before it may alias.
-  later =
-      (struct FieldWork *)((struct HeapWords *)Ram_HeapSlots)->fieldWork;
+  later = (struct FieldWork *)((struct HeapWords *)Ram_HeapSlots)->fieldWork;
   later->message++;
   FieldActor_ShowEmote(ACTOR_MIA, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 20);
   FieldEvent_ShowMessageThenWait(ACTOR_MIA, 0, 20);

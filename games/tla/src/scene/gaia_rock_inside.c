@@ -1025,7 +1025,8 @@ static inline void Orbiter_Step(struct Orbiter *orbiter, struct Actor *anchor) {
   orbiter->x = anchor->x.fixed;
   orbiter->y = anchor->y.fixed + toFIXED(8);
   orbiter->z = anchor->z.fixed;
-  FieldVector_AddPolarOffsetFX(orbiter->orbitRadius, orbiter->angle, &orbiter->x);
+  FieldVector_AddPolarOffsetFX(orbiter->orbitRadius, orbiter->angle,
+                               &orbiter->x);
 }
 
 /// Steps an orbiting object around its anchor: turns it by half its speed, puts

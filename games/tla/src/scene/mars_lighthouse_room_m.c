@@ -1028,50 +1028,6 @@ void MarsLighthouseRoomM_HearDragonStatue(void) {
 
 void Teleport_ArriveWhirling(void);
 
-/// Records the shimmer's four lists and sets each listed BG colour from its
-/// red, green and blue; then copies the BG and OBJ palettes into the palette
-/// fade's buffer and fades to them untinted; in teleport state 2 the party
-/// then arrives whirling.
-void Palette_SetColorsFade(u16 *slots, u16 *colours, u16 *a, u16 *b) {
-  u8 *saved = Ram_HeapSlots->paletteFade;
-
-  gPaletteSlots = slots;
-  gPaletteColors = colours;
-  gPaletteCycleColors = a;
-  gPaletteCycleSlots = b;
-  if (*slots != 0xffff && *colours != 0xffff) {
-  next:
-    {
-      int red = *colours++;
-      int index = *slots++;
-      int green = *colours++;
-      int blue = *colours++;
-      SET_RGB(((u16 *)BG_PLTT)[index], red, green, blue);
-    }
-    if (*slots != 0xffff && *colours != 0xffff)
-      goto next;
-  }
-  Dma_Set((const void *)BG_PLTT, saved, DMA_COPY_WORDS(112), REG_DMA3);
-  Dma_Set((const void *)OBJ_PLTT, saved + 448, DMA_COPY_WORDS(112), REG_DMA3);
-  PaletteFade_ApplyTarget(PALETTE_TINT_NONE, PALETTES_ALL);
-  if (gMainRoutineWork.teleportState == 2)
-    Teleport_ArriveWhirling();
-}
-
-/// Starts the shimmer of the circle's colours, stepping first after `countdown`
-/// frames and then quicker down to every other frame.
-#define DEFINE_TELEPORT_START_SHIMMER(name, period, countdown)                 \
-  void name(void) {                                                            \
-    gPaletteCycleIndex = 0;                                                    \
-    gPaletteCycleLength = List_CountEntries(gPaletteSlots);                    \
-    gPaletteCycleDelay = period;                                               \
-    gPaletteCycleTimer = countdown;                                            \
-    gPaletteCycleBright = 1;                                                   \
-    Task_AddFrame(PaletteCycle_Fade, TASK_PASS_VBLANK);                        \
-  }
-
-DEFINE_TELEPORT_START_SHIMMER(Teleport_StartShimmer, 15, 16)
-
 extern u8 gInventorySnapshot[];
 void Actor_SetSpriteColorMode(struct Actor *object, s32 value);
 void Actor_Release(void *handle);
@@ -1081,49 +1037,10 @@ void Actor_LaunchAhead(struct Actor *self);
 
 void FieldCamera_MoveToActorById(s32 a, s32 b);
 void FieldCamera_WaitForArrival(void);
-void Teleport_StartShimmer(void);
 void Teleport_PlaySparks(void);
-void Teleport_StopShimmer(void);
 void MarsLighthouseRoomM_FadeDoorway(void);
-void PaletteCycle_Fade(void);
 
-/// Stops the shimmer.
-void Teleport_StopShimmer(void) {
-  gFieldWork->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
-  FieldTask_Remove(PaletteCycle_Fade);
-}
-
-DEFINE_TELEPORT_START_SHIMMER(Teleport_StartFastShimmer, 2, 2)
-
-#include "shared/list_count_entries.h"
-
-#include "shared/palette_cycle_fade.h"
-
-/// Arriving by Teleport: the screen comes up from white as the circle whirls.
-void Teleport_ArriveWhirling(void) {
-  struct FieldWork *work = Ram_HeapSlots->fieldWork;
-  s32 saved;
-
-  saved = work->transition;
-  PaletteFade_ApplyTarget(PALETTE_TINT_CUSTOM | RGB(8, 8, 8), PALETTES_BG);
-  PaletteFade_ApplyTarget(PALETTE_TINT_NONE, PALETTES_OBJECTS);
-  gFieldWork->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
-  Event_StartScreenTransition();
-  Event_WaitTransitionFrames();
-  Teleport_StartFastShimmer();
-  Teleport_PlayWhirl();
-  System_Wait(40);
-  Teleport_StopShimmer();
-  PaletteFade_ApplyTarget(PALETTE_TINT_NONE, PALETTES_BG);
-  PaletteFade_Interpolate(16);
-  System_Wait(16);
-  {
-    struct MainRoutineWork *party = &gMainRoutineWork;
-
-    party->teleportState = 0;
-  }
-  work->transition = saved;
-}
+#include "shared/teleport_shimmer.c"
 
 #include "shared/actor_is_touching.h"
 

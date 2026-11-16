@@ -560,15 +560,16 @@ void SpriteViewer_PlaceRing(void) {
   scale = gSpriteViewer_Scale;
   table = (u8 *)Ram_HeapSlots->battleWork;
 
-  // Kinds 4, 6, 44 and 88 are The Broken Seal's, which no sprite here takes.
+  // Kinds 4, 6, 44 and 88 are The Broken Seal's: this game's
+  // Sprite_ComposePicture has no facing table for them.
   switch (kind) {
   case ANIM_FACING_THREE_PICTURES:
     angle = 0;
     step = DEGtoANG(60);
     cnt = 6;
     break;
-  case 5:
-  case 8:
+  case ANIM_FACING_SIX_PICTURES:
+  case ANIM_FACING_EIGHT_PICTURES:
   case 44:
   case 88:
     angle = 0;

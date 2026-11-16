@@ -11,13 +11,15 @@
 #include "battle/range_falloff.h"
 #include "battle/weapon_kind.h"
 
-/// Unused: a word no code names, at the head of the tables.
-const u32 gBattleTables_Unk_0 = 17;
+/// Unused: a word no code names, at the head of the tables; The Broken Seal's
+/// is 16.
+const u32 gBattleTables_UnusedWord = 17;
 
 const s8 gBattleParty_CenterOrderOffsets[] = {0, -1, 1, -2, 2, -3, 3, -4, 4};
 
 // clang-format off
 // Each by enum BattleWeaponKind.
+/// Isaac's battle sprite for each kind of weapon he holds.
 const u16 gBattleUnit_WeaponAnimationsIsaac[] ALIGNED(4) = {
     [WEAPON_KIND_LONG_SWORD]  = SPRITE_WEAPON_ISAAC_SWORD,
     [WEAPON_KIND_LIGHT_BLADE] = SPRITE_WEAPON_ISAAC_LIGHT_BLADE,
@@ -27,6 +29,7 @@ const u16 gBattleUnit_WeaponAnimationsIsaac[] ALIGNED(4) = {
     [WEAPON_KIND_ANKH]        = SPRITE_WEAPON_ISAAC_SWORD,
     [WEAPON_KIND_NONE]        = SPRITE_WEAPON_ISAAC_SWORD,
 };
+/// Garet's battle sprite for each kind of weapon he holds.
 const u16 gBattleUnit_WeaponAnimationsGaret[] = {
     [WEAPON_KIND_LONG_SWORD]  = SPRITE_WEAPON_GARET_SWORD,
     [WEAPON_KIND_LIGHT_BLADE] = SPRITE_WEAPON_GARET_SWORD,
@@ -36,6 +39,7 @@ const u16 gBattleUnit_WeaponAnimationsGaret[] = {
     [WEAPON_KIND_ANKH]        = SPRITE_WEAPON_GARET_MACE,
     [WEAPON_KIND_NONE]        = SPRITE_WEAPON_GARET_MACE,
 };
+/// Ivan's battle sprite for each kind of weapon he holds.
 const u16 gBattleUnit_WeaponAnimationsIvan[] = {
     [WEAPON_KIND_LONG_SWORD]  = SPRITE_WEAPON_IVAN_BLADE,
     [WEAPON_KIND_LIGHT_BLADE] = SPRITE_WEAPON_IVAN_BLADE,
@@ -45,6 +49,7 @@ const u16 gBattleUnit_WeaponAnimationsIvan[] = {
     [WEAPON_KIND_ANKH]        = SPRITE_WEAPON_IVAN_ANKH,
     [WEAPON_KIND_NONE]        = SPRITE_WEAPON_IVAN_STAFF,
 };
+/// Mia's battle sprite for each kind of weapon she holds.
 const u16 gBattleUnit_WeaponAnimationsMia[] = {
     [WEAPON_KIND_LONG_SWORD]  = SPRITE_WEAPON_MIA_ANKH,
     [WEAPON_KIND_LIGHT_BLADE] = SPRITE_WEAPON_MIA_ANKH,
@@ -54,6 +59,7 @@ const u16 gBattleUnit_WeaponAnimationsMia[] = {
     [WEAPON_KIND_ANKH]        = SPRITE_WEAPON_MIA_ANKH,
     [WEAPON_KIND_NONE]        = SPRITE_WEAPON_MIA_ANKH,
 };
+/// Jenna's battle sprite for each kind of weapon she holds.
 const u16 gBattleUnit_WeaponAnimationsJenna[] = {
     [WEAPON_KIND_LONG_SWORD]  = SPRITE_WEAPON_JENNA_BLADE,
     [WEAPON_KIND_LIGHT_BLADE] = SPRITE_WEAPON_JENNA_BLADE,
@@ -63,6 +69,7 @@ const u16 gBattleUnit_WeaponAnimationsJenna[] = {
     [WEAPON_KIND_ANKH]        = SPRITE_WEAPON_JENNA_ANKH,
     [WEAPON_KIND_NONE]        = SPRITE_WEAPON_JENNA_STAFF,
 };
+/// Felix's battle sprite for each kind of weapon he holds.
 const u16 gBattleUnit_WeaponAnimationsFelix[] = {
     [WEAPON_KIND_LONG_SWORD]  = SPRITE_WEAPON_FELIX_SWORD,
     [WEAPON_KIND_LIGHT_BLADE] = SPRITE_WEAPON_FELIX_LIGHT_BLADE,
@@ -72,6 +79,7 @@ const u16 gBattleUnit_WeaponAnimationsFelix[] = {
     [WEAPON_KIND_ANKH]        = SPRITE_WEAPON_FELIX_SWORD,
     [WEAPON_KIND_NONE]        = SPRITE_WEAPON_FELIX_SWORD,
 };
+/// Sheba's battle sprite for each kind of weapon she holds.
 const u16 gBattleUnit_WeaponAnimationsSheba[] = {
     [WEAPON_KIND_LONG_SWORD]  = SPRITE_WEAPON_SHEBA_MACE,
     [WEAPON_KIND_LIGHT_BLADE] = SPRITE_WEAPON_SHEBA_MACE,
@@ -81,6 +89,7 @@ const u16 gBattleUnit_WeaponAnimationsSheba[] = {
     [WEAPON_KIND_ANKH]        = SPRITE_WEAPON_SHEBA_ANKH,
     [WEAPON_KIND_NONE]        = SPRITE_WEAPON_SHEBA_STAFF,
 };
+/// Piers's battle sprite for each kind of weapon he holds.
 const u16 gBattleUnit_WeaponAnimationsPiers[] = {
     [WEAPON_KIND_LONG_SWORD]  = SPRITE_WEAPON_PIERS_SWORD,
     [WEAPON_KIND_LIGHT_BLADE] = SPRITE_WEAPON_PIERS_LIGHT_BLADE,
@@ -91,6 +100,9 @@ const u16 gBattleUnit_WeaponAnimationsPiers[] = {
     [WEAPON_KIND_NONE]        = SPRITE_WEAPON_PIERS_SWORD,
 };
 
+/// Where the party's places stand, x and y pixel pairs from the battlefield's
+/// centre, a 0, 0 pair after each layout; only the unused
+/// BattlePlacement_GetStepPair reads it.
 const s8 gBattlePlacement_StepPairs[] = {
     80, 48,
     80, 16,
@@ -121,15 +133,25 @@ const FIXED gBattleCamera_CommandMatrix[] = {
 };
 // clang-format on
 
-// The same in both games.
+// The same in both games: each a percent by the target's distance from the
+// unit aimed at (battle_targeting.c).
+/// The chance an effect lands.
 u8 gRangeFalloff_EffectChance[] = {100, 60, 30, 30, 30, 30};
+/// The PP an effect drains.
 s32 gRangeFalloff_PpLoss[] = {100, 50, 30, 10, 10, 10};
+/// The HP healed.
 s32 gRangeFalloff_HealHp[] = {100, 80, 60, 40, 20, 10};
+/// The PP damage done.
 s32 gRangeFalloff_PpDamage[] = {100, 50, 30, 10, 10, 10};
+/// Psynergy's damage.
 s32 gRangeFalloff_PsynergyDamage[] = {100, 80, 60, 40, 20, 10};
+/// A summon's damage.
 s32 gRangeFalloff_SummonDamage[] = {100, 70, 40, 30, 20, 10};
+/// An enemy ability's damage.
 s32 gRangeFalloff_EnemyDamage[] = {100, 50, 30, 10, 10, 10};
+/// The PP restored.
 s32 gRangeFalloff_HealPp[] = {100, 80, 60, 40, 20, 10};
+/// An effect's own damage.
 s32 gRangeFalloff_EffectDamage[] = {100, 50, 30, 10, 10, 10};
 
 /// The enemy definitions Dullahan acts as, one drawn at random.

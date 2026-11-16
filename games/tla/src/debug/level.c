@@ -32,6 +32,9 @@
 #include "window/window.h"
 #include "graphics/text_render.h"
 #include "graphics/uiflow.h"
+#include "fixed_math.h"
+#include "field/field_psynergy_work.h"
+#include "field/sprite.h"
 
 extern struct ActorPlacement gIncreaseItemAndLevel_ActorPlacements[];
 extern struct ActorPlacement gIncreaseItemAndLevel_FirstNamePlacements[];
@@ -56,7 +59,11 @@ enum {
   ENTRANCE_NAMES_FOURTH = 96,
   ENTRANCE_NAMES_THIRD = 97,
   ENTRANCE_NAMES_SECOND = 98,
-  ENTRANCE_NAMES_FIRST = 99
+  ENTRANCE_NAMES_FIRST = 99,
+  /// The entrances the code tests against: up to the first is the debug
+  /// room's, above the second the rooms of names'.
+  ENTRANCE_DEBUG_ROOM_LAST = 89,
+  ENTRANCE_NAMES_ABOVE = 94
 };
 
 /// The debug room's actors, numbering the rows of
@@ -92,14 +99,7 @@ const struct ActorPlacement *Scene_GetActorPlacements(void) {
   return gIncreaseItemAndLevel_ActorPlacements;
 }
 
-#define ITEM_DEBUG_DETAILS_WIDTH 28
-#define ITEM_DEBUG_DRAW_ITEM_NAME Text_DrawMessageAsTiles
-#define ITEM_DEBUG_DETAILS_WIDTH 13
-#define ITEM_DEBUG_DRAW_ITEM_NAME Text_DrawMessage
-#define DEBUG_ITEM_COUNT                                                       \
-  270 ///< The browser's item numbers, 0 to 269, wrapping.
-#define DEBUG_ABILITY_COUNT 270 ///< The ability browser's numbers, 0 to 269.
-#define LEVEL_EDITOR_SCALE (FIXED_ONE * 8 / 5)
+/// How much larger ACTOR_LEVEL_EDITOR is drawn in the debug room.
 #define LEVEL_EDITOR_SCALE (FIXED_ONE * 17 / 10)
 
 /// Shows the name of the person talked to in a room of names: actor `actorId`
@@ -136,10 +136,10 @@ void IncreaseItemAndLevel_ShowCharacterName(s32 character) {
   Event_End();
 }
 
-/// The scene's triggers: the rooms of names' for any entrance above 94, else
-/// the debug room's.
+/// The scene's triggers: the rooms of names' for any entrance above
+/// ENTRANCE_NAMES_ABOVE, else the debug room's.
 const struct Trigger *Scene_GetTriggers(void) {
-  if (gMainRoutineWork.entrance > 94)
+  if (gMainRoutineWork.entrance > ENTRANCE_NAMES_ABOVE)
     return gIncreaseItemAndLevel_NameTriggers;
   return gIncreaseItemAndLevel_Triggers;
 }
@@ -232,7 +232,6 @@ void IncreaseItemAndLevel_RunLevelEditor(void) {
 #define ITEM_COUNT 512      ///< The browser's item numbers, 0 to 511, wrapping.
 #define BROWSER_ROW_STEP 10 ///< Right and Left move ten numbers.
 #define BROWSER_PAGE_STEP 30 ///< R and L move thirty.
-#define INVENTORY_ITEM_ID_MASK 0x1ff
 
 void ItemMenu_DrawItemDetails(void *window, s32 item);
 
@@ -264,9 +263,10 @@ void IncreaseItemAndLevel_SelectItem(void) {
   // Lend the highlight palette (BG palette 14) to the item icons, as The
   // Broken Seal's: sprite palette 0 into it, then the window background colour
   // over its text background.
-  Dma_Set((const void *)OBJ_PLTT, (void *)&BG_PLTT_COLOR(14, 0),
+  Dma_Set((const void *)OBJ_PLTT, (void *)&BG_PLTT_COLOR(HIGHLIGHT_PALETTE, 0),
           DMA_COPY_HALFWORDS(16), REG_DMA3);
-  Dma_Set((const void *)(BG_PLTT + 244), (void *)(BG_PLTT + 238),
+  Dma_Set((const void *)&BG_PLTT_COLOR(WINDOW_PALETTE, WINDOW_BACKGROUND_COLOR),
+          (void *)&BG_PLTT_COLOR(HIGHLIGHT_PALETTE, TEXT_BACKGROUND_COLOR),
           DMA_COPY_HALFWORDS(1), REG_DMA3);
   wait(1);
   while (1) {
@@ -342,21 +342,13 @@ void IncreaseItemAndLevel_SelectItem(void) {
     // Skip items with no icon in the chosen direction.
     if (seekDirection == -1) {
       selectedItemId = (selectedItemId + ITEM_COUNT) % entryCount;
-      goto check_back;
-    back:
-      selectedItemId = (selectedItemId + ITEM_COUNT - 1) % entryCount;
-    check_back:
-      if (Item_GetDirect(selectedItemId & INVENTORY_ITEM_ID_MASK)->icon == 0)
-        goto back;
+      while (Item_GetDirect(selectedItemId & INVENTORY_ITEM_ID_MASK)->icon == 0)
+        selectedItemId = (selectedItemId + ITEM_COUNT - 1) % entryCount;
     }
     if (seekDirection == 1) {
       selectedItemId = (selectedItemId + ITEM_COUNT) % entryCount;
-      goto check_ahead;
-    ahead:
-      selectedItemId = (selectedItemId + ITEM_COUNT + 1) % entryCount;
-    check_ahead:
-      if (Item_GetDirect(selectedItemId & INVENTORY_ITEM_ID_MASK)->icon == 0)
-        goto ahead;
+      while (Item_GetDirect(selectedItemId & INVENTORY_ITEM_ID_MASK)->icon == 0)
+        selectedItemId = (selectedItemId + ITEM_COUNT + 1) % entryCount;
     }
     seekDirection = 0;
     wait(1);
@@ -367,12 +359,16 @@ void IncreaseItemAndLevel_SelectItem(void) {
   Window_Close(details, 1);
 }
 
+/// The level editor's label before a member's level.
 char gIncreaseItemAndLevel_LvLabel[4] = "Lv";
 
+/// The item selector's prompt, before the item number.
 char gIncreaseItemAndLevel_ItemPrompt[12] = "Item No:";
 
+/// The item selector's help line, while the bags have room.
 char gIncreaseItemAndLevel_ItemHelp[24] = "A:Get Item  B:Return";
 
+/// The item selector's line when the party's bags are full.
 char gIncreaseItemAndLevel_ItemFull[20] = "ITEM FULL........";
 
 struct SceneEntrance gSceneEntrances[] = {
@@ -389,99 +385,186 @@ struct SceneEntrance gSceneEntrances[] = {
     {SCENE_TABLE_END},
 };
 
+/// The room has no exits of its own.
 u32 gSceneExits[] = {
     SCENE_EXITS_END,
 };
 
 /// The debug room's actors, in the order of enum IncreaseItemAndLevelActorId.
-// clang-format off
 struct ActorPlacement gIncreaseItemAndLevel_ActorPlacements[] = {
-    {336, CONDITION_ALWAYS, 1, toFIXED(48), 0, toFIXED(272), FACING_SOUTHEAST, 0, 0},
-    {252, CONDITION_ALWAYS, 1, toFIXED(48), 0, toFIXED(72), FACING_SOUTHEAST, 0, 0},
-    {253, CONDITION_ALWAYS, 1, toFIXED(48), 0, toFIXED(136), FACING_SOUTHEAST, 0, 0},
-    {216, CONDITION_ALWAYS, 1, toFIXED(104), 0, toFIXED(272), FACING_SOUTHEAST, 0, 0},
-    {SCENE_TABLE_END, 0, 0, 0, 0, 0, 0, 0, 0},
+    ACTOR_PLACEMENT(SPRITE_LADY_STATUE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
+                    48, 0, 272, FACING_SOUTHEAST, TALK_FACING_PARTY, 0),
+    ACTOR_PLACEMENT(SPRITE_WINGED_STATUE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
+                    48, 0, 72, FACING_SOUTHEAST, TALK_FACING_PARTY, 0),
+    ACTOR_PLACEMENT(SPRITE_SUN_DISC_STATUE, CONDITION_ALWAYS,
+                    MOVEMENT_TYPE_STAND, 48, 0, 136, FACING_SOUTHEAST,
+                    TALK_FACING_PARTY, 0),
+    ACTOR_PLACEMENT(SPRITE_CAT, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 104, 0,
+                    272, FACING_SOUTHEAST, TALK_FACING_PARTY, 0),
+    {SCENE_TABLE_END},
 };
 
 /// The first room of names, from Master Poi.
 struct ActorPlacement gIncreaseItemAndLevel_FirstNamePlacements[] = {
-    {21, CONDITION_ALWAYS, 1, toFIXED(160), 0, toFIXED(160), FACING_SOUTHEAST, 2, 0},
-    {18, CONDITION_ALWAYS, 1, toFIXED(160), 0, toFIXED(192), FACING_SOUTHEAST, 2, 0},
-    {17, CONDITION_ALWAYS, 1, toFIXED(160), 0, toFIXED(224), FACING_SOUTHEAST, 2, 0},
-    {20, CONDITION_ALWAYS, 1, toFIXED(160), 0, toFIXED(256), FACING_SOUTHEAST, 2, 0},
-    {19, CONDITION_ALWAYS, 1, toFIXED(160), 0, toFIXED(288), FACING_SOUTHEAST, 2, 0},
-    {24, CONDITION_ALWAYS, 1, toFIXED(160), 0, toFIXED(320), FACING_SOUTHEAST, 2, 0},
-    {25, CONDITION_ALWAYS, 1, toFIXED(160), 0, toFIXED(352), FACING_SOUTHEAST, 2, 0},
-    {26, CONDITION_ALWAYS, 1, toFIXED(208), 0, toFIXED(160), FACING_SOUTHEAST, 2, 0},
-    {41, CONDITION_ALWAYS, 1, toFIXED(208), 0, toFIXED(192), FACING_SOUTHEAST, 2, 0},
-    {42, CONDITION_ALWAYS, 1, toFIXED(208), 0, toFIXED(224), FACING_SOUTHEAST, 2, 0},
-    {16, CONDITION_ALWAYS, 1, toFIXED(208), 0, toFIXED(256), FACING_SOUTHEAST, 2, 0},
-    {37, CONDITION_ALWAYS, 1, toFIXED(208), 0, toFIXED(288), FACING_SOUTHEAST, 2, 0},
-    {38, CONDITION_ALWAYS, 1, toFIXED(208), 0, toFIXED(320), FACING_SOUTHEAST, 2, 0},
-    {36, CONDITION_ALWAYS, 1, toFIXED(208), 0, toFIXED(352), FACING_SOUTHEAST, 2, 0},
-    {SCENE_TABLE_END, 0, 0, 0, 0, 0, 0, 0, 0},
+    ACTOR_PLACEMENT(SPRITE_POI, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 160, 0,
+                    160, FACING_SOUTHEAST, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_RIKI, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 160, 0,
+                    192, FACING_SOUTHEAST, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_TAVI, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 160, 0,
+                    224, FACING_SOUTHEAST, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_MADRAS_MAYOR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
+                    160, 0, 256, FACING_SOUTHEAST, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_MADRAS_ELDER, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
+                    160, 0, 288, FACING_SOUTHEAST, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_ALHAFRAS_MAYOR, CONDITION_ALWAYS,
+                    MOVEMENT_TYPE_STAND, 160, 0, 320, FACING_SOUTHEAST,
+                    TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_FORTUNE_TELLER, CONDITION_ALWAYS,
+                    MOVEMENT_TYPE_STAND, 160, 0, 352, FACING_SOUTHEAST,
+                    TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_AKAFUBU, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 208,
+                    0, 160, FACING_SOUTHEAST, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_MOAPA, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 208, 0,
+                    192, FACING_SOUTHEAST, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_MAHA, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 208, 0,
+                    224, FACING_SOUTHEAST, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_BRIGGS, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 208,
+                    0, 256, FACING_SOUTHEAST, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_CHAUCHA, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 208,
+                    0, 288, FACING_SOUTHEAST, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_EOLEO, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 208, 0,
+                    320, FACING_SOUTHEAST, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_OBABA, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 208, 0,
+                    352, FACING_SOUTHEAST, TALK_FACING_KEEP, 0),
+    {SCENE_TABLE_END},
 };
 
+/// The second room of names.
 struct ActorPlacement gIncreaseItemAndLevel_SecondNamePlacements[] = {
-    {29, CONDITION_ALWAYS, 1, toFIXED(256), 0, toFIXED(160), FACING_SOUTHEAST, 2, 0},
-    {30, CONDITION_ALWAYS, 1, toFIXED(256), 0, toFIXED(192), FACING_SOUTHEAST, 2, 0},
-    {32, CONDITION_ALWAYS, 1, toFIXED(256), 0, toFIXED(224), FACING_SOUTHEAST, 2, 0},
-    {31, CONDITION_ALWAYS, 1, toFIXED(256), 0, toFIXED(256), FACING_SOUTHEAST, 2, 0},
-    {34, CONDITION_ALWAYS, 1, toFIXED(256), 0, toFIXED(288), FACING_SOUTHEAST, 2, 0},
-    {23, CONDITION_ALWAYS, 1, toFIXED(256), 0, toFIXED(320), FACING_SOUTHEAST, 2, 0},
-    {33, CONDITION_ALWAYS, 1, toFIXED(256), 0, toFIXED(352), FACING_SOUTHEAST, 2, 0},
-    {60, CONDITION_ALWAYS, 1, toFIXED(208), 0, toFIXED(160), FACING_SOUTHEAST, 2, 0},
-    {61, CONDITION_ALWAYS, 1, toFIXED(208), 0, toFIXED(192), FACING_SOUTHEAST, 2, 0},
-    {62, CONDITION_ALWAYS, 1, toFIXED(208), 0, toFIXED(224), FACING_SOUTHEAST, 2, 0},
-    {43, CONDITION_ALWAYS, 1, toFIXED(208), 0, toFIXED(256), FACING_SOUTHEAST, 2, 0},
-    {44, CONDITION_ALWAYS, 1, toFIXED(208), 0, toFIXED(288), FACING_SOUTHEAST, 2, 0},
-    {46, CONDITION_ALWAYS, 1, toFIXED(208), 0, toFIXED(320), FACING_SOUTHEAST, 2, 0},
-    {45, CONDITION_ALWAYS, 1, toFIXED(208), 0, toFIXED(352), FACING_SOUTHEAST, 2, 0},
-    {SCENE_TABLE_END, 0, 0, 0, 0, 0, 0, 0, 0},
+    ACTOR_PLACEMENT(SPRITE_SUSA, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 256, 0,
+                    160, FACING_SOUTHEAST, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_LADY_UZUME, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
+                    256, 0, 192, FACING_SOUTHEAST, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_KUSHINADA, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
+                    256, 0, 224, FACING_SOUTHEAST, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_HYDROS, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 256,
+                    0, 256, FACING_SOUTHEAST, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_CONSERVATO, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
+                    256, 0, 288, FACING_SOUTHEAST, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_KARST, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 256, 0,
+                    320, FACING_SOUTHEAST, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_AGATIO, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 256,
+                    0, 352, FACING_SOUTHEAST, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_JENNAS_FATHER, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
+                    208, 0, 160, FACING_SOUTHEAST, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_JENNAS_MOTHER, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
+                    208, 0, 192, FACING_SOUTHEAST, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_KYLE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 208, 0,
+                    224, FACING_SOUTHEAST, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_LUNPA, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 208, 0,
+                    256, FACING_SOUTHEAST, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_PUELLE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 208,
+                    0, 288, FACING_SOUTHEAST, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_MASKED_SHAMAN, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
+                    208, 0, 320, FACING_SOUTHEAST, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_PROX_ELDER, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
+                    208, 0, 352, FACING_SOUTHEAST, TALK_FACING_KEEP, 0),
+    {SCENE_TABLE_END},
 };
 
 /// The third room of names, from Alex.
 struct ActorPlacement gIncreaseItemAndLevel_ThirdNamePlacements[] = {
-    {0, CONDITION_ALWAYS, 1, toFIXED(160), 0, toFIXED(160), FACING_SOUTHEAST, 2, 0},
-    {1, CONDITION_ALWAYS, 1, toFIXED(160), 0, toFIXED(192), FACING_SOUTHEAST, 2, 0},
-    {2, CONDITION_ALWAYS, 1, toFIXED(160), 0, toFIXED(224), FACING_SOUTHEAST, 2, 0},
-    {3, CONDITION_ALWAYS, 1, toFIXED(160), 0, toFIXED(256), FACING_SOUTHEAST, 2, 0},
-    {5, CONDITION_ALWAYS, 1, toFIXED(160), 0, toFIXED(288), FACING_SOUTHEAST, 2, 0},
-    {6, CONDITION_ALWAYS, 1, toFIXED(160), 0, toFIXED(320), FACING_SOUTHEAST, 2, 0},
-    {7, CONDITION_ALWAYS, 1, toFIXED(160), 0, toFIXED(352), FACING_SOUTHEAST, 2, 0},
-    {57, CONDITION_ALWAYS, 1, toFIXED(208), 0, toFIXED(160), FACING_SOUTHEAST, 2, 0},
-    {56, CONDITION_ALWAYS, 1, toFIXED(208), 0, toFIXED(192), FACING_SOUTHEAST, 2, 0},
-    {59, CONDITION_ALWAYS, 1, toFIXED(208), 0, toFIXED(224), FACING_SOUTHEAST, 2, 0},
-    {201, CONDITION_ALWAYS, 1, toFIXED(208), 0, toFIXED(256), FACING_SOUTHEAST, 2, 0},
-    {202, CONDITION_ALWAYS, 1, toFIXED(208), 0, toFIXED(288), FACING_SOUTHEAST, 2, 0},
-    {64, CONDITION_ALWAYS, 1, toFIXED(208), 0, toFIXED(336), FACING_SOUTHEAST, 2, 0},
-    {65, CONDITION_ALWAYS, 1, toFIXED(208), 0, toFIXED(368), FACING_SOUTHEAST, 2, 0},
-    {63, CONDITION_ALWAYS, 1, toFIXED(208), 0, toFIXED(400), FACING_SOUTHEAST, 2, 0},
-    {SCENE_TABLE_END, 0, 0, 0, 0, 0, 0, 0, 0},
+    ACTOR_PLACEMENT(SPRITE_ISAAC, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 160, 0,
+                    160, FACING_SOUTHEAST, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_GARET, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 160, 0,
+                    192, FACING_SOUTHEAST, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_IVAN, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 160, 0,
+                    224, FACING_SOUTHEAST, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_MIA, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 160, 0,
+                    256, FACING_SOUTHEAST, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_JENNA, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 160, 0,
+                    288, FACING_SOUTHEAST, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_SHEBA, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 160, 0,
+                    320, FACING_SOUTHEAST, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_PIERS, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 160, 0,
+                    352, FACING_SOUTHEAST, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_ALEX, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 208, 0,
+                    160, FACING_SOUTHEAST, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_KRADEN, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 208,
+                    0, 192, FACING_SOUTHEAST, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_HAMA, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 208, 0,
+                    224, FACING_SOUTHEAST, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_HEALER, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 208,
+                    0, 256, FACING_SOUTHEAST, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_BEARDED_MAN_IN_LONG_ROBE, CONDITION_ALWAYS,
+                    MOVEMENT_TYPE_STAND, 208, 0, 288, FACING_SOUTHEAST,
+                    TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_MAN_IN_TEAL_SHIRT, CONDITION_ALWAYS,
+                    MOVEMENT_TYPE_STAND, 208, 0, 336, FACING_SOUTHEAST,
+                    TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_WOMAN_IN_GREEN_HEADSCARF, CONDITION_ALWAYS,
+                    MOVEMENT_TYPE_STAND, 208, 0, 368, FACING_SOUTHEAST,
+                    TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_FEIZHI, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 208,
+                    0, 400, FACING_SOUTHEAST, TALK_FACING_KEEP, 0),
+    {SCENE_TABLE_END},
 };
 
+/// The fourth room of names.
 struct ActorPlacement gIncreaseItemAndLevel_FourthNamePlacements[] = {
-    {205, CONDITION_ALWAYS, 1, toFIXED(128), 0, toFIXED(160), FACING_SOUTHEAST, 2, 0},
-    {206, CONDITION_ALWAYS, 1, toFIXED(128), 0, toFIXED(192), FACING_SOUTHEAST, 2, 0},
-    {198, CONDITION_ALWAYS, 1, toFIXED(128), 0, toFIXED(224), FACING_SOUTHEAST, 2, 0},
-    {121, CONDITION_ALWAYS, 1, toFIXED(128), 0, toFIXED(256), FACING_SOUTHEAST, 2, 0},
-    {119, CONDITION_ALWAYS, 1, toFIXED(128), 0, toFIXED(288), FACING_SOUTHEAST, 2, 0},
-    {123, CONDITION_ALWAYS, 1, toFIXED(128), 0, toFIXED(320), FACING_SOUTHEAST, 2, 0},
-    {104, CONDITION_ALWAYS, 1, toFIXED(176), 0, toFIXED(160), FACING_SOUTHEAST, 2, 0},
-    {105, CONDITION_ALWAYS, 1, toFIXED(176), 0, toFIXED(192), FACING_SOUTHEAST, 2, 0},
-    {129, CONDITION_ALWAYS, 1, toFIXED(176), 0, toFIXED(224), FACING_SOUTHEAST, 2, 0},
-    {130, CONDITION_ALWAYS, 1, toFIXED(176), 0, toFIXED(256), FACING_SOUTHEAST, 2, 0},
-    {199, CONDITION_ALWAYS, 1, toFIXED(176), 0, toFIXED(288), FACING_SOUTHEAST, 2, 0},
-    {209, CONDITION_ALWAYS, 1, toFIXED(176), 0, toFIXED(320), FACING_SOUTHEAST, 2, 0},
-    {108, CONDITION_ALWAYS, 1, toFIXED(224), 0, toFIXED(160), FACING_SOUTHEAST, 2, 0},
-    {109, CONDITION_ALWAYS, 1, toFIXED(224), 0, toFIXED(192), FACING_SOUTHEAST, 2, 0},
-    {110, CONDITION_ALWAYS, 1, toFIXED(224), 0, toFIXED(224), FACING_SOUTHEAST, 2, 0},
-    {111, CONDITION_ALWAYS, 1, toFIXED(224), 0, toFIXED(256), FACING_SOUTHEAST, 2, 0},
-    {134, CONDITION_ALWAYS, 1, toFIXED(224), 0, toFIXED(288), FACING_SOUTHEAST, 2, 0},
-    {135, CONDITION_ALWAYS, 1, toFIXED(224), 0, toFIXED(320), FACING_SOUTHEAST, 2, 0},
-    {SCENE_TABLE_END, 0, 0, 0, 0, 0, 0, 0, 0},
+    ACTOR_PLACEMENT(SPRITE_BALD_MAN_IN_RED, CONDITION_ALWAYS,
+                    MOVEMENT_TYPE_STAND, 128, 0, 160, FACING_SOUTHEAST,
+                    TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_YOUNG_MAN_IN_GREEN, CONDITION_ALWAYS,
+                    MOVEMENT_TYPE_STAND, 128, 0, 192, FACING_SOUTHEAST,
+                    TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_WOMAN_WITH_PONYTAIL, CONDITION_ALWAYS,
+                    MOVEMENT_TYPE_STAND, 128, 0, 224, FACING_SOUTHEAST,
+                    TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_IZUMO_WOMAN_IN_CREAM, CONDITION_ALWAYS,
+                    MOVEMENT_TYPE_STAND, 128, 0, 256, FACING_SOUTHEAST,
+                    TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_IZUMO_MAN_IN_RED, CONDITION_ALWAYS,
+                    MOVEMENT_TYPE_STAND, 128, 0, 288, FACING_SOUTHEAST,
+                    TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_IZUMO_WOMAN_IN_ORANGE, CONDITION_ALWAYS,
+                    MOVEMENT_TYPE_STAND, 128, 0, 320, FACING_SOUTHEAST,
+                    TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_SUNSHINE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 176,
+                    0, 160, FACING_SOUTHEAST, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_MAN_WITH_ORANGE_BEARD, CONDITION_ALWAYS,
+                    MOVEMENT_TYPE_STAND, 176, 0, 192, FACING_SOUTHEAST,
+                    TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_GIRL_WITH_LONG_BLONDE_HAIR, CONDITION_ALWAYS,
+                    MOVEMENT_TYPE_STAND, 176, 0, 224, FACING_SOUTHEAST,
+                    TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_WOMAN_WITH_ORANGE_HAIR, CONDITION_ALWAYS,
+                    MOVEMENT_TYPE_STAND, 176, 0, 256, FACING_SOUTHEAST,
+                    TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_MAN_WITH_DARK_HAIR, CONDITION_ALWAYS,
+                    MOVEMENT_TYPE_STAND, 176, 0, 288, FACING_SOUTHEAST,
+                    TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_WOMAN_IN_PINK_APRON, CONDITION_ALWAYS,
+                    MOVEMENT_TYPE_STAND, 176, 0, 320, FACING_SOUTHEAST,
+                    TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_WEAPON_MERCHANT, CONDITION_ALWAYS,
+                    MOVEMENT_TYPE_STAND, 224, 0, 160, FACING_SOUTHEAST,
+                    TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_ARMOR_MERCHANT, CONDITION_ALWAYS,
+                    MOVEMENT_TYPE_STAND, 224, 0, 192, FACING_SOUTHEAST,
+                    TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_WOMAN_WITH_TEAL_HEADBAND, CONDITION_ALWAYS,
+                    MOVEMENT_TYPE_STAND, 224, 0, 224, FACING_SOUTHEAST,
+                    TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_ARTIFACT_MERCHANT, CONDITION_ALWAYS,
+                    MOVEMENT_TYPE_STAND, 224, 0, 256, FACING_SOUTHEAST,
+                    TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_INNKEEPER, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
+                    224, 0, 288, FACING_SOUTHEAST, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_INN_WORKER, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
+                    224, 0, 320, FACING_SOUTHEAST, TALK_FACING_KEEP, 0),
+    {SCENE_TABLE_END},
 };
-// clang-format on
 
 /// Talking to each tester runs its tool, as The Broken Seal's Japanese
 /// edition has it: Force cast at the portrait browser runs a motion test, and
@@ -573,23 +656,23 @@ s32 Scene_Initialize(void) {
 
   event->transition = SCENE_TRANSITION(TRANSITION_WINDOW, 4);
   event->transitionFrames = 24;
-  if (gMainRoutineWork.entrance <= 89) {
-    Actor_GetById(ACTOR_LEVEL_EDITOR)->scaleY = 0x1b333;
-    Actor_GetById(ACTOR_LEVEL_EDITOR)->scaleX = 0x1b333;
+  if (gMainRoutineWork.entrance <= ENTRANCE_DEBUG_ROOM_LAST) {
+    Actor_GetById(ACTOR_LEVEL_EDITOR)->scaleY = LEVEL_EDITOR_SCALE;
+    Actor_GetById(ACTOR_LEVEL_EDITOR)->scaleX = LEVEL_EDITOR_SCALE;
   }
   return 0;
 }
 
 /// Runs the animation test, then moves ACTOR_LEVEL_EDITOR to its test
 /// position, as The Broken Seal's Japanese edition: Force cast at
-/// ACTOR_PORTRAIT_BROWSER gives it mode 2 and ACTOR_LEVEL_EDITOR mode 4; once
+/// ACTOR_PORTRAIT_BROWSER walks it and ACTOR_LEVEL_EDITOR shakes its head; once
 /// ACTOR_PORTRAIT_BROWSER's animation has changed, ACTOR_LEVEL_EDITOR moves to
 /// (312, 416).
 void IncreaseItemAndLevel_RunMotionTest(void) {
   Event_Start();
   Event_ResolvePendingActions(0);
-  Actor_SetAnimationById(ACTOR_PORTRAIT_BROWSER, 2);
-  Actor_SetAnimationById(ACTOR_LEVEL_EDITOR, 4);
+  Actor_SetAnimationById(ACTOR_PORTRAIT_BROWSER, ANIM_WALK);
+  Actor_SetAnimationById(ACTOR_LEVEL_EDITOR, ANIM_SHAKE_HEAD);
   Actor_WaitForAnimationChange(ACTOR_PORTRAIT_BROWSER);
   Actor_SetPosition(ACTOR_LEVEL_EDITOR, 312, 416);
   Event_End();
@@ -599,7 +682,9 @@ void IncreaseItemAndLevel_RunMotionTest(void) {
 /// cast at it, this sets the effect's childMode, and Force's shot then leaves
 /// its target where it is.
 void IncreaseItemAndLevel_EnableEffectChildMode(void) {
-  *((u8 *)Ram_HeapSlots->fieldEffectWork + 53) = 1;
+  struct FieldEffectWork *effectWork = Ram_HeapSlots->fieldEffectWork;
+
+  effectWork->childMode = 1;
 }
 
 s32 Scene_PrepareMap(void) { return 0; }

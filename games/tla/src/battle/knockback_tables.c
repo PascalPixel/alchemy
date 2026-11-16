@@ -1,62 +1,61 @@
 /// @file
 /// How far, how fast and how high each knockback sends a unit, by variant
-/// (enum BattleKnockback), and two rows after the variants that no knockback
-/// names.
+/// (enum BattleKnockback).
 
 #include "fixed_math.h"
 #include "battle_effect/battle_effect.h"
 
 // clang-format off
 const FIXED gBattleKnockback_Acceleration[] = {
-    [KNOCKBACK_NUDGE]  = toFIXED(1),
-    [KNOCKBACK_HOP]    = toFIXED(1),
-    [KNOCKBACK_LEAP]   = toFIXED(1),
-    [KNOCKBACK_LAUNCH] = toFIXED(1),
-    [KNOCKBACK_HURL]   = toFIXED(8),
-    [KNOCKBACK_SKID]   = toFIXED(1),
-    [KNOCKBACK_BOUNCE] = toFIXED(1),
-    [KNOCKBACK_JOLT]   = toFIXED(1),
-    toFIXED(1),
-    toFIXED(8),
+    [KNOCKBACK_NUDGE]    = toFIXED(1),
+    [KNOCKBACK_HOP]      = toFIXED(1),
+    [KNOCKBACK_LEAP]     = toFIXED(1),
+    [KNOCKBACK_LAUNCH]   = toFIXED(1),
+    [KNOCKBACK_HURL]     = toFIXED(8),
+    [KNOCKBACK_SKID]     = toFIXED(1),
+    [KNOCKBACK_BOUNCE]   = toFIXED(1),
+    [KNOCKBACK_JOLT]     = toFIXED(1),
+    [KNOCKBACK_LIFT]     = toFIXED(1),
+    [KNOCKBACK_HURL_FAR] = toFIXED(8),
 };
 
 const FIXED gBattleKnockback_SpeedLimit[] = {
-    [KNOCKBACK_NUDGE]  = toFIXED(4),
-    [KNOCKBACK_HOP]    = toFIXED(4),
-    [KNOCKBACK_LEAP]   = toFIXED(4),
-    [KNOCKBACK_LAUNCH] = toFIXED(4),
-    [KNOCKBACK_HURL]   = toFIXED(20),
-    [KNOCKBACK_SKID]   = toFIXED(4),
-    [KNOCKBACK_BOUNCE] = toFIXED(4),
-    [KNOCKBACK_JOLT]   = toFIXED(4),
-    toFIXED(4),
-    toFIXED(20),
+    [KNOCKBACK_NUDGE]    = toFIXED(4),
+    [KNOCKBACK_HOP]      = toFIXED(4),
+    [KNOCKBACK_LEAP]     = toFIXED(4),
+    [KNOCKBACK_LAUNCH]   = toFIXED(4),
+    [KNOCKBACK_HURL]     = toFIXED(20),
+    [KNOCKBACK_SKID]     = toFIXED(4),
+    [KNOCKBACK_BOUNCE]   = toFIXED(4),
+    [KNOCKBACK_JOLT]     = toFIXED(4),
+    [KNOCKBACK_LIFT]     = toFIXED(4),
+    [KNOCKBACK_HURL_FAR] = toFIXED(20),
 };
 
 const FIXED gBattleKnockback_VelocityY[] = {
-    [KNOCKBACK_NUDGE]  = toFIXED(3),
-    [KNOCKBACK_HOP]    = toFIXED(6),
-    [KNOCKBACK_LEAP]   = toFIXED(7),
-    [KNOCKBACK_LAUNCH] = toFIXED(10),
-    [KNOCKBACK_HURL]   = toFIXED(5),
-    [KNOCKBACK_SKID]   = toFIXED(2),
-    [KNOCKBACK_BOUNCE] = toFIXED(3),
-    [KNOCKBACK_JOLT]   = toFIXED(11) / 2,
-    toFIXED(10),
-    toFIXED(5),
+    [KNOCKBACK_NUDGE]    = toFIXED(3),
+    [KNOCKBACK_HOP]      = toFIXED(6),
+    [KNOCKBACK_LEAP]     = toFIXED(7),
+    [KNOCKBACK_LAUNCH]   = toFIXED(10),
+    [KNOCKBACK_HURL]     = toFIXED(5),
+    [KNOCKBACK_SKID]     = toFIXED(2),
+    [KNOCKBACK_BOUNCE]   = toFIXED(3),
+    [KNOCKBACK_JOLT]     = toFIXED(11) / 2,
+    [KNOCKBACK_LIFT]     = toFIXED(10),
+    [KNOCKBACK_HURL_FAR] = toFIXED(5),
 };
 
 const s32 gBattleKnockback_DistancePercent[] = {
-    [KNOCKBACK_NUDGE]  = 140,
-    [KNOCKBACK_HOP]    = 140,
-    [KNOCKBACK_LEAP]   = 150,
-    [KNOCKBACK_LAUNCH] = 200,
-    [KNOCKBACK_HURL]   = 200,
-    [KNOCKBACK_SKID]   = 150,
-    [KNOCKBACK_BOUNCE] = 100,
-    [KNOCKBACK_JOLT]   = 100,
-    100,
-    300,
+    [KNOCKBACK_NUDGE]    = 140,
+    [KNOCKBACK_HOP]      = 140,
+    [KNOCKBACK_LEAP]     = 150,
+    [KNOCKBACK_LAUNCH]   = 200,
+    [KNOCKBACK_HURL]     = 200,
+    [KNOCKBACK_SKID]     = 150,
+    [KNOCKBACK_BOUNCE]   = 100,
+    [KNOCKBACK_JOLT]     = 100,
+    [KNOCKBACK_LIFT]     = 100,
+    [KNOCKBACK_HURL_FAR] = 300,
 };
 // clang-format on
 

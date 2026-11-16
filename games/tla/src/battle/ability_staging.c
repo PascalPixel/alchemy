@@ -3,9 +3,12 @@
 /// BattleActionRun_Build gives it and the effect it plays, by ability id, and
 /// the effect chance it rolls ahead. The ability names in the comments are the
 /// English release's; `?` is the name MsgAbilityName gives those ids. An
-/// effect's kind, its low twelve bits, stays a number.
+/// effect's kind, its low twelve bits, is an enum BattleEffectId, an enum
+/// SummonEffectId with EFFECT_SUMMON, and a number of
+/// BattleEffect_RunByIdRange's own with EFFECT_BY_ID_RANGE.
 
 #include "battle/ability_staging.h"
+#include "battle_effect/battle_effect.h"
 
 const u8 gActionRun_EffectChance[] = {100, 60, 30, 30, 30, 30};
 
@@ -754,133 +757,133 @@ const u32 gAbilityBattleEffects[] = {
     0, // Nothing
     0, // Attack
     0, // Defend
-    1, // Quake
-    1 | (1 << EFFECT_VARIANT_SHIFT), // Earthquake
-    1 | (2 << EFFECT_VARIANT_SHIFT), // Quake Sphere
-    2, // Spire
-    2 | (1 << EFFECT_VARIANT_SHIFT), // Clay Spire
-    2 | (2 << EFFECT_VARIANT_SHIFT), // Stone Spire
-    3, // Gaia
-    3 | (1 << EFFECT_VARIANT_SHIFT), // Mother Gaia
-    3 | (2 << EFFECT_VARIANT_SHIFT), // Grand Gaia
-    4, // Growth
-    4 | (1 << EFFECT_VARIANT_SHIFT), // Mad Growth
-    4 | (2 << EFFECT_VARIANT_SHIFT), // Wild Growth
-    5, // Thorn
-    5 | (1 << EFFECT_VARIANT_SHIFT), // Briar
-    5 | (2 << EFFECT_VARIANT_SHIFT), // Nettle
+    BATTLE_EFFECT_QUAKE, // Quake
+    BATTLE_EFFECT_QUAKE | (1 << EFFECT_VARIANT_SHIFT), // Earthquake
+    BATTLE_EFFECT_QUAKE | (2 << EFFECT_VARIANT_SHIFT), // Quake Sphere
+    BATTLE_EFFECT_SPIRE, // Spire
+    BATTLE_EFFECT_SPIRE | (1 << EFFECT_VARIANT_SHIFT), // Clay Spire
+    BATTLE_EFFECT_SPIRE | (2 << EFFECT_VARIANT_SHIFT), // Stone Spire
+    BATTLE_EFFECT_GAIA, // Gaia
+    BATTLE_EFFECT_GAIA | (1 << EFFECT_VARIANT_SHIFT), // Mother Gaia
+    BATTLE_EFFECT_GAIA | (2 << EFFECT_VARIANT_SHIFT), // Grand Gaia
+    BATTLE_EFFECT_GROWTH, // Growth
+    BATTLE_EFFECT_GROWTH | (1 << EFFECT_VARIANT_SHIFT), // Mad Growth
+    BATTLE_EFFECT_GROWTH | (2 << EFFECT_VARIANT_SHIFT), // Wild Growth
+    BATTLE_EFFECT_THORN, // Thorn
+    BATTLE_EFFECT_THORN | (1 << EFFECT_VARIANT_SHIFT), // Briar
+    BATTLE_EFFECT_THORN | (2 << EFFECT_VARIANT_SHIFT), // Nettle
     0, // ?
     0, // ?
     0, // ?
     0, // ?
     0, // ?
     0, // ?
-    6, // Frost
-    6 | (1 << EFFECT_VARIANT_SHIFT), // Tundra
-    6 | (2 << EFFECT_VARIANT_SHIFT), // Glacier
-    7, // Ice
-    7 | (1 << EFFECT_VARIANT_SHIFT), // Ice Horn
-    7 | (2 << EFFECT_VARIANT_SHIFT), // Ice Missile
-    8, // Prism
-    8 | (1 << EFFECT_VARIANT_SHIFT), // Hail Prism
-    8 | (2 << EFFECT_VARIANT_SHIFT), // Freeze Prism
-    9, // Douse
-    9 | (1 << EFFECT_VARIANT_SHIFT), // Drench
-    9 | (2 << EFFECT_VARIANT_SHIFT), // Deluge
-    10, // Froth
-    10 | (1 << EFFECT_VARIANT_SHIFT), // Froth Sphere
-    10 | (2 << EFFECT_VARIANT_SHIFT), // Froth Spiral
-    75, // Cool
-    75 | (1 << EFFECT_VARIANT_SHIFT), // Supercool
-    75 | (2 << EFFECT_VARIANT_SHIFT), // Megacool
+    BATTLE_EFFECT_FROST, // Frost
+    BATTLE_EFFECT_FROST | (1 << EFFECT_VARIANT_SHIFT), // Tundra
+    BATTLE_EFFECT_FROST | (2 << EFFECT_VARIANT_SHIFT), // Glacier
+    BATTLE_EFFECT_ICE, // Ice
+    BATTLE_EFFECT_ICE | (1 << EFFECT_VARIANT_SHIFT), // Ice Horn
+    BATTLE_EFFECT_ICE | (2 << EFFECT_VARIANT_SHIFT), // Ice Missile
+    BATTLE_EFFECT_PRISM, // Prism
+    BATTLE_EFFECT_PRISM | (1 << EFFECT_VARIANT_SHIFT), // Hail Prism
+    BATTLE_EFFECT_PRISM | (2 << EFFECT_VARIANT_SHIFT), // Freeze Prism
+    BATTLE_EFFECT_DOUSE, // Douse
+    BATTLE_EFFECT_DOUSE | (1 << EFFECT_VARIANT_SHIFT), // Drench
+    BATTLE_EFFECT_DOUSE | (2 << EFFECT_VARIANT_SHIFT), // Deluge
+    BATTLE_EFFECT_FROTH, // Froth
+    BATTLE_EFFECT_FROTH | (1 << EFFECT_VARIANT_SHIFT), // Froth Sphere
+    BATTLE_EFFECT_FROTH | (2 << EFFECT_VARIANT_SHIFT), // Froth Spiral
+    BATTLE_EFFECT_COOL, // Cool
+    BATTLE_EFFECT_COOL | (1 << EFFECT_VARIANT_SHIFT), // Supercool
+    BATTLE_EFFECT_COOL | (2 << EFFECT_VARIANT_SHIFT), // Megacool
     0, // ?
     0, // ?
     0, // ?
-    11, // Flare
-    11 | (1 << EFFECT_VARIANT_SHIFT), // Flare Wall
-    11 | (2 << EFFECT_VARIANT_SHIFT), // Flare Storm
-    12, // Fire
-    12 | (1 << EFFECT_VARIANT_SHIFT), // Fireball
-    12 | (2 << EFFECT_VARIANT_SHIFT), // Inferno
-    13, // Volcano
-    13 | (1 << EFFECT_VARIANT_SHIFT), // Eruption
-    13 | (2 << EFFECT_VARIANT_SHIFT), // Pyroclasm
-    14, // Blast
-    14 | (1 << EFFECT_VARIANT_SHIFT), // Mad Blast
-    14 | (2 << EFFECT_VARIANT_SHIFT), // Fiery Blast
-    15, // Blast
-    15 | (1 << EFFECT_VARIANT_SHIFT), // Nova
-    15 | (2 << EFFECT_VARIANT_SHIFT), // Supernova
-    72, // Fume
-    72 | (1 << EFFECT_VARIANT_SHIFT), // Serpent Fume
-    72 | (2 << EFFECT_VARIANT_SHIFT), // Dragon Fume
-    73, // Beam
-    73 | (1 << EFFECT_VARIANT_SHIFT), // Cycle Beam
-    73 | (2 << EFFECT_VARIANT_SHIFT), // Searing Beam
-    16, // Bolt
-    16 | (1 << EFFECT_VARIANT_SHIFT), // Flash Bolt
-    16 | (2 << EFFECT_VARIANT_SHIFT), // Blue Bolt
-    17, // Ray
-    17 | (1 << EFFECT_VARIANT_SHIFT), // Storm Ray
-    17 | (2 << EFFECT_VARIANT_SHIFT), // Destruct Ray
-    18, // Plasma
-    18 | (1 << EFFECT_VARIANT_SHIFT), // Shine Plasma
-    18 | (2 << EFFECT_VARIANT_SHIFT), // Spark Plasma
-    19, // Slash
-    19 | (1 << EFFECT_VARIANT_SHIFT), // Wind Slash
-    19 | (2 << EFFECT_VARIANT_SHIFT), // Sonic Slash
-    20, // Whirlwind
-    20 | (1 << EFFECT_VARIANT_SHIFT), // Tornado
-    20 | (2 << EFFECT_VARIANT_SHIFT), // Tempest
+    BATTLE_EFFECT_FLARE, // Flare
+    BATTLE_EFFECT_FLARE | (1 << EFFECT_VARIANT_SHIFT), // Flare Wall
+    BATTLE_EFFECT_FLARE | (2 << EFFECT_VARIANT_SHIFT), // Flare Storm
+    BATTLE_EFFECT_FIRE, // Fire
+    BATTLE_EFFECT_FIRE | (1 << EFFECT_VARIANT_SHIFT), // Fireball
+    BATTLE_EFFECT_FIRE | (2 << EFFECT_VARIANT_SHIFT), // Inferno
+    BATTLE_EFFECT_VOLCANO, // Volcano
+    BATTLE_EFFECT_VOLCANO | (1 << EFFECT_VARIANT_SHIFT), // Eruption
+    BATTLE_EFFECT_VOLCANO | (2 << EFFECT_VARIANT_SHIFT), // Pyroclasm
+    BATTLE_EFFECT_BLAST, // Blast
+    BATTLE_EFFECT_BLAST | (1 << EFFECT_VARIANT_SHIFT), // Mad Blast
+    BATTLE_EFFECT_BLAST | (2 << EFFECT_VARIANT_SHIFT), // Fiery Blast
+    BATTLE_EFFECT_NOVA, // Blast
+    BATTLE_EFFECT_NOVA | (1 << EFFECT_VARIANT_SHIFT), // Nova
+    BATTLE_EFFECT_NOVA | (2 << EFFECT_VARIANT_SHIFT), // Supernova
+    BATTLE_EFFECT_FUME, // Fume
+    BATTLE_EFFECT_FUME | (1 << EFFECT_VARIANT_SHIFT), // Serpent Fume
+    BATTLE_EFFECT_FUME | (2 << EFFECT_VARIANT_SHIFT), // Dragon Fume
+    BATTLE_EFFECT_BEAM, // Beam
+    BATTLE_EFFECT_BEAM | (1 << EFFECT_VARIANT_SHIFT), // Cycle Beam
+    BATTLE_EFFECT_BEAM | (2 << EFFECT_VARIANT_SHIFT), // Searing Beam
+    BATTLE_EFFECT_BOLT, // Bolt
+    BATTLE_EFFECT_BOLT | (1 << EFFECT_VARIANT_SHIFT), // Flash Bolt
+    BATTLE_EFFECT_BOLT | (2 << EFFECT_VARIANT_SHIFT), // Blue Bolt
+    BATTLE_EFFECT_RAY, // Ray
+    BATTLE_EFFECT_RAY | (1 << EFFECT_VARIANT_SHIFT), // Storm Ray
+    BATTLE_EFFECT_RAY | (2 << EFFECT_VARIANT_SHIFT), // Destruct Ray
+    BATTLE_EFFECT_PLASMA, // Plasma
+    BATTLE_EFFECT_PLASMA | (1 << EFFECT_VARIANT_SHIFT), // Shine Plasma
+    BATTLE_EFFECT_PLASMA | (2 << EFFECT_VARIANT_SHIFT), // Spark Plasma
+    BATTLE_EFFECT_SLASH, // Slash
+    BATTLE_EFFECT_SLASH | (1 << EFFECT_VARIANT_SHIFT), // Wind Slash
+    BATTLE_EFFECT_SLASH | (2 << EFFECT_VARIANT_SHIFT), // Sonic Slash
+    BATTLE_EFFECT_WHIRLWIND, // Whirlwind
+    BATTLE_EFFECT_WHIRLWIND | (1 << EFFECT_VARIANT_SHIFT), // Tornado
+    BATTLE_EFFECT_WHIRLWIND | (2 << EFFECT_VARIANT_SHIFT), // Tempest
     0, // ?
     0, // ?
     0, // ?
     0, // ?
     0, // ?
     0, // ?
-    71, // Aura
-    71 | (1 << EFFECT_VARIANT_SHIFT), // Healing Aura
-    71 | (2 << EFFECT_VARIANT_SHIFT), // Cool Aura
-    21, // Cure
-    21 | (1 << EFFECT_VARIANT_SHIFT), // Cure Well
-    21 | (2 << EFFECT_VARIANT_SHIFT), // Potent Cure
-    22, // Ply
-    22 | (1 << EFFECT_VARIANT_SHIFT), // Ply Well
-    22 | (2 << EFFECT_VARIANT_SHIFT), // Pure Ply
-    23, // Wish
-    23 | (1 << EFFECT_VARIANT_SHIFT), // Wish Well
-    23 | (2 << EFFECT_VARIANT_SHIFT), // Pure Wish
-    24, // Cure Poison
-    24 | (1 << EFFECT_VARIANT_SHIFT), // Restore
-    25, // Revive
-    26, // Impact
-    26 | (1 << EFFECT_VARIANT_SHIFT), // High Impact
-    27, // Dull
-    27 | (1 << EFFECT_VARIANT_SHIFT), // Blunt
-    28, // Guard
-    28 | (1 << EFFECT_VARIANT_SHIFT), // Protect
-    29, // Impair
-    29 | (1 << EFFECT_VARIANT_SHIFT), // Debilitate
-    30, // Ward
-    30 | (1 << EFFECT_VARIANT_SHIFT), // Resist
-    31, // Weaken
-    31 | (1 << EFFECT_VARIANT_SHIFT), // Enfeeble
-    32, // Taint
-    32, // Poison
-    33, // Delude
-    33 | (1 << EFFECT_VARIANT_SHIFT), // Confuse
+    BATTLE_EFFECT_AURA, // Aura
+    BATTLE_EFFECT_AURA | (1 << EFFECT_VARIANT_SHIFT), // Healing Aura
+    BATTLE_EFFECT_AURA | (2 << EFFECT_VARIANT_SHIFT), // Cool Aura
+    BATTLE_EFFECT_CURE, // Cure
+    BATTLE_EFFECT_CURE | (1 << EFFECT_VARIANT_SHIFT), // Cure Well
+    BATTLE_EFFECT_CURE | (2 << EFFECT_VARIANT_SHIFT), // Potent Cure
+    BATTLE_EFFECT_PLY, // Ply
+    BATTLE_EFFECT_PLY | (1 << EFFECT_VARIANT_SHIFT), // Ply Well
+    BATTLE_EFFECT_PLY | (2 << EFFECT_VARIANT_SHIFT), // Pure Ply
+    BATTLE_EFFECT_WISH, // Wish
+    BATTLE_EFFECT_WISH | (1 << EFFECT_VARIANT_SHIFT), // Wish Well
+    BATTLE_EFFECT_WISH | (2 << EFFECT_VARIANT_SHIFT), // Pure Wish
+    BATTLE_EFFECT_CURE_POISON, // Cure Poison
+    BATTLE_EFFECT_CURE_POISON | (1 << EFFECT_VARIANT_SHIFT), // Restore
+    BATTLE_EFFECT_REVIVE, // Revive
+    BATTLE_EFFECT_IMPACT, // Impact
+    BATTLE_EFFECT_IMPACT | (1 << EFFECT_VARIANT_SHIFT), // High Impact
+    BATTLE_EFFECT_DULL, // Dull
+    BATTLE_EFFECT_DULL | (1 << EFFECT_VARIANT_SHIFT), // Blunt
+    BATTLE_EFFECT_GUARD, // Guard
+    BATTLE_EFFECT_GUARD | (1 << EFFECT_VARIANT_SHIFT), // Protect
+    BATTLE_EFFECT_IMPAIR, // Impair
+    BATTLE_EFFECT_IMPAIR | (1 << EFFECT_VARIANT_SHIFT), // Debilitate
+    BATTLE_EFFECT_WARD, // Ward
+    BATTLE_EFFECT_WARD | (1 << EFFECT_VARIANT_SHIFT), // Resist
+    BATTLE_EFFECT_WEAKEN, // Weaken
+    BATTLE_EFFECT_WEAKEN | (1 << EFFECT_VARIANT_SHIFT), // Enfeeble
+    BATTLE_EFFECT_TAINT, // Taint
+    BATTLE_EFFECT_TAINT, // Poison
+    BATTLE_EFFECT_DELUDE, // Delude
+    BATTLE_EFFECT_DELUDE | (1 << EFFECT_VARIANT_SHIFT), // Confuse
     0, // Charm
-    36, // Paralyze
-    37, // Sleep
-    38, // Bind
-    39, // Haunt
-    41, // Curse
-    40, // Condemn
-    42, // Drain
-    42 | (1 << EFFECT_VARIANT_SHIFT), // Psy Drain
-    43, // Break
-    44, // Regenerate
-    45, // Reflect
+    BATTLE_EFFECT_PARALYZE, // Paralyze
+    BATTLE_EFFECT_SLEEP, // Sleep
+    BATTLE_EFFECT_BIND, // Bind
+    BATTLE_EFFECT_HAUNT, // Haunt
+    BATTLE_EFFECT_CURSE, // Curse
+    BATTLE_EFFECT_CONDEMN, // Condemn
+    BATTLE_EFFECT_DRAIN, // Drain
+    BATTLE_EFFECT_DRAIN | (1 << EFFECT_VARIANT_SHIFT), // Psy Drain
+    BATTLE_EFFECT_BREAK, // Break
+    BATTLE_EFFECT_REGENERATE, // Regenerate
+    BATTLE_EFFECT_REFLECT, // Reflect
     0, // ?
     0, // ?
     0, // ?
@@ -911,54 +914,54 @@ const u32 gAbilityBattleEffects[] = {
     0, // A??
     0, // ?
     0, // ?
-    49, // Dragon Cloud
-    50, // Demon Night
-    51, // Helm Splitter
-    52, // Quick Strike
-    3, // Rockfall
-    3 | (1 << EFFECT_VARIANT_SHIFT), // Rockslide
-    3 | (2 << EFFECT_VARIANT_SHIFT), // Avalanche
-    13, // Lava Shower
-    13 | (1 << EFFECT_VARIANT_SHIFT), // Molten Bath
-    13 | (2 << EFFECT_VARIANT_SHIFT), // Magma Storm
-    26, // Demon Spear
-    26 | (1 << EFFECT_VARIANT_SHIFT), // Angel Spear
-    28, // Guardian
-    28, // Protector
-    30, // Magic Shell
-    30 | (1 << EFFECT_VARIANT_SHIFT), // Magic Shield
-    53, // Death Plunge
-    54, // Shuriken
-    55, // Annihilation
-    56, // Punji
-    56 | (1 << EFFECT_VARIANT_SHIFT), // Punji Trap
-    56 | (1 << EFFECT_VARIANT_SHIFT), // Punji Strike
-    15, // Fire Bomb
-    15 | (1 << EFFECT_VARIANT_SHIFT), // Cluster Bomb
-    15 | (2 << EFFECT_VARIANT_SHIFT), // Carpet Bomb
-    20, // Gale
-    20 | (1 << EFFECT_VARIANT_SHIFT), // Typhoon
-    20 | (2 << EFFECT_VARIANT_SHIFT), // Hurricane
-    18, // Thunderclap
-    18 | (1 << EFFECT_VARIANT_SHIFT), // Thunderbolt
-    18 | (2 << EFFECT_VARIANT_SHIFT), // Thunderhead
-    33, // Mist
-    58, // Ragnarok
-    57, // Cutting Edge
-    59, // Heat Wave
-    68 | (1 << EFFECT_VARIANT_SHIFT) | EFFECT_VIEW_REVERSED, // Astral Blast
-    60, // Planet Diver
-    83, // Diamond Dust
-    125 | EFFECT_VIEW_REVERSED, // Odyssey
-    123 | EFFECT_VIEW_REVERSED, // Liquifier
-    85, // Plume Edge
-    86, // Thunder Mine
-    128, // Planetary
-    84, // Diamond Berg
-    53 | (1 << EFFECT_VARIANT_SHIFT), // Death Leap
-    49 | (1 << EFFECT_VARIANT_SHIFT), // Epicenter
-    127, // Thorny Grave
-    51 | (1 << EFFECT_VARIANT_SHIFT), // Skull Splitter
+    BATTLE_EFFECT_DRAGON_CLOUD, // Dragon Cloud
+    BATTLE_EFFECT_DEMON_NIGHT, // Demon Night
+    BATTLE_EFFECT_HELM_SPLITTER, // Helm Splitter
+    BATTLE_EFFECT_QUICK_STRIKE, // Quick Strike
+    BATTLE_EFFECT_GAIA, // Rockfall
+    BATTLE_EFFECT_GAIA | (1 << EFFECT_VARIANT_SHIFT), // Rockslide
+    BATTLE_EFFECT_GAIA | (2 << EFFECT_VARIANT_SHIFT), // Avalanche
+    BATTLE_EFFECT_VOLCANO, // Lava Shower
+    BATTLE_EFFECT_VOLCANO | (1 << EFFECT_VARIANT_SHIFT), // Molten Bath
+    BATTLE_EFFECT_VOLCANO | (2 << EFFECT_VARIANT_SHIFT), // Magma Storm
+    BATTLE_EFFECT_IMPACT, // Demon Spear
+    BATTLE_EFFECT_IMPACT | (1 << EFFECT_VARIANT_SHIFT), // Angel Spear
+    BATTLE_EFFECT_GUARD, // Guardian
+    BATTLE_EFFECT_GUARD, // Protector
+    BATTLE_EFFECT_WARD, // Magic Shell
+    BATTLE_EFFECT_WARD | (1 << EFFECT_VARIANT_SHIFT), // Magic Shield
+    BATTLE_EFFECT_DEATH_PLUNGE, // Death Plunge
+    BATTLE_EFFECT_SHURIKEN, // Shuriken
+    BATTLE_EFFECT_ANNIHILATION, // Annihilation
+    BATTLE_EFFECT_PUNJI, // Punji
+    BATTLE_EFFECT_PUNJI | (1 << EFFECT_VARIANT_SHIFT), // Punji Trap
+    BATTLE_EFFECT_PUNJI | (1 << EFFECT_VARIANT_SHIFT), // Punji Strike
+    BATTLE_EFFECT_NOVA, // Fire Bomb
+    BATTLE_EFFECT_NOVA | (1 << EFFECT_VARIANT_SHIFT), // Cluster Bomb
+    BATTLE_EFFECT_NOVA | (2 << EFFECT_VARIANT_SHIFT), // Carpet Bomb
+    BATTLE_EFFECT_WHIRLWIND, // Gale
+    BATTLE_EFFECT_WHIRLWIND | (1 << EFFECT_VARIANT_SHIFT), // Typhoon
+    BATTLE_EFFECT_WHIRLWIND | (2 << EFFECT_VARIANT_SHIFT), // Hurricane
+    BATTLE_EFFECT_PLASMA, // Thunderclap
+    BATTLE_EFFECT_PLASMA | (1 << EFFECT_VARIANT_SHIFT), // Thunderbolt
+    BATTLE_EFFECT_PLASMA | (2 << EFFECT_VARIANT_SHIFT), // Thunderhead
+    BATTLE_EFFECT_DELUDE, // Mist
+    BATTLE_EFFECT_RAGNAROK, // Ragnarok
+    BATTLE_EFFECT_CUTTING_EDGE, // Cutting Edge
+    BATTLE_EFFECT_HEAT_WAVE, // Heat Wave
+    BATTLE_EFFECT_ASTRAL_BLAST | (1 << EFFECT_VARIANT_SHIFT) | EFFECT_VIEW_REVERSED, // Astral Blast
+    BATTLE_EFFECT_PLANET_DIVER, // Planet Diver
+    BATTLE_EFFECT_DIAMOND_DUST, // Diamond Dust
+    BATTLE_EFFECT_ODYSSEY | EFFECT_VIEW_REVERSED, // Odyssey
+    BATTLE_EFFECT_LIQUIFIER | EFFECT_VIEW_REVERSED, // Liquifier
+    BATTLE_EFFECT_PLUME_EDGE, // Plume Edge
+    BATTLE_EFFECT_THUNDER_MINE, // Thunder Mine
+    BATTLE_EFFECT_PLANETARY, // Planetary
+    BATTLE_EFFECT_DIAMOND_BERG, // Diamond Berg
+    BATTLE_EFFECT_DEATH_PLUNGE | (1 << EFFECT_VARIANT_SHIFT), // Death Leap
+    BATTLE_EFFECT_DRAGON_CLOUD | (1 << EFFECT_VARIANT_SHIFT), // Epicenter
+    BATTLE_EFFECT_THORNY_GRAVE, // Thorny Grave
+    BATTLE_EFFECT_HELM_SPLITTER | (1 << EFFECT_VARIANT_SHIFT), // Skull Splitter
     0, // ?
     0, // ?
     138 | EFFECT_BY_ID_RANGE, // Terra Strike
@@ -968,28 +971,28 @@ const u32 gAbilityBattleEffects[] = {
     142 | EFFECT_BY_ID_RANGE, // Bad Omen
     143 | EFFECT_BY_ID_RANGE, // Life Nourish
     144 | EFFECT_BY_ID_RANGE, // Aqua Sock
-    63, // Blizzard
+    BATTLE_EFFECT_BLIZZARD, // Blizzard
     146 | EFFECT_BY_ID_RANGE, // Frost Bite
-    66, // Drown
+    BATTLE_EFFECT_DROWN, // Drown
     148 | EFFECT_BY_ID_RANGE, // Life Leech
     149 | EFFECT_BY_ID_RANGE, // Psy Leech
     150 | EFFECT_BY_ID_RANGE, // Broil
     151 | EFFECT_BY_ID_RANGE, // Meltdown
     152 | EFFECT_BY_ID_RANGE, // Heat Mirage
     153 | EFFECT_BY_ID_RANGE, // Barrage
-    64, // Demonfire
+    BATTLE_EFFECT_DEMON_FIRE, // Demonfire
     155 | EFFECT_BY_ID_RANGE, // Acid Bath
-    65, // Vorpal Slash
+    BATTLE_EFFECT_VORPAL_SLASH, // Vorpal Slash
     157 | EFFECT_BY_ID_RANGE, // Stun Voltage
     158 | EFFECT_BY_ID_RANGE, // Blinding Smog
     159 | EFFECT_BY_ID_RANGE, // Murk
     160 | EFFECT_BY_ID_RANGE, // Cyclone Slash
     161 | EFFECT_BY_ID_RANGE, // Psyphon Seal
-    310, // Rapid Smash
-    310, // Sonic Smash
+    BATTLE_EFFECT_RAPID_SMASH, // Rapid Smash
+    BATTLE_EFFECT_RAPID_SMASH, // Sonic Smash
     162 | EFFECT_BY_ID_RANGE, // Asura
-    61, // Titan Blade
-    62, // Shining Star
+    BATTLE_EFFECT_TITAN_BLADE, // Titan Blade
+    BATTLE_EFFECT_SHINING_STAR, // Shining Star
     0, // ?
     0, // ?
     0, // ?
@@ -1001,16 +1004,16 @@ const u32 gAbilityBattleEffects[] = {
     0, // ?
     0, // ?
     0, // ?
-    22, // {article_class:3}Herb
-    22, // {article_class:2}Nut
-    22, // {article_class:2}Vial
-    22, // {article_class:2}Potion
-    22, // {article_class:5}Soothing Water
-    212, // {article_class:2}Psy Crystal
-    24, // {article_class:2}Antidote
-    24 | (1 << EFFECT_VARIANT_SHIFT), // {article_class:3}Elixir
-    25, // {article_class:4}Water of Life
-    23 | (2 << EFFECT_VARIANT_SHIFT), // {article_class:2}Mist Potion
+    BATTLE_EFFECT_PLY, // {article_class:3}Herb
+    BATTLE_EFFECT_PLY, // {article_class:2}Nut
+    BATTLE_EFFECT_PLY, // {article_class:2}Vial
+    BATTLE_EFFECT_PLY, // {article_class:2}Potion
+    BATTLE_EFFECT_PLY, // {article_class:5}Soothing Water
+    BATTLE_EFFECT_PSY_CRYSTAL, // {article_class:2}Psy Crystal
+    BATTLE_EFFECT_CURE_POISON, // {article_class:2}Antidote
+    BATTLE_EFFECT_CURE_POISON | (1 << EFFECT_VARIANT_SHIFT), // {article_class:3}Elixir
+    BATTLE_EFFECT_REVIVE, // {article_class:4}Water of Life
+    BATTLE_EFFECT_WISH | (2 << EFFECT_VARIANT_SHIFT), // {article_class:2}Mist Potion
     0, // {article_class:4}Power Bread
     0, // {article_class:2}Cookie
     0, // {article_class:3}Apple
@@ -1018,10 +1021,10 @@ const u32 gAbilityBattleEffects[] = {
     0, // {article_class:2}Mint
     0, // {article_class:4}Lucky Pepper
     0, // ?
-    380, // {article_class:2}Smoke Bomb
-    380, // {article_class:2}Sleep Bomb
-    212, // {article_class:3}Adept Ring
-    21, // {article_class:4}Corn
+    BATTLE_EFFECT_SMOKE_BOMB, // {article_class:2}Smoke Bomb
+    BATTLE_EFFECT_SMOKE_BOMB, // {article_class:2}Sleep Bomb
+    BATTLE_EFFECT_PSY_CRYSTAL, // {article_class:3}Adept Ring
+    BATTLE_EFFECT_CURE, // {article_class:4}Corn
     0, // ?
     0, // ?
     0, // ?
@@ -1050,205 +1053,205 @@ const u32 gAbilityBattleEffects[] = {
     0, // ?
     0, // ?
     0, // Aurora Field
-    249, // Djinn Counter
+    BATTLE_EFFECT_DJINN_COUNTER, // Djinn Counter
     104 | EFFECT_BY_ID_RANGE, // Flint
-    200, // Granite
-    201, // Quartz
-    202, // Vine
+    BATTLE_EFFECT_GRANITE, // Granite
+    BATTLE_EFFECT_QUARTZ, // Quartz
+    BATTLE_EFFECT_VINE, // Vine
     107 | EFFECT_BY_ID_RANGE, // Sap
-    203, // Ground
+    BATTLE_EFFECT_GROUND, // Ground
     100 | EFFECT_BY_ID_RANGE, // Bane
     108 | EFFECT_BY_ID_RANGE, // Echo
-    220, // Iron
+    BATTLE_EFFECT_IRON, // Iron
     112 | EFFECT_BY_ID_RANGE, // Steel
-    237, // Mud
-    225, // Flower
-    251, // Meld
-    239, // Petra
-    226, // Salt
-    253, // Geode
-    250, // Mold
-    244, // Crystal
+    BATTLE_EFFECT_MUD, // Mud
+    BATTLE_EFFECT_FLOWER, // Flower
+    BATTLE_EFFECT_MELD, // Meld
+    BATTLE_EFFECT_PETRA, // Petra
+    BATTLE_EFFECT_SALT, // Salt
+    BATTLE_EFFECT_GEODE, // Geode
+    BATTLE_EFFECT_MOLD, // Mold
+    BATTLE_EFFECT_CRYSTAL, // Crystal
     0, // Earth18
     0, // Earth19
-    204, // Fizz
-    205, // Sleet
+    BATTLE_EFFECT_FIZZ, // Fizz
+    BATTLE_EFFECT_SLEET, // Sleet
     102 | EFFECT_BY_ID_RANGE, // Mist
-    206, // Spritz
-    207, // Hail
-    208, // Tonic
-    209, // Dew
+    BATTLE_EFFECT_SPRITZ, // Spritz
+    BATTLE_EFFECT_HAIL, // Hail
+    BATTLE_EFFECT_TONIC, // Tonic
+    BATTLE_EFFECT_DEW, // Dew
     113 | EFFECT_BY_ID_RANGE, // Fog
     109 | EFFECT_BY_ID_RANGE, // Sour
-    227, // Spring
-    222, // Shade
+    BATTLE_EFFECT_SPRING, // Spring
+    BATTLE_EFFECT_SHADE, // Shade
     110 | EFFECT_BY_ID_RANGE, // Chill
-    221, // Steam
-    240, // Rime
+    BATTLE_EFFECT_STEAM, // Steam
+    BATTLE_EFFECT_RIME, // Rime
     111 | EFFECT_BY_ID_RANGE, // Gel
-    245, // Eddy
-    230, // Balm
-    254, // Serac
+    BATTLE_EFFECT_EDDY, // Eddy
+    BATTLE_EFFECT_BALM, // Balm
+    BATTLE_EFFECT_SERAC, // Serac
     0, // Water18
     0, // Water19
-    210, // Forge
+    BATTLE_EFFECT_FORGE, // Forge
     103 | EFFECT_BY_ID_RANGE, // Fever
-    211, // Corona
+    BATTLE_EFFECT_CORONA, // Corona
     105 | EFFECT_BY_ID_RANGE, // Scorch
-    212, // Ember
-    213, // Flash
-    214, // Torch
-    246, // Cannon
-    255, // Spark
-    223, // Kindle
-    257, // Char
-    224, // Coal
-    248, // Reflux
-    236, // Core
-    231, // Tinder
-    252, // Shine
-    256, // Fury
-    243, // Fugue
+    BATTLE_EFFECT_PSY_CRYSTAL, // Ember
+    BATTLE_EFFECT_FLASH, // Flash
+    BATTLE_EFFECT_TORCH, // Torch
+    BATTLE_EFFECT_CANNON, // Cannon
+    BATTLE_EFFECT_SPARK, // Spark
+    BATTLE_EFFECT_KINDLE, // Kindle
+    BATTLE_EFFECT_CHAR, // Char
+    BATTLE_EFFECT_COAL, // Coal
+    BATTLE_EFFECT_REFLUX, // Reflux
+    BATTLE_EFFECT_CORE, // Core
+    BATTLE_EFFECT_TINDER, // Tinder
+    BATTLE_EFFECT_SHINE, // Shine
+    BATTLE_EFFECT_FURY, // Fury
+    BATTLE_EFFECT_FUGUE, // Fugue
     0, // Fire18
     0, // Fire19
-    219, // Gust
-    215, // Breeze
-    216, // Zephyr
+    BATTLE_EFFECT_GUST, // Gust
+    BATTLE_EFFECT_BREEZE, // Breeze
+    BATTLE_EFFECT_ZEPHYR, // Zephyr
     101 | EFFECT_BY_ID_RANGE, // Smog
-    217, // Kite
+    BATTLE_EFFECT_KITE, // Kite
     106 | EFFECT_BY_ID_RANGE, // Squall
-    218, // Luff
-    228, // Breath
+    BATTLE_EFFECT_LUFF, // Luff
+    BATTLE_EFFECT_BREATH, // Breath
     117 | EFFECT_BY_ID_RANGE, // Blitz
-    229, // Ether
-    234, // Waft
-    238, // Haze
+    BATTLE_EFFECT_ETHER, // Ether
+    BATTLE_EFFECT_WAFT, // Waft
+    BATTLE_EFFECT_HAZE, // Haze
     116 | EFFECT_BY_ID_RANGE, // Wheeze
-    247, // Aroma
-    232, // Whorl
-    242, // Gasp
-    241, // Lull
-    233, // Gale
+    BATTLE_EFFECT_AROMA, // Aroma
+    BATTLE_EFFECT_WHORL, // Whorl
+    BATTLE_EFFECT_GASP, // Gasp
+    BATTLE_EFFECT_LULL, // Lull
+    BATTLE_EFFECT_GALE, // Gale
     0, // Wind18
     0, // Wind19
-    280 | EFFECT_VIEW_ACROSS, // Venus
-    1 | EFFECT_SUMMON, // Ramses
-    5 | EFFECT_SUMMON, // Cybele
-    9 | EFFECT_SUMMON, // Judgment
-    13 | EFFECT_SUMMON, // Zagan
-    18 | EFFECT_SUMMON, // Haures
-    24 | EFFECT_SUMMON, // Charon
+    BATTLE_EFFECT_VENUS | EFFECT_VIEW_ACROSS, // Venus
+    SUMMON_EFFECT_RAMSES | EFFECT_SUMMON, // Ramses
+    SUMMON_EFFECT_CYBELE | EFFECT_SUMMON, // Cybele
+    SUMMON_EFFECT_JUDGMENT | EFFECT_SUMMON, // Judgment
+    SUMMON_EFFECT_ZAGAN | EFFECT_SUMMON, // Zagan
+    SUMMON_EFFECT_HAURES | EFFECT_SUMMON, // Haures
+    SUMMON_EFFECT_CHARON | EFFECT_SUMMON, // Charon
     0, // ?
-    281 | EFFECT_VIEW_ACROSS, // Mercury
-    2 | EFFECT_SUMMON, // Nereid
-    6 | EFFECT_SUMMON, // Neptune
-    10 | EFFECT_SUMMON, // Boreas
-    16 | EFFECT_SUMMON, // Moloch
-    20 | EFFECT_SUMMON, // Coatlicue
-    22 | EFFECT_SUMMON, // Azul
+    BATTLE_EFFECT_MERCURY | EFFECT_VIEW_ACROSS, // Mercury
+    SUMMON_EFFECT_NEREID | EFFECT_SUMMON, // Nereid
+    SUMMON_EFFECT_NEPTUNE | EFFECT_SUMMON, // Neptune
+    SUMMON_EFFECT_BOREAS | EFFECT_SUMMON, // Boreas
+    SUMMON_EFFECT_MOLOCH | EFFECT_SUMMON, // Moloch
+    SUMMON_EFFECT_COATLICUE | EFFECT_SUMMON, // Coatlicue
+    SUMMON_EFFECT_AZUL | EFFECT_SUMMON, // Azul
     0, // ?
-    282 | EFFECT_VIEW_ACROSS, // Mars
-    3 | EFFECT_SUMMON, // Kirin
-    7 | EFFECT_SUMMON, // Tiamat
-    11 | EFFECT_SUMMON, // Meteor
-    14 | EFFECT_SUMMON, // Megaera
-    17 | EFFECT_SUMMON, // Ulysses
-    21 | EFFECT_SUMMON, // Daedalus
-    26 | EFFECT_SUMMON, // Daedalus
-    25 | EFFECT_SUMMON, // Iris
+    BATTLE_EFFECT_MARS | EFFECT_VIEW_ACROSS, // Mars
+    SUMMON_EFFECT_KIRIN | EFFECT_SUMMON, // Kirin
+    SUMMON_EFFECT_TIAMAT | EFFECT_SUMMON, // Tiamat
+    SUMMON_EFFECT_METEOR | EFFECT_SUMMON, // Meteor
+    SUMMON_EFFECT_MEGAERA | EFFECT_SUMMON, // Megaera
+    SUMMON_EFFECT_ULYSSES | EFFECT_SUMMON, // Ulysses
+    SUMMON_EFFECT_DAEDALUS | EFFECT_SUMMON, // Daedalus
+    SUMMON_EFFECT_DAEDALUS_ALT | EFFECT_SUMMON, // Daedalus
+    SUMMON_EFFECT_IRIS | EFFECT_SUMMON, // Iris
     0, // ?
-    283 | EFFECT_VIEW_ACROSS, // Jupiter
-    4 | EFFECT_SUMMON, // Atalanta
-    8 | EFFECT_SUMMON, // Procne
-    12 | EFFECT_SUMMON, // Thor
-    15 | EFFECT_SUMMON, // Flora
-    19 | EFFECT_SUMMON, // Eclipse
-    23 | EFFECT_SUMMON, // Catastrophe
-    0, // ?
-    0, // ?
+    BATTLE_EFFECT_JUPITER | EFFECT_VIEW_ACROSS, // Jupiter
+    SUMMON_EFFECT_ATALANTA | EFFECT_SUMMON, // Atalanta
+    SUMMON_EFFECT_PROCNE | EFFECT_SUMMON, // Procne
+    SUMMON_EFFECT_THOR | EFFECT_SUMMON, // Thor
+    SUMMON_EFFECT_FLORA | EFFECT_SUMMON, // Flora
+    SUMMON_EFFECT_ECLIPSE | EFFECT_SUMMON, // Eclipse
+    SUMMON_EFFECT_CATASTROPHE | EFFECT_SUMMON, // Catastrophe
     0, // ?
     0, // ?
     0, // ?
     0, // ?
     0, // ?
-    400 | EFFECT_VIEW_REVERSED, // Fire Breath
-    400 | EFFECT_VIEW_REVERSED, // Fire Breath
-    400 | EFFECT_VIEW_REVERSED, // Fire Breath
-    401 | EFFECT_VIEW_REVERSED, // Water Breath
-    401 | EFFECT_VIEW_REVERSED, // Water Breath
-    401 | EFFECT_VIEW_REVERSED, // Water Breath
-    402, // Ice Breath
-    402, // Ice Breath
-    402, // Ice Breath
-    403 | EFFECT_VIEW_REVERSED, // Dark Breath
-    403 | EFFECT_VIEW_REVERSED, // Dark Breath
-    404 | EFFECT_VIEW_REVERSED, // Acid Breath
-    404 | EFFECT_VIEW_REVERSED, // Acid Breath
-    405 | EFFECT_VIEW_REVERSED, // Storm Breath
-    471 | EFFECT_VIEW_REVERSED, // Storm Breath
-    300, // Sonic Wave
-    300, // Sonic Wave
-    301, // Shriek
-    302, // Banshee Howl
-    303, // Crazy Voice
-    304, // War Cry
-    305, // Wicked Howl
-    306, // Wing Beat
-    307, // Wing Flutter
-    381, // Wing Stroke
-    406 | EFFECT_VIEW_REVERSED, // Evil Blessing
-    407 | EFFECT_VIEW_REVERSED, // Deadly Gas
+    0, // ?
+    0, // ?
+    BATTLE_EFFECT_FIRE_BREATH | EFFECT_VIEW_REVERSED, // Fire Breath
+    BATTLE_EFFECT_FIRE_BREATH | EFFECT_VIEW_REVERSED, // Fire Breath
+    BATTLE_EFFECT_FIRE_BREATH | EFFECT_VIEW_REVERSED, // Fire Breath
+    BATTLE_EFFECT_WATER_BREATH | EFFECT_VIEW_REVERSED, // Water Breath
+    BATTLE_EFFECT_WATER_BREATH | EFFECT_VIEW_REVERSED, // Water Breath
+    BATTLE_EFFECT_WATER_BREATH | EFFECT_VIEW_REVERSED, // Water Breath
+    BATTLE_EFFECT_ICE_BLESSING, // Ice Breath
+    BATTLE_EFFECT_ICE_BLESSING, // Ice Breath
+    BATTLE_EFFECT_ICE_BLESSING, // Ice Breath
+    BATTLE_EFFECT_DARK_BREATH | EFFECT_VIEW_REVERSED, // Dark Breath
+    BATTLE_EFFECT_DARK_BREATH | EFFECT_VIEW_REVERSED, // Dark Breath
+    BATTLE_EFFECT_ACID_BREATH | EFFECT_VIEW_REVERSED, // Acid Breath
+    BATTLE_EFFECT_ACID_BREATH | EFFECT_VIEW_REVERSED, // Acid Breath
+    BATTLE_EFFECT_STORM_BREATH | EFFECT_VIEW_REVERSED, // Storm Breath
+    BATTLE_EFFECT_STORM_BREATH_STRONG | EFFECT_VIEW_REVERSED, // Storm Breath
+    BATTLE_EFFECT_SONIC_WAVE, // Sonic Wave
+    BATTLE_EFFECT_SONIC_WAVE, // Sonic Wave
+    BATTLE_EFFECT_SHRIEK, // Shriek
+    BATTLE_EFFECT_BANSHEE_HOWL, // Banshee Howl
+    BATTLE_EFFECT_CRAZY_VOICE, // Crazy Voice
+    BATTLE_EFFECT_WAR_CRY, // War Cry
+    BATTLE_EFFECT_WICKED_HOWL, // Wicked Howl
+    BATTLE_EFFECT_WING_BEAT, // Wing Beat
+    BATTLE_EFFECT_WING_FLUTTER, // Wing Flutter
+    BATTLE_EFFECT_WING_STROKE, // Wing Stroke
+    BATTLE_EFFECT_EVIL_BLESSING | EFFECT_VIEW_REVERSED, // Evil Blessing
+    BATTLE_EFFECT_DEADLY_GAS | EFFECT_VIEW_REVERSED, // Deadly Gas
     0, // ?
     0, // ?
     0, // ?
-    308, // Rumble
-    309, // Bone Chiller
-    310, // Slice
-    311, // Bone Charge
-    312, // Mystic Flame
-    313, // Numbing Sting
-    314, // Brute Force
-    315, // Sticky Goo
-    316, // Cannibal Fang
-    317, // Bear Claw
-    318, // Poisonous Bite
-    319, // Flying Attack
-    320, // Undead Sword
-    321, // Ransack
-    322, // Sticky Poison
-    323, // Poison Fang
-    324, // Electric Bite
-    325, // Poison Tail
-    326, // Onslaught
-    327, // Vampiric Fang
-    328, // Bacteria Rush
-    329, // Swift Strike
-    330, // Rotten Blood
+    BATTLE_EFFECT_RUMBLE, // Rumble
+    BATTLE_EFFECT_BONE_CHILLER, // Bone Chiller
+    BATTLE_EFFECT_RAPID_SMASH, // Slice
+    BATTLE_EFFECT_BONE_CHARGE, // Bone Charge
+    BATTLE_EFFECT_MYSTIC_FLAME, // Mystic Flame
+    BATTLE_EFFECT_NUMBING_STING, // Numbing Sting
+    BATTLE_EFFECT_BRUTE_FORCE, // Brute Force
+    BATTLE_EFFECT_STICKY_GOO, // Sticky Goo
+    BATTLE_EFFECT_CANNIBAL_FANG, // Cannibal Fang
+    BATTLE_EFFECT_BEAR_CLAW, // Bear Claw
+    BATTLE_EFFECT_POISONOUS_BITE, // Poisonous Bite
+    BATTLE_EFFECT_FLYING_ATTACK, // Flying Attack
+    BATTLE_EFFECT_UNDEAD_SWORD, // Undead Sword
+    BATTLE_EFFECT_RANSACK, // Ransack
+    BATTLE_EFFECT_STICKY_POISON, // Sticky Poison
+    BATTLE_EFFECT_POISON_FANG, // Poison Fang
+    BATTLE_EFFECT_ELECTRIC_BITE, // Electric Bite
+    BATTLE_EFFECT_POISON_TAIL, // Poison Tail
+    BATTLE_EFFECT_ONSLAUGHT, // Onslaught
+    BATTLE_EFFECT_VAMPIRIC_FANG, // Vampiric Fang
+    BATTLE_EFFECT_BACTERIA_RUSH, // Bacteria Rush
+    BATTLE_EFFECT_SWIFT_STRIKE, // Swift Strike
+    BATTLE_EFFECT_ROTTEN_BLOOD, // Rotten Blood
     163 | EFFECT_BY_ID_RANGE, // Forcible Arm
-    332, // Double Fang
-    333, // Mortal Blow
-    334, // Freebite Rush
-    335, // Twin Beaks
-    336, // Rabid Fang
-    337, // Acid Bite
-    338, // Dynamite
-    339, // Headbutt
-    340, // Poison Ink
+    BATTLE_EFFECT_DOUBLE_FANG, // Double Fang
+    BATTLE_EFFECT_MORTAL_BLOW, // Mortal Blow
+    BATTLE_EFFECT_FREEBITE_RUSH, // Freebite Rush
+    BATTLE_EFFECT_TWIN_BEAKS, // Twin Beaks
+    BATTLE_EFFECT_RABID_FANG, // Rabid Fang
+    BATTLE_EFFECT_ACID_BITE, // Acid Bite
+    BATTLE_EFFECT_DYNAMITE, // Dynamite
+    BATTLE_EFFECT_HEADBUTT, // Headbutt
+    BATTLE_EFFECT_POISON_INK, // Poison Ink
     164 | EFFECT_BY_ID_RANGE, // Truncheon Fist
-    342, // Counterstrike
-    343, // Mad Dash
-    344, // Soothing Star
-    345, // Spider Web
-    346, // Heartrender
-    347, // Mad Spatter
-    348, // Spasm
-    349, // Sleep Star
-    350, // Decompose
-    351, // Haunting
-    352, // Worms
-    353, // Berserk
-    354, // Lucid Prophecy
-    389, // Recovery
+    BATTLE_EFFECT_COUNTERSTRIKE, // Counterstrike
+    BATTLE_EFFECT_MAD_DASH, // Mad Dash
+    BATTLE_EFFECT_SOOTHING_STAR, // Soothing Star
+    BATTLE_EFFECT_SPIDER_WEB, // Spider Web
+    BATTLE_EFFECT_HEARTRENDER, // Heartrender
+    BATTLE_EFFECT_MAD_SPATTER, // Mad Spatter
+    BATTLE_EFFECT_SPASM, // Spasm
+    BATTLE_EFFECT_SLEEP_STAR, // Sleep Star
+    BATTLE_EFFECT_DECOMPOSE, // Decompose
+    BATTLE_EFFECT_HAUNTING, // Haunting
+    BATTLE_EFFECT_WORMS, // Worms
+    BATTLE_EFFECT_BERSERK, // Berserk
+    BATTLE_EFFECT_LUCID_PROPHECY, // Lucid Prophecy
+    BATTLE_EFFECT_RECOVERY, // Recovery
     0, // Flee
     0, // Contain
     0, // Threaten
@@ -1261,148 +1264,148 @@ const u32 gAbilityBattleEffects[] = {
     0, // Stand Ready
     0, // Battle Cry
     0, // Can't Use
-    382, // Poison Beat
-    383, // Spinning Beat
+    BATTLE_EFFECT_POISON_BEAT, // Poison Beat
+    BATTLE_EFFECT_SPINNING_BEAT, // Spinning Beat
     152 | EFFECT_BY_ID_RANGE, // Heat Flash
     141 | EFFECT_BY_ID_RANGE, // Death Scythe
-    384 | EFFECT_VIEW_REVERSED, // Outer Space
-    385 | EFFECT_VIEW_REVERSED, // Dragon Driver
-    386, // Drain Fang
-    387, // Severe Blow
-    388, // Thrash
+    BATTLE_EFFECT_OUTER_SPACE | EFFECT_VIEW_REVERSED, // Outer Space
+    BATTLE_EFFECT_DRAGON_DRIVER | EFFECT_VIEW_REVERSED, // Dragon Driver
+    BATTLE_EFFECT_DRAIN_FANG, // Drain Fang
+    BATTLE_EFFECT_SEVERE_BLOW, // Severe Blow
+    BATTLE_EFFECT_THRASH, // Thrash
     0, // ?
-    100, // Stone Justice
+    BATTLE_EFFECT_STONE_JUSTICE, // Stone Justice
     185 | EFFECT_BY_ID_RANGE, // Sarcophagus
     172 | EFFECT_BY_ID_RANGE, // Evil Eye
     173 | EFFECT_BY_ID_RANGE, // Vein Tap
-    101, // Heavy Divide
+    BATTLE_EFFECT_HEAVY_DIVIDE, // Heavy Divide
     179 | EFFECT_BY_ID_RANGE, // Hammersphere
     194 | EFFECT_BY_ID_RANGE, // Mother Earth
-    103, // Wyrd Curse
-    69, // Heartbreak
-    126, // Vengeance
-    104, // Acheron's Grief
-    124, // Megiddo
+    BATTLE_EFFECT_WYRD_CURSE, // Wyrd Curse
+    BATTLE_EFFECT_HEARTBREAK, // Heartbreak
+    BATTLE_EFFECT_VENGEANCE, // Vengeance
+    BATTLE_EFFECT_ACHERONS_GRIEF, // Acheron's Grief
+    BATTLE_EFFECT_MEGIDDO, // Megiddo
     0, // ?
     0, // ?
     0, // ?
-    105, // Hurricane
-    106, // Dreamtide
+    BATTLE_EFFECT_HURRICANE, // Hurricane
+    BATTLE_EFFECT_DREAMTIDE, // Dreamtide
     168 | EFFECT_BY_ID_RANGE, // Stun Cloud
     169 | EFFECT_BY_ID_RANGE, // Searing Fog
     170 | EFFECT_BY_ID_RANGE, // Ice Crush
     180 | EFFECT_BY_ID_RANGE, // Flash Force
     171 | EFFECT_BY_ID_RANGE, // Sargasso
-    107, // Lethe Albion
+    BATTLE_EFFECT_LETHE_ALBION, // Lethe Albion
     182 | EFFECT_BY_ID_RANGE, // Reverse Star
-    108, // Rising Dragon
+    BATTLE_EFFECT_RISING_DRAGON, // Rising Dragon
     0, // ?
     0, // ?
     0, // ?
     0, // ?
     166 | EFFECT_BY_ID_RANGE, // Power Drive
-    109, // Boost Hack
+    BATTLE_EFFECT_BOOST_HACK, // Boost Hack
     167 | EFFECT_BY_ID_RANGE, // Heat Smash
-    111, // Fire Dance
-    112, // Blaze Rush
+    BATTLE_EFFECT_FIRE_DANCE, // Fire Dance
+    BATTLE_EFFECT_BLAZE_RUSH, // Blaze Rush
     178 | EFFECT_BY_ID_RANGE, // Flare Burst
-    113, // Shred
+    BATTLE_EFFECT_SHRED, // Shred
     181 | EFFECT_BY_ID_RANGE, // Crucible Fire
     174 | EFFECT_BY_ID_RANGE, // Scorpionfish
-    114, // Purgatory
-    115, // Soul Shatter
-    110, // Radiant Fire
-    129, // Life Shear
+    BATTLE_EFFECT_PURGATORY, // Purgatory
+    BATTLE_EFFECT_SOUL_SHATTER, // Soul Shatter
+    BATTLE_EFFECT_RADIANT_FIRE, // Radiant Fire
+    BATTLE_EFFECT_LIFE_SHEAR, // Life Shear
     0, // ?
     0, // ?
     0, // ?
     175 | EFFECT_BY_ID_RANGE, // Moon Air
     176 | EFFECT_BY_ID_RANGE, // Flash Edge
-    116, // Aging Gas
-    117, // Mad Zephyr
-    118, // Lunar Slash
-    119, // Nirvana
+    BATTLE_EFFECT_AGING_GAS, // Aging Gas
+    BATTLE_EFFECT_MAD_ZEPHYR, // Mad Zephyr
+    BATTLE_EFFECT_LUNAR_SLASH, // Lunar Slash
+    BATTLE_EFFECT_NIRVANA, // Nirvana
     177 | EFFECT_BY_ID_RANGE, // High Vitals
     184 | EFFECT_BY_ID_RANGE, // Stun Bolt
-    27 | EFFECT_SUMMON, // Trident
-    120, // Light Surge
+    SUMMON_EFFECT_TRIDENT | EFFECT_SUMMON, // Trident
+    BATTLE_EFFECT_LIGHT_SURGE, // Light Surge
     186 | EFFECT_BY_ID_RANGE, // Raiden's Wrath
-    121, // Void Beam
+    BATTLE_EFFECT_VOID_BEAM, // Void Beam
     183 | EFFECT_BY_ID_RANGE, // Supernova
     188 | EFFECT_BY_ID_RANGE, // Apocalypse
-    122, // Legend
+    BATTLE_EFFECT_LEGEND, // Legend
     0, // ?
     0, // ?
     0, // ?
     0, // ?
-    76, // Sabre Dance
-    77, // Backstab
-    400, // Fire Breath
-    78, // Juggle
-    78 | (1 << EFFECT_VARIANT_SHIFT), // Heat Juggle
-    78 | (2 << EFFECT_VARIANT_SHIFT), // Fiery Juggle
-    79, // Flame Card
-    89, // Thunder Card
-    88, // Bramble Card
-    87, // Frost Card
-    90, // Baffle Card
-    91, // Sword Card
-    92, // Sleep Card
-    93, // Death Card
+    BATTLE_EFFECT_SABRE_DANCE, // Sabre Dance
+    BATTLE_EFFECT_BACKSTAB, // Backstab
+    BATTLE_EFFECT_FIRE_BREATH, // Fire Breath
+    BATTLE_EFFECT_JUGGLE, // Juggle
+    BATTLE_EFFECT_JUGGLE | (1 << EFFECT_VARIANT_SHIFT), // Heat Juggle
+    BATTLE_EFFECT_JUGGLE | (2 << EFFECT_VARIANT_SHIFT), // Fiery Juggle
+    BATTLE_EFFECT_FLAME_CARD, // Flame Card
+    BATTLE_EFFECT_THUNDER_CARD, // Thunder Card
+    BATTLE_EFFECT_BRAMBLE_CARD, // Bramble Card
+    BATTLE_EFFECT_FROST_CARD, // Frost Card
+    BATTLE_EFFECT_BAFFLE_CARD, // Baffle Card
+    BATTLE_EFFECT_SWORD_CARD, // Sword Card
+    BATTLE_EFFECT_SLEEP_CARD, // Sleep Card
+    BATTLE_EFFECT_DEATH_CARD, // Death Card
     0, // ?
-    80, // Whiplash
+    BATTLE_EFFECT_WHIPLASH, // Whiplash
     196 | EFFECT_BY_ID_RANGE, // Wild Wolf
-    446 | EFFECT_VIEW_REVERSED, // Emu
+    BATTLE_EFFECT_EMU | EFFECT_VIEW_REVERSED, // Emu
     195 | EFFECT_BY_ID_RANGE, // Roc
-    400 | EFFECT_VIEW_REVERSED, // Salamander
+    BATTLE_EFFECT_FIRE_BREATH | EFFECT_VIEW_REVERSED, // Salamander
     195 | EFFECT_BY_ID_RANGE, // Orc
-    301, // Harpy
+    BATTLE_EFFECT_SHRIEK, // Harpy
     163 | EFFECT_BY_ID_RANGE, // Grand Golem
-    400 | EFFECT_VIEW_REVERSED, // Cerberus
-    400 | EFFECT_VIEW_REVERSED, // Wyvern
-    22, // Pixie
+    BATTLE_EFFECT_FIRE_BREATH | EFFECT_VIEW_REVERSED, // Cerberus
+    BATTLE_EFFECT_FIRE_BREATH | EFFECT_VIEW_REVERSED, // Wyvern
+    BATTLE_EFFECT_PLY, // Pixie
     197 | EFFECT_BY_ID_RANGE, // Dinox
-    335, // Gryphon
-    457, // Living Armor
-    400 | EFFECT_VIEW_REVERSED, // Chimera
-    402 | EFFECT_VIEW_REVERSED, // Blue Dragon
-    22, // Faery
-    23 | (1 << EFFECT_VARIANT_SHIFT), // Elder Wood
-    25, // Lich
-    314, // Troll
-    457, // Minotaur
-    449 | EFFECT_VIEW_REVERSED, // Ghost Soldier
-    400 | EFFECT_VIEW_REVERSED, // Macetail
-    400 | EFFECT_VIEW_REVERSED, // Fire Dragon
-    22, // Weird Nymph
-    22 | (1 << EFFECT_VARIANT_SHIFT), // Succubus
-    23 | (1 << EFFECT_VARIANT_SHIFT), // Estre Wood
-    71 | (2 << EFFECT_VARIANT_SHIFT), // Manticore
-    436, // Phoenix
+    BATTLE_EFFECT_TWIN_BEAKS, // Gryphon
+    BATTLE_EFFECT_LIVING_ARMOR, // Living Armor
+    BATTLE_EFFECT_FIRE_BREATH | EFFECT_VIEW_REVERSED, // Chimera
+    BATTLE_EFFECT_ICE_BLESSING | EFFECT_VIEW_REVERSED, // Blue Dragon
+    BATTLE_EFFECT_PLY, // Faery
+    BATTLE_EFFECT_WISH | (1 << EFFECT_VARIANT_SHIFT), // Elder Wood
+    BATTLE_EFFECT_REVIVE, // Lich
+    BATTLE_EFFECT_BRUTE_FORCE, // Troll
+    BATTLE_EFFECT_LIVING_ARMOR, // Minotaur
+    BATTLE_EFFECT_GHOST_SOLDIER | EFFECT_VIEW_REVERSED, // Ghost Soldier
+    BATTLE_EFFECT_FIRE_BREATH | EFFECT_VIEW_REVERSED, // Macetail
+    BATTLE_EFFECT_FIRE_BREATH | EFFECT_VIEW_REVERSED, // Fire Dragon
+    BATTLE_EFFECT_PLY, // Weird Nymph
+    BATTLE_EFFECT_PLY | (1 << EFFECT_VARIANT_SHIFT), // Succubus
+    BATTLE_EFFECT_WISH | (1 << EFFECT_VARIANT_SHIFT), // Estre Wood
+    BATTLE_EFFECT_AURA | (2 << EFFECT_VARIANT_SHIFT), // Manticore
+    BATTLE_EFFECT_PHOENIX, // Phoenix
     0, // ?
     199 | EFFECT_BY_ID_RANGE, // Call Zombie
-    446 | (2 << EFFECT_VARIANT_SHIFT) | EFFECT_VIEW_REVERSED, // Call Demon
-    448 | EFFECT_VIEW_REVERSED, // Call Dullahan
-    74, // Raging Heat
-    74 | (1 << EFFECT_VARIANT_SHIFT), // Fiery Abyss
-    74 | (2 << EFFECT_VARIANT_SHIFT), // Dire Inferno
-    81, // Poison Flow
-    82, // Fire Puppet
+    BATTLE_EFFECT_EMU | (2 << EFFECT_VARIANT_SHIFT) | EFFECT_VIEW_REVERSED, // Call Demon
+    BATTLE_EFFECT_CALL_DULLAHAN | EFFECT_VIEW_REVERSED, // Call Dullahan
+    BATTLE_EFFECT_RAGING_HEAT, // Raging Heat
+    BATTLE_EFFECT_RAGING_HEAT | (1 << EFFECT_VARIANT_SHIFT), // Fiery Abyss
+    BATTLE_EFFECT_RAGING_HEAT | (2 << EFFECT_VARIANT_SHIFT), // Dire Inferno
+    BATTLE_EFFECT_POISON_FLOW, // Poison Flow
+    BATTLE_EFFECT_FIRE_PUPPET, // Fire Puppet
     0, // ?
     0, // ?
     0, // ?
-    408 | EFFECT_VIEW_REVERSED, // Sand Breath
-    409 | EFFECT_VIEW_REVERSED, // Desert Gasp
-    410 | EFFECT_VIEW_REVERSED, // Black Ice
-    412 | EFFECT_VIEW_REVERSED, // Toxic Breath
-    411 | EFFECT_VIEW_REVERSED, // Typhoon Blow
-    414 | EFFECT_VIEW_REVERSED, // Blast Breath
-    413 | EFFECT_VIEW_REVERSED, // Gravel Blow
-    415 | EFFECT_VIEW_REVERSED, // Darksol Gasp
-    416 | EFFECT_VIEW_REVERSED, // Flame Breath
-    401 | EFFECT_VIEW_REVERSED, // Aqua Breath
-    416 | EFFECT_VIEW_REVERSED, // Fire Breath
-    470, // Chill Breath
+    BATTLE_EFFECT_SAND_BREATH | EFFECT_VIEW_REVERSED, // Sand Breath
+    BATTLE_EFFECT_DESERT_GASP | EFFECT_VIEW_REVERSED, // Desert Gasp
+    BATTLE_EFFECT_BLACK_ICE | EFFECT_VIEW_REVERSED, // Black Ice
+    BATTLE_EFFECT_TOXIC_BREATH | EFFECT_VIEW_REVERSED, // Toxic Breath
+    BATTLE_EFFECT_TYPHOON_BLOW | EFFECT_VIEW_REVERSED, // Typhoon Blow
+    BATTLE_EFFECT_BLAST_BREATH | EFFECT_VIEW_REVERSED, // Blast Breath
+    BATTLE_EFFECT_GRAVEL_BLOW | EFFECT_VIEW_REVERSED, // Gravel Blow
+    BATTLE_EFFECT_DARKSOL_GASP | EFFECT_VIEW_REVERSED, // Darksol Gasp
+    BATTLE_EFFECT_FLAME_BREATH | EFFECT_VIEW_REVERSED, // Flame Breath
+    BATTLE_EFFECT_WATER_BREATH | EFFECT_VIEW_REVERSED, // Aqua Breath
+    BATTLE_EFFECT_FLAME_BREATH | EFFECT_VIEW_REVERSED, // Fire Breath
+    BATTLE_EFFECT_CHILL_BREATH, // Chill Breath
     0, // ?
     0, // ?
     0, // ?
@@ -1412,77 +1415,77 @@ const u32 gAbilityBattleEffects[] = {
     0, // ?
     0, // ?
     189 | EFFECT_BY_ID_RANGE, // Flash Punch
-    453, // Formic Acid
-    454, // Claw Attack
-    455, // Beat Dance
-    425, // Twin Shear
-    313, // Paralytail
-    390 | EFFECT_VIEW_REVERSED, // Echo Cut
-    467, // Clarion Cry
-    426, // Triple Chomp
-    392, // Raging Flood
-    430, // Rising Venom
-    395, // Slaver
-    394, // Mighty Press
-    452, // Star Mine
-    458, // Heat Stun
-    447, // Ocean Fist
-    391, // Watery Grave
-    396, // Counter-rush
+    BATTLE_EFFECT_FORMIC_ACID, // Formic Acid
+    BATTLE_EFFECT_CLAW_ATTACK, // Claw Attack
+    BATTLE_EFFECT_BEAT_DANCE, // Beat Dance
+    BATTLE_EFFECT_TWIN_SHEAR, // Twin Shear
+    BATTLE_EFFECT_NUMBING_STING, // Paralytail
+    BATTLE_EFFECT_ECHO_CUT | EFFECT_VIEW_REVERSED, // Echo Cut
+    BATTLE_EFFECT_CLARION_CRY, // Clarion Cry
+    BATTLE_EFFECT_TRIPLE_CHOMP, // Triple Chomp
+    BATTLE_EFFECT_RAGING_FLOOD, // Raging Flood
+    BATTLE_EFFECT_RISING_VENOM, // Rising Venom
+    BATTLE_EFFECT_SLAVER, // Slaver
+    BATTLE_EFFECT_MIGHTY_PRESS, // Mighty Press
+    BATTLE_EFFECT_STAR_MINE, // Star Mine
+    BATTLE_EFFECT_HEAT_STUN, // Heat Stun
+    BATTLE_EFFECT_OCEAN_FIST, // Ocean Fist
+    BATTLE_EFFECT_WATERY_GRAVE, // Watery Grave
+    BATTLE_EFFECT_COUNTER_RUSH, // Counter-rush
     0, // Counter
     193 | EFFECT_BY_ID_RANGE, // Bosca Hit
-    469, // Strong Hit
-    434 | EFFECT_VIEW_REVERSED, // Rolling Flame
-    450, // Rising Dragon
-    29 | EFFECT_SUMMON, // Meteor Blow
-    435, // Cage
-    433, // Stun Muscle
-    397, // Djinnfest
-    398, // Heat Kiss
+    BATTLE_EFFECT_STRONG_HIT, // Strong Hit
+    BATTLE_EFFECT_ROLLING_FLAME | EFFECT_VIEW_REVERSED, // Rolling Flame
+    BATTLE_EFFECT_RISING_DRAGON_ENEMY, // Rising Dragon
+    SUMMON_EFFECT_METEOR_BLOW | EFFECT_SUMMON, // Meteor Blow
+    BATTLE_EFFECT_CAGE, // Cage
+    BATTLE_EFFECT_STUN_MUSCLE, // Stun Muscle
+    BATTLE_EFFECT_DJINNFEST, // Djinnfest
+    BATTLE_EFFECT_HEAT_KISS, // Heat Kiss
     196 | EFFECT_BY_ID_RANGE, // Fatal Fang
-    399, // Angle Spike
+    BATTLE_EFFECT_ANGLE_SPIKE, // Angle Spike
     192 | EFFECT_BY_ID_RANGE, // Quick Slash
-    427, // Doublestep
-    421, // Maneater
-    446 | EFFECT_VIEW_REVERSED, // Claw Slash
-    446 | (1 << EFFECT_VARIANT_SHIFT) | EFFECT_VIEW_REVERSED, // Mega Slash
-    424, // Vanish Claw
-    423, // Crusher Grip
-    422, // Ur Flash
+    BATTLE_EFFECT_DOUBLESTEP, // Doublestep
+    BATTLE_EFFECT_MANEATER, // Maneater
+    BATTLE_EFFECT_EMU | EFFECT_VIEW_REVERSED, // Claw Slash
+    BATTLE_EFFECT_EMU | (1 << EFFECT_VARIANT_SHIFT) | EFFECT_VIEW_REVERSED, // Mega Slash
+    BATTLE_EFFECT_VANISH_CLAW, // Vanish Claw
+    BATTLE_EFFECT_CRUSHER_GRIP, // Crusher Grip
+    BATTLE_EFFECT_UR_FLASH, // Ur Flash
     197 | EFFECT_BY_ID_RANGE, // Power Bite
     198 | EFFECT_BY_ID_RANGE, // Terrible Bite
-    440, // Poison Sting
-    441, // Kill Sting
-    442, // Beast Needle
-    443, // Poison Sting
-    444, // Stun Sting
-    429, // Mucous Gel
-    428, // Poison Gel
-    393, // Hydro Slash
-    436, // Regen Dance
-    432 | EFFECT_VIEW_REVERSED, // Fire Dance
-    457, // Power Crush
-    431, // Sack
-    446 | (2 << EFFECT_VARIANT_SHIFT) | EFFECT_VIEW_REVERSED, // Vital Moon
-    437, // Human Hunt
-    445 | EFFECT_VIEW_REVERSED, // Demon Eye
+    BATTLE_EFFECT_POISON_STING_TAIL, // Poison Sting
+    BATTLE_EFFECT_KILL_STING, // Kill Sting
+    BATTLE_EFFECT_BEAST_NEEDLE, // Beast Needle
+    BATTLE_EFFECT_POISON_STING, // Poison Sting
+    BATTLE_EFFECT_STUN_STING, // Stun Sting
+    BATTLE_EFFECT_MUCOUS_GEL, // Mucous Gel
+    BATTLE_EFFECT_POISON_GEL, // Poison Gel
+    BATTLE_EFFECT_HYDRO_SLASH, // Hydro Slash
+    BATTLE_EFFECT_PHOENIX, // Regen Dance
+    BATTLE_EFFECT_FIRE_DANCE_UNLEASH | EFFECT_VIEW_REVERSED, // Fire Dance
+    BATTLE_EFFECT_LIVING_ARMOR, // Power Crush
+    BATTLE_EFFECT_SACK, // Sack
+    BATTLE_EFFECT_EMU | (2 << EFFECT_VARIANT_SHIFT) | EFFECT_VIEW_REVERSED, // Vital Moon
+    BATTLE_EFFECT_HUMAN_HUNT, // Human Hunt
+    BATTLE_EFFECT_DEMON_EYE | EFFECT_VIEW_REVERSED, // Demon Eye
     191 | EFFECT_BY_ID_RANGE, // Stun Jip
-    449 | EFFECT_VIEW_REVERSED, // Pike Assault
-    448 | EFFECT_VIEW_REVERSED, // Formina Sage
-    451, // True Collide
+    BATTLE_EFFECT_GHOST_SOLDIER | EFFECT_VIEW_REVERSED, // Pike Assault
+    BATTLE_EFFECT_CALL_DULLAHAN | EFFECT_VIEW_REVERSED, // Formina Sage
+    BATTLE_EFFECT_TRUE_COLLIDE, // True Collide
     190 | EFFECT_BY_ID_RANGE, // Armor Crush
-    461, // Djinn Blast
-    462, // Djinn Storm
-    459 | EFFECT_VIEW_REVERSED, // Earth Force
-    460, // Guard Aura
-    28 | EFFECT_SUMMON, // Cruel Ruin
-    466, // Mystic Call
-    463, // Mine Ball
-    338, // Angry Mine
-    465, // Djinn Stun
+    BATTLE_EFFECT_DJINN_BLAST, // Djinn Blast
+    BATTLE_EFFECT_DJINN_STORM, // Djinn Storm
+    BATTLE_EFFECT_EARTH_FORCE | EFFECT_VIEW_REVERSED, // Earth Force
+    BATTLE_EFFECT_GUARD_AURA, // Guard Aura
+    SUMMON_EFFECT_CRUEL_RUIN | EFFECT_SUMMON, // Cruel Ruin
+    BATTLE_EFFECT_MYSTIC_CALL, // Mystic Call
+    BATTLE_EFFECT_MINE_BALL, // Mine Ball
+    BATTLE_EFFECT_DYNAMITE, // Angry Mine
+    BATTLE_EFFECT_DJINN_STUN, // Djinn Stun
     0, // Crucible
-    464, // Element Swap
-    22 | (2 << EFFECT_VARIANT_SHIFT), // Earnest Ply
-    468, // Psy Boost
+    BATTLE_EFFECT_ELEMENT_SWAP, // Element Swap
+    BATTLE_EFFECT_PLY | (2 << EFFECT_VARIANT_SHIFT), // Earnest Ply
+    BATTLE_EFFECT_PSY_BOOST, // Psy Boost
 };
 // clang-format on

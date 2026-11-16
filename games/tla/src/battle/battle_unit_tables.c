@@ -10,6 +10,8 @@
 const s32 gBattleObject_EmptyScript[] = {SC_END};
 
 // clang-format off
+/// The kind of weapon each weapon item is, which picks its holder's battle
+/// sprite (gBattleUnit_WeaponAnimationsIsaac and the rest).
 u16 gBattleUnit_WeaponKinds[] = {
     WEAPON(ITEM_LONG_SWORD, WEAPON_KIND_LONG_SWORD),
     WEAPON(ITEM_BROAD_SWORD, WEAPON_KIND_LONG_SWORD),

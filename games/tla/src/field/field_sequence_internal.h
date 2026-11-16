@@ -171,6 +171,8 @@ struct MapRegion {
   s16 value;
 };
 
+/// Each scene's encounters by scene, entrance and flag, ended by scene -1
+/// (FIELD_ENCOUNTERS.S).
 extern const struct SceneMusicEntry gScene_EncounterRules[];
 
 extern struct TerrainRule gWorldMap_EncounterRules[];
@@ -179,8 +181,10 @@ extern struct TerrainRule gWorldMap_ShipEncounterRules[];
 
 extern const struct EncounterZone gEncounter_EnemyGroupTable[];
 
+/// Each scene's music by scene or group, entrance and flag (cue_rules.s).
 extern const struct SceneCueRule gScene_CueRuleTable[];
 
+/// Each scene's area name by scene or group and entrance (area_name_rules.s).
 extern const struct SceneAreaNameRule gScene_AreaNameRules[];
 
 extern const s16 gParty_PairResolveRules[];
@@ -191,6 +195,7 @@ extern const s32 gScene_BattleBackgroundRules[];
 /// encounters that use it as (zone << 4) + slot, ended by 0.
 extern const s16 gEncounter_BattleMusic[];
 
+/// The scene data's halfword offset of its bounds, from gMapScene.
 extern u8 gMapSceneBoundsOffset[];
 
 extern s16 gSceneItems[];

@@ -312,11 +312,18 @@ extern const u8 gWorldMap_MarkerBlendCycle[];
 
 extern const u16 gWorldMap_CursorDirectionAngles[];
 
+/// Where the world picture's cursor glides to on its own, 16.16; 0 when it does
+/// not.
 extern s32 gWorldPicture_GlideTargetX;
+/// As gWorldPicture_GlideTargetX, the second coordinate.
 extern s32 gWorldPicture_GlideTargetY;
+/// Nonzero while the world picture is zoomed in.
 extern s16 gWorldPicture_Zoomed;
+/// Set while the place name waits to be drawn again.
 extern s16 gWorldPicture_NameRedrawPending[];
+/// Frames before the place name is drawn again.
 extern s16 gWorldPicture_NameRedrawDelay[];
+/// The world picture's cursor marker.
 extern struct WorldMapMarker gWorldPicture_CursorMarker;
 
 void FieldPsynergy_GreyMindReadPalette(void);

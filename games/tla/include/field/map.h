@@ -31,6 +31,8 @@ struct WorldMapBlocks {
 
 struct Actor *Actor_FindAtCell(s32 *position, s32 check_y);
 
+/// 32 KB of EWRAM holding background tiles, such as the world map's char blocks
+/// 2 and 3, as The Broken Seal's.
 extern u8 gBgTileBuffer[];
 /// The world map area's four tile sets, decoded one after another into
 /// gBgTileBuffer and copied to the two halves of BG char blocks 2 and 3, as
@@ -38,12 +40,16 @@ extern u8 gBgTileBuffer[];
 #define WORLD_MAP_TILE_SET_BYTES 0x2000
 #define WORLD_MAP_TILE_SET(n)                                                  \
   (Ram_BgTileBuffer + (n) * WORLD_MAP_TILE_SET_BYTES)
+/// The map's shape table, 16 KB of EWRAM: 4-byte entries that a map cell's
+/// shape indexes, as The Broken Seal's.
 extern u8 gMapGridShapes[];
 
 void WorldMap_UpdateRegionTint(s32 region, s32 gradual);
 
 s32 ScreenTransition_IsScanlineActiveFar(void);
 
+/// 16 KB of EWRAM that pictures and tiles are decoded into before they are
+/// copied on.
 extern u8 gDecodeBuffer[];
 
 void TilesetAnim_Update(void);
@@ -52,12 +58,14 @@ s32 MapCollision_FindOrAddTagFar(s32 layer, s32 unused, s32 value);
 
 s32 Actor_LiftTargetBlockFar(s32 layer, s32 unused, s32 value);
 
+/// The world map's row drawer, its Thumb entry and ARM code (draw_map.s),
+/// copied to RAM to run.
 extern const u8 Render_DrawMapCode[];
+/// The size of Render_DrawMapCode (draw_map.s).
 extern u8 Render_DrawMapCodeSize[];
 
 s32 SpriteViewer_FindNextSpriteWithPictures(s32 spriteId, s32 direction);
 void SpriteViewer_PlaceRing(void);
-extern struct BattleCells gSpriteObjects;
 
 void BlendScript_Start(u16 *script);
 s32 MapGrid_CheckCollisionAt(FIXED px, FIXED pz, s32 layer, s32 height);

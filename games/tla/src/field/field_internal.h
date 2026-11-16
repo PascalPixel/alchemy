@@ -270,20 +270,32 @@ struct SpritePictureCacheSource {
   s16 number;
 };
 
+/// The size of Matrix_UpdateVerticesCode, an address equal to the size
+/// (ld_script.ld).
 extern u8 Matrix_UpdateVerticesCodeSize[];
 
+/// The map converter's Thumb entry and ARM code (map_grid_convert.s), copied to
+/// RAM to run.
 extern u8 Render_ConvertMapCode[];
 
+/// The size of Render_ConvertMapCode (map_grid_convert.s).
 extern u8 Render_ConvertMapCodeSize[];
 
+/// The scene data's halfword offset of its edits, from gMapScene.
 extern u8 gMapSceneEditsOffset[];
 
+/// Each animation number's packed pictures, ending at number 0 (animdata.s).
 extern struct SpritePictureCacheSource gSpritePictureCache_Sources[];
 
+/// The sprites' shadow, 16 by 8 at 256 colours, loaded into VRAM cache entry
+/// VRAM_CACHE_ENTRY_ACTOR_SHADOW (animdata.s).
 extern const u8 gActor_ShadowTiles[];
 
+/// The strided copy's Thumb entry and ARM code (copy_strided.s), copied to RAM
+/// to run.
 extern u8 Render_CopyStridedCode[];
 
+/// The size of Render_CopyStridedCode (copy_strided.s).
 extern u8 Render_CopyStridedCodeSize[];
 
 /// Copies Render_DecodePicture into the frame scratch slot, the block sized for

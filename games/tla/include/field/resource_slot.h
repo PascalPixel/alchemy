@@ -11,6 +11,8 @@ struct Actor;
 struct SpriteAnimation;
 
 s32 Party_GetPpRatioFar(void);
+/// Matrix_UpdateVertices' Thumb entry and ARM code (world_map_lines_entry.s),
+/// copied to RAM to run.
 extern const u8 Matrix_UpdateVerticesCode[];
 s32 MapGrid_IsClimbableCellFar(s32 x, s32 z, s32 kind);
 s32 Actor_GetCellIndexFar(struct Actor *object);

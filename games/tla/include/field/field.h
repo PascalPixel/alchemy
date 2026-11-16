@@ -24,8 +24,9 @@ struct ScreenPoint;
 
 extern const FIXED gCamera_FixedViewMatrix[];
 extern u8 gSpriteDissolve_PixelOrder[];
-extern const s32 gActor_DefaultScript[];
 extern const u8 gWorldMap_TerrainBehaviorTable[];
+/// The size of Render_DecodePicture, copied to HEAP_SLOT_FRAME_SCRATCH; an
+/// address equal to the size (ld_script.ld).
 extern u8 Render_DecodePictureCodeSize[];
 extern u8 gSpriteColorRemapTables[];
 s32 BattleUnit_ProjectToScreen(s32 unit, s32 *screen);
@@ -57,6 +58,7 @@ struct Actor;
 
 extern u32 gDriftScene_SpawnScript[];
 extern u32 gSceneExits[];
+/// The actors ObjectTable_Snapshot saved, up to 32, after their slot numbers.
 extern struct Actor gSnapshotObjects[];
 extern u8 gLinkLobby_SlotColumns[];
 extern s32 gLinkLobby_SlotValues[];
@@ -153,8 +155,11 @@ enum ActorCreateKind {
   ACTOR_CREATE_NO_SPRITE = 8
 };
 
+/// The world map's still picture (story.s): its tiles, packed (tagged LZ).
 extern u8 gWorldMapPackedTiles[];
+/// The still picture's tile map, packed (tagged LZ), decoded after its tiles.
 extern u8 gWorldMapPackedPictures[];
+/// The still picture's palettes, one for each of its modes.
 extern u8 gWorldMapPalettes[];
 
 struct Sprite;
@@ -541,18 +546,31 @@ void Event_NoOp(void);
 
 void Actor_UpdateBlink(struct Actor *object);
 
+/// The world map camera's yaw, in 1/65536 turns, the scanline parameters were
+/// built for; the vertex update rebuilds them when it changes.
 extern u32 gScanlineAngle;
 
+/// Every sprite animation's metadata, by number (graphics/sprite/sprites.s).
 extern struct AnimationMetadata gSprite_AnimationMetadata[];
 
+/// Render_DecodePicture's Thumb entry and ARM code (picture_decode.s), which
+/// Render_LoadDecoder copies into the frame scratch slot.
 extern u8 Render_DecodePictureCode[];
 
+/// The end of the colour tables kept after Render_DecodePicture's code, where
+/// its copy stops (picture_decode_data.s).
 extern u8 Render_DecodePictureCopyEnd[];
 
+/// The size of the frame scratch block for Render_DecodePicture and its tables,
+/// an address equal to the size (ld_script.ld).
 extern u8 Render_DecodePictureBlockSize[];
 
+/// The grid outliner's Thumb entry and ARM code (grid_outline_entry.s), which
+/// RamCode_Load copies to RAM.
 extern const u8 Grid_DrawOutlineCode[];
 
+/// The size of Grid_DrawOutlineCode, an address equal to the size
+/// (ld_script.ld).
 extern u8 Grid_DrawOutlineCodeSize[];
 
 extern const u8 gSpriteColorShadeTables[];
@@ -565,6 +583,8 @@ s32 Party_CheckItemLimit(s32 item);
 
 s32 WorldMap_GetCollisionFar(s32 *position);
 
+/// The map's scene data in EWRAM, loaded from its resource: its entrance
+/// stream, then from the halfword offsets after it its edits and its bounds.
 extern u8 gMapScene[];
 
 void Party_ClearUnusableShortcuts(void);
@@ -627,6 +647,7 @@ extern const u16 gLuckyWheels_SparkCellOffsets[];
 s32 BattleEffect_BuildBlitterFar(s32 slot, s32 widthShift, s32 heightShift,
                                  s32 flags, u32 mode);
 
+/// The tileset animations' tiles, 16 KB of EWRAM, as The Broken Seal's.
 extern u8 gMapGridAnimTiles[];
 
 s32 WorldMap_WriteLayerCellTile(s32 layer, s32 x, s32 y, s32 tile, s32 update);
@@ -736,14 +757,18 @@ void SpriteAnimation_ClearFar(void *record);
 
 void Djinn_ShowJoinedMessageFar(s32 owner, s32 element, s32 djinni);
 
+/// The rope's tiles, tagged LZ (rope_vine_pictures.s).
 extern const u8 gRope_Tiles[];
+/// The bottom link of a hanging vine's chain, tagged LZ (rope_vine_pictures.s).
 extern const u8 gHangingVine_ChainBottomPicture[];
 
 s32 Field_FindNearbyPsynergyTarget(s32 self, s32 effect);
 
 s32 MapGrid_GetCellAttributeLowNibbleFar(s32 layer, s32 x, s32 z);
 
+/// The ground particles' tiles, byte LZ (field_effect_particles.s).
 extern const u8 gFieldEffect_GroundParticleTiles[];
+/// The motes' tiles, byte LZ (field_effect_particles.s).
 extern const u8 gFieldEffect_MoteTiles[];
 
 extern const u32 gBattleEffect_PulseScales[];
@@ -752,10 +777,12 @@ extern const s16 gLineScroll_WaveSine[];
 
 extern const s16 gFieldEffect_GroundParticleFrames[];
 
+/// The streaks' tiles, byte LZ (field_effect_particles.s).
 extern const u8 gFieldEffect_StreakTiles[];
 
 extern const struct SparklePicture gFieldEffect_SparklePictures[];
 
+/// The sparkles' tiles, byte LZ (field_effect_particles.s).
 extern const u8 gFieldEffect_SparkleTiles[];
 
 void Actor_SpawnWaterSplashFar(struct Actor *object, s32 kind);
@@ -767,6 +794,7 @@ s32 MapGrid_IsWallAtFar(s32 *position);
 extern const u16 gRope_KeyHeadings[];
 extern const u16 gFieldEffect_CyclePatternWords[];
 
+/// The world map camera's pitch the scanline parameters were built for.
 extern u32 gScanlinePitch;
 
 extern const s16 gGroundParticle_Offsets[];

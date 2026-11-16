@@ -132,6 +132,8 @@ struct DescendingArcSprite {
   struct SpriteAnimation *firstEntry; ///< entries[0], its first layer
 };
 
+/// The arc sparks' tiles, a copy of The Broken Seal's
+/// gBattleEffect_ArcSparkTiles (field_effects.s).
 extern const u8 gFieldEffect_ArcSparkTiles[];
 
 void Actor_WaitForTrackEndFar(struct Actor *object);
@@ -139,6 +141,8 @@ void Actor_WaitForTrackEndFar(struct Actor *object);
 extern const s32 gArrow_WobbleAngles[8];
 extern const s32 gArrow_WobbleFades[4];
 
+/// Three 8 by 8 glints the Arrow draws into its canvas, a byte a pixel
+/// (arrow_glint.s).
 extern const u8 gArrow_GlintPixels[];
 
 extern const s8 gFieldPsynergy_NearbyCellOffsets[];

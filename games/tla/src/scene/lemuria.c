@@ -573,36 +573,24 @@ const struct Trigger *Scene_GetTriggers(void) { return gSceneEvents; }
 u8 gLemuria_RippleBuffer BSS_DATA;
 s16 gLemuria_RippleLines[2][160] BSS_DATA ALIGNED(16);
 
-/// Every fourth frame rotates colours 1-14 of background palettes 7 and 8 by
-/// one place. The loops are written with goto:
-/// the bytes rebuild the palette address on every pass.
+/// Background palette `n`, as the water's colour cycle turns it.
+#define WATER_PALETTE(n) ((volatile u16 *)&BG_PLTT_COLOR(n, 0))
+
+/// Every fourth frame rotates colours 1 to 14 of background palettes 7 and 8
+/// by one place.
 void Lemuria_CycleWaterColors(void) {
   if ((gFrameCount & 3) == 0) {
-    volatile u16 *palette;
-    volatile u16 *slot;
     s16 saved;
-    s32 index;
+    s32 i;
 
-    saved = *(volatile u16 *)&BG_PLTT_COLOR(7, 14);
-    index = 14;
-  first:
-    palette = (volatile u16 *)&BG_PLTT_COLOR(7, 0);
-    palette[index] = (palette - 1)[index];
-    index--;
-    if (index != 1)
-      goto first;
-    slot = (volatile u16 *)&BG_PLTT_COLOR(7, 1);
-    *slot = saved;
-    slot += 29;
-    saved = *slot;
-    index = 14;
-  second:
-    palette = (volatile u16 *)&BG_PLTT_COLOR(8, 0);
-    palette[index] = (palette - 1)[index];
-    index--;
-    if (index != 1)
-      goto second;
-    *(volatile u16 *)&BG_PLTT_COLOR(8, 1) = saved;
+    saved = WATER_PALETTE(7)[14];
+    for (i = 14; i != 1; i--)
+      WATER_PALETTE(7)[i] = WATER_PALETTE(7)[i - 1];
+    WATER_PALETTE(7)[1] = saved;
+    saved = WATER_PALETTE(8)[14];
+    for (i = 14; i != 1; i--)
+      WATER_PALETTE(8)[i] = WATER_PALETTE(8)[i - 1];
+    WATER_PALETTE(8)[1] = saved;
   }
 }
 

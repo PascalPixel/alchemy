@@ -71,6 +71,13 @@
 /// While set, opening the field menu or pressing a shortcut raises the
 /// scene's menu trigger instead.
 #define FLAG_MENUS_RAISE_TRIGGER 0x107
+/// Set while a field Psynergy's tint holds the palettes, from
+/// Field_StartColorTransition until Field_StartPaletteTransition.
+#define FLAG_PSYNERGY_TINTED 0x108
+/// Set, the highest of these picks the tint a field Psynergy fades
+/// toward, gFieldEffect_TargetColors[n], in place of the frame counter's pick
+/// (FieldPsynergy_FadeToCastColor), as ☀️'s.
+#define FLAG_PSYNERGY_TINT(n) (0x148 + (n))
 /// The next field scene starts where the party was, as after a battle: the
 /// scene's flags are not reset, the actors come back from their snapshot,
 /// and the music saved in gMainRoutineWork.returnMusic resumes if there is

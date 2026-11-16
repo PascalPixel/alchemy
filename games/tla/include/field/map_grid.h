@@ -46,6 +46,26 @@ enum MapGridLayerIndex {
 /// Seal's CELL_BEHAVIOR_WALL.
 #define CELL_BEHAVIOR_WALL 255
 
+/// The collision codes of the overhead layer's cells that The Lost Age's field
+/// Psynergy reads (event_commands_field_psynergy.c).
+enum PsynergyCellBehavior {
+  CELL_BEHAVIOR_CLOAK = 231, ///< Cloak hides the leader there
+  CELL_BEHAVIOR_SAND = 232,  ///< Sand lets the leader move there as sand
+  /// A cell the Cyclone acts on (MapGrid_GetCycloneCellKind's kind 1).
+  CELL_BEHAVIOR_CYCLONE = 233,
+  /// A Cyclone teleporter, which carries the leader to its centre (kind 2).
+  CELL_BEHAVIOR_CYCLONE_CARRY = 234,
+  /// A Cyclone lift, which lifts the leader onto its centre (kind 3).
+  CELL_BEHAVIOR_CYCLONE_LIFT = 235,
+  CELL_BEHAVIOR_HOVER = 236 ///< Hover holds the leader up over it
+};
+
+/// MapCell.attributeB bits read by the field Psynergy.
+enum MapCellAttribute {
+  MAP_CELL_WATER = 0x10,    ///< water (MapGrid_IsWaterCell)
+  MAP_CELL_CLIMBABLE = 0x40 ///< can be climbed (MapGrid_IsClimbableCell)
+};
+
 /// One cell of a map layer: its cell picture and flags, its collision
 /// code and a second attribute byte.
 struct MapCell {

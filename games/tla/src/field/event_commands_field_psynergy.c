@@ -61,20 +61,23 @@ s32 MapGrid_CanScoop(s32 x, s32 z, s32 layer) {
   return ~MapGrid_GetCellAt(x, z, layer)->attributeB & 1;
 }
 
-/// Whether Cloak can hide the leader on the cell at (x, z): layer 2's
-/// collision code 231, whatever layer is passed.
+/// Whether Cloak can hide the leader on the cell at (x, z): the overhead
+/// layer's collision code is CELL_BEHAVIOR_CLOAK, whatever layer is passed.
 s32 MapGrid_IsCloakCell(s32 x, s32 z, s32 layer) {
-  return MapGrid_GetCellAt(x, z, 2)->collisionCode == 231;
+  return MapGrid_GetCellAt(x, z, MAPGRID_LAYER_OVERHEAD)->collisionCode ==
+         CELL_BEHAVIOR_CLOAK;
 }
 
-/// Whether Hover holds up over the cell at (x, z): layer 2's collision code
-/// 236, whatever layer is passed.
+/// Whether Hover holds up over the cell at (x, z): the overhead layer's
+/// collision code is CELL_BEHAVIOR_HOVER, whatever layer is passed.
 s32 MapGrid_IsHoverCell(s32 x, s32 z, s32 layer) {
-  return MapGrid_GetCellAt(x, z, 2)->collisionCode == 236;
+  return MapGrid_GetCellAt(x, z, MAPGRID_LAYER_OVERHEAD)->collisionCode ==
+         CELL_BEHAVIOR_HOVER;
 }
 
-/// Whether the leader can move as sand on the cell at (x, z): layer 2's
-/// collision code 232, or on the world map collision 5 or 6;
+/// Whether the leader can move as sand on the cell at (x, z): the overhead
+/// layer's CELL_BEHAVIOR_SAND, or on the world map collision
+/// WORLD_MAP_COLLISION_WALKABLE_FIRST or shallow water;
 /// FieldWork.sceneAttributeHigh turns the answer round.
 s32 MapGrid_IsSandCell(s32 x, s32 z, s32 layer) {
   struct FieldWork *event = Ram_HeapSlots->fieldWork;
@@ -83,11 +86,15 @@ s32 MapGrid_IsSandCell(s32 x, s32 z, s32 layer) {
     s32 position[3];
 
     SET_VECTOR(position, column, 0, z);
-    column = (u32)(WorldMap_GetCollisionFar(position) - 5) <= 1;
+    column =
+        (u32)(WorldMap_GetCollisionFar(position) -
+              WORLD_MAP_COLLISION_WALKABLE_FIRST) <=
+        WORLD_MAP_COLLISION_SHALLOW_WATER - WORLD_MAP_COLLISION_WALKABLE_FIRST;
   } else {
-    s32 code = MapGrid_GetCellAt(column, z, 2)->collisionCode;
+    s32 code =
+        MapGrid_GetCellAt(column, z, MAPGRID_LAYER_OVERHEAD)->collisionCode;
 
-    code ^= 232;
+    code ^= CELL_BEHAVIOR_SAND;
     column = NONZERO(code);
     column = 1 - column;
   }
@@ -96,13 +103,13 @@ s32 MapGrid_IsSandCell(s32 x, s32 z, s32 layer) {
   return column;
 }
 
-/// Whether the cell at (x, z) can be climbed (attribute bit 0x40), as the
+/// Whether the cell at (x, z) can be climbed (MAP_CELL_CLIMBABLE), as the
 /// climbing control (mode 2) and the Sand's climb test read it.
 u8 MapGrid_IsClimbableCell(s32 x, s32 z, s32 layer) {
-  return MapGrid_GetCellAt(x, z, layer)->attributeB & 0x40;
+  return MapGrid_GetCellAt(x, z, layer)->attributeB & MAP_CELL_CLIMBABLE;
 }
 
-/// Whether the cell at (x, z) is water: attribute bit 16, or on the world map
+/// Whether the cell at (x, z) is water: MAP_CELL_WATER, or on the world map
 /// collision 2 to 4.
 s32 MapGrid_IsWaterCell(s32 x, s32 z, s32 layer) {
   struct FieldWork *event = Ram_HeapSlots->fieldWork;
@@ -117,20 +124,21 @@ s32 MapGrid_IsWaterCell(s32 x, s32 z, s32 layer) {
     collision = WorldMap_GetCollisionFar(position);
     return (u32)(collision - 2) <= 2;
   }
-  return (u8)(MapGrid_GetCellAt(x, z, layer)->attributeB & 16);
+  return (u8)(MapGrid_GetCellAt(x, z, layer)->attributeB & MAP_CELL_WATER);
 }
 
-/// The Cyclone's kind of the cell at (x, z), from layer 2's collision code:
-/// 1 for 233, 2 for 234 (a teleporter it carries the leader to), 3 for 235,
-/// else 0. FieldPsynergy_GatherNearbyCells lists them.
+/// The Cyclone's kind of the cell at (x, z), from the overhead layer's
+/// collision code: 1 for CELL_BEHAVIOR_CYCLONE, 2 for
+/// CELL_BEHAVIOR_CYCLONE_CARRY, 3 for CELL_BEHAVIOR_CYCLONE_LIFT, else 0.
+/// FieldPsynergy_GatherNearbyCells lists them.
 s32 MapGrid_GetCycloneCellKind(s32 x, s32 z, s32 layer) {
-  u8 code = MapGrid_GetCellAt(x, z, 2)->collisionCode;
+  u8 code = MapGrid_GetCellAt(x, z, MAPGRID_LAYER_OVERHEAD)->collisionCode;
 
-  if (code == 233)
+  if (code == CELL_BEHAVIOR_CYCLONE)
     return 1;
-  if (code == 234)
+  if (code == CELL_BEHAVIOR_CYCLONE_CARRY)
     return 2;
-  if (code == 235)
+  if (code == CELL_BEHAVIOR_CYCLONE_LIFT)
     return 3;
   return 0;
 }
@@ -243,7 +251,7 @@ void FieldPsynergy_ShrinkToCaster(struct Actor *object, s32 x, s32 y, s32 z) {
   } while (i <= 10);
 }
 
-/// Spawns a particle (kind 0x2a1) at x, y, z that hops off in a random
+/// Spawns a sparkle at x, y, z that hops off in a random
 /// direction 8 to 32 pixels away at 1 to 2 pixels a frame.
 struct Actor *BattleEffect_SpawnScatterParticle(s32 x, s32 y, s32 z) {
   struct Actor *object = Actor_Spawn(SPRITE_SPARKLE, x, y, z);
@@ -253,7 +261,7 @@ struct Actor *BattleEffect_SpawnScatterParticle(s32 x, s32 y, s32 z) {
     Actor_StartScriptFar(object, gFieldEffect_FragmentScript);
     object->speedLimit = Random16() + FIXED_ONE;
     object->acceleration = FIXED_ONE;
-    object->motionFlags = 2;
+    object->motionFlags = ACTOR_FALLS;
     object->gravity = toFIXED(1) / 25;
     magnitude = Random16();
     magnitude -= Random16();
@@ -264,22 +272,16 @@ struct Actor *BattleEffect_SpawnScatterParticle(s32 x, s32 y, s32 z) {
   return object;
 }
 
-struct ResourceSprite {
-  u8 unused[0x10]; ///< no code names it
-  u8 vramBlock;
-  u8 flags;
-};
-
-/// Counts the free blocks (owner 0xff) of the sprite VRAM cache's 512 blocks.
+/// Counts the free blocks of the sprite VRAM cache.
 s32 ResourceTable_CountFreeBlocks(void) {
   u8 *marker = gVramCacheBlockOwners;
   s32 freeCount;
   s32 remaining;
 
   freeCount = 0;
-  remaining = 0x200;
+  remaining = VRAM_BLOCK_COUNT;
   do {
-    if (*marker++ == 0xff) {
+    if (*marker++ == VRAM_BLOCK_OWNER_FREE) {
       freeCount++;
     }
     remaining--;
@@ -289,24 +291,24 @@ s32 ResourceTable_CountFreeBlocks(void) {
 
 /// Makes sourceSprite share sharedSprite's VRAM block, releasing its own; with
 /// no sharedSprite it keeps its block.
-void *Sprite_ShareVramCacheEntry(void *src, void *alt) {
-  void *ret;
-  struct ResourceSprite *obj;
+void *Sprite_ShareVramCacheEntry(void *sourceSprite, void *sharedSprite) {
+  struct Sprite *shared;
+  struct Sprite *sprite;
 
-  obj = src;
-  ret = NULL;
-  if (obj != NULL) {
-    if (alt == NULL) {
-      ((struct Sprite *)obj)->retainCacheEntry = 1;
+  sprite = sourceSprite;
+  shared = NULL;
+  if (sprite != NULL) {
+    if (sharedSprite == NULL) {
+      sprite->retainCacheEntry = 1;
     } else {
-      VramCache_FreeEntry(obj->vramBlock);
-      obj->vramBlock = ((struct ResourceSprite *)alt)->vramBlock;
-      ((struct Sprite *)obj)->retainCacheEntry = 1;
-      obj = alt;
+      VramCache_FreeEntry(sprite->slot);
+      sprite->slot = ((struct Sprite *)sharedSprite)->slot;
+      sprite->retainCacheEntry = 1;
+      sprite = sharedSprite;
     }
-    ret = obj;
+    shared = sprite;
   }
-  return ret;
+  return shared;
 }
 
 #define Actor_SetAnimationSpeedFar                                             \
@@ -317,21 +319,17 @@ void *Sprite_ShareVramCacheEntry(void *src, void *alt) {
 struct Actor *Actor_Spawn(s32 kind, s32 x, s32 y, s32 z) {
   struct FieldEffectWork *scene = Ram_HeapSlots->fieldEffectWork;
   struct Actor *object;
-  u8 *part;
-  s32 mask;
 
   object = Actor_CreateFar(kind, x, y, z);
   if (object != NULL) {
-    if (object->spriteStorageKind == 0) {
+    if (object->spriteStorageKind == ACTOR_SPRITE_NONE) {
       Actor_ReleaseFar(object);
       return NULL;
     }
     object->groundHeight = scene->mainActor->groundHeight;
-    object->motionFlags = 4;
-    object->priorityFlags = 4;
-    mask = ~0xc;
-    part = object->sprite;
-    part[9] &= mask;
+    object->motionFlags = ACTOR_FLOATS;
+    object->priorityFlags = ACTOR_PRIORITY_OVERHEAD;
+    ((struct Sprite *)object->sprite)->image.priority = 0;
     Actor_SetSpriteFlagsFar(object, 0);
     Actor_SelectAnimationFar(object, 1);
   }
@@ -356,44 +354,51 @@ void Actor_SetOthersPaused(struct Actor *excludedObject, s32 groupMode,
       Actor_SetAnimationSpeedFar(object, action);
     }
     objectId++;
-  } while (objectId <= 0x50);
+    // BUG: one past the actor table: Actor_Lookup(FIELD_ACTOR_COUNT) reads the
+    // step trigger and push cell requests as an actor.
+#ifdef BUGFIX
+  } while (objectId < FIELD_ACTOR_COUNT);
+#else
+  } while (objectId <= FIELD_ACTOR_COUNT);
+#endif
 }
 
 void PaletteFade_SetTarget(s32 value, s32 mode);
 
 /// Fades the palettes to color over frames frames, keeping the field's colours
-/// for Field_StartPaletteTransition; flag 0x108 is set while it holds.
+/// for Field_StartPaletteTransition; FLAG_PSYNERGY_TINTED is set while it
+/// holds.
 void Field_StartColorTransition(s32 frames, s32 color) {
-  u8 *state = Ram_HeapSlots->fieldWork;
-  struct PaletteFade *buffers = Ram_HeapSlots->paletteFade;
+  struct FieldWork *field = Ram_HeapSlots->fieldWork;
+  struct PaletteFade *work = Ram_HeapSlots->paletteFade;
 
-  Dma_Set(buffers->target + 0x2a0, state + 0x762, DMA_COPY_WORDS(0x150),
+  Dma_Set(&work->target[672], &field->savedFadeTarget[672], DMA_COPY_WORDS(336),
           REG_DMA3);
-  if (*(s8 *)(state + 0xca4) == 0)
-    Dma_Set(buffers->target, state + 0x222, DMA_COPY_WORDS(0x150), REG_DMA3);
-  Dma_Set(buffers->target, buffers->current, DMA_COPY_WORDS(0x2a0), REG_DMA3);
+  if (field->revealActive == 0)
+    Dma_Set(work->target, field->savedFadeTarget, DMA_COPY_WORDS(336),
+            REG_DMA3);
+  Dma_Set(work->target, work->current, DMA_COPY_WORDS(sizeof work->current / 4),
+          REG_DMA3);
   PaletteFade_SetTarget(PALETTE_TINT_CUSTOM | color, 1);
-  GameFlag_Set(0x108);
+  GameFlag_Set(FLAG_PSYNERGY_TINTED);
   PaletteFade_StartInterpolation(frames);
 }
 
 /// Fades the palettes back from Field_StartColorTransition's colour over frames
-/// frames, the BG half to grey while Reveal is active; clears flag 0x108.
+/// frames, the BG half to grey while Reveal is active; clears
+/// FLAG_PSYNERGY_TINTED.
 void Field_StartPaletteTransition(s32 frames) {
-  u8 *state = Ram_HeapSlots->fieldWork;
-  s32 colors = (s32)(state + 0x222);
+  struct FieldWork *field = Ram_HeapSlots->fieldWork;
+  s32 savedPalettes = (s32)field->savedFadeTarget;
 
-  PaletteFade_SetTarget(colors, 2);
-  if (*(s8 *)(state + 0xca4) != 0)
+  PaletteFade_SetTarget(savedPalettes, 2);
+  if (field->revealActive != 0)
     PaletteFade_SetTarget(PALETTE_TINT_GRAYSCALE, 1);
   else
-    PaletteFade_SetTarget(colors, 1);
-  GameFlag_Clear(0x108);
+    PaletteFade_SetTarget(savedPalettes, 1);
+  GameFlag_Clear(FLAG_PSYNERGY_TINTED);
   PaletteFade_StartInterpolation(frames);
 }
-
-/// Flags 0x148-0x14f each force one tint, the last set one winning.
-#define FLAG_TINT_FIRST 0x148
 
 /// Tints the field for a Psynergy animation: a tint chosen by the frame
 /// counter (so each cast looks a little different), fixed for some
@@ -429,23 +434,22 @@ void FieldPsynergy_FadeToCastColor(void) {
   if (scene->fieldPsynergy == FIELD_PSYNERGY_TELEPORT)
     tint = 6;
 
-  if (GameFlag_Get(FLAG_TINT_FIRST + 0))
+  if (GameFlag_Get(FLAG_PSYNERGY_TINT(0)))
     tint = 0;
-  if (GameFlag_Get(FLAG_TINT_FIRST + 1))
+  if (GameFlag_Get(FLAG_PSYNERGY_TINT(1)))
     tint = 1;
-  if (GameFlag_Get(FLAG_TINT_FIRST + 2))
+  if (GameFlag_Get(FLAG_PSYNERGY_TINT(2)))
     tint = 2;
-  if (GameFlag_Get(FLAG_TINT_FIRST + 3))
+  if (GameFlag_Get(FLAG_PSYNERGY_TINT(3)))
     tint = 3;
-  if (GameFlag_Get(FLAG_TINT_FIRST + 4))
+  if (GameFlag_Get(FLAG_PSYNERGY_TINT(4)))
     tint = 4;
-  if (GameFlag_Get(FLAG_TINT_FIRST + 5))
+  if (GameFlag_Get(FLAG_PSYNERGY_TINT(5)))
     tint = 5;
-  if (GameFlag_Get(FLAG_TINT_FIRST + 6))
+  if (GameFlag_Get(FLAG_PSYNERGY_TINT(6)))
     tint = 6;
-  if (GameFlag_Get(FLAG_TINT_FIRST + 7))
+  if (GameFlag_Get(FLAG_PSYNERGY_TINT(7)))
     tint = 7;
   Field_StartColorTransition(8, gFieldEffect_TargetColors[tint]);
 }
 #undef Actor_SetAnimationSpeedFar
-#undef FLAG_TINT_FIRST

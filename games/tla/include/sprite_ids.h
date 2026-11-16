@@ -25,6 +25,9 @@ enum SpriteId {
   SPRITE_WINGED_SHIP_FLYING_SMALL,
   SPRITE_WINGED_SHIP,
   SPRITE_WINGED_SHIP_FLYING,
+  /// The splash at the feet of an actor wading through water
+  /// (Actor_SpawnWaterSplash).
+  SPRITE_WADING_SPLASH = 14,
   SPRITE_BRIGGS = 16,
   SPRITE_TAVI,
   SPRITE_RIKI,
@@ -275,7 +278,9 @@ enum SpriteId {
   SPRITE_PSYNERGY_STONE,
   SPRITE_BLANK_32,
   SPRITE_DOORWAY,
-  SPRITE_FOOTPRINTS = 270,
+  /// Rings that widen and fade on water, as Taopo Swamp's splashes end.
+  SPRITE_SPLASH_RING = 269,
+  SPRITE_FOOTPRINTS,
   SPRITE_GOLDEN_RINGS,
   SPRITE_STONE_PILLAR,
   SPRITE_STUMP,

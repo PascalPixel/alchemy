@@ -150,24 +150,24 @@ Sound_WaveRumble:
 	.global Sound_WaveCrash
 Sound_WaveCrash:
 	.incbin "games/tla/sound/direct_sound_samples/crash.pcm8.bin"
-	.global Sound_Wave39
-Sound_Wave39:
-	.incbin "games/tla/sound/direct_sound_samples/wave_39.pcm8.bin"
+	.global Sound_WavePsynergySparkle
+Sound_WavePsynergySparkle:
+	.incbin "games/tla/sound/direct_sound_samples/psynergy_sparkle.pcm8.bin"
 	.global Sound_WaveRoar
 Sound_WaveRoar:
 	.incbin "games/tla/sound/direct_sound_samples/roar.pcm8.bin"
-	.global Sound_Wave41
-Sound_Wave41:
-	.incbin "games/tla/sound/direct_sound_samples/wave_41.pcm8.bin"
-	.global Sound_Wave42
-Sound_Wave42:
-	.incbin "games/tla/sound/direct_sound_samples/wave_42.pcm8.bin"
-	.global Sound_Wave43
-Sound_Wave43:
-	.incbin "games/tla/sound/direct_sound_samples/wave_43.pcm8.bin"
-	.global Sound_Wave44
-Sound_Wave44:
-	.incbin "games/tla/sound/direct_sound_samples/wave_44.pcm8.bin"
+	.global Sound_WaveThunder
+Sound_WaveThunder:
+	.incbin "games/tla/sound/direct_sound_samples/thunder.pcm8.bin"
+	.global Sound_WaveSparks
+Sound_WaveSparks:
+	.incbin "games/tla/sound/direct_sound_samples/sparks.pcm8.bin"
+	.global Sound_WaveCurse
+Sound_WaveCurse:
+	.incbin "games/tla/sound/direct_sound_samples/curse.pcm8.bin"
+	.global Sound_WaveBoom
+Sound_WaveBoom:
+	.incbin "games/tla/sound/direct_sound_samples/boom.pcm8.bin"
 	.global Sound_WaveBell
 Sound_WaveBell:
 	.incbin "games/tla/sound/direct_sound_samples/bell.pcm8.bin"
@@ -186,9 +186,9 @@ Sound_WaveEyesGlow:
 	.global Sound_Wave50
 Sound_Wave50:
 	.incbin "games/tla/sound/direct_sound_samples/wave_50.pcm8.bin"
-	.global Sound_Wave51
-Sound_Wave51:
-	.incbin "games/tla/sound/direct_sound_samples/wave_51.pcm8.bin"
+	.global Sound_WaveSpiral
+Sound_WaveSpiral:
+	.incbin "games/tla/sound/direct_sound_samples/spiral.pcm8.bin"
 	.global Sound_Wave52
 Sound_Wave52:
 	.incbin "games/tla/sound/direct_sound_samples/wave_52.pcm8.bin"
@@ -213,9 +213,9 @@ Sound_WaveHowl:
 	.global Sound_WaveJawsOpen
 Sound_WaveJawsOpen:
 	.incbin "games/tla/sound/direct_sound_samples/jaws_open.pcm8.bin"
-	.global Sound_Wave60
-Sound_Wave60:
-	.incbin "games/tla/sound/direct_sound_samples/wave_60.pcm8.bin"
+	.global Sound_WaveSurf
+Sound_WaveSurf:
+	.incbin "games/tla/sound/direct_sound_samples/surf.pcm8.bin"
 	.global Sound_WaveIceCrack
 Sound_WaveIceCrack:
 	.incbin "games/tla/sound/direct_sound_samples/ice_crack.pcm8.bin"

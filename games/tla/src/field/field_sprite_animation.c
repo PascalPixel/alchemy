@@ -302,24 +302,27 @@ void Sprite_RemoveAnimationAt(struct Sprite *sprite, u32 index) {
   }
 }
 
-/// Starts animation no on a sprite animation when its metadata has it; with
-/// bit 7 of no set it keeps the place and timer of the script already running.
-void SpriteAnimation_Start(struct SpriteAnimation *work, s32 no) {
-  s32 hi;
-  struct AnimationMetadata *info;
-  s32 value;
+// Unlike Sprite_StartAnimation it does not mask SPRITE_ANIMATION_KEEP_PLACE
+// off, so with it set the index would pass animationCount only in a set of more
+// than 128 animations.
+/// Starts the indexed animation on a sprite animation when its metadata
+/// contains it.
+void SpriteAnimation_Start(struct SpriteAnimation *layer, s32 animation) {
+  s32 keepPlace;
+  struct AnimationMetadata *metadata;
+  s32 scriptAddress;
 
-  hi = 0x80 & no;
-  if (work->scripts != 0) {
-    info = Resource_GetMetadataRecordFar(work->animationId);
-    if (no < info->animationCount) {
-      value = (s32)work->scripts[no];
-      work->kind = info->drawKind;
-      work->script = (u8 *)value;
-      work->step = 0x10;
-      if (hi == 0) {
-        work->scriptOffset = hi;
-        work->timer = hi;
+  keepPlace = SPRITE_ANIMATION_KEEP_PLACE & animation;
+  if (layer->scripts != 0) {
+    metadata = Resource_GetMetadataRecordFar(layer->animationId);
+    if (animation < metadata->animationCount) {
+      scriptAddress = (s32)layer->scripts[animation];
+      layer->kind = metadata->drawKind;
+      layer->script = (u8 *)scriptAddress;
+      layer->step = SPRITE_ANIMATION_NORMAL_STEP;
+      if (keepPlace == 0) {
+        layer->scriptOffset = keepPlace;
+        layer->timer = keepPlace;
       }
     }
   }

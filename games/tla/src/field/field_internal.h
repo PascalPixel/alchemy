@@ -94,7 +94,7 @@ struct PlayerSprite {
   u8 palette : 4;
   u8 unusedAfterPalette[7]; ///< no code names it
   u8 cacheFlags : 2;        ///< retainCacheEntry and useOwnScale
-  u8 sunkRows : 6; ///< rows the picture is sunk (flags bit 3) or shaded (bit 2)
+  u8 sunkRows : 6; ///< rows SPRITE_FLAG_SUNK sinks or SPRITE_FLAG_SHADED shades
   u16 rotation;
   u8 unusedAfterRotation[5]; ///< no code names it
   u8 dirty;

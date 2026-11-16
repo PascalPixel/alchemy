@@ -113,7 +113,13 @@ struct AnimationSpritePart {
 enum SpriteFlag {
   SPRITE_FLAG_SHADOW = 1 << 0, ///< its shadow is drawn; set when created
   /// Drawn as an outline, in the actor system's edge and fill colours.
-  SPRITE_FLAG_OUTLINED = 1 << 1
+  SPRITE_FLAG_OUTLINED = 1 << 1,
+  /// Its bottom sunkRows rows drawn in shade, as the leader wading
+  /// (Actor_UpdatePlayerControl).
+  SPRITE_FLAG_SHADED = 1 << 2,
+  /// Drawn sunkRows rows lower, its bottom cut off, as sinking in Taopo
+  /// Swamp's mud; it takes the place of SPRITE_FLAG_SHADED.
+  SPRITE_FLAG_SUNK = 1 << 3
 };
 
 /// The VRAM cache entry of the actors' shared shadow (gActor_ShadowTiles),
@@ -130,7 +136,7 @@ struct Sprite {
   u8 retainCacheEntry : 1;
   /// Drawn at its own scale, not scaled by distance (fixed camera).
   u8 useOwnScale : 1;
-  u8 sunkRows : 6; ///< rows the picture is sunk (flags bit 3) or shaded (bit 2)
+  u8 sunkRows : 6; ///< rows SPRITE_FLAG_SUNK sinks or SPRITE_FLAG_SHADED shades
   u16 rotation;    ///< 1/65536 turns
   u8 width;        ///< pixels; zero marks a free sprite
   u8 height;       ///< pixels
@@ -139,11 +145,9 @@ struct Sprite {
   /// The animation number last selected, which selecting again skips.
   u8 lastNo;
   u8 dirty; ///< nonzero redraws its pixels into VRAM when next drawn
-  /// bits: 1 outlined in the actor system's edge and fill colours |
-  /// 0 shadow drawn (set when created)
-  u8 flags;
+  u8 flags; ///< enum SpriteFlag
   u8 count; ///< layers in use, up to the last one present
-  /// Its shadow, shown while flags bit 0 is set.
+  /// Its shadow, shown while SPRITE_FLAG_SHADOW is set.
   struct AnimationSpritePart shadow;
   struct SpriteAnimation *entries[4]; ///< its layers; empty ones null
 };

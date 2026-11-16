@@ -16,7 +16,7 @@
 #include "version.h"
 
 // Two 16.16 coordinates fall in the same 16-pixel cell, rounding to nearest.
-#define SAME_CELL(a, b) ((((a) - (b) + 0x80000) >> 20) == 0)
+#define SAME_CELL(a, b) ((((a) - (b) + toFIXED(8)) >> 20) == 0)
 
 /// What a shortcut key's assignment requests, bits 15..14
 /// (Field_RequestShortcut), as The Broken Seal's.
@@ -456,7 +456,7 @@ void Actor_SpawnWaterSplash(struct Actor *object, s32 mode) {
 extern struct MapCell gMapGridCellBuffer[];
 
 // Two 16.16 coordinates fall in the same 16-pixel cell, rounding to nearest.
-#define SAME_CELL(a, b) ((((a) - (b) + 0x80000) >> 20) == 0)
+#define SAME_CELL(a, b) ((((a) - (b) + toFIXED(8)) >> 20) == 0)
 
 /// SC_PLAYER: moves the player on the field by the direction pad: walking or
 /// running, sliding around walls, pushing movable actors, turning, playing the
@@ -761,20 +761,21 @@ counted:
     attribute = cells->attributeB;
     oldFlags = sprite->flags;
     if (attribute & 16) {
-      if (!(oldFlags & 8)) {
+      if (!(oldFlags & SPRITE_FLAG_SUNK)) {
         sprite->sunkRows = 4;
-        sprite->flags = ((u8)oldFlags | 4) & ~1;
+        sprite->flags =
+            ((u8)oldFlags | SPRITE_FLAG_SHADED) & ~SPRITE_FLAG_SHADOW;
       }
       if (object->timer == 0 && collision == 0 && !onObject) {
         Actor_SpawnWaterSplash(object, (u32)(map->groundEffects << 28) >> 30);
-        if (movementAnimation == 5)
+        if (movementAnimation == ANIM_LEADER_RUN)
           object->timer = 8;
         else
           object->timer = 12;
         object->userValue ^= 1;
       }
-    } else if (!(oldFlags & 8)) {
-      sprite->flags = ((u8)oldFlags | 1) & ~4;
+    } else if (!(oldFlags & SPRITE_FLAG_SUNK)) {
+      sprite->flags = ((u8)oldFlags | SPRITE_FLAG_SHADOW) & ~SPRITE_FLAG_SHADED;
     }
     if (oldFlags != sprite->flags)
       sprite->dirty = 1;

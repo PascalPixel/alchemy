@@ -262,7 +262,7 @@ s32 Sprite_ComposePicture(struct Sprite *obj, u32 dir) {
         outline(obj->width, obj->height, pixels, system->edge, system->fill);
         Heap_Release(outline);
       }
-      if (obj->flags & 8) {
+      if (obj->flags & SPRITE_FLAG_SUNK) {
         s32 height;
         s32 width;
         s32 amount;
@@ -289,7 +289,7 @@ s32 Sprite_ComposePicture(struct Sprite *obj, u32 dir) {
         limit = amount / 4;
         for (i = 0; i < limit; i++)
           *dst-- = 0;
-      } else if (obj->flags & 4) {
+      } else if (obj->flags & SPRITE_FLAG_SHADED) {
         u32 rows = obj->sunkRows;
         u32 height = obj->height;
         u32 width = obj->width;

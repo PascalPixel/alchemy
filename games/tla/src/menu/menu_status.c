@@ -573,7 +573,7 @@ s32 PartyMemberChooser_MoveEntry(s32 selectedIndex, s32 direction) {
   return 1;
 }
 
-void Menu_PlaceOwnerEntryObjects(struct RenderInput *window, s32 originX,
+void Menu_PlaceOwnerEntryObjects(struct Window *window, s32 originX,
                                  s32 originY);
 
 /// Its callers pass four values it does not read.
@@ -911,7 +911,7 @@ extern const u8 gMenu_SlashString[];
 
 void ItemMenu_DrawMemberStatus(s32 window, s32 owner, s32 flags);
 
-void MenuPanel_DrawEntryList(struct RenderInput *panel, s32 x, s32 y,
+void MenuPanel_DrawEntryList(struct Window *panel, s32 x, s32 y,
                              const u8 *enabled);
 
 s32 Unit_GetElementLevelFar(s32 ownerId, s32 element);

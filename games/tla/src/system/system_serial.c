@@ -19,16 +19,17 @@ enum {
   SERIAL_TIMER_RELOAD = 0xc963
 };
 
-/// Hands `command` to the serial work (heap slot HEAP_SLOT_SAVE) and starts it
-/// from the beginning; does nothing without the work.
-void Serial_QueueCommand(u32 command) {
-  struct SerialCommandWork *work = Ram_HeapSlots->saveWork;
+/// Sets the routine the save calls between sector writes (0 for none) and
+/// starts its count again at 0 of SAVE_SECTORS_PER_PART; does nothing while
+/// no save workspace (heap slot HEAP_SLOT_SAVE) is allocated.
+void Save_SetProgressCallback(void (*progress)(s32 step)) {
+  struct SaveWorkspace *work = Ram_HeapSlots->saveWork;
 
   if (work == 0)
     return;
-  work->command = command;
-  work->progress = 0;
-  work->state = 3;
+  work->progress = progress;
+  work->sectorCount = 0;
+  work->sectorTotal = SAVE_SECTORS_PER_PART;
 }
 
 /// Resets the serial port into multiplayer mode, installs the serial and timer

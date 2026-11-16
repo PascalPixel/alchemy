@@ -116,14 +116,14 @@ void Sanctum_ShowKeeperMessageHidingCursor(s32 messageId) {
   shop->cursor.anchor->motion = savedCursorMode;
 }
 
-void Portrait_CreateFar(s32 portrait, s32 a, s32 b, struct RenderInput *window,
+void Portrait_CreateFar(s32 portrait, s32 a, s32 b, struct Window *window,
                         s32 x, s32 y);
 
 /// Runs a sanctum: the keeper's welcome, the service menu until B, and the
 /// farewell; `actorId` is the keeper, whose portrait the lines show.
 s32 Sanctum_Run(s32 actorId) {
   s32 serviceSelection = 0;
-  struct RenderInput *listWindow = 0;
+  struct Window *listWindow = 0;
   struct ShopWork *shop;
   struct WindowSprite *cursorAnchor;
 
@@ -206,10 +206,10 @@ s32 Sanctum_Run(s32 actorId) {
 /// until B.
 s32 Sanctum_RunPartyService(void) {
   struct ShopWork *shop = Ram_HeapSlots->menuWork;
-  struct RenderInput *priceWindow;
+  struct Window *priceWindow;
   s32 redraw;
   s32 serviceKind;
-  struct RenderInput *listWindow;
+  struct Window *listWindow;
   s32 memberIndex;
   s32 unitId;
   s32 chooseAgain;
@@ -364,7 +364,7 @@ void Sanctum_ApplyService(s32 unitId, s32 serviceKind) {
 /// Shows the chosen party member running in place and the others standing,
 /// four a page with its arrows, and draws at seven tenths of their size the
 /// party members who do not need the service.
-void Sanctum_HighlightMembers(struct RenderInput *window, s32 selected) {
+void Sanctum_HighlightMembers(struct Window *window, s32 selected) {
   struct ShopWork *shop = Ram_HeapSlots->menuWork;
   s32 serviceKind = shop->action;
   s32 first = selected / SHOP_PARTY_PAGE_MEMBERS * SHOP_PARTY_PAGE_MEMBERS;
@@ -406,7 +406,7 @@ void Sanctum_HighlightMembers(struct RenderInput *window, s32 selected) {
 
 /// Shows the chosen party member's fee for the service, or that none is
 /// needed.
-void Sanctum_DrawFee(struct RenderInput *window, s32 unitId) {
+void Sanctum_DrawFee(struct Window *window, s32 unitId) {
   s32 message;
   s32 price;
   struct ShopWork *shop;

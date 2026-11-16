@@ -135,8 +135,8 @@ struct Window *SaveProgress_Close(struct Window *window) {
   } while (0)
 
 /// Runs Save_WritePart with interrupts masked and all four DMA channels
-/// stopped, queueing SaveProgress_Advance as the serial command around it, then
-/// restores IE and IME. Save_DeletePartMasked does the same around
+/// stopped, setting SaveProgress_Advance as the save's progress callback around
+/// it, then restores IE and IME. Save_DeletePartMasked does the same around
 /// Save_DeletePart.
 s32 Save_WritePartMasked(s32 partId, void *buffer) {
   volatile u32 ime;
@@ -151,9 +151,9 @@ s32 Save_WritePartMasked(s32 partId, void *buffer) {
   DMA_STOP(2);
   DMA_STOP(3);
   IRQ_UNLOCK(ime);
-  Serial_QueueCommand((u32)SaveProgress_Advance);
+  Save_SetProgressCallback(SaveProgress_Advance);
   result = Save_WritePart(partId, buffer);
-  Serial_QueueCommand(0);
+  Save_SetProgressCallback(0);
   IRQ_LOCK(ime);
   REG_IE = ie;
   IRQ_UNLOCK(ime);
@@ -163,8 +163,9 @@ s32 Save_WritePartMasked(s32 partId, void *buffer) {
 s32 Save_DeletePart(s32 partId);
 
 /// Deletes a part of a save file (Save_DeletePart) with interrupts masked and
-/// all four DMA channels stopped, queueing SaveProgress_Advance as the serial
-/// command around it, as Save_WritePartMasked does around Save_WritePart.
+/// all four DMA channels stopped, setting SaveProgress_Advance as the save's
+/// progress command around it, as Save_WritePartMasked does around
+/// Save_WritePart.
 s32 Save_DeletePartMasked(s32 partId) {
   volatile u32 ime;
   volatile u32 ie;
@@ -178,9 +179,9 @@ s32 Save_DeletePartMasked(s32 partId) {
   DMA_STOP(2);
   DMA_STOP(3);
   IRQ_UNLOCK(ime);
-  Serial_QueueCommand((u32)SaveProgress_Advance);
+  Save_SetProgressCallback(SaveProgress_Advance);
   result = Save_DeletePart(partId);
-  Serial_QueueCommand(0);
+  Save_SetProgressCallback(0);
   IRQ_LOCK(ime);
   REG_IE = ie;
   IRQ_UNLOCK(ime);
@@ -791,7 +792,7 @@ void Window_FillTilemapRect(struct Window *window, s32 x, s32 y, s32 width,
   }
 }
 
-void FileList_ShowPartySprites(struct RenderInput *origin, s32 x, s32 y,
+void FileList_ShowPartySprites(struct Window *origin, s32 x, s32 y,
                                struct SaveSummary *descriptor) {
   struct FileListWork *state = Ram_HeapSlots->menuWork;
   s32 i;
@@ -869,8 +870,7 @@ void FileList_PlacePartySprites(void) {
 
 /// Draws a saved game's Djinn of each element, four two-digit numbers 24 pixels
 /// apart at y = 16, into win; nothing when win is null.
-void FileList_DrawDjinnCounts(struct RenderInput *win,
-                              struct SaveSummary *summary) {
+void FileList_DrawDjinnCounts(struct Window *win, struct SaveSummary *summary) {
   s32 i;
 
   if (win != 0) {
@@ -1069,8 +1069,7 @@ s32 FileList_SelectFile(s32 selectedFile, s32 menuMode) {
                        (s32)fileList, FILE_LIST_AREA_X, y);
     }
   }
-  modePicture =
-      MenuTitle_Create(menuMode, (struct RenderInput *)fileList, 72, -24);
+  modePicture = MenuTitle_Create(menuMode, (struct Window *)fileList, 72, -24);
   DjinnFigures_InitializeTopRowFar();
   for (i = 0, y = 144; i < 4; i++, y += 24)
     DjinnFigures_SetSlotPositionFar(i, y, 128);
@@ -1090,7 +1089,7 @@ s32 FileList_SelectFile(s32 selectedFile, s32 menuMode) {
         if (partyWindow == NULL)
           partyWindow = Window_Create(16, 10, 13, 3, WINDOW_FLAG_INSTANT);
         FileList_HidePartySprites();
-        FileList_ShowPartySprites((struct RenderInput *)partyWindow, 0, 0,
+        FileList_ShowPartySprites((struct Window *)partyWindow, 0, 0,
                                   &save->summary[selectedFile]);
         wait(1);
         if ((s8)save->summary[selectedFile].djinn[0] +
@@ -1100,7 +1099,7 @@ s32 FileList_SelectFile(s32 selectedFile, s32 menuMode) {
             0) {
           if (djinnWindow == NULL)
             djinnWindow = Window_Create(16, 14, 13, 5, WINDOW_FLAG_INSTANT);
-          FileList_DrawDjinnCounts((struct RenderInput *)djinnWindow,
+          FileList_DrawDjinnCounts((struct Window *)djinnWindow,
                                    &save->summary[selectedFile]);
           DjinnFigures_SetShownFar(1);
         } else {

@@ -53,13 +53,13 @@ s32 BattleDjinnMenu_Run(s32 member, s32 unused) {
   struct QueuedSprite cursorSprite;
   u16 messageText[64];
   struct WindowWork *work;
-  struct RenderInput *previewWindow;
+  struct Window *previewWindow;
   s32 drawnRow;
   s32 cursorSlot;
   u32 *djinnEntries;
   s32 djinnCount;
   s32 drawnFirstEntry;
-  struct RenderInput *messageWindow;
+  struct Window *messageWindow;
   s32 standbyElements;
   s32 preferredRow;
   s32 previewPage;
@@ -72,8 +72,8 @@ s32 BattleDjinnMenu_Run(s32 member, s32 unused) {
   struct BattleMenuWork *navigation;
   struct Unit *unit;
   struct DjinnRecoveryList *list;
-  struct RenderInput *listWindow;
-  struct RenderInput *iconWindow;
+  struct Window *listWindow;
+  struct Window *iconWindow;
   struct PartyStatusWindow *partyStatus;
   u32 *entryCursor;
   s32 listEntry;
@@ -499,7 +499,7 @@ s32 BattleDjinnMenu_Run(s32 member, s32 unused) {
 
     partyStatus = Ram_HeapSlots->partyStatus;
     blinkPhase = gFrameCount & 4;
-    iconWindow = (struct RenderInput *)partyStatus->window;
+    iconWindow = (struct Window *)partyStatus->window;
     if (partyStatus->flags & 2) {
       for (i = 0; i <= 3; i++) {
         s32 palette = 15 - (blinkPhase != 0);

@@ -135,11 +135,11 @@ enum StatusPanelKind {
 
 extern const u8 gStatusPanel_LvString[];
 
-void Window_ClearInteriorTilesFar(struct RenderInput *window, s32 x, s32 y,
+void Window_ClearInteriorTilesFar(struct Window *window, s32 x, s32 y,
                                   s32 width, s32 height);
-void WindowSprite_ClearListFar(struct RenderInput *window);
-void *Portrait_CreateFar(s32 owner, s32 x, s32 y, struct RenderInput *window,
-                         s32 a, s32 b);
+void WindowSprite_ClearListFar(struct Window *window);
+void *Portrait_CreateFar(s32 owner, s32 x, s32 y, struct Window *window, s32 a,
+                         s32 b);
 void Unit_UpdateClassFar(s32 owner);
 
 /// Draws the status panel of the Item and Psynergy screens for the party
@@ -153,14 +153,13 @@ void Unit_UpdateClassFar(s32 owner);
 /// unless mode has STATUS_PANEL_LOWER_ONLY, the portrait it creates replaces
 /// the work's cursor. The equipment panel equips the item on the real unit for
 /// a moment and puts the unit back from a heap copy it frees before returning.
-void StatusPanel_Draw(struct RenderInput *unused, s32 owner, s32 slot,
-                      s32 mode) {
+void StatusPanel_Draw(struct Window *unused, s32 owner, s32 slot, s32 mode) {
   s32 created;
   struct ItemDefinition *def;
   u32 item;
   struct ItemMenuWork *state;
   struct Unit *unit;
-  struct RenderInput *window;
+  struct Window *window;
   s32 ailmentRows;
   s32 value;
   struct Unit *backup;
@@ -370,7 +369,7 @@ static inline s32 CountDigitsAtLeastTwo(s32 number) {
 /// before x.
 ///
 /// number: the value to draw, 0 or more
-/// window: the window to draw in, its struct RenderInput pointer held as an
+/// window: the window to draw in, its struct Window pointer held as an
 ///         s32, as its callers hold it
 /// x:      the field's right edge, in pixels within the window
 /// y:      the pixel row of the text, within the window
@@ -392,7 +391,7 @@ void Text_DrawNumberRightAligned(s32 number, s32 window, s32 x, s32 y) {
 /// then the colour goes back to 15, the default text colour.
 ///
 /// unit:   the character whose figures are drawn
-/// window: the window to draw in, its struct RenderInput pointer held as an
+/// window: the window to draw in, its struct Window pointer held as an
 ///         s32
 void StatusPanel_DrawHpPp(struct Unit *unit, s32 window) {
   // Each figure in turn, as an s16. Read straight from unit, the figures
@@ -448,7 +447,7 @@ void StatusPanel_DrawHpPp(struct Unit *unit, s32 window) {
 #endif
 }
 
-s32 Icon_CreateStatChangeArrow(struct RenderInput *window, s32 x, s32 y,
+s32 Icon_CreateStatChangeArrow(struct Window *window, s32 x, s32 y,
                                s32 variant);
 
 /// The stat arrows: the up and down arrow sprites the menu loads into its two
@@ -460,8 +459,8 @@ enum StatArrow { STAT_ARROW_UP, STAT_ARROW_DOWN };
 /// or down arrow: the equipment preview.
 void Text_DrawStatComparison(const struct Unit *alt, const struct Unit *base,
                              s32 work) {
-  Text_DrawMessageAsTilesFar((s32)MsgPanelStatLabel, (struct RenderInput *)work,
-                             0, 32);
+  Text_DrawMessageAsTilesFar((s32)MsgPanelStatLabel, (struct Window *)work, 0,
+                             32);
   Text_DrawNumberAtOffsetFar(base->atk, 3, work, 16, 40);
   if (alt->atk != base->atk) {
     Text_DrawNumberAtOffsetFar(alt->atk, 3, work, 64, 40);
@@ -471,8 +470,8 @@ void Text_DrawStatComparison(const struct Unit *alt, const struct Unit *base,
       Icon_CreateStatChangeArrow(work, 44, 36, STAT_ARROW_DOWN);
     }
   }
-  Text_DrawMessageAsTilesFar((s32)MsgPanelDefenseLabel,
-                             (struct RenderInput *)work, 0, 48);
+  Text_DrawMessageAsTilesFar((s32)MsgPanelDefenseLabel, (struct Window *)work,
+                             0, 48);
   Text_DrawNumberAtOffsetFar(base->def, 3, work, 16, 56);
   if (alt->def != base->def) {
     Text_DrawNumberAtOffsetFar(alt->def, 3, work, 64, 56);
@@ -482,8 +481,8 @@ void Text_DrawStatComparison(const struct Unit *alt, const struct Unit *base,
       Icon_CreateStatChangeArrow(work, 44, 52, STAT_ARROW_DOWN);
     }
   }
-  Text_DrawMessageAsTilesFar((s32)MsgAgilityLabel, (struct RenderInput *)work,
-                             0, 64);
+  Text_DrawMessageAsTilesFar((s32)MsgAgilityLabel, (struct Window *)work, 0,
+                             64);
   Text_DrawNumberAtOffsetFar(base->agi, 3, work, 16, 72);
   if (alt->agi != base->agi) {
     Text_DrawNumberAtOffsetFar(alt->agi, 3, work, 64, 72);
@@ -497,7 +496,7 @@ void Text_DrawStatComparison(const struct Unit *alt, const struct Unit *base,
 
 /// Creates a hand cursor sprite in window at (x, y), loading the hand's tiles
 /// into a free VRAM block.
-s32 Icon_CreateWithResource(struct RenderInput *window, s32 x, s32 y) {
+s32 Icon_CreateWithResource(struct Window *window, s32 x, s32 y) {
   s32 slot;
   s32 icon;
 
@@ -532,9 +531,9 @@ void PsynergyMenu_CallIconRoutineWithValue(s32 menu, s32 unit) {
 /// Opens the menu's top-left window (13 by 5 tiles) with a divider, puts the
 /// hand cursor in it, hidden, and adds the up and down arrow icons at its right
 /// edge when a VRAM entry is free. Returns the window.
-struct RenderInput *MenuCursor_Create(void *source) {
+struct Window *MenuCursor_Create(void *source) {
   struct PsynergyMenuWork *work = source;
-  struct RenderInput *window;
+  struct Window *window;
   struct WindowSprite *icon;
   s32 zero = 0;
   s32 sentinel;
@@ -768,7 +767,7 @@ void Text_GetMessageSizeFar(s32 message, s32 *left, s32 *top, s32 *width,
 /// for A, B or Start and clears it again.
 void ItemMenu_ShowMessage(s32 message, s32 x, s32 y) {
   struct ItemMenuWork *menu = (struct ItemMenuWork *)Ram_HeapSlots->menuWork;
-  struct RenderInput *window;
+  struct Window *window;
   s32 height;
   s32 width;
   s32 top;
@@ -1145,7 +1144,7 @@ void Menu_DrawCoins(s32 window) {
 }
 
 /// Moves and resizes a window, in tiles.
-void Window_SetBounds(struct RenderInput *window, s32 x, s32 y, s32 width,
+void Window_SetBounds(struct Window *window, s32 x, s32 y, s32 width,
                       s32 height) {
   if (window != NULL) {
     window->width = width;

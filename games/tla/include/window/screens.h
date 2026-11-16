@@ -6,7 +6,7 @@
 
 #include "types.h"
 
-struct RenderInput;
+struct Window;
 struct WindowSprite;
 
 /// A cursor stop among the Status screen's stats: its help entry, where the
@@ -78,8 +78,8 @@ void MenuTitle_Bob(struct WindowSprite *object);
 struct Window;
 struct WindowSprite *Portrait_Create(s32 speaker, s32 option, s32 side,
                                      struct Window *window, s32 x, s32 y);
-struct WindowSprite *MenuTitle_Create(s32 group, struct RenderInput *input,
-                                      s32 x, s32 y);
+struct WindowSprite *MenuTitle_Create(s32 group, struct Window *input, s32 x,
+                                      s32 y);
 s32 FileList_SelectAction(void);
 struct ArrowSprite {
   u32 link;

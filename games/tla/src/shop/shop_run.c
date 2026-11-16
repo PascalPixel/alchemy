@@ -116,7 +116,7 @@ void Shop_ReleaseWork(void) {
 s32 Shop_Run(s32 stockRow, s32 keeperId) {
   struct ShopWork *shop;
   struct WindowSprite *anchor;
-  struct RenderInput *window;
+  struct Window *window;
   s32 action = 0;
 
   if (stockRow >= ShopStock_GetRowCount() || stockRow < 0)

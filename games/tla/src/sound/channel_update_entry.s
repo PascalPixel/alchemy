@@ -123,7 +123,7 @@ AlchemyUncreditedEnd_08000646:
 	ldr	r3, [pc, #0]
 	bx	r3
 	.4byte	IwramSoundMixEntry + 1
-	.4byte	gData_02003a90
+	.4byte	gMixerPcmBuffer
 @ Unread here: 0x350 and REG_VCOUNT's address, as SoundMain's pool loads them.
 AlchemyUncredited_080006ac:
 	.4byte	0x00000350

@@ -552,7 +552,7 @@ void Text_DrawMessage(s32 message, s32 window, s32 x, s32 y) {
 /// picks the tile, and its remainder is where the text starts in it. As
 /// Text_DrawMessage, it decodes from the ring's start. Nothing is drawn
 /// when the place falls outside the tilemap's 32 by 20 entries.
-void Text_DrawMessageAsTiles(s32 character, struct RenderInput *position,
+void Text_DrawMessageAsTiles(s32 character, struct Window *position,
                              u32 offsetX, u32 offsetY) {
   s32 byteOffset;
   s32 vramAddress;
@@ -600,7 +600,7 @@ void Text_DrawString(u8 *text, s32 window, s32 x, s32 y) {
 
 /// Draws a byte string as tiles in window work at pixel (offsetX, offsetY) of
 /// its interior.
-void Text_DrawStringAtOffset(u8 *text, struct RenderInput *work, s32 offsetX,
+void Text_DrawStringAtOffset(u8 *text, struct Window *work, s32 offsetX,
                              s32 offsetY) {
   u16 *buffer;
   u16 *output;
@@ -664,8 +664,8 @@ void Text_DrawNumber(s32 value, s32 width, s32 window, s32 x, s32 y) {
 
 /// Draws a number (width as String_FormatNumber) as tiles in a window at pixel
 /// (x, y) of its interior.
-void Text_DrawNumberAtOffset(s32 value, s32 width, struct RenderInput *window,
-                             s32 x, s32 y) {
+void Text_DrawNumberAtOffset(s32 value, s32 width, struct Window *window, s32 x,
+                             s32 y) {
   u8 numberText[TEXT_NUMBER_BUFFER_SIZE];
 
   Text_DrawStringAtOffset(String_FormatNumber(numberText, value, width), window,
@@ -688,7 +688,7 @@ void Text_DrawNumberInWindow(s32 value, s32 width, s32 window, s32 x, s32 y) {
 /// Draws a four-digit number after a two-tile label as tiles in window work at
 /// pixel (offsetX, offsetY): the HP label for variant 0, the party status
 /// window's HP; the PP label for variant 1, its PP.
-void Text_DrawPrefixedNumberAtOffset(s32 value, struct RenderInput *work,
+void Text_DrawPrefixedNumberAtOffset(s32 value, struct Window *work,
                                      s32 offsetX, s32 offsetY, s32 variant) {
   u8 formatted[TEXT_NUMBER_BUFFER_SIZE];
   u16 output[8];

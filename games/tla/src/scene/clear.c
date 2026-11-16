@@ -858,7 +858,7 @@ extern u8 gClear_FourthPasswordRow[];
 
 extern u8 MsgFieldPasswordKana[];
 
-void Text_DrawMessageAsTiles(s32 character, struct RenderInput *position,
+void Text_DrawMessageAsTiles(s32 character, struct Window *position,
                              u32 offsetX, u32 offsetY);
 u16 Clear_CalculatePasswordCrc16(u32 length, u8 *p);
 void Resource_CopyFixedBlockB(void);
@@ -1023,7 +1023,7 @@ s32 Clear_EnterPassword(void) {
   if (entry < VRAM_CACHE_ENTRY_COUNT) {
     Resource_CopyFixedBlockB();
     sprite = WindowSprite_Create(entry, OUTPUT_SIZE_16X16,
-                                 (struct RenderInput *)window, 0, 0);
+                                 (struct Window *)window, 0, 0);
     Cursor_Attach(&cursorStore, sprite);
     Cursor_Place(&cursorStore, (s16)window->x * 8 - 2, (s16)window->y * 8 + 12);
   }
@@ -1031,7 +1031,7 @@ s32 Clear_EnterPassword(void) {
   if (entry < VRAM_CACHE_ENTRY_COUNT) {
     Resource_CopyFixedBlockA();
     sprite = WindowSprite_Create(entry, OUTPUT_SIZE_16X16,
-                                 (struct RenderInput *)window, 0, 0);
+                                 (struct Window *)window, 0, 0);
     Cursor_Attach(&gridStore, sprite);
     sprite->depth = 255;
     sprite->sprite.oam.priority = 0;

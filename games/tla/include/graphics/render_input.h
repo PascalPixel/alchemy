@@ -6,23 +6,11 @@
 #include "edition.h"
 #include "oam.h"
 
-/// A window as the render functions take it: its fields sit where a
-/// Window keeps its width, height and place.
-struct RenderInput {
-  u8 unk00[8]; ///< not named by ⚓️ code; a Window's output list here
-  u16 width;   ///< tiles
-  u16 height;  ///< tiles
-  u16 x;       ///< tiles
-  u16 y;       ///< tiles
-};
+struct Window;
 
-STATIC_ASSERT(sizeof(struct RenderInput) == 0x10);
-STATIC_ASSERT(offsetof(struct RenderInput, width) == 8);
-STATIC_ASSERT(offsetof(struct RenderInput, x) == 12);
-
-void Window_SetTileAttributeRect(const struct RenderInput *window, s32 x, s32 y,
+void Window_SetTileAttributeRect(const struct Window *window, s32 x, s32 y,
                                  s32 width, s32 height, u32 field);
-s32 WindowSprite_CreateAbilityIcon(struct RenderInput *window, s32 x, s32 y,
+s32 WindowSprite_CreateAbilityIcon(struct Window *window, s32 x, s32 y,
                                    s32 resource);
 
 /// A sprite's OAM attribute 2 (tile index, priority and palette) and the
@@ -93,14 +81,14 @@ STATIC_ASSERT(sizeof(struct WindowSpriteList) == 8);
 STATIC_ASSERT(offsetof(struct WindowSpriteList, tailLink) == 4);
 
 struct WindowSprite *WindowSprite_Create(s32 no, s32 flags,
-                                         struct RenderInput *input, s32 offsetX,
+                                         struct Window *input, s32 offsetX,
                                          s32 offsetY);
 
 /// Takes a free window output, writes its OAM attributes at the window's
 /// position offset by (offsetX, offsetY) pixels and appends it to the window's
 /// list.
 struct WindowSprite *WindowSprite_CreateFar(s32 resource, s32 flags,
-                                            struct RenderInput *window, s32 x,
+                                            struct Window *window, s32 x,
                                             s32 y);
 
 STATIC_ASSERT(offsetof(struct WindowSprite, animationStep) == 0x0c);

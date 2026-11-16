@@ -140,7 +140,7 @@ void Window_DrawColumnBorders(struct Window *window, u32 flags) {
 #define TILE_ROW_FROM_BOTTOM(tile, up)                                         \
   ((u32 *)((tile) * 32 - (up) * 4 + 0x0600001c))
 
-s32 PartyStatus_DrawBars(struct RenderInput *window, s32 x, s32 y, s32 value) {
+s32 PartyStatus_DrawBars(struct Window *window, s32 x, s32 y, s32 value) {
   s32 i;
   struct WindowWork *canvas = (struct WindowWork *)Ram_HeapSlots->windowWork;
   s32 filled = value;
@@ -279,7 +279,7 @@ void PartyStatus_Draw(s32 flags) {
     Text_DrawPrefixedNumberAtOffset(
         hp, window, (x + i * PARTY_STATUS_COLUMN_WIDTH) * 8, y * 8 + 8, 0);
     work->textPalette = WINDOW_PALETTE;
-    Text_DrawStringAtOffset(unit->name, (struct RenderInput *)window,
+    Text_DrawStringAtOffset(unit->name, (struct Window *)window,
                             (x + i * PARTY_STATUS_COLUMN_WIDTH) * 8, y * 8);
     Text_SetColor(TEXT_COLOR_WHITE);
     if (unit->hpMax != 0) {
@@ -287,7 +287,7 @@ void PartyStatus_Draw(s32 flags) {
       barLength = (current * 40) / unit->hpMax;
       if (barLength == 0 && current != 0)
         barLength = 1;
-      PartyStatus_DrawBars((struct RenderInput *)window,
+      PartyStatus_DrawBars((struct Window *)window,
                            x + i * PARTY_STATUS_COLUMN_WIDTH + 1, y + 2,
                            barLength);
     }
@@ -303,7 +303,7 @@ void PartyStatus_Draw(s32 flags) {
         barLength = (current * 40) / unit->ppMax;
         if (barLength == 0 && current != 0)
           barLength = 1;
-        PartyStatus_DrawBars((struct RenderInput *)window,
+        PartyStatus_DrawBars((struct Window *)window,
                              x + i * PARTY_STATUS_COLUMN_WIDTH + 1, y + 3,
                              barLength);
       }

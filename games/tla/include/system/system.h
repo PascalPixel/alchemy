@@ -165,15 +165,6 @@ struct BgScrollRegs {
   u32 words[4];
 };
 
-/// The serial transfer's command, as Serial_QueueCommand hands it to the save
-/// work: the command, how far it has got and its state.
-struct SerialCommandWork {
-  u8 unk0000[0x313c];
-  u32 command;
-  u16 progress;
-  u16 state;
-};
-
 /// A halfword in a record of its own, which Serial_StepBlockTransfer keeps its
 /// constant 1 in.
 struct SerialHalfword {
@@ -287,7 +278,7 @@ extern const u32 Math_InnerProductCode[];
 
 s32 System_GetLanguage(void);
 
-void Serial_QueueCommand(u32 command);
+void Save_SetProgressCallback(void (*progress)(s32 step));
 
 s32 Save_WritePart(s32 partId, void *source);
 s32 Save_InitializeWork(void);

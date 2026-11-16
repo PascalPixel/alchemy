@@ -57,7 +57,7 @@ s32 Glyph_DrawArm(struct Window *window, u32 character, u32 x, u32 y,
   u32 column;
 #if (LANGUAGE == LANGUAGE_JAPANESE)
   // Unused: gives the stack frame its 64 extra bytes.
-  UNUSED struct RenderInput unusedStackFrame[4];
+  UNUSED u32 unusedStackFrame[16];
 #endif
 
   windowHeight = window->height;

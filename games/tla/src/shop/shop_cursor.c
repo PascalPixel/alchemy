@@ -59,8 +59,8 @@ void Shop_CopyGlyphs(s32 digit, u8 *tileBuffer, u32 digitPosition) {
 
 /// Builds a price of up to five digits as a sprite on window at (x, y). Returns
 /// the sprite, or NULL with no free slot.
-struct WindowSprite *
-Shop_CreatePriceSprite(s32 value, struct RenderInput *window, s32 x, s32 y) {
+struct WindowSprite *Shop_CreatePriceSprite(s32 value, struct Window *window,
+                                            s32 x, s32 y) {
   u8 *tileBuffer;
   s32 resourceSlot;
   struct WindowSprite *priceSprite;
@@ -236,7 +236,7 @@ void MenuCursor_SetPositionImmediate(struct MenuCursor *cursor, s32 x, s32 y) {
 
 /// Starts the hand cursor's glide to (x, y) pixels inside `window` (the screen
 /// when it is NULL), over the frames shop->cursorFrames holds.
-void MenuCursor_Place(struct RenderInput *window, s32 x, s32 y) {
+void MenuCursor_Place(struct Window *window, s32 x, s32 y) {
   struct ShopWork *shop = Ram_HeapSlots->menuWork;
 
   // A window's position is in tiles, and its interior starts one tile (its

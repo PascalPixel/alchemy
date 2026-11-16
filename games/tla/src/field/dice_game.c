@@ -508,7 +508,7 @@ void SuperLuckyDice_Run(void) {
   s32 jingle;
   s32 spriteCount;
   s32 stoppedDice;
-  struct RenderInput *window;
+  struct Window *window;
   s32 index;
   s32 otherIndex;
   s32 digits;

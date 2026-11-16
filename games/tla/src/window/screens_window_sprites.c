@@ -9,7 +9,7 @@
 /// position offset by (offsetX, offsetY) pixels and appends it to the window's
 /// list. Releases the resource slot and returns NULL when no output is free.
 struct WindowSprite *WindowSprite_Create(s32 slot, s32 flags,
-                                         struct RenderInput *input, s32 offsetX,
+                                         struct Window *input, s32 offsetX,
                                          s32 offsetY) {
   s32 x;
   struct WindowSprite *output;
@@ -40,7 +40,7 @@ struct WindowSprite *WindowSprite_Create(s32 slot, s32 flags,
 /// Loads resource `resource` in loading mode `mode` into a VRAM slot and shows
 /// it as a 16x16 sprite at (x, y) in `window`.
 struct WindowSprite *WindowSprite_CreateFromResource(s32 mode, s32 resource,
-                                                     struct RenderInput *window,
+                                                     struct Window *window,
                                                      s32 x, s32 y) {
   s32 slot;
 
@@ -54,8 +54,8 @@ struct WindowSprite *WindowSprite_CreateFromResource(s32 mode, s32 resource,
 /// Copies icon `icon` (with `layers` passed on to the copier) into a free VRAM
 /// slot and shows it as a 16x16 sprite at (x, y) in `window`.
 struct WindowSprite *WindowSprite_CreateLoaded(s32 icon, s32 layers,
-                                               struct RenderInput *window,
-                                               s32 x, s32 y) {
+                                               struct Window *window, s32 x,
+                                               s32 y) {
   s32 slot;
   struct WindowSprite *sprite;
 
@@ -70,9 +70,9 @@ struct WindowSprite *WindowSprite_CreateLoaded(s32 icon, s32 layers,
 
 /// Builds a 16x16 icon from frame pattern 1 with overlay pattern `icon` drawn
 /// over it, and shows it at (x, y) in `window` on draw layer 251.
-struct WindowSprite *
-WindowSprite_CreateWithTransform(s32 icon, struct RenderInput *window, s32 x,
-                                 s32 y) {
+struct WindowSprite *WindowSprite_CreateWithTransform(s32 icon,
+                                                      struct Window *window,
+                                                      s32 x, s32 y) {
   s32 count;
   s32 unused;
   struct WindowSprite *result;
@@ -118,7 +118,7 @@ struct WindowSprite *Portrait_Create(s32 objectKind, s32 position, s32 side,
   slot = PORTRAIT_PALETTE + side;
   Icon_LoadWithPalette(id, position, &first, &second, slot, 0);
   object = WindowSprite_Create(first, OUTPUT_SIZE_32X32,
-                               (struct RenderInput *)window, x, y);
+                               (struct Window *)window, x, y);
   if (object != 0) {
     object->sprite.oam.palette = slot;
     object->kind = WINDOW_SPRITE_PORTRAIT;

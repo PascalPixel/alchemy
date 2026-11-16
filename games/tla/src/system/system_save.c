@@ -4,25 +4,6 @@
 
 #include "system_internal.h"
 
-enum {
-  SAVE_FLASH_TIMER = 2, ///< the hardware timer handed to the flash library
-  SAVE_FLASH_IDENTIFY_ATTEMPTS = 8, ///< tries, a frame apart
-  /// Flash sectors used; as a sector number, "none" in the functions below.
-  SAVE_SECTOR_COUNT = 15,
-  SAVE_SECTORS_PER_PART = 3, ///< a part fills three sectors in a row
-  SAVE_SECTOR_SIZE = 0x1000,
-  SAVE_PART_NONE = 16, ///< the part id of a free or invalidated sector
-  SAVE_FILE_COUNT = 3, ///< the save files, parts 0 to 2
-  /// The part after the files, whose summary is the save work's extra one.
-  SAVE_PART_EXTRA = 3,
-  /// The highest counter a write keeps; a copy written past it is
-  /// rewritten as 1.
-  SAVE_COUNTER_LIMIT = 65000,
-  /// Payload bytes summed into the checksum: a part's three sectors less its
-  /// header.
-  SAVE_CHECKSUM_BYTES = 0x2ff0
-};
-
 // The save code starts each DMA through Dma_Set, where serial.h's
 // SAVE_START_DMA writes DMA3's registers itself.
 /// DMA 3's enable bit in its count and control word, which the hardware

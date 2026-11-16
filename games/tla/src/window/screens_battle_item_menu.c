@@ -95,14 +95,14 @@ s32 BattleItemMenu_Run(s32 member, u16 *entries, s32 count) {
   s32 drawnFirstEntry;
   s32 drawnRow;
   s32 cursorHandle;
-  struct RenderInput *messageWindow;
+  struct Window *messageWindow;
   s32 iconCount;
   s32 preferredRow;
   struct {
     s32 x, y;
   } cursorPosition;
   struct BattleMenuWork *navigation;
-  struct RenderInput *window;
+  struct Window *window;
   s32 firstEntry;
   s32 selectedRow;
   s32 item;

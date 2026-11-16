@@ -90,7 +90,7 @@ s32 DebugBrowser_Icons(void) {
   s32 tile;
   s32 page;
   s32 mode;
-  struct RenderInput *window;
+  struct Window *window;
   s32 slot;
   s32 base;
   s32 i;
@@ -174,9 +174,9 @@ s32 DebugBrowser_Icons(void) {
 /// drawn with its number and its name from MsgTestName; A or B leaves.
 s32 DebugBrowser_Portraits(void) {
   struct WindowWork *work;
-  struct RenderInput *portrait;
+  struct Window *portrait;
   s32 redraw;
-  struct RenderInput *window;
+  struct Window *window;
   s32 count;
   s32 total;
   s32 index;

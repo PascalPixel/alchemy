@@ -160,7 +160,7 @@ void Sound_SetFixedSampleFreq(u32 mode) {
   control = 0;
   Io_Write16(control, &REG_TM0CNT_H);
   Io_Write16(__divsi3(-140448, samples), &REG_TM0CNT_L);
-  buffer = gData_02003a90;
+  buffer = gMixerPcmBuffer;
   Iwram_ClearWords(buffer, 0x18c0);
   m4aSoundVSyncOn();
   REG_DMA1SAD = (u32)buffer;

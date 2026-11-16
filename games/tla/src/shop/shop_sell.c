@@ -14,7 +14,7 @@ s32 Shop_ChooseMember(void) {
   struct ShopWork *shop = Ram_HeapSlots->menuWork;
   s32 unitId = 0;
   s32 memberIndex = 0;
-  struct RenderInput *listWindow;
+  struct Window *listWindow;
   s32 redraw = 1;
   s32 result;
 
@@ -108,12 +108,12 @@ s32 Shop_ChooseMember(void) {
 /// inventory ran out or, at the forge, an item was taken.
 s32 Shop_SelectSell(s32 unitId) {
   struct ShopWork *shop;
-  struct RenderInput *nameWindow;
-  struct RenderInput *priceWindow;
+  struct Window *nameWindow;
+  struct Window *priceWindow;
   struct Unit *unit;
   s32 inventoryCount;
   s32 slot;
-  struct RenderInput *window;
+  struct Window *window;
   s32 redraw;
   s32 itemId;
   s32 result;
@@ -261,7 +261,7 @@ s32 Shop_SelectSell(s32 unitId) {
 
 /// Draws the party member's items as icons in rows of five, or a line saying it
 /// has none.
-void Shop_DrawMemberItems(struct RenderInput *window, s32 unitId) {
+void Shop_DrawMemberItems(struct Window *window, s32 unitId) {
   if (window != NULL) {
     WindowSprite_PrepareForRedrawFar(window);
     ItemIconGrid_ShowInventory(window, 8, 0, unitId);

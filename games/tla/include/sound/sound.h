@@ -148,7 +148,10 @@ struct SoundTestCues {
 
 void Sound_WaitForBgmRestore(void);
 
-extern u8 gData_02003a90[];
+/// The mixer's PCM output: SoundDriver_EnterVBlankUpdate hands it to
+/// IwramSoundMixEntry, and Sound_SetFixedSampleFreq clears it and points DMA 1
+/// at its start and DMA 2 0xc60 bytes in.
+extern u8 gMixerPcmBuffer[];
 
 enum {
   /// Full volume, and the song's own tempo and pitch: 1.0 in the ramps' 8.8

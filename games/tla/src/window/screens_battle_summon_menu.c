@@ -41,15 +41,15 @@ s32 BattleSummonMenu_Run(s32 unusedA, s32 unusedB, const u8 *standby) {
   u8 visibleSummons[4];
   s32 glyph;
   s32 count;
-  struct RenderInput *window;
+  struct Window *window;
   struct WindowWork *work;
   s32 drawnRow;
   s32 drawnFirstEntry;
   s32 selectedRow;
   s32 firstEntry;
   s32 cursorHandle;
-  struct RenderInput *description;
-  struct RenderInput *counts;
+  struct Window *description;
+  struct Window *counts;
   s32 mask;
   s32 preferredRow;
   struct {

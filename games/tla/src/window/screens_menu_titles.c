@@ -29,8 +29,8 @@ void MenuTitle_Load(s32 groupIndex, s32 resourceIndex) {
 /// Shows heading `picture` of gMenuTitlePictures as two 32x16 sprites side by
 /// side at (x, y) in `window`, on draw layer 253, and returns the left one (the
 /// right one follows it in the window's list).
-struct WindowSprite *MenuTitle_Create(s32 group, struct RenderInput *input,
-                                      s32 x, s32 y) {
+struct WindowSprite *MenuTitle_Create(s32 group, struct Window *input, s32 x,
+                                      s32 y) {
   s32 index;
   struct WindowSprite *first;
   struct WindowSprite *second;
@@ -88,8 +88,7 @@ void CommandIcon_Load(s32 index, s32 value, s32 flag) {
 /// when no VRAM slot is free. The settings menu's icons come through here
 /// (window/settings_menu.c).
 struct WindowSprite *CommandIcon_Create(s32 icon, s32 remap,
-                                        struct RenderInput *window, s32 x,
-                                        s32 y) {
+                                        struct Window *window, s32 x, s32 y) {
   s32 index;
   struct WindowSprite *entity;
 

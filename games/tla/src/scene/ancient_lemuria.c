@@ -297,8 +297,9 @@ void AncientLemuria_HeadForTheDock(void) {
 
 const struct Trigger *Scene_GetTriggers(void) { return gSceneEvents; }
 
-/// Rotates colours 2-14 of palettes 7 and 8 by one entry every four frames,
-/// and selects colour 0x7f from the table.
+/// The water's shimmer: every four frames colours 1 to 14 of background
+/// palettes 7 and 8 rotate by one, and colour 15 of palette 7 takes the next of
+/// gAncientLemuria_ShimmerColors.
 s32 AncientLemuria_CycleWaterColors(void) {
   if ((*Ram_FrameCount & 3) == 0) {
     volatile u16 *palette;

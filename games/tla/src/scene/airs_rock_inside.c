@@ -426,6 +426,7 @@ void AirsRockInside_DriftMote(struct Actor *object) {
 /// of Whirlwind's.
 void AirsRockInside_StartWhirlwind(void) { Event_ResolvePendingActions(0); }
 
+/// Tells Whirlwind's effect that the scene runs its own.
 void AirsRockInside_TakeOverWhirlwind(void) {
   ((struct FieldEffectWork *)Ram_HeapSlots->fieldEffectWork)->childOption = 1;
 }
@@ -439,7 +440,7 @@ void AirsRockInside_TakeOverWhirlwind(void) {
 /// Sets an object's cells by its flag (its action parameter): when the flag is
 /// set it clears the kind byte of its layer 2 cell and its layer 0 cell, sinks
 /// 4 pixels when not on its ground and takes sprite priority 3; otherwise it
-/// marks both cells (0xff00 and 0xd480), rises 4 pixels and takes priority 1;
+/// walls both cells off, rises 4 pixels and takes priority 1;
 /// then it writes both cells back and moves the object's height
 /// (MapGrid_SetCellHeight).
 void AirsRockInside_SetConeCells(struct Actor *object) {
@@ -737,9 +738,9 @@ extern u32 gAirsRockInside_WhirlwindRisesScript[];
 /// while the render mode is 5, and on a cell of kind 212 it ends with one of
 /// two end scripts by its angle; otherwise, the first time it reaches the
 /// leader (within 16 pixels on the same height when the leader climbs, else
-/// within 8 on the same level) and flag 0x104 is clear, it carries the leader
-/// along (counter 0x16a 200, render mode 0); it moves 1.5 pixels a frame along
-/// its angle, upward when its angle is 0xc000.
+/// within 8 on the same level) and the field is not handling requests, it
+/// carries the leader along (raising trigger 200, the leader walking); it
+/// moves 1.5 pixels a frame along its angle, upward when it faces north.
 void AirsRockInside_MoveWhirlwind(struct Actor *shot) {
   struct Actor *leader = Actor_GetById(gMainRoutineWork.leaderActorId);
   struct FieldWork *work = Ram_HeapSlots->fieldWork;
@@ -858,6 +859,8 @@ void AirsRockInside_WakeStatue(struct Actor *object, s16 timer, u8 value) {
 
 extern u32 gAirsRockInside_PooledWhirlwindFadesScript[];
 
+/// A whirlwind from a statue of the pool's: as AirsRockInside_MoveWhirlwind,
+/// ending on a wall or another statue and carrying the leader it touches.
 void AirsRockInside_MovePooledWhirlwind(struct Actor *shot) {
   struct Actor *leader = Actor_GetById(gMainRoutineWork.leaderActorId);
   struct FieldWork *work = Ram_HeapSlots->fieldWork;
@@ -920,12 +923,11 @@ void AirsRockInside_MovePooledWhirlwind(struct Actor *shot) {
   }
 }
 
-/// An object's update: while none of the event work's four busy counters
-/// (0x15a, 0x15e, 0x166, 0x168) is set it counts frames in its action
-/// parameter, and at 240 (playing cue 202 unless flag 0x250 is set) it launches
-/// the first free one of objects 13 to 15 from 8 pixels ahead along its angle,
-/// with AirsRockInside_MovePooledWhirlwind as its update, and a dust effect
-/// below it.
+/// A statue's update: while no Psynergy, menu or item is in use it counts
+/// frames in its timer, and at 240 (with a flare unless the leader is riding a
+/// whirlwind) it launches the first free one of actors 13 to 15 from 8 pixels
+/// ahead along its angle, with AirsRockInside_MovePooledWhirlwind as its
+/// update, and a dust effect below it.
 void AirsRockInside_StatueBreathesPooledWhirlwind(struct Actor *object) {
   struct FieldWork *work = Ram_HeapSlots->fieldWork;
   struct Actor *shot;
@@ -978,6 +980,8 @@ void AirsRockInside_StatueBreathesPooledWhirlwind(struct Actor *object) {
   object->timer++;
 }
 
+/// Sets a pool statue breathing whirlwinds from timer, with value in its
+/// riseCounter, unless the party keeps its place.
 void AirsRockInside_WakePooledStatue(struct Actor *object, s16 timer,
                                      u8 value) {
   if (!GameFlag_Get(FLAG_KEEP_PARTY_POSITION)) {
@@ -989,6 +993,9 @@ void AirsRockInside_WakePooledStatue(struct Actor *object, s16 timer,
   }
 }
 
+/// A vent's puff: drifts and grows until its time runs out; reaching the
+/// leader it raises trigger 201 and bounces back, as it bounces off the room's
+/// pillars.
 void AirsRockInside_UpdateVentPuff(struct Actor *object) {
   struct FieldWork *work = Ram_HeapSlots->fieldWork;
   struct Actor *leader = Actor_GetById(gMainRoutineWork.leaderActorId);
@@ -1071,8 +1078,8 @@ void AirsRockInside_PuffVent(s32 x, s32 y, s32 z) {
 /// is set, starts a drip (AirsRockInside_PuffVent) at a place chosen by scene
 /// and frame: in one room one of two spots by
 /// FLAG_AIRS_ROCK_CLARITY_CIRCLET_CHEST_FIRST_PILLAR_PLACED, in the other one
-/// of six by the leader's position and flags 0x200 to 0x202. Places the two
-/// frame arms share are one call, reached by goto from the other arm.
+/// of six by the leader's position and FLAG_SCENE_TEMP_00 to 02. Places the
+/// two frame arms share are one call, reached by goto from the other arm.
 void AirsRockInside_PuffVents(void) {
   struct FieldWork *work = Ram_HeapSlots->fieldWork;
   u32 frame;
@@ -1126,6 +1133,8 @@ void AirsRockInside_PuffVents(void) {
   }
 }
 
+/// An object a gust carries: it rides 8 pixels above the gust, its draw order
+/// flickering.
 void AirsRockInside_FollowGust(struct Actor *object) {
   struct Actor *target = object->watchedActor;
 
@@ -1153,7 +1162,7 @@ void AirsRockInside_SpiralGust(struct Actor *object);
     carried = (at);                                                            \
   } while (0)
 
-/// One shake of the walls (cue 157).
+/// One shake of the walls, with the grinding of a gate.
 #define SHAKE()                                                                \
   (Sound_Play(SE_GATE_MOVE), MapGrid_SetShake(5, 5, 1),                        \
    MapGrid_SetShake(SHAKE_KEEP, SHAKE_KEEP, 0.9))
@@ -1542,6 +1551,9 @@ const struct ActorPlacement *Scene_GetActorPlacements(void) {
   return gAirsRockInside_Placements;
 }
 
+/// A task: once the leader stands still on a new cell, the cells stamped under
+/// the last are restored; in the Reveal tablet room the cell's attribute raises
+/// its trigger (200 on).
 void AirsRockInside_RestoreCellBehindLeader(void) {
   struct Actor *object = Actor_GetById(Party_GetLeaderActor());
   s32 x = FIELD_CELL(object->x.fixed);
@@ -1571,6 +1583,7 @@ void AirsRockInside_RestoreCellBehindLeader(void) {
   }
 }
 
+/// Starts AirsRockInside_RestoreCellBehindLeader with no cell stamped yet.
 void AirsRockInside_StartRestoringCells(void) {
   s32 value = -1;
 
@@ -1618,6 +1631,8 @@ void AirsRockInside_StampCellUnderLeader(void) {
                            gAirsRockInside_StampedX, gAirsRockInside_StampedZ);
 }
 
+/// As AirsRockInside_StampWideCellUnderLeader for the other rooms' floors, by
+/// scene.
 void AirsRockInside_StampOtherCellUnderLeader(void) {
   struct Actor *actor = Actor_GetById(Party_GetLeaderActor());
   s32 x = FIELD_CELL(actor->x.fixed);
@@ -1672,14 +1687,17 @@ void AirsRockInside_StampOtherCellUnderLeader(void) {
     }                                                                          \
   }
 
+/// Stepping on the Reveal tablet room's floor: the 1 by 3 cells under the
+/// leader are stamped as it walks.
 DEFINE_AIRS_ROCK_INSIDE_TRACK_LEADER_CELL(
     AirsRockInside_StampTallCellUnderLeader, 64)
 
-// As AirsRockInside_StampTallCellUnderLeader, one row nearer.
+/// As AirsRockInside_StampTallCellUnderLeader, one row nearer.
 DEFINE_AIRS_ROCK_INSIDE_TRACK_LEADER_CELL(
     AirsRockInside_StampTallCellUnderLeaderNearer, 63)
 
 /// A burst of dust at x, z.
+/// A burst of eight puffs of dust around x, z, and the walls shake.
 void AirsRockInside_BurstDust(s32 x, s32 z) {
   struct EffectOptions options;
   struct Vector3 spawn;
@@ -1703,6 +1721,7 @@ void AirsRockInside_BurstDust(s32 x, s32 z) {
   MapGrid_SetShake(SHAKE_KEEP, SHAKE_KEEP, 0.9);
 }
 
+/// Twelve sparks rise one after another around x, z.
 void AirsRockInside_ScatterSparks(s32 x, s32 z) {
   struct EffectOptions options;
   struct Vector3 position;
@@ -1724,6 +1743,8 @@ void AirsRockInside_ScatterSparks(s32 x, s32 z) {
   }
 }
 
+/// A gust's spark: circles the centre kept in bounce and riseBaseY, a lap every
+/// 32 frames, its radius growing as it rises above the ground.
 void AirsRockInside_SpiralGust(struct Actor *object) {
   FIXED radius = ((object->y.fixed - object->groundHeight) >> 1) + toFIXED(16);
 
@@ -1737,9 +1758,9 @@ void AirsRockInside_SpiralGust(struct Actor *object) {
   object->speedLimit++;
 }
 
-/// Circles the object around its centre (fields 68 and 76) on an ellipse twice
-/// as wide as deep, the radius growing with its height; it rises by field 72
-/// each frame and switches its part attribute between 0 and 9 every two frames.
+/// A spark: circles the centre kept in bounce and riseBaseY on an ellipse twice
+/// as wide as deep, the radius growing with its height; it rises by its gravity
+/// each frame and switches its palette between 0 and 9 every two frames.
 void AirsRockInside_SpiralSpark(struct Actor *object) {
   FIXED y = object->y.fixed;
   s32 phase;
@@ -1757,15 +1778,17 @@ void AirsRockInside_SpiralSpark(struct Actor *object) {
   Actor_SetSpriteColor(object, ((gFrameCount & 2) >> 1) * 9);
 }
 
+/// A Whirlwind target's update while the gust gathers: it flickers to the
+/// palette in riseCounter, at the rate riseEnabled sets.
 void AirsRockInside_FlickerTarget(struct Actor *object) {
   s32 bit = ((gFrameCount & 3) >> object->riseEnabled) & 1;
 
   Actor_SetSpriteColor(object, (u8)(bit * object->riseCounter));
 }
 
-/// Whirlwind on the hall's twister rock (object 11): it glows and the light it
-/// sends wakes the statue (object 10), which starts breathing whirlwinds; sets
-/// flag 0x89a.
+/// Whirlwind on the hall's twister rock: it glows and the light it sends wakes
+/// the statue beside it, which starts breathing whirlwinds
+/// (FLAG_AIRS_ROCK_HALL_STATUE_WOKEN).
 void AirsRockInside_WakeHallStatue(void) {
   u16 *buffer = Heap_Alloc(0x800);
   u16 *cell;
@@ -1924,8 +1947,9 @@ void AirsRockInside_StepOntoLedge(void) {
   Event_End();
 }
 
-/// Runs each room's list on entering it; the paired statues room also clears
-/// two cells' shapes and the coins chest room stops object 10's timer.
+/// Move lifts a pillar: each room frees the cells its pillars block; the paired
+/// statues room also clears two cells' shapes and the coins chest room stops
+/// object 10's timer.
 void AirsRockInside_StartPushingPillar(void) {
   s16 scene = gMainRoutineWork.next;
 
@@ -2046,9 +2070,9 @@ void AirsRockInside_FinishPushingPillar(void) {
   Event_End();
 }
 
-/// Whirlwind on the Vial chest room's twister rock (object 10): BG0 is loaded
+/// Whirlwind on the Vial chest room's twister rock: BG0 is loaded
 /// with the light it sends, which flashes across the room, opens the cells at
-/// (68, 84) and wakes the statue (object 8); sets flag 0x899.
+/// (68, 84) and wakes the statue (FLAG_AIRS_ROCK_VIAL_CHEST_STATUE_WOKEN).
 void AirsRockInside_WakeVialChestStatue(void) {
   u16 *buffer = Heap_Alloc(0x800);
   u16 *cell;
@@ -2309,10 +2333,13 @@ extern u32 gAirsRockInside_OrbitSparkScript[];
     MapGrid_CopyCellPictureIndicesRect(n2, 17, 88, 19, 1, 2);                  \
   }
 
+/// As Reveal fades, the hidden doors of the Reveal tablet room close again.
 DEFINE_AIRS_ROCK_INSIDE_SET_DOORS(AirsRockInside_HideRevealedDoors, 26, 90)
 
+/// Reveal shows the room's hidden doors.
 DEFINE_AIRS_ROCK_INSIDE_SET_DOORS(AirsRockInside_RevealDoors, 25, 89)
 
+/// Leaves a small spark where the orbiter is.
 void AirsRockInside_SpawnOrbitSpark(struct Actor *source) {
   struct Actor *object = FieldActor_Create(SPRITE_PARTICLE, source->x.fixed,
                                            source->y.fixed, source->z.fixed);
@@ -2328,6 +2355,9 @@ void AirsRockInside_SpawnOrbitSpark(struct Actor *source) {
   Actor_StartScript(object, gAirsRockInside_OrbitSparkScript);
 }
 
+/// An orbiter's update: circles 8 pixels above its anchor, closing in 4 pixels
+/// a step and leaving sparks, until its countdown ends; 1 once it is 2 pixels
+/// out.
 s32 AirsRockInside_OrbitAnchor(struct Orbiter *orbiter) {
   struct Actor *anchor = orbiter->anchor;
 
@@ -2520,8 +2550,9 @@ void AirsRockInside_ShebaLearnsReveal(s32 idA, s32 idB) {
 
 s32 Actor_MoveToObject();
 
-/// Checking the tablet shows its message; the first time (flag 0x8d4 clear)
-/// the scene with actor 6 follows, as Magma Rock's tablet does for Blaze.
+/// Checking the tablet shows its message; the first time
+/// (FLAG_REVEAL_TABLET_READ) Sheba learns Reveal, as Magma Rock's tablet does
+/// for Blaze.
 void AirsRockInside_ReadRevealTablet(void) {
   struct Actor *object;
 
@@ -2587,6 +2618,8 @@ void AirsRockInside_ReadRevealTablet(void) {
   }
 }
 
+/// Examining the tablet from the south: read already, it says so; otherwise
+/// the leader walks round to face it and Sheba reads it.
 void AirsRockInside_WalkToRevealTablet(void) {
   if (GameFlag_Get(FLAG_REVEAL_TABLET_READ)) {
     Event_Start();
@@ -2620,10 +2653,14 @@ void AirsRockInside_WalkToRevealTablet(void) {
     }                                                                          \
   }
 
+/// Examining the tablet from its east side: as
+/// AirsRockInside_WalkToRevealTablet.
 DEFINE_AIRS_ROCK_INSIDE_READ_TABLET(AirsRockInside_ReadTabletFacingWest, 280)
 
+/// Examining it from its west side: as AirsRockInside_WalkToRevealTablet.
 DEFINE_AIRS_ROCK_INSIDE_READ_TABLET(AirsRockInside_ReadTabletFacingEast, 248)
 
+/// Walking west into the tablet room's ledge: nothing happens.
 void AirsRockInside_IgnoreStep(void) {}
 
 /// Move on the Elixir chest room's pillar: its place sets the area flag.
@@ -2637,6 +2674,7 @@ void AirsRockInside_MoveElixirChestPillar(void) {
   Event_End();
 }
 
+/// Pound on one of the paired statues' cones (AirsRockInside_PoundCone).
 void AirsRockInside_PoundPairedStatuesCone(s32 mode, s32 step) {
   AirsRockInside_PoundCone(mode, step);
 }
@@ -2644,6 +2682,8 @@ void AirsRockInside_PoundPairedStatuesCone(s32 mode, s32 step) {
 extern u16 gAirsRockInside_PairedStatuesCones[];
 void AirsRockInside_SetConeCells(struct Actor *object);
 
+/// Move on one of the paired statues: it and its partner trade places, their
+/// sprites flattening and rising in turn.
 void AirsRockInside_TradePairedStatues(void) {
   struct Actor *first = 0, *second = 0, *leader;
   struct FieldSprite *firstSprite, *secondSprite;
@@ -2719,8 +2759,8 @@ step:
   Event_End();
 }
 
-/// When the event work's warp number (0x154) is set, plays cue 186 and moves
-/// the leader to that warp's place (warps 50 to 55), inside an event.
+/// Stepping onto a face warp (step triggers 50 to 55): the leader is carried to
+/// that warp's place with a chime.
 void AirsRockInside_RideFaceWarp(void) {
   s16 *warp;
   s32 x, z;
@@ -2774,6 +2814,7 @@ void AirsRockInside_RideFaceWarp(void) {
   Event_End();
 }
 
+/// Checking the Psynergy Stone restores the party's PP.
 void AirsRockInside_CheckPsynergyStone(void) {
   const u8 *message;
 
@@ -2789,7 +2830,7 @@ void AirsRockInside_CheckPsynergyStone(void) {
   Event_End();
 }
 
-/// The placement table for the current room.
+/// The trigger table for the current room.
 const struct Trigger *Scene_GetTriggers(void) {
   s16 scene = gMainRoutineWork.next;
 
@@ -2978,6 +3019,8 @@ void AirsRockInside_SetLedgeCellsByLevel(void) {
 #undef PICK_UP
 #undef SHAKE
 
+/// Dropping from the Vial chest room: the leader falls 130 pixels into the hall
+/// and lands in a ring of dust.
 void AirsRockInside_LandInHall(void) {
   struct Actor *leader = Actor_GetById(gMainRoutineWork.leaderActorId);
   struct EffectOptions options;

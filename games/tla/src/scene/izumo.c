@@ -76,9 +76,6 @@ extern u32 gIzumo_FifthSpinnerScript[];
 extern u32 gIzumo_SixthSpinnerScript[];
 void Izumo_RevealTheStoneCircle(void);
 
-#define BYTE_AT(base, offset) (*(u8 *)((u8 *)(base) + (offset)))
-#define WORD_AT(base, offset) (*(s32 *)((u8 *)(base) + (offset)))
-
 extern s16 gIzumo_MovableStones[];
 extern struct ActorPlacement gIzumo_ActorPlacementsOnceTheSerpentIsSlain[];
 extern struct ActorPlacement gIzumo_ActorPlacements[];
@@ -124,10 +121,14 @@ void Izumo_RotateWaterColors(void);
 void Izumo_StopThePartyToThankThem(void);
 void Izumo_TellTheCloudBrandLegend(void);
 
+/// Move on the stone circle: lifts the misaligned stone.
 void Izumo_StartMovingStone(void) {
   Actor_LiftTargetBlock(gIzumo_MovableStones);
 }
 
+/// Move sets the misaligned stone down: back in its place in the circle, the
+/// guard notices the first time and Reveal shows the way down; moved off it,
+/// the way closes again.
 void Izumo_FinishMovingStone(void) {
   struct Actor *actor = Actor_GetById(ACTOR_MISALIGNED_STONE);
   s32 x = FIELD_CELL(actor->x.fixed);
@@ -188,10 +189,13 @@ const struct ActorPlacement *Scene_GetActorPlacements(void) {
   return gIzumo_ActorPlacements;
 }
 
+/// Cyclone clears a patch of the village's bushes, the first of nine.
 void Izumo_CycloneFirstPatch(void) {
   FieldTileCopies_CopyTouchedCells(53, 5, 8, 9, 23, 30, 0);
 }
 
+/// Cyclone clears the second patch; until its flag is set, an actor is set in
+/// the cleared cell and the leader, if standing there, is pushed out.
 void Izumo_CycloneSecondPatch(void) {
   struct Actor *object = Actor_GetById(gMainRoutineWork.leaderActorId);
 
@@ -213,6 +217,7 @@ void Izumo_CycloneSecondPatch(void) {
   }
 }
 
+/// Cyclone clears the third patch, as the second does with its own cell.
 void Izumo_CycloneThirdPatch(void) {
   struct Actor *object = Actor_GetById(gMainRoutineWork.leaderActorId);
 
@@ -235,18 +240,22 @@ void Izumo_CycloneThirdPatch(void) {
   }
 }
 
+/// Cyclone clears the fourth patch of bushes.
 void Izumo_CycloneFourthPatch(void) {
   FieldTileCopies_CopyTouchedCells(44, 5, 8, 5, 7, 32, 0);
 }
 
+/// Cyclone clears the fifth patch of bushes.
 void Izumo_CycloneFifthPatch(void) {
   FieldTileCopies_CopyTouchedCells(55, 0, 4, 2, 16, 23, 0);
 }
 
+/// Cyclone clears the sixth patch of bushes.
 void Izumo_CycloneSixthPatch(void) {
   FieldTileCopies_CopyTouchedCells(42, 0, 6, 2, 9, 18, 0);
 }
 
+/// Cyclone clears the seventh patch, as the second does with its own cell.
 void Izumo_CycloneSeventhPatch(void) {
   struct Actor *object = Actor_GetById(gMainRoutineWork.leaderActorId);
 
@@ -268,21 +277,24 @@ void Izumo_CycloneSeventhPatch(void) {
   }
 }
 
+/// Cyclone clears the eighth patch of bushes.
 void Izumo_CycloneEighthPatch(void) {
   FieldTileCopies_CopyTouchedCells(49, 0, 5, 4, 24, 16, 0);
 }
 
+/// Cyclone clears the ninth patch of bushes.
 void Izumo_CycloneNinthPatch(void) {
   FieldTileCopies_CopyTouchedCells(36, 0, 5, 3, 16, 9, 0);
 }
 
+/// The leader walks through a door, leaving by the step trigger's exit.
 void Izumo_EnterDoor(void) {
   struct FieldWork *work = Ram_HeapSlots->fieldWork;
 
   Event_Start();
   Event_ResolvePendingActions(0);
   Actor_SetSpeedParameters(gMainRoutineWork.leaderActorId, toFIXED(1) / 2,
-                           0x4000);
+                           toFIXED(1) / 4);
   Actor_SetSpritePriority(gMainRoutineWork.leaderActorId, 1);
   Actor_GetById(gMainRoutineWork.leaderActorId)->motionFlags = 0;
   Sound_Play(SE_MAP_EXIT);
@@ -324,6 +336,9 @@ void Izumo_TalkToStoneCircleGuard(s32 actor) {
   Event_End();
 }
 
+/// The stone circle's guard during the festival: he shows the ring of stones
+/// and asks a question, or once the stone has moved complains he must still
+/// stand guard.
 void Izumo_TalkToFestivalStoneCircleGuard(s32 actor) {
   Event_Start();
   Event_ResolvePendingActions(0);
@@ -348,6 +363,7 @@ void Izumo_TalkToFestivalStoneCircleGuard(s32 actor) {
   Event_End();
 }
 
+/// A villager asks about Lady Uzume and her family, and answers by the reply.
 void Izumo_TellOfUzumesFamily(s32 actor) {
   const u8 *message;
 
@@ -406,6 +422,8 @@ void Izumo_RotateWaterColors(void) {
   }
 }
 
+/// Susa stops the party on its way out to offer a weapon; refused, he waits by
+/// the gate; accepted, he tells the Cloud Brand's legend.
 void Izumo_StopThePartyToThankThem(void) {
   GameFlag_Set(FLAG_STOPPED_TO_THANK_THE_PARTY);
   Event_Start();
@@ -443,12 +461,13 @@ void Izumo_StopThePartyToThankThem(void) {
   if (Event_AskYesNoWithActorAnimation(gMainRoutineWork.leaderActorId, 0) ==
       1) {
     FieldEvent_Wait(90);
-    Call3((void (*)())Actor_SetSpeedParameters, 32, 0x6666, 0x3333);
+    Call3((void (*)())Actor_SetSpeedParameters, ACTOR_SUSA, toFIXED(2) / 5,
+          toFIXED(1) / 5);
     Actor_WalkToById(ACTOR_SUSA, 200, 216);
     Actor_WaitForMoveById(ACTOR_SUSA);
-    FieldCamera_MoveToActorById(32, 1);
+    FieldCamera_MoveToActorById(ACTOR_SUSA, 1);
     FieldEvent_Wait(60);
-    Call3((void (*)())Actor_FaceDirectionById, 32, FACING_SOUTH, 0);
+    Call3((void (*)())Actor_FaceDirectionById, ACTOR_SUSA, FACING_SOUTH, 0);
     Actor_ShowEmoteById(ACTOR_SUSA, EMOTE_IN_FRONT | EMOTE_SWEAT_DROP, 30);
     // "Are you sure about that? I was only hoping to show you my appreciation."
     Event_ShowMessageAndWait(ACTOR_SUSA, 0);
@@ -461,6 +480,8 @@ void Izumo_StopThePartyToThankThem(void) {
   Event_End();
 }
 
+/// Susa tells the legend of the Cloud Brand, hidden where the Serpent's tail
+/// fell, and leaves for Kushinada.
 void Izumo_TellTheCloudBrandLegend(void) {
   Event_SetMessageId(MsgThisTokenIsn);
   Actor_ShowEmoteById(ACTOR_SUSA, EMOTE_IN_FRONT | EMOTE_SMILE, 30);
@@ -496,7 +517,7 @@ void Izumo_TellTheCloudBrandLegend(void) {
   FieldEvent_Wait(15);
   Actor_SetAnimationById(gMainRoutineWork.leaderActorId, ANIM_NOD);
   FieldEvent_Wait(30);
-  Actor_SetSpeedParameters(ACTOR_SUSA, 0x3333, 0x1999);
+  Actor_SetSpeedParameters(ACTOR_SUSA, toFIXED(1) / 5, toFIXED(1) / 10);
   Actor_GetById(ACTOR_SUSA)->motionFlags = 0;
   Actor_SetSpritePriority(ACTOR_SUSA, 3);
   Actor_WalkToById(ACTOR_SUSA, 200, 208);
@@ -506,6 +527,8 @@ void Izumo_TellTheCloudBrandLegend(void) {
   GameFlag_Clear(FLAG_THANKFUL_ONE_WAITS);
 }
 
+/// Susa, waiting by the gate, offers his token of gratitude again; once told,
+/// he repeats that it is a legend.
 void Izumo_OfferATokenOfGratitude(void) {
   if (!GameFlag_Get(FLAG_TOKEN_OFFERED)) {
     const u8 *message;
@@ -529,13 +552,15 @@ void Izumo_OfferATokenOfGratitude(void) {
   }
 }
 
+/// Sets up Izumo as the party enters: the fade in, the water's colours, the
+/// stone circle, and once the Serpent is slain the dancers and Susa.
 s32 Scene_Initialize(void) {
   GameFlag_Clear(FLAG_THANKFUL_ONE_WAITS);
-  WORD_AT(Ram_HeapSlots->fieldWork, 428) = 0x100;
+  gFieldWork->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
   Task_Add(Izumo_RotateWaterColors, TASK_PASS_FRAME);
   Actor_PlaceBlocks(gIzumo_MovableStones);
   if (GameFlag_Get(FLAG_SERPENT_SLAIN)) {
-    BYTE_AT(Actor_GetById(15), 90) = 2;
+    Actor_GetById(15)->steeringFlags = 2;
     Actor_SetAnimationById(ACTOR_DANCER_A, 5);
     Actor_SetAnimationById(ACTOR_DANCER_B, 5);
     Actor_SetAnimationById(ACTOR_DANCER_C, 5);
@@ -564,8 +589,10 @@ s32 Scene_Initialize(void) {
   return 0;
 }
 
+/// Nothing to prepare before the map is built. Returns 0.
 s32 Scene_PrepareMap(void) { return 0; }
 
+/// Reveal on the stone circle: shows the way down if the stone is in place.
 void Izumo_RevealTheStoneCircle(void) {
   struct Actor *object = Actor_GetById(gMainRoutineWork.leaderActorId);
   s32 x = FIELD_CELL(object->x.fixed);
@@ -584,18 +611,21 @@ void Izumo_RevealTheStoneCircle(void) {
   }
 }
 
+/// Reveal ends: the stone circle's way down is hidden.
 void Izumo_HideTheStoneCircle(void) {
   GameFlag_Clear(FLAG_REVEALING);
   MapGrid_CopyCellPictureIndicesRect(40, 8, 22, 8, 3, 3);
   Call6((void (*)())Map_CopyCellAttributeRect, 40, 8, 3, 3, 22, 8);
 }
 
+/// Felix walks down into the stone circle's opening and the scene leaves for
+/// the Izumo Ruins.
 void Izumo_DescendIntoTheRuins(void) {
   s32 value = gFieldWork->stepTrigger;
 
   Actor_FaceDirectionById(ACTOR_FELIX, FACING_NORTH, 0);
   FieldEvent_Wait(10);
-  BYTE_AT(Actor_GetById(ACTOR_FELIX), 90) &= ~1;
+  Actor_GetById(ACTOR_FELIX)->steeringFlags &= ~ACTOR_FACES_MOTION;
   Actor_SetDestinationOffsetById(ACTOR_FELIX, 0, 4);
   Actor_WaitForMoveById(ACTOR_FELIX);
   Actor_SetSpriteFlags(Actor_GetById(ACTOR_FELIX), 0);
@@ -609,20 +639,23 @@ void Izumo_DescendIntoTheRuins(void) {
   Izumo_SetExitRequest(value);
 }
 
+/// Felix steps in from the circle's left and goes down into the ruins.
 void Izumo_EnterTheRuinsFromTheLeft(void) {
-  Call3((void (*)())Actor_WalkByAndWaitById, 4, 0, -14);
+  Call3((void (*)())Actor_WalkByAndWaitById, ACTOR_FELIX, 0, -14);
   Actor_WalkByAndWaitById(ACTOR_FELIX, 16, 0);
   FieldEvent_Wait(10);
   Izumo_DescendIntoTheRuins();
 }
 
+/// Felix steps in from the circle's right and goes down into the ruins.
 void Izumo_EnterTheRuinsFromTheRight(void) {
-  Call3((void (*)())Actor_WalkByAndWaitById, 4, 0, -14);
+  Call3((void (*)())Actor_WalkByAndWaitById, ACTOR_FELIX, 0, -14);
   Actor_WalkByAndWaitById(ACTOR_FELIX, -16, 0);
   FieldEvent_Wait(10);
   Izumo_DescendIntoTheRuins();
 }
 
+/// Felix faces the circle's opening and goes down into the ruins.
 void Izumo_EnterTheRuins(void) {
   Actor_FaceDirectionById(ACTOR_FELIX, FACING_NORTH, 0);
   FieldEvent_Wait(10);
@@ -631,8 +664,9 @@ void Izumo_EnterTheRuins(void) {
 
 #include "text/msg_ids.h"
 
+/// The stones Move can lift, ended by -1: the misaligned stone.
 s16 gIzumo_MovableStones[] = {
-    12,
+    ACTOR_MISALIGNED_STONE,
     -1,
 };
 

@@ -23,11 +23,6 @@
 #include "field/scene_tables.h"
 #include "sprite_ids.h"
 
-struct IzumoRuinsEffectWork {
-  u8 unk00[26];
-  s16 objectId;
-};
-
 extern u8 gMapGridCellBuffer[];
 
 void Pound_SinkTarget(u16 *list, s32 mode, s32 count);
@@ -121,6 +116,11 @@ extern u32 gFieldEffect_LongScript[];
 /// Set as Parch dries the pool before the room of the stone tablet.
 #define FLAG_IZUMO_RUINS_POOL_PARCHED 0x941
 
+/// The second room's first two stone pillars, side by side at its north end.
+enum { ACTOR_SECOND_ROOM_PILLAR_A = 10, ACTOR_SECOND_ROOM_PILLAR_B };
+
+/// Reads bytes 2 and 3 of a map cell, high byte first: of map layer 0 to 2,
+/// or of the spare cell buffer above that. Returns 0 with no map.
 s32 MapGrid_GetCellWord(u32 layer, s32 x, s32 y) {
   struct MapWork *map = Ram_HeapSlots->mapGrid;
   u8 *cell;
@@ -135,6 +135,8 @@ s32 MapGrid_GetCellWord(u32 layer, s32 x, s32 y) {
   return (cell[2] << 8) | cell[3];
 }
 
+/// Writes bytes 2 and 3 of a map cell, as MapGrid_GetCellWord reads them.
+/// Returns what they held, or 0 with no map.
 s32 MapGrid_SetCellWord(u32 layer, s32 x, s32 y, s32 value) {
   struct MapWork *map = Ram_HeapSlots->mapGrid;
   u8 *cell;
@@ -192,6 +194,8 @@ void IzumoRuins_ShowPillarState(struct Actor *object) {
   MapGrid_SetCellHeight(column << 20, row << 20, object->layer, height);
 }
 
+/// Places Pound's pillars from a list of rows (actor, unused, flag), ended by
+/// 0xffff: each shows its sunk or standing state by its flag.
 void IzumoRuins_PlacePillars(u16 *list) {
   struct Actor *object;
   s32 flag;
@@ -234,9 +238,9 @@ const struct ActorPlacement *Scene_GetActorPlacements(void) {
 }
 
 /// Starts the effect for this scene's room, then, for a first argument of 1,
-/// runs IzumoRuins_ShowPillarState on the effect work's object.
+/// runs IzumoRuins_ShowPillarState on the Psynergy's target.
 void IzumoRuins_PoundPillar(s32 mode, s32 target) {
-  struct IzumoRuinsEffectWork *work = Ram_HeapSlots->fieldEffectWork;
+  struct FieldEffectWork *work = Ram_HeapSlots->fieldEffectWork;
   struct MainRoutineWork *party = &gMainRoutineWork;
   s16 scene;
 
@@ -246,9 +250,10 @@ void IzumoRuins_PoundPillar(s32 mode, s32 target) {
   else
     Pound_SinkTarget(gIzumoRuins_SecondRoomPoundPillars, mode, target);
   if (mode == 1)
-    IzumoRuins_ShowPillarState(Actor_Get(work->objectId));
+    IzumoRuins_ShowPillarState(Actor_Get(work->secondActorId));
 }
 
+/// Frost on a puddle: it becomes an ice pillar, drawn by the cells under it.
 void IzumoRuins_FreezePuddle(void) {
   struct FieldWork *work = Ram_HeapSlots->fieldWork;
   struct Actor *object;
@@ -262,6 +267,8 @@ void IzumoRuins_FreezePuddle(void) {
   Event_End();
 }
 
+/// Where the cell under the leader is sand (232 in its high byte), the leader
+/// walks on the upper layer, in the sand.
 void IzumoRuins_SinkIntoSand(void) {
   struct Actor *leader = Actor_Get(gMainRoutineWork.leaderActorId);
   s32 cell = MapGrid_GetCellWord(2, FIELD_CELL(leader->x.fixed),
@@ -293,6 +300,8 @@ void IzumoRuins_StartMovingPillar(void) {
   }
 }
 
+/// Move sets a pillar down; in the second room the cell at (50, 13) is opened
+/// again.
 void IzumoRuins_FinishMovingPillar(void) {
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
@@ -302,6 +311,7 @@ void IzumoRuins_FinishMovingPillar(void) {
   Event_End();
 }
 
+/// Parch dries the pool before the room of the stone tablet, for good.
 void IzumoRuins_ParchThePool(void) {
   Event_Start();
   MapGrid_CopyCellAttributes(7, 2, 8, 7, 7, 12);
@@ -318,6 +328,9 @@ const struct Trigger *Scene_GetTriggers(void) {
   return gIzumoRuins_SecondRoomTriggers;
 }
 
+/// Sets up the room being entered: the window in, its movable and Pound's
+/// pillars, the first room's puddles, and the second room's pool if parched.
+/// Returns 0.
 s32 Scene_Initialize(void) {
   struct FieldWork *work = Ram_HeapSlots->fieldWork;
   struct Actor *object;
@@ -333,8 +346,10 @@ s32 Scene_Initialize(void) {
     IzumoRuins_PlacePillars((u16 *)gIzumoRuins_FirstRoomPoundPillars);
     FlagBlock_PlaceAll(gIzumoRuins_Puddles);
   } else {
-    Actor_Get(10)->priorityFlags |= ACTOR_PRIORITY_IGNORES_RISES;
-    Actor_Get(11)->priorityFlags |= ACTOR_PRIORITY_IGNORES_RISES;
+    Actor_Get(ACTOR_SECOND_ROOM_PILLAR_A)->priorityFlags |=
+        ACTOR_PRIORITY_IGNORES_RISES;
+    Actor_Get(ACTOR_SECOND_ROOM_PILLAR_B)->priorityFlags |=
+        ACTOR_PRIORITY_IGNORES_RISES;
     Actor_PlaceBlocks(gIzumoRuins_SecondRoomMovablePillars);
     IzumoRuins_PlacePillars((u16 *)gIzumoRuins_SecondRoomPoundPillars);
     if (Event_GetFlag(FLAG_IZUMO_RUINS_POOL_PARCHED)) {
@@ -355,6 +370,7 @@ s32 Scene_Initialize(void) {
   return 0;
 }
 
+/// Nothing to prepare before the map is built. Returns 0.
 s32 Scene_PrepareMap(void) { return 0; }
 
 // clang-format off
@@ -389,6 +405,7 @@ u32 gFieldEffect_LongScript[] = {
       SC_END,                                                                  
   };
 
+/// The pillars Move can lift in each room, ended by -1.
 s16 gIzumoRuins_FirstRoomMovablePillars[] = {
     13, -1,
 };
@@ -403,17 +420,27 @@ const s32 *gFieldEffect_DurationScripts[] = {
     gFieldEffect_LongScript,
 };
 
+/// Pound's pillars in each room (IzumoRuins_PlacePillars): actor, unused, and
+/// the flag set while it is sunk; ended by -1.
 s16 gIzumoRuins_FirstRoomPoundPillars[] = {
-    8, 0, 512, 9, 0, 513, 12, 0,
-    514, -1,
+    8, 0, FLAG_SCENE_TEMP_00,
+    9, 0, FLAG_SCENE_TEMP_01,
+    12, 0, FLAG_SCENE_TEMP_02,
+    -1,
 };
 
 s16 gIzumoRuins_SecondRoomPoundPillars[] = {
-    8, 0, 512, 9, 0, 513, -1,
+    8, 0, FLAG_SCENE_TEMP_00,
+    9, 0, FLAG_SCENE_TEMP_01,
+    -1,
 };
 
+/// The first room's puddles Frost freezes: actor and the flag set once frozen,
+/// ended by -1.
 s16 gIzumoRuins_Puddles[] = {
-    10, 515, 11, 516, -1,
+    10, FLAG_SCENE_TEMP_03,
+    11, FLAG_SCENE_TEMP_04,
+    -1,
 };
 
 struct SceneEntrance gSceneEntrances[] = {

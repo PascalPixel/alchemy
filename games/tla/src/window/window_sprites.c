@@ -157,7 +157,7 @@ s32 Glyph_Draw(struct Window *window, s32 character, s32 x, s32 y, s32 mode) {
 
       Dma_Set(tiles,
               (void *)(OBJ_VRAM0 + (work->glyphTiles + index) * TILE_SIZE_4BPP),
-              DMA_COPY_WORDS(32), (volatile u32 *)0x040000d4);
+              DMA_COPY_WORDS(32), REG_DMA3);
       attr = (u16 *)&output->sprite.oam;
       if (work->battleMode & WINDOW_GLYPHS_BLENDED)
         *attr++ = (y + (spacingY >> 1) + window->y * 8 + GLYPH_Y) |
@@ -168,7 +168,7 @@ s32 Glyph_Draw(struct Window *window, s32 character, s32 x, s32 y, s32 mode) {
       attr[1] = work->glyphTiles + index;
       sprite = &output->sprite;
     }
-    output->depth = 253;
+    output->depth = OAM_DEPTH_FRONT - 2;
     output->x = sprite->oam.x;
     output->y = sprite->oam.y;
     output->index = index;
@@ -220,7 +220,7 @@ s32 Glyph_DrawAsSprite(struct Window *window, s32 character, s32 x, s32 y) {
     return 0;
   index = (output - work->sprites) * 4;
   output->motion = WINDOW_SPRITE_MOTION_STILL;
-  output->kind = 0;
+  output->kind = WINDOW_SPRITE_GLYPH;
   width = Text_DrawGlyphPair(character, tiles);
   Dma_Set(tiles,
           (void *)(OBJ_VRAM0 + (work->glyphTiles + index) * TILE_SIZE_4BPP),
@@ -231,7 +231,7 @@ s32 Glyph_DrawAsSprite(struct Window *window, s32 character, s32 x, s32 y) {
       (x + (spacingX >> 1) + window->x * 8 + GLYPH_SPRITE_OFFSET_X) | 0x4000;
   ((u16 *)&output->sprite.oam)[2] = work->glyphTiles + index;
   sprite = (struct GlyphSprite *)&output->sprite;
-  output->depth = 253;
+  output->depth = OAM_DEPTH_FRONT - 2;
   output->x = sprite->x;
   output->y = sprite->y;
   output->index = index;
@@ -280,15 +280,15 @@ void *Glyph_AddBlankSprite(struct Window *window, s32 character, s32 x, s32 y) {
     return NULL;
   index = (output - work->sprites) * 4;
   output->motion = WINDOW_SPRITE_MOTION_STILL;
-  output->kind = 0;
-  vram = (void *)(0x06010000 + (work->glyphTiles + index) * 32);
+  output->kind = WINDOW_SPRITE_GLYPH;
+  vram = (void *)(OBJ_VRAM0 + (work->glyphTiles + index) * TILE_SIZE_4BPP);
   ((u16 *)&output->sprite.oam)[0] =
       y + (spacingY >> 1) + window->y * 8 + GLYPH_SPRITE_OFFSET_Y;
   ((u16 *)&output->sprite.oam)[1] =
       (x + (spacingX >> 1) + window->x * 8 + GLYPH_SPRITE_OFFSET_X) | 0x4000;
   ((u16 *)&output->sprite.oam)[2] = work->glyphTiles + index;
   sprite = &output->sprite;
-  output->depth = 253;
+  output->depth = OAM_DEPTH_FRONT - 2;
   output->x = sprite->oam.x;
   output->y = sprite->oam.y;
   output->index = index;
@@ -494,7 +494,7 @@ void WindowSprite_UpdateScaleAnimation(struct WindowSprite *windowSprite) {
           1;
     break;
   }
-  if (scale == 256) {
+  if (scale == Q_8_8(1)) {
     sprite->affineIndex = 0;
     sprite->affine = 0;
     sprite->x = (u16)windowSprite->x;
@@ -504,7 +504,7 @@ void WindowSprite_UpdateScaleAnimation(struct WindowSprite *windowSprite) {
     effect.scaleY = scale;
     effect.angle = 0;
     sprite->affineIndex = OamMatrix_AllocFromTransform(&effect);
-    if (scale > 256) {
+    if (scale > Q_8_8(1)) {
       sprite->affine = 3;
       // x read through a u16 pointer, which loads it after the -8 is built;
       // as (u16)windowSprite->x the two loads swap.
@@ -688,7 +688,7 @@ void WindowSprite_UpdateAll(void) {
         break;
       }
       if (output->active == WINDOW_SPRITE_MOTION_PAGE_ARROW) {
-        if (work->glyphResource != 0x60)
+        if (work->glyphResource != VRAM_CACHE_ENTRY_COUNT)
           Oam_AddSpriteAtDepth(sprite, OAM_DEPTH_FRONT);
       } else if (output->active == WINDOW_SPRITE_MOTION_ON_SCREEN) {
         s32 x = (s16)output->x;

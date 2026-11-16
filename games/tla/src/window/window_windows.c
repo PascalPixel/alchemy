@@ -71,7 +71,7 @@ void WindowSystem_InitField(void) {
                                                   sizeof(struct WindowWork));
   Iwram_ClearWordsEntry(work, sizeof(struct WindowWork));
   work->dirty = 1;
-  work->glyphResource = 99;
+  work->glyphResource = NO_GLYPH_RESOURCE;
   work->textPalette = WINDOW_PALETTE;
   Iwram_FillWords(work->tilemap, sizeof(work->tilemap),
                   WINDOW_TILE_PAIR(WINDOW_TILE_BLANK));
@@ -86,29 +86,35 @@ void WindowSystem_InitField(void) {
 void WindowSystem_InitBattle(s32 kind) {
   struct WindowWork *work;
   s32 i;
-  s32 WindowSystem_CopyTileLowerRows(u32 src, u32 dst) {
-    src &= 0x3ff;
-    dst &= 0x3ff;
-    Dma_Set((void *)(0x06000010 + src * 32), (void *)(0x06000000 + dst * 32),
+  // Copies pixel rows 4 to 6 of UI tile src to rows 0 to 2 of tile dst and
+  // clears the rest of dst.
+  s32 WindowSystem_CopyTileLowerRows(u32 sourceTile, u32 destinationTile) {
+    sourceTile &= TILE_NUMBER_MASK;
+    destinationTile &= TILE_NUMBER_MASK;
+    Dma_Set(BG_CHAR_BLOCK(0) + sourceTile * TILE_SIZE_4BPP + 16,
+            BG_CHAR_BLOCK(0) + destinationTile * TILE_SIZE_4BPP,
             DMA_COPY_HALFWORDS(8), REG_DMA3);
-    return Iwram_ClearWordsEntry((void *)(0x0600000c + dst * 32), 20);
+    return Iwram_ClearWordsEntry(
+        BG_CHAR_BLOCK(0) + destinationTile * TILE_SIZE_4BPP + 12, 20);
   }
 
   work = (struct WindowWork *)HeapSlot_AllocEwram(HEAP_SLOT_WINDOW,
                                                   sizeof(struct WindowWork));
   Iwram_ClearWordsEntry(work, sizeof(struct WindowWork));
   work->dirty = 1;
-  work->glyphResource = 99;
-  work->battleMode = 1;
+  work->glyphResource = NO_GLYPH_RESOURCE;
+  work->battleMode = WINDOW_BATTLE;
   work->textPalette = WINDOW_PALETTE;
   Iwram_FillWordsEntry(work->tilemap, sizeof(work->tilemap),
                        WINDOW_TILE_PAIR(WINDOW_TILE_BLANK));
   WindowSprite_InitializeFreeList();
   Task_Add((s32)WindowSystem_UploadTilemap, TASK_PASS_FRAME);
   WindowSystem_StartBattleUpdate(kind);
+  // Tiles 128 to 130 take the lower rows of the bottom border tiles.
   WindowSystem_CopyTileLowerRows(WINDOW_TILE_BORDER_BOTTOM_LEFT, 128);
   WindowSystem_CopyTileLowerRows(WINDOW_TILE_BORDER_BOTTOM, 129);
   WindowSystem_CopyTileLowerRows(WINDOW_TILE_BORDER_BOTTOM_RIGHT, 130);
+  // Tiles 128 to 130 are also the first three text tiles.
   {
     u8 mode = 4;
 
@@ -121,27 +127,28 @@ void WindowSystem_InitBattle(s32 kind) {
 /// tilemap (four tile rows) marked in the dirty bits to VRAM.
 void WindowSystem_UploadTilemap(void) {
   struct WindowWork *work = (struct WindowWork *)Ram_HeapSlots->windowWork;
-  u32 flags;
+  u32 bands;
   u8 *src;
   u8 *dst;
 
-  flags = work->dirty;
-  if (flags != 0) {
+  bands = work->dirty;
+  if (bands != 0) {
     if (!work->holdTilemapUpload) {
       src = (u8 *)work->tilemap;
       dst = (u8 *)BG_SCREEN_BLOCK(4);
-      if (flags & 1)
-        flags = 63;
-      flags &= 63;
-      flags >>= 1;
+      // Bit 0 asks for all five bands; after the shift bit n is band n.
+      if (bands & 1)
+        bands = 63;
+      bands &= 63;
+      bands >>= 1;
       do {
-        if (flags & 1)
+        if (bands & 1)
           Dma_Set(src, dst, DMA_COPY_WORDS(64), REG_DMA3);
-        flags >>= 1;
+        bands >>= 1;
         src += 256;
         dst += 256;
-      } while (flags);
-      work->dirty = flags;
+      } while (bands);
+      work->dirty = bands;
     }
   }
 }
@@ -573,7 +580,7 @@ struct UiChannelSlot *BattleMessage_Continue(struct Window *window, s32 entry,
     // Start the next text run without retaining the previous run's style.
     selected->colour = TEXT_COLOR_WHITE;
     selected->entry = entry;
-    lineSpacing = 10;
+    lineSpacing = TEXT_DEFAULT_LINE_SPACING;
     selected->countdown = zero;
     selected->outline = zero;
     selected->line = zero;

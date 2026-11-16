@@ -11,46 +11,48 @@
 #include "resource_ids.h"
 
 /// Facing tables: for each animation facing kind, the picture to draw for
-/// each sector of the facing angle (0x80 mirrors it), as The Broken Seal's.
+/// each sector of the facing angle, MIRRORED where the picture is drawn
+/// mirrored, as The Broken Seal's.
+#define MIRRORED(picture) (0x80 | (picture))
 // clang-format off
 const u8 gAnimationFacing_OnePicture[16] = {
-    0x00, 0x00, 0x00, 0x80, 0x80, 0x80, 0x80, 0x00,
-    0x80, 0x80, 0x80, 0x00, 0x00, 0x00, 0x00, 0x80,
+    0, 0, 0, MIRRORED(0), MIRRORED(0), MIRRORED(0), MIRRORED(0), 0,
+    MIRRORED(0), MIRRORED(0), MIRRORED(0), 0, 0, 0, 0, MIRRORED(0),
 };
 
 const u8 gAnimationFacing_FrontBackSwapped[8] = {
-    0x80, 0x80, 0x00, 0x00, 0x01, 0x01, 0x81, 0x81,
+    MIRRORED(0), MIRRORED(0), 0, 0, 1, 1, MIRRORED(1), MIRRORED(1),
 };
 
 const u8 gAnimationFacing_FrontBack[8] = {
-    0x00, 0x00, 0x80, 0x80, 0x01, 0x01, 0x81, 0x81,
+    0, 0, MIRRORED(0), MIRRORED(0), 1, 1, MIRRORED(1), MIRRORED(1),
 };
 
 const u8 gAnimationFacing_ThreePictures[16] = {
-    0x01, 0x01, 0x00, 0x00, 0x80, 0x80, 0x81, 0x81,
-    0x81, 0x81, 0x82, 0x82, 0x02, 0x02, 0x02, 0x01,
+    1, 1, 0, 0, MIRRORED(0), MIRRORED(0), MIRRORED(1), MIRRORED(1),
+    MIRRORED(1), MIRRORED(1), MIRRORED(2), MIRRORED(2), 2, 2, 2, 1,
 };
 
 /// Unused: nothing in The Lost Age reads the five-picture facings.
 const u8 gAnimationFacing_FivePictures[16] = {
-    0x01, 0x00, 0x00, 0x03, 0x03, 0x80, 0x80, 0x81,
-    0x81, 0x82, 0x82, 0x04, 0x04, 0x02, 0x02, 0x01,
+    1, 0, 0, 3, 3, MIRRORED(0), MIRRORED(0), MIRRORED(1),
+    MIRRORED(1), MIRRORED(2), MIRRORED(2), 4, 4, 2, 2, 1,
 };
 
 /// Six pictures over 64 sectors, laid out otherwise than The Broken Seal's.
 const u8 gAnimationFacing_SixPictures[64] = {
-    0x01, 0x01, 0x01, 0x01, 0x00, 0x00, 0x00, 0x00,
-    0x00, 0x00, 0x00, 0x00, 0x03, 0x03, 0x03, 0x03,
-    0x03, 0x03, 0x03, 0x83, 0x80, 0x80, 0x80, 0x80,
-    0x80, 0x80, 0x80, 0x80, 0x81, 0x81, 0x81, 0x81,
-    0x81, 0x81, 0x81, 0x81, 0x82, 0x82, 0x82, 0x82,
-    0x82, 0x82, 0x82, 0x82, 0x84, 0x04, 0x04, 0x04,
-    0x04, 0x04, 0x04, 0x04, 0x02, 0x02, 0x02, 0x02,
-    0x02, 0x02, 0x02, 0x02, 0x01, 0x01, 0x01, 0x01,
+    1, 1, 1, 1, 0, 0, 0, 0,
+    0, 0, 0, 0, 3, 3, 3, 3,
+    3, 3, 3, MIRRORED(3), MIRRORED(0), MIRRORED(0), MIRRORED(0), MIRRORED(0),
+    MIRRORED(0), MIRRORED(0), MIRRORED(0), MIRRORED(0), MIRRORED(1), MIRRORED(1), MIRRORED(1), MIRRORED(1),
+    MIRRORED(1), MIRRORED(1), MIRRORED(1), MIRRORED(1), MIRRORED(2), MIRRORED(2), MIRRORED(2), MIRRORED(2),
+    MIRRORED(2), MIRRORED(2), MIRRORED(2), MIRRORED(2), MIRRORED(4), 4, 4, 4,
+    4, 4, 4, 4, 2, 2, 2, 2,
+    2, 2, 2, 2, 1, 1, 1, 1,
 };
 
 const u8 gAnimationFacing_EightPictures[8] = {
-    0x02, 0x01, 0x00, 0x07, 0x06, 0x05, 0x04, 0x03,
+    2, 1, 0, 7, 6, 5, 4, 3,
 };
 
 /// The order in which the 64 pixels of a sprite's tile in OBJ VRAM dissolve;

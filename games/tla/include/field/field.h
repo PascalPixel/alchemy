@@ -792,7 +792,7 @@ extern const u16 gFieldEffect_CyclePatternWords[];
 /// The world map camera's pitch the scanline parameters were built for.
 extern u32 gScanlinePitch;
 
-extern const s16 gGroundParticle_Offsets[];
+extern const s16 gGroundParticles_Offsets[];
 
 void Actor_UpdateAllMotion(void);
 

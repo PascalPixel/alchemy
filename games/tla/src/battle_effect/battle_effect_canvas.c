@@ -617,7 +617,7 @@ void BattleEffect_RunEclipse(struct BattleEffectParams *args) {
 
           blit[0](canvas, sprites + gBattleEffect_MotePictures[n - 1],
                   (FIXEDtoINT(p->x)) - n / 2, (FIXEDtoINT(p->y)) - n, n, n * 2);
-          BattleEffectKernels_IntegrateVector2(p, 60, -toFIXED(1) / 4);
+          Particle_AdvanceWithGravity2D(p, 60, -toFIXED(1) / 4);
           p->variant--;
         }
       }
@@ -910,7 +910,7 @@ void BattleEffect_RunFormChange(struct BattleEffectParams *args, s32 kind) {
                     FIXED_INTEGER_PART(flash->x) - 16,
                     FIXED_INTEGER_PART(flash->y) - 48, FLASH_BURST_WIDTH,
                     FLASH_BURST_HEIGHT);
-            BattleEffectKernels_IntegrateVector2(flash, 62, -toFIXED(1) / 32);
+            Particle_AdvanceWithGravity2D(flash, 62, -toFIXED(1) / 32);
             flash->variant++;
           }
         }

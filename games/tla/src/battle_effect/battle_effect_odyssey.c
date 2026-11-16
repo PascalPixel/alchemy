@@ -210,7 +210,7 @@ void BattleEffect_RunOdyssey(struct BattleEffectParams *args) {
           draw[0](canvas, graphics + gBattleEffect_MotePictures[size - 1],
                   FIXED_INTEGER_PART(step->x) - size / 2,
                   FIXED_INTEGER_PART(step->y) - size, size, size * 2);
-          BattleEffectKernels_IntegrateVector2(step, 60, 0);
+          Particle_AdvanceWithGravity2D(step, 60, 0);
           step->variant--;
         }
         step++;
@@ -403,7 +403,7 @@ void BattleEffect_RunOdyssey(struct BattleEffectParams *args) {
         Matrix_RotateY(step->z);
         Render_TransformVertices(gBattleEffect_TriangleCorners, projected, 3);
         Render_DrawModelList(model);
-        BattleEffectKernels_IntegrateVector3(step, 62, 0);
+        Particle_AdvanceWithGravity3D(step, 62, 0);
         step++;
       }
     }

@@ -205,8 +205,8 @@ void BattleEffect_RunCybele(struct BattleEffectParams *args) {
           tall = gCybele_ThornHeights[cel];
           y -= tall >> 1;
           draw[0](canvas, cell, x, y, width, tall);
-          BattleEffectKernels_IntegrateVector2(thorn, PARTICLE_DAMPING_NONE,
-                                               toFIXED(1) / 16);
+          Particle_AdvanceWithGravity2D(thorn, PARTICLE_DAMPING_NONE,
+                                        toFIXED(1) / 16);
         }
       }
     }
@@ -506,7 +506,7 @@ void BattleEffect_RunCybele(struct BattleEffectParams *args) {
               draw[0](canvas, source, screen.x - (size >> 1),
                       screen.y - (size >> 1), size, size);
             }
-            BattleEffectKernels_IntegrateVector2(ember, 60, toFIXED(1) / 16);
+            Particle_AdvanceWithGravity2D(ember, 60, toFIXED(1) / 16);
             ember->variant++;
           }
         }

@@ -59,7 +59,7 @@ void Djinn_RunJupiterJoinEffect(s32 djinniId) {
     FieldParticle_Initialize(effect, SPRITE_PARTICLE, position.x, position.z);
     FieldParticle_SetCallback(effect, FieldEffect_RunAngledApproachPhases);
     FieldParticle_SetActorMode(effect, 7);
-    Sprite_SetAnimationColorModesFar(effect->object, (Random16() * 7) >> 16);
+    Sprite_SetAnimationColorModesFar(effect->actor, (Random16() * 7) >> 16);
     scale = Random16() / 3 + FIXED_ONE; // 1.0 to 1.33
     effect->scaleY = scale;
     effect->scaleX = scale;
@@ -155,11 +155,11 @@ void FieldEffect_UpdateMarsSpark(struct FieldParticle *effect) {
     effect->targetX = position.x;
     effect->targetZ = position.z;
     effect->acceleration = toFIXED(5);
-    effect->maxSpeed = toFIXED(5);
-    effect->limitTurnStep = state;
+    effect->speedMax = toFIXED(5);
+    effect->turnStepLimited = state;
     effect->state++;
 
-    ((struct Sprite *)effect->object)->image.priority =
+    ((struct Sprite *)effect->actor)->image.priority =
         owner->sprite->image.priority;
     effect->flags = 0;
     effect->age = 0;
@@ -167,7 +167,7 @@ void FieldEffect_UpdateMarsSpark(struct FieldParticle *effect) {
       Sound_PlayFar(SE_HEAVY_IMPACT);
   } else if (state == MARS_SPARK_RISING) {
     if ((s16)effect->age == 3) {
-      ((struct Sprite *)effect->object)->image.priority = 0;
+      ((struct Sprite *)effect->actor)->image.priority = 0;
       effect->flags = 4;
     }
     if (FieldParticle_HasPendingTarget(effect) == 0)
@@ -176,7 +176,7 @@ void FieldEffect_UpdateMarsSpark(struct FieldParticle *effect) {
     if (FieldParticle_HasPendingTarget(effect) == 0) {
       effect->originX = effect->x;
       effect->originZ = effect->z;
-      ((struct Sprite *)effect->object)->image.priority = 0;
+      ((struct Sprite *)effect->actor)->image.priority = 0;
       effect->flags = 4;
       effect->render = 0;
       effect->state++;

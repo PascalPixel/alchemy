@@ -113,8 +113,7 @@ void BattleEffect_RunBreak(struct BattleEffectParams *args) {
             draw(canvas, sheet + gBattleEffect_MotePictures[size - 1],
                  FIXED_INTEGER_PART(shard->x) - size / 2,
                  FIXED_INTEGER_PART(shard->y) - size, size, size * 2);
-            BattleEffectKernels_IntegrateVector2(shard, 62,
-                                                 gDrain_Gravities[i & 3]);
+            Particle_AdvanceWithGravity2D(shard, 62, gDrain_Gravities[i & 3]);
             shard->variant++;
             if (shard->velocityY > 0 && FIXED_INTEGER_PART(shard->y) > 112)
               shard->variant = -1;
@@ -273,11 +272,11 @@ void BattleEffect_RunDrainMotes(struct BattleEffectParams *args, s32 mode) {
             if (mode == 2) {
               draw(canvas, sheet, screen.x - size / 2, screen.y - size, size,
                    size * 2);
-              BattleEffectKernels_IntegrateVector3(mote, 61, 0);
+              Particle_AdvanceWithGravity3D(mote, 61, 0);
             } else {
               draw(canvas, sheet + gBattleEffect_MotePictures[size - 1],
                    screen.x - size / 2, screen.y - size, size, size * 2);
-              BattleEffectKernels_IntegrateVector3(mote, 62, 0);
+              Particle_AdvanceWithGravity3D(mote, 62, 0);
             }
 
             // Home in on the user once ten frames out.

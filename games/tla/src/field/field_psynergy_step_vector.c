@@ -11,15 +11,15 @@
 #include "field/field_sprite.h"
 
 /// Moves a 2D point by its velocity, damped and pulled by gravity
-/// (BattleEffect_IntegrateVector2).
+/// (Field_AdvanceWithGravity2D).
 void BattleEffect_StepVector2(s32 *vector, s32 damping, s32 gravity) {
-  BattleEffect_IntegrateVector2(vector, damping, gravity);
+  Field_AdvanceWithGravity2D(vector, damping, gravity);
 }
 
 /// Moves a 3D point by its velocity, damped and pulled by gravity
-/// (BattleEffect_IntegrateVector3).
+/// (Field_AdvanceWithGravity3D).
 void BattleEffect_StepVector3(s32 *vector, s32 damping, s32 gravity) {
-  BattleEffect_IntegrateVector3(vector, damping, gravity);
+  Field_AdvanceWithGravity3D(vector, damping, gravity);
 }
 
 /// Plots a pixel of colour color at (x, y) on the 64-pixel canvas.
@@ -513,7 +513,7 @@ void FieldEffect_DrawScaledActor(struct FieldParticle *object) {
   FIXED scale[2];
   s32 position[4];
 
-  sprite = object->object;
+  sprite = object->actor;
   offset = 0;
   if (object->flags & FIELD_PARTICLE_LIFTED_BY_Z)
     offset = toFIXED(508) - object->z;
@@ -557,15 +557,15 @@ void FieldParticle_UpdateMotion(struct FieldParticle *effect) {
     }
   }
   angle = Trig_Atan(dz, dx);
-  if (effect->limitTurnStep != 0) {
+  if (effect->turnStepLimited != 0) {
     heading = effect->heading;
     turn = angle - heading;
-    if ((turn >= 0 ? turn : -turn) >= effect->maxTurnStep) {
+    if ((turn >= 0 ? turn : -turn) >= effect->turnStepMax) {
       if (turn < 0) {
-        if (-turn > effect->maxTurnStep)
-          turn = -effect->maxTurnStep;
-      } else if (turn > effect->maxTurnStep) {
-        turn = effect->maxTurnStep;
+        if (-turn > effect->turnStepMax)
+          turn = -effect->turnStepMax;
+      } else if (turn > effect->turnStepMax) {
+        turn = effect->turnStepMax;
       }
       angle = turn + heading;
     }
@@ -573,8 +573,8 @@ void FieldParticle_UpdateMotion(struct FieldParticle *effect) {
   facing = (u16)angle;
   effect->heading = facing;
   speed = effect->speed + effect->acceleration;
-  if (speed > effect->maxSpeed)
-    speed = effect->maxSpeed;
+  if (speed > effect->speedMax)
+    speed = effect->speedMax;
   angle = (s16)facing;
   effect->speed = speed;
   effect->x += Iwram_MulFX(Trig_Cos(angle), speed);
@@ -604,7 +604,7 @@ void FieldParticle_SetPosition(struct FieldParticle *effect, s32 x, s32 z) {
 
 /// Sets the animation of a field effect sprite.
 void FieldParticle_SetActorMode(struct FieldParticle *effect, s32 mode) {
-  Sprite_StartAnimationFar(effect->object, mode);
+  Sprite_StartAnimationFar(effect->actor, mode);
 }
 
 /// Gives a field effect sprite its per-frame callback, starting at state 0.
@@ -626,12 +626,12 @@ void FieldParticle_Initialize(struct FieldParticle *effect, s32 kind, s32 x,
 
   Dma_Fill32(0, effect, sizeof *effect);
   animation = Sprite_CreateFar(kind);
-  effect->object = animation;
+  effect->actor = animation;
   if (animation != NULL)
     animation->image.priority = 0;
   FieldParticle_SetPosition(effect, x, z);
   effect->scaleX = FIXED_ONE;
-  effect->maxSpeed = toFIXED(2);
+  effect->speedMax = toFIXED(2);
   effect->scaleY = FIXED_ONE;
   effect->acceleration = FIXED_ONE;
   effect->originX = x;
@@ -640,11 +640,11 @@ void FieldParticle_Initialize(struct FieldParticle *effect, s32 kind, s32 x,
   // setup below still require a sprite. Callers also immediately use it, so
   // guarding this store alone would not establish allocation-failure recovery.
   {
-    struct Sprite *sprite = effect->object;
+    struct Sprite *sprite = effect->actor;
     sprite->flags = 0;
   }
   effect->stopAtTarget = 1;
-  effect->limitTurnStep = 1;
+  effect->turnStepLimited = 1;
   effect->updateMotion = 1;
   effect->render = 1;
   effect->active = 1;
@@ -655,7 +655,7 @@ void FieldParticle_Initialize(struct FieldParticle *effect, s32 kind, s32 x,
 
 /// Frees a field effect sprite and its sprite, clearing it to zero (inactive).
 void FieldEffect_ClearOwnedSlot(struct FieldParticle *effect) {
-  if (effect->object)
-    Sprite_DestroyFar(effect->object);
+  if (effect->actor)
+    Sprite_DestroyFar(effect->actor);
   Dma_Fill32(0, effect, sizeof *effect);
 }

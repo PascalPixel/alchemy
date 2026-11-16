@@ -333,7 +333,7 @@ void BattleEffect_RunHaures(struct BattleEffectParams *args) {
                   Render_ApplyProjectedPlacementFar(
                       work->sprites[HAURES_DOTS + (i & 1)], wingPlace,
                       gHaures_UnitScale, 0);
-                  BattleEffectKernels_IntegrateVector2(p, 63, toFIXED(1) / 8);
+                  Particle_AdvanceWithGravity2D(p, 63, toFIXED(1) / 8);
                   if (FIXED_INTEGER_PART(p->y) > 119) {
                     p->variant = 1;
                   }
@@ -742,7 +742,7 @@ void BattleEffect_RunHaures(struct BattleEffectParams *args) {
               Render_TransformVertices(cells + i * 16, verts, 4);
               Render_DrawModelList(model);
             }
-            BattleEffectKernels_IntegrateVector3(p, 62, 0);
+            Particle_AdvanceWithGravity3D(p, 62, 0);
             p->x += toFIXED(4);
           }
         }
@@ -841,7 +841,7 @@ void BattleEffect_RunHaures(struct BattleEffectParams *args) {
           draw[0](canvas, sprites + gBattleEffect_MotePictures[n - 1],
                   FIXED_INTEGER_PART(p->x) - n / 2,
                   FIXED_INTEGER_PART(p->y) - n, n, n * 2);
-          BattleEffectKernels_IntegrateVector2(p, 63, -toFIXED(1) / 2);
+          Particle_AdvanceWithGravity2D(p, 63, -toFIXED(1) / 2);
           p->variant--;
         }
       }

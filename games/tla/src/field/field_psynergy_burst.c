@@ -100,7 +100,7 @@ void FieldPsynergy_UpdateBurst(void) {
         sprite->x = particle->x + toFIXED(canvas->x);
         sprite->y = particle->y + toFIXED(canvas->y);
         EffectSprite_Draw(sprite);
-        BattleEffect_IntegrateVector2(&particle->x, 60, 0);
+        Field_AdvanceWithGravity2D(&particle->x, 60, 0);
       }
       particle->timer++;
       particle++;
@@ -221,7 +221,7 @@ void FieldPsynergy_UpdateBurst(void) {
         sprite->x = particle->x + toFIXED(canvas->x);
         sprite->y = particle->y + toFIXED(canvas->y);
         EffectSprite_Draw(sprite);
-        BattleEffect_IntegrateVector2(&particle->x, 60, 0);
+        Field_AdvanceWithGravity2D(&particle->x, 60, 0);
       }
       particle->timer++;
       particle++;

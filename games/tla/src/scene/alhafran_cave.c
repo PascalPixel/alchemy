@@ -43,7 +43,7 @@
 #include "scene/dehkan_plateau.h"
 #include "scene/gabomba_statue.h"
 
-void Pillars_Place(const u16 *table);
+void Pillar_Place(const u16 *table);
 void AlhafranCave_TakeLeadersLayer(void);
 extern s32 gAlhafranCave_GuardStepsAsideScript[];
 extern u32 gAlhafranCave_VisitorsLeaveScript[];
@@ -389,7 +389,7 @@ void AlhafranCave_SetUpJail(void) {
       ACTOR_PRIORITY_IGNORES_RISES;
   Actor_Get(ACTOR_JAIL_ROPE_OTHER_POLE)->priorityFlags |=
       ACTOR_PRIORITY_IGNORES_RISES;
-  Pillars_Place(gAlhafranCave_Pillars);
+  Pillar_Place(gAlhafranCave_Pillars);
   Actor_SetSpriteFlags(Actor_Get(ACTOR_JAIL_STAKE), 0);
   FieldActor_SetSpriteRotationById(ACTOR_JAIL_LEANING_PILLAR, TRIG_TURN / 16);
   Actor_SetAnimation(ACTOR_JAIL_FIRST_PILLAR_PIECE, 0);
@@ -810,7 +810,7 @@ void AlhafranCave_TakeLeadersLayer(void) { Actor_TakeLeaderLayer(); }
 /// While Eoleo's Psynergy runs, the actors shake.
 void AlhafranCave_ShakeUnderEoleosPower(void) { Actor_CycleSpriteColors(); }
 
-#include "shared/pillars_place.h"
+#include "shared/pillar_place.h"
 
 #include "shared/pound_sink_target.h"
 

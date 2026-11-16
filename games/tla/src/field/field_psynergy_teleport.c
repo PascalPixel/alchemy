@@ -249,10 +249,10 @@ void Teleport_PlaySparks(void) {
           EffectSprite_DrawAtWorldPosition(sprite, particle);
           // Reread in each arm: the two calls share one bl only this way.
           if (i & 1) {
-            BattleEffect_IntegrateVector3(&particle->x, 63, toFIXED(1) / 2);
+            Field_AdvanceWithGravity3D(&particle->x, 63, toFIXED(1) / 2);
             age = particle->timer;
           } else {
-            BattleEffect_IntegrateVector3(&particle->x, 63, -(toFIXED(5) / 8));
+            Field_AdvanceWithGravity3D(&particle->x, 63, -(toFIXED(5) / 8));
             age = particle->timer;
           }
         }

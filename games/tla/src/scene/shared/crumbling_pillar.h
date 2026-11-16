@@ -2,7 +2,7 @@
 /// The crumbling and pounded pillars of the Izumo Ruins and Dehkan Plateau:
 /// lists of (actor, flag) or (actor, kind, flag) entries ended by 0xffff,
 /// placed from their flags and stepped on, struck or pounded until they fall.
-#include "pillars_place.h"
+#include "pillar_place.h"
 
 #include "pound_sink_target.h"
 
@@ -10,7 +10,7 @@
 
 s32 MapCollision_FindOrAddTag(s32 layer, s32 shape, s32 height);
 
-void CrumblingPillars_Place(u16 *list) {
+void CrumblingPillar_Place(u16 *list) {
   struct MapWork *map = Ram_HeapSlots->mapGrid;
   struct Actor *leader;
   s32 height;
@@ -56,7 +56,7 @@ void CrumblingPillars_Place(u16 *list) {
   }
 }
 
-void CrumblingPillars_Step(u16 *list) {
+void CrumblingPillar_Step(u16 *list) {
   struct Actor *leader;
   struct Actor *pillar;
   FIXED position[3];
@@ -169,7 +169,7 @@ void CrumblingPillar_Prepare(s32 id) {
 
 void Actor_MoveToObject(s32 id, s32 target);
 
-void CrumblingPillars_PlaceWithStandIns(u16 *list) {
+void CrumblingPillar_PlaceWithStandIns(u16 *list) {
   struct MapWork *map = Ram_HeapSlots->mapGrid;
   u8 *grid;
 
@@ -227,7 +227,7 @@ void Actor_TakePlaceOf(struct Actor *object, struct Actor *target) {
   FieldActor_SetPositionAndResetMotion(target, 0, 0, 0);
 }
 
-void CrumblingPillars_StepWithStandIn(u16 *list) {
+void CrumblingPillar_StepWithStandIn(u16 *list) {
   struct Actor *leader;
   struct Actor *helper;
   struct Actor *pillar;

@@ -439,8 +439,8 @@ void BattleEffect_RunBoreas(struct BattleEffectParams *args) {
           draw(canvas, work->sheet + gBoreas_FallPictures[picture],
                FIXED_INTEGER_PART(crystal->x), y - gBoreas_FallHeights[picture],
                gBoreas_FallWidths[picture], gBoreas_FallHeights[picture]);
-          BattleEffectKernels_IntegrateVector2(crystal, PARTICLE_DAMPING_NONE,
-                                               toFIXED(1));
+          Particle_AdvanceWithGravity2D(crystal, PARTICLE_DAMPING_NONE,
+                                        toFIXED(1));
           if (FIXED_INTEGER_PART(crystal->y) > BATTLE_VIEW_HEIGHT &&
               crystal->velocityY > toFIXED(8)) {
             crystal->velocityY = -crystal->velocityY / 4;

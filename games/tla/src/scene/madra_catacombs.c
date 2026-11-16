@@ -168,9 +168,9 @@ s32 Actor_GetCellIndex(struct Actor *object);
 
 // Raises each listed actor's cells: the shape grid and the cell flags under it,
 // then lifts the leader if the new terrain is above the leader.
-#include "shared/pillars_raise.h"
+#include "shared/pillar_raise.h"
 
-#include "shared/pillars_lower_held_cells.h"
+#include "shared/pillar_lower_held_cells.h"
 
 #include "shared/held_actor_raise_cell.h"
 
@@ -432,7 +432,7 @@ void MadraCatacombs_PushClimbablePillar(void) {
   if (Leader_CanPushObjectAhead() != 0) {
     object = Actor_GetById(
         Field_FindNearbyTalkTarget(gMainRoutineWork.leaderActorId));
-    Pillars_LowerHeldCells(gMadraCatacombs_ClimbablePillar);
+    Pillar_LowerHeldCells(gMadraCatacombs_ClimbablePillar);
     Leader_PushObjectAhead();
     MadraCatacombs_SettleClimbablePillar(object);
   }
@@ -440,7 +440,7 @@ void MadraCatacombs_PushClimbablePillar(void) {
 
 /// When Move takes hold of the climbable pillar: its raised cells are lowered.
 void MadraCatacombs_StartMovingClimbablePillar(void) {
-  Pillars_LowerHeldCells(gMadraCatacombs_ClimbablePillar);
+  Pillar_LowerHeldCells(gMadraCatacombs_ClimbablePillar);
 }
 
 /// A door opens, sliding stone (mode 2) or swinging (mode 1), and the leader
@@ -646,7 +646,7 @@ void MadraCatacombs_SetUpVillage(void) {
     Actor_SetPosition(ACTOR_CLIMBABLE_PILLAR, 568, 280);
   Actor_GetById(ACTOR_CLIMBABLE_PILLAR)->priorityFlags &=
       ~ACTOR_PRIORITY_AUTOMATIC;
-  Pillars_Raise(gMadraCatacombs_ClimbablePillar);
+  Pillar_Raise(gMadraCatacombs_ClimbablePillar);
   FlagBlock_PlaceAll(gMadraCatacombs_Puddles);
   if (Event_GetFlag(FLAG_MADRA_CATACOMBS_DOORWAY_OPEN) != 0) {
     MapGrid_CopyCellsTo(75, 66, 97, 39, 2, 2);

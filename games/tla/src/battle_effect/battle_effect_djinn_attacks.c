@@ -187,7 +187,7 @@ void BattleEffect_RunMercury(struct BattleEffectParams *args) {
         draw[1](canvas, sheet + gBattleEffect_MotePictures[size - 1],
                 FIXED_INTEGER_PART(dot->x) - size / 2,
                 FIXED_INTEGER_PART(dot->y) - size, size, size * 2);
-        BattleEffectKernels_IntegrateVector2(dot, 62, toFIXED(1) / 8);
+        Particle_AdvanceWithGravity2D(dot, 62, toFIXED(1) / 8);
         dot->variant--;
       }
     }
@@ -316,7 +316,7 @@ void BattleEffect_RunJupiter(struct BattleEffectParams *args) {
         draw[1](canvas, sheet + gBattleEffect_MotePictures[size - 1],
                 FIXED_INTEGER_PART(dot->x) - size / 2,
                 FIXED_INTEGER_PART(dot->y) - size, size, size * 2);
-        BattleEffectKernels_IntegrateVector2(dot, 62, toFIXED(1) / 8);
+        Particle_AdvanceWithGravity2D(dot, 62, toFIXED(1) / 8);
         dot->variant--;
       }
     }
@@ -464,7 +464,7 @@ void BattleEffect_RunVenus(struct BattleEffectParams *args) {
         draw[1](canvas, sheet + gBattleEffect_MotePictures[size - 1],
                 FIXED_INTEGER_PART(dot->x) - size / 2,
                 FIXED_INTEGER_PART(dot->y) - size, size, size * 2);
-        BattleEffectKernels_IntegrateVector2(dot, 62, toFIXED(1) / 8);
+        Particle_AdvanceWithGravity2D(dot, 62, toFIXED(1) / 8);
         dot->variant--;
       }
     }
@@ -617,8 +617,8 @@ void BattleEffect_RunMars(struct BattleEffectParams *args) {
         draw[1](canvas, sheet + gBattleEffect_MotePictures[size - 1],
                 x - ((u32)size >> 1), FIXED_INTEGER_PART(spark->y) - size, size,
                 size * 2);
-        BattleEffectKernels_IntegrateVector2(spark, PARTICLE_DAMPING_NONE,
-                                             -toFIXED(1) / 8);
+        Particle_AdvanceWithGravity2D(spark, PARTICLE_DAMPING_NONE,
+                                      -toFIXED(1) / 8);
         wobble = spark->z;
         spark->z = wobble + TRIG_TURN / 32;
         if (spark->z > TRIG_ANGLE_MASK)

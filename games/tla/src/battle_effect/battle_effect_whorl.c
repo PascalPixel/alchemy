@@ -292,7 +292,7 @@ void BattleEffect_RunWaterColumn(struct BattleEffectParams *args, u32 mode) {
                 q->y += (pos[1] - q->velocityY) / 32;
                 q->z += (pos[2] - q->velocityZ) / 32;
               } else {
-                BattleEffectKernels_IntegrateVector3(q, 62, toFIXED(1) / 64);
+                Particle_AdvanceWithGravity3D(q, 62, toFIXED(1) / 64);
               }
               EffectPosition_ProjectPoint(q, &proj);
               blit[0](canvas, sprites + gBattleEffect_MotePictures[n - 1],
@@ -435,7 +435,7 @@ void BattleEffect_RunWaterColumn(struct BattleEffectParams *args, u32 mode) {
                         (s16)(FIXEDtoINT(q->x)) - 16,
                         (s16)(FIXEDtoINT(q->y)) - 32, FLASH_BURST_WIDTH,
                         FLASH_BURST_HEIGHT);
-                BattleEffectKernels_IntegrateVector2(q, 60, -toFIXED(1) / 8);
+                Particle_AdvanceWithGravity2D(q, 60, -toFIXED(1) / 8);
                 q->variant++;
               }
             }

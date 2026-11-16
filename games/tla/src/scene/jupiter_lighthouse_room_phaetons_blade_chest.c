@@ -90,7 +90,7 @@ const struct ActorPlacement *Scene_GetActorPlacements(void) {
   return gActorPlacements;
 }
 
-s32 CrackedTiles_Step();
+s32 CrackedTile_Step();
 struct Actor *Whirlwind_SpawnUpper();
 
 /// As Hover lifts the party: while the leader hovers, walls off the cell at
@@ -165,7 +165,7 @@ void JupiterLighthouse_RaiseUpperWhirlwind(s32 id) {
 /// below (exit 13).
 void JupiterLighthouse_StepOnLowerCrackedTile(s32 arg) {
   if (Actor_Get(gMainRoutineWork.leaderActorId)->y.fixed == 0 &&
-      CrackedTiles_Step(arg) != 0)
+      CrackedTile_Step(arg) != 0)
     FieldEvent_SetExitRequest(13);
 }
 
@@ -185,7 +185,7 @@ void JupiterLighthouse_StepOnUpperCrackedTile(s32 arg) {
       FieldActor_SetSpritePriority(gMainRoutineWork.leaderActorId, 3);
     if (x == 8 && z == 39)
       FieldActor_SetSpritePriority(gMainRoutineWork.leaderActorId, 3);
-    if (CrackedTiles_Step(arg) != 0)
+    if (CrackedTile_Step(arg) != 0)
       FieldEvent_SetExitRequest(14);
   }
 }
@@ -232,18 +232,18 @@ s32 Scene_Initialize(void) {
   gWhirlwindRiding = 0;
   Actor_Get(ACTOR_WHIRLWIND_SOURCE)->motionFlags = 0;
   if ((u16)(gMainRoutineWork.entrance - 6) <= 1) {
-    CrackedTiles_Find(33, 0x280, 0x380, 48, 1);
+    CrackedTile_Find(33, 0x280, 0x380, 48, 1);
     CrackedTile_PlaceLanding(
         0, 0,
         SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE));
   } else if (gMainRoutineWork.entrance == 3 || gMainRoutineWork.entrance == 5 ||
              gMainRoutineWork.entrance == 13) {
-    CrackedTiles_Find(43, 0x280, 0x380, 49, 1);
+    CrackedTile_Find(43, 0x280, 0x380, 49, 1);
     CrackedTile_PlaceLanding(
         -21, 32,
         SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE));
   } else {
-    CrackedTiles_Find(43, 0x280, 0x380, 0, 0);
+    CrackedTile_Find(43, 0x280, 0x380, 0, 0);
     CrackedTile_PlaceLanding(
         -2, -27,
         SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE));
@@ -433,18 +433,18 @@ extern const s32 *gFieldEffect_DurationScripts[];
 #define EFFECT_SCRIPTS gFieldEffect_DurationScripts
 #include "../field/field_effect_spawn.c"
 
-/// The cells CrackedTiles_Step watches, and the cell it copies over the one the
+/// The cells CrackedTile_Step watches, and the cell it copies over the one the
 /// leader steps on.
 #define CELL_PUSH_SLOT_ENTRY Oam_AddSpriteAtDepthClamped
 #include "../field/map_cell_sprite.c"
 
-#include "shared/cracked_tiles_find.h"
+#include "shared/cracked_tile_find.h"
 
 #include "shared/leader_center_in_cell.h"
 
 // Centers the leader on its cell, plays sound 161 and copies the cell below
 // the table's source cell over the leader's, keeping the source column's and
-// row's 64 bit; CrackedTiles_Step calls it the first time the leader steps on
+// row's 64 bit; CrackedTile_Step calls it the first time the leader steps on
 // one of the table's cells.
 #include "shared/cracked_tile_crack.h"
 
@@ -469,6 +469,6 @@ extern u32 gFieldEffect_MediumScript[];
 
 void GameFlag_SetByte(s32 flag, s32 value);
 
-#include "shared/cracked_tiles_step.h"
+#include "shared/cracked_tile_step.h"
 
 #include "shared/cracked_tile_place_landing.h"

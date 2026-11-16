@@ -261,7 +261,7 @@ void Ride_SpawnLandingForward();
 
 void Ride_SpawnLandingBackward();
 void FlameThrowers_Puff(void);
-void MarsLighthouseRoomF_BeginBlazeOnTorch(void);
+void MarsLighthouseRoomF_StartBlazeOnTorch(void);
 
 void MarsLighthouseRoomF_JumpGap(void);
 
@@ -400,7 +400,7 @@ const struct ActorPlacement *Scene_GetActorPlacements(void) {
 // (its mode 3 for 2 when it finds no torch); the rest of blaze.c's reading of
 // the mode would settle it.
 /// Blaze is cast at a torch.
-void MarsLighthouseRoomF_BeginBlazeOnTorch(void) {
+void MarsLighthouseRoomF_StartBlazeOnTorch(void) {
   struct FieldWork *event = Ram_HeapSlots->fieldWork;
 
   event->blazeLongSpray = 1;
@@ -1870,7 +1870,7 @@ extern const s32 *gFieldEffect_DurationScripts[];
 #define CELL_PUSH_SLOT_ENTRY Oam_AddSpriteAtDepthClamped
 #include "../field/map_cell_sprite.c"
 
-#include "shared/cracked_tiles_find.h"
+#include "shared/cracked_tile_find.h"
 
 #include "shared/leader_center_in_cell.h"
 
@@ -1878,7 +1878,7 @@ extern const s32 *gFieldEffect_DurationScripts[];
 
 // Centers the leader on its cell, plays sound 161 and copies the cell below
 // the table's source cell over the leader's, keeping the source column's and
-// row's 64 bit; CrackedTiles_Step calls it the first time the leader steps on
+// row's 64 bit; CrackedTile_Step calls it the first time the leader steps on
 // one of the table's cells.
 #include "shared/cracked_tile_crack.h"
 
@@ -1894,7 +1894,7 @@ void GameFlag_SetByte(s32 flag, s32 value);
 
 /// The leader on a cracked tile: the first time it cracks, the next it gives
 /// way and he falls through.
-s32 CrackedTiles_Step(void) {
+s32 CrackedTile_Step(void) {
   struct Actor *object = Actor_Get(gMainRoutineWork.leaderActorId);
   s32 x = FIELD_CELL(object->x.fixed);
   s32 z = FIELD_CELL(object->z.fixed);
@@ -2724,7 +2724,7 @@ LATE_DATA struct Trigger gMarsLighthouseRoomF_Room1Triggers[] = {
     {PSYNERGY_PHASE_ON_CELL(ABILITY_BURST, PSYNERGY_PHASE_ACTS), 20, FLAG_WEST_WALL_BURST, EVENT(MarsLighthouseRoomF_BurstWestWall)},
     {PSYNERGY_PHASE_ON_CELL(ABILITY_BURST, PSYNERGY_PHASE_ACTS), 21, FLAG_EAST_WALL_BURST, EVENT(MarsLighthouseRoomF_BurstEastWall)},
     {PSYNERGY_PHASE_ON_CELL(ABILITY_BURST, PSYNERGY_PHASE_ACTS), 22, FLAG_CENTER_WALL_BURST, EVENT(MarsLighthouseRoomF_BurstCenterWall)},
-    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_BLAZE, PSYNERGY_PHASE_BEFORE_CAST), 9, CONDITION_ALWAYS, EVENT(MarsLighthouseRoomF_BeginBlazeOnTorch)},
+    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_BLAZE, PSYNERGY_PHASE_BEFORE_CAST), 9, CONDITION_ALWAYS, EVENT(MarsLighthouseRoomF_StartBlazeOnTorch)},
     {PSYNERGY_PHASE_ON_ACTOR(ABILITY_BLAZE, PSYNERGY_PHASE_HITS), 11, CONDITION_ALWAYS, EVENT(MarsLighthouseRoomF_BlazeTorch)},
     {PSYNERGY_PHASE_ON_ACTOR(ABILITY_BLAZE, PSYNERGY_PHASE_AFTER_END), 11, CONDITION_ALWAYS, EVENT(MarsLighthouseRoomF_WatchFireballCrackWall)},
     {TRIGGER_TABLE_END},
@@ -2771,7 +2771,7 @@ LATE_DATA struct Trigger gMarsLighthouseRoomF_Room2Triggers[] = {
     {STEP_TRIGGER_WALKING, 33, CONDITION_ALWAYS, EVENT(MarsLighthouseRoomF_PushPipeOrJump)},
     {TRIGGER_STEP, 33, CONDITION_ALWAYS, EVENT(MarsLighthouseRoomF_KnockBackIfHit)},
     {TRIGGER_STEP, STEP_TRIGGER_FLAME_HIT, CONDITION_ALWAYS, EVENT(MarsLighthouseRoomF_KnockBack)},
-    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_BLAZE, PSYNERGY_PHASE_BEFORE_CAST), 17, CONDITION_ALWAYS, EVENT(MarsLighthouseRoomF_BeginBlazeOnTorch)},
+    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_BLAZE, PSYNERGY_PHASE_BEFORE_CAST), 17, CONDITION_ALWAYS, EVENT(MarsLighthouseRoomF_StartBlazeOnTorch)},
     {PSYNERGY_PHASE_ON_ACTOR(ABILITY_BLAZE, PSYNERGY_PHASE_HITS), 16, CONDITION_ALWAYS, EVENT(MarsLighthouseRoomF_LightFlameThrower)},
     {PSYNERGY_PHASE_ON_ACTOR(ABILITY_BLAZE, PSYNERGY_PHASE_AFTER_END), 16, CONDITION_ALWAYS, EVENT(MarsLighthouseRoomF_WatchFlameThrower)},
     {PSYNERGY_ON_ACTOR(ABILITY_FROST), 11, FLAG_UPPER_PUDDLE_FROZEN, EVENT(MarsLighthouseRoomF_FrostUpperPuddle)},

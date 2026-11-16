@@ -906,7 +906,7 @@ void LemurianShip_ParchHold(void) {
 }
 
 /// Settles the field's pending actions as Parch is cast.
-void LemurianShip_BeginParch(void) {
+void LemurianShip_StartParch(void) {
   Event_Start();
   Event_ResolvePendingActions(0);
   Event_ResolvePendingActions(0);
@@ -2217,7 +2217,7 @@ struct Trigger gLemurianShip_HoldTriggers[] = {
     {TRIGGER_EXIT, 3, CONDITION_ALWAYS, 3},
     {TRIGGER_EXIT, 4, CONDITION_ALWAYS, 4},
     {TRIGGER_TALK, ACTOR_HOLD_JELLY_A, CONDITION_ALWAYS, EVENT(LemurianShip_FightAquaHydra)},
-    {PSYNERGY_PHASE_ON_CELL(ABILITY_PARCH, PSYNERGY_PHASE_FIRST), 255, CONDITION_ALWAYS, EVENT(LemurianShip_BeginParch)},
+    {PSYNERGY_PHASE_ON_CELL(ABILITY_PARCH, PSYNERGY_PHASE_FIRST), 255, CONDITION_ALWAYS, EVENT(LemurianShip_StartParch)},
     {PSYNERGY_PHASE_ON_CELL(ABILITY_PARCH, PSYNERGY_PHASE_ACTS), 255, CONDITION_ALWAYS, EVENT(LemurianShip_ParchHold)},
     {TRIGGER_TABLE_END},
 };

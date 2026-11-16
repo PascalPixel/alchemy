@@ -728,9 +728,9 @@ void TundariaTower_BurstIcyWall(s32 mode, s32 cue) {
     GameFlag_Set(FLAG_ICY_WALL_BURST);
   }
   if (mode == 2)
-    Rocks_Spawn(toFIXED(232), toFIXED(16), toFIXED(280), 2);
+    Rock_Spawn(toFIXED(232), toFIXED(16), toFIXED(280), 2);
   if (mode == 3)
-    Rocks_Spawn(toFIXED(232), toFIXED(16), toFIXED(280), 30);
+    Rock_Spawn(toFIXED(232), toFIXED(16), toFIXED(280), 30);
   if (cue == 999)
     TundariaTower_EndFallingRocks();
 }
@@ -1568,7 +1568,7 @@ struct RockWork {
 
 // Spawns count rocks around (x, y, z), each pushed out at a random angle and
 // thrown up and out along it.
-#include "shared/rocks_spawn.h"
+#include "shared/rock_spawn.h"
 
 /// The falling rocks' setup: loads their picture, sets up 64 small sprites,
 /// marks each rock idle and starts the task that spawns them.

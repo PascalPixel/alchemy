@@ -664,7 +664,7 @@ void BattleEffect_RunDjinnHeal(struct BattleEffectParams *args) {
         size = 9 - (screen.depth - 250) / 64;
         callbacks[0](canvas, sheet + gBattleEffect_MotePictures[size - 1],
                      screen.x - size / 2, screen.y - size, size, size * 2);
-        BattleEffectKernels_IntegrateVector3(spark, 60, 0);
+        Particle_AdvanceWithGravity3D(spark, 60, 0);
         if (frame > i + 30) {
           s32 dx = -spark->x >> 8;
           s32 dy = -spark->y >> 8;

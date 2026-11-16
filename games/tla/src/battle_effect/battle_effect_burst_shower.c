@@ -944,7 +944,7 @@ void BattleEffect_RunBurstShower(struct BattleEffectParams *args, u32 mode) {
             screen.x >>= 1;
             pair[0](canvas, sheet + gBattleEffect_MotePictures[5], screen.x - 3,
                     screen.y - height / 2, 6, height);
-            BattleEffectKernels_IntegrateVector3(mote, 62, 0);
+            Particle_AdvanceWithGravity3D(mote, 62, 0);
             if (frame > i + 16) {
               s32 dx = (object->x - mote->x) >> 7;
               s32 dy = (object->y + half - mote->y) >> 8;

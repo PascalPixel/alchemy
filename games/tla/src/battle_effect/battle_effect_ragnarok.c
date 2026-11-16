@@ -203,8 +203,8 @@ void BattleEffect_RunRagnarok(struct BattleEffectParams *args) {
             s32 y;
             s32 size;
 
-            BattleEffectKernels_IntegrateVector2(spark, PARTICLE_DAMPING_NONE,
-                                                 toFIXED(1) / 16);
+            Particle_AdvanceWithGravity2D(spark, PARTICLE_DAMPING_NONE,
+                                          toFIXED(1) / 16);
             spark->variant--;
             y = spark->y;
             if (y > toFIXED(108)) {
@@ -578,8 +578,8 @@ void BattleEffect_RunFallingSword(struct BattleEffectParams *args, s32 mode) {
           s32 y;
           s32 size;
 
-          BattleEffectKernels_IntegrateVector2(spark, PARTICLE_DAMPING_NONE,
-                                               toFIXED(1) / 8);
+          Particle_AdvanceWithGravity2D(spark, PARTICLE_DAMPING_NONE,
+                                        toFIXED(1) / 8);
           y = spark->y;
           spark->variant--;
           if (y > toFIXED(108)) {

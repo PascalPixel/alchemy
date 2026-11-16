@@ -311,7 +311,7 @@ void MagmaRockInside_DecompressTaggedLz(void *entry, void *destination);
 void MagmaRockInside_InitRockSprite(struct EffectSprite *sprite, s32 width,
                                     s32 height, u32 attributes, s32 tile);
 
-void Particles_UpdateFalling(void);
+void Particle_UpdateFalling(void);
 
 void MagmaRockInside_FightFury(void);
 
@@ -2710,7 +2710,7 @@ s32 MapCollision_FindOrAddTag(s32 unused, s32 key, s32 value);
 
 // On entering, sets each listed pillar from its two flags, then lifts the
 // leader onto the ground under it.
-#include "shared/pillars_restore_raised.h"
+#include "shared/pillar_restore_raised.h"
 
 #include "shared/traps_check.h"
 
@@ -2758,7 +2758,7 @@ void MagmaRockInside_CrumblePillar(const void *data, s32 id) {
 // halfword pairs: flag + 1 set parks the actor at (0, 0); otherwise its cell
 // gets attributeB 128 and its shape-grid byte is rewritten, and flag set makes
 // it copy actor 9's visual attributes.
-#include "shared/pillars_restore.h"
+#include "shared/pillar_restore.h"
 
 /// Puts an actor where another stands and moves the other away.
 void MagmaRockInside_TakePlaceOf(struct Actor *object, struct Actor *target) {
@@ -2927,7 +2927,7 @@ void MagmaRockInside_SetLeaderCellShape(s32 heightOffset, s32 layer) {
 void BattleEffect_StepVector3(struct Particle *particle, s32 damping,
                               s32 gravity);
 
-#include "shared/particles_update_falling.h"
+#include "shared/particle_update_falling.h"
 
 /// The falling rocks' work: their tiles, 64 rocks and their sprites, in a
 /// ring that next walks round.
@@ -3011,14 +3011,14 @@ void MagmaRockInside_StartFallingRocks(void) {
 
     work->next = zero;
   }
-  FieldTask_AddFrame(Particles_UpdateFalling, TASK_PASS_VBLANK);
+  FieldTask_AddFrame(Particle_UpdateFalling, TASK_PASS_VBLANK);
 }
 
 /// Ends the falling rocks: removes their task and frees their picture and work.
 void MagmaRockInside_EndFallingRocks(void) {
   struct RockWork *work = Ram_HeapSlots->menuWork;
 
-  FieldTask_Remove(Particles_UpdateFalling);
+  FieldTask_Remove(Particle_UpdateFalling);
   VramCache_FreeEntry(work->resource);
   HeapSlot_Release(HEAP_SLOT_MENU);
 }

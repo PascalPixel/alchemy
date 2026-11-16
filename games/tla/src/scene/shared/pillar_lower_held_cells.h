@@ -2,7 +2,7 @@
 /// each listed actor it is: the shape grid takes the shape for its new height
 /// and the cell flags under it are cleared; the field work keeps the actor as
 /// its moved block.
-void Pillars_LowerHeldCells(u16 *list) {
+void Pillar_LowerHeldCells(u16 *list) {
   struct Actor *held = Leader_FindActorAhead();
   struct FieldWork *work = Ram_HeapSlots->fieldWork;
   u8 *grid;

@@ -295,7 +295,7 @@ extern s32 gProx_LeaderWalksSouth[];
 extern s32 gProx_KradenWalksSouth[];
 extern s32 gProx_JennaRunsAhead[];
 void Leader_StopIfPending(void);
-void Particles_UpdateFalling(void);
+void Particle_UpdateFalling(void);
 
 void Prox_MercuryDjinniJoins(void);
 
@@ -317,7 +317,7 @@ void Prox_MoldHidesInSnow(void);
 
 /// Scoop on the pile of snow digs Mold out again.
 void Prox_ScoopUpMold(void);
-void Prox_BeginScoop(void);
+void Prox_StartScoop(void);
 void Prox_EndScoop(void);
 
 void Prox_OpenHouseDoorA(void);
@@ -1190,7 +1190,7 @@ void Prox_ScoopUpMold(void) {
 
 /// Scoop on the black dot under the boulder: the ground there is dug out of the
 /// map's collision while it is cast.
-void Prox_BeginScoop(void) { MapGrid_CopyCellAttributes(25, 2, 1, 1, 25, 9); }
+void Prox_StartScoop(void) { MapGrid_CopyCellAttributes(25, 2, 1, 1, 25, 9); }
 
 /// After the Scoop, the dug ground's collision is filled back in.
 void Prox_EndScoop(void) { MapGrid_CopyCellAttributes(25, 3, 1, 1, 25, 9); }
@@ -2361,7 +2361,7 @@ void EffectSprite_DrawAtWorldPosition(struct ParticleSprite *sprite,
 void BattleEffect_StepVector3(struct Particle *particle, s32 damping,
                               s32 gravity);
 
-#include "shared/particles_update_falling.h"
+#include "shared/particle_update_falling.h"
 
 /// The falling rocks' work: their tiles, 64 rocks and their sprites, in a
 /// ring that next walks round.
@@ -2376,7 +2376,7 @@ struct RockWork {
 
 /// Spawns count rocks around (x, y, z), each pushed out at a random angle and
 /// thrown up and out along it.
-#include "shared/rocks_spawn.h"
+#include "shared/rock_spawn.h"
 #undef FIELD_AT
 
 /// The overlay's call to EffectSprite_Init: one rock's sprite, its size,
@@ -2415,14 +2415,14 @@ UNUSED void Prox_StartFallingRocks(void) {
 
     work->next = zero;
   }
-  FieldTask_AddFrame(Particles_UpdateFalling, TASK_PASS_VBLANK);
+  FieldTask_AddFrame(Particle_UpdateFalling, TASK_PASS_VBLANK);
 }
 
 /// Unused: stops the falling rocks and frees their tiles and work.
 UNUSED void Prox_EndFallingRocks(void) {
   struct RockWork *work = Ram_HeapSlots->menuWork;
 
-  FieldTask_Remove(Particles_UpdateFalling);
+  FieldTask_Remove(Particle_UpdateFalling);
   VramCache_FreeEntry(work->resource);
   HeapSlot_Release(HEAP_SLOT_MENU);
 }
@@ -2765,7 +2765,7 @@ struct Trigger gProx_MoldTriggers[] = {
     {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 4, CONDITION_ALWAYS, EVENT(Prox_OpenUpperHouseDoor)},
     {TRIGGER_STEP, 9, FLAG_MOLD_HID_IN_SNOW, EVENT(Prox_MoldHidesInSnow)},
     {TRIGGER_STEP, 10, CONDITION_ALWAYS, EVENT(Leader_SlideOnIce)},
-    {PSYNERGY_PHASE_ON_CELL(ABILITY_SCOOP, PSYNERGY_PHASE_BEFORE_CAST), 255, CONDITION_ALWAYS, EVENT(Prox_BeginScoop)},
+    {PSYNERGY_PHASE_ON_CELL(ABILITY_SCOOP, PSYNERGY_PHASE_BEFORE_CAST), 255, CONDITION_ALWAYS, EVENT(Prox_StartScoop)},
     {PSYNERGY_PHASE_ON_CELL(ABILITY_SCOOP, PSYNERGY_PHASE_AFTER_CAST), 255, CONDITION_ALWAYS, EVENT(Prox_EndScoop)},
     {PSYNERGY_PHASE_ON_CELL(ABILITY_SCOOP, PSYNERGY_PHASE_ACTS), 8, CONDITION_ALWAYS, EVENT(Prox_ScoopUpMold)},
     {TRIGGER_RAISED, RAISED_MOLD_JOINS, FLAG_MARS_BEACON_LIT, EVENT(Prox_MoldJoins)},

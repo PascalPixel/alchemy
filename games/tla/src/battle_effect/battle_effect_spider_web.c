@@ -677,7 +677,7 @@ void BattleEffect_RunUlysses(struct BattleEffectParams *args) {
             blit[1](canvas, sprites + gBattleEffect_FlarePictures[n - 1],
                     FIXEDtoINT(q->x) - n, FIXEDtoINT(q->y) - n, n * 2, n * 2);
           }
-          BattleEffectKernels_IntegrateVector2(q, 60, toFIXED(1) / 8);
+          Particle_AdvanceWithGravity2D(q, 60, toFIXED(1) / 8);
           q->variant--;
         }
       }

@@ -155,7 +155,7 @@ void BattleEffect_RunHelmSplitter(struct BattleEffectParams *args) {
       spark = &sparks[i];
       if (spark->variant > 0) {
         spark->variant--;
-        BattleEffectKernels_IntegrateVector2(spark, 60, 0);
+        Particle_AdvanceWithGravity2D(spark, 60, 0);
         if (spark->y > toFIXED(104)) {
           spark->velocityY = -spark->velocityY / 2;
         } else if ((spark->x >= 0 && spark->x < toFIXED(127)) &&

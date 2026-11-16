@@ -220,7 +220,7 @@ void Actor_StartScript(struct Actor *object, const void *script);
 /// Starts a mote circling the beam of light at a random height, every third
 /// frame; every frame while FLAG_SCENE_TEMP_01 is set, which nothing in the
 /// hall sets.
-void Orbs_SpawnRising(void) {
+void Orb_SpawnRising(void) {
   struct Actor *center;
   struct Actor *effect;
   struct FieldSprite *sprite;
@@ -350,7 +350,7 @@ void JupiterLighthouse_ActivateTheLighthouse(void) {
   FieldEvent_Wait(40);
   JupiterLighthouse_BringInBeam(ACTOR_LOWER_BEAM);
   JupiterLighthouse_BringInBeam(ACTOR_UPPER_BEAM);
-  Task_AddFrame(Orbs_SpawnRising, TASK_PASS_VBLANK);
+  Task_AddFrame(Orb_SpawnRising, TASK_PASS_VBLANK);
   Event_PlaySound(SE_CLATTER);
   MapGrid_SetShake(6, 6, 1);
   PaletteFade_ApplySource(PALETTE_TINT_NONE, 0);
@@ -632,7 +632,7 @@ s32 Scene_Initialize(void) {
   if (Event_GetFlag(FLAG_JUPITER_LIGHTHOUSE_ACTIVATED)) {
     MapGrid_CopyCellsLayered(58, 99, 3, 3, 41, 99);
     MapGrid_CopyCellsLayered(123, 32, 1, 5, 106, 32);
-    Task_AddFrame(Orbs_SpawnRising, TASK_PASS_VBLANK);
+    Task_AddFrame(Orb_SpawnRising, TASK_PASS_VBLANK);
   }
   return 0;
 }
@@ -932,18 +932,18 @@ void Actor_SetSpriteFlags(struct Actor *object, u32 value);
 #undef EFFECT_SET_SCRIPT
 #undef EFFECT_SCRIPTS
 
-/// The cells CrackedTiles_Step watches, and the cell it copies over the one the
+/// The cells CrackedTile_Step watches, and the cell it copies over the one the
 /// leader steps on.
 #define CELL_PUSH_SLOT_ENTRY Oam_AddSpriteAtDepthClamped
 #include "../field/map_cell_sprite.c"
 
-#include "shared/cracked_tiles_find.h"
+#include "shared/cracked_tile_find.h"
 
 #include "shared/leader_center_in_cell.h"
 
 // Centers the leader on its cell, plays sound 161 and copies the cell below
 // the table's source cell over the leader's, keeping the source column's and
-// row's 64 bit; CrackedTiles_Step calls it the first time the leader steps on
+// row's 64 bit; CrackedTile_Step calls it the first time the leader steps on
 // one of the table's cells.
 #include "shared/cracked_tile_crack.h"
 
@@ -960,7 +960,7 @@ void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
 
 void GameFlag_SetByte(s32 flag, s32 value);
 
-#include "shared/cracked_tiles_step.h"
+#include "shared/cracked_tile_step.h"
 
 #include "shared/cracked_tile_place_landing.h"
 

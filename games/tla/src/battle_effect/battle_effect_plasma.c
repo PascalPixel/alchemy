@@ -145,7 +145,7 @@ void BattleEffect_RunPlasma(struct BattleEffectParams *args) {
       spark = &sparks[k];
       if (spark->variant > 0) {
         spark->variant--;
-        BattleEffectKernels_IntegrateVector2(spark, 60, toFIXED(1) / 16);
+        Particle_AdvanceWithGravity2D(spark, 60, toFIXED(1) / 16);
         if (spark->y > toFIXED(PILLAR_BASE_Y)) {
           spark->velocityY = -spark->velocityY / 2;
         } else {
@@ -363,7 +363,7 @@ void BattleEffect_RunSparkGroups(struct BattleEffectParams *args, s32 kind) {
         for (j = 0; j != SPARK_COUNT; j++) {
           struct Particle *spark = sparks + i * SPARK_COUNT + j;
           if (spark->variant > 0) {
-            BattleEffectKernels_IntegrateVector2(spark, 60, gravity);
+            Particle_AdvanceWithGravity2D(spark, 60, gravity);
             spark->variant--;
             if (spark->y > GROUND_Y) {
               spark->velocityY = -spark->velocityY / 2;

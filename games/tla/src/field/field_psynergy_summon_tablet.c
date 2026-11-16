@@ -84,7 +84,7 @@ struct ChasingMote {
       FIXED unusedAfterTargetZ; ///< no code names it
     };
     /// A spark: a position in the world and its velocity
-    /// (BattleEffect_IntegrateVector3's vector).
+    /// (Field_AdvanceWithGravity3D's vector).
     struct {
       FIXED position[3];
       FIXED velocity[3];
@@ -185,8 +185,7 @@ void SummonTablet_UpdateMotes(void) {
     if ((u32)mote->timer < 20) {
       sprite->oam.index = *tile + (mote->timer / 5 & 7) * 8;
       EffectSprite_DrawAtWorldPosition(sprite, mote->spark.position);
-      BattleEffect_IntegrateVector3(mote->spark.position, 63,
-                                    -(toFIXED(1) / 2));
+      Field_AdvanceWithGravity3D(mote->spark.position, 63, -(toFIXED(1) / 2));
       mote->timer++;
     }
   }

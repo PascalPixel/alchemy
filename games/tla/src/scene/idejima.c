@@ -21,7 +21,7 @@
 ///   (Idejima_RunAlexDeparture).
 ///
 /// While the island drifts, BG3's rows sway in a sine wave
-/// (Idejima_ComputeWaves, Idejima_ScrollWaves).
+/// (Idejima_CalculateWaves, Idejima_ScrollWaves).
 
 #include "battle/battle.h"
 #include "field/field_sequence_event.h"
@@ -121,7 +121,7 @@ s16 gIdejima_WaveBuffer BSS_DATA;
 
 void Idejima_ResetWaves(void);
 void Idejima_ScrollWaves(void);
-void Idejima_ComputeWaves(void);
+void Idejima_CalculateWaves(void);
 void Idejima_UseDriftPalette(void);
 void DriftScene_Prepare(void);
 void Idejima_PlaceTheSleepers(void);
@@ -828,7 +828,7 @@ void Idejima_ScrollWaves(void) {
 
 /// Fills the other table of gIdejima_WaveLines with BG3's scroll plus a sine
 /// of up to 2 pixels that moves down the screen a row each frame.
-void Idejima_ComputeWaves(void) {
+void Idejima_CalculateWaves(void) {
   struct MapLayer *layer = &Ram_HeapSlots->mapGrid->layers[0];
   s16 *line = gIdejima_WaveLines[gIdejima_WaveBuffer];
   s32 i;
@@ -1622,7 +1622,7 @@ s32 Scene_Initialize(void) {
 
   Idejima_ResetWaves();
   Task_AddFrame(Idejima_ScrollWaves, TASK_PASS_FRAME);
-  Task_AddFrame(Idejima_ComputeWaves, TASK_PASS_VBLANK);
+  Task_AddFrame(Idejima_CalculateWaves, TASK_PASS_VBLANK);
   {
     struct MainRoutineWork *party = &gMainRoutineWork;
 

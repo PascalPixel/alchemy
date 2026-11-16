@@ -907,7 +907,7 @@ void Actor_SetSpriteFlags(struct Actor *object, u32 value);
 #define CELL_PUSH_SLOT_ENTRY Oam_AddSpriteAtDepthClamped
 #include "../field/map_cell_sprite.c"
 
-#include "shared/cracked_tiles_find.h"
+#include "shared/cracked_tile_find.h"
 
 extern s32 gPaletteCycleFrame;
 extern s32 gPaletteCyclePausesInEvents;
@@ -919,7 +919,7 @@ void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
 
 // Centers the leader on its cell, plays sound 161 and copies the cell below
 // the table's source cell over the leader's, keeping the source column's and
-// row's 64 bit; CrackedTiles_Step calls it the first time the leader steps on
+// row's 64 bit; CrackedTile_Step calls it the first time the leader steps on
 // one of the table's cells.
 #include "shared/cracked_tile_crack.h"
 
@@ -940,7 +940,7 @@ void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
 
 #include "shared/cracked_tile_drop_in.h"
 
-#include "shared/cracked_tiles_step.h"
+#include "shared/cracked_tile_step.h"
 
 /// Entering by a cracked tile's fall: puts the leader and the camera in the
 /// cell below the one that gave way, offset by (dx, dz), drops it in, and sets

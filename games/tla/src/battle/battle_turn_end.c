@@ -396,30 +396,30 @@ s32 DjinnRecovery_CountDownSide(s32 side) {
 // label fits its text.
 #if LANGUAGE == LANGUAGE_JAPANESE
 // ねむりからさめた! ("wakes from slumber"), three before MsgResNormal.
-#define MSG_WAKES ((s32)&MsgResNormal - 3)
+#define WAKES_MESSAGE ((s32)&MsgResNormal - 3)
 // すばやさが もどった! ("Agility returns to normal"), after MsgDefNormal.
-#define MSG_AGI_NORMAL ((s32)&MsgDefNormal + 1)
+#define AGI_NORMAL_MESSAGE ((s32)&MsgDefNormal + 1)
 // われにかえった! ("regains consciousness"), two after MsgDefNormal.
-#define MSG_CONSCIOUS ((s32)&MsgDefNormal + 2)
+#define CONSCIOUS_MESSAGE ((s32)&MsgDefNormal + 2)
 // まぼろしを うちやぶった! ("sees clearly once again"), three before
 // MsgCharmConscious.
-#define MSG_CURE_DELUSION ((s32)&MsgCharmConscious - 3)
+#define CURE_DELUSION_MESSAGE ((s32)&MsgCharmConscious - 3)
 // エナジーふうじがとけた! ("Psynergy seal is gone"), two before
 // MsgCharmConscious.
-#define MSG_CURE_SEAL ((s32)&MsgCharmConscious - 2)
+#define CURE_SEAL_MESSAGE ((s32)&MsgCharmConscious - 2)
 // しびれがきえた! ("no longer stunned"), the message before MsgCharmConscious.
-#define MSG_CURE_STUN ((s32)&MsgCharmConscious - 1)
+#define CURE_STUN_MESSAGE ((s32)&MsgCharmConscious - 1)
 // リフレクトのこうかがきえた! ("Reflect no longer affects"), after
 // MsgRefrainEnd.
-#define MSG_REFLECT_END ((s32)&MsgRefrainEnd + 1)
+#define REFLECT_END_MESSAGE ((s32)&MsgRefrainEnd + 1)
 #else
-#define MSG_WAKES ((s32)&MsgWakes)
-#define MSG_AGI_NORMAL ((s32)&MsgAgiNormal)
-#define MSG_CONSCIOUS ((s32)&MsgConfusionConscious)
-#define MSG_CURE_DELUSION ((s32)&MsgCureDelusion)
-#define MSG_CURE_SEAL ((s32)&MsgCureSeal)
-#define MSG_CURE_STUN ((s32)&MsgCureStun)
-#define MSG_REFLECT_END ((s32)&MsgReflectEnd)
+#define WAKES_MESSAGE ((s32)&MsgWakes)
+#define AGI_NORMAL_MESSAGE ((s32)&MsgAgiNormal)
+#define CONSCIOUS_MESSAGE ((s32)&MsgConfusionConscious)
+#define CURE_DELUSION_MESSAGE ((s32)&MsgCureDelusion)
+#define CURE_SEAL_MESSAGE ((s32)&MsgCureSeal)
+#define CURE_STUN_MESSAGE ((s32)&MsgCureStun)
+#define REFLECT_END_MESSAGE ((s32)&MsgReflectEnd)
 #endif
 
 #define ANNOUNCE_END(test, message)                                            \
@@ -586,18 +586,18 @@ void Battle_ProcessTurnEnd(void) {
             BattleMessage_WaitForAdvance();
           }
         }
-        ANNOUNCE_END(BattleUnit_CountDownAgilityStage, MSG_AGI_NORMAL);
+        ANNOUNCE_END(BattleUnit_CountDownAgilityStage, AGI_NORMAL_MESSAGE);
         ANNOUNCE_END(BattleUnit_CountDownAttackStage, (s32)&MsgAtkNormal);
         ANNOUNCE_END(BattleUnit_CountDownDefenseStage, (s32)&MsgDefNormal);
         ANNOUNCE_END(BattleUnit_CountDownResistanceStage, (s32)&MsgResNormal);
-        ANNOUNCE_END(BattleUnit_CountDownDelusion, MSG_CURE_DELUSION);
-        ANNOUNCE_END(BattleUnit_CountDownConfusion, MSG_CONSCIOUS);
+        ANNOUNCE_END(BattleUnit_CountDownDelusion, CURE_DELUSION_MESSAGE);
+        ANNOUNCE_END(BattleUnit_CountDownConfusion, CONSCIOUS_MESSAGE);
         ANNOUNCE_END(BattleUnit_CountDownCharm, (s32)&MsgCharmConscious);
-        ANNOUNCE_END_POSE(BattleUnit_CountDownStun, MSG_CURE_STUN);
-        ANNOUNCE_END_POSE(BattleUnit_CountDownSleep, MSG_WAKES);
-        ANNOUNCE_END(BattleUnit_CountDownPsynergySeal, MSG_CURE_SEAL);
+        ANNOUNCE_END_POSE(BattleUnit_CountDownStun, CURE_STUN_MESSAGE);
+        ANNOUNCE_END_POSE(BattleUnit_CountDownSleep, WAKES_MESSAGE);
+        ANNOUNCE_END(BattleUnit_CountDownPsynergySeal, CURE_SEAL_MESSAGE);
         ANNOUNCE_END(BattleUnit_CountDownRegenerate, (s32)&MsgRefrainEnd);
-        ANNOUNCE_END(BattleUnit_CountDownReflect, MSG_REFLECT_END);
+        ANNOUNCE_END(BattleUnit_CountDownReflect, REFLECT_END_MESSAGE);
       }
     }
   }

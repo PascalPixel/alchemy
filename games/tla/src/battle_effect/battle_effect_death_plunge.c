@@ -165,7 +165,7 @@ void BattleEffect_RunDeathPlunge(struct BattleEffectParams *args) {
                   FIXED_INTEGER_PART(spark->x) - 16,
                   FIXED_INTEGER_PART(spark->y) - 32, FLASH_BURST_WIDTH,
                   FLASH_BURST_HEIGHT);
-          BattleEffectKernels_IntegrateVector2(spark, 62, -toFIXED(1) / 8);
+          Particle_AdvanceWithGravity2D(spark, 62, -toFIXED(1) / 8);
         }
         spark->variant++;
       }

@@ -505,14 +505,14 @@ void BattleEffect_FetchRectangleBlitters(s32 flip, void **out);
 void BattleCamera_Shake(s32 rangeX, u32 rangeY);
 /// Moves a particle one frame on the screen: its velocity scaled by `damping`
 /// sixty-fourths, then `gravity` added to its y speed.
-void BattleEffectKernels_IntegrateVector2(struct Particle *step, s32 damping,
-                                          s32 gravity);
+void Particle_AdvanceWithGravity2D(struct Particle *step, s32 damping,
+                                   s32 gravity);
 void Render_BuildQuadStrip(struct StripQuad *quad, s32 width, s32 height,
                            s32 count);
 /// Moves a particle one frame in three dimensions: its velocity scaled by
 /// `damping` sixty-fourths, then `gravity` added to its y speed.
-void BattleEffectKernels_IntegrateVector3(struct Particle *step, s32 damping,
-                                          s32 gravity);
+void Particle_AdvanceWithGravity3D(struct Particle *step, s32 damping,
+                                   s32 gravity);
 void BattleEffect_StartTiledCanvas(s32 bgControl);
 void BattleEffect_StartTiledCanvasFilled(s32 bgControl);
 void RagingHeat_FillGradientCanvas(void);

@@ -690,7 +690,7 @@ void BattleEffect_RunStatReduction(struct BattleEffectParams *args, s32 mode) {
                              STAT_REDUCTION_SHARD_PICTURES,
                          x, y, gStatChange_ShardWidths[cell],
                          gStatChange_ShardHeights[cell]);
-            BattleEffectKernels_IntegrateVector3(shard, 60, 0);
+            Particle_AdvanceWithGravity3D(shard, 60, 0);
           }
         }
       }

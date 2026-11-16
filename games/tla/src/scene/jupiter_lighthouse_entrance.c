@@ -319,7 +319,7 @@ extern const s32 *gFieldEffect_DurationScripts[];
 #define CELL_PUSH_SLOT_ENTRY Oam_AddSpriteAtDepthClamped
 #include "../field/map_cell_sprite.c"
 
-#include "shared/cracked_tiles_find_lower.h"
+#include "shared/cracked_tile_find_lower.h"
 
 #include "shared/leader_center_in_cell.h"
 
@@ -327,7 +327,7 @@ extern const s32 *gFieldEffect_DurationScripts[];
 
 // Centers the leader on its cell, plays sound 161 and copies the cell below
 // the table's source cell over the leader's, keeping the source column's and
-// row's 64 bit; CrackedTiles_Step calls it the first time the leader steps on
+// row's 64 bit; CrackedTile_Step calls it the first time the leader steps on
 // one of the table's cells.
 #include "shared/cracked_tile_crack.h"
 
@@ -361,6 +361,6 @@ extern u32 gFieldEffect_LongScript[];
 void CrackedTile_Crack();
 void CrackedTile_Fall();
 
-#include "shared/cracked_tiles_step.h"
+#include "shared/cracked_tile_step.h"
 
 #include "shared/cracked_tile_place_landing.h"

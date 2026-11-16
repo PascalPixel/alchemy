@@ -301,7 +301,7 @@ s32 Actor_HasArrived(struct Actor *object);
 
 void AirsRockInside_SetConeCells(struct Actor *object);
 
-void Pillars_Place(s16 *list) {
+void Pillar_Place(s16 *list) {
   s16 *entry;
 
   if ((u16)list[0] == 0xffff)

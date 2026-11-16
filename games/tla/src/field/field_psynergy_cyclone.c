@@ -628,7 +628,7 @@ void Blaze_UpdateSpray(void) {
     }
     if (work->hit != 0)
       break;
-    BattleEffect_IntegrateVector3(&particle->x, 64, work->gravity);
+    Field_AdvanceWithGravity3D(&particle->x, 64, work->gravity);
   }
 
   particle = work->puffMotion;

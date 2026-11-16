@@ -140,7 +140,7 @@ extern u32 gEmbers_Script[];
 
 void MarsLighthouseRoomM_LeaveLedge(void);
 
-void MarsLighthouseRoomM_BeginBlazeOnTorch(void);
+void MarsLighthouseRoomM_StartBlazeOnTorch(void);
 
 void MarsLighthouseRoomM_WatchBlazeReachFlame(void);
 
@@ -351,7 +351,7 @@ void MarsLighthouseRoomM_LeaveLedge(void) {
 // (its mode 3 for 2 when it finds no torch); the rest of blaze.c's reading of
 // the mode would settle it.
 /// Blaze is cast at the ledge's torch.
-void MarsLighthouseRoomM_BeginBlazeOnTorch(void) {
+void MarsLighthouseRoomM_StartBlazeOnTorch(void) {
   struct FieldWork *event = Ram_HeapSlots->fieldWork;
 
   event->blazeLongSpray = 1;
@@ -1477,7 +1477,7 @@ s32 gMarsLighthouseRoomM_LedgeCycleFrame = -1;
 
 struct Trigger gMarsLighthouseRoomM_Room6Triggers[] = {
     {TRIGGER_STEP, 1, CONDITION_ALWAYS, EVENT(MarsLighthouseRoomM_LeaveLedge)},
-    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_BLAZE, PSYNERGY_PHASE_BEFORE_CAST), 8, CONDITION_ALWAYS, EVENT(MarsLighthouseRoomM_BeginBlazeOnTorch)},
+    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_BLAZE, PSYNERGY_PHASE_BEFORE_CAST), 8, CONDITION_ALWAYS, EVENT(MarsLighthouseRoomM_StartBlazeOnTorch)},
     {PSYNERGY_PHASE_ON_ACTOR(ABILITY_BLAZE, PSYNERGY_PHASE_HITS), 10, CONDITION_ALWAYS, EVENT(MarsLighthouseRoomM_WatchBlazeReachFlame)},
     {PSYNERGY_PHASE_ON_ACTOR(ABILITY_BLAZE, PSYNERGY_PHASE_AFTER_END), 10, CONDITION_ALWAYS, EVENT(MarsLighthouseRoomM_LightFlame)},
     {TRIGGER_TABLE_END},

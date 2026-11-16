@@ -1,5 +1,5 @@
 /// Steps the vents: each active one puffs every ten frames.
-void Vents_Update(void) {
+void Vent_Update(void) {
   struct VentWork *work = VENT_WORK;
   struct VentEntry *entry = work->entries;
   s32 i;

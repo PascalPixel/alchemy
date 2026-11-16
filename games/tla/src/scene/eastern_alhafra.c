@@ -159,7 +159,7 @@ struct PushTarget {
 };
 
 void EasternAlhafra_PlaceClearedDebris(void);
-void Rocks_Spawn(s32, s32, s32, s32);
+void Rock_Spawn(s32, s32, s32, s32);
 
 void EasternAlhafra_StartFallingRocks(void);
 void EasternAlhafra_EndFallingRocks(void);
@@ -193,7 +193,7 @@ extern s16 gEasternAlhafra_CabinDoorFrames[];
 void EasternAlhafra_InitializeRockSprite(struct EffectSprite *sprite, s32 width,
                                          s32 height, u32 attributes, s32 tile);
 
-void Particles_UpdateFalling(void);
+void Particle_UpdateFalling(void);
 
 extern u16 gPushKinds[];
 
@@ -248,9 +248,9 @@ void EasternAlhafra_BurstMastBlock(s32 mode, s32 id) {
     EasternAlhafra_PlaceClearedDebris();
   }
   if (mode == 2)
-    Rocks_Spawn(toFIXED(498), toFIXED(16), toFIXED(412), 2);
+    Rock_Spawn(toFIXED(498), toFIXED(16), toFIXED(412), 2);
   if (mode == 3)
-    Rocks_Spawn(toFIXED(498), toFIXED(16), toFIXED(412), 30);
+    Rock_Spawn(toFIXED(498), toFIXED(16), toFIXED(412), 30);
   if (id == 0x3e7)
     EasternAlhafra_EndFallingRocks();
 }
@@ -713,7 +713,7 @@ void EasternAlhafra_StartWave(void) {
 
 #define EVENT_WORK ((u8 *)Ram_HeapSlots->fieldWork)
 
-void Pillars_Place();
+void Pillar_Place();
 
 s32 Scene_Initialize(void) {
   struct Actor *object;
@@ -806,7 +806,7 @@ s32 Scene_Initialize(void) {
   Tightrope_Place(0, ACTOR_TIGHTROPE_START, ACTOR_TIGHTROPE_END);
   Actor_SetSpriteFlags(Actor_Get(ACTOR_TIGHTROPE_START), 0);
   Actor_SetSpriteFlags(Actor_Get(ACTOR_TIGHTROPE_END), 0);
-  Pillars_Place(gEasternAlhafra_PoundCone);
+  Pillar_Place(gEasternAlhafra_PoundCone);
   Actor_SetSpriteFlags(Actor_Get(ACTOR_CONE), 0);
   flag = Event_GetFlag(FLAG_CONE_POUNDED);
   if (flag == 0) {
@@ -2371,7 +2371,7 @@ void EasternAlhafra_MayorFindsShipGone(void) {
 
 void BattleEffect_StepVector3(struct Particle *particle, s32 damping, s32 step);
 
-#include "shared/particles_update_falling.h"
+#include "shared/particle_update_falling.h"
 
 /// The falling rocks' work: their tiles, 64 rocks and their sprites, in a
 /// ring that next walks round.
@@ -2386,7 +2386,7 @@ struct RockWork {
 
 /// Spawns count rocks around (x, y, z), each pushed out at a random angle and
 /// thrown up and out along it.
-#include "shared/rocks_spawn.h"
+#include "shared/rock_spawn.h"
 
 /// Loads the falling rocks' tiles and sprites into the menu heap slot and
 /// starts their update.
@@ -2419,14 +2419,14 @@ void EasternAlhafra_StartFallingRocks(void) {
 
     work->next = zero;
   }
-  FieldTask_AddFrame(Particles_UpdateFalling, TASK_PASS_VBLANK);
+  FieldTask_AddFrame(Particle_UpdateFalling, TASK_PASS_VBLANK);
 }
 
 /// Stops the falling rocks and frees their tiles and work.
 void EasternAlhafra_EndFallingRocks(void) {
   struct RockWork *work = Ram_HeapSlots->menuWork;
 
-  FieldTask_Remove(Particles_UpdateFalling);
+  FieldTask_Remove(Particle_UpdateFalling);
   VramCache_FreeEntry(work->resource);
   HeapSlot_Release(HEAP_SLOT_MENU);
 }
@@ -2662,7 +2662,7 @@ void PushTarget_Push(struct PushTarget target) {
 
 #include "shared/actor_stop_at_push_target.h"
 
-void Pillars_Place(const u16 *list) {
+void Pillar_Place(const u16 *list) {
   const u16 *spec;
   u16 id;
   struct Actor *object;

@@ -1,12 +1,10 @@
-@ Why BattleEffectKernels_IntegrateVector3 to
-@ BattleEffectKernels_IntegrateVector2 are assembly:
-@ each bge.n branches on the flags of the muls before it (muls r5, r1;
-@ bge.n), a conditional branch on flags with no compare.
+@ Why Field_AdvanceWithGravity3D to Field_AdvanceWithGravity2D are assembly:
+@ each bge.n after muls branches on the multiply's flags with no compare.
 .syntax unified
 	.thumb
-	.global BattleEffectKernels_IntegrateVector3
+	.global Field_AdvanceWithGravity3D
 	.thumb_func
-BattleEffectKernels_IntegrateVector3:
+Field_AdvanceWithGravity3D:
 	push	{r5, r6, r7, lr}
 	mov	lr, r2
 	ldmia	r0!, {r2, r3, r4, r5, r6, r7}
@@ -17,25 +15,25 @@ BattleEffectKernels_IntegrateVector3:
 	stmia	r0!, {r2, r3, r4}
 	add	r6, lr
 	muls	r5, r1
-	bge.n	.L_08138070
+	bge.n	.L_080c8990
 	adds	r5, #63
-.L_08138070:
+.L_080c8990:
 	asrs	r5, r5, #6
 	muls	r6, r1
-	bge.n	.L_08138078
+	bge.n	.L_080c8998
 	adds	r6, #63
-.L_08138078:
+.L_080c8998:
 	asrs	r6, r6, #6
 	muls	r7, r1
-	bge.n	.L_08138080
+	bge.n	.L_080c89a0
 	adds	r7, #63
-.L_08138080:
+.L_080c89a0:
 	asrs	r7, r7, #6
 	stmia	r0!, {r5, r6, r7}
 	pop	{r5, r6, r7, pc}
-	.global BattleEffectKernels_IntegrateVector2
+	.global Field_AdvanceWithGravity2D
 	.thumb_func
-BattleEffectKernels_IntegrateVector2:
+Field_AdvanceWithGravity2D:
 	push	{r5, r6, lr}
 	mov	lr, r2
 	ldmia	r0!, {r2, r3, r4, r5, r6}
@@ -46,14 +44,14 @@ BattleEffectKernels_IntegrateVector2:
 	adds	r0, #4
 	add	r6, lr
 	muls	r5, r1
-	bge.n	.L_0813809e
+	bge.n	.L_080c89be
 	adds	r5, #63
-.L_0813809e:
+.L_080c89be:
 	asrs	r5, r5, #6
 	muls	r6, r1
-	bge.n	.L_081380a6
+	bge.n	.L_080c89c6
 	adds	r6, #63
-.L_081380a6:
+.L_080c89c6:
 	asrs	r6, r6, #6
 	stmia	r0!, {r5, r6}
 	pop	{r5, r6, pc}

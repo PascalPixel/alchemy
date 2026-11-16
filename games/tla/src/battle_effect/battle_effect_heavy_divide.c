@@ -201,8 +201,8 @@ void BattleEffect_RunHeavyBlow(struct BattleEffectParams *args, s32 mode) {
         }
         Render_TransformVertices(gBattleEffect_SquareCorners, vertices, 4);
         Render_DrawModelList(model);
-        BattleEffectKernels_IntegrateVector3(work->particles,
-                                             PARTICLE_DAMPING_NONE, 0);
+        Particle_AdvanceWithGravity3D(work->particles, PARTICLE_DAMPING_NONE,
+                                      0);
       }
     }
     Heap_Release(model);
@@ -225,13 +225,13 @@ void BattleEffect_RunHeavyBlow(struct BattleEffectParams *args, s32 mode) {
           if (chip->variant >= 0) {
             blitter(canvas, gHeavyBlow_ChipPixels, FIXED_INTEGER_PART(chip->x),
                     FIXED_INTEGER_PART(chip->y) - 1, 1, 2);
-            BattleEffectKernels_IntegrateVector2(chip, 62, toFIXED(1) / 16);
+            Particle_AdvanceWithGravity2D(chip, 62, toFIXED(1) / 16);
             blitter(canvas, gHeavyBlow_ChipPixels, FIXED_INTEGER_PART(chip->x),
                     FIXED_INTEGER_PART(chip->y) - 1, 1, 2);
-            BattleEffectKernels_IntegrateVector2(chip, 62, toFIXED(1) / 16);
+            Particle_AdvanceWithGravity2D(chip, 62, toFIXED(1) / 16);
             blitter(canvas, gHeavyBlow_ChipPixels, FIXED_INTEGER_PART(chip->x),
                     FIXED_INTEGER_PART(chip->y) - 1, 1, 2);
-            BattleEffectKernels_IntegrateVector2(chip, 62, toFIXED(1) / 16);
+            Particle_AdvanceWithGravity2D(chip, 62, toFIXED(1) / 16);
             if (FIXED_INTEGER_PART(chip->y) > 104) {
               chip->velocityY = -chip->velocityY;
               chip->variant -= 8;
@@ -418,7 +418,7 @@ void BattleEffect_RunCool(struct BattleEffectParams *args) {
               size = gCool_SparkSizes[cell];
               draw[0](canvas, src, x - size / 2, y - size / 2, size, size);
               spark->variant++;
-              BattleEffectKernels_IntegrateVector2(spark, 62, -toFIXED(1) / 8);
+              Particle_AdvanceWithGravity2D(spark, 62, -toFIXED(1) / 8);
             }
           }
         }
@@ -585,8 +585,8 @@ void BattleEffect_RunWyrdCurse(struct BattleEffectParams *args) {
                   FIXED_INTEGER_PART(drop->x) - dropSize / 2,
                   FIXED_INTEGER_PART(drop->y) - dropSize, dropSize,
                   dropSize * 2);
-          BattleEffectKernels_IntegrateVector2(drop, PARTICLE_DAMPING_NONE,
-                                               toFIXED(1) / 2);
+          Particle_AdvanceWithGravity2D(drop, PARTICLE_DAMPING_NONE,
+                                        toFIXED(1) / 2);
           if (FIXED_INTEGER_PART(drop->y) > 111) {
             drop->variant = 1;
             // DEAD: overwritten by the next store; the ROM keeps the call, its
@@ -662,7 +662,7 @@ void BattleEffect_RunWyrdCurse(struct BattleEffectParams *args) {
       Matrix_RotateX(-DEGtoANG(90));
       Render_TransformVertices(gBattleEffect_GroundSquareCorners, vertices, 4);
       Render_DrawModelList(model);
-      BattleEffectKernels_IntegrateVector2(drop, 60, -toFIXED(1) / 2);
+      Particle_AdvanceWithGravity2D(drop, 60, -toFIXED(1) / 2);
     }
     i++;
     drop++;
@@ -983,7 +983,7 @@ void BattleEffect_RunHurricane(struct BattleEffectParams *args) {
                 FIXED_INTEGER_PART(splash->x) - 12,
                 FIXED_INTEGER_PART(splash->y) - 32, SMOKE_PUFF_WIDTH,
                 SMOKE_PUFF_HEIGHT);
-        BattleEffectKernels_IntegrateVector2(splash, 56, -toFIXED(1) / 4);
+        Particle_AdvanceWithGravity2D(splash, 56, -toFIXED(1) / 4);
         splash->variant++;
       }
     }

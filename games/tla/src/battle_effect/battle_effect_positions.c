@@ -290,7 +290,7 @@ void BattleEffect_RunAttackSlash(struct BattleEffectParams *args) {
           size += 2;
           draw[pair & 1](canvas, sheet + gBattleEffect_FlarePictures[size - 1],
                          point.x - size, point.y - size, size * 2, size * 2);
-          BattleEffectKernels_IntegrateVector3(spark, 60, -toFIXED(1) / 64);
+          Particle_AdvanceWithGravity3D(spark, 60, -toFIXED(1) / 64);
           spark->variant--;
         }
       }
@@ -523,7 +523,7 @@ void BattleEffect_RunCriticalHit(struct BattleEffectParams *args) {
           spot.y += 16;
           draw[pair & 1](canvas, sheet + gBattleEffect_FlarePictures[size - 1],
                          spot.x - size, spot.y - size, size * 2, size * 2);
-          BattleEffectKernels_IntegrateVector3(spark, 60, -toFIXED(1) / 64);
+          Particle_AdvanceWithGravity3D(spark, 60, -toFIXED(1) / 64);
           spark->variant--;
         }
       }

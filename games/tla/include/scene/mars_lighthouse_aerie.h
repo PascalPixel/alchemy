@@ -92,13 +92,13 @@ void MarsLighthouseAerie_LightBeacon(void);
 void MarsLighthouseAerie_WatchGoldenSunRise(void);
 void MarsLighthouseAerie_EndRisingRings(struct Actor *object);
 
-void Orbs_UpdateRising(struct Actor *self);
+void Orb_UpdateRising(struct Actor *self);
 
-extern u32 gOrbs_RisingScript[];
+extern u32 gOrb_RisingScript[];
 
 extern s32 gMarsLighthouseAerie_BeaconSparkScript[];
 
-void Orbs_SpawnRising(void);
+void Orb_SpawnRising(void);
 
 extern s32 gMarsLighthouseAerie_BeamWidenScript[];
 extern u32 gMarsLighthouseAerie_BeamShootUpScript[];

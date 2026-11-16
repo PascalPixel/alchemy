@@ -100,7 +100,7 @@ void JupiterLighthouse_LoadPalettes(s32 value);
 /// the party falls to the room below (exit 13).
 void JupiterLighthouse_StepOnLowerCrackedTile(s32 value) {
   if (Actor_Get(gMainRoutineWork.leaderActorId)->y.fixed == 0 &&
-      CrackedTiles_Step(value))
+      CrackedTile_Step(value))
     FieldEvent_SetExitRequest(13);
 }
 
@@ -108,7 +108,7 @@ void JupiterLighthouse_StepOnLowerCrackedTile(s32 value) {
 /// the party falls to the room below (exit 14).
 void JupiterLighthouse_StepOnUpperCrackedTile(s32 value) {
   if (Actor_Get(gMainRoutineWork.leaderActorId)->y.fixed == 0 &&
-      CrackedTiles_Step(value))
+      CrackedTile_Step(value))
     FieldEvent_SetExitRequest(14);
 }
 
@@ -189,9 +189,9 @@ s32 Scene_Initialize(void) {
   if (Event_GetFlag(FLAG_DOOR_BUTTON_HELD))
     JupiterLighthouse_OpenDoor(0);
   if ((u16)(gMainRoutineWork.entrance - 5) <= 1) {
-    CrackedTiles_Find(33, FLAG_SCENE_TEMP_80, FLAG_AREA_TEMP_80, 20, 31);
+    CrackedTile_Find(33, FLAG_SCENE_TEMP_80, FLAG_AREA_TEMP_80, 20, 31);
   } else {
-    CrackedTiles_Find(43, FLAG_SCENE_TEMP_80, FLAG_AREA_TEMP_80, 21, 31);
+    CrackedTile_Find(43, FLAG_SCENE_TEMP_80, FLAG_AREA_TEMP_80, 21, 31);
     CrackedTile_PlaceLanding(
         21, -3,
         SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE));
@@ -380,18 +380,18 @@ extern const s32 *gFieldEffect_DurationScripts[];
 #define EFFECT_SCRIPTS gFieldEffect_DurationScripts
 #include "../field/field_effect_spawn.c"
 
-/// The cells CrackedTiles_Step watches, and the cell it copies over the one the
+/// The cells CrackedTile_Step watches, and the cell it copies over the one the
 /// leader steps on.
 #define CELL_PUSH_SLOT_ENTRY Oam_AddSpriteAtDepthClamped
 #include "../field/map_cell_sprite.c"
 
-#include "shared/cracked_tiles_find.h"
+#include "shared/cracked_tile_find.h"
 
 #include "shared/leader_center_in_cell.h"
 
 // Centers the leader on its cell, plays sound 161 and copies the cell below
 // the table's source cell over the leader's, keeping the source column's and
-// row's 64 bit; CrackedTiles_Step calls it the first time the leader steps on
+// row's 64 bit; CrackedTile_Step calls it the first time the leader steps on
 // one of the table's cells.
 #include "shared/cracked_tile_crack.h"
 
@@ -417,6 +417,6 @@ void JupiterLighthouse_FinishMovingBlock(void);
 void GameFlag_SetByte(s32 flag, s32 value);
 void CrackedTile_Crack(struct CellTarget *work, struct CellTargetEntry *entry);
 
-#include "shared/cracked_tiles_step.h"
+#include "shared/cracked_tile_step.h"
 
 #include "shared/cracked_tile_place_landing.h"

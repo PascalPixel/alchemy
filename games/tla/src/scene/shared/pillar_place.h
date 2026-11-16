@@ -1,7 +1,7 @@
 /// Places each pillar of a list of three-halfword entries (actor, kind,
 /// flag) ended by 0xffff, its collision bit cleared, raised or sunk by its
 /// flag (Actor_SetCellOpen).
-void Pillars_Place(const u16 *list) {
+void Pillar_Place(const u16 *list) {
   const u16 *entry;
 
   if (list[0] == 0xffff)

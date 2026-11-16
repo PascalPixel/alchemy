@@ -411,8 +411,8 @@ void BattleEffect_RunNeptune(struct BattleEffectParams *args) {
           drawSpray(canvas, cells + gBattleEffect_MotePictures[k - 1],
                     FIXED_INTEGER_PART(PARTICLES[i].x) - k / 2,
                     FIXED_INTEGER_PART(PARTICLES[i].y) - k, k, k * 2);
-          BattleEffectKernels_IntegrateVector2(&PARTICLES[i], 62,
-                                               gNeptune_Gravity[i & m]);
+          Particle_AdvanceWithGravity2D(&PARTICLES[i], 62,
+                                        gNeptune_Gravity[i & m]);
           PARTICLES[i].variant++;
           if (PARTICLES[i].velocityY > 0 &&
               FIXED_INTEGER_PART(PARTICLES[i].y) > 104)
@@ -520,7 +520,7 @@ void BattleEffect_RunNeptune(struct BattleEffectParams *args) {
         s32 y;
 
         PARTICLES[i].variant--;
-        BattleEffectKernels_IntegrateVector2(&PARTICLES[i], 60, toFIXED(1) / 4);
+        Particle_AdvanceWithGravity2D(&PARTICLES[i], 60, toFIXED(1) / 4);
         y = FIXEDtoINT(PARTICLES[i].y);
         if (y > 120) {
           PARTICLES[i].velocityY = -PARTICLES[i].velocityY / 2;

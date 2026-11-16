@@ -89,7 +89,7 @@ void BattleEffect_RunSwirlingStars(struct BattleEffectParams *args) {
                 work->sheet + ((i & 3) * MOTE_SET_BYTES +
                                gBattleEffect_MotePictures[size - 1]),
                 pos.x - size / 2, pos.y - size, size, size * 2);
-        BattleEffectKernels_IntegrateVector3(star, 60, 0);
+        Particle_AdvanceWithGravity3D(star, 60, 0);
 
         // Thirty frames in, the star is drawn toward the center.
         if (frame > i / 4 + 30) {
@@ -191,14 +191,14 @@ void BattleEffect_RunTargetBursts(struct BattleEffectParams *args) {
           EffectPosition_ProjectPoint((s32 *)p, &screen);
           screen.x >>= 1;
           if (i == 5) {
-            BattleEffectKernels_IntegrateVector3(p, 62, toFIXED(1) / 32);
+            Particle_AdvanceWithGravity3D(p, 62, toFIXED(1) / 32);
             rectangleA(canvas,
                        work->sheet + cel * PICTURE_BYTES(SMOKE_PUFF) +
                            TARGET_BURST_PICTURES,
                        screen.x - 12, screen.y - 36, SMOKE_PUFF_WIDTH,
                        SMOKE_PUFF_HEIGHT);
           } else {
-            BattleEffectKernels_IntegrateVector3(p, 60, toFIXED(1) / 128);
+            Particle_AdvanceWithGravity3D(p, 60, toFIXED(1) / 128);
             rectangleB(canvas, work->sheet + cel * PICTURE_BYTES(SMOKE_PUFF),
                        screen.x - 12, screen.y - 36, SMOKE_PUFF_WIDTH,
                        SMOKE_PUFF_HEIGHT);

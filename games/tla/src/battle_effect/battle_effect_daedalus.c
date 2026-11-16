@@ -937,7 +937,7 @@ void BattleEffect_RunDaedalus(struct BattleEffectParams *args) {
                   dest, &work->sheet[q->variant * PICTURE_BYTES(ROCKET_FLAME)],
                   (FIXEDtoINT(q->x)) - 2, (FIXEDtoINT(q->y)) - 12,
                   ROCKET_FLAME_WIDTH, ROCKET_FLAME_HEIGHT);
-              BattleEffectKernels_IntegrateVector2(q, PARTICLE_DAMPING_NONE, 0);
+              Particle_AdvanceWithGravity2D(q, PARTICLE_DAMPING_NONE, 0);
               q->variant++;
             }
           }
@@ -953,7 +953,7 @@ void BattleEffect_RunDaedalus(struct BattleEffectParams *args) {
                   (FIXEDtoINT(q->x)) - 16, (FIXEDtoINT(q->y)) - 32,
                   FLASH_BURST_WIDTH, FLASH_BURST_HEIGHT);
               q->velocityX += toFIXED(1) / 16;
-              BattleEffectKernels_IntegrateVector2(q, PARTICLE_DAMPING_NONE, 0);
+              Particle_AdvanceWithGravity2D(q, PARTICLE_DAMPING_NONE, 0);
               q->variant++;
             }
           }
@@ -1354,7 +1354,7 @@ void BattleEffect_RunDaedalus(struct BattleEffectParams *args) {
             q->variant = 0;
           }
           DAEDALUS_SPRITE(i)->rotation = p->z;
-          BattleEffectKernels_IntegrateVector3(p, PARTICLE_DAMPING_NONE, 0);
+          Particle_AdvanceWithGravity3D(p, PARTICLE_DAMPING_NONE, 0);
           p->velocityX = -Trig_Cos(DAEDALUS_SPRITE(i)->rotation) * 8;
           p->velocityY = -Trig_Sin(DAEDALUS_SPRITE(i)->rotation) * 8;
           DAEDALUS_SPRITE(i)->tile = DAEDALUS_SPRITE(0)->tile;
@@ -1389,7 +1389,7 @@ void BattleEffect_RunDaedalus(struct BattleEffectParams *args) {
           ((BlitFunc)blits[i & 1])(dest, &work->sheet[v << 11],
                                    (FIXEDtoINT(q->x)) - 16,
                                    (FIXEDtoINT(q->y)) - 48, 32, 64);
-          BattleEffectKernels_IntegrateVector2(q, 56, -toFIXED(1) / 8);
+          Particle_AdvanceWithGravity2D(q, 56, -toFIXED(1) / 8);
           q->variant++;
         }
       }
@@ -1547,7 +1547,7 @@ void BattleEffect_RunDaedalusAlt(struct BattleEffectParams *args) {
                     FIXED_INTEGER_PART(mote->x) - 16,
                     FIXED_INTEGER_PART(mote->y) - 48, FLASH_BURST_WIDTH,
                     FLASH_BURST_HEIGHT);
-            BattleEffectKernels_IntegrateVector2(mote, 62, -toFIXED(1) / 32);
+            Particle_AdvanceWithGravity2D(mote, 62, -toFIXED(1) / 32);
             mote->variant++;
           }
         }

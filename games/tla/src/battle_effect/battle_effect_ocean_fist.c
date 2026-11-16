@@ -138,7 +138,7 @@ void BattleEffect_RunOceanFist(struct BattleEffectParams *args) {
                       FIXED_INTEGER_PART(spray->x) - FLASH_BURST_WIDTH / 2,
                       FIXED_INTEGER_PART(spray->y) - FLASH_BURST_HEIGHT / 2,
                       FLASH_BURST_WIDTH, FLASH_BURST_HEIGHT);
-          BattleEffectKernels_IntegrateVector2(spray, 62, -toFIXED(1) / 8);
+          Particle_AdvanceWithGravity2D(spray, 62, -toFIXED(1) / 8);
         }
         if (++spray->variant == 0) {
           spray->x = INTtoFIXED((Random16() & 31) + target.x / 2 - 16);
@@ -190,10 +190,10 @@ void BattleEffect_RunOceanFist(struct BattleEffectParams *args) {
                           FIXED_INTEGER_PART(drop->x) - size / 2,
                           FIXED_INTEGER_PART(drop->y) - size, size, size * 2);
           if (frame > 31) {
-            BattleEffectKernels_IntegrateVector2(drop, 62, toFIXED(1) / 4);
+            Particle_AdvanceWithGravity2D(drop, 62, toFIXED(1) / 4);
           } else {
-            BattleEffectKernels_IntegrateVector2(drop, 62,
-                                                 gOceanFist_DropGravity[i & 3]);
+            Particle_AdvanceWithGravity2D(drop, 62,
+                                          gOceanFist_DropGravity[i & 3]);
           }
           drop->variant++;
           if (drop->velocityY > 0 && (FIXEDtoINT(drop->y)) > 104) {

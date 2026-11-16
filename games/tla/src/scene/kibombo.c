@@ -3,7 +3,7 @@
 /// rooms of this overlay: the village, its shops, inn and Sanctum
 /// (Kibombo_OpenWeaponShop, Kibombo_OpenInn), and the grounds before the
 /// statue. On the sacred night Akafubu offers the Black Orb to the Great
-/// Gabomba (Kibombo_CeremonyBegins to Kibombo_CeremonyEnds), where Piers, come
+/// Gabomba (Kibombo_CeremonyStarts to Kibombo_CeremonyEnds), where Piers, come
 /// to take his orb back, joins the party (Kibombo_PiersThanksParty); the way to
 /// the statue past the dead end is a vent Scoop uncovers
 /// (Kibombo_DeadEndByTheStatue). The villagers' talk changes once Akafubu is
@@ -2519,7 +2519,7 @@ void Kibombo_StatueFlashes(void) {
 
 /// The sacred night begins: Akafubu calls on the village to pray for his
 /// success, and the party hurries to watch.
-void Kibombo_CeremonyBegins(void) {
+void Kibombo_CeremonyStarts(void) {
   struct Actor *leader;
 
   FieldCamera_MoveTo(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0);
@@ -3406,7 +3406,7 @@ void Kibombo_InitializeStatueGroundsCeremony(void) {
     if (!GameFlag_Get(FLAG_AKAFUBU_OFFERED_HELP))
       Kibombo_CrowdBows();
   } else if (gMainRoutineWork.entrance == 5) {
-    Kibombo_CeremonyBegins();
+    Kibombo_CeremonyStarts();
   }
   Event_End();
   if (gMainRoutineWork.entrance == 99) {

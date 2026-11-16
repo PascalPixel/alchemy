@@ -1,5 +1,5 @@
 /// Throws `count` rocks out from a point.
-void Rocks_Spawn(s32 x, s32 y, s32 z, s32 count) {
+void Rock_Spawn(s32 x, s32 y, s32 z, s32 count) {
   struct RockWork *work;
   s32 i;
 

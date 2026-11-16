@@ -637,7 +637,7 @@ void BattleEffect_RunTargetStrike(struct BattleEffectParams *args, s32 mode) {
                         FIXED_INTEGER_PART(step->x) - 12,
                         FIXED_INTEGER_PART(step->y) - 24, SMOKE_PUFF_WIDTH,
                         SMOKE_PUFF_HEIGHT);
-            BattleEffectKernels_IntegrateVector2(step, 62, -toFIXED(1) / 64);
+            Particle_AdvanceWithGravity2D(step, 62, -toFIXED(1) / 64);
             step->variant++;
           }
         }
@@ -655,8 +655,8 @@ void BattleEffect_RunTargetStrike(struct BattleEffectParams *args, s32 mode) {
                     FIXED_INTEGER_PART(step->x) - 16,
                     FIXED_INTEGER_PART(step->y) - 32, FLASH_BURST_WIDTH,
                     FLASH_BURST_HEIGHT);
-            BattleEffectKernels_IntegrateVector2(step, 62, -toFIXED(1) / 32);
-            BattleEffectKernels_IntegrateVector2(step, 62, -toFIXED(1) / 32);
+            Particle_AdvanceWithGravity2D(step, 62, -toFIXED(1) / 32);
+            Particle_AdvanceWithGravity2D(step, 62, -toFIXED(1) / 32);
             step->variant++;
           }
         }
@@ -683,7 +683,7 @@ void BattleEffect_RunTargetStrike(struct BattleEffectParams *args, s32 mode) {
             draw[1](canvas, sheet + gBattleEffect_MotePictures[size - 1],
                     position.x - ((u32)size >> 1), position.y - size, size,
                     size * 2);
-            BattleEffectKernels_IntegrateVector3(step, 60, 0);
+            Particle_AdvanceWithGravity3D(step, 60, 0);
             step->variant++;
             if (step->variant > 10) {
               s32 dx = (source->x - step->x) >> 8;
@@ -710,7 +710,7 @@ void BattleEffect_RunTargetStrike(struct BattleEffectParams *args, s32 mode) {
           if (size >= 0) {
             EffectPosition_ProjectPoint((s32 *)step, &position);
             position.x >>= 1;
-            BattleEffectKernels_IntegrateVector3(step, 60, 0);
+            Particle_AdvanceWithGravity3D(step, 60, 0);
             size >>= 3;
             size++;
             draw[1](canvas, sheet + gBattleEffect_MotePictures[size - 1],

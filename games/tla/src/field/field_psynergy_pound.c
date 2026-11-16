@@ -67,7 +67,7 @@ void FieldPsynergy_UpdatePound(void) {
         sprite->x = particle->x;
         sprite->y = particle->y;
         EffectSprite_Draw(sprite);
-        BattleEffect_IntegrateVector2(particle, 64, 0);
+        Field_AdvanceWithGravity2D(particle, 64, 0);
       }
       particle->timer++;
     }

@@ -1,7 +1,7 @@
 /// Run each frame: when the leader steps onto a whole tile it cracks,
 /// and onto a cracked one other than the one it cracked last, the leader falls
 /// through it; 1 when it falls.
-s32 CrackedTiles_Step(void) {
+s32 CrackedTile_Step(void) {
   struct Actor *object = Actor_Get(gMainRoutineWork.leaderActorId);
   s32 x = FIELD_CELL(object->x.fixed);
   s32 z = FIELD_CELL(object->z.fixed);

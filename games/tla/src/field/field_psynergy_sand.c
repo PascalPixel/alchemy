@@ -259,7 +259,7 @@ void GrowingParticle_Update(struct EffectSprite *sprite,
     sprite->x = position[0];
     sprite->y = position[2];
     EffectSprite_Draw(sprite);
-    BattleEffect_IntegrateVector2(&particle->x, 60, 0);
+    Field_AdvanceWithGravity2D(&particle->x, 60, 0);
   }
   particle->timer++;
 }

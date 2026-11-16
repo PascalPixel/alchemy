@@ -82,7 +82,7 @@ void BattleEffect_RunNirvana(struct BattleEffectParams *args) {
         blit(canvas, sheet + gBattleEffect_MotePictures[size - 1],
              out.x - size / 2, out.y - size, size, size * 2);
       }
-      BattleEffectKernels_IntegrateVector3(orb, 62, 0);
+      Particle_AdvanceWithGravity3D(orb, 62, 0);
       if (frame > 0) {
         s32 dx = (user->x - orb->x) >> 10;
         s32 dy = (user->y + userHalf - orb->y) >> 10;
@@ -235,7 +235,7 @@ void BattleEffect_RunStoneJustice(struct BattleEffectParams *args) {
           }
         }
       }
-      BattleEffectKernels_IntegrateVector2(rock, 60, 0);
+      Particle_AdvanceWithGravity2D(rock, 60, 0);
       rock->velocityZ += rock->z;
       if (frame > i / 2 + 64) {
         if (args->side == EFFECT_SIDE_ENEMIES)
@@ -434,7 +434,7 @@ void BattleEffect_RunSoulShatter(struct BattleEffectParams *args) {
               y - gSoulShatter_SparkSizes[cell] / 2,
               gSoulShatter_SparkSizes[cell], gSoulShatter_SparkSizes[cell]);
           spark->variant++;
-          BattleEffectKernels_IntegrateVector2(spark, 62, -toFIXED(1) / 8);
+          Particle_AdvanceWithGravity2D(spark, 62, -toFIXED(1) / 8);
         }
       }
     }
@@ -462,7 +462,7 @@ void BattleEffect_RunSoulShatter(struct BattleEffectParams *args) {
           EffectPosition_ProjectPoint(&mote->x, &screen);
           draw[0](canvas, sheet + gBattleEffect_MotePictures[size - 1],
                   (screen.x >> 1) - size / 2, screen.y - size, size, size * 2);
-          BattleEffectKernels_IntegrateVector3(mote, 62, 0);
+          Particle_AdvanceWithGravity3D(mote, 62, 0);
           if (frame > i + 32) {
             s32 dx = (user->x - mote->x) >> 7;
             s32 dy = (user->y + userHalfHeight - mote->y) >> 7;
@@ -722,7 +722,7 @@ void BattleEffect_RunSerac(struct BattleEffectParams *args) {
           }
           picture = p->variant / 6;
           Render_ProjectPoint(p, &point);
-          BattleEffectKernels_IntegrateVector3(p, 60, toFIXED(1) / 8);
+          Particle_AdvanceWithGravity3D(p, 60, toFIXED(1) / 8);
           x = point.x - CLOUD_PUFF_WIDTH / 2;
           y = point.y - CLOUD_PUFF_HEIGHT / 2;
           blitters[0](canvas,
@@ -838,7 +838,7 @@ void BattleEffect_RunSerac(struct BattleEffectParams *args) {
             color[0] = p->variant;
             p->variant -= 2;
             model->shade = color;
-            BattleEffectKernels_IntegrateVector3(p, 62, toFIXED(1) / 64);
+            Particle_AdvanceWithGravity3D(p, 62, toFIXED(1) / 64);
             Matrix_Push();
             Matrix_Translate(p->x, p->y, p->z);
             Matrix_RotateX(angle);

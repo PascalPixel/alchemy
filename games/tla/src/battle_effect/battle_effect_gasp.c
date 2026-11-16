@@ -386,7 +386,7 @@ void BattleEffect_RunGaspFamily(struct BattleEffectParams *args, s32 mode) {
             draw[0](canvas, sprites + gBattleEffect_MotePictures[n - 1],
                     FIXED_INTEGER_PART(p->x) - n / 2,
                     FIXED_INTEGER_PART(p->y) - n, n, n * 2);
-            BattleEffectKernels_IntegrateVector2(p, 60, toFIXED(1) / 64);
+            Particle_AdvanceWithGravity2D(p, 60, toFIXED(1) / 64);
             p->variant--;
           }
         }
@@ -825,7 +825,7 @@ void BattleEffect_RunGaspFamily(struct BattleEffectParams *args, s32 mode) {
                   work->sheet + p->variant / 4 * PICTURE_BYTES(SMOKE_PUFF),
                   FIXED_INTEGER_PART(p->x) - 12, FIXED_INTEGER_PART(p->y) - 24,
                   SMOKE_PUFF_WIDTH, SMOKE_PUFF_HEIGHT);
-          BattleEffectKernels_IntegrateVector2(p, 60, -toFIXED(1) / 16);
+          Particle_AdvanceWithGravity2D(p, 60, -toFIXED(1) / 16);
           p->variant++;
         }
       }
@@ -839,7 +839,7 @@ void BattleEffect_RunGaspFamily(struct BattleEffectParams *args, s32 mode) {
             draw[0](canvas, sprites + gBattleEffect_MotePictures[n - 1],
                     FIXED_INTEGER_PART(q->x) - n / 2,
                     FIXED_INTEGER_PART(q->y) - n, n, n * 2);
-            BattleEffectKernels_IntegrateVector2(q, 62, 0);
+            Particle_AdvanceWithGravity2D(q, 62, 0);
             q->variant--;
           }
         }
@@ -926,7 +926,7 @@ void BattleEffect_RunGaspFamily(struct BattleEffectParams *args, s32 mode) {
           Matrix_ScaleUniform(FIXED_ONE / 2);
           Render_TransformVertices(gBattleEffect_SquareCorners, verts, 4);
           Render_DrawModelList(model);
-          BattleEffectKernels_IntegrateVector3(p, 60, 0);
+          Particle_AdvanceWithGravity3D(p, 60, 0);
         }
       }
       BattleCamera_Shake(8, 8);
@@ -975,7 +975,7 @@ void BattleEffect_RunGaspFamily(struct BattleEffectParams *args, s32 mode) {
           Matrix_ScaleUniform(FIXED_ONE / 2);
           Render_TransformVertices(gBattleEffect_SquareCorners, verts, 4);
           Render_DrawModelList(model);
-          BattleEffectKernels_IntegrateVector3(p, 60, 0);
+          Particle_AdvanceWithGravity3D(p, 60, 0);
         }
       }
     } else if (mode == GASP_MODE_CALL_DULLAHAN) {
@@ -1031,7 +1031,7 @@ void BattleEffect_RunGaspFamily(struct BattleEffectParams *args, s32 mode) {
               draw[0](canvas, sprites + gBattleEffect_MotePictures[n - 1],
                       FIXED_INTEGER_PART(p->x) - n / 2,
                       FIXED_INTEGER_PART(p->y) - n, n, n * 2);
-              BattleEffectKernels_IntegrateVector2(p, 63, toFIXED(1) / 32);
+              Particle_AdvanceWithGravity2D(p, 63, toFIXED(1) / 32);
               if (p->y > toFIXED(104)) {
                 p->y = toFIXED(104);
                 p->velocityY = -p->velocityY / 2;

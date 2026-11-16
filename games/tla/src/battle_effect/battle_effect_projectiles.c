@@ -246,7 +246,7 @@ void BattleEffect_RunDjinniEntrance(struct BattleEffectParams *args, u32 packed,
           size = 8 - (position.depth - 250) / 64;
           draw[1](canvas, sheet + gBattleEffect_MotePictures[size - 1],
                   position.x - size / 2, position.y - size, size, size * 2);
-          BattleEffectKernels_IntegrateVector3(spark, 60, 0);
+          Particle_AdvanceWithGravity3D(spark, 60, 0);
           if (frame >= i / 8 + 24) {
             s32 pullX = -spark->x >> 7;
             s32 pullY = -spark->y >> 7;
@@ -306,7 +306,7 @@ void BattleEffect_RunDjinniEntrance(struct BattleEffectParams *args, u32 packed,
           draw[0](canvas, sheet + gBattleEffect_MotePictures[size - 1],
                   (s16)(FIXEDtoINT(mote->x)) - size / 2,
                   (s16)(FIXEDtoINT(mote->y)) - size, size, size * 2);
-          BattleEffectKernels_IntegrateVector2(mote, 60, 0);
+          Particle_AdvanceWithGravity2D(mote, 60, 0);
           mote->variant--;
         }
       }
@@ -1192,9 +1192,9 @@ void BattleEffect_RunProjectileVolley(struct BattleEffectParams *args,
                   FIXED_INTEGER_PART(p->x) - size / 2,
                   FIXED_INTEGER_PART(p->y) - size, size, size * 2);
           if (mode == PROJECTILE_VOLLEY_HYDRO_SLASH)
-            BattleEffectKernels_IntegrateVector2(p, 60, toFIXED(1) / 4);
+            Particle_AdvanceWithGravity2D(p, 60, toFIXED(1) / 4);
           else
-            BattleEffectKernels_IntegrateVector2(p, 60, toFIXED(1) / 16);
+            Particle_AdvanceWithGravity2D(p, 60, toFIXED(1) / 16);
           if (p->y > toFIXED(112))
             p->velocityY = -p->velocityY / 2;
           p->variant--;
@@ -1212,7 +1212,7 @@ void BattleEffect_RunProjectileVolley(struct BattleEffectParams *args,
           draw[0](canvas, sheet + gBattleEffect_MotePictures[size - 1],
                   FIXED_INTEGER_PART(p->x) - size / 2,
                   FIXED_INTEGER_PART(p->y) - size, size, size * 2);
-          BattleEffectKernels_IntegrateVector2(p, 60, -toFIXED(1) / 4);
+          Particle_AdvanceWithGravity2D(p, 60, -toFIXED(1) / 4);
           p->variant--;
         }
       }
@@ -1230,7 +1230,7 @@ void BattleEffect_RunProjectileVolley(struct BattleEffectParams *args,
                     FIXED_INTEGER_PART(p->x) - SMOKE_PUFF_WIDTH / 2,
                     FIXED_INTEGER_PART(p->y) - SMOKE_PUFF_HEIGHT / 2,
                     SMOKE_PUFF_WIDTH, SMOKE_PUFF_HEIGHT);
-            BattleEffectKernels_IntegrateVector2(p, 62, -toFIXED(1) / 64);
+            Particle_AdvanceWithGravity2D(p, 62, -toFIXED(1) / 64);
             p->variant++;
           }
         }

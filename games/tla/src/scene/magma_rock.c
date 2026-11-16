@@ -2034,7 +2034,7 @@ void Actor_MoveToObject(s32 id, s32 owner);
 // halfword pairs: flag + 1 set parks the actor at (0, 0); otherwise its cell
 // gets attributeB 128 and its shape-grid byte is rewritten, and flag set makes
 // it copy actor 9's visual attributes.
-#include "shared/pillars_restore.h"
+#include "shared/pillar_restore.h"
 
 /// Puts an actor where another stands and moves the other away.
 void MagmaRock_TakePlaceOf(struct Actor *object, struct Actor *source) {
@@ -2202,7 +2202,7 @@ void MagmaRock_SetLeaderCellShape(s32 heightOffset, s32 layer) {
 void BattleEffect_StepVector3(struct Particle *particle, s32 damping,
                               s32 gravity);
 
-#include "shared/particles_update_falling.h"
+#include "shared/particle_update_falling.h"
 
 struct RockWork {
   u8 tiles[0x500];
@@ -2285,14 +2285,14 @@ void MagmaRock_StartFallingRocks(void) {
 
     work->next = zero;
   }
-  Task_AddFrame(Particles_UpdateFalling, TASK_PASS_VBLANK);
+  Task_AddFrame(Particle_UpdateFalling, TASK_PASS_VBLANK);
 }
 
 /// Ends the falling rocks: removes their task and frees their picture and work.
 void MagmaRock_EndFallingRocks(void) {
   struct RockWork *work = Ram_HeapSlots->menuWork;
 
-  FieldTask_Remove(Particles_UpdateFalling);
+  FieldTask_Remove(Particle_UpdateFalling);
   VramCache_FreeEntry(work->resource);
   HeapSlot_Release(HEAP_SLOT_MENU);
 }

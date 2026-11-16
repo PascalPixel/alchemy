@@ -210,7 +210,7 @@ SECTIONS
         "*/games/tla/src/game/game.o"(.rodata)
         . = ABSOLUTE(ROM_SHIFT + FIELD_SEQUENCE_BANK_START);
         "*/games/tla/src/gamepak/far_call/field_sequence.o"(.text .rodata .data .padding)
-        "*/games/tla/src/field/integrate_vectors.o"(.text .rodata .data .padding)
+        "*/games/tla/src/field/advance_with_gravity.o"(.text .rodata .data .padding)
         "*/games/tla/src/field/field_sequence_sprite_color_tables.o"(.rodata)
         "*/games/tla/src/field/decode_picture.o"(.text .rodata .data .padding)
         "*/games/tla/src/field/decode_picture_data.o"(.text .rodata .data .padding)
@@ -291,7 +291,7 @@ SECTIONS
         "*/games/tla/src/battle/battle_sprites.o"(.data)
         . = ABSOLUTE(ROM_SHIFT + 0x08138000);
         "*/games/tla/src/gamepak/far_call/battle_effect.o"(.text .rodata .data .padding)
-        "*/games/tla/src/battle_effect/kernel_bank_integrate_vectors.o"(.text .rodata .data .padding)
+        "*/games/tla/src/battle_effect/kernel_bank_advance_with_gravity.o"(.text .rodata .data .padding)
         "*/games/tla/src/battle_effect/render_fill_mesh_kernels.o"(.text .rodata .data .padding)
         "*/games/tla/src/battle_effect/render_solid_kernels.o"(.text .rodata .data .padding)
         "*/games/tla/src/battle_effect/render_textured_kernel.o"(.text .rodata .data .padding)

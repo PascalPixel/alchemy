@@ -852,7 +852,7 @@ extern u8 MsgWaitingForOpponent[];
 
 // なぞの男 ("Mystery Man"), the message after MsgWaitingForOpponent; なぞの女
 // ("Mystery Woman") follows it.
-#define MSG_MYSTERY_MAN ((s32)MsgWaitingForOpponent + 1)
+#define MYSTERY_MAN_MESSAGE ((s32)MsgWaitingForOpponent + 1)
 
 /// Copies a name into the decoded text at writePosition and returns the
 /// position after it. With mode set, a space and a line spacing of 10 go before
@@ -885,7 +885,7 @@ static inline u32 Message_AppendArticleName(s32 mode, u16 *name,
 /// The Japanese Message_Decode: no articles or plurals, and a battle message
 /// (WINDOW_BATTLE_MESSAGE) sets its names off and doubles each space. While
 /// menuState is set, the Mystery Man and Mystery Woman are named from
-/// MSG_MYSTERY_MAN and the message after it rather than their unit names.
+/// MYSTERY_MAN_MESSAGE and the message after it rather than their unit names.
 s32 Message_Decode(s32 script, s32 clear) {
   struct WindowWork *work = WINDOW_WORK;
   u32 code = 0;
@@ -1081,7 +1081,7 @@ s32 Message_Decode(s32 script, s32 clear) {
             if (work->battleMode != WINDOW_FIELD &&
                 (unit->enemyId == ENEMY_MYSTERY_MAN ||
                  unit->enemyId == ENEMY_MYSTERY_WOMAN)) {
-              message = MSG_MYSTERY_MAN;
+              message = MYSTERY_MAN_MESSAGE;
               if (unit->enemyId == ENEMY_MYSTERY_WOMAN)
                 message++;
               Message_DecodeRaw(message, name, 10);
@@ -1167,4 +1167,4 @@ s32 Message_Decode(s32 script, s32 clear) {
 #undef POSSESSIVE_COUNT
 #undef ENEMY_MYSTERY_MAN
 #undef ENEMY_MYSTERY_WOMAN
-#undef MSG_MYSTERY_MAN
+#undef MYSTERY_MAN_MESSAGE

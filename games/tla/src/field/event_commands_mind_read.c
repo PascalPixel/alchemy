@@ -478,8 +478,8 @@ next_state:
     effect->targetX = position.x;
     effect->targetZ = position.z;
     effect->acceleration = toFIXED(4);
-    effect->maxSpeed = toFIXED(4);
-    effect->limitTurnStep = state;
+    effect->speedMax = toFIXED(4);
+    effect->turnStepLimited = state;
     effect->state++;
     return;
   }
@@ -495,8 +495,8 @@ next_state:
   if (state == OUT_AND_BACK_AIM_BACK) {
     effect->targetX = effect->originX;
     effect->targetZ = effect->originZ;
-    effect->maxTurnStep = TRIG_TURN / 64;
-    effect->limitTurnStep = 1;
+    effect->turnStepMax = TRIG_TURN / 64;
+    effect->turnStepLimited = 1;
     effect->state++;
     return;
   }
@@ -1100,8 +1100,8 @@ again:
     effect->targetX = pos.x;
     effect->targetZ = pos.z;
     effect->acceleration = toFIXED(3);
-    effect->maxSpeed = toFIXED(3);
-    effect->limitTurnStep = 0;
+    effect->speedMax = toFIXED(3);
+    effect->turnStepLimited = 0;
     effect->state++;
     return;
   }
@@ -1128,8 +1128,8 @@ again:
     Vector_AddPolarOffset(toFIXED(4), Random16(), &pos);
     effect->targetX = pos.x;
     effect->targetZ = pos.z;
-    effect->maxTurnStep = TRIG_TURN / 32;
-    effect->limitTurnStep = 1;
+    effect->turnStepMax = TRIG_TURN / 32;
+    effect->turnStepLimited = 1;
     effect->state++;
     return;
   }
@@ -1206,7 +1206,7 @@ void FieldPsynergy_Force(void) {
     FieldParticle_Initialize(slot, SPRITE_PARTICLE, pos.x, pos.z);
     FieldParticle_SetCallback(slot, FieldEffect_UpdateRadialBurst);
     FieldParticle_SetActorMode(slot, 7);
-    Sprite_SetAnimationColorModesFar(slot->object, SPRITE_COLOR_BLUE_TINT);
+    Sprite_SetAnimationColorModesFar(slot->actor, SPRITE_COLOR_BLUE_TINT);
     slot->scaleY = FIXED_ONE * 7 / 10;
     slot->scaleX = FIXED_ONE * 7 / 10;
     wait(2);

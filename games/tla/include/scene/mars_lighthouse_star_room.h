@@ -27,7 +27,7 @@ void Actor_SteerByPad(struct Actor *object);
 
 void CrackedTile_Crack(struct CellTarget *table, struct CellTargetEntry *entry);
 
-void MarsLighthouseStarRoom_BeginBlazeOnStatue(void);
+void MarsLighthouseStarRoom_StartBlazeOnStatue(void);
 
 void MarsLighthouseStarRoom_BlazeStatue(void);
 

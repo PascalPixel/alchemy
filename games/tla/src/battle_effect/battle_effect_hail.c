@@ -108,7 +108,7 @@ void BattleEffect_RunHail(struct BattleEffectParams *args) {
                     FIXED_INTEGER_PART(chip->y) -
                         (height = gHail_PictureHeights[cel]) / 2,
                     width, height);
-        BattleEffectKernels_IntegrateVector3(chip, 63, toFIXED(1) / 16);
+        Particle_AdvanceWithGravity3D(chip, 63, toFIXED(1) / 16);
       }
     }
 

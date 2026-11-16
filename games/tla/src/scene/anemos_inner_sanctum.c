@@ -1095,13 +1095,13 @@ void AnemosInnerSanctum_PressSecondSwitch(void) {
   Event_End();
 }
 
-s32 CrackedTiles_Step();
+s32 CrackedTile_Step();
 
 #define DEFINE_ANEMOS_INNER_SANCTUM_EXIT_IF(name, exit)                        \
   void name(void) {                                                            \
     s32 fell;                                                                  \
                                                                                \
-    fell = CrackedTiles_Step();                                                \
+    fell = CrackedTile_Step();                                                 \
     if (fell != 0) {                                                           \
       FieldEvent_SetExitRequest(exit);                                         \
     }                                                                          \
@@ -1417,7 +1417,7 @@ void AnemosInnerSanctum_RaiseSecondStatue(void) {
   Event_End();
 }
 
-s32 CrackedTiles_Find();
+s32 CrackedTile_Find();
 extern s16 gAnemosInnerSanctum_PaletteSlots[];
 extern s16 gAnemosInnerSanctum_PaletteColors[];
 extern s16 gAnemosInnerSanctum_DimColors[];
@@ -1535,7 +1535,7 @@ s32 Scene_Initialize(void) {
     nearStairs = (u16)gMainRoutineWork.entrance;
     entrance = gMainRoutineWork.entrance;
     if (entrance == 1) {
-      CrackedTiles_Find(33, FLAG_SCENE_TEMP_80, FLAG_AREA_TEMP_80, 18, 68);
+      CrackedTile_Find(33, FLAG_SCENE_TEMP_80, FLAG_AREA_TEMP_80, 18, 68);
       if (Event_GetFlag(FLAG_AREA_TEMP_04) == 0) {
         Actor_Get(gMainRoutineWork.leaderActorId)->priorityFlags |=
             ACTOR_PRIORITY_WALKS_ON_PLATFORMS;
@@ -1569,14 +1569,14 @@ s32 Scene_Initialize(void) {
       if (Event_GetFlag(FLAG_SCENE_TEMP_06))
         MapGrid_CopyCellsTo(17, 71, 10, 71, 1, 1);
     } else if (entrance == 11) {
-      CrackedTiles_Find(33, FLAG_SCENE_TEMP_80, FLAG_AREA_TEMP_80, 18, 68);
+      CrackedTile_Find(33, FLAG_SCENE_TEMP_80, FLAG_AREA_TEMP_80, 18, 68);
       CrackedTile_PlaceLanding(22, 0, FLAG_SCENE_TEMP_04);
     } else if (entrance == 12) {
-      CrackedTiles_Find(35, FLAG_SCENE_TEMP_80, FLAG_AREA_TEMP_80, 18, 68);
+      CrackedTile_Find(35, FLAG_SCENE_TEMP_80, FLAG_AREA_TEMP_80, 18, 68);
       if (Event_GetFlag(FLAG_KEEP_PARTY_POSITION) == 0)
         CrackedTile_PlaceLanding(36, -36, FLAG_SCENE_TEMP_04);
     } else if ((u32)((nearStairs - 4) << 16) <= 0x10000) {
-      CrackedTiles_Find(35, FLAG_SCENE_TEMP_80, FLAG_AREA_TEMP_80, 18, 68);
+      CrackedTile_Find(35, FLAG_SCENE_TEMP_80, FLAG_AREA_TEMP_80, 18, 68);
     }
   } else if (scene == SCENE_ANEMOS_INNER_SANCTUM_GUARDIAN) {
     struct MapWork *map = Ram_HeapSlots->mapGrid;
@@ -1739,7 +1739,7 @@ void FieldEffect_SpawnLocal(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
 #define CELL_PUSH_SLOT_ENTRY Oam_AddSpriteAtDepth
 #include "../field/map_cell_sprite.c"
 
-#include "shared/cracked_tiles_find.h"
+#include "shared/cracked_tile_find.h"
 
 #include "shared/leader_center_in_cell.h"
 
@@ -1747,7 +1747,7 @@ void FieldEffect_SpawnLocal(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
 
 // Centers the leader on its cell, plays sound 161 and copies the cell below
 // the table's source cell over the leader's, keeping the source column's and
-// row's 64 bit; CrackedTiles_Step calls it the first time the leader steps on
+// row's 64 bit; CrackedTile_Step calls it the first time the leader steps on
 // one of the table's cells.
 #include "shared/cracked_tile_crack.h"
 
@@ -1817,7 +1817,7 @@ void CrackedTile_DropIn(void) {
 }
 
 void GameFlag_SetByte(s32 flag, s32 value);
-#include "shared/cracked_tiles_step.h"
+#include "shared/cracked_tile_step.h"
 
 #include "shared/cracked_tile_place_landing.h"
 

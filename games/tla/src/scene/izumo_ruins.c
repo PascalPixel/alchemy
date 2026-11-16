@@ -5,7 +5,7 @@
 /// Frost freezes the puddles (IzumoRuins_FreezePuddle), Pound sinks pillars
 /// (IzumoRuins_PoundPillar), Move sets the brown pillars in place
 /// (IzumoRuins_FinishMovingPillar), grey pillars crumble under a second step
-/// (shared/crumbling_pillars.h), and Parch dries the pool before the room of
+/// (shared/crumbling_pillar.h), and Parch dries the pool before the room of
 /// the stone tablet (IzumoRuins_ParchThePool).
 #include "system/iwram_call.h"
 #include "field/field_sequence.h"
@@ -83,7 +83,7 @@ void Leader_SetCellShapeAt(s32 level, s32 layer);
 
 void Actor_SetCellOpen(s32 id, u32 kind, s32 flag, s32 layer);
 
-#include "shared/crumbling_pillars.h"
+#include "shared/crumbling_pillar.h"
 
 #include "../field/field_effect_advance_motion_priority.c"
 

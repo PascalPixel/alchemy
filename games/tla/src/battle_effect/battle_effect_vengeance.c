@@ -780,8 +780,7 @@ void BattleEffect_RunGeyser(struct BattleEffectParams *args, s32 mode) {
           s32 y;
 
           drop->variant--;
-          BattleEffectKernels_IntegrateVector2(drop, 60,
-                                               gGeyser_DropGravity[mode]);
+          Particle_AdvanceWithGravity2D(drop, 60, gGeyser_DropGravity[mode]);
           y = FIXEDtoINT(drop->y);
           if (y > 120) {
             drop->velocityY = -drop->velocityY / 2;
@@ -981,7 +980,7 @@ void BattleEffect_RunStarSwarm(struct BattleEffectParams *args, s32 mode) {
       Matrix_Initialize();
       Matrix_SetLookAt(camera->eye, camera->focus);
       if (frame >= start + 4 && start < 44)
-        BattleEffectKernels_IntegrateVector3(point, PARTICLE_DAMPING_NONE, 0);
+        Particle_AdvanceWithGravity3D(point, PARTICLE_DAMPING_NONE, 0);
       Matrix_TranslateVector(&point->x);
 
       for (i = 0; i != starCount; i++) {
@@ -1014,7 +1013,7 @@ void BattleEffect_RunStarSwarm(struct BattleEffectParams *args, s32 mode) {
           size = 9 - (screen.depth - 250) / 64;
           draw[0](canvas, sparkCels + gBattleEffect_MotePictures[size - 1],
                   screen.x - size / 2, screen.y - size, size, size * 2);
-          BattleEffectKernels_IntegrateVector3(star, 60, 0);
+          Particle_AdvanceWithGravity3D(star, 60, 0);
 
           // The pull back into the point; a star within 2047 of it across
           // the floor is gone.
@@ -1126,7 +1125,7 @@ void BattleEffect_RunBubbleColumn(struct BattleEffectParams *args) {
                 FIXED_INTEGER_PART(bubble->y) -
                     ((height = gBubbleColumn_PictureHeights[cel]) >> 1),
                 width, height);
-        BattleEffectKernels_IntegrateVector2(bubble, 63, -toFIXED(1) / 4);
+        Particle_AdvanceWithGravity2D(bubble, 63, -toFIXED(1) / 4);
         if (bubble->y < -INTtoFIXED(gBubbleColumn_PictureHeights[cel]))
           bubble->variant = -1;
       }
@@ -1222,7 +1221,7 @@ struct MeshVertex;
                                                                                \
       blit[0](canvas, src_, x_, y_ - (h_ >> 1), w_, h_);                       \
     }                                                                          \
-    BattleEffectKernels_IntegrateVector2(p, 63, -toFIXED(1) / 4);              \
+    Particle_AdvanceWithGravity2D(p, 63, -toFIXED(1) / 4);                     \
     if ((p)->y < -INTtoFIXED(gCoatlicue_PictureHeights[n_])) {                 \
       (p)->variant = -1;                                                       \
     }                                                                          \
@@ -1769,7 +1768,7 @@ void BattleEffect_RunCoatlicue(struct BattleEffectParams *args) {
 
             blit[0](canvas, src, x0, y0 - (h >> 1), w, h);
           }
-          BattleEffectKernels_IntegrateVector3(step, PARTICLE_DAMPING_NONE, 0);
+          Particle_AdvanceWithGravity3D(step, PARTICLE_DAMPING_NONE, 0);
           if (step->z < 0) {
             step->z = zero;
           }

@@ -1,5 +1,5 @@
 @ The geysers' tiles, a vent and the column over it, in four field overlays
-@ (64d, 661, 66b, 697): Gondowan Cliffs' geysers (Geysers_Start), Yampi Desert's
+@ (64d, 661, 66b, 697): Gondowan Cliffs' geysers (Geyser_Start), Yampi Desert's
 @ rising sand, Trial Road's fountains and Venus Lighthouse's entrance load
 @ them into one VRAM cache entry.
 	.section .rodata

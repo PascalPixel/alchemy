@@ -623,7 +623,7 @@ void Lemuria_StartRippleDma(void) {
 
 /// A task: fills the back buffer of line scrolls with the water's ripple, a
 /// sine of the line and the frame, and swaps the buffers.
-void Lemuria_ComputeRipple(void) {
+void Lemuria_CalculateRipple(void) {
   struct MapLayer *layer = &Ram_HeapSlots->mapGrid->layers[1];
   s16 *lines = gLemuria_RippleLines[gLemuria_RippleBuffer ^ 1];
   FIXED v[2];
@@ -644,7 +644,7 @@ void Lemuria_StartRipple(void) {
   s32 priority;
 
   priority = TASK_PASS_VBLANK;
-  Task_AddFrame(Lemuria_ComputeRipple, priority);
+  Task_AddFrame(Lemuria_CalculateRipple, priority);
   priority = TASK_PASS_FRAME;
   Task_AddFrame(Lemuria_StartRippleDma, priority);
 }

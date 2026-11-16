@@ -361,7 +361,7 @@ void BattleEffect_RunFlurry(struct BattleEffectParams *args, s32 mode) {
         size++;
         draw[(i / 2) & 1](canvas, sheet + gBattleEffect_MotePictures[size - 1],
                           pos.x - size / 2, pos.y - size, size, size * 2);
-        BattleEffectKernels_IntegrateVector3(mote, 60, -toFIXED(1) / 64);
+        Particle_AdvanceWithGravity3D(mote, 60, -toFIXED(1) / 64);
         if (mote->y < toFIXED(8))
           mote->velocityY = -mote->velocityY / 2;
         mote->variant--;
@@ -411,7 +411,7 @@ void BattleEffect_RunFlurry(struct BattleEffectParams *args, s32 mode) {
                     FIXED_INTEGER_PART(puff->x) - 12,
                     FIXED_INTEGER_PART(puff->y) - 24, SMOKE_PUFF_WIDTH,
                     SMOKE_PUFF_HEIGHT);
-            BattleEffectKernels_IntegrateVector2(puff, 62, -toFIXED(1) / 16);
+            Particle_AdvanceWithGravity2D(puff, 62, -toFIXED(1) / 16);
           }
           puff->variant++;
         }

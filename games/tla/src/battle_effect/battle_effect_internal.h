@@ -885,10 +885,10 @@ void BattleEffect_RunWeaken(struct BattleEffectParams *args);
 void BattleEffect_SpawnObjects(s32 entryCount, s32 kind, u32 variant);
 
 // projectiles.c
-void BattleEffectKernels_IntegrateVector3(struct Particle *step, s32 damping,
-                                          s32 gravity);
-void BattleEffectKernels_IntegrateVector2(struct Particle *step, s32 damping,
-                                          s32 gravity);
+void Particle_AdvanceWithGravity3D(struct Particle *step, s32 damping,
+                                   s32 gravity);
+void Particle_AdvanceWithGravity2D(struct Particle *step, s32 damping,
+                                   s32 gravity);
 // BattleEffect_BuildBlitter itself.
 s32 BattleEffect_BuildBlitter(s32 slot, s32 widthShift, s32 heightShift,
                               s32 flags, u32 mode);

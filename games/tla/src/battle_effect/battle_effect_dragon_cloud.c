@@ -206,7 +206,7 @@ void BattleEffect_RunDragonCloud(struct BattleEffectParams *args) {
           draw[i & 1](canvas, graphics + gBattleEffect_MotePictures[size - 1],
                       FIXED_INTEGER_PART(step->x) - size / 2,
                       FIXED_INTEGER_PART(step->y) - size, size, size * 2);
-          BattleEffectKernels_IntegrateVector2(step, 62, toFIXED(1) / 4);
+          Particle_AdvanceWithGravity2D(step, 62, toFIXED(1) / 4);
           if (step->y > INTtoFIXED((i & 3) + 108))
             step->velocityY = -step->velocityY / 2;
           step->variant--;
@@ -331,13 +331,13 @@ void BattleEffect_RunDragonCloud(struct BattleEffectParams *args) {
                                   position.x - 16, position.y - 40,
                                   FLASH_BURST_WIDTH, FLASH_BURST_HEIGHT);
               step->variant++;
-              BattleEffectKernels_IntegrateVector3(step, 62, toFIXED(1) / 8);
+              Particle_AdvanceWithGravity3D(step, 62, toFIXED(1) / 8);
             }
           } else {
             draw[0](canvas, graphics + gBattleEffect_MotePictures[size - 1],
                     position.x - size / 2, position.y - size, size, size * 2);
-            BattleEffectKernels_IntegrateVector3(step, PARTICLE_DAMPING_NONE,
-                                                 -toFIXED(1) / 8);
+            Particle_AdvanceWithGravity3D(step, PARTICLE_DAMPING_NONE,
+                                          -toFIXED(1) / 8);
           }
         }
       }
@@ -357,7 +357,7 @@ void BattleEffect_RunDragonCloud(struct BattleEffectParams *args) {
             draw[i & 1](canvas, graphics + gBattleEffect_MotePictures[size - 1],
                         position.x - size / 2, position.y - size, size,
                         size * 2);
-            BattleEffectKernels_IntegrateVector3(step, 62, toFIXED(1) / 8);
+            Particle_AdvanceWithGravity3D(step, 62, toFIXED(1) / 8);
             step->variant--;
           }
         }
@@ -375,7 +375,7 @@ void BattleEffect_RunDragonCloud(struct BattleEffectParams *args) {
           draw[i & 1](canvas, graphics + gBattleEffect_MotePictures[size - 1],
                       FIXED_INTEGER_PART(spark->x) - size / 2,
                       FIXED_INTEGER_PART(spark->y) - size, size, size * 2);
-          BattleEffectKernels_IntegrateVector2(spark, 60, -toFIXED(1) / 4);
+          Particle_AdvanceWithGravity2D(spark, 60, -toFIXED(1) / 4);
           spark->variant--;
         }
       }

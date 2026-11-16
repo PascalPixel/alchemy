@@ -492,7 +492,7 @@ void BattleEffect_RunThor(struct BattleEffectParams *args) {
              i++, spark++) {
           if (spark->variant > 0) {
             spark->variant--;
-            BattleEffectKernels_IntegrateVector2(spark, 60, 0);
+            Particle_AdvanceWithGravity2D(spark, 60, 0);
             if (spark->y > toFIXED(120)) {
               spark->velocityY = -spark->velocityY / 2;
             } else if ((u32)spark->x <= 0x7effff && spark->y >= 0) {

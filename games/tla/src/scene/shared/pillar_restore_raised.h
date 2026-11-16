@@ -1,4 +1,4 @@
-/// Pillars_Restore without the reset, lifting the leader onto the ground.
+/// Pillar_Restore without the reset, lifting the leader onto the ground.
 void MagmaRockInside_RestoreCrumblingPillars(const u16 *table) {
   struct MapWork *map = Ram_HeapSlots->mapGrid;
   struct Actor *object;

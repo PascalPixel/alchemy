@@ -219,7 +219,7 @@ void BattleEffect_RunBoltTrail(struct BattleEffectParams *args, s32 mode) {
             gBattleEffect_GlintPictureHeights[cell]);
         HeapSlot_Release(HEAP_SLOT_RAM_CODE_PAIRED);
       }
-      BattleEffectKernels_IntegrateVector2(ball, PARTICLE_DAMPING_NONE, 0);
+      Particle_AdvanceWithGravity2D(ball, PARTICLE_DAMPING_NONE, 0);
     }
 
     // Thunder Mine's sparks bounce.
@@ -233,7 +233,7 @@ void BattleEffect_RunBoltTrail(struct BattleEffectParams *args, s32 mode) {
             draw[0](canvas, sprites + gBattleEffect_MotePictures[size - 1],
                     (FIXEDtoINT(dot->x)) - size / 2,
                     (FIXEDtoINT(dot->y)) - size, size, size * 2);
-            BattleEffectKernels_IntegrateVector2(dot, 62, 512);
+            Particle_AdvanceWithGravity2D(dot, 62, 512);
           }
           if ((FIXEDtoINT(dot->y)) > 111) {
             dot->velocityY = -dot->velocityY * 48 / DAMPING_SCALE;
@@ -482,7 +482,7 @@ void BattleEffect_RunMegaera(struct BattleEffectParams *args) {
 
           rects[which](canvas, smoke, FIXED_INTEGER_PART(p->x) - 16,
                        FIXED_INTEGER_PART(p->y) - 32, 32, 64);
-          BattleEffectKernels_IntegrateVector2(p, 62, -toFIXED(1) / 4);
+          Particle_AdvanceWithGravity2D(p, 62, -toFIXED(1) / 4);
         }
         p->variant++;
         if (frame == 108) {
@@ -538,7 +538,7 @@ void BattleEffect_RunMegaera(struct BattleEffectParams *args) {
             FIXED_INTEGER_PART(p->x) - gBattleEffect_SparkleSizes[k] / 2,
             FIXED_INTEGER_PART(p->y) - gBattleEffect_SparkleSizes[k] / 2,
             gBattleEffect_SparkleSizes[k], gBattleEffect_SparkleSizes[k]);
-        BattleEffectKernels_IntegrateVector2(p, 58, 0);
+        Particle_AdvanceWithGravity2D(p, 58, 0);
         if (i & 1) {
           p->velocityX += -toFIXED(1) / 32;
           p->velocityY += toFIXED(1) / 16;
@@ -642,7 +642,7 @@ void BattleEffect_RunMegaera(struct BattleEffectParams *args) {
               canvas, sprites + gBattleEffect_MotePictures[size - 1],
               FIXED_INTEGER_PART(p->x) - size / 2,
               FIXED_INTEGER_PART(p->y) - size, size, size * 2);
-          BattleEffectKernels_IntegrateVector2(p, 62, toFIXED(1) / 4);
+          Particle_AdvanceWithGravity2D(p, 62, toFIXED(1) / 4);
           p->variant++;
           if (p->velocityY > 0 && FIXED_INTEGER_PART(p->y) > 104) {
             p->variant = -1;

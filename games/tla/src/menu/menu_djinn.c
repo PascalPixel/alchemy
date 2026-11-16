@@ -1696,10 +1696,10 @@ s32 DjinnMenu_DrawPairPreview(s32 mode, s32 pageIndex) {
 #define DJINN_PREVIEW_POOL_ARROW_X 62 ///< beside HP and PP
 #define DJINN_PREVIEW_STAT_ARROW_X 70 ///< beside the other stats
 #define DJINN_PREVIEW_PP_X 88
-#define MSG_STAT_LABELS ((s32)MsgPreviewStatLabel)
-#define MSG_PSYNERGY_GAINED ((s32)MsgPsynergyGained)
-#define MSG_PSYNERGY_LOST ((s32)MsgPsynergyLost)
-#define MSG_NO_CHANGE ((s32)MsgPsynergyUnchanged)
+#define STAT_LABELS_MESSAGE ((s32)MsgPreviewStatLabel)
+#define PSYNERGY_GAINED_MESSAGE ((s32)MsgPsynergyGained)
+#define PSYNERGY_LOST_MESSAGE ((s32)MsgPsynergyLost)
+#define NO_CHANGE_MESSAGE ((s32)MsgPsynergyUnchanged)
 #else
 #define DJINN_PREVIEW_DIGITS 4
 #define DJINN_PREVIEW_CURRENT_X 32
@@ -1707,10 +1707,10 @@ s32 DjinnMenu_DrawPairPreview(s32 mode, s32 pageIndex) {
 #define DJINN_PREVIEW_POOL_ARROW_X 64
 #define DJINN_PREVIEW_STAT_ARROW_X 64
 #define DJINN_PREVIEW_PP_X 56
-#define MSG_STAT_LABELS ((s32)MsgLuckRises + 13)
-#define MSG_PSYNERGY_GAINED ((s32)MsgDjinnStatusHelp + 1)
-#define MSG_PSYNERGY_LOST ((s32)MsgDjinnStatusHelp + 2)
-#define MSG_NO_CHANGE ((s32)MsgDjinnCompareTrade + 1)
+#define STAT_LABELS_MESSAGE ((s32)MsgLuckRises + 13)
+#define PSYNERGY_GAINED_MESSAGE ((s32)MsgDjinnStatusHelp + 1)
+#define PSYNERGY_LOST_MESSAGE ((s32)MsgDjinnStatusHelp + 2)
+#define NO_CHANGE_MESSAGE ((s32)MsgDjinnCompareTrade + 1)
 #endif
 
 /// HP and PP, four digits wide in every edition, and their maximum and the
@@ -1851,7 +1851,7 @@ s32 DjinnMenu_DrawStatPreview(s32 window, s32 x, s32 y, s32 ownerId,
     Text_DrawStringAtOffsetFar((s32)gDjinnMenu_TextLevel, window, x * 8 + 40,
                                y * 8 + 16);
     Text_DrawNumberInWindowFar(unit->level, 2, window, x * 8 + 88, y * 8 + 16);
-    label = MSG_STAT_LABELS;
+    label = STAT_LABELS_MESSAGE;
     Text_DrawMessageAsTilesFar(label, window, x * 8,
                                DJINN_PREVIEW_STAT_Y(y, 0));
     Text_DrawMessageAsTilesFar(label + 1, window, x * 8,
@@ -2014,18 +2014,19 @@ s32 DjinnMenu_DrawStatPreview(s32 window, s32 x, s32 y, s32 ownerId,
       lines = 0;
       if (gained) {
         Text_SetColorFar(TEXT_COLOR_YELLOW);
-        Text_DrawMessageAsTilesFar(MSG_PSYNERGY_GAINED, window, x * 8,
+        Text_DrawMessageAsTilesFar(PSYNERGY_GAINED_MESSAGE, window, x * 8,
                                    y * 8 + 88);
         lines = 1;
       }
       if (lost) {
         Text_SetColorFar(TEXT_COLOR_RED);
-        Text_DrawMessageAsTilesFar(MSG_PSYNERGY_LOST, window, x * 8,
+        Text_DrawMessageAsTilesFar(PSYNERGY_LOST_MESSAGE, window, x * 8,
                                    (y + lines) * 8 + 88);
         lines++;
       }
       if (lines == 0)
-        Text_DrawMessageAsTilesFar(MSG_NO_CHANGE, window, x * 8, y * 8 + 88);
+        Text_DrawMessageAsTilesFar(NO_CHANGE_MESSAGE, window, x * 8,
+                                   y * 8 + 88);
       Text_SetColorFar(TEXT_COLOR_NORMAL);
       Window_DrawDividerLineFar(window, 0, 11, 13, 11);
     }
@@ -2040,4 +2041,4 @@ s32 DjinnMenu_DrawStatPreview(s32 window, s32 x, s32 y, s32 ownerId,
   return 1;
 }
 
-#undef MSG_NO_CHANGE
+#undef NO_CHANGE_MESSAGE

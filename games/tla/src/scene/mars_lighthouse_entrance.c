@@ -245,7 +245,7 @@ const struct ActorPlacement *Scene_GetActorPlacements(void) {
 // (its mode 3 for 2 when it finds no torch); the rest of blaze.c's reading of
 // the mode would settle it.
 /// Unused: as the dragon hall's, readies Blaze for a dragon statue.
-UNUSED void MarsLighthouseEntrance_BeginBlazeOnStatue(void) {
+UNUSED void MarsLighthouseEntrance_StartBlazeOnStatue(void) {
   struct FieldWork *event = Ram_HeapSlots->fieldWork;
 
   event->blazeLongSpray = 1;
@@ -1749,7 +1749,7 @@ void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
 #define CELL_PUSH_SLOT_ENTRY Oam_AddSpriteAtDepthClamped
 #include "../field/map_cell_sprite.c"
 
-#include "shared/cracked_tiles_find.h"
+#include "shared/cracked_tile_find.h"
 
 #include "shared/leader_center_in_cell.h"
 
@@ -1757,7 +1757,7 @@ void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
 
 // Centers the leader on its cell, plays sound 161 and copies the cell below
 // the table's source cell over the leader's, keeping the source column's and
-// row's 64 bit; CrackedTiles_Step calls it the first time the leader steps on
+// row's 64 bit; CrackedTile_Step calls it the first time the leader steps on
 // one of the table's cells.
 #include "shared/cracked_tile_crack.h"
 
@@ -1872,7 +1872,7 @@ void MarsLighthouseEntrance_LandFromCrack(void) {
 }
 
 void GameFlag_SetByte(s32 flag, s32 value);
-#include "shared/cracked_tiles_step.h"
+#include "shared/cracked_tile_step.h"
 
 void CrackedTile_PlaceLanding(s32 x, s32 z, s32 effect) {
   struct Actor *leader = Actor_Get(gMainRoutineWork.leaderActorId);

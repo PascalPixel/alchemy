@@ -134,7 +134,7 @@ struct Trigger;
 
 u32 Random16(void);
 void MarsLighthouseAerie_LookAround(struct Actor *object);
-void MarsLighthouseAerie_BeginTalkWhileHalted(s32 id);
+void MarsLighthouseAerie_StartTalkWhileHalted(s32 id);
 void MarsLighthouseAerie_EndTalkWhileHalted(s32 id);
 void Teleport_StartShimmer(void);
 void Teleport_StopShimmer(void);
@@ -1818,7 +1818,7 @@ void MarsLighthouseAerie_UrgeOnToBeacon(void) {
 }
 
 /// An orb circles the beacon's beam as it rises.
-void Orbs_UpdateRising(struct Actor *self) {
+void Orb_UpdateRising(struct Actor *self) {
   struct Actor *centre = Actor_Get(ACTOR_BEAM_BOTTOM);
   u16 angle = self->timer;
   FIXED sine;
@@ -1838,7 +1838,7 @@ void Orbs_UpdateRising(struct Actor *self) {
 
 /// Every third frame, or every frame once the light has broken through, an orb
 /// starts to rise round the beacon's beam.
-void Orbs_SpawnRising(void) {
+void Orb_SpawnRising(void) {
   struct Actor *center;
   struct Actor *effect;
   struct FieldSprite *sprite;
@@ -1866,13 +1866,13 @@ void Orbs_SpawnRising(void) {
   }
   if (effect != 0) {
     sprite = effect->sprite;
-    Actor_StartScript(effect, gOrbs_RisingScript);
+    Actor_StartScript(effect, gOrb_RisingScript);
     FieldActor_SetSpriteColor(effect, SPRITE_COLOR_GRB);
     effect->motionFlags = 0;
     angle = Random16() & 0xffff000;
     effect->timer = angle;
     effect->userValue = 0;
-    effect->update = (void (*)(void))Orbs_UpdateRising;
+    effect->update = (void (*)(void))Orb_UpdateRising;
     effect->speedLimit = Math_Sin((u32)(Random16() * 0xffff) >> 20) * 24 >> 16;
     sprite->flags = 0;
     sprite->priority = 2;
@@ -2116,7 +2116,7 @@ void MarsLighthouseAerie_LightBeacon(void) {
   lowerBeam->motionFlags = zero;
   FieldActor_SetPositionAndResetMotion(lowerBeam, toFIXED(512), toFIXED(96),
                                        toFIXED(204));
-  Task_AddFrame(Orbs_SpawnRising, TASK_PASS_VBLANK);
+  Task_AddFrame(Orb_SpawnRising, TASK_PASS_VBLANK);
   Actor_FaceDirection(ACTOR_PIERS, FACING_NORTHEAST, 0);
   Actor_FaceDirection(ACTOR_JENNA, FACING_NORTHEAST, 0);
   Actor_FaceDirection(ACTOR_SHEBA, FACING_NORTHEAST, 0);
@@ -2166,7 +2166,7 @@ void MarsLighthouseAerie_LightBeacon(void) {
   MarsLighthouseAerie_StepBackLeft(ACTOR_PIERS);
   MarsLighthouseAerie_StepBackLeft(ACTOR_JENNA);
   MarsLighthouseAerie_StepBackLeft(ACTOR_SHEBA);
-  glowTask = (s32)Orbs_SpawnRising;
+  glowTask = (s32)Orb_SpawnRising;
   MarsLighthouseAerie_StepBackLeft(ACTOR_JENNAS_MOTHER);
   MarsLighthouseAerie_StepBackLeft(ACTOR_JENNAS_FATHER);
   MarsLighthouseAerie_StepBackLeft(ACTOR_KRADEN);
@@ -2750,7 +2750,7 @@ void MarsLighthouseAerie_ClearCastOffer(void) {
 // From patch 1, as is MarsLighthouseAerie_EndTalkWhileHalted.
 #if TLA_PATCH_1
 /// From patch 1: talking to the one Halt holds keeps the hold during the talk.
-void MarsLighthouseAerie_BeginTalkWhileHalted(s32 id) {
+void MarsLighthouseAerie_StartTalkWhileHalted(s32 id) {
   u8 *work = Ram_HeapSlots->windowWork;
 
   if (gMainRoutineWork.haltedActor == id)
@@ -2794,7 +2794,7 @@ void MarsLighthouseAerie_TalkToIvan(void) {
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
 #if TLA_PATCH_1
-  MarsLighthouseAerie_BeginTalkWhileHalted(ACTOR_IVAN);
+  MarsLighthouseAerie_StartTalkWhileHalted(ACTOR_IVAN);
 #endif
   Actor_FaceActor(ACTOR_IVAN, gMainRoutineWork.leaderActorId, 0);
   FieldEvent_SetMessageId(MsgIUnderstandYour);
@@ -2814,7 +2814,7 @@ void MarsLighthouseAerie_TalkToJennasMother(void) {
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
 #if TLA_PATCH_1
-  MarsLighthouseAerie_BeginTalkWhileHalted(ACTOR_JENNAS_MOTHER);
+  MarsLighthouseAerie_StartTalkWhileHalted(ACTOR_JENNAS_MOTHER);
 #endif
   FieldEvent_SetMessageId(MsgUhhhhnnnICan);
   // "Uhhhhnnn... Felix... I...can't see you, but I sense that you're..."
@@ -2830,7 +2830,7 @@ void MarsLighthouseAerie_TalkToKyle(void) {
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
 #if TLA_PATCH_1
-  MarsLighthouseAerie_BeginTalkWhileHalted(ACTOR_KYLE);
+  MarsLighthouseAerie_StartTalkWhileHalted(ACTOR_KYLE);
 #endif
   FieldEvent_SetMessageId(MsgKoffKoffYou);
   // "*Koff! Koff!* Felix... You made it back...alive... Please, I must..."
@@ -2846,7 +2846,7 @@ void MarsLighthouseAerie_TalkToJennasFather(void) {
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
 #if TLA_PATCH_1
-  MarsLighthouseAerie_BeginTalkWhileHalted(ACTOR_JENNAS_FATHER);
+  MarsLighthouseAerie_StartTalkWhileHalted(ACTOR_JENNAS_FATHER);
 #endif
   FieldEvent_SetMessageId(MsgUnnnnIAm);
   // "Unnnn... Felix? ...Jenna? I am so happy...to have one last chance to..."
@@ -3433,7 +3433,7 @@ s32 gMarsLighthouseAerie_BeaconFlameScript[] = {
     SC_RELEASE,
 };
 
-u32 gOrbs_RisingScript[] = {                                                               
+u32 gOrb_RisingScript[] = {                                                               
       SC_SET(SW_SCALE_X, 0xcccc),                                              
       SC_SET(SW_SCALE_Y, 0xcccc),                                              
       SC_ANIMATION(1),                                                               

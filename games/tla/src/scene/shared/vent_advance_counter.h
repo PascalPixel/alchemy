@@ -1,5 +1,5 @@
 /// Steps the vents' counter, wrapping at `limit`.
-s32 Vents_AdvanceCounter(s32 limit) {
+s32 Vent_AdvanceCounter(s32 limit) {
   struct VentWork *work = VENT_WORK;
 
   if (Event_GetFlag(FLAG_FIELD_HANDLING_REQUESTS) == 0) {

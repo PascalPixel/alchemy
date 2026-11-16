@@ -1407,7 +1407,7 @@ void BattleEffect_RunCharon(struct BattleEffectParams *arg) {
           routine[0](canvas, buffer, x,
                      (FIXEDtoINT(p->y)) - FLASH_BURST_HEIGHT / 2,
                      FLASH_BURST_WIDTH, FLASH_BURST_HEIGHT);
-          BattleEffectKernels_IntegrateVector2(p, 60, -toFIXED(1) / 8);
+          Particle_AdvanceWithGravity2D(p, 60, -toFIXED(1) / 8);
         }
         p->variant++;
       }
@@ -1422,7 +1422,7 @@ void BattleEffect_RunCharon(struct BattleEffectParams *arg) {
             routine[0](canvas, glyphs + gBattleEffect_MotePictures[size - 1],
                        (FIXEDtoINT(p->x)) - size / 2, (FIXEDtoINT(p->y)) - size,
                        size, size * 2);
-            BattleEffectKernels_IntegrateVector2(p, 63, 0);
+            Particle_AdvanceWithGravity2D(p, 63, 0);
             if (p->y > toFIXED(112)) {
               p->velocityY = -p->velocityY;
             }
@@ -1623,7 +1623,7 @@ void BattleEffect_RunCharon(struct BattleEffectParams *arg) {
             routine[0](canvas, glyphs + gBattleEffect_MotePictures[size - 1],
                        (FIXEDtoINT(p->x)) - size / 2, (FIXEDtoINT(p->y)) - size,
                        size, size * 2);
-            BattleEffectKernels_IntegrateVector2(p, 60, 0);
+            Particle_AdvanceWithGravity2D(p, 60, 0);
             p->variant--;
           }
         }

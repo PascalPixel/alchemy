@@ -3108,7 +3108,7 @@ struct TrialRoadFountain *TrialRoad_AddFountain(s32 slot, s32 id, s32 timer,
 // other marks its cell, writes a shape for its height into the shape grid, and
 // takes mode 0 when its first flag is set. Then the leader is lifted onto the
 // ground if it stands below it.
-#include "shared/pillars_restore_raised.h"
+#include "shared/pillar_restore_raised.h"
 
 #include "shared/traps_check.h"
 
@@ -3159,7 +3159,7 @@ void Actor_MoveToObject(s32 id, s32 owner);
 // halfword pairs: flag + 1 set parks the actor at (0, 0); otherwise its cell
 // gets attributeB 128 and its shape-grid byte is rewritten, and flag set makes
 // it copy actor 9's visual attributes.
-#include "shared/pillars_restore.h"
+#include "shared/pillar_restore.h"
 
 /// Moves the actor to the target's place and the target out of sight.
 void TrialRoad_TakePlaceOf(struct Actor *object, struct Actor *target) {

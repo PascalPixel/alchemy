@@ -2497,21 +2497,21 @@ void Contigo_InitializeShops(void) {
 // The lines the prize counter speaks: the Spanish text numbers them
 // differently.
 #if (LANGUAGE == LANGUAGE_SPANISH)
-#define MSG_COINS_WON ((s32)MsgContigoHeyYaDontHaveEnough + 1)
-#define MSG_COINS_LOST ((s32)MsgContigoHeyYaDontHaveEnough + 2)
-#define MSG_READ_SIGN ((s32)MsgContigoYaWonCoinTalkAbout)
-#define MSG_CONGRATULATIONS ((s32)MsgContigoYaLostCoinBetterLuck)
-#define MSG_FIRST_PRIZE ((s32)MsgContigoTheRulesAreListedOn)
-#define MSG_NEXT_PRIZE ((s32)MsgContigoCongratulations)
-#define MSG_COME_AGAIN ((s32)MsgContigoComeAgain)
+#define COINS_WON_MESSAGE ((s32)MsgContigoHeyYaDontHaveEnough + 1)
+#define COINS_LOST_MESSAGE ((s32)MsgContigoHeyYaDontHaveEnough + 2)
+#define READ_SIGN_MESSAGE ((s32)MsgContigoYaWonCoinTalkAbout)
+#define CONGRATULATIONS_MESSAGE ((s32)MsgContigoYaLostCoinBetterLuck)
+#define FIRST_PRIZE_MESSAGE ((s32)MsgContigoTheRulesAreListedOn)
+#define NEXT_PRIZE_MESSAGE ((s32)MsgContigoCongratulations)
+#define COME_AGAIN_MESSAGE ((s32)MsgContigoComeAgain)
 #else
-#define MSG_COINS_WON ((s32)MsgContigoYaWonCoinTalkAbout)
-#define MSG_COINS_LOST ((s32)MsgContigoYaLostCoinBetterLuck)
-#define MSG_READ_SIGN ((s32)MsgContigoTheRulesAreListedOn)
-#define MSG_CONGRATULATIONS ((s32)MsgContigoCongratulations)
-#define MSG_FIRST_PRIZE ((s32)MsgContigoYouWonHereYouGo)
-#define MSG_NEXT_PRIZE ((s32)MsgContigoAndYouWonHereYou)
-#define MSG_COME_AGAIN ((s32)MsgContigoComeAgain)
+#define COINS_WON_MESSAGE ((s32)MsgContigoYaWonCoinTalkAbout)
+#define COINS_LOST_MESSAGE ((s32)MsgContigoYaLostCoinBetterLuck)
+#define READ_SIGN_MESSAGE ((s32)MsgContigoTheRulesAreListedOn)
+#define CONGRATULATIONS_MESSAGE ((s32)MsgContigoCongratulations)
+#define FIRST_PRIZE_MESSAGE ((s32)MsgContigoYouWonHereYouGo)
+#define NEXT_PRIZE_MESSAGE ((s32)MsgContigoAndYouWonHereYou)
+#define COME_AGAIN_MESSAGE ((s32)MsgContigoComeAgain)
 #endif
 
 void ItemDisplay_ShowItem(s32 item, s32 count);
@@ -2557,12 +2557,12 @@ void Contigo_InitializeLuckyDice(void) {
       else
         Sound_Play(MUS_JINGLE_SMALL);
       Event_Wait(20);
-      Event_SetMessageId(MSG_COINS_WON);
+      Event_SetMessageId(COINS_WON_MESSAGE);
       MessageArgument_Push(diff, MESSAGE_ARGUMENT_NUMBER);
       Event_ShowMessageAndWait(ACTOR_LUCKY_DICE_HOST, 0);
       Sound_WaitForJingle();
     } else if (diff < 0) {
-      Event_SetMessageId(MSG_COINS_LOST);
+      Event_SetMessageId(COINS_LOST_MESSAGE);
       MessageArgument_Push(-diff, MESSAGE_ARGUMENT_NUMBER);
       Event_ShowMessageAndWait(ACTOR_LUCKY_DICE_HOST, 0);
     }
@@ -2581,12 +2581,12 @@ void Contigo_InitializeLuckyDice(void) {
       else
         Sound_Play(MUS_JINGLE_SMALL);
       Event_Wait(20);
-      Event_SetMessageId(MSG_COINS_WON);
+      Event_SetMessageId(COINS_WON_MESSAGE);
       MessageArgument_Push(diff, MESSAGE_ARGUMENT_NUMBER);
       Event_ShowMessageAndWait(ACTOR_LUCKY_DICE_HOST, 0);
       Sound_WaitForJingle();
     } else if (diff < 0) {
-      Event_SetMessageId(MSG_COINS_LOST);
+      Event_SetMessageId(COINS_LOST_MESSAGE);
       MessageArgument_Push(-diff, MESSAGE_ARGUMENT_NUMBER);
       Event_ShowMessageAndWait(ACTOR_LUCKY_DICE_HOST, 0);
     }
@@ -2601,18 +2601,18 @@ void Contigo_InitializeLuckyDice(void) {
     if (list[0] == -1) {
       Contigo_SendToLuckyWheels(1);
     } else if (list[0] == -2) {
-      Event_SetMessageId(MSG_READ_SIGN);
+      Event_SetMessageId(READ_SIGN_MESSAGE);
       Event_ShowMessageAndWait(ACTOR_LUCKY_WHEELS_ATTENDANT, 0);
     } else {
-      Event_SetMessageId(MSG_CONGRATULATIONS);
+      Event_SetMessageId(CONGRATULATIONS_MESSAGE);
       Event_ShowMessageAndWait(ACTOR_LUCKY_WHEELS_ATTENDANT, 0);
       if (list[0] != -1) {
         prize = list;
         do {
           if (prize == list)
-            Event_SetMessageId(MSG_FIRST_PRIZE);
+            Event_SetMessageId(FIRST_PRIZE_MESSAGE);
           else
-            Event_SetMessageId(MSG_NEXT_PRIZE);
+            Event_SetMessageId(NEXT_PRIZE_MESSAGE);
           item = Contigo_PickPrize(*prize);
           MessageArgument_Push(item, MESSAGE_ARGUMENT_ITEM);
           Event_ShowMessageAndWait(ACTOR_LUCKY_WHEELS_ATTENDANT, 0);
@@ -2623,7 +2623,7 @@ void Contigo_InitializeLuckyDice(void) {
         } while (*prize != -1);
       }
       gMainRoutineWork.wheelsPrizes[0] = -2;
-      Event_SetMessageId(MSG_COME_AGAIN);
+      Event_SetMessageId(COME_AGAIN_MESSAGE);
       Event_ShowMessageAndWait(ACTOR_LUCKY_WHEELS_ATTENDANT, 0);
     }
     Event_End();
@@ -2696,13 +2696,13 @@ void Contigo_RaiseSparkle(struct Actor *object) {
     }
   }
 }
-#undef MSG_COINS_WON
-#undef MSG_COINS_LOST
-#undef MSG_READ_SIGN
-#undef MSG_CONGRATULATIONS
-#undef MSG_FIRST_PRIZE
-#undef MSG_NEXT_PRIZE
-#undef MSG_COME_AGAIN
+#undef COINS_WON_MESSAGE
+#undef COINS_LOST_MESSAGE
+#undef READ_SIGN_MESSAGE
+#undef CONGRATULATIONS_MESSAGE
+#undef FIRST_PRIZE_MESSAGE
+#undef NEXT_PRIZE_MESSAGE
+#undef COME_AGAIN_MESSAGE
 
 /// Sets up the sparkle: loads its picture and its four 16 by 16 sprites, and
 /// hands the object to its update, Contigo_RaiseSparkle.
@@ -3382,10 +3382,10 @@ struct Trigger gContigo_LuckyDiceTriggers[] = {
     {TRIGGER_TALK, ACTOR_LUCKY_WHEELS_PRIZE_SIGN, CONDITION_ALWAYS, EVENT(Contigo_ListLuckyWheelsPrizes)},
     {TRIGGER_TABLE_END},
 };
-#undef MSG_COINS_WON
-#undef MSG_COINS_LOST
-#undef MSG_READ_SIGN
-#undef MSG_CONGRATULATIONS
-#undef MSG_FIRST_PRIZE
-#undef MSG_NEXT_PRIZE
-#undef MSG_COME_AGAIN
+#undef COINS_WON_MESSAGE
+#undef COINS_LOST_MESSAGE
+#undef READ_SIGN_MESSAGE
+#undef CONGRATULATIONS_MESSAGE
+#undef FIRST_PRIZE_MESSAGE
+#undef NEXT_PRIZE_MESSAGE
+#undef COME_AGAIN_MESSAGE

@@ -68,7 +68,7 @@ enum JupiterLighthouseLeftTowerActorId {
 };
 
 struct Actor;
-s32 CrackedTiles_Step(void);
+s32 CrackedTile_Step(void);
 void MapGrid_SetAttributeBAt(s32 x, s32 z, s32 a, s32 b);
 void Actor_DisableById(s32 id);
 void CrackedTile_PlaceLanding(s32 x, s32 z, s32 effect);
@@ -116,7 +116,7 @@ void PushTarget_PushFill(struct PushTarget target);
 /// A cracked tile under the leader: as it gives way the party falls to the room
 /// below (exit 13).
 void JupiterLighthouse_StepOnCrackedTile(void) {
-  if (CrackedTiles_Step())
+  if (CrackedTile_Step())
     FieldEvent_SetExitRequest(13);
 }
 
@@ -181,7 +181,7 @@ s32 Scene_Initialize(void) {
   PushTarget_FillFootprint(ACTOR_FIRST_LOG + 2);
   PushTarget_FillFootprint(ACTOR_FIRST_LOG + 3);
   PushTarget_FillFootprint(ACTOR_FIRST_LOG + 4);
-  CrackedTiles_Find(33, FLAG_SCENE_TEMP_80, FLAG_AREA_TEMP_80, 0, 1);
+  CrackedTile_Find(33, FLAG_SCENE_TEMP_80, FLAG_AREA_TEMP_80, 0, 1);
   if (gMainRoutineWork.entrance == 13)
     CrackedTile_PlaceLanding(
         19, 0,
@@ -493,7 +493,7 @@ s8 gPushFootprints[][4] = {
 struct Actor;
 struct CellTarget;
 struct FieldEffect;
-s32 CrackedTiles_Step(void);
+s32 CrackedTile_Step(void);
 void Leader_CenterInCell(void);
 void CrackedTile_Crack(struct CellTarget *table, struct CellTargetEntry *entry);
 
@@ -506,18 +506,18 @@ extern const s32 *gFieldEffect_DurationScripts[];
 #define EFFECT_SCRIPTS gFieldEffect_DurationScripts
 #include "../field/field_effect_spawn.c"
 
-/// The cells CrackedTiles_Step watches, and the cell it copies over the one the
+/// The cells CrackedTile_Step watches, and the cell it copies over the one the
 /// leader steps on.
 #define CELL_PUSH_SLOT_ENTRY Oam_AddSpriteAtDepthClamped
 #include "../field/map_cell_sprite.c"
 
-#include "shared/cracked_tiles_find.h"
+#include "shared/cracked_tile_find.h"
 
 #include "shared/leader_center_in_cell.h"
 
 // Centers the leader on its cell, plays sound 161 and copies the cell below
 // the table's source cell over the leader's, keeping the source column's and
-// row's 64 bit; CrackedTiles_Step calls it the first time the leader steps on
+// row's 64 bit; CrackedTile_Step calls it the first time the leader steps on
 // one of the table's cells.
 #include "shared/cracked_tile_crack.h"
 
@@ -531,7 +531,7 @@ extern const s32 *gFieldEffect_DurationScripts[];
 
 struct CellTarget;
 struct CellTargetEntry;
-s32 CrackedTiles_Step(void);
+s32 CrackedTile_Step(void);
 void CrackedTile_PlaceLanding(s32 x, s32 z, s32 effect);
 extern u16 gPushKinds[];
 void CrackedTile_Crack(struct CellTarget *table, struct CellTargetEntry *entry);
@@ -540,7 +540,7 @@ void CrackedTile_Crack(struct CellTarget *table, struct CellTargetEntry *entry);
 
 void GameFlag_SetByte(s32 flag, s32 value);
 
-#include "shared/cracked_tiles_step.h"
+#include "shared/cracked_tile_step.h"
 
 #include "shared/cracked_tile_place_landing.h"
 

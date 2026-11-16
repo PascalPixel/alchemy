@@ -314,8 +314,8 @@ top:
     effect->targetX = pos.x;
     effect->targetZ = pos.z;
     effect->acceleration = toFIXED(4);
-    effect->maxSpeed = toFIXED(4);
-    effect->limitTurnStep = state;
+    effect->speedMax = toFIXED(4);
+    effect->turnStepLimited = state;
     effect->state++;
     return;
   }
@@ -333,8 +333,8 @@ top:
     Vector_AddPolarOffset(toFIXED(4), Random16(), &pos);
     effect->targetX = pos.x;
     effect->targetZ = pos.z;
-    effect->maxTurnStep = TRIG_TURN / 16;
-    effect->limitTurnStep = 1;
+    effect->turnStepMax = TRIG_TURN / 16;
+    effect->turnStepLimited = 1;
     effect->state++;
     return;
   }
@@ -421,7 +421,7 @@ void FieldPsynergy_Halt(void) {
     Vector_AddPolarOffset(toFIXED(4), Random16(), &pos.x);
     FieldParticle_Initialize(effect, SPRITE_SPARKLE, pos.x, pos.z);
     FieldParticle_SetCallback(effect, FieldEffect_UpdateHaltParticle);
-    Sprite_SetAnimationColorModesFar(effect->object, SPRITE_COLOR_WHITE);
+    Sprite_SetAnimationColorModesFar(effect->actor, SPRITE_COLOR_WHITE);
     effect++;
   }
 
@@ -629,7 +629,7 @@ void FieldPsynergy_UpdateLash(void) {
       else
         sprite->oam.index = work->tileB + (timer & 3) * 2;
       EffectSprite_DrawAtWorldPosition(sprite, particle);
-      BattleEffect_IntegrateVector3(particle, 63, -(toFIXED(5) / 64));
+      Field_AdvanceWithGravity3D(particle, 63, -(toFIXED(5) / 64));
       if (++particle->timer == 32)
         particle->timer = -1;
     }
@@ -866,8 +866,8 @@ void FieldEffect_UpdateRadialLaunch(struct FieldParticle *effect) {
     effect->targetX = pos.x;
     effect->targetZ = pos.z;
     effect->acceleration = toFIXED(5);
-    effect->maxSpeed = toFIXED(5);
-    effect->limitTurnStep = state;
+    effect->speedMax = toFIXED(5);
+    effect->turnStepLimited = state;
     effect->state++;
 
     if ((gFrameCount & 2) != 0)
@@ -925,7 +925,7 @@ void FieldPsynergy_Retreat(void) {
     FieldParticle_Initialize(effect, SPRITE_PARTICLE, pos.x, pos.z);
     FieldParticle_SetCallback(effect, FieldEffect_UpdateRadialLaunch);
     FieldParticle_SetActorMode(effect, 7);
-    Sprite_SetAnimationColorModesFar(effect->object, Random_Below(7));
+    Sprite_SetAnimationColorModesFar(effect->actor, Random_Below(7));
     scale = (Random16() >> 1) + FIXED_ONE * 6 / 5; // 1.2 to 1.7
     effect->scaleY = scale;
     effect->scaleX = scale;
@@ -1554,7 +1554,7 @@ again:
   sprite->y = pos[2];
   EffectSprite_Draw(sprite);
   if (work->arrowMoving != 0)
-    BattleEffect_IntegrateVector3(&motion->x, 64, 0);
+    Field_AdvanceWithGravity3D(&motion->x, 64, 0);
 
   if (work->sparking != 0) {
     motion = work->sparks;
@@ -1576,7 +1576,7 @@ again:
 
         BattleEffect_DrawCanvasBlock(
             gArrow_GlintPixels + (motion->delay & 1) * 64, x, y, 8, 8);
-        BattleEffect_IntegrateVector2(&motion->x, 60, 0);
+        Field_AdvanceWithGravity2D(&motion->x, 60, 0);
       }
       motion->delay++;
       if (work->sparksRepeat == 1 && motion->delay == 10)

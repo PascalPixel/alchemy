@@ -17,7 +17,7 @@ typedef void (*EffectCallback)(struct FieldParticle *);
 /// A particle a Psynergy effect moves and draws: its sprite, its position and
 /// target, its speed, scale and heading, and its per-frame callback.
 struct FieldParticle {
-  void *object;       ///< the slot's sprite
+  void *actor;        ///< the actor it draws, released with it
   FIXED x;            ///< 16.16 fixed-point pixels
   FIXED z;            ///< 16.16 fixed-point pixels
   FIXED targetX;      ///< 16.16 fixed-point pixels; EFFECT_NO_TARGET at rest
@@ -25,12 +25,12 @@ struct FieldParticle {
   FIXED originX;      ///< 16.16 fixed-point pixels
   FIXED originZ;      ///< 16.16 fixed-point pixels
   FIXED speed;        ///< 16.16 fixed-point pixels per frame
-  FIXED maxSpeed;     ///< 16.16 fixed-point pixels per frame
+  FIXED speedMax;     ///< 16.16 fixed-point pixels per frame
   FIXED acceleration; ///< 16.16 fixed-point pixels per frame, each frame
   FIXED scaleX;       ///< 16.16 fixed point, 0x10000 full size
   FIXED scaleY;       ///< 16.16 fixed point, 0x10000 full size
   u16 heading;        ///< 1/65536 turns
-  s16 maxTurnStep;    ///< 1/65536 turns a frame
+  s16 turnStepMax;    ///< 1/65536 turns a frame
   EffectCallback callback; ///< run each frame once callbackDelay is 0
   u16 age;                 ///< frames
   s16 callbackDelay;       ///< frames
@@ -38,13 +38,13 @@ struct FieldParticle {
   s16 orbitAngle;          ///< 1/32 turns
   s8 state;                ///< the callback's own step
   s8 stopAtTarget;         ///< nonzero: lands on the target within 8 pixels
-  s8 limitTurnStep; ///< Clamp steering to maxTurnStep; zero faces the target
-                    ///< directly.
-  s8 updateMotion;  ///< nonzero: FieldParticle_UpdateMotion moves it each frame
-  s8 render;        ///< nonzero: drawn each frame
-  s8 active;        ///< nonzero while the slot is in use
-  u8 randomValue;   ///< not read by name in TLA
-  u8 flags;         ///< FIELD_PARTICLE_LIFTED_BY_Z
+  s8 turnStepLimited; ///< Clamp steering to turnStepMax; zero faces the target
+                      ///< directly.
+  s8 updateMotion; ///< nonzero: FieldParticle_UpdateMotion moves it each frame
+  s8 render;       ///< nonzero: drawn each frame
+  s8 active;       ///< nonzero while the slot is in use
+  u8 randomValue;  ///< not read by name in TLA
+  u8 flags;        ///< FIELD_PARTICLE_LIFTED_BY_Z
 };
 
 /// FieldParticle.flags: z also lifts the sprite off the ground.

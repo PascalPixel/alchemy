@@ -1,7 +1,7 @@
 /// Finds the room's cracked tiles: every cell whose event is `kind` (whole) or
 /// `kind + 1` (cracked), each given the next flag from `flag`; returns how
 /// many.
-s32 CrackedTiles_Find(u32 kind, s32 flag, s32 flagByte, s32 x, s32 z) {
+s32 CrackedTile_Find(u32 kind, s32 flag, s32 flagByte, s32 x, s32 z) {
   struct CellTarget *table = &gCrackedTiles;
   struct CellTargetEntry *entry = table->entries;
   struct MapWork *map;
@@ -103,6 +103,6 @@ s32 CrackedTiles_Find(u32 kind, s32 flag, s32 flagByte, s32 x, s32 z) {
   table->tile = VramCache_FindFreeEntry();
   Vram_Load(table->tile, 0x100, buffer);
   Heap_Release(buffer);
-  Task_AddFrame(CrackedTiles_Update, 0x480);
+  Task_AddFrame(CrackedTile_Update, 0x480);
   return table->count;
 }

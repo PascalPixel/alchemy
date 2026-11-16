@@ -138,8 +138,7 @@ void BattleEffect_RunRagingHeat(struct BattleEffectParams *args) {
                       FIXED_INTEGER_PART(particle->y) - FLASH_BURST_HEIGHT / 2,
                       FLASH_BURST_WIDTH, FLASH_BURST_HEIGHT);
             }
-            BattleEffectKernels_IntegrateVector2(particle, 60,
-                                                 -toFIXED(1) / 16);
+            Particle_AdvanceWithGravity2D(particle, 60, -toFIXED(1) / 16);
           }
           particle->variant++;
         }
@@ -154,7 +153,7 @@ void BattleEffect_RunRagingHeat(struct BattleEffectParams *args) {
             draw[0](canvas, sprites + gBattleEffect_MotePictures[size - 1],
                     FIXED_INTEGER_PART(particle->x) - size / 2,
                     FIXED_INTEGER_PART(particle->y) - size, size, size * 2);
-            BattleEffectKernels_IntegrateVector2(particle, 60, toFIXED(1) / 16);
+            Particle_AdvanceWithGravity2D(particle, 60, toFIXED(1) / 16);
             particle->variant--;
           }
           i++;
@@ -402,7 +401,7 @@ void BattleEffect_RunJuggle(struct BattleEffectParams *args) {
                         sparkCels + gBattleEffect_MotePictures[size - 1],
                         FIXED_INTEGER_PART(spark->x) - size / 2,
                         FIXED_INTEGER_PART(spark->y) - size, size, size * 2);
-        BattleEffectKernels_IntegrateVector2(spark, 60, -toFIXED(1) / 4);
+        Particle_AdvanceWithGravity2D(spark, 60, -toFIXED(1) / 4);
         spark->variant--;
       }
     }

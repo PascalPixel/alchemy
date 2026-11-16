@@ -142,7 +142,7 @@ enum TaopoSwampStarDustActorId {
 
 void GameFlag_SetByte(s32 flag, s32 value);
 void Vent_SetGust(s32 id, s32 a);
-void Vents_SetId(s32 a, s32 b);
+void Vent_SetId(s32 a, s32 b);
 void TileCopies_CopyTouchedCells(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f,
                                  s32 g);
 void Actor_StartScript(struct Actor *object, const void *data);
@@ -155,11 +155,11 @@ void Field_TryJumpForward(void);
 void TaopoSwamp_DarkenRoom(s32 a);
 void TaopoSwamp_ShowMessage(s32 message);
 void Actor_SetSpritePriorityDirect(struct Actor *object, s32 a);
-s32 Vents_GetCounter(void);
+s32 Vent_GetCounter(void);
 #ifdef MODERN
 void Vent_SetActive(s32 index, s32 active);
 #endif
-s32 Vents_AdvanceCounter(s32 a);
+s32 Vent_AdvanceCounter(s32 a);
 
 /// The mud room's state: whether the leader is in the mud, how deep they have
 /// sunk (256 to a row of the sprite) and the last firm ground they stood on.
@@ -646,7 +646,7 @@ void TaopoSwamp_DouseVentSpot(s32 a, s32 id) {
     TaopoSwamp_CopyCellAttributes(n1, n2, 1, 1, n3, n2);                       \
     FieldActor_SetSpritePriority(id, 2);                                       \
     Actor_Get(id)->priorityFlags &= ~ACTOR_PRIORITY_UNDERFOOT;                 \
-    Vents_SetId(0, id);                                                        \
+    Vent_SetId(0, id);                                                         \
     Event_SetFlag(FLAG_TAOPO_SWAMP_SPOT_FROZEN);                               \
     Event_ClearFlag(FLAG_TAOPO_SWAMP_SPOT_PUDDLE);                             \
   }
@@ -664,7 +664,7 @@ void TaopoSwamp_ShatterIcePillar(s32 id) {
   FieldActor_SetSpritePriority(id, 3);
   Actor_Get(id)->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
   Actor_Get(id)->update = (void (*)(void))zero;
-  Vents_SetId(0, 0);
+  Vent_SetId(0, 0);
   Event_ClearFlag(FLAG_TAOPO_SWAMP_SPOT_WET);
   Event_ClearFlag(FLAG_TAOPO_SWAMP_SPOT_FROZEN);
   Event_ClearFlag(FLAG_TAOPO_SWAMP_SPOT_PUDDLE);
@@ -688,7 +688,7 @@ void TaopoSwamp_BlowAwayPuddle(s32 id) {
   FieldActor_SetSpritePriority(id, 3);
   Actor_Get(id)->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
   Actor_Get(id)->update = 0;
-  Vents_SetId(0, 0);
+  Vent_SetId(0, 0);
   Event_ClearFlag(FLAG_TAOPO_SWAMP_SPOT_WET);
   Event_ClearFlag(FLAG_TAOPO_SWAMP_SPOT_PUDDLE);
 }
@@ -717,7 +717,7 @@ void TaopoSwamp_ShatterDripIcePillar(s32 id) {
   FieldActor_SetSpritePriority(id, 3);
   Actor_Get(id)->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
   Actor_Get(id)->update = 0;
-  Vents_SetId(0, 0);
+  Vent_SetId(0, 0);
   Event_ClearFlag(FLAG_TAOPO_SWAMP_SPOT_WET);
   Event_ClearFlag(FLAG_TAOPO_SWAMP_SPOT_FROZEN);
   Event_ClearFlag(FLAG_TAOPO_SWAMP_SPOT_PUDDLE);
@@ -744,7 +744,7 @@ void TaopoSwamp_BlowAwayDripPuddle(s32 id) {
   FieldActor_SetSpritePriority(id, 3);
   Actor_Get(id)->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
   Actor_Get(id)->update = (void (*)(void))zero;
-  Vents_SetId(0, 0);
+  Vent_SetId(0, 0);
   Event_ClearFlag(FLAG_TAOPO_SWAMP_SPOT_WET);
   GameFlag_SetByte(FLAG_BYTE_TAOPO_SWAMP_DROPS_CAUGHT, 0);
 }
@@ -1103,7 +1103,7 @@ void TaopoSwamp_DripAtRandom(void) {
 /// The vent room's cycle of 480 frames: two sets of vents blow in turn, and
 /// while the second blows over the covered vent the Djinni is knocked down.
 void TaopoSwamp_CycleDjinniVents(void) {
-  s32 timer = Vents_GetCounter();
+  s32 timer = Vent_GetCounter();
 
   switch (timer) {
   case 0:
@@ -1144,13 +1144,13 @@ void TaopoSwamp_CycleDjinniVents(void) {
       !Event_GetFlag(FLAG_DJINNI(DJINNI_FLOWER)) &&
       !Event_GetFlag(FLAG_TAOPO_SWAMP_FLOWER_OFF_LEDGE))
     gFieldWork->raisedTrigger = 100;
-  Vents_AdvanceCounter(480);
+  Vent_AdvanceCounter(480);
 }
 
 /// The cycle of the vent under the circular spot: 120 frames of gust in 480
 /// that break its ice pillar or blow its puddle away.
 void TaopoSwamp_CycleSpotVent(void) {
-  s32 timer = Vents_GetCounter();
+  s32 timer = Vent_GetCounter();
 
   switch (timer) {
   case 0:
@@ -1170,12 +1170,12 @@ void TaopoSwamp_CycleSpotVent(void) {
     else if (Event_GetFlag(FLAG_TAOPO_SWAMP_SPOT_WET))
       TaopoSwamp_BlowAwayPuddle(8);
   }
-  Vents_AdvanceCounter(480);
+  Vent_AdvanceCounter(480);
 }
 
 /// As TaopoSwamp_CycleSpotVent, for the spot the ceiling drips onto.
 void TaopoSwamp_CycleDripVent(void) {
-  s32 timer = Vents_GetCounter();
+  s32 timer = Vent_GetCounter();
 
   switch (timer) {
   case 0:
@@ -1195,13 +1195,13 @@ void TaopoSwamp_CycleDripVent(void) {
     else if (Event_GetFlag(FLAG_TAOPO_SWAMP_SPOT_WET))
       TaopoSwamp_BlowAwayDripPuddle(ACTOR_DRIP_PUDDLE);
   }
-  Vents_AdvanceCounter(480);
+  Vent_AdvanceCounter(480);
 }
 
 /// The cycle of the two vents in the room of the cooled rocks: 180 frames of
 /// gust in 240.
 void TaopoSwamp_CycleRockRoomVents(void) {
-  switch (Vents_GetCounter()) {
+  switch (Vent_GetCounter()) {
   case 0:
     Vent_SetActive(0, 1);
     Vent_SetActive(1, 1);
@@ -1213,7 +1213,7 @@ void TaopoSwamp_CycleRockRoomVents(void) {
     Scene_QueueMusic(-1);
     break;
   }
-  Vents_AdvanceCounter(240);
+  Vent_AdvanceCounter(240);
 }
 
 /// A drop from the ceiling lands: it splashes and grows the puddle below by
@@ -1958,7 +1958,7 @@ void Vent_Puff(s32 *position, s32 base) {
   }
 }
 
-#include "shared/vents_update.h"
+#include "shared/vent_update.h"
 
 // The registers by io_reg.h's names from here on: local.h names the blend
 // register its own way for TaopoSwamp_DarkenRoom above.
@@ -2017,7 +2017,7 @@ void TaopoSwamp_StartVents(u16 *points, u16 *values, s32 arg) {
       REG_BLDCNT = cnt;
     }
   }
-  Task_AddFrame(Vents_Update, TASK_PASS_VBLANK);
+  Task_AddFrame(Vent_Update, TASK_PASS_VBLANK);
 }
 
 /// The accessors step the work pointer by whole entries and then take entry 0:
@@ -2042,9 +2042,9 @@ void Vent_SetActive(s32 index, s32 active) {
 }
 
 /// The vents' frame counter, which their cycles time their gusts by.
-s32 Vents_GetCounter(void) { return VENT_WORK->counter; }
+s32 Vent_GetCounter(void) { return VENT_WORK->counter; }
 
-#include "shared/vents_advance_counter.h"
+#include "shared/vent_advance_counter.h"
 
 /// The accessors step the work pointer by whole entries and then take entry
 /// 0: the bytes add the base to index * 20 before the field offset.
@@ -2057,7 +2057,7 @@ void Vent_SetGust(s32 index, s32 value) {
   VENT_AT(work, index)->entries[0].value = value;
 }
 
-#include "shared/vents_set_id.h"
+#include "shared/vent_set_id.h"
 #undef VENT_WORK
 #undef DIFF
 #undef DEFINE_TAOPO_SWAMP_FREEZE_SPOT

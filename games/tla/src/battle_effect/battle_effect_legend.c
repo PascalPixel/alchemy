@@ -156,7 +156,7 @@ void BattleEffect_RunLegend(struct BattleEffectParams *args) {
           step->y = toFIXED(104);
           step->velocityY = -step->velocityY / 2;
         }
-        BattleEffectKernels_IntegrateVector2(step, 62, toFIXED(1) / 4);
+        Particle_AdvanceWithGravity2D(step, 62, toFIXED(1) / 4);
         step->variant--;
       }
     }
@@ -449,8 +449,7 @@ void BattleEffect_RunElementCards(struct BattleEffectParams *args, s32 mode) {
                     FIXED_INTEGER_PART(step->x) - gPrism_ShardWidths[cell] / 2,
                     FIXED_INTEGER_PART(step->y) - gPrism_ShardHeights[cell] / 2,
                     gPrism_ShardWidths[cell], gPrism_ShardHeights[cell]);
-            BattleEffectKernels_IntegrateVector2(step, PARTICLE_DAMPING_NONE,
-                                                 0);
+            Particle_AdvanceWithGravity2D(step, PARTICLE_DAMPING_NONE, 0);
             if (step->y > toFIXED(96))
               step->velocityY = -step->velocityY / 2;
             step->variant += step->z;
@@ -683,7 +682,7 @@ void BattleEffect_RunElementCards(struct BattleEffectParams *args, s32 mode) {
             step->y = toFIXED(104);
             step->velocityY = -step->velocityY / 2;
           }
-          BattleEffectKernels_IntegrateVector2(
+          Particle_AdvanceWithGravity2D(
               step, gElementCards_SparkMotions[mode].damping,
               gElementCards_SparkMotions[mode].gravity);
         }

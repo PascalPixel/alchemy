@@ -665,18 +665,18 @@ extern const s32 *gFieldEffect_DurationScripts[];
 #define EFFECT_SCRIPTS gFieldEffect_DurationScripts
 #include "../field/field_effect_spawn.c"
 
-/// The cells CrackedTiles_Step watches, and the cell it copies over the one the
+/// The cells CrackedTile_Step watches, and the cell it copies over the one the
 /// leader steps on.
 #define CELL_PUSH_SLOT_ENTRY Oam_AddSpriteAtDepthClamped
 #include "../field/map_cell_sprite.c"
 
-#include "shared/cracked_tiles_find.h"
+#include "shared/cracked_tile_find.h"
 
 #include "shared/leader_center_in_cell.h"
 
 // Centers the leader on its cell, plays sound 161 and copies the cell below
 // the table's source cell over the leader's, keeping the source column's and
-// row's 64 bit; CrackedTiles_Step calls it the first time the leader steps on
+// row's 64 bit; CrackedTile_Step calls it the first time the leader steps on
 // one of the table's cells.
 #include "shared/cracked_tile_crack.h"
 
@@ -704,7 +704,7 @@ void GameFlag_SetByte(s32 flag, s32 value);
 /// Watches the leader's steps over the cracked tiles: the first step on one
 /// cracks it, a second step after leaving it drops the party through, saving
 /// the cell in the flag bytes for the floor below. Returns 1 on a fall.
-s32 CrackedTiles_Step(void) {
+s32 CrackedTile_Step(void) {
   struct Actor *object = Actor_Get(gMainRoutineWork.leaderActorId);
   s32 x = FIELD_CELL(object->x.fixed);
   s32 z = FIELD_CELL(object->z.fixed);

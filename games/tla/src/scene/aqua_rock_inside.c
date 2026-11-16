@@ -151,7 +151,7 @@ void Actor_StartScripted(struct Actor *object, s32 priority);
 void Vent_Puff(s32 *position, s32 base);
 s32 AquaRockInside_SetVentActive(s32 index, s32 value);
 s32 AquaRockInside_GetVentCounter(void);
-s32 Vents_AdvanceCounter(s32 limit);
+s32 Vent_AdvanceCounter(s32 limit);
 
 extern s32 gAquaRockInside_SpringLevel;
 struct PillarWork gAquaRockInside_Pillars BSS_DATA;
@@ -1653,7 +1653,7 @@ void AquaRockInside_UpdateVents(void) {
     Scene_QueueMusic(-1);
     break;
   }
-  Vents_AdvanceCounter(60 * 60 * 60);
+  Vent_AdvanceCounter(60 * 60 * 60);
 }
 
 extern u16 gAquaRockInside_FirstOutletSpots[];
@@ -2621,7 +2621,7 @@ void Vent_Puff(s32 *position, s32 base) {
   }
 }
 
-#include "shared/vents_update.h"
+#include "shared/vent_update.h"
 
 /// Sets up the vents from the spots and levels given, unless the party's place
 /// is kept, and starts the vents' task with `handler`.
@@ -2677,7 +2677,7 @@ void AquaRockInside_SetUpOutlets(const u16 *spots, const u16 *levels,
       REG_BLDCNT = cnt;
     }
   }
-  Task_AddFrame(Vents_Update, TASK_PASS_VBLANK);
+  Task_AddFrame(Vent_Update, TASK_PASS_VBLANK);
 }
 
 /// Whether vent `index` blows.
@@ -2697,7 +2697,7 @@ s32 AquaRockInside_SetVentActive(s32 index, s32 value) {
 /// The vents' frame counter.
 s32 AquaRockInside_GetVentCounter(void) { return VENT_WORK->counter; }
 
-#include "shared/vents_advance_counter.h"
+#include "shared/vent_advance_counter.h"
 
 /// Sets vent `index`'s value.
 void AquaRockInside_SetVentValue(s32 index, s32 value) {
@@ -2706,7 +2706,7 @@ void AquaRockInside_SetVentValue(s32 index, s32 value) {
   ((struct VentRow *)(base + index * 20))->value = value;
 }
 
-#include "shared/vents_set_id.h"
+#include "shared/vent_set_id.h"
 
 // clang-format off
 #include "shared/field_effect_duration_scripts.c"

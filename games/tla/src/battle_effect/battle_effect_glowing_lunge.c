@@ -214,7 +214,7 @@ void BattleEffect_RunRushingStrike(struct BattleEffectParams *args, s32 mode) {
           height = size * 2;
           draw[i & 1](canvas, sparkCels + gBattleEffect_MotePictures[size - 1],
                       screen.x - size / 2, screen.y - size, size, height);
-          BattleEffectKernels_IntegrateVector3(spark, 60, -toFIXED(1) / 128);
+          Particle_AdvanceWithGravity3D(spark, 60, -toFIXED(1) / 128);
           spark->variant--;
         }
       }
@@ -236,7 +236,7 @@ void BattleEffect_RunRushingStrike(struct BattleEffectParams *args, s32 mode) {
                         (cel << 11),
                     screen.x - 16, screen.y - 32, FLASH_BURST_WIDTH,
                     FLASH_BURST_HEIGHT);
-            BattleEffectKernels_IntegrateVector3(burst, 60, toFIXED(1) / 8);
+            Particle_AdvanceWithGravity3D(burst, 60, toFIXED(1) / 8);
             burst->variant++;
           }
         }

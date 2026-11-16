@@ -163,6 +163,7 @@ s32 YampiDesertCave_SetLogCells(s32 id) {
   struct Actor *actor = Actor_GetById(id);
   s16 sprite = ((struct Sprite *)actor->sprite)->entries[0]->animationId;
   s16 i;
+  s32 next;
   u32 kind;
   s32 w, h, x, z;
   s32 az;
@@ -170,14 +171,14 @@ s32 YampiDesertCave_SetLogCells(s32 id) {
 
   i = 0;
   if ((u16)sprite != gYampiDesertCave_LogSprites[i]) {
-  loop:
-    /* FAKEMATCH(temporary): kind set to i, then stepped. */
-    kind = (u16)i;
-    kind = (u16)(kind + 1);
-    i = (s16)kind;
-    if (kind < LOG_KIND_COUNT &&
-        (u16)sprite != gYampiDesertCave_LogSprites[kind])
-      goto loop;
+    do {
+      /* FAKEMATCH(temporary): the step taken in the high halfword, as the
+       * push footprints' copies of this search have it. */
+      next = (i + 1) * 65536;
+      kind = (u32)next >> 16;
+      i = next >> 16;
+    } while (kind < LOG_KIND_COUNT &&
+             (u16)sprite != gYampiDesertCave_LogSprites[kind]);
   }
   kind = (u16)i;
   if (kind == LOG_KIND_COUNT)
@@ -260,31 +261,24 @@ s32 YampiDesertCave_FindLogSlide(struct LogSlide *slide) {
     slide->x = actor->x.fixed + dx;
     slide->z = actor->z.fixed + dz;
     probe[1] = actor->y.fixed;
-    // The row loop is built from labels: as a loop it grows by 14 bytes.
-  next:
-    offset = kind;
-    probe[2] =
-        slide->z + toFIXED(gYampiDesertCave_LogFootprints[offset * 4 + 1]);
-    offset *= 4;
-    j = 0;
-    if (j >= h)
-      goto advance;
-  row:
-    probe[0] = slide->x + toFIXED(gYampiDesertCave_LogFootprints[offset]);
-    for (i = 0; i < w; i++) {
-      if (FieldActor_CheckMovementCollision(actor, probe) == 2)
-        goto hit;
-      probe[0] += toFIXED(16);
-    }
-    probe[2] += toFIXED(16);
-    j++;
-    if (j < h)
-      goto row;
-  advance:
-    slide->x += dx;
-    count++;
-    slide->z += dz;
-    goto next;
+    do {
+      offset = kind;
+      probe[2] =
+          slide->z + toFIXED(gYampiDesertCave_LogFootprints[offset * 4 + 1]);
+      offset *= 4;
+      for (j = 0; j < h; j++) {
+        probe[0] = slide->x + toFIXED(gYampiDesertCave_LogFootprints[offset]);
+        for (i = 0; i < w; i++) {
+          if (FieldActor_CheckMovementCollision(actor, probe) == 2)
+            goto hit;
+          probe[0] += toFIXED(16);
+        }
+        probe[2] += toFIXED(16);
+      }
+      slide->x += dx;
+      count++;
+      slide->z += dz;
+    } while (1);
   hit:
     *state = 0;
     if (count == 0)
@@ -297,9 +291,6 @@ s32 YampiDesertCave_FindLogSlide(struct LogSlide *slide) {
     return 0;
   }
 }
-
-/// The whole-pixel half of a 16.16 coordinate.
-#define PIXEL_PART(v) (((s16 *)&(v))[1])
 
 struct Actor *YampiDesertCave_FindPushedLog(s32 *direction, s32 *slot,
                                             s32 *kind) {
@@ -318,21 +309,21 @@ struct Actor *YampiDesertCave_FindPushedLog(s32 *direction, s32 *slot,
     for (k = 0; k < LOG_KIND_COUNT; k++) {
       if (((struct Sprite *)actor->sprite)->entries[0]->animationId ==
           gYampiDesertCave_LogSprites[k]) {
-        x = (PIXEL_PART(leader->x.fixed) +
+        x = (leader->x.part[0].integer +
              (gPushLeaderSteps[*direction] >> 16)) >>
             4;
-        z = (PIXEL_PART(leader->z.fixed) + (s16)gPushLeaderSteps[*direction]) >>
+        z = (leader->z.part[0].integer + (s16)gPushLeaderSteps[*direction]) >>
             4;
-        left = (PIXEL_PART(actor->x.fixed) +
+        left = (actor->x.part[0].integer +
                 gYampiDesertCave_LogFootprints[k * 4]) >>
                4;
-        top = (PIXEL_PART(actor->z.fixed) +
+        top = (actor->z.part[0].integer +
                gYampiDesertCave_LogFootprints[k * 4 + 1]) >>
               4;
-        right = (PIXEL_PART(actor->x.fixed) +
+        right = (actor->x.part[0].integer +
                  gYampiDesertCave_LogFootprints[k * 4 + 2]) >>
                 4;
-        bottom = (PIXEL_PART(actor->z.fixed) +
+        bottom = (actor->z.part[0].integer +
                   gYampiDesertCave_LogFootprints[k * 4 + 3]) >>
                  4;
         if (left <= x && x < right && top <= z && z < bottom) {
@@ -391,7 +382,6 @@ void YampiDesertCave_PushLog(struct LogSlide slide) {
   s32 acceleration = leader->acceleration;
   s32 cell[3];
   FIXED from[3];
-  s32 j;
   FIXED offset;
   s32 ax, az, bx, bz;
 
@@ -418,15 +408,13 @@ void YampiDesertCave_PushLog(struct LogSlide slide) {
   Actor_GetById(gMainRoutineWork.leaderActorId)->update =
       YampiDesertCave_StopLeaderAtLog;
   wait(4);
-  Actor_SelectAnimation(actor, 2);
+  if ((u32)(i - 6) <= 7)
+    Actor_SelectAnimation(actor, 3);
+  else
+    Actor_SelectAnimation(actor, 2);
   Event_PlaySound(SE_HEAVY_MOVE);
   Actor_SetSpeedAndAcceleration(slide.slot, 0.5, 0.1);
   Actor_SetMoveTarget(actor, slide.x, slide.y, slide.z);
-  /* FAKEMATCH(dead): a loop of one pass with an untaken two-test branch. */
-  for (j = 0; j < 1; j++) {
-    if (j != 0 && j != 5)
-      w = 1;
-  }
   Actor_WaitForMoveById(gMainRoutineWork.leaderActorId);
   Actor_SetAnimation(gMainRoutineWork.leaderActorId, ANIM_WALK);
   Actor_SetSpeedAndAcceleration(gMainRoutineWork.leaderActorId, 0.3, 0.1);
@@ -511,17 +499,12 @@ void YampiDesertCave_SetMarkColors(u16 *slots, u16 *colours, u16 *a, u16 *b) {
   gYampiDesertCave_MarkColors = colours;
   gYampiDesertCave_MarkDimColors = a;
   gYampiDesertCave_MarkCycleSlots = b;
-  if (*slots != PALETTE_LIST_END && *colours != PALETTE_LIST_END) {
-  next:
-    {
-      int red = *colours++;
-      int index = *slots++;
-      int green = *colours++;
-      int blue = *colours++;
-      SET_RGB(((u16 *)BG_PLTT)[index], red, green, blue);
-    }
-    if (*slots != PALETTE_LIST_END && *colours != PALETTE_LIST_END)
-      goto next;
+  while (*slots != PALETTE_LIST_END && *colours != PALETTE_LIST_END) {
+    int red = *colours++;
+    int index = *slots++;
+    int green = *colours++;
+    int blue = *colours++;
+    SET_RGB(BG_PLTT[index], red, green, blue);
   }
   Dma_Set((const void *)BG_PLTT, saved, DMA_COPY_WORDS(112), REG_DMA3);
   Dma_Set((const void *)OBJ_PLTT, saved + 448, DMA_COPY_WORDS(112), REG_DMA3);

@@ -7,7 +7,6 @@ s32 CrackedTile_Find(u32 kind, s32 flag, s32 flagByte, s32 x, s32 z) {
   struct MapWork *map;
   struct MapLayer *layer;
   struct MapCell *cells;
-  struct MapCell *rows;
   struct MapCell *cell;
   s32 x0, z0, width, height, i, j;
   u32 *buffer;
@@ -31,17 +30,9 @@ s32 CrackedTile_Find(u32 kind, s32 flag, s32 flagByte, s32 x, s32 z) {
   width = (map->maxX - map->minX) >> 20;
   height = (map->maxZ - map->minZ) >> 20;
   cells += ((map->minZ >> 20) << 7) + (map->minX >> 20);
-  /* Goto loops: as for loops (either one) loop.c moves the 64 of the cell
-   */
-  /* copy's masks out of them and 321 of 268 instructions differ. */
-  j = 0;
-  rows = cells;
-  if (j < height) {
-  row:
-    cell = rows + (j << 7);
-    i = 0;
-    if (i < width) {
-    column:
+  for (j = 0; j < height; j++) {
+    cell = cells + (j << 7);
+    for (i = 0; i < width; i++, cell++) {
       event = cell->collisionCode;
       if (event != 0 && event >= kind) {
         last = kind + 1;
@@ -64,14 +55,7 @@ s32 CrackedTile_Find(u32 kind, s32 flag, s32 flagByte, s32 x, s32 z) {
           table->count++;
         }
       }
-      i++;
-      cell++;
-      if (i < width)
-        goto column;
     }
-    j++;
-    if (j < height)
-      goto row;
   }
   if (Event_GetFlag(FLAG_KEEP_PARTY_POSITION)) {
     struct Actor *leader = Actor_Get(gMainRoutineWork.leaderActorId);
@@ -79,26 +63,18 @@ s32 CrackedTile_Find(u32 kind, s32 flag, s32 flagByte, s32 x, s32 z) {
     s32 leaderZ = FIELD_CELL(leader->z.fixed);
 
     entry = table->entries;
-    k = 0;
-    if (k < table->count) {
-    search:
+    for (k = 0; k < table->count; k++) {
       if (entry->x == leaderX && entry->z == leaderZ)
         table->current = k;
       entry++;
-      k++;
-      if (k < table->count)
-        goto search;
     }
   }
   buffer = Heap_Alloc(256);
   {
     u32 *word = buffer;
 
-    k = 63;
-  fill:
-    *word++ = 0x11111111;
-    if (--k >= 0)
-      goto fill;
+    for (k = 0; k < 64; k++)
+      *word++ = 0x11111111;
   }
   table->tile = VramCache_FindFreeEntry();
   Vram_Load(table->tile, 256, buffer);

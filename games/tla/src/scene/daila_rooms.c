@@ -570,30 +570,30 @@ s32 DailaRooms_GiveItem(s32 item, s32 unused) {
     FieldMessage_Show((s32)MsgItemReceived, 1);
     // "But you can't carry any more items."
     FieldMessage_Show((s32)MsgItemCannotCarry, 1);
-  retry:
-    // "What will you drop?"
-    FieldMessage_Show((s32)MsgItemDropPrompt, 1);
-    result = ItemPicker_RunToDrop(&member, &slot);
-    if (result == -1) {
-      if (Item_GetDirect(item)->flags & ITEM_INDISPENSABLE) {
+    for (;;) {
+      // "What will you drop?"
+      FieldMessage_Show((s32)MsgItemDropPrompt, 1);
+      result = ItemPicker_RunToDrop(&member, &slot);
+      if (result == -1) {
+        if (Item_GetDirect(item)->flags & ITEM_INDISPENSABLE) {
+          MessageArgument_Push(item, MESSAGE_ARGUMENT_ITEM);
+          // "That ...'s valuable! You must get it!"
+          FieldMessage_Show((s32)MsgItemDropPrompt + 4, 1);
+          continue;
+        }
         MessageArgument_Push(item, MESSAGE_ARGUMENT_ITEM);
-        // "That ...'s valuable! You must get it!"
-        FieldMessage_Show((s32)MsgItemDropPrompt + 4, 1);
-        goto retry;
+        // "Drop the ...?"
+        FieldMessage_Show((s32)MsgItemDropPrompt + 1, 5);
+        result = FieldYesNo_Ask(1);
+        Message_CloseFinishedWindows();
+        if (result != 0)
+          continue;
+        MessageArgument_Push(item, MESSAGE_ARGUMENT_ITEM);
+        // "Felix drops the ...."
+        FieldMessage_Show((s32)MsgItemDropPrompt + 2, 1);
+        work->message = saved;
+        return owner;
       }
-      MessageArgument_Push(item, MESSAGE_ARGUMENT_ITEM);
-      // "Drop the ...?"
-      FieldMessage_Show((s32)MsgItemDropPrompt + 1, 5);
-      result = FieldYesNo_Ask(1);
-      Message_CloseFinishedWindows();
-      if (result != 0)
-        goto retry;
-      MessageArgument_Push(item, MESSAGE_ARGUMENT_ITEM);
-      // "Felix drops the ...."
-      FieldMessage_Show((s32)MsgItemDropPrompt + 2, 1);
-      work->message = saved;
-      return owner;
-    } else {
       Unit_Get(member);
       count = Inventory_GetQuantity(member, slot);
       if (Inventory_CountItem(member, item) > 29) {
@@ -601,27 +601,28 @@ s32 DailaRooms_GiveItem(s32 item, s32 unused) {
         MessageArgument_Push(item, MESSAGE_ARGUMENT_ITEM);
         // "Empty"
         FieldMessage_Show((s32)MsgItemDropPrompt + 7, 1);
-        goto retry;
+        continue;
       }
-      for (i = 0; i < count; i++)
-        Inventory_Discard(member, slot);
-      Unit_RefreshPsynergy(member);
-      Unit_Calculate(member);
-      owner = PartyInventory_Add(item);
-      Sound_Play(MUS_TREASURE_FOUND);
-      if (owner == gMainRoutineWork.leaderActorId) {
-        MessageArgument_Push(item, MESSAGE_ARGUMENT_ITEM);
-        // "Felix got ...."
-        FieldMessage_Show((s32)MsgItemReceived, 3);
-      } else {
-        MessageArgument_Push(item, MESSAGE_ARGUMENT_ITEM);
-        MessageArgument_Push(owner, MESSAGE_ARGUMENT_ACTOR);
-        // "Felix gave ... to ...."
-        FieldMessage_Show((s32)MsgItemGiven, 3);
-      }
-      work->message = saved;
-      return owner;
+      break;
     }
+    for (i = 0; i < count; i++)
+      Inventory_Discard(member, slot);
+    Unit_RefreshPsynergy(member);
+    Unit_Calculate(member);
+    owner = PartyInventory_Add(item);
+    Sound_Play(MUS_TREASURE_FOUND);
+    if (owner == gMainRoutineWork.leaderActorId) {
+      MessageArgument_Push(item, MESSAGE_ARGUMENT_ITEM);
+      // "Felix got ...."
+      FieldMessage_Show((s32)MsgItemReceived, 3);
+    } else {
+      MessageArgument_Push(item, MESSAGE_ARGUMENT_ITEM);
+      MessageArgument_Push(owner, MESSAGE_ARGUMENT_ACTOR);
+      // "Felix gave ... to ...."
+      FieldMessage_Show((s32)MsgItemGiven, 3);
+    }
+    work->message = saved;
+    return owner;
   } else {
     Sound_Play(MUS_TREASURE_FOUND);
     MessageArgument_Push(item, MESSAGE_ARGUMENT_ITEM);

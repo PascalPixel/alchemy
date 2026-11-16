@@ -1165,16 +1165,14 @@ UNUSED void TundariaTower_CheckCrumblingStep(const u16 *table) {
   position[1] = leader->y.fixed;
   position[2] = leader->z.fixed;
   trap = Actor_FindAtCell(position, 0);
-  if (trap != 0)
-    goto test;
-  return;
-next:
-  id = table[0];
-  if (Actor_GetById(id) != trap) {
-    table += 2;
-    goto test;
-  }
-  {
+  if (trap == 0)
+    return;
+  while (*table != ACTOR_LIST_END) {
+    id = table[0];
+    if (Actor_GetById(id) != trap) {
+      table += 2;
+      continue;
+    }
     flag = table[1];
     Event_Start();
     if (!GameFlag_Get(flag)) {
@@ -1218,9 +1216,6 @@ next:
     Event_End();
     return;
   }
-test:
-  if (*table != ACTOR_LIST_END)
-    goto next;
 }
 
 /// Unused: Magma Rock's crumbling pillar: the listed pillar shakes, crumbles
@@ -1232,38 +1227,36 @@ UNUSED void TundariaTower_CrumblePillar(u16 *row, s32 id) {
 
   if (*row == ACTOR_LIST_END)
     return;
-loop:
-  if (*row != id) {
-    row += 2;
-    goto test;
-  }
-  flag = row[1];
-  Event_Start();
-  nextFlag = flag + 1;
-  if (!GameFlag_Get(nextFlag)) {
-    Sound_Play(SE_PUSH);
-    MapGrid_SetShake(1, 4, 1);
-    TundariaTower_SpawnRubble(0);
-    wait(8);
-    Actor_SelectAnimation(actor, 2);
-    Actor_SetCellShape(-4, actor->layer, id);
-    TundariaTower_SpawnRubble(1);
-    wait(16);
-    MapGrid_SetShake(SHAKE_KEEP, SHAKE_KEEP, 0.9);
-    wait(8);
-    Actor_SetPositionAndResetMotion(actor, 0, 0, 0);
-    wait(2);
-    Sound_Play(SE_THUMP);
-    TundariaTower_SpawnDustRing();
-    wait(20);
-    GameFlag_Set(flag);
-    GameFlag_Set(nextFlag);
-  }
-  Event_End();
-  return;
-test:
-  if (*row != ACTOR_LIST_END)
-    goto loop;
+  do {
+    if (*row != id) {
+      row += 2;
+      continue;
+    }
+    flag = row[1];
+    Event_Start();
+    nextFlag = flag + 1;
+    if (!GameFlag_Get(nextFlag)) {
+      Sound_Play(SE_PUSH);
+      MapGrid_SetShake(1, 4, 1);
+      TundariaTower_SpawnRubble(0);
+      wait(8);
+      Actor_SelectAnimation(actor, 2);
+      Actor_SetCellShape(-4, actor->layer, id);
+      TundariaTower_SpawnRubble(1);
+      wait(16);
+      MapGrid_SetShake(SHAKE_KEEP, SHAKE_KEEP, 0.9);
+      wait(8);
+      Actor_SetPositionAndResetMotion(actor, 0, 0, 0);
+      wait(2);
+      Sound_Play(SE_THUMP);
+      TundariaTower_SpawnDustRing();
+      wait(20);
+      GameFlag_Set(flag);
+      GameFlag_Set(nextFlag);
+    }
+    Event_End();
+    return;
+  } while (*row != ACTOR_LIST_END);
 }
 
 /// Keeps the pillar's sprite cached and stops it.
@@ -1365,68 +1358,65 @@ UNUSED void TundariaTower_StepOnTrap(const u16 *table) {
   position[2] = leader->z.fixed;
   trap = Actor_FindAtCell(position, 0);
   if (trap != 0) {
-    goto test;
-  next:
-    id = table[0];
-    if (Actor_GetById(id) != trap) {
-      table += 2;
-      goto test;
-    }
-    flag = table[1];
-    Event_Start();
-    if (!GameFlag_Get(flag)) {
-      Actor_SelectAnimation(partner, 1);
-      TundariaTower_TakePlaceOf(partner, trap);
-      wait(1);
-      Sound_Play(SE_CHEST_CLOSE);
-      Actor_SetSpriteColor(Actor_GetById(8), SPRITE_COLOR_WHITE);
-      wait(2);
-      Actor_SelectAnimation(partner, 0);
-      Actor_CopyGraphics(id, 9);
-      Actor_SetSpriteColor(Actor_GetById(8), SPRITE_COLOR_NORMAL);
-      wait(2);
-      Actor_SetSpriteColor(Actor_GetById(8), SPRITE_COLOR_WHITE);
-      wait(4);
-      Actor_SetSpriteColor(Actor_GetById(8), SPRITE_COLOR_NORMAL);
-      TundariaTower_SpawnRubble(0);
-      TundariaTower_TakePlaceOf(trap, partner);
-      wait(1);
-      GameFlag_Set(flag);
-    } else {
-      second = flag + 1;
-      if (!GameFlag_Get(second)) {
-        Actor_SelectAnimation(partner, 0);
-        TundariaTower_TakePlaceOf(partner, trap);
-        motion = &leader->motionFlags;
-        wait(1);
-        *motion = 0;
-        Sound_Play(SE_PUSH);
-        MapGrid_SetShake(1, 4, 1);
-        TundariaTower_SpawnRubble(0);
-        wait(8);
-        Actor_SelectAnimation(partner, 2);
-        TundariaTower_SetLeaderCellShape(-2, trap->layer);
-        TundariaTower_SpawnRubble(1);
-        wait(16);
-        TundariaTower_SetLeaderCellShape(-2, trap->layer);
-        wait(4);
-        MapGrid_SetShake(SHAKE_KEEP, SHAKE_KEEP, 0.9);
-        wait(8);
-        *motion = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
-        wait(5);
-        Actor_SetPositionAndResetMotion(partner, 0, 0, 0);
-        wait(2);
-        Sound_Play(SE_THUMP);
-        TundariaTower_SpawnDustRing();
-        wait(20);
-        GameFlag_Set(second);
+    while (*table != ACTOR_LIST_END) {
+      id = table[0];
+      if (Actor_GetById(id) != trap) {
+        table += 2;
+        continue;
       }
+      flag = table[1];
+      Event_Start();
+      if (!GameFlag_Get(flag)) {
+        Actor_SelectAnimation(partner, 1);
+        TundariaTower_TakePlaceOf(partner, trap);
+        wait(1);
+        Sound_Play(SE_CHEST_CLOSE);
+        Actor_SetSpriteColor(Actor_GetById(8), SPRITE_COLOR_WHITE);
+        wait(2);
+        Actor_SelectAnimation(partner, 0);
+        Actor_CopyGraphics(id, 9);
+        Actor_SetSpriteColor(Actor_GetById(8), SPRITE_COLOR_NORMAL);
+        wait(2);
+        Actor_SetSpriteColor(Actor_GetById(8), SPRITE_COLOR_WHITE);
+        wait(4);
+        Actor_SetSpriteColor(Actor_GetById(8), SPRITE_COLOR_NORMAL);
+        TundariaTower_SpawnRubble(0);
+        TundariaTower_TakePlaceOf(trap, partner);
+        wait(1);
+        GameFlag_Set(flag);
+      } else {
+        second = flag + 1;
+        if (!GameFlag_Get(second)) {
+          Actor_SelectAnimation(partner, 0);
+          TundariaTower_TakePlaceOf(partner, trap);
+          motion = &leader->motionFlags;
+          wait(1);
+          *motion = 0;
+          Sound_Play(SE_PUSH);
+          MapGrid_SetShake(1, 4, 1);
+          TundariaTower_SpawnRubble(0);
+          wait(8);
+          Actor_SelectAnimation(partner, 2);
+          TundariaTower_SetLeaderCellShape(-2, trap->layer);
+          TundariaTower_SpawnRubble(1);
+          wait(16);
+          TundariaTower_SetLeaderCellShape(-2, trap->layer);
+          wait(4);
+          MapGrid_SetShake(SHAKE_KEEP, SHAKE_KEEP, 0.9);
+          wait(8);
+          *motion = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
+          wait(5);
+          Actor_SetPositionAndResetMotion(partner, 0, 0, 0);
+          wait(2);
+          Sound_Play(SE_THUMP);
+          TundariaTower_SpawnDustRing();
+          wait(20);
+          GameFlag_Set(second);
+        }
+      }
+      Event_End();
+      return;
     }
-    Event_End();
-    return;
-  test:
-    if (*table != ACTOR_LIST_END)
-      goto next;
   }
 }
 
@@ -1481,7 +1471,6 @@ void TundariaTower_SpawnDustRing(void) {
   struct Actor *leader = Actor_GetById(gMainRoutineWork.leaderActorId);
   s32 state;
   u32 i;
-  s32 zero = 0;
 
   if (leader != NULL) {
     state = 0;
@@ -1494,22 +1483,21 @@ void TundariaTower_SpawnDustRing(void) {
         s32 angle;
 
         state = Sprite_ShareVramCacheEntry(effect->sprite, state);
-        zero = 0;
-        effect->motionFlags = zero;
-        effect->collisionFlags = zero;
+        effect->motionFlags = 0;
+        effect->collisionFlags = 0;
         Actor_SetSpriteFlags(effect, 0);
         Actor_SelectAnimation(effect, 2);
         TundariaTower_StartEffectScript(effect, gTundariaTower_DustRingScript);
         angle = i << 12;
         effect->velocity.x = Trig_Cos(angle);
-        effect->velocity.y = zero;
+        effect->velocity.y = 0;
         effect->velocity.z = Trig_Sin(angle);
         effect->velocity.x += effect->velocity.x >> 1;
         effect->velocity.x += ((Random16() * 3) << 14 >> 16) - toFIXED(3) / 8;
         effect->velocity.z += ((Random16() * 3) << 13 >> 16) - toFIXED(3) / 16;
         effect->spin = ((Random16() << 12) >> 16) - (TRIG_TURN / 32);
-        effect->scaleRateX = zero;
-        effect->scaleRateY = zero;
+        effect->scaleRateX = 0;
+        effect->scaleRateY = 0;
         effect->update = Effect_AdvanceMotionAtLeaderPriority;
         effect->sprite->priority =
             ((struct FieldSprite *)leader->sprite)->priority;
@@ -1585,7 +1573,7 @@ void TundariaTower_StartFallingRocks(void) {
   work->resource = resource;
   rock = work->rocks;
   sprite = work->sprites;
-  for (i = 63; i >= 0; i--) {
+  for (i = 0; i < 64; i++) {
     EffectSprite_Init(sprite, 8, 8, OBJ_SIZE_16X16, tile);
     sprite->oam.fullColor = 1;
     sprite->oam.palette = 0;

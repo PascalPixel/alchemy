@@ -216,8 +216,8 @@ void Garoh_WaveHypnosSwordChestLayer(void) {
     /* FAKEMATCH(barrier): the form kept; as no asm, 48 of 124 instructions
      * differ in tla-en. */
     asm("" : "+r"(i));
-    z = ((s16 *)&layer->y)[1];
-    x = ((s16 *)&layer->x)[1];
+    z = FIXEDtoINT(layer->y);
+    x = FIXEDtoINT(layer->x);
     // Each step held in a local for its whole life: as z * 13056 and
     // z * 4896 the starting phases are built differently.
     stepA = 13056;
@@ -230,8 +230,8 @@ void Garoh_WaveHypnosSwordChestLayer(void) {
       register s32 s1 asm("r8") = sine(a);
       s32 s2 = sine(b);
       *line++ = ((s1 * 3 + s2 * 7) >> 19) + x;
-      a += 13056;
-      b += 4896;
+      a += stepA;
+      b += stepB;
     }
     line = gGaroh_WaveLines;
     REG_BG2HOFS = line[0];
@@ -252,25 +252,13 @@ extern u16 gGaroh_HypnosSwordChestNightColors[];
 #define DEFINE_GAROH_LOAD_PALETTE(name, components, first, count)              \
   void name(void) {                                                            \
     struct PaletteFade *buffers = Ram_HeapSlots->paletteFade;                  \
-    const u8 *table = (const u8 *)components;                                  \
-    u32 i = 0;                                                                 \
-    u16 *dst = &buffers->palette[first];                                       \
-    s32 blue = 4;                                                              \
-    s32 red = 0;                                                               \
-    volatile u16 *color;                                                       \
-    s32 green;                                                                 \
+    u32 i;                                                                     \
                                                                                \
-  loop:                                                                        \
-    color = BG_PLTT + first + i;                                               \
-    green = blue - 2;                                                          \
-    *color = *(const u16 *)(table + blue) << 10 |                              \
-             *(const u16 *)(table + green) << 5 | *(const u16 *)(table + red); \
-    *dst++ = *color;                                                           \
-    i++;                                                                       \
-    blue += 6;                                                                 \
-    red += 6;                                                                  \
-    if (i < count)                                                             \
-      goto loop;                                                               \
+    for (i = 0; i < count; i++) {                                              \
+      BG_PLTT[first + i] = components[i * 3 + 2] << 10 |                       \
+                           components[i * 3 + 1] << 5 | components[i * 3];     \
+      buffers->palette[first + i] = BG_PLTT[first + i];                        \
+    }                                                                          \
   }
 
 /// By day the path's colours: BG palette 1's colours 8 to 15.
@@ -464,26 +452,13 @@ void Garoh_LittleWerewolfThanks(void) {
     FieldEvent_SetMessageId((s32)MsgGarohHeyItsYouGuysThanks);
     // "Hey, it's you guys! Thanks for last night!"
     FieldEvent_ShowMessageThenWait(ACTOR_LITTLE_WEREWOLF, 0, 10);
-    {
-      s32 a = EMOTE_IN_FRONT | EMOTE_QUESTION;
-      s32 b = 15;
-
-      FieldActor_ShowEmote(ACTOR_FELIX, a, b);
-    }
-    {
-      s32 a = EMOTE_IN_FRONT | EMOTE_LIGHT_BULB;
-      s32 b = 10;
-
-      FieldActor_ShowEmote(ACTOR_LITTLE_WEREWOLF, a, b);
-    }
+    FieldActor_ShowEmote(ACTOR_FELIX, EMOTE_IN_FRONT | EMOTE_QUESTION, 15);
+    FieldActor_ShowEmote(ACTOR_LITTLE_WEREWOLF,
+                         EMOTE_IN_FRONT | EMOTE_LIGHT_BULB, 10);
     // "Oh, yeah... That's right... You probably don't recognize me in my..."
     FieldEvent_ShowMessageThenWait(ACTOR_LITTLE_WEREWOLF, 0, 5);
-    {
-      s32 a = EMOTE_IN_FRONT | EMOTE_SMILE;
-      s32 b = 15;
-
-      FieldActor_ShowEmote(ACTOR_LITTLE_WEREWOLF, a, b);
-    }
+    FieldActor_ShowEmote(ACTOR_LITTLE_WEREWOLF, EMOTE_IN_FRONT | EMOTE_SMILE,
+                         15);
     // "I was in the cave with Maha! I was that little werewolf!"
     FieldEvent_ShowMessageThenWait(ACTOR_LITTLE_WEREWOLF, 0, 5);
   }

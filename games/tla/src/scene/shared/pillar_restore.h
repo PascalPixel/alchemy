@@ -24,38 +24,36 @@ void MagmaRockInside_RestorePillars(u16 *list) {
   Actor_SetPosition(9, 0, 0);
   Actor_SetPosition(10, 0, 0);
   System_Wait(1);
-  if (*list == ACTOR_LIST_END)
-    goto done;
-next:
-  id = list[0];
-  actor = Actor_Get(id);
-  flag = list[1];
-  nextFlag = flag + 1;
-  cells = map->layers[actor->layer].cells;
-  shapes = grid + (cells - (struct MapCell *)Ram_MapCellBuffer);
-  actor->retainSpriteCache = 3;
-  if (Event_GetFlag(nextFlag)) {
-    Actor_SetPosition(id, 0, 0);
-  } else {
-    s32 shape;
-    u8 *slot;
-    s32 height;
+  while (*list != ACTOR_LIST_END) {
+    id = list[0];
+    actor = Actor_Get(id);
+    flag = list[1];
+    nextFlag = flag + 1;
+    cells = map->layers[actor->layer].cells;
+    shapes = grid + (cells - (struct MapCell *)Ram_MapCellBuffer);
+    actor->retainSpriteCache = 3;
+    if (Event_GetFlag(nextFlag)) {
+      Actor_SetPosition(id, 0, 0);
+    } else {
+      s32 shape;
+      u8 *slot;
+      s32 height;
 
-    index = Actor_GetCellIndex(actor);
-    cell = &cells[index];
-    slot = shapes + index;
-    shape =
-        MapGrid_GetTerrainKind(actor->layer, actor->x.fixed, actor->z.fixed);
-    height = Map_GetTerrainHeight(actor->layer, actor->x.fixed, actor->z.fixed);
-    Actor_DisableById(id);
-    cell->attributeB = 128;
-    *slot = MapCollision_FindOrAddTag(actor->layer, shape, (height >> 19) + 4);
-    if (Event_GetFlag(flag))
-      Actor_CopyGraphics(id, 9);
+      index = Actor_GetCellIndex(actor);
+      cell = &cells[index];
+      slot = shapes + index;
+      shape =
+          MapGrid_GetTerrainKind(actor->layer, actor->x.fixed, actor->z.fixed);
+      height =
+          Map_GetTerrainHeight(actor->layer, actor->x.fixed, actor->z.fixed);
+      Actor_DisableById(id);
+      cell->attributeB = 128;
+      *slot =
+          MapCollision_FindOrAddTag(actor->layer, shape, (height >> 19) + 4);
+      if (Event_GetFlag(flag))
+        Actor_CopyGraphics(id, 9);
+    }
+    list += 2;
   }
-  list += 2;
-  if (*list != ACTOR_LIST_END)
-    goto next;
-done:
   System_Wait(10);
 }

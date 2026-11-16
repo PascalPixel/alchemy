@@ -1,15 +1,16 @@
-/// CrackedTile_Find as the lower floors' copies compile it.
+/// CrackedTile_Find under the name the lower floors call it by.
 s32 CrackedTile_FindLower(u32 kind, s32 flag, s32 flagByte, s32 x, s32 z) {
   struct CellTarget *table = &gCrackedTiles;
   struct CellTargetEntry *entry = table->entries;
   struct MapWork *map;
   struct MapLayer *layer;
-  struct MapCell *rows;
+  struct MapCell *cells;
   struct MapCell *cell;
   s32 x0, z0, width, height, i, j;
   u32 *buffer;
   u32 event, last;
-  s32 cz, cx;
+  s32 cx, cz;
+  s32 k;
 
   Iwram_ClearWordsEntry(table, 4);
   table->kind = kind;
@@ -21,22 +22,15 @@ s32 CrackedTile_FindLower(u32 kind, s32 flag, s32 flagByte, s32 x, s32 z) {
   table->count = 0;
   map = Ram_HeapSlots->mapGrid;
   layer = &map->layers[0];
-  rows = layer->cells;
+  cells = layer->cells;
   x0 = (layer->offsetX + map->minX) >> 20;
   z0 = (layer->offsetY + map->minZ) >> 20;
   width = (map->maxX - map->minX) >> 20;
   height = (map->maxZ - map->minZ) >> 20;
-  rows += ((map->minZ >> 20) << 7) + (map->minX >> 20);
-  /* Goto loops: as for loops (either one) loop.c moves the 64 of the cell
-   */
-  /* copy's masks out of them and 321 of 268 instructions differ. */
-  j = 0;
-  if (j < height) {
-  row:
-    cell = rows + (j << 7);
-    i = 0;
-    if (i < width) {
-    column:
+  cells += ((map->minZ >> 20) << 7) + (map->minX >> 20);
+  for (j = 0; j < height; j++) {
+    cell = cells + (j << 7);
+    for (i = 0; i < width; i++, cell++) {
       event = cell->collisionCode;
       if (event != 0 && event >= kind) {
         last = kind + 1;
@@ -51,58 +45,34 @@ s32 CrackedTile_FindLower(u32 kind, s32 flag, s32 flagByte, s32 x, s32 z) {
             if (event == last)
               Event_SetFlag(entry->flag);
           } else if (Event_GetFlag(entry->flag)) {
-            s32 sourceX = table->x;
-            s32 sourceZ = table->z;
-
-            cx |= (s16)(table->x & 64);
-            cz |= (s16)(table->z & 64);
-            MapGrid_CopyCells(sourceX, sourceZ + 1, 1, 1, cx, cz);
+            MapGrid_CopyCells(table->x, table->z + 1, 1, 1,
+                              cx | (s16)(table->x & 64),
+                              cz | (s16)(table->z & 64));
           }
           entry++;
           table->count++;
         }
       }
-    columnNext:
-      i++;
-      cell++;
-      if (i < width)
-        goto column;
     }
-  rowNext:
-    j++;
-    if (j < height)
-      goto row;
   }
   if (Event_GetFlag(FLAG_KEEP_PARTY_POSITION)) {
     struct Actor *leader = Actor_Get(gMainRoutineWork.leaderActorId);
     s32 leaderX = FIELD_CELL(leader->x.fixed);
     s32 leaderZ = FIELD_CELL(leader->z.fixed);
-    s32 k;
 
     entry = table->entries;
-    k = 0;
-    if (k < table->count) {
-    leaderRow:
-      do {
-        if (entry->x == leaderX && entry->z == leaderZ)
-          table->current = k;
-      leaderNext:
-        k++;
-        entry++;
-        /* A cast read: gcse keeps it in the loop. */
-      } while (k < *(s16 *)&table->count);
+    for (k = 0; k < table->count; k++) {
+      if (entry->x == leaderX && entry->z == leaderZ)
+        table->current = k;
+      entry++;
     }
   }
   buffer = Heap_Alloc(256);
   {
     u32 *word = buffer;
-    s32 count = 63;
 
-  fill:
-    *word++ = 0x11111111;
-  fillNext:
-    if (--count >= 0)
-      goto fill;
+    for (k = 0; k < 64; k++)
+      *word++ = 0x11111111;
   }
   table->tile = VramCache_FindFreeEntry();
   Vram_Load(table->tile, 256, buffer);

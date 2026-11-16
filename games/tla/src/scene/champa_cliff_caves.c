@@ -1653,7 +1653,7 @@ void ChampaCliffCaves_BriggsMournsSalamander(void) {
 /// ChampaCliffCaves_StartFlash's explosion: its tiles, decompressed into the
 /// heap, and the sprite that shows them.
 struct FlashWork {
-  u8 tiles[0x400];
+  u8 tiles[1024];
   struct EffectSprite sprite;
 };
 
@@ -1661,7 +1661,8 @@ struct FlashWork {
 /// is hidden, and the explosion's sprite plays over it, twice the size in mode
 /// 1.
 void ChampaCliffCaves_StartFlash(s32 id, s32 mode) {
-  struct FlashWork *work = HeapSlot_Alloc(HEAP_SLOT_MENU, 0x428);
+  struct FlashWork *work =
+      HeapSlot_Alloc(HEAP_SLOT_MENU, sizeof(struct FlashWork));
   struct Actor *actor = Actor_GetById(id);
   s32 slot;
   s32 tile;
@@ -1673,7 +1674,7 @@ void ChampaCliffCaves_StartFlash(s32 id, s32 mode) {
   if (mode == 0) {
     for (i = 15; i >= 0; i--) {
       s32 angle = actor->facing;
-      angle += 0x2000;
+      angle += DEGtoANG(45);
       actor->facing = angle;
       wait(1);
     }
@@ -1686,7 +1687,7 @@ void ChampaCliffCaves_StartFlash(s32 id, s32 mode) {
   Decompress_TaggedLz(Resource_GetTableEntry(RESOURCE_FIELD_EFFECT_EXPLOSION),
                       work);
   slot = VramCache_FindFreeEntry();
-  tile = Vram_Load(slot, 0x400, work);
+  tile = Vram_Load(slot, 1024, work);
   sprite = &work->sprite;
   FieldEffectSprite_Init(sprite, 8, 16, OBJ_SIZE_16X16, tile);
   sprite->depth = 240;
@@ -1824,7 +1825,7 @@ loop:
     s32 red = 31;
     s16 *frame = &work->frame;
     s32 wave = Trig_Sin((*frame + i) << 11) * 6;
-    s32 blue = Trig_Sin(((*frame / 2 + i) << 11) + 0x4800) * 3;
+    s32 blue = Trig_Sin(((*frame / 2 + i) << 11) + TRIG_TURN * 9 / 32) * 3;
     s32 colour;
     wave >>= 16;
     blue >>= 16;
@@ -2232,7 +2233,7 @@ LATE_DATA s16 gChampaCliffCaves_AvimanderPlacementsBriggsHome[] = {
     0,
     0,
     464,
-    0xd000,
+    FACING_NORTH_NORTHEAST,
     1,
     489,
     -1,
@@ -2410,13 +2411,54 @@ LATE_DATA struct ActorPlacement
 };
 
 LATE_DATA s16 gChampaCliffCaves_AvimanderPlacementsAfterAvimander[] = {
-    36,  -1,     1,   0,      0,  648, 0,
-    0,   0,      188, 0x5000, 2,  115, -1,
-    1,   0,      0,   216,    0,  0,   0,
-    464, 0x5000, 3,   489,    -1, 1,   0,
-    0,   -56,    0,   0,      0,  -56, FACING_SOUTH,
-    2,   -1,     0,   0,      0,  0,   0,
-    0,   0,      0,   0,      0,  0,
+    36,
+    -1,
+    1,
+    0,
+    0,
+    648,
+    0,
+    0,
+    0,
+    188,
+    FACING_SOUTH_SOUTHWEST,
+    2,
+    115,
+    -1,
+    1,
+    0,
+    0,
+    216,
+    0,
+    0,
+    0,
+    464,
+    FACING_SOUTH_SOUTHWEST,
+    3,
+    489,
+    -1,
+    1,
+    0,
+    0,
+    -56,
+    0,
+    0,
+    0,
+    -56,
+    FACING_SOUTH,
+    2,
+    -1,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
 };
 
 LATE_DATA s16 gChampaCliffCaves_DoorFrames[] = {

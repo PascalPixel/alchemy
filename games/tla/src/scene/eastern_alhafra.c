@@ -251,7 +251,7 @@ void EasternAlhafra_BurstMastBlock(s32 mode, s32 id) {
     Rock_Spawn(toFIXED(498), toFIXED(16), toFIXED(412), 2);
   if (mode == 3)
     Rock_Spawn(toFIXED(498), toFIXED(16), toFIXED(412), 30);
-  if (id == 0x3e7)
+  if (id == 999)
     EasternAlhafra_EndFallingRocks();
 }
 
@@ -1345,7 +1345,7 @@ void EasternAlhafra_WorkersSeeBlockGone(void) {
   Actor_SetAttachedEffect(ACTOR_FIRST_WORKER,
                           ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   FieldEvent_Wait(50);
-  FieldActor_ShowEmote(ACTOR_SECOND_WORKER, EMOTE_IN_FRONT | EMOTE_WINCE, 0x1e);
+  FieldActor_ShowEmote(ACTOR_SECOND_WORKER, EMOTE_IN_FRONT | EMOTE_WINCE, 30);
   // "Hey! Now, we can raise the mast and use the sail again!"
   FieldEvent_ShowMessageThenWait(ACTOR_FIRST_WORKER, 0, 10);
   Actor_FaceDirection(ACTOR_FIRST_WORKER, FACING_WEST, 0);
@@ -1405,7 +1405,7 @@ void EasternAlhafra_WorkersSeeBlockGone(void) {
   Actor_FaceDirection(ACTOR_EOLEO, FACING_WEST, 0);
   FieldEvent_Wait(30);
   FieldEvent_ShowMessageThenWait(ACTOR_CHAUCHA, 0, 10);
-  FieldActor_ShowEmote(ACTOR_EOLEO, EMOTE_IN_FRONT | EMOTE_SMILE, 0x2d);
+  FieldActor_ShowEmote(ACTOR_EOLEO, EMOTE_IN_FRONT | EMOTE_SMILE, 45);
   FieldActor_Jump(ACTOR_EOLEO, 6, 15);
   FieldActor_Jump(ACTOR_EOLEO, 6, 23);
   FieldEvent_Wait(10);
@@ -1470,7 +1470,7 @@ void EasternAlhafra_WorkersTellMayor(void) {
   FieldCamera_WaitForArrival();
   FieldEvent_Wait(10);
   FieldActor_ShowEmote(ACTOR_FIRST_WORKER, EMOTE_IN_FRONT | EMOTE_SCOWL, 0);
-  FieldActor_ShowEmote(ACTOR_FIRST_WORKER, EMOTE_IN_FRONT | EMOTE_SCOWL, 0x28);
+  FieldActor_ShowEmote(ACTOR_FIRST_WORKER, EMOTE_IN_FRONT | EMOTE_SCOWL, 40);
   Actor_SetSpeed(ACTOR_FIRST_WORKER, 3);
   Actor_SetSpeed(ACTOR_SECOND_WORKER, 3);
   Actor_SetScript(ACTOR_FIRST_WORKER, gEasternAlhafra_FirstWorkerCheerScript);
@@ -1540,8 +1540,7 @@ void EasternAlhafra_WorkersTellMayor(void) {
   FieldCamera_MoveTo(192, CAMERA_KEEP, 616, 1);
   FieldCamera_WaitForArrival();
   FieldEvent_Wait(20);
-  FieldActor_ShowEmote(ACTOR_ALHAFRAS_MAYOR, EMOTE_IN_FRONT | EMOTE_WINCE,
-                       0x1e);
+  FieldActor_ShowEmote(ACTOR_ALHAFRAS_MAYOR, EMOTE_IN_FRONT | EMOTE_WINCE, 30);
   Actor_FaceDirection(ACTOR_ALHAFRAS_MAYOR, FACING_NORTH, 0);
   FieldEvent_Wait(20);
   // "It's gone! That huge block is really gone!"
@@ -1570,7 +1569,7 @@ void EasternAlhafra_WorkersTellMayor(void) {
   Actor_FaceDirection(ACTOR_JIYA, FACING_NORTH_NORTHWEST, 0);
   FieldEvent_Wait(40);
   FieldActor_ShowEmote(ACTOR_ALHAFRAS_MAYOR, EMOTE_IN_FRONT | EMOTE_QUESTION,
-                       0x1e);
+                       30);
   // "But that can wait. Who was able to move the block?"
   FieldEvent_ShowMessageThenWait(ACTOR_ALHAFRAS_MAYOR, 0, 10);
   FieldActor_StartRepeatedMotion(ACTOR_FIRST_WORKER, 3);
@@ -1586,7 +1585,7 @@ void EasternAlhafra_WorkersTellMayor(void) {
   FieldActor_ShowEmote(ACTOR_FIRST_WORKER, EMOTE_IN_FRONT | EMOTE_EXCLAMATION,
                        0);
   FieldActor_ShowEmote(ACTOR_SECOND_WORKER, EMOTE_IN_FRONT | EMOTE_EXCLAMATION,
-                       0x28);
+                       40);
   Actor_FaceDirection(ACTOR_ALHAFRAS_MAYOR, FACING_NORTH_NORTHWEST, 0);
   Actor_FaceDirection(ACTOR_JIYA, FACING_NORTH_NORTHWEST, 0);
   FieldEvent_Wait(20);
@@ -1595,7 +1594,7 @@ void EasternAlhafra_WorkersTellMayor(void) {
   FieldEvent_Wait(20);
   // "Felix!"
   FieldEvent_ShowMessageThenWait(ACTOR_ALHAFRAS_MAYOR, 0, 10);
-  FieldActor_ShowEmote(ACTOR_FELIX, EMOTE_IN_FRONT | EMOTE_WINCE, 0x1e);
+  FieldActor_ShowEmote(ACTOR_FELIX, EMOTE_IN_FRONT | EMOTE_WINCE, 30);
   Actor_SetSpeed(ACTOR_ALHAFRAS_MAYOR, 1.5);
   Actor_SetSpeed(ACTOR_JIYA, 1.5);
   Actor_WalkBy(ACTOR_ALHAFRAS_MAYOR, -32, -32);
@@ -1607,7 +1606,7 @@ void EasternAlhafra_WorkersTellMayor(void) {
   Actor_FaceDirection(ACTOR_JIYA, FACING_NORTH_NORTHWEST, 0);
   FieldEvent_Wait(20);
   FieldActor_ShowEmote(ACTOR_ALHAFRAS_MAYOR, EMOTE_IN_FRONT | EMOTE_EXCLAMATION,
-                       0x1e);
+                       30);
   // "Felix, did you do this?"
   FieldEvent_ShowMessageThenWait(ACTOR_ALHAFRAS_MAYOR, 0, 10);
   Actor_WalkToAndWait(ACTOR_FELIX, 136, 520);
@@ -1627,7 +1626,7 @@ void EasternAlhafra_WorkersTellMayor(void) {
   // "We left Alhafra some time ago, but we just returned and destroyed..."
   FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | ACTOR_KRADEN, 0, 10);
   FieldActor_ShowEmote(ACTOR_ALHAFRAS_MAYOR, EMOTE_IN_FRONT | EMOTE_SWEAT_DROP,
-                       0x1e);
+                       30);
   // "Exploring? What brought you back to Alhafra right now?"
   FieldEvent_ShowMessageThenWait(ACTOR_ALHAFRAS_MAYOR, 0, 10);
   Actor_FaceDirection(ACTOR_KRADEN, FACING_WEST, 0);
@@ -1642,7 +1641,7 @@ void EasternAlhafra_WorkersTellMayor(void) {
   // "Mayor, not to interrupt, but shouldn't we begin repairs on your ship..."
   FieldEvent_ShowMessageThenWait(ACTOR_JIYA, 0, 10);
   FieldActor_ShowEmote(ACTOR_ALHAFRAS_MAYOR, EMOTE_IN_FRONT | EMOTE_EXCLAMATION,
-                       0x1e);
+                       30);
   Actor_FaceDirection(ACTOR_ALHAFRAS_MAYOR, FACING_EAST, 0);
   FieldEvent_Wait(20);
   // "Yes, yes... You're right, of course."
@@ -1835,20 +1834,20 @@ void EasternAlhafra_BriggsStealsShip(void) {
   // "Ahoy, Briggs!"
   FieldEvent_ShowMessageThenWait(ACTOR_KRADEN, 0, 10);
   FieldActor_ShowEmote(ACTOR_CHAUCHA, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
-  FieldActor_ShowEmote(ACTOR_BRIGGS, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0x32);
+  FieldActor_ShowEmote(ACTOR_BRIGGS, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 50);
   FieldActor_StartRepeatedMotion(ACTOR_BRIGGS, 3);
   Actor_SetAttachedEffect(ACTOR_BRIGGS,
                           ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   FieldEvent_Wait(40);
   Actor_WalkByAndWait(ACTOR_BRIGGS, 0, 16);
   FieldEvent_Wait(20);
-  FieldActor_ShowEmote(ACTOR_BRIGGS, EMOTE_IN_FRONT | EMOTE_WINCE, 0x1e);
+  FieldActor_ShowEmote(ACTOR_BRIGGS, EMOTE_IN_FRONT | EMOTE_WINCE, 30);
   // "Uh-oh... It's Felix!"
   FieldEvent_ShowMessageThenWait(ACTOR_BRIGGS, 0, 10);
   Actor_WalkByAndWait(ACTOR_CHAUCHA, 0, 16);
   Actor_FaceDirection(ACTOR_CHAUCHA, FACING_WEST, 0);
   FieldEvent_Wait(20);
-  FieldActor_ShowEmote(ACTOR_CHAUCHA, EMOTE_IN_FRONT | EMOTE_SWEAT_DROP, 0x1e);
+  FieldActor_ShowEmote(ACTOR_CHAUCHA, EMOTE_IN_FRONT | EMOTE_SWEAT_DROP, 30);
   // "You're not afraid of them, are you?"
   FieldEvent_ShowMessageThenWait(ACTOR_CHAUCHA, 0, 10);
   Actor_FaceDirection(ACTOR_CHAUCHA, FACING_SOUTH_SOUTHWEST, 0);
@@ -1859,10 +1858,10 @@ void EasternAlhafra_BriggsStealsShip(void) {
   FieldEvent_ShowMessageThenWait(ACTOR_CHAUCHA, 0, 10);
   Actor_FaceDirectionById(ACTOR_BRIGGS, FACING_EAST, 0);
   FieldEvent_Wait(20);
-  FieldActor_ShowEmote(ACTOR_BRIGGS, EMOTE_IN_FRONT | EMOTE_QUESTION, 0x2d);
+  FieldActor_ShowEmote(ACTOR_BRIGGS, EMOTE_IN_FRONT | EMOTE_QUESTION, 45);
   Actor_WalkByAndWait(ACTOR_BRIGGS, 0, 32);
   FieldEvent_Wait(30);
-  FieldActor_ShowEmote(ACTOR_BRIGGS, EMOTE_IN_FRONT | EMOTE_LIGHT_BULB, 0x2d);
+  FieldActor_ShowEmote(ACTOR_BRIGGS, EMOTE_IN_FRONT | EMOTE_LIGHT_BULB, 45);
   Actor_WalkByAndWait(ACTOR_BRIGGS, 0, -32);
   Actor_FaceDirectionById(ACTOR_BRIGGS, FACING_EAST, 0);
   FieldEvent_Wait(20);
@@ -1874,13 +1873,13 @@ void EasternAlhafra_BriggsStealsShip(void) {
   FieldEvent_Wait(50);
   Actor_FaceDirectionById(ACTOR_CHAUCHA, FACING_WEST, 0);
   FieldEvent_Wait(20);
-  FieldActor_ShowEmote(ACTOR_CHAUCHA, EMOTE_IN_FRONT | EMOTE_SMILE, 0x1e);
+  FieldActor_ShowEmote(ACTOR_CHAUCHA, EMOTE_IN_FRONT | EMOTE_SMILE, 30);
   // "They can't catch us... What would they do, swim?"
   FieldEvent_ShowMessageThenWait(ACTOR_CHAUCHA, 0, 10);
-  FieldActor_ShowEmote(ACTOR_BRIGGS, EMOTE_IN_FRONT | EMOTE_QUESTION, 0x32);
+  FieldActor_ShowEmote(ACTOR_BRIGGS, EMOTE_IN_FRONT | EMOTE_QUESTION, 50);
   Actor_WalkByAndWait(ACTOR_BRIGGS, 0, 32);
   FieldEvent_Wait(30);
-  FieldActor_ShowEmote(ACTOR_BRIGGS, EMOTE_IN_FRONT | EMOTE_LIGHT_BULB, 0x32);
+  FieldActor_ShowEmote(ACTOR_BRIGGS, EMOTE_IN_FRONT | EMOTE_LIGHT_BULB, 50);
   Actor_WalkByAndWait(ACTOR_BRIGGS, 0, -32);
   Actor_FaceDirectionById(ACTOR_BRIGGS, FACING_EAST, 0);
   FieldEvent_Wait(20);
@@ -1888,14 +1887,14 @@ void EasternAlhafra_BriggsStealsShip(void) {
   FieldEvent_Wait(10);
   // "Hah! You're right! They can't board us from way over there!"
   FieldEvent_ShowMessageThenWait(ACTOR_BRIGGS, 0, 10);
-  FieldActor_ShowEmote(ACTOR_CHAUCHA, EMOTE_IN_FRONT | EMOTE_SWEAT_DROP, 0x1e);
+  FieldActor_ShowEmote(ACTOR_CHAUCHA, EMOTE_IN_FRONT | EMOTE_SWEAT_DROP, 30);
   // "Wasn't there something you wanted to do the next time you saw Felix?"
   FieldEvent_ShowMessageThenWait(ACTOR_CHAUCHA, 0, 10);
   Actor_FaceDirection(ACTOR_BRIGGS, FACING_SOUTH_SOUTHWEST, 0);
   FieldEvent_Wait(30);
   EasternAlhafra_PuffFrom(ACTOR_BRIGGS);
   Event_PlaySound(SE_CURSE);
-  FieldActor_ShowEmote(ACTOR_BRIGGS, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 0x32);
+  FieldActor_ShowEmote(ACTOR_BRIGGS, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 50);
   Actor_FaceDirectionById(ACTOR_BRIGGS, FACING_EAST, 0);
   FieldEvent_Wait(20);
   Actor_SetAnimationAndWait(ACTOR_CHAUCHA, ANIM_SHAKE_HEAD);
@@ -1904,14 +1903,14 @@ void EasternAlhafra_BriggsStealsShip(void) {
   Actor_FaceDirection(ACTOR_BRIGGS, FACING_SOUTH_SOUTHWEST, 0);
   FieldEvent_Wait(30);
   EasternAlhafra_PuffFrom(ACTOR_BRIGGS);
-  FieldActor_ShowEmote(ACTOR_BRIGGS, EMOTE_IN_FRONT | EMOTE_LIGHT_BULB, 0x32);
+  FieldActor_ShowEmote(ACTOR_BRIGGS, EMOTE_IN_FRONT | EMOTE_LIGHT_BULB, 50);
   Actor_FaceDirectionById(ACTOR_BRIGGS, FACING_EAST, 0);
   FieldEvent_Wait(20);
   Actor_SetAnimationAndWait(ACTOR_BRIGGS, ANIM_NOD);
   FieldEvent_Wait(10);
   // "Oh yeah... I almost forgot."
   FieldEvent_ShowMessageThenWait(ACTOR_BRIGGS, 0, 10);
-  FieldActor_ShowEmote(ACTOR_CHAUCHA, EMOTE_IN_FRONT | EMOTE_SWEAT_DROP, 0x1e);
+  FieldActor_ShowEmote(ACTOR_CHAUCHA, EMOTE_IN_FRONT | EMOTE_SWEAT_DROP, 30);
   // "So now's your chance! Do what you swore to do!"
   FieldEvent_ShowMessageThenWait(ACTOR_CHAUCHA, 0, 10);
   Actor_RunRepeatedMotion(ACTOR_BRIGGS, 2);
@@ -1929,7 +1928,7 @@ void EasternAlhafra_BriggsStealsShip(void) {
   FieldActor_Jump(ACTOR_CHAUCHA, 6, 23);
   // "Is that the best you could come up with?"
   FieldEvent_ShowMessageThenWait(ACTOR_CHAUCHA, 0, 10);
-  FieldActor_ShowEmote(ACTOR_BRIGGS, EMOTE_IN_FRONT | EMOTE_WINCE, 0x32);
+  FieldActor_ShowEmote(ACTOR_BRIGGS, EMOTE_IN_FRONT | EMOTE_WINCE, 50);
   Actor_SetAnimation(ACTOR_BRIGGS, 7);
   FieldEvent_Wait(20);
   Actor_SetAnimation(ACTOR_BRIGGS, ANIM_STAND);
@@ -1937,10 +1936,10 @@ void EasternAlhafra_BriggsStealsShip(void) {
   FieldEvent_Wait(15);
   // "But, Chaucha, they're an awfully tough bunch..."
   FieldEvent_ShowMessageThenWait(ACTOR_BRIGGS, 0, 10);
-  FieldActor_ShowEmote(ACTOR_CHAUCHA, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 0x1e);
+  FieldActor_ShowEmote(ACTOR_CHAUCHA, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 30);
   // "See? It's that attitude right there! That's why you'll never amount..."
   FieldEvent_ShowMessageThenWait(ACTOR_CHAUCHA, 0, 10);
-  FieldActor_ShowEmote(ACTOR_BRIGGS, EMOTE_IN_FRONT | EMOTE_LIGHT_BULB, 0x28);
+  FieldActor_ShowEmote(ACTOR_BRIGGS, EMOTE_IN_FRONT | EMOTE_LIGHT_BULB, 40);
   // "You know what? You're right!"
   FieldEvent_ShowMessageThenWait(ACTOR_BRIGGS, 0, 10);
   Actor_WalkByAndWait(ACTOR_BRIGGS, 0, 8);
@@ -1955,7 +1954,7 @@ void EasternAlhafra_BriggsStealsShip(void) {
   FieldEvent_ShowMessageThenWait(SPEAKER_WINDOW_ABOVE | ACTOR_BRIGGS, 0, 10);
   // "What!?!"
   FieldEvent_ShowMessageThenWait(ACTOR_KRADEN, 0, 10);
-  FieldActor_ShowEmote(ACTOR_BRIGGS, EMOTE_IN_FRONT | EMOTE_SMILE, 0x1e);
+  FieldActor_ShowEmote(ACTOR_BRIGGS, EMOTE_IN_FRONT | EMOTE_SMILE, 30);
   // "I doubt we'll ever meet again, but if we do, remember this!"
   FieldEvent_ShowMessageThenWait(SPEAKER_WINDOW_ABOVE | ACTOR_BRIGGS, 0, 20);
   Actor_SetAnimation(ACTOR_BRIGGS, 8);
@@ -2033,7 +2032,7 @@ void EasternAlhafra_MayorFindsShipGone(void) {
   FieldCamera_WaitForArrival();
   FieldEvent_Wait(20);
   FieldActor_ShowEmote(ACTOR_ALHAFRAS_MAYOR, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN,
-                       0x1e);
+                       30);
   // "You and your friends talk a good game, but when trouble happens..."
   FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_LEFT | ACTOR_ALHAFRAS_MAYOR,
                                  0, 10);
@@ -2046,14 +2045,14 @@ void EasternAlhafra_MayorFindsShipGone(void) {
   FieldActor_Jump(ACTOR_ALHAFRAS_MAYOR, 6, 23);
   FieldEvent_Wait(10);
   FieldActor_ShowEmote(ACTOR_ALHAFRAS_MAYOR, EMOTE_IN_FRONT | EMOTE_SWEAT_DROP,
-                       0x1e);
+                       30);
   // "My prize ship, stolen by a bunch of filthy pirate scum!"
   FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_LEFT | ACTOR_ALHAFRAS_MAYOR,
                                  0, 10);
   Actor_FaceDirection(ACTOR_ALHAFRAS_MAYOR, FACING_NORTH_NORTHEAST, 0);
   FieldEvent_Wait(30);
   FieldActor_ShowEmote(ACTOR_ALHAFRAS_MAYOR, EMOTE_IN_FRONT | EMOTE_EXCLAMATION,
-                       0x1e);
+                       30);
   Actor_SetSpeed(ACTOR_ALHAFRAS_MAYOR, 0.7);
   Actor_GetById(ACTOR_ALHAFRAS_MAYOR)->steeringFlags &= ~ACTOR_FACES_MOTION;
   Actor_WalkByAndWait(ACTOR_ALHAFRAS_MAYOR, 0, 8);
@@ -2106,7 +2105,7 @@ void EasternAlhafra_MayorFindsShipGone(void) {
   Actor_SetSpriteFlags(Actor_GetById(ACTOR_SECOND_WORKER), 1);
   Actor_FaceDirection(ACTOR_SECOND_WORKER, FACING_SOUTH_SOUTHWEST, 0);
   FieldActor_Jump(ACTOR_SECOND_WORKER, 6, 40);
-  FieldActor_ShowEmote(ACTOR_SECOND_WORKER, EMOTE_IN_FRONT | EMOTE_WINCE, 0x28);
+  FieldActor_ShowEmote(ACTOR_SECOND_WORKER, EMOTE_IN_FRONT | EMOTE_WINCE, 40);
   Actor_FaceDirectionById(ACTOR_ALHAFRAS_MAYOR, FACING_SOUTH_SOUTHEAST, 0);
   FieldEvent_Wait(30);
   Actor_SetSpeed(ACTOR_ALHAFRAS_MAYOR, 0.7);
@@ -2156,24 +2155,22 @@ void EasternAlhafra_MayorFindsShipGone(void) {
   Actor_SetSpriteFlags(Actor_GetById(ACTOR_JIYA), 1);
   Actor_GetById(ACTOR_JIYA)->facing = FACING_NORTH_NORTHWEST;
   FieldActor_Jump(ACTOR_JIYA, 6, 40);
-  FieldActor_ShowEmote(ACTOR_JIYA, EMOTE_IN_FRONT | EMOTE_WINCE, 0x28);
+  FieldActor_ShowEmote(ACTOR_JIYA, EMOTE_IN_FRONT | EMOTE_WINCE, 40);
   Actor_FaceDirectionById(ACTOR_ALHAFRAS_MAYOR, FACING_NORTH_NORTHEAST, 0);
   FieldEvent_Wait(30);
-  FieldActor_ShowEmote(ACTOR_ALHAFRAS_MAYOR, EMOTE_IN_FRONT | EMOTE_SCOWL,
-                       0x1e);
+  FieldActor_ShowEmote(ACTOR_ALHAFRAS_MAYOR, EMOTE_IN_FRONT | EMOTE_SCOWL, 30);
   // "You guys have royally botched this one. This ruins everything!"
   FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_LEFT | ACTOR_ALHAFRAS_MAYOR,
                                  0, 10);
   FieldActor_ShowEmote(ACTOR_SECOND_WORKER, EMOTE_IN_FRONT | EMOTE_SWEAT_DROP,
-                       0x32);
+                       50);
   Actor_FaceDirectionById(ACTOR_ALHAFRAS_MAYOR, FACING_SOUTH_SOUTHEAST, 0);
   FieldEvent_Wait(30);
-  FieldActor_ShowEmote(ACTOR_ALHAFRAS_MAYOR, EMOTE_IN_FRONT | EMOTE_SCOWL,
-                       0x1e);
+  FieldActor_ShowEmote(ACTOR_ALHAFRAS_MAYOR, EMOTE_IN_FRONT | EMOTE_SCOWL, 30);
   // "You all ought to be ashamed! All of you were cowering, while I was..."
   FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_LEFT | ACTOR_ALHAFRAS_MAYOR,
                                  0, 10);
-  FieldActor_ShowEmote(ACTOR_JIYA, EMOTE_IN_FRONT | EMOTE_WINCE, 0x32);
+  FieldActor_ShowEmote(ACTOR_JIYA, EMOTE_IN_FRONT | EMOTE_WINCE, 50);
   Actor_SetAnimation(ACTOR_ALHAFRAS_MAYOR, 5);
   FieldEvent_Wait(30);
   // "All of you!"
@@ -2241,7 +2238,7 @@ void EasternAlhafra_MayorFindsShipGone(void) {
   Actor_WalkBy(ACTOR_SECOND_WORKER, 0, 64);
   Actor_WalkByAndWait(ACTOR_ALHAFRAS_MAYOR, 0, 64);
   FieldActor_ShowEmote(ACTOR_ALHAFRAS_MAYOR, EMOTE_IN_FRONT | EMOTE_LIGHT_BULB,
-                       0x28);
+                       40);
   // "There will be no reward for you, Felix!"
   FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | ACTOR_ALHAFRAS_MAYOR,
                                  0, 10);
@@ -2313,7 +2310,7 @@ void EasternAlhafra_MayorFindsShipGone(void) {
   EventCamera_FollowActor(ACTOR_FELIX, 1);
   FieldCamera_WaitForArrival();
   FieldEvent_Wait(40);
-  FieldActor_ShowEmote(ACTOR_KRADEN, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 0x32);
+  FieldActor_ShowEmote(ACTOR_KRADEN, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 50);
   Actor_FaceDirectionById(ACTOR_KRADEN, FACING_EAST, 0);
   Actor_FaceDirectionById(ACTOR_FELIX, FACING_WEST, 0);
   FieldEvent_Wait(20);
@@ -2376,7 +2373,7 @@ void BattleEffect_StepVector3(struct Particle *particle, s32 damping, s32 step);
 /// The falling rocks' work: their tiles, 64 rocks and their sprites, in a
 /// ring that next walks round.
 struct RockWork {
-  u8 tiles[0x500];
+  u8 tiles[1280];
   struct Rock rocks[64];
   struct EffectSprite sprites[64];
   s16 next;

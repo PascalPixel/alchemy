@@ -147,6 +147,9 @@ extern s32 gAnemosInnerSanctum_StatueScript[];
 extern s16 gAnemosInnerSanctum_OtherDoorFrames[];
 extern s32 gAnemosInnerSanctum_OrbScript[];
 
+/// Ends a u16 list of palette slots or colours, written -1 in its table.
+#define PALETTE_LIST_END ((u16)-1)
+
 /// Writes one background palette entry from its red, green and blue.
 #define BG_PLTT_SET_RGB(index, r, g, b)                                        \
   do {                                                                         \
@@ -250,7 +253,7 @@ void Palette_SetColors(u16 *slots, u16 *colours, u16 *cycleColors,
   gPaletteColors = colours;
   gPaletteCycleColors = cycleColors;
   gPaletteCycleSlots = cycleSlots;
-  while (*slots != 0xffff && *colours != 0xffff) {
+  while (*slots != PALETTE_LIST_END && *colours != PALETTE_LIST_END) {
     int index = *slots++;
     int red = *colours++;
     int green = *colours++;
@@ -1575,7 +1578,7 @@ s32 Scene_Initialize(void) {
       CrackedTile_Find(35, FLAG_SCENE_TEMP_80, FLAG_AREA_TEMP_80, 18, 68);
       if (Event_GetFlag(FLAG_KEEP_PARTY_POSITION) == 0)
         CrackedTile_PlaceLanding(36, -36, FLAG_SCENE_TEMP_04);
-    } else if ((u32)((nearStairs - 4) << 16) <= 0x10000) {
+    } else if ((u32)((nearStairs - 4) << 16) <= 1 << 16) {
       CrackedTile_Find(35, FLAG_SCENE_TEMP_80, FLAG_AREA_TEMP_80, 18, 68);
     }
   } else if (scene == SCENE_ANEMOS_INNER_SANCTUM_GUARDIAN) {
@@ -1909,8 +1912,8 @@ u32 gAnemosInnerSanctum_MoteScript[] = {
 };
 
 s32 gAnemosInnerSanctum_SparkScript[] = {
-    SC_SET(SW_SCALE_X, 0x20000),
-    SC_SET(SW_SCALE_Y, 0x20000),
+    SC_SET(SW_SCALE_X, FIXED_ONE * 2),
+    SC_SET(SW_SCALE_Y, FIXED_ONE * 2),
     SC_LABEL(1),
     SC_ADD(SW_SCALE_X, -6553),
     SC_ADD(SW_SCALE_Y, -6553),
@@ -2231,7 +2234,7 @@ struct Trigger gAnemosInnerSanctum_GuardianTriggers[] = {
     {TRIGGER_STEP, 30, FLAG_ANEMOS_GUARDIAN_SPOKE, EVENT(AnemosInnerSanctum_SummonTheGuardian)},
     {TRIGGER_RAISED, 200, CONDITION_ALWAYS, EVENT(AnemosInnerSanctum_RaiseDust)},
     {TRIGGER_RAISED, 201, CONDITION_ALWAYS, EVENT(AnemosInnerSanctum_MarkEntrance)},
-    {0xffffffff, 0, 0x0, 0},
+    {TRIGGER_TABLE_END},
     {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
     {TRIGGER_EXIT, 2, CONDITION_ALWAYS, 2},
     {TRIGGER_EXIT, 3, CONDITION_ALWAYS, 3},

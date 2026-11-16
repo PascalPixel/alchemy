@@ -184,7 +184,7 @@ void EasternAlhafraShip_EoleoLifts(s32 id) {
     Actor_RunRepeatedMotion(ACTOR_CHAUCHA, 2);
     Event_Wait(10);
     Event_ShowMessageThenWait(ACTOR_CHAUCHA, 0, 10);
-    Actor_FaceDirection(ACTOR_CHAUCHA, 0xafff, 0);
+    Actor_FaceDirection(ACTOR_CHAUCHA, FACING_NORTH_NORTHWEST - 1, 0);
   }
   Event_End();
 }

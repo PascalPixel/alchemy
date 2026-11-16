@@ -1701,27 +1701,77 @@ u32 gAlhafra_PasserbyWalksOffScript[] = {
     SC_END,
 };
 
-u32 gAlhafra_PasserbyLeadsFromCell21Script[] = {                                                               
-      39,        2, 4,  0x1b80000, 0,   0x3200000, 1,  4,         0x1980000, 0, 0x2f80000,     1,  4,      
-      0x1980000, 0, 0x2f80000, 1,  4,   0x1980000, 0,  0x2a80000, 1,  4, 0xf80000,     0,  0x2a80000,     
-      1,         4, 0xf80000, 0,  0x2780000, 1,  39, 1,         22, 3, 0xd000, 17,         
-  };
+u32 gAlhafra_PasserbyLeadsFromCell21Script[] = {
+    SC_ANIMATION(2),
+    SC_MOVE(440, 0, 800),
+    SC_SYNC,
+    SC_MOVE(408, 0, 760),
+    SC_SYNC,
+    SC_MOVE(408, 0, 760),
+    SC_SYNC,
+    SC_MOVE(408, 0, 680),
+    SC_SYNC,
+    SC_MOVE(248, 0, 680),
+    SC_SYNC,
+    SC_MOVE(248, 0, 632),
+    SC_SYNC,
+    SC_ANIMATION(1),
+    SC_SET(SW_FACING, FACING_NORTH_NORTHEAST),
+    SC_END,
+};
 
-u32 gAlhafra_MayorFollowsFromCell21Script[] = {                                                               
-      39, 2,  4, 0x1a80000, 0, 0x3180000, 1,        4, 0x1980000, 0, 0x2f80000, 1, 4,  0x1980000, 0,      0x2a80000, 1,  
-      4,  0xf80000, 0, 0x2a80000, 1, 4,  0xf80000, 0, 0x2980000, 1, 39, 1, 22, 3,  0xd000, 17,     
-  };
+u32 gAlhafra_MayorFollowsFromCell21Script[] = {
+    SC_ANIMATION(2),
+    SC_MOVE(424, 0, 792),
+    SC_SYNC,
+    SC_MOVE(408, 0, 760),
+    SC_SYNC,
+    SC_MOVE(408, 0, 680),
+    SC_SYNC,
+    SC_MOVE(248, 0, 680),
+    SC_SYNC,
+    SC_MOVE(248, 0, 664),
+    SC_SYNC,
+    SC_ANIMATION(1),
+    SC_SET(SW_FACING, FACING_NORTH_NORTHEAST),
+    SC_END,
+};
 
-u32 gAlhafra_OfficialFollowsFromCell21Script[] = {                                                               
-      39,        2, 4,  0x1b80000, 0,   0x3280000, 1,  4,         0x1b80000, 0, 0x3200000,     1,  4,      
-      0x1980000, 0, 0x2f80000, 1,  4,   0x1980000, 0,  0x2a80000, 1,  4, 0x1080000,     0,  0x2a80000,     
-      1,         4, 0x1080000, 0,  0x2980000, 1,  39, 1,         22, 3, 0xd000, 17,         
-  };
+u32 gAlhafra_OfficialFollowsFromCell21Script[] = {
+    SC_ANIMATION(2),
+    SC_MOVE(440, 0, 808),
+    SC_SYNC,
+    SC_MOVE(440, 0, 800),
+    SC_SYNC,
+    SC_MOVE(408, 0, 760),
+    SC_SYNC,
+    SC_MOVE(408, 0, 680),
+    SC_SYNC,
+    SC_MOVE(264, 0, 680),
+    SC_SYNC,
+    SC_MOVE(264, 0, 664),
+    SC_SYNC,
+    SC_ANIMATION(1),
+    SC_SET(SW_FACING, FACING_NORTH_NORTHEAST),
+    SC_END,
+};
 
-u32 gAlhafra_FirstMadranFollowsFromCell21Script[] = {                                                               
-      39, 2,  4, 0x1b80000, 0, 0x3280000, 1,        4, 0x1b80000, 0, 0x3200000, 1, 4,  0x1980000, 0,      0x2f80000, 1,  
-      4,  0x1980000, 0, 0x2a80000, 1, 4,  0xf80000, 0, 0x2a80000, 1, 39, 1, 22, 3,  0xd000, 17,     
-  };
+u32 gAlhafra_FirstMadranFollowsFromCell21Script[] = {
+    SC_ANIMATION(2),
+    SC_MOVE(440, 0, 808),
+    SC_SYNC,
+    SC_MOVE(440, 0, 800),
+    SC_SYNC,
+    SC_MOVE(408, 0, 760),
+    SC_SYNC,
+    SC_MOVE(408, 0, 680),
+    SC_SYNC,
+    SC_MOVE(248, 0, 680),
+    SC_SYNC,
+    SC_ANIMATION(1),
+    SC_SET(SW_FACING, FACING_NORTH_NORTHEAST),
+    SC_END,
+};
 
 u32 gAlhafra_FirstSoldierFollowsFromCell21Script[] = {
     SC_ANIMATION(2),
@@ -1736,10 +1786,22 @@ u32 gAlhafra_FirstSoldierFollowsFromCell21Script[] = {
     SC_END,
 };
 
-u32 gAlhafra_ElderFollowsFromCell21Script[] = {                                                               
-      39, 2,  4, 0x1980000, 0, 0x2f80000, 1,        4, 0x1980000, 0, 0x2a80000, 1, 4,  0x1180000, 0,      0x2a80000, 1,  
-      4,  0x1180000, 0, 0x2b80000, 1, 4,  0xf80000, 0, 0x2b80000, 1, 39, 1, 22, 3,  0xd000, 17,     
-  };
+u32 gAlhafra_ElderFollowsFromCell21Script[] = {
+    SC_ANIMATION(2),
+    SC_MOVE(408, 0, 760),
+    SC_SYNC,
+    SC_MOVE(408, 0, 680),
+    SC_SYNC,
+    SC_MOVE(280, 0, 680),
+    SC_SYNC,
+    SC_MOVE(280, 0, 696),
+    SC_SYNC,
+    SC_MOVE(248, 0, 696),
+    SC_SYNC,
+    SC_ANIMATION(1),
+    SC_SET(SW_FACING, FACING_NORTH_NORTHEAST),
+    SC_END,
+};
 
 u32 gAlhafra_SecondSoldierFollowsFromCell21Script[] = {
     SC_ANIMATION(2),
@@ -1762,11 +1824,24 @@ u32 gAlhafra_SecondSoldierFollowsFromCell21Script[] = {
     SC_END,
 };
 
-u32 gAlhafra_SecondMadranFollowsFromCell21Script[] = {                                                               
-      39,        2, 4,  0x1980000, 0,   0x2f80000, 1,  4,         0x1980000, 0, 0x2f80000,     1,  4,      
-      0x1980000, 0, 0x2a80000, 1,  4,   0x1180000, 0,  0x2a80000, 1,  4, 0x1180000,     0,  0x2b80000,     
-      1,         4, 0x1000000, 0,  0x2c80000, 1,  39, 1,         22, 3, 0xd000, 17,         
-  };
+u32 gAlhafra_SecondMadranFollowsFromCell21Script[] = {
+    SC_ANIMATION(2),
+    SC_MOVE(408, 0, 760),
+    SC_SYNC,
+    SC_MOVE(408, 0, 760),
+    SC_SYNC,
+    SC_MOVE(408, 0, 680),
+    SC_SYNC,
+    SC_MOVE(280, 0, 680),
+    SC_SYNC,
+    SC_MOVE(280, 0, 696),
+    SC_SYNC,
+    SC_MOVE(256, 0, 712),
+    SC_SYNC,
+    SC_ANIMATION(1),
+    SC_SET(SW_FACING, FACING_NORTH_NORTHEAST),
+    SC_END,
+};
 
 s32 gAlhafra_PasserbyLeadsFromCell20Script[] = {
     SC_ANIMATION(2),

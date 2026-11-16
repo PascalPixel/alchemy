@@ -554,7 +554,7 @@ void AnkohlRuins_PourSand(s32 rows, s32 frames, s32 x, s32 y, s32 startZ,
         }
         dy = Random16() & 31;
         FieldEffect_Spawn(INTtoFIXED(x + left * 16) + INTtoFIXED(dx - 8),
-                          (y + dy) << 16, INTtoFIXED(z), 0, 0, 0x100,
+                          (y + dy) << 16, INTtoFIXED(z), 0, 0, toFIXED(1) / 256,
                           EFFECT_USE_START_SCALE | 1, &params);
       }
       FieldEvent_Wait(frames);

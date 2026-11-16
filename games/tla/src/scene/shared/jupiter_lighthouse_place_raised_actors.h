@@ -27,7 +27,7 @@ void JupiterLighthouse_PlaceRaisedActors(void) {
       lid->y.fixed += step;
     }
     lid->x.fixed -= 0x28f40;
-    sprite->rotation += 0x800;
+    sprite->rotation += TRIG_TURN / 32;
     Actor_SetSpriteColorMode(Actor_Get(9), 4);
     Actor_SetSpriteColorMode(Actor_Get(11), 4);
   }
@@ -39,7 +39,7 @@ void JupiterLighthouse_PlaceRaisedActors(void) {
       lid->y.fixed += step;
     }
     lid->x.fixed += 0x28f40;
-    sprite->rotation -= 0x800;
+    sprite->rotation -= TRIG_TURN / 32;
     Actor_SetSpriteColorMode(Actor_Get(10), 4);
     Actor_SetSpriteColorMode(Actor_Get(12), 4);
   }

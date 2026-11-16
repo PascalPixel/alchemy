@@ -85,16 +85,16 @@ void WorldMap_UpdatePlacedActors(void) {
   FIXED z = object->z.fixed;
   struct Actor **objects = gWorldMap_PlacedActors;
 
-  if (zoom <= 0x10000) {
-    left = x - 0xa00000;
-    right = x + 0xa00000;
-    top = z - 0x12c0000;
-    bottom = z + 0xc80000;
+  if (zoom <= FIXED_ONE) {
+    left = x - toFIXED(160);
+    right = x + toFIXED(160);
+    top = z - toFIXED(300);
+    bottom = z + toFIXED(200);
   } else {
-    left = x - 0xf00000;
-    right = x + 0xf00000;
-    top = z - 0x1c20000;
-    bottom = z + 0x12c0000;
+    left = x - toFIXED(240);
+    right = x + toFIXED(240);
+    top = z - toFIXED(450);
+    bottom = z + toFIXED(300);
   }
   i = 0;
   next = kind;
@@ -109,8 +109,8 @@ void WorldMap_UpdatePlacedActors(void) {
     if (placement->value == WORLD_MAP_MARKER_SHIP)
       goto next;
     object = *slot;
-    px = placement->x << 16;
-    pz = placement->z << 16;
+    px = toFIXED(placement->x);
+    pz = toFIXED(placement->z);
     if (px > left && px < right && pz > top && pz < bottom) {
       s32 flag = placement->shownFlag;
       s32 shown;
@@ -195,7 +195,7 @@ void WorldMap_StartPlacedActors(void) {
 
 /// The cell index of a point in 16.16 pixels.
 s32 WorldMap_GetCellIndex(FIXED x, FIXED z) {
-  return x / 0x100000 + (z / 0x100000) * 128;
+  return x / toFIXED(16) + (z / toFIXED(16)) * 128;
 }
 
 s32 WorldMap_RiseFromAnchor(struct Actor *object) {

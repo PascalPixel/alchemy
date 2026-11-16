@@ -91,17 +91,17 @@ s32 KNOCK_BACK(void) {
         x = actor->x.fixed += (s16)work->direction.x << 17;
         z = actor->z.fixed + ((s16)work->direction.z << 17);
         actor->z.fixed = z;
-        off = (x & 0xfffff) + 0xfff80000;
+        off = (x & ~FIELD_CELL_MASK) - toFIXED(8);
         if (off > FIXED_ONE)
           off = FIXED_ONE;
-        if (off < (s32)0xffff0000)
-          off = 0xffff0000;
+        if (off < -FIXED_ONE)
+          off = -FIXED_ONE;
         actor->x.fixed = x - off;
-        off = (z & 0xfffff) + 0xfff80000;
+        off = (z & ~FIELD_CELL_MASK) - toFIXED(8);
         if (off > FIXED_ONE)
           off = FIXED_ONE;
-        if (off < (s32)0xffff0000)
-          off = 0xffff0000;
+        if (off < -FIXED_ONE)
+          off = -FIXED_ONE;
         actor->z.fixed = z - off;
         work->active = 0;
         System_Wait(1);

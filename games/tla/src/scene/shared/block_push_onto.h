@@ -11,7 +11,7 @@ void MagmaRockInside_PushBlockOnto(void) {
   lead = Actor_GetById(gMainRoutineWork.leaderActorId);
   dir = lead->facing >> 12;
   step = gPushLeaderSteps[dir];
-  dst.x = lead->x.fixed + (step & 0xffff0000);
+  dst.x = lead->x.fixed + (step & FIELD_PIXEL_MASK);
   dst.y = lead->y.fixed;
   step <<= 16;
   dst.z = lead->z.fixed + step;
@@ -20,7 +20,7 @@ void MagmaRockInside_PushBlockOnto(void) {
     return;
 
   step = gPushLeaderSteps[dir];
-  dst.x = next->x.fixed + (step & 0xffff0000);
+  dst.x = next->x.fixed + (step & FIELD_PIXEL_MASK);
   dst.y = next->y.fixed;
   step <<= 16;
   dst.z = next->z.fixed + step;
@@ -37,7 +37,7 @@ void MagmaRockInside_PushBlockOnto(void) {
 
   next->layer = 2;
   step = gPushLeaderSteps[dir];
-  dst.x = next->x.fixed + (step & 0xffff0000);
+  dst.x = next->x.fixed + (step & FIELD_PIXEL_MASK);
   dst.y = next->y.fixed;
   step <<= 16;
   dst.z = next->z.fixed + step;
@@ -63,8 +63,8 @@ void MagmaRockInside_PushBlockOnto(void) {
   next->z.fixed = dst.z;
   next->velocityX = 0;
   next->velocityZ = 0;
-  lead->targetX = 0x80000000;
-  lead->targetZ = 0x80000000;
+  lead->targetX = TARGET_UNSET;
+  lead->targetZ = TARGET_UNSET;
   lead->velocityX = 0;
   lead->velocityZ = 0;
   lead->x.fixed = lead->x.part[0].integer << 16;

@@ -9,7 +9,6 @@
 #include "scene_ids.h"
 #include "field/event_inline.h"
 
-
 /// Trial Road's progress, kept in the inventory snapshot while the trial runs.
 struct TrialRoadState {
   s16 order[8]; ///< the dealt stage patterns, two to a stage

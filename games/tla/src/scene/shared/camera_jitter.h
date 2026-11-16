@@ -7,18 +7,18 @@ void WorldMap_JitterTransitionCamera(void) {
   if (gFrameCount % 3 == 0) {
     switch ((u32)(Random16() << 2) >> 16) {
     case 0:
-      CameraMove((x << 16) - 0x10000, -1, (z << 16) + 0x10000, 1);
+      CameraMove(toFIXED(x) - toFIXED(1), -1, toFIXED(z) + toFIXED(1), 1);
       break;
     case 1: {
-      FieldCamera_MoveWithinMapBounds((x << 16) + 0x10000, -1,
-                                      (z << 16) - 0x10000, 1);
+      FieldCamera_MoveWithinMapBounds(toFIXED(x) + toFIXED(1), -1,
+                                      toFIXED(z) - toFIXED(1), 1);
       break;
     }
     case 2:
-      CameraMove((x << 16) + 0x10000, -1, (z << 16) + 0x10000, 1);
+      CameraMove(toFIXED(x) + toFIXED(1), -1, toFIXED(z) + toFIXED(1), 1);
       break;
     case 3:
-      CameraMove((x << 16) - 0x10000, -1, (z << 16) - 0x10000, 1);
+      CameraMove(toFIXED(x) - toFIXED(1), -1, toFIXED(z) - toFIXED(1), 1);
       break;
     }
   }

@@ -11,7 +11,6 @@
 #include "field/event_inline.h"
 #include "field/map_grid.h"
 
-
 #define ABS(value) ((value) < 0 ? -(value) : (value))
 
 void Actor_SetSpriteColorMode(struct Actor *object, s32 value);

@@ -17,7 +17,7 @@ void Whirlwind_CarryLeader(void) {
   actor->motionFlags = ACTOR_FLOATS;
   Actor_SetSpriteFlags(actor, 0);
 
-  while (*((u8 *)linked + 0x63) != 0) {
+  while (*(u8 *)&linked->riseEnabled != 0) {
     actor->x.fixed = linked->x.fixed;
     actor->y.fixed = linked->y.fixed + i;
     actor->z.fixed = linked->z.fixed;

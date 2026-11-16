@@ -360,6 +360,12 @@
 /// Set as the party sets out on the ship Hamma gave wings to at Atteka Inlet:
 /// from then on the ship flies, with no encounters at sea.
 #define FLAG_SHIP_FLIES 0x8df
+/// Set once the winged ship has first taken off from the World Map
+/// (WorldMap_TakeOff).
+#define FLAG_SHIP_HAS_FLOWN 0xa78
+/// Set while the flying ship hovers on the World Map, as Hover is cast aboard
+/// it; taking off again clears it.
+#define FLAG_SHIP_HOVERING 0x147
 
 /// Set once the pillar on the floor below Jupiter Lighthouse's aerie stands on
 /// the button by its door: the door stays open, a shortcut.
@@ -954,6 +960,9 @@
 #define FLAG_MAD_PLANT_FIRST 0x9b5
 #define FLAG_MAD_PLANT(n) (FLAG_MAD_PLANT_FIRST + (n))
 
+/// Set once Loho's miners have fired their cannon (Loho_FireCannon); the next
+/// arrival on the World Map at Loho delivers it to the ship.
+#define FLAG_LOHO_CANNON_FIRED 0xa5f
 /// Set as the World Map delivers Loho's cannon to the ship
 /// (WorldMap_DeliverLohoCannon), and by the Northern Reaches' entrance 90;
 /// Loho, Atteka Inlet and the Lemurian dock then place the cannon aboard.

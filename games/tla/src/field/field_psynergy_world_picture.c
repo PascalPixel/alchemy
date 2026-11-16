@@ -35,20 +35,21 @@ void WorldPicture_Initialize(void) {
   work->searchX = 0;
   work->searchZ = 0;
   Dma_Fill32(0, markerTiles, 128);
-  markerTiles[0] = 255;
-  markerTiles[1] = 0x1ff;
-  markerTiles[2] = 272;
-  markerTiles[8] = 68;
-  markerTiles[9] = 324;
-  markerTiles[10] = 272;
-  markerTiles[16] = 119;
-  markerTiles[17] = 0x177;
-  markerTiles[18] = 272;
-  markerTiles[24] = 0xff0;
-  markerTiles[25] = 0xffff;
-  markerTiles[26] = 0x1ffff;
-  markerTiles[27] = 0x11ff0;
-  markerTiles[28] = 0x1100;
+  // Four 8 by 8 tiles, a pixel a nibble: three marker dots and the cursor's.
+  markerTiles[0] = 0x000000ff;
+  markerTiles[1] = 0x000001ff;
+  markerTiles[2] = 0x00000110;
+  markerTiles[8] = 0x00000044;
+  markerTiles[9] = 0x00000144;
+  markerTiles[10] = 0x00000110;
+  markerTiles[16] = 0x00000077;
+  markerTiles[17] = 0x00000177;
+  markerTiles[18] = 0x00000110;
+  markerTiles[24] = 0x00000ff0;
+  markerTiles[25] = 0x0000ffff;
+  markerTiles[26] = 0x0001ffff;
+  markerTiles[27] = 0x00011ff0;
+  markerTiles[28] = 0x00001100;
   tileAttributes =
       VramCache_Load(work->vramBlock, 128, markerTiles) | OBJ_PRIORITY(1);
   for (i = 0; i < WORLD_PICTURE_PLACE_COUNT; i++) {
@@ -172,5 +173,5 @@ void WorldPicture_GetLeaderPoint(s32 *screenX, s32 *screenY) {
 u32 WorldMapPlace_GetMarker(const struct FlagEntry *place) {
   if (gWorldPicture_FirstListOnly != 0)
     return place->value >> 4;
-  return place->value & 15;
+  return place->value & 0xf;
 }

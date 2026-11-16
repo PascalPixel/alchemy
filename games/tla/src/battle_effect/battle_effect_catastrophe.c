@@ -182,7 +182,7 @@ void BattleEffect_RunCatastrophe(struct BattleEffectParams *args) {
       for (i = 0; i != CATASTROPHE_DEMON_SWAPPED_COUNT; i++) {
         obj = EffectSprite_Acquire(32, 32, OBJ_SIZE_32X32 | OBJ_256_COLORS, 0);
         work->sprites[CATASTROPHE_DEMON_SWAPPED + i] = obj;
-        Iwram_CopyWords(obj, work->sprites[i], 24);
+        Iwram_CopyWords(obj, work->sprites[i], offsetof(struct Sprite, lastNo));
         Iwram_CopyWords(
             (void *)OBJ_TILES(work->sprites[CATASTROPHE_DEMON_SWAPPED + i]),
             cells + i * OBJ_32X32_8BPP_BYTES, OBJ_32X32_8BPP_BYTES);
@@ -193,7 +193,7 @@ void BattleEffect_RunCatastrophe(struct BattleEffectParams *args) {
   for (i = 0; i != CATASTROPHE_MIRRORED_DEMON_COUNT; i++) {
     obj = EffectSprite_Acquire(32, 32, OBJ_SIZE_32X32 | OBJ_256_COLORS, 0);
     work->sprites[CATASTROPHE_MIRRORED_DEMON + i] = obj;
-    Iwram_CopyWords(obj, work->sprites[i], 24);
+    Iwram_CopyWords(obj, work->sprites[i], offsetof(struct Sprite, lastNo));
   }
   {
     u8 *cells;

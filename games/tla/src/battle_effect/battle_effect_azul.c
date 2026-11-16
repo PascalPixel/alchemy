@@ -144,7 +144,8 @@ void BattleEffect_RunAzul(struct BattleEffectParams *args) {
   for (i = 0; i != AZUL_BODY_COPIES; i++) {
     obj = EffectSprite_Acquire(32, 32, OBJ_SIZE_32X32 | OBJ_256_COLORS, 0);
     work->sprites[i + AZUL_SERPENT_OBJECTS] = obj;
-    Iwram_CopyWordsEntry(obj, work->sprites[AZUL_BODY_SEGMENT + (i & 3)], 24);
+    Iwram_CopyWordsEntry(obj, work->sprites[AZUL_BODY_SEGMENT + (i & 3)],
+                         offsetof(struct Sprite, lastNo));
     ((struct Sprite *)work->sprites[i])->image.priority = 1;
   }
   mapCells = gMapGridCellBuffer;
@@ -554,7 +555,7 @@ void BattleEffect_RunAzul(struct BattleEffectParams *args) {
       s32 angle;
       s32 offset;
 
-      Mesh_BuildGrid(grid, 16, 16, 8, 8);
+      Mesh_BuildGrid(grid, AZUL_SPHERE_RING_VERTICES, AZUL_SPHERE_RINGS, 8, 8);
       k = 0;
       angle = 0;
       offset = 0;

@@ -206,7 +206,7 @@ void BattleEffect_RunCharon(struct BattleEffectParams *arg) {
   for (i = 0; i != CHARON_ARROWS - CHARON_ARROW_FRAMES; i++) {
     struct Sprite *object = EffectSprite_Acquire(8, 8, 0, OBJ_PALETTE(15));
     SPRITES[CHARON_ARROW_FRAMES + i] = object;
-    Iwram_CopyWords(object, sprites[0], 24);
+    Iwram_CopyWords(object, sprites[0], offsetof(struct Sprite, lastNo));
   }
   Resource_LoadAndDecompress(RESOURCE_PARTICLE_SPRITES_A, glyphs, 0, 0);
   Resource_LoadAndDecompress(RESOURCE_PARTICLE_SPRITES_A, work->sheet, 0, 0);

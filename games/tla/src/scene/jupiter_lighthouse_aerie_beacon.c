@@ -1577,7 +1577,7 @@ void JupiterLighthouse_KarstAndAgatioRetreat(void) {
 /// arrives, and the beam carries them all down.
 void JupiterLighthouse_WeBeatThem(void) {
   s32 northwest;
-  FIXED southeast;
+  s32 southeast;
   s32 north;
   struct Actor *leader;
   struct FieldWork *work;
@@ -2263,10 +2263,7 @@ s32 Scene_PrepareMap(void) {
 
 extern s32 gPaletteCyclePausesInEvents;
 
-/// Sets whether the palette cycle stops while an event runs.
-void JupiterLighthouse_SetCycleFrame(s32 pauses) {
-  gPaletteCyclePausesInEvents = pauses;
-}
+#include "shared/palette_cycle_set_pauses_in_events.h"
 
 extern s32 gPaletteCycleFrame;
 

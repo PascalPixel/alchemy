@@ -1804,8 +1804,6 @@ void Islets_ArriveAtSecretSpot(void) {
   Islets_StartWaterShimmer();
 }
 
-#define Actor_Get(id) ((struct Actor *)((s32)Actor_Get((id))))
-
 extern u32 gIslets_TurtleSwimsScript[];
 extern u32 gIslets_TurtleTurnsScript[];
 
@@ -1822,7 +1820,7 @@ void Islets_ArriveBackAtIsland(void) {
   System_Wait(1);
   guide->facing = FACING_SOUTH;
   leader->update = Islets_RideOnLonesomeGeorge;
-  FieldActor_SetSpriteColor(((s32)Actor_Get(gMainRoutineWork.leaderActorId)),
+  FieldActor_SetSpriteColor(Actor_Get(gMainRoutineWork.leaderActorId),
                             SPRITE_COLOR_HIDDEN);
   Actor_SetAnimation(ACTOR_LONESOME_GEORGE, ANIM_NOD);
   System_Wait(1);
@@ -1853,7 +1851,7 @@ void Islets_ArriveBackAtIsland(void) {
   Event_ShowMessage(ACTOR_LONESOME_GEORGE, 0);
   Actor_SetAnimation(ACTOR_LONESOME_GEORGE, ANIM_STAND);
   Actor_SetSpeed(gMainRoutineWork.leaderActorId, 1.6);
-  FieldActor_SetSpriteColor(((s32)Actor_Get(gMainRoutineWork.leaderActorId)),
+  FieldActor_SetSpriteColor(Actor_Get(gMainRoutineWork.leaderActorId),
                             SPRITE_COLOR_NORMAL);
   FieldActor_Jump(gMainRoutineWork.leaderActorId, 6, 0);
   Actor_MoveToAndWait(gMainRoutineWork.leaderActorId, 152, 742);

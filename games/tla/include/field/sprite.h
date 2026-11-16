@@ -84,8 +84,6 @@ STATIC_ASSERT(offsetof(struct ActorSystemWork, count) == 0x18);
 STATIC_ASSERT(offsetof(struct ActorSystemWork, pictureCaches) == 0x1c);
 STATIC_ASSERT(sizeof(struct ActorSystemWork) == 0x5c);
 
-void Map_BuildProbeRing(s32 x, s32 z, struct SpritePlacement *points);
-
 /// The hardware sprite attributes one part of an animated sprite (its image or
 /// its shadow) is drawn with: the link to the next part queued at its depth,
 /// then the OAM entry's attributes 0 to 3.

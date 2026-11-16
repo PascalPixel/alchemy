@@ -7,6 +7,7 @@
 
 // clang-format off
 #if LANGUAGE == LANGUAGE_GERMAN
+/// Each item's gender, by item number.
 const u8 gLocalizedWord_ItemGenders[] = {
     2, 2, 2, 2, 2, 1, 2, 1, 1, 1, 2, 2, 2, 2, 1, 2,
     2, 2, 2, 1, 2, 2, 1, 1, 1, 2, 2, 2, 2, 2, 1, 1,
@@ -39,6 +40,7 @@ const u8 gLocalizedWord_ItemGenders[] = {
     0, 1, 0, 0, 2, 1, 1, 0, 2, 1, 0, 0, 2,
 };
 #elif LANGUAGE == LANGUAGE_ITALIAN
+/// Each item's gender, by item number.
 const u8 gLocalizedWord_ItemGenders[] = {
     0, 2, 2, 2, 2, 2, 1, 2, 1, 1, 1, 2, 0, 0, 0, 1,
     2, 2, 2, 2, 1, 2, 2, 1, 1, 1, 2, 2, 0, 0, 0, 1,

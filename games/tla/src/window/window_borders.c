@@ -11,7 +11,7 @@ void Window_DrawOpened(struct Window *window);
 /// its geometry and is drawn when it arrives; a closing one is erased frame
 /// by frame and cleared when its duration is reached.
 void Window_UpdateZooms(void) {
-  struct WindowWork *state = (struct WindowWork *)Ram_HeapSlots->windowWork;
+  struct WindowWork *state = WINDOW_WORK;
   struct Window *work = state->windows;
   s32 index = 0;
   u8 dirty;
@@ -137,7 +137,7 @@ u16 *Memory_FillHalfwordsDma(u16 *destination, s32 value, s32 count);
 /// Draws an empty window: a border around a filled interior, at tile (x, y) of
 /// width by height tiles, and frees the text tiles the rectangle showed.
 void Window_DrawBorder(s32 x, s32 y, u32 width, u32 height) {
-  struct WindowWork *canvas = (struct WindowWork *)Ram_HeapSlots->windowWork;
+  struct WindowWork *canvas = WINDOW_WORK;
   u16 *cursor = &canvas->tilemap[y][x];
   u32 row;
 
@@ -181,7 +181,7 @@ void Window_DrawBorder(s32 x, s32 y, u32 width, u32 height) {
 /// Window_ShowFlashFrame loads: the frame a window flashes with as it
 /// swells.
 void Window_DrawFlashBorder(s32 x, s32 y, u32 width, u32 height) {
-  struct WindowWork *canvas = (struct WindowWork *)Ram_HeapSlots->windowWork;
+  struct WindowWork *canvas = WINDOW_WORK;
   u16 *cursor = &canvas->tilemap[y][x];
   u32 row;
 
@@ -213,7 +213,7 @@ void Window_DrawFlashBorder(s32 x, s32 y, u32 width, u32 height) {
 /// With fullWidth set the canvas covers the side border columns too.
 void Window_MapTextCanvasTiles(s32 x, s32 y, u32 width, u32 height,
                                s32 fullWidth) {
-  struct WindowWork *canvas = (struct WindowWork *)Ram_HeapSlots->windowWork;
+  struct WindowWork *canvas = WINDOW_WORK;
   u16 *cursor = &canvas->tilemap[y][x];
   u32 row;
   u32 column;
@@ -249,7 +249,7 @@ s32 Message_AllTyped(void) {
   struct UiChannelSlot *ch;
   s32 i;
 
-  ch = ((struct WindowWork *)Ram_HeapSlots->windowWork)->channels;
+  ch = WINDOW_WORK->channels;
   for (i = 0; i != 3; i++, ch++) {
     if (ch->work != NULL && ch->work->state == 0)
       return 0;
@@ -270,7 +270,7 @@ s32 Window_IsClosed(struct Window *window) {
 /// Resets the text style glyphs are drawn with: colour 15, no outline, line
 /// spacing 10 and letter spacing 9.
 void Text_ResetStyle(void) {
-  struct WindowWork *state = (struct WindowWork *)Ram_HeapSlots->windowWork;
+  struct WindowWork *state = WINDOW_WORK;
 
   state->colour = TEXT_COLOR_WHITE;
   state->lineSpacing = TEXT_DEFAULT_LINE_SPACING;
@@ -285,9 +285,9 @@ void WindowSystem_Update(void);
 /// decoded text from its beginning and starts the per-frame window update
 /// (WindowSystem_Update).
 void WindowSystem_StartFieldUpdate(void) {
-  struct WindowWork *state = (struct WindowWork *)Ram_HeapSlots->windowWork;
+  struct WindowWork *state = WINDOW_WORK;
 
-  state->glyphTiles = VramCache_Load(95, 128 << 6, 0);
+  state->glyphTiles = VramCache_Load(VRAM_CACHE_ENTRY_GLYPH_SHEET, 128 << 6, 0);
   state->glyphSpacing = 9;
   state->lineSpacing = TEXT_DEFAULT_LINE_SPACING;
   state->outline = TEXT_STYLE_PLAIN;
@@ -303,10 +303,11 @@ void WindowSystem_UpdateBattle(void);
 /// (WindowSystem_Update), reserving the glyph sprites' tiles first when
 /// initialize is set.
 void WindowSystem_StartBattleUpdate(s32 initialize) {
-  struct WindowWork *state = (struct WindowWork *)Ram_HeapSlots->windowWork;
+  struct WindowWork *state = WINDOW_WORK;
 
   if (initialize != 0)
-    state->glyphTiles = VramCache_Load(95, 128 << 6, 0);
+    state->glyphTiles =
+        VramCache_Load(VRAM_CACHE_ENTRY_GLYPH_SHEET, 128 << 6, 0);
   state->glyphSpacing = 9;
   state->lineSpacing = TEXT_DEFAULT_LINE_SPACING;
   state->outline = TEXT_STYLE_PLAIN;
@@ -350,7 +351,7 @@ void BattleMessage_Open(s32 message) {
   struct WindowWork *work;
   s32 result;
 
-  work = (struct WindowWork *)Ram_HeapSlots->windowWork;
+  work = WINDOW_WORK;
   slot = Ram_HeapSlots->battleMessage;
   // Default: 0 until the message starts; the same zero clears a new window's
   // cursor.
@@ -395,7 +396,7 @@ void BattleMessage_ShowAndWait(s32 message) {
 /// Builds the render entries of a message and queues them in the window;
 /// returns 0 when the message is empty or there is no window.
 s32 Message_OpenDecoded(s32 window, s32 argument) {
-  struct WindowWork *work = (struct WindowWork *)Ram_HeapSlots->windowWork;
+  struct WindowWork *work = WINDOW_WORK;
   s32 entry;
   s32 result = 0;
   /* LEFTOVER(frame): an unused local the ROM's frame reserves and never
@@ -416,33 +417,31 @@ s32 Message_OpenDecoded(s32 window, s32 argument) {
 }
 
 /// Sets the decode flags the next message is decoded with
-/// (Message_Decode): flags bit 0 (haltingSpeech) makes it halting
+/// (Message_Decode): MESSAGE_DECODE_HALTING_SPEECH makes it halting
 /// speech, a short pause before each character, broken off with an ellipsis
-/// after the first word; bit 1 (spacingAfter) puts code 222 after certain
-/// characters in English and Japanese. Flags already set stay set: only
-/// Message_OpenWindow clears both, once it has started a message typing,
-/// so they also apply to every message decoded before that.
+/// after the first word; MESSAGE_DECODE_SPACING_AFTER puts a wide gap
+/// (ENTRY_WIDE_GAP) after certain characters in English and Japanese. Flags
+/// already set stay set: only Message_OpenWindow clears both, once it has
+/// started a message typing, so they also apply to every message decoded before
+/// that.
 void Message_SetDecodeFlags(u32 flags) {
-  u8 *work;
+  struct WindowWork *work;
 
-  work = Ram_HeapSlots->windowWork;
-  if (work == 0)
+  work = WINDOW_WORK;
+  if (work == NULL)
     return;
-  if (flags & 1)
-    work[WINDOW_BUSY_FLAGS_OFFSET] = 1;
-  if (flags & 2)
-    work[WINDOW_BUSY_FLAGS_OFFSET + 1] = 1;
+  if (flags & MESSAGE_DECODE_HALTING_SPEECH)
+    work->haltingSpeech = 1;
+  if (flags & MESSAGE_DECODE_SPACING_AFTER)
+    work->spacingAfter = 1;
 }
-
-#define UI_WORK ((struct WindowWork *)Ram_HeapSlots->windowWork)
 
 s32 Message_Decode(s32 key, s32 mode);
 struct Window *Window_Create(s32 x, s32 y, s32 width, s32 height, s32 attrs);
 /// Opens a window sized to a message near tile (x, y) and starts typing the
-/// message into it. packed holds the window options in its low bits (bit 0:
-/// zoom open rather than appear at once; bit 3: a text canvas; bit 4: keep the
-/// bottom edge; bit 5: keep the left edge) and the speaker's voice sound in
-/// bits 16 to 27.
+/// message into it. packed holds the window options in its low bits
+/// (enum MessageWindowOption) and the speaker's voice sound in bits 16 to 27
+/// (MESSAGE_WINDOW_VOICE).
 struct Window *Message_OpenWindow(s32 message, s32 x, s32 y, u32 packed) {
   s32 entry;
   u32 height;
@@ -453,7 +452,7 @@ struct Window *Message_OpenWindow(s32 message, s32 x, s32 y, u32 packed) {
   struct Window *window;
   struct WindowWork *work;
 
-  work = UI_WORK;
+  work = WINDOW_WORK;
   work->speakerVoiceSound = (packed << 4) >> 20;
   window = NULL;
   work->speakerVoiceCountdown = 0;
@@ -465,13 +464,13 @@ struct Window *Message_OpenWindow(s32 message, s32 x, s32 y, u32 packed) {
   Window_FitOnScreen(entry, &x, &y, &width, &height, (out = bounds), 0);
   if (width == 0 && height == 0)
     return NULL;
-  if (!(packed & 1))
+  if (!(packed & MESSAGE_WINDOW_ZOOM))
     flags |= WINDOW_FLAG_INSTANT;
-  if (packed & 8)
+  if (packed & MESSAGE_WINDOW_TEXT_CANVAS)
     flags |= WINDOW_FLAG_TEXT_CANVAS;
-  if (packed & 16)
+  if (packed & MESSAGE_WINDOW_ANCHOR_BOTTOM)
     flags |= WINDOW_FLAG_ANCHOR_BOTTOM;
-  if (packed & 32)
+  if (packed & MESSAGE_WINDOW_FIXED_X)
     flags |= WINDOW_FLAG_FIXED_X;
   window = Window_Create(x, y, width, height, flags);
   if (window == NULL)
@@ -485,21 +484,12 @@ struct Window *Message_OpenWindow(s32 message, s32 x, s32 y, u32 packed) {
   return window;
 }
 
-// Text-workspace tail: the Japanese edition's table is 0x200 bytes shorter.
-#if (LANGUAGE == LANGUAGE_JAPANESE)
-#define TEXT_WORK_TAIL 0x1184
-#else
-#define TEXT_WORK_TAIL 0x1384
-#endif
-
-s32 Party_GetLeaderActorFar(void);
-s32 Actor_GetScreenPositionFar(s32 object, s32 *out);
 s32 Message_AllTyped(void);
 
 /// Shows a message in a window centred on the screen, waits until it is typed
 /// out and closes it, as its flags say.
 void FieldMessage_Show(s32 no, s32 flags) {
-  u8 *base = Ram_HeapSlots->windowWork;
+  struct WindowWork *state = WINDOW_WORK;
   s32 release;
   s32 pos[2] = {0, 0};
   s32 height;
@@ -515,7 +505,7 @@ void FieldMessage_Show(s32 no, s32 flags) {
   release = flags & FIELD_MESSAGE_ZOOM;
 
   if (flags & FIELD_MESSAGE_WAITING_FOR_SOUND) {
-    *(u8 *)(base + TEXT_WORK_TAIL + 5) = 1;
+    state->waitingForSound = 1;
   }
 
   Text_GetMessageSize(no, &x, &y, (u32 *)&width, (u32 *)&height);
@@ -549,7 +539,7 @@ void FieldMessage_Show(s32 no, s32 flags) {
     }
 
     if (flags & FIELD_MESSAGE_HOLD_UPLOAD) {
-      Ram_HeapSlots->windowWork[6] = 1;
+      WINDOW_WORK->holdTilemapUpload = 1;
     }
 
     if (!(flags & FIELD_MESSAGE_KEEP_OPEN)) {
@@ -561,9 +551,9 @@ void FieldMessage_Show(s32 no, s32 flags) {
   }
 
   zero = 0;
-  *(u8 *)(base + TEXT_WORK_TAIL + 5) = zero;
-  *(u16 *)(base + TEXT_WORK_TAIL) = zero;
-  *(u16 *)(base + TEXT_WORK_TAIL + 2) = zero;
+  state->waitingForSound = zero;
+  state->speakerVoiceSound = zero;
+  state->speakerVoiceCountdown = zero;
   wait(3);
 }
 
@@ -575,6 +565,8 @@ void WindowSystem_Update(void) {
   WindowSprite_UpdateAll();
 }
 
+/// The window system's per-frame task in battle: windows, messages and sprite
+/// animation while the battle menu's work exists, otherwise messages alone.
 void WindowSystem_UpdateBattle(void) {
   if (Ram_HeapSlots->battleMenuWork != 0) {
     Window_UpdateZooms();
@@ -584,6 +576,3 @@ void WindowSystem_UpdateBattle(void) {
     Message_UpdateAll();
   }
 }
-
-#undef UI_WORK
-#undef TEXT_WORK_TAIL

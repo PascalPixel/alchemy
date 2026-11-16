@@ -33,7 +33,7 @@ struct OptionMenuWork {
   /// slider in use.
   u16 cursorFrame;
   /// The colour preset SELECT last chose, 0 to 5, from
-  /// gOptionMenu_FirstColorPresets and gOptionMenu_SecondColorPresets.
+  /// gOptionMenu_HuePresets and gOptionMenu_BrightnessPresets.
   u16 preset;
   u8 unusedAfterPreset[20];
   /// The settings being edited: window hue (0 to 23), window brightness (0

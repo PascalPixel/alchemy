@@ -1,15 +1,16 @@
+/// @file
+/// Window text tables: each edition's articles and possessives, the kana
+/// marks and the sprite motion curves. Message_Decode copies an article table
+/// whole (struct ArticleTable); each table's words come just before it.
+
 #include "types.h"
 #include "edition.h"
 #include "graphics/text_font.h"
 
-//--------------------------------------------------------------------------
-// Window tables: each edition's articles, the kana marks and sprite motion.
-// window.c copies an article table whole as struct ArticleTable
-// (s8 *text[kinds]); each table's words come just before it.
-//--------------------------------------------------------------------------
-
 #if (LANGUAGE == LANGUAGE_JAPANESE) || (LANGUAGE == LANGUAGE_ENGLISH)
 // clang-format off
+/// The glyph drawn over a kana for the mark in its code's top two bits: none,
+/// the voiced mark (dakuten) or the semi-voiced mark (handakuten).
 const u16 gFont_MarkGlyphCodes[] = {
     TEXT_MARK_NONE,
     TEXT_MARK_VOICED,
@@ -31,7 +32,7 @@ static const s8 sArticleEine[] = "eine ";
 static const s8 sArticleDie[] = "die ";
 static const s8 sArticleDas[] = "das ";
 
-/// The article of each kind
+/// The article of each article class.
 const s8 *const gArticle_Table[8] = {
     gArticle_Empty,
     sArticleEin,
@@ -59,7 +60,7 @@ const u8 gLocalizedWord_Point[] = "Punkt";
 static const s8 sPossessiveDein[] = "dein ";
 static const s8 sPossessiveDeine[] = "deine ";
 
-/// The possessive of each item gender (gLocalizedWord_ItemGenders)
+/// The possessive ("your") for each item gender (gLocalizedWord_ItemGenders).
 const s8 *const gLocalizedWord_ItemPossessives[4] = {
     sPossessiveDein,
     sPossessiveDeine,
@@ -76,7 +77,7 @@ static const s8 sArticleLa[] = "la ";
 static const s8 sArticleLos[] = "los ";
 static const s8 sArticleLas[] = "las ";
 
-/// The definite article of each kind
+/// The definite article of each article class.
 const s8 *const gArticle_Table[5] = {
     gArticle_Empty,
     sArticleEl,
@@ -90,8 +91,8 @@ static const s8 sArticleUna[] = "una ";
 static const s8 sArticleUnos[] = "unos ";
 static const s8 sArticleUnas[] = "unas ";
 
-/// The indefinite article of each kind
-const s8 *const gText_IndefiniteArticles[5] = {
+/// The indefinite article of each article class.
+const s8 *const gArticle_Indefinite[5] = {
     gArticle_Empty,
     sArticleUn,
     sArticleUna,
@@ -102,7 +103,7 @@ const s8 *const gText_IndefiniteArticles[5] = {
 static const s8 sPossessiveTu[] = "tu ";
 static const s8 sPossessiveTus[] = "tus ";
 
-/// The possessive, {singular, plural}
+/// The possessive ("your") for {singular, plural}.
 const s8 *const gLocalizedWord_ItemPossessives[2] = {
     sPossessiveTu,
     sPossessiveTus,
@@ -113,7 +114,7 @@ const s8 *const gLocalizedWord_ItemPossessives[2] = {
 static const s8 sArticleDeElided[] = "d'";
 static const s8 sArticleDe[] = "de ";
 
-/// "de", elided and whole
+/// "de", elided and whole.
 const s8 *const gText_DeArticles[2] = {
     sArticleDeElided,
     sArticleDe,
@@ -129,7 +130,7 @@ static const s8 sArticleUn[] = "un ";
 static const s8 sArticleUne[] = "une ";
 static const s8 sArticleDes[] = "des ";
 
-/// The article of each kind
+/// The article of each article class.
 const s8 *const gArticle_Table[8] = {
     gArticle_Empty,
     sArticleLe,
@@ -158,7 +159,7 @@ static const s8 sArticleUnElided[] = "un' ";
 static const s8 sArticleUno[] = "uno ";
 static const s8 sArticleUna[] = "una ";
 
-/// The article of each kind
+/// The article of each article class.
 const s8 *const gArticle_Table[11] = {
     gArticle_Empty,
     sArticleIl,
@@ -176,7 +177,7 @@ const s8 *const gArticle_Table[11] = {
 static const s8 sPossessiveIlTuo[] = "Il tuo ";
 static const s8 sPossessiveLaTua[] = "la tua ";
 
-/// The possessive of each item gender (gLocalizedWord_ItemGenders)
+/// The possessive ("your") for each item gender (gLocalizedWord_ItemGenders).
 const s8 *const gLocalizedWord_ItemPossessives[4] = {
     sPossessiveIlTuo,
     sPossessiveLaTua,
@@ -193,7 +194,7 @@ static const s8 sArticleAn[] = "an ";
 static const s8 sArticleSome[] = "some ";
 static const s8 sArticleThe[] = "the ";
 
-/// The article of each kind
+/// The article of each article class.
 const s8 *const gArticle_Table[8] = {
     gArticle_Empty,
     sArticleA,
@@ -207,11 +208,10 @@ const s8 *const gArticle_Table[8] = {
 
 #endif
 
-//--------------------------------------------------------------------------
-// Sprite motion
-//--------------------------------------------------------------------------
+// Sprite motion.
 
-/// The cursor's rise and fall
+/// The next-page arrow's bob (WINDOW_SPRITE_MOTION_PAGE_ARROW): a smooth rise
+/// and fall of 8 pixels over 80 frames.
 const u8 gWindowSprite_CursorBobOffsets[80] = {
     0, 1, 1, 2, 2, 2, 3, 3, 3, 3, 4, 4, 4, 4, 4, 5,
     5, 5, 5, 5, 5, 6, 6, 6, 6, 6, 6, 6, 7, 7, 7, 7,
@@ -220,7 +220,8 @@ const u8 gWindowSprite_CursorBobOffsets[80] = {
     5, 5, 4, 4, 4, 4, 4, 3, 3, 3, 3, 2, 2, 2, 1, 1,
 };
 
-/// A circle of radius 4
+/// A swing along an arc of radius 4, as {x, y} pairs: x runs 0, 4, 0, -4, 0
+/// while y rises at each side.
 const s8 gWindowSprite_WobbleOffsets[40] = {
     0, 4, 1, 4, 2, 3, 3, 2,
     4, 1, 4, 0, 4, 1, 3, 2,
@@ -229,12 +230,14 @@ const s8 gWindowSprite_WobbleOffsets[40] = {
     -4, 1, -3, 2, -2, 3, -1, 4,
 };
 
-const u8 gUiSprite_WobbleTail[16] = {
+/// Nothing in the game reads these 16 bytes.
+const u8 gWindowSprite_WobbleTail[16] = {
     4, 3, 2, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
 };
 
-/// A bounce
-const u8 gUiSprite_BounceOffsets[16] = {
+/// A hop of up to 8 pixels over 16 frames, for WINDOW_SPRITE_MOTION_HOP_UP and
+/// the other hops.
+const u8 gWindowSprite_BounceOffsets[16] = {
     0, 1, 1, 2, 3, 4, 6, 8, 6, 4, 3, 2, 1, 1, 0, 0,
 };
 // clang-format on

@@ -4,15 +4,13 @@
 
 #include "window_internal.h"
 
-#define UI_WORK ((struct WindowWork *)Ram_HeapSlots->windowWork)
-
 void Window_DrawOpened(struct Window *window);
 void Window_WaitZoom(void *work);
 
 /// Removes and returns the first entry of the free list, or NULL if it is
 /// empty.
 struct WindowSprite *WindowSprite_AcquireFree(void) {
-  struct WindowWork *work = UI_WORK;
+  struct WindowWork *work = WINDOW_WORK;
   struct WindowSprite *out = work->freeSprites.head;
 
   if (out != NULL) {
@@ -27,7 +25,7 @@ struct WindowSprite *WindowSprite_AcquireFree(void) {
 /// Puts an entry back at the free list's tail; entries outside sprites[] are
 /// ignored.
 void WindowSprite_ReleaseFree(struct WindowSprite *out) {
-  struct WindowWork *work = UI_WORK;
+  struct WindowWork *work = WINDOW_WORK;
 
   if ((u32)out >= (u32)work->sprites &&
       (u32)out < (u32)&work->freeSprites.head) {
@@ -46,7 +44,7 @@ void WindowSprite_InitializeFreeList(void) {
   struct WindowSprite *out;
   struct WindowSprite *next;
 
-  work = UI_WORK;
+  work = WINDOW_WORK;
   out = work->sprites;
   work->freeSprites.head = out;
   n = WINDOW_SPRITE_COUNT - 2;
@@ -71,7 +69,7 @@ void WindowSystem_InitField(void) {
                                                   sizeof(struct WindowWork));
   Iwram_ClearWordsEntry(work, sizeof(struct WindowWork));
   work->dirty = 1;
-  work->glyphResource = 99;
+  work->glyphResource = NO_GLYPH_RESOURCE;
   work->textPalette = WINDOW_PALETTE;
   Iwram_FillWords(work->tilemap, sizeof(work->tilemap),
                   WINDOW_TILE_PAIR(WINDOW_TILE_BLANK));
@@ -86,29 +84,35 @@ void WindowSystem_InitField(void) {
 void WindowSystem_InitBattle(s32 kind) {
   struct WindowWork *work;
   s32 i;
-  s32 WindowSystem_CopyTileLowerRows(u32 src, u32 dst) {
-    src &= 0x3ff;
-    dst &= 0x3ff;
-    Dma_Set((void *)(0x06000010 + src * 32), (void *)(0x06000000 + dst * 32),
+  // Copies pixel rows 4 to 6 of tile sourceTile to rows 0 to 2 of
+  // destinationTile and clears the rest of it.
+  s32 WindowSystem_CopyTileLowerRows(u32 sourceTile, u32 destinationTile) {
+    sourceTile &= TILE_NUMBER_MASK;
+    destinationTile &= TILE_NUMBER_MASK;
+    Dma_Set(BG_CHAR_BLOCK(0) + sourceTile * TILE_SIZE_4BPP + 16,
+            BG_CHAR_BLOCK(0) + destinationTile * TILE_SIZE_4BPP,
             DMA_COPY_HALFWORDS(8), REG_DMA3);
-    return Iwram_ClearWordsEntry((void *)(0x0600000c + dst * 32), 20);
+    return Iwram_ClearWordsEntry(
+        BG_CHAR_BLOCK(0) + destinationTile * TILE_SIZE_4BPP + 12, 20);
   }
 
   work = (struct WindowWork *)HeapSlot_AllocEwram(HEAP_SLOT_WINDOW,
                                                   sizeof(struct WindowWork));
   Iwram_ClearWordsEntry(work, sizeof(struct WindowWork));
   work->dirty = 1;
-  work->glyphResource = 99;
-  work->battleMode = 1;
+  work->glyphResource = NO_GLYPH_RESOURCE;
+  work->battleMode = WINDOW_BATTLE;
   work->textPalette = WINDOW_PALETTE;
   Iwram_FillWordsEntry(work->tilemap, sizeof(work->tilemap),
                        WINDOW_TILE_PAIR(WINDOW_TILE_BLANK));
   WindowSprite_InitializeFreeList();
   Task_Add((s32)WindowSystem_UploadTilemap, TASK_PASS_FRAME);
   WindowSystem_StartBattleUpdate(kind);
+  // Tiles 128 to 130 take the lower rows of the bottom border tiles.
   WindowSystem_CopyTileLowerRows(WINDOW_TILE_BORDER_BOTTOM_LEFT, 128);
   WindowSystem_CopyTileLowerRows(WINDOW_TILE_BORDER_BOTTOM, 129);
   WindowSystem_CopyTileLowerRows(WINDOW_TILE_BORDER_BOTTOM_RIGHT, 130);
+  // Tiles 128 to 130 are also the first three text tiles.
   {
     u8 mode = 4;
 
@@ -120,28 +124,29 @@ void WindowSystem_InitBattle(s32 kind) {
 /// The tilemap upload, a VBlank-pass task: copies each 256-byte band of the
 /// tilemap (four tile rows) marked in the dirty bits to VRAM.
 void WindowSystem_UploadTilemap(void) {
-  struct WindowWork *work = (struct WindowWork *)Ram_HeapSlots->windowWork;
-  u32 flags;
+  struct WindowWork *work = WINDOW_WORK;
+  u32 bands;
   u8 *src;
   u8 *dst;
 
-  flags = work->dirty;
-  if (flags != 0) {
+  bands = work->dirty;
+  if (bands != 0) {
     if (!work->holdTilemapUpload) {
       src = (u8 *)work->tilemap;
       dst = (u8 *)BG_SCREEN_BLOCK(4);
-      if (flags & 1)
-        flags = 63;
-      flags &= 63;
-      flags >>= 1;
+      // Bit 0 asks for all five bands; after the shift bit n is band n.
+      if (bands & 1)
+        bands = 63;
+      bands &= 63;
+      bands >>= 1;
       do {
-        if (flags & 1)
+        if (bands & 1)
           Dma_Set(src, dst, DMA_COPY_WORDS(64), REG_DMA3);
-        flags >>= 1;
+        bands >>= 1;
         src += 256;
         dst += 256;
-      } while (flags);
-      work->dirty = flags;
+      } while (bands);
+      work->dirty = bands;
     }
   }
 }
@@ -149,7 +154,7 @@ void WindowSystem_UploadTilemap(void) {
 /// Erases a window's rectangle of the tilemap (x, y, width and height in tiles)
 /// and frees the text tiles it showed.
 void Window_EraseBorderRect(s32 x, s32 y, u32 width, u32 height) {
-  struct WindowWork *canvas = (struct WindowWork *)Ram_HeapSlots->windowWork;
+  struct WindowWork *canvas = WINDOW_WORK;
   u16 *cursor = &canvas->tilemap[y][x];
   s32 tile;
   u32 bottom;
@@ -207,7 +212,7 @@ void Window_DrawOpened(struct Window *window) {
   u32 height;
   struct WindowWork *work;
 
-  work = UI_WORK;
+  work = WINDOW_WORK;
   x = (s16)window->x;
   y = (s16)window->y;
   width = window->width;
@@ -237,7 +242,7 @@ struct Window *Window_Create(s32 x, s32 y, s32 width, s32 height, s32 attrs) {
   struct Window *found;
   s32 i;
 
-  slot = UI_WORK->windows;
+  slot = WINDOW_WORK->windows;
   found = 0;
   for (i = 0; i != WINDOW_COUNT; i++, slot++) {
     if ((slot->flags & WINDOW_FLAG_OPEN) == 0 && slot->duration == 0) {
@@ -376,8 +381,6 @@ void WindowSprite_ClearList(void *sprites) {
   }
 }
 
-#define UI_WORK ((struct WindowWork *)Ram_HeapSlots->windowWork)
-
 /// Clears an area of a window's interior to the window fill. left, top, right
 /// and bottom are pixels inside the window, and the area covers every tile they
 /// touch.
@@ -393,7 +396,7 @@ void Window_ClearInteriorTiles(const struct Window *window, u32 left, u32 top,
   s32 windowX;
   s32 windowY;
 
-  work = UI_WORK;
+  work = WINDOW_WORK;
   x = left >> 3;
   windowX = (s16)window->x;
   y = top >> 3;
@@ -426,12 +429,6 @@ void Window_ClearInteriorTiles(const struct Window *window, u32 left, u32 top,
   }
   work->dirty = 1;
 }
-
-#if (LANGUAGE != LANGUAGE_JAPANESE)
-#define UI_PALETTE_OWNER_OFFSET 0x1360
-#else
-#define UI_PALETTE_OWNER_OFFSET 0x1160
-#endif
 
 /// Points a list's tail link back at its last sprite, after the list has been
 /// edited by hand.
@@ -470,9 +467,8 @@ void WindowSprite_Release(struct WindowSprite *entry) {
   if ((u8)entry->kind != WINDOW_SPRITE_GLYPH) {
     VramCache_FreeEntry((u8)entry->index);
     if ((u8)entry->kind == WINDOW_SPRITE_PORTRAIT) {
-      u8 *dst = (u8 *)Ram_HeapSlots->windowWork;
-      s32 idx = entry->sprite.oam.palette * 2 + UI_PALETTE_OWNER_OFFSET;
-      *(u16 *)(dst + idx) = PORTRAIT_SLOT_EMPTY;
+      WINDOW_WORK->resourceIds[entry->sprite.oam.palette - PORTRAIT_PALETTE] =
+          PORTRAIT_SLOT_EMPTY;
     }
   }
   entry->motion = 0;
@@ -485,7 +481,7 @@ void WindowSprite_Release(struct WindowSprite *entry) {
 /// the message (nonzero keeps the window's size from page to page).
 struct UiChannelSlot *Message_Start(struct Window *window, s32 entry, s32 x,
                                     s32 y, u16 *spacing, s32 flags) {
-  struct WindowWork *work = (struct WindowWork *)Ram_HeapSlots->windowWork;
+  struct WindowWork *work = WINDOW_WORK;
   struct UiChannelSlot *render = work->channels;
   struct UiChannelSlot *found = NULL;
   u32 i;
@@ -523,8 +519,6 @@ struct UiChannelSlot *Message_Start(struct Window *window, s32 entry, s32 x,
   return found;
 }
 
-#define UI_WORK ((struct WindowWork *)Ram_HeapSlots->windowWork)
-
 void Text_StartCanvasScroll(struct UiChannelSlot *channel);
 
 /// Starts a channel typing the decoded text at entry into the battle message
@@ -540,7 +534,7 @@ struct UiChannelSlot *BattleMessage_Continue(struct Window *window, s32 entry,
   u16 lineSpacing;
   u32 index;
 
-  slot = UI_WORK->channels;
+  slot = WINDOW_WORK->channels;
   selected = 0;
   for (index = 0; index != MESSAGE_COUNT; slot++, index++) {
     if (slot->work == 0 || slot->work->state != 0) {
@@ -573,7 +567,7 @@ struct UiChannelSlot *BattleMessage_Continue(struct Window *window, s32 entry,
     // Start the next text run without retaining the previous run's style.
     selected->colour = TEXT_COLOR_WHITE;
     selected->entry = entry;
-    lineSpacing = 10;
+    lineSpacing = TEXT_DEFAULT_LINE_SPACING;
     selected->countdown = zero;
     selected->outline = zero;
     selected->line = zero;
@@ -603,8 +597,7 @@ void Text_FillCanvasBackground(void) {
 /// Resets the pen and text style of the first idle message, clearing the canvas
 /// when the message still has a window.
 void Message_ResetIdle(void) {
-  struct UiChannelSlot *slot =
-      ((struct WindowWork *)Ram_HeapSlots->windowWork)->channels;
+  struct UiChannelSlot *slot = WINDOW_WORK->channels;
   struct UiChannelSlot *selection = 0;
   s32 i;
 
@@ -632,7 +625,7 @@ void Message_ResetIdle(void) {
 /// Copies the message's text colour, outline and line spacing into the shared
 /// glyph renderer before that message draws its next character.
 void Message_ApplyStyle(struct UiChannelSlot *channel) {
-  struct WindowWork *work = (struct WindowWork *)Ram_HeapSlots->windowWork;
+  struct WindowWork *work = WINDOW_WORK;
 
   work->colour = channel->colour;
   work->outline = channel->outline;
@@ -645,6 +638,3 @@ void Message_ApplyStyle(struct UiChannelSlot *channel) {
 void Text_StartCanvasScroll(struct UiChannelSlot *channel) {
   channel->transition = 2;
 }
-
-#undef UI_WORK
-#undef UI_PALETTE_OWNER_OFFSET

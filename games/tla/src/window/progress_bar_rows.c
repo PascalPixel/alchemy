@@ -5,9 +5,9 @@
 
 #include "types.h"
 
+// clang-format off
 /// The save screen's progress bar by step, a row of 12 of the progress
 /// bar's tiles for each of its seven steps.
-// clang-format off
 const u8 gWindow_ProgressBarRows[7 * 12] = {
     0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2,
     3, 5, 4, 1, 1, 1, 1, 1, 1, 1, 1, 2,

@@ -179,6 +179,8 @@ s32 Icon_CopyResourceToSlot(s32 inventoryCode, s32 layers, s32 cacheSlot) {
   return 1;
 }
 
+/// Draws one of the other icons (ICON_KIND_PATTERN) and loads it into
+/// cacheSlot, as Icon_CopyResourceToSlot does an item's.
 s32 Icon_BuildMiscIconTiles(s32 icon, s32 unused, s32 cacheSlot) {
   GlyphTransfer *work;
 

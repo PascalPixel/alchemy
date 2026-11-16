@@ -27,7 +27,7 @@ void Window_FitOnScreen(s32 no, s32 *px, s32 *py, u32 *pw, u32 *ph,
   s32 pos;
 
 #if !TLA_PATCH_1
-  work = (struct WindowWork *)Ram_HeapSlots->windowWork;
+  work = WINDOW_WORK;
 #endif
   x = *px;
   y = *py;
@@ -43,6 +43,9 @@ void Window_FitOnScreen(s32 no, s32 *px, s32 *py, u32 *pw, u32 *ph,
   if (*pw == 0 && *ph == 0)
     return;
 
+  // Pixels to tiles, with room for the border and a margin: + 19 is the two
+  // border tiles (16) and 3, so a width rounds up to the next tile only past 4
+  // pixels into it.
   if (!(flags & 2)) {
     *pw = (*pw + 19) >> 3;
     *ph = (*ph + 15) >> 3;
@@ -98,7 +101,7 @@ void Text_MeasureMessage(s32 no, s32 *x, s32 *y) {
     struct WindowWork *work;                                                   \
     s32 idx;                                                                   \
                                                                                \
-    work = (struct WindowWork *)Ram_HeapSlots->windowWork;                     \
+    work = WINDOW_WORK;                                                        \
     idx = Message_Decode(no, 0);                                               \
     if (work->textBuffer[idx] == 0) {                                          \
       return 0;                                                                \
@@ -138,7 +141,7 @@ void Text_MeasureDecoded(s32 entryIndex, u32 *outWidth, u32 *outHeight,
   u32 step;
   u32 style;
 
-  work = (struct WindowWork *)Ram_HeapSlots->windowWork;
+  work = WINDOW_WORK;
   width = 0;
   height = TEXT_LINE_HEIGHT;
   lines = 0;
@@ -148,7 +151,7 @@ void Text_MeasureDecoded(s32 entryIndex, u32 *outWidth, u32 *outHeight,
     code = work->textBuffer[entryIndex];
     entryIndex = (entryIndex + 1) & TEXT_BUFFER_MASK;
 #if LANGUAGE != LANGUAGE_JAPANESE
-    if (code > 31 && code != 176) {
+    if (code >= TEXT_SPACE && code != TEXT_EM_DASH) {
       if (code == TEXT_SPACE) {
         lineWidth += 5;
         count++;
@@ -163,17 +166,18 @@ void Text_MeasureDecoded(s32 entryIndex, u32 *outWidth, u32 *outHeight,
     }
 #else
     // Japanese counts every character as a point the line can be stretched
-    // at. The kana marks (codes 222 and 223) sit over the character before
-    // them; codes above TEXT_LAST_FONT_CODE are kanji, outside gFont_Glyphs.
-    if (code > 31) {
-      if (code - 222 <= 1) {
+    // at. The kana marks (TEXT_MARK_VOICED and TEXT_MARK_SEMIVOICED) sit over
+    // the character before them; codes above TEXT_LAST_FONT_CODE are kanji,
+    // outside gFont_Glyphs.
+    if (code >= TEXT_SPACE) {
+      if (code - TEXT_MARK_VOICED <= 1) {
         lineWidth += 1;
       } else if (code == TEXT_JAPANESE_MIDDLE_DOT) {
         lineWidth += 6;
-      } else if (code == 32) {
+      } else if (code == TEXT_SPACE) {
         lineWidth += 7;
       } else {
-        glyph = 10;
+        glyph = KANJI_WIDTH;
         if (code <= TEXT_LAST_FONT_CODE)
           glyph = gFont_Glyphs[code - TEXT_SPACE].width;
         style = work->outline;
@@ -319,7 +323,7 @@ void Text_MeasureAllPages(s32 entryIndex, u32 *outWidth, u32 *outHeight,
   s32 gap;
   u32 step;
 
-  work = (struct WindowWork *)Ram_HeapSlots->windowWork;
+  work = WINDOW_WORK;
 #if TLA_PATCH_1 && !TLA_PATCH_2
   maxWidth = 0;
 #endif
@@ -338,7 +342,7 @@ void Text_MeasureAllPages(s32 entryIndex, u32 *outWidth, u32 *outHeight,
   pageHeights[12] = TEXT_LINE_HEIGHT;
   pageHeights[13] = TEXT_LINE_HEIGHT;
   pageHeights[14] = TEXT_LINE_HEIGHT;
-  pageHeights[15] = 15;
+  pageHeights[15] = TEXT_LINE_HEIGHT;
 #if !TLA_PATCH_1 || TLA_PATCH_2
   maxWidth = 0;
 #endif
@@ -350,7 +354,7 @@ void Text_MeasureAllPages(s32 entryIndex, u32 *outWidth, u32 *outHeight,
     code = work->textBuffer[entryIndex];
     entryIndex = (entryIndex + 1) & TEXT_BUFFER_MASK;
 #if LANGUAGE != LANGUAGE_JAPANESE
-    if (code >= 32 && code != 176) {
+    if (code >= TEXT_SPACE && code != TEXT_EM_DASH) {
       if (code == TEXT_SPACE) {
         width += 5;
         count++;
@@ -365,17 +369,18 @@ void Text_MeasureAllPages(s32 entryIndex, u32 *outWidth, u32 *outHeight,
     }
 #else
     // Japanese counts every character as a point the line can be stretched
-    // at. The kana marks (codes 222 and 223) sit over the character before
-    // them; codes above TEXT_LAST_FONT_CODE are kanji, outside gFont_Glyphs.
-    if (code >= 32) {
-      if (code - 222 <= 1) {
+    // at. The kana marks (TEXT_MARK_VOICED and TEXT_MARK_SEMIVOICED) sit over
+    // the character before them; codes above TEXT_LAST_FONT_CODE are kanji,
+    // outside gFont_Glyphs.
+    if (code >= TEXT_SPACE) {
+      if (code - TEXT_MARK_VOICED <= 1) {
         width += 1;
       } else if (code == TEXT_JAPANESE_MIDDLE_DOT) {
         width += 6;
-      } else if (code == 32) {
+      } else if (code == TEXT_SPACE) {
         width += 7;
       } else {
-        glyph = 10;
+        glyph = KANJI_WIDTH;
         if (code <= TEXT_LAST_FONT_CODE)
           glyph = gFont_Glyphs[code - TEXT_SPACE].width;
         outline = work->outline;

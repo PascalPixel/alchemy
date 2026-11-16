@@ -27,7 +27,7 @@ struct ArticleTable {
 
 extern const struct ArticleTable gArticle_Table;
 #if (LANGUAGE == LANGUAGE_SPANISH)
-extern const struct ArticleTable gText_IndefiniteArticles;
+extern const struct ArticleTable gArticle_Indefinite;
 #endif
 #if (LANGUAGE == LANGUAGE_FRENCH)
 /// The German "de" articles, elided and whole, copied whole (articles.c).
@@ -117,7 +117,7 @@ u32 Message_AppendArticleName(s32 mode, u16 *name, u32 writePosition,
   if (mode != 0) {
     TEXT_APPEND(entries, writePosition, ' ');
     TEXT_APPEND(entries, writePosition, TEXT_LINE_SPACING);
-    TEXT_APPEND(entries, writePosition, 10);
+    TEXT_APPEND(entries, writePosition, TEXT_DEFAULT_LINE_SPACING);
   }
   if (articleForm == 1 || (articleForm == 3 && plural == 0)) {
     kind = 0;
@@ -197,7 +197,7 @@ u32 Message_AppendArticleName(s32 mode, u16 *name, u32 writePosition,
   if (mode != 0) {
     TEXT_APPEND(entries, writePosition, ' ');
     TEXT_APPEND(entries, writePosition, TEXT_LINE_SPACING);
-    TEXT_APPEND(entries, writePosition, 10);
+    TEXT_APPEND(entries, writePosition, TEXT_DEFAULT_LINE_SPACING);
   }
 #if (LANGUAGE == LANGUAGE_FRENCH)
   if (articleForm == 4) {
@@ -231,7 +231,7 @@ u32 Message_AppendArticleName(s32 mode, u16 *name, u32 writePosition,
     kind = 0;
     table = gArticle_Table;
 #if (LANGUAGE == LANGUAGE_SPANISH)
-    indefiniteTable = gText_IndefiniteArticles;
+    indefiniteTable = gArticle_Indefinite;
 #endif
     if (name[0] == MESSAGE_ARTICLE_CLASS) {
       kind = name[1];
@@ -332,7 +332,7 @@ u32 Message_AppendArticleName(s32 mode, u16 *name, u32 writePosition,
                               s32 *suffix);
 
 s32 Message_Decode(s32 script, s32 clear) {
-  struct WindowWork *work = (struct WindowWork *)Ram_HeapSlots->windowWork;
+  struct WindowWork *work = WINDOW_WORK;
   u32 code = 0;
 #if !TLA_PATCH_2
   s32 lineStart = 1;
@@ -406,11 +406,11 @@ s32 Message_Decode(s32 script, s32 clear) {
         afterItem = 0;
       }
 #endif
-      if (code > 255)
+      if (code > TEXT_LAST_FONT_CODE)
         code = '@';
 
       if (overflow != 0) {
-        if (code < 32 || code == MESSAGE_EM_DASH) {
+        if (code < TEXT_SPACE || code == MESSAGE_EM_DASH) {
           switch (code) {
           case MESSAGE_ARGUMENT_CLASS_NAME:
             decode(messageReader);
@@ -483,7 +483,7 @@ s32 Message_Decode(s32 script, s32 clear) {
         }
 #endif
 
-        if (code > 31 && code != MESSAGE_EM_DASH) {
+        if (code >= TEXT_SPACE && code != MESSAGE_EM_DASH) {
           if (work->haltingSpeech != 0 &&
               (code == TEXT_SPACE || decodedCount > 10)) {
             TEXT_APPEND(entry, writePosition, '.');
@@ -764,7 +764,7 @@ s32 Message_Decode(s32 script, s32 clear) {
             // value counts the letters here.
             for (value = 0; (c = *word++) != 0;) {
               if (value == 0 && suffix == 2)
-                c -= 32;
+                c -= 'a' - 'A';
               TEXT_APPEND(entry, writePosition, c);
               value++;
               if (value > 15)
@@ -868,7 +868,7 @@ static inline u32 Message_AppendArticleName(s32 mode, u16 *name,
   if (mode != 0) {
     TEXT_APPEND(entries, writePosition, ' ');
     TEXT_APPEND(entries, writePosition, TEXT_LINE_SPACING);
-    TEXT_APPEND(entries, writePosition, 10);
+    TEXT_APPEND(entries, writePosition, TEXT_DEFAULT_LINE_SPACING);
   }
   while (*name != 0) {
     c = *name++;
@@ -887,7 +887,7 @@ static inline u32 Message_AppendArticleName(s32 mode, u16 *name,
 /// menuState is set, the Mystery Man and Mystery Woman are named from
 /// MSG_MYSTERY_MAN and the message after it rather than their unit names.
 s32 Message_Decode(s32 script, s32 clear) {
-  struct WindowWork *work = (struct WindowWork *)Ram_HeapSlots->windowWork;
+  struct WindowWork *work = WINDOW_WORK;
   u32 code = 0;
   s32 lineStart = 1;
   u32 start = work->textBufferEnd;
@@ -992,11 +992,11 @@ s32 Message_Decode(s32 script, s32 clear) {
           TEXT_APPEND(entry, writePosition, ENTRY_WIDE_GAP);
         }
 
-        if (code > 31) {
+        if (code >= TEXT_SPACE) {
           if (mode != 0 && code == ' ') {
             TEXT_APPEND(entry, writePosition, (u16)code);
           }
-          // The ellipsis here is three of code 165, then code 161.
+          // The ellipsis here is three middle dots, then a full stop.
           if (work->haltingSpeech != 0 &&
               (code == TEXT_SPACE || decodedCount > 10)) {
             TEXT_APPEND(entry, writePosition, TEXT_JAPANESE_MIDDLE_DOT);

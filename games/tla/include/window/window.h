@@ -101,6 +101,13 @@ STATIC_ASSERT(offsetof(struct WindowWork, argumentKinds) == 0x116c);
 STATIC_ASSERT(sizeof(struct WindowWork) == 0x1190);
 #endif
 
+/// Message_SetDecodeFlags' flags, which set WindowWork.haltingSpeech and
+/// spacingAfter for the messages decoded next.
+enum MessageDecodeFlag {
+  MESSAGE_DECODE_HALTING_SPEECH = 1, ///< a pause before each character
+  MESSAGE_DECODE_SPACING_AFTER = 2   ///< a wide gap after some characters
+};
+
 /// WindowWork.glyphResource while the page arrow has no VRAM cache slot.
 #define NO_GLYPH_RESOURCE 99
 
@@ -518,7 +525,11 @@ enum FieldMessageFlag {
 enum PauseMenuEntry {
   PAUSE_MENU_SAVE_QUEST = 0,
   PAUSE_MENU_SLEEP = 1,
-  PAUSE_MENU_CHANGE_SETTINGS = 2
+  PAUSE_MENU_CHANGE_SETTINGS = 2,
+  /// In debug mode, R and L also leave the menu with these; PauseMenu_Run acts
+  /// on neither.
+  PAUSE_MENU_DEBUG_R = 20,
+  PAUSE_MENU_DEBUG_L = 21
 };
 
 #define WINDOW_HUE_COUNT 24 ///< "Window color" takes 0 to 23
@@ -543,5 +554,13 @@ enum PauseMenuEntry {
 /// Message_OpenWindow's packed argument: the speaker's voice in bits 16 to 27,
 /// above the window options, as ☀️'s.
 #define MESSAGE_WINDOW_VOICE(voice) ((voice) << 16)
+
+/// Message_OpenWindow's window options, in packed's low bits.
+enum MessageWindowOption {
+  MESSAGE_WINDOW_ZOOM = 1,           ///< zoom open rather than appear at once
+  MESSAGE_WINDOW_TEXT_CANVAS = 8,    ///< WINDOW_FLAG_TEXT_CANVAS
+  MESSAGE_WINDOW_ANCHOR_BOTTOM = 16, ///< WINDOW_FLAG_ANCHOR_BOTTOM
+  MESSAGE_WINDOW_FIXED_X = 32        ///< WINDOW_FLAG_FIXED_X
+};
 
 #endif

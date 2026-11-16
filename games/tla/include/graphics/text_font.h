@@ -4,8 +4,10 @@
 #include "edition.h"
 #include "types.h"
 
-/// In Japanese, the glyphs of character codes from 256: 24 bytes each, drawn
-/// 10 pixels wide.
+/// In Japanese, the glyphs of character codes from 256: KANJI_GLYPH_SIZE bytes
+/// each, drawn KANJI_WIDTH pixels wide.
+#define KANJI_GLYPH_SIZE 24
+#define KANJI_WIDTH 10
 extern const u8 gFont_KanjiGlyphs[];
 extern const u16 gFont_MarkGlyphCodes[];
 

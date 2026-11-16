@@ -11,23 +11,23 @@
 /// Returns rgb with each channel scaled (16.16 fixed point) and clamped to 0 to
 /// 31, as a BGR555 colour. rgb holds three components, not an already packed
 /// palette word.
-u16 Color_ScaleComponents(s16 *rgb, FIXED scale_r, FIXED scale_g,
-                          FIXED scale_b) {
-  s32 r = rgb[0] * scale_r >> 16;
-  s32 g = rgb[1] * scale_g >> 16;
-  s32 b = rgb[2] * scale_b >> 16;
+u16 Color_ScaleComponents(s16 *rgb, FIXED redScale, FIXED greenScale,
+                          FIXED blueScale) {
+  s32 red = rgb[0] * redScale >> 16;
+  s32 green = rgb[1] * greenScale >> 16;
+  s32 blue = rgb[2] * blueScale >> 16;
 
-  CLAMP(r, 0, RGB_LEVEL_MAX);
-  CLAMP(g, 0, RGB_LEVEL_MAX);
-  CLAMP(b, 0, RGB_LEVEL_MAX);
-  r |= b << 10 | g << 5;
-  return r;
+  CLAMP(red, 0, RGB_LEVEL_MAX);
+  CLAMP(green, 0, RGB_LEVEL_MAX);
+  CLAMP(blue, 0, RGB_LEVEL_MAX);
+  red |= blue << 10 | green << 5;
+  return red;
 }
 
 extern const u8 gPaletteGlow_WaveTable[];
 
-u16 Color_ScaleComponents(s16 *rgb, FIXED scale_r, FIXED scale_g,
-                          FIXED scale_b);
+u16 Color_ScaleComponents(s16 *rgb, FIXED redScale, FIXED greenScale,
+                          FIXED blueScale);
 
 #define GLOW_COLOR_SET(index, value)                                           \
   do {                                                                         \
@@ -35,6 +35,8 @@ u16 Color_ScaleComponents(s16 *rgb, FIXED scale_r, FIXED scale_g,
     BG_PLTT_COLOR(WINDOW_PALETTE, (index)) = color_;                           \
   } while (0)
 
+/// Sets the window colours (WINDOW_PALETTE, colours 4 to 10) for a window hue
+/// (0 to 23) and brightness (0 to 14, 7 neutral).
 void WindowColor_Apply(s32 phase, s32 brightness) {
   s16 rgb[3];
   s16 step;
@@ -52,28 +54,32 @@ void WindowColor_Apply(s32 phase, s32 brightness) {
   blue = gPaletteGlow_WaveTable[(step + WINDOW_COLOR_WHEEL_STEPS * 2 / 3) %
                                 WINDOW_COLOR_WHEEL_STEPS] +
          offset;
-  if (red < 0)
-    red = 0;
-  if (red > RGB_LEVEL_MAX)
-    red = RGB_LEVEL_MAX;
-  if (green < 0)
-    green = 0;
-  if (green > RGB_LEVEL_MAX)
-    green = RGB_LEVEL_MAX;
-  if (blue < 0)
-    blue = 0;
-  if (blue > RGB_LEVEL_MAX)
-    blue = RGB_LEVEL_MAX;
+  CLAMP(red, 0, RGB_LEVEL_MAX);
+  CLAMP(green, 0, RGB_LEVEL_MAX);
+  CLAMP(blue, 0, RGB_LEVEL_MAX);
   rgb[0] = red;
   rgb[1] = green;
   rgb[2] = blue;
-  GLOW_COLOR_SET(4, Color_ScaleComponents(rgb, 0xeeee, 0xcccc, 0x11110));
-  GLOW_COLOR_SET(5, Color_ScaleComponents(rgb, 0xd555, 0xbbbb, 0xeeee));
-  GLOW_COLOR_SET(6, Color_ScaleComponents(rgb, 0xbbbb, 0xaaaa, 0xcccc));
-  GLOW_COLOR_SET(7, Color_ScaleComponents(rgb, 0xa221, 0x9999, 0xaaaa));
-  GLOW_COLOR_SET(8, Color_ScaleComponents(rgb, 0x10888, 0xdddd, 0x13333));
-  GLOW_COLOR_SET(9, Color_ScaleComponents(rgb, 0x12221, 0xeeee, 0x15555));
-  GLOW_COLOR_SET(10, Color_ScaleComponents(rgb, 0x13bbb, FIXED_ONE, 0x17777));
+  // Each colour scales the tint by channel, in 16.16 (FIXED_ONE is 1): colours
+  // 4 to 7 grow darker, from about 0.93, 0.8 and 1.07 to 0.63, 0.6 and 0.67,
+  // and 8 to 10 lighter, up to about 1.23, 1 and 1.47.
+  GLOW_COLOR_SET(4, Color_ScaleComponents(rgb, FIXED_ONE * 14 / 15,
+                                          FIXED_ONE * 4 / 5, 0x11110));
+  GLOW_COLOR_SET(5, Color_ScaleComponents(rgb, FIXED_ONE * 5 / 6,
+                                          FIXED_ONE * 11 / 15,
+                                          FIXED_ONE * 14 / 15));
+  GLOW_COLOR_SET(6,
+                 Color_ScaleComponents(rgb, FIXED_ONE * 11 / 15,
+                                       FIXED_ONE * 2 / 3, FIXED_ONE * 4 / 5));
+  GLOW_COLOR_SET(7, Color_ScaleComponents(rgb, 0xa221, FIXED_ONE * 3 / 5,
+                                          FIXED_ONE * 2 / 3));
+  GLOW_COLOR_SET(8,
+                 Color_ScaleComponents(rgb, FIXED_ONE * 31 / 30,
+                                       FIXED_ONE * 13 / 15, FIXED_ONE * 6 / 5));
+  GLOW_COLOR_SET(9, Color_ScaleComponents(rgb, 0x12221, FIXED_ONE * 14 / 15,
+                                          FIXED_ONE * 4 / 3));
+  GLOW_COLOR_SET(10, Color_ScaleComponents(rgb, FIXED_ONE * 37 / 30, FIXED_ONE,
+                                           FIXED_ONE * 22 / 15));
 }
 
 /// The settings menu's per-frame task: moves the cursor and the two slider
@@ -193,12 +199,11 @@ extern u8 MsgAutoSleepLabel[];
 struct WindowSprite *CommandIcon_Create(s32 icon, s32 remap,
                                         struct Window *window, s32 x, s32 y);
 s32 Resource_LoadFixedBlockBIntoFreeSlot(void);
-void MenuCursor_SetPositionImmediateFar(void *object, s32 x, s32 y);
 
 /// Opens the settings menu's window: the labels, the hue and brightness
 /// sliders with their markers, the cursor and the setting icons. Returns the
 /// window. Its sprites belong to the window and go when it closes. A
-/// slider's marker stands option * 60 / count pixels right of
+/// slider's marker stands option * OPTION_SLIDER_WIDTH / count pixels right of
 /// OPTION_SLIDER_X.
 struct Window *SettingsMenu_Open(void) {
   struct OptionMenuWork *work;
@@ -266,7 +271,7 @@ struct Window *SettingsMenu_Open(void) {
     out->sprite.oam.fullColor = 1;
     work->marker[0].sprite = out;
     x = (s16)win->x * 8 + OPTION_SLIDER_X;
-    x += __divsi3(work->option[0] * 60, work->optionCount[0]);
+    x += work->option[0] * OPTION_SLIDER_WIDTH / work->optionCount[0];
     y = (s16)win->y * 8 + 4;
     MenuCursor_SetPositionImmediateFar(&work->marker[0], x, y);
   }
@@ -278,7 +283,7 @@ struct Window *SettingsMenu_Open(void) {
     out->sprite.oam.fullColor = 1;
     work->marker[1].sprite = out;
     x = (s16)win->x * 8 + OPTION_SLIDER_X;
-    x += __divsi3(work->option[1] * 60, work->optionCount[1]);
+    x += work->option[1] * OPTION_SLIDER_WIDTH / work->optionCount[1];
     y = (s16)win->y * 8 + 20;
     MenuCursor_SetPositionImmediateFar(&work->marker[1], x, y);
   }
@@ -305,18 +310,16 @@ struct Window *SettingsMenu_Open(void) {
 
 // The layout that fits each language's text: the help window's column and
 // width in tiles, then, in pixels from the settings window's left, where the
-// sliders start and where the choices' fields start and end.
+// choices' fields start and end.
 #if LANGUAGE == LANGUAGE_JAPANESE
 #define HELP_WINDOW_X 2
 #define HELP_WINDOW_WIDTH 26
-#define SLIDER_X 100
 #define CHOICE_X 168
 #define CHOICE_RIGHT 192
 #define FIRST_CHOICE_RIGHT 192
 #else
 #define HELP_WINDOW_X 1
 #define HELP_WINDOW_WIDTH 28
-#define SLIDER_X 140
 #define CHOICE_X 160
 #define CHOICE_RIGHT 184
 // The first choice's field is wider in German, French and Italian.
@@ -339,8 +342,7 @@ struct Window *SettingsMenu_Open(void) {
 
 extern u8 MsgMessageSpeedSlow[], MsgSpeechOff[], MsgAutoSleepOff[],
     MsgWindowColorHelp[], MsgSleepModeHelp[];
-extern const u8 gOptionMenu_FirstColorPresets[],
-    gOptionMenu_SecondColorPresets[];
+extern const u8 gOptionMenu_HuePresets[], gOptionMenu_BrightnessPresets[];
 
 void SettingsMenu_InitializeWork(void);
 void SettingsMenu_Release(void);
@@ -350,7 +352,6 @@ struct WindowSprite *MenuTitle_Create(s32 group, struct Window *input, s32 x,
                                       s32 y);
 void Icon_PrepareActorFar(struct WindowSprite *icon);
 void CommandIcon_Load(s32 index, s32 value, s32 flag);
-void MenuCursor_SetFar(void *cursor, s32 x, s32 y, s32 mode);
 void FieldMessage_Show(s32 message, s32 mode);
 
 #define PRESSED (((volatile struct InputState *)&gInput)->pressed)
@@ -429,11 +430,11 @@ s32 SettingsMenu_Run(void) {
         CommandIcon_Load(gOptionMenu_SleepIcons[i], resourceIndex, dimmed);
       }
 
-      x = (s16)settingsWindow->x * 8 + SLIDER_X;
+      x = (s16)settingsWindow->x * 8 + OPTION_SLIDER_X;
       x += (*hue * OPTION_SLIDER_WIDTH) / work->optionCount[0];
       y = (s16)settingsWindow->y * 8 + 4;
       MenuCursor_SetFar(&work->marker[0], x, y, 1);
-      x = (s16)settingsWindow->x * 8 + SLIDER_X;
+      x = (s16)settingsWindow->x * 8 + OPTION_SLIDER_X;
       x += (*brightness * OPTION_SLIDER_WIDTH) / work->optionCount[1];
       y = (s16)settingsWindow->y * 8 + 20;
       MenuCursor_SetFar(&work->marker[1], x, y, 1);
@@ -474,8 +475,8 @@ s32 SettingsMenu_Run(void) {
       redraw = 1;
       if (work->preset > 5)
         work->preset = 0;
-      *hue = gOptionMenu_FirstColorPresets[work->preset];
-      *brightness = gOptionMenu_SecondColorPresets[work->preset];
+      *hue = gOptionMenu_HuePresets[work->preset];
+      *brightness = gOptionMenu_BrightnessPresets[work->preset];
       continue;
     }
     if (PRESSED & 9) {
@@ -655,8 +656,6 @@ struct WindowSprite *MenuTitle_Create(s32 group, struct Window *input, s32 x,
                                       s32 y);
 void Icon_PrepareActorFar(struct WindowSprite *icon);
 void CommandIcon_Load(s32 index, s32 value, s32 flag);
-void MenuCursor_SetPositionImmediateFar(void *cursor, s32 x, s32 y);
-void MenuCursor_SetFar(void *cursor, s32 x, s32 y, s32 mode);
 
 #define KEYS_PRESSED (((struct InputState *)&gInput)->pressed)
 
@@ -664,7 +663,7 @@ void MenuCursor_SetFar(void *cursor, s32 x, s32 y, s32 mode);
 /// PauseMenuEntry) or cancels with B or START (-1).
 /// The result counts in the full entry table even when only Change settings is
 /// shown. The menu's window and work block are freed before it returns;
-/// PauseMenu_Run (screens/debug.c) acts on the result.
+/// PauseMenu_Run (screens_pause_menu.c) acts on the result.
 s32 PauseMenu_Choose(s32 initial) {
   struct Window *window;
   s32 redraw;
@@ -758,12 +757,12 @@ s32 PauseMenu_Choose(s32 initial) {
     }
     if (gDebugMode != 0) {
       if (KEYS_PRESSED & KEY_R) {
-        result = 20;
+        result = PAUSE_MENU_DEBUG_R;
         Sound_PlayFar(SE_MENU_CONFIRM);
         break;
       }
       if (KEYS_PRESSED & KEY_L) {
-        result = 21;
+        result = PAUSE_MENU_DEBUG_L;
         Sound_PlayFar(SE_MENU_CONFIRM);
         break;
       }
@@ -787,7 +786,6 @@ s32 PauseMenu_Choose(s32 initial) {
 #undef OPTION_CHOICE_X
 #undef HELP_WINDOW_X
 #undef HELP_WINDOW_WIDTH
-#undef SLIDER_X
 #undef CHOICE_X
 #undef CHOICE_RIGHT
 #undef FIRST_CHOICE_RIGHT

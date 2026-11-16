@@ -11,8 +11,8 @@ enum MessageSpeed {
   MESSAGE_SPEED_FAST = 2
 };
 
-extern const u8 gText_SpeedDelays[3];
 extern const u8 gMessageSpeed_Delays[3];
+extern const u8 gMessageSpeed_HeldPageDelays[3];
 extern const u8 gMessageSpeed_Steps[3];
 extern const u8 gMessageSpeed_VoiceGaps[3];
 

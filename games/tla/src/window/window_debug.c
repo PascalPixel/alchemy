@@ -7,6 +7,8 @@
 #include "flags.h"
 #include "sounds.h"
 #include "scene_ids.h"
+#include "scene_exits.h"
+#include "ability_ids.h"
 #include "item_ids.h"
 #include "game/character_ids.h"
 #include "window/settings_menu.h"
@@ -35,7 +37,6 @@ void DebugSoundTest_Release(void) {
 }
 
 s32 Resource_LoadFixedBlockBIntoFreeSlot(void);
-void MenuCursor_SetPositionImmediateFar(void *cursor, s32 x, s32 y);
 
 /// Opens the sound test's window and places the cursor on its first row.
 struct Window *DebugSoundTest_Open(void) {
@@ -54,19 +55,18 @@ extern const struct SoundTestValues gDebugSoundTest_StartValues;
 extern const u8 SoundTest_MusicString[], SoundTest_JingleString[],
     SoundTest_SeString[], SoundTest_FxString[];
 
-void MenuCursor_SetFar(void *cursor, s32 x, s32 y, s32 mode);
 s32 Sound_LoadReverbCode(s32 preset);
 
 /// Unused: nothing calls it. The debug sound test. Four values (music, jingle,
 /// sound effect, sound preset) start from gDebugSoundTest_StartValues; up and
 /// down pick one, left and right step it by 1, L and R by 10; A plays it (the
-/// fourth loads its preset parameters), START plays sound 390 and stops, and B
-/// leaves.
+/// fourth loads its preset parameters), START fades out the sound and stops the
+/// music, and B leaves.
 UNUSED s32 DebugSoundTest_Run(void) {
   struct SoundTestValues test;
   s32 redraw = 1;
   s32 cursor = 0;
-  u8 *work;
+  struct OptionMenuWork *work;
   struct Window *window;
   s32 rows = 4;
   s32 i;
@@ -92,7 +92,7 @@ UNUSED s32 DebugSoundTest_Run(void) {
       Text_DrawStringInWindow((u8 *)SoundTest_JingleString, (s32)window, 8, 16);
       Text_DrawStringInWindow((u8 *)SoundTest_SeString, (s32)window, 8, 32);
       Text_DrawStringInWindow((u8 *)SoundTest_FxString, (s32)window, 8, 48);
-      MenuCursor_SetFar(work + 0x5a4, ((s16)window->x << 3) - 4,
+      MenuCursor_SetFar(&work->cursor, ((s16)window->x << 3) - 4,
                         ((s16)window->y << 3) + (cursor << 4) + 12, 3);
     }
     wait(1);
@@ -161,14 +161,12 @@ void DebugMenu_Release(void) {
   HeapSlot_Release(HEAP_SLOT_SETTINGS_MENU);
 }
 
-#define WORD_AT(base, offset) (*(s32 *)((u8 *)(base) + (offset)))
-
 extern u8 MsgFullPpAndMoney[];
 
 /// Opens the debug menu's window: its five rows, from "Full PP and Money"
 /// (MsgFullPpAndMoney) to "Change of hero", with a divider under each.
 struct Window *DebugMenu_Open(void) {
-  void *work = Ram_HeapSlots->settingsMenu;
+  struct OptionMenuWork *work = Ram_HeapSlots->settingsMenu;
   struct Window *window = Window_Create(6, 2, 18, 16, WINDOW_FLAG_INSTANT);
   s32 i;
 
@@ -179,7 +177,7 @@ struct Window *DebugMenu_Open(void) {
   Text_DrawMessage((s32)MsgFullPpAndMoney + 2, (s32)window, 8, 52);
   Text_DrawMessage((s32)MsgFullPpAndMoney + 3, (s32)window, 8, 76);
   Text_DrawMessage((s32)MsgFullPpAndMoney + 4, (s32)window, 8, 100);
-  WORD_AT(work, 1444) =
+  work->cursor.sprite =
       WindowSprite_Create(Resource_LoadFixedBlockBIntoFreeSlot(),
                           OUTPUT_SIZE_16X16, (struct Window *)window, 0, 0);
   return window;
@@ -260,9 +258,9 @@ void DebugWarp_Arafura2(void) {
   {
     struct MainRoutineWork *party = &gMainRoutineWork;
 
-    party->secondShortcut = 141;
+    party->secondShortcut = ABILITY_MIND_READ;
   }
-  Event_SetDestinationFar(SCENE_ALHAFRA, 1);
+  Event_SetDestinationFar(SCENE_ALHAFRA, ALHAFRA_FROM_ALHAFRA_INTERIORS_NORTH);
 }
 
 /// Preset 2, "Energy Sample": does nothing.
@@ -276,9 +274,9 @@ void DebugWarp_Arafura3(void) {
   {
     struct MainRoutineWork *party = &gMainRoutineWork;
 
-    party->secondShortcut = 141;
+    party->secondShortcut = ABILITY_MIND_READ;
   }
-  Event_SetDestinationFar(SCENE_EASTERN_ALHAFRA, 1);
+  Event_SetDestinationFar(SCENE_EASTERN_ALHAFRA, EASTERN_ALHAFRA_FROM_ALHAFRA);
 }
 
 /// Preset 4, "CHAMPA2": the Trident's three prongs, and Briggs sailed from
@@ -291,9 +289,9 @@ void DebugWarp_Champa2(void) {
   {
     struct MainRoutineWork *party = &gMainRoutineWork;
 
-    party->secondShortcut = 141;
+    party->secondShortcut = ABILITY_MIND_READ;
   }
-  Event_SetDestinationFar(SCENE_CHAMPA, 9);
+  Event_SetDestinationFar(SCENE_CHAMPA, CHAMPA_FROM_WORLD_MAP);
 }
 
 /// Preset 5, "Kaoru Special4": four story flags set. To the Shaman Village.
@@ -302,7 +300,8 @@ void DebugWarp_KaoruSpecial4(void) {
   GameFlag_Set(0x94c);
   GameFlag_Set(0x9e1);
   GameFlag_Set(0x94f);
-  Event_SetDestinationFar(SCENE_SHAMAN_VILLAGE_INN, 30);
+  Event_SetDestinationFar(SCENE_SHAMAN_VILLAGE_INN,
+                          SHAMAN_VILLAGE_INN_FROM_TRIAL_ROAD_SUMMIT_EAST_A);
 }
 
 /// Preset 6, "Kaoru Special3": seven story flags set, saving barred. To Prox.
@@ -314,12 +313,14 @@ void DebugWarp_KaoruSpecial3(void) {
   GameFlag_Set(0x9c0);
   GameFlag_Set(0x9c1);
   GameFlag_Set(0x9c2);
-  Event_SetDestinationFar(SCENE_PROX, 1);
+  Event_SetDestinationFar(SCENE_PROX, PROX_FROM_PROX_SOUTH_GATE);
 }
 
 /// Preset 7, "Kaoru Special2": to the Mars Lighthouse aerie.
 void DebugWarp_KaoruSpecial2(void) {
-  Event_SetDestinationFar(SCENE_MARS_LIGHTHOUSE_AERIE, 1);
+  Event_SetDestinationFar(
+      SCENE_MARS_LIGHTHOUSE_AERIE,
+      MARS_LIGHTHOUSE_AERIE_FROM_MARS_LIGHTHOUSE_ROOM_M_INSCRIPTIONS);
 }
 
 /// Preset 8, "Kaoru Special1": to the Mars Lighthouse's star room.
@@ -461,7 +462,7 @@ void DebugShortcut_Release(void) {
   HeapSlot_Release(HEAP_SLOT_SETTINGS_MENU);
 }
 
-extern const u8 gPauseMenu_Icons[];
+extern const u8 gDebugShortcut_NoAbilityName[];
 
 /// Draws the ability's name; ability 0 draws a dash placeholder.
 void DebugShortcut_DrawAbility(s32 ability, s32 window, s32 x, s32 y) {
@@ -469,13 +470,13 @@ void DebugShortcut_DrawAbility(s32 ability, s32 window, s32 x, s32 y) {
     Text_DrawMessageAsTiles(ability + (s32)MsgAbilityName,
                             (struct Window *)window, x, y);
   else
-    Text_DrawStringInWindow((u8 *)gPauseMenu_Icons, window, x, y);
+    Text_DrawStringInWindow((u8 *)gDebugShortcut_NoAbilityName, window, x, y);
 }
 
 /// Opens the ability grid's window: eight dividers, then the four columns
 /// of gDebugShortcut_Abilities in nine rows, as DebugMenu_Open draws its grid.
 struct Window *DebugShortcut_Open(void) {
-  void *work = Ram_HeapSlots->settingsMenu;
+  struct OptionMenuWork *work = Ram_HeapSlots->settingsMenu;
   struct Window *window = Window_Create(0, 0, 30, 19, WINDOW_FLAG_INSTANT);
   const s16 *abilities;
   s32 i;
@@ -494,7 +495,7 @@ struct Window *DebugShortcut_Open(void) {
     DebugShortcut_DrawAbility(gDebugShortcut_Abilities[3][i], (s32)window, 176,
                               y);
   }
-  WORD_AT(work, 1444) =
+  work->cursor.sprite =
       WindowSprite_Create(Resource_LoadFixedBlockBIntoFreeSlot(),
                           OUTPUT_SIZE_16X16, (struct Window *)window, 0, 0);
   return window;
@@ -509,7 +510,7 @@ s32 Party_FindOwnerWithActionFar(s32 action);
 /// Returns the slot, or -1.
 UNUSED s32 DebugShortcut_Run(void) {
   s32 row = 0;
-  u8 *work;
+  struct OptionMenuWork *work;
   s16 left;
   struct MainRoutineWork *party;
   struct Window *window;
@@ -539,9 +540,9 @@ UNUSED s32 DebugShortcut_Run(void) {
       x = (column * 7 + left) * 8 - 4;
       y = ((s16)window->y << 3) + (row << 4) + 12;
       if (result == -1)
-        MenuCursor_SetPositionImmediateFar(work + 0x5a4, x, y);
+        MenuCursor_SetPositionImmediateFar(&work->cursor, x, y);
       else
-        MenuCursor_SetFar(work + 0x5a4, x, y, 3);
+        MenuCursor_SetFar(&work->cursor, x, y, 3);
       result = 0;
     }
     wait(1);
@@ -628,5 +629,3 @@ done:
   }
   return result;
 }
-
-#undef WORD_AT

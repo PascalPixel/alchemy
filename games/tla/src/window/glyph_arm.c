@@ -43,8 +43,8 @@ static __inline__ void Text_SetCanvasPixel(u32 windowHeight, u32 x, u32 tileY,
 /// (gFont_Glyphs, and in Japanese gFont_KanjiGlyphs for codes from 256), drawn
 /// in four passes: the first three draw an outline in colour 5 (offset left,
 /// right and down when the window has WINDOW_FLAG_OUTLINED_TEXT) and the last
-/// draws the glyph itself in colour 1. Kana marks (codes 222 and 223) sit over
-/// the previous character and advance by 0.
+/// draws the glyph itself in colour 1. Kana marks (TEXT_MARK_VOICED and
+/// TEXT_MARK_SEMIVOICED) sit over the previous character and advance by 0.
 s32 Glyph_DrawArm(struct Window *window, u32 character, u32 x, u32 y,
                   const u8 *font) {
   const u16 *glyphRows;
@@ -61,7 +61,7 @@ s32 Glyph_DrawArm(struct Window *window, u32 character, u32 x, u32 y,
 #endif
 
   windowHeight = window->height;
-  if (character <= 255 || (font != NULL && character - 222 <= 1)) {
+  if (character <= 255 || (font != NULL && character - TEXT_MARK_VOICED <= 1)) {
     if (font != NULL) {
       const u8 *source;
       u32 color;
@@ -76,7 +76,7 @@ s32 Glyph_DrawArm(struct Window *window, u32 character, u32 x, u32 y,
       color = 0x1111;
       fontWidth = 8;
       x++;
-      if (character - 222 <= 1) {
+      if (character - TEXT_MARK_VOICED <= 1) {
         character += 32;
         x -= 2;
         y--;
@@ -163,15 +163,16 @@ s32 Glyph_DrawArm(struct Window *window, u32 character, u32 x, u32 y,
     glyphWidth = *glyphRows++;
   } else {
 #if (LANGUAGE == LANGUAGE_JAPANESE)
-    glyphWidth = 10;
-    glyphRows = (const u16 *)(gFont_KanjiGlyphs + (character - 256) * 24);
+    glyphWidth = KANJI_WIDTH;
+    glyphRows =
+        (const u16 *)(gFont_KanjiGlyphs + (character - 256) * KANJI_GLYPH_SIZE);
 #else
     glyphRows = (const u16 *)((const u8 *)gFont_Glyphs + (character - 32) * 32);
     glyphWidth = *glyphRows;
     glyphRows += 4;
 #endif
   }
-  if (character - 222 <= 1) {
+  if (character - TEXT_MARK_VOICED <= 1) {
     x -= 3;
     y -= 2;
     advance = 0;

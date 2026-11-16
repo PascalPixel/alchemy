@@ -23,8 +23,8 @@ const u8 gStatusMenu_LevelLetterString[] = "Niv";
 const u8 gStatusMenu_LevelLetterString[] = "L";
 #endif
 
-/// The kana that take a dakuten, as ranges of first and last, ending at 0.
 // clang-format off
+/// The kana that take a dakuten, as ranges of first and last, ending at 0.
 const u8 gNameEntry_VoicedMarkRanges[] = {
     0xb6, 0xc4,
     0xca, 0xce,
@@ -47,6 +47,8 @@ const u8 gNameEntry_SemivoicedMarkRanges[] = {
 /// The name entry caret's sway, in pixels by frame.
 const s8 gNameEntry_CaretWave[8] = {0, 1, 2, 3, 3, 2, 1, 0};
 
+// The name entry's labels for its delete and end keys in German, Spanish and
+// French.
 #if LANGUAGE == LANGUAGE_GERMAN
 const u8 gNameEntry_DeleteKeyLabel[] = "ENT";
 const u8 gNameEntry_EndKeyLabel[] = "ENDE";

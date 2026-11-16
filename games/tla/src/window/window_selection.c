@@ -1071,6 +1071,9 @@ void SelectionMenu_Scroll(struct SelectionScreen *screen, s32 forward) {
 void Icon_BuildCommandIconTiles(s32 overlayIcon, s32 baseIcon, s32 *slot,
                                 s32 *tileOut, s32 reuse);
 
+/// Loads the icon of an entry of kind mode (enum IconKind: a command, a yes or
+/// no, an item or a Psynergy) into a free sprite tile slot and returns the
+/// slot, or -1 when none was free or mode is another kind.
 s32 Resource_LoadByMode(u32 mode, s32 value) {
   s32 output;
   s32 result = -1;
@@ -1087,7 +1090,7 @@ s32 Resource_LoadByMode(u32 mode, s32 value) {
     Icon_CopyResourceToSlot(
         value, ICON_COUNT_ABOVE_ONE | ICON_EQUIPPED | ICON_BROKEN, result);
     break;
-  case 4:
+  case ICON_KIND_ABILITY:
     Ability_LoadGlyph(value, 1, &result, &output, 0);
     break;
   }
@@ -1365,7 +1368,7 @@ void SelectionMenu_LoadLargeIcon(void) {
   table = Resource_GetTableEntry(RESOURCE_COMMAND_ICONS);
   {
     u8 **destination = &buffer->encoded;
-    resource = table + *(u16 *)(table + selection->base * 2);
+    resource = table + ((u16 *)table)[selection->base];
     *destination = resource;
   }
   Decompress_ByteLz(resource, buffer);
@@ -1396,11 +1399,6 @@ void Resource_ResetPendingTransfer(void) {
 
 void PartyStatus_CreateWindow(s32 flags);
 s32 FieldMenu_SelectCommand(s32);
-s32 DjinnMenu_RunFar(void);
-s32 Actor_GetTriggerCellAheadOfCurrentFar(void);
-s32 PsynergyMenu_RunFar(void);
-s32 ItemMenu_RunFar(void);
-s32 StatusScreen_RunFar(void);
 
 /// Runs the field menu until the player picks something that leaves it, and
 /// returns the chosen screen's result. Cancelling the menu returns an

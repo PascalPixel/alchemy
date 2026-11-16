@@ -392,9 +392,10 @@ extern struct Trigger gSceneEvents[];
 /// A scene's exit region, as The Broken Seal's SceneExitRegion: the box that,
 /// while its condition holds, takes the party leader out through its exit.
 struct SceneRegion {
-  s16 minX, minY,
-      minZ; ///< pixels, inclusive; minX SCENE_TABLE_END ends the table
-  s16 maxX, maxY, maxZ; ///< pixels, exclusive
+  /// Its lower corner in pixels, inclusive; a minX of SCENE_TABLE_END ends the
+  /// table.
+  s16 minX, minY, minZ;
+  s16 maxX, maxY, maxZ; ///< its upper corner in pixels, exclusive
   s16 condition;        ///< CONDITION_ALWAYS, or a flag condition
   s16 value;            ///< the exit kind, stored in FieldWork's exit
 };

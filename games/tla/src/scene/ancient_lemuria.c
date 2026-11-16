@@ -101,13 +101,13 @@ const struct ActorPlacement *Scene_GetActorPlacements(void) {
   return gActorPlacements;
 }
 
-/// Walking south past the step: the camera stays south of the shore's upper
-/// part.
+/// A step trigger (cell behavior 20): the camera keeps south of z 750, short
+/// of the shore's upper part.
 void AncientLemuria_KeepCameraSouth(void) {
   Ram_HeapSlots->mapGrid->minZ = toFIXED(750);
 }
 
-/// Walking back north: the camera may show the upper part again.
+/// A step trigger (cell behavior 21): the camera may go north to z 352 again.
 void AncientLemuria_LetCameraNorth(void) {
   Ram_HeapSlots->mapGrid->minZ = toFIXED(352);
 }
@@ -377,7 +377,7 @@ s32 Scene_PrepareMap(void) {
   return 0;
 }
 
-/// Walking east onto the ledge: the leader jumps across if the way is clear.
+/// A step trigger at the ledge: the leader jumps forward if the way is clear.
 void AncientLemuria_JumpForward(void) { Field_TryJumpForward(); }
 
 void Actor_MoveToObject();
@@ -881,12 +881,12 @@ struct ActorPlacement gActorPlacements[] = {
                     136, 0, 504, 0x3000, TALK_FACING_PARTY, 0),
     ACTOR_PLACEMENT(SPRITE_LEMURIAN_GIRL, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
                     200, 0, 504, 0x5000, TALK_FACING_PARTY, 0),
-    {SPRITE_KRADEN, CONDITION_ALWAYS, 1, -toFIXED(56), 0, -toFIXED(56),
-     FACING_NORTH, 2, 0},
-    {SPRITE_PIERS, CONDITION_ALWAYS, 1, -toFIXED(56), 0, -toFIXED(56),
-     FACING_NORTH, 2, 0},
-    {SPRITE_MERCURY_DJINNI, FLAG_DJINNI(DJINNI_RIME), 1, -toFIXED(56), 0,
-     -toFIXED(56), FACING_SOUTH, 0, 0},
+    {SPRITE_KRADEN, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, -toFIXED(56), 0,
+     -toFIXED(56), FACING_NORTH, TALK_FACING_KEEP, 0},
+    {SPRITE_PIERS, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, -toFIXED(56), 0,
+     -toFIXED(56), FACING_NORTH, TALK_FACING_KEEP, 0},
+    {SPRITE_MERCURY_DJINNI, FLAG_DJINNI(DJINNI_RIME), MOVEMENT_TYPE_STAND,
+     -toFIXED(56), 0, -toFIXED(56), FACING_SOUTH, TALK_FACING_PARTY, 0},
     ACTOR_PLACEMENT(SPRITE_BLUE_STATUE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
                     264, 0, 184, FACING_SOUTH, TALK_FACING_KEEP, 0),
     {SCENE_TABLE_END},

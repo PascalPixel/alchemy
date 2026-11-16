@@ -116,7 +116,9 @@ void Message_DecodeRawUnboundedFar(s32, u16 *);
 /// How many summons there are (summon_table.c), and the number that ends a
 /// list of them (Summon_ListLearned).
 #define SUMMON_COUNT 29
-/// The summons by summon id, each named for its ability (summon_table.c).
+/// The summons by summon id, each named for its ability, in the order of
+/// gSummon_Abilities (summon_table.c): the elements' own four, The Broken
+/// Seal's twelve, then this game's thirteen.
 enum SummonId {
   SUMMON_VENUS,
   SUMMON_MERCURY,
@@ -150,39 +152,6 @@ enum SummonId {
 };
 /// Ends the summon lists, and marks a summon already moved to the front.
 #define SUMMON_END 32
-/// A summon's number, the order of gSummon_Abilities: the elements' own four,
-/// The Broken Seal's twelve, then this game's thirteen.
-enum SummonNumber {
-  SUMMON_VENUS,
-  SUMMON_MERCURY,
-  SUMMON_MARS,
-  SUMMON_JUPITER,
-  SUMMON_RAMSES,
-  SUMMON_NEREID,
-  SUMMON_KIRIN,
-  SUMMON_ATALANTA,
-  SUMMON_CYBELE,
-  SUMMON_NEPTUNE,
-  SUMMON_TIAMAT,
-  SUMMON_PROCNE,
-  SUMMON_JUDGMENT,
-  SUMMON_BOREAS,
-  SUMMON_METEOR,
-  SUMMON_THOR,
-  SUMMON_ZAGAN,
-  SUMMON_MEGAERA,
-  SUMMON_FLORA,
-  SUMMON_MOLOCH,
-  SUMMON_ULYSSES,
-  SUMMON_HAURES,
-  SUMMON_ECLIPSE,
-  SUMMON_COATLICUE,
-  SUMMON_DAEDALUS,
-  SUMMON_AZUL,
-  SUMMON_CATASTROPHE,
-  SUMMON_CHARON,
-  SUMMON_IRIS
-};
 /// The summons in the order the Summon command lists them (summon_table.c).
 extern const u8 gSummon_OrderList[SUMMON_COUNT];
 /// The experience each character needs for each level (experience_table.c).

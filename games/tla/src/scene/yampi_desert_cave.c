@@ -368,7 +368,7 @@ void Teleport_PlaySparks(void);
 void YampiDesertCave_PushLog(struct YampiDesertCaveRect rect) {
   // Read as s32: the load then keeps its place after the argument stores.
   struct MapWork *map =
-      (struct MapWork *)((struct HeapView *)Ram_HeapSlots)->word;
+      (struct MapWork *)((struct HeapSlotWords *)Ram_HeapSlots)->mapWork;
   s32 w, h;
   struct Actor *leader = Actor_GetById(gMainRoutineWork.leaderActorId);
   struct Actor *object = Actor_GetById(rect.word[4]);

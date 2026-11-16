@@ -411,8 +411,8 @@ void MarsLighthouseAerie_SpawnBeaconFlames(void) {
       object->watchedActor = anchor;
       object->speedLimit = Math_Sin((offset & 0xfffff) >> 4) * 24 >> 16;
       ((u8 *)sprite)[26] = 0;
-      sprite->layer =
-          ((struct MarsLighthouseAerieSprite *)anchor->sprite)->layer;
+      sprite->priority =
+          ((struct MarsLighthouseAerieSprite *)anchor->sprite)->priority;
     }
   }
   gMarsLighthouseAerie_BeaconFlameFrame++;
@@ -1962,7 +1962,7 @@ void MarsLighthouseAerie_RaiseBeaconFire(void) {
       object->update = MarsLighthouseAerie_OrbitBeaconFire;
       object->speedLimit = Math_Sin(Random16() * 0xffff >> 20) * 24;
       object->speedLimit = anchor->speedLimit >> 16;
-      sprite->unk1a = 0;
+      sprite->nextFrame = 0;
       mask = -13;
       ((u8 *)sprite)[9] = (((u8 *)sprite)[9] & mask) | 4;
     }

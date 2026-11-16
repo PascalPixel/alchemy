@@ -42,7 +42,11 @@ struct Cell {
 /// A field sprite's byte 9: the top of its first tile and its priority (OAM
 /// attribute 2), read as bit-fields.
 struct SpriteAttr2High {
-  u8 unk00[9];
+  u8 link[4];
+  u8 y;         ///< attribute 0's y
+  u8 attr0High; ///< attribute 0's high byte
+  u8 attr1[2];
+  u8 tileLow; ///< attribute 2's low byte
   u8 tileHigh : 2;
   u8 priority : 2;
 };
@@ -217,13 +221,6 @@ struct Vec {
   s32 z;
 };
 
-struct TileSprite {
-  u8 unk00[18];
-  u16 tile;
-  u8 unk14[6];
-  u8 frame;
-};
-
 struct FadePalette {
   u16 colors[256];
 };
@@ -281,13 +278,29 @@ struct LemurianShipWarp {
   u16 z;
 };
 
+/// A field sprite (struct FieldSprite) read a byte at a time, as the Mars
+/// Lighthouse aerie's flames take the beacon fire's priority.
 struct MarsLighthouseAerieSprite {
-  u8 unk00[9];
-  u8 unk09_0 : 2;
-  u8 layer : 2;
-  u8 unk09_4 : 4;
-  u8 unk0a[0x10];
-  u8 unk1a;
+  u8 link[4];
+  u8 y;         ///< attribute 0's y
+  u8 attr0High; ///< attribute 0's high byte
+  u8 attr1[2];
+  u8 tileLow; ///< attribute 2's low byte
+  /// Attribute 2's high byte.
+  ///@{
+  u8 tileHigh : 2; ///< tile number bits 9..8
+  u8 priority : 2;
+  u8 palette : 4;
+  ///@}
+  u8 attr3[2];
+  u8 scale[4];
+  u8 vramBlock; ///< VRAM cache entry holding its tiles
+  u8 cacheFlags;
+  u8 rotation[2];
+  u8 size[4]; ///< width, height and the x and y offsets
+  u8 frame;
+  u8 dirty;
+  u8 nextFrame;
 };
 
 /// The event work's step counter.
@@ -339,28 +352,6 @@ struct LinkedEffectWork {
   u16 vramBlock;
 };
 
-struct Charge {
-  u8 pad[17];
-  u8 low : 2;
-  u8 level : 6;
-};
-
-struct MapFocus {
-  s32 scrolledX;
-  s32 scrolledZ;
-  s32 x;
-  s32 z;
-  s32 scaleX;
-  s32 scaleZ;
-  s32 unk18[4];
-  u16 unk28;
-  u16 unk2a;
-  u16 cellX;
-  u16 row;
-  u8 *cell;
-  u8 *shape;
-};
-
 struct SwingPoint {
   u16 unk00;
   u16 index;
@@ -368,11 +359,6 @@ struct SwingPoint {
   s32 y;
   s32 z;
   s32 w;
-};
-
-struct TitleWork {
-  u8 unk00[20];
-  u16 mode;
 };
 
 /// One entry of the cell lists Func_020005ac walks.
@@ -451,28 +437,27 @@ struct LinkedDetail {
   u8 field16;
 };
 
+/// A field sprite (struct FieldSprite) read a byte at a time, as Yampi Desert's
+/// scorpion sets its colour mode and priority and loads its tiles.
 struct YampiDesertVisual {
-  u8 unk00[5];
-  u8 flags05;
-  u8 unk06[3];
-  u8 flags09;
-  u8 unk0a[6];
-  u8 tileSlot;
-  u8 unk11[9];
-  u8 value1a;
-  u8 value1b;
-};
-
-struct YampiDesertRideWork {
-  s16 entry;
-  u16 value;
-  u8 unk004[0x1c0];
-  void *block;
-};
-
-struct HeapView {
-  s32 pad[8];
-  s32 word;
+  u8 link[4];
+  u8 y;         ///< attribute 0's y
+  u8 attr0High; ///< attribute 0's high byte: bit 5 is full colour
+  u8 attr1[2];
+  u8 tileLow; ///< attribute 2's low byte
+  /// Attribute 2's high byte.
+  /// bits: 7..4 palette | 3..2 priority | 1..0 tile bits 9..8
+  u8 attr2High;
+  u8 attr3[2];
+  u8 scale[4];
+  u8 vramBlock; ///< VRAM cache entry holding its tiles
+  u8 cacheFlags;
+  u8 rotation[2];
+  u8 size[4]; ///< width, height and the x and y offsets
+  u8 frame;
+  u8 dirty;
+  u8 nextFrame;
+  u8 layerCount;
 };
 
 void MapGrid_CenterOnFollowedPoint(void);

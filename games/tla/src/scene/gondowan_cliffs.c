@@ -188,9 +188,9 @@ void Geysers_Start(s32 a, s32 b);
 void Tightrope_Initialize(void);
 
 void GondowanCliffs_RollPillar(struct Actor *object) {
-  struct TileSprite *sprite = object->sprite;
+  struct FieldSprite *sprite = object->sprite;
 
-  sprite->tile -= 0x800;
+  sprite->rotation -= 0x800;
 }
 
 void GondowanCliffs_WaitToLand(struct Actor *object, s32 height) {

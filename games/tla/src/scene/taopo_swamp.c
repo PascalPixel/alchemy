@@ -320,7 +320,7 @@ void TaopoSwamp_SinkPillar(s32 unused, s32 id) {
   sprite = actor->sprite;
   i = 0;
   do {
-    ((struct Charge *)sprite)->level = i;
+    ((struct Sprite *)sprite)->sunkRows = i;
     sprite->nextFrame |= 8;
     sprite->nextFrame &= ~1;
     k = i;
@@ -1700,28 +1700,27 @@ extern u8 gMapGridCellBuffer[];
 
 /// Points the map's followed point at cell (x, z), and the screen follows.
 void TaopoSwamp_FocusMapOn(s32 x, s32 z) {
-  u8 *map = (u8 *)Ram_HeapSlots->mapGrid;
-  struct MapFocus *focus;
+  struct MapWork *map = Ram_HeapSlots->mapGrid;
+  struct MapLayer *layer;
   s32 index, fx = x << 19;
 
-  focus = (struct MapFocus *)(map + 0x178);
-  focus->x = fx;
-  focus->z = z << 19;
-  focus->unk28 = 127;
-  focus->unk2a = 0x3f80;
-  focus->row = z << 7;
-  focus->cellX = x;
-  focus->unk18[0] = 0;
-  focus->unk18[1] = 0;
-  focus->unk18[2] = 0;
-  focus->unk18[3] = 0;
+  layer = &map->layers[2];
+  layer->offsetX = fx;
+  layer->offsetY = z << 19;
+  layer->maskX = 127;
+  layer->maskY = 0x3f80;
+  layer->originY = z << 7;
+  layer->originX = x;
+  layer->speedX = 0;
+  layer->speedY = 0;
+  layer->phaseX = 0;
+  layer->phaseY = 0;
   index = (z / 2 << 7) + x / 2;
-  focus->scaleZ = focus->scaleX = FIXED_ONE;
-  focus->cell = gMapGridCellBuffer + index * 4;
-  focus->shape = gMapShapeGrid + index;
-  focus->scrolledX = Iwram_MulFX(*(s32 *)(map + 0xe4), 0x10000) + focus->x;
-  focus->scrolledZ =
-      Iwram_MulFX(*(s32 *)(map + 0xe8), focus->scaleZ) + focus->z;
+  layer->scaleY = layer->scaleX = FIXED_ONE;
+  layer->cells = (struct MapCell *)(gMapGridCellBuffer + index * 4);
+  layer->terrainIds = gMapShapeGrid + index;
+  layer->x = Iwram_MulFX(map->viewX, FIXED_ONE) + layer->offsetX;
+  layer->y = Iwram_MulFX(map->viewZ, layer->scaleY) + layer->offsetY;
   MapGrid_CenterOnFollowedPoint();
   System_Wait(1);
 }

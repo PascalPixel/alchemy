@@ -129,35 +129,35 @@ done:
 /// (Battle_CollectPartyCommands).
 s32 Battle_RefuseFlee(void) {
   s16 buffer[64];
-  s32 work;
+  s32 window;
   s32 result;
-  void *state;
+  struct BattleWork *battle;
   s32 mode;
-  s32 attrs;
 
-  state = Ram_HeapSlots->battleWork;
+  battle = Ram_HeapSlots->battleWork;
   mode = gMainRoutineWork.battleType;
   if (gMainRoutineWork.battleType == BATTLE_TYPE_NO_ESCAPE || mode <= 2 ||
       (result = 1, mode > 4)) {
     result = 0;
   }
   if (result == 0) {
-    if (*(s8 *)((u8 *)state + 0x43) != 0) {
+    if ((s8)battle->challengeFlag != 0) {
       result = 1;
     }
   }
   if (result != 0) {
-    attrs = 42;
-    work = Window_Create(0, 7, 30, 4, attrs);
+    window = Window_Create(0, 7, 30, 4,
+                           WINDOW_FLAG_INSTANT | WINDOW_FLAG_TEXT_CANVAS |
+                               WINDOW_FLAG_BORDERED_CANVAS);
     Text_FillCanvasBackground();
     BATTLE_MENU_MESSAGE_COPY((s32)&MsgNoTimeToRun, buffer,
                              BATTLE_MENU_MESSAGE_CAPACITY);
-    Text_DrawWideStringAtOffset(buffer, work, 0, 4);
+    Text_DrawWideStringAtOffset(buffer, window, 0, 4);
     do {
       wait(1);
     } while ((gInput.pressed & (KEY_A | KEY_B)) == 0 &&
-             *(s32 *)((u8 *)Ram_HeapSlots->battleMenuWork + 0x4C) != 0);
-    Window_Close(work, 1);
+             BATTLE_MENU_WORK->timer != 0);
+    Window_Close(window, 1);
   }
   return result;
 }

@@ -768,17 +768,15 @@ void MadraInteriors_InterrogatePiers(void) {
   FieldEvent_Wait(20);
   // "This man... He must be an Adept!"
   Event_OpenMessage(ACTOR_JAIL_KRADEN, 0);
-  if (FieldEvent_AskYesNoWithActorAnimation(ACTOR_FELIX, 0) != 0)
-    goto answeredNo;
-  Actor_RunRepeatedMotion(ACTOR_JAIL_KRADEN, 2);
-  FieldEvent_ShowMessageThenWait(ACTOR_JAIL_KRADEN, 0, 10);
-  gFieldWork->message += 1;
-  goto answered;
-answeredNo:
-  Actor_SetAnimationAndWait(ACTOR_JAIL_KRADEN, ANIM_SHAKE_HEAD);
-  gFieldWork->message += 1;
-  FieldEvent_ShowMessageThenWait(ACTOR_JAIL_KRADEN, 0, 10);
-answered:
+  if (FieldEvent_AskYesNoWithActorAnimation(ACTOR_FELIX, 0) == 0) {
+    Actor_RunRepeatedMotion(ACTOR_JAIL_KRADEN, 2);
+    FieldEvent_ShowMessageThenWait(ACTOR_JAIL_KRADEN, 0, 10);
+    gFieldWork->message += 1;
+  } else {
+    Actor_SetAnimationAndWait(ACTOR_JAIL_KRADEN, ANIM_SHAKE_HEAD);
+    gFieldWork->message += 1;
+    FieldEvent_ShowMessageThenWait(ACTOR_JAIL_KRADEN, 0, 10);
+  }
   Actor_RunRepeatedMotion(ACTOR_JAIL_KRADEN, 2);
   FieldEvent_Wait(10);
   FieldEvent_ShowMessageThenWait(ACTOR_JAIL_KRADEN, 0, 10);
@@ -787,11 +785,9 @@ answered:
   FieldEvent_Wait(10);
   Actor_SetAnimation(ACTOR_JAIL_KRADEN, ANIM_WALK);
   felix = Actor_Get(ACTOR_FELIX);
-  if (felix == 0)
-    goto piersLeft;
-  Actor_SetDestination(ACTOR_JAIL_KRADEN, felix->x.part[0].integer,
-                       felix->z.part[0].integer);
-piersLeft:
+  if (felix != 0)
+    Actor_SetDestination(ACTOR_JAIL_KRADEN, felix->x.part[0].integer,
+                         felix->z.part[0].integer);
   FieldActor_WaitForMoveById(ACTOR_JAIL_KRADEN);
   Actor_SetPosition(ACTOR_JAIL_KRADEN, 0, 0);
   Event_SetFlag(FLAG_PIERS_INTERROGATED);
@@ -1087,33 +1083,31 @@ void MadraInteriors_WelcomePiersHome(void) {
   Actor_ShowEmote(ACTOR_MAYOR, EMOTE_IN_FRONT | EMOTE_WINCE, 30);
   // "And your jewel..."
   Event_OpenMessage(ACTOR_MAYOR, 0);
-  if (FieldEvent_AskYesNoWithActorAnimation(ACTOR_FELIX, 0) != 0)
-    goto answeredNo;
-  Actor_ShowEmote(ACTOR_ELDER, EMOTE_IN_FRONT | EMOTE_SMILE, 30);
-  FieldEvent_ShowMessageThenWait(ACTOR_ELDER, 0, 10);
-  Actor_FaceDirectionAndWait(ACTOR_PIERS, FACING_SOUTHWEST);
-  Actor_SetAnimationAndWait(ACTOR_PIERS, ANIM_NOD);
-  FieldEvent_Wait(20);
-  FieldEvent_ShowMessageThenWait(ACTOR_PIERS, 0, 10);
-  Actor_ShowEmote(ACTOR_ELDERS_DAUGHTER, EMOTE_IN_FRONT | EMOTE_SMILE, 30);
-  FieldEvent_ShowMessageThenWait(ACTOR_ELDERS_DAUGHTER, 0, 10);
-  gFieldWork->message += 3;
-  goto answered;
-answeredNo:
-  Actor_ShowEmote(ACTOR_ELDERS_DAUGHTER, EMOTE_IN_FRONT | EMOTE_WINCE, 30);
-  MadraInteriors_CountAnswer();
-  gFieldWork->message += 3;
-  FieldEvent_ShowMessageThenWait(ACTOR_ELDER, 0, 10);
-  Actor_FaceDirectionAndWait(ACTOR_PIERS, FACING_SOUTHWEST);
-  Actor_SetAnimationAndWait(ACTOR_PIERS, ANIM_SHAKE_HEAD);
-  FieldEvent_Wait(20);
-  FieldEvent_ShowMessageThenWait(ACTOR_PIERS, 0, 10);
-  FieldActor_StartRepeatedMotion(ACTOR_ELDERS_DAUGHTER, 3);
-  Actor_SetAttachedEffect(ACTOR_ELDERS_DAUGHTER,
-                          ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
-  FieldEvent_Wait(50);
-  FieldEvent_ShowMessageThenWait(ACTOR_ELDERS_DAUGHTER, 0, 10);
-answered:
+  if (FieldEvent_AskYesNoWithActorAnimation(ACTOR_FELIX, 0) == 0) {
+    Actor_ShowEmote(ACTOR_ELDER, EMOTE_IN_FRONT | EMOTE_SMILE, 30);
+    FieldEvent_ShowMessageThenWait(ACTOR_ELDER, 0, 10);
+    Actor_FaceDirectionAndWait(ACTOR_PIERS, FACING_SOUTHWEST);
+    Actor_SetAnimationAndWait(ACTOR_PIERS, ANIM_NOD);
+    FieldEvent_Wait(20);
+    FieldEvent_ShowMessageThenWait(ACTOR_PIERS, 0, 10);
+    Actor_ShowEmote(ACTOR_ELDERS_DAUGHTER, EMOTE_IN_FRONT | EMOTE_SMILE, 30);
+    FieldEvent_ShowMessageThenWait(ACTOR_ELDERS_DAUGHTER, 0, 10);
+    gFieldWork->message += 3;
+  } else {
+    Actor_ShowEmote(ACTOR_ELDERS_DAUGHTER, EMOTE_IN_FRONT | EMOTE_WINCE, 30);
+    MadraInteriors_CountAnswer();
+    gFieldWork->message += 3;
+    FieldEvent_ShowMessageThenWait(ACTOR_ELDER, 0, 10);
+    Actor_FaceDirectionAndWait(ACTOR_PIERS, FACING_SOUTHWEST);
+    Actor_SetAnimationAndWait(ACTOR_PIERS, ANIM_SHAKE_HEAD);
+    FieldEvent_Wait(20);
+    FieldEvent_ShowMessageThenWait(ACTOR_PIERS, 0, 10);
+    FieldActor_StartRepeatedMotion(ACTOR_ELDERS_DAUGHTER, 3);
+    Actor_SetAttachedEffect(ACTOR_ELDERS_DAUGHTER,
+                            ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
+    FieldEvent_Wait(50);
+    FieldEvent_ShowMessageThenWait(ACTOR_ELDERS_DAUGHTER, 0, 10);
+  }
   Actor_SetAnimation(ACTOR_PIERS, ANIM_NOD);
   Actor_SetAnimation(ACTOR_SHEBA, ANIM_NOD);
   Actor_SetAnimation(ACTOR_KRADEN, ANIM_NOD);
@@ -1123,13 +1117,10 @@ answered:
   Actor_SetAnimationAndWait(ACTOR_KRADEN, ANIM_NOD);
   FieldEvent_Wait(20);
   FieldEvent_ShowMessageThenWait(ACTOR_KRADEN, 0, 10);
-  if (Event_GetFlag(FLAG_PIERS_SETTING_SAIL) == 0)
-    goto firstGoodbye;
-  MadraInteriors_SayGoodbyeAgain();
-  goto saidGoodbye;
-firstGoodbye:
-  MadraInteriors_AskToStayLonger();
-saidGoodbye:
+  if (Event_GetFlag(FLAG_PIERS_SETTING_SAIL) != 0)
+    MadraInteriors_SayGoodbyeAgain();
+  else
+    MadraInteriors_AskToStayLonger();
   Actor_FaceDirection(ACTOR_PIERS, FACING_SOUTH, 0);
   Actor_FaceDirectionAndWait(ACTOR_FELIX, FACING_SOUTH);
   FieldEvent_Wait(20);

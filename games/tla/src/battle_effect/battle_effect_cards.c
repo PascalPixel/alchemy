@@ -10,6 +10,16 @@
 
 /// Where PaletteRampImage is decoded in the effect's pictures.
 #define CARDS_PALETTE_RAMP_PICTURES 0x2580
+/// PaletteRampImage's bytes, which the Sword Card copies seven times, darker
+/// each time, after it.
+#define CARDS_PALETTE_RAMP_BYTES 696
+/// The card's picture, 32 pixels wide and 64 tall.
+#define CARD_WIDTH 32
+#define CARD_HEIGHT 64
+/// SheepCardSheet's four jumping sheep, each 32x32, after the card's picture.
+#define CARD_SHEEP (Ram_MapCellBuffer + 0x683e)
+#define SHEEP_WIDTH 32
+#define SHEEP_HEIGHT 32
 
 /// The four cards (Sleep, Baffle, Death and Sword Card): a card flies from
 /// the user to above the targets' middle for 48 frames, spinning upright and
@@ -27,7 +37,7 @@ void BattleEffect_RunCards(struct BattleEffectParams *args, s32 mode) {
   FIXED scale;
   s32 scroll;
   s32 overflow;
-  s32 length;
+  s32 totalFrames;
   s32 frame;
   struct ScreenPoint card;
   struct ScreenPoint middle;
@@ -37,7 +47,7 @@ void BattleEffect_RunCards(struct BattleEffectParams *args, s32 mode) {
   void *vertices;
   s32 i;
   s32 j;
-  s32 limit;
+  s32 cardFrames;
   s32 first;
   s32 slot;
 
@@ -80,44 +90,45 @@ void BattleEffect_RunCards(struct BattleEffectParams *args, s32 mode) {
     Resource_LoadAndDecompress(RESOURCE_SHEEP_CARD_SHEET, CARD, 1, 1);
     Resource_LoadAndDecompress(RESOURCE_BLUE_CLOUD_PUFF_SHEET, work->sheet, 0,
                                0);
-    length = 96;
+    totalFrames = 96;
   } else if (mode == CARD_BAFFLE) {
     Resource_LoadAndDecompress(RESOURCE_BUTTERFLY_CARD_SHEET, CARD, 1, 1);
     Resource_LoadAndDecompress(RESOURCE_BLUE_CLOUD_PUFF_SHEET, work->sheet, 0,
                                0);
-    length = 80;
+    totalFrames = 80;
   } else if (mode == CARD_SWORD) {
     Resource_LoadAndDecompress(RESOURCE_SWORD_CARD_SHEET, CARD, 1, 1);
     Resource_LoadAndDecompress(RESOURCE_DAGGER_SHEET, work->sheet, 1, 0);
     Resource_LoadAndDecompress(RESOURCE_PALETTE_RAMP_IMAGE,
                                work->sheet + CARDS_PALETTE_RAMP_PICTURES, 0, 0);
     for (i = 1; i != 8; i++) {
-      for (j = 0; j != 696; j++) {
-        s32 shade = work->sheet[0x2580 + j];
+      for (j = 0; j != CARDS_PALETTE_RAMP_BYTES; j++) {
+        s32 shade = work->sheet[CARDS_PALETTE_RAMP_PICTURES + j];
 
         if (shade > 0) {
           shade -= i * 6;
           if (shade <= 0)
             shade = 1;
         }
-        work->sheet[0x2580 + i * 696 + j] = shade;
+        work->sheet[CARDS_PALETTE_RAMP_PICTURES + i * CARDS_PALETTE_RAMP_BYTES +
+                    j] = shade;
       }
     }
-    length = 116;
+    totalFrames = 116;
   } else {
     Resource_LoadAndDecompress(RESOURCE_SKELETON_CARD_SHEET, CARD, 1, 1);
     Resource_LoadAndDecompress(RESOURCE_COUNTER_REVEAL_SHEET, work->sheet, 1,
                                0);
     Resource_LoadAndDecompress(RESOURCE_RED_CRESCENT_SHEET_A, Ram_MapCellBuffer,
                                1, 0);
-    length = 88;
+    totalFrames = 88;
   }
   EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_CLEAR, 0);
   if (mode == CARD_BAFFLE)
     Task_Add(BattleEffect_ArmBg2AffineHBlankDma, TASK_PASS_FRAME);
   REG_BG2PA = Q_8_8(1);
 
-  for (frame = 0; frame != length; frame++) {
+  for (frame = 0; frame != totalFrames; frame++) {
     // Frame 0: find the user and the targets' middle (the Death Card's 32
     // pixels toward the user), and scroll the background to the user.
     if (frame == 0) {
@@ -137,8 +148,8 @@ void BattleEffect_RunCards(struct BattleEffectParams *args, s32 mode) {
     }
 
     // The last eight frames: the screen fades.
-    if (frame >= length - 8) {
-      s32 fade = frame - length + 8;
+    if (frame >= totalFrames - 8) {
+      s32 fade = frame - totalFrames + 8;
 
       REG_BLDALPHA = ((fade + 8) << 8) | (16 - fade * 2);
     }
@@ -197,20 +208,20 @@ void BattleEffect_RunCards(struct BattleEffectParams *args, s32 mode) {
             BattleEffect_StepPaletteToResource(RESOURCE_DAGGER_SHEET);
         }
         if (frame == 48) {
-          for (i = 0; i != 256; i++)
+          for (i = 0; i != 8 * CARD_WIDTH; i++)
             noise[i] = Random16() & 15;
         }
         if (frame >= 48 && frame <= 63) {
           u8 *card = CARD;
 
-          for (i = 0; i != 64; i++) {
+          for (i = 0; i != CARD_HEIGHT; i++) {
             // first, free here, holds the cleared pixel: a second lifetime
             // keeps the flight's copy of card.x (see the header).
-            for (j = 0; j != 32; j++) {
+            for (j = 0; j != CARD_WIDTH; j++) {
               /* FAKEMATCH(dead): first cleared inside the test, or'd into frame
                * - 48. */
-              if (noise[(i & 7) * 32 + j] == (frame - 48 | (first = 0)))
-                card[i * 32 + j] = first;
+              if (noise[(i & 7) * CARD_WIDTH + j] == (frame - 48 | (first = 0)))
+                card[i * CARD_WIDTH + j] = first;
             }
           }
         }
@@ -219,10 +230,10 @@ void BattleEffect_RunCards(struct BattleEffectParams *args, s32 mode) {
 
     // The card, until its picture takes over.
     if (mode == CARD_SLEEP)
-      limit = 120;
+      cardFrames = 120;
     else
-      limit = mode == CARD_SWORD ? 72 : 80;
-    if (frame < limit) {
+      cardFrames = mode == CARD_SWORD ? 72 : 80;
+    if (frame < cardFrames) {
       vertices = Heap_AllocEwram(32);
       model = Render_AllocateModelList(1);
       texture.logWidth = 5;
@@ -283,8 +294,9 @@ void BattleEffect_RunCards(struct BattleEffectParams *args, s32 mode) {
         step = &work->particles[i];
         if (step->variant >= 0 && step->variant <= 15) {
           draw[0](canvas, work->sheet + (step->variant / 4 << 10),
-                  overflow + FIXED_INTEGER_PART(step->x) - 16,
-                  FIXED_INTEGER_PART(step->y) - 16, 32, 32);
+                  overflow + FIXED_INTEGER_PART(step->x) - CLOUD_PUFF_WIDTH / 2,
+                  FIXED_INTEGER_PART(step->y) - CLOUD_PUFF_HEIGHT / 2,
+                  CLOUD_PUFF_WIDTH, CLOUD_PUFF_HEIGHT);
           BattleEffectKernels_IntegrateVector2(step, 62, -toFIXED(1) / 16);
           if (step->y > toFIXED(96)) {
             step->velocityY = 0;
@@ -307,7 +319,7 @@ void BattleEffect_RunCards(struct BattleEffectParams *args, s32 mode) {
         u32 mask = 127; // Holds one constant for its whole life.
 
         slot = frame - 48;
-        sheep = (struct Particle *)(slot * 28 + (s32)work->particles);
+        sheep = &work->particles[slot];
         sheep->x = toFIXED(64);
         sheep->y = toFIXED(48);
         sheep->velocityX = ((Random16() & mask) - 64) << 11;
@@ -317,10 +329,10 @@ void BattleEffect_RunCards(struct BattleEffectParams *args, s32 mode) {
       for (i = 0; i != ARRAY_COUNT(work->particles); i++) {
         step = &work->particles[i];
         if (step->variant >= 0 && step->variant <= 63) {
-          draw[0](canvas,
-                  Ram_MapCellBuffer + 0x683e + ((step->variant / 4 & 3) << 10),
-                  overflow + FIXED_INTEGER_PART(step->x) - 16,
-                  FIXED_INTEGER_PART(step->y) - 16, 32, 32);
+          draw[0](canvas, CARD_SHEEP + ((step->variant / 4 & 3) << 10),
+                  overflow + FIXED_INTEGER_PART(step->x) - SHEEP_WIDTH / 2,
+                  FIXED_INTEGER_PART(step->y) - SHEEP_HEIGHT / 2, SHEEP_WIDTH,
+                  SHEEP_HEIGHT);
           BattleEffectKernels_IntegrateVector2(step, 62, toFIXED(1) / 8);
           step->variant++;
         }

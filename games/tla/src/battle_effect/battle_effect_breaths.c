@@ -10,6 +10,18 @@ enum CrescentSlashMode { CRESCENT_SLASH_HUMAN_HUNT, CRESCENT_SLASH_ECHO_CUT };
 
 /// The jaws' texture, unpacked into the map cell buffer's second 16 KB.
 #define JAW_TEXTURE (Ram_MapCellBuffer + 0x4000)
+/// The Beam's 16 fading rings of 32x32, one after another in the sheet, and the
+/// glow every breath draws at the mouth after them.
+#define BEAM_RING_SIZE 32
+#define BEAM_RING_COUNT 16
+#define BEAM_RING_BYTES (BEAM_RING_SIZE * BEAM_RING_SIZE)
+#define BREATH_GLOW 0x4000
+/// The motes that gather at the mouth, after the rolling ball.
+#define BREATH_MOTES (work->particles + 32)
+#define BREATH_MOTE_COUNT 32
+/// DustCloudSheet's ball.
+#define DUST_BALL_WIDTH 32
+#define DUST_BALL_HEIGHT 48
 
 // The breaths (Beam, Rolling Flame, Ghost Soldier and Pike Assault, Blast
 // Breath): 32 motes gather at the user's mouth, then burst out of it as
@@ -55,10 +67,10 @@ void BattleEffect_RunBreaths(struct BattleEffectParams *args, s32 mode) {
                              0);
   Resource_LoadAndDecompress(RESOURCE_FLAME_BAND_TEXTURE, JAW_TEXTURE, 0, 0);
   if (mode == BREATH_BEAM) {
-    for (i = 0; i != 16; i++) {
-      u8 *pixel = work->sheet + i * 0x400;
+    for (i = 0; i != BEAM_RING_COUNT; i++) {
+      u8 *pixel = work->sheet + i * BEAM_RING_BYTES;
 
-      for (j = 0; j != 32; j++) {
+      for (j = 0; j != BEAM_RING_SIZE; j++) {
         s32 shade;
         s32 k;
 
@@ -71,7 +83,7 @@ void BattleEffect_RunBreaths(struct BattleEffectParams *args, s32 mode) {
           shade = CANVAS_LEVEL_BRIGHTEST;
         if (shade < 0)
           shade = 0;
-        for (k = 0; k != 32; k++)
+        for (k = 0; k != BEAM_RING_SIZE; k++)
           *pixel++ = shade;
       }
     }
@@ -111,8 +123,8 @@ void BattleEffect_RunBreaths(struct BattleEffectParams *args, s32 mode) {
     // Frame 0: 32 motes wait around the mouth, each a frame later; the
     // rolling ball sets out from the mouth toward the target.
     if (frame == 0) {
-      for (i = 0; i != 32; i++) {
-        step = &work->particles[32 + i];
+      for (i = 0; i != BREATH_MOTE_COUNT; i++) {
+        step = &BREATH_MOTES[i];
         step->variant = -i;
         step->x = Random16();
         step->y = (Random16() & 31) + 32;
@@ -146,9 +158,9 @@ void BattleEffect_RunBreaths(struct BattleEffectParams *args, s32 mode) {
         if (size > gBreaths_MaxSizes[args->variant])
           size = gBreaths_MaxSizes[args->variant];
         if (size > 0) {
-          BattleEffect_DrawShadedCirclesMirrored(work->sheet + 0x4000, size,
-                                                 0x10000);
-          draw[1](canvas, work->sheet + 0x4000, mouthX - size / 2,
+          BattleEffect_DrawShadedCirclesMirrored(work->sheet + BREATH_GLOW,
+                                                 size, FIXED_ONE);
+          draw[1](canvas, work->sheet + BREATH_GLOW, mouthX - size / 2,
                   mouthY - size, size, size * 2);
         }
       }
@@ -162,17 +174,17 @@ void BattleEffect_RunBreaths(struct BattleEffectParams *args, s32 mode) {
           size = 104 - frame * 2;
         half = size >> 1;
         size = half * 2;
-        BattleEffect_DrawShadedCirclesMirrored(work->sheet + 0x4000, size,
-                                               0x10000);
-        draw[1](canvas, work->sheet + 0x4000, mouthX - (size >> 1),
+        BattleEffect_DrawShadedCirclesMirrored(work->sheet + BREATH_GLOW, size,
+                                               FIXED_ONE);
+        draw[1](canvas, work->sheet + BREATH_GLOW, mouthX - (size >> 1),
                 mouthY - size, size, half * 4);
       }
 
       if (frame >= gBreaths_BurstFrames[mode]) {
         // The burst: the motes fly out of the mouth, away from the targets.
         if (frame == gBreaths_BurstFrames[mode]) {
-          for (i = 0; i != 32; i++) {
-            step = &work->particles[32 + i];
+          for (i = 0; i != BREATH_MOTE_COUNT; i++) {
+            step = &BREATH_MOTES[i];
             step->x = INTtoFIXED(mouthX);
             step->y = INTtoFIXED(mouthY);
             step->velocityY = ((Random16() & 63) - 32) << 14;
@@ -183,8 +195,8 @@ void BattleEffect_RunBreaths(struct BattleEffectParams *args, s32 mode) {
             step->variant = (Random16() & 15) + 16;
           }
         }
-        for (i = 0; i != 32; i++) {
-          step = &work->particles[32 + i];
+        for (i = 0; i != BREATH_MOTE_COUNT; i++) {
+          step = &BREATH_MOTES[i];
           if (step->variant >= 0) {
             s32 size = (i & 3) + 1;
 
@@ -201,8 +213,8 @@ void BattleEffect_RunBreaths(struct BattleEffectParams *args, s32 mode) {
         }
       } else {
         // Before it: the motes spiral into the mouth.
-        for (i = 0; i != 32; i++) {
-          step = &work->particles[32 + i];
+        for (i = 0; i != BREATH_MOTE_COUNT; i++) {
+          step = &BREATH_MOTES[i];
           if (++step->variant >= 0) {
             s32 x = mouthX + (FIXEDtoINT(Trig_Sin(step->x) * step->y));
             s32 y = mouthY + (FIXEDtoINT(Trig_Cos(step->x) * step->y));
@@ -227,17 +239,17 @@ void BattleEffect_RunBreaths(struct BattleEffectParams *args, s32 mode) {
 
           if (ring < 0)
             ring = 0;
-          if (ring > 15)
-            ring = 15;
+          if (ring > BEAM_RING_COUNT - 1)
+            ring = BEAM_RING_COUNT - 1;
           for (i = 0; i != 4; i++) {
             if (args->side == EFFECT_SIDE_ENEMIES) {
-              draw[0](canvas, work->sheet + (ring << 10), x - 40, y - 48, 32,
-                      32);
-              x -= 32;
+              draw[0](canvas, work->sheet + (ring << 10), x - 40, y - 48,
+                      BEAM_RING_SIZE, BEAM_RING_SIZE);
+              x -= BEAM_RING_SIZE;
             } else {
-              draw[0](canvas, work->sheet + (ring << 10), x + 8, y - 48, 32,
-                      32);
-              x += 32;
+              draw[0](canvas, work->sheet + (ring << 10), x + 8, y - 48,
+                      BEAM_RING_SIZE, BEAM_RING_SIZE);
+              x += BEAM_RING_SIZE;
             }
           }
         }
@@ -245,8 +257,10 @@ void BattleEffect_RunBreaths(struct BattleEffectParams *args, s32 mode) {
                  frame >= gBreaths_BurstFrames[mode]) {
         // The ball of dust rolls to the target.
         step = &work->particles[0];
-        draw[0](canvas, work->sheet, FIXED_INTEGER_PART(step->x) - 16,
-                FIXED_INTEGER_PART(step->y) - 24, 32, 48);
+        draw[0](canvas, work->sheet,
+                FIXED_INTEGER_PART(step->x) - DUST_BALL_WIDTH / 2,
+                FIXED_INTEGER_PART(step->y) - DUST_BALL_HEIGHT / 2,
+                DUST_BALL_WIDTH, DUST_BALL_HEIGHT);
         BattleEffectKernels_IntegrateVector2(step, 56, 0);
         step->velocityX += step->z;
         step->velocityY += step->velocityZ;
@@ -460,8 +474,8 @@ void BattleEffect_RunEchoCut(struct BattleEffectParams *args) {
   BattleEffect_RunCrescentSlash(args, CRESCENT_SLASH_ECHO_CUT);
 }
 
-// Does nothing and gives no value: inlined with its value ignored, it leaves
-// only a clobber of the return register, an insn with no code.
+/// Does nothing and gives no value: inlined with its value ignored, it leaves
+/// only a clobber of the return register, an insn with no code.
 static inline s32 Nothing(void) {}
 
 #define CRESCENT_SLASH_FRAMES 32

@@ -1684,6 +1684,7 @@ struct StripTriangle {
   u8 endPad[2];
 };
 
+/// One quad of a vertex strip: its upper and lower triangles.
 struct StripQuad {
   struct StripTriangle upper;
   struct StripTriangle lower;

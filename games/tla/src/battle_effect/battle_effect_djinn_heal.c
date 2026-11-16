@@ -228,9 +228,12 @@ void BattleEffect_RunTumblingQuads(struct BattleEffectParams *args, s32 mode) {
 #define ZAGAN_PARTS 12
 
 #define ZAGAN_FRAMES 200 ///< frames of the gallop, the swing and the dust
-/// Three rows of a 32-shade ramp in the effect's pictures, drawn as the
+/// PetalSheet's four 60x100 pictures, drawn at Zagan's position as it gallops.
+#define ZAGAN_PETALS_WIDTH 60
+#define ZAGAN_PETALS_HEIGHT 100
+/// Three rows of a 32-shade ramp after PetalSheet's pictures, drawn as the
 /// streaks that blow across the field.
-#define ZAGAN_BAND 24000
+#define ZAGAN_BAND (4 * PICTURE_BYTES(ZAGAN_PETALS))
 
 /// The screen slides over to a white field and petals blow across it; Zagan
 /// (twelve objects) gallops in from the right as the backdrop darkens, rears,
@@ -532,9 +535,11 @@ void BattleEffect_RunZagan(struct BattleEffectParams *args) {
         velocity.y = velocity.y * 61 / DAMPING_SCALE;
       }
       if ((!(frame & 1) || !skip) && frame <= 119) {
-        blit[1](canvas, work->sheet + ((frame / 3) & 3) * 6000,
+        blit[1](canvas,
+                work->sheet + ((frame / 3) & 3) * PICTURE_BYTES(ZAGAN_PETALS),
                 (FIXEDtoINT(position.x / 2)) - 12,
-                (FIXEDtoINT(position.y)) - 58, 60, 100);
+                (FIXEDtoINT(position.y)) - 58, ZAGAN_PETALS_WIDTH,
+                ZAGAN_PETALS_HEIGHT);
       }
       if (frame == 157) {
         Resource_LoadAndDecompress(RESOURCE_FLAME_BAND_TEXTURE, ringPixels, 0,

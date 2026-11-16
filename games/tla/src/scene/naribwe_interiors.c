@@ -94,6 +94,8 @@ s32 NaribweInteriors_MindReadFortuneTeller(void) {
   return 0;
 }
 
+/// Once Gabomba's message is carried: "Items placed before me are filled with
+/// the desires of those who..."
 s32 NaribweInteriors_MindReadFortuneTellerOnReturn(void) {
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
@@ -116,6 +118,8 @@ enum { SHOP_NARIBWE_WEAPONS = 14, SHOP_NARIBWE_ARMOR = 15 };
 /// Naribwe's inn, as Inn_CheckIn numbers the inns.
 enum { NARIBWE_INN = 5 };
 
+/// The weapon shopkeeper: across the counter, the shop; from anywhere else,
+/// advice to take a weapon to the fortune-teller.
 void NaribweInteriors_RecommendFortuneTeller(s32 actor) {
   u16 facing = Actor_Get(gMainRoutineWork.leaderActorId)->facing;
 
@@ -131,6 +135,9 @@ void NaribweInteriors_RecommendFortuneTeller(s32 actor) {
   }
 }
 
+/// The weapon shopkeeper once Gabomba's message is carried: across the
+/// counter, the shop; from anywhere else, how out-of-town customers are always
+/// sent to the fortune-teller.
 void NaribweInteriors_RecommendFortuneTellerOnReturn(s32 actor) {
   u16 facing = Actor_Get(gMainRoutineWork.leaderActorId)->facing;
 
@@ -146,6 +153,8 @@ void NaribweInteriors_RecommendFortuneTellerOnReturn(s32 actor) {
   }
 }
 
+/// The armor shopkeeper: across the counter, the shop; from anywhere else,
+/// advice to visit the fortune-teller while in the village.
 void NaribweInteriors_SendToFortuneTeller(s32 actor) {
   u16 facing = Actor_Get(gMainRoutineWork.leaderActorId)->facing;
 
@@ -162,6 +171,9 @@ void NaribweInteriors_SendToFortuneTeller(s32 actor) {
   }
 }
 
+/// The armor shopkeeper once Gabomba's message is carried: across the counter,
+/// the shop; from anywhere else, the fortune-teller for anything one wishes to
+/// know.
 void NaribweInteriors_SendToFortuneTellerOnReturn(s32 actor) {
   u16 facing = Actor_Get(gMainRoutineWork.leaderActorId)->facing;
 
@@ -193,6 +205,8 @@ void NaribweInteriors_TalkAboutCooking(s32 actor) {
   }
 }
 
+/// The innkeeper once Gabomba's message is carried: across the counter, the
+/// inn; from anywhere else, too many travelers to remember Piers among them.
 void NaribweInteriors_TalkAboutTravelers(s32 actor) {
   u16 facing = Actor_Get(gMainRoutineWork.leaderActorId)->facing;
 
@@ -383,11 +397,12 @@ read:
   } else {
     rawKind = info[2];
     kind = rawKind;
-    if (kind == 6)
+    if (kind == ITEM_TYPE_PSYNERGY)
       NaribweInteriors_ReadShiningItem();
-    else if (kind == 1)
+    else if (kind == ITEM_TYPE_WEAPON)
       NaribweInteriors_ReadWeapon();
-    else if ((u8)((u8)rawKind - 2) <= 3)
+    else if ((u8)((u8)rawKind - ITEM_TYPE_ARMOR) <=
+             ITEM_TYPE_BOOTS - ITEM_TYPE_ARMOR)
       NaribweInteriors_ReadArmor();
     else
       NaribweInteriors_ReadOtherItem();
@@ -957,12 +972,15 @@ struct ActorPlacement gActorPlacements[] = {
     ACTOR_PLACEMENT(SPRITE_SUNSHINES_CHILD, CONDITION_ALWAYS,
                     MOVEMENT_TYPE_WANDER, 120, 0, 104, FACING_SOUTHWEST,
                     TALK_FACING_PARTY_AND_BACK, 0),
-    ACTOR_PLACEMENT(116, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 88, 0, 360,
-                    FACING_SOUTHEAST, TALK_FACING_PARTY_AND_BACK, 0),
-    ACTOR_PLACEMENT(25, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 672, 0, 94,
-                    FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
-    ACTOR_PLACEMENT(106, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 651, 0, 106,
-                    FACING_SOUTHEAST, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(SPRITE_WOMAN_IN_PURPLE_SKIRT, CONDITION_ALWAYS,
+                    MOVEMENT_TYPE_STAND, 88, 0, 360, FACING_SOUTHEAST,
+                    TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(SPRITE_FORTUNE_TELLER, CONDITION_ALWAYS,
+                    MOVEMENT_TYPE_STAND, 672, 0, 94, FACING_SOUTH,
+                    TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(SPRITE_BOY_WITH_SPIKY_HAIR, CONDITION_ALWAYS,
+                    MOVEMENT_TYPE_STAND, 651, 0, 106, FACING_SOUTHEAST,
+                    TALK_FACING_PARTY_AND_BACK, 0),
     ACTOR_PLACEMENT(SPRITE_SUNSHINES_WIFE, CONDITION_ALWAYS,
                     MOVEMENT_TYPE_STAND, 693, 0, 106, FACING_SOUTH,
                     TALK_FACING_PARTY_AND_BACK, 0),
@@ -977,10 +995,10 @@ struct ActorPlacement gActorPlacements[] = {
                     TALK_FACING_PARTY_AND_BACK, 0),
     ACTOR_PLACEMENT(SPRITE_INN_WORKER, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
                     328, 0, 368, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
-    ACTOR_PLACEMENT(489, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 672, 0, 112,
-                    FACING_SOUTH, TALK_FACING_PARTY, 0),
-    ACTOR_PLACEMENT(489, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 672, 0, 104,
-                    FACING_SOUTH, TALK_FACING_PARTY, 0),
+    ACTOR_PLACEMENT(SPRITE_UNSEEN_MARKER, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
+                    672, 0, 112, FACING_SOUTH, TALK_FACING_PARTY, 0),
+    ACTOR_PLACEMENT(SPRITE_UNSEEN_MARKER, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
+                    672, 0, 104, FACING_SOUTH, TALK_FACING_PARTY, 0),
     ACTOR_PLACEMENT(SPRITE_FLAME_AND_SMOKE, CONDITION_ALWAYS,
                     MOVEMENT_TYPE_STAND, 672, 0, 104, FACING_SOUTH,
                     TALK_FACING_PARTY, 0),

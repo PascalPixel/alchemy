@@ -2441,10 +2441,10 @@ u32 gSceneExits[] = {
 };
 
 struct ActorPlacement gActorPlacements[] = {
-    ACTOR_PLACEMENT(418, CONDITION_ALWAYS,
+    ACTOR_PLACEMENT(SPRITE_MARS_TORCH_LIT, CONDITION_ALWAYS,
                     (s32)gMarsLighthouseStarRoom_StatueScript, 712, 0, 264,
                     FACING_SOUTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(419, CONDITION_ALWAYS,
+    ACTOR_PLACEMENT(SPRITE_MARS_TORCH, CONDITION_ALWAYS,
                     (s32)gMarsLighthouseStarRoom_StatueScript, 648, 0, 264,
                     FACING_SOUTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(SPRITE_ICE_CRACK, CONDITION_ALWAYS, 7, 680, 0, 240,

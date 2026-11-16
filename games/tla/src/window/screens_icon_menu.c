@@ -848,6 +848,8 @@ void IconMenu_DrawIcons(void) {
   s32 spriteY;
   u32 lastLine;
   u32 index;
+  // UB: edge steps from one line's window 1 edges to the next line's, past
+  // the member it points into.
   u16 *edge;
   struct ScreenTransitionState *state;
   struct WindowBuffer *page;

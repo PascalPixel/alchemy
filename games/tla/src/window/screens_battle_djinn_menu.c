@@ -24,10 +24,11 @@
 #define DJINN_MENU_ARROW_VRAM                                                  \
   (BG_CHAR_BLOCK(0) + DJINN_MENU_ARROW_TILE * TILE_SIZE_4BPP)
 
-// A selected Djinni packs its element and number (DJINN_COMMAND), standby bit
-// and recovery turns.
+// A selected Djinni packs its element and number (DJINN_COMMAND), its standby
+// bit and its recovery turns.
+/// DJINN_COMMAND_ELEMENT masked before the shift, as this menu reads it: the
+/// shift first differs in 239 of BattleDjinnMenu_Run's 1246 instructions.
 #define DJINN_PACKED_ELEMENT(entry) (((entry) & 0xf00) >> 8)
-#define DJINN_PACKED_NUMBER(entry) ((entry) & 0xff)
 #define DJINN_ENTRY_STANDBY 0x10000
 #define DJINN_ENTRY_RECOVERY_MASK 0x3e0000
 #define DJINN_ENTRY_RECOVERY_SHIFT 17
@@ -199,7 +200,7 @@ s32 BattleDjinnMenu_Run(s32 member, s32 unused) {
                                  MESSAGE_ARGUMENT_NUMBER);
             BATTLE_MENU_MESSAGE_COPY(
                 DJINN_PACKED_ELEMENT(selectedDjinn) * DJINN_PER_ELEMENT +
-                    DJINN_PACKED_NUMBER(selectedDjinn) + (s32)MsgDjinnEffect,
+                    DJINN_COMMAND_INDEX(selectedDjinn) + (s32)MsgDjinnEffect,
                 messageText, BATTLE_MENU_MESSAGE_CAPACITY);
             if (previewWindow != NULL) {
               Window_Close(previewWindow, 1);
@@ -222,7 +223,7 @@ s32 BattleDjinnMenu_Run(s32 member, s32 unused) {
               previewWindow, member, selectedDjinn, previewPage, &previewPages);
           BATTLE_MENU_MESSAGE_COPY(
               DJINN_PACKED_ELEMENT(selectedDjinn) * DJINN_PER_ELEMENT +
-                  DJINN_PACKED_NUMBER(selectedDjinn) + (s32)MsgDjinnEffect,
+                  DJINN_COMMAND_INDEX(selectedDjinn) + (s32)MsgDjinnEffect,
               messageText, BATTLE_MENU_MESSAGE_CAPACITY);
         }
       } else {
@@ -261,7 +262,7 @@ s32 BattleDjinnMenu_Run(s32 member, s32 unused) {
             Text_SetColor(TEXT_COLOR_RED);
           Text_DrawMessageAsTiles(
               DJINN_PACKED_ELEMENT(encodedDjinn) * DJINN_PER_ELEMENT +
-                  DJINN_PACKED_NUMBER(encodedDjinn) + (s32)MsgDjinnName,
+                  DJINN_COMMAND_INDEX(encodedDjinn) + (s32)MsgDjinnName,
               listWindow, 8, j * 16);
           if (encodedDjinn & DJINN_ENTRY_RECOVERY_MASK)
             Text_DrawNumberAtOffset(
@@ -538,6 +539,7 @@ s32 BattleDjinnMenu_Run(s32 member, s32 unused) {
 #undef DJINN_LIST_X
 #undef DJINN_LIST_WIDTH
 #undef DJINN_TURNS_X
+#undef DJINN_PACKED_ELEMENT
 #undef DJINN_ENTRY_STANDBY
 #undef DJINN_ENTRY_RECOVERY_MASK
 #undef DJINN_ENTRY_RECOVERY_SHIFT

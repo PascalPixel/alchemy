@@ -34,7 +34,7 @@ struct WindowSprite *WindowSprite_Create(s32 slot, s32 oamFlags,
   sprite->y = (s16)y;
   sprite->next = NULL;
   sprite->index = (s8)slot;
-  // Kind 1: the sprite owns the slot, which is freed with it.
+  // An icon owns its VRAM cache slot, which is freed with it.
   sprite->kind = WINDOW_SPRITE_ICON;
   sprite->motion = 1;
   WindowSprite_AppendToList((struct WindowSpriteList *)window, sprite);

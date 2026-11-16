@@ -349,7 +349,7 @@ s32 Save_CountFilesExcludingSent(s32 excludeSent) {
 
 /// Loads the save file summaries for the File Screen and returns how many files
 /// there are: plus SAVE_SCAN_ALL_CLEARED when every file is cleared (its send
-/// excludeSent set), or SAVE_ERROR_NO_MEMORY when the backup memory cannot be
+/// flag set), or SAVE_ERROR_NO_MEMORY when the backup memory cannot be
 /// read. Sets the title's options from them: Battle when a file has any of game
 /// flags 48-127 set, Update when a file has a level and FLAG_REUNITED clear.
 s32 Save_ScanFileSummaries(void) {

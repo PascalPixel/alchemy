@@ -18,20 +18,20 @@ extern const struct Scale gTrident_UnitScale;
 
 #define TRIDENT_FRAMES 104
 /// The sparks the trident throws, in the map cell buffer.
-#define TRIDENT_SPARKS ((struct Particle *)(Ram_MapCellBuffer + 0x2964))
+#define TRIDENT_SPARKS ((struct Particle *)(Ram_MapCellBuffer + 10596))
 #define TRIDENT_SPARK_COUNT 128
 
 /// Where JaggedStreakSheet is decoded in the effect's pictures.
-#define TRIDENT_JAGGED_STREAKS 0xc56
+#define TRIDENT_JAGGED_STREAKS 3158
 
 /// Where FlameZigzagTexture is decoded in the map cell buffer.
-#define TRIDENT_FLAME_ZIGZAG 0x1000
+#define TRIDENT_FLAME_ZIGZAG 4096
 
 /// Where BillowTexture is decoded in the map cell buffer.
-#define TRIDENT_BILLOW 0x1400
+#define TRIDENT_BILLOW 5120
 
 /// Where FlashBurstSheet is decoded in the map cell buffer.
-#define TRIDENT_FLASH_BURST 0x5000
+#define TRIDENT_FLASH_BURST 20480
 
 /// Poseidon (four objects) rises behind the targets as rings of foam
 /// spread across the water; seven spinning tridents fly in from frame 18,
@@ -82,7 +82,7 @@ void BattleEffect_RunTrident(struct BattleEffectParams *args) {
   /* FAKEMATCH(temporary): the orange palette's id in a local. */
   orangeBase = RESOURCE_ORANGE_PALETTE_B - 4;
   Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_FRAME);
-  circles = (s16 *)(work->sheet + 0x4c56);
+  circles = (s16 *)(work->sheet + 19542);
   Resource_LoadAndDecompress(RESOURCE_TORNADO_SHEET, work->sheet, 1, 0);
   // offset first holds the cell buffer's address, for the FlashBurst load.
   offset = (s32)gMapGridCellBuffer;
@@ -99,7 +99,7 @@ void BattleEffect_RunTrident(struct BattleEffectParams *args) {
   }
   Resource_LoadAndDecompress(RESOURCE_FLASH_BURST_SHEET,
                              (u8 *)offset + TRIDENT_FLASH_BURST, 1, 0);
-  offset = 0x2400;
+  offset = 9216;
   // Twelve shaded droplets, 2 to 24 wide.
   for (i = 0; i != 12; i++) {
     BattleEffect_DrawShadedCircles((u8 *)(offset + cells), size, FIXED_ONE);
@@ -211,7 +211,7 @@ void BattleEffect_RunTrident(struct BattleEffectParams *args) {
         p->variant++;
         if (i == 0) {
           if (frame > 39) {
-            u8 *pool = work->sheet + 0x4c86;
+            u8 *pool = work->sheet + 19590;
 
             BattleEffect_DrawShadedCircles(pool, grow, FIXED_ONE);
             Canvas_BlitAtFoot(pool, centerX, 100, grow);
@@ -254,7 +254,7 @@ void BattleEffect_RunTrident(struct BattleEffectParams *args) {
     if (frame > 7) {
       s32 scale;
 
-      vertices = Heap_AllocEwram(0x400);
+      vertices = Heap_AllocEwram(1024);
       model = Render_AllocateModelList(1);
       texture.logWidth = 7;
       texture.logHeight = 7;
@@ -275,7 +275,7 @@ void BattleEffect_RunTrident(struct BattleEffectParams *args) {
         if (frame <= start) {
           continue;
         }
-        scale = (frame - start) * gTrident_RingGrowth[i] * 1500 + 0x4180;
+        scale = (frame - start) * gTrident_RingGrowth[i] * 1500 + 16768;
         shade = (start - frame) * 8 + 56;
         if (shade > 0) {
           shade = 0;
@@ -338,7 +338,7 @@ void BattleEffect_RunTrident(struct BattleEffectParams *args) {
             Matrix_RotateY(DEGtoANG(180));
           }
           spinner->z += spinner->velocityZ;
-          Matrix_Scale(FIXED_ONE * 2, 0x12710, FIXED_ONE);
+          Matrix_Scale(FIXED_ONE * 2, 75536, FIXED_ONE);
           Render_TransformVertices(gTrident_ProngCorners + x * 4, vertices, 4);
           Render_DrawModelList(model);
         }
@@ -456,17 +456,17 @@ void BattleEffect_RunPlanetary(struct BattleEffectParams *args) {
 }
 
 #define LEAP_FRAMES 88
-#define SPARKS ((struct Particle *)(Ram_MapCellBuffer + 0x6000))
+#define SPARKS ((struct Particle *)(Ram_MapCellBuffer + 24576))
 
 /// Where FlameballSheet (Planet Diver) or ClawSlashSheet (Planetary) is decoded
 /// in the effect's pictures.
-#define LEAPING_STRIKE_PICTURES 0x3000
+#define LEAPING_STRIKE_PICTURES 12288
 
 /// Where BillowTexture is decoded in the effect's pictures.
-#define LEAPING_STRIKE_BILLOW 0x4000
+#define LEAPING_STRIKE_BILLOW 16384
 
 /// Where FlameBandTexture is decoded in the effect's pictures.
-#define LEAPING_STRIKE_FLAME_BAND 0x5000
+#define LEAPING_STRIKE_FLAME_BAND 20480
 
 /// The caster flashes and sixteen flames ring it (frames 2-15), leaps up at
 /// frame 4 and comes down on the target at frame 16, sliding to it over the
@@ -565,7 +565,7 @@ void BattleEffect_RunLeapingStrike(struct BattleEffectParams *args, s32 mode) {
     // Frame 4: the leap, away from the caster's own side.
     if (frame == 4) {
       caster->autoFaceMotion = 0;
-      caster->verticalMotionStrength = 0x9999;
+      caster->verticalMotionStrength = toFIXED(3) / 5;
       caster->velocityY = toFIXED(15);
       if (caster->x < 0)
         caster->velocityX = -toFIXED(8);
@@ -676,12 +676,12 @@ void BattleEffect_RunLeapingStrike(struct BattleEffectParams *args, s32 mode) {
           Matrix_Translate(INTtoFIXED(pos.x - 60), INTtoFIXED(pos.y - 80), 0);
           Matrix_Scale(FIXED_ONE / 2, FIXED_ONE, FIXED_ONE / 2);
           if (args->side == EFFECT_SIDE_ENEMIES) {
-            Matrix_RotateZ(-0x3388);
+            Matrix_RotateZ(-13192);
           } else {
             Matrix_RotateY(DEGtoANG(180));
-            Matrix_RotateZ(-0x3388);
+            Matrix_RotateZ(-13192);
           }
-          Matrix_ScaleUniform(0x286a0);
+          Matrix_ScaleUniform(165536);
           Render_TransformVertices(gBattleEffect_SquareCorners, projected, 4);
           Render_DrawModelList(model);
         }
@@ -749,7 +749,7 @@ void BattleEffect_RunLeapingStrike(struct BattleEffectParams *args, s32 mode) {
               s32 scroll;
 
               start = frame - start;
-              scale = start * gLeapingStrike_RingGrowth[i] * 1500 + 0x4180;
+              scale = start * gLeapingStrike_RingGrowth[i] * 1500 + 16768;
 
               model->shade = shade;
               // Masked in place, the mask assigned first.
@@ -837,24 +837,24 @@ void Mesh_BuildGrid(struct MeshTriangle *triangles, s32 columns, s32 rows,
         struct MeshTriangle *triangle =
             (struct MeshTriangle *)((row * columns + column) * 24 +
                                     (u32)triangles);
-        s32 u0 = column * cellWidth;
-        s32 u1 = u0 + cellWidth - 1;
-        s32 v0 = row * cellHeight;
-        s32 v1 = v0 + cellHeight - 1;
+        s32 left = column * cellWidth;
+        s32 right = left + cellWidth - 1;
+        s32 top = row * cellHeight;
+        s32 bottom = top + cellHeight - 1;
 
-        triangle[0].texCoord[0][0] = u1;
-        triangle[0].texCoord[0][1] = v0;
-        triangle[0].texCoord[1][0] = u0;
-        triangle[0].texCoord[1][1] = v1;
-        triangle[0].texCoord[2][0] = u1;
-        triangle[0].texCoord[2][1] = v1;
+        triangle[0].texCoord[0][0] = right;
+        triangle[0].texCoord[0][1] = top;
+        triangle[0].texCoord[1][0] = left;
+        triangle[0].texCoord[1][1] = bottom;
+        triangle[0].texCoord[2][0] = right;
+        triangle[0].texCoord[2][1] = bottom;
         second = triangle + 1;
-        second->texCoord[0][0] = u0;
-        second->texCoord[0][1] = v0;
-        second->texCoord[1][0] = u0;
-        second->texCoord[1][1] = v1;
-        second->texCoord[2][0] = u1;
-        second->texCoord[2][1] = v0;
+        second->texCoord[0][0] = left;
+        second->texCoord[0][1] = top;
+        second->texCoord[1][0] = left;
+        second->texCoord[1][1] = bottom;
+        second->texCoord[2][0] = right;
+        second->texCoord[2][1] = top;
         triangle->vertex[0] = (column + 1) % columns + row * columns;
         triangle->vertex[1] = column % columns + columns + row * columns;
         triangle->vertex[2] = (column + 1) % columns + columns + row * columns;

@@ -7,13 +7,18 @@
 #include "gamepak/far_call/battle.h"
 #include "resource_ids.h"
 
-#define PILLAR_FRAMES 96
+// The fire pillars stand among the targets and scroll a column of fire up over
+// a flickering flame; each erupts in a fountain of sparks and keeps spitting
+// more.
 
+#define VOLCANO_FRAMES 96
 #define VOLCANO_ERUPTION 200 ///< sparks thrown as a pillar starts
 #define VOLCANO_TRICKLE 4    ///< and each frame after
 
 /// The flame on odd frames, then on even frames, after the 34x104 column.
 #define VOLCANO_FLAME_PICTURE_ODD PICTURE_BYTES(FIRE_PILLAR)
+#define VOLCANO_FLAME_PICTURE_EVEN                                             \
+  (VOLCANO_FLAME_PICTURE_ODD + PICTURE_BYTES(FIRE_PILLAR_FLAME))
 
 /// One, two or four columns of fire rise among the targets, each erupting in a
 /// fountain of sparks and knocking the targets back.
@@ -70,7 +75,7 @@ void BattleEffect_RunVolcano(struct BattleEffectParams *args) {
 
   EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
 
-  for (frame = 0; frame != PILLAR_FRAMES; frame++) {
+  for (frame = 0; frame != VOLCANO_FRAMES; frame++) {
     // The strongest variant turns the camera for 64 frames.
     camera = Ram_HeapSlots->cameraWork;
     if (args->variant == EFFECT_VARIANT_STRONGEST && frame < 64) {
@@ -97,11 +102,13 @@ void BattleEffect_RunVolcano(struct BattleEffectParams *args) {
         if (frame >= gVolcano_StartFrames[pillar] + 4) {
           s32 scroll = (frame * 16 + pillar * 25) % FIRE_PILLAR_HEIGHT;
 
-          draw[pillar & 1](canvas, work->sheet, screen.x - 17,
+          draw[pillar & 1](canvas, work->sheet,
+                           screen.x - FIRE_PILLAR_WIDTH / 2,
                            screen.y - scroll - FIRE_PILLAR_HEIGHT,
                            FIRE_PILLAR_WIDTH, FIRE_PILLAR_HEIGHT);
-          draw[pillar & 1](canvas, work->sheet, screen.x - 17,
-                           screen.y - scroll, 34, scroll);
+          draw[pillar & 1](canvas, work->sheet,
+                           screen.x - FIRE_PILLAR_WIDTH / 2, screen.y - scroll,
+                           FIRE_PILLAR_WIDTH, scroll);
           if (frame & 1) {
             draw[0](canvas, work->sheet + VOLCANO_FLAME_PICTURE_ODD,
                     screen.x - FIRE_PILLAR_FLAME_WIDTH, screen.y - 24,
@@ -110,11 +117,12 @@ void BattleEffect_RunVolcano(struct BattleEffectParams *args) {
                     screen.y - 24, FIRE_PILLAR_FLAME_WIDTH,
                     FIRE_PILLAR_FLAME_HEIGHT);
           } else {
-            draw[0](canvas, work->sheet + 0x10b4,
+            draw[0](canvas, work->sheet + VOLCANO_FLAME_PICTURE_EVEN,
                     screen.x - FIRE_PILLAR_FLAME_WIDTH, screen.y - 24,
                     FIRE_PILLAR_FLAME_WIDTH, FIRE_PILLAR_FLAME_HEIGHT);
-            draw[1](canvas, work->sheet + 0x10b4, screen.x, screen.y - 24,
-                    FIRE_PILLAR_FLAME_WIDTH, FIRE_PILLAR_FLAME_HEIGHT);
+            draw[1](canvas, work->sheet + VOLCANO_FLAME_PICTURE_EVEN, screen.x,
+                    screen.y - 24, FIRE_PILLAR_FLAME_WIDTH,
+                    FIRE_PILLAR_FLAME_HEIGHT);
           }
         }
 
@@ -133,7 +141,7 @@ void BattleEffect_RunVolcano(struct BattleEffectParams *args) {
 
               speed = (Random16() & 0x3ff) + 32;
               angle = (Random16() & 0x7fff) - DEGtoANG(90);
-              SET_POSITION(spark, screen.x << 8, (screen.y << 8) + 0x1000,
+              SET_POSITION(spark, screen.x << 8, (screen.y << 8) + (16 << 8),
                            (Trig_Sin(angle) * speed) >> 15);
               spark->velocityY = -(Trig_Cos(angle) * speed * 2) >> 15;
               spawned++;
@@ -202,4 +210,3 @@ void BattleEffect_RunVolcano(struct BattleEffectParams *args) {
   Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
   BattleEffect_EndCanvasLayer();
 }
-#undef PILLAR_FRAMES

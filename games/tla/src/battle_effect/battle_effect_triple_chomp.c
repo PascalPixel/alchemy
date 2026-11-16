@@ -12,9 +12,6 @@
 /// Each bite's anchor, where its jaw is drawn: the first three particles.
 #define BITE_ANCHOR(bite) (&work->particles[bite])
 
-// A texture for the model kernels: its size as powers of two, then its
-// pixels.
-
 // Triple Chomp: the caster lunges 80% of the way to the
 // target, and three bites close on it at frames 0, 12 and 24. Each bite
 // throws 32 blue sparks that fly off away from the caster, jolts and flashes
@@ -177,13 +174,13 @@ void BattleEffect_RunBeam(struct BattleEffectParams *args) {
 
 /// Abilities: Rolling Flame.
 void BattleEffect_RunRollingFlame(struct BattleEffectParams *args) {
-  args->variant = 2;
+  args->variant = EFFECT_VARIANT_STRONGEST;
   BattleEffect_RunBreaths(args, BREATH_ROLLING_FLAME);
 }
 
 /// Abilities: Ghost Soldier, Pike Assault.
 void BattleEffect_RunGhostSoldier(struct BattleEffectParams *args) {
-  args->variant = 2;
+  args->variant = EFFECT_VARIANT_STRONGEST;
   BattleEffect_RunBreaths(args, BREATH_PIKE);
 }
 

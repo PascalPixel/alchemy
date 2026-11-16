@@ -6,16 +6,26 @@
 #include "battle_effect_internal.h"
 #include "sounds.h"
 
-/// Jumps the user toward the first target and emits type 4 sparks after 29
-/// frames.
+/// The flashing strike's modes (BattleEffect_RunFlashingStrike), each named for
+/// the ability that plays it: which pictures it shows and how the user moves.
+enum FlashingStrikeMode {
+  FLASHING_STRIKE_UNUSED,       ///< RevealMaskE and F; nothing passes it
+  FLASHING_STRIKE_QUICK_STRIKE, ///< RevealMaskC and D, with a hop
+  FLASHING_STRIKE_VORPAL_SLASH, ///< RevealMaskA and B
+  FLASHING_STRIKE_LUNAR_SLASH,  ///< RevealMaskC and D, then Weaken
+  FLASHING_STRIKE_BOOST_HACK,   ///< RevealMaskA and B in other colours, a pose
+  FLASHING_STRIKE_TWIN_SHEAR    ///< the arc fragments, each with its reflection
+};
+
+/// The user leaps high at the first target, then sparks burst beneath it.
+///
+/// Abilities: Thrash.
 void BattleEffect_RunThrash(struct BattleEffectParams *args) {
-  // Jump 3/4 of the distance at displacement / 24, with initial vertical
-  // speed 12.2.
-  BattleMotion_ApproachTargetFar(args->user, args->targets[0], 24, 0xc3333);
+  BattleMotion_ApproachTargetFar(args->user, args->targets[0], 24,
+                                 toFIXED(61) / 5);
   wait(29);
-  args->variant = 4;
-  BattleEffect_RunSparkGroups(
-      args, SPARK_GROUPS_RISING); // 2: from the user's position.
+  args->variant = SPARK_GROUPS_THRASH;
+  BattleEffect_RunSparkGroups(args, SPARK_GROUPS_RISING);
 }
 
 /// The user leaps at the first target, waits 26 frames, and the spark groups
@@ -23,47 +33,48 @@ void BattleEffect_RunThrash(struct BattleEffectParams *args) {
 ///
 /// Abilities: Mighty Press.
 void BattleEffect_RunMightyPress(struct BattleEffectParams *args) {
-  BattleMotion_ApproachTargetFar(args->user, args->targets[0], 0x18, 0xc3333);
+  BattleMotion_ApproachTargetFar(args->user, args->targets[0], 24,
+                                 toFIXED(61) / 5);
   wait(26);
-  args->variant = 5;
+  args->variant = SPARK_GROUPS_MIGHTY_PRESS;
   BattleEffect_RunSparkGroups(args, SPARK_GROUPS_RISING);
 }
 
-/// Jumps the user toward the first target and emits type 3 sparks after 12
-/// frames.
+/// The user leaps at the first target, then sparks burst beneath it and the
+/// canvas flashes.
+///
+/// Abilities: Severe Blow.
 void BattleEffect_RunSevereBlow(struct BattleEffectParams *args) {
-  // Jump 3/4 of the distance at displacement / 24, with initial vertical
-  // speed 7.2.
-  BattleMotion_ApproachTargetFar(args->user, args->targets[0], 24, 0x73333);
+  BattleMotion_ApproachTargetFar(args->user, args->targets[0], 24,
+                                 toFIXED(36) / 5);
   wait(12);
-  args->variant = 3;
-  BattleEffect_RunSparkGroups(
-      args, SPARK_GROUPS_RISING); // 2: from the user's position.
+  args->variant = SPARK_GROUPS_SEVERE_BLOW;
+  BattleEffect_RunSparkGroups(args, SPARK_GROUPS_RISING);
 }
 
 /// Abilities: Quick Strike.
 void BattleEffect_RunQuickStrike(struct BattleEffectParams *args) {
-  BattleEffect_RunFlashingStrike(args, 1);
+  BattleEffect_RunFlashingStrike(args, FLASHING_STRIKE_QUICK_STRIKE);
 }
 
 /// Abilities: Vorpal Slash.
 void BattleEffect_RunVorpalSlash(struct BattleEffectParams *args) {
-  BattleEffect_RunFlashingStrike(args, 2);
+  BattleEffect_RunFlashingStrike(args, FLASHING_STRIKE_VORPAL_SLASH);
 }
 
 /// Abilities: Lunar Slash.
 void BattleEffect_RunLunarSlash(struct BattleEffectParams *args) {
-  BattleEffect_RunFlashingStrike(args, 3);
+  BattleEffect_RunFlashingStrike(args, FLASHING_STRIKE_LUNAR_SLASH);
 }
 
 /// Abilities: Boost Hack.
 void BattleEffect_RunBoostHack(struct BattleEffectParams *args) {
-  BattleEffect_RunFlashingStrike(args, 4);
+  BattleEffect_RunFlashingStrike(args, FLASHING_STRIKE_BOOST_HACK);
 }
 
 /// Abilities: Twin Shear.
 void BattleEffect_RunTwinShear(struct BattleEffectParams *args) {
-  BattleEffect_RunFlashingStrike(args, 5);
+  BattleEffect_RunFlashingStrike(args, FLASHING_STRIKE_TWIN_SHEAR);
 }
 
 #undef RESULTS_FRAME
@@ -89,19 +100,19 @@ void BattleEffect_RunFlashingStrike(struct BattleEffectParams *args,
   work = Ram_HeapSlots->battleEffect;
   canvas = Ram_HeapSlots->battleCanvas;
   BattleEffect_StartCanvasLayer(0);
-  if ((u32)(variant - 3) > 2)
+  if ((u32)(variant - FLASHING_STRIKE_LUNAR_SLASH) > 2)
     REG_BLDCNT = 0;
   REG_BLDALPHA = EFFECT_BLEND_ADD;
 
   // The pictures: 1 and 2 in the sheet, 3 and 4 in the map cell
-  // buffer (variant 5's four half pictures all there).
-  if (variant == 0) {
+  // buffer (Twin Shear's four half pictures all there).
+  if (variant == FLASHING_STRIKE_UNUSED) {
     Resource_LoadAndDecompress(RESOURCE_REVEAL_MASK_E, work->sheet, 1, 0);
     Resource_LoadAndDecompress(RESOURCE_REVEAL_MASK_F, Ram_MapCellBuffer, 1, 1);
-  } else if (variant == 1) {
+  } else if (variant == FLASHING_STRIKE_QUICK_STRIKE) {
     Resource_LoadAndDecompress(RESOURCE_REVEAL_MASK_C, work->sheet, 1, 0);
     Resource_LoadAndDecompress(RESOURCE_REVEAL_MASK_D, Ram_MapCellBuffer, 1, 1);
-  } else if (variant == 4) {
+  } else if (variant == FLASHING_STRIKE_BOOST_HACK) {
     s32 i;
 
     Resource_LoadAndDecompress(RESOURCE_REVEAL_MASK_A, work->sheet, 1, 0);
@@ -114,10 +125,10 @@ void BattleEffect_RunFlashingStrike(struct BattleEffectParams *args,
 
       ((u16 *)BG_PLTT)[i] = RGB(green, blue, red);
     }
-  } else if (variant == 3) {
+  } else if (variant == FLASHING_STRIKE_LUNAR_SLASH) {
     Resource_LoadAndDecompress(RESOURCE_REVEAL_MASK_C, work->sheet, 1, 0);
     Resource_LoadAndDecompress(RESOURCE_REVEAL_MASK_D, Ram_MapCellBuffer, 1, 1);
-  } else if (variant == 5) {
+  } else if (variant == FLASHING_STRIKE_TWIN_SHEAR) {
     Resource_LoadAndDecompress(RESOURCE_ARC_FRAGMENTS_SHEET, Ram_MapCellBuffer,
                                1, 1);
   } else {
@@ -126,23 +137,24 @@ void BattleEffect_RunFlashingStrike(struct BattleEffectParams *args,
   }
   EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_CLEAR, 0);
 
-  // The user closes on the target in 16 frames (variant 3 jumps in place,
-  // variant 4 strikes a pose instead and waits 8).
-  if (variant == 1 || variant == 5)
+  // The user closes on the target in 16 frames (Lunar Slash jumps in place,
+  // Boost Hack strikes a pose instead and waits 8).
+  if (variant == FLASHING_STRIKE_QUICK_STRIKE ||
+      variant == FLASHING_STRIKE_TWIN_SHEAR)
     BattleMotion_ApproachTargetFar(args->user, args->targets[0], 16,
                                    toFIXED(8));
-  else if (variant == 3)
+  else if (variant == FLASHING_STRIKE_LUNAR_SLASH)
     // The target is a whole word: the user, passed twice, is loaded once and
     // copied, where an s16 parameter would load it again halved.
     BattleMotion_ApproachTargetFar(args->user, args->user, 16, toFIXED(10));
-  else if (variant == 4) {
+  else if (variant == FLASHING_STRIKE_BOOST_HACK) {
     struct MotionObject *user = BattleObject_GetFar(args->user)->object;
 
-    Actor_SelectAnimationFar(user, 2);
+    Actor_SelectAnimationFar(user, POSE_LEAP);
     Actor_SetAnimationSpeedFar(user, ANIMATION_STEP_NORMAL * 3);
   } else
     BattleMotion_ApproachTargetFar(args->user, args->targets[0], 16, 0);
-  if (variant == 4)
+  if (variant == FLASHING_STRIKE_BOOST_HACK)
     wait(8);
   else
     wait(16);
@@ -168,7 +180,7 @@ void BattleEffect_RunFlashingStrike(struct BattleEffectParams *args,
 
   Sound_PlayFar(SE_POWER_UP);
   for (frame = 0; frame != REVEAL_FRAMES; frame++) {
-    if (variant == 5) {
+    if (variant == FLASHING_STRIKE_TWIN_SHEAR) {
       // Half the picture, then its reflection below it.
       if (frame <= 3) {
         draw[0](canvas, Ram_MapCellBuffer, 0, 0, SLASH_PICTURE_SIZE,
@@ -226,14 +238,14 @@ void BattleEffect_RunFlashingStrike(struct BattleEffectParams *args,
   HeapSlot_Release(HEAP_SLOT_RAM_CODE);
   HeapSlot_Release(HEAP_SLOT_RAM_CODE_PAIRED);
   Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
-  if (variant == 3) {
+  if (variant == FLASHING_STRIKE_LUNAR_SLASH) {
     // Clear the canvas and its tiles and hand the layer to the next scene.
     Iwram_ClearWords((void *)BG_CHAR_BLOCK(1), CANVAS_VIEW_BYTES);
     Iwram_ClearWords(canvas, CANVAS_VIEW_BYTES);
     Task_Remove(Palette_StepFadeTransfer);
     BattleEffect_RunWeaken(args);
   } else {
-    if (variant == 4)
+    if (variant == FLASHING_STRIKE_BOOST_HACK)
       Actor_SetAnimationSpeedFar(BattleObject_GetFar(args->user)->object,
                                  ANIMATION_STEP_NORMAL);
     BattleEffect_EndCanvasLayer();

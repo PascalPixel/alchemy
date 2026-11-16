@@ -60,7 +60,7 @@ void BattleEffect_RunTorch(struct BattleEffectParams *args) {
   REG_BG2CNT =
       BGCNT_WRAP | BGCNT_SCREEN_BASE(7) | BGCNT_256_COLORS | BGCNT_CHAR_BASE(1);
   REG_BLDALPHA = EFFECT_BLEND_CANVAS(0);
-  REG_BG2PA = 0xaa;
+  REG_BG2PA = Q_8_8(1.0 / 1.5);
   BattleEffect_FetchRectangleBlitters(args->side, draw);
   EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_THREE_QUARTERS);
 
@@ -142,8 +142,8 @@ void BattleEffect_RunTorch(struct BattleEffectParams *args) {
     // One BG2 X offset per scanline, a sine wave running down the screen.
     line = work->bg2xLines;
     for (i = 0, angle = -(wave << 9); i != DISPLAY_HEIGHT; i++) {
-      *line++ = ((i << 18) - (Trig_Sin(angle) << 7) + 0x40000) >> 10;
-      angle += 0x200;
+      *line++ = ((i << 18) - (Trig_Sin(angle) << 7) + toFIXED(4)) >> 10;
+      angle += TRIG_TURN / 128;
     }
 
     // Rotate the ramp outward by one ring: the last colour wraps to the
@@ -153,7 +153,9 @@ void BattleEffect_RunTorch(struct BattleEffectParams *args) {
     } else {
       ramp[1] = ramp[DISC_RINGS];
       Dma_Set(ramp + DISC_RINGS - 1, ramp + DISC_RINGS,
-              toFIXED(DMA_ENABLE | DMA_DEST_DEC | DMA_SRC_DEC) | 62, REG_DMA3);
+              (DMA_ENABLE | DMA_DEST_DEC | DMA_SRC_DEC) << 16 |
+                  (DISC_RINGS - 1),
+              REG_DMA3);
       IO_WRITE_QUEUE_PUSH((u32)&((u16 *)BG_PLTT)[1], (u32)(ramp + 1),
                           DMA_COPY_HALFWORDS(63));
     }

@@ -9,7 +9,7 @@
 #include "resource_ids.h"
 
 /// Where Paralyze unpacks the tornado's glints in the sheet.
-#define TORNADO_GLINT_SHEET 0x2580
+#define TORNADO_GLINT_SHEET 9600
 
 /// The target motes' styles (BattleEffect_RunTargetMotes), each named for the
 /// effect that plays it.
@@ -73,11 +73,18 @@ void BattleEffect_RunDrown(struct BattleEffectParams *args) {
 
 // The motes live in the map cell buffer, 64 for each target.
 
-/// Modes whose motes close in on the target and start again; the others
-/// drift up and are thrown back at random. Mode 7 closes in once.
-#define CONVERGES(mode)                                                        \
-  ((mode) <= 1 || (mode) == 4 || (mode) == 5 || (mode) == 6 || (mode) == 7)
-#define DECAYS(mode) ((mode) <= 1 || (mode) == 4 || (mode) == 5 || (mode) == 6)
+/// Styles whose motes start in a wide ball and last 32 frames more.
+#define TARGET_MOTES_START_WIDE(mode)                                          \
+  ((mode) <= TARGET_MOTES_PINK_SMOKE || (mode) == TARGET_MOTES_HEARTRENDER ||  \
+   (mode) == TARGET_MOTES_MYSTIC_FLAME || (mode) == TARGET_MOTES_DROWN ||      \
+   (mode) == TARGET_MOTES_DEMON_FIRE)
+/// Styles whose motes close in on the target; the others rise.
+#define TARGET_MOTES_CLOSE_IN(mode)                                            \
+  ((mode) <= TARGET_MOTES_PINK_SMOKE || (mode) == TARGET_MOTES_HEARTRENDER ||  \
+   (mode) == TARGET_MOTES_MYSTIC_FLAME || (mode) == TARGET_MOTES_DROWN)
+/// Every style but Taint's smokes and Paralyze ripples the canvas.
+#define TARGET_MOTES_RIPPLE(mode)                                              \
+  (!((mode) <= TARGET_MOTES_PINK_SMOKE || (mode) == TARGET_MOTES_PARALYZE))
 
 #define TARGET_MOTES_SLOTS 64 ///< particles reserved for each target
 #define TARGET_MOTES_CYCLE 24 ///< frames of a mote's image cycle
@@ -138,7 +145,7 @@ void BattleEffect_RunTargetMotes(struct BattleEffectParams *args, u32 mode) {
   for (i = 0; i != MOTE_MAX; i++) {
     struct Particle *mote = &PARTICLES[i];
 
-    if (CONVERGES(mode)) {
+    if (TARGET_MOTES_START_WIDE(mode)) {
       SET_POSITION(mote, ((Random16() & 0xff) - 127) << 15,
                    ((Random16() & 0xff) - 127) << 14,
                    ((Random16() & 0xff) - 127) << 15);
@@ -150,11 +157,11 @@ void BattleEffect_RunTargetMotes(struct BattleEffectParams *args, u32 mode) {
     mote->variant = 0;
   }
 
-  if (CONVERGES(mode))
+  if (TARGET_MOTES_START_WIDE(mode))
     total = args->targetCount * 8 + 64;
   else
     total = args->targetCount * 8 + 32;
-  if (!(mode <= TARGET_MOTES_PINK_SMOKE || mode == TARGET_MOTES_PARALYZE))
+  if (TARGET_MOTES_RIPPLE(mode))
     Task_Add(BattleEffect_ArmBg2AffineHBlankDma, TASK_PASS_FRAME);
   EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_THREE_QUARTERS);
   Sound_PlayFar(SE_SWIRL);
@@ -162,7 +169,7 @@ void BattleEffect_RunTargetMotes(struct BattleEffectParams *args, u32 mode) {
   for (frame = 0; frame != total; frame++) {
     struct BattleCamera *camera = Ram_HeapSlots->cameraWork;
 
-    // Mode 7 sends the caster at the first target 46 frames before the
+    // Demon Fire sends the caster at the first target 46 frames before the
     // end and strikes it 14 frames later; the others let the battle show the
     // damage.
     if (mode == TARGET_MOTES_DEMON_FIRE) {
@@ -180,7 +187,9 @@ void BattleEffect_RunTargetMotes(struct BattleEffectParams *args, u32 mode) {
     // Ripple the canvas: one horizontal offset for each line.
     row = work->bg2xLines;
     for (i = 0; i != DISPLAY_HEIGHT; i++)
-      *row++ = (0x40000 - (Trig_Sin((frame << 12) + i * 0x800) << 2)) >> 10;
+      *row++ = (toFIXED(4) -
+                (Trig_Sin((frame << 12) + i * (TRIG_TURN / 32)) << 2)) >>
+               10;
 
     for (member = 0; member != args->targetCount; member++) {
       struct MotionObject *object =
@@ -269,7 +278,7 @@ void BattleEffect_RunTargetMotes(struct BattleEffectParams *args, u32 mode) {
                     VORTEX_WIDTH, VORTEX_HEIGHT);
 
               // Close in by a step of the distance, or drift up.
-              if (DECAYS(mode)) {
+              if (TARGET_MOTES_CLOSE_IN(mode)) {
                 mote->x -= mote->x / distance;
                 mote->y -= mote->y / distance;
                 mote->z -= mote->z / distance;
@@ -278,7 +287,7 @@ void BattleEffect_RunTargetMotes(struct BattleEffectParams *args, u32 mode) {
               }
               mote->variant++;
               if (mote->variant == TARGET_MOTES_CYCLE) {
-                if (DECAYS(mode)) {
+                if (TARGET_MOTES_CLOSE_IN(mode)) {
                   mote->variant = 0;
                 } else {
                   SET_POSITION(mote, ((Random16() & 0xff) - 127) << 13,
@@ -309,7 +318,7 @@ void BattleEffect_RunTargetMotes(struct BattleEffectParams *args, u32 mode) {
 
   // Tear down.
   Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
-  if (!(mode <= TARGET_MOTES_PINK_SMOKE || mode == TARGET_MOTES_PARALYZE))
+  if (TARGET_MOTES_RIPPLE(mode))
     Task_Remove(BattleEffect_ArmBg2AffineHBlankDma);
   BattleEffect_EndCanvasLayer();
 }
@@ -411,18 +420,20 @@ void BattleEffect_RunSleep(struct BattleEffectParams *args) {
     // the first four drawn as they are, the last four mirrored.
     one = sheep;
     for (i = 0; i != SHEEP_COUNT; i++, one++) {
-      if (frame > i * 4 && one->y <= 0x7fffff) {
+      if (frame > i * 4 && one->y <= toFIXED(128) - 1) {
         s32 cel;
 
         cel = (one->variant / 16) & 7;
         if (cel < 4)
-          drawA(canvas, work->sheet + (cel << 10) + 0x800,
-                scroll + (FIXEDtoINT(one->x)) - 16, (FIXEDtoINT(one->y)) - 16,
-                SHEEP_WIDTH, SHEEP_HEIGHT);
+          drawA(canvas, work->sheet + (cel << 10) + 2048,
+                scroll + FIXEDtoINT(one->x) - SHEEP_WIDTH / 2,
+                FIXEDtoINT(one->y) - SHEEP_HEIGHT / 2, SHEEP_WIDTH,
+                SHEEP_HEIGHT);
         else
-          drawB(canvas, work->sheet + (cel << 10) - 0x800,
-                scroll + (FIXEDtoINT(one->x)) - 16, (FIXEDtoINT(one->y)) - 16,
-                SHEEP_WIDTH, SHEEP_HEIGHT);
+          drawB(canvas, work->sheet + (cel << 10) - 2048,
+                scroll + FIXEDtoINT(one->x) - SHEEP_WIDTH / 2,
+                FIXEDtoINT(one->y) - SHEEP_HEIGHT / 2, SHEEP_WIDTH,
+                SHEEP_HEIGHT);
         one->y += one->velocityY;
         one->velocityY += toFIXED(1) / 8;
         one->variant += one->z;
@@ -649,10 +660,7 @@ void BattleEffect_RunDjinnHeal(struct BattleEffectParams *args) {
         EffectPosition_ProjectPoint((s32 *)spark, &screen);
         screen.x >>= 1;
         Matrix_Pop();
-        if (screen.depth < 250)
-          screen.depth = 250;
-        if (screen.depth > 634)
-          screen.depth = 634;
+        CLAMP(screen.depth, 250, 634);
         size = 9 - (screen.depth - 250) / 64;
         callbacks[0](canvas, sheet + gBattleEffect_MotePictures[size - 1],
                      screen.x - size / 2, screen.y - size, size, size * 2);
@@ -794,8 +802,9 @@ void BattleEffect_RunPhoenix(struct BattleEffectParams *args) {
 #undef BLITTER
 #undef GROUND_Y
 #undef MOTE_MAX
-#undef CONVERGES
-#undef DECAYS
+#undef TARGET_MOTES_START_WIDE
+#undef TARGET_MOTES_CLOSE_IN
+#undef TARGET_MOTES_RIPPLE
 #undef SHEEP_COUNT
 #undef SHEEP_FRAMES
 #undef MARKER_FRAMES

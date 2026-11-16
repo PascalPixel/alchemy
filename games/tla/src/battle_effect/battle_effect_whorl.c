@@ -13,10 +13,10 @@ struct StripQuad;
 #define MAP_CELLS ((s8 (*)[2][4])Ram_MapCellBuffer)
 
 /// Where JupiterDjinnSmallSheet is decoded in the effect's pictures.
-#define WATER_COLUMN_JUPITER_DJINN_SMALL_PICTURES 0x2000
+#define WATER_COLUMN_JUPITER_DJINN_SMALL_PICTURES 8192
 
 /// Where FlashBurstSheet is decoded in the map cell buffer.
-#define WATER_COLUMN_FLASH_BURST 0x5000
+#define WATER_COLUMN_FLASH_BURST 20480
 
 /// The last particle keeps the target's position, and its scale in velocityX
 /// and velocityY, to restore when the column ends.
@@ -35,7 +35,7 @@ void BattleEffect_RunWaterColumn(struct BattleEffectParams *args, u32 mode) {
   struct BattleCamera *camera;
   u8 *sprites;
   s32 frames;
-  u8 *unit;
+  struct Unit *unit;
   struct MotionObject *target;
   struct RenderModel *model;
   struct ModelTexture texture;
@@ -45,9 +45,9 @@ void BattleEffect_RunWaterColumn(struct BattleEffectParams *args, u32 mode) {
   s32 j;
   // One constant for its whole life: the three palette copies' destination.
   void *palette = (void *)BG_PLTT;
-  void *vertices = Ram_MapCellBuffer + 0x1000;
-  u8 *sheet = Ram_MapCellBuffer + 0x4000;
-  void *mesh = Ram_MapCellBuffer + 0x2000;
+  void *vertices = Ram_MapCellBuffer + 4096;
+  u8 *sheet = Ram_MapCellBuffer + 16384;
+  void *mesh = Ram_MapCellBuffer + 8192;
   s32 point[3];
   s32 screen[3];
   s32 pos[3];
@@ -76,15 +76,15 @@ void BattleEffect_RunWaterColumn(struct BattleEffectParams *args, u32 mode) {
     if (mode == WATER_COLUMN_LETHE_ALBION) {
       s32 row;
       s32 k;
-      s32 size = 0x1000;
+      s32 size = 4096;
 
       Resource_LoadAndDecompress(RESOURCE_RUNE_SHEET, sheet + size, 1, 0);
       Iwram_ClearWordsEntry(sheet, size);
       for (row = 0; row != 48; row++) {
         for (k = 0; k != 24; k++) {
-          (Ram_MapCellBuffer + 0x4208)[row * 64 + k] =
-              sheet[(row * 2 + row) * 8 + 0x1000 + k];
-          sheet[row * 64 + 0x237 - k] = sheet[(row * 2 + row) * 8 + 0x1000 + k];
+          (Ram_MapCellBuffer + 16904)[row * 64 + k] =
+              sheet[(row * 2 + row) * 8 + 4096 + k];
+          sheet[row * 64 + 567 - k] = sheet[(row * 2 + row) * 8 + 4096 + k];
         }
       }
       Iwram_CopyWordsEntry(palette,
@@ -266,9 +266,9 @@ void BattleEffect_RunWaterColumn(struct BattleEffectParams *args, u32 mode) {
             target->y = toFIXED(144);
           } else if (frame <= 31) {
             if (target->x > 0) {
-              target->x += 0x8000;
+              target->x += toFIXED(1) / 2;
             } else {
-              target->x -= 0x8000;
+              target->x -= toFIXED(1) / 2;
             }
           } else {
             if (target->x > 0) {
@@ -453,7 +453,7 @@ void BattleEffect_RunWaterColumn(struct BattleEffectParams *args, u32 mode) {
           }
           Matrix_RotateZ((i << 10) + 256);
           Matrix_RotateX((i << 13) - (frame << 11));
-          Matrix_Scale(0x21770, FIXED_ONE, FIXED_ONE);
+          Matrix_Scale(137072, FIXED_ONE, FIXED_ONE);
           Render_TransformVertices(gMapGridCellBuffer, vertices, 66);
           Render_DrawModelList(model);
           Matrix_Pop();
@@ -528,7 +528,7 @@ void BattleEffect_RunWaterColumn(struct BattleEffectParams *args, u32 mode) {
           }
           Matrix_RotateX(i << 15);
           Matrix_RotateZ(FIXEDtoINT(Trig_Sin((frame + i * 8) << 11) << 11));
-          Matrix_Scale(0x14e20, FIXED_ONE / 2, FIXED_ONE);
+          Matrix_Scale(85536, FIXED_ONE / 2, FIXED_ONE);
           Render_TransformVertices(gMapGridCellBuffer, vertices, 66);
           Render_DrawModelList(model);
         }
@@ -584,7 +584,7 @@ void BattleEffect_RunWaterColumn(struct BattleEffectParams *args, u32 mode) {
     } while (frame != frames);
   }
 
-  if (unit[0x129] && mode == WATER_COLUMN_WHORL &&
+  if (unit->classId != CLASS_NONE && mode == WATER_COLUMN_WHORL &&
       args->variant == EFFECT_VARIANT_STRONGER) {
     target->x = work->particles[WATER_COLUMN_SAVED_TARGET].x;
     target->y = work->particles[WATER_COLUMN_SAVED_TARGET].y;

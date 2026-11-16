@@ -135,4 +135,8 @@ void BattleEffect_ArmBg2AffineHBlankDma(void);
 void Palette_StepFadeTransfer(void);
 struct BattleEffectParams;
 
+/// The battle camera's distance from its focus in its default view, and the
+/// unzoomed projection's focal length, in 16.16 pixels (BattleCamera_SetView).
+#define BATTLE_CAMERA_DISTANCE toFIXED(510)
+
 #endif

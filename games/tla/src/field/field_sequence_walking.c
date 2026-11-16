@@ -152,7 +152,7 @@ void Field_CheckExitRegions(FIXED positionX, FIXED positionY, FIXED positionZ) {
   x = positionX;
   y = positionY;
   z = positionZ;
-  region = ((struct MapRegion * (*)(void)) gOverlayArea[11])();
+  region = (struct MapRegion *)SCENE_ENTRIES->regions();
   if (region != 0 &&
       (runtime = Ram_HeapSlots->fieldWork, minX = region->minX, minX != -1)) {
   loop:
@@ -179,6 +179,8 @@ void Field_CheckExitRegions(FIXED positionX, FIXED positionY, FIXED positionZ) {
   }
 }
 
+/// Brings the party's recovering Djinn one turn nearer, setting each that is
+/// ready, and returns 1 when any was set.
 s32 DjinnRecovery_CountDownFar(void);
 void FieldEffect_SetAttached(s32 owner, s32 mode);
 

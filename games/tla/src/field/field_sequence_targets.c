@@ -217,8 +217,8 @@ s32 FieldEffect_PlayCueAndStartEmitterOnTarget(s32 actorId, s32 target,
 /// facing rounded to a quarter turn, can be pushed on by 16 pixels: 1 when
 /// nothing solid stands on the cell beyond it or above it and its terrain
 /// test passes there, else 0. Leader_PushObjectAhead, after it, makes the push.
-// The test against the paused object comes from patch 1; the Japanese release
-// has none.
+/// The test against the paused object comes from patch 1; the Japanese release
+/// has none.
 s32 Leader_CanPushObjectAhead(void) {
   s32 position[3];
   FIXED above[3];

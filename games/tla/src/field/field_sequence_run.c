@@ -30,8 +30,6 @@ s32 Leader_StepOffRope(void);
 s32 Leader_StepOntoTightrope(void);
 s32 Leader_StepOffTightrope(void);
 
-#define OVERLAY_CALL(index) ((s32 (*)(void))gOverlayArea[index])()
-
 /// The field sequence: runs the current scene, which the party entered by
 /// entrance, until it leaves; returns the exit kind it left by, for
 /// Scene_TakeExit, or EXIT_KEEP_DESTINATION when the next scene is already in
@@ -55,8 +53,8 @@ s32 FieldSequence_Run(void) {
   s32 talk;
   s32 packed;
 
-  work = HeapSlot_AllocEwram(HEAP_SLOT_FIELD, 0xd50);
-  Iwram_ClearWordsEntry(work, 0xd50);
+  work = HeapSlot_AllocEwram(HEAP_SLOT_FIELD, sizeof(struct FieldWork));
+  Iwram_ClearWordsEntry(work, sizeof(struct FieldWork));
   GameFlag_Clear(FLAG_IN_BATTLE);
   gMainRoutineWork.returnScene = gMainRoutineWork.next;
   gMainRoutineWork.returnEntrance = gMainRoutineWork.entrance;
@@ -79,36 +77,41 @@ s32 FieldSequence_Run(void) {
   }
   work->mode = mode;
   if (!GameFlag_Get(FLAG_KEEP_PARTY_POSITION))
-    gSceneLocalState[0x194c] = 0;
+    gTouchCopies.count = 0;
   else
     TileCopies_Restore();
   WindowSystem_InitFieldFar();
   ActorSystem_InitializeFar(mode);
   Field_ClearRequests();
-  work->triggers = (const void *)OVERLAY_CALL(9);
+  work->triggers = (const void *)SCENE_ENTRIES->triggers();
   BattleMap_ApplySceneEntranceView();
-  Actor_ResetForLeader(OVERLAY_CALL(7));
+  Actor_ResetForLeader((s32)SCENE_ENTRIES->placements());
   Field_PlaceTreasureSpots();
   if (GameFlag_Get(FLAG_KEEP_PARTY_POSITION))
     Actor_Restore();
   if (gMainRoutineWork.pendingDjinni != 0)
     Djinn_RestoreActorAfterBattle();
   work->queuedSound = -1;
-  if (mode == 3) {
+  if (mode == ACTOR_SYSTEM_WORLD_MAP) {
     WorldMap_UpdateCurrentTileBlockFar();
     WorldMap_LoadGraphicsFar(gMainRoutineWork.x, gMainRoutineWork.z);
   } else {
     Map_ApplySetFlagEditsFar();
-    OVERLAY_CALL(13);
+    SCENE_ENTRIES->prepareMap();
     MapGrid_CenterOnFollowedPointFar();
   }
   GameFlag_Clear(0x11f);
   PaletteFade_Initialize();
   PaletteFade_SetTarget(PALETTE_TINT_NONE, 0);
+  // The default fade is from the backdrop colour over 16 frames; the scene's
+  // initialization may choose another.
   work->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
-  work->transitionFrames = 16;
+  work->transitionFrames = MAP_TRANSITION_FRAMES;
   work->transitionActive = 0;
-  work->walkingDistanceScale = 409;
+  // Field_UpdateWalking scales the leader's speed by this (16.16) into the
+  // distance counted towards PP, Djinn recovery and poison: FIXED_ONE / 160
+  // counts each of them on by one about every 160 pixels walked.
+  work->walkingDistanceScale = FIXED_ONE / 160;
   work->walkingDistance = 0;
   if (gMainRoutineWork.sceneType == SCENE_TYPE_TOWN) {
     work->walkingDistanceScale = 0;
@@ -134,7 +137,7 @@ s32 FieldSequence_Run(void) {
   }
   Field_UpdateHoverReady();
   wait(2);
-  OVERLAY_CALL(1);
+  SCENE_ENTRIES->initialize();
   code = work->exit;
   if (code != 0) {
     result = code;
@@ -237,17 +240,17 @@ s32 FieldSequence_Run(void) {
           Leader_StopMoving();
           WorldMap_Freeze();
           for (value = 0; value < work->fallenCount; value++) {
-            Actor_SelectAnimationFar(leader, 22);
+            Actor_SelectAnimationFar(leader, ANIM_LEADER_LEAN_BACK);
             MessageArgument_PushFar(work->fallenOwners[value],
                                     MESSAGE_ARGUMENT_ACTOR);
             FieldMessage_ShowFar((s32)MsgFieldStrengthExhausted,
                                  FIELD_MESSAGE_ZOOM);
           }
           if (work->survivorCount == 0) {
-            if (*leaderId == 4)
+            if (*leaderId == ACTOR_FELIX)
               Actor_SelectAnimationFar(leader, 36);
             else
-              Actor_SelectAnimationFar(leader, 19);
+              Actor_SelectAnimationFar(leader, ANIM_COLLAPSE);
             Sound_PlayFar(MUS_DEFEAT);
             FieldMessage_ShowFar((s32)MsgFieldPartyAnnihilated,
                                  FIELD_MESSAGE_ZOOM);
@@ -335,7 +338,7 @@ s32 FieldSequence_Run(void) {
         Leader_StopMoving();
         ObjectTable_Snapshot();
         party->returnMusic = -1;
-        party->next = 510;
+        party->next = SEQUENCE_BATTLE;
         *entrance = work->encounter;
         work->exit = EXIT_KEEP_DESTINATION;
         Field_StartEncounterTransition(work->encounter);
@@ -348,14 +351,14 @@ s32 FieldSequence_Run(void) {
         if (gMainRoutineWork.ownerOverride == 0)
           value = Field_FindNearbyTalkTarget(*leaderId);
         else
-          value = Field_FindNearbyTalkTarget(8);
+          value = Field_FindNearbyTalkTarget(ACTOR_FIRST_PLACED);
         if (value != -1) {
           talk = 1;
-          if ((s32)value <= 63)
+          if ((s32)value <= FIELD_TREASURE_ACTOR - 1)
             talk = Scene_FindActorTalkTrigger(value) != 0;
         }
         if (talk) {
-          work->talk = value | 0x4000;
+          work->talk = value | FIELD_TALK_REQUEST;
           work->fieldMenu = 0;
         } else if ((talk = Actor_GetTriggerCellAheadOfCurrent()) != 0) {
           work->examineCell = talk;
@@ -387,7 +390,7 @@ s32 FieldSequence_Run(void) {
         work->fieldMenu = 0;
       } else if (work->talk != 0) {
         WorldMap_Freeze();
-        Scene_TalkToActor(work->talk & 0x3fff);
+        Scene_TalkToActor(work->talk & (FIELD_TALK_REQUEST - 1));
         WorldMap_ReloadPendingAreaGraphics();
         work->talk = 0;
       } else if (work->examineCell != 0) {
@@ -428,21 +431,25 @@ s32 FieldSequence_Run(void) {
           AreaNameWindow_HideFar();
           party->returnMusic = Sound_GetCurrentBgmFar();
           if (!GameFlag_Get(FLAG_IN_BATTLE_ARENA)) {
-            u8 *objects = (u8 *)Ram_HeapSlots->actorSystem;
+            // With fewer than 136 of the 512 sprite VRAM blocks (64 bytes each)
+            // free, sprite drawing stays suspended while the menu runs, and a
+            // frame passes so that the field's sprites give their VRAM back
+            // before it opens.
+            struct ActorSystemWork *actorSystem = Ram_HeapSlots->actorSystem;
             u8 *owner = gVramCacheBlockOwners;
             s32 freeBlocks = 0;
             s32 n = 512;
 
             do {
-              if (*owner++ == 0xff)
+              if (*owner++ == VRAM_BLOCK_OWNER_FREE)
                 freeBlocks++;
             } while (--n != 0);
             if (freeBlocks - 136 < 0) {
-              *(u16 *)(objects + 4) = 1;
+              actorSystem->suspended = 1;
               wait(1);
             }
             PauseMenu_RunFar(0);
-            *(u16 *)(objects + 4) = 0;
+            actorSystem->suspended = 0;
           } else {
             FieldMessage_ShowFar((s32)MsgFieldPauseUnavailable,
                                  FIELD_MESSAGE_ZOOM);
@@ -486,10 +493,10 @@ done:
 /// the scene has an examine trigger for. Returns 0 otherwise.
 s32 Actor_GetTriggerCellAheadOfCurrent(void) {
   struct FieldWork *work;
-  u8 *mapBytes;
+  struct MapWork *map;
   struct Actor *leader;
   union PolarOffsetPosition probePosition;
-  u8 *cell;
+  struct MapCell *cell;
   s32 collisionCode;
   s32 terrainHeight;
   s32 result;
@@ -497,7 +504,7 @@ s32 Actor_GetTriggerCellAheadOfCurrent(void) {
   result = 0;
   leader = WorldMap_Unfreeze();
   work = gFieldWork;
-  mapBytes = (u8 *)Ram_HeapSlots->mapGrid;
+  map = Ram_HeapSlots->mapGrid;
   if (leader != 0) {
     probePosition.vector.x = leader->x.fixed;
     probePosition.vector.y = leader->y.fixed;
@@ -513,25 +520,27 @@ s32 Actor_GetTriggerCellAheadOfCurrent(void) {
       x = probePosition.vector.x;
       z = probePosition.vector.z;
       cell =
-          Ram_MapBlocks +
-          ((((x / toFIXED(32)) & 31) + (((z / toFIXED(32)) & 31) << 5)) << 2);
+          &((struct MapCell *)Ram_MapBlocks)[((x / toFIXED(32)) & 31) +
+                                             (((z / toFIXED(32)) & 31) << 5)];
     } else {
       s32 x, z;
 
-      cell = *(u8 **)(mapBytes + 0x138);
+      cell = map->layers[0].cells;
       x = probePosition.vector.x;
       z = probePosition.vector.z;
-      cell += (((x / toFIXED(16)) + ((z / toFIXED(16)) << 7)) << 2);
+      cell += (x / toFIXED(MAPGRID_CELL_PIXELS)) +
+              ((z / toFIXED(MAPGRID_CELL_PIXELS)) << 7);
     }
-    collisionCode = cell[2];
-    if (collisionCode >= 242 && collisionCode <= 247) {
+    collisionCode = cell->collisionCode;
+    if (collisionCode >= CELL_BEHAVIOR_JAR &&
+        collisionCode <= CELL_BEHAVIOR_WELL) {
       terrainHeight = MapGrid_GetTerrainHeightFar(
           leader->layer, probePosition.vector.x, probePosition.vector.z);
       if (terrainHeight >= leader->y.fixed &&
           terrainHeight <= leader->y.fixed + toFIXED(16)) {
         result = collisionCode;
       }
-    } else if (Scene_FindTrigger(3, collisionCode) != 0) {
+    } else if (Scene_FindTrigger(TRIGGER_EXAMINE, collisionCode) != 0) {
       result = collisionCode;
     }
     if (result == 0 && work->mode == ACTOR_SYSTEM_WORLD_MAP) {
@@ -550,9 +559,7 @@ s32 Actor_GetTriggerCellAheadOfCurrent(void) {
 s32 Scene_ApplyEntrance(s32 findEntrance) {
   struct MapWork *map = Ram_HeapSlots->mapGrid;
   s32 entrance = gMainRoutineWork.entrance;
-  // The overlay table's entry 3 returns the scene's entrances.
-  const struct SceneEntrance *entry =
-      ((const struct SceneEntrance *(*)(void))gOverlayArea[3])();
+  const struct SceneEntrance *entry = SCENE_ENTRIES->entrances();
   s32 found = 0;
   s32 left;
 
@@ -594,8 +601,8 @@ s32 Scene_ApplyEntrance(s32 findEntrance) {
 }
 
 /// Reads the map's entrance stream (gMapScene) for the current entrance,
-/// places the party there unless flag 0x109 keeps its position, then sets the
-/// camera bounds from the first box that holds it.
+/// places the party there unless FLAG_KEEP_PARTY_POSITION keeps it, then sets
+/// the camera bounds from the first box that holds it.
 s32 Field_PlaceAtEntrance(void) {
   struct MapWork *map = Ram_HeapSlots->mapGrid;
   struct MainRoutineWork *work = &gMainRoutineWork;
@@ -621,7 +628,7 @@ s32 Field_PlaceAtEntrance(void) {
   layer = &gMainRoutineWork.layer;
   for (;; cursor += 6) {
     if (*(s8 *)cursor == -1) {
-      *angle = 0x4000;
+      *angle = FACING_SOUTH;
       {
         u32 cleared = 0;
 

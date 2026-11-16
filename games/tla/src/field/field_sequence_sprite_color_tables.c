@@ -6,6 +6,7 @@
 #include "types.h"
 
 // clang-format off
+/// The five conversion tables, then the five byte remap tables.
 const u8 gSpriteColorTablesCopy[10][256] = {
     { // Conversion table 0
         0, 1, 5, 33, 4, 2, 45, 186, 8, 135, 106, 21, 50, 13, 14, 15,

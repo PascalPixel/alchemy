@@ -32,6 +32,11 @@ struct Window;
 /// actor id is in the bits under it.
 #define FIELD_TALK_SILENT 0x1000
 #define FIELD_TALK_ACTOR 0xfff
+/// FieldWork.talk: set with the actor id under it to ask for that actor's talk.
+#define FIELD_TALK_REQUEST 0x4000
+/// The frames of a scene's default fade in, from the backdrop colour, as The
+/// Broken Seal's.
+#define MAP_TRANSITION_FRAMES 16
 
 /// The values of FieldWork.raisedTrigger that the field sequence handles
 /// itself, rather than passing them to the scene (Scene_RunRaisedTrigger).
@@ -103,7 +108,7 @@ struct FieldWork {
   /// The A button: a talk, an examine or the field menu, by what is ahead.
   s16 aButton;
   s16 pauseMenu;   ///< the Start button: open the Pause menu
-  s16 talk;        ///< an actor's talk trigger, as actor id | 0x4000
+  s16 talk;        ///< an actor's talk, as actor id | FIELD_TALK_REQUEST
   s16 examineCell; ///< a cell's cell behavior, for Field_ExamineCell
   s16 encounter;   ///< the enemy group of a random encounter
   s16 psynergy;    ///< a field Psynergy to use, as unit << 10 | Psynergy

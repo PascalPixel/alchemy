@@ -140,15 +140,8 @@ struct TriggerView *Scene_FindTrigger(s32 kind, s32 target) {
   return NULL;
 }
 
-struct FxGroup {
-  u8 unused[32]; ///< no code names it
-  struct Actor *objects[8];
-  u16 values[8];
-  s32 count;
-};
-
 /// Unused: runs the loaded overlay's initialize entry; nothing calls it.
-UNUSED void Overlay_CallInitialize(void) { ((s32 (*)(void))gOverlayArea[1])(); }
+UNUSED void Overlay_CallInitialize(void) { SCENE_ENTRIES->initialize(); }
 
 /// Returns the talk trigger of object id, or 0: for the object field Psynergy
 /// has stopped (gMainRoutineWork.haltedActor), its TRIGGER_TALK_HALTED trigger

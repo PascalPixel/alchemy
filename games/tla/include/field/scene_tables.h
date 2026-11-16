@@ -414,6 +414,10 @@ struct SceneEntries {
   const struct Trigger *(*triggers)(void);
   u32 regionsVeneer;
   const struct SceneRegion *(*regions)(void);
+  u32 prepareMapVeneer;
+  /// Run once the scene's actors are placed, on a map other than the World
+  /// Map: the scene's own edits to its map before it is shown.
+  s32 (*prepareMap)(void);
 };
 
 #endif

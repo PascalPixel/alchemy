@@ -76,6 +76,9 @@
 #include "field/object.h"
 #include "gamepak/far_call/field.h"
 
+/// The running scene's entry table, at the start of gOverlayArea.
+#define SCENE_ENTRIES ((struct SceneEntries *)gOverlayArea)
+
 // The object's functions its parts call before their definitions.
 
 // Outside routines and data the parts had declared each in its own way, with

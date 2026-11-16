@@ -59,7 +59,7 @@ void BattleStaging_PlanDaedalus(u16 *source, struct BattlePlan *plan) {
     own = 1;
   own = Battle_GetUnitAtPlace(BattleAI_ChooseRandomTarget(own));
   plan->element = ELEMENT_MARS;
-  plan->staging = 14;
+  plan->staging = STAGING_DAEDALUS;
   {
     s32 half = source[3];
     s16 *value;
@@ -225,12 +225,12 @@ s32 BattleStaging_DispatchAction(struct BattleActionRecord *request,
     case STAGING_FULL_SCREEN:
       BattleStaging_HideField(&battle->plan, 0);
       break;
-    // XXX: no ability's staging is 14 or 17 (gAbilityStaging), and no code sets
-    // them; a debug battle or a table row another edition has would settle it.
-    case 14:
+    case STAGING_DAEDALUS:
       BattleStaging_HideField(&battle->plan, 3);
       break;
     case STAGING_CAST:
+    // XXX: no ability's staging is 17 (gAbilityStaging), and no code sets it;
+    // a debug battle or a table row another edition has would settle it.
     case 17:
       BattleStaging_RunPsynergyCast(&battle->plan, CAST_PSYNERGY);
       break;
@@ -352,7 +352,8 @@ void BattleStaging_BuildTargetList(struct BattlePlan *plan,
     outputTarget = effect->actors;
     do {
       if (BattleUnit_IsListed(*inputTarget) &&
-          (Unit_Get(*inputTarget)->hp != 0 || (plan->battleEffect & EFFECT_ON_DOWNED))) {
+          (Unit_Get(*inputTarget)->hp != 0 ||
+           (plan->battleEffect & EFFECT_ON_DOWNED))) {
         *outputTarget++ = *inputTarget;
         livingTargets++;
       }

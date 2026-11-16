@@ -40,6 +40,9 @@ enum BattleStaging {
   STAGING_DJINN_RECOVERY = 11, ///< Eddy: "Speed up Djinn recovery time."
   STAGING_MEGAERA = 12,        ///< the summon, then High Impact on its side
   STAGING_IRIS = 13,           ///< the summon, then the Aurora Field
+  /// Daedalus's strike queued for the turn's end, from no ability's row: only
+  /// BattleStaging_PlanDaedalus sets it.
+  STAGING_DAEDALUS = 14,
   /// The summoned beasts that strike: Wild Wolf, Roc, Orc, Grand Golem, Dinox
   /// and Call Zombie (BattleMotion_CallBeast).
   STAGING_BEAST_ATTACK = 15,

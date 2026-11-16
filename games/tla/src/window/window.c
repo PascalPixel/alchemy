@@ -23,8 +23,13 @@
 ///                   DebugWarp_Run
 
 #include "window_internal.h"
-#include "graphics/output.h"
 #include "window/screens.h"
+
+#ifdef MODERN
+// The window object, like the screens object, calls Oam_AddSpriteAtDepth with
+// no declaration in scope, as its bytes need; a current GCC gets it here.
+#include "graphics/output.h"
+#endif
 
 // Called before their definitions; the screens object calls them with no
 // declaration in scope.

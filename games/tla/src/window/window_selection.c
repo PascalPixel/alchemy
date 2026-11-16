@@ -1332,9 +1332,6 @@ void MenuArrow_Create(struct MenuSprite *sprite, s32 *slot) {
 void MenuArrow_SetPosition(struct MenuSprite *sprite, s32 x, s32 y) {
   sprite->oam.f.x = x;
   sprite->oam.f.y = y;
-  /* FAKEMATCH(dead): an empty once-only block. */
-  do {
-  } while (0);
   Oam_AddSpriteAtDepth(sprite, OAM_DEPTH_FRONT - 3);
 }
 

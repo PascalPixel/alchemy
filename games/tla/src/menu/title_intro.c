@@ -798,8 +798,7 @@ s32 TitleIntro_ShowLighthouse(void) {
   logo->delay = 0;
   scroll.step = 1;
   scroll.limit = 224;
-  i = TitleIntro_ScrollLighthouse(&scroll);
-  if (i)
+  if (TitleIntro_ScrollLighthouse(&scroll))
     goto stopped;
   Task_Add(TitleIntro_UpdateLogo, TASK_PASS_VBLANK);
   scroll.limit = 160;
@@ -811,8 +810,7 @@ s32 TitleIntro_ShowLighthouse(void) {
   scroll.tile = 450;
   scroll.rows = 11;
   scroll.frames = 8;
-  i = TitleIntro_ScrollLighthouse(&scroll);
-  if (i)
+  if (TitleIntro_ScrollLighthouse(&scroll))
     goto stopped;
   TitlePaletteFade_SetTarget(RGB_WHITE, PALETTES_ALL);
   TitlePaletteFade_Start(20);

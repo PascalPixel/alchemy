@@ -509,7 +509,6 @@ s32 Party_FindOwnerWithActionFar(s32 action);
 UNUSED s32 DebugShortcut_Run(void) {
   s32 row = 0;
   struct OptionMenuWork *work;
-  s16 left;
   struct MainRoutineWork *party;
   struct Window *window;
   s32 result;
@@ -517,8 +516,6 @@ UNUSED s32 DebugShortcut_Run(void) {
   s32 ability;
   s32 owner;
   struct FieldWork *events;
-  s32 x;
-  s32 y;
   s32 pp;
   s32 columns = 4;
 
@@ -530,12 +527,14 @@ UNUSED s32 DebugShortcut_Run(void) {
   window = DebugShortcut_Open();
   while (1) {
     if (result != 0) {
+      s32 x;
+      s32 y;
+
       column = (column + columns) % columns;
       row = (row + 9) % 9;
-      /* FAKEMATCH(temporary): the window's x read through a halfword temporary.
-       */
-      left = window->x;
-      x = (column * 7 + left) * 8 - 4;
+      // y holds the window's left edge first.
+      y = (s16)window->x;
+      x = (column * 7 + y) * 8 - 4;
       y = ((s16)window->y << 3) + (row << 4) + 12;
       if (result == -1)
         MenuCursor_SetPositionImmediateFar(&work->cursor, x, y);

@@ -47,7 +47,11 @@ enum BattleStaging {
   /// and Call Zombie (BattleMotion_CallBeast).
   STAGING_BEAST_ATTACK = 15,
   /// The summoned beasts that cast, Emu to Call Dullahan.
-  STAGING_BEAST_CAST = 16
+  STAGING_BEAST_CAST = 16,
+  /// Unused: a beast called up (BattleMotion_CallBeast takes 15 to 17) whose
+  /// call then plays as the party's Psynergy cast (CAST_PSYNERGY). No
+  /// ability's row in gAbilityStaging gives it.
+  STAGING_BEAST_PSYNERGY = 17
 };
 
 // BattlePlan.battleEffect: the effect kind

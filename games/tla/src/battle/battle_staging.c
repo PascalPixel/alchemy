@@ -229,9 +229,7 @@ s32 BattleStaging_DispatchAction(struct BattleActionRecord *request,
       BattleStaging_HideField(&battle->plan, 3);
       break;
     case STAGING_CAST:
-    // XXX: no ability's staging is 17 (gAbilityStaging), and no code sets it;
-    // a debug battle or a table row another edition has would settle it.
-    case 17:
+    case STAGING_BEAST_PSYNERGY:
       BattleStaging_RunPsynergyCast(&battle->plan, CAST_PSYNERGY);
       break;
     case STAGING_DJINNI:

@@ -35,7 +35,9 @@ BattleMotion_CallBeast(struct BattlePlan *plan,
   s32 count;
   s32 i;
 
-  if ((u32)(plan->staging - 15) > 2 || plan->failure != 0)
+  if ((u32)(plan->staging - STAGING_BEAST_ATTACK) >
+          STAGING_BEAST_PSYNERGY - STAGING_BEAST_ATTACK ||
+      plan->failure != 0)
     return NULL;
   {
     u8 sides = (plan->unitId ^ plan->targetIds[0]) & 0x80;

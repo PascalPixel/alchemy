@@ -1256,7 +1256,7 @@ void MagmaRock_AmplifyBurst(void) {
     offset[1] = (Random16() & 15) << 16;
     FieldEffect_Spawn(
         leader->x.fixed + offset[0], leader->y.fixed + offset[1],
-        leader->z.fixed, 0, 0x13333, 0,
+        leader->z.fixed, 0, toFIXED(6) / 5, 0,
         EFFECT_USE_START_SCALE | EFFECT_USE_PRIORITY | EFFECT_USE_PALETTE, opt);
     wait(5);
   }
@@ -1275,7 +1275,7 @@ void MagmaRock_AmplifyBurst(void) {
       offset[1] = (Random16() & 15) << 16;
       FieldEffect_Spawn(
           leader->x.fixed + offset[0], leader->y.fixed + offset[1],
-          leader->z.fixed, 0, 0x13333, phase,
+          leader->z.fixed, 0, toFIXED(6) / 5, phase,
           EFFECT_USE_START_SCALE | EFFECT_USE_PRIORITY | EFFECT_USE_PALETTE,
           opt);
     }
@@ -2194,8 +2194,9 @@ void MagmaRock_SpawnRubble(s32 spread) {
       effect->scaleY = effect->scaleX = FIXED_ONE * 7 / 10;
       effect->sprite->priority = 1;
       if (spread != 0) {
-        effect->velocity.x = Iwram_MulFX(Trig_Cos(i << 13), 0x13333);
-        effect->velocity.z = Math_Sin(i << 13);
+        effect->velocity.x =
+            Iwram_MulFX(Trig_Cos(i * DEGtoANG(45)), FIXED_ONE * 6 / 5);
+        effect->velocity.z = Math_Sin(i * DEGtoANG(45));
       } else {
         effect->velocity.x = spread;
         effect->velocity.z = spread;
@@ -2350,7 +2351,7 @@ void MagmaRock_StartFallingRocks(void) {
   rock = work->rocks;
   sprite = work->sprites;
   for (i = 63; i >= 0; i--, sprite++, rock++) {
-    EffectSprite_Init(sprite, 8, 8, 0x40000000, tile);
+    EffectSprite_Init(sprite, 8, 8, OBJ_SIZE_16X16, tile);
     sprite->oam.fullColor = 1;
     sprite->oam.palette = SPRITE_COLOR_NORMAL;
     sprite->oam.priority = 0;

@@ -1289,7 +1289,7 @@ void MagmaRockInside_DrainLava(void) {
   FieldEvent_Wait(20);
   Event_PlaySound(SE_BUTTON_PRESS);
   flags = &leader->priorityFlags;
-  *flags &= ~64;
+  *flags &= ~ACTOR_PRIORITY_WALKS_ON_PLATFORMS;
   FieldEvent_Wait(20);
   MapGrid_SetShake(1, 2, 1);
   Event_PlaySound(SE_TREMOR);
@@ -1396,7 +1396,7 @@ void MagmaRockInside_DrainLava(void) {
   FieldMapGrid_WaitForShakeToSettle();
   Event_PlaySound(SE_BUTTON_PRESS);
   {
-    s32 bit = 64;
+    s32 bit = ACTOR_PRIORITY_WALKS_ON_PLATFORMS;
     bit |= *flags;
     *flags = bit;
   }
@@ -2064,7 +2064,7 @@ void MagmaRockInside_LearnBlaze(s32 a, s32 b) {
   REG_BLDCNT = BLDCNT_TGT1_OBJ | BLDCNT_TGT2_ALL;
   i = 0;
   do {
-    object = (struct Actor *)Import_ActorCreate(672, first->x.fixed,
+    object = (struct Actor *)Import_ActorCreate(SPRITE_PARTICLE, first->x.fixed,
                                                 first->y.fixed, first->z.fixed);
     Event_PlaySound(SE_GLITTER);
     object->x.fixed += ((Random16() & 31) - 16) << 16;
@@ -2445,7 +2445,8 @@ s32 Scene_Initialize(void) {
 
   gFieldWork->transition = SCENE_TRANSITION(TRANSITION_WINDOW, 4);
   if (gMainRoutineWork.next == SCENE_MAGMA_ROCK_INSIDE_LUCKY_MEDAL_CHEST) {
-    Actor_GetById(gMainRoutineWork.leaderActorId)->priorityFlags |= 64;
+    Actor_GetById(gMainRoutineWork.leaderActorId)->priorityFlags |=
+        ACTOR_PRIORITY_WALKS_ON_PLATFORMS;
     MagmaRockInside_StartLavaPlatform(ACTOR_LUCKY_MEDAL_PLATFORM,
                                       gMagmaRockInside_LuckyMedalPlatformPath,
                                       FLAG_ENTRANCE_FLOODED);
@@ -2472,7 +2473,8 @@ s32 Scene_Initialize(void) {
       Actor_GetById(ACTOR_ENTRANCE_PILLAR)->z.fixed = toFIXED(264);
     Actor_PlaceBlocks(gMagmaRockInside_EntrancePillars);
     MagmaRockInside_RaiseActorCells(gMagmaRockInside_Statues);
-    Actor_GetById(gMainRoutineWork.leaderActorId)->priorityFlags |= 64;
+    Actor_GetById(gMainRoutineWork.leaderActorId)->priorityFlags |=
+        ACTOR_PRIORITY_WALKS_ON_PLATFORMS;
     Raise(ACTOR_ENTRANCE_MARKER);
     if (Event_GetFlag(FLAG_ENTRANCE_FLOODED))
       MagmaRockInside_SetEntranceFlooded();
@@ -2486,7 +2488,8 @@ s32 Scene_Initialize(void) {
     Tightrope_Initialize();
     Tightrope_Place(0, ACTOR_TIGHTROPE_WEST_POST, ACTOR_TIGHTROPE_EAST_POST);
     MagmaRockInside_RaiseActorCells(gMagmaRockInside_Statues);
-    Actor_GetById(gMainRoutineWork.leaderActorId)->priorityFlags |= 64;
+    Actor_GetById(gMainRoutineWork.leaderActorId)->priorityFlags |=
+        ACTOR_PRIORITY_WALKS_ON_PLATFORMS;
     Raise(ACTOR_FURY_MARKER);
     MagmaRockInside_StartLavaPlatform(ACTOR_WEST_PLATFORM,
                                       gMagmaRockInside_FuryWestPlatformPath,
@@ -2500,7 +2503,8 @@ s32 Scene_Initialize(void) {
       CLOSED_BLEND();
   } else if (gMainRoutineWork.next == SCENE_MAGMA_ROCK_INSIDE_CRACKED_PILLARS) {
     FieldEffect_StartBlankOverlay(0);
-    Actor_GetById(gMainRoutineWork.leaderActorId)->priorityFlags |= 64;
+    Actor_GetById(gMainRoutineWork.leaderActorId)->priorityFlags |=
+        ACTOR_PRIORITY_WALKS_ON_PLATFORMS;
     MagmaRockInside_RaiseActorCells(gMagmaRockInside_CrackedPillarsStatues);
     if (gMainRoutineWork.entrance <= 7) {
       MagmaRockInside_StartLavaPlatform(
@@ -2573,7 +2577,8 @@ s32 Scene_Initialize(void) {
   } else if (gMainRoutineWork.next ==
              SCENE_MAGMA_ROCK_INSIDE_GOLEM_CORE_CHEST) {
     FieldEffect_StartBlankOverlay(0);
-    Actor_GetById(gMainRoutineWork.leaderActorId)->priorityFlags |= 64;
+    Actor_GetById(gMainRoutineWork.leaderActorId)->priorityFlags |=
+        ACTOR_PRIORITY_WALKS_ON_PLATFORMS;
     HangingVine_Place(ACTOR_HANGING_VINE_A, 1);
     HangingVine_Place(ACTOR_HANGING_VINE_B, 1);
     Raise(ACTOR_MARKER_A);
@@ -2588,7 +2593,8 @@ s32 Scene_Initialize(void) {
   } else if (gMainRoutineWork.next ==
              SCENE_MAGMA_ROCK_INSIDE_SALAMANDER_TAIL_CHEST) {
     FieldEffect_StartBlankOverlay(0);
-    Actor_GetById(gMainRoutineWork.leaderActorId)->priorityFlags |= 64;
+    Actor_GetById(gMainRoutineWork.leaderActorId)->priorityFlags |=
+        ACTOR_PRIORITY_WALKS_ON_PLATFORMS;
     if (Event_GetFlag(FLAG_NORTH_PILLAR_PUSHED)) {
       MapGrid_CopyCellAttributes(46, 74, 1, 1, 46, 73);
       Actor_GetById(ACTOR_NORTH_PILLAR)->x.fixed = toFIXED(760);
@@ -2878,8 +2884,9 @@ void MagmaRockInside_SpawnRubble(s32 spread) {
       effect->scaleY = effect->scaleX = FIXED_ONE * 7 / 10;
       effect->sprite->priority = 1;
       if (spread != 0) {
-        effect->velocity.x = Iwram_MulFX(Trig_Cos(i << 13), 0x13333);
-        effect->velocity.z = Math_Sin(i << 13);
+        effect->velocity.x =
+            Iwram_MulFX(Trig_Cos(i * DEGtoANG(45)), FIXED_ONE * 6 / 5);
+        effect->velocity.z = Math_Sin(i * DEGtoANG(45));
       } else {
         effect->velocity.x = spread;
         effect->velocity.z = spread;
@@ -3034,7 +3041,7 @@ void MagmaRockInside_StartFallingRocks(void) {
   rock = work->rocks;
   sprite = work->sprites;
   for (i = 63; i >= 0; i--, sprite++, rock++) {
-    MagmaRockInside_InitRockSprite(sprite, 8, 8, 0x40000000, tile);
+    MagmaRockInside_InitRockSprite(sprite, 8, 8, OBJ_SIZE_16X16, tile);
     sprite->oam.fullColor = 1;
     sprite->oam.palette = SPRITE_COLOR_NORMAL;
     sprite->oam.priority = 0;

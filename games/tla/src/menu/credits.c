@@ -44,7 +44,11 @@ struct DisplayScrollObject {
   u32 attr2;
 };
 
+/// Slides the crawl has released for the slideshow to show next; the
+/// slideshow waits while there are none.
 extern s16 gCredits_PendingSlides;
+/// The credits' sprite buffer, copied to OAM each frame: the border strips'
+/// sprites, then the text's.
 extern struct DisplayScrollObject *gDisplayScroll_Objects;
 extern const u32 gDisplayScroll_SlideResources[];
 extern const void *gDisplayScroll_LineTable[];
@@ -70,13 +74,20 @@ void Credits_InitCrawlSprites(void);
 void Credits_InitTextSpritesAtPage(s32 credits);
 void Credits_StopTextSprites(void);
 s32 Credits_DrawLine(const u8 *text, s32 firstTile, s32 alignment);
+/// Credits_DecodeBackground, the ARM decoder RamCode_Load copies into a heap
+/// block to run (credits_background_decode.s).
 extern const u8 Credits_DecodeBackgroundCode[];
+/// Credits_DecodeBackgroundCode's bytes, as its address.
 extern u8 Credits_DecodeBackgroundCodeSize[];
 extern const u8 gCredits_GlyphWidths[];
+/// The credits' font, the glyphs Credits_DrawLine draws a line's tiles from.
 extern const u8 gDisplayScroll_Font[];
 
 void EndingPicture_InitStrips(void);
+/// EndingPicture_Decode, the ARM decoder RamCode_Load copies into a heap block
+/// to run (ending_picture_decode.s).
 extern const u8 EndingPicture_DecodeCode[];
+/// EndingPicture_DecodeCode's bytes, as its address.
 extern u8 EndingPicture_DecodeCodeSize[];
 
 #include "gamepak/far_call/window.h"
@@ -1162,8 +1173,8 @@ void EndingPicture_LowerTopStrip(s32 enable) {
   }
 }
 
-/// The slideshow backdrops, ending in 0. Nothing reads this list.
 // clang-format off
+/// The slideshow backdrops, ending in 0. Nothing reads this list.
 const u32 gDisplayScroll_UnusedSlideResources[] = {
     RESOURCE_VALE_STORM_BACKDROP,
     RESOURCE_SOL_SANCTUM_BACKDROP,
@@ -1226,6 +1237,7 @@ const u32 gDisplayScroll_SlideResources[25] = {
     0
 };
 
+/// An empty credits line, between the names.
 static const u8 sBlankCreditLine[] = "";
 
 /// Ends a section of the credits: the scroll stops on it, and a section's

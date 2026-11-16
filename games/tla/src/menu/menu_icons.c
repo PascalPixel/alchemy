@@ -399,6 +399,7 @@ void DjinnFigures_UpdateTopRow(void) {
   }
 }
 
+/// The four Djinn figures' sprites, one an element (menu_tables.c).
 extern s32 gDjinnFigures_SpriteIds[];
 
 /// Replaces the four Djinn figures with one Djinni of each element

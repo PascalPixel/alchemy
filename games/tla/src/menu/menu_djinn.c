@@ -598,8 +598,6 @@ void DjinnMenu_BuildLists(struct DjinnMenuBackdrop *backdrop) {
   }
 }
 
-extern u8 MsgDjinnName[]; ///< the first djinni's name
-
 s32 Djinn_CanSetFar(s32 owner, s32 element, s32 index);
 s32 Djinn_IsSetFar(s32 owner, s32 element, s32 index);
 
@@ -931,6 +929,7 @@ s32 DjinnMenu_ShowHelp(void) {
 #define TRADE_HELP_DJINNI_FIRST 0
 #endif
 
+/// The level label: `Lv`; `Nv.` in Spanish, `Niv` in French.
 extern u8 gDjinnMenu_TextLevel[];
 
 s32 Djinn_MarkTradeOnlyRecipients(s8 *table, s32 self);
@@ -1707,6 +1706,7 @@ s32 DjinnMenu_DrawPairPreview(s32 mode, s32 pageIndex) {
 /// is tile column x.
 #define DJINN_PREVIEW_VALUE_X(x) ((x) * 8 + 72)
 
+/// `/` between the current and the maximum HP and PP in the Djinn preview.
 extern const char gDjinnMenu_TextSlash[];
 
 #if LANGUAGE != LANGUAGE_JAPANESE

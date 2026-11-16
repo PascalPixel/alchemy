@@ -118,8 +118,14 @@ struct TitleScreenWork {
 };
 
 void TitlePaletteFade_SetCurrent(s32 index, s32 transform);
+/// The title logo's pictures, decompressed here before they are copied into
+/// sprite tiles.
 extern u8 gTitleIntro_LogoTileBuffer[];
+/// The lighthouse picture's tiles past its first screen, which
+/// TitleIntro_ScrollLighthouse streams in as the picture scrolls down.
 extern u8 gTitleIntro_LighthouseTilesTail[];
+/// Unnamed: what the scroll back up copies its rows from. XXX: the EWRAM work
+/// at 0x02017080 (src/system/ewram.s); a name needs what else uses it.
 extern u8 Data_02017080[];
 extern const u8 gTitle_PromptBlendLevels[];
 extern u16 gTitleIntro_ChannelCurve[];

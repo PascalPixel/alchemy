@@ -5,10 +5,10 @@
 
 #include "types.h"
 
+// clang-format off
 /// The gull's frames, rows of five: a first tile, a count of columns, a
 /// duration in frames and an x and y offset. The animation steps a row at a
 /// time and stops at the row whose first value is -1.
-// clang-format off
 const s16 gTitleIntro_GullFrames[] = {
        0, 3, 3,  0,  0,
       24, 4, 3,  0, -4,

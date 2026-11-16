@@ -914,7 +914,10 @@ void StatusScreen_ShowMemberProgressMessage(void *window, s32 help, s32 full) {
 
 #undef HELP_LENGTH
 
+/// The Status screen's level label: `Lv`; `Nv.` in Spanish, `Niv` in French.
 extern const u8 gMenu_LvString[];
+/// `/` between a current and a maximum HP or PP, and between a set and a held
+/// Djinn count.
 extern const u8 gMenu_SlashString[];
 
 void ItemMenu_DrawMemberStatus(s32 window, s32 owner, s32 flags);
@@ -1007,7 +1010,10 @@ void StatusScreen_DrawStatusAilments(s32 window, s32 ownerId, s32 mode) {
   }
 }
 
+/// The HP label: `HP`; `KP` in German, `PV` in Spanish and French, `PS` in
+/// Italian.
 extern const u8 gMenu_HpString[];
+/// The PP label: `PP`; `EP` in German.
 extern const u8 gMenu_PpString[];
 
 // The stat column of the status page's top rows: three digits from 200 or
@@ -1116,6 +1122,8 @@ s32 PagedList_Build(struct PagedList *result, s32 index) {
 
 #undef PAGE_ROWS
 
+/// Pairs of 4-bit rows in colour 5, each a pixel longer than the last, that
+/// Menu_BuildPatternTiles XORs into its tile pairs (menu_strings.s).
 extern u32 gMenu_PatternRowMasks[][2];
 
 /// Builds two sets of six tile pairs (24 8x8 tiles) in background tile block
@@ -1194,16 +1202,6 @@ void PsynergyMenu_DrawRange(s32 window, s32 x, s32 y, s32 range, s32 unused) {
 #define USABLE_TOP 96
 #define USABLE_RIGHT 224
 #define USABLE_BOTTOM 104
-#endif
-
-#if LANGUAGE == LANGUAGE_JAPANESE
-extern u8 MsgExpLabel[];
-extern u8 MsgDjinnListHelp[];
-#else
-extern u8 MsgUsableInBattle[];
-extern u8 MsgUsableInField[];
-// In the English release its text is MsgUsableInField's again.
-extern u8 MsgUsableAnywhere[];
 #endif
 
 /// Updates the Psynergy page for the row under the cursor: the Psynergy's

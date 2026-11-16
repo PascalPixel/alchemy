@@ -970,12 +970,10 @@ s32 ItemMenu_SelectMember(s32 pane) {
   return result;
 }
 
-/// The item menu's help, followed by the equipment help. "L+A: Arrange
-/// items"; the next message is "R: View equipment".
-extern u8 MsgArrangeItemsHelp[];
 #if LANGUAGE == LANGUAGE_JAPANESE
-/// The key names Japanese draws before the help: "L+A:" and "R:".
+/// `L+A:`, the key name Japanese draws before the arrange help.
 extern const u8 gItemMenu_ArrangeKeysString[];
+/// `R:`, the key name Japanese draws before the equipment help.
 extern const u8 gItemMenu_EquipmentKeyString[];
 #endif
 
@@ -2098,10 +2096,7 @@ void ItemMenu_DrawItemDetails(s32 window, s32 item) {
 #define ITEM_DETAILS_MULTIPLIER_X 72
 #endif
 
-#if LANGUAGE == LANGUAGE_JAPANESE
-/// "ばい", times, after a multiplier.
-extern u8 MsgTimesSuffix[];
-#endif
+/// `.`, the decimal point of a multiplier.
 extern u8 gMenu_PointString[];
 
 void ItemMenu_DrawStat(s32 delta, s32 unused, s32 window, s32 x, s32 y);
@@ -2439,12 +2434,8 @@ void ItemMenu_FitMessageWindowToQuestion(void) {
 #define CURSOR_X 128
 #endif
 
-#if LANGUAGE == LANGUAGE_JAPANESE
-extern u8 MsgItemCommandUse[];
-#else
-// "How many?"
-extern u8 MsgHowMany[];
-#endif
+/// The item menu's quantity bar picture, which QuantityBar_FillFar fills in
+/// under the "How many?" question.
 extern const u8 gMenu_QuantityTiles[];
 
 void QuantityBar_FillFar(s32 value, s32 column, void *tiles);
@@ -2671,14 +2662,10 @@ s32 ItemMenu_ConfirmDrop(s32 item) {
 // The question is named in the English catalog alone; in every edition it is
 // the second message after MsgConfirmDrop.
 #if LANGUAGE == LANGUAGE_ENGLISH
-extern u8 MsgEquipThisItem[]; // the ☀️ twin's name
 #define EQUIP_QUESTION ((s32)MsgEquipThisItem)
 #else
-extern u8 MsgConfirmDrop[];
 #define EQUIP_QUESTION ((s32)MsgConfirmDrop + 2)
 #endif
-
-extern u8 MsgYes[]; // the ☀️ twin's name
 
 /// After giving or trading the selected item to the party member in side 1,
 /// offers to equip it there, showing the stats it would give.
@@ -2905,9 +2892,6 @@ s32 ItemMenu_DrawNamePage(s32 window, s32 unused,
 #else
 #define CHANGE_HELP_X 0
 #endif
-
-// "L/R: Change character", under the list in pane 0.
-extern u8 MsgChangeCharacterHelp[];
 
 /// The item list of the party member in sideIndex (0: the holder, 1: the
 /// receiver of a trade), five items a page. The cursor's item is named in the

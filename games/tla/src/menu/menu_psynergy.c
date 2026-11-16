@@ -621,9 +621,13 @@ s32 PsynergyMenu_SetShortcut(s32 memberId, s32 id, s32 second) {
 #endif
 
 #if LANGUAGE == LANGUAGE_JAPANESE
+/// `L`, before a wide shortcut name.
 extern const u8 gMenu_ShortcutLString[];
+/// `L:`, before the L shortcut's name.
 extern const u8 gMenu_ShortcutLColonString[];
+/// `R`, before a wide shortcut name.
 extern const u8 gMenu_ShortcutRString[];
+/// `R:`, before the R shortcut's name.
 extern const u8 gMenu_ShortcutRColonString[];
 #endif
 

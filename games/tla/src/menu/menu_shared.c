@@ -133,6 +133,7 @@ enum StatusPanelKind {
 #define MESSAGE_WILL_LEARN ((s32)&MsgWillLearn)
 #define MESSAGE_LEARNED ((s32)&MsgLearned)
 
+/// The status panel's level label: `Lv`; `Nv.` in Spanish, `Niv` in French.
 extern const u8 gStatusPanel_LvString[];
 
 void Window_ClearInteriorTilesFar(struct Window *window, s32 x, s32 y,
@@ -600,7 +601,9 @@ void Menu_PlacePartyFigures(void) {
   }
 }
 
+/// The hand cursor's bob in x, a step every two frames (MenuCursor_Position).
 extern u8 gMenuCursor_BobX[];
+/// The hand cursor's bob in y: 0, -1, -1, -2, -2, -1, -1, 0.
 extern u8 gMenuCursor_BobY[];
 
 #define CURSOR_BOB_STEP() ((gFrameCount >> 1) & 7)

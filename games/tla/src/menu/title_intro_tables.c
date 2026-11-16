@@ -6,9 +6,9 @@
 #include "types.h"
 #include "system/frame.h"
 
+// clang-format off
 /// The prompt's blend level over its pulse of a second, as The Broken Seal
 /// has it.
-// clang-format off
 const u8 gTitle_PromptBlendLevels[FRAMES_PER_SECOND] = {
     1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16,
     16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16,
@@ -27,6 +27,7 @@ u16 gTitleIntro_ChannelCurve[32] = {
     0x5217, 0x5772, 0x5d00, 0x62c3, 0x68bc, 0x6eed, 0x7559, 0x7c00,
 };
 
+/// The lighter curve, which lifts the dark and middle channels.
 u16 gTitleIntro_ChannelCurveLight[32] = {
     0x0000, 0x0265, 0x04df, 0x076e, 0x0a14, 0x0cd1, 0x0fa5, 0x1291,
     0x1596, 0x18b4, 0x1bec, 0x1f3f, 0x22ac, 0x2636, 0x29dc, 0x2da0,
@@ -34,6 +35,7 @@ u16 gTitleIntro_ChannelCurveLight[32] = {
     0x5529, 0x5a3d, 0x5f78, 0x64da, 0x6a65, 0x7019, 0x75f7, 0x7c00,
 };
 
+/// The contrast curve, which darkens the low channels and reaches full at 25.
 u16 gTitleIntro_ChannelCurveContrast[32] = {
     0x0000, 0x0168, 0x02f7, 0x04b1, 0x0699, 0x08b2, 0x0b01, 0x0d8a,
     0x1052, 0x135d, 0x16b0, 0x1a52, 0x1e48, 0x2298, 0x274a, 0x2c65,

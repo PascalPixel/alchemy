@@ -237,11 +237,11 @@ void JupiterLighthouse_FlashSky(void) {
   }
   REG_DISPCNT &= ~DISPCNT_BG0_ON;
   Io_Write16(BGCNT_SCREEN_BASE(4), &REG_BG0CNT);
-  buffer = Heap_Alloc(0x800);
+  buffer = Heap_Alloc(2048);
   Decompress_TaggedLz(Resource_GetTableEntry(RESOURCE_LIGHTNING_TILES), buffer);
   Dma_Set(buffer, (void *)VRAM, DMA_COPY_WORDS(512), REG_DMA3);
   Heap_Release(buffer);
-  Dma_Fill16(0, (void *)(VRAM + 0x2000), 0x800);
+  Dma_Fill16(0, (void *)(VRAM + 0x2000), 2048);
   buffer = Heap_Alloc(128);
   Decompress_TaggedLz(Resource_GetTableEntry(RESOURCE_LIGHTNING_MAP), buffer);
   p = buffer;
@@ -579,7 +579,7 @@ s32 JupiterLighthouse_SwayGaret(void) {
     if (sprite != NULL) {
       sprite->box[3] = 30;
       sprite->box[2] = -4;
-      sprite->rotation = Math_Sin(gFrameCount * 728) / 128 - 0x800;
+      sprite->rotation = Math_Sin(gFrameCount * 728) / 128 - TRIG_TURN / 32;
     }
   }
   return 1;
@@ -1966,11 +1966,15 @@ LATE_DATA struct Trigger gSceneEvents[] = {
 
 LATE_DATA u32 gJupiterLighthouse_GaretHangsScript[] = {
 #if !TLA_PATCH_1
-    39, 14, 22, 26, 0, 23,
+    SC_ANIMATION(14),
+    SC_SET(SW_MOTION, 0),
+    SC_ADD(SW_Y, toFIXED(12)),
 #else
-    39, 14, 22, 26, 0, 22,
+    SC_ANIMATION(14),
+    SC_SET(SW_MOTION, 0),
+    SC_SET(SW_Y, toFIXED(12)),
 #endif
-    6, 0xc0000, 17,
+    SC_END,
 };
 
 LATE_DATA u32 gJupiterLighthouse_MiaScript[] = {

@@ -326,7 +326,7 @@ void JupiterLighthouse_LightWestPath(s32 mode) {
     MapGrid_CopyCellsLayered(80, 46, 1, 7, 72, 9);
     MapGrid_CopyCellsLayered(80, 53, 8, 5, 72, 16);
     MapGrid_CopyCellsLayered(78, 47, 1, 1, 8, 74);
-    MapGrid_SetCellHeight(0x800000, 0xc00000, 0, 4);
+    MapGrid_SetCellHeight(toFIXED(128), toFIXED(192), 0, 4);
     if (mode == 1) {
       frame = 0;
       do {
@@ -353,7 +353,7 @@ void JupiterLighthouse_LightWestPath(s32 mode) {
     MapGrid_CopyCellsLayered(72, 46, 1, 7, 72, 9);
     MapGrid_CopyCellsLayered(72, 53, 8, 5, 72, 16);
     MapGrid_CopyCellsLayered(70, 47, 1, 1, 8, 74);
-    MapGrid_SetCellHeight(0x800000, 0xc00000, 0, 6);
+    MapGrid_SetCellHeight(toFIXED(128), toFIXED(192), 0, 6);
     FieldActor_Stop(gMainRoutineWork.leaderActorId);
     Actor_SetPosition(ACTOR_THIRD_PATH_BLOCK, 0, 0);
     if (mode == 1) {

@@ -14,6 +14,7 @@
 #include "field/field.h"
 #include "game/game.h"
 #include "graphics/palette_buffers.h"
+#include "graphics/glyph.h"
 #include "graphics/graphics.h"
 #include "system/math_table.h"
 #include "menu/menu.h"
@@ -200,11 +201,11 @@ struct WhirlwindActor {
   s32 x;
   s32 y;
   s32 z;
-  u8 unusedAfterZ[0x1c];
+  u8 unusedAfterZ[28];
   s32 speedLimit;
-  u8 unusedAfterSpeed[0x1c];
+  u8 unusedAfterSpeed[28];
   s8 *sprite;
-  u8 unusedAfterSprite[0x0e];
+  u8 unusedAfterSprite[14];
   u8 riding;   ///< Actor.riseCounter: the leader rides it
   u8 carrying; ///< Actor.riseEnabled: it carries the leader still
   u16 timer;   ///< Actor.timer, frames it has turned
@@ -331,7 +332,7 @@ void JupiterLighthouse_RaiseBeaconLight(void) {
         effect->riseCounter = counter;
       }
       effect->update = JupiterLighthouse_CircleBeaconWide;
-      effect->speedLimit = Math_Sin((u32)(Random16() * 0xffff) >> 20) * 24;
+      effect->speedLimit = Math_Sin((u32)(Random16() * 65535) >> 20) * 24;
       effect->speedLimit = center->speedLimit >> 16;
       sprite->flags = 0;
       sprite->priority = 1;
@@ -401,15 +402,15 @@ void JupiterLighthouse_SpawnBeaconParticle(void) {
     effect->timer = angle;
     effect->userValue = 0;
     effect->update = JupiterLighthouse_CircleBeacon;
-    effect->speedLimit = Math_Sin((u32)(Random16() * 0xffff) >> 20) * 24 >> 16;
+    effect->speedLimit = Math_Sin((u32)(Random16() * 65535) >> 20) * 24 >> 16;
     sprite->flags = 0;
     sprite->priority = 1;
   }
 }
 
-/// While the view's z is at most 177 pixels, sets object 36 at y 0x6f8000 and
-/// full size on odd frames, or at y 0x688000 and 1.3 times the size on even
-/// ones; beyond it, calls Actor_SetPosition(ACTOR_BEACON_ORB, 0, 0).
+/// While the view's z is at most 177 pixels, sets object 36 at y 111.5 pixels
+/// and full size on odd frames, or at y 104.5 pixels and 1.3 times the size on
+/// even ones; beyond it, calls Actor_SetPosition(ACTOR_BEACON_ORB, 0, 0).
 void JupiterLighthouse_PulseBeacon(void) {
   struct Actor *actor = Actor_Get(ACTOR_BEACON_ORB);
   struct MapWork *map = Ram_HeapSlots->mapGrid;
@@ -453,7 +454,7 @@ void JupiterLighthouse_CastTheJupiterStar(void) {
   s32 answer, state;
   struct Actor *felix, *star, *shadow, *beamA, *beamB;
   struct FieldSprite *sprite;
-  u8 *buffer;
+  GlyphTransfer *glyph;
   u8 *flags;
 
   if (GameFlag_Get(FLAG_ISAAC_AND_IVAN_FELL) != 0) {
@@ -496,9 +497,9 @@ void JupiterLighthouse_CastTheJupiterStar(void) {
         star->retainSpriteCache = 1;
         star->speedLimit = toFIXED(2) / 5;
         star->acceleration = toFIXED(1) / 20;
-        buffer = HeapSlot_Alloc(HEAP_SLOT_GLYPH_TRANSFER, 0x608);
+        glyph = HeapSlot_Alloc(HEAP_SLOT_GLYPH_TRANSFER, sizeof(GlyphTransfer));
         Item_LoadIcon(ITEM_JUPITER_STAR);
-        Vram_Load(sprite->slot, 128, buffer + 0x400);
+        Vram_Load(sprite->slot, ICON_TILE_BYTES, glyph->tiles);
         HeapSlot_Release(HEAP_SLOT_GLYPH_TRANSFER);
       }
       FieldActor_SetSpritePriority(ACTOR_STAR_SHADOW, 1);
@@ -2105,7 +2106,7 @@ void JupiterLighthouse_LiftObjectsInBeam(s32 mode) {
     }
     if ((i & 3) == 3)
       speed += toFIXED(1) / 10;
-    if (speed > 0x17fff)
+    if (speed > toFIXED(3) / 2 - 1)
       speed = toFIXED(3) / 2;
     System_Wait(1);
     if (mode == 0) {
@@ -2194,7 +2195,7 @@ s32 Scene_Initialize(void) {
 
   gFieldWork->transition =
       SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_SHAPE);
-  Call2(HangingVine_Place, 0xf, 1);
+  Call2(HangingVine_Place, 15, 1);
   HangingVine_Place(16, 1);
   Actor_Get(gMainRoutineWork.leaderActorId)->priorityFlags |=
       ACTOR_PRIORITY_WALKS_ON_PLATFORMS;
@@ -2317,8 +2318,8 @@ void JupiterLighthouse_RideTheBeam(void) {
     actor->x.fixed = linked->x.fixed;
     actor->y.fixed = linked->y.fixed + i;
     actor->z.fixed = linked->z.fixed;
-    if (i <= 0x3ffff)
-      i += 0x1999;
+    if (i <= toFIXED(4) - 1)
+      i += toFIXED(0.1);
     actor->facing = (u8)gFrameCount << 12;
     p = &actor->priorityFlags;
     *p ^= 2 << (gFrameCount & 1);
@@ -2473,7 +2474,7 @@ void JupiterLighthouse_EnergizeAngels(void) {
     left->y.fixed += 0x66640;
     rider->y.fixed += 0x1eb80;
     rider->x.fixed += -0x28f40;
-    sprite->rotation += 0x800;
+    sprite->rotation += TRIG_TURN / 32;
     Actor_SetSpriteColorMode(Actor_GetById(ACTOR_LEFT_ANGEL), SPRITE_COLOR_GBR);
     Actor_SetSpriteColorMode(Actor_GetById(ACTOR_LEFT_ARCHER),
                              SPRITE_COLOR_GBR);
@@ -2482,7 +2483,7 @@ void JupiterLighthouse_EnergizeAngels(void) {
     right->y.fixed += 0x66640;
     rider->y.fixed += 0x1eb80;
     rider->x.fixed += 0x28f40;
-    sprite->rotation -= 0x800;
+    sprite->rotation -= TRIG_TURN / 32;
     Actor_SetSpriteColorMode(Actor_GetById(ACTOR_RIGHT_ANGEL),
                              SPRITE_COLOR_GBR);
     Actor_SetSpriteColorMode(Actor_GetById(ACTOR_RIGHT_ARCHER),
@@ -2581,25 +2582,25 @@ s32 gJupiterLighthouse_BeamRiders[] = {BEAM_OBJECTS_END};
 #define FIELD_EFFECT_DURATION_SCRIPT_SECTION LATE_DATA
 #include "shared/field_effect_duration_scripts.c"
 
-/// Unused: turns its actor's facing back and forth, 0x1200 at a time, and
+/// Unused: turns its actor's facing back and forth, 9/128 of a turn at a time, and
 /// ends. Nothing starts it.
 LATE_DATA s32 gJupiterLighthouse_RockScript[] = {
     SC_WAIT(5),
-    SC_ADD(SW_FACING, 0x1200),
+    SC_ADD(SW_FACING, TRIG_TURN * 9 / 128),
     SC_WAIT(5),
-    SC_ADD(SW_FACING, 0x1200),
+    SC_ADD(SW_FACING, TRIG_TURN * 9 / 128),
     SC_WAIT(5),
-    SC_ADD(SW_FACING, -0x1200),
+    SC_ADD(SW_FACING, -TRIG_TURN * 9 / 128),
     SC_WAIT(2),
-    SC_ADD(SW_FACING, -0x1200),
+    SC_ADD(SW_FACING, -TRIG_TURN * 9 / 128),
     SC_WAIT(2),
-    SC_ADD(SW_FACING, -0x1200),
+    SC_ADD(SW_FACING, -TRIG_TURN * 9 / 128),
     SC_WAIT(5),
-    SC_ADD(SW_FACING, -0x1200),
+    SC_ADD(SW_FACING, -TRIG_TURN * 9 / 128),
     SC_WAIT(5),
-    SC_ADD(SW_FACING, 0x1200),
+    SC_ADD(SW_FACING, TRIG_TURN * 9 / 128),
     SC_WAIT(5),
-    SC_ADD(SW_FACING, 0x1200),
+    SC_ADD(SW_FACING, TRIG_TURN * 9 / 128),
     SC_END,
 };
 
@@ -2704,7 +2705,7 @@ LATE_DATA s32 gJupiterLighthouse_HopEastOverPlatformsScript[] = {
   };
 
 LATE_DATA s32 gJupiterLighthouse_StarFallsScript[] = {
-    SC_ADD(SW_SCALE_X, 0x1000),
+    SC_ADD(SW_SCALE_X, FIXED_ONE / 16),
     SC_WAIT(1),
     SC_LOOP(32, SC_TOP),
     SC_END,
@@ -2736,15 +2737,15 @@ LATE_DATA s32 gJupiterLighthouse_BeaconRisesScript[] = {
       SC_WAIT(1),                                                              
       SC_LOOP(4, SC_TO(1)),                                                    
       SC_LABEL(2),                                                             
-      SC_ADD(SW_SCALE_X, 0x600),                                               
+      SC_ADD(SW_SCALE_X, FIXED_ONE * 3 / 128),                                               
       SC_WAIT(1),                                                              
       SC_LOOP(4, SC_TO(2)),                                                    
       SC_LOOP(SC_FOREVER, SC_TOP),                                             
   };
 
 LATE_DATA s32 gJupiterLighthouse_BeaconSparkScript[] = {
-    SC_SET(SW_SCALE_X, 0xcccc),
-    SC_SET(SW_SCALE_Y, 0xcccc),
+    SC_SET(SW_SCALE_X, toFIXED(0.8)),
+    SC_SET(SW_SCALE_Y, toFIXED(0.8)),
     SC_ANIMATION(1),
     SC_LABEL(1),
     SC_ADD(SW_Y, toFIXED(-1)),
@@ -2811,17 +2812,30 @@ LATE_DATA struct ActorPlacement gActorPlacements[] = {
 };
 
 LATE_DATA s32 gJupiterLighthouse_BeaconParticleScript[] = {
-    22, 9, 0xcccc, 22, 10, 0xcccc,
-    39, 1, (s32)0x80010000, 23, 6, 0x10000,
-    0, 1, 13, 16, (s32)0xc0010000, 2,
-    0, 0, 0, 0, 1, 38,
+    SC_SET(SW_SCALE_X, toFIXED(0.8)),
+    SC_SET(SW_SCALE_Y, toFIXED(0.8)),
+    SC_ANIMATION(1),
+    SC_LABEL(1),
+    SC_ADD(SW_Y, toFIXED(1)),
+    SC_WAIT(1),
+    SC_LOOP(16, SC_TO(1)),
+    SC_POSITION(0, 0, 0),
+    SC_WAIT(1),
+    SC_RELEASE,
 #if TLA_PATCH_1
     0,
 #endif
-    22, 10, 0x16666, 22, 9, 0x16666,
-    39, 4, 0, 30, 38, 22,
-    26, 0, 23, 6, 0x40000, 0,
-    8, 3, 0, 1, 17,
+    SC_SET(SW_SCALE_Y, toFIXED(1.4)),
+    SC_SET(SW_SCALE_X, toFIXED(1.4)),
+    SC_ANIMATION(4),
+    SC_WAIT(30),
+    SC_RELEASE,
+    SC_SET(SW_MOTION, 0),
+    SC_ADD(SW_Y, toFIXED(4)),
+    SC_WAIT(8),
+    SC_POSITION_ORIGIN,
+    SC_WAIT(1),
+    SC_END,
 };
 // clang-format on
 

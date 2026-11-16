@@ -585,11 +585,11 @@ void JupiterLighthouse_StopBeamFlicker(struct Actor *actor) {
 /// sparks' and the trident's pictures and sprites, the beam's path, and where
 /// its steps have reached.
 struct BeamWork {
-  u8 tiles[0x200];
+  u8 tiles[512];
   struct EffectSprite sprites[32];
   struct BeamSpark sparks[32];
   struct EffectSprite large;
-  u8 unusedAfterLarge[0x1c];
+  u8 unusedAfterLarge[28];
   s32 from[3];
   s32 to[3];
   s32 carried[3];
@@ -756,7 +756,7 @@ void JupiterLighthouse_UpdateBeam(void) {
       } else {
         spark->position[1] += Trig_Sin(Random16()) << 1;
         spark->position[0] += Trig_Cos(Random16()) * 10;
-        spark->drift = (Random16() - 0x8000) << 1;
+        spark->drift = (Random16() - 32768) << 1;
       }
     }
     if (spark->age <= 15) {

@@ -194,12 +194,12 @@ void IzumoRuins_ShowPillarState(struct Actor *actor) {
 }
 
 /// Places Pound's pillars from a list of rows (actor, unused, flag), ended by
-/// 0xffff: each shows its sunk or standing state by its flag.
+/// -1: each shows its sunk or standing state by its flag.
 void IzumoRuins_PlacePillars(u16 *list) {
   struct Actor *actor;
   s32 flag;
 
-  while (list[0] != 0xffff) {
+  while (list[0] != (u16)-1) {
     actor = Actor_Get(list[0]);
     flag = (s16)list[2];
     Actor_SetSpriteFlags(actor, 0);

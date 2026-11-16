@@ -16,6 +16,7 @@
 #include "field/field.h"
 #include "game/game.h"
 #include "graphics/palette_buffers.h"
+#include "graphics/glyph.h"
 #include "graphics/graphics.h"
 #include "system/math_table.h"
 #include "menu/menu.h"
@@ -660,9 +661,10 @@ void GabombaStatueChamber_ShowDragonsEye(void) {
     item->update = GabombaStatueChamber_KeepItemWithStatue;
     sprite->flags = clear;
     sprite->count = clear;
-    icon = HeapSlot_Alloc(HEAP_SLOT_GLYPH_TRANSFER, 0x608);
+    icon = HeapSlot_Alloc(HEAP_SLOT_GLYPH_TRANSFER, sizeof(GlyphTransfer));
     Icon_DrawItem(ITEM_DRAGONS_EYE);
-    VramCache_Load(sprite->slot, 128, icon + 0x400);
+    VramCache_Load(sprite->slot, ICON_TILE_BYTES,
+                   ((GlyphTransfer *)icon)->tiles);
     HeapSlot_Release(HEAP_SLOT_GLYPH_TRANSFER);
   }
 }
@@ -689,9 +691,10 @@ void GabombaStatueChamber_ShowBlackCrystal(void) {
     item->update = GabombaStatueChamber_KeepItemWithStatue;
     sprite->flags = clear;
     sprite->count = clear;
-    icon = HeapSlot_Alloc(HEAP_SLOT_GLYPH_TRANSFER, 0x608);
+    icon = HeapSlot_Alloc(HEAP_SLOT_GLYPH_TRANSFER, sizeof(GlyphTransfer));
     Icon_DrawItem(ITEM_BLACK_CRYSTAL);
-    VramCache_Load(sprite->slot, 128, icon + 0x400);
+    VramCache_Load(sprite->slot, ICON_TILE_BYTES,
+                   ((GlyphTransfer *)icon)->tiles);
     HeapSlot_Release(HEAP_SLOT_GLYPH_TRANSFER);
   }
 }
@@ -751,9 +754,11 @@ void GabombaStatueChamber_WhereIsTheOrb(void) {
     sprite->palette = 0;
     sprite->priority = 1;
     crystal->retainSpriteCache = 1;
-    block = (u8 *)HeapSlot_Alloc(HEAP_SLOT_GLYPH_TRANSFER, 0x608);
+    block =
+        (u8 *)HeapSlot_Alloc(HEAP_SLOT_GLYPH_TRANSFER, sizeof(GlyphTransfer));
     Icon_DrawItem(ITEM_BLACK_CRYSTAL);
-    VramCache_Load(sprite->slot, 0x80, (s32)(block + 0x400));
+    VramCache_Load(sprite->slot, ICON_TILE_BYTES,
+                   (s32)((GlyphTransfer *)block)->tiles);
     HeapSlot_Release(HEAP_SLOT_GLYPH_TRANSFER);
   }
   GabombaStatueChamber_OpenThePassage();
@@ -964,7 +969,7 @@ void GabombaStatueChamber_AkafubuOffersToHelp(void) {
   {
     s32 *effect = &((struct FieldWork *)heap->fieldWork)->transition;
 
-    turn = 0x100;
+    turn = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
     *effect = turn;
   }
   Event_StartScreenTransition();

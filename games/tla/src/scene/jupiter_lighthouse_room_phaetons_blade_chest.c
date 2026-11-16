@@ -232,18 +232,18 @@ s32 Scene_Initialize(void) {
   gWhirlwindRiding = 0;
   Actor_Get(ACTOR_WHIRLWIND_SOURCE)->motionFlags = 0;
   if ((u16)(gMainRoutineWork.entrance - 6) <= 1) {
-    CrackedTile_Find(33, 0x280, 0x380, 48, 1);
+    CrackedTile_Find(33, FLAG_SCENE_TEMP_80, FLAG_AREA_TEMP_80, 48, 1);
     CrackedTile_PlaceLanding(
         0, 0,
         SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE));
   } else if (gMainRoutineWork.entrance == 3 || gMainRoutineWork.entrance == 5 ||
              gMainRoutineWork.entrance == 13) {
-    CrackedTile_Find(43, 0x280, 0x380, 49, 1);
+    CrackedTile_Find(43, FLAG_SCENE_TEMP_80, FLAG_AREA_TEMP_80, 49, 1);
     CrackedTile_PlaceLanding(
         -21, 32,
         SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE));
   } else {
-    CrackedTile_Find(43, 0x280, 0x380, 0, 0);
+    CrackedTile_Find(43, FLAG_SCENE_TEMP_80, FLAG_AREA_TEMP_80, 0, 0);
     CrackedTile_PlaceLanding(
         -2, -27,
         SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE));
@@ -343,7 +343,7 @@ u32 gSceneExits[] = {
 };
 
 struct ActorPlacement gActorPlacements[] = {
-    {SPRITE_UNSEEN_MARKER, CONDITION_ALWAYS, 11, -0x80000, 0, -0x80000, FACING_WEST, 2, 0},
+    {SPRITE_UNSEEN_MARKER, CONDITION_ALWAYS, 11, toFIXED(-8), 0, toFIXED(-8), FACING_WEST, 2, 0},
     ACTOR_PLACEMENT(SPRITE_POLE, CONDITION_ALWAYS, MOVEMENT_TYPE_CLEAR_CHILD, 424, 0, 168, FACING_SOUTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(SPRITE_POLE, CONDITION_ALWAYS, MOVEMENT_TYPE_CLEAR_CHILD, 440, 0, 168, FACING_SOUTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE),
     ACTOR_PLACEMENT(SPRITE_POLE, CONDITION_ALWAYS, MOVEMENT_TYPE_CLEAR_CHILD, 664, 0, 200, FACING_SOUTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE),

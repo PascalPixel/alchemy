@@ -392,8 +392,8 @@ void GaiaRockInside_RaiseDust(void) {
     velocity[1] = 0;
     velocity[2] = Math_Sin(angle);
     velocity[0] += velocity[0] >> 1;
-    velocity[0] += (Random_Below(0xc000)) - 0x6000;
-    velocity[2] += (Random_Below(0x6000)) - 0x3000;
+    velocity[0] += (Random_Below(toFIXED(3) / 4)) - toFIXED(3) / 8;
+    velocity[2] += (Random_Below(toFIXED(3) / 8)) - toFIXED(3) / 16;
     FieldEffect_Spawn(actor->x.fixed, actor->y.fixed, actor->z.fixed,
                       velocity[0], velocity[1], velocity[2],
                       EFFECT_USE_UPDATE | EFFECT_USE_START_SCALE |
@@ -440,7 +440,7 @@ s32 GaiaRockInside_CaskTips(void) {
   struct Actor *actor;
 
   actor = Actor_Get(ACTOR_CASK);
-  ((struct FieldSprite *)actor->sprite)->rotation += 0x300;
+  ((struct FieldSprite *)actor->sprite)->rotation += TRIG_TURN * 3 / 256;
   return 0;
 }
 
@@ -450,7 +450,7 @@ extern u32 gGaiaRockInside_PourScript[];
 s32 GaiaRockInside_CaskRights(void) {
   struct FieldSprite *sprite = Actor_Get(ACTOR_CASK)->sprite;
 
-  sprite->rotation -= 0x300;
+  sprite->rotation -= TRIG_TURN * 3 / 256;
   return 0;
 }
 
@@ -461,7 +461,7 @@ void GaiaRockInside_FlickerPour(struct Actor *actor) {
   s32 bias;
   s32 limit;
 
-  bias = -0x800;
+  bias = -FIXED_ONE / 32;
   scale += FIXEDtoINT(random << 12);
   scale += bias;
   actor->scaleX = scale;
@@ -570,7 +570,7 @@ s32 GaiaRockInside_CaskBursts(void) {
         dust->bounce = Trig_Cos(((Random16() << 3) >> 16) << 14) >> 1;
         dust->riseBaseY = Math_Sin(((Random16() << 3) >> 16) << 14) >> 1;
         dust->gravity = 0;
-        dust->timer = ((Random16() << 9) >> 16) - 0x100;
+        dust->timer = ((Random16() << 9) >> 16) - 256;
         dust->speedLimit = 0;
         dust->acceleration = 0;
         dust->update = Effect_AdvanceMotionAtLeaderPriority;
@@ -1140,7 +1140,7 @@ void GaiaRockInside_FelixLearnsSand(s32 idA, s32 idB) {
   Actor_SetMovementTypeById(idA, gGaiaRockInside_TabletRiseScript);
   Sound_Play(SE_TABLET_RISE);
   Event_Wait(45);
-  Actor_ConfigureSpriteColor(idA, 0x100);
+  Actor_ConfigureSpriteColor(idA, SPRITE_COLOR_BLINK);
   REG_BLDALPHA = BLEND_ALPHA(8, 16);
   REG_BLDCNT = BLDCNT_TGT1_OBJ | BLDCNT_TGT2_ALL;
   for (i = 0; i != 16; i++) {
@@ -1174,7 +1174,7 @@ void GaiaRockInside_FelixLearnsSand(s32 idA, s32 idB) {
         FieldActor_Create(SPRITE_PARTICLE, b->x.fixed, b->y.fixed, b->z.fixed);
     Sound_Play(SE_SPARKS);
     angle = &spark->timer;
-    *angle = (Random16() & 0x7fff) + 0x8000;
+    *angle = (Random16() & 0x7fff) + DEGtoANG(180);
     spark->userValue = ((i & 1) * 2 - 1) << ((Random16() & 3) + 9);
     spark->motionFlags = 0;
     spark->riseBaseY = toFIXED(122);
@@ -1188,7 +1188,7 @@ void GaiaRockInside_FelixLearnsSand(s32 idA, s32 idB) {
     FieldVector_AddPolarOffsetFX(spark->riseBaseY, *angle, &spark->x.fixed);
     Actor_StartScript(spark, gGaiaRockInside_CirclingSparkScript);
     if (i == 3) {
-      Actor_SetSpriteColorById(idB, 0x100);
+      Actor_SetSpriteColorById(idB, SPRITE_COLOR_BLINK);
       b->motionFlags = 0;
       b->acceleration = toFIXED(1) / 5;
       b->speedLimit = toFIXED(1) / 5;
@@ -1203,7 +1203,7 @@ void GaiaRockInside_FelixLearnsSand(s32 idA, s32 idB) {
         FieldActor_Create(SPRITE_PARTICLE, b->x.fixed,
                           b->y.fixed + i * FIXED_ONE - toFIXED(8), b->z.fixed);
     spark->timer = Random16();
-    spark->userValue = 0x800;
+    spark->userValue = TRIG_TURN / 32;
     spark->riseCounter = i;
     spark->riseEnabled = 1;
     spark->bounce = spark->x.fixed;
@@ -2405,7 +2405,7 @@ s32 Scene_Initialize(void) {
         Sound_Play(SE_IMPACT);
         actor->x.fixed = 0;
         actor->z.fixed = 0;
-        MapGrid_SetScreenShake(fast, fast, 0x10000);
+        MapGrid_SetScreenShake(fast, fast, FIXED_ONE);
         for (i = 0; i < 4; i++) {
           dx = -8;
           if (i > 1)
@@ -2472,7 +2472,7 @@ s32 Scene_Initialize(void) {
       Event_SetMessageId((s32)MsgFieldItLooksLikeTheDragon);
       Actor_SetPosition(ACTOR_CASK, 0, 0);
       Actor_SetAnimationById(ACTOR_SERPENT, 3);
-      Actor_GetById(ACTOR_KRADEN)->speedLimit = scale = 0x10000;
+      Actor_GetById(ACTOR_KRADEN)->speedLimit = scale = toFIXED(1);
       slow = FACING_WEST;
       susa = Actor_GetById(ACTOR_SUSA);
       susa->speedLimit = slow;
@@ -2601,7 +2601,7 @@ s32 Scene_Initialize(void) {
       alpha = *(u8 *)&alpha;
       while (alpha != 0) {
         REG_BLDALPHA = alpha | BLEND_ALPHA(0, 16);
-        alpha = alpha + 0xffff;
+        alpha = alpha - 1;
         wait(1);
       }
       REG_DISPCNT &= (u16)~DISPCNT_BG1_ON;
@@ -2798,14 +2798,14 @@ s32 Scene_Initialize(void) {
     if (work->entrance == 1 || work->entrance == 3 || work->entrance == 5)
       GaiaRockInside_StartWallTriggers();
     if (Test(FLAG_STATUE_A_RISEN))
-      GaiaRockInside_PlaceStatue(ACTOR_STATUE_A, 0x1800000, 0x4b0000,
-                                 0x2a80000);
+      GaiaRockInside_PlaceStatue(ACTOR_STATUE_A, toFIXED(384), toFIXED(75),
+                                 toFIXED(680));
     if (Test(FLAG_STATUE_B_RISEN))
-      GaiaRockInside_PlaceStatue(ACTOR_STATUE_B, 0x1cf0000, 0x330000,
-                                 0x2a80000);
+      GaiaRockInside_PlaceStatue(ACTOR_STATUE_B, toFIXED(463), toFIXED(51),
+                                 toFIXED(680));
     if (Test(FLAG_STATUE_C_RISEN))
-      GaiaRockInside_PlaceStatue(ACTOR_STATUE_C, 0x2350000, 0x370000,
-                                 0x2a80000);
+      GaiaRockInside_PlaceStatue(ACTOR_STATUE_C, toFIXED(565), toFIXED(55),
+                                 toFIXED(680));
     if (Test(FLAG_ALTAR_ROOM_STREAM_OPEN)) {
       s32 width;
       s32 height;
@@ -3283,7 +3283,7 @@ void GaiaRockInside_PlaceStatue(s32 id, s32 x, s32 y, s32 z) {
   struct Actor *actor = Actor_Get(id);
   struct MapCell *cell = Ram_HeapSlots->mapGrid->layers[2].cells;
   s32 column = x / toFIXED(16);
-  s32 row = (z - y + 0x7fff) / toFIXED(16);
+  s32 row = (z - y + toFIXED(1) / 2 - 1) / toFIXED(16);
 
   cell += column + (row << 7);
   cell->collisionCode = 255;
@@ -3746,8 +3746,8 @@ struct ActorPlacement gGaiaRockInside_LairPlacements[] = {
 };
 
 u32 gGaiaRockInside_RockScript[] = {
-    SC_SET(SW_SCALE_X, 0xc000),
-    SC_SET(SW_SCALE_Y, 0xc000),
+    SC_SET(SW_SCALE_X, FIXED_ONE * 3 / 4),
+    SC_SET(SW_SCALE_Y, FIXED_ONE * 3 / 4),
     SC_WAIT(1),
     SC_END,
 };
@@ -3799,22 +3799,22 @@ struct ActorPlacement gGaiaRockInside_AltarActorPlacements[] = {
 
 s32 gGaiaRockInside_SquashYScript[] = {
     SC_LABEL(1),
-    SC_ADD(SW_SCALE_Y, 0x1800),
+    SC_ADD(SW_SCALE_Y, FIXED_ONE * 3 / 32),
     SC_WAIT(1),
     SC_LOOP(4, SC_TO(1)),
     SC_LABEL(2),
-    SC_ADD(SW_SCALE_Y, -0x1800),
+    SC_ADD(SW_SCALE_Y, -FIXED_ONE * 3 / 32),
     SC_WAIT(1),
     SC_LOOP(4, SC_TO(2)),
     SC_LABEL(3),
-    SC_ADD(SW_SCALE_Y, 0x1000),
+    SC_ADD(SW_SCALE_Y, FIXED_ONE / 16),
     SC_WAIT(1),
     SC_LOOP(2, SC_TO(3)),
     SC_LABEL(4),
     SC_ADD(SW_SCALE_Y, -FIXED_ONE / 16),
     SC_WAIT(1),
     SC_LOOP(2, SC_TO(4)),
-    SC_ADD(SW_SCALE_Y, 0x1000),
+    SC_ADD(SW_SCALE_Y, FIXED_ONE / 16),
     SC_WAIT(1),
     SC_ADD(SW_SCALE_Y, -FIXED_ONE / 16),
     SC_WAIT(1),
@@ -3823,22 +3823,22 @@ s32 gGaiaRockInside_SquashYScript[] = {
 
 s32 gGaiaRockInside_SquashXScript[] = {
     SC_LABEL(1),
-    SC_ADD(SW_SCALE_X, 0x1800),
+    SC_ADD(SW_SCALE_X, FIXED_ONE * 3 / 32),
     SC_WAIT(1),
     SC_LOOP(4, SC_TO(1)),
     SC_LABEL(2),
-    SC_ADD(SW_SCALE_X, -0x1800),
+    SC_ADD(SW_SCALE_X, -FIXED_ONE * 3 / 32),
     SC_WAIT(1),
     SC_LOOP(4, SC_TO(2)),
     SC_LABEL(3),
-    SC_ADD(SW_SCALE_X, 0x1000),
+    SC_ADD(SW_SCALE_X, FIXED_ONE / 16),
     SC_WAIT(1),
     SC_LOOP(2, SC_TO(3)),
     SC_LABEL(4),
     SC_ADD(SW_SCALE_X, -FIXED_ONE / 16),
     SC_WAIT(1),
     SC_LOOP(2, SC_TO(4)),
-    SC_ADD(SW_SCALE_X, 0x1000),
+    SC_ADD(SW_SCALE_X, FIXED_ONE / 16),
     SC_WAIT(1),
     SC_ADD(SW_SCALE_X, -FIXED_ONE / 16),
     SC_WAIT(1),
@@ -3953,41 +3953,41 @@ u32 gGaiaRockInside_DustScript[] = {
 };
 
 s32 gGaiaRockInside_StatueRiseScript[] = {                                                               
-      SC_ADD(SW_SCALE_X, 0x8000),                                              
-      SC_ADD(SW_SCALE_Y, 0x8000),                                              
+      SC_ADD(SW_SCALE_X, FIXED_ONE / 2),                                              
+      SC_ADD(SW_SCALE_Y, FIXED_ONE / 2),                                              
       SC_WAIT(2),                                                              
-      SC_ADD(SW_SCALE_X, -0x4000),                                             
-      SC_ADD(SW_SCALE_Y, -0x4000),                                             
+      SC_ADD(SW_SCALE_X, -FIXED_ONE / 4),                                             
+      SC_ADD(SW_SCALE_Y, -FIXED_ONE / 4),                                             
       SC_WAIT(2),                                                              
-      SC_ADD(SW_SCALE_X, -0x2000),                                             
-      SC_ADD(SW_SCALE_Y, -0x2000),                                             
+      SC_ADD(SW_SCALE_X, -FIXED_ONE / 8),                                             
+      SC_ADD(SW_SCALE_Y, -FIXED_ONE / 8),                                             
       SC_WAIT(2),                                                              
-      SC_ADD(SW_SCALE_X, -0x2000),                                             
-      SC_ADD(SW_SCALE_Y, -0x2000),                                             
+      SC_ADD(SW_SCALE_X, -FIXED_ONE / 8),                                             
+      SC_ADD(SW_SCALE_Y, -FIXED_ONE / 8),                                             
       SC_WAIT(4),                                                              
-      SC_ADD(SW_SCALE_X, 0x8000),                                              
-      SC_ADD(SW_SCALE_Y, 0x8000),                                              
+      SC_ADD(SW_SCALE_X, FIXED_ONE / 2),                                              
+      SC_ADD(SW_SCALE_Y, FIXED_ONE / 2),                                              
       SC_WAIT(2),                                                              
-      SC_ADD(SW_SCALE_X, -0x4000),                                             
-      SC_ADD(SW_SCALE_Y, -0x4000),                                             
+      SC_ADD(SW_SCALE_X, -FIXED_ONE / 4),                                             
+      SC_ADD(SW_SCALE_Y, -FIXED_ONE / 4),                                             
       SC_WAIT(2),                                                              
-      SC_ADD(SW_SCALE_X, -0x2000),                                             
-      SC_ADD(SW_SCALE_Y, -0x2000),                                             
+      SC_ADD(SW_SCALE_X, -FIXED_ONE / 8),                                             
+      SC_ADD(SW_SCALE_Y, -FIXED_ONE / 8),                                             
       SC_WAIT(2),                                                              
-      SC_ADD(SW_SCALE_X, -0x2000),                                             
-      SC_ADD(SW_SCALE_Y, -0x2000),                                             
+      SC_ADD(SW_SCALE_X, -FIXED_ONE / 8),                                             
+      SC_ADD(SW_SCALE_Y, -FIXED_ONE / 8),                                             
       SC_WAIT(4),                                                              
-      SC_ADD(SW_SCALE_X, 0x8000),                                              
-      SC_ADD(SW_SCALE_Y, 0x8000),                                              
+      SC_ADD(SW_SCALE_X, FIXED_ONE / 2),                                              
+      SC_ADD(SW_SCALE_Y, FIXED_ONE / 2),                                              
       SC_WAIT(2),                                                              
-      SC_ADD(SW_SCALE_X, -0x4000),                                             
-      SC_ADD(SW_SCALE_Y, -0x4000),                                             
+      SC_ADD(SW_SCALE_X, -FIXED_ONE / 4),                                             
+      SC_ADD(SW_SCALE_Y, -FIXED_ONE / 4),                                             
       SC_WAIT(2),                                                              
-      SC_ADD(SW_SCALE_X, -0x2000),                                             
-      SC_ADD(SW_SCALE_Y, -0x2000),                                             
+      SC_ADD(SW_SCALE_X, -FIXED_ONE / 8),                                             
+      SC_ADD(SW_SCALE_Y, -FIXED_ONE / 8),                                             
       SC_WAIT(2),                                                              
-      SC_ADD(SW_SCALE_X, -0x2000),                                             
-      SC_ADD(SW_SCALE_Y, -0x2000),                                             
+      SC_ADD(SW_SCALE_X, -FIXED_ONE / 8),                                             
+      SC_ADD(SW_SCALE_Y, -FIXED_ONE / 8),                                             
       SC_WAIT(4),                                                              
       SC_WAIT(20),                                                             
       SC_LOOP(3, SC_TOP),                                                      

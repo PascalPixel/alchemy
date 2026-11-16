@@ -473,7 +473,7 @@ void JupiterLighthouse_CircleTheBeam(struct Actor *actor) {
   if ((s16)actor->userValue == 0)
     Actor_SelectAnimation(actor, 7);
   if (actor->y.fixed > toFIXED(340))
-    actor->userValue = 0xffff;
+    actor->userValue = -1;
   if (Math_Sin(angle) < 0)
     ((struct FieldSprite *)actor->sprite)->priority = 1;
   else

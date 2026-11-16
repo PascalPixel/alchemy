@@ -622,7 +622,7 @@ void GaiaRock_PlaceStatue(s32 id, s32 x, s32 y, s32 z) {
   struct Actor *actor = Actor_Get(id);
   struct MapCell *cell = Ram_HeapSlots->mapGrid->layers[2].cells;
   s32 cellX = x / toFIXED(16);
-  s32 cellZ = (z - y + 0x7fff) / toFIXED(16);
+  s32 cellZ = (z - y + toFIXED(1) / 2 - 1) / toFIXED(16);
 
   cell += cellX + (cellZ << 7);
   cell->collisionCode = CELL_BEHAVIOR_WALL;

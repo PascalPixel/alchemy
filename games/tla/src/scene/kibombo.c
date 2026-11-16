@@ -27,6 +27,7 @@
 #include "field/ground_mask.h"
 #include "field/field_psynergy_work.h"
 #include "game/game.h"
+#include "graphics/glyph.h"
 #include "graphics/graphics.h"
 #include "system/math_table.h"
 #include "menu/menu.h"
@@ -276,7 +277,7 @@ struct Actor;
 
 /// An actor's update: turns its sprite a little each frame.
 s32 Kibombo_SpinSprite(struct Actor *actor) {
-  ((struct FieldSprite *)actor->sprite)->rotation += 0x600;
+  ((struct FieldSprite *)actor->sprite)->rotation += TRIG_TURN * 3 / 128;
   return 0;
 }
 
@@ -1806,7 +1807,7 @@ void Kibombo_CreateBlackCrystal(void) {
   *slot = actor;
   if (actor != 0) {
     struct FieldSprite *sprite = actor->sprite;
-    u8 *buffer;
+    GlyphTransfer *glyph;
 
     sprite->fullColor = 0;
     sprite->palette = 0;
@@ -1815,9 +1816,9 @@ void Kibombo_CreateBlackCrystal(void) {
     actor->retainSpriteCache = 1;
     sprite->flags = zero;
     sprite->countAndShadow[0] = zero;
-    buffer = HeapSlot_Alloc(HEAP_SLOT_GLYPH_TRANSFER, 0x608);
+    glyph = HeapSlot_Alloc(HEAP_SLOT_GLYPH_TRANSFER, sizeof(GlyphTransfer));
     Icon_DrawItem(ITEM_BLACK_CRYSTAL);
-    VramCache_Load(sprite->slot, 128, buffer + 0x400);
+    VramCache_Load(sprite->slot, ICON_TILE_BYTES, glyph->tiles);
     HeapSlot_Release(HEAP_SLOT_GLYPH_TRANSFER);
   }
 }
@@ -1867,9 +1868,9 @@ void Kibombo_RaiseEmbers(void) {
     s32 value;
 
     if (actor != 0) {
-      actor->bounce = Trig_Cos(((Random16() << 13) >> 16) + 0x3000);
+      actor->bounce = Trig_Cos(((Random16() << 13) >> 16) + TRIG_TURN * 3 / 16);
       actor->gravity = toFIXED(1);
-      actor->riseBaseY = 0x40000 - (u16)Random16();
+      actor->riseBaseY = toFIXED(4) - (u16)Random16();
       value = (u16)Random16() + 0xffff8000;
       actor->timer = value;
       actor->motionFlags = 0;
@@ -2091,9 +2092,9 @@ void Kibombo_SpinSpark(struct Actor *actor) {
   case 0:
     *action += 4;
     object->actor.riseBaseY = 1;
-    ((struct FieldSprite *)object->actor.sprite)->rotation += 0x1000;
-    object->actor.scaleX += 0x666;
-    object->actor.scaleY += 0x666;
+    ((struct FieldSprite *)object->actor.sprite)->rotation += TRIG_TURN / 16;
+    object->actor.scaleX += toFIXED(0.025);
+    object->actor.scaleY += toFIXED(0.025);
     if (object->actor.scaleX > FIXED_ONE * 3 / 2 &&
         ((struct FieldSprite *)object->actor.sprite)->rotation == 0) {
       *stage = 1;
@@ -2102,7 +2103,7 @@ void Kibombo_SpinSpark(struct Actor *actor) {
     break;
   case 1:
     *action += 4;
-    ((struct FieldSprite *)object->actor.sprite)->rotation += 0x1000;
+    ((struct FieldSprite *)object->actor.sprite)->rotation += TRIG_TURN / 16;
     if (((struct FieldSprite *)object->actor.sprite)->rotation == 0 &&
         --*timer == 0) {
       Sound_Play(SE_SHIMMER);
@@ -2139,10 +2140,10 @@ void Kibombo_SpinSpark(struct Actor *actor) {
     break;
   case 6:
     *action += 4;
-    ((struct FieldSprite *)object->actor.sprite)->rotation += 0x1000;
-    object->actor.scaleX += -0x1000;
-    object->actor.scaleY += -0x1000;
-    if (object->actor.scaleX < 0x1200) {
+    ((struct FieldSprite *)object->actor.sprite)->rotation += TRIG_TURN / 16;
+    object->actor.scaleX += -FIXED_ONE / 16;
+    object->actor.scaleY += -FIXED_ONE / 16;
+    if (object->actor.scaleX < FIXED_ONE * 9 / 128) {
       object->actor.targetX = 100;
       object->actor.targetZ = 100;
       *stage = 7;
@@ -2196,7 +2197,7 @@ void Kibombo_AkafubuChants(void) {
       spark->targetZ = center->z.fixed;
       spark->update = (void (*)(void))Kibombo_SpinSpark;
     }
-    angle += 0x160000;
+    angle += toFIXED(22);
     i++;
   } while (i <= 15);
 }
@@ -2555,7 +2556,7 @@ void Kibombo_CeremonyStarts(void) {
   Event_Wait(20);
   Actor_FaceDirection(ACTOR_AKAFUBU, FACING_SOUTH_SOUTHEAST, 20);
   // "All of you, pray in the depths of your hearts for my success!"
-  Event_ShowMessageAndWait(0x4000 + ACTOR_AKAFUBU, 0);
+  Event_ShowMessageAndWait(SPEAKER_WINDOW_ABOVE | ACTOR_AKAFUBU, 0);
   Sound_Play(MUS_KIBOMBO);
   GameFlag_Set(FLAG_GABOMBA_CEREMONY_UNDER_WAY);
   Sound_Play(SE_BOSS_ROAR);
@@ -2627,7 +2628,7 @@ void Kibombo_PresentOrbToGabomba(void) {
   Actor_SetAnimationAndWait(ACTOR_AKAFUBU, ANIM_NOD);
   Event_SetMessageId((s32)MsgLetUsNow);
   // "Let us now present our jewel to the Great Gabomba!"
-  Event_ShowMessageAndWait(0x4000 + ACTOR_AKAFUBU, 0);
+  Event_ShowMessageAndWait(SPEAKER_WINDOW_ABOVE | ACTOR_AKAFUBU, 0);
   Sound_Play(MUS_JUPITER_LIGHTHOUSE);
   Actor_SetSpriteFlags(Actor_GetById(ACTOR_CRYSTAL_CARRIER), 0);
   Actor_GetById(ACTOR_CRYSTAL_CARRIER)->motionFlags = 0;
@@ -2711,7 +2712,7 @@ void Kibombo_GabombaNotPleased(void) {
   Actor_SetAnimationAndWait(ACTOR_AKAFUBU, ANIM_SHAKE_HEAD);
   Event_ShowMessageAndWait(ACTOR_AKAFUBU, 0);
   Actor_FaceDirectionAndWait(ACTOR_AKAFUBU, FACING_SOUTH_SOUTHEAST);
-  Event_ShowMessageAndWait(0x4000 + ACTOR_AKAFUBU, 0);
+  Event_ShowMessageAndWait(SPEAKER_WINDOW_ABOVE | ACTOR_AKAFUBU, 0);
   GameFlag_Clear(FLAG_GABOMBA_MUSIC_SILENCED);
   Sound_Play(MUS_KIBOMBO);
   Event_Wait(80);
@@ -2803,10 +2804,10 @@ void Kibombo_CrowdCheers(void) {
   Actor_Jump(ACTOR_WARRIOR_H, 6, 40);
   Actor_FaceDirectionAndWait(ACTOR_WARRIOR_C, FACING_SOUTH_SOUTHWEST);
   Actor_Jump(ACTOR_WARRIOR_C, 2, 0);
-  Event_ShowMessageAndWait(0x4000 + ACTOR_WARRIOR_C, 0);
+  Event_ShowMessageAndWait(SPEAKER_WINDOW_ABOVE | ACTOR_WARRIOR_C, 0);
   Actor_FaceDirectionAndWait(ACTOR_WARRIOR_F, FACING_SOUTH_SOUTHEAST);
   Actor_Jump(ACTOR_WARRIOR_F, 2, 0);
-  Event_ShowMessageAndWait(0x4000 + ACTOR_WARRIOR_F, 0);
+  Event_ShowMessageAndWait(SPEAKER_WINDOW_ABOVE | ACTOR_WARRIOR_F, 0);
   Actor_SetMovementTypeById(ACTOR_WARRIOR_A, gKibombo_CrowdDanceScript);
   Actor_SetMovementTypeById(ACTOR_WARRIOR_B, gKibombo_CrowdDanceScript);
   Actor_SetMovementTypeById(ACTOR_WARRIOR_C, gKibombo_CrowdDanceScript);
@@ -3023,7 +3024,7 @@ void Kibombo_GabombaRespondsToGift(void) {
   FieldEffect_SetAttached(ACTOR_AKAFUBU,
                           ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   Event_Wait(40);
-  Actor_FaceDirectionAndWait(ACTOR_AKAFUBU, 0x3000);
+  Actor_FaceDirectionAndWait(ACTOR_AKAFUBU, FACING_SOUTH_SOUTHEAST);
   Event_ShowMessage(SPEAKER_WINDOW_ABOVE | ACTOR_AKAFUBU, 0);
   FieldActor_ShowEmote(ACTOR_AKAFUBU, EMOTE_IN_FRONT | EMOTE_SMILE, 20);
   Event_ShowMessage(SPEAKER_WINDOW_ABOVE | ACTOR_AKAFUBU, 0);
@@ -3541,7 +3542,7 @@ u32 gKibombo_EmberScript[] = {
 
 s32 gKibombo_EnterDoorScript[] = {                                                               
       SC_SET(SW_MOTION, 0),                                                    
-      SC_ADD(SW_Z, -0x8000),                                                   
+      SC_ADD(SW_Z, toFIXED(-0.5)),                                                   
       SC_ADD(SW_SCALE_X, -FIXED_ONE / 64),                                               
       SC_ADD(SW_SCALE_Y, -FIXED_ONE / 64),                                               
       SC_WAIT(1),                                                              
@@ -3570,8 +3571,8 @@ s32 gKibombo_ShebaMeetsPiersScript[] = {
     SC_SET(SW_FACING, FACING_NORTHEAST),
     SC_WAIT(1),
     SC_END,
-    SC_ADD(SW_SCALE_X, 0x800),
-    SC_ADD(SW_SCALE_Y, 0x800),
+    SC_ADD(SW_SCALE_X, FIXED_ONE / 32),
+    SC_ADD(SW_SCALE_Y, FIXED_ONE / 32),
     SC_CALL(Kibombo_SpinSprite),
     SC_WAIT(1),
     SC_LOOP(10, SC_TOP),
@@ -3685,113 +3686,58 @@ s32 gKibombo_JawsSettleScript[] = {
 };
 
 s32 gKibombo_JawsOpenScript[] = {
-    SC_SET(SW_SCALE_X, 0x18000),
-    SC_SET(SW_SCALE_Y, 0x18000),
+    SC_SET(SW_SCALE_X, FIXED_ONE * 3 / 2),
+    SC_SET(SW_SCALE_Y, FIXED_ONE * 3 / 2),
     SC_ADD(SW_Y, toFIXED(-2)),
     SC_WAIT(20),
-    SC_SET(SW_SCALE_X, 0x10000),
-    SC_SET(SW_SCALE_Y, 0x10000),
+    SC_SET(SW_SCALE_X, FIXED_ONE),
+    SC_SET(SW_SCALE_Y, FIXED_ONE),
     SC_ADD(SW_Y, toFIXED(2)),
     SC_WAIT(1),
     SC_END,
 };
 
 s32 gKibombo_CrowdDanceScript[] = {
-    22,
-    39,
-    0,
-    46,
-    (s32)Kibombo_TurnRandomly,
-    22,
-    15,
-    0x6666,
-    22,
-    16,
-    0x6666,
-    (s32)0x80010000,
-    39,
-    2,
-    4,
-    0xe60000,
-    0,
-    0x1e60000,
-    1,
-    39,
-    1,
-    0,
-    20,
-    22,
-    3,
-    0x5000,
-    0,
-    40,
-    39,
-    2,
-    4,
-    0x1000000,
-    0,
-    0x1e60000,
-    1,
-    39,
-    1,
-    22,
-    3,
-    0x3000,
-    0,
-    20,
-    22,
-    3,
-    0x5000,
-    0,
-    40,
-    13,
-    0xffff,
-    0,
-    22,
-    15,
-    0x6666,
-    22,
-    16,
-    0x6666,
-    (s32)0x80010000,
-    39,
-    2,
-    4,
-    0x12a0000,
-    0,
-    0x1e60000,
-    1,
-    39,
-    1,
-    0,
-    20,
-    22,
-    3,
-    0x3000,
-    0,
-    40,
-    39,
-    2,
-    4,
-    0x1100000,
-    0,
-    0x1e60000,
-    1,
-    39,
-    1,
-    22,
-    3,
-    0x5000,
-    0,
-    20,
-    22,
-    3,
-    0x3000,
-    0,
-    40,
-    13,
-    0xffff,
-    0,
+    SC_SET(SW_RISE_COUNTER, 0),
+    SC_CALL(Kibombo_TurnRandomly),
+    SC_SPEED(0.4),
+    SC_ACCELERATION(0.4),
+    SC_LABEL(1),
+    SC_ANIMATION(2),
+    SC_MOVE(230, 0, 486),
+    SC_SYNC,
+    SC_ANIMATION(1),
+    SC_WAIT(20),
+    SC_SET(SW_FACING, FACING_SOUTH_SOUTHWEST),
+    SC_WAIT(40),
+    SC_ANIMATION(2),
+    SC_MOVE(256, 0, 486),
+    SC_SYNC,
+    SC_ANIMATION(1),
+    SC_SET(SW_FACING, FACING_SOUTH_SOUTHEAST),
+    SC_WAIT(20),
+    SC_SET(SW_FACING, FACING_SOUTH_SOUTHWEST),
+    SC_WAIT(40),
+    SC_LOOP(SC_FOREVER, SC_TOP),
+    SC_SPEED(0.4),
+    SC_ACCELERATION(0.4),
+    SC_LABEL(1),
+    SC_ANIMATION(2),
+    SC_MOVE(298, 0, 486),
+    SC_SYNC,
+    SC_ANIMATION(1),
+    SC_WAIT(20),
+    SC_SET(SW_FACING, FACING_SOUTH_SOUTHEAST),
+    SC_WAIT(40),
+    SC_ANIMATION(2),
+    SC_MOVE(272, 0, 486),
+    SC_SYNC,
+    SC_ANIMATION(1),
+    SC_SET(SW_FACING, FACING_SOUTH_SOUTHWEST),
+    SC_WAIT(20),
+    SC_SET(SW_FACING, FACING_SOUTH_SOUTHEAST),
+    SC_WAIT(40),
+    SC_LOOP(SC_FOREVER, SC_TOP),
 };
 
 s16 gKibombo_FrozenPuddle[] = {

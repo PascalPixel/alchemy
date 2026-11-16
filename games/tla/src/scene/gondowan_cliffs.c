@@ -586,7 +586,7 @@ void Geyser_Update(void) {
     } else {
       FIXED wave;
 
-      entry->phase += 0x1000;
+      entry->phase += TRIG_TURN / 16;
       wave = Iwram_MulFX(toFIXED(2), Trig_Sin(entry->phase)) + -toFIXED(14);
       rider->y.fixed = actor->y.fixed + toFIXED(entry->height) + wave;
     }
@@ -684,10 +684,10 @@ void Geyser_Start(s32 unused, s32 firstTerrain) {
 
   if (!Event_GetFlag(FLAG_KEEP_PARTY_POSITION))
     Iwram_ClearWords((s32)work, sizeof(struct GeyserWork));
-  buffer = (void *)Value1((s32 (*)())Heap_AllocEwram, 0x800);
+  buffer = (void *)Value1((s32 (*)())Heap_AllocEwram, 2048);
   Decompress_TaggedLz(gField_GeyserTiles, buffer);
   work->entry = VramCache_FindFreeEntry();
-  Vram_Load(work->entry, 0x800, buffer);
+  Vram_Load(work->entry, 2048, buffer);
   Heap_Release(buffer);
   work->block = Heap_AllocEwram(80 * 3 * sizeof(u32));
   work->firstTerrain = firstTerrain;
@@ -766,19 +766,19 @@ LATE_DATA s32 gGondowanCliffs_ResetTileSpriteScript[] = {
 
 // clang-format off
 LATE_DATA s16 gGondowanCliffs_Entrances[] = {
-    0, -1, 680, 0, 280, 0x4000, 0, -1,
+    0, -1, 680, 0, 280, FACING_SOUTH, 0, -1,
     -1, -1, -1, 0, 1, -1, 536, 0,
-    488, 0, 0, 512, 0, 0x800, 864, 0,
-    2, -1, 0x7e8, 0, 792, 0x8000, 0, 512,
-    0, 0x800, 864, 0, 3, -1, 0x628, 0,
-    680, 0x4000, 0, 512, 0, 0x800, 864, 0,
-    99, -1, 0x4f8, 0, 552, 0x4000, 0, 512,
-    0, 0x800, 864, 0, -1, 0, 0, 0,
+    488, 0, 0, 512, 0, 2048, 864, 0,
+    2, -1, 2024, 0, 792, FACING_WEST, 0, 512,
+    0, 2048, 864, 0, 3, -1, 1576, 0,
+    680, FACING_SOUTH, 0, 512, 0, 2048, 864, 0,
+    99, -1, 1272, 0, 552, FACING_SOUTH, 0, 512,
+    0, 2048, 864, 0, -1, 0, 0, 0,
     0, 0, 0, 0, 0, 0, 0, 0,
 };
 
 LATE_DATA struct ActorPlacement gGondowanCliffs_PassEntrances[] = {
-    {0, CONDITION_ALWAYS, 168, 0x40000118, toFIXED(-1), -0x1, 0xffff, 0, 0},
+    {0, CONDITION_ALWAYS, 168, 0x40000118, toFIXED(-1), -1, -1, 0, 0},
     {SCENE_TABLE_END},
 };
 

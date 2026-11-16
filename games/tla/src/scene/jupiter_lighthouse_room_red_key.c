@@ -88,7 +88,7 @@ struct CellTargetEntry;
 
 enum {
   EFFECT_DEFAULT_TYPE = 285,
-  EFFECT_SCALE_ONE = 0x10000,
+  EFFECT_SCALE_ONE = FIXED_ONE,
   EFFECT_OPTION_MASK = 0xffff0000,
   EFFECT_SCRIPT_REPEAT_COUNT = 3
 };
@@ -212,7 +212,7 @@ void Orb_Update(struct Actor *self) {
   self->z.fixed = z;
   self->targetX = x;
   self->targetZ = z;
-  self->timer += -0x800;
+  self->timer += -TRIG_TURN / 32;
 }
 
 void Actor_StartScript(struct Actor *actor, const void *script);
@@ -255,7 +255,7 @@ void Orb_SpawnRising(void) {
     effect->timer = angle;
     effect->userValue = 0;
     effect->update = (void (*)(void))Orb_Update;
-    effect->speedLimit = Math_Sin((u32)(Random16() * 0xffff) >> 20) * 24 >> 16;
+    effect->speedLimit = Math_Sin((u32)(Random16() * 65535) >> 20) * 24 >> 16;
     sprite->flags = 0;
     sprite->priority = 1;
   }
@@ -483,7 +483,7 @@ void JupiterLighthouse_AlexAppears(void) {
                         p);
     }
     if (i == 20)
-      Actor_SetSpriteColorById(ACTOR_ALEX, 0x100);
+      Actor_SetSpriteColorById(ACTOR_ALEX, SPRITE_COLOR_BLINK);
   }
   Actor_SetSpriteColorById(ACTOR_ALEX, 0);
   Actor_SetSpriteFlags(Actor_Get(ACTOR_ALEX), 1);
@@ -504,7 +504,7 @@ void JupiterLighthouse_HealWithArc(s32 actorId, s32 target) {
       struct Actor *actor = Actor_Get(target);
       u32 facing = actor->facing;
 
-      actor->facing = facing + 0x1000;
+      actor->facing = facing + FACING_STEP;
     }
     FieldActor_SetSpriteColor(Actor_Get(target), (i & 4) ? 7 : 0);
     System_Wait(1);
@@ -762,7 +762,7 @@ struct Spark {
 /// The spark ring in heap slot 220: the orbs' pictures, 96 sparks and their
 /// sprites, the ring's two ends and its VRAM entry.
 struct SparkWork {
-  u8 tiles[0x400];
+  u8 tiles[1024];
   struct Spark sparks[96];
   struct EffectSprite sprites[96];
   s32 from[3];
@@ -857,7 +857,7 @@ void JupiterLighthouse_StartSparkRing(const s32 *from, const s32 *to) {
   work->to[2] = to[2];
   Decompress_TaggedLz(Resource_GetTableEntry(RESOURCE_COLOURED_ORBS), work);
   entry = VramCache_FindFreeEntry();
-  tile = Vram_Load(entry, 0x400, work);
+  tile = Vram_Load(entry, 1024, work);
   work->tile = tile;
   work->vramEntry = entry;
   i = 0;
@@ -973,7 +973,7 @@ void JupiterLighthouse_ActivateTheLighthouse(void);
 #include "shared/field_effect_duration_scripts.c"
 
 u32 gJupiterLighthouse_BringInScript[] = {
-    SC_ADD(SW_SCALE_X, 0x1000),
+    SC_ADD(SW_SCALE_X, FIXED_ONE / 16),
     SC_WAIT(1),
     SC_LOOP(32, SC_TOP),
     SC_END,
@@ -1024,8 +1024,8 @@ struct ActorPlacement gActorPlacements[] = {
 };
 
 u32 gOrbScript[] = {                                                               
-      SC_SET(SW_SCALE_X, 0xcccc),                                              
-      SC_SET(SW_SCALE_Y, 0xcccc),                                              
+      SC_SET(SW_SCALE_X, toFIXED(0.8)),                                              
+      SC_SET(SW_SCALE_Y, toFIXED(0.8)),                                              
       SC_ANIMATION(1),                                                               
       SC_LABEL(1),                                                             
       SC_ADD(SW_Y, toFIXED(1)),                                                 

@@ -60,7 +60,7 @@
 
 /// Set once the leader has been walked back from the edge of the map by
 /// Idejima_CatchUpWithFelix, so the next one to catch up finds him there.
-#define FLAG_IDEJIMA_LEADER_WALKED_BACK 0x200
+#define FLAG_IDEJIMA_LEADER_WALKED_BACK FLAG_SCENE_TEMP_00
 
 /// The entrances the triggers are chosen by: two out of the door on the hill,
 /// and two onto the shore, the second of which is taken after a load.
@@ -1761,11 +1761,19 @@ u32 gIdejima_KradenFollowsAlexScript[] = {
 };
 
 u32 gIdejima_JennaFollowsAlexScript[] = {
-    39, 2, 4, 0xd80000, 0, 0xac0000,
-    1, 4, 0x1280000, 0, 0xac0000, 1,
-    4, 0x13c0000, 0, 0xd00000, 1, 39,
-    1, 0, 1, 22, 3, 0,
-    0, 1, 22, 35, 1, 17,
+    SC_ANIMATION(2),
+    SC_MOVE(216, 0, 172),
+    SC_SYNC,
+    SC_MOVE(296, 0, 172),
+    SC_SYNC,
+    SC_MOVE(316, 0, 208),
+    SC_SYNC,
+    SC_ANIMATION(1),
+    SC_WAIT(1),
+    SC_SET(SW_FACING, FACING_EAST),
+    SC_WAIT(1),
+    SC_SET(SW_TIMER, 1),
+    SC_END,
 };
 
 u32 gIdejima_KradenRunsToFelixScript[] =                                                                 
@@ -1796,10 +1804,15 @@ u32 gIdejima_KradenToTheShoreScript[] = {
   };
 
 u32 gIdejima_FelixToTheShoreScript[] = {
-    39, 2, 4, 0x19c0000, 0, 0xf80000,
-    1, 39, 1, 0, 1, 22,
-    3, 0, 0, 1, 22, 35,
-    1, 17,
+    SC_ANIMATION(2),
+    SC_MOVE(412, 0, 248),
+    SC_SYNC,
+    SC_ANIMATION(1),
+    SC_WAIT(1),
+    SC_SET(SW_FACING, FACING_EAST),
+    SC_WAIT(1),
+    SC_SET(SW_TIMER, 1),
+    SC_END,
 };
 
 s32 gIdejima_StretchScript[] = {
@@ -1823,8 +1836,8 @@ s32 gIdejima_StretchScript[] = {
     SC_ADD(SW_SCALE_Y, -768),
     SC_WAIT(1),
     SC_LOOP(12, SC_TO(4)),
-    SC_SET(SW_SCALE_X, 0x10000),
-    SC_SET(SW_SCALE_Y, 0x10000),
+    SC_SET(SW_SCALE_X, FIXED_ONE),
+    SC_SET(SW_SCALE_Y, FIXED_ONE),
     SC_WAIT(1),
     SC_END,
 };
@@ -1881,9 +1894,9 @@ struct ActorPlacement gIdejimaPlacements[] = {
     ACTOR_PLACEMENT(SPRITE_KRADEN, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(SPRITE_JENNA, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(SPRITE_SHEBA, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_EAST, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(0x15a, CONDITION_ALWAYS, 7, 256, 0, 200, FACING_WEST, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_MENARDIS_SHIP, CONDITION_ALWAYS, 7, 256, 0, 200, FACING_WEST, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(57, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(0x1e9, CONDITION_ALWAYS, 7, 0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_UNSEEN_MARKER, CONDITION_ALWAYS, 7, 0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, 0),
     {SCENE_TABLE_END},
 };
 // clang-format on

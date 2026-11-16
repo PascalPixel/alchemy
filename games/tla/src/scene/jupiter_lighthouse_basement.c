@@ -435,12 +435,12 @@ static inline void *BumpAlloc(s32 size) { return Heap_Alloc(size); }
 /// Loads the first set of light pictures into VRAM and starts drawing the lit
 /// actors (none yet), small.
 void LightSprites_InitA(void) {
-  u8 *buffer = BumpAlloc(0xc00);
+  u8 *buffer = BumpAlloc(3072);
 
   Iwram_ClearWordsEntry(gLightSpriteActors, sizeof(gLightSpriteActors));
   Decompress_TaggedLz(gField_CachedTilesA, buffer);
   gLightSpriteTile = VramCache_FindFreeEntry();
-  VramCache_Load(gLightSpriteTile, 0xc00, buffer);
+  VramCache_Load(gLightSpriteTile, 3072, buffer);
   Heap_Release(buffer);
   Task_Add(LightSprites_Draw, TASK_PASS_VBLANK);
   gLightSpriteCount = 0;
@@ -451,12 +451,12 @@ void LightSprites_InitA(void) {
 /// Loads the second set of light pictures into VRAM and starts drawing the lit
 /// actors (none yet), small.
 void LightSprites_InitB(void) {
-  u8 *buffer = Heap_Alloc(0xc00);
+  u8 *buffer = Heap_Alloc(3072);
 
   Iwram_ClearWordsEntry(gLightSpriteActors, sizeof(gLightSpriteActors));
   Decompress_TaggedLz(gField_CachedTilesB, buffer);
   gLightSpriteTile = VramCache_FindFreeEntry();
-  Vram_Load(gLightSpriteTile, 0x800, buffer);
+  Vram_Load(gLightSpriteTile, 2048, buffer);
   Heap_Release(buffer);
   Task_AddFrame(LightSprites_Draw, TASK_PASS_VBLANK);
   gLightSpriteCount = 0;
@@ -467,12 +467,12 @@ void LightSprites_InitB(void) {
 /// Loads the third set of light pictures into VRAM and starts drawing the lit
 /// actors (none yet), large.
 void LightSprites_InitC(void) {
-  u8 *buffer = BumpAlloc(0x800);
+  u8 *buffer = BumpAlloc(2048);
 
   Iwram_ClearWordsEntry(gLightSpriteActors, sizeof(gLightSpriteActors));
   Decompress_TaggedLz(gField_CachedTilesC, buffer);
   gLightSpriteTile = VramCache_FindFreeEntry();
-  Vram_Load(gLightSpriteTile, 0x800, buffer);
+  Vram_Load(gLightSpriteTile, 2048, buffer);
   Heap_Release(buffer);
   Task_AddFrame(LightSprites_Draw, TASK_PASS_VBLANK);
   gLightSpriteCount = 0;

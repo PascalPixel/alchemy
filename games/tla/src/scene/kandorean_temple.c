@@ -35,6 +35,7 @@
 #include "field/field_sequence.h"
 #include "field/field_sequence_event.h"
 #include "game/game.h"
+#include "graphics/glyph.h"
 #include "graphics/graphics.h"
 #include "menu/menu.h"
 #include "field/event_commands.h"
@@ -349,7 +350,7 @@ s32 KandoreanTemple_LevitateStudentBob(struct Actor *actor) {
     {
       s32 scale = actor->scaleY;
 
-      actor->scaleY = scale + 0x2000;
+      actor->scaleY = scale + FIXED_ONE / 8;
     }
     break;
   case 4:
@@ -588,14 +589,14 @@ void KandoreanTemple_PushNorth(struct Actor *actor, FIXED dz) {
   position[2] = actor->z.fixed + toFIXED(8);
   if (MapGrid_CheckCollision(actor, position) > 0)
     return;
-  position[0] = actor->x.fixed + 0x5b333;
+  position[0] = actor->x.fixed + toFIXED(5.7);
   position[1] = actor->y.fixed;
-  position[2] = actor->z.fixed + 0x5b333;
+  position[2] = actor->z.fixed + toFIXED(5.7);
   if (MapGrid_CheckCollision(actor, position) > 0)
     return;
-  position[0] = actor->x.fixed - 0x5b333;
+  position[0] = actor->x.fixed - toFIXED(5.7);
   position[1] = actor->y.fixed;
-  position[2] = actor->z.fixed + 0x5b333;
+  position[2] = actor->z.fixed + toFIXED(5.7);
   if (MapGrid_CheckCollision(actor, position) > 0)
     return;
   focus->z.fixed += dz;
@@ -678,10 +679,11 @@ void KandoreanTemple_BlowSteam(s32 *position, s32 value) {
   if (actor) {
     s32 timer;
 
-    actor->bounce = Trig_Cos((Random_Below(0x3000)) + 0x3000);
+    actor->bounce =
+        Trig_Cos((Random_Below(TRIG_TURN * 3 / 16)) + TRIG_TURN * 3 / 16);
     actor->gravity = (u16)Random16();
     actor->riseBaseY = (u16)(Random16() * 2) + value;
-    timer = (u16)Random16() - 0x8000;
+    timer = (u16)Random16() - 32768;
     actor->timer = timer;
     KandoreanTemple_InitializeSteam(actor, 3);
     actor->update = (void (*)(void))KandoreanTemple_UpdateVentSteam;
@@ -734,10 +736,11 @@ void KandoreanTemple_BlowStreamSteam(void) {
   if (actor) {
     s32 timer;
 
-    actor->bounce = Trig_Cos((Random_Below(0x3000)) + 0x3000);
+    actor->bounce =
+        Trig_Cos((Random_Below(TRIG_TURN * 3 / 16)) + TRIG_TURN * 3 / 16);
     actor->gravity = (u16)Random16();
-    actor->riseBaseY = (u16)(Random16() * 2) + 0x58000;
-    timer = (u16)Random16() - 0x8000;
+    actor->riseBaseY = (u16)(Random16() * 2) + toFIXED(11) / 2;
+    timer = (u16)Random16() - 32768;
     actor->timer = timer;
     KandoreanTemple_InitializeSteam(actor, 1);
     actor->update = (void (*)(void))KandoreanTemple_UpdateStreamSteam;
@@ -970,7 +973,7 @@ void KandoreanTemple_RunLeftVent(void) {
           }
           phase = &gKandoreanTemple_LeftBobPhase;
           statue->y.fixed += Trig_Sin(*phase) >> 1;
-          *phase += 0x1000;
+          *phase += TRIG_TURN / 16;
         } else if (t <= 999) {
           phase = &gKandoreanTemple_LeftBobPhase;
           if (*phase == 0) {
@@ -979,7 +982,7 @@ void KandoreanTemple_RunLeftVent(void) {
             GameFlag_Clear(FLAG_WEST_VENT_BLOWING);
           }
           statue->y.fixed += Trig_Sin(*phase) >> 1;
-          *phase += 0x1000;
+          *phase += TRIG_TURN / 16;
         } else {
           statue->y.fixed += -toFIXED(27) / 4;
           limit = FIXED_ONE * 3 / 32;
@@ -997,7 +1000,7 @@ void KandoreanTemple_RunLeftVent(void) {
         }
       } else {
         if (t <= 316) {
-          statue->y.fixed += 0x27999;
+          statue->y.fixed += toFIXED(2.475);
           limit = FIXED_ONE / 16;
           KandoreanTemple_GrowColumn(ACTOR_WEST_COLUMN_TOP, toFIXED(1), limit);
           KandoreanTemple_GrowColumn(ACTOR_WEST_COLUMN_UPPER_PIECE,
@@ -1006,7 +1009,7 @@ void KandoreanTemple_RunLeftVent(void) {
         } else if (t < 600) {
           phase = &gKandoreanTemple_LeftBobPhase;
           statue->y.fixed += Trig_Sin(*phase) >> 1;
-          *phase += 0x1000;
+          *phase += TRIG_TURN / 16;
         } else if (t <= 999) {
           phase = &gKandoreanTemple_LeftBobPhase;
           if (*phase == 0) {
@@ -1015,9 +1018,9 @@ void KandoreanTemple_RunLeftVent(void) {
             GameFlag_Clear(FLAG_WEST_VENT_BLOWING);
           }
           statue->y.fixed += Trig_Sin(*phase) >> 1;
-          *phase += 0x1000;
+          *phase += TRIG_TURN / 16;
         } else {
-          statue->y.fixed += -0x3b666;
+          statue->y.fixed += -toFIXED(3.7125);
           limit = FIXED_ONE * 3 / 32;
           KandoreanTemple_ShrinkColumn(ACTOR_WEST_COLUMN_TOP, toFIXED(3) / 2,
                                        limit);
@@ -1072,7 +1075,7 @@ void KandoreanTemple_RunLeftVent(void) {
 #define BOB(statue, phase)                                                     \
   do {                                                                         \
     (statue)->y.fixed += Trig_Sin(*(phase)) >> 1;                              \
-    *(phase) += 0x1000;                                                        \
+    *(phase) += TRIG_TURN / 16;                                                \
   } while (0)
 
 /// The east vent's task, as KandoreanTemple_RunLeftVent with the platforms
@@ -1145,7 +1148,7 @@ void KandoreanTemple_RunRightVent(void) {
         }
       } else {
         if (t <= 316) {
-          statue->y.fixed += 0x27999;
+          statue->y.fixed += toFIXED(2.475);
           limit = FIXED_ONE / 16;
           KandoreanTemple_GrowColumn(ACTOR_EAST_COLUMN_TOP, toFIXED(1), limit);
           KandoreanTemple_GrowColumn(ACTOR_EAST_COLUMN_UPPER_PIECE,
@@ -1163,7 +1166,7 @@ void KandoreanTemple_RunRightVent(void) {
           }
           BOB(statue, phase);
         } else {
-          statue->y.fixed += -0x3b666;
+          statue->y.fixed += -toFIXED(3.7125);
           limit = FIXED_ONE * 3 / 32;
           KandoreanTemple_ShrinkColumn(ACTOR_EAST_COLUMN_TOP, toFIXED(3) / 2,
                                        limit);
@@ -1236,7 +1239,8 @@ void KandoreanTemple_RunWestLift(void) {
     Actor_SetAnimationById(ACTOR_WEST_LIFT_COLUMN, 2);
   } else if ((u32)(*timer - 301) <= 1698) {
     lift->y.fixed += toFIXED(4);
-    KandoreanTemple_GrowColumn(ACTOR_WEST_LIFT_COLUMN, 0x4ccc, 0x4ccc);
+    KandoreanTemple_GrowColumn(ACTOR_WEST_LIFT_COLUMN, toFIXED(0.3),
+                               toFIXED(0.3));
     if (*(long *)&lift->y.fixed > -toFIXED(5))
       Actor_SetSpritePriority(ACTOR_WEST_LIFT, 2);
     if (lift->y.fixed >= 0) {
@@ -1247,7 +1251,7 @@ void KandoreanTemple_RunWestLift(void) {
     u16 *phase = &gKandoreanTemple_LeftBobPhase;
 
     lift->y.fixed += Trig_Sin(*phase) >> 1;
-    *phase += 0x1000;
+    *phase += TRIG_TURN / 16;
     if (*timer == 2280)
       MapGrid_CopyCellAttributes(27, 10, 1, 1, 27, 12);
     if (*timer > 2300 && *phase == 0) {
@@ -1260,7 +1264,8 @@ void KandoreanTemple_RunWestLift(void) {
     }
   } else {
     lift->y.fixed += toFIXED(-4);
-    KandoreanTemple_ShrinkColumn(ACTOR_WEST_LIFT_COLUMN, 0x4ccc, 0x4ccc);
+    KandoreanTemple_ShrinkColumn(ACTOR_WEST_LIFT_COLUMN, toFIXED(0.3),
+                                 toFIXED(0.3));
     // y read as long, as above.
     if (*(long *)&lift->y.fixed < -toFIXED(5))
       Actor_SetSpritePriority(ACTOR_WEST_LIFT, 3);
@@ -1295,7 +1300,8 @@ void KandoreanTemple_RunEastLift(void) {
     Actor_SetAnimationById(ACTOR_EAST_LIFT_COLUMN, 2);
   } else if ((u32)(*timer - 301) <= 1698) {
     lift->y.fixed += toFIXED(4);
-    KandoreanTemple_GrowColumn(ACTOR_EAST_LIFT_COLUMN, 0x4ccc, 0x4ccc);
+    KandoreanTemple_GrowColumn(ACTOR_EAST_LIFT_COLUMN, toFIXED(0.3),
+                               toFIXED(0.3));
     if (*(long *)&lift->y.fixed > -toFIXED(5))
       Actor_SetSpritePriority(ACTOR_EAST_LIFT, 2);
     if (lift->y.fixed >= 0) {
@@ -1306,7 +1312,7 @@ void KandoreanTemple_RunEastLift(void) {
     u16 *phase = &gKandoreanTemple_RightBobPhase;
 
     lift->y.fixed += Trig_Sin(*phase) >> 1;
-    *phase += 0x1000;
+    *phase += TRIG_TURN / 16;
     if (*timer == 2280)
       MapGrid_CopyCellAttributes(37, 12, 1, 1, 37, 14);
     if (*timer > 2300 && *phase == 0) {
@@ -1319,7 +1325,8 @@ void KandoreanTemple_RunEastLift(void) {
     }
   } else {
     lift->y.fixed += toFIXED(-4);
-    KandoreanTemple_ShrinkColumn(ACTOR_EAST_LIFT_COLUMN, 0x4ccc, 0x4ccc);
+    KandoreanTemple_ShrinkColumn(ACTOR_EAST_LIFT_COLUMN, toFIXED(0.3),
+                                 toFIXED(0.3));
     // y read as long, as above.
     if (*(long *)&lift->y.fixed < -toFIXED(5))
       Actor_SetSpritePriority(ACTOR_EAST_LIFT, 3);
@@ -1363,11 +1370,11 @@ void KandoreanTemple_WatchVentPlatforms(void) {
   if (gKandoreanTemple_LeftVentBlowing != 0 && leader->y.fixed == 0 &&
       leader->x.fixed > toFIXED(284) && leader->x.fixed < toFIXED(308) &&
       leader->z.fixed < toFIXED(200) && !Event_GetFlag(FLAG_PILLAR_MOVING))
-    KandoreanTemple_PushNorth(leader, 0x26666);
+    KandoreanTemple_PushNorth(leader, toFIXED(2.4));
   if (gKandoreanTemple_RightVentBlowing != 0 && leader->y.fixed == 0 &&
-      leader->x.fixed > toFIXED(330) && leader->x.fixed <= 0x165ffff &&
+      leader->x.fixed > toFIXED(330) && leader->x.fixed <= toFIXED(358) - 1 &&
       leader->z.fixed < toFIXED(216) && !Event_GetFlag(FLAG_PILLAR_MOVING))
-    KandoreanTemple_PushNorth(leader, 0x39999);
+    KandoreanTemple_PushNorth(leader, toFIXED(3.6));
   if (Event_GetFlag(FLAG_VENT_SOUND_PLAYING)) {
     if (!Event_GetFlag(FLAG_WEST_VENT_BLOWING) &&
         !Event_GetFlag(FLAG_EAST_VENT_BLOWING)) {
@@ -2150,8 +2157,8 @@ void KandoreanTemple_LandFromAbove(void) {
     velocity[2] = Trig_Sin(i << 12);
     velocity[0] += velocity[0] >> 1;
     velocity[0] += ((Random16() * 3) << 14) >> 16;
-    velocity[0] += -0x6000;
-    velocity[2] += (((Random16() * 3) << 13) >> 16) + -0x3000;
+    velocity[0] += -toFIXED(3) / 8;
+    velocity[2] += (((Random16() * 3) << 13) >> 16) + -toFIXED(3) / 16;
     FieldEffect_Spawn(leader->x.fixed, leader->y.fixed, leader->z.fixed,
                       velocity[0], velocity[1], velocity[2],
                       EFFECT_USE_UPDATE | EFFECT_USE_START_SCALE |
@@ -2387,9 +2394,9 @@ void KandoreanTemple_SinkIntoTheSteam(void) {
     {
       s32 scale = actor->scaleX;
 
-      actor->scaleX = scale + -0x400;
+      actor->scaleX = scale + -FIXED_ONE / 64;
     }
-    actor->scaleY += -0x400;
+    actor->scaleY += -FIXED_ONE / 64;
     actor->y.fixed += -toFIXED(2);
     wait(1);
     if (i == 10)
@@ -2444,7 +2451,7 @@ void KandoreanTemple_SinkIntoTheSteam(void) {
     do {                                                                       \
       first->y.fixed += toFIXED(4);                                            \
       leader->y.fixed += toFIXED(4);                                           \
-      KandoreanTemple_GrowColumn(columnId, 0x4ccc, 0x4ccc);                    \
+      KandoreanTemple_GrowColumn(columnId, toFIXED(0.3), toFIXED(0.3));        \
       wait(1);                                                                 \
     } while (first->y.fixed < 0);                                              \
     MapGrid_CopyCellAttributes(0, 0, 1, 1, cellX, cellZ);                      \
@@ -2474,7 +2481,8 @@ void KandoreanTemple_RideWestLiftUp(void) {
   Event_ResolvePendingActions(0);
   do {
     actor->y.fixed -= toFIXED(4);
-    KandoreanTemple_ShrinkColumn(ACTOR_WEST_LIFT_COLUMN, 0x4ccc, 0x4ccc);
+    KandoreanTemple_ShrinkColumn(ACTOR_WEST_LIFT_COLUMN, toFIXED(0.3),
+                                 toFIXED(0.3));
     wait(1);
   } while (actor->y.fixed > -toFIXED(20));
   Actor_SetPosition(ACTOR_WEST_LIFT_COLUMN, 0, 0);
@@ -2493,7 +2501,8 @@ void KandoreanTemple_RideEastLiftUp(void) {
   Event_ResolvePendingActions(0);
   do {
     actor->y.fixed -= toFIXED(4);
-    KandoreanTemple_ShrinkColumn(ACTOR_EAST_LIFT_COLUMN, 0x4ccc, 0x4ccc);
+    KandoreanTemple_ShrinkColumn(ACTOR_EAST_LIFT_COLUMN, toFIXED(0.3),
+                                 toFIXED(0.3));
     wait(1);
   } while (actor->y.fixed > -toFIXED(20));
   Actor_SetPosition(ACTOR_EAST_LIFT_COLUMN, 0, 0);
@@ -2726,7 +2735,7 @@ void KandoreanTemple_TestTheStudents(void) {
   FieldCamera_WaitForArrival();
   Actor_RunRepeatedMotion(ACTOR_FIRST_TESTED_STUDENT, 2);
   Sound_Play(SE_PSYNERGY_SPARKLE);
-  Actor_ConfigureSpriteColor(ACTOR_FIRST_TESTED_STUDENT, 0x100);
+  Actor_ConfigureSpriteColor(ACTOR_FIRST_TESTED_STUDENT, SPRITE_COLOR_BLINK);
   Event_Wait(20);
   Actor_ConfigureSpriteColor(ACTOR_FIRST_TESTED_STUDENT, 0);
   Event_Wait(20);
@@ -2735,7 +2744,7 @@ void KandoreanTemple_TestTheStudents(void) {
   actor->motionFlags = 0;
   i = 0;
   do {
-    actor->y.fixed += 0xccc;
+    actor->y.fixed += toFIXED(0.05);
     Event_Wait(1);
     i++;
   } while (i <= 63);
@@ -2780,7 +2789,7 @@ void KandoreanTemple_TestTheStudents(void) {
   FieldCamera_WaitForArrival();
   Actor_RunRepeatedMotion(ACTOR_SECOND_TESTED_STUDENT, 2);
   Sound_Play(SE_PSYNERGY_SPARKLE);
-  Actor_ConfigureSpriteColor(ACTOR_SECOND_TESTED_STUDENT, 0x100);
+  Actor_ConfigureSpriteColor(ACTOR_SECOND_TESTED_STUDENT, SPRITE_COLOR_BLINK);
   Event_Wait(20);
   Actor_ConfigureSpriteColor(ACTOR_SECOND_TESTED_STUDENT, 0);
   Event_Wait(20);
@@ -2816,7 +2825,7 @@ void KandoreanTemple_TestTheStudents(void) {
   FieldCamera_WaitForArrival();
   Actor_RunRepeatedMotion(ACTOR_THIRD_TESTED_STUDENT, 2);
   Sound_Play(SE_PSYNERGY_SPARKLE);
-  Actor_ConfigureSpriteColor(ACTOR_THIRD_TESTED_STUDENT, 0x100);
+  Actor_ConfigureSpriteColor(ACTOR_THIRD_TESTED_STUDENT, SPRITE_COLOR_BLINK);
   Event_Wait(20);
   Actor_ConfigureSpriteColor(ACTOR_THIRD_TESTED_STUDENT, 0);
   Event_Wait(20);
@@ -3237,7 +3246,7 @@ void KandoreanTemple_CreateLashPebble(void) {
   *slot = actor;
   if (actor) {
     struct FieldSprite *sprite = actor->sprite;
-    u8 *buffer;
+    GlyphTransfer *glyph;
 
     sprite->fullColor = 0;
     sprite->palette = 0;
@@ -3245,9 +3254,9 @@ void KandoreanTemple_CreateLashPebble(void) {
     actor->retainSpriteCache = 1;
     sprite->flags = zero;
     sprite->countAndShadow[0] = zero;
-    buffer = HeapSlot_Alloc(HEAP_SLOT_GLYPH_TRANSFER, 0x608);
+    glyph = HeapSlot_Alloc(HEAP_SLOT_GLYPH_TRANSFER, sizeof(GlyphTransfer));
     Icon_DrawItem(ITEM_LASH_PEBBLE);
-    VramCache_Load(sprite->slot, 128, buffer + 0x400);
+    VramCache_Load(sprite->slot, ICON_TILE_BYTES, glyph->tiles);
     HeapSlot_Release(HEAP_SLOT_GLYPH_TRANSFER);
   }
 }

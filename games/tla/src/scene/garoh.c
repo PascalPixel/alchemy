@@ -218,10 +218,10 @@ void Garoh_WaveHypnosSwordChestLayer(void) {
     asm("" : "+r"(i));
     z = ((s16 *)&layer->y)[1];
     x = ((s16 *)&layer->x)[1];
-    // Each step held in a local for its whole life: as z * 0x3300 and
-    // z * 0x1320 the starting phases are built differently.
-    stepA = 0x3300;
-    stepB = 0x1320;
+    // Each step held in a local for its whole life: as z * 13056 and
+    // z * 4896 the starting phases are built differently.
+    stepA = 13056;
+    stepB = 4896;
     a = z * stepA + (frame << 10);
     b = z * stepB - (frame << 10);
     for (; i != 160; i++) {
@@ -230,8 +230,8 @@ void Garoh_WaveHypnosSwordChestLayer(void) {
       register s32 s1 asm("r8") = sine(a);
       s32 s2 = sine(b);
       *line++ = ((s1 * 3 + s2 * 7) >> 19) + x;
-      a += 0x3300;
-      b += 0x1320;
+      a += 13056;
+      b += 4896;
     }
     line = gGaroh_WaveLines;
     REG_BG2HOFS = line[0];
@@ -2773,8 +2773,8 @@ s32 gGaroh_ShrunkenSpriteScript[] = {
     SC_SET(SW_MOTION, 0),
     SC_ADD(SW_Y, toFIXED(-4)),
     SC_ADD(SW_X, toFIXED(6)),
-    SC_SET(SW_SCALE_X, 0xcccc),
-    SC_SET(SW_SCALE_Y, 0xcccc),
+    SC_SET(SW_SCALE_X, toFIXED(0.8)),
+    SC_SET(SW_SCALE_Y, toFIXED(0.8)),
     SC_CALL(Garoh_ClearScriptedActorSpriteFlags),
     SC_END,
 };

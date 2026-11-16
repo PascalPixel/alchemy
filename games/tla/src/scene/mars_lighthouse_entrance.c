@@ -287,35 +287,37 @@ s32 MapCell_Get();
 s32 Map_GetTerrainHeight();
 void Scene_SetActorSpritePriority();
 
+/// Sets the cells under an ice cone: standing, it blocks the way, the ground
+/// there is raised and it is drawn in front; flattened (its flag, kept in its
+/// timer, set), the cells are clear and the ground is lowered again.
 void MarsLighthouseEntrance_SetIceConeCells(struct Actor *object) {
-  s32 v10, v6, v7, v8, v9;
-  struct Actor *v5;
-  u8 *v11;
+  s32 z, upperCell, height, groundCell, x;
+  struct Actor *cone;
+  u8 *layer;
 
-  v5 = object;
-  v9 = FIELD_CELL(v5->x.fixed);
-  v10 = FIELD_CELL(v5->z.fixed);
-  v8 = MapCell_Get(0, v9, v10);
-  v6 = MapCell_Get(2, v9, v10);
-  v11 = &v5->layer;
-  v7 = ((Map_GetTerrainHeight(v5->layer, v5->x.fixed, v5->z.fixed)) >> 19);
-  if (Event_GetFlag(v5->timer)) {
-    v6 &= -0xff01;
-    v8 &= -129;
-    if ((v5->groundHeight >> 19) == v7)
-      goto L_02008282;
-    v7 = (v7 + -4);
-    goto L_02008282;
+  cone = object;
+  x = FIELD_CELL(cone->x.fixed);
+  z = FIELD_CELL(cone->z.fixed);
+  groundCell = MapCell_Get(0, x, z);
+  upperCell = MapCell_Get(2, x, z);
+  layer = &cone->layer;
+  height =
+      Map_GetTerrainHeight(cone->layer, cone->x.fixed, cone->z.fixed) >> 19;
+  if (Event_GetFlag(cone->timer)) {
+    upperCell &= -0xff01;
+    groundCell &= -129;
+    if ((cone->groundHeight >> 19) != height)
+      height -= 4;
+  } else {
+    upperCell &= 255;
+    upperCell |= 0xff00;
+    groundCell |= 128;
+    height += 4;
+    Scene_SetActorSpritePriority(cone, 2);
   }
-  v6 &= 255;
-  v6 |= 0xff00;
-  v8 |= 128;
-  v7 = (v7 + 4);
-  Scene_SetActorSpritePriority(v5, 2);
-L_02008282:
-  MapCell_Swap(0, v9, v10, v8);
-  MapCell_Swap(2, v9, v10, v6);
-  MapGrid_SetCellHeight((v9 << 20), (v10 << 20), *v11, v7);
+  MapCell_Swap(0, x, z, groundCell);
+  MapCell_Swap(2, x, z, upperCell);
+  MapGrid_SetCellHeight(x << 20, z << 20, *layer, height);
 }
 
 /// Each row: an ice cone's actor, its first animation and the flag set once
@@ -329,20 +331,19 @@ void MarsLighthouseEntrance_PlaceIceCones(u16 *table) {
   if (table[0] == 0xffff)
     return;
   row = table;
-loop:
-  object = (struct FieldActor *)Actor_Get(row[0]);
-  animation = row[1];
-  flag = row[2];
+  do {
+    object = (struct FieldActor *)Actor_Get(row[0]);
+    animation = row[1];
+    flag = row[2];
 
-  Actor_SetSpriteFlags(object, 0);
-  Actor_SelectAnimation(object, (u16)animation + Event_GetFlag((u16)flag));
-  object->motionFlags = 0;
-  object->collisionFlags &= ~ACTOR_SOLID;
-  object->timer = flag;
-  MarsLighthouseEntrance_SetIceConeCells(object);
-  row += 3;
-  if (row[0] != 0xffff)
-    goto loop;
+    Actor_SetSpriteFlags(object, 0);
+    Actor_SelectAnimation(object, (u16)animation + Event_GetFlag((u16)flag));
+    object->motionFlags = 0;
+    object->collisionFlags &= ~ACTOR_SOLID;
+    object->timer = flag;
+    MarsLighthouseEntrance_SetIceConeCells(object);
+    row += 3;
+  } while (row[0] != 0xffff);
 }
 
 /// While index is at most 7, spawns effect type 0x117 index steps below the
@@ -390,11 +391,11 @@ void MarsLighthouseEntrance_ScatterIceChips(s32 id) {
   s32 i;
 
   i = 5;
-next:
-  {
+  do {
     FIXED x = source->x.fixed + (Random16() << 4) - (Random16() << 4);
     struct Actor *object = Import_ActorCreate_(
-        0x145, x, (Random16() << 3) + source->y.fixed + toFIXED(4),
+        SPRITE_TURNING_ROCK, x,
+        (Random16() << 3) + source->y.fixed + toFIXED(4),
         source->z.fixed + (Random16() << 4) - (Random16() << 4));
 
     if (object != NULL) {
@@ -404,12 +405,9 @@ next:
 
       angle = Random16();
       radius = Random16();
-      scale = (Random16() >> 1) + 0x4000;
+      scale = (Random16() >> 1) + FIXED_ONE / 4;
       Actor_StartScript(object, gMarsLighthouseEntrance_IceChipScript);
       Actor_SetSpriteFlags(object, 0);
-      /* FAKEMATCH(dead): an empty once-only block holds the order around it. */
-      do {
-      } while (0);
       object->velocityY = angle * 4 + toFIXED(2);
       object->velocityZ = Iwram_MulFX(radius * 8, Trig_Cos(angle));
       object->velocityX = Iwram_MulFX(radius * 8, Math_Sin(angle));
@@ -420,9 +418,7 @@ next:
       object->bounce = FIXED_ONE / 2;
       Actor_SetSpriteColorMode(object, 1);
     }
-  }
-  if (--i >= 0)
-    goto next;
+  } while (--i >= 0);
 }
 
 /// Grind on the ice at the dead end: the crack runs to the ice sheet
@@ -434,14 +430,13 @@ void MarsLighthouseEntrance_GrindIce(void) {
   Event_PlaySound(SE_CRUMBLE);
   x = 32;
   count = 6;
-step:
-  MapGrid_CopyCellPictureCellsRect_(x, 125, 3, 3, 39, 85);
-  MarsLighthouseEntrance_ScatterIceChips(ACTOR_DEAD_END);
-  count--;
-  System_Wait(10);
-  x += 3;
-  if (count >= 0)
-    goto step;
+  do {
+    MapGrid_CopyCellPictureCellsRect_(x, 125, 3, 3, 39, 85);
+    MarsLighthouseEntrance_ScatterIceChips(ACTOR_DEAD_END);
+    count--;
+    System_Wait(10);
+    x += 3;
+  } while (count >= 0);
   ObjectTable_Snapshot();
   FieldEvent_SetExitRequest(20);
 }
@@ -783,10 +778,9 @@ void MarsLighthouseEntrance_StartHoleMask(void) {
   u32 *word = buffer;
   s32 count = 63;
 
-fill:
-  *word++ = 0x11111111;
-  if (--count >= 0)
-    goto fill;
+  do {
+    *word++ = 0x11111111;
+  } while (--count >= 0);
   gMarsLighthouseEntrance_HoleMaskVram = VramCache_FindFreeEntry();
   Vram_Load(gMarsLighthouseEntrance_HoleMaskVram, 0x100, buffer);
   Heap_Release(buffer);
@@ -844,17 +838,14 @@ void MarsLighthouseEntrance_FallIntoHole(s32 arg) {
   }
   Actor_SetAnimation(gMainRoutineWork.leaderActorId, ANIM_LEADER_ARMS_RAISED);
   FieldEvent_Wait(16);
-  i = 0;
-next:
-  if (i == 5)
-    Event_PlaySound(SE_DUST_PUFF);
-  actor->scaleX -= FIXED_ONE / 64;
-  actor->scaleY -= 0x300;
-  actor->y.fixed -= 0x9999;
-  System_Wait(1);
-  i++;
-  if (i <= 39)
-    goto next;
+  for (i = 0; i <= 39; i++) {
+    if (i == 5)
+      Event_PlaySound(SE_DUST_PUFF);
+    actor->scaleX -= FIXED_ONE / 64;
+    actor->scaleY -= 0x300;
+    actor->y.fixed -= 0x9999;
+    System_Wait(1);
+  }
   Actor_Get(gMainRoutineWork.leaderActorId)->spriteStorageKind = 0;
   gFieldWork->transition = SCENE_TRANSITION(TRANSITION_WINDOW, 9);
   Event_FinishScreenTransition();
@@ -921,17 +912,14 @@ void MarsLighthouseEntrance_FallThroughCrack(const struct MapCell *cell) {
   }
   Actor_SetAnimation(gMainRoutineWork.leaderActorId, ANIM_LEADER_ARMS_RAISED);
   FieldEvent_Wait(16);
-  i = 0;
-next:
-  if (i == 5)
-    Event_PlaySound(SE_DUST_PUFF);
-  leader->scaleX -= FIXED_ONE / 64;
-  leader->scaleY -= 0x300;
-  leader->y.fixed -= 0x9999;
-  System_Wait(1);
-  i++;
-  if (i <= 39)
-    goto next;
+  for (i = 0; i <= 39; i++) {
+    if (i == 5)
+      Event_PlaySound(SE_DUST_PUFF);
+    leader->scaleX -= FIXED_ONE / 64;
+    leader->scaleY -= 0x300;
+    leader->y.fixed -= 0x9999;
+    System_Wait(1);
+  }
   Actor_Get(gMainRoutineWork.leaderActorId)->spriteStorageKind = 0;
   gFieldWork->transition = SCENE_TRANSITION(TRANSITION_WINDOW, 9);
   Event_FinishScreenTransition();
@@ -2240,9 +2228,7 @@ void MarsLighthouseEntrance_LandFromCrack(void) {
   options.update = FieldEffect_AdvanceMotion;
   options.startScaleX = FIXED_ONE * 16 / 25;
   options.startScaleY = FIXED_ONE * 16 / 25;
-  i = 0;
-next:
-  {
+  for (i = 0; i <= 16; i++) {
     s32 angle = i << 12;
 
     velocity.x = Trig_Cos(angle);
@@ -2257,8 +2243,6 @@ next:
                           EFFECT_USE_PALETTE | 1,
                       &options);
   }
-  if (++i <= 16)
-    goto next;
   Event_PlaySound(SE_THUMP);
   Actor_SetAttachedEffect(gMainRoutineWork.leaderActorId,
                           ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ATTACH);
@@ -2992,8 +2976,8 @@ struct ActorPlacement gMarsLighthouseEntrance_FuguePlacements[] = {
     ACTOR_PLACEMENT(SPRITE_STAKE, CONDITION_ALWAYS,
                     gMarsLighthouseEntrance_IceConeScript, 136, 0, 424,
                     FACING_SOUTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(489, 800, MOVEMENT_TYPE_STAND, 648, 0, 376, FACING_SOUTH,
-                    TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_UNSEEN_MARKER, 800, MOVEMENT_TYPE_STAND, 648, 0, 376,
+                    FACING_SOUTH, TALK_FACING_KEEP, 0),
 #if !TLA_PATCH_1
     ACTOR_PLACEMENT(SPRITE_MARS_DJINNI, FLAG_DJINNI(DJINNI_FUGUE),
                     MOVEMENT_TYPE_STAND, 664, 0, 424, FACING_SOUTH,
@@ -3021,13 +3005,13 @@ struct ActorPlacement gMarsLighthouseEntrance_LapisPlacements[] = {
     ACTOR_PLACEMENT(SPRITE_DRAGON_HEAD, CONDITION_ALWAYS, gMarsLighthouseEntrance_LapisEastFlameThrowerRoute, 280, 0, 112, FACING_SOUTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(SPRITE_DRAGON_HEAD, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 328, 0, 112, FACING_SOUTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(SPRITE_DRAGON_HEAD, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 72, 0, 112, FACING_SOUTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(419, CONDITION_ALWAYS, (s32)gMarsLighthouseEntrance_StatueScript, 88, 0, 680, FACING_SOUTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(419, CONDITION_ALWAYS, (s32)gMarsLighthouseEntrance_StatueScript, 552, 0, 680, FACING_SOUTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(418, CONDITION_ALWAYS, (s32)gMarsLighthouseEntrance_StatueScript, 88, 0, 728, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_MARS_TORCH, CONDITION_ALWAYS, (s32)gMarsLighthouseEntrance_StatueScript, 88, 0, 680, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_MARS_TORCH, CONDITION_ALWAYS, (s32)gMarsLighthouseEntrance_StatueScript, 552, 0, 680, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_MARS_TORCH_LIT, CONDITION_ALWAYS, (s32)gMarsLighthouseEntrance_StatueScript, 88, 0, 728, FACING_SOUTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(SPRITE_STAKE, CONDITION_ALWAYS, gMarsLighthouseEntrance_IceConeScript, 0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(SPRITE_STAKE, CONDITION_ALWAYS, gMarsLighthouseEntrance_IceConeScript, 552, 0, 776, FACING_SOUTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(SPRITE_ICE_CRACK, CONDITION_ALWAYS, 7, 840, 0, 672, FACING_SOUTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(419, CONDITION_ALWAYS, (s32)gMarsLighthouseEntrance_StatueScript, 88, 0, 728, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_MARS_TORCH, CONDITION_ALWAYS, (s32)gMarsLighthouseEntrance_StatueScript, 88, 0, 728, FACING_SOUTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(SPRITE_ICE_CRACK, CONDITION_ALWAYS, 7, 480, 0, 704, FACING_SOUTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(SPRITE_SPARKLE, CONDITION_ALWAYS, 7, 0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(SPRITE_FIREBALL, CONDITION_ALWAYS, 7, 0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, 0),
@@ -3038,7 +3022,7 @@ struct ActorPlacement gMarsLighthouseEntrance_LapisPlacements[] = {
 // clang-format off
 struct ActorPlacement gMarsLighthouseEntrance_BalmPlacements[] = {
     ACTOR_PLACEMENT(SPRITE_DRAGON_HEAD, CONDITION_ALWAYS, gMarsLighthouseEntrance_BalmFlameThrowerRoute, 840, 0, 528, FACING_SOUTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(419, CONDITION_ALWAYS, (s32)gMarsLighthouseEntrance_StatueScript, 872, 0, 568, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_MARS_TORCH, CONDITION_ALWAYS, (s32)gMarsLighthouseEntrance_StatueScript, 872, 0, 568, FACING_SOUTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(SPRITE_DRAGON_STATUE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 200, 0, 792, FACING_EAST, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(SPRITE_DRAGON_STATUE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 264, 0, 792, FACING_WEST, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(SPRITE_STAKE, CONDITION_ALWAYS, gMarsLighthouseEntrance_IceConeScript, 840, 0, 680, FACING_SOUTH, TALK_FACING_KEEP, 0),
@@ -3057,10 +3041,10 @@ struct ActorPlacement gMarsLighthouseEntrance_BalmPlacements[] = {
 
 // clang-format off
 struct ActorPlacement gMarsLighthouseEntrance_HiddenCirclePlacements[] = {
-    ACTOR_PLACEMENT(418, CONDITION_ALWAYS, (s32)gMarsLighthouseEntrance_StatueScript, 72, 0, 632, FACING_SOUTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(419, CONDITION_ALWAYS, (s32)gMarsLighthouseEntrance_StatueScript, 72, 0, 680, FACING_SOUTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(418, CONDITION_ALWAYS, (s32)gMarsLighthouseEntrance_StatueScript, 904, 0, 120, FACING_SOUTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(419, CONDITION_ALWAYS, (s32)gMarsLighthouseEntrance_StatueScript, 856, 0, 120, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_MARS_TORCH_LIT, CONDITION_ALWAYS, (s32)gMarsLighthouseEntrance_StatueScript, 72, 0, 632, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_MARS_TORCH, CONDITION_ALWAYS, (s32)gMarsLighthouseEntrance_StatueScript, 72, 0, 680, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_MARS_TORCH_LIT, CONDITION_ALWAYS, (s32)gMarsLighthouseEntrance_StatueScript, 904, 0, 120, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_MARS_TORCH, CONDITION_ALWAYS, (s32)gMarsLighthouseEntrance_StatueScript, 856, 0, 120, FACING_SOUTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(SPRITE_ICE_CRACK, CONDITION_ALWAYS, 7, 240, 0, 688, FACING_SOUTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(SPRITE_SPARKLE, CONDITION_ALWAYS, 7, 0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(SPRITE_FIREBALL, CONDITION_ALWAYS, 7, 0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, 0),
@@ -3072,9 +3056,9 @@ struct ActorPlacement gMarsLighthouseEntrance_HiddenCirclePlacements[] = {
 struct ActorPlacement gMarsLighthouseEntrance_ValkyriePlacements[] = {
     ACTOR_PLACEMENT(SPRITE_DRAGON_STATUE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 72, 0, 696, FACING_SOUTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(SPRITE_DRAGON_HEAD, CONDITION_ALWAYS, gMarsLighthouseEntrance_ValkyrieWestFlameThrowerRoute, 120, 0, 688, FACING_SOUTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(419, CONDITION_ALWAYS, (s32)gMarsLighthouseEntrance_StatueScript, 88, 0, 728, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_MARS_TORCH, CONDITION_ALWAYS, (s32)gMarsLighthouseEntrance_StatueScript, 88, 0, 728, FACING_SOUTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(SPRITE_DRAGON_HEAD, CONDITION_ALWAYS, gMarsLighthouseEntrance_ValkyrieEastFlameThrowerRoute, 792, 0, 128, FACING_SOUTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(419, CONDITION_ALWAYS, (s32)gMarsLighthouseEntrance_StatueScript, 56, 0, 168, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_MARS_TORCH, CONDITION_ALWAYS, (s32)gMarsLighthouseEntrance_StatueScript, 56, 0, 168, FACING_SOUTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(SPRITE_STAKE, CONDITION_ALWAYS, gMarsLighthouseEntrance_IceConeScript, 200, 0, 168, FACING_SOUTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(SPRITE_STAKE, CONDITION_ALWAYS, gMarsLighthouseEntrance_IceConeScript, 328, 0, 184, FACING_SOUTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(SPRITE_STAKE, CONDITION_ALWAYS, gMarsLighthouseEntrance_IceConeScript, 360, 0, 152, FACING_SOUTH, TALK_FACING_KEEP, 0),

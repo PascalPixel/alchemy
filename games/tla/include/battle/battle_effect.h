@@ -15,13 +15,7 @@ void BattleEffect_RunMeteor(struct BattleEffectParams *effect);
 ///
 /// Abilities: Outer Space.
 void BattleEffect_RunOuterSpace(struct BattleEffectParams *effect);
-/// Particles in a palette's colours; mode chooses the palette and the motion.
-void BattleEffect_RunPaletteParticles(struct BattleEffectParams *effect,
-                                      s32 mode);
 void BattleEffect_RunCybele(struct BattleEffectParams *effect);
-
-/// Resets the effects' VRAM block and releases their heap blocks.
-s32 Graphics_ResetVramBlockAndReleaseHeapBlocks(s32 unused);
 
 /// Fills a size by size/2 byte map with circles of growing radius, each
 /// shaded by the cosine of its radius (0 to 63) times scale (16.16).

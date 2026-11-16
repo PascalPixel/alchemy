@@ -120,17 +120,6 @@ struct ScaledSprite;
 struct SceneCueRule;
 struct WorldMapWork;
 
-/// A spawned object as a particle emitter sees it: only its sprite.
-struct ParticleEffectObject {
-  u8 padding[80];              ///< not named through this view
-  struct ParticleChild *child; ///< the sprite, MotionObject's records
-};
-/// A point in the field, in 16.16 pixels.
-struct ParticlePosition {
-  FIXED x;
-  FIXED y;
-  FIXED z;
-};
 /// The 32x16 spark the swelling arcs over a caster are drawn with
 /// (field_effects.s).
 extern const u8 gFieldEffect_SparkTiles[];
@@ -222,11 +211,9 @@ struct BattlePresentationWork;
 struct BattleActionRecord;
 
 s32 AutoBattle_ShowDefend(s16 *);
-s32 BattleStaging_RunUnitAction(s16 *);
 s32 AutoBattle_RunAttackOrItem(struct BattleActionRecord *action);
 s32 AutoBattle_RunPsynergy(struct BattleActionRecord *action);
 s32 Battle_Run(s32 enemyGroup);
-void BattleMotion_ReservedNoOp83B0();
 s32 BattleUnit_GetEffectHeight(s32 owner);
 s32 BattleUnit_ListLivingWithReserve(s32 sideMask, u16 *unitIds);
 void BattleUnit_RefreshPlacement(void);

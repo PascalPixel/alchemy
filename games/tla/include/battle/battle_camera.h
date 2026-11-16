@@ -120,7 +120,6 @@ void BattleStaging_BuildTargetList(struct BattlePlan *plan,
 
 void BattleCamera_SetRange(FIXED cx, FIXED cy, s32 ox, s32 oy, FIXED scale);
 
-s32 BattleStaging_RunPairedUnitTransition(struct BattleActionRecord *action);
 s32 BattleObject_IsValidId(u32 objectId);
 void BattleCamera_SetView(s32 x, s32 depth, s32 y, s32 zoom);
 void BattleHighlight_SetSpriteMode(s32 actor, s32 mode);

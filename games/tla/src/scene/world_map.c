@@ -1338,8 +1338,8 @@ void WorldMap_FightBanditAndThieves(s32 entrance) {
       struct Actor *object = Actor_Get(ACTOR_FELIX);
 
       if (object != NULL)
-        Actor_SetDestination(ACTOR_KRADEN, *(s16 *)((u8 *)object + 10),
-                             *(s16 *)((u8 *)object + 18));
+        Actor_SetDestination(ACTOR_KRADEN, object->x.part[0].integer,
+                             object->z.part[0].integer);
     }
     Actor_WaitForMoveById(ACTOR_KRADEN);
     Actor_SetPosition(ACTOR_KRADEN, 0, 0);
@@ -1535,7 +1535,7 @@ void WorldMap_MeetEcho(void) {
     djinni->motionFlags = 0;
     FieldActor_SetMoveTargetFX(djinni, x, toFIXED(16), z);
     while (i >= 0) {
-      *(u16 *)&djinni->facing += 0x1000;
+      djinni->facing += TRIG_TURN / 16;
       wait(1);
       i--;
     }
@@ -1546,7 +1546,7 @@ void WorldMap_MeetEcho(void) {
     djinni->groundHeight = 0;
     i = 7;
     while (i >= 0) {
-      *(u16 *)&djinni->facing += 0x1000;
+      djinni->facing += TRIG_TURN / 16;
       wait(1);
       i--;
     }
@@ -1868,7 +1868,7 @@ void WorldMap_ShowIdejimaDrifting(void) {
   FieldEffect_ScheduleRatioTransition(FIXED_ONE * 7 / 5, 300);
   FieldEvent_Wait(270);
   gFieldWork->transitionFrames = 16;
-  *(u16 *)BG_PLTT = RGB_WHITE;
+  BG_PLTT_COLOR(0, 0) = RGB_WHITE;
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();
   FieldEvent_SetExitRequest(WORLD_MAP_EXIT_IDEJIMA_AFTER_DRIFT);

@@ -939,8 +939,7 @@ void TrialRoad_CheckPoundedPillarsCovered(s32 a, s32 b) {
   s32 id;
 
   id = ACTOR_WEST_PILLAR;
-next:
-  {
+  do {
     struct Actor *object = Actor_GetById(id);
     s32 x = FIELD_CELL(object->x.fixed);
     s32 z = FIELD_CELL(object->z.fixed);
@@ -948,24 +947,17 @@ next:
         Actor_GetById(gTrialRoad_PoundPartners[(id - ACTOR_WEST_PILLAR) & 3]));
     s32 other;
 
-    other = ACTOR_PILLAR_A;
     *covered = 0;
-    goto test;
-  step:
-    other++;
-  test:
-    if (other <= ACTOR_PILLAR_C) {
+    for (other = ACTOR_PILLAR_A; other <= ACTOR_PILLAR_C; other++) {
       object = Actor_GetById(other);
-      if (x != FIELD_CELL(object->x.fixed))
-        goto step;
-      if (z != FIELD_CELL(object->z.fixed))
-        goto step;
-      *covered = 1;
+      if (x == FIELD_CELL(object->x.fixed) &&
+          z == FIELD_CELL(object->z.fixed)) {
+        *covered = 1;
+        break;
+      }
     }
-  }
-  id++;
-  if (id <= ACTOR_EAST_PILLAR)
-    goto next;
+    id++;
+  } while (id <= ACTOR_EAST_PILLAR);
 }
 
 /// Pound drives a pillar down and raises its partner
@@ -1044,14 +1036,13 @@ void TrialRoad_StepOnSeesawPillar(s32 id, s32 other, s32 flag, s32 side) {
   wait(1);
   TrialRoad_RaisePillar(other);
   t = FIXED_ONE / 8;
-grow:
-  TrialRoad_SetPillarTopLift(id, (FIXED_ONE / 2 - t) / (FIXED_ONE / 32));
-  object->scaleY = FIXED_ONE - t;
-  partner->scaleY = t;
-  wait(1);
-  t += FIXED_ONE / 8;
-  if (t <= FIXED_ONE)
-    goto grow;
+  do {
+    TrialRoad_SetPillarTopLift(id, (FIXED_ONE / 2 - t) / (FIXED_ONE / 32));
+    object->scaleY = FIXED_ONE - t;
+    partner->scaleY = t;
+    wait(1);
+    t += FIXED_ONE / 8;
+  } while (t <= FIXED_ONE);
   object->scaleY = FIXED_ONE;
   TrialRoad_LowerPillar(id);
   Event_PlaySound(SE_ITEM_BREAK);
@@ -1731,11 +1722,11 @@ struct TrialRoadFountain {
   s16 fallAt; ///< the phase it starts to fall at
   s16 high;
   s16 low;
-  s16 unk10;
-  s16 speed; ///< pixels a frame, 4 rising and -8 falling
-  s16 unk14;
-  s16 bob;             ///< the spout's sine phase
-  struct Actor *spout; ///< drawn over it
+  s16 unusedAfterLow;   ///< set to 1 as the fountain is added; nothing reads it
+  s16 speed;            ///< pixels a frame, 4 rising and -8 falling
+  s16 unusedAfterSpeed; ///< cleared as the fountain is added; nothing reads it
+  s16 bob;              ///< the spout's sine phase
+  struct Actor *spout;  ///< drawn over it
 };
 
 /// The fountain stage's work, kept in the inventory snapshot's spare room.
@@ -1889,7 +1880,7 @@ void PaletteCycle_StepAt(void) {
     struct FieldWork *work = Ram_HeapSlots->fieldWork;
     s16 *state = &work->psynergy;
 
-    if (*state != 0 && (*state & 0x3ff) != 153)
+    if (*state != 0 && (*state & 0x3ff) != ABILITY_HOVER)
       return;
     if (work->revealActive != 0)
       return;
@@ -1898,18 +1889,17 @@ void PaletteCycle_StepAt(void) {
   }
   i = 0;
   offset = 4;
-next:
-  p = colors;
-  {
-    s32 slot = (phase + i) % 5;
-    u8 *table = (u8 *)gTrialRoad_PaletteCycleColors;
+  do {
+    p = colors;
+    {
+      s32 slot = (phase + i) % 5;
+      u8 *table = (u8 *)gTrialRoad_PaletteCycleColors;
 
-    colors[slot] = *(u16 *)(table + offset);
-  }
-  i++;
-  offset += 2;
-  if (i <= 4)
-    goto next;
+      colors[slot] = *(u16 *)(table + offset);
+    }
+    i++;
+    offset += 2;
+  } while (i <= 4);
   Dma_Set(p, (void *)&BG_PLTT_COLOR(5, 2), DMA_COPY_WORDS(2), REG_DMA3);
   gTrialRoad_PaletteCycleFrame++;
 }
@@ -2241,13 +2231,10 @@ s32 Scene_PrepareMap(void) {
         Map_CopyRawCellsRect(px, row, 13, 21, 1, 13);
         Map_CopyRawCellsRect(px + 42, row, 13, 21, x1 + 1, 13);
         Map_CopyRawCellsRect(px + 84, row, 13, 21, x2 + 1, 13);
-        i = 0;
-      hide_unused:
-        if (gTrialRoad_DemoSceneryStages[i] != value)
-          Actor_SetPosition(i + 64, 0, 0);
-        i++;
-        if (i <= 9)
-          goto hide_unused;
+        for (i = 0; i <= 9; i++) {
+          if (gTrialRoad_DemoSceneryStages[i] != value)
+            Actor_SetPosition(i + 64, 0, 0);
+        }
         MapGrid_CenterOnFollowedPoint();
       } else {
         s32 x1;
@@ -2296,13 +2283,10 @@ s32 Scene_PrepareMap(void) {
         Map_CopyRawCellsRect(px, row, 13, 21, 10, destinationY);
         Map_CopyRawCellsRect(px + 42, row, 13, 21, 44, destinationY);
         Map_CopyRawCellsRect(px + 84, row, 13, 21, 78, destinationY);
-        i = 0;
-      hideUnused:
-        if (gTrialRoad_SceneryStages[i] != value)
-          Actor_SetPosition(i + 64, 0, 0);
-        i++;
-        if (i <= 9)
-          goto hideUnused;
+        for (i = 0; i <= 9; i++) {
+          if (gTrialRoad_SceneryStages[i] != value)
+            Actor_SetPosition(i + 64, 0, 0);
+        }
         MapGrid_CenterOnFollowedPoint();
         leader = Actor_GetById(gMainRoutineWork.leaderActorId);
         if (!GameFlag_Get(FLAG_KEEP_PARTY_POSITION))
@@ -3037,31 +3021,28 @@ void TrialRoad_DrawFountains(void) {
     frame = ((gFrameCount % 12) / 3) * 8 + 32;
     lift = 0;
     if (lift < mover->height) {
-    next:
-      if (count > 79)
-        goto skip;
-      x = object->x.fixed - viewX;
-      height = object->y.fixed + toFIXED(lift) - viewY;
-      z = object->z.fixed - viewZ - viewY;
-      x = FIXEDtoINT(x) - 8;
-      sy = z - height;
-      sy = (sy >> 16) - 16;
-      depth = ((height + z) >> 16) + 58;
-      if ((u32)(x + 15) > 334 || sy <= -16 || sy > 239)
-        goto skip;
-      x &= 0x1ff;
-      sy &= 0xff;
-      cursor = entry;
-      *cursor++ = 0;
-      *cursor++ = sy | OBJ_X(x) | OBJ_SIZE_16X16 | OBJ_256_COLORS;
-      *cursor = (tile + frame) | OBJ_PRIORITY(2);
-      Oam_AddSpriteAtDepth(entry, depth);
-      entry += 3;
-      count++;
-    skip:
-      lift += 16;
-      if (lift < mover->height)
-        goto next;
+      do {
+        if (count > 79)
+          continue;
+        x = object->x.fixed - viewX;
+        height = object->y.fixed + toFIXED(lift) - viewY;
+        z = object->z.fixed - viewZ - viewY;
+        x = FIXEDtoINT(x) - 8;
+        sy = z - height;
+        sy = (sy >> 16) - 16;
+        depth = ((height + z) >> 16) + 58;
+        if ((u32)(x + 15) > 334 || sy <= -16 || sy > 239)
+          continue;
+        x &= 0x1ff;
+        sy &= 0xff;
+        cursor = entry;
+        *cursor++ = 0;
+        *cursor++ = sy | OBJ_X(x) | OBJ_SIZE_16X16 | OBJ_256_COLORS;
+        *cursor = (tile + frame) | OBJ_PRIORITY(2);
+        Oam_AddSpriteAtDepth(entry, depth);
+        entry += 3;
+        count++;
+      } while ((lift += 16) < mover->height);
     }
     if (count > 79)
       continue;
@@ -3134,12 +3115,12 @@ struct TrialRoadFountain *TrialRoad_AddFountain(s32 slot, s32 id, s32 timer,
     fountain->riseAt = 60;
     fountain->fallAt = 240;
     fountain->low = low;
-    fountain->unk10 = 1;
+    fountain->unusedAfterLow = 1;
     object->motionFlags = 0;
     object->collisionFlags = ACTOR_NOT_TARGETED;
     fountain->speed = 0;
     fountain->bob = 0;
-    fountain->unk14 = 0;
+    fountain->unusedAfterSpeed = 0;
     object->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
   }
   spout = ((struct Actor *)Import_ActorCreate(
@@ -3185,7 +3166,7 @@ void TrialRoad_CrumblePillar(const void *data, s32 id) {
         MagmaRockInside_SpawnRubble(0);
         wait(8);
         Actor_SelectAnimation(object, 2);
-        TrialRoad_SetActorCellShape(-4, *(u8 *)&object->layer, id);
+        TrialRoad_SetActorCellShape(-4, object->layer, id);
         MagmaRockInside_SpawnRubble(1);
         wait(16);
         MapGrid_SetShake(SHAKE_KEEP, SHAKE_KEEP, 0.9);
@@ -3461,13 +3442,12 @@ UNUSED void String_WriteU32AsHex(u8 *buf, u32 value) {
   *buf = 0;
   buf--;
   i = 7;
-next:
-  *buf = digits[value & 15];
-  value >>= 4;
-  buf--;
-  i--;
-  if (i >= 0)
-    goto next;
+  do {
+    *buf = digits[value & 15];
+    value >>= 4;
+    buf--;
+    i--;
+  } while (i >= 0);
 }
 
 extern u8 gSceneState[];

@@ -1555,10 +1555,7 @@ void AirsRockInside_StartRestoringCells(void) {
   s32 value = -1;
 
   gAirsRockInside_StampedCell = value;
-  {
-    s32 priority = 1152;
-    Task_Add(AirsRockInside_RestoreCellBehindLeader, priority);
-  }
+  Task_Add(AirsRockInside_RestoreCellBehindLeader, 1152);
 }
 
 /// As the leader steps onto a new cell, saves the cells under it and stamps the
@@ -2896,11 +2893,8 @@ void AirsRockInside_SpawnMotes(void) {
     sprite = actor->sprite;
     sprite->priority = 1;
     actor->riseEnabled = i << 4;
-    {
-      s32 zero = 0;
-      actor->motionFlags = zero;
-      actor->priorityFlags = zero;
-    }
+    actor->motionFlags = 0;
+    actor->priorityFlags = 0;
     actor->acceleration = actor->speedLimit = (i << 12) + (toFIXED(1) / 2);
     actor->update = AirsRockInside_DriftMote;
     Actor_SetSpriteFlags(actor, 0);
@@ -3037,7 +3031,7 @@ void AirsRockInside_PuffVents(void);
 
 s32 Scene_Initialize(void) {
   struct Actor *actor;
-  s32 i, z, one;
+  s32 i, z;
 
   gFieldWork->transition = SCENE_TRANSITION(TRANSITION_WINDOW, 4);
   Actor_GetById(gMainRoutineWork.leaderActorId)->priorityFlags |=
@@ -3240,11 +3234,10 @@ s32 Scene_Initialize(void) {
     }
   } else if (gMainRoutineWork.next == SCENE_AIRS_ROCK_INSIDE_PAIRED_STATUES) {
     AirsRockInside_StartRestoringCells();
-    one = 1;
-    Actor_GetById(ACTOR_PAIRED_STATUES_CONE_A)->riseCounter = one;
-    Actor_GetById(ACTOR_PAIRED_STATUES_CONE_B)->riseCounter = one;
-    Actor_GetById(ACTOR_PAIRED_STATUES_CONE_C)->riseCounter = one;
-    Actor_GetById(ACTOR_PAIRED_STATUES_CONE_D)->riseCounter = one;
+    Actor_GetById(ACTOR_PAIRED_STATUES_CONE_A)->riseCounter = 1;
+    Actor_GetById(ACTOR_PAIRED_STATUES_CONE_B)->riseCounter = 1;
+    Actor_GetById(ACTOR_PAIRED_STATUES_CONE_C)->riseCounter = 1;
+    Actor_GetById(ACTOR_PAIRED_STATUES_CONE_D)->riseCounter = 1;
     if (!GameFlag_Get(FLAG_KEEP_PARTY_POSITION)) {
       GameFlag_Set(FLAG_SCENE_TEMP_01);
       GameFlag_Set(FLAG_SCENE_TEMP_02);
@@ -3255,12 +3248,12 @@ s32 Scene_Initialize(void) {
                           toFIXED(696));
     Actor_PlaceBlocks(gAirsRockInside_PairedStatuesPillars);
     if (GameFlag_Get(FLAG_AREA_TEMP_04)) {
-      MapGrid_CopyCellsTo(39, 82, 38, 82, one, 3);
+      MapGrid_CopyCellsTo(39, 82, 38, 82, 1, 3);
       MapGrid_CopyCellAttributes(39, 82, 1, 1, 38, 82);
       MapGrid_CopyCellAttributes(38, 19, 1, 1, 38, 18);
     }
     if (GameFlag_Get(FLAG_AREA_TEMP_05)) {
-      MapGrid_CopyCellsTo(39, 82, 38, 99, one, 3);
+      MapGrid_CopyCellsTo(39, 82, 38, 99, 1, 3);
       MapGrid_CopyCellAttributes(38, 98, 1, 1, 38, 99);
       MapGrid_CopyCellAttributes(38, 35, 1, 1, 38, 37);
     }

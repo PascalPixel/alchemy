@@ -1844,7 +1844,6 @@ void Prox_MatchCaveHomesPriority(void) {
 }
 
 void Prox_InitializeCaveHomes(void) {
-  s32 priority;
 
   if (Event_GetFlag(FLAG_KEEP_PARTY_POSITION) == 0) {
     s32 entrance = (u16)gMainRoutineWork.entrance;
@@ -1860,8 +1859,7 @@ void Prox_InitializeCaveHomes(void) {
   FieldEffect_StartBlankOverlay(0);
   // The priority in a local is built before the task function's address (passed
   // directly, the address loads first).
-  priority = TASK_PASS_VBLANK;
-  Task_AddFrame(Prox_MatchCaveHomesPriority, priority);
+  Task_AddFrame(Prox_MatchCaveHomesPriority, TASK_PASS_VBLANK);
 }
 
 s32 Actor_MoveToObject();

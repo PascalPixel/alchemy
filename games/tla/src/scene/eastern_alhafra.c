@@ -1334,11 +1334,7 @@ void EasternAlhafra_WorkersSeeBlockGone(void) {
   // "Hey! That block on the mast has disappeared!"
   FieldEvent_ShowMessageThenWait(ACTOR_FIRST_WORKER, 0, 10);
   Actor_FaceDirection(ACTOR_FELIX, FACING_SOUTH, 0);
-  {
-    s32 mode = 1;
-
-    FieldCamera_MoveTo(328, CAMERA_KEEP, 632, mode);
-  }
+  FieldCamera_MoveTo(328, CAMERA_KEEP, 632, 1);
   FieldCamera_WaitForArrival();
   FieldEvent_Wait(20);
   FieldActor_StartRepeatedMotion(ACTOR_FIRST_WORKER, 3);

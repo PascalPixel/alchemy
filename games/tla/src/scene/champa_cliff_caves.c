@@ -297,16 +297,14 @@ void ChampaCliffCaves_ObabaAsksForBriggs(void) {
 /// A villager at a door asks whether the party wants to come in, and answers
 /// the choice.
 void ChampaCliffCaves_AskToComeIn(s32 actor) {
-  s32 msg = (s32)MsgWhatYouWant;
-
-  Event_SetMessageId(msg);
+  Event_SetMessageId((s32)MsgWhatYouWant);
   FieldMessage_ShowAtActor(actor, 0);
   if (Event_AskYesNoWithActorAnimation(Party_GetLeaderActor(), 0) == 0) {
     Event_Wait(10);
-    Event_SetMessageId(msg + 1);
+    Event_SetMessageId((s32)MsgWhatYouWant + 1);
   } else {
     Event_Wait(20);
-    Event_SetMessageId(msg + 2);
+    Event_SetMessageId((s32)MsgWhatYouWant + 2);
   }
   Event_ShowMessageAndWait(actor, 0);
 }
@@ -1867,11 +1865,7 @@ void ChampaCliffCaves_StartForgeFire(const s32 *position) {
   ChampaCliffCaves_LoadColumn();
   work->frame = 0;
   time = 0;
-  {
-    s32 priority = TASK_PASS_VBLANK;
-
-    Task_Add(ChampaCliffCaves_DrawGlow, priority);
-  }
+  Task_Add(ChampaCliffCaves_DrawGlow, TASK_PASS_VBLANK);
   MapGrid_SetShake(4, 4, 1);
   state = 0;
   do {
@@ -1967,11 +1961,7 @@ void ChampaCliffCaves_LightDisc(const struct Vector3 *origin) {
   work->columnScale.value = 0;
   work->columnTrailingScale.value = 0;
   work->frame = 0;
-  {
-    s32 priority = TASK_PASS_VBLANK;
-
-    Task_Add(ChampaCliffCaves_DrawGlow, priority);
-  }
+  Task_Add(ChampaCliffCaves_DrawGlow, TASK_PASS_VBLANK);
   Sound_Play(SE_DJINNI_SET);
   state = 0;
   do {
@@ -1993,11 +1983,7 @@ void ChampaCliffCaves_RaiseColumn(void) {
   s32 state;
 
   ChampaCliffCaves_LoadColumn();
-  {
-    s32 priority = TASK_PASS_VBLANK;
-
-    Task_Add(ChampaCliffCaves_DrawGlow, priority);
-  }
+  Task_Add(ChampaCliffCaves_DrawGlow, TASK_PASS_VBLANK);
   Sound_Play(SE_CLATTER);
   state = 0;
   do {

@@ -758,18 +758,14 @@ void AirsRock_WhirlwindClearsWall(void) {
     FieldEvent_Wait(1);
   }
   FieldTask_Remove(AirsRock_ScrollWave);
-  {
-    s32 zero = 0;
-
-    Actor_Get(ACTOR_TWISTER_ROCK_BY_THE_WALL)->riseEnabled = zero;
-    System_Wait(30);
-    Actor_Get(ACTOR_TWISTER_ROCK_BY_THE_WALL)->update = (void (*)(void))zero;
-    FieldActor_SetSpriteColor(Actor_Get(ACTOR_TWISTER_ROCK_BY_THE_WALL),
-                              SPRITE_COLOR_GREY);
-    FieldMapGrid_WaitForShakeToSettle();
-    FieldEvent_Wait(60);
-    REG_BLDCNT = zero;
-  }
+  Actor_Get(ACTOR_TWISTER_ROCK_BY_THE_WALL)->riseEnabled = 0;
+  System_Wait(30);
+  Actor_Get(ACTOR_TWISTER_ROCK_BY_THE_WALL)->update = NULL;
+  FieldActor_SetSpriteColor(Actor_Get(ACTOR_TWISTER_ROCK_BY_THE_WALL),
+                            SPRITE_COLOR_GREY);
+  FieldMapGrid_WaitForShakeToSettle();
+  FieldEvent_Wait(60);
+  REG_BLDCNT = 0;
   Window_LoadGraphics();
   DebugText_Clear();
   work = &gMainRoutineWork;
@@ -1136,8 +1132,6 @@ void AirsRock_CrumbleRock(s32 x, s32 z) {
   struct Vector3 scatter;
   s32 i;
   FIXED radius = toFIXED(64);
-  FIXED shakeA = -1;
-  FIXED shakeC = FIXED_ONE * 9 / 10;
 
   first = FieldActor_Create(SPRITE_ROCK, x, 0, z);
   options.priority = 1;
@@ -1178,7 +1172,7 @@ void AirsRock_CrumbleRock(s32 x, s32 z) {
                                rock->z.fixed + scatter.z);
   }
   MapGrid_SetShake(5, 7, 1);
-  MapGrid_SetShakeFX(shakeA, shakeA, shakeC);
+  MapGrid_SetShake(SHAKE_KEEP, SHAKE_KEEP, 0.9);
 }
 
 /// Whirlwind on the purple twister rock (actor 14): it glows, the rocks in the
@@ -1515,18 +1509,14 @@ void AirsRock_WhirlwindClearsFog(void) {
     FieldEvent_Wait(1);
   }
   FieldTask_Remove(AirsRock_ScrollWave);
-  {
-    s32 zero = 0;
-
-    Actor_Get(ACTOR_TWISTER_ROCK_IN_THE_FOG)->riseEnabled = zero;
-    System_Wait(30);
-    Actor_Get(ACTOR_TWISTER_ROCK_IN_THE_FOG)->update = (void (*)(void))zero;
-    FieldActor_SetSpriteColor(Actor_Get(ACTOR_TWISTER_ROCK_IN_THE_FOG),
-                              SPRITE_COLOR_GREY);
-    FieldMapGrid_WaitForShakeToSettle();
-    FieldEvent_Wait(60);
-    REG_BLDCNT = zero;
-  }
+  Actor_Get(ACTOR_TWISTER_ROCK_IN_THE_FOG)->riseEnabled = 0;
+  System_Wait(30);
+  Actor_Get(ACTOR_TWISTER_ROCK_IN_THE_FOG)->update = NULL;
+  FieldActor_SetSpriteColor(Actor_Get(ACTOR_TWISTER_ROCK_IN_THE_FOG),
+                            SPRITE_COLOR_GREY);
+  FieldMapGrid_WaitForShakeToSettle();
+  FieldEvent_Wait(60);
+  REG_BLDCNT = 0;
   Window_LoadGraphics();
   DebugText_Clear();
   FieldWindowColor_Apply(gMainRoutineWork.windowHue,

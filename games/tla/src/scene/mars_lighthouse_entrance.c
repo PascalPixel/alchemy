@@ -1567,8 +1567,7 @@ struct RideAnimation {
 };
 
 void Ride_Create(void) {
-  struct MarsLighthouseEntranceRideHead *work =
-      (struct MarsLighthouseEntranceRideHead *)RIDE_WORK;
+  struct FlameHitWork *work = RIDE_WORK;
   struct Actor *object;
   struct RideAnimation *animation;
 
@@ -1579,7 +1578,7 @@ void Ride_Create(void) {
   Actor_SelectAnimation(object, 1);
   animation = object->sprite;
   work->handle = object;
-  work->value0c = animation->vramBlock;
+  work->flameVramBlock = animation->vramBlock;
   animation->keepEntry = 1;
 }
 

@@ -8,11 +8,6 @@
 
 struct Actor;
 
-struct EffectWork1a {
-  u8 unk00[0x1a];
-  s16 active;
-};
-
 void DehkanPlateau_CannonLeapsAway(void);
 
 void Pound_SinkTarget(u16 *list, s32 mode, s32 count);
@@ -91,13 +86,6 @@ void DehkanPlateau_HideFullMetalVestChestActors(void);
 
 struct Actor;
 struct EffectOptions;
-
-struct AnimationFacing {
-  u8 unk00[9];
-  u8 low : 2;
-  u8 facing : 2;
-  u8 high : 4;
-};
 
 void DehkanPlateau_EnterConeCell(void);
 

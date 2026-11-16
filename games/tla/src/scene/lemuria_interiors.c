@@ -784,7 +784,7 @@ void LemuriaInteriors_EmitNote(s32 x, s32 y, s32 z, s16 rotation, s32 timer) {
       __asm__("");
       object->wait = timer;
     }
-    sprite->nextPicture = 0;
+    sprite->nextFrame = 0;
     sprite->rotation = rotation;
   }
 }

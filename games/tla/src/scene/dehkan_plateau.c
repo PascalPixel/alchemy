@@ -1534,9 +1534,9 @@ s32 Scene_Initialize(void) {
 void DehkanPlateau_KeepPriorityWithLeader(void) {
   Actor_SetSpritePriority(
       ACTOR_FULL_METAL_VEST_CHEST,
-      ((struct AnimationFacing *)Actor_GetById(gMainRoutineWork.leaderActorId)
+      ((struct SpriteAttr2High *)Actor_GetById(gMainRoutineWork.leaderActorId)
            ->sprite)
-          ->facing);
+          ->priority);
 }
 
 void DehkanPlateau_RestoreFullMetalVestChestCracks(void);

@@ -2,23 +2,32 @@
 #define ALCHEMY_CYCLE_PICTURES_H
 
 /// @file
-/// A sprite that steps through a list of pictures.
+/// A sprite that steps through its pictures and colour modes.
 
 #include "types.h"
 
-struct SpritePictures {
-  u8 unk00[5];
-  u8 picture;
-};
+struct SpriteAnimation;
 
+/// A field sprite (struct FieldSprite) as the scenes that cycle its pictures
+/// read it: its rotation, the flag that redraws it, the frame it shows next and
+/// its animation layer.
 struct AnimatedSprite {
-  u8 unk00[0x12];
-  s16 rotation;
-  u8 unk14[5];
-  u8 picture;
-  u8 nextPicture;
-  u8 unk1b[0xd];
-  struct SpritePictures *pictures;
+  u8 link[4];
+  u8 attr0[2];
+  u8 attr1[2];
+  u8 attr2[2];
+  u8 attr3[2];
+  u8 scale[4];
+  u8 vramBlock; ///< VRAM cache entry holding its tiles
+  u8 cacheFlags;
+  s16 rotation; ///< 1/65536 turns
+  u8 size[4];   ///< width, height and the x and y offsets
+  u8 frame;
+  u8 dirty;     ///< nonzero redraws its pixels
+  u8 nextFrame; ///< the sprite flags, saved with the object's snapshot
+  /// The layer count, then the shadow's link and attributes.
+  u8 shadow[13];
+  struct SpriteAnimation *animation;
 };
 
 #endif

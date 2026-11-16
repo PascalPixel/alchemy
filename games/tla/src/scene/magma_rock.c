@@ -2283,7 +2283,7 @@ struct RockWork {
   struct EffectSprite sprites[64];
   s16 next;
   u16 tileBase;
-  u16 resource;
+  s16 resource;
 };
 
 void MagmaRock_DropRocks(s32 x, s32 y, s32 z, s32 count) {
@@ -2361,7 +2361,7 @@ void MagmaRock_StartFallingRocks(void) {
 }
 
 void MagmaRock_EndFallingRocks(void) {
-  struct MagmaRockSparkWork *work = Ram_HeapSlots->menuWork;
+  struct RockWork *work = Ram_HeapSlots->menuWork;
 
   FieldTask_Remove(Particles_UpdateFalling);
   VramCache_FreeEntry(work->resource);

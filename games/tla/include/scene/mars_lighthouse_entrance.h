@@ -13,26 +13,6 @@ struct CellTargetEntry;
 struct MapCell;
 struct Position;
 
-struct MarsLighthouseEntranceAnimation {
-  u8 unk00[9];
-  u8 unused09 : 2;
-  u8 layer : 2;
-  u8 unk0a[6];
-  u8 value10;
-  u8 flag11 : 1;
-  u16 angle;
-};
-
-struct MarsLighthouseEntranceRideHead {
-  s32 counter;
-  s16 active;
-  u8 unk06[6];
-  u16 value0c;
-  s16 value0e;
-  u8 unk10[0x60];
-  struct Actor *handle;
-};
-
 s32 Leader_KnockBack(void);
 
 void Ride_SpawnForward();

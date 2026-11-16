@@ -14,11 +14,6 @@ struct MagmaRockCrumblingPillar {
   u16 flag;
 };
 
-struct MagmaRockSparkWork {
-  u8 unk0000[0x1604];
-  s16 resource;
-};
-
 s32 MapCell_GetAttributes(u32 layer, s32 x, s32 z);
 
 extern s16 gMagmaRock_SlidePillars[];

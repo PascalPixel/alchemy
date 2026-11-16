@@ -385,42 +385,41 @@ s32 Battle_AppendLinkedActions(struct BattleActionRecord *actions, s32 count) {
   }
 
   if (battle->linkPaused == 0) {
-    do {
-      if (battle->linkSide == 0) {
-        u32 saved;
+    if (battle->linkSide == 0) {
+      u32 saved;
 
-        state->count = count;
-        state->check = Battle_RandomFar();
-        IRQ_LOCK(saved);
-        Battle_SetRandomSeed(state->seed = gRandomSeed);
-        IRQ_UNLOCK(saved);
-        if (LinkBattle_SendActions() < 0 || LinkBattle_ReceiveActions() < 0)
-          break;
-        result = state->count;
-      } else {
-        if (LinkBattle_ReceiveActions() < 0)
-          break;
-        result = state->count;
-        state->count = count;
-        if (LinkBattle_SendActions() < 0)
-          break;
-        if (Battle_RandomFar() != state->check)
-          break;
-        Battle_SetRandomSeed(state->seed);
-      }
+      state->count = count;
+      state->check = Battle_RandomFar();
+      IRQ_LOCK(saved);
+      Battle_SetRandomSeed(state->seed = gRandomSeed);
+      IRQ_UNLOCK(saved);
+      if (LinkBattle_SendActions() < 0 || LinkBattle_ReceiveActions() < 0)
+        goto fail;
+      result = state->count;
+    } else {
+      if (LinkBattle_ReceiveActions() < 0)
+        goto fail;
+      result = state->count;
+      state->count = count;
+      if (LinkBattle_SendActions() < 0)
+        goto fail;
+      if (Battle_RandomFar() != state->check)
+        goto fail;
+      Battle_SetRandomSeed(state->seed);
+    }
 
-      for (index = 0; index < result; index++) {
-        struct BattleActionRecord *action = &actions[count + index];
+    for (index = 0; index < result; index++) {
+      struct BattleActionRecord *action = &actions[count + index];
 
-        action->unitId = action->slot;
-        action->target = action->target ^ 0x80;
-      }
+      action->unitId = action->slot;
+      action->target = action->target ^ 0x80;
+    }
 
-      Heap_Release(state);
-      return result;
-    } while (0);
+    Heap_Release(state);
+    return result;
   }
 
+fail:
   LinkBattle_ResetTransferState();
   Serial_RemoveIrqHandlers();
   Heap_Release(state);

@@ -212,35 +212,44 @@ void Loho_FireCannon(void) {
   felix = Actor_GetById(ACTOR_FELIX);
   Event_Start();
   Event_ResolvePendingActions(0);
-  do {
-    west = 0;
-    north = 0;
-    south = 0;
-    if (felix->x.fixed < toFIXED(489)) {
-      west = 1;
-    }
-    z = felix->z.fixed;
-    if (z < toFIXED(347)) {
-      north = 1;
-    } else if (z > toFIXED(370)) {
-      south = 1;
-    }
-    if (south != 0) {
-      break;
-    }
-    if (north != 0) {
-      if (west != 0) {
-        Actor_WalkToAndWait(ACTOR_FELIX, 471, 346);
-      } else {
-        Actor_WalkToAndWait(ACTOR_FELIX, 506, 346);
-      }
-    }
-    if (west != 0) {
-      Actor_WalkToAndWait(ACTOR_FELIX, 471, 373);
-    } else {
-      Actor_WalkToAndWait(ACTOR_FELIX, 506, 373);
-    }
-  } while (0);
+  goto start;
+approach:
+  if (north == 0)
+    goto turned;
+  if (west == 0)
+    goto toNorthEast;
+  Actor_WalkToAndWait(ACTOR_FELIX, 471, 346);
+  goto turned;
+toNorthEast:
+  Actor_WalkToAndWait(ACTOR_FELIX, 506, 346);
+turned:
+  if (west == 0)
+    goto toEast;
+  goto toWest;
+toEast:
+  Actor_WalkToAndWait(ACTOR_FELIX, 506, 373);
+  goto inPlace;
+start:
+  west = 0;
+  north = 0;
+  south = 0;
+  if (felix->x.fixed >= toFIXED(489))
+    goto checkZ;
+  west = 1;
+checkZ:
+  z = felix->z.fixed;
+  if (z >= toFIXED(347))
+    goto checkSouth;
+  north = 1;
+  goto placed;
+checkSouth:
+  if (z <= toFIXED(370))
+    goto placed;
+  south = 1;
+placed:
+  if (south == 0)
+    goto approach;
+inPlace:
   FieldCamera_MoveTo(488, CAMERA_KEEP, 372, 1);
   Event_SetFlag(FLAG_LOHO_WALL_BREACHED);
   Actor_MoveToAndWait(ACTOR_FELIX, 487, 377);
@@ -490,17 +499,22 @@ void Loho_FireCannon(void) {
   FieldCamera_WaitForArrival();
   // "That boat's yours, isn't it?"
   Event_OpenMessage(ACTOR_MAN_KEEPING_THE_CANNON, 0);
-  if (Event_AskYesNoWithActorAnimation(ACTOR_FELIX, 0) == 0) {
-    Actor_SetAnimation(ACTOR_MINER_PUZZLED_BY_THE_CANNON, 3);
-    Event_ShowMessage(ACTOR_MINER_PUZZLED_BY_THE_CANNON, 0);
-    gFieldWork->message++;
-  } else {
-    Actor_SetAnimation(ACTOR_MINER_PUZZLED_BY_THE_CANNON, 4);
-    gFieldWork->message++;
-    Event_ShowMessage(ACTOR_MAN_KEEPING_THE_CANNON, 0);
-    Actor_SetAnimation(ACTOR_MINER_PUZZLED_BY_THE_CANNON, 3);
-    Event_ShowMessage(ACTOR_MINER_PUZZLED_BY_THE_CANNON, 0);
-  }
+  if (Event_AskYesNoWithActorAnimation(ACTOR_FELIX, 0))
+    goto answeredNo;
+  Actor_SetAnimation(ACTOR_MINER_PUZZLED_BY_THE_CANNON, 3);
+  Event_ShowMessage(ACTOR_MINER_PUZZLED_BY_THE_CANNON, 0);
+  gFieldWork->message++;
+  goto crewLeaves;
+toWest:
+  Actor_WalkToAndWait(ACTOR_FELIX, 471, 373);
+  goto inPlace;
+answeredNo:
+  Actor_SetAnimation(ACTOR_MINER_PUZZLED_BY_THE_CANNON, 4);
+  gFieldWork->message++;
+  Event_ShowMessage(ACTOR_MAN_KEEPING_THE_CANNON, 0);
+  Actor_SetAnimation(ACTOR_MINER_PUZZLED_BY_THE_CANNON, 3);
+  Event_ShowMessage(ACTOR_MINER_PUZZLED_BY_THE_CANNON, 0);
+crewLeaves:
   Actor_WalkBy(ACTOR_MINER_PUZZLED_BY_THE_CANNON, 0, 24);
   Actor_WalkByAndWait(ACTOR_MAN_KEEPING_THE_CANNON, 0, 24);
   Actor_FaceDirection(ACTOR_MAN_KEEPING_THE_CANNON, FACING_EAST, 0);

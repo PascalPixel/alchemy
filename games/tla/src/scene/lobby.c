@@ -349,82 +349,94 @@ s32 LinkLobby_ReceivePartyRecords(void) {
   heap = Heap_AllocEwram(size);
   result = 0;
   timeout = LOBBY_RECEIVE_TIMEOUT_FRAMES;
-  for (slot = 0; slot < LOBBY_UNIT_RECORD_COUNT; slot++) {
-    unit = Unit_Get(slot + 128);
-    transfer = Serial_StartReceive(unit);
-    tries = 0;
-    if (transfer == -1)
-      break;
-    while (Serial_GetActiveTransfers() != 0) {
-      if (gSerialReceivedSize > size) {
-        result = -1;
-        goto done;
-      }
-      wait(1);
-      if (--timeout < 0 ||
-          (gLinkStatus & LOBBY_LINK_READY_MASK) != LOBBY_LINK_READY_MASK) {
-        if (++tries > LOBBY_TRANSFER_RETRY_LIMIT) {
-          result = -1;
-          goto done;
-        }
-      }
-    }
-    if (gSerialReceivedSize != size) {
+  slot = 0;
+  // Three records, each started at recordNext and waited for at recordTest,
+  // then the Djinn recovery table at table. Each receive waits a frame at a
+  // time; more than size bytes is an overrun and fewer once it ends a short
+  // record, and once the timeout has run out, or while the link is not ready,
+  // every frame is a try, failing past LOBBY_TRANSFER_RETRY_LIMIT.
+  goto recordNext;
+recordWait:
+  if (gSerialReceivedSize > size) {
+    result = -1;
+    goto done;
+  }
+  wait(1);
+  if (--timeout < 0 ||
+      (gLinkStatus & LOBBY_LINK_READY_MASK) != LOBBY_LINK_READY_MASK) {
+    if (++tries > LOBBY_TRANSFER_RETRY_LIMIT) {
       result = -1;
       goto done;
     }
-    if (unit->side != BATTLE_SIDE_NONE)
-      result++;
-    wait(2);
-    FieldMessage_DecodeRawUnbounded((s32)MsgEnemyLabel, namePrefix);
-    for (i = 0; i <= LOBBY_PREFIX_LIMIT && namePrefix[i] != 0; i++)
-      ;
+  }
+recordTest:
+  if (Serial_GetActiveTransfers() != 0)
+    goto recordWait;
+  if (gSerialReceivedSize != size) {
+    result = -1;
+    goto done;
+  }
+  if (unit->side != BATTLE_SIDE_NONE)
+    result++;
+  wait(2);
+  FieldMessage_DecodeRawUnbounded((s32)MsgEnemyLabel, namePrefix);
+  for (i = 0; i <= LOBBY_PREFIX_LIMIT && namePrefix[i] != 0; i++)
+    ;
 #if LOBBY_PREFIX_LIMIT == 7
-    namePrefix[i] = 32;
-    length = i + 1;
+  namePrefix[i] = 32;
+  length = i + 1;
 #else
-    length = i;
+  length = i;
 #endif
-    for (i = UNIT_NAME_SIZE - 1; i >= length; i--)
-      unit->name[i] = unit->name[i - length];
-    for (i = 0; i < length; i++)
-      unit->name[i] = namePrefix[i];
-    unit->name[UNIT_NAME_SIZE - 1] = 0;
-  }
-  if (slot >= LOBBY_UNIT_RECORD_COUNT) {
-    // Then the Djinn recovery table. A receive that cannot start leaves by the
-    // break, as one in the loop above does.
-    do {
-      Heap_Release(heap);
-      size = LOBBY_RECOVERY_RECORD_BYTES;
-      heap = Heap_AllocEwram(size);
-      transfer = Serial_StartReceive(Djinn_GetRecoveryTable(1));
-      tries = 0;
-      if (transfer == -1)
-        break;
-      while (Serial_GetActiveTransfers() != 0) {
-        s32 limit = LOBBY_RECOVERY_RECORD_BYTES;
+  for (i = UNIT_NAME_SIZE - 1; i >= length; i--)
+    unit->name[i] = unit->name[i - length];
+  for (i = 0; i < length; i++)
+    unit->name[i] = namePrefix[i];
+  unit->name[UNIT_NAME_SIZE - 1] = 0;
+  slot++;
+recordNext:
+  if (slot >= LOBBY_UNIT_RECORD_COUNT)
+    goto table;
+  unit = Unit_Get(slot + 128);
+  transfer = Serial_StartReceive(unit);
+  tries = 0;
+  if (transfer == -1)
+    goto failed;
+  goto recordTest;
+tableWait:
+  {
+    s32 limit = LOBBY_RECOVERY_RECORD_BYTES;
 
-        if (gSerialReceivedSize > limit) {
-          result = -1;
-          goto done;
-        }
-        wait(1);
-        if (--timeout < 0 ||
-            (gLinkStatus & LOBBY_LINK_READY_MASK) != LOBBY_LINK_READY_MASK) {
-          if (++tries > LOBBY_TRANSFER_RETRY_LIMIT) {
-            result = -1;
-            goto done;
-          }
-        }
-      }
-      if (gSerialReceivedSize != LOBBY_RECOVERY_RECORD_BYTES)
-        result = -1;
-      else
-        wait(2);
+    if (gSerialReceivedSize > limit) {
+      result = -1;
       goto done;
-    } while (0);
+    }
   }
+  wait(1);
+  if (--timeout < 0 ||
+      (gLinkStatus & LOBBY_LINK_READY_MASK) != LOBBY_LINK_READY_MASK) {
+    if (++tries > LOBBY_TRANSFER_RETRY_LIMIT) {
+      result = -1;
+      goto done;
+    }
+  }
+tableTest:
+  if (Serial_GetActiveTransfers() != 0)
+    goto tableWait;
+  if (gSerialReceivedSize != LOBBY_RECOVERY_RECORD_BYTES)
+    result = -1;
+  else
+    wait(2);
+  goto done;
+table:
+  Heap_Release(heap);
+  size = LOBBY_RECOVERY_RECORD_BYTES;
+  heap = Heap_AllocEwram(size);
+  transfer = Serial_StartReceive(Djinn_GetRecoveryTable(1));
+  tries = 0;
+  if (transfer != -1)
+    goto tableTest;
+failed:
   result = transfer;
 done:
   Heap_Release(heap);
@@ -480,6 +492,8 @@ s32 LinkLobby_SendPartyRecords(void) {
   // or while the link is not ready, every frame is a try, and past
   // LOBBY_TRANSFER_RETRY_LIMIT tries the exchange fails. A send that cannot
   // start leaves the block.
+  /* FAKEMATCH(dead): the sends in a once-only block; as a goto to done from
+   * each break, 79 of 264 instructions differ in tla-en. */
   do {
     for (i = 0; i < memberCount; i++) {
       s32 tries = 0;

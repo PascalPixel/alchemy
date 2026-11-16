@@ -131,6 +131,8 @@ done:
   return;
 }
 
+/// Mind Read on Piers' uncle: his thoughts follow how far Piers' homecoming
+/// has gone.
 void LemuriaInteriors_MindReadPiersUncle(s32 unused, s32 id) {
   if (Event_GetFlag(FLAG_PIERS_AT_MOTHERS_GRAVE)) {
     Event_SetMessageId((s32)MsgLemuriaInteriorsLunpaHasGivenKingTremendous);
@@ -1435,6 +1437,7 @@ struct SceneEntrance gSceneEntrances[] = {
 };
 
 // clang-format off
+/// The houses' exit regions.
 s16 gSceneRegions[] = {
     416, 32, 592, 432, 48, 608, -1, 13,
     688, -24, 608, 704, -8, 624, -1, 14,
@@ -1580,6 +1583,7 @@ struct Trigger gSceneEvents[] = {
     {TRIGGER_TABLE_END},
 };
 
+/// The script each floating note runs.
 u32 gLemuriaInteriors_NoteFloats[] = {
     38,
 };

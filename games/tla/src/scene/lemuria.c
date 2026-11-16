@@ -1159,6 +1159,7 @@ void Lemuria_TakeLeaderLayer(void) { Actor_TakeLeaderLayer(); }
 extern u16 gLemuria_ThirdDoorOpening[];
 
 // clang-format off
+/// The spoiled child's walk.
 s32 gLemuria_FirstWalkerPaces[] = {                                                               
       SC_ANIMATION(2),                                                               
       SC_SPEED(1),                                               
@@ -1175,6 +1176,7 @@ s32 gLemuria_FirstWalkerPaces[] = {
       SC_LOOP(SC_FOREVER, SC_TO(1)),                                           
   };
 
+/// The lonely child's walk.
 s32 gLemuria_SecondWalkerPaces[] = {                                                               
       SC_ANIMATION(2),                                                               
       SC_SPEED(1),                                               
@@ -1262,24 +1264,31 @@ u16 gLemuria_ThirdDoorOpening[] = {
 };
 // clang-format on
 
+/// The first house door's opening, at its place on the map grid.
 struct MapGridCellAnimation gLemuria_FirstDoor = {(s32)gLemuria_DoorOpening, 22,
                                                   47};
 
+/// The second house door's opening, at its place on the map grid.
 struct MapGridCellAnimation gLemuria_SecondDoor = {(s32)gLemuria_DoorOpening,
                                                    35, 47};
 
+/// The palace door's opening, at its place on the map grid.
 struct MapGridCellAnimation gLemuria_PalaceDoor = {gLemuria_WideDoorOpening, 9,
                                                    40};
 
+/// The third house door's opening, at its place on the map grid.
 struct MapGridCellAnimation gLemuria_ThirdDoor = {gLemuria_ThirdDoorOpening, 54,
                                                   45};
 
+/// The palace front door's opening, at its place on the map grid.
 struct MapGridCellAnimation gLemuria_PalaceFrontDoor = {
     gLemuria_WideDoorOpening, 28, 20};
 
+/// The palace upper door's opening, at its place on the map grid.
 struct MapGridCellAnimation gLemuria_PalaceUpperDoor = {
     gLemuria_WideDoorOpening, 28, 13};
 
+/// The fourth house door's opening, at its place on the map grid.
 struct MapGridCellAnimation gLemuria_FourthDoor = {(s32)gLemuria_DoorOpening,
                                                    54, 50};
 

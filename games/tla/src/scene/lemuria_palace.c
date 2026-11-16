@@ -297,6 +297,7 @@ void LemuriaPalace_FreeMaps(void) {
   VramCache_FreeEntry(gLemuriaPalace_SecondMapVram);
 }
 
+/// Writes the alpha blend weights, REG_BLDALPHA.
 static __inline__ void Blend_WriteAlpha(s32 value) { REG_BLDALPHA = value; }
 
 #define BLEND_SET_ALPHA(value)                                                 \
@@ -1232,11 +1233,13 @@ u16 gLemuriaPalace_DoorOpening[] = {
     MAPGRID_ANIMATION_STEPS_END,
 };
 
+/// The palace's two doors' openings, at their places on the map grid.
 struct MapGridCellAnimation gLemuriaPalace_Doors[] = {
     {gLemuriaPalace_DoorOpening, 5, 23},
     {gLemuriaPalace_DoorOpening, 30, 23},
 };
 
+/// The palace's inner door opening, at its place on the map grid.
 struct MapGridCellAnimation gLemuriaPalace_InnerDoor = {
     gLemuriaPalace_DoorOpening, 56, 4};
 
@@ -1297,6 +1300,7 @@ struct Trigger gSceneEvents[] = {
     {TRIGGER_TABLE_END},
 };
 
+/// The twelve colours of the glow, in turn.
 s16 gLemuriaPalace_GlowColors[] = {
     0x7b00, 0x76c0, 0x7280, 0x6e40, 0x6a00, 0x65c0,
     0x6180, 0x65c0, 0x6a00, 0x6e40, 0x7280, 0x76c0,
@@ -1306,6 +1310,8 @@ s16 gLemuriaPalace_GlowColors[] = {
 
 #undef BLEND_SET_ALPHA
 
+/// The blend weights the hall's two maps flicker between as one fades into
+/// the other.
 LATE_DATA ALIGNED(4) u16 gLemuriaPalace_MapCrossfade[] = {
     BLEND_ALPHA(2, 14), BLEND_ALPHA(4, 12), BLEND_ALPHA(6, 10),
     BLEND_ALPHA(8, 8),  BLEND_ALPHA(10, 6), BLEND_ALPHA(12, 4),

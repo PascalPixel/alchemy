@@ -839,6 +839,7 @@ void KibomboMountains_StepNorthOfDog(void);
 extern s32 gKibomboMountains_FirstLookoutScript[];
 
 // clang-format off
+/// A pillar risen out of a frozen puddle.
 s32 gKibomboMountains_RaisedPillarScript[] = {
     SC_ANIMATION(2),
     SC_END,
@@ -874,15 +875,18 @@ u32 gSceneExits[] = {
     SCENE_EXITS_END,
 };
 
+/// A crate held still.
 s32 gKibomboMountains_CrateScript[] = {
     SC_SET(SW_MOTION, 0),
     SC_END,
 };
 
+/// The mountain path's actors.
 struct ActorPlacement gKibomboMountains_Placements[] = {
     {SCENE_TABLE_END},
 };
 
+/// The upper guard's patrol.
 s32 gKibomboMountains_PatrolScript[] = {
     SC_SPEED(0.5),
     SC_ACCELERATION(0.1),
@@ -900,6 +904,7 @@ s32 gKibomboMountains_PatrolScript[] = {
     SC_LOOP(SC_FOREVER, SC_TOP),
 };
 
+/// The lower guard's patrol.
 s32 gKibomboMountains_LowerGuardPatrolScript[] = {                                                               
       SC_SPEED(0.5),                                                
       SC_ACCELERATION(0.1),                                                
@@ -925,11 +930,13 @@ s32 gKibomboMountains_LowerGuardPatrolScript[] = {
       SC_LOOP(SC_FOREVER, SC_TOP),                                             
   };
 
+/// The crate over the knocked-out guard, bobbing.
 s32 gKibomboMountains_BobScript[] = {
     SC_CALL(Actor_Bob),
     SC_END,
 };
 
+/// The guard dog's patrol.
 s32 gKibomboMountains_DogPatrolScript[] = {
     SC_SPEED(1.25),
     SC_ACCELERATION(0.25),
@@ -978,6 +985,7 @@ s32 gKibomboMountains_DogPatrolScript[] = {
     SC_LOOP(SC_FOREVER, SC_TOP),
 };
 
+/// Waft's ledges' actors, by enum KibomboMountainsWaftActorId.
 struct ActorPlacement gKibomboMountains_WaftPlacements[] = {
     ACTOR_PLACEMENT(SPRITE_KIBOMBO_WARRIOR, FLAG_KIBOMBO_LETS_PARTY_PASS, gKibomboMountains_PatrolScript, 616, 0, 328, FACING_NORTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(SPRITE_KIBOMBO_WARRIOR, FLAG_KIBOMBO_LETS_PARTY_PASS, gKibomboMountains_LowerGuardPatrolScript, 824, 0, 584, FACING_NORTH, TALK_FACING_KEEP, 0),
@@ -994,6 +1002,7 @@ struct ActorPlacement gKibomboMountains_WaftPlacements[] = {
     {SCENE_TABLE_END},
 };
 
+/// The first lookout's watch, back and forth.
 s32 gKibomboMountains_FirstLookoutScript[] = {                                                               
       SC_SPEED(0.5),                                                
       SC_ACCELERATION(0.1),                                                
@@ -1019,6 +1028,7 @@ s32 gKibomboMountains_FirstLookoutScript[] = {
       SC_LOOP(SC_FOREVER, SC_TOP),                                             
   };
 
+/// The second lookout's watch, back and forth.
 s32 gKibomboMountains_SecondLookoutScript[] = {                                                               
       SC_SPEED(0.5),                                                
       SC_ACCELERATION(0.1),                                                
@@ -1044,6 +1054,7 @@ s32 gKibomboMountains_SecondLookoutScript[] = {
       SC_LOOP(SC_FOREVER, SC_TOP),                                             
   };
 
+/// The chest room's actors, by enum KibomboMountainsDiskAxeChestActorId.
 struct ActorPlacement gKibomboMountains_DiskAxeChestPlacements[] = {
     ACTOR_PLACEMENT(SPRITE_TIGHTROPE_POST, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 392, 0, 200, FACING_NORTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(SPRITE_TIGHTROPE_POST, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 456, 0, 200, FACING_NORTH, TALK_FACING_KEEP, 0),
@@ -1069,10 +1080,12 @@ struct ActorPlacement gKibomboMountains_DiskAxeChestPlacements[] = {
     {SCENE_TABLE_END},
 };
 
+/// The mountain path's triggers.
 struct Trigger gKibomboMountains_Triggers[] = {
     {TRIGGER_TABLE_END},
 };
 
+/// The triggers of Waft's ledges.
 struct Trigger gKibomboMountains_WaftTriggers[] = {
     {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
     {TRIGGER_EXIT, 2, CONDITION_ALWAYS, 2},
@@ -1107,6 +1120,7 @@ struct Trigger gKibomboMountains_WaftTriggers[] = {
     {TRIGGER_TABLE_END},
 };
 
+/// The chest room's triggers.
 struct Trigger gKibomboMountains_DiskAxeChestTriggers[] = {
     {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
     {TRIGGER_EXIT, 2, CONDITION_ALWAYS, 2},
@@ -1139,6 +1153,7 @@ struct Trigger gKibomboMountains_DiskAxeChestTriggers[] = {
     {TRIGGER_TABLE_END},
 };
 
+/// The small cavern's triggers.
 struct Trigger gKibomboMountains_CavernTriggers[] = {
     {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
     {TRIGGER_EXIT, 2, CONDITION_ALWAYS, 2},

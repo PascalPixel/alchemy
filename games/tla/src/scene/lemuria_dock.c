@@ -250,6 +250,7 @@ s32 gLemuriaDock_Exits[] = {
     SCENE_EXITS_END,
 };
 
+/// The dock's exits once the party came by Lemuria's other way in.
 s32 gLemuriaDock_ExitsToOtherWayIn[] = {
     SCENE_EXITS(LemuriaDock),
     SCENE_EXIT_UNLESS(1, LemuriaEntrance, 5, EXIT_FLAG_NONE),
@@ -266,11 +267,13 @@ struct ActorPlacement gActorPlacements[] = {
     {SCENE_TABLE_END},
 };
 
+/// The steps of the dock house's door opening.
 s16 gLemuriaDock_HouseDoorOpening[] = {
     51, 38, 1, 1, 6, -1,
 };
 // clang-format on
 
+/// The dock house's door opening, at its place on the map grid.
 struct WarpTarget gLemuriaDock_HouseDoor = {(s32)gLemuriaDock_HouseDoorOpening,
                                             70, 22};
 

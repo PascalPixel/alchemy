@@ -576,6 +576,8 @@ void LemuriaSpring_GivePrize(s32 item) {
   Event_End();
 }
 
+/// Sets an actor of the toss where the simulation has it: its position,
+/// facing, colour mode and animation step.
 void LemuriaSpring_SetActorAppearance(s32 id, s32 *position, s32 facing,
                                       s32 colorMode, s32 step) {
   struct Actor *object = Actor_Get(id);
@@ -608,6 +610,7 @@ void LemuriaSpring_SetActorAppearance(s32 id, s32 *position, s32 facing,
   }
 }
 
+/// Sets how actor `id` keeps its sprites (Actor.spriteStorageKind).
 void LemuriaSpring_SetSpriteStorageKind(s32 id, s32 kind) {
   struct Actor *object;
 
@@ -617,6 +620,8 @@ void LemuriaSpring_SetSpriteStorageKind(s32 id, s32 kind) {
   }
 }
 
+/// A task: moves the tossed coin or medal a frame, its trail and shadow
+/// behind it, and the crabs and turtles that swim in the spring.
 void LemuriaSpring_UpdateTossSimulation(void) {
   struct SpringTossMotion *toss;
   struct SpringObstacle *obstacle;
@@ -1227,18 +1232,22 @@ u8 gLemuriaSpring_FrontObstacleAnimations[] = {
     0, 1, 9,
 };
 
+/// The turtles' animations, by speed.
 u8 gLemuriaSpring_BackObstacleAnimations[] = {
     0, 3, 4,
 };
 
+/// Where each obstacle starts, across.
 u8 gLemuriaSpring_ObstacleStartX[] = {
     80, 160, 80, 72,
 };
 
+/// Where each obstacle starts, down.
 u8 gLemuriaSpring_ObstacleStartZ[] = {
     32, 104, 68, 72,
 };
 
+/// The way each obstacle starts heading.
 u16 gLemuriaSpring_ObstacleHeadings[] = {
     0, 1, 0, 0x8000,
 };

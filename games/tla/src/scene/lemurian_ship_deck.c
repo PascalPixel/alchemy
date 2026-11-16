@@ -1187,10 +1187,12 @@ void LemurianShipDeck_SetOutForMadra(void) {
 }
 
 // clang-format off
+/// The deck's puddle, by actor id and flag.
 s16 gLemurianShipDeck_Puddles[] = {
-    8, 512, -1, 0,
+    ACTOR_PUDDLE, FLAG_SCENE_TEMP_00, -1, 0,
 };
 
+/// The crew walking off the deck after Piers agrees to sail for Lemuria.
 s32 gLemurianShipDeck_ReachPiersShipScript[] = {
     SC_ANIMATION(2),
     SC_MOVE(263, 0, 176),
@@ -1202,6 +1204,7 @@ s32 gLemurianShipDeck_ReachPiersShipScript[] = {
     SC_END,
 };
 
+/// The crew following Piers belowdecks.
 s32 gLemurianShipDeck_ReturnToShipScript[] = {
     SC_ANIMATION(2),
     SC_MOVE(368, 0, 448),
@@ -1217,6 +1220,7 @@ s32 gLemurianShipDeck_ReturnToShipScript[] = {
     SC_END,
 };
 
+/// The first of the crew looking about the deck.
 s32 gLemurianShipDeck_FirstCrewLooksAround[] = {                                                               
       SC_SET(SW_FACING, FACING_SOUTH),     SC_WAIT(30),                        
       SC_SET(SW_FACING, FACING_SOUTHWEST), SC_WAIT(50),                        
@@ -1225,6 +1229,7 @@ s32 gLemurianShipDeck_FirstCrewLooksAround[] = {
       SC_LOOP(SC_FOREVER, SC_TOP),                                             
   };
 
+/// The second of the crew looking about the deck.
 s32 gLemurianShipDeck_SecondCrewLooksAround[] = {
     SC_SET(SW_FACING, FACING_EAST),
     SC_WAIT(50),
@@ -1233,6 +1238,7 @@ s32 gLemurianShipDeck_SecondCrewLooksAround[] = {
     SC_LOOP(SC_FOREVER, SC_TOP),
 };
 
+/// The third of the crew looking about the deck.
 s32 gLemurianShipDeck_ThirdCrewLooksAround[] = {
     SC_SET(SW_FACING, FACING_NORTH_NORTHEAST),
     SC_WAIT(70),
@@ -1262,6 +1268,7 @@ u32 gSceneExits[] = {
     SCENE_EXITS_END,
 };
 
+/// The main deck's actors.
 struct ActorPlacement gLemurianShipDeck_Placements[] = {
     ACTOR_PLACEMENT(SPRITE_PUDDLE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 136, 0, 312, FACING_SOUTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(SPRITE_KRADEN, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 8, 0, 8, FACING_SOUTH, TALK_FACING_KEEP, 0),
@@ -1271,6 +1278,7 @@ struct ActorPlacement gLemurianShipDeck_Placements[] = {
     {SCENE_TABLE_END},
 };
 
+/// The tiller deck's actors.
 struct ActorPlacement gLemurianShipDeck_TillerPlacements[] = {
     ACTOR_PLACEMENT(SPRITE_PUDDLE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 8, 0, 8, FACING_SOUTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(SPRITE_KRADEN, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 8, 0, 8, FACING_SOUTH, TALK_FACING_KEEP, 0),
@@ -1280,10 +1288,12 @@ struct ActorPlacement gLemurianShipDeck_TillerPlacements[] = {
     {SCENE_TABLE_END},
 };
 
+/// The tiller deck's triggers: none.
 struct Trigger gLemurianShipDeck_Triggers[] = {
     {TRIGGER_TABLE_END},
 };
 
+/// The main deck's triggers.
 struct Trigger gLemurianShipDeck_MainDeckTriggers[] = {
     {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 1, CONDITION_ALWAYS, EVENT(LemurianShipDeck_EnterCabin)},
     {TRIGGER_EXIT, 2, CONDITION_ALWAYS, 2},
@@ -1298,11 +1308,13 @@ struct Trigger gLemurianShipDeck_MainDeckTriggers[] = {
     {TRIGGER_TABLE_END},
 };
 
+/// A sparkle fading as it rises.
 u32 gLemurianShipDeck_SparkleFades[] = {
     0, 10, 1, 3, 0, 1,
     38,
 };
 
+/// A puff of smoke rising and fading.
 u32 gLemurianShipDeck_SmokePuff[] = {
     0, 15, 3, 0, 1, 38,
 };

@@ -154,7 +154,6 @@ s32 gLinkLobby_CallFrames BSS_DATA;
 /// The lobby's task each frame: counts frames without the opponent, clears
 /// the peer signatures after 25, and raises the event trigger when both sides
 /// are ready or the link is lost. Returns whether the peer answered.
-// Ported from ☀️'s LinkLobby_PollPeerReady.
 s32 LinkLobby_PollPeerReady(void) {
   struct FieldWork *work;
   s32 result;

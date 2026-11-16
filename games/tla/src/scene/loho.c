@@ -890,6 +890,7 @@ s32 Scene_PrepareMap(void) {
 }
 
 // clang-format off
+/// The miner by the cannon walks up to the breached wall.
 s32 gLoho_FirstMinerGoesToWall[] = {
     SC_ANIMATION(2),
     SC_MOVE_XZ(539, 327),
@@ -913,6 +914,7 @@ s32 gLoho_FirstMinerGoesToWall[] = {
     SC_END,
 };
 
+/// The miner puzzled by the cannon steps up to look at the wall.
 s32 gLoho_SecondMinerStepsUp[] = {
     SC_WAIT(50),
     SC_ANIMATION(2),
@@ -922,6 +924,7 @@ s32 gLoho_SecondMinerStepsUp[] = {
     SC_END,
 };
 
+/// The man keeping the cannon steps up to look at the wall.
 s32 gLoho_ThirdMinerStepsUp[] = {
     SC_WAIT(70),
     SC_ANIMATION(2),
@@ -933,6 +936,7 @@ s32 gLoho_ThirdMinerStepsUp[] = {
     SC_END,
 };
 
+/// The miner by the cannon walks back from the wall.
 s32 gLoho_FirstMinerWalksBack[] = {
     SC_ANIMATION(2),
     SC_MOVE(570, 0, 248),
@@ -946,6 +950,7 @@ s32 gLoho_FirstMinerWalksBack[] = {
     SC_END,
 };
 
+/// The miner by the cannon goes to fetch it.
 s32 gLoho_FirstMinerFetchesCannon[] = {
     SC_POSITION(583, 0, 327),
     SC_SET(SW_MOTION, 0),
@@ -958,6 +963,7 @@ s32 gLoho_FirstMinerFetchesCannon[] = {
     SC_END,
 };
 
+/// The miner by the cannon comes back with it.
 s32 gLoho_FirstMinerReturns[] = {
     SC_ANIMATION(2),
     SC_MOVE_XZ(472, 331),
@@ -968,6 +974,7 @@ s32 gLoho_FirstMinerReturns[] = {
     SC_END,
 };
 
+/// Run on the cannon as the crew sets off with it.
 s32 gLoho_ForemanComes[] = {
     SC_MOVE_BY(0, 2, 0),
     SC_SYNC,
@@ -981,6 +988,7 @@ s32 gLoho_ForemanComes[] = {
     SC_END,
 };
 
+/// The villager by the shop pacing in her house.
 s32 gLoho_VillagerPaces[] = {
     SC_LABEL(1),
     SC_WAIT(50),
@@ -995,6 +1003,7 @@ s32 gLoho_VillagerPaces[] = {
     SC_END,
 };
 
+/// The villager by the shop going back to her place.
 s32 gLoho_VillagerReturns[] = {
     SC_ANIMATION(2),
     SC_MOVE(128, 0, 120),
@@ -1013,6 +1022,7 @@ s32 gLoho_VillagerReturns[] = {
     SC_END,
 };
 
+/// The villager by the shop stepping west, out of the way.
 s32 gLoho_VillagerMovesWest[] = {                                                               
       SC_SPEED(0.9),                                                
       SC_ANIMATION(2),                                                               
@@ -1022,6 +1032,7 @@ s32 gLoho_VillagerMovesWest[] = {
       SC_END,                                                                  
   };
 
+/// The villager by the shop stepping north, out of the way.
 s32 gLoho_VillagerMovesNorth[] = {                                                               
       SC_SPEED(0.9),                                                
       SC_ANIMATION(2),                                                               
@@ -1036,6 +1047,7 @@ struct SceneEntrance gSceneEntrances[] = {
     {SCENE_TABLE_END},
 };
 
+/// The houses' exit regions.
 u32 gLoho_Regions[] = {
     0x1c01c4, 0x1cc02e4, 0x2ec0024, 0x6ffff, 0xffff, 0,
     0, 0,
@@ -1066,6 +1078,7 @@ u32 gSceneExits[] = {
     SCENE_EXITS_END,
 };
 
+/// The town's actors, by enum LohoActorId.
 struct ActorPlacement gLoho_TownPlacements[] = {
     ACTOR_PLACEMENT(SPRITE_LOHO_WORKER, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 56, 0, 304, FACING_SOUTHWEST, TALK_FACING_PARTY_AND_BACK, 0),
     ACTOR_PLACEMENT(SPRITE_LOHO_WORKER, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 72, 0, 392, FACING_SOUTHEAST, TALK_FACING_PARTY_AND_BACK, 0),
@@ -1085,6 +1098,7 @@ struct ActorPlacement gLoho_TownPlacements[] = {
     {SCENE_TABLE_END},
 };
 
+/// The houses' actors, by enum LohoInteriorsActorId.
 struct ActorPlacement gLoho_InteriorsPlacements[] = {
     ACTOR_PLACEMENT(SPRITE_WOMAN_WITH_ORANGE_HAIR, CONDITION_ALWAYS, gLoho_VillagerPaces, 128, 0, 120, FACING_NORTHWEST, TALK_FACING_PARTY_AND_BACK, 0),
     ACTOR_PLACEMENT(SPRITE_UNSEEN_MARKER, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 168, 0, 120, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
@@ -1092,10 +1106,12 @@ struct ActorPlacement gLoho_InteriorsPlacements[] = {
     {SCENE_TABLE_END},
 };
 
+/// The triggers of neither the town nor the houses: none.
 struct Trigger gLoho_Triggers[] = {
     {TRIGGER_TABLE_END},
 };
 
+/// The town's triggers.
 struct Trigger gLoho_TownTriggers[] = {
     {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 1, CONDITION_ALWAYS, EVENT(Loho_EnterDoor)},
     {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 2, CONDITION_ALWAYS, EVENT(Loho_EnterDoor)},
@@ -1161,6 +1177,7 @@ struct Trigger gLoho_TownTriggers[] = {
     {TRIGGER_TABLE_END},
 };
 
+/// The houses' triggers.
 struct Trigger gLoho_InteriorsTriggers[] = {
     {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
     {TRIGGER_EXIT, 2, CONDITION_ALWAYS, 2},
@@ -1188,10 +1205,12 @@ struct Trigger gLoho_InteriorsTriggers[] = {
     {TRIGGER_TABLE_END},
 };
 
+/// The steps of a house door opening.
 s16 gLoho_DoorOpening[] = {
     64, 50, 2, 2, 2, 64, 52, 2,
     2, 2, 64, 54, 2, 2, 2, -1,
 };
 // clang-format on
 
+/// A house door's opening, at its place on the map grid.
 struct MapGridCellAnimation gLoho_HouseDoor = {gLoho_DoorOpening, 79, 15};

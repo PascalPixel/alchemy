@@ -321,6 +321,7 @@ s32 gLemuriaEntrance_ShipSailsOut[] = {
 };
 // clang-format on
 
+/// The ship's animation as it rests in the harbour.
 s32 gLemuriaEntrance_ShipAtRest[] = {
     SC_CALL(LemuriaEntrance_ResetAnimationFrame),
     SC_ANIMATION(7),

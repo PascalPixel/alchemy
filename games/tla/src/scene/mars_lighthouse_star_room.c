@@ -60,6 +60,7 @@
 #include "field/sprite.h"
 #include "tla_edition.h"
 #include "game/character_ids.h"
+#include "graphics/glyph.h"
 #include "text/msg_ids.h"
 #include "system/io_write.h"
 
@@ -589,7 +590,7 @@ void MarsLighthouseStarRoom_KeepStarAtLeaderPriority(struct Actor *object) {
 /// The Mars Star as an actor on the floor by Agatio, rising first when asked.
 void MarsLighthouseStarRoom_CreateMarsStar(s32 rise) {
   struct Actor **slot = &gMarsLighthouseStarRoom_MarsStar;
-  u8 *block;
+  GlyphTransfer *glyph;
   struct Actor *object;
   struct FieldSprite *sprite;
   u8 zero;
@@ -607,13 +608,12 @@ void MarsLighthouseStarRoom_CreateMarsStar(s32 rise) {
   object->motionFlags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
   object->retainSpriteCache = 1;
   object->update = MarsLighthouseStarRoom_KeepStarAtLeaderPriority;
-  size = 0x608;
+  size = sizeof(GlyphTransfer);
   sprite->flags = zero;
   sprite->countAndShadow[0] = zero;
-  block = HeapSlot_Alloc(HEAP_SLOT_GLYPH_TRANSFER, size);
+  glyph = HeapSlot_Alloc(HEAP_SLOT_GLYPH_TRANSFER, size);
   Item_LoadIcon(ITEM_MARS_STAR);
-  block += 0x400;
-  Vram_Load(sprite->slot, 128, block);
+  Vram_Load(sprite->slot, ICON_TILE_BYTES, glyph->tiles);
   HeapSlot_Release(HEAP_SLOT_GLYPH_TRANSFER);
   if (rise) {
     System_Wait(1);

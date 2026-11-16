@@ -235,6 +235,10 @@ const struct ActorPlacement *Scene_GetActorPlacements(void) {
   return gSeaOfTime_Placements;
 }
 
+/// The corner of the 32-pixel square, two cells across, that a 16.16 coordinate
+/// lies in: the swirls and currents turn the ship about such squares.
+#define SWIRL_SQUARE_ORIGIN(coordinate) (((coordinate) >> 21) << 21)
+
 /// In a swirl the ship is drawn to the middle of its 32-pixel square and turned
 /// about it, one way or the other by the swirl's cell.
 void SeaOfTime_CircleSwirl(void) {
@@ -248,8 +252,8 @@ void SeaOfTime_CircleSwirl(void) {
   FIXED x;
   FIXED z;
 
-  center[0] = ((object->x.fixed >> 21) << 21) + toFIXED(16);
-  center[2] = ((object->z.fixed >> 21) << 21) + toFIXED(16);
+  center[0] = SWIRL_SQUARE_ORIGIN(object->x.fixed) + toFIXED(16);
+  center[2] = SWIRL_SQUARE_ORIGIN(object->z.fixed) + toFIXED(16);
   pos = &object->x.fixed;
   if (Position_FlatDistance(pos, center) > 4) {
     if (*pos < center[0])

@@ -2450,7 +2450,7 @@ s32 ItemMenu_SelectGiveQuantity(s32 baseQuantity, s32 quantityRange,
                                 s32 dropMode) {
   s32 value = baseQuantity;
   struct ItemMenuWork *menu = Ram_HeapSlots->menuWork;
-  u8 *tiles = HeapSlot_AllocEwram(HEAP_SLOT_TILE_SCRATCH, 0x400);
+  u8 *tiles = HeapSlot_AllocEwram(HEAP_SLOT_TILE_SCRATCH, 1024);
   s32 entry;
   s32 changed = 1;
   s32 targetCount = 0;
@@ -2467,7 +2467,7 @@ s32 ItemMenu_SelectGiveQuantity(s32 baseQuantity, s32 quantityRange,
       menu->sideMember[0], menu->selectedItems[0] & INVENTORY_ITEM_ID_MASK);
   entry = VramCache_FindFreeEntry();
   if (entry != VRAM_CACHE_ENTRY_COUNT) {
-    VramCache_Load(entry, 0x100, 0);
+    VramCache_Load(entry, 256, 0);
     WindowSprite_CreateFar(entry, OUTPUT_SIZE_32X8, window, 48, 32);
     arrow = WindowSprite_CreateFar(entry, OUTPUT_SIZE_32X8, window, 80, 32);
     arrow->sprite.oam.index = arrow->sprite.oam.index + 4;
@@ -2484,7 +2484,7 @@ s32 ItemMenu_SelectGiveQuantity(s32 baseQuantity, s32 quantityRange,
         QuantityBar_FillFar(baseQuantity + quantityRange, 0, tiles);
         QuantityBar_FillFar(baseQuantity + value + 1, 10, tiles);
         QuantityBar_FillFar(baseQuantity, 2, tiles);
-        VramCache_Load(entry, 0x100, tiles);
+        VramCache_Load(entry, 256, tiles);
         Text_DrawNumberInWindowFar(value + 1, 2, window, 32, 32);
         Text_DrawMessageAsTilesFar(
             (menu->selectedItems[0] & INVENTORY_ITEM_ID_MASK) +

@@ -273,7 +273,7 @@ s32 Battle_CollectPartyCommands(struct BattleAction *commands, u16 *actors,
       command = commands;
       command->unitId = actors[0];
       forcedCount = refused;
-      command->priority = 0x7ffe;
+      command->priority = 32766;
       command->command = COMMAND_FLEE;
       command->parameter = refused;
       command->target = 256;
@@ -1569,7 +1569,7 @@ s32 IconMenu_ChooseSendOption(s32 mode) {
   IconMenu_Center(17, ENTRY_WIDTH, 0);
   if (mode != RESOURCE_LAYOUT_TRANSFER_METHOD) {
     Task_Add(Menu_DrawModeLabel, TASK_PASS_VBLANK - 10);
-    work->previousMode = 0xffff;
+    work->previousMode = -1;
     window = Window_Create(PASSWORD_UPPER_X, 0, PASSWORD_UPPER_WIDTH, 4,
                            WINDOW_FLAG_INSTANT);
     msg = (s32)MsgPasswordEntry;
@@ -1594,7 +1594,7 @@ s32 IconMenu_ChooseSendOption(s32 mode) {
 #endif
   } else {
     Task_Add(Menu_DrawModeIndicator, TASK_PASS_VBLANK - 10);
-    work->previousMode = 0xffff;
+    work->previousMode = -1;
     window = Window_Create(TRANSFER_UPPER_X, 0, TRANSFER_UPPER_WIDTH, 4,
                            WINDOW_FLAG_INSTANT);
     upper = &work->upperWindow;

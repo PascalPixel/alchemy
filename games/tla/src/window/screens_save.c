@@ -104,7 +104,7 @@ struct Window *SaveProgress_Open(u32 kind) {
   s32 message;
 
   window = Window_Create(0, 0, 30, 20, 0);
-  tiles = Heap_AllocEwram(0x100);
+  tiles = Heap_AllocEwram(256);
   Decompress_TaggedLz(gWindow_ProgressBarTiles, tiles);
   Dma_Set(tiles, (void *)BG_SCREEN_BLOCK(2), DMA_COPY_WORDS(64), REG_DMA3);
   switch (kind) {
@@ -490,7 +490,7 @@ s32 Save_ProcessSelectedFile(void) {
   s32 progress;
 
   result = 0;
-  part = Heap_AllocEwram(0x3000);
+  part = Heap_AllocEwram(12288);
   value = gSaveSlot;
   if (value != -1) {
     error = Save_InitializeWork();
@@ -1004,7 +1004,7 @@ s32 FileList_SelectFile(s32 selectedFile, s32 menuMode) {
   s32 i;
   s32 y;
 
-  spriteWork = HeapSlot_Alloc(HEAP_SLOT_MENU, 0xcec);
+  spriteWork = HeapSlot_Alloc(HEAP_SLOT_MENU, 3308);
   save = Ram_HeapSlots->saveWork;
   summaryWindow = NULL;
   partyWindow = NULL;
@@ -1078,7 +1078,7 @@ s32 FileList_SelectFile(s32 selectedFile, s32 menuMode) {
     }
   }
 
-  Dma_Fill32(0, spriteWork, 0xcec);
+  Dma_Fill32(0, spriteWork, 3308);
   FileList_StartPulse();
   fileList = Window_Create(1, 2, 28, 7, WINDOW_FLAG_INSTANT);
   for (i = 0, summary = save->summary; i < SAVE_FILE_COUNT; i++, summary++) {

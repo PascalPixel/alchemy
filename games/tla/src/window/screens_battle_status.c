@@ -22,10 +22,10 @@
 #endif
 #if TLA_PATCH_3
 #define SUMMARY_DJINN_HELP_CAPACITY 52
-#define SUMMARY_PP_LABEL_SECOND_TILE 0xf005
+#define SUMMARY_PP_LABEL_SECOND_TILE WINDOW_TILE(5)
 #else
 #define SUMMARY_DJINN_HELP_CAPACITY 32
-#define SUMMARY_PP_LABEL_SECOND_TILE 0xf01e
+#define SUMMARY_PP_LABEL_SECOND_TILE WINDOW_TILE(30)
 #endif
 
 // Japanese text is shorter: its help lines and Psynergy descriptions take
@@ -224,7 +224,7 @@ s32 BattleStatusScreen_Run(u16 *list, s32 listCount, s32 member) {
   shownMember = figureList[0] = list[0];
   figureList[1] = BATTLE_UNIT_LIST_END;
   BattleActor_SpawnObjectsForListFar(figureList, 1);
-  portraitSlot = VramCache_AllocEntry(0x200);
+  portraitSlot = VramCache_AllocEntry(512);
   navigation = BATTLE_MENU_WORK;
   navigation->timerHidden = redraw;
   if (navigation->timerWindow != NULL) {
@@ -238,13 +238,13 @@ s32 BattleStatusScreen_Run(u16 *list, s32 listCount, s32 member) {
   cursor.helpEntry = 0;
   cursor.drawnHelpEntry = 0;
   cursor.group = STATUS_CURSOR_GENERAL;
-  cursorSlot = VramCache_AllocEntry(0x80);
+  cursorSlot = VramCache_AllocEntry(128);
   for (i = 0; i < STATUS_ICON_COUNT; i++) {
-    statusSlots[i] = VramCache_AllocEntry(0x80);
+    statusSlots[i] = VramCache_AllocEntry(128);
     statusKinds[i] = OWNER_CONDITION_EMPTY;
   }
   for (i = 0; i <= 3; i++) {
-    iconSlots[i] = VramCache_AllocEntry(0x80);
+    iconSlots[i] = VramCache_AllocEntry(128);
     iconSprites[i].oam.f.tile =
         VramCache_Reload(iconSlots[i], (const void *)-1);
   }

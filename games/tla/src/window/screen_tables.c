@@ -33,14 +33,14 @@ const u8 gNameEntry_VoicedMarkRanges[] = {
     0xea, 0xee,
     0x93, 0x93,
     0xb3, 0xb3,
-    0x00,
+    0,
 };
 
 /// The kana that take a handakuten, as gNameEntry_VoicedMarkRanges.
 const u8 gNameEntry_SemivoicedMarkRanges[] = {
     0xca, 0xce,
     0xea, 0xee,
-    0x00,
+    0,
 };
 // clang-format on
 

@@ -529,9 +529,9 @@ s32 DisplayScroll_DrawMessageLine(s32 message, s32 slot, s32 align) {
   s32 offset;
 
   canvas = Heap_AllocEwram(CREDITS_BUFFER_BYTES);
-  // BUG: the clear, and the packing loop's reads below, cover 0xc00 bytes of
-  // a 0x900-byte allocation.
-  Iwram_ClearWords(canvas, 0xc00);
+  // BUG: the clear, and the packing loop's reads below, cover 3,072 bytes of
+  // a 2,304-byte allocation.
+  Iwram_ClearWords(canvas, 3072);
   busy = Text_DrawMessageToCanvasFar(message, canvas, align);
   dst = canvas;
   src = canvas;
@@ -1131,9 +1131,9 @@ void EndingPicture_InitStrips(void) {
 
   gEndingPicture_Strips = Heap_AllocEwram(ENDING_PICTURE_STRIP_SPRITES *
                                           sizeof(struct QueuedSprite));
-  tile = VramCache_Load(slot, 0x200, 0);
+  tile = VramCache_Load(slot, 512, 0);
   Dma_Fill32(PIXELS_4BPP(1), (void *)(OBJ_VRAM0 + tile * TILE_SIZE_4BPP),
-             0x200);
+             512);
   words = (u32 *)gEndingPicture_Strips;
   for (i = 0; i < 8; i++) {
     *words++ = 0;

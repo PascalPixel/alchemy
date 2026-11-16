@@ -1209,18 +1209,7 @@ s16 gSettlements_WallCrate[] = {
     10, -1,
 };
 
-s16 gSlideOnIce_SteerAngles[] = {                                                               
-      -1,     0,      0x8000, -1,     0xc000, 0xe000, 0xa000, 0xc000,          
-      0x4000, 0x2000, 0x6000, 0x4000, -1,     0,      0x8000, -1,              
-      -1,     0,      0x8000, -1,     0xc000, -1,     -1,     0xc000,          
-      0x4000, -1,     -1,     0x4000, -1,     0,      0x8000, -1,              
-  };
-
-s16 gSlideOnIce_AnglesByKey[] = {
-    -1, 0, 0x8000, -1, 0xc000, 0, 0x8000, 0xc000,
-    0x4000, 0, 0x8000, 0x4000, -1, 0, 0x8000, -1,
-    0,
-};
+#include "shared/slide_on_ice_angles.c"
 
 const s32 *gFieldEffect_DurationScripts[] = {
     gFieldEffect_ShortScript,

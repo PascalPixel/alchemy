@@ -2445,22 +2445,7 @@ s32 gMarsLighthouseRoomF_FireballDrop[] = {
       SC_END,                                                                  
   };
 
-s32 gScriptedPart_Script[] = {                                                               
-      SC_WAIT(30), SC_SET(SW_HOOK, 0), SC_POSITION(0, 0, 0), SC_WAIT(1),       
-      SC_RELEASE,                                                                 
-  };
-
-u32 gCrumbs_Script[] = {
-    0, 20, 0x80010000, 22, 25, 0,
-    0, 1, 22, 25, 1, 0,
-    1, 13, 10, 0xc0010000, 38,
-};
-
-u32 gEmbers_Script[] = {
-    0, 20, 0x80010000, 22, 25, 0,
-    0, 1, 22, 25, 1, 0,
-    1, 13, 10, 0xc0010000, 38,
-};
+#include "shared/mars_lighthouse_part_scripts.c"
 
 #include "shared/field_effect_duration_scripts.c"
 

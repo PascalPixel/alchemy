@@ -1632,18 +1632,7 @@ s16 gTundariaTowerBurstBroochPillar[] = {
     8, -1,
 };
 
-s16 gSlideOnIce_SteerAngles[] = {                                                               
-      -1,     0,      0x8000, -1,     0xc000, 0xe000, 0xa000, 0xc000,          
-      0x4000, 0x2000, 0x6000, 0x4000, -1,     0,      0x8000, -1,              
-      -1,     0,      0x8000, -1,     0xc000, -1,     -1,     0xc000,          
-      0x4000, -1,     -1,     0x4000, -1,     0,      0x8000, -1,              
-  };
-
-s16 gSlideOnIce_AnglesByKey[] = {
-    -1, 0, 0x8000, -1, 0xc000, 0, 0x8000, 0xc000,
-    0x4000, 0, 0x8000, 0x4000, -1, 0, 0x8000, -1,
-    0,
-};
+#include "shared/slide_on_ice_angles.c"
 
 u32 gTundariaTower_RubbleScript[] = {
     SC_WAIT(33),

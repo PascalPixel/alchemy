@@ -2232,34 +2232,9 @@ s32 gMarsLighthouseEntrance_FireballToLapisIceSheet[] = {
       4,  0x800000,         0x160000, 0x2a80000, 1,  22, 37, (s32)MarsLighthouseEntrance_CrackLapisIceSheet, 46, (s32)Actor_Park, 17,      
   };
 
-s32 gScriptedPart_Script[] = {                                                               
-      SC_WAIT(30), SC_SET(SW_HOOK, 0), SC_POSITION(0, 0, 0), SC_WAIT(1),       
-      SC_RELEASE,                                                                 
-  };
+#include "shared/mars_lighthouse_part_scripts.c"
 
-u32 gCrumbs_Script[] = {
-    0, 20, 0x80010000, 22, 25, 0,
-    0, 1, 22, 25, 1, 0,
-    1, 13, 10, 0xc0010000, 38,
-};
-
-u32 gEmbers_Script[] = {
-    0, 20, 0x80010000, 22, 25, 0,
-    0, 1, 22, 25, 1, 0,
-    1, 13, 10, 0xc0010000, 38,
-};
-
-s16 gSlideOnIce_SteerAngles[] = {
-    -1, 0, -32768, -1, -16384, -8192, -24576, -16384,
-    16384, 8192, 24576, 16384, -1, 0, -32768, -1,
-    -1, 0, -32768, -1, -16384, -1, -1, -16384,
-    16384, -1, -1, 16384, -1, 0, -32768, -1,
-};
-
-s16 gSlideOnIce_AnglesByKey[] = {
-    -1, 0, -32768, -1, -16384, 0, -32768, -16384,
-    16384, 0, -32768, 16384, -1, 0, -32768, -1,
-};
+#include "shared/slide_on_ice_angles.c"
 
 #include "shared/field_effect_duration_scripts.c"
 

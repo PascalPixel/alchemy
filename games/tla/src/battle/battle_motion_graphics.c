@@ -216,9 +216,10 @@ BattleMotion_CallBeast(struct BattlePlan *plan,
   object->angle = plan->targetIds[0] <= ALLY_MAX ? 0 : DEGtoANG(180);
   BattleHighlight_SetSpriteMode(saved->unitId, SPRITE_SEMI_TRANSPARENT);
   for (i = 0; i <= 29; i++) {
-    object->y = (29 - i) * 3 << 16;
+    object->y = toFIXED((29 - i) * 3);
     object->velocityY = 0;
-    object->angle += 0x2222;
+    // Four turns over the 30 frames.
+    object->angle += TRIG_TURN * 4 / 30;
     if (i < BLEND_WEIGHT_MAX)
       REG_BLDALPHA = ((BLEND_WEIGHT_MAX - i) << 8) | i;
     wait(1);
@@ -261,7 +262,7 @@ void BattleMotion_DismissBeast(struct SavedBattleObject *saved) {
   for (i = 0; i != 16; i++) {
     s32 fade;
 
-    object->y = i << 18;
+    object->y = toFIXED(i * 4);
     object->angle += DEGtoANG(45);
     fade = i * 2 - 16;
     if (fade < 0)

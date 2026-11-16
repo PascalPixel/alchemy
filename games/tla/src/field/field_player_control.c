@@ -371,8 +371,9 @@ s32 Field_RequestShortcut(u32 assignment) {
 
 /// Checks the keys the player has configured: the menu, examine and start
 /// keys set their request and return 1, the two shortcut keys pass on their
-/// assignment (Field_RequestShortcut). While a second event is pending, any of
-/// the five requests command 0x209b instead. Returns 0 when none is pressed.
+/// assignment (Field_RequestShortcut). While the Ring is out, any of the five
+/// asks for the Ring again (ABILITY_RING, packed), which ends it. Returns 0
+/// when none is pressed.
 s32 Field_CheckConfiguredKeys(void) {
   struct FieldWork *work = gFieldWork;
   s32 result = 0;
@@ -385,7 +386,7 @@ s32 Field_CheckConfiguredKeys(void) {
         (gInput.pressed & gMainRoutineWork.startKeys) ||
         (gInput.pressed & gMainRoutineWork.firstShortcutKeys) ||
         (gInput.pressed & gMainRoutineWork.secondShortcutKeys)) {
-      work->psynergy = 0x209b;
+      work->psynergy = ABILITY_RING | ACT_PACKED;
       return 1;
     }
     return 0;
@@ -795,8 +796,8 @@ counted:
   if ((map->groundEffects & 3) && object->timer == 0 && collision == 0) {
     struct Actor *effect;
 
-    effect =
-        Actor_Create(0x10e, object->x.fixed, object->y.fixed, object->z.fixed);
+    effect = Actor_Create(SPRITE_FOOTPRINTS, object->x.fixed, object->y.fixed,
+                          object->z.fixed);
     if (effect != 0) {
       struct PlayerSprite *effectSprite;
 

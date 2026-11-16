@@ -26,15 +26,6 @@ enum {
   ANIM_OAM_FIELD_PRIORITY = OBJ_PRIORITY(2)
 };
 
-struct ChildObject {
-  u8 unused[2]; ///< no code names it
-  u16 value;
-  u8 unusedAfterValue[8]; ///< no code names it
-  s32 active;
-  u8 unusedAfterActive[5]; ///< no code names it
-  u8 mode;
-};
-
 /// The sprite as Sprite_Create fills it: the image's three attribute
 /// words, its layout, then the shadow's three words.
 struct ResourceSprite {
@@ -43,7 +34,7 @@ struct ResourceSprite {
   u8 slot;
   u8 retainCacheEntry : 1;
   u8 useOwnScale : 1;
-  u8 unk11 : 6;
+  u8 sunkRows : 6;
   u16 rotation;
   u8 width;
   u8 height;
@@ -386,23 +377,17 @@ s32 Sprite_StartAnimation(struct Sprite *state, s32 flags) {
   return 0;
 }
 
-struct ChildGroup {
-  u8 unused[27]; ///< no code names it
-  u8 count;
-  u8 unusedAfterCount[12]; ///< no code names it
-  struct ChildObject *children[1];
-};
-
 /// Sets each playing sprite animation's timer to the given duration in frames.
 /// Returns 0.
-s32 Sprite_SetAnimationTimers(struct ChildGroup *group, s32 value) {
+s32 Sprite_SetAnimationTimers(struct Sprite *sprite, s32 frames) {
   s32 i;
 
-  for (i = 0; i < group->count; i++) {
-    struct ChildObject *child = group->children[i];
+  for (i = 0; i < sprite->count; i++) {
+    struct SpriteAnimation *layer = sprite->entries[i];
 
-    if (child != NULL && child->active != 0) {
-      child->value = value << 4;
+    // The sprite animation timer counts sixteenths of a frame.
+    if (layer != NULL && layer->scripts != NULL) {
+      layer->timer = frames << 4;
     }
   }
   return 0;

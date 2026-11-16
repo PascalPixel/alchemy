@@ -14,10 +14,10 @@ s32 Actor_StepAngle(struct Actor *actor) {
     s32 currentAngle = actor->facing;
     delta = (s16)(targetAngle - currentAngle);
     if (delta != 0) {
-      if (delta > 4096)
-        delta = 2048;
-      if (delta < -4096)
-        delta = -2048;
+      if (delta > TRIG_TURN / 16)
+        delta = TRIG_TURN / 32;
+      if (delta < -(TRIG_TURN / 16))
+        delta = -(TRIG_TURN / 32);
       actor->facing = currentAngle + delta;
     }
   }

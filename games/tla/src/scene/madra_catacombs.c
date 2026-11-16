@@ -734,9 +734,10 @@ void MadraCatacombs_SetUpTabletRoom(void) {
 }
 
 // clang-format off
+/// The leader's actor script for walking north through an opened door.
 s32 gMadraCatacombs_WalkIntoDoorway[] = {                                                               
       SC_SET(SW_MOTION, 0),                                                    
-      SC_ADD(SW_Z, -0x8000),                                                   
+      SC_ADD(SW_Z, -toFIXED(1) / 2),                                                   
       SC_ADD(SW_SCALE_X, -FIXED_ONE / 64),                                               
       SC_ADD(SW_SCALE_Y, -FIXED_ONE / 64),                                               
       SC_WAIT(1),                                                              
@@ -744,70 +745,78 @@ s32 gMadraCatacombs_WalkIntoDoorway[] = {
       SC_END,                                                                  
   };
 
+/// A tablet room flame's actor script as it flares up.
 s32 gMadraCatacombs_FlameFlaresUp[] = {
-    SC_SET(SW_SCALE_X, 0x1000),
-    SC_SET(SW_SCALE_Y, 0x1000),
+    SC_SET(SW_SCALE_X, FIXED_ONE / 16),
+    SC_SET(SW_SCALE_Y, FIXED_ONE / 16),
     SC_WAIT(1),
     SC_LABEL(1),
-    SC_ADD(SW_SCALE_X, 0x4000),
-    SC_ADD(SW_SCALE_Y, 0x2000),
+    SC_ADD(SW_SCALE_X, FIXED_ONE / 4),
+    SC_ADD(SW_SCALE_Y, FIXED_ONE / 8),
     SC_WAIT(1),
     SC_LOOP(4, SC_TO(1)),
     SC_LABEL(2),
-    SC_ADD(SW_SCALE_Y, 0x2000),
+    SC_ADD(SW_SCALE_Y, FIXED_ONE / 8),
     SC_WAIT(1),
     SC_LOOP(4, SC_TO(2)),
-    SC_SET(SW_SCALE_X, 0x10000),
-    SC_SET(SW_SCALE_Y, 0x10000),
+    SC_SET(SW_SCALE_X, FIXED_ONE),
+    SC_SET(SW_SCALE_Y, FIXED_ONE),
     SC_END,
 };
 
+/// The great flame's actor script as it flares up.
 s32 gMadraCatacombs_GreatFlameFlaresUp[] = {
-    SC_SET(SW_SCALE_X, 0x1000),
-    SC_SET(SW_SCALE_Y, 0x1000),
+    SC_SET(SW_SCALE_X, FIXED_ONE / 16),
+    SC_SET(SW_SCALE_Y, FIXED_ONE / 16),
     SC_WAIT(1),
     SC_LABEL(1),
-    SC_ADD(SW_SCALE_X, 0x8000),
-    SC_ADD(SW_SCALE_Y, 0x4000),
+    SC_ADD(SW_SCALE_X, FIXED_ONE / 2),
+    SC_ADD(SW_SCALE_Y, FIXED_ONE / 4),
     SC_WAIT(1),
     SC_LOOP(4, SC_TO(1)),
     SC_LABEL(2),
-    SC_ADD(SW_SCALE_X, -0x2000),
-    SC_ADD(SW_SCALE_Y, 0x6000),
+    SC_ADD(SW_SCALE_X, -FIXED_ONE / 8),
+    SC_ADD(SW_SCALE_Y, FIXED_ONE * 3 / 8),
     SC_WAIT(1),
     SC_LOOP(4, SC_TO(2)),
     SC_LABEL(3),
-    SC_ADD(SW_SCALE_X, -0x2000),
-    SC_ADD(SW_SCALE_Y, -0x4000),
+    SC_ADD(SW_SCALE_X, -FIXED_ONE / 8),
+    SC_ADD(SW_SCALE_Y, -FIXED_ONE / 4),
     SC_WAIT(1),
     SC_LOOP(4, SC_TO(3)),
-    SC_SET(SW_SCALE_X, 0x10000),
-    SC_SET(SW_SCALE_Y, 0x10000),
+    SC_SET(SW_SCALE_X, FIXED_ONE),
+    SC_SET(SW_SCALE_Y, FIXED_ONE),
     SC_END,
 };
 
+/// The second pillar Move pushes, ended by -1.
 s16 gMadraCatacombs_PushedPillar[] = {
     12, -1,
 };
 
+/// The puddles Frost freezes into pillars, each with its flag.
 s16 gMadraCatacombs_Puddles[] = {
     13, 514, -1,
 };
 
+/// The climbable pillar Move pushes, ended by -1.
 s16 gMadraCatacombs_ClimbablePillar[] = {
     8, -1, 0,
 };
 
+/// The entrances of the catacombs' rooms with no table of their own.
 struct SceneEntrance gMadraCatacombs_Entrances[] = {
     {0, CONDITION_ALWAYS, 172, 0, 149, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
     {SCENE_TABLE_END},
 };
 
+/// The entrances of the stone door's room.
 struct SceneEntrance gMadraCatacombs_StoneDoorEntrances[] = {
     {3, CONDITION_ALWAYS, 512, 0, 224, FACING_NORTH, 0, 392, 40, 632, 280, 0},
     {SCENE_TABLE_END},
 };
 
+/// The entrances of the bookshelf room.
 struct SceneEntrance gMadraCatacombs_BookshelfEntrances[] = {
     {5, CONDITION_ALWAYS, 728, 0, 88, FACING_SOUTH, 0, 680, 32, 920, 192, 0},
     {6, CONDITION_ALWAYS, 872, 0, 88, FACING_SOUTH, 0, 680, 32, 920, 192, 0},
@@ -816,6 +825,7 @@ struct SceneEntrance gMadraCatacombs_BookshelfEntrances[] = {
     {SCENE_TABLE_END},
 };
 
+/// The exit regions of the ladder room.
 s16 gMadraCatacombs_LadderRoomRegions[] = {
     112, 48, 144, 128, 64, 160, -1, 1,
     336, 48, 144, 352, 64, 160, -1, 3,
@@ -874,10 +884,12 @@ u32 gSceneExits[] = {
     SCENE_EXITS_END,
 };
 
+/// The actors placed in the catacombs' rooms with no table of their own.
 struct ActorPlacement gMadraCatacombs_Placements[] = {
     {SCENE_TABLE_END},
 };
 
+/// The actors placed in the catacombs' entrance.
 struct ActorPlacement gMadraCatacombs_EntrancePlacements[] = {
     ACTOR_PLACEMENT(250, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 552, 0, 280, FACING_SOUTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(SPRITE_TIGHTROPE_POST, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 584, 0, 424, FACING_SOUTH, TALK_FACING_KEEP, 0),
@@ -888,6 +900,7 @@ struct ActorPlacement gMadraCatacombs_EntrancePlacements[] = {
     {SCENE_TABLE_END},
 };
 
+/// The actors placed in the Champa tunnel.
 struct ActorPlacement gMadraCatacombs_ChampaTunnelPlacements[] = {
     ACTOR_PLACEMENT(SPRITE_TIGHTROPE_POST, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 776, 0, 232, FACING_SOUTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(SPRITE_TIGHTROPE_POST, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 696, 0, 232, FACING_SOUTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE),
@@ -895,11 +908,13 @@ struct ActorPlacement gMadraCatacombs_ChampaTunnelPlacements[] = {
     {SCENE_TABLE_END},
 };
 
+/// The actors placed in the bookshelf room.
 struct ActorPlacement gMadraCatacombs_BookshelfPlacements[] = {
     ACTOR_PLACEMENT(679, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 202, 0, 408, FACING_SOUTH, TALK_FACING_KEEP, 0),
     {SCENE_TABLE_END},
 };
 
+/// The actors placed in the tablet room.
 struct ActorPlacement gMadraCatacombs_TabletPlacements[] = {
     ACTOR_PLACEMENT(SPRITE_STONE_DOOR_HALF, CONDITION_ALWAYS, 7, 150, 0, 366, FACING_SOUTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(SPRITE_STONE_DOOR_HALF, CONDITION_ALWAYS, 7, 170, 0, 366, FACING_SOUTH, TALK_FACING_KEEP, 0),
@@ -926,10 +941,12 @@ struct ActorPlacement gMadraCatacombs_TabletPlacements[] = {
     {SCENE_TABLE_END},
 };
 
+/// The triggers of the catacombs' rooms with no table of their own.
 struct Trigger gMadraCatacombs_Triggers[] = {
     {TRIGGER_TABLE_END},
 };
 
+/// The triggers of the catacombs' entrance.
 struct Trigger gMadraCatacombs_EntranceTriggers[] = {
     {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 1, CONDITION_ALWAYS, EVENT(MadraCatacombs_EnterDoorway)},
     {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 2, CONDITION_ALWAYS, EVENT(MadraCatacombs_EnterDoorway)},
@@ -951,6 +968,7 @@ struct Trigger gMadraCatacombs_EntranceTriggers[] = {
     {TRIGGER_TABLE_END},
 };
 
+/// The triggers of the ladder room.
 struct Trigger gMadraCatacombs_LaddersTriggers[] = {
     {TRIGGER_EXIT, 2, CONDITION_ALWAYS, 2},
     {TRIGGER_EXIT, 4, CONDITION_ALWAYS, 4},
@@ -958,6 +976,7 @@ struct Trigger gMadraCatacombs_LaddersTriggers[] = {
 };
 // clang-format on
 
+/// The triggers of the Champa tunnel.
 struct Trigger gMadraCatacombs_ChampaTunnelTriggers[] = {
     {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
     {TRIGGER_EXIT, 2, CONDITION_ALWAYS, 2},
@@ -975,6 +994,7 @@ struct Trigger gMadraCatacombs_ChampaTunnelTriggers[] = {
     {TRIGGER_TABLE_END},
 };
 
+/// The triggers of the stone door's room.
 struct Trigger gMadraCatacombs_StoneDoorTriggers[] = {
     {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
     {TRIGGER_EXIT, 2, CONDITION_ALWAYS, 2},
@@ -993,6 +1013,7 @@ struct Trigger gMadraCatacombs_StoneDoorTriggers[] = {
     {TRIGGER_TABLE_END},
 };
 
+/// The triggers of the bookshelf room.
 struct Trigger gMadraCatacombs_BookshelfTriggers[] = {
     {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
     {TRIGGER_EXIT, 2, CONDITION_ALWAYS, 2},
@@ -1009,6 +1030,7 @@ struct Trigger gMadraCatacombs_BookshelfTriggers[] = {
     {TRIGGER_TABLE_END},
 };
 
+/// The triggers of the tablet room.
 struct Trigger gMadraCatacombs_TabletTriggers[] = {
     {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
     {TRIGGER_EXIT, 2, CONDITION_ALWAYS, 2},

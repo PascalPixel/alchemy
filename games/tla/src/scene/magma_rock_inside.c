@@ -1416,11 +1416,11 @@ void MagmaRockInside_DrainLava(void) {
 }
 
 #define DEFINE_MAGMA_ROCK_INSIDE_BURST_PILLAR(name, n1, n2)                    \
-  void name(s32 a, s32 b) {                                                    \
-    struct Actor **work = Ram_HeapSlots->fieldEffectWork;                      \
+  void name(s32 mode, s32 cue) {                                               \
+    struct FieldEffectWork *work = Ram_HeapSlots->fieldEffectWork;             \
                                                                                \
-    work[5] = Actor_Get(n1);                                                   \
-    MagmaRockInside_BurstStatue(a, b);                                         \
+    work->child = Actor_Get(n1);                                               \
+    MagmaRockInside_BurstStatue(mode, cue);                                    \
     Event_SetFlag(n2);                                                         \
   }
 
@@ -3092,6 +3092,7 @@ s32 gPushLeaderSteps[] = {
       PUSH_STEP(16, 0),                                                        
   };
 
+/// An ember's actor script.
 s32 gMagmaRockInside_EmberScript[] = {
     SC_ANIMATION(2),
     SC_WAIT(18),
@@ -3101,6 +3102,7 @@ s32 gMagmaRockInside_EmberScript[] = {
     SC_END,
 };
 
+/// A flame ember's actor script.
 s32 gMagmaRockInside_FlameEmberScript[] = {
     SC_ANIMATION(3),
     SC_WAIT(23),
@@ -3110,12 +3112,14 @@ s32 gMagmaRockInside_FlameEmberScript[] = {
     SC_END,
 };
 
+/// A lava platform's path in the rooms inside with no table of their own, an actor script.
 s16 gMagmaRockInside_PlatformPathA[] = {                                                               
       4, 0,  0, 776, 0, 16, 0, 680, 1,  0,  4,  0,  0, 744, 0,  16,               
       0, 680, 1, 0,  4, 0,  0, 744, 0,  16, 0,  632, 1, 0,  4,  0,                
       0, 776, 0, 16, 0, 632, 1, 0,  13, 0,  -1, 0,  0, 0,  17, 0,                
   };
 
+/// A lava platform's path in the rooms inside with no table of their own, an actor script.
 s32 gMagmaRockInside_PlatformPathB[] = {                                                               
       SC_MOVE(216, 16, 568),                             
       SC_SYNC,                                                                 
@@ -3129,6 +3133,7 @@ s32 gMagmaRockInside_PlatformPathB[] = {
       SC_END,                                                                  
   };
 
+/// A lava platform's path in the rooms inside with no table of their own, an actor script.
 u16 gMagmaRockInside_PlatformPathC[] = {
     4, 0, 0, 600, 0, 16, 0, 664,
     1, 0, 4, 0, 0, 728, 0, 16,
@@ -3139,6 +3144,7 @@ u16 gMagmaRockInside_PlatformPathC[] = {
     1, 0, 17, 0,
 };
 
+/// A lava platform's path in the rooms inside with no table of their own, an actor script.
 s32 gMagmaRockInside_PlatformPathD[] = {                                                               
       SC_MOVE(184, 16, 232),                             
       SC_SYNC,                                                                 
@@ -3152,54 +3158,63 @@ s32 gMagmaRockInside_PlatformPathD[] = {
       SC_END,                                                                  
   };
 
+/// A lava platform's path in the rooms inside with no table of their own, an actor script.
 s16 gMagmaRockInside_PlatformPathE[] = {                                                               
       4, 0,  0, 472, 0, 16, 0, 296, 1,  0,  4,  0,  0, 424, 0,  16,               
       0, 296, 1, 0,  4, 0,  0, 424, 0,  16, 0,  264, 1, 0,  4,  0,                
       0, 472, 0, 16, 0, 264, 1, 0,  13, 0,  -1, 0,  0, 0,  17, 0,                
   };
 
+/// A lava platform's path in the rooms inside with no table of their own, an actor script.
 s16 gMagmaRockInside_PlatformPathF[] = {                                                               
       4, 0,  0, 216, 0, 16, 0, 600, 1,  0,  4,  0,  0, 280, 0,  16,               
       0, 600, 1, 0,  4, 0,  0, 280, 0,  16, 0,  664, 1, 0,  4,  0,                
       0, 216, 0, 16, 0, 664, 1, 0,  13, 0,  -1, 0,  0, 0,  17, 0,                
   };
 
+/// A lava platform's path in the rooms inside with no table of their own, an actor script.
 s16 gMagmaRockInside_PlatformPathG[] = {                                                               
       4, 0,  0, 312, 0, 16, 0, 664, 1,  0,  4,  0,  0, 376, 0,  16,               
       0, 664, 1, 0,  4, 0,  0, 376, 0,  16, 0,  600, 1, 0,  4,  0,                
       0, 312, 0, 16, 0, 600, 1, 0,  13, 0,  -1, 0,  0, 0,  17, 0,                
   };
 
+/// A lava platform's path in the rooms inside with no table of their own, an actor script.
 s16 gMagmaRockInside_PlatformPathH[] = {                                                               
       4, 0,  0, 440, 0, 16, 0, 600, 1,  0,  4,  0,  0, 504, 0,  16,               
       0, 600, 1, 0,  4, 0,  0, 504, 0,  16, 0,  664, 1, 0,  4,  0,                
       0, 440, 0, 16, 0, 664, 1, 0,  13, 0,  -1, 0,  0, 0,  17, 0,                
   };
 
+/// A lava platform's path in the rooms inside with no table of their own, an actor script.
 s16 gMagmaRockInside_PlatformPathI[] = {                                                               
       4, 0,  0, 536, 0, 16, 0, 664, 1,  0,  4,  0,  0, 600, 0,  16,               
       0, 664, 1, 0,  4, 0,  0, 600, 0,  16, 0,  600, 1, 0,  4,  0,                
       0, 536, 0, 16, 0, 600, 1, 0,  13, 0,  -1, 0,  0, 0,  17, 0,                
   };
 
+/// A lava platform's path in the rooms inside with no table of their own, an actor script.
 s16 gMagmaRockInside_PlatformPathJ[] = {                                                               
       4, 0,  0, 376, 0, 16, 0, 264, 1,  0,  4,  0,  0, 376, 0,  16,               
       0, 232, 1, 0,  4, 0,  0, 408, 0,  16, 0,  232, 1, 0,  4,  0,                
       0, 408, 0, 16, 0, 264, 1, 0,  13, 0,  -1, 0,  0, 0,  17, 0,                
   };
 
+/// A lava platform's path in the rooms inside with no table of their own, an actor script.
 s16 gMagmaRockInside_PlatformPathK[] = {                                                               
       4, 0,  0, 216, 0, 16, 0, 680, 1,  0,  4,  0,  0, 280, 0,  16,               
       0, 680, 1, 0,  4, 0,  0, 280, 0,  16, 0,  712, 1, 0,  4,  0,                
       0, 216, 0, 16, 0, 712, 1, 0,  13, 0,  -1, 0,  0, 0,  17, 0,                
   };
 
+/// A lava platform's path in the rooms inside with no table of their own, an actor script.
 s16 gMagmaRockInside_PlatformPathL[] = {                                                               
       4, 0,  0, 376, 0, 16, 0, 680, 1,  0,  4,  0,  0, 312, 0,  16,               
       0, 680, 1, 0,  4, 0,  0, 312, 0,  16, 0,  712, 1, 0,  4,  0,                
       0, 376, 0, 16, 0, 712, 1, 0,  13, 0,  -1, 0,  0, 0,  17, 0,                
   };
 
+/// The pillars Move pushes in the entrance, ended by -1.
 s16 gMagmaRockInside_EntrancePillars[] = {
     ACTOR_ENTRANCE_PILLAR, -1,
 };
@@ -3209,10 +3224,12 @@ ALIGNED(4) s16 gMagmaRockInside_Statues[] = {
     ACTOR_STATUE, 50, -1, -1,
 };
 
+/// The pillars Move pushes in Fury's room, ended by -1.
 s16 gMagmaRockInside_FuryPillars[] = {
     ACTOR_FURY_PILLAR, -1,
 };
 
+/// The statues of the cracked pillars' room by cell: actor, cell code and value, ended by -1 (MagmaRock_FindStatue).
 s16 gMagmaRockInside_CrackedPillarsStatues[] = {
     ACTOR_STATUE, 50, -1,
     ACTOR_LOWER_WEST_STATUE, 51, -1,
@@ -3220,24 +3237,29 @@ s16 gMagmaRockInside_CrackedPillarsStatues[] = {
     -1,
 };
 
+/// The pillars Move pushes in the cracked pillars' room, ended by -1.
 s16 gMagmaRockInside_CrackedPillarsPillars[] = {
     ACTOR_PILLAR_A, ACTOR_PILLAR_B, ACTOR_PILLAR_C, -1,
 };
 
+/// The pillars Move pushes in the Salamander Tail's chest room, ended by -1.
 s16 gMagmaRockInside_SalamanderTailChestPillars[] = {
     ACTOR_NORTH_PILLAR, ACTOR_EAST_PILLAR, -1,
 };
 
+/// The pillars Move pushes in the ember stone's room, ended by -1.
 s16 gMagmaRockInside_EmberStonePillars[] = {
     ACTOR_LEDGE_PILLAR, -1, 0,
 };
 
+/// A small spark's actor script (MagmaRockInside_SpawnSpark).
 s32 gMagmaRockInside_FlameScript[] = {
     SC_WAIT(6),
     SC_RELEASE,
     SC_END,
 };
 
+/// A flame bursting from the tablet: its actor script.
 s32 gMagmaRockInside_TorchScript[] = {                                                               
       SC_MOVE_BY(0, 160, 0),                                           
       SC_SYNC,                                                                 
@@ -3245,6 +3267,7 @@ s32 gMagmaRockInside_TorchScript[] = {
       SC_END,                                                                  
   };
 
+/// A circling spark's actor script (MagmaRockInside_OrbitParent).
 s32 gMagmaRockInside_SparkScript[] = {
     SC_CALL(MagmaRockInside_OrbitParent),
     SC_RELEASE,
@@ -3253,10 +3276,12 @@ s32 gMagmaRockInside_SparkScript[] = {
 
 s32 MagmaRockInside_DriftForSteps(struct Orbit *object);
 
+/// A rising spark's actor script: it circles and drifts for its steps (MagmaRockInside_DriftForSteps).
 s32 gMagmaRockInside_OrbitScript[] = {                                                               
       SC_CALL(Orbit_Update), SC_CALL(Actor_AimAtWatched), SC_CALL(MagmaRockInside_DriftForSteps), SC_RELEASE, SC_END,         
   };
 
+/// The tablet reader's actor script as Blaze is learned (MagmaRockInside_LearnBlaze).
 s32 gMagmaRockInside_BlazeCasterScript[] = {                                                               
       SC_MOVE_BY(0, 24, 0),                                            
       SC_SYNC,                                                                 
@@ -3264,6 +3289,7 @@ s32 gMagmaRockInside_BlazeCasterScript[] = {
       SC_END,                                                                  
   };
 
+/// The second actor's script as the sparks circle it (MagmaRockInside_LearnBlaze).
 s32 gMagmaRockInside_BlazeWatcherScript[] = {                                                               
       SC_MOVE_BY(0, 16, 0),                                            
       SC_SYNC,                                                                 
@@ -3271,6 +3297,7 @@ s32 gMagmaRockInside_BlazeWatcherScript[] = {
       SC_END,                                                                  
   };
 
+/// The tablet reader's actor script as the lesson ends.
 s32 gMagmaRockInside_BlazeCasterReturnScript[] = {                                                               
       SC_SET(SW_MOTION, 0),                                                    
       SC_MOVE_BY(0, -24, 0),                                           
@@ -3279,6 +3306,7 @@ s32 gMagmaRockInside_BlazeCasterReturnScript[] = {
       SC_END,                                                                  
   };
 
+/// The second actor's script as the lesson ends.
 s32 gMagmaRockInside_BlazeWatcherReturnScript[] = {                                                               
       SC_SET(SW_MOTION, 0),                                                    
       SC_MOVE_BY(0, -16, 0),                                           
@@ -3287,11 +3315,13 @@ s32 gMagmaRockInside_BlazeWatcherReturnScript[] = {
       SC_END,                                                                  
   };
 
+/// A piece of rubble's actor script: it lasts 33 frames.
 s32 gMagmaRockInside_RubbleScript[] = {                                                               
       SC_WAIT(33), SC_SET(SW_HOOK, 0), SC_POSITION(0, 0, 0), SC_WAIT(1),       
       SC_RELEASE,                                                                 
   };
 
+/// A dust cloud's actor script: it lasts 44 frames.
 s32 gMagmaRockInside_DustScript[] = {                                                               
       SC_WAIT(44), SC_SET(SW_HOOK, 0), SC_POSITION(0, 0, 0), SC_WAIT(1),       
       SC_RELEASE,                                                                 
@@ -3402,11 +3432,13 @@ u32 gSceneExits[] = {
     SCENE_EXITS_END,
 };
 
+/// The actors placed in the rooms inside with no table of their own.
 struct ActorPlacement gMagmaRockInside_Placements[] = {
     {SPRITE_WHITE_PLATFORM, CONDITION_ALWAYS, MOVEMENT_TYPE_CLEAR_COLLISION, 1, 0, 0, FACING_NORTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_AT_SCENE_POINT},
     {SCENE_TABLE_END},
 };
 
+/// The actors placed in the entrance.
 struct ActorPlacement gMagmaRockInside_EntrancePlacements[] = {
     {SPRITE_WIND_STATUE, CONDITION_ALWAYS, MOVEMENT_TYPE_CLEAR_COLLISION, 1, 0, 0, FACING_WEST, TALK_FACING_KEEP, ACTOR_PLACEMENT_AT_SCENE_POINT},
     {SPRITE_ORANGE_PILLAR, CONDITION_ALWAYS, MOVEMENT_TYPE_CLEAR_COLLISION, 2, 0, 0, FACING_NORTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_AT_SCENE_POINT},
@@ -3421,6 +3453,7 @@ struct ActorPlacement gMagmaRockInside_EntrancePlacements[] = {
     {SCENE_TABLE_END},
 };
 
+/// The actors placed in Fury's room.
 struct ActorPlacement gMagmaRockInside_FuryPlacements[] = {
     {SPRITE_WIND_STATUE, CONDITION_ALWAYS, MOVEMENT_TYPE_CLEAR_COLLISION, 1, 0, 0, FACING_WEST, TALK_FACING_KEEP, ACTOR_PLACEMENT_AT_SCENE_POINT},
     {489, CONDITION_ALWAYS, MOVEMENT_TYPE_CLEAR_COLLISION, 2, 0, 0, FACING_NORTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_AT_SCENE_POINT},
@@ -3433,6 +3466,7 @@ struct ActorPlacement gMagmaRockInside_FuryPlacements[] = {
     {SCENE_TABLE_END},
 };
 
+/// The actors placed in the cracked pillars' room.
 struct ActorPlacement gMagmaRockInside_CrackedPillarsPlacements[] = {
     {SPRITE_WIND_STATUE, CONDITION_ALWAYS, MOVEMENT_TYPE_CLEAR_COLLISION, 1, 0, 0, FACING_EAST, TALK_FACING_KEEP, ACTOR_PLACEMENT_AT_SCENE_POINT},
     {SPRITE_BURST_PILLAR, FLAG_CRACKED_PILLAR_A_BURST, MOVEMENT_TYPE_STAND, 2, 0, 0, FACING_NORTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_AT_SCENE_POINT},
@@ -3456,6 +3490,7 @@ struct ActorPlacement gMagmaRockInside_CrackedPillarsPlacements[] = {
     {SCENE_TABLE_END},
 };
 
+/// The actors placed in the Golem Core's chest room.
 struct ActorPlacement gMagmaRockInside_GolemCoreChestPlacements[] = {
     {489, CONDITION_ALWAYS, MOVEMENT_TYPE_CLEAR_COLLISION, 1, 0, 0, FACING_NORTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_AT_SCENE_POINT},
     {489, CONDITION_ALWAYS, MOVEMENT_TYPE_CLEAR_COLLISION, 2, 0, 0, FACING_NORTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_AT_SCENE_POINT},
@@ -3464,6 +3499,7 @@ struct ActorPlacement gMagmaRockInside_GolemCoreChestPlacements[] = {
     {SCENE_TABLE_END},
 };
 
+/// The actors placed in the Salamander Tail's chest room.
 struct ActorPlacement gMagmaRockInside_SalamanderTailChestPlacements[] = {
     {SPRITE_WHITE_PLATFORM, CONDITION_ALWAYS, MOVEMENT_TYPE_CLEAR_COLLISION, 1, 0, 0, FACING_NORTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_AT_SCENE_POINT},
     {SPRITE_YELLOW_BLOCK, CONDITION_ALWAYS, MOVEMENT_TYPE_CLEAR_COLLISION, 2, 0, 0, FACING_NORTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_AT_SCENE_POINT},
@@ -3473,6 +3509,7 @@ struct ActorPlacement gMagmaRockInside_SalamanderTailChestPlacements[] = {
     {SCENE_TABLE_END},
 };
 
+/// The actors placed in the ember stone's room.
 struct ActorPlacement gMagmaRockInside_EmberStonePlacements[] = {
     {SPRITE_YELLOW_BLOCK, CONDITION_ALWAYS, MOVEMENT_TYPE_CLEAR_COLLISION, 1, 0, 0, FACING_NORTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_AT_SCENE_POINT},
     {SPRITE_YELLOW_BLOCK, CONDITION_ALWAYS, MOVEMENT_TYPE_CLEAR_COLLISION, 2, 0, 0, FACING_NORTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_AT_SCENE_POINT | ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE},
@@ -3493,6 +3530,7 @@ struct ActorPlacement gMagmaRockInside_EmberStonePlacements[] = {
     {SCENE_TABLE_END},
 };
 
+/// The actors placed in the Blaze tablet's room.
 struct ActorPlacement gMagmaRockInside_BlazeTabletPlacements[] = {
     {SPRITE_SLATE, CONDITION_ALWAYS, MOVEMENT_TYPE_CLEAR_COLLISION, 1, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_AT_SCENE_POINT},
     {SPRITE_YELLOW_BLOCK, CONDITION_ALWAYS, MOVEMENT_TYPE_CLEAR_COLLISION, 2, 0, 0, FACING_NORTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_AT_SCENE_POINT},
@@ -3519,6 +3557,7 @@ struct Trigger gMagmaRockInside_Triggers[] = {
     {TRIGGER_TABLE_END},
 };
 
+/// The triggers of the entrance.
 struct Trigger gMagmaRockInside_EntranceTriggers[] = {
     {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
     {TRIGGER_EXIT, 2, CONDITION_ALWAYS, 2},
@@ -3549,6 +3588,7 @@ struct Trigger gMagmaRockInside_EntranceTriggers[] = {
     {TRIGGER_TABLE_END},
 };
 
+/// The triggers of Fury's room.
 struct Trigger gMagmaRockInside_FuryTriggers[] = {
     {TRIGGER_EXIT | EXIT_STYLE_STAIRS_UP, 1, CONDITION_ALWAYS, 1},
     {TRIGGER_EXIT, 2, CONDITION_ALWAYS, 2},
@@ -3584,6 +3624,7 @@ struct Trigger gMagmaRockInside_FuryTriggers[] = {
     {TRIGGER_TABLE_END},
 };
 
+/// The triggers of the cracked pillars' room.
 struct Trigger gMagmaRockInside_CrackedPillarsTriggers[] = {
     {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
     {TRIGGER_EXIT, 2, CONDITION_ALWAYS, 2},
@@ -3655,6 +3696,7 @@ struct Trigger gMagmaRockInside_CrackedPillarsTriggers[] = {
     {TRIGGER_TABLE_END},
 };
 
+/// The triggers of the Golem Core's chest room.
 struct Trigger gMagmaRockInside_GolemCoreChestTriggers[] = {
     {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
     {TRIGGER_EXIT, 2, CONDITION_ALWAYS, 2},
@@ -3675,6 +3717,7 @@ struct Trigger gMagmaRockInside_GolemCoreChestTriggers[] = {
     {TRIGGER_TABLE_END},
 };
 
+/// The triggers of the Salamander Tail's chest room.
 struct Trigger gMagmaRockInside_SalamanderTailChestTriggers[] = {
     {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
     {TRIGGER_EXIT, 2, CONDITION_ALWAYS, 2},
@@ -3714,6 +3757,7 @@ struct Trigger gMagmaRockInside_SalamanderTailChestTriggers[] = {
     {TRIGGER_TABLE_END},
 };
 
+/// The triggers of the ember stone's room.
 struct Trigger gMagmaRockInside_EmberStoneTriggers[] = {
     {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 1, CONDITION_ALWAYS,
      EVENT(MagmaRockInside_OpenStairs)},
@@ -3772,8 +3816,11 @@ struct Trigger gMagmaRockInside_EmberStoneTriggers[] = {
     {TRIGGER_TABLE_END},
 };
 
+/// The cell the leader last stopped on, x in the high half and z in the low, or
+/// -1 for none (MagmaRockInside_TrackStepCell).
 s32 gMagmaRockInside_LastStepCell = -1;
 
+/// The triggers of the Blaze tablet's room.
 struct Trigger gMagmaRockInside_BlazeTabletTriggers[] = {
     {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
     {TRIGGER_STEP, 80, CONDITION_ALWAYS, EVENT(MagmaRockInside_StampStepCell)},

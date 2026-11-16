@@ -2403,6 +2403,7 @@ s32 gPushLeaderSteps[] = {
       PUSH_STEP(16, 0),                                                        
   };
 
+/// An ember's actor script.
 u32 gMagmaRock_EmberScript[] = {
     SC_ANIMATION(2),
     SC_WAIT(18),
@@ -2412,6 +2413,7 @@ u32 gMagmaRock_EmberScript[] = {
     SC_END,
 };
 
+/// A flame ember's actor script.
 s32 gMagmaRock_FlameEmberScript[] = {
     SC_ANIMATION(3),
     SC_WAIT(23),
@@ -2421,60 +2423,74 @@ s32 gMagmaRock_FlameEmberScript[] = {
     SC_END,
 };
 
+/// The pillars Move pushes in the slide, ended by -1.
 s16 gMagmaRock_SlidePillars[] = {
     8, 10, -1,
 };
 
+/// The statues of the slide by cell: actor, cell code and value, ended by -1 (MagmaRock_FindStatue).
 s16 gMagmaRock_SlideStatues[] = {
     9, 50, 20, 12, 30, -1, -1,
 };
 
+/// The pillars Move pushes in the Salamander Tail room's lower level, ended by -1.
 s16 gMagmaRock_SalamanderTailLowerPillars[] = {
     8, 15, -1,
 };
 
+/// The statues of the Salamander Tail room's lower level by cell: actor, cell code and value, ended by -1 (MagmaRock_FindStatue).
 s16 gMagmaRock_SalamanderTailLowerStatues[] = {
     13, 30, -1, -1,
 };
 
+/// The lower level's crumbling pillars: (actor, flag) rows ended by 0xffff, the flag set once cracked and the next once fallen.
 s16 gMagmaRock_CrumblingPillars[] = {
     9, 512, 10, 514, -1,
 };
 
+/// The statues of the Salamander Tail room's middle level by cell: actor, cell code and value, ended by -1 (MagmaRock_FindStatue).
 s16 gMagmaRock_SalamanderTailMiddleStatues[] = {
     14, 50, 15, 17, 51, 18, -1,
 };
 
+/// The pillars Move pushes in the Salamander Tail room's middle level, ended by -1.
 s16 gMagmaRock_SalamanderTailMiddlePillars[] = {
     16, -1,
 };
 
+/// The statues of the Salamander Tail room's upper level by cell: actor, cell code and value, ended by -1 (MagmaRock_FindStatue).
 s16 gMagmaRock_SalamanderTailUpperStatues[] = {
     9, 50, 10, 11, 51, 12, -1,
 };
 
+/// The pillars Move pushes in the Salamander Tail room's upper level, ended by -1.
 s16 gMagmaRock_SalamanderTailUpperPillars[] = {
     8, -1,
 };
 
+/// The pillars Move pushes in the Salamander Tail room's top, ended by -1.
 s16 gMagmaRock_SalamanderTailTopPillars[] = {
     8, 9, -1,
 };
 
+/// The statues of the Salamander Tail room's top by cell: actor, cell code and value, ended by -1 (MagmaRock_FindStatue).
 s16 gMagmaRock_SalamanderTailTopStatues[] = {
     11, 30, -1, 12, 50, 13, 15, 31,
     -1, -1,
 };
 
+/// The statues of the statue room by cell: actor, cell code and value, ended by -1 (MagmaRock_FindStatue).
 s16 gMagmaRock_StatueStatues[] = {
     9, 50, -1, -1, 0,
 };
 
+/// A piece of rubble's actor script: it lasts 33 frames.
 u32 gMagmaRock_RubbleScript[] = {                                                               
       SC_WAIT(33), SC_SET(SW_HOOK, 0), SC_POSITION(0, 0, 0), SC_WAIT(1),       
       SC_RELEASE,                                                                 
   };
 
+/// A dust cloud's actor script: it lasts 44 frames.
 u32 gMagmaRock_DustScript[] = {                                                               
       SC_WAIT(44), SC_SET(SW_HOOK, 0), SC_POSITION(0, 0, 0), SC_WAIT(1),       
       SC_RELEASE,                                                                 
@@ -2491,12 +2507,14 @@ struct SceneEntrance gSceneEntrances[] = {
     {SCENE_TABLE_END},
 };
 
+/// The exit regions of the slide.
 s16 gMagmaRock_Regions[] = {
     240, 328, 352, 256, 344, 368, -1, 3,
     448, 328, 352, 464, 344, 368, -1, 4,
     -1, 0, 0, 0, 0, 0, 0, 0,
 };
 
+/// The exit regions of the Salamander Tail room.
 s16 gMagmaRock_SalamanderTailRegions[] = {
     272, 56, 576, 288, 72, 592, -1, 1,
     352, 40, 560, 368, 56, 576, -1, 2,
@@ -2511,6 +2529,7 @@ s16 gMagmaRock_SalamanderTailRegions[] = {
     -1, 0, 0, 0, 0, 0, 0, 0,
 };
 
+/// The exit regions of the statue room.
 s16 gMagmaRock_StatueRegions[] = {
     240, -56, 448, 256, -40, 464, -1, 1,
     384, -56, 448, 400, -40, 464, -1, 2,
@@ -2550,6 +2569,7 @@ u32 gSceneExits[] = {
     SCENE_EXITS_END,
 };
 
+/// The actors placed in the slide.
 struct ActorPlacement gMagmaRock_Placements[] = {
     {SPRITE_STONE_PILLAR, CONDITION_ALWAYS, 1, 1, 0, 0, FACING_NORTH, 2, 2},
     {SPRITE_WIND_STATUE, CONDITION_ALWAYS, 1, 2, 0, 0, FACING_SOUTH, 2, 2},
@@ -2568,6 +2588,7 @@ struct ActorPlacement gMagmaRock_Placements[] = {
     {SCENE_TABLE_END},
 };
 
+/// The actors placed in the Salamander Tail room's lower level.
 struct ActorPlacement gMagmaRock_SalamanderTailLowerPlacements[] = {
     {SPRITE_STONE_PILLAR, CONDITION_ALWAYS, 1, 1, 0, 0, FACING_NORTH, 2, 2},
     {SPRITE_BURST_PILLAR, CONDITION_ALWAYS, 1, 2, 0, 0, FACING_NORTH, 2, 2},
@@ -2580,6 +2601,7 @@ struct ActorPlacement gMagmaRock_SalamanderTailLowerPlacements[] = {
     {SCENE_TABLE_END},
 };
 
+/// The actors placed in the Salamander Tail room's middle level.
 struct ActorPlacement gMagmaRock_SalamanderTailMiddlePlacements[] = {
     {SPRITE_WIND_STATUE, CONDITION_ALWAYS, 7, 9, 0, 0, FACING_EAST, 2, 2},
     {SPRITE_WIND_STATUE, CONDITION_ALWAYS, 7, 10, 0, 0, FACING_WEST, 2, 2},
@@ -2598,6 +2620,7 @@ struct ActorPlacement gMagmaRock_SalamanderTailMiddlePlacements[] = {
     {SCENE_TABLE_END},
 };
 
+/// The actors placed in the Salamander Tail room's upper level.
 struct ActorPlacement gMagmaRock_SalamanderTailUpperPlacements[] = {
     {SPRITE_STONE_PILLAR, CONDITION_ALWAYS, 1, 14, 0, 0, FACING_NORTH, 2, 2},
     {SPRITE_WIND_STATUE, CONDITION_ALWAYS, 1, 15, 0, 0, FACING_SOUTH, 2, 2},
@@ -2609,6 +2632,7 @@ struct ActorPlacement gMagmaRock_SalamanderTailUpperPlacements[] = {
     {SCENE_TABLE_END},
 };
 
+/// The actors placed in the Salamander Tail room's top.
 struct ActorPlacement gMagmaRock_SalamanderTailTopPlacements[] = {
     {SPRITE_STONE_PILLAR, CONDITION_ALWAYS, 1, 19, 0, 0, FACING_NORTH, 2, 2},
     {SPRITE_STONE_PILLAR, CONDITION_ALWAYS, 1, 20, 0, 0, FACING_NORTH, 2, 2},
@@ -2624,6 +2648,7 @@ struct ActorPlacement gMagmaRock_SalamanderTailTopPlacements[] = {
     {SCENE_TABLE_END},
 };
 
+/// The actors placed in the statue room.
 struct ActorPlacement gMagmaRock_StatuePlacements[] = {
     {384, CONDITION_ALWAYS, 7, 1, 0, 0, FACING_NORTH, 2, 2},
     {SPRITE_WIND_STATUE, CONDITION_ALWAYS, 7, 2, 0, 0, FACING_WEST, 2, 2},
@@ -2631,6 +2656,7 @@ struct ActorPlacement gMagmaRock_StatuePlacements[] = {
 };
 // clang-format on
 
+/// The triggers of the slide.
 struct Trigger gMagmaRock_Triggers[] = {
     {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
     {STEP_TRIGGER_WALKING | STEP_TRIGGER_FLAG_QUICK | FACING_NORTH, 2,
@@ -2674,6 +2700,7 @@ struct Trigger gMagmaRock_Triggers[] = {
     {TRIGGER_TABLE_END},
 };
 
+/// The triggers of the Salamander Tail room's lower level.
 struct Trigger gMagmaRock_SalamanderTailLowerTriggers[] = {
     {TRIGGER_EXIT, 3, CONDITION_ALWAYS, 3},
     {STEP_TRIGGER_WALKING, 20, CONDITION_ALWAYS,
@@ -2703,6 +2730,7 @@ struct Trigger gMagmaRock_SalamanderTailLowerTriggers[] = {
     {TRIGGER_TABLE_END},
 };
 
+/// The triggers of the Salamander Tail room's middle level.
 struct Trigger gMagmaRock_SalamanderTailMiddleTriggers[] = {
     {TRIGGER_EXIT, 4, CONDITION_ALWAYS, 4},
     {TRIGGER_PUSH, 0, CONDITION_ALWAYS, EVENT(MagmaRock_UnblockMovedPillar)},
@@ -2727,6 +2755,7 @@ struct Trigger gMagmaRock_SalamanderTailMiddleTriggers[] = {
     {TRIGGER_TABLE_END},
 };
 
+/// The triggers of the Salamander Tail room's upper level.
 struct Trigger gMagmaRock_SalamanderTailUpperTriggers[] = {
     {TRIGGER_EXIT, 11, CONDITION_ALWAYS, 11},
     {TRIGGER_EXIT, 12, CONDITION_ALWAYS, 12},
@@ -2754,6 +2783,7 @@ struct Trigger gMagmaRock_SalamanderTailUpperTriggers[] = {
     {TRIGGER_TABLE_END},
 };
 
+/// The triggers of the Salamander Tail room's top.
 struct Trigger gMagmaRock_SalamanderTailTopTriggers[] = {
     {TRIGGER_EXIT, 13, CONDITION_ALWAYS, 13},
     {TRIGGER_EXIT, 15, CONDITION_ALWAYS, 15},
@@ -2802,6 +2832,7 @@ struct Trigger gMagmaRock_SalamanderTailTopTriggers[] = {
     {TRIGGER_TABLE_END},
 };
 
+/// The triggers of the statue room.
 struct Trigger gMagmaRock_StatueTriggers[] = {
     {TRIGGER_EXIT, 3, CONDITION_ALWAYS, 3},
     {PSYNERGY_PHASE_ON_CELL(ABILITY_BURST, PSYNERGY_PHASE_FIRST), 50,

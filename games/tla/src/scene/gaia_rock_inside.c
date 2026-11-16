@@ -327,8 +327,10 @@ const u8 *Scene_GetExitRegions(void) {
   return 0;
 }
 
-static __inline__ void GaiaRockInside_JumpDownLedge(s32 id, s32 a, s32 b) {
-  Actor_JumpDownLedge(id, a, b);
+/// Actor_JumpDownLedge, called through this inline as the ROM's call compiles.
+static __inline__ void GaiaRockInside_JumpDownLedge(s32 id, s32 pose,
+                                                    s32 param) {
+  Actor_JumpDownLedge(id, pose, param);
 }
 
 /// Stepping off the ledge by the altar: the leader jumps down to the room
@@ -350,8 +352,10 @@ void GaiaRockInside_JumpDownByAltar(void) {
 #include "../field/field_effect_advance_motion.c"
 #endif
 
-// The Japanese edition has no form of this function here.
 #if TLA_PATCH_1
+/// Arriving in the lair by entrance 3 from above: the leader drops from 130
+/// pixels up and lands in a ring of dust with a thump that shakes the room.
+/// The Japanese edition has no form of this function here.
 void GaiaRockInside_RaiseDust(void) {
   struct Actor *actor = Actor_Get(gMainRoutineWork.leaderActorId);
   u32 i;
@@ -370,7 +374,7 @@ void GaiaRockInside_RaiseDust(void) {
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
   Event_PlaySound(SE_DUST_PUFF);
-  actor->motionFlags = 3;
+  actor->motionFlags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
   FieldEvent_Wait(24);
   options.palette = 7;
   options.update = FieldEffect_AdvanceMotion;
@@ -743,8 +747,10 @@ void GaiaRockInside_CycloneClearsHallBushes(void) {
 
 static __inline__ s32 GameFlag_Test_(s32 flag) { return GameFlag_Get(flag); }
 
-static __inline__ void GaiaRockInside_MadPlantLeaps(s32 a, s32 b, s32 c) {
-  MadPlant_LeapAtLeader(a, b, c);
+/// MadPlant_LeapAtLeader, called through this inline as the ROM's call
+/// compiles.
+static __inline__ void GaiaRockInside_MadPlantLeaps(s32 sprite, s32 x, s32 z) {
+  MadPlant_LeapAtLeader(sprite, x, z);
 }
 
 /// Cyclone on the bushes by the platforms: they blow away, and the first time
@@ -1033,6 +1039,8 @@ void GaiaRockInside_ReadSusasMind(void) {
 
 extern u32 gGaiaRockInside_SparkScript[];
 
+/// Leaves a small spark where an orbiting one is, released after 6 frames: the
+/// orbit's trail.
 void GaiaRockInside_SpawnSpark(struct Orbiter *source) {
   struct Actor *spark =
       FieldActor_Create(SPRITE_PARTICLE, source->x, source->y, source->z);
@@ -1980,12 +1988,11 @@ void GaiaRockInside_PlacePlatform(s32 id, s32 dx, s32 dz) {
                              ((dz << 4) + platform->userValue) << 16);
 }
 
+extern struct SwayState gSceneState;
+
 /// The platforms' frame task: they all stop while the menu is open or
 /// Psynergy is cast; otherwise, at frame 60 of every 240 each leans out one way
 /// and at frame 180 they come back.
-
-extern struct SwayState gSceneState;
-
 void GaiaRockInside_SwayPlatforms(void) {
   // Pointers that stay on one global for their whole life.
   struct SwayState *state = &gSceneState;
@@ -2956,6 +2963,7 @@ typedef struct {
   PathCell cells[GRID_WIDTH * GRID_WIDTH];
 } PathGrid;
 
+/// Heap_AllocEwram, called through this inline as the ROM's call compiles.
 static inline void *BumpAllocEwram(s32 size) { return Heap_AllocEwram(size); }
 
 #define AT(x, y) grid->cells[(y) * GRID_WIDTH + (x)]

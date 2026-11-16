@@ -392,6 +392,8 @@ void FieldMessage_ShowCentered(s32 message, s32 mode, s32 yOffset) {
 
 s32 Message_Decode(s32 message, s32 mode);
 
+/// Decodes message into the text buffer, using up each message argument it
+/// reads, and returns where its text starts there.
 s32 Message_DecodeMode1(s32 message) { return Message_Decode(message, 1); }
 
 s32 Message_Decode(s32 message, s32 mode);
@@ -418,6 +420,8 @@ void Message_DecodeAppend(s32 message) {
 #define PLOT_GLYPH_ROWS 14
 #endif
 
+/// Plots a glyph's rows of bits onto the story crawl's canvas at dst, one byte
+/// a pixel in color, leftmost pixel from the high bit; clear bits are left.
 void Text_PlotGlyphRows(u16 *rows, u8 *dst, s32 color) {
   s32 y;
   u8 *p;

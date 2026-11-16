@@ -199,7 +199,6 @@ extern u8 MsgAutoSleepLabel[];
 struct WindowSprite *CommandIcon_Create(s32 icon, s32 remap,
                                         struct Window *window, s32 x, s32 y);
 s32 Resource_LoadFixedBlockBIntoFreeSlot(void);
-void MenuCursor_SetPositionImmediateFar(void *object, s32 x, s32 y);
 
 /// Opens the settings menu's window: the labels, the hue and brightness
 /// sliders with their markers, the cursor and the setting icons. Returns the
@@ -354,7 +353,6 @@ struct WindowSprite *MenuTitle_Create(s32 group, struct Window *input, s32 x,
                                       s32 y);
 void Icon_PrepareActorFar(struct WindowSprite *icon);
 void CommandIcon_Load(s32 index, s32 value, s32 flag);
-void MenuCursor_SetFar(void *cursor, s32 x, s32 y, s32 mode);
 void FieldMessage_Show(s32 message, s32 mode);
 
 #define PRESSED (((volatile struct InputState *)&gInput)->pressed)
@@ -659,8 +657,6 @@ struct WindowSprite *MenuTitle_Create(s32 group, struct Window *input, s32 x,
                                       s32 y);
 void Icon_PrepareActorFar(struct WindowSprite *icon);
 void CommandIcon_Load(s32 index, s32 value, s32 flag);
-void MenuCursor_SetPositionImmediateFar(void *cursor, s32 x, s32 y);
-void MenuCursor_SetFar(void *cursor, s32 x, s32 y, s32 mode);
 
 #define KEYS_PRESSED (((struct InputState *)&gInput)->pressed)
 

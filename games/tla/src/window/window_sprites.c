@@ -563,7 +563,7 @@ struct PopTransform {
 extern const u8 gWindowSprite_PageArrowTiles[];
 extern const u8 gWindowSprite_CursorBobOffsets[];
 extern const s8 gWindowSprite_WobbleOffsets[][2];
-extern const s8 gUiSprite_BounceOffsets[];
+extern const s8 gWindowSprite_BounceOffsets[];
 
 /// The per-frame sprite update: moves each sprite that an open window carries
 /// by its animation mode (WINDOW_SPRITE_MOTION_) and queues it for drawing, at
@@ -656,29 +656,29 @@ void WindowSprite_UpdateAll(void) {
       case WINDOW_SPRITE_MOTION_HOP_UP:
         output->animationStep++;
         sprite->y =
-            output->y - gUiSprite_BounceOffsets[output->animationStep & 15];
+            output->y - gWindowSprite_BounceOffsets[output->animationStep & 15];
         break;
       case WINDOW_SPRITE_MOTION_HOP_DOWN_NEXT_PAGE:
         output->animationStep++;
         sprite->y =
-            output->y + gUiSprite_BounceOffsets[output->animationStep & 15];
+            output->y + gWindowSprite_BounceOffsets[output->animationStep & 15];
         break;
       case WINDOW_SPRITE_MOTION_HOP_LEFT:
         output->animationStep++;
         sprite->x =
-            output->x - gUiSprite_BounceOffsets[output->animationStep & 15];
+            output->x - gWindowSprite_BounceOffsets[output->animationStep & 15];
         break;
       case WINDOW_SPRITE_MOTION_HOP_RIGHT:
         output->animationStep++;
         sprite->x =
-            output->x + gUiSprite_BounceOffsets[output->animationStep & 15];
+            output->x + gWindowSprite_BounceOffsets[output->animationStep & 15];
         break;
       case WINDOW_SPRITE_MOTION_HOP_DOWN_LEFT:
         output->animationStep++;
         sprite->x =
-            output->x - gUiSprite_BounceOffsets[output->animationStep & 15];
+            output->x - gWindowSprite_BounceOffsets[output->animationStep & 15];
         sprite->y =
-            output->y + gUiSprite_BounceOffsets[output->animationStep & 15];
+            output->y + gWindowSprite_BounceOffsets[output->animationStep & 15];
         break;
       case WINDOW_SPRITE_MOTION_SWELL:
       case WINDOW_SPRITE_MOTION_SWELL_HALF:

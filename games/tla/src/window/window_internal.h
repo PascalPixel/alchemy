@@ -174,6 +174,28 @@ void Text_DrawWideStringAtOffset(u16 *text, struct Window *window, s32 x,
 s16 DebugSceneSelect_Run(void);
 s32 DebugSceneSelect_HandleRowInput(s32 arg, s16 value, s16 *sub, s16 *mode);
 
+// The far calls the window object makes into the field, menu and shop banks.
+/// Writes an actor's position on screen, in pixels, to out[0] and out[1];
+/// returns -1 when the actor does not exist.
+s32 Actor_GetScreenPositionFar(s32 object, s32 *out);
+/// The party leader's actor id.
+s32 Party_GetLeaderActorFar(void);
+/// The cell behavior 16 pixels ahead of the leader when there is something to
+/// search there, else 0.
+s32 Actor_GetTriggerCellAheadOfCurrentFar(void);
+/// The field menu's Djinn screen; returns 1 to open the field menu again.
+s32 DjinnMenu_RunFar(void);
+/// The field menu's Psynergy screen.
+s32 PsynergyMenu_RunFar(void);
+/// The field menu's Item screen; returns 1 when an item is to be used.
+s32 ItemMenu_RunFar(void);
+/// The field menu's Status screen.
+s32 StatusScreen_RunFar(void);
+/// Moves a menu cursor to (x, y), gliding as mode says.
+void MenuCursor_SetFar(void *cursor, s32 x, s32 y, s32 mode);
+/// Places a menu cursor at (x, y) at once.
+void MenuCursor_SetPositionImmediateFar(void *cursor, s32 x, s32 y);
+
 /// The first of the 20 digit tiles Graphics_ExpandVramTilesByColorTable
 /// builds for the battle lists' page numbers: the UI digits '0' to '9' with
 /// colour 1 drawn as 10, then the same digits in their own colours.

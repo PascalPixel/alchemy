@@ -486,8 +486,6 @@ struct Window *Message_OpenWindow(s32 message, s32 x, s32 y, u32 packed) {
   return window;
 }
 
-s32 Party_GetLeaderActorFar(void);
-s32 Actor_GetScreenPositionFar(s32 object, s32 *out);
 s32 Message_AllTyped(void);
 
 /// Shows a message in a window centred on the screen, waits until it is typed
@@ -569,6 +567,8 @@ void WindowSystem_Update(void) {
   WindowSprite_UpdateAll();
 }
 
+/// The window system's per-frame task in battle: windows, messages and sprite
+/// animation while the battle menu's work exists, otherwise messages alone.
 void WindowSystem_UpdateBattle(void) {
   if (Ram_HeapSlots->battleMenuWork != 0) {
     Window_UpdateZooms();

@@ -27,7 +27,7 @@ struct ArticleTable {
 
 extern const struct ArticleTable gArticle_Table;
 #if (LANGUAGE == LANGUAGE_SPANISH)
-extern const struct ArticleTable gText_IndefiniteArticles;
+extern const struct ArticleTable gArticle_Indefinite;
 #endif
 #if (LANGUAGE == LANGUAGE_FRENCH)
 /// The German "de" articles, elided and whole, copied whole (articles.c).
@@ -231,7 +231,7 @@ u32 Message_AppendArticleName(s32 mode, u16 *name, u32 writePosition,
     kind = 0;
     table = gArticle_Table;
 #if (LANGUAGE == LANGUAGE_SPANISH)
-    indefiniteTable = gText_IndefiniteArticles;
+    indefiniteTable = gArticle_Indefinite;
 #endif
     if (name[0] == MESSAGE_ARTICLE_CLASS) {
       kind = name[1];

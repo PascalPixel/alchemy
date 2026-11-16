@@ -37,7 +37,6 @@ void DebugSoundTest_Release(void) {
 }
 
 s32 Resource_LoadFixedBlockBIntoFreeSlot(void);
-void MenuCursor_SetPositionImmediateFar(void *cursor, s32 x, s32 y);
 
 /// Opens the sound test's window and places the cursor on its first row.
 struct Window *DebugSoundTest_Open(void) {
@@ -56,7 +55,6 @@ extern const struct SoundTestValues gDebugSoundTest_StartValues;
 extern const u8 SoundTest_MusicString[], SoundTest_JingleString[],
     SoundTest_SeString[], SoundTest_FxString[];
 
-void MenuCursor_SetFar(void *cursor, s32 x, s32 y, s32 mode);
 s32 Sound_LoadReverbCode(s32 preset);
 
 /// Unused: nothing calls it. The debug sound test. Four values (music, jingle,

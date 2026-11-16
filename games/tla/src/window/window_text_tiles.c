@@ -351,7 +351,8 @@ void Text_UseExtraTiles(s32 allowAlternateTiles) {
   }
 }
 
-void Window_ReservedNoOp(void) {}
+/// Unused: nothing calls it. Does nothing.
+UNUSED void Window_ReservedNoOp(void) {}
 
 /// Draws a divider from (x1, y1) to (x2, y2), one of which must agree,
 /// joining it to the frame and divider tiles already on the tilemap.

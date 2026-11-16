@@ -428,10 +428,10 @@ void BattleEffect_RunAzul(struct BattleEffectParams *args) {
       }
     }
     if ((u32)(frame - 138) <= 29) {
-      s32 d = -0x20000;
+      s32 d = -toFIXED(2);
 
       if (frame > 151) {
-        d = (frame << 13) + -0x150000;
+        d = (frame << 13) - toFIXED(21);
       }
       pos.x = pos.x + d;
     }
@@ -489,7 +489,7 @@ void BattleEffect_RunAzul(struct BattleEffectParams *args) {
           BattleEffect_TintBattler(args->targets[i], SPRITE_COLOR_BLUE_TINT,
                                    POSE_DAMAGE, i, 8);
           BattleEffect_StartActorMotion(args->targets[i], 1, 0, 0,
-                                        (Random16() << 1) + 0x10000, 100);
+                                        (Random16() << 1) + toFIXED(1), 100);
           // record is 0 here; the store reuses its register.
           actor->verticalMotionStrength = (s32)record;
         }

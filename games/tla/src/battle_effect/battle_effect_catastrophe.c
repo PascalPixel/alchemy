@@ -505,7 +505,7 @@ void BattleEffect_RunCatastrophe(struct BattleEffectParams *args) {
     }
     if ((u32)(frame - 554) <= 31 && !((frame - 554) & 1)) {
       ColorBuffer_ScaleFar(battle->palette, (void *)&BG_PLTT_COLOR(6, 0),
-                           0x10000 - ((frame - 554) << 10),
+                           FIXED_ONE - ((frame - 554) << 10),
                            BATTLE_BACKGROUND_COLORS);
     }
     if (swapped == 0) {
@@ -797,7 +797,7 @@ void BattleEffect_RunCatastrophe(struct BattleEffectParams *args) {
     }
     if ((u32)(frame - 602) <= 15 || (u32)(frame - 630) <= 3) {
       s32 n = 1;
-      s32 sx = 0x50000;
+      s32 sx = FIXED_ONE * 5;
       s32 base = Random16() % 3;
       s32 spread = 8;
 
@@ -805,7 +805,7 @@ void BattleEffect_RunCatastrophe(struct BattleEffectParams *args) {
         sx = sx - frame * 61845 + 0x2418834;
       }
       if (sx <= 65535) {
-        sx = 0x10000;
+        sx = FIXED_ONE;
       }
       if (frame <= 613) {
         if (frame > 605) {
@@ -1275,8 +1275,8 @@ void BattleEffect_RunCatastrophe(struct BattleEffectParams *args) {
           if (frame >= st && frame < i + 144) {
             s32 s = (frame - st) << 13;
 
-            if (s > 0x10000) {
-              s = 0x10000;
+            if (s > FIXED_ONE) {
+              s = FIXED_ONE;
             }
             aerialTexture.pixels = work->sheet + 0x1456 + (p->variant << 12);
             Matrix_Initialize();
@@ -1546,7 +1546,8 @@ void BattleEffect_RunCatastrophe(struct BattleEffectParams *args) {
         sweepTexture.logHeight = 6;
         sweepModel->scrollU = 0;
         sweepTexture.pixels = work->sheet + CATASTROPHE_SWEEP_PICTURES;
-        Matrix_Translate(-0x20000, (Trig_Sin(frame << 10) << 2) + -0x60000, 0);
+        Matrix_Translate(-toFIXED(2), (Trig_Sin(frame << 10) << 2) - toFIXED(6),
+                         0);
         Matrix_RotateZ(-TRIG_TURN / 32);
         {
           FIXED s0 = Trig_Sin(a);

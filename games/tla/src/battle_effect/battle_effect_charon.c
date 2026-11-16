@@ -1382,7 +1382,7 @@ void BattleEffect_RunCharon(struct BattleEffectParams *arg) {
         for (i = 0; i != arg->targetCount; i++) {
           s32 spin = Random16();
           s32 delay = (Random16() & 31) + 120;
-          s32 speed = spin * 2 + 0x20000;
+          s32 speed = spin * 2 + toFIXED(2);
 
           BattleEffect_StartActorMotion(arg->targets[i], 1, toFIXED(4),
                                         toFIXED(8), speed, delay);

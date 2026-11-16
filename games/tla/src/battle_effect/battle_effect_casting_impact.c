@@ -724,10 +724,10 @@ void BattleEffect_RunCastingImpact(struct BattleEffectParams *action,
     } else if (kind == CASTING_IMPACT_IMPACT_APOCALYPSE) {
       REG_BG2PA = Q_8_8(1);
       if (action->side == EFFECT_SIDE_ENEMIES) {
-        scrollA = 0xffc00000;
-        scrollB = 0x20000;
+        scrollA = -toFIXED(64);
+        scrollB = toFIXED(2);
       } else {
-        scrollA = 0xffc80000;
+        scrollA = -toFIXED(56);
         scrollB = 0xfffe0000;
       }
       REG_BG2X = (FIXEDtoINT(scrollA)) << 8;
@@ -2282,9 +2282,9 @@ void BattleEffect_RunCastingImpact(struct BattleEffectParams *action,
           s32 two;
           m = frame / 4;
           two = m * 2;
-          fade = 0x10000;
+          fade = FIXED_ONE;
           if (frame > 39)
-            fade = 0x38000 - (frame << 12);
+            fade = FIXED_ONE * 7 / 2 - (frame << 12);
           if (two > 1 && fade > 0) {
             BattleEffect_DrawShadedCircles(work->sheet, m * 4, fade);
             HeapSlot_Release(HEAP_SLOT_RAM_CODE_PAIRED);

@@ -331,8 +331,8 @@ void BattleEffect_RunEclipse(struct BattleEffectParams *args) {
             Matrix_Scale(FIXED_ONE / 2, FIXED_ONE, FIXED_ONE);
             Matrix_RotateZ(work->particles[i].x);
             Matrix_Scale(Trig_Sin(work->particles[i].variant * 682) +
-                             DEGtoANG(90),
-                         0x20000, 0x10000);
+                             FIXED_ONE / 4,
+                         FIXED_ONE * 2, FIXED_ONE);
             Render_TransformVertices(gBattleEffect_TaperedBeamCorners, verts,
                                      4);
             Render_DrawModelList(model);
@@ -369,7 +369,7 @@ void BattleEffect_RunEclipse(struct BattleEffectParams *args) {
           Matrix_RotateZ(TRIG_TURN * 5 / 32);
           if (frame > 203) {
             Matrix_Scale(FIXED_ONE * 8 - ((frame - 204) << 15), FIXED_ONE * 2,
-                         0x10000);
+                         FIXED_ONE);
           } else {
             Matrix_Scale(FIXED_ONE * 8, FIXED_ONE * 2, FIXED_ONE);
           }
@@ -624,10 +624,10 @@ void BattleEffect_RunEclipse(struct BattleEffectParams *args) {
       model = Render_AllocateModelList(1);
       shade = 0;
       if (frame <= 31) {
-        s32 s = 0x10000;
+        s32 s = FIXED_ONE;
 
         if (frame > 15) {
-          s += 0x10000 - (frame << 12);
+          s += FIXED_ONE - (frame << 12);
         }
         landingTexture.logWidth = 5;
         landingTexture.logHeight = 2;
@@ -683,10 +683,10 @@ void BattleEffect_RunEclipse(struct BattleEffectParams *args) {
         model->flags = 3;
       }
       {
-        s32 s = (frame << 9) + 0x8000;
+        s32 s = (frame << 9) + FIXED_ONE / 2;
 
-        if (s > 0x10000) {
-          s = 0x10000;
+        if (s > FIXED_ONE) {
+          s = FIXED_ONE;
         }
         Matrix_Initialize();
         Matrix_Translate(-toFIXED(2), toFIXED(12), 0);

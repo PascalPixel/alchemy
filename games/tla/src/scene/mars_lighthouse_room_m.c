@@ -297,18 +297,20 @@ void MarsLighthouseRoomM_CycleLedgeFlame(void) {
     return;
   if (gMarsLighthouseRoomM_LedgeCycleFrame == -1) {
     Iwram_CopyWordsEntry(gMarsLighthouseRoomM_LedgeSavedPalette,
-                         (void *)&BG_PLTT_COLOR(13, 0), PALETTE_COLORS * 2);
+                         (void *)&BG_PLTT_COLOR(13, 0),
+                         sizeof(gMarsLighthouseRoomM_LedgeSavedPalette));
     Iwram_CopyWordsEntry(gMarsLighthouseRoomM_LedgeFlameColors,
-                         (void *)&BG_PLTT_COLOR(8, 0), 2 * PALETTE_COLORS * 2);
+                         (void *)&BG_PLTT_COLOR(8, 0),
+                         sizeof(gMarsLighthouseRoomM_LedgeFlameColors));
     Iwram_CopyWordsEntry(gMarsLighthouseRoomM_LedgePalette,
                          gMarsLighthouseRoomM_LedgeFlameColors,
-                         2 * PALETTE_COLORS * 2);
+                         sizeof(gMarsLighthouseRoomM_LedgeFlameColors));
     gMarsLighthouseRoomM_LedgeCycleFrame = 0;
   }
   base = gMarsLighthouseRoomM_LedgeCycleFrame / 8 % 6;
   Iwram_CopyWordsEntry(gMarsLighthouseRoomM_LedgePalette,
                        gMarsLighthouseRoomM_LedgeSavedPalette,
-                       PALETTE_COLORS * 2);
+                       sizeof(gMarsLighthouseRoomM_LedgeSavedPalette));
   if (entrance == ENTRANCE_FROM_VENUS_TOWER &&
       Event_GetFlag(FLAG_VENUS_FLAME_LIT)) {
     for (i = 0; i <= 5; i++)
@@ -414,10 +416,11 @@ void MarsLighthouseRoomM_CycleHallFlames(void) {
     Iwram_CopyWordsEntry(gMarsLighthouseRoomM_HallSavedPalette,
                          (void *)&BG_PLTT_COLOR(2, 0), PALETTE_COLORS * 2);
     Iwram_CopyWordsEntry(gMarsLighthouseRoomM_HallFlameColors.colors,
-                         (void *)&BG_PLTT_COLOR(8, 0), 2 * PALETTE_COLORS * 2);
+                         (void *)&BG_PLTT_COLOR(8, 0),
+                         sizeof(gMarsLighthouseRoomM_HallFlameColors));
     Iwram_CopyWordsEntry(gMarsLighthouseRoomM_HallPalette.colors,
                          gMarsLighthouseRoomM_HallFlameColors.colors,
-                         2 * PALETTE_COLORS * 2);
+                         sizeof(gMarsLighthouseRoomM_HallFlameColors));
     gMarsLighthouseRoomM_HallCycleFrame = 0;
   }
   base = gMarsLighthouseRoomM_HallCycleFrame / 8 % 6;
@@ -704,7 +707,7 @@ s32 Scene_Initialize(void) {
         actor->y.fixed = toFIXED(16);
         actor->groundHeight = toFIXED(16);
         actor->launchedActorId = ACTOR_FIREBALL;
-        actor->userValue = 0x4000;
+        actor->userValue = FACING_SOUTH;
         actor->watchedActor = (struct Actor *)unset;
         Actor_LaunchAhead(actor);
         System_Wait(40);
@@ -737,10 +740,13 @@ s32 Scene_Initialize(void) {
 
 void Weather_StartRain(s32 a);
 
-/// The ledges ripple in the rain: the line scroll's wave across and down.
-static __inline__ void Rain_StartRipple(s32 mode, FIXED freqX, s32 stepX,
-                                        FIXED ampX, FIXED freqY, s32 stepY,
-                                        FIXED ampY) {
+/// The line scroll's wave across and down that the rain ledges start with the
+/// rain. Called plainly, LineScroll_InitWave takes its arguments in another
+/// order (16 of 237 instructions of Scene_PrepareMap differ in tla-en).
+static __inline__ void MarsLighthouseRoomM_StartRainWave(s32 mode, FIXED freqX,
+                                                         s32 stepX, FIXED ampX,
+                                                         FIXED freqY, s32 stepY,
+                                                         FIXED ampY) {
   LineScroll_InitWave(mode, freqX, stepX, ampX, freqY, stepY, ampY);
 }
 
@@ -755,8 +761,9 @@ s32 Scene_PrepareMap(void) {
       scene == SCENE_MARS_LIGHTHOUSE_ROOM_M_ALASTORS_HOOD_CHEST ||
       scene == SCENE_MARS_LIGHTHOUSE_VENUS_LEDGE) {
     Weather_StartRain(1);
-    Rain_StartRipple(1, FIXED_ONE, FIXED_ONE * 4, FIXED_ONE * 2, FIXED_ONE,
-                     FIXED_ONE / 2, FIXED_ONE / 4);
+    MarsLighthouseRoomM_StartRainWave(1, FIXED_ONE, FIXED_ONE * 4,
+                                      FIXED_ONE * 2, FIXED_ONE, FIXED_ONE / 2,
+                                      FIXED_ONE / 4);
   }
   if (scene == SCENE_MARS_LIGHTHOUSE_ROOM_M_FLAME) {
     switch (entrance) {
@@ -1488,7 +1495,7 @@ void Ride_SetEntryValue(s32 index, s16 value) {
   ((struct RideRow *)((u8 *)RIDE_WORK + index * 16))->entry.active = value;
 }
 
-/// The flame throwers' hit count.
+/// The flame throwers' counter, which Ride_AdvanceCounter steps.
 s32 Ride_GetCounter(void) { return RIDE_WORK->counter; }
 
 #include "shared/ride_advance_counter.h"

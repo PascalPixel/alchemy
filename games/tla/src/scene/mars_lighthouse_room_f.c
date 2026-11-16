@@ -91,8 +91,6 @@
 #define FLAG_SAW_PIPELINE_MENDED FLAG_AREA_TEMP_51
 #define FLAG_BLOCK_DROPPED FLAG_AREA_TEMP_58
 
-/// A flame thrower's flags (Ride_SetEntry and the flame thrower tables): the
-/// flame's reach in the low four bits, and which flame it sends, or none.
 /// The Mars tower (F1). Its first rooms: the flame thrower the button sets
 /// moving, the dragon statue that becomes a torch once its flame is lit, the
 /// statue that shoots at the center wall and the wall itself. Its pipe room:
@@ -1314,7 +1312,7 @@ void JupiterLighthouse_LoadPalettesZero(s32 mode) {
     Iwram_CopyWordsEntry(gPaletteCycleColors, (void *)&BG_PLTT_COLOR(12, 0),
                          PALETTE_COLORS * 2);
     Iwram_CopyWordsEntry(gPaletteCycleUnlitPalette,
-                         (void *)&BG_PLTT_COLOR(13, 0), 32);
+                         (void *)&BG_PLTT_COLOR(13, 0), PALETTE_COLORS * 2);
   }
   if (Event_GetFlag(FLAG_JUPITER_LIGHTHOUSE_ACTIVATED) || mode == 1) {
     PaletteCycle_SetFrame(0);

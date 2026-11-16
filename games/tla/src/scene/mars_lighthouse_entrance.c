@@ -118,8 +118,8 @@ enum MarsLighthouseEntranceTeleportLapisActorId {
   ACTOR_ICE_SHEET,
   ACTOR_UNLIT_TORCH,
   ACTOR_SECOND_ICE_SHEET,
-  ACTOR_LAPIS_FIREBALL,     ///< flies from the torch Blaze is cast at
-  ACTOR_LAPIS_FIREBALL_ROLL ///< sent rolling on where the flight ends
+  ACTOR_LAPIS_FIREBALL,     ///< the sparkle that flies from the torch
+  ACTOR_LAPIS_FIREBALL_ROLL ///< the fireball the sparkle sends rolling
 };
 
 /// Balm's room: a flame thrower and the torch its fireball stops at, two dragon
@@ -135,9 +135,9 @@ enum MarsLighthouseEntranceBalmActorId {
   ACTOR_BALM_ICE_CONE_D,
   ACTOR_BALM_ICE_CONE_E,
   ACTOR_BALM,
-  ACTOR_BALM_FIREBALL, ///< flies from the torch Blaze is cast at
-  ACTOR_BALM_SECOND_FIREBALL,
-  ACTOR_BALM_FIREBALL_ROLL ///< sent rolling on where the flight ends
+  ACTOR_BALM_FIREBALL,       ///< the sparkle that flies from the torch
+  ACTOR_BALM_SECOND_SPARKLE, ///< placed, and sent nowhere
+  ACTOR_BALM_FIREBALL_ROLL   ///< the fireball the sparkle sends rolling
 };
 
 /// The hidden circle's room: a lit torch and a torch Blaze sends a fireball
@@ -148,13 +148,13 @@ enum MarsLighthouseEntranceHiddenCircleActorId {
   ACTOR_EAST_LIT_TORCH,
   ACTOR_EAST_TORCH,
   ACTOR_HIDDEN_CIRCLE_ICE_SHEET,
-  ACTOR_HIDDEN_CIRCLE_FIREBALL,     ///< flies from the torch Blaze is cast at
-  ACTOR_HIDDEN_CIRCLE_FIREBALL_ROLL ///< sent rolling on where the flight ends
+  ACTOR_HIDDEN_CIRCLE_FIREBALL,     ///< the sparkle that flies from the torch
+  ACTOR_HIDDEN_CIRCLE_FIREBALL_ROLL ///< the fireball the sparkle sends rolling
 };
 
 /// The Valkyrie Mail room: the dragon statue pushed into the flames, the upper
 /// flame thrower and its torch, the dragon face that wakes and the torch below
-/// it, six ice cones and the face's fireball.
+/// it, six ice cones, and the sparkle and fireball a torch sends.
 enum MarsLighthouseEntranceValkyrieMailChestActorId {
   ACTOR_UPPER_FLAME_THROWER = ACTOR_FIRST_PLACED + 1,
   ACTOR_UPPER_TORCH,
@@ -166,8 +166,8 @@ enum MarsLighthouseEntranceValkyrieMailChestActorId {
   ACTOR_VALKYRIE_ICE_CONE_D,
   ACTOR_VALKYRIE_ICE_CONE_E,
   ACTOR_VALKYRIE_ICE_CONE_F,
-  ACTOR_VALKYRIE_FIREBALL,     ///< flies from the torch Blaze is cast at
-  ACTOR_VALKYRIE_FIREBALL_ROLL ///< sent rolling on where the flight ends
+  ACTOR_VALKYRIE_FIREBALL,     ///< the sparkle that flies from the torch
+  ACTOR_VALKYRIE_FIREBALL_ROLL ///< the fireball the sparkle sends rolling
 };
 #ifndef TLA_MARS_LIGHTHOUSE_ENTRANCE_RIDE_H
 #define TLA_MARS_LIGHTHOUSE_ENTRANCE_RIDE_H
@@ -216,8 +216,8 @@ extern struct ActorPlacement gMarsLighthouseEntrance_HiddenCirclePlacements[];
 extern struct ActorPlacement gMarsLighthouseEntrance_ValkyriePlacements[];
 extern struct ActorPlacement gMarsLighthouseEntrance_SolBladePlacements[];
 
-/// The dragon face's flame thrower is put out (set dry).
-s32 MarsLighthouseEntrance_LightDragonFace(void) {
+/// Moved to its left end, the dragon face sends no more flames.
+s32 MarsLighthouseEntrance_DryDragonFace(void) {
   Ride_SetEntryState(0, FLAME_THROWER_DRY | 1);
   return 0;
 }
@@ -1340,7 +1340,7 @@ void MarsLighthouseEntrance_ShootValkyrieLowerFireball(void) {
                gMarsLighthouseEntrance_ValkyrieLowerFireballPath);
 }
 
-/// Blaze on the torch in Balm's room: its fireball sets off south.
+/// The flames reach the torch in Balm's room: its fireball sets off south.
 void MarsLighthouseEntrance_ShootBalmFireball(void) {
   Actor_Attach(ACTOR_BALM_TORCH, ACTOR_BALM_FIREBALL, ACTOR_BALM_FIREBALL_ROLL,
                FACING_SOUTH, gMarsLighthouseEntrance_BalmFireballPath);
@@ -1655,7 +1655,7 @@ UNUSED void Ride_SetEntryValue(s32 index, s16 value) {
   ((struct RideRow *)((u8 *)RIDE_WORK + index * 16))->entry.active = value;
 }
 
-/// The flame throwers' hit count.
+/// The flame throwers' counter, which Ride_StepCounter steps.
 UNUSED s32 Ride_GetCounter(void) { return RIDE_WORK->counter; }
 
 /// Steps the counter, wrapping at `limit`, unless the field is handling an
@@ -2640,7 +2640,7 @@ s32 gMarsLighthouseEntrance_DragonFaceGoesLeft[] = {
     SC_MOVE(56, 48, 128),
     SC_SYNC,
     SC_WAIT(60),
-    SC_CALL(MarsLighthouseEntrance_LightDragonFace),
+    SC_CALL(MarsLighthouseEntrance_DryDragonFace),
     SC_END,
 };
 

@@ -361,11 +361,8 @@ void ApojiiIslands_CycleSeaColors(void) {
   }
   phase = gApojiiIslands_SeaCycleFrame / 8 % 4;
   for (k = 0; k <= 3; k++) {
-    /* FAKEMATCH(dead): the phase and the first colour in a once-only block. */
-    do {
-      j = (phase + k) % 4;
-      gApojiiIslands_SeaCycled[12 + j] = gApojiiIslands_SeaColors[12 + k];
-    } while (0);
+    j = (phase + k) % 4;
+    gApojiiIslands_SeaCycled[12 + j] = gApojiiIslands_SeaColors[12 + k];
     gApojiiIslands_ShoreCycled[12 + j] = gApojiiIslands_ShoreColors[12 + k];
   }
   IO_WRITE_QUEUE_PUSH((u32)&BG_PLTT_COLOR(3, 0), (u32)gApojiiIslands_SeaCycled,

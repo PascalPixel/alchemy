@@ -41,7 +41,7 @@ void Window_StepSwellEffect(struct UiChannelSlot *window);
 /// its window animation or types more text, and on the text's end marks the
 /// window done (state 1) or closes it.
 void Message_UpdateAll(void) {
-  struct UiChannelSlot *channel = (WINDOW_WORK)->channels;
+  struct UiChannelSlot *channel = WINDOW_WORK->channels;
   s32 channelNo = 0;
   s32 one = 1;
 
@@ -367,7 +367,7 @@ s32 Message_Type(struct UiChannelSlot *channel) {
           Glyph_Draw(channel->work, code, pixelX, pixelY, GLYPH_DRAW_CHARACTER);
       channel->glyphDelay = gMessageSpeed_Delays[TEXT_SPEED];
       if (glyphWidth == 0)
-        return 9;
+        return CHANNEL_STEP_CLOSE;
       if (work->speakerVoiceSound != 0) {
         if (work->speakerVoiceCountdown == 0) {
           if (code != TEXT_SPACE) {

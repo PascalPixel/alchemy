@@ -342,8 +342,7 @@ struct Window *SettingsMenu_Open(void) {
 
 extern u8 MsgMessageSpeedSlow[], MsgSpeechOff[], MsgAutoSleepOff[],
     MsgWindowColorHelp[], MsgSleepModeHelp[];
-extern const u8 gOptionMenu_FirstColorPresets[],
-    gOptionMenu_SecondColorPresets[];
+extern const u8 gOptionMenu_HuePresets[], gOptionMenu_BrightnessPresets[];
 
 void SettingsMenu_InitializeWork(void);
 void SettingsMenu_Release(void);
@@ -476,8 +475,8 @@ s32 SettingsMenu_Run(void) {
       redraw = 1;
       if (work->preset > 5)
         work->preset = 0;
-      *hue = gOptionMenu_FirstColorPresets[work->preset];
-      *brightness = gOptionMenu_SecondColorPresets[work->preset];
+      *hue = gOptionMenu_HuePresets[work->preset];
+      *brightness = gOptionMenu_BrightnessPresets[work->preset];
       continue;
     }
     if (PRESSED & 9) {

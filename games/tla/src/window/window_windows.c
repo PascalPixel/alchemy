@@ -84,8 +84,8 @@ void WindowSystem_InitField(void) {
 void WindowSystem_InitBattle(s32 kind) {
   struct WindowWork *work;
   s32 i;
-  // Copies pixel rows 4 to 6 of UI tile src to rows 0 to 2 of tile dst and
-  // clears the rest of dst.
+  // Copies pixel rows 4 to 6 of tile sourceTile to rows 0 to 2 of
+  // destinationTile and clears the rest of it.
   s32 WindowSystem_CopyTileLowerRows(u32 sourceTile, u32 destinationTile) {
     sourceTile &= TILE_NUMBER_MASK;
     destinationTile &= TILE_NUMBER_MASK;
@@ -597,7 +597,7 @@ void Text_FillCanvasBackground(void) {
 /// Resets the pen and text style of the first idle message, clearing the canvas
 /// when the message still has a window.
 void Message_ResetIdle(void) {
-  struct UiChannelSlot *slot = (WINDOW_WORK)->channels;
+  struct UiChannelSlot *slot = WINDOW_WORK->channels;
   struct UiChannelSlot *selection = 0;
   s32 i;
 

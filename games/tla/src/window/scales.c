@@ -65,12 +65,12 @@ const s8 gOptionMenu_SleepIcons[2] = {
 
 /// The window colour presets SELECT cycles through on the settings menu: the
 /// colour (hue, 0 to 23) of each.
-const u8 gOptionMenu_FirstColorPresets[6] = {
+const u8 gOptionMenu_HuePresets[6] = {
     4, 16, 8, 21, 1, 13,
 };
 
 /// The brightness (0 to 14, 7 neutral) of each preset.
-const u8 gOptionMenu_SecondColorPresets[6] = {
+const u8 gOptionMenu_BrightnessPresets[6] = {
     0, 11, 13, 7, 14, 14,
 };
 

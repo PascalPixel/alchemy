@@ -321,7 +321,7 @@ void Message_CloseFinishedWindows(void) {
   struct UiChannelSlot *slot;
   struct Window *work;
 
-  slot = (WINDOW_WORK)->channels;
+  slot = WINDOW_WORK->channels;
   slotIndex = 0;
   do {
     work = slot->work;

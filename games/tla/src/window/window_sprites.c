@@ -405,7 +405,7 @@ void Window_PutGlyph(struct Window *win, u32 tile, u32 x, u32 y, s32 mode) {
 /// the tilemap, is ignored.
 void Window_SetTilemapEntry(struct Window *window, s32 value, s32 x, s32 y,
                             u32 mode) {
-  u16 *map = (WINDOW_WORK)->tilemap[0];
+  u16 *map = WINDOW_WORK->tilemap[0];
   s32 palette;
   s32 index;
 

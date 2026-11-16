@@ -105,7 +105,7 @@ STATIC_ASSERT(sizeof(struct WindowWork) == 0x1190);
 /// spacingAfter for the messages decoded next.
 enum MessageDecodeFlag {
   MESSAGE_DECODE_HALTING_SPEECH = 1, ///< a pause before each character
-  MESSAGE_DECODE_SPACING_AFTER = 2   ///< ENTRY_ spacing after some characters
+  MESSAGE_DECODE_SPACING_AFTER = 2   ///< a wide gap after some characters
 };
 
 /// WindowWork.glyphResource while the page arrow has no VRAM cache slot.

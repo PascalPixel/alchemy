@@ -249,7 +249,7 @@ s32 Message_AllTyped(void) {
   struct UiChannelSlot *ch;
   s32 i;
 
-  ch = (WINDOW_WORK)->channels;
+  ch = WINDOW_WORK->channels;
   for (i = 0; i != 3; i++, ch++) {
     if (ch->work != NULL && ch->work->state == 0)
       return 0;
@@ -419,10 +419,11 @@ s32 Message_OpenDecoded(s32 window, s32 argument) {
 /// Sets the decode flags the next message is decoded with
 /// (Message_Decode): MESSAGE_DECODE_HALTING_SPEECH makes it halting
 /// speech, a short pause before each character, broken off with an ellipsis
-/// after the first word; MESSAGE_DECODE_SPACING_AFTER puts code 222 after
-/// certain characters in English and Japanese. Flags already set stay set: only
-/// Message_OpenWindow clears both, once it has started a message typing,
-/// so they also apply to every message decoded before that.
+/// after the first word; MESSAGE_DECODE_SPACING_AFTER puts a wide gap
+/// (ENTRY_WIDE_GAP) after certain characters in English and Japanese. Flags
+/// already set stay set: only Message_OpenWindow clears both, once it has
+/// started a message typing, so they also apply to every message decoded before
+/// that.
 void Message_SetDecodeFlags(u32 flags) {
   struct WindowWork *work;
 

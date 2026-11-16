@@ -30,9 +30,11 @@ const s32 gPairTable[2] = {
     -1, -1,
 };
 
-/// The cells of an 8x8 grid, one diagonal at a time from the top left
-/// corner, each diagonal ended by -1; -4 follows the longest diagonal and
-/// -9 the last.
+/// The pixels of an 8 by 8 tile (a pixel's row times 8 plus its column), one
+/// diagonal at a time from the top left corner, each diagonal ended by -1;
+/// -4 follows the longest diagonal and -9 the last. Heading_Close clears a
+/// diagonal of every tile each two frames (Heading_WipeTilePixel) and tests
+/// only for a negative entry and for -9; the last entry pads the table.
 const s16 gHeading_WipeSteps[80] = {
     0, -1,
     1, 8, -1,

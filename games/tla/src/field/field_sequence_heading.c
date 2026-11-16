@@ -77,15 +77,18 @@ void Event_WaitTwoSecondsOrPress(void) {
   }
 }
 
-/// Clears the left (corner & 3) + 1 pixels of halfword corner >> 2 in the
-/// 4bpp tile at (x, y) of a 26-tile-wide grid at VRAM 0x06000200.
-void Tile_ClearLeftPixels(s32 x, s32 y, u32 corner) {
+/// Clears pixel `pixel` (its row times 8 plus its column) of the 4bpp tile at
+/// (x, y) of the heading's picture, and the pixels left of it in its
+/// halfword: a tile's row is two halfwords of four pixels each, the leftmost
+/// in the low bits, so halfword pixel >> 2 loses its low (pixel & 3) + 1
+/// pixels.
+void Heading_WipeTilePixel(s32 x, s32 y, u32 pixel) {
   u16 *cell =
       (u16 *)(HEADING_TILES + (y * HEADING_COLUMNS + x) * TILE_SIZE_4BPP);
 
-  cell += corner >> 2;
+  cell += pixel >> 2;
 
-  switch (corner & 3) {
+  switch (pixel & 3) {
   case 0: {
     u32 value = *cell;
     u32 mask;
@@ -110,8 +113,10 @@ extern s16 gHeading_WipeSteps[];
 
 /// Unused: only the far-call table refers to it. Closes Heading_Show's
 /// picture window: fades the palette out while wiping
-/// the picture's 26 by 5 tiles from the left by the steps in gHeading_WipeSteps
-/// (runs of widths, each run ended by a negative entry and the whole by -9),
+/// every one of the picture's 26 by 5 tiles from its top left corner to its
+/// bottom right, a diagonal every two frames (gHeading_WipeSteps: a tile's
+/// pixels a diagonal at a time, each ended by a negative entry and the last
+/// by -9),
 /// then turns BG0 and the window off, clears the screen block, reloads the
 /// window tiles and turns BG0 back on.
 void Heading_Close(void) {
@@ -126,7 +131,7 @@ void Heading_Close(void) {
     for (; gHeading_WipeSteps[step] >= 0; step++) {
       for (x = 0; x < HEADING_COLUMNS; x++) {
         for (y = 0; y < HEADING_ROWS; y++)
-          Tile_ClearLeftPixels(x, y, gHeading_WipeSteps[step]);
+          Heading_WipeTilePixel(x, y, gHeading_WipeSteps[step]);
       }
     }
     wait(2);

@@ -821,10 +821,11 @@ void BattleEffect_RunFormChange(struct BattleEffectParams *args, s32 kind) {
       center.x -= 16;
       center.y -= 24;
     } else {
+      /* FAKEMATCH(dead): the third arm steps x by nothing, as the two arms
+       * above step x and y; without it, 187 of 734 instructions differ in
+       * tla-en. */
+      center.x += 0;
       center.y -= 48;
-      /* FAKEMATCH(barrier): an empty asm taking the centre's address gives it
-       * two more references. */
-      __asm__("" : : "r"(&center));
     }
 
     if (frame == 0) {

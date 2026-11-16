@@ -45,6 +45,14 @@ struct MeshVertex {
 #define CATASTROPHE_ARMOUR_COUNT                                               \
   (CATASTROPHE_PURPLE_ARMOUR_COUNT + CATASTROPHE_SPIKES_COUNT)
 #define CATASTROPHE_SPRITES 50
+/// ChainedDemonTiles' colours, OBJ palette 0 to 191.
+#define CATASTROPHE_DEMON_COLORS 192
+/// The frames of act one, unless A or B skips it.
+#define CATASTROPHE_ACT_ONE_FRAMES 637
+/// Where the objects' first 240 colours are kept in the effect's pictures,
+/// which the objects fade from.
+#define CATASTROPHE_SAVED_OBJ_PALETTE 0x5000
+#define CATASTROPHE_SAVED_OBJ_COLORS 240
 
 /// Catastrophe: over a red sky the chained demon in golden armour spreads its
 /// wings and drives down a sword of light; the blade's orb falls on the land
@@ -156,8 +164,8 @@ void BattleEffect_RunCatastrophe(struct BattleEffectParams *args) {
     u8 *cells;
 
     e = Resource_GetTableEntry(RESOURCE_CHAINED_DEMON_TILES);
-    Iwram_CopyWords((void *)OBJ_PLTT, e, 384);
-    e += 384;
+    Iwram_CopyWords((void *)OBJ_PLTT, e, CATASTROPHE_DEMON_COLORS * 2);
+    e += CATASTROPHE_DEMON_COLORS * 2;
     Decompress_TaggedLz(e, cellBuffer);
     cells = Ram_MapCellBuffer;
     for (i = 0; i != CATASTROPHE_DEMON_TILED;
@@ -238,7 +246,8 @@ void BattleEffect_RunCatastrophe(struct BattleEffectParams *args) {
       Iwram_CopyWords((void *)OBJ_TILES(obj), cells, OBJ_32X32_4BPP_BYTES);
     }
   }
-  Iwram_CopyWords(work->sheet + 0x5000, (void *)OBJ_PLTT, 480);
+  Iwram_CopyWords(work->sheet + CATASTROPHE_SAVED_OBJ_PALETTE, (void *)OBJ_PLTT,
+                  CATASTROPHE_SAVED_OBJ_COLORS * 2);
   Resource_LoadAndDecompress(RESOURCE_LIGHTNING_TEXTURE, work->sheet, 0, 0);
   Resource_LoadAndDecompress(RESOURCE_JAGGED_STREAK_SHEET,
                              work->sheet + CATASTROPHE_JAGGED_STREAKS, 0, 0);
@@ -260,7 +269,7 @@ void BattleEffect_RunCatastrophe(struct BattleEffectParams *args) {
   blit[0] = Ram_HeapSlots->ramCode;
   // Act one: the demon breaks out of its chains and drives down its sword.
   frame = 0;
-  while (frame != 637) {
+  while (frame != CATASTROPHE_ACT_ONE_FRAMES) {
     s32 level;
     s32 d;
 
@@ -457,8 +466,8 @@ void BattleEffect_RunCatastrophe(struct BattleEffectParams *args) {
           s32 n;
 
           if (j == 0) {
-            src = (u16 *)(work->sheet + 0x5002);
-            n = 240;
+            src = (u16 *)(work->sheet + CATASTROPHE_SAVED_OBJ_PALETTE + 2);
+            n = CATASTROPHE_SAVED_OBJ_COLORS;
             dst = (u16 *)&OBJ_PLTT_COLOR(0, 1);
           } else {
             dst = (u16 *)&BG_PLTT_COLOR(6, 0);

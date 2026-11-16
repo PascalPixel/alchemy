@@ -56,6 +56,16 @@
 #define FLAG_FACE_HALF_PUSHED_INTO_GAP 0x9db
 #define FLAG_THANATOS_FACE_HALF_PLACED 0x9dc
 #define FLAG_GREAT_FACE_HALF_PLACED 0x9dd
+/// The sand doors opened by their switches in the sand rooms, the first and the
+/// second.
+#define FLAG_FIRST_SAND_DOOR_OPENED 0x9e2
+#define FLAG_SECOND_SAND_DOOR_OPENED 0x9e3
+/// Set while the raft passes rows 31 to 36, the cells under its path
+/// shifted.
+#define FLAG_RAFT_CELLS_SHIFTED 0x146
+/// The sand rooms' switches pressed, the sand rising in each.
+#define FLAG_FIRST_SAND_SWITCH_PRESSED FLAG_SCENE_TEMP_02
+#define FLAG_SECOND_SAND_SWITCH_PRESSED FLAG_SCENE_TEMP_03
 
 /// The first room (gAnkohlRuins_StoneFacesPlacements).
 enum AnkohlRuinsFirstRoomActorId {
@@ -147,6 +157,7 @@ void AnkohlRuins_RaiseFirstSand(void);
 void AnkohlRuins_RaiseSecondSand(void);
 void AnkohlRuins_RideRaftDown(void);
 
+/// Whether the game flag is set, read through an inline as the ROM's call is.
 static inline s32 AnkohlRuins_FlagCheck(s32 flag) { return GameFlag_Get(flag); }
 
 #include "field/field.h"
@@ -179,6 +190,8 @@ static inline s32 AnkohlRuins_FlagCheck(s32 flag) { return GameFlag_Get(flag); }
 #include "system/task.h"
 #include "system/frame.h"
 
+/// Creates a hidden, still actor of `type` at a point, untargeted, in colour 15
+/// and drawn underfoot.
 struct Actor *AnkohlRuins_CreateActor(s32 x, s32 y, s32 z, s32 type) {
   struct Actor *object = FieldActor_Create(type, x, y, z);
 
@@ -228,10 +241,13 @@ const struct ActorPlacement *Scene_GetExitRegions(void) {
 
 const u32 *Scene_GetExits(void) { return gSceneExits; }
 
+/// Actor_JumpDownLedge through an inline, as the ROM's call is made.
 static __inline__ void Actor_Start(s32 id, s32 a, s32 b) {
   Actor_JumpDownLedge(id, a, b);
 }
 
+/// The leader jumps down the ledge and falls to the room below, arriving
+/// falling.
 void AnkohlRuins_JumpDownLedge(void) {
   FieldActor_SetSpritePriority(gMainRoutineWork.leaderActorId, 2);
   Actor_Start(gMainRoutineWork.leaderActorId, 6, 0x1000);
@@ -249,6 +265,8 @@ void AnkohlRuins_JumpDownLedge(void) {
 
 #if TLA_PATCH_1
 
+/// From patch 1: the leader drops in from above, lands in a ring of dust and
+/// shakes the ground.
 void AnkohlRuins_LandFromFall(void) {
   struct Actor *leader = Actor_Get(gMainRoutineWork.leaderActorId);
   struct EffectOptions options;
@@ -285,7 +303,9 @@ void AnkohlRuins_LandFromFall(void) {
     velocity[0] += ((Random16() * 3) << 14 >> 16) - (toFIXED(3) / 8);
     velocity[2] += ((Random16() * 3) << 13 >> 16) - (toFIXED(3) / 16);
     FieldEffect_Spawn(leader->x.fixed, leader->y.fixed, leader->z.fixed,
-                      velocity[0], velocity[1], velocity[2], 0x1090001,
+                      velocity[0], velocity[1], velocity[2],
+                      EFFECT_USE_UPDATE | EFFECT_USE_START_SCALE |
+                          EFFECT_USE_PALETTE | 1,
                       &options);
     i++;
   } while (i <= 16);
@@ -308,6 +328,8 @@ void AnkohlRuins_LandFromFall(void) {
 
 #endif
 
+/// The call gAnkohlRuins_ShrunkenSpriteScript makes: hides the tuft of ivy,
+/// sets its sprite's priority to 2 and stands it four pixels lower.
 s32 AnkohlRuins_ClearScriptedActorSpriteFlags(struct Actor *object) {
   Actor_SetSpriteFlags(object, 0);
   ((struct FieldSprite *)object->sprite)->priority = 2;
@@ -344,10 +366,12 @@ const struct ActorPlacement *Scene_GetActorPlacements(void) {
   return gAnkohlRuins_Placements;
 }
 
+/// Sand takes the leader into the sand layer.
 void AnkohlRuins_SinkIntoSand(void) {
   Actor_Get(gMainRoutineWork.leaderActorId)->layer = 2;
 }
 
+/// Sand ends: the leader is back on the ground layer.
 void AnkohlRuins_RiseFromSand(void) {
   Actor_Get(gMainRoutineWork.leaderActorId)->layer = 0;
 }
@@ -450,6 +474,8 @@ void AnkohlRuins_FinishMovingFace(s32 unused, s32 id) {
   }
 }
 
+/// Move on a stone face to row 31: it falls off the ledge and is gone, its flag
+/// set.
 void AnkohlRuins_DropPillar(s32 unused, s32 objectId) {
   s32 id = objectId;
   struct Actor *object = Actor_Get(id);
@@ -530,8 +556,8 @@ void AnkohlRuins_PourSand(s32 rows, s32 frames, s32 x, s32 y, s32 startZ,
         }
         dy = Random16() & 31;
         FieldEffect_Spawn(INTtoFIXED(x + left * 16) + INTtoFIXED(dx - 8),
-                          (y + dy) << 16, INTtoFIXED(z), 0, 0, 0x100, 0x80001,
-                          &params);
+                          (y + dy) << 16, INTtoFIXED(z), 0, 0, 0x100,
+                          EFFECT_USE_START_SCALE | 1, &params);
       }
       FieldEvent_Wait(frames);
       z += 2;
@@ -582,20 +608,20 @@ void AnkohlRuins_PlacePillarPair(s32 unused, s32 id) {
   MapGrid_CopyCells(16, 27, 3, 2, toColumn, lowRow);
   MapGrid_CopyCells(16, 91, 3, 2, toColumn, highRow);
   rise = -40;
-  AnkohlRuins_PourSand(3, 15, 200, rise, 0x2e8, kind = 3);
+  AnkohlRuins_PourSand(3, 15, 200, rise, 744, kind = 3);
   MapGrid_CopyCells(16, 27, 3, 3, toColumn, lowRow);
   MapGrid_CopyCells(16, 91, 3, 3, toColumn, highRow);
-  AnkohlRuins_PourSand(3, 10, 200, rise, 0x2f8, kind);
+  AnkohlRuins_PourSand(3, 10, 200, rise, 760, kind);
   MapGrid_CopyCells(16, 27, 3, 4, toColumn, lowRow);
   MapGrid_CopyCells(16, 91, 3, 4, toColumn, highRow);
-  AnkohlRuins_PourSand(3, 10, 200, rise, 0x308, kind);
+  AnkohlRuins_PourSand(3, 10, 200, rise, 776, kind);
   MapGrid_CopyCells(16, 27, 3, 5, toColumn, lowRow);
   MapGrid_CopyCells(16, 91, 3, 5, toColumn, highRow);
-  AnkohlRuins_PourSand(3, 10, 200, rise, 0x318, kind);
+  AnkohlRuins_PourSand(3, 10, 200, rise, 792, kind);
   MapGrid_CopyCells(16, 27, 3, 6, toColumn, lowRow);
   MapGrid_CopyCells(16, 91, 3, 6, toColumn, highRow);
   MapGrid_SetShake(SHAKE_KEEP, SHAKE_KEEP, 0.9);
-  AnkohlRuins_PourSand(3, 10, 200, rise, 0x328, kind);
+  AnkohlRuins_PourSand(3, 10, 200, rise, 808, kind);
   MapGrid_CopyCells(16, 27, 3, 13, toColumn, lowRow);
   MapGrid_CopyCells(16, 91, 3, 13, toColumn, highRow);
   Event_End();
@@ -644,12 +670,14 @@ void AnkohlRuins_PlaceFacePiece(s32 unused, s32 id) {
   Event_End();
 }
 
+/// Move on the great face's half to cell (15, 24): it settles, the great face's
+/// eyes glow, and the face can be ridden down the sand.
 void AnkohlRuins_PushRaftPillar(s32 unused, s32 id) {
   struct Actor *object = Actor_GetById(id);
   s32 x = FIELD_CELL(object->x.fixed);
   s32 z = FIELD_CELL(object->z.fixed);
 
-  if (id == 10 && x == 15 && z == 24) {
+  if (id == ACTOR_GREAT_FACE_HALF && x == 15 && z == 24) {
     Actor_SetSpriteFlags(Actor_GetById(ACTOR_GREAT_FACE_HALF), 0);
     object->y.fixed -= toFIXED(2);
     FieldEvent_Wait(1);
@@ -671,6 +699,8 @@ void AnkohlRuins_PushRaftPillar(s32 unused, s32 id) {
 
 extern struct MapCell gMapGridCellBuffer[];
 
+/// Each frame on flowing sand: the leader and the camera drift south half a
+/// pixel, and leave by trigger 66 when a wall stops them.
 void AnkohlRuins_FlowWithSand(void) {
   struct Actor *leader = Actor_Get(gMainRoutineWork.leaderActorId);
   struct FieldWork *work = (struct FieldWork *)Ram_HeapSlots->fieldWork;
@@ -706,6 +736,7 @@ void AnkohlRuins_FlowWithSand(void) {
   companion->z.fixed += toFIXED(1) / 2;
 }
 
+/// The leader, pushed off a ledge, slips forward, is startled and falls.
 void AnkohlRuins_PushedOffLedge(void) {
   struct Actor *object = Actor_Get(gMainRoutineWork.leaderActorId);
 
@@ -733,13 +764,17 @@ void AnkohlRuins_PushedOffLedge(void) {
   Event_End();
 }
 
+/// After a push: the fourth room's face halves go to
+/// AnkohlRuins_PlacePillarPair, everything else to
+/// AnkohlRuins_FinishMovingFace.
 void AnkohlRuins_FinishPushing(s32 a, s32 id) {
-  if ((u32)(id - 9) <= 1)
+  if (id == ACTOR_LEFT_FACE_HALF || id == ACTOR_RIGHT_FACE_HALF)
     AnkohlRuins_PlacePillarPair(a, id);
   else
     AnkohlRuins_FinishMovingFace(a, id);
 }
 
+/// Whirlwind on a tuft of ivy: its room's flag for that tuft is set.
 void AnkohlRuins_WhirlwindOnOvergrowth(s32 a, s32 id) {
   if (gMainRoutineWork.next == SCENE_ANKOHL_RUINS_STONE_FACES)
     Event_SetFlag(FLAG_FIRST_ROOM_IVY_CLEARED(id));
@@ -749,8 +784,8 @@ void AnkohlRuins_WhirlwindOnOvergrowth(s32 a, s32 id) {
     Event_SetFlag(FLAG_FOURTH_ROOM_IVY_CLEARED(id));
 }
 
-/// Draws eight sprites while flag 0x205 is clear and the level is below
-/// 0x200000: each moves by the level as its kind says, is placed relative to
+/// Draws eight sprites while FLAG_SCENE_TEMP_05 is clear and the sand is below
+/// 32 pixels: each moves by the level as its kind says, is placed relative to
 /// the view and is drawn when it is on screen. Then sets a word in map layer 1
 /// to the level plus a base.
 void AnkohlRuins_DrawSand(void) {
@@ -825,6 +860,8 @@ void AnkohlRuins_DrawSand(void) {
   }
 }
 
+/// Sets up the sand rooms' rising sand: its tile in VRAM, the window, the
+/// drawing task, and the falling sand's sprites by the entrance.
 void AnkohlRuins_InitSand(s32 unused) {
   struct AnkohlRuinsSpriteWork *work = &gAnkohlRuins_Sand;
   u32 *tiles = Heap_Alloc(128);
@@ -906,6 +943,8 @@ void AnkohlRuins_InitSand(s32 unused) {
   }
 }
 
+/// Counts the risen sand's time; when it runs out, the room's sand sinks again
+/// by trigger 68 or 69.
 void AnkohlRuins_CountSandTime(void) {
   struct FieldWork *work = (struct FieldWork *)Ram_HeapSlots->fieldWork;
 
@@ -922,6 +961,8 @@ void AnkohlRuins_CountSandTime(void) {
 
 extern struct AnkohlRuinsSandRow gAnkohlRuins_FirstSandRows[];
 
+/// The first sand room's sand rises a step in sixteen moves, lifting the leader
+/// standing on it, and its cells follow the new level.
 void AnkohlRuins_RaiseFirstSand(void) {
   struct Actor *leader = Actor_Get(gMainRoutineWork.leaderActorId);
   struct MapWork *map = (struct MapWork *)Ram_HeapSlots->mapGrid;
@@ -1004,6 +1045,8 @@ void AnkohlRuins_RaiseFirstSand(void) {
 
 extern struct AnkohlRuinsSandRow gAnkohlRuins_SecondSandRows[];
 
+/// The second sand room's sand rises a step in sixteen moves, lifting the
+/// leader standing on it, and its cells follow the new level.
 void AnkohlRuins_RaiseSecondSand(void) {
   struct Actor *leader = Actor_Get(gMainRoutineWork.leaderActorId);
   struct MapWork *map = (struct MapWork *)Ram_HeapSlots->mapGrid;
@@ -1085,8 +1128,10 @@ void AnkohlRuins_RaiseSecondSand(void) {
     MapGrid_CopyCellAttributes(18, 7, 1, 1, 4, 23);
 }
 
+/// The first sand room's switch: the sand rises slowly and sinks after 200
+/// frames.
 void AnkohlRuins_PressFirstSandSwitch(void) {
-  s32 done = AnkohlRuins_FlagCheck(0x202);
+  s32 done = AnkohlRuins_FlagCheck(FLAG_FIRST_SAND_SWITCH_PRESSED);
 
   if (done == 0) {
     FieldEvent_ResolvePendingActions(0);
@@ -1103,10 +1148,12 @@ void AnkohlRuins_PressFirstSandSwitch(void) {
     gAnkohlRuins_SandRoom = 1;
     Event_SetFlag(FLAG_NO_PLACE_TO_SAVE);
     AnkohlRuins_RaiseFirstSand();
-    Event_SetFlag(FLAG_SCENE_TEMP_02);
+    Event_SetFlag(FLAG_FIRST_SAND_SWITCH_PRESSED);
   }
 }
 
+/// Defines a sand door's opening: once, under flag n1, a button sounds and the
+/// door at (n2, n3) slides open, its cell taking (n4, n5)'s attributes.
 #define DEFINE_ANKOHL_RUINS_OPEN_ONCE(name, n1, n2, n3, n4, n5)                \
   void name(void) {                                                            \
     if (AnkohlRuins_FlagCheck(n1) == 0) {                                      \
@@ -1123,11 +1170,14 @@ void AnkohlRuins_PressFirstSandSwitch(void) {
     }                                                                          \
   }
 
-DEFINE_ANKOHL_RUINS_OPEN_ONCE(AnkohlRuins_OpenFirstSandDoor, 0x9e2, 14, 65, 15,
-                              5)
+/// Stepping on the first sand room's door button opens its door.
+DEFINE_ANKOHL_RUINS_OPEN_ONCE(AnkohlRuins_OpenFirstSandDoor,
+                              FLAG_FIRST_SAND_DOOR_OPENED, 14, 65, 15, 5)
 
+/// The second sand room's switch: the sand rises faster and sinks after 100
+/// frames.
 void AnkohlRuins_PressSecondSandSwitch(void) {
-  s32 done = AnkohlRuins_FlagCheck(0x203);
+  s32 done = AnkohlRuins_FlagCheck(FLAG_SECOND_SAND_SWITCH_PRESSED);
 
   if (done == 0) {
     FieldEvent_ResolvePendingActions(0);
@@ -1144,18 +1194,19 @@ void AnkohlRuins_PressSecondSandSwitch(void) {
     gAnkohlRuins_SandRoom = 2;
     Event_SetFlag(FLAG_NO_PLACE_TO_SAVE);
     AnkohlRuins_RaiseSecondSand();
-    Event_SetFlag(FLAG_SCENE_TEMP_03);
+    Event_SetFlag(FLAG_SECOND_SAND_SWITCH_PRESSED);
   }
 }
 
-DEFINE_ANKOHL_RUINS_OPEN_ONCE(AnkohlRuins_OpenSecondSandDoor, 0x9e3, 2, 83, 1,
-                              23)
+/// Stepping on the second sand room's door button opens its door.
+DEFINE_ANKOHL_RUINS_OPEN_ONCE(AnkohlRuins_OpenSecondSandDoor,
+                              FLAG_SECOND_SAND_DOOR_OPENED, 2, 83, 1, 23)
 
-/// Each frame, moves the raft (the great face) down by 0xcccc and carries the
-/// leader and the event work's unk1cc object with it while the leader stands on
-/// it; copies the cells it passes in rows 31 to 37 (flag 0x146), and past row
-/// 41 removes itself, stops the shaking, copies the landing cells and sets flag
-/// 0x201.
+/// Each frame, moves the raft (the great face) four fifths of a pixel down the
+/// sand and carries the leader and the camera's actor with it while the leader
+/// stands on it; shifts the cells under it in rows 31 to 37
+/// (FLAG_RAFT_CELLS_SHIFTED), and past row 41 removes itself, stops the
+/// shaking, opens the landing and sets FLAG_SCENE_TEMP_01.
 void AnkohlRuins_RideRaftDown(void) {
   struct Actor *rider = gFieldWork->camera;
   struct Actor *raft = Actor_GetById(ACTOR_GREAT_FACE);
@@ -1181,13 +1232,13 @@ void AnkohlRuins_RideRaftDown(void) {
     }
   }
   row = FIELD_CELL(raft->z.fixed);
-  if ((u16)(row - 31) <= 4 && !AnkohlRuins_FlagCheck(0x146)) {
+  if ((u16)(row - 31) <= 4 && !AnkohlRuins_FlagCheck(FLAG_RAFT_CELLS_SHIFTED)) {
     MapGrid_CopyCellAttributes(35, 83, 5, 4, 12, 96);
-    Event_SetFlag(0x146);
+    Event_SetFlag(FLAG_RAFT_CELLS_SHIFTED);
   }
-  if (row == 37 && AnkohlRuins_FlagCheck(0x146)) {
+  if (row == 37 && AnkohlRuins_FlagCheck(FLAG_RAFT_CELLS_SHIFTED)) {
     MapGrid_CopyCellAttributes(40, 83, 5, 4, 12, 96);
-    Event_ClearFlag(0x146);
+    Event_ClearFlag(FLAG_RAFT_CELLS_SHIFTED);
   }
   if (row > 41) {
     FieldTask_Remove(AnkohlRuins_RideRaftDown);
@@ -1200,6 +1251,8 @@ void AnkohlRuins_RideRaftDown(void) {
   }
 }
 
+/// Stepping onto the great face, once its half is placed: the ground shakes and
+/// it starts down the sand with the party.
 void AnkohlRuins_BoardRaft(void) {
   s32 z = FIELD_CELL(Actor_Get(ACTOR_GREAT_FACE)->z.fixed);
 
@@ -1227,6 +1280,7 @@ void AnkohlRuins_BoardRaft(void) {
   }
 }
 
+/// As AnkohlRuins_BoardRaft, without the camera's pan.
 void AnkohlRuins_BoardRaftAgain(void) {
   s32 z = FIELD_CELL(Actor_Get(ACTOR_GREAT_FACE)->z.fixed);
 
@@ -1254,6 +1308,8 @@ extern struct Trigger gAnkohlRuins_CrystalPowderChestTriggers[];
 extern struct Trigger gAnkohlRuins_SandDoorsTriggers[];
 extern struct Trigger gAnkohlRuins_LeftProngTriggers[];
 
+/// Move on the fifth room's half face to cell (26, 35): it drops into the gap
+/// and the scene reloads.
 void AnkohlRuins_PushStatueIntoGap(void) {
   struct Actor *object = Actor_Get(ACTOR_FACE_HALF_FOR_THE_GAP);
 
@@ -1270,14 +1326,16 @@ void AnkohlRuins_PushStatueIntoGap(void) {
 #endif
 }
 
+/// Reveal shows the fifth room's gap.
 void AnkohlRuins_RevealGap(void) {
-#if TLA_PATCH_1 /* The Japanese edition does not touch flag 0x205. */
+#if TLA_PATCH_1 /* The Japanese edition does not touch FLAG_SCENE_TEMP_05. */
   Event_SetFlag(FLAG_SCENE_TEMP_05);
 #endif
   MapGrid_CopyCells(35, 34, 3, 5, 25, 34);
   MapGrid_CopyCells(35, 98, 3, 3, 25, 98);
 }
 
+/// Reveal ends: the gap is hidden again.
 void AnkohlRuins_HideGap(void) {
 #if TLA_PATCH_1
   Event_ClearFlag(FLAG_SCENE_TEMP_05);
@@ -1286,8 +1344,10 @@ void AnkohlRuins_HideGap(void) {
   MapGrid_CopyCells(40, 98, 3, 3, 25, 98);
 }
 
+/// Reveal begins: FLAG_SCENE_TEMP_05 hides the sand's sprites.
 void AnkohlRuins_StartReveal(void) { GameFlag_Set(FLAG_SCENE_TEMP_05); }
 
+/// Reveal ends: the sand's sprites show again.
 void AnkohlRuins_EndReveal(void) { GameFlag_Clear(FLAG_SCENE_TEMP_05); }
 
 const struct Trigger *Scene_GetTriggers(void) {
@@ -1308,6 +1368,7 @@ const struct Trigger *Scene_GetTriggers(void) {
   return gAnkohlRuins_Triggers;
 }
 
+/// A dust puff every eighth frame near the actor, as the raft scrapes.
 void AnkohlRuins_RaiseDust(struct Actor *object) {
   struct EffectOptions params;
   u32 phase = gFrameCount & 7;
@@ -1324,7 +1385,7 @@ void AnkohlRuins_RaiseDust(struct Actor *object) {
     params.type = 673;
     FieldEffect_Spawn(object->x.fixed + INTtoFIXED(dx - 8),
                       object->y.fixed + INTtoFIXED(dy - 8), object->z.fixed, 0,
-                      toFIXED(1) / 2, phase, 0x100000, &params);
+                      toFIXED(1) / 2, phase, EFFECT_USE_TYPE, &params);
   }
 }
 
@@ -1553,13 +1614,13 @@ s32 Scene_Initialize(s32 a0) {
 
     if (work->entrance <= 4)
       AnkohlRuins_InitSand(a0);
-    if (GameFlag_Get(0x9e2)) {
+    if (GameFlag_Get(FLAG_FIRST_SAND_DOOR_OPENED)) {
       s32 x = 14;
 
       MapGrid_CopyCells(26, 67, 1, 3, x, 65);
       MapGrid_CopyCellAttributes(15, 5, 1, 1, x, 5);
     }
-    if (GameFlag_Get(0x9e3)) {
+    if (GameFlag_Get(FLAG_SECOND_SAND_DOOR_OPENED)) {
       s32 x = 2;
 
       MapGrid_CopyCells(26, 67, 1, 3, x, 83);
@@ -1818,13 +1879,13 @@ s32 Scene_Initialize(s32 a0) {
 
     if (work->entrance <= 4)
       AnkohlRuins_InitSand(a0);
-    if (GameFlag_Get(0x9e2)) {
+    if (GameFlag_Get(FLAG_FIRST_SAND_DOOR_OPENED)) {
       s32 x = 14;
 
       MapGrid_CopyCells(26, 67, 1, 3, x, 65);
       MapGrid_CopyCellAttributes(15, 5, 1, 1, x, 5);
     }
-    if (GameFlag_Get(0x9e3)) {
+    if (GameFlag_Get(FLAG_SECOND_SAND_DOOR_OPENED)) {
       s32 x = 2;
 
       MapGrid_CopyCells(26, 67, 1, 3, x, 83);
@@ -1927,12 +1988,16 @@ u32 gFieldEffect_LongScript[] = {
     SC_END,
 };
 
+/// The first sand room's cell blocks, each with the sand level that covers it,
+/// ended by level 99.
 struct AnkohlRuinsSandRow gAnkohlRuins_FirstSandRows[] = {
     {0, 15, 4, 1, 8},  {0, 3, 3, 4, 5},   {0, 6, 2, 7, 6},
     {0, 1, 1, 10, 5},  {0, 1, 1, 12, 5},  {2, 1, 1, 11, 5},
     {2, 15, 1, 1, 12}, {4, 15, 1, 1, 13}, {99},
 };
 
+/// The second sand room's cell blocks, each with the sand level that covers it,
+/// ended by level 99.
 struct AnkohlRuinsSandRow gAnkohlRuins_SecondSandRows[] = {
     {0, 15, 2, 1, 28}, {0, 12, 2, 4, 26}, {0, 8, 2, 4, 24},
     {0, 2, 1, 5, 23},  {0, 2, 1, 10, 23}, {0, 1, 1, 15, 25},
@@ -1951,11 +2016,13 @@ struct SceneEntrance gSceneEntrances[] = {
     {SCENE_TABLE_END},
 };
 
+/// The exit regions of the fifth room.
 u32 gAnkohlRuins_StoneFacesRegions[] = {
     0xee0333, 0x33b0354, 0x35c00f6, 0xcffff, 0xffff, 0,
     0, 0,
 };
 
+/// The exit regions of the Left Prong's room.
 u32 gAnkohlRuins_ThanatosMaceChestRegions[] = {
     0xffe600b4, 0xbc00a4, 0xacffee, 0x1ffff, 0xffff, 0,
     0, 0,
@@ -2071,29 +2138,34 @@ u32 gSceneExits[] = {
     SCENE_EXITS_END,
 };
 
+/// The tufts of ivy's script: sets work value 11 to 1.5 and hides each one
+/// through AnkohlRuins_ClearScriptedActorSpriteFlags.
 s32 gAnkohlRuins_ShrunkenSpriteScript[] = {
-    22,
-    11,
-    0x18000,
-    46,
-    (s32)AnkohlRuins_ClearScriptedActorSpriteFlags,
-    17,
+    // XXX: script work value 11 has no name in ActorScriptValue; a probe of
+    // what the set changes on the ivy would name it.
+    SC_SET(11, FIXED_ONE * 3 / 2),
+    SC_CALL(AnkohlRuins_ClearScriptedActorSpriteFlags),
+    SC_END,
 };
 
+/// The Thanatos Mace chest's script: it stands still.
 u32 gAnkohlRuins_ThanatosMaceChestScript[] = {
     SC_SET(SW_MOTION, 0),
     SC_END,
 };
 
+/// The great face's script: it does not collide.
 u32 gAnkohlRuins_GreatFaceScript[] = {
     SC_SET(SW_COLLISION, 0),
     SC_END,
 };
 
+/// The scene's other rooms' actors: none.
 struct ActorPlacement gAnkohlRuins_Placements[] = {
     {SCENE_TABLE_END},
 };
 
+/// The first room's actors, in AnkohlRuinsFirstRoomActorId's order.
 struct ActorPlacement gAnkohlRuins_StoneFacesPlacements[] = {
     ACTOR_PLACEMENT(SPRITE_STONE_PILLAR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 56, 0, 88, FACING_SOUTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(489, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 8, 0, 8, FACING_SOUTH, TALK_FACING_KEEP, 0),
@@ -2121,6 +2193,7 @@ struct ActorPlacement gAnkohlRuins_StoneFacesPlacements[] = {
     {SCENE_TABLE_END},
 };
 
+/// The Thanatos Mace chest's room's actors, in its enum's order.
 struct ActorPlacement gAnkohlRuins_ThanatosMaceChestPlacements[] = {
     ACTOR_PLACEMENT(391, CONDITION_ALWAYS, (s32)gAnkohlRuins_ThanatosMaceChestScript, 120, 0, 88, FACING_SOUTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(SPRITE_IVY, CONDITION_ALWAYS, (s32)gAnkohlRuins_ShrunkenSpriteScript, 472, 0, 776, FACING_SOUTH, TALK_FACING_KEEP, 0),
@@ -2129,6 +2202,7 @@ struct ActorPlacement gAnkohlRuins_ThanatosMaceChestPlacements[] = {
     {SCENE_TABLE_END},
 };
 
+/// The third room's actors, in AnkohlRuinsThirdRoomActorId's order.
 struct ActorPlacement gAnkohlRuins_GreatFacePlacements[] = {
     ACTOR_PLACEMENT(SPRITE_STONE_PILLAR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 536, 0, 104, FACING_SOUTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(SPRITE_STONE_FACE, CONDITION_ALWAYS, (s32)gAnkohlRuins_GreatFaceScript, 232, 0, 392, FACING_SOUTH, TALK_FACING_KEEP, 0),
@@ -2136,6 +2210,7 @@ struct ActorPlacement gAnkohlRuins_GreatFacePlacements[] = {
     {SCENE_TABLE_END},
 };
 
+/// The fourth room's actors, in AnkohlRuinsFourthRoomActorId's order.
 struct ActorPlacement gAnkohlRuins_FaceHalvesPlacements[] = {
     ACTOR_PLACEMENT(SPRITE_STONE_PILLAR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 56, 0, 776, FACING_SOUTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(391, CONDITION_ALWAYS, (s32)gAnkohlRuins_ThanatosMaceChestScript, 104, 0, 760, FACING_SOUTH, TALK_FACING_KEEP, 0),
@@ -2152,36 +2227,47 @@ struct ActorPlacement gAnkohlRuins_FaceHalvesPlacements[] = {
     {SCENE_TABLE_END},
 };
 
+/// The fifth room's actors, in AnkohlRuinsFifthRoomActorId's order.
 struct ActorPlacement gAnkohlRuins_CrystalPowderChestPlacements[] = {
     ACTOR_PLACEMENT(SPRITE_STONE_PILLAR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 296, 0, 312, FACING_SOUTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(393, CONDITION_ALWAYS, (s32)gAnkohlRuins_ThanatosMaceChestScript, 440, 0, 584, FACING_SOUTH, TALK_FACING_KEEP, 0),
     {SCENE_TABLE_END},
 };
 
+/// The sand rooms' actors: none.
 struct ActorPlacement gAnkohlRuins_SandDoorsPlacements[] = {
     {SCENE_TABLE_END},
 };
 
+/// The Left Prong's room's actors: none.
 struct ActorPlacement gAnkohlRuins_LeftProngPlacements[] = {
     {SCENE_TABLE_END},
 };
 
+/// Frames between the sand's moves as it rises.
 s16 gAnkohlRuins_SandStepDelay = 10;
 
+/// Frames the risen sand has stood.
 s16 gAnkohlRuins_SandTimer = 0;
 
+/// Frames the risen sand stands before it sinks.
 s16 gAnkohlRuins_SandTime = 0;
 
+/// How far the sand rises each move, in 16.16 pixels.
 s32 gAnkohlRuins_SandStep = toFIXED(1) / 2;
 
+/// Which sand room's switch was pressed: 1 or 2.
 s32 gAnkohlRuins_SandRoom = 0;
 
+/// The scene's other rooms' triggers: two exits.
 struct Trigger gAnkohlRuins_Triggers[] = {
     {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
     {TRIGGER_EXIT, 2, CONDITION_ALWAYS, 2},
     {TRIGGER_TABLE_END},
 };
 
+/// The first room's exits and stairs, Sand, Move on its stone faces and pillar,
+/// and Whirlwind on its ivy.
 struct Trigger gAnkohlRuins_StoneFacesTriggers[] = {
     {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
     {TRIGGER_EXIT, 2, CONDITION_ALWAYS, 2},
@@ -2244,6 +2330,8 @@ struct Trigger gAnkohlRuins_StoneFacesTriggers[] = {
     {TRIGGER_TABLE_END},
 };
 
+/// The Thanatos Mace chest's room's exits and stairs, Sand, Move on the face
+/// half and Whirlwind on its ivy.
 struct Trigger gAnkohlRuins_ThanatosMaceChestTriggers[] = {
     {TRIGGER_EXIT | EXIT_STYLE_STAIRS_DOWN, 1, CONDITION_ALWAYS, 1},
     {TRIGGER_EXIT | EXIT_STYLE_STAIRS_DOWN, 2, CONDITION_ALWAYS, 2},
@@ -2271,6 +2359,8 @@ struct Trigger gAnkohlRuins_ThanatosMaceChestTriggers[] = {
     {TRIGGER_TABLE_END},
 };
 
+/// The third room's exits and stairs, Sand, Move on its pillar and the great
+/// face's half, and the steps that board the raft.
 struct Trigger gAnkohlRuins_GreatFaceTriggers[] = {
     {TRIGGER_EXIT | EXIT_STYLE_STAIRS_UP, 1, CONDITION_ALWAYS, 1},
     {TRIGGER_EXIT | EXIT_STYLE_STAIRS_UP, 2, CONDITION_ALWAYS, 2},
@@ -2295,6 +2385,8 @@ struct Trigger gAnkohlRuins_GreatFaceTriggers[] = {
     {TRIGGER_TABLE_END},
 };
 
+/// The fourth room's exits and stairs, Sand, Move on the face halves and its
+/// pillars, and Whirlwind on its ivy.
 struct Trigger gAnkohlRuins_FaceHalvesTriggers[] = {
     {TRIGGER_EXIT | EXIT_STYLE_STAIRS_DOWN, 1, CONDITION_ALWAYS, 1},
     {TRIGGER_EXIT | EXIT_STYLE_STAIRS_UP, 2, CONDITION_ALWAYS, 2},
@@ -2333,6 +2425,8 @@ struct Trigger gAnkohlRuins_FaceHalvesTriggers[] = {
     {TRIGGER_TABLE_END},
 };
 
+/// The fifth room's exits and stairs, its ledges, Sand, Move on its pillar and
+/// the half face, and Reveal on the gap.
 struct Trigger gAnkohlRuins_CrystalPowderChestTriggers[] = {
     {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
     {TRIGGER_EXIT, 2, CONDITION_ALWAYS, 2},
@@ -2359,6 +2453,8 @@ struct Trigger gAnkohlRuins_CrystalPowderChestTriggers[] = {
     {TRIGGER_TABLE_END},
 };
 
+/// The sand rooms' exits and stairs, Sand, Reveal, the switches, the doors and
+/// the rising sand.
 struct Trigger gAnkohlRuins_SandDoorsTriggers[] = {
     {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
     {TRIGGER_EXIT | EXIT_STYLE_STAIRS_UP, 2, CONDITION_ALWAYS, 2},
@@ -2379,6 +2475,7 @@ struct Trigger gAnkohlRuins_SandDoorsTriggers[] = {
     {TRIGGER_TABLE_END},
 };
 
+/// The Left Prong's room's triggers: none.
 struct Trigger gAnkohlRuins_LeftProngTriggers[] = {
     {TRIGGER_TABLE_END},
 };

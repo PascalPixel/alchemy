@@ -847,12 +847,7 @@ void BattleEffect_RunVoidBeam(struct BattleEffectParams *args) {
         point[2] = caster->z + Trig_Sin(angle) * 40;
         EffectPosition_ProjectPoint(point, &ring);
         ring.x >>= 1;
-        if (ring.depth <= 159) {
-          ring.depth = 160;
-        }
-        if (ring.depth > 799) {
-          ring.depth = 799;
-        }
+        CLAMP(ring.depth, 160, 799);
         draw[1](canvas, sprites + gBattleEffect_MotePictures[size - 1],
                 ring.x - size / 2, ring.y - size, size, size * 2);
       }

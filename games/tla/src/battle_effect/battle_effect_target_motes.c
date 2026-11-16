@@ -9,7 +9,7 @@
 #include "resource_ids.h"
 
 /// Where Paralyze unpacks the tornado's glints in the sheet.
-#define TORNADO_GLINT_SHEET 0x2580
+#define TORNADO_GLINT_SHEET 9600
 
 /// The target motes' styles (BattleEffect_RunTargetMotes), each named for the
 /// effect that plays it.
@@ -180,7 +180,9 @@ void BattleEffect_RunTargetMotes(struct BattleEffectParams *args, u32 mode) {
     // Ripple the canvas: one horizontal offset for each line.
     row = work->bg2xLines;
     for (i = 0; i != DISPLAY_HEIGHT; i++)
-      *row++ = (0x40000 - (Trig_Sin((frame << 12) + i * 0x800) << 2)) >> 10;
+      *row++ = (toFIXED(4) -
+                (Trig_Sin((frame << 12) + i * (TRIG_TURN / 32)) << 2)) >>
+               10;
 
     for (member = 0; member != args->targetCount; member++) {
       struct MotionObject *object =
@@ -411,18 +413,20 @@ void BattleEffect_RunSleep(struct BattleEffectParams *args) {
     // the first four drawn as they are, the last four mirrored.
     one = sheep;
     for (i = 0; i != SHEEP_COUNT; i++, one++) {
-      if (frame > i * 4 && one->y <= 0x7fffff) {
+      if (frame > i * 4 && one->y <= toFIXED(128) - 1) {
         s32 cel;
 
         cel = (one->variant / 16) & 7;
         if (cel < 4)
-          drawA(canvas, work->sheet + (cel << 10) + 0x800,
-                scroll + (FIXEDtoINT(one->x)) - 16, (FIXEDtoINT(one->y)) - 16,
-                SHEEP_WIDTH, SHEEP_HEIGHT);
+          drawA(canvas, work->sheet + (cel << 10) + 2048,
+                scroll + FIXEDtoINT(one->x) - SHEEP_WIDTH / 2,
+                FIXEDtoINT(one->y) - SHEEP_HEIGHT / 2, SHEEP_WIDTH,
+                SHEEP_HEIGHT);
         else
-          drawB(canvas, work->sheet + (cel << 10) - 0x800,
-                scroll + (FIXEDtoINT(one->x)) - 16, (FIXEDtoINT(one->y)) - 16,
-                SHEEP_WIDTH, SHEEP_HEIGHT);
+          drawB(canvas, work->sheet + (cel << 10) - 2048,
+                scroll + FIXEDtoINT(one->x) - SHEEP_WIDTH / 2,
+                FIXEDtoINT(one->y) - SHEEP_HEIGHT / 2, SHEEP_WIDTH,
+                SHEEP_HEIGHT);
         one->y += one->velocityY;
         one->velocityY += toFIXED(1) / 8;
         one->variant += one->z;
@@ -649,10 +653,7 @@ void BattleEffect_RunDjinnHeal(struct BattleEffectParams *args) {
         EffectPosition_ProjectPoint((s32 *)spark, &screen);
         screen.x >>= 1;
         Matrix_Pop();
-        if (screen.depth < 250)
-          screen.depth = 250;
-        if (screen.depth > 634)
-          screen.depth = 634;
+        CLAMP(screen.depth, 250, 634);
         size = 9 - (screen.depth - 250) / 64;
         callbacks[0](canvas, sheet + gBattleEffect_MotePictures[size - 1],
                      screen.x - size / 2, screen.y - size, size, size * 2);

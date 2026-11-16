@@ -1004,10 +1004,7 @@ void BattleEffect_RunStarSwarm(struct BattleEffectParams *args, s32 mode) {
           EffectPosition_ProjectPoint(&star->x, &screen);
           screen.x >>= 1;
           Matrix_Pop();
-          if (screen.depth < 250)
-            screen.depth = 250;
-          if (screen.depth > 0x27a)
-            screen.depth = 0x27a;
+          CLAMP(screen.depth, 250, 634);
           size = 9 - (screen.depth - 250) / 64;
           draw[0](canvas, sparkCels + gBattleEffect_MotePictures[size - 1],
                   screen.x - size / 2, screen.y - size, size, size * 2);

@@ -107,7 +107,31 @@ struct LinkPeer {
   s32 values[6];
 };
 
-extern struct LinkPeer gLinkPeerSignatures[2];
+extern struct LinkPeer gLinkPeerSignatures[4];
+
+/// The words of gLinkLobby_SlotValues, by slot, as The Broken Seal's Battle
+/// Arena numbers them. They are the signature, then the state a console
+/// publishes.
+enum LobbySlot {
+  LOBBY_SLOT_SIGNATURE = 0,
+  LOBBY_SLOT_ASKED = 1,     ///< has asked for a battle
+  LOBBY_SLOT_IN_CIRCLE = 2, ///< stands in the circle
+  LOBBY_SLOT_UNUSED = 3,
+  LOBBY_SLOT_IDLE = 4,
+  /// Replaces the signature when no partner answers the attendant and during
+  /// a monster series.
+  LOBBY_SLOT_ALONE = 5
+};
+
+/// The lobby's raised triggers (FieldWork.raisedTrigger).
+enum LobbyRaisedTrigger {
+  LOBBY_EVENT_NONE = 0,
+  LOBBY_EVENT_PROMPT = 1,      ///< LinkLobby_PromptToParticipate
+  LOBBY_EVENT_DISCONNECTED = 2 ///< LinkLobby_ReportDisconnection
+};
+
+/// Frames without a link before the lobby gives the partner up.
+#define LOBBY_PEER_WAIT_FRAMES 25
 
 /// Returns 1 when the partner's payload holds slot's word in slot's column, 0
 /// when it does not or there is no link.
@@ -167,32 +191,26 @@ s32 LinkLobby_PollPeerReady(void) {
 
   if (z > toFIXED(224))
     Event_ClearFlag(FLAG_AREA_TEMP_04);
-  if (work->raisedTrigger != 2) {
-    LinkLobby_PeerSlotMatches(0);
+  if (work->raisedTrigger != LOBBY_EVENT_DISCONNECTED) {
+    LinkLobby_PeerSlotMatches(LOBBY_SLOT_SIGNATURE);
     set = Event_GetFlag(FLAG_AREA_TEMP_03);
     if (!set) {
-      if (++gLinkLobby_WaitFrames > 25) {
-        s32 offset = 0;
-
-        i = 3;
-      clear:
-        Iwram_ClearWordsEntry((u8 *)gLinkPeerSignatures + offset, 20);
-        i--;
-        offset += 24;
-        if (i >= 0)
-          goto clear;
+      if (++gLinkLobby_WaitFrames > LOBBY_PEER_WAIT_FRAMES) {
+        for (i = 0; i < 4; i++)
+          Iwram_ClearWordsEntry(&gLinkPeerSignatures[i], 20);
         gLinkLobby_WaitFrames = 0;
-        LinkLobby_WriteSlotValue(4);
+        LinkLobby_WriteSlotValue(LOBBY_SLOT_IDLE);
       }
     } else {
       gLinkLobby_WaitFrames = 0;
     }
     if (gLinkLobby_WaitFrames == 0) {
-      if (LinkLobby_PeerSlotMatches(0) &&
-          (LinkLobby_PeerSlotMatches(1) || LinkLobby_PeerSlotMatches(2))) {
+      if (LinkLobby_PeerSlotMatches(LOBBY_SLOT_SIGNATURE) &&
+          (LinkLobby_PeerSlotMatches(LOBBY_SLOT_ASKED) ||
+           LinkLobby_PeerSlotMatches(LOBBY_SLOT_IN_CIRCLE))) {
         Event_SetFlag(FLAG_SCENE_TEMP_01);
         if (Event_GetFlag(FLAG_SCENE_TEMP_02))
-          work->raisedTrigger = 1;
+          work->raisedTrigger = LOBBY_EVENT_PROMPT;
         result = 1;
       } else {
         Event_ClearFlag(FLAG_SCENE_TEMP_01);
@@ -201,20 +219,21 @@ s32 LinkLobby_PollPeerReady(void) {
     }
     if (Event_GetFlag(FLAG_SCENE_TEMP_01) &&
         Event_GetFlag(FLAG_SCENE_TEMP_02) && !Event_GetFlag(FLAG_SCENE_TEMP_00))
-      work->raisedTrigger = 1;
+      work->raisedTrigger = LOBBY_EVENT_PROMPT;
   }
   if ((Event_GetFlag(FLAG_SCENE_TEMP_01) ||
        Event_GetFlag(FLAG_SCENE_TEMP_02)) &&
-      !Event_GetFlag(FLAG_MONSTER_BATTLE) && !LinkLobby_PeerSlotMatches(0) &&
+      !Event_GetFlag(FLAG_MONSTER_BATTLE) &&
+      !LinkLobby_PeerSlotMatches(LOBBY_SLOT_SIGNATURE) &&
       gLinkLobby_WaitFrames > 24) {
-    work->raisedTrigger = 2;
+    work->raisedTrigger = LOBBY_EVENT_DISCONNECTED;
     Event_SetFlag(FLAG_SCENE_TEMP_05);
     Event_ClearFlag(FLAG_SCENE_TEMP_01);
     Event_ClearFlag(FLAG_SCENE_TEMP_02);
-    LinkLobby_WriteSlotValue(4);
+    LinkLobby_WriteSlotValue(LOBBY_SLOT_IDLE);
   }
   if (Event_GetFlag(FLAG_SCENE_TEMP_05))
-    work->raisedTrigger = 2;
+    work->raisedTrigger = LOBBY_EVENT_DISCONNECTED;
   return result;
 }
 
@@ -249,12 +268,12 @@ s32 LinkLobby_PromptToParticipate(void) {
 s32 LinkLobby_ReportDisconnection(void) {
   struct FieldWork *work = Ram_HeapSlots->fieldWork;
 
-  LinkLobby_WriteSlotValue(4);
+  LinkLobby_WriteSlotValue(LOBBY_SLOT_IDLE);
   Event_ClearFlag(FLAG_SCENE_TEMP_00);
   Event_ClearFlag(FLAG_SCENE_TEMP_03);
   Event_Start();
   Event_ResolvePendingActions(0);
-  work->raisedTrigger = 0;
+  work->raisedTrigger = LOBBY_EVENT_NONE;
   Event_SetMessageId((s32)MsgLobbyLinkWasDisconnected);
   // "The link was disconnected."
   Event_OpenMessage(ACTOR_ATTENDANT, 0);
@@ -662,28 +681,29 @@ s32 LinkLobby_EnterBattle(void) {
     Event_Start();
     Event_ResolvePendingActions(0);
     Event_SetFlag(FLAG_SCENE_TEMP_03);
-    LinkLobby_WriteSlotValue(2);
-    if (!LinkLobby_PeerSlotMatches(2))
+    LinkLobby_WriteSlotValue(LOBBY_SLOT_IN_CIRCLE);
+    if (!LinkLobby_PeerSlotMatches(LOBBY_SLOT_IN_CIRCLE))
       window = Message_OpenWindow(MsgLobbyAwaitingYourOpponent, 5, 4, 1);
-    while (!LinkLobby_PeerSlotMatches(2)) {
+    while (!LinkLobby_PeerSlotMatches(LOBBY_SLOT_IN_CIRCLE)) {
       wait(1);
       stop = 0;
       if (!Event_GetFlag(FLAG_SCENE_TEMP_01))
         stop = 1;
       if (Event_GetFlag(FLAG_SCENE_TEMP_05))
         stop = 1;
-      if (!LinkLobby_PeerSlotMatches(2) && !LinkLobby_PeerSlotMatches(1)) {
+      if (!LinkLobby_PeerSlotMatches(LOBBY_SLOT_IN_CIRCLE) &&
+          !LinkLobby_PeerSlotMatches(LOBBY_SLOT_ASKED)) {
         if (++cnt > 25)
           stop = 1;
       } else {
         cnt = 0;
       }
       if (stop) {
-        work->raisedTrigger = 2;
+        work->raisedTrigger = LOBBY_EVENT_DISCONNECTED;
         Event_SetFlag(FLAG_SCENE_TEMP_05);
         Event_ClearFlag(FLAG_SCENE_TEMP_01);
         Event_ClearFlag(FLAG_SCENE_TEMP_02);
-        LinkLobby_WriteSlotValue(4);
+        LinkLobby_WriteSlotValue(LOBBY_SLOT_IDLE);
         failed = 1;
         Event_ClearFlag(FLAG_SCENE_TEMP_00);
         break;
@@ -724,8 +744,8 @@ s32 LinkLobby_EnterBattle(void) {
         TilesetAnim_Pause(5);
         Actor_WaitForMoveById(ACTOR_FELIX);
         HeapSlot_Release(HEAP_SLOT_ENEMY_UNITS);
-        LinkLobby_WriteSlotValue(0);
-        LinkLobby_WriteSlotValue(4);
+        LinkLobby_WriteSlotValue(LOBBY_SLOT_SIGNATURE);
+        LinkLobby_WriteSlotValue(LOBBY_SLOT_IDLE);
         Task_Add((TaskFunc)LinkLobby_PollPeerReady, TASK_PASS_VBLANK);
         Task_SetFlags(LinkLobby_PollPeerReady, 1);
         Event_ClearFlag(FLAG_SCENE_TEMP_01);
@@ -733,7 +753,7 @@ s32 LinkLobby_EnterBattle(void) {
         Event_ClearFlag(FLAG_AREA_TEMP_03);
         Event_ClearFlag(FLAG_SCENE_TEMP_03);
         Event_ClearFlag(FLAG_SCENE_TEMP_00);
-        work->raisedTrigger = 2;
+        work->raisedTrigger = LOBBY_EVENT_DISCONNECTED;
         Event_End();
         return;
       }
@@ -786,10 +806,10 @@ s32 LinkLobby_ChooseBattleMode(void) {
   Event_Start();
   Event_ResolvePendingActions(0);
   Actor_FaceActor(ACTOR_ATTENDANT, gMainRoutineWork.leaderActorId, 0);
-  if (LinkLobby_PeerSlotMatches(0) == 0)
+  if (LinkLobby_PeerSlotMatches(LOBBY_SLOT_SIGNATURE) == 0)
     wait(1);
-  if (LinkLobby_PeerSlotMatches(0) == 0) {
-    LinkLobby_WriteSlotValue(5);
+  if (LinkLobby_PeerSlotMatches(LOBBY_SLOT_SIGNATURE) == 0) {
+    LinkLobby_WriteSlotValue(LOBBY_SLOT_ALONE);
     LinkLobby_InitializeSerial();
     if (!Event_GetFlag(FLAG_MONSTER_BATTLE)) {
       Event_SetMessageId(msg + 5);
@@ -808,7 +828,7 @@ s32 LinkLobby_ChooseBattleMode(void) {
       }
       Event_ClearFlag(FLAG_MONSTER_BATTLE);
       Event_SetFlag(FLAG_LINK_BATTLE);
-      LinkLobby_WriteSlotValue(0);
+      LinkLobby_WriteSlotValue(LOBBY_SLOT_SIGNATURE);
       line = msg + 6;
       goto message;
     } else {
@@ -817,7 +837,7 @@ s32 LinkLobby_ChooseBattleMode(void) {
     }
   } else {
     if (Event_GetFlag(FLAG_MONSTER_BATTLE)) {
-      LinkLobby_WriteSlotValue(0);
+      LinkLobby_WriteSlotValue(LOBBY_SLOT_SIGNATURE);
       Event_SetMessageId((s32)MsgLobbyYourOpponentHasArrived);
       // "Your opponent has arrived!"
       Event_OpenMessage(ACTOR_ATTENDANT, 0);
@@ -845,14 +865,14 @@ s32 LinkLobby_ChooseBattleMode(void) {
       // "Would you like to apply?"
       Event_OpenMessage(ACTOR_ATTENDANT, 0);
       if (Event_AskYesNoWithActorAnimation(ACTOR_FELIX, 0) == 0) {
-        if (LinkLobby_PeerSlotMatches(0)) {
+        if (LinkLobby_PeerSlotMatches(LOBBY_SLOT_SIGNATURE)) {
           Event_SetFlag(FLAG_LINK_BATTLE);
           Event_SetFlag(FLAG_LINK_BATTLE_ARRANGED);
           if (Event_GetFlag(FLAG_SCENE_TEMP_01))
             Event_SetMessageId(msg + 3);
           else
             Event_SetMessageId(msg + 4);
-          LinkLobby_WriteSlotValue(1);
+          LinkLobby_WriteSlotValue(LOBBY_SLOT_ASKED);
           Event_SetFlag(FLAG_SCENE_TEMP_02);
           goto open_message;
         } else {
@@ -1292,13 +1312,10 @@ void LinkLobby_DrawThreeDigitValue(s32 value) {
 
   if (value > 999)
     value = 999;
-  i = 0;
-next:
-  MapGrid_CopyCellsTo(27, value % 10, 16 - i, 8, 1, 1);
-  value /= 10;
-  i++;
-  if (i <= 2)
-    goto next;
+  for (i = 0; i <= 2; i++) {
+    MapGrid_CopyCellsTo(27, value % 10, 16 - i, 8, 1, 1);
+    value /= 10;
+  }
   MapGrid_CenterOnFollowedPoint();
 }
 
@@ -1310,7 +1327,7 @@ void Serial_Initialize(void);
 void TilesetAnim_Pause(s32 entry);
 void Party_RestoreHpPp(s32 value);
 void Sound_LoadReverbCode(s32 preset);
-void LinkLobby_WriteSlotValue(s32 value);
+void LinkLobby_WriteSlotValue(s32 slot);
 void Event_StartScreenTransition(void);
 void Event_WaitTransitionFrames(void);
 /// Sets the lobby up as The Broken Seal's BattleArena_Initialize sets the arena
@@ -1332,7 +1349,7 @@ s32 LinkLobby_Initialize(void) {
   LinkLobby_DrawThreeDigitValue(
       gMainRoutineWork.linkTallies[LINK_TALLY_LINKED_BEST_STREAK]);
   MapGrid_CopyCellAttributes(11, 11, 1, 1, 13, 10);
-  LinkLobby_WriteSlotValue(4);
+  LinkLobby_WriteSlotValue(LOBBY_SLOT_IDLE);
   wait(1);
   TilesetAnim_Pause(5);
   {
@@ -1358,7 +1375,7 @@ s32 LinkLobby_Initialize(void) {
     Event_ResolvePendingActions(0);
     Event_StartScreenTransition();
     Event_WaitTransitionFrames();
-    LinkLobby_WriteSlotValue(5);
+    LinkLobby_WriteSlotValue(LOBBY_SLOT_ALONE);
     gMainRoutineWork.linkTallies[LINK_TALLY_MONSTER_WINS]++;
     gMainRoutineWork.linkTallies[LINK_TALLY_MONSTER_STREAK]++;
     wins = (s8)GameFlag_GetByte(FLAG_MONSTER_BATTLE_WINS);
@@ -1399,7 +1416,7 @@ s32 LinkLobby_Initialize(void) {
         // "You won ... battle. Please speak to me when you wish to battle..."
         Event_OpenMessage(ACTOR_ATTENDANT, 0);
       }
-      LinkLobby_WriteSlotValue(0);
+      LinkLobby_WriteSlotValue(LOBBY_SLOT_SIGNATURE);
     }
     Event_End();
   } else if (gMainRoutineWork.entrance == 9) {
@@ -1408,7 +1425,7 @@ s32 LinkLobby_Initialize(void) {
     Event_ResolvePendingActions(0);
     Event_StartScreenTransition();
     Event_WaitTransitionFrames();
-    LinkLobby_WriteSlotValue(5);
+    LinkLobby_WriteSlotValue(LOBBY_SLOT_ALONE);
     Actor_FaceActor(ACTOR_ATTENDANT, gMainRoutineWork.leaderActorId, 0);
     // score holds the row's address, then the score read through it.
     score = (u32)&gMainRoutineWork.linkTallies[LINK_TALLY_MONSTER_STREAK];
@@ -1428,7 +1445,7 @@ s32 LinkLobby_Initialize(void) {
     gMainRoutineWork.linkTallies[LINK_TALLY_MONSTER_STREAK] = 0;
     Event_ClearFlag(FLAG_MONSTER_BATTLE);
     FieldGameFlag_SetByte(FLAG_MONSTER_BATTLE_WINS, -1);
-    LinkLobby_WriteSlotValue(0);
+    LinkLobby_WriteSlotValue(LOBBY_SLOT_SIGNATURE);
     Event_End();
   } else if (gMainRoutineWork.entrance == 10) {
     s32 v;
@@ -1437,17 +1454,17 @@ s32 LinkLobby_Initialize(void) {
     Event_ResolvePendingActions(0);
     Event_StartScreenTransition();
     Event_WaitTransitionFrames();
-    LinkLobby_WriteSlotValue(0);
-    LinkLobby_WriteSlotValue(4);
+    LinkLobby_WriteSlotValue(LOBBY_SLOT_SIGNATURE);
+    LinkLobby_WriteSlotValue(LOBBY_SLOT_IDLE);
     if (Event_GetFlag(FLAG_AREA_TEMP_E8)) {
       work = Ram_HeapSlots->fieldWork;
       Event_ClearFlag(FLAG_AREA_TEMP_E8);
-      work->raisedTrigger = 2;
+      work->raisedTrigger = LOBBY_EVENT_DISCONNECTED;
       Event_ClearFlag(FLAG_AREA_TEMP_04);
       wait(20);
       LinkLobby_InitializeSerial();
-      LinkLobby_WriteSlotValue(0);
-      LinkLobby_WriteSlotValue(4);
+      LinkLobby_WriteSlotValue(LOBBY_SLOT_SIGNATURE);
+      LinkLobby_WriteSlotValue(LOBBY_SLOT_IDLE);
     } else {
       gMainRoutineWork.linkTallies[LINK_TALLY_LINKED_WINS]++;
       v = gMainRoutineWork.linkTallies[LINK_TALLY_LINKED_STREAK] + 1;
@@ -1468,8 +1485,8 @@ s32 LinkLobby_Initialize(void) {
     Event_ResolvePendingActions(0);
     Event_StartScreenTransition();
     Event_WaitTransitionFrames();
-    LinkLobby_WriteSlotValue(0);
-    LinkLobby_WriteSlotValue(4);
+    LinkLobby_WriteSlotValue(LOBBY_SLOT_SIGNATURE);
+    LinkLobby_WriteSlotValue(LOBBY_SLOT_IDLE);
     if ((v = Event_GetFlag(FLAG_MONSTER_BATTLE)) == 0) {
       gMainRoutineWork.linkTallies[LINK_TALLY_LINKED_LOSSES]++;
       gMainRoutineWork.linkTallies[LINK_TALLY_LINKED_STREAK] = v;
@@ -1495,8 +1512,8 @@ s32 LinkLobby_Initialize(void) {
     }
     gMainRoutineWork.idleSleepEnabled = 0;
     gIdleSleepEnabled = 0;
-    LinkLobby_WriteSlotValue(0);
-    LinkLobby_WriteSlotValue(4);
+    LinkLobby_WriteSlotValue(LOBBY_SLOT_SIGNATURE);
+    LinkLobby_WriteSlotValue(LOBBY_SLOT_IDLE);
   }
   func = LinkLobby_PollPeerReady;
   Task_Add(func, TASK_PASS_VBLANK);
@@ -1675,7 +1692,9 @@ struct Trigger gSceneEvents[] = {
      MSGNO(MsgLobbyIDontHaveGuts)},
     {TRIGGER_STEP, 10, CONDITION_ALWAYS, EVENT(LinkLobby_EnterBattle)},
     {TRIGGER_STEP, 1, CONDITION_ALWAYS, EVENT(LinkLobby_LeaveArena)},
-    {TRIGGER_RAISED, 1, CONDITION_ALWAYS, EVENT(LinkLobby_PromptToParticipate)},
-    {TRIGGER_RAISED, 2, CONDITION_ALWAYS, EVENT(LinkLobby_ReportDisconnection)},
+    {TRIGGER_RAISED, LOBBY_EVENT_PROMPT, CONDITION_ALWAYS,
+     EVENT(LinkLobby_PromptToParticipate)},
+    {TRIGGER_RAISED, LOBBY_EVENT_DISCONNECTED, CONDITION_ALWAYS,
+     EVENT(LinkLobby_ReportDisconnection)},
     {TRIGGER_TABLE_END},
 };

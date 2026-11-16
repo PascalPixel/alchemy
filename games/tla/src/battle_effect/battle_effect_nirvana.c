@@ -401,11 +401,10 @@ void BattleEffect_RunSoulShatter(struct BattleEffectParams *args) {
         }
         for (i = 0, x = centre - 14; i != 2; i++, x += 14) {
           if (i == 0)
-            EFFECT_LOAD_BLITTER(104, COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y, mode);
+            EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, mode);
           else
-            EFFECT_LOAD_BLITTER(
-                104, COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y | COMPOSITE_FLIP_X,
-                mode);
+            EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE,
+                                EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X, mode);
           draw[0] = (DrawRectangle)Ram_HeapSlots->ramCode;
           draw[0](canvas, work->sheet, x, 104 - height, 14, height);
           HeapSlot_Release(HEAP_SLOT_RAM_CODE);
@@ -522,6 +521,9 @@ struct ProjectedPoint {
 
 /// Where BlueCloudPuffSheet is decoded in the effect's pictures.
 #define SERAC_CLOUD_PUFFS 0x400
+/// Where FlameBandTexture, the mist inside the spire, is decoded in the map
+/// cell buffer.
+#define SERAC_MIST 0x4000
 
 /// The Mercury Djinni drops onto the target, dust bursting where it lands;
 /// a spire of ice (a cone of 8 rings of 8 vertices, its mesh built on the
@@ -558,7 +560,7 @@ void BattleEffect_RunSerac(struct BattleEffectParams *args) {
   REG_BG2PA = Q_8_8(1);
   BattleEffect_FetchRectangleBlitters(0, (void **)blitters);
   EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
-  mistSheet = Ram_MapCellBuffer + 0x4000;
+  mistSheet = Ram_MapCellBuffer + SERAC_MIST;
   Resource_LoadAndDecompress(RESOURCE_FLAME_BAND_TEXTURE, mistSheet, 0, 0);
   Resource_LoadAndDecompress(RESOURCE_DUST_BLOB_SHEET, work->sheet, 1, 1);
   Resource_LoadAndDecompress(RESOURCE_BLUE_CLOUD_PUFF_SHEET,
@@ -790,7 +792,7 @@ void BattleEffect_RunSerac(struct BattleEffectParams *args) {
         caster->speedLimit = speed;
         caster->snapToTarget = 1;
         caster->velocityY = toFIXED(6);
-        caster->gravity = 0x13333;
+        caster->gravity = toFIXED(6) / 5;
         caster->bounce = 0;
         caster->steeringFlags = 1;
         Actor_StartIdleFar(caster);
@@ -810,7 +812,7 @@ void BattleEffect_RunSerac(struct BattleEffectParams *args) {
             SET_POSITION(p,
                          target->x + ((Trig_Sin(angle) * (ring = i / 8)) << 2),
                          ((Random16() & TRIG_ANGLE_MASK) << 2) -
-                             ((ring * 5) << 17) + 0x400000,
+                             ((ring * 5) << 17) + toFIXED(64),
                          target->z + ((Trig_Cos(angle) * ring) << 2));
             p->velocityX = ((Random16() & TRIG_ANGLE_MASK) << 1) + 0x10000;
             p->velocityY = ((Random16() & TRIG_ANGLE_MASK) - 12768) * 3;
@@ -854,7 +856,7 @@ void BattleEffect_RunSerac(struct BattleEffectParams *args) {
           // Set before the branch below and stored after it; the second value
           // stays apart from the 7 beside it.
           s32 spireShade;
-          const void *mesh = Ram_MapCellBuffer + 0x2000;
+          const void *mesh = MESH_BUFFER;
 
           // The spire, then the mist inside it.
           texture.logWidth = 5;

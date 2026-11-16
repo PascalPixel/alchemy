@@ -233,9 +233,10 @@ s32 Scene_TalkToActor(s32 id) {
     }
     if (found) {
       found = type;
-      if ((u16)(type - CONTAINER_CHEST) <= 1)
+      if ((u16)(type - CONTAINER_CHEST) <= CONTAINER_MIMIC - CONTAINER_CHEST)
         found = 1;
-      if ((u16)(type - CONTAINER_PSYNERGY_STONE) <= 2)
+      if ((u16)(type - CONTAINER_PSYNERGY_STONE) <=
+          CONTAINER_STONE_TABLET - CONTAINER_PSYNERGY_STONE)
         found = 5;
       if (type == CONTAINER_STONE_TABLET)
         found = 26;

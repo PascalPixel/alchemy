@@ -292,9 +292,6 @@ s32 YampiDesertCave_FindLogSlide(struct LogSlide *slide) {
   }
 }
 
-/// The whole-pixel half of a 16.16 coordinate.
-#define PIXEL_PART(v) (((s16 *)&(v))[1])
-
 struct Actor *YampiDesertCave_FindPushedLog(s32 *direction, s32 *slot,
                                             s32 *kind) {
   struct FieldWork *work = Ram_HeapSlots->fieldWork;
@@ -312,21 +309,21 @@ struct Actor *YampiDesertCave_FindPushedLog(s32 *direction, s32 *slot,
     for (k = 0; k < LOG_KIND_COUNT; k++) {
       if (((struct Sprite *)actor->sprite)->entries[0]->animationId ==
           gYampiDesertCave_LogSprites[k]) {
-        x = (PIXEL_PART(leader->x.fixed) +
+        x = (leader->x.part[0].integer +
              (gPushLeaderSteps[*direction] >> 16)) >>
             4;
-        z = (PIXEL_PART(leader->z.fixed) + (s16)gPushLeaderSteps[*direction]) >>
+        z = (leader->z.part[0].integer + (s16)gPushLeaderSteps[*direction]) >>
             4;
-        left = (PIXEL_PART(actor->x.fixed) +
+        left = (actor->x.part[0].integer +
                 gYampiDesertCave_LogFootprints[k * 4]) >>
                4;
-        top = (PIXEL_PART(actor->z.fixed) +
+        top = (actor->z.part[0].integer +
                gYampiDesertCave_LogFootprints[k * 4 + 1]) >>
               4;
-        right = (PIXEL_PART(actor->x.fixed) +
+        right = (actor->x.part[0].integer +
                  gYampiDesertCave_LogFootprints[k * 4 + 2]) >>
                 4;
-        bottom = (PIXEL_PART(actor->z.fixed) +
+        bottom = (actor->z.part[0].integer +
                   gYampiDesertCave_LogFootprints[k * 4 + 3]) >>
                  4;
         if (left <= x && x < right && top <= z && z < bottom) {

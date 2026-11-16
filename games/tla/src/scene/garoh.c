@@ -216,8 +216,8 @@ void Garoh_WaveHypnosSwordChestLayer(void) {
     /* FAKEMATCH(barrier): the form kept; as no asm, 48 of 124 instructions
      * differ in tla-en. */
     asm("" : "+r"(i));
-    z = ((s16 *)&layer->y)[1];
-    x = ((s16 *)&layer->x)[1];
+    z = FIXEDtoINT(layer->y);
+    x = FIXEDtoINT(layer->x);
     // Each step held in a local for its whole life: as z * 13056 and
     // z * 4896 the starting phases are built differently.
     stepA = 13056;
@@ -230,8 +230,8 @@ void Garoh_WaveHypnosSwordChestLayer(void) {
       register s32 s1 asm("r8") = sine(a);
       s32 s2 = sine(b);
       *line++ = ((s1 * 3 + s2 * 7) >> 19) + x;
-      a += 13056;
-      b += 4896;
+      a += stepA;
+      b += stepB;
     }
     line = gGaroh_WaveLines;
     REG_BG2HOFS = line[0];

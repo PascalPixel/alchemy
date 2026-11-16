@@ -63,7 +63,7 @@ The packing is Huffman coding: common letters cost the fewest bits.
 
 ## The text buffer
 
-Decoded text waits in a ring of 512 places, each a letter or a control
+Decoded text is kept in a ring of 512 places, each a letter or a control
 code, until it has been typed.
 
 ## Typing
@@ -72,8 +72,9 @@ code, until it has been typed.
 
 Each frame the task reads the next few places for each open message. A
 letter is drawn at the pen, which then moves on by that letter's width. A
-control code is obeyed: new line, pause, wait for a button, turn the page,
-change colour, stop.
+control code is obeyed: new line, pause, hold for a button, turn the page,
+change colour, stop. A pause or a hold is a state the task finds again on
+its next visit. The task returns every frame and never calls `wait()`.
 
 The message speed in the settings decides how many letters come in a
 frame. Lines are also set level at the right edge, by measuring a line

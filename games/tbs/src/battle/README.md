@@ -33,7 +33,7 @@ asleep or stunned is not asked, but an action is still written for them
 with no command in it, and their place in the order is when the player
 reads why they did nothing.
 
-Enemies choose by dice from a list of eight moves in their row of the
+Enemies choose at random from a list of eight moves in their row of the
 enemy table, weighted by a habit, such as favouring the start of the list
 (`battle_enemy_ai.c`).
 

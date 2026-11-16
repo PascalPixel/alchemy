@@ -101,9 +101,10 @@ place, and the guide at the top of that file is the place to start.
 
 ### Overlays
 
-A place's code is an [overlay](../glossary.md#overlay), loaded when the
-party arrives ([System](../system.md#overlays)). Each is one `.c` file in
-`scene/` or `debug/`. Every one links the same entry table, `scene/entry.s`;
+A scene's code is in an [overlay](../glossary.md#overlay), loaded when the
+party arrives ([System](../system.md#overlays)). Each overlay is one `.c`
+file in `scene/` or `debug/`, and one file often holds several scenes that
+belong together. Every one links the same entry table, `scene/entry.s`;
 the build writes each overlay's import table from one list,
 `system/overlay/imports.inc`.
 

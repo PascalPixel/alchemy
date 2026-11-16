@@ -20,10 +20,11 @@ of the code opens up.
 1. [The main routine](system.md#the-main-routine). One routine runs the
    game from switch-on to switch-off, one sequence at a time: the field, a
    battle, Lucky Dice or Lucky Wheels.
-2. [Waiting and tasks](system.md#waiting-and-tasks). Code that needs time
-   simply stops and waits, and the game goes on running inside the wait. If
-   you have never met a task system, this is the part that will surprise
-   you.
+2. [Waiting and tasks](system.md#waiting-and-tasks). No loop at the top
+   turns once a frame. The frame loop is inside one function, `wait()`:
+   code that needs time to pass calls it, and it runs that many frames of
+   the game and returns. What it runs each frame is a short list of
+   functions, the tasks. This is the part that will surprise you.
 
 ## What runs
 

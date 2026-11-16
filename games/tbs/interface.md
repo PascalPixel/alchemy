@@ -16,11 +16,11 @@ A box is a [window](glossary.md#window). Whoever wants one asks for it
 once, then carries on or waits. It never draws it.
 
 The drawing is done by the windows' own [task](glossary.md#task), which
-runs once in every frame from inside whatever code is waiting. Each frame it grows
-every opening window a little, shrinks every closing one, and types the
-next letters into any that have text coming. That is why a line and the
-portrait beside it can both be on the move while the conversation that
-asked for them stands still.
+runs once in every frame from inside whatever code is waiting. Each frame
+it grows every opening window a little, shrinks every closing one, and
+types the next letters into any that have text coming. That is why a line
+and the portrait beside it can both be on the move while the conversation
+that asked for them stands still.
 
 It is also why every window in the game looks and behaves alike. Change the
 window colour in the settings and a conversation, a menu and a shop counter
@@ -64,7 +64,7 @@ flowchart LR
 
 A menu is not a state the game switches into. It is a function the field
 calls, which returns when the menu closes. Inside, it is code that waits:
-draw the choices, wait a frame, look at the buttons, go round again. A
+draw the choices, call `wait(1)`, look at the buttons, go round again. A
 question inside a screen is another call, one level deeper, and B returns
 from it.
 
@@ -75,7 +75,7 @@ shows one screen open, ask and close.
 
 One rule decides what a menu may do by itself. Anything that needs only the
 party, such as casting Cure on Garet, the screen does on the spot. Anything
-that touches the place, such as Move on a pillar, it cannot do: it writes
+that touches the scene, such as Move on a pillar, it cannot do: it writes
 down who is casting what, sets a request, and closes. The field finds the
 request and does the casting. That is why the menu is always gone before
 the pillar moves.
@@ -85,9 +85,9 @@ the pillar moves.
 ![Isaac talks to Bilibin's item shopkeeper across the counter. Watch the coins window as he buys one Herb and gives it to himself: the party's coins drop by the Herb's price before the shopkeeper thanks him.](https://alchemy.pascalpixel.com/guides/shop/shop.gif)
 
 A visit to a counter starts as an ordinary conversation. The shopkeeper's
-[event](glossary.md#event) calls the shop's code and waits for it to
-return, exactly as the field waits for a menu. So a whole shop visit can
-sit in the middle of a conversation.
+[event](glossary.md#event) calls the shop's code as a function and goes on
+when it returns, exactly as the field calls a menu. So a whole shop visit
+can sit in the middle of a conversation.
 
 There are three kinds. A shop buys, sells and repairs. A sanctum revives
 and cures. An inn restores HP and PP, and charges only for the party

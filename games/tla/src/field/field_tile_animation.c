@@ -1319,13 +1319,12 @@ s32 WorldMap_IsSailable(void *object, struct WorldPosition *position) {
 
 /// Returns 0 where the winged ship can go, else -1: low down, where it can
 /// sail; higher, more of the ground by the kind it last flew over.
-s32 WorldMap_IsFlyable(struct WorldMover *mover,
-                       struct WorldPosition *position) {
+s32 WorldMap_IsFlyable(struct Actor *mover, struct WorldPosition *position) {
   if (WorldMap_GetBlockPlace(position) != WORLD_MAP_NO_PLACE) {
     s32 collision = WorldMap_GetCollision(position);
     struct FieldWork *work = Ram_HeapSlots->fieldWork;
 
-    s32 height = mover->height;
+    s32 height = mover->y.fixed;
 
     if (height < toFIXED(4)) {
       if ((u32)(collision - WORLD_MAP_COLLISION_SEA_FIRST) >

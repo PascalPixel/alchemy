@@ -11,19 +11,8 @@
 
 struct Actor;
 
-struct ReflectionSprite {
-  u8 unused[2]; ///< no code names it
-  u16 unk02;
-  u8 unusedB[12]; ///< no code names it
-  s32 unk10;
-  u8 unk14;
-};
-
-struct ReflectionAnimation {
-  u8 unused[40]; ///< no code names it
-  struct ReflectionSprite *sprite;
-};
-
+/// One block of the world map, an entry of WorldMapBlocks: the place it belongs
+/// to and its terrain.
 struct WorldMapBlock {
   u8 unused[2];        ///< no code names it
   u8 place;            ///< WORLD_MAP_NO_PLACE where the map has no block
@@ -39,48 +28,6 @@ struct WorldMapBlocks {
 
 /// WorldMapBlock.place where the world map has no block: nothing may go there.
 #define WORLD_MAP_NO_PLACE 255
-
-struct WorldMover {
-  u8 unused[12]; ///< no code names it
-  s32 height;
-};
-
-struct ScanlineRow {
-  s32 scale;
-  s32 depth;
-  s32 offsetX;
-  s32 offsetY;
-  s32 unusedAfterOffsetY; ///< no code names it
-};
-
-struct SpriteViewerLayer {
-  s16 spriteId;
-  s16 animationIndex;
-  u8 enabled;
-  s8 priority;
-  s8 colorMode;
-};
-
-struct ViewerSprite {
-  u8 unused[26]; ///< no code names it
-  u8 flags;
-  u8 unusedAfterFlags[29]; ///< no code names it
-};
-
-struct ProbeShape {
-  u8 unused[4]; ///< no code names it
-  u8 kind;
-};
-
-struct ProbeObjects {
-  u8 unused[40]; ///< no code names it
-  struct ProbeShape *shape;
-};
-
-struct Vec2 {
-  s32 x;
-  s32 y;
-};
 
 struct Actor *Actor_FindAtCell(s32 *position, s32 check_y);
 

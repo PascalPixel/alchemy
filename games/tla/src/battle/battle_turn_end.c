@@ -15,7 +15,9 @@ s32 BattleUnit_RollCounterEarlyEnd(s32 unitId, s32 turns, s32 bias) {
   struct Unit *state = Unit_Get(unitId);
 
   if (turns <= 5) {
-    s32 threshold = ((state->luck * 3 - turns * 5) + bias) * 0x28f;
+    // 65536 / 100, rounded down, scales the percentage to the 16-bit random
+    // range.
+    s32 threshold = ((state->luck * 3 - turns * 5) + bias) * (65536 / 100);
     if (threshold >= (Battle_RandomFar() & 0xffff))
       return 1;
   }
@@ -368,7 +370,8 @@ s32 DjinnRecovery_CountDownSide(s32 side) {
             Actor_SelectAnimationFar(
                 (struct Actor *)BattleObject_Get(id)->object, POSE_CAST);
             Actor_SetAnimationSpeedFar(
-                (struct Actor *)BattleObject_Get(id)->object, 32);
+                (struct Actor *)BattleObject_Get(id)->object,
+                ANIMATION_STEP_NORMAL * 2);
           }
           element = entry->element;
           Djinn_SetFar(id, element, entry->index);
@@ -490,7 +493,8 @@ void Battle_ProcessTurnEnd(void) {
               Actor_SelectAnimationFar(BattleObject_Get(unitId)->object,
                                        POSE_CAST);
               Actor_SetAnimationSpeedFar(
-                  (struct Actor *)BattleObject_Get(unitId)->object, 32);
+                  (struct Actor *)BattleObject_Get(unitId)->object,
+                  ANIMATION_STEP_NORMAL * 2);
             }
             element = expiredEntry->element;
             Djinn_SetFar(unitId, element, expiredEntry->index);
@@ -599,14 +603,17 @@ void Battle_ProcessTurnEnd(void) {
   }
 }
 
+// The most Djinn BattleUnit_DrainDjinn gathers to choose from.
+#define DRAIN_CANDIDATE_MAX 10
+
 /// Djinnfest, Fugue, Djinn Blast, Djinn Storm and Djinn Stun: puts one of the
 /// unit's set Djinn at random on standby (every one, when all is set), or, when
 /// none is set, drains one that could be set so it must recover. Djinn Stun's
 /// announce shows MsgDjinnOnStandby; the others show MsgDjinnDrained or
 /// MsgAllDjinnDrained.
 void BattleUnit_DrainDjinn(s32 unitId, s32 all, s32 announce) {
-  u8 elements[10];
-  u8 indices[10];
+  u8 elements[DRAIN_CANDIDATE_MAX];
+  u8 indices[DRAIN_CANDIDATE_MAX];
   s32 shown;
   s32 count;
   s32 active;
@@ -623,26 +630,26 @@ again:
   {
     count = 0;
     active = 0;
-    for (element = 0; element <= 3; element++) {
-      for (djinni = 0; djinni <= 19; djinni++) {
+    for (element = 0; element < ELEMENT_COUNT; element++) {
+      for (djinni = 0; djinni < DJINN_PER_ELEMENT; djinni++) {
         if (Djinn_IsSetFar(unitId, element, djinni)) {
           elements[count] = element;
           indices[count] = djinni;
           count++;
           active = 1;
-          if (count == 10)
+          if (count == DRAIN_CANDIDATE_MAX)
             goto picked;
         }
       }
     }
     if (count == 0) {
-      for (element = 0; element <= 3; element++) {
-        for (djinni = 0; djinni <= 19; djinni++) {
+      for (element = 0; element < ELEMENT_COUNT; element++) {
+        for (djinni = 0; djinni < DJINN_PER_ELEMENT; djinni++) {
           if (Djinn_CanSetFar(unitId, element, djinni)) {
             elements[count] = element;
             indices[count] = djinni;
             count++;
-            if (count == 10)
+            if (count == DRAIN_CANDIDATE_MAX)
               goto picked;
           }
         }
@@ -673,15 +680,16 @@ again:
     list = &Djinn_GetRecoveryTableFar(unitId < 0 || unitId > ALLY_MAX)->list;
     for (i = 0; i < list->count; i++) {
       if (list->entries[i].element == element &&
-          list->entries[i].index == djinni && list->entries[i].turns == -1)
-        list->entries[i].turns = -2;
+          list->entries[i].index == djinni &&
+          list->entries[i].turns == DJINN_RECOVERY_AFTER_BATTLE)
+        list->entries[i].turns = DJINN_RECOVERY_SUMMONED;
     }
 
     pending = &Djinn_GetRecoveryTableFar(unitId < 0 || unitId > ALLY_MAX)->list;
     for (;;) {
       owner = -1;
       for (i = 0; i < pending->count; i++) {
-        if (pending->entries[i].turns == -2) {
+        if (pending->entries[i].turns == DJINN_RECOVERY_SUMMONED) {
           owner = pending->entries[i].unitId;
           break;
         }
@@ -699,7 +707,7 @@ again:
         recoveryTurn = 2;
       for (i = 0; i < pending->count; i++) {
         if (pending->entries[i].unitId == owner &&
-            pending->entries[i].turns == -2) {
+            pending->entries[i].turns == DJINN_RECOVERY_SUMMONED) {
           pending->entries[i].turns = recoveryTurn;
           recoveryTurn++;
         }
@@ -749,7 +757,8 @@ void BattleUnit_ProcessActionEnd(struct BattlePlan *plan) {
     for (strongestElement = 0; strongestElement < list->count;
          strongestElement++) {
       if (list->entries[strongestElement].unitId == unitId &&
-          list->entries[strongestElement].turns == -1) {
+          list->entries[strongestElement].turns ==
+              DJINN_RECOVERY_AFTER_BATTLE) {
         Djinn_PutOnStandbyFar(unitId, list->entries[strongestElement].element,
                               list->entries[strongestElement].index);
       }
@@ -775,7 +784,7 @@ void BattleUnit_ProcessActionEnd(struct BattlePlan *plan) {
     for (;;) {
       owner = -1;
       for (i = 0; i < pending->count; i++) {
-        if (pending->entries[i].turns == -2) {
+        if (pending->entries[i].turns == DJINN_RECOVERY_SUMMONED) {
           owner = pending->entries[i].unitId;
           break;
         }
@@ -796,7 +805,7 @@ void BattleUnit_ProcessActionEnd(struct BattlePlan *plan) {
       }
       for (i = 0; i < pending->count; i++) {
         if (pending->entries[i].unitId == owner &&
-            pending->entries[i].turns == -2) {
+            pending->entries[i].turns == DJINN_RECOVERY_SUMMONED) {
           pending->entries[i].turns = recoveryTurn;
           counts[pending->entries[i].element]++;
           recoveryTurn++;
@@ -810,14 +819,16 @@ void BattleUnit_ProcessActionEnd(struct BattlePlan *plan) {
 
     before = Heap_AllocEwram(sizeof(struct Unit));
     Iwram_CopyWordsEntry(before, unit, sizeof(struct Unit));
-    for (i = 0; i <= 3; i++) {
+    for (i = 0; i < ELEMENT_COUNT; i++) {
+      // A summon raises an element by one level for each of its Djinn the
+      // summon used, four at most.
       if (counts[i] > 4)
         counts[i] = 4;
       if (unit->summonBoost[i] < counts[i])
         unit->summonBoost[i] = counts[i];
     }
     Unit_CalculateFar(unitId);
-    for (i = 0; i <= 3; i++) {
+    for (i = 0; i < ELEMENT_COUNT; i++) {
       s32 gain = unit->element[i].power - before->element[i].power;
 
       if (gain > 0) {
@@ -833,7 +844,8 @@ void BattleUnit_ProcessActionEnd(struct BattlePlan *plan) {
         Sound_PlayFar(SE_POWER_UP);
         Actor_SelectAnimationFar(BattleObject_Get(unitId)->object, POSE_CAST);
         Actor_SetAnimationSpeedFar(
-            (struct Actor *)BattleObject_Get(unitId)->object, 32);
+            (struct Actor *)BattleObject_Get(unitId)->object,
+            ANIMATION_STEP_NORMAL * 2);
         ElementGlow_Play(unitId, i, GLOW_PILLAR, -1);
         BattlePlayback_WaitForReady();
       }
@@ -898,6 +910,7 @@ void BattleUnit_ProcessActionEnd(struct BattlePlan *plan) {
     }
     BattlePlayback_RunAll();
     BattlePlayback_Reset();
+    // At 0 the Reaper takes far more HP than any unit has.
     reaper = &unit->grimReaper;
     if (*reaper != 0 && !BattleUnit_KeepsOneHp(unitId) && --*reaper == 0 &&
         Unit_AddHpFar(unitId, 0xc0000000) == 0) {

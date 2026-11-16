@@ -41,6 +41,10 @@
 #define SUMMARY_STAT_VALUE_X 184
 #endif
 
+/// The condition icons the Status screen shows at most: Normal, or each
+/// condition the unit has, in a row.
+#define STATUS_ICON_COUNT 11
+
 /// The Status screen's help lines, from MsgOwnerStatusEntryHelp, which the
 /// cursor stops in window_tables.s name; the status icons' places and the
 /// three list pages follow.
@@ -170,9 +174,9 @@ s32 Unit_GetExperienceForLevelFar(s32 member, s32 level);
 s32 BattleStatusScreen_Run(u16 *list, s32 listCount, s32 member) {
   struct SummaryOam portraitSprite;
   struct SummaryOam cursorSprite;
-  s32 statusSlots[11];
-  s8 statusKinds[11];
-  struct SummaryOam statusSprites[11];
+  s32 statusSlots[STATUS_ICON_COUNT];
+  s8 statusKinds[STATUS_ICON_COUNT];
+  struct SummaryOam statusSprites[STATUS_ICON_COUNT];
   struct SummaryOam iconSprites[4];
   struct SummaryOam nameSprite;
   struct StatusCursor cursor;
@@ -235,7 +239,7 @@ s32 BattleStatusScreen_Run(u16 *list, s32 listCount, s32 member) {
   cursor.drawnHelpEntry = 0;
   cursor.group = STATUS_CURSOR_GENERAL;
   cursorSlot = VramCache_AllocEntry(0x80);
-  for (i = 0; i <= 10; i++) {
+  for (i = 0; i < STATUS_ICON_COUNT; i++) {
     statusSlots[i] = VramCache_AllocEntry(0x80);
     statusKinds[i] = OWNER_CONDITION_EMPTY;
   }
@@ -560,7 +564,7 @@ s32 BattleStatusScreen_Run(u16 *list, s32 listCount, s32 member) {
       portraitSprite.oam.word.attr23 = 0;
       if (face != NULL) {
         portraitSprite.oam.f.tile = face->oam.f.tile;
-        portraitSprite.oam.f.x = 0xac;
+        portraitSprite.oam.f.x = 172;
         portraitSprite.oam.f.y = 56;
         if (figureShown != 0)
           Oam_AddSpriteAtDepth(&portraitSprite, OAM_DEPTH_WINDOW);
@@ -740,7 +744,7 @@ s32 BattleStatusScreen_Run(u16 *list, s32 listCount, s32 member) {
                                      ELEMENT_ICON_TILE + ability->element, 15,
                                      j * 2 + 8, tileFlags);
             range = ability->range;
-            if (range == 255)
+            if (range == ABILITY_RANGE_ALL)
               range = 11;
             else
               range--;
@@ -1072,8 +1076,8 @@ s32 BattleStatusScreen_Run(u16 *list, s32 listCount, s32 member) {
         statusKinds[0] = OWNER_CONDITION_NORMAL;
         i = 1;
       }
-      if (i <= 10) {
-        for (j = i; j < 11; j++)
+      if (i < STATUS_ICON_COUNT) {
+        for (j = i; j < STATUS_ICON_COUNT; j++)
           statusKinds[j] = OWNER_CONDITION_EMPTY;
       }
       statusCount = i;
@@ -1173,7 +1177,8 @@ s32 BattleStatusScreen_Run(u16 *list, s32 listCount, s32 member) {
 
       sprite = statusSprites;
       slot = statusSlots;
-      for (i = 0, entry = gVramCacheEntries, iconX = 112; i <= 10; i++) {
+      for (i = 0, entry = gVramCacheEntries, iconX = 112; i < STATUS_ICON_COUNT;
+           i++) {
         MenuSprite_Initialize(*sprite, OBJ_SIZE_16X16 |
                                            OBJ_MODE(OBJ_MODE_SEMI_TRANSPARENT));
         sprite->oam.f.tile = entry[*slot++].offset >> 5;
@@ -1233,7 +1238,7 @@ s32 BattleStatusScreen_Run(u16 *list, s32 listCount, s32 member) {
     for (i = 3; i >= 0; i--)
       VramCache_FreeEntry(*slot++);
     slot = statusSlots;
-    for (i = 10; i >= 0; i--)
+    for (i = STATUS_ICON_COUNT - 1; i >= 0; i--)
       VramCache_FreeEntry(*slot++);
   }
   VramCache_FreeEntry(portraitSlot);

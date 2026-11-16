@@ -156,10 +156,10 @@ void JupiterLighthouse_PushLogOffTheLedge(void) {
       Event_GetFlag(FLAG_LOG_OFF_LEDGE) == 0) {
     Event_SetFlag(FLAG_LOG_OFF_LEDGE);
     FieldActor_SetSpritePriority(ACTOR_LEDGE_LOG, 3);
-    object->motionFlags = 3;
+    object->motionFlags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
     System_Wait(5);
     Event_PlaySound(SE_HEAVY_IMPACT);
-    object->motionFlags = 2;
+    object->motionFlags = ACTOR_FALLS;
     for (i = 0, x = toFIXED(176); i <= 3; i++, x += toFIXED(16)) {
       FieldMapGrid_SetCellHeight(toFIXED(256), x, 0, 0);
       MapGrid_SetCellBehavior(toFIXED(256), x, 0, 0);

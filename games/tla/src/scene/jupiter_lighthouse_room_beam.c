@@ -223,7 +223,7 @@ void JupiterLighthouse_CycloneDropsLeader(s32 kind) {
   Actor_SetSpriteFlags(Actor_Get(owner), 1);
   leader->facing = FACING_SOUTH;
   leader->layer = 0;
-  leader->motionFlags = 3;
+  leader->motionFlags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
   FieldTask_Remove(JupiterLighthouse_DrawGlow);
   JupiterLighthouse_SetLayerCellsByLeader();
   Event_End();
@@ -303,7 +303,7 @@ void JupiterLighthouse_CycloneLiftsLeader(s32 kind) {
   Actor_SetSpriteFlags(Actor_Get(owner), 1);
   leader->facing = FACING_SOUTH;
   leader->layer = 1;
-  leader->motionFlags = 3;
+  leader->motionFlags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
   leader->y.fixed = toFIXED(144);
   leader->groundHeight = toFIXED(144);
   FieldTask_Remove(JupiterLighthouse_DrawGlow);
@@ -383,7 +383,7 @@ void JupiterLighthouse_DropEnergyBlock(s32 unused, s32 id) {
   struct MainRoutineWork *party;
   s32 i;
 
-  object->motionFlags = 3;
+  object->motionFlags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
   Actor_Get(id)->priorityFlags |= ACTOR_PRIORITY_AUTOMATIC;
   party = &gMainRoutineWork;
   Actor_Get(party->leaderActorId)->priorityFlags |= ACTOR_PRIORITY_AUTOMATIC;
@@ -601,7 +601,7 @@ void Actor_RaiseFromCell(s32 id) {
   s32 height;
 
   object = Actor_Get(id);
-  object->motionFlags = 4;
+  object->motionFlags = ACTOR_FLOATS;
   height = object->groundHeight;
   object->bounce = 0;
   object->y.fixed = height + toFIXED(32);

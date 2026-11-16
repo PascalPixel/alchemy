@@ -110,6 +110,8 @@ s32 Actor_ShowEmoteById(s32 actorId, s32 emote, s32 frames);
 void FieldEffect_SetAttached(s32 id, s32 a);
 void FieldCamera_WaitForArrival(void);
 void FieldCamera_MoveToActorById(s32 id, s32 value);
+/// Leaves the scene by an exit (Event_SetExitRequest, through the overlay's
+/// import).
 void Izumo_SetExitRequest(s32 value);
 void Actor_PlaceBlocks(const s16 *data);
 void Actor_LiftTargetBlock(const s16 *data);
@@ -472,7 +474,7 @@ void Izumo_StopThePartyToThankThem(void) {
     // "Are you sure about that? I was only hoping to show you my appreciation."
     Event_ShowMessageAndWait(ACTOR_SUSA, 0);
     Actor_SetSpritePriority(ACTOR_SUSA, 3);
-    Actor_GetById(ACTOR_SUSA)->motionFlags |= 2;
+    Actor_GetById(ACTOR_SUSA)->motionFlags |= ACTOR_FALLS;
     GameFlag_Set(FLAG_THANKFUL_ONE_WAITS);
   } else {
     Izumo_TellTheCloudBrandLegend();
@@ -580,12 +582,12 @@ s32 Scene_Initialize(void) {
       Call3((void (*)())Actor_SetHorizontalPositionWithTerrain, ACTOR_SUSA,
             toFIXED(200), toFIXED(216));
       Actor_SetSpritePriority(ACTOR_SUSA, 3);
-      Actor_GetById(ACTOR_SUSA)->motionFlags |= 2;
+      Actor_GetById(ACTOR_SUSA)->motionFlags |= ACTOR_FALLS;
       GameFlag_Set(FLAG_THANKFUL_ONE_WAITS);
     }
   }
   Actor_SetSpritePriority(24, 3);
-  Actor_GetById(24)->motionFlags |= 2;
+  Actor_GetById(24)->motionFlags |= ACTOR_FALLS;
   return 0;
 }
 

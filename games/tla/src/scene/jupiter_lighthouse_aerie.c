@@ -139,9 +139,12 @@ struct FieldEffect;
 
 void MapGrid_SetCellHeight(s32 x, s32 z, s32 a, s32 b);
 void FieldCamera_WaitForArrival(void);
+/// Draws an effect sprite (EffectSprite_Draw, through the overlay's import).
 void Import_EffectSpriteDraw(struct EffectSprite *sprite);
 void EffectSprite_DrawAtWorldPosition(struct EffectSprite *sprite,
                                       struct BeamSpark *spark);
+/// Selects an actor's sprite animation (Actor_SelectAnimation, through the
+/// overlay's import).
 void Import_ActorSelectAnimation(struct FieldEffect *effect, s32 mode);
 
 const struct SceneEntrance *Scene_GetEntrances(void) { return gSceneEntrances; }
@@ -202,9 +205,9 @@ void JupiterLighthouse_EnergizeAngels(s32 mode) {
   Event_PlaySound(MUS_PUZZLE_SOLVED);
   FieldEvent_Wait(10);
   Sound_WaitForJingle();
-  left->motionFlags = 4;
-  right->motionFlags = 4;
-  lid->motionFlags = 4;
+  left->motionFlags = ACTOR_FLOATS;
+  right->motionFlags = ACTOR_FLOATS;
+  lid->motionFlags = ACTOR_FLOATS;
 }
 
 /// The left archer shoots its beam at the left angel, which rises; the second
@@ -276,7 +279,7 @@ void JupiterLighthouse_PlacePathBlock(s32 unused, s32 id) {
   if (id == ACTOR_LEFT_PATH_BLOCK) {
     if (FIELD_CELL(object->x.fixed) == 6 && FIELD_CELL(object->z.fixed) == 12) {
       Event_SetFlag(FLAG_JUPITER_LIGHTHOUSE_LEFT_ANGEL_ENERGIZED);
-      object->motionFlags = 3;
+      object->motionFlags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
       System_Wait(2);
       i = 0;
       if (object->y.fixed > object->groundHeight || object->velocityY != 0) {
@@ -308,7 +311,7 @@ void JupiterLighthouse_PlacePathBlock(s32 unused, s32 id) {
     if (FIELD_CELL(object->x.fixed) == 57 &&
         FIELD_CELL(object->z.fixed) == 12) {
       Event_SetFlag(FLAG_JUPITER_LIGHTHOUSE_RIGHT_ANGEL_ENERGIZED);
-      object->motionFlags = 3;
+      object->motionFlags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
       System_Wait(2);
       i = 0;
       if (object->y.fixed > object->groundHeight || object->velocityY != 0) {
@@ -460,7 +463,7 @@ void JupiterLighthouse_RideTheBeam(void) {
   FieldEvent_ResolvePendingActions(0);
   i = 0;
   work->glowHeld = 0;
-  actor->motionFlags = 4;
+  actor->motionFlags = ACTOR_FLOATS;
   Actor_SetSpriteFlags(actor, 0);
   while (linked->riseEnabled != 0) {
     actor->x.fixed = linked->x.fixed;
@@ -480,7 +483,7 @@ void JupiterLighthouse_RideTheBeam(void) {
                    << 19;
   actor->velocityY = toFIXED(6);
   actor->priorityFlags = 1;
-  actor->motionFlags = 3;
+  actor->motionFlags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
   Actor_SetSpriteFlags(actor, 1);
   FieldCamera_MoveTo(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0);
   shadow = FieldCamera_GetActor();

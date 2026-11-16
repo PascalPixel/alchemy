@@ -506,7 +506,7 @@ void JupiterLighthouse_CastTheJupiterStar(void) {
       shadow->x.fixed = felix->x.fixed;
       shadow->y.fixed = toFIXED(96);
       shadow->z.fixed = felix->z.fixed;
-      shadow->motionFlags = 3;
+      shadow->motionFlags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
       shadow->acceleration = toFIXED(1) / 20;
       shadow->speedLimit = toFIXED(2) / 5;
       shadow->scaleX = FIXED_ONE / 8;
@@ -1248,7 +1248,7 @@ void JupiterLighthouse_KarstAndAgatioRetreat(void) {
   Actor_Get(ACTOR_ALEX)->priorityFlags |= ACTOR_PRIORITY_WALKS_ON_PLATFORMS;
   Actor_Get(ACTOR_AGATIO)->priorityFlags |= ACTOR_PRIORITY_WALKS_ON_PLATFORMS;
   Actor_Get(ACTOR_KARST)->priorityFlags |= ACTOR_PRIORITY_WALKS_ON_PLATFORMS;
-  Actor_Get(ACTOR_ALEX)->motionFlags = 2;
+  Actor_Get(ACTOR_ALEX)->motionFlags = ACTOR_FALLS;
   Actor_SetScript(ACTOR_ALEX, gJupiterLighthouse_HopWestOverPlatformsScript);
   FieldActor_WaitForScriptEndById(ACTOR_AGATIO);
   Actor_SetScript(ACTOR_AGATIO, gJupiterLighthouse_HopWestOverPlatformsScript);
@@ -1486,7 +1486,7 @@ void JupiterLighthouse_KarstAndAgatioRetreat(void) {
   Actor_WalkToAndWait(ACTOR_ISAAC, 584, 252);
   Actor_WalkToAndWait(ACTOR_ISAAC, 616, 247);
   Actor_WalkToAndWait(ACTOR_ISAAC, 617, 312);
-  Actor_Get(ACTOR_ISAAC)->motionFlags = 2;
+  Actor_Get(ACTOR_ISAAC)->motionFlags = ACTOR_FALLS;
   Actor_SetScript(ACTOR_ISAAC, gJupiterLighthouse_HopEastOverPlatformsScript);
   FieldActor_WaitForScriptEndById(ACTOR_ISAAC);
   Actor_FaceDirectionAndWait(ACTOR_ISAAC, FACING_SOUTH);
@@ -1553,7 +1553,7 @@ void JupiterLighthouse_KarstAndAgatioRetreat(void) {
   Actor_SetScript(ACTOR_FELIX, gJupiterLighthouse_WalkToPlatformsScript);
   FieldActor_WaitForScriptEndById(ACTOR_FELIX);
   Actor_Get(ACTOR_FELIX)->priorityFlags |= ACTOR_PRIORITY_WALKS_ON_PLATFORMS;
-  Actor_Get(ACTOR_ALEX)->motionFlags = 2;
+  Actor_Get(ACTOR_ALEX)->motionFlags = ACTOR_FALLS;
   Actor_SetScript(ACTOR_FELIX, gJupiterLighthouse_HopWestOverPlatformsScript);
   FieldActor_WaitForScriptEndById(ACTOR_FELIX);
   Actor_WalkToAndWait(ACTOR_FELIX, 311, 256);
@@ -1762,7 +1762,7 @@ void JupiterLighthouse_WeBeatThem(void) {
   Actor_Get(ACTOR_ALEX)->priorityFlags |= ACTOR_PRIORITY_WALKS_ON_PLATFORMS;
   Actor_Get(ACTOR_AGATIO)->priorityFlags |= ACTOR_PRIORITY_WALKS_ON_PLATFORMS;
   Actor_Get(ACTOR_KARST)->priorityFlags |= ACTOR_PRIORITY_WALKS_ON_PLATFORMS;
-  Actor_Get(ACTOR_ALEX)->motionFlags = 2;
+  Actor_Get(ACTOR_ALEX)->motionFlags = ACTOR_FALLS;
   Actor_SetScript(ACTOR_ALEX, gJupiterLighthouse_HopWestOverPlatformsScript);
   FieldActor_WaitForScriptEndById(ACTOR_AGATIO);
   Actor_SetScript(ACTOR_AGATIO, gJupiterLighthouse_HopWestOverPlatformsScript);
@@ -1929,7 +1929,7 @@ void JupiterLighthouse_WeBeatThem(void) {
   Actor_WalkToAndWait(ACTOR_ISAAC, 584, 252);
   Actor_WalkToAndWait(ACTOR_ISAAC, 616, 247);
   Actor_WalkToAndWait(ACTOR_ISAAC, 617, 312);
-  Actor_Get(ACTOR_ISAAC)->motionFlags = 2;
+  Actor_Get(ACTOR_ISAAC)->motionFlags = ACTOR_FALLS;
   Actor_SetScript(ACTOR_ISAAC, gJupiterLighthouse_HopEastOverPlatformsScript);
   FieldActor_WaitForScriptEndById(ACTOR_ISAAC);
   Actor_FaceDirectionAndWait(ACTOR_ISAAC, FACING_SOUTH);
@@ -1996,7 +1996,7 @@ void JupiterLighthouse_WeBeatThem(void) {
   Actor_SetScript(ACTOR_FELIX, gJupiterLighthouse_WalkToPlatformsScript);
   FieldActor_WaitForScriptEndById(ACTOR_FELIX);
   Actor_Get(ACTOR_FELIX)->priorityFlags |= ACTOR_PRIORITY_WALKS_ON_PLATFORMS;
-  Actor_Get(ACTOR_ALEX)->motionFlags = 2;
+  Actor_Get(ACTOR_ALEX)->motionFlags = ACTOR_FALLS;
   Actor_SetScript(ACTOR_FELIX, gJupiterLighthouse_HopWestOverPlatformsScript);
   FieldActor_WaitForScriptEndById(ACTOR_FELIX);
   Actor_WalkToAndWait(ACTOR_FELIX, 311, 256);
@@ -2303,7 +2303,7 @@ void Actor_RaiseFromCell(s32 id) {
   s32 height;
 
   object = Actor_Get(id);
-  object->motionFlags = 4;
+  object->motionFlags = ACTOR_FLOATS;
   height = object->groundHeight;
   object->bounce = 0;
   object->y.fixed = height + toFIXED(32);
@@ -2332,7 +2332,7 @@ void JupiterLighthouse_RideTheBeam(void) {
   i = 0;
   work->glowHeld = i;
 
-  actor->motionFlags = 4;
+  actor->motionFlags = ACTOR_FLOATS;
   Actor_SetSpriteFlags(actor, 0);
 
   while (linked->riseEnabled != 0) {
@@ -2354,7 +2354,7 @@ void JupiterLighthouse_RideTheBeam(void) {
                    << 19;
   actor->velocityY = toFIXED(6);
   actor->priorityFlags = 1;
-  actor->motionFlags = 3;
+  actor->motionFlags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
   Actor_SetSpriteFlags(actor, 1);
   FieldCamera_MoveTo(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0);
   shadow = EventCamera_GetActor();
@@ -2515,9 +2515,9 @@ void JupiterLighthouse_EnergizeAngels(void) {
     left->y.fixed += 0x199900;
     right->y.fixed += 0x199900;
     rider->y.fixed += 0x1b8480;
-    left->motionFlags = 4;
-    right->motionFlags = 4;
-    rider->motionFlags = 4;
+    left->motionFlags = ACTOR_FLOATS;
+    right->motionFlags = ACTOR_FLOATS;
+    rider->motionFlags = ACTOR_FLOATS;
   }
 }
 

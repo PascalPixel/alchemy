@@ -220,6 +220,7 @@ struct IsletsDoor {
   u16 z;
 };
 
+/// Where a pushed object comes to rest, read by the push that follows.
 struct PushTarget {
   FIXED x; ///< 16.16 fixed-point pixels
   s32 y;
@@ -558,18 +559,17 @@ void Islets_TradeWithBird(void) {
 // The Islets' trade of the Red Cloth with the cow. With the cloth in the
 // party, if FLAG_SCENE_TEMP_01 is set (asked before) the camera moves and the
 // cow asks again (MsgAreYouGiving); otherwise it notices the cloth
-// (MsgOhThatRed), the leader steps up and shows it (sprite 489, its picture set
-// to the item by Actor_SetItemIcon) and the cow asks. A yes hands the cloth
-// across step by step, takes it and gives Milk (the cow hands it back over the
-// leader's head), sets FLAG_COW_TRADED and counts the answer in the event
-// work's halfword 0x1c4 the first time; a no sets FLAG_SCENE_TEMP_01. Without
-// the cloth, the cow says MsgYupANice after the trade or MsgIVeBeenFeeling
-// before it.
+// (MsgOhThatRed), the leader steps up and holds up its icon and the cow asks. A
+// yes hands the cloth across step by step, takes it and gives Milk (the cow
+// hands it back over the leader's head), sets FLAG_COW_TRADED and counts the
+// answer in FieldWork.message the first time; a no sets FLAG_SCENE_TEMP_01.
+// Without the cloth, the cow says MsgYupANice after the trade or
+// MsgIVeBeenFeeling before it.
 
 #define STEP(actor, x, z)                                                      \
-  (Actor_GetById(actor)->steeringFlags &= ~1,                                  \
+  (Actor_GetById(actor)->steeringFlags &= ~ACTOR_FACES_MOTION,                 \
    Actor_WalkToAndWait(actor, x, z), Event_Wait(1),                            \
-   Actor_GetById(actor)->steeringFlags |= 1)
+   Actor_GetById(actor)->steeringFlags |= ACTOR_FACES_MOTION)
 
 /// The cow walks round and hands the item back over the leader's head.
 #define HAND_BACK(leader, given, off)                                          \
@@ -779,9 +779,9 @@ extern s32 gIslets_BirdFliesOffScript[];
 extern s32 gIslets_BirdFliesBackScript[];
 
 #define STEP(actor, x, z)                                                      \
-  (Actor_GetById(actor)->steeringFlags &= ~1,                                  \
+  (Actor_GetById(actor)->steeringFlags &= ~ACTOR_FACES_MOTION,                 \
    Actor_WalkToAndWait(actor, x, z), FieldEvent_Wait(1),                       \
-   Actor_GetById(actor)->steeringFlags |= 1)
+   Actor_GetById(actor)->steeringFlags |= ACTOR_FACES_MOTION)
 
 /// "Sniff! Sniff! I smell fresh milk!" The dog trades the Li'l Turtle for Milk.
 void Islets_TradeWithDog(void) {
@@ -1045,7 +1045,9 @@ void Islets_GiveTurtle(void) {
       } else {
         FieldPsynergy_GreyMindReadPalette();
         Event_SetMessageId(message - 1);
-        goto refused;
+        Event_ShowMessage(ACTOR_LONESOME_GEORGE, 0);
+        Actor_FaceDirectionAndWait(ACTOR_LONESOME_GEORGE,
+                                   FACING_SOUTH_SOUTHWEST);
       }
     } else {
       Event_SetMessageId(MsgIMSoVery);
@@ -1145,7 +1147,6 @@ void Islets_GiveTurtle(void) {
       FieldEvent_SetExitRequest(3);
     } else {
       FieldPsynergy_GreyMindReadPalette();
-    refused:
       Event_ShowMessage(ACTOR_LONESOME_GEORGE, 0);
       Actor_FaceDirectionAndWait(ACTOR_LONESOME_GEORGE, FACING_SOUTH_SOUTHWEST);
     }
@@ -1400,7 +1401,7 @@ void Islets_BirdReturnsToNest(void) {
   FieldActor_WaitForMove(object);
   FieldTask_Remove(Islets_PlayFootsteps);
   Actor_SetAnimation(ACTOR_BIRD, 5);
-  object->motionFlags = 3;
+  object->motionFlags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
   FieldActor_SetSpritePriority(ACTOR_BIRD, 2);
   Actor_FaceActor(ACTOR_BIRD, gMainRoutineWork.leaderActorId, 0);
   FieldEvent_Wait(10);
@@ -1521,7 +1522,7 @@ void Islets_FinishPushingCrate(void) {
       MapGrid_CopyCellAttributes(7, 2, 1, 1, firstX, firstZ);
       both = 1;
     }
-    first->motionFlags = 3;
+    first->motionFlags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
     System_Wait(10);
     Event_PlaySound(SE_RATTLE);
     System_Wait(10);
@@ -1545,7 +1546,7 @@ void Islets_FinishPushingCrate(void) {
       MapGrid_CopyCellAttributes(7, 2, 1, 1, firstX, firstZ);
       both = 1;
     }
-    second->motionFlags = 3;
+    second->motionFlags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
     System_Wait(10);
     Event_PlaySound(SE_RATTLE);
     System_Wait(10);
@@ -1603,7 +1604,7 @@ void Islets_StepUpOntoIceberg(void) {
     FieldEvent_ResolvePendingActions(0);
     object->motionFlags = 0;
     Actor_WalkToAndWait(gMainRoutineWork.leaderActorId, 72, 280);
-    object->motionFlags = 3;
+    object->motionFlags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
     Event_End();
   }
 }
@@ -1622,7 +1623,7 @@ void Islets_StepDownFromIceberg(void) {
       FieldEvent_ResolvePendingActions(0);
       object->motionFlags = 0;
       Actor_WalkToAndWait(gMainRoutineWork.leaderActorId, 72, 296);
-      object->motionFlags = 3;
+      object->motionFlags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
       Event_End();
     }
   }
@@ -2420,6 +2421,8 @@ void PushedActor_FillGridAttributeRectangle(s32 layer, s32 x, s32 z, u32 width,
 
 extern s32 gPushLeaderSteps[];
 
+/// Whether an actor at a position would collide with the map
+/// (MapGrid_CheckCollision).
 static __inline__ s32 PushTarget_CheckCollision(struct Actor *object,
                                                 struct Vector3 *cell) {
   return MapGrid_CheckCollision(object, cell);

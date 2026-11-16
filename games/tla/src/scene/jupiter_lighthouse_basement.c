@@ -78,6 +78,8 @@ struct LightOam gLightSpriteOam[16] BSS_DATA;
 s16 gLightSpriteLargeOam BSS_DATA;
 s16 gJupiterLighthouse_LightLevel BSS_DATA;
 struct CellTarget gCrackedTiles BSS_DATA;
+/// Sets a map cell's ground height (MapGrid_SetCellHeight, through the
+/// overlay's import).
 void Import_MapGridSetCellHeight();
 
 void Leader_CenterInCell(void);
@@ -317,7 +319,7 @@ void Actor_RaiseFromCell(s32 id) {
   s32 height;
 
   object = Actor_Get(id);
-  object->motionFlags = 4;
+  object->motionFlags = ACTOR_FLOATS;
   height = object->groundHeight;
   object->bounce = 0;
   object->y.fixed = height + toFIXED(32);

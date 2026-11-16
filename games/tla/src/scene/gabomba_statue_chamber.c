@@ -1072,10 +1072,9 @@ void GabombaStatueChamber_InitializeIdol(void) {
 void GabombaStatueChamber_InitializeLift(void) {
   if (GameFlag_Get(FLAG_KEEP_PARTY_POSITION)) {
     if (GameFlag_Get(FLAG_SCENE_TEMP_07)) {
-      struct GabombaStatueChamberMapWork *map =
-          (struct GabombaStatueChamberMapWork *)Ram_HeapSlots->mapGrid;
-      struct GabombaStatueChamberLayer *front = &map->layers[0];
-      struct GabombaStatueChamberLayer *back = &map->layers[2];
+      struct MapWork *map = Ram_HeapSlots->mapGrid;
+      struct MapLayer *front = &map->layers[0];
+      struct MapLayer *back = &map->layers[2];
       s32 blend = 1;
       s32 i;
 
@@ -1089,8 +1088,8 @@ void GabombaStatueChamber_InitializeLift(void) {
           REG_BLDALPHA = alpha;
           blend++;
         }
-        front->y += toFIXED(1);
-        back->y += toFIXED(1);
+        front->offsetY += toFIXED(1);
+        back->offsetY += toFIXED(1);
         i++;
       } while (i < 352);
       MapGrid_CenterOnFollowedPoint();

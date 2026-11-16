@@ -129,7 +129,7 @@ void Epilogue_LoadNamePanel(void) {
   FieldTask_AddFrame(Epilogue_PlaceNamePanel, priority);
 }
 
-struct EpilogueWindow *Message_OpenWindow(s32 id, s32 x, s32 y, s32 resource);
+struct Window *Message_OpenWindow(s32 message, s32 x, s32 y, u32 packed);
 
 /// A speaker (a sprite number) or'd with this shows the line without the
 /// speaker's name.
@@ -143,8 +143,8 @@ struct EpilogueWindow *Message_OpenWindow(s32 id, s32 x, s32 y, s32 resource);
 void Epilogue_ShowLineAt(s32 speaker, s32 x, s32 y, s32 left, s32 line,
                          s32 frames, s32 mode) {
   s32 wide;
-  struct EpilogueWindow *window;
-  struct EpilogueWindow *name;
+  struct Window *window;
+  struct Window *name;
 
   name = 0;
   wide = EPILOGUE_NO_NAME & speaker;
@@ -158,9 +158,9 @@ void Epilogue_ShowLineAt(s32 speaker, s32 x, s32 y, s32 left, s32 line,
     gEpilogueNameY = line << 3;
   }
   if (mode == 2) {
-    window->unk0e++;
-    window->unk08 = 0;
-    window->unk0a = 0;
+    window->y++;
+    window->width = 0;
+    window->height = 0;
   }
   while (!Message_AllTyped())
     System_Wait(1);

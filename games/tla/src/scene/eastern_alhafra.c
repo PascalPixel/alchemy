@@ -572,12 +572,12 @@ void EasternAlhafra_StepOntoMast(void) {
 
 /// Stepping into a door: it opens, the leader walks through and the scene
 /// leaves by the exit given.
-void EasternAlhafra_OpenDoorAndEnter(struct DoorStep *step, s32 countdown,
+void EasternAlhafra_OpenDoorAndEnter(struct MapGridCellAnimation *step, s32 countdown,
                                      s32 unused) {
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
   Event_PlaySound(SE_DOOR_OPEN);
-  MapGrid_AnimateCells(step->script, step->x, step->z);
+  MapGrid_AnimateCells(step->steps, step->x, step->y);
   Actor_Get(gMainRoutineWork.leaderActorId)->motionFlags = ACTOR_FALLS;
   Actor_SetSpeed(gMainRoutineWork.leaderActorId, 0.5);
   Actor_SetAnimation(gMainRoutineWork.leaderActorId, ANIM_WALK);

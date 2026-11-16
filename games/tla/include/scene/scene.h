@@ -10,6 +10,7 @@
 #include "field/field_coordinate.h"
 #include "field/sprite.h"
 #include "field/field_psynergy_work.h"
+#include "field/map_grid.h"
 #include "graphics/render_input.h"
 #include "scene/mars_lighthouse_aerie.h"
 #include "field/scene_tables.h"
@@ -139,12 +140,6 @@ struct Orbit {
   s16 speed;  ///< its turn a frame, slowed by 128 a frame once grown
 };
 
-struct DoorStep {
-  s32 script;
-  u16 x;
-  u16 z;
-};
-
 struct LightOam {
   u32 link;
   u32 attr01;
@@ -204,14 +199,6 @@ struct HeapSlotWords {
   u32 mapWork;
 };
 
-struct EpilogueWindow {
-  u8 unk00[8];
-  u16 unk08;
-  u16 unk0a;
-  u8 unk0c[2];
-  u16 unk0e;
-};
-
 union EventLine {
   s32 word;
   u16 line;
@@ -222,17 +209,6 @@ struct PuzzleCell {
   u8 blocked;
   u8 state;
   u8 occupied;
-};
-
-struct GabombaStatueChamberLayer {
-  u8 unk00[12];
-  s32 y;
-  u8 unk10[0x28];
-};
-
-struct GabombaStatueChamberMapWork {
-  u8 unk000[0x108];
-  struct GabombaStatueChamberLayer layers[3];
 };
 
 struct Vec {
@@ -246,11 +222,6 @@ struct TileSprite {
   u16 tile;
   u8 unk14[6];
   u8 frame;
-};
-
-struct ActorSprite {
-  u8 unk00[18];
-  u16 rotation;
 };
 
 struct FadePalette {
@@ -285,10 +256,6 @@ struct BeamSpark {
   u32 age;
 };
 
-struct Probe {
-  s32 unk00[6];
-};
-
 struct SpringTossMotion {
   u8 unused[2];
   s16 launchFrame;
@@ -307,37 +274,11 @@ struct SpringObstacle {
   s16 hitCooldownFrames;
 };
 
-struct SpringPoint {
-  s32 x;
-  s32 y;
-  s32 z;
-};
-
-struct SpringRide {
-  u16 unk00;
-  u16 hold;
-  struct SpringPoint trail[5];
-  struct SpringPoint velocity;
-  s32 frames;
-};
-
 struct LemurianShipWarp {
   u16 exit;
   s32 value;
   u16 x;
   u16 z;
-};
-
-struct LohoPicture {
-  const void *data;
-  u16 a;
-  u16 b;
-};
-
-struct MadraPlacement {
-  const void *data;
-  u16 x;
-  u16 y;
 };
 
 struct MarsLighthouseAerieSprite {
@@ -390,13 +331,6 @@ struct MarsLighthouseRoomFRideWork {
   u16 value0c;
   u8 unk0e[0x62];
   struct Actor *handle;
-};
-
-struct WarpEntry {
-  s16 x;
-  s16 z;
-  s16 flag;
-  s16 unk6;
 };
 
 struct UnitData {

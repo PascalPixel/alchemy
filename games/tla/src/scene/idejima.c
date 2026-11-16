@@ -161,7 +161,7 @@ void Idejima_GetUp(s32 id) {
   Actor_SetAnimation(id, 1);
   Actor_SetSpriteFlags(Actor_Get(id), 1);
   object->x.fixed -= toFIXED(12);
-  ((struct ActorSprite *)object->sprite)->rotation = 0;
+  ((struct FieldSprite *)object->sprite)->rotation = 0;
   System_Wait(1);
   Actor_SetSpriteFlags(Actor_Get(id), 1);
   object->velocityY = toFIXED(4);
@@ -1651,7 +1651,7 @@ UNUSED void Idejima_LieDown(s32 id) {
   object->x.fixed += toFIXED(12);
   object->y.fixed = toFIXED(16);
   object->collisionFlags = 0;
-  ((struct ActorSprite *)object->sprite)->rotation = 0xc000;
+  ((struct FieldSprite *)object->sprite)->rotation = 0xc000;
 }
 
 /// Lays Kraden, Jenna and Sheba wherever they have not yet woken, and wakes

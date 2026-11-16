@@ -234,7 +234,7 @@ struct WarpWork {
   s16 current;
   s16 busy;
   u8 unk10[0x10];
-  struct WarpEntry entries[1];
+  struct CellTargetEntry entries[1];
 };
 
 extern s16 gMarsLighthouseRoomF_JumpAnglesByKey[];
@@ -2470,7 +2470,7 @@ s32 CrackedTiles_Step(void) {
   s32 x = FIELD_CELL(object->x.fixed);
   s32 z = FIELD_CELL(object->z.fixed);
   struct WarpWork *work = &gCrackedTiles;
-  struct WarpEntry *entry = work->entries;
+  struct CellTargetEntry *entry = work->entries;
   s32 index;
 
   index = 0;

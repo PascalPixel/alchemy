@@ -1017,7 +1017,7 @@ void LemuriaSpring_UpdateTossSimulation(void);
 /// Places the four actors from their tables, resets the ride and installs
 /// its task.
 void LemuriaSpring_InitializeTossSimulation(void) {
-  struct SpringRide *ride = &gLemuriaSpring_Toss;
+  struct SpringTossMotion *ride = &gLemuriaSpring_Toss;
   s32 i = 0;
   u8 *xtbl;
   u16 *htbl;
@@ -1055,7 +1055,7 @@ void LemuriaSpring_InitializeTossSimulation(void) {
   ride->velocity.x = 0;
   ride->velocity.y = 0;
   ride->velocity.z = 0;
-  ride->frames = 0;
+  ride->attractionFrames = 0;
 
   Actor_SelectAnimation(Actor_Get(ACTOR_LEMURIA_SPRING_TURTLE_A), 2);
   Actor_SelectAnimation(Actor_Get(ACTOR_LEMURIA_SPRING_TURTLE_B), 2);
@@ -1066,7 +1066,7 @@ void LemuriaSpring_InitializeTossSimulation(void) {
 
 /// Runs the spring ride from one side until it ends, and returns its result.
 s32 LemuriaSpring_RunToss(s32 side) {
-  struct SpringRide *ride;
+  struct SpringTossMotion *ride;
 
   ride = &gLemuriaSpring_Toss;
   ride->trail[0].y = 0;
@@ -1075,20 +1075,20 @@ s32 LemuriaSpring_RunToss(s32 side) {
   ride->trail[3].y = 0;
   gLemuriaSpring_TossChoice = side;
   gLemuriaSpring_TossDone = 0;
-  ride->hold = 0xffff;
+  ride->launchFrame = -1;
   for (gLemuriaSpring_TossFrame = 0;; gLemuriaSpring_TossFrame++) {
     if (gLemuriaSpring_TossFrame == 50)
       Event_PlaySound(SE_TOLBI_SPRING_TOSS);
     if (gLemuriaSpring_TossFrame == 16) {
       Actor_SetAnimation(gMainRoutineWork.leaderActorId, 39);
-      ride->hold = 0;
+      ride->launchFrame = 0;
       ride->velocity.x = toFIXED(13) / 10;
       ride->velocity.y = toFIXED(4);
       ride->velocity.z = -toFIXED(2);
       ride->trail[0].x = toFIXED(120);
       ride->trail[0].y = toFIXED(16);
       ride->trail[0].z = toFIXED(152);
-      ride->frames = 300;
+      ride->attractionFrames = 300;
       if (gLemuriaSpring_TossChoice == 1) {
         Actor_SelectAnimation(Actor_Get(ACTOR_LEMURIA_SPRING_MEDAL_SHADOW), 3);
         Actor_SelectAnimation(Actor_Get(ACTOR_LEMURIA_SPRING_MEDAL), 0);

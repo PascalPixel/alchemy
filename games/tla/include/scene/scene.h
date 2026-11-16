@@ -93,8 +93,8 @@ struct Orbiter {
   u8 frozen;
   u8 countdown; ///< frames left of the spiral
   u8 riseEnabled;
-  s16 angle; ///< its place on the circle, 1/65536 turns
-  u16 speed; ///< twice its turn a frame, 1/65536 turns
+  s16 angle;            ///< its place on the circle, 1/65536 turns
+  u16 speed;            ///< twice its turn a frame, 1/65536 turns
   struct Actor *anchor; ///< the actor it circles, in watchedActor
 };
 
@@ -138,39 +138,46 @@ struct Orbit {
   s16 wait;
   u8 refused;
   u8 frozen;
-  u8 phase;   ///< where the circle's growth starts, 1/64 turns
-  u8 growth;  ///< grows by 10 every other frame up to 141
-  s16 angle;  ///< its place on the circle, 1/65536 turns
-  s16 speed;  ///< its turn a frame, slowed by 128 a frame once grown
+  u8 phase;  ///< where the circle's growth starts, 1/64 turns
+  u8 growth; ///< grows by 10 every other frame up to 141
+  s16 angle; ///< its place on the circle, 1/65536 turns
+  s16 speed; ///< its turn a frame, slowed by 128 a frame once grown
 };
 
+/// A glow sprite queued for the OAM: the link at its depth, attributes 0 and 1
+/// as one word, and attribute 2's fields.
 struct LightOam {
   u32 link;
   u32 attr01;
   u16 tile : 10;
   u16 priority : 2;
   u16 palette : 4;
-  u16 unk0a;
+  u16 attr3; ///< no code names it
 };
 
-/// Draws eight sprites while flag 0x205 is clear and the level is below
-/// 0x200000: each moves by the level as its kind says, is placed relative to
-/// the view and is drawn when it is on screen. Then sets a word in map layer
-/// 1 to the level plus a base.
+/// One of the eight sprites the sand draws: where it starts, how the level
+/// moves it, and its OAM entry as Oam_AddSpriteAtDepthClamped takes it.
 struct AnkohlRuinsSprite {
   s32 x;
   s32 z;
   s32 y;
-  u32 kind;
+  u32 kind; ///< which way the level moves it
   u32 oam[3];
 };
 
+/// Ankohl Ruins' sand (gAnkohlRuins_Sand): its sprites' VRAM cache entry, its
+/// level, map layer 1's offset before it rose, and its eight sprites.
 struct AnkohlRuinsSpriteWork {
-  s16 unk00;
-  s16 tile;
-  s32 level;
-  s32 unk08;
-  s32 unk0c;
+  /// No code names it as the sand's; the entrance tests read through the type
+  /// so that their load stays behind a store to the sand.
+  s16 unused;
+  s16 tile;  ///< the VRAM cache entry of the sprites' tiles
+  s32 level; ///< 16.16 pixels the sand has risen
+  /// Map layer 1's offset when the sand started, which the level is added to.
+  ///@{
+  FIXED baseOffsetX;
+  FIXED baseOffsetY;
+  ///@}
   struct AnkohlRuinsSprite sprites[8];
 };
 
@@ -185,10 +192,16 @@ struct AnkohlRuinsSandRow {
   u8 unused[3];
 };
 
+/// The map work (struct MapWork) with its ground marks as bit-fields, for
+/// rooms that set the kind of wading.
 struct MapBits {
-  u8 unk00[23];
-  u8 low : 2;
-  u8 mode : 2;
+  FIXED *origin;
+  s32 shakeX, shakeY, shakeDecay;
+  u8 *script;
+  u16 dispcnt;
+  u8 wideTiles;
+  u8 footprints : 2;
+  u8 wading : 2; ///< the kind of wading; rooms with a second level set 1
 };
 
 /// One id of a list ended by 0xffff, as Pillars_Raise reads it.
@@ -245,11 +258,13 @@ union ViewCoordinate {
   } part[1];
 };
 
+/// A spark of the aerie's beam: where it is, how fast it drifts up and its
+/// age in frames.
 struct BeamSpark {
   s32 position[3];
-  s32 unk0c;
-  s32 drift;
-  s32 unk14;
+  s32 unusedBeforeDrift; ///< no code names it
+  s32 drift;             ///< taken off its height each frame
+  s32 unusedAfterDrift;  ///< no code names it
   u32 age;
 };
 
@@ -338,27 +353,20 @@ struct SavedColors {
   u16 colors[14];
 };
 
+/// The field effect work as the Golden Rings read it: the VRAM cache entry
+/// their sprites share, in bytes struct FieldEffectWork leaves unnamed.
 struct LinkedEffectWork {
-  u8 unk000[0x7c0];
+  u8 beforeVramBlock[0x7c0];
   u16 vramBlock;
 };
 
-struct SwingPoint {
-  u16 unk00;
-  u16 index;
-  s32 x;
-  s32 y;
-  s32 z;
-  s32 w;
-};
-
-/// One entry of the cell lists Func_020005ac walks.
+/// A spiky rock's cell on Treasure Isle (TreasureIsle_RaiseSpikyRock).
 struct TreasureIsleCell {
-  s32 x; ///< in 16-pixel cells
-  s32 z; ///< in 16-pixel cells
-  s32 unk08;
-  u16 flag; ///< set once the cell has been opened (Func_020003fc)
-  u16 unk0e;
+  s32 x;            ///< in 16-pixel cells
+  s32 z;            ///< in 16-pixel cells
+  s32 unusedAfterZ; ///< no code names it; 12 onwards, one a rock
+  u16 flag;         ///< set once the rock has risen (TreasureIsle_SetSpikyRock)
+  u16 unusedAfterFlag; ///< no code names it
 };
 
 struct SparkState {
@@ -423,11 +431,6 @@ struct RescueMap {
   u16 unk11e;
 };
 
-struct LinkedDetail {
-  u8 unk00[22];
-  u8 field16;
-};
-
 /// A field sprite (struct FieldSprite) read a byte at a time, as Yampi Desert's
 /// scorpion sets its colour mode and priority and loads its tiles.
 struct YampiDesertVisual {
@@ -483,19 +486,5 @@ extern const u8 gWorldMapPackedTilesC[];
 
 struct Vector3;
 struct Window;
-
-struct FieldPartBytes {
-  u8 unk00[5];
-  u8 frame;
-};
-
-struct FieldAnimation {
-  u8 unk00[40];
-  struct FieldPartBytes *part;
-};
-
-struct FieldPart {
-  s16 kind;
-};
 
 #endif

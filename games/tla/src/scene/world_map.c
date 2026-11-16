@@ -2576,7 +2576,7 @@ void WorldMap_SpawnTwinSparks(struct Actor *parent) {
         sprite->fullColor = 0;
         sprite->shape = 1;
         ((struct WorldMapOam *)sprite)->size = 2;
-        ((struct LinkedDetail *)sprite->record)->field16 = 0;
+        ((struct SpriteAnimation *)sprite->record)->picture = 0;
       }
     }
   }

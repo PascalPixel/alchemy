@@ -540,7 +540,7 @@ void LemurianShipDeck_SetUpTillerDeck(void) {
 s32 Scene_Initialize(void) {
   struct MapBits *map = (struct MapBits *)Ram_HeapSlots->mapGrid;
 
-  map->mode = 1;
+  map->wading = 1;
   if (gMainRoutineWork.next == SCENE_LEMURIAN_SHIP_TILLER) {
     LemurianShipDeck_SetUpTillerDeck();
   } else {

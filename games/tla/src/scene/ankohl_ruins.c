@@ -822,7 +822,7 @@ void AnkohlRuins_DrawSand(void) {
   {
     struct MapLayer *layer = &map->layers[1];
 
-    layer->offsetY = work->unk0c + work->level;
+    layer->offsetY = work->baseOffsetY + work->level;
   }
 }
 
@@ -846,8 +846,8 @@ fill:
   *(s16 *)&work->tile = VramCache_FindFreeEntry();
   Vram_Load(work->tile, 128, tiles);
   Heap_Release(tiles);
-  work->unk08 = layer->offsetX;
-  work->unk0c = layer->offsetY;
+  work->baseOffsetX = layer->offsetX;
+  work->baseOffsetY = layer->offsetY;
   Io_Write16(0x1b1f, &REG_WINOUT);
   REG_DISPCNT |= 0x8000;
   Task_AddFrame(AnkohlRuins_DrawSand, TASK_PASS_VBLANK);
@@ -1573,7 +1573,7 @@ s32 Scene_Initialize(s32 a0) {
 
       gAnkohlRuins_Sand.level = level;
       // Read through this struct so the load stays behind the store above.
-      if ((u16)(((struct AnkohlRuinsSpriteWork *)entrance)->unk00 - 1) <= 1) {
+      if ((u16)(((struct AnkohlRuinsSpriteWork *)entrance)->unused - 1) <= 1) {
         s32 z;
         s32 x;
 
@@ -1838,7 +1838,7 @@ s32 Scene_Initialize(s32 a0) {
 
       gAnkohlRuins_Sand.level = level;
       // Read through this struct so the load stays behind the store above.
-      if ((u16)(((struct AnkohlRuinsSpriteWork *)entrance)->unk00 - 1) <= 1) {
+      if ((u16)(((struct AnkohlRuinsSpriteWork *)entrance)->unused - 1) <= 1) {
         s32 z;
         s32 x;
 

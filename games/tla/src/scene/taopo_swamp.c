@@ -31,13 +31,6 @@
 void Rope_Initialize(void);
 s32 Map_GetTerrainHeight(s32 terrain, s32 x, s32 z);
 
-struct SwingWork {
-  u32 unk00;
-  s32 arg;
-  struct SwingPoint points[16];
-  u16 values[4];
-};
-
 /// The mud room's actors (SceneId_TaopoSwampMud).
 enum TaopoSwampMudActorId {
   /// The five ivy bushes Whirlwind blows away (SPRITE_IVY), each kept gone by
@@ -1902,8 +1895,8 @@ void Vent_Puff(s32 *position, s32 base) {
 
 /// Places a room's vents from its tables and starts their cycle.
 void TaopoSwamp_StartVents(u16 *points, u16 *values, s32 arg) {
-  struct SwingWork *work = (struct SwingWork *)(gInventorySnapshot + 0x188);
-  struct SwingPoint *point = work->points;
+  struct VentWork *work = VENT_WORK;
+  struct VentEntry *point = work->entries;
 
   if (!Event_GetFlag(FLAG_KEEP_PARTY_POSITION)) {
     s32 x;
@@ -1916,12 +1909,12 @@ void TaopoSwamp_StartVents(u16 *points, u16 *values, s32 arg) {
       s32 z = points[0];
       s32 w = points[1];
 
-      point->unk00 = 0;
+      point->active = 0;
       point->x = toFIXED(x);
       point->z = toFIXED(z);
       point->y = Map_GetTerrainHeight(0, toFIXED(x), toFIXED(z) + toFIXED(16));
-      point->w = toFIXED(w);
-      point->index = i++;
+      point->value = toFIXED(w);
+      point->timer = i++;
       points += 2;
       point++;
       if (i > 15)
@@ -1933,7 +1926,7 @@ void TaopoSwamp_StartVents(u16 *points, u16 *values, s32 arg) {
       i = 0;
       if (x > 0) {
       next_value:
-        work->values[i++] = x;
+        work->ids[i++] = x;
         if (i > 3)
           goto values_done;
         x = *values++;
@@ -1943,7 +1936,7 @@ void TaopoSwamp_StartVents(u16 *points, u16 *values, s32 arg) {
     }
   values_done:;
   }
-  work->arg = arg;
+  work->hook = (s32 (*)(void))arg;
   if (REG_BLDCNT == 0) {
     {
       s32 alpha = BLEND_ALPHA(8, 12);

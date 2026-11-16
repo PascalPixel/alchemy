@@ -857,7 +857,7 @@ void StaffCredit_SpawnGrowingPair(struct Actor *parent) {
         sprite->image.fullColor = 0;
         sprite->image.shape = 1;
         sprite->image.size = 2;
-        ((struct LinkedDetail *)sprite->entries[0])->field16 = 0;
+        sprite->entries[0]->picture = 0;
       }
     }
   }

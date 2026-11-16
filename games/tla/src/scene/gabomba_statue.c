@@ -234,12 +234,14 @@ const u8 *Scene_GetExitRegions(void) {
 
 const u32 *Scene_GetExits(void) { return gSceneExits; }
 
-/// The flashing cog's update: its picture alternates every ten frames.
+/// The flashing cog's update: its colours swap between two orders every ten
+/// frames.
 s32 GabombaStatue_FlashCog(struct Actor *actor) {
   u32 frame = gFrameCount;
 
   if (frame % 10 == 0)
-    ((struct FieldAnimation *)actor->sprite)->part->frame = frame % 20 / 10 + 3;
+    ((struct Sprite *)actor->sprite)->entries[0]->colorMode =
+        frame % 20 / 10 + SPRITE_COLOR_BGR;
   return 1;
 }
 
@@ -1302,11 +1304,11 @@ void GabombaStatue_PauseCogsInMenus(void) {
       struct Actor *object = Actor_Get(i);
 
       if (object != NULL && object->spriteStorageKind == 1) {
-        struct FieldPart *part =
-            ((struct FieldAnimation *)object->sprite)->part;
+        struct SpriteAnimation *part =
+            ((struct Sprite *)object->sprite)->entries[0];
 
         if (part != NULL) {
-          switch (part->kind) {
+          switch (part->animationId) {
           case SPRITE_BLUE_COG:
           case SPRITE_GREEN_COG:
           case SPRITE_RED_COG:
@@ -1355,7 +1357,7 @@ void GabombaStatue_DrawCogCells(void) {
       continue;
     if (object->spriteStorageKind != 1)
       continue;
-    frames = (s16 *)((struct FieldAnimation *)object->sprite)->part;
+    frames = (s16 *)((struct Sprite *)object->sprite)->entries[0];
     if (frames == 0)
       continue;
     found = 0;

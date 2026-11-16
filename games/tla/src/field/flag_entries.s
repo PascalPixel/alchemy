@@ -8,8 +8,8 @@
 @ in pixels, facing in degrees and the flag it is shown by (-1 always; with
 @ 0x1000 shown while the flag is set, else while it is clear); the scene and
 @ entrance whose arrival marks the place visited (WorldMap_MarkPlaceVisited,
-@ -1 for none, an entrance of -1 for any); and the scene and entrance
-@ choosing it leads to (0 for none).
+@ scene -1 and entrance -2 for none, an entrance of -1 for any); and the
+@ scene and entrance choosing it leads to (0 for none).
 	.macro place number:req, markers:req, sprite:req, x:req, z:req, facing:req, shown_flag:req, visit_scene:req, visit_entrance:req, scene:req, entrance:req
 	.byte \number, \markers
 	.2byte \sprite, \x, \z, \facing * 0x10000 / 360, \shown_flag

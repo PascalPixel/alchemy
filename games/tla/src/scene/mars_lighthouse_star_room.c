@@ -207,7 +207,7 @@ void MarsLighthouseStarRoom_ScatterIceChips(s32 id) {
       object->scaleX = scale;
       object->scaleY = scale;
       object->bounce = FIXED_ONE / 2;
-      Actor_SetSpriteColorMode(object, 1);
+      Actor_SetSpriteColorMode(object, SPRITE_COLOR_GRB);
     }
   }
 }

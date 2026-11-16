@@ -40,9 +40,9 @@ void FieldPsynergy_StopMindReadWave(void);
 /// frame.
 s32 MercuryLighthouse_FlickerMote(struct Actor *object) {
   if ((gMercuryLighthouse_MoteFrames >> 1) & 1)
-    FieldActor_SetSpriteColor(object, 15);
+    FieldActor_SetSpriteColor(object, SPRITE_COLOR_HIDDEN);
   else
-    FieldActor_SetSpriteColor(object, 7);
+    FieldActor_SetSpriteColor(object, SPRITE_COLOR_WHITE);
   return 0;
 }
 
@@ -155,7 +155,8 @@ void MercuryLighthouse_HearVoices(void) {
 
   Event_Start();
   Event_ResolvePendingActions(0);
-  FieldActor_SetSpriteColor(Actor_GetById(gMainRoutineWork.leaderActorId), 15);
+  FieldActor_SetSpriteColor(Actor_GetById(gMainRoutineWork.leaderActorId),
+                            SPRITE_COLOR_HIDDEN);
   wait(1);
   gMercuryLighthouse_MoteFrames = 0;
   Task_Add(MercuryLighthouse_SpawnMotes, TASK_PASS_VBLANK);

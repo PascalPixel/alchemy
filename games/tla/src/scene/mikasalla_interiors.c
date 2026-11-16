@@ -272,7 +272,7 @@ s32 Scene_Initialize(void) {
              Event_GetFlag(FLAG_REUNITED))
       Actor_SetPosition(ACTOR_GALAHAD, 0, 0);
     else
-      FieldActor_SetSpriteColor(Actor_Get(ACTOR_GALAHAD), 4);
+      FieldActor_SetSpriteColor(Actor_Get(ACTOR_GALAHAD), SPRITE_COLOR_GBR);
     return 0;
   }
   if (gMainRoutineWork.next == SCENE_MIKASALLA_INTERIORS_SANCTUM) {

@@ -257,7 +257,7 @@ void NorthernReaches_FireMagmaBall(void) {
     FieldEvent_Wait(4);
     blast->scaleX = FIXED_ONE * 3 / 2;
     blast->scaleY = FIXED_ONE * 3 / 2;
-    Actor_SetSpriteColorMode(Actor_Get(ACTOR_BLAST), 6);
+    Actor_SetSpriteColorMode(Actor_Get(ACTOR_BLAST), SPRITE_COLOR_GREY);
     Actor_SetPosition(ACTOR_BLAST, 464, 200);
     Actor_SetAnimation(ACTOR_BLAST, 1);
     ball->scaleX = FIXED_ONE / 2;

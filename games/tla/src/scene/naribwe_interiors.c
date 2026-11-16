@@ -940,7 +940,7 @@ s32 Scene_Initialize(void) {
 
   Actor_SetSpriteFlags(Actor_Get(ACTOR_FORTUNE_FLAME), 0);
   Actor_SetSpriteFlags(Actor_Get(ACTOR_FORTUNE_SMOKE), 0);
-  FieldActor_SetSpriteColor(Actor_Get(ACTOR_FORTUNE_SMOKE), 4);
+  FieldActor_SetSpriteColor(Actor_Get(ACTOR_FORTUNE_SMOKE), SPRITE_COLOR_GBR);
   return 0;
 }
 

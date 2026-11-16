@@ -1277,7 +1277,7 @@ void Prox_AddPuff(s32 x, s32 y, s32 z) {
     object->motionFlags = 0;
     object->timer = 0;
     object->priorityFlags &= ~ACTOR_PRIORITY_AUTOMATIC;
-    FieldActor_SetSpriteColor(object, 7);
+    FieldActor_SetSpriteColor(object, SPRITE_COLOR_WHITE);
     ((struct FieldSprite *)object->sprite)->priority = 1;
     Actor_SetSpriteFlags(object, 0);
     object->scaleX = FIXED_ONE / 2;

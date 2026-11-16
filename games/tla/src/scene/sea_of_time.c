@@ -74,7 +74,7 @@ struct Actor *Scene_CreateImportedActor(s32 x, s32 y, s32 z, s32 type) {
     object->motionFlags = 0;
     object->collisionFlags = ACTOR_NOT_TARGETED;
     Actor_SetSpriteFlags(object, 0);
-    Actor_SetSpriteColor(object, 15);
+    Actor_SetSpriteColor(object, SPRITE_COLOR_HIDDEN);
     object->priorityFlags |=
         ACTOR_PRIORITY_IGNORES_RISES | ACTOR_PRIORITY_UNDERFOOT;
     return object;

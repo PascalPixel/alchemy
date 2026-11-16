@@ -569,14 +569,15 @@ void YampiDesert_StepOntoStakeTops(void) {
           (u8 *)((((s32)cells - (s32)Ram_MapCellBuffer) >> 2) + (s32)grid);
       s32 index = Actor_GetCellIndex(actor);
       s32 shape = MapGrid_GetTerrainKind(layer, actor->x.fixed, actor->z.fixed);
-      s32 height = Map_GetTerrainHeight(layer, actor->x.fixed, actor->z.fixed);
+      s32 height =
+          Map_GetTerrainHeight(layer, actor->x.fixed, actor->z.fixed) >> 19;
 
       cells += index;
       shapes += index;
       actor->motionFlags = 0;
       cells->collisionCode = 0;
       cells->attributeB |= 128;
-      *shapes = MapCollision_FindOrAddTag(layer, shape, (height >> 19) + 4);
+      *shapes = MapCollision_FindOrAddTag(layer, shape, height + 4);
     }
     list++;
   }
@@ -599,26 +600,24 @@ void YampiDesert_StepOffStakeTops(void) {
     return;
   while (*list != STAKE_LIST_END) {
     struct Actor *actor = Actor_GetById(*list);
-    s32 set;
 
     list += 2;
-    set = GameFlag_Get(*list);
-    if (!set) {
+    if (!GameFlag_Get(*list)) {
       s32 layer = actor->layer;
       struct MapCell *cells = map->layers[layer].cells;
       u8 *shapes =
           (u8 *)((((s32)cells - (s32)Ram_MapCellBuffer) >> 2) + (s32)grid);
-      /* FAKEMATCH(pin): the index in r10. */
-      register s32 index asm("r10") = Actor_GetCellIndex(actor);
+      s32 index = Actor_GetCellIndex(actor);
       s32 shape = MapGrid_GetTerrainKind(layer, actor->x.fixed, actor->z.fixed);
-      s32 height = Map_GetTerrainHeight(layer, actor->x.fixed, actor->z.fixed);
+      s32 height =
+          Map_GetTerrainHeight(layer, actor->x.fixed, actor->z.fixed) >> 19;
 
       cells += index;
       shapes += index;
-      actor->motionFlags = set;
+      actor->motionFlags = 0;
       cells->collisionCode = CELL_WALL;
       cells->attributeB &= 127;
-      *shapes = MapCollision_FindOrAddTag(layer, shape, (height >> 19) - 4);
+      *shapes = MapCollision_FindOrAddTag(layer, shape, height - 4);
     }
     list++;
   }

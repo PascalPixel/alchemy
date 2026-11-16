@@ -1065,14 +1065,14 @@ loop:
 
 /// Finds the current target's table row and shrinks it.
 UNUSED void Pound_SinkTarget(u16 *list, s32 mode, s32 count) {
-  struct GabombaStatueEffectWork *work = Ram_HeapSlots->fieldEffectWork;
+  struct FieldEffectWork *work = Ram_HeapSlots->fieldEffectWork;
 
   if (*list == 0xffff)
     return;
 top:
   {
     u32 entry = *list;
-    s32 id = work->objectId;
+    s32 id = work->secondActorId;
 
     if (id == entry) {
       struct Actor *object = Actor_GetById(id);

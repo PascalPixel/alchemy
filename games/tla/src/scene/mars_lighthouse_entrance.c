@@ -350,8 +350,8 @@ loop:
 /// restores its size, sets its flag, hands it to
 /// MarsLighthouseEntrance_SetIceConeCells and clears its position.
 void MarsLighthouseEntrance_PoundIceCone(s32 mode, s32 index) {
-  struct EffectHolder *holder = Ram_HeapSlots->fieldEffectWork;
-  struct Actor *object = Actor_Get(holder->objectId);
+  struct FieldEffectWork *holder = Ram_HeapSlots->fieldEffectWork;
+  struct Actor *object = Actor_Get(holder->secondActorId);
 
   if (index <= 7) {
     struct EffectOptions options;
@@ -372,7 +372,7 @@ void MarsLighthouseEntrance_PoundIceCone(s32 mode, s32 index) {
   if (mode == 1) {
     object->scaleY = FIXED_ONE;
     Event_SetFlag(object->timer);
-    MarsLighthouseEntrance_SetIceConeCells(Actor_Get(holder->objectId));
+    MarsLighthouseEntrance_SetIceConeCells(Actor_Get(holder->secondActorId));
     object->x.fixed = object->y.fixed = object->z.fixed = 0;
   }
 }
@@ -2455,11 +2455,11 @@ void Teleport_ArriveWhirling(void) {
 
 /// Finds the current target's table row and shrinks it.
 UNUSED void Pound_SinkTarget(u16 *list, s32 mode, s32 count) {
-  struct GabombaStatueEffectWork *work = Ram_HeapSlots->fieldEffectWork;
+  struct FieldEffectWork *work = Ram_HeapSlots->fieldEffectWork;
 
   while (*list != 0xffff) {
     s32 entry = *list;
-    s32 id = work->objectId;
+    s32 id = work->secondActorId;
 
     if (id == entry) {
       struct Actor *object = Actor_GetById(id);

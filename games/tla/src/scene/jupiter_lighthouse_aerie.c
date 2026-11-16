@@ -509,30 +509,32 @@ void Actor_StartScript(struct Actor *object, const s32 *script);
 
 #include "shared/whirlwind_update.h"
 
-struct GustObject *Whirlwind_Spawn(struct GustObject *source) {
+struct Actor *Whirlwind_Spawn(struct Actor *source) {
   struct Vector3 position;
   struct EffectOptions options;
-  struct GustObject *object;
+  struct Actor *object;
 
   Event_PlaySound(SE_WHIRLWIND);
-  position.x = source->x + Math_MulFX(toFIXED(8), Trig_Cos(source->angle));
-  position.z = source->z + Math_MulFX(toFIXED(8), Math_Sin(source->angle));
-  object = ((struct GustObject *)FieldActor_Create(SPRITE_WHIRLWIND, position.x,
-                                                   source->y, position.z));
+  position.x =
+      source->x.fixed + Math_MulFX(toFIXED(8), Trig_Cos(source->facing));
+  position.z =
+      source->z.fixed + Math_MulFX(toFIXED(8), Math_Sin(source->facing));
+  object = FieldActor_Create(SPRITE_WHIRLWIND, position.x, source->y.fixed,
+                             position.z);
   Import_ActorSelectAnimation(object, 2);
   Actor_SetSpriteFlags(object, 0);
   object->motionFlags = 0;
   object->priorityFlags &= ~1;
-  object->angle = source->angle;
-  object->unk64 = 0;
-  object->unk62 = 0;
-  object->unk63 = 0;
+  object->facing = source->facing;
+  object->timer = 0;
+  object->riseCounter = 0;
+  object->riseEnabled = 0;
   object->update = Whirlwind_Update;
   object->speedLimit = toFIXED(3) / 2;
   options.priority = 1;
   options.palette = 7;
-  FieldEffect_Spawn(position.x, source->y, position.z - toFIXED(6), 0, 0, 0,
-                    toFIXED(3), &options);
+  FieldEffect_Spawn(position.x, source->y.fixed, position.z - toFIXED(6), 0, 0,
+                    0, toFIXED(3), &options);
   return object;
 }
 

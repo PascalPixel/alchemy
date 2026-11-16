@@ -9,6 +9,7 @@
 #include "resource_ids.h"
 #include "field/field_coordinate.h"
 #include "field/sprite.h"
+#include "field/field_psynergy_work.h"
 #include "graphics/render_input.h"
 #include "scene/mars_lighthouse_aerie.h"
 #include "field/scene_tables.h"
@@ -43,11 +44,6 @@ struct SpriteAttr2High {
   u8 unk00[9];
   u8 tileHigh : 2;
   u8 priority : 2;
-};
-
-struct GabombaStatueEffectWork {
-  u8 unk00[0x1a];
-  s16 objectId;
 };
 
 struct Orbiter {
@@ -172,19 +168,6 @@ struct ListedActor {
   u16 id;
 };
 
-struct DoorPlan {
-  s32 value[6];
-};
-
-struct SpawnObject {
-  u8 unk00[0x50];
-  struct FieldSprite *sprite;
-  u8 unk54;
-  u8 motionFlags;
-  u8 unk56[8];
-  u16 unk5e;
-};
-
 /// The heap slots read as words: the map slot comes through u32, not its
 /// pointer type, so its load stays behind the stores of the block.
 struct HeapSlotWords {
@@ -262,26 +245,6 @@ struct JupiterLighthouseAerieObject {
   s32 z;
 };
 
-struct GustObject {
-  u8 unk00[6];
-  u16 angle;
-  s32 x;
-  s32 y;
-  s32 z;
-  u8 unk14[0x0f];
-  u8 priorityFlags;
-  u8 unk24[0x0c];
-  s32 speedLimit;
-  u8 unk34[0x21];
-  u8 motionFlags;
-  u8 unk56[0x0c];
-  u8 unk62;
-  u8 unk63;
-  u16 unk64;
-  u8 unk66[6];
-  void (*update)(struct GustObject *object);
-};
-
 /// A coordinate as the scenes' actor views read it: struct FieldCoordinate's
 /// layout as a union, whose members may alias anything.
 union ViewCoordinate {
@@ -305,18 +268,6 @@ struct PositionedActor {
   struct FieldSprite *animation;
   u8 animationKind;
   u8 motionFlags;
-};
-
-struct BeamSprite {
-  u8 unk00[8];
-  u16 tile : 10;
-  u16 bits : 6;
-  u8 unk0a[2];
-  s32 x;
-  s32 z;
-  s32 scaleX;
-  s32 scaleY;
-  u8 unk1c[0x0c];
 };
 
 struct BeamSpark {
@@ -354,11 +305,6 @@ struct EffectParams {
 
 struct Probe {
   s32 unk00[6];
-};
-
-struct AnimationRecord26 {
-  u8 unk00[0x1a];
-  u8 frame;
 };
 
 struct SpawnedActor {
@@ -477,19 +423,9 @@ struct AerieEventWork {
   };
 };
 
-struct EffectHolder {
-  u8 unk00[0x1a];
-  s16 objectId;
-};
-
 /// One halfword read as a struct's field.
 struct HalfwordField {
   s16 value;
-};
-
-struct Sprite020012e4 {
-  u8 unk00[18];
-  u16 unk12;
 };
 
 /// One object the beam reaches, as FlameThrowers_Start records it.
@@ -512,12 +448,6 @@ struct MarsLighthouseBeam {
     u16 unk00;
     u16 unk02;
   } stops[4];
-};
-
-struct MarsLighthouseRoomFAnimation {
-  u8 unk00[0x10];
-  u8 value10;
-  u8 flag11 : 1;
 };
 
 struct MarsLighthouseRoomFRideWork {
@@ -621,8 +551,6 @@ struct SceneEffectParams {
   FIXED startScaleY; ///< 16.16 fixed point, 0x10000 full size
   u8 unk10[0x18];
 };
-
-enum { ENTRANCE_ALTERNATE_PLACEMENTS = 99 };
 
 struct SparkState {
   s32 x;

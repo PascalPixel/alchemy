@@ -1548,8 +1548,6 @@ void DehkanPlateau_KeepPriorityWithLeader(void) {
           ->priority);
 }
 
-void DehkanPlateau_RestoreFullMetalVestChestCracks(void);
-
 /// Sets up the first room: its pillars, the stone pillar already in the gap,
 /// its cracks and covers, and the chest's task.
 void DehkanPlateau_InitializeFullMetalVestChest(void) {
@@ -1573,8 +1571,6 @@ void DehkanPlateau_InitializeFullMetalVestChest(void) {
     Task_Add(DehkanPlateau_KeepPriorityWithLeader, priority);
   }
 }
-
-void DehkanPlateau_RestoreThemisAxeChestCracks(void);
 
 /// Sets up the second room: its grey, Pound and stone pillars, its cracks, and
 /// Cannon as far as he has fled.
@@ -1772,12 +1768,13 @@ extern u16 gDehkanPlateau_FallLandingCells[];
     }                                                                          \
   }
 
-// Draws, in rooms 4 and 5, the cells where the party landed under the crack it
-// fell through.
+/// Draws, in the fourth room, the cells where the party landed under the crack
+/// it fell through.
 DEFINE_DEHKAN_PLATEAU_PLACE_BY_FLAG(DehkanPlateau_DrawMintChestFallLanding, 3,
                                     8, 67, 3, 66, 69)
 
-/// Draws, in room 5, the cells where the party landed.
+/// Draws, in the fifth room, the cells where the party landed under the crack
+/// it fell through.
 DEFINE_DEHKAN_PLATEAU_PLACE_BY_FLAG(DehkanPlateau_DrawPoundCubeFallLanding, 13,
                                     5, 77, 0, 65, 65)
 

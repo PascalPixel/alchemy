@@ -301,6 +301,7 @@ void Contigo_ClearSecondBushes(void);
 
 void Contigo_ClearBushesBySalt(void);
 
+/// Clears the fourth clump of bushes where Whirlwind touched it.
 void Contigo_ClearFourthBushes(void);
 void Contigo_ClearFifthBushes(void);
 void Contigo_ClearSixthBushes(void);
@@ -1173,6 +1174,7 @@ void Contigo_ClearFirstBushes(void) {
   FieldTileCopies_CopyTouchedCells(3, 50, 1, 1, 8, 54, 0);
 }
 
+/// Clears the second clump of bushes where Whirlwind touched it.
 void Contigo_ClearSecondBushes(void) {
   FieldTileCopies_CopyTouchedCells(4, 43, 2, 1, 2, 43, 0);
 }
@@ -1209,38 +1211,47 @@ void Contigo_ClearFourthBushes(void) {
   FieldTileCopies_CopyTouchedCells(29, 35, 1, 2, 23, 47, 0);
 }
 
+/// Clears the fifth clump of bushes where Whirlwind touched it.
 void Contigo_ClearFifthBushes(void) {
   FieldTileCopies_CopyTouchedCells(32, 55, 2, 3, 29, 58, 0);
 }
 
+/// Clears the sixth clump of bushes where Whirlwind touched it.
 void Contigo_ClearSixthBushes(void) {
   FieldTileCopies_CopyTouchedCells(3, 60, 1, 1, 3, 56, 0);
 }
 
+/// Clears the seventh clump of bushes where Whirlwind touched it.
 void Contigo_ClearSeventhBushes(void) {
   FieldTileCopies_CopyTouchedCells(7, 62, 2, 1, 7, 58, 0);
 }
 
+/// Clears the eighth clump of bushes where Whirlwind touched it.
 void Contigo_ClearEighthBushes(void) {
   FieldTileCopies_CopyTouchedCells(10, 63, 2, 1, 10, 59, 0);
 }
 
+/// Clears the first hedge row where Whirlwind touched it.
 void Contigo_ClearFirstHedgeRow(void) {
   FieldTileCopies_CopyTouchedCells(32, 55, 3, 1, 40, 57, 0);
 }
 
+/// Clears the second hedge row where Whirlwind touched it.
 void Contigo_ClearSecondHedgeRow(void) {
   FieldTileCopies_CopyTouchedCells(32, 55, 5, 1, 39, 58, 0);
 }
 
+/// Clears the third hedge row where Whirlwind touched it.
 void Contigo_ClearThirdHedgeRow(void) {
   FieldTileCopies_CopyTouchedCells(32, 55, 5, 1, 39, 59, 0);
 }
 
+/// Clears the fourth hedge row where Whirlwind touched it.
 void Contigo_ClearFourthHedgeRow(void) {
   FieldTileCopies_CopyTouchedCells(32, 55, 5, 1, 39, 60, 0);
 }
 
+/// Clears the fifth hedge row where Whirlwind touched it.
 void Contigo_ClearFifthHedgeRow(void) {
   FieldTileCopies_CopyTouchedCells(32, 55, 3, 1, 40, 61, 0);
 }
@@ -2692,7 +2703,7 @@ void Contigo_RaiseSparkle(struct Actor *object) {
   FIXED sine;
   s32 i, j;
   struct SparkleWork *work = (struct SparkleWork *)object->watchedActor;
-  u8 *count = (u8 *)object + 99;
+  u8 *count = &object->riseEnabled;
   struct EffectSprite *sprite;
 
   if (*count & 1)

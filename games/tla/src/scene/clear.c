@@ -1228,6 +1228,9 @@ s32 Clear_EnterPassword(void) {
             System_Wait(6);
             NameEntry_EditMemberName(0);
             StatusScreen_Run();
+            // XXX: what copy of the flags this restores; it lies 0xac into an
+            // EWRAM block nothing else names, and the routine that writes it
+            // there would settle it.
             Iwram_CopyWords(Data_02012f94 + 0xac, gGameFlagBytes, 0xf40);
             return 0;
           }

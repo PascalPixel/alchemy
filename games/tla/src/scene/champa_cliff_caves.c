@@ -835,19 +835,13 @@ DEFINE_CHAMPA_CLIFF_CAVES_GROW(ChampaCliffCaves_GrowThrownSlowly,
 
 #define PALETTE ((u16 *)&BG_PLTT_COLOR(0, 0))
 
-struct Position {
-  s32 x;
-  s32 y;
-  s32 z;
-};
-
 /// Entering Avimander's room: Briggs stops the party and Obaba asks Felix to
 /// back down; refused, she throws Briggs's salamander into her forge and it
 /// comes out as Avimander to fight.
 void ChampaCliffCaves_FightAvimander(void) {
   u16 current[5];
   u16 target[5];
-  struct Position position;
+  struct Vector3 position;
   const u16 *colour;
   struct Actor *object = Actor_GetById(ACTOR_AVIMANDER);
 
@@ -1970,14 +1964,8 @@ UNUSED void ChampaCliffCaves_PutOutForgeFire(void) {
   HeapSlot_Release(HEAP_SLOT_MENU);
 }
 
-struct Vec3 {
-  s32 x;
-  s32 y;
-  s32 z;
-};
-
 /// The forge's first glow at a spot: the disc alone grows to full size.
-void ChampaCliffCaves_LightDisc(const struct Vec3 *origin) {
+void ChampaCliffCaves_LightDisc(const struct Vector3 *origin) {
   struct ChampaCliffCavesWork *work =
       HeapSlot_Alloc(HEAP_SLOT_MENU, sizeof(struct ChampaCliffCavesWork));
   s32 state;

@@ -54,6 +54,25 @@
 /// Set once Move has pushed the peak's pillar into column 8, where it stays.
 #define FLAG_TRIAL_ROAD_PEAK_PILLAR_PLACED 0x9fc
 
+/// Set while the leader stands on the pillars' tops
+/// (TrialRoad_TrackLeaderOnPillars).
+#define FLAG_LEADER_ON_PILLARS FLAG_SCENE_TEMP_08
+/// Set once a step at a stage's foot has offered to give up; stepping away
+/// clears it.
+#define FLAG_GIVE_UP_ASKED FLAG_SCENE_TEMP_81
+/// Set once both blue chests hold their items and the leader's door opens.
+#define FLAG_STAGE_DOOR_OPEN FLAG_SCENE_TEMP_82
+/// Set once the leader reaches the door at a stage's end and the blue chests
+/// open (TrialRoad_OpenChests).
+#define FLAG_STAGE_CHESTS_OPENED FLAG_SCENE_TEMP_84
+/// Set while the inner blue chest stands open for an item.
+#define FLAG_INNER_CHEST_OPEN FLAG_SCENE_TEMP_85
+/// Set while the outer blue chest stands open for an item: it opens only when
+/// Moapa reached the door first.
+#define FLAG_OUTER_CHEST_OPEN FLAG_SCENE_TEMP_86
+/// Set once Lift has raised the rock at the summit cave's mouth.
+#define FLAG_CAVE_ROCK_LIFTED FLAG_SCENE_TEMP_89
+
 #include "shared/trial_road.h"
 
 /// The actors every stage room places first, numbering the rows of each
@@ -237,7 +256,7 @@ s32 TrialRoad_RivalIsAhead(s32 fallback) {
     return 1;
   if (state->leaderBest > state->rivalBest)
     return 0;
-  if (Event_GetFlag(FLAG_SCENE_TEMP_84))
+  if (Event_GetFlag(FLAG_STAGE_CHESTS_OPENED))
     return 0;
   if (state->rivalTimer != 0)
     return 1;
@@ -598,16 +617,16 @@ s32 TrialRoad_OfferToGiveUp(void) {
       return 1;
     }
   }
-  Event_SetFlag(FLAG_SCENE_TEMP_81);
+  Event_SetFlag(FLAG_GIVE_UP_ASKED);
   return 0;
 }
 
 /// Stepping away from the stairs lets the offer to give up be asked again.
-void TrialRoad_ClearGiveUpAsked(void) { GameFlag_Clear(FLAG_SCENE_TEMP_81); }
+void TrialRoad_ClearGiveUpAsked(void) { GameFlag_Clear(FLAG_GIVE_UP_ASKED); }
 
-/// The leader reaches the door at a stage's end: the blue chests open (flags
-/// 645 and 646), the second only when the rival arrived first and twice the
-/// weight is due.
+/// The leader reaches the door at a stage's end: the blue chests open
+/// (FLAG_INNER_CHEST_OPEN and FLAG_OUTER_CHEST_OPEN), the outer one only when
+/// the rival arrived first and twice the weight is due.
 void TrialRoad_OpenChests(void) {
   struct Actor *leader = Actor_GetById(gMainRoutineWork.leaderActorId);
   struct TrialRoadState *state = gTrialRoadState;
@@ -625,31 +644,29 @@ void TrialRoad_OpenChests(void) {
   Event_PlaySound(SE_CHEST_OPEN);
   if (state->mirrored == 0) {
     Actor_SetAnimation(ACTOR_LEFT_INNER_CHEST, 6);
-    Event_SetFlag(FLAG_SCENE_TEMP_85);
+    Event_SetFlag(FLAG_INNER_CHEST_OPEN);
     if (found != 0) {
       Actor_SetAnimation(ACTOR_LEFT_OUTER_CHEST, 6);
-      Event_SetFlag(FLAG_SCENE_TEMP_86);
+      Event_SetFlag(FLAG_OUTER_CHEST_OPEN);
     }
   } else {
     Actor_SetAnimation(ACTOR_RIGHT_INNER_CHEST, 6);
-    Event_SetFlag(FLAG_SCENE_TEMP_85);
+    Event_SetFlag(FLAG_INNER_CHEST_OPEN);
     if (found != 0) {
       Actor_SetAnimation(ACTOR_RIGHT_OUTER_CHEST, 6);
-      Event_SetFlag(FLAG_SCENE_TEMP_86);
+      Event_SetFlag(FLAG_OUTER_CHEST_OPEN);
     }
   }
-  Event_SetFlag(FLAG_SCENE_TEMP_84);
+  Event_SetFlag(FLAG_STAGE_CHESTS_OPENED);
   Event_End();
 }
 
-/// Puts an item in the chest: "{protagonist} put {actor}'s {item} in the
-/// chest." (MsgTrialRoadStoredItem) with sound 125 while the chest object
-/// Field_FindNearbyTalkTarget picks plays motion 5; chests 9 and 11 clear flag
-/// 645, the others 646, and once both are clear it calls
-/// TrialRoad_OpenLeaderDoor with the stage state's mirrored and stage[0],
-/// plays sound 138 and sets flag 642. Then the item leaves the owner's slot.
+/// Puts an item in the chest the leader faces: "{protagonist} put {actor}'s
+/// {item} in the chest." (MsgTrialRoadStoredItem), and the chest closes. Once
+/// both chests are closed the leader's door opens (FLAG_STAGE_DOOR_OPEN).
+/// Then the item leaves the owner's slot.
 void TrialRoad_PutItemInChest(s32 item, s32 owner, s32 slot) {
-  s32 kind = Field_FindNearbyTalkTarget(Party_GetLeaderActor());
+  s32 chest = Field_FindNearbyTalkTarget(Party_GetLeaderActor());
   struct TrialRoadState *state = gTrialRoadState;
 
   Event_Start();
@@ -659,16 +676,16 @@ void TrialRoad_PutItemInChest(s32 item, s32 owner, s32 slot) {
   // "Felix put ...'s ... in the chest."
   FieldMessage_Show((s32)&MsgTrialRoadStoredItem, 1);
   Event_PlaySound(SE_CHEST_CLOSE);
-  Actor_SetAnimationAndWait(kind, 5);
-  if (kind == 9 || kind == 11)
-    Event_ClearFlag(FLAG_SCENE_TEMP_85);
+  Actor_SetAnimationAndWait(chest, 5);
+  if (chest == ACTOR_LEFT_INNER_CHEST || chest == ACTOR_RIGHT_INNER_CHEST)
+    Event_ClearFlag(FLAG_INNER_CHEST_OPEN);
   else
-    Event_ClearFlag(FLAG_SCENE_TEMP_86);
-  if (!Event_GetFlag(FLAG_SCENE_TEMP_85) &&
-      !Event_GetFlag(FLAG_SCENE_TEMP_86)) {
+    Event_ClearFlag(FLAG_OUTER_CHEST_OPEN);
+  if (!Event_GetFlag(FLAG_INNER_CHEST_OPEN) &&
+      !Event_GetFlag(FLAG_OUTER_CHEST_OPEN)) {
     TrialRoad_OpenLeaderDoor(state->mirrored, state->stage[0]);
     Event_PlaySound(SE_ITEM_BREAK);
-    Event_SetFlag(FLAG_SCENE_TEMP_82);
+    Event_SetFlag(FLAG_STAGE_DOOR_OPEN);
   }
   Inventory_ClearSlot(owner, slot);
   Event_End();
@@ -678,10 +695,10 @@ void TrialRoad_PutItemInChest(s32 item, s32 owner, s32 slot) {
 void TrialRoad_ExamineChest(s32 id) {
   s32 flag;
 
-  if (id == 9 || id == 11)
-    flag = FLAG_SCENE_TEMP_85;
+  if (id == ACTOR_LEFT_INNER_CHEST || id == ACTOR_RIGHT_INNER_CHEST)
+    flag = FLAG_INNER_CHEST_OPEN;
   else
-    flag = FLAG_SCENE_TEMP_86;
+    flag = FLAG_OUTER_CHEST_OPEN;
   if (!Event_GetFlag(flag)) {
     Event_Start();
     Event_ResolvePendingActions(0);
@@ -817,14 +834,14 @@ void TrialRoad_OpenSpoutCell(s32 id) {
                              FIELD_CELL(object->z.fixed));
 }
 
-/// Notes whether the leader stands on the pillars' tops (FLAG_SCENE_TEMP_08).
+/// Notes whether the leader stands on the pillars' tops.
 void TrialRoad_TrackLeaderOnPillars(void) {
   FIXED y = Actor_GetById(gMainRoutineWork.leaderActorId)->y.fixed;
 
   if (y == toFIXED(32))
-    Event_SetFlag(FLAG_SCENE_TEMP_08);
+    Event_SetFlag(FLAG_LEADER_ON_PILLARS);
   else
-    Event_ClearFlag(FLAG_SCENE_TEMP_08);
+    Event_ClearFlag(FLAG_LEADER_ON_PILLARS);
 }
 
 /// Jumps across the gap when the pillar fills it, else drops down the ledge.
@@ -1480,8 +1497,8 @@ void TrialRoad_DriftWithStream(void) {
 // Trial Road's rooms set up, the rival Moapa's race, the peak, the
 // fountains and crumbling pillars, the race's progress display and the tables.
 
-/// Lift raises the rock at the cave's mouth (FLAG_SCENE_TEMP_89).
-void TrialRoad_LiftCaveRock(void) { GameFlag_Set(FLAG_SCENE_TEMP_89); }
+/// Lift raises the rock at the cave's mouth.
+void TrialRoad_LiftCaveRock(void) { GameFlag_Set(FLAG_CAVE_ROCK_LIFTED); }
 
 /// Cyclone cuts the bushes it touches.
 void TrialRoad_CutBushes(void) {
@@ -2307,10 +2324,10 @@ s32 Scene_PrepareMap(void) {
           GameFlag_Set(FLAG_RETREAT_BLOCKED);
           road = gTrialRoadState;
           if (road->stage[0] < road->leaderBest ||
-              GameFlag_Get(FLAG_SCENE_TEMP_82)) {
+              GameFlag_Get(FLAG_STAGE_DOOR_OPEN)) {
             TrialRoad_OpenLeaderDoor(road->mirrored, road->stage[0]);
-            GameFlag_Set(FLAG_SCENE_TEMP_82);
-            GameFlag_Set(FLAG_SCENE_TEMP_84);
+            GameFlag_Set(FLAG_STAGE_DOOR_OPEN);
+            GameFlag_Set(FLAG_STAGE_CHESTS_OPENED);
           }
           if (road->stage[0] < road->rivalBest)
             TrialRoad_OpenRivalDoor(road->mirrored, road->stage[0]);
@@ -2319,8 +2336,8 @@ s32 Scene_PrepareMap(void) {
           Task_Add(TrialRoad_UpdateRival, TASK_PASS_VBLANK);
         } else {
           TrialRoad_OpenLeaderDoor(state->mirrored, state->stage[0]);
-          GameFlag_Set(FLAG_SCENE_TEMP_82);
-          GameFlag_Set(FLAG_SCENE_TEMP_84);
+          GameFlag_Set(FLAG_STAGE_DOOR_OPEN);
+          GameFlag_Set(FLAG_STAGE_CHESTS_OPENED);
           TrialRoad_OpenRivalDoor(state->mirrored, state->stage[0]);
         }
       }
@@ -4295,37 +4312,37 @@ LAST_DATA struct Trigger gTrialRoad_PillarStageTriggers[] = {
     {TRIGGER_STEP, 2, CONDITION_ALWAYS, EVENT(TrialRoad_TakeStairs)},
     {TRIGGER_STEP, 3, CONDITION_ALWAYS, EVENT(TrialRoad_TakeStairs)},
     {TRIGGER_STEP, 4, CONDITION_ALWAYS, EVENT(TrialRoad_TakeStairs)},
-    {TRIGGER_STEP, 10, IF_FLAG_SET(0x281), EVENT(TrialRoad_ClearGiveUpAsked)},
-    {TRIGGER_STEP, 11, 0x281, EVENT(TrialRoad_OfferToGiveUp)},
-    {TRIGGER_STEP, 20, IF_FLAG_SET(0x281), EVENT(TrialRoad_ClearGiveUpAsked)},
-    {TRIGGER_STEP, 21, 0x281, EVENT(TrialRoad_OfferToGiveUp)},
-    {TRIGGER_STEP, 30, IF_FLAG_SET(0x284), EVENT(TrialRoad_StepPastChests)},
-    {TRIGGER_STEP, 31, 0x284, EVENT(TrialRoad_OpenChests)},
-    {TRIGGER_STEP, 40, IF_FLAG_SET(0x284), EVENT(TrialRoad_StepPastChests)},
-    {TRIGGER_STEP, 41, 0x284, EVENT(TrialRoad_OpenChests)},
-    {USE_ITEM_ON_ACTOR(ITEM_FILTER_EQUIPMENT), 0x409, IF_FLAG_SET(0x285), EVENT(TrialRoad_PutItemInChest)},
-    {USE_ITEM_ON_ACTOR(ITEM_FILTER_EQUIPMENT), 0x40a, IF_FLAG_SET(0x286), EVENT(TrialRoad_PutItemInChest)},
-    {USE_ITEM_ON_ACTOR(ITEM_FILTER_EQUIPMENT), 0x40b, IF_FLAG_SET(0x285), EVENT(TrialRoad_PutItemInChest)},
-    {USE_ITEM_ON_ACTOR(ITEM_FILTER_EQUIPMENT), 0x40c, IF_FLAG_SET(0x286), EVENT(TrialRoad_PutItemInChest)},
+    {TRIGGER_STEP, 10, IF_FLAG_SET(FLAG_GIVE_UP_ASKED), EVENT(TrialRoad_ClearGiveUpAsked)},
+    {TRIGGER_STEP, 11, FLAG_GIVE_UP_ASKED, EVENT(TrialRoad_OfferToGiveUp)},
+    {TRIGGER_STEP, 20, IF_FLAG_SET(FLAG_GIVE_UP_ASKED), EVENT(TrialRoad_ClearGiveUpAsked)},
+    {TRIGGER_STEP, 21, FLAG_GIVE_UP_ASKED, EVENT(TrialRoad_OfferToGiveUp)},
+    {TRIGGER_STEP, 30, IF_FLAG_SET(FLAG_STAGE_CHESTS_OPENED), EVENT(TrialRoad_StepPastChests)},
+    {TRIGGER_STEP, 31, FLAG_STAGE_CHESTS_OPENED, EVENT(TrialRoad_OpenChests)},
+    {TRIGGER_STEP, 40, IF_FLAG_SET(FLAG_STAGE_CHESTS_OPENED), EVENT(TrialRoad_StepPastChests)},
+    {TRIGGER_STEP, 41, FLAG_STAGE_CHESTS_OPENED, EVENT(TrialRoad_OpenChests)},
+    {USE_ITEM_ON_ACTOR(ITEM_FILTER_EQUIPMENT), 0x409, IF_FLAG_SET(FLAG_INNER_CHEST_OPEN), EVENT(TrialRoad_PutItemInChest)},
+    {USE_ITEM_ON_ACTOR(ITEM_FILTER_EQUIPMENT), 0x40a, IF_FLAG_SET(FLAG_OUTER_CHEST_OPEN), EVENT(TrialRoad_PutItemInChest)},
+    {USE_ITEM_ON_ACTOR(ITEM_FILTER_EQUIPMENT), 0x40b, IF_FLAG_SET(FLAG_INNER_CHEST_OPEN), EVENT(TrialRoad_PutItemInChest)},
+    {USE_ITEM_ON_ACTOR(ITEM_FILTER_EQUIPMENT), 0x40c, IF_FLAG_SET(FLAG_OUTER_CHEST_OPEN), EVENT(TrialRoad_PutItemInChest)},
     {TRIGGER_TALK, 9, CONDITION_ALWAYS, EVENT(TrialRoad_ExamineChest)},
     {TRIGGER_TALK, 10, CONDITION_ALWAYS, EVENT(TrialRoad_ExamineChest)},
     {TRIGGER_TALK, 11, CONDITION_ALWAYS, EVENT(TrialRoad_ExamineChest)},
     {TRIGGER_TALK, 12, CONDITION_ALWAYS, EVENT(TrialRoad_ExamineChest)},
-    {STEP_TRIGGER_WALKING_INTO(FACING_SOUTH), 51, IF_FLAG_SET(0x208), EVENT(TrialRoad_JumpAcrossGap)},
-    {STEP_TRIGGER_WALKING_INTO(FACING_SOUTH), 52, IF_FLAG_SET(0x208), EVENT(TrialRoad_JumpForward)},
+    {STEP_TRIGGER_WALKING_INTO(FACING_SOUTH), 51, IF_FLAG_SET(FLAG_LEADER_ON_PILLARS), EVENT(TrialRoad_JumpAcrossGap)},
+    {STEP_TRIGGER_WALKING_INTO(FACING_SOUTH), 52, IF_FLAG_SET(FLAG_LEADER_ON_PILLARS), EVENT(TrialRoad_JumpForward)},
     {TRIGGER_PUSH, 0, CONDITION_ALWAYS, EVENT(TrialRoad_UnblockMovedPillar)},
     {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), 15, CONDITION_ALWAYS, EVENT(TrialRoad_UnblockMovedPillar)},
     {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), 16, CONDITION_ALWAYS, EVENT(TrialRoad_UnblockMovedPillar)},
-    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), 17, IF_FLAG_SET(0x307), EVENT(TrialRoad_UnblockMovedPillar)},
+    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), 17, IF_FLAG_SET(FLAG_AREA_TEMP_07), EVENT(TrialRoad_UnblockMovedPillar)},
     {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), 18, CONDITION_ALWAYS, EVENT(TrialRoad_UnblockMovedPillar)},
     {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), 19, CONDITION_ALWAYS, EVENT(TrialRoad_UnblockMovedPillar)},
     {TRIGGER_PUSHED, 0, CONDITION_ALWAYS, EVENT(TrialRoad_BlockMovedPillar)},
     {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 15, CONDITION_ALWAYS, EVENT(TrialRoad_BlockMovedPillar)},
     {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 16, CONDITION_ALWAYS, EVENT(TrialRoad_BlockMovedPillar)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 17, IF_FLAG_SET(0x307), EVENT(TrialRoad_BlockMovedPillar)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 17, IF_FLAG_SET(FLAG_AREA_TEMP_07), EVENT(TrialRoad_BlockMovedPillar)},
     {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 18, CONDITION_ALWAYS, EVENT(TrialRoad_BlockMovedPillar)},
     {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 19, CONDITION_ALWAYS, EVENT(TrialRoad_BlockMovedPillar)},
-    {PSYNERGY_ON_ACTOR(ABILITY_WHIRLWIND), 20, 0x307, EVENT(TrialRoad_BlowBushOffLonePillar)},
+    {PSYNERGY_ON_ACTOR(ABILITY_WHIRLWIND), 20, FLAG_AREA_TEMP_07, EVENT(TrialRoad_BlowBushOffLonePillar)},
     {TRIGGER_TABLE_END},
 };
 
@@ -4334,18 +4351,18 @@ LAST_DATA struct Trigger gTrialRoad_TorchStageTriggers[] = {
     {TRIGGER_STEP, 2, CONDITION_ALWAYS, EVENT(TrialRoad_TakeStairs)},
     {TRIGGER_STEP, 3, CONDITION_ALWAYS, EVENT(TrialRoad_TakeStairs)},
     {TRIGGER_STEP, 4, CONDITION_ALWAYS, EVENT(TrialRoad_TakeStairs)},
-    {TRIGGER_STEP, 10, IF_FLAG_SET(0x281), EVENT(TrialRoad_ClearGiveUpAsked)},
-    {TRIGGER_STEP, 11, 0x281, EVENT(TrialRoad_OfferToGiveUp)},
-    {TRIGGER_STEP, 20, IF_FLAG_SET(0x281), EVENT(TrialRoad_ClearGiveUpAsked)},
-    {TRIGGER_STEP, 21, 0x281, EVENT(TrialRoad_OfferToGiveUp)},
-    {TRIGGER_STEP, 30, IF_FLAG_SET(0x284), EVENT(TrialRoad_StepPastChests)},
-    {TRIGGER_STEP, 31, 0x284, EVENT(TrialRoad_OpenChests)},
-    {TRIGGER_STEP, 40, IF_FLAG_SET(0x284), EVENT(TrialRoad_StepPastChests)},
-    {TRIGGER_STEP, 41, 0x284, EVENT(TrialRoad_OpenChests)},
-    {USE_ITEM_ON_ACTOR(ITEM_FILTER_EQUIPMENT), 0x409, IF_FLAG_SET(0x285), EVENT(TrialRoad_PutItemInChest)},
-    {USE_ITEM_ON_ACTOR(ITEM_FILTER_EQUIPMENT), 0x40a, IF_FLAG_SET(0x286), EVENT(TrialRoad_PutItemInChest)},
-    {USE_ITEM_ON_ACTOR(ITEM_FILTER_EQUIPMENT), 0x40b, IF_FLAG_SET(0x285), EVENT(TrialRoad_PutItemInChest)},
-    {USE_ITEM_ON_ACTOR(ITEM_FILTER_EQUIPMENT), 0x40c, IF_FLAG_SET(0x286), EVENT(TrialRoad_PutItemInChest)},
+    {TRIGGER_STEP, 10, IF_FLAG_SET(FLAG_GIVE_UP_ASKED), EVENT(TrialRoad_ClearGiveUpAsked)},
+    {TRIGGER_STEP, 11, FLAG_GIVE_UP_ASKED, EVENT(TrialRoad_OfferToGiveUp)},
+    {TRIGGER_STEP, 20, IF_FLAG_SET(FLAG_GIVE_UP_ASKED), EVENT(TrialRoad_ClearGiveUpAsked)},
+    {TRIGGER_STEP, 21, FLAG_GIVE_UP_ASKED, EVENT(TrialRoad_OfferToGiveUp)},
+    {TRIGGER_STEP, 30, IF_FLAG_SET(FLAG_STAGE_CHESTS_OPENED), EVENT(TrialRoad_StepPastChests)},
+    {TRIGGER_STEP, 31, FLAG_STAGE_CHESTS_OPENED, EVENT(TrialRoad_OpenChests)},
+    {TRIGGER_STEP, 40, IF_FLAG_SET(FLAG_STAGE_CHESTS_OPENED), EVENT(TrialRoad_StepPastChests)},
+    {TRIGGER_STEP, 41, FLAG_STAGE_CHESTS_OPENED, EVENT(TrialRoad_OpenChests)},
+    {USE_ITEM_ON_ACTOR(ITEM_FILTER_EQUIPMENT), 0x409, IF_FLAG_SET(FLAG_INNER_CHEST_OPEN), EVENT(TrialRoad_PutItemInChest)},
+    {USE_ITEM_ON_ACTOR(ITEM_FILTER_EQUIPMENT), 0x40a, IF_FLAG_SET(FLAG_OUTER_CHEST_OPEN), EVENT(TrialRoad_PutItemInChest)},
+    {USE_ITEM_ON_ACTOR(ITEM_FILTER_EQUIPMENT), 0x40b, IF_FLAG_SET(FLAG_INNER_CHEST_OPEN), EVENT(TrialRoad_PutItemInChest)},
+    {USE_ITEM_ON_ACTOR(ITEM_FILTER_EQUIPMENT), 0x40c, IF_FLAG_SET(FLAG_OUTER_CHEST_OPEN), EVENT(TrialRoad_PutItemInChest)},
     {TRIGGER_TALK, 9, CONDITION_ALWAYS, EVENT(TrialRoad_ExamineChest)},
     {TRIGGER_TALK, 10, CONDITION_ALWAYS, EVENT(TrialRoad_ExamineChest)},
     {TRIGGER_TALK, 11, CONDITION_ALWAYS, EVENT(TrialRoad_ExamineChest)},
@@ -4362,10 +4379,10 @@ LAST_DATA struct Trigger gTrialRoad_TorchStageTriggers[] = {
     {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 16, CONDITION_ALWAYS, EVENT(TrialRoad_MeltIceBesideTorch)},
     {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 21, CONDITION_ALWAYS, EVENT(TrialRoad_MeltIceBesideTorch)},
     {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 22, CONDITION_ALWAYS, EVENT(TrialRoad_MeltIceBesideTorch)},
-    {PSYNERGY_ON_ACTOR(ABILITY_FROST), 17, IF_FLAG_SET(0x214), EVENT(TrialRoad_FreezePuddle)},
-    {PSYNERGY_ON_ACTOR(ABILITY_FROST), 18, IF_FLAG_SET(0x215), EVENT(TrialRoad_FreezePuddle)},
-    {PSYNERGY_ON_ACTOR(ABILITY_FROST), 19, IF_FLAG_SET(0x216), EVENT(TrialRoad_FreezePuddle)},
-    {PSYNERGY_ON_ACTOR(ABILITY_FROST), 20, IF_FLAG_SET(0x217), EVENT(TrialRoad_FreezePuddle)},
+    {PSYNERGY_ON_ACTOR(ABILITY_FROST), 17, IF_FLAG_SET(FLAG_SCENE_TEMP_14), EVENT(TrialRoad_FreezePuddle)},
+    {PSYNERGY_ON_ACTOR(ABILITY_FROST), 18, IF_FLAG_SET(FLAG_SCENE_TEMP_15), EVENT(TrialRoad_FreezePuddle)},
+    {PSYNERGY_ON_ACTOR(ABILITY_FROST), 19, IF_FLAG_SET(FLAG_SCENE_TEMP_16), EVENT(TrialRoad_FreezePuddle)},
+    {PSYNERGY_ON_ACTOR(ABILITY_FROST), 20, IF_FLAG_SET(FLAG_SCENE_TEMP_17), EVENT(TrialRoad_FreezePuddle)},
     {TRIGGER_TABLE_END},
 };
 
@@ -4374,37 +4391,37 @@ LAST_DATA struct Trigger gTrialRoad_BushPillarStageTriggers[] = {
     {TRIGGER_STEP, 2, CONDITION_ALWAYS, EVENT(TrialRoad_TakeStairs)},
     {TRIGGER_STEP, 3, CONDITION_ALWAYS, EVENT(TrialRoad_TakeStairs)},
     {TRIGGER_STEP, 4, CONDITION_ALWAYS, EVENT(TrialRoad_TakeStairs)},
-    {TRIGGER_STEP, 10, IF_FLAG_SET(0x281), EVENT(TrialRoad_ClearGiveUpAsked)},
-    {TRIGGER_STEP, 11, 0x281, EVENT(TrialRoad_OfferToGiveUp)},
-    {TRIGGER_STEP, 20, IF_FLAG_SET(0x281), EVENT(TrialRoad_ClearGiveUpAsked)},
-    {TRIGGER_STEP, 21, 0x281, EVENT(TrialRoad_OfferToGiveUp)},
-    {TRIGGER_STEP, 30, IF_FLAG_SET(0x284), EVENT(TrialRoad_StepPastChests)},
-    {TRIGGER_STEP, 31, 0x284, EVENT(TrialRoad_OpenChests)},
-    {TRIGGER_STEP, 40, IF_FLAG_SET(0x284), EVENT(TrialRoad_StepPastChests)},
-    {TRIGGER_STEP, 41, 0x284, EVENT(TrialRoad_OpenChests)},
-    {USE_ITEM_ON_ACTOR(ITEM_FILTER_EQUIPMENT), 0x409, IF_FLAG_SET(0x285), EVENT(TrialRoad_PutItemInChest)},
-    {USE_ITEM_ON_ACTOR(ITEM_FILTER_EQUIPMENT), 0x40a, IF_FLAG_SET(0x286), EVENT(TrialRoad_PutItemInChest)},
-    {USE_ITEM_ON_ACTOR(ITEM_FILTER_EQUIPMENT), 0x40b, IF_FLAG_SET(0x285), EVENT(TrialRoad_PutItemInChest)},
-    {USE_ITEM_ON_ACTOR(ITEM_FILTER_EQUIPMENT), 0x40c, IF_FLAG_SET(0x286), EVENT(TrialRoad_PutItemInChest)},
+    {TRIGGER_STEP, 10, IF_FLAG_SET(FLAG_GIVE_UP_ASKED), EVENT(TrialRoad_ClearGiveUpAsked)},
+    {TRIGGER_STEP, 11, FLAG_GIVE_UP_ASKED, EVENT(TrialRoad_OfferToGiveUp)},
+    {TRIGGER_STEP, 20, IF_FLAG_SET(FLAG_GIVE_UP_ASKED), EVENT(TrialRoad_ClearGiveUpAsked)},
+    {TRIGGER_STEP, 21, FLAG_GIVE_UP_ASKED, EVENT(TrialRoad_OfferToGiveUp)},
+    {TRIGGER_STEP, 30, IF_FLAG_SET(FLAG_STAGE_CHESTS_OPENED), EVENT(TrialRoad_StepPastChests)},
+    {TRIGGER_STEP, 31, FLAG_STAGE_CHESTS_OPENED, EVENT(TrialRoad_OpenChests)},
+    {TRIGGER_STEP, 40, IF_FLAG_SET(FLAG_STAGE_CHESTS_OPENED), EVENT(TrialRoad_StepPastChests)},
+    {TRIGGER_STEP, 41, FLAG_STAGE_CHESTS_OPENED, EVENT(TrialRoad_OpenChests)},
+    {USE_ITEM_ON_ACTOR(ITEM_FILTER_EQUIPMENT), 0x409, IF_FLAG_SET(FLAG_INNER_CHEST_OPEN), EVENT(TrialRoad_PutItemInChest)},
+    {USE_ITEM_ON_ACTOR(ITEM_FILTER_EQUIPMENT), 0x40a, IF_FLAG_SET(FLAG_OUTER_CHEST_OPEN), EVENT(TrialRoad_PutItemInChest)},
+    {USE_ITEM_ON_ACTOR(ITEM_FILTER_EQUIPMENT), 0x40b, IF_FLAG_SET(FLAG_INNER_CHEST_OPEN), EVENT(TrialRoad_PutItemInChest)},
+    {USE_ITEM_ON_ACTOR(ITEM_FILTER_EQUIPMENT), 0x40c, IF_FLAG_SET(FLAG_OUTER_CHEST_OPEN), EVENT(TrialRoad_PutItemInChest)},
     {TRIGGER_TALK, 9, CONDITION_ALWAYS, EVENT(TrialRoad_ExamineChest)},
     {TRIGGER_TALK, 10, CONDITION_ALWAYS, EVENT(TrialRoad_ExamineChest)},
     {TRIGGER_TALK, 11, CONDITION_ALWAYS, EVENT(TrialRoad_ExamineChest)},
     {TRIGGER_TALK, 12, CONDITION_ALWAYS, EVENT(TrialRoad_ExamineChest)},
     {STEP_TRIGGER_WALKING_INTO(FACING_SOUTH), 33, CONDITION_ALWAYS, EVENT(TrialRoad_JumpForward)},
     {TRIGGER_PUSH, 0, CONDITION_ALWAYS, EVENT(TrialRoad_UnblockMovedPillar)},
-    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), 15, IF_FLAG_SET(0x327), EVENT(TrialRoad_UnblockMovedPillar)},
-    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), 16, IF_FLAG_SET(0x328), EVENT(TrialRoad_UnblockMovedPillar)},
+    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), 15, IF_FLAG_SET(FLAG_AREA_TEMP_27), EVENT(TrialRoad_UnblockMovedPillar)},
+    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), 16, IF_FLAG_SET(FLAG_AREA_TEMP_28), EVENT(TrialRoad_UnblockMovedPillar)},
     {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), 17, CONDITION_ALWAYS, EVENT(TrialRoad_UnblockMovedPillar)},
     {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), 18, CONDITION_ALWAYS, EVENT(TrialRoad_UnblockMovedPillar)},
     {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), 19, CONDITION_ALWAYS, EVENT(TrialRoad_UnblockMovedPillar)},
     {TRIGGER_PUSHED, 0, CONDITION_ALWAYS, EVENT(TrialRoad_BlockMovedPillar)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 15, IF_FLAG_SET(0x327), EVENT(TrialRoad_BlockMovedPillar)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 16, IF_FLAG_SET(0x328), EVENT(TrialRoad_BlockMovedPillar)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 15, IF_FLAG_SET(FLAG_AREA_TEMP_27), EVENT(TrialRoad_BlockMovedPillar)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 16, IF_FLAG_SET(FLAG_AREA_TEMP_28), EVENT(TrialRoad_BlockMovedPillar)},
     {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 17, CONDITION_ALWAYS, EVENT(TrialRoad_BlockMovedPillar)},
     {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 18, CONDITION_ALWAYS, EVENT(TrialRoad_BlockMovedPillar)},
     {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 19, CONDITION_ALWAYS, EVENT(TrialRoad_BlockMovedPillar)},
-    {PSYNERGY_ON_ACTOR(ABILITY_WHIRLWIND), 20, 0x327, EVENT(TrialRoad_BlowBushOffPillar)},
-    {PSYNERGY_ON_ACTOR(ABILITY_WHIRLWIND), 21, 0x328, EVENT(TrialRoad_BlowBushOffPillar)},
+    {PSYNERGY_ON_ACTOR(ABILITY_WHIRLWIND), 20, FLAG_AREA_TEMP_27, EVENT(TrialRoad_BlowBushOffPillar)},
+    {PSYNERGY_ON_ACTOR(ABILITY_WHIRLWIND), 21, FLAG_AREA_TEMP_28, EVENT(TrialRoad_BlowBushOffPillar)},
     {TRIGGER_TABLE_END},
 };
 
@@ -4413,18 +4430,18 @@ LAST_DATA struct Trigger gTrialRoad_PoundStageTriggers[] = {
     {TRIGGER_STEP, 2, CONDITION_ALWAYS, EVENT(TrialRoad_TakeStairs)},
     {TRIGGER_STEP, 3, CONDITION_ALWAYS, EVENT(TrialRoad_TakeStairs)},
     {TRIGGER_STEP, 4, CONDITION_ALWAYS, EVENT(TrialRoad_TakeStairs)},
-    {TRIGGER_STEP, 10, IF_FLAG_SET(0x281), EVENT(TrialRoad_ClearGiveUpAsked)},
-    {TRIGGER_STEP, 11, 0x281, EVENT(TrialRoad_OfferToGiveUp)},
-    {TRIGGER_STEP, 20, IF_FLAG_SET(0x281), EVENT(TrialRoad_ClearGiveUpAsked)},
-    {TRIGGER_STEP, 21, 0x281, EVENT(TrialRoad_OfferToGiveUp)},
-    {TRIGGER_STEP, 30, IF_FLAG_SET(0x284), EVENT(TrialRoad_StepPastChests)},
-    {TRIGGER_STEP, 31, 0x284, EVENT(TrialRoad_OpenChests)},
-    {TRIGGER_STEP, 40, IF_FLAG_SET(0x284), EVENT(TrialRoad_StepPastChests)},
-    {TRIGGER_STEP, 41, 0x284, EVENT(TrialRoad_OpenChests)},
-    {USE_ITEM_ON_ACTOR(ITEM_FILTER_EQUIPMENT), 0x409, IF_FLAG_SET(0x285), EVENT(TrialRoad_PutItemInChest)},
-    {USE_ITEM_ON_ACTOR(ITEM_FILTER_EQUIPMENT), 0x40a, IF_FLAG_SET(0x286), EVENT(TrialRoad_PutItemInChest)},
-    {USE_ITEM_ON_ACTOR(ITEM_FILTER_EQUIPMENT), 0x40b, IF_FLAG_SET(0x285), EVENT(TrialRoad_PutItemInChest)},
-    {USE_ITEM_ON_ACTOR(ITEM_FILTER_EQUIPMENT), 0x40c, IF_FLAG_SET(0x286), EVENT(TrialRoad_PutItemInChest)},
+    {TRIGGER_STEP, 10, IF_FLAG_SET(FLAG_GIVE_UP_ASKED), EVENT(TrialRoad_ClearGiveUpAsked)},
+    {TRIGGER_STEP, 11, FLAG_GIVE_UP_ASKED, EVENT(TrialRoad_OfferToGiveUp)},
+    {TRIGGER_STEP, 20, IF_FLAG_SET(FLAG_GIVE_UP_ASKED), EVENT(TrialRoad_ClearGiveUpAsked)},
+    {TRIGGER_STEP, 21, FLAG_GIVE_UP_ASKED, EVENT(TrialRoad_OfferToGiveUp)},
+    {TRIGGER_STEP, 30, IF_FLAG_SET(FLAG_STAGE_CHESTS_OPENED), EVENT(TrialRoad_StepPastChests)},
+    {TRIGGER_STEP, 31, FLAG_STAGE_CHESTS_OPENED, EVENT(TrialRoad_OpenChests)},
+    {TRIGGER_STEP, 40, IF_FLAG_SET(FLAG_STAGE_CHESTS_OPENED), EVENT(TrialRoad_StepPastChests)},
+    {TRIGGER_STEP, 41, FLAG_STAGE_CHESTS_OPENED, EVENT(TrialRoad_OpenChests)},
+    {USE_ITEM_ON_ACTOR(ITEM_FILTER_EQUIPMENT), 0x409, IF_FLAG_SET(FLAG_INNER_CHEST_OPEN), EVENT(TrialRoad_PutItemInChest)},
+    {USE_ITEM_ON_ACTOR(ITEM_FILTER_EQUIPMENT), 0x40a, IF_FLAG_SET(FLAG_OUTER_CHEST_OPEN), EVENT(TrialRoad_PutItemInChest)},
+    {USE_ITEM_ON_ACTOR(ITEM_FILTER_EQUIPMENT), 0x40b, IF_FLAG_SET(FLAG_INNER_CHEST_OPEN), EVENT(TrialRoad_PutItemInChest)},
+    {USE_ITEM_ON_ACTOR(ITEM_FILTER_EQUIPMENT), 0x40c, IF_FLAG_SET(FLAG_OUTER_CHEST_OPEN), EVENT(TrialRoad_PutItemInChest)},
     {TRIGGER_TALK, 9, CONDITION_ALWAYS, EVENT(TrialRoad_ExamineChest)},
     {TRIGGER_TALK, 10, CONDITION_ALWAYS, EVENT(TrialRoad_ExamineChest)},
     {TRIGGER_TALK, 11, CONDITION_ALWAYS, EVENT(TrialRoad_ExamineChest)},
@@ -4433,19 +4450,19 @@ LAST_DATA struct Trigger gTrialRoad_PoundStageTriggers[] = {
     {STEP_TRIGGER_WALKING, 51, CONDITION_ALWAYS, EVENT(TrialRoad_LandOnPillar)},
     {STEP_TRIGGER_WALKING, 52, CONDITION_ALWAYS, EVENT(TrialRoad_LandOnPillar)},
     {STEP_TRIGGER_WALKING, 53, CONDITION_ALWAYS, EVENT(TrialRoad_LandOnPillar)},
-    {TRIGGER_STEP, 50, 0x335, EVENT(TrialRoad_StepOnWestPillar)},
-    {TRIGGER_STEP, 51, IF_FLAG_SET(0x335), EVENT(TrialRoad_StepOnInnerWestPillar)},
-    {TRIGGER_STEP, 52, 0x337, EVENT(TrialRoad_StepOnInnerEastPillar)},
-    {TRIGGER_STEP, 53, IF_FLAG_SET(0x337), EVENT(TrialRoad_StepOnEastPillar)},
+    {TRIGGER_STEP, 50, FLAG_AREA_TEMP_35, EVENT(TrialRoad_StepOnWestPillar)},
+    {TRIGGER_STEP, 51, IF_FLAG_SET(FLAG_AREA_TEMP_35), EVENT(TrialRoad_StepOnInnerWestPillar)},
+    {TRIGGER_STEP, 52, FLAG_AREA_TEMP_37, EVENT(TrialRoad_StepOnInnerEastPillar)},
+    {TRIGGER_STEP, 53, IF_FLAG_SET(FLAG_AREA_TEMP_37), EVENT(TrialRoad_StepOnEastPillar)},
     {STEP_TRIGGER_WALKING, 60, CONDITION_ALWAYS, EVENT(TrialRoad_LandOnPillar)},
     {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 15, CONDITION_ALWAYS, EVENT(TrialRoad_CheckPoundedPillarsCovered)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 16, IF_FLAG_SET(0x339), EVENT(TrialRoad_CheckPoundedPillarsCovered)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 16, IF_FLAG_SET(FLAG_AREA_TEMP_39), EVENT(TrialRoad_CheckPoundedPillarsCovered)},
     {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 17, CONDITION_ALWAYS, EVENT(TrialRoad_CheckPoundedPillarsCovered)},
-    {PSYNERGY_ON_ACTOR(ABILITY_WHIRLWIND), 22, 0x339, EVENT(TrialRoad_BlowBushOffPoundPillar)},
-    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_POUND, PSYNERGY_PHASE_ACTS), 18, 0x335, EVENT(TrialRoad_PoundWestPillar)},
-    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_POUND, PSYNERGY_PHASE_ACTS), 19, IF_FLAG_SET(0x335), EVENT(TrialRoad_PoundInnerWestPillar)},
-    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_POUND, PSYNERGY_PHASE_ACTS), 20, 0x337, EVENT(TrialRoad_PoundInnerEastPillar)},
-    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_POUND, PSYNERGY_PHASE_ACTS), 21, IF_FLAG_SET(0x337), EVENT(TrialRoad_PoundEastPillar)},
+    {PSYNERGY_ON_ACTOR(ABILITY_WHIRLWIND), 22, FLAG_AREA_TEMP_39, EVENT(TrialRoad_BlowBushOffPoundPillar)},
+    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_POUND, PSYNERGY_PHASE_ACTS), 18, FLAG_AREA_TEMP_35, EVENT(TrialRoad_PoundWestPillar)},
+    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_POUND, PSYNERGY_PHASE_ACTS), 19, IF_FLAG_SET(FLAG_AREA_TEMP_35), EVENT(TrialRoad_PoundInnerWestPillar)},
+    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_POUND, PSYNERGY_PHASE_ACTS), 20, FLAG_AREA_TEMP_37, EVENT(TrialRoad_PoundInnerEastPillar)},
+    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_POUND, PSYNERGY_PHASE_ACTS), 21, IF_FLAG_SET(FLAG_AREA_TEMP_37), EVENT(TrialRoad_PoundEastPillar)},
     {TRIGGER_TABLE_END},
 };
 
@@ -4459,22 +4476,26 @@ LAST_DATA struct Trigger gTrialRoad_CrumblingStageTriggers[] = {
     {TRIGGER_STEP, 2, CONDITION_ALWAYS, EVENT(TrialRoad_TakeStairs)},
     {TRIGGER_STEP, 3, CONDITION_ALWAYS, EVENT(TrialRoad_TakeStairs)},
     {TRIGGER_STEP, 4, CONDITION_ALWAYS, EVENT(TrialRoad_TakeStairs)},
-    {TRIGGER_STEP, 10, IF_FLAG_SET(0x281), EVENT(TrialRoad_ClearGiveUpAsked)},
-    {TRIGGER_STEP, 11, 0x281, EVENT(TrialRoad_OfferToGiveUp)},
-    {TRIGGER_STEP, 20, IF_FLAG_SET(0x281), EVENT(TrialRoad_ClearGiveUpAsked)},
-    {TRIGGER_STEP, 21, 0x281, EVENT(TrialRoad_OfferToGiveUp)},
-    {TRIGGER_STEP, 30, IF_FLAG_SET(0x284), EVENT(TrialRoad_StepPastChests)},
-    {TRIGGER_STEP, 31, 0x284, EVENT(TrialRoad_OpenChests)},
-    {TRIGGER_STEP, 40, IF_FLAG_SET(0x284), EVENT(TrialRoad_StepPastChests)},
-    {TRIGGER_STEP, 41, 0x284, EVENT(TrialRoad_OpenChests)},
-    {USE_ITEM_ON_ACTOR(ITEM_FILTER_EQUIPMENT), 0x409, IF_FLAG_SET(0x285),
-     EVENT(TrialRoad_PutItemInChest)},
-    {USE_ITEM_ON_ACTOR(ITEM_FILTER_EQUIPMENT), 0x40a, IF_FLAG_SET(0x286),
-     EVENT(TrialRoad_PutItemInChest)},
-    {USE_ITEM_ON_ACTOR(ITEM_FILTER_EQUIPMENT), 0x40b, IF_FLAG_SET(0x285),
-     EVENT(TrialRoad_PutItemInChest)},
-    {USE_ITEM_ON_ACTOR(ITEM_FILTER_EQUIPMENT), 0x40c, IF_FLAG_SET(0x286),
-     EVENT(TrialRoad_PutItemInChest)},
+    {TRIGGER_STEP, 10, IF_FLAG_SET(FLAG_GIVE_UP_ASKED),
+     EVENT(TrialRoad_ClearGiveUpAsked)},
+    {TRIGGER_STEP, 11, FLAG_GIVE_UP_ASKED, EVENT(TrialRoad_OfferToGiveUp)},
+    {TRIGGER_STEP, 20, IF_FLAG_SET(FLAG_GIVE_UP_ASKED),
+     EVENT(TrialRoad_ClearGiveUpAsked)},
+    {TRIGGER_STEP, 21, FLAG_GIVE_UP_ASKED, EVENT(TrialRoad_OfferToGiveUp)},
+    {TRIGGER_STEP, 30, IF_FLAG_SET(FLAG_STAGE_CHESTS_OPENED),
+     EVENT(TrialRoad_StepPastChests)},
+    {TRIGGER_STEP, 31, FLAG_STAGE_CHESTS_OPENED, EVENT(TrialRoad_OpenChests)},
+    {TRIGGER_STEP, 40, IF_FLAG_SET(FLAG_STAGE_CHESTS_OPENED),
+     EVENT(TrialRoad_StepPastChests)},
+    {TRIGGER_STEP, 41, FLAG_STAGE_CHESTS_OPENED, EVENT(TrialRoad_OpenChests)},
+    {USE_ITEM_ON_ACTOR(ITEM_FILTER_EQUIPMENT), 0x409,
+     IF_FLAG_SET(FLAG_INNER_CHEST_OPEN), EVENT(TrialRoad_PutItemInChest)},
+    {USE_ITEM_ON_ACTOR(ITEM_FILTER_EQUIPMENT), 0x40a,
+     IF_FLAG_SET(FLAG_OUTER_CHEST_OPEN), EVENT(TrialRoad_PutItemInChest)},
+    {USE_ITEM_ON_ACTOR(ITEM_FILTER_EQUIPMENT), 0x40b,
+     IF_FLAG_SET(FLAG_INNER_CHEST_OPEN), EVENT(TrialRoad_PutItemInChest)},
+    {USE_ITEM_ON_ACTOR(ITEM_FILTER_EQUIPMENT), 0x40c,
+     IF_FLAG_SET(FLAG_OUTER_CHEST_OPEN), EVENT(TrialRoad_PutItemInChest)},
     {TRIGGER_TALK, 9, CONDITION_ALWAYS, EVENT(TrialRoad_ExamineChest)},
     {TRIGGER_TALK, 10, CONDITION_ALWAYS, EVENT(TrialRoad_ExamineChest)},
     {TRIGGER_TALK, 11, CONDITION_ALWAYS, EVENT(TrialRoad_ExamineChest)},
@@ -4491,10 +4512,10 @@ LAST_DATA struct Trigger gTrialRoad_CrumblingStageTriggers[] = {
      EVENT(TrialRoad_CheckCrumblingPillars)},
     {STEP_TRIGGER_WALKING_INTO(FACING_WEST), 34, CONDITION_ALWAYS,
      EVENT(TrialRoad_CheckCrumblingPillars)},
-    {PSYNERGY_PHASE_ON_CELL(ABILITY_BURST, PSYNERGY_PHASE_ACTS), 50, 0x343,
-     EVENT(TrialRoad_CrumbleWestPillar)},
-    {PSYNERGY_PHASE_ON_CELL(ABILITY_BURST, PSYNERGY_PHASE_ACTS), 51, 0x345,
-     EVENT(TrialRoad_CrumbleEastPillar)},
+    {PSYNERGY_PHASE_ON_CELL(ABILITY_BURST, PSYNERGY_PHASE_ACTS), 50,
+     FLAG_AREA_TEMP_43, EVENT(TrialRoad_CrumbleWestPillar)},
+    {PSYNERGY_PHASE_ON_CELL(ABILITY_BURST, PSYNERGY_PHASE_ACTS), 51,
+     FLAG_AREA_TEMP_45, EVENT(TrialRoad_CrumbleEastPillar)},
     {TRIGGER_TABLE_END},
 };
 
@@ -4503,22 +4524,26 @@ LAST_DATA struct Trigger gTrialRoad_LogStageTriggers[] = {
     {TRIGGER_STEP, 2, CONDITION_ALWAYS, EVENT(TrialRoad_TakeStairs)},
     {TRIGGER_STEP, 3, CONDITION_ALWAYS, EVENT(TrialRoad_TakeStairs)},
     {TRIGGER_STEP, 4, CONDITION_ALWAYS, EVENT(TrialRoad_TakeStairs)},
-    {TRIGGER_STEP, 10, IF_FLAG_SET(0x281), EVENT(TrialRoad_ClearGiveUpAsked)},
-    {TRIGGER_STEP, 11, 0x281, EVENT(TrialRoad_OfferToGiveUp)},
-    {TRIGGER_STEP, 20, IF_FLAG_SET(0x281), EVENT(TrialRoad_ClearGiveUpAsked)},
-    {TRIGGER_STEP, 21, 0x281, EVENT(TrialRoad_OfferToGiveUp)},
-    {TRIGGER_STEP, 30, IF_FLAG_SET(0x284), EVENT(TrialRoad_StepPastChests)},
-    {TRIGGER_STEP, 31, 0x284, EVENT(TrialRoad_OpenChests)},
-    {TRIGGER_STEP, 40, IF_FLAG_SET(0x284), EVENT(TrialRoad_StepPastChests)},
-    {TRIGGER_STEP, 41, 0x284, EVENT(TrialRoad_OpenChests)},
-    {USE_ITEM_ON_ACTOR(ITEM_FILTER_EQUIPMENT), 0x409, IF_FLAG_SET(0x285),
-     EVENT(TrialRoad_PutItemInChest)},
-    {USE_ITEM_ON_ACTOR(ITEM_FILTER_EQUIPMENT), 0x40a, IF_FLAG_SET(0x286),
-     EVENT(TrialRoad_PutItemInChest)},
-    {USE_ITEM_ON_ACTOR(ITEM_FILTER_EQUIPMENT), 0x40b, IF_FLAG_SET(0x285),
-     EVENT(TrialRoad_PutItemInChest)},
-    {USE_ITEM_ON_ACTOR(ITEM_FILTER_EQUIPMENT), 0x40c, IF_FLAG_SET(0x286),
-     EVENT(TrialRoad_PutItemInChest)},
+    {TRIGGER_STEP, 10, IF_FLAG_SET(FLAG_GIVE_UP_ASKED),
+     EVENT(TrialRoad_ClearGiveUpAsked)},
+    {TRIGGER_STEP, 11, FLAG_GIVE_UP_ASKED, EVENT(TrialRoad_OfferToGiveUp)},
+    {TRIGGER_STEP, 20, IF_FLAG_SET(FLAG_GIVE_UP_ASKED),
+     EVENT(TrialRoad_ClearGiveUpAsked)},
+    {TRIGGER_STEP, 21, FLAG_GIVE_UP_ASKED, EVENT(TrialRoad_OfferToGiveUp)},
+    {TRIGGER_STEP, 30, IF_FLAG_SET(FLAG_STAGE_CHESTS_OPENED),
+     EVENT(TrialRoad_StepPastChests)},
+    {TRIGGER_STEP, 31, FLAG_STAGE_CHESTS_OPENED, EVENT(TrialRoad_OpenChests)},
+    {TRIGGER_STEP, 40, IF_FLAG_SET(FLAG_STAGE_CHESTS_OPENED),
+     EVENT(TrialRoad_StepPastChests)},
+    {TRIGGER_STEP, 41, FLAG_STAGE_CHESTS_OPENED, EVENT(TrialRoad_OpenChests)},
+    {USE_ITEM_ON_ACTOR(ITEM_FILTER_EQUIPMENT), 0x409,
+     IF_FLAG_SET(FLAG_INNER_CHEST_OPEN), EVENT(TrialRoad_PutItemInChest)},
+    {USE_ITEM_ON_ACTOR(ITEM_FILTER_EQUIPMENT), 0x40a,
+     IF_FLAG_SET(FLAG_OUTER_CHEST_OPEN), EVENT(TrialRoad_PutItemInChest)},
+    {USE_ITEM_ON_ACTOR(ITEM_FILTER_EQUIPMENT), 0x40b,
+     IF_FLAG_SET(FLAG_INNER_CHEST_OPEN), EVENT(TrialRoad_PutItemInChest)},
+    {USE_ITEM_ON_ACTOR(ITEM_FILTER_EQUIPMENT), 0x40c,
+     IF_FLAG_SET(FLAG_OUTER_CHEST_OPEN), EVENT(TrialRoad_PutItemInChest)},
     {TRIGGER_TALK, 9, CONDITION_ALWAYS, EVENT(TrialRoad_ExamineChest)},
     {TRIGGER_TALK, 10, CONDITION_ALWAYS, EVENT(TrialRoad_ExamineChest)},
     {TRIGGER_TALK, 11, CONDITION_ALWAYS, EVENT(TrialRoad_ExamineChest)},
@@ -4563,22 +4588,26 @@ LAST_DATA struct Trigger gTrialRoad_FountainStageTriggers[] = {
     {TRIGGER_STEP, 2, CONDITION_ALWAYS, EVENT(TrialRoad_TakeStairs)},
     {TRIGGER_STEP, 3, CONDITION_ALWAYS, EVENT(TrialRoad_TakeStairs)},
     {TRIGGER_STEP, 4, CONDITION_ALWAYS, EVENT(TrialRoad_TakeStairs)},
-    {TRIGGER_STEP, 10, IF_FLAG_SET(0x281), EVENT(TrialRoad_ClearGiveUpAsked)},
-    {TRIGGER_STEP, 11, 0x281, EVENT(TrialRoad_OfferToGiveUp)},
-    {TRIGGER_STEP, 20, IF_FLAG_SET(0x281), EVENT(TrialRoad_ClearGiveUpAsked)},
-    {TRIGGER_STEP, 21, 0x281, EVENT(TrialRoad_OfferToGiveUp)},
-    {TRIGGER_STEP, 30, IF_FLAG_SET(0x284), EVENT(TrialRoad_StepPastChests)},
-    {TRIGGER_STEP, 31, 0x284, EVENT(TrialRoad_OpenChests)},
-    {TRIGGER_STEP, 40, IF_FLAG_SET(0x284), EVENT(TrialRoad_StepPastChests)},
-    {TRIGGER_STEP, 41, 0x284, EVENT(TrialRoad_OpenChests)},
-    {USE_ITEM_ON_ACTOR(ITEM_FILTER_EQUIPMENT), 0x409, IF_FLAG_SET(0x285),
-     EVENT(TrialRoad_PutItemInChest)},
-    {USE_ITEM_ON_ACTOR(ITEM_FILTER_EQUIPMENT), 0x40a, IF_FLAG_SET(0x286),
-     EVENT(TrialRoad_PutItemInChest)},
-    {USE_ITEM_ON_ACTOR(ITEM_FILTER_EQUIPMENT), 0x40b, IF_FLAG_SET(0x285),
-     EVENT(TrialRoad_PutItemInChest)},
-    {USE_ITEM_ON_ACTOR(ITEM_FILTER_EQUIPMENT), 0x40c, IF_FLAG_SET(0x286),
-     EVENT(TrialRoad_PutItemInChest)},
+    {TRIGGER_STEP, 10, IF_FLAG_SET(FLAG_GIVE_UP_ASKED),
+     EVENT(TrialRoad_ClearGiveUpAsked)},
+    {TRIGGER_STEP, 11, FLAG_GIVE_UP_ASKED, EVENT(TrialRoad_OfferToGiveUp)},
+    {TRIGGER_STEP, 20, IF_FLAG_SET(FLAG_GIVE_UP_ASKED),
+     EVENT(TrialRoad_ClearGiveUpAsked)},
+    {TRIGGER_STEP, 21, FLAG_GIVE_UP_ASKED, EVENT(TrialRoad_OfferToGiveUp)},
+    {TRIGGER_STEP, 30, IF_FLAG_SET(FLAG_STAGE_CHESTS_OPENED),
+     EVENT(TrialRoad_StepPastChests)},
+    {TRIGGER_STEP, 31, FLAG_STAGE_CHESTS_OPENED, EVENT(TrialRoad_OpenChests)},
+    {TRIGGER_STEP, 40, IF_FLAG_SET(FLAG_STAGE_CHESTS_OPENED),
+     EVENT(TrialRoad_StepPastChests)},
+    {TRIGGER_STEP, 41, FLAG_STAGE_CHESTS_OPENED, EVENT(TrialRoad_OpenChests)},
+    {USE_ITEM_ON_ACTOR(ITEM_FILTER_EQUIPMENT), 0x409,
+     IF_FLAG_SET(FLAG_INNER_CHEST_OPEN), EVENT(TrialRoad_PutItemInChest)},
+    {USE_ITEM_ON_ACTOR(ITEM_FILTER_EQUIPMENT), 0x40a,
+     IF_FLAG_SET(FLAG_OUTER_CHEST_OPEN), EVENT(TrialRoad_PutItemInChest)},
+    {USE_ITEM_ON_ACTOR(ITEM_FILTER_EQUIPMENT), 0x40b,
+     IF_FLAG_SET(FLAG_INNER_CHEST_OPEN), EVENT(TrialRoad_PutItemInChest)},
+    {USE_ITEM_ON_ACTOR(ITEM_FILTER_EQUIPMENT), 0x40c,
+     IF_FLAG_SET(FLAG_OUTER_CHEST_OPEN), EVENT(TrialRoad_PutItemInChest)},
     {TRIGGER_TALK, 9, CONDITION_ALWAYS, EVENT(TrialRoad_ExamineChest)},
     {TRIGGER_TALK, 10, CONDITION_ALWAYS, EVENT(TrialRoad_ExamineChest)},
     {TRIGGER_TALK, 11, CONDITION_ALWAYS, EVENT(TrialRoad_ExamineChest)},
@@ -4590,12 +4619,12 @@ LAST_DATA struct Trigger gTrialRoad_FountainStageTriggers[] = {
     {TRIGGER_PUSHED, 0, CONDITION_ALWAYS, EVENT(TrialRoad_BlockMovedPillar)},
     {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 15, CONDITION_ALWAYS,
      EVENT(TrialRoad_BlockMovedPillar)},
-    {PSYNERGY_PHASE_ON_CELL(ABILITY_SCOOP, PSYNERGY_PHASE_ACTS), 50, 0x363,
-     EVENT(TrialRoad_UncoverWestSpout)},
-    {PSYNERGY_PHASE_ON_CELL(ABILITY_SCOOP, PSYNERGY_PHASE_ACTS), 51, 0x364,
-     EVENT(TrialRoad_UncoverMiddleSpout)},
-    {PSYNERGY_PHASE_ON_CELL(ABILITY_SCOOP, PSYNERGY_PHASE_ACTS), 52, 0x365,
-     EVENT(TrialRoad_UncoverEastSpout)},
+    {PSYNERGY_PHASE_ON_CELL(ABILITY_SCOOP, PSYNERGY_PHASE_ACTS), 50,
+     FLAG_AREA_TEMP_63, EVENT(TrialRoad_UncoverWestSpout)},
+    {PSYNERGY_PHASE_ON_CELL(ABILITY_SCOOP, PSYNERGY_PHASE_ACTS), 51,
+     FLAG_AREA_TEMP_64, EVENT(TrialRoad_UncoverMiddleSpout)},
+    {PSYNERGY_PHASE_ON_CELL(ABILITY_SCOOP, PSYNERGY_PHASE_ACTS), 52,
+     FLAG_AREA_TEMP_65, EVENT(TrialRoad_UncoverEastSpout)},
     {TRIGGER_TABLE_END},
 };
 
@@ -4610,22 +4639,26 @@ LAST_DATA struct Trigger gTrialRoad_SandStageTriggers[] = {
     {TRIGGER_STEP, 2, CONDITION_ALWAYS, EVENT(TrialRoad_TakeStairs)},
     {TRIGGER_STEP, 3, CONDITION_ALWAYS, EVENT(TrialRoad_TakeStairs)},
     {TRIGGER_STEP, 4, CONDITION_ALWAYS, EVENT(TrialRoad_TakeStairs)},
-    {TRIGGER_STEP, 10, IF_FLAG_SET(0x281), EVENT(TrialRoad_ClearGiveUpAsked)},
-    {TRIGGER_STEP, 11, 0x281, EVENT(TrialRoad_OfferToGiveUp)},
-    {TRIGGER_STEP, 20, IF_FLAG_SET(0x281), EVENT(TrialRoad_ClearGiveUpAsked)},
-    {TRIGGER_STEP, 21, 0x281, EVENT(TrialRoad_OfferToGiveUp)},
-    {TRIGGER_STEP, 30, IF_FLAG_SET(0x284), EVENT(TrialRoad_StepPastChests)},
-    {TRIGGER_STEP, 31, 0x284, EVENT(TrialRoad_OpenChests)},
-    {TRIGGER_STEP, 40, IF_FLAG_SET(0x284), EVENT(TrialRoad_StepPastChests)},
-    {TRIGGER_STEP, 41, 0x284, EVENT(TrialRoad_OpenChests)},
-    {USE_ITEM_ON_ACTOR(ITEM_FILTER_EQUIPMENT), 0x409, IF_FLAG_SET(0x285),
-     EVENT(TrialRoad_PutItemInChest)},
-    {USE_ITEM_ON_ACTOR(ITEM_FILTER_EQUIPMENT), 0x40a, IF_FLAG_SET(0x286),
-     EVENT(TrialRoad_PutItemInChest)},
-    {USE_ITEM_ON_ACTOR(ITEM_FILTER_EQUIPMENT), 0x40b, IF_FLAG_SET(0x285),
-     EVENT(TrialRoad_PutItemInChest)},
-    {USE_ITEM_ON_ACTOR(ITEM_FILTER_EQUIPMENT), 0x40c, IF_FLAG_SET(0x286),
-     EVENT(TrialRoad_PutItemInChest)},
+    {TRIGGER_STEP, 10, IF_FLAG_SET(FLAG_GIVE_UP_ASKED),
+     EVENT(TrialRoad_ClearGiveUpAsked)},
+    {TRIGGER_STEP, 11, FLAG_GIVE_UP_ASKED, EVENT(TrialRoad_OfferToGiveUp)},
+    {TRIGGER_STEP, 20, IF_FLAG_SET(FLAG_GIVE_UP_ASKED),
+     EVENT(TrialRoad_ClearGiveUpAsked)},
+    {TRIGGER_STEP, 21, FLAG_GIVE_UP_ASKED, EVENT(TrialRoad_OfferToGiveUp)},
+    {TRIGGER_STEP, 30, IF_FLAG_SET(FLAG_STAGE_CHESTS_OPENED),
+     EVENT(TrialRoad_StepPastChests)},
+    {TRIGGER_STEP, 31, FLAG_STAGE_CHESTS_OPENED, EVENT(TrialRoad_OpenChests)},
+    {TRIGGER_STEP, 40, IF_FLAG_SET(FLAG_STAGE_CHESTS_OPENED),
+     EVENT(TrialRoad_StepPastChests)},
+    {TRIGGER_STEP, 41, FLAG_STAGE_CHESTS_OPENED, EVENT(TrialRoad_OpenChests)},
+    {USE_ITEM_ON_ACTOR(ITEM_FILTER_EQUIPMENT), 0x409,
+     IF_FLAG_SET(FLAG_INNER_CHEST_OPEN), EVENT(TrialRoad_PutItemInChest)},
+    {USE_ITEM_ON_ACTOR(ITEM_FILTER_EQUIPMENT), 0x40a,
+     IF_FLAG_SET(FLAG_OUTER_CHEST_OPEN), EVENT(TrialRoad_PutItemInChest)},
+    {USE_ITEM_ON_ACTOR(ITEM_FILTER_EQUIPMENT), 0x40b,
+     IF_FLAG_SET(FLAG_INNER_CHEST_OPEN), EVENT(TrialRoad_PutItemInChest)},
+    {USE_ITEM_ON_ACTOR(ITEM_FILTER_EQUIPMENT), 0x40c,
+     IF_FLAG_SET(FLAG_OUTER_CHEST_OPEN), EVENT(TrialRoad_PutItemInChest)},
     {TRIGGER_TALK, 9, CONDITION_ALWAYS, EVENT(TrialRoad_ExamineChest)},
     {TRIGGER_TALK, 10, CONDITION_ALWAYS, EVENT(TrialRoad_ExamineChest)},
     {TRIGGER_TALK, 11, CONDITION_ALWAYS, EVENT(TrialRoad_ExamineChest)},
@@ -4635,7 +4668,7 @@ LAST_DATA struct Trigger gTrialRoad_SandStageTriggers[] = {
      CONDITION_ALWAYS, EVENT(TrialRoad_StartSand)},
     {PSYNERGY_ANYWHERE(ABILITY_SAND, PSYNERGY_PHASE_FADES), 0, CONDITION_ALWAYS,
      EVENT(TrialRoad_EndSand)},
-    {PSYNERGY_ON_ACTOR(ABILITY_WHIRLWIND), 17, 0x374,
+    {PSYNERGY_ON_ACTOR(ABILITY_WHIRLWIND), 17, FLAG_AREA_TEMP_74,
      EVENT(TrialRoad_BlowBushOffVine)},
     {TRIGGER_TABLE_END},
 };
@@ -4645,7 +4678,8 @@ LAST_DATA struct Trigger gTrialRoad_CaveRockTriggers[] = {
     {TRIGGER_EXIT, 2, CONDITION_ALWAYS, 2},
     {TRIGGER_EXIT, 3, CONDITION_ALWAYS, 3},
     {TRIGGER_EXIT, 4, CONDITION_ALWAYS, 4},
-    {PSYNERGY_ON_ACTOR(ABILITY_LIFT), 8, 0x289, EVENT(TrialRoad_LiftCaveRock)},
+    {PSYNERGY_ON_ACTOR(ABILITY_LIFT), 8, FLAG_CAVE_ROCK_LIFTED,
+     EVENT(TrialRoad_LiftCaveRock)},
     {TRIGGER_TABLE_END},
 };
 
@@ -4664,7 +4698,7 @@ LAST_DATA struct Trigger gTrialRoad_GaspTriggers[] = {
 };
 
 LAST_DATA struct Trigger gTrialRoad_SummitTriggers[] = {
-    {TRIGGER_STEP, 33, 0x283, EVENT(TrialRoad_OpenSummitGate)},
+    {TRIGGER_STEP, 33, FLAG_SCENE_TEMP_83, EVENT(TrialRoad_OpenSummitGate)},
     {TRIGGER_STEP, 40, IF_FLAG_SET(FLAG_TRIAL_ROAD_HOLDS_EQUIPMENT),
      EVENT(TrialRoad_ChallengeMoapa)},
     {TRIGGER_STEP, 41, IF_FLAG_SET(FLAG_TRIAL_ROAD_HOLDS_EQUIPMENT),

@@ -295,9 +295,7 @@ s32 Scene_TalkToActor(s32 id) {
         ObjectEvent_Remove(index);
         if (flag != -1)
           GameFlag_Set(flag);
-        goto done;
-      }
-      if (type == CONTAINER_STONE_TABLET) {
+      } else if (type == CONTAINER_STONE_TABLET) {
         Event_Start();
         Event_ResolvePendingActions(0);
         SummonTablet_PlayRunes(index);
@@ -307,9 +305,7 @@ s32 Scene_TalkToActor(s32 id) {
         if (flag != -1)
           GameFlag_Set(flag);
         Event_End();
-        goto done;
-      }
-      if (type == CONTAINER_MIMIC) {
+      } else if (type == CONTAINER_MIMIC) {
         work = Ram_HeapSlots->fieldWork;
         TreasureSpot_LaunchMimic(index);
         if (flag != -1)
@@ -324,94 +320,92 @@ s32 Scene_TalkToActor(s32 id) {
         BattleEffect_SelectBattleCue(ENCOUNTER_ZONE_MIMIC, contents);
         Sound_PlayFar(gMainRoutineWork.battleMusic);
         FieldMessage_ShowFar((s32)&MsgChestWasMimic, FIELD_MESSAGE_ZOOM);
-        goto done;
-      }
-      if (type == CONTAINER_POND)
-        FieldMessage_ShowFar((s32)&MsgSomethingInTheShallows,
-                             FIELD_MESSAGE_ZOOM);
-      if (Actor_GetSpriteShape(index)) {
-        FieldMessage_ShowFar((s32)&MsgSomethingBuriedHere, FIELD_MESSAGE_ZOOM);
-        if (Party_FindOwnerWithActionFar(ABILITY_SCOOP) != -1)
-          gFieldWork->fieldMenu = 1;
-        goto done;
-      }
-      if (contents & CONTAINER_COINS) {
-        if (type == CONTAINER_BURIED) {
-          shown = TreasureSpot_GetActor(index);
-          shown->update = ItemDisplay_EmitSparkles;
+      } else {
+        if (type == CONTAINER_POND)
+          FieldMessage_ShowFar((s32)&MsgSomethingInTheShallows,
+                               FIELD_MESSAGE_ZOOM);
+        if (Actor_GetSpriteShape(index)) {
+          FieldMessage_ShowFar((s32)&MsgSomethingBuriedHere,
+                               FIELD_MESSAGE_ZOOM);
+          if (Party_FindOwnerWithActionFar(ABILITY_SCOOP) != -1)
+            gFieldWork->fieldMenu = 1;
+        } else if (contents & CONTAINER_COINS) {
+          if (type == CONTAINER_BURIED) {
+            shown = TreasureSpot_GetActor(index);
+            shown->update = ItemDisplay_EmitSparkles;
+          } else {
+            shown = ItemDisplay_ShowItemInFront(index, 0);
+            wait(30);
+            if (type == CONTAINER_CHEST)
+              TreasureSpot_ShowOpened(index);
+          }
+          ItemDisplay_RaiseAboveLeader(shown);
+          Sound_PlayFar(MUS_TREASURE_FOUND);
+          contents &= CONTAINER_COINS - 1;
+          MessageArgument_PushFar(contents, MESSAGE_ARGUMENT_NUMBER);
+          FieldMessage_ShowFar((s32)&MsgCoinsReceived,
+                               FIELD_MESSAGE_ZOOM |
+                                   FIELD_MESSAGE_WAITING_FOR_SOUND);
+          Party_AdjustCoinsFar(contents);
+          if (flag != -1)
+            GameFlag_Set(flag);
+          if (type == CONTAINER_BURIED) {
+            Actor_SetPositionAndResetMotionFar(shown, 0, 0, 0);
+            shown->update = NULL;
+          } else {
+            Actor_ReleaseFar(shown);
+          }
+        } else if (contents == 0) {
+          if (flag != -1)
+            GameFlag_Set(flag);
+          goto empty;
         } else {
-          shown = ItemDisplay_ShowItemInFront(index, 0);
-          wait(30);
-          if (type == CONTAINER_CHEST)
-            TreasureSpot_ShowOpened(index);
+          if (type == CONTAINER_BURIED) {
+            shown = TreasureSpot_GetActor(index);
+            shown->update = ItemDisplay_EmitSparkles;
+          } else {
+            shown = ItemDisplay_ShowItemInFront(index, contents);
+            wait(30);
+          }
+          slot = PartyInventory_AddFar(contents);
+          if (slot == -1) {
+            MessageArgument_PushFar(contents, MESSAGE_ARGUMENT_ITEM);
+            FieldMessage_ShowFar((s32)&MsgFoundItem, FIELD_MESSAGE_ZOOM);
+            FieldMessage_ShowFar((s32)&MsgFoundItem + 4, FIELD_MESSAGE_ZOOM);
+            if (type != CONTAINER_BURIED)
+              Actor_ReleaseIfPresent(shown);
+            if (type == CONTAINER_CHEST)
+              TreasureSpot_CloseChest(index);
+          } else {
+            if (type == CONTAINER_CHEST)
+              TreasureSpot_ShowOpened(index);
+            ItemDisplay_RaiseAboveLeader(shown);
+            Sound_PlayFar(MUS_TREASURE_FOUND);
+            MessageArgument_PushFar(contents, MESSAGE_ARGUMENT_ITEM);
+            if (slot == gMainRoutineWork.leaderActorId) {
+              FieldMessage_ShowFar((s32)&MsgItemReceived,
+                                   FIELD_MESSAGE_ZOOM |
+                                       FIELD_MESSAGE_WAITING_FOR_SOUND);
+            } else {
+              MessageArgument_PushFar(slot, MESSAGE_ARGUMENT_ACTOR);
+              FieldMessage_ShowFar((s32)&MsgItemGiven,
+                                   FIELD_MESSAGE_ZOOM |
+                                       FIELD_MESSAGE_WAITING_FOR_SOUND);
+            }
+            if (flag != -1)
+              GameFlag_Set(flag);
+            if (type == CONTAINER_BURIED) {
+              Actor_SetPositionAndResetMotionFar(shown, 0, 0, 0);
+              shown->update = NULL;
+            } else {
+              Actor_ReleaseFar(shown);
+            }
+            if (type == CONTAINER_POND)
+              ObjectEvent_Remove(index);
+            result = 0;
+          }
         }
-        ItemDisplay_RaiseAboveLeader(shown);
-        Sound_PlayFar(MUS_TREASURE_FOUND);
-        contents &= CONTAINER_COINS - 1;
-        MessageArgument_PushFar(contents, MESSAGE_ARGUMENT_NUMBER);
-        FieldMessage_ShowFar((s32)&MsgCoinsReceived,
-                             FIELD_MESSAGE_ZOOM |
-                                 FIELD_MESSAGE_WAITING_FOR_SOUND);
-        Party_AdjustCoinsFar(contents);
-        if (flag != -1)
-          GameFlag_Set(flag);
-        if (type == CONTAINER_BURIED) {
-          Actor_SetPositionAndResetMotionFar(shown, 0, 0, 0);
-          shown->update = NULL;
-        } else {
-          Actor_ReleaseFar(shown);
-        }
-        goto done;
       }
-      if (contents == 0) {
-        if (flag != -1)
-          GameFlag_Set(flag);
-        goto empty;
-      }
-      if (type == CONTAINER_BURIED) {
-        shown = TreasureSpot_GetActor(index);
-        shown->update = ItemDisplay_EmitSparkles;
-      } else {
-        shown = ItemDisplay_ShowItemInFront(index, contents);
-        wait(30);
-      }
-      slot = PartyInventory_AddFar(contents);
-      if (slot == -1) {
-        MessageArgument_PushFar(contents, MESSAGE_ARGUMENT_ITEM);
-        FieldMessage_ShowFar((s32)&MsgFoundItem, FIELD_MESSAGE_ZOOM);
-        FieldMessage_ShowFar((s32)&MsgFoundItem + 4, FIELD_MESSAGE_ZOOM);
-        if (type != CONTAINER_BURIED)
-          Actor_ReleaseIfPresent(shown);
-        if (type == CONTAINER_CHEST)
-          TreasureSpot_CloseChest(index);
-        goto done;
-      }
-      if (type == CONTAINER_CHEST)
-        TreasureSpot_ShowOpened(index);
-      ItemDisplay_RaiseAboveLeader(shown);
-      Sound_PlayFar(MUS_TREASURE_FOUND);
-      MessageArgument_PushFar(contents, MESSAGE_ARGUMENT_ITEM);
-      if (slot == gMainRoutineWork.leaderActorId) {
-        FieldMessage_ShowFar((s32)&MsgItemReceived,
-                             FIELD_MESSAGE_ZOOM |
-                                 FIELD_MESSAGE_WAITING_FOR_SOUND);
-      } else {
-        MessageArgument_PushFar(slot, MESSAGE_ARGUMENT_ACTOR);
-        FieldMessage_ShowFar((s32)&MsgItemGiven,
-                             FIELD_MESSAGE_ZOOM |
-                                 FIELD_MESSAGE_WAITING_FOR_SOUND);
-      }
-      if (flag != -1)
-        GameFlag_Set(flag);
-      if (type == CONTAINER_BURIED) {
-        Actor_SetPositionAndResetMotionFar(shown, 0, 0, 0);
-        shown->update = NULL;
-      } else {
-        Actor_ReleaseFar(shown);
-      }
-      if (type == CONTAINER_POND)
-        ObjectEvent_Remove(index);
-      result = 0;
       goto done;
     empty:
       FieldMessage_ShowFar(found + (s32)&MsgTileResult, FIELD_MESSAGE_ZOOM);

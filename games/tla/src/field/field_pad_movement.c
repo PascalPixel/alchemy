@@ -347,10 +347,9 @@ s32 Actor_SailOnMap(struct Actor *interpreter) {
   angleOffsets[headingCount++] = direction + DEGtoANG(45);
   angleOffsets[headingCount++] = direction - DEGtoANG(45);
   angleOffsets[headingCount++] = direction + FIELD_PROBE_ANGLE * 3;
-  angleOffsets[headingCount++] = direction - FIELD_PROBE_ANGLE * 3;
-  /* FAKEMATCH(dead): an empty once-only loop. */
-  do {
-  } while (0);
+  /* FAKEMATCH(dead): the count through its own address at the last heading,
+   * which keeps the loop's test of an empty list until the list is known. */
+  angleOffsets[(*&headingCount)++] = direction - FIELD_PROBE_ANGLE * 3;
   for (angleIndex = 0; angleIndex < headingCount; angleIndex++) {
     heading = angleOffsets[angleIndex];
     SET_POSITION(&position, actor->x.fixed, actor->y.fixed, actor->z.fixed);
@@ -768,86 +767,89 @@ s32 Actor_FlyOnWorldMap(struct Actor *actor) {
   direction = angle;
   if (direction == WORLD_MAP_KEY_HEADING_NONE) {
     collision |= PLAYER_STEP_STOPPED;
-    goto update_object;
-  }
-  SET_POSITION(&position, actor->x.fixed, actor->y.fixed, actor->z.fixed);
-  Vector_AddPolarOffset(WORLD_MAP_PROBE_RADIUS, direction, &position);
-  if (gDebugMode != 0 && (gInput.held & KEY_L) != 0)
-    goto update_object;
-  if (WorldMap_IsFlyable(actor, &position) == 0) {
-    SET_POSITION(&testPosition, actor->x.fixed, actor->y.fixed, actor->z.fixed);
-    Vector_AddPolarOffset(WORLD_MAP_PROBE_RADIUS, direction + FIELD_PROBE_ANGLE,
-                          &testPosition);
-    if (WorldMap_IsFlyable(actor, &testPosition) == 0) {
-      SET_POSITION(&testPosition, actor->x.fixed, actor->y.fixed,
-                   actor->z.fixed);
-      Vector_AddPolarOffset(WORLD_MAP_PROBE_RADIUS,
-                            direction - FIELD_PROBE_ANGLE, &testPosition);
-      if (WorldMap_IsFlyable(actor, &testPosition) == 0) {
+  } else {
+    SET_POSITION(&position, actor->x.fixed, actor->y.fixed, actor->z.fixed);
+    Vector_AddPolarOffset(WORLD_MAP_PROBE_RADIUS, direction, &position);
+    if (gDebugMode == 0 || (gInput.held & KEY_L) == 0) {
+      if (WorldMap_IsFlyable(actor, &position) == 0) {
         SET_POSITION(&testPosition, actor->x.fixed, actor->y.fixed,
                      actor->z.fixed);
-        Vector_AddPolarOffset(WORLD_MAP_PROBE_RADIUS, direction + DEGtoANG(45),
-                              &testPosition);
+        Vector_AddPolarOffset(WORLD_MAP_PROBE_RADIUS,
+                              direction + FIELD_PROBE_ANGLE, &testPosition);
         if (WorldMap_IsFlyable(actor, &testPosition) == 0) {
           SET_POSITION(&testPosition, actor->x.fixed, actor->y.fixed,
                        actor->z.fixed);
           Vector_AddPolarOffset(WORLD_MAP_PROBE_RADIUS,
-                                direction - DEGtoANG(45), &testPosition);
-          if (WorldMap_IsFlyable(actor, &testPosition) == 0)
-            goto check_objects;
+                                direction - FIELD_PROBE_ANGLE, &testPosition);
+          if (WorldMap_IsFlyable(actor, &testPosition) == 0) {
+            SET_POSITION(&testPosition, actor->x.fixed, actor->y.fixed,
+                         actor->z.fixed);
+            Vector_AddPolarOffset(WORLD_MAP_PROBE_RADIUS,
+                                  direction + DEGtoANG(45), &testPosition);
+            if (WorldMap_IsFlyable(actor, &testPosition) == 0) {
+              SET_POSITION(&testPosition, actor->x.fixed, actor->y.fixed,
+                           actor->z.fixed);
+              Vector_AddPolarOffset(WORLD_MAP_PROBE_RADIUS,
+                                    direction - DEGtoANG(45), &testPosition);
+              if (WorldMap_IsFlyable(actor, &testPosition) == 0)
+                goto check_objects;
+            }
+          }
         }
+      }
+      angleOffsets[count++] = direction + FIELD_PROBE_ANGLE;
+      angleOffsets[count++] = direction - FIELD_PROBE_ANGLE;
+      angleOffsets[count++] = direction + DEGtoANG(45);
+      angleOffsets[count++] = direction - DEGtoANG(45);
+      angleOffsets[count++] = direction + FIELD_PROBE_ANGLE * 3;
+      angleOffsets[count++] = direction - FIELD_PROBE_ANGLE * 3;
+      for (angleIndex = 0; angleIndex < count; angleIndex++) {
+        direction = angleOffsets[angleIndex];
+        SET_POSITION(&position, actor->x.fixed, actor->y.fixed, actor->z.fixed);
+        Vector_AddPolarOffset(WORLD_MAP_PROBE_RADIUS, direction, &position);
+        if (WorldMap_IsFlyable(actor, &position) != 0)
+          continue;
+        SET_POSITION(&testPosition, actor->x.fixed, actor->y.fixed,
+                     actor->z.fixed);
+        Vector_AddPolarOffset(WORLD_MAP_PROBE_RADIUS,
+                              direction + FIELD_PROBE_ANGLE, &testPosition);
+        if (WorldMap_IsFlyable(actor, &testPosition) != 0)
+          continue;
+        SET_POSITION(&testPosition, actor->x.fixed, actor->y.fixed,
+                     actor->z.fixed);
+        Vector_AddPolarOffset(WORLD_MAP_PROBE_RADIUS,
+                              direction - FIELD_PROBE_ANGLE, &testPosition);
+        if (WorldMap_IsFlyable(actor, &testPosition) != 0)
+          continue;
+        SET_POSITION(&testPosition, actor->x.fixed, actor->y.fixed,
+                     actor->z.fixed);
+        Vector_AddPolarOffset(WORLD_MAP_PROBE_RADIUS, direction + DEGtoANG(45),
+                              &testPosition);
+        if (WorldMap_IsFlyable(actor, &testPosition) != 0)
+          continue;
+        SET_POSITION(&testPosition, actor->x.fixed, actor->y.fixed,
+                     actor->z.fixed);
+        Vector_AddPolarOffset(WORLD_MAP_PROBE_RADIUS, direction - DEGtoANG(45),
+                              &testPosition);
+        if (WorldMap_IsFlyable(actor, &testPosition) != 0)
+          continue;
+        angle = (s16)direction;
+        goto check_objects;
+      }
+      collision |= PLAYER_STEP_BLOCKED_BY_MAP;
+
+    check_objects:
+      other = Ram_HeapSlots->actors;
+      for (angleIndex = ACTOR_COUNT - 1; angleIndex >= 0;
+           angleIndex -= 1, other++) {
+        if (other->script != NULL && (other->collisionFlags & ACTOR_SOLID) &&
+            other != actor &&
+            Field_CheckSpheresOverlap(&other->x.fixed, other->radius,
+                                      &position.x, actor->radius) >= 0)
+          collision |= PLAYER_STEP_BLOCKED_BY_ACTOR;
       }
     }
   }
-  angleOffsets[count++] = direction + FIELD_PROBE_ANGLE;
-  angleOffsets[count++] = direction - FIELD_PROBE_ANGLE;
-  angleOffsets[count++] = direction + DEGtoANG(45);
-  angleOffsets[count++] = direction - DEGtoANG(45);
-  angleOffsets[count++] = direction + FIELD_PROBE_ANGLE * 3;
-  angleOffsets[count++] = direction - FIELD_PROBE_ANGLE * 3;
-  for (angleIndex = 0; angleIndex < count; angleIndex++) {
-    direction = angleOffsets[angleIndex];
-    SET_POSITION(&position, actor->x.fixed, actor->y.fixed, actor->z.fixed);
-    Vector_AddPolarOffset(WORLD_MAP_PROBE_RADIUS, direction, &position);
-    if (WorldMap_IsFlyable(actor, &position) != 0)
-      continue;
-    SET_POSITION(&testPosition, actor->x.fixed, actor->y.fixed, actor->z.fixed);
-    Vector_AddPolarOffset(WORLD_MAP_PROBE_RADIUS, direction + FIELD_PROBE_ANGLE,
-                          &testPosition);
-    if (WorldMap_IsFlyable(actor, &testPosition) != 0)
-      continue;
-    SET_POSITION(&testPosition, actor->x.fixed, actor->y.fixed, actor->z.fixed);
-    Vector_AddPolarOffset(WORLD_MAP_PROBE_RADIUS, direction - FIELD_PROBE_ANGLE,
-                          &testPosition);
-    if (WorldMap_IsFlyable(actor, &testPosition) != 0)
-      continue;
-    SET_POSITION(&testPosition, actor->x.fixed, actor->y.fixed, actor->z.fixed);
-    Vector_AddPolarOffset(WORLD_MAP_PROBE_RADIUS, direction + DEGtoANG(45),
-                          &testPosition);
-    if (WorldMap_IsFlyable(actor, &testPosition) != 0)
-      continue;
-    SET_POSITION(&testPosition, actor->x.fixed, actor->y.fixed, actor->z.fixed);
-    Vector_AddPolarOffset(WORLD_MAP_PROBE_RADIUS, direction - DEGtoANG(45),
-                          &testPosition);
-    if (WorldMap_IsFlyable(actor, &testPosition) != 0)
-      continue;
-    angle = (s16)direction;
-    goto check_objects;
-  }
-  collision |= PLAYER_STEP_BLOCKED_BY_MAP;
-
-check_objects:
-  other = Ram_HeapSlots->actors;
-  for (angleIndex = ACTOR_COUNT - 1; angleIndex >= 0;
-       angleIndex -= 1, other++) {
-    if (other->script != NULL && (other->collisionFlags & ACTOR_SOLID) &&
-        other != actor &&
-        Field_CheckSpheresOverlap(&other->x.fixed, other->radius, &position.x,
-                                  actor->radius) >= 0)
-      collision |= PLAYER_STEP_BLOCKED_BY_ACTOR;
-  }
-
-update_object:
   work = Ram_HeapSlots->fieldWork;
   if (work != NULL) {
     if ((collision & PLAYER_STEP_BLOCKED) != 0)

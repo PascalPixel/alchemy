@@ -1,7 +1,7 @@
 /// @file
-        // The sign tiles Text_DrawPrefixedNumberAtOffset writes (the HP and PP
-        // labels' tiles) advance 8 for a first tile and 3 for a second, in
-        // pixels; a character its font width, and any other tile below 32 one.
+// The sign tiles Text_DrawPrefixedNumberAtOffset writes (the HP and PP
+// labels' tiles) advance 8 for a first tile and 3 for a second, in
+// pixels; a character its font width, and any other tile below 32 one.
 /// Text drawn as tiles, text tile ownership and divider lines.
 // Part of window.c.
 
@@ -322,10 +322,13 @@ void Window_MarkVisibleTextTiles(void) {
   u8 *base = Ram_HeapSlots->windowWork;
   u32 alternate = ((struct WindowWork *)base)->extraTextTiles;
   u16 *cursor = ((struct WindowWork *)base)->tilemap[0];
-  s32 width = 30;
+  s32 width = DISPLAY_TILE_WIDTH;
   s32 row;
   s32 x;
 
+  // The cursor never skips the two hidden columns that end each 32-entry
+  // row, so the scan covers the tilemap's first 600 entries in order: row 18
+  // from column 24 on and row 19 are never marked shown.
   for (row = DISPLAY_TILE_HEIGHT; row != 0; row--) {
     for (x = 0; x < width; x++) {
       u32 tile = *cursor++ & TILE_NUMBER_MASK;

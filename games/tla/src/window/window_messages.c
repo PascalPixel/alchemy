@@ -451,12 +451,12 @@ s32 Text_DrawGlyphToCanvas(u8 *canvas, u32 ch, s32 x, s32 row) {
   s32 markCode = gFont_MarkGlyphCodes[ch >> TEXT_MARK_SHIFT];
 
   if (markCode != 0) {
-    markCode -= 32;
+    markCode -= TEXT_SPACE;
     mark = gFont_Glyphs[markCode].rows;
   }
   ch &= (1 << TEXT_MARK_SHIFT) - 1;
   if (ch < KANJI_FIRST_CODE) {
-    s32 index = ch - 32;
+    s32 index = ch - TEXT_SPACE;
 
     // The width, then the rows after it.
     rows = &gFont_Glyphs[index].width;
@@ -481,7 +481,8 @@ s32 Text_DrawGlyphToCanvas(u8 *canvas, u32 ch, s32 x, s32 row) {
 }
 #else
 s32 Text_DrawGlyphToCanvas(u8 *canvas, s32 ch, s32 x, s32 row) {
-  u16 *glyph = (u16 *)((u8 *)gFont_Glyphs + (((ch & 0xff) - 32) << 5));
+  u16 *glyph = (u16 *)((u8 *)gFont_Glyphs +
+                       (((ch & TEXT_LAST_FONT_CODE) - TEXT_SPACE) << 5));
   s32 width = *glyph;
   u8 *dst = canvas + (x + row * CRAWL_CANVAS_WIDTH);
   u8 *rows;

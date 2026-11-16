@@ -550,4 +550,12 @@ enum PauseMenuEntry {
 /// above the window options, as ☀️'s.
 #define MESSAGE_WINDOW_VOICE(voice) ((voice) << 16)
 
+/// Message_OpenWindow's window options, in packed's low bits.
+enum MessageWindowOption {
+  MESSAGE_WINDOW_ZOOM = 1,           ///< zoom open rather than appear at once
+  MESSAGE_WINDOW_TEXT_CANVAS = 8,    ///< WINDOW_FLAG_TEXT_CANVAS
+  MESSAGE_WINDOW_ANCHOR_BOTTOM = 16, ///< WINDOW_FLAG_ANCHOR_BOTTOM
+  MESSAGE_WINDOW_FIXED_X = 32        ///< WINDOW_FLAG_FIXED_X
+};
+
 #endif

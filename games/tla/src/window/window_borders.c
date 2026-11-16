@@ -439,10 +439,9 @@ void Message_SetDecodeFlags(u32 flags) {
 s32 Message_Decode(s32 key, s32 mode);
 struct Window *Window_Create(s32 x, s32 y, s32 width, s32 height, s32 attrs);
 /// Opens a window sized to a message near tile (x, y) and starts typing the
-/// message into it. packed holds the window options in its low bits (bit 0:
-/// zoom open rather than appear at once; bit 3: a text canvas; bit 4: keep the
-/// bottom edge; bit 5: keep the left edge) and the speaker's voice sound in
-/// bits 16 to 27.
+/// message into it. packed holds the window options in its low bits
+/// (enum MessageWindowOption) and the speaker's voice sound in bits 16 to 27
+/// (MESSAGE_WINDOW_VOICE).
 struct Window *Message_OpenWindow(s32 message, s32 x, s32 y, u32 packed) {
   s32 entry;
   u32 height;
@@ -465,13 +464,13 @@ struct Window *Message_OpenWindow(s32 message, s32 x, s32 y, u32 packed) {
   Window_FitOnScreen(entry, &x, &y, &width, &height, (out = bounds), 0);
   if (width == 0 && height == 0)
     return NULL;
-  if (!(packed & 1))
+  if (!(packed & MESSAGE_WINDOW_ZOOM))
     flags |= WINDOW_FLAG_INSTANT;
-  if (packed & 8)
+  if (packed & MESSAGE_WINDOW_TEXT_CANVAS)
     flags |= WINDOW_FLAG_TEXT_CANVAS;
-  if (packed & 16)
+  if (packed & MESSAGE_WINDOW_ANCHOR_BOTTOM)
     flags |= WINDOW_FLAG_ANCHOR_BOTTOM;
-  if (packed & 32)
+  if (packed & MESSAGE_WINDOW_FIXED_X)
     flags |= WINDOW_FLAG_FIXED_X;
   window = Window_Create(x, y, width, height, flags);
   if (window == NULL)

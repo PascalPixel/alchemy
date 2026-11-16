@@ -7,6 +7,7 @@
 
 #include "fixed_math.h"
 #include "types.h"
+#include "field/field_coordinate.h"
 
 /// One watched cell, in map cells.
 struct CellTargetEntry {
@@ -41,7 +42,7 @@ struct CellTarget {
 /// as each copy of the cell-target handler in the Jupiter and Mars Lighthouse
 /// overlays and overlay 6B0 builds its row. The name is ours.
 static inline s32 CellTarget_CellOf(FIXED position, s16 bit) {
-  return (position >> 20) | bit;
+  return FIELD_CELL(position) | bit;
 }
 
 #endif

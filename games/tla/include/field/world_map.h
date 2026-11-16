@@ -41,7 +41,9 @@ STATIC_ASSERT(offsetof(struct WorldMapWork, mode) == 0x642);
 STATIC_ASSERT(offsetof(struct WorldMapWork, searchZ) == 0x648);
 
 /// The game flag that marks a World Map place visited, from its FlagEntry.flag.
-#define FLAG_PLACE_VISITED(place) ((place) + 0x180)
+/// The first of those flags, a place's FlagEntry.flag being added to it.
+#define FLAG_PLACE_VISITED_FIRST 0x180
+#define FLAG_PLACE_VISITED(place) ((place) + FLAG_PLACE_VISITED_FIRST)
 /// FlagEntry.value's markers, besides the marker pictures 1 to 14.
 enum WorldMapMarkerKind {
   WORLD_MAP_MARKER_NONE = 0, ///< the place is not drawn

@@ -351,8 +351,10 @@ enum PsynergyPhase {
 /// phase, as Scene_FindPsynergyTrigger compares it (bits 31..28 phase
 /// | 3..0 kind).
 /// A Psynergy trigger's phase bits, 31..28.
-#define PSYNERGY_PHASE_MASK (15u << 28)
-#define PSYNERGY_TRIGGER(phase) ((u32)(phase) << 28 | TRIGGER_PSYNERGY)
+#define PSYNERGY_PHASE_SHIFT 28
+#define PSYNERGY_PHASE_MASK (15u << PSYNERGY_PHASE_SHIFT)
+#define PSYNERGY_TRIGGER(phase)                                                \
+  ((u32)(phase) << PSYNERGY_PHASE_SHIFT | TRIGGER_PSYNERGY)
 #define PSYNERGY_TRIGGER_ANY PSYNERGY_TRIGGER(PSYNERGY_PHASE_ANY)
 
 /// A Psynergy trigger on the actor the leader faces.
@@ -362,11 +364,11 @@ enum PsynergyPhase {
 /// A Psynergy trigger on an actor at one phase of the cast, as
 /// PSYNERGY_ANYWHERE is for any target.
 #define PSYNERGY_PHASE_ON_ACTOR(ability, phase)                                \
-  ((u32)(phase) << 28 | PSYNERGY_ON_ACTOR(ability))
+  ((u32)(phase) << PSYNERGY_PHASE_SHIFT | PSYNERGY_ON_ACTOR(ability))
 
 /// A Psynergy trigger on the cell behavior ahead, at one phase of the cast.
 #define PSYNERGY_PHASE_ON_CELL(ability, phase)                                 \
-  ((u32)(phase) << 28 | (ability) << 8 | TRIGGER_PSYNERGY)
+  ((u32)(phase) << PSYNERGY_PHASE_SHIFT | (ability) << 8 | TRIGGER_PSYNERGY)
 
 /// Using an item on a cell behavior, or on an actor, as The Broken Seal's
 /// USE_ITEM; the item is an ItemId (item_ids.h) or an ITEM_FILTER_ value.
@@ -378,8 +380,8 @@ enum PsynergyPhase {
 /// A Psynergy trigger for any target, not a particular actor or cell.
 #define TRIGGER_PSYNERGY_ANYWHERE 0x80
 #define PSYNERGY_ANYWHERE(ability, phase)                                      \
-  ((u32)(phase) << 28 | (ability) << 8 | TRIGGER_PSYNERGY_ANYWHERE |           \
-   TRIGGER_PSYNERGY)
+  ((u32)(phase) << PSYNERGY_PHASE_SHIFT | (ability) << 8 |                     \
+   TRIGGER_PSYNERGY_ANYWHERE | TRIGGER_PSYNERGY)
 
 /// A scene overlay's own entrances, actor placements and triggers, which its
 /// getters return.

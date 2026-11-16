@@ -282,14 +282,6 @@ enum DjinniEntranceAnchor {
 #define DJINNI_ENTRANCE_SIDE(packed) (((packed) >> 4) & 1)
 #define DJINNI_ENTRANCE_ANCHOR(packed) (((packed) >> 5) & 0xf)
 
-// Places in the sheet.
-enum SeriesBSheet {
-  SERIES_B_FLARES = 0x0000,  // the gathering lights
-  SERIES_B_BURST = 0x060e,   // six 40x40 bursts
-  SERIES_B_PICTURE = 0x2b8e, // the mode's picture
-  SERIES_B_DJINNI = 0x65c0   // the 40x40 Djinni
-};
-
 // A row of gQuake_Timings, one for each variant.
 enum {
   TIMING_FRAMES,      // the whole effect

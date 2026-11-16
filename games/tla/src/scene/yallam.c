@@ -1509,7 +1509,7 @@ void Yallam_ShowSongGame(void) {
   Yallam_StartRunner(ACTOR_STORY_CHILD);
   Yallam_StartRunner(gMainRoutineWork.leaderActorId);
   {
-    s32 priority = 0x480;
+    s32 priority = TASK_PASS_VBLANK;
     Task_AddFrame(Yallam_UpdateSongGame, priority);
   }
   // "Go north past the twins, passing two swirls, run deasil twice 'round..."

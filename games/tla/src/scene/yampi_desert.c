@@ -821,7 +821,7 @@ void YampiDesert_StirScorpionAgain(void) {
   wait(1);
   Actor_SetPosition(ACTOR_KING_SCORPION_ROOM_SAND_RIPPLE, 0, 0);
   FieldEvent_Wait(20);
-  YampiDesert_BurstSand(0xf80000, 0, 0x2400000);
+  YampiDesert_BurstSand(toFIXED(248), 0, toFIXED(576));
   Sound_Play(SE_KOLIMA_BRIDGE_HOP);
   Actor_GetById(ACTOR_KING_SCORPION_ROOM_KING_SCORPION)->velocityY = toFIXED(6);
   Actor_SetSpriteColor(Actor_GetById(ACTOR_KING_SCORPION_ROOM_KING_SCORPION),
@@ -1489,7 +1489,7 @@ void TilesetAnim_ResumeAll(void);
 void YampiDesert_UpdateSandSlide(void) {
   struct FieldWork *work = Ram_HeapSlots->fieldWork;
   struct Actor *leader = Actor_GetById(gMainRoutineWork.leaderActorId);
-  s32 speed = 0x18000;
+  s32 speed = toFIXED(3) / 2;
   struct MapWork *map;
   struct MapCell *here, *ahead, *under;
   s32 index, column, row;
@@ -2555,7 +2555,7 @@ void YampiDesert_UpdateRisingSand(void) {
     } else {
       FIXED wave;
 
-      entry->phase += 0x1000;
+      entry->phase += TRIG_TURN / 16;
       wave = Iwram_MulFX(toFIXED(2), Trig_Sin(entry->phase)) - toFIXED(14);
       rider->y.fixed = object->y.fixed + INTtoFIXED(entry->height) + wave;
     }

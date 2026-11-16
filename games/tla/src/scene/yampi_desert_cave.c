@@ -484,7 +484,7 @@ void YampiDesertCave_StopLeaderAtLog(struct Actor *object) {
   position[0] = object->x.fixed;
   position[1] = object->y.fixed;
   position[2] = object->z.fixed;
-  Vector_AddPolarOffset(0x100000, angle, position);
+  Vector_AddPolarOffset(toFIXED(16), angle, position);
   hit = Actor_FindAtCell(position, 1);
   if (hit != 0) {
     for (i = 0; i < LOG_KIND_COUNT; i++) {

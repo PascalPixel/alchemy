@@ -39,6 +39,9 @@
 /// Piers has said the ship is at a safe distance.
 #define FLAG_SAFE_DISTANCE_TOLD 0x90d
 
+/// The crew has called Kraden to see the ice wall, for this visit.
+#define FLAG_ICE_WALL_SIGHTED FLAG_SCENE_TEMP_00
+
 /// The crew has talked the ice wall over.
 #define FLAG_ICE_WALL_DISCUSSED 0x90c
 
@@ -130,9 +133,9 @@ void NorthernReaches_ClearIceWall(void) {
 /// "Kraden, come look at this... There's a huge ice wall blocking our path..."
 void NorthernReaches_SightIceWall(void) {
 
-  if (Event_GetFlag(FLAG_SCENE_TEMP_00) != 0)
+  if (Event_GetFlag(FLAG_ICE_WALL_SIGHTED) != 0)
     return;
-  Event_SetFlag(FLAG_SCENE_TEMP_00);
+  Event_SetFlag(FLAG_ICE_WALL_SIGHTED);
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
   FieldEvent_SetMessageId((s32)MsgShipIceWallFirstApproach);

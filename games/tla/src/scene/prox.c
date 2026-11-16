@@ -346,7 +346,7 @@ extern u32 gProx_FirstChildRuns[];
 extern u32 gProx_SecondChildRuns[];
 extern u32 gProx_ThirdChildRuns[];
 /// The leader comes down the stairs into a basement.
-void Prox_ComeDownStairs(s32 value);
+void Prox_ComeDownStairs(s32 westOrSouth);
 extern s32 gProx_KradenStepsForward[];
 extern s32 gProx_SecondParentWalksSouth[];
 extern s32 gProx_ThirdParentWalksSouth[];
@@ -1267,15 +1267,12 @@ void Prox_AddPuff(s32 x, s32 y, s32 z) {
   struct Actor *object = FieldActor_Create(SPRITE_DUST_CLOUD, x, y, z);
 
   if (object != NULL) {
-    s8 *animation;
-
     object->retainSpriteCache = 2;
     object->motionFlags = 0;
     object->timer = 0;
     object->priorityFlags &= ~ACTOR_PRIORITY_AUTOMATIC;
     FieldActor_SetSpriteColor(object, 7);
-    animation = object->sprite;
-    animation[9] = (animation[9] & -13) | 4;
+    ((struct FieldSprite *)object->sprite)->priority = 1;
     Actor_SetSpriteFlags(object, 0);
     object->scaleX = FIXED_ONE / 2;
     object->scaleY = FIXED_ONE / 2;

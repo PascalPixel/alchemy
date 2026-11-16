@@ -24,6 +24,12 @@
 /// The villager has asked about the Kibombo expedition.
 #define FLAG_ASKED_ABOUT_EXPEDITION 0x85d
 
+/// Whirlwind has blown the ivy off the back yard's ladder, for this visit.
+#define FLAG_IVY_BLOWN_AWAY FLAG_SCENE_TEMP_01
+
+/// The rope between the two posts, tied by Lash, for this visit.
+#define FLAG_ROPE_TIED FLAG_SCENE_TEMP_02
+
 /// Naribwe, by the rows of the village's placements (the same before and
 /// after the return from Kibombo); the last row goes to Isaac's party slot.
 enum NaribweActorId {
@@ -291,11 +297,11 @@ void Naribwe_EnterDoor(void) {
 }
 
 /// Whirlwind blows away the ivy in the back yard, uncovering the ladder
-/// (FLAG_SCENE_TEMP_01).
+/// (FLAG_IVY_BLOWN_AWAY).
 void Naribwe_BlowAwayIvy(void) {
   Event_Start();
   Event_ResolvePendingActions(0);
-  Event_SetFlag(FLAG_SCENE_TEMP_01);
+  Event_SetFlag(FLAG_IVY_BLOWN_AWAY);
   Event_End();
 }
 
@@ -332,10 +338,10 @@ s32 Scene_Initialize(void) {
   Actor_GetById(ACTOR_STONE)->scaleX = FIXED_ONE / 2;
   Actor_GetById(ACTOR_STONE)->scaleY = FIXED_ONE / 2;
   Naribwe_HideStone();
-  if (Event_GetFlag(FLAG_SCENE_TEMP_01))
+  if (Event_GetFlag(FLAG_IVY_BLOWN_AWAY))
     Actor_SetPosition(ACTOR_IVY, 0, 0);
   Rope_Initialize();
-  Rope_Place(0, FLAG_SCENE_TEMP_02, ACTOR_ROPE_POST_A, ACTOR_ROPE_POST_B);
+  Rope_Place(0, FLAG_ROPE_TIED, ACTOR_ROPE_POST_A, ACTOR_ROPE_POST_B);
   Actor_SetSpriteFlags(Actor_GetById(ACTOR_ROPE_POST_A), 0);
   Actor_DisableById(ACTOR_ROPE_POST_B);
   return 0;
@@ -359,6 +365,9 @@ void Naribwe_BlowAwayIvy(void);
 void Naribwe_RevealStone(void);
 
 extern s32 gNaribwe_BrazierBurns[];
+// XXX: the flames over the braziers wear sheet 410, which sprite_ids.h names
+// SPRITE_EXCLAMATION_BUBBLE and nothing else uses; the sheet's picture settles
+// which name is wrong.
 extern s32 gNaribwe_FlameRises[];
 
 extern s32 gNaribwe_IvyAnimation[];
@@ -554,9 +563,9 @@ struct Trigger gNaribwe_Triggers[] = {
      FIND_MESSAGE(MSGNO(MsgNaribweTheresOnlyLittleBit))},
     {PSYNERGY_PHASE_ON_ACTOR(ABILITY_BLAZE, PSYNERGY_PHASE_BEFORE_CAST), 8,
      CONDITION_ALWAYS, EVENT(Naribwe_PrepareBlaze)},
-    {PSYNERGY_ON_ACTOR(ABILITY_WHIRLWIND), ACTOR_IVY, FLAG_SCENE_TEMP_01,
+    {PSYNERGY_ON_ACTOR(ABILITY_WHIRLWIND), ACTOR_IVY, FLAG_IVY_BLOWN_AWAY,
      EVENT(Naribwe_BlowAwayIvy)},
-    {PSYNERGY_ON_ACTOR(ABILITY_LASH), ACTOR_ROPE_POST_A, FLAG_SCENE_TEMP_02, 0},
+    {PSYNERGY_ON_ACTOR(ABILITY_LASH), ACTOR_ROPE_POST_A, FLAG_ROPE_TIED, 0},
     {PSYNERGY_ANYWHERE(ABILITY_REVEAL, PSYNERGY_PHASE_ACTS), 0,
      CONDITION_ALWAYS, EVENT(Naribwe_RevealStone)},
     {PSYNERGY_ANYWHERE(ABILITY_REVEAL, PSYNERGY_PHASE_FADES), 0,
@@ -624,9 +633,9 @@ struct Trigger gNaribwe_TriggersOnReturn[] = {
      FIND_MESSAGE(MSGNO(MsgNaribweTheresOnlyLittleBit))},
     {PSYNERGY_PHASE_ON_ACTOR(ABILITY_BLAZE, PSYNERGY_PHASE_BEFORE_CAST), 8,
      CONDITION_ALWAYS, EVENT(Naribwe_PrepareBlaze)},
-    {PSYNERGY_ON_ACTOR(ABILITY_WHIRLWIND), ACTOR_IVY, FLAG_SCENE_TEMP_01,
+    {PSYNERGY_ON_ACTOR(ABILITY_WHIRLWIND), ACTOR_IVY, FLAG_IVY_BLOWN_AWAY,
      EVENT(Naribwe_BlowAwayIvy)},
-    {PSYNERGY_ON_ACTOR(ABILITY_LASH), ACTOR_ROPE_POST_A, FLAG_SCENE_TEMP_02, 0},
+    {PSYNERGY_ON_ACTOR(ABILITY_LASH), ACTOR_ROPE_POST_A, FLAG_ROPE_TIED, 0},
     {PSYNERGY_ANYWHERE(ABILITY_REVEAL, PSYNERGY_PHASE_ACTS), 0,
      CONDITION_ALWAYS, EVENT(Naribwe_RevealStone)},
     {PSYNERGY_ANYWHERE(ABILITY_REVEAL, PSYNERGY_PHASE_FADES), 0,

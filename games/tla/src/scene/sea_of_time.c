@@ -172,12 +172,13 @@ const u32 *Scene_GetExits(void) { return gSceneExits; }
 
 extern struct ActorPlacement gSeaOfTime_Placements[];
 
-/// The party's ship: placed blank, it wears the boat sheet (sprite 11) on the
-/// water, and the currents, the swirl and the whirlpool move it.
+/// The party's ship: placed blank, it wears the ship's sheet
+/// (SPRITE_WINGED_SHIP) on the water, and the currents, the swirl and the
+/// whirlpool move it.
 enum {
   ACTOR_SHIP = ACTOR_FIRST_PLACED,
-  /// The five rocks (sprite 424) in the channel to Lemuria, which the ship's
-  /// Grind clears one by one.
+  /// The five rocks (SPRITE_SEA_ROCK) in the channel to Lemuria, which the
+  /// ship's Grind clears one by one.
   ACTOR_ROCK_A,
   ACTOR_ROCK_B,
   ACTOR_ROCK_C,
@@ -198,8 +199,8 @@ enum {
 /// While the waves run (SeaOfTime_StartWaves), the channels and the lap cells
 /// do not answer.
 #define FLAG_WAVES_RUNNING FLAG_SCENE_TEMP_00
-/// Set the first time the sea sweeps the ship back, which then leaves by exit 4
-/// rather than 1, and on crossing to Lemuria.
+/// Set the first time the sea sweeps the ship back, onto the Lemurian ship's
+/// tiller; later sweeps land on the world map. Crossing to Lemuria sets it too.
 #define FLAG_SWEPT_BACK_ONCE 0x8dd
 
 /// The cell behaviors the Sea of Time's triggers answer: currents that carry
@@ -842,15 +843,16 @@ void SeaOfTime_SinkIntoWhirlpool(void) {
   Event_End();
 }
 
-/// The sea sweeps the ship back out: by exit 4 the first time, by exit 1 after.
+/// The sea sweeps the ship back out of the whirlpool's sea: onto the Lemurian
+/// ship's tiller the first time, onto the world map after.
 void SeaOfTime_SweptBack(void) {
   Event_Start();
   Event_ResolvePendingActions(0);
   if (!Event_GetFlag(FLAG_SWEPT_BACK_ONCE)) {
-    Import_EventSetExitRequest(4);
+    Import_EventSetExitRequest(SEA_OF_TIME_WHIRLPOOL_TO_LEMURIAN_SHIP_TILLER);
     Event_SetFlag(FLAG_SWEPT_BACK_ONCE);
   } else {
-    Import_EventSetExitRequest(1);
+    Import_EventSetExitRequest(SEA_OF_TIME_WHIRLPOOL_TO_WORLD_MAP);
   }
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();
@@ -1117,7 +1119,7 @@ void SeaOfTime_AnimateSea(void) {
       u16 green = RGB_GREEN(color);
       u16 blue = RGB_BLUE(color);
 
-      if (GameFlag_Get(FLAG_SCENE_TEMP_00) == 0) {
+      if (GameFlag_Get(FLAG_WAVES_RUNNING) == 0) {
         red += gSeaOfTime_RedPulseStep[0];
         if (red < 18) {
           red = 18;
@@ -1340,7 +1342,7 @@ s32 Scene_Initialize(void) {
     gSeaOfTime_WaveState = 1;
     Dma_Set((const void *)&BG_PLTT_COLOR(3, 1), gSeaOfTime_SavedColors.colors,
             DMA_COPY_HALFWORDS(14), REG_DMA3);
-    if (GameFlag_Get(FLAG_SCENE_TEMP_00)) {
+    if (GameFlag_Get(FLAG_WAVES_RUNNING)) {
       u32 *state = gSceneState;
       u32 offset, i;
 

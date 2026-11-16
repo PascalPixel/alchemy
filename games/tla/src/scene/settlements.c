@@ -63,6 +63,28 @@
 #define FLAG_APPLE_TAKEN 0xf5d
 /// Kalt Island's rope, tied by Lash, for this visit.
 #define FLAG_KALT_ROPE_TIED FLAG_SCENE_TEMP_03
+/// Kalt Island: the leader is on the ice, where each step slides
+/// (Leader_SlideOnIce).
+#define FLAG_ON_ICE FLAG_SCENE_TEMP_01
+/// SW Atteka Islet: the pillar has sunk into the river at (11, 12), and river
+/// stone K stands in its place.
+#define FLAG_PILLAR_SUNK FLAG_SCENE_TEMP_04
+/// SW Atteka Islet: the crate has gone down the falls onto the sunk pillar and
+/// rests there.
+#define FLAG_FALLS_CRATE_AT_REST FLAG_SCENE_TEMP_05
+/// SW Atteka Islet: the crate has gone down the falls with no pillar to stop
+/// it, and is lost.
+#define FLAG_FALLS_CRATE_LOST FLAG_SCENE_TEMP_06
+/// SW Atteka Islet: the crate has bobbed in the water at (16, 12).
+#define FLAG_FALLS_CRATE_BOBBED FLAG_SCENE_TEMP_07
+/// SW Atteka Islet: Lift has raised the boulder.
+#define FLAG_BOULDER_LIFTED FLAG_SCENE_TEMP_08
+/// Hesperia Settlement: the party walks along the top of the wall.
+#define FLAG_ON_WALL FLAG_SCENE_TEMP_20
+/// Hesperia Settlement: the crate has dropped off the wall into the water.
+#define FLAG_WALL_CRATE_DROPPED FLAG_SCENE_TEMP_21
+/// Hesperia Settlement: Growth has made the sprout a vine.
+#define FLAG_VINE_GROWN FLAG_SCENE_TEMP_30
 
 /// The bush on the Gondowan Settlement's stairs is cut.
 #define FLAG_STAIRS_BUSH_CUT 0xa60
@@ -477,7 +499,7 @@ void Settlements_TurnAndClimbDownLadder(void) {
 /// Growth makes Hesperia Settlement's sprout a vine the party can climb.
 void Settlements_GrowVine(void) {
   MapGrid_CopyCellAttributes(0, 3, 1, 1, 3, 15);
-  Event_SetFlag(FLAG_SCENE_TEMP_30);
+  Event_SetFlag(FLAG_VINE_GROWN);
 }
 
 extern struct Trigger gSettlements_Triggers[];
@@ -534,15 +556,12 @@ void Settlements_SpawnSmoke(s32 x, s32 y, s32 z) {
   struct Actor *object = FieldActor_Create(SPRITE_DUST_CLOUD, x, y, z);
 
   if (object != NULL) {
-    s8 *animation;
-
     object->retainSpriteCache = 2;
     object->motionFlags = 0;
     object->timer = 0;
     object->priorityFlags &= ~ACTOR_PRIORITY_AUTOMATIC;
     FieldActor_SetSpriteColor(object, 7);
-    animation = object->sprite;
-    animation[9] = (animation[9] & -13) | 4;
+    ((struct FieldSprite *)object->sprite)->priority = 1;
     Actor_SetSpriteFlags(object, 0);
     object->scaleX = FIXED_ONE / 2;
     object->scaleY = FIXED_ONE / 2;
@@ -641,17 +660,17 @@ s32 Scene_Initialize(void) {
   if (gMainRoutineWork.next == SCENE_SW_ATTEKA_ISLET) {
     FieldEffect_StartBlankOverlay(0);
     Actor_PlaceBlocks(gSettlements_FallsObjects);
-    if (Event_GetFlag(FLAG_SCENE_TEMP_06))
+    if (Event_GetFlag(FLAG_FALLS_CRATE_LOST))
       Actor_SetPosition(ACTOR_FALLS_CRATE, 0, 0);
     Actor_GetById(ACTOR_FALLS_CRATE)->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
     Actor_SetAnimation(ACTOR_RIVER_STONE_H, 2);
     Actor_SetAnimation(ACTOR_RIVER_STONE_I, 2);
     Actor_SetAnimation(ACTOR_RIVER_STONE_K, 2);
-    if (Event_GetFlag(FLAG_SCENE_TEMP_05))
+    if (Event_GetFlag(FLAG_FALLS_CRATE_AT_REST))
       Actor_SetAnimation(ACTOR_FALLS_CRATE, 2);
     Settlements_StartWaterfall();
 #if TLA_PATCH_1
-    if (Event_GetFlag(FLAG_SCENE_TEMP_04)) {
+    if (Event_GetFlag(FLAG_PILLAR_SUNK)) {
       Actor_SetPosition(ACTOR_PILLAR, 0, 0);
       Actor_SetPosition(ACTOR_RIVER_STONE_K, 184, 184);
       Actor_GetById(ACTOR_RIVER_STONE_K)->motionFlags = 0;
@@ -660,13 +679,13 @@ s32 Scene_Initialize(void) {
 #endif
   }
   if (gMainRoutineWork.next == SCENE_HESPERIA_SETTLEMENT) {
-    if (Event_GetFlag(FLAG_SCENE_TEMP_30)) {
+    if (Event_GetFlag(FLAG_VINE_GROWN)) {
       MapGrid_CopyCellAttributes(0, 3, 1, 1, 3, 15);
       Actor_SetAnimation(ACTOR_SPROUT, 4);
     }
     if (Event_GetFlag(FLAG_KEEP_PARTY_POSITION) &&
-        Event_GetFlag(FLAG_SCENE_TEMP_20)) {
-      Event_ClearFlag(FLAG_SCENE_TEMP_20);
+        Event_GetFlag(FLAG_ON_WALL)) {
+      Event_ClearFlag(FLAG_ON_WALL);
       Settlements_StepOntoWall();
     }
     Actor_PlaceBlocks(gSettlements_WallCrate);
@@ -680,16 +699,16 @@ s32 Scene_Initialize(void) {
 
 s32 Scene_PrepareMap(void) {
   if (gMainRoutineWork.next == SCENE_SW_ATTEKA_ISLET) {
-    if (Event_GetFlag(FLAG_SCENE_TEMP_05)) {
+    if (Event_GetFlag(FLAG_FALLS_CRATE_AT_REST)) {
       MapGrid_CopyCellAttributes(9, 11, 1, 1, 11, 12);
       MapGrid_CopyCellsTo(12, 32, 11, 15, 1, 1);
       MapGrid_CopyCellsTo(77, 15, 75, 15, 1, 1);
     }
 #if !TLA_PATCH_1
-    if (Event_GetFlag(FLAG_SCENE_TEMP_05))
+    if (Event_GetFlag(FLAG_FALLS_CRATE_AT_REST))
       MapGrid_CopyCellAttributes(9, 11, 1, 1, 11, 11);
 #else
-    if (Event_GetFlag(FLAG_SCENE_TEMP_04)) {
+    if (Event_GetFlag(FLAG_PILLAR_SUNK)) {
       Actor_SetPosition(ACTOR_PILLAR, 0, 0);
       Actor_SetPosition(ACTOR_RIVER_STONE_K, 184, 184);
       Actor_GetById(ACTOR_RIVER_STONE_K)->motionFlags = 0;
@@ -708,10 +727,10 @@ s32 Scene_PrepareMap(void) {
 }
 
 /// On Kalt Island's ice: the slide starts.
-void Settlements_StepOntoIce(void) { GameFlag_Set(FLAG_SCENE_TEMP_01); }
+void Settlements_StepOntoIce(void) { GameFlag_Set(FLAG_ON_ICE); }
 
 /// Off Kalt Island's ice.
-void Settlements_StepOffIce(void) { GameFlag_Clear(FLAG_SCENE_TEMP_01); }
+void Settlements_StepOffIce(void) { GameFlag_Clear(FLAG_ON_ICE); }
 
 /// Steps the leader's slide on Kalt Island's ice.
 void Settlements_StepOnIceSlide(void) { Leader_SlideOnIce(); }
@@ -854,7 +873,7 @@ void Settlements_SinkPillar(void) {
   s32 row = FIELD_CELL(object->z.fixed);
   s32 i;
 
-  if (!Event_GetFlag(FLAG_SCENE_TEMP_04) && column == 11 && row == 12) {
+  if (!Event_GetFlag(FLAG_PILLAR_SUNK) && column == 11 && row == 12) {
     object->motionFlags = 0;
     for (i = 10; i > 0; i--) {
       object->y.fixed -= toFIXED(2);
@@ -866,7 +885,7 @@ void Settlements_SinkPillar(void) {
     Actor_GetById(ACTOR_RIVER_STONE_K)->motionFlags = 0;
     Actor_GetById(ACTOR_RIVER_STONE_K)->y.fixed -= toFIXED(64);
     MapGrid_CopyCellAttributes(9, 11, 1, 1, 11, 12);
-    Event_SetFlag(FLAG_SCENE_TEMP_04);
+    Event_SetFlag(FLAG_PILLAR_SUNK);
   }
 }
 
@@ -904,7 +923,7 @@ void Settlements_SlideCrateDownFalls(void) {
     Actor_SetDestinationOffset(ACTOR_FALLS_CRATE, 0, 80);
     FieldActor_WaitForMoveById(ACTOR_FALLS_CRATE);
     Settlements_SplashCrate(ACTOR_FALLS_CRATE);
-    if (!Event_GetFlag(FLAG_SCENE_TEMP_04)) {
+    if (!Event_GetFlag(FLAG_PILLAR_SUNK)) {
       FieldEvent_Wait(10);
       Actor_SetSpeed(ACTOR_FALLS_CRATE, 0.8);
       Actor_SetDestinationOffset(ACTOR_FALLS_CRATE, 0, 80);
@@ -913,7 +932,7 @@ void Settlements_SlideCrateDownFalls(void) {
       Actor_SetDestinationOffset(ACTOR_FALLS_CRATE, 0, 80);
       FieldEvent_Wait(5);
       Actor_SetPosition(ACTOR_FALLS_CRATE, 0, 0);
-      Event_SetFlag(FLAG_SCENE_TEMP_06);
+      Event_SetFlag(FLAG_FALLS_CRATE_LOST);
     } else {
       MapGrid_CopyCellsTo(12, 32, 11, 15, 1, 1);
       MapGrid_CopyCellsTo(77, 15, 75, 15, 1, 1);
@@ -923,16 +942,17 @@ void Settlements_SlideCrateDownFalls(void) {
       MapGrid_CopyCellAttributes(9, 11, 1, 1, 11, 11);
       Actor_SetAnimation(ACTOR_FALLS_CRATE, 2);
       FieldEvent_Wait(30);
-      Event_SetFlag(FLAG_SCENE_TEMP_05);
+      Event_SetFlag(FLAG_FALLS_CRATE_AT_REST);
     }
     Event_End();
-  } else if (!Event_GetFlag(FLAG_SCENE_TEMP_07) && column == 16 && row == 12) {
+  } else if (!Event_GetFlag(FLAG_FALLS_CRATE_BOBBED) && column == 16 &&
+             row == 12) {
     MapGrid_CopyCellAttributes(17, 12, 1, 1, column, row);
     flags = &object->motionFlags;
     *flags = 3;
     FieldEvent_Wait(30);
     *flags = 0;
-    Event_SetFlag(FLAG_SCENE_TEMP_07);
+    Event_SetFlag(FLAG_FALLS_CRATE_BOBBED);
     Event_End();
   }
 }
@@ -976,21 +996,20 @@ void Settlements_RestoreWallCells(void) {
 /// Onto Hesperia Settlement's wall: its collision is switched for walking along
 /// the top until the party steps off.
 void Settlements_StepOntoWall(void) {
-  if (!Event_GetFlag(FLAG_SCENE_TEMP_21) &&
-      !Event_GetFlag(FLAG_SCENE_TEMP_20)) {
+  if (!Event_GetFlag(FLAG_WALL_CRATE_DROPPED) && !Event_GetFlag(FLAG_ON_WALL)) {
     MapGrid_CopyCellAttributes(11, 73, 10, 10, 64, 50);
     MapGrid_CopyCellAttributes(42, 73, 10, 10, 64, 60);
     MapGrid_CopyCellAttributes(42, 11, 10, 4, 11, 75);
-    Event_SetFlag(FLAG_SCENE_TEMP_20);
+    Event_SetFlag(FLAG_ON_WALL);
   }
 }
 
 /// Off Hesperia Settlement's wall: its stretches take their own collision back.
 void Settlements_StepOffWall(void) {
-  if (Event_GetFlag(FLAG_SCENE_TEMP_20)) {
+  if (Event_GetFlag(FLAG_ON_WALL)) {
     MapGrid_CopyCellAttributes(64, 50, 10, 10, 11, 73);
     MapGrid_CopyCellAttributes(64, 60, 10, 10, 42, 73);
-    Event_ClearFlag(FLAG_SCENE_TEMP_20);
+    Event_ClearFlag(FLAG_ON_WALL);
   }
 }
 
@@ -1033,8 +1052,10 @@ void Settlements_DropCrate(void) {
   object = Actor_Get(ACTOR_WALL_CRATE);
   column = FIELD_CELL(object->x.fixed);
   row = FIELD_CELL(object->z.fixed);
+  // XXX: the two sinkings with flags of their own, at (16, 15) and (13, 15)
+  // (FLAG_SCENE_TEMP_05 and 04), are named once the map shows what lies there.
   if (column == 12 && row == 15) {
-    Event_SetFlag(FLAG_SCENE_TEMP_21);
+    Event_SetFlag(FLAG_WALL_CRATE_DROPPED);
     object->motionFlags = 0;
     SINK(32);
     Settlements_SpawnSplashRing(ACTOR_WALL_CRATE);
@@ -1042,14 +1063,14 @@ void Settlements_DropCrate(void) {
   } else if (!Event_GetFlag(FLAG_SCENE_TEMP_05) && column == 16 && row == 15) {
     object->motionFlags = 0;
     Event_SetFlag(FLAG_SCENE_TEMP_05);
-    Event_SetFlag(FLAG_SCENE_TEMP_21);
+    Event_SetFlag(FLAG_WALL_CRATE_DROPPED);
     SINK(48);
     Settlements_SpawnSplashRing(ACTOR_WALL_CRATE);
     FieldEvent_Wait(30);
   } else if (column == 19 && row == 15) {
     MapGrid_CopyCellAttributes(18, 16, 1, 1, column, row);
     object->motionFlags = 0;
-    Event_SetFlag(FLAG_SCENE_TEMP_21);
+    Event_SetFlag(FLAG_WALL_CRATE_DROPPED);
     SINK(32);
     Settlements_SpawnSplashRing(ACTOR_WALL_CRATE);
     if (!Event_GetFlag(FLAG_DJINNI(DJINNI_TINDER))) {
@@ -1143,7 +1164,7 @@ void Settlements_SpawnSplashRing(s32 objectId) {
 }
 
 /// Lift raises SW Atteka Islet's boulder.
-void Settlements_LiftBoulder(void) { GameFlag_Set(FLAG_SCENE_TEMP_08); }
+void Settlements_LiftBoulder(void) { GameFlag_Set(FLAG_BOULDER_LIFTED); }
 
 extern s16 gSlideOnIce_SteerAngles[];
 
@@ -1438,8 +1459,8 @@ struct Trigger gSettlements_HesperiaSettlementTriggers[] = {
     {STEP_TRIGGER_WALKING_INTO(FACING_WEST), 5, CONDITION_ALWAYS,
      EVENT(Settlements_StepOntoLadderFromEast)},
     {TRIGGER_EXIT | TRIGGER_FLAG_FACING | FACING_NORTH, 6, CONDITION_ALWAYS, 6},
-    {TRIGGER_STEP, 34, FLAG_SCENE_TEMP_20, EVENT(Settlements_StepOntoWall)},
-    {TRIGGER_STEP, 35, IF_FLAG_SET(FLAG_SCENE_TEMP_20),
+    {TRIGGER_STEP, 34, FLAG_ON_WALL, EVENT(Settlements_StepOntoWall)},
+    {TRIGGER_STEP, 35, IF_FLAG_SET(FLAG_ON_WALL),
      EVENT(Settlements_StepOffWall)},
     {TRIGGER_TALK, ACTOR_HESPERIA_MAN, CONDITION_ALWAYS,
      MSGNO(MsgSettlementsYouMustBeVeryBrave)},
@@ -1453,7 +1474,7 @@ struct Trigger gSettlements_HesperiaSettlementTriggers[] = {
      EVENT(Settlements_BlockCrate)},
     {TRIGGER_PUSH, 0, CONDITION_ALWAYS, EVENT(Settlements_UnblockCrate)},
     {TRIGGER_PUSHED, 0, CONDITION_ALWAYS, EVENT(Settlements_BlockCrate)},
-    {PSYNERGY_ON_ACTOR(ABILITY_GROWTH), ACTOR_SPROUT, FLAG_SCENE_TEMP_30,
+    {PSYNERGY_ON_ACTOR(ABILITY_GROWTH), ACTOR_SPROUT, FLAG_VINE_GROWN,
      EVENT(Settlements_GrowVine)},
     {TRIGGER_TABLE_END},
 };
@@ -1480,7 +1501,7 @@ struct Trigger gSettlements_KaltIslandTriggers[] = {
     {TRIGGER_STEP, ACTOR_GEL, CONDITION_ALWAYS, EVENT(Settlements_StepOntoIce)},
     {TRIGGER_STEP, ACTOR_APPLE, CONDITION_ALWAYS,
      EVENT(Settlements_StepOffIce)},
-    {TRIGGER_STEP, 20, FLAG_SCENE_TEMP_01, EVENT(Settlements_StepOnIceSlide)},
+    {TRIGGER_STEP, 20, FLAG_ON_ICE, EVENT(Settlements_StepOnIceSlide)},
     {PSYNERGY_ON_ACTOR(ABILITY_LASH), ACTOR_ROPE_POST_A, FLAG_KALT_ROPE_TIED,
      EVENT(Settlements_LashRope)},
     {TRIGGER_TALK, ACTOR_GEL, CONDITION_ALWAYS, EVENT(Settlements_MeetGel)},
@@ -1515,15 +1536,15 @@ struct Trigger gSettlements_AttekaIsletTriggers[] = {
      MSGNO(MsgSettlementsMyBuddyThinksImNuts)},
     {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), 9,
      0x204, EVENT(Settlements_UnblockFallsObjects)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_PILLAR, FLAG_SCENE_TEMP_04,
+    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_PILLAR, FLAG_PILLAR_SUNK,
      EVENT(Settlements_MovePillar)},
     {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), 10,
      0x205, EVENT(Settlements_UnblockFallsObjects)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_FALLS_CRATE, FLAG_SCENE_TEMP_05,
-     EVENT(Settlements_MoveCrate)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_FALLS_CRATE,
+     FLAG_FALLS_CRATE_AT_REST, EVENT(Settlements_MoveCrate)},
     {TRIGGER_PUSH, 0, CONDITION_ALWAYS, EVENT(Settlements_BlockFallsObject)},
     {TRIGGER_PUSHED, 0, CONDITION_ALWAYS, EVENT(Settlements_PushIntoFalls)},
-    {PSYNERGY_ON_ACTOR(ABILITY_LIFT), ACTOR_BOULDER, FLAG_SCENE_TEMP_08,
+    {PSYNERGY_ON_ACTOR(ABILITY_LIFT), ACTOR_BOULDER, FLAG_BOULDER_LIFTED,
      EVENT(Settlements_LiftBoulder)},
     {TRIGGER_TABLE_END},
 };

@@ -82,6 +82,10 @@
 /// From patch 1: the ice is burst, and fireballs still on their way no longer
 /// crack it.
 #define FLAG_DRAGON_ICE_BURST FLAG_SCENE_TEMP_38
+/// The column and row of the cracked tile the party fell through, a byte each
+/// (MarsLighthouseEntrance_FallThroughCrack).
+#define FLAG_CRACK_COLUMN FLAG_AREA_TEMP_40
+#define FLAG_CRACK_ROW FLAG_AREA_TEMP_48
 
 /// Where the battle with the Flame Dragons returns the party.
 #define ENTRANCE_AFTER_BATTLE 20
@@ -314,8 +318,8 @@ s32 Scene_Initialize(void) {
     if (entrance == ENTRANCE_FROM_CRACK) {
       struct Actor *leader = Actor_GetById(gMainRoutineWork.leaderActorId);
       struct FieldWork *work = Ram_HeapSlots->fieldWork;
-      s32 column = FieldGameFlag_GetByte(FLAG_AREA_TEMP_40);
-      s32 row = FieldGameFlag_GetByte(FLAG_AREA_TEMP_48);
+      s32 column = FieldGameFlag_GetByte(FLAG_CRACK_COLUMN);
+      s32 row = FieldGameFlag_GetByte(FLAG_CRACK_ROW);
       struct Actor *other;
       s32 x;
 

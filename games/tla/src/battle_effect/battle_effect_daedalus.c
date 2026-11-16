@@ -907,21 +907,21 @@ void BattleEffect_RunDaedalus(struct BattleEffectParams *args) {
             p->velocityY = p->velocityY * 63 / DAMPING_SCALE + 0x8c8;
           }
           if (p->variant < 80)
-            p->velocityY += 0x200;
+            p->velocityY += toFIXED(1) / 128;
           if (p->variant > 29)
             p->velocityX -= toFIXED(1) / 4;
           if (p->variant >= 40 && p->variant < 68)
             p->velocityY -= toFIXED(1) / 16;
           if (p->variant >= 50 && p->variant < 60) {
             DAEDALUS_SPRITE(DAEDALUS_ROCKET)->rotation =
-                (p->variant << 7) - 0x5900;
+                (p->variant << 7) - TRIG_TURN * 89 / 256;
             p->velocityY -= toFIXED(1) / 16;
           }
           if (p->variant >= 108 && p->variant < 140) {
             if (p->variant >= 120 && p->variant < 123)
-              DAEDALUS_SPRITE(DAEDALUS_ROCKET)->rotation -= 0x180;
+              DAEDALUS_SPRITE(DAEDALUS_ROCKET)->rotation -= TRIG_TURN * 3 / 512;
             else
-              DAEDALUS_SPRITE(DAEDALUS_ROCKET)->rotation += 0x100;
+              DAEDALUS_SPRITE(DAEDALUS_ROCKET)->rotation += TRIG_TURN / 256;
             p->velocityY -= toFIXED(1) / 16;
           }
           if (p->variant >= 140 && p->variant < 160)

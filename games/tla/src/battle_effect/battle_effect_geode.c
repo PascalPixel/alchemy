@@ -271,7 +271,7 @@ void BattleEffect_RunGeode(struct BattleEffectParams *args) {
         *(volatile u16 *)&work->bg2pa;
         work->bg2pa = ratio;
         *(volatile u16 *)&work->bg2pd;
-        work->bg2pd = 0x100;
+        work->bg2pd = Q_8_8(1);
       }
       for (row = 0, height = -64, angle = 0; row != DOME_ROWS;
            height += 8, angle += 2184, row++) {

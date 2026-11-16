@@ -985,7 +985,7 @@ void BattleEffect_RunCruelRuin(struct BattleEffectParams *args) {
           if (frame > 7) {
             scale = toFIXED(9) / 4 - (frame << 11);
           }
-          if (scale <= 0x7fff) {
+          if (scale < FIXED_ONE / 2) {
             scale = FIXED_ONE / 2;
           }
           if (frame > 35) {
@@ -1071,7 +1071,7 @@ void BattleEffect_RunCruelRuin(struct BattleEffectParams *args) {
           if ((u32)t <= 99) {
             s32 sc = toFIXED(3) - (t << 11);
 
-            if (sc <= 0xffff) {
+            if (sc < FIXED_ONE) {
               sc = FIXED_ONE;
             }
             shade = -32;
@@ -1624,7 +1624,10 @@ void BattleEffect_RunCruelRuin(struct BattleEffectParams *args) {
     if (v > CANVAS_LEVEL_BRIGHTEST) {
       v = CANVAS_LEVEL_BRIGHTEST;
     }
-    for (j = 0, c = (u8 *)(i + (s32)work + 1792); j != 120; j++) {
+    /* FAKEMATCH(signature): the column's pointer computed as an integer. */
+    for (j = 0,
+        c = (u8 *)(i + (s32)work + offsetof(struct BattleEffectWork, sheet));
+         j != 120; j++) {
       *c = v;
       c += 120;
     }

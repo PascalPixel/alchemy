@@ -39,6 +39,14 @@ struct StripQuad;
 /// The motes of Djinn Counter's blow and of Reflux's and Counter Rush's swirl:
 /// every particle but the last.
 #define GASP_MOTES 63
+/// Mold's 40x40 Djinni is copied to the middle of a 64x64 cel.
+#define GASP_DJINNI_CEL 64
+#define GASP_DJINNI_CEL_MARGIN ((GASP_DJINNI_CEL - DJINNI_WIDTH) / 2)
+/// Call Dullahan's four bolts each take a 32x128 cel, 4 pixels in from its
+/// left.
+#define GASP_BOLT_CEL_WIDTH 32
+#define GASP_BOLT_CEL_HEIGHT 128
+#define GASP_BOLT_CEL_BYTES (GASP_BOLT_CEL_WIDTH * GASP_BOLT_CEL_HEIGHT)
 
 /// Where VenusDjinnSheet is decoded in the effect's pictures.
 #define GASP_FAMILY_VENUS_DJINN_PICTURES 0x1000
@@ -113,12 +121,12 @@ void BattleEffect_RunGaspFamily(struct BattleEffectParams *args, s32 mode) {
     {
       s32 (*clear)(void *, s32) = Iwram_ClearWordsEntry;
 
-      clear(work->sheet, 64 * 64);
+      clear(work->sheet, GASP_DJINNI_CEL * GASP_DJINNI_CEL);
     }
-    // The Djinni, centred in a 64x64 cel.
     for (k = 0; k != DJINNI_HEIGHT; k++)
       for (j = 0; j != DJINNI_WIDTH; j++)
-        work->sheet[(k + 12) * 64 + 12 + j] =
+        work->sheet[(k + GASP_DJINNI_CEL_MARGIN) * GASP_DJINNI_CEL +
+                    GASP_DJINNI_CEL_MARGIN + j] =
             work->sheet[GASP_FAMILY_VENUS_DJINN_PICTURES + k * DJINNI_WIDTH +
                         j];
     frames = 42;
@@ -186,14 +194,13 @@ void BattleEffect_RunGaspFamily(struct BattleEffectParams *args, s32 mode) {
     s32 k;
 
     Resource_LoadAndDecompress(RESOURCE_LIGHTNING_BOLT_SHEET, cells, 1, 1);
-    // The four bolts, each 4 pixels in from the left of a 32x128 cel.
-    Iwram_ClearWordsEntry(work->sheet, 4 * 32 * 128);
+    Iwram_ClearWordsEntry(work->sheet, 4 * GASP_BOLT_CEL_BYTES);
     for (i = 0; i != 4; i++)
       for (k = 0; k != LIGHTNING_BOLT_HEIGHT; k++)
         for (j = 0; j != LIGHTNING_BOLT_WIDTH; j++)
-          work->sheet[4 + i * 32 * 128 + k * 32 + j] =
-              cells[i * LIGHTNING_BOLT_PICTURE_BYTES +
-                    k * LIGHTNING_BOLT_WIDTH + j];
+          work->sheet[4 + i * GASP_BOLT_CEL_BYTES + k * GASP_BOLT_CEL_WIDTH +
+                      j] = cells[i * LIGHTNING_BOLT_PICTURE_BYTES +
+                                 k * LIGHTNING_BOLT_WIDTH + j];
     LOAD_BG_PALETTE(RESOURCE_VIOLET_PALETTE_F);
     frames = 60;
   } else if (mode == GASP_MODE_COUNTER_RUSH) {

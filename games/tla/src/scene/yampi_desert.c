@@ -261,7 +261,7 @@ enum YampiDesertBlowMaceChestActorId {
 
 void YampiDesert_RippleFollowsScorpion(void);
 
-extern u32 gYampiDesert_SandCloudCells[];
+extern u16 gYampiDesert_SandCloudCells[];
 
 extern u32 gYampiDesert_SandCloudDrifts[];
 
@@ -646,8 +646,8 @@ void YampiDesert_BlockPoundedStakes(u16 *list) {
   }
 }
 
-/// As Sand ends, gives each stake of a room's list its cell's collision code 232
-/// in the overhead layer again.
+/// As Sand ends, gives each stake of a room's list its cell's collision code
+/// 232 in the overhead layer again.
 void YampiDesert_UnblockStakes(u16 *list) {
   struct MapWork *map = Ram_HeapSlots->mapGrid;
   struct MapCell *cell;
@@ -865,7 +865,7 @@ void YampiDesert_CornerScorpion(void) {
 
 void Actor_StartScript(struct Actor *object, const void *script);
 
-/// Spawns an object of kind 285 at each of the fifteen cells of
+/// Raises a cloud of dust at each of the fifteen points of
 /// gYampiDesert_SandCloudCells, twice, each moved by -2 to +1 pixels at random.
 void YampiDesert_RaiseSandCloud(void) {
   u32 pass;
@@ -874,7 +874,7 @@ void YampiDesert_RaiseSandCloud(void) {
   for (pass = 0; pass <= 1; pass++) {
     u16 *cell;
 
-    cell = (u16 *)gYampiDesert_SandCloudCells;
+    cell = gYampiDesert_SandCloudCells;
     for (i = 0; i <= 14; i++) {
       s32 x = *cell++ + ((Random16() << 2) >> 16);
       s32 z = *cell++ + ((Random16() << 2) >> 16);
@@ -2710,6 +2710,8 @@ struct RideEntry *YampiDesert_AddRisingSand(s32 slot, s32 id, s32 timer,
 }
 
 // clang-format off
+/// A field effect's actor that lasts a short, a medium or a long while, then
+/// goes back to the origin and frees itself (gFieldEffect_DurationScripts).
 u32 gFieldEffect_ShortScript[] = {
     SC_WAIT(1),
     SC_LOOP(22, SC_TOP),
@@ -2740,15 +2742,21 @@ u32 gFieldEffect_LongScript[] = {
     SC_END,
 };
 
-u32 gYampiDesert_SandCloudCells[] = {
-    0x9800e0, 0x9800e8, 0x9800f0, 0xa000d8, 0xa000e0, 0xa000e8,
-    0xa000f0, 0xa000f8, 0xa800d8, 0xa800e0, 0xa800e8, 0xa800f0,
-    0xa800f8, 0xb000d8, 0xb000f8,
+/// Where the King Scorpion's cloud of dust rises: x and z in pixels.
+u16 gYampiDesert_SandCloudCells[] ALIGNED(4) = {
+    224, 152, 232, 152, 240, 152,
+    216, 160, 224, 160, 232, 160, 240, 160, 248, 160,
+    216, 168, 224, 168, 232, 168, 240, 168, 248, 168,
+    216, 176, 248, 176,
 };
 
+/// A puff of the sand slide's dust, which frees itself after a while.
 u32 gYampiDesert_SlideDust[] = {
-    0, 25, 22, 38, 0, 3,
-    0, 1, 38,
+    SC_WAIT(25),
+    SC_SET(SW_HOOK, 0),
+    SC_POSITION_ORIGIN,
+    SC_WAIT(1),
+    SC_RELEASE,
 };
 // clang-format on
 
@@ -2777,40 +2785,67 @@ LATE_DATA const s32 *gFieldEffect_DurationScripts[] = {
 };
 
 // clang-format off
+/// The two travelers resting at the oasis look about them in turn.
 LATE_DATA u32 gYampiDesert_TravelerLooksAround[] = {
-    22, 3, 0xb000, 0, 80, 22,
-    3, 0, 0, 80, 22, 3,
-    0xd000, 0, 20, 22, 3, 0,
-    0, 40, 13, 0xffff, 0,
+    SC_SET(SW_FACING, FACING_NORTH_NORTHWEST),
+    SC_WAIT(80),
+    SC_SET(SW_FACING, FACING_EAST),
+    SC_WAIT(80),
+    SC_SET(SW_FACING, FACING_NORTH_NORTHEAST),
+    SC_WAIT(20),
+    SC_SET(SW_FACING, FACING_EAST),
+    SC_WAIT(40),
+    SC_LOOP(SC_FOREVER, SC_TOP),
 };
 
 LATE_DATA u32 gYampiDesert_OtherTravelerLooksAround[] = {
-    22, 3, 0xd000, 0, 20, 22,
-    3, 0, 0, 40, 22, 3,
-    0xb000, 0, 80, 22, 3, 0,
-    0, 80, 13, 0xffff, 0,
+    SC_SET(SW_FACING, FACING_NORTH_NORTHEAST),
+    SC_WAIT(20),
+    SC_SET(SW_FACING, FACING_EAST),
+    SC_WAIT(40),
+    SC_SET(SW_FACING, FACING_NORTH_NORTHWEST),
+    SC_WAIT(80),
+    SC_SET(SW_FACING, FACING_EAST),
+    SC_WAIT(80),
+    SC_LOOP(SC_FOREVER, SC_TOP),
 };
 
+/// The mayor runs ahead to the travelers, and the others follow.
 LATE_DATA u32 gYampiDesert_FinderRunsAhead[] = {
-    39, 2, 4, 0xf80000, 0, 0xf80000,
-    1, 4, 0xf80000, 0, 0x1180000, 1,
-    4, 0x1080000, 0, 0x1900000, 1, 39,
-    1, 17,
+    SC_ANIMATION(2),
+    SC_MOVE(248, 0, 248),
+    SC_SYNC,
+    SC_MOVE(248, 0, 280),
+    SC_SYNC,
+    SC_MOVE(264, 0, 400),
+    SC_SYNC,
+    SC_ANIMATION(1),
+    SC_END,
 };
 
 LATE_DATA u32 gYampiDesert_TravelersFollow[] = {
-    39, 2, 4, 0xf00000, 0, 0x1180000,
-    1, 4, 0x1080000, 0, 0x1900000, 1,
-    39, 1, 17,
+    SC_ANIMATION(2),
+    SC_MOVE(240, 0, 280),
+    SC_SYNC,
+    SC_MOVE(264, 0, 400),
+    SC_SYNC,
+    SC_ANIMATION(1),
+    SC_END,
 };
 
 LATE_DATA u32 gYampiDesert_LastTravelersFollow[] = {
-    39, 2, 4, 0xd80000, 0, 0xe80000,
-    1, 4, 0xf00000, 0, 0x1180000, 1,
-    4, 0x1080000, 0, 0x1900000, 1, 39,
-    1, 17,
+    SC_ANIMATION(2),
+    SC_MOVE(216, 0, 232),
+    SC_SYNC,
+    SC_MOVE(240, 0, 280),
+    SC_SYNC,
+    SC_MOVE(264, 0, 400),
+    SC_SYNC,
+    SC_ANIMATION(1),
+    SC_END,
 };
 
+/// Each room's stakes, as STAKE_ROW lists them.
 LATE_DATA u16 gYampiDesertGuardianRingChestStakes[] = {
     STAKE_ROW(0), STAKE_ROW(1), STAKE_ROW(2), STAKE_ROW(3),
     STAKE_ROW(4), STAKE_ROW(5), STAKE_LIST_END,
@@ -2838,6 +2873,7 @@ LATE_DATA s32 gYampiDesert_RaisedEvent = 0;
 
 LATE_DATA struct Actor *gYampiDesert_SandRipple = NULL;
 
+/// Where the party arrives, in the desert and in the cave under the oasis.
 LATE_DATA struct SceneEntrance gYampiDesert_Entrances[] = {
     {0, CONDITION_ALWAYS, 172, 0, 149, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
     {SCENE_TABLE_END},
@@ -2851,6 +2887,7 @@ LATE_DATA struct SceneEntrance gYampiDesertOasisCaveEntrances[] = {
     {SCENE_TABLE_END},
 };
 
+/// The regions that leave the scorpion's pit and the cave under the oasis.
 LATE_DATA u32 gYampiDesertScorpionPitExitRegions[] = {
     0x2c00d8, 0xf800b8, 0xd8004c, 0x1ffff, 0xffff, 0,
     0, 0,
@@ -2912,6 +2949,7 @@ LATE_DATA u32 gSceneExits[] = {
     SCENE_EXITS_END,
 };
 
+/// The desert's actors, room by room.
 LATE_DATA struct ActorPlacement gYampiDesert_Placements[] = {
     {SCENE_TABLE_END},
 };
@@ -3025,6 +3063,7 @@ LATE_DATA struct ActorPlacement gYampiDesertBlowMaceChestActorPlacements[] = {
     {SCENE_TABLE_END},
 };
 
+/// The desert's triggers, room by room.
 LATE_DATA struct Trigger gYampiDesert_Triggers[] = {
     {TRIGGER_TABLE_END},
 };
@@ -3205,8 +3244,11 @@ LATE_DATA struct Trigger gYampiDesertBlowMaceChestTriggers[] = {
     {TRIGGER_TABLE_END},
 };
 
+/// A puff of the King Scorpion's dust drifts aside and frees itself.
 LATE_DATA u32 gYampiDesert_SandCloudDrifts[] = {
-    0, 1, 4, 0xe80000, 0, 0xba0000,
-    1, 38,
+    SC_WAIT(1),
+    SC_MOVE(232, 0, 186),
+    SC_SYNC,
+    SC_RELEASE,
 };
 // clang-format on

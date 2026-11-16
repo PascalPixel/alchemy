@@ -144,6 +144,9 @@ enum {
 #define FLAG_SHAMAN_VILLAGE_ROPE_TIED FLAG_SCENE_TEMP_04
 /// Set once Growth has grown the village's vine.
 #define FLAG_SHAMAN_VILLAGE_VINE_GROWN FLAG_SCENE_TEMP_05
+/// Set once the party has shown the Shaman's Rod
+/// (ShamanVillage_ShowShamansRod): Moapa's door stays open.
+#define FLAG_SHAMAN_VILLAGE_MOAPAS_DOOR_OPEN FLAG_SCENE_TEMP_02
 
 #include "../field/field_effect_move.c"
 
@@ -350,7 +353,8 @@ void ShamanVillage_BlowAwaySand(void);
 void ShamanVillage_HopFortuneTeller(void);
 void ShamanVillage_StartLettering(s32 a, s32 b);
 void ShamanVillage_LoadLettering(s32 a);
-void ShamanVillage_EnterDoor(s32 a, s32 b, s32 c, s32 d, s32 mode, s32 f);
+void ShamanVillage_EnterDoor(s32 sourceX, s32 sourceY, s32 destinationX,
+                             s32 destinationY, s32 width, s32 height);
 s32 ShamanVillage_IsFacingCounter(void);
 void ShamanVillage_ExplainTrialRules(void);
 void ShamanVillage_StepBackFromTrial(void);
@@ -448,15 +452,18 @@ void ShamanVillage_WaveWhirlwindLines(void) {
   Dma_Set(source, scroll, 0xa2600001, (volatile u32 *)dma);
 }
 
+/// Scrolls the sand layer, the third, while Whirlwind blows: its offset moves
+/// two pixels a frame, back in x and on in z, and starts again once z passes
+/// 1040.
 void ShamanVillage_ScrollSandLayer(void) {
-  s32 *view = (s32 *)((u8 *)Ram_HeapSlots->mapGrid + 376);
+  struct MapLayer *sand = &Ram_HeapSlots->mapGrid->layers[2];
 
-  view[2] -= toFIXED(2);
+  sand->offsetX -= toFIXED(2);
 
-  view[3] += toFIXED(2);
-  if (view[3] > toFIXED(1040)) {
-    view[2] = 0;
-    view[3] = toFIXED(1024);
+  sand->offsetY += toFIXED(2);
+  if (sand->offsetY > toFIXED(1040)) {
+    sand->offsetX = 0;
+    sand->offsetY = toFIXED(1024);
   }
 }
 
@@ -1694,7 +1701,7 @@ void ShamanVillage_ShowShamansRod(void) {
   Actor_RunScriptAndWait(ACTOR_KRADEN,
                          gShamanVillage_RejoinLeaderAtHouseScript);
   Event_Wait(20);
-  Event_SetFlag(FLAG_SCENE_TEMP_02);
+  Event_SetFlag(FLAG_SHAMAN_VILLAGE_MOAPAS_DOOR_OPEN);
   Event_SetFlag(FLAG_SHAMAN_VILLAGE_SHAMANS_ROD_SHOWN);
   Event_End();
 }
@@ -2468,21 +2475,28 @@ void ShamanVillage_CastWhirlwindOnSand(void) {
   Actor_SetSpritePriority(ACTOR_SHEBA, 2);
 }
 
-void ShamanVillage_EnterDoor(s32 a, s32 b, s32 c, s32 d, s32 mode, s32 f) {
+/// Opens a door by copying its open picture (width by height cells from
+/// sourceX, sourceY to destinationX, destinationY), with a thump for a door two
+/// cells wide and SE_DOOR_OPEN for one; through a door one cell wide the leader
+/// first steps to the middle of its cell, faces north and walks in, and the
+/// party leaves by the step trigger it stood on.
+void ShamanVillage_EnterDoor(s32 sourceX, s32 sourceY, s32 destinationX,
+                             s32 destinationY, s32 width, s32 height) {
   struct FieldWork *work = Ram_HeapSlots->fieldWork;
   struct Actor *object;
   s32 cell;
 
   Event_Start();
   Event_ResolvePendingActions(0);
-  if (mode == 2)
+  if (width == 2)
     Event_PlaySound(SE_THUMP);
   else
     Event_PlaySound(SE_DOOR_OPEN);
-  MapGrid_CopyCellsTo(a, b, c, d, mode, f);
+  MapGrid_CopyCellsTo(sourceX, sourceY, destinationX, destinationY, width,
+                      height);
   Event_Wait(20);
   Actor_SetSpeed(gMainRoutineWork.leaderActorId, 0.5);
-  if (mode == 1) {
+  if (width == 1) {
     object = ((struct Actor *)Actor_GetById(gMainRoutineWork.leaderActorId));
     cell = FIXEDtoINT(object->x.fixed);
     Actor_SetMoveTarget(object, toFIXED(8 - cell % 16) + object->x.fixed,
@@ -2499,6 +2513,7 @@ void ShamanVillage_EnterDoor(s32 a, s32 b, s32 c, s32 d, s32 mode, s32 f) {
   Import_EventSetExitRequest(work->stepTrigger);
 }
 
+/// The village's houses' doors, each opened by ShamanVillage_EnterDoor.
 void ShamanVillage_EnterDoorA(void) {
   ShamanVillage_EnterDoor(43, 40, 8, 22, 1, 2);
 }
@@ -2519,8 +2534,10 @@ void ShamanVillage_EnterDoorE(void) {
   ShamanVillage_EnterDoor(43, 42, 10, 8, 1, 2);
 }
 
+/// Moapa's door, left open once the party has shown the Shaman's Rod, is walked
+/// through at once; until then it opens as the other doors do.
 void ShamanVillage_EnterMoapasHouse(void) {
-  if (Event_GetFlag(FLAG_SCENE_TEMP_02)) {
+  if (Event_GetFlag(FLAG_SHAMAN_VILLAGE_MOAPAS_DOOR_OPEN)) {
     Event_Start();
     Event_ResolvePendingActions(0);
     Event_PlaySound(SE_MAP_EXIT);
@@ -2724,6 +2741,9 @@ void ShamanVillage_SetUpAromaRoom(void) {
       ((struct Actor *)Actor_GetById(ACTOR_FORTUNE_TELLERS_FLAME)), 0);
 }
 
+/// A smoke puff's update: it drifts on in x ever faster, rises half a pixel a
+/// frame and grows, and is released when the frames its creator counted into
+/// watchedActor run out.
 void ShamanVillage_DriftSmoke(struct Actor *object) {
   s32 step;
 
@@ -2739,6 +2759,8 @@ void ShamanVillage_DriftSmoke(struct Actor *object) {
     Actor_Release(object);
 }
 
+/// Puffs a blended cloud of smoke at x, y, z, half its size, that
+/// ShamanVillage_DriftSmoke moves for 60 frames.
 void ShamanVillage_SpawnSmoke(s32 x, s32 y, s32 z) {
   struct Actor *object =
       ((struct Actor *)Import_ActorCreate(SPRITE_DUST_CLOUD, x, y, z));
@@ -2747,7 +2769,7 @@ void ShamanVillage_SpawnSmoke(s32 x, s32 y, s32 z) {
     object->retainSpriteCache = 2;
     object->motionFlags = 0;
     object->timer = 0;
-    object->priorityFlags &= ~1;
+    object->priorityFlags &= ~ACTOR_PRIORITY_AUTOMATIC;
     FieldActor_SetSpriteColor(object, 7);
     ((struct FieldSprite *)object->sprite)->priority = 1;
     object->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
@@ -2761,10 +2783,11 @@ void ShamanVillage_SpawnSmoke(s32 x, s32 y, s32 z) {
   }
 }
 
+/// Every 64th frame, a puff of smoke from each of the village's two chimneys.
 void ShamanVillage_PuffChimneySmoke(void) {
   if ((gFrameCount & 63) == 0) {
-    ShamanVillage_SpawnSmoke(0x480000, 0x420000, 0x1780000);
-    ShamanVillage_SpawnSmoke(0x680000, 0x620000, 0x980000);
+    ShamanVillage_SpawnSmoke(toFIXED(72), toFIXED(66), toFIXED(376));
+    ShamanVillage_SpawnSmoke(toFIXED(104), toFIXED(98), toFIXED(152));
   }
 }
 
@@ -2797,7 +2820,7 @@ void ShamanVillage_SetUpVillage(void) {
       wait(1);
     }
   }
-  if (Event_GetFlag(FLAG_SCENE_TEMP_02))
+  if (Event_GetFlag(FLAG_SHAMAN_VILLAGE_MOAPAS_DOOR_OPEN))
     MapGrid_CopyCellsTo(43, 40, 7, 6, 1, 2);
   if (Event_GetFlag(FLAG_SHAMAN_VILLAGE_DOORS_OPEN)) {
     s32 width = 1;

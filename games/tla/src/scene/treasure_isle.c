@@ -196,7 +196,8 @@ const struct SceneRegion *Scene_GetExitRegions(void) { return 0; }
 
 const u32 *Scene_GetExits(void) { return gSceneExits; }
 
-const u8 *Scene_GetActorPlacements(void) {
+/// The actors of the room the party enters.
+const struct ActorPlacement *Scene_GetActorPlacements(void) {
   s32 scene = gMainRoutineWork.next;
 
   if (scene == SCENE_TREASURE_ISLE_CHESTS)
@@ -494,7 +495,8 @@ void TreasureIsle_MeetStarMagician(void) {
 
 extern struct Trigger gTreasureIsle_Room1Triggers[];
 
-const u8 *Scene_GetTriggers(void) {
+/// The triggers of the room the party enters.
+const struct Trigger *Scene_GetTriggers(void) {
   s32 scene = gMainRoutineWork.next;
 
   if (scene == SCENE_TREASURE_ISLE_CHESTS)
@@ -505,7 +507,7 @@ const u8 *Scene_GetTriggers(void) {
     return gTreasureIsle_Room4Triggers;
   if (scene == SCENE_TREASURE_ISLE_GUARDIAN)
     return gTreasureIsle_Room5Triggers;
-  return (const u8 *)gTreasureIsle_Room1Triggers;
+  return gTreasureIsle_Room1Triggers;
 }
 
 /// The water colours' cycle frame, -1 until the first frame saves the

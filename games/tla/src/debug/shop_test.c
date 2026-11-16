@@ -374,6 +374,8 @@ void ShopTest_OpenPortraitBrowser(void);
 
 void ShopTest_NoOp(void);
 
+/// The debug windows' own strings, as Increase item and level's: the level
+/// label, and the item selector's prompt, help line and full-bags line.
 char gShopTest_LvLabel[4] = "Lv";
 
 char gShopTest_ItemPrompt[12] = "Item No:";

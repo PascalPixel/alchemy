@@ -712,6 +712,7 @@ void PsynergyTest_UpdateRings(struct Actor *object) {
 }
 
 // clang-format off
+/// The rings' tiles (PsynergyTest_StartRings loads 256 bytes of them).
 s32 gPsynergyTest_RingTiles[] = {
     0, 0, 0, 0, 0, 0,
     0x70000000, (s32)0xf7700000, 0, 0, 0, 0,
@@ -766,6 +767,7 @@ u32 gSceneExits[] = {
 
 // clang-format on
 
+/// The room's people: the party's four rows, then enum PsynergyTestActorId's.
 struct ActorPlacement gActorPlacements[] = {
     ACTOR_PLACEMENT(GARET, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 40, 0, 40,
                     FACING_SOUTH, TALK_FACING_PARTY, 0),
@@ -812,6 +814,8 @@ struct ActorPlacement gActorPlacements[] = {
     {SCENE_TABLE_END},
 };
 
+/// The room's events: talking to its people, Mind Read on them, the cells
+/// examined, and the field Psynergy each spot answers.
 struct Trigger gSceneEvents[] = {
     {TRIGGER_TALK, JENNA, CONDITION_ALWAYS, EVENT(PsynergyTest_NoOp)},
     {TRIGGER_TALK, IVAN, CONDITION_ALWAYS, EVENT(PsynergyTest_NoOp)},

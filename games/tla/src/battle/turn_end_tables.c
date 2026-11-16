@@ -16,8 +16,8 @@ const u8 gBattle_UnusedCounting[] = {
     0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15,
 };
 
-/// Unused: a unit matrix.
 // clang-format off
+/// Unused: a unit matrix.
 const MATRIX gBattle_UnusedUnitMatrix = {
     FIXED_ONE, 0,         0,
     0,         FIXED_ONE, 0,

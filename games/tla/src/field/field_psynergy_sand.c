@@ -430,100 +430,99 @@ void FieldPsynergy_Sand(void) {
   savedY = owner->y.fixed;
   motionFlags = &owner->motionFlags;
   savedFlags = *motionFlags;
-  if (((struct Sprite *)owner->sprite)->width != 32 ||
-      ((struct Sprite *)owner->sprite)->height != 32)
-    goto end;
-  FieldPsynergy_MarkWorldMapTilesUsed();
-  Actor_SetOthersPaused(owner, 1, 0);
-  if (MapGrid_IsSandCell(owner->x.fixed, owner->z.fixed, owner->layer) == 0)
-    event->standing = 1;
-  else
-    event->standing = 0;
-  FieldPsynergy_FadeToCastColor();
-  Decompress_TaggedLz(Resource_GetTableEntry(RESOURCE_DUST_PUFF_A), work);
-  particleEntry = VramCache_FindFreeEntry();
-  particleTiles = VramCache_Load(particleEntry, 2048, work);
-  i = 0;
-  particle = work->grains;
-  delay = -12;
-  sprite = work->grainSprites;
-  for (; i < SAND_GRAIN_COUNT; i++) {
-    Sand_SpawnGrain(sprite, particle, i, particleTiles, event->standing);
-    particle->timer = delay;
-    sprite++;
-    delay -= 2;
-    particle++;
-  }
-  FieldCamera_MoveWithinMapBounds(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0);
-  BattleEffect_SetObjectUpdateMode(effect->mainActor, 0);
-  Actor_SetPositionAndResetMotionFar(owner, owner->x.fixed, owner->y.fixed,
-                                     owner->z.fixed);
-  *motionFlags = 0;
-  wait(2);
-  for (frame = 0; frame < 40; frame++) {
-    if (frame > 0)
-      owner->y.fixed += toFIXED(9) / 40;
-    if (frame & 31)
-      Sound_PlayFar(SE_SPIRAL);
-    owner->facing += DEGtoANG(45);
-    wait(1);
-  }
-  owner->facing = DEGtoANG(90);
-  wait(1);
-  FieldPsynergy_DecodePicture(
-      (struct PictureSource *)((struct Sprite *)owner->sprite)->entries[0],
-      work->picture, sizeof(work->picture));
-  pictureEntry = VramCache_FindFreeEntry();
-  pictureTiles = VramCache_Load(pictureEntry, sizeof(work->picture), NULL);
-  Sand_InitLeaderSprite(&work->leader, pictureTiles);
-  frame = 15;
-  for (; frame <= 92; frame++) {
-    Picture_SinkColumnsByWave(work->picture, work->sunken, frame * 3 / 2);
-    ((void (*)(void *, s32, s32, void *))Ram_HeapSlots->pictureUploader)(
-        work->sunken, 32, 32, (u8 *)OBJ_VRAM0 + pictureTiles * 32);
-    Sand_DrawLeaderSprite(&work->leader);
+  if (((struct Sprite *)owner->sprite)->width == 32 &&
+      ((struct Sprite *)owner->sprite)->height == 32) {
+    FieldPsynergy_MarkWorldMapTilesUsed();
+    Actor_SetOthersPaused(owner, 1, 0);
+    if (MapGrid_IsSandCell(owner->x.fixed, owner->z.fixed, owner->layer) == 0)
+      event->standing = 1;
+    else
+      event->standing = 0;
+    FieldPsynergy_FadeToCastColor();
+    Decompress_TaggedLz(Resource_GetTableEntry(RESOURCE_DUST_PUFF_A), work);
+    particleEntry = VramCache_FindFreeEntry();
+    particleTiles = VramCache_Load(particleEntry, 2048, work);
     i = 0;
     particle = work->grains;
+    delay = -12;
     sprite = work->grainSprites;
-    for (; i <= 32; i++) {
-      GrowingParticle_Update(sprite, particle, i, particleTiles);
+    for (; i < SAND_GRAIN_COUNT; i++) {
+      Sand_SpawnGrain(sprite, particle, i, particleTiles, event->standing);
+      particle->timer = delay;
       sprite++;
+      delay -= 2;
       particle++;
     }
-    if (frame == 16)
-      Animation_ApplyChildValueToFirstFar(owner->sprite, SPRITE_COLOR_HIDDEN);
-    if (frame == 45)
-      Sound_PlayFar(SE_WHOOSH);
-    if (frame == 60) {
-      Actor_SetFirstSpriteAnimationFar(owner, 251);
-      // The image's OAM shape and size bytes: square, 16 by 16 pixels.
-      ((u8 *)owner->sprite)[5] &= 63;
-      ((u8 *)owner->sprite)[7] = (((u8 *)owner->sprite)[7] & 63) | 64;
-      Actor_SelectAnimationFar(owner, 1);
-      Actor_SetSpriteFlagsFar(Actor_GetById(effect->firstActorId), 0);
-      FieldCamera_FollowActor(effect->firstActorId, 1);
-      owner->y.fixed = savedY;
-      *motionFlags = savedFlags;
+    FieldCamera_MoveWithinMapBounds(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0);
+    BattleEffect_SetObjectUpdateMode(effect->mainActor, 0);
+    Actor_SetPositionAndResetMotionFar(owner, owner->x.fixed, owner->y.fixed,
+                                       owner->z.fixed);
+    *motionFlags = 0;
+    wait(2);
+    for (frame = 0; frame < 40; frame++) {
+      if (frame > 0)
+        owner->y.fixed += toFIXED(9) / 40;
+      if (frame & 31)
+        Sound_PlayFar(SE_SPIRAL);
+      owner->facing += DEGtoANG(45);
+      wait(1);
     }
-    if (frame == 61)
-      Animation_ApplyChildValueToFirstFar(owner->sprite, SPRITE_COLOR_NORMAL);
+    owner->facing = DEGtoANG(90);
     wait(1);
+    FieldPsynergy_DecodePicture(
+        (struct PictureSource *)((struct Sprite *)owner->sprite)->entries[0],
+        work->picture, sizeof(work->picture));
+    pictureEntry = VramCache_FindFreeEntry();
+    pictureTiles = VramCache_Load(pictureEntry, sizeof(work->picture), NULL);
+    Sand_InitLeaderSprite(&work->leader, pictureTiles);
+    frame = 15;
+    for (; frame <= 92; frame++) {
+      Picture_SinkColumnsByWave(work->picture, work->sunken, frame * 3 / 2);
+      ((void (*)(void *, s32, s32, void *))Ram_HeapSlots->pictureUploader)(
+          work->sunken, 32, 32, (u8 *)OBJ_VRAM0 + pictureTiles * 32);
+      Sand_DrawLeaderSprite(&work->leader);
+      i = 0;
+      particle = work->grains;
+      sprite = work->grainSprites;
+      for (; i <= 32; i++) {
+        GrowingParticle_Update(sprite, particle, i, particleTiles);
+        sprite++;
+        particle++;
+      }
+      if (frame == 16)
+        Animation_ApplyChildValueToFirstFar(owner->sprite, SPRITE_COLOR_HIDDEN);
+      if (frame == 45)
+        Sound_PlayFar(SE_WHOOSH);
+      if (frame == 60) {
+        Actor_SetFirstSpriteAnimationFar(owner, 251);
+        // The image's OAM shape and size bytes: square, 16 by 16 pixels.
+        ((u8 *)owner->sprite)[5] &= 63;
+        ((u8 *)owner->sprite)[7] = (((u8 *)owner->sprite)[7] & 63) | 64;
+        Actor_SelectAnimationFar(owner, 1);
+        Actor_SetSpriteFlagsFar(Actor_GetById(effect->firstActorId), 0);
+        FieldCamera_FollowActor(effect->firstActorId, 1);
+        owner->y.fixed = savedY;
+        *motionFlags = savedFlags;
+      }
+      if (frame == 61)
+        Animation_ApplyChildValueToFirstFar(owner->sprite, SPRITE_COLOR_NORMAL);
+      wait(1);
+    }
+    if (event->mode == ACTOR_SYSTEM_WORLD_MAP)
+      gMainRoutineWork.movementMode = LEADER_MOVEMENT_WORLD_SAND;
+    else
+      gMainRoutineWork.movementMode = LEADER_MOVEMENT_SAND;
+    owner->timer = 0;
+    owner->userValue = 0;
+    event->sandTrailPriority = 3;
+    gMainRoutineWork.pendingThird = 1;
+    if (event->standing == 0)
+      Task_Add(FieldPsynergy_WatchSandGround, TASK_PASS_VBLANK);
+    Actor_SetOthersPaused(owner, 0, ANIMATION_STEP_NORMAL);
+    VramCache_FreeEntry(pictureEntry);
+    VramCache_FreeEntry(particleEntry);
+    FieldPsynergy_FadeFromCastColor();
   }
-  if (event->mode == ACTOR_SYSTEM_WORLD_MAP)
-    gMainRoutineWork.movementMode = LEADER_MOVEMENT_WORLD_SAND;
-  else
-    gMainRoutineWork.movementMode = LEADER_MOVEMENT_SAND;
-  owner->timer = 0;
-  owner->userValue = 0;
-  event->sandTrailPriority = 3;
-  gMainRoutineWork.pendingThird = 1;
-  if (event->standing == 0)
-    Task_Add(FieldPsynergy_WatchSandGround, TASK_PASS_VBLANK);
-  Actor_SetOthersPaused(owner, 0, ANIMATION_STEP_NORMAL);
-  VramCache_FreeEntry(pictureEntry);
-  VramCache_FreeEntry(particleEntry);
-  FieldPsynergy_FadeFromCastColor();
-end:
   HeapSlot_Release(HEAP_SLOT_BATTLE_EFFECT);
   if (event->standing != 0)
     FieldPsynergy_EndSand();

@@ -1342,11 +1342,6 @@ void FieldPsynergy_UpdateArrow(void) {
 
 again:
   switch (work->phase) {
-  hit:
-    work->done = 1;
-    work->result = objectIndex;
-    BOW_NEXT_PHASE(work);
-    goto again;
   case 0:
     if (work->timer == 0) {
       work->sparking = 0;
@@ -1425,8 +1420,12 @@ again:
       if (actor != NULL && actor->script != NULL &&
           (actor->collisionFlags & ACTOR_SOLID) && actor != scene->mainActor &&
           FieldPsynergy_CheckOverlap(&motion->x, 2, &actor->x.fixed,
-                                     actor->radius - 2) >= 0)
-        goto hit;
+                                     actor->radius - 2) >= 0) {
+        work->done = 1;
+        work->result = objectIndex;
+        BOW_NEXT_PHASE(work);
+        goto again;
+      }
     }
     break;
   case 3:

@@ -476,37 +476,36 @@ s32 Actor_MoveAsSand(struct Actor *actor) {
       Vector_AddPolarOffset(toFIXED(8), (u16)angle, &testPosition);
       testPosition.y = actor->y.fixed - testPosition.z;
       testPosition.z = actor->z.fixed;
-      if (MapGrid_CheckCollision(actor, &testPosition))
-        goto climb_blocked;
-      SET_POSITION(&testPosition, actor->x.fixed, 0, 0);
-      Vector_AddPolarOffset(toFIXED(8), (u16)angle + FIELD_PROBE_ANGLE,
-                            &testPosition);
-      testPosition.y = actor->y.fixed - testPosition.z;
-      testPosition.z = actor->z.fixed;
-      if (MapGrid_CheckCollision(actor, &testPosition))
-        goto climb_blocked;
-      SET_POSITION(&testPosition, actor->x.fixed, 0, 0);
-      Vector_AddPolarOffset(toFIXED(8), (u16)angle - FIELD_PROBE_ANGLE,
-                            &testPosition);
-      testPosition.y = actor->y.fixed - testPosition.z;
-      testPosition.z = actor->z.fixed;
-      if (MapGrid_CheckCollision(actor, &testPosition))
-        goto climb_blocked;
-      SET_POSITION(&testPosition, actor->x.fixed, 0, 0);
-      Vector_AddPolarOffset(toFIXED(8), (u16)angle + DEGtoANG(45),
-                            &testPosition);
-      testPosition.y = actor->y.fixed - testPosition.z;
-      testPosition.z = actor->z.fixed;
-      if (MapGrid_CheckCollision(actor, &testPosition))
-        goto climb_blocked;
-      SET_POSITION(&testPosition, actor->x.fixed, 0, 0);
-      Vector_AddPolarOffset(toFIXED(8), (u16)angle - DEGtoANG(45),
-                            &testPosition);
-      testPosition.y = actor->y.fixed - testPosition.z;
-      testPosition.z = actor->z.fixed;
-      if (!MapGrid_CheckCollision(actor, &testPosition))
-        goto climb_moved;
-    climb_blocked:
+      if (!MapGrid_CheckCollision(actor, &testPosition)) {
+        SET_POSITION(&testPosition, actor->x.fixed, 0, 0);
+        Vector_AddPolarOffset(toFIXED(8), (u16)angle + FIELD_PROBE_ANGLE,
+                              &testPosition);
+        testPosition.y = actor->y.fixed - testPosition.z;
+        testPosition.z = actor->z.fixed;
+        if (!MapGrid_CheckCollision(actor, &testPosition)) {
+          SET_POSITION(&testPosition, actor->x.fixed, 0, 0);
+          Vector_AddPolarOffset(toFIXED(8), (u16)angle - FIELD_PROBE_ANGLE,
+                                &testPosition);
+          testPosition.y = actor->y.fixed - testPosition.z;
+          testPosition.z = actor->z.fixed;
+          if (!MapGrid_CheckCollision(actor, &testPosition)) {
+            SET_POSITION(&testPosition, actor->x.fixed, 0, 0);
+            Vector_AddPolarOffset(toFIXED(8), (u16)angle + DEGtoANG(45),
+                                  &testPosition);
+            testPosition.y = actor->y.fixed - testPosition.z;
+            testPosition.z = actor->z.fixed;
+            if (!MapGrid_CheckCollision(actor, &testPosition)) {
+              SET_POSITION(&testPosition, actor->x.fixed, 0, 0);
+              Vector_AddPolarOffset(toFIXED(8), (u16)angle - DEGtoANG(45),
+                                    &testPosition);
+              testPosition.y = actor->y.fixed - testPosition.z;
+              testPosition.z = actor->z.fixed;
+              if (!MapGrid_CheckCollision(actor, &testPosition))
+                goto climb_moved;
+            }
+          }
+        }
+      }
       SET_POSITION(&position, actor->x.fixed, actor->y.fixed, actor->z.fixed);
       collision |= PLAYER_STEP_BLOCKED_BY_MAP;
     }
@@ -556,205 +555,209 @@ s32 Actor_MoveAsSand(struct Actor *actor) {
       }
     }
     Sand_CheckEndKeys(actor);
-    goto done;
-  }
+  } else {
 
-  // On foot.
-  collision = 0;
-  actor->speedLimit = toFIXED(1);
-  actor->acceleration = toFIXED(1) / 4;
-  angle = gWorldMap_KeyHeadings[DPAD_INDEX(gInput.held)];
-  if ((u16)angle == WORLD_MAP_KEY_HEADING_NONE) {
-    collision = PLAYER_STEP_STOPPED;
-    goto counted;
-  }
-  SET_POSITION(&position, actor->x.fixed, actor->y.fixed, actor->z.fixed);
-  Vector_AddPolarOffset(toFIXED(8), (u16)angle, &position);
-  if (gDebugMode != 0 && (gInput.held & KEY_L)) {
-    heading = (s16)angle;
-    goto counted;
-  }
-  if (!MapGrid_CheckCollision(actor, &position)) {
-    SET_POSITION(&testPosition, actor->x.fixed, actor->y.fixed, actor->z.fixed);
-    Vector_AddPolarOffset(toFIXED(8), (u16)angle + FIELD_PROBE_ANGLE,
-                          &testPosition);
-    if (!MapGrid_CheckCollision(actor, &testPosition)) {
+    // On foot.
+    collision = 0;
+    actor->speedLimit = toFIXED(1);
+    actor->acceleration = toFIXED(1) / 4;
+    angle = gWorldMap_KeyHeadings[DPAD_INDEX(gInput.held)];
+    if ((u16)angle == WORLD_MAP_KEY_HEADING_NONE) {
+      collision = PLAYER_STEP_STOPPED;
+      goto counted;
+    }
+    SET_POSITION(&position, actor->x.fixed, actor->y.fixed, actor->z.fixed);
+    Vector_AddPolarOffset(toFIXED(8), (u16)angle, &position);
+    if (gDebugMode != 0 && (gInput.held & KEY_L)) {
+      heading = (s16)angle;
+      goto counted;
+    }
+    if (!MapGrid_CheckCollision(actor, &position)) {
       SET_POSITION(&testPosition, actor->x.fixed, actor->y.fixed,
                    actor->z.fixed);
-      Vector_AddPolarOffset(toFIXED(8), (u16)angle - FIELD_PROBE_ANGLE,
+      Vector_AddPolarOffset(toFIXED(8), (u16)angle + FIELD_PROBE_ANGLE,
                             &testPosition);
       if (!MapGrid_CheckCollision(actor, &testPosition)) {
         SET_POSITION(&testPosition, actor->x.fixed, actor->y.fixed,
                      actor->z.fixed);
-        Vector_AddPolarOffset(toFIXED(8), (u16)angle + DEGtoANG(45),
+        Vector_AddPolarOffset(toFIXED(8), (u16)angle - FIELD_PROBE_ANGLE,
                               &testPosition);
         if (!MapGrid_CheckCollision(actor, &testPosition)) {
           SET_POSITION(&testPosition, actor->x.fixed, actor->y.fixed,
                        actor->z.fixed);
-          Vector_AddPolarOffset(toFIXED(8), (u16)angle - DEGtoANG(45),
+          Vector_AddPolarOffset(toFIXED(8), (u16)angle + DEGtoANG(45),
                                 &testPosition);
           if (!MapGrid_CheckCollision(actor, &testPosition)) {
-            heading = (s16)angle;
-            goto counted;
+            SET_POSITION(&testPosition, actor->x.fixed, actor->y.fixed,
+                         actor->z.fixed);
+            Vector_AddPolarOffset(toFIXED(8), (u16)angle - DEGtoANG(45),
+                                  &testPosition);
+            if (!MapGrid_CheckCollision(actor, &testPosition)) {
+              heading = (s16)angle;
+              goto counted;
+            }
           }
         }
       }
     }
-  }
-  {
-    u16 direction = angle;
+    {
+      u16 direction = angle;
 
-    angleOffsets[count++] = direction + FIELD_PROBE_ANGLE;
-    angleOffsets[count++] = direction - FIELD_PROBE_ANGLE;
-    angleOffsets[count++] = direction + DEGtoANG(45);
-    angleOffsets[count++] = direction - DEGtoANG(45);
-    angleOffsets[count++] = direction + FIELD_PROBE_ANGLE * 3;
-    angleOffsets[count++] = direction - FIELD_PROBE_ANGLE * 3;
-  }
-  for (angleIndex = 0; angleIndex < count; angleIndex++) {
-    heading = angleOffsets[angleIndex];
+      angleOffsets[count++] = direction + FIELD_PROBE_ANGLE;
+      angleOffsets[count++] = direction - FIELD_PROBE_ANGLE;
+      angleOffsets[count++] = direction + DEGtoANG(45);
+      angleOffsets[count++] = direction - DEGtoANG(45);
+      angleOffsets[count++] = direction + FIELD_PROBE_ANGLE * 3;
+      angleOffsets[count++] = direction - FIELD_PROBE_ANGLE * 3;
+    }
+    for (angleIndex = 0; angleIndex < count; angleIndex++) {
+      heading = angleOffsets[angleIndex];
+      SET_POSITION(&position, actor->x.fixed, actor->y.fixed, actor->z.fixed);
+      Vector_AddPolarOffset(toFIXED(8), (u16)heading, &position);
+      if (MapGrid_CheckCollision(actor, &position))
+        continue;
+      SET_POSITION(&testPosition, actor->x.fixed, actor->y.fixed,
+                   actor->z.fixed);
+      Vector_AddPolarOffset(toFIXED(8), (u16)heading + FIELD_PROBE_ANGLE,
+                            &testPosition);
+      if (MapGrid_CheckCollision(actor, &testPosition))
+        continue;
+      SET_POSITION(&testPosition, actor->x.fixed, actor->y.fixed,
+                   actor->z.fixed);
+      Vector_AddPolarOffset(toFIXED(8), (u16)heading - FIELD_PROBE_ANGLE,
+                            &testPosition);
+      if (MapGrid_CheckCollision(actor, &testPosition))
+        continue;
+      SET_POSITION(&testPosition, actor->x.fixed, actor->y.fixed,
+                   actor->z.fixed);
+      Vector_AddPolarOffset(toFIXED(8), (u16)heading + DEGtoANG(45),
+                            &testPosition);
+      if (MapGrid_CheckCollision(actor, &testPosition))
+        continue;
+      SET_POSITION(&testPosition, actor->x.fixed, actor->y.fixed,
+                   actor->z.fixed);
+      Vector_AddPolarOffset(toFIXED(8), (u16)heading - DEGtoANG(45),
+                            &testPosition);
+      if (!MapGrid_CheckCollision(actor, &testPosition))
+        goto counted;
+    }
     SET_POSITION(&position, actor->x.fixed, actor->y.fixed, actor->z.fixed);
-    Vector_AddPolarOffset(toFIXED(8), (u16)heading, &position);
-    if (MapGrid_CheckCollision(actor, &position))
-      continue;
-    SET_POSITION(&testPosition, actor->x.fixed, actor->y.fixed, actor->z.fixed);
-    Vector_AddPolarOffset(toFIXED(8), (u16)heading + FIELD_PROBE_ANGLE,
-                          &testPosition);
-    if (MapGrid_CheckCollision(actor, &testPosition))
-      continue;
-    SET_POSITION(&testPosition, actor->x.fixed, actor->y.fixed, actor->z.fixed);
-    Vector_AddPolarOffset(toFIXED(8), (u16)heading - FIELD_PROBE_ANGLE,
-                          &testPosition);
-    if (MapGrid_CheckCollision(actor, &testPosition))
-      continue;
-    SET_POSITION(&testPosition, actor->x.fixed, actor->y.fixed, actor->z.fixed);
-    Vector_AddPolarOffset(toFIXED(8), (u16)heading + DEGtoANG(45),
-                          &testPosition);
-    if (MapGrid_CheckCollision(actor, &testPosition))
-      continue;
-    SET_POSITION(&testPosition, actor->x.fixed, actor->y.fixed, actor->z.fixed);
-    Vector_AddPolarOffset(toFIXED(8), (u16)heading - DEGtoANG(45),
-                          &testPosition);
-    if (!MapGrid_CheckCollision(actor, &testPosition))
-      goto counted;
-  }
-  SET_POSITION(&position, actor->x.fixed, actor->y.fixed, actor->z.fixed);
-  collision |= PLAYER_STEP_BLOCKED_BY_MAP;
-  // Up against a face more than 8 pixels high: start climbing it.
-  if ((gInput.held & KEY_UP) && groundAhead > y + toFIXED(8)) {
-    cellX = (position.x & FIELD_CELL_MASK) + toFIXED(8);
-    cellZ = (position.z & FIELD_CELL_MASK) - toFIXED(8);
+    collision |= PLAYER_STEP_BLOCKED_BY_MAP;
+    // Up against a face more than 8 pixels high: start climbing it.
+    if ((gInput.held & KEY_UP) && groundAhead > y + toFIXED(8)) {
+      cellX = (position.x & FIELD_CELL_MASK) + toFIXED(8);
+      cellZ = (position.z & FIELD_CELL_MASK) - toFIXED(8);
 
-    if (MapGrid_IsClimbableCellFar(cellX, cellZ, 2)) {
-      actor->motionFlags = 0;
-      actor->y.fixed += toFIXED(1);
-      actor->userValue = 1;
-      actor->velocityX = 0;
-      actor->velocityY = 0;
-      actor->velocityZ = 0;
-      Actor_SelectAnimation(actor, 3);
-      goto done;
-    }
-  }
-  // Down at a drop: climb down the face south of the cell.
-  if (gInput.held & KEY_DOWN) {
-    cellX = (actor->x.fixed & FIELD_CELL_MASK) + toFIXED(8);
-    cellZ = (actor->z.fixed & FIELD_CELL_MASK) + toFIXED(24);
-
-    if (MapGrid_GetTerrainHeight(*terrainId, cellX, cellZ) < y &&
-        MapGrid_IsClimbableCellFar(cellX, cellZ, 2)) {
-      actor->motionFlags = 0;
-      Actor_SetMoveTarget(actor, actor->x.fixed, groundHere - toFIXED(2),
-                          cellZ);
-      actor->timer = 1;
-      actor->userValue = 1;
-      actor->velocityX = 0;
-      actor->velocityY = 0;
-      actor->velocityZ = 0;
-      Actor_SelectAnimation(actor, 3);
-      goto done;
-    }
-  }
-
-counted:
-  {
-    struct FieldWork *work = Ram_HeapSlots->fieldWork;
-
-    if (work != NULL) {
-      if (collision & PLAYER_STEP_BLOCKED)
-        work->blockedSteps++;
-      else
-        work->blockedSteps = 0;
-      work->heldKeys = gInput.held;
-    }
-  }
-  Actor_SelectAnimation(actor, 1);
-  if (collision != 0) {
-    actor->targetX = TARGET_UNSET;
-    actor->targetY = TARGET_UNSET;
-    actor->targetZ = TARGET_UNSET;
-    actor->velocityX = 0;
-    actor->velocityZ = 0;
-    if (collision & PLAYER_STEP_BLOCKED) {
-      s32 difference;
-      u16 turn = angle;
-
-      difference = (s16)(turn - actor->facing);
-      if (difference > FIELD_BLOCKED_TURN_MAX)
-        difference = FIELD_BLOCKED_TURN_MAX;
-      if (difference < -FIELD_BLOCKED_TURN_MAX)
-        difference = -FIELD_BLOCKED_TURN_MAX;
-      actor->facing += difference;
-    }
-    wakeTimer = &actor->wakeTimer;
-    *wakeTimer = 0;
-  } else {
-    FIXED speed;
-
-    Actor_SetMoveTarget(actor, position.x, position.y, position.z);
-    speed = Math_SqrtFX(Iwram_MulFX(actor->velocityX, actor->velocityX) +
-                        Iwram_MulFX(actor->velocityZ, actor->velocityZ));
-    actor->velocityX = 0;
-    actor->velocityZ = 0;
-    Vector_AddPolarOffset(speed, (u16)heading,
-                          (struct FieldPosition *)&actor->velocityX);
-    wakeTimer = &actor->wakeTimer;
-    if (*wakeTimer != 0)
-      (*wakeTimer)--;
-  }
-  // The retest reads through the actor, not wakeTimer: that keeps its
-  // zero path from skipping it.
-  if (actor->wakeTimer == 0 && collision == 0) {
-    effect = Actor_Create(WORLD_MAP_SPRITE_WAKE, actor->x.fixed, actor->y.fixed,
-                          actor->z.fixed - toFIXED(2));
-    if (effect != NULL) {
-      effect->groundHeight = actor->groundHeight;
-      sprite = effect->sprite;
-      Actor_StartScript(effect, gActor_WakeScript);
-      effect->priorityFlags = 8;
-      // Through a struct member: as a byte offset the store holds back the
-      // stack read of collision after it.
-      effect->wakeFrames = 100;
-      effect->motionFlags = 0;
-      Sound_PlayFar(SE_SAND_MOVE);
-      if (sprite != NULL) {
-        /* FAKEMATCH(signature): the field work read through SandTrailWork,
-         * whose priority is the low byte of a halfword; as struct FieldWork *
-         * and work->sandTrailPriority & 3, 8 of 965 instructions differ in
-         * tla-en. */
-        struct SandTrailWork *work = Ram_HeapSlots->fieldWork;
-
-        Sprite_StartAnimation(sprite, 1);
-        sprite->flags = 0;
-        // DEAD: overwritten by the next line; the ROM keeps the store of 2.
-        sprite->priority = 2;
-        sprite->priority = work->trailPriority & 3;
+      if (MapGrid_IsClimbableCellFar(cellX, cellZ, 2)) {
+        actor->motionFlags = 0;
+        actor->y.fixed += toFIXED(1);
+        actor->userValue = 1;
+        actor->velocityX = 0;
+        actor->velocityY = 0;
+        actor->velocityZ = 0;
+        Actor_SelectAnimation(actor, 3);
+        goto done;
       }
-      *wakeTimer = 5;
     }
-  }
-  Sand_CheckEndKeys(actor);
+    // Down at a drop: climb down the face south of the cell.
+    if (gInput.held & KEY_DOWN) {
+      cellX = (actor->x.fixed & FIELD_CELL_MASK) + toFIXED(8);
+      cellZ = (actor->z.fixed & FIELD_CELL_MASK) + toFIXED(24);
 
+      if (MapGrid_GetTerrainHeight(*terrainId, cellX, cellZ) < y &&
+          MapGrid_IsClimbableCellFar(cellX, cellZ, 2)) {
+        actor->motionFlags = 0;
+        Actor_SetMoveTarget(actor, actor->x.fixed, groundHere - toFIXED(2),
+                            cellZ);
+        actor->timer = 1;
+        actor->userValue = 1;
+        actor->velocityX = 0;
+        actor->velocityY = 0;
+        actor->velocityZ = 0;
+        Actor_SelectAnimation(actor, 3);
+        goto done;
+      }
+    }
+
+  counted:
+    {
+      struct FieldWork *work = Ram_HeapSlots->fieldWork;
+
+      if (work != NULL) {
+        if (collision & PLAYER_STEP_BLOCKED)
+          work->blockedSteps++;
+        else
+          work->blockedSteps = 0;
+        work->heldKeys = gInput.held;
+      }
+    }
+    Actor_SelectAnimation(actor, 1);
+    if (collision != 0) {
+      actor->targetX = TARGET_UNSET;
+      actor->targetY = TARGET_UNSET;
+      actor->targetZ = TARGET_UNSET;
+      actor->velocityX = 0;
+      actor->velocityZ = 0;
+      if (collision & PLAYER_STEP_BLOCKED) {
+        s32 difference;
+        u16 turn = angle;
+
+        difference = (s16)(turn - actor->facing);
+        if (difference > FIELD_BLOCKED_TURN_MAX)
+          difference = FIELD_BLOCKED_TURN_MAX;
+        if (difference < -FIELD_BLOCKED_TURN_MAX)
+          difference = -FIELD_BLOCKED_TURN_MAX;
+        actor->facing += difference;
+      }
+      wakeTimer = &actor->wakeTimer;
+      *wakeTimer = 0;
+    } else {
+      FIXED speed;
+
+      Actor_SetMoveTarget(actor, position.x, position.y, position.z);
+      speed = Math_SqrtFX(Iwram_MulFX(actor->velocityX, actor->velocityX) +
+                          Iwram_MulFX(actor->velocityZ, actor->velocityZ));
+      actor->velocityX = 0;
+      actor->velocityZ = 0;
+      Vector_AddPolarOffset(speed, (u16)heading,
+                            (struct FieldPosition *)&actor->velocityX);
+      wakeTimer = &actor->wakeTimer;
+      if (*wakeTimer != 0)
+        (*wakeTimer)--;
+    }
+    // The retest reads through the actor, not wakeTimer: that keeps its
+    // zero path from skipping it.
+    if (actor->wakeTimer == 0 && collision == 0) {
+      effect = Actor_Create(WORLD_MAP_SPRITE_WAKE, actor->x.fixed,
+                            actor->y.fixed, actor->z.fixed - toFIXED(2));
+      if (effect != NULL) {
+        effect->groundHeight = actor->groundHeight;
+        sprite = effect->sprite;
+        Actor_StartScript(effect, gActor_WakeScript);
+        effect->priorityFlags = 8;
+        // Through a struct member: as a byte offset the store holds back the
+        // stack read of collision after it.
+        effect->wakeFrames = 100;
+        effect->motionFlags = 0;
+        Sound_PlayFar(SE_SAND_MOVE);
+        if (sprite != NULL) {
+          /* FAKEMATCH(signature): the field work read through SandTrailWork,
+           * whose priority is the low byte of a halfword; as struct FieldWork *
+           * and work->sandTrailPriority & 3, 8 of 965 instructions differ in
+           * tla-en. */
+          struct SandTrailWork *work = Ram_HeapSlots->fieldWork;
+
+          Sprite_StartAnimation(sprite, 1);
+          sprite->flags = 0;
+          // DEAD: overwritten by the next line; the ROM keeps the store of 2.
+          sprite->priority = 2;
+          sprite->priority = work->trailPriority & 3;
+        }
+        *wakeTimer = 5;
+      }
+    }
+    Sand_CheckEndKeys(actor);
+  }
 done:
   actor->scriptCursor++;
   return 1;

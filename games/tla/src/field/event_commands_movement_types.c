@@ -720,6 +720,7 @@ failure:
 /// Returns the nearest tied rope node within reach of position, or NULL.
 struct RopeNode *Rope_FindNodeNear(s32 *position) {
   struct RopeNode *found;
+  struct RopeNode *result;
   struct RopeWork *work;
   struct RopeNode *node;
   s32 best;
@@ -727,27 +728,28 @@ struct RopeNode *Rope_FindNodeNear(s32 *position) {
 
   found = NULL;
   work = ROPE_WORK;
-  if (work == NULL)
-    return NULL;
-  /* FAKEMATCH(barrier): an empty asm. */
-  asm("");
-  node = work->nodes;
-  best = 0x10000000;
-  for (i = 0; i < 128; i++, node++) {
-    if (node->kind == 1) {
-      s32 dx = (position[0] - node->x) >> 8;
-      s32 dy = (position[1] - node->y) >> 8;
-      s32 dz = (position[2] - node->z) >> 8;
-      s32 distance =
-          Iwram_MulFX(dx, dx) + Iwram_MulFX(dy, dy) + Iwram_MulFX(dz, dz);
+  if (work == NULL) {
+    result = NULL;
+  } else {
+    node = work->nodes;
+    best = 0x10000000;
+    for (i = 0; i < 128; i++, node++) {
+      if (node->kind == 1) {
+        s32 dx = (position[0] - node->x) >> 8;
+        s32 dy = (position[1] - node->y) >> 8;
+        s32 dz = (position[2] - node->z) >> 8;
+        s32 distance =
+            Iwram_MulFX(dx, dx) + Iwram_MulFX(dy, dy) + Iwram_MulFX(dz, dz);
 
-      if (distance <= 1024 && best > distance) {
-        best = distance;
-        found = node;
+        if (distance <= 1024 && best > distance) {
+          best = distance;
+          found = node;
+        }
       }
     }
+    result = found;
   }
-  return found;
+  return result;
 }
 
 /// Hops the leader onto the nearest tied rope node, to cross the rope (render
@@ -824,6 +826,7 @@ s32 Leader_StepOffRope(void) {
 /// Returns the nearest tightrope node within reach of position, or NULL.
 struct TightropeNode *Tightrope_FindNodeNear(s32 *position) {
   struct TightropeNode *found;
+  struct TightropeNode *result;
   struct TightropeWork *work;
   struct TightropeNode *node;
   s32 best;
@@ -831,27 +834,28 @@ struct TightropeNode *Tightrope_FindNodeNear(s32 *position) {
 
   found = NULL;
   work = TIGHTROPE_WORK;
-  if (work == NULL)
-    return NULL;
-  /* FAKEMATCH(barrier): an empty asm. */
-  asm("");
-  node = work->nodes;
-  best = 0x10000000;
-  for (i = 0; i < 128; i++, node++) {
-    if (node->kind == 1) {
-      s32 dx = (position[0] - node->x) >> 8;
-      s32 dy = (position[1] - node->y) >> 8;
-      s32 dz = (position[2] - node->z) >> 8;
-      s32 distance =
-          Iwram_MulFX(dx, dx) + Iwram_MulFX(dy, dy) + Iwram_MulFX(dz, dz);
+  if (work == NULL) {
+    result = NULL;
+  } else {
+    node = work->nodes;
+    best = 0x10000000;
+    for (i = 0; i < 128; i++, node++) {
+      if (node->kind == 1) {
+        s32 dx = (position[0] - node->x) >> 8;
+        s32 dy = (position[1] - node->y) >> 8;
+        s32 dz = (position[2] - node->z) >> 8;
+        s32 distance =
+            Iwram_MulFX(dx, dx) + Iwram_MulFX(dy, dy) + Iwram_MulFX(dz, dz);
 
-      if (distance <= 1024 && best > distance) {
-        best = distance;
-        found = node;
+        if (distance <= 1024 && best > distance) {
+          best = distance;
+          found = node;
+        }
       }
     }
+    result = found;
   }
-  return found;
+  return result;
 }
 
 /// Hops the leader onto the nearest tightrope node (render mode 4); returns 0

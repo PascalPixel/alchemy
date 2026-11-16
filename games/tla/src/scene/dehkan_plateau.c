@@ -530,11 +530,11 @@ void DehkanPlateau_ForgetFall(void) {
   s32 flag;
 
   flag = FLAG_FELL_THROUGH_FIRST;
-loop:
-  GameFlag_Clear(flag);
-  if (flag != FLAG_FELL_THROUGH_LAST) {
+  while (1) {
+    GameFlag_Clear(flag);
+    if (flag == FLAG_FELL_THROUGH_LAST)
+      return;
     flag++;
-    goto loop;
   }
 }
 
@@ -1803,8 +1803,6 @@ void DehkanPlateau_LandFromFall(void) {
   struct Actor *leader = Actor_GetById(gMainRoutineWork.leaderActorId);
   struct EffectOptions options;
   u32 i;
-  struct EffectOptions *opts;
-  s32 spawn;
 
   Event_Start();
   Event_ResolvePendingActions(0);
@@ -1821,40 +1819,28 @@ void DehkanPlateau_LandFromFall(void) {
   Sound_Play(SE_DUST_PUFF);
   leader->motionFlags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
   Event_Wait(24);
-  opts = &options;
-  opts->palette = 7;
-  opts->update = FieldEffect_AdvanceMotion;
-  opts->startScaleX = FIXED_ONE * 16 / 25;
-  opts->startScaleY = FIXED_ONE * 16 / 25;
-  opts = &options;
-  spawn = 1;
-  i = 0;
-loop:
-  {
+  options.palette = 7;
+  options.update = FieldEffect_AdvanceMotion;
+  options.startScaleX = FIXED_ONE * 16 / 25;
+  options.startScaleY = FIXED_ONE * 16 / 25;
+  for (i = 0; i <= 16; i++) {
     s32 angle;
     FIXED velocity[3];
-    FIXED cosine;
 
     angle = i << 12;
-    cosine = Trig_Cos(angle);
-    if (spawn) {
-      velocity[0] = cosine;
-      velocity[1] = 0;
-      velocity[2] = Trig_Sin(angle);
-      velocity[0] += velocity[0] >> 1;
-      velocity[0] += ((Random16() * 3) << 14) >> 16;
-      velocity[0] += -(toFIXED(3) / 8);
-      velocity[2] += (((Random16() * 3) << 13) >> 16) + -(toFIXED(3) / 16);
-      FieldEffect_Spawn(leader->x.fixed, leader->y.fixed, leader->z.fixed,
-                        velocity[0], velocity[1], velocity[2],
-                        EFFECT_USE_UPDATE | EFFECT_USE_START_SCALE |
-                            EFFECT_USE_PALETTE | 1,
-                        opts);
-    }
-    i++;
+    velocity[0] = Trig_Cos(angle);
+    velocity[1] = 0;
+    velocity[2] = Trig_Sin(angle);
+    velocity[0] += velocity[0] >> 1;
+    velocity[0] += ((Random16() * 3) << 14) >> 16;
+    velocity[0] += -(toFIXED(3) / 8);
+    velocity[2] += (((Random16() * 3) << 13) >> 16) + -(toFIXED(3) / 16);
+    FieldEffect_Spawn(leader->x.fixed, leader->y.fixed, leader->z.fixed,
+                      velocity[0], velocity[1], velocity[2],
+                      EFFECT_USE_UPDATE | EFFECT_USE_START_SCALE |
+                          EFFECT_USE_PALETTE | 1,
+                      &options);
   }
-  if (i <= 16)
-    goto loop;
   Sound_Play(SE_THUMP);
   FieldEffect_SetAttached(gMainRoutineWork.leaderActorId,
                           ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ATTACH);

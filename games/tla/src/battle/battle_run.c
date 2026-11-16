@@ -157,7 +157,6 @@ s32 Battle_Run(s32 enemyGroup) {
   u32 copyIndex;
   u32 actingUnit;
   s16 cue;
-  s32 scripted;
 
   camera = HeapSlot_AllocEwram(HEAP_SLOT_CAMERA, sizeof(struct BattleCamera));
   battle = HeapSlot_AllocEwram(HEAP_SLOT_BATTLE, sizeof(struct BattleWork));
@@ -377,12 +376,13 @@ s32 Battle_Run(s32 enemyGroup) {
     Battle_TurnEndNoOp();
     Battle_ProcessTurnEnd();
     BattleMotion_DestroyAllSlotObjects();
-    scripted = enemyGroup - FORMATION_KARST_AND_AGATIO_A;
-    if ((u32)scripted <= 1 && round == 2)
-      goto won_scripted;
+    if ((enemyGroup == FORMATION_KARST_AND_AGATIO_A ||
+         enemyGroup == FORMATION_KARST_AND_AGATIO_B) &&
+        round == 2)
+      goto won;
     if (battle->isLink != 0) {
       if (LinkBattle_SyncTurn() < 0)
-        goto aborted_scripted;
+        goto aborted;
     } else {
       wait(20);
     }
@@ -404,10 +404,9 @@ s32 Battle_Run(s32 enemyGroup) {
   }
 
 won:
-  scripted = enemyGroup - FORMATION_KARST_AND_AGATIO_A;
-won_scripted:
   Battle_ClearSerialTransferPayload();
-  if ((u32)scripted > 1) {
+  if ((enemyGroup != FORMATION_KARST_AND_AGATIO_A &&
+       enemyGroup != FORMATION_KARST_AND_AGATIO_B)) {
     if (enemyGroup != FORMATION_DOOM_DRAGON_C &&
         GameFlag_Get(FLAG_DJINN_LESSON) == 0) {
       if (battle->isLink != 0)
@@ -435,8 +434,6 @@ won_scripted:
   goto finished;
 
 aborted:
-  scripted = enemyGroup - FORMATION_KARST_AND_AGATIO_A;
-aborted_scripted:
   Battle_ClearSerialTransferPayload();
   Task_SuspendAll(0);
   REG_DISPCNT = DISPCNT_MODE_1;
@@ -446,8 +443,9 @@ aborted_scripted:
 
 party_lost:
   Battle_ClearSerialTransferPayload();
-  scripted = enemyGroup - FORMATION_KARST_AND_AGATIO_A;
-  if ((u32)scripted > 1 && enemyGroup != FORMATION_KARST_AND_AGATIO_VS_ISAAC) {
+  if ((enemyGroup != FORMATION_KARST_AND_AGATIO_A &&
+       enemyGroup != FORMATION_KARST_AND_AGATIO_B) &&
+      enemyGroup != FORMATION_KARST_AND_AGATIO_VS_ISAAC) {
     if (enemyGroup != FORMATION_KARST_AND_AGATIO_C) {
       Sound_PlayFar(MUS_DEFEAT);
       MessageArgument_ClearAllFar();
@@ -469,10 +467,10 @@ fled:
   ScreenFade_ToBlack(30);
   ScreenFade_Wait();
   result = BATTLE_OUTCOME_FLED;
-  scripted = enemyGroup - FORMATION_KARST_AND_AGATIO_A;
 
 finished:
-  if ((u32)scripted <= 1)
+  if ((enemyGroup == FORMATION_KARST_AND_AGATIO_A ||
+       enemyGroup == FORMATION_KARST_AND_AGATIO_B))
     ScriptedBattle_SaveUnits();
   BattleParty_ResetActiveRuntimeFields();
   Battle_TurnEndNoOp();

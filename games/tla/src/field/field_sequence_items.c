@@ -4,6 +4,7 @@
 
 #include "field_sequence_internal.h"
 #include "flags.h"
+#include "item_ids.h"
 #include "fixed_math.h"
 #include "gamepak/far_call/window.h"
 #include "field/event_commands.h"
@@ -41,30 +42,32 @@ s32 Party_GetLeaderActor(void) {
   struct MainRoutineWork *state = &gMainRoutineWork;
   s32 actor;
 
-  actor = 8;
+  // On the ship its stand, the first placed actor, stands for the party.
+  actor = ACTOR_FIRST_PLACED;
   if (state->ownerOverride == 0)
     actor = state->leaderActorId;
   return actor;
 }
 
-/// Returns 1 when item_id answers filter: the item itself, 0x1ff any item, or
-/// 0x1fe any item of types 1 to 4; else 0.
-s32 Item_MatchesFilter(s32 filter, s32 item_id) {
-  if (filter == item_id)
+/// Returns 1 when itemId answers filter: the item itself, ITEM_FILTER_ANY any
+/// item, or ITEM_FILTER_EQUIPMENT any item of types 1 to 4; else 0.
+s32 Item_MatchesFilter(s32 filter, s32 itemId) {
+  if (filter == itemId)
     return 1;
-  if (filter == 0x1ff)
+  if (filter == ITEM_FILTER_ANY)
     return 1;
-  if (filter == 0x1fe && (u32)(Item_GetDirectFar(item_id)->type - 1) <= 3)
+  if (filter == ITEM_FILTER_EQUIPMENT &&
+      (u32)(Item_GetDirectFar(itemId)->type - 1) <= 3)
     return 1;
   return 0;
 }
 
-/// Finds the scene's first kind-4 trigger whose condition holds, whose facing
-/// range (when it has one) takes the controlled actor's angle, whose item
-/// filter takes source (when given), and whose target is the actor the leader
-/// can talk to (flag 0x10) or the object it is touching; 0 when none does.
-/// The Broken Seal's routine, asking Party_GetLeaderActor for the actor and
-/// Item_MatchesFilter for the trigger's item.
+/// Finds the scene's first TRIGGER_ITEM trigger whose condition holds, whose
+/// facing range (when it has one) takes the controlled actor's angle, whose
+/// item filter takes source (when given), and whose target is the actor the
+/// leader can talk to (TRIGGER_ITEM_ON_ACTOR) or the object it is touching; 0
+/// when none does. The Broken Seal's routine, asking Party_GetLeaderActor for
+/// the actor and Item_MatchesFilter for the trigger's item.
 const struct Trigger *Field_FindItemTrigger(s32 source) {
   struct FieldWork *work = Ram_HeapSlots->fieldWork;
   const struct Trigger *trigger = work->triggers;
@@ -72,7 +75,7 @@ const struct Trigger *Field_FindItemTrigger(s32 source) {
   s32 selected = Field_FindNearbyTalkTarget(Party_GetLeaderActor());
   s32 collision;
 
-  source &= 0x1ff;
+  source &= ITEM_FILTER_ANY;
   collision = Field_GetCollisionAheadOfLeader();
 
   while (trigger->control != -1) {

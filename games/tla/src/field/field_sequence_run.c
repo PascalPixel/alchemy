@@ -223,7 +223,7 @@ s32 FieldSequence_Run(void) {
   layer = &gMainRoutineWork.layer;
   for (;;) {
     GameFlag_Set(FLAG_FIELD_HANDLING_REQUESTS);
-    leader = WorldMap_Unfreeze();
+    leader = Field_GetPartyActor();
     Actor_StartIdleFar(leader);
     SET_POSITION(party, leader->x.fixed, 0, leader->z.fixed);
     party->heading = leader->facing;
@@ -461,12 +461,12 @@ s32 FieldSequence_Run(void) {
       }
     }
     GameFlag_Clear(FLAG_FIELD_HANDLING_REQUESTS);
-    if (WorldMap_Unfreeze() != NULL)
+    if (Field_GetPartyActor() != NULL)
       Actor_StartRenderModeScriptFar();
     pending = &gMainRoutineWork.pendingThird;
     do {
       wait(1);
-      leader = WorldMap_Unfreeze();
+      leader = Field_GetPartyActor();
       if (gDebugMode == 0 || !GameFlag_Get(FLAG_DEBUG_STEPS_OFF)) {
         if (*pending == 0 ||
             (leader->timer == 0 && *(s16 *)&leader->userValue == 0))
@@ -502,7 +502,7 @@ s32 Actor_GetTriggerCellAheadOfCurrent(void) {
   s32 result;
 
   result = 0;
-  leader = WorldMap_Unfreeze();
+  leader = Field_GetPartyActor();
   work = gFieldWork;
   map = Ram_HeapSlots->mapGrid;
   if (leader != 0) {

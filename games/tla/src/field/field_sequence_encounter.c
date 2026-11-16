@@ -4,6 +4,8 @@
 
 #include "field_sequence_internal.h"
 #include "flags.h"
+#include "sounds.h"
+#include "game/character_ids.h"
 #include "field/encounter_zone.h"
 #include "gamepak/far_call/game.h"
 #include "field/field_sequence.h"
@@ -71,7 +73,7 @@ void Encounter_SelectMapZones(s32 search) {
   for (i = 0; i < 6; i++)
     *out++ = 0;
   work->encounterBias = 0;
-  work->encounterThreshold = 0x100000;
+  work->encounterThreshold = 16 * FIXED_ONE;
   BattleBackground_SelectForMap();
 }
 
@@ -127,7 +129,11 @@ s32 Encounter_CountStepsAndSelectFormation(s32 zone, FIXED steps) {
   asm("" : : "l"(pick));
 
   work = Ram_HeapSlots->fieldWork;
-  if (GameFlag_Get(0x15f) == 0) {
+  // UB: FLAG_IGNORE_ENCOUNTER_CHECKS reaches the draw without setting entry.
+#ifdef UBFIX
+  entry = gEncounter_EnemyGroupTable + zone;
+#endif
+  if (GameFlag_Get(FLAG_IGNORE_ENCOUNTER_CHECKS) == 0) {
     if (GameFlag_Get(FLAG_NO_ENCOUNTERS) != 0 ||
         GameFlag_Get(FLAG_NO_ENCOUNTERS_IN_AREA) != 0)
       return 0;
@@ -149,6 +155,8 @@ s32 Encounter_CountStepsAndSelectFormation(s32 zone, FIXED steps) {
       return 0;
     rate += level * 5;
 
+    // A random bias varies the distance between battles: two differences of
+    // random numbers, halved, so from -65535 to 65535 and most often near 0.
     bias = work->encounterBias;
     if (bias == 0) {
       s32 a = Random16();
@@ -158,8 +166,7 @@ s32 Encounter_CountStepsAndSelectFormation(s32 zone, FIXED steps) {
       bias = (a - b + c - (s32)Random16()) / 2;
       work->encounterBias = bias;
     }
-    step =
-        Iwram_RatioMulQ14((rate << 20) + ((rate << 4) - 16) * bias, 0x100000);
+    step = Iwram_RatioMulQ14((rate << 20) + ((rate << 4) - 16) * bias, 1 << 20);
     total = ENCOUNTER_STEPS += Iwram_MulFX(step, steps);
     if (total < work->encounterThreshold)
       return 0;
@@ -200,15 +207,7 @@ s32 Encounter_RollWorldMap(s32 pos, FIXED steps) {
 
 /// Returns the selected group from a fourteen-halfword encounter row.
 u16 Encounter_GetFormationAtSlot(s32 zone, s32 slot) {
-  u16 *table;
-  s32 byteOffset;
-
-  byteOffset = zone * 14;
-  table = (u16 *)gEncounter_EnemyGroupTable;
-  byteOffset += slot;
-  byteOffset <<= 1;
-  byteOffset += 4;
-  return *(u16 *)((u8 *)table + byteOffset);
+  return gEncounter_EnemyGroupTable[zone].formations[slot];
 }
 
 /// Resolves the Djinni table's zone and slot pair to its enemy group.
@@ -216,7 +215,7 @@ u16 Encounter_GetDjinnFormation(s32 djinni) {
   u16 *zoneAndSlot = (u16 *)(gEncounter_AreaEntryTable + djinni * 4);
 
 #ifdef UBFIX
-  return Encounter_GetFormationAtSlot(battle->zone, battle->slot);
+  return Encounter_GetFormationAtSlot(zoneAndSlot[0], zoneAndSlot[1]);
 #else
   // UB: no return statement; the native leaves the called getter's result in
   // r0.
@@ -228,7 +227,7 @@ u16 Encounter_GetDjinnFormation(s32 djinni) {
 /// first rule matching the scene or its area and the entrance; SOUND_KEEP_BGM
 /// when none does.
 void Scene_ChooseMusic(void) {
-  s16 cue = 79;
+  s16 cue = SOUND_KEEP_BGM;
   s16 scene = gMainRoutineWork.next;
   s16 entrance = gMainRoutineWork.entrance;
   s16 group = gMainRoutineWork.area;
@@ -376,7 +375,7 @@ void BattleBackground_SelectForMap(void) {
   if (entry != 0 && entry != target) {
     do {
       if (entry & 0x80000000) {
-        result = entry & 0xFFFF;
+        result = entry & 0xffff;
       }
       entry = *table++;
     } while (entry != 0 && entry != target);
@@ -436,10 +435,11 @@ s32 Party_IsInFrontRow(s32 owner) {
 }
 
 /// Chooses the battle music for slot of zone (gMainRoutineWork.battleMusic): a
-/// key takes the song listed last before it in gEncounter_BattleMusic, and flag
-/// 0x16c's battles always use music 79. With no song found, it is 56 while
-/// ownerOverride is set and flag 0x8df clear, else 50 when owner 4 is active,
-/// 750 when owner 0 is, 49 when owner 5 is, or 50.
+/// key takes the song listed last before it in gEncounter_BattleMusic, and a
+/// link battle (FLAG_LINK_BATTLE) keeps the music playing. With no song found,
+/// it is MUS_SHIP_BATTLE on the ship before it flies, else by the front row:
+/// MUS_BATTLE with Felix, MUS_ISAAC_BATTLE with Isaac, MUS_JENNA_BATTLE with
+/// Jenna, or MUS_BATTLE.
 void BattleEffect_SelectBattleCue(s32 zone, s32 slot) {
   s16 key = (zone << 4) + slot;
   const s16 *table = gEncounter_BattleMusic;
@@ -447,7 +447,7 @@ void BattleEffect_SelectBattleCue(s32 zone, s32 slot) {
   u16 value;
 
   if (GameFlag_Get(FLAG_LINK_BATTLE)) {
-    music = 79;
+    music = SOUND_KEEP_BGM;
   } else {
     for (;;) {
       value = *table++;
@@ -461,15 +461,15 @@ void BattleEffect_SelectBattleCue(s32 zone, s32 slot) {
   }
   if (music == 0) {
     if (gMainRoutineWork.ownerOverride != 0 && !GameFlag_Get(FLAG_SHIP_FLIES))
-      music = 56;
-    else if (Party_IsInFrontRow(4))
-      music = 50;
-    else if (Party_IsInFrontRow(0))
-      music = 750;
-    else if (Party_IsInFrontRow(5))
-      music = 49;
+      music = MUS_SHIP_BATTLE;
+    else if (Party_IsInFrontRow(FELIX))
+      music = MUS_BATTLE;
+    else if (Party_IsInFrontRow(ISAAC))
+      music = MUS_ISAAC_BATTLE;
+    else if (Party_IsInFrontRow(JENNA))
+      music = MUS_JENNA_BATTLE;
     else
-      music = 50;
+      music = MUS_BATTLE;
   }
   gMainRoutineWork.battleMusic = music;
 }

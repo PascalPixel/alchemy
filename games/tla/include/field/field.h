@@ -585,7 +585,7 @@ void ObjectTable_Clear(void);
 void Party_AddPp(s32 amount, s32 unused);
 void Party_AddHp(s32 amount, s32 scaled);
 s32 Party_ApplyPoisonDamage(void);
-void *WorldMap_Unfreeze(void);
+void *Field_GetPartyActor(void);
 
 s32 Actor_GetTriggerCellAheadOfCurrent(void);
 u32 Stream_ReadU16(u8 **cursor);

@@ -69,6 +69,12 @@ struct MapCell {
 /// MapCell.attributeB bit 1: pushing against the cell pushes the actor ahead
 /// (Field_RunPushCell).
 #define MAP_CELL_PUSH 0x02
+/// MapCell.attributeB bit 2: random battles here roll on the scene's second
+/// encounter zone (Field_UpdateWalking).
+#define MAP_CELL_SECOND_ZONE 0x04
+/// MapCell.attributeB bit 3: hazardous ground; with HAZARD_COUNT_ON_CELLS the
+/// hazard count rises by the pixels walked on it.
+#define MAP_CELL_HAZARD 0x08
 /// MapCell.attributeB bit 5: a ledge, jumped down by pushing KEY_DOWN.
 #define MAP_CELL_LEDGE 0x20
 /// MapCell.attributeB bit 6: the cell can be climbed (MapGrid_IsClimbableCell).

@@ -31,6 +31,19 @@ enum BattleType {
 /// The most coins the party carries, and the most shop credit.
 #define COINS_MAX 999999
 
+/// gMainRoutineWork.hazardMode: what advances the hazard count
+/// (Field_UpdateWalking), as The Broken Seal's.
+enum HazardMode {
+  /// The distance the leader walks on MAP_CELL_HAZARD ground.
+  HAZARD_COUNT_ON_CELLS = 0,
+  /// One each frame the field sequence runs; no code in the game sets it.
+  HAZARD_COUNT_FRAMES = 1
+};
+
+/// gMainRoutineWork.hazardDamage's bit 8: its low byte is a percentage of
+/// maximum HP rather than HP.
+#define HAZARD_DAMAGE_PERCENT 0x100
+
 /// The first pending Djinni battle event: DJINNI_BATTLE_EVENT_FIRST plus the
 /// Djinni's number (Field_RequestDjinnBattle).
 #define DJINNI_BATTLE_EVENT_FIRST 300

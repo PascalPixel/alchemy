@@ -40,7 +40,7 @@ void Event_Wait(s32 frames) {
 
 /// Stops the leader where it stands: no horizontal velocity, the normal walking
 /// speed (1.0) and acceleration (0.5), no destination, and the standing pose,
-/// or the climbing pose (12) while the leader is on a climbable wall.
+/// or ANIM_LEADER_CLING while the leader is on a climbable wall.
 void Leader_StopMoving(void) {
   struct Actor *object = Actor_Lookup(Party_GetLeaderActor());
   object->speedLimit = FIXED_ONE;
@@ -50,9 +50,9 @@ void Leader_StopMoving(void) {
   object->velocityX = 0;
   object->velocityZ = 0;
   if (gMainRoutineWork.movementMode == LEADER_MOVEMENT_KEYS)
-    Actor_SelectAnimationFar(object, 12);
+    Actor_SelectAnimationFar(object, ANIM_LEADER_CLING);
   else
-    Actor_SelectAnimationFar(object, 1);
+    Actor_SelectAnimationFar(object, ANIM_STAND);
 }
 
 /// Begins an event: closes any area name window, stops the leader, ends the
@@ -68,7 +68,7 @@ void Event_Start(void) {
   state->choiceMessage = 0;
   state->choiceWidth = 0;
   state->choiceSelection = 0;
-  state->transitionFrames = 16;
+  state->transitionFrames = MAP_TRANSITION_FRAMES;
   state->fastForward = 0;
   state->unusedAfterMessage = 0xffff;
   state->unusedBeforeCamera[0] = -1;
@@ -83,8 +83,9 @@ void Event_Start(void) {
 }
 
 /// Ends an event: stops the debug fast-forward task, gives the camera back to
-/// the leader (or to actor 8 while gMainRoutineWork.ownerOverride is set) and
-/// refreshes the Lure Cap's flag (GameFlag_RefreshLureCap).
+/// the leader (or to the ship's stand, the first placed actor, while
+/// gMainRoutineWork.ownerOverride is set) and refreshes the Lure Cap's flag
+/// (GameFlag_RefreshLureCap).
 void Event_End(void) {
   Task_Remove((u32)Event_UpdateDebugSkip);
   {
@@ -92,7 +93,7 @@ void Event_End(void) {
     if (party->ownerOverride == 0)
       FieldCamera_FollowActor(party->leaderActorId, 1);
     else
-      FieldCamera_FollowActor(8, 1);
+      FieldCamera_FollowActor(ACTOR_FIRST_PLACED, 1);
     GameFlag_RefreshLureCapFar();
   }
 }
@@ -141,15 +142,15 @@ void Event_PrepareTwoObjectsAndApply(s32 first, s32 second) {
 
 /// Checks an L or R button shortcut, packed as the party member in bits 10 to
 /// 13 and the Psynergy in bits 0 to 9.
-s32 Party_CheckShortcut(u32 packed_id) {
-  s32 group = (packed_id >> 10) & 0xf;
-  s32 entry = packed_id & 0x3ff;
+s32 Party_CheckShortcut(u32 shortcut) {
+  s32 member = (shortcut >> 10) & 0xf;
+  s32 ability = shortcut & 0x3ff;
 
-  if (group > 7)
+  if (member > ALLY_MAX)
     return -1;
-  if (GameFlag_Get(group) == 0)
+  if (GameFlag_Get(member) == 0)
     return -2;
-  if (Unit_KnowsPsynergyFar(group, entry) == 0)
+  if (Unit_KnowsPsynergyFar(member, ability) == 0)
     return -3;
   return 0;
 }
@@ -318,36 +319,33 @@ void Inventory_ReservedNoOp(void) {}
 
 /// Waits, at most 90 frames, for an actor's animation to stop being animation:
 /// the actor has finished a one-off animation such as a nod.
-void Actor_WaitForAnimationEnd(s32 objectId, s32 value) {
-  struct Actor *obj = Actor_Lookup(objectId);
+void Actor_WaitForAnimationEnd(s32 actorId, s32 animation) {
+  struct Actor *actor = Actor_Lookup(actorId);
 
-  if (obj != 0 && obj->spriteStorageKind == 1) {
-    s32 cnt = 0;
-    u8 *anim = (u8 *)obj->sprite;
+  if (actor != 0 && actor->spriteStorageKind == ACTOR_SPRITE_ONE) {
+    s32 frames = 0;
+    struct Sprite *sprite = actor->sprite;
 
-    while (cnt <= 89) {
+    while (frames <= 89) {
       wait(1);
-      if (value != anim[0x18]) {
+      if (animation != sprite->lastNo) {
         break;
       }
-      cnt++;
+      frames++;
     }
   }
 }
 
-/// The event command "choose yes or no": waits for the message, asks yes or no
-/// below it or above it when the message windows reach past row 15, and the
-/// speaker nods (animation 3) at yes and shakes its head (4) at no. It waits
-/// (2 - event mode) * 3 frames, passes the name and its width and a third value
-/// to the menu, and skips the animation wait in event mode 2.
 /// The event command "choose yes or no": once the message on screen has been
 /// read, asks yes or no below it, or above it when the message windows reach
-/// past row 15 or forceBottom is set.
+/// past row 15 (unless forceBottom is set). The speaker nods (ANIM_NOD) at yes
+/// and shakes its head (ANIM_SHAKE_HEAD) at no; at the fastest message speed
+/// the nod is not waited for.
 s32 Event_AskYesNoWithActorAnimation(s32 actor, s32 forceBottom) {
-  u8 *work = Ram_HeapSlots->fieldWork;
-  s32 sprite = *(s16 *)Scene_FindActorPlacement(*(s32 *)(work + 0x1e0));
-  struct Window *window = *(struct Window **)(work + 0x1e4);
-  struct Window *side = *(struct Window **)(work + 0x1e8);
+  struct FieldWork *work = Ram_HeapSlots->fieldWork;
+  s32 sprite = *(s16 *)Scene_FindActorPlacement(work->speaker);
+  struct Window *window = work->messageWindow;
+  struct Window *side = work->sideWindow;
   s32 useBottom = 1;
   s32 answer;
 
@@ -369,20 +367,20 @@ s32 Event_AskYesNoWithActorAnimation(s32 actor, s32 forceBottom) {
       useBottom = 0;
   }
 
-  answer = YesNoMenu_RunFar(useBottom, *(s16 *)(work + 0xcb0),
-                            *(s16 *)(work + 0xcb2), *(s16 *)(work + 0xcb4));
+  answer = YesNoMenu_RunFar(useBottom, work->choiceMessage, work->choiceWidth,
+                            work->choiceSelection);
   if (answer != 0) {
-    Actor_SetAnimationById(actor, 4);
+    Actor_SetAnimationById(actor, ANIM_SHAKE_HEAD);
     Portrait_CloseWindowFar(sprite);
     Message_CloseFinishedWindowsFar();
     if (gMainRoutineWork.messageSpeed != 2)
-      Actor_WaitForAnimationEnd(actor, 4);
+      Actor_WaitForAnimationEnd(actor, ANIM_SHAKE_HEAD);
   } else {
-    Actor_SetAnimationById(actor, 3);
+    Actor_SetAnimationById(actor, ANIM_NOD);
     Portrait_CloseWindowFar(sprite);
     Message_CloseFinishedWindowsFar();
     if (gMainRoutineWork.messageSpeed != 2)
-      Actor_WaitForAnimationEnd(actor, 3);
+      Actor_WaitForAnimationEnd(actor, ANIM_NOD);
   }
 
   return answer;

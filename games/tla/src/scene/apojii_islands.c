@@ -16,6 +16,8 @@
 /// Set while the father who wished on the rock sees it answer Douse, so that
 /// the scene finishes his words if it is left before he has spoken.
 #define FLAG_FATHER_SEES_THE_STONE 0x95e
+/// Haze's islet: set once Lash has tied the tightrope between its posts.
+#define FLAG_HAZE_ROPE_TIED FLAG_SCENE_TEMP_00
 #include "types.h"
 #include "macros.h"
 #include "graphics/output.h"
@@ -131,11 +133,14 @@ s32 Actor_EmitMist(struct Actor *object);
 void Leader_RiseFromWater(void);
 void ApojiiIslands_DrawCellMarkers(void);
 void ApojiiIslands_StartCellMarkers(void);
-void ApojiiIslands_AddCellMarkers(u32 base, s32 a, s32 b);
+void ApojiiIslands_AddCellMarkers(u32 base, s32 level, s32 restLevel);
 void GroundParticles_Draw(void);
 void ApojiiIslands_StartSparkles(void);
 void ApojiiIslands_SetSparkleAnchor(s32 id);
 
+/// A marker drawn over a marked cell: its place, the height it rests at, its
+/// kind (the collision code's offset from the base), its state and its
+/// sprite's attributes.
 struct CellMarker {
   s32 x;
   s32 y;
@@ -146,34 +151,50 @@ struct CellMarker {
   u32 oam[3];
 };
 
+/// ApojiiIslands_DrawCellMarkers's table: the markers' VRAM entry and up to 128
+/// markers.
 struct CellMarkers {
   u16 block;
   u16 count;
   struct CellMarker markers[128];
 };
 
+/// The falls' palette as loaded, the source of each cycle.
 u16 gApojiiIslands_FallsColors[16] BSS_DATA ALIGNED(4);
+/// The falls' palette as this frame's cycle leaves it.
 u16 gApojiiIslands_FallsCycled[16] BSS_DATA;
+/// The spray's palette as loaded.
 u16 gApojiiIslands_SprayColors[16] BSS_DATA;
+/// The spray's palette as this frame's cycle leaves it.
 u16 gApojiiIslands_SprayCycled[16] BSS_DATA;
+/// The sea's palette as loaded.
 u16 gApojiiIslands_SeaColors[16] BSS_DATA;
+/// The sea's palette as this frame's cycle leaves it.
 u16 gApojiiIslands_SeaCycled[16] BSS_DATA;
+/// The shore's palette as loaded.
 u16 gApojiiIslands_ShoreColors[16] BSS_DATA;
+/// The shore's palette as this frame's cycle leaves it.
 u16 gApojiiIslands_ShoreCycled[16] BSS_DATA;
+/// The Aqua Stone's palette as loaded.
 u16 gApojiiIslands_StoneColors[16] BSS_DATA;
+/// The Aqua Stone's palette as this frame's cycle leaves it.
 u16 gApojiiIslands_StoneCycled[16] BSS_DATA;
 s32 gApojiiIslands_SplitLine BSS_DATA;
 u16 gApojiiIslands_UpperScrollX BSS_DATA;
 u16 gApojiiIslands_LowerScrollX BSS_DATA;
+/// The cell markers drawn over the village's marked cells.
 struct CellMarkers gApojiiIslands_CellMarkers BSS_DATA;
 extern u32 gApojiiIslands_SplashScript[];
 extern u32 gWaterDropScript[];
 
+/// Creates an actor of `kind` at a point (Import_ActorCreate).
 static __inline__ struct Actor *Import_ActorCreate_(s32 kind, s32 x, s32 y,
                                                     s32 z) {
   return Import_ActorCreate(kind, x, y, z);
 }
 
+/// Moves the camera to a point within the map's bounds
+/// (FieldCamera_MoveWithinMapBounds).
 static __inline__ void Camera_MoveWithinMapBounds_(FIXED x, FIXED a, FIXED z,
                                                    s32 b) {
   FieldCamera_MoveWithinMapBounds(x, a, z, b);
@@ -194,10 +215,12 @@ static __inline__ void Camera_MoveWithinMapBounds_(FIXED x, FIXED a, FIXED z,
 #include "scene/event_layer.h"
 #include "system/task.h"
 #include "field/map_grid.h"
+#include "field/map.h"
 #include "graphics/vram_tab.h"
 #include "system/dma.h"
 #include "system/heap_release.h"
 #include "graphics/resource.h"
+#include "graphics/palette_buffers.h"
 #include "version.h"
 #include "../field/actor_set_sprite_priority.c"
 
@@ -228,8 +251,8 @@ extern struct Trigger gApojiiIslands_HazeTriggers[];
 void ApojiiIslands_SinkIntoSand(void);
 void ApojiiIslands_RiseFromSand(void);
 void ApojiiIslands_ResumeSeaColors(void);
-void ApojiiIslands_ClearShopsBushes(void);
-void ApojiiIslands_ClearShopsSmallBush(void);
+void ApojiiIslands_ClearHazeBushes(void);
+void ApojiiIslands_ClearHazeSmallBush(void);
 void ApojiiIslands_EnterDoor(void);
 void ApojiiIslands_JumpDownLedge(void);
 void ApojiiIslands_JumpForward(void);
@@ -238,8 +261,7 @@ extern u32 gFieldEffect_MediumScript[];
 extern u32 gFieldEffect_LongScript[];
 extern s32 gApojiiIslands_PaceScript[];
 
-extern u8 Data_0202c001[];
-
+/// Haze, the Jupiter Djinni on the islet, joins the party.
 void ApojiiIslands_HazeJoinsParty(void) {
   Djinn_JoinParty(10, DJINNI_HAZE / DJINN_PER_ELEMENT,
                   DJINNI_INDEX(DJINNI_HAZE));
@@ -269,12 +291,15 @@ void ApojiiIslands_SinkIntoSand(void) {
   Actor_Get(gMainRoutineWork.leaderActorId)->layer = 2;
 }
 
+/// Sand ends: the leader is back on the ground layer.
 void ApojiiIslands_RiseFromSand(void) {
   Actor_Get(gMainRoutineWork.leaderActorId)->layer = 0;
 }
 
 extern s32 gApojiiIslands_FallsCycleFrame;
 
+/// The falls' and their spray's colours cycle every eighth frame, held while
+/// Psynergy or a reveal runs.
 void ApojiiIslands_CycleFallsColors(void) {
   struct FieldWork *work = Ram_HeapSlots->fieldWork;
   s32 phase, k, offset;
@@ -285,10 +310,12 @@ void ApojiiIslands_CycleFallsColors(void) {
   if (work->revealActive != 0)
     return;
   if (gApojiiIslands_FallsCycleFrame == -1) {
-    Iwram_CopyWords(gApojiiIslands_FallsColors, (void *)0x05000060, 32);
+    Iwram_CopyWords(gApojiiIslands_FallsColors, (void *)&BG_PLTT_COLOR(3, 0),
+                    32);
     Iwram_CopyWordsEntry(gApojiiIslands_FallsCycled, gApojiiIslands_FallsColors,
                          32);
-    Iwram_CopyWordsEntry(gApojiiIslands_SprayColors, (void *)0x05000080, 32);
+    Iwram_CopyWordsEntry(gApojiiIslands_SprayColors,
+                         (void *)&BG_PLTT_COLOR(4, 0), 32);
     Iwram_CopyWordsEntry(gApojiiIslands_SprayCycled, gApojiiIslands_SprayColors,
                          32);
     gApojiiIslands_FallsCycleFrame = 0;
@@ -302,8 +329,10 @@ void ApojiiIslands_CycleFallsColors(void) {
     *(u16 *)((u8 *)firstCopy + offset) = gApojiiIslands_FallsColors[12 + k];
     *(u16 *)((u8 *)secondCopy + offset) = gApojiiIslands_SprayColors[12 + k];
   }
-  IO_WRITE_QUEUE_PUSH((u32)&BG_PLTT_COLOR(3, 0), (u32)firstCopy, 0x84000008);
-  IO_WRITE_QUEUE_PUSH((u32)&BG_PLTT_COLOR(4, 0), (u32)secondCopy, 0x84000008);
+  IO_WRITE_QUEUE_PUSH((u32)&BG_PLTT_COLOR(3, 0), (u32)firstCopy,
+                      DMA_COPY_WORDS(8));
+  IO_WRITE_QUEUE_PUSH((u32)&BG_PLTT_COLOR(4, 0), (u32)secondCopy,
+                      DMA_COPY_WORDS(8));
   gApojiiIslands_FallsCycleFrame++;
 }
 
@@ -320,10 +349,12 @@ void ApojiiIslands_CycleSeaColors(void) {
   if (busy != 0)
     return;
   if (gApojiiIslands_SeaCycleFrame == -1) {
-    Iwram_CopyWords((s32)gApojiiIslands_SeaColors, 0x05000060, 32);
+    Iwram_CopyWords((s32)gApojiiIslands_SeaColors, (s32)&BG_PLTT_COLOR(3, 0),
+                    32);
     Iwram_CopyWordsEntry(gApojiiIslands_SeaCycled, gApojiiIslands_SeaColors,
                          32);
-    Iwram_CopyWordsEntry(gApojiiIslands_ShoreColors, (void *)0x050001a0, 32);
+    Iwram_CopyWordsEntry(gApojiiIslands_ShoreColors,
+                         (void *)&BG_PLTT_COLOR(13, 0), 32);
     Iwram_CopyWordsEntry(gApojiiIslands_ShoreCycled, gApojiiIslands_ShoreColors,
                          32);
     gApojiiIslands_SeaCycleFrame = busy;
@@ -338,17 +369,19 @@ void ApojiiIslands_CycleSeaColors(void) {
     gApojiiIslands_ShoreCycled[12 + j] = gApojiiIslands_ShoreColors[12 + k];
   }
   IO_WRITE_QUEUE_PUSH((u32)&BG_PLTT_COLOR(3, 0), (u32)gApojiiIslands_SeaCycled,
-                      0x84000008);
+                      DMA_COPY_WORDS(8));
   IO_WRITE_QUEUE_PUSH((u32)&BG_PLTT_COLOR(13, 0),
-                      (u32)gApojiiIslands_ShoreCycled, 0x84000008);
+                      (u32)gApojiiIslands_ShoreCycled, DMA_COPY_WORDS(8));
   gApojiiIslands_SeaCycleFrame++;
 }
 
+/// Holds the sea's colour cycle, as an event begins.
 void ApojiiIslands_PauseSeaColors(void) {
   Task_SuspendAll(ApojiiIslands_CycleSeaColors);
   System_Wait(3);
 }
 
+/// Lets the sea's colour cycle run again.
 void ApojiiIslands_ResumeSeaColors(void) {
   Task_ResumeAll(ApojiiIslands_CycleSeaColors);
   System_Wait(3);
@@ -362,7 +395,8 @@ void ApojiiIslands_CycleAquaStoneColors(void) {
   s32 i;
 
   if (gApojiiIslands_StoneCycleFrame[0] == -1) {
-    Iwram_CopyWordsEntry(gApojiiIslands_StoneColors, (void *)0x05000080, 32);
+    Iwram_CopyWordsEntry(gApojiiIslands_StoneColors,
+                         (void *)&BG_PLTT_COLOR(4, 0), 32);
     gApojiiIslands_StoneCycleFrame[0] = 0;
   }
   base = (gApojiiIslands_StoneCycleFrame[0] / 2) % 15;
@@ -370,10 +404,11 @@ void ApojiiIslands_CycleAquaStoneColors(void) {
     gApojiiIslands_StoneCycled[(base + i) % 15 + 1] =
         gApojiiIslands_StoneColors[i + 1];
   IO_WRITE_QUEUE_PUSH((u32)&OBJ_PLTT_COLOR(14, 0),
-                      (u32)gApojiiIslands_StoneCycled, 0x84000008);
+                      (u32)gApojiiIslands_StoneCycled, DMA_COPY_WORDS(8));
   gApojiiIslands_StoneCycleFrame[0]++;
 }
 
+/// A flashing actor's last update: its sprite's colour back to normal.
 void ApojiiIslands_StopFlashing(struct Actor *object) {
   Actor_SetSpriteColorMode(object, 0);
   object->update = 0;
@@ -386,8 +421,8 @@ void ApojiiIslands_StopFlashing(struct Actor *object) {
 /// (ApojiiIslands_StartSparkles) runs and four flashes of random strength
 /// follow; then the screen blends in over six steps while the palette cycle
 /// gives way to ApojiiIslands_CycleAquaStoneColors and the cell markers are
-/// rebuilt (ApojiiIslands_AddCellMarkers). Flags 0x95f and 0x95e are set and
-/// the camera pans through three points before cue 77.
+/// rebuilt (ApojiiIslands_AddCellMarkers). FLAG_APOJII_AQUA_STONE_DOUSED and
+/// FLAG_FATHER_SEES_THE_STONE are set and the camera pans through three points.
 void ApojiiIslands_DouseAquaStone(s32 unused, s32 id) {
   struct Actor *actor = Actor_GetById(id);
   s32 i;
@@ -402,35 +437,34 @@ void ApojiiIslands_DouseAquaStone(s32 unused, s32 id) {
   ApojiiIslands_SetSparkleAnchor(ACTOR_AQUA_STONE);
   Scene_QueueMusic(SE_AMBIENT_WATER);
   i = 3;
-flash:
-  Value2((s32 (*)())PaletteFade_SetTarget, Random16() & 0x7fff, 0);
-  PaletteFade_StartInterpolation(15);
-  wait(10);
-  Value2((s32 (*)())PaletteFade_SetTarget, 0x10000, 0);
-  PaletteFade_StartInterpolation(10);
-  i--;
-  wait(10);
-  if (i >= 0)
-    goto flash;
+  do {
+    Value2((s32 (*)())PaletteFade_SetTarget, Random16() & 0x7fff, 0);
+    PaletteFade_StartInterpolation(15);
+    wait(10);
+    Value2((s32 (*)())PaletteFade_SetTarget, PALETTE_TINT_NONE, 0);
+    PaletteFade_StartInterpolation(10);
+    i--;
+    wait(10);
+  } while (i >= 0);
   ObjectTable_Snapshot();
   IO_WRITE_QUEUE_PUSH((u32)&REG_BLDCNT,
                       BLDCNT_TGT2_BG0 | BLDCNT_TGT2_BG1 | BLDCNT_TGT2_BG2 |
                           BLDCNT_TGT2_BG3,
-                      0x20000);
-  IO_WRITE_QUEUE_PUSH((u32)&REG_BLDALPHA, BLEND_ALPHA(0, 16), 0x20000);
+                      IO_WRITE_HALFWORD);
+  IO_WRITE_QUEUE_PUSH((u32)&REG_BLDALPHA, BLEND_ALPHA(0, 16),
+                      IO_WRITE_HALFWORD);
   wait(1);
   Task_Remove(ApojiiIslands_CycleSeaColors);
   Task_Add(ApojiiIslands_CycleAquaStoneColors, TASK_PASS_VBLANK);
   ApojiiIslands_StartCellMarkers();
   ApojiiIslands_AddCellMarkers(33, 0, 0);
   i = 1;
-blend:
-  IO_WRITE_QUEUE_PUSH((u32)&REG_BLDALPHA, BLEND_ALPHA(i, BLEND_WEIGHT_MAX),
-                      0x20000);
-  wait(4);
-  i++;
-  if (i <= 6)
-    goto blend;
+  do {
+    IO_WRITE_QUEUE_PUSH((u32)&REG_BLDALPHA, BLEND_ALPHA(i, BLEND_WEIGHT_MAX),
+                        IO_WRITE_HALFWORD);
+    wait(4);
+    i++;
+  } while (i <= 6);
   GameFlag_Set(FLAG_APOJII_AQUA_STONE_DOUSED);
   GameFlag_Set(FLAG_FATHER_SEES_THE_STONE);
   FieldCamera_SetSpeed(1);
@@ -475,10 +509,14 @@ void ApojiiIslands_FatherSeesTheStone(void) {
   Event_ClearFlag(FLAG_FATHER_SEES_THE_STONE);
 }
 
+/// Cyclone on the village's first bush clears its cells.
 void ApojiiIslands_ClearFirstBush(void) {
   FieldTileCopies_CopyTouchedCells(68, 38, 39, 24, 68, 4, 1);
 }
 
+/// Defines a bush's clearing: its cells copied in, and while flag n5 is clear
+/// actor n6 set at (n7, n8), the leader hopping aside when he stands on cell
+/// (n9, n10).
 #define DEFINE_APOJII_ISLANDS_SHIFT_CELLS_AND_HOP(name, n1, n2, n3, n4, n5,    \
                                                   n6, n7, n8, n9, n10)         \
   void name(void) {                                                            \
@@ -502,17 +540,21 @@ void ApojiiIslands_ClearFirstBush(void) {
     }                                                                          \
   }
 
+/// Cyclone on the village's second bush clears its cells.
 DEFINE_APOJII_ISLANDS_SHIFT_CELLS_AND_HOP(ApojiiIslands_ClearSecondBush, 68, 38,
                                           21, 4, 0xf9b, 65, 376, 376, 23, 23)
 
+/// Cyclone on the village's third bush clears its cells.
 DEFINE_APOJII_ISLANDS_SHIFT_CELLS_AND_HOP(ApojiiIslands_ClearThirdBush, 68, 38,
                                           21, 4, 0xf9a, 64, 600, 408, 37, 25)
 
-void ApojiiIslands_ClearShopsBushes(void) {
+/// Cyclone on Haze's islet's bushes clears their cells.
+void ApojiiIslands_ClearHazeBushes(void) {
   FieldTileCopies_CopyTouchedCells(67, 38, 11, 6, 67, 8, 1);
 }
 
-DEFINE_APOJII_ISLANDS_SHIFT_CELLS_AND_HOP(ApojiiIslands_ClearShopsSmallBush, 67,
+/// Cyclone on Haze's islet's small bush clears its cells.
+DEFINE_APOJII_ISLANDS_SHIFT_CELLS_AND_HOP(ApojiiIslands_ClearHazeSmallBush, 67,
                                           11, 6, 8, 0xf9e, 64, 200, 152, 12, 9)
 
 /// Stepping onto a door: the leader walks through it and the scene leaves by
@@ -535,6 +577,8 @@ void ApojiiIslands_EnterDoor(void) {
   Event_End();
 }
 
+/// The staring man's son, unless spoken to from behind, turns to the leader and
+/// asks why his father stares at the rock.
 s32 ApojiiIslands_TalkToSon(void) {
   u16 facing;
 
@@ -553,6 +597,7 @@ s32 ApojiiIslands_TalkToSon(void) {
   return 0;
 }
 
+/// Mind Read on the staring man's son: his thought, unless read from behind.
 s32 ApojiiIslands_MindReadSon(void) {
   u16 facing;
 
@@ -569,6 +614,7 @@ s32 ApojiiIslands_MindReadSon(void) {
   return 0;
 }
 
+/// Walking south off Haze's ledge jumps the leader down.
 void ApojiiIslands_JumpDownLedge(void) {
   Actor_JumpDownLedge(gMainRoutineWork.leaderActorId, 1, 5);
 }
@@ -591,6 +637,8 @@ enum { SHOP_APOJII = 23 };
 /// The Apojii Islands' inn, as Inn_CheckIn numbers the inns.
 enum { APOJII_INN = 8 };
 
+/// The innkeeper: across the counter, the inn; from elsewhere, his words about
+/// the fancy boat.
 void ApojiiIslands_TalkToInnkeeper(s32 actor) {
   if ((u16)((Actor_Get(gMainRoutineWork.leaderActorId)->facing + 0x2000) &
             0xc000) == 0xc000) {
@@ -605,6 +653,8 @@ void ApojiiIslands_TalkToInnkeeper(s32 actor) {
   Event_End();
 }
 
+/// The inn worker asks whether the party are the warriors who came in the boat,
+/// and answers the yes or the no.
 void ApojiiIslands_AskAboutWarriors(s32 actor) {
   s32 msg;
 
@@ -626,6 +676,8 @@ void ApojiiIslands_AskAboutWarriors(s32 actor) {
   Event_End();
 }
 
+/// The merchant: across the counter, the shop; from elsewhere, her wish for
+/// imported goods.
 void ApojiiIslands_TalkToMerchant(s32 actor) {
   if ((u16)((Actor_Get(gMainRoutineWork.leaderActorId)->facing + 0x2000) &
             0xc000) == 0xc000) {
@@ -694,10 +746,13 @@ s32 Scene_Initialize(void) {
 
 s32 Scene_PrepareMap(void) { return 0; }
 
+/// Haze's islet on entry: the falls' colours cycle, the tightrope is strung,
+/// the water sounds, and the leader rises from the water when he came by it.
 void ApojiiIslands_InitializeHaze(void) {
   Task_AddFrame(ApojiiIslands_CycleFallsColors, TASK_PASS_VBLANK);
   Rope_Initialize();
-  Rope_Place(0, 0x200, 8, 9);
+  Rope_Place(0, FLAG_HAZE_ROPE_TIED, ACTOR_TIGHTROPE_POST_A,
+             ACTOR_TIGHTROPE_POST_B);
   Scene_QueueMusic(SE_AMBIENT_WATER);
   Scroll_StartHBlank();
   if (gMainRoutineWork.entrance == 3)
@@ -708,13 +763,16 @@ void ApojiiIslands_InitializeHaze(void) {
     Leader_RiseFromWater();
 }
 
+/// Entered by the houses' entrance 6: no window transition and no area name.
 void ApojiiIslands_LeaveQuietly(void) {
   gFieldWork->transition = SCENE_TRANSITION(TRANSITION_WINDOW, 9);
   Event_ClearFlag(FLAG_SHOW_AREA_NAME);
 }
 
+/// Lets the leader jump forward off a ledge.
 void ApojiiIslands_JumpForward(void) { Field_TryJumpForward(); }
 
+/// A splash at the actor's feet, on its sprite's priority.
 void ApojiiIslands_SpawnSplash(struct Actor *object) {
   struct Actor *child;
   struct FieldSprite *parent;
@@ -837,11 +895,13 @@ void Leader_SpinAway(s32 entrance) {
 #define COPY_PICTURE(from, to)                                                 \
   Dma_Set((void *)(from), (void *)(offset + (to)), DMA_COPY_WORDS(16), REG_DMA3)
 
+/// Each frame: copies the marker pictures to sprite VRAM and draws a sprite
+/// over each live cell marker in view.
 void ApojiiIslands_DrawCellMarkers(void) {
   struct MapWork *map = Ram_HeapSlots->mapGrid;
   s32 *view = &map->viewX;
-  s32 viewX = view[0] & 0xffff0000;
-  s32 viewZ = view[1] & 0xffff0000;
+  s32 viewX = view[0] & FIELD_PIXEL_MASK;
+  s32 viewZ = view[1] & FIELD_PIXEL_MASK;
   // DEAD: viewY, subtracted from both height and z, cancels in dy; the ROM
   // keeps its load and its store to the stack.
   s32 viewY = map->origin[1];
@@ -896,9 +956,10 @@ void ApojiiIslands_DrawCellMarkers(void) {
     picture = kind * 4;
     flip = 0;
     if (kind == 2)
-      flip = 0x10000000;
+      flip = OBJ_HFLIP;
     *attr++ = clear;
-    *attr++ = top | (left << 16) | flip | 0x40000400;
+    *attr++ = top | (left << 16) | flip | OBJ_SIZE_16X16 |
+              OBJ_MODE(OBJ_MODE_SEMI_TRANSPARENT);
     *attr = palette | (tile + picture);
     Oam_AddSpriteAtDepth(record->oam, 0);
   }
@@ -907,13 +968,17 @@ void ApojiiIslands_DrawCellMarkers(void) {
 /// Clears the effect table, takes a free VRAM entry for it with a 0x200-byte
 /// block and no source, then schedules ApojiiIslands_DrawCellMarkers.
 void ApojiiIslands_StartCellMarkers(void) {
-  Iwram_ClearWordsEntry(&gApojiiIslands_CellMarkers, 0x1004);
+  Iwram_ClearWordsEntry(&gApojiiIslands_CellMarkers,
+                        sizeof(struct CellMarkers));
   gApojiiIslands_CellMarkers.block = VramCache_FindFreeEntry();
   Vram_Load(gApojiiIslands_CellMarkers.block, 0x200, 0);
   FieldTask_AddFrame(ApojiiIslands_DrawCellMarkers, TASK_PASS_VBLANK);
 }
 
-void ApojiiIslands_AddCellMarkers(u32 base, s32 a, s32 b) {
+/// Adds a marker over each cell of layer 1 whose collision code is `base` to
+/// `base` + 3, at `level` and resting at `restLevel`, each in steps of 8
+/// pixels, and gives those cells MAP_SHAPE_MARKED, its entry set to `level`.
+void ApojiiIslands_AddCellMarkers(u32 base, s32 level, s32 restLevel) {
   struct MapWork *map = Ram_HeapSlots->mapGrid;
   struct MapLayer *second = &map->layers[1];
   struct MapLayer *layer = &map->layers[0];
@@ -924,47 +989,45 @@ void ApojiiIslands_AddCellMarkers(u32 base, s32 a, s32 b) {
   s32 width = FIELD_CELL(map->maxX - map->minX);
   s32 height = FIELD_CELL(map->maxZ - map->minZ);
   struct CellMarker *entry = &markers->markers[markers->count];
-  s32 *slot = (s32 *)(Data_0202c001 + 0x1df);
+  s32 *slot = (s32 *)(gMapGridShapes + MAP_SHAPE_MARKED * 4);
   s32 origin = (FIELD_CELL(map->minZ) << 7) + FIELD_CELL(map->minX);
   struct MapCell *cell;
   s16 x, z;
   u32 value;
 
-  *slot = a << 8;
+  *slot = level << 8;
   cells += origin;
   z = 0;
   if (z < height) {
-  outer:
-    cell = cells + ((u16)z << 7);
-    x = 0;
-    if (x < width) {
-    inner:
-      value = cell->collisionCode;
-      if (value != 0 && value >= base && value < base + 4) {
-        entry->x = ((u16)x << 20) + left + toFIXED(8);
-        entry->z = ((u16)z << 20) + top + toFIXED(8);
-        entry->rest = b << 19;
-        entry->y = a << 19;
-        entry->kind = value - base;
-        entry->state = 1;
-        entry++;
-        markers->count++;
-        // Layer 0's row base in its own local (written inline, 10 of 159
-        // differ).
-        {
-          u8 *terrain = map->layers[0].terrainIds + origin;
+    do {
+      cell = cells + ((u16)z << 7);
+      x = 0;
+      if (x < width) {
+        do {
+          value = cell->collisionCode;
+          if (value != 0 && value >= base && value < base + 4) {
+            entry->x = ((u16)x << 20) + left + toFIXED(8);
+            entry->z = ((u16)z << 20) + top + toFIXED(8);
+            entry->rest = restLevel << 19;
+            entry->y = level << 19;
+            entry->kind = value - base;
+            entry->state = 1;
+            entry++;
+            markers->count++;
+            // Layer 0's row base in its own local (written inline, 10 of 159
+            // differ).
+            {
+              u8 *terrain = map->layers[0].terrainIds + origin;
 
-          terrain[(u16)x + ((u16)z << 7)] = 120;
-        }
+              terrain[(u16)x + ((u16)z << 7)] = MAP_SHAPE_MARKED;
+            }
+          }
+          x = (toFIXED(x) + toFIXED(1)) >> 16;
+          cell++;
+        } while ((u16)x < width);
       }
-      x = (toFIXED(x) + toFIXED(1)) >> 16;
-      cell++;
-      if ((u16)x < width)
-        goto inner;
-    }
-    z = (toFIXED(z) + toFIXED(1)) >> 16;
-    if ((u16)z < height)
-      goto outer;
+      z = (toFIXED(z) + toFIXED(1)) >> 16;
+    } while ((u16)z < height);
   }
 }
 
@@ -973,7 +1036,7 @@ extern s16 gGroundParticleFrames[];
 #include "shared/ground_particles_draw.h"
 
 /// Starts the sparkles: 64 sprites on the ground at the origin, their tiles
-/// decoded into VRAM, and GroundParticles_Draw scheduled at priority 0x480 to
+/// decoded into VRAM, and GroundParticles_Draw scheduled in TASK_PASS_VBLANK to
 /// move them; the overlay's copy of FieldEffect_InitializeSparkles.
 void ApojiiIslands_StartSparkles(void) {
   struct GroundParticleWork *work =
@@ -997,24 +1060,24 @@ void ApojiiIslands_StartSparkles(void) {
   HeapSlot_Release(HEAP_SLOT_TILE_SCRATCH);
   work->leader = (s32 *)size;
   i = 0;
-loop:
-  size = (u32)p;
-  *(u32 *)size = 0;
-  size += 4;
-  *(u32 *)size = 0x40000400;
-  size += 4;
-  *(u32 *)size = 0xb400;
-  p->posX = 0;
-  p->posZ = 0;
-  p->posY = toFIXED(Map_GetTerrainHeight(0, 0, 0));
-  p->timer = (i & 15) + 1;
-  i++;
-  p++;
-  if (i < 64)
-    goto loop;
+  do {
+    size = (u32)p;
+    *(u32 *)size = 0;
+    size += 4;
+    *(u32 *)size = OBJ_SIZE_16X16 | OBJ_MODE(1);
+    size += 4;
+    *(u32 *)size = OBJ_PRIORITY(1) | OBJ_PALETTE(11);
+    p->posX = 0;
+    p->posZ = 0;
+    p->posY = toFIXED(Map_GetTerrainHeight(0, 0, 0));
+    p->timer = (i & 15) + 1;
+    i++;
+    p++;
+  } while (i < 64);
   Task_AddFrame(GroundParticles_Draw, TASK_PASS_VBLANK);
 }
 
+/// Ties the sparkles to the actor `id`, or to none.
 void ApojiiIslands_SetSparkleAnchor(s32 id) {
   struct GroundParticleWork *work = Ram_HeapSlots->weather;
   struct Actor *object = Actor_Get(id);
@@ -1067,18 +1130,22 @@ u32 gFieldEffect_LongScript[] = {
     SC_END,
 };
 
+/// A splash's script: it shows for 20 frames, then is released.
 u32 gApojiiIslands_SplashScript[] = {
     SC_WAIT(20),
     SC_RELEASE,
 };
 
+/// A water drop's script: it rises a quarter of a pixel a frame for 31
+/// frames, then is released.
 u32 gWaterDropScript[] = {
-    SC_ADD(SW_Y, 0x4000),
+    SC_ADD(SW_Y, toFIXED(1) / 4),
     SC_WAIT(1),
     SC_LOOP(30, SC_TOP),
     SC_RELEASE,
 };
 
+/// The sparkles' frames, read by GroundParticles_Draw.
 s16 gGroundParticleFrames[] = {                                                               
       -8,  -12,  20,  0,   1,    -8,  -12,  20,  0,    1,   -8,   -12,         
       20,  0,    1,   -8,  -12,  16,  0,    1,   -8,   -12, 16,   0,           
@@ -1100,6 +1167,7 @@ const s32 *gFieldEffect_DurationScripts[] = {
     gFieldEffect_LongScript,
 };
 
+/// A villager's pacing script.
 s32 gApojiiIslands_PaceScript[] = {
     SC_SET(SW_COLLISION, PACE_SCRIPT_THIRD_WORD),
     SC_ACCELERATION(0.2),
@@ -1160,40 +1228,44 @@ u32 gSceneExits[] = {
     SCENE_EXITS_END,
 };
 
+/// The scene's other rooms' actors: none.
 struct ActorPlacement gApojiiIslands_Placements[] = {
     {SCENE_TABLE_END},
 };
 
+/// The village's actors, in ApojiiIslandsVillageActorId's order.
 struct ActorPlacement gApojiiIslands_VillagePlacements[] = {
     ACTOR_PLACEMENT(SPRITE_SUNSHINES_CHILD, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 56, 0, 168, FACING_NORTHWEST, TALK_FACING_PARTY_AND_BACK, 0),
-    ACTOR_PLACEMENT(116, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 456, 0, 88, FACING_NORTHEAST, TALK_FACING_PARTY_THEN_WATCH, 0),
-    ACTOR_PLACEMENT(114, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 568, 0, 312, FACING_NORTHEAST, TALK_FACING_PARTY_AND_BACK, 0),
-    ACTOR_PLACEMENT(128, CONDITION_ALWAYS, MOVEMENT_TYPE_WANDER, 504, 0, 200, FACING_NORTH, TALK_FACING_PARTY, 0),
-    ACTOR_PLACEMENT(112, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 616, 0, 264, FACING_SOUTHEAST, TALK_FACING_PARTY_AND_BACK, 0),
-    ACTOR_PLACEMENT(113, CONDITION_ALWAYS, MOVEMENT_TYPE_WANDER, 184, 0, 152, FACING_NORTHEAST, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(SPRITE_WOMAN_IN_PURPLE_SKIRT, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 456, 0, 88, FACING_NORTHEAST, TALK_FACING_PARTY_THEN_WATCH, 0),
+    ACTOR_PLACEMENT(SPRITE_MAN_WITH_CURLY_HAIR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 568, 0, 312, FACING_NORTHEAST, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(SPRITE_WOMAN_IN_GREEN_SKIRT, CONDITION_ALWAYS, MOVEMENT_TYPE_WANDER, 504, 0, 200, FACING_NORTH, TALK_FACING_PARTY, 0),
+    ACTOR_PLACEMENT(SPRITE_OLD_MAN_IN_GREY_ROBE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 616, 0, 264, FACING_SOUTHEAST, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(SPRITE_OLD_WOMAN_WITH_HEADBAND, CONDITION_ALWAYS, MOVEMENT_TYPE_WANDER, 184, 0, 152, FACING_NORTHEAST, TALK_FACING_PARTY_AND_BACK, 0),
     ACTOR_PLACEMENT(SPRITE_BOY_WITH_BLACK_HAIR, CONDITION_ALWAYS, MOVEMENT_TYPE_WANDER_NEAR, 216, 0, 376, FACING_SOUTH, TALK_FACING_PARTY, 0),
     ACTOR_PLACEMENT(SPRITE_GIRL_WITH_TOPKNOT, CONDITION_ALWAYS, MOVEMENT_TYPE_WANDER_NEAR, 104, 0, 344, FACING_SOUTHEAST, TALK_FACING_PARTY, 0),
     ACTOR_PLACEMENT(SPRITE_SUNSHINES_CHILD, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 344, 0, 280, FACING_NORTH, TALK_FACING_PARTY_AND_BACK, 0),
-    ACTOR_PLACEMENT(383, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 352, 0, 232, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_WATER_DROP_LARGE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 352, 0, 232, FACING_SOUTH, TALK_FACING_KEEP, 0),
     {SCENE_TABLE_END},
 };
 
+/// The houses' actors, in ApojiiIslandsHousesActorId's order.
 struct ActorPlacement gApojiiIslands_ShopsPlacements[] = {
-    ACTOR_PLACEMENT(116, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 152, 0, 152, FACING_EAST, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(SPRITE_WOMAN_IN_PURPLE_SKIRT, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 152, 0, 152, FACING_EAST, TALK_FACING_PARTY_AND_BACK, 0),
     ACTOR_PLACEMENT(SPRITE_BOY_WITH_BLACK_HAIR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 120, 0, 104, FACING_SOUTHEAST, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(114, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 264, 0, 104, FACING_SOUTHEAST, TALK_FACING_PARTY_AND_BACK, 0),
-    ACTOR_PLACEMENT(128, CONDITION_ALWAYS, (s32)gApojiiIslands_PaceScript, 280, 0, 136, FACING_EAST, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(SPRITE_MAN_WITH_CURLY_HAIR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 264, 0, 104, FACING_SOUTHEAST, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(SPRITE_WOMAN_IN_GREEN_SKIRT, CONDITION_ALWAYS, (s32)gApojiiIslands_PaceScript, 280, 0, 136, FACING_EAST, TALK_FACING_PARTY_AND_BACK, 0),
     ACTOR_PLACEMENT(SPRITE_BOY_WITH_BLACK_HAIR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 408, 0, 104, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
     ACTOR_PLACEMENT(SPRITE_GIRL_WITH_TOPKNOT, CONDITION_ALWAYS, MOVEMENT_TYPE_WANDER, 344, 0, 120, FACING_NORTHEAST, TALK_FACING_PARTY_AND_BACK, 0),
-    ACTOR_PLACEMENT(112, CONDITION_ALWAYS, MOVEMENT_TYPE_WANDER_NEAR, 592, 0, 120, FACING_SOUTHEAST, TALK_FACING_PARTY_AND_BACK, 0),
-    ACTOR_PLACEMENT(113, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 552, 0, 136, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(SPRITE_OLD_MAN_IN_GREY_ROBE, CONDITION_ALWAYS, MOVEMENT_TYPE_WANDER_NEAR, 592, 0, 120, FACING_SOUTHEAST, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(SPRITE_OLD_WOMAN_WITH_HEADBAND, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 552, 0, 136, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
     ACTOR_PLACEMENT(SPRITE_WOMAN_WITH_TEAL_HEADBAND, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 416, 0, 360, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
     ACTOR_PLACEMENT(SPRITE_INNKEEPER, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 144, 0, 360, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
     ACTOR_PLACEMENT(SPRITE_INN_WORKER, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 216, 0, 376, FACING_SOUTHWEST, TALK_FACING_PARTY_AND_BACK, 0),
-    ACTOR_PLACEMENT(112, CONDITION_ALWAYS, MOVEMENT_TYPE_WANDER_NEAR, 128, 0, 620, FACING_SOUTH, TALK_FACING_PARTY, 0),
+    ACTOR_PLACEMENT(SPRITE_OLD_MAN_IN_GREY_ROBE, CONDITION_ALWAYS, MOVEMENT_TYPE_WANDER_NEAR, 128, 0, 620, FACING_SOUTH, TALK_FACING_PARTY, 0),
     {SCENE_TABLE_END},
 };
 
+/// Haze's islet's actors, in ApojiiIslandsHazeActorId's order.
 struct ActorPlacement gApojiiIslands_HazePlacements[] = {
     ACTOR_PLACEMENT(SPRITE_TIGHTROPE_POST, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 264, 0, 280, FACING_NORTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(SPRITE_TIGHTROPE_POST, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 216, 0, 280, FACING_NORTH, TALK_FACING_KEEP, 0),
@@ -1201,18 +1273,23 @@ struct ActorPlacement gApojiiIslands_HazePlacements[] = {
     {SCENE_TABLE_END},
 };
 
+/// The scene's other rooms' triggers: none.
 struct Trigger gApojiiIslands_Triggers[] = {
     {TRIGGER_TABLE_END},
 };
 
+/// Frames the falls' cycle has run; -1 until it loads the palettes.
 s32 gApojiiIslands_FallsCycleFrame = -1;
 
+/// Frames the sea's cycle has run; -1 until it loads the palettes.
 s32 gApojiiIslands_SeaCycleFrame = -1;
 
+/// Frames the Aqua Stone's cycle has run; -1 until it loads the palette.
 s32 gApojiiIslands_StoneCycleFrame[] = {
     -1,
 };
 
+/// The village's exits, doors, talks and Psynergy.
 struct Trigger gApojiiIslands_VillageTriggers[] = {
     {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
     {TRIGGER_EXIT, 2, CONDITION_ALWAYS, 2},
@@ -1254,6 +1331,7 @@ struct Trigger gApojiiIslands_VillageTriggers[] = {
     {TRIGGER_TABLE_END},
 };
 
+/// The houses' exits, doors, talks and Psynergy.
 struct Trigger gApojiiIslands_ShopsTriggers[] = {
     {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
     {TRIGGER_EXIT, 2, CONDITION_ALWAYS, 2},
@@ -1288,6 +1366,8 @@ struct Trigger gApojiiIslands_ShopsTriggers[] = {
     {TRIGGER_TABLE_END},
 };
 
+/// Haze's islet's ways into the water, its ledge, Haze, Lash on the tightrope
+/// and Cyclone on the bushes.
 struct Trigger gApojiiIslands_HazeTriggers[] = {
     {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
     {TRIGGER_EXIT, 2, CONDITION_ALWAYS, 2},
@@ -1296,9 +1376,9 @@ struct Trigger gApojiiIslands_HazeTriggers[] = {
     {TRIGGER_STEP, 5, CONDITION_ALWAYS, EVENT(Leader_SinkAway)},
     {STEP_TRIGGER_WALKING_INTO(FACING_SOUTH), 40, CONDITION_ALWAYS, EVENT(ApojiiIslands_JumpDownLedge)},
     {TRIGGER_TALK, ACTOR_HAZE, CONDITION_ALWAYS, EVENT(ApojiiIslands_HazeJoinsParty)},
-    {PSYNERGY_ON_ACTOR(ABILITY_LASH), ACTOR_TIGHTROPE_POST_A, FLAG_SCENE_TEMP_00, 0},
-    {PSYNERGY_PHASE_ON_CELL(ABILITY_CYCLONE, PSYNERGY_PHASE_ACTS), 21, CONDITION_ALWAYS, EVENT(ApojiiIslands_ClearShopsBushes)},
-    {PSYNERGY_PHASE_ON_CELL(ABILITY_CYCLONE, PSYNERGY_PHASE_ACTS), 22, CONDITION_ALWAYS, EVENT(ApojiiIslands_ClearShopsSmallBush)},
+    {PSYNERGY_ON_ACTOR(ABILITY_LASH), ACTOR_TIGHTROPE_POST_A, FLAG_HAZE_ROPE_TIED, 0},
+    {PSYNERGY_PHASE_ON_CELL(ABILITY_CYCLONE, PSYNERGY_PHASE_ACTS), 21, CONDITION_ALWAYS, EVENT(ApojiiIslands_ClearHazeBushes)},
+    {PSYNERGY_PHASE_ON_CELL(ABILITY_CYCLONE, PSYNERGY_PHASE_ACTS), 22, CONDITION_ALWAYS, EVENT(ApojiiIslands_ClearHazeSmallBush)},
     {TRIGGER_TABLE_END},
 };
 #undef COPY_PICTURE

@@ -142,9 +142,11 @@ const s16 *Scene_GetActorPlacements(void) {
   return gChampa_ActorPlacements;
 }
 
+/// The leader's update while it walks into one of the two cliff doorways: it
+/// shrinks by 3/128 of its size each frame.
 void Champa_ShrinkIntoDoorway(struct Actor *object) {
-  object->scaleX += -1536;
-  object->scaleY += -1536;
+  object->scaleX += -(FIXED_ONE * 3 / 128);
+  object->scaleY += -(FIXED_ONE * 3 / 128);
 }
 
 /// Stepping into a door: it opens, the leader walks through and the scene
@@ -172,12 +174,15 @@ void Champa_OpenDoorAndEnter(const void *warp, s32 door, s32 mode) {
 
 void TilesetAnim_Resume(s32 a);
 
+/// Walking into a door: the cliff doorways (1 and 2) shrink the leader as it
+/// goes; door 7 starts its animated tiles and edits the map as it opens; the
+/// others open plainly.
 void Champa_EnterDoor(s32 door) {
   s32 *table = gChampa_Doors;
 
   if ((u32)(door - 1) <= 1)
-    *(void **)((u8 *)Actor_Get(gMainRoutineWork.leaderActorId) + 108) =
-        Champa_ShrinkIntoDoorway;
+    Actor_Get(gMainRoutineWork.leaderActorId)->update =
+        (void (*)(void))Champa_ShrinkIntoDoorway;
   if (door == 7) {
     TilesetAnim_Resume(8);
     Champa_OpenDoorAndEnter(table, 7, 1);
@@ -186,6 +191,8 @@ void Champa_EnterDoor(s32 door) {
   }
 }
 
+/// Reveal by the six gravestones: the Viking Helm's chest stands out of the
+/// ground.
 void Champa_RevealTreasureSpot(void) {
 
   TreasureSpot_SetPosition(ACTOR_VIKING_HELM_CHEST, toFIXED(392), toFIXED(568));
@@ -193,12 +200,15 @@ void Champa_RevealTreasureSpot(void) {
   Actor_Get(ACTOR_VIKING_HELM_CHEST)->y.fixed = toFIXED(32);
 }
 
+/// Reveal ends: the Viking Helm's chest goes back under the ground.
 void Champa_HideTreasureSpot(void) {
   TreasureSpot_SetPosition(ACTOR_VIKING_HELM_CHEST, 0, 0);
 }
 
 #include "text/msg_ids.h"
 
+/// Once Briggs has sailed, two sailors spot Felix and run to warn Briggs, who
+/// flees from his house.
 void Champa_SailorsSpotFelix(void) {
 
   Event_SetFlag(FLAG_SAILORS_SPOTTED_FELIX);
@@ -276,6 +286,8 @@ void Champa_SailorsSpotFelix(void) {
   Event_End();
 }
 
+/// The boy practicing Psynergy stands up straight, tells of Eoleo's strange
+/// ability and goes back to squashing himself.
 void Champa_TalkToPracticingBoy(s32 actor) {
   struct Actor *object = Actor_Get(actor);
 
@@ -288,6 +300,8 @@ void Champa_TalkToPracticingBoy(s32 actor) {
   Actor_SetMovementType(object, MOVEMENT_TYPE_SQUASH);
 }
 
+/// A villager asks whether the party came to Champa for Briggs's treasure, and
+/// answers the yes or the no.
 void Champa_TellOfBriggsTreasure(s32 actor) {
   s32 msg = (s32)&MsgChampaHeyYouJustCameTo;
 
@@ -304,6 +318,8 @@ void Champa_TellOfBriggsTreasure(s32 actor) {
   Event_ShowMessage(actor, 0);
 }
 
+/// The old man asks whether the party has been to Ankohl Ruins, or, once Briggs
+/// has sailed, whether they would know why he took so long to return.
 void Champa_AskAboutAnkohlRuins(s32 actor) {
   if (Event_GetFlag(FLAG_BRIGGS_SAILED_FROM_ALHAFRA)) {
     FieldEvent_SetMessageId((s32)MsgChampaBriggsTookALongTime);
@@ -334,7 +350,9 @@ void Champa_AskAboutAnkohlRuins(s32 actor) {
   }
 }
 
-void Champa_TellOfObaba(s32 a0) {
+/// A villager tells of Obaba, the last of the Ankohl, the first time, and then
+/// of how she acts since Briggs came back.
+void Champa_TellOfObaba(s32 actor) {
 
   if (!Event_GetFlag(FLAG_TOLD_OF_OBABA)) {
     Event_SetFlag(FLAG_TOLD_OF_OBABA);
@@ -343,9 +361,11 @@ void Champa_TellOfObaba(s32 a0) {
     FieldEvent_SetMessageId((s32)MsgChampaYoudThinkObabaWouldBe);
   }
   // "You'd think Obaba would be glad that Briggs was back. She acts like..."
-  Event_ShowMessage(a0, 0);
+  Event_ShowMessage(actor, 0);
 }
 
+/// The sailor tells strangers that Champa's sailors are not welcoming, and
+/// answers the yes or the no.
 void Champa_SailorsNotWelcome(s32 actor) {
   s32 msg = (s32)&MsgChampaTheChampaSailorsArentWell;
 
@@ -362,16 +382,20 @@ void Champa_SailorsNotWelcome(s32 actor) {
   Event_ShowMessage(actor, 0);
 }
 
-void Champa_TakeFeizhisGift(s32 a0) {
+/// Feizhi's gift taken: the Golden Ring, which stays if the party cannot carry
+/// it.
+void Champa_TakeFeizhisGift(s32 actor) {
 
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
-  if (!Value3(Event_PickUpItem, a0, 0x19f, -1)) {
+  if (!Value3(Event_PickUpItem, actor, ITEM_GOLDEN_RING, -1)) {
     Event_ClearFlag(FLAG_FEIZHIS_GIFT_WAITING);
   }
   Event_End();
 }
 
+/// Sets Feizhi's gift, the Golden Ring, where she left it, and marks it
+/// waiting.
 void Champa_FeizhiHoldsHerGift(void) {
   FieldActor_ShowItemIconById(ACTOR_FEIZHIS_GIFT, ITEM_GOLDEN_RING);
   {
@@ -383,6 +407,9 @@ void Champa_FeizhiHoldsHerGift(void) {
   Event_SetFlag(FLAG_FEIZHIS_GIFT_WAITING);
 }
 
+/// With Hsu rescued in The Broken Seal's data, Feizhi comes to Champa taking
+/// Felix for Isaac, talks with Kraden and leaves her gift; from patch 1 not
+/// once Isaac is in the party.
 void Champa_FeizhiArrives(void) {
 #if TLA_PATCH_1
 #endif
@@ -417,8 +444,8 @@ void Champa_FeizhiArrives(void) {
       Actor_WalkToAndWait(ACTOR_FEIZHI, 314, 624);
       Actor_ShowEmote(ACTOR_FEIZHI, EMOTE_IN_FRONT | EMOTE_QUESTION, 30);
       // "Isaac, is it you? Do my eyes deceive me?"
-      Event_OpenMessage(29, 0);
-      if (!FieldEvent_AskYesNoWithActorAnimation(4, 0)) {
+      Event_OpenMessage(ACTOR_FEIZHI, 0);
+      if (!FieldEvent_AskYesNoWithActorAnimation(ACTOR_FELIX, 0)) {
         FieldEvent_ShowMessageThenWait(ACTOR_FEIZHI, 0, 5);
         gFieldWork->message = (gFieldWork->message + 1);
       } else {
@@ -517,7 +544,7 @@ void Champa_FeizhiArrives(void) {
       Actor_SetAnimationAndWait(ACTOR_FELIX, ANIM_NOD);
       FieldEvent_Wait(30);
       Actor_SetAnimation(ACTOR_KRADEN_MEETING_FEIZHI, 2);
-      Actor_HeadToward(30, 4);
+      Actor_HeadToward(ACTOR_KRADEN_MEETING_FEIZHI, ACTOR_FELIX);
       FieldActor_WaitForMoveById(ACTOR_KRADEN_MEETING_FEIZHI);
       Actor_SetPosition(ACTOR_KRADEN_MEETING_FEIZHI, 0, 0);
       Actor_SetPosition(ACTOR_FEIZHI, 0, 0);
@@ -532,6 +559,8 @@ const struct Trigger *Scene_GetTriggers(void) {
   return gChampa_Triggers;
 }
 
+/// Every other frame, turns colours 1 to 14 of background palettes 3, 4 and 5
+/// one place on.
 void Champa_RotatePaletteColors(void) {
   if ((gFrameCount & 1) == 0) {
     volatile u16 *palette;
@@ -615,6 +644,7 @@ extern u32 gChampa_GlareSparkScript[];
 
 void Actor_StartScript(struct Actor *object, const void *script);
 
+/// A spark at a point, its sprite turned to `angle`, for `frames` frames.
 void Champa_SpawnGlareSpark(s32 x, s32 y, s32 z, s32 angle, s32 frames) {
   s16 value = angle;
   struct Actor *object;
@@ -626,21 +656,18 @@ void Champa_SpawnGlareSpark(s32 x, s32 y, s32 z, s32 angle, s32 frames) {
     Actor_SelectAnimation(object, 1);
     Actor_StartScript(object, gChampa_GlareSparkScript);
     object->motionFlags = 0;
-    ((struct {
-      u8 unk00[94];
-      u16 frames;
-    } *)object)
-        ->frames = frames;
+    object->wait = frames;
 
     sprite->flags = 0;
     sprite->rotation = value;
   }
 }
 
+/// Two sparks over each of the two actors in turn, as Jenna and Sheba glare.
 void Champa_JennaAndShebaGlare(s32 firstId, s32 secondId) {
   struct Actor *first = Actor_Get(firstId);
   struct Actor *second = Actor_Get(secondId);
-  s32 rise = 0x1c0000;
+  s32 rise = toFIXED(28);
   FIXED y;
 
   y = first->y.fixed;
@@ -654,7 +681,7 @@ void Champa_JennaAndShebaGlare(s32 firstId, s32 secondId) {
   Event_PlaySound(SE_LIGHT_APPEAR);
   FieldEvent_Wait(15);
   Champa_SpawnGlareSpark(first->x.fixed, first->y.fixed + rise, first->z.fixed,
-                         0x1000, 15);
+                         toFIXED(1) / 16, 15);
   Event_PlaySound(SE_LIGHT_APPEAR);
   FieldEvent_Wait(15);
   Champa_SpawnGlareSpark(second->x.fixed, second->y.fixed + rise,
@@ -692,18 +719,21 @@ void Champa_ShowTwoMessages(s32 first, s32 firstX, s32 firstY,
   System_Wait(1);
 }
 
-void Champa_CloseTwoMessages(s32 a0, s32 a1) {
-  s32 t0;
-  s32 t1;
+/// Closes the two windows Champa_ShowTwoMessages opened.
+void Champa_CloseTwoMessages(s32 first, s32 second) {
+  s32 firstSprite;
+  s32 secondSprite;
 
-  t0 = Actor_GetSpriteById(a0);
-  t1 = Actor_GetSpriteById(a1);
-  Window_CloseMatchingId(t0);
-  Window_CloseMatchingId(t1);
+  firstSprite = Actor_GetSpriteById(first);
+  secondSprite = Actor_GetSpriteById(second);
+  Window_CloseMatchingId(firstSprite);
+  Window_CloseMatchingId(secondSprite);
 }
 
+/// Walking up to Obaba's cliff sets FLAG_NEAR_THE_CLIFF, so Alex waits there.
 void Champa_ApproachTheCliff(void) { GameFlag_Set(FLAG_NEAR_THE_CLIFF); }
 
+/// Shows the speaker's message by its actor (FieldMessage_ShowAtActor).
 static __inline__ void Champa_MessageOpen(s32 speaker, s32 flags) {
   FieldMessage_ShowAtActor(speaker, flags);
 }
@@ -759,8 +789,8 @@ void Champa_MeetAlex(void) {
   // "A Water Adept?"
   Event_ShowMessage(ACTOR_PIERS, 0);
   Actor_ShowEmote(ACTOR_ALEX, EMOTE_IN_FRONT | EMOTE_QUESTION, 30);
-  Champa_MessageOpen(0x2019, 0);
-  if (FieldEvent_AskYesNoWithActorAnimation(4, 0) == 0) {
+  Champa_MessageOpen(SPEAKER_PORTRAIT_RIGHT | ACTOR_ALEX, 0);
+  if (FieldEvent_AskYesNoWithActorAnimation(ACTOR_FELIX, 0) == 0) {
     FieldEvent_Wait(15);
     Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | ACTOR_ALEX, 0);
     gFieldWork->message = (gFieldWork->message + 1);
@@ -789,7 +819,7 @@ void Champa_MeetAlex(void) {
   Actor_FaceDirection(ACTOR_SHEBA, FACING_NORTHEAST, 0);
   Actor_FaceDirection(ACTOR_PIERS, FACING_EAST, 0);
   Actor_FaceDirectionAndWait(ACTOR_KRADEN, FACING_EAST);
-  if (FieldEvent_AskYesNoWithActorAnimation(4, 0) == 0) {
+  if (FieldEvent_AskYesNoWithActorAnimation(ACTOR_FELIX, 0) == 0) {
     FieldEvent_Wait(20);
     Actor_SetAnimationAndWait(ACTOR_SHEBA, ANIM_NOD);
     FieldEvent_Wait(10);
@@ -1331,7 +1361,7 @@ void Champa_MeetAlex(void) {
   Actor_FaceDirection(ACTOR_JENNA, FACING_WEST, 0);
   Actor_FaceDirectionAndWait(ACTOR_SHEBA, FACING_EAST + 1);
   FieldEvent_Wait(25);
-  Champa_JennaAndShebaGlare(5, 6);
+  Champa_JennaAndShebaGlare(ACTOR_JENNA, ACTOR_SHEBA);
   Actor_ShowEmote(ACTOR_JENNA, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
   Actor_ShowEmote(ACTOR_SHEBA, EMOTE_IN_FRONT | EMOTE_QUESTION, 40);
   Actor_FaceDirection(ACTOR_JENNA, FACING_WEST, 0);
@@ -1339,7 +1369,7 @@ void Champa_MeetAlex(void) {
   FieldEvent_Wait(10);
   Actor_SetAnimation(ACTOR_JENNA, ANIM_SHAKE_HEAD);
   Actor_SetAnimationAndWait(ACTOR_SHEBA, ANIM_SHAKE_HEAD);
-  FieldEvent_ShowTwoMessagesAndWait(ACTOR_JENNA, 5, 5, 0x12, 8, 6, 6, 0xe, 8, 9,
+  FieldEvent_ShowTwoMessagesAndWait(ACTOR_JENNA, 5, 5, 18, 8, 6, 6, 14, 8, 9,
                                     0);
   Actor_SetAnimationAndWait(ACTOR_KRADEN, 3);
   Event_ShowMessage(ACTOR_KRADEN, 0);
@@ -1354,7 +1384,7 @@ void Champa_MeetAlex(void) {
   Actor_ShowEmote(ACTOR_SHEBA, EMOTE_IN_FRONT | EMOTE_SCOWL, 30);
   Champa_ShowTwoMessages(5, 8, 5, 0x12, 8, 6, 8, 0xe, 8, 9, 0);
   Actor_FaceDirectionAndWait(ACTOR_FELIX, FACING_SOUTHWEST);
-  if (FieldEvent_AskYesNoWithActorAnimation(4, 0) == 0) {
+  if (FieldEvent_AskYesNoWithActorAnimation(ACTOR_FELIX, 0) == 0) {
     Champa_CloseTwoMessages(5, 6);
     FieldEvent_Wait(15);
     Actor_ShowEmote(ACTOR_KRADEN, EMOTE_IN_FRONT | EMOTE_WINCE, 30);
@@ -1433,7 +1463,7 @@ void Champa_MeetAlex(void) {
   Actor_SetPosition(ACTOR_PIERS, 0, 0);
   Actor_SetSpeed(ACTOR_KRADEN, 1.2);
   Actor_SetAnimation(ACTOR_KRADEN, 2);
-  Actor_HeadToward(28, gMainRoutineWork.leaderActorId);
+  Actor_HeadToward(ACTOR_KRADEN, gMainRoutineWork.leaderActorId);
   FieldActor_WaitForMoveById(ACTOR_KRADEN);
   Actor_SetPosition(ACTOR_KRADEN, 0, 0);
   Event_End();
@@ -1461,24 +1491,25 @@ u32 gSceneExits[] = {
 };
 
 // clang-format off
+/// Champa's actors, in ChampaActorId's order.
 struct ActorPlacement gChampa_ActorPlacements[] = {
     ACTOR_PLACEMENT(SPRITE_TIGHTROPE_POST, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 200, 0, 408, FACING_SOUTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(SPRITE_TIGHTROPE_POST, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 344, 0, 408, FACING_SOUTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE),
     ACTOR_PLACEMENT(SPRITE_RED_FLAG, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 240, 0, 456, FACING_SOUTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(SPRITE_RED_FLAG, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 368, 0, 456, FACING_SOUTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE),
     ACTOR_PLACEMENT(SPRITE_SUNSHINES_CHILD, CONDITION_ALWAYS, MOVEMENT_TYPE_WANDER, 296, 0, 408, FACING_WEST, TALK_FACING_PARTY, 0),
-    ACTOR_PLACEMENT(116, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 168, 0, 392, FACING_SOUTH_SOUTHEAST, TALK_FACING_PARTY_AND_BACK, 0),
-    ACTOR_PLACEMENT(114, CONDITION_ALWAYS, MOVEMENT_TYPE_WANDER, 328, 0, 312, FACING_SOUTH_SOUTHWEST, TALK_FACING_PARTY, 0),
-    ACTOR_PLACEMENT(128, CONDITION_ALWAYS, MOVEMENT_TYPE_WANDER, 432, 0, 312, FACING_WEST, TALK_FACING_PARTY, 0),
-    ACTOR_PLACEMENT(112, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 328, 0, 280, FACING_WEST, TALK_FACING_PARTY_AND_BACK, 0),
-    ACTOR_PLACEMENT(113, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 312, 0, 280, FACING_EAST, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(SPRITE_WOMAN_IN_PURPLE_SKIRT, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 168, 0, 392, FACING_SOUTH_SOUTHEAST, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(SPRITE_MAN_WITH_CURLY_HAIR, CONDITION_ALWAYS, MOVEMENT_TYPE_WANDER, 328, 0, 312, FACING_SOUTH_SOUTHWEST, TALK_FACING_PARTY, 0),
+    ACTOR_PLACEMENT(SPRITE_WOMAN_IN_GREEN_SKIRT, CONDITION_ALWAYS, MOVEMENT_TYPE_WANDER, 432, 0, 312, FACING_WEST, TALK_FACING_PARTY, 0),
+    ACTOR_PLACEMENT(SPRITE_OLD_MAN_IN_GREY_ROBE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 328, 0, 280, FACING_WEST, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(SPRITE_OLD_WOMAN_WITH_HEADBAND, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 312, 0, 280, FACING_EAST, TALK_FACING_PARTY_AND_BACK, 0),
     ACTOR_PLACEMENT(SPRITE_BOY_WITH_BLACK_HAIR, CONDITION_ALWAYS, 8, 440, 0, 392, FACING_EAST, TALK_FACING_PARTY_AND_BACK, 0),
     ACTOR_PLACEMENT(SPRITE_GIRL_WITH_TOPKNOT, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 440, 0, 408, FACING_EAST, TALK_FACING_PARTY, 0),
     ACTOR_PLACEMENT(SPRITE_CHAMPA_CREWMAN, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 216, 0, 280, FACING_EAST, TALK_FACING_PARTY_AND_BACK, 0),
     ACTOR_PLACEMENT(SPRITE_CHAMPA_CREWMAN, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 216, 0, 296, FACING_EAST, TALK_FACING_PARTY_AND_BACK, 0),
     ACTOR_PLACEMENT(SPRITE_CHAMPA_CREWMAN, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 248, 0, 280, FACING_WEST, TALK_FACING_PARTY_AND_BACK, 0),
     ACTOR_PLACEMENT(SPRITE_ROCK, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 456, 0, 392, FACING_WEST, TALK_FACING_PARTY_AND_BACK, 0),
-    ACTOR_PLACEMENT(116, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 904, 0, 344, FACING_SOUTH_SOUTHEAST, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(SPRITE_WOMAN_IN_PURPLE_SKIRT, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 904, 0, 344, FACING_SOUTH_SOUTHEAST, TALK_FACING_PARTY_AND_BACK, 0),
     ACTOR_PLACEMENT(SPRITE_ALEX, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, -56, 0, -56, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
     ACTOR_PLACEMENT(SPRITE_KARST, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, -56, 0, -56, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
     ACTOR_PLACEMENT(SPRITE_AGATIO, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, -56, 0, -56, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
@@ -1488,28 +1519,30 @@ struct ActorPlacement gChampa_ActorPlacements[] = {
     ACTOR_PLACEMENT(SPRITE_PIERS, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, -56, 0, -56, FACING_NORTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(SPRITE_FEIZHI, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_NORTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(SPRITE_KRADEN, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_NORTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(489, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_NORTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_UNSEEN_MARKER, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_NORTH, TALK_FACING_KEEP, 0),
     {SCENE_TABLE_END},
 };
 
+/// Champa's actors once Briggs has sailed from Alhafra: the sailors who spot
+/// Felix and Briggs too.
 struct ActorPlacement gChampa_ActorPlacementsOnceBriggsSailed[] = {
     ACTOR_PLACEMENT(SPRITE_TIGHTROPE_POST, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 200, 0, 408, FACING_SOUTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(SPRITE_TIGHTROPE_POST, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 344, 0, 408, FACING_SOUTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE),
     ACTOR_PLACEMENT(SPRITE_RED_FLAG, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 240, 0, 456, FACING_SOUTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(SPRITE_RED_FLAG, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 368, 0, 456, FACING_SOUTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE),
     ACTOR_PLACEMENT(SPRITE_SUNSHINES_CHILD, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 264, 0, 424, FACING_SOUTH_SOUTHEAST, TALK_FACING_PARTY_AND_BACK, 0),
-    ACTOR_PLACEMENT(116, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 168, 0, 392, FACING_SOUTH_SOUTHEAST, TALK_FACING_PARTY_AND_BACK, 0),
-    ACTOR_PLACEMENT(114, CONDITION_ALWAYS, MOVEMENT_TYPE_WANDER, 328, 0, 312, FACING_SOUTH_SOUTHWEST, TALK_FACING_PARTY, 0),
-    ACTOR_PLACEMENT(128, CONDITION_ALWAYS, MOVEMENT_TYPE_WANDER, 432, 0, 312, FACING_WEST, TALK_FACING_PARTY, 0),
-    ACTOR_PLACEMENT(112, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 328, 0, 280, FACING_WEST, TALK_FACING_PARTY_AND_BACK, 0),
-    ACTOR_PLACEMENT(113, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 312, 0, 280, FACING_EAST, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(SPRITE_WOMAN_IN_PURPLE_SKIRT, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 168, 0, 392, FACING_SOUTH_SOUTHEAST, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(SPRITE_MAN_WITH_CURLY_HAIR, CONDITION_ALWAYS, MOVEMENT_TYPE_WANDER, 328, 0, 312, FACING_SOUTH_SOUTHWEST, TALK_FACING_PARTY, 0),
+    ACTOR_PLACEMENT(SPRITE_WOMAN_IN_GREEN_SKIRT, CONDITION_ALWAYS, MOVEMENT_TYPE_WANDER, 432, 0, 312, FACING_WEST, TALK_FACING_PARTY, 0),
+    ACTOR_PLACEMENT(SPRITE_OLD_MAN_IN_GREY_ROBE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 328, 0, 280, FACING_WEST, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(SPRITE_OLD_WOMAN_WITH_HEADBAND, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 312, 0, 280, FACING_EAST, TALK_FACING_PARTY_AND_BACK, 0),
     ACTOR_PLACEMENT(SPRITE_BOY_WITH_BLACK_HAIR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 328, 0, 400, FACING_SOUTH_SOUTHWEST, TALK_FACING_PARTY, 0),
     ACTOR_PLACEMENT(SPRITE_GIRL_WITH_TOPKNOT, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 424, 0, 392, FACING_WEST, TALK_FACING_PARTY, 0),
     ACTOR_PLACEMENT(SPRITE_CHAMPA_CREWMAN, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 264, 0, 392, FACING_SOUTH_SOUTHEAST, TALK_FACING_PARTY_AND_BACK, 0),
     ACTOR_PLACEMENT(SPRITE_CHAMPA_CREWMAN, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 272, 0, 472, FACING_NORTH_NORTHWEST, TALK_FACING_PARTY_AND_BACK, 0),
     ACTOR_PLACEMENT(SPRITE_CHAMPA_CREWMAN, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 320, 0, 472, FACING_NORTH_NORTHEAST, TALK_FACING_PARTY_AND_BACK, 0),
     ACTOR_PLACEMENT(SPRITE_ROCK, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 456, 0, 392, FACING_WEST, TALK_FACING_PARTY_AND_BACK, 0),
-    ACTOR_PLACEMENT(116, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 904, 0, 344, FACING_SOUTH_SOUTHEAST, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(SPRITE_WOMAN_IN_PURPLE_SKIRT, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 904, 0, 344, FACING_SOUTH_SOUTHEAST, TALK_FACING_PARTY_AND_BACK, 0),
     ACTOR_PLACEMENT(SPRITE_ALEX, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, -56, 0, -56, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
     ACTOR_PLACEMENT(SPRITE_KARST, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, -56, 0, -56, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
     ACTOR_PLACEMENT(SPRITE_AGATIO, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, -56, 0, -56, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
@@ -1519,23 +1552,27 @@ struct ActorPlacement gChampa_ActorPlacementsOnceBriggsSailed[] = {
     ACTOR_PLACEMENT(SPRITE_PIERS, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, -56, 0, -56, FACING_NORTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(SPRITE_FEIZHI, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_NORTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(SPRITE_KRADEN, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_NORTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(489, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_NORTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_UNSEEN_MARKER, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_NORTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(SPRITE_CHAMPA_CREWMAN, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 184, 0, 296, FACING_NORTH_NORTHWEST, TALK_FACING_PARTY_THEN_WATCH, 0),
     ACTOR_PLACEMENT(SPRITE_CHAMPA_CREWMAN, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 152, 0, 296, FACING_NORTH_NORTHEAST, TALK_FACING_PARTY_THEN_WATCH, 0),
     ACTOR_PLACEMENT(SPRITE_BRIGGS, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 168, 0, 264, FACING_SOUTH_SOUTHWEST, TALK_FACING_PARTY_AND_BACK, 0),
     {SCENE_TABLE_END},
 };
 
+/// A door's map edit: none.
 s16 gChampa_NoDoorEdit[] = {
     -1,
 };
 
+/// Door 7's map edit as it opens.
 s16 gChampa_DoorEdit[] = {
     36, 2, 2, 2, 6, 36, 4, 2,
     2, 6, -1,
 };
 // clang-format on
 
+/// The doors' map edits for Champa_OpenDoorAndEnter: door 7's, then the
+/// others'.
 s32 gChampa_Doors[] = {
     (s32)gChampa_DoorEdit,
     0x9001d,
@@ -1543,6 +1580,7 @@ s32 gChampa_Doors[] = {
     0,
 };
 
+/// Champa's exits, doors, talks, Mind Read and Psynergy.
 struct Trigger gChampa_Triggers[] = {
     {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 1, CONDITION_ALWAYS,
      EVENT(Champa_EnterDoor)},
@@ -1627,6 +1665,7 @@ struct Trigger gChampa_Triggers[] = {
     {TRIGGER_TABLE_END},
 };
 
+/// Champa's triggers once Briggs has sailed, the sailors' warning among them.
 struct Trigger gChampa_TriggersOnceBriggsSailed[] = {
     {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 1, CONDITION_ALWAYS,
      EVENT(Champa_EnterDoor)},
@@ -1713,6 +1752,7 @@ struct Trigger gChampa_TriggersOnceBriggsSailed[] = {
     {TRIGGER_TABLE_END},
 };
 
+/// A glare spark's script: it is released when its wait runs out.
 u32 gChampa_GlareSparkScript[] = {
     SC_RELEASE,
 };

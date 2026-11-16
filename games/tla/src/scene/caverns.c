@@ -28,6 +28,8 @@
 /// block's path raised while it moves.
 #define FLAG_ANGARA_BLOCKS_STACKED FLAG_SCENE_TEMP_12
 #define FLAG_ANGARA_CELLS_RAISED FLAG_SCENE_TEMP_13
+/// Indra Cavern: set once Lash has tied the rope between its posts.
+#define FLAG_INDRA_ROPE_TIED FLAG_SCENE_TEMP_00
 
 extern s16 gCaverns_AngaraBlocks[];
 extern s16 gCaverns_OseniaRegions[];
@@ -42,12 +44,13 @@ extern struct Trigger gCaverns_AngaraTriggers[];
 void Caverns_PlaceAngaraBlocks(const s16 *data);
 void Caverns_PrepareOsenia(void);
 void Caverns_PrepareAtteka(void);
-s32 MapGrid_CheckCollision(struct Actor *object, s16 *position);
+s32 MapGrid_CheckCollision(struct Actor *object,
+                           struct FieldCoordinate *position);
 void Caverns_InitializeIndra(void);
 void Caverns_PrepareAngara(void);
 void Caverns_InitializeAngara(void);
 /// Jumps the leader across to the position given when nothing is in the way.
-s32 Caverns_JumpAcross(struct Actor *object, s16 *position);
+s32 Caverns_JumpAcross(struct Actor *object, struct FieldCoordinate *position);
 #include "flags.h"
 #include "battle/battle.h"
 #include "field/field.h"
@@ -137,27 +140,23 @@ void Caverns_PlaceAngaraBlocks(const s16 *data) {
   s32 height;
   s32 cell;
 
-  if (*ids == 0xffff)
-    goto done;
-loop:
-  object = Actor_GetById(*ids);
-  object->motionFlags = 0;
-  object->collisionFlags = 0;
-  object->bounce = 0;
-  Actor_SetSpriteFlags((struct Actor *)object, 0);
-  height =
-      (Map_GetTerrainHeight(0, object->x.fixed, object->z.fixed) >> 19) + 2;
-  MapGrid_SetCellHeight(object->x.fixed, object->z.fixed, 0, height);
-  MapGrid_SetCellHeight(object->x.fixed, object->z.fixed, 2, height);
-  cell = MapCell_GetAttributes(0, FIELD_CELL(object->x.fixed),
-                               FIELD_CELL(object->z.fixed));
-  object->riseBaseY = cell;
-  MapCell_SetAttributes(0, FIELD_CELL(object->x.fixed),
-                        FIELD_CELL(object->z.fixed), cell | 0x80);
-  ids++;
-  if (*ids != 0xffff)
-    goto loop;
-done:
+  while (*ids != 0xffff) {
+    object = Actor_GetById(*ids);
+    object->motionFlags = 0;
+    object->collisionFlags = 0;
+    object->bounce = 0;
+    Actor_SetSpriteFlags((struct Actor *)object, 0);
+    height =
+        (Map_GetTerrainHeight(0, object->x.fixed, object->z.fixed) >> 19) + 2;
+    MapGrid_SetCellHeight(object->x.fixed, object->z.fixed, 0, height);
+    MapGrid_SetCellHeight(object->x.fixed, object->z.fixed, 2, height);
+    cell = MapCell_GetAttributes(0, FIELD_CELL(object->x.fixed),
+                                 FIELD_CELL(object->z.fixed));
+    object->riseBaseY = cell;
+    MapCell_SetAttributes(0, FIELD_CELL(object->x.fixed),
+                          FIELD_CELL(object->z.fixed), cell | 0x80);
+    ids++;
+  }
   if (GameFlag_Get(FLAG_KEEP_PARTY_POSITION)) {
     wait(1);
     leader->y.fixed = leader->groundHeight =
@@ -168,6 +167,7 @@ done:
   }
 }
 
+/// The terrain height of layer 2 at a point.
 static __inline__ s32 GetHeight(s32 x, s32 z) {
   return Map_GetTerrainHeight(2, x, z);
 }
@@ -236,19 +236,15 @@ void Caverns_StartMovingAngaraBlock(void) {
     position[1] = leader->y.fixed;
     position[2] = leader->z.fixed;
     Vector_AddPolarOffset(toFIXED(16), angle, position);
-    if (*ids == 0xffff)
-      goto search_done;
-  search:
-    object = Actor_GetById(*ids);
-    if (FIELD_CELL(position[0]) == FIELD_CELL(object->x.fixed) &&
-        position[1] / toFIXED(1) == object->y.fixed / toFIXED(1) &&
-        position[2] >> 20 == FIELD_CELL(object->z.fixed))
-      goto search_done;
-    ids++;
-    object = NULL;
-    if (*ids != 0xffff)
-      goto search;
-  search_done:
+    while (*ids != 0xffff) {
+      object = Actor_GetById(*ids);
+      if (FIELD_CELL(position[0]) == FIELD_CELL(object->x.fixed) &&
+          position[1] / toFIXED(1) == object->y.fixed / toFIXED(1) &&
+          position[2] >> 20 == FIELD_CELL(object->z.fixed))
+        break;
+      ids++;
+      object = NULL;
+    }
     if (object == NULL)
       return;
     work->movedBlock = object;
@@ -331,10 +327,11 @@ void Caverns_FinishMovingAngaraBlock(void) {
       object->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
       REG_BLDALPHA = BLEND_ALPHA(0, 16);
       blendControl = (u16 *)&REG_BLDCNT;
-      *blendControl = 0x3f10;
+      *blendControl = BLDCNT_TGT1_OBJ | BLDCNT_TGT2_ALL;
       sum = kind + 2;
       spawned = OverlayObject_PrepareObject(object->x.fixed, 0,
-                                            object->z.fixed + (sum << 20), 312);
+                                            object->z.fixed + (sum << 20),
+                                            SPRITE_YELLOW_BLOCK);
       Sound_Play(SE_DUST_PUFF);
       OverlayObject_WaitUntilIdle(object);
       OverlayObject_WaitUntilIdle(object);
@@ -352,8 +349,7 @@ void Caverns_FinishMovingAngaraBlock(void) {
       options.startScaleX = FIXED_ONE * 4 / 5;
       options.startScaleY = FIXED_ONE * 4 / 5;
       i = 0;
-    loop:
-      {
+      do {
         angle = i << 12;
         velocity[0] = Trig_Cos(angle) * 2;
         velocity[1] = 0;
@@ -365,11 +361,11 @@ void Caverns_FinishMovingAngaraBlock(void) {
          * call's arguments. */
         FieldEffect_Spawn(object->x.fixed, object->y.fixed, object->z.fixed,
                           velocity[0], velocity[1], velocity[2],
-                          sum = 0x10b0000, &options);
+                          sum = EFFECT_USE_UPDATE | EFFECT_USE_START_SCALE |
+                                EFFECT_USE_PRIORITY | EFFECT_USE_PALETTE,
+                          &options);
         i++;
-      }
-      if (i <= 16)
-        goto loop;
+      } while (i <= 16);
     }
     object->motionFlags = 0;
     object->layer = 0;
@@ -395,7 +391,7 @@ void Caverns_FinishMovingAngaraBlock(void) {
                                 FIELD_CELL(object->z.fixed));
   object->riseBaseY = value;
   MapCell_SetAttributes(0, FIELD_CELL(object->x.fixed),
-                        FIELD_CELL(object->z.fixed), value | 128);
+                        FIELD_CELL(object->z.fixed), value | 0x80);
 }
 
 const struct Trigger *Scene_GetTriggers(void) {
@@ -431,7 +427,6 @@ s32 Scene_PrepareMap(void) {
   return 0;
 }
 
-/// Indra Cavern: the rope Lash reaches and the pillar Move pushes.
 /// Indra's cavern: the posts the rope Lash ties is strung between, and the
 /// pillar Move pushes.
 enum CavernsIndraActorId {
@@ -440,13 +435,15 @@ enum CavernsIndraActorId {
   ACTOR_PILLAR
 };
 
+/// Indra Cavern on entry: strings the rope between its posts (tied once
+/// FLAG_INDRA_ROPE_TIED is set), stills the pillar and marks its cell.
 void Caverns_InitializeIndra(void) {
   struct Actor *object;
   s32 arg;
 
   Actor_GetById(ACTOR_FELIX)->priorityFlags |= ACTOR_PRIORITY_IGNORES_RISES;
   Rope_Initialize();
-  Rope_Place(0, 0x200, ACTOR_ROPE_POST, ACTOR_SECOND_ROPE_POST);
+  Rope_Place(0, FLAG_INDRA_ROPE_TIED, ACTOR_ROPE_POST, ACTOR_SECOND_ROPE_POST);
   object = Actor_GetById(ACTOR_PILLAR);
   object->motionFlags = 0;
 
@@ -454,6 +451,8 @@ void Caverns_InitializeIndra(void) {
   Map_CopyCellAttributeRect(16, arg, 1, 1, FIELD_CELL(object->x.fixed), arg);
 }
 
+/// Move on Indra Cavern's pillar: stills it and copies the cells of its new
+/// place into the floor.
 void Caverns_MoveIndraPillar(s32 unused, s32 id) {
   struct Actor *object = Actor_GetById(id);
 
@@ -462,7 +461,7 @@ void Caverns_MoveIndraPillar(s32 unused, s32 id) {
   Map_CopyCellAttributeRect(16, 10, 1, 1, FIELD_CELL(object->x.fixed), 10);
 }
 
-s32 Caverns_JumpAcross(struct Actor *object, s16 *position) {
+s32 Caverns_JumpAcross(struct Actor *object, struct FieldCoordinate *position) {
   u8 *flags = &object->motionFlags;
   s32 saved = *flags;
   s32 blocked = MapGrid_CheckCollision(object, position);
@@ -470,10 +469,10 @@ s32 Caverns_JumpAcross(struct Actor *object, s16 *position) {
   if (blocked == 0) {
     Event_Start();
     Event_ResolvePendingActions(0);
-    Actor_SelectAnimation(object, 6);
+    Actor_SelectAnimation(object, ANIM_LEADER_SPRING);
     wait(6);
     Sound_Play(SE_JUMP);
-    Actor_SelectAnimation(object, 7);
+    Actor_SelectAnimation(object, ANIM_LEADER_LEAP);
     object->speedLimit = toFIXED(3);
     object->acceleration = toFIXED(2);
     object->velocityY = toFIXED(4);
@@ -481,13 +480,13 @@ s32 Caverns_JumpAcross(struct Actor *object, s16 *position) {
     Actor_SetSpriteFlags(object, 0);
     {
       struct MainRoutineWork *party = &gMainRoutineWork;
-      s32 x = position[1];
-      s32 z = position[5];
+      s32 x = position[0].part[0].integer;
+      s32 z = position[2].part[0].integer;
       s32 owner = party->leaderActorId;
 
       Actor_MoveToAndWaitById(owner, x, z);
     }
-    Actor_SelectAnimation(object, 6);
+    Actor_SelectAnimation(object, ANIM_LEADER_SPRING);
     Actor_SetSpriteFlags(object, 1);
     *flags = saved;
     Event_End();
@@ -496,6 +495,8 @@ s32 Caverns_JumpAcross(struct Actor *object, s16 *position) {
   return 0;
 }
 
+/// Indra Cavern: walking east onto the gap's edge jumps the leader 32 pixels
+/// across it.
 void Caverns_JumpEastAcrossGap(void) {
   struct Actor *leader = Actor_GetById(gMainRoutineWork.leaderActorId);
   s32 position[3];
@@ -504,11 +505,16 @@ void Caverns_JumpEastAcrossGap(void) {
   x = leader->x.fixed;
   x += toFIXED(32);
   SET_VECTOR(position, x, leader->y.fixed, leader->z.fixed);
-  Caverns_JumpAcross(leader, (s16 *)position);
+  Caverns_JumpAcross(leader, (struct FieldCoordinate *)position);
 }
+
+/// Osenia Cavern's one actor, the row of gCaverns_Placements: an unseen marker
+/// set at the passage the leader steps down into.
+enum CavernsOseniaActorId { ACTOR_PASSAGE_MARKER = ACTOR_FIRST_PLACED };
 
 void Caverns_OpenOseniaPassage(void);
 
+/// Osenia Cavern's map: once Scoop has dug it, the passage stands open.
 void Caverns_PrepareOsenia(void) {
   s32 scooped;
 
@@ -519,6 +525,8 @@ void Caverns_PrepareOsenia(void) {
   return;
 }
 
+/// Opens Osenia Cavern's passage in the map: the dug cells and their
+/// attributes copied over the closed ones.
 void Caverns_OpenOseniaPassage(void) {
   MapGrid_CopyCellPictureIndicesRect(35, 12, 18, 12, 3, 3);
   MapGrid_CopyCellAttributes(35, 12, 3, 3, 18, 12);
@@ -532,9 +540,9 @@ void Caverns_WalkIntoPassage(void) {
   s32 value = ((struct FieldWork *)Ram_HeapSlots->fieldWork)->stepTrigger;
 
   if (value == 2)
-    Actor_SetPosition(8, 144, 224);
+    Actor_SetPosition(ACTOR_PASSAGE_MARKER, 144, 224);
   else
-    Actor_SetPosition(8, 224, 224);
+    Actor_SetPosition(ACTOR_PASSAGE_MARKER, 224, 224);
   Actor_FaceDirectionById(ACTOR_FELIX, FACING_NORTH, 0);
   Event_Wait(10);
   Actor_GetById(ACTOR_FELIX)->steeringFlags &= ~ACTOR_FACES_MOTION;
@@ -544,12 +552,14 @@ void Caverns_WalkIntoPassage(void) {
   Actor_SetSpriteFlags(Actor_GetById(ACTOR_FELIX), 0);
   Actor_SetDestinationOffsetById(ACTOR_FELIX, 0, 16);
   Actor_WaitForMoveById(ACTOR_FELIX);
-  Actor_SetAnimationById(ACTOR_FELIX, 13);
+  Actor_SetAnimationById(ACTOR_FELIX, ANIM_LEADER_CLIMB_DOWN_FROM_TOP);
   Sound_Play(SE_MAP_EXIT);
   Event_Wait(14);
   Import_EventSetExitRequest(value);
 }
 
+/// Osenia Cavern: walking east into a passage's mouth steps up and across, then
+/// down into it.
 void Caverns_WalkEastIntoPassage(void) {
   Actor_WalkByAndWait(ACTOR_FELIX, 0, -14);
   Actor_WalkByAndWaitById(ACTOR_FELIX, 16, 0);
@@ -558,6 +568,8 @@ void Caverns_WalkEastIntoPassage(void) {
   return;
 }
 
+/// Osenia Cavern: walking west into a passage's mouth steps up and across, then
+/// down into it.
 void Caverns_WalkWestIntoPassage(void) {
   Actor_WalkByAndWait(ACTOR_FELIX, 0, -14);
   Actor_WalkByAndWaitById(ACTOR_FELIX, -16, 0);
@@ -566,6 +578,8 @@ void Caverns_WalkWestIntoPassage(void) {
   return;
 }
 
+/// Osenia Cavern: walking south into a passage's mouth turns the leader north
+/// and takes him down into it.
 void Caverns_WalkSouthIntoPassage(void) {
   Actor_FaceDirectionById(ACTOR_FELIX, FACING_NORTH, 0);
   Event_Wait(10);
@@ -573,6 +587,7 @@ void Caverns_WalkSouthIntoPassage(void) {
   return;
 }
 
+/// Scoop on Osenia Cavern's sand: as it digs, opens the passage for good.
 void Caverns_ScoopOseniaPassage(s32 mode) {
   if (mode == 1) {
     Caverns_OpenOseniaPassage();
@@ -581,6 +596,7 @@ void Caverns_ScoopOseniaPassage(s32 mode) {
   return;
 }
 
+/// Atteka Cavern's map: once Parch has dried it, the water stays gone.
 void Caverns_PrepareAtteka(void) {
   s32 parched;
 
@@ -593,6 +609,8 @@ void Caverns_PrepareAtteka(void) {
   return;
 }
 
+/// Parch on Atteka Cavern's water: dries it, opening the way to Coatlicue's
+/// tablet, for good.
 void Caverns_ParchAttekaWater(void) {
   Event_Start();
   Event_ResolvePendingActions(0);
@@ -604,6 +622,8 @@ void Caverns_ParchAttekaWater(void) {
   return;
 }
 
+/// Angara Cavern's map: entered by entrance 5 or 6, the cells at columns 28 and
+/// 36 of row 5 take the attributes of those of row 0.
 void Caverns_PrepareAngara(void) {
   if ((u16)(gMainRoutineWork.entrance - 5) <= 1) {
     MapGrid_CopyCellAttributes(28, 0, 1, 1, 28, 5);
@@ -622,6 +642,9 @@ enum CavernsAngaraActorId {
   ACTOR_EAST_OF_TABLET
 };
 
+/// Angara Cavern on entry: sets the two grey blocks on their cells, lets them
+/// stand over rises, and keeps the searches for a block off the tablet's
+/// stones.
 void Caverns_InitializeAngara(void) {
   Caverns_PlaceAngaraBlocks(gCaverns_AngaraBlocks);
   Actor_GetById(ACTOR_FIRST_BLOCK)->priorityFlags |=
@@ -676,6 +699,7 @@ u32 gFieldEffect_LongScript[] = {
     SC_END,
 };
 
+/// The grey blocks of Angara Cavern, by actor id, ended by -1.
 s16 gCaverns_AngaraBlocks[] = {
     ACTOR_FIRST_BLOCK, ACTOR_SECOND_BLOCK, -1, 0,
 };
@@ -691,6 +715,7 @@ struct SceneEntrance gSceneEntrances[] = {
     {SCENE_TABLE_END},
 };
 
+/// Osenia Cavern's exit regions: the two passages' mouths, exits 4 and 5.
 s16 gCaverns_OseniaRegions[] = {
     132, 28, 692, 140, 36, 700, -1, 4,
     292, 28, 692, 300, 36, 700, -1, 5,
@@ -721,11 +746,13 @@ u32 gSceneExits[] = {
     SCENE_EXITS_END,
 };
 
+/// Osenia and Atteka Caverns' actors: the passage marker.
 struct ActorPlacement gCaverns_Placements[] = {
-    ACTOR_PLACEMENT(489, CONDITION_ALWAYS, 7, 0, 0, 0, FACING_NORTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_UNSEEN_MARKER, CONDITION_ALWAYS, 7, 0, 0, 0, FACING_NORTH, TALK_FACING_KEEP, 0),
     {SCENE_TABLE_END},
 };
 
+/// Indra Cavern's actors, in CavernsIndraActorId's order.
 struct ActorPlacement gCaverns_IndraPlacements[] = {
     ACTOR_PLACEMENT(SPRITE_TIGHTROPE_POST, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 328, 0, 168, FACING_NORTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(SPRITE_TIGHTROPE_POST, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 280, 0, 168, FACING_NORTH, TALK_FACING_KEEP, 0),
@@ -733,6 +760,7 @@ struct ActorPlacement gCaverns_IndraPlacements[] = {
     {SCENE_TABLE_END},
 };
 
+/// Angara Cavern's actors, in CavernsAngaraActorId's order.
 struct ActorPlacement gCaverns_AngaraPlacements[] = {
     ACTOR_PLACEMENT(SPRITE_SPIRAL_PILLAR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 536, 0, 552, FACING_NORTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(SPRITE_SPIRAL_PILLAR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 600, 0, 536, FACING_NORTH, TALK_FACING_KEEP, 0),
@@ -741,6 +769,8 @@ struct ActorPlacement gCaverns_AngaraPlacements[] = {
     {SCENE_TABLE_END},
 };
 
+/// Osenia Cavern's exit, its two passages' mouths walked into from three sides,
+/// and Scoop on its sand.
 struct Trigger gCaverns_OseniaTriggers[] = {
     {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
     {STEP_TRIGGER_WALKING_INTO(FACING_SOUTH), 2, CONDITION_ALWAYS, EVENT(Caverns_WalkSouthIntoPassage)},
@@ -753,20 +783,24 @@ struct Trigger gCaverns_OseniaTriggers[] = {
     {TRIGGER_TABLE_END},
 };
 
+/// Indra Cavern's exit, its gap, Lash on the rope post and Move on the pillar.
 struct Trigger gCaverns_IndraTriggers[] = {
     {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
     {STEP_TRIGGER_WALKING_INTO(FACING_EAST), 10, CONDITION_ALWAYS, EVENT(Caverns_JumpEastAcrossGap)},
-    {PSYNERGY_ON_ACTOR(ABILITY_LASH), ACTOR_ROPE_POST, FLAG_SCENE_TEMP_00, 0},
+    {PSYNERGY_ON_ACTOR(ABILITY_LASH), ACTOR_ROPE_POST, FLAG_INDRA_ROPE_TIED, 0},
     {PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_PILLAR, CONDITION_ALWAYS, EVENT(Caverns_MoveIndraPillar)},
     {TRIGGER_TABLE_END},
 };
 
+/// Atteka Cavern's exit and Parch on its water.
 struct Trigger gCaverns_AttekaTriggers[] = {
     {TRIGGER_EXIT, 5, CONDITION_ALWAYS, 5},
     {PSYNERGY_PHASE_ON_CELL(ABILITY_PARCH, PSYNERGY_PHASE_ACTS), 60, CONDITION_ALWAYS, EVENT(Caverns_ParchAttekaWater)},
     {TRIGGER_TABLE_END},
 };
 
+/// Angara Cavern's exits and stairs, its door, and pushing, Move and Carry on
+/// either grey block until they are stacked.
 struct Trigger gCaverns_AngaraTriggers[] = {
     {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
     {TRIGGER_EXIT | EXIT_STYLE_STAIRS_DOWN, 2, CONDITION_ALWAYS, 2},

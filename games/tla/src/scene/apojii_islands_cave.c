@@ -58,6 +58,8 @@ s32 Scene_Initialize(void) {
 s32 Scene_PrepareMap(void) { return 0; }
 
 // clang-format off
+/// Each patch of ivy's script: still, standing on ground four pixels up,
+/// three pixels high and drawn half again as tall.
 u32 gApojiiIslandsCave_FoliageScript[] = {
     SC_SET(SW_MOTION, 0),
     SC_SET(SW_GROUND, toFIXED(4)),

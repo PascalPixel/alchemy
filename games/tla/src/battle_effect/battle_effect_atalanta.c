@@ -185,7 +185,7 @@ void BattleEffect_RunAtalanta(struct BattleEffectParams *args) {
       Matrix_RotateZ(Random16() & TRIG_ANGLE_MASK);
       Matrix_RotateX(Random16() & TRIG_ANGLE_MASK);
       Matrix_RotateY(Random16() & TRIG_ANGLE_MASK);
-      Matrix_Get(MATRICES + (i * ATALANTA_TRAIL_MOTES + j) * 48);
+      Matrix_Get(MATRICES + (i * ATALANTA_TRAIL_MOTES + j) * sizeof(MATRIX));
     }
   }
   EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
@@ -287,7 +287,8 @@ void BattleEffect_RunAtalanta(struct BattleEffectParams *args) {
             struct Particle *trail = &TRAILS[i * ATALANTA_TRAIL_MOTES + j];
 
             if (trail->x > 0) {
-              Matrix_Load(MATRICES + (i * ATALANTA_TRAIL_MOTES + j) * 48);
+              Matrix_Load(MATRICES +
+                          (i * ATALANTA_TRAIL_MOTES + j) * sizeof(MATRIX));
               point[0] = trail->x;
               EffectPosition_ProjectPoint(point, &screen);
               screen.x = (screen.x >> 1) + x;

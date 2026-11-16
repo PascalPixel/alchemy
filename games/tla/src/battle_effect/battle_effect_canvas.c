@@ -25,6 +25,22 @@
 /// Where FlameBandTexture is decoded in the effect's pictures.
 #define ECLIPSE_FLAME_BAND 0x400
 
+/// The glowing orb the dragon gathers: its radius in variant, drawn as shaded
+/// circles into the effect's pictures.
+#define ECLIPSE_ORB (work->particles[16])
+/// The 120x120 ramp of the second act, brightening from left to right.
+#define ECLIPSE_RAMP_SIZE 120
+/// The landing's buffers in the map cell buffer: the dome's vertices (8 rings
+/// of 16) and its grid mesh, the band's vertices and mesh, and 512 motes.
+#define ECLIPSE_DOME_VERTICES (Ram_MapCellBuffer + 0x800)
+#define ECLIPSE_DOME_MESH (Ram_MapCellBuffer + 0x1000)
+#define ECLIPSE_BAND_VERTICES (Ram_MapCellBuffer + 0x2000)
+#define ECLIPSE_BAND_MESH (Ram_MapCellBuffer + 0x2800)
+#define ECLIPSE_MOTES ((struct Particle *)(Ram_MapCellBuffer + 0x4000))
+#define ECLIPSE_MOTE_COUNT 512
+#define ECLIPSE_DOME_RINGS 8
+#define ECLIPSE_DOME_RING_VERTICES 16
+
 /// Eclipse: after a flash the golden dragon (thirty-two sprites, its head one
 /// of them) looms over a blue sky while shafts of light fall about it; it
 /// breathes a blast of light that whites out the field, and the blast lands
@@ -153,7 +169,7 @@ void BattleEffect_RunEclipse(struct BattleEffectParams *args) {
         velY = -toFIXED(10);
         work->fadeFrames = 1;
         work->fadeStep = frame;
-        work->particles[16].variant = frame;
+        ECLIPSE_ORB.variant = frame;
         Resource_LoadAndDecompress(RESOURCE_SWIRL_TEXTURE, FLASHES, 0, 0);
       }
       if (frame == 136) {
@@ -227,44 +243,44 @@ void BattleEffect_RunEclipse(struct BattleEffectParams *args) {
         work->fadeFrames = BACKGROUND_DARKEN_FRAMES;
         work->fadeStep = 0;
       }
-      cx = baseX / 2 - (work->particles[16].variant << 13) + toFIXED(28);
-      cy = baseY + (work->particles[16].variant << 14) + toFIXED(56);
+      cx = baseX / 2 - (ECLIPSE_ORB.variant << 13) + toFIXED(28);
+      cy = baseY + (ECLIPSE_ORB.variant << 14) + toFIXED(56);
       u = frame - 136;
       if (u <= 84) {
         if (frame == 136) {
-          work->particles[16].variant = 4;
-          work->particles[16].x = 0;
-          work->particles[16].z = 0;
-          BattleEffect_DrawShadedCircles(
-              work->sheet, work->particles[16].variant * 2, 0x10000);
+          ECLIPSE_ORB.variant = 4;
+          ECLIPSE_ORB.x = 0;
+          ECLIPSE_ORB.z = 0;
+          BattleEffect_DrawShadedCircles(work->sheet, ECLIPSE_ORB.variant * 2,
+                                         FIXED_ONE);
         }
         if (frame > 171) {
           if (frame == 172) {
-            work->particles[16].variant = 64;
+            ECLIPSE_ORB.variant = 64;
             BattleEffect_DrawShadedCircles(work->sheet, 128, FIXED_ONE);
             velX = toFIXED(3);
             velY = -toFIXED(3);
           }
-          if (frame > 203 && work->particles[16].variant > 1) {
-            work->particles[16].variant -= 4;
-            if (work->particles[16].variant <= 1) {
-              work->particles[16].variant = 2;
+          if (frame > 203 && ECLIPSE_ORB.variant > 1) {
+            ECLIPSE_ORB.variant -= 4;
+            if (ECLIPSE_ORB.variant <= 1) {
+              ECLIPSE_ORB.variant = 2;
             }
-            BattleEffect_DrawShadedCircles(
-                work->sheet, work->particles[16].variant * 2, 0x10000);
+            BattleEffect_DrawShadedCircles(work->sheet, ECLIPSE_ORB.variant * 2,
+                                           FIXED_ONE);
           }
         } else if (frame > 135) {
           velX += -toFIXED(1) / 32;
           velY += toFIXED(1) / 32;
-          if (++work->particles[16].variant <= 32) {
-            BattleEffect_DrawShadedCircles(
-                work->sheet, work->particles[16].variant * 2, 0x10000);
+          if (++ECLIPSE_ORB.variant <= 32) {
+            BattleEffect_DrawShadedCircles(work->sheet, ECLIPSE_ORB.variant * 2,
+                                           FIXED_ONE);
           } else {
-            work->particles[16].variant = 32;
+            ECLIPSE_ORB.variant = 32;
           }
         }
         {
-          s32 size = work->particles[16].variant;
+          s32 size = ECLIPSE_ORB.variant;
 
           Canvas_BlitAtFoot(work->sheet, FIXEDtoINT(cx), FIXEDtoINT(cy),
                             size * 2);
@@ -315,8 +331,8 @@ void BattleEffect_RunEclipse(struct BattleEffectParams *args) {
             Matrix_Scale(FIXED_ONE / 2, FIXED_ONE, FIXED_ONE);
             Matrix_RotateZ(work->particles[i].x);
             Matrix_Scale(Trig_Sin(work->particles[i].variant * 682) +
-                             DEGtoANG(90),
-                         0x20000, 0x10000);
+                             FIXED_ONE / 4,
+                         FIXED_ONE * 2, FIXED_ONE);
             Render_TransformVertices(gBattleEffect_TaperedBeamCorners, verts,
                                      4);
             Render_DrawModelList(model);
@@ -353,7 +369,7 @@ void BattleEffect_RunEclipse(struct BattleEffectParams *args) {
           Matrix_RotateZ(TRIG_TURN * 5 / 32);
           if (frame > 203) {
             Matrix_Scale(FIXED_ONE * 8 - ((frame - 204) << 15), FIXED_ONE * 2,
-                         0x10000);
+                         FIXED_ONE);
           } else {
             Matrix_Scale(FIXED_ONE * 8, FIXED_ONE * 2, FIXED_ONE);
           }
@@ -371,7 +387,7 @@ void BattleEffect_RunEclipse(struct BattleEffectParams *args) {
           s32 y = 0;
 
           if (frame <= 171) {
-            s32 size = work->particles[16].variant * 2;
+            s32 size = ECLIPSE_ORB.variant * 2;
 
             x = Random16() % size + (FIXEDtoINT(cx)) - (size >> 1) -
                 (gBattleEffect_GlintPictureWidths[t] >> 1);
@@ -379,7 +395,7 @@ void BattleEffect_RunEclipse(struct BattleEffectParams *args) {
                 (gBattleEffect_GlintPictureHeights[t] >> 1);
           } else {
             u32 a = Random16() & 63;
-            s32 r = work->particles[16].variant;
+            s32 r = ECLIPSE_ORB.variant;
 
             x = (FIXEDtoINT(cx)) - (a >> 1) -
                 (gBattleEffect_GlintPictureWidths[t] >> 1) + Random16() % r -
@@ -433,19 +449,19 @@ void BattleEffect_RunEclipse(struct BattleEffectParams *args) {
   Iwram_FillWords(canvas, CANVAS_BYTES,
                   CANVAS_FILL_WORD(CANVAS_LEVEL_BRIGHTEST));
   REG_BG2CNT = BGCNT_CHAR_BASE(1) | BGCNT_256_COLORS | BGCNT_SCREEN_BASE(7);
-  args->targets[args->targetCount] = 0xff;
+  args->targets[args->targetCount] = BATTLE_UNIT_LIST_END;
   BattleActor_SpawnObjectsForListFar(args->targets, 0);
   Resource_LoadAndDecompress(RESOURCE_GLOW_BAND_TEXTURE_B,
                              work->sheet + ECLIPSE_GLOW_BAND_B, 0, 0);
   REG_BLDALPHA = EFFECT_BLEND_ADD;
-  for (i = 0; i != 120; i++) {
+  for (i = 0; i != ECLIPSE_RAMP_SIZE; i++) {
     s32 v = i / 2;
 
     if (v > CANVAS_LEVEL_BRIGHTEST) {
       v = CANVAS_LEVEL_BRIGHTEST;
     }
-    for (j = 0; j != 120; j++) {
-      work->sheet[j * 120 + i] = v;
+    for (j = 0; j != ECLIPSE_RAMP_SIZE; j++) {
+      work->sheet[j * ECLIPSE_RAMP_SIZE + i] = v;
     }
   }
   // The blast whites out the battlefield.
@@ -549,9 +565,9 @@ void BattleEffect_RunEclipse(struct BattleEffectParams *args) {
   EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
   gBgScroll[1].y = BATTLE_BACKGROUND_SCROLL_Y;
   {
-    const void *mesh = Ram_MapCellBuffer + 0x1000;
+    const void *mesh = ECLIPSE_DOME_MESH;
     void *vertices = gMapGridCellBuffer;
-    const void *bandMesh = Ram_MapCellBuffer + 0x2800;
+    const void *bandMesh = ECLIPSE_BAND_MESH;
 
     for (frame = 0; frame != 26; frame++) {
       if ((gInput.repeat & (KEY_A | KEY_B)) && count == -1) {
@@ -580,8 +596,8 @@ void BattleEffect_RunEclipse(struct BattleEffectParams *args) {
         }
       }
       for (i = 0; i != 16; i++) {
-        struct Particle *q = (struct Particle *)(Ram_MapCellBuffer + 0x4000) +
-                             ((frame * 16 + i) & 511);
+        struct Particle *q =
+            ECLIPSE_MOTES + ((frame * 16 + i) & (ECLIPSE_MOTE_COUNT - 1));
         // Default: set for real below.
         s32 a = 0;
         s32 r = 0;
@@ -594,8 +610,8 @@ void BattleEffect_RunEclipse(struct BattleEffectParams *args) {
         q->velocityY = 0;
         q->variant = (Random16() & 15) + 16;
       }
-      for (i = 0; i != 512; i++) {
-        p = (struct Particle *)(Ram_MapCellBuffer + 0x4000) + i;
+      for (i = 0; i != ECLIPSE_MOTE_COUNT; i++) {
+        p = ECLIPSE_MOTES + i;
         if (p->variant >= 0) {
           s32 n = (p->variant >> 3) + 1;
 
@@ -608,10 +624,10 @@ void BattleEffect_RunEclipse(struct BattleEffectParams *args) {
       model = Render_AllocateModelList(1);
       shade = 0;
       if (frame <= 31) {
-        s32 s = 0x10000;
+        s32 s = FIXED_ONE;
 
         if (frame > 15) {
-          s += 0x10000 - (frame << 12);
+          s += FIXED_ONE - (frame << 12);
         }
         landingTexture.logWidth = 5;
         landingTexture.logHeight = 2;
@@ -632,27 +648,28 @@ void BattleEffect_RunEclipse(struct BattleEffectParams *args) {
       }
       if (frame == 0) {
         Sound_PlayFar(SE_BANE_ESCAPE);
-        Mesh_BuildGrid(Ram_MapCellBuffer + 0x1000, 16, 8, 8, 8);
+        Mesh_BuildGrid(ECLIPSE_DOME_MESH, ECLIPSE_DOME_RING_VERTICES,
+                       ECLIPSE_DOME_RINGS, 8, 8);
         {
           s32 ringAngle = 0;
-          for (ring = 0, offset = 0; ring != 8;
-               ringAngle += 0x888, offset += 64, ring++) {
+          for (ring = 0, offset = 0; ring != ECLIPSE_DOME_RINGS;
+               ringAngle += DEGtoANG(12),
+              offset += ECLIPSE_DOME_RING_VERTICES * sizeof(struct ModelVertex),
+              ring++) {
             s32 y = FIXEDtoINT(-Trig_Cos(ringAngle) * 96);
             s32 rr = FIXEDtoINT(Trig_Sin(ringAngle) * 48);
-            struct ModelVertex *v =
-                (struct ModelVertex *)(Ram_MapCellBuffer + 0x800);
+            struct ModelVertex *v = (struct ModelVertex *)ECLIPSE_DOME_VERTICES;
 
             k = 0;
             v = (struct ModelVertex *)((u8 *)v + offset);
-            for (; k != 16; k++) {
+            for (; k != ECLIPSE_DOME_RING_VERTICES; k++) {
               SET_POSITION(v, FIXEDtoINT(Trig_Sin(k << 12) * rr), y,
                            FIXEDtoINT(Trig_Cos(k << 12) * rr));
               v++;
             }
           }
         }
-        Mesh_BuildCylinderBand(Ram_MapCellBuffer + 0x2000,
-                               Ram_MapCellBuffer + 0x2800, 32);
+        Mesh_BuildCylinderBand(ECLIPSE_BAND_VERTICES, ECLIPSE_BAND_MESH, 32);
       }
       landingTexture.logWidth = 5;
       landingTexture.logHeight = 5;
@@ -666,17 +683,19 @@ void BattleEffect_RunEclipse(struct BattleEffectParams *args) {
         model->flags = 3;
       }
       {
-        s32 s = (frame << 9) + 0x8000;
+        s32 s = (frame << 9) + FIXED_ONE / 2;
 
-        if (s > 0x10000) {
-          s = 0x10000;
+        if (s > FIXED_ONE) {
+          s = FIXED_ONE;
         }
         Matrix_Initialize();
         Matrix_Translate(-toFIXED(2), toFIXED(12), 0);
         Matrix_RotateX(DEGtoANG(45));
         Matrix_RotateY(-frame << 10);
         Matrix_ScaleUniform(s);
-        Render_TransformVertices(Ram_MapCellBuffer + 0x800, vertices, 128);
+        Render_TransformVertices(ECLIPSE_DOME_VERTICES, vertices,
+                                 ECLIPSE_DOME_RINGS *
+                                     ECLIPSE_DOME_RING_VERTICES);
         Render_DrawModelList(model);
       }
       landingTexture.logHeight = 5;
@@ -711,7 +730,7 @@ void BattleEffect_RunEclipse(struct BattleEffectParams *args) {
             Matrix_RotateY((frame + i * 8) << 10);
             Matrix_Scale(FIXED_ONE, FIXED_ONE * 6, FIXED_ONE);
             Matrix_Translate(0, INTtoFIXED(gEclipse_RingHeights[i]), 0);
-            Render_TransformVertices(Ram_MapCellBuffer + 0x2000, vertices, 64);
+            Render_TransformVertices(ECLIPSE_BAND_VERTICES, vertices, 64);
             Render_DrawModelList(model);
           }
         }
@@ -751,6 +770,9 @@ void BattleEffect_ReservedNoOpB(void) {}
 
 /// Where GlowBandTextureA is decoded in the effect's pictures.
 #define FORM_CHANGE_GLOW_BAND 0x3000
+/// Where BillowTexture, the crystals' texture, is decoded in the map cell
+/// buffer.
+#define FORM_CHANGE_BILLOW (Ram_MapCellBuffer + 0x2000)
 
 /// A glow on the canvas map widens over the user for 56 frames while 16
 /// spinning rings rise around it, four abreast. From frame 48 the screen
@@ -780,8 +802,7 @@ void BattleEffect_RunFormChange(struct BattleEffectParams *args, s32 kind) {
   Resource_LoadAndDecompress(RESOURCE_FLASH_BURST_SHEET, work->sheet, 1, 0);
   Resource_LoadAndDecompress(RESOURCE_GLOW_BAND_TEXTURE_A,
                              work->sheet + FORM_CHANGE_GLOW_BAND, 0, 0);
-  Resource_LoadAndDecompress(RESOURCE_BILLOW_TEXTURE,
-                             (Ram_MapCellBuffer + 0x2000), 0, 0);
+  Resource_LoadAndDecompress(RESOURCE_BILLOW_TEXTURE, FORM_CHANGE_BILLOW, 0, 0);
   EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
   work->fadeFrames = BACKGROUND_DARKEN_FRAMES;
   work->fadeStep = 0;
@@ -850,7 +871,7 @@ void BattleEffect_RunFormChange(struct BattleEffectParams *args, s32 kind) {
 
           for (i = 0; i != 64; i++) {
             *variant = -1;
-            variant += 7;
+            variant += sizeof(struct Particle) / sizeof(*variant);
           }
         }
         work->shakeFrames = 8;
@@ -958,8 +979,8 @@ void BattleEffect_RunFormChange(struct BattleEffectParams *args, s32 kind) {
           }
           Matrix_Scale(FIXED_ONE / 2, FIXED_ONE, FIXED_ONE);
           Matrix_RotateZ(ring->x);
-          Matrix_Scale(Trig_Sin(ring->variant * 682) + TRIG_TURN, 0x20000,
-                       0x10000);
+          Matrix_Scale(Trig_Sin(ring->variant * 682) + FIXED_ONE, FIXED_ONE * 2,
+                       FIXED_ONE);
           Render_TransformVertices(gBattleEffect_TaperedBeamCorners, corners,
                                    4);
           Render_DrawModelList(model);
@@ -970,7 +991,7 @@ void BattleEffect_RunFormChange(struct BattleEffectParams *args, s32 kind) {
       model->texture = &texture;
       model->vertices = corners;
       texture.logWidth = 6;
-      texture.pixels = (Ram_MapCellBuffer + 0x2000);
+      texture.pixels = FORM_CHANGE_BILLOW;
       model->kind = MODEL_SHADED_ADDITIVE;
       texture.logHeight = 6;
       model->mesh = gBattleEffect_RingMesh;
@@ -983,14 +1004,14 @@ void BattleEffect_RunFormChange(struct BattleEffectParams *args, s32 kind) {
           if (bias > -16)
             bias = -16;
           if (bias > -64) {
-            s32 growth =
-                (frame - start) * gFormChange_WaveGrowth[i] * 2000 + 0x4000;
+            s32 growth = (frame - start) * gFormChange_WaveGrowth[i] * 2000 +
+                         FIXED_ONE / 4;
 
             model->shade = bias;
             Matrix_Initialize();
             Matrix_Translate(INTtoFIXED(center.x / 2 - 60), toFIXED(32), 0);
             Matrix_Scale(growth * 2,
-                         gFormChange_WaveStretch[i] * growth + 0x40000,
+                         gFormChange_WaveStretch[i] * growth + FIXED_ONE * 4,
                          growth / 4);
             Matrix_RotateX(1000);
             if (i & 1)
@@ -1039,25 +1060,25 @@ void BattleEffect_ProcessPendingGraphicsTransfer(void) {
     work->transferPending = 0;
     IRQ_UNLOCK(ime);
     switch (work->transferMode) {
-    case 0:
+    case CANVAS_COPY:
       Iwram_CopyWords((void *)BG_CHAR_BLOCK(1), source, CANVAS_BYTES);
       break;
-    case 1:
+    case CANVAS_COPY_AND_CLEAR:
       Iwram_CopyWords((void *)BG_CHAR_BLOCK(1), source, CANVAS_BYTES);
       Iwram_FillWords(source, CANVAS_BYTES, work->transferValue);
       break;
-    case 2:
-      if (work->transferValue == 50)
+    case CANVAS_COPY_AND_FADE:
+      if (work->transferValue == CANVAS_FADE_HALF)
         ColorBuffer_Halve(source, (void *)BG_CHAR_BLOCK(1), CANVAS_BYTES);
       else
         ColorBuffer_ScaleThreeQuarters(source, (void *)BG_CHAR_BLOCK(1),
-                                       FIXED_ONE / 4);
+                                       CANVAS_BYTES);
       break;
-    case 3:
+    case CANVAS_COPY_AND_DARKEN:
       ColorBuffer_Darken(source, work->transferValue, (void *)BG_CHAR_BLOCK(1),
                          CANVAS_BYTES);
       break;
-    case 4:
+    case CANVAS_COPY_AND_BRIGHTEN:
       ColorBuffer_Brighten(source, work->transferValue,
                            (void *)BG_CHAR_BLOCK(1), CANVAS_BYTES);
       break;
@@ -1102,24 +1123,24 @@ void BattleEffect_FlushPendingGraphicsTransfer(void) {
     work->transferPending = 0;
     IRQ_UNLOCK(ime);
     switch (work->transferMode) {
-    case 0:
+    case CANVAS_COPY:
       Iwram_CopyWords((void *)BG_CHAR_BLOCK(2), source,
                       BATTLE_BACKGROUND_BYTES);
       break;
-    case 1:
+    case CANVAS_COPY_AND_CLEAR:
       Iwram_CopyWords((void *)BG_CHAR_BLOCK(2), source,
                       BATTLE_BACKGROUND_BYTES);
       Iwram_FillWords(source, BATTLE_BACKGROUND_BYTES, work->transferValue);
       break;
-    case 2:
-      if (work->transferValue == 50)
+    case CANVAS_COPY_AND_FADE:
+      if (work->transferValue == CANVAS_FADE_HALF)
         ColorBuffer_Halve(source, (void *)BG_CHAR_BLOCK(2),
                           BATTLE_BACKGROUND_BYTES);
       else
         ColorBuffer_ScaleThreeQuarters(source, (void *)BG_CHAR_BLOCK(2),
                                        BATTLE_BACKGROUND_BYTES);
       break;
-    case 3:
+    case CANVAS_COPY_AND_DARKEN:
       ColorBuffer_Darken(source, work->transferValue, (void *)BG_CHAR_BLOCK(2),
                          BATTLE_BACKGROUND_BYTES);
       break;
@@ -1145,25 +1166,25 @@ void BattleEffect_ProcessPendingBlock2Transfer(void) {
     work->transferPending = 0;
     IRQ_UNLOCK(ime);
     switch (work->transferMode) {
-    case 0:
+    case CANVAS_COPY:
       Iwram_CopyWords((void *)BG_CHAR_BLOCK(2), source,
                       BATTLE_BACKGROUND_BYTES);
       break;
-    case 1:
+    case CANVAS_COPY_AND_CLEAR:
       Iwram_CopyWords((void *)BG_CHAR_BLOCK(2), source,
                       BATTLE_BACKGROUND_BYTES);
-      Iwram_FillWords(source, 0x3c00, work->transferValue);
+      Iwram_FillWords(source, CANVAS_VIEW_BYTES, work->transferValue);
       break;
-    case 2:
-      if (work->transferValue == 50)
-        ColorBuffer_Halve(source, (void *)BG_CHAR_BLOCK(2), 0x3c00);
+    case CANVAS_COPY_AND_FADE:
+      if (work->transferValue == CANVAS_FADE_HALF)
+        ColorBuffer_Halve(source, (void *)BG_CHAR_BLOCK(2), CANVAS_VIEW_BYTES);
       else
         ColorBuffer_ScaleThreeQuarters(source, (void *)BG_CHAR_BLOCK(2),
-                                       0x3c00);
+                                       CANVAS_VIEW_BYTES);
       break;
-    case 3:
+    case CANVAS_COPY_AND_DARKEN:
       ColorBuffer_Darken(source, work->transferValue, (void *)BG_CHAR_BLOCK(2),
-                         0x3c00);
+                         CANVAS_VIEW_BYTES);
       break;
     }
     // DEAD: nothing uses the counter read here; the ROM keeps its load.
@@ -1236,6 +1257,8 @@ void Display_ApplyBg2Reference(void) {
   REG_BG2Y = work->bg2y;
 }
 
+/// While fadeFrames lasts, scales the battle background's colours (BG palette 6
+/// on) one fade step darker than the battle's own palette each frame.
 void Palette_StepFadeTransfer(void) {
   struct BattleEffectWork *work = Ram_HeapSlots->battleEffect;
   s32 *framesLeft;
@@ -1265,22 +1288,21 @@ void BattleEffect_ClearActorTimers(void) {
 /// Counts down each target's flash timer; when one runs out, the target gets
 /// its own palette back.
 void BattleEffect_CountDownBattlerTints(void) {
-  u8 *base;
-  s32 i;
-  s32 index;
+  struct BattleEffectWork *work;
+  s32 actorIndex;
 
-  base = Ram_HeapSlots->battleEffect;
-  i = 0;
+  work = Ram_HeapSlots->battleEffect;
+  actorIndex = 0;
   do {
-    if (base[0x78dc + i] != 0) {
-      if ((base[0x78dc + i] = base[0x78dc + i] - 1) == 0) {
-        index = i * 2 + 36;
-        BattleEffect_TintBattler(*(s16 *)(*(u8 **)(base + 0x78f0) + index),
+    if (work->actorTimers[actorIndex] != 0) {
+      if ((work->actorTimers[actorIndex] = work->actorTimers[actorIndex] - 1) ==
+          0) {
+        BattleEffect_TintBattler(work->args->targets[actorIndex],
                                  SPRITE_COLOR_NORMAL, TINT_KEEP, TINT_KEEP, 0);
       }
     }
-    i += 1;
-  } while (i != 8);
+    actorIndex += 1;
+  } while (actorIndex != 8);
 }
 
 /// Shows the canvas on BG2 at half width across the whole screen, blended over

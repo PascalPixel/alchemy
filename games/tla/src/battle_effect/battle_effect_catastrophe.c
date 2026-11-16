@@ -45,6 +45,14 @@ struct MeshVertex {
 #define CATASTROPHE_ARMOUR_COUNT                                               \
   (CATASTROPHE_PURPLE_ARMOUR_COUNT + CATASTROPHE_SPIKES_COUNT)
 #define CATASTROPHE_SPRITES 50
+/// ChainedDemonTiles' colours, OBJ palette 0 to 191.
+#define CATASTROPHE_DEMON_COLORS 192
+/// The frames of act one, unless A or B skips it.
+#define CATASTROPHE_ACT_ONE_FRAMES 637
+/// Where the objects' first 240 colours are kept in the effect's pictures,
+/// which the objects fade from.
+#define CATASTROPHE_SAVED_OBJ_PALETTE 0x5000
+#define CATASTROPHE_SAVED_OBJ_COLORS 240
 
 /// Catastrophe: over a red sky the chained demon in golden armour spreads its
 /// wings and drives down a sword of light; the blade's orb falls on the land
@@ -156,8 +164,8 @@ void BattleEffect_RunCatastrophe(struct BattleEffectParams *args) {
     u8 *cells;
 
     e = Resource_GetTableEntry(RESOURCE_CHAINED_DEMON_TILES);
-    Iwram_CopyWords((void *)OBJ_PLTT, e, 384);
-    e += 384;
+    Iwram_CopyWords((void *)OBJ_PLTT, e, CATASTROPHE_DEMON_COLORS * 2);
+    e += CATASTROPHE_DEMON_COLORS * 2;
     Decompress_TaggedLz(e, cellBuffer);
     cells = Ram_MapCellBuffer;
     for (i = 0; i != CATASTROPHE_DEMON_TILED;
@@ -174,7 +182,7 @@ void BattleEffect_RunCatastrophe(struct BattleEffectParams *args) {
       for (i = 0; i != CATASTROPHE_DEMON_SWAPPED_COUNT; i++) {
         obj = EffectSprite_Acquire(32, 32, OBJ_SIZE_32X32 | OBJ_256_COLORS, 0);
         work->sprites[CATASTROPHE_DEMON_SWAPPED + i] = obj;
-        Iwram_CopyWords(obj, work->sprites[i], 24);
+        Iwram_CopyWords(obj, work->sprites[i], offsetof(struct Sprite, lastNo));
         Iwram_CopyWords(
             (void *)OBJ_TILES(work->sprites[CATASTROPHE_DEMON_SWAPPED + i]),
             cells + i * OBJ_32X32_8BPP_BYTES, OBJ_32X32_8BPP_BYTES);
@@ -185,7 +193,7 @@ void BattleEffect_RunCatastrophe(struct BattleEffectParams *args) {
   for (i = 0; i != CATASTROPHE_MIRRORED_DEMON_COUNT; i++) {
     obj = EffectSprite_Acquire(32, 32, OBJ_SIZE_32X32 | OBJ_256_COLORS, 0);
     work->sprites[CATASTROPHE_MIRRORED_DEMON + i] = obj;
-    Iwram_CopyWords(obj, work->sprites[i], 24);
+    Iwram_CopyWords(obj, work->sprites[i], offsetof(struct Sprite, lastNo));
   }
   {
     u8 *cells;
@@ -238,7 +246,8 @@ void BattleEffect_RunCatastrophe(struct BattleEffectParams *args) {
       Iwram_CopyWords((void *)OBJ_TILES(obj), cells, OBJ_32X32_4BPP_BYTES);
     }
   }
-  Iwram_CopyWords(work->sheet + 0x5000, (void *)OBJ_PLTT, 480);
+  Iwram_CopyWords(work->sheet + CATASTROPHE_SAVED_OBJ_PALETTE, (void *)OBJ_PLTT,
+                  CATASTROPHE_SAVED_OBJ_COLORS * 2);
   Resource_LoadAndDecompress(RESOURCE_LIGHTNING_TEXTURE, work->sheet, 0, 0);
   Resource_LoadAndDecompress(RESOURCE_JAGGED_STREAK_SHEET,
                              work->sheet + CATASTROPHE_JAGGED_STREAKS, 0, 0);
@@ -260,7 +269,7 @@ void BattleEffect_RunCatastrophe(struct BattleEffectParams *args) {
   blit[0] = Ram_HeapSlots->ramCode;
   // Act one: the demon breaks out of its chains and drives down its sword.
   frame = 0;
-  while (frame != 637) {
+  while (frame != CATASTROPHE_ACT_ONE_FRAMES) {
     s32 level;
     s32 d;
 
@@ -457,8 +466,8 @@ void BattleEffect_RunCatastrophe(struct BattleEffectParams *args) {
           s32 n;
 
           if (j == 0) {
-            src = (u16 *)(work->sheet + 0x5002);
-            n = 240;
+            src = (u16 *)(work->sheet + CATASTROPHE_SAVED_OBJ_PALETTE + 2);
+            n = CATASTROPHE_SAVED_OBJ_COLORS;
             dst = (u16 *)&OBJ_PLTT_COLOR(0, 1);
           } else {
             dst = (u16 *)&BG_PLTT_COLOR(6, 0);
@@ -496,7 +505,7 @@ void BattleEffect_RunCatastrophe(struct BattleEffectParams *args) {
     }
     if ((u32)(frame - 554) <= 31 && !((frame - 554) & 1)) {
       ColorBuffer_ScaleFar(battle->palette, (void *)&BG_PLTT_COLOR(6, 0),
-                           0x10000 - ((frame - 554) << 10),
+                           FIXED_ONE - ((frame - 554) << 10),
                            BATTLE_BACKGROUND_COLORS);
     }
     if (swapped == 0) {
@@ -788,7 +797,7 @@ void BattleEffect_RunCatastrophe(struct BattleEffectParams *args) {
     }
     if ((u32)(frame - 602) <= 15 || (u32)(frame - 630) <= 3) {
       s32 n = 1;
-      s32 sx = 0x50000;
+      s32 sx = FIXED_ONE * 5;
       s32 base = Random16() % 3;
       s32 spread = 8;
 
@@ -796,7 +805,7 @@ void BattleEffect_RunCatastrophe(struct BattleEffectParams *args) {
         sx = sx - frame * 61845 + 0x2418834;
       }
       if (sx <= 65535) {
-        sx = 0x10000;
+        sx = FIXED_ONE;
       }
       if (frame <= 613) {
         if (frame > 605) {
@@ -1266,8 +1275,8 @@ void BattleEffect_RunCatastrophe(struct BattleEffectParams *args) {
           if (frame >= st && frame < i + 144) {
             s32 s = (frame - st) << 13;
 
-            if (s > 0x10000) {
-              s = 0x10000;
+            if (s > FIXED_ONE) {
+              s = FIXED_ONE;
             }
             aerialTexture.pixels = work->sheet + 0x1456 + (p->variant << 12);
             Matrix_Initialize();
@@ -1537,7 +1546,8 @@ void BattleEffect_RunCatastrophe(struct BattleEffectParams *args) {
         sweepTexture.logHeight = 6;
         sweepModel->scrollU = 0;
         sweepTexture.pixels = work->sheet + CATASTROPHE_SWEEP_PICTURES;
-        Matrix_Translate(-0x20000, (Trig_Sin(frame << 10) << 2) + -0x60000, 0);
+        Matrix_Translate(-toFIXED(2), (Trig_Sin(frame << 10) << 2) - toFIXED(6),
+                         0);
         Matrix_RotateZ(-TRIG_TURN / 32);
         {
           FIXED s0 = Trig_Sin(a);

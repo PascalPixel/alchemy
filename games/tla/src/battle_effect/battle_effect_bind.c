@@ -88,7 +88,7 @@ void BattleEffect_ConvertBackgroundToBlueRamp(void) {
     do {
       *buffer++ += 64;
       i++;
-    } while (i != 0x7800);
+    } while (i != BATTLE_BACKGROUND_BYTES);
   }
   Iwram_CopyWords((void *)BG_CHAR_BLOCK(2), PIXEL_BUFFER,
                   BATTLE_BACKGROUND_BYTES);

@@ -308,20 +308,13 @@ UNREAD_RESULT BattleEnemy_LetterFirstOfKind(s32 classId) {
     if (unit->id != classId)
       continue;
     // The name's end, then the letter and a new terminator after it.
-    nameIndex = 0;
-    if (unit->name[nameIndex] == 0) {
-      unit->name[nameIndex] = LIST_MARKER_CHAR;
-      unit->name[nameIndex + 1] = 0;
-      return;
+    for (nameIndex = 0; nameIndex <= 13; nameIndex++) {
+      if (unit->name[nameIndex] == 0) {
+        unit->name[nameIndex] = LIST_MARKER_CHAR;
+        unit->name[nameIndex + 1] = 0;
+        break;
+      }
     }
-  scan_slots:
-    nameIndex++;
-    if (nameIndex > 13)
-      return;
-    if (unit->name[nameIndex] != 0)
-      goto scan_slots;
-    unit->name[nameIndex] = LIST_MARKER_CHAR;
-    unit->name[nameIndex + 1] = 0;
     return;
   }
 }

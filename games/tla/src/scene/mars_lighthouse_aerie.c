@@ -191,8 +191,8 @@ void MarsLighthouseAerie_LookAround(struct Actor *object) {
   }
 }
 
-/// The actor flickers white every other frame.
-void MarsLighthouseAerie_FlickerWhite(struct Actor *object) {
+/// The actor flickers: hidden for two frames, shown for two.
+void MarsLighthouseAerie_Flicker(struct Actor *object) {
   if ((gFrameCount >> 1) & 1)
     FieldActor_SetSpriteColor(object, SPRITE_COLOR_HIDDEN);
   else
@@ -1051,7 +1051,7 @@ void MarsLighthouseAerie_FaceDoomDragon(void) {
   Actor_SetAnimation(ACTOR_IVAN, ANIM_NOD);
   FieldActor_SetAnimationAndWait(ACTOR_MIA, ANIM_NOD);
   Event_PlaySound(SOUND_FADE_OUT_BGM);
-  actor->update = (void (*)(void))MarsLighthouseAerie_FlickerWhite;
+  actor->update = (void (*)(void))MarsLighthouseAerie_Flicker;
   Actor_SetScript(ACTOR_WISE_ONE, (s32)gMarsLighthouseAerie_VoiceFadeScript);
   PaletteFade_ApplyTarget(PALETTE_TINT_GRAYSCALE, PALETTES_BG);
   PaletteFade_Interpolate(20);

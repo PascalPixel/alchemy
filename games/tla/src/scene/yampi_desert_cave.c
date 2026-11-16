@@ -59,7 +59,7 @@ s32 MapGrid_CheckCollision(struct Actor *actor, struct FieldPosition *position);
 /// Set once Scoop has dug Crystal out of the sand.
 #define FLAG_YAMPI_DESERT_CAVE_CRYSTAL_DUG_UP FLAG_SCENE_TEMP_71
 /// The ripple's step count, the byte of flags from FLAG_SCENE_TEMP_78: each
-/// thirty-two steps it moves on one cell of gYampiDesertCave_RipplePath.
+/// thirty-two steps it moves on one row of gYampiDesertCave_RipplePath.
 #define FLAG_BYTE_YAMPI_DESERT_CAVE_RIPPLE_STEP FLAG_SCENE_TEMP_78
 /// Set once Valukar, the guardian of fire, has been beaten; he is gone.
 #define FLAG_VALUKAR_BEATEN 0x9cd
@@ -835,8 +835,9 @@ static __inline__ s32 GameFlag_GetByte_(s32 flag) {
   return ((s32)GameFlag_GetByte(flag));
 }
 
-/// Moves the ripple along its path, one cell every thirty-two steps of its
-/// counter.
+/// Moves the ripple along its path, a row of gYampiDesertCave_RipplePath for
+/// every thirty-two steps of its counter, which counts only while the party
+/// walks.
 void YampiDesertCave_MoveSandRipple(void) {
   s32 step = GameFlag_GetByte_(FLAG_BYTE_YAMPI_DESERT_CAVE_RIPPLE_STEP);
   s32 index = (step / 32) * 2;
@@ -1094,8 +1095,9 @@ s32 gPushLeaderSteps[] = {
       PUSH_STEP(16, 0),                                                        
   };
 
-/// The ripple's path, in half cells: a column and a row for each stop, then a
-/// pair the ripple never reaches.
+/// The ripple's path, a column and a row in half cells (8 pixels) for each
+/// thirty-two steps: it shows at four places in turn, and between them lies at
+/// the origin, out of sight.
 s16 gYampiDesertCave_RipplePath[] = {
     101, 39, 0, 0, 97, 35, 0, 0,
     99, 37, 0, 0, 95, 33, 0, 0,

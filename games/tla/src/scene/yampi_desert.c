@@ -261,7 +261,7 @@ enum YampiDesertBlowMaceChestActorId {
 
 void YampiDesert_RippleFollowsScorpion(void);
 
-extern u16 gYampiDesert_SandCloudCells[];
+extern u16 gYampiDesert_SandCloudPoints[];
 
 extern u32 gYampiDesert_SandCloudDrifts[];
 
@@ -866,18 +866,19 @@ void YampiDesert_CornerScorpion(void) {
 void Actor_StartScript(struct Actor *object, const void *script);
 
 /// Raises a cloud of dust at each of the fifteen points of
-/// gYampiDesert_SandCloudCells, twice, each moved by -2 to +1 pixels at random.
+/// gYampiDesert_SandCloudPoints, twice, each moved by -2 to +1 pixels at
+/// random.
 void YampiDesert_RaiseSandCloud(void) {
   u32 pass;
   u32 i;
 
   for (pass = 0; pass <= 1; pass++) {
-    u16 *cell;
+    u16 *point;
 
-    cell = gYampiDesert_SandCloudCells;
+    point = gYampiDesert_SandCloudPoints;
     for (i = 0; i <= 14; i++) {
-      s32 x = *cell++ + ((Random16() << 2) >> 16);
-      s32 z = *cell++ + ((Random16() << 2) >> 16);
+      s32 x = *point++ + ((Random16() << 2) >> 16);
+      s32 z = *point++ + ((Random16() << 2) >> 16);
       struct Actor *object = Import_ActorCreate(
           SPRITE_DUST_CLOUD, INTtoFIXED(x - 2), 0, INTtoFIXED(z - 2));
 
@@ -2469,9 +2470,9 @@ struct RideEntry {
   s16 fallAt;
   s16 max;
   s16 min;
-  s16 unusedAfterMin; ///< set to 1 as the platform is placed; nothing reads it
+  s16 unk10; ///< set to 1 as the platform is placed; nothing reads it
   s16 step;
-  s16 unusedAfterStep; ///< cleared as the platform is placed; nothing reads it
+  s16 unk14; ///< cleared as the platform is placed; nothing reads it
   s16 phase;
   struct Actor *rider;
 };
@@ -2692,12 +2693,12 @@ struct RideEntry *YampiDesert_AddRisingSand(s32 slot, s32 id, s32 timer,
     entry->riseAt = 60;
     entry->fallAt = 240;
     entry->min = low;
-    entry->unusedAfterMin = 1;
+    entry->unk10 = 1;
     object->motionFlags = 0;
     object->collisionFlags = ACTOR_NOT_TARGETED;
     entry->step = 0;
     entry->phase = 0;
-    entry->unusedAfterStep = 0;
+    entry->unk14 = 0;
     object->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
   }
   rider = Import_ActorCreate(0x8000, object->x.fixed, object->y.fixed,
@@ -2743,7 +2744,7 @@ u32 gFieldEffect_LongScript[] = {
 };
 
 /// Where the King Scorpion's cloud of dust rises: x and z in pixels.
-u16 gYampiDesert_SandCloudCells[] ALIGNED(4) = {
+u16 gYampiDesert_SandCloudPoints[] ALIGNED(4) = {
     224, 152, 232, 152, 240, 152,
     216, 160, 224, 160, 232, 160, 240, 160, 248, 160,
     216, 168, 224, 168, 232, 168, 240, 168, 248, 168,
@@ -2873,7 +2874,8 @@ LATE_DATA s32 gYampiDesert_RaisedEvent = 0;
 
 LATE_DATA struct Actor *gYampiDesert_SandRipple = NULL;
 
-/// Where the party arrives, in the desert and in the cave under the oasis.
+/// Where the party arrives in the desert's rooms; the cave under the oasis has
+/// its own.
 LATE_DATA struct SceneEntrance gYampiDesert_Entrances[] = {
     {0, CONDITION_ALWAYS, 172, 0, 149, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
     {SCENE_TABLE_END},
@@ -2887,14 +2889,15 @@ LATE_DATA struct SceneEntrance gYampiDesertOasisCaveEntrances[] = {
     {SCENE_TABLE_END},
 };
 
-/// The regions that leave the scorpion's pit and the cave under the oasis, a
-/// row each: the box's least x, y and z and its greatest, in pixels, its
-/// condition (-1 always) and its exit; -1 ends the list.
+/// The region that leaves the scorpion's pit, a row: the box's least x, y
+/// and z and its greatest, in pixels, its condition (-1 always) and its exit;
+/// -1 ends the list.
 LATE_DATA s16 gYampiDesertScorpionPitExitRegions[] ALIGNED(4) = {
     216, 44, 184, 248, 76, 216, -1, 1,
     -1, 0, 0, 0, 0, 0, 0, 0,
 };
 
+/// The two regions that leave the cave under the oasis, in rows as the pit's.
 LATE_DATA s16 gYampiDesertOasisCaveExitRegions[] = {
     112, 24, 416, 128, 40, 432, -1, 3,
     368, 24, 80, 384, 40, 96, -1, 4,
@@ -2951,7 +2954,7 @@ LATE_DATA u32 gSceneExits[] = {
     SCENE_EXITS_END,
 };
 
-/// The desert's actors, room by room.
+/// The actors of the rooms that place none.
 LATE_DATA struct ActorPlacement gYampiDesert_Placements[] = {
     {SCENE_TABLE_END},
 };
@@ -3065,7 +3068,7 @@ LATE_DATA struct ActorPlacement gYampiDesertBlowMaceChestActorPlacements[] = {
     {SCENE_TABLE_END},
 };
 
-/// The desert's triggers, room by room.
+/// The triggers of the rooms that have none.
 LATE_DATA struct Trigger gYampiDesert_Triggers[] = {
     {TRIGGER_TABLE_END},
 };

@@ -95,7 +95,7 @@ void BattleEffect_RunDjinniCharge(struct BattleEffectParams *args, s32 mode) {
       Resource_LoadAndDecompress(RESOURCE_GLOW_ORB_SHEET,
                                  work->sheet + DJINNI_CHARGE_BURST_PICTURES, 1,
                                  1);
-      LOAD_BG_PALETTE(ResourceId_OrangePaletteB);
+      LOAD_BG_PALETTE(RESOURCE_ORANGE_PALETTE_B);
       frames = 102;
     } else {
       Resource_LoadAndDecompress(RESOURCE_PETAL_SHEET, cells, 1, 0);

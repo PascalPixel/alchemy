@@ -589,13 +589,13 @@ void BattleEffect_RunProjectileVolley(struct BattleEffectParams *args,
                                  work->sheet + PROJECTILE_VOLLEY_COMET_PICTURES,
                                  1, 1);
     if (mode == PROJECTILE_VOLLEY_CUTTING_EDGE) {
-      LOAD_BG_PALETTE(ResourceId_IceBlockSheet);
+      LOAD_BG_PALETTE(RESOURCE_ICE_BLOCK_SHEET);
     }
     Resource_LoadAndDecompress(
         RESOURCE_WIND_STREAK_SHEET,
         work->sheet + PROJECTILE_VOLLEY_WIND_STREAK_PICTURES, 1, 0);
     if (mode == PROJECTILE_VOLLEY_CUTTING_EDGE) {
-      LOAD_BG_PALETTE(ResourceId_IceBlockSheet);
+      LOAD_BG_PALETTE(RESOURCE_ICE_BLOCK_SHEET);
     }
     EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_THREE_QUARTERS);
   } else if (mode >= PROJECTILE_VOLLEY_BEAST_NEEDLE &&

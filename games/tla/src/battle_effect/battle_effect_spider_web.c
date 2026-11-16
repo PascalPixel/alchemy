@@ -924,7 +924,7 @@ void BattleEffect_RunSwirlSwipe(struct BattleEffectParams *args, s32 mode) {
   Resource_LoadAndDecompress(RESOURCE_MAGENTA_TAIL_SHEET, Ram_MapCellBuffer, 1,
                              0);
   if (mode == 0) {
-    LOAD_BG_PALETTE(ResourceId_LimePalette);
+    LOAD_BG_PALETTE(RESOURCE_LIME_PALETTE);
   }
   EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_THREE_QUARTERS);
 

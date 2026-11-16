@@ -43,7 +43,7 @@ void BattleEffect_RunOceanFist(struct BattleEffectParams *args) {
   Resource_LoadAndDecompress(RESOURCE_FLASH_BURST_SHEET, spraySheet, 1, 0);
   Resource_LoadAndDecompress(RESOURCE_WHIRL_BEAM_SHEET, work->sheet, 1, 0);
   Resource_LoadAndDecompress(RESOURCE_PARTICLE_SPRITES_A, sprites, 0, 0);
-  LOAD_BG_PALETTE(ResourceId_BlueFlameSheet);
+  LOAD_BG_PALETTE(RESOURCE_BLUE_FLAME_SHEET);
   EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
   EffectPosition_ProjectBattler(args->targets[0], &target);
 

@@ -285,7 +285,7 @@ void BattleEffect_RunJuggle(struct BattleEffectParams *args) {
   Resource_LoadAndDecompress(RESOURCE_SMALL_FLAME_SHEET, work->sheet, 1, 1);
   Resource_LoadAndDecompress(RESOURCE_PARTICLE_SPRITES_A, sparkCels, 0, 0);
   if (args->variant == EFFECT_VARIANT_STRONGEST) {
-    LOAD_BG_PALETTE(ResourceId_OrangePaletteB);
+    LOAD_BG_PALETTE(RESOURCE_ORANGE_PALETTE_B);
   }
   blitters = draw;
   BattleEffect_FetchRectangleBlitters(0, blitters);

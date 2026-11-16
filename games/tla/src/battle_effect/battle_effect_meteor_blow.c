@@ -92,7 +92,7 @@ void BattleEffect_RunMeteorBlow(struct BattleEffectParams *args) {
                              work->sheet + METEOR_BLOW_DUST_BLOB_PICTURES, 1,
                              1);
   Iwram_CopyWordsEntry(sprites, work->sheet + 0x1c2, 30);
-  LOAD_BG_PALETTE(ResourceId_OrangePaletteB);
+  LOAD_BG_PALETTE(RESOURCE_ORANGE_PALETTE_B);
   Graphics_LoadGreyRamp();
   gProjection.centerY = SUMMON_PROJECTION_CENTER_Y;
   wait(1);
@@ -415,7 +415,7 @@ void BattleEffect_RunMeteorBlow(struct BattleEffectParams *args) {
                              work->sheet + METEOR_BLOW_BILLOW, 0, 0);
   Resource_LoadAndDecompress(RESOURCE_FLAME_BAND_TEXTURE,
                              work->sheet + METEOR_BLOW_FLAME_BAND, 0, 0);
-  LOAD_BG_PALETTE(ResourceId_OrangePaletteB);
+  LOAD_BG_PALETTE(RESOURCE_ORANGE_PALETTE_B);
   {
     s32 *q = (s32 *)((s32 *)(Ram_MapCellBuffer + 0x18));
 

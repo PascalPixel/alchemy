@@ -50,7 +50,7 @@ void BattleEffect_RunLiquifier(struct BattleEffectParams *args) {
                              work->sheet + LIQUIFIER_GLOW_BAND, 0, 0);
   Resource_LoadAndDecompress(RESOURCE_FIRE_RING_TEXTURE, gData_02014000, 0, 0);
   Resource_LoadAndDecompress(RESOURCE_PARTICLE_SPRITES_A, graphics, 0, 0);
-  LOAD_BG_PALETTE(ResourceId_OrangePaletteB);
+  LOAD_BG_PALETTE(RESOURCE_ORANGE_PALETTE_B);
   EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
   EffectPosition_ProjectBattler(args->user, &from);
   EffectPosition_ProjectBattler(args->targets[0], &to);

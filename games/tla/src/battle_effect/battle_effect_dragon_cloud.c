@@ -78,7 +78,7 @@ void BattleEffect_RunDragonCloud(struct BattleEffectParams *args) {
   Resource_LoadAndDecompress(RESOURCE_FLASH_BURST_SHEET, Ram_MapCellBuffer, 1,
                              0);
   if (args->variant == EFFECT_VARIANT_STRONGER) {
-    LOAD_BG_PALETTE(ResourceId_OrangePaletteB);
+    LOAD_BG_PALETTE(RESOURCE_ORANGE_PALETTE_B);
   }
   BattleEffect_FetchRectangleBlitters(args->side, draw);
   EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_THREE_QUARTERS);

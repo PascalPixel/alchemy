@@ -27,7 +27,7 @@ void BattleEffect_RunNirvana(struct BattleEffectParams *args) {
   sheet = Ram_HeapSlots->battleSheet;
   BattleEffect_StartCanvasLayer(BGCNT_PRIORITY(1));
   Resource_LoadAndDecompress(RESOURCE_PARTICLE_SPRITES_A, sheet, 0, 0);
-  LOAD_BG_PALETTE(ResourceId_PinkBurstSheet);
+  LOAD_BG_PALETTE(RESOURCE_PINK_BURST_SHEET);
   object = BattleObject_GetFar(args->targets[0])->object;
   half = BattleUnit_GetEffectHeightFar(args->targets[0]) / 2;
   orb = work->particles;
@@ -310,7 +310,7 @@ void BattleEffect_RunSoulShatter(struct BattleEffectParams *args) {
   Resource_LoadAndDecompress(RESOURCE_BLAST_SHEET, work->sheet + SPARK_OFFSET,
                              1, 0);
   Resource_LoadAndDecompress(RESOURCE_PARTICLE_SPRITES_A, sheet, 0, 0);
-  LOAD_BG_PALETTE(ResourceId_OrangePaletteB);
+  LOAD_BG_PALETTE(RESOURCE_ORANGE_PALETTE_B);
   EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_THREE_QUARTERS);
   target = BattleObject_GetFar(args->targets[0])->object;
   EffectPosition_ProjectBattler(args->targets[0], &position);
@@ -565,7 +565,7 @@ void BattleEffect_RunSerac(struct BattleEffectParams *args) {
                              work->sheet + SERAC_CLOUD_PUFFS, 0, 0);
   Resource_LoadAndDecompress(RESOURCE_MERCURY_DJINN_SHEET,
                              work->sheet + SERAC_MERCURY_DJINN_PICTURES, 1, 0);
-  LOAD_BG_PALETTE(ResourceId_BlueFlameSheet);
+  LOAD_BG_PALETTE(RESOURCE_BLUE_FLAME_SHEET);
   // A block of its own: camera, savedYaw and target take their stack slots
   // after the blitter pair's address.
   {

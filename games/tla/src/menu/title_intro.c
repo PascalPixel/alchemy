@@ -580,7 +580,7 @@ extern s16 gTitleIntro_GullPath[];
 #define LOAD_LOGO_TILES(id)                                                    \
   {                                                                            \
     u8 *buffer = gTitleIntro_LogoTileBuffer;                                   \
-    Decompress_ByteLz(Resource_GetTableEntry((s32)&(id)), buffer);             \
+    Decompress_ByteLz(Resource_GetTableEntry(id), buffer);                     \
     Dma_Set(buffer, (void *)OBJ_VRAM0, DMA_COPY_WORDS(3072), REG_DMA3);        \
   }
 
@@ -624,7 +624,7 @@ void TitleIntro_UpdateLogo(void) {
       Dma_Set(Resource_GetTableEntry(RESOURCE_SUBTITLE_PALETTE),
               (void *)OBJ_PLTT,
               (DMA_ENABLE | DMA_32BIT) << 16 | (BG_PLTT_SIZE / 4), REG_DMA3);
-      LOAD_LOGO_TILES(ResourceId_SubtitleA);
+      LOAD_LOGO_TILES(RESOURCE_SUBTITLE_A);
       logo->phase = TITLE_LOGO_ZOOM;
       logo->frame = 1;
       logo->timer = 0;
@@ -676,11 +676,11 @@ void TitleIntro_UpdateLogo(void) {
         REG_BLDALPHA = BLEND_ALPHA(logo->frame, BLEND_WEIGHT_MAX);
       }
       if (logo->timer == 8)
-        LOAD_LOGO_TILES(ResourceId_SubtitleB)
+        LOAD_LOGO_TILES(RESOURCE_SUBTITLE_B)
       else if (logo->timer == 16)
-        LOAD_LOGO_TILES(ResourceId_SubtitleC)
+        LOAD_LOGO_TILES(RESOURCE_SUBTITLE_C)
       else if (logo->timer == 24)
-        LOAD_LOGO_TILES(ResourceId_SubtitleD)
+        LOAD_LOGO_TILES(RESOURCE_SUBTITLE_D)
     }
   }
 }

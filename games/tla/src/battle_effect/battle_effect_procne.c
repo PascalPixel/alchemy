@@ -588,7 +588,7 @@ void BattleEffect_RunDragonFire(struct BattleEffectParams *args, s32 mode) {
                              work->sheet + STREAK_SHEET, 1, 0);
   Resource_LoadAndDecompress(RESOURCE_PARTICLE_SPRITES_A, sheet, 0, 0);
   if (mode == DRAGON_FIRE_DRAGON_DRIVER) {
-    LOAD_BG_PALETTE(ResourceId_LightningBoltSheet);
+    LOAD_BG_PALETTE(RESOURCE_LIGHTNING_BOLT_SHEET);
   }
   EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_THREE_QUARTERS);
   {

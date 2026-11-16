@@ -192,11 +192,11 @@ void BattleEffect_RunStatBoost(struct BattleEffectParams *args, u32 mode) {
     Resource_LoadAndDecompress(RESOURCE_VIOLET_STREAK_SHEET,
                                work->sheet + SERIES_B_PICTURE, 1, 1);
     if (mode == STAT_BOOST_GRANITE) {
-      LOAD_BG_PALETTE(ResourceId_VenusDjinnSheet);
+      LOAD_BG_PALETTE(RESOURCE_VENUS_DJINN_SHEET);
     } else if (mode == STAT_BOOST_FLASH) {
-      LOAD_BG_PALETTE(ResourceId_MarsDjinnSheet);
+      LOAD_BG_PALETTE(RESOURCE_MARS_DJINN_SHEET);
     } else {
-      LOAD_BG_PALETTE(ResourceId_MercuryDjinnSheet);
+      LOAD_BG_PALETTE(RESOURCE_MERCURY_DJINN_SHEET);
     }
   } else if (mode == STAT_BOOST_ZEPHYR) {
     Resource_LoadAndDecompress(RESOURCE_WISP_SHEET,
@@ -204,7 +204,7 @@ void BattleEffect_RunStatBoost(struct BattleEffectParams *args, u32 mode) {
   } else if (mode == STAT_BOOST_COAL) {
     Resource_LoadAndDecompress(RESOURCE_WISP_SHEET,
                                work->sheet + SERIES_B_PICTURE, 1, 0);
-    LOAD_BG_PALETTE(ResourceId_MarsDjinnSheet);
+    LOAD_BG_PALETTE(RESOURCE_MARS_DJINN_SHEET);
   } else {
     void *palette;
 

@@ -257,7 +257,7 @@ void BattleEffect_RunMegiddo(struct BattleEffectParams *args) {
       target->x = zero;
       target->z = zero;
       EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
-      LOAD_BG_PALETTE(ResourceId_OrangePaletteB);
+      LOAD_BG_PALETTE(RESOURCE_ORANGE_PALETTE_B);
     }
     if (frame > 154) {
       s32 d = 16 - (frame - 155) / 2;

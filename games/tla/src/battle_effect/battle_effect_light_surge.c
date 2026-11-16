@@ -70,7 +70,7 @@ void BattleEffect_RunLightSurge(struct BattleEffectParams *args) {
   Resource_LoadAndDecompress(RESOURCE_GLOW_BAND_TEXTURE_A,
                              work->sheet + LIGHT_SURGE_GLOW_BAND, 0, 0);
   Resource_LoadAndDecompress(RESOURCE_PARTICLE_SPRITES_A, sprites, 0, 0);
-  LOAD_BG_PALETTE(ResourceId_VioletPaletteF);
+  LOAD_BG_PALETTE(RESOURCE_VIOLET_PALETTE_F);
   EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
   camera = Ram_HeapSlots->cameraWork;
   savedYaw = camera->yaw;

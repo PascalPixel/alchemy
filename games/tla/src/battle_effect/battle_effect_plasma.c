@@ -50,7 +50,7 @@ void BattleEffect_RunPlasma(struct BattleEffectParams *args) {
                              1);
   Resource_LoadAndDecompress(RESOURCE_PARTICLE_SPRITES_A, sprites, 0, 0);
   if (args->variant != EFFECT_VARIANT_STRONGEST) {
-    LOAD_BG_PALETTE(ResourceId_VioletPaletteB);
+    LOAD_BG_PALETTE(RESOURCE_VIOLET_PALETTE_B);
   }
 
   // Every spark starts at rest.
@@ -237,9 +237,9 @@ void BattleEffect_RunSparkGroups(struct BattleEffectParams *args, s32 kind) {
   Resource_LoadAndDecompress(RESOURCE_FLASH_BURST_SHEET, work->sheet, 1, 1);
   Resource_LoadAndDecompress(RESOURCE_PARTICLE_SPRITES_A, graphics, 0, 0);
   if (kind == SPARK_GROUPS_DYNAMITE) {
-    LOAD_BG_PALETTE(ResourceId_OrangePaletteB);
+    LOAD_BG_PALETTE(RESOURCE_ORANGE_PALETTE_B);
   } else if (kind == SPARK_GROUPS_RISING) {
-    LOAD_BG_PALETTE(ResourceId_LightningBoltSheet);
+    LOAD_BG_PALETTE(RESOURCE_LIGHTNING_BOLT_SHEET);
   }
 
   sparks = gMapGridCellBuffer;

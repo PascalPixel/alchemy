@@ -26,10 +26,18 @@
 /// The gathering's crash: the canvas fills, then the beams fall from the next
 /// frame.
 #define JUDGMENT_BEAM_FRAME 144
+/// The beam, at the sheet's start.
+#define JUDGMENT_BEAM_WIDTH 24
+#define JUDGMENT_BEAM_HEIGHT 64
 /// The explosion's four pictures, loaded over the flares on the sweep's
 /// frame 64.
 #define JUDGMENT_SHEET_EXPLOSION 16384
+/// The two flare pictures, from the crescent sheet the sweep loads.
+#define JUDGMENT_FLARE_WIDTH 24
+#define JUDGMENT_FLARE_HEIGHT 24
 #define JUDGMENT_SHEET_FLARE_A 16384
+#define JUDGMENT_SHEET_FLARE_B                                                 \
+  (JUDGMENT_SHEET_FLARE_A + PICTURE_BYTES(JUDGMENT_FLARE))
 #define JUDGMENT_EXPLOSION_WIDTH 32
 #define JUDGMENT_EXPLOSION_HEIGHT 54
 /// The sweep's scenes, by the frame each opens on: the flare lands on the
@@ -341,12 +349,14 @@ void BattleEffect_RunJudgment(struct BattleEffectParams *args) {
       flags = EFFECT_CLIP_BOUNDS;
       EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED, flags, BLITTER_ADDITIVE);
       ((DrawRectangle)Ram_HeapSlots->ramCodePaired)(canvas, work->sheet, 36, y,
-                                                    24, 64);
+                                                    JUDGMENT_BEAM_WIDTH,
+                                                    JUDGMENT_BEAM_HEIGHT);
       HeapSlot_Release(HEAP_SLOT_RAM_CODE_PAIRED);
       flags = EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X;
       EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED, flags, BLITTER_ADDITIVE);
       ((DrawRectangle)Ram_HeapSlots->ramCodePaired)(canvas, work->sheet, 60, y,
-                                                    24, 64);
+                                                    JUDGMENT_BEAM_WIDTH,
+                                                    JUDGMENT_BEAM_HEIGHT);
       HeapSlot_Release(HEAP_SLOT_RAM_CODE_PAIRED);
     }
 
@@ -592,27 +602,31 @@ void BattleEffect_RunJudgment(struct BattleEffectParams *args) {
       if ((frame & 7) < 4) {
         sheet = work->sheet + JUDGMENT_SHEET_FLARE_A;
       } else {
-        sheet = work->sheet + 0x4240;
+        sheet = work->sheet + JUDGMENT_SHEET_FLARE_B;
       }
       flags = EFFECT_CLIP_BOUNDS;
       EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED, flags, BLITTER_MAX);
       ((DrawRectangle)Ram_HeapSlots->ramCodePaired)(canvas, sheet, 36, top - 24,
-                                                    24, 24);
+                                                    JUDGMENT_FLARE_WIDTH,
+                                                    JUDGMENT_FLARE_HEIGHT);
       HeapSlot_Release(HEAP_SLOT_RAM_CODE_PAIRED);
       flags = EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X;
       EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED, flags, BLITTER_MAX);
       ((DrawRectangle)Ram_HeapSlots->ramCodePaired)(canvas, sheet, 59, top - 24,
-                                                    24, 24);
+                                                    JUDGMENT_FLARE_WIDTH,
+                                                    JUDGMENT_FLARE_HEIGHT);
       HeapSlot_Release(HEAP_SLOT_RAM_CODE_PAIRED);
       flags = EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_Y;
       EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED, flags, BLITTER_MAX);
       ((DrawRectangle)Ram_HeapSlots->ramCodePaired)(canvas, sheet, 36, top - 1,
-                                                    24, 24);
+                                                    JUDGMENT_FLARE_WIDTH,
+                                                    JUDGMENT_FLARE_HEIGHT);
       HeapSlot_Release(HEAP_SLOT_RAM_CODE_PAIRED);
       flags = EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP;
       EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED, flags, BLITTER_MAX);
       ((DrawRectangle)Ram_HeapSlots->ramCodePaired)(canvas, sheet, 59, top - 1,
-                                                    24, 24);
+                                                    JUDGMENT_FLARE_WIDTH,
+                                                    JUDGMENT_FLARE_HEIGHT);
       HeapSlot_Release(HEAP_SLOT_RAM_CODE_PAIRED);
     }
     if ((u32)(frame - 64) <= 1) {

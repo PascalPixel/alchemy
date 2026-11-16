@@ -255,7 +255,8 @@ void BattleEffect_RunNeptune(struct BattleEffectParams *args) {
 
           glintSize = r * 2;
           draw[0](canvas,
-                  work->sheet + gBattleEffect_FlarePictures[r - 1] + 0x4e20,
+                  work->sheet + gBattleEffect_FlarePictures[r - 1] +
+                      NEPTUNE_FLARE_SHEET,
                   fx - r, fy - r, glintSize, glintSize);
           glint->x += glint->velocityX;
           glint->y += glint->velocityY;

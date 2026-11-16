@@ -456,7 +456,7 @@ void BattleEffect_RunHealingMotes(struct BattleEffectParams *args, u32 mode) {
           else if (mode == HEALING_MODE_SALT)
             end = start + i / 2 + 64;
           else
-            end = 0x10000;
+            end = 65536;
           if (frame > start + i / 4 && frame < end) {
             s32 xx = (spark->x >> 8) * (spark->x >> 8);
             s32 yy = (spark->y >> 8) * (spark->y >> 8);
@@ -477,10 +477,7 @@ void BattleEffect_RunHealingMotes(struct BattleEffectParams *args, u32 mode) {
 
               // Depth 314-634 gives sizes 3 down to 1; some modes cycle
               // through the nine puffs instead.
-              if (screen.depth < 314)
-                screen.depth = 314;
-              if (screen.depth > 634)
-                screen.depth = 634;
+              CLAMP(screen.depth, 314, 634);
               size = 3 - (screen.depth - 314) / 128;
               if (mode == HEALING_MODE_PLY || mode == HEALING_MODE_SPRING ||
                   mode == HEALING_MODE_BREATH)

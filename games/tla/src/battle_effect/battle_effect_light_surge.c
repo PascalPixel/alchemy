@@ -9,6 +9,12 @@ struct StripQuad;
 
 #define LIGHT_SURGE_FRAMES 74
 #define SURGE_BOLTS 14
+/// The work's particles: the flashes from the first, the glows from the 17th
+/// and the bolts from the 33rd.
+#define SURGE_FIRST_GLOW 16
+#define SURGE_FIRST_BOLT 32
+/// The shaded circles packed in the map buffer, 2 to 64 pixels across.
+#define SURGE_CIRCLES 32
 
 /// Where GlowOrbTexture is decoded in the effect's pictures.
 #define LIGHT_SURGE_GLOW_ORB 0x1000
@@ -81,7 +87,7 @@ void BattleEffect_RunLightSurge(struct BattleEffectParams *args) {
   circles = (s16 *)work->sheet;
   offset = 0;
   size = 2;
-  for (i = 0; i != 32; i++) {
+  for (i = 0; i != SURGE_CIRCLES; i++) {
     BattleEffect_DrawShadedCircles((u8 *)(offset + cells), size, FIXED_ONE);
     circles[i] = offset;
     offset += (i * 2 + 3) * size / 2;
@@ -103,7 +109,7 @@ void BattleEffect_RunLightSurge(struct BattleEffectParams *args) {
     }
     if (frame == 0) {
       camera->yaw = savedYaw;
-      for (i = 0; i != 32; i++) {
+      for (i = 0; i != SURGE_FIRST_BOLT; i++) {
         work->particles[i].variant = -1;
       }
       for (i = 0; i != 32; i++) {
@@ -111,7 +117,7 @@ void BattleEffect_RunLightSurge(struct BattleEffectParams *args) {
         s32 angle;
         s32 z;
 
-        fall = &work->particles[32 + i];
+        fall = &work->particles[SURGE_FIRST_BOLT + i];
         radius = (Random16() & 63) + 32;
         angle = Random16() & TRIG_ANGLE_MASK;
 
@@ -133,9 +139,9 @@ void BattleEffect_RunLightSurge(struct BattleEffectParams *args) {
       s32 turn;
 
       if (frame <= 71) {
-        turn = 0x100;
+        turn = 256;
       } else {
-        turn = 0xa00 - (frame << 5);
+        turn = 2560 - (frame << 5);
       }
       if (args->side == EFFECT_SIDE_ENEMIES) {
         camera->yaw += turn;
@@ -211,8 +217,9 @@ void BattleEffect_RunLightSurge(struct BattleEffectParams *args) {
     model->shade = shade;
     model->kind = MODEL_SHADED_ADDITIVE;
     texture.pixels = work->sheet + LIGHT_SURGE_GLOW_BAND;
-    for (i = 0, flash = work->particles, glow = &work->particles[16],
-        bolt = &work->particles[32];
+    for (i = 0, flash = work->particles,
+        glow = &work->particles[SURGE_FIRST_GLOW],
+        bolt = &work->particles[SURGE_FIRST_BOLT];
          i != SURGE_BOLTS; flash++, glow++, bolt++, i++) {
       s32 t = ++bolt->variant;
       struct ScreenPoint *out;

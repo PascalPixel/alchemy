@@ -177,9 +177,9 @@ void BattleEffect_RunMeteorBlow(struct BattleEffectParams *args) {
     if (frame == 0) {
       x = toFIXED(272);
       z = toFIXED(88);
-      size = 0x400;
-      pitch = 0xd00;
-      yaw = 0x2500;
+      size = FIXED_ONE / 64;
+      pitch = 3328;
+      yaw = 9472;
       work->frame = 8;
       Sound_PlayFar(SE_WAVE);
     }
@@ -197,7 +197,10 @@ void BattleEffect_RunMeteorBlow(struct BattleEffectParams *args) {
       Task_Remove(BattleEffect_FlushPendingGraphicsTransfer);
       Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_FRAME);
       IO_WRITE_QUEUE_PUSH((u32)&REG_BG2PA, Q_8_8(0.5), IO_WRITE_HALFWORD);
-      IO_WRITE_QUEUE_PUSH((u32)&REG_BG2CNT, 0x784, IO_WRITE_HALFWORD);
+      IO_WRITE_QUEUE_PUSH((u32)&REG_BG2CNT,
+                          BGCNT_CHAR_BASE(1) | BGCNT_256_COLORS |
+                              BGCNT_SCREEN_BASE(7),
+                          IO_WRITE_HALFWORD);
     }
     if (frame > 128) {
       BattleEffect_StepPaletteToResource(RESOURCE_ORANGE_PALETTE_B);
@@ -212,7 +215,7 @@ void BattleEffect_RunMeteorBlow(struct BattleEffectParams *args) {
     // DEAD: frame never reaches 1600 here; the ROM keeps the compare and
     // branch.
     if (frame <= 1599) {
-      u16 *dst = (u16 *)((u8 *)work + 0x7640);
+      u16 *dst = work->backdropLines;
       s32 value = work->frame;
       s32 base = value / 2 + 16;
 
@@ -269,7 +272,7 @@ void BattleEffect_RunMeteorBlow(struct BattleEffectParams *args) {
       model->shade = shade;
       model->scrollU = 0;
       if (frame > 127) {
-        s32 d = (frame << 6) - 0x2000;
+        s32 d = (frame << 6) - FIXED_ONE / 8;
 
         if (d > 1023) {
           d = 1024;
@@ -290,7 +293,7 @@ void BattleEffect_RunMeteorBlow(struct BattleEffectParams *args) {
         Matrix_RotateY(angle);
         Render_TransformVertices(meshA, projected, 32);
         Render_DrawModelList(model);
-        angle += 0x1800;
+        angle += TRIG_TURN * 3 / 32;
         scroll += 20;
       }
       Heap_Release(model);
@@ -350,16 +353,16 @@ void BattleEffect_RunMeteorBlow(struct BattleEffectParams *args) {
     Render_ApplyProjectedPlacementFar(work->sprites[0], place, req, 0);
     speed = toFIXED(1) / 32;
     {
-      s32 a = 0x6000;
+      s32 a = DEGtoANG(135);
 
       if (frame > 23) {
-        a = a - frame * 286 + 0x11e0;
+        a = a - frame * 286 + 4576;
         if (a < 0) {
           a = 0;
         }
       }
       if (frame > 87) {
-        speed = speed - (frame << 6) + 0x1600;
+        speed = speed - (frame << 6) + toFIXED(11) / 128;
         if (speed < 0) {
           speed = 0;
         }
@@ -369,7 +372,7 @@ void BattleEffect_RunMeteorBlow(struct BattleEffectParams *args) {
       size += 512;
     }
     if (frame > 127) {
-      speed = (frame << 13) - 0x100000;
+      speed = (frame << 13) - toFIXED(16);
       if (speed > 0x1ffff) {
         speed = toFIXED(2);
       }
@@ -416,13 +419,8 @@ void BattleEffect_RunMeteorBlow(struct BattleEffectParams *args) {
   Resource_LoadAndDecompress(RESOURCE_FLAME_BAND_TEXTURE,
                              work->sheet + METEOR_BLOW_FLAME_BAND, 0, 0);
   LOAD_BG_PALETTE(RESOURCE_ORANGE_PALETTE_B);
-  {
-    s32 *q = (s32 *)((s32 *)(Ram_MapCellBuffer + 0x18));
-
-    for (i = 0; i != 256; i++, q += 7) {
-      *q = 0;
-    }
-  }
+  for (i = 0; i != 256; i++)
+    PARTICLES[i].variant = 0;
   Palette_BrightenBattleBg(5, -4, -12);
 
   // The impact: the meteor lands, rings of fire and shards fly.

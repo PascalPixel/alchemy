@@ -47,7 +47,7 @@ void BattleEffect_RunKirin(struct BattleEffectParams *args) {
   BattleEffect_ConfigureEffectDisplay();
   REG_BG2CNT = BGCNT_CHAR_BASE(1) | BGCNT_256_COLORS | BGCNT_SCREEN_BASE(7);
   PLTT_BACKDROP = 0;
-  BG_PLTT_COLOR(0, 1) = 0x18;
+  BG_PLTT_COLOR(0, 1) = RGB(24, 0, 0);
   work->transferMode = CANVAS_COPY;
   Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_FRAME);
   // Setup: wipe the battle away, swap in the forest and wipe back.
@@ -228,8 +228,11 @@ void BattleEffect_RunKirin(struct BattleEffectParams *args) {
   BattleEffect_SetupBlendedDisplay();
   REG_WIN0H = WIN_RANGE(0, DISPLAY_WIDTH);
 
-  for (i = 0; i != 9; i++)
-    ((u8 *)work->sprites[i])[9] |= 12;
+  for (i = 0; i != 9; i++) {
+    struct Sprite *sprite = work->sprites[i];
+
+    sprite->image.priority = 3;
+  }
 
   {
     s32 rowX;

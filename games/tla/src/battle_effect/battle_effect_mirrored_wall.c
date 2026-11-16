@@ -118,7 +118,7 @@ void BattleEffect_RunDjinnBeams(struct BattleEffectParams *args, s32 mode) {
 
   // The motes start 80 pixels up, each at its own phase of the sway.
   for (i = 0; i != DJINN_BEAMS_MOTES; i++) {
-    SET_POSITION(&PARTICLES[i], 0, 80 << 16, (Random16() | -32) << 14);
+    SET_POSITION(&PARTICLES[i], 0, toFIXED(80), (Random16() | -32) << 14);
     PARTICLES[i].variant = Random16() & 255;
   }
 
@@ -398,7 +398,7 @@ void BattleEffect_RunLobbedShells(struct BattleEffectParams *args, s32 mode) {
 
   // The shots leave the caster at the mode's height, each aimed at its
   // target with a little spread in depth.
-  for (i = 0; i != 1024; i++)
+  for (i = 0; i != PARTICLE_POOL_COUNT; i++)
     PARTICLES[i].variant = -1;
   source = BattleObject_GetFar(args->user)->object;
   if (mode == LOBBED_SHELLS_MUD)
@@ -423,7 +423,7 @@ void BattleEffect_RunLobbedShells(struct BattleEffectParams *args, s32 mode) {
       shot->variant = 0;
     }
   }
-  for (i = 0; i != 256; i++)
+  for (i = 0; i != LOBBED_SHELLS_BURST_SLOTS; i++)
     BURSTS[i].variant = -1;
 
   // The blitter pair for the caster's side; modes 4 and 7 clear the canvas
@@ -454,7 +454,7 @@ void BattleEffect_RunLobbedShells(struct BattleEffectParams *args, s32 mode) {
         s32 start = k * 8 + i * 4;
 
         if (frame >= start) {
-          struct Particle *shot = &PARTICLES[k * 16 + i];
+          struct Particle *shot = &PARTICLES[k * LOBBED_SHELLS_SLOTS + i];
 
           if (frame == start + 17) {
             BattleEffect_TintBattler(args->targets[k % args->targetCount],
@@ -471,12 +471,14 @@ void BattleEffect_RunLobbedShells(struct BattleEffectParams *args, s32 mode) {
             position.y -= 8;
             if (step > 4)
               draw[gLobbedShells_Styles[mode * 4 + RECORD_SHOT_BLITTER]](
-                  canvas, work->sheet + step * 768, position.x - 16,
-                  position.y - 12, LOBBED_SHELL_HEIGHT, 24);
+                  canvas, work->sheet + step * PICTURE_BYTES(LOBBED_SHELL),
+                  position.x - 16, position.y - 12, LOBBED_SHELL_HEIGHT,
+                  LOBBED_SHELL_WIDTH);
             else
               draw[gLobbedShells_Styles[mode * 4 + RECORD_SHOT_BLITTER]](
-                  canvas, work->sheet + step * 768, position.x - 12,
-                  position.y - 16, LOBBED_SHELL_WIDTH, LOBBED_SHELL_HEIGHT);
+                  canvas, work->sheet + step * PICTURE_BYTES(LOBBED_SHELL),
+                  position.x - 12, position.y - 16, LOBBED_SHELL_WIDTH,
+                  LOBBED_SHELL_HEIGHT);
             if (shot->variant == 0)
               BattleEffectKernels_IntegrateVector3(shot, 63, -toFIXED(1) / 2);
             if (shot->y < 0) {

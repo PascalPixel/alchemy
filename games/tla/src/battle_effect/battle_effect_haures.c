@@ -14,6 +14,7 @@ struct WingVertex {
 };
 
 #define SCRATCH (Ram_MapCellBuffer + 0x4000)
+/// The wing strip's corners, rebuilt each frame from the morphing shapes.
 extern struct WingVertex gHaures_WingCorners[];
 extern const u16 gHaures_BodyPiecePoints[][2];
 
@@ -21,12 +22,10 @@ extern const u16 gHaures_BodyPiecePoints[][2];
 #define STAMP_TILES(work) (*(u32 *)((u8 *)(work) + 0x7b74))
 #define STAMP_CANVAS(work) ((u8 *)(work) + 0x6780)
 
-static __inline__ void PLACE(s32 x, s32 y) {
-  Matrix_Translate(INTtoFIXED(x), INTtoFIXED(y), 0);
-}
 #define HAURES_FRAMES 92
 /// Haures's sprites: the demon's eleven pieces (SPRITE_HAURES), four violet
-/// flames (sprite 660) and two small dots (sprite 661), then the 64x64 stamp.
+/// flames (SPRITE_HAURES_FLAME) and two small dots (SPRITE_HAURES_DOT), then
+/// the 64x64 stamp.
 #define HAURES_BODY_PIECES 11
 #define HAURES_FLAMES 12
 #define HAURES_FLAME_COUNT 4
@@ -36,6 +35,14 @@ static __inline__ void PLACE(s32 x, s32 y) {
 /// The wings: a strip of 32 points, upper and lower edge each, so 31 quads.
 #define HAURES_WING_POINTS 32
 #define HAURES_WING_QUADS (HAURES_WING_POINTS - 1)
+/// The wing's shapes it morphs through in turn, HAURES_WING_POINTS heights
+/// each.
+#define HAURES_WING_SHAPES 13
+/// Where SwirlTexture, 64 x 64 and dimmed to half, is decoded in the effect's
+/// pictures.
+#define HAURES_SWIRL_TEXTURE 0x4000
+#define HAURES_SWIRL_WIDTH 64
+#define HAURES_SWIRL_HEIGHT 64
 
 /// Haures: in a blue cavern a dark pool ringed in red swells into a mound under
 /// a violet glow and a rune flashes; the demon rears in a burning cave, then
@@ -86,7 +93,7 @@ void BattleEffect_RunHaures(struct BattleEffectParams *args) {
   Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_FRAME);
   BattleEffect_WipeCanvas(CANVAS_WIPE_ACROSS, CANVAS_WIPE_FILL);
   REG_BLDCNT = BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_ALL;
-  REG_BG2X = 0x400;
+  REG_BG2X = Q_8_8(4);
   gProjection.centerY = SUMMON_PROJECTION_CENTER_Y;
   BattleEffect_SelectLivingTargets(work->args);
   transition[4] = 1;
@@ -98,7 +105,7 @@ void BattleEffect_RunHaures(struct BattleEffectParams *args) {
   dived = 0;
   BattleEffect_SpawnObjects(2, SPRITE_HAURES, 2);
   for (i = 0; i != HAURES_FLAME_COUNT; i++) {
-    sprite = Sprite_CreateFar(0x294);
+    sprite = Sprite_CreateFar(SPRITE_HAURES_FLAME);
     work->sprites[HAURES_FLAMES + i] = sprite;
     if (sprite != NULL) {
       sprite->flags = 0;
@@ -112,7 +119,7 @@ void BattleEffect_RunHaures(struct BattleEffectParams *args) {
     }
   }
   for (i = 0; i != HAURES_DOT_COUNT; i++) {
-    sprite = Sprite_CreateFar(0x295);
+    sprite = Sprite_CreateFar(SPRITE_HAURES_DOT);
     work->sprites[HAURES_DOTS + i] = sprite;
     if (sprite != NULL) {
       sprite->flags = 0;
@@ -135,7 +142,7 @@ void BattleEffect_RunHaures(struct BattleEffectParams *args) {
     Resource_LoadAndDecompress(RESOURCE_CHAIN_TEXTURE, c, 0, 0);
     Picture_MirrorIntoQuadrants(c, SCRATCH, 64, 64);
     Resource_LoadAndDecompress(RESOURCE_EMBER_STREAK_SHEET, c, 1, 0);
-    for (i = 0; i != 0x1781; i++, c++) {
+    for (i = 0; i != 6017; i++, c++) {
       u8 v = *c;
 
       if (v != 0) {
@@ -148,9 +155,10 @@ void BattleEffect_RunHaures(struct BattleEffectParams *args) {
     u32 mask;
 
     Resource_LoadAndDecompress(RESOURCE_SWIRL_TEXTURE,
-                               w = (u32 *)(work->sheet + 0x4000), 0, 0);
+                               w = (u32 *)(work->sheet + HAURES_SWIRL_TEXTURE),
+                               0, 0);
     mask = 0x7f7f7f7f;
-    for (i = 0; i != 1024; i++) {
+    for (i = 0; i != PICTURE_BYTES(HAURES_SWIRL) / 4; i++) {
       w[i] = (w[i] >> 1) & mask;
     }
   }
@@ -212,7 +220,7 @@ void BattleEffect_RunHaures(struct BattleEffectParams *args) {
       if (b > RGB_LEVEL_MAX) {
         b = RGB_LEVEL_MAX;
       }
-      *dst = b << 10 | (i + 2) << 5 | r;
+      *dst = RGB(r, i + 2, b);
     }
   }
   BattleBackground_LoadFar(BATTLE_BACKGROUND_FIXED, RESOURCE_MOSS_CAVE_BACKDROP,
@@ -357,7 +365,7 @@ void BattleEffect_RunHaures(struct BattleEffectParams *args) {
           texture.logWidth = 6;
           t = frame - 47;
           texture.logHeight = 6;
-          texture.pixels = work->sheet + 0x4000;
+          texture.pixels = work->sheet + HAURES_SWIRL_TEXTURE;
           sh = frame - 111;
           if (sh > 0) {
             sh = 0;
@@ -404,9 +412,9 @@ void BattleEffect_RunHaures(struct BattleEffectParams *args) {
               morph = 0;
               morphStep = 0;
             }
-            a = morph % 13;
+            a = morph % HAURES_WING_SHAPES;
             next = morph + 1;
-            b = next % 13;
+            b = next % HAURES_WING_SHAPES;
             n = morphStep;
             morphStep = n + 1;
             if (morphStep == gHaures_WingMorphSteps[a]) {
@@ -961,7 +969,7 @@ void BattleEffect_RunHaures(struct BattleEffectParams *args) {
             Matrix_RotateZ(-DEGtoANG(45));
           } else {
             Matrix_Translate(INTtoFIXED(x - 16), INTtoFIXED(y), 0);
-            Matrix_RotateZ(0x27d0);
+            Matrix_RotateZ(10192);
           }
           Matrix_Scale(FIXED_ONE * 3, amp, FIXED_ONE * 2);
           Render_TransformVertices(gBattleEffect_SquareCorners, verts, 4);
@@ -987,7 +995,7 @@ void BattleEffect_RunHaures(struct BattleEffectParams *args) {
       model->scrollU = (frame * 8) & 127;
       bandTexture.pixels = work->sheet;
       if (frame <= 71) {
-        v = FIXEDtoINT(Trig_Sin((frame << 10) + -0xe000) * 80);
+        v = FIXEDtoINT(Trig_Sin((frame << 10) - DEGtoANG(315)) * 80);
       } else if (frame > 79) {
         v = FIXEDtoINT(Trig_Sin((frame << 10) + -TRIG_TURN) * 80);
       } else {

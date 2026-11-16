@@ -227,7 +227,7 @@ void BattleEffect_RunGround(struct BattleEffectParams *args) {
       struct Particle *rock = &work->particles[i];
 
       SET_POSITION(rock, actor->x, toFIXED(66), actor->z);
-      rock->velocityX = (i * 0x500000) >> 5;
+      rock->velocityX = (i * toFIXED(80)) >> 5;
       rock->velocityY = (s32)INTtoFIXED((Random16() & 127) - 64) >> 6;
       rock->velocityZ = (s32)INTtoFIXED((Random16() & 255) - 127) >> 5;
       if (rock->x > 0)
@@ -258,8 +258,8 @@ void BattleEffect_RunGround(struct BattleEffectParams *args) {
                               BLITTER_ADDITIVE);
         if (frame <= 3)
           ((DrawRectangle)Ram_HeapSlots->ramCodePaired)(
-              canvas, work->sheet + GROUND_VENUS_DJINN_SMALL_PICTURES, x, y, 20,
-              40);
+              canvas, work->sheet + GROUND_VENUS_DJINN_SMALL_PICTURES, x, y,
+              SMALL_DJINNI_WIDTH, SMALL_DJINNI_HEIGHT);
         HeapSlot_Release(HEAP_SLOT_RAM_CODE_PAIRED);
         draw[0](canvas, work->sheet + GROUND_VENUS_DJINN_SMALL_PICTURES, x, y,
                 SMALL_DJINNI_WIDTH, SMALL_DJINNI_HEIGHT);
@@ -360,9 +360,9 @@ void BattleEffect_RunGround(struct BattleEffectParams *args) {
 }
 
 /// Shakes the battle view while the effect work's shakeFrames lasts, moving
-/// BG1 and gProjection.centerX and [4] by a random offset; once the
-/// shake runs out, BG1 returns to its saved position and both parameters to
-/// 120. It takes two random numbers each shaking frame, x first.
+/// BG1 and gProjection's centre by a random offset; once the shake runs
+/// out, BG1 returns to its saved position and the centre to the battle's. It
+/// takes two random numbers each shaking frame, x first.
 ///
 /// Called by nearly every effect. The x offset is centred on
 /// half of rangeY too, so with rangeX smaller the x offset is never positive.
@@ -398,10 +398,10 @@ void BattleCamera_Shake(s32 rangeX, u32 rangeY) {
 /// While shakeFrames lasts, moves BG1 and the projection centre up or down
 /// by a random offset within range; then restores them.
 void Camera_ApplyVerticalShake(s32 range) {
-  u8 *fx = Ram_HeapSlots->battleEffect;
+  struct BattleEffectWork *work = Ram_HeapSlots->battleEffect;
   s32 *timer;
 
-  timer = (s32 *)(fx + 0x77a8);
+  timer = &work->shakeFrames;
   if (*timer > 0) {
     s32 shake = ((range - 1) & Random16()) - range / 2;
 
@@ -409,7 +409,7 @@ void Camera_ApplyVerticalShake(s32 range) {
     gProjection.centerY = BATTLE_PROJECTION_CENTER_Y - shake;
     (*timer)--;
   } else {
-    gBgScroll[1].y = *(s32 *)(fx + 0x77a4);
+    gBgScroll[1].y = work->savedBg1Y;
     gProjection.centerY = BATTLE_PROJECTION_CENTER_Y;
   }
 }

@@ -696,8 +696,9 @@ static inline void Iris_DrawSplash(s32 t, s32 x, s32 y, s32 small) {
         blit(canvas, ring, px - 3, py - 7, IRIS_LARGE_RING_WIDTH,
              IRIS_LARGE_RING_HEIGHT);
         a += a >> 1;
-        px = (FIXEDtoINT(Iwram_MulFX(0x28000, r * Trig_Sin(a) / 2))) + x;
-        py = (FIXEDtoINT(Iwram_MulFX(0x50000, r * Trig_Cos(a) / 2))) + y;
+        px = (FIXEDtoINT(Iwram_MulFX(FIXED_ONE * 5 / 2, r * Trig_Sin(a) / 2))) +
+             x;
+        py = (FIXEDtoINT(Iwram_MulFX(FIXED_ONE * 5, r * Trig_Cos(a) / 2))) + y;
         blit(canvas, ring, px - 3, py - 7, IRIS_LARGE_RING_WIDTH,
              IRIS_LARGE_RING_HEIGHT);
       }
@@ -729,8 +730,9 @@ static inline void Iris_DrawSplash(s32 t, s32 x, s32 y, s32 small) {
         blit(canvas, ring, px - 2, py - 5, IRIS_SMALL_RING_WIDTH,
              IRIS_SMALL_RING_HEIGHT);
         a += a >> 1;
-        px = (FIXEDtoINT(Iwram_MulFX(0x28000, r * Trig_Sin(a) / 2))) + x;
-        py = (FIXEDtoINT(Iwram_MulFX(0x50000, r * Trig_Cos(a) / 2))) + y;
+        px = (FIXEDtoINT(Iwram_MulFX(FIXED_ONE * 5 / 2, r * Trig_Sin(a) / 2))) +
+             x;
+        py = (FIXEDtoINT(Iwram_MulFX(FIXED_ONE * 5, r * Trig_Cos(a) / 2))) + y;
         blit(canvas, ring, px - 2, py - 5, IRIS_SMALL_RING_WIDTH,
              IRIS_SMALL_RING_HEIGHT);
       }
@@ -809,7 +811,7 @@ void BattleEffect_RunIris(struct BattleEffectParams *args) {
   struct Sprite **objects = (struct Sprite **)gMapGridCellBuffer;
   u8 *sprites = Ram_HeapSlots->battleSheet;
   struct IrisPetals *petals = &IRIS_PETAL_WORK;
-  u8 *battle = (u8 *)Ram_HeapSlots->battleWork;
+  struct BattleWork *battle = Ram_HeapSlots->battleWork;
   s32 savedScroll = gBgScroll[1].x;
   s16 *camera = Ram_HeapSlots->cameraWork;
   s32 savedYaw;
@@ -1218,7 +1220,7 @@ void BattleEffect_RunIris(struct BattleEffectParams *args) {
       Iwram_FillWordsEntry(canvas, CANVAS_BYTES,
                            CANVAS_FILL_WORD(CANVAS_LEVEL_BRIGHTEST));
       EFFECT_PRESENT_CANVAS(work);
-      battle[0x867] = 1;
+      battle->keepBackdropPalette = TRUE;
       BattleBackground_LoadFar(BATTLE_BACKGROUND_FIXED,
                                RESOURCE_SUNSET_BACKDROP, 0);
       colors = Resource_GetTableEntry(RESOURCE_ROBED_GODDESS_TILES);
@@ -1318,7 +1320,7 @@ void BattleEffect_RunIris(struct BattleEffectParams *args) {
         if ((u32)(frame - 351) <= 14)
           lift = Trig_Sin((frame - 350) << 10) << 6;
         else if (frame > 365)
-          lift = ((366 - frame) * 5 << 17) + 0x400000;
+          lift = ((366 - frame) * 5 << 17) + toFIXED(64);
         if (frame <= 229)
           lift = (Trig_Sin((frame << 6) - 0x2c00) << 6) - 0x147200;
         for (j = 0; j != IRIS_GODDESS_ROWS; j++) {
@@ -1853,7 +1855,9 @@ void BattleEffect_RunIris(struct BattleEffectParams *args) {
       if (shade < 0 || shade > CANVAS_LEVEL_BRIGHTEST)
         shade = CANVAS_LEVEL_BRIGHTEST;
       BattleEffect_DrawDiagonalCanvasLine(
-          0, FIXEDtoINT(Iwram_MulFX((frame - 521) * 0x10000, 0x400) + 0x7b0000),
+          0,
+          FIXEDtoINT(Iwram_MulFX((frame - 521) * toFIXED(1), FIXED_ONE / 64) +
+                     toFIXED(123)),
           frame - 521, shade);
     }
     if ((u32)(frame - 531) <= 209) {
@@ -1872,7 +1876,10 @@ void BattleEffect_RunIris(struct BattleEffectParams *args) {
       if (shade < 0 || shade > CANVAS_LEVEL_BRIGHTEST)
         shade = CANVAS_LEVEL_BRIGHTEST;
       BattleEffect_DrawDiagonalCanvasLine(
-          0, FIXEDtoINT(Iwram_MulFX((frame - 534) * 0x10000, 0x600) + 0x780000),
+          0,
+          FIXEDtoINT(
+              Iwram_MulFX((frame - 534) * toFIXED(1), FIXED_ONE * 3 / 128) +
+              toFIXED(120)),
           frame - 534, shade);
     }
     if ((u32)(frame - 554) <= 209) {
@@ -2533,6 +2540,7 @@ s32 BattleEffect_LoadBlitter(s32 slot, s32 modeAndFlags) {
 // transparent, default copy, and the second run copied from the first by its
 // measured length.
 
+/// Copies two words from source to destination with one block load and store.
 CAMELOT_ASM("ldmia and stmia of two registers from r0 to r1 with scratch from "
             "r2 up, in the shape of Dma_Set: agscc's block moves leave r0 and "
             "r1 to the allocator")
@@ -2545,10 +2553,10 @@ static __inline__ void CopyWords2(const void *source, void *destination) {
                    : "r2", "r3", "memory");
 }
 
+/// Copies three words from source to destination with one block load and store.
 CAMELOT_ASM("ldmia and stmia of three registers from r0 to r1 with scratch "
             "from r2 up, in the shape of Dma_Set: agscc's block moves leave r0 "
             "and r1 to the allocator")
-/// Copies three words from source to destination with one block load and store.
 static __inline__ void CopyWords3(const void *source, void *destination) {
   register const void *from __asm__("r0") = source;
   register void *to __asm__("r1") = destination;
@@ -2558,9 +2566,9 @@ static __inline__ void CopyWords3(const void *source, void *destination) {
                    : "r2", "r3", "r4", "memory");
 }
 
+/// Copies four words from source to destination with one block load and store.
 CAMELOT_ASM("ldmia and stmia of four registers: agscc's block moves stop at "
             "three, so a 16-byte struct copy compiles to 12 and 4")
-/// Copies four words from source to destination with one block load and store.
 static __inline__ void CopyWords4(const void *source, void *destination) {
   register const void *from __asm__("r0") = source;
   register void *to __asm__("r1") = destination;
@@ -2634,30 +2642,30 @@ s32 BattleEffect_BuildBlitter(s32 slot, s32 widthShift, s32 heightShift,
   dst = HeapSlot_Alloc(slot, (s32)dst);
 
   COPY(4);
-  if (mode == 0) {
+  if (mode == BLITTER_ADDITIVE) {
     COPY_FROM(BattleEffect_Mask, 3);
   }
 
-  if ((flags & 12) == 4) {
+  if ((flags & COMPOSITE_FLIP) == COMPOSITE_FLIP_X) {
     COPY_FROM(src, 3);
   }
   src += 3;
-  if ((flags & 12) == 8) {
+  if ((flags & COMPOSITE_FLIP) == COMPOSITE_FLIP_Y) {
     COPY_FROM(src, 4);
   }
   src += 4;
-  if ((flags & 12) == 12) {
+  if ((flags & COMPOSITE_FLIP) == COMPOSITE_FLIP) {
     COPY_FROM(src, 3);
   }
   src += 3;
-  if ((flags & 12) == 0) {
+  if ((flags & COMPOSITE_FLIP) == 0) {
     PUT(src[0]);
   }
   src += 1;
 
-  if ((flags & 2) != 0) {
+  if ((flags & COMPOSITE_CLIP_Y) != 0) {
     COPY(2);
-    if ((flags & 8) != 0) {
+    if ((flags & COMPOSITE_FLIP_Y) != 0) {
       PUT(src[0]);
     } else {
       PUT(src[1]);
@@ -2674,16 +2682,16 @@ s32 BattleEffect_BuildBlitter(s32 slot, s32 widthShift, s32 heightShift,
   noRows = dst;
   PUT(*src++);
 
-  if ((flags & 1) == 0) {
+  if ((flags & COMPOSITE_CLIP_X) == 0) {
     s32 width = 1 << widthShift;
 
     PUT(src[0] + width - 1);
   }
   src += 1;
-  if ((flags & 1) != 0) {
+  if ((flags & COMPOSITE_CLIP_X) != 0) {
     PUT(src[0]);
     PUT(src[1]);
-    if ((flags & 4) != 0) {
+    if ((flags & COMPOSITE_FLIP_X) != 0) {
       PUT(src[2]);
       PUT(src[3]);
     } else {
@@ -2693,7 +2701,7 @@ s32 BattleEffect_BuildBlitter(s32 slot, s32 widthShift, s32 heightShift,
     PUT(src[6]);
     PUT(src[7]);
     PUT(src[8] + gBattleEffect_BitOperands[widthShift]);
-    if ((flags & 4) != 0) {
+    if ((flags & COMPOSITE_FLIP_X) != 0) {
       PUT(src[9]);
     } else {
       PUT(src[10]);
@@ -2710,7 +2718,7 @@ s32 BattleEffect_BuildBlitter(s32 slot, s32 widthShift, s32 heightShift,
   COPY_LONG(6);
 
   PUT(*src++);
-  if ((flags & 1) == 0) {
+  if ((flags & COMPOSITE_CLIP_X) == 0) {
     PUT(src[0]);
   }
   src += 1;
@@ -2724,14 +2732,14 @@ s32 BattleEffect_BuildBlitter(s32 slot, s32 widthShift, s32 heightShift,
   PUT(src[3]);
   src += 4;
 
-  if ((flags & 1) == 0) {
+  if ((flags & COMPOSITE_CLIP_X) == 0) {
     PUT(src[0]);
   }
   src += 1;
 
   skip = dst + 1;
   COPY(2);
-  if ((flags & 4) != 0) {
+  if ((flags & COMPOSITE_FLIP_X) != 0) {
     PUT(src[0]);
   } else {
     PUT(src[1]);
@@ -2744,7 +2752,7 @@ s32 BattleEffect_BuildBlitter(s32 slot, s32 widthShift, s32 heightShift,
   default: {
     const u32 *part;
 
-    if ((flags & 4) != 0) {
+    if ((flags & COMPOSITE_FLIP_X) != 0) {
       part = BattleEffect_CopyReverse;
     } else {
       part = BattleEffect_CopyForward;
@@ -2752,10 +2760,10 @@ s32 BattleEffect_BuildBlitter(s32 slot, s32 widthShift, s32 heightShift,
     COPY_FROM(part, 2);
     break;
   }
-  case 2: {
+  case BLITTER_TRANSPARENT: {
     const u32 *part;
 
-    if ((flags & 4) != 0) {
+    if ((flags & COMPOSITE_FLIP_X) != 0) {
       part = BattleEffect_TransparentReverse;
     } else {
       part = BattleEffect_TransparentForward;
@@ -2763,10 +2771,10 @@ s32 BattleEffect_BuildBlitter(s32 slot, s32 widthShift, s32 heightShift,
     COPY_FROM(part, 4);
     break;
   }
-  case 1: {
+  case BLITTER_MAX: {
     const u32 *part;
 
-    if ((flags & 4) != 0) {
+    if ((flags & COMPOSITE_FLIP_X) != 0) {
       part = BattleEffect_MaxReverse;
     } else {
       part = BattleEffect_MaxForward;
@@ -2774,8 +2782,8 @@ s32 BattleEffect_BuildBlitter(s32 slot, s32 widthShift, s32 heightShift,
     COPY_FROM(part, 4);
     break;
   }
-  case 0:
-    if ((flags & 4) != 0) {
+  case BLITTER_ADDITIVE:
+    if ((flags & COMPOSITE_FLIP_X) != 0) {
       COPY_DMA(BattleEffect_AdditiveReverse, 6);
     } else {
       COPY_DMA(BattleEffect_AdditiveForward, 6);
@@ -2787,7 +2795,7 @@ s32 BattleEffect_BuildBlitter(s32 slot, s32 widthShift, s32 heightShift,
   PUT_BRANCH(run);
   runSize = (u8 *)dst - (u8 *)runCopy;
   PUT(*src++);
-  if ((flags & 1) == 0) {
+  if ((flags & COMPOSITE_CLIP_X) == 0) {
     PUT(src[0]);
     PUT(src[1]);
   }
@@ -2800,28 +2808,28 @@ s32 BattleEffect_BuildBlitter(s32 slot, s32 widthShift, s32 heightShift,
   run = dst;
   switch (mode) {
   default:
-    if ((flags & 4) != 0) {
+    if ((flags & COMPOSITE_FLIP_X) != 0) {
       COPY_DMA(BattleEffect_Copy8Reverse, 16);
     } else {
       COPY_DMA(BattleEffect_Copy8Forward, 16);
     }
     break;
-  case 2:
-    if ((flags & 4) != 0) {
+  case BLITTER_TRANSPARENT:
+    if ((flags & COMPOSITE_FLIP_X) != 0) {
       COPY_DMA(BattleEffect_Transparent8Reverse, 25);
     } else {
       COPY_DMA(BattleEffect_Transparent8Forward, 25);
     }
     break;
-  case 1:
-    if ((flags & 4) != 0) {
+  case BLITTER_MAX:
+    if ((flags & COMPOSITE_FLIP_X) != 0) {
       COPY_TWICE(BattleEffect_Max4Reverse, 16);
     } else {
       COPY_TWICE(BattleEffect_Max4Forward, 16);
     }
     break;
-  case 0:
-    if ((flags & 4) != 0) {
+  case BLITTER_ADDITIVE:
+    if ((flags & COMPOSITE_FLIP_X) != 0) {
       COPY_TWICE(BattleEffect_ColorReverse, 14);
     } else {
       COPY_TWICE(BattleEffect_ColorForward, 14);
@@ -2830,7 +2838,7 @@ s32 BattleEffect_BuildBlitter(s32 slot, s32 widthShift, s32 heightShift,
   }
 
   PUT(*src++);
-  if ((flags & 1) == 0) {
+  if ((flags & COMPOSITE_CLIP_X) == 0) {
     PUT(src[0]);
     PUT(src[1]);
   }
@@ -2843,7 +2851,7 @@ s32 BattleEffect_BuildBlitter(s32 slot, s32 widthShift, s32 heightShift,
   PUT(*src++);
   skip = dst;
   PUT(*src++);
-  if ((flags & 4) != 0) {
+  if ((flags & COMPOSITE_FLIP_X) != 0) {
     PUT(src[0]);
   } else {
     PUT(src[1]);

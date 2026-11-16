@@ -190,6 +190,8 @@ void Daila_TalkBeenBefore(void) {
   }
 }
 
+/// A villager asks whether all of Indra seemed to move when the tidal wave hit,
+/// and answers the choice.
 void Daila_TalkIndraMoved(void) {
   s32 msg;
 
@@ -210,6 +212,7 @@ void Daila_TalkIndraMoved(void) {
   Event_End();
 }
 
+/// A villager asks whether the party wants a boat, and answers the choice.
 void Daila_TalkBoat(void) {
   s32 msg;
 
@@ -233,6 +236,8 @@ void Daila_TalkBoat(void) {
 /// Daila's shops, as Shop_Run numbers them.
 enum { SHOP_DAILA_ITEMS = 3 };
 
+/// Daila's item shop: facing the counter opens it; otherwise the keeper worries
+/// that Tavi and Riki have not been seen lately.
 void Daila_AskAfterTaviAndRiki(s32 keeper) {
   u16 facing = Actor_GetById(gMainRoutineWork.leaderActorId)->facing;
 
@@ -248,6 +253,8 @@ void Daila_AskAfterTaviAndRiki(s32 keeper) {
   }
 }
 
+/// The old man knocked over asks whether the party thought the wave hurt his
+/// hip, and answers the choice.
 void Daila_TalkHip(void) {
   s32 msg;
 
@@ -268,6 +275,8 @@ void Daila_TalkHip(void) {
   Event_End();
 }
 
+/// Daila's item shop once Tavi and Riki are home: facing the counter opens it;
+/// otherwise the keeper tells of their return.
 void Daila_TaviAndRikiAreHome(s32 keeper) {
   u16 facing = Actor_GetById(gMainRoutineWork.leaderActorId)->facing;
 
@@ -287,7 +296,7 @@ void Daila_TaviAndRikiAreHome(s32 keeper) {
 static inline void Actor_JoinLeader(s32 actor) {
   struct Actor *leader;
 
-  Actor_SetAnimationById(actor, 2);
+  Actor_SetAnimationById(actor, ANIM_WALK);
   leader = Actor_GetById(gMainRoutineWork.leaderActorId);
   if (leader != 0)
     Actor_SetDestinationById(actor, leader->x.part[0].integer,

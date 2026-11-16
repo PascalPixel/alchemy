@@ -161,6 +161,9 @@ enum {
 #define FLAG_TIGHTROPES_ROPE_LASHED FLAG_SCENE_TEMP_08
 /// Cannon met in room 6 on this visit, or already in the party.
 #define FLAG_CANNON_MET FLAG_SCENE_TEMP_09
+/// The first of a room's crack flags, one a listed crack, set while the crack
+/// is open (DEFINE_DEHKAN_PLATEAU_RESTORE_CELLS).
+#define FLAG_CRACK_OPENED_FIRST FLAG_SCENE_TEMP_40
 /// The crack the party fell through, one flag for each landing entrance from
 /// FIRST_LANDING_ENTRANCE, for the landing drawn below it.
 #define FLAG_FELL_THROUGH_FIRST FLAG_AREA_TEMP_20
@@ -313,7 +316,7 @@ void DehkanPlateau_StepOnThemisAxeChestPillars(void) {
       gDehkanPlateau_ThemisAxeChestCrumblingPillars);
   DehkanPlateau_SetThemisAxeChestStandingPillarCells();
   y = Actor_GetById(gMainRoutineWork.leaderActorId)->y.fixed;
-  if (y < 0x80000) {
+  if (y < toFIXED(8)) {
     Actor_SetSpritePriority(gMainRoutineWork.leaderActorId, 2);
     Actor_GetById(gMainRoutineWork.leaderActorId)->priorityFlags |=
         ACTOR_PRIORITY_AUTOMATIC;
@@ -347,7 +350,7 @@ void DehkanPlateau_StepOnCannonPillar(void) {
 
   CrumblingPillars_Step(gDehkanPlateau_CannonCrumblingPillar);
   y = Actor_GetById(gMainRoutineWork.leaderActorId)->y.fixed;
-  if (y < 0x180000)
+  if (y < toFIXED(24))
     DehkanPlateau_LeaveConeCell();
 }
 
@@ -550,7 +553,7 @@ loop:
 #define DEFINE_DEHKAN_PLATEAU_RESTORE_CELLS(name, cracks, last, pictures)      \
   void name(void) {                                                            \
     const u16 *cell = &cracks[0][0];                                           \
-    s32 flag = 0x240;                                                          \
+    s32 flag = FLAG_CRACK_OPENED_FIRST;                                        \
     u32 i;                                                                     \
                                                                                \
     for (i = 0; i <= last; i++) {                                              \
@@ -576,6 +579,8 @@ loop:
       DehkanPlateau_ForgetFall();                                              \
   }
 
+/// Restores the first room's fourteen cracks: on a return the opened ones are
+/// drawn open, otherwise each listed crack starts its flag.
 DEFINE_DEHKAN_PLATEAU_RESTORE_CELLS(
     DehkanPlateau_RestoreFullMetalVestChestCracks,
     gDehkanPlateau_FullMetalVestChestCracks, 13,
@@ -584,6 +589,7 @@ DEFINE_DEHKAN_PLATEAU_RESTORE_CELLS(
 extern u16 gDehkanPlateau_ThemisAxeChestCrackPictures[];
 extern u16 gDehkanPlateau_ThemisAxeChestCracks[][6];
 
+/// Restores the second room's eight cracks, as the first room's.
 DEFINE_DEHKAN_PLATEAU_RESTORE_CELLS(DehkanPlateau_RestoreThemisAxeChestCracks,
                                     gDehkanPlateau_ThemisAxeChestCracks, 7,
                                     gDehkanPlateau_ThemisAxeChestCrackPictures)
@@ -591,6 +597,7 @@ DEFINE_DEHKAN_PLATEAU_RESTORE_CELLS(DehkanPlateau_RestoreThemisAxeChestCracks,
 extern u16 gDehkanPlateau_TightropesCrackPictures[];
 extern u16 gDehkanPlateau_TightropesCracks[][6];
 
+/// Restores the third room's six cracks, as the first room's.
 DEFINE_DEHKAN_PLATEAU_RESTORE_CELLS(DehkanPlateau_RestoreTightropesCracks,
                                     gDehkanPlateau_TightropesCracks, 5,
                                     gDehkanPlateau_TightropesCrackPictures)
@@ -600,7 +607,7 @@ DEFINE_DEHKAN_PLATEAU_RESTORE_CELLS(DehkanPlateau_RestoreTightropesCracks,
 /// otherwise each listed crack starts its flag.
 void DehkanPlateau_RestorePoundCubeCracks(void) {
   u16 *record = &gDehkanPlateau_PoundCubeCracks[0][0];
-  s32 flag = 0x240;
+  s32 flag = FLAG_CRACK_OPENED_FIRST;
   u32 i;
 
   for (i = 0; i <= 15; flag++, i++) {
@@ -646,19 +653,19 @@ void DehkanPlateau_StepOnCrack(void) {
 
   if (gMainRoutineWork.next == SCENE(DehkanPlateauFullMetalVestChest)) {
     n = work->stepTrigger - 11;
-    flag = work->stepTrigger + 0x235;
+    flag = FLAG_CRACK_OPENED_FIRST + n;
     record = &gDehkanPlateau_FullMetalVestChestCracks[n][1];
   } else if (gMainRoutineWork.next == SCENE(DehkanPlateauThemisAxeChest)) {
     n = work->stepTrigger - 14;
-    flag = work->stepTrigger + 0x232;
+    flag = FLAG_CRACK_OPENED_FIRST + n;
     record = &gDehkanPlateau_ThemisAxeChestCracks[n][1];
   } else if (gMainRoutineWork.next == SCENE(DehkanPlateauTightropes)) {
     n = work->stepTrigger - 12;
-    flag = work->stepTrigger + 0x234;
+    flag = FLAG_CRACK_OPENED_FIRST + n;
     record = &gDehkanPlateau_TightropesCracks[n][1];
   } else if (gMainRoutineWork.next == SCENE(DehkanPlateauPoundCube)) {
     n = work->stepTrigger - 18;
-    flag = work->stepTrigger + 0x22e;
+    flag = FLAG_CRACK_OPENED_FIRST + n;
     record = &gDehkanPlateau_PoundCubeCracks[n][1];
     if (GameFlag_Get(FLAG_AREA_TEMP_3A))
       gDehkanPlateau_PoundCubeCracks[4][3] = 3;
@@ -766,7 +773,8 @@ void DehkanPlateau_StepOnCrack(void) {
         Actor_SetSpritePriority(gMainRoutineWork.leaderActorId, 3);
       }
     }
-    Actor_SetAnimationById(gMainRoutineWork.leaderActorId, 28);
+    Actor_SetAnimationById(gMainRoutineWork.leaderActorId,
+                           ANIM_LEADER_ARMS_RAISED);
     Event_Wait(16);
     for (cellX = 0; (u32)cellX <= 39; cellX++) {
       if (cellX == 5)
@@ -1128,7 +1136,7 @@ void DehkanPlateau_SinkPoundedPillar(void) {
 /// Cannon casts Pound on the third room's Pound pillar.
 void DehkanPlateau_CannonCastsPound(void) {
   FieldPsynergy_LoadResources(ABILITY_POUND, 1);
-  FieldTask_AddFrame(DehkanPlateau_SinkPoundedPillar, 0x480);
+  FieldTask_AddFrame(DehkanPlateau_SinkPoundedPillar, TASK_PASS_VBLANK);
   FieldPsynergy_SetupActorPair(ACTOR_TIGHTROPES_CANNON,
                                ACTOR_TIGHTROPES_POUND_PILLAR);
   FieldPsynergy_StartCast();
@@ -1160,12 +1168,12 @@ void DehkanPlateau_CrumblePillar(s32 id, s32 center, s32 flag) {
   FIXED y;
 
   Sound_Play(SE_CHEST_CLOSE);
-  Actor_SetSpriteColor(Actor_GetById(id), 7);
+  Actor_SetSpriteColor(Actor_GetById(id), SPRITE_COLOR_WHITE);
   wait(2);
   Actor_SetAnimationById(id, 0);
-  Actor_SetSpriteColor(Actor_GetById(id), 7);
+  Actor_SetSpriteColor(Actor_GetById(id), SPRITE_COLOR_WHITE);
   wait(4);
-  Actor_SetSpriteColor(Actor_GetById(id), 0);
+  Actor_SetSpriteColor(Actor_GetById(id), SPRITE_COLOR_NORMAL);
   leader = Actor_GetById(center);
   frame = 0;
   for (i = 0; i <= 7; i++) {
@@ -1174,8 +1182,8 @@ void DehkanPlateau_CrumblePillar(s32 id, s32 center, s32 flag) {
 
     y = leader->y.fixed - toFIXED(((Random16() * 7) << 1) >> 16);
     object = ((struct Actor *)Import_ActorCreate(
-        285, (i << 17) + leader->x.fixed - FIXED_ONE * 8, y - FIXED_ONE * 2,
-        leader->z.fixed));
+        SPRITE_DUST_CLOUD, (i << 17) + leader->x.fixed - FIXED_ONE * 8,
+        y - FIXED_ONE * 2, leader->z.fixed));
     if (object != NULL) {
       effect = (struct FieldEffect *)object;
       frame = Sprite_ShareVramCacheEntry(effect->sprite, frame);
@@ -1301,7 +1309,8 @@ void DehkanPlateau_CannonPoundsLeaderThrough(void) {
   leader->motionFlags = 0;
   Actor_SetSpritePriority(ACTOR_POUND_CUBE_CANNON, 3);
   Actor_SetSpritePriority(gMainRoutineWork.leaderActorId, 3);
-  Actor_SetAnimationById(gMainRoutineWork.leaderActorId, 28);
+  Actor_SetAnimationById(gMainRoutineWork.leaderActorId,
+                         ANIM_LEADER_ARMS_RAISED);
   Event_Wait(16);
   for (i = 0; i < 40; i++) {
     if (i == 5)
@@ -1343,7 +1352,7 @@ void DehkanPlateau_ForgetFall(void);
 /// Cannon casts Pound on the leader in the fifth room.
 void DehkanPlateau_CannonCastsPoundOnLeader(void) {
   FieldPsynergy_LoadResources(ABILITY_POUND, 1);
-  FieldTask_AddFrame(DehkanPlateau_PoundLeaderThrough, 0x480);
+  FieldTask_AddFrame(DehkanPlateau_PoundLeaderThrough, TASK_PASS_VBLANK);
   FieldPsynergy_SetupActorPair(ACTOR_POUND_CUBE_CANNON,
                                gMainRoutineWork.leaderActorId);
   FieldPsynergy_StartCast();
@@ -1539,8 +1548,6 @@ void DehkanPlateau_KeepPriorityWithLeader(void) {
           ->priority);
 }
 
-void DehkanPlateau_RestoreFullMetalVestChestCracks(void);
-
 /// Sets up the first room: its pillars, the stone pillar already in the gap,
 /// its cracks and covers, and the chest's task.
 void DehkanPlateau_InitializeFullMetalVestChest(void) {
@@ -1559,13 +1566,11 @@ void DehkanPlateau_InitializeFullMetalVestChest(void) {
   DehkanPlateau_RestoreFullMetalVestChestCracks();
   DehkanPlateau_HideFullMetalVestChestActors();
   {
-    s32 priority = 0x480;
+    s32 priority = TASK_PASS_VBLANK;
 
     Task_Add(DehkanPlateau_KeepPriorityWithLeader, priority);
   }
 }
-
-void DehkanPlateau_RestoreThemisAxeChestCracks(void);
 
 /// Sets up the second room: its grey, Pound and stone pillars, its cracks, and
 /// Cannon as far as he has fled.
@@ -1642,7 +1647,7 @@ void DehkanPlateau_InitializeTightropes(void) {
   Actor_SetSpritePriority(ACTOR_TIGHTROPES_ROPE_LOW_POST, 1);
   Actor_SetSpritePriority(ACTOR_TIGHTROPES_ROPE_HIGH_POST, 1);
   DehkanPlateau_InitializeRopes();
-  Rope_Place(0, 520, ACTOR_TIGHTROPES_ROPE_LOW_POST,
+  Rope_Place(0, FLAG_TIGHTROPES_ROPE_LASHED, ACTOR_TIGHTROPES_ROPE_LOW_POST,
              ACTOR_TIGHTROPES_ROPE_HIGH_POST);
   Actor_PlaceBlocks(gDehkanPlateau_TightropesMovablePillars);
   if (Actor_GetById(ACTOR_TIGHTROPES_PILLAR)->y.fixed > (s32)-toFIXED(8))
@@ -1763,11 +1768,13 @@ extern u16 gDehkanPlateau_FallLandingCells[];
     }                                                                          \
   }
 
-// Draws, in rooms 4 and 5, the cells where the party landed under the crack it
-// fell through.
+/// Draws, in the fourth room, the cells where the party landed under the crack
+/// it fell through.
 DEFINE_DEHKAN_PLATEAU_PLACE_BY_FLAG(DehkanPlateau_DrawMintChestFallLanding, 3,
                                     8, 67, 3, 66, 69)
 
+/// Draws, in the fifth room, the cells where the party landed under the crack
+/// it fell through.
 DEFINE_DEHKAN_PLATEAU_PLACE_BY_FLAG(DehkanPlateau_DrawPoundCubeFallLanding, 13,
                                     5, 77, 0, 65, 65)
 
@@ -1851,7 +1858,9 @@ loop:
       velocity[0] += -(toFIXED(3) / 8);
       velocity[2] += (((Random16() * 3) << 13) >> 16) + -(toFIXED(3) / 16);
       FieldEffect_Spawn(leader->x.fixed, leader->y.fixed, leader->z.fixed,
-                        velocity[0], velocity[1], velocity[2], 0x01090001,
+                        velocity[0], velocity[1], velocity[2],
+                        EFFECT_USE_UPDATE | EFFECT_USE_START_SCALE |
+                            EFFECT_USE_PALETTE | 1,
                         opts);
     }
     i++;
@@ -1922,7 +1931,8 @@ void DehkanPlateau_InitializePoundCube(void) {
 void DehkanPlateau_CreatePoundCube(void) {
   struct Actor **slot = &gDehkanPlateau_PoundCube;
   s32 zero = 0;
-  struct Actor *object = ((struct Actor *)Import_ActorCreate(489, 0, 0, 0));
+  struct Actor *object =
+      ((struct Actor *)Import_ActorCreate(SPRITE_UNSEEN_MARKER, 0, 0, 0));
 
   *slot = object;
   if (object != 0) {

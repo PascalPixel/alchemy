@@ -30,6 +30,7 @@
 #include "field/scene_call.h"
 #include "system/ram_buffer.h"
 #include "field/actor.h"
+#include "field/actor_script.h"
 #include "field/field_sequence_event.h"
 #include "game/inventory.h"
 #include "scene/scene.h"
@@ -487,7 +488,7 @@ void DailaInteriors_TalkCaughtPracticing(void) {
   // "Er... Aheh heh... You... weren't watching, were you?"
   Event_ShowMessageAndWait(ACTOR_PRACTISING_PERFORMER, 0);
   FieldEvent_Wait(30);
-  Actor_SetAnimationById(ACTOR_PRACTISING_PERFORMER, 3);
+  Actor_SetAnimationById(ACTOR_PRACTISING_PERFORMER, ANIM_NOD);
   FieldEvent_Wait(30);
   // "I was just practicing for the show we're putting on tonight."
   Event_ShowMessageAndWait(ACTOR_PRACTISING_PERFORMER, 0);
@@ -725,57 +726,104 @@ s16 gDailaInteriors_PillarFrozenFlags[] = {
 
 /// Tavi's father's script: he paces his house back and forth.
 s32 gDailaInteriors_PacingScript[] = {
-    22, 30,
 #if !TLA_PATCH_1
-    131,
+    SC_SET(SW_COLLISION, 131),
 #else
-    129,
+    SC_SET(SW_COLLISION, 129),
 #endif
-    22, 16, 0x1999, 22, 15, 0x4ccc,
-    (s32)0x80010000, 39, 2, 4, 0x1380000, 0,
-    0xa80000, 1, 0, 20, 39, 1,
-    22, 3, 0, 0, 20, 39,
-    2, 4, 0x1880000, 0, 0xa80000, 1,
-    0, 20, 39, 1, 22, 3,
-    0, 0, 20, 13, 0xffff, (s32)0xc0010000,
-    17,
+    SC_ACCELERATION(0.1),
+    SC_SPEED(0.3),
+    SC_LABEL(1),
+    SC_ANIMATION(ANIM_WALK),
+    SC_MOVE(312, 0, 168),
+    SC_SYNC,
+    SC_WAIT(20),
+    SC_ANIMATION(ANIM_STAND),
+    SC_SET(SW_FACING, FACING_EAST),
+    SC_WAIT(20),
+    SC_ANIMATION(ANIM_WALK),
+    SC_MOVE(392, 0, 168),
+    SC_SYNC,
+    SC_WAIT(20),
+    SC_ANIMATION(ANIM_STAND),
+    SC_SET(SW_FACING, FACING_EAST),
+    SC_WAIT(20),
+    SC_LOOP(SC_FOREVER, SC_TO(1)),
+    SC_END,
 };
 
 /// The inn's two performers' script once Tavi is rescued: they turn on the
 /// spot, rehearsing the dinner show.
 s32 gDailaInteriors_LookAroundScript[] = {
-    22, 30, 129, 22, 16, 0x1999,
-    22, 15, 0x4ccc, (s32)0x80010000, 39, 1,
-    22, 3, 0x6000, 0, 5, 22,
-    3, 0x8000, 0, 5, 22, 3,
-    0xa000, 0, 5, 22, 3, 0xc000,
-    0, 5, 22, 3, 0, 0,
-    5, 22, 3, 0x2000, 0, 5,
-    22, 3, 0x4000, 0, 5, 22,
-    3, 0x6000, 0, 5, 22, 3,
-    0x8000, 0, 5, 22, 3, 0xa000,
-    0, 5, 22, 3, 0xc000, 0,
-    5, 22, 3, 0, 0, 5,
-    22, 3, 0x2000, 0, 5, 22,
-    3, 0x4000, 0, 5, 22, 3,
-    0x6000, 0, 5, 22, 3, 0x8000,
-    0, 5, 22, 3, 0xa000, 0,
-    5, 22, 3, 0xc000, 0, 5,
-    22, 3, 0, 0, 5, 22,
-    3, 0x2000, 0, 5, 22, 3,
-    0x4000, 0, 5, 22, 6, 0x80000,
-    0, 30, 22, 6, 0x80000, 0,
-    30, 13, 0xffff, (s32)0xc0010000, 17, 22,
-    30,
+    SC_SET(SW_COLLISION, 129),
+    SC_ACCELERATION(0.1),
+    SC_SPEED(0.3),
+    SC_LABEL(1),
+    SC_ANIMATION(ANIM_STAND),
+    SC_SET(SW_FACING, FACING_SOUTHWEST),
+    SC_WAIT(5),
+    SC_SET(SW_FACING, FACING_WEST),
+    SC_WAIT(5),
+    SC_SET(SW_FACING, FACING_NORTHWEST),
+    SC_WAIT(5),
+    SC_SET(SW_FACING, FACING_NORTH),
+    SC_WAIT(5),
+    SC_SET(SW_FACING, FACING_EAST),
+    SC_WAIT(5),
+    SC_SET(SW_FACING, FACING_SOUTHEAST),
+    SC_WAIT(5),
+    SC_SET(SW_FACING, FACING_SOUTH),
+    SC_WAIT(5),
+    SC_SET(SW_FACING, FACING_SOUTHWEST),
+    SC_WAIT(5),
+    SC_SET(SW_FACING, FACING_WEST),
+    SC_WAIT(5),
+    SC_SET(SW_FACING, FACING_NORTHWEST),
+    SC_WAIT(5),
+    SC_SET(SW_FACING, FACING_NORTH),
+    SC_WAIT(5),
+    SC_SET(SW_FACING, FACING_EAST),
+    SC_WAIT(5),
+    SC_SET(SW_FACING, FACING_SOUTHEAST),
+    SC_WAIT(5),
+    SC_SET(SW_FACING, FACING_SOUTH),
+    SC_WAIT(5),
+    SC_SET(SW_FACING, FACING_SOUTHWEST),
+    SC_WAIT(5),
+    SC_SET(SW_FACING, FACING_WEST),
+    SC_WAIT(5),
+    SC_SET(SW_FACING, FACING_NORTHWEST),
+    SC_WAIT(5),
+    SC_SET(SW_FACING, FACING_NORTH),
+    SC_WAIT(5),
+    SC_SET(SW_FACING, FACING_EAST),
+    SC_WAIT(5),
+    SC_SET(SW_FACING, FACING_SOUTHEAST),
+    SC_WAIT(5),
+    SC_SET(SW_FACING, FACING_SOUTH),
+    SC_WAIT(5),
+    SC_SET(SW_Y, toFIXED(8)),
+    SC_WAIT(30),
+    SC_SET(SW_Y, toFIXED(8)),
+    SC_WAIT(30),
+    SC_LOOP(SC_FOREVER, SC_TO(1)),
+    SC_END,
+    // Unused: a second script after the end, wandering near home.
 #if !TLA_PATCH_1
-    131,
+    SC_SET(SW_COLLISION, 131),
 #else
-    129,
+    SC_SET(SW_COLLISION, 129),
 #endif
-    22, 16, 0x1999, 22, 15, 0x4ccc,
-    (s32)0x80010000, 39, 1, 39, 2, 10,
-    0x20000, 0x20000, 0x60000, 1, 0, 4,
-    13, 0xffff, (s32)0xc0010000, 17,
+    SC_ACCELERATION(0.1),
+    SC_SPEED(0.3),
+    SC_LABEL(1),
+    SC_ANIMATION(ANIM_STAND),
+    SC_ANIMATION(ANIM_WALK),
+    SC_WANDER_HOME(2, 2, 6),
+    SC_SYNC,
+    SC_WAIT(4),
+    SC_LOOP(SC_FOREVER, SC_TO(1)),
+    SC_END,
 };
 // clang-format on
 

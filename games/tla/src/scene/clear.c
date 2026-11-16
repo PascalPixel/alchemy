@@ -49,6 +49,7 @@
 #include "window/cursor.h"
 #include "graphics/vram_tab.h"
 #include "item_ids.h"
+#include "djinn_ids.h"
 #include "field/field_sequence.h"
 
 /// A question's window, left open for the Yes/No menu below it.
@@ -109,7 +110,6 @@ const struct Trigger *Scene_GetTriggers(void) { return gSceneEvents; }
 
 /// The logo background, as the title's Title_LoadBackground, then the party
 /// leader's motion flags cleared.
-// As ☀️'s Clear_LoadBackground.
 void Clear_LoadBackground(void) {
   u8 *res;
   s32 id;
@@ -154,7 +154,6 @@ void Clear_LoadBackground(void) {
 /// Queues an alpha blend of BG0 and the sprites over the rest whose first
 /// weight rises by one every second frame (the second weight 16 less), and
 /// removes the callback once the first weight passes 15.
-// As ☀️'s Clear_UpdateBlend.
 void Clear_FadeInBlend(void) {
   s32 frame;
   u32 level;
@@ -213,7 +212,10 @@ void Clear_CheckButtonCodes(void) {
   }
 }
 
-s32 Clear_CanRetreat(void) {
+/// Nonzero (-1) when the save was made where Retreat is blocked, unless in a
+/// town or on the world map: such a save cannot restart at the Sanctum, by L
+/// and Start held as it loads or as a corrupted save is recovered.
+s32 Clear_IsRetreatBlocked(void) {
   struct MainRoutineWork *party;
   s32 mode;
 
@@ -221,7 +223,7 @@ s32 Clear_CanRetreat(void) {
     return 0;
   party = &gMainRoutineWork;
 
-  if (party->sceneType == 2)
+  if (party->sceneType == SCENE_TYPE_TOWN)
     return 0;
   mode = party->next ^ SCENE_WORLD_MAP;
   return -NONZERO(mode);
@@ -450,8 +452,8 @@ top:
       WindowColor_Apply(party->windowHue, party->windowBrightness);
       if (party->buildStamp != BuildStamp_GetTime()) {
         RETURN_TO_SAVED(party)
-      } else if (mask = 0x208, (gInput.held & mask) == mask) {
-        if (Clear_CanRetreat()) {
+      } else if (mask = KEY_L | KEY_START, (gInput.held & mask) == mask) {
+        if (Clear_IsRetreatBlocked()) {
           failure = (s32)MsgDataCouldNotBeRecovered;
           goto refuse;
         }
@@ -466,7 +468,7 @@ top:
           goto top;
         }
         Message_CloseFinishedWindows();
-        if (Clear_CanRetreat()) {
+        if (Clear_IsRetreatBlocked()) {
           failure = recovery + 2;
         refuse:
           FieldMessage_Show(failure, FIELD_MESSAGE_ZOOM | FIELD_MESSAGE_LOWER);
@@ -943,6 +945,9 @@ static inline void Cursor_Show(struct MenuCursor *cursor, s32 x, s32 y) {
   }
 #endif
 
+/// The password screen: chooses the password's level, then lets the player
+/// enter it on the grid of symbols, checks it and applies it; returns -1 when
+/// cancelled.
 s32 Clear_EnterPassword(void) {
   struct MenuCursor cursorStore;
   struct MenuCursor gridStore;
@@ -980,7 +985,7 @@ s32 Clear_EnterPassword(void) {
   palette = (u16 *)&BG_PLTT_COLOR(14, 0);
   Dma_Set((const void *)&BG_PLTT_COLOR(15, 0), palette, DMA_COPY_WORDS(8),
           REG_DMA3);
-  palette[4] = 0x6318;
+  palette[4] = RGB(24, 24, 24);
   mode = IconMenu_ChooseSendOption(RESOURCE_LAYOUT_PASSWORD_LEVEL);
   if (mode == -1)
     return -1;
@@ -990,7 +995,7 @@ s32 Clear_EnterPassword(void) {
   row = 0;
   work = Heap_AllocEwram(sizeof(struct PasswordWork));
   advance = 0;
-  Graphics_ExpandVramTilesByColorTable((void *)0x06006000);
+  Graphics_ExpandVramTilesByColorTable(BG_CHAR_BLOCK(0) + 768 * TILE_SIZE_4BPP);
   if (mode == PASSWORD_LEVEL_GOLD) {
     length = PASSWORD_GOLD_LENGTH;
   } else {
@@ -1223,6 +1228,9 @@ s32 Clear_EnterPassword(void) {
             System_Wait(6);
             NameEntry_EditMemberName(0);
             StatusScreen_Run();
+            // XXX: what copy of the flags this restores; it lies 0xac into an
+            // EWRAM block nothing else names, and the routine that writes it
+            // there would settle it.
             Iwram_CopyWords(Data_02012f94 + 0xac, gGameFlagBytes, 0xf40);
             return 0;
           }
@@ -1417,17 +1425,18 @@ void Clear_ApplyImportedData(s32 mode, u8 *in) {
       statsOffset += 15;
     }
     for (i = 0; i != 4; i++) {
-      s16 *stats = &Unit_Get(gClear_ImportedMembers[i])->baseHp;
+      struct UnitBaseStats *stats =
+          (struct UnitBaseStats *)&Unit_Get(gClear_ImportedMembers[i])->baseHp;
       s32 at = i * 8;
 
 #define WORD (*(u32 *)((u8 *)packedStats + at))
-      stats[0] = WORD >> 21;
-      stats[1] = WORD << 11 >> 21;
-      stats[4] = WORD & 0x1ff;
+      stats->hp = WORD >> 21;
+      stats->pp = WORD << 11 >> 21;
+      stats->attack = WORD & 0x1ff;
       at += 4;
-      stats[5] = WORD >> 22 & 0x1ff;
-      stats[6] = WORD >> 12 & 0x1ff;
-      ((u8 *)stats)[14] = WORD >> 4 & 0x7f;
+      stats->defense = WORD >> 22 & 0x1ff;
+      stats->agility = WORD >> 12 & 0x1ff;
+      stats->luck = WORD >> 4 & 0x7f;
 #undef WORD
     }
   }
@@ -1456,16 +1465,17 @@ void Clear_ApplyImportedData(s32 mode, u8 *in) {
       Iwram_ClearWordsEntry(unit->djinnHeld, 40);
   }
 
-  for (i = 0; i != 28; i++) {
-    s32 element = i / 7;
-    s32 number = i % 7;
+  for (i = 0; i != ELEMENT_COUNT * TRANSFERRED_DJINN_PER_ELEMENT; i++) {
+    s32 element = i / TRANSFERRED_DJINN_PER_ELEMENT;
+    s32 number = i % TRANSFERRED_DJINN_PER_ELEMENT;
 
-    GameFlag_Clear(element * 20 + number + 48);
+    GameFlag_Clear(FLAG_DJINNI(element * DJINN_PER_ELEMENT + number));
   }
 
-  for (i = 0; i != 28; i++) {
+  for (i = 0; i != ELEMENT_COUNT * TRANSFERRED_DJINN_PER_ELEMENT; i++) {
     if ((djinnBits >> i) & 1)
-      Djinn_GiveToParty(i / 7, i % 7);
+      Djinn_GiveToParty(i / TRANSFERRED_DJINN_PER_ELEMENT,
+                        i % TRANSFERRED_DJINN_PER_ELEMENT);
   }
 
   if (mode != PASSWORD_LEVEL_GOLD) {
@@ -1792,26 +1802,23 @@ u16 Clear_CalculatePasswordCrc16(u32 length, u8 *p) {
   crc = 0xffff;
   i = 0;
   if (length != 0) {
-  next_byte:
-    crc ^= *p << 8;
-    j = 0;
-  next_bit:
-    // One bit: shift, adding the polynomial when the top bit was set.
-    {
-      u32 high = crc & 0x8000;
-      u32 next = crc << 1;
+    do {
+      crc ^= *p << 8;
+      j = 0;
+      // One bit at a time: shift, adding the polynomial when the top bit was
+      // set.
+      do {
+        u32 high = crc & 0x8000;
+        u32 next = crc << 1;
 
-      j++;
-      crc = next + 0xffffefdf;
-      if (high == 0)
-        crc = next;
-    }
-    if (j != 8)
-      goto next_bit;
-    i++;
-    p++;
-    if (i != length)
-      goto next_byte;
+        j++;
+        crc = next + 0xffffefdf;
+        if (high == 0)
+          crc = next;
+      } while (j != 8);
+      i++;
+      p++;
+    } while (i != length);
   }
   return ~crc;
 }

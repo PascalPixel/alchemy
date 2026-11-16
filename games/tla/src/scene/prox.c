@@ -1039,15 +1039,10 @@ void Prox_MeetPuelle(void) {
   Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | SPEAKER_WINDOW_BELOW | ACTOR_ISAAC,
                     0);
   // Waits up to 80 frames, or until a key is held.
-  i = 0;
-  goto test_wait;
-next_wait:
-  i++;
-test_wait:
-  if (i < 80) {
+  for (i = 0; i < 80; i++) {
     System_Wait(1);
-    if (gInput.held == 0)
-      goto next_wait;
+    if (gInput.held != 0)
+      break;
   }
   Actor_RunRepeatedMotion(ACTOR_CLANSMAN_GUARDING_THE_ROAD, 1);
   Event_ShowMessage(ACTOR_CLANSMAN_GUARDING_THE_ROAD, 0);
@@ -1442,8 +1437,8 @@ s32 Prox_EndEvent();
 void Prox_GiveThanksForBeacon(void) {
   s32 answer;
   struct Actor *leader;
-  s32 angleC000;
-  s32 angleB000;
+  s32 north;
+  s32 northNorthwest;
   s32 facing;
 
   Event_Start();
@@ -1455,17 +1450,16 @@ void Prox_GiveThanksForBeacon(void) {
   /* FAKEMATCH(temporary): the three facings held in locals set before their
    * first placement, where as constants each placement rebuilds them and the
    * later turns cannot share them. */
-  angleC000 = FACING_NORTH;
-  angleB000 = FACING_NORTH_NORTHWEST;
-  Actor_SetPositionAndFacing(ACTOR_ISAAC, toFIXED(168), toFIXED(484),
-                             angleC000);
+  north = FACING_NORTH;
+  northNorthwest = FACING_NORTH_NORTHWEST;
+  Actor_SetPositionAndFacing(ACTOR_ISAAC, toFIXED(168), toFIXED(484), north);
   Actor_SetPositionAndFacing(ACTOR_HOUSES_KRADEN, toFIXED(200), toFIXED(484),
-                             angleB000);
+                             northNorthwest);
   facing = FACING_SOUTH_SOUTHEAST;
   Actor_SetPositionAndFacing(ACTOR_CHILD_SENT_OUTSIDE, toFIXED(138),
                              toFIXED(412), facing);
   Actor_SetPositionAndFacing(ACTOR_VILLAGER_ON_THE_RESCUED, toFIXED(220),
-                             toFIXED(600), angleB000);
+                             toFIXED(600), northNorthwest);
   Actor_SetPosition(ACTOR_JENNA, 184, 684);
   System_Wait(1);
   EVENT_WORK->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
@@ -2364,15 +2358,10 @@ void Prox_SayFarewell(void) {
     PaletteFade_Interpolate(120);
     System_Wait(120);
     // Waits up to 120 frames, or until a key is held.
-    i = 0;
-    goto test_wait;
-  next_wait:
-    i++;
-  test_wait:
-    if (i < 120) {
+    for (i = 0; i < 120; i++) {
       System_Wait(1);
-      if (gInput.held == 0)
-        goto next_wait;
+      if (gInput.held != 0)
+        break;
     }
     PaletteFade_ApplyTarget(RGB(0, 0, 0), PALETTES_ALL);
     PaletteFade_Interpolate(16);

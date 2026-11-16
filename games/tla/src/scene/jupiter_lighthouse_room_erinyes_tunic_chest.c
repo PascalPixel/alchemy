@@ -39,6 +39,7 @@
 #include "field/cell_target.h"
 #include "field/field_sequence_event.h"
 #include "field/field.h"
+#include "scene/event_layer.h"
 #include "system/io_reg.h"
 #include "field/field_event.h"
 #include "system/frame.h"
@@ -92,10 +93,6 @@ s32 PushTarget_FillFootprint(s32 id);
 s32 PushTarget_FindSlide(struct PushTarget *target);
 void PushTarget_PushFill(struct PushTarget target);
 
-static __inline__ void Lift_(s32 x, s32 z, s32 a, s32 b) {
-  MapGrid_SetCellHeight(x, z, a, b);
-}
-
 void JupiterLighthouse_StartMovingPillar(void);
 void JupiterLighthouse_LeaveByCyclone(void);
 void JupiterLighthouse_JumpForward(void);
@@ -137,11 +134,15 @@ const struct ActorPlacement *Scene_GetActorPlacements(void) {
   return gActorPlacements;
 }
 
+/// The ledge log's update while it is pushed: at cell (14, 12), below the
+/// ledge, it is drawn at priority 2.
 void JupiterLighthouse_DrawLogBelowLedge(struct Actor *object) {
   if (FIELD_CELL(object->x.fixed) == 14 && FIELD_CELL(object->z.fixed) == 12)
     Actor_SetSpritePriorityDirect(object, 2);
 }
 
+/// The leader pushes the ledge log; pushed to cell (16, 12) it falls off the
+/// ledge with a thud and the four cells it lands across sink to the floor.
 void JupiterLighthouse_PushLogOffTheLedge(void) {
   struct Actor *object = Actor_Get(ACTOR_LEDGE_LOG);
   struct PushTarget target;
@@ -160,15 +161,16 @@ void JupiterLighthouse_PushLogOffTheLedge(void) {
     Event_PlaySound(SE_HEAVY_IMPACT);
     object->motionFlags = 2;
     for (i = 0, x = toFIXED(176); i <= 3; i++, x += toFIXED(16)) {
-      Lift_(0x1000000, x, 0, 0);
-      MapGrid_SetCellBehavior(0x1000000, x, 0, 0);
+      FieldMapGrid_SetCellHeight(toFIXED(256), x, 0, 0);
+      MapGrid_SetCellBehavior(toFIXED(256), x, 0, 0);
       if (i <= 1)
-        MapGrid_SetAttributeBAt(0x1000000, x, 0, 128);
+        MapGrid_SetAttributeBAt(toFIXED(256), x, 0, 128);
     }
   }
   object->update = 0;
 }
 
+/// Move takes hold of a pillar: nothing to do in this room.
 void JupiterLighthouse_StartMovingPillar(void) {}
 
 /// Sets FLAG_LEFT_PILLAR_IN_GAP or FLAG_RIGHT_PILLAR_IN_GAP when the pillar
@@ -199,10 +201,13 @@ void JupiterLighthouse_FinishMovingPillar(s32 unused, s32 id) {
   }
 }
 
+/// Leaves by exit 12.
 void JupiterLighthouse_LeaveByCyclone(void) { Import_EventSetExitRequest(12); }
 
 const struct Trigger *Scene_GetTriggers(void) { return gSceneEvents; }
 
+/// Sets up the room as the party enters: the window in, the two vines, and the
+/// teleporter's ring the party arrives in. Returns 0.
 s32 Scene_Initialize(void) {
   gFieldWork->transition =
       SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE);
@@ -217,6 +222,9 @@ s32 Scene_Initialize(void) {
   return 0;
 }
 
+/// Sets the scene's arrival flags; puts the pillars back in their gaps, fixes
+/// the four logs in their cells, and sinks the cells the ledge log fell across.
+/// Returns 0.
 s32 Scene_PrepareMap(void) {
   struct Actor *object;
   s32 i;
@@ -258,15 +266,16 @@ s32 Scene_PrepareMap(void) {
   PushTarget_FillFootprint(ACTOR_FOURTH_LOG);
   if (Event_GetFlag(FLAG_LOG_OFF_LEDGE)) {
     for (i = 0, x = toFIXED(176); i <= 3; i++, x += toFIXED(16)) {
-      Lift_(0x1000000, x, 0, 0);
-      MapGrid_SetCellBehavior(0x1000000, x, 0, 0);
+      FieldMapGrid_SetCellHeight(toFIXED(256), x, 0, 0);
+      MapGrid_SetCellBehavior(toFIXED(256), x, 0, 0);
       if (i <= 1)
-        MapGrid_SetAttributeBAt(0x1000000, x, 0, 128);
+        MapGrid_SetAttributeBAt(toFIXED(256), x, 0, 128);
     }
   }
   return 0;
 }
 
+/// The leader jumps forward over the gap, where it can.
 void JupiterLighthouse_JumpForward(void) { Field_TryJumpForward(); }
 
 #include "shared/scene_set_arrival_flags.c"
@@ -297,6 +306,8 @@ void JupiterLighthouse_LoadPalettesZero(s32 mode) {
 
 #include "shared/whirlwind_carry_leader_lower.h"
 
+/// The distance between two positions across the ground (x and z), in whole
+/// pixels.
 s32 Position_FlatDistance(FIXED *a, FIXED *b) {
   s32 dx = FIXEDtoINT(a[0] - b[0]);
   s32 dz = FIXEDtoINT(a[2] - b[2]);
@@ -552,6 +563,7 @@ static inline void *BumpAlloc(s32 size) { return Heap_Alloc(size); }
 
 #include "shared/light_sprites_add.h"
 
+/// Sets the priority the lit actors' sprites are drawn at.
 void LightSprites_SetPriority(s32 value) { gLightSpritePriority = value; }
 
 #include "../field/actor_set_sprite_priority.c"
@@ -695,15 +707,15 @@ LATE_DATA struct ActorPlacement gActorPlacements[] = {
     ACTOR_PLACEMENT(SPRITE_FALLEN_COLUMN_WEST_EAST, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 128, 0, 200, FACING_SOUTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(SPRITE_FALLEN_COLUMN_NORTH_SOUTH, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 168, 0, 192, FACING_SOUTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(SPRITE_FALLEN_COLUMN_WEST_EAST, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 208, 0, 216, FACING_SOUTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(373, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 360, 0, 568, FACING_SOUTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(373, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 488, 0, 568, FACING_SOUTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(312, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 312, 0, 584, FACING_SOUTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(312, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 536, 0, 584, FACING_SOUTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(341, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 248, 0, 680, FACING_SOUTHWEST, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(341, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 600, 0, 680, FACING_SOUTHEAST, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE),
-    ACTOR_PLACEMENT(341, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 120, 0, 840, FACING_SOUTHWEST, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE),
-    ACTOR_PLACEMENT(341, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 184, 0, 840, FACING_SOUTHEAST, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE),
-    ACTOR_PLACEMENT(341, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 728, 0, 840, FACING_SOUTHEAST, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE),
+    ACTOR_PLACEMENT(SPRITE_SEEDLING, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 360, 0, 568, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_SEEDLING, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 488, 0, 568, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_YELLOW_BLOCK, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 312, 0, 584, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_YELLOW_BLOCK, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 536, 0, 584, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_WHITE_WINGS, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 248, 0, 680, FACING_SOUTHWEST, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_WHITE_WINGS, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 600, 0, 680, FACING_SOUTHEAST, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE),
+    ACTOR_PLACEMENT(SPRITE_WHITE_WINGS, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 120, 0, 840, FACING_SOUTHWEST, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE),
+    ACTOR_PLACEMENT(SPRITE_WHITE_WINGS, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 184, 0, 840, FACING_SOUTHEAST, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE),
+    ACTOR_PLACEMENT(SPRITE_WHITE_WINGS, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 728, 0, 840, FACING_SOUTHEAST, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE),
     {SCENE_TABLE_END},
 };
 

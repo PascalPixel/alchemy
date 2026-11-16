@@ -34,7 +34,7 @@ s32 Battle_CalculateRecoveryFar(s32 value, s32 selector, s32 multiplier);
 s16 Unit_AddPpFar(s32 unit, s32 amount);
 /// Fills a battle unit with an enemy: its stats, its name with its letter, its
 /// items, rewards and elements (BattleUnit_Set).
-s32 BattleUnit_SetFar(s32 slot, s32 unit, s32 mask);
+s32 BattleUnit_SetFar(s32 unitId, s32 enemyId, s32 suffix);
 s32 Ability_EffectAppliesToDowned(s32 effect);
 
 #endif

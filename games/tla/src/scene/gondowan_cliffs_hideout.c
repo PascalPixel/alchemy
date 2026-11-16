@@ -117,7 +117,9 @@ struct SceneEntrance gSceneEntrances[] = {
 
 u32 gSceneExits[] = {
     SCENE_EXITS(GondowanCliffsHideout),
-    SCENE_EXIT_UNLESS(1, GondowanCliffs, 3, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(
+        GONDOWAN_CLIFFS_HIDEOUT_TO_GONDOWAN_CLIFFS, GondowanCliffs,
+        GONDOWAN_CLIFFS_FROM_GONDOWAN_CLIFFS_HIDEOUT, EXIT_FLAG_NONE),
     SCENE_EXITS_END,
 };
 

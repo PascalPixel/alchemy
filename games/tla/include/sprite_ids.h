@@ -690,4 +690,12 @@ enum SpriteId {
   SPRITE_STATUS_GRIM_REAPER_7
 };
 
+/// SPRITE_STUMP's animations beyond its standing frame (stump.tsv), as The
+/// Broken Seal's.
+enum StumpAnimation {
+  /// Sinks until only its cut top shows, level with the ground or the water.
+  STUMP_ANIMATION_SINK = 2,
+  STUMP_ANIMATION_SPLASH = 3 ///< drops into water with a splash
+};
+
 #endif

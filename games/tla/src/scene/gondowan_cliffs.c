@@ -73,6 +73,15 @@ enum {
   ACTOR_KRADEN = 22
 };
 
+/// The pass's actors by their rows: the tightrope's two posts follow the reset
+/// script's actor.
+enum { ACTOR_PASS_TIGHTROPE_POST_A = 9, ACTOR_PASS_TIGHTROPE_POST_B = 10 };
+
+/// The pass's entrance an event sends the party in by, aboard the ship.
+enum { ENTRANCE_PASS_BY_SHIP = 99 };
+
+/// Talking to the Djinni at the end of the cliffs starts the battle with
+/// Kindle, a Mars Djinni.
 void GondowanCliffs_FightKindle(void) {
   Field_RequestDjinnBattle(ACTOR_KINDLE, DJINNI_KINDLE);
 }
@@ -153,29 +162,34 @@ struct MapGroundEffects {
   u8 wading : 2;
   u8 unusedHighBits : 4; ///< no code names them
 };
-/// One rising platform and what rides it.
+/// A geyser Scoop has dug up: it rises and falls on its timer, carrying the
+/// platform at its top, as Yampi Desert's rising sand does.
 struct Geyser {
-  s16 id;
-  s16 timer;
-  s16 height;
-  s16 period;
-  s16 riseAt;
-  s16 fallAt;
-  s16 max;
-  s16 min;
-  s16 unk10;
-  s16 step;
-  s16 unk14;
-  s16 phase;
-  struct Actor *rider;
+  s16 id;              ///< its actor; 0 for a free entry
+  s16 timer;           ///< frames into its period
+  s16 height;          ///< pixels it has risen
+  s16 period;          ///< frames in one rise and fall
+  s16 riseAt;          ///< the timer it starts to rise at
+  s16 fallAt;          ///< the timer it starts to fall at
+  s16 max;             ///< pixels it rises to
+  s16 min;             ///< pixels it falls to
+  s16 unreadSetToOne;  ///< set to 1 by Geyser_Add and never read
+  s16 step;            ///< pixels a frame: 4 rising, -8 falling, 0 at rest
+  s16 unreadCleared;   ///< cleared by Geyser_Add and never read
+  s16 phase;           ///< the platform's bob, 1/65536 turns
+  struct Actor *rider; ///< the platform at its top, which the leader rides
 };
 
+/// The geysers' work, kept in the inventory snapshot's spare room.
 struct GeyserWork {
-  s16 entry;
-  s16 value;
+  s16 entry;        ///< the VRAM cache entry holding the column's tiles
+  s16 firstTerrain; ///< the terrain id and collision slot of the first entry
   struct Geyser entries[16];
+  /// The OAM words Geysers_Draw queues: at most 80 sprites of three words.
   void *block;
 };
+
+#define GEYSER_WORK ((struct GeyserWork *)(gInventorySnapshot + 0x188))
 
 void GondowanCliffs_FreezeSecondPuddle(void);
 void GondowanCliffs_BlowAwayFoliage(void);
@@ -184,15 +198,18 @@ void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
                        const struct EffectOptions *options);
 void Tightrope_Place(s32 a, s32 b, s32 c);
 void Rope_Initialize(void);
-void Geysers_Start(s32 a, s32 b);
+void Geysers_Start(s32 unused, s32 firstTerrain);
 void Tightrope_Initialize(void);
 
+/// The leaping stump's update routine turns its sprite a fixed amount per
+/// frame.
 void GondowanCliffs_RollPillar(struct Actor *object) {
   struct FieldSprite *sprite = object->sprite;
 
-  sprite->rotation -= 0x800;
+  sprite->rotation -= TRIG_TURN / 32;
 }
 
+/// Waits until the actor has come down to height (16.16), a second at most.
 void GondowanCliffs_WaitToLand(struct Actor *object, s32 height) {
   s32 count = 60;
 
@@ -204,6 +221,8 @@ void GondowanCliffs_WaitToLand(struct Actor *object, s32 height) {
   }
 }
 
+/// Move on the stump at the stream's edge: it rolls, leaps into the stream
+/// and lands upright in the water with a splash, a step across for the party.
 void GondowanCliffs_PushPillarIntoWater(s32 mode, s32 id) {
   struct Actor *actor = Actor_GetById(id);
   s32 unused[3]; // Unused: gives the stack frame its 12 bytes.
@@ -222,7 +241,7 @@ void GondowanCliffs_PushPillarIntoWater(s32 mode, s32 id) {
     for (i = 0; i <= 17; i++) {
       System_Wait(1);
       sprite = actor->sprite;
-      sprite->rotation -= 256;
+      sprite->rotation -= TRIG_TURN / 256;
       actor->x.fixed -=
           Trig_Cos(((struct FieldSprite *)actor->sprite)->rotation) / 2;
       actor->targetX = TARGET_UNSET;
@@ -231,7 +250,7 @@ void GondowanCliffs_PushPillarIntoWater(s32 mode, s32 id) {
     Actor_SetSpeed(id, 3);
     Actor_SetDestination(id, 1193, 530);
     actor->gravity = toFIXED(4) / 5;
-    actor->motionFlags = 3;
+    actor->motionFlags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
     actor->layer = 0;
     FieldActor_WaitForMoveById(id);
     GondowanCliffs_WaitToLand(actor, 0);
@@ -239,11 +258,11 @@ void GondowanCliffs_PushPillarIntoWater(s32 mode, s32 id) {
     MapGrid_SetShake(5, 5, 1);
     Event_PlaySound(SE_RUMBLE);
     MapGrid_SetShake(SHAKE_KEEP, SHAKE_KEEP, 0.9);
-    ((struct FieldSprite *)actor->sprite)->rotation = 0x1000;
+    ((struct FieldSprite *)actor->sprite)->rotation = TRIG_TURN / 16;
     // Cleared through a word: as a function pointer the store sinks below the
     // effect options.
     *(u32 *)&actor->update = 0;
-    options.type = 276;
+    options.type = SPRITE_SPLASH;
     options.startScaleX = FIXED_ONE / 2;
     options.targetScaleX = FIXED_ONE * 3 / 2;
     options.targetScaleY = FIXED_ONE * 6 / 5;
@@ -253,7 +272,7 @@ void GondowanCliffs_PushPillarIntoWater(s32 mode, s32 id) {
                           EFFECT_SCALE_TO_TARGET,
                       &options);
     Event_PlaySound(SE_CAST);
-    Actor_SetAnimation(id, 3);
+    Actor_SetAnimation(id, STUMP_ANIMATION_SPLASH);
     FieldMapGrid_WaitForShakeToSettle();
     Actor_GetById(ACTOR_STUMP)->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
     Event_SetFlag(FLAG_GONDOWAN_CLIFFS_PILLAR_IN_WATER);
@@ -261,7 +280,8 @@ void GondowanCliffs_PushPillarIntoWater(s32 mode, s32 id) {
   Event_End();
 }
 
-/// Marks a pillar moved: it stops and its cell moves.
+/// Frost on the first puddle: its ice pillar stands still and its cell can be
+/// climbed, for this visit.
 void GondowanCliffs_FreezeFirstPuddle(void) {
   struct Actor *object = Actor_Get(ACTOR_FIRST_PUDDLE);
 
@@ -271,6 +291,8 @@ void GondowanCliffs_FreezeFirstPuddle(void) {
   Event_SetFlag(FLAG_FIRST_PUDDLE_FROZEN);
 }
 
+/// Frost on the second puddle: its ice pillar stands 32 pixels tall and its
+/// cell can be climbed, for this visit.
 void GondowanCliffs_FreezeSecondPuddle(void) {
   struct Actor *object = Actor_Get(ACTOR_SECOND_PUDDLE);
 
@@ -282,10 +304,12 @@ void GondowanCliffs_FreezeSecondPuddle(void) {
   Event_SetFlag(FLAG_SECOND_PUDDLE_FROZEN);
 }
 
+/// Whirlwind on the ivy blows it away for good.
 void GondowanCliffs_BlowAwayFoliage(void) {
   GameFlag_Set(FLAG_GONDOWAN_CLIFFS_FOLIAGE_BLOWN);
 }
 
+/// Scoop on the yellow sand of cell behaviour 30 digs up the geyser for good.
 void GondowanCliffs_ScoopUpGeyser(s32 unused, s32 cell) {
   struct Actor *object;
 
@@ -301,6 +325,8 @@ void GondowanCliffs_ScoopUpGeyser(s32 unused, s32 cell) {
 
 #include "text/msg_ids.h"
 
+/// Talking to the dog barks at the leader, unless he faces the geyser's cell
+/// beside it, which opens the field menu instead.
 void GondowanCliffs_TalkToDog(void) {
   struct Actor *object = Actor_Get(gMainRoutineWork.leaderActorId);
   struct {
@@ -329,6 +355,7 @@ void GondowanCliffs_TalkToDog(void) {
 extern struct Trigger gGondowanCliffs_PassTriggers[];
 extern struct Trigger gGondowanCliffs_Triggers[];
 
+/// Grind on the rock in the pass breaks it for good.
 void GondowanCliffs_GrindTheRock(s32 unused, s32 id) {
   Actor_SetPosition(id, 0, 0);
   Event_SetFlag(FLAG_GONDOWAN_CLIFFS_ROCK_GROUND);
@@ -342,6 +369,8 @@ const struct Trigger *Scene_GetTriggers(void) {
 
 u16 gGondowanCliffs_SavedWaterColors[4] BSS_DATA;
 
+/// Each frame: the four colours of the water's palette row turn one step every
+/// 16 frames.
 void GondowanCliffs_CycleWaterColors(void) {
   u16 *color = (u16 *)&BG_PLTT_COLOR(0, 12);
   u32 phase = gFrameCount >> 4;
@@ -356,15 +385,20 @@ void GondowanCliffs_CycleWaterColors(void) {
   }
 }
 
+/// Sets up the pass: on arriving by ship, the leader walks again; the
+/// tightrope is strung and the water's colours start turning.
 void GondowanCliffs_SetUpPass(void) {
-  if (gMainRoutineWork.entrance == 99) {
+  if (gMainRoutineWork.entrance == ENTRANCE_PASS_BY_SHIP) {
     gMainRoutineWork.movementMode = LEADER_MOVEMENT_SHIP;
     gMainRoutineWork.ownerOverride = 1;
-    Event_SetDestination(SCENE_GONDOWAN_CLIFFS_PASS, 1);
+    Event_SetDestination(SCENE_GONDOWAN_CLIFFS_PASS,
+                         GONDOWAN_CLIFFS_PASS_FROM_WORLD_MAP_NORTH);
   }
   Tightrope_Initialize();
-  Value3((s32 (*)())Tightrope_Place, 0, 9, 10);
-  Iwram_CopyWords((s32)gGondowanCliffs_SavedWaterColors, 0x05000018, 8);
+  Value3((s32 (*)())Tightrope_Place, 0, ACTOR_PASS_TIGHTROPE_POST_A,
+         ACTOR_PASS_TIGHTROPE_POST_B);
+  Iwram_CopyWords((s32)gGondowanCliffs_SavedWaterColors,
+                  (s32)&BG_PLTT_COLOR(0, 12), 8);
   Task_AddFrame(GondowanCliffs_CycleWaterColors, TASK_PASS_VBLANK);
 }
 
@@ -423,22 +457,16 @@ void GondowanCliffs_TurnBackToHelpPiers(void) {
   Event_PlaySound(SE_MAP_EXIT);
   Actor_WalkToAndWait(gMainRoutineWork.leaderActorId, 512, 488);
   Event_WaitTransitionFrames();
-  FieldEvent_SetExitRequest(1);
+  FieldEvent_SetExitRequest(GONDOWAN_CLIFFS_TO_WORLD_MAP_A);
 }
 
 void Rope_Place(s32 a, s32 b, s32 c, s32 d);
 struct Geyser *Geyser_Add(s32 slot, s32 id, s32 timer, s32 low, s32 high);
 
-/// Gondowan Cliffs' setup: Ov66bRoom2 runs GondowanCliffs_SetUpPass and
-/// returns; with flag 0x8f3 set and 0x8ef clear it runs
-/// GondowanCliffs_TurnBackToHelpPiers; otherwise in Ov66bRoom1 it starts the
-/// room's lists, places or raises actor 14 by flag
-/// FLAG_GONDOWAN_CLIFFS_FOLIAGE_BLOWN, copies cells by flags
-/// FLAG_FIRST_PUDDLE_FROZEN and FLAG_SECOND_PUDDLE_FROZEN, records the swinging
-/// actor 17 (Geyser_Add) and places it by flag FLAG_GONDOWAN_CLIFFS_GEYSER_DUG,
-/// sets actor 16's mode, places actor 15 by flag
-/// FLAG_GONDOWAN_CLIFFS_PILLAR_IN_WATER, saves four palette colours, schedules
-/// GondowanCliffs_CycleWaterColors and sets BG layer priority. Returns 0.
+/// Sets up the scene being entered. The pass has its own set-up; the cliffs
+/// turn the party back while Piers still needs their help, and otherwise
+/// string the rope and tightrope, restore the ivy, the frozen puddles, the
+/// geyser and the stump as their flags say, and start the water's colours.
 s32 Scene_Initialize(void) {
   struct Actor *actor;
   s32 height;
@@ -455,47 +483,46 @@ s32 Scene_Initialize(void) {
   }
   Actor_GetById(Party_GetLeaderActor())->priorityFlags |=
       ACTOR_PRIORITY_IGNORES_RISES;
-  if (gMainRoutineWork.next != SCENE_GONDOWAN_CLIFFS)
-    goto done;
-  Rope_Initialize();
-  Rope_Place(0, FLAG_SCENE_TEMP_00, ACTOR_ROPE_POST_A, ACTOR_ROPE_POST_B);
-  if (GameFlag_Get(FLAG_BRIGGS_CAUGHT)) {
-    Tightrope_Initialize();
-    Tightrope_Place(0, ACTOR_TIGHTROPE_POST_A, ACTOR_TIGHTROPE_POST_B);
+  if (gMainRoutineWork.next == SCENE_GONDOWAN_CLIFFS) {
+    Rope_Initialize();
+    Rope_Place(0, FLAG_SCENE_TEMP_00, ACTOR_ROPE_POST_A, ACTOR_ROPE_POST_B);
+    if (GameFlag_Get(FLAG_BRIGGS_CAUGHT)) {
+      Tightrope_Initialize();
+      Tightrope_Place(0, ACTOR_TIGHTROPE_POST_A, ACTOR_TIGHTROPE_POST_B);
+    }
+    if (GameFlag_Get(FLAG_GONDOWAN_CLIFFS_FOLIAGE_BLOWN))
+      Actor_SetPosition(ACTOR_IVY, 0, 0);
+    else
+      Actor_GetById(ACTOR_IVY)->scaleY = FIXED_ONE * 5 / 4;
+    if (GameFlag_Get(FLAG_FIRST_PUDDLE_FROZEN))
+      MapGrid_CopyCellAttributes(79, 28, 1, 1, 81, 28);
+    if (GameFlag_Get(FLAG_SECOND_PUDDLE_FROZEN))
+      MapGrid_CopyCellAttributes(115, 35, 1, 1, 117, 35);
+    Geysers_Start(0, 240);
+    Geyser_Add(0, ACTOR_GEYSER, 0, 0, 64);
+    if (GameFlag_Get(FLAG_GONDOWAN_CLIFFS_GEYSER_DUG)) {
+      actor = Actor_GetById(ACTOR_GEYSER);
+      MapGrid_CopyCellsLayered(124, 1, 1, 1, 119, 43);
+      Actor_SetPosition(ACTOR_GEYSER, 1912, 728);
+      height = Map_GetTerrainHeight(0, actor->x.fixed, actor->z.fixed);
+      actor->y.fixed = height;
+      actor->groundHeight = height;
+    }
+    Actor_SetAnimation(ACTOR_DOG, 4);
+    if (GameFlag_Get(FLAG_GONDOWAN_CLIFFS_PILLAR_IN_WATER)) {
+      MapGrid_CopyCellAttributes(74, 31, 1, 1, 74, 33);
+      Actor_SetPosition(ACTOR_STUMP, 1193, 530);
+      Actor_GetById(ACTOR_STUMP)->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
+      Actor_GetById(ACTOR_STUMP)->collisionFlags = 0;
+      Actor_SetAnimation(ACTOR_STUMP, STUMP_ANIMATION_SINK);
+    } else {
+      Actor_GetById(ACTOR_STUMP)->collisionFlags |= ACTOR_NEAR_PSYNERGY;
+    }
+    Iwram_CopyWordsEntry(((u8 *)gGondowanCliffs_SavedWaterColors),
+                         (void *)&BG_PLTT_COLOR(0, 12), 8);
+    Task_AddFrame(GondowanCliffs_CycleWaterColors, TASK_PASS_VBLANK);
+    ((struct MapGroundEffects *)Ram_HeapSlots->mapGrid)->wading = 1;
   }
-  if (GameFlag_Get(FLAG_GONDOWAN_CLIFFS_FOLIAGE_BLOWN))
-    Actor_SetPosition(ACTOR_IVY, 0, 0);
-  else
-    Actor_GetById(ACTOR_IVY)->scaleY = FIXED_ONE * 5 / 4;
-  if (GameFlag_Get(FLAG_FIRST_PUDDLE_FROZEN))
-    MapGrid_CopyCellAttributes(79, 28, 1, 1, 81, 28);
-  if (GameFlag_Get(FLAG_SECOND_PUDDLE_FROZEN))
-    MapGrid_CopyCellAttributes(115, 35, 1, 1, 117, 35);
-  Geysers_Start(0, 240);
-  Geyser_Add(0, ACTOR_GEYSER, 0, 0, 64);
-  if (GameFlag_Get(FLAG_GONDOWAN_CLIFFS_GEYSER_DUG)) {
-    actor = Actor_GetById(ACTOR_GEYSER);
-    MapGrid_CopyCellsLayered(124, 1, 1, 1, 119, 43);
-    Actor_SetPosition(ACTOR_GEYSER, 1912, 728);
-    height = Map_GetTerrainHeight(0, actor->x.fixed, actor->z.fixed);
-    actor->y.fixed = height;
-    actor->groundHeight = height;
-  }
-  Actor_SetAnimation(ACTOR_DOG, 4);
-  if (GameFlag_Get(FLAG_GONDOWAN_CLIFFS_PILLAR_IN_WATER)) {
-    MapGrid_CopyCellAttributes(74, 31, 1, 1, 74, 33);
-    Actor_SetPosition(ACTOR_STUMP, 1193, 530);
-    Actor_GetById(ACTOR_STUMP)->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
-    Actor_GetById(ACTOR_STUMP)->collisionFlags = 0;
-    Actor_SetAnimation(ACTOR_STUMP, 2);
-  } else {
-    Actor_GetById(ACTOR_STUMP)->collisionFlags |= ACTOR_NEAR_PSYNERGY;
-  }
-  Iwram_CopyWordsEntry(((u8 *)gGondowanCliffs_SavedWaterColors),
-                       (void *)&BG_PLTT_COLOR(0, 12), 8);
-  Task_AddFrame(GondowanCliffs_CycleWaterColors, TASK_PASS_VBLANK);
-  ((struct MapGroundEffects *)Ram_HeapSlots->mapGrid)->wading = 1;
-done:
   return 0;
 }
 
@@ -514,14 +541,14 @@ s32 Scene_PrepareMap(void) {
 /// each of the 16 entries it moves the actor on its timer, writes its height to
 /// the collision and cell maps, and carries its rider with a bob.
 void Geysers_Update(void) {
-  struct GeyserWork *work = (struct GeyserWork *)(gInventorySnapshot + 0x188);
+  struct GeyserWork *work = GEYSER_WORK;
   struct MapWork *map = Ram_HeapSlots->mapGrid;
   struct Geyser *entry = work->entries;
-  s32 value = work->value;
+  s32 firstTerrain = work->firstTerrain;
   u8 *terrain = map->layers[0].terrainIds;
   struct MapCell *cells = map->layers[0].cells;
   s32 i = 0;
-  s32 *collision = (s32 *)Ram_MapCollision + value;
+  s32 *collision = (s32 *)Ram_MapCollision + firstTerrain;
 
   for (; i <= 15; collision++, entry++, i++) {
     struct Actor *object;
@@ -560,7 +587,7 @@ void Geysers_Update(void) {
         entry->timer = 0;
     }
     index = FIELD_CELL(object->x.fixed) + FIELD_CELL(object->z.fixed) * 128;
-    terrain[index] = (u8)work->value + i;
+    terrain[index] = (u8)work->firstTerrain + i;
     *collision = ((PIXEL_PART(object->y.fixed) + entry->height) / 8) << 8;
     cell = &cells[index];
     if (entry->step != 0)
@@ -594,7 +621,7 @@ void Geysers_Update(void) {
 /// 16 pixels of its height and the bobbing head on top, at most 80 sprites,
 /// queued by Oam_AddSpriteAtDepthClamped.
 void Geysers_Draw(void) {
-  struct GeyserWork *work = (struct GeyserWork *)(gInventorySnapshot + 0x188);
+  struct GeyserWork *work = GEYSER_WORK;
   struct Geyser *swing = work->entries;
   s32 k;
   u32 tile = gVramCacheEntries[work->entry].offset >> 5;
@@ -613,7 +640,7 @@ void Geysers_Draw(void) {
   u32 *p;
 
   scrollX = view[0];
-  scrollX &= 0xffff0000;
+  scrollX &= FIELD_PIXEL_MASK;
   scrollZ = view[1] & FIELD_PIXEL_MASK;
   lift = map->origin[1];
   for (k = 15; k >= 0; k--, swing++) {
@@ -621,35 +648,28 @@ void Geysers_Draw(void) {
       continue;
     actor = Actor_GetById(swing->id);
     frame = (gFrameCount % 12) / 3 * 8 + 32;
-    h = 0;
-    if (h >= swing->height)
-      goto top;
-  again:
-    if (count > 79)
-      goto next;
-    x = actor->x.fixed - scrollX;
-    y = actor->y.fixed + toFIXED(h) - lift;
-    z = actor->z.fixed - scrollZ - lift;
-    x = FIXEDtoINT(x) - 8;
-    screenY = z - y;
-    screenY = FIXEDtoINT(screenY) - 16;
-    depth = FIXEDtoINT(y + z) + 58;
-    if ((u32)(x + 15) > 334 || screenY <= -16 || screenY > 239)
-      goto next;
-    x &= 511;
-    screenY &= 255;
-    p = oam;
-    *p++ = 0;
-    *p++ = screenY | x << 16 | 0x40002000;
-    *p = (tile + frame) | 0x800;
-    Oam_AddSpriteAtDepthClamped(oam, depth);
-    oam += 3;
-    count++;
-  next:
-    h += 16;
-    if (h < swing->height)
-      goto again;
-  top:
+    for (h = 0; h < swing->height; h += 16) {
+      if (count > 79)
+        continue;
+      x = actor->x.fixed - scrollX;
+      y = actor->y.fixed + toFIXED(h) - lift;
+      z = actor->z.fixed - scrollZ - lift;
+      x = FIXEDtoINT(x) - 8;
+      screenY = z - y;
+      screenY = FIXEDtoINT(screenY) - 16;
+      depth = FIXEDtoINT(y + z) + 58;
+      if ((u32)(x + 15) > 334 || screenY <= -16 || screenY > 239)
+        continue;
+      x &= 511;
+      screenY &= 255;
+      p = oam;
+      *p++ = 0;
+      *p++ = screenY | OBJ_X(x) | (OBJ_SIZE_16X16 | OBJ_256_COLORS);
+      *p = (tile + frame) | OBJ_PRIORITY(2);
+      Oam_AddSpriteAtDepthClamped(oam, depth);
+      oam += 3;
+      count++;
+    }
     if (count > 79)
       continue;
     x = actor->x.fixed - scrollX;
@@ -668,34 +688,39 @@ void Geysers_Draw(void) {
     screenY &= 255;
     p = oam;
     *p++ = 0;
-    *p++ = screenY | x << 16 | 0x40002000;
-    *p = (tile + frame - 32) | 0x800;
+    *p++ = screenY | OBJ_X(x) | (OBJ_SIZE_16X16 | OBJ_256_COLORS);
+    *p = (tile + frame - 32) | OBJ_PRIORITY(2);
     Oam_AddSpriteAtDepthClamped(oam, depth);
     oam += 3;
     count++;
   }
 }
 
-void Geysers_Start(s32 unused, s32 value) {
-  struct GeyserWork *work = (struct GeyserWork *)(gInventorySnapshot + 0x188);
+/// Starts the geysers: clears their work unless the party keeps its place,
+/// loads the column's tiles and starts Geysers_Update and Geysers_Draw.
+void Geysers_Start(s32 unused, s32 firstTerrain) {
+  struct GeyserWork *work = GEYSER_WORK;
   void *buffer;
 
   if (!Event_GetFlag(FLAG_KEEP_PARTY_POSITION))
-    Iwram_ClearWords((s32)work, 456);
+    Iwram_ClearWords((s32)work, sizeof(struct GeyserWork));
   buffer = (void *)Value1((s32 (*)())Heap_AllocEwram, 0x800);
   Decompress_TaggedLz(gField_GeyserTiles, buffer);
   work->entry = VramCache_FindFreeEntry();
   Vram_Load(work->entry, 0x800, buffer);
   Heap_Release(buffer);
-  work->block = Heap_AllocEwram(0x3c0);
-  work->value = value;
+  work->block = Heap_AllocEwram(80 * 3 * sizeof(u32));
+  work->firstTerrain = firstTerrain;
   FieldTask_AddFrame((s32)Geysers_Update, TASK_PASS_VBLANK + 13);
   FieldTask_AddFrame((s32)Geysers_Draw, TASK_PASS_VBLANK);
-  Actor_Get(FieldParty_GetLeaderActor())->priorityFlags |= 0x40;
+  Actor_Get(FieldParty_GetLeaderActor())->priorityFlags |=
+      ACTOR_PRIORITY_WALKS_ON_PLATFORMS;
 }
 
+/// Makes actor id the geyser of entry slot, rising from low to high pixels
+/// every six seconds, with an unseen platform at its top for the leader.
 struct Geyser *Geyser_Add(s32 slot, s32 id, s32 timer, s32 low, s32 high) {
-  struct GeyserWork *work = (struct GeyserWork *)(gInventorySnapshot + 0x188);
+  struct GeyserWork *work = GEYSER_WORK;
   struct Geyser *entry = &work->entries[slot];
   struct Actor *object = Actor_Get(id);
   struct Actor *rider;
@@ -717,19 +742,19 @@ struct Geyser *Geyser_Add(s32 slot, s32 id, s32 timer, s32 low, s32 high) {
     entry->riseAt = 60;
     entry->fallAt = 240;
     entry->min = low;
-    entry->unk10 = 1;
+    entry->unreadSetToOne = 1;
     object->motionFlags = 0;
-    object->collisionFlags = 8;
+    object->collisionFlags = ACTOR_NOT_TARGETED;
     entry->step = 0;
     entry->phase = 0;
-    entry->unk14 = 0;
+    entry->unreadCleared = 0;
     object->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
   }
-  rider = (FieldActor_Create(0x8000, object->x.fixed, object->y.fixed,
-                             object->z.fixed));
+  rider = (FieldActor_Create(ACTOR_CREATE_NO_SPRITE << 12, object->x.fixed,
+                             object->y.fixed, object->z.fixed));
   rider->collisionFlags = 0;
   rider->motionFlags = 0;
-  rider->priorityFlags |= 128;
+  rider->priorityFlags |= ACTOR_PRIORITY_PLATFORM;
   entry->rider = rider;
   return entry;
 }
@@ -785,12 +810,12 @@ LATE_DATA struct ActorPlacement gGondowanCliffs_PassEntrances[] = {
 
 LATE_DATA u32 gSceneExits[] = {
     SCENE_EXITS(GondowanCliffs),
-    SCENE_EXIT_UNLESS(1, WorldMap, 21, EXIT_FLAG_NONE),
-    SCENE_EXIT_UNLESS(2, WorldMap, 22, EXIT_FLAG_NONE),
-    SCENE_EXIT_UNLESS(3, GondowanCliffsHideout, 1, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(GONDOWAN_CLIFFS_TO_WORLD_MAP_A, WorldMap, WORLD_MAP_FROM_GONDOWAN_CLIFFS_A, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(GONDOWAN_CLIFFS_TO_WORLD_MAP_B, WorldMap, WORLD_MAP_FROM_GONDOWAN_CLIFFS_B, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(GONDOWAN_CLIFFS_TO_GONDOWAN_CLIFFS_HIDEOUT, GondowanCliffsHideout, GONDOWAN_CLIFFS_HIDEOUT_FROM_GONDOWAN_CLIFFS, EXIT_FLAG_NONE),
     SCENE_EXITS(GondowanCliffsPass),
-    SCENE_EXIT_UNLESS(1, WorldMap, 85, EXIT_FLAG_NONE),
-    SCENE_EXIT_UNLESS(2, WorldMap, 86, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(GONDOWAN_CLIFFS_PASS_TO_WORLD_MAP_NORTH, WorldMap, WORLD_MAP_FROM_GONDOWAN_CLIFFS_PASS_NORTH, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(GONDOWAN_CLIFFS_PASS_TO_WORLD_MAP_SOUTH, WorldMap, WORLD_MAP_FROM_GONDOWAN_CLIFFS_PASS_SOUTH, EXIT_FLAG_NONE),
     SCENE_EXITS_END,
 };
 
@@ -804,9 +829,9 @@ LATE_DATA struct ActorPlacement gGondowanCliffs_ActorPlacements[] = {
     ACTOR_PLACEMENT(SPRITE_IVY, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 1576, 0, 672, FACING_NORTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(SPRITE_STUMP, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 1232, 0, 544, FACING_SOUTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(SPRITE_DOG, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 1928, 0, 728, FACING_WEST, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(489, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_SOUTH, TALK_FACING_PARTY, 0),
-    ACTOR_PLACEMENT(83, FLAG_BRIGGS_CAUGHT, MOVEMENT_TYPE_STAND, 888, 0, 200, FACING_WEST, TALK_FACING_PARTY_AND_BACK, 0),
-    ACTOR_PLACEMENT(83, FLAG_BRIGGS_CAUGHT, MOVEMENT_TYPE_STAND, 888, 0, 232, FACING_WEST, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(SPRITE_UNSEEN_MARKER, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_SOUTH, TALK_FACING_PARTY, 0),
+    ACTOR_PLACEMENT(SPRITE_KIBOMBO_WARRIOR, FLAG_BRIGGS_CAUGHT, MOVEMENT_TYPE_STAND, 888, 0, 200, FACING_WEST, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(SPRITE_KIBOMBO_WARRIOR, FLAG_BRIGGS_CAUGHT, MOVEMENT_TYPE_STAND, 888, 0, 232, FACING_WEST, TALK_FACING_PARTY_AND_BACK, 0),
     ACTOR_PLACEMENT(424, FLAG_GONDOWAN_CLIFFS_ROCK_GROUND, MOVEMENT_TYPE_STAND, 816, 0, 232, FACING_WEST, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(SPRITE_MARS_DJINNI, FLAG_DJINNI(DJINNI_KINDLE), MOVEMENT_TYPE_STAND, 1336, 0, 648, FACING_SOUTH, TALK_FACING_PARTY, 0),
     ACTOR_PLACEMENT(SPRITE_JENNA, IF_FLAG_SET(FLAG_KIBOMBO_PIERS_MET), MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_EAST, TALK_FACING_PARTY, 0),

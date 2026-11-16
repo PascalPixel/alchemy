@@ -151,6 +151,7 @@ static inline void Scene_TaskAdd(void (*func)(void), s32 priority) {
   Task_Add(func, priority);
 }
 
+/// Whether a flag is set (GameFlag_Get).
 static inline s32 Scene_FlagTest(s32 flag) { return GameFlag_Get(flag); }
 
 /// Turns an actor to an angle over the given frames.
@@ -328,6 +329,7 @@ extern struct SceneEntrance gYampiDesertOasisCaveEntrances[];
 extern u32 gYampiDesertScorpionPitExitRegions[];
 extern s16 gYampiDesertOasisCaveExitRegions[];
 
+/// Talking to Blitz, the Jupiter Djinni, starts its battle.
 void YampiDesert_FightBlitz(void) {
   Field_RequestDjinnBattle(ACTOR_BLITZ, DJINNI_BLITZ);
 }
@@ -2426,6 +2428,7 @@ void YampiDesert_SetUpScorpionPit(void) {
   wait(10);
 }
 
+/// Sets up the cave under the oasis: it opens through the window transition.
 void YampiDesert_SetUpOasisCave(void) {
   gFieldWork->transition = SCENE_TRANSITION(TRANSITION_WINDOW, 4);
 }

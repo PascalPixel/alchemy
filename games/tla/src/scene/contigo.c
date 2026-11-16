@@ -562,8 +562,8 @@ s32 Actor_IsFacingNear(struct Actor *self, struct Actor *other, s32 range) {
   from = &self->x.fixed;
   if (Lemuria_Distance(to, from) < range) {
     u32 angle = (u16)Trig_Atan(other->z.fixed - self->z.fixed, *to - *from);
-    u32 left = (angle - 0x1000) & 0xf000;
-    u32 right = (angle + 0x1000) & 0xf000;
+    u32 left = (angle - TRIG_TURN / 16) & 0xf000;
+    u32 right = (angle + TRIG_TURN / 16) & 0xf000;
     u32 ahead = angle & 0xf000;
     u32 facing = self->facing & 0xf000;
 
@@ -576,11 +576,11 @@ s32 Actor_IsFacingNear(struct Actor *self, struct Actor *other, s32 range) {
 void Actor_SetSpritePriorityDirect(struct Actor *object, s32 value);
 s32 BattleEffect_GetObjectPriority(struct Actor *object);
 
-/// The update of the wanderer and the girl by the ship: each turns to the one
-/// it talks with (ANIM_STAND's frames, near) while the leader or the other
-/// villager stands close and faces it, or Mind Read is cast on it, and
-/// otherwise looks away.
-s32 Contigo_FaceTalker(struct Actor *self) {
+/// The update of the wanderer and the girl by the ship: each stands still
+/// while it faces the other within 18 pixels or the leader within 26, or while
+/// Mind Read is cast, and walks on otherwise or when the leader comes within
+/// 11.
+s32 Contigo_PauseWhenFaced(struct Actor *self) {
   struct FieldWork *event = Ram_HeapSlots->fieldWork;
   u8 *state;
   u32 mode;
@@ -595,29 +595,29 @@ s32 Contigo_FaceTalker(struct Actor *self) {
   if (mode == ABILITY_MIND_READ) {
     effect = Ram_HeapSlots->fieldEffectWork;
     if (effect[0x713] != 0)
-      goto near;
+      goto stand;
   }
   if (self->riseEnabled == 1)
-    goto near;
+    goto stand;
   other = Actor_GetById(gMainRoutineWork.leaderActorId);
   if (Lemuria_Distance(&self->x.fixed, &other->x.fixed) <= 11)
-    goto far;
+    goto walk;
   if (self->riseCounter == 1)
     other = Actor_GetById(ACTOR_GIRL_ON_THE_SHIP);
   else
     other = Actor_GetById(ACTOR_WANDERER);
   if (Actor_IsFacingNear(self, other, 18) != 0)
-    goto near;
+    goto stand;
   if (Actor_IsFacingNear(self, Actor_GetById(gMainRoutineWork.leaderActorId),
                          26) != 0)
-    goto near;
-far:
+    goto stand;
+walk:
   *state = 0;
-  Actor_SelectAnimation(self, 2);
+  Actor_SelectAnimation(self, ANIM_WALK);
   return 0;
-near:
+stand:
   *state = 1;
-  Actor_SelectAnimation(self, 1);
+  Actor_SelectAnimation(self, ANIM_STAND);
   return 0;
 }
 
@@ -2432,9 +2432,9 @@ void Contigo_KeepPriorityWithLeader(void) {
   }
 }
 
-/// Sets up the village: the wanderer and the girl by the ship turn to whoever
-/// talks to them (Contigo_FaceTalker), the girl and the old woman gone and the
-/// games' rooms open once the beacon is lit; Shine waits where it landed until
+/// Sets up the village: the wanderer and the girl by the ship stop when faced
+/// (Contigo_PauseWhenFaced), the girl and the old woman gone and the games'
+/// rooms open once the beacon is lit; Shine waits where it landed until
 /// caught; arriving by entrances 1 to 4, the camera follows the leader across
 /// the whole village; then the water's colours are set.
 void Contigo_InitializeVillage(void) {
@@ -2443,7 +2443,7 @@ void Contigo_InitializeVillage(void) {
   Task_Add(Contigo_KeepPriorityWithLeader, TASK_PASS_VBLANK);
   object->riseCounter = 1;
   object->riseEnabled = 0;
-  object->update = Contigo_FaceTalker;
+  object->update = Contigo_PauseWhenFaced;
   if (GameFlag_Get(FLAG_JUPITER_BEACON_LIT) != 0 &&
       GameFlag_Get(FLAG_SET_OUT_WITH_WINGS) == 0) {
     Actor_Stop(ACTOR_GIRL_ON_THE_SHIP);
@@ -2454,7 +2454,7 @@ void Contigo_InitializeVillage(void) {
     object = Actor_GetById(ACTOR_GIRL_ON_THE_SHIP);
     object->riseCounter = 0;
     object->riseEnabled = 0;
-    object->update = Contigo_FaceTalker;
+    object->update = Contigo_PauseWhenFaced;
   }
   if (GameFlag_Get(FLAG_SHINE_FREED) != 0 &&
       GameFlag_Get(FLAG_SHINE_CAUGHT) == 0) {

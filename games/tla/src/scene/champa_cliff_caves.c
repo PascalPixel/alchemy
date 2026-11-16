@@ -130,7 +130,7 @@ union ChampaCliffCavesScale {
 /// pictures of the glowing disc and the column of fire, their sprites at the
 /// forge's spot, and their scales, each one's height trailing its width.
 struct ChampaCliffCavesWork {
-  u8 tiles[0x1000];
+  u8 tiles[64 * 64]; ///< the larger picture, the disc's 64 by 64 pixels
   s32 position[3];
   struct EffectSprite disc;
   struct EffectSprite column;
@@ -144,6 +144,9 @@ struct ChampaCliffCavesWork {
   union ChampaCliffCavesScale columnTrailingScale;
   s16 frame;
 };
+
+/// The state the forge glow's steps end on.
+enum { GLOW_DONE = 999 };
 
 void ChampaCliffCaves_LoadDisc(void);
 void ChampaCliffCaves_DrawGlow(void);
@@ -1753,10 +1756,10 @@ next:
     *tile = (*tile & 0xf) + 0x60;
   tile++;
   i++;
-  if (i < 0x1000)
+  if (i < (s32)sizeof(work->tiles))
     goto next;
   entry = VramCache_FindFreeEntry();
-  vram = VramCache_Load(entry, 0x1000, work);
+  vram = VramCache_Load(entry, 64 * 64, work);
   work->discEntry = entry;
   work->discVram = vram;
   sprite = &work->disc;
@@ -1788,10 +1791,10 @@ next:
     *tile = (*tile & 0xf) + 0x60;
   i++;
   tile++;
-  if (i < 0x1000)
+  if (i < (s32)sizeof(work->tiles))
     goto next;
   entry = VramCache_FindFreeEntry();
-  vram = VramCache_Load(entry, 0x800, work);
+  vram = VramCache_Load(entry, 32 * 64, work);
   work->columnEntry = entry;
   work->columnVram = vram;
   sprite = &work->column;
@@ -1911,13 +1914,13 @@ void ChampaCliffCaves_StartForgeFire(const s32 *position) {
       if ((work->columnScale.value += FIXED_ONE * 3 / 16) >=
           FIXED_ONE * 13 / 10) {
         work->columnScale.value = FIXED_ONE * 13 / 10;
-        state = 999;
+        state = GLOW_DONE;
       }
       break;
     }
     System_Wait(1);
     time++;
-  } while (state != 999);
+  } while (state != GLOW_DONE);
 }
 
 /// Unused: puts out the forge's fire: the column and then the disc shrink
@@ -1951,12 +1954,12 @@ UNUSED void ChampaCliffCaves_PutOutForgeFire(void) {
       break;
     case 2:
       if (time == 1)
-        state = 999;
+        state = GLOW_DONE;
       break;
     }
     wait(1);
     time++;
-  } while (state != 999);
+  } while (state != GLOW_DONE);
   Task_Remove(ChampaCliffCaves_DrawGlow);
   MapGrid_SetShake(0, 0, 0);
   VramCache_FreeEntry(work->discEntry);
@@ -1989,11 +1992,11 @@ void ChampaCliffCaves_LightDisc(const struct Vector3 *origin) {
       work->discScale.value += FIXED_ONE / 16;
       if (work->discScale.value >= FIXED_ONE * 13 / 10) {
         work->discScale.value = FIXED_ONE * 13 / 10;
-        state = 999;
+        state = GLOW_DONE;
       }
     }
     wait(1);
-  } while (state != 999);
+  } while (state != GLOW_DONE);
 }
 
 /// The column of fire rises through the disc already burning.
@@ -2023,12 +2026,12 @@ void ChampaCliffCaves_RaiseColumn(void) {
       work->columnScale.value += FIXED_ONE * 3 / 16;
       if (work->columnScale.value >= FIXED_ONE * 13 / 10) {
         work->columnScale.value = FIXED_ONE * 13 / 10;
-        state = 999;
+        state = GLOW_DONE;
       }
       break;
     }
     wait(1);
-  } while (state != 999);
+  } while (state != GLOW_DONE);
 }
 
 /// The forge's last flare: the column flares to twice its size, then it and the
@@ -2065,12 +2068,12 @@ void ChampaCliffCaves_FlareAndDieDown(void) {
       break;
     case 3:
       if (time == 1)
-        state = 999;
+        state = GLOW_DONE;
       break;
     }
     wait(1);
     time++;
-  } while (state != 999);
+  } while (state != GLOW_DONE);
   Task_Remove(ChampaCliffCaves_DrawGlow);
   VramCache_FreeEntry(work->discEntry);
   VramCache_FreeEntry(work->columnEntry);

@@ -4,8 +4,7 @@
 /// rope, puddle and the door Reveal opens, the room whose bookshelf Tremor
 /// shakes until a chest falls into the room below, and the tablet room whose
 /// red double door the Ruin Key opens, lighting its flames before Moloch's
-/// tablet. Once the Black Crystal is stolen (FLAG_BRIGGS_CAUGHT) the Champa's
-/// way in is blocked.
+/// tablet. Once FLAG_BRIGGS_CAUGHT is set the Champa's way in is blocked.
 
 #include "flags.h"
 #include "sprite_ids.h"

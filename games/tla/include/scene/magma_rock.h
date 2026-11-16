@@ -67,7 +67,7 @@ void MagmaRock_PlaceTightrope();
 s32 Field_TryJumpForward(void);
 
 void MagmaRock_SpawnRubble(s32 spread);
-void MagmaRock_SetLeaderCellShape(s32 a, s32 b);
+void MagmaRock_SetLeaderCellShape(s32 heightOffset, s32 layer);
 extern u32 gMagmaRock_RubbleScript[];
 
 extern u32 gMagmaRock_DustScript[];

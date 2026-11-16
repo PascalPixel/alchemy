@@ -106,7 +106,8 @@ enum MagmaRockSlideActorId {
   ACTOR_CRACKED_PILLAR_C,
   ACTOR_CRACKED_PILLAR_D,
   ACTOR_SLIDE_STATUE_FLAME = ACTOR_FIRST_PLACED + 12, ///< sprite 379
-  ACTOR_SLIDE_MAGMA_ROCK ///< a flame puff, rolling between the pair
+  ACTOR_SLIDE_MAGMA_ROCK ///< drawn as SPRITE_FLAME_PUFF, rolling between the
+                         ///< pair
 };
 
 /// The Salamander Tail room's lower level: the cracked pillars the first two
@@ -512,7 +513,7 @@ void MagmaRock_ThrowEmbers(struct Actor *object) {
 
 void Actor_PlaySoundInView(struct Actor *object, s32 value);
 
-/// Every fourth frame, spawns flame puff at the object with a random z offset
+/// Every fourth frame, spawns a flame puff at the object with a random z offset
 /// and z velocity.
 void MagmaRock_TrailEmbers(struct Actor *object) {
   u32 frame = gFrameCount;
@@ -955,7 +956,7 @@ void MagmaRock_RaiseFlamePart(struct Actor *part) {
 }
 
 /// The fifth part of MagmaRock_BurnStatue's group: follows its owner like the
-/// others, throws flame puff every eighth frame and marks the ground beneath.
+/// others, throws a flame puff every eighth frame and marks the ground beneath.
 void MagmaRock_RaiseFlameTop(union FieldObject *object) {
   struct Actor *watched = (struct Actor *)object->effect.countdown;
   struct EffectOptions config;
@@ -2269,9 +2270,10 @@ void MagmaRock_SetActorCellShape(s32 heightOffset, s32 layer, s32 id) {
   *shapes = MapCollision_FindOrAddTag(actor->layer, value, height);
 }
 
-/// MagmaRock_SetActorCellShape for the leader's cell.
-void MagmaRock_SetLeaderCellShape(s32 a, s32 b) {
-  MagmaRock_SetActorCellShape(a, b, gMainRoutineWork.leaderActorId);
+/// MagmaRock_SetActorCellShape for the leader.
+void MagmaRock_SetLeaderCellShape(s32 heightOffset, s32 layer) {
+  MagmaRock_SetActorCellShape(heightOffset, layer,
+                              gMainRoutineWork.leaderActorId);
 }
 
 void BattleEffect_StepVector3(struct Particle *particle, s32 damping,

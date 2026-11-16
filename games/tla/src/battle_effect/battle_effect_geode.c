@@ -30,7 +30,7 @@ void BattleEffect_RunGeode(struct BattleEffectParams *args) {
   // Unused: blit[1], the idle half of the pair, gives the stack frame its 4
   // bytes.
   DrawRectangle blit[2];
-  s32 *transition;
+  struct BattleBackgroundWork *backdrop;
   u8 *projected;
   struct ModelVertex *vertices;
   u8 *mesh;
@@ -53,7 +53,7 @@ void BattleEffect_RunGeode(struct BattleEffectParams *args) {
 
   work = Ram_HeapSlots->battleEffect;
   canvas = Ram_HeapSlots->battleCanvas;
-  transition = (s32 *)Ram_HeapSlots->battleBackground;
+  backdrop = Ram_HeapSlots->battleBackground;
   BattleEffect_StartCanvasLayer(BGCNT_PRIORITY(2));
   BattleEffect_RunDjinniEntrance(
       args,
@@ -65,7 +65,7 @@ void BattleEffect_RunGeode(struct BattleEffectParams *args) {
               WININ_WIN1_OBJ | WININ_WIN1_CLR;
   REG_WINOUT = WINOUT_WIN01_BG0 | WINOUT_WIN01_OBJ | WINOUT_WIN01_CLR |
                WINOUT_WINOBJ_ALL;
-  transition[4] = 1;
+  backdrop->busy = 1;
   if (args->side == EFFECT_SIDE_ENEMIES) {
     EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS,
                         BLITTER_ADDITIVE);
@@ -361,7 +361,7 @@ void BattleEffect_RunGeode(struct BattleEffectParams *args) {
       Heap_Release(ring);
     }
     if (frame == 61) {
-      transition[4] = 0;
+      backdrop->busy = 0;
       Iwram_FillWordsEntry((void *)&BG_PLTT_COLOR(6, 0), 256, 0);
     }
     if (frame == 62) {

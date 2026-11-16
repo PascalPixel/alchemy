@@ -10,21 +10,33 @@
 
 struct StripQuad;
 
+/// Flora is twelve 32x32 sprites in 256 colours, the first sprites of the
+/// effect work; then come the thirty-two 16x16 petals, the first fifteen
+/// carrying the bloom's tiles.
+#define FLORA_FIGURE_PIECES 12
+#define FLORA_PETAL_SPRITES 12
+#define FLORA_BLOOM_TILES 15
+#define FLORA_PETAL_COUNT 32
+#define FLORA_COLORS 240
+/// Where the storm's fifteen 16x16 petal pictures are unpacked to a byte a
+/// pixel in the effect's pictures.
+#define FLORA_STORM_PETALS 0x1000
+
 /// Flora's petals in gEffectScratch: the bloom's fifteen
 /// tile numbers, each petal's animation phase, position and velocity, and
 /// the object palette as it fades.
 struct FloraWork {
-  u16 tiles[15];
-  u16 phase[32];
+  u16 tiles[FLORA_BLOOM_TILES];
+  u16 phase[FLORA_PETAL_COUNT];
   u16 padding;
-  s32 x[32];
-  s32 y[32];
-  s32 vx[32];
-  s32 vy[32];
-  u16 palette[240];
+  s32 x[FLORA_PETAL_COUNT];
+  s32 y[FLORA_PETAL_COUNT];
+  s32 vx[FLORA_PETAL_COUNT];
+  s32 vy[FLORA_PETAL_COUNT];
+  u16 palette[FLORA_COLORS];
 };
 
-#define w ((struct FloraWork *)petals)
+#define FLORA_PETALS ((struct FloraWork *)petals)
 
 /// The effect work's sheet.
 static inline u8 *SheetOf(struct BattleEffectWork *owner) {
@@ -43,7 +55,7 @@ void BattleEffect_RunFlora(struct BattleEffectParams *args) {
   DrawRectangle draw[2];
   s32 frame;
   s32 savedScroll;
-  s32 *transition;
+  struct BattleBackgroundWork *backdrop;
   u8 *sprites;
   s32 scroll;
   FIXED posX;
@@ -80,7 +92,7 @@ void BattleEffect_RunFlora(struct BattleEffectParams *args) {
   canvas = Ram_HeapSlots->battleCanvas;
   work = Ram_HeapSlots->battleEffect;
   savedScroll = gBgScroll[1].x;
-  transition = (s32 *)Ram_HeapSlots->battleBackground;
+  backdrop = Ram_HeapSlots->battleBackground;
   petals = (s32)gEffectScratch;
   source = Ram_MapCellBuffer;
   sprites = Ram_HeapSlots->battleSheet;
@@ -103,39 +115,41 @@ void BattleEffect_RunFlora(struct BattleEffectParams *args) {
       work->scrollStepX = -3;
       work->scrollStepY = 0;
       Task_Add(BattleEffect_AdvanceScrollOnInterval, TASK_PASS_FRAME);
-      transition[4] = 1;
+      backdrop->busy = 1;
       e = Resource_GetTableEntry(RESOURCE_PINK_PETALS_TILES);
       Iwram_CopyWordsEntry((void *)&OBJ_PLTT_COLOR(15, 0), e,
                            PALETTE_BANK_BYTES);
       e += PALETTE_BANK_BYTES;
       Decompress_TaggedLz(e, source);
       cells = Ram_MapCellBuffer;
-      for (i = 0; i != 15; i++) {
+      for (i = 0; i != FLORA_BLOOM_TILES; i++) {
         struct Sprite *obj = EffectSprite_CreateWithTiles(
             16, 16, OBJ_SIZE_16X16, OBJ_PALETTE(15));
-        work->sprites[12 + i] = obj;
+        work->sprites[FLORA_PETAL_SPRITES + i] = obj;
         obj->image.priority = 2;
         Iwram_CopyWordsEntry((void *)OBJ_TILES(obj), cells + i * 128, 128);
-        w->tiles[i] = ((struct Sprite *)work->sprites[12 + i])->image.tile;
+        FLORA_PETALS->tiles[i] =
+            ((struct Sprite *)work->sprites[FLORA_PETAL_SPRITES + i])
+                ->image.tile;
       }
-      for (i = 0; i != 17; i++) {
+      for (i = 0; i != FLORA_PETAL_COUNT - FLORA_BLOOM_TILES; i++) {
         struct Sprite *obj =
             EffectSprite_Acquire(16, 16, OBJ_SIZE_16X16, OBJ_PALETTE(15));
-        work->sprites[27 + i] = obj;
-        Iwram_CopyWordsEntry(obj, work->sprites[12], 24);
+        work->sprites[FLORA_PETAL_SPRITES + FLORA_BLOOM_TILES + i] = obj;
+        Iwram_CopyWordsEntry(obj, work->sprites[FLORA_PETAL_SPRITES], 24);
       }
       i = 0;
       phase = (u16 *)(Ram_MapCellBuffer + 0x401e);
-      for (; i != 32; i++, phase++) {
+      for (; i != FLORA_PETAL_COUNT; i++, phase++) {
         *phase = (Random16() % 15) << 8;
-        ((struct Sprite *)work->sprites[12 + i])->image.tile =
-            w->tiles[*phase / 256];
+        ((struct Sprite *)work->sprites[FLORA_PETAL_SPRITES + i])->image.tile =
+            FLORA_PETALS->tiles[*phase / 256];
       }
       e = Resource_GetTableEntry(RESOURCE_GREEN_HAIRED_MAIDEN_TILES);
-      e += 480;
+      e += FLORA_COLORS * 2;
       Decompress_TaggedLz(e, source);
       cells = Ram_MapCellBuffer;
-      for (i = 0; i != 12; i++) {
+      for (i = 0; i != FLORA_FIGURE_PIECES; i++) {
         struct Sprite *obj = EffectSprite_CreateWithTiles(
             32, 32, OBJ_SIZE_32X32 | OBJ_256_COLORS, 0);
         obj->image.priority = 2;
@@ -177,7 +191,7 @@ void BattleEffect_RunFlora(struct BattleEffectParams *args) {
   spin = 512;
   spread = 0;
   grow = 0;
-  for (i = 0; i != 32; i++) {
+  for (i = 0; i != FLORA_PETAL_COUNT; i++) {
     s32 q = i / 8;
     s32 left = 256;
     s32 t;
@@ -185,8 +199,8 @@ void BattleEffect_RunFlora(struct BattleEffectParams *args) {
 
     t = (i - q * 8) << 5;
     u2 = q * 22;
-    w->x[i] = t + left;
-    w->y[i] = u2 + 128;
+    FLORA_PETALS->x[i] = t + left;
+    FLORA_PETALS->y[i] = u2 + 128;
   }
   EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, BLITTER_MAX);
@@ -197,10 +211,11 @@ void BattleEffect_RunFlora(struct BattleEffectParams *args) {
     if (frame == 0) {
       Iwram_ClearWords((void *)BG_CHAR_BLOCK(1), CANVAS_BYTES);
       Iwram_ClearWordsEntry(canvas, CANVAS_BYTES);
-      for (i = 0; i != 240; i++) {
-        w->palette[i] = 0x7fff;
+      for (i = 0; i != FLORA_COLORS; i++) {
+        FLORA_PETALS->palette[i] = RGB_WHITE;
       }
-      Iwram_CopyWordsEntry((void *)OBJ_PLTT, gFlora_SpritePalettes, 480);
+      Iwram_CopyWordsEntry((void *)OBJ_PLTT, gFlora_SpritePalettes,
+                           FLORA_COLORS * 2);
       REG_BG2PA = Q_8_8(1);
       Graphics_LoadGreyRamp();
       REG_BG2X = -(60 << 8);
@@ -236,8 +251,8 @@ void BattleEffect_RunFlora(struct BattleEffectParams *args) {
     if (u <= 31) {
       u16 *e = Resource_GetTableEntry(RESOURCE_GREEN_HAIRED_MAIDEN_TILES);
 
-      for (i = 0; i != 240; i++, e++) {
-        s32 c = w->palette[i];
+      for (i = 0; i != FLORA_COLORS; i++, e++) {
+        s32 c = FLORA_PETALS->palette[i];
         s32 b = RGB_BLUE((u16)c);
         s32 g = RGB_GREEN((u16)c);
         s32 r = RGB_RED(c);
@@ -255,9 +270,10 @@ void BattleEffect_RunFlora(struct BattleEffectParams *args) {
         if (r > tr) {
           r--;
         }
-        w->palette[i] = RGB(r, g, b);
+        FLORA_PETALS->palette[i] = RGB(r, g, b);
       }
-      Iwram_CopyWordsEntry((void *)OBJ_PLTT, gFlora_SpritePalettes, 480);
+      Iwram_CopyWordsEntry((void *)OBJ_PLTT, gFlora_SpritePalettes,
+                           FLORA_COLORS * 2);
     }
     if (u <= 7) {
       Iwram_FillWordsEntry(canvas, CANVAS_BYTES,
@@ -270,13 +286,13 @@ void BattleEffect_RunFlora(struct BattleEffectParams *args) {
     dx = 0;
     place[1] = toFIXED(255);
     if (frame <= 119) {
-      posX = Trig_Sin(TRIG_TURN * 205 / 256) * 24 + 0x980000;
-      posY = Trig_Cos(TRIG_TURN * 205 / 256) * 20 + 0x2c0000;
+      posX = Trig_Sin(TRIG_TURN * 205 / 256) * 24 + toFIXED(152);
+      posY = Trig_Cos(TRIG_TURN * 205 / 256) * 20 + toFIXED(44);
     } else if (frame <= 179) {
-      s32 a = frame * 3 * 256 + -0x9800;
+      s32 a = frame * 3 * 256 - TRIG_TURN * 19 / 32;
 
-      posX = Trig_Sin(a) * 24 + 0x980000;
-      posY = Trig_Cos(a) * 20 + 0x2c0000;
+      posX = Trig_Sin(a) * 24 + toFIXED(152);
+      posY = Trig_Cos(a) * 20 + toFIXED(44);
     } else if (frame <= 221) {
       posX += -toFIXED(9) / 8;
       posY += toFIXED(1) / 2;
@@ -325,169 +341,170 @@ void BattleEffect_RunFlora(struct BattleEffectParams *args) {
       posY += -toFIXED(6);
     }
     if (frame > 111) {
-      for (i = 0; i != 12; i++) {
+      for (i = 0; i != FLORA_FIGURE_PIECES; i++) {
         place[0] = posX + INTtoFIXED(i % 3 * 32 + dx);
         place[2] = posY + INTtoFIXED(i / 3 * 32 + dy);
         Render_ApplyProjectedPlacementFar(work->sprites[i], place, (s32 *)&req,
                                           0);
       }
     }
-    for (i = 0; i != 32; i++) {
+    for (i = 0; i != FLORA_PETAL_COUNT; i++) {
       s32 start = 211 + i * 2;
 
       if (i == 0) {
         if (frame == 0) {
-          w->x[i] = toFIXED(240);
-          w->y[i] = toFIXED(48);
+          FLORA_PETALS->x[i] = toFIXED(240);
+          FLORA_PETALS->y[i] = toFIXED(48);
         } else if (frame <= 47) {
-          w->x[i] += -toFIXED(3);
-          w->y[i] += toFIXED(3) / 2;
+          FLORA_PETALS->x[i] += -toFIXED(3);
+          FLORA_PETALS->y[i] += toFIXED(3) / 2;
         } else if (frame <= 79) {
-          w->x[i] += -toFIXED(1);
-          w->y[i] += -toFIXED(1);
+          FLORA_PETALS->x[i] += -toFIXED(1);
+          FLORA_PETALS->y[i] += -toFIXED(1);
         } else if (frame <= 111) {
-          w->x[i] += toFIXED(3);
+          FLORA_PETALS->x[i] += toFIXED(3);
           // DEAD: y moves by 0; the ROM keeps its load and store.
-          w->y[i] += 0;
+          FLORA_PETALS->y[i] += 0;
         }
         if (frame == 112) {
-          w->x[i] = toFIXED(256);
+          FLORA_PETALS->x[i] = toFIXED(256);
         }
       } else if (i == 1) {
         if (frame <= 27) {
-          w->x[i] = toFIXED(256);
-          w->y[i] = toFIXED(48);
+          FLORA_PETALS->x[i] = toFIXED(256);
+          FLORA_PETALS->y[i] = toFIXED(48);
         } else if (frame == 28) {
-          w->x[i] = toFIXED(16);
-          w->y[i] = toFIXED(32);
+          FLORA_PETALS->x[i] = toFIXED(16);
+          FLORA_PETALS->y[i] = toFIXED(32);
         } else if (frame <= 62) {
-          w->x[i] += 0x1d6d8;
-          w->y[i] += 0x1fde8;
+          FLORA_PETALS->x[i] += 0x1d6d8;
+          FLORA_PETALS->y[i] += 0x1fde8;
         } else if (frame <= 79) {
-          w->x[i] += 0x19c40;
-          w->y[i] += 0x6710;
+          FLORA_PETALS->x[i] += 0x19c40;
+          FLORA_PETALS->y[i] += 0x6710;
         } else if (frame <= 141) {
-          w->x[i] += toFIXED(3);
+          FLORA_PETALS->x[i] += toFIXED(3);
           // DEAD: y moves by 0; the ROM keeps its load and store.
-          w->y[i] += 0;
+          FLORA_PETALS->y[i] += 0;
         }
         if (frame == 112) {
-          w->x[i] = toFIXED(256);
+          FLORA_PETALS->x[i] = toFIXED(256);
         }
       } else if (i == 2) {
         if (frame <= 49) {
-          w->x[i] = toFIXED(256);
-          w->y[i] = toFIXED(48);
+          FLORA_PETALS->x[i] = toFIXED(256);
+          FLORA_PETALS->y[i] = toFIXED(48);
         } else if (frame == 50) {
-          w->x[i] = 0;
-          w->y[i] = toFIXED(124);
+          FLORA_PETALS->x[i] = 0;
+          FLORA_PETALS->y[i] = toFIXED(124);
         } else if (frame <= 62) {
-          w->x[i] += toFIXED(4);
-          w->y[i] += -toFIXED(5) / 4;
+          FLORA_PETALS->x[i] += toFIXED(4);
+          FLORA_PETALS->y[i] += -toFIXED(5) / 4;
         } else if (frame <= 93) {
-          w->x[i] += toFIXED(3);
-          w->y[i] += toFIXED(3) / 4;
+          FLORA_PETALS->x[i] += toFIXED(3);
+          FLORA_PETALS->y[i] += toFIXED(3) / 4;
         } else if (frame <= 125) {
-          w->x[i] += toFIXED(3);
-          w->y[i] += -toFIXED(1);
+          FLORA_PETALS->x[i] += toFIXED(3);
+          FLORA_PETALS->y[i] += -toFIXED(1);
         }
         if (frame == 112) {
-          w->x[i] = toFIXED(256);
+          FLORA_PETALS->x[i] = toFIXED(256);
         }
       } else if (i == 3) {
         if (frame <= 49) {
-          w->x[i] = toFIXED(256);
-          w->y[i] = toFIXED(48);
+          FLORA_PETALS->x[i] = toFIXED(256);
+          FLORA_PETALS->y[i] = toFIXED(48);
         } else if (frame == 50) {
-          w->x[i] = 0;
-          w->y[i] = toFIXED(108);
+          FLORA_PETALS->x[i] = 0;
+          FLORA_PETALS->y[i] = toFIXED(108);
         } else if (frame <= 103) {
-          w->x[i] += toFIXED(3);
-          w->y[i] += -toFIXED(5) / 4;
+          FLORA_PETALS->x[i] += toFIXED(3);
+          FLORA_PETALS->y[i] += -toFIXED(5) / 4;
         } else if (frame <= 135) {
-          w->x[i] += toFIXED(1);
-          w->y[i] += toFIXED(1);
+          FLORA_PETALS->x[i] += toFIXED(1);
+          FLORA_PETALS->y[i] += toFIXED(1);
         }
         if (frame == 112) {
-          w->x[i] = toFIXED(256);
+          FLORA_PETALS->x[i] = toFIXED(256);
         }
       } else if (i == 4) {
         if (frame <= 59) {
-          w->x[i] = toFIXED(256);
-          w->y[i] = toFIXED(48);
+          FLORA_PETALS->x[i] = toFIXED(256);
+          FLORA_PETALS->y[i] = toFIXED(48);
         } else if (frame == 60) {
-          w->x[i] = toFIXED(16);
-          w->y[i] = toFIXED(32);
+          FLORA_PETALS->x[i] = toFIXED(16);
+          FLORA_PETALS->y[i] = toFIXED(32);
         } else if (frame <= 82) {
-          w->x[i] += toFIXED(4);
-          w->y[i] += toFIXED(3);
+          FLORA_PETALS->x[i] += toFIXED(4);
+          FLORA_PETALS->y[i] += toFIXED(3);
         } else if (frame <= 135) {
-          w->x[i] += toFIXED(4);
+          FLORA_PETALS->x[i] += toFIXED(4);
         }
         if (frame == 112) {
-          w->x[i] = toFIXED(256);
+          FLORA_PETALS->x[i] = toFIXED(256);
         }
       } else if (i == 5) {
         if (frame <= 85) {
-          w->x[i] = toFIXED(256);
-          w->y[i] = toFIXED(48);
+          FLORA_PETALS->x[i] = toFIXED(256);
+          FLORA_PETALS->y[i] = toFIXED(48);
         } else if (frame == 86) {
-          w->x[i] = toFIXED(144);
-          w->y[i] = toFIXED(32);
+          FLORA_PETALS->x[i] = toFIXED(144);
+          FLORA_PETALS->y[i] = toFIXED(32);
         } else if (frame <= 135) {
-          w->x[i] += toFIXED(1);
-          w->y[i] += toFIXED(3);
+          FLORA_PETALS->x[i] += toFIXED(1);
+          FLORA_PETALS->y[i] += toFIXED(3);
         }
         if (frame == 112) {
-          w->x[i] = toFIXED(256);
+          FLORA_PETALS->x[i] = toFIXED(256);
         }
       } else if (i <= 15) {
         if (frame == 0) {
-          w->x[i] = toFIXED(248);
-          w->y[i] = frame;
+          FLORA_PETALS->x[i] = toFIXED(248);
+          FLORA_PETALS->y[i] = frame;
         } else if (frame == start) {
-          w->x[i] = INTtoFIXED(Random16() & 7) + toFIXED(92);
-          w->y[i] = INTtoFIXED(Random16() & 7) + toFIXED(104);
-          w->vx[i] = (Random16() & TRIG_ANGLE_MASK) * 12 + -0xc0000;
-          w->vy[i] = 0x40000;
+          FLORA_PETALS->x[i] = INTtoFIXED(Random16() & 7) + toFIXED(92);
+          FLORA_PETALS->y[i] = INTtoFIXED(Random16() & 7) + toFIXED(104);
+          FLORA_PETALS->vx[i] = (Random16() & TRIG_ANGLE_MASK) * 12 + -0xc0000;
+          FLORA_PETALS->vy[i] = toFIXED(4);
         } else if (frame >= start) {
-          if (w->x[i] >= -toFIXED(16) && w->y[i] <= toFIXED(168)) {
-            w->x[i] += w->vx[i];
-            w->y[i] += w->vy[i];
+          if (FLORA_PETALS->x[i] >= -toFIXED(16) &&
+              FLORA_PETALS->y[i] <= toFIXED(168)) {
+            FLORA_PETALS->x[i] += FLORA_PETALS->vx[i];
+            FLORA_PETALS->y[i] += FLORA_PETALS->vy[i];
           } else if (frame <= 251) {
-            w->x[i] = INTtoFIXED(Random16() & 7) + toFIXED(92);
-            w->y[i] = INTtoFIXED(Random16() & 7) + toFIXED(104);
+            FLORA_PETALS->x[i] = INTtoFIXED(Random16() & 7) + toFIXED(92);
+            FLORA_PETALS->y[i] = INTtoFIXED(Random16() & 7) + toFIXED(104);
           }
         }
       } else if (i <= 31) {
         if (frame == 0) {
-          w->x[i] = toFIXED(248);
-          w->y[i] = frame;
+          FLORA_PETALS->x[i] = toFIXED(248);
+          FLORA_PETALS->y[i] = frame;
         } else if (frame == 112) {
           u32 a = Random16() & TRIG_ANGLE_MASK;
           s32 s = ((Random16() & 255) << 1) + 256;
 
-          w->x[i] = INTtoFIXED(Random16() & 7) + toFIXED(168);
-          w->y[i] = INTtoFIXED(Random16() & 7) + toFIXED(92);
-          w->vx[i] = Trig_Sin(a) * s / 256;
-          w->vy[i] = Trig_Cos(a) * s / 256;
+          FLORA_PETALS->x[i] = INTtoFIXED(Random16() & 7) + toFIXED(168);
+          FLORA_PETALS->y[i] = INTtoFIXED(Random16() & 7) + toFIXED(92);
+          FLORA_PETALS->vx[i] = Trig_Sin(a) * s / 256;
+          FLORA_PETALS->vy[i] = Trig_Cos(a) * s / 256;
         } else if (frame == 252) {
           u32 a = Random16() & TRIG_ANGLE_MASK;
           s32 s = ((Random16() & 255) << 1) + 256;
 
-          w->x[i] = INTtoFIXED(Random16() & 7) + toFIXED(92);
-          w->y[i] = INTtoFIXED(Random16() & 7) + toFIXED(104);
-          w->vx[i] = Trig_Sin(a) * s / 256;
-          w->vy[i] = Trig_Cos(a) * s / 256;
+          FLORA_PETALS->x[i] = INTtoFIXED(Random16() & 7) + toFIXED(92);
+          FLORA_PETALS->y[i] = INTtoFIXED(Random16() & 7) + toFIXED(104);
+          FLORA_PETALS->vx[i] = Trig_Sin(a) * s / 256;
+          FLORA_PETALS->vy[i] = Trig_Cos(a) * s / 256;
         } else if (frame > 111) {
-          w->x[i] += w->vx[i];
-          w->y[i] += w->vy[i];
-          w->vx[i] = w->vx[i] * 63 / DAMPING_SCALE;
-          w->vy[i] = w->vy[i] * 63 / DAMPING_SCALE;
-          if ((u32)(w->vx[i] + 0xffff) <= 0x1fffe &&
-              (u32)(w->vy[i] + 0xffff) <= 0x1fffe) {
-            w->x[i] = toFIXED(256);
-            w->y[i] = 0;
+          FLORA_PETALS->x[i] += FLORA_PETALS->vx[i];
+          FLORA_PETALS->y[i] += FLORA_PETALS->vy[i];
+          FLORA_PETALS->vx[i] = FLORA_PETALS->vx[i] * 63 / DAMPING_SCALE;
+          FLORA_PETALS->vy[i] = FLORA_PETALS->vy[i] * 63 / DAMPING_SCALE;
+          if ((u32)(FLORA_PETALS->vx[i] + 0xffff) <= 0x1fffe &&
+              (u32)(FLORA_PETALS->vy[i] + 0xffff) <= 0x1fffe) {
+            FLORA_PETALS->x[i] = toFIXED(256);
+            FLORA_PETALS->y[i] = 0;
           }
         }
       }
@@ -496,14 +513,14 @@ void BattleEffect_RunFlora(struct BattleEffectParams *args) {
       } else {
         gFlora_PetalTiles[14 + i] = (gFlora_PetalTiles[14 + i] + 128) % 3840;
       }
-      ((struct Sprite *)work->sprites[12 + i])->image.tile =
-          w->tiles[gFlora_PetalTiles[14 + i] >> 8];
+      ((struct Sprite *)work->sprites[FLORA_PETAL_SPRITES + i])->image.tile =
+          FLORA_PETALS->tiles[gFlora_PetalTiles[14 + i] >> 8];
     }
-    for (i = 0; i != 32; i++) {
-      place[0] = w->x[i] - toFIXED(8);
-      place[2] = w->y[i] - toFIXED(8);
-      Render_ApplyProjectedPlacementFar(work->sprites[12 + i], place,
-                                        (s32 *)&req, 0);
+    for (i = 0; i != FLORA_PETAL_COUNT; i++) {
+      place[0] = FLORA_PETALS->x[i] - toFIXED(8);
+      place[2] = FLORA_PETALS->y[i] - toFIXED(8);
+      Render_ApplyProjectedPlacementFar(work->sprites[FLORA_PETAL_SPRITES + i],
+                                        place, (s32 *)&req, 0);
     }
     if (frame == 114) {
       Sound_PlayFar(SE_POWER_UP);
@@ -700,9 +717,9 @@ void BattleEffect_RunFlora(struct BattleEffectParams *args) {
   }
   Task_Remove(BattleEffect_AdvanceScrollOnInterval);
   gBgScroll[1].x = savedScroll;
-  transition[4] = 0;
+  backdrop->busy = 0;
   BattleEffect_SetupBlendedDisplay();
-  for (i = 0; i != 44; i++) {
+  for (i = 0; i != FLORA_PETAL_SPRITES + FLORA_PETAL_COUNT; i++) {
     Sprite_DestroyFar(work->sprites[i]);
   }
   Palette_LoadBasicSpriteColors();
@@ -732,13 +749,13 @@ void BattleEffect_RunFlora(struct BattleEffectParams *args) {
     /* FAKEMATCH(pin): c kept in r1. */
     register u32 c asm("r1");
 
-    Iwram_CopyWordsEntry((void *)BG_PLTT, e, 32);
-    e += 32;
+    Iwram_CopyWordsEntry((void *)BG_PLTT, e, PALETTE_BANK_BYTES);
+    e += PALETTE_BANK_BYTES;
     Decompress_TaggedLz(e, SheetOf(work));
-    sheet = work->sheet + 0x1000;
+    sheet = work->sheet + FLORA_STORM_PETALS;
     i = 0;
     mask = 15;
-    for (row = 0; row != 15; row++) {
+    for (row = 0; row != FLORA_BLOOM_TILES; row++) {
       for (a = 0; a != 2; a++) {
         for (b = 0; b != 2; b++) {
           s32 offset;
@@ -782,7 +799,8 @@ void BattleEffect_RunFlora(struct BattleEffectParams *args) {
     p = (struct Particle *)source;
     for (i = 0; i != 64; i++, p++) {
       if (frame > i) {
-        draw[0](canvas, work->sheet + 0x1000 + (p->variant / 4 % 15 << 8),
+        draw[0](canvas,
+                work->sheet + FLORA_STORM_PETALS + (p->variant / 4 % 15 << 8),
                 FIXED_INTEGER_PART(p->x) - 4, FIXED_INTEGER_PART(p->y), 16, 16);
         BattleEffectKernels_IntegrateVector2(p, PARTICLE_DAMPING_NONE, 0);
         p->velocityX += -toFIXED(1) / 16;
@@ -838,7 +856,7 @@ void BattleEffect_StartActorMotionOutward(s32 id) {
       x = object->x - toFIXED(15);
     Actor_SetMoveTargetFar(object, x, 0, slot->anchorZ);
   }
-  object->verticalMotionStrength = 0x9999;
+  object->verticalMotionStrength = toFIXED(3) / 5;
   object->verticalMotionPhase = 0;
   object->autoFaceMotion = 0;
   Actor_SelectAnimationFar(object, 5);
@@ -973,12 +991,13 @@ void BattleEffect_RunSabreDance(struct BattleEffectParams *args) {
   BattleEffect_EndCanvasLayer();
 }
 
-/// A sprite record as Flora sets its priority.
+/// A sprite record as Flora sets its priority: the byte of OAM attribute 2
+/// that holds it, after the link, attributes 0 and 1 and the tile's low byte.
 struct FxRecord {
-  u8 unk00[9];
-  u8 low : 2;
+  u8 linkPositionAndTile[9];
+  u8 tileHigh : 2;
   u8 priority : 2;
-  u8 high : 4;
+  u8 palette : 4;
 };
 
 /// Sets the OBJ priority of every motion record of the battle object, unless
@@ -1005,8 +1024,8 @@ void BattleObject_SetRecordPriority(s32 objectId, s32 priority) {
 /// while the caster stands just past the target; at frame 16 it leaps at
 /// the target, and at frame 32 the palette turns pink, the caster lands
 /// beside the target, which is knocked back and flashes, and sixteen pink
-/// stars burst from it for 24 frames. Battle work byte 0x866 is set for the
-/// whole effect.
+/// stars burst from it for 24 frames. The battle keeps the sprites' priorities
+/// as the effect sets them throughout.
 ///
 /// Abilities: Backstab.
 void BattleEffect_RunBackstab(struct BattleEffectParams *args) {
@@ -1153,7 +1172,7 @@ void BattleEffect_RunBackstab(struct BattleEffectParams *args) {
   BattleEffect_EndCanvasLayer();
 }
 #undef BLITTER
-#undef w
+#undef FLORA_PETALS
 #undef DAGGER_FRAMES
 #undef DAGGER_COUNT
 #undef DAGGER_FALL_FRAME

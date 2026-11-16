@@ -239,7 +239,7 @@ void BattleEffect_RunZagan(struct BattleEffectParams *args) {
   void *canvas;
   struct BattleEffectWork *work;
   u8 *sprites;
-  s32 *transition;
+  struct BattleBackgroundWork *backdrop;
   s32 savedScroll;
   DrawRectangle *blit;
   struct Point2D position;
@@ -267,7 +267,7 @@ void BattleEffect_RunZagan(struct BattleEffectParams *args) {
   canvas = Ram_HeapSlots->battleCanvas;
   work = Ram_HeapSlots->battleEffect;
   sprites = Ram_HeapSlots->battleSheet;
-  transition = (s32 *)Ram_HeapSlots->battleBackground;
+  backdrop = Ram_HeapSlots->battleBackground;
   savedScroll = gBgScroll[1].x;
   BattleEffect_ConfigureEffectDisplay();
   BattleEffect_StartCanvasLayer(0);
@@ -281,7 +281,7 @@ void BattleEffect_RunZagan(struct BattleEffectParams *args) {
       gProjection.centerY = SUMMON_PROJECTION_CENTER_Y;
       BattleEffect_SelectLivingTargets(work->args);
       work->scrollStepX = -8;
-      transition[4] = 1;
+      backdrop->busy = 1;
       Iwram_FillWordsEntry((void *)&BG_PLTT_COLOR(6, 0), 256,
                            COLOR_PAIR(RGB_WHITE));
       Resource_LoadAndDecompress(RESOURCE_PARTICLE_SPRITES_A, work->sheet, 0,
@@ -355,7 +355,7 @@ void BattleEffect_RunZagan(struct BattleEffectParams *args) {
       }
     }
     if (frame == 0) {
-      transition[4] = 1;
+      backdrop->busy = 1;
       position.x = toFIXED(240);
       position.y = toFIXED(64);
       velocity.x = -toFIXED(20);
@@ -618,7 +618,7 @@ void BattleEffect_RunZagan(struct BattleEffectParams *args) {
   }
   Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
   EFFECT_RELEASE_BLITTERS();
-  transition[4] = 0;
+  backdrop->busy = 0;
   for (i = 0; i != ZAGAN_PARTS; i++) {
     Sprite_DestroyFar(work->sprites[i]);
   }

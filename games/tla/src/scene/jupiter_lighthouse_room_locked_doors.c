@@ -248,8 +248,8 @@ void JupiterLighthouse_SpawnCirclingMotes(void) {
     actor = (FieldActor_Create(SPRITE_PARTICLE, 0, 0, 0));
     actor->motionFlags = 0;
     actor->priorityFlags = 0;
-    actor->speedLimit = (Random16() << 2) + 0x60000;
-    actor->acceleration = ((Random16() << 11) >> 16) + 0x800;
+    actor->speedLimit = (Random16() << 2) + toFIXED(6);
+    actor->acceleration = ((Random16() << 11) >> 16) + toFIXED(1) / 32;
     actor->update = (void (*)(void))JupiterLighthouse_CircleTheMote;
     actor->timer = Random16();
     actor->userValue = phase;
@@ -290,7 +290,7 @@ s32 Scene_Initialize(void) {
     FieldEvent_Wait(10);
     for (i = 0; i <= 89 && leader->y.fixed < 0; i++) {
       leader->groundHeight = leader->y.fixed = leader->y.fixed + toFIXED(3);
-      leader->facing += 0x1800;
+      leader->facing += TRIG_TURN * 3 / 32;
       System_Wait(2);
     }
     leader->groundHeight = leader->y.fixed = 0;
@@ -395,7 +395,7 @@ UNUSED s32 Actor_EmitRisingSparks(struct Actor *actor) {
     options.palette = 14;
     x = actor->x.fixed + toFIXED((Random_Below(9)) - 4);
     y = actor->y.fixed + toFIXED(32 - (Random_Below(20)));
-    velocityY = (s32)((toFIXED(Random_Below(5)) + 0x50000)) / 10;
+    velocityY = (s32)((toFIXED(Random_Below(5)) + toFIXED(5))) / 10;
     FieldEffect_Spawn(x, y, actor->z.fixed, 0, velocityY, 0,
                       EFFECT_USE_PALETTE | EFFECT_USE_PRIORITY |
                           EFFECT_USE_START_SCALE,
@@ -442,7 +442,7 @@ UNUSED void JupiterLighthouse_PlaceAngelsAndLid(void) {
     left->y.fixed += 0x66640;
     rider->y.fixed += 0x1eb80;
     rider->x.fixed += -0x28f40;
-    sprite->rotation += 0x800;
+    sprite->rotation += TRIG_TURN / 32;
     Actor_SetSpriteColorMode(Actor_Get(ACTOR_LEFT_ANGEL), 4);
     Actor_SetSpriteColorMode(Actor_Get(ACTOR_LEFT_ARCHER), 4);
   }
@@ -450,7 +450,7 @@ UNUSED void JupiterLighthouse_PlaceAngelsAndLid(void) {
     right->y.fixed += 0x66640;
     rider->y.fixed += 0x1eb80;
     rider->x.fixed += 0x28f40;
-    sprite->rotation -= 0x800;
+    sprite->rotation -= TRIG_TURN / 32;
     Actor_SetSpriteColorMode(Actor_Get(ACTOR_RIGHT_ANGEL), 4);
     Actor_SetSpriteColorMode(Actor_Get(ACTOR_RIGHT_ARCHER), 4);
   }
@@ -591,7 +591,7 @@ struct ActorPlacement gActorPlacements[] = {
     ACTOR_PLACEMENT(SPRITE_BALANCE_PLATFORM, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 536, 0, 168, FACING_EAST, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE),
     ACTOR_PLACEMENT(SPRITE_BALANCE_PLATFORM, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 488, 0, 200, FACING_EAST, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE),
     ACTOR_PLACEMENT(SPRITE_BALANCE_PLATFORM, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 520, 0, 200, FACING_EAST, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE),
-    {SPRITE_BALANCE_PLATFORM, CONDITION_ALWAYS, 1, -0x80000, 0, -0x80000, FACING_EAST, 2, 1},
+    {SPRITE_BALANCE_PLATFORM, CONDITION_ALWAYS, 1, toFIXED(-8), 0, toFIXED(-8), FACING_EAST, 2, 1},
     ACTOR_PLACEMENT(SPRITE_BALANCE_PLATFORM, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 152, 0, 520, FACING_EAST, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(SPRITE_BALANCE_PLATFORM, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 200, 0, 520, FACING_SOUTHEAST, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE),
     ACTOR_PLACEMENT(SPRITE_BALANCE_PLATFORM, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 264, 0, 520, FACING_EAST, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE),

@@ -16,7 +16,7 @@
 #include "version.h"
 
 // Two 16.16 coordinates fall in the same 16-pixel cell, rounding to nearest.
-#define SAME_CELL(a, b) ((((a) - (b) + 0x80000) >> 20) == 0)
+#define SAME_CELL(a, b) ((((a) - (b) + toFIXED(8)) >> 20) == 0)
 
 /// What a shortcut key's assignment requests, bits 15..14
 /// (Field_RequestShortcut), as The Broken Seal's.
@@ -47,18 +47,6 @@ enum FieldShortcutKind {
 /// The world map camera turns toward the pad's yaw by at most about 2.8
 /// degrees a frame.
 #define WORLD_MAP_YAW_STEP_MAX (TRIG_TURN / 128)
-/// What stopped the leader's step this frame (Actor_UpdatePlayerControl,
-/// Actor_MoveOnWorldMap).
-enum PlayerStepBlock {
-  PLAYER_STEP_BLOCKED_BY_MAP = 1, ///< every heading tried runs into the map
-  /// A solid actor ahead, or one with no room to be pushed.
-  PLAYER_STEP_BLOCKED_BY_ACTOR = 2,
-  PLAYER_STEP_BLOCKED = 3, ///< either of the two
-  /// No step, and none counted as blocked: the pad is not held, or a climb
-  /// meets a wall.
-  PLAYER_STEP_STOPPED = 4
-};
-
 /// The footprints the leader leaves in snow and sand, and the leader's
 /// userValue that asks for the pair next.
 enum FootprintAnimation {
@@ -110,8 +98,8 @@ s32 Actor_UpdateWalkingControl(struct Actor *object) {
 
     onObject = 0;
     other = (struct Actor *)Ram_HeapSlots->actors;
-    withinHalfCell = 0x7ffff;
-    for (angleIndex = 0; angleIndex < 64; angleIndex++, other++) {
+    withinHalfCell = toFIXED(8) - 1;
+    for (angleIndex = 0; angleIndex < ACTOR_COUNT; angleIndex++, other++) {
       FIXED delta;
       FIXED dy;
 
@@ -235,13 +223,13 @@ push_objects:
   SET_POSITION(&contact, object->x.fixed, object->y.fixed, object->z.fixed);
   Vector_AddPolarOffset(toFIXED(4), (u16)heading, &contact);
   other = (struct Actor *)Ram_HeapSlots->actors;
-  for (angleIndex = 63; angleIndex >= 0; angleIndex--, other++) {
+  for (angleIndex = ACTOR_COUNT - 1; angleIndex >= 0; angleIndex--, other++) {
     s32 radius;
 
     radius = object->radius - 2;
     if (other->script == NULL)
       continue;
-    if (!(other->collisionFlags & 1))
+    if (!(other->collisionFlags & ACTOR_SOLID))
       continue;
     if (other == object)
       continue;
@@ -371,8 +359,9 @@ s32 Field_RequestShortcut(u32 assignment) {
 
 /// Checks the keys the player has configured: the menu, examine and start
 /// keys set their request and return 1, the two shortcut keys pass on their
-/// assignment (Field_RequestShortcut). While a second event is pending, any of
-/// the five requests command 0x209b instead. Returns 0 when none is pressed.
+/// assignment (Field_RequestShortcut). While the Ring is out, any of the five
+/// asks for the Ring again (ABILITY_RING, packed), which ends it. Returns 0
+/// when none is pressed.
 s32 Field_CheckConfiguredKeys(void) {
   struct FieldWork *work = gFieldWork;
   s32 result = 0;
@@ -385,7 +374,7 @@ s32 Field_CheckConfiguredKeys(void) {
         (gInput.pressed & gMainRoutineWork.startKeys) ||
         (gInput.pressed & gMainRoutineWork.firstShortcutKeys) ||
         (gInput.pressed & gMainRoutineWork.secondShortcutKeys)) {
-      work->psynergy = 0x209b;
+      work->psynergy = ABILITY_RING | ACT_PACKED;
       return 1;
     }
     return 0;
@@ -455,7 +444,8 @@ void Actor_SpawnWaterSplash(struct Actor *object, s32 mode) {
       child->flags = 0;
       child->layer = sprite->layer;
       if (mode == 2) {
-        Sprite_SetAnimationColorModes((struct Sprite *)child, 13);
+        Sprite_SetAnimationColorModes((struct Sprite *)child,
+                                      SPRITE_COLOR_FILL);
         Sprite_SetAnimationSpeed((struct Sprite *)child, 8);
       }
     }
@@ -466,7 +456,7 @@ void Actor_SpawnWaterSplash(struct Actor *object, s32 mode) {
 extern struct MapCell gMapGridCellBuffer[];
 
 // Two 16.16 coordinates fall in the same 16-pixel cell, rounding to nearest.
-#define SAME_CELL(a, b) ((((a) - (b) + 0x80000) >> 20) == 0)
+#define SAME_CELL(a, b) ((((a) - (b) + toFIXED(8)) >> 20) == 0)
 
 /// SC_PLAYER: moves the player on the field by the direction pad: walking or
 /// running, sliding around walls, pushing movable actors, turning, playing the
@@ -529,7 +519,7 @@ s32 Actor_UpdatePlayerControl(struct Actor *object) {
 #endif
     angleIndex = 0;
     other = (struct Actor *)Ram_HeapSlots->actors;
-    for (; angleIndex < 64; angleIndex++, other++) {
+    for (; angleIndex < ACTOR_COUNT; angleIndex++, other++) {
       FIXED dy;
 
       if (other->script == NULL)
@@ -540,7 +530,7 @@ s32 Actor_UpdatePlayerControl(struct Actor *object) {
         continue;
       dy = object->y.fixed - other->y.fixed;
       if ((dy - toFIXED(16) < 0 ? -(dy - toFIXED(16)) : dy - toFIXED(16)) >
-          0x7ffff)
+          toFIXED(8) - 1)
         continue;
       if (SAME_CELL(object->x.fixed, other->x.fixed) &&
           SAME_CELL(object->z.fixed, other->z.fixed))
@@ -648,13 +638,13 @@ push_objects:
   SET_POSITION(&contact, object->x.fixed, object->y.fixed, object->z.fixed);
   Vector_AddPolarOffset(toFIXED(4), (u16)heading, &contact);
   other = (struct Actor *)Ram_HeapSlots->actors;
-  for (angleIndex = 63; angleIndex >= 0; angleIndex--, other++) {
+  for (angleIndex = ACTOR_COUNT - 1; angleIndex >= 0; angleIndex--, other++) {
     s32 radius;
 
     radius = object->radius - 2;
     if (other->script == NULL)
       continue;
-    if (!(other->collisionFlags & 1))
+    if (!(other->collisionFlags & ACTOR_SOLID))
       continue;
     if (other == object)
       continue;
@@ -771,20 +761,21 @@ counted:
     attribute = cells->attributeB;
     oldFlags = sprite->flags;
     if (attribute & 16) {
-      if (!(oldFlags & 8)) {
+      if (!(oldFlags & SPRITE_FLAG_SUNK)) {
         sprite->sunkRows = 4;
-        sprite->flags = ((u8)oldFlags | 4) & ~1;
+        sprite->flags =
+            ((u8)oldFlags | SPRITE_FLAG_SHADED) & ~SPRITE_FLAG_SHADOW;
       }
       if (object->timer == 0 && collision == 0 && !onObject) {
         Actor_SpawnWaterSplash(object, (u32)(map->groundEffects << 28) >> 30);
-        if (movementAnimation == 5)
+        if (movementAnimation == ANIM_LEADER_RUN)
           object->timer = 8;
         else
           object->timer = 12;
         object->userValue ^= 1;
       }
-    } else if (!(oldFlags & 8)) {
-      sprite->flags = ((u8)oldFlags | 1) & ~4;
+    } else if (!(oldFlags & SPRITE_FLAG_SUNK)) {
+      sprite->flags = ((u8)oldFlags | SPRITE_FLAG_SHADOW) & ~SPRITE_FLAG_SHADED;
     }
     if (oldFlags != sprite->flags)
       sprite->dirty = 1;
@@ -795,8 +786,8 @@ counted:
   if ((map->groundEffects & 3) && object->timer == 0 && collision == 0) {
     struct Actor *effect;
 
-    effect =
-        Actor_Create(0x10e, object->x.fixed, object->y.fixed, object->z.fixed);
+    effect = Actor_Create(SPRITE_FOOTPRINTS, object->x.fixed, object->y.fixed,
+                          object->z.fixed);
     if (effect != 0) {
       struct PlayerSprite *effectSprite;
 

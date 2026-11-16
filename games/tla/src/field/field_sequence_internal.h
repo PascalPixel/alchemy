@@ -185,7 +185,7 @@ struct MapRegion {
 };
 
 /// Each scene's encounters by scene, entrance and flag, ended by scene -1
-/// (FIELD_ENCOUNTERS.S).
+/// (encounter_rules.s).
 extern const struct SceneMusicEntry gScene_EncounterRules[];
 
 extern struct TerrainRule gWorldMap_EncounterRules[];

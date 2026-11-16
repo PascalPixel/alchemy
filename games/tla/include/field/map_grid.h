@@ -57,27 +57,34 @@ enum CellBehavior {
   /// A cell the Cyclone lifts the leader onto, its centre kept in
   /// FieldWork.cycloneLiftX and Z (kind 3).
   CELL_BEHAVIOR_CYCLONE_LIFT = 235,
-  CELL_BEHAVIOR_HOVER = 236,        ///< Hover holds the leader up over it
-  CELL_BEHAVIOR_JUMP_FORWARD = 254, ///< jumped across
-  CELL_BEHAVIOR_WALL = 255          ///< blocks whatever the heights
-};
-
-/// MapCell.attributeB bits read by the field Psynergy.
-enum MapCellAttribute {
-  MAP_CELL_WATER = 0x10,    ///< water (MapGrid_IsWaterCell)
-  MAP_CELL_CLIMBABLE = 0x40 ///< can be climbed (MapGrid_IsClimbableCell)
-};
-
-/// 242 to 247: examine triggers with lines of their own, the same on every
-/// map (Field_ExamineCell, gField_ExamineTriggerMessageOffsets), as The Broken
-/// Seal's.
-enum {
+  CELL_BEHAVIOR_HOVER = 236, ///< Hover holds the leader up over it
+  /// 242 to 247: examine triggers with lines of their own, the same on every
+  /// map (Field_ExamineCell, gField_ExamineTriggerMessageOffsets).
   CELL_BEHAVIOR_JAR = 242,
   CELL_BEHAVIOR_BARREL = 243,
   CELL_BEHAVIOR_WOODEN_BOX = 244,
   CELL_BEHAVIOR_GRAVE = 245,
   CELL_BEHAVIOR_BOOKS = 246,
-  CELL_BEHAVIOR_WELL = 247
+  CELL_BEHAVIOR_WELL = 247,
+  CELL_BEHAVIOR_JUMP_FORWARD = 254, ///< jumped across
+  CELL_BEHAVIOR_WALL = 255          ///< blocks whatever the heights
+};
+
+/// MapCell.attributeB's bits.
+enum MapCellAttribute {
+  /// Pushing against the cell pushes the actor ahead (Field_RunPushCell).
+  MAP_CELL_PUSH = 0x02,
+  /// Random battles here roll on the scene's second encounter zone
+  /// (Field_UpdateWalking).
+  MAP_CELL_SECOND_ZONE = 0x04,
+  /// Hazardous ground; with HAZARD_COUNT_ON_CELLS the hazard count rises by
+  /// the pixels walked on it.
+  MAP_CELL_HAZARD = 0x08,
+  MAP_CELL_WATER = 0x10, ///< water (MapGrid_IsWaterCell)
+  MAP_CELL_LEDGE = 0x20, ///< a ledge, jumped down by pushing KEY_DOWN
+  /// A wall the leader can climb (MapGrid_IsClimbableCell, Actor_MoveByKeys).
+  MAP_CELL_CLIMBABLE = 0x40,
+  MAP_CELL_JUMP = 0x80 ///< a gap the leader jumps across, pushing forward
 };
 
 /// One cell of a map layer: its cell picture and flags, its collision
@@ -87,22 +94,6 @@ struct MapCell {
   u8 collisionCode;
   u8 attributeB;
 };
-
-/// MapCell.attributeB bit 1: pushing against the cell pushes the actor ahead
-/// (Field_RunPushCell).
-#define MAP_CELL_PUSH 0x02
-/// MapCell.attributeB bit 2: random battles here roll on the scene's second
-/// encounter zone (Field_UpdateWalking).
-#define MAP_CELL_SECOND_ZONE 0x04
-/// MapCell.attributeB bit 3: hazardous ground; with HAZARD_COUNT_ON_CELLS the
-/// hazard count rises by the pixels walked on it.
-#define MAP_CELL_HAZARD 0x08
-/// MapCell.attributeB bit 5: a ledge, jumped down by pushing KEY_DOWN.
-#define MAP_CELL_LEDGE 0x20
-/// MapCell.attributeB bit 6: the cell can be climbed (MapGrid_IsClimbableCell).
-#define MAP_CELL_CLIMBABLE 0x40
-/// MapCell.attributeB bit 7: a gap the leader jumps across, pushing forward.
-#define MAP_CELL_JUMP 0x80
 
 /// A row of gMaps: a layout's resources, each counted from ResourceId_EmptyMap.
 struct MapResources {
@@ -230,6 +221,37 @@ enum WorldMapCollision {
   /// Forest: the leader's sprite shows its second layer and no shadow.
   WORLD_MAP_COLLISION_FOREST = 9,
   WORLD_MAP_COLLISION_WALKABLE_LAST = 12
+};
+
+/// A world map battle environment (gWorldMap_TerrainBehaviorTable,
+/// WorldMap_GetBattleEnvironment): what its ground means for battles, named by
+/// the battle background BattleBackground_SelectForEnvironment gives it, as The
+/// Broken Seal's, with the sea and the blizzard this game adds.
+enum BattleEnvironment {
+  BATTLE_ENVIRONMENT_NONE = 0,
+  BATTLE_ENVIRONMENT_GRASSLAND = 1, ///< ResourceId_GrasslandBBackdrop
+  /// ResourceId_DenseForestBackdrop; encounters take a region's forest zone.
+  BATTLE_ENVIRONMENT_FOREST = 2,
+  BATTLE_ENVIRONMENT_DESERT = 3,    ///< ResourceId_DesertBackdrop
+  BATTLE_ENVIRONMENT_BEACH = 4,     ///< ResourceId_RockyBeachBackdrop
+  BATTLE_ENVIRONMENT_SNOWFIELD = 5, ///< ResourceId_SnowfieldBBackdrop
+  /// ResourceId_SnowfieldBBackdrop, for the snowfield's forest.
+  BATTLE_ENVIRONMENT_SNOW_FOREST = 6,
+  /// ResourceId_RockyBeachBackdrop, for shallow water
+  /// (WORLD_MAP_COLLISION_SHALLOW_WATER).
+  BATTLE_ENVIRONMENT_SHALLOWS = 7,
+  /// The sea the ship sails, collisions 1 to 3 outside the snowfields, where
+  /// its encounters are (gWorldMap_ShipEncounterRules);
+  /// ResourceId_ShipDeckBackdrop.
+  BATTLE_ENVIRONMENT_SEA = 8,
+  /// All the sea of the snowfield regions, where no rule gives encounters.
+  BATTLE_ENVIRONMENT_SNOWFIELD_SEA = 9,
+  /// XXX: what WORLD_MAP_COLLISION_SEA_LAST is outside the snowfields, where no
+  /// rule gives encounters; seeing where the ship meets it would settle it.
+  BATTLE_ENVIRONMENT_SEA_LAST = 10,
+  BATTLE_ENVIRONMENT_BLIZZARD = 11, ///< ResourceId_BlizzardBackdrop
+  /// ResourceId_BlizzardBackdrop, for the blizzard's forest.
+  BATTLE_ENVIRONMENT_BLIZZARD_FOREST = 12
 };
 
 s32 WorldMap_GetCollision(struct WorldPosition *position);

@@ -16,13 +16,12 @@
 #include "field/object.h"
 #include "system/ram_buffer.h"
 
-/// The heading of each direction-pad combination, 0xffff for none.
-
-/// The script command 0x1b: moves an object 8 pixels at a time by the
-/// direction pad, with up and down changing its height (y) rather than its
-/// depth. Refuses steps into an occupied cell, from or onto a cell without
-/// attribute bit 6, or onto ground too high (up) or too low (down), and
-/// records the held keys in the event work. Returns 1.
+/// SCRIPT_CMD_KEYS, the leader's control on a climbable wall: moves it 8 pixels
+/// at a time by the direction pad, up and down changing its height rather than
+/// its depth, reaching east or west as it goes and clinging while the pad is
+/// not held. Refuses a step into a wall, from or onto a cell that is not
+/// MAP_CELL_CLIMBABLE, or onto ground too high (up) or too low (down), and
+/// records the held keys in the field work. Returns 1.
 s32 Actor_MoveByKeys(struct Actor *object) {
   struct FieldPosition position;
   struct MapCell *sourceCell;
@@ -38,7 +37,7 @@ s32 Actor_MoveByKeys(struct Actor *object) {
   s32 half;
 
   object->acceleration = toFIXED(1) / 4;
-  animation = 12;
+  animation = ANIM_LEADER_CLING;
   half = 0x8000;
   object->speedLimit = half;
   if (gDebugMode)
@@ -50,13 +49,13 @@ s32 Actor_MoveByKeys(struct Actor *object) {
     angle = *(const u16 *)((const u8 *)table + (((keys >> 4) & 15) << 1));
   }
   if (angle == WORLD_MAP_KEY_HEADING_NONE) {
-    collisionFlags = 4;
+    collisionFlags = PLAYER_STEP_STOPPED;
   } else {
-    animation = 14;
+    animation = ANIM_LEADER_CLIMB_EAST;
     if ((angle & 0xf000) != 0) {
-      animation = 15;
+      animation = ANIM_LEADER_CLIMB_WEST;
       if ((angle & 0xf000) != half)
-        animation = 10;
+        animation = ANIM_LEADER_CLIMB;
     }
     collisionFlags = 0;
     SET_POSITION(&position, 0, 0, 0);
@@ -76,27 +75,28 @@ s32 Actor_MoveByKeys(struct Actor *object) {
         &map->layers[object->layer].cells[position.x / toFIXED(16) +
                                           (position.z / toFIXED(16)) * 128];
     if (MapGrid_IsWallAt((s32 *)&position) != 0 ||
-        !(sourceCell->attributeB & 64) || !(destinationCell->attributeB & 64)) {
-      collisionFlags = 4;
-      animation = 12;
-    } else if (gInput.held & 64) {
+        !(sourceCell->attributeB & MAP_CELL_CLIMBABLE) ||
+        !(destinationCell->attributeB & MAP_CELL_CLIMBABLE)) {
+      collisionFlags = PLAYER_STEP_STOPPED;
+      animation = ANIM_LEADER_CLING;
+    } else if (gInput.held & KEY_UP) {
       terrainHeight = MapGrid_GetTerrainHeight(object->layer, position.x,
                                                position.z - toFIXED(16));
       if (terrainHeight - object->y.fixed < toFIXED(16))
         goto refused;
-    } else if (gInput.held & 128) {
+    } else if (gInput.held & KEY_DOWN) {
       terrainHeight =
           MapGrid_GetTerrainHeight(object->layer, position.x, position.z);
       if (terrainHeight - object->y.fixed > -toFIXED(8)) {
       refused:
-        collisionFlags = 1;
-        animation = 12;
+        collisionFlags = PLAYER_STEP_BLOCKED_BY_MAP;
+        animation = ANIM_LEADER_CLING;
       }
     }
   }
   work = Ram_HeapSlots->fieldWork;
   if (work != NULL) {
-    if (collisionFlags & 3)
+    if (collisionFlags & PLAYER_STEP_BLOCKED)
       work->blockedSteps++;
     else
       work->blockedSteps = 0;
@@ -117,7 +117,7 @@ s32 Actor_MoveByKeys(struct Actor *object) {
   return 1;
 }
 
-/// Script command 0x1c, the leader's control on a tied rope (render mode 3):
+/// SCRIPT_CMD_ROPE, the leader's control on a tied rope (render mode 3):
 /// the pad moves it from node to node along the rope, a half cell a step.
 s32 Actor_CrossRope(struct Actor *object) {
   struct FieldPosition position;
@@ -139,7 +139,7 @@ s32 Actor_CrossRope(struct Actor *object) {
 
   sprite = object->sprite;
   rope = *(struct RopeWork **)&Ram_HeapSlots->rope;
-  speed = 0x10000;
+  speed = FIXED_ONE;
   collisionFlags = 0;
   object->speedLimit = toFIXED(1) / 2;
   object->acceleration = toFIXED(1) / 2;
@@ -160,12 +160,12 @@ s32 Actor_CrossRope(struct Actor *object) {
     best = NULL;
     bestDistance = 0x10000000;
     if (rope == NULL) {
-      collisionFlags = 1;
+      collisionFlags = PLAYER_STEP_BLOCKED_BY_MAP;
       /* FAKEMATCH(dead): the event work slot copied onto itself. */
       Ram_HeapSlots->fieldWork = Ram_HeapSlots->fieldWork;
       goto done;
     }
-    for (count = 0; count < 128; count++, node++) {
+    for (count = 0; count < ROPE_NODE_COUNT; count++, node++) {
       if (node->kind == 1) {
         s32 dx = (position.x - node->x) >> 8;
         s32 dy = (position.y - node->y) >> 8;
@@ -183,7 +183,7 @@ s32 Actor_CrossRope(struct Actor *object) {
   if (best == NULL) {
     // DEAD: collisionFlags is still 0 here, so the OR changes nothing; the ROM
     // keeps its load, OR and store.
-    collisionFlags |= 1;
+    collisionFlags |= PLAYER_STEP_BLOCKED_BY_MAP;
   } else {
     slot = &rope->slots[best->slot - 1];
     first = Actor_GetByIdFar(slot->first);
@@ -201,10 +201,10 @@ s32 Actor_CrossRope(struct Actor *object) {
     object->scaleX = speed;
     if (best->x == object->x.fixed && best->y == object->y.fixed &&
         best->z == object->z.fixed) {
-      collisionFlags = 1;
+      collisionFlags = PLAYER_STEP_BLOCKED_BY_MAP;
     } else {
       slot->swinging = 1;
-      slot->amplitude += 0x8000;
+      slot->amplitude += toFIXED(1) / 2;
       if (slot->amplitude > toFIXED(2))
         slot->amplitude = toFIXED(2);
       object->watchedActor = (struct Actor *)best;
@@ -215,7 +215,7 @@ s32 Actor_CrossRope(struct Actor *object) {
 done:
   work = Ram_HeapSlots->fieldWork;
   if (work != NULL) {
-    if (collisionFlags & 3)
+    if (collisionFlags & PLAYER_STEP_BLOCKED)
       work->blockedSteps++;
     else
       work->blockedSteps = 0;
@@ -241,10 +241,10 @@ done:
 static inline void TurnToward(struct Actor *object, u16 angle) {
   s16 delta = angle - object->facing;
 
-  if (delta > 0x1000)
-    delta = 0x1000;
-  if (delta < -0x1000)
-    delta = -0x1000;
+  if (delta > TRIG_TURN / 16)
+    delta = TRIG_TURN / 16;
+  if (delta < -(TRIG_TURN / 16))
+    delta = -(TRIG_TURN / 16);
   object->facing += delta;
 }
 
@@ -271,7 +271,7 @@ s32 Actor_CrossTightrope(struct Actor *object) {
   object->motionFlags = 0;
   angle = gWorldMap_KeyHeadings[DPAD_INDEX(gInput.held)];
   if (angle == WORLD_MAP_KEY_HEADING_NONE) {
-    collisionFlags = 4;
+    collisionFlags = PLAYER_STEP_STOPPED;
     best = (struct TightropeNode *)object->watchedActor;
     SET_POSITION(&position, object->x.fixed, best->y, object->z.fixed);
   } else {
@@ -282,7 +282,7 @@ s32 Actor_CrossTightrope(struct Actor *object) {
     best = NULL;
     bestDistance = 0x10000000;
     if (tightrope == NULL) {
-      collisionFlags = 1;
+      collisionFlags = PLAYER_STEP_BLOCKED_BY_MAP;
       /* FAKEMATCH(dead): the event work slot copied onto itself. */
       Ram_HeapSlots->fieldWork = Ram_HeapSlots->fieldWork;
     } else {
@@ -301,15 +301,15 @@ s32 Actor_CrossTightrope(struct Actor *object) {
         }
       }
       if (best == NULL) {
-        collisionFlags |= 1;
+        collisionFlags |= PLAYER_STEP_BLOCKED_BY_MAP;
       } else if (best->x == object->x.fixed && best->y == object->y.fixed &&
                  best->z == object->z.fixed) {
-        collisionFlags = 1;
+        collisionFlags = PLAYER_STEP_BLOCKED_BY_MAP;
       } else {
         if (best->slot != 0) {
           slot = &tightrope->slots[best->slot - 1];
           slot->wobbling = 1;
-          slot->amplitude += 0x8000;
+          slot->amplitude += toFIXED(1) / 2;
           if (slot->amplitude > toFIXED(2))
             slot->amplitude = toFIXED(2);
           object->watchedActor = (struct Actor *)best;
@@ -322,7 +322,7 @@ s32 Actor_CrossTightrope(struct Actor *object) {
   }
   work = Ram_HeapSlots->fieldWork;
   if (work != NULL) {
-    if (collisionFlags & 3)
+    if (collisionFlags & PLAYER_STEP_BLOCKED)
       work->blockedSteps++;
     else
       work->blockedSteps = 0;
@@ -340,7 +340,7 @@ s32 Actor_CrossTightrope(struct Actor *object) {
     object->velocityX = 0;
     object->velocityY = 0;
     object->velocityZ = 0;
-    if (collisionFlags & 3)
+    if (collisionFlags & PLAYER_STEP_BLOCKED)
       TurnToward(object, angle);
     object->y.fixed = position.y;
   } else {
@@ -353,8 +353,6 @@ s32 Actor_CrossTightrope(struct Actor *object) {
   return 1;
 }
 
-#define HALF_AT(base, offset) (*(u16 *)((u8 *)(base) + (offset)))
-
 /// Update of a grain the Sand leaves as the leader moves: it turns and
 /// jitters sideways at random.
 void Sand_JitterGrain(struct Actor *object) {
@@ -362,7 +360,7 @@ void Sand_JitterGrain(struct Actor *object) {
   u32 second;
   FIXED x;
 
-  HALF_AT(object->sprite, 18) += 0x400;
+  ((struct Sprite *)object->sprite)->rotation += TRIG_TURN / 64;
   first = Random16();
   second = Random16();
   x = object->x.fixed;
@@ -372,9 +370,10 @@ void Sand_JitterGrain(struct Actor *object) {
   object->x.fixed = x + (first - second);
 }
 
-/// When one of three party key sets is pressed: plays cue 113 if the far call
-/// accepts the argument, else posts event request 0x208b and returns 1 while
-/// flag 0x146 is clear.
+/// Whether the player ends Sand: when the Select, A or Start keys are pressed,
+/// plays SE_MENU_CANCEL where the leader is blocked (Actor_CheckBlockedFar),
+/// and otherwise, while flag 0x146 is clear, asks for Sand again
+/// (ABILITY_SAND, packed) and returns 1.
 s32 Sand_CheckEndKeys(s32 arg) {
   struct FieldWork *work = Ram_HeapSlots->fieldWork;
   s32 pressed = 0;
@@ -398,7 +397,6 @@ s32 Sand_CheckEndKeys(s32 arg) {
   return 0;
 }
 #undef CHAIN_WORK
-#undef HALF_AT
 
 // The heading of each direction-pad combination, -1 for none.
 
@@ -456,7 +454,7 @@ s32 Actor_MoveAsSand(struct Actor *actor) {
     if (groundHere > y) {
       actor->userValue = 0;
       actor->groundHeight = groundHere;
-      actor->motionFlags = 3;
+      actor->motionFlags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
       goto done;
     }
 
@@ -468,7 +466,7 @@ s32 Actor_MoveAsSand(struct Actor *actor) {
     actor->acceleration = toFIXED(1) / 4;
     angle = gWorldMap_KeyHeadings[DPAD_INDEX(gInput.held)];
     if ((u16)angle == WORLD_MAP_KEY_HEADING_NONE) {
-      collision = 4;
+      collision = PLAYER_STEP_STOPPED;
     } else {
       SET_POSITION(&position, actor->x.fixed, 0, 0);
       Vector_AddPolarOffset(toFIXED(8), (u16)angle, &position);
@@ -544,7 +542,7 @@ s32 Actor_MoveAsSand(struct Actor *actor) {
         sprite = effect->sprite;
         Actor_StartScript(effect, gSand_GrainScript);
         effect->update = Sand_JitterGrain;
-        effect->motionFlags = 2;
+        effect->motionFlags = ACTOR_FALLS;
         if (collision == 0)
           Sound_PlayFar(SE_SAND_MOVE);
         effect->gravity = toFIXED(1) / 25;
@@ -568,7 +566,7 @@ s32 Actor_MoveAsSand(struct Actor *actor) {
   actor->acceleration = toFIXED(1) / 4;
   angle = gWorldMap_KeyHeadings[DPAD_INDEX(gInput.held)];
   if ((u16)angle == WORLD_MAP_KEY_HEADING_NONE) {
-    collision = 4;
+    collision = PLAYER_STEP_STOPPED;
     goto counted;
   }
   SET_POSITION(&position, actor->x.fixed, actor->y.fixed, actor->z.fixed);
@@ -804,7 +802,7 @@ s32 Actor_MoveAsSandOnWorldMap(struct Actor *object) {
   angle = gWorldMap_KeyHeadings[DPAD_INDEX(gInput.held)];
   direction = angle;
   if (direction == WORLD_MAP_KEY_HEADING_NONE) {
-    collision |= 4;
+    collision |= PLAYER_STEP_STOPPED;
   } else {
     SET_POSITION(&position, object->x.fixed, object->y.fixed, object->z.fixed);
     Vector_AddPolarOffset(toFIXED(8), direction, &position);

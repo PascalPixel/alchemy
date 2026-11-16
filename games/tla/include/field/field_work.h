@@ -90,7 +90,10 @@ enum ActorSystemMode {
   ACTOR_SYSTEM_MAP = 2,
   /// The world map: the fixed camera, which projects 3D points onto the
   /// screen.
-  ACTOR_SYSTEM_WORLD_MAP = 3
+  ACTOR_SYSTEM_WORLD_MAP = 3,
+  /// A battle: the fixed camera, and the battle's own motion update
+  /// (Actor_UpdateAllMotion).
+  ACTOR_SYSTEM_BATTLE = 4
 };
 
 /// A field scene's work: FieldSequence_Run allocates it in heap slot 108,

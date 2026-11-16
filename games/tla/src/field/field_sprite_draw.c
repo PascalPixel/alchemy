@@ -262,7 +262,7 @@ s32 Sprite_ComposePicture(struct Sprite *obj, u32 dir) {
         outline(obj->width, obj->height, pixels, system->edge, system->fill);
         Heap_Release(outline);
       }
-      if (obj->flags & 8) {
+      if (obj->flags & SPRITE_FLAG_SUNK) {
         s32 height;
         s32 width;
         s32 amount;
@@ -289,7 +289,7 @@ s32 Sprite_ComposePicture(struct Sprite *obj, u32 dir) {
         limit = amount / 4;
         for (i = 0; i < limit; i++)
           *dst-- = 0;
-      } else if (obj->flags & 4) {
+      } else if (obj->flags & SPRITE_FLAG_SHADED) {
         u32 rows = obj->sunkRows;
         u32 height = obj->height;
         u32 width = obj->width;
@@ -676,6 +676,8 @@ void Render_PlaceProjectedSprite(struct Sprite *sprite, s32 *point, s32 *scale,
   }
 }
 
+/// Sets the colour mode (enum SpriteColorMode) of the sprite's first layer
+/// and has it drawn again.
 void Animation_ApplyChildValueToFirst(struct Sprite *record, u32 value) {
   if (record != NULL) {
     record->entries[0]->colorMode = value;
@@ -683,12 +685,14 @@ void Animation_ApplyChildValueToFirst(struct Sprite *record, u32 value) {
   }
 }
 
+/// Sets the colour mode of every layer of the sprite that is not hidden
+/// (SPRITE_COLOR_HIDDEN) and has it drawn again.
 void Sprite_SetAnimationColorModes(struct Sprite *record, u32 value) {
   s32 i;
 
   if (record != NULL) {
     for (i = 0; i < record->count; i++) {
-      if (record->entries[i]->colorMode != 15)
+      if (record->entries[i]->colorMode != SPRITE_COLOR_HIDDEN)
         record->entries[i]->colorMode = value;
     }
     record->dirty = 1;

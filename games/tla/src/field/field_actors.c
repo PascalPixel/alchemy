@@ -13,6 +13,7 @@
 #include "field/objdisp.h"
 #include "field/actor.h"
 #include "field/actor_view.h"
+#include "field/actor_script.h"
 #include "system/ram_code.h"
 #include "battle/battle_system.h"
 #include "system/matrix.h"
@@ -29,7 +30,7 @@
 #include "field/field_sequence.h"
 
 /// Waits, at most 90 frames, for a sprite's animation to change or for its
-/// first layer's script to reach code 241.
+/// first layer's script to reach ANIMCMD_HOLD.
 void Animation_WaitForTrackEnd(struct Sprite *sprite) {
   u8 animation = sprite->lastNo;
   struct SpriteAnimation *entry = sprite->entries[0];
@@ -37,13 +38,13 @@ void Animation_WaitForTrackEnd(struct Sprite *sprite) {
 
   if (sprite != NULL) {
     i = 0;
-    if (entry->script[entry->scriptOffset] != 241) {
+    if (entry->script[entry->scriptOffset] != ANIMCMD_HOLD) {
       do {
         wait(1);
         i++;
         if (i > 89)
           break;
-        if (entry->script[entry->scriptOffset] == 241)
+        if (entry->script[entry->scriptOffset] == ANIMCMD_HOLD)
           break;
       } while (sprite->lastNo == animation);
     }
@@ -171,8 +172,9 @@ s32 MapGrid_GetScreenRelativePosition(struct Actor *actor,
 
 /// Sets up the actor system: allocates and zeroes the 64 actors and the
 /// system's work, sets the outline's colours and registers the per-frame
-/// updates. The battle's mode, 4, moves the actors with Actor_UpdateAllMotion;
-/// modes 3 and 4 place their sprites with the fixed camera.
+/// updates (mode is an enum ActorSystemMode). A battle moves its actors with
+/// Actor_UpdateAllMotion; the World Map and a battle place their sprites with
+/// the fixed camera.
 void ActorSystem_Initialize(s32 mode) {
   struct ActorSystemWork *system;
   struct Actor *pool;
@@ -180,17 +182,17 @@ void ActorSystem_Initialize(s32 mode) {
   volatile u32 zero;
 
   system = HeapSlot_AllocEwram(HEAP_SLOT_ACTOR_SYSTEM, sizeof(*system));
-  pool = HeapSlot_AllocEwram(HEAP_SLOT_ACTORS, 64 * sizeof(*pool));
+  pool = HeapSlot_AllocEwram(HEAP_SLOT_ACTORS, ACTOR_COUNT * sizeof(*pool));
   ActorSystem_Configure(mode);
-  Dma_Fill32Cell(zero, 0, pool, 64 * sizeof(*pool));
+  Dma_Fill32Cell(zero, 0, pool, ACTOR_COUNT * sizeof(*pool));
   Dma_Fill32Cell(zero, 0, system, sizeof(*system));
-  if (mode == 4) {
+  if (mode == ACTOR_SYSTEM_BATTLE) {
     Task_Add(Actor_UpdateAllMotion, TASK_PASS_VBLANK + 10);
   } else {
     Task_Add(Actor_UpdateAllThumb, TASK_PASS_VBLANK + 11);
     Task_Add(Actor_MoveWithCarriers, TASK_PASS_VBLANK + 10);
   }
-  if (mode == 3 || mode == 4)
+  if (mode == ACTOR_SYSTEM_WORLD_MAP || mode == ACTOR_SYSTEM_BATTLE)
     Task_Add(ActorSystem_ProjectSprites, TASK_PASS_VBLANK);
   else
     Task_Add(ActorSystem_PlaceSprites, TASK_PASS_VBLANK);
@@ -198,8 +200,10 @@ void ActorSystem_Initialize(s32 mode) {
   system->fill = 0;
 }
 
+/// Unused: an empty routine beside the actor system's, in both games.
 UNUSED void ActorSystem_ReservedNoOpA(void) {}
 
+/// Unused: a second empty routine.
 UNUSED void ActorSystem_ReservedNoOpB(void) {}
 
 // Objects: create and release field objects, and render them each frame.
@@ -248,47 +252,50 @@ void Actor_Release(struct Actor *actor) {
 }
 
 /// Creates an actor at (x, y, z), in 16.16 pixels, or returns 0 when every slot
-/// is in use. id / 4096 is the kind of actor and the low 12 bits the sprite's
-/// animation id.
-struct Actor *Actor_Create(s32 id, FIXED x, FIXED y, FIXED z) {
+/// is in use. encodedSprite / 4096 is the kind of actor (enum
+/// ActorCreateKind) and its low 12 bits the sprite's animation id.
+struct Actor *Actor_Create(s32 encodedSprite, FIXED x, FIXED y, FIXED z) {
   struct Actor *object;
   void *sprite;
-  s32 kind;
-  void **entry;
+  s32 spriteStorageKind;
+  void **spriteSlots;
   volatile u32 zero;
 
-  kind = id / 4096;
-  id &= 0xfff;
+  spriteStorageKind = encodedSprite / (ACTOR_CREATE_SPRITE_MASK + 1);
+  encodedSprite &= ACTOR_CREATE_SPRITE_MASK;
   object = Actor_FindFree();
   if (object != NULL) {
     object->radius = 16;
-    switch (kind) {
-    case 0:
-      sprite = Sprite_Create(id);
+    switch (spriteStorageKind) {
+    case ACTOR_CREATE_ONE_SPRITE:
+      sprite = Sprite_Create(encodedSprite);
       if (sprite != NULL) {
-        object->spriteStorageKind = 1;
+        object->spriteStorageKind = ACTOR_SPRITE_ONE;
         object->sprite = sprite;
-        object->radius = Resource_GetMetadataRecordFar(id)->boxY >> 1;
+        object->radius =
+            Resource_GetMetadataRecordFar(encodedSprite)->boxY >> 1;
       } else {
-        object->spriteStorageKind = 0;
+        object->spriteStorageKind = ACTOR_SPRITE_NONE;
       }
       break;
     case ACTOR_CREATE_GROUP:
-      entry = (void **)((u32 *)Ram_HeapSlots->actorSystem +
-                        Ram_HeapSlots->actorSystem->count++ + 2);
-      object->spriteStorageKind = kind;
-      object->sprite = entry;
+      // Take a zeroed list of four sprites, and fill it with id and id + 1.
+      spriteSlots = (void **)((u32 *)Ram_HeapSlots->actorSystem +
+                              Ram_HeapSlots->actorSystem->count++ + 2);
+      object->spriteStorageKind = spriteStorageKind;
+      object->sprite = spriteSlots;
       zero = 0;
-      Dma_Set(&zero, entry, 0x85000004, REG_DMA3);
-      sprite = Sprite_Create(id);
+      Dma_Set(&zero, spriteSlots, DMA_FILL_WORDS(4), REG_DMA3);
+      sprite = Sprite_Create(encodedSprite);
       if (sprite != NULL) {
-        object->radius = Resource_GetMetadataRecordFar(id)->boxY >> 1;
-        *entry = sprite;
-        entry++;
+        object->radius =
+            Resource_GetMetadataRecordFar(encodedSprite)->boxY >> 1;
+        *spriteSlots = sprite;
+        spriteSlots++;
       }
-      sprite = Sprite_Create(id + 1);
+      sprite = Sprite_Create(encodedSprite + 1);
       if (sprite != NULL)
-        *entry = sprite;
+        *spriteSlots = sprite;
       break;
     }
   }
@@ -299,12 +306,12 @@ struct Actor *Actor_Create(s32 id, FIXED x, FIXED y, FIXED z) {
     object->scriptCursor = 0;
     object->scaleX = FIXED_ONE;
     object->scaleY = FIXED_ONE;
-    object->acceleration = toFIXED(1);
-    object->motionFlags = 3;
-    object->gravity = toFIXED(1);
-    object->bounce = 0x4000;
+    object->acceleration = FIXED_ONE;
+    object->motionFlags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
+    object->gravity = FIXED_ONE;
+    object->bounce = FIXED_ONE / 4;
     object->collisionFlags = 0;
-    object->steeringFlags = 1;
+    object->steeringFlags = ACTOR_FACES_MOTION;
     object->facing = DEGtoANG(90);
     object->riseBaseY = 0;
     object->homeX = x / toFIXED(1);
@@ -523,17 +530,17 @@ void Actor_StartCamera(struct Actor *actor, s32 watchedActorHandle) {
 /// returns as soon as the script idles, and after the limit whether or not it
 /// has.
 void Actor_WaitForScriptEnd(struct Actor *object) {
-  s32 cnt = 0;
+  s32 waitedFrames = 0;
 
   if (object->script != 0 &&
-      ((const s32 *)object->script)[object->scriptCursor] != 17) {
+      ((const s32 *)object->script)[object->scriptCursor] != SC_END) {
     do {
       wait(1);
-      cnt++;
-      if (cnt > 599)
+      waitedFrames++;
+      if (waitedFrames > 599)
         break;
     } while (object->script != 0 &&
-             ((const s32 *)object->script)[object->scriptCursor] != 17);
+             ((const s32 *)object->script)[object->scriptCursor] != SC_END);
   }
 }
 
@@ -613,18 +620,18 @@ void Actor_SetItemIcon(struct Actor *owner, s32 id) {
 
 /// The sprite id an actor is drawn with (the first halfword of its sprite's
 /// definition), or 0 for none.
-s32 Actor_GetSpriteId(u8 *object) {
-  u8 *track = *(u8 **)(object + 0x50);
+s32 Actor_GetSpriteId(struct Actor *actor) {
+  struct Sprite *sprite = actor->sprite;
 
-  if (object != NULL && track != NULL && track != (u8 *)-0x28)
-    return **(s16 **)(track + 0x28);
+  if (actor != NULL && sprite != NULL && sprite->entries != NULL)
+    return sprite->entries[0]->animationId;
   return 0;
 }
 
 /// Animation_WaitForTrackEnd on an actor's sprite.
-void Actor_WaitForTrackEnd(u8 *object) {
-  if (object != NULL)
-    Animation_WaitForTrackEnd(*(void **)(object + 0x50));
+void Actor_WaitForTrackEnd(struct Actor *actor) {
+  if (actor != NULL)
+    Animation_WaitForTrackEnd(actor->sprite);
 }
 
 /// Suspends the actor camera updates, starts the palette back to normal and, a
@@ -711,14 +718,14 @@ void ActorSystem_PlaceSprites(void) {
     object = Ram_HeapSlots->actors;
     system->used = zero;
   }
-  for (objectIndex = 0; objectIndex < 64; objectIndex++, object++) {
+  for (objectIndex = 0; objectIndex < ACTOR_COUNT; objectIndex++, object++) {
     if (object->script == NULL)
       continue;
     if (object->x.fixed != 0 || object->z.fixed != 0) {
       kind = object->spriteStorageKind & ACTOR_SPRITE_KIND_MASK;
-      if (kind == 0)
+      if (kind == ACTOR_SPRITE_NONE)
         continue;
-      if (kind != 1)
+      if (kind != ACTOR_SPRITE_ONE)
         continue;
       if ((u16)system->suspended != 0 && !(object->retainSpriteCache & 1)) {
         struct PlacedSprite *frozen = object->sprite;
@@ -751,12 +758,10 @@ void ActorSystem_PlaceSprites(void) {
             if (MapGrid_GetTerrainHeight(layer, probeX, feetZ) ==
                 object->groundHeight) {
               leftPriority = CELL_PRIORITY(cells, probeX, feetZ);
-              height = MapGrid_GetTerrainHeight(layer, probeX,
-                                                feetZ + toFIXED(16)) >>
-                       16;
-              rise = (MapGrid_GetTerrainHeight(layer, probeX,
-                                               feetZ + toFIXED(32)) >>
-                      16) -
+              height = FIXEDtoINT(
+                  MapGrid_GetTerrainHeight(layer, probeX, feetZ + toFIXED(16)));
+              rise = (FIXEDtoINT(MapGrid_GetTerrainHeight(
+                         layer, probeX, feetZ + toFIXED(32)))) -
                      16;
               if (rise > height)
                 height = rise;
@@ -767,12 +772,10 @@ void ActorSystem_PlaceSprites(void) {
             if (MapGrid_GetTerrainHeight(layer, probeX, feetZ) ==
                 object->groundHeight) {
               middlePriority = CELL_PRIORITY(cells, probeX, feetZ);
-              height = MapGrid_GetTerrainHeight(layer, probeX,
-                                                feetZ + toFIXED(16)) >>
-                       16;
-              rise = (MapGrid_GetTerrainHeight(layer, probeX,
-                                               feetZ + toFIXED(32)) >>
-                      16) -
+              height = FIXEDtoINT(
+                  MapGrid_GetTerrainHeight(layer, probeX, feetZ + toFIXED(16)));
+              rise = (FIXEDtoINT(MapGrid_GetTerrainHeight(
+                         layer, probeX, feetZ + toFIXED(32)))) -
                      16;
               if (rise > height)
                 height = rise;
@@ -781,13 +784,11 @@ void ActorSystem_PlaceSprites(void) {
             }
             probeX -= toFIXED(6);
             rightPriority = CELL_PRIORITY(cells, probeX, feetZ);
-            height =
-                MapGrid_GetTerrainHeight(layer, probeX, feetZ + toFIXED(16)) >>
-                16;
-            rise =
-                (MapGrid_GetTerrainHeight(layer, probeX, feetZ + toFIXED(32)) >>
-                 16) -
-                16;
+            height = FIXEDtoINT(
+                MapGrid_GetTerrainHeight(layer, probeX, feetZ + toFIXED(16)));
+            rise = (FIXEDtoINT(MapGrid_GetTerrainHeight(layer, probeX,
+                                                        feetZ + toFIXED(32)))) -
+                   16;
             if (rise > height)
               height = rise;
             if (height > objectHeight)
@@ -832,9 +833,9 @@ void ActorSystem_PlaceSprites(void) {
         point.y = dz - originY;
         point.groundHeight = object->groundHeight - originY;
         if (*priorityFlags & ACTOR_PRIORITY_UNDERFOOT) {
-          point.height += 0xfec00000;
-          point.y += 0xfec00000;
-          point.groundHeight += 0xfec00000;
+          point.height -= toFIXED(320);
+          point.y -= toFIXED(320);
+          point.groundHeight -= toFIXED(320);
         }
         if (*priorityFlags & ACTOR_PRIORITY_OVERHEAD) {
           point.height += toFIXED(320);
@@ -949,8 +950,8 @@ void ActorSystem_ProjectSprites(void) {
     Matrix_SetLookAt((s32 *)eye, (s32 *)target);
   }
   actor = Ram_HeapSlots->actors;
-  actor += 63;
-  for (i = 63; i >= 0; i--, actor--) {
+  actor += ACTOR_COUNT - 1;
+  for (i = ACTOR_COUNT - 1; i >= 0; i--, actor--) {
     // The upper half of a script's address in ROM is never zero.
     if (((u16 *)&actor->script)[1] != 0)
       Actor_PlaceSprites(actor, angle);

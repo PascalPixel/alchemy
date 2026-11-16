@@ -26,15 +26,6 @@ enum {
   ANIM_OAM_FIELD_PRIORITY = OBJ_PRIORITY(2)
 };
 
-struct ChildObject {
-  u8 unused[2]; ///< no code names it
-  u16 value;
-  u8 unusedAfterValue[8]; ///< no code names it
-  s32 active;
-  u8 unusedAfterActive[5]; ///< no code names it
-  u8 mode;
-};
-
 /// The sprite as Sprite_Create fills it: the image's three attribute
 /// words, its layout, then the shadow's three words.
 struct ResourceSprite {
@@ -43,7 +34,7 @@ struct ResourceSprite {
   u8 slot;
   u8 retainCacheEntry : 1;
   u8 useOwnScale : 1;
-  u8 unk11 : 6;
+  u8 sunkRows : 6;
   u16 rotation;
   u8 width;
   u8 height;
@@ -311,98 +302,90 @@ void Sprite_RemoveAnimationAt(struct Sprite *sprite, u32 index) {
   }
 }
 
-/// Starts animation no on a sprite animation when its metadata has it; with
-/// bit 7 of no set it keeps the place and timer of the script already running.
-void SpriteAnimation_Start(struct SpriteAnimation *work, s32 no) {
-  s32 hi;
-  struct AnimationMetadata *info;
-  s32 value;
+// Unlike Sprite_StartAnimation it does not mask SPRITE_ANIMATION_KEEP_PLACE
+// off, so with it set the index would pass animationCount only in a set of more
+// than 128 animations.
+/// Starts the indexed animation on a sprite animation when its metadata
+/// contains it.
+void SpriteAnimation_Start(struct SpriteAnimation *layer, s32 animation) {
+  s32 keepPlace;
+  struct AnimationMetadata *metadata;
+  s32 scriptAddress;
 
-  hi = 0x80 & no;
-  if (work->scripts != 0) {
-    info = Resource_GetMetadataRecordFar(work->animationId);
-    if (no < info->animationCount) {
-      value = (s32)work->scripts[no];
-      work->kind = info->drawKind;
-      work->script = (u8 *)value;
-      work->step = 0x10;
-      if (hi == 0) {
-        work->scriptOffset = hi;
-        work->timer = hi;
+  keepPlace = SPRITE_ANIMATION_KEEP_PLACE & animation;
+  if (layer->scripts != 0) {
+    metadata = Resource_GetMetadataRecordFar(layer->animationId);
+    if (animation < metadata->animationCount) {
+      scriptAddress = (s32)layer->scripts[animation];
+      layer->kind = metadata->drawKind;
+      layer->script = (u8 *)scriptAddress;
+      layer->step = SPRITE_ANIMATION_NORMAL_STEP;
+      if (keepPlace == 0) {
+        layer->scriptOffset = keepPlace;
+        layer->timer = keepPlace;
       }
     }
   }
 }
 
-/// Starts animation flags & 0x7f on every sprite animation of a sprite (bit 7
-/// keeps each sprite animation's place and timer), unless the sprite plays it
-/// already.
-s32 Sprite_StartAnimation(struct Sprite *state, s32 flags) {
-  s32 highBit;
-  s32 index;
+/// Starts an animation on every sprite animation of a sprite
+/// (SPRITE_ANIMATION_KEEP_PLACE keeps each one's place and timer), unless the
+/// sprite plays it already.
+s32 Sprite_StartAnimation(struct Sprite *sprite, s32 animation) {
+  s32 keepPlace;
+  s32 i;
 
-  highBit = flags & 0x80;
-  flags &= 0x7f;
+  keepPlace = animation & SPRITE_ANIMATION_KEEP_PLACE;
+  animation &= SPRITE_ANIMATION_INDEX_MASK;
 
-  if (state->lastNo != flags) {
-    index = 0;
+  if (sprite->lastNo != animation) {
+    i = 0;
     goto test_entry;
   entry_loop:
+    // Only the first sprite animation supplies the sprite's offsets.
     {
-      struct SpriteAnimation *entry = state->entries[index];
+      struct SpriteAnimation *layer = sprite->entries[i];
       struct AnimationMetadata *metadata;
       s32 selectedAnimation;
 
-      if (entry == 0)
-        goto next_entry;
-      if (entry->scripts == 0)
-        goto next_entry;
-
-      metadata = Resource_GetMetadataRecordFar(entry->animationId);
-      if (flags >= metadata->animationCount)
-        goto next_entry;
-
-      selectedAnimation = (s32)entry->scripts[flags];
-      entry->kind = metadata->drawKind;
-      entry->script = (u8 *)selectedAnimation;
-      entry->step = 0x10;
-      if (highBit == 0) {
-        entry->scriptOffset = 0;
-        entry->timer = 0;
+      if (layer != 0 && layer->scripts != 0) {
+        metadata = Resource_GetMetadataRecordFar(layer->animationId);
+        if (animation < metadata->animationCount) {
+          selectedAnimation = (s32)layer->scripts[animation];
+          layer->kind = metadata->drawKind;
+          layer->script = (u8 *)selectedAnimation;
+          layer->step = SPRITE_ANIMATION_NORMAL_STEP;
+          if (keepPlace == 0) {
+            layer->scriptOffset = 0;
+            layer->timer = 0;
+          }
+          if (i == 0) {
+            sprite->offsetY = metadata->adjustY;
+            sprite->offsetX = metadata->adjustX;
+          }
+        }
       }
-      if (index == 0) {
-        state->offsetY = metadata->adjustY;
-        state->offsetX = metadata->adjustX;
-      }
-      goto next_entry;
     }
-  next_entry:
-    index++;
+    i++;
   test_entry:
-    if (index < state->count)
+    if (i < sprite->count)
       goto entry_loop;
-    state->lastNo = flags;
+    sprite->lastNo = animation;
   }
   return 0;
 }
 
-struct ChildGroup {
-  u8 unused[27]; ///< no code names it
-  u8 count;
-  u8 unusedAfterCount[12]; ///< no code names it
-  struct ChildObject *children[1];
-};
-
 /// Sets each playing sprite animation's timer to the given duration in frames.
 /// Returns 0.
-s32 Sprite_SetAnimationTimers(struct ChildGroup *group, s32 value) {
+s32 Sprite_SetAnimationTimers(struct Sprite *sprite, s32 frames) {
   s32 i;
 
-  for (i = 0; i < group->count; i++) {
-    struct ChildObject *child = group->children[i];
+  for (i = 0; i < sprite->count; i++) {
+    struct SpriteAnimation *layer = sprite->entries[i];
 
-    if (child != NULL && child->active != 0) {
-      child->value = value << 4;
+    // The sprite animation timer counts sixteenths of a frame.
+    if (layer != NULL && layer->scripts != NULL) {
+      layer->timer = frames << 4;
     }
   }
   return 0;
@@ -421,16 +404,16 @@ void Sprite_SetAnimationSpeed(struct Sprite *sprite, s32 step) {
   }
 }
 
-/// Takes the sprite and layer pools (from the fixed heap blocks in mode 3,
-/// the heap otherwise) and clears them, loads the shadow tiles into VRAM cache
-/// entry VRAM_CACHE_ENTRY_ACTOR_SHADOW and copies the strided tile copier into
-/// RAM.
+/// Takes the sprite and layer pools (from EWRAM first on the World Map,
+/// ACTOR_SYSTEM_WORLD_MAP, and IWRAM first otherwise) and clears them, loads
+/// the shadow tiles into VRAM cache entry VRAM_CACHE_ENTRY_ACTOR_SHADOW and
+/// copies the strided tile copier into RAM.
 void ActorSystem_Configure(s32 mode) {
   void *sprites;
   void *layers;
   volatile u32 zero;
 
-  if (mode == 3) {
+  if (mode == ACTOR_SYSTEM_WORLD_MAP) {
     sprites = HeapSlot_AllocEwram(HEAP_SLOT_SPRITES,
                                   ANIM_OBJECT_COUNT * sizeof(struct Sprite));
     layers =
@@ -646,8 +629,9 @@ void Sprite_Destroy(struct Sprite *sprite) {
 }
 
 /// Sums the first cnt frame durations of animation id's entry number `no`.
-/// Commands are two bytes (command, value); 254, 241, 253 and 239 end the
-/// list, and the values of commands 245, 255 and those up to 238 count.
+/// Commands are two bytes (command, value); ANIMCMD_PLAY, ANIMCMD_HOLD,
+/// ANIMCMD_JUMP and ANIMCMD_END end the list, and the values of ANIMCMD_WAIT,
+/// ANIMCMD_BLANK and the frames below ANIMCMD_END count.
 s32 SpriteAnimation_SumCommandLengths(s32 id, u32 animation, s32 timedCount) {
   struct AnimationMetadata *metadata;
   u8 *script;

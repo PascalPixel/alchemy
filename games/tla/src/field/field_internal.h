@@ -29,6 +29,7 @@
 #include "field/actor_view.h"
 #include "battle/battle.h"
 #include "field/field.h"
+#include "field/field_work.h"
 #include "game/game.h"
 #include "graphics/graphics.h"
 #include "system/math_table.h"
@@ -93,7 +94,7 @@ struct PlayerSprite {
   u8 palette : 4;
   u8 unusedAfterPalette[7]; ///< no code names it
   u8 cacheFlags : 2;        ///< retainCacheEntry and useOwnScale
-  u8 sunkRows : 6; ///< rows the picture is sunk (flags bit 3) or shaded (bit 2)
+  u8 sunkRows : 6; ///< rows SPRITE_FLAG_SUNK sinks or SPRITE_FLAG_SHADED shades
   u16 rotation;
   u8 unusedAfterRotation[5]; ///< no code names it
   u8 dirty;
@@ -229,6 +230,19 @@ enum {
   /// Sixteenths of a frame taken off a sprite animation's timer each frame: one
   /// frame.
   SPRITE_ANIMATION_NORMAL_STEP = 16
+};
+
+/// What stopped the leader's step this frame (Actor_UpdatePlayerControl,
+/// Actor_MoveOnWorldMap, Actor_UpdateHoverControl and the climbing and rope
+/// controls).
+enum PlayerStepBlock {
+  PLAYER_STEP_BLOCKED_BY_MAP = 1, ///< every heading tried runs into the map
+  /// A solid actor ahead, or one with no room to be pushed.
+  PLAYER_STEP_BLOCKED_BY_ACTOR = 2,
+  PLAYER_STEP_BLOCKED = 3, ///< either of the two
+  /// No step, and none counted as blocked: the pad is not held, or a climb
+  /// meets a wall.
+  PLAYER_STEP_STOPPED = 4
 };
 
 /// Layered-map viewport distances in 16.16 pixels. The followed point is below

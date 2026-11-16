@@ -91,6 +91,8 @@ enum SuperLuckyDicePictures {
   DICE_PICTURES_DOUBLE_UP = 5 ///< Double Up and Cash Out
 };
 
+/// Runs Super Lucky Dice, every layer off until it sets up its own display,
+/// and returns 0.
 s32 SuperLuckyDice_Start(void) {
   REG_DISPCNT = DISPCNT_OBJ_1D_MAP;
   SuperLuckyDice_Run();
@@ -103,7 +105,6 @@ void SuperLuckyDice_ResetViewDefaults(void) {
   struct Point local;
   s32 *result;
   u32 ratio;
-  u32 param;
 
   state->pitch = 147 << 8;
   state->distance = 255 << 17;
@@ -126,15 +127,12 @@ void SuperLuckyDice_ResetViewDefaults(void) {
   local.z = state->distance;
   Iwram_TransformVector(&local, result);
 
-  param = 250;
-  param <<= 16;
-  ratio = Iwram_RatioMulQ14(param, 192 << 8);
-
-  param = 250;
-  param <<= 16;
-  Projection_Set(param, ratio, 0x7fff0000);
+  ratio = Iwram_RatioMulQ14(toFIXED(250), 192 << 8);
+  Projection_Set(toFIXED(250), ratio, 0x7fff0000);
 }
 
+/// Writes count RGB555 colours from source to destination, each channel
+/// multiplied by scale (16.16, FIXED_ONE unchanged). Returns 0.
 s32 SuperLuckyDice_ScaleRgb555Buffer(u16 *source, u16 *destination, s32 scale,
                                      s32 count) {
   s32 remaining;
@@ -195,6 +193,9 @@ void SuperLuckyDice_BrightenColors(u16 *source, u16 *destination, u32 count,
   }
 }
 
+/// Draws value as digits small digit sprites ending at x, 10 pixels apart,
+/// leading zeros skipped but for the last, tiles PINK_DIGIT_TILES + 4 * digit
+/// in palette. Returns the next free sprite.
 s32 SuperLuckyDice_DrawNumber(s32 sprite, s32 x, s32 y, s32 value, s32 palette,
                               s32 digits) {
   struct DiceSprites *sprites;
@@ -263,8 +264,8 @@ s32 SuperLuckyDice_DrawLargeNumber(s32 sprite, s32 x, s32 y, s32 value,
 /// the number of matching pairs: 2 for one, 3 for two, 4 for three, 0 for
 /// none. The matched values are collected in a local array the score never
 /// reads.
-// The native's stack frame and stores keep that array.
 s32 SuperLuckyDice_ScoreDice(s32 *dice) {
+  // The native's stack frame and stores keep this array.
   s32 matches[2];
   s32 score;
   s32 pairs;

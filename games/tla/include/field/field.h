@@ -149,6 +149,10 @@ enum ActorCreateKind {
   ACTOR_CREATE_NO_SPRITE = 8
 };
 
+/// The sprite id in Actor_Create's id, below its enum ActorCreateKind (id /
+/// 4096).
+#define ACTOR_CREATE_SPRITE_MASK 0xfff
+
 /// The world map's still picture (story.s): its tiles, packed (tagged LZ).
 extern u8 gWorldMapPackedTiles[];
 /// The still picture's tile map, packed (tagged LZ), decoded after its tiles.

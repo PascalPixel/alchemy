@@ -1215,9 +1215,9 @@ s32 MapGrid_IsWallAt(s32 *position) {
 
 /// The place of the world map block under position (blocks 32 pixels square on
 /// a 32 by 32 grid), WORLD_MAP_NO_PLACE where the map has none.
-// XXX: what the byte numbers besides 255; the world map scene's events of
-// kind 2 against the blocks in gCellPictures would settle it.
 s32 WorldMap_GetBlockPlace(struct WorldPosition *position) {
+  // XXX: what the byte numbers besides 255; the world map scene's events of
+  // kind 2 against the blocks in gCellPictures would settle it.
   s32 z = position->y;
   s32 x = position->x;
 

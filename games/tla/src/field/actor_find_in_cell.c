@@ -19,9 +19,9 @@ struct Actor *Actor_FindInCell(s32 *position, struct Actor *self) {
   objects = &work->actors[8];
   for (; i < 64; i++) {
     object = *objects++;
-    if (position[0] >> 20 == FIELD_CELL(object->x.fixed) &&
-        position[1] >> 20 == FIELD_CELL(object->y.fixed) &&
-        position[2] >> 20 == FIELD_CELL(object->z.fixed))
+    if (FIELD_CELL(position[0]) == FIELD_CELL(object->x.fixed) &&
+        FIELD_CELL(position[1]) == FIELD_CELL(object->y.fixed) &&
+        FIELD_CELL(position[2]) == FIELD_CELL(object->z.fixed))
       return object;
   }
   return NULL;

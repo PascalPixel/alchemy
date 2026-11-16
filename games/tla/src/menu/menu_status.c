@@ -877,10 +877,14 @@ void StatusScreen_DrawSelectionLabels(s32 target, s32 selected,
 #define HELP_LENGTH 64
 #endif
 
-u32 Unit_GetExperienceForLevelFar(s32 owner_id, s32 level);
+/// Returns the experience party member memberId needs for level.
+u32 Unit_GetExperienceForLevelFar(s32 memberId, s32 level);
+/// Copies a message's text, its arguments expanded, into buffer: up to length
+/// characters with its terminator.
 void Message_CopyExpandedFar(s32 messageId, void *buffer, s32 length);
-void Text_DrawWideStringAtOffsetFar(void *buffer, void *destination, s32 offset,
-                                    s32 terminator);
+/// Draws a decoded string of 16-bit characters into window at pixel (x, y),
+/// all at once.
+void Text_DrawWideStringAtOffsetFar(void *text, void *window, s32 x, s32 y);
 
 /// Writes the help text of status entry messageVariant into destination: the
 /// entries skip Djinn when the party has none (preserveVariant 0); the

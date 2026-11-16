@@ -90,6 +90,8 @@ s32 PsynergyMenu_Run(void) {
   return result;
 }
 
+/// Returns whether the scene has a trigger for field Psynergy type on what it
+/// would act on.
 s32 Scene_HasPsynergyTriggerFar(s32 type);
 
 /// PsynergyMenuWork.flags: the Psynergy list shows the shortcut help (Select

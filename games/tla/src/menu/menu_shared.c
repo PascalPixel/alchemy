@@ -57,6 +57,7 @@ void Window_InitializeWork(s32 unused) {
 
 void Window_CloseFar();
 struct Window *Window_CreateFar(s32 x, s32 y, s32 width, s32 height, s32 style);
+/// Redraws a window empty, its border and fill, at its current rectangle.
 void WindowSprite_RedrawSavedRectFar(struct Window *window);
 
 /// Creates *handle's window if absent and returns 1. Otherwise returns 0,
@@ -136,11 +137,16 @@ enum StatusPanelKind {
 /// The status panel's level label: `Lv`; `Nv.` in Spanish, `Niv` in French.
 extern const u8 gStatusPanel_LvString[];
 
-void Window_ClearInteriorTilesFar(struct Window *window, s32 x, s32 y,
-                                  s32 width, s32 height);
+/// Clears an area of a window's interior to the window fill: left, top, right
+/// and bottom are pixels inside it, and the area covers every tile they touch.
+void Window_ClearInteriorTilesFar(struct Window *window, s32 left, s32 top,
+                                  s32 right, s32 bottom);
+/// Releases every window sprite in a window's list and empties it.
 void WindowSprite_ClearListFar(struct Window *window);
-void *Portrait_CreateFar(s32 owner, s32 x, s32 y, struct Window *window, s32 a,
-                         s32 b);
+/// Creates party member owner's portrait in window at pixel (x, y), with side's
+/// palette.
+void *Portrait_CreateFar(s32 owner, s32 position, s32 side,
+                         struct Window *window, s32 x, s32 y);
 void Unit_UpdateClassFar(s32 owner);
 
 /// Draws the status panel of the Item and Psynergy screens for the party

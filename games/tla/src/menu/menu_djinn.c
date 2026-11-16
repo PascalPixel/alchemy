@@ -135,6 +135,8 @@ s32 DjinnMenu_SelectDjinn(s32 mode);
 s32 DjinnMenu_ShowMemberStatus(void);
 s32 DjinnMenu_ShowHelp(void);
 s32 PsynergyList_RunCompareLoop(u32 mode);
+/// Moves a Djinni from owner to recipient, set or on standby as it was;
+/// returns -1 when it cannot.
 s32 Djinn_TransferFar(s32 owner, s32 element, s32 index, s32 recipient);
 
 u32 Djinn_PutOnStandbyFar(s32 owner, s32 element, s32 index);
@@ -456,6 +458,8 @@ void DjinnMenu_AdjustPalettes(s32 brightnessDelta) {
   }
 }
 
+/// Copies the window font's ten digit tiles twice into tiles, the first copy
+/// with colour 1 drawn as colour 10.
 void Graphics_ExpandVramTilesByColorTableFar(void *tiles);
 s32 Palette_GetBasicSpriteColors(void);
 
@@ -791,6 +795,8 @@ void Window_SetInteriorRectPalette(struct Window *panel, s32 x, s32 y,
                         height, palette);
 }
 
+/// Builds a message's render entries and queues them in window; returns 0 when
+/// the message is empty or there is no window.
 struct UiChannelSlot *Message_OpenDecodedFar(void *window, s32 message);
 
 /// The Djinn menu's help, opened by Select on the first chooser: a list of

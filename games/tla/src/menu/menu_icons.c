@@ -249,6 +249,7 @@ void Menu_UpdateEntryObjectTransforms(void) {
   }
 }
 
+/// Returns the sprite party member id's figure shows.
 s32 Party_GetCharacterSpriteFar(s32 id);
 
 /// Menu_CreateOwnerEntryObjects for two characters (-1 for none): their

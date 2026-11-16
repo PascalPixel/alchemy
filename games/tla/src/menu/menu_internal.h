@@ -484,15 +484,25 @@ struct DjinnMenuBackdrop;
 s32 GameFlag_Get(s32);
 void GameFlag_Clear(s32 flag_no);
 s32 Inventory_EquipFar(s32 owner, s32 slot);
+/// Draws an empty window at tile (x, y), width by height tiles, and frees the
+/// text tiles the rectangle showed.
 void Window_DrawBorderFar(s32 x, s32 y, s32 width, s32 height);
+/// Erases a rectangle of the windows' tilemap, in tiles, and frees the text
+/// tiles it showed.
 void Window_EraseBorderRectFar(s32 x, s32 y, s32 width, s32 height);
+/// Frees the second range of text tiles and, with flag set, lets text take
+/// them too.
 void Text_UseExtraTilesFar(s32 flag);
+/// Marks the text tiles the tilemap shows and frees those it no longer shows.
 void Window_MarkVisibleTextTilesFar(void);
 void Menu_CreateOwnerEntryObjects(s32 first);
 void Menu_HighlightPageEntry(s32 unused, s32 index, s32 count);
 s32 Menu_MoveGridCursor(s32 *selection, s32 count, s32 columns);
+/// Loads entry id's icon of kind mode into sprite tile slot slot (a free one
+/// when -1).
 void Resource_LoadByModeIntoSlotFar(s32 mode, s32 id, s32 slot, s32 flags);
 s32 Sprite_StartAnimationFar(void *object, s32 argument);
+/// Animates the page arrows on a window's top border, from tile offset.
 void Link_DrawPageArrowsFar(s32 offset);
 void Menu_UpdateEntryObjectTransforms(void);
 void Input_ResetKeyRepeat(void);

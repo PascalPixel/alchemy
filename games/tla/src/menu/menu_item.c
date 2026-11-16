@@ -1749,6 +1749,7 @@ s32 ItemMenu_ChooseCommand(void) {
 #define COMMAND_AVAILABLE 1
 
 s32 Item_ClassifyUseMode(s32 owner, s32 item);
+/// Returns whether the scene has an event for item on what the leader faces.
 s32 Scene_HasItemTriggerFar(s32 item);
 
 /// Fills commandStates (indexed by ItemMenuCommand) with
@@ -2438,7 +2439,9 @@ void ItemMenu_FitMessageWindowToQuestion(void) {
 /// under the "How many?" question.
 extern const u8 gMenu_QuantityTiles[];
 
-void QuantityBar_FillFar(s32 value, s32 column, void *tiles);
+/// Colours the first count segments of the quantity bar in tiles, each two
+/// pixels wide, in colour color.
+void QuantityBar_FillFar(s32 count, s32 color, void *tiles);
 
 /// Asks how many of the selected item stack to give or drop: Left and Right
 /// choose a number from 1 to quantityRange (shown as baseQuantity + 1 up to

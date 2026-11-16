@@ -31,25 +31,14 @@
 /// Indra Cavern: set once Lash has tied the rope between its posts.
 #define FLAG_INDRA_ROPE_TIED FLAG_SCENE_TEMP_00
 
-/// The grey blocks of Angara Cavern, by actor id, ended by -1.
 extern s16 gCaverns_AngaraBlocks[];
-/// Osenia Cavern's exit regions: the two passages' mouths, exits 4 and 5.
 extern s16 gCaverns_OseniaRegions[];
-/// Osenia and Atteka Caverns' actors: the passage marker.
 extern struct ActorPlacement gCaverns_Placements[];
-/// Indra Cavern's actors, in CavernsIndraActorId's order.
 extern struct ActorPlacement gCaverns_IndraPlacements[];
-/// Angara Cavern's actors, in CavernsAngaraActorId's order.
 extern struct ActorPlacement gCaverns_AngaraPlacements[];
-/// Osenia Cavern's exit, its two passages' mouths walked into from three sides,
-/// and Scoop on its sand.
 extern struct Trigger gCaverns_OseniaTriggers[];
-/// Indra Cavern's exit, its gap, Lash on the rope post and Move on the pillar.
 extern struct Trigger gCaverns_IndraTriggers[];
-/// Atteka Cavern's exit and Parch on its water.
 extern struct Trigger gCaverns_AttekaTriggers[];
-/// Angara Cavern's exits and stairs, its door, and pushing, Move and Carry on
-/// either grey block until they are stacked.
 extern struct Trigger gCaverns_AngaraTriggers[];
 
 void Caverns_PlaceAngaraBlocks(const s16 *data);
@@ -710,6 +699,7 @@ u32 gFieldEffect_LongScript[] = {
     SC_END,
 };
 
+/// The grey blocks of Angara Cavern, by actor id, ended by -1.
 s16 gCaverns_AngaraBlocks[] = {
     ACTOR_FIRST_BLOCK, ACTOR_SECOND_BLOCK, -1, 0,
 };
@@ -725,6 +715,7 @@ struct SceneEntrance gSceneEntrances[] = {
     {SCENE_TABLE_END},
 };
 
+/// Osenia Cavern's exit regions: the two passages' mouths, exits 4 and 5.
 s16 gCaverns_OseniaRegions[] = {
     132, 28, 692, 140, 36, 700, -1, 4,
     292, 28, 692, 300, 36, 700, -1, 5,
@@ -755,11 +746,13 @@ u32 gSceneExits[] = {
     SCENE_EXITS_END,
 };
 
+/// Osenia and Atteka Caverns' actors: the passage marker.
 struct ActorPlacement gCaverns_Placements[] = {
     ACTOR_PLACEMENT(SPRITE_UNSEEN_MARKER, CONDITION_ALWAYS, 7, 0, 0, 0, FACING_NORTH, TALK_FACING_KEEP, 0),
     {SCENE_TABLE_END},
 };
 
+/// Indra Cavern's actors, in CavernsIndraActorId's order.
 struct ActorPlacement gCaverns_IndraPlacements[] = {
     ACTOR_PLACEMENT(SPRITE_TIGHTROPE_POST, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 328, 0, 168, FACING_NORTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(SPRITE_TIGHTROPE_POST, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 280, 0, 168, FACING_NORTH, TALK_FACING_KEEP, 0),
@@ -767,6 +760,7 @@ struct ActorPlacement gCaverns_IndraPlacements[] = {
     {SCENE_TABLE_END},
 };
 
+/// Angara Cavern's actors, in CavernsAngaraActorId's order.
 struct ActorPlacement gCaverns_AngaraPlacements[] = {
     ACTOR_PLACEMENT(SPRITE_SPIRAL_PILLAR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 536, 0, 552, FACING_NORTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(SPRITE_SPIRAL_PILLAR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 600, 0, 536, FACING_NORTH, TALK_FACING_KEEP, 0),
@@ -775,6 +769,8 @@ struct ActorPlacement gCaverns_AngaraPlacements[] = {
     {SCENE_TABLE_END},
 };
 
+/// Osenia Cavern's exit, its two passages' mouths walked into from three sides,
+/// and Scoop on its sand.
 struct Trigger gCaverns_OseniaTriggers[] = {
     {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
     {STEP_TRIGGER_WALKING_INTO(FACING_SOUTH), 2, CONDITION_ALWAYS, EVENT(Caverns_WalkSouthIntoPassage)},
@@ -787,6 +783,7 @@ struct Trigger gCaverns_OseniaTriggers[] = {
     {TRIGGER_TABLE_END},
 };
 
+/// Indra Cavern's exit, its gap, Lash on the rope post and Move on the pillar.
 struct Trigger gCaverns_IndraTriggers[] = {
     {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
     {STEP_TRIGGER_WALKING_INTO(FACING_EAST), 10, CONDITION_ALWAYS, EVENT(Caverns_JumpEastAcrossGap)},
@@ -795,12 +792,15 @@ struct Trigger gCaverns_IndraTriggers[] = {
     {TRIGGER_TABLE_END},
 };
 
+/// Atteka Cavern's exit and Parch on its water.
 struct Trigger gCaverns_AttekaTriggers[] = {
     {TRIGGER_EXIT, 5, CONDITION_ALWAYS, 5},
     {PSYNERGY_PHASE_ON_CELL(ABILITY_PARCH, PSYNERGY_PHASE_ACTS), 60, CONDITION_ALWAYS, EVENT(Caverns_ParchAttekaWater)},
     {TRIGGER_TABLE_END},
 };
 
+/// Angara Cavern's exits and stairs, its door, and pushing, Move and Carry on
+/// either grey block until they are stacked.
 struct Trigger gCaverns_AngaraTriggers[] = {
     {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
     {TRIGGER_EXIT | EXIT_STYLE_STAIRS_DOWN, 2, CONDITION_ALWAYS, 2},

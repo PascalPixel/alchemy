@@ -43,6 +43,10 @@ extern u8 gBgTileBuffer[];
 /// The map's shape table, 16 KB of EWRAM: 4-byte entries that a map cell's
 /// shape indexes, as The Broken Seal's.
 extern u8 gMapGridShapes[];
+/// The shape a scene gives the cells it marks, rewriting the shape's entry with
+/// their height in its second byte: Apojii's cell markers and Aqua Rock's
+/// spouts.
+#define MAP_SHAPE_MARKED 120
 
 void WorldMap_UpdateRegionTint(s32 region, s32 gradual);
 

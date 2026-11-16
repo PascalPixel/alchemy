@@ -55,6 +55,9 @@
 #include "fixed_math.h"
 #include "text/msg_ids.h"
 
+/// The -1 that ends a list of actor ids or table rows, read as a u16.
+#define ID_LIST_END 0xffff
+
 extern struct MapCell gMapGridCellBuffer[];
 
 void Scene_SetActorSpritePriority(struct Actor *actor, s32 priority);
@@ -446,9 +449,9 @@ s32 MagmaRockInside_SwapCells(u32 layer, s32 x, s32 y, s32 value) {
   return old;
 }
 
-/// For each id of a list ended by 0xffff: clears the object's mark and, on a
-/// cell with attribute bit 6, blocks the cells ahead of and behind it and sets
-/// the mark.
+/// For each id of a list ended by ID_LIST_END: clears the object's mark and, on
+/// a cell with attribute bit 6, blocks the cells ahead of and behind it and
+/// sets the mark.
 void MagmaRockInside_MarkBlockCells(u16 *ids) {
   struct Actor *actor;
   u8 *blocked;
@@ -457,7 +460,7 @@ void MagmaRockInside_MarkBlockCells(u16 *ids) {
   struct MapCell *cell;
   s32 x, z;
 
-  while (*ids != 0xffff) {
+  while (*ids != ID_LIST_END) {
     actor = Actor_Get(*ids);
     blocked = &actor->riseEnabled;
     *blocked = 0;
@@ -752,21 +755,21 @@ void MagmaRockInside_FlashStatue(struct Actor *actor) {
     FieldActor_SetSpriteColor(actor, SPRITE_COLOR_NORMAL);
 }
 
-// The cell watch's table lookup over (id, cell, value) rows ended by 0xffff:
-// for the row of the cell under the watch, sets the watch's object to the row's
-// object and returns its value; otherwise returns the value of the last row
-// passed (0 for none).
+// The cell watch's table lookup over (id, cell, value) rows ended by
+// ID_LIST_END: for the row of the cell under the watch, sets the watch's object
+// to the row's object and returns its value; otherwise returns the value of the
+// last row passed (0 for none).
 
 /// Looks up the cell under the field Psynergy in an (actor, cell, value) table
-/// ended by 0xffff: on a match, makes the row's actor the target and returns
-/// its value.
+/// ended by ID_LIST_END: on a match, makes the row's actor the target and
+/// returns its value.
 s32 MagmaRockInside_FindStatue(u16 *table) {
   struct FieldEffectWork *watch = Ram_HeapSlots->fieldEffectWork;
   s32 result = 0;
   s32 cell = MapCell_Get(0, FIELD_CELL(watch->x), FIELD_CELL(watch->z)) >> 8;
   u32 id;
 
-  for (; *table != 0xffff; result = *table++) {
+  for (; *table != ID_LIST_END; result = *table++) {
     id = *table++;
     if (cell == *table++) {
       watch->child = Actor_Get(id);
@@ -1726,7 +1729,7 @@ void MagmaRockInside_StartStepCells(void) {
   s32 priority;
 
   gMagmaRockInside_LastStepCell = none;
-  priority = 0x480;
+  priority = TASK_PASS_VBLANK;
   FieldTask_AddFrame(MagmaRockInside_TrackStepCell, priority);
 }
 
@@ -1933,9 +1936,9 @@ struct SparkOrbiter {
   s32 x;
   s32 y;
   s32 z;
-  u8 beforeRadius[0x38];
+  u8 beforeRadius[56];
   s32 radius;
-  u8 beforeTimer[0x12];
+  u8 beforeTimer[18];
   u8 stepsLeft;
   u8 afterStepsLeft;
   u16 angle;
@@ -2093,7 +2096,7 @@ void MagmaRockInside_LearnBlaze(s32 a, s32 b) {
     spark = FieldActor_Create(SPRITE_PARTICLE, second->x.fixed, second->y.fixed,
                               second->z.fixed);
     Event_PlaySound(SE_SPARKS);
-    spark->timer = (Random16() & 0x7fff) + 0x8000;
+    spark->timer = (Random16() & 0x7fff) + DEGtoANG(180);
     spark->userValue = (((i & 1) << 1) - 1) << ((Random16() & 3) + 9);
     noMotion = 0;
     spark->motionFlags = noMotion;
@@ -2125,7 +2128,7 @@ void MagmaRockInside_LearnBlaze(s32 a, s32 b) {
                               second->y.fixed + i * toFIXED(1) - toFIXED(8),
                               second->z.fixed);
     riser->timer = Random16();
-    riser->userValue = 0x800;
+    riser->userValue = TRIG_TURN / 32;
     ((struct Orbit *)riser)->phase = i;
     ((struct Orbit *)riser)->growth = 1;
     riser->bounce = riser->x.fixed;
@@ -2720,7 +2723,7 @@ void MagmaRockInside_CrumblePillar(const void *data, s32 id) {
   struct Actor *actor = Actor_Get(id);
   s32 flag;
 
-  while (entry->actor != 0xffff) {
+  while (entry->actor != ID_LIST_END) {
     if (entry->actor != id) {
       entry++;
       continue;
@@ -2787,7 +2790,7 @@ void MagmaRockInside_StepOnTrap(const u16 *table) {
   trap = Actor_FindAtCell(position, 0);
   if (trap == 0)
     return;
-  while (*table != 0xffff) {
+  while (*table != ID_LIST_END) {
     id = table[0];
     if (Actor_GetById(id) != trap) {
       table += 2;
@@ -2883,9 +2886,9 @@ void MagmaRockInside_SpawnDustRing(void) {
       effect->velocity.y = 0;
       effect->velocity.z = Math_Sin(i << 12);
       effect->velocity.x += effect->velocity.x >> 1;
-      effect->velocity.x += ((Random16() * 3) << 14 >> 16) - 0x6000;
-      effect->velocity.z += ((Random16() * 3) << 13 >> 16) - 0x3000;
-      effect->spin = ((Random16() << 12) >> 16) - 0x800;
+      effect->velocity.x += ((Random16() * 3) << 14 >> 16) - toFIXED(3) / 8;
+      effect->velocity.z += ((Random16() * 3) << 13 >> 16) - toFIXED(3) / 16;
+      effect->spin = ((Random16() << 12) >> 16) - TRIG_TURN / 32;
       effect->scaleRateX = 0;
       effect->scaleRateY = 0;
       effect->update = Effect_AdvanceMotionAtLeaderPriority;
@@ -2930,7 +2933,7 @@ void BattleEffect_StepVector3(struct Particle *particle, s32 damping,
 /// The falling rocks' work: their tiles, 64 rocks and their sprites, in a
 /// ring that next walks round.
 struct RockWork {
-  u8 tiles[0x500];
+  u8 tiles[1280];
   struct Rock rocks[64];
   struct EffectSprite sprites[64];
   s16 next;
@@ -2991,7 +2994,7 @@ void MagmaRockInside_StartFallingRocks(void) {
   MagmaRockInside_DecompressTaggedLz(
       Resource_GetTableEntry(RESOURCE_FALLING_ROCK), work);
   entry = VramCache_FindFreeEntry();
-  tile = Vram_Load(entry, 0x500, work);
+  tile = Vram_Load(entry, 1280, work);
   work->tileBase = tile;
   work->resource = entry;
   rock = work->rocks;

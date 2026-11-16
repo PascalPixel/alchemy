@@ -648,7 +648,7 @@ void Palette_SetColorsFade(u16 *slots, u16 *colours, u16 *a, u16 *b);
 extern s16 gMarsLighthouseRoomM_FadeSlots[];
 extern s16 gMarsLighthouseRoomM_FadeColorsFrom[];
 extern s16 gMarsLighthouseRoomM_FadeColorsTo[];
-extern u32 gMarsLighthouseRoomM_FadeOrder[];
+extern u16 gMarsLighthouseRoomM_FadeOrder[];
 
 s32 Scene_Initialize(void) {
   s32 entrance;
@@ -807,7 +807,7 @@ s32 Scene_PrepareMap(void) {
       }
       MarsLighthouseRoomM_StartDoorways(entrance);
       {
-        s32 priority = 0x480;
+        s32 priority = TASK_PASS_VBLANK;
 
         FieldTask_AddFrame(MarsLighthouseRoomM_CycleHallFlames, priority);
       }
@@ -1189,10 +1189,11 @@ void Ride_SpawnSpark(struct Vector3 *position, s32 value, s32 mode) {
   s32 spin;
 
   if (actor != 0) {
-    actor->bounce = Trig_Cos(((u32)(Random16() * 3 << 12) >> 16) + 0x3000);
+    actor->bounce =
+        Trig_Cos(((u32)(Random16() * 3 << 12) >> 16) + TRIG_TURN * 3 / 16);
     actor->gravity = (u16)Random16();
     actor->riseBaseY = ((u32)(Random16() << 17) >> 16) + value;
-    spin = (u16)Random16() - 0x8000;
+    spin = (u16)Random16() - DEGtoANG(180);
     actor->timer = spin;
     ((void (*)())Actor_SetupScripted)(actor, 2);
     actor->update = Ride_UpdateDrift;
@@ -1393,10 +1394,10 @@ s16 gMarsLighthouseRoomM_FadeColorsTo[] = {
     5, 21, 31, 31, 31, -1,
 };
 
-u32 gMarsLighthouseRoomM_FadeOrder[] = {
-    0xc900ce, 0xcb00ca, 0xcd00cc, 0xce00cd, 0xca00c9, 0xcc00cb,
-    0xcd00cc, 0xc900ce, 0xcb00ca, 0xcc00cb, 0xce00cd, 0xca00c9,
-    0xcb00ca, 0xcd00cc, 0xc900ce, 0xca00c9, 0xcc00cb, 0xce00cd,
+u16 gMarsLighthouseRoomM_FadeOrder[] ALIGNED(4) = {
+    206, 201, 202, 203, 204, 205, 205, 206, 201, 202, 203, 204,
+    204, 205, 206, 201, 202, 203, 203, 204, 205, 206, 201, 202,
+    202, 203, 204, 205, 206, 201, 201, 202, 203, 204, 205, 206,
 };
 
 struct SceneEntrance gSceneEntrances[] = {
@@ -1522,15 +1523,15 @@ struct Trigger gMarsLighthouseRoomM_Room5Triggers[] = {
 };
 
 s32 gMarsLighthouseRoomM_RubbleBounceScript[] = {
-    SC_ADD(SW_SCALE_X, 0x3000),
-    SC_ADD(SW_SCALE_Y, 0x3000),
-    SC_ADD(SW_Y, -0x1800),
+    SC_ADD(SW_SCALE_X, FIXED_ONE * 3 / 16),
+    SC_ADD(SW_SCALE_Y, FIXED_ONE * 3 / 16),
+    SC_ADD(SW_Y, -toFIXED(3) / 32),
     SC_WAIT(1),
     SC_LOOP(8, SC_TOP),
     SC_LABEL(1),
     SC_ADD(SW_SCALE_X, -FIXED_ONE * 3 / 16),
     SC_ADD(SW_SCALE_Y, -FIXED_ONE * 3 / 16),
-    SC_ADD(SW_Y, 0x1800),
+    SC_ADD(SW_Y, toFIXED(3) / 32),
     SC_WAIT(1),
     SC_LOOP(12, SC_TO(1)),
     SC_POSITION_ORIGIN,

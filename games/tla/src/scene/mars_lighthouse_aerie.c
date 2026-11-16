@@ -29,6 +29,7 @@
 #include "field/field.h"
 #include "game/game.h"
 #include "graphics/graphics.h"
+#include "graphics/glyph.h"
 #include "system/math_table.h"
 #include "menu/menu.h"
 #include "sound/sound.h"
@@ -243,7 +244,7 @@ void MarsLighthouseAerie_OrbitBeaconFire(struct Actor *actor) {
   actor->z.fixed = across;
   actor->targetX = actor->x.fixed;
   actor->targetZ = across;
-  *pangle -= 0x800;
+  *pangle -= TRIG_TURN / 32;
 }
 
 const struct SceneEntrance *Scene_GetEntrances(void) { return gSceneEntrances; }
@@ -276,7 +277,7 @@ const struct Trigger *Scene_GetTriggers(void) { return gSceneEvents; }
 extern s16 gMarsLighthouseAerie_FadeSlots[];
 extern s16 gMarsLighthouseAerie_FadeColorsFrom[];
 extern s16 gMarsLighthouseAerie_FadeColorsTo[];
-extern u32 gMarsLighthouseAerie_FadeOrder[];
+extern u16 gMarsLighthouseAerie_FadeOrder[];
 
 void Actor_SetSpriteColorMode(struct Actor *actor, s32 value);
 void Palette_SetColorsFade(u16 *slots, u16 *colours, u16 *a, u16 *b);
@@ -428,7 +429,7 @@ void MarsLighthouseAerie_SwingBeaconFlame(struct Actor *actor) {
     ((struct FieldSprite *)actor->sprite)->priority = 2;
   else
     ((struct FieldSprite *)actor->sprite)->priority = 1;
-  *pangle -= 0x200;
+  *pangle -= TRIG_TURN / 128;
 }
 
 /// The actor stands looking about.
@@ -596,7 +597,7 @@ void MarsLighthouseAerie_FaceDoomDragon(void) {
   Actor_MoveToAndWait(gMainRoutineWork.leaderActorId, 504, 320);
   Actor_Get(gMainRoutineWork.leaderActorId)->steeringFlags |=
       ACTOR_FACES_MOTION;
-  *palette = 0x7fff;
+  *palette = RGB_WHITE;
   System_Wait(1);
   // "So, you are still intent on lighting the beacon of Mars Lighthouse?"
   Event_ShowMessage(ACTOR_WISE_ONE, 0);
@@ -1721,8 +1722,8 @@ void MarsLighthouseAerie_UrgeOnToBeacon(void) {
   // "I knew what I was doing the moment I raised my sword."
   FieldEvent_ShowMessageThenWait(SPEAKER_WINDOW_BELOW | ACTOR_ISAAC, 0, 20);
   {
-    s32 third = 0x28;
-    s32 second = 0x105;
+    s32 third = 40;
+    s32 second = EMOTE_IN_FRONT | EMOTE_ELLIPSIS;
     s32 actor;
 
     actor = gMainRoutineWork.leaderActorId;
@@ -1829,7 +1830,7 @@ void Orb_UpdateRising(struct Actor *self) {
   self->z.fixed = z;
   self->targetX = x;
   self->targetZ = z;
-  self->timer += -0x800;
+  self->timer += -(TRIG_TURN / 32);
 }
 
 /// Every third frame, or every frame once the light has broken through, an orb
@@ -1869,7 +1870,7 @@ void Orb_SpawnRising(void) {
     effect->timer = angle;
     effect->userValue = 0;
     effect->update = (void (*)(void))Orb_UpdateRising;
-    effect->speedLimit = Math_Sin((u32)(Random16() * 0xffff) >> 20) * 24 >> 16;
+    effect->speedLimit = Math_Sin((u32)(Random16() * 65535) >> 20) * 24 >> 16;
     sprite->flags = 0;
     sprite->priority = 2;
   }
@@ -1948,7 +1949,7 @@ void MarsLighthouseAerie_RaiseBeaconFire(void) {
   if (spawn) {
     actor = FieldActor_Create(SPRITE_PARTICLE, anchor->x.fixed,
                               anchor->y.fixed - ((Random_Below(80)) << 16) -
-                                  0x80000,
+                                  toFIXED(8),
                               anchor->z.fixed);
     if (actor != NULL) {
       s32 mask;
@@ -2071,9 +2072,9 @@ void MarsLighthouseAerie_LightBeacon(void) {
     object->speedLimit = toFIXED(2) / 5;
     object->acceleration = toFIXED(1) / 20;
     object->gravity = toFIXED(1) / 2;
-    block = HeapSlot_Alloc(HEAP_SLOT_GLYPH_TRANSFER, 0x608);
+    block = HeapSlot_Alloc(HEAP_SLOT_GLYPH_TRANSFER, sizeof(GlyphTransfer));
     Item_LoadIcon(ITEM_MARS_STAR);
-    tiles = (block + 0x400);
+    tiles = block + offsetof(GlyphTransfer, tiles);
     Vram_Load(sprite->vramBlock, 128, tiles);
     HeapSlot_Release(HEAP_SLOT_GLYPH_TRANSFER);
     object->motionFlags = zero;
@@ -2776,7 +2777,7 @@ void MarsLighthouseAerie_EndTalkWhileHalted(s32 id) {
     s32 zero = 0;
 
     work[0x138a] = zero;
-    ones.value = 0xffff;
+    ones.value = -1;
     party->haltedActor = raw.value | ones.value;
     Actor_Get(held)->update = (void *)zero;
     FieldActor_SetSpriteColor(Actor_Get(held), SPRITE_COLOR_NORMAL);
@@ -3059,10 +3060,10 @@ s16 gMarsLighthouseAerie_FadeColorsTo[] = {
     5, 21, 31, 31, 31, -1,
 };
 
-u32 gMarsLighthouseAerie_FadeOrder[] = {
-    0x89008e, 0x8b008a, 0x8d008c, 0x8e008d, 0x8a0089, 0x8c008b,
-    0x8d008c, 0x89008e, 0x8b008a, 0x8c008b, 0x8e008d, 0x8a0089,
-    0x8b008a, 0x8d008c, 0x89008e, 0x8a0089, 0x8c008b, 0x8e008d,
+u16 gMarsLighthouseAerie_FadeOrder[] ALIGNED(4) = {
+    142, 137, 138, 139, 140, 141, 141, 142, 137, 138, 139, 140,
+    140, 141, 142, 137, 138, 139, 139, 140, 141, 142, 137, 138,
+    138, 139, 140, 141, 142, 137, 137, 138, 139, 140, 141, 142,
 };
 
 s32 gMarsLighthouseAerie_BeaconFireScript[] = {                                                               
@@ -3071,7 +3072,7 @@ s32 gMarsLighthouseAerie_BeaconFireScript[] = {
       SC_WAIT(1),                                                              
       SC_LOOP(4, SC_TO(1)),                                                    
       SC_LABEL(2),                                                             
-      SC_ADD(SW_SCALE_X, 0x600),                                               
+      SC_ADD(SW_SCALE_X, FIXED_ONE * 3 / 128),                                               
       SC_WAIT(1),                                                              
       SC_LOOP(4, SC_TO(2)),                                                    
       SC_LOOP(SC_FOREVER, SC_TOP),                                             
@@ -3120,7 +3121,7 @@ s32 gMarsLighthouseAerie_VoiceFadeScript[] = {
 s32 gMarsLighthouseAerie_DoomDragonRiseScript[] = {
     SC_ADD(SW_SCALE_X, FIXED_ONE / 128),
     SC_ADD(SW_SCALE_Y, FIXED_ONE / 128),
-    SC_ADD(SW_Y, 0x2000),
+    SC_ADD(SW_Y, toFIXED(1) / 8),
     SC_WAIT(1),
     SC_LOOP(128, SC_TOP),
     SC_END,
@@ -3188,15 +3189,25 @@ u32 gMarsLighthouseAerie_GaretReadyScript[] =
   };
 
 u32 gMarsLighthouseAerie_ShebaToBodiesScript[] = {
-    39, 2, 4, 0x1d80000, 0, 0x1400000,
-    1, 4, 0x1d80000, 0, 0x1300000, 1,
-    39, 1, 22, 39, 1, 17,
+    SC_ANIMATION(2),
+    SC_MOVE(472, 0, 320),
+    SC_SYNC,
+    SC_MOVE(472, 0, 304),
+    SC_SYNC,
+    SC_ANIMATION(1),
+    SC_SET(SW_RISE_COUNTER, 1),
+    SC_END,
 };
 
 u32 gMarsLighthouseAerie_JennaToBodiesScript[] = {
-    39, 2, 4, 0x1dc0000, 0, 0x1480000,
-    1, 4, 0x1d80000, 0, 0x1400000, 1,
-    39, 1, 22, 39, 1, 17,
+    SC_ANIMATION(2),
+    SC_MOVE(476, 0, 328),
+    SC_SYNC,
+    SC_MOVE(472, 0, 320),
+    SC_SYNC,
+    SC_ANIMATION(1),
+    SC_SET(SW_RISE_COUNTER, 1),
+    SC_END,
 };
 
 u32 gMarsLighthouseAerie_JennaTurnScript[] =                                                                 
@@ -3236,7 +3247,7 @@ u32 gMarsLighthouseAerie_MiaTurnScript[] =
   };
 
 s32 gMarsLighthouseAerie_BeamWidenScript[] = {
-    SC_ADD(SW_SCALE_X, 0x1000),
+    SC_ADD(SW_SCALE_X, FIXED_ONE / 16),
     SC_WAIT(1),
     SC_LOOP(32, SC_TOP),
     SC_END,
@@ -3272,8 +3283,8 @@ u32 gMarsLighthouseAerie_BeamRiseScript[] = {
 };
 
 s32 gMarsLighthouseAerie_BeaconSparkScript[] = {
-    SC_SET(SW_SCALE_X, 0xcccc),
-    SC_SET(SW_SCALE_Y, 0xcccc),
+    SC_SET(SW_SCALE_X, toFIXED(0.8)),
+    SC_SET(SW_SCALE_Y, toFIXED(0.8)),
     SC_ANIMATION(1),
     SC_LABEL(1),
     SC_ADD(SW_Y, -toFIXED(1)),
@@ -3285,7 +3296,7 @@ s32 gMarsLighthouseAerie_BeaconSparkScript[] = {
 };
 
 s32 gMarsLighthouseAerie_WatchGoldenSunRiseScript[] = {
-    SC_ADD(SW_SCALE_X, 0x1000),
+    SC_ADD(SW_SCALE_X, FIXED_ONE / 16),
     SC_WAIT(1),
     SC_LOOP(8, SC_TOP),
     SC_LABEL(1),
@@ -3422,16 +3433,16 @@ struct Trigger gSceneEvents[] = {
 };
 
 s32 gMarsLighthouseAerie_BeaconFlameScript[] = {
-    SC_SET(SW_SCALE_Y, 0x16666),
-    SC_SET(SW_SCALE_X, 0x16666),
+    SC_SET(SW_SCALE_Y, toFIXED(1.4)),
+    SC_SET(SW_SCALE_X, toFIXED(1.4)),
     SC_ANIMATION(4),
     SC_WAIT(30),
     SC_RELEASE,
 };
 
 u32 gOrb_RisingScript[] = {                                                               
-      SC_SET(SW_SCALE_X, 0xcccc),                                              
-      SC_SET(SW_SCALE_Y, 0xcccc),                                              
+      SC_SET(SW_SCALE_X, toFIXED(0.8)),                                              
+      SC_SET(SW_SCALE_Y, toFIXED(0.8)),                                              
       SC_ANIMATION(1),                                                               
       SC_LABEL(1),                                                             
       SC_ADD(SW_Y, toFIXED(1)),                                                 

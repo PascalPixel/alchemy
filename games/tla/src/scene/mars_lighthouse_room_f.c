@@ -667,14 +667,14 @@ void MarsLighthouseRoomF_ScatterRubble(s32 id) {
                           (c << 4) + origin->z.fixed);
 
     if (actor != NULL) {
-      s32 angle = (Random16() >> 2) + 0xe000;
+      s32 angle = (Random16() >> 2) + DEGtoANG(315);
       s32 speed = Random16() << 3;
-      s32 scale = (Random16() >> 1) + 0x4000;
+      s32 scale = (Random16() >> 1) + FIXED_ONE / 4;
 
       {
         u32 pick = Random16();
 
-        if (pick <= 0x7fff)
+        if (pick <= 32767)
           Actor_StartScript(actor, gMarsLighthouseRoomF_RubbleScriptA);
         else
           Actor_StartScript(actor, gMarsLighthouseRoomF_RubbleScriptB);
@@ -1343,13 +1343,13 @@ UNUSED void Whirlwind_CarryLeader(void) {
   motion = &actor->motionFlags;
   *motion = 4;
   Actor_SetSpriteFlags(actor, 0);
-  flag = (u8 *)linked + 0x63;
+  flag = &linked->riseEnabled;
   while (*flag != 0) {
     actor->x.fixed = linked->x.fixed;
     actor->y.fixed = linked->y.fixed + i;
     actor->z.fixed = linked->z.fixed;
-    if (i <= 0x3ffff)
-      i += 0x1999;
+    if (i <= toFIXED(4) - 1)
+      i += toFIXED(0.1);
     actor->facing = (u8)gFrameCount << 12;
     actor->priorityFlags ^= 2 << (gFrameCount & 1);
     System_Wait(1);
@@ -1471,7 +1471,7 @@ UNUSED void JupiterLighthouse_PlaceRaisedActors(void) {
       lid->y.fixed += step;
     }
     lid->x.fixed -= 0x28f40;
-    sprite->rotation += 0x800;
+    sprite->rotation += TRIG_TURN / 32;
     Actor_SetSpriteColorMode(Actor_GetById(ACTOR_LEFT_ANGEL), 4);
     Actor_SetSpriteColorMode(Actor_GetById(ACTOR_LEFT_ARCHER), 4);
   }
@@ -1483,7 +1483,7 @@ UNUSED void JupiterLighthouse_PlaceRaisedActors(void) {
       lid->y.fixed += step;
     }
     lid->x.fixed += 0x28f40;
-    sprite->rotation -= 0x800;
+    sprite->rotation -= TRIG_TURN / 32;
     Actor_SetSpriteColorMode(Actor_GetById(ACTOR_RIGHT_ANGEL), 4);
     Actor_SetSpriteColorMode(Actor_GetById(ACTOR_RIGHT_ARCHER), 4);
   }
@@ -1821,7 +1821,7 @@ void Actor_LaunchAhead(struct Actor *self) {
   actor->steeringFlags = 0;
   actor->speedLimit = toFIXED(8);
   actor->acceleration = toFIXED(1) / 8;
-  sprite->rotation = angle - 0x4000;
+  sprite->rotation = angle - DEGtoANG(90);
   actor->scaleX = 0;
   actor->scaleY = 0;
   actor->timer = 0;
@@ -2145,12 +2145,12 @@ void PushTarget_Push(struct PushTarget target) {
 static inline void *BumpAlloc(s32 size) { return Heap_Alloc(size); }
 
 void LightSprites_InitA(void) {
-  u8 *buffer = BumpAlloc(0xc00);
+  u8 *buffer = BumpAlloc(3072);
 
   Iwram_ClearWordsEntry(gLightSpriteActors, sizeof(gLightSpriteActors));
   Decompress_TaggedLz(gField_CachedTilesA, buffer);
   gLightSpriteTile = VramCache_FindFreeEntry();
-  VramCache_Load(gLightSpriteTile, 0xc00, buffer);
+  VramCache_Load(gLightSpriteTile, 3072, buffer);
   Heap_Release(buffer);
   Task_Add(LightSprites_Draw, TASK_PASS_VBLANK);
   gLightSpriteCount = 0;
@@ -2159,12 +2159,12 @@ void LightSprites_InitA(void) {
 }
 
 void LightSprites_InitB(void) {
-  u8 *buffer = Heap_Alloc(0xc00);
+  u8 *buffer = Heap_Alloc(3072);
 
   Iwram_ClearWordsEntry(gLightSpriteActors, sizeof(gLightSpriteActors));
   Decompress_TaggedLz(gField_CachedTilesB, buffer);
   gLightSpriteTile = VramCache_FindFreeEntry();
-  Vram_Load(gLightSpriteTile, 0x800, buffer);
+  Vram_Load(gLightSpriteTile, 2048, buffer);
   Heap_Release(buffer);
   Task_AddFrame(LightSprites_Draw, TASK_PASS_VBLANK);
   gLightSpriteCount = 0;
@@ -2173,12 +2173,12 @@ void LightSprites_InitB(void) {
 }
 
 void LightSprites_InitC(void) {
-  u8 *buffer = BumpAlloc(0x800);
+  u8 *buffer = BumpAlloc(2048);
 
   Iwram_ClearWordsEntry(gLightSpriteActors, sizeof(gLightSpriteActors));
   Decompress_TaggedLz(gField_CachedTilesC, buffer);
   gLightSpriteTile = VramCache_FindFreeEntry();
-  Vram_Load(gLightSpriteTile, 0x800, buffer);
+  Vram_Load(gLightSpriteTile, 2048, buffer);
   Heap_Release(buffer);
   Task_AddFrame(LightSprites_Draw, TASK_PASS_VBLANK);
   gLightSpriteCount = 0;
@@ -2424,15 +2424,31 @@ u16 gMarsLighthouseRoomF_VenusStatueFlameStops[] = {
     ACTOR_TRAP_STATUE_D, 0, ACTOR_TRAP_STATUE_E, 0, 0,
 };
 
-s32 gMarsLighthouseRoomF_FireballToWall[] = {                                                               
-      46, (s32)Actor_PopUp, 4,  0xf80000, 0x200000, 0x2a00000, 1,  4,          0xf80000, 0x160000,         0x2a00000, 1,   
-      4,  0xf80000,         0x160000, 0x2b00000, 1,  22, 37, (s32)MarsLighthouseRoomF_CrackCenterWall, 46, (s32)Actor_Park, 17,      
-  };
+s32 gMarsLighthouseRoomF_FireballToWall[] = {
+    SC_CALL(Actor_PopUp),
+    SC_MOVE(248, 32, 672),
+    SC_SYNC,
+    SC_MOVE(248, 22, 672),
+    SC_SYNC,
+    SC_MOVE(248, 22, 688),
+    SC_SYNC,
+    SC_SET(37, (s32)MarsLighthouseRoomF_CrackCenterWall),
+    SC_CALL(Actor_Park),
+    SC_END,
+};
 
-s32 gMarsLighthouseRoomF_FireballToIcebergs[] = {                                                               
-      46, (s32)Actor_PopUp, 4,  0xb80000, 0x400000, 0x2300000, 1,  4,          0xb80000, 0x360000,         0x2300000, 1,   
-      4,  0xb80000,         0x360000, 0x2400000, 1,  22, 37, (s32)MarsLighthouseRoomF_MeltIcebergs, 46, (s32)Actor_Park, 17,      
-  };
+s32 gMarsLighthouseRoomF_FireballToIcebergs[] = {
+    SC_CALL(Actor_PopUp),
+    SC_MOVE(184, 64, 560),
+    SC_SYNC,
+    SC_MOVE(184, 54, 560),
+    SC_SYNC,
+    SC_MOVE(184, 54, 576),
+    SC_SYNC,
+    SC_SET(37, (s32)MarsLighthouseRoomF_MeltIcebergs),
+    SC_CALL(Actor_Park),
+    SC_END,
+};
 
 s32 gMarsLighthouseRoomF_FireballDrop[] = {                                                               
       SC_CALL(Actor_PopUp), SC_MOVE(872, 32, 128),             
@@ -2452,8 +2468,8 @@ s16 gSlideOnIce_SteerAngles[] = {
 };
 
 s16 gMarsLighthouseRoomF_JumpAnglesByKey[] = {
-    -1, 0, -0x8000, -1, -0x4000, -1, -1, -0x4000,
-    0x4000, -1, -1, 0x4000, -1, 0, -0x8000, -1,
+    -1, 0, -DEGtoANG(180), -1, -DEGtoANG(90), -1, -1, -DEGtoANG(90),
+    DEGtoANG(90), -1, -1, DEGtoANG(90), -1, 0, -DEGtoANG(180), -1,
 };
 
 s16 gSlideOnIce_AnglesByKey[] = {
@@ -2678,11 +2694,11 @@ LATE_DATA struct Trigger gMarsLighthouseRoomF_Room4Triggers[] = {
     {TRIGGER_EXIT | EXIT_STYLE_STAIRS_DOWN, 8, CONDITION_ALWAYS, 8},
     {TRIGGER_EXIT | EXIT_STYLE_STAIRS_UP, 9, CONDITION_ALWAYS, 9},
     {TRIGGER_EXIT, 10, CONDITION_ALWAYS, 10},
-    {0x51, 11, CONDITION_ALWAYS, 11},
+    {TRIGGER_EXIT | EXIT_STYLE_HIDDEN_LAYER, 11, CONDITION_ALWAYS, 11},
     {TRIGGER_EXIT, 12, CONDITION_ALWAYS, 12},
-    {0x51, 13, CONDITION_ALWAYS, 13},
+    {TRIGGER_EXIT | EXIT_STYLE_HIDDEN_LAYER, 13, CONDITION_ALWAYS, 13},
     {TRIGGER_EXIT, 14, CONDITION_ALWAYS, 14},
-    {0x51, 15, CONDITION_ALWAYS, 15},
+    {TRIGGER_EXIT | EXIT_STYLE_HIDDEN_LAYER, 15, CONDITION_ALWAYS, 15},
     {TRIGGER_PUSH, 0, CONDITION_ALWAYS, EVENT(MarsLighthouseRoomF_StartMovingStone)},
     {TRIGGER_PUSHED, 0, CONDITION_ALWAYS, EVENT(MarsLighthouseRoomF_StopMovingStone)},
     {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), 10, CONDITION_ALWAYS, EVENT(MarsLighthouseRoomF_StartMovingStone)},
@@ -2764,7 +2780,7 @@ LATE_DATA struct Trigger gMarsLighthouseRoomF_Room2Triggers[] = {
     {TRIGGER_EXIT | EXIT_STYLE_STAIRS_UP, 4, CONDITION_ALWAYS, 4},
     {TRIGGER_EXIT | EXIT_STYLE_STAIRS_DOWN, 5, CONDITION_ALWAYS, 5},
     {TRIGGER_EXIT, 6, CONDITION_ALWAYS, 6},
-    {0x51, 7, CONDITION_ALWAYS, 7},
+    {TRIGGER_EXIT | EXIT_STYLE_HIDDEN_LAYER, 7, CONDITION_ALWAYS, 7},
     {TRIGGER_EXIT, 8, CONDITION_ALWAYS, 8},
     {TRIGGER_STEP, 30, CONDITION_ALWAYS, EVENT(Leader_SlideOnIce)},
     {STEP_TRIGGER_WALKING, 33, CONDITION_ALWAYS, EVENT(MarsLighthouseRoomF_PushPipeOrJump)},

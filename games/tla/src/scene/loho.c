@@ -82,7 +82,7 @@ extern s32 gLoho_VillagerMovesWest[];
 extern s32 gLoho_VillagerReturns[];
 
 void Loho_ClimbDownLadder(void);
-extern u32 gLoho_Regions[];
+extern struct SceneRegion gLoho_Regions[];
 extern struct ActorPlacement gLoho_TownPlacements[];
 extern struct ActorPlacement gLoho_RoomsPlacements[];
 extern s32 gLoho_FirstMinerGoesToWall[];
@@ -136,7 +136,7 @@ void Loho_MeetLull(void) {
 
 const struct SceneEntrance *Scene_GetEntrances(void) { return gSceneEntrances; }
 
-const u32 *Scene_GetExitRegions(void) {
+const struct SceneRegion *Scene_GetExitRegions(void) {
   if (gMainRoutineWork.next == SCENE_LOHO_ROOMS)
     return gLoho_Regions;
   return 0;
@@ -283,12 +283,12 @@ inPlace:
   table = (struct LohoSpark *)Heap_AllocEwram(LOHO_SPARK_COUNT *
                                               sizeof(struct LohoSpark));
   {
-    void *buffer = Heap_Alloc(0x1000);
+    void *buffer = Heap_Alloc(4096);
 
     sheet = Resource_GetTableEntry(RESOURCE_FIELD_EFFECT_EXPLOSION);
     Decompress_TaggedLz(sheet, buffer);
     entry = VramCache_FindFreeEntry();
-    tiles = VramCache_Load(entry, 0x400, buffer);
+    tiles = VramCache_Load(entry, 1024, buffer);
     Heap_Release(buffer);
   }
   spark = (struct LohoSpark *)&table->age;
@@ -984,7 +984,7 @@ s32 gLoho_ForemanComes[] = {
     SC_END,
     SC_WAIT(5),
     SC_ANIMATION(5),
-    SC_SET(SW_SCALE_X, -0x10000),
+    SC_SET(SW_SCALE_X, -FIXED_ONE),
     SC_END,
 };
 
@@ -1045,9 +1045,9 @@ s32 gLoho_VillagerMovesNorth[] = {
 #include "shared/scene_entrances_default.c"
 
 /// The houses' exit regions.
-u32 gLoho_Regions[] = {
-    0x1c01c4, 0x1cc02e4, 0x2ec0024, 0x6ffff, 0xffff, 0,
-    0, 0,
+struct SceneRegion gLoho_Regions[] = {
+    {452, 28, 740, 460, 36, 748, CONDITION_ALWAYS, 6},
+    {SCENE_TABLE_END},
 };
 
 u32 gSceneExits[] = {

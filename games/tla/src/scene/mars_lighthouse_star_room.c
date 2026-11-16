@@ -707,7 +707,7 @@ void MarsLighthouseStarRoom_TakeMarsStar(void) {
         u16 value;
       } white;
 
-      white.value = 0x7fff;
+      white.value = RGB_WHITE;
       OBJ_PLTT_COLOR(0, 15) = white.value;
     }
     System_Wait(1);
@@ -1078,7 +1078,7 @@ void MarsLighthouseStarRoom_UseMarsStar(void) {
 /// A rising spark as its update reads the actor: its frames, kept where an
 /// actor keeps its watched actor.
 struct RiseTimer {
-  u8 beforeFrames[0x68];
+  u8 beforeFrames[104];
   s32 frames;
 };
 
@@ -1251,7 +1251,7 @@ DEFINE_RIDE_SPAWN_BACKWARD(Ride_SpawnLandingBackward, Flame_UpdateLanding)
 
 s32 Actor_IsAbove(struct Actor *a, struct Actor *b) {
   if (DIFF(a->x.fixed, b->x.fixed) < toFIXED(12)) {
-    if ((u32)(a->y.fixed - b->y.fixed - 1) <= 0xffffe) {
+    if ((u32)(a->y.fixed - b->y.fixed - 1) <= toFIXED(16) - 2) {
       if (DIFF(a->z.fixed, b->z.fixed) < toFIXED(8))
         return 1;
     }
@@ -1276,10 +1276,11 @@ void Ride_SpawnSpark(s32 *position, s32 base, s32 mode) {
   s32 spin;
 
   if (actor != 0) {
-    actor->bounce = Trig_Cos((Random_Below(0x3000)) + 0x3000);
+    actor->bounce =
+        Trig_Cos((Random_Below(TRIG_TURN * 3 / 16)) + TRIG_TURN * 3 / 16);
     actor->gravity = (u16)Random16();
     actor->riseBaseY = (u16)(Random16() << 1) + base;
-    spin = (u16)Random16() - 0x8000;
+    spin = (u16)Random16() - DEGtoANG(180);
     actor->timer = spin;
     Actor_SetupScriptedFor(actor, 2);
     actor->update = Ride_UpdateDrift;
@@ -1294,7 +1295,7 @@ typedef struct Actor Actor;
 /// The flame's sprite as Ride_Create reads it: its VRAM block, and the bit that
 /// keeps the block cached.
 struct RideAnimation {
-  u8 beforeVramBlock[0x10];
+  u8 beforeVramBlock[16];
   u8 vramBlock;
   u8 keepEntry : 1;
 };
@@ -1386,7 +1387,7 @@ void FlameThrowers_Start(u16 *targets, u16 *stops, s32 onStopped,
       REG_BLDALPHA = alpha;
     }
     {
-      s32 control = 0x3f10;
+      s32 control = BLDCNT_TGT1_OBJ | BLDCNT_TGT2_ALL;
       REG_BLDCNT = control;
     }
   }
@@ -1787,172 +1788,80 @@ u32 gMarsLighthouseStarRoom_ScatterIceChipsScript[] = {
 };
 
 s32 gMarsLighthouseStarRoom_WestFireballRoute[] = {
-    46,
-    (s32)Actor_PopUp,
-    4,
-    0x2680000,
-    0,
-    0x1080000,
-    1,
-    0,
-    2,
-    4,
-    0x2680000,
-    0,
-    0xf80000,
-    1,
-    0,
-    2,
-    4,
-    0x2380000,
-    0,
-    0xf00000,
-    1,
-    0,
-    2,
-    4,
-    0x2380000,
-    0x200000,
-    0xf00000,
-    1,
-    0,
-    2,
-    4,
-    0x2380000,
-    0x200000,
-    0xd80000,
-    1,
-    0,
-    2,
-    4,
-    0x2400000,
-    0x200000,
-    0xd80000,
-    1,
-    0,
-    2,
-    4,
-    0x2400000,
-    0x160000,
-    0xd80000,
-    1,
-    0,
-    2,
-    4,
-    0x2500000,
-    0x160000,
-    0xd80000,
-    1,
-    0,
-    2,
-    22,
-    37,
-    (s32)MarsLighthouseStarRoom_WestFireballCracksIce,
-    46,
-    (s32)Actor_Park,
-    17,
+    SC_CALL(Actor_PopUp),
+    SC_MOVE(616, 0, 264),
+    SC_SYNC,
+    SC_WAIT(2),
+    SC_MOVE(616, 0, 248),
+    SC_SYNC,
+    SC_WAIT(2),
+    SC_MOVE(568, 0, 240),
+    SC_SYNC,
+    SC_WAIT(2),
+    SC_MOVE(568, 32, 240),
+    SC_SYNC,
+    SC_WAIT(2),
+    SC_MOVE(568, 32, 216),
+    SC_SYNC,
+    SC_WAIT(2),
+    SC_MOVE(576, 32, 216),
+    SC_SYNC,
+    SC_WAIT(2),
+    SC_MOVE(576, 22, 216),
+    SC_SYNC,
+    SC_WAIT(2),
+    SC_MOVE(592, 22, 216),
+    SC_SYNC,
+    SC_WAIT(2),
+    SC_SET(37, (s32)MarsLighthouseStarRoom_WestFireballCracksIce),
+    SC_CALL(Actor_Park),
+    SC_END,
 };
 
 s32 gMarsLighthouseStarRoom_EastFireballRoute[] = {
-    46,
-    (s32)Actor_PopUp,
-    4,
-    0x2a80000,
-    0,
-    0x1080000,
-    1,
-    0,
-    2,
-    4,
-    0x2a80000,
-    0,
-    0x1280000,
-    1,
-    0,
-    2,
-    4,
-    0x2d80000,
-    0,
-    0x1280000,
-    1,
-    0,
-    2,
-    4,
-    0x2d80000,
-    0,
-    0x1080000,
-    1,
-    0,
-    2,
-    4,
-    0x3280000,
-    0,
-    0x1080000,
-    1,
-    0,
-    2,
-    4,
-    0x3280000,
-    0,
-    0xf00000,
-    1,
-    0,
-    2,
-    4,
-    0x3280000,
-    0x180000,
-    0xf00000,
-    1,
-    0,
-    2,
-    4,
-    0x3180000,
-    0x180000,
-    0xf00000,
-    1,
-    0,
-    2,
-    4,
-    0x3180000,
-    0x200000,
-    0xf00000,
-    1,
-    0,
-    2,
-    4,
-    0x3180000,
-    0x200000,
-    0xd80000,
-    1,
-    0,
-    2,
-    4,
-    0x3100000,
-    0x200000,
-    0xd80000,
-    1,
-    0,
-    2,
-    4,
-    0x3100000,
-    0x160000,
-    0xd80000,
-    1,
-    0,
-    2,
-    4,
-    0x3000000,
-    0x160000,
-    0xd80000,
-    1,
-    0,
-    2,
-    22,
-    37,
-    (s32)MarsLighthouseStarRoom_EastFireballCracksIce,
-    46,
-    (s32)Actor_Park,
-    17,
+    SC_CALL(Actor_PopUp),
+    SC_MOVE(680, 0, 264),
+    SC_SYNC,
+    SC_WAIT(2),
+    SC_MOVE(680, 0, 296),
+    SC_SYNC,
+    SC_WAIT(2),
+    SC_MOVE(728, 0, 296),
+    SC_SYNC,
+    SC_WAIT(2),
+    SC_MOVE(728, 0, 264),
+    SC_SYNC,
+    SC_WAIT(2),
+    SC_MOVE(808, 0, 264),
+    SC_SYNC,
+    SC_WAIT(2),
+    SC_MOVE(808, 0, 240),
+    SC_SYNC,
+    SC_WAIT(2),
+    SC_MOVE(808, 24, 240),
+    SC_SYNC,
+    SC_WAIT(2),
+    SC_MOVE(792, 24, 240),
+    SC_SYNC,
+    SC_WAIT(2),
+    SC_MOVE(792, 32, 240),
+    SC_SYNC,
+    SC_WAIT(2),
+    SC_MOVE(792, 32, 216),
+    SC_SYNC,
+    SC_WAIT(2),
+    SC_MOVE(784, 32, 216),
+    SC_SYNC,
+    SC_WAIT(2),
+    SC_MOVE(784, 22, 216),
+    SC_SYNC,
+    SC_WAIT(2),
+    SC_MOVE(768, 22, 216),
+    SC_SYNC,
+    SC_WAIT(2),
+    SC_SET(37, (s32)MarsLighthouseStarRoom_EastFireballCracksIce),
+    SC_CALL(Actor_Park),
+    SC_END,
 };
 
 #include "shared/mars_lighthouse_part_scripts.c"
@@ -1967,9 +1876,9 @@ s32 gMarsLighthouseStarRoom_StatueScript[] = {
 };
 
 s32 gMarsLighthouseStarRoom_LightRiseScript[] = {
-    SC_ADD(SW_SCALE_X, 0x400),
-    SC_ADD(SW_SCALE_Y, 0x400),
-    SC_ADD(SW_Y, -0x4000),
+    SC_ADD(SW_SCALE_X, FIXED_ONE / 64),
+    SC_ADD(SW_SCALE_Y, FIXED_ONE / 64),
+    SC_ADD(SW_Y, -toFIXED(1) / 4),
     SC_WAIT(1),
     SC_LOOP(40, SC_TOP),
     SC_END,
@@ -1978,7 +1887,7 @@ s32 gMarsLighthouseStarRoom_LightRiseScript[] = {
 s32 gMarsLighthouseStarRoom_LightSinkScript[] = {
     SC_ADD(SW_SCALE_X, -FIXED_ONE / 32),
     SC_ADD(SW_SCALE_Y, -FIXED_ONE / 32),
-    SC_ADD(SW_Y, 0x4000),
+    SC_ADD(SW_Y, toFIXED(1) / 4),
     SC_WAIT(1),
     SC_LOOP(24, SC_TOP),
     SC_POSITION_ORIGIN,

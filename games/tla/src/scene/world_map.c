@@ -301,7 +301,7 @@ u32 __umodsi3(u32 a, u32 b);
 #include "shared/tile_sprite_reset.h"
 
 /// The marker blinks and bobs up and down on a circle.
-// As The Broken Seal's WorldMap_CircleEcho.
+/// As The Broken Seal's WorldMap_CircleEcho.
 void WorldMap_CircleEcho(struct BobbingMarker *marker) {
   s16 *angle;
   FIXED y;
@@ -836,11 +836,13 @@ void WorldMap_EnterProx(s32 id) {
                          WORLD_MAP_TO_PROX_SOUTH_GATE);
 }
 
+/// Yallam's way in, chosen by the leader's approach.
 void WorldMap_EnterYallam(s32 id) {
   WorldMap_SelectExitByZ(id, WORLD_MAP_TO_YALLAM_SOUTH_B,
                          WORLD_MAP_TO_YALLAM_SOUTH_A);
 }
 
+/// Daila's way in, chosen by the leader's approach.
 void WorldMap_EnterDaila(s32 id) {
   WorldMap_SelectExitByZ(id, WORLD_MAP_TO_DAILA_NORTH,
                          WORLD_MAP_TO_DAILA_SOUTH);

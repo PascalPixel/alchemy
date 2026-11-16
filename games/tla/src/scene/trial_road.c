@@ -429,8 +429,10 @@ void TrialRoad_CutBushes(void);
 
 void TrialRoad_CutMadPlantBushes(void);
 
+/// Shows the pools' hidden tiles.
 void TrialRoad_RevealPoolTiles(void);
 
+/// Hides the pools' tiles again.
 void TrialRoad_HidePoolTiles(void);
 
 void TrialRoad_ChallengeMoapa(void);
@@ -502,6 +504,7 @@ void Map_CopyRawCellsRect(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f);
 
 void TrialRoad_ShowProgress(s32 leaderId, s32 rivalId);
 
+/// Opens the door at the end of the leader's stage, on his side of the road.
 void TrialRoad_OpenLeaderDoor(s32 side, s32 phase);
 
 extern u32 gTrialRoad_LeftKnightEntersScript[];
@@ -556,10 +559,8 @@ void TrialRoad_UpdateFountains(void);
     }                                                                          \
   }
 
-/// Opens the door at the end of the leader's stage, on his side of the road.
 DEFINE_TRIAL_ROAD_OPEN_DOOR(TrialRoad_OpenLeaderDoor, 23, 57, 0, 9, 43, 1)
 
-/// Opens the door at the end of Moapa's stage, on his side of the road.
 DEFINE_TRIAL_ROAD_OPEN_DOOR(TrialRoad_OpenRivalDoor, 28, 62, 1, 4, 38, 0)
 
 /// A step at a stage's foot asks; giving up takes the party back to the start.
@@ -788,6 +789,8 @@ void TrialRoad_SetPillarTopLift(s32 id, s32 value) {
       onFoot(id);                                                              \
   }
 
+/// While the party's render mode is 0, clears the map cell flag under the
+/// object.
 DEFINE_TRIAL_ROAD_ON_FOOT(TrialRoad_UnblockMovedPillar,
                           TrialRoad_UnblockCellUnder)
 
@@ -1000,18 +1003,22 @@ void TrialRoad_PoundPillar(s32 id, s32 mode, s32 frame) {
     partner->scaleY = FIXED_ONE;
 }
 
+/// Pound on the west pillar.
 void TrialRoad_PoundWestPillar(s32 a, s32 b) {
   TrialRoad_PoundPillar(ACTOR_WEST_PILLAR, a, b);
 }
 
+/// Pound on the inner west pillar.
 void TrialRoad_PoundInnerWestPillar(s32 a, s32 b) {
   TrialRoad_PoundPillar(ACTOR_INNER_WEST_PILLAR, a, b);
 }
 
+/// Pound on the inner east pillar.
 void TrialRoad_PoundInnerEastPillar(s32 a, s32 b) {
   TrialRoad_PoundPillar(ACTOR_INNER_EAST_PILLAR, a, b);
 }
 
+/// Pound on the east pillar.
 void TrialRoad_PoundEastPillar(s32 a, s32 b) {
   TrialRoad_PoundPillar(ACTOR_EAST_PILLAR, a, b);
 }
@@ -1047,21 +1054,25 @@ void TrialRoad_StepOnSeesawPillar(s32 id, s32 other, s32 flag, s32 side) {
   Event_End();
 }
 
+/// Stepping onto the west pillar sinks it and raises the inner west one.
 void TrialRoad_StepOnWestPillar(void) {
   TrialRoad_StepOnSeesawPillar(ACTOR_WEST_PILLAR, ACTOR_INNER_WEST_PILLAR,
                                FLAG_AREA_TEMP_35, 1);
 }
 
+/// Stepping onto the inner west pillar sinks it and raises the west one.
 void TrialRoad_StepOnInnerWestPillar(void) {
   TrialRoad_StepOnSeesawPillar(ACTOR_INNER_WEST_PILLAR, ACTOR_WEST_PILLAR,
                                FLAG_AREA_TEMP_35, 0);
 }
 
+/// Stepping onto the inner east pillar sinks it and raises the east one.
 void TrialRoad_StepOnInnerEastPillar(void) {
   TrialRoad_StepOnSeesawPillar(ACTOR_INNER_EAST_PILLAR, ACTOR_EAST_PILLAR,
                                FLAG_AREA_TEMP_37, 1);
 }
 
+/// Stepping onto the east pillar sinks it and raises the inner east one.
 void TrialRoad_StepOnEastPillar(void) {
   TrialRoad_StepOnSeesawPillar(ACTOR_EAST_PILLAR, ACTOR_INNER_EAST_PILLAR,
                                FLAG_AREA_TEMP_37, 0);
@@ -1253,26 +1264,32 @@ void TrialRoad_PushLog(s32 id, s32 dx, s32 dz, s32 axis) {
   TrialRoad_BlockLogs();
 }
 
+/// Pushes the upper log west.
 void TrialRoad_PushUpperLogWest(void) {
   TrialRoad_PushLog(ACTOR_UPPER_LOG, -1, 0, 0);
 }
 
+/// Pushes the upper log east.
 void TrialRoad_PushUpperLogEast(void) {
   TrialRoad_PushLog(ACTOR_UPPER_LOG, 1, 0, 0);
 }
 
+/// Pushes the lower log west.
 void TrialRoad_PushLowerLogWest(void) {
   TrialRoad_PushLog(ACTOR_LOWER_LOG, -1, 0, 0);
 }
 
+/// Pushes the lower log east.
 void TrialRoad_PushLowerLogEast(void) {
   TrialRoad_PushLog(ACTOR_LOWER_LOG, 1, 0, 0);
 }
 
+/// Pushes the east log north.
 void TrialRoad_PushEastLogNorth(void) {
   TrialRoad_PushLog(ACTOR_EAST_LOG, 0, -1, 1);
 }
 
+/// Pushes the east log south.
 void TrialRoad_PushEastLogSouth(void) {
   TrialRoad_PushLog(ACTOR_EAST_LOG, 0, 1, 1);
 }
@@ -1303,14 +1320,17 @@ void TrialRoad_UncoverSpout(s32 id, s32 a, s32 frame) {
   }
 }
 
+/// Pound uncovers the west spout.
 void TrialRoad_UncoverWestSpout(s32 a, s32 b) {
   TrialRoad_UncoverSpout(ACTOR_WEST_SPOUT, a, b);
 }
 
+/// Pound uncovers the middle spout.
 void TrialRoad_UncoverMiddleSpout(s32 a, s32 b) {
   TrialRoad_UncoverSpout(ACTOR_MIDDLE_SPOUT, a, b);
 }
 
+/// Pound uncovers the east spout.
 void TrialRoad_UncoverEastSpout(s32 a, s32 b) {
   TrialRoad_UncoverSpout(ACTOR_EAST_SPOUT, a, b);
 }
@@ -1490,10 +1510,8 @@ s32 TrialRoad_ReturnTrue(void) { return 1; }
     Map_CopyCellsRect(n2, 30, 1, 1, 82, 15);                                   \
   }
 
-/// Shows the pools' hidden tiles.
 DEFINE_TRIAL_ROAD_SET_POOL_TILES(TrialRoad_RevealPoolTiles, 33, 35)
 
-/// Hides the pools' tiles again.
 DEFINE_TRIAL_ROAD_SET_POOL_TILES(TrialRoad_HidePoolTiles, 34, 36)
 
 /// The gate at the top opens while the party's equipment is held.
@@ -2002,6 +2020,7 @@ void TrialRoad_CopyCellsBackward(s32 srcX, s32 srcY, s32 width, s32 height,
   }
 }
 
+/// Opens the door at the end of Moapa's stage, on his side of the road.
 void TrialRoad_OpenRivalDoor(s32 mirrored, s32 stage);
 
 /// Each frame of the race, moves Moapa's party on by its recording.

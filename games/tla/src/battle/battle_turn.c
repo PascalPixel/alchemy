@@ -267,6 +267,11 @@ void BattleActionOrder_Sort(struct BattleActionRecord *entries, s32 count) {
 /// may take 300 frames.
 #define LINK_PACKET_BYTES 20
 #define LINK_TRANSFER_TIMEOUT 300
+/// The bytes of count actions (16 each, a struct BattleActionRecord), in
+/// whole packets.
+#define LINK_ACTIONS_BYTES(count)                                              \
+  ((u32)((count) * 16 + LINK_PACKET_BYTES - 1) / LINK_PACKET_BYTES *           \
+   LINK_PACKET_BYTES)
 
 /// Link battle: exchanges the turn's actions with the other console and appends
 /// the opponent's, their units and targets seen from this side. Returns how
@@ -274,9 +279,9 @@ void BattleActionOrder_Sort(struct BattleActionRecord *entries, s32 count) {
 s32 Battle_AppendLinkedActions(struct BattleActionRecord *actions, s32 count) {
   struct BattleWork *battle = Ram_HeapSlots->battleWork;
   s32 result = 0;
-  s32 allocationSize = (u32)(count * 16 + 19) / 20 * 20;
+  s32 allocationSize = LINK_ACTIONS_BYTES(count);
   struct BattleLinkedActionState *state =
-      (struct BattleLinkedActionState *)Heap_AllocEwram(40);
+      Heap_AllocEwram(sizeof(struct BattleLinkedActionState));
   s32 index;
 
   s32 LinkBattle_SendActions(void) {
@@ -348,7 +353,7 @@ s32 Battle_AppendLinkedActions(struct BattleActionRecord *actions, s32 count) {
       if (status == -1)
         return status;
       while (Serial_GetActiveTransfers()) {
-        if (gSerialReceivedSize > (u32)(result * 16 + 19) / 20 * 20)
+        if (gSerialReceivedSize > LINK_ACTIONS_BYTES(result))
           return -1;
         wait(1);
         if (--timeout < 0)
@@ -360,7 +365,7 @@ s32 Battle_AppendLinkedActions(struct BattleActionRecord *actions, s32 count) {
           disconnected = 0;
         }
       }
-      if (gSerialReceivedSize != (u32)(result * 16 + 19) / 20 * 20)
+      if (gSerialReceivedSize != LINK_ACTIONS_BYTES(result))
         return -1;
     }
     return 0;

@@ -182,6 +182,37 @@ enum WorldMapCollision {
   WORLD_MAP_COLLISION_WALKABLE_LAST = 12
 };
 
+/// A world map battle environment (gWorldMap_TerrainBehaviorTable,
+/// WorldMap_GetBattleEnvironment): what its ground means for battles, named by
+/// the battle background BattleBackground_SelectForEnvironment gives it, as The
+/// Broken Seal's, with the sea and the blizzard this game adds.
+enum BattleEnvironment {
+  BATTLE_ENVIRONMENT_NONE = 0,
+  BATTLE_ENVIRONMENT_GRASSLAND = 1, ///< ResourceId_GrasslandBBackdrop
+  /// ResourceId_DenseForestBackdrop; encounters take a region's forest zone.
+  BATTLE_ENVIRONMENT_FOREST = 2,
+  BATTLE_ENVIRONMENT_DESERT = 3,    ///< ResourceId_DesertBackdrop
+  BATTLE_ENVIRONMENT_BEACH = 4,     ///< ResourceId_RockyBeachBackdrop
+  BATTLE_ENVIRONMENT_SNOWFIELD = 5, ///< ResourceId_SnowfieldBBackdrop
+  /// ResourceId_SnowfieldBBackdrop, for the snowfield's forest.
+  BATTLE_ENVIRONMENT_SNOW_FOREST = 6,
+  /// ResourceId_RockyBeachBackdrop, for shallow water
+  /// (WORLD_MAP_COLLISION_SHALLOW_WATER).
+  BATTLE_ENVIRONMENT_SHALLOWS = 7,
+  /// The sea the ship sails, collisions 1 to 3 outside the snowfields, where
+  /// its encounters are (gWorldMap_ShipEncounterRules);
+  /// ResourceId_ShipDeckBackdrop.
+  BATTLE_ENVIRONMENT_SEA = 8,
+  /// All the sea of the snowfield regions, where no rule gives encounters.
+  BATTLE_ENVIRONMENT_SNOWFIELD_SEA = 9,
+  /// XXX: what WORLD_MAP_COLLISION_SEA_LAST is outside the snowfields, where no
+  /// rule gives encounters; seeing where the ship meets it would settle it.
+  BATTLE_ENVIRONMENT_SEA_LAST = 10,
+  BATTLE_ENVIRONMENT_BLIZZARD = 11, ///< ResourceId_BlizzardBackdrop
+  /// ResourceId_BlizzardBackdrop, for the blizzard's forest.
+  BATTLE_ENVIRONMENT_BLIZZARD_FOREST = 12
+};
+
 s32 WorldMap_GetCollision(struct WorldPosition *position);
 
 void PushedActor_FillGridAttributeRectangle(s32 layer, s32 x, s32 y, u32 width,

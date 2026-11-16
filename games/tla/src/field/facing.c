@@ -1,50 +1,43 @@
 /// @file
-/// The facing tables the animated sprites choose their pictures by.
+/// Which picture a sprite shows for the way it faces, and the small tables
+/// and scripts the actors read as they move: the direction pad's headings,
+/// the World Map camera's lean, a floating actor's bob, how long a footprint
+/// lasts, the order a sprite dissolves in and the World Map's graphics sets.
 
 #include "field/actor_script.h"
 #include "types.h"
 #include "field/object.h"
+#include "fixed_math.h"
 #include "resource_ids.h"
 
-//--------------------------------------------------------------------------
-// Field object tables: the animation picture for each facing, the tile
-// dissolve order, the fixed camera, and the small scripts the field and
-// the world map start by themselves. Most are The Broken Seal's, byte for
-// byte; its names for them are in the comments.
-//--------------------------------------------------------------------------
-
-// The frame for each facing of an animation kind (0x80 = mirrored).
-
-/// gAnimationFacing_Kind1
+/// Facing tables: for each animation facing kind, the picture to draw for
+/// each sector of the facing angle (0x80 mirrors it), as The Broken Seal's.
 // clang-format off
 const u8 gAnimationFacing_OnePicture[16] = {
     0x00, 0x00, 0x00, 0x80, 0x80, 0x80, 0x80, 0x00,
     0x80, 0x80, 0x80, 0x00, 0x00, 0x00, 0x00, 0x80,
 };
 
-/// gAnimationFacing_Kind22
 const u8 gAnimationFacing_FrontBackSwapped[8] = {
     0x80, 0x80, 0x00, 0x00, 0x01, 0x01, 0x81, 0x81,
 };
 
-/// gAnimationFacing_Kind2
 const u8 gAnimationFacing_FrontBack[8] = {
     0x00, 0x00, 0x80, 0x80, 0x01, 0x01, 0x81, 0x81,
 };
 
-/// gAnimationFacing_Kind3
 const u8 gAnimationFacing_ThreePictures[16] = {
     0x01, 0x01, 0x00, 0x00, 0x80, 0x80, 0x81, 0x81,
     0x81, 0x81, 0x82, 0x82, 0x02, 0x02, 0x02, 0x01,
 };
 
-/// gAnimationFacing_Kind5: nothing in The Lost Age reads it.
+/// Unused: nothing in The Lost Age reads the five-picture facings.
 const u8 gAnimationFacing_FivePictures[16] = {
     0x01, 0x00, 0x00, 0x03, 0x03, 0x80, 0x80, 0x81,
     0x81, 0x82, 0x82, 0x04, 0x04, 0x02, 0x02, 0x01,
 };
 
-/// Sixty-four facings, The Lost Age's own.
+/// Six pictures over 64 sectors, laid out otherwise than The Broken Seal's.
 const u8 gAnimationFacing_SixPictures[64] = {
     0x01, 0x01, 0x01, 0x01, 0x00, 0x00, 0x00, 0x00,
     0x00, 0x00, 0x00, 0x00, 0x03, 0x03, 0x03, 0x03,
@@ -56,12 +49,12 @@ const u8 gAnimationFacing_SixPictures[64] = {
     0x02, 0x02, 0x02, 0x02, 0x01, 0x01, 0x01, 0x01,
 };
 
-/// gAnimationFacing_Kind8
 const u8 gAnimationFacing_EightPictures[8] = {
     0x02, 0x01, 0x00, 0x07, 0x06, 0x05, 0x04, 0x03,
 };
 
-/// The order a tile's 64 pixels dissolve in.
+/// The order in which the 64 pixels of a sprite's tile in OBJ VRAM dissolve;
+/// read by SpriteDissolve_Step.
 const u8 gSpriteDissolve_PixelOrder[64] = {
     4, 63, 12, 10, 44, 5, 1, 60, 46, 41, 3, 23, 29, 55, 51, 15,
     50, 25, 26, 57, 19, 49, 16, 61, 8, 58, 37, 17, 27, 31, 59, 53,
@@ -69,22 +62,24 @@ const u8 gSpriteDissolve_PixelOrder[64] = {
     6, 48, 52, 9, 43, 28, 0, 40, 24, 34, 20, 47, 54, 39, 38, 18,
 };
 
+/// Two bytes after the dissolve order; no code names them, in either game.
 const u16 gSpriteDissolve_PixelOrderTail = 0x01ff;
 
-/// Two 1.0s (16.16), The Lost Age's own.
-const s32 gActorSprite_FullScale[2] = {
-    0x10000, 0x10000,
+/// An actor sprite's scale at full size, across and down.
+const FIXED gActorSprite_FullScale[2] = {
+    FIXED_ONE, FIXED_ONE,
 };
 
-/// The fixed view matrix (16.16), as The Broken Seal's.
+/// The fixed camera's view matrix (16.16): identity with a -0.8 shear of y by
+/// x, as The Broken Seal's.
 const FIXED gCamera_FixedViewMatrix[12] = {
-    0x10000, 0, 0,
-    -0xcccc, 0x10000, 0,
-    0, 0, 0x10000,
+    FIXED_ONE, 0, 0,
+    -(FIXED_ONE * 4 / 5), FIXED_ONE, 0,
+    0, 0, FIXED_ONE,
     0, 0, 0,
 };
 
-/// gScriptObject_CycleTable: a triangle wave.
+/// One period of a triangle wave, which bobs a floating actor up and down.
 const s32 gActorScript_CycleTable[32] = {
     1, 2, 3, 4, 5, 6, 7, 8,
     7, 6, 5, 4, 3, 2, 1, 0,
@@ -92,40 +87,50 @@ const s32 gActorScript_CycleTable[32] = {
     -7, -6, -5, -4, -3, -2, -1, 0,
 };
 
-/// The script an object returns to when its own one ends.
+/// The idle script an actor returns to when its own one ends: a lone SC_END,
+/// which reloads it. ActorScript_End (SC_END) points an actor here.
 const s32 gScript_MainScript[1] = {
     SC_END,
 };
 
+/// Halfwords that follow the main script; no code names them, in either game.
 const s16 gActorScript_EndScriptTail[8] = {
-    0x1000, -0x2000, 0x3000, -0x4000, 0x6000, -0x8000, 0x4000, 0x0,
+    4096, -8192, 12288, -16384, 24576, -32768, 16384, 0,
 };
 
-/// The heading for each direction pad state (DPAD_INDEX), or
-/// WORLD_MAP_KEY_HEADING_NONE.
+/// The heading for each state of the direction pad (bits 4-7 of the keys:
+/// Right, Left, Up, Down), in 1/65536 turns: Right is 0, Down DEGtoANG(90),
+/// Left DEGtoANG(180) and Up TRIG_TURN * 3 / 4; WORLD_MAP_KEY_HEADING_NONE
+/// means no direction is held, or only an opposite pair.
 const u16 gWorldMap_KeyHeadings[16] = {
-    0xffff, 0x0000, 0x8000, 0xffff, 0xc000, 0xe000, 0xa000, 0xc000,
-    0x4000, 0x2000, 0x6000, 0x4000, 0xffff, 0x0000, 0x8000, 0xffff,
+    WORLD_MAP_KEY_HEADING_NONE, 0, DEGtoANG(180), WORLD_MAP_KEY_HEADING_NONE,
+    TRIG_TURN * 3 / 4, TRIG_TURN * 7 / 8, TRIG_TURN * 5 / 8, TRIG_TURN * 3 / 4,
+    DEGtoANG(90), DEGtoANG(45), TRIG_TURN * 3 / 8, DEGtoANG(90),
+    WORLD_MAP_KEY_HEADING_NONE, 0, DEGtoANG(180), WORLD_MAP_KEY_HEADING_NONE,
 };
 
-/// Wait, then release the object.
-// As The Broken Seal's gWorldMap_FootprintActions do.
+/// A footprint's script: wait 120 frames, then release the actor, as The
+/// Broken Seal's gWorldMap_FootprintActions.
 const s32 gActor_FootprintScript[] = {
     SC_WAIT(120),
     SC_RELEASE,
 };
 
+/// A splash's script: wait 20 frames, then release the actor.
 const s32 gActor_SplashScript[] = {
     SC_WAIT(20),
     SC_RELEASE,
 };
 
+/// A ripple's script: wait 32 frames, then release the actor.
 const s32 gActor_RippleScript[] = {
     SC_WAIT(32),
     SC_RELEASE,
 };
 
-/// The turn for each direction pad state.
+/// The yaw the World Map camera leans to for each state of the direction pad,
+/// in 1/65536 turns: Right -512 and Left 512, or -384 and 384 with Up or Down
+/// but not both; 0 otherwise.
 const s32 gWorldMap_KeyYaws[16] = {
     0, -512, 512, 0,
     0, -384, 384, 0,
@@ -147,16 +152,15 @@ const s32 gActor_WakeScript[] = {
     SC_RELEASE,
 };
 
+/// A grain of the Sand's script: wait 60 frames, then release the actor.
 const s32 gSand_GrainScript[] = {
     SC_WAIT(60),
     SC_RELEASE,
 };
 
-//--------------------------------------------------------------------------
-// World map graphics in four sets, each a palette, two more resources and
-// six tile sets, by resource id.
-//--------------------------------------------------------------------------
-
+/// The World Map's graphics in four sets, by resource id: each a palette,
+/// its tile animation and cell picture attributes, and six tile sets;
+/// WorldMap_PreloadCurrentTileBlock chooses one by the region the party is in.
 const u32 gWorldMap_GraphicsResources[4][9] = {
     {
         RESOURCE_WORLD_MAP_PALETTE_A,

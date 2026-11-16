@@ -5,11 +5,11 @@
 #include "macros.h"
 #include "fixed_math.h"
 #include "field/actor_script.h"
+#include "field/sprite.h"
 
-/// clang-format off
-/// Word-aligned, as an array of structures is: the two bytes before it are
-/// the alignment's fill.
-/// 243 rows searched by ID by Speaker_FindDefinition, followed by one more row.
+/// 243 rows searched by ID by Speaker_FindDefinition, followed by one more
+/// row; word-aligned, as an array of structures is.
+// clang-format off
 const s16 gSpeakerDefinitions[][2] ALIGNED(4) = {
     {0, 16},   {1, 16},   {2, 16},   {3, 12},   {4, 28},   {5, 12},   {6, 12},
     {16, 28},  {17, 8},   {18, 8},   {19, 24},  {20, 16},  {21, 24},  {22, 8},
@@ -47,9 +47,7 @@ const s16 gSpeakerDefinitions[][2] ALIGNED(4) = {
     {57, 16},  {58, 28},  {246, 16}, {243, 16}, {245, 16}, {244, 16}, {487, -1},
     {255, -1}, {450, -1}, {325, -1}, {489, -1}, {421, -1}, {0, 16},
 };
-// Three bounces for Actor_StartRepeatedMotion, each squashing the actor
-// (wider, then shorter) and stretching it back over 12 frames; it starts
-// count bounces from the end. Each is 128 bytes, 32 words.
+// Each bounce is 128 bytes, 32 words.
 #define VARIANT_BOUNCE                                                         \
   SC_ADD(SW_SCALE_X, -FIXED_ONE / 4), SC_ADD(SW_SCALE_Y, FIXED_ONE / 8),       \
       SC_WAIT(2), SC_ADD(SW_SCALE_X, FIXED_ONE / 8),                           \
@@ -57,6 +55,9 @@ const s16 gSpeakerDefinitions[][2] ALIGNED(4) = {
       SC_ADD(SW_SCALE_X, FIXED_ONE / 16), SC_ADD(SW_SCALE_Y, -FIXED_ONE / 32), \
       SC_WAIT(2), SC_ADD(SW_SCALE_X, FIXED_ONE / 16),                          \
       SC_ADD(SW_SCALE_Y, -FIXED_ONE / 32), SC_WAIT(4)
+/// Three bounces for Actor_StartRepeatedMotion, each squashing the actor
+/// (wider, then shorter) and stretching it back over 12 frames; it starts
+/// count bounces from the end.
 const s32 gActor_VariantScripts[] = {
     VARIANT_BOUNCE,
     VARIANT_BOUNCE,
@@ -64,22 +65,28 @@ const s32 gActor_VariantScripts[] = {
     SC_END,
 };
 #undef VARIANT_BOUNCE
-/// A dust puff's scripts (FieldEffect_SpawnDustPuff): it lasts 38 frames, or
-/// 18, and is released.
+
+/// A dust puff's script (FieldEffect_SpawnDustPuff): it lasts 38 frames and
+/// is released.
 const u32 gDustPuff_LongScript[] = {
     SC_WAIT(1),
     SC_LOOP(38, SC_TOP),
     SC_RELEASE,
 };
+
+/// A short dust puff's script: it lasts 18 frames and is released.
 const u32 gDustPuff_ShortScript[] = {
     SC_WAIT(1),
     SC_LOOP(18, SC_TOP),
     SC_RELEASE,
 };
+
+/// The colour of a blinking actor in each of four two-frame steps
+/// (Actor_UpdateBlink): white, then its own colours.
 const u8 gActor_BlinkSpriteColors[] = {
-    7,
-    0,
-    0,
-    0,
+    SPRITE_COLOR_WHITE,
+    SPRITE_COLOR_NORMAL,
+    SPRITE_COLOR_NORMAL,
+    SPRITE_COLOR_NORMAL,
 };
 // clang-format on

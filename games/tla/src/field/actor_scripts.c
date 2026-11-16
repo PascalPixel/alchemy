@@ -6,12 +6,6 @@
 #include "edition.h"
 #include "fixed_math.h"
 
-//--------------------------------------------------------------------------
-// Object motion scripts and the small tables between them. Most are The
-// Broken Seal's object scripts with The Lost Age's command numbers; its
-// names for them are in the comments. The names the listings use stay.
-//--------------------------------------------------------------------------
-
 // Each callback takes the object and returns nonzero to go on with the
 // script this frame. They take different views of the object, so the
 // declarations leave the parameters unspecified.
@@ -23,7 +17,7 @@ s32 Actor_MoveTowardTarget();
 s32 Actor_TurnTowardWatchedActor();
 s32 Actor_TakeLeaderLayer();
 
-/// ScreenTransition_ShapesTail
+/// Unused: three rows of 0, 2, 4, 2 that nothing reads.
 // clang-format off
 const u8 ScreenTransition_ShapesTail[12] = {
     0, 2, 4, 2,
@@ -59,16 +53,21 @@ const s16 gHeading_WipeSteps[80] = {
 };
 // clang-format on
 
+/// The walk-by script (Actor_WalkByById): waits for the actor to arrive, then
+/// stands it in its first animation.
 const s32 gActor_OffsetScript[] = {
     SC_SYNC,
     SC_ANIMATION(1),
     SC_END,
 };
 
+/// The launch script (Actor_LaunchFromLeader): waits for the actor to arrive
+/// and a frame more, stands it, then steps it by its angle.
 const s32 gActor_LaunchScript[] = {
     SC_SYNC, SC_WAIT(1), SC_ANIMATION(1), SC_CALL(Actor_StepAngle), SC_END,
 };
 
+/// Steps the actor by its angle once.
 const s32 gActor_StepAngleScript[] = {
     SC_CALL(Actor_StepAngle),
     SC_END,
@@ -85,29 +84,29 @@ const u8 gMessageSpeed_VoiceRates[4] = {
 
 /// Squashes and stretches, then releases the actor.
 const s32 gFieldEffect_WatchedActorScript[] = {
-    SC_ADD(SW_SCALE_X, -0x8000),
-    SC_ADD(SW_SCALE_Y, 0x4000),
+    SC_ADD(SW_SCALE_X, -FIXED_ONE / 2),
+    SC_ADD(SW_SCALE_Y, FIXED_ONE / 4),
     SC_WAIT(2),
-    SC_ADD(SW_SCALE_X, 0x4000),
-    SC_ADD(SW_SCALE_Y, -0x2000),
+    SC_ADD(SW_SCALE_X, FIXED_ONE / 4),
+    SC_ADD(SW_SCALE_Y, -FIXED_ONE / 8),
     SC_WAIT(2),
-    SC_ADD(SW_SCALE_X, 0x2000),
-    SC_ADD(SW_SCALE_Y, -0x1000),
+    SC_ADD(SW_SCALE_X, FIXED_ONE / 8),
+    SC_ADD(SW_SCALE_Y, -FIXED_ONE / 16),
     SC_WAIT(2),
-    SC_ADD(SW_SCALE_X, 0x2000),
-    SC_ADD(SW_SCALE_Y, -0x1000),
+    SC_ADD(SW_SCALE_X, FIXED_ONE / 8),
+    SC_ADD(SW_SCALE_Y, -FIXED_ONE / 16),
     SC_WAIT(2),
-    SC_ADD(SW_SCALE_X, 0x1000),
-    SC_ADD(SW_SCALE_Y, -0x800),
+    SC_ADD(SW_SCALE_X, FIXED_ONE / 16),
+    SC_ADD(SW_SCALE_Y, -FIXED_ONE / 32),
     SC_WAIT(2),
-    SC_ADD(SW_SCALE_X, -0x1000),
-    SC_ADD(SW_SCALE_Y, 0x800),
+    SC_ADD(SW_SCALE_X, -FIXED_ONE / 16),
+    SC_ADD(SW_SCALE_Y, FIXED_ONE / 32),
     SC_WAIT(2),
-    SC_ADD(SW_SCALE_X, -0x800),
-    SC_ADD(SW_SCALE_Y, 0x400),
+    SC_ADD(SW_SCALE_X, -FIXED_ONE / 32),
+    SC_ADD(SW_SCALE_Y, FIXED_ONE / 64),
     SC_WAIT(2),
-    SC_ADD(SW_SCALE_X, 0x800),
-    SC_ADD(SW_SCALE_Y, -0x400),
+    SC_ADD(SW_SCALE_X, FIXED_ONE / 32),
+    SC_ADD(SW_SCALE_Y, -FIXED_ONE / 64),
     SC_WAIT(2),
     SC_WAIT(30),
     SC_RELEASE,
@@ -156,11 +155,14 @@ const s32 gMovementType_ClearCollisionScript[] = {
     SC_END,
 };
 
+/// Movement type 11: clears the actor's sprite flags.
 const s32 gMovementType_ClearChildScript[] = {
     SC_CALL(Actor_ClearChildFlags),
     SC_END,
 };
 
+/// Movement type 10: the actor takes its cells' priority even where the
+/// ground in front rises.
 const s32 gMovementType_ResetActionScript[] = {
     SC_CALL(Actor_IgnoreRises),
     SC_END,
@@ -203,29 +205,29 @@ const s32 gMovementType_SquashScript[] = {
     SC_LABEL(1),
     SC_SET(SW_SCALE_X, FIXED_ONE),
     SC_SET(SW_SCALE_Y, FIXED_ONE),
-    SC_ADD(SW_SCALE_X, -0x4000),
-    SC_ADD(SW_SCALE_Y, 0x2000),
+    SC_ADD(SW_SCALE_X, -FIXED_ONE / 4),
+    SC_ADD(SW_SCALE_Y, FIXED_ONE / 8),
     SC_WAIT(2),
-    SC_ADD(SW_SCALE_X, 0x2000),
-    SC_ADD(SW_SCALE_Y, -0x1000),
+    SC_ADD(SW_SCALE_X, FIXED_ONE / 8),
+    SC_ADD(SW_SCALE_Y, -FIXED_ONE / 16),
     SC_WAIT(2),
-    SC_ADD(SW_SCALE_X, 0x1000),
-    SC_ADD(SW_SCALE_Y, -0x800),
+    SC_ADD(SW_SCALE_X, FIXED_ONE / 16),
+    SC_ADD(SW_SCALE_Y, -FIXED_ONE / 32),
     SC_WAIT(2),
-    SC_ADD(SW_SCALE_X, 0x1000),
-    SC_ADD(SW_SCALE_Y, -0x800),
+    SC_ADD(SW_SCALE_X, FIXED_ONE / 16),
+    SC_ADD(SW_SCALE_Y, -FIXED_ONE / 32),
     SC_WAIT(4),
-    SC_ADD(SW_SCALE_X, -0x4000),
-    SC_ADD(SW_SCALE_Y, 0x2000),
+    SC_ADD(SW_SCALE_X, -FIXED_ONE / 4),
+    SC_ADD(SW_SCALE_Y, FIXED_ONE / 8),
     SC_WAIT(2),
-    SC_ADD(SW_SCALE_X, 0x2000),
-    SC_ADD(SW_SCALE_Y, -0x1000),
+    SC_ADD(SW_SCALE_X, FIXED_ONE / 8),
+    SC_ADD(SW_SCALE_Y, -FIXED_ONE / 16),
     SC_WAIT(2),
-    SC_ADD(SW_SCALE_X, 0x1000),
-    SC_ADD(SW_SCALE_Y, -0x800),
+    SC_ADD(SW_SCALE_X, FIXED_ONE / 16),
+    SC_ADD(SW_SCALE_Y, -FIXED_ONE / 32),
     SC_WAIT(2),
-    SC_ADD(SW_SCALE_X, 0x1000),
-    SC_ADD(SW_SCALE_Y, -0x800),
+    SC_ADD(SW_SCALE_X, FIXED_ONE / 16),
+    SC_ADD(SW_SCALE_Y, -FIXED_ONE / 32),
     SC_WAIT(4),
     SC_LOOP(SC_FOREVER, SC_TO(1)),
 };
@@ -242,9 +244,7 @@ const s32 gMovementType_FaceLeaderScript[] = {
     SC_LOOP(SC_FOREVER, SC_TOP),
 };
 
-/// Keep the leader's display layer.
-// The Spanish and Italian scaffolds name the function by the far-call slot
-// that reaches it in the other editions.
+/// Movement type 9: keeps the leader's display layer, every frame.
 const s32 gMovementType_TakeLeaderLayerScript[] = {
     SC_CALL(Actor_TakeLeaderLayer),
     SC_WAIT(1),

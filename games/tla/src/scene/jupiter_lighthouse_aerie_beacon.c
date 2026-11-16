@@ -348,7 +348,7 @@ void JupiterLighthouse_RaiseBeaconLight(void) {
       effect->update = JupiterLighthouse_CircleBeaconWide;
       effect->speedLimit = Math_Sin((u32)(Random16() * 0xffff) >> 20) * 24;
       effect->speedLimit = center->speedLimit >> 16;
-      sprite->nextFrame = 0;
+      sprite->flags = 0;
       sprite->priority = 1;
     }
   }
@@ -422,7 +422,7 @@ void JupiterLighthouse_SpawnBeaconParticle(void) {
     effect->userValue = 0;
     effect->update = JupiterLighthouse_CircleBeacon;
     effect->speedLimit = Math_Sin((u32)(Random16() * 0xffff) >> 20) * 24 >> 16;
-    sprite->nextFrame = 0;
+    sprite->flags = 0;
     sprite->priority = 1;
   }
 }
@@ -504,7 +504,7 @@ void JupiterLighthouse_CastTheJupiterStar(void) {
                                felix->y.fixed + toFIXED(8), felix->z.fixed);
       if (star != 0) {
         sprite = star->sprite;
-        sprite->unk1b[0] = 0;
+        sprite->countAndShadow[0] = 0;
         sprite->fullColor = 0;
         sprite->palette = 0;
         sprite->priority = 0;
@@ -515,7 +515,7 @@ void JupiterLighthouse_CastTheJupiterStar(void) {
         star->acceleration = toFIXED(1) / 20;
         buffer = HeapSlot_Alloc(HEAP_SLOT_GLYPH_TRANSFER, 0x608);
         Item_LoadIcon(ITEM_JUPITER_STAR);
-        Vram_Load(sprite->vramBlock, 128, buffer + 0x400);
+        Vram_Load(sprite->slot, 128, buffer + 0x400);
         HeapSlot_Release(HEAP_SLOT_GLYPH_TRANSFER);
       }
       FieldActor_SetSpritePriority(ACTOR_STAR_SHADOW, 1);

@@ -321,10 +321,10 @@ void TaopoSwamp_SinkPillar(s32 unused, s32 id) {
   i = 0;
   do {
     ((struct Charge *)sprite)->level = i;
-    sprite->nextFrame |= 8;
-    sprite->nextFrame &= ~1;
+    sprite->flags |= 8;
+    sprite->flags &= ~1;
     k = i;
-    sprite->unk19 = 1;
+    sprite->dirty = 1;
     k &= 3;
     if (k == 0) {
       x = actor->x.fixed + Random16() * 2 - Random16() * 2;
@@ -337,7 +337,7 @@ void TaopoSwamp_SinkPillar(s32 unused, s32 id) {
         splash->motionFlags = 0;
         if (splashSprite != 0) {
           ((s32 (*)())Sprite_StartAnimation)(splashSprite, 1);
-          splashSprite->nextFrame = k;
+          splashSprite->flags = k;
           splashSprite->priority = sprite->priority;
           Sprite_SetAnimationColorModes(splashSprite, 13);
           Sprite_SetAnimationSpeed(splashSprite, 8);
@@ -365,7 +365,7 @@ void TaopoSwamp_SinkPillar(s32 unused, s32 id) {
       spark->layer = 1;
       if (sparkSprite != 0) {
         Sprite_StartAnimation(sparkSprite, 2);
-        sparkSprite->nextFrame = zero;
+        sparkSprite->flags = zero;
         sparkSprite->priority = 2;
       }
     }
@@ -1800,7 +1800,7 @@ void TaopoSwamp_SinkInMud(void) {
       spark->layer = 1;
       if (sparkSprite != 0) {
         Sprite_StartAnimation(sparkSprite, 2);
-        sparkSprite->nextFrame = 0;
+        sparkSprite->flags = 0;
         sparkSprite->priority = 2;
       }
     }

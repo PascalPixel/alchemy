@@ -15,7 +15,7 @@ void Actor_EmitWaterDrop(struct Actor *object) {
       child->layer = 1;
       if (sprite != 0) {
         Sprite_StartAnimation(sprite, 2);
-        sprite->nextFrame = 0;
+        sprite->flags = 0;
         sprite->priority = 2;
       }
     }

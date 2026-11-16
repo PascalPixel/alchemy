@@ -514,11 +514,11 @@ s32 Scene_Initialize(void) {
     } else {
       Actor_SetSpriteRotationById(ACTOR_SISTER_IN_BED, TRIG_TURN * 3 / 4);
       Actor_SetSpriteFlags(Actor_Get(ACTOR_SISTER_IN_BED), 0);
-      ((struct FieldSprite *)Actor_Get(ACTOR_SISTER_IN_BED)->sprite)
-          ->nextFrame |= 8;
+      ((struct FieldSprite *)Actor_Get(ACTOR_SISTER_IN_BED)->sprite)->flags |=
+          8;
       sprite = Actor_Get(ACTOR_SISTER_IN_BED)->sprite;
-      sprite->unk11 = (sprite->unk11 & 3) | 32;
-      ((struct FieldSprite *)Actor_Get(ACTOR_SISTER_IN_BED)->sprite)->unk19 = 1;
+      sprite->cacheBits = (sprite->cacheBits & 3) | 32;
+      ((struct FieldSprite *)Actor_Get(ACTOR_SISTER_IN_BED)->sprite)->dirty = 1;
     }
   }
   MadraInteriors_PlaceBlackCrystal();

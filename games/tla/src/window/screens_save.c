@@ -802,7 +802,7 @@ void FileList_ShowPartySprites(struct RenderInput *origin, s32 x, s32 y,
 
     if (object != 0) {
       Sprite_StartAnimationFar(object, ANIM_STAND);
-      object->nextFrame = 0;
+      object->flags = 0;
       object->priority = 0;
     }
 

@@ -256,7 +256,7 @@ void WorldMap_SpawnSparkPair(struct Actor *object) {
     spark->watchedActor = object;
     if (sprite != NULL) {
       Sprite_StartAnimation(sprite, 2);
-      sprite->nextFrame = 0;
+      sprite->flags = 0;
       sprite->priority = 1;
     }
   }
@@ -272,7 +272,7 @@ void WorldMap_SpawnSparkPair(struct Actor *object) {
     spark->layer = 1;
     if (sprite != NULL) {
       Sprite_StartAnimation(sprite, 1);
-      sprite->nextFrame = 0;
+      sprite->flags = 0;
     }
   }
 }
@@ -300,6 +300,6 @@ void WorldMap_SpawnParticle(struct Actor *object) {
     particle->scaleX = FIXED_ONE * 4 / 5;
     particle->scaleY = FIXED_ONE * 4 / 5;
     if (sprite != NULL)
-      sprite->nextFrame = 0;
+      sprite->flags = 0;
   }
 }

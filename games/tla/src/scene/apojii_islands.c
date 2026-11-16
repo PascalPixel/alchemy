@@ -730,7 +730,7 @@ void ApojiiIslands_SpawnSplash(struct Actor *object) {
     child->motionFlags = 0;
     if (sprite != NULL) {
       Sprite_StartAnimation(sprite, 1);
-      sprite->nextFrame = 0;
+      sprite->flags = 0;
       sprite->priority = parent->priority;
     }
   }

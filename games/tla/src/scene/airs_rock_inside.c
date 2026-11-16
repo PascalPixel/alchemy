@@ -516,9 +516,9 @@ void AirsRockInside_PoundCone(s32 mode, s32 step) {
     second->motionFlags = 0;
     second->y.fixed -= toFIXED(28);
     wait(1);
-    entry = &gVramCacheEntries[secondSprite->vramBlock];
+    entry = &gVramCacheEntries[secondSprite->slot];
     second->watchedActor = (void *)(entry->offset + OBJ_VRAM0);
-    entry = &gVramCacheEntries[firstSprite->vramBlock];
+    entry = &gVramCacheEntries[firstSprite->slot];
     first->watchedActor = (void *)(entry->offset + OBJ_VRAM0);
     Dma_Fill32(step, second->watchedActor, entry->size);
     Dma_Set(first->watchedActor, second->watchedActor, DMA_COPY_WORDS(192),
@@ -540,9 +540,9 @@ void AirsRockInside_PoundCone(s32 mode, s32 step) {
     GameFlag_Set(first->timer);
     GameFlag_Clear(second->timer);
     Actor_SelectAnimation(first,
-                          ((struct FieldSprite *)first->sprite)->frame + 1);
+                          ((struct FieldSprite *)first->sprite)->lastNo + 1);
     Actor_SelectAnimation(second,
-                          ((struct FieldSprite *)second->sprite)->frame - 1);
+                          ((struct FieldSprite *)second->sprite)->lastNo - 1);
     AirsRockInside_SetConeCells(first);
     AirsRockInside_SetConeCells(second);
   }
@@ -2727,9 +2727,9 @@ found:
   second->motionFlags = busy;
   second->y.fixed -= toFIXED(28);
   wait(1);
-  entry = &gVramCacheEntries[secondSprite->vramBlock];
+  entry = &gVramCacheEntries[secondSprite->slot];
   second->watchedActor = (void *)(entry->offset + 0x6010000);
-  entry = &gVramCacheEntries[firstSprite->vramBlock];
+  entry = &gVramCacheEntries[firstSprite->slot];
   first->watchedActor = (void *)(entry->offset + 0x6010000);
   Dma_Fill32(busy, second->watchedActor, entry->size);
   Dma_Set(first->watchedActor, second->watchedActor, DMA_COPY_WORDS(192),
@@ -2759,9 +2759,9 @@ step:
   GameFlag_Set(first->timer);
   GameFlag_Clear(second->timer);
   Actor_SelectAnimation(first,
-                        ((struct FieldSprite *)first->sprite)->frame + 1);
+                        ((struct FieldSprite *)first->sprite)->lastNo + 1);
   Actor_SelectAnimation(second,
-                        ((struct FieldSprite *)second->sprite)->frame - 1);
+                        ((struct FieldSprite *)second->sprite)->lastNo - 1);
   AirsRockInside_SetConeCells(first);
   AirsRockInside_SetConeCells(second);
   FieldEvent_Wait(10);

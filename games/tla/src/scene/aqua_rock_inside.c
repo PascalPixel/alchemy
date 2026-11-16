@@ -1490,7 +1490,7 @@ void AquaRockInside_SplashBeneath(struct Actor *object) {
       child->layer = 1;
       if (sprite != 0) {
         Sprite_StartAnimation(sprite, 2);
-        sprite->nextFrame = 0;
+        sprite->flags = 0;
         sprite->rotation = 0x4000;
         sprite->priority = 2;
       }
@@ -1988,7 +1988,7 @@ void AquaRockInside_SpawnSplash(struct Actor *object) {
     child->motionFlags = 0;
     if (sprite != 0) {
       Sprite_StartAnimation(sprite, 1);
-      sprite->nextFrame = 0;
+      sprite->flags = 0;
       sprite->priority = source->priority;
     }
   }

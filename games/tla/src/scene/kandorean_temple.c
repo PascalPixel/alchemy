@@ -551,7 +551,7 @@ void KandoreanTemple_PuffSteam(struct Actor *object) {
     if (sprite) {
       Sprite_StartAnimation(sprite, 2);
       sprite->blendMode = 1;
-      sprite->nextFrame = 0;
+      sprite->flags = 0;
       sprite->priority = 3;
     }
   }
@@ -3212,11 +3212,11 @@ void KandoreanTemple_CreateLashPebble(void) {
     sprite->palette = 0;
     object->motionFlags = zero;
     object->retainSpriteCache = 1;
-    sprite->nextFrame = zero;
-    sprite->unk1b[0] = zero;
+    sprite->flags = zero;
+    sprite->countAndShadow[0] = zero;
     buffer = HeapSlot_Alloc(HEAP_SLOT_GLYPH_TRANSFER, 0x608);
     Icon_DrawItem(ITEM_LASH_PEBBLE);
-    VramCache_Load(sprite->vramBlock, 128, buffer + 0x400);
+    VramCache_Load(sprite->slot, 128, buffer + 0x400);
     HeapSlot_Release(HEAP_SLOT_GLYPH_TRANSFER);
   }
 }

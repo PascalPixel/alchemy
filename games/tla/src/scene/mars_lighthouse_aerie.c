@@ -1867,7 +1867,7 @@ void Orbs_SpawnRising(void) {
     effect->unk66 = 0;
     effect->update = (void (*)(struct OrbitEffect *))Orbs_UpdateRising;
     effect->radius = Math_Sin((u32)(Random16() * 0xffff) >> 20) * 24 >> 16;
-    sprite->nextFrame = 0;
+    sprite->flags = 0;
     sprite->priority = 2;
   }
 }

@@ -703,15 +703,15 @@ void GabombaStatueChamber_WhereIsTheOrb(void) {
   Actor_SetPositionAndFacing(ACTOR_JENNA, toFIXED(408), toFIXED(184), turnB);
   if (statue != 0) {
     sprite = statue->sprite;
-    sprite->nextFrame = 0;
-    sprite->unk1b[0] = 0;
+    sprite->flags = 0;
+    sprite->countAndShadow[0] = 0;
     sprite->fullColor = 0;
     sprite->palette = 0;
     sprite->priority = 1;
     ((u8 *)statue)[0x5c] = 1;
     block = (u8 *)HeapSlot_Alloc(HEAP_SLOT_GLYPH_TRANSFER, 0x608);
     Icon_DrawItem(ITEM_BLACK_CRYSTAL);
-    VramCache_Load(sprite->vramBlock, 0x80, (s32)(block + 0x400));
+    VramCache_Load(sprite->slot, 0x80, (s32)(block + 0x400));
     HeapSlot_Release(HEAP_SLOT_GLYPH_TRANSFER);
   }
   GabombaStatueChamber_OpenThePassage();

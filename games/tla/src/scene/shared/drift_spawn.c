@@ -24,7 +24,7 @@ s16 value;
     Import_ActorSetMode(object, 1);
     Import_ActorStartScript(object, gDriftScene_SpawnScript);
     object->motionFlags = 0;
-    sprite->nextFrame = 0;
+    sprite->flags = 0;
     sprite->rotation = value;
   }
 }

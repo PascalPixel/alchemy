@@ -643,6 +643,7 @@ void StaffCredit_GlowInFlight(struct Actor *object) {
   }
 }
 
+/// Sets the ship's look by flight mode: 0 plain, 1 powering up, 2 in flight.
 void Actor_SetFlightMode(struct Actor *object, s32 mode) {
   if (mode == 0) {
     object->update = 0;
@@ -658,6 +659,7 @@ void Actor_SetFlightMode(struct Actor *object, s32 mode) {
 
 #include "shared/leader_search.h"
 
+/// Unused: the leader's ship lands, plain again.
 UNUSED void StaffCredit_EndFlight(void) {
   Actor_SetFlightMode(Actor_Get(FieldParty_GetLeaderActor()), 0);
 }
@@ -688,6 +690,7 @@ static inline void CameraMove(FIXED x, FIXED y, FIXED z, s32 mode) {
       (u32)(buffer + PICTURES_FIRST_FRAME + (frame) * PICTURES_FRAME_STRIDE),  \
       DMA_COPY_WORDS(PICTURE_FRAME_SIZE / 4))
 
+/// Unused: fades out the field and plays the beacon picture's frames.
 UNUSED void StaffCredit_ShowPicture(s32 mode) {
   u8 *buffer;
 
@@ -802,6 +805,8 @@ UNUSED void StaffCredit_ShowPicture(s32 mode) {
   Event_SetFlag(FLAG_SKIP_SCENE_CHANGE_SOUND);
 }
 
+/// Unused: an update that flashes an actor every other two frames and sends
+/// out a growing pair of sparks every sixteenth frame.
 UNUSED void StaffCredit_FlashAndEmit(struct Actor *object) {
   if ((gFrameCount & 2) != 0) {
     Actor_SetSpriteColorMode(object, 7);
@@ -813,6 +818,8 @@ UNUSED void StaffCredit_FlashAndEmit(struct Actor *object) {
   }
 }
 
+/// Cycles an actor's colour mode, sending out a growing pair of sparks every
+/// sixteenth frame.
 void Actor_AnimateAndEmit(struct Actor *object) {
   u32 frame = gFrameCount;
 
@@ -878,6 +885,7 @@ void StaffCredit_SpawnGrowingPair(struct Actor *parent) {
   }
 }
 
+/// Redraws the gauge for `progress`.
 void Gauge_Draw(s32 progress) {
   s32 level = ((progress * GAUGE_LEVELS + FIXED_ONE / 2) >> 16) + 1;
   s32 kind = GAUGE_EMPTY;
@@ -991,6 +999,7 @@ void Gauge_Update(void) {
   Oam_AddSpriteAtDepthClamped(gGauge_Sprite, OAM_DEPTH_FRONT);
 }
 
+/// Sets up the gauge.
 void Gauge_Init(void) {
   Decompress_TaggedLz(gWorldMapPackedTilesC, gGauge_SourceTiles);
   gGauge_Vram = VramCache_FindFreeEntry();
@@ -1000,6 +1009,7 @@ void Gauge_Init(void) {
   Task_AddFrame(Gauge_Update, TASK_PASS_VBLANK - 10);
 }
 
+/// Takes the gauge down.
 void Gauge_End(void) {
   Decompress_TaggedLz(gWorldMapPackedTilesC, gGauge_SourceTiles);
   VramCache_FreeEntry(gGauge_Vram);

@@ -42,6 +42,8 @@
 #include "scene/sparkle.h"
 #include "scene/event_layer.h"
 
+/// MadPlant_LeapAtLeader through this room's own row of the import table
+/// (imports.inc), whose place in the list shapes the room's table.
 void Import_DebugMadPlantLeap(s32 sprite, s32 x, s32 z);
 
 // The room's flags: the four Scoop spots dug, the falling actor's item taken,
@@ -877,7 +879,7 @@ struct Trigger gSceneEvents[] = {
      EVENT(PsynergyTest_GiveTreasureTestStock)},
     {EXAMINE_TRIGGER(EXAMINE_SILENT), 13, CONDITION_ALWAYS,
      EVENT(PsynergyTest_GivePartyDjinn)},
-    {EXAMINE_TRIGGER(EXAMINE_CHEST), 100, CONDITION_ALWAYS, 0x20014d},
+    {EXAMINE_TRIGGER(EXAMINE_CHEST), 100, CONDITION_ALWAYS, FIND_COINS(333)},
     {PSYNERGY_ON_ACTOR(ABILITY_FORCE), ACTOR_SPROUT, CONDITION_ALWAYS,
      EVENT(PsynergyTest_IgnorePsynergy)},
     {PSYNERGY_ON_ACTOR(ABILITY_FORCE), ACTOR_MENU_TESTER, CONDITION_ALWAYS,

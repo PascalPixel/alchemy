@@ -2506,7 +2506,6 @@ s32 PushTarget_FindSlide(struct PushTarget *target) {
   s32 direction, kind, width, height, dx;
   FIXED dz;
   s32 steps, i, j, offset;
-  u8 *layer;
 
   actor = PushTarget_FindAhead(&direction, &target->id, &target->footprint);
   if (actor != 0) {
@@ -2520,8 +2519,7 @@ s32 PushTarget_FindSlide(struct PushTarget *target) {
     dz = toFIXED(offset);
     target->callback = 0;
     steps = 0;
-    layer = &actor->layer;
-    *layer = 2;
+    actor->layer = 2;
     target->x = actor->x.fixed + dx;
     target->z = actor->z.fixed + dz;
     cell.y = actor->y.fixed;
@@ -2541,7 +2539,7 @@ s32 PushTarget_FindSlide(struct PushTarget *target) {
       target->z += dz;
     }
   blocked:
-    *layer = 0;
+    actor->layer = 0;
     if (steps == 0)
       return 0;
     {

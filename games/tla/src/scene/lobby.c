@@ -867,7 +867,6 @@ void MessageArgument_Push(s32 value, s32 digits);
 /// Tells the leader's win count, total or in a row by the way the lead faces.
 s32 LinkLobby_ReportWinTallies(s32 actor) {
   u32 facing = Actor_GetById(ACTOR_FELIX)->facing;
-  u16 *count;
   s32 base;
 
   Event_Start();
@@ -875,10 +874,10 @@ s32 LinkLobby_ReportWinTallies(s32 actor) {
   Actor_FaceActor(actor, gMainRoutineWork.leaderActorId, 0);
   if (facing > FACING_NORTHWEST && facing < FACING_NORTHEAST) {
     base = (s32)MsgLobbyItLooksLike;
-    count = &gMainRoutineWork.linkTallies[LINK_TALLY_LINKED_WINS];
-    if (*count != 0) {
+    if (gMainRoutineWork.linkTallies[LINK_TALLY_LINKED_WINS] != 0) {
       MessageArgument_ClearAll();
-      MessageArgument_Push(*count, MESSAGE_ARGUMENT_NUMBER);
+      MessageArgument_Push(gMainRoutineWork.linkTallies[LINK_TALLY_LINKED_WINS],
+                           MESSAGE_ARGUMENT_NUMBER);
       Event_SetMessageId(base + 1);
       // "You've won ... Linked Battle. Keep up the good work!"
       Event_ShowMessage(actor, 0);
@@ -889,10 +888,11 @@ s32 LinkLobby_ReportWinTallies(s32 actor) {
     }
   } else {
     base = (s32)MsgItLooksLikeThisIsYour;
-    count = &gMainRoutineWork.linkTallies[LINK_TALLY_LINKED_STREAK];
-    if (*count != 0) {
+    if (gMainRoutineWork.linkTallies[LINK_TALLY_LINKED_STREAK] != 0) {
       MessageArgument_ClearAll();
-      MessageArgument_Push(*count, MESSAGE_ARGUMENT_NUMBER);
+      MessageArgument_Push(
+          gMainRoutineWork.linkTallies[LINK_TALLY_LINKED_STREAK],
+          MESSAGE_ARGUMENT_NUMBER);
       Event_SetMessageId(base + 1);
       // "You've won ... Linked Battle. Check the board on the wall for..."
       Event_ShowMessage(actor, 0);

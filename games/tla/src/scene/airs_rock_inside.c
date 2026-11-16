@@ -540,7 +540,6 @@ void AirsRockInside_RideWhirlwind(void) {
   struct Actor *leader = Actor_GetById(gMainRoutineWork.leaderActorId);
   struct Actor *ride = leader->watchedActor;
   struct Actor *rider, *dust;
-  u8 *riding, *motion, *priority;
   s32 rise;
   FIXED dx, dz;
   s32 moved, i, height;
@@ -549,14 +548,12 @@ void AirsRockInside_RideWhirlwind(void) {
 
   Event_Start();
   Event_ResolvePendingActions(0);
-  motion = &leader->motionFlags;
-  *motion = ACTOR_FLOATS;
+  leader->motionFlags = ACTOR_FLOATS;
   Actor_SetSpriteFlags(leader, 0);
   GameFlag_Set(FLAG_SCENE_TEMP_50);
   Sound_Play(SE_KIRIN);
-  riding = &ride->riseEnabled;
   rise = 0;
-  while (*riding != 0) {
+  while (ride->riseEnabled != 0) {
     leader->x.fixed = ride->x.fixed;
     leader->y.fixed = ride->y.fixed + rise;
     leader->z.fixed = ride->z.fixed;
@@ -573,14 +570,13 @@ void AirsRockInside_RideWhirlwind(void) {
     Event_End();
     return;
   }
-  priority = &leader->priorityFlags;
   facing = ride->facing;
   switch (facing) {
   case DEGtoANG(270):
     rider = ride->watchedActor;
     dx = 0;
     dz = 0;
-    *priority = 4;
+    leader->priorityFlags = 4;
     leader->x.fixed = (((leader->x.fixed >> 19) & ~1) + 1) << 19;
     i = 0;
     leader->y.fixed = (((ride->y.fixed >> 19) & ~1) + 3) << 19;
@@ -646,15 +642,15 @@ void AirsRockInside_RideWhirlwind(void) {
     leader->speedLimit = toFIXED(2);
     leader->acceleration = toFIXED(1) / 2;
     leader->velocityY = toFIXED(4);
-    *motion = ACTOR_FALLS;
-    *priority = 1;
+    leader->motionFlags = ACTOR_FALLS;
+    leader->priorityFlags = 1;
     leader->layer = rider->riseCounter;
     Actor_SetMoveTarget(leader, leader->x.fixed + dx, leader->y.fixed,
                         leader->z.fixed + dz);
     OverlayObject_WaitUntilIdle(leader);
     Actor_WaitForMove(leader);
     Actor_SetSpriteFlags(leader, 1);
-    *motion = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
+    leader->motionFlags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
     break;
   default:
     angle = ride->facing;
@@ -663,8 +659,8 @@ void AirsRockInside_RideWhirlwind(void) {
     noFlags = 0;
     Actor_SetSpriteFlags(leader, 1);
     leader->velocityY = toFIXED(6);
-    *priority = 33;
-    *motion = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
+    leader->priorityFlags = 33;
+    leader->motionFlags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
     FieldCamera_MoveToFX(-1, -1, -1, 0);
     dust = FieldCamera_GetActor();
     dust->speedLimit = toFIXED(8);
@@ -2251,24 +2247,23 @@ enum { TRIGGER_FIRST_VANISHING_STONE = 202 };
 /// FLAG_SCENE_TEMP_00 and the stone's own flag are set.
 void AirsRockInside_StepOnVanishingStone(void) {
   struct FieldWork *work = Ram_HeapSlots->fieldWork;
-  s16 *trigger;
   struct Actor *leader;
   s32 cell, row = 54;
 
   leader = Actor_GetById(gMainRoutineWork.leaderActorId);
   cell = MapCell_GetAttributes(2, FIELD_CELL(leader->x.fixed),
                                FIELD_CELL(leader->z.fixed));
-  trigger = &work->raisedTrigger;
   // From 54 in two steps: as one expression the constants fold into
   // 858 - 4 * counter.
-  row -= (*trigger - TRIGGER_FIRST_VANISHING_STONE + 1) << 2;
+  row -= (work->raisedTrigger - TRIGGER_FIRST_VANISHING_STONE + 1) << 2;
   cell >>= 8;
   if (cell != 1 && cell != 7) {
     AirsRockInside_StampCellUnderLeader();
     AirsRockInside_VanishStone(264, row * 8 + 10);
     if (!Event_GetFlag(FLAG_SCENE_TEMP_00))
       GameFlag_Set(FLAG_SCENE_TEMP_00);
-    GameFlag_Set(*trigger - TRIGGER_FIRST_VANISHING_STONE + FLAG_SCENE_TEMP_02);
+    GameFlag_Set(work->raisedTrigger - TRIGGER_FIRST_VANISHING_STONE +
+                 FLAG_SCENE_TEMP_02);
   } else if (GameFlag_Get(FLAG_SCENE_TEMP_00)) {
     AirsRockInside_VanishStone(264, row * 8 + 10);
   }
@@ -2379,7 +2374,6 @@ void AirsRockInside_ShebaLearnsReveal(s32 idA, s32 idB) {
   struct Actor *a = Actor_GetById(idA);
   struct Actor *b = Actor_GetById(idB);
   s32 i;
-  s16 *angle;
   /* LEFTOVER(frame): an unused local the ROM's frame reserves and never
    * touches. */
   s32 unused[3];
@@ -2434,8 +2428,7 @@ void AirsRockInside_ShebaLearnsReveal(s32 idA, s32 idB) {
     struct Actor *spark =
         FieldActor_Create(SPRITE_PARTICLE, b->x.fixed, b->y.fixed, b->z.fixed);
     Sound_Play(SE_SPARKS);
-    angle = &spark->timer;
-    *angle = (Random16() & 0x7fff) + DEGtoANG(180);
+    spark->timer = (Random16() & 0x7fff) + DEGtoANG(180);
     spark->userValue = ((i & 1) * 2 - 1) << ((Random16() & 3) + 9);
     spark->motionFlags = 0;
     spark->riseBaseY = toFIXED(122);
@@ -2446,7 +2439,7 @@ void AirsRockInside_ShebaLearnsReveal(s32 idA, s32 idB) {
     Actor_SelectAnimation(spark, 7);
     Actor_SetSpriteFlags(spark, 0);
     Actor_SetBlendMode(spark, 1);
-    FieldVector_AddPolarOffsetFX(spark->riseBaseY, *angle,
+    FieldVector_AddPolarOffsetFX(spark->riseBaseY, spark->timer,
                                  (s32)&spark->x.fixed);
     Actor_StartScript(spark, gAirsRockInside_OrbitingSparkScript);
     if (i == 3) {

@@ -1809,9 +1809,8 @@ void ChampaCliffCaves_DrawGlow(void) {
 
   for (i = 0; i <= 31; i++) {
     s32 red = 31;
-    s16 *frame = &work->frame;
-    s32 wave = Trig_Sin((*frame + i) << 11) * 6;
-    s32 blue = Trig_Sin(((*frame / 2 + i) << 11) + TRIG_TURN * 9 / 32) * 3;
+    s32 wave = Trig_Sin((work->frame + i) << 11) * 6;
+    s32 blue = Trig_Sin(((work->frame / 2 + i) << 11) + TRIG_TURN * 9 / 32) * 3;
     s32 colour;
     wave >>= 16;
     blue >>= 16;

@@ -421,19 +421,18 @@ s32 Prox_PlayTag(struct Actor *actor) {
 s32 Prox_PlayTag(struct Actor *actor) {
   u8 *tiles = Ram_HeapSlots->windowWork;
   struct FieldWork *work = Ram_HeapSlots->fieldWork;
-  s16 *action = &actor->timer;
   s32 flag = 0;
   struct Actor *target;
 
-  if (*action == 0)
+  if (actor->timer == 0)
     target = Actor_Get(ACTOR_TRAINING_CHILD);
-  else if (*action == 1)
+  else if (actor->timer == 1)
     target = Actor_Get(ACTOR_PLAYING_CHILD);
   else
     target = Actor_Get(ACTOR_RESTLESS_CHILD);
   if (Prox_ChaseTarget(actor, target, 24, 0) == 0) {
     target = Actor_Get(gMainRoutineWork.leaderActorId);
-    if ((work->talk != 0 || tiles[4] != 0) && (*action & 2))
+    if ((work->talk != 0 || tiles[4] != 0) && (actor->timer & 2))
       flag = 1;
     Prox_ChaseTarget(actor, target, 32, flag);
   }

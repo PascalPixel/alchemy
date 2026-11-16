@@ -458,8 +458,7 @@ s32 Yallam_HasArrived(struct Actor *actor) {
 void Yallam_RunSongPath(s32 actorId) {
   /* FAKEMATCH(pin): the actor in r5. */
   register struct Actor *actor asm("r5") = Actor_GetById(actorId);
-  u8 *state = &actor->riseCounter;
-  u8 s = *state;
+  u8 s = actor->riseCounter;
   s16 *timer;
 
   if (s == 1)
@@ -476,7 +475,7 @@ void Yallam_RunSongPath(s32 actorId) {
   case 2:
     Actor_SetMoveTarget(actor, actor->x.fixed, actor->y.fixed, actor->z.fixed);
     *timer &= ~1;
-    *state = 1;
+    actor->riseCounter = 1;
     return;
   }
   switch (*timer) {

@@ -234,7 +234,6 @@ s32 WindowSystem_InitField();
 /// clear screen. Returns 0.
 s32 Scene_Initialize(void) {
   struct MainRoutineWork *work;
-  u8 *eventMode;
   s32 savedSpeed;
   s32 one;
   s32 count;
@@ -244,12 +243,11 @@ s32 Scene_Initialize(void) {
   struct BgScroll *scroll;
 
   work = &gMainRoutineWork;
-  eventMode = &work->messageSpeed;
-  savedSpeed = *eventMode;
+  savedSpeed = work->messageSpeed;
   leader = Actor_Get(work->leaderActorId);
   leader->motionFlags = 0;
   one = 1;
-  *eventMode = one;
+  work->messageSpeed = one;
   EndingPicture_Start();
   WindowSystem_InitField();
   windowWork = (struct WindowWork *)Ram_HeapSlots->windowWork;

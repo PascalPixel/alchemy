@@ -720,13 +720,12 @@ void Layer_TrackScroll(void) {
 /// The overlay's entry: sets the map mode and screen effect 0x202, then starts
 /// each room's own setup.
 s32 Scene_Initialize(void) {
-  s32 *effect;
   s16 scene;
   struct MainRoutineWork *party;
 
   Map_SetUpperLevelWading(Ram_HeapSlots->mapGrid);
-  effect = &gFieldWork->transition;
-  *effect = SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_NOISE);
+  gFieldWork->transition =
+      SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_NOISE);
   party = &gMainRoutineWork;
   scene = party->next;
   if (scene == SCENE_APOJII_ISLANDS_HAZE) {
@@ -736,7 +735,7 @@ s32 Scene_Initialize(void) {
     if (Event_GetFlag(FLAG_FATHER_SEES_THE_STONE))
       ApojiiIslands_FatherSeesTheStone();
   } else if (scene == SCENE_APOJII_ISLANDS_SHOPS) {
-    *effect = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
+    gFieldWork->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
     if (party->entrance == 6)
       ApojiiIslands_LeaveQuietly();
   }

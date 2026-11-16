@@ -796,7 +796,6 @@ void AirsRock_RideWhirlwind(void) {
   struct Actor *leader = Actor_GetById(gMainRoutineWork.leaderActorId);
   struct Actor *ride = leader->watchedActor;
   struct Actor *rider, *dust;
-  u8 *riding, *motion;
   s32 rise;
   FIXED dx, dz;
   s32 moved, i, height;
@@ -806,14 +805,12 @@ void AirsRock_RideWhirlwind(void) {
 
   Event_Start();
   Event_ResolvePendingActions(0);
-  motion = &leader->motionFlags;
-  *motion = ACTOR_FLOATS;
+  leader->motionFlags = ACTOR_FLOATS;
   Actor_SetSpriteFlags(leader, 0);
   GameFlag_Set(FLAG_RIDING_WHIRLWIND);
   Sound_Play(SE_KIRIN);
-  riding = &ride->riseEnabled;
   rise = 0;
-  while (*riding != 0) {
+  while (ride->riseEnabled != 0) {
     leader->x.fixed = ride->x.fixed;
     leader->y.fixed = ride->y.fixed + rise;
     leader->z.fixed = ride->z.fixed;
@@ -894,7 +891,7 @@ void AirsRock_RideWhirlwind(void) {
     leader->speedLimit = toFIXED(2);
     leader->acceleration = toFIXED(1) / 2;
     leader->velocityY = toFIXED(4);
-    *motion = ACTOR_FALLS;
+    leader->motionFlags = ACTOR_FALLS;
     leader->priorityFlags = ACTOR_PRIORITY_AUTOMATIC;
     leader->layer = rider->riseCounter;
     FieldActor_SetMoveTargetFX(leader, leader->x.fixed + dx, leader->y.fixed,
@@ -902,7 +899,7 @@ void AirsRock_RideWhirlwind(void) {
     OverlayObject_WaitUntilIdle(leader);
     FieldActor_WaitForMove(leader);
     Actor_SetSpriteFlags(leader, 1);
-    *motion = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
+    leader->motionFlags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
   } else {
     angle = ride->facing;
     leader->x.fixed = (((ride->x.fixed >> 19) & ~1) + (angle >>= 13) - 1) << 19;
@@ -911,7 +908,7 @@ void AirsRock_RideWhirlwind(void) {
     Actor_SetSpriteFlags(leader, 1);
     leader->velocityY = toFIXED(6);
     leader->priorityFlags = ACTOR_PRIORITY_AUTOMATIC;
-    *motion = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
+    leader->motionFlags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
     FieldCamera_MoveTo(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0);
     dust = FieldCamera_GetActor();
     dust->speedLimit = toFIXED(8);

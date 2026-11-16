@@ -456,8 +456,7 @@ void Caverns_MoveIndraPillar(s32 unused, s32 id) {
 }
 
 s32 Caverns_JumpAcross(struct Actor *actor, struct FieldCoordinate *position) {
-  u8 *flags = &actor->motionFlags;
-  s32 saved = *flags;
+  s32 saved = actor->motionFlags;
   s32 blocked = MapGrid_CheckCollision(actor, position);
 
   if (blocked == 0) {
@@ -470,7 +469,7 @@ s32 Caverns_JumpAcross(struct Actor *actor, struct FieldCoordinate *position) {
     actor->speedLimit = toFIXED(3);
     actor->acceleration = toFIXED(2);
     actor->velocityY = toFIXED(4);
-    *flags &= 0x7e;
+    actor->motionFlags &= 0x7e;
     Actor_SetSpriteFlags(actor, 0);
     {
       struct MainRoutineWork *party = &gMainRoutineWork;
@@ -482,7 +481,7 @@ s32 Caverns_JumpAcross(struct Actor *actor, struct FieldCoordinate *position) {
     }
     Actor_SelectAnimation(actor, ANIM_LEADER_SPRING);
     Actor_SetSpriteFlags(actor, 1);
-    *flags = saved;
+    actor->motionFlags = saved;
     Event_End();
     return 1;
   }

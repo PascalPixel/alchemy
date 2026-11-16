@@ -321,7 +321,7 @@ void BattleEffect_RunBoreas(struct BattleEffectParams *args) {
           PARTICLES[i].x += PARTICLES[i].velocityX;
           PARTICLES[i].y += PARTICLES[i].velocityY;
           if ((FIXEDtoINT(PARTICLES[i].x)) < -16 ||
-              (FIXEDtoINT(PARTICLES[i].y)) > 120) {
+              (FIXEDtoINT(PARTICLES[i].y)) > BATTLE_VIEW_HEIGHT) {
             PARTICLES[i].x = toFIXED(72);
             PARTICLES[i].y = toFIXED(56);
           }
@@ -441,7 +441,7 @@ void BattleEffect_RunBoreas(struct BattleEffectParams *args) {
                gBoreas_FallWidths[picture], gBoreas_FallHeights[picture]);
           BattleEffectKernels_IntegrateVector2(crystal, PARTICLE_DAMPING_NONE,
                                                toFIXED(1));
-          if (FIXED_INTEGER_PART(crystal->y) > 120 &&
+          if (FIXED_INTEGER_PART(crystal->y) > BATTLE_VIEW_HEIGHT &&
               crystal->velocityY > toFIXED(8)) {
             crystal->velocityY = -crystal->velocityY / 4;
             crystal->y = toFIXED(120);
@@ -458,7 +458,8 @@ void BattleEffect_RunBoreas(struct BattleEffectParams *args) {
              BOREAS_CRYSTAL_HEIGHT);
         work->particles[i].x += work->particles[i].velocityX;
         work->particles[i].y += work->particles[i].velocityY;
-        if ((FIXEDtoINT(work->particles[i].y)) > 120 && frame <= 47) {
+        if ((FIXEDtoINT(work->particles[i].y)) > BATTLE_VIEW_HEIGHT &&
+            frame <= 47) {
           work->particles[i].x = INTtoFIXED((Random16() & 127) + 64);
           work->particles[i].y = -toFIXED(16);
         }

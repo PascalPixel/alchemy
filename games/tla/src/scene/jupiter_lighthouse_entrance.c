@@ -218,7 +218,7 @@ struct Actor *Whirlwind_SpawnUpper(struct Actor *source) {
   Import_ActorSelectAnimation(object, 2);
   Actor_SetSpriteFlags(object, 0);
   object->motionFlags = 0;
-  object->priorityFlags &= ~1;
+  object->priorityFlags &= ~ACTOR_PRIORITY_AUTOMATIC;
   object->facing = source->facing;
   object->timer = 0;
   object->riseCounter = 0;

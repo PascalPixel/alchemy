@@ -258,7 +258,7 @@ void IzumoRuins_FreezePuddle(void) {
   FlagBlock_ApplyFlags(gIzumoRuins_Puddles);
   object = work->movedBlock;
   object->priorityFlags |= ACTOR_PRIORITY_AUTOMATIC;
-  object->priorityFlags &= ~2;
+  object->priorityFlags &= ~ACTOR_PRIORITY_UNDERFOOT;
   Event_End();
 }
 

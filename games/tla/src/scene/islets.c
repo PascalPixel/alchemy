@@ -290,7 +290,7 @@ void Islets_PushLogIntoWater(void) {
     FieldEvent_Wait(22);
     Event_PlaySound(SE_LOG_FALL);
     Actor_SetAnimation(ACTOR_LOG, 8);
-    object->priorityFlags |= 2;
+    object->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
     object->motionFlags = 0;
     object->velocityY = 0;
     object->y.fixed = toFIXED(-8);
@@ -1871,7 +1871,7 @@ void Islets_StartIceberg(s32 id) {
   Actor_SetSpriteFlags(object, 0);
   object->retainSpriteCache = 3;
   object->motionFlags = 0;
-  object->priorityFlags |= 0x80;
+  object->priorityFlags |= ACTOR_PRIORITY_PLATFORM;
   object->acceleration = toFIXED(3) / 20;
   object->speedLimit = toFIXED(3) / 10;
 }
@@ -1962,7 +1962,7 @@ void Islets_InitializePrettyStone(void) {
   u16 *next;
   s32 i;
 
-  Actor_Get(gMainRoutineWork.leaderActorId)->priorityFlags |= 64;
+  Actor_Get(gMainRoutineWork.leaderActorId)->priorityFlags |= ACTOR_PRIORITY_WALKS_ON_PLATFORMS;
   if (gMainRoutineWork.entrance == 2)
     Event_ClearFlag(FLAG_SHOW_AREA_NAME);
   i = 11;
@@ -1980,7 +1980,7 @@ void Islets_InitializePrettyStone(void) {
     object = Actor_Get(ACTOR_LOG);
     Actor_SetPosition(ACTOR_LOG, 176, 168);
     Actor_SetAnimation(ACTOR_LOG, 4);
-    object->priorityFlags |= 2;
+    object->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
     object->motionFlags = 0;
     object->y.fixed = toFIXED(-8);
     object->groundHeight = toFIXED(-8);
@@ -2031,7 +2031,7 @@ void Islets_InitializeCow(void) {
   }
   FieldActor_SetSpritePriority(ACTOR_BLUE_ORB, 1);
   FieldActor_SetSpriteColor(Actor_Get(ACTOR_BLUE_ORB), 15);
-  Actor_Get(ACTOR_BLUE_ORB)->priorityFlags |= 2;
+  Actor_Get(ACTOR_BLUE_ORB)->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
 }
 
 // A room's setup.

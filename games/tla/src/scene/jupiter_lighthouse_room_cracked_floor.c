@@ -216,7 +216,7 @@ UNUSED void JupiterLighthouse_FloatAboveGround(s32 id) {
   height = object->groundHeight;
   object->bounce = 0;
   object->y.fixed = height + toFIXED(32);
-  object->priorityFlags |= 128;
+  object->priorityFlags |= ACTOR_PRIORITY_PLATFORM;
   height =
       Map_GetTerrainHeight(object->layer, object->x.fixed, object->z.fixed);
   MapGrid_SetCellHeight(object->x.fixed, object->z.fixed, 0,
@@ -253,7 +253,7 @@ struct Actor *Whirlwind_Spawn(struct Actor *source) {
   Import_ActorSelectAnimation(object, 2);
   Actor_SetSpriteFlags(object, 0);
   object->motionFlags = 0;
-  object->priorityFlags &= ~1;
+  object->priorityFlags &= ~ACTOR_PRIORITY_AUTOMATIC;
   object->facing = source->facing;
   object->timer = 0;
   object->riseCounter = 0;

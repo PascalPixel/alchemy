@@ -503,7 +503,7 @@ s32 Scene_Initialize(void) {
   }
   if (gMainRoutineWork.entrance == 3 || gMainRoutineWork.entrance == 6 ||
       gMainRoutineWork.entrance == 7)
-    Actor_Get(gMainRoutineWork.leaderActorId)->priorityFlags |= 64;
+    Actor_Get(gMainRoutineWork.leaderActorId)->priorityFlags |= ACTOR_PRIORITY_WALKS_ON_PLATFORMS;
   if (Event_GetFlag(FLAG_JUPITER_LIGHTHOUSE_ACTIVATED)) {
     Actor_RaiseFromCell(ACTOR_FIRST_HOVERING_BLOCK);
     Actor_RaiseFromCell(ACTOR_FIRST_HOVERING_BLOCK + 1);
@@ -568,7 +568,7 @@ void Actor_RaiseFromCell(s32 id) {
   height = object->groundHeight;
   object->bounce = 0;
   object->y.fixed = height + toFIXED(32);
-  object->priorityFlags |= 128;
+  object->priorityFlags |= ACTOR_PRIORITY_PLATFORM;
   height =
       Map_GetTerrainHeight(object->layer, object->x.fixed, object->z.fixed);
   MapGrid_SetCellHeight(object->x.fixed, object->z.fixed, 0,

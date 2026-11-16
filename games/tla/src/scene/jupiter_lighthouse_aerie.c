@@ -345,13 +345,13 @@ s32 Scene_Initialize(void) {
   JupiterLighthouse_LoadPalettesZero(0);
   Import_HangingVinePlace(ACTOR_FIRST_VINE, 1);
   Import_HangingVinePlace(ACTOR_SECOND_VINE, 1);
-  Actor_Get(gMainRoutineWork.leaderActorId)->priorityFlags |= 64;
-  Actor_Get(ACTOR_FIRST_RAISED_BLOCK)->priorityFlags |= 128;
-  Actor_Get(ACTOR_FIRST_RAISED_BLOCK + 1)->priorityFlags |= 128;
-  Actor_Get(ACTOR_FIRST_RAISED_BLOCK + 2)->priorityFlags |= 128;
-  Actor_Get(ACTOR_FIRST_RAISED_BLOCK + 3)->priorityFlags |= 128;
-  Actor_Get(ACTOR_FIRST_RAISED_BLOCK + 4)->priorityFlags |= 128;
-  Actor_Get(ACTOR_LAST_RAISED_BLOCK)->priorityFlags |= 128;
+  Actor_Get(gMainRoutineWork.leaderActorId)->priorityFlags |= ACTOR_PRIORITY_WALKS_ON_PLATFORMS;
+  Actor_Get(ACTOR_FIRST_RAISED_BLOCK)->priorityFlags |= ACTOR_PRIORITY_PLATFORM;
+  Actor_Get(ACTOR_FIRST_RAISED_BLOCK + 1)->priorityFlags |= ACTOR_PRIORITY_PLATFORM;
+  Actor_Get(ACTOR_FIRST_RAISED_BLOCK + 2)->priorityFlags |= ACTOR_PRIORITY_PLATFORM;
+  Actor_Get(ACTOR_FIRST_RAISED_BLOCK + 3)->priorityFlags |= ACTOR_PRIORITY_PLATFORM;
+  Actor_Get(ACTOR_FIRST_RAISED_BLOCK + 4)->priorityFlags |= ACTOR_PRIORITY_PLATFORM;
+  Actor_Get(ACTOR_LAST_RAISED_BLOCK)->priorityFlags |= ACTOR_PRIORITY_PLATFORM;
   JupiterLighthouse_PlaceRaisedActors();
   return 0;
 }
@@ -515,7 +515,7 @@ struct Actor *Whirlwind_Spawn(struct Actor *source) {
   Import_ActorSelectAnimation(object, 2);
   Actor_SetSpriteFlags(object, 0);
   object->motionFlags = 0;
-  object->priorityFlags &= ~1;
+  object->priorityFlags &= ~ACTOR_PRIORITY_AUTOMATIC;
   object->facing = source->facing;
   object->timer = 0;
   object->riseCounter = 0;

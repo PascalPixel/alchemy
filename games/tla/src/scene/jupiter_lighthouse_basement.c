@@ -316,7 +316,7 @@ void Actor_RaiseFromCell(s32 id) {
   height = object->groundHeight;
   object->bounce = 0;
   object->y.fixed = height + toFIXED(32);
-  object->priorityFlags |= 128;
+  object->priorityFlags |= ACTOR_PRIORITY_PLATFORM;
   height =
       Map_GetTerrainHeight(object->layer, object->x.fixed, object->z.fixed);
   Import_MapGridSetCellHeight(object->x.fixed, object->z.fixed, 0,

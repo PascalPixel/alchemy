@@ -665,7 +665,7 @@ void IzumoInteriors_RecognizeTheHeroes(s32 mode) {
   FieldEvent_Wait(120);
   Actor_SetSpeed(ACTOR_SUSA, 0.6);
   Actor_SetSpeed(ACTOR_SUSA, 0.6);
-  Actor_GetById(ACTOR_SUSA)->priorityFlags &= ~1;
+  Actor_GetById(ACTOR_SUSA)->priorityFlags &= ~ACTOR_PRIORITY_AUTOMATIC;
   Actor_WalkTo(ACTOR_SUSA, 144, 648);
   if (mode == 0) {
     Actor_WalkToAndWait(ACTOR_SUSA, 88, 648);

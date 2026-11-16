@@ -1155,7 +1155,7 @@ void Garoh_WerewolfProwls(void) {
   Actor_SetAnimation(ACTOR_WEREWOLF, 2);
   i = 0;
   do {
-    s32 r;
+    s32 tenths;
     s32 wave;
 
     wave = Math_Sin(i * (DEGtoANG(45)));
@@ -1164,9 +1164,9 @@ void Garoh_WerewolfProwls(void) {
     wave = Math_Sin(i * (DEGtoANG(45)));
     position[2] = Garoh_PathStep(toFIXED(32), toFIXED(120), i) - wave * 7;
     position[1] = 0;
-    r = (Random_Below(10)) + 4;
-    Actor_SetSpeedFX(ACTOR_WEREWOLF, r * (toFIXED(1) / 10),
-                     r * (toFIXED(1) / 20));
+    tenths = Random_Below(10) + 4;
+    Actor_SetSpeedFX(ACTOR_WEREWOLF, tenths * (toFIXED(1) / 10),
+                     tenths * (toFIXED(1) / 20));
     Actor_WalkToAndWait(ACTOR_WEREWOLF, position[0] / toFIXED(1),
                         position[2] / toFIXED(1));
     i++;
@@ -1189,16 +1189,16 @@ void Garoh_WerewolfProwls(void) {
   toZ = toFIXED(184);
   i = 0;
   do {
-    s32 r;
+    s32 tenths;
     FIXED wave;
 
     wave = Math_Sin(i * (DEGtoANG(45)));
     position[0] = Garoh_PathStep(x, toX, i) - wave * 4;
     position[2] = Garoh_PathStep(z, toZ, i);
     position[1] = 0;
-    r = (Random_Below(10)) + 4;
-    Actor_SetSpeedFX(ACTOR_WEREWOLF, r * (toFIXED(1) / 10),
-                     r * (toFIXED(1) / 20));
+    tenths = Random_Below(10) + 4;
+    Actor_SetSpeedFX(ACTOR_WEREWOLF, tenths * (toFIXED(1) / 10),
+                     tenths * (toFIXED(1) / 20));
     Actor_WalkToAndWait(ACTOR_WEREWOLF, position[0] / toFIXED(1),
                         position[2] / toFIXED(1));
     i++;

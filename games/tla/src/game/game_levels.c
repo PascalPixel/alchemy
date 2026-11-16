@@ -7,6 +7,14 @@
 #include "game/game.h"
 #include "text/msg_ids.h"
 
+// Slots are four-byte entries, read as halfwords; UBFIX reads each entry
+// through its own type.
+#ifdef UBFIX
+#define PSYNERGY_ACTION_AT(slots, index) ((slots)[index].encodedAction)
+#else
+#define PSYNERGY_ACTION_AT(slots, index) (((u16 *)(slots))[(index) * 2])
+#endif
+
 /// Returns the definition of ability `abilityId` (its low 14 bits); an id
 /// past the table gives the first. Every bank reads an ability through its far
 /// call, Ability_Get.
@@ -63,52 +71,54 @@ s32 Unit_KnowsPsynergy(s32 unitId, s32 abilityId) {
 /// order, then come its class's Psynergy up to its level and its equipped
 /// items' Psynergy, while the list has room.
 s32 Owner_UpdateClassActions(s32 owner) {
-  struct Unit *st;
-  u16 *ability;
-  struct ClassDefinition *cls;
-  struct ItemDefinition *def;
+  struct Unit *unit;
+  struct PsynergyEntry *abilities;
+  struct ClassDefinition *classDefinition;
+  struct ItemDefinition *item;
   s32 i;
   s32 j;
   u16 mask;
-  struct ClassAbility *cg;
+  struct ClassAbility *classAbility;
 
-  st = Unit_Get(owner);
-  ability = (u16 *)st->psynergy;
-  cls = Class_GetDefinition(st->classId);
-  if (st->classId == CLASS_NONE)
+  unit = Unit_Get(owner);
+  abilities = unit->psynergy;
+  classDefinition = Class_GetDefinition(unit->classId);
+  if (unit->classId == CLASS_NONE)
     return 0;
   mask = OWNER_ACTION_CLASS | OWNER_ACTION_ITEM;
   for (j = 0; j < PSYNERGY_SLOTS; j++) {
-    if (ability[j * 2] & mask)
-      ability[j * 2] = 0;
+    if (PSYNERGY_ACTION_AT(abilities, j) & mask)
+      PSYNERGY_ACTION_AT(abilities, j) = 0;
   }
   for (i = PSYNERGY_SLOTS - 1, j = PSYNERGY_SLOTS - 1; i >= 0;) {
-    if (ability[i * 2] == 0) {
+    if (PSYNERGY_ACTION_AT(abilities, i) == 0) {
       i--;
     } else {
-      ability[j * 2] = ability[i * 2];
+      PSYNERGY_ACTION_AT(abilities, j) = PSYNERGY_ACTION_AT(abilities, i);
       i--;
       j--;
     }
   }
   for (; j >= 0; j--)
-    ability[j * 2] = 0;
+    PSYNERGY_ACTION_AT(abilities, j) = 0;
 
   mask = OWNER_ACTION_CLASS;
   for (j = 0; j < CLASS_ABILITY_SLOTS; j++) {
-    cg = &cls->abilities[j];
-    if (cls->abilities[j].ability == 0)
+    classAbility = &classDefinition->abilities[j];
+    if (classDefinition->abilities[j].ability == 0)
       continue;
-    if (st->level < cls->abilities[j].level)
+    if (unit->level < classDefinition->abilities[j].level)
       continue;
     i = 0;
-    while (i < PSYNERGY_SLOTS && ability[i * 2] != cls->abilities[j].ability)
+    while (i < PSYNERGY_SLOTS && PSYNERGY_ACTION_AT(abilities, i) !=
+                                     classDefinition->abilities[j].ability)
       i++;
     if (i != PSYNERGY_SLOTS)
       continue;
     for (i = 0; i < PSYNERGY_SLOTS; i++) {
-      if (ability[i * 2] == 0) {
-        ability[i * 2] = cg->ability | OWNER_ACTION_CLASS;
+      if (PSYNERGY_ACTION_AT(abilities, i) == 0) {
+        PSYNERGY_ACTION_AT(abilities, i) =
+            classAbility->ability | OWNER_ACTION_CLASS;
         break;
       }
     }
@@ -117,22 +127,23 @@ s32 Owner_UpdateClassActions(s32 owner) {
   }
 
   for (j = 0; j < INVENTORY_SLOTS; j++) {
-    if (st->inventory[j] == 0)
+    if (unit->inventory[j] == 0)
       continue;
-    if (!(st->inventory[j] & INVENTORY_EQUIPPED))
+    if (!(unit->inventory[j] & INVENTORY_EQUIPPED))
       continue;
-    def = Item_GetDirect(st->inventory[j]);
-    if (def->useType != ITEM_USE_TEACHES)
+    item = Item_GetDirect(unit->inventory[j]);
+    if (item->useType != ITEM_USE_TEACHES)
       continue;
     for (i = 0; i < PSYNERGY_SLOTS; i++) {
-      if ((ability[i * 2] & PSYNERGY_ABILITY_MASK) == def->abilityId)
+      if ((PSYNERGY_ACTION_AT(abilities, i) & PSYNERGY_ABILITY_MASK) ==
+          item->abilityId)
         break;
     }
     if (i != PSYNERGY_SLOTS)
       continue;
     for (i = 0; i < PSYNERGY_SLOTS; i++) {
-      if (ability[i * 2] == 0) {
-        ability[i * 2] = def->abilityId | OWNER_ACTION_ITEM;
+      if (PSYNERGY_ACTION_AT(abilities, i) == 0) {
+        PSYNERGY_ACTION_AT(abilities, i) = item->abilityId | OWNER_ACTION_ITEM;
         break;
       }
     }
@@ -141,16 +152,16 @@ s32 Owner_UpdateClassActions(s32 owner) {
   }
 
   for (i = 0, j = 0; i < PSYNERGY_SLOTS;) {
-    if (ability[i * 2] == 0) {
+    if (PSYNERGY_ACTION_AT(abilities, i) == 0) {
       i++;
     } else {
-      ability[j * 2] = ability[i * 2];
+      PSYNERGY_ACTION_AT(abilities, j) = PSYNERGY_ACTION_AT(abilities, i);
       i++;
       j++;
     }
   }
   for (; j < PSYNERGY_SLOTS; j++)
-    ability[j * 2] = 0;
+    PSYNERGY_ACTION_AT(abilities, j) = 0;
   return 0;
 }
 
@@ -414,3 +425,5 @@ void Unit_LevelUpTo(s32 unitId, s32 targetLevel) {
   }
   Unit_Calculate(unitId);
 }
+
+#undef PSYNERGY_ACTION_AT

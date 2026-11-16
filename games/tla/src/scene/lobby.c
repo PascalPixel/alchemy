@@ -349,9 +349,7 @@ s32 LinkLobby_ReceivePartyRecords(void) {
   heap = Heap_AllocEwram(size);
   result = 0;
   timeout = LOBBY_RECEIVE_TIMEOUT_FRAMES;
-  for (slot = 0;; slot++) {
-    if (slot >= LOBBY_UNIT_RECORD_COUNT)
-      goto second;
+  for (slot = 0; slot < LOBBY_UNIT_RECORD_COUNT; slot++) {
     unit = Unit_Get(slot + 128);
     transfer = Serial_StartReceive(unit);
     tries = 0;
@@ -393,39 +391,40 @@ s32 LinkLobby_ReceivePartyRecords(void) {
       unit->name[i] = namePrefix[i];
     unit->name[UNIT_NAME_SIZE - 1] = 0;
   }
-  goto failed;
-  for (;;) {
-  second:
-    Heap_Release(heap);
-    size = LOBBY_RECOVERY_RECORD_BYTES;
-    heap = Heap_AllocEwram(size);
-    transfer = Serial_StartReceive(Djinn_GetRecoveryTable(1));
-    tries = 0;
-    if (transfer == -1)
-      break;
-    while (Serial_GetActiveTransfers() != 0) {
-      s32 limit = LOBBY_RECOVERY_RECORD_BYTES;
+  if (slot >= LOBBY_UNIT_RECORD_COUNT) {
+    // Then the Djinn recovery table. A receive that cannot start leaves by the
+    // break, as one in the loop above does.
+    do {
+      Heap_Release(heap);
+      size = LOBBY_RECOVERY_RECORD_BYTES;
+      heap = Heap_AllocEwram(size);
+      transfer = Serial_StartReceive(Djinn_GetRecoveryTable(1));
+      tries = 0;
+      if (transfer == -1)
+        break;
+      while (Serial_GetActiveTransfers() != 0) {
+        s32 limit = LOBBY_RECOVERY_RECORD_BYTES;
 
-      if (gSerialReceivedSize > limit) {
-        result = -1;
-        goto done;
-      }
-      wait(1);
-      if (--timeout < 0 ||
-          (gLinkStatus & LOBBY_LINK_READY_MASK) != LOBBY_LINK_READY_MASK) {
-        if (++tries > LOBBY_TRANSFER_RETRY_LIMIT) {
+        if (gSerialReceivedSize > limit) {
           result = -1;
           goto done;
         }
+        wait(1);
+        if (--timeout < 0 ||
+            (gLinkStatus & LOBBY_LINK_READY_MASK) != LOBBY_LINK_READY_MASK) {
+          if (++tries > LOBBY_TRANSFER_RETRY_LIMIT) {
+            result = -1;
+            goto done;
+          }
+        }
       }
-    }
-    if (gSerialReceivedSize != LOBBY_RECOVERY_RECORD_BYTES)
-      result = -1;
-    else
-      wait(2);
-    goto done;
+      if (gSerialReceivedSize != LOBBY_RECOVERY_RECORD_BYTES)
+        result = -1;
+      else
+        wait(2);
+      goto done;
+    } while (0);
   }
-failed:
   result = transfer;
 done:
   Heap_Release(heap);
@@ -477,12 +476,12 @@ s32 LinkLobby_SendPartyRecords(void) {
   memberCount = LinkLobby_CopyPartyOwnerIds(memberIds);
   for (i = 0; i <= 7; i++)
     peerSlots[i] = 0;
-  i = 0;
-  if (i >= memberCount)
-    goto next;
-  {
-  send:
-    {
+  // Each send waits a frame at a time to finish. Once the timeout has run out,
+  // or while the link is not ready, every frame is a try, and past
+  // LOBBY_TRANSFER_RETRY_LIMIT tries the exchange fails. A send that cannot
+  // start leaves the block.
+  do {
+    for (i = 0; i < memberCount; i++) {
       s32 tries = 0;
 
       Iwram_CopyWordsEntry(heap, Unit_Get(memberIds[i]), size);
@@ -492,92 +491,80 @@ s32 LinkLobby_SendPartyRecords(void) {
         result = transferResult;
         goto done;
       }
-      goto testMember;
-    waitMember:
-      wait(1);
-      if (--timeout < 0 ||
-          (gLinkStatus & LOBBY_LINK_READY_MASK) != LOBBY_LINK_READY_MASK) {
-        if (++tries > LOBBY_TRANSFER_RETRY_LIMIT) {
-          result = -1;
-          goto done;
+      while (Serial_GetActiveTransfers() != 0) {
+        wait(1);
+        if (--timeout < 0 ||
+            (gLinkStatus & LOBBY_LINK_READY_MASK) != LOBBY_LINK_READY_MASK) {
+          if (++tries > LOBBY_TRANSFER_RETRY_LIMIT) {
+            result = -1;
+            goto done;
+          }
         }
       }
-    testMember:
-      if (Serial_GetActiveTransfers() != 0)
-        goto waitMember;
       wait(2);
-      i++;
-      if (i < memberCount)
-        goto send;
-      /* FAKEMATCH(dead): an empty once-only block between the test and the
-       * jump. */
-      do {
-      } while (0);
-      goto next;
     }
-  }
-wait:
-  wait(1);
-  if (--timeout < 0 ||
-      (gLinkStatus & LOBBY_LINK_READY_MASK) != LOBBY_LINK_READY_MASK) {
-    if (++tries > LOBBY_TRANSFER_RETRY_LIMIT) {
-      result = -1;
-      goto done;
-    }
-  }
-test:
-  if (Serial_GetActiveTransfers() != 0)
-    goto wait;
-  wait(2);
-  i++;
-next:
-  if (i < LOBBY_UNIT_RECORD_COUNT) {
-    ((struct Unit *)heap)->side = tries = 0;
-    if ((transferResult = Serial_StartSend(heap, size)) != -1)
-      goto test;
-    result = transferResult;
-    goto done;
-  }
-  Heap_Release(heap);
-  size = LOBBY_RECOVERY_RECORD_BYTES;
-  heap = Heap_AllocEwram(size);
-  IWRAM_COPY_WORDS(heap, Djinn_GetRecoveryTable(0), size);
-  {
-    s32 timeout;
-    s32 tries;
-
-    list = &((struct DjinnRecoveryTable *)heap)->list;
-    tries = 0;
-    timeout = LOBBY_SEND_TIMEOUT_FRAMES;
-    for (j = 0; j < list->count; j++) {
-      list->entries[j].unitId = peerSlots[list->entries[j].unitId];
-      if (list->entries[j].unitId == 0) {
-        for (k = j; k < list->count - 1; k++)
-          list->entries[k] = list->entries[k + 1];
-        list->count--;
-        j--;
+    // Pad to three records with the last copy marked absent.
+    for (; i < LOBBY_UNIT_RECORD_COUNT; i++) {
+      ((struct Unit *)heap)->side = tries = 0;
+      if ((transferResult = Serial_StartSend(heap, size)) == -1)
+        break;
+      while (Serial_GetActiveTransfers() != 0) {
+        wait(1);
+        if (--timeout < 0 ||
+            (gLinkStatus & LOBBY_LINK_READY_MASK) != LOBBY_LINK_READY_MASK) {
+          if (++tries > LOBBY_TRANSFER_RETRY_LIMIT) {
+            result = -1;
+            goto done;
+          }
+        }
       }
+      wait(2);
     }
-    if ((transferResult = Serial_StartSend(heap, size)) == -1) {
+    if (i < LOBBY_UNIT_RECORD_COUNT) {
       result = transferResult;
-      goto done;
+      break;
     }
-    goto testOffers;
-  waitOffers:
-    wait(1);
-    if (--timeout < 0 ||
-        (gLinkStatus & LOBBY_LINK_READY_MASK) != LOBBY_LINK_READY_MASK) {
-      if (++tries > LOBBY_TRANSFER_RETRY_LIMIT) {
-        result = -1;
-        goto done;
+    // Then the recovery table.
+    Heap_Release(heap);
+    size = LOBBY_RECOVERY_RECORD_BYTES;
+    heap = Heap_AllocEwram(size);
+    IWRAM_COPY_WORDS(heap, Djinn_GetRecoveryTable(0), size);
+    {
+      s32 timeout;
+      s32 tries;
+
+      list = &((struct DjinnRecoveryTable *)heap)->list;
+      tries = 0;
+      timeout = LOBBY_SEND_TIMEOUT_FRAMES;
+      // Give each Djinni on the list its party member's number on the
+      // partner's side, and drop those of party members not sent.
+      for (j = 0; j < list->count; j++) {
+        list->entries[j].unitId = peerSlots[list->entries[j].unitId];
+        if (list->entries[j].unitId == 0) {
+          for (k = j; k < list->count - 1; k++)
+            list->entries[k] = list->entries[k + 1];
+          list->count--;
+          j--;
+        }
       }
+      if ((transferResult = Serial_StartSend(heap, size)) == -1) {
+        result = transferResult;
+        break;
+      }
+      while (Serial_GetActiveTransfers() != 0) {
+        wait(1);
+        if (--timeout < 0 ||
+            (gLinkStatus & LOBBY_LINK_READY_MASK) != LOBBY_LINK_READY_MASK) {
+          if (++tries > LOBBY_TRANSFER_RETRY_LIMIT) {
+            result = -1;
+            goto done;
+          }
+        }
+      }
+      wait(1);
+      wait(2);
     }
-  testOffers:
-    if (Serial_GetActiveTransfers() != 0)
-      goto waitOffers;
-    wait(1);
-    wait(2);
-  }
+  } while (0);
 done:
   Heap_Release(heap);
   return result;
@@ -1084,7 +1071,7 @@ void LinkLobby_TakeSongRequest(s32 actor) {
         step--;
       if (gInput.repeat & KEY_RIGHT)
         step = 1;
-      while (step != 0) {
+      for (; step != 0;) {
         song += step;
         if (song < 0)
           song = 96;
@@ -1093,9 +1080,8 @@ void LinkLobby_TakeSongRequest(s32 actor) {
         if (all != 0 || gMainRoutineWork.sendFlag != 0 || gAnyFileCleared != 0)
           break;
         if (SoundFlag_Test(gLinkLobby_RequestableSounds[song]) != 0)
-          goto keys;
+          break;
       }
-    keys:
       if (gInput.pressed & KEY_A)
         break;
       if (gInput.pressed & KEY_B) {

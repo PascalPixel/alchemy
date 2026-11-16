@@ -262,7 +262,7 @@ void WorldPicture_UpdateMarkers(void) {
   i = 0;
   do {
     if (place->flag == 0) {
-      if (gData_0202a642 != 0)
+      if (gWorldPicture_FirstListOnly != 0)
         break;
       place = &places[128];
       i = 128;

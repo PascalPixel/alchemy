@@ -176,8 +176,8 @@ typedef s32 (*ScriptCommandFn)();
 
 typedef void (*TargetHook)(struct Actor *, s32 *, s32 *);
 
-/// One sprite's two OAM words.
-// volatile: the words are built in place for the DMA to copy to OAM.
+/// One sprite's two OAM words, volatile because they are built in place for the
+/// DMA to copy to OAM.
 struct OamWords {
   volatile u32 attr01; ///< attr0 | attr1 << 16
   volatile u32 attr2;  ///< attr2 | affine value << 16
@@ -234,13 +234,6 @@ struct DiceCamera {
   FIXED focus[3];
 };
 
-struct ObjectSystemColours {
-  u16 used;
-  u8 unusedAfterUsed[4]; ///< no code names it
-  u8 edge;
-  u8 fill;
-};
-
 /// A party member's unit as the field reads it: its gauges and its HP and PP.
 struct FieldUnit {
   u8 unused[20]; ///< no code names it
@@ -261,15 +254,6 @@ struct LuckyDiceSprites {
   struct RenderInput *coinsWindow;
   struct RenderInput *winningsWindow;
   struct RenderInput *helpWindow;
-};
-
-struct BattleFxTransferWork {
-  u8 unused[30592]; ///< no code names it
-  s32 transferMode;
-  s32 transferValue;
-  u8 unusedAfterTransferValue[348]; ///< no code names it
-  s32 vblanksSinceTransfer;
-  s32 transferPending;
 };
 
 /// A Lucky Wheels reel: its turn, its 21 symbols, whether it is held and
@@ -461,18 +445,21 @@ struct EffectOwner {
   struct Sprite *sprite;
 };
 
+/// The line scroll's work, as The Broken Seal's: two pages of BG1 to BG3
+/// scroll offsets for each of the 160 scanlines, and the sine wave that bends
+/// them on each axis.
 struct LineScrollWork {
-  struct BgScroll rows[2][160][3];
-  u8 page;
-  u8 mode;
-  u16 frame;
-  u8 unusedAfterFrame[4]; ///< no code names it
-  s32 freqX;
-  s32 freqY;
-  s32 stepX;
-  s32 stepY;
-  s32 ampX;
-  s32 ampY;
+  struct BgScroll rows[2][160][3]; ///< per page and scanline: BG3, BG2, BG1
+  u8 page;      ///< the page the HBlank DMA shows; the other is built
+  u8 mode;      ///< set at the start; not read by name
+  u16 frame;    ///< frames built so far, added to BG3's y for the wave's phase
+  u8 unused[4]; ///< zeroed with the block; nothing reads or writes it
+  FIXED freqX;  ///< phase per frame and per BG3 row, 16.16 wave table entries
+  FIXED freqY;  ///< phase per frame and per BG3 row, 16.16 wave table entries
+  FIXED stepX;  ///< 16.16 wave table entries a scanline, 256 a cycle
+  FIXED stepY;  ///< 16.16 wave table entries a scanline, 256 a cycle
+  FIXED ampX;   ///< 16.16 scale on the sine entry, which is then divided by 256
+  FIXED ampY;   ///< 16.16 scale on the sine entry, which is then divided by 256
 };
 
 /// One node of a rope Lash throws and ties (Rope_Initialize's work): a point on
@@ -513,17 +500,6 @@ struct RopeWork {
 };
 
 #define ROPE_WORK ((struct RopeWork *)Ram_HeapSlots->rope)
-
-struct AnimationGroup {
-  u8 unused[22]; ///< no code names it
-  s8 offsetX;
-  s8 offsetY;
-  u8 lastNo;
-  u8 unusedAfterLastNo[2]; ///< no code names it
-  u8 count;
-  u8 unusedAfterCount[12]; ///< no code names it
-  struct SpriteAnimation *entries[4];
-};
 
 extern const u8 gSuperLuckyDice_FaceTiles[];
 s32 SuperLuckyDice_ScaleRgb555Buffer(u16 *source, u16 *destination, s32 scale,

@@ -751,8 +751,8 @@ Data_0202a63e:
 	.global gWorldPicture_Zoomed
 gWorldPicture_Zoomed:
 	.space 0x00000002
-	.global gData_0202a642
-gData_0202a642:
+	.global gWorldPicture_FirstListOnly
+gWorldPicture_FirstListOnly:
 	.space 0x00000002
 	.global gWorldPicture_GlideTargetX
 gWorldPicture_GlideTargetX:

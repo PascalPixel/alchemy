@@ -166,9 +166,10 @@ void WorldPicture_GetLeaderPoint(s32 *screenX, s32 *screenY) {
 }
 
 /// Returns a World Map place's marker: the high nibble of its value when
-/// gData_0202a642 is set, else the low nibble (0 and 15 show none).
+/// gWorldPicture_FirstListOnly is set, else the low nibble (0 and 15 show
+/// none).
 u32 WorldMapPlace_GetMarker(const struct FlagEntry *place) {
-  if (gData_0202a642 != 0)
+  if (gWorldPicture_FirstListOnly != 0)
     return place->value >> 4;
   return place->value & 15;
 }

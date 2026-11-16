@@ -914,10 +914,10 @@ void FieldEffect_SpawnBurstParticleField(void) {
     obj = Actor_Spawn(SPRITE_PARTICLE, pos[0], pos[1], pos[2]);
     visual = &((struct BurstParticleVisualGroup *)obj->sprite)->primary;
     child = &((struct BurstParticleVisualGroup *)obj->sprite)->child;
-    child->flip = visual->flip;
-    child->flagsBHigh = visual->flagsBHigh;
-    child->flagsAHigh = visual->flagsAHigh;
-    child->attributes.bits.shape = visual->attributes.bits.shape;
+    child->fullColor = visual->fullColor;
+    child->size = visual->size;
+    child->shape = visual->shape;
+    child->attributes.bits.tile = visual->attributes.bits.tile;
     child->attributes.bytes.palette = visual->attributes.bytes.palette;
 
     if (obj != 0) {

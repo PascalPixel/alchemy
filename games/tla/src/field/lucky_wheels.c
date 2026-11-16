@@ -27,6 +27,7 @@
 #include "field/lucky_wheels_title.h"
 #include "field/field.h"
 #include "field/field_sequence.h"
+#include "battle/battle_effect_work.h"
 #include "resource_ids.h"
 #include "graphics/graphics.h"
 #include "item_ids.h"
@@ -218,7 +219,7 @@ s32 LuckyWheels_ScaleRgb555(u16 *src, u16 *dst, FIXED scale, s32 count) {
 /// sends the canvas to its tiles in VRAM (LUCKY_WHEELS_CANVAS_TILES), then
 /// clears it or fades it into trails as transferMode says.
 void LuckyWheels_TransferCanvas(void) {
-  struct BattleFxTransferWork *work;
+  struct BattleEffectWork *work;
   u8 *buf;
 
   work = Ram_HeapSlots->battleEffect;

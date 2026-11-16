@@ -288,11 +288,10 @@ void TaopoSwamp_GrowVine(void) {
   Event_SetFlag(FLAG_SCENE_TEMP_20);
 }
 
-struct AnimationGroup;
 struct ChildGroup;
 
 extern u32 gTaopoSwamp_SplashFades[];
-s32 Sprite_StartAnimation(struct AnimationGroup *state, s32 flags);
+s32 Sprite_StartAnimation(struct Sprite *state, s32 flags);
 void Sprite_SetAnimationColorModes(struct FieldSprite *record, u32 value);
 void Sprite_SetAnimationSpeed(struct ChildGroup *group, s32 value);
 

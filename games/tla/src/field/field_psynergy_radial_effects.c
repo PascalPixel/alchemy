@@ -1244,7 +1244,7 @@ void BattleEffect_SetObjectUpdateMode(struct Actor *object, s32 mode) {
 /// target's priority, then restarts that group's age, records the target and
 /// switches to the other group.
 void BattleEffect_SpawnScaledArcObjects(struct Actor *target) {
-  struct ArcWork *work = Ram_HeapSlots->arcEffect;
+  struct ArcEffectWork *work = Ram_HeapSlots->arcEffect;
   s32 tiles = gVramCacheEntries[work->resource].offset >> 5;
   s32 group = work->group;
   struct EffectSprite *sprite;
@@ -1267,7 +1267,7 @@ void BattleEffect_SpawnScaledArcObjects(struct Actor *target) {
 /// frame, the second arc of a pair upside down, one in front of the actor and
 /// one behind.
 void BattleEffect_UpdateArcEffect(void) {
-  struct ArcWork *work = Ram_HeapSlots->arcEffect;
+  struct ArcEffectWork *work = Ram_HeapSlots->arcEffect;
   struct Actor *target = work->target;
   s32 group;
   FIXED position[3];
@@ -1611,9 +1611,6 @@ again:
 /// Effect 29 cast on a target: runs the effect. Nothing calls it; the
 /// targeted dispatch has no case for animation 29.
 void FieldPsynergy_ArrowOnTarget(void) { FieldPsynergy_Arrow(); }
-
-// One moving point: a spark on the canvas (x and y only, counting delay) or
-// a sprite's place in the world.
 
 void FieldPsynergy_Arrow(void) {
   struct BowWork *work =

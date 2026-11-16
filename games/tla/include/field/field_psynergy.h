@@ -38,8 +38,8 @@ enum OrbKind {
   ORB_HANDOFF,  // target 373: the target is handed on
 };
 
-// One moving point: a spark on the canvas (x and y only, counting delay) or
-// a sprite's place in the world.
+/// One moving point of the Arrow: a spark on the canvas (x and y only, counting
+/// delay) or a sprite's place in the world.
 struct BowMotion {
   s32 x;
   s32 y;
@@ -50,6 +50,9 @@ struct BowMotion {
   s32 delay;
 };
 
+/// The Arrow's work (FieldPsynergy_Arrow, in heap slot
+/// HEAP_SLOT_BATTLE_EFFECT): its 32 sparks, the arrow and the bow with their
+/// motions, the points the arrow flies between, and the phase of its task.
 struct BowWork {
   u8 *tiles;
   struct BowMotion sparks[32];
@@ -81,14 +84,6 @@ struct PointWork {
   u16 cycloneCarryZ;
   u16 cycloneLiftX;
   u16 cycloneLiftZ;
-};
-
-struct ArcWork {
-  struct EffectSprite sprites[2][2];
-  s16 age[2];
-  s16 resource;
-  s16 group;
-  struct Actor *target;
 };
 
 /// A falling arc's sprite (struct Sprite), seen as the image attributes, VRAM

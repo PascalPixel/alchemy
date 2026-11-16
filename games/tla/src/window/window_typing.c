@@ -41,8 +41,7 @@ void Window_StepSwellEffect(struct UiChannelSlot *window);
 /// its window animation or types more text, and on the text's end marks the
 /// window done (state 1) or closes it.
 void Message_UpdateAll(void) {
-  struct UiChannelSlot *channel =
-      ((struct WindowWork *)Ram_HeapSlots->windowWork)->channels;
+  struct UiChannelSlot *channel = (WINDOW_WORK)->channels;
   s32 channelNo = 0;
   s32 one = 1;
 
@@ -108,7 +107,7 @@ void WindowSprite_PrepareForRedraw(struct Window *window);
 /// or a control code also ends it; in battle it is 8 glyphs, 13 after a frame
 /// that took two VBlanks and 18 after one that took three or more.
 s32 Message_Type(struct UiChannelSlot *channel) {
-  struct WindowWork *work = (struct WindowWork *)Ram_HeapSlots->windowWork;
+  struct WindowWork *work = WINDOW_WORK;
   // DEAD: the held keys are read here and never used; the ROM keeps the load.
   u32 keys = gInput.held;
   s32 glyphsLeft = gMessageSpeed_Steps[TEXT_SPEED];

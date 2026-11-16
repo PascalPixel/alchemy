@@ -4,15 +4,13 @@
 
 #include "window_internal.h"
 
-#define UI_WORK ((struct WindowWork *)Ram_HeapSlots->windowWork)
-
 void Window_DrawOpened(struct Window *window);
 void Window_WaitZoom(void *work);
 
 /// Removes and returns the first entry of the free list, or NULL if it is
 /// empty.
 struct WindowSprite *WindowSprite_AcquireFree(void) {
-  struct WindowWork *work = UI_WORK;
+  struct WindowWork *work = WINDOW_WORK;
   struct WindowSprite *out = work->freeSprites.head;
 
   if (out != NULL) {
@@ -27,7 +25,7 @@ struct WindowSprite *WindowSprite_AcquireFree(void) {
 /// Puts an entry back at the free list's tail; entries outside sprites[] are
 /// ignored.
 void WindowSprite_ReleaseFree(struct WindowSprite *out) {
-  struct WindowWork *work = UI_WORK;
+  struct WindowWork *work = WINDOW_WORK;
 
   if ((u32)out >= (u32)work->sprites &&
       (u32)out < (u32)&work->freeSprites.head) {
@@ -46,7 +44,7 @@ void WindowSprite_InitializeFreeList(void) {
   struct WindowSprite *out;
   struct WindowSprite *next;
 
-  work = UI_WORK;
+  work = WINDOW_WORK;
   out = work->sprites;
   work->freeSprites.head = out;
   n = WINDOW_SPRITE_COUNT - 2;
@@ -126,7 +124,7 @@ void WindowSystem_InitBattle(s32 kind) {
 /// The tilemap upload, a VBlank-pass task: copies each 256-byte band of the
 /// tilemap (four tile rows) marked in the dirty bits to VRAM.
 void WindowSystem_UploadTilemap(void) {
-  struct WindowWork *work = (struct WindowWork *)Ram_HeapSlots->windowWork;
+  struct WindowWork *work = WINDOW_WORK;
   u32 bands;
   u8 *src;
   u8 *dst;
@@ -156,7 +154,7 @@ void WindowSystem_UploadTilemap(void) {
 /// Erases a window's rectangle of the tilemap (x, y, width and height in tiles)
 /// and frees the text tiles it showed.
 void Window_EraseBorderRect(s32 x, s32 y, u32 width, u32 height) {
-  struct WindowWork *canvas = (struct WindowWork *)Ram_HeapSlots->windowWork;
+  struct WindowWork *canvas = WINDOW_WORK;
   u16 *cursor = &canvas->tilemap[y][x];
   s32 tile;
   u32 bottom;
@@ -214,7 +212,7 @@ void Window_DrawOpened(struct Window *window) {
   u32 height;
   struct WindowWork *work;
 
-  work = UI_WORK;
+  work = WINDOW_WORK;
   x = (s16)window->x;
   y = (s16)window->y;
   width = window->width;
@@ -244,7 +242,7 @@ struct Window *Window_Create(s32 x, s32 y, s32 width, s32 height, s32 attrs) {
   struct Window *found;
   s32 i;
 
-  slot = UI_WORK->windows;
+  slot = WINDOW_WORK->windows;
   found = 0;
   for (i = 0; i != WINDOW_COUNT; i++, slot++) {
     if ((slot->flags & WINDOW_FLAG_OPEN) == 0 && slot->duration == 0) {
@@ -383,8 +381,6 @@ void WindowSprite_ClearList(void *sprites) {
   }
 }
 
-#define UI_WORK ((struct WindowWork *)Ram_HeapSlots->windowWork)
-
 /// Clears an area of a window's interior to the window fill. left, top, right
 /// and bottom are pixels inside the window, and the area covers every tile they
 /// touch.
@@ -400,7 +396,7 @@ void Window_ClearInteriorTiles(const struct Window *window, u32 left, u32 top,
   s32 windowX;
   s32 windowY;
 
-  work = UI_WORK;
+  work = WINDOW_WORK;
   x = left >> 3;
   windowX = (s16)window->x;
   y = top >> 3;
@@ -433,12 +429,6 @@ void Window_ClearInteriorTiles(const struct Window *window, u32 left, u32 top,
   }
   work->dirty = 1;
 }
-
-#if (LANGUAGE != LANGUAGE_JAPANESE)
-#define UI_PALETTE_OWNER_OFFSET 0x1360
-#else
-#define UI_PALETTE_OWNER_OFFSET 0x1160
-#endif
 
 /// Points a list's tail link back at its last sprite, after the list has been
 /// edited by hand.
@@ -477,9 +467,8 @@ void WindowSprite_Release(struct WindowSprite *entry) {
   if ((u8)entry->kind != WINDOW_SPRITE_GLYPH) {
     VramCache_FreeEntry((u8)entry->index);
     if ((u8)entry->kind == WINDOW_SPRITE_PORTRAIT) {
-      u8 *dst = (u8 *)Ram_HeapSlots->windowWork;
-      s32 idx = entry->sprite.oam.palette * 2 + UI_PALETTE_OWNER_OFFSET;
-      *(u16 *)(dst + idx) = PORTRAIT_SLOT_EMPTY;
+      WINDOW_WORK->resourceIds[entry->sprite.oam.palette - PORTRAIT_PALETTE] =
+          PORTRAIT_SLOT_EMPTY;
     }
   }
   entry->motion = 0;
@@ -492,7 +481,7 @@ void WindowSprite_Release(struct WindowSprite *entry) {
 /// the message (nonzero keeps the window's size from page to page).
 struct UiChannelSlot *Message_Start(struct Window *window, s32 entry, s32 x,
                                     s32 y, u16 *spacing, s32 flags) {
-  struct WindowWork *work = (struct WindowWork *)Ram_HeapSlots->windowWork;
+  struct WindowWork *work = WINDOW_WORK;
   struct UiChannelSlot *render = work->channels;
   struct UiChannelSlot *found = NULL;
   u32 i;
@@ -530,8 +519,6 @@ struct UiChannelSlot *Message_Start(struct Window *window, s32 entry, s32 x,
   return found;
 }
 
-#define UI_WORK ((struct WindowWork *)Ram_HeapSlots->windowWork)
-
 void Text_StartCanvasScroll(struct UiChannelSlot *channel);
 
 /// Starts a channel typing the decoded text at entry into the battle message
@@ -547,7 +534,7 @@ struct UiChannelSlot *BattleMessage_Continue(struct Window *window, s32 entry,
   u16 lineSpacing;
   u32 index;
 
-  slot = UI_WORK->channels;
+  slot = WINDOW_WORK->channels;
   selected = 0;
   for (index = 0; index != MESSAGE_COUNT; slot++, index++) {
     if (slot->work == 0 || slot->work->state != 0) {
@@ -610,8 +597,7 @@ void Text_FillCanvasBackground(void) {
 /// Resets the pen and text style of the first idle message, clearing the canvas
 /// when the message still has a window.
 void Message_ResetIdle(void) {
-  struct UiChannelSlot *slot =
-      ((struct WindowWork *)Ram_HeapSlots->windowWork)->channels;
+  struct UiChannelSlot *slot = (WINDOW_WORK)->channels;
   struct UiChannelSlot *selection = 0;
   s32 i;
 
@@ -639,7 +625,7 @@ void Message_ResetIdle(void) {
 /// Copies the message's text colour, outline and line spacing into the shared
 /// glyph renderer before that message draws its next character.
 void Message_ApplyStyle(struct UiChannelSlot *channel) {
-  struct WindowWork *work = (struct WindowWork *)Ram_HeapSlots->windowWork;
+  struct WindowWork *work = WINDOW_WORK;
 
   work->colour = channel->colour;
   work->outline = channel->outline;
@@ -652,6 +638,3 @@ void Message_ApplyStyle(struct UiChannelSlot *channel) {
 void Text_StartCanvasScroll(struct UiChannelSlot *channel) {
   channel->transition = 2;
 }
-
-#undef UI_WORK
-#undef UI_PALETTE_OWNER_OFFSET

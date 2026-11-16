@@ -332,7 +332,7 @@ u32 Message_AppendArticleName(s32 mode, u16 *name, u32 writePosition,
                               s32 *suffix);
 
 s32 Message_Decode(s32 script, s32 clear) {
-  struct WindowWork *work = (struct WindowWork *)Ram_HeapSlots->windowWork;
+  struct WindowWork *work = WINDOW_WORK;
   u32 code = 0;
 #if !TLA_PATCH_2
   s32 lineStart = 1;
@@ -887,7 +887,7 @@ static inline u32 Message_AppendArticleName(s32 mode, u16 *name,
 /// menuState is set, the Mystery Man and Mystery Woman are named from
 /// MSG_MYSTERY_MAN and the message after it rather than their unit names.
 s32 Message_Decode(s32 script, s32 clear) {
-  struct WindowWork *work = (struct WindowWork *)Ram_HeapSlots->windowWork;
+  struct WindowWork *work = WINDOW_WORK;
   u32 code = 0;
   s32 lineStart = 1;
   u32 start = work->textBufferEnd;

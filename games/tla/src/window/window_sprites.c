@@ -44,7 +44,7 @@ s32 Text_DrawGlyphPair(s32 character, u32 *tiles);
 /// nothing is drawn and it returns 0. The sprite stays until its window is
 /// cleared or closed.
 s32 Glyph_Draw(struct Window *window, s32 character, s32 x, s32 y, s32 mode) {
-  struct WindowWork *work = (struct WindowWork *)Ram_HeapSlots->windowWork;
+  struct WindowWork *work = WINDOW_WORK;
   s32 width;
   u32 spacingX = work->glyphSpacing;
   u32 spacingY = work->lineSpacing;
@@ -316,7 +316,7 @@ void *Glyph_AddBlankSprite(struct Window *window, s32 character, s32 x, s32 y) {
 /// next-page arrow sprite on the interior's last tile. In Japanese, a kana mark
 /// goes in the tile above the character before it.
 void Window_PutGlyph(struct Window *win, u32 tile, u32 x, u32 y, s32 mode) {
-  struct WindowWork *base = (struct WindowWork *)Ram_HeapSlots->windowWork;
+  struct WindowWork *base = WINDOW_WORK;
   u16 *tilemap = base->tilemap[0];
   struct WindowSprite *out;
   s32 idx;
@@ -405,7 +405,7 @@ void Window_PutGlyph(struct Window *win, u32 tile, u32 x, u32 y, s32 mode) {
 /// the tilemap, is ignored.
 void Window_SetTilemapEntry(struct Window *window, s32 value, s32 x, s32 y,
                             u32 mode) {
-  u16 *map = ((struct WindowWork *)Ram_HeapSlots->windowWork)->tilemap[0];
+  u16 *map = (WINDOW_WORK)->tilemap[0];
   s32 palette;
   s32 index;
 
@@ -569,7 +569,7 @@ extern const s8 gWindowSprite_BounceOffsets[];
 /// by its animation mode (WINDOW_SPRITE_MOTION_) and queues it for drawing, at
 /// its depth slot (WindowSprite.sentinel).
 void WindowSprite_UpdateAll(void) {
-  struct WindowWork *work = (struct WindowWork *)Ram_HeapSlots->windowWork;
+  struct WindowWork *work = WINDOW_WORK;
   struct Window *window = work->windows;
   s32 no;
   union {

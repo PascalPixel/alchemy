@@ -155,6 +155,9 @@ enum {
   TEXT_INVERTED_QUESTION_MARK = 191 ///< ¿, outside Japanese
 };
 
+/// The window system's work, as ☀️'s WINDOW_WORK.
+#define WINDOW_WORK ((struct WindowWork *)Ram_HeapSlots->windowWork)
+
 // The window object's functions its parts call before their definitions, or
 // with declarations of their own that disagree.
 void Window_DrawBorder(s32 x, s32 y, u32 width, u32 height);

@@ -48,7 +48,7 @@ s32 Text_DrawGlyphPair(s32 code, u32 *out) {
   s32 pixelsLeft;
   u32 tileLine;
 
-  work = (struct WindowWork *)Ram_HeapSlots->windowWork;
+  work = WINDOW_WORK;
 #if (LANGUAGE == LANGUAGE_JAPANESE)
   // The voicing mark the code carries above TEXT_MARK_SHIFT, drawn over the
   // glyph one pixel wider.
@@ -235,7 +235,7 @@ void Text_DrawWideStringAtOffset(u16 *text, struct Window *window, s32 x,
   u32 next;
   s16 start;
 
-  work = (struct WindowWork *)Ram_HeapSlots->windowWork;
+  work = WINDOW_WORK;
   c = 0;
   start = x;
   if (text == NULL) {
@@ -341,7 +341,7 @@ void Text_DrawWideStringAtOffset(u16 *text, struct Window *window, s32 x,
 /// in WindowWork.textBuffer. The window's position is read signed.
 void Text_DrawGlyphTileAtWorkOffset(u16 *buffer, const struct Window *work,
                                     s32 offsetX, s32 offsetY) {
-  struct WindowWork *canvas = (struct WindowWork *)Ram_HeapSlots->windowWork;
+  struct WindowWork *canvas = WINDOW_WORK;
   u32 cell;
 
   if (buffer == NULL) {
@@ -372,7 +372,7 @@ void Text_DrawWideStringInWindow(s16 *text, struct Window *window, s32 x,
   u16 c;
   s16 start;
 
-  work = (struct WindowWork *)Ram_HeapSlots->windowWork;
+  work = WINDOW_WORK;
   start = x;
   if (text == NULL) {
     text = work->textBuffer;

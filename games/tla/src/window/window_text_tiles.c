@@ -9,7 +9,7 @@
 /// colours mapped through remap (0 leaves a pixel as it was).
 void Window_OverlayTilePattern(u16 *entry, u16 *mirror, s32 pattern,
                                u8 *remap) {
-  struct WindowWork *work = (struct WindowWork *)Ram_HeapSlots->windowWork;
+  struct WindowWork *work = WINDOW_WORK;
   u8 pixels[128];
   u8 *sheet = Resource_GetTableEntry(RESOURCE_WINDOW_TILES);
   u32 slot = *(u8 *)entry;
@@ -118,7 +118,7 @@ s32 Text_DrawStringAsTiles(u16 *script, u16 *tiles, u16 *mirror, s32 x) {
   s32 j;
   u32 bits;
 
-  work = (struct WindowWork *)Ram_HeapSlots->windowWork;
+  work = WINDOW_WORK;
   canvas = Heap_Alloc(0x800);
   glyphs = Resource_GetTableEntry(RESOURCE_WINDOW_TILES);
   attr = work->textPalette << 12;
@@ -334,7 +334,7 @@ void Window_MarkVisibleTextTiles(void) {
 /// too; the first range's tiles keep their state. The flag, once read, holds
 /// the zero the tiles are cleared with.
 void Text_UseExtraTiles(s32 allowAlternateTiles) {
-  struct WindowWork *work = (struct WindowWork *)Ram_HeapSlots->windowWork;
+  struct WindowWork *work = WINDOW_WORK;
   s32 i;
   u8 *p;
 
@@ -358,7 +358,7 @@ UNUSED void Window_ReservedNoOp(void) {}
 /// joining it to the frame and divider tiles already on the tilemap.
 void Window_DrawDividerLine(struct Window *win, u32 x1, u32 y1, u32 x2,
                             u32 y2) {
-  struct WindowWork *work = (struct WindowWork *)Ram_HeapSlots->windowWork;
+  struct WindowWork *work = WINDOW_WORK;
   u16 *cursor;
   u32 pos;
   u32 tile;
@@ -516,7 +516,7 @@ void Window_DrawDividerLine(struct Window *win, u32 x1, u32 y1, u32 x2,
 /// figures with it (menu/menu_shared.c, window/screens_party_status.c), and
 /// set TEXT_COLOR_WHITE back after.
 void Text_SetColor(s32 param) {
-  struct WindowWork *work = (struct WindowWork *)Ram_HeapSlots->windowWork;
+  struct WindowWork *work = WINDOW_WORK;
 
   work->colour = param & 15;
 }
@@ -525,7 +525,7 @@ void Text_SetColor(s32 param) {
 /// 5 a motion of glyph sprites. Reached only through a bare entry of the
 /// window far-call table.
 void Text_SetStyle(s32 value) {
-  struct WindowWork *work = (struct WindowWork *)Ram_HeapSlots->windowWork;
+  struct WindowWork *work = WINDOW_WORK;
 
   work->outline = value;
 }
@@ -536,7 +536,7 @@ void Text_DrawWideStringAtOffset(u16 *text, struct Window *window, s32 x,
 /// Decodes a message and draws it into a text canvas window at pixel (x, y),
 /// all at once.
 void Text_DrawMessage(s32 message, s32 window, s32 x, s32 y) {
-  struct WindowWork *canvas = (struct WindowWork *)Ram_HeapSlots->windowWork;
+  struct WindowWork *canvas = WINDOW_WORK;
   u16 *counter = &canvas->textBufferEnd;
   s32 zero = 0;
 
@@ -563,7 +563,7 @@ void Text_DrawMessageAsTiles(s32 character, struct Window *position,
   struct WindowWork *canvas;
   u16 *counter;
 
-  canvas = (struct WindowWork *)Ram_HeapSlots->windowWork;
+  canvas = WINDOW_WORK;
   counter = &canvas->textBufferEnd;
   zero = 0;
   *counter = zero;
@@ -613,7 +613,7 @@ void Text_DrawStringAtOffset(u8 *text, struct Window *work, s32 offsetX,
   s32 phase;
 
   buffer = Heap_AllocEwram(TEXT_WIDE_STRING_BUFFER_SIZE);
-  canvas = (struct WindowWork *)Ram_HeapSlots->windowWork;
+  canvas = WINDOW_WORK;
   output = buffer;
   while (*text != 0) {
     *output = *text;
@@ -702,7 +702,7 @@ void Text_DrawPrefixedNumberAtOffset(s32 value, struct Window *work,
   s32 dst;
   s32 phase;
 
-  canvas = (struct WindowWork *)Ram_HeapSlots->windowWork;
+  canvas = WINDOW_WORK;
   text = String_FormatNumber(formatted, value, 4);
   // Each label is two tiles; the PP label's second is the HP label's in
   // English, German and Japanese (WINDOW_TILE_PP_LABEL_END).

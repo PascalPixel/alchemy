@@ -123,7 +123,7 @@ void Djinn_RunMercuryJoinEffect(s32 djinniId) {
   slot = (u8 *)effectSlots + 80;
   remaining = 23;
   do {
-    FieldParticle_Initialize(slot, 301, position.x, position.z);
+    FieldParticle_Initialize(slot, SPRITE_DROPLET, position.x, position.z);
     FieldParticle_SetCallback(slot,
                               (void *)FieldEffect_UpdateRandomTargetParticle);
     FieldParticle_SetActorMode(slot, 7);

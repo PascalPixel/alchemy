@@ -32,7 +32,8 @@ void WorldMap_StepZoom(void) {
   s32 offset;
   s32 delta;
 
-  if (((struct FieldWork *)HeapSlot_AllocEwram(HEAP_SLOT_FIELD, 0xd50))
+  if (((struct FieldWork *)HeapSlot_AllocEwram(HEAP_SLOT_FIELD,
+                                               sizeof(struct FieldWork)))
           ->camera->paused != 0)
     return;
   duration = &map->zoomFrames;
@@ -56,8 +57,9 @@ void WorldMap_StartZoom(FIXED zoom, s32 frames) {
   struct MapWork *map = Ram_HeapSlots->mapGrid;
   s32 result;
 
-  if (((struct FieldWork *)HeapSlot_AllocEwram(HEAP_SLOT_FIELD, 0xd50))->mode !=
-      3)
+  if (((struct FieldWork *)HeapSlot_AllocEwram(HEAP_SLOT_FIELD,
+                                               sizeof(struct FieldWork)))
+          ->mode != ACTOR_SYSTEM_WORLD_MAP)
     return;
   {
     s32 (*ratio)(s32, s32) = Iwram_RatioMulQ14Entry;
@@ -76,14 +78,15 @@ void Event_WaitForZoomTransition(void) {
   struct MapWork *map = Ram_HeapSlots->mapGrid;
   s32 frames;
 
-  if (((struct FieldWork *)HeapSlot_AllocEwram(HEAP_SLOT_FIELD, 0xd50))->mode ==
-      3) {
+  if (((struct FieldWork *)HeapSlot_AllocEwram(HEAP_SLOT_FIELD,
+                                               sizeof(struct FieldWork)))
+          ->mode == ACTOR_SYSTEM_WORLD_MAP) {
     frames = 0;
     if (map->zoomFrames != 0) {
       do {
         wait(1);
         frames++;
-      } while (frames <= 0x12b && map->zoomFrames != 0);
+      } while (frames < 300 && map->zoomFrames != 0);
     }
   }
 }
@@ -103,7 +106,7 @@ s32 FieldEffect_CopyWatchedActorPosition(struct Actor *object) {
              *(s16 *)Scene_FindActorPlacement((s16)object->userValue))
              ->boxX
          << 16) +
-        0x80000;
+        toFIXED(8);
     object->groundHeight = link->groundHeight;
     object->z.fixed = link->z.fixed;
   }

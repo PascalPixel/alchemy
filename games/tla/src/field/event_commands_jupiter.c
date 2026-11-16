@@ -107,10 +107,10 @@ void FieldEffect_AdvanceAngleWithRamp(struct Actor *actor) {
   }
 }
 
-/// Spins an object 1/8 turn and shrinks it by 0x1c0 a frame, destroying it once
-/// its scale falls below 0x3000.
+/// Spins an object 1/8 turn and shrinks it by 7/1024 a frame, destroying it
+/// once its scale falls below 3/16.
 void FieldEffect_ShrinkActorAndDestroySlow(void *obj) {
-  s32 step = 0xFFFFFE40;
+  s32 step = -(FIXED_ONE * 7 / 1024);
   s32 scaleY;
   s32 scale;
   s32 angle;
@@ -122,7 +122,7 @@ void FieldEffect_ShrinkActorAndDestroySlow(void *obj) {
   scale += step;
   ((struct MotionObject *)obj)->angle = angle + DEGtoANG(45);
   ((struct MotionObject *)obj)->scaleX = scale;
-  if (scale < 0x3000)
+  if (scale < FIXED_ONE * 3 / 16)
     Actor_ReleaseFar(obj);
 }
 

@@ -1238,6 +1238,8 @@ extern u32 gMarsLighthouseAerie_IsaacTurnScript[];
 extern u32 gMarsLighthouseAerie_GaretTurnScript[];
 extern u32 gMarsLighthouseAerie_MiaTurnScript[];
 
+/// The Doom Dragon falls, and the party finds who it was: Jenna's parents
+/// and Kraden's old friends, freed.
 void MarsLighthouseAerie_FindWhoTheDragonWas(void) {
   s32 facing;
   s32 leader, leaderAgain;
@@ -1798,7 +1800,7 @@ void MarsLighthouseAerie_UrgeOnToBeacon(void) {
   Party_RemoveMemberRestored(1);
   Actor_Get(ACTOR_JENNAS_MOTHER)->collisionFlags |= ACTOR_NOT_TARGETED;
   Actor_Get(ACTOR_JENNAS_FATHER)->collisionFlags |= ACTOR_NOT_TARGETED;
-  FieldActor_SetSpriteColor(Actor_Get(ACTOR_HAMA), 0xf);
+  FieldActor_SetSpriteColor(Actor_Get(ACTOR_HAMA), SPRITE_COLOR_HIDDEN);
   Actor_SetPosition(ACTOR_HAMA, 568, 274);
   Actor_Get(ACTOR_JENNAS_MOTHER_TALK_SPOT)->motionFlags = 0;
   FieldActor_SetPositionAndResetMotion(Actor_Get(ACTOR_JENNAS_MOTHER_TALK_SPOT),
@@ -2006,6 +2008,8 @@ void MarsLighthouseAerie_StartLookingAround(s32 id);
 void MarsLighthouseAerie_StopLookingAround(s32 id);
 extern s32 gMarsLighthouseAerie_BeamNarrowScript[];
 
+/// The Mars Star is cast into the beacon: the beam rises, the fire falls
+/// into it and the beacon is lit.
 void MarsLighthouseAerie_LightBeacon(void) {
   struct FieldWork *work, *later;
   struct OverlaySprite *sprite;
@@ -2313,6 +2317,7 @@ void MarsLighthouseAerie_LightBeacon(void) {
 
 void MarsLighthouseAerie_SpawnBeaconFlames(void);
 
+/// All look up as the beam widens and the Golden Sun begins to rise.
 void MarsLighthouseAerie_WatchGoldenSunRise(void) {
   s32 *leader, *leaderInLoop, *leaderAfterLoop, i, south;
   s32 southSoutheast, actor;
@@ -2687,6 +2692,8 @@ void MarsLighthouseAerie_WatchGoldenSunRise(void) {
   return;
 }
 
+/// Kraden holds the leader back from the parents and sends him toward the
+/// beacon.
 void MarsLighthouseAerie_HoldBackFromParents(void) {
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
@@ -2700,6 +2707,7 @@ void MarsLighthouseAerie_HoldBackFromParents(void) {
   Event_End();
 }
 
+/// As MarsLighthouseAerie_HoldBackFromParents, from the other side.
 void MarsLighthouseAerie_HoldBackFromParentsAgain(void) {
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
@@ -2713,6 +2721,7 @@ void MarsLighthouseAerie_HoldBackFromParentsAgain(void) {
   Event_End();
 }
 
+/// At the beacon: "Will you cast in the Mars Star?" Yes lights it.
 void MarsLighthouseAerie_OfferToCastMarsStar(void) {
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
@@ -2780,6 +2789,7 @@ void MarsLighthouseAerie_EndTalkWhileHalted(s32 id) {
 
 #endif
 
+/// Talking to Ivan.
 void MarsLighthouseAerie_TalkToIvan(void) {
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
@@ -2799,6 +2809,7 @@ void MarsLighthouseAerie_TalkToIvan(void) {
   Event_End();
 }
 
+/// Talking to Jenna's mother.
 void MarsLighthouseAerie_TalkToJennasMother(void) {
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
@@ -2814,6 +2825,7 @@ void MarsLighthouseAerie_TalkToJennasMother(void) {
   Event_End();
 }
 
+/// Talking to Kyle.
 void MarsLighthouseAerie_TalkToKyle(void) {
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
@@ -2829,6 +2841,7 @@ void MarsLighthouseAerie_TalkToKyle(void) {
   Event_End();
 }
 
+/// Talking to Jenna's father.
 void MarsLighthouseAerie_TalkToJennasFather(void) {
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
@@ -2866,19 +2879,23 @@ void MarsLighthouseAerie_HaltSpeaker(s32 spot, s32 speaker) {
 // These four, their rows, and MarsLighthouseAerie_HaltSpeaker are from patch 1.
 #if TLA_PATCH_1
 
+/// From patch 1: Ivan is held where he stands while he talks.
 void MarsLighthouseAerie_HaltIvan(void) {
   MarsLighthouseAerie_HaltSpeaker(ACTOR_HAMA, ACTOR_IVAN);
 }
 
+/// From patch 1: Jenna's mother is held where she lies while she talks.
 void MarsLighthouseAerie_HaltJennasMother(void) {
   MarsLighthouseAerie_HaltSpeaker(ACTOR_JENNAS_MOTHER_TALK_SPOT,
                                   ACTOR_JENNAS_MOTHER);
 }
 
+/// From patch 1: Kyle is held where he lies while he talks.
 void MarsLighthouseAerie_HaltKyle(void) {
   MarsLighthouseAerie_HaltSpeaker(ACTOR_KYLE_TALK_SPOT, ACTOR_KYLE);
 }
 
+/// From patch 1: Jenna's father is held where he lies while he talks.
 void MarsLighthouseAerie_HaltJennasFather(void) {
   MarsLighthouseAerie_HaltSpeaker(ACTOR_JENNAS_FATHER_TALK_SPOT,
                                   ACTOR_JENNAS_FATHER);

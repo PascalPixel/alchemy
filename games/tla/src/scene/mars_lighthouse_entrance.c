@@ -457,6 +457,7 @@ void MarsLighthouseEntrance_GrindIce(void) {
   FieldEvent_SetExitRequest(20);
 }
 
+/// Examining the ice shaft.
 void MarsLighthouseEntrance_CheckIce(void) {
   // "Felix checked the ice."
   FieldMessage_Show((s32)MsgMarsLighthouseEntranceCheckedIce, 1);

@@ -447,6 +447,8 @@ void MarsLighthouseRoomF_JumpGap(void) { Field_TryJumpForward(); }
 /// second stands right behind it.
 #if TLA_PATCH_1
 
+/// Pushing a stone along the ledge: it moves unless another stone stands
+/// beyond it.
 void MarsLighthouseRoomF_PushStoneAlongLedge(void) {
   s32 position[3];
   struct Actor *object = Actor_Get(gMainRoutineWork.leaderActorId);
@@ -471,6 +473,8 @@ void MarsLighthouseRoomF_PushStoneAlongLedge(void) {
 
 #else
 
+/// Pushing a stone along the ledge: it moves unless another stone stands
+/// beyond it.
 void MarsLighthouseRoomF_PushStoneAlongLedge(void) { Leader_PushObjectAhead(); }
 
 #endif
@@ -728,36 +732,48 @@ void MarsLighthouseRoomF_CrackCenterWall(s32 burst) {
 /// circle the exit of the same number leads to.
 void MarsLighthouseRoomF_CycloneToExit2(void) { Import_EventSetExitRequest(2); }
 
+/// Cyclone on the circle that exit 3 leads from.
 void MarsLighthouseRoomF_CycloneToExit3(void) { Import_EventSetExitRequest(3); }
 
+/// Cyclone on the circle that exit 4 leads from.
 void MarsLighthouseRoomF_CycloneToExit4(void) { Import_EventSetExitRequest(4); }
 
+/// Cyclone on the circle that exit 5 leads from.
 void MarsLighthouseRoomF_CycloneToExit5(void) { Import_EventSetExitRequest(5); }
 
+/// Cyclone on the circle that exit 6 leads from.
 void MarsLighthouseRoomF_CycloneToExit6(void) { Import_EventSetExitRequest(6); }
 
+/// Cyclone on the circle that exit 7 leads from.
 void MarsLighthouseRoomF_CycloneToExit7(void) { Import_EventSetExitRequest(7); }
 
+/// Cyclone on the circle that exit 8 leads from.
 void MarsLighthouseRoomF_CycloneToExit8(void) { Import_EventSetExitRequest(8); }
 
+/// Cyclone on the circle that exit 9 leads from.
 void MarsLighthouseRoomF_CycloneToExit9(void) { Import_EventSetExitRequest(9); }
 
+/// Cyclone on the circle that exit 10 leads from.
 void MarsLighthouseRoomF_CycloneToExit10(void) {
   Import_EventSetExitRequest(10);
 }
 
+/// Cyclone on the circle that exit 11 leads from.
 void MarsLighthouseRoomF_CycloneToExit11(void) {
   Import_EventSetExitRequest(11);
 }
 
+/// Cyclone on the circle that exit 12 leads from.
 void MarsLighthouseRoomF_CycloneToExit12(void) {
   Import_EventSetExitRequest(12);
 }
 
+/// Cyclone on the circle that exit 13 leads from.
 void MarsLighthouseRoomF_CycloneToExit13(void) {
   Import_EventSetExitRequest(13);
 }
 
+/// Cyclone on the circle that exit 14 leads from.
 void MarsLighthouseRoomF_CycloneToExit14(void) {
   Import_EventSetExitRequest(14);
 }
@@ -2366,14 +2382,6 @@ void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
 #include "../field/field_effect_advance_motion.c"
 
 #undef CELL_PUSH_SLOT_ENTRY
-
-static __inline__ void CamBounds(FIXED x, FIXED y, FIXED z, s32 mode) {
-  FieldCamera_MoveToFX(x, y, z, mode);
-}
-
-static __inline__ void SetWorkTriple(FIXED a, FIXED b, FIXED c) {
-  MapGrid_SetShakeFX(a, b, c);
-}
 
 #include "shared/cracked_tile_drop_in.h"
 

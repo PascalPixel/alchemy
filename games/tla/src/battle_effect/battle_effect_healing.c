@@ -456,7 +456,7 @@ void BattleEffect_RunHealingMotes(struct BattleEffectParams *args, u32 mode) {
           else if (mode == HEALING_MODE_SALT)
             end = start + i / 2 + 64;
           else
-            end = 0x10000;
+            end = 65536;
           if (frame > start + i / 4 && frame < end) {
             s32 xx = (spark->x >> 8) * (spark->x >> 8);
             s32 yy = (spark->y >> 8) * (spark->y >> 8);

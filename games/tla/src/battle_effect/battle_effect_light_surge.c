@@ -9,7 +9,7 @@ struct StripQuad;
 
 #define LIGHT_SURGE_FRAMES 74
 #define SURGE_BOLTS 14
-/// The work's particles: the rings from the first, the glows from the 17th
+/// The work's particles: the flashes from the first, the glows from the 17th
 /// and the bolts from the 33rd.
 #define SURGE_FIRST_GLOW 16
 #define SURGE_FIRST_BOLT 32
@@ -139,9 +139,9 @@ void BattleEffect_RunLightSurge(struct BattleEffectParams *args) {
       s32 turn;
 
       if (frame <= 71) {
-        turn = 0x100;
+        turn = 256;
       } else {
-        turn = 0xa00 - (frame << 5);
+        turn = 2560 - (frame << 5);
       }
       if (args->side == EFFECT_SIDE_ENEMIES) {
         camera->yaw += turn;

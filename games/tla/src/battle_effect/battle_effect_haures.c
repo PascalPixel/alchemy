@@ -142,7 +142,7 @@ void BattleEffect_RunHaures(struct BattleEffectParams *args) {
     Resource_LoadAndDecompress(RESOURCE_CHAIN_TEXTURE, c, 0, 0);
     Picture_MirrorIntoQuadrants(c, SCRATCH, 64, 64);
     Resource_LoadAndDecompress(RESOURCE_EMBER_STREAK_SHEET, c, 1, 0);
-    for (i = 0; i != 0x1781; i++, c++) {
+    for (i = 0; i != 6017; i++, c++) {
       u8 v = *c;
 
       if (v != 0) {
@@ -969,7 +969,7 @@ void BattleEffect_RunHaures(struct BattleEffectParams *args) {
             Matrix_RotateZ(-DEGtoANG(45));
           } else {
             Matrix_Translate(INTtoFIXED(x - 16), INTtoFIXED(y), 0);
-            Matrix_RotateZ(0x27d0);
+            Matrix_RotateZ(10192);
           }
           Matrix_Scale(FIXED_ONE * 3, amp, FIXED_ONE * 2);
           Render_TransformVertices(gBattleEffect_SquareCorners, verts, 4);
@@ -995,7 +995,7 @@ void BattleEffect_RunHaures(struct BattleEffectParams *args) {
       model->scrollU = (frame * 8) & 127;
       bandTexture.pixels = work->sheet;
       if (frame <= 71) {
-        v = FIXEDtoINT(Trig_Sin((frame << 10) + -0xe000) * 80);
+        v = FIXEDtoINT(Trig_Sin((frame << 10) - DEGtoANG(315)) * 80);
       } else if (frame > 79) {
         v = FIXEDtoINT(Trig_Sin((frame << 10) + -TRIG_TURN) * 80);
       } else {

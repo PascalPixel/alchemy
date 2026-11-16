@@ -9,10 +9,10 @@
 struct StripQuad;
 
 /// GreatSwordSheet's sword, 32 x 128, and its four after-images after it, each
-/// drawn in one colour from BG colour 60 on.
+/// drawn in one colour of its own, BG colours 60 to 63.
 #define HEAVY_DIVIDE_SWORD_WIDTH 32
 #define HEAVY_DIVIDE_SWORD_HEIGHT 128
-#define HEAVY_DIVIDE_AFTER_IMAGE_COLORS 59
+#define HEAVY_DIVIDE_FIRST_AFTER_IMAGE_COLOR 60
 
 /// The body of Heavy Divide (mode 0) and Strong Hit (mode 1). Heavy Divide:
 /// a great sword (with four fading after-images, each a dimmer copy of the
@@ -54,14 +54,14 @@ void BattleEffect_RunHeavyBlow(struct BattleEffectParams *args, s32 mode) {
 
     // Four after-images, each in its own dimmer colour.
     for (k = 1; k != 5; k++) {
-      ((u16 *)BG_PLTT)[HEAVY_DIVIDE_AFTER_IMAGE_COLORS + k] =
+      ((u16 *)BG_PLTT)[HEAVY_DIVIDE_FIRST_AFTER_IMAGE_COLOR - 1 + k] =
           RGB(0, 0, (4 - k) * 4 + 15);
       for (i = 0; i != PICTURE_BYTES(HEAVY_DIVIDE_SWORD); i++) {
         if (work->sheet[i] == 0) {
           work->sheet[k * PICTURE_BYTES(HEAVY_DIVIDE_SWORD) + i] = 0;
         } else {
           work->sheet[k * PICTURE_BYTES(HEAVY_DIVIDE_SWORD) + i] =
-              k + HEAVY_DIVIDE_AFTER_IMAGE_COLORS;
+              HEAVY_DIVIDE_FIRST_AFTER_IMAGE_COLOR - 1 + k;
         }
       }
     }

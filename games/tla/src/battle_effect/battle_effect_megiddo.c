@@ -294,7 +294,7 @@ void BattleEffect_RunMegiddo(struct BattleEffectParams *args) {
     }
 
     if (frame > 1) {
-      struct FieldSprite *obj;
+      struct Sprite *obj;
       s32 *pair;
       s32 v = 0; // Default: set before it is read.
 
@@ -317,8 +317,8 @@ void BattleEffect_RunMegiddo(struct BattleEffectParams *args) {
       place[0] = x;
       place[2] = z;
       obj = work->sprites[0];
-      obj->box[3] = 32;
-      obj->box[2] = zero;
+      obj->offsetY = 32;
+      obj->offsetX = zero;
       if ((u32)(place[2] + toFIXED(52)) < toFIXED(252)) {
         Render_ApplyProjectedPlacementFar(obj, place, pair, 0);
       }

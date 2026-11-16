@@ -247,7 +247,7 @@ void BattleEffect_RunLegend(struct BattleEffectParams *args) {
           Matrix_Initialize();
           Matrix_Scale(FIXED_ONE / 2, FIXED_ONE, FIXED_ONE / 2);
           Matrix_Translate(INTtoFIXED(start.x - 128), -toFIXED(80), 0);
-          Matrix_RotateX(0x47d0);
+          Matrix_RotateX(18384);
           Matrix_RotateZ((frame + i * 16) << 9);
           scale = (frame << 12) - FIXED_ONE / 4;
           if (scale > FIXED_ONE)
@@ -379,12 +379,12 @@ void BattleEffect_RunElementCards(struct BattleEffectParams *args, s32 mode) {
     // faster and shrinks.
     if (frame <= 47) {
       card.y--;
-      scale += 0x200;
+      scale += FIXED_ONE / 128;
       if (scale > FIXED_ONE / 2)
         scale = FIXED_ONE / 2;
     }
     if (frame > 95) {
-      scale += -0x200;
+      scale -= FIXED_ONE / 128;
       card.y -= 2;
     }
 
@@ -572,7 +572,7 @@ void BattleEffect_RunElementCards(struct BattleEffectParams *args, s32 mode) {
         else
           Matrix_Translate(Trig_Sin(frame * 682) << 7, 0, 0);
       }
-      Matrix_RotateY(0x1770);
+      Matrix_RotateY(6000);
       Matrix_RotateZ(frame << 10);
       Matrix_ScaleUniform(scale);
       Matrix_Scale(FIXED_ONE, FIXED_ONE * 2, FIXED_ONE);

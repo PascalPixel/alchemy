@@ -1856,7 +1856,7 @@ void BattleEffect_RunIris(struct BattleEffectParams *args) {
         shade = CANVAS_LEVEL_BRIGHTEST;
       BattleEffect_DrawDiagonalCanvasLine(
           0,
-          FIXEDtoINT(Iwram_MulFX((frame - 521) * toFIXED(1), 0x400) +
+          FIXEDtoINT(Iwram_MulFX((frame - 521) * toFIXED(1), FIXED_ONE / 64) +
                      toFIXED(123)),
           frame - 521, shade);
     }
@@ -1877,8 +1877,9 @@ void BattleEffect_RunIris(struct BattleEffectParams *args) {
         shade = CANVAS_LEVEL_BRIGHTEST;
       BattleEffect_DrawDiagonalCanvasLine(
           0,
-          FIXEDtoINT(Iwram_MulFX((frame - 534) * toFIXED(1), 0x600) +
-                     toFIXED(120)),
+          FIXEDtoINT(
+              Iwram_MulFX((frame - 534) * toFIXED(1), FIXED_ONE * 3 / 128) +
+              toFIXED(120)),
           frame - 534, shade);
     }
     if ((u32)(frame - 554) <= 209) {

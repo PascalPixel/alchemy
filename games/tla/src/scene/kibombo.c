@@ -2051,20 +2051,11 @@ void Kibombo_AkafubuCastsOnCrystal(void) {
 
 s32 VramCache_FreeEntry(u32 slot);
 
-/// A spark Akafubu's Psynergy sends about the crystal, the actor seen through a
-/// union (see the FAKEMATCH in Kibombo_SpinSpark).
-union SpinningSpark {
-  struct Actor actor;
-};
-
 /// A spark's update while Akafubu casts on the crystal: it circles its centre
 /// at its radius, wobbling in and out, and rises.
-void Kibombo_SpinSpark(struct Actor *actor) {
-  /* FAKEMATCH(temporary): object, the actor read through union SpinningSpark,
-     kept; as actor's own fields, 20 of 228 instructions differ in tla-en. */
+void Kibombo_SpinSpark(union FieldObject *object) {
   FIXED wobble = 0;
-  union SpinningSpark *object;
-  u8 *timer = &actor->riseEnabled;
+  u8 *timer = &object->actor.riseEnabled;
   s16 *action;
   u8 *stage;
   struct Vector3 centre;
@@ -2073,8 +2064,9 @@ void Kibombo_SpinSpark(struct Actor *actor) {
   s32 turn;
 
   if (*timer != 0)
-    wobble = Trig_Sin((actor->timer + (s16)actor->userValue) * 9 << 9) * 6;
-  object = (union SpinningSpark *)actor;
+    wobble = Trig_Sin((object->actor.timer + (s16)object->actor.userValue) * 9
+                      << 9) *
+             6;
   action = &object->actor.timer;
   centre.x = object->actor.targetX;
   centre.y = object->actor.targetY;

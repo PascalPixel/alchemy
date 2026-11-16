@@ -677,26 +677,22 @@ s32 NaribweInteriors_ProngsHeld(void) {
 s32 NaribweInteriors_DjinniHintLimit(s32 group) {
   s32 i = DJINNI_INDEX(DJINNI_CRYSTAL);
 
-loop:
-  {
+  do {
     s32 flag = FLAG_DJINNI(group * DJINN_PER_ELEMENT + i);
 
     if (group == 0) {
       if (i == DJINNI_INDEX(DJINNI_ECHO))
-        goto next;
+        continue;
     }
     if (group == 1) {
       if (i == DJINNI_INDEX(DJINNI_SPRING))
-        goto next;
+        continue;
       if (i == DJINNI_INDEX(DJINNI_SHADE))
-        goto next;
+        continue;
     }
     if (Event_GetFlag(flag))
       return i + 1;
-  }
-next:
-  if (--i >= TRANSFERRED_DJINN_PER_ELEMENT)
-    goto loop;
+  } while (--i >= TRANSFERRED_DJINN_PER_ELEMENT);
   return -1;
 }
 
@@ -714,21 +710,19 @@ s32 NaribweInteriors_ListUnfoundDjinn(s32 limit, s32 group, s32 *out) {
       s32 flag;
 
       if (group == 0 && i == DJINNI_INDEX(DJINNI_ECHO))
-        goto next;
+        continue;
       if (group == 1) {
         if (i == DJINNI_INDEX(DJINNI_SPRING))
-          goto next;
+          continue;
         if (i == DJINNI_INDEX(DJINNI_SHADE))
-          goto next;
+          continue;
       }
       flag = FLAG_DJINNI(group * DJINN_PER_ELEMENT + i);
       if (Event_GetFlag(flag) == 0) {
         *cursor++ = flag;
         count++;
       }
-    next:
-      i++;
-    } while (i < limit);
+    } while (++i < limit);
   }
   return count;
 }

@@ -127,7 +127,7 @@ void NorthernReaches_ClearIceWall(void) {
 void NorthernReaches_SightIceWall(void) {
 
   if (Event_GetFlag(FLAG_SCENE_TEMP_00) != 0)
-    goto done;
+    return;
   Event_SetFlag(FLAG_SCENE_TEMP_00);
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
@@ -140,8 +140,6 @@ void NorthernReaches_SightIceWall(void) {
   // "Hm... If we can't do something about that wall, we're not going any..."
   FieldEvent_ShowMessageThenWait(ACTOR_KRADEN, 0, 5);
   Event_End();
-done:
-  return;
 }
 
 /// The crew gathers at the bow to talk the ice wall over, once
@@ -149,7 +147,7 @@ done:
 void NorthernReaches_DiscussIceWall(void) {
 
   if (Event_GetFlag(FLAG_ICE_WALL_DISCUSSED) != 0)
-    goto done;
+    return;
   Event_SetFlag(FLAG_ICE_WALL_DISCUSSED);
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
@@ -174,16 +172,10 @@ void NorthernReaches_DiscussIceWall(void) {
   Actor_SetPosition(ACTOR_JENNA, 0, 0);
   Actor_SetPosition(ACTOR_SHEBA, 0, 0);
   Event_End();
-done:
-  return;
 }
 
 s32 Actor_SetSpriteColorMode();
 
-/// At a safe distance the crew asks Felix to fire the Magma Ball at the ice
-/// wall; if he is ready the ship backs off, fires, and the wall shatters (flag
-/// FLAG_ICE_WALL_SHATTERED).
-/// "We should be safe if we fire from this distance."
 /// Shrinks an actor evenly by step, as the ship sails off into the distance.
 #define Actor_ShrinkBy(actor, step)                                            \
   {                                                                            \
@@ -193,6 +185,10 @@ s32 Actor_SetSpriteColorMode();
     (actor)->scaleX = scale - (step);                                          \
   }
 
+/// At a safe distance the crew asks Felix to fire the Magma Ball at the ice
+/// wall; if he is ready the ship backs off, fires, and the wall shatters (flag
+/// FLAG_ICE_WALL_SHATTERED).
+/// "We should be safe if we fire from this distance."
 void NorthernReaches_FireMagmaBall(void) {
   FIXED from[3];
   struct Actor *ship;
@@ -207,7 +203,7 @@ void NorthernReaches_FireMagmaBall(void) {
   ship = Actor_Get(ACTOR_SHIP);
   count = Event_GetFlag(FLAG_ICE_WALL_SHATTERED);
   if (count != 0)
-    goto done;
+    return;
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
   FieldEvent_SetMessageId((s32)MsgShipSafeFiringDistance);
@@ -228,118 +224,107 @@ void NorthernReaches_FireMagmaBall(void) {
   Actor_SetPosition(ACTOR_SHEBA, 464, 216);
   told = Event_GetFlag(FLAG_SAFE_DISTANCE_TOLD);
   message = (s32)MsgShipSafeFiringDistance;
-  if (told != 0)
-    goto ask;
-  Event_SetFlag(FLAG_SAFE_DISTANCE_TOLD);
-  // "We should be safe if we fire from this distance."
-  FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | ACTOR_PIERS, 0, 5);
-ask:
+  if (told == 0) {
+    Event_SetFlag(FLAG_SAFE_DISTANCE_TOLD);
+    // "We should be safe if we fire from this distance."
+    FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | ACTOR_PIERS, 0, 5);
+  }
   FieldEvent_SetMessageId((message + 1));
   // "OK, here we go! Felix, aim right at the ice wall and fire when ready!"
   // Yes: fire; No: wait.
   Event_OpenMessage(ACTOR_KRADEN, 0);
-  if (!FieldEvent_AskYesNoWithActorAnimation(ACTOR_FELIX, 0))
-    goto ready;
-  // "What? You're not ready yet? Take your time and get into position..."
-  FieldEvent_ShowMessageThenWait(ACTOR_KRADEN, 0, 5);
-  Actor_SetDestinationOffset(ACTOR_SHIP, 0, 16);
-  FieldActor_WaitForMove(ship);
-  FieldEvent_Wait(5);
-  goto putAway;
-ready:
-  gFieldWork->message++;
-  // "Fire the Magma Ball!"
-  FieldEvent_ShowMessageThenWait(ACTOR_KRADEN, 0, 5);
-  Actor_SetSpeed(ACTOR_SHIP, 3);
-  Actor_Get(ACTOR_SHIP)->steeringFlags &= ~ACTOR_FACES_MOTION;
-  Actor_WalkBy(ACTOR_SHIP, 0, 16);
-  Event_PlaySound(SE_CLATTER);
-  FieldEvent_Wait(4);
-  blast->scaleX = FIXED_ONE * 3 / 2;
-  blast->scaleY = FIXED_ONE * 3 / 2;
-  Actor_SetSpriteColorMode(Actor_Get(ACTOR_BLAST), 6);
-  Actor_SetPosition(ACTOR_BLAST, 464, 200);
-  Actor_SetAnimation(ACTOR_BLAST, 1);
-  ball->scaleX = FIXED_ONE / 2;
-  ball->scaleY = FIXED_ONE / 2;
-  Actor_SetSpeed(ACTOR_MAGMA_BALL_SHOT, 2);
-  Actor_SetPosition(ACTOR_MAGMA_BALL_SHOT, 464, 216);
-  Actor_WalkTo(ACTOR_MAGMA_BALL_SHOT, 464, 144);
-  count = 15;
-growBall:
-  ball->scaleX += FIXED_ONE / 32;
-  ball->scaleY += FIXED_ONE / 32;
-  System_Wait(1);
-  count--;
-  if (count >= 0)
-    goto growBall;
-  FieldCamera_MoveTo(472, CAMERA_KEEP, 176, 1);
-  FieldCamera_WaitForArrival();
-  FieldActor_WaitForMoveById(ACTOR_MAGMA_BALL_SHOT);
-  Event_PlaySound(SE_CRASH);
-  from[0] = ((ball->x.fixed) - toFIXED(2));
-  from[1] = (ball->y.fixed);
-  from[2] = ((ball->z.fixed) - toFIXED(8));
-  to[0] = toFIXED(400);
-  to[1] = 0;
-  to[2] = toFIXED(80);
-  NorthernReaches_ShatterIceWall((s32)from, to, NorthernReaches_ClearIceWall);
-  FieldEvent_Wait(20);
-  Actor_SetPosition(ACTOR_BLAST, 0, 0);
-  Actor_SetPosition(ACTOR_MAGMA_BALL_SHOT, 0, 0);
-  gFieldWork->transitionFrames = 100;
-  PaletteFade_ApplyTarget(PALETTE_TINT_NONE, PALETTES_ALL);
-  Event_StartScreenTransition();
-  Event_WaitTransitionFrames();
-  gFieldWork->transitionFrames = 8;
-  // "Great! We did it! We can keep going now!"
-  FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | ACTOR_JENNA, 0, 5);
-  // "All right, let's head for the Northern Seas."
-  FieldEvent_ShowMessageThenWait(ACTOR_KRADEN, 0, 5);
-  // "Let's go!"
-  FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | ACTOR_SHEBA, 0, 5);
-  Actor_SetSpeed(ACTOR_SHIP, 0.8);
-  Actor_MoveToAndWait(ACTOR_SHIP, 464, 176);
-  EventCamera_FollowActor(ACTOR_SHIP, 1);
-  Actor_MoveToAndWait(ACTOR_SHIP, 464, 152);
-  Actor_SetSpeed(ACTOR_SHIP, 0.6);
-  Actor_ShrinkBy(ship, FIXED_ONE / 16);
-  Actor_SetDestinationOffset(ACTOR_SHIP, 0, -16);
-  FieldActor_WaitForMoveById(ACTOR_SHIP);
-  Actor_ShrinkBy(ship, FIXED_ONE / 16);
-  Actor_SetDestinationOffset(ACTOR_SHIP, 0, -16);
-  FieldActor_WaitForMoveById(ACTOR_SHIP);
-  Actor_ShrinkBy(ship, FIXED_ONE / 16);
-  Actor_SetDestinationOffset(ACTOR_SHIP, 0, -16);
-  FieldActor_WaitForMoveById(ACTOR_SHIP);
-  Actor_ShrinkBy(ship, FIXED_ONE / 16);
-  Actor_SetDestinationOffset(ACTOR_SHIP, 0, -16);
-  FieldActor_WaitForMoveById(ACTOR_SHIP);
-  Actor_ShrinkBy(ship, FIXED_ONE / 16);
-  Actor_SetDestinationOffset(ACTOR_SHIP, 0, -16);
-  FieldActor_WaitForMoveById(ACTOR_SHIP);
-  Actor_SetSpeed(ACTOR_SHIP, 0.2);
-  Actor_SetDestinationOffset(ACTOR_SHIP, 0, -12);
-  count = 19;
-settle:
-  Actor_ShrinkBy(ship, FIXED_ONE * 9 / 256);
-  System_Wait(7);
-  count--;
-  if (count >= 0)
-    goto settle;
-  ship->scaleY = 0;
-  ship->scaleX = 0;
-  FieldEvent_Wait(10);
-  Event_SetFlag(FLAG_ICE_WALL_SHATTERED);
-  FieldEvent_SetExitRequest(4);
-putAway:
+  if (FieldEvent_AskYesNoWithActorAnimation(ACTOR_FELIX, 0)) {
+    // "What? You're not ready yet? Take your time and get into position..."
+    FieldEvent_ShowMessageThenWait(ACTOR_KRADEN, 0, 5);
+    Actor_SetDestinationOffset(ACTOR_SHIP, 0, 16);
+    FieldActor_WaitForMove(ship);
+    FieldEvent_Wait(5);
+  } else {
+    gFieldWork->message++;
+    // "Fire the Magma Ball!"
+    FieldEvent_ShowMessageThenWait(ACTOR_KRADEN, 0, 5);
+    Actor_SetSpeed(ACTOR_SHIP, 3);
+    Actor_Get(ACTOR_SHIP)->steeringFlags &= ~ACTOR_FACES_MOTION;
+    Actor_WalkBy(ACTOR_SHIP, 0, 16);
+    Event_PlaySound(SE_CLATTER);
+    FieldEvent_Wait(4);
+    blast->scaleX = FIXED_ONE * 3 / 2;
+    blast->scaleY = FIXED_ONE * 3 / 2;
+    Actor_SetSpriteColorMode(Actor_Get(ACTOR_BLAST), 6);
+    Actor_SetPosition(ACTOR_BLAST, 464, 200);
+    Actor_SetAnimation(ACTOR_BLAST, 1);
+    ball->scaleX = FIXED_ONE / 2;
+    ball->scaleY = FIXED_ONE / 2;
+    Actor_SetSpeed(ACTOR_MAGMA_BALL_SHOT, 2);
+    Actor_SetPosition(ACTOR_MAGMA_BALL_SHOT, 464, 216);
+    Actor_WalkTo(ACTOR_MAGMA_BALL_SHOT, 464, 144);
+    for (count = 15; count >= 0; count--) {
+      ball->scaleX += FIXED_ONE / 32;
+      ball->scaleY += FIXED_ONE / 32;
+      System_Wait(1);
+    }
+    FieldCamera_MoveTo(472, CAMERA_KEEP, 176, 1);
+    FieldCamera_WaitForArrival();
+    FieldActor_WaitForMoveById(ACTOR_MAGMA_BALL_SHOT);
+    Event_PlaySound(SE_CRASH);
+    from[0] = ((ball->x.fixed) - toFIXED(2));
+    from[1] = (ball->y.fixed);
+    from[2] = ((ball->z.fixed) - toFIXED(8));
+    to[0] = toFIXED(400);
+    to[1] = 0;
+    to[2] = toFIXED(80);
+    NorthernReaches_ShatterIceWall((s32)from, to, NorthernReaches_ClearIceWall);
+    FieldEvent_Wait(20);
+    Actor_SetPosition(ACTOR_BLAST, 0, 0);
+    Actor_SetPosition(ACTOR_MAGMA_BALL_SHOT, 0, 0);
+    gFieldWork->transitionFrames = 100;
+    PaletteFade_ApplyTarget(PALETTE_TINT_NONE, PALETTES_ALL);
+    Event_StartScreenTransition();
+    Event_WaitTransitionFrames();
+    gFieldWork->transitionFrames = 8;
+    // "Great! We did it! We can keep going now!"
+    FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | ACTOR_JENNA, 0, 5);
+    // "All right, let's head for the Northern Seas."
+    FieldEvent_ShowMessageThenWait(ACTOR_KRADEN, 0, 5);
+    // "Let's go!"
+    FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | ACTOR_SHEBA, 0, 5);
+    Actor_SetSpeed(ACTOR_SHIP, 0.8);
+    Actor_MoveToAndWait(ACTOR_SHIP, 464, 176);
+    EventCamera_FollowActor(ACTOR_SHIP, 1);
+    Actor_MoveToAndWait(ACTOR_SHIP, 464, 152);
+    Actor_SetSpeed(ACTOR_SHIP, 0.6);
+    Actor_ShrinkBy(ship, FIXED_ONE / 16);
+    Actor_SetDestinationOffset(ACTOR_SHIP, 0, -16);
+    FieldActor_WaitForMoveById(ACTOR_SHIP);
+    Actor_ShrinkBy(ship, FIXED_ONE / 16);
+    Actor_SetDestinationOffset(ACTOR_SHIP, 0, -16);
+    FieldActor_WaitForMoveById(ACTOR_SHIP);
+    Actor_ShrinkBy(ship, FIXED_ONE / 16);
+    Actor_SetDestinationOffset(ACTOR_SHIP, 0, -16);
+    FieldActor_WaitForMoveById(ACTOR_SHIP);
+    Actor_ShrinkBy(ship, FIXED_ONE / 16);
+    Actor_SetDestinationOffset(ACTOR_SHIP, 0, -16);
+    FieldActor_WaitForMoveById(ACTOR_SHIP);
+    Actor_ShrinkBy(ship, FIXED_ONE / 16);
+    Actor_SetDestinationOffset(ACTOR_SHIP, 0, -16);
+    FieldActor_WaitForMoveById(ACTOR_SHIP);
+    Actor_SetSpeed(ACTOR_SHIP, 0.2);
+    Actor_SetDestinationOffset(ACTOR_SHIP, 0, -12);
+    for (count = 19; count >= 0; count--) {
+      Actor_ShrinkBy(ship, FIXED_ONE * 9 / 256);
+      System_Wait(7);
+    }
+    ship->scaleY = 0;
+    ship->scaleX = 0;
+    FieldEvent_Wait(10);
+    Event_SetFlag(FLAG_ICE_WALL_SHATTERED);
+    FieldEvent_SetExitRequest(NORTHERN_REACHES_TO_WORLD_MAP_NORTH);
+  }
   Actor_SetPosition(ACTOR_KRADEN, 0, 0);
   Actor_SetPosition(ACTOR_JENNA, 0, 0);
   Actor_SetPosition(ACTOR_SHEBA, 0, 0);
   Actor_SetPosition(ACTOR_PIERS, 0, 0);
   Event_End();
-done:
-  return;
 }
 
 const struct Trigger *Scene_GetTriggers(void) { return gSceneEvents; }
@@ -403,8 +388,8 @@ void NorthernReaches_ShatterIceWall(s32 unused, s32 *position,
     sprite->oam.fullColor = 1;
     sprite->oam.palette = zero;
     column = i / 6;
-    particle->x = position[0] + (column << 20);
-    particle->y = position[1] - ((i % 6) << 20);
+    particle->x = position[0] + FIELD_CELL_ORIGIN(column);
+    particle->y = position[1] - FIELD_CELL_ORIGIN(i % 6);
     column -= 4;
     sprite++;
     particle->z = position[2];
@@ -455,7 +440,7 @@ void NorthernReaches_ShatterIceWall(s32 unused, s32 *position,
       for (i = ICE_SHARD_COUNT - 1; i >= 0; i--) {
         if (particle->age < 60) {
           EffectSprite_DrawAtWorldPosition(flySprite, particle);
-          BattleEffect_StepVector3(particle, 63, -12288);
+          BattleEffect_StepVector3(particle, 63, -toFIXED(3) / 16);
           particle->age++;
         }
         flySprite++;

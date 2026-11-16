@@ -181,6 +181,20 @@ struct Actor {
       u8 unusedBeforeSavedPriority[2]; ///< refused and frozen
       u8 savedSpritePriority; ///< its sprite's priority, given back after
     };
+    /// A member of the party looking about in the Gabomba Statue
+    /// (GabombaStatue_LookAround).
+    struct {
+      u8 unusedBeforeLookTimer[2]; ///< refused and frozen
+      u8 lookTimer;                ///< frames to its next turn
+      u8 lookTurned;               ///< nonzero while it faces lookOtherFacing
+    };
+    /// A magical charge running along the Gabomba Statue's channel
+    /// (GabombaStatue_MoveCharge).
+    struct {
+      u8 unusedBeforeChargeHeading[2]; ///< refused and frozen
+      u8 chargeHeading;                ///< the quarter turn it runs toward
+      u8 chargeState; ///< 1 while it runs; it falls or rises on 2
+    };
   };
   /// Two halfwords whose meaning depends on what runs the actor.
   union {
@@ -211,6 +225,17 @@ struct Actor {
     /// A spin that speeds up (FieldEffect_AdvanceAngleWithRamp).
     struct {
       s16 spinRampFrames; ///< frames the spin has been speeding up for
+    };
+    /// The two headings a member of the party looking about turns between
+    /// (GabombaStatue_LookAround), 1/65536 turns.
+    struct {
+      u16 lookFacing;
+      u16 lookOtherFacing;
+    };
+    /// A charge's cell of the channel (GabombaStatue_MoveCharge).
+    struct {
+      s16 chargeColumn;
+      s16 chargeRow;
     };
   };
   /// The object its action script follows or faces.

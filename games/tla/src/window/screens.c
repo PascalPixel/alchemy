@@ -168,7 +168,18 @@ extern const u8 gWindow_PairBobOffsets[];
 
 extern const struct BarPatternRow gMenu_BarPatternRows[];
 
+/// The standby Djinn counts 10 to 18, one tile each, from BG tile
+/// DJINN_COUNT_TENS_TILE: the party status window loads them
+/// (gPartyStatus_DigitTiles) when a count passes 9.
 extern const u8 gPartyStatus_DigitTiles[];
+#define DJINN_COUNT_TENS_TILE 416
+#define DJINN_COUNT_TENS_VRAM                                                  \
+  ((void *)(BG_CHAR_BLOCK(0) + DJINN_COUNT_TENS_TILE * TILE_SIZE_4BPP))
+/// The window tilemap entry of standby count `n`: a digit, or a tile from
+/// DJINN_COUNT_TENS_TILE for 10 on.
+#define DJINN_COUNT_TILE(n)                                                    \
+  ((n) > 9 ? (n) + WINDOW_TILE(DJINN_COUNT_TENS_TILE - 10)                     \
+           : WINDOW_TILE((n) + '0'))
 
 extern const u8 gWindow_ProgressBarRows[];
 

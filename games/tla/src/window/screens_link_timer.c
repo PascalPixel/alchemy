@@ -1,6 +1,5 @@
 /// @file
-/// The link battle timer, and a localized message shown until the player reads
-/// it.
+/// The link battle timer and the no-flee check.
 // Part of screens.c.
 
 #include "window_internal.h"
@@ -13,6 +12,19 @@
 
 #include "system/heap_slots.h"
 
+/// The partner console's link signature (gLinkPeerSignatures) as the timer
+/// reads it: halfwords 4 to 7 read "EDVS" once the partner has chosen its
+/// commands (Battle_CollectPartyCommands), which starts this side's
+/// countdown.
+struct LinkSignature {
+  u8 exec[8]; ///< halfwords 0 to 3, "EXEC" while the link holds
+  u16 e;
+  u16 d;
+  u16 v;
+  u16 s;
+  u8 paddingAfterSignature[8];
+};
+
 /// A task while the party's commands are chosen (Battle_CollectPartyCommands):
 /// eases the battle view a third of the way to BattleMenuWork.targetViewOffset
 /// each frame (a pixel at least), draws the sprites of BattleMenuWork.icons
@@ -24,7 +36,7 @@ void UpdateLinkSessionCountdown(void) {
   struct BattleWork *runtime;
   struct MenuSprite *entry;
   u8 *active;
-  u16 *signature;
+  struct LinkSignature *signature;
   s32 target;
   s32 current;
   s32 difference;
@@ -40,7 +52,7 @@ void UpdateLinkSessionCountdown(void) {
     current = state->viewOffset;
     if (target != current) {
       difference = target - current;
-      step = __divsi3(difference, 3);
+      step = difference / 3;
       if (step == 0) {
         step--;
         if (difference >= 0)
@@ -62,38 +74,42 @@ void UpdateLinkSessionCountdown(void) {
     } while (i >= 0);
     Link_DrawPageArrows(LIST_PAGE_ARROW_VRAM);
 
+    // Local battles still animate the UI, but do not run the link timer.
     if (state->linkTimer == 0)
-      goto done;
+      return;
 
     runtime = Ram_HeapSlots->battleWork;
     if (runtime->linkPaused == 0)
       goto load_timer;
     state->timer = 0;
-    goto done;
+    return;
 
   signature_tail:
-    if (signature[6] != 'V')
+    if (signature->v != 'V')
       goto signature_done;
-    if (signature[7] != 'S')
+    if (signature->s != 'S')
       goto signature_done;
     state->timer = COUNTDOWN_START_FRAMES;
     timer = state->timer;
     goto signature_done;
 
+    // -1 until the partner's signature reads "EDVS", then the countdown.
   load_timer:
     timer = state->timer;
     if (timer >= 0)
       goto timer_ready;
-    signature = gLinkPeerSignatures[runtime->linkSide ^ 1];
-    if (signature[4] != 'E')
+    signature =
+        (struct LinkSignature *)gLinkPeerSignatures[runtime->linkSide ^ 1];
+    if (signature->e != 'E')
       goto signature_done;
-    if (signature[5] == 'D')
+    if (signature->d == 'D')
       goto signature_tail;
 
   signature_done:
     if (timer < 0)
-      goto done;
+      return;
 
+    // The window opens the first frame the Status screen is not up.
   timer_ready:
     if (state->timerWindow == 0 && state->timerHidden == 0) {
       state->timerWindow = (void *)Link_CreateCountdownLabelWindow();
@@ -106,18 +122,16 @@ void UpdateLinkSessionCountdown(void) {
       timer = nextTimer;
     }
     if (timer < 0)
-      goto done;
+      return;
 
-    seconds = __divsi3(timer + FRAMES_PER_SECOND - 1, FRAMES_PER_SECOND);
+    // Round remaining frames upward so zero appears only after time expires.
+    seconds = (timer + FRAMES_PER_SECOND - 1) / FRAMES_PER_SECOND;
     if (seconds != 0 && seconds * FRAMES_PER_SECOND == timer)
       Sound_PlayFar(SE_TRIPLE_TONE_LOW);
 
     if (state->timerWindow != 0)
       Text_DrawNumberInWindow(seconds, 2, (s32)state->timerWindow, 16, 8);
   }
-
-done:
-  return;
 }
 
 /// Tests whether the party may not run from this battle: battle types 3 and

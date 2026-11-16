@@ -193,8 +193,9 @@ extern const u8 gPartyStatus_DigitTiles[];
            : WINDOW_TILE((n) + '0'))
 
 /// The saving screen's progress bar: its seven stages, a row of tile numbers
-/// each, and its tiles, compressed.
+/// each.
 extern const u8 gWindow_ProgressBarRows[];
+/// The progress bar's tiles, compressed.
 extern const u8 gWindow_ProgressBarTiles[];
 
 /// The cell picture routine, copied to RAM before it runs.

@@ -143,6 +143,8 @@ s32 BattleParty_ChooseReserve(s32 slot) {
   }
 }
 
+/// Lists the units still standing on the sides in sideMask, party first, into
+/// unitIds when it is not null, and returns how many.
 s32 BattleUnit_ListLivingFar(s32 sideMask, u16 *unitIds);
 
 /// The first half of The Broken Seal's Battle_BuildPartyActions: each action

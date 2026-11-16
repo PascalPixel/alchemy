@@ -404,7 +404,9 @@ s32 Portrait_Load(u32 member, s32 cacheSlot) {
   return tile;
 }
 
+/// The 4bpp decoder Icon_Decompress copies into RAM.
 extern u8 Tile_Decompress4bppCode[];
+/// The decoder's byte count, as this symbol's address (ld_script.ld).
 extern u8 Tile_Decompress4bppCodeSize[];
 
 /// Returns gWindow_FixedTileBlocks[0], whatever no is.
@@ -495,11 +497,6 @@ void BattleCommandRow_LoadIconTiles(struct GlyphPalette *palette, s32 glyph,
   Heap_Release(remapped);
   HeapSlot_Release(HEAP_SLOT_GLYPH_TRANSFER);
 }
-
-typedef struct {
-  u16 code : 10;
-  u16 style : 6;
-} CharacterCell;
 
 /// Loads the command row's icon `index` as command icon `icon`: as BG1 tiles
 /// from tile index * 16 (BattleCommandRow_LoadIconTiles), and into the row's

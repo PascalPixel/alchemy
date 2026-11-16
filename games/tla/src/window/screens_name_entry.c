@@ -268,6 +268,7 @@ void NameEntry_DrawName(s32 window, u8 *name) {
   ((u8)((c) - TEXT_MARK_VOICED) <= TEXT_MARK_SEMIVOICED - TEXT_MARK_VOICED)
 
 #if LANGUAGE == LANGUAGE_JAPANESE
+/// The Japanese keyboard's second page of letters, which Select turns to.
 extern const u8 gNameEntry_AlternateKeyboardTilemap[];
 
 void Text_DrawString(u8 *text, s32 window, s32 x, s32 y);

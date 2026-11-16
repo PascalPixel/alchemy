@@ -181,6 +181,8 @@ enum ActorScriptValue {
   SW_BOUNCE = 20,
   SW_GRAVITY = 21,
   SW_GROUND = 22,
+  /// Actor.spriteStorageKind: 0 draws no sprite, 1 its one sprite.
+  SW_SPRITE_STORAGE_KIND = 25,
   SW_MOTION = 26,
   SW_ARRIVAL = 27,
   SW_RESULT = 28,

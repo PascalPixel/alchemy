@@ -351,6 +351,12 @@
 /// Set as the ceremony sends the party back to Kibombo; the Gabomba Statue's
 /// arrow room reads it once and clears it.
 #define FLAG_GABOMBA_BACK_FROM_CEREMONY 0x8fc
+/// Where Retreat takes the party from the Gabomba Statue's lower rooms: set as
+/// it comes in to the pinion room from outside (FLAG_GABOMBA_RETREAT_TO_PINION)
+/// or to the idol's chamber by its third entrance
+/// (FLAG_GABOMBA_RETREAT_TO_IDOL), each clearing the other.
+#define FLAG_GABOMBA_RETREAT_TO_PINION 0xa27
+#define FLAG_GABOMBA_RETREAT_TO_IDOL 0xa28
 /// Set while Kibombo is shown at its ceremony night
 /// (Kibombo_InitializeCeremony), cleared by day and once the message is
 /// carried: the houses' and the statue's exits lead to KibomboCeremony while it

@@ -1075,7 +1075,7 @@ void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
 
 void Settlements_SpawnSplashRing(s32 objectId) {
   struct Actor *object;
-  struct Vec vec;
+  struct Vector3 vec;
   struct EffectOptions params;
   u32 angleStep;
   s32 angle;

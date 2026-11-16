@@ -14,10 +14,6 @@
 
 struct EffectOptions;
 
-struct JupiterLighthouseAerieSpark {
-  s32 word[10];
-};
-
 extern u8 gDecodeFillByte;
 
 void Actor_SetSpriteColorMode(struct Actor *object, s32 value);

@@ -216,11 +216,15 @@ struct HeapSlotWords {
   u32 mapWork;
 };
 
+/// An event's message counter, read as a word or as its halfword (Gabomba
+/// Catacombs' centred lines).
 union EventLine {
   s32 word;
   u16 line;
 };
 
+/// A cell of Gabomba Statue's channel puzzle: its kind, whether it is
+/// blocked, its shape and what stands on it.
 struct PuzzleCell {
   u8 kind;
   u8 blocked;
@@ -228,21 +232,20 @@ struct PuzzleCell {
   u8 occupied;
 };
 
-struct Vec {
-  s32 x;
-  s32 y;
-  s32 z;
-};
-
+/// The palette fade's work (heap slot paletteFade) as 256 colours.
 struct FadePalette {
   u16 colors[256];
 };
 
+/// A row of a scene's trap table, ended by an actor of 0xffff: an actor and
+/// its flag.
 struct TrapEntry {
   u16 actor;
   u16 flag;
 };
 
+/// An actor's coordinate read as its word or its low halfword, through a
+/// union so that a store to it may alias a read after it.
 union ActorCoordinate {
   s32 value;
   u16 half;
@@ -268,6 +271,9 @@ struct BeamSpark {
   u32 age;
 };
 
+/// Lemuria spring's toss (gLemuriaSpring_Toss): the frame the coin is let
+/// go, its trail of positions and its shadow, its velocity, and the frames the
+/// spring still draws it in.
 struct SpringTossMotion {
   u8 unused[2];
   s16 launchFrame;
@@ -277,6 +283,8 @@ struct SpringTossMotion {
   s32 attractionFrames;
 };
 
+/// One of the spring's moving obstacles: its position and heading, and the
+/// timers its motion and its hits keep.
 struct SpringObstacle {
   struct Vector3 position;
   s16 heading;
@@ -286,6 +294,8 @@ struct SpringObstacle {
   s16 hitCooldownFrames;
 };
 
+/// A door of the Lemurian ship: the step trigger it answers, its opening's
+/// cell animation and the cell it opens at.
 struct LemurianShipWarp {
   u16 exit;
   s32 value;
@@ -323,11 +333,6 @@ struct HalfwordField {
   s16 value;
 };
 
-struct UnitData {
-  u8 filler[216];
-  u16 items[15];
-};
-
 /// The sprite words as one stored pair, or the attributes field by field.
 union SparkOam {
   struct {
@@ -337,11 +342,14 @@ union SparkOam {
   struct OamData oam;
 };
 
+/// A place on the Sea of Time's lap, in 16.16 pixels.
 struct Spot {
   s32 x;
   s32 z;
 };
 
+/// The six places of the Sea of Time's lap where spray rises once the lap has
+/// been run more than three times.
 struct Spots {
   struct Spot spot[6];
 };
@@ -369,6 +377,8 @@ struct TreasureIsleCell {
   u16 unusedAfterFlag; ///< no code names it
 };
 
+/// A spark of Venus Lighthouse's entrance: its position and velocity in
+/// 16.16 pixels, and its frame.
 struct SparkState {
   s32 x;
   s32 y;
@@ -425,6 +435,10 @@ struct BobbingMarker {
   s16 stopped; ///< nonzero holds it still, in userValue
 };
 
+/// The map work as the World Map's sinking of Idejima reads it: two
+/// halfwords of map layer 0's scale, stepped against each other.
+/// XXX: what the two halfwords are on the World Map; the World Map's own reading of
+/// layer 0's scale would settle it.
 struct RescueMap {
   u8 unk000[0x11c];
   u16 unk11c;

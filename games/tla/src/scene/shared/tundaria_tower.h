@@ -16,12 +16,6 @@
 
 #include "field/scene_tables.h"
 
-struct TundariaTowerPosition {
-  s32 x;
-  s32 y;
-  s32 z;
-};
-
 void GameFlag_Set(s32 flag);
 void GameFlag_Clear(s32 flag);
 s32 MapCell_SetAttributes(u32 layer, s32 x, s32 z, s32 value);

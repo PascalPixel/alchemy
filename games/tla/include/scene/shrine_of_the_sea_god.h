@@ -8,6 +8,8 @@
 
 struct Actor;
 
+/// A footprint of the Shrine of the Sea God (gShrineOfTheSeaGod_Footprints):
+/// where it lies in 16.16 pixels, its scale and its turn.
 struct ShrineOfTheSeaGodSpot {
   s32 x;
   s32 z;

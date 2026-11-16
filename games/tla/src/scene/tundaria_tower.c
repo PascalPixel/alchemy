@@ -110,7 +110,7 @@ void TundariaTower_StartEffectScript(struct FieldEffect *effect,
 #define FLAG_ICY_WALL_REVEALED FLAG_SCENE_TEMP_12
 
 void TundariaTower_AdvanceIceShard(union FieldObject *object);
-void TundariaTower_ScatterIceShards(struct TundariaTowerPosition *position,
+void TundariaTower_ScatterIceShards(struct Vector3 *position,
                                     s32 count, FIXED scale);
 void TundariaTower_UpdateFallingRocks(void);
 void TundariaTower_StartFallingRocks(void);
@@ -331,7 +331,7 @@ void TundariaTower_AdvanceIceShard(union FieldObject *object) {
 
 /// Scatters shards of ice (effect 279) around a position, each turned at
 /// random and thrown off to fall under TundariaTower_AdvanceIceShard.
-void TundariaTower_ScatterIceShards(struct TundariaTowerPosition *position,
+void TundariaTower_ScatterIceShards(struct Vector3 *position,
                                     s32 count, FIXED scale) {
   struct EffectOptions options;
   s32 i;
@@ -370,7 +370,7 @@ void TundariaTower_ScatterIceShards(struct TundariaTowerPosition *position,
 
 /// Burst on the crystal: it cracks and throws off shards of ice.
 void TundariaTower_BurstCrystal(s32 step) {
-  struct TundariaTowerPosition position;
+  struct Vector3 position;
 
   switch (step) {
   case 1:
@@ -662,7 +662,7 @@ void TundariaTower_StopSliding(void) { Event_ResolvePendingActions(0); }
 
 /// Burst on the brown part of the outside wall opens a short cut.
 void TundariaTower_BurstBrownWall(s32 step) {
-  struct TundariaTowerPosition position;
+  struct Vector3 position;
 
   switch (step) {
   case 1:

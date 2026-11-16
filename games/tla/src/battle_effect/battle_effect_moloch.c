@@ -809,7 +809,7 @@ void BattleEffect_RunIris(struct BattleEffectParams *args) {
   struct Sprite **objects = (struct Sprite **)gMapGridCellBuffer;
   u8 *sprites = Ram_HeapSlots->battleSheet;
   struct IrisPetals *petals = &IRIS_PETAL_WORK;
-  u8 *battle = (u8 *)Ram_HeapSlots->battleWork;
+  struct BattleWork *battle = Ram_HeapSlots->battleWork;
   s32 savedScroll = gBgScroll[1].x;
   s16 *camera = Ram_HeapSlots->cameraWork;
   s32 savedYaw;
@@ -1218,7 +1218,7 @@ void BattleEffect_RunIris(struct BattleEffectParams *args) {
       Iwram_FillWordsEntry(canvas, CANVAS_BYTES,
                            CANVAS_FILL_WORD(CANVAS_LEVEL_BRIGHTEST));
       EFFECT_PRESENT_CANVAS(work);
-      battle[0x867] = 1;
+      battle->keepBackdropPalette = TRUE;
       BattleBackground_LoadFar(BATTLE_BACKGROUND_FIXED,
                                RESOURCE_SUNSET_BACKDROP, 0);
       colors = Resource_GetTableEntry(RESOURCE_ROBED_GODDESS_TILES);

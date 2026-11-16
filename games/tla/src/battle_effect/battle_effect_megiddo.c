@@ -36,7 +36,7 @@ void BattleEffect_RunMegiddo(struct BattleEffectParams *args) {
   DrawRectangle blit[2];
   u8 *sprites;
   s32 *transition;
-  s16 *camera;
+  struct BattleCamera *camera;
   s16 savedYaw;
   u8 *meshA;
   u8 *meshB;
@@ -168,13 +168,13 @@ void BattleEffect_RunMegiddo(struct BattleEffectParams *args) {
     }
     EffectPosition_ProjectScaledBattler(args->user, &pos);
     if (frame == 3) {
-      savedYaw = camera[27];
+      savedYaw = camera->yaw;
     }
     if ((u32)(frame - 16) <= 61) {
       if (!args->side) {
-        camera[27] -= 256;
+        camera->yaw -= 256;
       } else {
-        camera[27] += 256;
+        camera->yaw += 256;
       }
     }
 
@@ -246,7 +246,7 @@ void BattleEffect_RunMegiddo(struct BattleEffectParams *args) {
       struct MotionObject *target;
 
       Palette_BrightenBattleBg(-12, -2, -2);
-      camera[27] = savedYaw;
+      camera->yaw = savedYaw;
       x = toFIXED(120);
       z = toFIXED(48);
       targetList[0] = args->targets[0];

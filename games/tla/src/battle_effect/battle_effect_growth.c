@@ -265,6 +265,9 @@ void BattleEffect_RunGrowingColumns(struct BattleEffectParams *args, s32 mode) {
 }
 
 #define VINE_COUNT 16
+/// GreenVineSheet: five 32 x 32 pictures of a vine's tip.
+#define VINE_WIDTH 32
+#define VINE_HEIGHT 32
 #define VINE_FRAMES 70
 #define CUE_FRAME 32 ///< the vines reach the targets
 #define CUE_VINES 143
@@ -364,8 +367,8 @@ void BattleEffect_RunVine(struct BattleEffectParams *args) {
           height = 160 - (frame - delay) * 4;
         }
         if (height > 0)
-          draw[i & 1](canvas, work->sheet + (cell << 10), vine->x - 16,
-                      (i & 7) - height + 104, 32, height);
+          draw[i & 1](canvas, work->sheet + cell * PICTURE_BYTES(VINE),
+                      vine->x - 16, (i & 7) - height + 104, VINE_WIDTH, height);
       }
       i++;
       vine++;
@@ -390,6 +393,8 @@ void BattleEffect_RunVine(struct BattleEffectParams *args) {
 #define CUE_THORN 133
 
 #define THORN_BIG_HEIGHT 80
+#define THORN_BIG_LEAN 30
+#define THORN_SMALL_LEAN 8
 #define THORN_SMALL_PICTURE_WIDTH 32
 #define THORN_SMALL_PICTURE_HEIGHT 64
 
@@ -420,8 +425,8 @@ void BattleEffect_RunThorn(struct BattleEffectParams *args) {
   /* FAKEMATCH(barrier): an empty asm through heap hides that it holds the heap
    * slots' fixed address. */
   __asm__("" : "+r"(heap));
-  work = (struct BattleEffectWork *)heap[23];
-  canvas = (void *)heap[24];
+  work = (struct BattleEffectWork *)heap[HEAP_SLOT_BATTLE_EFFECT / sizeof(u32)];
+  canvas = (void *)heap[HEAP_SLOT_BATTLE_CANVAS / sizeof(u32)];
   EFFECT_START_NARROW_CANVAS(BGCNT_PRIORITY(1));
   REG_BLDCNT = 0;
   REG_BLDALPHA = EFFECT_BLEND_ADD;
@@ -431,11 +436,11 @@ void BattleEffect_RunThorn(struct BattleEffectParams *args) {
   }
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS,
                       BLITTER_TRANSPARENT);
-  draw = ((DrawRectangle *)heap)[26];
+  draw = ((DrawRectangle *)heap)[HEAP_SLOT_RAM_CODE / sizeof(u32)];
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED,
                       EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X,
                       BLITTER_TRANSPARENT);
-  drawFlip = ((DrawRectangle *)heap)[47];
+  drawFlip = ((DrawRectangle *)heap)[HEAP_SLOT_RAM_CODE_PAIRED / sizeof(u32)];
   work->transferMode =
       CANVAS_COPY_AND_CLEAR; // clear the canvas to 0 every frame
   work->transferValue = 0;
@@ -472,15 +477,15 @@ void BattleEffect_RunThorn(struct BattleEffectParams *args) {
           if (height > THORN_BIG_HEIGHT) {
             height = THORN_BIG_HEIGHT;
           }
-          if (lean > 30) {
-            lean = 30;
+          if (lean > THORN_BIG_LEAN) {
+            lean = THORN_BIG_LEAN;
           }
           if (gGrowth_Kinds[i] & THORN_MIRRORED) {
-            drawFlip(canvas, work->sheet, gGrowth_X[i] - lean, 108 - height, 48,
-                     height);
+            drawFlip(canvas, work->sheet, gGrowth_X[i] - lean, 108 - height,
+                     THORN_BIG_WIDTH, height);
           } else {
-            draw(canvas, work->sheet, gGrowth_X[i] + lean, 108 - height, 48,
-                 height);
+            draw(canvas, work->sheet, gGrowth_X[i] + lean, 108 - height,
+                 THORN_BIG_WIDTH, height);
           }
         } else {
           height = age * 8;
@@ -488,8 +493,8 @@ void BattleEffect_RunThorn(struct BattleEffectParams *args) {
           if (height > THORN_SMALL_PICTURE_HEIGHT) {
             height = THORN_SMALL_PICTURE_HEIGHT;
           }
-          if (age > 8) {
-            lean = 8;
+          if (age > THORN_SMALL_LEAN) {
+            lean = THORN_SMALL_LEAN;
           }
           if (gGrowth_Kinds[i] & THORN_MIRRORED) {
             drawFlip(canvas, work->sheet + THORN_SMALL_PICTURE,

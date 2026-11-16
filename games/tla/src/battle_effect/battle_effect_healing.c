@@ -477,10 +477,7 @@ void BattleEffect_RunHealingMotes(struct BattleEffectParams *args, u32 mode) {
 
               // Depth 314-634 gives sizes 3 down to 1; some modes cycle
               // through the nine puffs instead.
-              if (screen.depth < 314)
-                screen.depth = 314;
-              if (screen.depth > 634)
-                screen.depth = 634;
+              CLAMP(screen.depth, 314, 634);
               size = 3 - (screen.depth - 314) / 128;
               if (mode == HEALING_MODE_PLY || mode == HEALING_MODE_SPRING ||
                   mode == HEALING_MODE_BREATH)

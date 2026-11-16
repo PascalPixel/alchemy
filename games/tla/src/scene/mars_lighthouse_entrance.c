@@ -2821,26 +2821,7 @@ s16 gSlideOnIce_AnglesByKey[] = {
     16384, 0, -32768, 16384, -1, 0, -32768, -1,
 };
 
-u32 gFieldEffect_ShortScript[] = {                                                               
-      SC_WAIT(1), SC_LOOP(22, SC_TOP),                                     
-      SC_WAIT(1), SC_POSITION(0, 0, 0),                                        
-      SC_WAIT(1), SC_RELEASE,                                                     
-      SC_END,                                                                  
-  };
-
-u32 gFieldEffect_MediumScript[] = {                                                               
-      SC_WAIT(1), SC_LOOP(44, SC_TOP),                                     
-      SC_WAIT(1), SC_POSITION(0, 0, 0),                                        
-      SC_WAIT(1), SC_RELEASE,                                                     
-      SC_END,                                                                  
-  };
-
-u32 gFieldEffect_LongScript[] = {                                                               
-      SC_WAIT(1), SC_LOOP(126, SC_TOP),                                     
-      SC_WAIT(1), SC_POSITION(0, 0, 0),                                        
-      SC_WAIT(1), SC_RELEASE,                                                     
-      SC_END,                                                                  
-  };
+#include "shared/field_effect_duration_scripts.c"
 
 s16 gMarsLighthouseEntrance_FadeSlots[] = {
     137, 138, 139, 140, 141, 142, 143, -1,

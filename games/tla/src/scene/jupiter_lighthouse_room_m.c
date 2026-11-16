@@ -1909,26 +1909,8 @@ extern u32 gFieldEffect_LongScript[];
 extern s32 gJupiterLighthouse_ShowGustScript[];
 
 // clang-format off
-LATE_DATA u32 gFieldEffect_ShortScript[] = {                                                               
-      SC_WAIT(1), SC_LOOP(22, SC_TOP),                                     
-      SC_WAIT(1), SC_POSITION(0, 0, 0),                                        
-      SC_WAIT(1), SC_RELEASE,                                                     
-      SC_END,                                                                  
-  };
-
-LATE_DATA u32 gFieldEffect_MediumScript[] = {                                                               
-      SC_WAIT(1), SC_LOOP(44, SC_TOP),                                     
-      SC_WAIT(1), SC_POSITION(0, 0, 0),                                        
-      SC_WAIT(1), SC_RELEASE,                                                     
-      SC_END,                                                                  
-  };
-
-LATE_DATA u32 gFieldEffect_LongScript[] = {                                                               
-      SC_WAIT(1), SC_LOOP(126, SC_TOP),                                     
-      SC_WAIT(1), SC_POSITION(0, 0, 0),                                        
-      SC_WAIT(1), SC_RELEASE,                                                     
-      SC_END,                                                                  
-  };
+#define FIELD_EFFECT_DURATION_SCRIPT_SECTION LATE_DATA
+#include "shared/field_effect_duration_scripts.c"
 
 LATE_DATA s32 gJupiterLighthouse_ShowGustScript[] = {
     SC_CALL(JupiterLighthouse_ClearScriptedActorSpriteFlags),

@@ -660,26 +660,8 @@ extern u32 gFieldEffect_LongScript[];
 void JupiterLighthouse_PushLogOffTheLedge(void);
 
 // clang-format off
-LATE_DATA u32 gFieldEffect_ShortScript[] = {                                                               
-      SC_WAIT(1), SC_LOOP(22, SC_TOP),                                     
-      SC_WAIT(1), SC_POSITION(0, 0, 0),                                        
-      SC_WAIT(1), SC_RELEASE,                                                     
-      SC_END,                                                                  
-  };
-
-LATE_DATA u32 gFieldEffect_MediumScript[] = {                                                               
-      SC_WAIT(1), SC_LOOP(44, SC_TOP),                                     
-      SC_WAIT(1), SC_POSITION(0, 0, 0),                                        
-      SC_WAIT(1), SC_RELEASE,                                                     
-      SC_END,                                                                  
-  };
-
-LATE_DATA u32 gFieldEffect_LongScript[] = {                                                               
-      SC_WAIT(1), SC_LOOP(126, SC_TOP),                                     
-      SC_WAIT(1), SC_POSITION(0, 0, 0),                                        
-      SC_WAIT(1), SC_RELEASE,                                                     
-      SC_END,                                                                  
-  };
+#define FIELD_EFFECT_DURATION_SCRIPT_SECTION LATE_DATA
+#include "shared/field_effect_duration_scripts.c"
 
 LATE_DATA struct SceneEntrance gSceneEntrances[] = {
     {0, CONDITION_ALWAYS, 172, 0, 149, FACING_SOUTH, 0, -1, -1, -1, -1, 0},

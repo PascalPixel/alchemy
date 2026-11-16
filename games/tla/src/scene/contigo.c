@@ -324,9 +324,9 @@ void Contigo_SendToSuperLuckyDice(void);
 void Contigo_EnterLuckyWheels(void);
 void Contigo_EnterSuperLuckyDice(void);
 void Contigo_ReturnToNewHome(void);
-extern u32 gContigo_ShortScript[];
-extern u32 gContigo_MediumScript[];
-extern u32 gContigo_LongScript[];
+extern u32 gFieldEffect_ShortScript[];
+extern u32 gFieldEffect_MediumScript[];
+extern u32 gFieldEffect_LongScript[];
 extern u32 gContigo_WandererScript[];
 extern u32 gContigo_PacerScript[];
 extern s32 gContigo_StatueScript[];
@@ -2830,35 +2830,7 @@ s32 gContigo_SparkleTiles[] = {
     (s32)0xe9000000, 233,
 };
 
-u32 gContigo_ShortScript[] = {
-    SC_WAIT(1),
-    SC_LOOP(22, SC_TOP),
-    SC_WAIT(1),
-    SC_POSITION(0, 0, 0),
-    SC_WAIT(1),
-    SC_RELEASE,
-    SC_END,
-};
-
-u32 gContigo_MediumScript[] = {
-    SC_WAIT(1),
-    SC_LOOP(44, SC_TOP),
-    SC_WAIT(1),
-    SC_POSITION(0, 0, 0),
-    SC_WAIT(1),
-    SC_RELEASE,
-    SC_END,
-};
-
-u32 gContigo_LongScript[] = {
-    SC_WAIT(1),
-    SC_LOOP(126, SC_TOP),
-    SC_WAIT(1),
-    SC_POSITION(0, 0, 0),
-    SC_WAIT(1),
-    SC_RELEASE,
-    SC_END,
-};
+#include "shared/field_effect_duration_scripts.c"
 
 /// The Lucky Wheels' prizes, three to each icon that wins them
 /// (Contigo_PickPrize).
@@ -2900,9 +2872,9 @@ u16 gContigo_CycleSlots[] = {
   };
 
 s32 gFieldEffect_DurationScripts[] = {
-    (s32)gContigo_ShortScript,
-    (s32)gContigo_MediumScript,
-    (s32)gContigo_LongScript,
+    (s32)gFieldEffect_ShortScript,
+    (s32)gFieldEffect_MediumScript,
+    (s32)gFieldEffect_LongScript,
 };
 
 u32 gContigo_WandererScript[] = {

@@ -1033,26 +1033,7 @@ void JupiterLighthouse_CheckCrackedTile(s32 dx, s32 dz, s32 value) {
 extern u32 gFieldEffect_ShortScript[];
 
 // clang-format off
-u32 gFieldEffect_ShortScript[] = {                                                               
-      SC_WAIT(1), SC_LOOP(22, SC_TOP),                                     
-      SC_WAIT(1), SC_POSITION(0, 0, 0),                                        
-      SC_WAIT(1), SC_RELEASE,                                                     
-      SC_END,                                                                  
-  };
-
-u32 gFieldEffect_MediumScript[] = {                                                               
-      SC_WAIT(1), SC_LOOP(44, SC_TOP),                                     
-      SC_WAIT(1), SC_POSITION(0, 0, 0),                                        
-      SC_WAIT(1), SC_RELEASE,                                                     
-      SC_END,                                                                  
-  };
-
-u32 gFieldEffect_LongScript[] = {                                                               
-      SC_WAIT(1), SC_LOOP(126, SC_TOP),                                     
-      SC_WAIT(1), SC_POSITION(0, 0, 0),                                        
-      SC_WAIT(1), SC_RELEASE,                                                     
-      SC_END,                                                                  
-  };
+#include "shared/field_effect_duration_scripts.c"
 
 struct SceneEntrance gSceneEntrances[] = {
     {0, CONDITION_ALWAYS, 560, 96, 264, FACING_SOUTH, 0, -1, -1, -1, -1, 0},

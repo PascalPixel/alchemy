@@ -1942,35 +1942,7 @@ s32 gAnemosInnerSanctum_SparkOffsets[][2] = {
     {32, 16}, {-48, 32}, {48, 32}, {-16, 32}, {16, 32},
 };
 
-u32 gFieldEffect_ShortScript[] = {
-    SC_WAIT(1),
-    SC_LOOP(22, SC_TOP),
-    SC_WAIT(1),
-    SC_POSITION(0, 0, 0),
-    SC_WAIT(1),
-    SC_RELEASE,
-    SC_END,
-};
-
-u32 gFieldEffect_MediumScript[] = {
-    SC_WAIT(1),
-    SC_LOOP(44, SC_TOP),
-    SC_WAIT(1),
-    SC_POSITION(0, 0, 0),
-    SC_WAIT(1),
-    SC_RELEASE,
-    SC_END,
-};
-
-u32 gFieldEffect_LongScript[] = {
-    SC_WAIT(1),
-    SC_LOOP(126, SC_TOP),
-    SC_WAIT(1),
-    SC_POSITION(0, 0, 0),
-    SC_WAIT(1),
-    SC_RELEASE,
-    SC_END,
-};
+#include "shared/field_effect_duration_scripts.c"
 
 s32 gAnemosInnerSanctum_DurationScripts[] = {
     (s32)gAnemosInnerSanctum_ShortScript,

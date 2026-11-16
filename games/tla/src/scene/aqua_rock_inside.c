@@ -2709,35 +2709,7 @@ void AquaRockInside_SetVentValue(s32 index, s32 value) {
 #include "shared/vents_set_id.h"
 
 // clang-format off
-u32 gFieldEffect_ShortScript[] = {
-    SC_WAIT(1),
-    SC_LOOP(22, SC_TOP),
-    SC_WAIT(1),
-    SC_POSITION(0, 0, 0),
-    SC_WAIT(1),
-    SC_RELEASE,
-    SC_END,
-};
-
-u32 gFieldEffect_MediumScript[] = {
-    SC_WAIT(1),
-    SC_LOOP(44, SC_TOP),
-    SC_WAIT(1),
-    SC_POSITION(0, 0, 0),
-    SC_WAIT(1),
-    SC_RELEASE,
-    SC_END,
-};
-
-u32 gFieldEffect_LongScript[] = {
-    SC_WAIT(1),
-    SC_LOOP(126, SC_TOP),
-    SC_WAIT(1),
-    SC_POSITION(0, 0, 0),
-    SC_WAIT(1),
-    SC_RELEASE,
-    SC_END,
-};
+#include "shared/field_effect_duration_scripts.c"
 
 /// The cell blocks the spring's levels copy, x then z.
 u8 gAquaRockInside_SpringLevelCells[] = {67, 66, 75, 66, 83, 66, 91, 66, 99, 66, 107, 66, 115, 66, 67, 81, 75, 81, 83, 81, 91, 81, 99, 81, 107, 81, 115, 81, 67, 96, 75, 96};

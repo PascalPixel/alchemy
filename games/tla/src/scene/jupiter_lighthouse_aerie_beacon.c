@@ -2597,28 +2597,12 @@ s32 gJupiterLighthouse_FourthBeamObjects[] = {BEAM_OBJECTS_END};
 s32 gJupiterLighthouse_BeamRiders[] = {BEAM_OBJECTS_END};
 
 // clang-format off
-LATE_DATA u32 gFieldEffect_ShortScript[] = {                                                               
-      SC_WAIT(1), SC_LOOP(22, SC_TOP),                                     
-      SC_WAIT(1), SC_POSITION(0, 0, 0),                                        
-      SC_WAIT(1), SC_RELEASE,                                                     
-      SC_END,                                                                  
-  };
+#define FIELD_EFFECT_DURATION_SCRIPT_SECTION LATE_DATA
+#include "shared/field_effect_duration_scripts.c"
 
-LATE_DATA u32 gFieldEffect_MediumScript[] = {                                                               
-      SC_WAIT(1), SC_LOOP(44, SC_TOP),                                     
-      SC_WAIT(1), SC_POSITION(0, 0, 0),                                        
-      SC_WAIT(1), SC_RELEASE,                                                     
-      SC_END,                                                                  
-  };
-
-LATE_DATA s32 gFieldEffect_LongScript[] = {
-    SC_WAIT(1),
-    SC_LOOP(126, SC_TOP),
-    SC_WAIT(1),
-    SC_POSITION(0, 0, 0),
-    SC_WAIT(1),
-    SC_RELEASE,
-    SC_END,
+/// Unused: turns its actor's facing back and forth, 0x1200 at a time, and
+/// ends. Nothing starts it.
+LATE_DATA s32 gJupiterLighthouse_RockScript[] = {
     SC_WAIT(5),
     SC_ADD(SW_FACING, 0x1200),
     SC_WAIT(5),

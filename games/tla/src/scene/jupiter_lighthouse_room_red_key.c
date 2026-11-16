@@ -1031,26 +1031,7 @@ void JupiterLighthouse_LiftPushedBlock(void);
 void JupiterLighthouse_ActivateTheLighthouse(void);
 
 // clang-format off
-u32 gFieldEffect_ShortScript[] = {                                                               
-      SC_WAIT(1), SC_LOOP(22, SC_TOP),                                     
-      SC_WAIT(1), SC_POSITION(0, 0, 0),                                        
-      SC_WAIT(1), SC_RELEASE,                                                     
-      SC_END,                                                                  
-  };
-
-u32 gFieldEffect_MediumScript[] = {                                                               
-      SC_WAIT(1), SC_LOOP(44, SC_TOP),                                     
-      SC_WAIT(1), SC_POSITION(0, 0, 0),                                        
-      SC_WAIT(1), SC_RELEASE,                                                     
-      SC_END,                                                                  
-  };
-
-u32 gFieldEffect_LongScript[] = {                                                               
-      SC_WAIT(1), SC_LOOP(126, SC_TOP),                                     
-      SC_WAIT(1), SC_POSITION(0, 0, 0),                                        
-      SC_WAIT(1), SC_RELEASE,                                                     
-      SC_END,                                                                  
-  };
+#include "shared/field_effect_duration_scripts.c"
 
 u32 gJupiterLighthouse_BringInScript[] = {
     SC_ADD(SW_SCALE_X, 0x1000),

@@ -1959,35 +1959,7 @@ void AnkohlRuins_RaiseSecondSand(void);
 void AnkohlRuins_HideGap(void);
 
 // clang-format off
-u32 gFieldEffect_ShortScript[] = {
-    SC_WAIT(1),
-    SC_LOOP(22, SC_TOP),
-    SC_WAIT(1),
-    SC_POSITION(0, 0, 0),
-    SC_WAIT(1),
-    SC_RELEASE,
-    SC_END,
-};
-
-u32 gFieldEffect_MediumScript[] = {
-    SC_WAIT(1),
-    SC_LOOP(44, SC_TOP),
-    SC_WAIT(1),
-    SC_POSITION(0, 0, 0),
-    SC_WAIT(1),
-    SC_RELEASE,
-    SC_END,
-};
-
-u32 gFieldEffect_LongScript[] = {
-    SC_WAIT(1),
-    SC_LOOP(126, SC_TOP),
-    SC_WAIT(1),
-    SC_POSITION(0, 0, 0),
-    SC_WAIT(1),
-    SC_RELEASE,
-    SC_END,
-};
+#include "shared/field_effect_duration_scripts.c"
 
 /// The first sand room's cell blocks, each with the sand level that covers it,
 /// ended by level 99.

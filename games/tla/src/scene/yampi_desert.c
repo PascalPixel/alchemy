@@ -2713,35 +2713,7 @@ struct RideEntry *YampiDesert_AddRisingSand(s32 slot, s32 id, s32 timer,
 // clang-format off
 /// A field effect's actor that lasts a short, a medium or a long while, then
 /// goes back to the origin and frees itself (gFieldEffect_DurationScripts).
-u32 gFieldEffect_ShortScript[] = {
-    SC_WAIT(1),
-    SC_LOOP(22, SC_TOP),
-    SC_WAIT(1),
-    SC_POSITION(0, 0, 0),
-    SC_WAIT(1),
-    SC_RELEASE,
-    SC_END,
-};
-
-u32 gFieldEffect_MediumScript[] = {
-    SC_WAIT(1),
-    SC_LOOP(44, SC_TOP),
-    SC_WAIT(1),
-    SC_POSITION(0, 0, 0),
-    SC_WAIT(1),
-    SC_RELEASE,
-    SC_END,
-};
-
-u32 gFieldEffect_LongScript[] = {
-    SC_WAIT(1),
-    SC_LOOP(126, SC_TOP),
-    SC_WAIT(1),
-    SC_POSITION(0, 0, 0),
-    SC_WAIT(1),
-    SC_RELEASE,
-    SC_END,
-};
+#include "shared/field_effect_duration_scripts.c"
 
 /// Where the King Scorpion's cloud of dust rises: x and z in pixels.
 u16 gYampiDesert_SandCloudPoints[] ALIGNED(4) = {

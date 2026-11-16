@@ -68,117 +68,115 @@ void FieldPsynergy_TremorOnTarget(void) {
   s32 frames;
   struct FieldPsynergyParticle *particle;
 
-  if (target != NULL && targetSprite != NULL &&
-      targetSprite->width * targetSprite->height > PICTURE_MAX_PIXELS)
-    goto release;
+  if (target == NULL || targetSprite == NULL ||
+      targetSprite->width * targetSprite->height <= PICTURE_MAX_PIXELS) {
+    FieldPsynergy_FadeToCastColor();
+    Decompress_TaggedLz(Resource_GetTableEntry(RESOURCE_SHAKE_TILES),
+                        work->picture);
+    tiles = VramCache_FindFreeEntry();
+    tile = VramCache_Load(tiles, 64, work->picture);
+    for (i = 0, particle = work->particles; i < SHAKE_SPRITE_COUNT;
+         i++, particle++) {
+      struct EffectSprite *sprite = &work->sprites[i];
 
-  FieldPsynergy_FadeToCastColor();
-  Decompress_TaggedLz(Resource_GetTableEntry(RESOURCE_SHAKE_TILES),
-                      work->picture);
-  tiles = VramCache_FindFreeEntry();
-  tile = VramCache_Load(tiles, 64, work->picture);
-  for (i = 0, particle = work->particles; i < SHAKE_SPRITE_COUNT;
-       i++, particle++) {
-    struct EffectSprite *sprite = &work->sprites[i];
-
-    EffectSprite_Init(sprite, 4, 4, 0, tile + (i & 1));
-    sprite->oam.fullColor = 0;
-    sprite->oam.palette = 14;
-    sprite->oam.priority = 0;
-    sprite->depth = OAM_DEPTH_WINDOW;
-    particle->timer = -1;
-  }
-  BattleEffect_SetObjectUpdateMode(scene->mainActor, 0);
-  if (target != NULL && targetSprite != NULL) {
-    Sprite_SetAnimationSpeedFar(targetSprite, 0);
-    FieldPsynergy_DecodePicture(
-        (struct PictureSource *)targetSprite->entries[0], work->picture,
-        targetSprite->width * targetSprite->height);
-  }
-  ViewMove_Start(VIEW_MOVE_X);
-  ViewMove_SaveNearbySprites();
-  wait(10);
-
-  shown = -1;
-  width = targetSprite->width;
-  showing = 0;
-  phase = 0;
-  frameCount = 0;
-  amplitude = SWAY_START;
-  state = SWAY_GROW;
-  frames = 0;
-  do {
-    if ((frameCount & 15) == 15)
-      Sound_PlayFar(SE_JUMP);
-
-    // Rock the gathered objects' sprites with the view.
-    if (event->mode == ACTOR_SYSTEM_MAP) {
-      for (i = 0; i < work->view.count; i++) {
-        struct Sprite *sprite = work->view.objects[i]->sprite;
-        s32 rotation = work->view.spriteRotations[i];
-
-        if (amplitude > SWAY_SHAKE)
-          sprite->rotation =
-              rotation + Iwram_MulFX(Trig_Sin(phase * 3 << 11),
-                                     (amplitude - SWAY_SHAKE) / 128);
-        else
-          sprite->rotation = rotation;
-      }
+      EffectSprite_Init(sprite, 4, 4, 0, tile + (i & 1));
+      sprite->oam.fullColor = 0;
+      sprite->oam.palette = 14;
+      sprite->oam.priority = 0;
+      sprite->depth = OAM_DEPTH_WINDOW;
+      particle->timer = -1;
     }
-
-    ViewMove_Swing(VIEW_MOVE_X, phase++, amplitude);
-    switch (state) {
-    case SWAY_GROW:
-      if (frames == 40)
-        showing = 1;
-      amplitude += SWAY_RAMP;
-      if (amplitude >= SWAY_PEAK) {
-        state = SWAY_HOLD;
-        frames = -1;
-      }
-      break;
-    case SWAY_HOLD:
-      if (frames == SWAY_HOLD_FRAMES) {
-        state = SWAY_SHRINK;
-        frames = -1;
-      }
-      break;
-    case SWAY_SHRINK:
-      if (frames == 50)
-        showing = -1;
-      amplitude -= SWAY_RAMP;
-      if (amplitude <= SWAY_START) {
-        state = SWAY_SETTLE;
-        frames = -1;
-      }
-      break;
-    case SWAY_SETTLE:
-      amplitude = 0;
-      if (frames == 0)
-        state = SWAY_DONE;
-      break;
+    BattleEffect_SetObjectUpdateMode(scene->mainActor, 0);
+    if (target != NULL && targetSprite != NULL) {
+      Sprite_SetAnimationSpeedFar(targetSprite, 0);
+      FieldPsynergy_DecodePicture(
+          (struct PictureSource *)targetSprite->entries[0], work->picture,
+          targetSprite->width * targetSprite->height);
     }
+    ViewMove_Start(VIEW_MOVE_X);
+    ViewMove_SaveNearbySprites();
+    wait(10);
 
-    // A count up to the picture's width and back that nothing reads.
-    if (showing == 1 && shown <= width)
-      shown++;
-    if (showing == -1 && shown >= 0)
-      shown -= 2;
+    shown = -1;
+    width = targetSprite->width;
+    showing = 0;
+    phase = 0;
+    frameCount = 0;
+    amplitude = SWAY_START;
+    state = SWAY_GROW;
+    frames = 0;
+    do {
+      if ((frameCount & 15) == 15)
+        Sound_PlayFar(SE_JUMP);
 
-    wait(1);
-    frames++;
-    frameCount++;
-  } while (state != SWAY_DONE);
+      // Rock the gathered objects' sprites with the view.
+      if (event->mode == ACTOR_SYSTEM_MAP) {
+        for (i = 0; i < work->view.count; i++) {
+          struct Sprite *sprite = work->view.objects[i]->sprite;
+          s32 rotation = work->view.spriteRotations[i];
 
-  if (target != NULL && targetSprite != NULL) {
-    Sprite_SetAnimationSpeedFar(targetSprite, ANIMATION_STEP_NORMAL);
-    ((struct Sprite *)target->sprite)->dirty = 1;
+          if (amplitude > SWAY_SHAKE)
+            sprite->rotation =
+                rotation + Iwram_MulFX(Trig_Sin(phase * 3 << 11),
+                                       (amplitude - SWAY_SHAKE) / 128);
+          else
+            sprite->rotation = rotation;
+        }
+      }
+
+      ViewMove_Swing(VIEW_MOVE_X, phase++, amplitude);
+      switch (state) {
+      case SWAY_GROW:
+        if (frames == 40)
+          showing = 1;
+        amplitude += SWAY_RAMP;
+        if (amplitude >= SWAY_PEAK) {
+          state = SWAY_HOLD;
+          frames = -1;
+        }
+        break;
+      case SWAY_HOLD:
+        if (frames == SWAY_HOLD_FRAMES) {
+          state = SWAY_SHRINK;
+          frames = -1;
+        }
+        break;
+      case SWAY_SHRINK:
+        if (frames == 50)
+          showing = -1;
+        amplitude -= SWAY_RAMP;
+        if (amplitude <= SWAY_START) {
+          state = SWAY_SETTLE;
+          frames = -1;
+        }
+        break;
+      case SWAY_SETTLE:
+        amplitude = 0;
+        if (frames == 0)
+          state = SWAY_DONE;
+        break;
+      }
+
+      // A count up to the picture's width and back that nothing reads.
+      if (showing == 1 && shown <= width)
+        shown++;
+      if (showing == -1 && shown >= 0)
+        shown -= 2;
+
+      wait(1);
+      frames++;
+      frameCount++;
+    } while (state != SWAY_DONE);
+
+    if (target != NULL && targetSprite != NULL) {
+      Sprite_SetAnimationSpeedFar(targetSprite, ANIMATION_STEP_NORMAL);
+      ((struct Sprite *)target->sprite)->dirty = 1;
+    }
+    ViewMove_End();
+    ViewMove_RestoreNearbySprites();
+    VramCache_FreeEntry(tiles);
+    FieldPsynergy_FadeFromCastColor();
   }
-  ViewMove_End();
-  ViewMove_RestoreNearbySprites();
-  VramCache_FreeEntry(tiles);
-  FieldPsynergy_FadeFromCastColor();
-release:
   HeapSlot_Release(HEAP_SLOT_BATTLE_EFFECT);
 }
 

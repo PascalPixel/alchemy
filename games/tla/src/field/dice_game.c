@@ -781,17 +781,18 @@ void SuperLuckyDice_Run(void) {
         s32 message = -1;
 
         if ((gInput.repeat & KEY_UP) && lower == 1) {
-          if (target == 24)
-            goto refuse;
-          if (round == 0)
-            message = (s32)&MsgDiceGameHigher;
-          else
-            message = (s32)&MsgDiceGameHigherAgain;
-          Sound_PlayFar(SE_MENU_CURSOR_MOVE);
-          lower = 0;
+          if (target == 24) {
+            Sound_PlayFar(SE_MENU_CANCEL);
+          } else {
+            if (round == 0)
+              message = (s32)&MsgDiceGameHigher;
+            else
+              message = (s32)&MsgDiceGameHigherAgain;
+            Sound_PlayFar(SE_MENU_CURSOR_MOVE);
+            lower = 0;
+          }
         } else if ((gInput.repeat & KEY_DOWN) && lower == 0) {
           if (target == 4) {
-          refuse:
             Sound_PlayFar(SE_MENU_CANCEL);
           } else {
             if (round == 0)

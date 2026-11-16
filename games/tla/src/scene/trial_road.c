@@ -374,10 +374,10 @@ void TrialRoad_SetPillarTopLift(s32 id, s32 value);
 void TrialRoad_OpenSpoutCell(s32 id);
 void TrialRoad_TrackLeaderOnPillars(void);
 void TrialRoad_CheckPoundedPillarsCovered(s32 a, s32 b);
-void TrialRoad_PoundPillar(s32 id, s32 a, s32 b);
+void TrialRoad_PoundPillar(s32 id, s32 phase, s32 frame);
 void TrialRoad_StepOnSeesawPillar(s32 id, s32 other, s32 flag, s32 side);
 void TrialRoad_PushLog(s32 id, s32 dx, s32 dz, s32 axis);
-void TrialRoad_UncoverSpout(s32 id, s32 a, s32 frame);
+void TrialRoad_UncoverSpout(s32 id, s32 phase, s32 frame);
 void MagmaRockInside_CheckCrumblingStep(const u16 *table);
 void TrialRoad_CrumblePillar(const void *data, s32 a);
 
@@ -419,7 +419,7 @@ void TrialRoad_StartSand(void);
 
 void TrialRoad_EndSand(void);
 
-void TrialRoad_RevealVine(void);
+void TrialRoad_BlowBushOffVine(void);
 
 void TrialRoad_DriftWithStream(void);
 
@@ -959,7 +959,7 @@ void TrialRoad_CheckPoundedPillarsCovered(s32 a, s32 b) {
 
 /// Pound drives a pillar down and raises its partner
 /// (gTrialRoad_PoundPartners).
-void TrialRoad_PoundPillar(s32 id, s32 mode, s32 frame) {
+void TrialRoad_PoundPillar(s32 id, s32 phase, s32 frame) {
   s32 other = gTrialRoad_PoundPartners[(id - ACTOR_WEST_PILLAR) & 3];
   struct Actor *object = Actor_GetById(id);
   struct Actor *partner = Actor_GetById(other);
@@ -969,7 +969,7 @@ void TrialRoad_PoundPillar(s32 id, s32 mode, s32 frame) {
     object->scaleY = FIXED_ONE - (frame << 12);
   else
     object->scaleY = FIXED_ONE;
-  if (mode == 1) {
+  if (phase == 1) {
     TrialRoad_LowerPillar(id);
     TrialRoad_RaisePillar(other);
     switch (id) {
@@ -1004,23 +1004,23 @@ void TrialRoad_PoundPillar(s32 id, s32 mode, s32 frame) {
 }
 
 /// Pound on the west pillar.
-void TrialRoad_PoundWestPillar(s32 a, s32 b) {
-  TrialRoad_PoundPillar(ACTOR_WEST_PILLAR, a, b);
+void TrialRoad_PoundWestPillar(s32 phase, s32 frame) {
+  TrialRoad_PoundPillar(ACTOR_WEST_PILLAR, phase, frame);
 }
 
 /// Pound on the inner west pillar.
-void TrialRoad_PoundInnerWestPillar(s32 a, s32 b) {
-  TrialRoad_PoundPillar(ACTOR_INNER_WEST_PILLAR, a, b);
+void TrialRoad_PoundInnerWestPillar(s32 phase, s32 frame) {
+  TrialRoad_PoundPillar(ACTOR_INNER_WEST_PILLAR, phase, frame);
 }
 
 /// Pound on the inner east pillar.
-void TrialRoad_PoundInnerEastPillar(s32 a, s32 b) {
-  TrialRoad_PoundPillar(ACTOR_INNER_EAST_PILLAR, a, b);
+void TrialRoad_PoundInnerEastPillar(s32 phase, s32 frame) {
+  TrialRoad_PoundPillar(ACTOR_INNER_EAST_PILLAR, phase, frame);
 }
 
 /// Pound on the east pillar.
-void TrialRoad_PoundEastPillar(s32 a, s32 b) {
-  TrialRoad_PoundPillar(ACTOR_EAST_PILLAR, a, b);
+void TrialRoad_PoundEastPillar(s32 phase, s32 frame) {
+  TrialRoad_PoundPillar(ACTOR_EAST_PILLAR, phase, frame);
 }
 
 /// Stepping onto a raised pillar of a pair sinks it and raises its partner.
@@ -1095,14 +1095,14 @@ void TrialRoad_CheckCrumblingPillars(void) {
   MagmaRockInside_CheckCrumblingStep(gTrialRoad_CrumblingPillars);
 }
 
-/// Pound crumbles the west crumbling pillar.
+/// Burst crumbles the west crumbling pillar.
 void TrialRoad_CrumbleWestPillar(s32 phase) {
   if (phase == 3)
     TrialRoad_CrumblePillar(gTrialRoad_CrumblingPillars,
                             ACTOR_WEST_CRUMBLING_PILLAR);
 }
 
-/// Pound crumbles the east crumbling pillar.
+/// Burst crumbles the east crumbling pillar.
 void TrialRoad_CrumbleEastPillar(s32 phase) {
   if (phase == 3)
     TrialRoad_CrumblePillar(gTrialRoad_CrumblingPillars,
@@ -1304,8 +1304,9 @@ void TrialRoad_PushEastLogSouthOrClimbDown(void) {
     TrialRoad_PushLog(ACTOR_EAST_LOG, 0, 1, 1);
 }
 
-/// Pound uncovers a spout: its rock sinks to the ground.
-void TrialRoad_UncoverSpout(s32 id, s32 a, s32 frame) {
+/// Scoop uncovers a spout at its thirtieth frame: the spout is set on the
+/// ground at its own place (its timer and user value) and its cell opens.
+void TrialRoad_UncoverSpout(s32 id, s32 phase, s32 frame) {
   if (frame == 30) {
     struct Actor *object = Actor_GetById(id);
     s32 height;
@@ -1320,19 +1321,19 @@ void TrialRoad_UncoverSpout(s32 id, s32 a, s32 frame) {
   }
 }
 
-/// Pound uncovers the west spout.
-void TrialRoad_UncoverWestSpout(s32 a, s32 b) {
-  TrialRoad_UncoverSpout(ACTOR_WEST_SPOUT, a, b);
+/// Scoop uncovers the west spout.
+void TrialRoad_UncoverWestSpout(s32 phase, s32 frame) {
+  TrialRoad_UncoverSpout(ACTOR_WEST_SPOUT, phase, frame);
 }
 
-/// Pound uncovers the middle spout.
-void TrialRoad_UncoverMiddleSpout(s32 a, s32 b) {
-  TrialRoad_UncoverSpout(ACTOR_MIDDLE_SPOUT, a, b);
+/// Scoop uncovers the middle spout.
+void TrialRoad_UncoverMiddleSpout(s32 phase, s32 frame) {
+  TrialRoad_UncoverSpout(ACTOR_MIDDLE_SPOUT, phase, frame);
 }
 
-/// Pound uncovers the east spout.
-void TrialRoad_UncoverEastSpout(s32 a, s32 b) {
-  TrialRoad_UncoverSpout(ACTOR_EAST_SPOUT, a, b);
+/// Scoop uncovers the east spout.
+void TrialRoad_UncoverEastSpout(s32 phase, s32 frame) {
+  TrialRoad_UncoverSpout(ACTOR_EAST_SPOUT, phase, frame);
 }
 
 /// Lifts the leader onto the block when he stands on its cell.
@@ -1349,18 +1350,18 @@ void TrialRoad_StandOnBlock(void) {
   }
 }
 
-/// On the sand the leader moves on layer 2.
+/// While Sand is cast, the leader moves on layer 2.
 void TrialRoad_StartSand(void) {
   Actor_GetById(gMainRoutineWork.leaderActorId)->layer = 2;
 }
 
-/// Off the sand the leader moves on layer 0 again.
+/// As Sand fades, the leader moves on layer 0 again.
 void TrialRoad_EndSand(void) {
   Actor_GetById(gMainRoutineWork.leaderActorId)->layer = 0;
 }
 
-/// Reveal shows the vine and opens the way up it.
-void TrialRoad_RevealVine(void) {
+/// Whirlwind blows the bush off the vine and opens the way up it.
+void TrialRoad_BlowBushOffVine(void) {
   MapGrid_CopyCellAttributes(12, 21, 1, 1, 19, 21);
   Event_SetFlag(FLAG_AREA_TEMP_74);
 }
@@ -1480,12 +1481,12 @@ void TrialRoad_DriftWithStream(void) {
 /// Lift raises the rock at the cave's mouth (FLAG_SCENE_TEMP_89).
 void TrialRoad_LiftCaveRock(void) { GameFlag_Set(FLAG_SCENE_TEMP_89); }
 
-/// Whirlwind blows away the bushes it touches.
+/// Cyclone cuts the bushes it touches.
 void TrialRoad_CutBushes(void) {
   Cyclone_CopyTouchedCells_(68, 6, 1, 21, 13, 64, 64);
 }
 
-/// Whirlwind blows away the bushes, and the Mad Plant hiding in them attacks.
+/// Cyclone cuts the bushes, and the Mad Plant hiding in them attacks.
 void TrialRoad_CutMadPlantBushes(void) {
   Cyclone_CopyTouchedCells_(68, 6, 1, 21, 13, 64, 64);
   if (!Event_GetFlag(FLAG_TRIAL_ROAD_MAD_PLANT_BEATEN)) {
@@ -1799,8 +1800,8 @@ void TrialRoad_SetUpFountainStage(void) {
   TrialRoad_BlockCellUnder(ACTOR_PILLAR_A);
 }
 
-/// Readies the sand stage: its tightrope, and the vine once Reveal has shown
-/// it.
+/// Readies the sand stage: its tightrope, and the vine once Whirlwind has
+/// blown its bush away.
 void TrialRoad_SetUpSandStage(void) {
   Tightrope_Initialize();
   Tightrope_Place(0, ACTOR_WEST_POST, ACTOR_EAST_POST);
@@ -2401,7 +2402,8 @@ s32 TrialRoad_MirrorCellX(s32 x) {
   return x << 3;
 }
 
-/// An offset in eighths on the mirrored road, turned round when it is.
+/// An x offset of so many 8-pixel steps, in pixels, turned round on the
+/// mirrored road.
 s32 TrialRoad_MirrorOffset(s32 x) {
   if (TrialRoad_IsMirrored())
     return -x << 3;
@@ -4630,7 +4632,7 @@ LAST_DATA struct Trigger gTrialRoad_SandStageTriggers[] = {
     {PSYNERGY_ANYWHERE(ABILITY_SAND, PSYNERGY_PHASE_FADES), 0, CONDITION_ALWAYS,
      EVENT(TrialRoad_EndSand)},
     {PSYNERGY_ON_ACTOR(ABILITY_WHIRLWIND), 17, 0x374,
-     EVENT(TrialRoad_RevealVine)},
+     EVENT(TrialRoad_BlowBushOffVine)},
     {TRIGGER_TABLE_END},
 };
 

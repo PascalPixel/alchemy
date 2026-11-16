@@ -63,7 +63,7 @@ struct SpriteCacheBits {
 /// A FieldSprite read as its sprite attribute 1, whose top two bits are the
 /// sprite size where FieldSprite names them its flips.
 struct WorldMapOam {
-  u8 link[6]; ///< FieldSprite's unused bytes and attribute 0
+  u8 filler[6]; ///< FieldSprite's unused bytes and attribute 0, not read here
   u16 x : 9;
   u16 affineIndex : 5;
   u16 size : 2;
@@ -2410,7 +2410,8 @@ static inline void CameraMove(FIXED x, FIXED y, FIXED z, s32 mode) {
       DMA_COPY_WORDS(PICTURE_FRAME_SIZE / 4))
 
 /// The view of a lighthouse lit, seen from the World Map: mode 1 for Venus
-/// Lighthouse, 2 for Jupiter's beacon, with the ground shaking.
+/// Lighthouse, 2 for Jupiter's beacon, which also rumbles and shakes the
+/// ground.
 void WorldMap_PlayLighthouseTransition(s32 mode) {
   u8 *buffer;
 

@@ -115,12 +115,14 @@ void TundariaTower_StartEffectScript(struct FieldEffect *effect,
 /// name; a cell's attributes hold its behavior in their high byte
 /// (MapCell_SetAttributes).
 enum TundariaTowerCellBehavior {
-  /// The edge of a pillar's slide, where the leader stops sliding
+  /// Where the leader's slide over the ice ends
   /// (TundariaTower_StopSliding).
   CELL_BEHAVIOR_TUNDARIA_TOWER_SLIDE_END = 31,
-  /// Black ice, slid across (TundariaTower_SlideOnIce); in the Burst
-  /// Brooch's room the same number is the icy wall Burst opens.
+  /// Black ice, slid across (TundariaTower_SlideOnIce).
   CELL_BEHAVIOR_TUNDARIA_TOWER_ICE = 50,
+  /// In the Burst Brooch's room, the cell where Burst opens the icy
+  /// wall (TundariaTower_BurstIcyWall).
+  CELL_BEHAVIOR_TUNDARIA_TOWER_ICY_WALL = 50,
   /// The step on which Reflux appears (TundariaTower_RefluxAppears).
   CELL_BEHAVIOR_TUNDARIA_TOWER_REFLUX_APPEARS = 51
 };
@@ -902,7 +904,8 @@ void TundariaTower_UpdateLedgeCell(void) {
   if ((Actor_GetById(gMainRoutineWork.leaderActorId)->y.fixed >> 19) != 0)
     MapCell_SetAttributes(0, 14, 17, 0);
   else
-    MapCell_SetAttributes(0, 14, 17, CELL_BEHAVIOR_TUNDARIA_TOWER_ICE << 8);
+    MapCell_SetAttributes(0, 14, 17,
+                          CELL_BEHAVIOR_TUNDARIA_TOWER_ICY_WALL << 8);
 }
 
 extern s16 gTundariaTowerIceColumnsColumns[];
@@ -1988,8 +1991,9 @@ struct Trigger gTundariaTowerBurstBroochTriggers[] = {
      CONDITION_ALWAYS, EVENT(TundariaTower_LiftPillar)},
     {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 8, CONDITION_ALWAYS,
      EVENT(TundariaTower_SetDownPillar)},
-    {PSYNERGY_PHASE_ON_CELL(ABILITY_BURST, PSYNERGY_PHASE_ACTS), 50,
-     FLAG_ICY_WALL_BURST, EVENT(TundariaTower_BurstIcyWall)},
+    {PSYNERGY_PHASE_ON_CELL(ABILITY_BURST, PSYNERGY_PHASE_ACTS),
+     CELL_BEHAVIOR_TUNDARIA_TOWER_ICY_WALL, FLAG_ICY_WALL_BURST,
+     EVENT(TundariaTower_BurstIcyWall)},
     {TRIGGER_TABLE_END},
 };
 #undef EFFECT_SPAWN

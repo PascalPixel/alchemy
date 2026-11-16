@@ -356,7 +356,7 @@ const struct SceneRegion *Scene_GetExitRegions(void) { return 0; }
 
 const u32 *Scene_GetExits(void) { return gSceneExits; }
 
-/// It draws the actor in the colour mode of its VENUS_COLOR_MARK.
+/// Draws the actor in the colour mode its VENUS_COLOR_MARK holds.
 s32 VenusLighthouse_UpdateChildFromTimer(struct Actor *actor) {
   FieldActor_SetSpriteColor(actor, actor->timer & 15);
   return 0;

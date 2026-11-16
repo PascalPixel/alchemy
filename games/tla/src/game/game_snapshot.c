@@ -119,8 +119,6 @@ void InventorySnapshot_Restore(void) {
       // UB: the party order's four bytes are stored as two halfwords.
       u16 *owners = (u16 *)gMainRoutineWork.party;
 
-      /* FAKEMATCH(temporary): both party-order halfwords stored through one
-       * cursor over activeOwners. */
       *owners++ = *src++;
       *owners = *src;
     }

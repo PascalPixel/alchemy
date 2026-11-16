@@ -85,17 +85,20 @@ void System_WaitForFrameInterrupt(void) {
 #define SLEEP_IDLE_FRAMES 10800 ///< three minutes with no key held
 
 /// Restarts the cartridge: marks gCartridgeResetMarker, stops direct sound and
-/// jumps to the cartridge's start with interrupts off.
-static __inline__ void System_Reset(void) {
-  /* FAKEMATCH(pin): entry held in r4, where the restart's bx takes it. */
-  register u32 entry __asm__("r4");
-  gCartridgeResetMarker = 0x19670704;
-  Sound_SuspendDirectSoundFar();
-  entry = Cart_Start;
-  Io_Write16(0, &REG_IME);
-  CAMELOT_ASM("the cartridge restart transfers control without returning.")
-  __asm__ volatile("bx %0" : : "r"(entry));
-}
+/// jumps to the cartridge's start with interrupts off. `entry` is the caller's
+/// local for the start address.
+#define System_Reset(entry)                                                    \
+  {                                                                            \
+    gCartridgeResetMarker = 0x19670704;                                        \
+    Sound_SuspendDirectSoundFar();                                             \
+    (entry) = Cart_Start;                                                      \
+    Io_Write16(0, &REG_IME);                                                   \
+    CAMELOT_ASM("the cartridge restart transfers control without returning.")  \
+    __asm__ volatile("bx %0"                                                   \
+                     :                                                         \
+                     : "r"(entry)                                              \
+                     : "r0", "r1", "r2", "r3", "ip", "lr");                    \
+  }
 
 /// Stops the CPU and the screen until an enabled interrupt wakes them (the BIOS
 /// Stop call): the sleep that L and R end.
@@ -114,6 +117,9 @@ void wait(s32 frames) {
   s32 j;
   s16 display;
   s16 backdrop;
+  /* FAKEMATCH(barrier): the restart address in a local of wait's own, and
+   * System_Reset's jump naming the registers a call may change. */
+  u32 entry;
 
   for (i = 0; i < (u32)frames; i++) {
     gTasksRunning = 1;
@@ -175,7 +181,7 @@ void wait(s32 frames) {
         Input_UpdateKeyRepeatAndDirection();
         if (gResetRequested) {
           gResetRequested = 0;
-          System_Reset();
+          System_Reset(entry);
         }
       }
     }
@@ -222,7 +228,7 @@ void wait(s32 frames) {
     }
     if (gResetRequested) {
       gResetRequested = 0;
-      System_Reset();
+      System_Reset(entry);
     }
   }
 }

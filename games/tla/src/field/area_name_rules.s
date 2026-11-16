@@ -1,124 +1,128 @@
-	.section .rodata
-@ Area names: map scene/group and entrance (-1 matches any) to an area name ID.
+	.include "enums/area_ids.inc"
+
+@ Area names: the name (its offset from MsgDebugAreaName) of the first rule
+@ matching the scene or its area and the entrance (-1 for any).
 	.macro scene_name scene:req, entrance:req, name:req
 	.2byte SceneId_\scene, (\entrance & 0x7fff) | 0x8000
 	.4byte \name
 	.endm
-	.macro group_name group:req, entrance:req, name:req
-	.2byte \group, \entrance & 0x7fff
+	.macro area_name area:req, entrance:req, name:req
+	.2byte \area, \entrance & 0x7fff
 	.4byte \name
 	.endm
+
+	.section .rodata
 	.global gScene_AreaNameRules
 gScene_AreaNameRules:
-	group_name 0, -1, 0
-	group_name 1, -1, 1
-	group_name 2, -1, 2
-	group_name 3, -1, 3
-	group_name 4, -1, 4
-	group_name 5, -1, 5
-	group_name 6, -1, 6
+	area_name AREA_TITLE_SCREEN, -1, 0
+	area_name AREA_CLEAR_DATA, -1, 1
+	area_name AREA_WORLD_MAP, -1, 2
+	area_name AREA_STAFF_CREDIT, -1, 3
+	area_name AREA_VENUS_LIGHTHOUSE, -1, 4
+	area_name AREA_SUHALLA_GATE, -1, 5
+	area_name AREA_IDEJIMA, -1, 6
 	scene_name DailaInteriorsHouses, 7, 7
-	group_name 7, -1, 8
-	group_name 8, -1, 9
-	group_name 9, -1, 9
-	group_name 10, -1, 10
-	group_name 11, -1, 11
-	group_name 14, -1, 12
-	group_name 15, -1, 13
-	group_name 16, -1, 14
-	group_name 17, -1, 15
+	area_name AREA_DAILA, -1, 8
+	area_name AREA_KANDOREAN_TEMPLE, -1, 9
+	area_name AREA_KANDOREAN_TEMPLE_GATE, -1, 9
+	area_name AREA_SHRINE_OF_THE_SEA_GOD, -1, 10
+	area_name AREA_DEHKAN_PLATEAU, -1, 11
+	area_name AREA_MADRA, -1, 12
+	area_name AREA_MADRA_CATACOMBS, -1, 13
+	area_name AREA_MADRA_DRAWBRIDGE, -1, 14
+	area_name AREA_OSENIA_CLIFFS, -1, 15
 	scene_name MikasallaInteriorsHouses, 5, 16
 	scene_name MikasallaInteriorsSanctum, 4, 17
 	scene_name MikasallaInteriorsSanctum, 5, 18
-	group_name 18, -1, 19
-	group_name 19, -1, 20
-	group_name 20, -1, 21
-	group_name 21, -1, 22
-	group_name 22, -1, 23
-	group_name 23, -1, 23
-	group_name 24, -1, 24
-	group_name 25, -1, 25
-	group_name 26, -1, 26
-	group_name 27, -1, 27
-	group_name 28, -1, 28
-	group_name 29, -1, 29
-	group_name 30, -1, 30
-	group_name 31, -1, 30
-	group_name 32, -1, 31
-	group_name 33, -1, 32
-	group_name 12, -1, 33
-	group_name 13, -1, 34
-	group_name 34, -1, 35
-	group_name 35, -1, 36
-	group_name 36, -1, 37
-	group_name 37, -1, 38
-	group_name 38, -1, 39
-	group_name 40, -1, 40
-	group_name 41, -1, 41
-	group_name 42, -1, 41
+	area_name AREA_MIKASALLA, -1, 19
+	area_name AREA_GAROH, -1, 20
+	area_name AREA_YAMPI_DESERT, -1, 21
+	area_name AREA_YAMPI_DESERT_CAVE, -1, 22
+	area_name AREA_AIRS_ROCK, -1, 23
+	area_name AREA_AIRS_ROCK_INSIDE, -1, 23
+	area_name AREA_ALHAFRA, -1, 24
+	area_name AREA_EASTERN_ALHAFRA, -1, 25
+	area_name AREA_ALHAFRAN_CAVE, -1, 26
+	area_name AREA_GONDOWAN_CLIFFS, -1, 27
+	area_name AREA_NARIBWE, -1, 28
+	area_name AREA_KIBOMBO_MOUNTAINS, -1, 29
+	area_name AREA_KIBOMBO, -1, 30
+	area_name AREA_KIBOMBO_CEREMONY, -1, 30
+	area_name AREA_GABOMBA_STATUE, -1, 31
+	area_name AREA_GABOMBA_CATACOMBS, -1, 32
+	area_name AREA_LEMURIAN_SHIP, -1, 33
+	area_name AREA_EAST_INDRA_SHORE, -1, 34
+	area_name AREA_WEST_INDRA_ISLET, -1, 35
+	area_name AREA_EAST_TUNDARIA_ISLET, -1, 36
+	area_name AREA_NORTH_OSENIA_ISLET, -1, 37
+	area_name AREA_SOUTHEAST_ANGARA_ISLET, -1, 38
+	area_name AREA_SEA_OF_TIME_ISLET, -1, 39
+	area_name AREA_YALLAM, -1, 40
+	area_name AREA_TAOPO_SWAMP_ENTRANCE, -1, 41
+	area_name AREA_TAOPO_SWAMP, -1, 41
 	scene_name ApojiiIslandsShops, 6, 42
-	group_name 43, -1, 43
-	group_name 44, -1, 44
-	group_name 49, -1, 45
-	group_name 50, -1, 45
-	group_name 45, -1, 46
-	group_name 46, -1, 46
-	group_name 47, -1, 47
-	group_name 48, -1, 48
+	area_name AREA_APOJII_ISLANDS, -1, 43
+	area_name AREA_APOJII_ISLANDS_CAVE, -1, 44
+	area_name AREA_GAIA_ROCK, -1, 45
+	area_name AREA_GAIA_ROCK_INSIDE, -1, 45
+	area_name AREA_AQUA_ROCK, -1, 46
+	area_name AREA_AQUA_ROCK_INSIDE, -1, 46
+	area_name AREA_IZUMO, -1, 47
+	area_name AREA_IZUMO_RUINS, -1, 48
 	scene_name ChampaInteriors, 8, 49
 	scene_name ChampaInteriors, 9, 50
-	group_name 51, -1, 51
-	group_name 53, -1, 52
-	group_name 52, -1, 53
+	area_name AREA_CHAMPA, -1, 51
+	area_name AREA_SEA_OF_TIME, -1, 52
+	area_name AREA_ANKOHL_RUINS, -1, 53
 	scene_name AncientLemuria, 1, 54
-	group_name 54, -1, 55
-	group_name 55, -1, 55
-	group_name 56, -1, 56
-	group_name 60, -1, 57
-	group_name 57, -1, 58
-	group_name 58, -1, 59
-	group_name 59, -1, 60
-	group_name 61, -1, 61
-	group_name 62, -1, 61
-	group_name 63, -1, 62
-	group_name 66, -1, 63
-	group_name 67, -1, 64
-	group_name 68, -1, 65
-	group_name 69, -1, 65
+	area_name AREA_LEMURIA_ENTRANCE, -1, 55
+	area_name AREA_LEMURIA, -1, 55
+	area_name AREA_TUNDARIA_TOWER, -1, 56
+	area_name AREA_SOUTHWEST_ATTEKA_ISLET, -1, 57
+	area_name AREA_GONDOWAN_SETTLEMENT, -1, 58
+	area_name AREA_HESPERIA_SETTLEMENT, -1, 59
+	area_name AREA_KALT_ISLAND, -1, 60
+	area_name AREA_MAGMA_ROCK, -1, 61
+	area_name AREA_MAGMA_ROCK_INSIDE, -1, 61
+	area_name AREA_ATTEKA_INLET, -1, 62
+	area_name AREA_SHAMAN_VILLAGE_CAVE, -1, 63
+	area_name AREA_SHAMAN_VILLAGE, -1, 64
+	area_name AREA_TRIAL_ROAD, -1, 65
+	area_name AREA_TRIAL_ROAD_CAVE, -1, 65
 	scene_name ContigoShops, 21, 66
-	group_name 64, -1, 67
-	group_name 65, -1, 68
-	group_name 70, -1, 69
-	group_name 71, -1, 70
-	group_name 72, -1, 71
-	group_name 73, -1, 72
-	group_name 74, -1, 73
-	group_name 75, -1, 74
-	group_name 77, -1, 75
-	group_name 76, -1, 76
-	group_name 39, -1, 77
-	group_name 78, -1, 78
-	group_name 79, -1, 79
-	group_name 80, -1, 80
-	group_name 81, -1, 81
-	group_name 82, -1, 82
-	group_name 83, -1, 83
-	group_name 84, -1, 84
-	group_name 85, -1, 85
-	group_name 86, -1, 86
-	group_name 87, -1, 87
-	group_name 88, -1, 88
-	group_name 89, -1, 89
-	group_name 90, -1, 90
-	group_name 91, -1, 91
-	group_name 92, -1, 92
+	area_name AREA_CONTIGO, -1, 67
+	area_name AREA_ANEMOS_SANCTUM, -1, 68
+	area_name AREA_JUPITER_LIGHTHOUSE, -1, 69
+	area_name AREA_LOHO, -1, 70
+	area_name AREA_NORTHERN_REACHES, -1, 71
+	area_name AREA_PROX, -1, 72
+	area_name AREA_INDRA_CAVERN, -1, 73
+	area_name AREA_OSENIA_CAVERN, -1, 74
+	area_name AREA_ANGARA_CAVERN, -1, 75
+	area_name AREA_ATTEKA_CAVERN, -1, 76
+	area_name AREA_ISLET_CAVE, -1, 77
+	area_name AREA_MARS_LIGHTHOUSE, -1, 78
+	area_name AREA_TREASURE_ISLE, -1, 79
+	area_name AREA_ANEMOS_INNER_SANCTUM, -1, 80
+	area_name AREA_MERCURY_LIGHTHOUSE, -1, 81
+	area_name AREA_EPILOGUE, -1, 82
+	area_name AREA_MOUNT_ALEPH_SUMMIT, -1, 83
+	area_name AREA_LINK_LOBBY, -1, 84
+	area_name AREA_TEST_0, -1, 85
+	area_name AREA_TEST_1, -1, 86
+	area_name AREA_TEST_2, -1, 87
+	area_name AREA_TEST_3, -1, 88
+	area_name AREA_TEST_4, -1, 89
+	area_name AREA_TEST_5, -1, 90
+	area_name AREA_TEST_6, -1, 91
+	area_name AREA_TEST_7, -1, 92
 	scene_name Level, 96, 93
 	scene_name Level, 97, 93
 	scene_name Level, 98, 93
 	scene_name Level, 99, 93
-	group_name 93, -1, 94
-	group_name 94, -1, 95
-	group_name 95, -1, 96
-	group_name 96, -1, 97
+	area_name AREA_ICON_TEST, -1, 94
+	area_name AREA_PSYNERGY_TEST, -1, 95
+	area_name AREA_PSYNERGY_TEST_2, -1, 96
+	area_name AREA_SHOP_TEST, -1, 97
 	.2byte 0xffff, 0xffff, 0xffff, 0xffff	@ End.
 	.2byte 0, 0, 0, 0	@ Unused: eight zero bytes after the end, which no lookup reaches.

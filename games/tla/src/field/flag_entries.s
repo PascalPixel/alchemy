@@ -1,99 +1,107 @@
-	.section .rodata
-@ 20-byte entries keyed by a flag (0x180 + flag), which FlagEntries_GetTable
-@ returns: WorldMap_MarkPlaceVisited sets the flag of the entry whose id matches (and
-@ whose variant does, unless it is -1), FlagEntries_GetValue returns an entry's
-@ value by its flag; WorldPicture_StepToPlace, WorldPicture_UpdateMarkers and WorldPicture_Show read
-@ them too. A zero flag ends the list.
-	.macro flag_entry flag:req, value:req, sprite:req, x:req, z:req, facing:req, shown_flag:req, id:req, variant:req, scene:req, entrance:req
-	.byte \flag, \value
-	.2byte \sprite, \x, \z, \facing, \shown_flag
-	.2byte \id, \variant, \scene, \entrance
+	.include "enums/flags.inc"
+	.include "enums/sprite_ids.inc"
+
+@ The World Map's places (struct FlagEntry), which FlagEntries_GetTable
+@ returns; a place number of 0 ends the list. Each row: the place number,
+@ whose flag is 0x180 + place; its markers (low nibble, and high nibble on
+@ the World Picture); the actor the World Map shows there, its sprite, place
+@ in pixels, facing in degrees and the flag it is shown by (-1 always; with
+@ 0x1000 shown while the flag is set, else while it is clear); the scene and
+@ entrance whose arrival marks the place visited (WorldMap_MarkPlaceVisited,
+@ -1 for none, an entrance of -1 for any); and the scene and entrance
+@ choosing it leads to (0 for none).
+	.macro place number:req, markers:req, sprite:req, x:req, z:req, facing:req, shown_flag:req, visit_scene:req, visit_entrance:req, scene:req, entrance:req
+	.byte \number, \markers
+	.2byte \sprite, \x, \z, \facing * 0x10000 / 360, \shown_flag
+	.2byte \visit_scene, \visit_entrance, \scene, \entrance
 	.endm
+
+	.section .rodata
 	.global gFlagEntries
 gFlagEntries:
-	flag_entry 2, 17, 483, 10144, 8288, 0x4000, -1, 10, -1, 10, -1
-	flag_entry 4, 1, 456, 10136, 8570, 0x4000, -1, 21, -1, 0, -1
-	flag_entry 5, 0, 444, 10424, 8336, 0x4000, -1, -1, -2, 0, -1
-	flag_entry 6, 0, 476, 10226, 8884, 0x4000, -1, -1, -2, 0, -1
-	flag_entry 7, 0, 476, 10570, 8928, 0x4000, -1, -1, -2, 0, -1
-	flag_entry 8, 0, 489, 10637, 9075, 0x4000, -1, 43, -1, 0, -1
-	flag_entry 9, 17, 439, 10168, 9603, 0x4000, -1, 44, -1, 44, -1
-	flag_entry 12, 0, 489, 10394, 9380, 0x4000, -1, 54, -1, 0, -1
-	flag_entry 13, 0, 475, 10412, 9395, 0x4000, -1, 54, -1, 0, -1
-	flag_entry 14, 17, 480, 11125, 10660, 0x4000, -1, 55, -1, 55, -1
-	flag_entry 15, 17, 480, 12068, 10440, 0x4000, -1, 61, -1, 61, -1
-	flag_entry 16, 2, 462, 11880, 10064, 0x4000, -1, 82, -1, 0, -1
-	flag_entry 19, 0, 444, 11910, 9700, 0x4000, -1, 67, -1, 0, -1
-	flag_entry 20, 17, 439, 11633, 9366, 0x4000, -1, 95, -1, 95, -1
-	flag_entry 21, 0, 489, 9258, 9520, 0, -1, -1, -2, 0, -1
-	flag_entry 22, 0, 489, 9316, 9526, -0x8000, -1, -1, -2, 0, -1
-	flag_entry 23, 17, 481, 9148, 9018, 0x4000, -1, 105, -1, 105, -1
-	flag_entry 25, 0, 457, 9200, 8380, 0x4000, -1, -1, -2, 0, -1
-	flag_entry 26, 0, 457, 9077, 8258, 0x4000, -1, -1, -2, 0, -1
-	flag_entry 27, 17, 481, 9256, 7908, 0x4000, -1, 110, -1, 110, -1
-	flag_entry 28, 1, 458, 9546, 8274, 0x4000, -1, 131, -1, 0, -1
-	flag_entry 29, 1, 459, 12770, 11530, 0x4000, -1, 132, -1, 0, -1
-	flag_entry 30, 1, 458, 11724, 8030, 0x4000, -1, 133, -1, 0, -1
-	flag_entry 31, 1, 458, 11680, 6640, 0x4000, -1, 134, -1, 0, -1
-	flag_entry 32, 1, 458, 13488, 7519, 0x4000, -1, 135, -1, 0, -1
-	flag_entry 33, 17, 480, 12923, 9713, 0x4000, -1, 139, -1, 139, -1
-	flag_entry 35, 0, 489, 12695, 10297, 0x4000, -1, -1, -2, 0, -1
-	flag_entry 36, 17, 474, 14517, 8413, 0x4000, -1, 154, -1, 154, -1
-	flag_entry 37, 2, 463, 14256, 8708, 0x4000, -1, 158, -1, 0, -1
-	flag_entry 38, 17, 485, 13406, 6068, 0x4000, -1, 171, -1, 171, -1
-	flag_entry 39, 2, 464, 13450, 6178, 0x4000, -1, 174, -1, 0, -1
-	flag_entry 40, 17, 485, 10904, 6258, 0x4000, -1, 182, -1, 182, -1
-	flag_entry 41, 2, 469, 11204, 6081, 0x4000, -1, 189, -1, 0, -1
-	flag_entry 42, 0, 328, 12437, 7523, 0x4000, -1, 198, -1, 0, -1
-	flag_entry 43, 0, 328, 12490, 7523, 0x4000, -1, 198, -1, 0, -1
-	flag_entry 45, 33, 489, 12461, 7142, 0x4000, -1, 199, -1, 199, -1
-	flag_entry 45, 0, 472, 13088, 1058, 0x4000, -1, 199, -1, 199, -1
-	flag_entry 46, 2, 471, 9490, 10930, 0x4000, -1, 206, -1, 0, -1
-	flag_entry 47, 1, 458, 5810, 10134, 0x4000, -1, 221, -1, 0, -1
-	flag_entry 48, 1, 458, 8582, 7380, 0x4000, -1, 213, -1, 0, -1
-	flag_entry 49, 1, 458, 6307, 6200, 0x4000, -1, 216, -1, 0, -1
-	flag_entry 50, 1, 459, 8848, 4600, 0x4000, -1, 219, -1, 0, -1
-	flag_entry 51, 2, 465, 8970, 7460, 0x4000, -1, 223, -1, 0, -1
-	flag_entry 54, 17, 484, 7714, 7730, 0x4000, -1, 236, -1, 236, -1
-	flag_entry 55, 2, 477, 7279, 7303, 0x4000, -1, 251, -1, 264, -1
-	flag_entry 56, 0, 444, 7382, 5720, 0x4000, -1, 241, -1, 0, -1
-	flag_entry 57, 0, 444, 7500, 5628, 0x4000, -1, 241, -1, 0, -1
-	flag_entry 58, 17, 482, 7662, 5499, 0x4000, -1, 242, -1, 242, -1
-	flag_entry 59, 17, 484, 8978, 5838, 0x4000, -1, 266, -1, 266, -1
+	place 2, 0x11, SPRITE_WORLD_MAP_DAILA, 10144, 8288, 90, -1, SceneId_DailaFlooded, -1, SceneId_DailaFlooded, -1
+	place 4, 0x01, SPRITE_WORLD_MAP_KANDOREAN_TEMPLE, 10136, 8570, 90, -1, SceneId_KandoreanTempleGate, -1, 0, -1
+	place 5, 0x00, SPRITE_WORLD_MAP_CAVE, 10424, 8336, 90, -1, -1, -2, 0, -1
+	place 6, 0x00, SPRITE_WORLD_MAP_HILL, 10226, 8884, 90, -1, -1, -2, 0, -1
+	place 7, 0x00, SPRITE_WORLD_MAP_HILL, 10570, 8928, 90, -1, -1, -2, 0, -1
+	place 8, 0x00, SPRITE_UNSEEN_MARKER, 10637, 9075, 90, -1, SceneId_LemurianShipMainDeck, -1, 0, -1
+	place 9, 0x11, SPRITE_WORLD_MAP_TOWN, 10168, 9603, 90, -1, SceneId_Madra, -1, SceneId_Madra, -1
+	place 12, 0x00, SPRITE_UNSEEN_MARKER, 10394, 9380, 90, -1, SceneId_OseniaCliffs, -1, 0, -1
+	place 13, 0x00, SPRITE_WORLD_MAP_CLIFFS, 10412, 9395, 90, -1, SceneId_OseniaCliffs, -1, 0, -1
+	place 14, 0x11, SPRITE_WORLD_MAP_FOREST_VILLAGE, 11125, 10660, 90, -1, SceneId_Mikasalla, -1, SceneId_Mikasalla, -1
+	place 15, 0x11, SPRITE_WORLD_MAP_FOREST_VILLAGE, 12068, 10440, 90, -1, SceneId_GarohBlocks, -1, SceneId_GarohBlocks, -1
+	place 16, 0x02, SPRITE_WORLD_MAP_AIRS_ROCK, 11880, 10064, 90, -1, SceneId_AirsRockStormBrandChest, -1, 0, -1
+	place 19, 0x00, SPRITE_WORLD_MAP_CAVE, 11910, 9700, 90, -1, SceneId_YampiDesertGuardianRingChest, -1, 0, -1
+	place 20, 0x11, SPRITE_WORLD_MAP_TOWN, 11633, 9366, 90, -1, SceneId_Alhafra, -1, SceneId_Alhafra, -1
+	place 21, 0x00, SPRITE_UNSEEN_MARKER, 9258, 9520, 0, -1, -1, -2, 0, -1
+	place 22, 0x00, SPRITE_UNSEEN_MARKER, 9316, 9526, -180, -1, -1, -2, 0, -1
+	place 23, 0x11, SPRITE_WORLD_MAP_ROUND_HUT_VILLAGE, 9148, 9018, 90, -1, SceneId_Naribwe, -1, SceneId_Naribwe, -1
+	place 25, 0x00, SPRITE_WORLD_MAP_MOUNTAIN_PATH, 9200, 8380, 90, -1, -1, -2, 0, -1
+	place 26, 0x00, SPRITE_WORLD_MAP_MOUNTAIN_PATH, 9077, 8258, 90, -1, -1, -2, 0, -1
+	place 27, 0x11, SPRITE_WORLD_MAP_ROUND_HUT_VILLAGE, 9256, 7908, 90, -1, SceneId_Kibombo, -1, SceneId_Kibombo, -1
+	place 28, 0x01, SPRITE_WORLD_MAP_HOUSE, 9546, 8274, 90, -1, SceneId_IsletsDog, -1, 0, -1
+	place 29, 0x01, SPRITE_WORLD_MAP_SNOWY_HOUSE, 12770, 11530, 90, -1, SceneId_IsletsPrettyStone, -1, 0, -1
+	place 30, 0x01, SPRITE_WORLD_MAP_HOUSE, 11724, 8030, 90, -1, SceneId_IsletsCow, -1, 0, -1
+	place 31, 0x01, SPRITE_WORLD_MAP_HOUSE, 11680, 6640, 90, -1, SceneId_IsletsPier, -1, 0, -1
+	place 32, 0x01, SPRITE_WORLD_MAP_HOUSE, 13488, 7519, 90, -1, SceneId_IsletsTurtle, -1, 0, -1
+	place 33, 0x11, SPRITE_WORLD_MAP_FOREST_VILLAGE, 12923, 9713, 90, -1, SceneId_Yallam, -1, SceneId_Yallam, -1
+	place 35, 0x00, SPRITE_UNSEEN_MARKER, 12695, 10297, 90, -1, -1, -2, 0, -1
+	place 36, 0x11, SPRITE_WORLD_MAP_APOJII_ISLANDS_B, 14517, 8413, 90, -1, SceneId_ApojiiIslands, -1, SceneId_ApojiiIslands, -1
+	place 37, 0x02, SPRITE_WORLD_MAP_AQUA_ROCK, 14256, 8708, 90, -1, SceneId_AquaRockMoai, -1, 0, -1
+	place 38, 0x11, SPRITE_WORLD_MAP_GOLD_ROOFED_TOWN, 13406, 6068, 90, -1, SceneId_Izumo, -1, SceneId_Izumo, -1
+	place 39, 0x02, SPRITE_WORLD_MAP_GAIA_ROCK, 13450, 6178, 90, -1, SceneId_GaiaRockSusa, -1, 0, -1
+	place 40, 0x11, SPRITE_WORLD_MAP_GOLD_ROOFED_TOWN, 10904, 6258, 90, -1, SceneId_Champa, -1, SceneId_Champa, -1
+	place 41, 0x02, SPRITE_WORLD_MAP_ANKOHL_RUINS, 11204, 6081, 90, -1, SceneId_AnkohlRuinsStoneFaces, -1, 0, -1
+	place 42, 0x00, SPRITE_ROCK_PILE, 12437, 7523, 90, -1, SceneId_SeaOfTimeToLemuria, -1, 0, -1
+	place 43, 0x00, SPRITE_ROCK_PILE, 12490, 7523, 90, -1, SceneId_SeaOfTimeToLemuria, -1, 0, -1
+	place 45, 0x21, SPRITE_UNSEEN_MARKER, 12461, 7142, 90, -1, SceneId_LemuriaEntrance, -1, SceneId_LemuriaEntrance, -1
+	place 45, 0x00, SPRITE_WORLD_MAP_LEMURIA, 13088, 1058, 90, -1, SceneId_LemuriaEntrance, -1, SceneId_LemuriaEntrance, -1
+	place 46, 0x02, SPRITE_WORLD_MAP_TUNDARIA_TOWER, 9490, 10930, 90, -1, SceneId_TundariaTowerEntrance, -1, 0, -1
+	place 47, 0x01, SPRITE_WORLD_MAP_HOUSE, 5810, 10134, 90, -1, SceneId_SwAttekaIslet, -1, 0, -1
+	place 48, 0x01, SPRITE_WORLD_MAP_HOUSE, 8582, 7380, 90, -1, SceneId_GondowanSettlement, -1, 0, -1
+	place 49, 0x01, SPRITE_WORLD_MAP_HOUSE, 6307, 6200, 90, -1, SceneId_HesperiaSettlement, -1, 0, -1
+	place 50, 0x01, SPRITE_WORLD_MAP_SNOWY_HOUSE, 8848, 4600, 90, -1, SceneId_KaltIsland, -1, 0, -1
+	place 51, 0x02, SPRITE_WORLD_MAP_MAGMA_ROCK, 8970, 7460, 90, -1, SceneId_MagmaRockSlide, -1, 0, -1
+	place 54, 0x11, SPRITE_WORLD_MAP_SANDY_TOWN, 7714, 7730, 90, -1, SceneId_Contigo, -1, SceneId_Contigo, -1
+	place 55, 0x02, SPRITE_WORLD_MAP_JUPITER_LIGHTHOUSE, 7279, 7303, 90, -1, SceneId_JupiterLighthouseEntrance, -1, SceneId_JupiterLighthouseAerie, -1
+	place 56, 0x00, SPRITE_WORLD_MAP_CAVE, 7382, 5720, 90, -1, SceneId_ShamanVillageTrialGrounds, -1, 0, -1
+	place 57, 0x00, SPRITE_WORLD_MAP_CAVE, 7500, 5628, 90, -1, SceneId_ShamanVillageTrialGrounds, -1, 0, -1
+	place 58, 0x11, SPRITE_WORLD_MAP_SHAMAN_VILLAGE, 7662, 5499, 90, -1, SceneId_ShamanVillage, -1, SceneId_ShamanVillage, -1
+	place 59, 0x11, SPRITE_WORLD_MAP_SANDY_TOWN, 8978, 5838, 90, -1, SceneId_Loho, -1, SceneId_Loho, -1
 	.ifdef TLA_EDITION_JA
-	flag_entry 62, 17, 489, 8893, 3020, 0x4000, -1, 270, -1, 270, -1
+	place 62, 0x11, SPRITE_UNSEEN_MARKER, 8893, 3020, 90, -1, SceneId_Prox, -1, SceneId_Prox, -1
 	.else
-	flag_entry 62, 17, 489, 9120, 3180, 0x4000, -1, 270, -1, 270, -1
+	place 62, 0x11, SPRITE_UNSEEN_MARKER, 9120, 3180, 90, -1, SceneId_Prox, -1, SceneId_Prox, -1
 	.endif
-	flag_entry 62, 0, 441, 9055, 1214, 0x4000, -1, 270, -1, 270, -1
-	flag_entry 82, 0, 444, 11596, 10170, 0x4000, -1, 276, -1, 0, -1
-	flag_entry 83, 0, 444, 10240, 9124, 0x4000, -1, 275, -1, 0, -1
-	flag_entry 84, 0, 478, 9020, 850, 0x4000, 6704, 279, -1, 0, -1
-	flag_entry 84, 0, 479, 9020, 850, 0x4000, 2608, 279, -1, 0, -1
-	flag_entry 87, 1, 444, 12640, 4360, 0x4000, -1, 298, -1, 0, -1
-	flag_entry 88, 0, 444, 7868, 9094, 0x4000, -1, 277, -1, 0, -1
-	flag_entry 89, 0, 444, 9479, 5020, 0x4000, -1, 278, -1, 0, -1
-	flag_entry 90, 2, 470, 10424, 8250, 0x4000, -1, 23, -1, 0, -1
-	flag_entry 53, 1, 486, 7265, 8230, 0x4000, -1, 234, -1, 0, -1
-	flag_entry 22, 1, 475, 9288, 9530, -0x8000, -1, 102, -1, 0, -1
-	flag_entry 36, 0, 473, 14530, 8444, 0x4000, -1, 154, -1, 0, -1
-	flag_entry 36, 0, 473, 14617, 8430, 0x4000, -1, 154, -1, 0, -1
-	flag_entry 36, 0, 473, 14637, 8360, 0x4000, -1, 154, -1, 0, -1
-	flag_entry 42, 0, 328, 12990, 1290, 0x4000, -1, 198, -1, 0, -1
-	flag_entry 43, 0, 328, 13030, 1290, 0x4000, -1, 198, -1, 0, -1
-	flag_entry 120, 0, 460, 11680, 9302, 0x4000, 2319, -1, -2, 0, -1
-	flag_entry 120, 0, 375, 9256, 7890, 0x4000, -1, 198, -1, 0, -1
-	flag_entry 32, 0, 444, 13488, 7630, 0x4000, -1, 67, -1, 0, -1
-	flag_entry 25, 1, 489, 9139, 8320, 0x4000, -1, 107, -1, 0, -1
-	flag_entry 19, 1, 489, 11428, 9753, 0x4000, -1, 67, -1, 0, -1
-	flag_entry 6, 1, 489, 10416, 8892, 0x4000, -1, 34, -1, 0, -1
-	flag_entry 35, 1, 468, 12720, 10319, 0x4000, -1, 143, -1, 0, -1
-	flag_entry 120, 0, 452, 1992, 7272, 0x4000, -1, 4, -1, 0, -1
-	flag_entry 120, 0, 438, 9774, 5296, 0x4000, -1, -1, -2, 0, -1
-	flag_entry 120, 0, 441, 10024, 4366, 0x4000, -1, -1, -2, 0, -1
-	flag_entry 120, 0, 445, 10120, 4264, 0x4000, -1, -1, -2, 0, -1
-	flag_entry 120, 0, 447, 9752, 5208, 0x4000, -1, -1, -2, 0, -1
-	flag_entry 120, 0, 448, 10092, 6904, 0x4000, -1, -1, -2, 0, -1
-	flag_entry 120, 0, 452, 10184, 7272, 0x4000, -1, -1, -2, 0, -1
-	flag_entry 127, 15, 8, 0, 0, 0x4000, -1, 2, 255, 0, -1
-	flag_entry 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
+	place 62, 0x00, SPRITE_WORLD_MAP_SNOWY_VILLAGE, 9055, 1214, 90, -1, SceneId_Prox, -1, SceneId_Prox, -1
+	place 82, 0x00, SPRITE_WORLD_MAP_CAVE, 11596, 10170, 90, -1, SceneId_CavernsOsenia, -1, 0, -1
+	place 83, 0x00, SPRITE_WORLD_MAP_CAVE, 10240, 9124, 90, -1, SceneId_CavernsIndra, -1, 0, -1
+	place 84, 0x00, SPRITE_WORLD_MAP_MARS_LIGHTHOUSE_A, 9020, 850, 90, FLAG_MARS_LIGHTHOUSE_THAWED | 0x1000, SceneId_MarsLighthouseOutside, -1, 0, -1
+	place 84, 0x00, SPRITE_WORLD_MAP_MARS_LIGHTHOUSE_B, 9020, 850, 90, FLAG_MARS_LIGHTHOUSE_THAWED, SceneId_MarsLighthouseOutside, -1, 0, -1
+	place 87, 0x01, SPRITE_WORLD_MAP_CAVE, 12640, 4360, 90, -1, SceneId_TreasureIsleEntrance, -1, 0, -1
+	place 88, 0x00, SPRITE_WORLD_MAP_CAVE, 7868, 9094, 90, -1, SceneId_CavernsAtteka, -1, 0, -1
+	place 89, 0x00, SPRITE_WORLD_MAP_CAVE, 9479, 5020, 90, -1, SceneId_CavernsAngara, -1, 0, -1
+	place 90, 0x02, SPRITE_WORLD_MAP_SHRINE_OF_THE_SEA_GOD, 10424, 8250, 90, -1, SceneId_ShrineOfTheSeaGodRope, -1, 0, -1
+	place 53, 0x01, SPRITE_WORLD_MAP_ATTEKA_INLET, 7265, 8230, 90, -1, SceneId_AttekaInlet, -1, 0, -1
+	place 22, 0x01, SPRITE_WORLD_MAP_CLIFFS, 9288, 9530, -180, -1, SceneId_GondowanCliffs, -1, 0, -1
+	place 36, 0x00, SPRITE_WORLD_MAP_APOJII_ISLANDS_A, 14530, 8444, 90, -1, SceneId_ApojiiIslands, -1, 0, -1
+	place 36, 0x00, SPRITE_WORLD_MAP_APOJII_ISLANDS_A, 14617, 8430, 90, -1, SceneId_ApojiiIslands, -1, 0, -1
+	place 36, 0x00, SPRITE_WORLD_MAP_APOJII_ISLANDS_A, 14637, 8360, 90, -1, SceneId_ApojiiIslands, -1, 0, -1
+	place 42, 0x00, SPRITE_ROCK_PILE, 12990, 1290, 90, -1, SceneId_SeaOfTimeToLemuria, -1, 0, -1
+	place 43, 0x00, SPRITE_ROCK_PILE, 13030, 1290, 90, -1, SceneId_SeaOfTimeToLemuria, -1, 0, -1
+	place 120, 0x00, SPRITE_WORLD_MAP_ALHAFRA_SHIP, 11680, 9302, 90, FLAG_ALHAFRA_SHIP_GONE, -1, -2, 0, -1
+	place 120, 0x00, SPRITE_SEATED_IDOL, 9256, 7890, 90, -1, SceneId_SeaOfTimeToLemuria, -1, 0, -1
+	place 32, 0x00, SPRITE_WORLD_MAP_CAVE, 13488, 7630, 90, -1, SceneId_YampiDesertGuardianRingChest, -1, 0, -1
+	place 25, 0x01, SPRITE_UNSEEN_MARKER, 9139, 8320, 90, -1, SceneId_KibomboMountainsWaft, -1, 0, -1
+	place 19, 0x01, SPRITE_UNSEEN_MARKER, 11428, 9753, 90, -1, SceneId_YampiDesertGuardianRingChest, -1, 0, -1
+	place 6, 0x01, SPRITE_UNSEEN_MARKER, 10416, 8892, 90, -1, SceneId_DehkanPlateauFullMetalVestChest, -1, 0, -1
+	place 35, 0x01, SPRITE_WORLD_MAP_TAOPO_SWAMP, 12720, 10319, 90, -1, SceneId_TaopoSwampEntrance, -1, 0, -1
+	place 120, 0x00, SPRITE_WORLD_MAP_VENUS_LIGHTHOUSE, 1992, 7272, 90, -1, SceneId_VenusLighthouseEntrance, -1, 0, -1
+	place 120, 0x00, SPRITE_WORLD_MAP_VILLAGE, 9774, 5296, 90, -1, -1, -2, 0, -1
+	place 120, 0x00, SPRITE_WORLD_MAP_SNOWY_VILLAGE, 10024, 4366, 90, -1, -1, -2, 0, -1
+	place 120, 0x00, SPRITE_WORLD_MAP_MERCURY_LIGHTHOUSE, 10120, 4264, 90, -1, -1, -2, 0, -1
+	place 120, 0x00, SPRITE_WORLD_MAP_MOUNTAIN, 9752, 5208, 90, -1, -1, -2, 0, -1
+	place 120, 0x00, SPRITE_WORLD_MAP_BABI_LIGHTHOUSE, 10092, 6904, 90, -1, -1, -2, 0, -1
+	place 120, 0x00, SPRITE_WORLD_MAP_VENUS_LIGHTHOUSE, 10184, 7272, 90, -1, -1, -2, 0, -1
+	place 127, 0x0f, SPRITE_BLANK, 0, 0, 90, -1, SceneId_WorldMap, 255, 0, -1
+	.2byte 0, 0, 0, 0, 0, 0, 0, 0, 0, 0	@ End.

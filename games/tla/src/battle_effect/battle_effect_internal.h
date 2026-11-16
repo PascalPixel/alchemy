@@ -191,6 +191,9 @@ extern const struct Scale gProcne_UnitScale; ///< the comets' unit scale
 /// The bytes of a 32x32 sprite's tiles in 256 colours, and in 16.
 #define OBJ_32X32_8BPP_BYTES (32 * 32)
 #define OBJ_32X32_4BPP_BYTES (32 * 32 / 2)
+/// The bytes of a 64x64 sprite's tiles in 256 colours, and in 16.
+#define OBJ_64X64_8BPP_BYTES (64 * 64)
+#define OBJ_64X64_4BPP_BYTES (64 * 64 / 2)
 /// The byte of the first pixel of canvas row y, y not negative.
 #define CANVAS_ROW_OFFSET(y) ((((y) & 7) << 3) + (((y) >> 3) << 10))
 /// The brightest canvas level: the additive blitters and

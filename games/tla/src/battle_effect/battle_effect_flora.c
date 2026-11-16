@@ -746,19 +746,15 @@ void BattleEffect_RunFlora(struct BattleEffectParams *args) {
     s32 b;
     s32 k;
     s32 m;
-    s32 mask;
     s32 t;
     u8 *sheet;
     s32 hi;
-    /* FAKEMATCH(pin): c kept in r1. */
-    register u32 c asm("r1");
 
     Iwram_CopyWordsEntry((void *)BG_PLTT, e, PALETTE_BANK_BYTES);
     e += PALETTE_BANK_BYTES;
     Decompress_TaggedLz(e, SheetOf(work));
     sheet = work->sheet + FLORA_STORM_PETALS;
     i = 0;
-    mask = 15;
     for (row = 0; row != FLORA_BLOOM_TILES; row++) {
       for (a = 0; a != 2; a++) {
         for (b = 0; b != 2; b++) {
@@ -774,9 +770,8 @@ void BattleEffect_RunFlora(struct BattleEffectParams *args) {
             u8 *d = (u8 *)(offset + (s32)sheet);
 
             for (m = 0; m != 4; m++) {
-              c = work->sheet[i];
-              hi = c >> 4 & mask;
-              d[0] = c & 15;
+              hi = work->sheet[i] >> 4 & 15;
+              d[0] = work->sheet[i] & 15;
               d[1] = hi;
               i++;
               d += 2;

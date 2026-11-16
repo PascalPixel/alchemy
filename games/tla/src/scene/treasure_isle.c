@@ -657,9 +657,15 @@ u32 gFieldEffect_LongScript[] = {
 };
 
 u32 gTreasureIsle_RockDust[] = {
-    39, 2, 0x80010000, 0, 1, 13,
-    44, 0xc0010000, 0, 1, 2, 0,
-    0, 0, 0, 1, 38, 17,
+    SC_ANIMATION(2),
+    SC_LABEL(1),
+    SC_WAIT(1),
+    SC_LOOP(44, SC_TO(1)),
+    SC_WAIT(1),
+    SC_POSITION(0, 0, 0),
+    SC_WAIT(1),
+    SC_RELEASE,
+    SC_END,
 };
 
 const s32 *gFieldEffect_DurationScripts[] = {

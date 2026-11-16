@@ -391,6 +391,15 @@ extern struct Trigger gSceneEvents[];
 
 struct SceneRegion;
 
+/// A scene's exit region, as The Broken Seal's SceneExitRegion: the box that,
+/// while its condition holds, takes the party leader out through its exit.
+struct SceneRegion {
+  s16 minX, minY, minZ; ///< pixels, inclusive; minX -1 ends the table
+  s16 maxX, maxY, maxZ; ///< pixels, exclusive
+  s16 condition;        ///< CONDITION_ALWAYS, or a flag condition
+  s16 exit;             ///< the exit taken, stored in FieldWork's exit
+};
+
 /// The table a scene overlay starts with (gOverlayArea): a veneer word and an
 /// entry point for each of its tables.
 struct SceneEntries {

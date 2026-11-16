@@ -261,9 +261,9 @@ void ShrineOfTheSeaGod_FightBreath(void) {
 
 struct Actor;
 
-extern u32 gShrineOfTheSeaGodStatueExitRegions[];
-extern s16 gShrineOfTheSeaGodLaddersExitRegions[];
-extern u32 gShrineOfTheSeaGodRightProngExitRegions[];
+extern struct SceneRegion gShrineOfTheSeaGodStatueExitRegions[];
+extern struct SceneRegion gShrineOfTheSeaGodLaddersExitRegions[];
+extern struct SceneRegion gShrineOfTheSeaGodRightProngExitRegions[];
 
 const struct SceneEntrance *Scene_GetEntrances(void) { return gSceneEntrances; }
 
@@ -273,11 +273,11 @@ const struct SceneRegion *Scene_GetExitRegions(void) {
   s16 scene = gMainRoutineWork.next;
 
   if (scene == SCENE_SHRINE_OF_THE_SEA_GOD_STATUE)
-    return (const struct SceneRegion *)gShrineOfTheSeaGodStatueExitRegions;
+    return gShrineOfTheSeaGodStatueExitRegions;
   if (scene == SCENE_SHRINE_OF_THE_SEA_GOD_LADDERS)
-    return (const struct SceneRegion *)gShrineOfTheSeaGodLaddersExitRegions;
+    return gShrineOfTheSeaGodLaddersExitRegions;
   if (scene == SCENE_SHRINE_OF_THE_SEA_GOD_RIGHT_PRONG)
-    return (const struct SceneRegion *)gShrineOfTheSeaGodRightProngExitRegions;
+    return gShrineOfTheSeaGodRightProngExitRegions;
   return 0;
 }
 
@@ -445,8 +445,8 @@ void ShrineOfTheSeaGod_RaiseWaterBand(s32 x, s32 y) {
 
   MapGrid_CopyCellsTo(x, y, 6, 56, 18, 6);
   for (i = 0; i < 16; i++) {
-    water->offsetY += -0x2000;
-    ground->offsetY += -0x2000;
+    water->offsetY -= toFIXED(1) / 8;
+    ground->offsetY -= toFIXED(1) / 8;
     wait(1);
   }
 }
@@ -559,14 +559,11 @@ void ShrineOfTheSeaGod_LowerWaterBand(s32 x, s32 y) {
   u8 i;
 
   MapGrid_CopyCellsTo(x, y, 6, 56, 18, 6);
-  i = 0;
-loop:
-  water->offsetY += 0x2000;
-  ground->offsetY += 0x2000;
-  wait(1);
-  i++;
-  if (i <= 15)
-    goto loop;
+  for (i = 0; i <= 15; i++) {
+    water->offsetY += toFIXED(1) / 8;
+    ground->offsetY += toFIXED(1) / 8;
+    wait(1);
+  }
 }
 
 /// Back on the island after the second Tear, the water sinks to where it was.
@@ -738,19 +735,16 @@ void ShrineOfTheSeaGod_SinkWithWater(void) {
   object->motionFlags = 0;
   Sound_Play(SE_AMBIENT_STREAM);
   MapGrid_SetShakeFX(toFIXED(1), toFIXED(1), FIXED_ONE);
-  i = 0;
-loop:
-  object->y.fixed -= toFIXED(1) / 2;
-  object->groundHeight -= toFIXED(1) / 2;
-  layer->offsetY -= toFIXED(1) / 2;
-  wait(2);
-  if (i == 90) {
-    gFieldWork->transition = SCENE_TRANSITION(TRANSITION_WINDOW, 3);
-    Event_FinishScreenTransition();
+  for (i = 0; i <= 99; i++) {
+    object->y.fixed -= toFIXED(1) / 2;
+    object->groundHeight -= toFIXED(1) / 2;
+    layer->offsetY -= toFIXED(1) / 2;
+    wait(2);
+    if (i == 90) {
+      gFieldWork->transition = SCENE_TRANSITION(TRANSITION_WINDOW, 3);
+      Event_FinishScreenTransition();
+    }
   }
-  i++;
-  if (i <= 99)
-    goto loop;
   Event_SetExitRequest(1);
 }
 
@@ -1076,7 +1070,7 @@ void ShrineOfTheSeaGod_TopplePillarIntoWater(void) {
   MapGrid_SetShakeFX(-1, -1, 9 * FIXED_ONE / 10);
   Task_Remove(ShrineOfTheSeaGod_KeepCrossroadsPillarWithLeader);
   for (i = 0; i < 8; i++) {
-    sprite->rotation += 0x200;
+    sprite->rotation += TRIG_TURN / 128;
     stone->z.fixed += toFIXED(1);
     wait(1);
   }
@@ -1333,7 +1327,7 @@ void ShrineOfTheSeaGod_LashRope(void) {
   Actor_MoveToAndWait(ACTOR_TAVI, 248, 168);
   Actor_SetAnimationById(ACTOR_TAVI, 6);
   object->scaleX = -FIXED_ONE;
-  sprite->rotation = 0xd000;
+  sprite->rotation = TRIG_TURN * 13 / 16;
   object->motionFlags = 0;
   object->y.fixed += toFIXED(6);
   Actor_SetSpriteFlags(Actor_GetById(ACTOR_TAVI), 0);
@@ -1551,7 +1545,7 @@ void ShrineOfTheSeaGod_DjinniRunsWest(void) {
     FieldCamera_GetActor()->motionFlags = done;
     FieldCamera_MoveWithinMapBounds(toFIXED(328), toFIXED(48), toFIXED(552), 1);
     FieldCamera_WaitForArrival();
-    done = 0x4000;
+    done = FACING_SOUTH;
     ShrineOfTheSeaGod_ObjPlaceTurn(ACTOR_BREATH, toFIXED(424), toFIXED(520),
                                    done);
     wait(1);
@@ -1637,7 +1631,8 @@ DEFINE_DJINNI_DASH(ShrineOfTheSeaGod_DjinniSouthEastToNorthEast, 392, 216, 1)
     state = &block->riseCounter;                                               \
     if (flag) {                                                                \
       block->facing = n2;                                                      \
-      Actor_SetAttachedEffect(ACTOR_BREATH, 258);                              \
+      Actor_SetAttachedEffect(ACTOR_BREATH, ATTACHED_EFFECT_IN_FRONT |         \
+                                                ATTACHED_EFFECT_ONCE);         \
       Event_Wait(20);                                                          \
       *state = n3;                                                             \
       GameFlag_Set(FLAG_DJINNI_TRAPPED);                                       \
@@ -1700,7 +1695,8 @@ DEFINE_DJINNI_DASH(ShrineOfTheSeaGod_DjinniNorthEastToSouthEast, 392, 296, 0)
     state = &block->riseCounter;                                               \
     if (flag) {                                                                \
       block->facing = n1;                                                      \
-      Actor_SetAttachedEffect(ACTOR_BREATH, 258);                              \
+      Actor_SetAttachedEffect(ACTOR_BREATH, ATTACHED_EFFECT_IN_FRONT |         \
+                                                ATTACHED_EFFECT_ONCE);         \
       Event_Wait(20);                                                          \
       *state = n2;                                                             \
       GameFlag_Set(FLAG_DJINNI_TRAPPED);                                       \
@@ -1796,7 +1792,7 @@ void ShrineOfTheSeaGod_ChaseDjinni(void) {
   }
 }
 
-extern s16 gShrineOfTheSeaGod_Footprints[];
+extern struct ShrineOfTheSeaGodSpot gShrineOfTheSeaGod_Footprints[];
 extern s16 gShrineOfTheSeaGod_MovableActors[];
 extern u32 gShrineOfTheSeaGod_RikiLooksAround[];
 
@@ -1956,7 +1952,7 @@ void ShrineOfTheSeaGod_InitializePlankBridge(void) {
     Actor_SetHorizontalPositionWithTerrain(ACTOR_SIDE_ROOM_RIKI, 0, 0);
   } else if (GameFlag_Get(FLAG_RIKI_GAVE_UP)) {
     ShrineOfTheSeaGod_ObjPlaceTurn(ACTOR_SIDE_ROOM_RIKI, toFIXED(328),
-                                   toFIXED(200), 0x8000);
+                                   toFIXED(200), FACING_WEST);
     wait(1);
     Actor_SetMovementTypeById(ACTOR_SIDE_ROOM_RIKI,
                               gShrineOfTheSeaGod_RikiLooksAround);
@@ -1990,7 +1986,7 @@ void ShrineOfTheSeaGod_InitializeCrossroads(void) {
   if (GameFlag_Get(FLAG_CROSSROADS_PILLAR_TOPPLED)) {
     ShrineOfTheSeaGod_ObjSetPos(block, toFIXED(408), -(toFIXED(13)),
                                 toFIXED(336));
-    ((struct FieldSprite *)block->sprite)->rotation = 0x1000;
+    ((struct FieldSprite *)block->sprite)->rotation = TRIG_TURN / 16;
     Actor_SetSpritePriority(ACTOR_GREAT_HALL_TOPPLING_PILLAR, 3);
     block->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
     MapGrid_CopyCellAttributes(0, 50, 3, 1, 24, 70);
@@ -2003,7 +1999,7 @@ void ShrineOfTheSeaGod_InitializeCrossroads(void) {
     Actor_SetHorizontalPositionWithTerrain(ACTOR_GREAT_HALL_BREATH, 0, 0);
   else if (GameFlag_Get(FLAG_DJINNI_FLED_EAST)) {
     ShrineOfTheSeaGod_ObjPlaceTurn(ACTOR_GREAT_HALL_BREATH, toFIXED(580),
-                                   toFIXED(344), 0x4000);
+                                   toFIXED(344), FACING_SOUTH);
   }
   FieldEffect_StartBlankOverlay(0);
   wait(1);
@@ -2119,8 +2115,10 @@ void ShrineOfTheSeaGod_InitializePillars(void) {
     Actor_SetSpritePriority(ACTOR_SECOND_TOPPLING_PILLAR, 3);
   }
   Rope_Initialize();
-  Call4((void (*)())Rope_Place, 0, FLAG_ROPE_TIED, 17, 18);
-  Rope_Place(1, FLAG_SECOND_ROPE_TIED, 19, 20);
+  Call4((void (*)())Rope_Place, 0, FLAG_ROPE_TIED, ACTOR_FIRST_ROPE_POLE,
+        ACTOR_FIRST_ROPE_OTHER_POLE);
+  Rope_Place(1, FLAG_SECOND_ROPE_TIED, ACTOR_SECOND_ROPE_POLE,
+             ACTOR_SECOND_ROPE_OTHER_POLE);
   Actor_DisableById(ACTOR_FIRST_PILLAR_LOG);
   Actor_GetById(ACTOR_FIRST_PILLAR_LOG)->motionFlags = 0;
   firstLog = Actor_GetById(ACTOR_FIRST_PILLAR_OTHER_LOG);
@@ -2177,7 +2175,7 @@ void ShrineOfTheSeaGod_SparkleRightProng(struct Actor *object) {
 
 /// Sets up the top room: the Right Prong sparkles above its place.
 void ShrineOfTheSeaGod_InitializeRightProng(void) {
-  struct Actor *object = Actor_GetById(64);
+  struct Actor *object = Actor_GetById(FIELD_TREASURE_ACTOR);
   struct MapWork *map = Ram_HeapSlots->mapGrid;
   struct MapLayer *layer = &map->layers[2];
 
@@ -2273,63 +2271,84 @@ const s32 *gFieldEffect_DurationScripts[] = {
     gFieldEffect_LongScript,
 };
 
+/// Riki looks about the room, north-north-west, south-south-west and west, for
+/// ever.
 u32 gShrineOfTheSeaGod_RikiLooksAround[] = {
-    22, 3, 0xb000, 0, 80, 22,
-    3, 0x5000, 0, 80, 22, 3,
-    0x8000, 0, 120, 13, 0xffff, 0,
+    SC_SET(SW_FACING, FACING_NORTH_NORTHWEST),
+    SC_WAIT(80),
+    SC_SET(SW_FACING, FACING_SOUTH_SOUTHWEST),
+    SC_WAIT(80),
+    SC_SET(SW_FACING, FACING_WEST),
+    SC_WAIT(120),
+    SC_LOOP(SC_FOREVER, SC_TOP),
 };
 
+/// The boys walk off by four points and stop.
 u32 gShrineOfTheSeaGod_BoysGoHome[] = {
-    39, 2, 4, 0x1580000, 0, 0xc60000,
-    1, 4, 0x17a0000, 0, 0xc60000, 1,
-    4, 0x1880000, 0, 0xdc0000, 1, 4,
-    0x1880000, 0, 0x11c0000, 1, 39, 1,
-    17,
+    SC_ANIMATION(2),
+    SC_MOVE(344, 0, 198),
+    SC_SYNC,
+    SC_MOVE(378, 0, 198),
+    SC_SYNC,
+    SC_MOVE(392, 0, 220),
+    SC_SYNC,
+    SC_MOVE(392, 0, 284),
+    SC_SYNC,
+    SC_ANIMATION(1),
+    SC_END,
 };
 
 s16 gShrineOfTheSeaGod_MovableActors[] = {
     ACTOR_TORCH, -1,
 };
 
-s16 gShrineOfTheSeaGod_Footprints[] = {
-    0, 316, 0, 136, 0, -1, 0x8000, 0,
-    0, 318, 0, 142, 0, 1, 0x7000, 0,
-    0, 324, 0, 154, 0, -1, 0x6000, 0,
-    0, 330, 0, 158, 0, 1, 0x5000, 0,
-    0, 338, 0, 166, 0, -1, 0x4800, 0,
-    0, 344, 0, 166, 0, 1, 0x4800, 0,
-    0, 288, 0, 240, 0, 1, 0xd800, 0,
-    0, 284, 0, 236, 0, -1, 0xd800, 0,
-    0, 272, 0, 232, 0, 1, 0xc800, 0,
-    0, 266, 0, 230, 0, -1, 0xc800, 0,
-    0, 256, 0, 238, 0, 1, 0xb000, 0,
-    0, 248, 0, 238, 0, -1, 0xb800, 0,
-    0, 240, 0, 250, 0, 1, 0xa800, 0,
-    0, 234, 0, 252, 0, -1, 0xb000, 0,
-    0, 224, 0, 262, 0, 1, 0xa800, 0,
-    0, 220, 0, 262, 0, -1, 0xa800, 0,
-    -1, 0,
+/// The Djinni's footprints, laid by ShrineOfTheSeaGod_PlaceFootprints: where
+/// each lies, mirrored (a scale of -1) or not, and its turn.
+struct ShrineOfTheSeaGodSpot gShrineOfTheSeaGod_Footprints[] = {
+    {toFIXED(316), toFIXED(136), -FIXED_ONE, TRIG_TURN * 16 / 32},
+    {toFIXED(318), toFIXED(142), FIXED_ONE, TRIG_TURN * 14 / 32},
+    {toFIXED(324), toFIXED(154), -FIXED_ONE, TRIG_TURN * 12 / 32},
+    {toFIXED(330), toFIXED(158), FIXED_ONE, TRIG_TURN * 10 / 32},
+    {toFIXED(338), toFIXED(166), -FIXED_ONE, TRIG_TURN * 9 / 32},
+    {toFIXED(344), toFIXED(166), FIXED_ONE, TRIG_TURN * 9 / 32},
+    {toFIXED(288), toFIXED(240), FIXED_ONE, TRIG_TURN * 27 / 32},
+    {toFIXED(284), toFIXED(236), -FIXED_ONE, TRIG_TURN * 27 / 32},
+    {toFIXED(272), toFIXED(232), FIXED_ONE, TRIG_TURN * 25 / 32},
+    {toFIXED(266), toFIXED(230), -FIXED_ONE, TRIG_TURN * 25 / 32},
+    {toFIXED(256), toFIXED(238), FIXED_ONE, TRIG_TURN * 22 / 32},
+    {toFIXED(248), toFIXED(238), -FIXED_ONE, TRIG_TURN * 23 / 32},
+    {toFIXED(240), toFIXED(250), FIXED_ONE, TRIG_TURN * 21 / 32},
+    {toFIXED(234), toFIXED(252), -FIXED_ONE, TRIG_TURN * 22 / 32},
+    {toFIXED(224), toFIXED(262), FIXED_ONE, TRIG_TURN * 21 / 32},
+    {toFIXED(220), toFIXED(262), -FIXED_ONE, TRIG_TURN * 21 / 32},
 };
+
+/// Unused: the halfwords after the last footprint, -1 and 0.
+s32 gShrineOfTheSeaGod_FootprintsEnd = 0xffff;
 
 struct SceneEntrance gSceneEntrances[] = {
     {0, CONDITION_ALWAYS, 172, 0, 149, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
     {SCENE_TABLE_END},
 };
 
-u32 gShrineOfTheSeaGodStatueExitRegions[] = {
-    0x200100, 0x11000c0, 0xd00030, 0x2ffff, 0xffff, 0,
-    0, 0,
+struct SceneRegion gShrineOfTheSeaGodStatueExitRegions[] = {
+    {256, 32, 192, 272, 48, 208, CONDITION_ALWAYS,
+     SHRINE_OF_THE_SEA_GOD_STATUE_TO_SHRINE_OF_THE_SEA_GOD_LADDERS_SOUTH},
+    {-1},
 };
 
-s16 gShrineOfTheSeaGodLaddersExitRegions[] = {
-    720, -38, 238, 736, -22, 254, -1, 1,
-    864, 32, 208, 880, 48, 224, -1, 2,
-    -1, 0, 0, 0, 0, 0, 0, 0,
+struct SceneRegion gShrineOfTheSeaGodLaddersExitRegions[] = {
+    {720, -38, 238, 736, -22, 254, CONDITION_ALWAYS,
+     SHRINE_OF_THE_SEA_GOD_LADDERS_TO_SHRINE_OF_THE_SEA_GOD_STATUE_SOUTH},
+    {864, 32, 208, 880, 48, 224, CONDITION_ALWAYS,
+     SHRINE_OF_THE_SEA_GOD_LADDERS_TO_SHRINE_OF_THE_SEA_GOD_RIGHT_PRONG_WEST},
+    {-1},
 };
 
-u32 gShrineOfTheSeaGodRightProngExitRegions[] = {
-    0xffda0310, 0x32000a0, 0xb0ffea, 0x1ffff, 0xffff, 0,
-    0, 0,
+struct SceneRegion gShrineOfTheSeaGodRightProngExitRegions[] = {
+    {784, -38, 160, 800, -22, 176, CONDITION_ALWAYS,
+     SHRINE_OF_THE_SEA_GOD_RIGHT_PRONG_TO_SHRINE_OF_THE_SEA_GOD_LADDERS_EAST},
+    {-1},
 };
 
 u32 gSceneExits[] = {

@@ -383,37 +383,32 @@ void Shop_DrawItemPrice(struct Window *window, s32 itemId, s32 price,
 
   if (window == 0)
     return;
-  goto draw;
-cannot_buy:
-  Text_DrawMessageAsTilesFar((s32)MsgCannotBuyThat, window, SHOP_ITEM_NOTE_X,
-                             8);
-  return;
-not_broken:
-  Text_DrawMessageAsTilesFar((s32)MsgNotBroken, window, SHOP_ITEM_NOTE_X, 8);
-  return;
-show_price:
-  labelMessage = (s32)MsgPrice;
-  Text_DrawMessageAsTilesFar(labelMessage, window, SHOP_ITEM_NOTE_X, 8);
-  labelMessage -= 3;
-  Text_DrawNumberInWindowFar(price, 5, (s32)window, SHOP_PRICE_NUMBER_X, 8);
-  Text_DrawMessageAsTilesFar(labelMessage, window, SHOP_PRICE_LABEL_X, 8);
-  return;
-draw:
-  WindowSprite_RedrawSavedRectFar(window);
-  Text_DrawMessageAsTilesFar(itemId + (s32)MsgItemName, window, 0, 0);
-  if (price == 0) {
-    switch (priceKind) {
-    case SHOP_PRICE_KIND_SELL:
-      goto cannot_buy;
-    case SHOP_PRICE_KIND_REPAIR:
-      goto not_broken;
+  do {
+    WindowSprite_RedrawSavedRectFar(window);
+    Text_DrawMessageAsTilesFar(itemId + (s32)MsgItemName, window, 0, 0);
+    if (price == 0) {
+      if (priceKind == SHOP_PRICE_KIND_SELL) {
+        Text_DrawMessageAsTilesFar((s32)MsgCannotBuyThat, window,
+                                   SHOP_ITEM_NOTE_X, 8);
+        break;
+      }
+      if (priceKind == SHOP_PRICE_KIND_REPAIR) {
+        Text_DrawMessageAsTilesFar((s32)MsgNotBroken, window, SHOP_ITEM_NOTE_X,
+                                   8);
+        break;
+      }
     }
-  }
-  // MsgItemCondition starts a list: "----------", "Processed", "Rusted".
-  if (priceKind == SHOP_PRICE_KIND_FORGE)
-    Text_DrawMessageAsTilesFar(price + (s32)MsgItemCondition, window, 8, 8);
-  else
-    goto show_price;
+    // MsgItemCondition starts a list: "----------", "Processed", "Rusted".
+    if (priceKind == SHOP_PRICE_KIND_FORGE) {
+      Text_DrawMessageAsTilesFar(price + (s32)MsgItemCondition, window, 8, 8);
+      break;
+    }
+    labelMessage = (s32)MsgPrice;
+    Text_DrawMessageAsTilesFar(labelMessage, window, SHOP_ITEM_NOTE_X, 8);
+    labelMessage -= 3;
+    Text_DrawNumberInWindowFar(price, 5, (s32)window, SHOP_PRICE_NUMBER_X, 8);
+    Text_DrawMessageAsTilesFar(labelMessage, window, SHOP_PRICE_LABEL_X, 8);
+  } while (0);
 }
 
 #undef SHOP_ITEM_NOTE_X

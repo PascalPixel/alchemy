@@ -241,20 +241,25 @@ static __inline__ void TaopoSwamp_CopyCellAttributes(s32 a, s32 b, s32 c, s32 d,
   MapGrid_CopyCellAttributes(a, b, c, d, e, f);
 }
 
+/// Actor id jumps down a ledge (Actor_JumpDownLedge).
 static __inline__ void TaopoSwamp_JumpDownLedge(s32 id, s32 a, s32 b) {
   Actor_JumpDownLedge(id, a, b);
 }
 
+/// Copies the map cells the leader's Psynergy touches
+/// (TileCopies_CopyTouchedCells).
 static __inline__ void TileCopies_CopyTouchedCells_(s32 a, s32 b, s32 c, s32 d,
                                                     s32 e, s32 f, s32 g) {
   TileCopies_CopyTouchedCells(a, b, c, d, e, f, g);
 }
 
+/// Creates an actor of sprite type at x, y, z.
 static __inline__ struct Actor *TaopoSwamp_CreateActor(s32 type, s32 x, s32 y,
                                                        s32 z) {
   return Import_ActorCreate(type, x, y, z);
 }
 
+/// The Mad Plant leaps out of its bush at the leader (MadPlant_LeapAtLeader).
 static __inline__ void MadPlant_LeapAtLeader_(s32 a, s32 b, s32 c) {
   MadPlant_LeapAtLeader(a, b, c);
 }
@@ -975,6 +980,7 @@ void TaopoSwamp_PushExitRockIn(s32 a, s32 id) {
 }
 
 #if TLA_PATCH_1 /* Absent from the Japanese edition. */
+/// The leader jumps across to the next rock if there is ground to land on.
 void TaopoSwamp_JumpForward(void) { Field_TryJumpForward(); }
 #endif
 

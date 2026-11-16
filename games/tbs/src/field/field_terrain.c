@@ -555,11 +555,11 @@ s32 WorldMap_GetBattleEnvironment(struct WorldPosition *position,
   // Blocks are 32 pixels, 32 to a row; the bias rounds a negative coordinate
   // towards zero, as division would.
   if (x < 0)
-    x += 0x1fffff;
+    x += toFIXED(32) - 1;
   cellPictureX = (x >> 21) & 31;
   y = position->y;
   if (y < 0)
-    y += 0x1fffff;
+    y += toFIXED(32) - 1;
 
   index = cellPictureX + (((y >> 21) & 31) << 5);
   cellPictureWord = gCellPictures + index;

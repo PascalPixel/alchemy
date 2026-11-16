@@ -36,7 +36,7 @@ struct WorldMapCell {
 
 /// A world map tile set: the four tile resources are 8 KB each, half a
 /// character block.
-#define WORLD_MAP_TILE_SET_BYTES 0x2000
+#define WORLD_MAP_TILE_SET_BYTES 8192
 /// A world map tile is 16 by 16 cells.
 #define WORLD_MAP_TILE_CELLS 16
 /// The world map is 16 by 16 tiles, 512 pixels each, wrapping; each layer's

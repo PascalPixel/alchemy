@@ -80,12 +80,12 @@ s32 Field_GetCollisionAheadOfLeader(void) {
     // Rounding toward zero, as a signed division by 32 pixels (32 << 16) would.
     fixedX = position.vector.x;
     if (fixedX < 0)
-      fixedX += 0x1fffff;
+      fixedX += toFIXED(32) - 1;
     tileX = (fixedX >> 21) & 31;
 
     fixedZ = position.vector.z;
     if (fixedZ < 0)
-      fixedZ += 0x1fffff;
+      fixedZ += toFIXED(32) - 1;
     tileY = (fixedZ >> 21) & 31;
 
     tile = (u8 *)gCellPictures + ((tileX + (tileY << 5)) << 2);

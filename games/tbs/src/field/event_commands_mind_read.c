@@ -172,8 +172,8 @@ void FieldEffect_AdvanceHueCycle(void) {
 
   FieldEffect_CalculateHueChannels(work->hue << 16, &r, &g, &b);
 
-  // Squeeze 0 to 31 into 4 to 11; offset walks red, green and blue (0x28b).
-  offset = 0x28b;
+  // Squeeze 0 to 31 into 4 to 11; offset walks red, green and blue.
+  offset = offsetof(struct MindReadWork, red);
   pr = (u8 *)work + offset;
   *pr = (r >> 18) + 4;
   offset += 1;

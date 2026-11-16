@@ -66,8 +66,8 @@ void FieldEffect_WanderAroundAnchor(struct Actor *effect) {
   dz = Iwram_MulFX(len, Trig_Sin(angle));
   effect->x.fixed += dx;
   effect->z.fixed += dz;
-  // The u16 angle wraps: 0xfff0 gives a small backwards drift.
-  effect->facing += 0xfff0;
+  // The u16 angle wraps: -16 gives a small backwards drift.
+  effect->facing += -16;
   if (effect->turnFrames != 0) {
     effect->turnFrames--;
     effect->facing += TRIG_TURN / 32;

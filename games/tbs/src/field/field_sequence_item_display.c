@@ -4,9 +4,9 @@
 
 #include "field_sequence_internal.h"
 
-STATIC_ASSERT(offsetof(struct Actor, velocityY) == 0x28);
-STATIC_ASSERT(offsetof(struct Actor, motionFlags) == 0x55);
-STATIC_ASSERT(offsetof(struct Actor, sprite) == 0x50);
+STATIC_ASSERT(offsetof(struct Actor, velocityY) == 40);
+STATIC_ASSERT(offsetof(struct Actor, motionFlags) == 85);
+STATIC_ASSERT(offsetof(struct Actor, sprite) == 80);
 
 /// ActorSystem_Initialize allocates the 64 actors in
 /// HEAP_SLOT_ACTORS.

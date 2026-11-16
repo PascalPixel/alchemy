@@ -93,7 +93,7 @@ void Event_Start(void) {
   runtime->choiceWidth = 0;
   runtime->transitionFrames = MAP_TRANSITION_FRAMES;
   runtime->fastForward = 0;
-  runtime->unusedAfterMessage = 0xFFFF;
+  runtime->unusedAfterMessage = -1;
   runtime->unusedBeforeCamera[0] = -1;
   runtime->unusedBeforeCamera[1] = -1;
   Task_Add(Event_UpdateDebugSkip, TASK_PASS_FRAME);

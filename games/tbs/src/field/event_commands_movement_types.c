@@ -134,13 +134,13 @@ struct Actor *Actor_FindNearestFacingTarget(struct Actor *self, s32 sprite) {
       continue;
     if (entry->spriteStorageKind != ACTOR_SPRITE_ONE)
       continue;
-    // 0x2fffff: under 48 pixels apart in height, either way.
+    // Under 48 pixels apart in height, either way.
     heightDifference = entry->y.fixed - self->y.fixed;
     if (heightDifference >= 0) {
-      if (heightDifference > 0x2fffff)
+      if (heightDifference > toFIXED(48) - 1)
         continue;
     } else {
-      if (self->y.fixed - entry->y.fixed > 0x2fffff)
+      if (self->y.fixed - entry->y.fixed > toFIXED(48) - 1)
         continue;
     }
     pixelX = (entry->x.fixed - self->x.fixed) / FIXED_ONE;
@@ -152,9 +152,9 @@ struct Actor *Actor_FindNearestFacingTarget(struct Actor *self, s32 sprite) {
                            entry->x.fixed - self->x.fixed);
     if (distance > 23) {
       angleDifference = (s16)(angle - self->facing);
-      if (angleDifference < -0x2fff)
+      if (angleDifference < -(TRIG_TURN * 3 / 16 - 1))
         continue;
-      if (angleDifference > 0x2fff)
+      if (angleDifference > TRIG_TURN * 3 / 16 - 1)
         continue;
     }
     found = entry;

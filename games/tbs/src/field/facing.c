@@ -7,60 +7,65 @@
 #include "field/facing.h"
 #include "field/actor_script.h"
 
+/// A facing table entry: the picture to draw, counted from the sprite
+/// animation's base picture (bits 0-2), mirrored when bit 7 is set.
+#define FACING_MIRRORED_BIT 0x80
+#define MIRRORED(picture) (FACING_MIRRORED_BIT | (picture))
+
+// clang-format off
 /// Facing tables: for each enum AnimationFacingKind, the picture to draw for
 /// each sector of the facing angle.
-// clang-format off
 const u8 gAnimationFacing_OnePicture[16] = {
-    0x00, 0x00, 0x00, 0x80, 0x80, 0x80, 0x80, 0x00,
-    0x80, 0x80, 0x80, 0x00, 0x00, 0x00, 0x00, 0x80,
+    0, 0, 0, MIRRORED(0), MIRRORED(0), MIRRORED(0), MIRRORED(0), 0,
+    MIRRORED(0), MIRRORED(0), MIRRORED(0), 0, 0, 0, 0, MIRRORED(0),
 };
 
 const u8 gAnimationFacing_FrontBackSwapped[8] = {
-    0x80, 0x80, 0x00, 0x00, 0x01, 0x01, 0x81, 0x81,
+    MIRRORED(0), MIRRORED(0), 0, 0, 1, 1, MIRRORED(1), MIRRORED(1),
 };
 
 const u8 gAnimationFacing_FrontBack[8] = {
-    0x00, 0x00, 0x80, 0x80, 0x01, 0x01, 0x81, 0x81,
+    0, 0, MIRRORED(0), MIRRORED(0), 1, 1, MIRRORED(1), MIRRORED(1),
 };
 
 const u8 gAnimationFacing_ThreePictures[16] = {
-    0x01, 0x01, 0x00, 0x00, 0x80, 0x80, 0x81, 0x81,
-    0x81, 0x81, 0x82, 0x82, 0x02, 0x02, 0x02, 0x01,
+    1, 1, 0, 0, MIRRORED(0), MIRRORED(0), MIRRORED(1), MIRRORED(1),
+    MIRRORED(1), MIRRORED(1), MIRRORED(2), MIRRORED(2), 2, 2, 2, 1,
 };
 
 const u8 gAnimationFacing_FivePictures[16] = {
-    0x01, 0x00, 0x00, 0x03, 0x03, 0x80, 0x80, 0x81,
-    0x81, 0x82, 0x82, 0x04, 0x04, 0x02, 0x02, 0x01,
+    1, 0, 0, 3, 3, MIRRORED(0), MIRRORED(0), MIRRORED(1),
+    MIRRORED(1), MIRRORED(2), MIRRORED(2), 4, 4, 2, 2, 1,
 };
 
 const u8 gAnimationFacing_EightPictures[8] = {
-    0x02, 0x01, 0x00, 0x07, 0x06, 0x05, 0x04, 0x03,
+    2, 1, 0, 7, 6, 5, 4, 3,
 };
 
 const u8 gAnimationFacing_EightPicturesMirrored[8] = {
-    0x01, 0x00, 0x03, 0x85, 0x86, 0x87, 0x04, 0x02,
+    1, 0, 3, MIRRORED(5), MIRRORED(6), MIRRORED(7), 4, 2,
 };
 
 const u8 gAnimationFacing_FourPictures[64] = {
-    0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x00,
-    0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-    0x80, 0x80, 0x80, 0x80, 0x80, 0x80, 0x80, 0x80,
-    0x80, 0x81, 0x81, 0x81, 0x81, 0x81, 0x81, 0x81,
-    0x81, 0x82, 0x82, 0x82, 0x82, 0x82, 0x82, 0x83,
-    0x83, 0x83, 0x83, 0x83, 0x83, 0x83, 0x83, 0x83,
-    0x03, 0x03, 0x03, 0x03, 0x03, 0x03, 0x03, 0x03,
-    0x03, 0x02, 0x02, 0x02, 0x02, 0x02, 0x02, 0x01,
+    1, 1, 1, 1, 1, 1, 1, 0,
+    0, 0, 0, 0, 0, 0, 0, 0,
+    MIRRORED(0), MIRRORED(0), MIRRORED(0), MIRRORED(0), MIRRORED(0), MIRRORED(0), MIRRORED(0), MIRRORED(0),
+    MIRRORED(0), MIRRORED(1), MIRRORED(1), MIRRORED(1), MIRRORED(1), MIRRORED(1), MIRRORED(1), MIRRORED(1),
+    MIRRORED(1), MIRRORED(2), MIRRORED(2), MIRRORED(2), MIRRORED(2), MIRRORED(2), MIRRORED(2), MIRRORED(3),
+    MIRRORED(3), MIRRORED(3), MIRRORED(3), MIRRORED(3), MIRRORED(3), MIRRORED(3), MIRRORED(3), MIRRORED(3),
+    3, 3, 3, 3, 3, 3, 3, 3,
+    3, 2, 2, 2, 2, 2, 2, 1,
 };
 
 const u8 gAnimationFacing_SixPictures[64] = {
-    0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x00,
-    0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x04,
-    0x04, 0x80, 0x80, 0x80, 0x80, 0x80, 0x80, 0x80,
-    0x80, 0x81, 0x81, 0x81, 0x81, 0x81, 0x81, 0x81,
-    0x81, 0x82, 0x82, 0x82, 0x82, 0x82, 0x82, 0x83,
-    0x83, 0x83, 0x83, 0x83, 0x83, 0x83, 0x83, 0x05,
-    0x05, 0x03, 0x03, 0x03, 0x03, 0x03, 0x03, 0x03,
-    0x03, 0x02, 0x02, 0x02, 0x02, 0x02, 0x02, 0x01,
+    1, 1, 1, 1, 1, 1, 1, 0,
+    0, 0, 0, 0, 0, 0, 0, 4,
+    4, MIRRORED(0), MIRRORED(0), MIRRORED(0), MIRRORED(0), MIRRORED(0), MIRRORED(0), MIRRORED(0),
+    MIRRORED(0), MIRRORED(1), MIRRORED(1), MIRRORED(1), MIRRORED(1), MIRRORED(1), MIRRORED(1), MIRRORED(1),
+    MIRRORED(1), MIRRORED(2), MIRRORED(2), MIRRORED(2), MIRRORED(2), MIRRORED(2), MIRRORED(2), MIRRORED(3),
+    MIRRORED(3), MIRRORED(3), MIRRORED(3), MIRRORED(3), MIRRORED(3), MIRRORED(3), MIRRORED(3), 5,
+    5, 3, 3, 3, 3, 3, 3, 3,
+    3, 2, 2, 2, 2, 2, 2, 1,
 };
 
 /// The order in which the 64 pixels of a sprite's tile in OBJ VRAM dissolve;
@@ -73,7 +78,7 @@ const u8 gSpriteDissolve_PixelOrder[64] = {
 };
 
 /// Two bytes after the dissolve order; no code in The Broken Seal names them.
-const u16 gSpriteDissolve_PixelOrderTail = 0x01ff;
+const u16 gSpriteDissolve_PixelOrderTail = 511;
 
 /// The fixed camera's view matrix (16.16): identity with a -0.8 shear of y by x.
 /// ActorSystem_ProjectSprites applies it while battle commands are chosen.

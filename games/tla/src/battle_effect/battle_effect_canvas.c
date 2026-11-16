@@ -770,6 +770,9 @@ void BattleEffect_ReservedNoOpB(void) {}
 
 /// Where GlowBandTextureA is decoded in the effect's pictures.
 #define FORM_CHANGE_GLOW_BAND 0x3000
+/// Where BillowTexture, the crystals' texture, is decoded in the map cell
+/// buffer.
+#define FORM_CHANGE_BILLOW (Ram_MapCellBuffer + 0x2000)
 
 /// A glow on the canvas map widens over the user for 56 frames while 16
 /// spinning rings rise around it, four abreast. From frame 48 the screen
@@ -799,8 +802,7 @@ void BattleEffect_RunFormChange(struct BattleEffectParams *args, s32 kind) {
   Resource_LoadAndDecompress(RESOURCE_FLASH_BURST_SHEET, work->sheet, 1, 0);
   Resource_LoadAndDecompress(RESOURCE_GLOW_BAND_TEXTURE_A,
                              work->sheet + FORM_CHANGE_GLOW_BAND, 0, 0);
-  Resource_LoadAndDecompress(RESOURCE_BILLOW_TEXTURE,
-                             (Ram_MapCellBuffer + 0x2000), 0, 0);
+  Resource_LoadAndDecompress(RESOURCE_BILLOW_TEXTURE, FORM_CHANGE_BILLOW, 0, 0);
   EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
   work->fadeFrames = BACKGROUND_DARKEN_FRAMES;
   work->fadeStep = 0;
@@ -869,7 +871,7 @@ void BattleEffect_RunFormChange(struct BattleEffectParams *args, s32 kind) {
 
           for (i = 0; i != 64; i++) {
             *variant = -1;
-            variant += 7;
+            variant += sizeof(struct Particle) / sizeof(*variant);
           }
         }
         work->shakeFrames = 8;
@@ -977,8 +979,8 @@ void BattleEffect_RunFormChange(struct BattleEffectParams *args, s32 kind) {
           }
           Matrix_Scale(FIXED_ONE / 2, FIXED_ONE, FIXED_ONE);
           Matrix_RotateZ(ring->x);
-          Matrix_Scale(Trig_Sin(ring->variant * 682) + TRIG_TURN, 0x20000,
-                       0x10000);
+          Matrix_Scale(Trig_Sin(ring->variant * 682) + FIXED_ONE, FIXED_ONE * 2,
+                       FIXED_ONE);
           Render_TransformVertices(gBattleEffect_TaperedBeamCorners, corners,
                                    4);
           Render_DrawModelList(model);
@@ -989,7 +991,7 @@ void BattleEffect_RunFormChange(struct BattleEffectParams *args, s32 kind) {
       model->texture = &texture;
       model->vertices = corners;
       texture.logWidth = 6;
-      texture.pixels = (Ram_MapCellBuffer + 0x2000);
+      texture.pixels = FORM_CHANGE_BILLOW;
       model->kind = MODEL_SHADED_ADDITIVE;
       texture.logHeight = 6;
       model->mesh = gBattleEffect_RingMesh;
@@ -1002,14 +1004,14 @@ void BattleEffect_RunFormChange(struct BattleEffectParams *args, s32 kind) {
           if (bias > -16)
             bias = -16;
           if (bias > -64) {
-            s32 growth =
-                (frame - start) * gFormChange_WaveGrowth[i] * 2000 + 0x4000;
+            s32 growth = (frame - start) * gFormChange_WaveGrowth[i] * 2000 +
+                         FIXED_ONE / 4;
 
             model->shade = bias;
             Matrix_Initialize();
             Matrix_Translate(INTtoFIXED(center.x / 2 - 60), toFIXED(32), 0);
             Matrix_Scale(growth * 2,
-                         gFormChange_WaveStretch[i] * growth + 0x40000,
+                         gFormChange_WaveStretch[i] * growth + FIXED_ONE * 4,
                          growth / 4);
             Matrix_RotateX(1000);
             if (i & 1)

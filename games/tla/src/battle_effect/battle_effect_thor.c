@@ -12,8 +12,8 @@
 /// The sparks; the glint pictures that draw the crackles of lightning come
 /// before them.
 #define THOR_PARTICLES ((struct Particle *)(Ram_MapCellBuffer + 3160))
-/// The violet mote in the second part's sheet, a quarter drawn four times
-/// mirrored.
+/// The violet mote in the second part's sheet: its left half, which
+/// Canvas_BlitAtFoot draws and then mirrors.
 #define THOR_MOTE_PICTURE 24576
 #define THOR_SPARK_COUNT 910
 #define THOR_DIMMED_DOTS 10000

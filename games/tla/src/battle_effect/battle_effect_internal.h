@@ -1699,7 +1699,7 @@ extern const struct Scale gNeptune_UnitScale; ///< the serpent's scale
 /// nirvana.c
 extern u8 gSerac_MeshEnd[]; ///< the mesh's end, after 112 faces
 
-extern const s8 gVoidBeam_Corners[]; ///< the hexagon's corners (z, y)
+extern const s8 gVoidBeam_Corners[][2]; ///< the hexagon's corners (z, y)
 
 /// flora.c
 extern const struct Scale gFlora_UnitScale;

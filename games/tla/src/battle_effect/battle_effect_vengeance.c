@@ -417,11 +417,11 @@ void BattleEffect_RunLifeShear(struct BattleEffectParams *args) {
       Sound_PlayFar(SE_CURSE_FALL);
       if (args->side == EFFECT_SIDE_ENEMIES) {
         work->particles[0].x = toFIXED(32);
-        work->particles[0].y = toFIXED(65472);
+        work->particles[0].y = -toFIXED(64);
         work->particles[0].z = -7216;
       } else {
-        work->particles[0].x = toFIXED(65504);
-        work->particles[0].y = toFIXED(65472);
+        work->particles[0].x = -toFIXED(32);
+        work->particles[0].y = -toFIXED(64);
         work->particles[0].z = -7216;
       }
       work->particles[0].velocityZ = 0;
@@ -1541,9 +1541,9 @@ void BattleEffect_RunCoatlicue(struct BattleEffectParams *args) {
       i = 0;
       half = lift / 2;
       for (; i != 256; i++, source++, dst++) {
-        s32 b;
-        s32 g;
-        s32 r;
+        s32 blue;
+        s32 green;
+        s32 red;
         s32 color;
         s32 sourceRed;
 
@@ -1551,20 +1551,20 @@ void BattleEffect_RunCoatlicue(struct BattleEffectParams *args) {
         /* FAKEMATCH(temporary): red through a temporary set twice. */
         sourceRed = 31;
         sourceRed &= color;
-        r = sourceRed + lift;
-        g = RGB_GREEN((u16)color) + half;
-        b = RGB_BLUE((u16)color) + lift / 4;
+        red = sourceRed + lift;
+        green = RGB_GREEN((u16)color) + half;
+        blue = RGB_BLUE((u16)color) + lift / 4;
 
-        if (r > RGB_LEVEL_MAX) {
-          r = RGB_LEVEL_MAX;
+        if (red > RGB_LEVEL_MAX) {
+          red = RGB_LEVEL_MAX;
         }
-        if (g > RGB_LEVEL_MAX) {
-          g = RGB_LEVEL_MAX;
+        if (green > RGB_LEVEL_MAX) {
+          green = RGB_LEVEL_MAX;
         }
-        if (b > RGB_LEVEL_MAX) {
-          b = RGB_LEVEL_MAX;
+        if (blue > RGB_LEVEL_MAX) {
+          blue = RGB_LEVEL_MAX;
         }
-        *dst = RGB(r, g, b);
+        *dst = RGB(red, green, blue);
       }
     }
     if ((u32)(frame - 292) <= 253) {

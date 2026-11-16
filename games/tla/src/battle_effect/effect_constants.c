@@ -80,8 +80,8 @@ const struct Scale gNeptune_UnitScale = {FIXED_ONE * 3 / 2, FIXED_ONE * 3 / 2};
 const struct Scale gMegaera_UnitScale = {FIXED_ONE * 3 / 2, FIXED_ONE * 3 / 2};
 
 /// The hexagon's six corners, {z, y} in pixels.
-const s8 gVoidBeam_Corners[12] = {
-    40, -40, 0, 40, -40, -40, 40, 40, 0, -40, -40, 40,
+const s8 gVoidBeam_Corners[6][2] = {
+    {40, -40}, {0, 40}, {-40, -40}, {40, 40}, {0, -40}, {-40, 40},
 };
 
 /// Charon's swarm scale, before it is set to one and a quarter.

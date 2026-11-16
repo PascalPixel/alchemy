@@ -809,8 +809,8 @@ void BattleEffect_RunVoidBeam(struct BattleEffectParams *args) {
           s32 corner = (i + 4) % 6;
 
           point[1] =
-              INTtoFIXED(gVoidBeam_Corners[corner * 2 + 1]) + toFIXED(30);
-          point[2] = INTtoFIXED(gVoidBeam_Corners[corner * 2]) + caster->z;
+              INTtoFIXED(gVoidBeam_Corners[corner][1]) + toFIXED(30);
+          point[2] = INTtoFIXED(gVoidBeam_Corners[corner][0]) + caster->z;
           EffectPosition_ProjectPoint(point, &corners[i]);
           corners[i].x >>= 1;
         }

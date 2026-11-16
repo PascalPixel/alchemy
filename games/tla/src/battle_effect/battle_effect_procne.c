@@ -20,7 +20,7 @@ enum DragonFireMode {
 
 /// frame / 4 % 3, as the source writes it: the multiply-high routine with the
 /// reciprocal of 3, where a plain % calls __modsi3.
-#define MODULO_THREE(v) Math_UnsignedMulHighAdd((v), 0x55555556, -3)
+#define MODULO_THREE(v) Math_UnsignedMulHighAdd((v), 0xffffffffU / 3 + 1, -3)
 
 #define WHIRLWIND_CEL (48 * 64) ///< one of the whirlwind's three frames
 #define DUST_SHEET 0x2400       ///< the dust motes, after the whirlwind
@@ -226,7 +226,7 @@ void BattleEffect_RunProcne(struct BattleEffectParams *args) {
             vector[2] = point[index].z * Trig_Cos(point[index].velocityY);
             EffectPosition_ProjectPoint(vector, &screen);
             screen.x >>= 1;
-            if (point[index].y <= 0x3fffff)
+            if (point[index].y < toFIXED(64))
               draw[0](canvas, work->sheet + DUST_SHEET, screen.x - 12,
                       screen.y - 12, 16, 16);
             if (point[index].z > 24)
@@ -327,7 +327,7 @@ void BattleEffect_RunProcne(struct BattleEffectParams *args) {
         if (frame > 255) {
           s32 threshold;
 
-          shake[2] = 0x1000000;
+          shake[2] = toFIXED(256);
           alive = 0;
           shake[0] = 0;
           shake[1] = 0;
@@ -358,7 +358,8 @@ void BattleEffect_RunProcne(struct BattleEffectParams *args) {
                   screen.depth = 170;
                 if (screen.depth > 350)
                   screen.depth = 350;
-                span = 6 - Math_UnsignedMulHigh(screen.depth - 170, 0x071c71c8);
+                span = 6 - Math_UnsignedMulHigh(screen.depth - 170,
+                                                0xffffffffU / 36 + 1);
                 draw[1](canvas, graphics + gBattleEffect_MotePictures[span - 1],
                         screen.x - span / 2, screen.y - span, span, span * 2);
                 point->x -= point->x / dist;
@@ -412,8 +413,8 @@ void BattleEffect_RunProcne(struct BattleEffectParams *args) {
                     screen.depth = 170;
                   if (screen.depth > 350)
                     screen.depth = 350;
-                  span =
-                      3 - Math_UnsignedMulHigh(screen.depth - 170, 0x02d82d83);
+                  span = 3 - Math_UnsignedMulHigh(screen.depth - 170,
+                                                  0xffffffffU / 90 + 1);
                   draw[0](canvas,
                           graphics + gBattleEffect_MotePictures[span - 1],
                           screen.x - span / 2, screen.y - span, span, span * 2);
@@ -488,8 +489,8 @@ void BattleEffect_RunProcne(struct BattleEffectParams *args) {
                     screen.depth = 170;
                   if (screen.depth > 350)
                     screen.depth = 350;
-                  span =
-                      3 - Math_UnsignedMulHigh(screen.depth - 170, 0x02d82d83);
+                  span = 3 - Math_UnsignedMulHigh(screen.depth - 170,
+                                                  0xffffffffU / 90 + 1);
                   draw[0](canvas,
                           graphics + gBattleEffect_MotePictures[span - 1],
                           screen.x - span / 2, screen.y - span, span, span * 2);

@@ -800,7 +800,7 @@ void BattleEffect_RunParticleStreams(struct BattleEffectParams *args,
     s32 green = (Random16() & 15) + 16;
     s32 blue = (Random16() & 15) + 16;
 
-    ((u16 *)&BG_PLTT_COLOR(8, 0))[i] = RGB(red, green, blue);
+    BG_PLTT_COLOR(8, i) = RGB(red, green, blue);
   }
   IWRAM_FILL_WORDS(canvas, CANVAS_BYTES, 0);
 

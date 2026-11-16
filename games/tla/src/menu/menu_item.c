@@ -18,12 +18,12 @@ s32 ItemMenu_ChooseCommand(void);
 s32 ItemMenu_CollectItems(struct Unit *owner, u16 *items, s32 mode);
 s32 ItemMenu_ConfirmDrop(s32 item);
 s32 ItemMenu_ConfirmEquip(s32 unused);
-s32 ItemMenu_CountItems(s32 owner_id);
+s32 ItemMenu_CountItems(s32 ownerId);
 void ItemMenu_DrawIcons(u16 *items, s32 style);
 void ItemMenu_DrawItemHead(void);
 void ItemMenu_DrawMessage(s32 unused, s32 message);
 s32 ItemMenu_GetItemQuantity(s32 owner, s32 item);
-s32 ItemMenu_IsStatRaisingItem(s32 item_id);
+s32 ItemMenu_IsStatRaisingItem(s32 itemId);
 void ItemMenu_RefreshMember(s32 ownerId, s32 mode);
 s32 ItemMenu_RunList(s32 pane);
 s32 ItemMenu_SelectGiveQuantity(s32 baseQuantity, s32 quantityRange,
@@ -1317,15 +1317,15 @@ void Menu_HideEmptyEntryIcons(const u16 *items) {
 }
 
 /// Counts the nonempty slots in the owner's inventory.
-s32 ItemMenu_CountItems(s32 owner_id) {
+s32 ItemMenu_CountItems(s32 ownerId) {
   s32 count = 0;
-  struct Unit *state = Unit_Get(owner_id);
+  struct Unit *state = Unit_Get(ownerId);
   s32 i;
 
   for (i = 0; i < INVENTORY_SLOTS; i++) {
-    s32 item_id = state->inventory[i] & INVENTORY_ITEM_ID_MASK;
+    s32 itemId = state->inventory[i] & INVENTORY_ITEM_ID_MASK;
 
-    if (item_id != 0)
+    if (itemId != 0)
       count++;
   }
   return count;

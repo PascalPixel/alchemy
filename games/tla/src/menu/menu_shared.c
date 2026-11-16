@@ -13,13 +13,7 @@
 #define WINDOW_KEEP_EXISTING 0x100
 #define WINDOW_STYLE_MASK 0xff
 
-/// @file
-/// The pieces the menu screens share: windows, the status panel, numbers,
-/// icons, the party figures, the hand cursor, paged lists, palettes, the
-/// cancel sound and text colours.
-// Part of menu.c.
-
-s32 GameFlag_Set(s32 flag_no);
+s32 GameFlag_Set(s32 flag);
 
 /// Resumes the overlay tasks and tileset animations when a menu closes, and
 /// clears FLAG_WEATHER_HELD and FLAG_PALETTE_BLEND_HELD: undoes

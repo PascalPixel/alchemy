@@ -482,7 +482,7 @@ struct DjinnMenuBackdrop;
 
 // What several parts call, declared once here for all of them.
 s32 GameFlag_Get(s32);
-void GameFlag_Clear(s32 flag_no);
+void GameFlag_Clear(s32 flag);
 s32 Inventory_EquipFar(s32 owner, s32 slot);
 /// Draws an empty window at tile (x, y), width by height tiles, and frees the
 /// text tiles the rectangle showed.

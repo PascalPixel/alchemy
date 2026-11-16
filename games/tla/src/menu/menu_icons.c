@@ -578,16 +578,16 @@ void MenuIcon_SetActive(s32 active) {
 void MenuPanel_DrawEntryList(struct Window *panel, s32 x, s32 y,
                              const u8 *enabled) {
   s32 count = 0;
-  s32 icon_x = (s16)panel->x * 8 + x + 8;
-  s32 icon_y = (s16)panel->y * 8 + y + 8;
+  s32 iconX = (s16)panel->x * 8 + x + 8;
+  s32 iconY = (s16)panel->y * 8 + y + 8;
   s32 i;
 
   for (i = 0; i <= 4; i++) {
     if (enabled[i] != 0) {
-      MenuIcon_SetSlot(i, icon_x, icon_y);
+      MenuIcon_SetSlot(i, iconX, iconY);
       Text_DrawMessageAsTilesFar((s32)MsgStatusNameDown + i, panel, x + 16, y);
       y += 16;
-      icon_y += 16;
+      iconY += 16;
       count++;
     } else {
       MenuIcon_SetSlot(i, -16, -16);

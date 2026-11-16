@@ -221,6 +221,12 @@ struct Actor {
       u8 unusedBeforeFlashMask[3]; ///< refused, frozen and riseCounter
       u8 flashMask; ///< its sprite flashes while gFrameCount & this is set
     };
+    /// A statue that launches a fireball (Actor_LaunchAhead), or the fireball
+    /// an attached actor sends rolling (Actor_Attach).
+    struct {
+      u8 unusedBeforeLaunchedActor[2]; ///< refused and frozen
+      u8 launchedActorId;              ///< the actor sent rolling ahead
+    };
   };
   /// Two halfwords whose meaning depends on what runs the actor.
   union {

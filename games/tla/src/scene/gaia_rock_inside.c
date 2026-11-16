@@ -15,6 +15,7 @@
 #include "field/actor.h"
 #include "field/event_inline.h"
 #include "battle/battle.h"
+#include "battle/battle_unit.h"
 #include "field/field.h"
 #include "game/game.h"
 #include "graphics/palette_buffers.h"
@@ -193,7 +194,9 @@ typedef struct {
 /// The four ways out of a step, in the order PathStep.next keeps them.
 enum MazeWay { MAZE_SOUTH, MAZE_WEST, MAZE_EAST, MAZE_NORTH };
 
-/// PathStep.next's mark for the way out of the maze, from its last step.
+/// PathStep.next's marks for the ways out of the maze, each the exit it takes:
+/// back out from its first step, and on from its last.
+#define MAZE_BACK 250
 #define MAZE_EXIT 251
 
 /// At gInventorySnapshot + 0x288: the step the party stands on, set to the
@@ -203,13 +206,21 @@ typedef struct {
   PathStep steps[15];
 } Path;
 
+#define gPath ((Path *)(gInventorySnapshot + 0x288))
+
+/// Set once the plant on a step of the maze has pointed the way on, for this
+/// visit.
+#define FLAG_MAZE_PLANT_POINTED(step) (0xa50 + (step))
+
+/// A map grid cell, its column and row.
 struct CellPoint {
   s16 position[2];
 };
 
+/// The platforms' sway (GaiaRockInside_SwayPlatforms).
 struct SwayState {
-  u16 frame;
-  u16 pending;
+  u16 frame;   ///< frames into the sway's 240
+  u16 pending; ///< frames still to run, which a push holds back
 };
 
 extern u32 gGaiaRockInside_BurstScript[];
@@ -317,17 +328,21 @@ const u8 *Scene_GetExitRegions(void) {
   return 0;
 }
 
-static __inline__ void GaiaRockInside_JumpDownLedge(s32 id, s32 a, s32 b) {
-  Actor_JumpDownLedge(id, a, b);
+/// Actor_JumpDownLedge, called through this inline as the ROM's call compiles.
+static __inline__ void GaiaRockInside_JumpDownLedge(s32 id, s32 pose,
+                                                    s32 param) {
+  Actor_JumpDownLedge(id, pose, param);
 }
 
+/// Stepping off the ledge by the altar: the leader jumps down to the room
+/// below.
 void GaiaRockInside_JumpDownByAltar(void) {
   FieldActor_SetSpritePriority(gMainRoutineWork.leaderActorId, 3);
   OverlayObject_PrepareObject(toFIXED(712), 0, toFIXED(468), SPRITE_CRATE);
   OverlayObject_PrepareObject(toFIXED(712), 0, toFIXED(490), SPRITE_CRATE);
   GaiaRockInside_JumpDownLedge(gMainRoutineWork.leaderActorId, 6, 0x800);
   Event_PlaySound(SE_FALL);
-  Event_SetFlag(290);
+  Event_SetFlag(FLAG_ARRIVE_FALLING);
   FieldEvent_SetExitRequest(8);
 }
 
@@ -338,8 +353,10 @@ void GaiaRockInside_JumpDownByAltar(void) {
 #include "../field/field_effect_advance_motion.c"
 #endif
 
-// The Japanese edition has no form of this function here.
 #if TLA_PATCH_1
+/// Arriving in the lair by entrance 3 from above: the leader drops from 130
+/// pixels up and lands in a ring of dust with a thump that shakes the room.
+/// The Japanese edition has no form of this function here.
 void GaiaRockInside_RaiseDust(void) {
   struct Actor *actor = Actor_Get(gMainRoutineWork.leaderActorId);
   u32 i;
@@ -358,7 +375,7 @@ void GaiaRockInside_RaiseDust(void) {
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
   Event_PlaySound(SE_DUST_PUFF);
-  actor->motionFlags = 3;
+  actor->motionFlags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
   FieldEvent_Wait(24);
   options.palette = 7;
   options.update = FieldEffect_AdvanceMotion;
@@ -410,11 +427,11 @@ const u32 *Scene_GetExits(void) { return gSceneExits; }
 ///
 /// The cask lands and holds still on its third animation.
 s32 GaiaRockInside_CaskRests(void) {
-  s32 t0;
+  struct Actor *cask;
 
-  t0 = ((s32)Actor_Get(ACTOR_CASK));
-  Actor_SelectAnimation(t0, 3);
-  Actor_SetAnimationSpeed(t0, 0);
+  cask = Actor_Get(ACTOR_CASK);
+  Actor_SelectAnimation(cask, 3);
+  Actor_SetAnimationSpeed(cask, 0);
   return 0;
 }
 
@@ -508,7 +525,7 @@ s32 GaiaRockInside_SusaThrowsCask(void) {
   object = Actor_Get(ACTOR_CASK);
   Actor_StartScript(object, (s32)gGaiaRockInside_CaskThrownScript);
   object->x.fixed = toFIXED(472);
-  Actor_SetAnimationSpeed(object, 0x10);
+  Actor_SetAnimationSpeed(object, 16);
   Actor_SetAttachedEffect(ACTOR_SUSA,
                           ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   return 0;
@@ -516,11 +533,11 @@ s32 GaiaRockInside_SusaThrowsCask(void) {
 
 /// At the mouth the cask tips, pours and rights itself again.
 s32 GaiaRockInside_CaskEmpties(void) {
-  s32 t0;
+  struct Actor *cask;
 
-  t0 = ((s32)Actor_Get(ACTOR_CASK));
-  Actor_StartScript(t0, (s32)gGaiaRockInside_CaskEmptiesScript);
-  Actor_SetAnimationSpeed(t0, 0);
+  cask = Actor_Get(ACTOR_CASK);
+  Actor_StartScript(cask, (s32)gGaiaRockInside_CaskEmptiesScript);
+  Actor_SetAnimationSpeed(cask, 0);
   Actor_SetAttachedEffect(ACTOR_SUSA,
                           ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   return 0;
@@ -653,6 +670,7 @@ void GaiaRockInside_PulseSidewaysArrow(struct Actor *object) {
   gGaiaRockInside_ArrowFrame++;
 }
 
+/// As GaiaRockInside_PulseSidewaysArrow, for an arrow pointing up or down.
 void GaiaRockInside_PulseUpDownArrow(struct Actor *object) {
   s32 value = 0;
 
@@ -667,13 +685,15 @@ void GaiaRockInside_PulseUpDownArrow(struct Actor *object) {
   gGaiaRockInside_ArrowFrame++;
 }
 
+/// Growth on the plant of a maze step: it grows into an arrow pointing the way
+/// on, and stays one for this visit.
 void GaiaRockInside_PlantPointsTheWay(s32 unused, u32 id) {
   struct Actor *object = Actor_Get(id);
   u32 direction;
   s32 *state;
 
   direction = GaiaRockInside_GetMazeWayOn();
-  state = (s32 *)(gInventorySnapshot + 0x288);
+  state = &gPath->current;
   object->collisionFlags = 0;
   Actor_SelectAnimation(object, ((direction & 0xc000) >> 14) + 2);
   if (direction & 0x4000)
@@ -681,7 +701,7 @@ void GaiaRockInside_PlantPointsTheWay(s32 unused, u32 id) {
   else
     object->update = (void (*)(void))GaiaRockInside_PulseSidewaysArrow;
   object->collisionFlags = 1;
-  Event_SetFlag(*state + 0xa50);
+  Event_SetFlag(FLAG_MAZE_PLANT_POINTED(*state));
   Event_SetFlag(FLAG_SCENE_TEMP_00);
   System_Wait(20);
 }
@@ -728,10 +748,14 @@ void GaiaRockInside_CycloneClearsHallBushes(void) {
 
 static __inline__ s32 GameFlag_Test_(s32 flag) { return GameFlag_Get(flag); }
 
-static __inline__ void GaiaRockInside_MadPlantLeaps(s32 a, s32 b, s32 c) {
-  MadPlant_LeapAtLeader(a, b, c);
+/// MadPlant_LeapAtLeader, called through this inline as the ROM's call
+/// compiles.
+static __inline__ void GaiaRockInside_MadPlantLeaps(s32 sprite, s32 x, s32 z) {
+  MadPlant_LeapAtLeader(sprite, x, z);
 }
 
+/// Cyclone on the bushes by the platforms: they blow away, and the first time
+/// the platforms start to sway.
 void GaiaRockInside_CycloneStartsPlatforms(void) {
   GaiaRockInside_CopyTouchedCells(16, 25, 0, 5, 5, 40, 8);
   if (GameFlag_Test_(FLAG_PLATFORMS_SWAYING) == 0) {
@@ -740,6 +764,8 @@ void GaiaRockInside_CycloneStartsPlatforms(void) {
   }
 }
 
+/// Cyclone on the bushes hiding a Mad Plant: they blow away, and until it is
+/// beaten the plant leaps out to fight.
 void GaiaRockInside_CycloneMadPlant(void) {
   GaiaRockInside_CopyTouchedCells(18, 17, 0, 3, 3, 31, 0);
   if (Event_GetFlag(FLAG_MAD_PLANT(2)) == 0) {
@@ -750,16 +776,20 @@ void GaiaRockInside_CycloneMadPlant(void) {
   }
 }
 
+/// Cyclone on the bushes by the platforms blows them away.
 void GaiaRockInside_ClearPlatformsBushes(void) {
   GaiaRockInside_CopyTouchedCells(19, 24, 0, 4, 3, 31, 4);
 }
 
+/// Cyclone on the smaller bushes by the platforms blows them away.
 void GaiaRockInside_ClearPlatformsSmallBushes(void) {
   GaiaRockInside_CopyTouchedCells(18, 17, 0, 3, 3, 31, 0);
 }
 
 extern struct CellPoint gGaiaRockInside_CobwebCells[12];
 
+/// Cyclone on the cobweb: once it is torn, the altar it held shakes and drops,
+/// the leader steps back from under it, and the party goes on below.
 void GaiaRockInside_CycloneClearsCobweb(void) {
   struct Actor *guard;
   struct Actor *leader;
@@ -775,8 +805,8 @@ void GaiaRockInside_CycloneClearsCobweb(void) {
   count = 0;
   for (i = 0; i <= 11; i++) {
     if (MapGrid_GetCellBehaviorAt(
-            2, gGaiaRockInside_CobwebCells[i].position[0] << 20,
-            gGaiaRockInside_CobwebCells[i].position[1] << 20) == 0)
+            2, FIELD_CELL_ORIGIN(gGaiaRockInside_CobwebCells[i].position[0]),
+            FIELD_CELL_ORIGIN(gGaiaRockInside_CobwebCells[i].position[1])) == 0)
       count++;
   }
   if (count <= 0)
@@ -810,7 +840,7 @@ void GaiaRockInside_CycloneClearsCobweb(void) {
   OverlayObject_PrepareObject(toFIXED(724), 0, toFIXED(468), SPRITE_CRATE);
   OverlayObject_PrepareObject(toFIXED(724), 0, toFIXED(490), SPRITE_CRATE);
   Event_PlaySound(SE_DUST_PUFF);
-  guard->motionFlags = 3;
+  guard->motionFlags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
   ((struct FieldSprite *)guard->sprite)->priority = 3;
   FieldEvent_Wait(10);
   Actor_SetPosition(ACTOR_FALLING_ALTAR, 0, 0);
@@ -819,6 +849,7 @@ void GaiaRockInside_CycloneClearsCobweb(void) {
   FieldEvent_SetExitRequest(9);
 }
 
+/// Walking into Susa: "Move out of the way there."
 void GaiaRockInside_SusaSaysMoveAside(void) {
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
@@ -828,6 +859,8 @@ void GaiaRockInside_SusaSaysMoveAside(void) {
   Event_End();
 }
 
+/// Stops Susa and the cask he is handling where they are, keeping Susa's actor,
+/// place and animation to be given back after a talk.
 void GaiaRockInside_SaveSusa(void) {
   struct Actor *walker = Actor_Get(ACTOR_CASK);
   struct Actor *object = Actor_Get(ACTOR_SUSA);
@@ -863,6 +896,8 @@ void GaiaRockInside_SaveSusa(void) {
   }
 }
 
+/// After a talk, Susa walks back to where GaiaRockInside_SaveSusa found him and
+/// takes up his animation, and the cask goes on.
 void GaiaRockInside_RestoreSusa(void) {
   struct Actor *walker = Actor_Get(ACTOR_CASK);
   struct Actor *object = Actor_Get(ACTOR_SUSA);
@@ -976,14 +1011,16 @@ void GaiaRockInside_TalkToSusa(void) {
   Event_End();
 }
 
+/// Mind Read on Susa: what he thinks of the party once they hold the Dancing
+/// Idol, or otherwise of the Serpent and his casks.
 void GaiaRockInside_ReadSusasMind(void) {
   struct Actor *object;
-  s32 t2;
+  s32 holder;
 
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
-  t2 = FieldPartyInventory_FindMember(ITEM_DANCING_IDOL);
-  if (t2 != -1) {
+  holder = FieldPartyInventory_FindMember(ITEM_DANCING_IDOL);
+  if (holder != -1) {
     FieldEvent_SetMessageId((s32)MsgGaiaRockInsideWhoDoTheyThinkThey);
     // "Who do they think they are? I'm the only one who can save Kushinada."
     Event_ShowMessage(ACTOR_SUSA, 0);
@@ -1003,19 +1040,21 @@ void GaiaRockInside_ReadSusasMind(void) {
 
 extern u32 gGaiaRockInside_SparkScript[];
 
+/// Leaves a small spark where an orbiting one is, released after 6 frames: the
+/// orbit's trail.
 void GaiaRockInside_SpawnSpark(struct Orbiter *source) {
-  struct Actor *t0 =
+  struct Actor *spark =
       FieldActor_Create(SPRITE_PARTICLE, source->x, source->y, source->z);
 
-  t0->scaleY = FIXED_ONE * 2 / 5;
-  t0->scaleX = FIXED_ONE * 2 / 5;
-  t0->motionFlags = 0;
-  FieldActor_SetSpriteColor(t0, 2);
-  Scene_SetActorSpritePriority(t0, 1);
-  Actor_SelectAnimation(t0, 1);
-  Actor_SetSpriteFlags(t0, 0);
-  Actor_SetBlendMode(t0, 1);
-  Actor_StartScript(t0, (s32)gGaiaRockInside_SparkScript);
+  spark->scaleY = FIXED_ONE * 2 / 5;
+  spark->scaleX = FIXED_ONE * 2 / 5;
+  spark->motionFlags = 0;
+  FieldActor_SetSpriteColor(spark, 2);
+  Scene_SetActorSpritePriority(spark, 1);
+  Actor_SelectAnimation(spark, 1);
+  Actor_SetSpriteFlags(spark, 0);
+  Actor_SetBlendMode(spark, 1);
+  Actor_StartScript(spark, (s32)gGaiaRockInside_SparkScript);
 }
 
 /// Turns an orbiting object by half its speed and puts it out from its anchor,
@@ -1075,6 +1114,8 @@ extern s32 gGaiaRockInside_FallingSparkScript[];
 extern s32 gGaiaRockInside_TabletSettleScript[];
 extern s32 gGaiaRockInside_FelixSettleScript[];
 
+/// Felix touches the slate in the lair and learns Sand: he and the slate rise
+/// among circling sparks, then settle.
 void GaiaRockInside_FelixLearnsSand(s32 idA, s32 idB) {
   struct Actor *a = Actor_GetById(idA);
   struct Actor *b = Actor_GetById(idB);
@@ -1286,6 +1327,8 @@ void GaiaRockInside_ReadSandTablet(void) {
   Event_End();
 }
 
+/// The dust's update: it moves by its velocity, slowing a little across the
+/// ground each frame, and grows and spins.
 void Effect_AdvanceMotionLocal(union FieldObject *object) {
   struct FieldEffect *effect = &object->effect;
   s32 velocityX;
@@ -1313,6 +1356,8 @@ void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
                        s32 velocityZ, u32 flags,
                        const struct EffectOptions *options);
 
+/// A ring of dust spreads from the slate's place, one puff every eighth of a
+/// turn.
 void GaiaRockInside_RingOfDust(void) {
   FIXED velocity[3];
   struct EffectOptions options;
@@ -1392,12 +1437,12 @@ void GaiaRockInside_RaiseSandTablet(void) {
   Event_End();
 }
 
+#include "text/msg_ids.h"
+
 /// Examining the Serpent: once it is slain, it only looks almost alive;
 /// otherwise the battle starts, as hard as the streams of Dragonsbane still
 /// closed make it. Winning comes back by entrance 10; losing by entrance 11, or
 /// by 12 when the party carries the doll and opened no stream.
-#include "text/msg_ids.h"
-
 void GaiaRockInside_ChallengeSerpent(void) {
   s32 count;
 
@@ -1431,20 +1476,23 @@ void Leader_SetLayerByte(void) {
   Actor_Get(gMainRoutineWork.leaderActorId)->layer = 2;
 }
 
+/// Puts the leader back on map layer 0 as Sand ends.
 void GaiaRockInside_EndSand(void) {
   Actor_Get(gMainRoutineWork.leaderActorId)->layer = 0;
 }
 
+/// The Cloud Brand's treasure spot is raised to where the party can reach it,
+/// and its chest is opened without the message of checking it.
 void GaiaRockInside_FindCloudBrand(void) {
   struct Actor *object;
 
-  object = Actor_Get(66);
+  object = Actor_Get(FIELD_TREASURE_ACTOR + 2);
   object->x.fixed = toFIXED(552);
   object->z.fixed = toFIXED(296);
-  object->y.fixed = -1966080;
-  object->groundHeight = -2097152;
+  object->y.fixed = toFIXED(-30);
+  object->groundHeight = toFIXED(-32);
   Event_ClearFlag(FLAG_NOTHING_HAPPENS);
-  Scene_TalkToActor(4162);
+  Scene_TalkToActor(TALK_WITHOUT_CHECK_MESSAGE | (FIELD_TREASURE_ACTOR + 2));
 }
 
 /// Examines the altar.
@@ -1469,6 +1517,7 @@ void GaiaRockInside_CheckAltar(void) {
 #include "text/msg_ids.h"
 void Actor_MoveToObject(s32 id, s32 target);
 
+/// Placing the doll on the first altar: its two faces stir.
 void GaiaRockInside_PlaceDollOnFirstAltar(void) {
   struct Actor *westFace = Actor_Get(ACTOR_FIRST_ALTAR_WEST_FACE);
   struct Actor *eastFace = Actor_Get(ACTOR_FIRST_ALTAR_EAST_FACE);
@@ -1611,8 +1660,8 @@ void GaiaRockInside_PlaceDollOnWestAltar(void) {
     leader = Actor_GetById(gMainRoutineWork.leaderActorId);
     if (leader != NULL)
       Actor_SetDestinationById(ACTOR_TWIN_ALTARS_DOLL,
-                               *(s16 *)((u8 *)leader + 10),
-                               *(s16 *)((u8 *)leader + 18));
+                               leader->x.part[0].integer,
+                               leader->z.part[0].integer);
     partner->velocityY = toFIXED(6);
     Actor_WaitForMoveById(ACTOR_TWIN_ALTARS_DOLL);
     Actor_SetPosition(ACTOR_TWIN_ALTARS_DOLL, 0, 0);
@@ -1636,8 +1685,8 @@ void GaiaRockInside_PlaceDollOnWestAltar(void) {
     leader = Actor_GetById(gMainRoutineWork.leaderActorId);
     if (leader != NULL)
       Actor_SetDestinationById(ACTOR_TWIN_ALTARS_DOLL,
-                               *(s16 *)((u8 *)leader + 10),
-                               *(s16 *)((u8 *)leader + 18));
+                               leader->x.part[0].integer,
+                               leader->z.part[0].integer);
     partner->velocityY = toFIXED(6);
     Actor_WaitForMoveById(ACTOR_TWIN_ALTARS_DOLL);
     Actor_SetPosition(ACTOR_TWIN_ALTARS_DOLL, 0, 0);
@@ -1645,6 +1694,8 @@ void GaiaRockInside_PlaceDollOnWestAltar(void) {
   }
 }
 
+/// The doll placed on the east altar, as on the west one
+/// (GaiaRockInside_PlaceDollOnWestAltar).
 void GaiaRockInside_PlaceDollOnEastAltar(void) {
   struct Actor *object;
   struct Actor *partner;
@@ -1702,8 +1753,8 @@ void GaiaRockInside_PlaceDollOnEastAltar(void) {
     leader = Actor_GetById(gMainRoutineWork.leaderActorId);
     if (leader != NULL)
       Actor_SetDestinationById(ACTOR_TWIN_ALTARS_DOLL,
-                               *(s16 *)((u8 *)leader + 10),
-                               *(s16 *)((u8 *)leader + 18));
+                               leader->x.part[0].integer,
+                               leader->z.part[0].integer);
     partner->velocityY = toFIXED(6);
     Actor_WaitForMoveById(ACTOR_TWIN_ALTARS_DOLL);
     Actor_SetPosition(ACTOR_TWIN_ALTARS_DOLL, 0, 0);
@@ -1727,8 +1778,8 @@ void GaiaRockInside_PlaceDollOnEastAltar(void) {
     leader = Actor_GetById(gMainRoutineWork.leaderActorId);
     if (leader != NULL)
       Actor_SetDestinationById(ACTOR_TWIN_ALTARS_DOLL,
-                               *(s16 *)((u8 *)leader + 10),
-                               *(s16 *)((u8 *)leader + 18));
+                               leader->x.part[0].integer,
+                               leader->z.part[0].integer);
     partner->velocityY = toFIXED(6);
     Actor_WaitForMoveById(ACTOR_TWIN_ALTARS_DOLL);
     Actor_SetPosition(ACTOR_TWIN_ALTARS_DOLL, 0, 0);
@@ -1736,6 +1787,8 @@ void GaiaRockInside_PlaceDollOnEastAltar(void) {
   }
 }
 
+/// The doll placed on the altar room's altar, as on the west one
+/// (GaiaRockInside_PlaceDollOnWestAltar).
 void GaiaRockInside_PlaceDollOnAltarAltar(void) {
   struct Actor *object;
   struct Actor *partner;
@@ -1792,8 +1845,8 @@ void GaiaRockInside_PlaceDollOnAltarAltar(void) {
     Event_Wait(30);
     leader = Actor_GetById(gMainRoutineWork.leaderActorId);
     if (leader != NULL)
-      Actor_SetDestinationById(ACTOR_ALTAR_DOLL, *(s16 *)((u8 *)leader + 10),
-                               *(s16 *)((u8 *)leader + 18));
+      Actor_SetDestinationById(ACTOR_ALTAR_DOLL, leader->x.part[0].integer,
+                               leader->z.part[0].integer);
     partner->velocityY = toFIXED(6);
     Actor_WaitForMoveById(ACTOR_ALTAR_DOLL);
     Actor_SetPosition(ACTOR_ALTAR_DOLL, 0, 0);
@@ -1816,8 +1869,8 @@ void GaiaRockInside_PlaceDollOnAltarAltar(void) {
     Event_Wait(30);
     leader = Actor_GetById(gMainRoutineWork.leaderActorId);
     if (leader != NULL)
-      Actor_SetDestinationById(ACTOR_ALTAR_DOLL, *(s16 *)((u8 *)leader + 10),
-                               *(s16 *)((u8 *)leader + 18));
+      Actor_SetDestinationById(ACTOR_ALTAR_DOLL, leader->x.part[0].integer,
+                               leader->z.part[0].integer);
     partner->velocityY = toFIXED(6);
     Actor_WaitForMoveById(ACTOR_ALTAR_DOLL);
     Actor_SetPosition(ACTOR_ALTAR_DOLL, 0, 0);
@@ -1855,14 +1908,17 @@ s32 GaiaRockInside_RecordRockSpots(void) {
   }
 }
 
+/// Stepping on the first statue's spot raises it under the leader.
 void GaiaRockInside_StepOnFirstStatueSpot(void) {
   GaiaRockInside_StatueRisesUnderLeader(ACTOR_STATUE_A, FLAG_STATUE_A_RISEN);
 }
 
+/// Stepping on the second statue's spot raises it under the leader.
 void GaiaRockInside_StepOnSecondStatueSpot(void) {
   GaiaRockInside_StatueRisesUnderLeader(ACTOR_STATUE_B, FLAG_STATUE_B_RISEN);
 }
 
+/// Stepping on the third statue's spot raises it under the leader.
 void GaiaRockInside_StepOnThirdStatueSpot(void) {
   GaiaRockInside_StatueRisesUnderLeader(ACTOR_STATUE_C, FLAG_STATUE_C_RISEN);
 }
@@ -1892,25 +1948,30 @@ const struct Trigger *Scene_GetTriggers(void) {
   return gGaiaRockInside_Triggers;
 }
 
-void GaiaRockInside_SetPlatformPose(s32 a0, s32 a1) {
-  u8 *t2;
-  struct Actor *t0 = Actor_GetById(a0);
+/// Turns a stone face toward its altar and lays its glowing eyes over its
+/// sprite, drawn in front.
+void GaiaRockInside_TurnFaceToAltar(s32 faceId, s32 altarId) {
+  struct SpriteAnimation *eyes;
+  struct Actor *face = Actor_GetById(faceId);
 
-  Actor_FaceActorById(a0, a1, 0);
-  if (t0 != NULL) {
-    t2 = (u8 *)Sprite_AddAnimation(t0->sprite, 0x185);
-    t2[5] = 0;
-    t2[6] = 0;
-    Actor_SelectAnimation(t0, 0);
-    Actor_SelectAnimation(t0, 4);
+  Actor_FaceActorById(faceId, altarId, 0);
+  if (face != NULL) {
+    eyes = (struct SpriteAnimation *)Sprite_AddAnimation(face->sprite,
+                                                         SPRITE_GLOWING_EYES);
+    eyes->colorMode = SPRITE_COLOR_NORMAL;
+    eyes->priority = 0;
+    Actor_SelectAnimation(face, 0);
+    Actor_SelectAnimation(face, 4);
   }
 }
 
+/// Readies a platform: one others stand on, 16 pixels up, its home its place
+/// now, on animation mode.
 void GaiaRockInside_SetPlatformMode(u32 id, s8 mode) {
   struct Actor *object = Actor_Get(id);
 
   object->motionFlags = 0;
-  object->priorityFlags |= 0x80;
+  object->priorityFlags |= ACTOR_PRIORITY_PLATFORM;
   object->acceleration = toFIXED(1) / 16;
   object->speedLimit = toFIXED(1);
   object->y.fixed = toFIXED(16);
@@ -1919,6 +1980,7 @@ void GaiaRockInside_SetPlatformMode(u32 id, s8 mode) {
   Actor_SetAnimation(id, mode);
 }
 
+/// Sends a platform toward its home moved dx and dz cells.
 void GaiaRockInside_PlacePlatform(s32 id, s32 dx, s32 dz) {
   struct Actor *platform = Actor_GetById(id);
 
@@ -1927,12 +1989,11 @@ void GaiaRockInside_PlacePlatform(s32 id, s32 dx, s32 dz) {
                              ((dz << 4) + platform->userValue) << 16);
 }
 
+extern struct SwayState gSceneState;
+
 /// The platforms' frame task: they all stop while the menu is open or
 /// Psynergy is cast; otherwise, at frame 60 of every 240 each leans out one way
 /// and at frame 180 they come back.
-
-extern struct SwayState gSceneState;
-
 void GaiaRockInside_SwayPlatforms(void) {
   // Pointers that stay on one global for their whole life.
   struct SwayState *state = &gSceneState;
@@ -1955,31 +2016,30 @@ void GaiaRockInside_SwayPlatforms(void) {
     return;
   if (*pending == 0)
     return;
-step:
-  switch (*frame) {
-  case 60:
-    GaiaRockInside_PlacePlatform(ACTOR_FIRST_PLATFORM, 0, 3);
-    GaiaRockInside_PlacePlatform(ACTOR_FIRST_PLATFORM + 1, 3, 0);
-    GaiaRockInside_PlacePlatform(ACTOR_FIRST_PLATFORM + 2, 0, 3);
-    GaiaRockInside_PlacePlatform(ACTOR_FIRST_PLATFORM + 3, 0, 3);
-    GaiaRockInside_PlacePlatform(ACTOR_FIRST_PLATFORM + 4, 0, -3);
-    GaiaRockInside_PlacePlatform(ACTOR_FIRST_PLATFORM + 5, 0, -3);
-    GaiaRockInside_PlacePlatform(ACTOR_FIRST_PLATFORM + 6, 0, 3);
-    GaiaRockInside_PlacePlatform(ACTOR_FIRST_PLATFORM + 7, 0, -3);
-    GaiaRockInside_PlacePlatform(ACTOR_LAST_PLATFORM, 3, 0);
-    break;
-  case 180:
-    id = ACTOR_FIRST_PLATFORM;
-    do {
-      GaiaRockInside_PlacePlatform(id, 0, 0);
-      id++;
-    } while (id <= ACTOR_LAST_PLATFORM);
-    break;
-  }
-  if (++*frame == 240)
-    *frame = 0;
-  if (--*pending != 0)
-    goto step;
+  do {
+    switch (*frame) {
+    case 60:
+      GaiaRockInside_PlacePlatform(ACTOR_FIRST_PLATFORM, 0, 3);
+      GaiaRockInside_PlacePlatform(ACTOR_FIRST_PLATFORM + 1, 3, 0);
+      GaiaRockInside_PlacePlatform(ACTOR_FIRST_PLATFORM + 2, 0, 3);
+      GaiaRockInside_PlacePlatform(ACTOR_FIRST_PLATFORM + 3, 0, 3);
+      GaiaRockInside_PlacePlatform(ACTOR_FIRST_PLATFORM + 4, 0, -3);
+      GaiaRockInside_PlacePlatform(ACTOR_FIRST_PLATFORM + 5, 0, -3);
+      GaiaRockInside_PlacePlatform(ACTOR_FIRST_PLATFORM + 6, 0, 3);
+      GaiaRockInside_PlacePlatform(ACTOR_FIRST_PLATFORM + 7, 0, -3);
+      GaiaRockInside_PlacePlatform(ACTOR_LAST_PLATFORM, 3, 0);
+      break;
+    case 180:
+      id = ACTOR_FIRST_PLATFORM;
+      do {
+        GaiaRockInside_PlacePlatform(id, 0, 0);
+        id++;
+      } while (id <= ACTOR_LAST_PLATFORM);
+      break;
+    }
+    if (++*frame == 240)
+      *frame = 0;
+  } while (--*pending != 0);
 }
 
 extern s16 gGaiaRockInside_PlatformPlaces[][2];
@@ -1996,7 +2056,8 @@ void GaiaRockInside_StartPlatforms(u8 mode) {
 
     *frame = 0;
     *pending = 0;
-    Actor_Get(FieldParty_GetLeaderActor())->priorityFlags |= 0x40;
+    Actor_Get(FieldParty_GetLeaderActor())->priorityFlags |=
+        ACTOR_PRIORITY_WALKS_ON_PLATFORMS;
     for (i = 0, id = ACTOR_FIRST_PLATFORM; id <= ACTOR_LAST_PLATFORM;
          i++, id++) {
       Actor_SetPositionFX(id, gGaiaRockInside_PlatformPlaces[i][0] << 19,
@@ -2092,7 +2153,7 @@ extern s32 gGaiaRockInside_SusaWalksOffScript[];
 
 struct Actor *OverlayObject_PrepareObject(s32 x, s32 y, s32 z, s32 kind);
 s32 __modsi3(s32 numerator, s32 denominator);
-void GaiaRockInside_SetPlatformPose();
+void GaiaRockInside_TurnFaceToAltar();
 void GaiaRockInside_RingOfDust(void);
 void GaiaRockInside_PlaceStatue(s32 id, s32 x, s32 y, s32 z);
 void GaiaRockInside_StartWallTriggers(void);
@@ -2233,9 +2294,9 @@ s32 Scene_Initialize(void) {
         Event_Start();
         Event_ResolvePendingActions(0);
         Actor_SetPosition(ACTOR_CASK, 0, 0);
-        Actor_SetMovementTypeById(ACTOR_CASK, 1);
+        Actor_SetMovementTypeById(ACTOR_CASK, MOVEMENT_TYPE_STAND);
         Actor_SetPosition(ACTOR_SUSA, 456, 360);
-        Actor_SetMovementTypeById(ACTOR_SUSA, 1);
+        Actor_SetMovementTypeById(ACTOR_SUSA, MOVEMENT_TYPE_STAND);
         Actor_FaceDirection(ACTOR_SUSA, FACING_NORTHEAST, 0);
         Actor_SetAnimationById(ACTOR_SERPENT, 2);
         Event_StartScreenTransition();
@@ -2355,7 +2416,7 @@ s32 Scene_Initialize(void) {
           if ((i & 1) == 0)
             dz = 8;
           shards[i] = (struct Actor *)Import_ActorCreate(
-              403, toFIXED(456) + INTtoFIXED(dx), -toFIXED(32),
+              SPRITE_FLAME_PUFF, toFIXED(456) + INTtoFIXED(dx), -toFIXED(32),
               toFIXED(358) + INTtoFIXED(dz));
           Actor_SelectAnimation(shards[i], 2);
           Actor_SetSpriteFlags(shards[i], 0);
@@ -2630,9 +2691,9 @@ s32 Scene_Initialize(void) {
     object = Actor_Get(ACTOR_FIRST_ALTAR_EAST_FACE);
     object->priorityFlags |= mask;
     Actor_SetSpritePriorityDirect(object, 3);
-    GaiaRockInside_SetPlatformPose(ACTOR_FIRST_ALTAR_WEST_FACE,
+    GaiaRockInside_TurnFaceToAltar(ACTOR_FIRST_ALTAR_WEST_FACE,
                                    ACTOR_FIRST_ALTAR);
-    GaiaRockInside_SetPlatformPose(ACTOR_FIRST_ALTAR_EAST_FACE,
+    GaiaRockInside_TurnFaceToAltar(ACTOR_FIRST_ALTAR_EAST_FACE,
                                    ACTOR_FIRST_ALTAR);
     if (Test(FLAG_FIRST_ALTAR_FACES_MOVED)) {
       Actor_SetPosition(ACTOR_FIRST_ALTAR_WEST_FACE, 440, 688);
@@ -2662,8 +2723,8 @@ s32 Scene_Initialize(void) {
 
     object = Actor_GetById(ACTOR_WEST_ALTAR);
     Actor_SetSpritePriorityDirect(object, 3);
-    GaiaRockInside_SetPlatformPose(ACTOR_WEST_FACE, ACTOR_WEST_ALTAR);
-    GaiaRockInside_SetPlatformPose(ACTOR_EAST_FACE, ACTOR_EAST_ALTAR);
+    GaiaRockInside_TurnFaceToAltar(ACTOR_WEST_FACE, ACTOR_WEST_ALTAR);
+    GaiaRockInside_TurnFaceToAltar(ACTOR_EAST_FACE, ACTOR_EAST_ALTAR);
     if (!Test(FLAG_ALTAR_ROOM_STREAM_OPEN))
       MapGrid_CopyCells(25, 77, 1, 15, 26, 77);
     if (Test(FLAG_WEST_ALTAR_STREAM_OPEN)) {
@@ -2711,7 +2772,7 @@ s32 Scene_Initialize(void) {
         Actor_SetSpriteFlags(other, 0);
         Actor_StartScript(other, gGaiaRockInside_KushinadaScript);
         Actor_SelectAnimation(other, 1);
-        Actor_SetSpriteColorMode(other, 14);
+        Actor_SetSpriteColorMode(other, SPRITE_COLOR_BLACK);
         ((u8 *)other->sprite)[9] |= 12;
         other->scaleX = FIXED_ONE * 6 / 5;
         other->scaleY = FIXED_ONE * 6 / 5;
@@ -2735,7 +2796,7 @@ s32 Scene_Initialize(void) {
 #endif
   } else if (work->next == SCENE_GAIA_ROCK_INSIDE_ALTAR) {
     HangingVine_Place(ACTOR_HANGING_VINE, 1);
-    GaiaRockInside_SetPlatformPose(ACTOR_ALTAR_FACE, ACTOR_ALTAR);
+    GaiaRockInside_TurnFaceToAltar(ACTOR_ALTAR_FACE, ACTOR_ALTAR);
     if (work->entrance == 1 || work->entrance == 3 || work->entrance == 5)
       GaiaRockInside_StartWallTriggers();
     if (Test(FLAG_STATUE_A_RISEN))
@@ -2773,19 +2834,23 @@ end:
   return 0;
 }
 
-void GaiaRockInside_ClearMazeLayer(s32 a0) {
-  GaiaRockInside_SetMazeLayer(1, a0);
+/// Clears map layer 1 of every cell but those of collision code keep.
+void GaiaRockInside_ClearMazeLayer(s32 keep) {
+  GaiaRockInside_SetMazeLayer(1, keep);
 }
 
 struct Unit *Unit_Get(u32 unitId);
 void BlendScript_Start(u16 *script);
 
+/// Prepares the map: in the maze, lays the path from the leader's name and
+/// draws the step the party stands on, or readies the lair's blend; in the
+/// altar rooms, clears the overhead layer of all but the entrance's part.
 s32 Scene_PrepareMap(void) {
   if (gMainRoutineWork.next == SCENE_GAIA_ROCK_INSIDE_MAZE) {
     u8 *map = (u8 *)Ram_HeapSlots->mapGrid;
 
     if (gMainRoutineWork.entrance <= 4) {
-      u8 *unit;
+      struct Unit *unit;
       s32 total;
       s32 *stage;
       s32 i;
@@ -2794,11 +2859,11 @@ s32 Scene_PrepareMap(void) {
       unit = Unit_Get(gMainRoutineWork.leaderActorId);
 
       for (i = 0; i <= 13; i++)
-        total += unit[i];
+        total += unit->name[i];
       GaiaRockInside_LayMaze(total);
       Actor_GetById(Party_GetLeaderActor())->priorityFlags |=
           ACTOR_PRIORITY_IGNORES_RISES;
-      map[261] = 1;
+      ((struct MapWork *)map)->enabled[1] = 1;
       {
         volatile u16 control = REG_BG2CNT & ~3;
         // Once-only block: keeps the sky cell window's store after its read.
@@ -2808,12 +2873,12 @@ s32 Scene_PrepareMap(void) {
         REG_BG2CNT = control | 1;
       }
       GaiaRockInside_DrawMazeRoom();
-      stage = (s32 *)(gInventorySnapshot + 0x288);
+      stage = &gPath->current;
       if (*stage == 3 && !GameFlag_Get(FLAG_AREA_TEMP_F6))
         Actor_SetPosition(FIELD_TREASURE_ACTOR, 104, 88);
       if (*stage == 9)
-        Actor_SetPosition(65, 104, 72);
-      if (GameFlag_Get(*stage + 0xa50)) {
+        Actor_SetPosition(FIELD_TREASURE_ACTOR + 1, 104, 72);
+      if (GameFlag_Get(FLAG_MAZE_PLANT_POINTED(*stage))) {
         struct Actor *plant = Actor_GetById(ACTOR_ARROW_PLANT);
         u32 angle = GaiaRockInside_GetMazeWayOn();
 
@@ -2828,7 +2893,7 @@ s32 Scene_PrepareMap(void) {
     } else if (gMainRoutineWork.entrance > 8) {
       struct MapLayer *layer;
 
-      *(s32 *)(gInventorySnapshot + 0x288) = 1;
+      gPath->current = 1;
       layer = &((struct MapWork *)map)->layers[2];
       layer->maskX = 127;
       layer->speedX = 0;
@@ -2894,18 +2959,20 @@ s32 Scene_PrepareMap(void) {
 
 #define GRID_WIDTH 28
 
+/// The grid the maze's path is laid on (GaiaRockInside_LayMaze).
 typedef struct {
   PathCell cells[GRID_WIDTH * GRID_WIDTH];
 } PathGrid;
 
-#define gPath ((Path *)(gInventorySnapshot + 0x288))
-
+/// Heap_AllocEwram, called through this inline as the ROM's call compiles.
 static inline void *BumpAllocEwram(s32 size) { return Heap_AllocEwram(size); }
 
 #define AT(x, y) grid->cells[(y) * GRID_WIDTH + (x)]
 #define AT_ADDRESS(x, y)                                                       \
   ((PathCell *)(((y) * GRID_WIDTH + (x)) * 4 + (s32)grid))
 
+/// Lays the maze's path of 14 steps from seed, once a visit, on a random walk
+/// over a 28 by 28 grid, and records each step's ways out.
 void GaiaRockInside_LayMaze(s32 seed) {
   PathGrid *grid;
   Path *path;
@@ -3106,21 +3173,23 @@ restart:
     y = cell->nextY;
   }
   steps[14].next[MAZE_NORTH] = MAZE_EXIT;
-  steps[1].next[MAZE_SOUTH] = 250;
+  steps[1].next[MAZE_SOUTH] = MAZE_BACK;
   path->current = 1;
   Heap_Release(grid);
   Event_SetFlag(FLAG_AREA_TEMP_F0);
   gRandomSeed = saved;
 }
 
+/// Leaving a maze step by a way: out of the maze, or on to the step it leads
+/// to (a dead end leads back to the first).
 void GaiaRockInside_TakeMazeExit(s32 direction) {
-  s32 *state = (s32 *)(gInventorySnapshot + 0x288);
+  s32 *state = &gPath->current;
   u8 *row = (u8 *)state + *state * 8;
   s32 next = row[((direction - 1) & 3) + 6];
 
   switch (next) {
-  case 250:
-  case 251:
+  case MAZE_BACK:
+  case MAZE_EXIT:
     FieldEvent_SetExitRequest(next);
     break;
   case 0:
@@ -3139,7 +3208,7 @@ extern s8 gGaiaRockInside_MazeOrigins[][2];
 /// MapGrid_CopyRawCells with the state's origin plus the layer's cell, a 15 by
 /// 10 size and the layer's cell plus one.
 void GaiaRockInside_DrawMazeRoom(void) {
-  s32 state = *(s32 *)(gInventorySnapshot + 0x288);
+  s32 state = gPath->current;
   s8 *origin = gGaiaRockInside_MazeOrigins[state];
   struct MapWork *map = Ram_HeapSlots->mapGrid;
 
@@ -3183,6 +3252,8 @@ s32 GaiaRockInside_GetMazeWayOn(void) {
   return -1;
 }
 
+/// Fills every cell of a map layer within the map's bounds with its first
+/// cell, but those of collision code 0 or keep.
 void GaiaRockInside_SetMazeLayer(s32 layer, s32 keep) {
   struct MapWork *map = Ram_HeapSlots->mapGrid;
   struct MapLayer *mapLayer = &map->layers[layer];
@@ -3199,15 +3270,18 @@ void GaiaRockInside_SetMazeLayer(s32 layer, s32 keep) {
     u32 *cell = &cells[z * 128];
 
     for (x = 0; x < width; x++) {
-      if (((u8 *)cell)[2] != 0 && ((u8 *)cell)[2] != keep)
+      if (((struct MapCell *)cell)->collisionCode != 0 &&
+          ((struct MapCell *)cell)->collisionCode != keep)
         *cell = fill;
       cell++;
     }
   }
 }
 
+/// Each frame while the leader is moved by the keys alone: the collision code
+/// of the wall cell he stands before, 1 to 230, is his step trigger.
 void GaiaRockInside_TriggerWallCell(void) {
-  if (gMainRoutineWork.movementMode == 2) {
+  if (gMainRoutineWork.movementMode == LEADER_MOVEMENT_KEYS) {
     struct FieldWork *event = Ram_HeapSlots->fieldWork;
     struct MapWork *map = Ram_HeapSlots->mapGrid;
     struct Actor *object = Actor_Get(gMainRoutineWork.leaderActorId);
@@ -3222,6 +3296,7 @@ void GaiaRockInside_TriggerWallCell(void) {
   }
 }
 
+/// Stands a statue on the cell at (x, y, z), its wall cell blocked.
 void GaiaRockInside_PlaceStatue(s32 id, s32 x, s32 y, s32 z) {
   struct Actor *object = Actor_Get(id);
   struct MapCell *cell = Ram_HeapSlots->mapGrid->layers[2].cells;
@@ -3232,15 +3307,17 @@ void GaiaRockInside_PlaceStatue(s32 id, s32 x, s32 y, s32 z) {
   cell->collisionCode = 255;
   object->x.fixed = (x & FIELD_CELL_MASK) + toFIXED(8);
   object->z.fixed = (z & FIELD_CELL_MASK) + toFIXED(8);
-  object->y.fixed = object->z.fixed - (row << 20);
+  object->y.fixed = object->z.fixed - FIELD_CELL_ORIGIN(row);
   object->motionFlags = 0;
-  object->priorityFlags |= 2;
+  object->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
   Actor_SetSpriteFlags(object, 0);
 }
 
 extern s32 gGaiaRockInside_StatueRiseScript[];
 extern u32 gGaiaRockInside_DustScript[];
 
+/// A statue rises under the leader in a burst of rocks, lifting him with it;
+/// he lands on top, and its flag is set.
 void GaiaRockInside_StatueRisesUnderLeader(s32 id, s32 flag) {
   struct Actor *leader = Actor_Get(gMainRoutineWork.leaderActorId);
   s32 gravity = leader->gravity;
@@ -3270,7 +3347,7 @@ void GaiaRockInside_StatueRisesUnderLeader(s32 id, s32 flag) {
       angle = Random16();
       speed = Random16();
       size = Random16();
-      scale = (size >> 1) + 0x2000;
+      scale = (size >> 1) + FIXED_ONE / 8;
       dust->velocityY = Iwram_MulFX(speed * 8, Trig_Cos(angle));
       dust->velocityX = Iwram_MulFX(speed * 8, Math_Sin(angle));
       dust->acceleration = 0;
@@ -3288,7 +3365,7 @@ void GaiaRockInside_StatueRisesUnderLeader(s32 id, s32 flag) {
   Actor_SelectAnimation(leader, 40);
   FieldEvent_Wait(40);
   Event_PlaySound(SE_DUST_PUFF);
-  leader->motionFlags = 3;
+  leader->motionFlags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
   leader->gravity = toFIXED(33) / 100;
   for (id = 0; id < 180; id++) {
     System_Wait(1);
@@ -3316,6 +3393,7 @@ void GaiaRockInside_StatueRisesUnderLeader(s32 id, s32 flag) {
   Event_SetFlag(flag);
 }
 
+/// Starts GaiaRockInside_TriggerWallCell each frame.
 void GaiaRockInside_StartWallTriggers(void) {
   Task_AddFrame((s32)GaiaRockInside_TriggerWallCell, TASK_PASS_VBLANK);
 }

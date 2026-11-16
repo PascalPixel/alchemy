@@ -312,9 +312,9 @@
 /// Daila's houses then take their later tables.
 #define FLAG_TAVI_RESCUED 0x873
 
-/// Set as Move pushes the small pillar on the Gondowan Cliffs into the water,
-/// where it makes a step.
-#define FLAG_GONDOWAN_CLIFFS_PILLAR_IN_WATER 0x884
+/// Set as Move sends the stump on the Gondowan Cliffs leaping into the stream,
+/// where it stands as a step.
+#define FLAG_GONDOWAN_CLIFFS_STUMP_IN_WATER 0x884
 /// Set as Whirlwind blows away the foliage before the cave of Kibombo
 /// warriors.
 #define FLAG_GONDOWAN_CLIFFS_FOLIAGE_BLOWN 0x885

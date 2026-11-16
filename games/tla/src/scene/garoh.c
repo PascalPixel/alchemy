@@ -141,6 +141,13 @@ enum GarohWerewolfActorId {
   ACTOR_FIRE_B
 };
 
+/// The werewolf's path's tightrope posts: Jenna, Sheba and Piers take their
+/// own numbers, so the posts follow the werewolf and Kraden.
+enum {
+  ACTOR_PATH_TIGHTROPE_POST_A = ACTOR_FIRST_PLACED + 2,
+  ACTOR_PATH_TIGHTROPE_POST_B
+};
+
 /// The stone pillars on the way up to the village (SceneId_GarohBlocks),
 /// numbering the rows of gGaroh_BlocksActorPlacements: Move or a push takes
 /// each onto the cell where it rises.
@@ -240,7 +247,8 @@ void Garoh_WaveHypnosSwordChestLayer(void) {
 extern u16 gGaroh_HypnosSwordChestDayColors[];
 extern u16 gGaroh_HypnosSwordChestNightColors[];
 
-/// Build BG palette 1 colors 8-15 from the table.
+/// Writes count colours from first on, from a table of red, green and blue
+/// halfwords, to the BG palette and the palette fade's source.
 #define DEFINE_GAROH_LOAD_PALETTE(name, components, first, count)              \
   void name(void) {                                                            \
     struct PaletteFade *buffers = Ram_HeapSlots->paletteFade;                  \
@@ -265,13 +273,15 @@ extern u16 gGaroh_HypnosSwordChestNightColors[];
       goto loop;                                                               \
   }
 
+/// By day the path's colours: BG palette 1's colours 8 to 15.
 DEFINE_GAROH_LOAD_PALETTE(Garoh_LoadHypnosSwordChestDayColors,
                           gGaroh_HypnosSwordChestDayColors, 24, 8)
 
-// Build BG palette 6 colors 1-9 from the table.
+/// By night the path's colours: BG palette 6's colours 1 to 9.
 DEFINE_GAROH_LOAD_PALETTE(Garoh_LoadHypnosSwordChestNightColors,
                           gGaroh_HypnosSwordChestNightColors, 97, 9)
 
+/// A script's call: clears the actor's sprite flags.
 s32 Garoh_ClearScriptedActorSpriteFlags(struct Actor *object) {
   Actor_SetSpriteFlags(object, 0);
   return 0;
@@ -612,6 +622,9 @@ void Garoh_HowlAtNight(void) {
 
 void Garoh_InitializeHypnosSwordChest(void);
 
+/// Sets up the room being entered: the cave's lamps and Maha once he has told
+/// the legend, the village by night or day, the werewolf's path, or the way
+/// up, which also makes the sanctum the place a defeat returns the party to.
 s32 Scene_Initialize(void) {
   struct FieldWork *work;
 
@@ -670,10 +683,10 @@ void Garoh_InitializeVillage(void) {
     Event_WaitTransitionFrames();
     PaletteFade_PackTarget();
     {
-      u8 *palette = (u8 *)Ram_HeapSlots->paletteFade;
+      struct PaletteFade *fade = Ram_HeapSlots->paletteFade;
 
-      *(volatile u16 *)&BG_PLTT_COLOR(1, 14) = 0x7fff;
-      *(u16 *)(palette + 60) = *(volatile u16 *)&BG_PLTT_COLOR(1, 14);
+      *(volatile u16 *)&BG_PLTT_COLOR(1, 14) = RGB_WHITE;
+      fade->palette[16 + 14] = *(volatile u16 *)&BG_PLTT_COLOR(1, 14);
     }
     PaletteFade_ApplyTarget(PALETTE_TINT_NONE, 1);
   } else {
@@ -684,7 +697,7 @@ void Garoh_InitializeVillage(void) {
     MapGrid_CopyCellsTo(76, 32, 89, 22, 1, 1);
     MapGrid_CopyCellsTo(75, 33, 72, 22, 1, 1);
   }
-  if (gMainRoutineWork.entrance == 12) {
+  if (gMainRoutineWork.entrance == GAROH_FROM_GAROH_WEREWOLF_CAVE) {
     struct FieldWork *work = Ram_HeapSlots->fieldWork;
 
     work->transition = SCENE_TRANSITION(TRANSITION_WINDOW, 9);
@@ -696,11 +709,12 @@ void Garoh_InitializeVillage(void) {
   }
 }
 
+/// The werewolf's path: the tightrope strung, and by night its colours and
+/// the rippling layer, by day the opened cells.
 void Garoh_InitializeHypnosSwordChest(void) {
-
   Task_AddFrame(Garoh_HowlAtNight, TASK_PASS_VBLANK);
   Tightrope_Initialize();
-  Tightrope_Place(0, 10, 11);
+  Tightrope_Place(0, ACTOR_PATH_TIGHTROPE_POST_A, ACTOR_PATH_TIGHTROPE_POST_B);
   if (Event_GetFlag(FLAG_GAROH_NIGHT)) {
     if (gMainRoutineWork.entrance == 12) {
       PaletteFade_ApplyTarget(PALETTE_TINT_CUSTOM | RGB(9, 6, 18), 1);
@@ -740,8 +754,10 @@ void Garoh_InitializeBlocks(void) {
   Event_WaitTransitionFrames();
 }
 
+/// Move lifts the pillar it is cast on.
 void Garoh_LiftPillar(void) { Actor_LiftTargetBlock(gGaroh_Pillars); }
 
+/// Move lifts the pillar it is cast on, from the cells a push reaches.
 void Garoh_LiftPushedPillar(void) { Actor_LiftTargetBlock(gGaroh_Pillars); }
 
 /// A block left on its cell rises with a whoosh and a ring of dust.
@@ -774,17 +790,22 @@ void Garoh_RaisePillar(s32 id, struct Actor *object) {
     }                                                                          \
   }
 
+/// The first pillar rises once it stands on its cell.
 DEFINE_GAROH_TRIGGER_AT_CELL(Garoh_RaiseFirstPillarOnCell, ACTOR_FIRST_PILLAR,
                              FLAG_FIRST_PILLAR_RAISED, 10, 29)
 
+/// The second pillar rises once it stands on its cell.
 DEFINE_GAROH_TRIGGER_AT_CELL(Garoh_RaiseSecondPillarOnCell, ACTOR_SECOND_PILLAR,
                              FLAG_SECOND_PILLAR_RAISED, 15, 28)
 
+/// The third pillar has no cell to rise on: its check reads the pillar and the
+/// rope's flag and does nothing.
 void Garoh_CheckThirdPillar(void) {
   Actor_Get(ACTOR_THIRD_PILLAR);
   Flag_IsSet(FLAG_ROPE_LASHED);
 }
 
+/// The fourth pillar rises once it stands on its cell.
 void Garoh_RaiseFourthPillarOnCell(void) {
   struct Actor *object = Actor_Get(ACTOR_FOURTH_PILLAR);
   s32 x = FIELD_CELL(object->x.fixed);
@@ -796,26 +817,31 @@ void Garoh_RaiseFourthPillarOnCell(void) {
   }
 }
 
+/// Move sets the first pillar down, and it rises if it is on its cell.
 void Garoh_PlaceFirstPillar(void) {
   Actor_PlaceMovedBlock();
   Garoh_RaiseFirstPillarOnCell();
 }
 
+/// Move sets the second pillar down, and it rises if it is on its cell.
 void Garoh_PlaceSecondPillar(void) {
   Actor_PlaceMovedBlock();
   Garoh_RaiseSecondPillarOnCell();
 }
 
+/// Move sets the third pillar down.
 void Garoh_PlaceThirdPillar(void) {
   Actor_PlaceMovedBlock();
   Garoh_CheckThirdPillar();
 }
 
+/// Move sets the fourth pillar down, and it rises if it is on its cell.
 void Garoh_PlaceFourthPillar(void) {
   Actor_PlaceMovedBlock();
   Garoh_RaiseFourthPillarOnCell();
 }
 
+/// A pushed pillar comes to rest: each pillar on its cell rises.
 void Garoh_PlacePushedPillar(void) {
   Actor_PlaceMovedBlock();
   Garoh_RaiseFirstPillarOnCell();
@@ -824,29 +850,35 @@ void Garoh_PlacePushedPillar(void) {
   Garoh_RaiseFourthPillarOnCell();
 }
 
+/// Reveal opens the crevice by the sanctuary.
 void Garoh_RevealSanctuaryCrevice(void) {
   MapGrid_CopyCellsTo(98, 8, 86, 8, 1, 2);
   MapGrid_CopyCellAttributes(34, 9, 1, 1, 22, 11);
 }
 
+/// Reveal opens the passage into the tunnels.
 void Garoh_RevealTunnelPassage(void) {
   MapGrid_CopyCellsTo(25, 47, 11, 33, 1, 3);
   MapGrid_CopyCellAttributes(25, 47, 1, 1, 11, 33);
 }
 
+/// Reveal opens the passage into the cave.
 void Garoh_RevealCavePassage(void) {
   MapGrid_CopyCellsTo(44, 5, 19, 5, 3, 3);
   MapGrid_CopyCellsTo(108, 5, 83, 5, 3, 2);
   MapGrid_CopyCellAttributes(44, 5, 3, 3, 19, 5);
 }
 
+/// Reveal wearing off closes the crevice by the sanctuary again.
 void Garoh_HideSanctuaryCrevice(void) {
   MapGrid_CopyCellsTo(102, 8, 86, 8, 1, 2);
   MapGrid_CopyCellAttributes(22, 10, 1, 1, 22, 11);
 }
 
+/// Whether it is night in Garoh.
 s32 Garoh_IsNight(void) { return Flag_IsSet(FLAG_GAROH_NIGHT); }
 
+/// Reveal wearing off in the way up: by night the cave darkens again.
 void Garoh_RestoreBlocksDark(void) {
   if (Flag_IsSet(FLAG_GAROH_NIGHT)) {
     if (Flag_IsSet(FLAG_IN_DARK_CAVE))
@@ -857,25 +889,27 @@ void Garoh_RestoreBlocksDark(void) {
   }
 }
 
+/// Reveal wearing off closes the passage into the tunnels again.
 void Garoh_HideTunnelPassage(void) {
   MapGrid_CopyCellsTo(8, 30, 11, 33, 1, 3);
   MapGrid_CopyCellAttributes(8, 30, 1, 1, 11, 33);
 }
 
+/// Reveal wearing off closes the passage into the cave again.
 void Garoh_HideCavePassage(void) {
   MapGrid_CopyCellsTo(39, 5, 19, 5, 3, 3);
   MapGrid_CopyCellsTo(103, 5, 83, 5, 3, 2);
   MapGrid_CopyCellAttributes(39, 5, 3, 3, 19, 5);
 }
 
-/// Crossing room 3's first threshold darkens or lightens the cave by the way
-/// the party came in.
+/// Crossing the way up's first threshold darkens or lightens the cave by the
+/// way the party came in.
 void Garoh_CrossBlocksWestThreshold(void) {
   struct FieldWork *work;
 
   if (!Flag_IsSet(FLAG_GAROH_SECRET_SHARED)) {
     Flag_Set(FLAG_CROSSED_WEST_THRESHOLD);
-    if (gMainRoutineWork.entrance == 1) {
+    if (gMainRoutineWork.entrance == GAROH_BLOCKS_FROM_WORLD_MAP) {
       PaletteFade_ApplyTarget(PALETTE_TINT_WARM, 1);
       Flag_Set(FLAG_GAROH_NIGHT);
       Flag_Set(FLAG_IN_DARK_CAVE);
@@ -890,12 +924,15 @@ void Garoh_CrossBlocksWestThreshold(void) {
   }
 }
 
+/// Crossing the way up's second threshold darkens or lightens the cave by the
+/// way the party came in.
 void Garoh_CrossBlocksEastThreshold(void) {
   struct FieldWork *work;
 
   if (!Flag_IsSet(FLAG_GAROH_SECRET_SHARED)) {
     Flag_Set(FLAG_CROSSED_EAST_THRESHOLD);
-    if (gMainRoutineWork.entrance == 2) {
+    if (gMainRoutineWork.entrance ==
+        GAROH_BLOCKS_FROM_GAROH_HYPNOS_SWORD_CHEST) {
       PaletteFade_ApplyTarget(PALETTE_TINT_WARM, 1);
       Flag_Set(FLAG_GAROH_NIGHT);
       Flag_Set(FLAG_IN_DARK_CAVE);
@@ -923,6 +960,8 @@ void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
                        s32 velocityZ, u32 flags,
                        const struct EffectOptions *options);
 
+/// A ring of puffs of dust spreads out from the actor, one every eighth of a
+/// turn: nine, the first and last both to the east.
 void Garoh_PuffAround(s32 objectId) {
   struct Actor *object;
   struct Vector3 vec;
@@ -934,7 +973,7 @@ void Garoh_PuffAround(s32 objectId) {
 
   object = Actor_Get(objectId);
   params.update = FieldEffect_AdvanceMotion;
-  angleStep = FACING_EAST;
+  angleStep = 0;
   do {
     angle = angleStep << 12;
     vec.x = Trig_Cos(angle);
@@ -952,11 +991,13 @@ void Garoh_PuffAround(s32 objectId) {
 
 extern u32 gGaroh_PuffScript[];
 
+/// Lash ties the rope between the third and fourth pillars.
 void Garoh_LashRope(void) {
-  Rope_Lash(1, 10, 11);
+  Rope_Lash(1, ACTOR_THIRD_PILLAR, ACTOR_FOURTH_PILLAR);
   Flag_Set(FLAG_ROPE_LASHED);
 }
 
+/// Until the secret is shared, whether the party has met the werewolves.
 s32 Garoh_MetWerewolves(void) {
   if (!Flag_IsSet(FLAG_GAROH_SECRET_SHARED))
     return Flag_IsSet(FLAG_GAROH_MET_WEREWOLVES);
@@ -990,11 +1031,11 @@ void Garoh_PuffFrom(s32 id) {
   struct Actor *object = Actor_Get(id);
 
   Garoh_SpawnPuff(object->x.fixed + toFIXED(8), object->y.fixed + toFIXED(28),
-                  object->z.fixed, 0x1000, 20);
+                  object->z.fixed, TRIG_TURN / 16, 20);
   Event_PlaySound(SE_LIGHT_APPEAR);
   FieldEvent_Wait(20);
   Garoh_SpawnPuff(object->x.fixed - toFIXED(8), object->y.fixed + toFIXED(28),
-                  object->z.fixed, 0xf000, 20);
+                  object->z.fixed, TRIG_TURN * 15 / 16, 20);
   Event_PlaySound(SE_LIGHT_APPEAR);
   FieldEvent_Wait(20);
 }
@@ -1009,8 +1050,10 @@ void Garoh_PuffFrom(s32 id) {
     FieldPsynergy_End();                                                       \
   }
 
+/// Reveal's effect played on the cave's crevice as it opens.
 DEFINE_GAROH_PLAY_EFFECT(Garoh_OpenCaveCrevice, 1, 44)
 
+/// Reveal's effect played on the cave's crevice as it closes.
 DEFINE_GAROH_PLAY_EFFECT(Garoh_CloseCaveCrevice, 3, 39)
 
 /// Plays an animation, then waits the given frames.
@@ -1044,6 +1087,7 @@ static inline void Scene_WalkIntoLeader(s32 actorId) {
   Actor_SetPosition(actorId, 0, 0);
 }
 
+/// The point i eighths of the way from from to to.
 static inline s32 Garoh_PathStep(s32 from, s32 to, s32 i) {
   return from + ((to - from) * i) / 8;
 }
@@ -1111,7 +1155,7 @@ void Garoh_WerewolfProwls(void) {
   Actor_SetAnimation(ACTOR_WEREWOLF, 2);
   i = 0;
   do {
-    s32 r;
+    s32 tenths;
     s32 wave;
 
     wave = Math_Sin(i * (DEGtoANG(45)));
@@ -1120,9 +1164,9 @@ void Garoh_WerewolfProwls(void) {
     wave = Math_Sin(i * (DEGtoANG(45)));
     position[2] = Garoh_PathStep(toFIXED(32), toFIXED(120), i) - wave * 7;
     position[1] = 0;
-    r = (Random_Below(10)) + 4;
-    Actor_SetSpeedFX(ACTOR_WEREWOLF, r * (toFIXED(1) / 10),
-                     r * (toFIXED(1) / 20));
+    tenths = Random_Below(10) + 4;
+    Actor_SetSpeedFX(ACTOR_WEREWOLF, tenths * (toFIXED(1) / 10),
+                     tenths * (toFIXED(1) / 20));
     Actor_WalkToAndWait(ACTOR_WEREWOLF, position[0] / toFIXED(1),
                         position[2] / toFIXED(1));
     i++;
@@ -1145,16 +1189,16 @@ void Garoh_WerewolfProwls(void) {
   toZ = toFIXED(184);
   i = 0;
   do {
-    s32 r;
+    s32 tenths;
     FIXED wave;
 
     wave = Math_Sin(i * (DEGtoANG(45)));
     position[0] = Garoh_PathStep(x, toX, i) - wave * 4;
     position[2] = Garoh_PathStep(z, toZ, i);
     position[1] = 0;
-    r = (Random_Below(10)) + 4;
-    Actor_SetSpeedFX(ACTOR_WEREWOLF, r * (toFIXED(1) / 10),
-                     r * (toFIXED(1) / 20));
+    tenths = Random_Below(10) + 4;
+    Actor_SetSpeedFX(ACTOR_WEREWOLF, tenths * (toFIXED(1) / 10),
+                     tenths * (toFIXED(1) / 20));
     Actor_WalkToAndWait(ACTOR_WEREWOLF, position[0] / toFIXED(1),
                         position[2] / toFIXED(1));
     i++;
@@ -1321,7 +1365,7 @@ void Garoh_WerewolfProwls(void) {
                           ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   FieldEvent_Wait(40);
   FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | ACTOR_KRADEN, 0, 0);
-  Garoh_PuffFrom(6);
+  Garoh_PuffFrom(ACTOR_SHEBA);
   FieldEvent_Wait(20);
   FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | ACTOR_SHEBA, 0, 0);
   Actor_RunRepeatedMotion(ACTOR_KRADEN, 2);
@@ -1622,7 +1666,7 @@ void Garoh_WerewolvesRevealThemselves(void) {
   FieldEvent_Wait(20);
   Actor_SetPosition(ACTOR_CAVE_CREVICE, 328, 136);
   Actor_SetSpriteFlags(Actor_Get(ACTOR_CAVE_CREVICE), 0);
-  Garoh_OpenCaveCrevice(11);
+  Garoh_OpenCaveCrevice(ACTOR_CAVE_CREVICE);
   FieldEvent_Wait(20);
   FieldEvent_ShowMessageThenWait(ACTOR_JENNA, 0, 0);
   Actor_SetSpeed(ACTOR_WEREWOLF, 0.7);
@@ -1635,7 +1679,7 @@ void Garoh_WerewolvesRevealThemselves(void) {
   Actor_WalkBy(ACTOR_WEREWOLF, 0, 16);
   Actor_WalkByAndWait(ACTOR_MAHA, 0, 16);
   FieldEvent_Wait(10);
-  Garoh_CloseCaveCrevice(11);
+  Garoh_CloseCaveCrevice(ACTOR_CAVE_CREVICE);
   Actor_SetPosition(ACTOR_CAVE_CREVICE, 0, 0);
   EventCamera_FollowActor(ACTOR_MAHA, 1);
   FieldEvent_Wait(20);
@@ -2000,7 +2044,7 @@ void Garoh_WerewolvesRevealThemselves(void) {
   }
   EventCamera_FollowActor(gMainRoutineWork.leaderActorId, 1);
   Garoh_MetWerewolves();
-  FieldEvent_SetExitRequest(11);
+  FieldEvent_SetExitRequest(GAROH_WEREWOLF_CAVE_TO_GAROH_INTERIORS_HOUSES);
   Event_End();
 }
 
@@ -2045,14 +2089,14 @@ void Garoh_MahaTellsTheLegend(void) {
   FieldEvent_Wait(20);
   Actor_SetPosition(ACTOR_CAVE_CREVICE, 328, 136);
   Actor_SetSpriteFlags(Actor_Get(ACTOR_CAVE_CREVICE), 0);
-  Garoh_OpenCaveCrevice(11);
+  Garoh_OpenCaveCrevice(ACTOR_CAVE_CREVICE);
   FieldEvent_Wait(30);
   Actor_SetSpeed(ACTOR_MAHA, 0.7);
   Actor_SetPosition(ACTOR_MAHA, 328, 128);
   FieldEvent_Wait(10);
   Actor_WalkByAndWait(ACTOR_MAHA, 0, 16);
   FieldEvent_Wait(20);
-  Garoh_CloseCaveCrevice(11);
+  Garoh_CloseCaveCrevice(ACTOR_CAVE_CREVICE);
   Actor_SetPosition(ACTOR_CAVE_CREVICE, 0, 0);
   EventCamera_FollowActor(ACTOR_MAHA, 1);
   FieldEvent_Wait(20);
@@ -2483,8 +2527,8 @@ void Garoh_MahaTellsTheLegend(void) {
   FieldEvent_ShowMessageThenWait(ACTOR_KRADEN, 0, 0);
   Actor_FaceDirection(ACTOR_MAHA, FACING_NORTH, 0);
   FieldEvent_Wait(40);
-  Garoh_PuffFrom(10);
-  Garoh_PuffFrom(10);
+  Garoh_PuffFrom(ACTOR_MAHA);
+  Garoh_PuffFrom(ACTOR_MAHA);
   FieldEvent_Wait(20);
   Actor_WalkByAndWait(ACTOR_MAHA, 16, 0);
   FieldEvent_Wait(20);
@@ -2603,7 +2647,7 @@ void Garoh_MahaTellsTheLegend(void) {
     Actor_FaceDirection(ACTOR_PIERS, FACING_WEST, 0);
   }
   Actor_FaceDirection(ACTOR_SHEBA, FACING_WEST, 0);
-  Djinn_JoinParty(12, DJINNI_ETHER / DJINN_PER_ELEMENT,
+  Djinn_JoinParty(ACTOR_ETHER, DJINNI_ETHER / DJINN_PER_ELEMENT,
                   DJINNI_INDEX(DJINNI_ETHER));
   FieldCamera_MoveTo(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0);
   Actor_SetAnimation(ACTOR_FELIX, ANIM_STAND);

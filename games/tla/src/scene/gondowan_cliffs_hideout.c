@@ -21,10 +21,12 @@
 #include "field/actor_script.h"
 #include "sprite_ids.h"
 
-/// The hideout's placed actors: two not yet understood, then the four
-/// Kibombo warriors, named for what each says when spoken to.
+/// The hideout's placed actors: the campfire, drawn by two actors at one spot,
+/// then the four Kibombo warriors, named for what each says when spoken to.
 enum GondowanCliffsHideoutActorId {
-  ACTOR_WARRIOR_FROM_KIBOMBO = ACTOR_FIRST_PLACED + 2,
+  ACTOR_CAMPFIRE = ACTOR_FIRST_PLACED, ///< the actor under the fire
+  ACTOR_CAMPFIRE_FLAMES,               ///< SPRITE_FIRE
+  ACTOR_WARRIOR_FROM_KIBOMBO,
   ACTOR_WARRIOR_BLAMING_THE_COLLISION,
   ACTOR_WARRIOR_CLAIMING_TO_CAMP,
   ACTOR_WARRIOR_AWAITING_FRIENDS
@@ -58,7 +60,7 @@ void GondowanCliffsHideout_WarriorsAreFound(void) {
     Event_ResolvePendingActions(0);
     Event_SetMessageId((s32)MsgKibomboWarriorsFound);
     FieldCamera_SetSpeed(1);
-    FieldCamera_FollowActor(8, 1);
+    FieldCamera_FollowActor(ACTOR_CAMPFIRE, 1);
     FieldCamera_WaitForArrival();
     Actor_FaceActorById(ACTOR_WARRIOR_FROM_KIBOMBO, ACTOR_FELIX, 2);
     Actor_SetAttachedEffect(ACTOR_WARRIOR_FROM_KIBOMBO,
@@ -88,13 +90,15 @@ void GondowanCliffsHideout_WarriorsAreFound(void) {
   GameFlag_Set(FLAG_KIBOMBO_WARRIORS_FOUND);
 }
 
+/// Entering the hideout: clears the campfire's sprite flags.
 s32 Scene_Initialize(void) {
   gFieldWork->transition = SCENE_TRANSITION(TRANSITION_WINDOW, 1);
-  Actor_SetSpriteFlags(Actor_GetById(8), 0);
-  Actor_SetSpriteFlags(Actor_GetById(9), 0);
+  Actor_SetSpriteFlags(Actor_GetById(ACTOR_CAMPFIRE), 0);
+  Actor_SetSpriteFlags(Actor_GetById(ACTOR_CAMPFIRE_FLAMES), 0);
   return 0;
 }
 
+/// The leader ignores the ground's rises in the hideout.
 s32 Scene_PrepareMap(void) {
   Actor_GetById(Party_GetLeaderActor())->priorityFlags |=
       ACTOR_PRIORITY_IGNORES_RISES;
@@ -113,7 +117,9 @@ struct SceneEntrance gSceneEntrances[] = {
 
 u32 gSceneExits[] = {
     SCENE_EXITS(GondowanCliffsHideout),
-    SCENE_EXIT_UNLESS(1, GondowanCliffs, 3, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(
+        GONDOWAN_CLIFFS_HIDEOUT_TO_GONDOWAN_CLIFFS, GondowanCliffs,
+        GONDOWAN_CLIFFS_FROM_GONDOWAN_CLIFFS_HIDEOUT, EXIT_FLAG_NONE),
     SCENE_EXITS_END,
 };
 
@@ -121,10 +127,10 @@ u32 gSceneExits[] = {
 struct ActorPlacement gPlacementsWithWarriors[] = {
     ACTOR_PLACEMENT(410, CONDITION_ALWAYS, (s32)gGondowanCliffsHideout_StandScript, 216, 0, 184, FACING_SOUTH, TALK_FACING_PARTY, 0),
     ACTOR_PLACEMENT(SPRITE_FIRE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 216, 0, 184, FACING_SOUTH, TALK_FACING_PARTY, 0),
-    {83, CONDITION_ALWAYS, 1, 1, 0, 0, FACING_WEST, 0, 2},
-    {83, CONDITION_ALWAYS, 1, 2, 0, 0, FACING_NORTH, 0, 2},
-    {83, CONDITION_ALWAYS, 1, 3, 0, 0, FACING_SOUTH, 0, 2},
-    {83, CONDITION_ALWAYS, 1, 4, 0, 0, FACING_EAST, 0, 2},
+    {SPRITE_KIBOMBO_WARRIOR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 1, 0, 0, FACING_WEST, TALK_FACING_PARTY, ACTOR_PLACEMENT_AT_SCENE_POINT},
+    {SPRITE_KIBOMBO_WARRIOR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 2, 0, 0, FACING_NORTH, TALK_FACING_PARTY, ACTOR_PLACEMENT_AT_SCENE_POINT},
+    {SPRITE_KIBOMBO_WARRIOR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 3, 0, 0, FACING_SOUTH, TALK_FACING_PARTY, ACTOR_PLACEMENT_AT_SCENE_POINT},
+    {SPRITE_KIBOMBO_WARRIOR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 4, 0, 0, FACING_EAST, TALK_FACING_PARTY, ACTOR_PLACEMENT_AT_SCENE_POINT},
     {SCENE_TABLE_END},
 };
 // clang-format on

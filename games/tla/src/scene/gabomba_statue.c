@@ -542,7 +542,7 @@ void GabombaStatue_RideTurntable(void) {
     test.z = z + actor->velocityZ;
     if (MapGrid_CheckCollision(actor, &test) == 0) {
       s32 s, c, angle;
-      angle = 0x1555 - turn;
+      angle = DEGtoANG(30) - turn;
       s = Math_Sin(angle);
       c = Trig_Cos(angle);
       tx = table->x.fixed + Iwram_MulFX(c, dx) + Iwram_MulFX(s, dz);
@@ -552,7 +552,7 @@ void GabombaStatue_RideTurntable(void) {
       if (MapGrid_CheckCollision(actor, &test) == 0) {
         FIXED s, c;
         s32 angle;
-        angle = back - 0x1555;
+        angle = back - DEGtoANG(30);
         s = Math_Sin(angle);
         c = Trig_Cos(angle);
         tx = table->x.fixed + Iwram_MulFX(c, dx) + Iwram_MulFX(s, dz);
@@ -1576,8 +1576,8 @@ void GabombaStatue_LandFromFall(void) {
     velocity[1] = 0;
     velocity[2] = Math_Sin(angle);
     velocity[0] += velocity[0] >> 1;
-    velocity[0] += (Random_Below(0xc000)) - 0x6000;
-    velocity[2] += (Random_Below(0x6000)) - 0x3000;
+    velocity[0] += (Random_Below(toFIXED(3) / 4)) - toFIXED(3) / 8;
+    velocity[2] += (Random_Below(toFIXED(3) / 8)) - toFIXED(3) / 16;
     FieldEffect_Spawn(actor->x.fixed, actor->y.fixed, actor->z.fixed,
                       velocity[0], velocity[1], velocity[2],
                       EFFECT_USE_UPDATE | EFFECT_USE_START_SCALE |
@@ -1692,7 +1692,7 @@ void GabombaStatue_WatchTheChargesStick(void) {
   FieldEvent_ResolvePendingActions(0);
   FieldCamera_MoveTo(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0);
   Event_PlaySound(SOUND_FADE_OUT_BGM);
-  speed = 0x4000;
+  speed = FACING_SOUTH;
   Actor_SetPositionAndFacing(gMainRoutineWork.leaderActorId, toFIXED(348),
                              toFIXED(312), speed);
   Actor_SetPositionAndFacing(ACTOR_PIERS, toFIXED(330), toFIXED(312), speed);
@@ -2258,12 +2258,12 @@ static __inline__ void *Mem_Alloc(s32 size) { return Heap_Alloc(size); }
 
 void GabombaStatue_LoadTileGraphics(void) {
   struct SceneState *state = &gSceneState;
-  void *buffer = Mem_Alloc(0xc00);
+  void *buffer = Mem_Alloc(3072);
   s32 handle;
 
   Decompress_TaggedLz(gField_CachedTilesA, buffer);
   handle = VramCache_FindFreeEntry();
-  VramCache_Load(handle, 0xc00, buffer);
+  VramCache_Load(handle, 3072, buffer);
   state->tileEntry = handle;
   Heap_Release(buffer);
 }
@@ -2383,7 +2383,7 @@ draw_next:
   if (++row < CHANNEL_ROWS)
     goto draw_row;
   n = 0;
-  if (Random16() < 0x8000) {
+  if (Random16() < 32768) {
     n |= GabombaStatue_LayPath(2, 7, 5, 7, 4, 0, 3, 2);
     n |= GabombaStatue_LayPath(8, 7, 6, 6, 4, 2, 2, 3);
     GabombaStatue_WritePiece(5, 6, 9, 12);
@@ -2627,7 +2627,7 @@ s32 GabombaStatue_LayPath(s32 x0, s32 z0, s32 endX, s32 endZ, s32 length,
         goto back;
       value = Random16();
       dir = direction;
-      if (value > 0x7fff)
+      if (value > 32767)
         dir = Random_Below(4);
       tried = gGabombaStatue_PathTried[step];
       if ((tried >> dir) & one)
@@ -2787,7 +2787,7 @@ void GabombaStatue_RaiseTiles(s32 value, s32 row) {
   struct Actor *actor = Actor_Get(ACTOR_GREY_CONE);
 
   if (row < CHANNEL_ROWS)
-    actor->scaleY += -0x1f00;
+    actor->scaleY += -FIXED_ONE * 31 / 256;
   if (value == 1) {
     GabombaStatue_ShowTiles(gSceneState.firstId, 1);
     Actor_SelectAnimation(actor, 6);
@@ -2871,7 +2871,7 @@ void GabombaStatue_LowerArrowA(void) {
       do {
         s32 *offset = &state->statueOffset;
 
-        *offset -= 0x333;
+        *offset -= TRIG_TURN / 80;
         System_Wait(1);
         i--;
       } while (i >= 0);
@@ -2909,7 +2909,7 @@ void GabombaStatue_RaiseArrowB(void) {
       do {
         s32 *offset = &state->statueOffset;
 
-        *offset += 0x333;
+        *offset += TRIG_TURN / 80;
         System_Wait(1);
         i--;
       } while (i >= 0);
@@ -2944,8 +2944,8 @@ void GabombaStatue_DrawFloatingTiles(void) {
 
   if (state->statueOffset != 0) {
     effect.angle = state->statueOffset;
-    effect.scaleX = 0x100;
-    effect.scaleY = 0x100;
+    effect.scaleX = Q_8_8(1);
+    effect.scaleY = Q_8_8(1);
     affine = OamMatrix_AllocFromTransform(&effect);
   }
   for (id = state->firstId; id < state->endId; id++) {
@@ -3394,14 +3394,14 @@ void GabombaStatue_DrawClock(void) {
   GabombaStatue_FormatClock(*timer, clock->now);
   // old and now walk the sheet and the pictures here, the digit lists below.
   for (i = 0; i < 5; i++) {
-    Iwram_CopyWordsEntry(now, old + (*digit << 6) - 0xc00, 64);
+    Iwram_CopyWordsEntry(now, old + (*digit << 6) - 3072, 64);
     now += 64;
     digit++;
   }
   Vram_Load(clock->tileEntry, 320, clock->digits);
   effect.angle = 0;
-  effect.scaleX = 0x200;
-  effect.scaleY = 0x200;
+  effect.scaleX = Q_8_8(2);
+  effect.scaleY = Q_8_8(2);
   plain = OamMatrix_AllocFromTransform(&effect);
   scale = GabombaStatue_TickClock(*timer);
   effect.angle = 0;
@@ -3458,10 +3458,10 @@ void GabombaStatue_StartClock(s32 mode) {
     clock->timer = FRAMES_PER_SECOND * 60;
     clock->ringing = 1;
   }
-  tiles = Heap_AllocEwram(0x400);
+  tiles = Heap_AllocEwram(1024);
   Decompress_TaggedLz(Resource_GetTableEntry(RESOURCE_CLOCK_DIGITS), tiles);
   clock->tiles = tiles;
-  clock->digits = tiles + 0x2c0;
+  clock->digits = tiles + 704;
   clock->tileEntry = VramCache_FindFreeEntry();
   Vram_Load(clock->tileEntry, 320, NULL);
   clock->mode = mode;
@@ -3500,11 +3500,11 @@ void GabombaStatue_ResetClock(void) {
   CLOCK_WORK->timer = FRAMES_PER_SECOND * 60;
 }
 
-/// Layer switch table: three words (id, mode, flag), terminated by 0xffff.
+/// Layer switch table: three halfwords (id, mode, flag), ended by -1.
 void GabombaStatue_PlaceSwitchActors(const u16 *entry) {
   s32 value;
 
-  while ((value = *entry) != 0xffff) {
+  while ((value = *entry) != (u16)-1) {
     u16 id = *entry++;
     struct Actor *actor = Actor_Get(id);
     s16 mode = entry[0];
@@ -3675,8 +3675,8 @@ LATE_DATA s16 gGabombaStatue_ConePillars[] = {
 
 LATE_DATA u32 gGabombaStatue_PathLengths[] = {
     36, 122, 201, 312, 431, 504,
-    619, 712, 823, 908, 0x41e, 0x461,
-    0x4b7, 0x51f, 0x579, 0x613,
+    619, 712, 823, 908, 1054, 1121,
+    1207, 1311, 1401, 1555,
 };
 
 LATE_DATA struct SceneEntrance gSceneEntrances[] = {

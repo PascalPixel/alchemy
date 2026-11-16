@@ -246,8 +246,8 @@ void DjinnRecovery_Reconcile(void) {
   count = BattleParty_PrepareMembers(owners);
   for (n = 0; n < count; n++) {
     owner = owners[n];
-    for (element = 0; element <= 3; element++) {
-      for (djinn = 0; djinn <= 19; djinn++) {
+    for (element = 0; element < ELEMENT_COUNT; element++) {
+      for (djinn = 0; djinn < DJINN_PER_ELEMENT; djinn++) {
         if (Djinn_CanSetFar(owner, element, djinn) != 0) {
           list = &(Djinn_GetRecoveryTableFar(owner > ALLY_MAX))->list;
           for (i = 0; i < list->count; i++) {

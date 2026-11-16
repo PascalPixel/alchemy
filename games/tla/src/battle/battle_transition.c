@@ -363,7 +363,7 @@ void BattleTransition_Run(s32 enemyCount, s32 kind) {
     for (i = 0; i != count; i++)
       BattleHighlight_SetSpriteMode(shown[i], SPRITE_SEMI_TRANSPARENT);
     for (i = 0; i != BLEND_WEIGHT_MAX; i++) {
-      REG_BLDALPHA = i | 0x1000;
+      REG_BLDALPHA = BLEND_ALPHA(i, BLEND_WEIGHT_MAX);
       wait(1);
     }
     for (i = 0; i != count; i++)

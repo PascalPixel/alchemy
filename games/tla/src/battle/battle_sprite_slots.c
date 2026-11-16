@@ -114,9 +114,14 @@ s32 EnemySprite_LoadIntoSlots(s32 unit) {
     if (!singleSlot)
       table->spriteSlots[slot + 1] = unit;
 
-    if (spriteValue != 561 && spriteValue != 631 && spriteValue != 638 &&
-        spriteValue != 585 && spriteValue != 579 && spriteValue != 581 &&
-        spriteValue != 583)
+    // A two-part enemy loads its second sprite into the next slot.
+    if (spriteValue != SPRITE_BATTLE_SERPENT &&
+        spriteValue != SPRITE_BATTLE_KRAKEN &&
+        spriteValue != SPRITE_BATTLE_FUSION_DRAGON &&
+        spriteValue != SPRITE_BATTLE_POSEIDON &&
+        spriteValue != SPRITE_BATTLE_DOOM_DRAGON_A &&
+        spriteValue != SPRITE_BATTLE_DOOM_DRAGON_E &&
+        spriteValue != SPRITE_BATTLE_DOOM_DRAGON_H)
       break;
   } while (++pass <= 1);
 

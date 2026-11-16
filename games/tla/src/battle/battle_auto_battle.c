@@ -259,7 +259,7 @@ s32 AutoBattle_RunPsynergy(struct BattleActionRecord *action) {
   for (index = 0; index != sideCount; index++)
     BattleHighlight_SetSpriteMode(index + sideStart, SPRITE_SEMI_TRANSPARENT);
   for (index = 0; index != BLEND_WEIGHT_MAX; index++) {
-    REG_BLDALPHA = (BLEND_WEIGHT_MAX - index) | 0x1000;
+    REG_BLDALPHA = BLEND_ALPHA(BLEND_WEIGHT_MAX - index, BLEND_WEIGHT_MAX);
     wait(1);
   }
   PartyStatus_DrawFar(PARTY_STATUS_CLOSED);
@@ -298,7 +298,7 @@ s32 AutoBattle_RunPsynergy(struct BattleActionRecord *action) {
   for (index = 0; index != sideCount; index++)
     BattleHighlight_SetSpriteMode(index + sideStart, SPRITE_SEMI_TRANSPARENT);
   for (index = 0; index != BLEND_WEIGHT_MAX; index++) {
-    REG_BLDALPHA = index | 0x1000;
+    REG_BLDALPHA = BLEND_ALPHA(index, BLEND_WEIGHT_MAX);
     wait(1);
   }
   for (index = 0; index != sideCount; index++)

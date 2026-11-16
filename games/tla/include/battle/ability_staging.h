@@ -50,6 +50,8 @@ enum BattleStaging {
 // BattlePlan.battleEffect: the effect kind
 // in the low twelve bits and its strength (a double or triple blow) above them;
 // then how the effect is staged.
+#define EFFECT_ID_MASK 0xfff
+#define EFFECT_VARIANT_MASK 0x3000
 #define EFFECT_VARIANT_SHIFT 12
 #define EFFECT_BY_ID_RANGE 0x4000 ///< BattleEffect_RunByIdRangeFar
 #define EFFECT_SUMMON 0x8000 ///< BattleEffect_RunSummonFar, acting unit's view

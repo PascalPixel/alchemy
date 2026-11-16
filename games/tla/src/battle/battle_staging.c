@@ -25,12 +25,12 @@ s32 BattleUnit_GetPartyAttackEffect(s32 characterId) {
   case FELIX:
   case JENNA:
   case PIERS:
-    characterId = 0x4001;
+    characterId = EFFECT_BY_ID_RANGE | 1;
     break;
   case IVAN:
   case MIA:
   case SHEBA:
-    characterId = 0x4004;
+    characterId = EFFECT_BY_ID_RANGE | 4;
     break;
   }
   return characterId;
@@ -343,8 +343,8 @@ void BattleStaging_BuildTargetList(struct BattlePlan *plan,
   livingTargets = 0;
   effect->flags = 0;
   flags = plan->battleEffect;
-  effect->kind = flags & 0xfff;
-  effect->variant = (flags & 0x3000) >> EFFECT_VARIANT_SHIFT;
+  effect->kind = flags & EFFECT_ID_MASK;
+  effect->variant = (flags & EFFECT_VARIANT_MASK) >> EFFECT_VARIANT_SHIFT;
   effect->actor = plan->unitId;
   targetIndex = 0;
   if (targetIndex < plan->targetCount) {
@@ -352,7 +352,7 @@ void BattleStaging_BuildTargetList(struct BattlePlan *plan,
     outputTarget = effect->actors;
     do {
       if (BattleUnit_IsListed(*inputTarget) &&
-          (Unit_Get(*inputTarget)->hp != 0 || (plan->battleEffect & 0x10000))) {
+          (Unit_Get(*inputTarget)->hp != 0 || (plan->battleEffect & EFFECT_ON_DOWNED))) {
         *outputTarget++ = *inputTarget;
         livingTargets++;
       }
@@ -491,7 +491,7 @@ s32 BattleStaging_HideField(struct BattlePlan *plan, s32 mode) {
   if (mode & STAGING_HIDE_ACTOR)
     BattleHighlight_SetSpriteMode(actor, SPRITE_SEMI_TRANSPARENT);
   for (i = 0; i != BLEND_WEIGHT_MAX; i++) {
-    REG_BLDALPHA = (BLEND_WEIGHT_MAX - i) | 0x1000;
+    REG_BLDALPHA = BLEND_ALPHA(BLEND_WEIGHT_MAX - i, BLEND_WEIGHT_MAX);
     wait(1);
   }
 
@@ -567,7 +567,7 @@ s32 BattleStaging_HideField(struct BattlePlan *plan, s32 mode) {
       BattleHighlight_SetSpriteMode(unit, SPRITE_SEMI_TRANSPARENT);
   }
   for (i = 0; i != BLEND_WEIGHT_MAX; i++) {
-    REG_BLDALPHA = i | 0x1000;
+    REG_BLDALPHA = BLEND_ALPHA(i, BLEND_WEIGHT_MAX);
     wait(1);
   }
   for (i = 0; i != count; i++)

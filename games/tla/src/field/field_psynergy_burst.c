@@ -275,7 +275,7 @@ void FieldPsynergy_UpdateBurst(void) {
     case 1:
       canvas->scaleX += FIXED_ONE * 5 / 256;
       canvas->scaleY = canvas->scaleX;
-      if (canvas->scaleX > 0x4ccb) {
+      if (canvas->scaleX > toFIXED(0.3) - 1) {
         work->phase++;
         work->timer = 0;
       }

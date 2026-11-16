@@ -204,7 +204,7 @@ s32 Field_CheckConfiguredKeysAndCount(struct Actor *actor) {
 #define SHIP_TURN_STEP (TRIG_TURN / 64)
 
 // Two 16.16 coordinates fall in the same 16-pixel cell, rounding to nearest.
-#define SAME_CELL(a, b) ((((a) - (b) + 0x80000) >> 20) == 0)
+#define SAME_CELL(a, b) ((((a) - (b) + toFIXED(8)) >> 20) == 0)
 
 /// Script command 0x1f (control mode 6): the ship moved by the direction pad
 /// on a field map, as the party's actor (gMainRoutineWork.ownerOverride), as at
@@ -567,12 +567,12 @@ s32 Actor_SailOnWorldMap(struct Actor *actor) {
           if (WorldMap_IsSailable(actor, &testPosition) == 0) {
             SET_POSITION(&testPosition, actor->x.fixed, actor->y.fixed,
                          actor->z.fixed);
-            Vector_AddPolarOffset(WORLD_MAP_PROBE_RADIUS, direction + 0x2000,
+            Vector_AddPolarOffset(WORLD_MAP_PROBE_RADIUS, direction + DEGtoANG(45),
                                   &testPosition);
             if (WorldMap_IsSailable(actor, &testPosition) == 0) {
               SET_POSITION(&testPosition, actor->x.fixed, actor->y.fixed,
                            actor->z.fixed);
-              Vector_AddPolarOffset(WORLD_MAP_PROBE_RADIUS, direction - 0x2000,
+              Vector_AddPolarOffset(WORLD_MAP_PROBE_RADIUS, direction - DEGtoANG(45),
                                     &testPosition);
               if (WorldMap_IsSailable(actor, &testPosition) == 0)
                 goto update_object;
@@ -606,13 +606,13 @@ s32 Actor_SailOnWorldMap(struct Actor *actor) {
           continue;
         SET_POSITION(&testPosition, actor->x.fixed, actor->y.fixed,
                      actor->z.fixed);
-        Vector_AddPolarOffset(WORLD_MAP_PROBE_RADIUS, direction + 0x2000,
+        Vector_AddPolarOffset(WORLD_MAP_PROBE_RADIUS, direction + DEGtoANG(45),
                               &testPosition);
         if (WorldMap_IsSailable(actor, &testPosition) != 0)
           continue;
         SET_POSITION(&testPosition, actor->x.fixed, actor->y.fixed,
                      actor->z.fixed);
-        Vector_AddPolarOffset(WORLD_MAP_PROBE_RADIUS, direction - 0x2000,
+        Vector_AddPolarOffset(WORLD_MAP_PROBE_RADIUS, direction - DEGtoANG(45),
                               &testPosition);
         if (WorldMap_IsSailable(actor, &testPosition) != 0)
           continue;
@@ -762,7 +762,7 @@ s32 Actor_FlyOnWorldMap(struct Actor *actor) {
 
   actor->motionFlags = 0;
   collision = 0;
-  actor->speedLimit = actor->y.fixed / 16 + 0x14000;
+  actor->speedLimit = actor->y.fixed / 16 + toFIXED(1.25);
   actor->acceleration = toFIXED(1) / 2;
   angle = gWorldMap_KeyHeadings[DPAD_INDEX(gInput.held)];
   direction = angle;
@@ -786,12 +786,12 @@ s32 Actor_FlyOnWorldMap(struct Actor *actor) {
       if (WorldMap_IsFlyable(actor, &testPosition) == 0) {
         SET_POSITION(&testPosition, actor->x.fixed, actor->y.fixed,
                      actor->z.fixed);
-        Vector_AddPolarOffset(WORLD_MAP_PROBE_RADIUS, direction + 0x2000,
+        Vector_AddPolarOffset(WORLD_MAP_PROBE_RADIUS, direction + DEGtoANG(45),
                               &testPosition);
         if (WorldMap_IsFlyable(actor, &testPosition) == 0) {
           SET_POSITION(&testPosition, actor->x.fixed, actor->y.fixed,
                        actor->z.fixed);
-          Vector_AddPolarOffset(WORLD_MAP_PROBE_RADIUS, direction - 0x2000,
+          Vector_AddPolarOffset(WORLD_MAP_PROBE_RADIUS, direction - DEGtoANG(45),
                                 &testPosition);
           if (WorldMap_IsFlyable(actor, &testPosition) == 0)
             goto check_objects;
@@ -822,12 +822,12 @@ s32 Actor_FlyOnWorldMap(struct Actor *actor) {
     if (WorldMap_IsFlyable(actor, &testPosition) != 0)
       continue;
     SET_POSITION(&testPosition, actor->x.fixed, actor->y.fixed, actor->z.fixed);
-    Vector_AddPolarOffset(WORLD_MAP_PROBE_RADIUS, direction + 0x2000,
+    Vector_AddPolarOffset(WORLD_MAP_PROBE_RADIUS, direction + DEGtoANG(45),
                           &testPosition);
     if (WorldMap_IsFlyable(actor, &testPosition) != 0)
       continue;
     SET_POSITION(&testPosition, actor->x.fixed, actor->y.fixed, actor->z.fixed);
-    Vector_AddPolarOffset(WORLD_MAP_PROBE_RADIUS, direction - 0x2000,
+    Vector_AddPolarOffset(WORLD_MAP_PROBE_RADIUS, direction - DEGtoANG(45),
                           &testPosition);
     if (WorldMap_IsFlyable(actor, &testPosition) != 0)
       continue;
@@ -902,7 +902,7 @@ update_object:
 
   camera = (struct WorldMapView *)Ram_HeapSlots->mapGrid;
   targetCameraYaw = Iwram_MulFX(gWorldMap_KeyYaws[DPAD_INDEX(gInput.held)],
-                                actor->y.fixed / 4 + 0x10000);
+                                actor->y.fixed / 4 + FIXED_ONE);
   yawStep = (s16)(targetCameraYaw - camera->yaw) / 8;
   if (yawStep > 32)
     yawStep = 32;

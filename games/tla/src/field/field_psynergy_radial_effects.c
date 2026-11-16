@@ -28,6 +28,9 @@
 #include "item_ids.h"
 #include "ability_ids.h"
 
+/// What Speaker_GetHaltedLines returns for a sprite with no halted lines.
+#define SPEAKER_HALTED_LINES_NONE 255
+
 extern const s32 gBattleEffect_SharedParticleScript[];
 
 /// Whirlwind: its leaves, their circling and wandering, the target's shrinking
@@ -85,8 +88,8 @@ void FieldEffect_WanderAroundAnchor(struct Actor *effect) {
   dz = Iwram_MulFX(radius, Trig_Sin(angle));
   effect->x.fixed += dx;
   effect->z.fixed += dz;
-  // The u16 angle wraps: 0xfff0 gives a small backwards drift.
-  effect->facing += 0xfff0;
+  // A small backwards drift, 16 a frame.
+  effect->facing += -16;
   if (effect->turnFrames != 0) {
     effect->turnFrames--;
     effect->facing += TRIG_TURN / 32;
@@ -486,9 +489,9 @@ void FieldPsynergy_ResumeHaltedActor(s32 actorId) {
 s32 Speaker_GetHaltedLines(s32 id);
 
 /// Returns no target (-1) when Halt passes actor id over (its sprite has no
-/// halted lines, 0xff), else id.
+/// halted lines, SPEAKER_HALTED_LINES_NONE), else id.
 s32 FieldPsynergy_FilterHaltTarget(s32 id) {
-  if (Speaker_GetHaltedLines(id) == 0xff)
+  if (Speaker_GetHaltedLines(id) == SPEAKER_HALTED_LINES_NONE)
     return -1;
   return id;
 }
@@ -1495,7 +1498,7 @@ again:
     sprite->scaleX += -(FIXED_ONE / 64);
     sprite->scaleY = sprite->scaleX;
     sprite->angle += DEGtoANG(45);
-    if (sprite->scaleX <= 0x6665) {
+    if (sprite->scaleX <= toFIXED(0.4) - 1) {
       sprite->scaleX = sprite->scaleY = 0;
       work->bowShrinking = 0;
     }

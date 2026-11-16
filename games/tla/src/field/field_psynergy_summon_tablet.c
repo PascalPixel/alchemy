@@ -447,7 +447,7 @@ void SummonTablet_PlayRunes(s32 targetId) {
 }
 
 /// A flag block: its actor and the flag that says it has been moved, in a list
-/// ended by actor 0xffff (FlagBlock_PlaceAll).
+/// ended by ACTOR_LIST_END (FlagBlock_PlaceAll).
 struct ActorFlag {
   u16 actor;
   s16 flag;
@@ -456,7 +456,7 @@ struct ActorFlag {
 void FlagBlock_ApplyFlags(struct ActorFlag *list);
 
 /// Sets up a scene's flag blocks, the puddles Frost turns into pillars of ice
-/// (actor and flag pairs, ended by actor 0xffff): each stops being solid and
+/// (actor and flag pairs, ended by ACTOR_LIST_END): each stops being solid and
 /// blocks its cell; one whose flag is set takes animation 0 and has the flag
 /// cleared, the others animation 1. Then FlagBlock_ApplyFlags applies them and
 /// the leader is lifted onto the ground if it now lies below it. Daila,
@@ -468,7 +468,7 @@ void FlagBlock_PlaceAll(struct ActorFlag *actors) {
   struct Actor *leader;
   s32 height;
 
-  for (; actors->actor != 0xffff; actors++) {
+  for (; actors->actor != ACTOR_LIST_END; actors++) {
     struct Actor *actor = Actor_GetById(actors->actor);
     u16 flag = actors->flag;
     s32 slot = Actor_GetCellIndex(actor);
@@ -477,7 +477,7 @@ void FlagBlock_PlaceAll(struct ActorFlag *actors) {
     actor->motionFlags = 0;
     actor->collisionFlags &= ~1;
     Actor_SetSpriteFlagsFar(actor, 0);
-    cell->collisionCode = 0xff;
+    cell->collisionCode = CELL_BEHAVIOR_WALL;
     if (GameFlag_Get(flag)) {
       Actor_SelectAnimationFar(actor, 0);
       GameFlag_Clear(flag);

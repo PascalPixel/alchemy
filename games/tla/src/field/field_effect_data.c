@@ -4,6 +4,7 @@
 #include "field/actor_script.h"
 #include "types.h"
 #include "field/field.h"
+#include "system/io_reg.h"
 
 //--------------------------------------------------------------------------
 // Effect tables after the particle pictures.
@@ -23,7 +24,8 @@ const s32 gTightrope_DebugSwinging = 0;
 // As The Broken Seal's gBattleEffect_TargetColors are.
 // clang-format off
 const u32 gFieldEffect_TargetColors[8] = {
-    0x4084, 0x1204, 0x1090, 0x2942, 0x304c, 0x098c, 0x2108, 0x4210,
+    RGB(4, 4, 16),  RGB(4, 16, 4),  RGB(16, 4, 4), RGB(2, 10, 10),
+    RGB(12, 2, 12), RGB(12, 12, 2), RGB(8, 8, 8),  RGB(16, 16, 16),
 };
 // clang-format on
 

@@ -9,7 +9,6 @@
 #include "scene_ids.h"
 #include "field/event_inline.h"
 
-#define OBJECT_BYTE(object, offset) (((u8 *)(object))[offset])
 
 /// Trial Road's progress, kept in the inventory snapshot while the trial runs.
 struct TrialRoadState {

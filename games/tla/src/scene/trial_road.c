@@ -169,12 +169,10 @@ enum { ACTOR_WEST_POST = ACTOR_FIRST_STAGE_PIECE, ACTOR_EAST_POST };
 
 /// A piece the party cannot push: a pillar a bush holds down, or a log.
 /// Leader_CanPushObjectAhead refuses a target with this byte set.
-#define PUSH_BLOCKED(object)                                                   \
-  OBJECT_BYTE(object, offsetof(struct Actor, riseCounter))
+#define PUSH_BLOCKED(object) *(u8 *)&object->riseCounter
 /// The height in pixels of a pillar's top (TrialRoad_AddPillarTop) above the
 /// pillar: 16 standing, -16 lowered.
-#define PILLAR_TOP_HEIGHT(top)                                                 \
-  OBJECT_BYTE(top, offsetof(struct Actor, riseEnabled))
+#define PILLAR_TOP_HEIGHT(top) *(u8 *)&top->riseEnabled
 
 /// A map cell's collision code for a wall: nothing steps onto it.
 #define CELL_WALL 0xff
@@ -3098,7 +3096,7 @@ void TrialRoad_CrumblePillar(const void *data, s32 id) {
         MagmaRockInside_SpawnRubble(0);
         wait(8);
         Actor_SelectAnimation(object, 2);
-        TrialRoad_SetActorCellShape(-4, OBJECT_BYTE(object, 34), id);
+        TrialRoad_SetActorCellShape(-4, *(u8 *)&object->layer, id);
         MagmaRockInside_SpawnRubble(1);
         wait(16);
         MapGrid_SetShake(SHAKE_KEEP, SHAKE_KEEP, 0.9);

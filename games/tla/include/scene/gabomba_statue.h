@@ -97,7 +97,6 @@ void GabombaStatue_LoadTileGraphics(void);
 void GabombaStatue_ClearGrid(void);
 s32 GabombaStatue_LayChannel(s32 value);
 
-
 void GabombaStatue_CountDownShowingClock(void);
 void GabombaStatue_CountDown(void);
 void Actor_SetCellOpen(s32 id, u32 mode, s32 flag, s32 layer);

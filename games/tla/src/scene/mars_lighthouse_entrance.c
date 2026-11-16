@@ -591,7 +591,7 @@ void MarsLighthouseEntrance_PushStatueIntoFlames(s32 unused, s32 id) {
     if (FIELD_CELL(object->x.fixed) == 20) {
       FieldEvent_Wait(5);
       object->z.fixed += toFIXED(1);
-      BYTE_AT(object, 98) = 1;
+      *(u8 *)&object->riseCounter = 1;
       Flag_Set(FLAG_LAPIS_STATUE_BLOCKS_FLAMES);
     }
   }
@@ -2014,7 +2014,7 @@ s32 Actor_Attach(s32 id, s32 target, s32 kind, s32 a3, const void *script) {
   object->watchedActor = source;
   object->timer = 0;
   object->userValue = a3;
-  BYTE_AT(object, 98) = kind;
+  *(u8 *)&object->riseCounter = kind;
   object->update = (void (*)(void))Actor_HoldDuringEvent;
   // UB: no value is returned, though the callers take one.
 #ifdef UBFIX

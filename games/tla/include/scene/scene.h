@@ -355,8 +355,8 @@ struct Spots {
 };
 
 /// The 14 colours of BG palette 3 (entries 1 to 14) that the fade returns to,
-/// copied from palette RAM by Scene_Initialize and rotated by Func_02001650 in
-/// step with BG palette entries 49 to 62.
+/// copied from palette RAM by Scene_Initialize and rotated by
+/// SeaOfTime_AnimateSea in step with BG palette entries 49 to 62.
 struct SavedColors {
   u16 colors[14];
 };
@@ -437,8 +437,8 @@ struct BobbingMarker {
 
 /// The map work as the World Map's sinking of Idejima reads it: two
 /// halfwords of map layer 0's scale, stepped against each other.
-/// XXX: what the two halfwords are on the World Map; the World Map's own reading of
-/// layer 0's scale would settle it.
+/// XXX: what the two halfwords are on the World Map; the World Map's own
+/// reading of layer 0's scale would settle it.
 struct RescueMap {
   u8 unk000[0x11c];
   u16 unk11c;
@@ -478,6 +478,7 @@ extern const u8 gField_GroundTiles[];
 
 s32 Speaker_GetVoice(s32 object);
 
+/// An explosion's 16 sprite colours (graphics/field/explosion_palette.png).
 extern const u16 Field_ExplosionPalette[];
 
 void FieldPsynergy_StartCast(void);

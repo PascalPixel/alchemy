@@ -11,7 +11,6 @@
 #include "field/event_inline.h"
 #include "field/map_grid.h"
 
-#define BYTE_AT(base, offset) (*(u8 *)((u8 *)(base) + (offset)))
 
 #define ABS(value) ((value) < 0 ? -(value) : (value))
 

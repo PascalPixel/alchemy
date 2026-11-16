@@ -43,11 +43,6 @@
 #include "system/io_reg.h"
 #include "text/msg_ids.h"
 
-struct SeaOfTimeSprite {
-  u8 unk00[0x1a];
-  u8 visible;
-};
-
 extern volatile u32 gSeaOfTime_WaveStartFrame;
 extern u32 gSeaOfTime_WaveState;
 extern u32 gSceneState[];
@@ -68,6 +63,7 @@ s32 Position_FlatDistance(FIXED *a, FIXED *b);
 void SeaOfTime_RemoveRock(s32 x, s32 z, s32 actor);
 void SeaOfTime_PlaceRock(s32 x, s32 z, s32 actor);
 
+/// Trig_Cos, through an inline as the swirl's turn calls it.
 static inline s32 SeaOfTime_Cos(s32 angle) { return Trig_Cos(angle); }
 
 struct Actor *Scene_CreateImportedActor(s32 x, s32 y, s32 z, s32 type) {
@@ -123,12 +119,15 @@ extern s32 gSeaOfTime_ShipRests[];
 s32 Actor_HasArrived(struct Actor *actor);
 u16 gSeaOfTime_RippleLines[160] BSS_DATA ALIGNED(16);
 
-s32 SeaOfTime_HideSprite(struct Actor *object) {
-  ((struct SeaOfTimeSprite *)object->sprite)->visible = 0;
+/// Starts an actor's animation from its first frame, on map layer 1.
+s32 SeaOfTime_ResetAnimationFrame(struct Actor *object) {
+  ((struct FieldSprite *)object->sprite)->flags = 0;
   object->layer = 1;
   return 1;
 }
 
+/// A map cell's collision code and second attribute, as one number: the code in
+/// the high byte. Layers above 2 read the cell buffer.
 s32 SeaOfTime_GetCellCode(u32 layer, s32 x, s32 y) {
   struct MapWork *map = Ram_HeapSlots->mapGrid;
   struct MapCell *cell;
@@ -143,6 +142,8 @@ s32 SeaOfTime_GetCellCode(u32 layer, s32 x, s32 y) {
   return (cell->collisionCode << 8) | cell->attributeB;
 }
 
+/// Sets a map cell's collision code and second attribute from one number, as
+/// SeaOfTime_GetCellCode reads them, and returns the old one.
 s32 SeaOfTime_SetCellCode(u32 layer, s32 x, s32 y, s32 value) {
   struct MapWork *map = Ram_HeapSlots->mapGrid;
   struct MapCell *cell;
@@ -234,6 +235,8 @@ const struct ActorPlacement *Scene_GetActorPlacements(void) {
   return gSeaOfTime_Placements;
 }
 
+/// In a swirl the ship is drawn to the middle of its 32-pixel square and turned
+/// about it, one way or the other by the swirl's cell.
 void SeaOfTime_CircleSwirl(void) {
   struct Actor *object = Actor_GetById(ACTOR_SHIP);
   s32 turn[1];
@@ -261,11 +264,11 @@ void SeaOfTime_CircleSwirl(void) {
                               FIELD_CELL(center[2])) >>
             8 ==
         CELL_BEHAVIOR_SWIRL_COUNTERCLOCKWISE) {
-      turn[0] = SeaOfTime_Cos(-0x200);
-      sine = Trig_Sin(-0x200);
+      turn[0] = SeaOfTime_Cos(-TRIG_TURN / 128);
+      sine = Trig_Sin(-TRIG_TURN / 128);
     } else {
-      turn[0] = SeaOfTime_Cos(0x200);
-      sine = Trig_Sin(0x200);
+      turn[0] = SeaOfTime_Cos(TRIG_TURN / 128);
+      sine = Trig_Sin(TRIG_TURN / 128);
     }
     dx = object->x.fixed - center[0];
     dz = object->z.fixed - center[2];
@@ -278,6 +281,8 @@ void SeaOfTime_CircleSwirl(void) {
   }
 }
 
+/// A current carries the ship toward the next square in its heading and turns
+/// it about that square's middle, throwing up spray on both sides as it goes.
 void SeaOfTime_RideCurrent(void) {
   struct FieldWork *work = (struct FieldWork *)Ram_HeapSlots->fieldWork;
   struct Actor *object = Actor_GetById(ACTOR_SHIP);
@@ -342,9 +347,9 @@ void SeaOfTime_RideCurrent(void) {
   pos = &object->x.fixed;
   if (Position_FlatDistance(pos, &center) > 46) {
     if (*pos < center.x)
-      *pos += 0x8000;
+      *pos += toFIXED(1) / 2;
     else
-      *pos -= 0x8000;
+      *pos -= toFIXED(1) / 2;
     if (object->z.fixed < center.z)
       object->z.fixed += toFIXED(1) / 2;
     else
@@ -353,11 +358,11 @@ void SeaOfTime_RideCurrent(void) {
   if (SeaOfTime_GetCellCode(1, FIELD_CELL(center.x), FIELD_CELL(center.z)) >>
           8 ==
       CELL_BEHAVIOR_SWIRL_COUNTERCLOCKWISE) {
-    turn[0] = SeaOfTime_Cos(-0x200);
-    s = Trig_Sin(-0x200);
+    turn[0] = SeaOfTime_Cos(-TRIG_TURN / 128);
+    s = Trig_Sin(-TRIG_TURN / 128);
   } else {
-    turn[0] = SeaOfTime_Cos(0x200);
-    s = Trig_Sin(0x200);
+    turn[0] = SeaOfTime_Cos(TRIG_TURN / 128);
+    s = Trig_Sin(TRIG_TURN / 128);
   }
   dx = object->x.fixed - center.x;
   dz = object->z.fixed - center.z;
@@ -394,12 +399,12 @@ void SeaOfTime_RideCurrent(void) {
     }
     ends[0] += object->x.fixed;
     ends[1] += object->z.fixed;
-    speed = 0x8000;
+    speed = toFIXED(1) / 2;
     ends[2] += object->x.fixed;
     ends[3] += object->z.fixed;
     if (ends[1] != object->z.fixed) {
-      ends[1] += -0xc0000;
-      ends[3] += -0xc0000;
+      ends[1] += -toFIXED(12);
+      ends[3] += -toFIXED(12);
     }
     flip = *counter & 4;
     px = ends[0];
@@ -448,8 +453,8 @@ void SeaOfTime_FollowChannel(void) {
   Event_ResolvePendingActions(0);
   x = FIELD_CELL(actor->x.fixed);
   z = FIELD_CELL(actor->z.fixed);
-  dx = Trig_Cos(angle) >> 16;
-  dz = Trig_Sin(angle) >> 16;
+  dx = FIXEDtoINT(Trig_Cos(angle));
+  dz = FIXEDtoINT(Trig_Sin(angle));
   actor->speedLimit = toFIXED(4);
   actor->acceleration = toFIXED(4);
   targetZ = 0;
@@ -461,13 +466,13 @@ void SeaOfTime_FollowChannel(void) {
     targetX = (dz < 0 ? -dz : dz) * 15 << 16;
     targetZ = (dx < 0 ? -dx : dx) * 15 << 16;
   }
-  targetX += x << 20;
-  targetZ += z << 20;
+  targetX += FIELD_CELL_ORIGIN(x);
+  targetZ += FIELD_CELL_ORIGIN(z);
   while (SeaOfTime_GetCellCode(1, x, z) >> 8 == work->stepTrigger) {
     x += dx;
     z += dz;
-    targetX += dx << 20;
-    targetZ += dz << 20;
+    targetX += FIELD_CELL_ORIGIN(dx);
+    targetZ += FIELD_CELL_ORIGIN(dz);
     Actor_SetMoveTarget(actor, targetX, actor->y.fixed, targetZ);
     while (Actor_HasArrived(actor) == 0) {
       s32 phase = 3;
@@ -491,15 +496,15 @@ void SeaOfTime_FollowChannel(void) {
         pos[2] += actor->x.fixed;
         pos[3] += actor->z.fixed;
         if (pos[1] != actor->z.fixed) {
-          pos[1] -= 0xc0000;
-          pos[3] -= 0xc0000;
+          pos[1] -= toFIXED(12);
+          pos[3] -= toFIXED(12);
         }
         flip = gFrameCount & 4;
         y0 = actor->y.fixed;
         x0 = pos[0];
         z0 = pos[1];
         if (flip) {
-          FieldEffect_Spawn(x0 + toFIXED(4), y0, z0, 0x8000, 0, 0,
+          FieldEffect_Spawn(x0 + toFIXED(4), y0, z0, toFIXED(1) / 2, 0, 0,
                             EFFECT_USE_START_SCALE | EFFECT_USE_PRIORITY |
                                 EFFECT_USE_PALETTE,
                             &spark);
@@ -509,7 +514,7 @@ void SeaOfTime_FollowChannel(void) {
                                 EFFECT_USE_PALETTE,
                             &spark);
         } else {
-          FieldEffect_Spawn(x0 - toFIXED(4), y0, z0, -0x8000, 0, 0,
+          FieldEffect_Spawn(x0 - toFIXED(4), y0, z0, -toFIXED(1) / 2, 0, 0,
                             EFFECT_USE_START_SCALE | EFFECT_USE_PRIORITY |
                                 EFFECT_USE_PALETTE,
                             &spark);
@@ -572,12 +577,12 @@ void SeaOfTime_CountLaps(void) {
     if (*delta == 7) {
       *delta = -1;
     }
-    raw = *(u16 *)delta;
+    raw = (u16)*delta;
     if ((s16)raw == -7) {
       *delta = 1;
     }
     diff = last - now;
-    raw = *(u16 *)delta;
+    raw = (u16)*delta;
     step = (s16)raw;
     count = &gSeaOfTime_LapCount;
     if (diff == step || now - last == step * 7) {
@@ -599,7 +604,7 @@ void SeaOfTime_CountLaps(void) {
 
       struct EffectOptions *p = &params;
 
-      p->type = 0x2a1;
+      p->type = SPRITE_SPARKLE;
       p->priority = 2;
       x = Random16() & 31;
       z = Random16() & 31;
@@ -619,6 +624,8 @@ void SeaOfTime_CountLaps(void) {
   }
 }
 
+/// A task while the waves run: ends them after their time is up and keeps their
+/// start, length and the frame count for the scene's next visit.
 void SeaOfTime_TrackWaves(void) {
   u32 *state = gSceneState;
 
@@ -693,6 +700,8 @@ void SeaOfTime_StartWaves(void) {
 
 struct SavedColors gSeaOfTime_SavedColors BSS_DATA;
 
+/// Ends the waves: fades BG palette 3 back to its saved colours, one unit per
+/// channel every 10 frames, and lets the channels and lap cells answer again.
 void SeaOfTime_StopWaves(void) {
   s32 changed;
   volatile u16 *palette;
@@ -707,50 +716,49 @@ void SeaOfTime_StopWaves(void) {
   gSeaOfTime_WaveState = 1;
   // Each of the 14 colours steps one unit per channel toward its saved colour
   // every 10 frames, until none changes.
-fade:
-  wait(10);
-  changed = 0;
-  palette = &BG_PLTT_COLOR(3, 0);
-  // i counts palette entries from 1 and j saved colours from 0; the saved
-  // colours are read through a pointer set after i, each pass.
-  for (i = 1, saved = &gSeaOfTime_SavedColors, j = 0; i != 15; i++, j++) {
-    u16 color = palette[i];
-    u16 target = saved->colors[j];
-    u16 r = RGB_RED(color);
-    u16 g = RGB_GREEN(color);
-    u16 b = RGB_BLUE(color);
-    u16 tr = RGB_RED(target);
-    u16 tg = RGB_GREEN(target);
-    u16 tb = RGB_BLUE(target);
+  do {
+    wait(10);
+    changed = 0;
+    palette = &BG_PLTT_COLOR(3, 0);
+    // i counts palette entries from 1 and j saved colours from 0; the saved
+    // colours are read through a pointer set after i, each pass.
+    for (i = 1, saved = &gSeaOfTime_SavedColors, j = 0; i != 15; i++, j++) {
+      u16 color = palette[i];
+      u16 target = saved->colors[j];
+      u16 r = RGB_RED(color);
+      u16 g = RGB_GREEN(color);
+      u16 b = RGB_BLUE(color);
+      u16 tr = RGB_RED(target);
+      u16 tg = RGB_GREEN(target);
+      u16 tb = RGB_BLUE(target);
 
-    if (r < tr) {
-      r++;
-      changed = 1;
+      if (r < tr) {
+        r++;
+        changed = 1;
+      }
+      if (r > tr) {
+        r--;
+        changed = 1;
+      }
+      if (g < tg) {
+        g++;
+        changed = 1;
+      }
+      if (g > tg) {
+        g--;
+        changed = 1;
+      }
+      if (b < tb) {
+        b++;
+        changed = 1;
+      }
+      if (b > tb) {
+        b--;
+        changed = 1;
+      }
+      palette[i] = RGB(r, g, b);
     }
-    if (r > tr) {
-      r--;
-      changed = 1;
-    }
-    if (g < tg) {
-      g++;
-      changed = 1;
-    }
-    if (g > tg) {
-      g--;
-      changed = 1;
-    }
-    if (b < tb) {
-      b++;
-      changed = 1;
-    }
-    if (b > tb) {
-      b--;
-      changed = 1;
-    }
-    palette[i] = RGB(r, g, b);
-  }
-  if (changed)
-    goto fade;
+  } while (changed);
   gSeaOfTime_WaveState = 1;
   Event_ClearFlag(FLAG_WAVES_RUNNING);
   Event_End();
@@ -796,8 +804,8 @@ void SeaOfTime_SinkIntoWhirlpool(void) {
       sides[3] += actor->z.fixed;
       velocity = toFIXED(1) / 2;
       if (sides[1] != actor->z.fixed) {
-        sides[1] -= 0xc0000;
-        sides[3] -= 0xc0000;
+        sides[1] -= toFIXED(12);
+        sides[3] -= toFIXED(12);
       }
       alternate = gFrameCount & 4;
       reverseVelocity = -velocity;
@@ -830,6 +838,7 @@ void SeaOfTime_SinkIntoWhirlpool(void) {
   Event_End();
 }
 
+/// The sea sweeps the ship back out: by exit 4 the first time, by exit 1 after.
 void SeaOfTime_SweptBack(void) {
   Event_Start();
   Event_ResolvePendingActions(0);
@@ -844,12 +853,14 @@ void SeaOfTime_SweptBack(void) {
   Event_End();
 }
 
+/// Every other frame, throws up spray 16 pixels south of the ship, at a random
+/// place across its width.
 void SeaOfTime_UpdateSpray(struct Actor *object) {
   struct EffectOptions spark;
   s32 even = gFrameCount & 1;
 
   if (even == 0) {
-    FIXED dx = ((Random16() & 31) << 16) + -0xe0000;
+    FIXED dx = toFIXED(Random16() & 31) + -toFIXED(14);
 
     spark.startScaleX = FIXED_ONE * 7 / 10;
     spark.startScaleY = FIXED_ONE * 7 / 10;
@@ -862,6 +873,9 @@ void SeaOfTime_UpdateSpray(struct Actor *object) {
   }
 }
 
+/// The way to Lemuria opens: the ship sails up, the sea's colours fade back,
+/// puffs burst over the water for 360 frames, faster and faster, and 16 larger
+/// ones follow.
 void SeaOfTime_CrossToLemuria(void) {
   volatile u16 fill;
   struct EffectOptions burst;
@@ -892,80 +906,75 @@ void SeaOfTime_CrossToLemuria(void) {
   MapGrid_CopyCellPictureIndicesRect(49, 70, 19, 73, 6, 6);
   // Steps each colour's red, green and blue by one toward the saved palette
   // every 10 frames until none changes.
-fade:
-  wait(10);
-  changed = 0;
-  palette = &BG_PLTT_COLOR(3, 0);
-  // i counts palette entries from 1 and j saved colours from 0; the saved
-  // colours are read through a pointer set after i, each pass.
-  for (i = 1, saved = &gSeaOfTime_SavedColors, j = 0; i != 15; i++, j++) {
-    u16 color = palette[i];
-    u16 target = saved->colors[j];
-    u16 r = RGB_RED(color);
-    u16 g = RGB_GREEN(color);
-    u16 b = RGB_BLUE(color);
-    u16 tr = RGB_RED(target);
-    u16 tg = RGB_GREEN(target);
-    u16 tb = RGB_BLUE(target);
+  do {
+    wait(10);
+    changed = 0;
+    palette = &BG_PLTT_COLOR(3, 0);
+    // i counts palette entries from 1 and j saved colours from 0; the saved
+    // colours are read through a pointer set after i, each pass.
+    for (i = 1, saved = &gSeaOfTime_SavedColors, j = 0; i != 15; i++, j++) {
+      u16 color = palette[i];
+      u16 target = saved->colors[j];
+      u16 r = RGB_RED(color);
+      u16 g = RGB_GREEN(color);
+      u16 b = RGB_BLUE(color);
+      u16 tr = RGB_RED(target);
+      u16 tg = RGB_GREEN(target);
+      u16 tb = RGB_BLUE(target);
 
-    if (r < tr) {
-      r++;
-      changed = 1;
+      if (r < tr) {
+        r++;
+        changed = 1;
+      }
+      if (r > tr) {
+        r--;
+        changed = 1;
+      }
+      if (g < tg) {
+        g++;
+        changed = 1;
+      }
+      if (g > tg) {
+        g--;
+        changed = 1;
+      }
+      if (b < tb) {
+        b++;
+        changed = 1;
+      }
+      if (b > tb) {
+        b--;
+        changed = 1;
+      }
+      palette[i] = RGB(r, g, b);
     }
-    if (r > tr) {
-      r--;
-      changed = 1;
-    }
-    if (g < tg) {
-      g++;
-      changed = 1;
-    }
-    if (g > tg) {
-      g--;
-      changed = 1;
-    }
-    if (b < tb) {
-      b++;
-      changed = 1;
-    }
-    if (b > tb) {
-      b--;
-      changed = 1;
-    }
-    palette[i] = RGB(r, g, b);
-  }
-  if (changed)
-    goto fade;
+  } while (changed);
   Event_Wait(30);
   // For 360 frames, spawns an effect every 16 frames, then every 8, then every
   // other frame, and plays sound 164 every 64 frames.
-  i = 0;
-sparks:
-  if ((i & 63) == 0)
-    Sound_Play(SE_SCATTER);
-  if (i < 120) {
-    if (i & 15)
-      goto next;
-  } else if (i < 240) {
-    if (i & 7)
-      goto next;
-  } else if (i & 1)
-    goto next;
-  {
-    s32 x = Random16();
-    s32 mask = 31;
-    s32 z = Random16();
+  for (i = 0; i != 360; i++) {
+    if ((i & 63) == 0)
+      Sound_Play(SE_SCATTER);
+    if (i < 120) {
+      if (i & 15)
+        continue;
+    } else if (i < 240) {
+      if (i & 7)
+        continue;
+    } else if (i & 1)
+      continue;
+    {
+      s32 x = Random16();
+      s32 mask = 31;
+      s32 z = Random16();
 
-    burst.palette = 7;
-    FieldEffect_Spawn(((x & mask) << 16) + toFIXED(336), 0,
-                      ((z & mask) << 16) + toFIXED(176), 0, 0, 0,
-                      EFFECT_USE_PALETTE, &burst);
-    wait(1);
+      burst.palette = 7;
+      FieldEffect_Spawn(toFIXED(x & mask) + toFIXED(336), 0,
+                        toFIXED(z & mask) + toFIXED(176), 0, 0, 0,
+                        EFFECT_USE_PALETTE, &burst);
+      wait(1);
+    }
   }
-next:
-  i++;
-  if (i != 360)
-    goto sparks;
   // Then 16 larger effects, one a frame.
   i = 0;
   while (i != 16) {
@@ -973,8 +982,8 @@ next:
       s32 x = Random16();
       s32 mask = 31;
       s32 z = Random16();
-      FIXED offsetZ = (z & mask) << 16;
-      FIXED offsetX = (x & mask) << 16;
+      FIXED offsetZ = toFIXED(z & mask);
+      FIXED offsetX = toFIXED(x & mask);
 
       rain.startScaleX = FIXED_ONE * 3 / 2;
       rain.startScaleY = FIXED_ONE * 3 / 2;
@@ -999,6 +1008,7 @@ next:
   Event_End();
 }
 
+/// Grind clears a rock: its 2 by 2 cells open and its actor is put away.
 void SeaOfTime_RemoveRock(s32 x, s32 z, s32 actor) {
   s32 cx = FIELD_CELL(x);
   s32 cz = FIELD_CELL(z);
@@ -1062,14 +1072,14 @@ const struct Trigger *Scene_GetTriggers(void) {
 void SeaOfTime_AnimateSea(void) {
   u16 *line = gSeaOfTime_RippleLines;
   struct MapLayer *layer = &Ram_HeapSlots->mapGrid->layers[2];
-  u8 *block = Ram_HeapSlots->paletteFade;
+  struct PaletteFade *fade = Ram_HeapSlots->paletteFade;
   struct FieldWork *event = Ram_HeapSlots->fieldWork;
   s32 i;
   s16 color;
 
   if (event->psynergy != 0)
     return;
-  if (*(s8 *)(block + 0x2a01) != 0)
+  if (fade->duration != 0)
     return;
   if (event->transitionActive == 0)
     return;
@@ -1126,28 +1136,34 @@ void SeaOfTime_AnimateSea(void) {
   Dma_Set((const void *)BG_PLTT, Ram_HeapSlots->paletteFade,
           DMA_COPY_WORDS(112), REG_DMA3);
   PaletteFade_SetTarget(PALETTE_TINT_NONE, 0);
-  *(s32 *)((u8 *)layer + 0x1c) = 0;
+  layer->speedY = 0;
   for (i = 0; i != 160; i++)
     *line++ =
-        (s16)(layer->x >> 16) +
-        (Trig_Sin((i + *(u8 *)&gFrameCount + (s16)(layer->y >> 16)) << 9) >>
+        (s16)FIXEDtoINT(layer->x) +
+        (Trig_Sin((i + *(u8 *)&gFrameCount + (s16)FIXEDtoINT(layer->y)) << 9) >>
          15);
   line = gSeaOfTime_RippleLines;
   REG_BG1HOFS = *line;
-  Dma_Set(line + 1, (void *)&REG_BG1HOFS, 0xa2600001, (volatile u32 *)REG_DMA0);
+  Dma_Set(line + 1, (void *)&REG_BG1HOFS,
+          (DMA_ENABLE | DMA_START_HBLANK | DMA_REPEAT | DMA_DEST_RELOAD) << 16 |
+              1,
+          (volatile u32 *)REG_DMA0);
 }
 
+/// Places a rock (x and z in 8-pixel steps) and walls off its 2 by 2 cells.
 void SeaOfTime_PlaceRock(s32 x, s32 z, s32 actor) {
   Actor_GetById(actor)->collisionFlags |= ACTOR_NEAR_PSYNERGY;
   Actor_SetPositionFX(actor, (x << 19) + toFIXED(8), (z << 19) + toFIXED(8));
   x >>= 1;
   z >>= 1;
-  SeaOfTime_SetCellCode(1, x, z, 0xff00);
-  SeaOfTime_SetCellCode(1, x + 1, z, 0xff00);
-  SeaOfTime_SetCellCode(1, x, z + 1, 0xff00);
-  SeaOfTime_SetCellCode(1, x + 1, z + 1, 0xff00);
+  SeaOfTime_SetCellCode(1, x, z, CELL_BEHAVIOR_WALL << 8);
+  SeaOfTime_SetCellCode(1, x + 1, z, CELL_BEHAVIOR_WALL << 8);
+  SeaOfTime_SetCellCode(1, x, z + 1, CELL_BEHAVIOR_WALL << 8);
+  SeaOfTime_SetCellCode(1, x + 1, z + 1, CELL_BEHAVIOR_WALL << 8);
 }
 
+/// A rock rises out of the sea: the camera goes to it, the screen shakes, water
+/// splashes and the rock grows up out of it.
 void SeaOfTime_RaiseRock(s32 x, s32 z, s32 actor) {
   struct EffectOptions spark;
   FIXED px;
@@ -1236,7 +1252,7 @@ void SeaOfTime_Open(void) {
       x &= mask;
       x <<= 16;
       x += toFIXED(336);
-      FieldEffect_Spawn(x, 0, ((y & mask) << 16) + toFIXED(176), 0, 0, 0,
+      FieldEffect_Spawn(x, 0, toFIXED(y & mask) + toFIXED(176), 0, 0, 0,
                         EFFECT_USE_START_SCALE | EFFECT_USE_PRIORITY |
                             EFFECT_USE_PALETTE,
                         &params);
@@ -1255,7 +1271,7 @@ void SeaOfTime_Open(void) {
     x &= mask;
     x <<= 16;
     x += toFIXED(336);
-    FieldEffect_Spawn(x, 0, ((y & mask) << 16) + toFIXED(176), 0, toFIXED(1), 0,
+    FieldEffect_Spawn(x, 0, toFIXED(y & mask) + toFIXED(176), 0, toFIXED(1), 0,
                       EFFECT_USE_START_SCALE | EFFECT_USE_PRIORITY |
                           EFFECT_USE_PALETTE,
                       &burst);
@@ -1330,7 +1346,7 @@ s32 Scene_Initialize(void) {
       i = 1;
       offset = 98;
       do {
-        *(volatile u16 *)(offset + 0x05000000) = 0x5ccb;
+        *(volatile u16 *)(offset + 0x05000000) = RGB(11, 6, 23);
         i++;
         offset += 2;
       } while (i != 14);
@@ -1370,7 +1386,7 @@ s32 Scene_Initialize(void) {
     }
   }
   {
-    s32 priority = 0xc80;
+    s32 priority = TASK_PASS_FRAME;
 
     Task_Add(SeaOfTime_AnimateSea, priority);
   }
@@ -1435,7 +1451,7 @@ const s32 *gFieldEffect_DurationScripts[] = {
 };
 
 s32 gSeaOfTime_ShipRests[] = {
-    SC_CALL((s32)SeaOfTime_HideSprite),
+    SC_CALL((s32)SeaOfTime_ResetAnimationFrame),
     SC_END,
 };
 

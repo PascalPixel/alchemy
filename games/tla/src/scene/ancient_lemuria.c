@@ -64,20 +64,24 @@ enum AncientLemuriaActorId {
   ACTOR_RIMES_STATUE
 };
 
+/// Talking to Rime once it is out: it joins the party.
 void AncientLemuria_RimeJoins(void) {
   Djinn_JoinParty(ACTOR_RIME, DJINNI_RIME / DJINN_PER_ELEMENT,
                   DJINNI_INDEX(DJINNI_RIME));
 }
 
+/// The update of the statue Rime hides in: it rocks from side to side,
+/// clicking every sixteenth frame.
 void AncientLemuria_ShakeTheStatue(struct Actor *object) {
   struct FieldSprite *sprite = object->sprite;
   s16 time = object->timer++;
 
-  sprite->rotation = Iwram_MulFX(Trig_Sin(time << 12), 0x100);
+  sprite->rotation = Iwram_MulFX(Trig_Sin(time << 12), TRIG_TURN / 256);
   if ((time & 15) == 0)
     Sound_Play(SE_SWITCH);
 }
 
+/// Stops actor id rocking.
 void AncientLemuria_StillTheStatue(s32 id) {
   struct Actor *object = Actor_GetById(id);
   struct FieldSprite *sprite = object->sprite;
@@ -97,16 +101,22 @@ const struct ActorPlacement *Scene_GetActorPlacements(void) {
   return gActorPlacements;
 }
 
+/// A step trigger (cell behavior 20): the camera keeps south of z 750, short
+/// of the shore's upper part.
 void AncientLemuria_KeepCameraSouth(void) {
   Ram_HeapSlots->mapGrid->minZ = toFIXED(750);
 }
 
+/// A step trigger (cell behavior 21): the camera may go north to z 352 again.
 void AncientLemuria_LetCameraNorth(void) {
   Ram_HeapSlots->mapGrid->minZ = toFIXED(352);
 }
 
+/// Move lifts the blue statue; nothing else happens.
 void AncientLemuria_StartMovingStatue(void) {}
 
+/// Move sets the blue statue down: on cell (8, 36) it stays moved, and once it
+/// is the Lemurians come out to meet the party.
 void AncientLemuria_FinishMovingStatue(s32 unused, s32 id) {
   struct Actor *object = Actor_GetById(id);
   s32 x = FIELD_CELL(object->x.fixed);
@@ -144,8 +154,8 @@ void AncientLemuria_CycloneRevealsRime(void) {
   object->scaleY = FIXED_ONE / 2;
   object->scaleX = FIXED_ONE / 2;
   for (i = 29; i >= 0; i--) {
-    object->facing += 0x1000;
-    if (object->scaleX <= 0xffff)
+    object->facing += TRIG_TURN / 16;
+    if (object->scaleX < FIXED_ONE)
       object->scaleX += FIXED_ONE * 5 / 128;
     object->scaleY = object->scaleX;
     wait(1);
@@ -182,28 +192,34 @@ void AncientLemuria_CycloneRevealsRime(void) {
   Actor_GetById(ACTOR_RIMES_STATUE)->timer = 0;
 }
 
+/// Cyclone on the second bush cuts it down; so for the next four.
 void AncientLemuria_CycloneSecondBush(void) {
   FieldTileCopies_CopyTouchedCells(9, 9, 2, 3, 8, 9, 0);
 }
 
+/// As AncientLemuria_CycloneSecondBush.
 void AncientLemuria_CycloneThirdBush(void) {
   FieldTileCopies_CopyTouchedCells(38, 0, 5, 2, 12, 7, 0);
 }
 
+/// As AncientLemuria_CycloneSecondBush.
 void AncientLemuria_CycloneFourthBush(void) {
   FieldTileCopies_CopyTouchedCells(39, 2, 4, 3, 14, 11, 0);
 }
 
+/// As AncientLemuria_CycloneSecondBush.
 void AncientLemuria_CycloneFifthBush(void) {
   FieldTileCopies_CopyTouchedCells(39, 2, 3, 3, 21, 9, 0);
 }
 
+/// As AncientLemuria_CycloneSecondBush.
 void AncientLemuria_CycloneSixthBush(void) {
   FieldTileCopies_CopyTouchedCells(39, 0, 4, 3, 25, 8, 0);
 }
 
+/// As Tremor starts, the statue Rime hides in stops rocking.
 void AncientLemuria_StartTremorOnTheStatue(void) {
-  AncientLemuria_StillTheStatue(13);
+  AncientLemuria_StillTheStatue(ACTOR_RIMES_STATUE);
 }
 
 /// Tremor on the shaking statue, once Rime hides in it: Rime is thrown out,
@@ -219,7 +235,7 @@ void AncientLemuria_TremorShakesOutRime(void) {
   object = Actor_GetById(ACTOR_RIME);
   GameFlag_Set(FLAG_RIME_SHAKEN_OUT);
   GameFlag_Clear(FLAG_RIME_IN_THE_STATUE);
-  AncientLemuria_StillTheStatue(13);
+  AncientLemuria_StillTheStatue(ACTOR_RIMES_STATUE);
   Actor_SetPosition(ACTOR_RIME, 270, 184);
   object->y.fixed = toFIXED(22);
   Actor_Jump(ACTOR_RIME, 11, 0);
@@ -228,8 +244,8 @@ void AncientLemuria_TremorShakesOutRime(void) {
   Actor_SetSpeed(ACTOR_RIME, 2.2);
   Actor_WalkTo(ACTOR_RIME, 312, 184);
   for (i = 23; i >= 0; i--) {
-    object->facing += 0x2000;
-    if (object->scaleX <= 0xffff)
+    object->facing += TRIG_TURN / 8;
+    if (object->scaleX < FIXED_ONE)
       object->scaleX += FIXED_ONE * 5 / 128;
     object->scaleY = object->scaleX;
     wait(1);
@@ -240,6 +256,9 @@ void AncientLemuria_TremorShakesOutRime(void) {
   Actor_WaitForMoveById(ACTOR_RIME);
 }
 
+/// Walking south to the boat dock: once the Lemurians have met the party and
+/// until King Hydros is met, Kraden calls Felix back to keep exploring;
+/// otherwise the party leaves.
 void AncientLemuria_HeadForTheDock(void) {
   struct Actor *object;
 
@@ -278,8 +297,9 @@ void AncientLemuria_HeadForTheDock(void) {
 
 const struct Trigger *Scene_GetTriggers(void) { return gSceneEvents; }
 
-/// Rotates colours 2-14 of palettes 7 and 8 by one entry every four frames,
-/// and selects colour 0x7f from the table.
+/// The water's shimmer: every four frames colours 1 to 14 of background
+/// palettes 7 and 8 rotate by one, and colour 15 of palette 7 takes the next of
+/// gAncientLemuria_ShimmerColors.
 s32 AncientLemuria_CycleWaterColors(void) {
   if ((*Ram_FrameCount & 3) == 0) {
     volatile u16 *palette;
@@ -357,10 +377,14 @@ s32 Scene_PrepareMap(void) {
   return 0;
 }
 
+/// A step trigger at the ledge: the leader jumps forward if the way is clear.
 void AncientLemuria_JumpForward(void) { Field_TryJumpForward(); }
 
 void Actor_MoveToObject();
 
+/// The two Lemurians who saw the Psynergy come out, wonder whether the party
+/// are the ones who defeated Poseidon and, seeing Piers, hurry back into the
+/// city ahead of the party.
 void AncientLemuria_MeetTheLemurians(void) {
   struct Actor *leader;
   s32 result;
@@ -410,12 +434,12 @@ void AncientLemuria_MeetTheLemurians(void) {
   Actor_RunRepeatedMotion(ACTOR_SECOND_LEMURIAN, 2);
   Event_Wait(10);
   // "Are you the ones who defeated Poseidon?"
-  Event_OpenMessage(10, 0);
-  result = FieldEvent_AskYesNoWithActorAnimation(4, 0);
+  Event_OpenMessage(ACTOR_SECOND_LEMURIAN, 0);
+  result = FieldEvent_AskYesNoWithActorAnimation(ACTOR_FELIX, 0);
   if (result == 0) {
     Event_Wait(30);
     Actor_StartRepeatedMotion(ACTOR_SECOND_LEMURIAN, 3);
-    FieldEffect_SetAttached(10,
+    FieldEffect_SetAttached(ACTOR_SECOND_LEMURIAN,
                             ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
     Event_Wait(40);
     Event_ShowMessageThenWait(ACTOR_SECOND_LEMURIAN, 0, 10);
@@ -423,7 +447,7 @@ void AncientLemuria_MeetTheLemurians(void) {
   } else {
     Event_Wait(40);
     Actor_StartRepeatedMotion(ACTOR_SECOND_LEMURIAN, 3);
-    FieldEffect_SetAttached(10,
+    FieldEffect_SetAttached(ACTOR_SECOND_LEMURIAN,
                             ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
     Event_Wait(40);
     gFieldWork->message++;
@@ -680,7 +704,7 @@ void AncientLemuria_MeetTheLemurians(void) {
   Event_Wait(10);
   FieldMessage_ShowAtActor(ACTOR_LEMURIAN, 0);
   if ((s8)gMainRoutineWork.countedAnswers <= 4) {
-    result = FieldEvent_AskYesNoWithActorAnimation(4, 0);
+    result = FieldEvent_AskYesNoWithActorAnimation(ACTOR_FELIX, 0);
     if (result == 0) {
       Event_Wait(25);
       Actor_FaceDirectionById(ACTOR_KRADEN, FACING_SOUTH_SOUTHWEST, 0);
@@ -706,7 +730,7 @@ void AncientLemuria_MeetTheLemurians(void) {
 
     n = (u16)gFieldWork->message;
     gFieldWork->message = n + 2;
-    result = FieldEvent_AskYesNoWithActorAnimation(4, 0);
+    result = FieldEvent_AskYesNoWithActorAnimation(ACTOR_FELIX, 0);
     if (result == 0) {
       Event_Wait(25);
       Actor_FaceDirection(ACTOR_KRADEN, FACING_SOUTH_SOUTHWEST, 0);
@@ -853,15 +877,16 @@ u32 gSceneExits[] = {
 struct ActorPlacement gActorPlacements[] = {
     ACTOR_PLACEMENT(SPRITE_BLUE_STATUE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
                     152, 0, 584, FACING_SOUTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(157, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 136, 0, 504,
-                    0x3000, TALK_FACING_PARTY, 0),
-    ACTOR_PLACEMENT(157, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 200, 0, 504,
-                    0x5000, TALK_FACING_PARTY, 0),
-    {56, CONDITION_ALWAYS, 1, -toFIXED(56), 0, -toFIXED(56), FACING_NORTH, 2,
-     0},
-    {7, CONDITION_ALWAYS, 1, -toFIXED(56), 0, -toFIXED(56), FACING_NORTH, 2, 0},
-    {SPRITE_MERCURY_DJINNI, FLAG_DJINNI(DJINNI_RIME), 1, -toFIXED(56), 0,
-     -toFIXED(56), FACING_SOUTH, 0, 0},
+    ACTOR_PLACEMENT(SPRITE_LEMURIAN_GIRL, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
+                    136, 0, 504, 0x3000, TALK_FACING_PARTY, 0),
+    ACTOR_PLACEMENT(SPRITE_LEMURIAN_GIRL, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
+                    200, 0, 504, 0x5000, TALK_FACING_PARTY, 0),
+    {SPRITE_KRADEN, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, -toFIXED(56), 0,
+     -toFIXED(56), FACING_NORTH, TALK_FACING_KEEP, 0},
+    {SPRITE_PIERS, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, -toFIXED(56), 0,
+     -toFIXED(56), FACING_NORTH, TALK_FACING_KEEP, 0},
+    {SPRITE_MERCURY_DJINNI, FLAG_DJINNI(DJINNI_RIME), MOVEMENT_TYPE_STAND,
+     -toFIXED(56), 0, -toFIXED(56), FACING_SOUTH, TALK_FACING_PARTY, 0},
     ACTOR_PLACEMENT(SPRITE_BLUE_STATUE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
                     264, 0, 184, FACING_SOUTH, TALK_FACING_KEEP, 0),
     {SCENE_TABLE_END},

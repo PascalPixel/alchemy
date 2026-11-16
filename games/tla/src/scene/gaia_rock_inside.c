@@ -3278,23 +3278,7 @@ void GaiaRockInside_SetMazeLayer(s32 layer, s32 keep) {
   }
 }
 
-/// Each frame while the leader is moved by the keys alone: the collision code
-/// of the wall cell he stands before, 1 to 230, is his step trigger.
-void GaiaRockInside_TriggerWallCell(void) {
-  if (gMainRoutineWork.movementMode == LEADER_MOVEMENT_KEYS) {
-    struct FieldWork *event = Ram_HeapSlots->fieldWork;
-    struct MapWork *map = Ram_HeapSlots->mapGrid;
-    struct Actor *object = Actor_Get(gMainRoutineWork.leaderActorId);
-    s32 x = object->x.fixed / toFIXED(16);
-    s32 z = (object->z.fixed - object->y.fixed + 0x7fff) / toFIXED(16);
-    struct MapCell *cells = map->layers[2].cells;
-    struct MapCell *cell = &cells[x + (z << 7)];
-    s32 code = cell->collisionCode;
-
-    if (code >= 1 && code <= 230)
-      event->stepTrigger = code;
-  }
-}
+#include "shared/gaia_rock_trigger_wall_cell.c"
 
 /// Stands a statue on the cell at (x, y, z), its wall cell blocked.
 void GaiaRockInside_PlaceStatue(s32 id, s32 x, s32 y, s32 z) {
@@ -3393,9 +3377,9 @@ void GaiaRockInside_StatueRisesUnderLeader(s32 id, s32 flag) {
   Event_SetFlag(flag);
 }
 
-/// Starts GaiaRockInside_TriggerWallCell each frame.
+/// Starts GaiaRock_TriggerWallCell each frame.
 void GaiaRockInside_StartWallTriggers(void) {
-  Task_AddFrame((s32)GaiaRockInside_TriggerWallCell, TASK_PASS_VBLANK);
+  Task_AddFrame((s32)GaiaRock_TriggerWallCell, TASK_PASS_VBLANK);
 }
 
 #include "text/msg_ids.h"

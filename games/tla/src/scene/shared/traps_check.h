@@ -37,7 +37,7 @@ next:
       Actor_SetSpriteColor(Actor_GetById(id), 7);
       wait(4);
       Actor_SetSpriteColor(Actor_GetById(id), 0);
-      MagmaRockInside_SpawnRubble(0);
+      Rubble_Scatter(0);
       GameFlag_Set(flag);
     } else {
       second = flag + 1;
@@ -45,11 +45,11 @@ next:
         leader->motionFlags = 0;
         Sound_Play(SE_PUSH);
         MapGrid_SetShake(1, 4, 1);
-        MagmaRockInside_SpawnRubble(0);
+        Rubble_Scatter(0);
         wait(8);
         Actor_SelectAnimation(trap, 2);
         MagmaRockInside_SetLeaderCellShape(-2, trap->layer);
-        MagmaRockInside_SpawnRubble(1);
+        Rubble_Scatter(1);
         wait(16);
         MagmaRockInside_SetLeaderCellShape(-2, trap->layer);
         wait(4);

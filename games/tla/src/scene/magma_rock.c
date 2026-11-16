@@ -1953,17 +1953,17 @@ void MagmaRock_StepOnCrumblingPillar(u16 *list) {
         FieldActor_SetSpriteColor(Actor_GetById(id), SPRITE_COLOR_WHITE);
         wait(4);
         FieldActor_SetSpriteColor(Actor_GetById(id), SPRITE_COLOR_NORMAL);
-        MagmaRock_SpawnRubble(0);
+        Rubble_Scatter(0);
         Event_SetFlag(flag);
       } else if (!Event_GetFlag(flag + 1)) {
         leader->motionFlags = 0;
         Event_PlaySound(SE_PUSH);
         MapGrid_SetShake(1, 4, 1);
-        MagmaRock_SpawnRubble(0);
+        Rubble_Scatter(0);
         wait(8);
         Actor_SelectAnimation(target, 2);
         MagmaRock_SetLeaderCellShape(-2, target->layer);
-        MagmaRock_SpawnRubble(1);
+        Rubble_Scatter(1);
         wait(16);
         MagmaRock_SetLeaderCellShape(-2, target->layer);
         wait(4);
@@ -2003,11 +2003,11 @@ void MagmaRock_CrumblePillar(struct MagmaRockCrumblingPillar *entry, s32 id) {
     if (Event_GetFlag(nextFlag) == 0) {
       Event_PlaySound(SE_PUSH);
       MapGrid_SetShake(1, 4, 1);
-      MagmaRock_SpawnRubble(0);
+      Rubble_Scatter(0);
       System_Wait(8);
       Actor_SelectAnimation(target, 2);
       MagmaRock_SetActorCellShape(-4, target->layer, id);
-      MagmaRock_SpawnRubble(1);
+      Rubble_Scatter(1);
       System_Wait(16);
       MapGrid_SetShake(SHAKE_KEEP, SHAKE_KEEP, 0.9);
       System_Wait(8);
@@ -2086,7 +2086,7 @@ void MagmaRock_StepOnTrap(u16 *list) {
         FieldActor_SetSpriteColor(Actor_GetById(8), SPRITE_COLOR_WHITE);
         wait(4);
         FieldActor_SetSpriteColor(Actor_GetById(8), SPRITE_COLOR_NORMAL);
-        MagmaRock_SpawnRubble(0);
+        Rubble_Scatter(0);
         MagmaRock_TakePlaceOf(target, actor8);
         wait(1);
         Event_SetFlag(flag);
@@ -2100,11 +2100,11 @@ void MagmaRock_StepOnTrap(u16 *list) {
         *flags = 0;
         Event_PlaySound(SE_PUSH);
         MapGrid_SetShake(1, 4, 1);
-        MagmaRock_SpawnRubble(0);
+        Rubble_Scatter(0);
         wait(8);
         Actor_SelectAnimation(actor8, 2);
         MagmaRock_SetLeaderCellShape(-2, target->layer);
-        MagmaRock_SpawnRubble(1);
+        Rubble_Scatter(1);
         wait(16);
         MagmaRock_SetLeaderCellShape(-2, target->layer);
         wait(4);
@@ -2131,46 +2131,7 @@ void MagmaRock_StepOnTrap(u16 *list) {
 
 void Actor_StartScript(struct Actor *object, const s32 *script);
 
-/// Scatters dust and rubble around the leader's feet; with spread, they fly
-/// outward.
-void MagmaRock_SpawnRubble(s32 spread) {
-  struct Actor *leader = Actor_Get(gMainRoutineWork.leaderActorId);
-  struct FieldEffect *effect;
-  u32 frame = 0;
-  u32 i = 0;
-  FIXED y;
-
-  do {
-    y = leader->y.fixed - ((Random_Below(14)) << 16);
-    effect = (struct FieldEffect *)FieldActor_Create(
-        SPRITE_DUST_CLOUD, (i << 17) + leader->x.fixed - toFIXED(8),
-        y - toFIXED(2), leader->z.fixed);
-    if (effect != 0) {
-      frame = Sprite_ShareVramCacheEntry(effect->sprite, frame);
-      effect->motionFlags = 0;
-      effect->collisionFlags = 0;
-      Actor_SetSpriteFlags(effect, 0);
-      Actor_SelectAnimation(effect, 2);
-      Actor_StartScript(effect, gMagmaRock_RubbleScript);
-      effect->scaleY = effect->scaleX = FIXED_ONE * 7 / 10;
-      effect->sprite->priority = 1;
-      if (spread != 0) {
-        effect->velocity.x =
-            Iwram_MulFX(Trig_Cos(i * DEGtoANG(45)), FIXED_ONE * 6 / 5);
-        effect->velocity.z = Math_Sin(i * DEGtoANG(45));
-      } else {
-        effect->velocity.x = spread;
-        effect->velocity.z = spread;
-      }
-      effect->velocity.y = -(((Random16() << 14) >> 16) + 0x6000);
-      effect->spin = ((Random16() << 9) >> 16) - 0x100;
-      effect->scaleRateX = -FIXED_ONE / 32;
-      effect->scaleRateY = -0x600;
-      effect->update = Effect_AdvanceMotionAtLeaderPriority;
-    }
-    i++;
-  } while (i <= 7);
-}
+#include "shared/rubble_scatter.c"
 
 /// Throws a ring of dust clouds out from the leader as a pillar lands.
 void MagmaRock_SpawnDustRing(void) {
@@ -2425,7 +2386,7 @@ s16 gMagmaRock_StatueStatues[] = {
 };
 
 /// A piece of rubble's actor script: it lasts 33 frames.
-u32 gMagmaRock_RubbleScript[] = {                                                               
+u32 gRubble_ScatterScript[] = {                                                               
       SC_WAIT(33), SC_SET(SW_HOOK, 0), SC_POSITION(0, 0, 0), SC_WAIT(1),       
       SC_RELEASE,                                                                 
   };

@@ -539,7 +539,7 @@ s32 MapGrid_GetTerrainKind(s32 layer, s32 x, s32 z);
 void Actor_DisableById(s32 id);
 struct Actor *Actor_FindAtCell(s32 *position, s32 mode);
 
-void MagmaRockInside_SpawnRubble(s32 value);
+void Rubble_Scatter(s32 value);
 void MagmaRockInside_SetLeaderCellShape(s32 offset, s32 layer);
 void MagmaRockInside_SpawnDustRing(void);
 void TrialRoad_SetActorCellShape(s32 a, s32 b, s32 c);
@@ -3130,11 +3130,11 @@ void TrialRoad_CrumblePillar(const void *data, s32 id) {
       if (!Event_GetFlag(flag + 1)) {
         Event_PlaySound(SE_PUSH);
         MapGrid_SetShake(1, 4, 1);
-        MagmaRockInside_SpawnRubble(0);
+        Rubble_Scatter(0);
         wait(8);
         Actor_SelectAnimation(object, 2);
         TrialRoad_SetActorCellShape(-4, object->layer, id);
-        MagmaRockInside_SpawnRubble(1);
+        Rubble_Scatter(1);
         wait(16);
         MapGrid_SetShake(SHAKE_KEEP, SHAKE_KEEP, 0.9);
         wait(8);
@@ -3212,7 +3212,7 @@ void TrialRoad_StepOnTrap(const u16 *table) {
       Actor_SetSpriteColor(Actor_GetById(ACTOR_MOAPA), 7);
       wait(4);
       Actor_SetSpriteColor(Actor_GetById(ACTOR_MOAPA), 0);
-      MagmaRockInside_SpawnRubble(0);
+      Rubble_Scatter(0);
       TrialRoad_TakePlaceOf(trap, partner);
       wait(1);
       GameFlag_Set(flag);
@@ -3226,11 +3226,11 @@ void TrialRoad_StepOnTrap(const u16 *table) {
         *motion = 0;
         Sound_Play(SE_PUSH);
         MapGrid_SetShake(1, 4, 1);
-        MagmaRockInside_SpawnRubble(0);
+        Rubble_Scatter(0);
         wait(8);
         Actor_SelectAnimation(partner, 2);
         MagmaRockInside_SetLeaderCellShape(-2, trap->layer);
-        MagmaRockInside_SpawnRubble(1);
+        Rubble_Scatter(1);
         wait(16);
         MagmaRockInside_SetLeaderCellShape(-2, trap->layer);
         wait(4);
@@ -3292,9 +3292,9 @@ void TrialRoad_DriftRubble(union FieldObject *object) {
   to->bits = bits;
 }
 
-extern s32 gTrialRoad_RubbleScript[];
+extern s32 gRubble_ScatterScript[];
 
-void MagmaRockInside_SpawnRubble(s32 spread) {
+void Rubble_Scatter(s32 spread) {
   struct Actor *leader = Actor_GetById(gMainRoutineWork.leaderActorId);
   struct FieldEffect *effect;
   u32 frame = 0;
@@ -3315,7 +3315,7 @@ void MagmaRockInside_SpawnRubble(s32 spread) {
       effect->collisionFlags = 0;
       Actor_SetSpriteFlags(effect, 0);
       Actor_SelectAnimation(effect, 2);
-      Actor_StartScript((struct Actor *)effect, gTrialRoad_RubbleScript);
+      Actor_StartScript((struct Actor *)effect, gRubble_ScatterScript);
       effect->scaleY = effect->scaleX = FIXED_ONE * 7 / 10;
       effect->sprite->priority = 1;
       if (spread != 0) {
@@ -3987,9 +3987,9 @@ u32 gTrialRoad_RightKnightLeavesScript[] = {
 #undef MARKER
 
 // clang-format off
-LATE_DATA s32 gTrialRoad_RubbleScript[] = {
-    0, 33, 22, 38, 0, 2,
-    0, 0, 0, 0, 1, 38,
+LATE_DATA s32 gRubble_ScatterScript[] = {
+    SC_WAIT(33), SC_SET(SW_HOOK, 0), SC_POSITION(0, 0, 0), SC_WAIT(1),
+    SC_RELEASE,
 };
 
 LATE_DATA s32 gTrialRoad_DustScript[] = {

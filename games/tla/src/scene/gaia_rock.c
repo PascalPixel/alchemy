@@ -614,22 +614,7 @@ s32 Scene_PrepareMap(void) {
   return 0;
 }
 
-/// While the leader climbs, runs the step trigger of the wall cell under him.
-void GaiaRock_TriggerWallCell(void) {
-  if (gMainRoutineWork.movementMode == LEADER_MOVEMENT_KEYS) {
-    struct FieldWork *work = Ram_HeapSlots->fieldWork;
-    struct MapWork *map = Ram_HeapSlots->mapGrid;
-    struct Actor *object = Actor_Get(gMainRoutineWork.leaderActorId);
-    s32 x = object->x.fixed / toFIXED(16);
-    s32 z = (object->z.fixed - object->y.fixed + 0x7fff) / toFIXED(16);
-    struct MapCell *cells = map->layers[2].cells;
-    struct MapCell *cell = &cells[x + (z << 7)];
-    s32 code = cell->collisionCode;
-
-    if (code >= 1 && code <= 230)
-      work->stepTrigger = code;
-  }
-}
+#include "shared/gaia_rock_trigger_wall_cell.c"
 
 /// Stands statue id risen on the cell under (x, y, z), in 16.16 pixels, and
 /// blocks that cell.

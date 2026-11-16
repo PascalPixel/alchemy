@@ -297,10 +297,10 @@ s32 Actor_GetCellIndex(struct Actor *object);
 s32 Field_TryJumpForward(void);
 struct Actor *Actor_FindAtCell(s32 *position, s32 mode);
 
-void MagmaRockInside_SpawnRubble(s32 spread);
+void Rubble_Scatter(s32 spread);
 void MagmaRockInside_SetLeaderCellShape(s32 heightOffset, s32 layer);
 void MagmaRockInside_SpawnDustRing(void);
-extern s32 gMagmaRockInside_RubbleScript[];
+extern u32 gRubble_ScatterScript[];
 
 extern s32 gMagmaRockInside_DustScript[];
 
@@ -2731,11 +2731,11 @@ void MagmaRockInside_CrumblePillar(const void *data, s32 id) {
     if (!Event_GetFlag(flag + 1)) {
       Event_PlaySound(SE_PUSH);
       MapGrid_SetShake(1, 4, 1);
-      MagmaRockInside_SpawnRubble(0);
+      Rubble_Scatter(0);
       System_Wait(8);
       Actor_SelectAnimation(object, 2);
       MagmaRockInside_SetActorCellShape(-4, object->layer, id);
-      MagmaRockInside_SpawnRubble(1);
+      Rubble_Scatter(1);
       System_Wait(16);
       MapGrid_SetShake(SHAKE_KEEP, SHAKE_KEEP, 0.9);
       System_Wait(8);
@@ -2811,7 +2811,7 @@ void MagmaRockInside_StepOnTrap(const u16 *table) {
         FieldActor_SetSpriteColor(Actor_GetById(8), SPRITE_COLOR_WHITE);
         wait(4);
         FieldActor_SetSpriteColor(Actor_GetById(8), SPRITE_COLOR_NORMAL);
-        MagmaRockInside_SpawnRubble(0);
+        Rubble_Scatter(0);
         MagmaRockInside_TakePlaceOf(trap, partner);
         wait(1);
         Event_SetFlag(flag);
@@ -2824,11 +2824,11 @@ void MagmaRockInside_StepOnTrap(const u16 *table) {
           leader->motionFlags = 0;
           Event_PlaySound(SE_PUSH);
           MapGrid_SetShake(1, 4, 1);
-          MagmaRockInside_SpawnRubble(0);
+          Rubble_Scatter(0);
           wait(8);
           Actor_SelectAnimation(partner, 2);
           MagmaRockInside_SetLeaderCellShape(-2, trap->layer);
-          MagmaRockInside_SpawnRubble(1);
+          Rubble_Scatter(1);
           wait(16);
           MagmaRockInside_SetLeaderCellShape(-2, trap->layer);
           wait(4);
@@ -2857,46 +2857,7 @@ void MagmaRockInside_StepOnTrap(const u16 *table) {
 
 void Actor_StartScript(struct Actor *object, const void *data);
 
-/// Scatters dust and rubble around the leader's feet; with spread, they fly
-/// outward.
-void MagmaRockInside_SpawnRubble(s32 spread) {
-  struct Actor *leader = Actor_Get(gMainRoutineWork.leaderActorId);
-  struct FieldEffect *effect;
-  u32 frame = 0;
-  u32 i = 0;
-  FIXED y;
-
-  do {
-    y = leader->y.fixed - ((Random_Below(14)) << 16);
-    effect = (struct FieldEffect *)FieldActor_Create(
-        SPRITE_DUST_CLOUD, (i << 17) + leader->x.fixed - toFIXED(8),
-        y - toFIXED(2), leader->z.fixed);
-    if (effect != 0) {
-      frame = Sprite_ShareVramCacheEntry(effect->sprite, frame);
-      effect->motionFlags = 0;
-      effect->collisionFlags = 0;
-      Actor_SetSpriteFlags(effect, 0);
-      Actor_SelectAnimation(effect, 2);
-      Actor_StartScript(effect, gMagmaRockInside_RubbleScript);
-      effect->scaleY = effect->scaleX = FIXED_ONE * 7 / 10;
-      effect->sprite->priority = 1;
-      if (spread != 0) {
-        effect->velocity.x =
-            Iwram_MulFX(Trig_Cos(i * DEGtoANG(45)), FIXED_ONE * 6 / 5);
-        effect->velocity.z = Math_Sin(i * DEGtoANG(45));
-      } else {
-        effect->velocity.x = spread;
-        effect->velocity.z = spread;
-      }
-      effect->velocity.y = -(((Random16() << 14) >> 16) + 0x6000);
-      effect->spin = ((Random16() << 9) >> 16) - 0x100;
-      effect->scaleRateX = -FIXED_ONE / 32;
-      effect->scaleRateY = -0x600;
-      effect->update = Effect_AdvanceMotionAtLeaderPriority;
-    }
-    i++;
-  } while (i <= 7);
-}
+#include "shared/rubble_scatter.c"
 
 /// Throws a ring of 16 dust clouds out from the leader as a pillar lands.
 void MagmaRockInside_SpawnDustRing(void) {
@@ -3323,7 +3284,7 @@ s32 gMagmaRockInside_BlazeWatcherReturnScript[] = {
   };
 
 /// A piece of rubble's actor script: it lasts 33 frames.
-s32 gMagmaRockInside_RubbleScript[] = {                                                               
+u32 gRubble_ScatterScript[] = {                                                               
       SC_WAIT(33), SC_SET(SW_HOOK, 0), SC_POSITION(0, 0, 0), SC_WAIT(1),       
       SC_RELEASE,                                                                 
   };

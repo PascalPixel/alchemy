@@ -484,7 +484,7 @@ void FieldPsynergy_ResumeHaltedActor(s32 actorId) {
       Actor_SetSpriteColorModeFar(actor, (s8)gMainRoutineWork.pausedPose);
     }
     actor->paused = 0;
-    Actor_SetAnimationSpeedFar(actor, 16);
+    Actor_SetAnimationSpeedFar(actor, ANIMATION_STEP_NORMAL);
   }
 }
 

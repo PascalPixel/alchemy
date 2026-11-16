@@ -611,31 +611,13 @@ void ViewMove_End(void) {
   }
 }
 
-/// The actors near the caster whose sprite value a view move saves and gives
-/// back (heap slot battleEffect): up to eight, with each one's value.
-#define NEARBY_SPRITE_COUNT 8
-
-struct NearbySpriteGroup {
-  u8 unused[32]; ///< no code names it
-  struct Actor *objects[NEARBY_SPRITE_COUNT];
-  u16 values[NEARBY_SPRITE_COUNT];
-  s32 count;
-};
-
-/// An actor's sprite as halfwords, the tenth its saved value.
-union SpriteHalfwords {
-  u16 halves[10];
-  u32 words[5];
-};
-
 /// Gathers up to eight live objects, other than the scene's main object, for
 /// which Field_MeasurePsynergyReach measures a distance from the first object,
-/// with each one's sprite value.
+/// with each one's sprite rotation, for the view move to rock.
 void ViewMove_SaveNearbySprites(void) {
   struct FieldEffectWork *scene = Ram_HeapSlots->fieldEffectWork;
   struct FieldWork *work = Ram_HeapSlots->fieldWork;
-  struct NearbySpriteGroup *group =
-      (struct NearbySpriteGroup *)Ram_HeapSlots->battleEffect;
+  struct ViewMoveWork *group = Ram_HeapSlots->battleEffect;
   struct Actor **objects;
   struct Actor *obj;
   s32 i;
@@ -650,22 +632,21 @@ void ViewMove_SaveNearbySprites(void) {
                                    scene->firstActorId, i) == -1)
       continue;
     group->objects[group->count] = obj;
-    group->values[group->count] =
-        ((union SpriteHalfwords *)obj->sprite)->halves[9];
-    if (++group->count == NEARBY_SPRITE_COUNT)
+    group->spriteRotations[group->count] =
+        ((struct Sprite *)obj->sprite)->rotation;
+    if (++group->count == ARRAY_COUNT(group->objects))
       break;
   }
 }
 
-/// Writes each gathered object's saved sprite value back.
+/// Gives each gathered object's sprite its saved rotation back.
 void ViewMove_RestoreNearbySprites(void) {
-  struct NearbySpriteGroup *group =
-      (struct NearbySpriteGroup *)Ram_HeapSlots->battleEffect;
+  struct ViewMoveWork *group = Ram_HeapSlots->battleEffect;
   s32 i;
 
   for (i = 0; i < group->count; i++)
-    ((union SpriteHalfwords *)group->objects[i]->sprite)->halves[9] =
-        group->values[i];
+    ((struct Sprite *)group->objects[i]->sprite)->rotation =
+        group->spriteRotations[i];
 }
 #undef VIEW_EDGE_MARGIN
 #undef SWING_SINE

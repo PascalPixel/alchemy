@@ -389,7 +389,7 @@ void FieldPsynergy_EndSand(void) {
     wait(1);
     ripple += 3;
   }
-  Actor_SetOthersPaused(owner, 0, 16);
+  Actor_SetOthersPaused(owner, 0, ANIMATION_STEP_NORMAL);
   VramCache_FreeEntry(pictureEntry);
   VramCache_FreeEntry(particleEntry);
   HeapSlot_Release(HEAP_SLOT_BATTLE_EFFECT);
@@ -515,7 +515,7 @@ void FieldPsynergy_Sand(void) {
   gMainRoutineWork.pendingThird = 1;
   if (event->standing == 0)
     Task_Add(FieldPsynergy_WatchSandGround, TASK_PASS_VBLANK);
-  Actor_SetOthersPaused(owner, 0, 16);
+  Actor_SetOthersPaused(owner, 0, ANIMATION_STEP_NORMAL);
   VramCache_FreeEntry(pictureEntry);
   VramCache_FreeEntry(particleEntry);
   FieldPsynergy_FadeFromCastColor();

@@ -53,7 +53,7 @@ struct SpriteAnimation {
   u8 **scripts;    ///< the metadata's command scripts, one per animation number
   u8 *script;      ///< the running script; null once command 239 ends it
   u8 scriptOffset; ///< byte offset of the next command in script
-  u8 step;         ///< taken off timer each frame; 16 is normal speed
+  u8 step;         ///< taken off timer each frame; ANIMATION_STEP_NORMAL
   u8 picture; ///< picture shown, pictureBase plus the facing offset; 255 none
   u8 pictureBase; ///< picture the script chose, before facing; 255 blank
 };

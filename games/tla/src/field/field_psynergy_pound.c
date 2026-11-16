@@ -11,19 +11,23 @@
 
 #include "sprite_ids.h"
 
+/// The sparks of Pound's shine; the first 12 are drawn.
+#define POUND_SPARK_COUNT 32
+#define POUND_DRAWN_SPARKS 12
+
 /// Pound's work (heap slot HEAP_SLOT_BATTLE_EFFECT): the star tiles, the
 /// shine's 32 sparks, the glow under the fist, the fist itself and the stage of
 /// its fall.
 struct PoundWork {
-  u8 tiles[0x1000];
-  struct FieldPsynergyParticle particles[32];
-  struct EffectSprite sprites[32];
+  u8 tiles[4096];
+  struct FieldPsynergyParticle particles[POUND_SPARK_COUNT];
+  struct EffectSprite sprites[POUND_SPARK_COUNT];
   struct EffectSprite glow;
   struct Actor *object; ///< the fist, then what sinks into the ground
-  s16 state;            ///< the stage of the fall; 999 once it ends
-  s16 timer;            ///< frames into the stage
-  s8 sparkles;          ///< nonzero draws the sparks
-  s8 fading; ///< set on the frame the fist lands, passed to the event
+  s16 state;   ///< the stage of the fall; FIELD_PSYNERGY_FINISHED once it ends
+  s16 timer;   ///< frames into the stage
+  s8 sparkles; ///< nonzero draws the sparks
+  s8 fading;   ///< set on the frame the fist lands, passed to the event
 };
 
 /// Task of the Pound: its shine's colours and particles, each frame.
@@ -51,14 +55,14 @@ void FieldPsynergy_UpdatePound(void) {
     green = Trig_Sin((((((u32)*frames >> 1) + i) << 16) + base) >> 5) * 12;
     red = (red >> 16) + 16;
     green = (green >> 16) + 16;
-    Io_Write16((green << 5) | blue | red, &OBJ_PLTT_COLOR(14, i));
+    Io_Write16((green << 5) | blue | red, &OBJ_PLTT_COLOR(CANVAS_PALETTE, i));
     if (++i < 32)
       goto palette;
   }
   if (work->sparkles) {
     particle = work->particles;
     sprite = work->sprites;
-    for (i = 0; i < 12; i++, sprite++, particle++) {
+    for (i = 0; i < POUND_DRAWN_SPARKS; i++, sprite++, particle++) {
       if (particle->timer >= 0 && particle->timer < 16) {
         sprite->x = particle->x;
         sprite->y = particle->y;
@@ -127,8 +131,8 @@ void BattleEffect_SinkAndShrinkObject(void) {
     struct Actor *object = work->object;
 
     object->y.fixed += -(toFIXED(5) / 2);
-    object->scaleX += -0x400;
-    object->scaleY += -0x400;
+    object->scaleX += -(FIXED_ONE / 64);
+    object->scaleY += -(FIXED_ONE / 64);
     if (work->timer == 8)
       work->state = FIELD_PSYNERGY_FINISHED;
   }
@@ -146,7 +150,8 @@ void FieldPsynergy_ShrinkToCaster(struct Actor *object, s32 x, s32 y, s32 z);
 /// of reach, or with a solid actor in the way, it shatters with the error
 /// sound; else the place's Pound event runs.
 void FieldPsynergy_Pound(void) {
-  struct PoundWork *work = HeapSlot_Alloc(HEAP_SLOT_BATTLE_EFFECT, 0x18b4);
+  struct PoundWork *work =
+      HeapSlot_Alloc(HEAP_SLOT_BATTLE_EFFECT, sizeof(struct PoundWork));
   struct FieldEffectWork *scene = Ram_HeapSlots->fieldEffectWork;
   struct FieldWork *event = Ram_HeapSlots->fieldWork;
   struct Actor *child = scene->child;
@@ -165,7 +170,7 @@ void FieldPsynergy_Pound(void) {
   FIXED lift;
   s32 glowTile;
   s32 spot;
-  s32 size = 0x800;
+  s32 size = 2048;
   s32 rise;
   s32 speed;
   s32 angle;
@@ -173,7 +178,7 @@ void FieldPsynergy_Pound(void) {
   s32 j;
   struct FieldPsynergyParticle *particle;
 
-  lift = 0x200000;
+  lift = toFIXED(32);
   if (child == NULL) {
     SET_POSITION(scene, caster->x.fixed, caster->y.fixed, caster->z.fixed);
     Vector_AddPolarOffset(lift, scene->angle, &scene->x);
@@ -190,10 +195,10 @@ void FieldPsynergy_Pound(void) {
         ~Field_MeasurePsynergyHeight(scene->fieldPsynergy, caster, &scene->x);
     inReach = NONZERO(spot);
     if (inReach == 1) {
-      for (j = 0; j < 80; j++) {
+      for (j = 0; j < FIELD_ACTOR_COUNT; j++) {
         object = event->actors[j];
         if (object != NULL && object->script != NULL &&
-            (object->collisionFlags & 1) &&
+            (object->collisionFlags & ACTOR_SOLID) &&
             FieldPsynergy_CheckOverlap(&scene->x, 4, &object->x.fixed,
                                        object->radius - 2) >= 0)
           goto outOfReach;
@@ -215,7 +220,7 @@ void FieldPsynergy_Pound(void) {
     goto end;
   shine->motionFlags = 0;
   if (event->psynergyDrawFlags & 2) {
-    if ((shine->spriteStorageKind & 15) == 1) {
+    if ((shine->spriteStorageKind & 15) == ACTOR_SPRITE_ONE) {
       ((struct EffectSprite *)shine->sprite)->oam.priority = 1;
       shine->priorityFlags &= 254;
     }
@@ -263,11 +268,12 @@ void FieldPsynergy_Pound(void) {
 
   Decompress_TaggedLz(Resource_GetTableEntry(RESOURCE_GOLD_STAR), work);
   starEntry = VramCache_FindFreeEntry();
-  starTile = VramCache_Load(starEntry, 0x100, work);
-  for (j = 0, particle = work->particles; j < 32; j++, particle++) {
+  starTile = VramCache_Load(starEntry, 256, work);
+  for (j = 0, particle = work->particles; j < POUND_SPARK_COUNT;
+       j++, particle++) {
     sprite = &work->sprites[j];
     speed = Random16() * 18 / 10;
-    speed += 0x28000;
+    speed += toFIXED(5) / 2;
     angle = j * (DEGtoANG(30)) + (Random16() >> 5);
     pos[0] = scene->x;
     pos[1] = scene->y;
@@ -361,7 +367,7 @@ void Picture_ShiftColumnsByWave(u8 *source, u8 *destination, s32 phase) {
 
     for (row = 0; row < height; row++) {
       FIXED position =
-          phase * 0x19999 - FIXED_ONE * 124 + row * (FIXED_ONE * 4);
+          phase * (toFIXED(8) / 5) - FIXED_ONE * 124 + row * (FIXED_ONE * 4);
       // In two steps: the wave subtracted, then the shift.
       s32 shift = position - wave;
       shift >>= 16;

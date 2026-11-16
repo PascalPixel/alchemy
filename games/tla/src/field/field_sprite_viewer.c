@@ -459,8 +459,7 @@ void SpriteViewer_SetGridColumnColorMode(s32 slot, s32 value) {
   s32 count = 9;
 
   do {
-    struct SpriteAnimation *entry =
-        *(struct SpriteAnimation **)(base + offset);
+    struct SpriteAnimation *entry = *(struct SpriteAnimation **)(base + offset);
 
     count--;
     entry->colorMode = value;
@@ -477,8 +476,7 @@ void SpriteViewer_SetGridColumnPriority(s32 slot, s32 value) {
   s32 count = 9;
 
   do {
-    struct SpriteAnimation *entry =
-        *(struct SpriteAnimation **)(base + offset);
+    struct SpriteAnimation *entry = *(struct SpriteAnimation **)(base + offset);
 
     count--;
     entry->priority = value;
@@ -535,8 +533,7 @@ void SpriteViewer_SetGridColumnNumber(s32 slot, s32 no) {
            offsetof(struct Sprite, entries);
   count = 9;
   do {
-    struct SpriteAnimation *entry =
-        *(struct SpriteAnimation **)(base + offset);
+    struct SpriteAnimation *entry = *(struct SpriteAnimation **)(base + offset);
 
     count--;
     entry->animationId = no;

@@ -75,7 +75,8 @@ s32 Actor_MoveByKeys(struct Actor *object) {
         &map->layers[object->layer].cells[position.x / toFIXED(16) +
                                           (position.z / toFIXED(16)) * 128];
     if (MapGrid_IsWallAt((s32 *)&position) != 0 ||
-        !(sourceCell->attributeB & CELL_CLIMBABLE) || !(destinationCell->attributeB & CELL_CLIMBABLE)) {
+        !(sourceCell->attributeB & CELL_CLIMBABLE) ||
+        !(destinationCell->attributeB & CELL_CLIMBABLE)) {
       collisionFlags = PLAYER_STEP_STOPPED;
       animation = ANIM_LEADER_CLING;
     } else if (gInput.held & KEY_UP) {

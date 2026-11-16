@@ -1,4 +1,7 @@
 /// @file
+        // The sign tiles Text_DrawPrefixedNumberAtOffset writes (the HP and PP
+        // labels' tiles) advance 8 for a first tile and 3 for a second, in
+        // pixels; a character its font width, and any other tile below 32 one.
 /// Text drawn as tiles, text tile ownership and divider lines.
 // Part of window.c.
 
@@ -100,50 +103,56 @@ extern const u8 gText_ColourPens[];
 /// Draws a string of 16-bit character codes with the window font into tiles of
 /// their own, starting x pixels into the first tile, and points tiles (and the
 /// same entries in mirror) at them.
-s32 Text_DrawStringAsTiles(u16 *script, u16 *tiles, u16 *mirror, s32 x) {
+s32 Text_DrawStringAsTiles(u16 *text, u16 *tiles, u16 *mirror, s32 x) {
   // Unused: gives the stack frame its 32 extra bytes.
   UNUSED u32 reserve[8];
   u8 pens[16];
   struct WindowWork *work;
   u8 *canvas;
   u8 *glyphs;
-  u32 attr;
+  u32 paletteBits;
   u32 *src;
   u8 *dst;
-  u32 c;
+  u32 glyphCode;
   u32 code;
-  s32 count;
-  u32 w;
-  s32 i;
-  s32 j;
+  s32 tileCount;
+  u32 glyphWidth;
+  s32 index;
+  s32 column;
   u32 bits;
 
   work = WINDOW_WORK;
-  canvas = Heap_Alloc(0x800);
+  canvas = Heap_Alloc(2048);
   glyphs = Resource_GetTableEntry(RESOURCE_WINDOW_TILES);
-  attr = work->textPalette << 12;
+  paletteBits = BG_TILE_PALETTE(work->textPalette);
   Iwram_ClearWords(pens, 16);
-  if (attr == BG_TILE_PALETTE(WINDOW_PALETTE)) {
+  // pens maps a font pixel, 1 or 3 (the font's two shades), to a colour; 0
+  // leaves the background.
+  if (paletteBits == BG_TILE_PALETTE(WINDOW_PALETTE)) {
     pens[1] = gText_ColourPens[work->colour & (PALETTE_COLORS - 1)];
     pens[3] = 3;
-    Iwram_FillWords(canvas, 0x800, PIXELS_8BPP(WINDOW_BACKGROUND_COLOR));
+    Iwram_FillWords(canvas, 2048, PIXELS_8BPP(WINDOW_BACKGROUND_COLOR));
   } else {
     pens[1] = (u8)work->colour & (PALETTE_COLORS - 1);
     pens[3] = 1;
-    Iwram_FillWords(canvas, 0x800, PIXELS_8BPP(TEXT_BACKGROUND_COLOR));
+    Iwram_FillWords(canvas, 2048, PIXELS_8BPP(TEXT_BACKGROUND_COLOR));
   }
-  if (script != 0) {
+  // Expand glyph pixels and control-code colour changes into a byte canvas.
+  if (text != 0) {
     for (;;) {
-      c = *script++;
-      code = c;
-      if (c == 0)
+      glyphCode = *text++;
+      code = glyphCode;
+      if (glyphCode == 0)
         break;
-      if (c <= TEXT_END_ALT) {
-        switch (c) {
+      if (glyphCode <= TEXT_END_ALT) {
+        switch (glyphCode) {
         case TEXT_COLOR:
-          work->colour = *script++;
+          work->colour = *text++;
           pens[1] = gText_ColourPens[work->colour & (PALETTE_COLORS - 1)];
           break;
+        // TEXT_COLORS_RESET, TEXT_OUTLINE and TEXT_LINE_SPACING all reset the
+        // colour here, and the last two leave their operand to be read as the
+        // next code.
         case TEXT_COLORS_RESET:
         case TEXT_OUTLINE:
         case TEXT_LINE_SPACING:
@@ -156,29 +165,34 @@ s32 Text_DrawStringAsTiles(u16 *script, u16 *tiles, u16 *mirror, s32 x) {
         case 14:
         case TEXT_WINDOW_STATE:
         case 28:
-          script++;
+          text++;
+          // Skip the second operand too.
+          // Fall through.
         case 11:
         case 12:
         case TEXT_ACTOR_NAME:
 #if !TEXT_JAPANESE_FONT
         case TEXT_ARTICLE_CLASS:
 #endif
-          script++;
+          text++;
           break;
         }
       } else {
-        c &= 0xFF;
+        // A tilemap code (such as WINDOW_TILE_HP_LABEL) draws window tile
+        // glyphCode & 0xff.
+        glyphCode &= 0xFF;
 #if TEXT_JAPANESE_FONT
-        if (c - 222 <= 1) {
+        if (glyphCode - TEXT_MARK_VOICED <= 1) {
           x -= 3;
-          c += 32;
+          glyphCode += 32;
         }
 #endif
-        src = (u32 *)(glyphs + c * 32);
+        // Each glyph is an 8x8 tile of the window tiles, a word a row.
+        src = (u32 *)(glyphs + glyphCode * 32);
         dst = canvas + x;
-        for (i = 0; i < 8; i++) {
+        for (index = 0; index < 8; index++) {
           bits = *src++;
-          for (j = 0; j < 4; j++) {
+          for (column = 0; column < 4; column++) {
             u8 pen = pens[bits & 15];
 
             if (pen != 0)
@@ -199,45 +213,47 @@ s32 Text_DrawStringAsTiles(u16 *script, u16 *tiles, u16 *mirror, s32 x) {
           x += 3;
         else {
 #if TEXT_JAPANESE_FONT
-          if (c > 128)
-            w = c - 254 <= 1 ? 3 : 8;
+          if (glyphCode > 128)
+            glyphWidth = glyphCode - 254 <= 1 ? 3 : 8;
           else
 #endif
-              if (c > 31)
-            w = gFont_GlyphWidths[c - TEXT_SPACE];
+              if (glyphCode >= TEXT_SPACE)
+            glyphWidth = gFont_GlyphWidths[glyphCode - TEXT_SPACE];
           else
-            w = 1;
-          x += w;
+            glyphWidth = 1;
+          x += glyphWidth;
         }
       }
     }
   }
 
-  count = (u32)(x + 7) >> 3;
+  // Pack each eight-pixel span back into the tile's four-bit colour fields.
+  tileCount = (u32)(x + 7) >> 3;
   src = (u32 *)canvas;
   dst = canvas;
-  for (i = 0; i < 8; i++) {
-    for (j = 0; j < count; j++) {
-      c = src[0];
+  for (index = 0; index < 8; index++) {
+    for (column = 0; column < tileCount; column++) {
+      glyphCode = src[0];
       bits = src[1];
-      c |= c << 4;
+      glyphCode |= glyphCode << 4;
       bits |= bits >> 4;
-      c &= 0x0FF00FF0;
+      glyphCode &= 0x0FF00FF0;
       bits &= 0x00FF00FF;
-      c |= c << 8;
+      glyphCode |= glyphCode << 8;
       bits |= bits >> 8;
       src += 2;
-      *(u32 *)dst = (c << 4) >> 16 | bits << 16;
+      *(u32 *)dst = (glyphCode << 4) >> 16 | bits << 16;
       dst += 4;
     }
-    dst = dst - count * 4 + 0x100;
-    src = (u32 *)((u8 *)src - count * 8 + 0x100);
+    dst = dst - tileCount * 4 + 256;
+    src = (u32 *)((u8 *)src - tileCount * 8 + 256);
   }
 
-  for (i = 0; i < count; i++) {
+  // Reuse private text tiles, allocate any new ones, then upload each tile.
+  for (index = 0; index < tileCount; index++) {
     u32 mask = TEXT_TILES - 1;
     u32 tile;
-    u32 *p;
+    u32 *vramTile;
 
     if (work->extraTextTiles != 0)
       mask = 2 * TEXT_TILES - 1;
@@ -246,7 +262,8 @@ s32 Text_DrawStringAsTiles(u16 *script, u16 *tiles, u16 *mirror, s32 x) {
         (work->extraTextTiles == 0 || tile < TEXT_EXTRA_TILE_FIRST ||
          tile > TEXT_EXTRA_TILE_FIRST + TEXT_TILES - 1)) {
       tile = work->nextTextTile & mask;
-      for (j = 0; j <= mask && work->textTileState[tile] != 0; j++)
+      for (column = 0; column <= mask && work->textTileState[tile] != 0;
+           column++)
         tile = (tile + 1) & mask;
       work->nextTextTile = (tile + 1) & mask;
       work->textTileState[tile] = 1;
@@ -254,23 +271,23 @@ s32 Text_DrawStringAsTiles(u16 *script, u16 *tiles, u16 *mirror, s32 x) {
         tile += TEXT_EXTRA_TILE_FIRST - TEXT_TILES;
       else
         tile |= 0x80;
-      *tiles = attr | tile;
-      *mirror = attr | tile;
+      *tiles = paletteBits | tile;
+      *mirror = paletteBits | tile;
     }
-    p = (u32 *)(BG_CHAR_BLOCK(0) + tile * TILE_SIZE_4BPP);
-    *p++ = ((u32 *)canvas)[i];
-    *p++ = ((u32 *)canvas)[i + 0x40];
-    *p++ = ((u32 *)canvas)[i + 0x80];
-    *p++ = ((u32 *)canvas)[i + 0xC0];
-    *p++ = ((u32 *)canvas)[i + 0x100];
-    *p++ = ((u32 *)canvas)[i + 0x140];
-    *p++ = ((u32 *)canvas)[i + 0x180];
-    *p++ = ((u32 *)canvas)[i + 0x1C0];
+    vramTile = (u32 *)(BG_CHAR_BLOCK(0) + tile * TILE_SIZE_4BPP);
+    *vramTile++ = ((u32 *)canvas)[index];
+    *vramTile++ = ((u32 *)canvas)[index + 64];
+    *vramTile++ = ((u32 *)canvas)[index + 128];
+    *vramTile++ = ((u32 *)canvas)[index + 192];
+    *vramTile++ = ((u32 *)canvas)[index + 256];
+    *vramTile++ = ((u32 *)canvas)[index + 320];
+    *vramTile++ = ((u32 *)canvas)[index + 384];
+    *vramTile++ = ((u32 *)canvas)[index + 448];
     tiles++;
     mirror++;
   }
   Heap_Release(canvas);
-  return count;
+  return tileCount;
 }
 
 /// Frees the text tiles under a tilemap rectangle (x, y, width and height in

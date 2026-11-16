@@ -14,9 +14,6 @@
 #define GLYPH_PIXELS_SIZE (GLYPH_BUFFER_WIDTH * 24)
 #endif
 
-/// Every kanji is drawn 10 pixels wide.
-#define KANJI_WIDTH 10
-
 #if (LANGUAGE == LANGUAGE_JAPANESE)
 /// The first kanji's code; the codes below it are the font's glyphs.
 #define KANJI_FIRST_CODE 256

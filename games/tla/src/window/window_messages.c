@@ -845,4 +845,3 @@ void Portrait_CloseWindow(s32 id) {
 #undef DECODE_EUROPEAN
 #undef PLOT_GLYPH_ROWS
 #undef KANJI_FIRST_CODE
-#undef KANJI_WIDTH

@@ -693,7 +693,7 @@ s32 MapGrid_GetCellBehavior(s32 x, s32 z, s32 layer);
 
 /// Unused: raises a whirlwind 8 pixels ahead of the source, facing its way,
 /// with a puff of dust; returns it.
-UNUSED struct Actor *JupiterLighthouse_SpawnGust(struct Actor *source) {
+UNUSED struct Actor *Whirlwind_Spawn(struct Actor *source) {
   struct Vector3 position;
   struct EffectOptions options;
   struct Actor *object;
@@ -718,13 +718,13 @@ UNUSED struct Actor *JupiterLighthouse_SpawnGust(struct Actor *source) {
   options.priority = 1;
   options.palette = 7;
   FieldEffect_Spawn(position.x, source->y.fixed, position.z - toFIXED(6), 0, 0,
-                    0, toFIXED(3), &options);
+                    0, EFFECT_USE_PALETTE | EFFECT_USE_PRIORITY, &options);
   return object;
 }
 
 /// Unused: every eighth frame, sends a spark up from a random spot about the
 /// actor.
-UNUSED s32 JupiterLighthouse_UpdateGust(struct Actor *object) {
+UNUSED s32 JupiterLighthouse_EmitRisingMotes(struct Actor *object) {
   struct EffectOptions options;
   s32 phase;
   FIXED x, y, speed;
@@ -737,7 +737,7 @@ UNUSED s32 JupiterLighthouse_UpdateGust(struct Actor *object) {
     options.palette = 14;
     x = object->x.fixed + INTtoFIXED((s32)(Random_Below(9)) - 4);
     y = object->y.fixed + INTtoFIXED(32 - (s32)(Random_Below(20)));
-    speed = (INTtoFIXED((s32)(Random_Below(5))) + 0x50000) / 10;
+    speed = (INTtoFIXED((s32)(Random_Below(5))) + toFIXED(5)) / 10;
     FieldEffect_Spawn(x, y, object->z.fixed, 0, speed, phase,
                       EFFECT_USE_PALETTE | EFFECT_USE_PRIORITY |
                           EFFECT_USE_START_SCALE,
@@ -959,7 +959,7 @@ void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
   if ((flags & EFFECT_USE_PALETTE) != 0)
     FieldActor_SetSpriteColor(effect, options->palette);
   if ((flags & EFFECT_USE_PRIORITY) != 0) {
-    effect->priorityFlags &= ~1;
+    effect->priorityFlags &= ~ACTOR_PRIORITY_AUTOMATIC;
     Scene_SetActorSpritePriority(effect, options->priority);
   }
   if ((flags & EFFECT_USE_START_SCALE) != 0) {

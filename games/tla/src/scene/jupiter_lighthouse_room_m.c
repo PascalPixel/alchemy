@@ -1182,7 +1182,8 @@ s32 Inventory_Equip();
 
 /// After the battle with Karst and Agatio: the two stand over the fallen Isaac
 /// and Ivan until Felix and the others step in, Felix promises to light the
-/// beacon, and the Mythril Bag he carries is swapped and equipped.
+/// beacon, and the Mythril Bag holding the Jupiter Star is swapped for a
+/// plain one (ITEM_MYTHRIL_BAG_B) that Felix equips.
 void JupiterLighthouse_IsaacAndIvanFall(void) {
   s32 index;
   s32 answer;
@@ -1728,7 +1729,7 @@ struct Actor *Whirlwind_SpawnUpper(struct Actor *source) {
   Import_ActorSelectAnimation(object, 2);
   Actor_SetSpriteFlags(object, 0);
   object->motionFlags = 0;
-  object->priorityFlags &= ~1;
+  object->priorityFlags &= ~ACTOR_PRIORITY_AUTOMATIC;
   object->facing = source->facing;
   object->timer = 0;
   object->riseCounter = 0;
@@ -1738,7 +1739,7 @@ struct Actor *Whirlwind_SpawnUpper(struct Actor *source) {
   options.priority = 1;
   options.palette = 7;
   FieldEffect_Spawn(position.x, source->y.fixed, position.z - toFIXED(6), 0, 0,
-                    0, toFIXED(3), &options);
+                    0, EFFECT_USE_PALETTE | EFFECT_USE_PRIORITY, &options);
   return object;
 }
 

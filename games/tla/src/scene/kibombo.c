@@ -577,7 +577,7 @@ void Kibombo_ReadMindNeverAgain(void) {
 /// Shows (show 1) or hides the two shades the room keeps out of sight: on the
 /// statue's grounds ACTOR_GROUNDS_SHADE_A and B, in the houses actors 26 and
 /// 27.
-void Kibombo_ShowShades(s32 show) {
+void Kibombo_SetShadesShown(s32 show) {
   s16 scene = gMainRoutineWork.next;
 
   if (scene == SCENE_KIBOMBO_STATUE_GROUNDS ||
@@ -589,13 +589,13 @@ void Kibombo_ShowShades(s32 show) {
 
 /// Unused: shows the room's two shades, noting it in FLAG_SCENE_TEMP_00.
 UNUSED void Kibombo_RevealShades(void) {
-  Kibombo_ShowShades(1);
+  Kibombo_SetShadesShown(1);
   GameFlag_Set(FLAG_SCENE_TEMP_00);
 }
 
 /// Hides the room's two shades again.
 void Kibombo_HideShades(void) {
-  Kibombo_ShowShades(0);
+  Kibombo_SetShadesShown(0);
   GameFlag_Clear(FLAG_SCENE_TEMP_00);
 }
 
@@ -1919,7 +1919,7 @@ void Kibombo_PuffSmoke(void) {
       object->retainSpriteCache = 2;
       object->motionFlags = 0;
       object->timer = 0;
-      object->priorityFlags &= ~1;
+      object->priorityFlags &= ~ACTOR_PRIORITY_AUTOMATIC;
       mask = 13;
       part = (u8 *)object->sprite;
       part[9] = (part[9] & -mask) | 8;
@@ -1958,7 +1958,7 @@ void Kibombo_SpawnFlame(s32 x, s32 y, s32 z) {
 
   if (object != 0) {
     object->motionFlags = 0;
-    object->priorityFlags &= ~1;
+    object->priorityFlags &= ~ACTOR_PRIORITY_AUTOMATIC;
     object->scaleY = FIXED_ONE * 2;
     object->timer = (Random_Below(10)) + 10;
     object->userValue = 0;
@@ -2056,23 +2056,20 @@ void Kibombo_AkafubuCastsOnCrystal(void) {
 
 s32 VramCache_FreeEntry(u32 slot);
 
-/// A spark Akafubu's Psynergy sends about the crystal: an actor whose bob
-/// bytes hold its stage and its wobble's timer.
+/// A spark Akafubu's Psynergy sends about the crystal, the actor seen through a
+/// union (see the FAKEMATCH in Kibombo_SpinSpark).
 union SpinningSpark {
   struct Actor actor;
-  struct {
-    u8 beforeBob[0x62]; ///< the actor up to its riseCounter
-    u8 stage;           ///< riseCounter
-    u8 timer;           ///< riseEnabled
-  } spark;
 };
 
 /// A spark's update while Akafubu casts on the crystal: it circles its centre
 /// at its radius, wobbling in and out, and rises.
 void Kibombo_SpinSpark(struct Actor *actor) {
+  /* FAKEMATCH(temporary): object, the actor read through union SpinningSpark,
+     kept; as actor's own fields, 20 of 228 instructions differ in tla-en. */
   FIXED wobble = 0;
   union SpinningSpark *object;
-  u8 *timer = &((union SpinningSpark *)actor)->spark.timer;
+  u8 *timer = &actor->riseEnabled;
   s16 *action;
   u8 *stage;
   struct Vector3 centre;
@@ -2095,7 +2092,7 @@ void Kibombo_SpinSpark(struct Actor *actor) {
   object->actor.x.fixed = centre.x;
   object->actor.y.fixed = centre.y;
   object->actor.z.fixed = centre.z;
-  stage = &object->spark.stage;
+  stage = &object->actor.riseCounter;
   switch (*stage) {
   case 0:
     *action += 4;

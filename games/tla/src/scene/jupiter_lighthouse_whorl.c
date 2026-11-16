@@ -389,7 +389,7 @@ void JupiterLighthouse_LiftPathBlock(s32 unused, s32 id) {
 
   if (id == ACTOR_THIRD_PATH_BLOCK) {
     MapGrid_SetCellHeight(object->x.fixed, object->z.fixed, 0, 6);
-    MapGrid_ClearAttributeBBitsAt(object->x.fixed, object->z.fixed, 0, 128);
+    MapGrid_ClearAttributeBBitsAt(object->x.fixed, object->z.fixed, 0, 0x80);
   }
 }
 
@@ -482,7 +482,7 @@ void JupiterLighthouse_PlacePathBlock(s32 unused, s32 id) {
                                  object->layer, CELL_BEHAVIOR_WALL);
   } else {
     MapGrid_SetCellHeight(object->x.fixed, object->z.fixed, 0, 8);
-    MapGrid_SetAttributeBBitsAt(object->x.fixed, object->z.fixed, 0, 128);
+    MapGrid_SetAttributeBBitsAt(object->x.fixed, object->z.fixed, 0, 0x80);
   }
 }
 
@@ -678,13 +678,18 @@ s32 Scene_Initialize(void) {
       Event_GetFlag(FLAG_PATH_BLOCK_IN_GAP(PATH_GAP_WEST, 1)) ||
       Event_GetFlag(FLAG_PATH_BLOCK_IN_GAP(PATH_GAP_NORTH, 1)))
     Actor_SetPosition(ACTOR_SECOND_PATH_BLOCK, 0, 0);
-  Actor_Get(gMainRoutineWork.leaderActorId)->priorityFlags |= 0x40;
-  Actor_Get(ACTOR_FIRST_GREY_BLOCK)->priorityFlags |= 0x80;
-  Actor_Get(ACTOR_FIRST_GREY_BLOCK + 1)->priorityFlags |= 0x80;
-  Actor_Get(ACTOR_FIRST_GREY_BLOCK + 2)->priorityFlags |= 0x80;
-  Actor_Get(ACTOR_FIRST_GREY_BLOCK + 3)->priorityFlags |= 0x80;
-  Actor_Get(ACTOR_FIRST_GREY_BLOCK + 4)->priorityFlags |= 0x80;
-  Actor_Get(ACTOR_LAST_GREY_BLOCK)->priorityFlags |= 0x80;
+  Actor_Get(gMainRoutineWork.leaderActorId)->priorityFlags |=
+      ACTOR_PRIORITY_WALKS_ON_PLATFORMS;
+  Actor_Get(ACTOR_FIRST_GREY_BLOCK)->priorityFlags |= ACTOR_PRIORITY_PLATFORM;
+  Actor_Get(ACTOR_FIRST_GREY_BLOCK + 1)->priorityFlags |=
+      ACTOR_PRIORITY_PLATFORM;
+  Actor_Get(ACTOR_FIRST_GREY_BLOCK + 2)->priorityFlags |=
+      ACTOR_PRIORITY_PLATFORM;
+  Actor_Get(ACTOR_FIRST_GREY_BLOCK + 3)->priorityFlags |=
+      ACTOR_PRIORITY_PLATFORM;
+  Actor_Get(ACTOR_FIRST_GREY_BLOCK + 4)->priorityFlags |=
+      ACTOR_PRIORITY_PLATFORM;
+  Actor_Get(ACTOR_LAST_GREY_BLOCK)->priorityFlags |= ACTOR_PRIORITY_PLATFORM;
   return 0;
 }
 

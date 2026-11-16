@@ -287,6 +287,20 @@ void Field_RequestBattleFromEncounterTable(s32 row, s32 column);
 /// The encounter table row of the hidden Mad Plants' battles, one column
 /// each, in FLAG_MAD_PLANT's order.
 #define ENCOUNTER_TABLE_MAD_PLANTS 106
+
+/// The encounter table row of four guardians of hidden places, who speak
+/// before they fight: one column each (HiddenBoss).
+#define ENCOUNTER_TABLE_HIDDEN_BOSSES 103
+
+/// The columns of ENCOUNTER_TABLE_HIDDEN_BOSSES.
+enum HiddenBoss {
+  HIDDEN_BOSS_TREASURE_ISLE, ///< the guardian at the end of Treasure Isle
+  HIDDEN_BOSS_VALUKAR,       ///< Valukar, in the Yampi Desert Cave
+  HIDDEN_BOSS_SENTINEL,      ///< the Sentinel, at the end of the Islet Cave
+  /// The shadow at the entrance of the Anemos Inner Sanctum.
+  HIDDEN_BOSS_ANEMOS
+};
+
 void MadPlant_LeapAtLeader(s32 sprite, s32 x, s32 z);
 
 void Party_LearnAbility(s32 unit, s32 ability);

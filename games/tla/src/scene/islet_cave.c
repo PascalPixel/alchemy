@@ -24,6 +24,7 @@
 #include "scene/scene.h"
 #include "system/task.h"
 #include "field/actor.h"
+#include "field/field_sprite.h"
 #include "field/scene_tables.h"
 #include "battle/battle.h"
 #include "game/game.h"
@@ -104,17 +105,21 @@ void Teleport_PlaySparks(void);
 void FieldEffect_StartBlankOverlay(s32 mode);
 void PaletteFade_PackTarget(void);
 
+/// Ends the lists of palette slots and colours the water's cycle reads.
+#define PALETTE_LIST_END 0xffff
+
 /// Records the four palette lists, writes each listed palette entry from its
-/// red, green and blue, then copies two palettes from block32 and starts the
-/// blend.
-void Palette_SetColors(u16 *slots, u16 *colours, u16 *a, u16 *b) {
-  u8 *saved = Ram_HeapSlots->paletteFade;
+/// red, green and blue, then copies the BG and OBJ palettes into the palette
+/// fade's source and starts the blend.
+void Palette_SetColors(u16 *slots, u16 *colours, u16 *cycleColours,
+                       u16 *cycleSlots) {
+  struct PaletteFade *fade = Ram_HeapSlots->paletteFade;
 
   gPaletteSlots = slots;
   gPaletteColors = colours;
-  gPaletteCycleColors = a;
-  gPaletteCycleSlots = b;
-  if (*slots != 0xffff && *colours != 0xffff) {
+  gPaletteCycleColors = cycleColours;
+  gPaletteCycleSlots = cycleSlots;
+  if (*slots != PALETTE_LIST_END && *colours != PALETTE_LIST_END) {
   next:
     {
       int red = *colours++;
@@ -123,16 +128,19 @@ void Palette_SetColors(u16 *slots, u16 *colours, u16 *a, u16 *b) {
       int blue = *colours++;
       SET_RGB(((u16 *)BG_PLTT)[index], red, green, blue);
     }
-    if (*slots != 0xffff && *colours != 0xffff)
+    if (*slots != PALETTE_LIST_END && *colours != PALETTE_LIST_END)
       goto next;
   }
-  Dma_Set((const void *)BG_PLTT, saved, DMA_COPY_WORDS(112), REG_DMA3);
-  Dma_Set((const void *)OBJ_PLTT, saved + 448, DMA_COPY_WORDS(112), REG_DMA3);
+  Dma_Set((const void *)BG_PLTT, fade->palette, DMA_COPY_WORDS(112), REG_DMA3);
+  Dma_Set((const void *)OBJ_PLTT, &fade->palette[224], DMA_COPY_WORDS(112),
+          REG_DMA3);
   PaletteFade_SetTarget(PALETTE_TINT_NONE, 0);
   if (gMainRoutineWork.teleportState == 2)
     IsletCave_TeleportIn();
 }
 
+/// Starts the water's colours cycling, slowly at first: the first step waits
+/// 16 frames, and each step after waits a frame less, down to two.
 void IsletCave_StartSlowPaletteCycle(void) {
   gPaletteCycleIndex = 0;
   gPaletteCycleLength = List_CountEntries(gPaletteSlots);
@@ -142,11 +150,14 @@ void IsletCave_StartSlowPaletteCycle(void) {
   Task_Add(PaletteCycle_Fade, TASK_PASS_VBLANK);
 }
 
+/// Stops the water's colours cycling, and sets the next screen transition to a
+/// fade of the backdrop.
 void IsletCave_StopPaletteCycle(void) {
   gFieldWork->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
   Task_Remove(PaletteCycle_Fade);
 }
 
+/// Starts the water's colours cycling at full speed, a step every two frames.
 void IsletCave_StartFastPaletteCycle(void) {
   gPaletteCycleIndex = 0;
   gPaletteCycleLength = List_CountEntries(gPaletteSlots);
@@ -158,6 +169,9 @@ void IsletCave_StartFastPaletteCycle(void) {
 
 #include "shared/list_count_entries.h"
 
+/// Each frame while the cycle runs: when its timer runs out, writes the next
+/// row of cycled colours into the listed palette slots and flashes the last
+/// slot between its bright and dim colour.
 void PaletteCycle_Fade(void) {
   s32 step;
   u32 i;
@@ -231,6 +245,8 @@ void IsletCave_TeleportIn(void) {
 /// Meld, the Djinni waiting in this room.
 enum { ACTOR_MELD = 15 };
 
+/// Talking to the Djinni at the end of the logs starts the battle with Meld, a
+/// Venus Djinni.
 void IsletCave_FightMeld(void) {
   Field_RequestDjinnBattle(ACTOR_MELD, DJINNI_MELD);
   return;
@@ -246,28 +262,35 @@ enum { ACTOR_SENTINEL = 8, ACTOR_FIRST_FIRE = 9 };
 /// Set once the Sentinel is beaten, as the party comes back to its room.
 #define FLAG_SENTINEL_DEFEATED 0x9cf
 
+/// The Sentinel's room's entrance the battle with it returns the party to.
+enum { ENTRANCE_AFTER_BATTLE = 2 };
+
+/// Talking to Serac once Tremor has shaken him out starts the battle with him,
+/// a Mercury Djinni.
 void IsletCave_FightSerac(void) {
   Field_RequestDjinnBattle(ACTOR_SERAC, DJINNI_SERAC);
   return;
 }
 
-s32 IsletCave_ClearScriptedActorSpriteFlags(s32 actor) {
+/// The fires' script's last call: clears the actor's sprite flags.
+s32 IsletCave_ClearScriptedActorSpriteFlags(struct Actor *actor) {
   Actor_SetSpriteFlags(actor, 0);
   return 0;
 }
 
-s32 IsletCave_BobOnWater(struct Actor *object) {
-  u8 *phase = (u8 *)object + 0x62;
-  s32 step = *phase & 63;
-  s16 *animation = object->sprite;
+/// The winged statue's script while Serac hides in it: every 64 frames it
+/// hops, rocking its sprite through the first half of the cycle.
+s32 IsletCave_HopWingedStatue(struct Actor *object) {
+  s32 step = object->riseCounter & 63;
+  struct FieldSprite *sprite = object->sprite;
 
-  object->motionFlags = 3;
+  object->motionFlags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
   if (step < 32) {
     if (step == 0)
       object->velocityY = toFIXED(1);
-    animation[9] = Trig_Cos(step << 12) / 128;
+    sprite->rotation = Trig_Cos(step << 12) / 128;
   }
-  (*phase)++;
+  object->riseCounter++;
   return -1;
 }
 
@@ -304,6 +327,8 @@ const struct Trigger *Scene_GetTriggers(void) {
   return gIsletCave_Triggers;
 }
 
+/// The end of a Teleport onto one of the circles: the water spins fast while
+/// the whirl plays, then the colours settle and the leader is shown again.
 void IsletCave_FinishTeleport(void) {
   struct FieldWork *work = Ram_HeapSlots->fieldWork;
   s32 effect = work->transition;
@@ -321,7 +346,9 @@ void IsletCave_FinishTeleport(void) {
   work->transition = effect;
 }
 
-#define DEFINE_ISLET_CAVE_ARRIVE_AT(name, n1, n2)                              \
+/// Teleport cast on a circle: the sparks rise, and after 40 frames the leader
+/// stands at (x, z).
+#define DEFINE_ISLET_CAVE_ARRIVE_AT(name, x, z)                                \
   void name(void) {                                                            \
     IsletCave_StartSlowPaletteCycle();                                         \
     Teleport_PlaySparks();                                                     \
@@ -329,49 +356,56 @@ void IsletCave_FinishTeleport(void) {
     gMainRoutineWork.teleportState = 1;                                        \
     Event_Wait(40);                                                            \
     Actor_SetHorizontalPositionWithTerrain(gMainRoutineWork.leaderActorId,     \
-                                           toFIXED(n1), toFIXED(n2));          \
+                                           toFIXED(x), toFIXED(z));            \
     IsletCave_FinishTeleport();                                                \
   }
 
+/// Teleport cast where it answers carries the leader to the first circle.
 DEFINE_ISLET_CAVE_ARRIVE_AT(IsletCave_TeleportToFirstCircle, 232, 136)
 
+/// Teleport cast where it answers carries the leader to the second circle.
 DEFINE_ISLET_CAVE_ARRIVE_AT(IsletCave_TeleportToSecondCircle, 240, 480)
 
-/// Darkens the palette by the scale given: each corridor is darker than the
-/// last.
+/// One level of a palette fade's colour channel, which holds its 0 to 31
+/// shifted up 10 bits: also the scale that leaves a colour as it is.
+#define FADE_CHANNEL_LEVEL (1 << 10)
+
+/// Darkens the palette by the scale given, out of FADE_CHANNEL_LEVEL: each
+/// corridor is darker than the last.
 void IsletCave_DimPalette(s32 scale) {
-  u16 *source = Ram_HeapSlots->paletteFade;
-  u16 *channel = (u16 *)((u8 *)source + 0xe00);
-  u32 count = 224;
+  struct PaletteFade *fade = Ram_HeapSlots->paletteFade;
+  u16 *source = fade->palette;
+  u16 *channel = fade->target;
+  u32 count = ARRAY_COUNT(fade->palette) / 2;
   u32 i = 0;
   u32 color, value, mask;
 
   do {
     color = *source++;
-    mask = ~0x3ff;
-    value = (color >> 10) & 31;
+    mask = ~(FADE_CHANNEL_LEVEL - 1);
+    value = RGB_BLUE(color);
 #ifdef BUGFIX
     value *= scale;
 #else
-    // BUG: blue is multiplied by the full scale, 0x400, not by scale, so it
-    // never dims.
-    value *= 0x400;
+    // BUG: blue is multiplied by the full scale, not by scale, so it never
+    // dims.
+    value *= FADE_CHANNEL_LEVEL;
 #endif
     value &= mask;
-    if (value > 0x7c00)
-      value = 0x7c00;
+    if (value > RGB_LEVEL_MAX * FADE_CHANNEL_LEVEL)
+      value = RGB_LEVEL_MAX * FADE_CHANNEL_LEVEL;
     *channel++ = value;
-    value = (color >> 5) & 31;
+    value = RGB_GREEN(color);
     value *= scale;
     value &= mask;
-    if (value > 0x7c00)
-      value = 0x7c00;
+    if (value > RGB_LEVEL_MAX * FADE_CHANNEL_LEVEL)
+      value = RGB_LEVEL_MAX * FADE_CHANNEL_LEVEL;
     *channel++ = value;
-    value = color & 31;
+    value = RGB_RED(color);
     value *= scale;
     value &= mask;
-    if (value > 0x7c00)
-      value = 0x7c00;
+    if (value > RGB_LEVEL_MAX * FADE_CHANNEL_LEVEL)
+      value = RGB_LEVEL_MAX * FADE_CHANNEL_LEVEL;
     *channel++ = value;
     i++;
   } while (i < count);
@@ -379,6 +413,8 @@ void IsletCave_DimPalette(s32 scale) {
 
 extern struct MapGridCellAnimation gIsletCave_Doors[];
 
+/// Walking north into one of the Serac room's doors: everything stops, the
+/// door opens and the leader walks through it to the next corridor.
 void IsletCave_OpenDoorAndEnter(void) {
   struct FieldWork *work = Ram_HeapSlots->fieldWork;
   u32 i;
@@ -386,17 +422,12 @@ void IsletCave_OpenDoorAndEnter(void) {
 
   Event_Start();
   Event_ResolvePendingActions(0);
-  i = 8;
-loop:
-  {
+  for (i = ACTOR_FIRST_PLACED; i <= 63; i++) {
     struct Actor *object = Actor_GetById(i);
 
     if (object != 0)
       object->motionFlags = 0;
   }
-  i++;
-  if (i <= 63)
-    goto loop;
   index = work->stepTrigger - 1;
   Sound_Play(SE_DOOR_OPEN);
   index >>= 1;
@@ -422,6 +453,9 @@ extern u16 gIsletCave_DimColors[];
 extern u16 gIsletCave_CycleSlots[];
 extern s32 gIsletCave_TremorTargetScript[];
 
+/// Sets up the room being entered: the logs where their flags left them and the
+/// water's colours, the Sentinel gone once beaten, or Serac hidden in the
+/// winged statue until Tremor; the corridors darken a step a room.
 s32 Scene_Initialize(void) {
   s32 scene, dim;
 
@@ -434,7 +468,7 @@ s32 Scene_Initialize(void) {
                       gIsletCave_DimColors, gIsletCave_CycleSlots);
   } else if (scene == SCENE_ISLET_CAVE_SENTINEL) {
     Actor_SetSpriteFlags(Actor_GetById(ACTOR_FIRST_FIRE), 0);
-    if (gMainRoutineWork.entrance == 2) {
+    if (gMainRoutineWork.entrance == ENTRANCE_AFTER_BATTLE) {
       Actor_SetPosition(ACTOR_SENTINEL, 0, 0);
       GameFlag_Set(FLAG_SENTINEL_DEFEATED);
     }
@@ -459,7 +493,7 @@ other:
       dim = (gMainRoutineWork.entrance - 3) / 2;
     else
       dim = 3;
-    IsletCave_DimPalette(0x400 - (dim << 7));
+    IsletCave_DimPalette(FADE_CHANNEL_LEVEL - dim * (FADE_CHANNEL_LEVEL / 8));
     PaletteFade_PackTarget();
     PaletteFade_StartInterpolation(1);
     Event_WaitTransitionFrames();
@@ -469,95 +503,160 @@ other:
 
 s32 Scene_PrepareMap(void) { return 0; }
 
-/// Readies object id: when the flag is set, places it at (x, z) in cells;
-/// marks it, then calls Map_CopyCellAttributeRect with the cell to the left of
-/// it.
-void IsletCave_PlaceLogByCellLeft(s32 id, s32 a, s32 b, s32 x, s32 z,
-                                  s32 unused, s32 flag) {
-  struct Actor *object = Actor_GetById(id);
+/// The logs floating in the cave's water, in the order the party rides them.
+/// The first six are three cells tall and drift east and west, the seventh is
+/// three cells wide and drifts north and south.
+enum {
+  ACTOR_FIRST_LOG = ACTOR_FIRST_PLACED,
+  ACTOR_SECOND_LOG,
+  ACTOR_THIRD_LOG,
+  ACTOR_FOURTH_LOG,
+  ACTOR_FIFTH_LOG,
+  ACTOR_SIXTH_LOG,
+  ACTOR_SEVENTH_LOG
+};
 
-  if (object != NULL) {
+/// The cell behaviour under each log, whose step triggers settle it and ride
+/// it (gIsletCave_Triggers).
+enum {
+  CELL_BEHAVIOR_ISLET_CAVE_FIRST_LOG = 20,
+  CELL_BEHAVIOR_ISLET_CAVE_SECOND_LOG,
+  CELL_BEHAVIOR_ISLET_CAVE_THIRD_LOG,
+  CELL_BEHAVIOR_ISLET_CAVE_FOURTH_LOG,
+  CELL_BEHAVIOR_ISLET_CAVE_FIFTH_LOG,
+  CELL_BEHAVIOR_ISLET_CAVE_SIXTH_LOG,
+  CELL_BEHAVIOR_ISLET_CAVE_SEVENTH_LOG
+};
+
+/// Set while a log lies across the water from where it is placed, until the
+/// party leaves the cave's map: IsletCave_PlaceLogs then places it there.
+///
+/// XXX: both of the fourth log's rides clear its flag, so it is placed back at
+/// its start; the game run past that log would show whether it jumps back.
+enum {
+  FLAG_ISLET_CAVE_FIRST_LOG_MOVED = FLAG_SCENE_TEMP_80,
+  FLAG_ISLET_CAVE_SECOND_LOG_MOVED = FLAG_SCENE_TEMP_81,
+  FLAG_ISLET_CAVE_THIRD_LOG_MOVED = FLAG_SCENE_TEMP_82,
+  FLAG_ISLET_CAVE_FOURTH_LOG_MOVED = FLAG_SCENE_TEMP_83,
+  FLAG_ISLET_CAVE_FIFTH_LOG_MOVED = FLAG_SCENE_TEMP_84,
+  FLAG_ISLET_CAVE_SIXTH_LOG_MOVED = FLAG_SCENE_TEMP_85,
+  FLAG_ISLET_CAVE_SEVENTH_LOG_MOVED = FLAG_SCENE_TEMP_86
+};
+
+/// Places a log three cells wide that drifts north and south: at (x, z) if its
+/// flag says it has drifted, under the party, then draws its footprint from
+/// the stored cells at (sourceColumn, sourceRow); its cell behaviour is passed
+/// and not used.
+void IsletCave_PlaceWestEastLog(s32 actorId, s32 sourceColumn, s32 sourceRow,
+                                s32 x, s32 z, s32 cellBehavior, s32 flag) {
+  struct Actor *actor = Actor_GetById(actorId);
+
+  if (actor != NULL) {
     if (GameFlag_Get(flag))
-      Actor_SetPosition(id, x, z);
-    Actor_SetSpritePriority(id, 3);
-    object->priorityFlags |= 2;
-    MapGrid_CopyCellAttributes(a, b, 3, 1, FIELD_CELL(object->x.fixed) - 1,
-                               FIELD_CELL(object->z.fixed));
+      Actor_SetPosition(actorId, x, z);
+    Actor_SetSpritePriority(actorId, 3);
+    actor->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
+    MapGrid_CopyCellAttributes(sourceColumn, sourceRow, 3, 1,
+                               FIELD_CELL(actor->x.fixed) - 1,
+                               FIELD_CELL(actor->z.fixed));
   }
 }
 
-/// As IsletCave_PlaceLogByCellLeft, with the cell above the object.
-void IsletCave_PlaceLogByCellAbove(s32 id, s32 a, s32 bArg, s32 x, s32 z,
-                                   s32 unused, s32 flag) {
-  struct Actor *object;
+/// As IsletCave_PlaceWestEastLog, for a log three cells tall that drifts east
+/// and west.
+void IsletCave_PlaceNorthSouthLog(s32 actorId, s32 sourceColumn, s32 sourceRow,
+                                  s32 x, s32 z, s32 cellBehavior, s32 flag) {
+  struct Actor *actor;
 
-  if (Actor_GetById(id) != 0) {
-    Actor_SetSpritePriority(id, 3);
+  if (Actor_GetById(actorId) != 0) {
+    Actor_SetSpritePriority(actorId, 3);
     if (GameFlag_Get(flag))
-      Actor_SetPosition(id, x, z);
-    object = Actor_GetById(id);
-    object->priorityFlags |= 2;
-    MapGrid_CopyCellAttributes(a, bArg, 1, 3, FIELD_CELL(object->x.fixed),
-                               FIELD_CELL(object->z.fixed) - 1);
+      Actor_SetPosition(actorId, x, z);
+    actor = Actor_GetById(actorId);
+    actor->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
+    MapGrid_CopyCellAttributes(sourceColumn, sourceRow, 1, 3,
+                               FIELD_CELL(actor->x.fixed),
+                               FIELD_CELL(actor->z.fixed) - 1);
   }
 }
 
-/// A log the leader steps onto rocks under him.
-void IsletCave_SettleLog(s32 logId) {
-  Actor_SetAnimationById(logId, 1);
-  Actor_SetAnimationById(logId, 2);
+/// Stepping onto a log plays its animation from the start.
+void IsletCave_SettleLog(s32 actorId) {
+  Actor_SetAnimationById(actorId, 1);
+  Actor_SetAnimationById(actorId, 2);
   return;
 }
 
 /// Places the seven logs on the water where their flags left them.
 void IsletCave_PlaceLogs(void) {
-  ((void (*)())IsletCave_PlaceLogByCellAbove)(8, 27, 0, 136, 0x1f8, 20, 0x280);
-  ((void (*)())IsletCave_PlaceLogByCellAbove)(9, 28, 0, 136, 232, 21, 0x281);
-  ((void (*)())IsletCave_PlaceLogByCellAbove)(10, 29, 0, 0x358, 152, 22, 0x282);
-  ((void (*)())IsletCave_PlaceLogByCellAbove)(11, 30, 0, 0x318, 152, 23, 0x283);
-  ((void (*)())IsletCave_PlaceLogByCellAbove)(12, 31, 0, 0x358, 0x178, 24,
-                                              0x284);
-  ((void (*)())IsletCave_PlaceLogByCellAbove)(13, 32, 0, 0x318, 0x178, 25,
-                                              0x285);
-  ((void (*)())IsletCave_PlaceLogByCellLeft)(14, 33, 0, 0x338, 120, 26, 0x286);
+  IsletCave_PlaceNorthSouthLog(ACTOR_FIRST_LOG, 27, 0, 136, 504,
+                               CELL_BEHAVIOR_ISLET_CAVE_FIRST_LOG,
+                               FLAG_ISLET_CAVE_FIRST_LOG_MOVED);
+  IsletCave_PlaceNorthSouthLog(ACTOR_SECOND_LOG, 28, 0, 136, 232,
+                               CELL_BEHAVIOR_ISLET_CAVE_SECOND_LOG,
+                               FLAG_ISLET_CAVE_SECOND_LOG_MOVED);
+  IsletCave_PlaceNorthSouthLog(ACTOR_THIRD_LOG, 29, 0, 856, 152,
+                               CELL_BEHAVIOR_ISLET_CAVE_THIRD_LOG,
+                               FLAG_ISLET_CAVE_THIRD_LOG_MOVED);
+  IsletCave_PlaceNorthSouthLog(ACTOR_FOURTH_LOG, 30, 0, 792, 152,
+                               CELL_BEHAVIOR_ISLET_CAVE_FOURTH_LOG,
+                               FLAG_ISLET_CAVE_FOURTH_LOG_MOVED);
+  IsletCave_PlaceNorthSouthLog(ACTOR_FIFTH_LOG, 31, 0, 856, 376,
+                               CELL_BEHAVIOR_ISLET_CAVE_FIFTH_LOG,
+                               FLAG_ISLET_CAVE_FIFTH_LOG_MOVED);
+  IsletCave_PlaceNorthSouthLog(ACTOR_SIXTH_LOG, 32, 0, 792, 376,
+                               CELL_BEHAVIOR_ISLET_CAVE_SIXTH_LOG,
+                               FLAG_ISLET_CAVE_SIXTH_LOG_MOVED);
+  IsletCave_PlaceWestEastLog(ACTOR_SEVENTH_LOG, 33, 0, 824, 120,
+                             CELL_BEHAVIOR_ISLET_CAVE_SEVENTH_LOG,
+                             FLAG_ISLET_CAVE_SEVENTH_LOG_MOVED);
   return;
 }
 
+/// Stepping onto the first log.
 void IsletCave_SettleFirstLog(void) {
-  IsletCave_SettleLog(8);
+  IsletCave_SettleLog(ACTOR_FIRST_LOG);
   return;
 }
 
+/// Stepping onto the second log.
 void IsletCave_SettleSecondLog(void) {
-  IsletCave_SettleLog(9);
+  IsletCave_SettleLog(ACTOR_SECOND_LOG);
   return;
 }
 
+/// Stepping onto the third log.
 void IsletCave_SettleThirdLog(void) {
-  IsletCave_SettleLog(10);
+  IsletCave_SettleLog(ACTOR_THIRD_LOG);
   return;
 }
 
+/// Stepping onto the fourth log.
 void IsletCave_SettleFourthLog(void) {
-  IsletCave_SettleLog(11);
+  IsletCave_SettleLog(ACTOR_FOURTH_LOG);
   return;
 }
 
+/// Stepping onto the fifth log.
 void IsletCave_SettleFifthLog(void) {
-  IsletCave_SettleLog(12);
+  IsletCave_SettleLog(ACTOR_FIFTH_LOG);
   return;
 }
 
+/// Stepping onto the sixth log.
 void IsletCave_SettleSixthLog(void) {
-  IsletCave_SettleLog(13);
+  IsletCave_SettleLog(ACTOR_SIXTH_LOG);
   return;
 }
 
+/// Stepping onto the seventh log.
 void IsletCave_SettleSeventhLog(void) {
-  IsletCave_SettleLog(14);
+  IsletCave_SettleLog(ACTOR_SEVENTH_LOG);
   return;
 }
 
+/// Rides log actorId one stage, `dx` and `dz` pixels, with the leader walking
+/// backwards on it to the cell it stops at.
 void IsletCave_RideLog(s32 actorId, s32 dx, s32 dz) {
   struct Actor *leader;
   struct Actor *actor;
@@ -591,9 +690,8 @@ void IsletCave_RideLog(s32 actorId, s32 dx, s32 dz) {
   Event_End();
 }
 
-/// Rides log `logId` `dx` pixels across the water and moves its cells with it,
-/// then sets or clears its flag (`flagCall`) to say where it lies. The
-/// name is ours.
+/// Rides log `logId` `dx` pixels across the water and moves its footprint with
+/// it, then sets or clears its flag (`flagCall`) to say where it lies.
 #define DEFINE_ISLET_CAVE_RIDE_LOG_ACROSS(name, logId, dx, flagCall, flag)     \
   void name(void) {                                                            \
     s32 fromX = Actor_GetById(logId)->x.fixed;                                 \
@@ -609,23 +707,18 @@ void IsletCave_RideLog(s32 actorId, s32 dx, s32 dz) {
     flagCall(flag);                                                            \
   }
 
-/// The logs floating in the cave's water, in the order the party rides them.
-enum {
-  ACTOR_FIRST_LOG = 8,
-  ACTOR_SECOND_LOG = 9,
-  ACTOR_THIRD_LOG = 10,
-  ACTOR_FOURTH_LOG = 11,
-  ACTOR_FIFTH_LOG = 12,
-  ACTOR_SIXTH_LOG = 13,
-  ACTOR_SEVENTH_LOG = 14
-};
-
+/// Walking east onto the first log rides it east across the water.
 DEFINE_ISLET_CAVE_RIDE_LOG_ACROSS(IsletCave_RideFirstLogEast, ACTOR_FIRST_LOG,
-                                  32, GameFlag_Clear, FLAG_SCENE_TEMP_80)
+                                  32, GameFlag_Clear,
+                                  FLAG_ISLET_CAVE_FIRST_LOG_MOVED)
 
+/// Walking west onto the first log rides it west across the water.
 DEFINE_ISLET_CAVE_RIDE_LOG_ACROSS(IsletCave_RideFirstLogWest, ACTOR_FIRST_LOG,
-                                  -32, GameFlag_Set, FLAG_SCENE_TEMP_80)
+                                  -32, GameFlag_Set,
+                                  FLAG_ISLET_CAVE_FIRST_LOG_MOVED)
 
+/// Walking east onto the second log rides it east across the water, in
+/// two stages.
 void IsletCave_RideSecondLogEast(void) {
   FIXED fromX = Actor_GetById(ACTOR_SECOND_LOG)->x.fixed;
   FIXED fromZ = Actor_GetById(ACTOR_SECOND_LOG)->z.fixed;
@@ -639,9 +732,11 @@ void IsletCave_RideSecondLogEast(void) {
       FIELD_CELL(fromZ) - 1);
   Map_CopyCellAttributeRect(0, 0, 1, 3, FIELD_CELL(fromX),
                             FIELD_CELL(fromZ) - 1);
-  GameFlag_Clear(FLAG_SCENE_TEMP_81);
+  GameFlag_Clear(FLAG_ISLET_CAVE_SECOND_LOG_MOVED);
 }
 
+/// Walking west onto the second log rides it west across the water, in
+/// two stages.
 void IsletCave_RideSecondLogWest(void) {
   FIXED fromX = Actor_GetById(ACTOR_SECOND_LOG)->x.fixed;
   FIXED fromZ = Actor_GetById(ACTOR_SECOND_LOG)->z.fixed;
@@ -655,33 +750,51 @@ void IsletCave_RideSecondLogWest(void) {
       FIELD_CELL(fromZ) - 1);
   Map_CopyCellAttributeRect(0, 0, 1, 3, FIELD_CELL(fromX),
                             FIELD_CELL(fromZ) - 1);
-  GameFlag_Set(FLAG_SCENE_TEMP_81);
+  GameFlag_Set(FLAG_ISLET_CAVE_SECOND_LOG_MOVED);
 }
 
+/// Walking east onto the third log rides it east across the water.
 DEFINE_ISLET_CAVE_RIDE_LOG_ACROSS(IsletCave_RideThirdLogEast, ACTOR_THIRD_LOG,
-                                  80, GameFlag_Set, FLAG_SCENE_TEMP_82)
+                                  80, GameFlag_Set,
+                                  FLAG_ISLET_CAVE_THIRD_LOG_MOVED)
 
+/// Walking west onto the third log rides it west across the water.
 DEFINE_ISLET_CAVE_RIDE_LOG_ACROSS(IsletCave_RideThirdLogWest, ACTOR_THIRD_LOG,
-                                  -80, GameFlag_Clear, FLAG_SCENE_TEMP_82)
+                                  -80, GameFlag_Clear,
+                                  FLAG_ISLET_CAVE_THIRD_LOG_MOVED)
 
+/// Walking east onto the fourth log rides it east across the water.
 DEFINE_ISLET_CAVE_RIDE_LOG_ACROSS(IsletCave_RideFourthLogEast, ACTOR_FOURTH_LOG,
-                                  80, GameFlag_Clear, FLAG_SCENE_TEMP_83)
+                                  80, GameFlag_Clear,
+                                  FLAG_ISLET_CAVE_FOURTH_LOG_MOVED)
 
+/// Walking west onto the fourth log rides it west across the water.
 DEFINE_ISLET_CAVE_RIDE_LOG_ACROSS(IsletCave_RideFourthLogWest, ACTOR_FOURTH_LOG,
-                                  -80, GameFlag_Clear, FLAG_SCENE_TEMP_83)
+                                  -80, GameFlag_Clear,
+                                  FLAG_ISLET_CAVE_FOURTH_LOG_MOVED)
 
+/// Walking east onto the fifth log rides it east across the water.
 DEFINE_ISLET_CAVE_RIDE_LOG_ACROSS(IsletCave_RideFifthLogEast, ACTOR_FIFTH_LOG,
-                                  80, GameFlag_Set, FLAG_SCENE_TEMP_84)
+                                  80, GameFlag_Set,
+                                  FLAG_ISLET_CAVE_FIFTH_LOG_MOVED)
 
+/// Walking west onto the fifth log rides it west across the water.
 DEFINE_ISLET_CAVE_RIDE_LOG_ACROSS(IsletCave_RideFifthLogWest, ACTOR_FIFTH_LOG,
-                                  -80, GameFlag_Clear, FLAG_SCENE_TEMP_84)
+                                  -80, GameFlag_Clear,
+                                  FLAG_ISLET_CAVE_FIFTH_LOG_MOVED)
 
+/// Walking east onto the sixth log rides it east across the water.
 DEFINE_ISLET_CAVE_RIDE_LOG_ACROSS(IsletCave_RideSixthLogEast, ACTOR_SIXTH_LOG,
-                                  80, GameFlag_Clear, FLAG_SCENE_TEMP_85)
+                                  80, GameFlag_Clear,
+                                  FLAG_ISLET_CAVE_SIXTH_LOG_MOVED)
 
+/// Walking west onto the sixth log rides it west across the water.
 DEFINE_ISLET_CAVE_RIDE_LOG_ACROSS(IsletCave_RideSixthLogWest, ACTOR_SIXTH_LOG,
-                                  -80, GameFlag_Set, FLAG_SCENE_TEMP_85)
+                                  -80, GameFlag_Set,
+                                  FLAG_ISLET_CAVE_SIXTH_LOG_MOVED)
 
+/// Walking north onto the seventh log rides it north across the water, in
+/// three stages.
 void IsletCave_RideSeventhLogNorth(void) {
   FIXED fromX = Actor_GetById(ACTOR_SEVENTH_LOG)->x.fixed;
   s32 column = fromX;
@@ -689,7 +802,7 @@ void IsletCave_RideSeventhLogNorth(void) {
   s32 fromRow = Actor_GetById(ACTOR_SEVENTH_LOG)->z.fixed;
 
   step = -step;
-  fromRow >>= 20;
+  fromRow = FIELD_CELL(fromRow);
   IsletCave_RideLog(ACTOR_SEVENTH_LOG, 0, step);
   IsletCave_RideLog(ACTOR_SEVENTH_LOG, 0, step);
   IsletCave_RideLog(ACTOR_SEVENTH_LOG, 0, -128);
@@ -699,9 +812,11 @@ void IsletCave_RideSeventhLogNorth(void) {
       column, fromRow, 3, 1, column,
       FIELD_CELL(Actor_GetById(ACTOR_SEVENTH_LOG)->z.fixed));
   Map_CopyCellAttributeRect(0, 0, 3, 1, column, fromRow);
-  GameFlag_Set(FLAG_SCENE_TEMP_86);
+  GameFlag_Set(FLAG_ISLET_CAVE_SEVENTH_LOG_MOVED);
 }
 
+/// Walking south onto the seventh log rides it south across the water, in
+/// three stages.
 void IsletCave_RideSeventhLogSouth(void) {
   FIXED fromX = Actor_GetById(ACTOR_SEVENTH_LOG)->x.fixed;
   s32 column = fromX;
@@ -713,20 +828,13 @@ void IsletCave_RideSeventhLogSouth(void) {
   IsletCave_RideLog(ACTOR_SEVENTH_LOG, 0, 128);
   wait(2);
   column = FIELD_CELL(column) - 1;
-  fromRow >>= 20;
+  fromRow = FIELD_CELL(fromRow);
   MapGrid_CopyCellAttributes(
       column, fromRow, 3, 1, column,
       FIELD_CELL(Actor_GetById(ACTOR_SEVENTH_LOG)->z.fixed));
   Map_CopyCellAttributeRect(0, 0, 3, 1, column, fromRow);
-  GameFlag_Clear(FLAG_SCENE_TEMP_86);
+  GameFlag_Clear(FLAG_ISLET_CAVE_SEVENTH_LOG_MOVED);
 }
-
-#define FIELD_AT(base, type, off)                                              \
-  (((struct {                                                                  \
-     u8 pad[off];                                                              \
-     type v;                                                                   \
-   } *)(base))                                                                 \
-       ->v)
 
 /// At the end of the corridors the guardian of wind is summoned and the
 /// Sentinel fights.
@@ -752,9 +860,11 @@ void IsletCave_SentinelAwaits(void) {
                              object->z.part[0].integer);
   }
   Event_Wait(20);
-  FieldEvent_SetAfterBattleDestination(SCENE_ISLET_CAVE_SENTINEL, 2);
+  FieldEvent_SetAfterBattleDestination(SCENE_ISLET_CAVE_SENTINEL,
+                                       ENTRANCE_AFTER_BATTLE);
   Battle_SetType(BATTLE_TYPE_NO_ESCAPE);
-  Field_RequestBattleFromEncounterTable(0x67, 2);
+  Field_RequestBattleFromEncounterTable(ENCOUNTER_TABLE_HIDDEN_BOSSES,
+                                        HIDDEN_BOSS_SENTINEL);
   Event_End();
 }
 
@@ -771,13 +881,12 @@ void IsletCave_TremorRevealsSerac(void) {
     Actor_MoveToAndWait(ACTOR_SERAC, 344, ((owner->z.fixed >> 19) << 3) + 24);
     Actor_Stop(ACTOR_WINGED_STATUE);
     object->speedLimit = toFIXED(1);
-    Actor_TurnToFaceEachOther(gMainRoutineWork.leaderActorId, 9, 0);
+    Actor_TurnToFaceEachOther(gMainRoutineWork.leaderActorId, ACTOR_SERAC, 0);
   }
 }
 
 #undef DEFINE_ISLET_CAVE_ARRIVE_AT
 #undef DEFINE_ISLET_CAVE_RIDE_LOG_ACROSS
-#undef FIELD_AT
 
 void IsletCave_RideFirstLogWest(void);
 void IsletCave_RideThirdLogWest(void);
@@ -795,22 +904,22 @@ u16 gIsletCave_CycleSlots[] = {
   };
 
 u32 gIsletCave_SentinelScript[] = {
-    SC_SET(SW_SCALE_Y, 0x14ccc),
-    SC_SET(SW_SCALE_X, 0x14ccc),
+    SC_SET(SW_SCALE_Y, FIXED_ONE * 13 / 10),
+    SC_SET(SW_SCALE_X, FIXED_ONE * 13 / 10),
     SC_END,
 };
 
 s32 gIsletCave_ShrunkenSpriteScript[] = {
     SC_SET(SW_MOTION, 0),
     SC_ADD(SW_Y, toFIXED(-4)),
-    SC_SET(SW_SCALE_X, 0xcccc),
-    SC_SET(SW_SCALE_Y, 0xcccc),
+    SC_SET(SW_SCALE_X, FIXED_ONE * 4 / 5),
+    SC_SET(SW_SCALE_Y, FIXED_ONE * 4 / 5),
     SC_CALL(IsletCave_ClearScriptedActorSpriteFlags),
     SC_END,
 };
 
 s32 gIsletCave_TremorTargetScript[] = {
-    SC_CALL(IsletCave_BobOnWater),
+    SC_CALL(IsletCave_HopWingedStatue),
     SC_END,
 };
 
@@ -848,7 +957,7 @@ u32 gSceneExits[] = {
 };
 
 struct ActorPlacement gIsletCave_Placements[] = {
-    ACTOR_PLACEMENT(170, FLAG_SENTINEL_DEFEATED, (s32)gIsletCave_SentinelScript, 184, 0, 184, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_SENTINEL, FLAG_SENTINEL_DEFEATED, (s32)gIsletCave_SentinelScript, 184, 0, 184, FACING_SOUTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(SPRITE_FIRE, CONDITION_ALWAYS, (s32)gIsletCave_ShrunkenSpriteScript, 152, 0, 144, FACING_NORTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(SPRITE_FIRE, CONDITION_ALWAYS, (s32)gIsletCave_ShrunkenSpriteScript, 216, 0, 144, FACING_NORTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE),
     ACTOR_PLACEMENT(SPRITE_FIRE, CONDITION_ALWAYS, (s32)gIsletCave_ShrunkenSpriteScript, 136, 0, 176, FACING_NORTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE),
@@ -889,27 +998,27 @@ struct Trigger gIsletCave_Triggers[] = {
     {TRIGGER_EXIT, 6, CONDITION_ALWAYS, 6},
     {TRIGGER_EXIT, 7, CONDITION_ALWAYS, 7},
     {TRIGGER_EXIT, 8, CONDITION_ALWAYS, 8},
-    {STEP_TRIGGER_WALKING_INTO(FACING_EAST), 20, CONDITION_ALWAYS, EVENT(IsletCave_RideFirstLogEast)},
-    {STEP_TRIGGER_WALKING_INTO(FACING_WEST), 20, CONDITION_ALWAYS, EVENT(IsletCave_RideFirstLogWest)},
-    {STEP_TRIGGER_WALKING_INTO(FACING_EAST), 21, CONDITION_ALWAYS, EVENT(IsletCave_RideSecondLogEast)},
-    {STEP_TRIGGER_WALKING_INTO(FACING_WEST), 21, CONDITION_ALWAYS, EVENT(IsletCave_RideSecondLogWest)},
-    {STEP_TRIGGER_WALKING_INTO(FACING_EAST), 22, CONDITION_ALWAYS, EVENT(IsletCave_RideThirdLogEast)},
-    {STEP_TRIGGER_WALKING_INTO(FACING_WEST), 22, CONDITION_ALWAYS, EVENT(IsletCave_RideThirdLogWest)},
-    {STEP_TRIGGER_WALKING_INTO(FACING_EAST), 23, CONDITION_ALWAYS, EVENT(IsletCave_RideFourthLogEast)},
-    {STEP_TRIGGER_WALKING_INTO(FACING_WEST), 23, CONDITION_ALWAYS, EVENT(IsletCave_RideFourthLogWest)},
-    {STEP_TRIGGER_WALKING_INTO(FACING_EAST), 24, CONDITION_ALWAYS, EVENT(IsletCave_RideFifthLogEast)},
-    {STEP_TRIGGER_WALKING_INTO(FACING_WEST), 24, CONDITION_ALWAYS, EVENT(IsletCave_RideFifthLogWest)},
-    {STEP_TRIGGER_WALKING_INTO(FACING_EAST), 25, CONDITION_ALWAYS, EVENT(IsletCave_RideSixthLogEast)},
-    {STEP_TRIGGER_WALKING_INTO(FACING_WEST), 25, CONDITION_ALWAYS, EVENT(IsletCave_RideSixthLogWest)},
-    {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 26, CONDITION_ALWAYS, EVENT(IsletCave_RideSeventhLogNorth)},
-    {STEP_TRIGGER_WALKING_INTO(FACING_SOUTH), 26, CONDITION_ALWAYS, EVENT(IsletCave_RideSeventhLogSouth)},
-    {TRIGGER_STEP, 20, CONDITION_ALWAYS, EVENT(IsletCave_SettleFirstLog)},
-    {TRIGGER_STEP, 21, CONDITION_ALWAYS, EVENT(IsletCave_SettleSecondLog)},
-    {TRIGGER_STEP, 22, CONDITION_ALWAYS, EVENT(IsletCave_SettleThirdLog)},
-    {TRIGGER_STEP, 23, CONDITION_ALWAYS, EVENT(IsletCave_SettleFourthLog)},
-    {TRIGGER_STEP, 24, CONDITION_ALWAYS, EVENT(IsletCave_SettleFifthLog)},
-    {TRIGGER_STEP, 25, CONDITION_ALWAYS, EVENT(IsletCave_SettleSixthLog)},
-    {TRIGGER_STEP, 26, CONDITION_ALWAYS, EVENT(IsletCave_SettleSeventhLog)},
+    {STEP_TRIGGER_WALKING_INTO(FACING_EAST), CELL_BEHAVIOR_ISLET_CAVE_FIRST_LOG, CONDITION_ALWAYS, EVENT(IsletCave_RideFirstLogEast)},
+    {STEP_TRIGGER_WALKING_INTO(FACING_WEST), CELL_BEHAVIOR_ISLET_CAVE_FIRST_LOG, CONDITION_ALWAYS, EVENT(IsletCave_RideFirstLogWest)},
+    {STEP_TRIGGER_WALKING_INTO(FACING_EAST), CELL_BEHAVIOR_ISLET_CAVE_SECOND_LOG, CONDITION_ALWAYS, EVENT(IsletCave_RideSecondLogEast)},
+    {STEP_TRIGGER_WALKING_INTO(FACING_WEST), CELL_BEHAVIOR_ISLET_CAVE_SECOND_LOG, CONDITION_ALWAYS, EVENT(IsletCave_RideSecondLogWest)},
+    {STEP_TRIGGER_WALKING_INTO(FACING_EAST), CELL_BEHAVIOR_ISLET_CAVE_THIRD_LOG, CONDITION_ALWAYS, EVENT(IsletCave_RideThirdLogEast)},
+    {STEP_TRIGGER_WALKING_INTO(FACING_WEST), CELL_BEHAVIOR_ISLET_CAVE_THIRD_LOG, CONDITION_ALWAYS, EVENT(IsletCave_RideThirdLogWest)},
+    {STEP_TRIGGER_WALKING_INTO(FACING_EAST), CELL_BEHAVIOR_ISLET_CAVE_FOURTH_LOG, CONDITION_ALWAYS, EVENT(IsletCave_RideFourthLogEast)},
+    {STEP_TRIGGER_WALKING_INTO(FACING_WEST), CELL_BEHAVIOR_ISLET_CAVE_FOURTH_LOG, CONDITION_ALWAYS, EVENT(IsletCave_RideFourthLogWest)},
+    {STEP_TRIGGER_WALKING_INTO(FACING_EAST), CELL_BEHAVIOR_ISLET_CAVE_FIFTH_LOG, CONDITION_ALWAYS, EVENT(IsletCave_RideFifthLogEast)},
+    {STEP_TRIGGER_WALKING_INTO(FACING_WEST), CELL_BEHAVIOR_ISLET_CAVE_FIFTH_LOG, CONDITION_ALWAYS, EVENT(IsletCave_RideFifthLogWest)},
+    {STEP_TRIGGER_WALKING_INTO(FACING_EAST), CELL_BEHAVIOR_ISLET_CAVE_SIXTH_LOG, CONDITION_ALWAYS, EVENT(IsletCave_RideSixthLogEast)},
+    {STEP_TRIGGER_WALKING_INTO(FACING_WEST), CELL_BEHAVIOR_ISLET_CAVE_SIXTH_LOG, CONDITION_ALWAYS, EVENT(IsletCave_RideSixthLogWest)},
+    {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), CELL_BEHAVIOR_ISLET_CAVE_SEVENTH_LOG, CONDITION_ALWAYS, EVENT(IsletCave_RideSeventhLogNorth)},
+    {STEP_TRIGGER_WALKING_INTO(FACING_SOUTH), CELL_BEHAVIOR_ISLET_CAVE_SEVENTH_LOG, CONDITION_ALWAYS, EVENT(IsletCave_RideSeventhLogSouth)},
+    {TRIGGER_STEP, CELL_BEHAVIOR_ISLET_CAVE_FIRST_LOG, CONDITION_ALWAYS, EVENT(IsletCave_SettleFirstLog)},
+    {TRIGGER_STEP, CELL_BEHAVIOR_ISLET_CAVE_SECOND_LOG, CONDITION_ALWAYS, EVENT(IsletCave_SettleSecondLog)},
+    {TRIGGER_STEP, CELL_BEHAVIOR_ISLET_CAVE_THIRD_LOG, CONDITION_ALWAYS, EVENT(IsletCave_SettleThirdLog)},
+    {TRIGGER_STEP, CELL_BEHAVIOR_ISLET_CAVE_FOURTH_LOG, CONDITION_ALWAYS, EVENT(IsletCave_SettleFourthLog)},
+    {TRIGGER_STEP, CELL_BEHAVIOR_ISLET_CAVE_FIFTH_LOG, CONDITION_ALWAYS, EVENT(IsletCave_SettleFifthLog)},
+    {TRIGGER_STEP, CELL_BEHAVIOR_ISLET_CAVE_SIXTH_LOG, CONDITION_ALWAYS, EVENT(IsletCave_SettleSixthLog)},
+    {TRIGGER_STEP, CELL_BEHAVIOR_ISLET_CAVE_SEVENTH_LOG, CONDITION_ALWAYS, EVENT(IsletCave_SettleSeventhLog)},
     {TRIGGER_TALK, 15, CONDITION_ALWAYS, EVENT(IsletCave_FightMeld)},
     {PSYNERGY_PHASE_ON_CELL(ABILITY_TELEPORT, PSYNERGY_PHASE_AFTER_CAST), 50, CONDITION_ALWAYS, EVENT(IsletCave_TeleportToFirstCircle)},
     {PSYNERGY_PHASE_ON_CELL(ABILITY_TELEPORT, PSYNERGY_PHASE_AFTER_CAST), 51, CONDITION_ALWAYS, EVENT(IsletCave_TeleportToSecondCircle)},
@@ -934,7 +1043,7 @@ struct Trigger gIsletCave_Room2Triggers[] = {
 
 struct Trigger gIsletCave_Room3Triggers[] = {
     {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
-    {TRIGGER_STEP, 10, 0x9cf, EVENT(IsletCave_SentinelAwaits)},
+    {TRIGGER_STEP, 10, FLAG_SENTINEL_DEFEATED, EVENT(IsletCave_SentinelAwaits)},
     {TRIGGER_TABLE_END},
 };
 

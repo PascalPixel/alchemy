@@ -76,7 +76,7 @@
 #define FLAG_PSYNERGY_TINTED 0x108
 /// Set, the highest of these picks the tint a field Psynergy fades
 /// toward, gFieldEffect_TargetColors[n], in place of the frame counter's pick
-/// (FieldPsynergy_FadeToCastColor), as ☀️'s.
+/// (FieldPsynergy_FadeToCastColor), as The Broken Seal's.
 #define FLAG_PSYNERGY_TINT(n) (0x148 + (n))
 /// The next field scene starts where the party was, as after a battle: the
 /// scene's flags are not reset, the actors come back from their snapshot,

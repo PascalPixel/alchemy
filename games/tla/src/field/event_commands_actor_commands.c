@@ -163,28 +163,28 @@ void Actor_FallOverWithAnimationById(s32 id, u32 angle, s32 mode) {
   MapGrid_SetCellBehaviorAtFar(object->layer, position[0], position[2],
                                CELL_BEHAVIOR_WALL);
   switch (angle) {
-  case 0:
+  case FACING_EAST:
     object->x.fixed += toFIXED(8);
     object->z.fixed += toFIXED(1);
     sprite->offsetX -= 4;
     sprite->offsetY += 15;
     break;
-  case DEGtoANG(180):
+  case FACING_WEST:
     object->x.fixed -= toFIXED(8);
     object->z.fixed += toFIXED(1);
     sprite->offsetX += 3;
     sprite->offsetY += 16;
     break;
-  case DEGtoANG(270):
+  case FACING_NORTH:
     sprite->offsetY += 1;
     break;
-  case DEGtoANG(90):
+  case FACING_SOUTH:
     object->z.fixed += toFIXED(8);
     sprite->offsetY += 13;
     break;
   }
   object->collisionFlags = 0;
-  object->priorityFlags |= 2;
+  object->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
   sprite->flags = 0;
   sprite->rotation = angle + DEGtoANG(90);
 }

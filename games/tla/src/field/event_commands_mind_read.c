@@ -172,9 +172,9 @@ void FieldEffect_AdvanceHueCycle(void) {
   b = FieldEffect_HueChannelRamp(work->hue + HUE_DEGREES * 2 / 3);
 
   // Scale 0-31 down to 4-11.
-  work->red = (r / 4 + 4) & RGB_LEVEL_MAX;
-  work->green = (g / 4 + 4) & RGB_LEVEL_MAX;
-  work->blue = (b / 4 + 4) & RGB_LEVEL_MAX;
+  work->red = (r / 4 + 4) & 0x1f;
+  work->green = (g / 4 + 4) & 0x1f;
+  work->blue = (b / 4 + 4) & 0x1f;
   limit = toFIXED(HUE_DEGREES - 1);
   if ((u32)((work->hue += 4) << 16) > limit)
     work->hue = 0;
@@ -801,7 +801,7 @@ void FieldPsynergy_GrowthOnTarget(s32 unused) {
     Actor_SelectAnimationFar(target, 2);
     Actor_SetSpriteFlagsFar(target, 0);
     target->collisionFlags = 0;
-    target->priorityFlags |= 2;
+    target->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
     wait(10);
     Sound_PlayFar(SE_RECOVERY);
     wait(40);

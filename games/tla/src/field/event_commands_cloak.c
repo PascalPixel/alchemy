@@ -207,7 +207,8 @@ void FieldPsynergy_Douse(void) {
         }
         mote->update = (void (*)(void))BattleEffect_LandFallingObject;
         mote->motionFlags = ACTOR_FALLS;
-        mote->priorityFlags = 5;
+        mote->priorityFlags =
+            ACTOR_PRIORITY_AUTOMATIC | ACTOR_PRIORITY_OVERHEAD;
       }
       Sound_PlayFar(SE_WATER);
       wait(6);

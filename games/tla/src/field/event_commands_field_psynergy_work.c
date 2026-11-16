@@ -65,7 +65,6 @@ void Camera_WorldToScreen(struct Vector3 *position) {
 
     // Relative to the view's whole-pixel corner; height lifts a point up
     // the screen.
-
     position->x -= x;
     position->z -= position->y;
     position->z -= z;
@@ -80,7 +79,7 @@ void BattleEffect_UpdateAllEffectSlots(void) {
   s32 remainingSlots;
 
   scene = Ram_HeapSlots->fieldEffectWork;
-  remainingSlots = 24 - 1;
+  remainingSlots = ARRAY_COUNT(scene->particles) - 1;
   slot = scene->particles;
   do {
     remainingSlots -= 1;

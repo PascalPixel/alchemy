@@ -42,25 +42,23 @@ enum MapGridLayerIndex {
   MAPGRID_LAYER_OVERHEAD = 2, ///< `BG1`: roofs and tree tops, over the actors
 };
 
-/// A cell the leader jumps across, as The Broken Seal's
-/// CELL_BEHAVIOR_JUMP_FORWARD.
-#define CELL_BEHAVIOR_JUMP_FORWARD 254
-/// A cell's collision code that blocks whatever the heights, as The Broken
-/// Seal's CELL_BEHAVIOR_WALL.
-#define CELL_BEHAVIOR_WALL 255
-
-/// The collision codes of the overhead layer's cells that The Lost Age's field
-/// Psynergy reads (event_commands_field_psynergy.c).
-enum PsynergyCellBehavior {
+/// A cell's collision code, as The Broken Seal's enum CellBehavior: the codes
+/// The Lost Age's field code reads by name. Cloak, Sand, the Cyclone and Hover
+/// read theirs on the overhead layer (event_commands_field_psynergy.c).
+enum CellBehavior {
   CELL_BEHAVIOR_CLOAK = 231, ///< Cloak hides the leader there
   CELL_BEHAVIOR_SAND = 232,  ///< Sand lets the leader move there as sand
   /// A cell the Cyclone acts on (MapGrid_GetCycloneCellKind's kind 1).
   CELL_BEHAVIOR_CYCLONE = 233,
-  /// A Cyclone teleporter, which carries the leader to its centre (kind 2).
+  /// A cell the Cyclone carries the leader to, its centre kept in
+  /// FieldWork.cycloneCarryX and Z (kind 2).
   CELL_BEHAVIOR_CYCLONE_CARRY = 234,
-  /// A Cyclone lift, which lifts the leader onto its centre (kind 3).
+  /// A cell the Cyclone lifts the leader onto, its centre kept in
+  /// FieldWork.cycloneLiftX and Z (kind 3).
   CELL_BEHAVIOR_CYCLONE_LIFT = 235,
-  CELL_BEHAVIOR_HOVER = 236 ///< Hover holds the leader up over it
+  CELL_BEHAVIOR_HOVER = 236,        ///< Hover holds the leader up over it
+  CELL_BEHAVIOR_JUMP_FORWARD = 254, ///< jumped across
+  CELL_BEHAVIOR_WALL = 255          ///< blocks whatever the heights
 };
 
 /// MapCell.attributeB bits read by the field Psynergy.

@@ -1461,8 +1461,8 @@ void HangingVine_Update(void) {
     z = link->z;
     swing = slot->swing;
 
-    // Swing less while the leader stands within 8 pixels across, a pixel
-    // deep, and between 8 above and 80 below the anchor.
+    // Swing less while the leader stands within 8 pixels across and 16 deep
+    // of the anchor, and between 8 above and 80 below it.
     if ((x - leader->x.fixed >= 0 ? x - leader->x.fixed < toFIXED(8)
                                   : leader->x.fixed - x < toFIXED(8)) &&
         (u32)(z - leader->z.fixed + 0xfffff) <= 0xffffe &&

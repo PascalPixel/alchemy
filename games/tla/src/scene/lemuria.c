@@ -33,6 +33,7 @@
 #include "field/field_sequence_event.h"
 #include "field/actor_view.h"
 #include "field/actor_script.h"
+#include "scene/event_layer.h"
 #include "text/msg_ids.h"
 #include "field/sprite.h"
 #include "field/field_psynergy_work.h"
@@ -137,6 +138,9 @@ s32 Actor_IsFacingNear(struct Actor *self, struct Actor *other, s32 range) {
 
 s32 BattleEffect_GetObjectPriority(struct Actor *object);
 
+/// An update for the two walking children: each stops while it faces the other
+/// child or the leader close by, or while Mind Read shows its thoughts, and
+/// walks on otherwise.
 s32 Lemuria_NoticeLeader(struct Actor *self) {
   struct FieldWork *event = Ram_HeapSlots->fieldWork;
   u8 *state;
@@ -173,8 +177,6 @@ near:
   return 0;
 }
 
-void TileCopies_CopyTouchedCells(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f,
-                                 s32 g);
 s32 MapGrid_GetAttributeBAt(s32 x, s32 z, s32 layer);
 
 extern struct MapGridCellAnimation gLemuria_FirstDoor;
@@ -195,13 +197,17 @@ const struct ActorPlacement *Scene_GetActorPlacements(void) {
   return gActorPlacements;
 }
 
+/// Puts the girl who stood in for Kraden back in her place, as herself.
 void Lemuria_RestoreGirl(void) {
   Actor_SetPosition(ACTOR_KRADEN_STAND_IN, 488, 1256);
-  Actor_SetFirstSpriteAnimation(Actor_Get(ACTOR_KRADEN_STAND_IN), 157);
+  Actor_SetFirstSpriteAnimation(Actor_Get(ACTOR_KRADEN_STAND_IN),
+                                SPRITE_LEMURIAN_GIRL);
   Actor_SetAnimation(ACTOR_KRADEN_STAND_IN, 3);
   Actor_FaceDirection(ACTOR_KRADEN_STAND_IN, FACING_WEST, 0);
 }
 
+/// The leader opens one of Lemuria's doors and walks in, centred on it or
+/// straight ahead by `mode`.
 void Lemuria_OpenDoorAndEnter(const struct MapGridCellAnimation *door, s32 exit,
                               s32 mode) {
   s32 id;
@@ -320,31 +326,32 @@ void Lemuria_TalkToLonelyChild(void) {
   System_Wait(1);
 }
 
-static __inline__ void TileCopies_CopyTouchedCells_(s32 a, s32 b, s32 c, s32 d,
-                                                    s32 e, s32 f, s32 g) {
-  TileCopies_CopyTouchedCells(a, b, c, d, e, f, g);
-}
-
+/// Dig on the first soft spot: its cells open beside it.
 void Lemuria_DigFirstSpot(void) {
-  TileCopies_CopyTouchedCells_(37, 72, 2, 2, 39, 71, 2);
+  FieldTileCopies_CopyTouchedCells(37, 72, 2, 2, 39, 71, 2);
 }
 
+/// Dig on the second soft spot: its cells open beside it.
 void Lemuria_DigSecondSpot(void) {
-  TileCopies_CopyTouchedCells_(59, 64, 4, 3, 49, 71, 2);
+  FieldTileCopies_CopyTouchedCells(59, 64, 4, 3, 49, 71, 2);
 }
 
+/// Dig on the third soft spot: its cell opens beside it.
 void Lemuria_DigThirdSpot(void) {
-  TileCopies_CopyTouchedCells_(52, 69, 1, 1, 53, 69, 2);
+  FieldTileCopies_CopyTouchedCells(52, 69, 1, 1, 53, 69, 2);
 }
 
+/// Dig on the fourth soft spot: its cell opens beside it.
 void Lemuria_DigFourthSpot(void) {
-  TileCopies_CopyTouchedCells_(53, 64, 1, 1, 52, 64, 2);
+  FieldTileCopies_CopyTouchedCells(53, 64, 1, 1, 52, 64, 2);
 }
 
+/// Dig on the fifth soft spot: its cells open, its treasure shows until it is
+/// dug up, and a leader standing on it hops off.
 void Lemuria_DigFifthSpot(void) {
   struct Actor *leader = Actor_Get(gMainRoutineWork.leaderActorId);
 
-  TileCopies_CopyTouchedCells_(59, 64, 4, 3, 49, 71, 2);
+  FieldTileCopies_CopyTouchedCells(59, 64, 4, 3, 49, 71, 2);
   if (Event_GetFlag(FLAG_FIFTH_SPOT_DUG) == 0) {
     Actor_SetPosition(FIELD_TREASURE_ACTOR + 5, 808, 1176);
     if (FIELD_CELL(leader->x.fixed) == 50 &&
@@ -363,6 +370,7 @@ void Lemuria_DigFifthSpot(void) {
 
 void Teleport_PlaySparksAndFade(void);
 
+/// Teleports the party, with sparks and a fade, to Lemuria's entrance 2.
 void Lemuria_LeaveForAncientLemuria(void) {
   struct MainRoutineWork *party;
 
@@ -373,6 +381,7 @@ void Lemuria_LeaveForAncientLemuria(void) {
   party->teleportState = 2;
 }
 
+/// Growth on the sprout: the vine grows, and its two cells can be climbed.
 void Lemuria_GrowVine(void) {
   FIXED x;
   FIXED z;
@@ -388,36 +397,43 @@ void Lemuria_GrowVine(void) {
 }
 
 /// The Scoop spots: each digs up its treasure actor and sets its flag.
-void Lemuria_ScoopFirstTreasure(s32 a) {
-  Event_DigUpTreasure(a, FIELD_TREASURE_ACTOR, FLAG_AREA_TEMP_00);
+void Lemuria_ScoopFirstTreasure(s32 id) {
+  Event_DigUpTreasure(id, FIELD_TREASURE_ACTOR, FLAG_AREA_TEMP_00);
 }
 
-void Lemuria_ScoopSecondTreasure(s32 a) {
-  Event_DigUpTreasure(a, FIELD_TREASURE_ACTOR + 1, FLAG_AREA_TEMP_01);
+/// The second Scoop spot.
+void Lemuria_ScoopSecondTreasure(s32 id) {
+  Event_DigUpTreasure(id, FIELD_TREASURE_ACTOR + 1, FLAG_AREA_TEMP_01);
 }
 
-void Lemuria_ScoopThirdTreasure(s32 a) {
-  Event_DigUpTreasure(a, FIELD_TREASURE_ACTOR + 2, FLAG_AREA_TEMP_02);
+/// The third Scoop spot.
+void Lemuria_ScoopThirdTreasure(s32 id) {
+  Event_DigUpTreasure(id, FIELD_TREASURE_ACTOR + 2, FLAG_AREA_TEMP_02);
 }
 
-void Lemuria_ScoopFourthTreasure(s32 a) {
-  Event_DigUpTreasure(a, FIELD_TREASURE_ACTOR + 3, FLAG_AREA_TEMP_03);
+/// The fourth Scoop spot.
+void Lemuria_ScoopFourthTreasure(s32 id) {
+  Event_DigUpTreasure(id, FIELD_TREASURE_ACTOR + 3, FLAG_AREA_TEMP_03);
 }
 
-void Lemuria_ScoopFifthTreasure(s32 a) {
-  Event_DigUpTreasure(a, FIELD_TREASURE_ACTOR + 4, FLAG_AREA_TEMP_04);
+/// The fifth Scoop spot.
+void Lemuria_ScoopFifthTreasure(s32 id) {
+  Event_DigUpTreasure(id, FIELD_TREASURE_ACTOR + 4, FLAG_AREA_TEMP_04);
 }
 
-void Lemuria_ScoopSixthTreasure(s32 a) {
-  Event_DigUpTreasure(a, FIELD_TREASURE_ACTOR + 6, FLAG_AREA_TEMP_06);
+/// The sixth Scoop spot, its treasure actor the seventh.
+void Lemuria_ScoopSixthTreasure(s32 id) {
+  Event_DigUpTreasure(id, FIELD_TREASURE_ACTOR + 6, FLAG_AREA_TEMP_06);
 }
 
-void Lemuria_ScoopSeventhTreasure(s32 a) {
-  Event_DigUpTreasure(a, FIELD_TREASURE_ACTOR + 7, FLAG_AREA_TEMP_07);
+/// The seventh Scoop spot.
+void Lemuria_ScoopSeventhTreasure(s32 id) {
+  Event_DigUpTreasure(id, FIELD_TREASURE_ACTOR + 7, FLAG_AREA_TEMP_07);
 }
 
-void Lemuria_ScoopEighthTreasure(s32 a) {
-  Event_DigUpTreasure(a, FIELD_TREASURE_ACTOR + 8, FLAG_AREA_TEMP_08);
+/// The eighth Scoop spot.
+void Lemuria_ScoopEighthTreasure(s32 id) {
+  Event_DigUpTreasure(id, FIELD_TREASURE_ACTOR + 8, FLAG_AREA_TEMP_08);
 }
 
 s32 Party_FindOwnerWithAction();
@@ -610,6 +626,8 @@ void Lemuria_StartRippleDma(void) {
           (volatile u32 *)dma);
 }
 
+/// A task: fills the back buffer of line scrolls with the water's ripple, a
+/// sine of the line and the frame, and swaps the buffers.
 void Lemuria_ComputeRipple(void) {
   struct MapLayer *layer = &Ram_HeapSlots->mapGrid->layers[1];
   s16 *lines = gLemuria_RippleLines[gLemuria_RippleBuffer ^ 1];
@@ -625,6 +643,8 @@ void Lemuria_ComputeRipple(void) {
   gLemuria_RippleBuffer ^= 1;
 }
 
+/// Starts the water's ripple: its line scrolls each VBlank and their DMA each
+/// frame.
 void Lemuria_StartRipple(void) {
   s32 priority;
 

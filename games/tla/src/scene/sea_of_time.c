@@ -244,13 +244,13 @@ void SeaOfTime_CircleSwirl(void) {
   pos = &actor->x.fixed;
   if (Position_FlatDistance(pos, center) > 4) {
     if (*pos < center[0])
-      *pos += 0x3333;
+      *pos += toFIXED(0.2);
     else
-      *pos -= 0x3333;
+      *pos -= toFIXED(0.2);
     if (actor->z.fixed < center[2])
-      actor->z.fixed += 0x3333;
+      actor->z.fixed += toFIXED(0.2);
     else
-      actor->z.fixed -= 0x3333;
+      actor->z.fixed -= toFIXED(0.2);
     if (SeaOfTime_GetCellCode(1, FIELD_CELL(center[0]),
                               FIELD_CELL(center[2])) >>
             8 ==
@@ -603,7 +603,7 @@ void SeaOfTime_CountLaps(void) {
       x <<= 16;
       z <<= 16;
       FieldEffect_Spawn(spots.spot[(u16)index].x + x, 0,
-                        spots.spot[(u16)index].z + z, 0, 0x13333, phase,
+                        spots.spot[(u16)index].z + z, 0, toFIXED(1.2), phase,
                         EFFECT_USE_TYPE | EFFECT_USE_PRIORITY | 1, p);
     }
   }
@@ -1389,7 +1389,7 @@ s32 Scene_Initialize(void) {
 s32 Scene_PrepareMap(void) {
   void *block = Ram_HeapSlots->paletteFade;
 
-  Dma_Fill32(-1, block, 0x1c0);
+  Dma_Fill32(-1, block, 448);
   PaletteFade_SetSource(PALETTE_TINT_NONE, 0);
   return 0;
 }

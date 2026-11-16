@@ -63,6 +63,9 @@ void Actor_PlaceMovedBlock(void);
 void Actor_DisableById(u32 id);
 void Actor_SetCellShape(s32 level, s32 layer, s32 owner);
 
+/// The actor id that ends a list of actors or of (actor, kind, flag) entries.
+#define ACTOR_LIST_END 0xffff
+
 #include "../field/actor_set_sprite_priority.c"
 
 /// Actor_StartScript, through the far-call veneer this overlay's import table
@@ -217,7 +220,7 @@ void TundariaTower_SetUpIceColumns(u16 *table) {
   s16 flag;
   s16 animation;
 
-  if (table[0] == 0xffff)
+  if (table[0] == ACTOR_LIST_END)
     return;
   row = table;
   do {
@@ -232,19 +235,19 @@ void TundariaTower_SetUpIceColumns(u16 *table) {
     object->timer = flag;
     TundariaTower_SetColumnCell(object);
     row += 3;
-  } while (row[0] != 0xffff);
+  } while (row[0] != ACTOR_LIST_END);
 }
 
 const struct SceneEntrance *Scene_GetEntrances(void) { return gSceneEntrances; }
 
-extern u32 gTundariaTowerLiftPillarsExitRegions[];
-extern u32 gTundariaTowerBurstBroochExitRegions[];
+extern struct SceneRegion gTundariaTowerLiftPillarsExitRegions[];
+extern struct SceneRegion gTundariaTowerBurstBroochExitRegions[];
 
-const struct ActorPlacement *Scene_GetExitRegions(void) {
+const struct SceneRegion *Scene_GetExitRegions(void) {
   if (gMainRoutineWork.next == SCENE_TUNDARIA_TOWER_LIFT_PILLARS)
-    return (const struct ActorPlacement *)gTundariaTowerLiftPillarsExitRegions;
+    return gTundariaTowerLiftPillarsExitRegions;
   if (gMainRoutineWork.next == SCENE_TUNDARIA_TOWER_BURST_BROOCH)
-    return (const struct ActorPlacement *)gTundariaTowerBurstBroochExitRegions;
+    return gTundariaTowerBurstBroochExitRegions;
   return 0;
 }
 
@@ -459,7 +462,7 @@ void TundariaTower_ExamineCrystal(void) {
 /// Stepping onto black ice sets the leader sliding.
 void TundariaTower_SlideOnIce(void) { Leader_SlideOnIce(); }
 
-extern u32 gTundariaTower_RefluxHops[];
+extern s32 gTundariaTower_RefluxHops[];
 
 /// Reflux appears in a flash and a splash, hops down before the party and
 /// waits.
@@ -1071,7 +1074,7 @@ UNUSED void TundariaTower_PlaceStakes(u16 *table) {
   struct Actor *actor;
   s16 x, z;
 
-  if (table[0] == 0xffff)
+  if (table[0] == ACTOR_LIST_END)
     return;
   row = table;
   do {
@@ -1084,7 +1087,7 @@ UNUSED void TundariaTower_PlaceStakes(u16 *table) {
     Actor_SetSpriteFlags(actor, 0);
     Actor_SetCellOpen(id, (u16)x, (u16)z, actor->layer);
     row += 3;
-  } while (row[0] != 0xffff);
+  } while (row[0] != ACTOR_LIST_END);
 }
 
 #include "shared/pound_sink_target.h"
@@ -1107,7 +1110,7 @@ UNUSED void TundariaTower_RestoreCrumblingPillars(const u16 *table) {
   struct Actor *leader;
   s32 ground;
 
-  if (*table != 0xffff) {
+  if (*table != ACTOR_LIST_END) {
     do {
       id = table[0];
       actor = Actor_GetById(id);
@@ -1137,7 +1140,7 @@ UNUSED void TundariaTower_RestoreCrumblingPillars(const u16 *table) {
           Actor_SelectAnimation(actor, 0);
       }
       table += 2;
-    } while (*table != 0xffff);
+    } while (*table != ACTOR_LIST_END);
   }
   leader = Actor_GetById(gMainRoutineWork.leaderActorId);
   ground =
@@ -1219,7 +1222,7 @@ next:
     return;
   }
 test:
-  if (*table != 0xffff)
+  if (*table != ACTOR_LIST_END)
     goto next;
 }
 
@@ -1230,7 +1233,7 @@ UNUSED void TundariaTower_CrumblePillar(u16 *row, s32 id) {
   s32 flag;
   s32 nextFlag;
 
-  if (*row == 0xffff)
+  if (*row == ACTOR_LIST_END)
     return;
 loop:
   if (*row != id) {
@@ -1262,7 +1265,7 @@ loop:
   Event_End();
   return;
 test:
-  if (*row != 0xffff)
+  if (*row != ACTOR_LIST_END)
     goto loop;
 }
 
@@ -1272,10 +1275,10 @@ void TundariaTower_FreezePillar(s32 id) {
   Actor_DisableById(id);
 }
 
-/// Places actors 8, 9 and 10, then walks a 0xffff-ended list of (actor, flag)
-/// halfword pairs: flag + 1 set parks the actor at (0, 0); otherwise its cell
-/// gets attributeB 128 and its shape-grid byte is rewritten, and flag set makes
-/// it copy actor 9's visual attributes.
+/// Places actors 8, 9 and 10, then walks an ACTOR_LIST_END-ended list of
+/// (actor, flag) halfword pairs: flag + 1 set parks the actor at (0, 0);
+/// otherwise its cell gets attributeB 128 and its shape-grid byte is rewritten,
+/// and flag set makes it copy actor 9's visual attributes.
 UNUSED void TundariaTower_RestorePillars(u16 *list) {
   struct MapWork *map = Ram_HeapSlots->mapGrid;
   struct Actor *actor;
@@ -1301,7 +1304,7 @@ UNUSED void TundariaTower_RestorePillars(u16 *list) {
   Actor_SetPosition(9, 0, 0);
   Actor_SetPosition(10, 0, 0);
   wait(1);
-  if (*list != 0xffff) {
+  if (*list != ACTOR_LIST_END) {
     do {
       id = list[0];
       actor = Actor_GetById(id);
@@ -1332,7 +1335,7 @@ UNUSED void TundariaTower_RestorePillars(u16 *list) {
           Actor_CopyGraphics(id, 9);
       }
       list += 2;
-    } while (*list != 0xffff);
+    } while (*list != ACTOR_LIST_END);
   }
   wait(10);
 }
@@ -1425,7 +1428,7 @@ UNUSED void TundariaTower_StepOnTrap(const u16 *table) {
     Event_End();
     return;
   test:
-    if (*table != 0xffff)
+    if (*table != ACTOR_LIST_END)
       goto next;
   }
 }
@@ -1466,8 +1469,8 @@ void TundariaTower_SpawnRubble(s32 spread) {
         effect->velocity.x = spread;
         effect->velocity.z = spread;
       }
-      effect->velocity.y = -(((Random16() << 14) >> 16) + 0x6000);
-      effect->spin = ((Random16() << 9) >> 16) - 0x100;
+      effect->velocity.y = -(((Random16() << 14) >> 16) + (toFIXED(3) / 8));
+      effect->spin = ((Random16() << 9) >> 16) - (TRIG_TURN / 256);
       effect->scaleRateX = -(FIXED_ONE / 32);
       effect->scaleRateY = -(FIXED_ONE * 3 / 128);
       effect->update = Effect_AdvanceMotionAtLeaderPriority;
@@ -1507,7 +1510,7 @@ void TundariaTower_SpawnDustRing(void) {
         effect->velocity.x += effect->velocity.x >> 1;
         effect->velocity.x += ((Random16() * 3) << 14 >> 16) - toFIXED(3) / 8;
         effect->velocity.z += ((Random16() * 3) << 13 >> 16) - toFIXED(3) / 16;
-        effect->spin = ((Random16() << 12) >> 16) - 0x800;
+        effect->spin = ((Random16() << 12) >> 16) - (TRIG_TURN / 32);
         effect->scaleRateX = zero;
         effect->scaleRateY = zero;
         effect->update = Effect_AdvanceMotionAtLeaderPriority;
@@ -1555,7 +1558,7 @@ void TundariaTower_UpdateFallingRocks(void) {
 /// The falling rocks' work: their tiles, 64 rocks and their sprites, in a
 /// ring that next walks round.
 struct RockWork {
-  u8 tiles[0x500];
+  u8 tiles[1280];
   struct Rock rocks[64];
   struct EffectSprite sprites[64];
   s16 next;
@@ -1663,21 +1666,24 @@ s16 gTundariaTowerLiftPillarsColumns[] = {
     FLAG_ICE_COLUMN_POUNDED + 2, -1, 0,
 };
 
-u32 gTundariaTower_RefluxHops[] = {
-    22, 3, 0, 0x80010000, 0, 1,
-    23, 3, 0x1000, 13, 0xffff, 0x80010000,
+s32 gTundariaTower_RefluxHops[] = {
+    SC_SET(SW_FACING, 0),
+    SC_LABEL(1),
+    SC_WAIT(1),
+    SC_ADD(SW_FACING, TRIG_TURN / 16),
+    SC_LOOP(SC_FOREVER, SC_LABEL(1)),
 };
 
 #include "shared/scene_entrances_default.c"
 
-u32 gTundariaTowerLiftPillarsExitRegions[] = {
-    0x500330, 0x3400210, 0x2200060, 0x6ffff, 0xffff, 0,
-    0, 0,
+struct SceneRegion gTundariaTowerLiftPillarsExitRegions[] = {
+    {816, 80, 528, 832, 96, 544, CONDITION_ALWAYS, 6},
+    {SCENE_TABLE_END},
 };
 
-u32 gTundariaTowerBurstBroochExitRegions[] = {
-    0xf00b0, 0xc000c0, 0xd00021, 0x1ffff, 0xffff, 0,
-    0, 0,
+struct SceneRegion gTundariaTowerBurstBroochExitRegions[] = {
+    {176, 15, 192, 192, 33, 208, CONDITION_ALWAYS, 1},
+    {SCENE_TABLE_END},
 };
 
 u32 gSceneExits[] = {

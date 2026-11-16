@@ -10,8 +10,8 @@ s32 Actor_EmitMist(struct Actor *actor) {
     params[1] = 7;
     if ((gFrameCount & 2) == 0)
       params[1] = 5;
-    params[2] = toFIXED(0.8);
-    params[3] = toFIXED(0.8);
+    params[2] = FIXED_ONE * 4 / 5;
+    params[3] = FIXED_ONE * 4 / 5;
     params[0] = 0;
     drift = ((u32)(Random16() << 3) >> 16) * toFIXED(0.2);
     x = actor->x.fixed;

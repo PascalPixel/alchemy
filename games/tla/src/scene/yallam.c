@@ -1847,8 +1847,8 @@ s32 gYallam_PillarSunk[] = {
 
 /// The standing log's shadow, shrunk and lowered under it.
 s32 gYallam_PillarShadowSunk[] = {
-    SC_SET(SW_SCALE_X, 0x9999),
-    SC_SET(SW_SCALE_Y, 0x9999),
+    SC_SET(SW_SCALE_X, FIXED_ONE * 3 / 5),
+    SC_SET(SW_SCALE_Y, FIXED_ONE * 3 / 5),
     SC_SET(SW_MOTION, 0),
     SC_ADD(SW_Y, -toFIXED(16)),
     SC_CALL((s32)Yallam_HideSprite),

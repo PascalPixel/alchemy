@@ -738,8 +738,8 @@ struct ActorPlacement gTreasureIsle_Room3Placements[] = {
 };
 
 u32 gTreasureIsle_LiftRockScale[] = {
-    SC_SET(SW_SCALE_X, 0xcccc),
-    SC_SET(SW_SCALE_Y, 0xcccc),
+    SC_SET(SW_SCALE_X, FIXED_ONE * 4 / 5),
+    SC_SET(SW_SCALE_Y, FIXED_ONE * 4 / 5),
     SC_WAIT(1),
     SC_END,
 };

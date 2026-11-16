@@ -132,7 +132,7 @@ void VenusLighthouseEntrance_PointToMeetingSpot(void);
 /// their pictures, ninety-six puffs each with its place and sprite, and the
 /// next to emit.
 struct DustPuffWork {
-  u8 pictures[0x800]; ///< decompressed, then loaded into the VRAM cache
+  u8 pictures[2048]; ///< decompressed, then loaded into the VRAM cache
   struct SparkState particles[96];
   struct EffectSprite sprites[96];
   s16 next;     ///< the next puff to emit, taken in turn
@@ -1098,7 +1098,7 @@ void VenusLighthouseEntrance_RuffianWaitsForBackup(void) {
   FieldActor_Jump(ACTOR_WAITING_RUFFIAN, 6, 35);
   Actor_FaceDirection(ACTOR_WAITING_RUFFIAN, FACING_NORTH_NORTHWEST, 0);
   FieldEvent_Wait(20);
-  Actor_SetAnimation(ACTOR_WAITING_RUFFIAN, 0xc);
+  Actor_SetAnimation(ACTOR_WAITING_RUFFIAN, 12);
   // "Yaaah! P-P-Please! Just let me go, and... Hey!"
   FieldEvent_ShowMessageThenWait(ACTOR_WAITING_RUFFIAN, 0, 0);
   Actor_SetAnimation(ACTOR_WAITING_RUFFIAN, ANIM_STAND);
@@ -1282,7 +1282,7 @@ void VenusLighthouseEntrance_WakeUp(void) {
 /// plays: its pictures, sixteen pieces of earth, the actor it lifts and the
 /// blast's effect actor.
 struct BlastColumnWork {
-  u8 pictures[0x400]; ///< decompressed, then loaded into the VRAM cache
+  u8 pictures[1024]; ///< decompressed, then loaded into the VRAM cache
   struct EffectSprite sprites[16];
   struct SparkState states[16];
   struct Actor *object;
@@ -1439,7 +1439,8 @@ s32 BattleEffect_GetObjectDepth(struct Actor *actor);
 /// A column of rising earth lifts an actor, holds it, then hurls it off the
 /// top of the screen, and the ground shakes as the column sinks.
 void VenusLighthouseEntrance_BlastActorSkyward(s32 id) {
-  struct BlastColumnWork *work = HeapSlot_Alloc(HEAP_SLOT_MENU, 0x860);
+  struct BlastColumnWork *work =
+      HeapSlot_Alloc(HEAP_SLOT_MENU, sizeof(struct BlastColumnWork));
   struct Actor *actor = Actor_Get(id);
   struct Actor *effect;
   struct EffectSprite *sprite;
@@ -1454,7 +1455,7 @@ void VenusLighthouseEntrance_BlastActorSkyward(s32 id) {
   work->z = actor->z.fixed + toFIXED(2);
   Decompress_TaggedLz(gField_GeyserTiles, work);
   resource = VramCache_FindFreeEntry();
-  tile = Vram_Load(resource, 0x800, work);
+  tile = Vram_Load(resource, 2048, work);
   work->tile = tile;
   work->tileTop = tile + 32;
   state = work->states;
@@ -1549,7 +1550,7 @@ void VenusLighthouseEntrance_StartDust(void) {
 
   Decompress_TaggedLz(Resource_GetTableEntry(RESOURCE_DUST_PUFF_A), work);
   resource = VramCache_FindFreeEntry();
-  tileBase = Vram_Load(resource, 0x800, work);
+  tileBase = Vram_Load(resource, 2048, work);
   work->tileBase = tileBase;
   work->resource = resource;
   state = work->particles;

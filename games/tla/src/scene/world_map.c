@@ -228,7 +228,7 @@ void Party_RestoreHpPp(s32 value);
     work = Ram_HeapSlots->fieldWork;                                           \
     party = &gMainRoutineWork;                                                 \
     if (party->encounterSteps >= work->encounterThreshold * 9 / 10) {          \
-      if (Random16() < 0x8000) {                                               \
+      if (Random16() < 32768) {                                                \
         Event_RequestDjinnBattle(a, b);                                        \
         work->encounterBias = 0;                                               \
       } else {                                                                 \
@@ -246,7 +246,7 @@ void Party_RestoreHpPp(s32 value);
     work = Ram_HeapSlots->fieldWork;                                           \
     if (party->movementMode == 1) {                                            \
       if (party->encounterSteps >= work->encounterThreshold * 9 / 10) {        \
-        if (Random16() < 0x8000) {                                             \
+        if (Random16() < 32768) {                                              \
           Event_RequestDjinnBattle(a, b);                                      \
           work->encounterBias = 0;                                             \
         } else {                                                               \
@@ -556,10 +556,10 @@ void WorldMap_LeaveShip(void) {
   position[0] = ship->x.fixed;
   position[1] = ship->y.fixed;
   position[2] = ship->z.fixed;
-  Vector_AddPolarOffset(0x180000, ship->facing, position);
+  Vector_AddPolarOffset(toFIXED(24), ship->facing, position);
   blocked = 0;
-  block = blocks + ((((position[0] / 0x200000) & 31) +
-                     ((position[2] / 0x200000) & 31) * 32) *
+  block = blocks + ((((position[0] / toFIXED(32)) & 31) +
+                     ((position[2] / toFIXED(32)) & 31) * 32) *
                     4);
   if (cell > 12) {
     blocked = 1;
@@ -1684,7 +1684,7 @@ void WorldMap_SpawnCollapseDust(void) {
                            z + toFIXED(7260)));
   if (obj != NULL) {
     sprite = obj->sprite;
-    scale = ((Random16() << 15) >> 16) + 0x13333;
+    scale = ((Random16() << 15) >> 16) + FIXED_ONE * 6 / 5;
     sprite->flags = 0;
     sprite->priority = 2;
     motionFlags = &obj->motionFlags;
@@ -2261,7 +2261,7 @@ void WorldMap_TakeOff(void) {
 
 /// A sparkle of the trail flickers through the colour modes at random.
 s32 WorldMap_TwinkleTrail(struct Actor *actor) {
-  if (Random16() < 0x4000)
+  if (Random16() < 16384)
     Actor_SetSpriteColorMode(actor, Random_Below(8));
   return 0;
 }
@@ -2425,7 +2425,7 @@ void WorldMap_PlayLighthouseTransition(s32 mode) {
     Event_PlaySound(SE_RUMBLE);
   }
   WorldMap_Freeze();
-  buffer = Heap_AllocEwram(0x4000);
+  buffer = Heap_AllocEwram(16384);
   Decompress_TaggedLz(gWorldMapPackedTiles, buffer);
   Decompress_TaggedLz(gWorldMapPackedPictures,
                       buffer + PICTURE_FIRST_TILE * TILE_SIZE_4BPP);
@@ -2512,7 +2512,7 @@ void WorldMap_PlayLighthouseTransition(s32 mode) {
 /// Loads the tidal wave's tiles, pictures and palette and sets its
 /// background up.
 void WorldMap_LoadTidalWave(void) {
-  u8 *buffer = Heap_AllocEwram(0x4000);
+  u8 *buffer = Heap_AllocEwram(16384);
   u8 *frames;
   u32 x;
   s32 y, i, scrollX;
@@ -2520,7 +2520,7 @@ void WorldMap_LoadTidalWave(void) {
   s32 mode;
 
   Decompress_TaggedLz(gWorldMapPackedTilesB, buffer);
-  frames = buffer + 0x2000;
+  frames = buffer + 8192;
   Decompress_TaggedLz(gWorldMapPackedPicturesB, frames);
   IO_WRITE_QUEUE_PUSH((u32)&BG_PLTT_COLOR(PICTURE_PALETTE, 0),
                       (u32)gWorldMapPalettesB,
@@ -2537,7 +2537,7 @@ void WorldMap_LoadTidalWave(void) {
   gBgScroll[0].y = 352;
   IO_WRITE_QUEUE_PUSH((u32)&REG_BG0CNT, BGCNT_SIZE(3) | BGCNT_SCREEN_BASE(2),
                       IO_WRITE_HALFWORD);
-  y = 0x2d60;
+  y = 11616;
   x = 561;
   for (i = 95; i >= 0; i--) {
     scrollX = (s32)(x * 16) / 128;
@@ -2655,32 +2655,55 @@ void WorldMap_SpawnTwinSparks(struct Actor *parent) {
 
 // clang-format off
 u32 gWorldMap_LohoWorkerLeaveScriptA[] = {
-    39, 2, 48, 0x23010000, 0x16cd0000, 1,
-    3, 17,
+    SC_ANIMATION(2),
+    SC_MOVE_XZ(8961, 5837),
+    SC_SYNC,
+    SC_POSITION_ORIGIN,
+    SC_END,
 };
 
 u32 gWorldMap_LohoWorkerLeaveScriptB[] = {
-    39, 2, 48, 0x22f10000, 0x16dd0000, 1,
-    48, 0x23010000, 0x16cd0000, 1, 3, 17,
+    SC_ANIMATION(2),
+    SC_MOVE_XZ(8945, 5853),
+    SC_SYNC,
+    SC_MOVE_XZ(8961, 5837),
+    SC_SYNC,
+    SC_POSITION_ORIGIN,
+    SC_END,
 };
 
 u32 gWorldMap_LohoWorkerLeaveScriptC[] = {
-    39, 2, 48, 0x22f10000, 0x16dd0000, 1,
-    48, 0x23010000, 0x16cd0000, 1, 3, 17,
+    SC_ANIMATION(2),
+    SC_MOVE_XZ(8945, 5853),
+    SC_SYNC,
+    SC_MOVE_XZ(8961, 5837),
+    SC_SYNC,
+    SC_POSITION_ORIGIN,
+    SC_END,
 };
 
 u32 gWorldMap_IdejimaDriftScript[] = {
-    5, 0x180000, 0, 0, 1, 13,
-    10, 0, 22, 35, 1, 5,
-    0x180000, 0, 0, 1, 5, 0x180000,
-    0, 0, 1, 17,
+    SC_MOVE_BY(24, 0, 0),
+    SC_SYNC,
+    SC_LOOP(10, SC_TOP),
+    SC_SET(SW_TIMER, 1),
+    SC_MOVE_BY(24, 0, 0),
+    SC_SYNC,
+    SC_MOVE_BY(24, 0, 0),
+    SC_SYNC,
+    SC_END,
 };
 
 s32 gWorldMap_IdejimaWakeScript[] = {
-    23, 5, (s32)0xffffe667, 23, 7, 0x1999,
-    23, 9, 0xe00, 23, 10, -384,
-    0, 1, 13, 48, 0, 2,
-    0, 0, 0, 0, 1, 38,
+    SC_ADD(SW_X, -toFIXED(0.1)),
+    SC_ADD(SW_Z, toFIXED(0.1)),
+    SC_ADD(SW_SCALE_X, FIXED_ONE * 7 / 128),
+    SC_ADD(SW_SCALE_Y, -384),
+    SC_WAIT(1),
+    SC_LOOP(48, SC_TOP),
+    SC_POSITION(0, 0, 0),
+    SC_WAIT(1),
+    SC_RELEASE,
 };
 
 s32 gWorldMap_AquaRockTrailScript[] = {

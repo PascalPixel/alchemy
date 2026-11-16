@@ -64,6 +64,11 @@ s32 MapGrid_CheckCollision(struct Actor *actor, struct FieldPosition *position);
 /// Set once Valukar, the guardian of fire, has been beaten; he is gone.
 #define FLAG_VALUKAR_BEATEN 0x9cd
 
+/// The entry that ends the marks' lists of palette slots and colours.
+#define PALETTE_LIST_END 0xffff
+/// The actor id that ends a list of actors or of (actor, kind, flag) entries.
+#define ACTOR_LIST_END 0xffff
+
 /// The Water of Life chest's room's actors
 /// (SceneId_YampiDesertCaveWaterOfLifeChest), the rows of
 /// gYampiDesertCave_Placements.
@@ -511,7 +516,7 @@ void YampiDesertCave_SetMarkColors(u16 *slots, u16 *colours, u16 *a, u16 *b) {
   gYampiDesertCave_MarkColors = colours;
   gYampiDesertCave_MarkDimColors = a;
   gYampiDesertCave_MarkCycleSlots = b;
-  if (*slots != 0xffff && *colours != 0xffff) {
+  if (*slots != PALETTE_LIST_END && *colours != PALETTE_LIST_END) {
   next:
     {
       int red = *colours++;
@@ -520,7 +525,7 @@ void YampiDesertCave_SetMarkColors(u16 *slots, u16 *colours, u16 *a, u16 *b) {
       int blue = *colours++;
       SET_RGB(((u16 *)BG_PLTT)[index], red, green, blue);
     }
-    if (*slots != 0xffff && *colours != 0xffff)
+    if (*slots != PALETTE_LIST_END && *colours != PALETTE_LIST_END)
       goto next;
   }
   Dma_Set((const void *)BG_PLTT, saved, DMA_COPY_WORDS(112), REG_DMA3);
@@ -634,7 +639,7 @@ void Actor_SetCellOpen(s32 id, u32 kind, s32 flag, s32 layer);
 void YampiDesertCave_PlaceStakes(const u16 *list) {
   const u16 *entry;
 
-  if (list[0] == 0xffff)
+  if (list[0] == ACTOR_LIST_END)
     return;
   entry = list;
   do {
@@ -647,7 +652,7 @@ void YampiDesertCave_PlaceStakes(const u16 *list) {
     Actor_SetSpriteFlags(actor, 0);
     Actor_SetCellOpen(id, (u16)kind, (u16)flag, actor->layer);
     entry += 3;
-  } while (entry[0] != 0xffff);
+  } while (entry[0] != ACTOR_LIST_END);
 }
 
 // Finds the current target's table row and shrinks it.
@@ -881,7 +886,7 @@ void YampiDesertCave_ScoopDjinni(s32 mode) {
     Actor_SetPositionFX(ACTOR_CRYSTAL, column << 19, row << 19);
     crystal->y.fixed = toFIXED(32);
     crystal->motionFlags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
-    crystal->gravity = 0x170a;
+    crystal->gravity = toFIXED(0.09);
     wait(50);
     {
       s16 *counter = &work->talk;
@@ -1218,7 +1223,7 @@ u16 gYampiDesertCaveCrystalStakes[] ALIGNED(4) = {
     ACTOR_STAKE,
     0,
     FLAG_YAMPI_DESERT_CAVE_STAKE_POUNDED,
-    0xffff,
+    ACTOR_LIST_END,
 };
 
 /// The Water of Life chest's room: its exits, the logs, the pillar, the two

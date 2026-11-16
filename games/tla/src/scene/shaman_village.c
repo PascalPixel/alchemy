@@ -469,11 +469,11 @@ void ShamanVillage_BlowAwaySand(void) {
   u32 i;
   u32 j;
 
-  buffer = Heap_Alloc(0x680);
+  buffer = Heap_Alloc(1664);
   REG_DISPCNT &= ~DISPCNT_BG0_ON;
   Decompress_TaggedLz(Resource_GetTableEntry(RESOURCE_WHIRLWIND_TILES), buffer);
   Dma_Set(buffer, BG_SCREEN_BLOCK(29), DMA_COPY_WORDS(208), REG_DMA3);
-  Dma_Set(buffer + 0x1a0, (void *)0x0600ec00, DMA_COPY_WORDS(208), REG_DMA3);
+  Dma_Set(buffer + 416, (void *)0x0600ec00, DMA_COPY_WORDS(208), REG_DMA3);
   Heap_Release(buffer);
   Actor_SetSpritePriority(gMainRoutineWork.leaderActorId, 1);
   Actor_SetSpritePriority(ACTOR_SAND_MOUND, 1);
@@ -481,7 +481,7 @@ void ShamanVillage_BlowAwaySand(void) {
              &REG_BG0CNT);
   REG_BG0CNT &= ~3;
   REG_BG0CNT |= 1;
-  Dma_Fill16(16, (void *)0x06002000, 0x500);
+  Dma_Fill16(16, (void *)0x06002000, 1280);
   buffer = Heap_Alloc(576);
   Decompress_TaggedLz(Resource_GetTableEntry(RESOURCE_WHIRLWIND_MAP), buffer);
   for (i = 0, cell = buffer; i != 288; i++, cell++) {
@@ -811,9 +811,9 @@ s32 ShamanVillage_IsFacingCounter(void) {
 
   turn =
       ((struct Actor *)Actor_GetById(gMainRoutineWork.leaderActorId))->facing +
-      0x5fff;
+      (DEGtoANG(135) - 1);
   facing = 1;
-  if (turn >= 0x3fff)
+  if (turn >= DEGtoANG(90) - 1)
     facing = FACING_EAST;
   return facing;
 }
@@ -1419,9 +1419,9 @@ struct Actor *ShamanVillage_CreateRodIcon(void) {
     actor->retainSpriteCache = 1;
     sprite->flags = 0;
     sprite->countAndShadow[0] = 0;
-    buffer = HeapSlot_Alloc(HEAP_SLOT_GLYPH_TRANSFER, 0x608);
+    buffer = HeapSlot_Alloc(HEAP_SLOT_GLYPH_TRANSFER, 1544);
     Icon_DrawItem(ITEM_SHAMANS_ROD);
-    VramCache_Load(sprite->slot, 128, buffer + 0x400);
+    VramCache_Load(sprite->slot, 128, buffer + 1024);
     HeapSlot_Release(HEAP_SLOT_GLYPH_TRANSFER);
   }
   return actor;
@@ -1568,9 +1568,9 @@ void ShamanVillage_ShowShamansRod(void) {
     FIXED y = toFIXED(80);
     FIXED z = toFIXED(242);
 
-    DriftScene_SpawnObject(toFIXED(116), y, z, 0xe000);
+    DriftScene_SpawnObject(toFIXED(116), y, z, DEGtoANG(315));
     Event_Wait(10);
-    DriftScene_SpawnObject(toFIXED(124), y, z, 0x2000);
+    DriftScene_SpawnObject(toFIXED(124), y, z, DEGtoANG(45));
     Event_Wait(30);
     FieldActor_ShowEmote(ACTOR_WEST_GUARD, EMOTE_IN_FRONT | EMOTE_LIGHT_BULB,
                          20);
@@ -1587,7 +1587,7 @@ void ShamanVillage_ShowShamansRod(void) {
     Actor_SetAnimation(ACTOR_MOAPA, 3);
     Event_ShowMessage(ACTOR_MOAPA, 0);
     FieldCamera_SetSpeed(0.4);
-    FieldCamera_MoveToFX(toFIXED(180), 0x200000, z, 1);
+    FieldCamera_MoveToFX(toFIXED(180), toFIXED(32), z, 1);
   }
   actor = ((struct Actor *)Actor_GetById(ACTOR_WEST_GUARD));
   actor->riseEnabled = 0;
@@ -1963,9 +1963,10 @@ commands:
     }
     break;
   }
-  IO_WRITE_QUEUE_PUSH((u32)&REG_BLDCNT, 0x3f00, 0x20000);
+  IO_WRITE_QUEUE_PUSH((u32)&REG_BLDCNT, 0x3f00, IO_WRITE_HALFWORD);
   IO_WRITE_QUEUE_PUSH((u32)&REG_BLDALPHA,
-                      ((BLEND_WEIGHT_MAX - blend) << 8) | blend, 0x20000);
+                      ((BLEND_WEIGHT_MAX - blend) << 8) | blend,
+                      IO_WRITE_HALFWORD);
 }
 
 /// Starts the mode task: keeps the mode and its parameter, schedules
@@ -2691,7 +2692,7 @@ void ShamanVillage_DriftSmoke(struct Actor *actor) {
 
   actor->y.fixed += toFIXED(1) / 2;
 
-  step = 0x51e;
+  step = FIXED_ONE / 50;
   actor->scaleX += step;
   actor->scaleY += step;
   actor->timer += 2;
@@ -2906,7 +2907,7 @@ u8 gShamanVillage_LetteringPalettes[] = {
 // clang-format off
 s32 gShamanVillage_EnterDoorScript[] = {
     SC_SET(SW_MOTION, 0),
-    SC_ADD(SW_Z, -0x8000),
+    SC_ADD(SW_Z, -toFIXED(0.5)),
     SC_ADD(SW_SCALE_X, -FIXED_ONE / 64),
     SC_ADD(SW_SCALE_Y, -FIXED_ONE / 64),
     SC_WAIT(1),
@@ -3107,7 +3108,7 @@ u32 gShamanVillage_RejoinLeaderAtSandScript[] = {
 
 s32 gShamanVillage_HopFortuneTellerScript[] = {
     SC_ADD(SW_SCALE_X, FIXED_ONE / 8),
-    SC_ADD(SW_SCALE_Y, 0x4000),
+    SC_ADD(SW_SCALE_Y, FIXED_ONE / 4),
     SC_WAIT(1),
     SC_LOOP(4, SC_TOP),
     SC_LABEL(1),
@@ -3141,13 +3142,13 @@ s16 gShamanVillage_LetteringVramEntry[] = {
 #endif
 
 s16 gShamanVillage_LetteringSlideScript[] = {
-    LETTERING_START, -188, 0x800,
+    LETTERING_START, -188, 2048,
     LETTERING_SCALE, SHAMAN_GRAPHIC1_SCALE, 1,
     LETTERING_BLEND, 16, 1,
     LETTERING_WAIT, 14,
     LETTERING_SPEED, 0, 20,
     LETTERING_WAIT, 60,
-    LETTERING_SPEED, 0x800, 20,
+    LETTERING_SPEED, 2048, 20,
     LETTERING_WAIT, 60,
     LETTERING_END,
 };

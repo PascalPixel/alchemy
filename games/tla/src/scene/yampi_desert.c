@@ -1365,9 +1365,9 @@ struct Actor *YampiDesert_CreateScoopGem(void) {
     actor->retainSpriteCache = 1;
     visual->nextFrame = 0;
     visual->layerCount = 0;
-    buffer = HeapSlot_Alloc(HEAP_SLOT_GLYPH_TRANSFER, 0x608);
+    buffer = HeapSlot_Alloc(HEAP_SLOT_GLYPH_TRANSFER, 1544);
     Icon_DrawItem(ITEM_SCOOP_GEM);
-    VramCache_Load(visual->vramBlock, 128, buffer + 0x400);
+    VramCache_Load(visual->vramBlock, 128, buffer + 1024);
     HeapSlot_Release(HEAP_SLOT_GLYPH_TRANSFER);
   }
   return actor;
@@ -1973,7 +1973,7 @@ void YampiDesert_SetUpTrappedScorpion(void) {
 
 /// While the King Scorpion's Scoop runs, opens the hole it digs.
 void YampiDesert_OpenScoopHole(void) {
-  if (*(s16 *)((u8 *)Ram_HeapSlots->fieldEffectWork + 0x7c4) != 0)
+  if (((struct FieldEffectWork *)Ram_HeapSlots->fieldEffectWork)->stage != 0)
     MapGrid_CopyCellPictureIndicesRect(73, 76, 78, 11, 1, 1);
 }
 
@@ -2652,12 +2652,12 @@ void YampiDesert_StartRisingSand(s32 unused, s32 value) {
 
   if (!GameFlag_Get(FLAG_KEEP_PARTY_POSITION))
     Iwram_ClearWords((s32)work, 456);
-  buffer = (void *)Value1((s32 (*)())Heap_AllocEwram, 0x800);
+  buffer = (void *)Value1((s32 (*)())Heap_AllocEwram, 2048);
   Decompress_TaggedLz(gField_GeyserTiles, buffer);
   work->cacheEntry = VramCache_FindFreeEntry();
-  VramCache_Load(work->cacheEntry, 0x800, buffer);
+  VramCache_Load(work->cacheEntry, 2048, buffer);
   Heap_Release(buffer);
-  work->block = Heap_AllocEwram(0x3c0);
+  work->block = Heap_AllocEwram(960);
   work->firstTerrainId = value;
   Task_Add((s32)YampiDesert_UpdateRisingSand, TASK_PASS_VBLANK + 13);
   Task_Add((s32)YampiDesert_DrawRisingSand, TASK_PASS_VBLANK);

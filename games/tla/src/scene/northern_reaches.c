@@ -93,7 +93,7 @@ struct IceShardSpark {
 /// The shattering's work: the shards' sheet, and each shard's sprite and
 /// motion.
 struct IceWallWork {
-  u8 sheet[0x1000];
+  u8 sheet[4096];
   struct EffectSprite sprites[ICE_SHARD_COUNT];
   struct IceShard particles[ICE_SHARD_COUNT];
 };
@@ -385,7 +385,7 @@ void NorthernReaches_ShatterIceWall(s32 unused, s32 *position,
   Decompress_TaggedLz(Resource_GetTableEntry(RESOURCE_FIELD_EFFECT_ICE_SHARD),
                       work);
   entry = VramCache_FindFreeEntry();
-  tiles = VramCache_Load(entry, 0x500, work);
+  tiles = VramCache_Load(entry, 1280, work);
   i = 0;
   particle = work->particles;
   sprite = work->sprites;
@@ -411,12 +411,12 @@ void NorthernReaches_ShatterIceWall(s32 unused, s32 *position,
   sparks = Heap_AllocEwram(SPARK_COUNT * sizeof(struct IceShardSpark));
   /* FAKEMATCH(temporary): the size held in the local that then takes the
    * buffer. */
-  sheet = (void *)0x1000;
+  sheet = (void *)4096;
   sheet = Heap_Alloc((s32)sheet);
   Decompress_TaggedLz(Resource_GetTableEntry(RESOURCE_FIELD_EFFECT_EXPLOSION),
                       sheet);
   sparkEntry = VramCache_FindFreeEntry();
-  sparkTiles = VramCache_Load(sparkEntry, 0x400, sheet);
+  sparkTiles = VramCache_Load(sparkEntry, 1024, sheet);
   Heap_Release(sheet);
   timer = &sparks->timer;
   for (i = SPARK_COUNT - 1; i >= 0; i--) {

@@ -281,9 +281,9 @@ void Prox_InitializeHouses(void);
 
 /// The basements: the leader comes down their stairs.
 void Prox_InitializeCaveHomes(void);
-extern u32 gProx_FirstChildRuns[];
-extern u32 gProx_SecondChildRuns[];
-extern u32 gProx_ThirdChildRuns[];
+extern s32 gProx_FirstChildRuns[];
+extern s32 gProx_SecondChildRuns[];
+extern s32 gProx_ThirdChildRuns[];
 /// The leader comes down the stairs into a basement.
 void Prox_ComeDownStairs(s32 westOrSouth);
 extern s32 gProx_KradenStepsForward[];
@@ -1758,7 +1758,7 @@ s32 Scene_PrepareMap(void) { return 0; }
 /// A child playing tag as its handlers read the actor: whether it has reached
 /// its target, its frames left, and its update.
 struct Walker {
-  u8 beforeArrived[0x63];
+  u8 beforeArrived[99];
   u8 arrived;
   u16 frames;
   u8 beforeUpdate[6];
@@ -1790,7 +1790,8 @@ void Prox_InitializeTown(void) {
     }
   }
   FieldActor_SetSpritePriority(ACTOR_TOWN_CRATE, 1);
-  FieldActor_SetSpriteColor(((s32)Actor_Get(ACTOR_TOWN_CRATE)), 0xf);
+  FieldActor_SetSpriteColor(((s32)Actor_Get(ACTOR_TOWN_CRATE)),
+                            SPRITE_COLOR_HIDDEN);
 }
 
 /// Sets up the north of the village: the warrior and the upper house's door by
@@ -1799,7 +1800,8 @@ void Prox_InitializeMold(void) {
   struct Actor *actor;
 
   FieldActor_SetSpritePriority(ACTOR_MOLD_CRATE, 1);
-  FieldActor_SetSpriteColor(((s32)Actor_Get(ACTOR_MOLD_CRATE)), 0xf);
+  FieldActor_SetSpriteColor(((s32)Actor_Get(ACTOR_MOLD_CRATE)),
+                            SPRITE_COLOR_HIDDEN);
   if (!Event_GetFlag(FLAG_MARS_BEACON_LIT)) {
     if (!Event_GetFlag(FLAG_HEARD_OF_PARENTS)) {
       Actor_SetPosition(ACTOR_WARRIOR_SENT_FOR_PARENTS, 0, 0);
@@ -2365,7 +2367,7 @@ void BattleEffect_StepVector3(struct Particle *particle, s32 damping,
 /// The falling rocks' work: their tiles, 64 rocks and their sprites, in a
 /// ring that next walks round.
 struct RockWork {
-  u8 tiles[0x500];
+  u8 tiles[1280];
   struct Rock rocks[64];
   struct EffectSprite sprites[64];
   s16 next;
@@ -2396,7 +2398,7 @@ UNUSED void Prox_StartFallingRocks(void) {
 
   Decompress_TaggedLz(Resource_GetTableEntry(RESOURCE_FALLING_ROCK), work);
   entry = VramCache_FindFreeEntry();
-  tile = Vram_Load(entry, 0x500, work);
+  tile = Vram_Load(entry, 1280, work);
   work->tileBase = tile;
   work->resource = entry;
   rock = work->rocks;
@@ -2438,7 +2440,7 @@ extern u32 gFieldEffect_LongScript[];
 
 s32 gProx_EnterDoorScript[] = {
     SC_SET(SW_MOTION, 0),
-    SC_ADD(SW_Z, -0x8000),
+    SC_ADD(SW_Z, -toFIXED(0.5)),
     SC_ADD(SW_SCALE_X, -FIXED_ONE / 64),
     SC_ADD(SW_SCALE_Y, -FIXED_ONE / 64),
     SC_WAIT(1),
@@ -2456,23 +2458,62 @@ const s32 *gFieldEffect_DurationScripts[] = {
     gFieldEffect_LongScript,
 };
 
-u32 gProx_FirstChildRuns[] = {                                                               
-      39, 2,  22, 15, 0x10000, 22, 16, 0x6666, 39, 2,  4,  0x2300000,     0,          
-      0x17c0000, 1,  39, 2,  4,       0x2340000, 0,  0x1a80000,     1,  39, 2,  4,      0x2180000,         
-      0,  0x1a80000, 1,  39, 2,       4,  0x2180000, 0,      0x17c0000, 1,  13, 0xffff, 0,          
-  };
+s32 gProx_FirstChildRuns[] = {
+    SC_ANIMATION(2),
+    SC_SPEED(1),
+    SC_ACCELERATION(0.4),
+    SC_ANIMATION(2),
+    SC_MOVE(560, 0, 380),
+    SC_SYNC,
+    SC_ANIMATION(2),
+    SC_MOVE(564, 0, 424),
+    SC_SYNC,
+    SC_ANIMATION(2),
+    SC_MOVE(536, 0, 424),
+    SC_SYNC,
+    SC_ANIMATION(2),
+    SC_MOVE(536, 0, 380),
+    SC_SYNC,
+    SC_LOOP(SC_FOREVER, SC_TOP),
+};
 
-u32 gProx_SecondChildRuns[] = {                                                               
-      39, 2,  22, 15, 0x10000, 22, 16, 0x6666, 39, 2,  4,  0x2180000,     0,          
-      0x17c0000, 1,  39, 2,  4,       0x2300000, 0,  0x17c0000,     1,  39, 2,  4,      0x2340000,         
-      0,  0x1a80000, 1,  39, 2,       4,  0x2180000, 0,      0x1a80000, 1,  13, 0xffff, 0,          
-  };
+s32 gProx_SecondChildRuns[] = {
+    SC_ANIMATION(2),
+    SC_SPEED(1),
+    SC_ACCELERATION(0.4),
+    SC_ANIMATION(2),
+    SC_MOVE(536, 0, 380),
+    SC_SYNC,
+    SC_ANIMATION(2),
+    SC_MOVE(560, 0, 380),
+    SC_SYNC,
+    SC_ANIMATION(2),
+    SC_MOVE(564, 0, 424),
+    SC_SYNC,
+    SC_ANIMATION(2),
+    SC_MOVE(536, 0, 424),
+    SC_SYNC,
+    SC_LOOP(SC_FOREVER, SC_TOP),
+};
 
-u32 gProx_ThirdChildRuns[] = {                                                               
-      39, 2,  22, 15, 0x10000, 22, 16, 0x6666, 39, 2,  4,  0x2180000,     0,          
-      0x1a80000, 1,  39, 2,  4,       0x2180000, 0,  0x17c0000,     1,  39, 2,  4,      0x2300000,         
-      0,  0x17c0000, 1,  39, 2,       4,  0x2340000, 0,      0x1a80000, 1,  13, 0xffff, 0,          
-  };
+s32 gProx_ThirdChildRuns[] = {
+    SC_ANIMATION(2),
+    SC_SPEED(1),
+    SC_ACCELERATION(0.4),
+    SC_ANIMATION(2),
+    SC_MOVE(536, 0, 424),
+    SC_SYNC,
+    SC_ANIMATION(2),
+    SC_MOVE(536, 0, 380),
+    SC_SYNC,
+    SC_ANIMATION(2),
+    SC_MOVE(560, 0, 380),
+    SC_SYNC,
+    SC_ANIMATION(2),
+    SC_MOVE(564, 0, 424),
+    SC_SYNC,
+    SC_LOOP(SC_FOREVER, SC_TOP),
+};
 
 s32 gProx_KradenStepsUpToPuelle[] = {
     SC_ANIMATION(2),

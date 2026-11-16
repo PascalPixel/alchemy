@@ -7,8 +7,8 @@ s32 Actor_EmitRisingSparksB(struct Actor *actor) {
     FIXED y;
 
     params[0] = 3;
-    params[2] = toFIXED(0.7);
-    params[3] = toFIXED(0.7);
+    params[2] = FIXED_ONE * 7 / 10;
+    params[3] = FIXED_ONE * 7 / 10;
     params[1] = 14;
     x = actor->x.fixed + (((Random_Below(9)) - 4) << 16);
     y = actor->y.fixed + ((32 - (Random_Below(20))) << 16);

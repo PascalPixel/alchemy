@@ -1057,8 +1057,8 @@ void ShrineOfTheSeaGod_TopplePillarIntoWater(void) {
     velocity[0] += velocity[0] >> 1;
     velocity[0] += ((Random16() * 3) << 14) >> 16;
     i++;
-    velocity[0] += -0x6000;
-    velocity[2] += (((Random16() * 3) << 13) >> 16) + -0x3000;
+    velocity[0] += -(toFIXED(3) / 8);
+    velocity[2] += (((Random16() * 3) << 13) >> 16) - toFIXED(3) / 16;
     FieldEffect_Spawn(leader->x.fixed, leader->y.fixed + toFIXED(-4),
                       leader->z.fixed, velocity[0], velocity[1], velocity[2],
                       EFFECT_USE_UPDATE | EFFECT_USE_START_SCALE |
@@ -1655,7 +1655,7 @@ DEFINE_DJINNI_DASH(ShrineOfTheSeaGod_DjinniSouthEastToNorthEast, 392, 216, 1)
   }
 
 DEFINE_DJINNI_WALK_AND_JUMP(ShrineOfTheSeaGod_DjinniNorthEastJumpsWest, 360,
-                            0x8000, 4, 296, 328, 2)
+                            FACING_WEST, 4, 296, 328, 2)
 
 #define DEFINE_DJINNI_DASH_AROUND(name, n1, n2, n3, n4)                        \
   void name(void) {                                                            \
@@ -1717,8 +1717,8 @@ DEFINE_DJINNI_DASH(ShrineOfTheSeaGod_DjinniNorthEastToSouthEast, 392, 296, 0)
     ShrineOfTheSeaGod_EndDjinniDash();                                         \
   }
 
-DEFINE_DJINNI_JUMP(ShrineOfTheSeaGod_TrappedDjinniJumpsWest, 0x8000, 4, 296,
-                   328, 2)
+DEFINE_DJINNI_JUMP(ShrineOfTheSeaGod_TrappedDjinniJumpsWest, FACING_WEST, 4,
+                   296, 328, 2)
 
 DEFINE_DJINNI_DASH(ShrineOfTheSeaGod_TrappedDjinniToNorthEast, 392, 216, 1)
 

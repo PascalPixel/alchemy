@@ -1619,17 +1619,12 @@ void BattleEffect_RunCruelRuin(struct BattleEffectParams *args) {
   REG_BLDALPHA = EFFECT_BLEND_ADD;
   for (i = 0; i != 120; i++) {
     s32 v = i / 2;
-    u8 *c;
 
     if (v > CANVAS_LEVEL_BRIGHTEST) {
       v = CANVAS_LEVEL_BRIGHTEST;
     }
-    /* FAKEMATCH(signature): the column's pointer computed as an integer. */
-    for (j = 0,
-        c = (u8 *)(i + (s32)work + offsetof(struct BattleEffectWork, sheet));
-         j != 120; j++) {
-      *c = v;
-      c += 120;
+    for (j = 0; j != 120; j++) {
+      work->sheet[i + j * 120] = v;
     }
   }
   {

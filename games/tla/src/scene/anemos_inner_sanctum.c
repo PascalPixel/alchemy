@@ -157,8 +157,8 @@ extern s32 gAnemosInnerSanctum_OrbScript[];
 
 /// The actors of the inner rooms the set-up and the switches move, numbering
 /// each room's placement table: stone pillars (SPRITE_STONE_PILLAR) Moved onto
-/// the floor's marks, and the statues (sprite 432) that rise when the tiles or
-/// the switches ask.
+/// the floor's marks, and the statues (SPRITE_ARROW_PANEL) that rise when the
+/// tiles or the switches ask.
 enum AnemosInnerSanctumElevatorActorId {
   ACTOR_ELEVATOR_FIRST_PILLAR = ACTOR_FIRST_PLACED,
   ACTOR_ELEVATOR_STATUE,
@@ -183,8 +183,8 @@ enum AnemosInnerSanctumOrihalconChestActorId {
   ACTOR_ORIHALCON_CHEST_SECOND_PILLAR
 };
 
-/// The guardian room's three mimic stones (sprite 431), one by each way in
-/// from above: entered by entrance 1, 3 or 5, that one's stone follows the
+/// The guardian room's three mimic stones (SPRITE_MIMIC_STONE), one by each way
+/// in from above: entered by entrance 1, 3 or 5, that one's stone follows the
 /// leader's steps (AnemosInnerSanctum_StartFollower) until it drops into its
 /// hole.
 #define ACTOR_MIMIC_STONE_A ACTOR_FIRST_PLACED
@@ -235,8 +235,8 @@ enum { DJINN_FOUND_PER_ELEMENT = 18 };
 #define FLAG_ANEMOS_ALL_SYMBOLS_LIT 0xa8b
 #define FLAG_ANEMOS_GUARDIAN_SPOKE 0xa8c
 
-/// The guardian room's statue (sprite 432) that rises at its entrance 12
-/// (AnemosInnerSanctum_RaiseSecondStatue).
+/// The guardian room's statue (SPRITE_ARROW_PANEL) that rises at its entrance
+/// 12 (AnemosInnerSanctum_RaiseSecondStatue).
 #define ACTOR_GUARDIAN_ROOM_STATUE (ACTOR_FIRST_PLACED + 3)
 
 /// Writes each listed background colour from its red, green and blue, keeps
@@ -2098,20 +2098,20 @@ struct ActorPlacement gAnemosInnerSanctum_DragonSkinChestPlacements[] = {
 };
 
 struct ActorPlacement gAnemosInnerSanctum_ElevatorPlacements[] = {
-    {272, CONDITION_ALWAYS, 7, 0x1, 0, 0, FACING_NORTH, 2, 2},
-    {432, CONDITION_ALWAYS, (s32)gAnemosInnerSanctum_StatueScript, 0x2, 0, 0, FACING_NORTH, 2, 2},
-    {272, CONDITION_ALWAYS, 7, 0x3, 0, 0, FACING_NORTH, 2, 2},
+    {SPRITE_STONE_PILLAR, CONDITION_ALWAYS, 7, 0x1, 0, 0, FACING_NORTH, 2, 2},
+    {SPRITE_ARROW_PANEL, CONDITION_ALWAYS, (s32)gAnemosInnerSanctum_StatueScript, 0x2, 0, 0, FACING_NORTH, 2, 2},
+    {SPRITE_STONE_PILLAR, CONDITION_ALWAYS, 7, 0x3, 0, 0, FACING_NORTH, 2, 2},
     {SCENE_TABLE_END},
 };
 
 struct ActorPlacement gAnemosInnerSanctum_SwitchesPlacements[] = {
-    {272, CONDITION_ALWAYS, 7, 0x1, 0, 0, FACING_NORTH, 2, 2},
-    {329, CONDITION_ALWAYS, 1, 0x2, 0, 0, FACING_NORTH, 2, 2},
-    {272, CONDITION_ALWAYS, 7, 0x3, 0, 0, FACING_NORTH, 2, 2},
-    {272, CONDITION_ALWAYS, 7, 0x4, 0, 0, FACING_NORTH, 2, 2},
-    {272, CONDITION_ALWAYS, 7, 0x5, 0, 0, FACING_NORTH, 2, 2},
-    {272, CONDITION_ALWAYS, 7, 0x6, 0, 0, FACING_NORTH, 2, 2},
-    {489, CONDITION_ALWAYS, 7, 0x7, 0, 0, FACING_NORTH, 2, 2},
+    {SPRITE_STONE_PILLAR, CONDITION_ALWAYS, 7, 0x1, 0, 0, FACING_NORTH, 2, 2},
+    {SPRITE_ROUND_BOULDER, CONDITION_ALWAYS, 1, 0x2, 0, 0, FACING_NORTH, 2, 2},
+    {SPRITE_STONE_PILLAR, CONDITION_ALWAYS, 7, 0x3, 0, 0, FACING_NORTH, 2, 2},
+    {SPRITE_STONE_PILLAR, CONDITION_ALWAYS, 7, 0x4, 0, 0, FACING_NORTH, 2, 2},
+    {SPRITE_STONE_PILLAR, CONDITION_ALWAYS, 7, 0x5, 0, 0, FACING_NORTH, 2, 2},
+    {SPRITE_STONE_PILLAR, CONDITION_ALWAYS, 7, 0x6, 0, 0, FACING_NORTH, 2, 2},
+    {SPRITE_UNSEEN_MARKER, CONDITION_ALWAYS, 7, 0x7, 0, 0, FACING_NORTH, 2, 2},
     {SCENE_TABLE_END},
 };
 
@@ -2121,14 +2121,14 @@ s32 gAnemosInnerSanctum_OrihalconChestPlacements[] = {
   };
 
 struct ActorPlacement gAnemosInnerSanctum_GuardianPlacements[] = {
-    {431, CONDITION_ALWAYS, 7, 0x1, 0, 0, FACING_NORTH, 2, 2},
-    {431, CONDITION_ALWAYS, 7, 0x2, 0, 0, FACING_NORTH, 2, 2},
-    {431, CONDITION_ALWAYS, 7, 0x3, 0, 0, FACING_NORTH, 2, 2},
-    {432, CONDITION_ALWAYS, (s32)gAnemosInnerSanctum_StatueScript, 0x4, 0, 0, FACING_NORTH, 2, 2},
-    ACTOR_PLACEMENT(429, CONDITION_ALWAYS, (s32)gAnemosInnerSanctum_StatueScript, 584, 0, 582, FACING_WEST, TALK_FACING_PARTY_AND_BACK, 0),
-    ACTOR_PLACEMENT(429, CONDITION_ALWAYS, (s32)gAnemosInnerSanctum_StatueScript, 584, 0, 630, FACING_WEST, TALK_FACING_PARTY_AND_BACK, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE),
-    ACTOR_PLACEMENT(429, CONDITION_ALWAYS, (s32)gAnemosInnerSanctum_StatueScript, 680, 0, 582, FACING_EAST, TALK_FACING_PARTY_AND_BACK, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE),
-    ACTOR_PLACEMENT(429, CONDITION_ALWAYS, (s32)gAnemosInnerSanctum_StatueScript, 680, 0, 630, FACING_EAST, TALK_FACING_PARTY_AND_BACK, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE),
+    {SPRITE_MIMIC_STONE, CONDITION_ALWAYS, 7, 0x1, 0, 0, FACING_NORTH, 2, 2},
+    {SPRITE_MIMIC_STONE, CONDITION_ALWAYS, 7, 0x2, 0, 0, FACING_NORTH, 2, 2},
+    {SPRITE_MIMIC_STONE, CONDITION_ALWAYS, 7, 0x3, 0, 0, FACING_NORTH, 2, 2},
+    {SPRITE_ARROW_PANEL, CONDITION_ALWAYS, (s32)gAnemosInnerSanctum_StatueScript, 0x4, 0, 0, FACING_NORTH, 2, 2},
+    ACTOR_PLACEMENT(SPRITE_COILED_DRAGON_STATUE, CONDITION_ALWAYS, (s32)gAnemosInnerSanctum_StatueScript, 584, 0, 582, FACING_WEST, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(SPRITE_COILED_DRAGON_STATUE, CONDITION_ALWAYS, (s32)gAnemosInnerSanctum_StatueScript, 584, 0, 630, FACING_WEST, TALK_FACING_PARTY_AND_BACK, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE),
+    ACTOR_PLACEMENT(SPRITE_COILED_DRAGON_STATUE, CONDITION_ALWAYS, (s32)gAnemosInnerSanctum_StatueScript, 680, 0, 582, FACING_EAST, TALK_FACING_PARTY_AND_BACK, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE),
+    ACTOR_PLACEMENT(SPRITE_COILED_DRAGON_STATUE, CONDITION_ALWAYS, (s32)gAnemosInnerSanctum_StatueScript, 680, 0, 630, FACING_EAST, TALK_FACING_PARTY_AND_BACK, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE),
     {SCENE_TABLE_END},
 };
 

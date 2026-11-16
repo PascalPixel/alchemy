@@ -257,35 +257,26 @@ struct ActorPlacement *Scene_GetActorPlacements(void) {
   return gLemurianShip_Placements;
 }
 
+/// The leader opens the cabin door at the step trigger and walks through, the
+/// actors held still.
 void LemurianShip_OpenDoor(void) {
   struct FieldWork *work = Ram_HeapSlots->fieldWork;
   struct Actor *object;
-  u8 *entry;
-  s32 offset;
   u32 found;
   u32 i;
 
   Event_Start();
   Event_ResolvePendingActions(0);
   found = 0;
-  i = ACTOR_FIRST_PLACED;
-nextActor:
-  object = ((struct Actor *)Actor_GetById(i));
-  if (object != NULL)
-    object->motionFlags = 0;
-  i++;
-  if (i < FIELD_TREASURE_ACTOR)
-    goto nextActor;
-  entry = (u8 *)gLemurianShip_Doors;
-  i = 0;
-  offset = 0;
-nextDoor:
-  if (work->stepTrigger == *(u16 *)(entry + offset))
-    found = i;
-  i++;
-  offset += 12;
-  if (i < 10)
-    goto nextDoor;
+  for (i = ACTOR_FIRST_PLACED; i < FIELD_TREASURE_ACTOR; i++) {
+    object = ((struct Actor *)Actor_GetById(i));
+    if (object != NULL)
+      object->motionFlags = 0;
+  }
+  for (i = 0; i < 10; i++) {
+    if (work->stepTrigger == gLemurianShip_Doors[i].exit)
+      found = i;
+  }
   Event_PlaySound(SE_DOOR_OPEN);
   Actor_SetSpritePriority(gMainRoutineWork.leaderActorId, 1);
   MapGrid_CopyCellsTo(0, 0, gLemurianShip_Doors[found].x,
@@ -307,35 +298,27 @@ nextDoor:
   Import_EventSetExitRequest(work->stepTrigger);
 }
 
+/// The leader opens a lower-deck door and walks through; once the Aqua Hydra
+/// is beaten and until Parch dries the hold, the hold's doors open on its
+/// flooded rows.
 void LemurianShip_OpenLowerDoor(void) {
   struct FieldWork *work = Ram_HeapSlots->fieldWork;
   struct Actor *object;
-  u8 *entry;
-  s32 offset;
   u32 found;
   u32 i;
 
   Event_Start();
   Event_ResolvePendingActions(0);
   found = 0;
-  i = ACTOR_FIRST_PLACED;
-nextActor:
-  object = ((struct Actor *)Actor_GetById(i));
-  if (object != NULL)
-    object->motionFlags = 0;
-  i++;
-  if (i < FIELD_TREASURE_ACTOR)
-    goto nextActor;
-  entry = (u8 *)gLemurianShip_LowerDoors;
-  i = 0;
-  offset = 0;
-nextDoor:
-  if (work->stepTrigger == *(u16 *)(entry + offset))
-    found = i;
-  i++;
-  offset += 12;
-  if (i < 4)
-    goto nextDoor;
+  for (i = ACTOR_FIRST_PLACED; i < FIELD_TREASURE_ACTOR; i++) {
+    object = ((struct Actor *)Actor_GetById(i));
+    if (object != NULL)
+      object->motionFlags = 0;
+  }
+  for (i = 0; i < 4; i++) {
+    if (work->stepTrigger == gLemurianShip_LowerDoors[i].exit)
+      found = i;
+  }
   if (found < 2 && Event_GetFlag(FLAG_AQUA_HYDRA_BEATEN) &&
       Event_GetFlag(FLAG_HOLD_PARCHED) == 0)
     found += 4;
@@ -353,6 +336,8 @@ nextDoor:
   Import_EventSetExitRequest(work->stepTrigger);
 }
 
+/// Once the pillars have sunk and opened the way, the leader walks into the
+/// passage and shrinks away into it.
 void LemurianShip_WalkIntoPassage(void) {
   if (Event_GetFlag(FLAG_PILLAR_WAY_OPEN)) {
     struct FieldWork *work = Ram_HeapSlots->fieldWork;
@@ -469,16 +454,21 @@ void LemurianShip_ExamineLiftSwitch(void) {
   Event_End();
 }
 
+/// Lift raises a crate.
 void LemurianShip_LiftCrate(void) {
   Actor_LiftTargetBlock(gLemurianShip_Crate);
 }
 
+/// Lift sets the raised crate down.
 void LemurianShip_SetDownCrate(void) { Actor_PlaceMovedBlock(); }
 
+/// Lift raises the crate on the ledge.
 void LemurianShip_LiftLedgeCrate(void) {
   Actor_LiftTargetBlock(gLemurianShip_Crate);
 }
 
+/// Lift sets the ledge crate down; set down at the ledge's edge it drops to
+/// the floor below.
 void LemurianShip_PushCrateOffLedge(void) {
   struct Actor *object;
   s32 x;
@@ -508,23 +498,30 @@ void LemurianShip_PushCrateOffLedge(void) {
   }
 }
 
+/// Frost freezes a puddle in the room of two jellies.
 void LemurianShip_FreezeTwoJellyRoomPuddle(void) {
   FlagBlock_ApplyFlags(gLemurianShip_TwoJellyRoomPuddles);
 }
 
+/// Frost freezes a puddle in the room of six jellies.
 void LemurianShip_FreezeSixJellyRoomPuddle(void) {
   FlagBlock_ApplyFlags(gLemurianShip_SixJellyRoomPuddles);
 }
 
+/// Frost freezes the puddle by the lift, and its cells can be stood on.
 void LemurianShip_FreezeLiftPuddle(void) {
   MapGrid_CopyCellAttributes(110, 1, 3, 1, 110, 4);
   Event_SetFlag((FLAG_PUDDLE_FROZEN + 2));
 }
 
+/// Frost freezes a puddle in the room of seven jellies.
 void LemurianShip_FreezeSevenJellyRoomPuddle(void) {
   FlagBlock_ApplyFlags(gLemurianShip_SevenJellyRoomPuddles);
 }
 
+/// Stepping onto the lift before the engine runs: it gives way with a jolt and
+/// the leader jumps clear; until the jelly by the lift is beaten, the jelly
+/// comes onto it first.
 void LemurianShip_StepOnLift(void) {
   struct Actor *leader;
   struct Actor *helper;
@@ -616,6 +613,7 @@ void LemurianShip_StepOnLift(void) {
   }
 }
 
+/// Stepping onto the lift from its west side before the engine runs.
 void LemurianShip_StepOnLiftWestSide(void) {
   struct Actor *leader;
 
@@ -665,6 +663,8 @@ DEFINE_JELLY_BATTLE(LemurianShip_FightSixJellyRoomJelly, 2, 9)
 
 DEFINE_JELLY_BATTLE(LemurianShip_FightSevenJellyRoomJelly, 8, 9)
 
+/// Sends a jelly leaping into the middle of the hold, where the Aqua Hydra
+/// forms.
 void LemurianShip_LeapIntoHydra(s32 id) {
   struct Actor *object = ((struct Actor *)Actor_GetById(id));
 
@@ -674,6 +674,8 @@ void LemurianShip_LeapIntoHydra(s32 id) {
   Actor_SetDestination(id, 120, 120);
 }
 
+/// The jellies in the hold leap together into the Aqua Hydra, and its battle
+/// begins.
 void LemurianShip_FightAquaHydra(void) {
   Event_Start();
   Event_ResolvePendingActions(0);
@@ -800,57 +802,66 @@ void LemurianShip_CheckPillarsOnDroplets(void) {
   }
 }
 
+/// Lift raises one of the two pillars.
 void LemurianShip_LiftPillar(void) {
   Actor_LiftTargetBlock(gLemurianShip_Pillars);
 }
 
+/// Lift sets a pillar down, and whether both stand on their droplet tiles is
+/// checked.
 void LemurianShip_SetDownPillar(void) {
   Actor_PlaceMovedBlock();
   LemurianShip_CheckPillarsOnDroplets();
 }
 
-#define DEFINE_DOUSE_PILLAR(name, n1, n2)                                      \
+#define DEFINE_DOUSE_PILLAR(name, pillar, fullFlag)                            \
   void name(void) {                                                            \
     Sound_Play(SE_DRIP);                                                       \
-    Actor_SetAnimationById(n1, 2);                                             \
-    GameFlag_Set(n2);                                                          \
+    Actor_SetAnimationById(pillar, 2);                                         \
+    GameFlag_Set(fullFlag);                                                    \
     LemurianShip_CheckPillarsOnDroplets();                                     \
   }
 
-DEFINE_DOUSE_PILLAR(LemurianShip_DouseRightPillar, 8, FLAG_RIGHT_PILLAR_FULL)
+/// Douse fills the right pillar with water.
+DEFINE_DOUSE_PILLAR(LemurianShip_DouseRightPillar, ACTOR_RIGHT_PILLAR,
+                    FLAG_RIGHT_PILLAR_FULL)
 
-DEFINE_DOUSE_PILLAR(LemurianShip_DouseLeftPillar, 9, FLAG_LEFT_PILLAR_FULL)
+/// Douse fills the left pillar with water.
+DEFINE_DOUSE_PILLAR(LemurianShip_DouseLeftPillar, ACTOR_LEFT_PILLAR,
+                    FLAG_LEFT_PILLAR_FULL)
 
+/// Shows the puddle by the right pillar in its own colours.
 void LemurianShip_ShowRightPillarPuddle(void) {
   FieldActor_SetSpriteColor(
       ((struct Actor *)Actor_GetById(ACTOR_RIGHT_PILLAR_PUDDLE)), 0);
 }
 
+/// Shows the puddle by the left pillar in its own colours.
 void LemurianShip_ShowLeftPillarPuddle(void) {
   FieldActor_SetSpriteColor(
       ((struct Actor *)Actor_GetById(ACTOR_LEFT_PILLAR_PUDDLE)), 0);
 }
 
-#define DEFINE_RAISE_PILLAR(name, n1, n2, n3, n4)                              \
+#define DEFINE_RAISE_PILLAR(name, pillar, sunkFlag, fullFlag, column)          \
   void name(void) {                                                            \
     struct FieldWork *work = Ram_HeapSlots->fieldWork;                         \
-    struct Actor *object = ((struct Actor *)Actor_GetById(n1));                \
+    struct Actor *object = ((struct Actor *)Actor_GetById(pillar));            \
     u32 i;                                                                     \
                                                                                \
     Event_Start();                                                             \
     Event_ResolvePendingActions(0);                                            \
     work->raisedTrigger = 0;                                                   \
-    GameFlag_Clear(n2);                                                        \
-    GameFlag_Clear(n3);                                                        \
+    GameFlag_Clear(sunkFlag);                                                  \
+    GameFlag_Clear(fullFlag);                                                  \
     Event_Wait(20);                                                            \
     Sound_Play(SE_SOL_SANCTUM_LIGHT_UP);                                       \
     for (i = 0; i <= 63; i++) {                                                \
       object->y.fixed += toFIXED(1) / 4;                                       \
       wait(1);                                                                 \
     }                                                                          \
-    Actor_SetSpritePriority(n1, 2);                                            \
-    MapGrid_CopyCellPictureIndicesRect(4, 123, n4, 69, 1, 1);                  \
-    MapGrid_CopyCellAttributes(36, 0, 1, 1, n4, 9);                            \
+    Actor_SetSpritePriority(pillar, 2);                                        \
+    MapGrid_CopyCellPictureIndicesRect(4, 123, column, 69, 1, 1);              \
+    MapGrid_CopyCellAttributes(36, 0, 1, 1, column, 9);                        \
     Sound_Play(SE_THUMP);                                                      \
     MapGrid_CopyCellsTo(7, 124, 31, 64, 3, 2);                                 \
     GameFlag_Clear(FLAG_PILLAR_WAY_OPEN);                                      \
@@ -858,11 +869,13 @@ void LemurianShip_ShowLeftPillarPuddle(void) {
     Event_End();                                                               \
   }
 
-DEFINE_RAISE_PILLAR(LemurianShip_RaiseRightPillar, 8, FLAG_RIGHT_PILLAR_SUNK,
-                    FLAG_RIGHT_PILLAR_FULL, 35)
+/// The right pillar, emptied, rises again and closes the way on.
+DEFINE_RAISE_PILLAR(LemurianShip_RaiseRightPillar, ACTOR_RIGHT_PILLAR,
+                    FLAG_RIGHT_PILLAR_SUNK, FLAG_RIGHT_PILLAR_FULL, 35)
 
-DEFINE_RAISE_PILLAR(LemurianShip_RaiseLeftPillar, 9, FLAG_LEFT_PILLAR_SUNK,
-                    FLAG_LEFT_PILLAR_FULL, 29)
+/// The left pillar, emptied, rises again and closes the way on.
+DEFINE_RAISE_PILLAR(LemurianShip_RaiseLeftPillar, ACTOR_LEFT_PILLAR,
+                    FLAG_LEFT_PILLAR_SUNK, FLAG_LEFT_PILLAR_FULL, 29)
 
 /// Parch dries the flooded hold: the party and the chest the flood carried off
 /// are set back where the floor is dry.
@@ -892,6 +905,7 @@ void LemurianShip_ParchHold(void) {
   Event_End();
 }
 
+/// Settles the field's pending actions as Parch is cast.
 void LemurianShip_BeginParch(void) {
   Event_Start();
   Event_ResolvePendingActions(0);
@@ -899,24 +913,28 @@ void LemurianShip_BeginParch(void) {
   Event_End();
 }
 
-#define DEFINE_SET_UP_PUDDLE(name, n1)                                         \
+#define DEFINE_SET_UP_PUDDLE(name, priority)                                   \
   void name(s32 id) {                                                          \
     struct Actor *object = ((struct Actor *)Actor_GetById(id));                \
                                                                                \
     ((struct Actor *)Actor_GetById(id))->priorityFlags |=                      \
         ACTOR_PRIORITY_IGNORES_RISES;                                          \
-    Actor_SetSpritePriority(id, n1);                                           \
+    Actor_SetSpritePriority(id, priority);                                     \
     object->priorityFlags &= ~ACTOR_PRIORITY_UNDERFOOT;                        \
     object->riseCounter = 1;                                                   \
   }
 
+/// Keeps a frozen puddle flat on the floor, drawn at sprite priority 1.
 DEFINE_SET_UP_PUDDLE(LemurianShip_SetUpPuddle, 1)
 
-// From patch 1; in the Japanese release actors 10 and 11 also use action 1.
+// From patch 1; in the Japanese release the pillar room's puddles also take
+// priority 1.
 #if TLA_PATCH_1
+/// Keeps a frozen puddle flat on the floor, drawn at sprite priority 2.
 DEFINE_SET_UP_PUDDLE(LemurianShip_SetUpLowPuddle, 2)
 #endif
 
+/// Keeps the room of six jellies' puddles flat on the floor.
 void LemurianShip_KeepSixJellyRoomPuddles(void) {
   ((struct Actor *)Actor_GetById(ACTOR_LIFT_PUDDLE))->priorityFlags |=
       ACTOR_PRIORITY_IGNORES_RISES;
@@ -930,6 +948,7 @@ void LemurianShip_KeepSixJellyRoomPuddles(void) {
   LemurianShip_SetUpPuddle(ACTOR_SIX_JELLY_ROOM_PUDDLE_E);
 }
 
+/// Keeps the room of seven jellies' puddles flat on the floor.
 void LemurianShip_KeepSevenJellyRoomPuddles(void) {
   LemurianShip_SetUpPuddle(ACTOR_SEVEN_JELLY_ROOM_PUDDLE_A);
   LemurianShip_SetUpPuddle(ACTOR_SEVEN_JELLY_ROOM_PUDDLE_B);
@@ -939,6 +958,7 @@ void LemurianShip_KeepSevenJellyRoomPuddles(void) {
   LemurianShip_SetUpPuddle(ACTOR_SEVEN_JELLY_ROOM_PUDDLE_G);
 }
 
+/// Keeps the pillar room's two puddles flat on the floor.
 void LemurianShip_KeepPillarRoomPuddles(void) {
 #if !TLA_PATCH_1
   LemurianShip_SetUpPuddle(ACTOR_RIGHT_PILLAR_PUDDLE);
@@ -949,6 +969,8 @@ void LemurianShip_KeepPillarRoomPuddles(void) {
 #endif
 }
 
+/// A task: draws the hold's water rippling around the cell the leader stands
+/// in.
 void LemurianShip_RippleAroundLeader(void) {
   struct Actor *leader =
       ((struct Actor *)Actor_GetById(gMainRoutineWork.leaderActorId));
@@ -977,6 +999,7 @@ void LemurianShip_RippleAroundLeader(void) {
   }
 }
 
+/// A task: once a sunk pillar's puddle is gone, the pillar rises again.
 void LemurianShip_WatchPillarPuddles(void) {
   struct FieldWork *work = Ram_HeapSlots->fieldWork;
   struct Actor *object;
@@ -997,6 +1020,7 @@ void LemurianShip_WatchPillarPuddles(void) {
   }
 }
 
+/// A task: a glint drifts in from around the orb toward its centre.
 void LemurianShip_DrawLightToOrb(void) {
   s32 position[3];
   struct Actor *object;
@@ -1098,6 +1122,7 @@ void LemurianShip_SetBlackCrystal(void) {
   Import_EventSetExitRequest(90);
 }
 
+/// A beaten jelly melts into a puddle where it stood.
 void LemurianShip_MeltJellyIntoPuddle(s32 actor, s32 id) {
   struct Actor *object = ((struct Actor *)Actor_GetById(id));
 
@@ -1116,6 +1141,8 @@ void LemurianShip_MeltJellyIntoPuddle(s32 actor, s32 id) {
   Event_End();
 }
 
+/// On entering the room of six jellies, the jelly by the lift takes fright and
+/// flees, until it is beaten.
 void LemurianShip_ScareJellyOnArrival(void) {
   if (Event_GetFlag((FLAG_JELLIES_BEATEN + 2)) == 0) {
     Event_Start();
@@ -1128,6 +1155,8 @@ void LemurianShip_ScareJellyOnArrival(void) {
   }
 }
 
+/// Stepping near the jelly by the lift: it takes fright and flees, until it is
+/// beaten.
 void LemurianShip_ScareJelly(void) {
   if (Event_GetFlag((FLAG_JELLIES_BEATEN + 2)) == 0) {
     Event_Start();
@@ -1137,6 +1166,7 @@ void LemurianShip_ScareJelly(void) {
   }
 }
 
+/// The jelly by the lift jumps, and flees down the lift.
 void LemurianShip_JellyFlees(void) {
   struct Actor *object =
       ((struct Actor *)Actor_GetById(ACTOR_SIX_JELLY_ROOM_JELLY_A));
@@ -1157,6 +1187,7 @@ void LemurianShip_JellyFlees(void) {
   Event_SetFlag(FLAG_JELLY_FLED);
 }
 
+/// A pause of two seconds, with its sound, as the hold floods.
 void LemurianShip_FloodHold(void) {
   Event_Start();
   Event_ResolvePendingActions(0);
@@ -1299,6 +1330,7 @@ void LemurianShip_SetUpTwoJellyRoom(void) {
   }
 }
 
+/// Sets a jelly up on the raised floor, 32 pixels up.
 void LemurianShip_SetUpRaisedJelly(s32 id) {
   struct Actor *object = ((struct Actor *)Actor_GetById(id));
 
@@ -1318,6 +1350,8 @@ void LemurianShip_SetUpRaisedJelly(s32 id) {
     ((struct Actor *)Actor_GetById(id))->groundHeight = -toFIXED(32);          \
   }
 
+/// The room of six jellies: its crate, its jellies, and the puddles of those
+/// beaten.
 void LemurianShip_SetUpSixJellyRoom(void) {
   ((struct Actor *)Actor_GetById(gMainRoutineWork.leaderActorId))
       ->priorityFlags |= ACTOR_PRIORITY_IGNORES_RISES;
@@ -1457,6 +1491,7 @@ void LemurianShip_SetUpSixJellyRoom(void) {
     LemurianShip_ScareJellyOnArrival();
 }
 
+/// A task: draws the ledge crate at the leader's sprite priority.
 void LemurianShip_MatchCratePriority(void) {
   struct Actor *leader =
       ((struct Actor *)Actor_GetById(gMainRoutineWork.leaderActorId));
@@ -1465,6 +1500,7 @@ void LemurianShip_MatchCratePriority(void) {
                           ((struct FieldSprite *)leader->sprite)->priority);
 }
 
+/// The room of the crate on the ledge.
 void LemurianShip_SetUpLedgeRoom(void) {
   // XXX: flag 8 is tested where the drop sets FLAG_CRATE_DROPPED; whether it is
   // a slip for that flag would be settled by returning from a battle here.
@@ -1474,6 +1510,7 @@ void LemurianShip_SetUpLedgeRoom(void) {
   LEMURIAN_SHIP_TASK_ADD(LemurianShip_MatchCratePriority, 0x480);
 }
 
+/// Sets a jelly up on the floor.
 void LemurianShip_SetUpJelly(s32 id) {
   struct Actor *object = ((struct Actor *)Actor_GetById(id));
 
@@ -1595,6 +1632,7 @@ void LemurianShip_SetUpSevenJellyRoom(void) {
   }
 }
 
+/// The stair room: once the engine runs, its stairs are open.
 void LemurianShip_SetUpStairRoom(void) {
   if (Event_GetFlag(FLAG_SHIP_ENGINE_RUNNING)) {
     MapGrid_CopyCellsTo(17, 125, 27, 63, 3, 3);
@@ -1710,6 +1748,8 @@ void LemurianShip_SetUpPillarRoom(void) {
   LEMURIAN_SHIP_TASK_ADD(LemurianShip_WatchPillarPuddles, 0x480);
 }
 
+/// The engine room: until the engine runs, Piers sets the Black Crystal as the
+/// party arrives.
 void LemurianShip_SetUpEngineRoom(void) {
   if (Event_GetFlag(FLAG_SHIP_ENGINE_RUNNING) == 0)
     LemurianShip_SetBlackCrystal();

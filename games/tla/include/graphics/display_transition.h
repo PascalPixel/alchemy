@@ -62,6 +62,9 @@ struct ScreenTransitionState {
   s8 step;     ///< frames
   /// The mode taken when the value reaches its end; 0 ends the transition.
   s8 nextMode;
+  /// Set by the fade out to the centre line (ScreenTransition_Finish); while
+  /// it is set the icon menus leave window 1's lines alone.
+  s8 centreLine;
 };
 
 STATIC_ASSERT(offsetof(struct ScreenTransitionDissolveState, value) == 0x52a);

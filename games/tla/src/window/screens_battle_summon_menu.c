@@ -1,6 +1,6 @@
 /// @file
 /// The battle summon menu.
-// Part of window.c.
+// Part of screens.c.
 
 #include "window_internal.h"
 #include "sounds.h"
@@ -8,21 +8,15 @@
 #include "window/screens.h"
 
 // Where the Japanese layout differs: the summon list's window and its Djinn
-// costs, in tiles. The Japanese edition decodes a summon's description
-// (Message_DecodeRaw) into at most 32 halfwords; the others copy its text
-// (Message_CopyExpanded) into at most 52.
+// costs, in tiles.
 #if LANGUAGE != LANGUAGE_JAPANESE
 #define SUMMON_MENU_WINDOW_X 13
 #define SUMMON_MENU_WINDOW_WIDTH 17
 #define SUMMON_COST_X 11
-#define BATTLE_MENU_MESSAGE_CAPACITY 52
-#define BATTLE_MENU_MESSAGE_COPY Message_CopyExpanded
 #else
 #define SUMMON_MENU_WINDOW_X 14
 #define SUMMON_MENU_WINDOW_WIDTH 16
 #define SUMMON_COST_X 10
-#define BATTLE_MENU_MESSAGE_CAPACITY 32
-#define BATTLE_MENU_MESSAGE_COPY Message_DecodeRaw
 #endif
 
 /// The battle summon list: the summons the party holds enough Djinn for
@@ -107,16 +101,16 @@ s32 BattleSummonMenu_Run(s32 unusedA, s32 unusedB, const u8 *standby) {
     orderedCount = 0;
     for (i = count - 1; i >= 0; i--) {
       const struct SummonDefinition *definition;
-      s32 n;
+      s32 element;
       s32 k;
 
       k = learnedSummons[i];
       definition = SummonDefinition_Get(k);
-      for (n = 0; n <= 3; n++) {
-        if (definition->djinnRequired[n] > standby[n])
+      for (element = 0; element <= 3; element++) {
+        if (definition->djinnRequired[element] > standby[element])
           break;
       }
-      if (n == 4) {
+      if (element == 4) {
         orderedSummons[orderedCount] = k;
         learnedSummons[i] = SUMMON_END;
         orderedCount++;
@@ -180,10 +174,7 @@ s32 BattleSummonMenu_Run(s32 unusedA, s32 unusedB, const u8 *standby) {
           for (element = 0; element <= 3; element++) {
             Window_SetTilemapEntry(counts, element + ELEMENT_ICON_TILE,
                                    element * 2, 0, 0);
-            if (standby[element] > 9)
-              tile = standby[element] + 0xf196;
-            else
-              tile = (standby[element] + '0') | 0xf000;
+            tile = DJINN_COUNT_TILE(standby[element]);
             Window_SetTilemapEntry(counts, tile, element * 2 + 1, 0,
                                    GLYPH_DRAW_CHARACTER);
           }
@@ -380,5 +371,3 @@ s32 BattleSummonMenu_Run(s32 unusedA, s32 unusedB, const u8 *standby) {
 #undef SUMMON_MENU_WINDOW_X
 #undef SUMMON_MENU_WINDOW_WIDTH
 #undef SUMMON_COST_X
-#undef BATTLE_MENU_MESSAGE_CAPACITY
-#undef BATTLE_MENU_MESSAGE_COPY

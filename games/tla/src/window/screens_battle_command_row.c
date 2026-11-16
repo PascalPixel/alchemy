@@ -1,6 +1,6 @@
 /// @file
 /// The row of command icons the player picks a command from.
-// Part of window.c.
+// Part of screens.c.
 
 #include "window_internal.h"
 #include "sounds.h"
@@ -75,8 +75,8 @@ s32 BattleCommandRow_Run(s32 mode, s32 fleeAllowed) {
   battleMenu = BATTLE_MENU_WORK;
   selectionUi = Heap_AllocEwram(sizeof(*selectionUi));
   for (i = 255; i >= 0; i--)
-    selectionUi->paletteSlots[i] = 255;
-  selectionUi->paletteCount = 1;
+    selectionUi->palette.slot[i] = 255;
+  selectionUi->palette.count = 1;
   if (mode == COMMAND_ROW_PARTY)
     selectionUi->window = Window_Create(20, 17, 10, 3, 6);
   else
@@ -85,10 +85,10 @@ s32 BattleCommandRow_Run(s32 mode, s32 fleeAllowed) {
   selectionUi->drawnIndex = -1;
   if (mode == COMMAND_ROW_PARTY) {
     kindCount = 0;
-    selectionUi->commandKinds[kindCount++] = 14;
-    if (((u8 *)Ram_HeapSlots->battleWork)[0x44] == 0 &&
+    selectionUi->commandKinds[kindCount++] = COMMAND_ICON_FIGHT;
+    if (Ram_HeapSlots->battleWork->isLink == 0 &&
         battleMenu->swappedUnit == -1 && Party_CountMembersFar() > 4)
-      selectionUi->commandKinds[kindCount++] = 49;
+      selectionUi->commandKinds[kindCount++] = COMMAND_ICON_SWITCH;
     if (fleeAllowed > 0 && gMainRoutineWork.battleType != BATTLE_TYPE_NO_ESCAPE)
       selectionUi->commandKinds[kindCount++] = COMMAND_ICON_FLEE;
     selectionUi->commandKinds[kindCount++] = COMMAND_ICON_STATUS;
@@ -365,42 +365,50 @@ s32 BattleCommandRow_Run(s32 mode, s32 fleeAllowed) {
   return command;
 }
 
-void Window_HighlightRect(s32 x, s32 y, s32 width, s32 height, s32 alt) {
-  struct WindowWork *tiles = Ram_HeapSlots->windowWork;
+/// Switches the UI tilemap entries of the `width` x `height` tile rectangle at
+/// screen tile (x, y) to WINDOW_PALETTE or HIGHLIGHT_PALETTE by bit 12, keeping
+/// the rest of each entry: the menus' row highlight. `paletteBit` is the
+/// palette, of which only the low bit counts.
+void Window_HighlightRect(s32 x, s32 y, s32 width, s32 height, s32 paletteBit) {
+  struct WindowWork *work = Ram_HeapSlots->windowWork;
 
-  alt &= 1;
-  alt <<= 12;
+  paletteBit &= 1;
+  paletteBit = BG_TILE_PALETTE(paletteBit);
 
   if (x < 0) {
     width += x;
     x = 0;
   }
-  if (x + width > 29) {
+  if (x + width > DISPLAY_TILE_WIDTH - 1) {
     width = DISPLAY_TILE_WIDTH - x;
   }
   if (y < 0) {
     height += y;
     y = 0;
   }
-  if (y + height > 29) {
+  // BUG: tests the bottom against the screen's width, so a window reaching
+  // below the screen draws into the map's unseen rows.
+#ifdef BUGFIX
+  if (y + height > DISPLAY_TILE_HEIGHT - 1) {
+#else
+  if (y + height > DISPLAY_TILE_WIDTH - 1) {
+#endif
     height = DISPLAY_TILE_HEIGHT - y;
   }
 
   if (width > 0 && height > 0) {
     do {
-      u16 *p = &tiles->tilemap[y][x];
-      s32 col = width;
+      u16 *cell = &work->tilemap[y][x];
+      s32 remaining = width;
 
-      if (col != 0) {
-        do {
-          u32 tile = *p;
-          col--;
-          tile = (tile & ~0x1000) | alt;
-          *p = tile;
-          p++;
-        } while (col != 0);
+      while (remaining != 0) {
+        u32 tile = *cell;
+        remaining--;
+        tile = (tile & ~0x1000) | paletteBit;
+        *cell = tile;
+        cell++;
       }
-      UiRender_MarkRow(tiles, y);
+      UiRender_MarkRow(work, y);
       height--;
       y++;
     } while (height != 0);

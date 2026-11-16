@@ -1,40 +1,44 @@
 /// @file
 /// Window sprites, portraits and the window spans.
-// Part of window.c.
+// Part of screens.c.
 
 #include "window_internal.h"
 #include "window/screens.h"
 
-/// Takes a free window output, writes its OAM attributes at the window's
-/// position offset by (offsetX, offsetY) pixels and appends it to the window's
-/// list. Releases the resource slot and returns NULL when no output is free.
-struct WindowSprite *WindowSprite_Create(s32 slot, s32 flags,
-                                         struct Window *input, s32 offsetX,
+/// Creates a window sprite for the VRAM cache slot `slot` and attaches it to
+/// `window`, placed at (offsetX, offsetY) pixels from the window's inner corner
+/// (one tile in from its top-left border). `oamFlags` holds the OAM shape and
+/// size bits. Releases the slot and returns NULL when no sprite is free.
+struct WindowSprite *WindowSprite_Create(s32 slot, s32 oamFlags,
+                                         struct Window *window, s32 offsetX,
                                          s32 offsetY) {
   s32 x;
-  struct WindowSprite *output;
+  struct WindowSprite *sprite;
   s32 y;
 
-  output = WindowSprite_AcquireFree();
-  if (output == NULL) {
+  sprite = WindowSprite_AcquireFree();
+  if (sprite == NULL) {
     VramCache_FreeEntry((u32)slot);
     return NULL;
   }
-  x = offsetX + (s16)input->x * 8 + 8;
-  y = offsetY + (s16)input->y * 8 + 8;
+  // Window tiles to screen pixels, wrapped to OAM's 9-bit X and 8-bit Y.
+  x = offsetX + (s16)window->x * 8 + 8;
+  y = offsetY + (s16)window->y * 8 + 8;
   x &= 0x1ff;
   y &= 0xff;
-  *(u32 *)&output->sprite.oam = (x << 16) | y | flags;
-  ((u32 *)&output->sprite.oam)[1] = gVramCacheEntries[slot].offset >> 5;
-  output->depth = 254;
-  output->x = x;
-  output->y = (s16)y;
-  output->next = NULL;
-  output->index = (s8)slot;
-  output->kind = WINDOW_SPRITE_ICON;
-  output->motion = 1;
-  WindowSprite_AppendToList((struct WindowSpriteList *)input, output);
-  return output;
+  *(u32 *)&sprite->sprite.oam = (x << 16) | y | oamFlags;
+  // Attribute 2: the first tile of the slot's VRAM block (32 bytes a tile).
+  ((u32 *)&sprite->sprite.oam)[1] = gVramCacheEntries[slot].offset >> 5;
+  sprite->depth = OAM_DEPTH_FRONT - 1;
+  sprite->x = x;
+  sprite->y = (s16)y;
+  sprite->next = NULL;
+  sprite->index = (s8)slot;
+  // An icon owns its VRAM cache slot, which is freed with it.
+  sprite->kind = WINDOW_SPRITE_ICON;
+  sprite->motion = 1;
+  WindowSprite_AppendToList((struct WindowSpriteList *)window, sprite);
+  return sprite;
 }
 
 /// Loads resource `resource` in loading mode `mode` into a VRAM slot and shows
@@ -73,72 +77,73 @@ struct WindowSprite *WindowSprite_CreateLoaded(s32 icon, s32 layers,
 struct WindowSprite *WindowSprite_CreateWithTransform(s32 icon,
                                                       struct Window *window,
                                                       s32 x, s32 y) {
-  s32 count;
-  s32 unused;
-  struct WindowSprite *result;
+  s32 slot;
+  s32 unusedTile;
+  struct WindowSprite *sprite;
 
-  count = VramCache_FindFreeEntry();
-  if (count == 0x60) {
+  slot = VramCache_FindFreeEntry();
+  if (slot == VRAM_CACHE_ENTRY_COUNT) {
     return NULL;
   }
-  Icon_BuildCommandIconTiles(icon, 1, &count, &unused, 1);
-  result = WindowSprite_Create(count, OUTPUT_SIZE_16X16, window, x, y);
-  result->depth = 251;
-  return result;
+  Icon_BuildCommandIconTiles(icon, 1, &slot, &unusedTile, 1);
+  sprite = WindowSprite_Create(slot, OUTPUT_SIZE_16X16, window, x, y);
+  // Not checked: with every sprite in use, this stores through NULL.
+  sprite->depth = OAM_DEPTH_FRONT - 4;
+  return sprite;
 }
 
-/// Loads the character entry for the key into the given side, or into a free
-/// one (resource id 999) when the side is 2 or more, and creates its output
-/// with that side's palette (14 + side).
-struct WindowSprite *Portrait_Create(s32 objectKind, s32 position, s32 side,
+/// Shows the 32x32 portrait of `character` at (x, y) in `window`, in portrait
+/// slot `side` (0 or 1, or any other value for the first free one; the second
+/// is tried first), in PORTRAIT_PALETTE + side.
+struct WindowSprite *Portrait_Create(s32 character, s32 position, s32 side,
                                      struct Window *window, s32 x, s32 y) {
-  struct WindowWork *state = (struct WindowWork *)Ram_HeapSlots->windowWork;
-  struct WindowSprite *object = 0;
-  s32 first;
-  s32 second;
-  s32 id;
+  struct WindowWork *work = (struct WindowWork *)Ram_HeapSlots->windowWork;
+  struct WindowSprite *portrait = 0;
   s32 slot;
+  s32 tile;
+  s32 icon;
+  s32 palette;
 
-  id = Portrait_GetForSpeaker(objectKind);
-  if (id == -1)
-    return object;
+  icon = Portrait_GetForSpeaker(character);
+  if (icon == -1)
+    return portrait;
 
+  // No side given: the second slot if it is free, else the first.
   if ((u32)side > 1) {
     u32 current;
 
-    current = state->resourceIds[1];
+    current = work->resourceIds[1];
     side = 1;
     if (current != PORTRAIT_SLOT_EMPTY) {
       side = 0;
-      if (state->resourceIds[0] != PORTRAIT_SLOT_EMPTY)
-        return object;
+      if (work->resourceIds[0] != PORTRAIT_SLOT_EMPTY)
+        return portrait;
     }
   }
 
-  slot = PORTRAIT_PALETTE + side;
-  Icon_LoadWithPalette(id, position, &first, &second, slot, 0);
-  object = WindowSprite_Create(first, OUTPUT_SIZE_32X32,
-                               (struct Window *)window, x, y);
-  if (object != 0) {
-    object->sprite.oam.palette = slot;
-    object->kind = WINDOW_SPRITE_PORTRAIT;
+  palette = PORTRAIT_PALETTE + side;
+  Icon_LoadWithPalette(icon, position, &slot, &tile, palette, 0);
+  portrait = WindowSprite_Create(slot, OUTPUT_SIZE_32X32,
+                                 (struct Window *)window, x, y);
+  if (portrait != 0) {
+    portrait->sprite.oam.palette = palette;
+    portrait->kind = WINDOW_SPRITE_PORTRAIT;
   }
 
-  state->resourceIds[side] = id;
-  state->outputIds[side] = first;
-  return object;
+  // Recorded even when no sprite was free and WindowSprite_Create released
+  // the VRAM slot.
+  work->resourceIds[side] = icon;
+  work->outputIds[side] = slot;
+  return portrait;
 }
 
 /// Reloads the portrait picture for the key into a portrait slot with that
-/// slot's palette (14 + slot), reusing the slot's VRAM cache entry. A slot of
-/// 2 or more means whichever slot already shows the picture, the second
-/// first; when neither does, nothing is loaded.
+/// slot's palette (PORTRAIT_PALETTE + slot), reusing the slot's VRAM cache
+/// entry. A slot of 2 or more means whichever slot already shows the picture,
+/// the second first; when neither does, nothing is loaded.
 void Portrait_Reload(u32 slot, s32 key, s32 unused) {
   struct WindowWork *work = (struct WindowWork *)Ram_HeapSlots->windowWork;
   s32 id = Portrait_GetForSpeaker(key);
-  s32 offset;
-  s32 palette;
-  s32 cached;
   s32 tile;
   s32 entry;
 
@@ -152,11 +157,8 @@ void Portrait_Reload(u32 slot, s32 key, s32 unused) {
     else
       return;
   }
-  offset = offsetof(struct WindowWork, outputIds);
-  palette = slot;
-  cached = *(u16 *)((u8 *)work + (slot * 2 + offset));
-  entry = cached;
-  Icon_LoadWithPalette(id, unused, &entry, &tile, palette + 14, 1);
+  entry = work->outputIds[slot];
+  Icon_LoadWithPalette(id, unused, &entry, &tile, PORTRAIT_PALETTE + slot, 1);
 }
 
 /// Sets active to mode and resets the animation step (animationStep) to zero.
@@ -170,22 +172,32 @@ void WindowSprite_SetMotion(struct WindowSprite *out, s32 mode) {
 
 /// Sets the draw layer of the window sprite `sprite` to 255 - `priority`, so a
 /// higher priority draws on a lower layer. Does nothing when `sprite` is NULL.
-void WindowSprite_SetInvertedSentinel(u8 *window, s32 value) {
-  if (window != NULL)
-    window[15] = ~value;
+void WindowSprite_SetInvertedSentinel(void *sprite, s32 priority) {
+  if (sprite != NULL)
+    ((struct WindowSprite *)sprite)->depth = ~priority;
 }
 
 /// The ARM routine ScanlineWindow_FillSpans copies to RAM and runs; it returns
 /// the end of the spans it wrote.
 typedef u16 *(*WindowSpanRoutine)(u16 *spans, u16 *tilemap);
 
-/// Fills the 0x140-byte row buffer with blank tiles, or builds it from the
-/// window tiles' map through the cell picture routine copied to RAM.
+/// Fills `spans`, a page of the screen transition's window edges past its WININ
+/// and WINOUT, with the windows' horizontal extent on each of the 160 scan
+/// lines: (left << 8) | right in the second halfword (WIN1H) of each line's
+/// pair, read from the UI tilemap by the ARM routine Tile_BuildCellPictures,
+/// copied into RAM for the call.
 void ScanlineWindow_FillSpans(void *spans) {
   struct WindowWork *work = Ram_HeapSlots->windowWork;
 
   if (work == NULL) {
-    Dma_Fill16(0xe0e0, spans, 0x140);
+    // BUG: the fill is one halfword for each of the DISPLAY_HEIGHT lines, but
+    // each line takes two, so the lower 80 lines keep the window 1 edges
+    // this page held when it was last built.
+#ifdef BUGFIX
+    Dma_Fill16(0xe0e0, spans, DISPLAY_HEIGHT * 4);
+#else
+    Dma_Fill16(0xe0e0, spans, DISPLAY_HEIGHT * 2);
+#endif
   } else {
     WindowSpanRoutine routine;
 
@@ -201,7 +213,7 @@ void ScanlineWindow_FillSpans(void *spans) {
 void BgScreen_FillRect(s32 unusedA, s32 unusedB, u32 width, u32 height,
                        s32 value) {
   u32 row = 0;
-  s16 *dst = (s16 *)BG_SCREEN_BLOCK(4);
+  s16 *dst = (s16 *)WINDOW_TILEMAP_VRAM;
 
   if (row < height) {
     do {

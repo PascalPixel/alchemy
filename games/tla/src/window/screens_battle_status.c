@@ -1,6 +1,6 @@
 /// @file
 /// The Status screen.
-// Part of window.c.
+// Part of screens.c.
 
 #include "window_internal.h"
 #include "sounds.h"
@@ -31,18 +31,19 @@
 // Japanese text is shorter: its help lines and Psynergy descriptions take
 // smaller buffers, and its stat numbers sit one tile further left. It decodes
 // the item, Psynergy and Djinn lines raw where the other languages copy them
-// expanded; the lines that take a number are copied expanded in every language.
+// expanded (BATTLE_MENU_MESSAGE_COPY); the lines that take a number are copied
+// expanded in every language.
 #if LANGUAGE == LANGUAGE_JAPANESE
-#define SUMMARY_TEXT_COPY Message_DecodeRaw
-#define SUMMARY_PSYNERGY_TEXT_LENGTH 32
 #define SUMMARY_HELP_TEXT_LENGTH 64
 #define SUMMARY_STAT_VALUE_X 176
 #else
-#define SUMMARY_TEXT_COPY Message_CopyExpanded
-#define SUMMARY_PSYNERGY_TEXT_LENGTH 52
 #define SUMMARY_HELP_TEXT_LENGTH 128
 #define SUMMARY_STAT_VALUE_X 184
 #endif
+
+/// The condition icons the Status screen shows at most: Normal, or each
+/// condition the unit has, in a row.
+#define STATUS_ICON_COUNT 11
 
 /// The Status screen's help lines, from MsgOwnerStatusEntryHelp, which the
 /// cursor stops in window_tables.s name; the status icons' places and the
@@ -173,9 +174,9 @@ s32 Unit_GetExperienceForLevelFar(s32 member, s32 level);
 s32 BattleStatusScreen_Run(u16 *list, s32 listCount, s32 member) {
   struct SummaryOam portraitSprite;
   struct SummaryOam cursorSprite;
-  s32 statusSlots[11];
-  s8 statusKinds[11];
-  struct SummaryOam statusSprites[11];
+  s32 statusSlots[STATUS_ICON_COUNT];
+  s8 statusKinds[STATUS_ICON_COUNT];
+  struct SummaryOam statusSprites[STATUS_ICON_COUNT];
   struct SummaryOam iconSprites[4];
   struct SummaryOam nameSprite;
   struct StatusCursor cursor;
@@ -238,7 +239,7 @@ s32 BattleStatusScreen_Run(u16 *list, s32 listCount, s32 member) {
   cursor.drawnHelpEntry = 0;
   cursor.group = STATUS_CURSOR_GENERAL;
   cursorSlot = VramCache_AllocEntry(0x80);
-  for (i = 0; i <= 10; i++) {
+  for (i = 0; i < STATUS_ICON_COUNT; i++) {
     statusSlots[i] = VramCache_AllocEntry(0x80);
     statusKinds[i] = OWNER_CONDITION_EMPTY;
   }
@@ -563,7 +564,7 @@ s32 BattleStatusScreen_Run(u16 *list, s32 listCount, s32 member) {
       portraitSprite.oam.word.attr23 = 0;
       if (face != NULL) {
         portraitSprite.oam.f.tile = face->oam.f.tile;
-        portraitSprite.oam.f.x = 0xac;
+        portraitSprite.oam.f.x = 172;
         portraitSprite.oam.f.y = 56;
         if (figureShown != 0)
           Oam_AddSpriteAtDepth(&portraitSprite, OAM_DEPTH_WINDOW);
@@ -633,13 +634,13 @@ s32 BattleStatusScreen_Run(u16 *list, s32 listCount, s32 member) {
         u16 *entry = entries + rowBase + row;
 
         if (Item_ClassifyUseAbility(member, *entry) == 2)
-          SUMMARY_TEXT_COPY((s32)MsgBattleItemUnavailable, itemText, 32);
+          BATTLE_MENU_MESSAGE_COPY((s32)MsgBattleItemUnavailable, itemText, 32);
         else
-          SUMMARY_TEXT_COPY((*entry & INVENTORY_ITEM_ID_MASK) +
-                                (s32)MsgItemPlainName,
-                            itemText, SUMMARY_ITEM_HELP_CAPACITY);
+          BATTLE_MENU_MESSAGE_COPY((*entry & INVENTORY_ITEM_ID_MASK) +
+                                       (s32)MsgItemPlainName,
+                                   itemText, SUMMARY_ITEM_HELP_CAPACITY);
       } else {
-        SUMMARY_TEXT_COPY((s32)MsgBattleNoItems, itemText, 32);
+        BATTLE_MENU_MESSAGE_COPY((s32)MsgBattleNoItems, itemText, 32);
       }
       WindowSprite_RedrawSavedRect(statusWindow);
       Window_MapTextCanvasTiles((s16)helpWindow->x, (s16)helpWindow->y,
@@ -700,12 +701,13 @@ s32 BattleStatusScreen_Run(u16 *list, s32 listCount, s32 member) {
         work->holdTilemapUpload = 1;
         Text_FillCanvasBackground();
         if (count != 0)
-          SUMMARY_TEXT_COPY((entries[rowBase + row] & PSYNERGY_ABILITY_MASK) +
-                                (s32)MsgAbilityDescription,
-                            psynergyText, SUMMARY_PSYNERGY_TEXT_LENGTH);
+          BATTLE_MENU_MESSAGE_COPY(
+              (entries[rowBase + row] & PSYNERGY_ABILITY_MASK) +
+                  (s32)MsgAbilityDescription,
+              psynergyText, BATTLE_MENU_MESSAGE_CAPACITY);
         else
-          SUMMARY_TEXT_COPY((s32)MsgBattleNoPsynergy, psynergyText,
-                            SUMMARY_PSYNERGY_TEXT_LENGTH);
+          BATTLE_MENU_MESSAGE_COPY((s32)MsgBattleNoPsynergy, psynergyText,
+                                   BATTLE_MENU_MESSAGE_CAPACITY);
         WindowSprite_RedrawSavedRect(statusWindow);
         Window_MapTextCanvasTiles((s16)helpWindow->x, (s16)helpWindow->y,
                                   helpWindow->width, helpWindow->height, 0);
@@ -742,7 +744,7 @@ s32 BattleStatusScreen_Run(u16 *list, s32 listCount, s32 member) {
                                      ELEMENT_ICON_TILE + ability->element, 15,
                                      j * 2 + 8, tileFlags);
             range = ability->range;
-            if (range == 255)
+            if (range == ABILITY_RANGE_ALL)
               range = 11;
             else
               range--;
@@ -818,17 +820,17 @@ s32 BattleStatusScreen_Run(u16 *list, s32 listCount, s32 member) {
             MessageArgument_Push((entry & STATUS_DJINN_TURNS) >>
                                      STATUS_DJINN_TURNS_SHIFT,
                                  MESSAGE_ARGUMENT_NUMBER);
-            SUMMARY_TEXT_COPY(STATUS_DJINNI(entry) + (s32)MsgDjinnEffect,
-                              psynergyText, SUMMARY_DJINN_HELP_CAPACITY);
+            BATTLE_MENU_MESSAGE_COPY(STATUS_DJINNI(entry) + (s32)MsgDjinnEffect,
+                                     psynergyText, SUMMARY_DJINN_HELP_CAPACITY);
           } else {
             Message_CopyExpanded((s32)MsgReadyToSummon, psynergyText, 32);
           }
         } else {
-          SUMMARY_TEXT_COPY(STATUS_DJINNI(entry) + (s32)MsgDjinnEffect,
-                            psynergyText, SUMMARY_DJINN_HELP_CAPACITY);
+          BATTLE_MENU_MESSAGE_COPY(STATUS_DJINNI(entry) + (s32)MsgDjinnEffect,
+                                   psynergyText, SUMMARY_DJINN_HELP_CAPACITY);
         }
       } else {
-        SUMMARY_TEXT_COPY((s32)MsgNoDjinn, psynergyText, 32);
+        BATTLE_MENU_MESSAGE_COPY((s32)MsgNoDjinn, psynergyText, 32);
       }
       work->holdTilemapUpload = released;
       Text_FillCanvasBackground();
@@ -1074,8 +1076,8 @@ s32 BattleStatusScreen_Run(u16 *list, s32 listCount, s32 member) {
         statusKinds[0] = OWNER_CONDITION_NORMAL;
         i = 1;
       }
-      if (i <= 10) {
-        for (j = i; j < 11; j++)
+      if (i < STATUS_ICON_COUNT) {
+        for (j = i; j < STATUS_ICON_COUNT; j++)
           statusKinds[j] = OWNER_CONDITION_EMPTY;
       }
       statusCount = i;
@@ -1175,7 +1177,8 @@ s32 BattleStatusScreen_Run(u16 *list, s32 listCount, s32 member) {
 
       sprite = statusSprites;
       slot = statusSlots;
-      for (i = 0, entry = gVramCacheEntries, iconX = 112; i <= 10; i++) {
+      for (i = 0, entry = gVramCacheEntries, iconX = 112; i < STATUS_ICON_COUNT;
+           i++) {
         MenuSprite_Initialize(*sprite, OBJ_SIZE_16X16 |
                                            OBJ_MODE(OBJ_MODE_SEMI_TRANSPARENT));
         sprite->oam.f.tile = entry[*slot++].offset >> 5;
@@ -1235,7 +1238,7 @@ s32 BattleStatusScreen_Run(u16 *list, s32 listCount, s32 member) {
     for (i = 3; i >= 0; i--)
       VramCache_FreeEntry(*slot++);
     slot = statusSlots;
-    for (i = 10; i >= 0; i--)
+    for (i = STATUS_ICON_COUNT - 1; i >= 0; i--)
       VramCache_FreeEntry(*slot++);
   }
   VramCache_FreeEntry(portraitSlot);
@@ -1258,8 +1261,6 @@ s32 BattleStatusScreen_Run(u16 *list, s32 listCount, s32 member) {
 #undef SUMMARY_ITEM_HELP_CAPACITY
 #undef SUMMARY_DJINN_HELP_CAPACITY
 #undef SUMMARY_PP_LABEL_SECOND_TILE
-#undef SUMMARY_TEXT_COPY
-#undef SUMMARY_PSYNERGY_TEXT_LENGTH
 #undef SUMMARY_HELP_TEXT_LENGTH
 #undef SUMMARY_STAT_VALUE_X
 #undef SUMMARY_DRAW_PAGE_MARKS

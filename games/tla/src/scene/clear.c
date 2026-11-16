@@ -811,7 +811,7 @@ done:
   return 1;
 }
 
-/// This overlay's copy of Window_SetTilemapFlagRect (window/fixed_block.c):
+/// This overlay's copy of Window_SetTextTileRect (window/screens_name_entry.c):
 /// sets the field in the tilemap flags of a rectangle of a window, clipped to
 /// the screen.
 void Clear_DrawGridCell(const struct Window *object, s32 x, s32 y, s32 width,

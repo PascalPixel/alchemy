@@ -23,7 +23,11 @@
 #include "game/character_ids.h"
 #include "field/scene_tables.h"
 
+/// A bounce of 32 steps, 8.8 fixed-point scales: the selected icons pulse by
+/// it.
 extern const u16 gWindowSprite_BounceScales[];
+/// The portraits of the characters and of the other speakers, {who, portrait}
+/// pairs ending in -1.
 extern const s16 gPortrait_CharacterMap[];
 extern const s16 gPortrait_SpriteMap[];
 
@@ -60,8 +64,9 @@ struct CommandRowAffine {
 /// The command row's work block: the icons' shared palette, up to six icons,
 /// the label window, the pulsing icon's transform and the selection.
 struct BattleCommandRowWork {
-  u8 paletteSlots[256];
-  s32 paletteCount;
+  /// BG palette slots for the icons' 256-colour pixels, filled as each icon
+  /// is loaded (BattleCommandRow_LoadIconTiles).
+  struct GlyphPalette palette;
   struct BattleCommandRowIcon entries[6];
   void *window;
   s32 iconCount;
@@ -120,51 +125,81 @@ union NameCursor {
   struct MenuCursor cursor;
 };
 
-/// The first two words of gMainRoutineWork as the save writes them: the build
-/// stamp and the play time.
-struct SaveGameWords {
-  u32 buildStamp;
-  u32 playTime;
-};
-
-/// The menu work as the file list reads it, ShopWork's party row: the party
+/// The menus' work (heap slot HEAP_SLOT_MENU) as the file list reads it: the
+/// party row of the shop's ShopWork (shop/shop_internal.h), holding the party
 /// sprites of the file under the cursor, where each stands and its scale.
 struct FileListWork {
-  u8 unk000[0xf8];
-  void *partyMemberIcons[4]; ///< up to four party sprites, null for none
-  u8 unk108[0x10];
+  u8 menuScreens[0xf8]; ///< the windows and lists before the party row
+  /// Up to four party sprites, null for none; the row has room for eight.
+  void *partyMemberIcons[8];
   s16 partyMemberX[8];       ///< pixels
   s16 partyMemberY[8];       ///< pixels
   FIXED partyMemberScale[4]; ///< 16.16 fixed point, FIXED_ONE full size
 };
 
+// The battle menus' message buffers, in halfwords, and the copier that fills
+// them: the Japanese edition decodes the message (Message_DecodeRaw), the
+// others copy its text (Message_CopyExpanded).
+#if LANGUAGE != LANGUAGE_JAPANESE
+#define BATTLE_MENU_MESSAGE_CAPACITY 52
+#define BATTLE_MENU_MESSAGE_COPY Message_CopyExpanded
+#else
+#define BATTLE_MENU_MESSAGE_CAPACITY 32
+#define BATTLE_MENU_MESSAGE_COPY Message_DecodeRaw
+#endif
+
+/// The two BG tiles of the Djinn menu's arrow: DJINN_MENU_ARROW_TILE blinks,
+/// the one after it stays (gDjinnMenu_BlinkTile).
+#define DJINN_MENU_ARROW_TILE 808
+
+/// The arrow tile BattleDjinnMenu_Run copies to the two BG tiles from
+/// DJINN_MENU_ARROW_TILE each frame: the first blinks (four frames shown, four
+/// blank), the second stays.
 extern const u8 gDjinnMenu_BlinkTile[32];
 
+/// Where each element's icon and standby count sit in the party status
+/// window's Djinn column, in tiles, for the Djinn menu to blink them.
 extern u8 gDjinnMenu_ElementXOffsets[4];
-
 extern u8 gDjinnMenu_ElementYOffsets[4];
 
+/// The Status screen's cursor stops: the stats, the equipment and the
+/// conditions.
 extern const struct BattleSummaryStatCursor gOwnerStatus_StatCursors[];
-
 extern const struct BattleSummaryCursor gOwnerStatus_EquipmentCursors[];
-
 extern const struct BattleSummaryCursor gOwnerStatus_ConditionCursors[];
-
+/// "Lv", before the level on the Status screen.
 extern const u8 gOwnerStatus_LevelString[];
 
 /// The ability of each summon, by its number.
 extern const u16 gSummon_Abilities[];
 
+/// The heading pair's bob (MenuTitle_Bob), in pixels, a step every four
+/// VBlanks.
 extern const u8 gWindow_PairBobOffsets[];
 
+/// The rows the range icons are marked with (Menu_BuildLocalizedPatternTiles).
 extern const struct BarPatternRow gMenu_BarPatternRows[];
 
+/// The standby Djinn counts 10 to 18, one tile each, from BG tile
+/// DJINN_COUNT_TENS_TILE: the party status window loads them
+/// (gPartyStatus_DigitTiles) when a count passes 9.
 extern const u8 gPartyStatus_DigitTiles[];
+#define DJINN_COUNT_TENS_TILE 416
+#define DJINN_COUNT_TENS_VRAM                                                  \
+  ((void *)(BG_CHAR_BLOCK(0) + DJINN_COUNT_TENS_TILE * TILE_SIZE_4BPP))
+/// The window tilemap entry of standby count `n`: a digit, or a tile from
+/// DJINN_COUNT_TENS_TILE for 10 on.
+#define DJINN_COUNT_TILE(n)                                                    \
+  ((n) > 9 ? (n) + WINDOW_TILE(DJINN_COUNT_TENS_TILE - 10)                     \
+           : WINDOW_TILE((n) + '0'))
 
+/// The saving screen's progress bar: its seven stages, a row of tile numbers
+/// each.
 extern const u8 gWindow_ProgressBarRows[];
-
+/// The progress bar's tiles, compressed.
 extern const u8 gWindow_ProgressBarTiles[];
 
+/// The cell picture routine, copied to RAM before it runs.
 extern u8 Tile_BuildCellPicturesCode[];
 
 // The parts, in ROM order (The Broken Seal's src/README.md, "Objects and
@@ -210,16 +245,18 @@ struct WindowLine {
 /// A page of the icon menu's window shape: one WindowLine for each of the
 /// screen's 160 lines.
 struct WindowBuffer {
-  u8 unk000[4];
+  u8 winInOut[4]; ///< WININ and WINOUT, not touched here
   struct WindowLine lines[160];
 };
 
+/// The Pause menu's headings and page label.
 extern const u8 gWorkspace_ItemTitle[];
 extern const u8 gWorkspace_EnergyTitle[];
 extern const u8 gWorkspace_StatusTitle[];
 extern const u8 gWorkspace_PageLabel[];
 extern const u8 gWorkspace_RangeDash[];
 
+/// The save screen's icon menu: the action at each icon position.
 extern s8 gMenu_SaveSlotActionByPosition[];
 
 // The parts, in ROM order.

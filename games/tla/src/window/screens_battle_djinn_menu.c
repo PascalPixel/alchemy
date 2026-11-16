@@ -1,6 +1,6 @@
 /// @file
 /// The battle Djinn menu.
-// Part of window.c.
+// Part of screens.c.
 
 #include "window_internal.h"
 #include "menu/djinn_menu.h"
@@ -9,34 +9,26 @@
 #include "window/screens.h"
 #include "window/window.h"
 
-// The Japanese list window is 9 tiles wide from column 21, its messages hold
-// 32 characters and a recovering Djinni's turns stand at x 40.
+// The Japanese list window is 9 tiles wide from column 21 and a recovering
+// Djinni's turns stand at x 40.
 #if LANGUAGE == LANGUAGE_JAPANESE
 #define DJINN_LIST_X 21
 #define DJINN_LIST_WIDTH 9
-#define DJINN_MESSAGE_CAPACITY 32
 #define DJINN_TURNS_X 40
 #else
 #define DJINN_LIST_X 20
 #define DJINN_LIST_WIDTH 10
-#define DJINN_MESSAGE_CAPACITY 52
 #define DJINN_TURNS_X 48
 #endif
 
-// Japanese decodes four of the menu's six messages raw where the other
-// languages copy them expanded.
-#if LANGUAGE != LANGUAGE_JAPANESE
-#define DJINN_MESSAGE_COPY Message_CopyExpanded
-#else
-#define DJINN_MESSAGE_COPY Message_DecodeRaw
-#endif
-
-/// The two BG tiles of the Djinn menu's arrow: DJINN_MENU_ARROW_TILE blinks,
-/// the one after it stays.
-#define DJINN_MENU_ARROW_TILE 808
 #define DJINN_MENU_ARROW_VRAM                                                  \
   (BG_CHAR_BLOCK(0) + DJINN_MENU_ARROW_TILE * TILE_SIZE_4BPP)
 
+// A selected Djinni packs its element and number (DJINN_COMMAND), its standby
+// bit and its recovery turns.
+/// DJINN_COMMAND_ELEMENT masked before the shift, as this menu reads it: the
+/// shift first differs in 239 of BattleDjinnMenu_Run's 1246 instructions.
+#define DJINN_PACKED_ELEMENT(entry) (((entry) & 0xf00) >> 8)
 #define DJINN_ENTRY_STANDBY 0x10000
 #define DJINN_ENTRY_RECOVERY_MASK 0x3e0000
 #define DJINN_ENTRY_RECOVERY_SHIFT 17
@@ -122,9 +114,9 @@ s32 BattleDjinnMenu_Run(s32 member, s32 unused) {
     // djinnCount, 2 of 1246 differ.
     for (djinnIndex = 0,
         entryCursor = (u32 *)((djinnCount << 2) + (u32)djinnEntries);
-         djinnIndex <= 19; djinnIndex++) {
+         djinnIndex < DJINN_PER_ELEMENT; djinnIndex++) {
       if (unit->djinnSet[element] & (u32)(1 << djinnIndex)) {
-        *entryCursor = (u32)((element << 8) | djinnIndex);
+        *entryCursor = (u32)DJINN_COMMAND(element, djinnIndex);
         entryCursor++;
         djinnCount++;
       } else if (unit->djinnHeld[element] & (u32)(1 << djinnIndex)) {
@@ -139,7 +131,7 @@ s32 BattleDjinnMenu_Run(s32 member, s32 unused) {
             break;
           }
         }
-        v = (u32)((element << 8) | djinnIndex | DJINN_ENTRY_STANDBY);
+        v = (u32)(DJINN_COMMAND(element, djinnIndex) | DJINN_ENTRY_STANDBY);
         *entryCursor = v;
         if (list->entries[k].turns > 0) {
           v |= (u32)(list->entries[k].turns << DJINN_ENTRY_RECOVERY_SHIFT);
@@ -191,8 +183,8 @@ s32 BattleDjinnMenu_Run(s32 member, s32 unused) {
           }
         }
         if (alreadySelected != 0) {
-          DJINN_MESSAGE_COPY((s32)MsgCannotUseSameDjinniTwice, messageText,
-                             DJINN_MESSAGE_CAPACITY);
+          BATTLE_MENU_MESSAGE_COPY((s32)MsgCannotUseSameDjinniTwice,
+                                   messageText, BATTLE_MENU_MESSAGE_CAPACITY);
           if (previewWindow != NULL) {
             Window_Close(previewWindow, 1);
             previewWindow = NULL;
@@ -206,10 +198,10 @@ s32 BattleDjinnMenu_Run(s32 member, s32 unused) {
             MessageArgument_Push((selectedDjinn & DJINN_ENTRY_RECOVERY_MASK) >>
                                      DJINN_ENTRY_RECOVERY_SHIFT,
                                  MESSAGE_ARGUMENT_NUMBER);
-            DJINN_MESSAGE_COPY(((selectedDjinn & 0xf00) >> 8) *
-                                       DJINN_PER_ELEMENT +
-                                   (selectedDjinn & 0xff) + (s32)MsgDjinnEffect,
-                               messageText, DJINN_MESSAGE_CAPACITY);
+            BATTLE_MENU_MESSAGE_COPY(
+                DJINN_PACKED_ELEMENT(selectedDjinn) * DJINN_PER_ELEMENT +
+                    DJINN_COMMAND_INDEX(selectedDjinn) + (s32)MsgDjinnEffect,
+                messageText, BATTLE_MENU_MESSAGE_CAPACITY);
             if (previewWindow != NULL) {
               Window_Close(previewWindow, 1);
               previewWindow = NULL;
@@ -223,20 +215,20 @@ s32 BattleDjinnMenu_Run(s32 member, s32 unused) {
                 previewWindow, member, selectedDjinn, previewPage,
                 &previewPages);
             Message_CopyExpanded((s32)MsgReadyToSummon, messageText,
-                                 DJINN_MESSAGE_CAPACITY);
-            standbyElements = 1 << ((selectedDjinn & 0xf00) >> 8);
+                                 BATTLE_MENU_MESSAGE_CAPACITY);
+            standbyElements = 1 << DJINN_PACKED_ELEMENT(selectedDjinn);
           }
         } else {
           previewWindow = BattleDjinnMenu_ShowChangePreview(
               previewWindow, member, selectedDjinn, previewPage, &previewPages);
-          DJINN_MESSAGE_COPY(((selectedDjinn & 0xf00) >> 8) *
-                                     DJINN_PER_ELEMENT +
-                                 (selectedDjinn & 0xff) + (s32)MsgDjinnEffect,
-                             messageText, DJINN_MESSAGE_CAPACITY);
+          BATTLE_MENU_MESSAGE_COPY(
+              DJINN_PACKED_ELEMENT(selectedDjinn) * DJINN_PER_ELEMENT +
+                  DJINN_COMMAND_INDEX(selectedDjinn) + (s32)MsgDjinnEffect,
+              messageText, BATTLE_MENU_MESSAGE_CAPACITY);
         }
       } else {
-        DJINN_MESSAGE_COPY((s32)MsgNoDjinn, messageText,
-                           DJINN_MESSAGE_CAPACITY);
+        BATTLE_MENU_MESSAGE_COPY((s32)MsgNoDjinn, messageText,
+                                 BATTLE_MENU_MESSAGE_CAPACITY);
       }
       work->holdTilemapUpload = 0;
       if (previewPage == 0) {
@@ -260,17 +252,18 @@ s32 BattleDjinnMenu_Run(s32 member, s32 unused) {
         for (listEntry = firstEntry;
              (encodedDjinn = djinnEntries[listEntry]) != DJINN_ENTRY_END;
              listEntry++) {
-          Window_SetTilemapEntry(
-              listWindow, ((encodedDjinn & 0xf00) >> 8) + ELEMENT_ICON_TILE, 0,
-              j * 2, 0);
+          Window_SetTilemapEntry(listWindow,
+                                 DJINN_PACKED_ELEMENT(encodedDjinn) +
+                                     ELEMENT_ICON_TILE,
+                                 0, j * 2, 0);
           if (encodedDjinn & DJINN_ENTRY_RECOVERY_MASK)
             Text_SetColor(TEXT_COLOR_YELLOW);
           else if (encodedDjinn & DJINN_ENTRY_STANDBY)
             Text_SetColor(TEXT_COLOR_RED);
-          Text_DrawMessageAsTiles(((encodedDjinn & 0xf00) >> 8) *
-                                          DJINN_PER_ELEMENT +
-                                      (encodedDjinn & 0xff) + (s32)MsgDjinnName,
-                                  listWindow, 8, j * 16);
+          Text_DrawMessageAsTiles(
+              DJINN_PACKED_ELEMENT(encodedDjinn) * DJINN_PER_ELEMENT +
+                  DJINN_COMMAND_INDEX(encodedDjinn) + (s32)MsgDjinnName,
+              listWindow, 8, j * 16);
           if (encodedDjinn & DJINN_ENTRY_RECOVERY_MASK)
             Text_DrawNumberAtOffset(
                 (encodedDjinn & DJINN_ENTRY_RECOVERY_MASK) >>
@@ -376,7 +369,7 @@ s32 BattleDjinnMenu_Run(s32 member, s32 unused) {
                                    DJINN_ENTRY_RECOVERY_SHIFT,
                                MESSAGE_ARGUMENT_NUMBER);
           Message_CopyExpanded((s32)MsgDjinniStillRecovering, messageText,
-                               DJINN_MESSAGE_CAPACITY);
+                               BATTLE_MENU_MESSAGE_CAPACITY);
           Text_DrawWideStringAtOffset(messageText, messageWindow, 0, 4);
         }
         Sound_PlayFar(SE_MENU_ERROR);
@@ -545,9 +538,8 @@ s32 BattleDjinnMenu_Run(s32 member, s32 unused) {
 
 #undef DJINN_LIST_X
 #undef DJINN_LIST_WIDTH
-#undef DJINN_MESSAGE_CAPACITY
 #undef DJINN_TURNS_X
-#undef DJINN_MESSAGE_COPY
+#undef DJINN_PACKED_ELEMENT
 #undef DJINN_ENTRY_STANDBY
 #undef DJINN_ENTRY_RECOVERY_MASK
 #undef DJINN_ENTRY_RECOVERY_SHIFT

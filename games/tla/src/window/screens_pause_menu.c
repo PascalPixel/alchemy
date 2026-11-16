@@ -1,7 +1,7 @@
 /// @file
-/// The save screen's selection, the portrait browser, and the flag grid drawn
-/// into a tilemap.
-// Part of window.c.
+/// The Pause menu's selection, a tilemap palette-bit rectangle, and the debug
+/// browsers of icons and portraits.
+// Part of screens.c.
 
 #include "window_internal.h"
 #include "window/item_icon.h"
@@ -19,11 +19,11 @@ again:
     return -1;
   if (selection == PAUSE_MENU_SAVE_QUEST) {
     if (GameFlag_Get(FLAG_CANNOT_SAVE_HERE)) {
-      FieldMessage_Show((s32)MsgCannotSaveHere, 1);
+      FieldMessage_Show((s32)MsgCannotSaveHere, FIELD_MESSAGE_ZOOM);
       goto again;
     }
     if (GameFlag_Get(FLAG_NO_PLACE_TO_SAVE)) {
-      FieldMessage_Show((s32)MsgNoPlaceForThat, 1);
+      FieldMessage_Show((s32)MsgNoPlaceForThat, FIELD_MESSAGE_ZOOM);
       goto again;
     }
     if (Save_ToChosenFile() == -1)
@@ -38,39 +38,49 @@ again:
   return 0;
 }
 
-void Render_SetTilemapFlagBitRect(const struct Window *object, s32 x, s32 y,
-                                  s32 width, s32 height, u32 field) {
+/// Sets (`set` 1) or clears (0) bit 12 of the tilemap entries of the `width` x
+/// `height` tile rectangle at (x, y) inside `window`, clipped to the screen:
+/// bit 12 is the lowest bit of the entry's palette number, so this switches the
+/// rectangle between two palettes, such as 15 and 14. Nothing calls it.
+UNUSED void Window_SetTextTileBitRect(const struct Window *window, s32 x, s32 y,
+                                      s32 width, s32 height, u32 set) {
   struct WindowWork *work = (struct WindowWork *)Ram_HeapSlots->windowWork;
 
-  x += (s16)object->x + 1;
-  y += (s16)object->y + 1;
-  field &= 1;
-  field <<= 12;
+  x += (s16)window->x + 1;
+  y += (s16)window->y + 1;
+  set &= 1;
+  set = BG_TILE_PALETTE(set);
   if (x < 0) {
     width += x;
     x = 0;
   }
-  if (x + width > (DISPLAY_TILE_WIDTH - 1)) {
+  if (x + width > DISPLAY_TILE_WIDTH - 1) {
     width = DISPLAY_TILE_WIDTH - x;
   }
   if (y < 0) {
     height += y;
     y = 0;
   }
-  if (y + height > 29) {
+  // BUG: tests the bottom against the screen's width, so a window reaching
+  // below the screen draws into the map's unseen rows.
+#ifdef BUGFIX
+  if (y + height > DISPLAY_TILE_HEIGHT - 1) {
+#else
+  if (y + height > DISPLAY_TILE_WIDTH - 1) {
+#endif
     height = DISPLAY_TILE_HEIGHT - y;
   }
   if (width > 0 && height > 0) {
     do {
-      u16 *pixel = &work->tilemap[y][x];
+      u16 *cell = &work->tilemap[y][x];
       s32 remaining = width;
       while (remaining != 0) {
-        u32 value = *pixel;
-        value &= 0xFFFFEFFF;
-        value |= field;
+        u32 entry = *cell;
+        entry &= ~0x1000;
+        entry |= set;
         remaining--;
-        *pixel = value;
-        pixel++;
+        *cell = entry;
+        cell++;
       }
       height--;
       y++;
@@ -177,14 +187,14 @@ s32 DebugBrowser_Portraits(void) {
   struct Window *portrait;
   s32 redraw;
   struct Window *window;
-  s32 count;
-  s32 total;
+  s32 characterCount;
+  s32 entryCount;
   s32 index;
   s32 i;
   s32 glyph;
   s32 tile;
   s32 slot;
-  s32 cancel;
+  s32 cancelKey;
   u32 slotOffset;
   s32 palette;
 
@@ -193,15 +203,17 @@ s32 DebugBrowser_Portraits(void) {
   portrait = Portrait_OpenWindow(0, 0, 10, 5);
   window = Window_Create(10, 10, 14, 3, WINDOW_FLAG_INSTANT);
   index = 0;
-  palette = 15;
+  palette = PORTRAIT_PALETTE + 1;
   for (i = 0; gPortrait_CharacterMap[i * 2] != -1; i++) {
   }
-  count = i;
+  characterCount = i;
   for (i = 0; gPortrait_SpriteMap[i * 2] != -1; i++) {
   }
-  total = count + i;
+  entryCount = characterCount + i;
   /* FAKEMATCH(dead): a zero from the count. */
-  cancel = ((u32)(u16)count >> 16) | 2;
+  cancelKey = ((u32)(u16)characterCount >> 16) | KEY_B;
+  /* FAKEMATCH(temporary): the second portrait slot read through its offset,
+   * held in a local. */
   slotOffset = offsetof(struct WindowWork, outputIds[1]);
   while (1) {
     if (gInput.repeat & KEY_LEFT) {
@@ -222,16 +234,16 @@ s32 DebugBrowser_Portraits(void) {
     }
     if (gInput.repeat & KEY_A)
       break;
-    if (gInput.repeat & cancel)
+    if (gInput.repeat & cancelKey)
       break;
     if (redraw) {
       redraw = 0;
-      index = (index + total) % total;
+      index = (index + entryCount) % entryCount;
       WindowSprite_PrepareForRedraw(window);
-      if (index < count)
+      if (index < characterCount)
         glyph = gPortrait_CharacterMap[index * 2 + 1];
       else
-        glyph = gPortrait_SpriteMap[(index - count) * 2 + 1] + 128;
+        glyph = gPortrait_SpriteMap[(index - characterCount) * 2 + 1] + 128;
       slot = *(u16 *)((u8 *)work + slotOffset);
       Icon_LoadWithPalette(glyph, 0, &slot, &tile, palette, 1);
       Text_DrawNumberInWindow(index, 2, window, 0, 0);

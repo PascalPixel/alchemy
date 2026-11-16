@@ -1,6 +1,6 @@
 /// @file
 /// Choosing a battle target.
-// Part of window.c.
+// Part of screens.c.
 
 #include "window_internal.h"
 #include "flags.h"
@@ -76,6 +76,16 @@ s32 System_GetLanguage(void);
     (y) += bob >> 15;                                                          \
   }
 
+/// Lets the player choose the target of an action of unit `selection`, with a
+/// cursor over the aimed unit and smaller markers on the others its range
+/// covers. `mode` is the action's targetMode: ABILITY_TARGET_ALLIES the party,
+/// ABILITY_TARGET_SELF only `selection` itself, anything else the enemies.
+/// `spread` is its range: 1 one unit, n the aimed one and n - 1 either side,
+/// ABILITY_RANGE_ALL every one (the cursor does not move); 0 counts as 1.
+/// `kind` is Battle_ClassifyEntryKind's class, or TARGET_HINT_SET_DJINNI: on a
+/// party member it opens a window of what the action would do (its HP or PP,
+/// the statuses it cures, "Set Djinni"). Returns the target chosen, 0x100 | its
+/// party slot or 0x180 | its enemy slot, or -1 when cancelled.
 s32 BattleTarget_RunSelection(s32 selection, s32 mode, u32 spread, u32 kind) {
   u16 candidateIds[8];
   struct SelectionSprite cursorSprites[6];

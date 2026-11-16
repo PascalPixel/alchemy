@@ -1,6 +1,6 @@
 /// @file
 /// The name entry screen.
-// Part of window.c.
+// Part of screens.c.
 
 #include "window_internal.h"
 #include "resource_ids.h"
@@ -92,38 +92,46 @@ void Window_CopyTilemapRegion(struct Window *window, const void *resource) {
   Heap_Release(buffer);
 }
 
-void Window_SetTilemapFlagRect(const struct Window *object, s32 x, s32 y,
-                               s32 width, s32 height, u32 field) {
+/// Like Window_SetTextTileBitRect, but ORs all of `palette` into the palette
+/// number of each entry (bits 12-15) after clearing only its lowest bit.
+void Window_SetTextTileRect(const struct Window *window, s32 x, s32 y,
+                            s32 width, s32 height, u32 palette) {
   struct WindowWork *work = (struct WindowWork *)Ram_HeapSlots->windowWork;
 
-  x += (s16)object->x + 1;
-  y += (s16)object->y + 1;
-  field <<= 12;
+  x += (s16)window->x + 1;
+  y += (s16)window->y + 1;
+  palette = BG_TILE_PALETTE(palette);
   if (x < 0) {
     width += x;
     x = 0;
   }
-  if (x + width > (DISPLAY_TILE_WIDTH - 1)) {
+  if (x + width > DISPLAY_TILE_WIDTH - 1) {
     width = DISPLAY_TILE_WIDTH - x;
   }
   if (y < 0) {
     height += y;
     y = 0;
   }
-  if (y + height > 29) {
+  // BUG: tests the bottom against the screen's width, so a window reaching
+  // below the screen draws into the map's unseen rows.
+#ifdef BUGFIX
+  if (y + height > DISPLAY_TILE_HEIGHT - 1) {
+#else
+  if (y + height > DISPLAY_TILE_WIDTH - 1) {
+#endif
     height = DISPLAY_TILE_HEIGHT - y;
   }
   if (width > 0 && height > 0) {
     do {
-      u16 *pixel = &work->tilemap[y][x];
+      u16 *cell = &work->tilemap[y][x];
       s32 remaining = width;
       while (remaining != 0) {
-        u32 value = *pixel;
-        value &= 0xFFFFEFFF;
-        value |= field;
+        u32 entry = *cell;
+        entry &= ~0x1000;
+        entry |= palette;
         remaining--;
-        *pixel = value;
-        pixel++;
+        *cell = entry;
+        cell++;
       }
       height--;
       y++;
@@ -139,18 +147,18 @@ s32 Resource_LoadFixedBlockBIntoFreeSlot(void) {
   s32 slot;
 
   slot = VramCache_FindFreeEntry();
-  VramBlock_LoadResourceFar(slot, 0x80, RESOURCE_UI_ICON_TILES);
+  VramBlock_LoadResourceFar(slot, 128, RESOURCE_UI_ICON_TILES);
   return slot;
 }
 
 /// Loads the UI icon tiles into VRAM cache entry slot.
 void Resource_CopyFixedBlockB(s32 slot) {
-  VramBlock_LoadResourceFar(slot, 0x80, RESOURCE_UI_ICON_TILES);
+  VramBlock_LoadResourceFar(slot, 128, RESOURCE_UI_ICON_TILES);
 }
 
 /// Loads the UI's fixed block A tiles into VRAM cache entry slot.
 void Resource_CopyFixedBlockA(s32 slot) {
-  VramBlock_LoadResourceFar(slot, 0x80, RESOURCE_UI_FIXED_BLOCK_A_TILES);
+  VramBlock_LoadResourceFar(slot, 128, RESOURCE_UI_FIXED_BLOCK_A_TILES);
 }
 
 #if (LANGUAGE != LANGUAGE_JAPANESE)
@@ -260,6 +268,7 @@ void NameEntry_DrawName(s32 window, u8 *name) {
   ((u8)((c) - TEXT_MARK_VOICED) <= TEXT_MARK_SEMIVOICED - TEXT_MARK_VOICED)
 
 #if LANGUAGE == LANGUAGE_JAPANESE
+/// The Japanese keyboard's second page of letters, which Select turns to.
 extern const u8 gNameEntry_AlternateKeyboardTilemap[];
 
 void Text_DrawString(u8 *text, s32 window, s32 x, s32 y);
@@ -273,6 +282,7 @@ extern const u8 gNameEntry_EndKeyLabel[];
 
 #endif
 
+/// Places a menu cursor and its sprite at (x, y) at once.
 void MenuCursor_SetPositionImmediateFar(void *cursor, s32 x, s32 y);
 #define MenuCursor_SetPositionImmediateFar MenuCursor_SetPositionImmediateFar
 
@@ -377,11 +387,11 @@ s32 NameEntry_EditMemberName(s32 member) {
       if (keyRow == NAME_FINISH_ROW)
         width = 3;
     }
-    Window_SetTilemapFlagRect(keyboardWindow, keyColumn, keyRow, width, 1,
-                              HIGHLIGHT_PALETTE);
+    Window_SetTextTileRect(keyboardWindow, keyColumn, keyRow, width, 1,
+                           HIGHLIGHT_PALETTE);
     wait(1);
-    Window_SetTilemapFlagRect(keyboardWindow, keyColumn, keyRow, width, 1,
-                              WINDOW_PALETTE);
+    Window_SetTextTileRect(keyboardWindow, keyColumn, keyRow, width, 1,
+                           WINDOW_PALETTE);
     if (cursorDirty) {
       cursorDirty = 0;
       MenuCursor_SetFar(keyMotion, ((s16)keyboardWindow->x + keyColumn) * 8 - 7,
@@ -663,11 +673,11 @@ s32 NameEntry_EditMemberName(s32 member) {
       if (keyRow == 5)
         width = NAME_FINISH_WIDTH;
     }
-    Window_SetTilemapFlagRect(keyboardWindow, keyColumn, keyRow, width, 1,
-                              HIGHLIGHT_PALETTE);
+    Window_SetTextTileRect(keyboardWindow, keyColumn, keyRow, width, 1,
+                           HIGHLIGHT_PALETTE);
     wait(1);
-    Window_SetTilemapFlagRect(keyboardWindow, keyColumn, keyRow, width, 1,
-                              WINDOW_PALETTE);
+    Window_SetTextTileRect(keyboardWindow, keyColumn, keyRow, width, 1,
+                           WINDOW_PALETTE);
     if (cursorDirty) {
       cursorDirty = 0;
       MenuCursor_SetFar(keyMotion, ((s16)keyboardWindow->x + keyColumn) * 8 - 7,

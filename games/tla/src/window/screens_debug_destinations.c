@@ -1,6 +1,6 @@
 /// @file
 /// The debug menus' destination row.
-// Part of window.c.
+// Part of screens.c.
 
 #include "window_internal.h"
 #include "gamepak/far_call/field_sequence.h"

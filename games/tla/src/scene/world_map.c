@@ -60,8 +60,10 @@ struct SpriteCacheBits {
   u8 retainCacheEntry : 1; ///< keeps the VRAM cache entry when it is released
 };
 
+/// A FieldSprite read as its sprite attribute 1, whose top two bits are the
+/// sprite size where FieldSprite names them its flips.
 struct WorldMapOam {
-  u8 unk00[6];
+  u8 filler[6]; ///< FieldSprite's unused bytes and attribute 0, not read here
   u16 x : 9;
   u16 affineIndex : 5;
   u16 size : 2;
@@ -125,7 +127,7 @@ enum { AREA_DAILA = 0, AREA_YALLAM = 25, AREA_PROX = 50 };
 
 void Gauge_Update(void);
 
-void WorldMap_SelectExitByZ(s32 a, s32 b, s32 c);
+void WorldMap_SelectExitByZ(s32 slot, s32 exitBefore, s32 exitAfter);
 
 void Actor_SetFlightMode(struct Actor *object, s32 mode);
 
@@ -257,26 +259,33 @@ void Party_RestoreHpPp(s32 value);
   }
 #endif
 
+/// Walking into Iron on the World Map may start his battle
+/// (WORLD_MAP_TRY_ENCOUNTER); so for each Djinni below.
 void WorldMap_MeetIron(void) {
   WORLD_MAP_TRY_ENCOUNTER(DJINN_NO_HOP | ACTOR_IRON, DJINNI_IRON)
 }
 
+/// Walking into Sour may start his battle.
 void WorldMap_MeetSour(void) {
   WORLD_MAP_TRY_ENCOUNTER(DJINN_NO_HOP | ACTOR_SOUR, DJINNI_SOUR)
 }
 
+/// Walking into Chill may start his battle.
 void WorldMap_MeetChill(void) {
   WORLD_MAP_TRY_ENCOUNTER(DJINN_NO_HOP | ACTOR_CHILL, DJINNI_CHILL)
 }
 
+/// Walking into Wheeze may start his battle.
 void WorldMap_MeetWheeze(void) {
   WORLD_MAP_TRY_ENCOUNTER(DJINN_NO_HOP | ACTOR_WHEEZE, DJINNI_WHEEZE)
 }
 
+/// Walking into Petra may start her battle.
 void WorldMap_MeetPetra(void) {
   WORLD_MAP_TRY_ENCOUNTER(DJINN_NO_HOP | ACTOR_PETRA, DJINNI_PETRA)
 }
 
+/// Walking into Core may start his battle.
 void WorldMap_MeetCore(void) {
   WORLD_MAP_TRY_ENCOUNTER(DJINN_NO_HOP | ACTOR_CORE, DJINNI_CORE)
 }
@@ -292,7 +301,7 @@ u32 __umodsi3(u32 a, u32 b);
 #include "shared/tile_sprite_reset.h"
 
 /// The marker blinks and bobs up and down on a circle.
-// As The Broken Seal's WorldMap_CircleEcho.
+/// As The Broken Seal's WorldMap_CircleEcho.
 void WorldMap_CircleEcho(struct BobbingMarker *marker) {
   s16 *angle;
   FIXED y;
@@ -301,9 +310,9 @@ void WorldMap_CircleEcho(struct BobbingMarker *marker) {
   FIXED rise;
 
   if (gFrameCount & 2)
-    Actor_SetSpriteColorMode(marker, 10);
+    Actor_SetSpriteColorMode(marker, SPRITE_COLOR_RED_TINT);
   else
-    Actor_SetSpriteColorMode(marker, 7);
+    Actor_SetSpriteColorMode(marker, SPRITE_COLOR_WHITE);
   if (marker->stopped == 0) {
     angle = &marker->angle;
     marker->x.fixed = toFIXED(10120);
@@ -316,10 +325,12 @@ void WorldMap_CircleEcho(struct BobbingMarker *marker) {
     radius = rise;
     FieldVector_AddPolarOffsetFX(radius, *angle, &marker->x);
     marker->facing = *angle + DEGtoANG(90);
-    *angle += 0x400;
+    *angle += TRIG_TURN / 64;
   }
 }
 
+/// Until the party has Echo or has learnt about Djinn, Echo circles south of
+/// Daila (WorldMap_CircleEcho), at half size.
 s32 WorldMap_SetUpEcho(struct Actor *actor) {
   if (Event_GetFlag(FLAG_DJINNI(DJINNI_ECHO)) != 0) {
     return 0;
@@ -336,6 +347,7 @@ s32 WorldMap_SetUpEcho(struct Actor *actor) {
   return 0;
 }
 
+/// Turns the island's sprite with the World Map's view and shows it.
 s32 WorldMap_SetIslandTile(struct Actor *object) {
   u16 *tile = (u16 *)((u8 *)Ram_HeapSlots->mapGrid + 286);
   struct FieldSprite *sprite = object->sprite;
@@ -345,6 +357,7 @@ s32 WorldMap_SetIslandTile(struct Actor *object) {
   return 1;
 }
 
+/// Shows the tidal wave's sprite.
 s32 WorldMap_SetUpWave(struct Actor *object) {
   Actor_SetSpriteFlags(object, 0);
   return 0;
@@ -423,13 +436,13 @@ const struct ActorPlacement *Scene_GetActorPlacements(void) {
   }
 }
 
-/// The world map's render mode 8 start: with flag 0x147 a blank message is
-/// shown first, the event work's counters are cleared.
+/// The world map's render mode 8 start: with FLAG_SHIP_HOVERING a blank message
+/// is shown first, the event work's counters are cleared.
 void WorldMap_SetUpFlyingShip(void) {
   struct FieldWork *work = Ram_HeapSlots->fieldWork;
 
   gMainRoutineWork.movementMode = LEADER_MOVEMENT_FLYING_SHIP;
-  if (Event_GetFlag(0x147)) {
+  if (Event_GetFlag(FLAG_SHIP_HOVERING)) {
     WorldMap_Freeze();
     MessageArgument_Push(ABILITY_HOVER, MESSAGE_ARGUMENT_ABILITY);
     // "Hover"
@@ -438,11 +451,11 @@ void WorldMap_SetUpFlyingShip(void) {
   if (Actor_Get(FieldParty_GetLeaderActor()) != NULL)
     Actor_StartRenderModeScript();
   Leader_Search();
-  if (Event_GetFlag(0x147))
+  if (Event_GetFlag(FLAG_SHIP_HOVERING))
     work->climbing = 0;
   else
     work->climbing = 1;
-  if (Event_GetFlag(0x147)) {
+  if (Event_GetFlag(FLAG_SHIP_HOVERING)) {
     Message_CloseFinishedWindows();
     WorldMap_ReloadPendingAreaGraphics();
   }
@@ -467,14 +480,9 @@ void WorldMap_SetUpShip(void) {
   Actor_SetSpriteFlags(Actor_Get(ACTOR_SHIP), 0);
   count = Party_CountMembers();
   pp = 0;
-  i = 0;
-  if (pp < count) {
-  loop:
+  for (i = 0; i < count; i++) {
     // One member's PP.
     pp += Unit_Get(gMainRoutineWork.party[i])->pp;
-    i++;
-    if (i < count)
-      goto loop;
   }
   if (pp == 0)
     Unit_AddPp(gMainRoutineWork.leaderActorId, 1);
@@ -649,6 +657,8 @@ static __inline__ void Actor_JoinLeader(s32 actor) {
   Actor_SetPosition(actor, 0, 0);
 }
 
+/// Once Jupiter Lighthouse is lit and before the parties meet at Contigo,
+/// Jenna stops Felix leaving by any other exit: they must go to Contigo.
 void WorldMap_RefuseToRunAway(void) {
   struct Actor *object;
   s32 x;
@@ -665,7 +675,7 @@ void WorldMap_RefuseToRunAway(void) {
     z >>= 20;
     Event_Start();
     FieldEvent_ResolvePendingActions(0);
-    if (Event_GetFlag(0x9b3)) {
+    if (Event_GetFlag(FLAG_JENNA_POINTED_TO_CONTIGO)) {
       FieldEffect_ScheduleRatioTransition(FIXED_ONE * 7 / 5, 6);
       Actor_MoveToObject(ACTOR_JENNA, gMainRoutineWork.leaderActorId);
       System_Wait(1);
@@ -718,7 +728,7 @@ void WorldMap_RefuseToRunAway(void) {
       Actor_JoinLeader(ACTOR_JENNA);
       System_Wait(1);
       Actor_WalkToAndWait(gMainRoutineWork.leaderActorId, 7312, 8192);
-      Event_SetFlag(0x9b3);
+      Event_SetFlag(FLAG_JENNA_POINTED_TO_CONTIGO);
       FieldEffect_ScheduleRatioTransition(FIXED_ONE, 6);
     }
     System_Wait(8);
@@ -736,6 +746,8 @@ void WorldMap_RefuseToRunAway(void) {
 /// The actor slot the pond's coins take when they show (WorldMap_GazeIntoPond).
 enum { ACTOR_POND_COINS = 79 };
 
+/// Searching the pond: one time in sixteen there are coins in the shallows,
+/// one in sixteen the boat rocks, and otherwise one of the pond's lines.
 void WorldMap_GazeIntoPond(void) {
   u32 roll = (Random16() << 4) >> 16;
 
@@ -761,7 +773,8 @@ void WorldMap_GazeIntoPond(void) {
     actor = Actor_Get(ACTOR_POND_COINS);
     x = position[0];
     if (actor == NULL) {
-      actor = FieldActor_Create(0x1e9, x, position[1], position[2]);
+      actor =
+          FieldActor_Create(SPRITE_UNSEEN_MARKER, x, position[1], position[2]);
       if (actor == NULL)
         return;
       work->actors[slot] = actor;
@@ -778,7 +791,7 @@ void WorldMap_GazeIntoPond(void) {
     } while (0);
   } else if (roll == 1) {
     MapGrid_SetShake(3, 5, 1);
-    MapGrid_SetShakeFX((s32)(-1), (s32)(-1), (s32)(0xe666));
+    MapGrid_SetShake(SHAKE_KEEP, SHAKE_KEEP, 0.9);
     FieldEvent_Wait(30);
     // "The boat's rocking! This thing's dangerous! I almost fell out!"
     Message_ShowCentered((s32)MsgTheBoatS, 1);
@@ -788,36 +801,52 @@ void WorldMap_GazeIntoPond(void) {
   Event_End();
 }
 
+/// Searching the Golden Boots picks them up.
 void WorldMap_PickUpGoldenBoots(void) {
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
   if (Value3((s32 (*)())Event_PickUpItem, ACTOR_GOLDEN_BOOTS, ITEM_GOLDEN_BOOTS,
              -1) == 0)
-    Event_ClearFlag(0xa77);
+    Event_ClearFlag(FLAG_GOLDEN_BOOTS_ON_MAP);
   Event_End();
 }
 
+/// Places the Golden Boots on the map as an item icon
+/// (FLAG_GOLDEN_BOOTS_ON_MAP).
 void WorldMap_ShowGoldenBoots(void) {
   struct Actor *object;
-  u8 *animation;
+  struct FieldSprite *sprite;
   s32 a, id;
 
   FieldActor_ShowItemIconById(ACTOR_GOLDEN_BOOTS, ITEM_GOLDEN_BOOTS);
   object = Actor_Get(ACTOR_GOLDEN_BOOTS);
-  animation = object->sprite;
-  animation[17] |= 1;
+  sprite = object->sprite;
+  ((struct SpriteCacheBits *)&sprite->cacheBits)->retainCacheEntry = 1;
   Actor_SetSpriteFlags(Actor_Get(ACTOR_GOLDEN_BOOTS), 0);
   a = FACING_SOUTH;
   id = ACTOR_GOLDEN_BOOTS;
   Actor_SetPositionAndFacing(id, toFIXED(10168), toFIXED(9648), a);
-  Event_SetFlag(0xa77);
+  Event_SetFlag(FLAG_GOLDEN_BOOTS_ON_MAP);
 }
 
-void WorldMap_EnterProx(s32 id) { WorldMap_SelectExitByZ(id, 63, 62); }
+/// Prox's way in, chosen by the leader's approach from the north or south;
+/// so for Yallam and Daila below.
+void WorldMap_EnterProx(s32 id) {
+  WorldMap_SelectExitByZ(id, WORLD_MAP_TO_PROX_MOLD,
+                         WORLD_MAP_TO_PROX_SOUTH_GATE);
+}
 
-void WorldMap_EnterYallam(s32 id) { WorldMap_SelectExitByZ(id, 34, 33); }
+/// Yallam's way in, chosen by the leader's approach.
+void WorldMap_EnterYallam(s32 id) {
+  WorldMap_SelectExitByZ(id, WORLD_MAP_TO_YALLAM_SOUTH_B,
+                         WORLD_MAP_TO_YALLAM_SOUTH_A);
+}
 
-void WorldMap_EnterDaila(s32 id) { WorldMap_SelectExitByZ(id, 3, 2); }
+/// Daila's way in, chosen by the leader's approach.
+void WorldMap_EnterDaila(s32 id) {
+  WorldMap_SelectExitByZ(id, WORLD_MAP_TO_DAILA_NORTH,
+                         WORLD_MAP_TO_DAILA_SOUTH);
+}
 
 const struct Trigger *Scene_GetTriggers(void) { return gSceneEvents; }
 
@@ -853,17 +882,17 @@ s32 Scene_Initialize(void) {
     Field_SetWorldMapWindowCellTile(0, 224, 208, 256);
     Field_SetWorldMapWindowCellTile(16, 224, 224, 256);
   }
-  if (GameFlag_Get(0xa77))
+  if (GameFlag_Get(FLAG_GOLDEN_BOOTS_ON_MAP))
     WorldMap_ShowGoldenBoots();
   switch (gMainRoutineWork.entrance) {
   case WORLD_MAP_AT_GAIA_ROCK:
     if (GameFlag_Get(FLAG_SERPENT_SLAIN))
-      GameFlag_Set(0x9ab);
+      GameFlag_Set(FLAG_SUSA_REJOICES);
     break;
   case WORLD_MAP_AT_MADRA:
   case WORLD_MAP_BANDIT_BEATEN:
   case WORLD_MAP_BANDIT_LOST:
-    if (GameFlag_Get(0xa76))
+    if (GameFlag_Get(FLAG_BANDIT_ON_WORLD_MAP))
       WorldMap_FightBanditAndThieves(gMainRoutineWork.entrance);
     break;
   case WORLD_MAP_IDEJIMA_DRIFTING:
@@ -873,7 +902,8 @@ s32 Scene_Initialize(void) {
     WorldMap_CarryPartyToAquaRock();
     break;
   case WORLD_MAP_AT_LOHO:
-    if (!Event_GetFlag(FLAG_SHIP_CARRIES_CANNON) && GameFlag_Get(0xa5f) != 0) {
+    if (!Event_GetFlag(FLAG_SHIP_CARRIES_CANNON) &&
+        GameFlag_Get(FLAG_LOHO_CANNON_FIRED) != 0) {
       GameFlag_Set(FLAG_SHIP_CARRIES_CANNON);
       WorldMap_DeliverLohoCannon();
     }
@@ -904,7 +934,7 @@ s32 Scene_Initialize(void) {
     break;
   case WORLD_MAP_JUPITER_BEACON:
     WorldMap_PlayLighthouseTransition(2);
-    FieldActor_SetSpriteColor(Actor_GetById(ACTOR_PIERS), 15);
+    FieldActor_SetSpriteColor(Actor_GetById(ACTOR_PIERS), SPRITE_COLOR_HIDDEN);
     Actor_SetPosition(ACTOR_PIERS, 7277, 7300);
     wait(1);
     FieldEvent_SetMessageId((s32)MsgIVeHeard);
@@ -940,6 +970,8 @@ s32 Scene_PrepareMap(void) { return 0; }
 /// The djinn tutorial. With flag 0x175 set each message is offset by
 /// MsgDjinnGiveTutorialB less A.
 // As The Broken Seal's WorldMap_ShowDjinnTutorial.
+/// Echo shows how to give Djinn to another party member, then opens the Djinn
+/// menu.
 void WorldMap_ExplainGivingDjinn(void) {
   WorldMap_ReloadPendingAreaGraphics();
   FieldEffect_ScheduleRatioTransition(FIXED_ONE, 6);
@@ -1092,7 +1124,7 @@ void WorldMap_FightBanditAndThieves(s32 entrance) {
     FieldCamera_MoveTo(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0);
     Field_RequestBattleFromEncounterTable(102, 3);
   } else if (entrance == WORLD_MAP_BANDIT_LOST) {
-    Event_ClearFlag(0xa76);
+    Event_ClearFlag(FLAG_BANDIT_ON_WORLD_MAP);
     facingSouth = FACING_SOUTH;
     Actor_SetPositionAndFacing(ACTOR_BANDIT, toFIXED(10168), toFIXED(9616),
                                facingSouth);
@@ -1101,10 +1133,10 @@ void WorldMap_FightBanditAndThieves(s32 entrance) {
     Actor_SetPositionAndFacing(ACTOR_THIEF_B, toFIXED(10184), toFIXED(9616),
                                facingSouth);
     {
-      s32 a3 = 0xe000;
+      s32 facingNortheast = FACING_NORTHEAST;
 
       Actor_SetPositionAndFacing(ACTOR_KRADEN, toFIXED(10152), toFIXED(9664),
-                                 a3);
+                                 facingNortheast);
     }
     Actor_SetPositionAndFacing(ACTOR_FELIX, toFIXED(10168), toFIXED(9648),
                                FACING_NORTHWEST);
@@ -1157,7 +1189,7 @@ void WorldMap_FightBanditAndThieves(s32 entrance) {
                          (s16)gMainRoutineWork.restartEntrance);
     gFieldWork->transition = 0;
   } else {
-    Event_ClearFlag(0xa76);
+    Event_ClearFlag(FLAG_BANDIT_ON_WORLD_MAP);
     southB = FACING_SOUTH;
     Actor_SetPositionAndFacing(ACTOR_BANDIT, toFIXED(10168), toFIXED(9632),
                                southB);
@@ -1230,7 +1262,7 @@ void WorldMap_FightBanditAndThieves(s32 entrance) {
     Actor_FaceDirectionAndWait(ACTOR_BANDIT, southB);
     Event_Wait(20);
     // "Are you guys, like, wandering sheriffs or something?"
-    Event_OpenMessage(20, 0);
+    Event_OpenMessage(ACTOR_BANDIT, 0);
     if (FieldEvent_AskYesNoWithActorAnimation(ACTOR_FELIX, 0) == 0) {
       Actor_ShowEmote(ACTOR_BANDIT, EMOTE_IN_FRONT | EMOTE_SWEAT_DROP, 30);
       // "Because we could be really useful to you if you are. We know all..."
@@ -1308,8 +1340,8 @@ void WorldMap_FightBanditAndThieves(s32 entrance) {
       struct Actor *object = Actor_Get(ACTOR_FELIX);
 
       if (object != NULL)
-        Actor_SetDestination(ACTOR_KRADEN, *(s16 *)((u8 *)object + 10),
-                             *(s16 *)((u8 *)object + 18));
+        Actor_SetDestination(ACTOR_KRADEN, object->x.part[0].integer,
+                             object->z.part[0].integer);
     }
     Actor_WaitForMoveById(ACTOR_KRADEN);
     Actor_SetPosition(ACTOR_KRADEN, 0, 0);
@@ -1323,6 +1355,7 @@ extern u32 gWorldMap_LohoWorkerLeaveScriptA[];
 extern u32 gWorldMap_LohoWorkerLeaveScriptB[];
 extern u32 gWorldMap_LohoWorkerLeaveScriptC[];
 
+/// Loho's men carry the cannon aboard the ship and go home.
 void WorldMap_DeliverLohoCannon(void) {
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
@@ -1504,7 +1537,7 @@ void WorldMap_MeetEcho(void) {
     djinni->motionFlags = 0;
     FieldActor_SetMoveTargetFX(djinni, x, toFIXED(16), z);
     while (i >= 0) {
-      *(u16 *)&djinni->facing += 0x1000;
+      djinni->facing += TRIG_TURN / 16;
       wait(1);
       i--;
     }
@@ -1515,7 +1548,7 @@ void WorldMap_MeetEcho(void) {
     djinni->groundHeight = 0;
     i = 7;
     while (i >= 0) {
-      *(u16 *)&djinni->facing += 0x1000;
+      djinni->facing += TRIG_TURN / 16;
       wait(1);
       i--;
     }
@@ -1649,7 +1682,8 @@ void WorldMap_SpawnCollapseDust(void) {
 
   x = (Random_Below(40)) << 16;
   z = (Random_Below(30)) << 16;
-  obj = (FieldActor_Create(285, x + toFIXED(1976), 0, z + toFIXED(7260)));
+  obj = (FieldActor_Create(SPRITE_DUST_CLOUD, x + toFIXED(1976), 0,
+                           z + toFIXED(7260)));
   if (obj != NULL) {
     sprite = obj->sprite;
     scale = ((Random16() << 15) >> 16) + 0x13333;
@@ -1664,27 +1698,32 @@ void WorldMap_SpawnCollapseDust(void) {
   }
 }
 
+/// Places an actor at whole pixels.
 static __inline__ void PosSet(s32 id, s32 x, s32 z) {
   Actor_SetPosition(id, x, z);
 }
 
+/// Moves the actor by whole pixels.
 void WorldMap_ShiftActor(s32 id, s32 dx, s32 dz) {
   struct Actor *object = Actor_Get(id);
 
   if (object != NULL)
-    PosSet(id, *(s16 *)((u8 *)object + 10) + dx,
-           *(s16 *)((u8 *)object + 18) + dz);
+    PosSet(id, object->x.part[0].integer + dx, object->z.part[0].integer + dz);
 }
 
-void WorldMap_SplitIdejima(s32 a, s32 b, s32 dx, s32 dz) {
-  FieldWorldMap_SetWindowCellTileAndDraw(a, b, 48, 224);
+/// Breaks a piece of Idejima's tiles away and moves the party on it with
+/// the piece.
+void WorldMap_SplitIdejima(s32 x, s32 z, s32 dx, s32 dz) {
+  FieldWorldMap_SetWindowCellTileAndDraw(x, z, 48, 224);
   WorldMap_ShiftActor(ACTOR_JENNA, dx, dz);
   WorldMap_ShiftActor(ACTOR_IDEJIMA_KRADEN, dx, dz);
   WorldMap_ShiftActor(ACTOR_ALEX, dx, dz);
   WorldMap_ShiftActor(ACTOR_IDEJIMA, dx, dz);
-  FieldWorldMap_SetWindowCellTileAndDraw(a + 16, b, 64, 224);
+  FieldWorldMap_SetWindowCellTileAndDraw(x + 16, z, 64, 224);
 }
 
+/// Venus Lighthouse is lit and falls; the earthquake breaks Idejima away with
+/// Jenna, Kraden and Alex on it.
 void WorldMap_WatchVenusLighthouseCollapse(void) {
   WorldMap_PlayLighthouseTransition(1);
   FieldEvent_SetMessageId((s32)MsgTheyVeDone);
@@ -1763,6 +1802,7 @@ void WorldMap_WatchVenusLighthouseCollapse(void) {
 
 extern s32 gWorldMap_IdejimaWakeScript[];
 
+/// Every sixteenth frame, a puff of spray behind the drifting Idejima.
 void WorldMap_SpawnIdejimaWake(void) {
   struct Actor *leader;
   struct Actor *obj;
@@ -1772,8 +1812,8 @@ void WorldMap_SpawnIdejimaWake(void) {
   if ((gFrameCount & 15) != 0)
     return;
   leader = Actor_Get(ACTOR_DRIFTING_IDEJIMA);
-  obj = FieldActor_Create(285, leader->x.fixed - toFIXED(32), leader->y.fixed,
-                          leader->z.fixed - toFIXED(16));
+  obj = FieldActor_Create(SPRITE_DUST_CLOUD, leader->x.fixed - toFIXED(32),
+                          leader->y.fixed, leader->z.fixed - toFIXED(16));
   if (obj == NULL)
     return;
   obj->scaleX = FIXED_ONE / 2;
@@ -1801,6 +1841,7 @@ void WorldMap_SpawnIdejimaWake(void) {
 
 extern u32 gWorldMap_IdejimaDriftScript[];
 
+/// The camera follows Idejima as it drifts away north.
 void WorldMap_ShowIdejimaDrifting(void) {
   struct Actor *actor;
 
@@ -1813,7 +1854,8 @@ void WorldMap_ShowIdejimaDrifting(void) {
   actor->scaleY = FIXED_ONE * 12 / 10;
   EventCamera_FollowActor(ACTOR_DRIFTING_IDEJIMA, 1);
   System_Wait(1);
-  FieldActor_SetSpriteColor(Actor_Get(gMainRoutineWork.leaderActorId), 15);
+  FieldActor_SetSpriteColor(Actor_Get(gMainRoutineWork.leaderActorId),
+                            SPRITE_COLOR_HIDDEN);
   Actor_SetSpriteFlags(Actor_Get(gMainRoutineWork.leaderActorId), 0);
   Actor_SetSpriteFlags(Actor_Get(ACTOR_DRIFTING_IDEJIMA), 0);
   Actor_SetSpeed(ACTOR_DRIFTING_IDEJIMA, 0.4);
@@ -1828,12 +1870,13 @@ void WorldMap_ShowIdejimaDrifting(void) {
   FieldEffect_ScheduleRatioTransition(FIXED_ONE * 7 / 5, 300);
   FieldEvent_Wait(270);
   gFieldWork->transitionFrames = 16;
-  *(u16 *)BG_PLTT = RGB_WHITE;
+  BG_PLTT_COLOR(0, 0) = RGB_WHITE;
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();
   FieldEvent_SetExitRequest(WORLD_MAP_EXIT_IDEJIMA_AFTER_DRIFT);
 }
 
+/// Idejima drifts north; a tidal wave rises behind it and carries it away.
 void WorldMap_DriftNorthOfContinent(void) {
   struct Actor *boat = Actor_Get(ACTOR_IDEJIMA);
   struct RescueMap *map = (struct RescueMap *)Ram_HeapSlots->mapGrid;
@@ -1847,7 +1890,8 @@ void WorldMap_DriftNorthOfContinent(void) {
   boat->scaleY = FIXED_ONE * 12 / 10;
   FieldCamera_MoveTo(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0);
   System_Wait(1);
-  FieldActor_SetSpriteColor(Actor_Get(gMainRoutineWork.leaderActorId), 15);
+  FieldActor_SetSpriteColor(Actor_Get(gMainRoutineWork.leaderActorId),
+                            SPRITE_COLOR_HIDDEN);
   Actor_SetSpriteFlags(Actor_Get(gMainRoutineWork.leaderActorId), 0);
   Actor_SetSpriteFlags(Actor_Get(ACTOR_IDEJIMA), 0);
   Actor_SetSpeed(ACTOR_IDEJIMA, 0.4);
@@ -1967,6 +2011,7 @@ void WorldMap_PanToAlhafraManor(void) {
   Event_SetDestination(SCENE_ALHAFRA_MANOR, 80);
 }
 
+/// The first voyage: the party takes the ship's tiller and learns to sail.
 void WorldMap_TakeTheTiller(void) {
   s32 scale;
   s32 seen = Event_GetFlag(FLAG_SHIP_SAILABLE);
@@ -2067,6 +2112,7 @@ void WorldMap_TakeTheTiller(void) {
   }
 }
 
+/// The ship sails to its berth and the party goes down to the deck.
 void WorldMap_SailToShipDeck(void) {
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
@@ -2078,7 +2124,7 @@ void WorldMap_SailToShipDeck(void) {
   FieldEvent_SetExitRequest(WORLD_MAP_EXIT_SHIP_TILLER);
 }
 
-/// The ship's first flight once it has wings (flag 0xa78).
+/// The ship's first flight once it has wings (FLAG_SHIP_HAS_FLOWN).
 void WorldMap_TakeOff(void) {
   s32 x, z, i;
 
@@ -2086,7 +2132,7 @@ void WorldMap_TakeOff(void) {
     return;
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
-  Event_SetFlag(0xa78);
+  Event_SetFlag(FLAG_SHIP_HAS_FLOWN);
   Actor_MoveToAndWait(ACTOR_SHIP, 7158, 8532);
   WorldMap_SetUpShip();
   x = Actor_Get(ACTOR_SHIP)->x.fixed / toFIXED(1);
@@ -2204,22 +2250,18 @@ void WorldMap_TakeOff(void) {
   Event_ShowMessage(ACTOR_KRADEN, 0);
   Scene_PlayMusic();
   WorldMap_ReloadPendingAreaGraphics();
-  i = 0;
-  {
-  restore:
+  for (i = 0; i <= 7; i++) {
     if (gWorldMap_HiddenMembers[i] >= 0) {
       Actor_SetSpriteFlags(Actor_Get(gWorldMap_HiddenMembers[i]), 1);
       Actor_Get(gWorldMap_HiddenMembers[i])->scaleX = FIXED_ONE;
       Actor_SetPosition(gWorldMap_HiddenMembers[i], 0, 0);
     }
-    i++;
-    if (i <= 7)
-      goto restore;
   }
   Actor_SetPosition(ACTOR_KRADEN, 0, 0);
   Event_End();
 }
 
+/// A sparkle of the trail flickers through the colour modes at random.
 s32 WorldMap_TwinkleTrail(struct Actor *object) {
   if (Random16() < 0x4000)
     Actor_SetSpriteColorMode(object, Random_Below(8));
@@ -2228,12 +2270,13 @@ s32 WorldMap_TwinkleTrail(struct Actor *object) {
 
 extern s32 gWorldMap_AquaRockTrailScript[];
 
+/// Every eighth frame, a sparkle in the party's trail to Aqua Rock.
 void WorldMap_SpawnAquaRockTrail(struct Actor *parent) {
   if ((gFrameCount & 7) == 0) {
     FIXED x = parent->x.fixed;
     FIXED y = parent->y.fixed;
     FIXED z = parent->z.fixed;
-    struct Actor *object = (FieldActor_Create(673, x, y, z));
+    struct Actor *object = (FieldActor_Create(SPRITE_SPARKLE, x, y, z));
 
     if (object != NULL) {
       Actor_StartScript(object, gWorldMap_AquaRockTrailScript);
@@ -2246,10 +2289,13 @@ void WorldMap_SpawnAquaRockTrail(struct Actor *parent) {
   }
 }
 
+/// The party, hidden in a trail of sparkles, is carried across the sea to
+/// Aqua Rock.
 void WorldMap_CarryPartyToAquaRock(void) {
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
-  FieldActor_SetSpriteColor(Actor_Get(gMainRoutineWork.leaderActorId), 15);
+  FieldActor_SetSpriteColor(Actor_Get(gMainRoutineWork.leaderActorId),
+                            SPRITE_COLOR_HIDDEN);
   Actor_SetSpriteFlags(Actor_Get(gMainRoutineWork.leaderActorId), 0);
   Actor_Get(gMainRoutineWork.leaderActorId)->update =
       WorldMap_SpawnAquaRockTrail;
@@ -2276,6 +2322,7 @@ void WorldMap_CarryPartyToAquaRock(void) {
   FieldEvent_SetExitRequest(WORLD_MAP_EXIT_AQUA_ROCK);
 }
 
+/// Turns a placed actor's sprite with the World Map's view and shows it.
 s32 WorldMap_SetPlacedActorTile(struct Actor *object) {
   u16 *tile = (u16 *)((u8 *)Ram_HeapSlots->mapGrid + 286);
   struct FieldSprite *sprite = object->sprite;
@@ -2290,9 +2337,9 @@ s32 WorldMap_SetPlacedActorTile(struct Actor *object) {
 /// The ship's flicker and its sparks while it powers up (flight mode 1).
 void WorldMap_FlashPoweringUp(struct Actor *object) {
   if ((gFrameCount & 2) != 0) {
-    Actor_SetSpriteColorMode(object, 7);
+    Actor_SetSpriteColorMode(object, SPRITE_COLOR_WHITE);
   } else {
-    Actor_SetSpriteColorMode(object, 0);
+    Actor_SetSpriteColorMode(object, SPRITE_COLOR_NORMAL);
   }
   if ((gFrameCount & 15) == 0) {
     WorldMap_SpawnSparkPair(object);
@@ -2319,7 +2366,7 @@ void WorldMap_GlowInFlight(struct Actor *object) {
 void Actor_SetFlightMode(struct Actor *object, s32 mode) {
   if (mode == 0) {
     object->update = 0;
-    Actor_SetSpriteColorMode(object, 0);
+    Actor_SetSpriteColorMode(object, SPRITE_COLOR_NORMAL);
     Event_PlaySound(SOUND_FADE_OUT_ACTION_SE);
   } else if (mode == 1) {
     object->update = (void (*)(void))WorldMap_FlashPoweringUp;
@@ -2331,6 +2378,7 @@ void Actor_SetFlightMode(struct Actor *object, s32 mode) {
 
 #include "shared/leader_search.h"
 
+/// Brings the leader's ship down out of flight.
 void WorldMap_EndFlight(void) {
   Actor_SetFlightMode(Actor_GetById(Party_GetLeaderActor()), 0);
 }
@@ -2361,6 +2409,9 @@ static inline void CameraMove(FIXED x, FIXED y, FIXED z, s32 mode) {
       (u32)(buffer + PICTURES_FIRST_FRAME + (frame) * PICTURES_FRAME_STRIDE),  \
       DMA_COPY_WORDS(PICTURE_FRAME_SIZE / 4))
 
+/// The view of a lighthouse lit, seen from the World Map: mode 1 for Venus
+/// Lighthouse, 2 for Jupiter's beacon, which also rumbles and shakes the
+/// ground.
 void WorldMap_PlayLighthouseTransition(s32 mode) {
   u8 *buffer;
 
@@ -2460,6 +2511,8 @@ void WorldMap_PlayLighthouseTransition(s32 mode) {
   Event_SetFlag(FLAG_SKIP_SCENE_CHANGE_SOUND);
 }
 
+/// Loads the tidal wave's tiles, pictures and palette and sets its
+/// background up.
 void WorldMap_LoadTidalWave(void) {
   u8 *buffer = Heap_AllocEwram(0x4000);
   u8 *frames;
@@ -2478,12 +2531,14 @@ void WorldMap_LoadTidalWave(void) {
                       DMA_COPY_WORDS(PICTURE_FIRST_TILE * TILE_SIZE_4BPP / 4));
   IO_WRITE_QUEUE_PUSH(PICTURE_TILES, (u32)frames,
                       DMA_COPY_WORDS(256 * TILE_SIZE_4BPP / 4));
-  Scene_QueueIoWrite16((u32)&REG_BLDCNT, 0x3f41);
+  Scene_QueueIoWrite16((u32)&REG_BLDCNT,
+                       BLDCNT_TGT1_BG0 | BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_ALL);
   Scene_QueueIoWrite16((u32)&REG_BLDALPHA,
                        BLEND_ALPHA(BLEND_WEIGHT_MAX, BLEND_WEIGHT_MAX));
   gBgScroll[0].x = 0;
   gBgScroll[0].y = 352;
-  IO_WRITE_QUEUE_PUSH((u32)&REG_BG0CNT, 0xc200, 0x20000);
+  IO_WRITE_QUEUE_PUSH((u32)&REG_BG0CNT, BGCNT_SIZE(3) | BGCNT_SCREEN_BASE(2),
+                      IO_WRITE_HALFWORD);
   y = 0x2d60;
   x = 561;
   for (i = 95; i >= 0; i--) {
@@ -2521,11 +2576,12 @@ void WorldMap_LoadTidalWave(void) {
   gBgScroll[0].y = 0;
 }
 
+/// The actor flashes white, with a pair of sparks every sixteenth frame.
 void WorldMap_FlashWithSparks(struct Actor *object) {
   if ((gFrameCount & 2) != 0) {
-    Actor_SetSpriteColorMode(object, 7);
+    Actor_SetSpriteColorMode(object, SPRITE_COLOR_WHITE);
   } else {
-    Actor_SetSpriteColorMode(object, 0);
+    Actor_SetSpriteColorMode(object, SPRITE_COLOR_NORMAL);
   }
   if ((gFrameCount & 15) == 0) {
     WorldMap_SpawnTwinSparks(object);
@@ -2548,6 +2604,7 @@ void Actor_AnimateAndEmit(struct Actor *object) {
 
 #include "shared/actor_grow_down.h"
 
+/// Two golden rings rise from the actor and grow away.
 void WorldMap_SpawnTwinSparks(struct Actor *parent) {
   struct Actor *pair[2];
   struct Actor *child;
@@ -3079,21 +3136,22 @@ LATE_DATA struct ActorPlacement gWorldMapActorPlacements[] = {
                     0, FACING_SOUTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(SPRITE_LOHO_WORKER, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
                     0, 0, 0, FACING_NORTHWEST, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(154, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0, 0,
-                    FACING_EAST, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_OLD_MAN_IN_PURPLE_ROBE, CONDITION_ALWAYS,
+                    MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_EAST, TALK_FACING_KEEP,
+                    0),
     ACTOR_PLACEMENT(SPRITE_LOHO_WORKER, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
                     0, 0, 0, FACING_WEST, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(489, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0, 0,
-                    FACING_NORTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(SPRITE_MAN_WITH_LONG_DARK_HAIR, IF_FLAG_SET(0xa76),
-                    MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_NORTH,
-                    TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(SPRITE_PERSON_IN_PURPLE, IF_FLAG_SET(0xa76),
-                    MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_NORTH,
-                    TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(SPRITE_PERSON_IN_PURPLE, IF_FLAG_SET(0xa76),
-                    MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_NORTH,
-                    TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_UNSEEN_MARKER, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
+                    0, 0, 0, FACING_NORTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_MAN_WITH_LONG_DARK_HAIR,
+                    IF_FLAG_SET(FLAG_BANDIT_ON_WORLD_MAP), MOVEMENT_TYPE_STAND,
+                    0, 0, 0, FACING_NORTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_PERSON_IN_PURPLE,
+                    IF_FLAG_SET(FLAG_BANDIT_ON_WORLD_MAP), MOVEMENT_TYPE_STAND,
+                    0, 0, 0, FACING_NORTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_PERSON_IN_PURPLE,
+                    IF_FLAG_SET(FLAG_BANDIT_ON_WORLD_MAP), MOVEMENT_TYPE_STAND,
+                    0, 0, 0, FACING_NORTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(SPRITE_KRADEN, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0,
                     0, FACING_SOUTH, TALK_FACING_KEEP, 0),
     {SCENE_TABLE_END},
@@ -3104,8 +3162,8 @@ LATE_DATA struct ActorPlacement gWorldMap_CollapsePlacements[] = {
                     0, 7488, FACING_NORTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(SPRITE_JENNA, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 1936,
                     0, 7472, FACING_NORTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(57, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 1904, 0, 7488,
-                    FACING_NORTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_ALEX, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 1904, 0,
+                    7488, FACING_NORTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(SPRITE_BLANK, CONDITION_ALWAYS,
                     (s32)gWorldMap_TileSpriteScript, 1946, 0, 7557, FACING_EAST,
                     TALK_FACING_KEEP, 0),
@@ -3127,29 +3185,37 @@ LATE_DATA struct ActorPlacement gWorldMap_DriftPlacements[] = {
                     0, 7500, FACING_EAST, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(SPRITE_JENNA, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 10000,
                     0, 7500, FACING_EAST, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(57, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 10000, 0, 8000,
-                    FACING_EAST, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_ALEX, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 10000,
+                    0, 8000, FACING_EAST, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(SPRITE_SHEBA, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 11000,
                     0, 8000, FACING_EAST, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(SPRITE_WORLD_MAP_ISLAND, CONDITION_ALWAYS,
                     (s32)gWorldMap_IslandScript, 10207, 0, 7900, FACING_SOUTH,
                     TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(277, CONDITION_ALWAYS, (s32)gWorldMap_TidalWaveScript,
-                    10524, 0, 7450, FACING_SOUTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(277, CONDITION_ALWAYS, (s32)gWorldMap_TidalWaveScript,
-                    10532, 0, 7480, FACING_SOUTH, TALK_FACING_KEEP, 1),
-    ACTOR_PLACEMENT(277, CONDITION_ALWAYS, (s32)gWorldMap_TidalWaveScript,
-                    10540, 0, 7510, FACING_SOUTH, TALK_FACING_KEEP, 1),
-    ACTOR_PLACEMENT(277, CONDITION_ALWAYS, (s32)gWorldMap_TidalWaveScript,
-                    10548, 0, 7540, FACING_SOUTH, TALK_FACING_KEEP, 1),
-    ACTOR_PLACEMENT(277, CONDITION_ALWAYS, (s32)gWorldMap_TidalWaveScript,
-                    10556, 0, 7570, FACING_SOUTH, TALK_FACING_KEEP, 1),
-    ACTOR_PLACEMENT(277, CONDITION_ALWAYS, (s32)gWorldMap_TidalWaveScript,
-                    10564, 0, 7600, FACING_SOUTH, TALK_FACING_KEEP, 1),
-    ACTOR_PLACEMENT(277, CONDITION_ALWAYS, (s32)gWorldMap_TidalWaveScript,
-                    10572, 0, 7630, FACING_SOUTH, TALK_FACING_KEEP, 1),
-    ACTOR_PLACEMENT(277, CONDITION_ALWAYS, (s32)gWorldMap_TidalWaveScript,
-                    10580, 0, 7660, FACING_SOUTH, TALK_FACING_KEEP, 1),
+    ACTOR_PLACEMENT(SPRITE_WATER_SPRAY, CONDITION_ALWAYS,
+                    (s32)gWorldMap_TidalWaveScript, 10524, 0, 7450,
+                    FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_WATER_SPRAY, CONDITION_ALWAYS,
+                    (s32)gWorldMap_TidalWaveScript, 10532, 0, 7480,
+                    FACING_SOUTH, TALK_FACING_KEEP, 1),
+    ACTOR_PLACEMENT(SPRITE_WATER_SPRAY, CONDITION_ALWAYS,
+                    (s32)gWorldMap_TidalWaveScript, 10540, 0, 7510,
+                    FACING_SOUTH, TALK_FACING_KEEP, 1),
+    ACTOR_PLACEMENT(SPRITE_WATER_SPRAY, CONDITION_ALWAYS,
+                    (s32)gWorldMap_TidalWaveScript, 10548, 0, 7540,
+                    FACING_SOUTH, TALK_FACING_KEEP, 1),
+    ACTOR_PLACEMENT(SPRITE_WATER_SPRAY, CONDITION_ALWAYS,
+                    (s32)gWorldMap_TidalWaveScript, 10556, 0, 7570,
+                    FACING_SOUTH, TALK_FACING_KEEP, 1),
+    ACTOR_PLACEMENT(SPRITE_WATER_SPRAY, CONDITION_ALWAYS,
+                    (s32)gWorldMap_TidalWaveScript, 10564, 0, 7600,
+                    FACING_SOUTH, TALK_FACING_KEEP, 1),
+    ACTOR_PLACEMENT(SPRITE_WATER_SPRAY, CONDITION_ALWAYS,
+                    (s32)gWorldMap_TidalWaveScript, 10572, 0, 7630,
+                    FACING_SOUTH, TALK_FACING_KEEP, 1),
+    ACTOR_PLACEMENT(SPRITE_WATER_SPRAY, CONDITION_ALWAYS,
+                    (s32)gWorldMap_TidalWaveScript, 10580, 0, 7660,
+                    FACING_SOUTH, TALK_FACING_KEEP, 1),
     ACTOR_PLACEMENT(SPRITE_BLANK, CONDITION_ALWAYS,
                     (s32)gWorldMap_TileSpriteScript, 3515, 0, 7621, FACING_EAST,
                     TALK_FACING_KEEP, 0),
@@ -3267,7 +3333,7 @@ LATE_DATA struct Trigger gSceneEvents[] = {
     {TRIGGER_EXIT, 45, CONDITION_ALWAYS, 45},
     {TRIGGER_STEP, 52, CONDITION_ALWAYS, EVENT(WorldMap_GoAboard)},
     {TRIGGER_STEP, 53, CONDITION_ALWAYS, EVENT(WorldMap_RefuseToRunAway)},
-    {TRIGGER_STEP, 40, 0xa78, EVENT(WorldMap_TakeOff)},
+    {TRIGGER_STEP, 40, FLAG_SHIP_HAS_FLOWN, EVENT(WorldMap_TakeOff)},
     {TRIGGER_EXIT, 60, CONDITION_ALWAYS, 60},
     {TRIGGER_EXIT, 61, CONDITION_ALWAYS, 61},
     {TRIGGER_EXIT, 85, CONDITION_ALWAYS, 85},

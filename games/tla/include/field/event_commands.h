@@ -288,8 +288,8 @@ void Field_RequestBattleFromEncounterTable(s32 row, s32 column);
 /// each, in FLAG_MAD_PLANT's order.
 #define ENCOUNTER_TABLE_MAD_PLANTS 106
 
-/// The encounter table row of four guardians of hidden places, who speak
-/// before they fight: one column each (HiddenBoss).
+/// The encounter table row of the battles with four guardians of hidden places,
+/// one column each (HiddenBoss).
 #define ENCOUNTER_TABLE_HIDDEN_BOSSES 103
 
 /// The columns of ENCOUNTER_TABLE_HIDDEN_BOSSES.

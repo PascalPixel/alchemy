@@ -218,7 +218,7 @@ struct Actor *MagmaRockInside_CreateEffectActor(s32 x, s32 y, s32 z, s32 kind) {
     object->motionFlags = 0;
     object->collisionFlags = ACTOR_NOT_TARGETED;
     Actor_SetSpriteFlags(object, 0);
-    FieldActor_SetSpriteColor(object, 15);
+    FieldActor_SetSpriteColor(object, SPRITE_COLOR_HIDDEN);
     object->priorityFlags |=
         ACTOR_PRIORITY_IGNORES_RISES | ACTOR_PRIORITY_UNDERFOOT;
     return object;
@@ -462,10 +462,10 @@ void MagmaRockInside_MarkBlockCells(u16 *ids) {
       x = FIELD_CELL(object->x.fixed);
       cell = *cells;
       cell += x + ((z + 1) << 7);
-      cell->collisionCode = 255;
+      cell->collisionCode = CELL_BEHAVIOR_WALL;
       cell = *cells;
       cell += x + ((z - 1) << 7);
-      cell->collisionCode = 255;
+      cell->collisionCode = CELL_BEHAVIOR_WALL;
       *blocked = 1;
     }
     ids++;
@@ -699,7 +699,7 @@ void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
                        s32 velocityZ, u32 flags,
                        const struct EffectOptions *options);
 
-/// An object's update: every fourth frame it spawns an effect of type 403 with
+/// An object's update: every fourth frame it spawns an flame puff with
 /// its own script at a random point within 4 pixels of the object along z,
 /// moving along z at a random speed; every sixteenth frame it also plays sound
 /// SE_WHOOSH at the object.
@@ -711,7 +711,7 @@ void MagmaRockInside_TrailEmbers(struct Actor *object) {
 
   if ((frame & 3) != 0)
     return;
-  options.type = 403;
+  options.type = SPRITE_FLAME_PUFF;
   options.priority = 2;
   options.script = gMagmaRockInside_EmberScript;
   if ((frame & 15) == 0)
@@ -726,10 +726,10 @@ void MagmaRockInside_TrailEmbers(struct Actor *object) {
 
 /// Flashes an actor in colour 10 on the frames its mask picks.
 void MagmaRockInside_FlashStatue(struct Actor *object) {
-  if (gFrameCount & object->riseEnabled)
-    FieldActor_SetSpriteColor(object, 10);
+  if (gFrameCount & object->flashMask)
+    FieldActor_SetSpriteColor(object, SPRITE_COLOR_RED_TINT);
   else
-    FieldActor_SetSpriteColor(object, 0);
+    FieldActor_SetSpriteColor(object, SPRITE_COLOR_NORMAL);
 }
 
 // The cell watch's table lookup over (id, cell, value) rows ended by 0xffff:
@@ -788,7 +788,7 @@ void MagmaRockInside_TargetStatue(s32 mode) {
 
     MagmaRockInside_FindStatue(table);
     object = watch->child;
-    object->riseEnabled = 4;
+    object->flashMask = 4;
     object->update = (void (*)(void))MagmaRockInside_FlashStatue;
   }
   if (mode == 3) {
@@ -796,7 +796,7 @@ void MagmaRockInside_TargetStatue(s32 mode) {
 
     MagmaRockInside_FindStatue(table);
     object = watch->child;
-    object->riseEnabled = 2;
+    object->flashMask = 2;
     object->update = (void (*)(void))MagmaRockInside_FlashStatue;
   }
 }
@@ -827,7 +827,7 @@ static __inline__ struct Actor *Import_ActorCreate_(s32 kind, s32 x, s32 y,
 }
 
 void MagmaRockInside_FireFromStatue(struct Actor *source) {
-  struct Actor *flame = Import_ActorCreate_(403, source->x.fixed,
+  struct Actor *flame = Import_ActorCreate_(SPRITE_FLAME_PUFF, source->x.fixed,
                                             source->y.fixed, source->z.fixed);
   struct Actor *other;
   FIXED position[3];
@@ -888,7 +888,7 @@ spark:
   bit = gFrameCount;
   bit &= 1;
   if (bit == 0) {
-    options.type = 403;
+    options.type = SPRITE_FLAME_PUFF;
     options.priority = 1;
     options.update =
         (void (*)(union FieldObject *))MagmaRockInside_DriftAndSlow;
@@ -945,9 +945,9 @@ void MagmaRockInside_FireStatue(void) {
   FieldEvent_Wait(10);
   object = work->child;
   object->update = NULL;
-  FieldActor_SetSpriteColor(object, 7);
+  FieldActor_SetSpriteColor(object, SPRITE_COLOR_WHITE);
   FieldEvent_Wait(3);
-  FieldActor_SetSpriteColor(work->child, 0);
+  FieldActor_SetSpriteColor(work->child, SPRITE_COLOR_NORMAL);
   FieldEvent_Wait(1);
   MagmaRockInside_FireFromStatue(work->child);
   Event_End();
@@ -973,7 +973,7 @@ void MagmaRockInside_BurstStatue(s32 mode, s32 cue) {
     target = work->child;
     SET_ACTOR_POSITION(target, 0, 0, 0);
   }
-  if (cue == 0x3e7)
+  if (cue == PSYNERGY_EVENT_LAST_FRAME)
     MagmaRockInside_EndFallingRocks();
   if (cue == 178)
     Actor_SelectAnimation(work->child, 3);
@@ -1057,7 +1057,7 @@ void MagmaRockInside_RaiseLava(void) {
   // t holds 212 for a set flag, then the frame count.
   t = 0;
   effectOptions = &options;
-  effectOptions->type = 403;
+  effectOptions->type = SPRITE_FLAME_PUFF;
   effectOptions->priority = 1;
   effectOptions->script = gMagmaRockInside_FlameEmberScript;
   effectOptions->startScaleX = FIXED_ONE * 9 / 5;
@@ -1135,9 +1135,9 @@ rise:
   MapGrid_SetShake(SHAKE_KEEP, SHAKE_KEEP, 0.9);
   Event_Wait(30);
   MapGrid_CopyCellsTo(71, 70, srcX, srcZ, 3, 6);
-  effectOptions->type = 403;
+  effectOptions->type = SPRITE_FLAME_PUFF;
   effectOptions->priority = 1;
-  effectOptions->palette = 10;
+  effectOptions->palette = SPRITE_COLOR_RED_TINT;
   effectOptions->script = gMagmaRockInside_EmberScript;
   if (t != 0) {
     MapGrid_CopyCellsTo(68, 70, srcX, srcZ, 3, 6);
@@ -1341,9 +1341,9 @@ void MagmaRockInside_DrainLava(void) {
     FieldEvent_Wait(20);
   } else {
     MapGrid_SetShake(2, 1, 1);
-    options.type = 403;
+    options.type = SPRITE_FLAME_PUFF;
     options.priority = 2;
-    options.palette = 10;
+    options.palette = SPRITE_COLOR_RED_TINT;
     options.script = gMagmaRockInside_EmberScript;
     for (i = 0; i != 10; i++) {
       for (j = 0; j != 6; j++) {
@@ -1420,9 +1420,9 @@ void MagmaRockInside_SmokeEmber(struct Actor *object) {
   if ((object->timer & 1) == 0) {
     struct EffectOptions config;
 
-    config.type = 403;
+    config.type = SPRITE_FLAME_PUFF;
     config.priority = 2;
-    config.palette = 10;
+    config.palette = SPRITE_COLOR_RED_TINT;
     config.script = gMagmaRockInside_EmberScript;
     FieldEffect_Spawn(object->x.fixed, object->y.fixed, object->z.fixed, 0,
                       0x1000, 0,
@@ -1455,9 +1455,9 @@ void MagmaRockInside_ReleaseRocks(void) {
   Event_Wait(30);
   FieldCamera_MoveTo(776, CAMERA_KEEP, 272, 1);
   FieldCamera_WaitForArrival();
-  options.type = 403;
+  options.type = SPRITE_FLAME_PUFF;
   options.priority = 2;
-  options.palette = 10;
+  options.palette = SPRITE_COLOR_RED_TINT;
   options.script = gMagmaRockInside_FlameEmberScript;
   options.startScaleY = FIXED_ONE * 3 / 2;
   options.startScaleX = FIXED_ONE * 3 / 2;
@@ -1519,7 +1519,8 @@ void MagmaRockInside_TakeFlame(void) {
 
   work->blazeLongSpray = 1;
   if (!Event_GetFlag(FLAG_EAST_TORCH_LIT)) {
-    FieldActor_SetSpriteColor(Actor_Get(ACTOR_EAST_TORCH_FLAME), 15);
+    FieldActor_SetSpriteColor(Actor_Get(ACTOR_EAST_TORCH_FLAME),
+                              SPRITE_COLOR_HIDDEN);
     Actor_SetPosition(ACTOR_EAST_TORCH_FLAME, 632, 312);
     Actor_Get(ACTOR_EAST_TORCH_FLAME)->scaleX =
         Actor_Get(ACTOR_EAST_TORCH_FLAME)->scaleY = FIXED_ONE / 16;
@@ -1529,7 +1530,7 @@ void MagmaRockInside_TakeFlame(void) {
 #define DEFINE_MAGMA_ROCK_INSIDE_LIGHT_TORCH(name, n1, n2, n3, n4)             \
   void name(void) {                                                            \
     if (!Event_GetFlag(n1)) {                                                  \
-      FieldActor_SetSpriteColor(Actor_Get(n2), 15);                            \
+      FieldActor_SetSpriteColor(Actor_Get(n2), SPRITE_COLOR_HIDDEN);           \
       Actor_SetPosition(n2, n3, n4);                                           \
       Actor_Get(n2)->scaleX = Actor_Get(n2)->scaleY = FIXED_ONE / 16;          \
     }                                                                          \
@@ -1549,7 +1550,7 @@ void MagmaRockInside_GrowFlame(void) {
   s32 i;
 
   object = Actor_GetById(work->psynergyHitObject);
-  FieldActor_SetSpriteColor(object, 0);
+  FieldActor_SetSpriteColor(object, SPRITE_COLOR_NORMAL);
   Event_PlaySound(SE_WHOOSH);
   i = 0;
   do {
@@ -1819,7 +1820,7 @@ void MagmaRockInside_GrowTabletFlame(void) {
   s32 i;
 
   object = Actor_Get(gFieldWork->psynergyHitObject);
-  FieldActor_SetSpriteColor(object, 0);
+  FieldActor_SetSpriteColor(object, SPRITE_COLOR_NORMAL);
   Event_PlaySound(SE_WHOOSH);
   i = 0;
   do {
@@ -1877,7 +1878,7 @@ void MagmaRockInside_SpawnSpark(struct Actor *source) {
   object->scaleY = FIXED_ONE * 2 / 5;
   object->scaleX = FIXED_ONE * 2 / 5;
   object->motionFlags = 0;
-  FieldActor_SetSpriteColor(object, 10);
+  FieldActor_SetSpriteColor(object, SPRITE_COLOR_RED_TINT);
   Scene_SetActorSpritePriority(object, 1);
   Actor_SelectAnimation(object, 1);
   Actor_SetSpriteFlags(object, 0);
@@ -1959,7 +1960,7 @@ void MagmaRockInside_TrailSparks(struct Actor *object) {
 
   if (frame != 0)
     return;
-  options.palette = 7;
+  options.palette = SPRITE_COLOR_WHITE;
   options.type = SPRITE_SPARKLE;
   options.priority = 1;
   position[0] = object->x.fixed + (((Random16() & 31) - 16) << 16);
@@ -2020,7 +2021,7 @@ void MagmaRockInside_LearnBlaze(s32 a, s32 b) {
   Actor_SetScript(a, gMagmaRockInside_BlazeCasterScript);
   Event_PlaySound(SE_TABLET_RISE);
   Event_Wait(45);
-  Actor_SetSpriteColorById(a, 256);
+  Actor_SetSpriteColorById(a, SPRITE_COLOR_BLINK);
   REG_BLDALPHA = BLEND_ALPHA(8, 16);
   REG_BLDCNT = BLDCNT_TGT1_OBJ | BLDCNT_TGT2_ALL;
   i = 0;
@@ -2033,7 +2034,7 @@ burst:
   object->speedLimit = toFIXED(8);
   object->acceleration = toFIXED(1) / 5;
   object->motionFlags = 0;
-  FieldActor_SetSpriteColor(object, 10);
+  FieldActor_SetSpriteColor(object, SPRITE_COLOR_RED_TINT);
   Scene_SetActorSpritePriority(object, 1);
   Actor_SelectAnimation(object, 7);
   Actor_SetSpriteFlags(object, 0);
@@ -2063,7 +2064,7 @@ burst:
     spark->riseBaseY = toFIXED(122);
     spark->watchedActor = second;
     ((union ActorView *)spark)->bytes.unk62 = ((16 - i) << 3) + 15;
-    FieldActor_SetSpriteColor(spark, 10);
+    FieldActor_SetSpriteColor(spark, SPRITE_COLOR_RED_TINT);
     Scene_SetActorSpritePriority(spark, 1);
     Actor_SelectAnimation(spark, 7);
     Actor_SetSpriteFlags(spark, 0);
@@ -2072,7 +2073,7 @@ burst:
                                  &spark->x.fixed);
     Actor_StartScript(spark, gMagmaRockInside_SparkScript);
     if (i == 3) {
-      Actor_SetSpriteColorById(b, 256);
+      Actor_SetSpriteColorById(b, SPRITE_COLOR_BLINK);
       second->motionFlags = noMotion;
       second->acceleration = toFIXED(1) / 5;
       second->speedLimit = toFIXED(1) / 5;
@@ -2097,7 +2098,7 @@ column:
   riser->watchedActor = second;
   riser->motionFlags = (u16)0;
   riser->priorityFlags = ACTOR_PRIORITY_AUTOMATIC;
-  FieldActor_SetSpriteColor(riser, 10);
+  FieldActor_SetSpriteColor(riser, SPRITE_COLOR_RED_TINT);
   Actor_SelectAnimation(riser, 7);
   Actor_SetSpriteFlags(riser, 0);
   Actor_SetBlendMode(riser, 1);
@@ -2111,8 +2112,8 @@ column:
   PaletteFade_StartInterpolation(8);
   wait(16);
   MapGrid_SetShake(0, 0, 0);
-  Actor_SetSpriteColorById(a, 0);
-  Actor_SetSpriteColorById(b, 0);
+  Actor_SetSpriteColorById(a, SPRITE_COLOR_NORMAL);
+  Actor_SetSpriteColorById(b, SPRITE_COLOR_NORMAL);
   Event_PlaySound(SE_FLASH);
   PaletteFade_SetTarget(PALETTE_TINT_NONE, 0);
   PaletteFade_StartInterpolation(80);
@@ -2749,15 +2750,15 @@ next:
       MagmaRockInside_TakePlaceOf(partner, trap);
       wait(1);
       Event_PlaySound(SE_CHEST_CLOSE);
-      FieldActor_SetSpriteColor(Actor_GetById(8), 7);
+      FieldActor_SetSpriteColor(Actor_GetById(8), SPRITE_COLOR_WHITE);
       wait(2);
       Actor_SelectAnimation(partner, 0);
       Actor_CopyGraphics(id, 9);
-      FieldActor_SetSpriteColor(Actor_GetById(8), 0);
+      FieldActor_SetSpriteColor(Actor_GetById(8), SPRITE_COLOR_NORMAL);
       wait(2);
-      FieldActor_SetSpriteColor(Actor_GetById(8), 7);
+      FieldActor_SetSpriteColor(Actor_GetById(8), SPRITE_COLOR_WHITE);
       wait(4);
-      FieldActor_SetSpriteColor(Actor_GetById(8), 0);
+      FieldActor_SetSpriteColor(Actor_GetById(8), SPRITE_COLOR_NORMAL);
       MagmaRockInside_SpawnRubble(0);
       MagmaRockInside_TakePlaceOf(trap, partner);
       wait(1);
@@ -2816,8 +2817,8 @@ void MagmaRockInside_SpawnRubble(s32 spread) {
   do {
     y = leader->y.fixed - ((Random_Below(14)) << 16);
     effect = (struct FieldEffect *)FieldActor_Create(
-        285, (i << 17) + leader->x.fixed - toFIXED(8), y - toFIXED(2),
-        leader->z.fixed);
+        SPRITE_DUST_CLOUD, (i << 17) + leader->x.fixed - toFIXED(8),
+        y - toFIXED(2), leader->z.fixed);
     if (effect != 0) {
       frame = Sprite_ShareVramCacheEntry(effect->sprite, frame);
       effect->motionFlags = 0;
@@ -2856,7 +2857,7 @@ void MagmaRockInside_SpawnDustRing(void) {
   i = 0;
   do {
     effect = (struct FieldEffect *)FieldActor_Create(
-        285, leader->x.fixed, leader->y.fixed, leader->z.fixed);
+        SPRITE_DUST_CLOUD, leader->x.fixed, leader->y.fixed, leader->z.fixed);
     if (effect != 0) {
       frame = Sprite_ShareVramCacheEntry(effect->sprite, frame);
       effect->motionFlags = 0;
@@ -2976,7 +2977,7 @@ void MagmaRockInside_StartFallingRocks(void) {
   for (i = 63; i >= 0; i--, sprite++, rock++) {
     MagmaRockInside_InitRockSprite(sprite, 8, 8, 0x40000000, tile);
     sprite->oam.fullColor = 1;
-    sprite->oam.palette = 0;
+    sprite->oam.palette = SPRITE_COLOR_NORMAL;
     sprite->oam.priority = 0;
     sprite->depth = 240;
     rock->timer = -1;

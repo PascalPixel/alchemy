@@ -498,8 +498,8 @@ s32 Scene_Initialize(void) {
       Actor_SetPosition(ACTOR_MORGAN, 0, 0);
       Actor_SetPosition(ACTOR_DEKKA, 0, 0);
     } else {
-      FieldActor_SetSpriteColor(Actor_Get(ACTOR_MORGAN), 3);
-      FieldActor_SetSpriteColor(Actor_Get(ACTOR_DEKKA), 5);
+      FieldActor_SetSpriteColor(Actor_Get(ACTOR_MORGAN), SPRITE_COLOR_BGR);
+      FieldActor_SetSpriteColor(Actor_Get(ACTOR_DEKKA), SPRITE_COLOR_BRG);
     }
     if (Event_GetFlag(FLAG_BRIGGS_CAUGHT)) {
       MapGrid_CopyCellsLayered(2, 110, 16, 10, 16, 64);
@@ -523,9 +523,11 @@ s32 Scene_Initialize(void) {
   }
   MadraInteriors_PlaceBlackCrystal();
   if (Event_GetFlag(FLAG_GABOMBA_MESSAGE_CARRIED))
-    FieldActor_SetSpriteColor(Actor_Get(ACTOR_TRAVELERS_PARTNER_ON_RETURN), 2);
+    FieldActor_SetSpriteColor(Actor_Get(ACTOR_TRAVELERS_PARTNER_ON_RETURN),
+                              SPRITE_COLOR_RBG);
   else
-    FieldActor_SetSpriteColor(Actor_Get(ACTOR_TRAVELERS_PARTNER), 2);
+    FieldActor_SetSpriteColor(Actor_Get(ACTOR_TRAVELERS_PARTNER),
+                              SPRITE_COLOR_RBG);
   return 0;
 }
 
@@ -754,7 +756,7 @@ void MadraInteriors_InterrogatePiers(void) {
   Actor_SetPosition(ACTOR_STERN_INTERROGATOR, 0, 0);
   Actor_SetPosition(ACTOR_ACCUSING_INTERROGATOR, 0, 0);
   Actor_SetAnimation(ACTOR_JAIL_PUDDLE, 6);
-  Actor_SetSpriteColorById(ACTOR_JAIL_PUDDLE, 0);
+  Actor_SetSpriteColorById(ACTOR_JAIL_PUDDLE, SPRITE_COLOR_NORMAL);
   Actor_FaceDirection(ACTOR_PIERS, FACING_NORTH, 0);
   Actor_WaitForAnimationChange(8);
   EventCamera_FollowActor(ACTOR_FELIX, 1);

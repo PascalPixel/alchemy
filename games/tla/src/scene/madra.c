@@ -1627,7 +1627,7 @@ void Madra_MeetKarst(void) {
   Actor_FaceDirectionAndWait(ACTOR_KRADEN, FACING_SOUTH);
   // "Ah! Well! Er, yes. For now, we should press onward to Jupiter..."
   Event_ShowMessageAndWait(ACTOR_KRADEN, 0);
-  Actor_SetSpriteColor(Actor_GetById(ACTOR_JENNA), 0);
+  Actor_SetSpriteColor(Actor_GetById(ACTOR_JENNA), SPRITE_COLOR_NORMAL);
   Event_Wait(20);
   FieldActor_ShowEmote(ACTOR_JENNA, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 30);
   Actor_FaceActorById(ACTOR_JENNA, ACTOR_KRADEN, 0);
@@ -1646,7 +1646,7 @@ void Madra_MeetKarst(void) {
   Event_Wait(20);
   // "*Ahem!* Are you ready to listen yet?"
   Event_ShowMessageAndWait(ACTOR_KRADEN, 0);
-  Actor_SetSpriteColor(Actor_GetById(ACTOR_JENNA), 0);
+  Actor_SetSpriteColor(Actor_GetById(ACTOR_JENNA), SPRITE_COLOR_NORMAL);
   Actor_FaceActorById(ACTOR_FELIX, ACTOR_KRADEN, 0);
   Actor_FaceActorById(ACTOR_JENNA, ACTOR_KRADEN, 0);
   Actor_FaceActorById(ACTOR_SHEBA, ACTOR_KRADEN, 0);

@@ -181,6 +181,24 @@ struct Actor {
       u8 unusedBeforeSavedPriority[2]; ///< refused and frozen
       u8 savedSpritePriority; ///< its sprite's priority, given back after
     };
+    /// A magma rock rolling between a pair of statues at Magma Rock
+    /// (MagmaRock_RollMagmaRock).
+    struct {
+      u8 unusedBeforeRollSide[2]; ///< refused and frozen
+      u8 rollSide; ///< 0 or 1: which statue of its pair it rolls toward
+    };
+    /// A part of a statue's rising flame at Magma Rock
+    /// (MagmaRock_RaiseFlamePart).
+    struct {
+      u8 unusedBeforeFlameLevel[2]; ///< refused and frozen
+      u8 flameLevel; ///< its height in the column, 16 pixels a level
+    };
+    /// An actor that blinks, as Magma Rock's statues and blasted wall do
+    /// (MagmaRock_FlashStatue).
+    struct {
+      u8 unusedBeforeFlashMask[3]; ///< refused, frozen and riseCounter
+      u8 flashMask; ///< its sprite flashes while gFrameCount & this is set
+    };
   };
   /// Two halfwords whose meaning depends on what runs the actor.
   union {

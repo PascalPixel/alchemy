@@ -33,6 +33,11 @@ enum SpriteColorMode {
   SPRITE_COLOR_HIDDEN = 15      ///< solid colour 0, transparent
 };
 
+/// Passed to Actor_ConfigureSpriteColor in place of a SpriteColorMode:
+/// the actor blinks white every few frames (Actor_UpdateBlink)
+/// until it is given a mode again.
+#define SPRITE_COLOR_BLINK 0x100
+
 /// SpriteAnimation.picture and pictureBase when no picture is shown.
 #define SPRITE_PICTURE_NONE 0xff
 

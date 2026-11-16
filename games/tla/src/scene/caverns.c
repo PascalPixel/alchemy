@@ -278,10 +278,7 @@ void Caverns_LayerLeaderByStack(struct Actor *actor) {
   u8 *flags = &leader->priorityFlags;
 
   if (leaderZ > z) {
-    s32 value = 4;
-
-    value |= *flags;
-    *flags = value;
+    ActorFlags_Set(flags, 4);
   } else {
     *flags &= ~6;
   }

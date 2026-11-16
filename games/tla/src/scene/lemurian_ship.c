@@ -562,16 +562,10 @@ void LemurianShip_StepOnLift(void) {
           ->steeringFlags &= ~ACTOR_FACES_MOTION;
       Actor_WalkToAndWait(ACTOR_SIX_JELLY_ROOM_JELLY_A, 824, 88);
       Event_Wait(1);
-      {
-        /* FAKEMATCH(temporary): the bit in a local the byte is or'ed into. */
-        u8 *bits =
-            &((struct Actor *)Actor_GetById(ACTOR_SIX_JELLY_ROOM_JELLY_A))
-                 ->steeringFlags;
-        s32 value = 1;
-
-        value |= *bits;
-        *bits = value;
-      }
+      ActorFlags_Set(
+          &((struct Actor *)Actor_GetById(ACTOR_SIX_JELLY_ROOM_JELLY_A))
+               ->steeringFlags,
+          ACTOR_FACES_MOTION);
       Event_PlaySound(SE_LEMURIAN_SHIP_LIFT);
       Actor_SetAttachedEffect(gMainRoutineWork.leaderActorId,
                               ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);

@@ -121,10 +121,14 @@ static inline void Kibombo_TaskAdd(void (*func)(void), s32 priority) {
 
 void Kibombo_InitializeVillage(void);
 s32 Kibombo_ClampColor(s32 value);
+/// An actor's update: flashes its sprite's colour on and off every two frames.
 void Kibombo_FlashSprite(struct Actor *object);
 void Kibombo_DigFirstMarking(void);
+/// Digs up the second of the four markings by the statue.
 void Kibombo_DigSecondMarking(void);
+/// Digs up the third of the four markings by the statue.
 void Kibombo_DigThirdMarking(void);
+/// Digs up the fourth of the four markings by the statue.
 void Kibombo_DigFourthMarking(void);
 void Kibombo_PiersHasForgottenParty(void);
 void Kibombo_PiersTakesPartyForEnemies(void);
@@ -178,6 +182,10 @@ struct Actor *gKibombo_BlackCrystal BSS_DATA;
 #define FLAG_PIERS_JOINED 0x8f4
 /// Set once the party has heard of the foreign ceremony.
 #define FLAG_HEARD_OF_THE_FOREIGN_CEREMONY 0x9df
+/// Set once Lash has tied the village's rope across.
+#define FLAG_KIBOMBO_ROPE_TIED 0x9e9
+/// Set once the party has been to the statue's grounds on the ceremony night.
+#define FLAG_SAW_THE_GROUNDS_CEREMONY 0x869
 /// For this visit: each of the four markings dug, and the one Scoop is digging.
 #define FLAG_FIRST_MARKING_DUG FLAG_SCENE_TEMP_04
 #define FLAG_SECOND_MARKING_DUG FLAG_SCENE_TEMP_05
@@ -270,11 +278,14 @@ enum { ACTOR_HEALER_ON_THE_CEREMONY = 36 };
 
 struct Actor;
 
+/// An actor's update: turns its sprite a little each frame.
 s32 Kibombo_SpinSprite(struct Actor *object) {
   ((struct FieldSprite *)object->sprite)->rotation += 0x600;
   return 0;
 }
 
+/// An actor's update: keeps its position as the centre Kibombo_ShakeInPlace
+/// shakes it about.
 s32 Kibombo_KeepShakeCentre(struct Actor *object) {
   object->bounce = object->x.fixed;
   object->gravity = object->y.fixed;
@@ -283,12 +294,14 @@ s32 Kibombo_KeepShakeCentre(struct Actor *object) {
 
 extern s16 gKibombo_HousesExitRegions[];
 
+/// An actor's update: every other frame, puts it up to a pixel either way of
+/// its kept centre.
 s32 Kibombo_ShakeInPlace(struct Actor *object) {
   if (gFrameCount & 1) {
     FIXED dx;
     FIXED dy;
 
-    dx = -0x10000;
+    dx = -toFIXED(1);
     dy = dx;
     dx += toFIXED(Random_Below(3));
     dy += toFIXED(Random_Below(3));
@@ -306,6 +319,7 @@ void Kibombo_FlashSprite(struct Actor *object) {
     Actor_SetSpriteColor(object, 0);
 }
 
+/// An actor's update: every ten to twenty frames, faces a random way.
 s32 Kibombo_TurnRandomly(struct Actor *object) {
   if (object->riseCounter != 0) {
     object->riseCounter--;
@@ -376,6 +390,7 @@ const struct Trigger *Scene_GetTriggers(void) {
   return gKibombo_Triggers;
 }
 
+/// A villager asks whether the party has noticed there are fewer warriors.
 void Kibombo_AskAboutFewerWarriors(void) {
   Event_Start();
   Event_ResolvePendingActions(0);
@@ -385,6 +400,7 @@ void Kibombo_AskAboutFewerWarriors(void) {
   Event_End();
 }
 
+/// A villager asks whether the party has come for revenge for the raid.
 void Kibombo_AskAboutRevenge(void) {
   Event_Start();
   Event_ResolvePendingActions(0);
@@ -394,6 +410,8 @@ void Kibombo_AskAboutRevenge(void) {
   Event_End();
 }
 
+/// The signal fire's keeper tells of the path to peace under Akafubu, and of
+/// the signal fire.
 void Kibombo_TalkPathToPeace(void) {
   Event_Start();
   Event_ResolvePendingActions(0);
@@ -409,6 +427,7 @@ void Kibombo_TalkPathToPeace(void) {
   Event_End();
 }
 
+/// A villager asks whether the party is heading to western Gondowan.
 void Kibombo_AskGoingWest(void) {
   Event_Start();
   Event_ResolvePendingActions(0);
@@ -430,6 +449,8 @@ enum {
 /// Kibombo's inn, as Inn_CheckIn numbers the inns.
 enum { KIBOMBO_INN = 6 };
 
+/// Talking to the weapon shopkeeper: across the counter, the shop; from
+/// elsewhere, a word about Kibombo's weapons.
 void Kibombo_OpenWeaponShop(void) {
   if (Leader_IsFacingNorth()) {
     Shop_Run(SHOP_KIBOMBO_WEAPONS, ACTOR_WEAPON_SHOPKEEPER);
@@ -443,6 +464,8 @@ void Kibombo_OpenWeaponShop(void) {
   }
 }
 
+/// Talking to the armor shopkeeper: across the counter, the shop; from
+/// elsewhere, a word about shields and war paint.
 void Kibombo_OpenArmorShop(void) {
   if (Leader_IsFacingNorth()) {
     Shop_Run(SHOP_KIBOMBO_ARMOR, ACTOR_ARMOR_SHOPKEEPER);
@@ -456,6 +479,8 @@ void Kibombo_OpenArmorShop(void) {
   }
 }
 
+/// Talking to the item shopkeeper: across the counter, the shop; from
+/// elsewhere, a word about the spearhead poison.
 void Kibombo_OpenItemShop(void) {
   if (Leader_IsFacingNorth()) {
     Shop_Run(SHOP_KIBOMBO_ITEMS, ACTOR_ITEM_SHOPKEEPER);
@@ -469,6 +494,8 @@ void Kibombo_OpenItemShop(void) {
   }
 }
 
+/// Talking to the innkeeper: across the counter, the inn; from elsewhere, a
+/// word about the beds.
 void Kibombo_OpenInn(void) {
   if (Leader_IsFacingNorth()) {
     Inn_CheckIn(KIBOMBO_INN, ACTOR_INNKEEPER);
@@ -482,6 +509,8 @@ void Kibombo_OpenInn(void) {
   }
 }
 
+/// Talking to the healer: across the counter, the Sanctum; from elsewhere, a
+/// word about the peace the ceremony brought.
 void Kibombo_OpenSanctum(void) {
   if (Leader_IsFacingNorth()) {
     Sanctum_Run(ACTOR_HEALER);
@@ -495,8 +524,10 @@ void Kibombo_OpenSanctum(void) {
   }
 }
 
+/// The healer on the ceremony night: the first time, she muses on foreign
+/// ceremonies; then she turns to the party and runs her Sanctum.
 void Kibombo_TalkForeignCeremony(void) {
-  if (Event_GetFlag(0x9df)) {
+  if (Event_GetFlag(FLAG_HEARD_OF_THE_FOREIGN_CEREMONY)) {
     Event_Start();
     Event_ResolvePendingActions(0);
     Actor_FaceActorById(ACTOR_HEALER_ON_THE_CEREMONY,
@@ -525,6 +556,7 @@ void Kibombo_TalkForeignCeremony(void) {
   }
 }
 
+/// The man whose back has ached since the ceremony.
 void Kibombo_TalkAchingBack(void) {
   Event_Start();
   Event_ResolvePendingActions(0);
@@ -534,6 +566,7 @@ void Kibombo_TalkAchingBack(void) {
   Event_End();
 }
 
+/// Mind Read on the man with the aching back.
 void Kibombo_ReadMindNeverAgain(void) {
   Event_Start();
   Event_ResolvePendingActions(0);
@@ -543,26 +576,32 @@ void Kibombo_ReadMindNeverAgain(void) {
   Event_End();
 }
 
-void Kibombo_SetActorsHidden(s32 show) {
+/// Shows (show 1) or hides the two shades the room keeps out of sight: on the
+/// statue's grounds ACTOR_GROUNDS_SHADE_A and B, in the houses actors 26 and
+/// 27.
+void Kibombo_ShowShades(s32 show) {
   s16 scene = gMainRoutineWork.next;
 
   if (scene == SCENE_KIBOMBO_STATUE_GROUNDS ||
       scene == SCENE_KIBOMBO_STATUE_GROUNDS_CEREMONY)
-    Actors_SetHidden(show, 15, 2);
+    Actors_SetHidden(show, ACTOR_GROUNDS_SHADE_A, 2);
   else if (scene == SCENE_KIBOMBO_HOUSES)
     Actors_SetHidden(show, 26, 2);
 }
 
-void Kibombo_HideActors(void) {
-  Kibombo_SetActorsHidden(1);
+/// Unused: shows the room's two shades, noting it in FLAG_SCENE_TEMP_00.
+UNUSED void Kibombo_RevealShades(void) {
+  Kibombo_ShowShades(1);
   GameFlag_Set(FLAG_SCENE_TEMP_00);
 }
 
-void Kibombo_ShowActors(void) {
-  Kibombo_SetActorsHidden(0);
+/// Hides the room's two shades again.
+void Kibombo_HideShades(void) {
+  Kibombo_ShowShades(0);
   GameFlag_Clear(FLAG_SCENE_TEMP_00);
 }
 
+/// Shows (show 1) or hides count actors from first.
 void Actors_SetHidden(s32 show, s32 first, u32 count) {
   u32 i;
 
@@ -570,7 +609,7 @@ void Actors_SetHidden(s32 show, s32 first, u32 count) {
     struct Actor *actor = Actor_GetById(first + i);
 
     if (show)
-      actor->priorityFlags &= ~0x10;
+      actor->priorityFlags &= ~ACTOR_PRIORITY_NOT_DRAWN;
     else
       actor->priorityFlags |= ACTOR_PRIORITY_NOT_DRAWN;
   }
@@ -579,12 +618,14 @@ void Actors_SetHidden(s32 show, s32 first, u32 count) {
 /// Frost on the puddle freezes it into a pillar.
 void Kibombo_FreezePuddle(void) { FlagBlock_ApplyFlags(gKibombo_FrozenPuddle); }
 
+/// Draws the vent by the statue uncovered and lets the party into it.
 void Kibombo_UncoverVent(void) {
   MapGrid_CopyCellPictureIndicesRect(34, 33, 23, 18, 1, 1);
   MapGrid_CopyCellAttributes(34, 33, 1, 1, 23, 18);
   GameFlag_Set(FLAG_KIBOMBO_VENT_UNCOVERED);
 }
 
+/// Scoop on the vent's cell: once the dig is done (mode 1), uncovers it.
 void Kibombo_ScoopVent(s32 mode) {
   if (mode == 1)
     Kibombo_UncoverVent();
@@ -597,6 +638,7 @@ void Kibombo_DigFirstMarking(void) {
   GameFlag_Set(FLAG_FIRST_MARKING_DUG);
 }
 
+/// Scoop on the first marking: once the dig is done (mode 1), digs it up.
 void Kibombo_ScoopFirstMarking(s32 mode) {
   if (mode == 1)
     Kibombo_DigFirstMarking();
@@ -608,6 +650,7 @@ void Kibombo_DigSecondMarking(void) {
   GameFlag_Set(FLAG_SECOND_MARKING_DUG);
 }
 
+/// Scoop on the second marking: once the dig is done (mode 1), digs it up.
 void Kibombo_ScoopSecondMarking(s32 mode) {
   if (mode == 1)
     Kibombo_DigSecondMarking();
@@ -619,6 +662,7 @@ void Kibombo_DigThirdMarking(void) {
   GameFlag_Set(FLAG_THIRD_MARKING_DUG);
 }
 
+/// Scoop on the third marking: once the dig is done (mode 1), digs it up.
 void Kibombo_ScoopThirdMarking(s32 mode) {
   if (mode == 1)
     Kibombo_DigThirdMarking();
@@ -630,6 +674,7 @@ void Kibombo_DigFourthMarking(void) {
   GameFlag_Set(FLAG_FOURTH_MARKING_DUG);
 }
 
+/// Scoop on the fourth marking: once the dig is done (mode 1), digs it up.
 void Kibombo_ScoopFourthMarking(s32 mode) {
   if (mode == 1)
     Kibombo_DigFourthMarking();
@@ -1005,7 +1050,7 @@ void Kibombo_PiersRefusesToLeave(void) {
   Import_EventSetExitRequest(5);
   GameFlag_Clear(FLAG_KIBOMBO_PIERS_WITH_PARTY);
   GameFlag_Set(FLAG_KIBOMBO_PIERS_STAYED_BEHIND);
-  Party_RemoveMemberRestored(7);
+  Party_RemoveMemberRestored(PIERS);
   Event_End();
 }
 
@@ -1919,7 +1964,7 @@ void Kibombo_LightFlameRow(void) {
 void Scene_RunUnlessFlag(void) {
   if (GameFlag_Get(FLAG_KEEP_PARTY_POSITION)) {
     if (GameFlag_Get(FLAG_SCENE_TEMP_00) == 0)
-      Kibombo_ShowActors();
+      Kibombo_HideShades();
   } else {
     GameFlag_Set(FLAG_SCENE_TEMP_00);
   }
@@ -3073,7 +3118,7 @@ void Kibombo_InitializeVillage(void) {
   FlagBlock_PlaceAll(gKibombo_FrozenPuddle);
   Actor_SetSpritePriority(ACTOR_VILLAGE_PUDDLE, 3);
   Rope_Initialize();
-  Rope_Place(0, 0x9e9, ACTOR_ROPE_POST_A, ACTOR_ROPE_POST_B);
+  Rope_Place(0, FLAG_KIBOMBO_ROPE_TIED, ACTOR_ROPE_POST_A, ACTOR_ROPE_POST_B);
   Actor_GetById(ACTOR_GATE_GUARD_A)->collisionFlags |= 0x80;
   Actor_GetById(ACTOR_GATE_GUARD_B)->collisionFlags |= 0x80;
 }
@@ -3083,7 +3128,7 @@ void Kibombo_InitializeVillageByDay(void) {
   Actor_SetSpriteFlags(Actor_GetById(ACTOR_FLAME), 0);
   Actor_GetById(ACTOR_FLAME)->scaleY = FIXED_ONE / 2;
   Kibombo_InitializeVillage();
-  GameFlag_Clear(0x86b);
+  GameFlag_Clear(FLAG_KIBOMBO_AT_CEREMONY);
   Actor_DisableById(ACTOR_SIGNAL_FIRE);
   Actor_SetAnimationById(ACTOR_SIGNAL_FIRE, 2);
   Task_Add(Kibombo_PuffSmoke, TASK_PASS_VBLANK);
@@ -3094,13 +3139,11 @@ void Kibombo_InitializeVillageByDay(void) {
 
 struct Unit *Unit_Get(u32 unitId);
 
-/// Unless flag 265 is set, places actor 11 and, arriving by entrance 19 with
-/// Piers in the party, restores his HP and PP, sets his gauges, clears two of
-/// his bytes, marks him as staying behind (FLAG_KIBOMBO_PIERS_STAYED_BEHIND)
-/// and removes him from the party; then saves four palette colours, frees
-/// actors 30 to 35, sets flags 0x202 and 0x209, places actor 29, places actors
-/// 21 and 26 to 28 when flag 0x8fd is set, sets flag 0x86b and fades in with
-/// Kibombo_FlickerVillageFires scheduled.
+/// The village on the ceremony night: the signal fire's flame is raised, and
+/// arriving by entrance 19 with Piers in the party, he is healed and stays
+/// behind. The fires' colours are kept for their flicker, the candlesticks lit
+/// and, once Akafubu has offered his help, the ceremony's actors moved; the
+/// screen fades in with the village fires flickering.
 void Kibombo_InitializeCeremony(void) {
   struct Actor *actor = Actor_GetById(ACTOR_FLAME);
   struct Unit *unit;
@@ -3152,7 +3195,7 @@ void Kibombo_InitializeCeremony(void) {
     Actor_SetPosition(28, 0, 0);
     Actor_SetPosition(21, 302, 172);
   }
-  GameFlag_Set(0x86b);
+  GameFlag_Set(FLAG_KIBOMBO_AT_CEREMONY);
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
   {
@@ -3173,7 +3216,7 @@ void Kibombo_InitializeStatueGrounds(void) {
   if (!GameFlag_Get(FLAG_GABOMBA_RESPONDED))
     Kibombo_CreateBlackCrystal();
   Kibombo_HideGroundsPair();
-  if (!GameFlag_Get(0x869))
+  if (!GameFlag_Get(FLAG_SAW_THE_GROUNDS_CEREMONY))
     GameFlag_Set(FLAG_SCENE_TEMP_01);
   FlagBlock_PlaceAll(gKibombo_FrozenPuddle);
   Actor_SetSpritePriority(ACTOR_GROUNDS_PUDDLE, 2);
@@ -3240,7 +3283,7 @@ void Kibombo_InitializeStatueGroundsCeremony(void) {
 
   Event_Start();
   Event_ResolvePendingActions(0);
-  GameFlag_Set(0x869);
+  GameFlag_Set(FLAG_SAW_THE_GROUNDS_CEREMONY);
   GameFlag_Set(FLAG_SCENE_TEMP_02);
   gKibombo_FireColors[0] = BG_PLTT[9];
   gKibombo_FireColors[1] = BG_PLTT[7];
@@ -3919,7 +3962,7 @@ struct Trigger gKibombo_VillageTriggers[] = {
     {TRIGGER_STEP, 15, CONDITION_ALWAYS, EVENT(Kibombo_StopTrackingLeader)},
     {PSYNERGY_ON_ACTOR(ABILITY_FROST), 8, FLAG_SCENE_TEMP_01,
      EVENT(Kibombo_FreezePuddle)},
-    {PSYNERGY_ON_ACTOR(ABILITY_LASH), 12, 0x9e9, 0},
+    {PSYNERGY_ON_ACTOR(ABILITY_LASH), 12, FLAG_KIBOMBO_ROPE_TIED, 0},
     {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 20, CONDITION_ALWAYS,
      EVENT(Kibombo_JumpForward)},
     {STEP_TRIGGER_WALKING_INTO(FACING_WEST), 21, CONDITION_ALWAYS,
@@ -3983,7 +4026,7 @@ struct Trigger gKibombo_CeremonyTriggers[] = {
     {TRIGGER_STEP, 15, CONDITION_ALWAYS, EVENT(Kibombo_StopTrackingLeader)},
     {PSYNERGY_ON_ACTOR(ABILITY_FROST), 8, FLAG_SCENE_TEMP_01,
      EVENT(Kibombo_FreezePuddle)},
-    {PSYNERGY_ON_ACTOR(ABILITY_LASH), 12, 0x9e9, 0},
+    {PSYNERGY_ON_ACTOR(ABILITY_LASH), 12, FLAG_KIBOMBO_ROPE_TIED, 0},
     {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 20, CONDITION_ALWAYS,
      EVENT(Kibombo_JumpForward)},
     {TRIGGER_TALK, 20, FLAG_AKAFUBU_OFFERED_HELP, MSGNO(MsgAkafubuSCeremony)},

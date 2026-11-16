@@ -14,9 +14,10 @@ enum WindFunnelMode { WIND_FUNNEL_WAFT, WIND_FUNNEL_AROMA };
 
 #define SPARK_COUNT 16
 #define SPARK_LIFE 28
-#define BLAST_SHEET_OFFSET 1120
+/// Where BlastSheet is decoded, after the column's 14 by 80 picture.
+#define BLAST_SHEET_OFFSET (14 * 80)
 
-#define BURST_FRAMES 54
+#define UNDEAD_SWORD_FRAMES 54 ///< frames of the columns
 #define BURST_HIT_FRAME 10
 #define COLUMN_RISE_FRAME 8 ///< the columns break the ground
 #define COLUMN_PEAK_FRAME 31
@@ -78,7 +79,7 @@ void BattleEffect_RunUndeadSword(struct BattleEffectParams *args) {
   }
   work->shakeFrames = 8;
 
-  for (frame = 0; frame != BURST_FRAMES; frame++) {
+  for (frame = 0; frame != UNDEAD_SWORD_FRAMES; frame++) {
     // The hit: the damage shown, a shake, knock-back and a flash.
     if (frame == BURST_HIT_FRAME) {
       work->shakeFrames = 8;
@@ -1281,7 +1282,7 @@ void BattleEffect_RunDiamondBerg(struct BattleEffectParams *args) {
 #undef SPARK_COUNT
 #undef SPARK_LIFE
 #undef BLAST_SHEET_OFFSET
-#undef BURST_FRAMES
+#undef UNDEAD_SWORD_FRAMES
 #undef BURST_HIT_FRAME
 #undef COLUMN_RISE_FRAME
 #undef COLUMN_PEAK_FRAME

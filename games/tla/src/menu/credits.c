@@ -33,6 +33,13 @@
 #include "system/bg_scroll.h"
 #include "graphics/render_input.h"
 #include "text/msg_ids.h"
+#include "gamepak/far_call/window.h"
+#include "system/ram_buffer.h"
+#include "fixed_math.h"
+#include "window/window.h"
+#include "flags.h"
+#include "resource_ids.h"
+#include "field/flag_call.h"
 
 struct QueuedSprite;
 
@@ -89,14 +96,6 @@ void EndingPicture_InitStrips(void);
 extern const u8 EndingPicture_DecodeCode[];
 /// EndingPicture_DecodeCode's bytes, as its address.
 extern u8 EndingPicture_DecodeCodeSize[];
-
-#include "gamepak/far_call/window.h"
-#include "system/ram_buffer.h"
-#include "fixed_math.h"
-#include "window/window.h"
-#include "flags.h"
-#include "resource_ids.h"
-#include "field/flag_call.h"
 
 extern u8 gDebugTextEnabled;
 

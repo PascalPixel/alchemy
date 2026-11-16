@@ -29,6 +29,7 @@
 #include "system/bg_scroll.h"
 #include "graphics/palette_buffers.h"
 #include "field/actor.h"
+#include "resource_ids.h"
 
 /// One step of the intro picture's scroll: how many frames it lasts, and for
 /// each of BG1's and BG2's y and x the pixels it moves a frame and the mask of
@@ -137,8 +138,6 @@ extern u16 gTitleIntro_ChannelCurveLight[];
 extern u16 gTitleIntro_ChannelCurveContrast[];
 s32 TitlePaletteFade_ClampComponent(s32 value);
 s32 TitlePaletteFade_ClampShiftedComponent(s32 value);
-
-#include "resource_ids.h"
 
 #if (LANGUAGE == LANGUAGE_GERMAN) || (LANGUAGE == LANGUAGE_SPANISH) ||         \
     (LANGUAGE == LANGUAGE_ITALIAN)

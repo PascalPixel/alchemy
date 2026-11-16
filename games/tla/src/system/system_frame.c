@@ -408,8 +408,8 @@ void System_VBlankHandler(void) {
 #define SOUND_PRESET_COUNT 5
 
 /// Where The Broken Seal copies the mixer code for reverb preset `preset` into
-/// IWRAM, The Lost Age keeps only the range check and returns 0, so the battle's
-/// call changes nothing.
+/// IWRAM, The Lost Age keeps only the range check and returns 0, so the
+/// battle's call changes nothing.
 s32 Sound_LoadReverbCode(s32 preset) {
   if ((u32)preset > SOUND_PRESET_COUNT - 1)
     preset = 0;

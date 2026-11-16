@@ -43,8 +43,8 @@ STATIC_ASSERT(offsetof(struct Task, flags) == 6);
 #define TASK_STATE_HIGH(task) (((u8 *)&(task)->priority)[1])
 /// The bit of a task's high priority byte (TASK_STATE_HIGH) that suspends it.
 #define TASK_SUSPENDED 1
-/// The bit of a task's flags that keeps it running while Task_SuspendOverlayTasks
-/// suspends the others.
+/// The bit of a task's flags that keeps it running while
+/// Task_SuspendOverlayTasks suspends the others.
 #define TASK_FLAG_KEEP_RUNNING 1
 /// Whether the task's routine is in EWRAM (0x02xxxxxx), where a scene's overlay
 /// runs.

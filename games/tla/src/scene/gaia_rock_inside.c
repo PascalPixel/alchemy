@@ -520,7 +520,7 @@ s32 GaiaRockInside_SusaThrowsCask(void) {
   object = Actor_Get(ACTOR_CASK);
   Actor_StartScript(object, (s32)gGaiaRockInside_CaskThrownScript);
   object->x.fixed = toFIXED(472);
-  Actor_SetAnimationSpeed(object, 0x10);
+  Actor_SetAnimationSpeed(object, 16);
   Actor_SetAttachedEffect(ACTOR_SUSA,
                           ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   return 0;
@@ -798,8 +798,8 @@ void GaiaRockInside_CycloneClearsCobweb(void) {
   count = 0;
   for (i = 0; i <= 11; i++) {
     if (MapGrid_GetCellBehaviorAt(
-            2, gGaiaRockInside_CobwebCells[i].position[0] << 20,
-            gGaiaRockInside_CobwebCells[i].position[1] << 20) == 0)
+            2, FIELD_CELL_ORIGIN(gGaiaRockInside_CobwebCells[i].position[0]),
+            FIELD_CELL_ORIGIN(gGaiaRockInside_CobwebCells[i].position[1])) == 0)
       count++;
   }
   if (count <= 0)
@@ -2008,31 +2008,30 @@ void GaiaRockInside_SwayPlatforms(void) {
     return;
   if (*pending == 0)
     return;
-step:
-  switch (*frame) {
-  case 60:
-    GaiaRockInside_PlacePlatform(ACTOR_FIRST_PLATFORM, 0, 3);
-    GaiaRockInside_PlacePlatform(ACTOR_FIRST_PLATFORM + 1, 3, 0);
-    GaiaRockInside_PlacePlatform(ACTOR_FIRST_PLATFORM + 2, 0, 3);
-    GaiaRockInside_PlacePlatform(ACTOR_FIRST_PLATFORM + 3, 0, 3);
-    GaiaRockInside_PlacePlatform(ACTOR_FIRST_PLATFORM + 4, 0, -3);
-    GaiaRockInside_PlacePlatform(ACTOR_FIRST_PLATFORM + 5, 0, -3);
-    GaiaRockInside_PlacePlatform(ACTOR_FIRST_PLATFORM + 6, 0, 3);
-    GaiaRockInside_PlacePlatform(ACTOR_FIRST_PLATFORM + 7, 0, -3);
-    GaiaRockInside_PlacePlatform(ACTOR_LAST_PLATFORM, 3, 0);
-    break;
-  case 180:
-    id = ACTOR_FIRST_PLATFORM;
-    do {
-      GaiaRockInside_PlacePlatform(id, 0, 0);
-      id++;
-    } while (id <= ACTOR_LAST_PLATFORM);
-    break;
-  }
-  if (++*frame == 240)
-    *frame = 0;
-  if (--*pending != 0)
-    goto step;
+  do {
+    switch (*frame) {
+    case 60:
+      GaiaRockInside_PlacePlatform(ACTOR_FIRST_PLATFORM, 0, 3);
+      GaiaRockInside_PlacePlatform(ACTOR_FIRST_PLATFORM + 1, 3, 0);
+      GaiaRockInside_PlacePlatform(ACTOR_FIRST_PLATFORM + 2, 0, 3);
+      GaiaRockInside_PlacePlatform(ACTOR_FIRST_PLATFORM + 3, 0, 3);
+      GaiaRockInside_PlacePlatform(ACTOR_FIRST_PLATFORM + 4, 0, -3);
+      GaiaRockInside_PlacePlatform(ACTOR_FIRST_PLATFORM + 5, 0, -3);
+      GaiaRockInside_PlacePlatform(ACTOR_FIRST_PLATFORM + 6, 0, 3);
+      GaiaRockInside_PlacePlatform(ACTOR_FIRST_PLATFORM + 7, 0, -3);
+      GaiaRockInside_PlacePlatform(ACTOR_LAST_PLATFORM, 3, 0);
+      break;
+    case 180:
+      id = ACTOR_FIRST_PLATFORM;
+      do {
+        GaiaRockInside_PlacePlatform(id, 0, 0);
+        id++;
+      } while (id <= ACTOR_LAST_PLATFORM);
+      break;
+    }
+    if (++*frame == 240)
+      *frame = 0;
+  } while (--*pending != 0);
 }
 
 extern s16 gGaiaRockInside_PlatformPlaces[][2];
@@ -2287,9 +2286,9 @@ s32 Scene_Initialize(void) {
         Event_Start();
         Event_ResolvePendingActions(0);
         Actor_SetPosition(ACTOR_CASK, 0, 0);
-        Actor_SetMovementTypeById(ACTOR_CASK, 1);
+        Actor_SetMovementTypeById(ACTOR_CASK, MOVEMENT_TYPE_STAND);
         Actor_SetPosition(ACTOR_SUSA, 456, 360);
-        Actor_SetMovementTypeById(ACTOR_SUSA, 1);
+        Actor_SetMovementTypeById(ACTOR_SUSA, MOVEMENT_TYPE_STAND);
         Actor_FaceDirection(ACTOR_SUSA, FACING_NORTHEAST, 0);
         Actor_SetAnimationById(ACTOR_SERPENT, 2);
         Event_StartScreenTransition();
@@ -2409,7 +2408,7 @@ s32 Scene_Initialize(void) {
           if ((i & 1) == 0)
             dz = 8;
           shards[i] = (struct Actor *)Import_ActorCreate(
-              403, toFIXED(456) + INTtoFIXED(dx), -toFIXED(32),
+              SPRITE_FLAME_PUFF, toFIXED(456) + INTtoFIXED(dx), -toFIXED(32),
               toFIXED(358) + INTtoFIXED(dz));
           Actor_SelectAnimation(shards[i], 2);
           Actor_SetSpriteFlags(shards[i], 0);
@@ -2765,7 +2764,7 @@ s32 Scene_Initialize(void) {
         Actor_SetSpriteFlags(other, 0);
         Actor_StartScript(other, gGaiaRockInside_KushinadaScript);
         Actor_SelectAnimation(other, 1);
-        Actor_SetSpriteColorMode(other, 14);
+        Actor_SetSpriteColorMode(other, SPRITE_COLOR_BLACK);
         ((u8 *)other->sprite)[9] |= 12;
         other->scaleX = FIXED_ONE * 6 / 5;
         other->scaleY = FIXED_ONE * 6 / 5;
@@ -2870,7 +2869,7 @@ s32 Scene_PrepareMap(void) {
       if (*stage == 3 && !GameFlag_Get(FLAG_AREA_TEMP_F6))
         Actor_SetPosition(FIELD_TREASURE_ACTOR, 104, 88);
       if (*stage == 9)
-        Actor_SetPosition(65, 104, 72);
+        Actor_SetPosition(FIELD_TREASURE_ACTOR + 1, 104, 72);
       if (GameFlag_Get(FLAG_MAZE_PLANT_POINTED(*stage))) {
         struct Actor *plant = Actor_GetById(ACTOR_ARROW_PLANT);
         u32 angle = GaiaRockInside_GetMazeWayOn();
@@ -3299,7 +3298,7 @@ void GaiaRockInside_PlaceStatue(s32 id, s32 x, s32 y, s32 z) {
   cell->collisionCode = 255;
   object->x.fixed = (x & FIELD_CELL_MASK) + toFIXED(8);
   object->z.fixed = (z & FIELD_CELL_MASK) + toFIXED(8);
-  object->y.fixed = object->z.fixed - (row << 20);
+  object->y.fixed = object->z.fixed - FIELD_CELL_ORIGIN(row);
   object->motionFlags = 0;
   object->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
   Actor_SetSpriteFlags(object, 0);

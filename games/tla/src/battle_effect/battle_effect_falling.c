@@ -240,14 +240,14 @@ void BattleEffect_RunIce(struct BattleEffectParams *args) {
 // targets. Deluge throws its droplets higher.
 
 /// Where BlueBeamSheet is decoded in the effect's pictures.
-#define DOUSE_BLUE_BEAM_PICTURES 0x604
+#define DOUSE_BLUE_BEAM_PICTURES 1540
 
 #define DOUSE_DROP_WIDTH 24
 #define DOUSE_DROP_HEIGHT 24
 /// The small and the large splash in ParticleSpritesD, decoded at the start
 /// of the effect's pictures.
-#define DOUSE_SPLASH 0x844
-#define DOUSE_BURST 0xa84
+#define DOUSE_SPLASH 2116
+#define DOUSE_BURST 2692
 #define DOUSE_BURST_PICTURE_WIDTH 42
 #define DOUSE_BURST_PICTURE_HEIGHT 42
 
@@ -375,7 +375,7 @@ void BattleEffect_RunDouse(struct BattleEffectParams *args) {
             splash->y = INTtoFIXED(y);
             splash->velocityX = ((Random16() & 255) - 128) << 9;
             if (args->variant == EFFECT_VARIANT_STRONGEST)
-              splash->velocityY = ((Random16() & 0x1ff) - 0x180) << 10;
+              splash->velocityY = ((Random16() & 0x1ff) - 384) << 10;
             else
               splash->velocityY = ((Random16() & 255) - 255) << 10;
             splash->variant = (Random16() & 15) + 16;

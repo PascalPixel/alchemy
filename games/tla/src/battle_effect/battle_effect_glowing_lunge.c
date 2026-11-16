@@ -12,7 +12,7 @@
 #define BURST_COUNT 16 ///< mode 5's flame bursts
 
 /// Where FlashBurstSheet is decoded in the effect's pictures.
-#define RUSHING_STRIKE_FLASH_BURST_PICTURES 0x800
+#define RUSHING_STRIKE_FLASH_BURST_PICTURES 2048
 
 /// The user rushes at the first target; a ring flares where it hits and sparks
 /// scatter.
@@ -90,7 +90,7 @@ void BattleEffect_RunRushingStrike(struct BattleEffectParams *args, s32 mode) {
     // The first frame readies the sparks and mode 5's bursts at the
     // target, 8 pixels to the outside of it, flying back the other way.
     if (frame == 0) {
-      struct Particle *spark = Ram_MapCellBuffer + 0x4000;
+      struct Particle *spark = Ram_MapCellBuffer + 16384;
 
       for (i = 0; i != SPARK_COUNT; i++, spark++) {
         spark->x = targetObject->x;
@@ -202,7 +202,7 @@ void BattleEffect_RunRushingStrike(struct BattleEffectParams *args, s32 mode) {
 
       Matrix_Initialize();
       Matrix_SetLookAt(camera->eye, camera->focus);
-      spark = Ram_MapCellBuffer + 0x4000;
+      spark = Ram_MapCellBuffer + 16384;
       for (i = 0; i != SPARK_COUNT; i++, spark++) {
         s32 life = spark->variant;
 

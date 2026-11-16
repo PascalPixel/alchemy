@@ -8,7 +8,7 @@
 struct StripQuad;
 
 /// A second, larger particle table, always reached at its fixed address.
-#define EXTRA_PARTICLES ((struct Particle *)(Ram_MapCellBuffer + 0x4000))
+#define EXTRA_PARTICLES ((struct Particle *)(Ram_MapCellBuffer + 16384))
 
 /// Where the small Djinni sheet is decoded in the effect's pictures, as
 /// The Broken Seal places it.
@@ -49,12 +49,12 @@ struct StripQuad;
 #define GASP_BOLT_CEL_BYTES (GASP_BOLT_CEL_WIDTH * GASP_BOLT_CEL_HEIGHT)
 
 /// Where VenusDjinnSheet is decoded in the effect's pictures.
-#define GASP_FAMILY_VENUS_DJINN_PICTURES 0x1000
+#define GASP_FAMILY_VENUS_DJINN_PICTURES 4096
 /// Where CornerGlowSheet is decoded in the effect's pictures.
-#define GASP_FAMILY_CORNER_GLOW_PICTURES 0x4000
+#define GASP_FAMILY_CORNER_GLOW_PICTURES 16384
 
 /// Where FireRingTexture is decoded in the effect's pictures.
-#define GASP_FIRE_RING 0x3080
+#define GASP_FIRE_RING 12416
 
 /// The shared body of sixteen abilities' effects, named for the first (its
 /// wrappers are in rime.c): Gasp (mode 0), Reflux (2), Djinn Counter (3), Mold
@@ -533,7 +533,7 @@ void BattleEffect_RunGaspFamily(struct BattleEffectParams *args, s32 mode) {
     // The model layer.
     Matrix_Initialize();
     gProjection.centerY = 104;
-    verts = Heap_AllocEwram(0x400);
+    verts = Heap_AllocEwram(1024);
     model = Render_AllocateModelList(1);
     model->texture = &texture;
     model->vertices = verts;
@@ -609,7 +609,7 @@ void BattleEffect_RunGaspFamily(struct BattleEffectParams *args, s32 mode) {
           Matrix_Initialize();
           Matrix_Scale(scale >> 1, scale, scale);
           Matrix_RotateZ((frame << 8) + TRIG_TURN * 3 / 4);
-          Matrix_RotateX((frame << 6) - 0x4770);
+          Matrix_RotateX((frame << 6) - 18288);
           for (i = 0; i != 12; i++) {
             texture.pixels = work->sheet + (i % 3 << 10);
             Matrix_Push();
@@ -889,7 +889,7 @@ void BattleEffect_RunGaspFamily(struct BattleEffectParams *args, s32 mode) {
           s32 a;
 
           s &= Random16();
-          a = (Random16() & 0x7fff) + 0x4000;
+          a = (Random16() & 0x7fff) + DEGtoANG(90);
           s += 128;
           p->velocityX = Trig_Sin(a) * s >> 7;
           p->velocityY = Trig_Cos(a) * s >> 6;
@@ -941,7 +941,7 @@ void BattleEffect_RunGaspFamily(struct BattleEffectParams *args, s32 mode) {
           s32 a;
 
           s &= Random16();
-          a = (Random16() & 0x7fff) + 0x4000;
+          a = (Random16() & 0x7fff) + DEGtoANG(90);
           s += 128;
           p->velocityX = Trig_Sin(a) * s >> 6;
           p->velocityY = Trig_Cos(a) * s >> 6;

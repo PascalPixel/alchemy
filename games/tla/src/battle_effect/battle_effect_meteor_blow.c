@@ -19,15 +19,15 @@ struct MeteorStar {
 extern const struct Scale gMeteorBlow_DoubleScale;
 
 /// Where DustBlobSheet is decoded in the effect's pictures.
-#define METEOR_BLOW_DUST_BLOB_PICTURES 0x2000
+#define METEOR_BLOW_DUST_BLOB_PICTURES 8192
 
 #define METEOR_BLOW_FRAMES 50
 
 /// Where BillowTexture is decoded in the effect's pictures.
-#define METEOR_BLOW_BILLOW 0x4000
+#define METEOR_BLOW_BILLOW 16384
 
 /// Where FlameBandTexture is decoded in the effect's pictures.
-#define METEOR_BLOW_FLAME_BAND 0x5000
+#define METEOR_BLOW_FLAME_BAND 20480
 
 /// Meteor Blow.
 void BattleEffect_RunMeteorBlow(struct BattleEffectParams *args) {
@@ -91,7 +91,7 @@ void BattleEffect_RunMeteorBlow(struct BattleEffectParams *args) {
   Resource_LoadAndDecompress(RESOURCE_DUST_BLOB_SHEET,
                              work->sheet + METEOR_BLOW_DUST_BLOB_PICTURES, 1,
                              1);
-  Iwram_CopyWordsEntry(sprites, work->sheet + 0x1c2, 30);
+  Iwram_CopyWordsEntry(sprites, work->sheet + 450, 30);
   LOAD_BG_PALETTE(RESOURCE_ORANGE_PALETTE_B);
   Graphics_LoadGreyRamp();
   gProjection.centerY = SUMMON_PROJECTION_CENTER_Y;
@@ -106,16 +106,16 @@ void BattleEffect_RunMeteorBlow(struct BattleEffectParams *args) {
   REG_BG2CNT = BGCNT_PRIORITY(3) | BGCNT_CHAR_BASE(1) | BGCNT_256_COLORS |
                BGCNT_SCREEN_BASE(7) | BGCNT_WRAP;
   IWRAM_FILL_WORDS(canvas, CANVAS_BYTES, 0);
-  Iwram_CopyWordsEntry((void *)BG_CHAR_BLOCK(1), canvas, 0x4000);
+  Iwram_CopyWordsEntry((void *)BG_CHAR_BLOCK(1), canvas, 16384);
   Task_Add(BattleEffect_FlushPendingGraphicsTransfer, TASK_PASS_FRAME);
   REG_BLDCNT =
       BLDCNT_TGT1_BG1 | BLDCNT_TGT1_BG2 | BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_ALL;
   REG_BLDALPHA = EFFECT_BLEND_ADD;
-  projected = work->sheet + 0x5740;
-  meshA = work->sheet + 0x5f40;
-  triangles = work->sheet + 0x6340;
+  projected = work->sheet + 22336;
+  meshA = work->sheet + 24384;
+  triangles = work->sheet + 25408;
   transition = Ram_HeapSlots->battleBackground;
-  stars = (struct MeteorStar *)(work->sheet + 0x7a4);
+  stars = (struct MeteorStar *)(work->sheet + 1956);
   // Default: the flight sets these at frame 0.
   pitch = 0;
   yaw = 0;
@@ -287,7 +287,7 @@ void BattleEffect_RunMeteorBlow(struct BattleEffectParams *args) {
         model->scrollV = ~scroll & 127;
         Matrix_Initialize();
         Matrix_Translate(-toFIXED(2), -toFIXED(64), 0);
-        Matrix_Scale(42000, 0x24650, FIXED_ONE);
+        Matrix_Scale(42000, 149072, FIXED_ONE);
         Matrix_Scale(scale, scale, scale);
         Matrix_RotateZ(DEGtoANG(180));
         Matrix_RotateY(angle);
@@ -340,7 +340,7 @@ void BattleEffect_RunMeteorBlow(struct BattleEffectParams *args) {
           }
         }
       } else {
-        Iwram_ClearWordsEntry(gMapGridCellBuffer, 0x7800);
+        Iwram_ClearWordsEntry(gMapGridCellBuffer, 30720);
       }
     }
 
@@ -373,7 +373,7 @@ void BattleEffect_RunMeteorBlow(struct BattleEffectParams *args) {
     }
     if (frame > 127) {
       speed = (frame << 13) - toFIXED(16);
-      if (speed > 0x1ffff) {
+      if (speed > toFIXED(2) - 1) {
         speed = toFIXED(2);
       }
       z += speed;
@@ -472,7 +472,7 @@ void BattleEffect_RunMeteorBlow(struct BattleEffectParams *args) {
         count++;
         count--;
         r = (Random16() & 511) + count;
-        a = (Random16() & 0x7fff) + 0x4000;
+        a = (Random16() & 0x7fff) + DEGtoANG(90);
 
         p->x = half;
         p->y = toFIXED(114);

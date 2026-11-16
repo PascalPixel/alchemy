@@ -461,9 +461,9 @@ void BattleEffect_RunCybele(struct BattleEffectParams *args) {
           struct Particle *ember = &work->particles[i * 10 + j];
 
           SET_POSITION(ember, object->x, toFIXED(20), object->z);
-          ember->velocityX = Trig_Sin(j * 0x3334) << 2;
+          ember->velocityX = Trig_Sin(j * 13108) << 2;
           ember->velocityY = (Random16() & 0x7fff) + toFIXED(1);
-          ember->velocityZ = Trig_Cos(j * 0x3334) << 2;
+          ember->velocityZ = Trig_Cos(j * 13108) << 2;
           ember->variant = 0;
         }
       }
@@ -535,4 +535,4 @@ void BattleEffect_RunCybele(struct BattleEffectParams *args) {
 
 /// Rocks, spray and puffs live in the map cell buffer; the spray's trails
 /// follow the first 128 particles.
-#define TRAILS ((struct Particle *)(Ram_MapCellBuffer + 0xe00))
+#define TRAILS ((struct Particle *)(Ram_MapCellBuffer + 3584))

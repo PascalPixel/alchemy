@@ -13,7 +13,7 @@
 
 /// Where the two stars are built in the effect's pictures, each a 24 by 48
 /// picture mirrored from one half of BlueCrescentSheet's.
-#define STAR_MINE_STAR_PICTURES 0x1200
+#define STAR_MINE_STAR_PICTURES 4608
 #define STAR_WIDTH 24
 #define STAR_HEIGHT 48
 /// The bytes of a star's source in BlueCrescentSheet, 24 by 24: each row's
@@ -23,7 +23,7 @@
 #define STAR_BURST_SPARKS 4
 #define STAR_BURST_DROPS (STAR_DROPS / STARS)
 /// Where FlashBurstSheet is decoded in the effect's pictures.
-#define STAR_MINE_FLASH_BURST_PICTURES 0x4000
+#define STAR_MINE_FLASH_BURST_PICTURES 16384
 
 /// Six stars (a 24 by 48 picture mirrored both ways from the sheet's two
 /// halves) are thrown from the caster, each one at a target in turn; from
@@ -236,7 +236,7 @@ void BattleEffect_RunStarMine(struct BattleEffectParams *args) {
 }
 
 /// Fills the 32x30 tilemap at screen block 31: the upper 15 rows from tile
-/// 0x210 on, the lower 15 from tile 48 on, each row repeating 16 tiles.
+/// 528 on, the lower 15 from tile 48 on, each row repeating 16 tiles.
 void BattleEffect_BuildRepeatingTilemap(void) {
   u16 *dst = (u16 *)BG_SCREEN_BLOCK(31);
   s32 y;
@@ -262,18 +262,18 @@ struct CornerRow {
 /// The dragon's buffers in the map cell buffer: its strip's corners, their
 /// transformed vertices, the strip mesh, and the sparks: the first half thrown
 /// up at the start and at frame 134, the second the trail behind the dragon.
-#define RISING_DRAGON_ENEMY_VERTICES 0x1000
-#define RISING_DRAGON_ENEMY_STRIP 0x2000
-#define SPARKS ((struct Particle *)(Ram_MapCellBuffer + 0x4000))
+#define RISING_DRAGON_ENEMY_VERTICES 4096
+#define RISING_DRAGON_ENEMY_STRIP 8192
+#define SPARKS ((struct Particle *)(Ram_MapCellBuffer + 16384))
 #define SPARK_COUNT 256
 #define TRAIL_SPARKS (SPARK_COUNT / 2)
 
 #define SEGMENTS 33
 
 /// Where FlashBurstSheet is decoded in the effect's pictures.
-#define RISING_DRAGON_ENEMY_FLASH_BURST_PICTURES 0x800
+#define RISING_DRAGON_ENEMY_FLASH_BURST_PICTURES 2048
 /// Where ClawSlashSheet is decoded in the effect's pictures.
-#define RISING_DRAGON_ENEMY_CLAW_SLASH_PICTURES 0x4000
+#define RISING_DRAGON_ENEMY_CLAW_SLASH_PICTURES 16384
 
 #define RISING_DRAGON_ENEMY_FRAMES 186
 
@@ -470,7 +470,7 @@ void BattleEffect_RunRisingDragonEnemy(struct BattleEffectParams *args) {
         s32 climb;
 
         if (scroll > 104) {
-          scroll -= 0x10000;
+          scroll -= 65536;
         }
         scroll -= 8;
         if (scroll < -16) {
@@ -543,7 +543,7 @@ void BattleEffect_RunRisingDragonEnemy(struct BattleEffectParams *args) {
         if (args->side == EFFECT_SIDE_PARTY) {
           Matrix_RotateY(DEGtoANG(180));
         }
-        Matrix_ScaleUniform(0x21770);
+        Matrix_ScaleUniform(137072);
         Render_TransformVertices(cells, vertices, SEGMENTS * 2);
         Render_DrawModelList(model);
         Matrix_Pop();
@@ -557,7 +557,7 @@ void BattleEffect_RunRisingDragonEnemy(struct BattleEffectParams *args) {
           Matrix_Translate(INTtoFIXED(target.x - 124), INTtoFIXED(height - 144),
                            0);
           Matrix_RotateZ(DEGtoANG(90));
-          Matrix_Scale(0x19c40, 0x14e20, FIXED_ONE);
+          Matrix_Scale(105536, 85536, FIXED_ONE);
           Render_TransformVertices(gBattleEffect_SquareCorners, vertices, 4);
           Render_DrawModelList(model);
         }

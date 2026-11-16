@@ -16,10 +16,10 @@
 #define LIQUIFIER_FIRST_SHARD LIQUIFIER_SPARKS
 #define LIQUIFIER_SHARDS 16
 
-#define EFFECT_PICTURES (Ram_MapCellBuffer + 0x4000)
+#define EFFECT_PICTURES (Ram_MapCellBuffer + 16384)
 
 /// Where GlowBandTextureA is decoded in the effect's pictures.
-#define LIQUIFIER_GLOW_BAND 0x1000
+#define LIQUIFIER_GLOW_BAND 4096
 
 /// 111 frames. Sparks gather at the caster (frames 0-15)
 /// and burst from it toward the target (16-110); eight flat flashes turn about
@@ -70,7 +70,7 @@ void BattleEffect_RunLiquifier(struct BattleEffectParams *args) {
       for (i = 0, shard = &work->particles[LIQUIFIER_FIRST_SHARD];
            i != LIQUIFIER_SHARDS; i++, shard++) {
         SET_POSITION(shard, INTtoFIXED(to.x + (Random16() & 127) - 64),
-                     INTtoFIXED(to.y), (Random16() & 0x1fff) + 0x7000);
+                     INTtoFIXED(to.y), (Random16() & 0x1fff) + toFIXED(7) / 16);
       }
     }
     if (frame == 0) {
@@ -93,8 +93,8 @@ void BattleEffect_RunLiquifier(struct BattleEffectParams *args) {
         struct Particle *step = work->particles;
 
         for (i = 0; i != LIQUIFIER_SPARKS; i++) {
-          u32 angle = Random16() % 0x5fff + 0x5000;
-          s32 speed = (Random16() & 0x1ff) + 0x200;
+          u32 angle = Random16() % (DEGtoANG(135) - 1) + 20480;
+          s32 speed = (Random16() & 0x1ff) + 512;
 
           step->velocityX = (Trig_Sin(angle) * speed) >> 8;
           step->velocityY = (Trig_Cos(angle) * speed) >> 7;
@@ -143,7 +143,7 @@ void BattleEffect_RunLiquifier(struct BattleEffectParams *args) {
 
         for (i = 0; i != LIQUIFIER_SPARKS; i++) {
           s32 angle = (Random16() & 0x7fff) - DEGtoANG(90);
-          s32 speed = (Random16() & 0x1ff) + 0x200;
+          s32 speed = (Random16() & 0x1ff) + 512;
           s32 y;
 
           step->velocityX = (Trig_Sin(angle) * speed) >> 10;
@@ -212,8 +212,8 @@ void BattleEffect_RunLiquifier(struct BattleEffectParams *args) {
           Matrix_Scale(FIXED_ONE / 2, FIXED_ONE, FIXED_ONE / 2);
           Matrix_Translate(INTtoFIXED(from.x - 128), INTtoFIXED(from.y - 74),
                            0);
-          Matrix_RotateZ((i << 12) - 0x3800);
-          Matrix_Scale(0x5555,
+          Matrix_RotateZ((i << 12) - 14336);
+          Matrix_Scale(FIXED_ONE / 3,
                        Trig_Sin(age << 11) * gLiquifier_SplashHeights[i] / 64 *
                            2,
                        DEGtoANG(180));
@@ -388,7 +388,7 @@ static inline void DrawDisc(void *canvas, s16 *discs, s32 cells, s32 x, s32 y,
 }
 
 /// Where FlashBurstSheet is decoded in the effect's pictures.
-#define CANVAS_BURST_FLASH_BURST_PICTURES 0x800
+#define CANVAS_BURST_FLASH_BURST_PICTURES 2048
 /// The work's particles: mode 0's rays, then at the hit the flames, and the
 /// sparks after them.
 #define CANVAS_BURST_RAYS 16
@@ -453,7 +453,7 @@ void BattleEffect_RunCanvasBurst(struct BattleEffectParams *args, u32 mode) {
   for (i = 0; i != 32; i++) {
     s32 size = i * 2 + 2;
 
-    BattleEffect_DrawShadedCircles((u8 *)(offset + cells), size, 0x14e20);
+    BattleEffect_DrawShadedCircles((u8 *)(offset + cells), size, 85536);
     discs[i] = offset;
     offset += (i * 2 + 3) * size / 2;
   }

@@ -427,7 +427,7 @@ struct SpriteWords {
   s32 shadowAttributes;
   s32 shadowTile;
   struct SpriteAnimation *entry;
-  u8 moreEntries[0x0c];
+  u8 moreEntries[12];
 };
 
 /// Makes an effect sprite with tiles of its own in object VRAM: a free VRAM

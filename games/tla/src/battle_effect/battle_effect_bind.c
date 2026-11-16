@@ -66,7 +66,7 @@ void BattleEffect_ConvertBackgroundToBlueRamp(void) {
       } while (x != 256);
       row++;
     }
-    Iwram_CopyWords((void *)BG_CHAR_BLOCK(2), PIXEL_BUFFER, 0x7800);
+    Iwram_CopyWords((void *)BG_CHAR_BLOCK(2), PIXEL_BUFFER, 30720);
     wait(1);
     if (end > 248)
       break;
@@ -95,8 +95,8 @@ void BattleEffect_ConvertBackgroundToBlueRamp(void) {
   wait(1);
 }
 
-#define FLARE_SHEET 0x1000 ///< the flares, after the rune picture
-#define DJINN_SHEET 0x2000 ///< the Jupiter Djinn, after the flares
+#define FLARE_SHEET 4096 ///< the flares, after the rune picture
+#define DJINN_SHEET 8192 ///< the Jupiter Djinn, after the flares
 #define DJINN_SIZE 40
 
 #define CORNERS 3
@@ -221,9 +221,9 @@ void BattleEffect_RunBind(struct BattleEffectParams *args) {
             point = &work->particles[member * BIND_SLOTS_PER_TARGET + j];
             Matrix_Initialize();
             if (memberFrame <= 63) {
-              scale[0] = 0x2a000 - (memberFrame * 3 << 9);
-              scale[1] = 0x2a000 - (memberFrame * 3 << 9);
-              scale[2] = 0x2a000 - (memberFrame * 3 << 9);
+              scale[0] = toFIXED(2.625) - (memberFrame * 3 << 9);
+              scale[1] = toFIXED(2.625) - (memberFrame * 3 << 9);
+              scale[2] = toFIXED(2.625) - (memberFrame * 3 << 9);
               Matrix_ScaleVector(scale);
               Matrix_RotateZ((BIND_RUNE_FRAME - memberFrame) << 9);
               Matrix_RotateY((BIND_RUNE_FRAME - memberFrame) << 9);
@@ -359,9 +359,9 @@ void BattleEffect_RunUnusedTriangleStrike(struct BattleEffectParams *args) {
             point = &work->particles[member * BIND_SLOTS_PER_TARGET + j];
             Matrix_Initialize();
             if (memberFrame <= 63) {
-              scale[0] = 0x2a000 - (memberFrame * 3 << 9);
-              scale[1] = 0x2a000 - (memberFrame * 3 << 9);
-              scale[2] = 0x2a000 - (memberFrame * 3 << 9);
+              scale[0] = toFIXED(2.625) - (memberFrame * 3 << 9);
+              scale[1] = toFIXED(2.625) - (memberFrame * 3 << 9);
+              scale[2] = toFIXED(2.625) - (memberFrame * 3 << 9);
               Matrix_ScaleVector(scale);
               Matrix_RotateZ((BIND_RUNE_FRAME - memberFrame) << 9);
               Matrix_RotateY((BIND_RUNE_FRAME - memberFrame) << 9);

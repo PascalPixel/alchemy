@@ -23,8 +23,8 @@ enum DragonFireMode {
 #define MODULO_THREE(v) Math_UnsignedMulHighAdd((v), 0xffffffffU / 3 + 1, -3)
 
 #define WHIRLWIND_CEL (48 * 64) ///< one of the whirlwind's three frames
-#define DUST_SHEET 0x2400       ///< the dust motes, after the whirlwind
-#define COMET_SHEET 0x3600      ///< the violet comets
+#define DUST_SHEET 9216         ///< the dust motes, after the whirlwind
+#define COMET_SHEET 13824       ///< the violet comets
 /// Procne's nine sprites, placed on a grid by gProcne_GridX and _GridY.
 #define PROCNE_SPRITES 9
 
@@ -284,7 +284,7 @@ void BattleEffect_RunProcne(struct BattleEffectParams *args) {
         index = 0;
         do {
           speed = Random16() & 127;
-          angle = (Random16() & 0x7fff) + 0x9fff;
+          angle = (Random16() & 0x7fff) + DEGtoANG(225) - 1;
           work->particles[index].x = Trig_Sin(angle) * speed;
           work->particles[index].y = Trig_Cos(angle) * speed;
           work->particles[index].z = INTtoFIXED(Random16() % 200 - 100);
@@ -541,7 +541,7 @@ void BattleEffect_RunTiamat(struct BattleEffectParams *args) {
   BattleEffect_RunDragonFire(args, DRAGON_FIRE_TIAMAT);
 }
 
-#define STREAK_SHEET 0x3000 ///< the ember streaks, after the flashes
+#define STREAK_SHEET 12288 ///< the ember streaks, after the flashes
 
 #define DRAGON_FIRE_FRAMES 208
 

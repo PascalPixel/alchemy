@@ -60,9 +60,9 @@ void BattleEffect_RunSpark(struct BattleEffectParams *args) {
 }
 
 // The pictures in the work sheet, after the beam (EarthWallSheet).
-#define PIC_MOTE 0x2710  ///< the crescent motes, 24 x 24
-#define PIC_DJINN 0x65c0 ///< the Djinn, 40 x 40
-#define MOTES 8          ///< per target
+#define PIC_MOTE 10000  ///< the crescent motes, 24 x 24
+#define PIC_DJINN 26048 ///< the Djinn, 40 x 40
+#define MOTES 8         ///< per target
 
 #define DJINN_BEAMS_MOTES 512 ///< motes in PARTICLES
 
@@ -317,15 +317,15 @@ void BattleEffect_RunFormicAcid(struct BattleEffectParams *args) {
 // The shots live in the map buffer, 16 for each target, and the bursts
 // after them, 32 for each target.
 
-#define BURSTS ((struct Particle *)(Ram_MapCellBuffer + 0x1c00))
+#define BURSTS ((struct Particle *)(Ram_MapCellBuffer + 7168))
 
 #define RECORD_SHARDS 0
 #define RECORD_SHOT_BLITTER 1
 #define RECORD_SHOTS 2
 #define RECORD_FRAMES 3
 
-#define SMOKE_SHEET 0x3e80 ///< the smoke, after the gold shells
-#define SHARD_SHEET 0x1e00 ///< the shards, among the gold shells
+#define SMOKE_SHEET 16000 ///< the smoke, after the gold shells
+#define SHARD_SHEET 7680  ///< the shards, among the gold shells
 
 #define LOBBED_SHELLS_SLOTS 16        ///< particles reserved for each target
 #define LOBBED_SHELLS_BURST_SLOTS 256 ///< burst particles after the shells

@@ -106,13 +106,13 @@ FLURRY_DEFINE_BY_VARIANT(BattleEffect_RunDoublestep, FLURRY_GUST,
 #define MOTES ((struct Particle *)Ram_MapCellBuffer)
 #define FLURRY_MOTE_COUNT 256
 /// The wave pictures, past the motes.
-#define FLURRY_WAVE_PICTURES (Ram_MapCellBuffer + 0x2400)
+#define FLURRY_WAVE_PICTURES (Ram_MapCellBuffer + 9216)
 /// The smoke pictures, past the waves.
-#define FLURRY_SMOKE_PICTURES (Ram_MapCellBuffer + 0x3788)
+#define FLURRY_SMOKE_PICTURES (Ram_MapCellBuffer + 14216)
 /// Where BlueArcSheetA or BlueArcSheetB is decoded in the effect's pictures.
-#define FLURRY_BLUE_ARC_PICTURES 0xc80
+#define FLURRY_BLUE_ARC_PICTURES 3200
 /// The flash pictures, packed to half width past the smoke.
-#define FLURRY_FLASH_PICTURES (Ram_MapCellBuffer + 0x5288)
+#define FLURRY_FLASH_PICTURES (Ram_MapCellBuffer + 21128)
 
 /// The bytes of a gFlurry_Styles row, one row a mode.
 enum FlurryColumn {
@@ -175,7 +175,7 @@ void BattleEffect_RunFlurry(struct BattleEffectParams *args, s32 mode) {
       s32 dst = row * YELLOW_ORB_PACKED_WIDTH + col / 2;
       s32 src = row * YELLOW_ORB_WIDTH + col;
 
-      (cels + dst)[0x2e88] = work->sheet[src];
+      (cels + dst)[11912] = work->sheet[src];
     }
   }
   // The glints' sheet takes the orb's place.

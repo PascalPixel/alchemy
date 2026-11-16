@@ -20,13 +20,13 @@ struct Corner {
 #define FUME_ARC_GROWTH 44
 #define FUME_ARC_SPAN 988
 /// The strip's mesh and its transformed corners, in the map cell buffer.
-#define FUME_STRIP_VERTICES (Ram_MapCellBuffer + 0x1000)
-#define FUME_STRIP_MESH (Ram_MapCellBuffer + 0x2000)
+#define FUME_STRIP_VERTICES (Ram_MapCellBuffer + 4096)
+#define FUME_STRIP_MESH (Ram_MapCellBuffer + 8192)
 
 /// Where FlashBurstSheet is decoded in the effect's pictures.
-#define FUME_FLASH_BURST_PICTURES 0x800
+#define FUME_FLASH_BURST_PICTURES 2048
 /// Where ClawSlashSheet is decoded in the effect's pictures.
-#define FUME_CLAW_SLASH_PICTURES 0x4000
+#define FUME_CLAW_SLASH_PICTURES 16384
 
 /// A band of smoke arcs from the caster to the target (33 segments of two
 /// vertices each, a scrolling textured strip), its head growing 44 units a

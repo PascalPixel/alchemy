@@ -6,10 +6,10 @@
 #include "sounds.h"
 
 /// The Djinni's picture, 40 pixels wide, at the end of the work sheet.
-#define DJINNI_OFFSET 0x65c0
+#define DJINNI_OFFSET 26048
 /// Rime's crystal: a 48x48 picture mirrored from its left half into a
 /// 64-pixel-wide square after the rune picture.
-#define CRYSTAL_OFFSET 0x480
+#define CRYSTAL_OFFSET 1152
 #define CRYSTAL_ORIGIN (CRYSTAL_OFFSET + 8 * 64 + 8)
 
 #define DJINNI_SIGN_FRAMES 48
@@ -53,7 +53,7 @@ void BattleEffect_RunDjinniSign(struct BattleEffectParams *args, s32 mode) {
     Resource_LoadAndDecompress(RESOURCE_RUNE_SHEET, work->sheet, 1, 0);
 
     // Mirror the rune's 24x48 left half into a 48x48 crystal.
-    Iwram_ClearWordsEntry(work->sheet + CRYSTAL_OFFSET, 0x4000);
+    Iwram_ClearWordsEntry(work->sheet + CRYSTAL_OFFSET, 16384);
     for (row = 0; row != 48; row++) {
       for (column = 0; column != 24; column++) {
         work->sheet[CRYSTAL_ORIGIN + row * 64 + column] =

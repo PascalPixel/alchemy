@@ -188,5 +188,5 @@ void BattleEffect_RunHelmSplitter(struct BattleEffectParams *args) {
 
 /// The sparks live in the map cell buffer's second 16 KB: 128 at the target,
 /// 128 thrown up at the start and 128 shed by the head.
-#define SPARKS ((struct Particle *)(Ram_MapCellBuffer + 0x4000))
+#define SPARKS ((struct Particle *)(Ram_MapCellBuffer + 16384))
 #define SPARK_COUNT 512

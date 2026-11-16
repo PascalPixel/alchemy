@@ -378,7 +378,7 @@ void BattleEffect_RunGatheringLights(struct BattleEffectParams *args,
       s32 x = (FIXEDtoINT(Trig_Sin((frame + i) << 10) * sway)) + scrollX;
 
       if (x < 0)
-        x += 0xffff;
+        x += 65535;
       *row++ = x | 32 << 16;
     }
 

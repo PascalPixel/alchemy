@@ -24,8 +24,8 @@ struct StripQuad;
 #define DRAGON_ARC_END 950
 /// The dragons' buffers in the map cell buffer: the strips' corners, then
 /// their transformed vertices, then the strip mesh.
-#define RISING_DRAGON_VERTICES 0x1000
-#define RISING_DRAGON_STRIP 0x2000
+#define RISING_DRAGON_VERTICES 4096
+#define RISING_DRAGON_STRIP 8192
 
 /// A strip's vertex, as Render_TransformVertices reads it.
 struct StripVertex {
@@ -36,7 +36,7 @@ struct StripVertex {
 };
 
 /// Where ClawSlashSheet is decoded in the effect's pictures.
-#define RISING_DRAGON_CLAW_SLASH_PICTURES 0x4000
+#define RISING_DRAGON_CLAW_SLASH_PICTURES 16384
 
 /// One dragon (two at a higher level: effect->variant + 1) of smoke rises
 /// from the caster and arcs onto the target, each a scrolling textured strip
@@ -300,7 +300,7 @@ void BattleEffect_RunRisingDragon(struct BattleEffectParams *args) {
             model->mesh = gBattleEffect_SquareMesh;
             texture.pixels = work->sheet + RISING_DRAGON_CLAW_SLASH_PICTURES;
             Matrix_Translate(INTtoFIXED(endX[i]), INTtoFIXED(endY[i]), 0);
-            Matrix_RotateZ(0x3060 - (arcs[i * 2] << 5));
+            Matrix_RotateZ(12384 - (arcs[i * 2] << 5));
             Matrix_ScaleUniform(20768);
             Render_TransformVertices(gBattleEffect_SquareCorners, vertices, 4);
             Render_DrawModelList(model);
@@ -328,16 +328,16 @@ void BattleEffect_RunRisingDragon(struct BattleEffectParams *args) {
 #define FIGURE_BODY 0
 #define FIGURE_BODY_WIDTH 96
 #define FIGURE_BODY_HEIGHT 83
-#define FIGURE_ARM_LOWERED 0x1f20
+#define FIGURE_ARM_LOWERED 7968
 #define FIGURE_ARM_LOWERED_WIDTH 42
 #define FIGURE_ARM_LOWERED_HEIGHT 35
-#define FIGURE_ARM_RAISED 0x24de
+#define FIGURE_ARM_RAISED 9438
 #define FIGURE_ARM_RAISED_WIDTH 48
 #define FIGURE_ARM_RAISED_HEIGHT 51
-#define FIGURE_SWING 0x2e6e ///< four pictures, gHeartbreak_SwingPictures
+#define FIGURE_SWING 11886 ///< four pictures, gHeartbreak_SwingPictures
 /// The fist raised, then eight pictures of it falling,
 /// gHeartbreak_FistPictures.
-#define FIGURE_FIST 0x4e9d
+#define FIGURE_FIST 20125
 #define FIGURE_FIST_WIDTH 32
 #define FIGURE_FIST_HEIGHT 29
 

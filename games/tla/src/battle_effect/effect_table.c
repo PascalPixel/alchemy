@@ -211,7 +211,7 @@ const u8 gCruelRuin_StreakStepY[] = {16, 4, 16, 24};
 const u8 gCruelRuin_StreakEndY[] = {96, 96, 96, 120};
 
 /// Each streak's roll.
-const s32 gCruelRuin_StreakRolls[] = {0x9000, 0xa000, 0x9000, 0x9000};
+const s32 gCruelRuin_StreakRolls[] = {36864, DEGtoANG(225), 36864, 36864};
 
 /// The flips a glint may be drawn with, one picked at random.
 const u8 gEclipse_GlintFlips[] = {0, 4, 8, 12};
@@ -321,7 +321,7 @@ const s32 gBind_Vertex[] = {0, 24, 0};
 const s32 gBind_TriangleStrikeVertex[] = {0, 24, 0};
 
 /// The two ring points, alternating.
-const s32 gStar_Points[] = {0, 0x300000, 0, 0, 0x1c0000, 0};
+const s32 gStar_Points[] = {0, toFIXED(48), 0, 0, toFIXED(28), 0};
 
 /// The ring radii, alternating: 32 and 16.
 const u8 gStar_Radii[] = {32, 16};
@@ -372,7 +372,8 @@ const u16 gTiamat_FlamePictures[] = {0, 552, 1480, 2590, 3913, 5185};
 const u8 gNereid_Columns[] = {16, 104, 32, 104, 48, 104, 64, 104};
 
 /// Each falling spark's gravity.
-const s32 gNereid_Gravity[] = {0x8000, 0x4000, 0x4000, 0x2000};
+const s32 gNereid_Gravity[] = {toFIXED(0.5), toFIXED(0.25), toFIXED(0.25),
+                               toFIXED(0.125)};
 
 /// Froth, by variant: the FROTH_ columns.
 const u8 gVortices_Counts[][2] = {
@@ -1020,7 +1021,8 @@ const u8 gBoreas_FallHeights[] = {48, 38, 26};
 const u16 gBoreas_FallPictures[] = {0, 1152, 2064};
 
 /// The gravities Drain's motes fall with.
-const s32 gDrain_Gravities[] = {0x4000, 0x2000, 0x4000, 0x8000};
+const s32 gDrain_Gravities[] = {toFIXED(0.25), toFIXED(0.125), toFIXED(0.25),
+                                toFIXED(0.5)};
 
 /// The mote's size, by mode.
 const u8 gDrainMotes_Sizes[] = {6, 6, 10};
@@ -1092,7 +1094,7 @@ const u16 gEruption_PuffSizes[] = {16, 32, 48, 48, 48, 48, 48};
 const u8 gProjectileVolleyB_GlintFlips[] = {0, 4, 8, 12};
 
 /// Atalanta's sprites' scale, one to one.
-const s32 gAtalanta_UnitScale[] = {0x10000, 0x10000};
+const s32 gAtalanta_UnitScale[] = {toFIXED(1), toFIXED(1)};
 
 /// Each vine picture's width, in pixels.
 const u8 gGrowth_VineWidths[] = {21, 28, 19};
@@ -1474,7 +1476,8 @@ const u8 gCastingImpact_ArmorCrushWaveStretch[] = {3, 4, 5, 6};
 const u8 gNereidCopy_Columns[] = {16, 104, 32, 104, 48, 104, 64, 104, 0, 0};
 
 /// Each falling spark's gravity.
-const s32 gNereidCopy_Gravity[] = {0x8000, 0x4000, 0x4000, 0x2000};
+const s32 gNereidCopy_Gravity[] = {toFIXED(0.5), toFIXED(0.25), toFIXED(0.25),
+                                   toFIXED(0.125)};
 
 /// The twelve-sprite formation: each sprite's x.
 const u8 gHelmSplitter_TwelveX[] = {52, 25,  57, 89, 7,  39,
@@ -1559,7 +1562,8 @@ const u8 gRagnarok_FlashPictures[] = {5, 5, 4, 3, 2, 1};
 const u8 gTitanBlade_FlashPictures[] = {5, 5, 4, 3, 2, 1};
 
 /// The dust's four gravities.
-const s32 gTitanBlade_DustGravity[] = {0x8000, 0x4000, 0x4000, 0x2000};
+const s32 gTitanBlade_DustGravity[] = {toFIXED(0.5), toFIXED(0.25),
+                                       toFIXED(0.25), toFIXED(0.125)};
 
 /// Each burst picture's byte offset in Judgment's sheet.
 const u8 gJudgment_BurstPictures[] = {0, 1, 2,  3,  4,  5,  6,
@@ -1581,7 +1585,8 @@ const u8 gKirin_Columns[] = {8, 40, 72, 104, 8, 40, 72, 104, 0};
 const u8 gKirin_Rows[] = {0, 0, 0, 24, 32, 32, 32, 56, 64};
 
 /// The spray's four gravities.
-const s32 gNeptune_Gravity[] = {0x8000, 0x4000, 0x4000, 0x2000};
+const s32 gNeptune_Gravity[] = {toFIXED(0.5), toFIXED(0.25), toFIXED(0.25),
+                                toFIXED(0.125)};
 
 /// Each spark picture's byte offset in Undead Sword's sheet.
 const u16 gUndeadSword_SparkPictures[] = {0,    256,  1280, 3584,
@@ -1962,8 +1967,8 @@ const u16 gFume_Levels[][FUME_COLUMNS] = {{16384, 16, 24, 96, 8, 4096},
 const s32 gOceanFist_DropGravity[4] = {-8192, -16384, -16384, -32768};
 
 /// The streak's scale, 16.16, by mode.
-const s32 gRushingStrike_Scales[] = {0x8000, 0x8000, 0x8000,
-                                     0x8000, 55536,  52768};
+const s32 gRushingStrike_Scales[] = {toFIXED(0.5), toFIXED(0.5), toFIXED(0.5),
+                                     toFIXED(0.5), 55536,        52768};
 
 /// By mode: the quad's scale (16.16, doubled when used) and a second word.
 const s32 gMirroredWall_BurstScales[] = {39768, 44152, 44152, 55536};
@@ -2231,7 +2236,7 @@ const u16 gHaures_BodyPiecePoints[][2] = {
 const u8 gHaures_ParticleX[] = {120, 88, 144, 112, 0, 0};
 
 /// Haures's sprites' scale, one to one.
-const s32 gHaures_UnitScale[] = {0x10000, 0x10000};
+const s32 gHaures_UnitScale[] = {toFIXED(1), toFIXED(1)};
 
 /// The wings' shapes, 32 heights a shape; the wings morph from one to the next.
 const u8 gHaures_WingShapes[] = {
@@ -2319,7 +2324,10 @@ const u8 gElementCards_Frames[] = {124, 140, 132, 130};
 
 /// How each card's sparks move.
 const struct SparkMotion gElementCards_SparkMotions[] = {
-    {0x2000, 62, 1}, {0x2000, 62, 1}, {-0x2000, 62, 1}, {2048, 64, 4}};
+    {toFIXED(0.125), 62, 1},
+    {toFIXED(0.125), 62, 1},
+    {-toFIXED(0.125), 62, 1},
+    {2048, 64, 4}};
 
 /// The three bites' frames.
 const u8 gTripleChomp_BiteFrames[] = {0, 12, 24};

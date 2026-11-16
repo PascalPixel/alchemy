@@ -18,7 +18,7 @@
 #define DRAW_GLINT ((DrawRectangle)Ram_HeapSlots->ramCodePaired)
 
 /// Where LightningBoltSheet is decoded in the effect's pictures.
-#define BOLT_LIGHTNING_BOLT_PICTURES 0xc56
+#define BOLT_LIGHTNING_BOLT_PICTURES 3158
 
 /// A bolt of lightning strikes each target in turn, and sparks fly up from
 /// where it lands while glints flicker there.
@@ -82,7 +82,8 @@ void BattleEffect_RunBolt(struct BattleEffectParams *args) {
           height = GROUND_Y;
         for (j = 0; j != gBolt_Counts[args->variant * 4 + 3]; j++) {
           draw[0](canvas,
-                  work->sheet + (((i + frame + j) / 2) & 3) * 2880 + 0xc56,
+                  work->sheet + (((i + frame + j) / 2) & 3) * 2880 +
+                      BOLT_LIGHTNING_BOLT_PICTURES,
                   pos.x - 12, 0, 24, height);
         }
 

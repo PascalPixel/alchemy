@@ -48,7 +48,7 @@ void BattleEffect_StartActorMotionRandomDistance(s32 id) {
 /// The map cell buffer holds the embers.
 #define EMBERS ((struct Particle *)Ram_MapCellBuffer)
 #define EMBER_COUNT 1024
-#define PILLAR_SHEET 0x6e4 ///< the fire pillar after the spray in the sheet
+#define PILLAR_SHEET 1764 ///< the fire pillar after the spray in the sheet
 
 #define FORMATION_SIZE 12
 
@@ -364,7 +364,7 @@ void BattleEffect_PlaceFormationObjects(s32 formation, s32 x, s32 z) {
   }
 }
 
-#define SHARD_E 0x59d8
+#define SHARD_E 23000
 
 #define IMPACT_BURST_FRAMES 72
 
@@ -671,8 +671,8 @@ void BattleEffect_RunOuterSpace(struct BattleEffectParams *args) {
 #define PARTICLE_STREAMS_LARGE_GLOW_SIZE 24
 #define PARTICLE_STREAMS_SMALL_GLOW_SIZE 8
 /// Where the two glows are in the sheet.
-#define PARTICLE_STREAMS_LARGE_GLOW 0x1c80
-#define PARTICLE_STREAMS_SMALL_GLOW 0x1f40
+#define PARTICLE_STREAMS_LARGE_GLOW 7296
+#define PARTICLE_STREAMS_SMALL_GLOW 8000
 /// The burst's flashes in PARTICLES, then its embers.
 #define PARTICLE_STREAMS_FLASHES 128
 #define PARTICLE_STREAMS_EMBER_COUNT 512
@@ -1107,7 +1107,7 @@ void BattleEffect_RunParticleStreams(struct BattleEffectParams *args,
   EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_CLEAR, CANVAS_FILL_WORD(16));
 
   for (frame = 0; frame != BLAST_FRAMES; frame++) {
-    s32 size = (frame + 0x1d0) << 8;
+    s32 size = (frame + 464) << 8;
     struct BattleCamera *camera = Ram_HeapSlots->cameraWork;
     s32 elapsed = frame - BLAST_FLASH_FRAME;
     struct Scale scale;

@@ -63,7 +63,7 @@ enum SlashSheetPicture {
 };
 
 #define TRAILS ((struct Particle *)Ram_MapCellBuffer)
-#define MATRICES (Ram_MapCellBuffer + 0x3800)
+#define MATRICES (Ram_MapCellBuffer + 14336)
 #define OBJ_VRAM ((u8 *)OBJ_VRAM0)
 
 #define ATALANTA_PIECES 11

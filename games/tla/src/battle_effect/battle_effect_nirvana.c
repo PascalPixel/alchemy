@@ -271,7 +271,7 @@ void BattleEffect_RunStoneJustice(struct BattleEffectParams *args) {
   EFFECT_FINISH_CANVAS_ONE_BLITTER();
 }
 
-#define SPARK_OFFSET 0x460
+#define SPARK_OFFSET 1120
 #define SPARKS 16
 #define MOTES 32
 
@@ -513,18 +513,18 @@ struct ProjectedPoint {
 };
 
 #define VERTICES ((struct ModelVertex *)Ram_MapCellBuffer)
-#define MESH_BUFFER (Ram_MapCellBuffer + 0x2000)
+#define MESH_BUFFER (Ram_MapCellBuffer + 8192)
 
 /// Where MercuryDjinnSheet is decoded in the effect's pictures.
-#define SERAC_MERCURY_DJINN_PICTURES 0x4000
+#define SERAC_MERCURY_DJINN_PICTURES 16384
 
 #define SERAC_FRAMES 88
 
 /// Where BlueCloudPuffSheet is decoded in the effect's pictures.
-#define SERAC_CLOUD_PUFFS 0x400
+#define SERAC_CLOUD_PUFFS 1024
 /// Where FlameBandTexture, the mist inside the spire, is decoded in the map
 /// cell buffer.
-#define SERAC_MIST 0x4000
+#define SERAC_MIST 16384
 
 /// The Mercury Djinni drops onto the target, dust bursting where it lands;
 /// a spire of ice (a cone of 8 rings of 8 vertices, its mesh built on the
@@ -676,7 +676,7 @@ void BattleEffect_RunSerac(struct BattleEffectParams *args) {
         }
       }
 
-      vertices = Heap_AllocEwram(0x400);
+      vertices = Heap_AllocEwram(1024);
       model = Render_AllocateModelList(1);
       savedScrollX = gProjection.centerX;
       savedScrollY = gProjection.centerY;
@@ -815,9 +815,9 @@ void BattleEffect_RunSerac(struct BattleEffectParams *args) {
                          ((Random16() & TRIG_ANGLE_MASK) << 2) -
                              ((ring * 5) << 17) + toFIXED(64),
                          target->z + ((Trig_Cos(angle) * ring) << 2));
-            p->velocityX = ((Random16() & TRIG_ANGLE_MASK) << 1) + 0x10000;
+            p->velocityX = ((Random16() & TRIG_ANGLE_MASK) << 1) + toFIXED(1);
             p->velocityY = ((Random16() & TRIG_ANGLE_MASK) - 12768) * 3;
-            p->velocityZ = ((Random16() & TRIG_ANGLE_MASK) - 0x8000) << 1;
+            p->velocityZ = ((Random16() & TRIG_ANGLE_MASK) - toFIXED(0.5)) << 1;
             if (p->x < 0) {
               p->velocityX = -p->velocityX;
             }

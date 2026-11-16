@@ -22,7 +22,7 @@ void BattleEffect_RunBlast(struct BattleEffectParams *args) {
   BattleEffect_RunEruption(args, ERUPTION_BLAST);
 }
 
-#define MOTE_SHEET 0x3200 ///< the mote pictures in the sheet
+#define MOTE_SHEET 12800 ///< the mote pictures in the sheet
 
 // A blast of motes and smoke puffs bursts from the near or far edge of the
 // field toward the targets.

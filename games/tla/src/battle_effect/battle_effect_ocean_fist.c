@@ -12,7 +12,7 @@
 #define OCEAN_FIST_COLUMN_WIDTH 96
 #define OCEAN_FIST_COLUMN_HEIGHT 64
 /// Where FlashBurstSheet, the spray, is decoded in the map cell buffer.
-#define OCEAN_FIST_SPRAY 0x4000
+#define OCEAN_FIST_SPRAY 16384
 
 /// A column of water (three pictures of the work's sheet, each halved in
 /// brightness from frame 32 to 43) rises at the target and is drawn top-down

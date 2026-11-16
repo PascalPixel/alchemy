@@ -9,7 +9,7 @@ struct MeshTriangle;
 struct StripQuad;
 
 /// Where MarsDjinnSmallSheet is decoded in the effect's pictures.
-#define DJINNI_CHARGE_MARS_DJINN_SMALL_PICTURES 0x1000
+#define DJINNI_CHARGE_MARS_DJINN_SMALL_PICTURES 4096
 
 /// The last two particles: the one that keeps the camera's focus at the start,
 /// and the one that holds the Djinni's offset from it and its step toward the
@@ -20,10 +20,10 @@ struct StripQuad;
 #define DJINNI_CHARGE_FIRST_BURST 54
 /// Where GlowOrbSheet (Core) or FlashBurstSheet (Cannon) is decoded in the
 /// effect's pictures.
-#define DJINNI_CHARGE_BURST_PICTURES 0x2000
+#define DJINNI_CHARGE_BURST_PICTURES 8192
 /// The ball's projected corners and its mesh, in the map cell buffer.
-#define DJINNI_CHARGE_VERTICES (Ram_MapCellBuffer + 0x2000)
-#define DJINNI_CHARGE_MESH (Ram_MapCellBuffer + 0x4000)
+#define DJINNI_CHARGE_VERTICES (Ram_MapCellBuffer + 8192)
+#define DJINNI_CHARGE_MESH (Ram_MapCellBuffer + 16384)
 
 /// The body of Core (mode 0) and Cannon (mode 1): the Mars Djinni flies at
 /// the target. For Core it pulls back, then drives in and strikes four times

@@ -31,15 +31,15 @@
 /// A list of units to spawn, as Charon passes an empty one.
 #define SPRITES ((struct Sprite **)Ram_MapCellBuffer)
 #define SPRITE_BUFFER gMapGridCellBuffer
-#define OAM_BUFFER ((u32 *)(gMapGridCellBuffer + 0x4000))
-#define REVEAL_BUFFER (Ram_MapCellBuffer + 0x4000)
-#define CHARON_PARTICLES ((struct Particle *)(Ram_MapCellBuffer + 0x4200))
+#define OAM_BUFFER ((u32 *)(gMapGridCellBuffer + 16384))
+#define REVEAL_BUFFER (Ram_MapCellBuffer + 16384)
+#define CHARON_PARTICLES ((struct Particle *)(Ram_MapCellBuffer + 16896))
 /// The last act's flash bursts and sparks among them.
 #define CHARON_BURSTS (CHARON_PARTICLES + 96)
 #define CHARON_SPARKS (CHARON_PARTICLES + 128)
 #define OBJ_VRAM ((u8 *)OBJ_VRAM0)
 /// RedCrescentTiles' 64x64 picture, decoded where the arrows' OAM later goes.
-#define CRESCENT_BUFFER (gMapGridCellBuffer + 0x4000)
+#define CRESCENT_BUFFER (gMapGridCellBuffer + 16384)
 /// The colours of Charon's 256-colour objects: RedSlashTiles' 160 from colour
 /// 32, CrimsonBeastTiles' first 192 and RedCrescentTiles' 32 from colour 192.
 #define CHARON_SLASH_FIRST_COLOR 32
@@ -57,18 +57,18 @@ extern const struct Scale gCharon_RevealScale;
 extern const struct Scale gCharon_FinaleScale;
 
 /// Where ParticleSpritesD is decoded in the effect's pictures.
-#define CHARON_PARTICLE_SPRITES_D_PICTURES 0x2400
+#define CHARON_PARTICLE_SPRITES_D_PICTURES 9216
 /// RuneSealSheet, decoded over ParticleSpritesD at frame 56, and its size.
-#define CHARON_RUNE_SEAL 0x2400
+#define CHARON_RUNE_SEAL 9216
 #define RUNE_SEAL_WIDTH 184
 #define RUNE_SEAL_HEIGHT 80
 /// Where each act decodes its own sheet in the effect's pictures: SwirlTexture
 /// with CharmRingSheet, CurseSealSheet, FireRingTexture or shaded circles.
-#define CHARON_ACT_PICTURES 0x1000
+#define CHARON_ACT_PICTURES 4096
 /// The finale's brightest block, which the four columns of light are drawn
 /// from, and GlowRingTexture made all bright.
-#define CHARON_BRIGHT_BLOCK 0x2000
-#define CHARON_GLOW_RING 0x3000
+#define CHARON_BRIGHT_BLOCK 8192
+#define CHARON_GLOW_RING 12288
 /// The bytes of either, a 64x64 texture.
 #define CHARON_TEXTURE_BYTES (64 * 64)
 
@@ -372,7 +372,7 @@ void BattleEffect_RunCharon(struct BattleEffectParams *arg) {
     }
     if (frame >= 132 && frame < 147) {
       Iwram_FillWords(canvas, CANVAS_VIEW_BYTES,
-                      (0x3f - (frame - 132) * 4) * 0x01010101);
+                      (63 - (frame - 132) * 4) * 0x01010101);
     }
     if ((frame & 3) == 0 && (frame >= 132 && frame < 240)) {
       u16 *target = Resource_GetTableEntry(RESOURCE_AERIAL_VIEW_BACKDROP);
@@ -576,8 +576,8 @@ void BattleEffect_RunCharon(struct BattleEffectParams *arg) {
         Resource_LoadAndDecompress(
             RESOURCE_PARTICLE_SPRITES_D,
             work->sheet + CHARON_PARTICLE_SPRITES_D_PICTURES, 0, 0);
-        Iwram_CopyWords(
-            glyphs, work->sheet + CHARON_PARTICLE_SPRITES_D_PICTURES, 0x302);
+        Iwram_CopyWords(glyphs,
+                        work->sheet + CHARON_PARTICLE_SPRITES_D_PICTURES, 770);
         Resource_LoadAndDecompress(RESOURCE_CURSE_SEAL_SHEET,
                                    work->sheet + CHARON_ACT_PICTURES, 1, 1);
         posX = toFIXED(72);
@@ -800,7 +800,7 @@ void BattleEffect_RunCharon(struct BattleEffectParams *arg) {
                           CHARON_CRESCENT_COLORS * 2, COLOR_PAIR(RGB_WHITE));
           Iwram_CopyWords((u16 *)&BG_PLTT_COLOR(6, 0),
                           Resource_GetTableEntry(RESOURCE_AERIAL_VIEW_BACKDROP),
-                          0x100);
+                          256);
           source = (u8 *)Resource_GetTableEntry(RESOURCE_BOLT_SHEET);
           Iwram_CopyWords(BG_PLTT, source, SHEET_PALETTE_BYTES);
           Resource_LoadAndDecompress(RESOURCE_FIRE_RING_TEXTURE,
@@ -901,7 +901,7 @@ void BattleEffect_RunCharon(struct BattleEffectParams *arg) {
           dx = 347 - frame;
           dz = (frame - 347) / 4;
         }
-        finaleScale.x = finaleScale.y = (frame << 11) - 0xa5000;
+        finaleScale.x = finaleScale.y = (frame << 11) - toFIXED(10.3125);
         finalePlace[3] = 0;
         finalePlace[1] = toFIXED(255);
         finalePlace[0] = INTtoFIXED(dx) + toFIXED(92);
@@ -933,7 +933,7 @@ void BattleEffect_RunCharon(struct BattleEffectParams *arg) {
         s32 height = 54;
 
         if (frame > 349) {
-          height = (FIXEDtoINT(-(Trig_Sin((frame << 10) - 0x57800) * 54))) + 54;
+          height = (FIXEDtoINT(-(Trig_Sin((frame << 10) - 358400) * 54))) + 54;
         }
         if (frame == 360) {
           work->transferMode = CANVAS_COPY;
@@ -1166,7 +1166,7 @@ void BattleEffect_RunCharon(struct BattleEffectParams *arg) {
       if (depth > -48) {
         Matrix_Initialize();
         Matrix_Translate(toFIXED(4), -toFIXED(16), 0);
-        Matrix_ScaleUniform(-0xa710);
+        Matrix_ScaleUniform(-42768);
         Matrix_RotateX(DEGtoANG(45));
         Matrix_RotateY(-frame << 9);
         Render_TransformVertices(gBattleEffect_GroundSquareCorners, texture, 4);
@@ -1182,7 +1182,7 @@ void BattleEffect_RunCharon(struct BattleEffectParams *arg) {
         model->shade = last;
         Matrix_Initialize();
         Matrix_Translate(toFIXED(2), -toFIXED(32), 0);
-        Matrix_ScaleUniform(0x58f0);
+        Matrix_ScaleUniform(22768);
         Matrix_RotateX(DEGtoANG(45));
         Matrix_RotateY(frame << 10);
         Render_TransformVertices(gBattleEffect_GroundSquareCorners, texture, 4);
@@ -1195,7 +1195,7 @@ void BattleEffect_RunCharon(struct BattleEffectParams *arg) {
         if (frame > -48) {
           Matrix_Initialize();
           Matrix_Translate(toFIXED(2), -toFIXED(48), 0);
-          Matrix_ScaleUniform(-0x31e0);
+          Matrix_ScaleUniform(-12768);
           Matrix_RotateX(DEGtoANG(45));
           Matrix_RotateY(-frame << 10);
           Render_TransformVertices(gBattleEffect_GroundSquareCorners, texture,
@@ -1276,7 +1276,7 @@ void BattleEffect_RunCharon(struct BattleEffectParams *arg) {
     s32 limit;
 
     i = 0;
-    limit = 0x302;
+    limit = 770;
   empty:
     i += 35;
     if (i != limit) {
@@ -1552,7 +1552,7 @@ void BattleEffect_RunCharon(struct BattleEffectParams *arg) {
         }
       }
       if (frame >= 0) {
-        gBgScroll[1].x += 0xfff4;
+        gBgScroll[1].x -= 12;
         EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE,
                             EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_Y, BLITTER_MAX);
         {
@@ -1562,8 +1562,8 @@ void BattleEffect_RunCharon(struct BattleEffectParams *arg) {
           s32 y2;
           for (i = 0, y2 = -26, y = 0, x = shake, phase = frame << 10,
               column = COLUMNS, halfCell = width / 2;
-               i != 4;
-               y2 += 30, y += 30, x += 8, phase += 0x2000, column++, i++) {
+               i != 4; y2 += 30, y += 30, x += 8, phase += DEGtoANG(45),
+              column++, i++) {
             column->x = x + (FIXEDtoINT(Trig_Sin(phase) * 4));
             column->y = y;
             if (i == 3) {
@@ -1588,7 +1588,7 @@ void BattleEffect_RunCharon(struct BattleEffectParams *arg) {
           if (drop->variant == 0) {
             drop->x = INTtoFIXED(Random16() % 24 + shake - i * 2);
             drop->y = toFIXED(80) + i * (192 << 10);
-            drop->velocityX = -(Random16() & TRIG_ANGLE_MASK) - 0x4000;
+            drop->velocityX = -(Random16() & TRIG_ANGLE_MASK) - toFIXED(0.25);
             drop->velocityY = -toFIXED(1);
           }
           if (drop->variant >= 0) {
@@ -1647,7 +1647,7 @@ void BattleEffect_RunCharon(struct BattleEffectParams *arg) {
           if (timer >= 0 && timer < 18) {
             s32 step = timer * 3;
             s32 depth = step - 64;
-            s32 size = step * 1016 + 0x800;
+            s32 size = step * 1016 + toFIXED(1) / 32;
 
             member->variant = timer + 1;
             model->shade = depth;

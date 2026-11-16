@@ -10,9 +10,9 @@
 #define CHIP_COUNT 64
 
 /// Where IceChipSheet is decoded in the effect's pictures.
-#define HAIL_ICE_CHIP_PICTURES 0x400
+#define HAIL_ICE_CHIP_PICTURES 1024
 /// Where MercuryDjinnSmallSheet is decoded in the effect's pictures.
-#define HAIL_MERCURY_DJINN_SMALL_PICTURES 0x65c0
+#define HAIL_MERCURY_DJINN_SMALL_PICTURES 26048
 
 #define HAIL_FRAMES 64
 
@@ -52,7 +52,7 @@ void BattleEffect_RunHail(struct BattleEffectParams *args) {
     s32 speed;
 
     angle = (Random16() & 0x7fff) + DEGtoANG(90);
-    speed = (Random16() & 0x1ff) + 0x80;
+    speed = (Random16() & 0x1ff) + 128;
     CHIPS[i].x = INTtoFIXED((spawn[0] / 2 + (Random16() & 0xf)) - 8);
     CHIPS[i].y = INTtoFIXED(spawn[1] + 8);
     CHIPS[i].velocityX = (Trig_Sin(angle) * speed) >> 9;
@@ -171,7 +171,7 @@ void BattleEffect_RunHail(struct BattleEffectParams *args) {
 #define FIRST_CHIP 32
 
 /// Where VenusDjinnSmallSheet is decoded in the effect's pictures.
-#define GROUND_VENUS_DJINN_SMALL_PICTURES 0x65c0
+#define GROUND_VENUS_DJINN_SMALL_PICTURES 26048
 
 #define GROUND_FRAMES 96
 

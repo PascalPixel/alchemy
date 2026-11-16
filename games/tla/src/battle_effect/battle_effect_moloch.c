@@ -277,7 +277,7 @@ void BattleEffect_RunMoloch(struct BattleEffectParams *args) {
           Matrix_Initialize();
           Matrix_Translate(toFIXED(16), INTtoFIXED(gMoloch_RingHeights[i]), 0);
           Matrix_Scale(scale, scale, scale);
-          Matrix_RotateX(0xbb8);
+          Matrix_RotateX(3000);
           model->scrollU = ((frame + i * 5) & 7) << 4;
           Render_TransformVertices(gBattleEffect_CylinderCorners, projected,
                                    32);
@@ -405,10 +405,10 @@ void Iris_ChangeBackdrop(void) {
 /// dimmer than the last), later overwritten by the strips' and the glow's
 /// 32x64 textures.
 #define IRIS_MOTE_FADES 8
-#define IRIS_DROPS 0x1b12
+#define IRIS_DROPS 6930
 #define IRIS_DROP_WIDTH 20
 #define IRIS_DROP_HEIGHT 40
-#define IRIS_SMALL_DROPS 0x4c12
+#define IRIS_SMALL_DROPS 19474
 #define IRIS_SMALL_DROP_WIDTH 12
 #define IRIS_SMALL_DROP_HEIGHT 24
 #define IRIS_DROP_PICTURES 8
@@ -420,7 +420,7 @@ void Iris_ChangeBackdrop(void) {
 /// is drawn first at IRIS_PILLAR_CIRCLE and mirrored into it.
 #define IRIS_PILLAR_TEXTURE MOTE_SET_BYTES
 #define IRIS_PILLAR_TEXTURE_SIZE 16
-#define IRIS_PILLAR_CIRCLE 0x3e8
+#define IRIS_PILLAR_CIRCLE 1000
 
 /// The splashes' pictures, in the particle sheet (Ram_HeapSlots->battleSheet):
 /// three fades each of a large and a small ring mote, eight fades of a dot and
@@ -571,7 +571,7 @@ struct StripQuad;
 /// The 128 background colours the scene fades (entries 96 to 223).
 #define IRIS_FADE_COLORS 128
 
-/// The petal objects' work, in the map cell buffer at 0x1f40.
+/// The petal objects' work, in the map cell buffer at byte 8000.
 struct IrisPetals {
   s16 life[IRIS_PETALS]; // high byte: frames left; 0 frees the slot
   u16 tiles[IRIS_PETAL_FRAMES];
@@ -591,7 +591,7 @@ struct IrisPoint {
   s32 unused; ///< cleared as the opening starts; nothing reads it
 };
 
-/// The opening's circle of light and its fifteen streaks, at 0x2ee0.
+/// The opening's circle of light and its fifteen streaks, at byte 12000.
 struct IrisScene {
   union {
     s32 x;
@@ -618,10 +618,10 @@ struct IrisScene {
   struct IrisPoint streaks[IRIS_STREAKS][IRIS_STREAK_LENGTH];
 };
 
-#define IRIS_PETAL_WORK (*(struct IrisPetals *)(Ram_MapCellBuffer + 0x1f40))
-#define IRIS_SCENE (*(struct IrisScene *)(Ram_MapCellBuffer + 0x2ee0))
+#define IRIS_PETAL_WORK (*(struct IrisPetals *)(Ram_MapCellBuffer + 8000))
+#define IRIS_SCENE (*(struct IrisScene *)(Ram_MapCellBuffer + 12000))
 #define IRIS_STREAK_POINTS                                                     \
-  ((struct IrisPoint(*)[IRIS_STREAK_LENGTH])(Ram_MapCellBuffer + 0x2ef4))
+  ((struct IrisPoint(*)[IRIS_STREAK_LENGTH])(Ram_MapCellBuffer + 12020))
 
 extern const struct FiveWidths gIris_RisingPillarWidths;
 extern const struct SevenWidths gIris_WideningPillarWidths;
@@ -1208,7 +1208,7 @@ void BattleEffect_RunIris(struct BattleEffectParams *args) {
                      BGCNT_SCREEN_BASE(7);
         IWRAM_FILL_WORDS(canvas, CANVAS_BYTES,
                          CANVAS_FILL_WORD(CANVAS_LEVEL_BRIGHTEST));
-        IWRAM_FILL_WORDS(FADE_PLTT, 0x100, COLOR_PAIR(RGB_WHITE));
+        IWRAM_FILL_WORDS(FADE_PLTT, 256, COLOR_PAIR(RGB_WHITE));
       }
     }
 
@@ -1225,7 +1225,7 @@ void BattleEffect_RunIris(struct BattleEffectParams *args) {
                                RESOURCE_SUNSET_BACKDROP, 0);
       colors = Resource_GetTableEntry(RESOURCE_ROBED_GODDESS_TILES);
       Dma_Set(colors, (void *)OBJ_PLTT, DMA_COPY_WORDS(128), REG_DMA3);
-      colors += 0x200;
+      colors += 512;
       Decompress_TaggedLz(colors, tileBuffer);
       tiles = gIris_TileBuffer;
       for (i = 0; i != IRIS_GODDESS_SPRITES; i++) {
@@ -1234,7 +1234,7 @@ void BattleEffect_RunIris(struct BattleEffectParams *args) {
 
         work->sprites[i] = obj;
         obj->image.priority = 1;
-        Dma_Set(tiles + i * 0x400, (void *)OBJ_TILES(obj), DMA_COPY_WORDS(256),
+        Dma_Set(tiles + i * 1024, (void *)OBJ_TILES(obj), DMA_COPY_WORDS(256),
                 REG_DMA3);
       }
       colors = Resource_GetTableEntry(RESOURCE_PINK_PETALS_TILES);
@@ -1322,7 +1322,7 @@ void BattleEffect_RunIris(struct BattleEffectParams *args) {
         else if (frame > 365)
           lift = ((366 - frame) * 5 << 17) + toFIXED(64);
         if (frame <= 229)
-          lift = (Trig_Sin((frame << 6) - 0x2c00) << 6) - 0x147200;
+          lift = (Trig_Sin((frame << 6) - 11264) << 6) - 0x147200;
         for (j = 0; j != IRIS_GODDESS_ROWS; j++) {
           for (column = 0; column != IRIS_GODDESS_COLUMNS; column++) {
             pos[0] = toFIXED(72) + column * toFIXED(IRIS_GODDESS_TILE);
@@ -1784,7 +1784,7 @@ void BattleEffect_RunIris(struct BattleEffectParams *args) {
                            << 16;
             petals->y[s] = INTtoFIXED(r) + toFIXED(16);
             petals->vx[s] = (Random16() & 15) * 3 << 11;
-            petals->vy[s] = -0x8000 - ((Random16() & 31) * 3 << 11);
+            petals->vy[s] = -toFIXED(0.5) - ((Random16() & 31) * 3 << 11);
           }
         }
         model->texture = &texture;
@@ -1814,7 +1814,7 @@ void BattleEffect_RunIris(struct BattleEffectParams *args) {
                            << 16;
             petals->y[s] = INTtoFIXED(r) + toFIXED(16);
             petals->vx[s] = (Random16() & 15) * 3 << 11;
-            petals->vy[s] = -0x8000 - ((Random16() & 31) * 3 << 11);
+            petals->vy[s] = -toFIXED(0.5) - ((Random16() & 31) * 3 << 11);
           }
         }
         if (!(frame & 3)) {
@@ -1866,7 +1866,7 @@ void BattleEffect_RunIris(struct BattleEffectParams *args) {
 
       if (shade < 0 || shade > CANVAS_LEVEL_BRIGHTEST)
         shade = CANVAS_LEVEL_BRIGHTEST;
-      x -= Iwram_MulFX((frame - 530) * toFIXED(1), 0x400);
+      x -= Iwram_MulFX((frame - 530) * toFIXED(1), toFIXED(1) / 64);
       BattleEffect_DrawDiagonalCanvasLine(FIXEDtoINT(x), 127, frame - 530,
                                           shade);
     }
@@ -1888,7 +1888,7 @@ void BattleEffect_RunIris(struct BattleEffectParams *args) {
 
       if (shade < 0 || shade > CANVAS_LEVEL_BRIGHTEST)
         shade = CANVAS_LEVEL_BRIGHTEST;
-      x -= Iwram_MulFX((frame - 553) * toFIXED(1), 0x600);
+      x -= Iwram_MulFX((frame - 553) * toFIXED(1), toFIXED(3) / 128);
       BattleEffect_DrawDiagonalCanvasLine(FIXEDtoINT(x), 127, frame - 553,
                                           shade);
     }

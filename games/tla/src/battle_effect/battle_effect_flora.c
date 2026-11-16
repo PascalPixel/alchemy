@@ -20,7 +20,7 @@ struct StripQuad;
 #define FLORA_COLORS 240
 /// Where the storm's fifteen 16x16 petal pictures are unpacked to a byte a
 /// pixel in the effect's pictures.
-#define FLORA_STORM_PETALS 0x1000
+#define FLORA_STORM_PETALS 4096
 
 /// Flora's petals in gEffectScratch: the bloom's fifteen
 /// tile numbers, each petal's animation phase, position and velocity, and
@@ -141,7 +141,7 @@ void BattleEffect_RunFlora(struct BattleEffectParams *args) {
         Iwram_CopyWordsEntry(obj, work->sprites[FLORA_PETAL_SPRITES], 24);
       }
       i = 0;
-      phase = (u16 *)(Ram_MapCellBuffer + 0x401e);
+      phase = (u16 *)(Ram_MapCellBuffer + 16414);
       for (; i != FLORA_PETAL_COUNT; i++, phase++) {
         *phase = (Random16() % FLORA_BLOOM_TILES) << 8;
         ((struct Sprite *)work->sprites[FLORA_PETAL_SPRITES + i])->image.tile =
@@ -379,10 +379,10 @@ void BattleEffect_RunFlora(struct BattleEffectParams *args) {
           FLORA_WORK->x[i] = toFIXED(16);
           FLORA_WORK->y[i] = toFIXED(32);
         } else if (frame <= 62) {
-          FLORA_WORK->x[i] += 0x1d6d8;
-          FLORA_WORK->y[i] += 0x1fde8;
+          FLORA_WORK->x[i] += 120536;
+          FLORA_WORK->y[i] += 130536;
         } else if (frame <= 79) {
-          FLORA_WORK->x[i] += 0x19c40;
+          FLORA_WORK->x[i] += 105536;
           FLORA_WORK->y[i] += 0x6710;
         } else if (frame <= 141) {
           FLORA_WORK->x[i] += toFIXED(3);
@@ -503,8 +503,8 @@ void BattleEffect_RunFlora(struct BattleEffectParams *args) {
           FLORA_WORK->y[i] += FLORA_WORK->vy[i];
           FLORA_WORK->vx[i] = FLORA_WORK->vx[i] * 63 / DAMPING_SCALE;
           FLORA_WORK->vy[i] = FLORA_WORK->vy[i] * 63 / DAMPING_SCALE;
-          if ((u32)(FLORA_WORK->vx[i] + 0xffff) <= 0x1fffe &&
-              (u32)(FLORA_WORK->vy[i] + 0xffff) <= 0x1fffe) {
+          if ((u32)(FLORA_WORK->vx[i] + FIXED_ONE - 1) <= 2 * (FIXED_ONE - 1) &&
+              (u32)(FLORA_WORK->vy[i] + FIXED_ONE - 1) <= 2 * (FIXED_ONE - 1)) {
             FLORA_WORK->x[i] = toFIXED(256);
             FLORA_WORK->y[i] = 0;
           }
@@ -838,7 +838,7 @@ void BattleEffect_RunFlora(struct BattleEffectParams *args) {
 /// BattleEffect_StartActorMotion with fixed values: unless the unit is the
 /// Fusion Dragon or one of three of the Doom Dragon's forms, the actor steps
 /// 15 pixels further from x = 0 on its anchor's side, its y velocity growing
-/// by 0x28000 while y is under 10.
+/// by toFIXED(2.5) while y is under 10.
 void BattleEffect_StartActorMotionOutward(s32 id) {
   struct BattleObject *slot;
   struct MotionObject *object;
@@ -915,7 +915,7 @@ void BattleEffect_RunSabreDance(struct BattleEffectParams *args) {
         SET_POSITION(dagger, INTtoFIXED((Random16() & 63) + 32), y, Random16());
         dagger->velocityX = zero;
         dagger->velocityY = -((Random16() & 31) + 32) << 10;
-        dagger->velocityZ = (Random16() & 0x3ff) + 0x400;
+        dagger->velocityZ = (Random16() & 0x3ff) + toFIXED(1) / 64;
         if (i & 1)
           dagger->velocityZ = -dagger->velocityZ;
         dagger->variant = zero;
@@ -963,7 +963,7 @@ void BattleEffect_RunSabreDance(struct BattleEffectParams *args) {
         s32 drift;
 
         dagger->y = -toFIXED(48);
-        angle = (i << 10) + (Random16() & 0x3ff) - 0x1200;
+        angle = (i << 10) + (Random16() & 0x3ff) - 4608;
         dagger->x = (angle << 10) + toFIXED(64);
         dagger->z = angle;
         drift = -angle << 5;
@@ -1014,7 +1014,7 @@ void BattleObject_SetRecordPriority(s32 objectId, s32 priority) {
 #define STAR_BURST_FRAME 32 ///< and strikes it
 #define SMOKE_COUNT 32
 #define STAR_COUNT 16
-#define STAR_CELS 0x3e80 ///< the pink star's six 16x16 cels, after the smoke's
+#define STAR_CELS 16000 ///< the pink star's six 16x16 cels, after the smoke's
 
 /// A pink star burst. Smoke puffs from the caster for its first 24 frames
 /// while the caster stands just past the target; at frame 16 it leaps at

@@ -483,7 +483,7 @@ void BattleEffect_RunChillBreath(struct BattleEffectParams *args) {
 #define SHORT_STREAK_HEIGHT 2
 #define PROJECTILE_VOLLEY_STING_SPRAY_PICTURES PICTURE_BYTES(SHORT_STREAK)
 /// Hydro Slash's beam, every second byte of BlueBeamSheet's picture.
-#define PROJECTILE_VOLLEY_HALVED_BEAM_PICTURES 0x1000
+#define PROJECTILE_VOLLEY_HALVED_BEAM_PICTURES 4096
 #define PROJECTILE_VOLLEY_HALVED_BEAM_BYTES 1458
 
 /// The bytes of a gProjectileVolley_Modes row.
@@ -503,9 +503,9 @@ enum VolleyField {
 #define DRAW_ALTERNATE ((DrawRectangle)Ram_HeapSlots->ramCodePaired)
 
 /// Where WindStreakSheet is decoded in the effect's pictures.
-#define PROJECTILE_VOLLEY_WIND_STREAK_PICTURES 0x2000
+#define PROJECTILE_VOLLEY_WIND_STREAK_PICTURES 8192
 /// Where MercuryDjinnSmallSheet is decoded in the effect's pictures.
-#define PROJECTILE_VOLLEY_MERCURY_DJINN_SMALL_PICTURES 0x65c0
+#define PROJECTILE_VOLLEY_MERCURY_DJINN_SMALL_PICTURES 26048
 
 #define PROJECTILE_VOLLEY_COMET_PICTURES 4096 ///< comets: the top half of each
 /// The hit flashes turned on their side, after the upright ones.

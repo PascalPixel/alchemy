@@ -818,7 +818,8 @@ void BattleEffect_ArmMeteorBlowPaletteDma(void) {
   channel[DMA_CONTROL_HALF] &= (u16)~DMA_ENABLE;
   palette = 0xa0;
   (void)channel[DMA_CONTROL_HALF];
-  Dma_Set(work + 0x7640, (void *)(palette << 19), DMA_HBLANK_HALFWORD_PER_LINE,
+  Dma_Set(((struct BattleEffectWork *)work)->backdropLines,
+          (void *)(palette << 19), DMA_HBLANK_HALFWORD_PER_LINE,
           (volatile u32 *)channel);
 }
 

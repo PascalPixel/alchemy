@@ -90,7 +90,7 @@ void BattleEffect_RunAstralBlast(struct BattleEffectParams *args) {
       if (frame <= 39)
         speed = 128;
       else
-        speed = 0x300 - frame * 16;
+        speed = 768 - frame * 16;
       if (args->side == EFFECT_SIDE_ENEMIES)
         view->yaw -= speed;
       else
@@ -122,7 +122,7 @@ void BattleEffect_RunAstralBlast(struct BattleEffectParams *args) {
           scale[1] = scale[0];
           scale[2] = scale[0];
           Matrix_ScaleVector(scale);
-          Matrix_RotateZ(j * 0x199a);
+          Matrix_RotateZ(j * 6554);
           depth = EffectPosition_ProjectPoint(&gStar_Points[(j & 1) * 3], &pos);
           if (nearest < depth)
             nearest = depth;
@@ -279,14 +279,14 @@ void BattleEffect_RunShiningStar(struct BattleEffectParams *args) {
               for (j = 0; j != RING_POINTS; j++) {
                 ring[i * 10 + j].velocityX =
                     pos.x +
-                    (FIXEDtoINT((Trig_Sin(j * 0x199a -
-                                          ((frame - star->variant) << 11)) *
-                                 gStar_Radii[j & 1]) /
-                                2));
+                    (FIXEDtoINT(
+                        (Trig_Sin(j * 6554 - ((frame - star->variant) << 11)) *
+                         gStar_Radii[j & 1]) /
+                        2));
                 ring[i * 10 + j].velocityY =
                     pos.y -
                     (FIXEDtoINT(
-                        Trig_Cos(j * 0x199a - ((frame - star->variant) << 11)) *
+                        Trig_Cos(j * 6554 - ((frame - star->variant) << 11)) *
                         gStar_Radii[j & 1]));
               }
               for (j = 0; j != RING_POINTS; j++) {

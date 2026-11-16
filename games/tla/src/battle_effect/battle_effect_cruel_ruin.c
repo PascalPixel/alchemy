@@ -130,7 +130,7 @@ void BattleEffect_RunShatteringOpening(struct BattleEffectParams *args) {
 
   // Copy the picture at 0x06008000 aside, fill it with colour 1, and make
   // colours 6 to 13 white.
-  Iwram_CopyWords(Ram_MapCellBuffer, (void *)BG_CHAR_BLOCK(2), 0x7800);
+  Iwram_CopyWords(Ram_MapCellBuffer, (void *)BG_CHAR_BLOCK(2), 30720);
   Iwram_FillWords(Ram_MapCellBuffer, BATTLE_BACKGROUND_BYTES,
                   CANVAS_FILL_WORD(1));
   view->busy = 1;
@@ -141,7 +141,7 @@ void BattleEffect_RunShatteringOpening(struct BattleEffectParams *args) {
                       BGCNT_PRIORITY(1) | BGCNT_256_COLORS |
                           BGCNT_SCREEN_BASE(31),
                       IO_WRITE_HALFWORD);
-  Iwram_FillWords((void *)&BG_PLTT_COLOR(6, 0), 0x100, COLOR_PAIR(RGB_WHITE));
+  Iwram_FillWords((void *)&BG_PLTT_COLOR(6, 0), 256, COLOR_PAIR(RGB_WHITE));
   Sound_PlayFar(SE_POWER_UP);
   BattleEffect_TintBattler(args->targets[0], SPRITE_COLOR_WHITE, 3, 0, 30);
 
@@ -322,7 +322,7 @@ void BattleEffect_RunShatteringOpening(struct BattleEffectParams *args) {
         piece = &work->particles[i];
         piece->x = INTtoFIXED((Random16() & 31) + 32);
         piece->y = INTtoFIXED((Random16() & 31) + 80);
-        piece->velocityX = ((Random16() & 0x1ff) - 0x100) << 12;
+        piece->velocityX = ((Random16() & 0x1ff) - 256) << 12;
         piece->velocityY = 0;
         piece->variant = 0;
       }
@@ -441,7 +441,7 @@ void BattleEffect_RunElementBurst(struct BattleEffectParams *args) {
   for (i = 0; i != ELEMENT_BURST_SPARKLES; i++) {
     gSparkles[i].y = toFIXED(128);
     gSparkles[i].x = Random16() & TRIG_ANGLE_MASK;
-    gSparkles[i].z = (Random16() & 0x1ff) + 0x400;
+    gSparkles[i].z = (Random16() & 0x1ff) + 1024;
     gSparkles[i].variant = -i;
   }
 
@@ -539,7 +539,7 @@ void BattleEffect_TransferHalvedCanvas(void) {
     {
       void *destination = (void *)BG_CHAR_BLOCK(1);
 
-      ColorBuffer_Halve(buffer, destination, 0x4000);
+      ColorBuffer_Halve(buffer, destination, 16384);
     }
   } else {
     IRQ_UNLOCK(ime);
@@ -738,18 +738,18 @@ void BattleEffect_EndElementStreaks(void) {
 /// GlowBandTextureB; PinkBarSheet; the ten shaded circles, 2 to 20 wide, at
 /// gCruelRuin_CirclePictures; and, in the last act, GlowBandTextureB with the
 /// shaded circle drawn after it.
-#define CRUEL_RUIN_SWIRL 0x2648
-#define CRUEL_RUIN_BAND_A 0x3648
-#define CRUEL_RUIN_BAND_B 0x3688
-#define CRUEL_RUIN_PINK_BAR 0x36c8
-#define CRUEL_RUIN_CIRCLES 0x3a48
-#define CRUEL_RUIN_BURST_BAND 0x3840
-#define CRUEL_RUIN_BURST_CIRCLE 0x38c0
+#define CRUEL_RUIN_SWIRL 9800
+#define CRUEL_RUIN_BAND_A 13896
+#define CRUEL_RUIN_BAND_B 13960
+#define CRUEL_RUIN_PINK_BAR 14024
+#define CRUEL_RUIN_CIRCLES 14920
+#define CRUEL_RUIN_BURST_BAND 14400
+#define CRUEL_RUIN_BURST_CIRCLE 14528
 /// CornerRuneASheet's 64x64 rune mirrored into a 128x128 one, in the map cell
 /// buffer.
-#define CRUEL_RUIN_RUNE_CIRCLE 0x4000
+#define CRUEL_RUIN_RUNE_CIRCLE 16384
 /// The pillar's strip mesh, in the map cell buffer.
-#define CRUEL_RUIN_STRIP_MESH (Ram_MapCellBuffer + 0x2000)
+#define CRUEL_RUIN_STRIP_MESH (Ram_MapCellBuffer + 8192)
 /// The particles of the first act: rays of light from the caster, the motes
 /// that rise around it, and the black sphere that falls on the foes.
 #define CRUEL_RUIN_RAYS 24
@@ -871,7 +871,7 @@ void BattleEffect_RunCruelRuin(struct BattleEffectParams *args) {
   steps = 0;
   for (i = 0; i != CRUEL_RUIN_RAYS; i++) {
     struct Particle *p = &work->particles[i];
-    p->z = i * 0xaaa + (Random16() & 0xfff);
+    p->z = i * 2730 + (Random16() & 0xfff);
     p->variant = -(Random16() & 15);
   }
   for (i = 0; i != CRUEL_RUIN_MOTES; i++) {
@@ -1221,7 +1221,7 @@ void BattleEffect_RunCruelRuin(struct BattleEffectParams *args) {
         half = w / 2;
         for (i = 0; i != 2; i++, acc += w, v += 4) {
           v[0] = height;
-          v[1] = (FIXEDtoINT(Trig_Sin(c * 0x92c) * gCruelRuin_PillarSways[k])) +
+          v[1] = (FIXEDtoINT(Trig_Sin(c * 2348) * gCruelRuin_PillarSways[k])) +
                  acc - half;
           v[2] = 0;
         }
@@ -1496,7 +1496,7 @@ void BattleEffect_RunCruelRuin(struct BattleEffectParams *args) {
             Matrix_Translate(x, -toFIXED(16), 0);
             Matrix_Scale(45536, FIXED_ONE, FIXED_ONE / 2);
             if (i == 0) {
-              Matrix_RotateZ(-0xbe8);
+              Matrix_RotateZ(-3048);
             } else {
               Matrix_RotateZ(-(TRIG_TURN / 64));
             }
@@ -1511,11 +1511,11 @@ void BattleEffect_RunCruelRuin(struct BattleEffectParams *args) {
       place[3] = 0;
       place[1] = toFIXED(255);
       scrollX += toFIXED(24);
-      if (scrollX > 0x1fffff) {
+      if (scrollX > toFIXED(32) - 1) {
         phase = (phase + 7) % 8;
         scrollX -= toFIXED(32);
       }
-      gBgScroll[1].x += 0xfff8;
+      gBgScroll[1].x -= 8;
       for (j = 0; j != 2; j++) {
         s32 row = j * 9;
         void **last = &work->sprites[row + 8];
@@ -1562,7 +1562,7 @@ void BattleEffect_RunCruelRuin(struct BattleEffectParams *args) {
             s32 x = obj->attr.all & mask;
             obj->attr.all = x | v;
           }
-          if (place[0] > 0xffffff) {
+          if (place[0] > toFIXED(256) - 1) {
             place[0] -= toFIXED(288);
           }
           Render_ApplyProjectedPlacementFar(work->sprites[j * 9 + i], place,

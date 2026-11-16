@@ -172,6 +172,7 @@ static inline s32 AnkohlRuins_FlagCheck(s32 flag) { return GameFlag_Get(flag); }
 #include "types.h"
 #include "field/scene_tables.h"
 #include "field/event_commands.h"
+#include "field/field_sequence.h"
 #include "scene/scene.h"
 #include "version.h"
 #include "system/ram_buffer.h"
@@ -725,7 +726,7 @@ void AnkohlRuins_FlowWithSand(void) {
   upper += index;
   if (((ground->attributeB & 4) | (upper->collisionCode & 232)) != 236)
     return;
-  if (gMainRoutineWork.movementMode == 5)
+  if (gMainRoutineWork.movementMode == LEADER_MOVEMENT_SAND)
     return;
   position[0] = leader->x.fixed;
   position[1] = leader->y.fixed;
@@ -1219,7 +1220,8 @@ void AnkohlRuins_RideRaftDown(void) {
     return;
   raft->z.fixed += toFIXED(4) / 5;
   column = FIELD_CELL(leader->x.fixed);
-  if (gMainRoutineWork.movementMode != 5 && column > 12 && column <= 15) {
+  if (gMainRoutineWork.movementMode != LEADER_MOVEMENT_SAND && column > 12 &&
+      column <= 15) {
     if (raft->z.fixed + toFIXED(24) >= leader->z.fixed &&
         leader->z.fixed >= raft->z.fixed) {
       leader->z.fixed = raft->z.fixed + toFIXED(24);

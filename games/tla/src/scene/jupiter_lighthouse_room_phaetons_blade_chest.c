@@ -220,14 +220,14 @@ void JupiterLighthouse_StepOnCrackedTileOrWhirlwind(s32 arg) {
 
 const struct Trigger *Scene_GetTriggers(void) { return gSceneEvents; }
 
-/// Sets up the hall: its cracked tiles, and the landing of a leader who fell
-/// through one from the floor above.
+/// Sets up the hall: its treasure chest at sprite priority 3, its cracked tiles,
+/// and the landing of a leader who fell through one from the floor above.
 s32 Scene_Initialize(void) {
   struct FieldWork *work = Ram_HeapSlots->fieldWork;
 
   work->transition =
       SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE);
-  FieldActor_SetSpritePriority(64, 3);
+  FieldActor_SetSpritePriority(FIELD_TREASURE_ACTOR, 3);
   gWhirlwindRiding = 0;
   Actor_Get(ACTOR_WHIRLWIND_SOURCE)->motionFlags = 0;
   if ((u16)(gMainRoutineWork.entrance - 6) <= 1) {

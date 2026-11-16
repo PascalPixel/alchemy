@@ -311,9 +311,9 @@ s32 Kibombo_ShakeInPlace(struct Actor *object) {
 /// An actor's update: flashes its sprite's colour on and off every two frames.
 void Kibombo_FlashSprite(struct Actor *object) {
   if (gFrameCount & 2)
-    Actor_SetSpriteColor(object, 10);
+    Actor_SetSpriteColor(object, SPRITE_COLOR_RED_TINT);
   else
-    Actor_SetSpriteColor(object, 0);
+    Actor_SetSpriteColor(object, SPRITE_COLOR_NORMAL);
 }
 
 /// An actor's update: every ten to twenty frames, faces a random way.
@@ -1769,9 +1769,9 @@ void Kibombo_FlickerRedderColor(s32 index, s32 entry, s32 delta) {
   }
 }
 
-#define DEFINE_KIBOMBO_WOBBLE(name, secondIndex, secondRange, secondBias,      \
-                              thirdIndex, flickerFourth, fourthIndex,          \
-                              fourthRange, fourthBias)                         \
+#define DEFINE_KIBOMBO_FLICKER_FIRES(name, secondIndex, secondRange,           \
+                                     secondBias, thirdIndex, flickerFourth,    \
+                                     fourthIndex, fourthRange, fourthBias)     \
   void name(void) {                                                            \
     struct FieldWork *work = Ram_HeapSlots->fieldWork;                         \
                                                                                \
@@ -1785,11 +1785,15 @@ void Kibombo_FlickerRedderColor(s32 index, s32 entry, s32 delta) {
     }                                                                          \
   }
 
-DEFINE_KIBOMBO_WOBBLE(Kibombo_FlickerVillageFires, 87, 8, 4, 103,
-                      Kibombo_FlickerColor, 119, 4, 2)
+/// A frame task in the village: every eighth frame outside menus and Psynergy,
+/// the four fire colours flicker.
+DEFINE_KIBOMBO_FLICKER_FIRES(Kibombo_FlickerVillageFires, 87, 8, 4, 103,
+                             Kibombo_FlickerColor, 119, 4, 2)
 
-DEFINE_KIBOMBO_WOBBLE(Kibombo_FlickerCeremonyFires, 7, 6, 3, 6,
-                      Kibombo_FlickerRedderColor, 76, 8, 4)
+/// As Kibombo_FlickerVillageFires on the ceremony night, its fourth colour
+/// flickering redder.
+DEFINE_KIBOMBO_FLICKER_FIRES(Kibombo_FlickerCeremonyFires, 7, 6, 3, 6,
+                             Kibombo_FlickerRedderColor, 76, 8, 4)
 
 /// A frame task before the statue's face: every eighth frame outside menus and
 /// Psynergy, the three fire colours flicker.
@@ -1857,7 +1861,7 @@ void Kibombo_CarryBlackCrystal(void) {
 
 #include "../field/field_effect_advance_motion.c"
 
-#undef DEFINE_KIBOMBO_WOBBLE
+#undef DEFINE_KIBOMBO_FLICKER_FIRES
 #undef Actor_SetSpriteFlags
 #undef EVENT_WORK
 #include "shared/tables.h"
@@ -2017,7 +2021,7 @@ void Kibombo_HideGroundsPair(void) {
   Scene_RunUnlessFlag();
 }
 
-// Hides room 3's actors 26 and 27 before the room opens.
+/// Hides the houses' actors 26 and 27 before the room opens.
 // XXX: who actors 26 and 27 are in room 3; staging the room would settle it.
 void Kibombo_HideHousesPair(void) {
   u32 i;
@@ -2032,16 +2036,18 @@ void Kibombo_HideHousesPair(void) {
   Scene_RunUnlessFlag();
 }
 
-#define DEFINE_KIBOMBO_SET_CROWD_MODE(name, n1)                                \
+#define DEFINE_KIBOMBO_SET_CROWD_MODE(name, animation)                         \
   void name(void) {                                                            \
     u32 i;                                                                     \
                                                                                \
     for (i = 0; i <= 7; i++)                                                   \
-      Actor_SetAnimationById(i + 18, n1);                                      \
+      Actor_SetAnimationById(i + ACTOR_WARRIOR_A, animation);                  \
   }
 
+/// The eight warriors, ACTOR_WARRIOR_A to H, bow.
 DEFINE_KIBOMBO_SET_CROWD_MODE(Kibombo_CrowdBows, 5)
 
+/// The eight warriors stand again.
 DEFINE_KIBOMBO_SET_CROWD_MODE(Kibombo_CrowdStands, 1)
 
 /// Akafubu's Psynergy on the Black Crystal.
@@ -2174,9 +2180,9 @@ void Kibombo_AkafubuChants(void) {
 
   Sound_Play(SE_CAST);
   for (i = 0; i <= 7; i++) {
-    Actor_SetSpriteColor(Actor_GetById(ACTOR_AKAFUBU), 7);
+    Actor_SetSpriteColor(Actor_GetById(ACTOR_AKAFUBU), SPRITE_COLOR_WHITE);
     wait(2);
-    Actor_SetSpriteColor(Actor_GetById(ACTOR_AKAFUBU), 0);
+    Actor_SetSpriteColor(Actor_GetById(ACTOR_AKAFUBU), SPRITE_COLOR_NORMAL);
     wait(2);
   }
   Sound_Play(SE_MERCURY_LIGHTHOUSE_DOOR_OPEN);
@@ -2414,26 +2420,30 @@ void Kibombo_StepIntoFirstHole(void) {
   Kibombo_DropIntoHole(680, 352);
 }
 
-#define DEFINE_KIBOMBO_STEP_WHEN_HELD(name, n1, n2, n3, n4, n5, n6, n7)        \
+#define DEFINE_KIBOMBO_STEP_WHEN_HELD(name, sideZ, westX, eastX, southX,       \
+                                      southZ, holeX, holeZ)                    \
   void name(void) {                                                            \
     struct Actor *leader = Actor_GetById(gMainRoutineWork.leaderActorId);      \
     s32 x = FIELD_CELL(leader->x.fixed);                                       \
     s32 z = FIELD_CELL(leader->z.fixed);                                       \
                                                                                \
-    if (z == n1) {                                                             \
-      if (x == n2 && (gInput.held & KEY_RIGHT) == 0)                           \
+    if (z == sideZ) {                                                          \
+      if (x == westX && (gInput.held & KEY_RIGHT) == 0)                        \
         return;                                                                \
-      if (x == n3 && (gInput.held & KEY_LEFT) == 0)                            \
+      if (x == eastX && (gInput.held & KEY_LEFT) == 0)                         \
         return;                                                                \
-    } else if (x == n4 && z == n5 && (gInput.held & KEY_UP) == 0) {            \
+    } else if (x == southX && z == southZ && (gInput.held & KEY_UP) == 0) {    \
       return;                                                                  \
     }                                                                          \
-    Kibombo_DropIntoHole(n6, n7);                                              \
+    Kibombo_DropIntoHole(holeX, holeZ);                                        \
   }
 
+/// As Kibombo_StepIntoFirstHole, for the second hole, which the leader may
+/// step into from the west, the east or the south.
 DEFINE_KIBOMBO_STEP_WHEN_HELD(Kibombo_StepIntoSecondHole, 38, 23, 25, 24, 39,
                               392, 608)
 
+/// As Kibombo_StepIntoSecondHole, for the third hole.
 DEFINE_KIBOMBO_STEP_WHEN_HELD(Kibombo_StepIntoThirdHole, 54, 42, 44, 43, 55,
                               696, 864)
 
@@ -2613,7 +2623,8 @@ void Kibombo_CarryBlackCrystal(void);
 /// its light.
 void Kibombo_PresentOrbToGabomba(void) {
   Actor_SetSpriteFlags(Actor_GetById(gMainRoutineWork.leaderActorId), 0);
-  Actor_SetSpriteColor(Actor_GetById(gMainRoutineWork.leaderActorId), 15);
+  Actor_SetSpriteColor(Actor_GetById(gMainRoutineWork.leaderActorId),
+                       SPRITE_COLOR_HIDDEN);
   FieldCamera_MoveTo(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0);
   FieldCamera_GetActor()->motionFlags = 0;
   Event_StartScreenTransition();
@@ -2671,7 +2682,8 @@ void Kibombo_GabombaNotPleased(void) {
   struct Actor *object;
 
   Actor_SetSpriteFlags(Actor_GetById(gMainRoutineWork.leaderActorId), 0);
-  Actor_SetSpriteColor(Actor_GetById(gMainRoutineWork.leaderActorId), 15);
+  Actor_SetSpriteColor(Actor_GetById(gMainRoutineWork.leaderActorId),
+                       SPRITE_COLOR_HIDDEN);
   FieldCamera_MoveTo(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0);
   FieldCamera_GetActor()->motionFlags = 0;
   Actor_SetSpriteFlags(Actor_GetById(ACTOR_CRYSTAL_CARRIER), 0);
@@ -2729,7 +2741,8 @@ void Kibombo_WitchDoctorFeelsPower(void) {
 
   Event_Start();
   Event_ResolvePendingActions(0);
-  Actor_SetSpriteColor(Actor_GetById(gMainRoutineWork.leaderActorId), 15);
+  Actor_SetSpriteColor(Actor_GetById(gMainRoutineWork.leaderActorId),
+                       SPRITE_COLOR_HIDDEN);
   Actor_SetSpriteFlags(Actor_GetById(gMainRoutineWork.leaderActorId), 0);
   Kibombo_CrowdBows();
   Task_Add(Kibombo_FlickerCeremonyFires, TASK_PASS_VBLANK);
@@ -2765,7 +2778,8 @@ void Kibombo_OpenCeremonyScene(void) {
   Event_ResolvePendingActions(0);
   FieldCamera_MoveTo(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0);
   FieldCamera_GetActor()->motionFlags = 0;
-  Actor_SetSpriteColor(Actor_GetById(gMainRoutineWork.leaderActorId), 15);
+  Actor_SetSpriteColor(Actor_GetById(gMainRoutineWork.leaderActorId),
+                       SPRITE_COLOR_HIDDEN);
   Actor_SetSpriteFlags(Actor_GetById(gMainRoutineWork.leaderActorId), 0);
   Task_Add(Kibombo_FlickerCeremonyFires, TASK_PASS_VBLANK);
   Kibombo_SetStatueMouth(1, 1);
@@ -2885,11 +2899,11 @@ void Kibombo_GabombaStillNotPleased(void) {
 void Kibombo_GabombaSeesOrb(void) {
   Kibombo_OpenCeremonyScene();
   Sound_Play(SE_STATUE_STIRS);
-  Actor_SetSpriteColor(Actor_GetById(ACTOR_STATUE_JAW_A), 7);
-  Actor_SetSpriteColor(Actor_GetById(ACTOR_STATUE_JAW_B), 7);
+  Actor_SetSpriteColor(Actor_GetById(ACTOR_STATUE_JAW_A), SPRITE_COLOR_WHITE);
+  Actor_SetSpriteColor(Actor_GetById(ACTOR_STATUE_JAW_B), SPRITE_COLOR_WHITE);
   wait(8);
-  Actor_SetSpriteColor(Actor_GetById(ACTOR_STATUE_JAW_A), 0);
-  Actor_SetSpriteColor(Actor_GetById(ACTOR_STATUE_JAW_B), 0);
+  Actor_SetSpriteColor(Actor_GetById(ACTOR_STATUE_JAW_A), SPRITE_COLOR_NORMAL);
+  Actor_SetSpriteColor(Actor_GetById(ACTOR_STATUE_JAW_B), SPRITE_COLOR_NORMAL);
   wait(8);
   Actor_ShowEmoteById(ACTOR_AKAFUBU, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 20);
   Event_SetMessageId((s32)MsgLookLookThe);
@@ -2912,9 +2926,9 @@ void Kibombo_GabombaSeesOrb(void) {
 /// The warriors cry that the Great Gabomba has responded to their gift.
 void Kibombo_GabombaResponds(void) {
   Kibombo_OpenCeremonyScene();
-  Event_PlaySound(0x240);
-  Actor_SetSpriteColor(Actor_GetById(ACTOR_STATUE_JAW_A), 7);
-  Actor_SetSpriteColor(Actor_GetById(ACTOR_STATUE_JAW_B), 7);
+  Event_PlaySound(SE_STATUE_STIRS);
+  Actor_SetSpriteColor(Actor_GetById(ACTOR_STATUE_JAW_A), SPRITE_COLOR_WHITE);
+  Actor_SetSpriteColor(Actor_GetById(ACTOR_STATUE_JAW_B), SPRITE_COLOR_WHITE);
   wait(8);
   Actor_GetById(ACTOR_STATUE_JAW_A)->update =
       (void (*)(void))Kibombo_FlashSprite;
@@ -2945,18 +2959,18 @@ void Kibombo_GabombaRespondsToGift(void) {
   object = Actor_GetById(ACTOR_STATUE_TONGUE);
   Kibombo_OpenCeremonyScene();
   Actor_SetSpritePriority(ACTOR_AKAFUBU, 1);
-  Event_PlaySound(0x240);
-  Actor_SetSpriteColor(Actor_GetById(ACTOR_STATUE_JAW_A), 7);
-  Actor_SetSpriteColor(Actor_GetById(ACTOR_STATUE_JAW_B), 7);
+  Event_PlaySound(SE_STATUE_STIRS);
+  Actor_SetSpriteColor(Actor_GetById(ACTOR_STATUE_JAW_A), SPRITE_COLOR_WHITE);
+  Actor_SetSpriteColor(Actor_GetById(ACTOR_STATUE_JAW_B), SPRITE_COLOR_WHITE);
   wait(8);
-  Actor_SetSpriteColor(Actor_GetById(ACTOR_STATUE_JAW_A), 0);
-  Actor_SetSpriteColor(Actor_GetById(ACTOR_STATUE_JAW_B), 0);
+  Actor_SetSpriteColor(Actor_GetById(ACTOR_STATUE_JAW_A), SPRITE_COLOR_NORMAL);
+  Actor_SetSpriteColor(Actor_GetById(ACTOR_STATUE_JAW_B), SPRITE_COLOR_NORMAL);
   wait(8);
   Actor_ShowEmoteById(ACTOR_AKAFUBU, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 20);
   Event_SetMessageId((s32)MsgLookTheGreatGabomba);
   // "Look! The Great Gabomba has responded to our gift!"
   Event_ShowMessageThenWait(ACTOR_AKAFUBU, 0, 20);
-  Event_PlaySound(0x240);
+  Event_PlaySound(SE_STATUE_STIRS);
   Kibombo_SetStatueTongue(1, 0);
   Event_Wait(20);
   Sound_Play(SE_CART_ROLL);
@@ -3006,7 +3020,7 @@ void Kibombo_GabombaRespondsToGift(void) {
   Event_Wait(10);
   Kibombo_SetStatueMouth(0, 1);
   Event_Wait(40);
-  Event_PlaySound(0x240);
+  Event_PlaySound(SE_STATUE_STIRS);
   Kibombo_SetStatueMouth(1, 1);
   Kibombo_SetStatueTongue(1, 0);
   Sound_Play(SE_WATER);
@@ -3440,11 +3454,13 @@ void Kibombo_InitializeStatueFace(void) {
   gKibombo_FireColors[2] = PALETTE_WORD(166);
   if (gMainRoutineWork.entrance == 10) {
     Actor_SetSpriteFlags(Actor_GetById(gMainRoutineWork.leaderActorId), 0);
-    Actor_SetSpriteColor(Actor_GetById(gMainRoutineWork.leaderActorId), 15);
+    Actor_SetSpriteColor(Actor_GetById(gMainRoutineWork.leaderActorId),
+                         SPRITE_COLOR_HIDDEN);
     Kibombo_StatueFlashes();
   } else if (gMainRoutineWork.entrance == 11) {
     Actor_SetSpriteFlags(Actor_GetById(gMainRoutineWork.leaderActorId), 0);
-    Actor_SetSpriteColor(Actor_GetById(gMainRoutineWork.leaderActorId), 15);
+    Actor_SetSpriteColor(Actor_GetById(gMainRoutineWork.leaderActorId),
+                         SPRITE_COLOR_HIDDEN);
     Kibombo_GazeAtStatue();
   } else {
     Event_StartScreenTransition();

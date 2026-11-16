@@ -664,7 +664,7 @@ void KandoreanTemple_InitializeSteam(struct Actor *object, s32 priority) {
   Actor_SetSpriteFlags(object, 0);
   Actor_SelectAnimation(object, 2);
   Actor_StartScript(object, gKandoreanTemple_SteamScript);
-  Actor_SetSpriteColor(object, 9);
+  Actor_SetSpriteColor(object, SPRITE_COLOR_BLUE_TINT);
   object->timer = 0;
   object->speedLimit = 0;
   object->acceleration = 0;
@@ -1704,12 +1704,14 @@ void KandoreanTemple_TouchTheHotFloor(void) {
   Actor_ShowEmoteById(gMainRoutineWork.leaderActorId,
                       EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 20);
   Sound_Play(SE_WATER);
-  Actor_SetSpriteColor(Actor_GetById(gMainRoutineWork.leaderActorId), 10);
+  Actor_SetSpriteColor(Actor_GetById(gMainRoutineWork.leaderActorId),
+                       SPRITE_COLOR_RED_TINT);
   leader->velocityY = toFIXED(6);
   wait(20);
   while (leader->velocityY != 0)
     wait(1);
-  Actor_SetSpriteColor(Actor_GetById(gMainRoutineWork.leaderActorId), 0);
+  Actor_SetSpriteColor(Actor_GetById(gMainRoutineWork.leaderActorId),
+                       SPRITE_COLOR_NORMAL);
   Event_End();
 }
 
@@ -2870,7 +2872,7 @@ void KandoreanTemple_TestTheStudents(void) {
   Actor_WalkToAndWait(ACTOR_POI, 326, 664);
   Actor_WalkToAndWaitById(ACTOR_POI, 328, 648);
   Actor_SetSpriteFlags(Actor_GetById(ACTOR_POI), 0);
-  Actor_SetSpriteColor(Actor_GetById(ACTOR_POI), 15);
+  Actor_SetSpriteColor(Actor_GetById(ACTOR_POI), SPRITE_COLOR_HIDDEN);
   Actor_SetPosition(ACTOR_POI, 440, 600);
   FieldCamera_MoveTo(400, 0, 688, 1);
   Actor_SetSpeed(ACTOR_THIRD_TESTED_STUDENT, 0.8);

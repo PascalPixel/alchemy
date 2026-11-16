@@ -250,7 +250,7 @@ void Orbs_SpawnRising(void) {
   if (effect != 0) {
     sprite = effect->sprite;
     Actor_StartScript(effect, gOrbScript);
-    FieldActor_SetSpriteColor(effect, 1);
+    FieldActor_SetSpriteColor(effect, SPRITE_COLOR_GRB);
     effect->motionFlags = 0;
     angle = Random16() & 0xffff000;
     effect->timer = angle;
@@ -286,7 +286,7 @@ static __inline__ void JupiterLighthouse_BringInBeam(s32 id) {
   struct Actor *object;
 
   Actor_SetSpritePriority(id, 2);
-  Actor_SetSpriteColor(Actor_GetById(id), 7);
+  Actor_SetSpriteColor(Actor_GetById(id), SPRITE_COLOR_WHITE);
   object = Actor_GetById(id);
   object->motionFlags = 0;
   object->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
@@ -511,7 +511,7 @@ void JupiterLighthouse_HealWithArc(s32 actor, s32 target) {
     System_Wait(1);
   }
   Actor_Get(target)->facing = FACING_NORTH;
-  FieldActor_SetSpriteColor(Actor_Get(target), 0);
+  FieldActor_SetSpriteColor(Actor_Get(target), SPRITE_COLOR_NORMAL);
   BattleEffect_SetObjectUpdateMode(Actor_Get(actor), 0);
   BattleEffect_WaitForArcGroups();
   BattleEffect_EndArcEffect();
@@ -549,7 +549,8 @@ void JupiterLighthouse_AlexHealsTheParty(void) {
   Actor_FaceDirectionAndWait(ACTOR_FELIX, FACING_NORTH);
   FieldEvent_Wait(10);
   Actor_SetSpriteFlags(((void *)Actor_Get(ACTOR_ALEX)), 0);
-  FieldActor_SetSpriteColor(((void *)Actor_Get(ACTOR_ALEX)), 15);
+  FieldActor_SetSpriteColor(((void *)Actor_Get(ACTOR_ALEX)),
+                            SPRITE_COLOR_HIDDEN);
   angle = FACING_SOUTH;
   Actor_SetPositionAndFacing(ACTOR_ALEX, toFIXED(64), toFIXED(225), angle);
   JupiterLighthouse_AlexAppears();

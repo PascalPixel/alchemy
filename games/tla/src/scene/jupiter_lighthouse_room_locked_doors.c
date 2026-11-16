@@ -254,7 +254,7 @@ void JupiterLighthouse_SpawnCirclingMotes(void) {
     object->timer = Random16();
     object->userValue = phase;
     Actor_SetSpriteFlags(object, 0);
-    FieldActor_SetSpriteColor(object, 2);
+    FieldActor_SetSpriteColor(object, SPRITE_COLOR_RBG);
     ((struct FieldSprite *)object->sprite)->priority = 1;
     phase += 5;
   }

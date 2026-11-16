@@ -51,7 +51,7 @@ void BattleEffect_RunRushingStrike(struct BattleEffectParams *args, s32 mode) {
   Resource_LoadAndDecompress(RESOURCE_FLAME_PLUME_SHEET, work->sheet, 0, 0);
   for (row = 0; row != 32; row++)
     for (column = 0; column != 32; column++)
-      work->sheet[0x400 + (31 - row) * 32 + column] =
+      work->sheet[32 * 32 + (31 - row) * 32 + column] =
           work->sheet[row * 32 + column];
   Resource_LoadAndDecompress(RESOURCE_FLASH_BURST_SHEET,
                              work->sheet + RUSHING_STRIKE_FLASH_BURST_PICTURES,
@@ -129,9 +129,9 @@ void BattleEffect_RunRushingStrike(struct BattleEffectParams *args, s32 mode) {
     EffectPosition_ProjectBattler(args->user, &caster);
     vertices = Heap_AllocEwram(32);
     quad = Render_AllocateModelList(1);
-    *(u32 *)&texture = (*(u32 *)&texture & ~0xff) | 5;
+    texture.logWidth = 5;
     brightness = 0;
-    *(u32 *)&texture = (*(u32 *)&texture & ~0xff00) | 6 << 8;
+    texture.logHeight = 6;
     texture.pixels = work->sheet;
     quad->texture = &texture;
     quad->mesh = gBattleEffect_TallMesh;
@@ -214,7 +214,7 @@ void BattleEffect_RunRushingStrike(struct BattleEffectParams *args, s32 mode) {
           height = size * 2;
           draw[i & 1](canvas, sparkCels + gBattleEffect_MotePictures[size - 1],
                       screen.x - size / 2, screen.y - size, size, height);
-          BattleEffectKernels_IntegrateVector3(spark, 60, -0x200);
+          BattleEffectKernels_IntegrateVector3(spark, 60, -toFIXED(1) / 128);
           spark->variant--;
         }
       }

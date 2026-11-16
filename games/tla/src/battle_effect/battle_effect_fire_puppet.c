@@ -9,6 +9,10 @@ struct StripQuad;
 
 #define FIRE_PUPPET_FRAMES 103
 #define PUPPET_SEGMENTS 33
+/// The arm's corners, their projections and its strip's mesh, in the map cell
+/// buffer.
+#define PUPPET_STRIP_VERTICES (Ram_MapCellBuffer + 0x1000)
+#define PUPPET_STRIP_MESH (Ram_MapCellBuffer + 0x2000)
 /// The last particle keeps the target's position, and its scale in velocityX
 /// and velocityY.
 #define FIRE_PUPPET_SAVED_TARGET 63
@@ -38,7 +42,7 @@ void BattleEffect_RunFirePuppet(struct BattleEffectParams *args) {
   s32 endY;
   s32 i;
 
-  buffer = Ram_MapCellBuffer + 0x2000;
+  buffer = PUPPET_STRIP_MESH;
   work = Ram_HeapSlots->battleEffect;
   canvas = Ram_HeapSlots->battleCanvas;
   camera = Ram_HeapSlots->cameraWork;
@@ -103,7 +107,7 @@ void BattleEffect_RunFirePuppet(struct BattleEffectParams *args) {
       s32 j;
       struct ModelVertex(*cells)[2] =
           (struct ModelVertex(*)[2])Ram_MapCellBuffer;
-      u8 *projected = Ram_MapCellBuffer + 0x1000;
+      u8 *projected = PUPPET_STRIP_VERTICES;
       s32 shade;
 
       length = frame * 44 - 704;
@@ -131,7 +135,7 @@ void BattleEffect_RunFirePuppet(struct BattleEffectParams *args) {
           cells[j][i].z = 0;
           i++;
         } while (i != 2);
-        if (j == 32) {
+        if (j == PUPPET_SEGMENTS - 1) {
           endX =
               (FIXEDtoINT(Trig_Cos(length << 5) * (width / 2 + wobble + 16))) -
               (width + wobble) / 2 - 16;
@@ -155,7 +159,7 @@ void BattleEffect_RunFirePuppet(struct BattleEffectParams *args) {
       model->scrollU = 127 & ~(frame << 2);
       Matrix_Initialize();
       Matrix_Translate(INTtoFIXED(pos.x / 2 - 64),
-                       INTtoFIXED(pos.y) + 0xffd60000, 0);
+                       INTtoFIXED(pos.y) - toFIXED(42), 0);
       Matrix_Scale(FIXED_ONE / 2, FIXED_ONE, FIXED_ONE / 2);
       if (args->side == EFFECT_SIDE_PARTY) {
         Matrix_RotateY(DEGtoANG(180));
@@ -164,8 +168,7 @@ void BattleEffect_RunFirePuppet(struct BattleEffectParams *args) {
       if (frame > 73) {
         Matrix_ScaleUniform((212 << 10) - (frame << 11));
       }
-      Render_TransformVertices(Ram_MapCellBuffer, Ram_MapCellBuffer + 0x1000,
-                               66);
+      Render_TransformVertices(Ram_MapCellBuffer, PUPPET_STRIP_VERTICES, 66);
       Render_DrawModelList(model);
 
       // The hand at the arm's end.
@@ -358,6 +361,8 @@ void BattleEffect_RunWhiplash(struct BattleEffectParams *args) {
 #undef BLITTER
 #undef FIRE_PUPPET_FRAMES
 #undef PUPPET_SEGMENTS
+#undef PUPPET_STRIP_VERTICES
+#undef PUPPET_STRIP_MESH
 #undef SWING_FRAMES
 #undef SWING_HIT_FRAME
 #undef SPARK_COUNT

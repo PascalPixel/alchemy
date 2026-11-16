@@ -109,6 +109,8 @@ FLURRY_DEFINE_BY_VARIANT(BattleEffect_RunDoublestep, FLURRY_GUST,
 #define FLURRY_WAVE_PICTURES (Ram_MapCellBuffer + 0x2400)
 /// The smoke pictures, past the waves.
 #define FLURRY_SMOKE_PICTURES (Ram_MapCellBuffer + 0x3788)
+/// Where BlueArcSheetA or BlueArcSheetB is decoded in the effect's pictures.
+#define FLURRY_BLUE_ARC_PICTURES 0xc80
 /// The flash pictures, packed to half width past the smoke.
 #define FLURRY_FLASH_PICTURES (Ram_MapCellBuffer + 0x5288)
 
@@ -179,11 +181,11 @@ void BattleEffect_RunFlurry(struct BattleEffectParams *args, s32 mode) {
   // The glints' sheet takes the orb's place.
   Resource_LoadAndDecompress(RESOURCE_TORNADO_SHEET, work->sheet, 1, 0);
   if (gFlurry_Styles[mode][FLURRY_ARC_SHEET] == FLURRY_ARCS_AND_WAVES)
-    Resource_LoadAndDecompress(RESOURCE_BLUE_ARC_SHEET_A, work->sheet + 0xc80,
-                               1, 1);
+    Resource_LoadAndDecompress(RESOURCE_BLUE_ARC_SHEET_A,
+                               work->sheet + FLURRY_BLUE_ARC_PICTURES, 1, 1);
   else
-    Resource_LoadAndDecompress(RESOURCE_BLUE_ARC_SHEET_B, work->sheet + 0xc80,
-                               1, 1);
+    Resource_LoadAndDecompress(RESOURCE_BLUE_ARC_SHEET_B,
+                               work->sheet + FLURRY_BLUE_ARC_PICTURES, 1, 1);
   Resource_LoadAndDecompress(RESOURCE_WAVE_SHEET, FLURRY_WAVE_PICTURES, 1, 0);
   Resource_LoadAndDecompress(RESOURCE_SMOKE_SHEET, FLURRY_SMOKE_PICTURES, 1, 0);
   switch (gFlurry_Styles[mode][FLURRY_PALETTE]) {
@@ -250,7 +252,8 @@ void BattleEffect_RunFlurry(struct BattleEffectParams *args, s32 mode) {
     // The ripple's line table: BG2 swings six pixels on a sine wave.
     lines = work->bg2xLines;
     for (i = 0; i != DISPLAY_HEIGHT; i++)
-      *lines++ = (0x60000 - Trig_Sin((frame + i) * 0x800) * 6) >> 10;
+      *lines++ =
+          (toFIXED(6) - Trig_Sin((frame + i) * (TRIG_TURN / 32)) * 6) >> 10;
     if (mode == FLURRY_CRUSHER_GRIP && frame == 8)
       Sound_PlayFar(SE_RISE_WITH_SPARKS);
     strikes = gFlurry_Styles[mode][FLURRY_STRIKES];
@@ -285,12 +288,14 @@ void BattleEffect_RunFlurry(struct BattleEffectParams *args, s32 mode) {
           // The arc: six 48x72 cels.
           if (args->side == EFFECT_SIDE_ENEMIES)
             draw[i & 1](canvas,
-                        work->sheet + 0xc80 + step * PICTURE_BYTES(BLUE_ARC),
+                        work->sheet + FLURRY_BLUE_ARC_PICTURES +
+                            step * PICTURE_BYTES(BLUE_ARC),
                         targetPos.x / 2 - 16, targetPos.y - 40, BLUE_ARC_WIDTH,
                         BLUE_ARC_HEIGHT);
           else
             draw[i & 1](canvas,
-                        work->sheet + 0xc80 + step * PICTURE_BYTES(BLUE_ARC),
+                        work->sheet + FLURRY_BLUE_ARC_PICTURES +
+                            step * PICTURE_BYTES(BLUE_ARC),
                         targetPos.x / 2 - 32, targetPos.y - 40, BLUE_ARC_WIDTH,
                         BLUE_ARC_HEIGHT);
         } else {

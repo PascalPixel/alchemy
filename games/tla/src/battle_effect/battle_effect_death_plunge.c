@@ -85,9 +85,9 @@ void BattleEffect_RunDeathPlunge(struct BattleEffectParams *args) {
     // Frame 0: both leap. Frame 11: both turn upside down.
     if (frame == 0) {
       target->velocityY = toFIXED(15);
-      target->gravity = 0x91eb;
+      target->gravity = toFIXED(57) / 100;
       user->velocityY = toFIXED(15);
-      user->gravity = 0x91eb;
+      user->gravity = toFIXED(57) / 100;
     }
     if (frame == 11) {
       target->scaleY = -target->scaleY;
@@ -102,9 +102,9 @@ void BattleEffect_RunDeathPlunge(struct BattleEffectParams *args) {
       BattleEffect_TintBattler(args->targets[0], SPRITE_COLOR_WHITE,
                                POSE_DAMAGE, 0, 10);
       target->velocityY = toFIXED(8);
-      target->gravity = 0xab85;
+      target->gravity = toFIXED(67) / 100;
       user->velocityY = toFIXED(5);
-      user->gravity = 0x7851;
+      user->gravity = toFIXED(47) / 100;
       user->acceleration = toFIXED(1);
       user->speedLimit = toFIXED(2);
       user->steeringFlags = 0;

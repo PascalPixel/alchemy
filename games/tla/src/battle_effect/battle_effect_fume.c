@@ -15,6 +15,13 @@ struct Corner {
 
 #define FUME_FRAMES 50
 #define FUME_SEGMENTS 33
+/// The arc grows by FUME_ARC_GROWTH a frame at its head, and later its tail,
+/// up to its whole span.
+#define FUME_ARC_GROWTH 44
+#define FUME_ARC_SPAN 988
+/// The strip's mesh and its transformed corners, in the map cell buffer.
+#define FUME_STRIP_VERTICES (Ram_MapCellBuffer + 0x1000)
+#define FUME_STRIP_MESH (Ram_MapCellBuffer + 0x2000)
 
 /// Where FlashBurstSheet is decoded in the effect's pictures.
 #define FUME_FLASH_BURST_PICTURES 0x800
@@ -71,7 +78,7 @@ void BattleEffect_RunFume(struct BattleEffectParams *args) {
   Resource_LoadAndDecompress(RESOURCE_CLAW_SLASH_SHEET,
                              work->sheet + FUME_CLAW_SLASH_PICTURES, 1, 0);
   REG_BG2PA = Q_8_8(0.5);
-  Render_BuildQuadStrip(Ram_MapCellBuffer + 0x2000, 4, 32, 32);
+  Render_BuildQuadStrip(FUME_STRIP_MESH, 4, 32, 32);
 
   for (frame = 0; frame != FUME_FRAMES; frame++) {
     if (frame == 0) {
@@ -119,9 +126,9 @@ void BattleEffect_RunFume(struct BattleEffectParams *args) {
       particle->variant++;
     }
 
-    buffer = Ram_MapCellBuffer + 0x1000;
+    buffer = FUME_STRIP_VERTICES;
     // The strip mesh held in a per-frame local, as the vertex buffer is.
-    strip = Ram_MapCellBuffer + 0x2000;
+    strip = FUME_STRIP_MESH;
     corners = (struct Corner *)gMapGridCellBuffer;
     // DEAD: frame never falls below 0; the ROM keeps the compare and branch.
     if (frame >= 0) {
@@ -132,14 +139,15 @@ void BattleEffect_RunFume(struct BattleEffectParams *args) {
       s32 shade;
 
       width = gFume_Levels[args->variant][FUME_WIDTH];
-      arc.head = frame * 44;
-      if (arc.head > 988) {
-        arc.head = 988;
+      arc.head = frame * FUME_ARC_GROWTH;
+      if (arc.head > FUME_ARC_SPAN) {
+        arc.head = FUME_ARC_SPAN;
       }
       if (frame >= gFume_Levels[args->variant][FUME_TAIL_START]) {
-        arc.tail = (frame - gFume_Levels[args->variant][FUME_TAIL_START]) * 44;
-        if (arc.tail > 988) {
-          arc.tail = 988;
+        arc.tail = (frame - gFume_Levels[args->variant][FUME_TAIL_START]) *
+                   FUME_ARC_GROWTH;
+        if (arc.tail > FUME_ARC_SPAN) {
+          arc.tail = FUME_ARC_SPAN;
         }
       }
 
@@ -178,7 +186,7 @@ void BattleEffect_RunFume(struct BattleEffectParams *args) {
           radiusY += thickness;
           radiusX += thickness;
         }
-        if (j == 32) {
+        if (j == FUME_SEGMENTS - 1) {
           endX = (FIXEDtoINT((distance + wobble) * Trig_Cos(angle))) - distance;
           endY = -(FIXEDtoINT((height + wobble) * Trig_Sin(angle)));
         }
@@ -203,7 +211,7 @@ void BattleEffect_RunFume(struct BattleEffectParams *args) {
           model->scrollU = 127 & ~(frame << 3);
           Matrix_Initialize();
           Matrix_Translate(INTtoFIXED(caster.x / 2 - 64),
-                           INTtoFIXED(caster.y) + 0xffc00000, 0);
+                           INTtoFIXED(caster.y) - toFIXED(64), 0);
           Matrix_Scale(FIXED_ONE / 2, FIXED_ONE, FIXED_ONE / 2);
           if (args->side == EFFECT_SIDE_PARTY) {
             Matrix_RotateY(DEGtoANG(180));
@@ -240,3 +248,7 @@ void BattleEffect_RunFume(struct BattleEffectParams *args) {
 #undef BLITTER
 #undef FUME_FRAMES
 #undef FUME_SEGMENTS
+#undef FUME_ARC_GROWTH
+#undef FUME_ARC_SPAN
+#undef FUME_STRIP_VERTICES
+#undef FUME_STRIP_MESH

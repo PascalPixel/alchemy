@@ -423,8 +423,11 @@ void BattleEffect_RunVenus(struct BattleEffectParams *args) {
     for (i = 0, start = 16; i != COLUMN_COUNT; start += 4, i++) {
       column = &work->particles[i];
       if (frame >= start) {
-        draw[0](canvas, work->sheet + 0x9e0, column->x - 17, column->y - 32,
-                BLUE_FLAME_SPLASH_WIDTH, BLUE_FLAME_SPLASH_HEIGHT);
+        draw[0](canvas,
+                work->sheet + VENUS_BLUE_FLAME_PICTURES +
+                    BLUE_FLAME_SHEET_FLAME,
+                column->x - 17, column->y - 32, BLUE_FLAME_SPLASH_WIDTH,
+                BLUE_FLAME_SPLASH_HEIGHT);
         if (frame == start) {
           // The burst: sixteen dots sprayed upward from the column's foot.
           for (j = 0; j != 16; j++) {
@@ -617,9 +620,9 @@ void BattleEffect_RunMars(struct BattleEffectParams *args) {
         BattleEffectKernels_IntegrateVector2(spark, PARTICLE_DAMPING_NONE,
                                              -toFIXED(1) / 8);
         wobble = spark->z;
-        spark->z = wobble + 0x800;
-        if (spark->z > 0xffff)
-          spark->z = wobble + 0x800 - 0xffff;
+        spark->z = wobble + TRIG_TURN / 32;
+        if (spark->z > TRIG_ANGLE_MASK)
+          spark->z = wobble + TRIG_TURN / 32 - TRIG_ANGLE_MASK;
       }
       member++;
       spark++;

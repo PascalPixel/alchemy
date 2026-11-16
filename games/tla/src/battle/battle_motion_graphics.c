@@ -22,12 +22,12 @@ void BattleObject_Reset(struct BattleObject *actor, s32 keep);
 /// beast's enemy (ENEMY_WILD_WOLF for Wild Wolf and so on) to play the attack;
 /// returns the save, or NULL for any other ability. BattleMotion_DismissBeast
 /// undoes it.
-struct SavedBattleObj *
+struct SavedBattleObject *
 BattleMotion_CallBeast(struct BattlePlan *plan,
                        struct BattlePresentationWork *work) {
   s32 single;
   struct BattleObject *battleObject;
-  struct SavedBattleObj *saved;
+  struct SavedBattleObject *saved;
   u16 ids[UNIT_MAX];
   struct MotionObject *object;
   struct MotionObject *actor;
@@ -41,7 +41,7 @@ BattleMotion_CallBeast(struct BattlePlan *plan,
     u8 sides = (plan->unitId ^ plan->targetIds[0]) & 0x80;
     single = sides != 0;
   }
-  saved = Heap_AllocEwram(sizeof(struct SavedBattleObj));
+  saved = Heap_AllocEwram(sizeof(struct SavedBattleObject));
   saved->single = single;
   saved->reactivate = 0;
   switch (plan->abilityId) {
@@ -228,7 +228,7 @@ BattleMotion_CallBeast(struct BattlePlan *plan,
 }
 
 /// Frees the borrowed buffer and releases the motion graphics slot.
-void BattleMotion_ReleaseBuffer(struct SavedBattleObj *saved) {
+void BattleMotion_ReleaseBuffer(struct SavedBattleObject *saved) {
   struct MotionObject *object = BattleObject_Get(saved->unitId)->object;
 
   if (saved->buffer != NULL) {
@@ -247,7 +247,7 @@ void BattleMotion_ReleaseBuffer(struct SavedBattleObj *saved) {
 
 /// Sends the called beast away and puts back the battle object
 /// BattleMotion_CallBeast saved, then frees the save.
-void BattleMotion_DismissBeast(struct SavedBattleObj *saved) {
+void BattleMotion_DismissBeast(struct SavedBattleObject *saved) {
   u16 ids[UNIT_MAX];
   struct MotionObject *object;
   s32 unitId;
@@ -497,8 +497,7 @@ s32 BattleStaging_RunItem(struct BattlePlan *plan, s32 unused,
   s32 inventoryEntry;
   struct Unit *unit;
   struct ItemDefinition *itemDefinition;
-  struct BattleBackgroundWork *transition =
-      (struct BattleBackgroundWork *)Ram_HeapSlots->battleBackground;
+  struct BattleBackgroundWork *transition = Ram_HeapSlots->battleBackground;
   s32 targetYaw;
 
   if (plan->unitId > 4)

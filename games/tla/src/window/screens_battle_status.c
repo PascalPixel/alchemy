@@ -964,11 +964,11 @@ s32 BattleStatusScreen_Run(u16 *list, s32 listCount, s32 member) {
           Window_SetTilemapEntry(statusWindow, ELEMENT_ICON_TILE + j, 7 + j * 4,
                                  pal + 8, 0);
           if (hasDjinn != 0) {
-            Text_DrawNumberInWindow(unit->djinnActiveCounts[j], 1, statusWindow,
+            Text_DrawNumberInWindow(unit->djinnSetCounts[j], 1, statusWindow,
                                     40 + j * 32, 72);
             Text_DrawStringAtOffset(gOwnerStatus_SlashString, statusWindow,
                                     48 + j * 32, 72);
-            Text_DrawNumberInWindow(unit->djinnOwnedCounts[j], 1, statusWindow,
+            Text_DrawNumberInWindow(unit->djinnHeldCounts[j], 1, statusWindow,
                                     48 + j * 32 + 8, 72);
           }
           Text_DrawNumberInWindow(Unit_GetElementLevelFar(member, j), 2,

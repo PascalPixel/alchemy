@@ -66,20 +66,6 @@ void *EffectSprite_CreateWithTiles(s32 width, s32 height, s32 attributes,
 // The three kinds the scenes ask for.
 enum { KIND_RIGHT = 78, KIND_LEFT = 79, KIND_FINALE = 80 };
 
-/// The battle effect work as Cruel Ruin's fade reads it.
-struct BattleFxFadeWork {
-  s32 unk00;
-  s32 halvePending;
-  s32 framesLeft;
-  s32 step;
-};
-
-/// The battle effect work as Cruel Ruin's streaks read it.
-struct StreakWork {
-  s32 frame;
-  s32 transferPending;
-};
-
 /// A point of a streak: x, y and z.
 struct StreakPoint {
   s32 x;
@@ -98,18 +84,20 @@ struct Streak {
   s32 unusedB;
 };
 
-/// The backdrop's work, in place of the battle effect work.
-struct StreakSceneWork {
-  s32 frame;        // the streaks' frame count (BattleEffect_DrawStreaks)
-  s32 halvePending; // the streaks are drawn: halve the canvas into VRAM
-  s32 fadeFrames;   // frames of the background's fade left
-                    // (BattleEffect_DimBackgroundStep)
-  s32 fadeStep;
+/// The element streaks' work, which BattleEffect_StartElementStreaks allocates
+/// in the HEAP_SLOT_BATTLE_EFFECT heap slot in place of the battle effect work.
+struct ElementStreaksWork {
+  s32 frame;        ///< the streaks' frame count (BattleEffect_DrawStreaks)
+  s32 halvePending; ///< the streaks are drawn: halve the canvas into VRAM
+  /// Frames of the background's fade left (BattleEffect_DimBackgroundStep).
+  s32 fadeFrames;
+  s32 fadeStep; ///< the fade's steps so far, CANVAS_FADE_STEP each
 };
 
-/// A sprite as Cruel Ruin reads its tile, priority, palette and resource.
+/// An EffectSprite as Cruel Ruin reads its OAM attribute 2: its tile, priority
+/// and palette, as fields or as one halfword.
 struct RuinObject {
-  u8 unk0[8];
+  u8 unusedBeforeAttr[8]; ///< the sprite's next and OAM attributes 0 and 1
   union {
     struct {
       u16 tile : 10;
@@ -118,9 +106,11 @@ struct RuinObject {
     } bits;
     u16 all;
   } attr;
-  u8 unk0a[4];
-  u8 resource;
 };
+
+/// The map cell buffer from its second 16 KB on, which some effects borrow as
+/// scratch: no map is loaded during a battle.
+extern u8 gEffectScratch[];
 
 /// The map cell buffer holds WIN0's line table and then the splashes.
 struct DropSplashBuffer {
@@ -148,7 +138,7 @@ extern const struct Scale gProcne_UnitScale; ///< the comets' unit scale
 /// The whole pixels of a stored 16.16 value, read as its upper halfword.
 // UB: the s32 is read through an s16.
 #ifdef UBFIX
-#define FIXED_INTEGER_PART(v) ((s32)(v) >> 16)
+#define FIXED_INTEGER_PART(v) FIXEDtoINT((s32)(v))
 #else
 #define FIXED_INTEGER_PART(v) (((s16 *)&(v))[1])
 #endif
@@ -1038,14 +1028,15 @@ void BattleBackground_SetPaletteLevelFar(s32 background, s32 level);
 /// Turns the battle camera, over `frames` frames, to look at the point between
 /// two units.
 void BattleCamera_SetViewAtPairMidpointFar(s32 actor, s32 target, s32 frames);
-void BattleCamera_SetViewFar(s32 a, s32 b, s32 c, s32 d);
+void BattleCamera_SetViewFar(s32 x, s32 depth, s32 y, s32 zoom);
 /// Glowing orbs spiral in on each target.
 ///
 /// Abilities: Mystic Flame.
-void BattleEffect_RunMysticFlame(struct BattleEffectParams *);
+void BattleEffect_RunMysticFlame(struct BattleEffectParams *args);
 void BattleObject_PutFar(void);
 /// Spawns the battle objects of a list of units through its far call.
-void BattleObject_SpawnObjectsForListFar(s16 *actors, s32 a, s32 b);
+void BattleObject_SpawnObjectsForListFar(s16 *unitIds, s32 refreshPoses,
+                                         s32 releaseOthers);
 /// BattlePlayback_Start through its far call.
 void BattlePlayback_StartFar(s32 phase);
 /// Whether an enemy's sprite takes the heavy impact, through its far call.
@@ -1691,7 +1682,6 @@ extern const struct Scale gGaia_UnitScale;
 extern const struct SpriteScale gUlysses_ParticleScale;
 
 // The 64 sparks, past the map cells' first 16 KB.
-extern u8 gData_02014000[];
 
 /// neptune.c
 extern const struct Scale gNeptune_UnitScale; ///< the serpent's scale
@@ -1705,7 +1695,10 @@ extern const s8 gVoidBeam_Corners[]; ///< the hexagon's corners (z, y)
 
 /// flora.c
 extern const struct Scale gFlora_UnitScale;
+/// Inside gEffectScratch: FloraWork from its second tile number on, read at
+/// its fixed place.
 extern u16 gFlora_PetalTiles[];
+/// Inside gEffectScratch: FloraWork.palette, the object palette as it fades.
 extern u16 gFlora_SpritePalettes[];
 
 // ocean_fist.c
@@ -1719,8 +1712,11 @@ extern const struct Scale gCoatlicue_UnitScale;
 extern const struct Scale gCatastrophe_UnitScale;
 
 /// haures.c
+/// In the map cell buffer: the wing's faces, eight bytes a quad.
 extern u8 gHaures_WingStrip[];
+/// The face after the wing's last, which ends the strip.
 extern u8 gHaures_WingStripEnd[];
+/// In the map cell buffer: each wing corner's shade.
 extern u8 gHaures_WingShades[];
 extern const struct Scale gHaures_ChargeScale;
 extern const struct Scale gHaures_OrbitScale;
@@ -1728,57 +1724,105 @@ extern const struct Scale gHaures_OpeningScale;
 
 /// moloch.c
 extern const u8 gMoloch_MoteSizes[];
+/// In the map cell buffer: the tiles Iris draws its sprites from.
 extern u8 gIris_TileBuffer[];
 extern const struct Scale gIris_UnitScale;
-extern const u32 BattleEffect_PatchTemplateCode[];
+/// The template BattleEffect_BuildBlitter walks word by word to write a blitter
+/// (patch_template.s); none of it runs where it is.
+extern const u32 gBlitterTemplate[];
+
+// The pixel fragments BattleEffect_BuildBlitter copies into its blitters, from
+// blitter_fragments.s: Forward reads the picture left to right and Reverse
+// right to left. None of them runs where it is.
+/// Sets 0x40 in every byte of sl, which caps an additive word's pixels at the
+/// brightest canvas level.
 extern const u32 BattleEffect_Mask[];
+/// The ARM immediate operand for 1 << n, n from 0 to 15 (blitter_operands.c).
 extern const u16 gBattleEffect_BitOperands[];
+/// Copy, one pixel, right to left.
 extern const u32 BattleEffect_CopyReverse[];
+/// Copy, one pixel, left to right.
 extern const u32 BattleEffect_CopyForward[];
+/// Copy, a full cell's eight pixels, right to left.
 extern const u32 BattleEffect_Copy8Reverse[];
+/// Copy, a full cell's eight pixels, left to right.
 extern const u32 BattleEffect_Copy8Forward[];
+/// Transparent, one pixel, right to left.
 extern const u32 BattleEffect_TransparentReverse[];
+/// Transparent, one pixel, left to right.
 extern const u32 BattleEffect_TransparentForward[];
+/// Transparent, a full cell's eight pixels, right to left.
 extern const u32 BattleEffect_Transparent8Reverse[];
+/// Transparent, a full cell's eight pixels, left to right.
 extern const u32 BattleEffect_Transparent8Forward[];
+/// Max, one pixel, right to left.
 extern const u32 BattleEffect_MaxReverse[];
+/// Max, one pixel, left to right.
 extern const u32 BattleEffect_MaxForward[];
+/// Max, four pixels (one canvas word), right to left; a full cell's row takes
+/// it twice.
 extern const u32 BattleEffect_Max4Reverse[];
+/// Max, four pixels (one canvas word), left to right; a full cell's row takes
+/// it twice.
 extern const u32 BattleEffect_Max4Forward[];
+/// Additive, one pixel, right to left.
 extern const u32 BattleEffect_AdditiveReverse[];
+/// Additive, one pixel, left to right.
 extern const u32 BattleEffect_AdditiveForward[];
+/// Additive, four pixels added a word at a time, right to left; a full cell's
+/// row takes it twice.
 extern const u32 BattleEffect_ColorReverse[];
+/// Additive, four pixels added a word at a time, left to right; a full cell's
+/// row takes it twice.
 extern const u32 BattleEffect_ColorForward[];
+
+// The model renderer's ARM routines, which run from IWRAM, each with its size
+// in bytes and, for three of them, in DMA words.
+/// An ARM build of Render_FillMesh, which Render_RunFillMeshKernel runs.
 extern const u8 Render_FillMeshKernel[];
-extern u8 Render_FillMeshKernelCodeSize[];
+extern u8 Render_FillMeshKernelCodeSize[]; ///< Render_FillMeshKernel's bytes
+/// The vertex transform Render_TransformVertices runs.
 extern const u8 Render_TransformKernel[];
-extern u8 Render_TransformKernelCodeSize[];
-/// The rasterizer kernels, ARM code that runs from IWRAM, with their sizes in
-/// bytes and, for three of them, in DMA words.
-extern const u8 Render_SolidKernel[];
-extern const u8 Render_SolidMaxKernel[];
-extern const u8 Render_SolidAdditiveKernel[];
-extern const u8 Render_TexturedKernel[];
-extern const u8 Render_TexturedMaxKernel[];
-extern const u8 Render_TexturedAdditiveKernel[];
-extern const u8 Render_ShadedMaxKernel[];
-extern const u8 Render_ShadedAdditiveKernel[];
-extern const u8 Render_ShadedKernel[];
-extern const u8 Render_TexturedNarrowKernel[];
-extern const u8 Render_SolidNarrowKernel[];
-extern u8 Render_SolidKernelCodeSize[];
-extern u8 Render_SolidMaxKernelCodeSize[];
-extern u8 Render_SolidAdditiveKernelCodeSize[];
-extern u8 Render_TexturedKernelCodeSize[];
-extern u8 Render_TexturedMaxKernelCodeSize[];
-extern u8 Render_TexturedAdditiveKernelCodeSize[];
-extern u8 Render_ShadedMaxKernelCodeSize[];
-extern u8 Render_ShadedAdditiveKernelCodeSize[];
-extern u8 Render_ShadedKernelCodeSize[];
-extern u8 Render_TexturedNarrowKernelCodeSize[];
-extern u8 Render_SolidNarrowKernelCodeSize[];
-extern u8 Render_TexturedKernelCodeWords[];
-extern u8 Render_ShadedKernelCodeWords[];
-extern u8 Render_TexturedNarrowKernelCodeWords[];
+extern u8 Render_TransformKernelCodeSize[]; ///< Render_TransformKernel's bytes
+
+// The rasterizer kernels Render_DrawModelList copies into IWRAM, one for each
+// ModelKind, with their sizes in bytes and, for three of them, in DMA words.
+extern const u8 Render_SolidKernel[];            ///< MODEL_SOLID
+extern const u8 Render_SolidMaxKernel[];         ///< MODEL_SOLID_MAX
+extern const u8 Render_SolidAdditiveKernel[];    ///< MODEL_SOLID_ADDITIVE
+extern const u8 Render_TexturedKernel[];         ///< MODEL_TEXTURED
+extern const u8 Render_TexturedMaxKernel[];      ///< MODEL_TEXTURED_MAX
+extern const u8 Render_TexturedAdditiveKernel[]; ///< MODEL_TEXTURED_ADDITIVE
+extern const u8 Render_ShadedMaxKernel[];        ///< MODEL_SHADED_MAX
+extern const u8 Render_ShadedAdditiveKernel[];   ///< MODEL_SHADED_ADDITIVE
+extern const u8 Render_ShadedKernel[];           ///< MODEL_SHADED
+extern const u8 Render_TexturedNarrowKernel[];   ///< MODEL_TEXTURED_NARROW
+extern const u8 Render_SolidNarrowKernel[];      ///< MODEL_SOLID_NARROW
+extern u8 Render_SolidKernelCodeSize[];          ///< Render_SolidKernel's bytes
+extern u8 Render_SolidMaxKernelCodeSize[]; ///< Render_SolidMaxKernel's bytes
+extern u8
+    Render_SolidAdditiveKernelCodeSize[];  ///< Render_SolidAdditiveKernel's
+                                           ///< bytes
+extern u8 Render_TexturedKernelCodeSize[]; ///< Render_TexturedKernel's bytes
+extern u8
+    Render_TexturedMaxKernelCodeSize[]; ///< Render_TexturedMaxKernel's bytes
+extern u8 Render_TexturedAdditiveKernelCodeSize
+    [];                                     ///< Render_TexturedAdditiveKernel's
+                                            ///< bytes
+extern u8 Render_ShadedMaxKernelCodeSize[]; ///< Render_ShadedMaxKernel's bytes
+extern u8
+    Render_ShadedAdditiveKernelCodeSize[]; ///< Render_ShadedAdditiveKernel's
+                                           ///< bytes
+extern u8 Render_ShadedKernelCodeSize[];   ///< Render_ShadedKernel's bytes
+extern u8
+    Render_TexturedNarrowKernelCodeSize[]; ///< Render_TexturedNarrowKernel's
+                                           ///< bytes
+extern u8
+    Render_SolidNarrowKernelCodeSize[]; ///< Render_SolidNarrowKernel's bytes
+extern u8 Render_TexturedKernelCodeWords[]; ///< Render_TexturedKernel's words
+extern u8 Render_ShadedKernelCodeWords[];   ///< Render_ShadedKernel's words
+extern u8
+    Render_TexturedNarrowKernelCodeWords[]; ///< Render_TexturedNarrowKernel's
+                                            ///< words
 
 #endif // ALCHEMY_BATTLE_EFFECT_INTERNAL_H

@@ -26,23 +26,15 @@ void BattleEffect_SetupBlendedDisplay(void) {
   Sound_PlayFar(SOUND_FADE_OUT_ACTION_SE);
 }
 
-/// The sprite group behind a battler, as the tint reads its entries.
-struct FxGroup {
-  u8 unk00[27];
-  u8 count;
-  u8 unk1c[12];
-  struct FxGroupEntry *entries[4];
-};
-
-/// How many sprites an effect group holds.
-static __inline__ u8 GroupCount(struct FxGroup *group) { return group->count; }
+/// How many sprite animations a sprite holds.
+static __inline__ u8 GroupCount(struct Sprite *group) { return group->count; }
 
 /// Updates every effect group of one unit's battle object: its palette, its
 /// pose (reset only when it changes) and the timer slot's frames.
 void BattleEffect_TintBattler(s32 setId, s32 objectValue, s32 groupValue,
                               s32 stateSlot, s32 stateValue) {
-  struct FxSlot *set;
-  struct FxGroup *group;
+  struct BattleObject *set;
+  struct Sprite *group;
   struct BattleEffectWork *state;
   s32 groupIndex;
 
@@ -59,23 +51,23 @@ void BattleEffect_TintBattler(s32 setId, s32 objectValue, s32 groupValue,
 
         objectIndex = 0;
         if (GroupCount(group) != 0) {
-          struct FxGroupEntry **objects;
+          struct SpriteAnimation **objects;
 
           objects = group->entries;
           do {
-            struct FxGroupEntry *object;
+            struct SpriteAnimation *object;
 
             object = *objects++;
-            if (object != NULL && object != set->effectEntry &&
+            if (object != NULL && object != set->shadowEntry &&
                 object != set->animationEntry) {
-              u8 old = object->param;
+              u8 old = object->colorMode;
 
               if (objectValue == 0)
-                object->param = BattleMotion_GetSlotPaletteFar(setId);
+                object->colorMode = BattleMotion_GetSlotPaletteFar(setId);
               else
-                object->param = objectValue;
-              if (object->param != old)
-                object->frame = 0xff;
+                object->colorMode = objectValue;
+              if (object->colorMode != old)
+                object->picture = SPRITE_PICTURE_NONE;
             }
             objectIndex++;
           } while (objectIndex != GroupCount(group));

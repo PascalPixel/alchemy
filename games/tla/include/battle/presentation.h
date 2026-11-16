@@ -21,7 +21,7 @@ s32 BattleFormation_BuildEnemyList(s32 recordId);
 void BattleBackground_Init(void);
 void BattleBackground_Load(s32 mode, s32 resource, s32 level);
 
-void BattleTransition_Run(s32 arg, s32 kind);
+void BattleTransition_Run(s32 enemyCount, s32 kind);
 
 void Battle_TurnEndNoOp(void);
 
@@ -54,25 +54,19 @@ struct BattlePresentationWork;
 /// the source after the last halfword it read.
 typedef const u8 *(*ModelDecoder)(const u8 *source, void *destination);
 
-struct DjinnRecoveryEntryDraft {
-  u8 element;
-  u8 index;
-  u8 unitId;
-  s8 turns;
-};
-
-struct DjinnRecoveryListDraft {
-  struct DjinnRecoveryEntryDraft entries[72];
-  s32 count;
-};
-
-struct SavedBattleObj {
-  struct BattleObject object;
+/// What BattleMotion_CallBeast saves of the battle object a called beast
+/// borrows, for BattleMotion_DismissBeast to put back.
+struct SavedBattleObject {
+  struct BattleObject object; ///< the borrowed object, copied whole
+  /// The beast's pictures: a heap block of its own, or gActorSpriteSlots when
+  /// the object borrowed is another side's.
   u32 *buffer;
-  u8 unitId;
+  u8 unitId; ///< the unit whose battle object the beast borrows
+  /// 1 when the caster and its first target are on opposite sides: the beast
+  /// takes the caster's own object.
   u8 single;
-  u8 reactivate;
-  u16 classId;
+  u8 reactivate; ///< 1 when the borrowed object had to be made first
+  u16 classId;   ///< the beast's enemy id (ENEMY_WILD_WOLF and so on)
 };
 
 /// One kept formation: its record and its average level, -1 while empty.
@@ -81,36 +75,23 @@ struct FormationCandidate {
   s32 score : 16;
 };
 
-struct OwnerElementStats {
-  s16 power;
-  s16 res;
-};
-
-struct AIState {
-  unsigned initialized : 1;
-  unsigned selection : 3;
-  unsigned form : 2;
-  unsigned remaining : 26;
-};
-
+/// An EnemyDefinition as BattleAI_ChooseAction reads its abilities: through a
+/// pointer two bytes past its start.
 struct AIEnemyRest {
-  u8 unk00[0x2c];
-  u16 abilities[8];
+  u8 unused[44];    ///< the rest of the definition before its abilities
+  u16 abilities[8]; ///< EnemyDefinition.abilities
 };
 
-struct BattleGroupOrder {
-  s32 group[2];
-};
-
+/// The bit decoder BattleBackground_Load copies to RAM to decode a battle
+/// background's tiles (model_decode.s).
 extern const u8 Model_DecodeCode[];
-
-extern u8 Model_DecodeCodeSize[];
+extern u8 Model_DecodeCodeSize[]; ///< Model_DecodeCode's bytes
 
 void Animation_SkipToStopFar(void *record);
 
 void Sprite_RemoveAnimationAtFar(void *record, s32 slot);
 
-s32 SpriteAnimation_SumCommandLengthsFar(s32 animation, s32 a, s32 b);
+s32 SpriteAnimation_SumCommandLengthsFar(s32 id, s32 animation, s32 timedCount);
 
 void ColorBuffer_Scale(u16 *source, u32 destination, s32 value, s32 size);
 
@@ -120,19 +101,27 @@ void SpriteDissolve_StepFar(void *record, s32 step);
 
 s32 Unit_TryLevelUpFar(s32 unitId, s16 *gains);
 
+/// The advance arrow beside a battle message: eight 128-byte pictures of a
+/// 256-colour sprite, one every four frames.
 extern u8 gBattleMessage_AdvanceArrowTiles[];
 
+/// BattleAI_ChooseAction's rolls for the first three action strategies, a row
+/// each: the chance in 256 of each place in the enemy's actions.
 extern u8 gBattleAI_ActionWeights[3][8];
-
+/// The enemy definitions Dullahan acts as, one drawn at random.
 extern u16 gBattleAI_DullahanForms[];
 
+/// The battle transition's curtain tile in eight variants, 32 bytes (one 4-bit
+/// tile) each, a new one every four frames.
 extern const u8 gBattleTransition_CurtainVariants[];
-
+/// The battle transition's curtain tiles, 32 bytes (one 4-bit tile) each.
 extern u8 gBattleTransition_CurtainTiles[];
 
 void BattleEffect_RunShatteringOpeningFar(struct BattlePresentationWork *work);
 
-extern const struct BattleGroupOrder gBattleParty_TurnEndSideOrder;
+/// The party, then the enemies: the order the sides take their turn-end
+/// effects in.
+extern const struct BattleSideOrder gBattleParty_TurnEndSideOrder;
 
 void BattleUnit_DrainDjinn(s32 unitId, s32 all, s32 announce);
 

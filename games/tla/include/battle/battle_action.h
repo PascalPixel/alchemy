@@ -19,7 +19,7 @@ struct BattleObject {
   FIXED anchorX; ///< 16.16 fixed-point pixels
   FIXED anchorZ; ///< 16.16 fixed-point pixels
   s32 palette;   ///< the unit sprite's colour mode, an enum SpriteColorMode
-  FIXED scale;   ///< 16.16 fixed point, 0x10000 full size
+  FIXED scale;   ///< 16.16 fixed point, FIXED_ONE full size
   u16 activeStatuses;                     ///< a bit per status with an icon
   u8 selectedCondition;                   ///< the status whose icon is shown
   s8 cycleTimer;                          ///< frames until the next status icon

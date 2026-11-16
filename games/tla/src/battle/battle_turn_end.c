@@ -512,7 +512,7 @@ void Battle_ProcessTurnEnd(void) {
                            Ram_HeapSlots->battleWork->background, 0);
   {
     s32 *groupList;
-    struct BattleGroupOrder order = gBattleParty_TurnEndSideOrder;
+    struct BattleSideOrder order = gBattleParty_TurnEndSideOrder;
     u16 unitIds[16];
     s32 group;
     s32 unitIndex;

@@ -132,7 +132,7 @@ void BattleEffect_RunCharon(struct BattleEffectParams *arg) {
   }
   BattleEffect_WipeCanvas(CANVAS_WIPE_ACROSS, CANVAS_WIPE_FILL);
   gProjection.centerY = SUMMON_PROJECTION_CENTER_Y;
-  backgroundView->active = 1;
+  backgroundView->busy = 1;
   gBgScroll[1].x = 0;
   emptyList[0] = BATTLE_UNIT_LIST_END;
   BattleActor_SpawnObjectsForListFar(emptyList, 0);
@@ -1460,7 +1460,7 @@ void BattleEffect_RunCharon(struct BattleEffectParams *arg) {
     if (frame > 120) {
       if (frame == 121) {
         gBgScroll[1].x = savedWidth;
-        backgroundView->active = 0;
+        backgroundView->busy = 0;
         camera->yaw = savedYaw;
       }
       if (frame < 148) {

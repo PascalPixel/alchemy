@@ -758,7 +758,7 @@ void Party_BalanceDjinn(void) {
       s32 j;
 
       sum = 0;
-      counts = unit->djinnOwnedCounts;
+      counts = unit->djinnHeldCounts;
       j = 3;
       do {
         u8 value = *counts;

@@ -237,7 +237,7 @@ void BattleEffect_RunAzul(struct BattleEffectParams *args) {
       }
     }
     if (frame <= 95 || (u32)(frame - 160) <= 31) {
-      u16 *c = (u16 *)(work->unk7300 + 0x340);
+      u16 *c = work->backdropLines;
       s32 level = frame / 8;
 
       if (frame > 159) {

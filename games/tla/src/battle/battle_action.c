@@ -520,7 +520,7 @@ s32 BattleActionRun_Build(struct BattleActionRecord *request,
 
   case COMMAND_SUMMON: {
     const struct SummonDefinition *summon;
-    struct DjinnRecoveryListDraft *list;
+    struct DjinnRecoveryList *list;
     s32 side;
     u8 counts[ELEMENT_COUNT];
     s32 index;
@@ -535,9 +535,7 @@ s32 BattleActionRun_Build(struct BattleActionRecord *request,
     if ((u16)request->unitId > ALLY_MAX &&
         ((struct BattleWork *)Ram_HeapSlots->battleWork)->isLink)
       side = DJINN_RECOVERY_OPPONENT;
-    list = (struct DjinnRecoveryListDraft *)((u8 *)Djinn_GetRecoveryTableFar(
-                                                 side) +
-                                             8);
+    list = &Djinn_GetRecoveryTableFar(side)->list;
     for (index = 0;
          index < ELEMENT_COUNT && counts[index] >= summon->djinnRequired[index];
          index++)
@@ -555,7 +553,7 @@ s32 BattleActionRun_Build(struct BattleActionRecord *request,
     MessageArgument_PushFar(abilityId, MESSAGE_ARGUMENT_ABILITY);
     BattleMessage_ShowAndWaitFar((s32)&MsgActorSummons);
     for (index = 0; index != list->count; index++) {
-      struct DjinnRecoveryEntryDraft *entry = &list->entries[index];
+      struct DjinnRecoveryEntry *entry = &list->entries[index];
 
       if (entry->turns == DJINN_RECOVERY_AFTER_BATTLE &&
           BattleUnit_IsListed(entry->unitId) && counts[entry->element] != 0) {

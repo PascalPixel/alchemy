@@ -47,7 +47,7 @@ void BattleEffect_RunThor(struct BattleEffectParams *args) {
   struct ScreenPoint screen[11];
   s32 position[3];
   s32 scale[3];
-  struct BattleBackgroundView *view;
+  struct BattleBackgroundWork *view;
   struct BattleEffectWork *work;
   void *canvas;
   u8 *sprites;
@@ -61,7 +61,7 @@ void BattleEffect_RunThor(struct BattleEffectParams *args) {
   s32 spawned;
   struct Particle *spark;
 
-  view = (struct BattleBackgroundView *)Ram_HeapSlots->battleBackground;
+  view = Ram_HeapSlots->battleBackground;
   work = Ram_HeapSlots->battleEffect;
   canvas = Ram_HeapSlots->battleCanvas;
   sprites = Ram_HeapSlots->battleSheet;

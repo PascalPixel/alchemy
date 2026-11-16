@@ -12,15 +12,15 @@ struct ModelVertex {
   s8 x;
   s8 y;
   s8 z;
-  s8 pad;
+  s8 unused; ///< no code names it
 };
 
 /// One projected vertex, as Render_ProjectPoint leaves it.
 struct ProjectedVertex {
-  s16 x;     ///< screen pixels
-  s16 y;     ///< screen pixels
-  s16 depth; ///< projected depth
-  s16 unk06;
+  s16 x;      ///< screen pixels
+  s16 y;      ///< screen pixels
+  s16 depth;  ///< projected depth
+  s16 unused; ///< no code names it
 };
 
 /// A texture for the ARM model renderer: its size as powers of two and the
@@ -28,7 +28,7 @@ struct ProjectedVertex {
 struct ModelTexture {
   u32 logWidth : 8;  ///< the width is 1 << logWidth pixels
   u32 logHeight : 8; ///< the height is 1 << logHeight pixels
-  u32 unk02 : 16;
+  u32 unused : 16;   ///< no code names it
   const u8 *pixels;
 };
 

@@ -72,7 +72,7 @@ void BattleEffect_RunKirin(struct BattleEffectParams *args) {
   view = Ram_HeapSlots->battleBackground;
   shift = 0;
   EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_CLEAR, baseX);
-  view->active = 1;
+  view->busy = 1;
 
   for (i = 0; i != ARRAY_COUNT(work->particles); i++) {
     struct Particle *fire = &work->particles[i];
@@ -224,7 +224,7 @@ void BattleEffect_RunKirin(struct BattleEffectParams *args) {
 
   // The charge: Kirin runs across the targets behind the battle background.
   gBgScroll[1].x = savedX;
-  view->active = 0;
+  view->busy = 0;
   BattleEffect_SetupBlendedDisplay();
   REG_WIN0H = WIN_RANGE(0, DISPLAY_WIDTH);
 

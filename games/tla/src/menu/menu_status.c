@@ -975,11 +975,11 @@ void StatusScreen_DrawStatusAilments(s32 window, s32 ownerId, s32 mode) {
   }
   for (element = 0; element <= 3; element++) {
     if (hasDjinn)
-      Text_DrawNumberInWindowFar(unit->djinnOwnedCounts[element], 1, window,
+      Text_DrawNumberInWindowFar(unit->djinnHeldCounts[element], 1, window,
                                  STATUS_ELEMENT_X(element), (djinnRow + 1) * 8);
     if ((mode & 0xff) == 1) {
       if (hasDjinn) {
-        Text_DrawNumberInWindowFar(unit->djinnActiveCounts[element], 1, window,
+        Text_DrawNumberInWindowFar(unit->djinnSetCounts[element], 1, window,
                                    STATUS_ELEMENT_X(element) - 16,
                                    (djinnRow + 1) * 8);
         Text_DrawStringInWindowFar(gMenu_SlashString, window,

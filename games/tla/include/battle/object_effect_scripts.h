@@ -4,6 +4,5 @@
 #include "types.h"
 
 extern const s32 gBattleEffect_SharedParticleScript[];
-extern const s32 gBattleEffect_FragmentScript[];
 
 #endif

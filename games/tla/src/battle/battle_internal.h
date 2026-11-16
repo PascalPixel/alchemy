@@ -189,10 +189,10 @@ struct SnapshotCopy {
 /// boosts, each one's statuses and the last two's HP and PP.
 struct Snapshot {
   u8 listed[8];
-  s8 summonBoosts[3][4];
+  s8 summonBoosts[3][ELEMENT_COUNT];
   /// The units' SnapshotCopy rows, read as gScriptedBattle_SnapshotBytes, each
   /// padded to 28 bytes; the last overruns into vitals' unused first rows.
-  u8 statuses[0x80];
+  u8 statuses[128];
   struct SnapshotVitals
       vitals[5]; ///< also read as gScriptedBattle_SnapshotVitals
 };
@@ -241,8 +241,8 @@ struct BattleLinkedActionState {
 
 // COMMAND_DJINN's parameter: the Djinni's element in bits 11..8, its index in
 // bits 7..0.
-#define DJINN_ELEMENT(v) (((v) >> 8) & 15)
-#define DJINN_INDEX(v) ((v) & 255)
+#define DJINN_ELEMENT(v) (((v) >> 8) & 0xf)
+#define DJINN_INDEX(v) ((v) & 0xff)
 
 /// BattlePlan.targetCritical: the critical hit rolled for each target.
 enum BattleCritical {

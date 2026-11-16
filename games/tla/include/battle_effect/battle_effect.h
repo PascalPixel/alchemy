@@ -78,17 +78,6 @@ struct Texture {
   void *pixels;
 };
 
-/// An animation slot of a sprite: its object, its entries and whether it is
-/// fading.
-struct FxSlot {
-  void *object;
-  u8 unk04[28];
-  struct FxGroupEntry *animationEntry;
-  struct FxGroupEntry *effectEntry;
-  u8 unk28[2];
-  u8 fading;
-};
-
 /// A point or a velocity, 16.16 pixels.
 struct Point2D {
   FIXED x;
@@ -161,14 +150,15 @@ void BattleEffect_DrawShadedCircles(u8 *map, s32 size, FIXED scale);
 void Picture_MirrorIntoQuadrants(u8 *src, u8 *dst, s32 width, s32 height);
 void BattleEffect_RunDjinniEntrance(struct BattleEffectParams *effect,
                                     u32 packed, s32 *screen, s32 *world);
-void Canvas_BlitAtFoot(void *, s32, s32, s32);
+void Canvas_BlitAtFoot(void *source, s32 x, s32 y, s32 size);
 struct PoolEntry *Render_AllocateModelList(s32 count);
 void Render_TransformVertices(const void *corners, void *vertices, s32 count);
 void EffectPosition_ProjectBattler(s32 id, struct ScreenPoint *position);
 void BattleEffect_SpawnObjects(s32 entryCount, s32 kind, u32 variant);
 void BattleEffect_SelectLivingTargets(
     struct BattleEffectParams *party); // SelectLivingTargets
-void BattleEffect_StartActorMotion(s32, s32, s32, s32, s32, s32);
+void BattleEffect_StartActorMotion(s32 id, s32 force, s32 acceleration,
+                                   s32 speedLimit, s32 velocityY, s32 percent);
 void BattleEffect_FetchRectangleBlitters(s32 flip, void **out);
 void BattleCamera_Shake(s32 rangeX, u32 rangeY);
 /// Moves a particle one frame on the screen: its velocity scaled by `gravity`
@@ -200,7 +190,6 @@ void BattleEffect_ClearActorTimers(void);
 void BattleEffect_DrawClippedCanvasLine(s32 x0, s32 y0, s32 x1, s32 y1,
                                         s32 color);
 void BattleEffect_SetupCanvasWindows(void); // the BG2 canvas's registers
-extern u8 gData_02014000[];
 void BattleEffect_DrawShadedCirclesMirrored(u8 *map, s32 size, s32 scale);
 void BattleEffect_RunRamses(struct BattleEffectParams *effect);
 void BattleEffect_RunNereid(struct BattleEffectParams *effect);
@@ -291,7 +280,7 @@ enum DjinniEntranceAnchor {
   ((element) | (side) << 4 | (anchor) << 5)
 #define DJINNI_ENTRANCE_ELEMENT(packed) ((packed) & 7)
 #define DJINNI_ENTRANCE_SIDE(packed) (((packed) >> 4) & 1)
-#define DJINNI_ENTRANCE_ANCHOR(packed) (((packed) >> 5) & 15)
+#define DJINNI_ENTRANCE_ANCHOR(packed) (((packed) >> 5) & 0xf)
 
 // Places in the sheet.
 enum SeriesBSheet {
@@ -310,17 +299,17 @@ enum {
 
 /// The four rock pillars' heights, in pixels.
 struct RockWallHeights {
-  s32 column[4]; // each pillar's height in pixels
+  s32 column[4]; ///< each pillar's height in pixels
 };
 
 /// The five widths a rising pillar takes.
 struct FiveWidths {
-  s32 w[5];
+  s32 widths[5];
 };
 
 /// The seven widths a widening pillar takes.
 struct SevenWidths {
-  s32 w[7];
+  s32 widths[7];
 };
 
 /// Where a strip's petals start across, by quarter of its rise: the left edge
@@ -329,7 +318,7 @@ struct FourSpans {
   struct {
     s32 left;
     s32 width;
-  } p[4];
+  } spans[4];
 };
 
 // A row of gFrost_Timings, one for each variant.
@@ -353,16 +342,16 @@ enum VolleyBSheet {
 
 /// A growing column, laid over struct Particle in work->particles.
 struct DualColumn {
-  s32 x; // root on the canvas
-  s32 y;
-  u8 unk08[8];
-  s32 height; // full length
-  u8 unk14[4];
-  s32 start; // the frame it starts to grow
+  s32 x;                   ///< the root on the canvas
+  s32 y;                   ///< the root on the canvas
+  u8 unused[8];            ///< no code names it
+  s32 height;              ///< the full length
+  u8 unusedAfterHeight[4]; ///< no code names it
+  s32 start;               ///< the frame it starts to grow
 };
 
-void BattleEffect_StepPaletteToResource(s32);
-void BattleEffect_WipeCanvas(s32, s32);
+void BattleEffect_StepPaletteToResource(s32 resourceId);
+void BattleEffect_WipeCanvas(s32 direction, s32 fill);
 void EffectPosition_ProjectSprite(s32 id, struct ScreenPoint *position);
 void BattleEffect_BuildWindowEdgeTable(void);
 void BattleEffect_RunDrainMotes(struct BattleEffectParams *effect, s32 mode);
@@ -372,14 +361,6 @@ extern const struct RockWallHeights gRockWall_Heights;
 void BattleEffect_RunEruption(struct BattleEffectParams *effect, s32 mode);
 void BattleEffect_RunGrowingColumns(struct BattleEffectParams *effect,
                                     s32 mode);
-/// One animation entry of a sprite group.
-struct FxGroupEntry {
-  u8 unk00[5];
-  u8 param;
-  u8 unk06[16];
-  u8 frame;
-};
-
 /// Copies `size` bytes of colour levels, halving each.
 void ColorBuffer_Halve(void *source, void *destination, s32 size);
 /// Copies `size` bytes of colour levels at three quarters of each.

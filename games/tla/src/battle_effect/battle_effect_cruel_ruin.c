@@ -43,7 +43,7 @@ void BattleEffect_RunShatteringOpening(struct BattleEffectParams *args) {
   s32 rmax;
   s32 r;
   s32 d;
-  struct BattleBackgroundView *view;
+  struct BattleBackgroundWork *view;
   struct Particle *piece;
   s32 i;
   s32 px;
@@ -60,7 +60,7 @@ void BattleEffect_RunShatteringOpening(struct BattleEffectParams *args) {
   work = HeapSlot_Alloc(HEAP_SLOT_BATTLE_EFFECT, BATTLE_EFFECT_WORK_SIZE);
   canvas = HeapSlot_Alloc(HEAP_SLOT_BATTLE_CANVAS, CANVAS_BYTES);
   battle = Ram_HeapSlots->battleWork;
-  view = (struct BattleBackgroundView *)Ram_HeapSlots->battleBackground;
+  view = Ram_HeapSlots->battleBackground;
   work->args = args;
   work->vblanksSinceTransfer = 1;
 
@@ -530,8 +530,7 @@ void BattleEffect_RunElementBurst(struct BattleEffectParams *args) {
 /// Frame callback: when a transfer is pending, writes the canvas to BG
 /// character block 1 at half brightness.
 void BattleEffect_TransferHalvedCanvas(void) {
-  struct BattleFxFadeWork *work =
-      (struct BattleFxFadeWork *)Ram_HeapSlots->battleEffect;
+  struct ElementStreaksWork *work = Ram_HeapSlots->battleEffect;
   void *buffer = Ram_HeapSlots->battleCanvas;
   u32 ime;
 
@@ -551,7 +550,7 @@ void BattleEffect_TransferHalvedCanvas(void) {
 
 /// Draws the streaks of the backdrop and halves the canvas into VRAM.
 void BattleEffect_DrawStreaks(void) {
-  struct StreakWork *work = (struct StreakWork *)Ram_HeapSlots->battleEffect;
+  struct ElementStreaksWork *work = Ram_HeapSlots->battleEffect;
   s32 frame;
   s32 i;
   struct Streak *streak;
@@ -605,22 +604,21 @@ void BattleEffect_DrawStreaks(void) {
                                          fade + 56);
     }
   }
-  work->transferPending = 1;
+  work->halvePending = 1;
 }
 
 /// Each frame while frames are left, darkens the battle background's 128
 /// colours by one more CANVAS_FADE_STEP into BG palettes 6 to 13.
 void BattleEffect_DimBackgroundStep(void) {
-  struct BattleFxFadeWork *work =
-      (struct BattleFxFadeWork *)Ram_HeapSlots->battleEffect;
+  struct ElementStreaksWork *work = Ram_HeapSlots->battleEffect;
   struct BattleWork *battle = Ram_HeapSlots->battleWork;
 
-  if (work->framesLeft > 0) {
-    work->step++;
+  if (work->fadeFrames > 0) {
+    work->fadeStep++;
     ColorBuffer_ScaleFar(battle->palette, (void *)&BG_PLTT_COLOR(6, 0),
-                         FIXED_ONE - work->step * CANVAS_FADE_STEP,
+                         FIXED_ONE - work->fadeStep * CANVAS_FADE_STEP,
                          BATTLE_BACKGROUND_COLORS);
-    work->framesLeft--;
+    work->fadeFrames--;
   }
 }
 
@@ -629,10 +627,10 @@ void BattleEffect_DimBackgroundStep(void) {
 /// Starts the element streaks, which then draw by themselves while the battle
 /// runs on.
 void BattleEffect_StartElementStreaks(s32 kind) {
-  struct StreakSceneWork *work;
+  struct ElementStreaksWork *work;
   void *canvas;
   struct BattleWork *battle;
-  struct BattleBackgroundView *view;
+  struct BattleBackgroundWork *view;
   s32 id;
   s32 i;
   s32 j;
@@ -641,7 +639,7 @@ void BattleEffect_StartElementStreaks(s32 kind) {
   work = HeapSlot_Alloc(HEAP_SLOT_BATTLE_EFFECT, sizeof *work);
   canvas = HeapSlot_Alloc(HEAP_SLOT_BATTLE_CANVAS, CANVAS_BYTES);
   battle = Ram_HeapSlots->battleWork;
-  view = (struct BattleBackgroundView *)Ram_HeapSlots->battleBackground;
+  view = Ram_HeapSlots->battleBackground;
 
   // Turn BG2 into a 128x128 canvas, one step a frame.
   BattleEffect_ConfigureEffectDisplay();

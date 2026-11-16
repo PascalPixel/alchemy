@@ -42,11 +42,11 @@ void BattleCamera_SetCommandView(s32 pos) {
   Projection_Set(0, result, toFIXED(1938));
 
   gProjection.centerY = pos + BATTLE_PROJECTION_CENTER_Y;
-  secondary->active = one;
+  secondary->busy = one;
   BattleCamera_SetRange(toFIXED(120), toFIXED(118 - pos), 0, 8 << 8,
                         FIXED_ONE * 2);
   secondary->flag = one;
-  secondary->active = 0;
+  secondary->busy = 0;
 }
 
 #define Unit_CalculateFar ((void (*)(u16))Unit_CalculateFar)

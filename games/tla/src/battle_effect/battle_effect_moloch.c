@@ -397,7 +397,7 @@ void Iris_ChangeBackdrop(void) {
       blue = 0;
     *palette++ = RGB(blue, red, green);
   }
-  transition->active = 1;
+  transition->busy = 1;
   gBgScroll[1].x = 0;
 }
 
@@ -1547,7 +1547,7 @@ void BattleEffect_RunIris(struct BattleEffectParams *args) {
 
         if (h > CANVAS_SIZE - 1)
           h = CANVAS_SIZE - 1;
-        Iris_DrawPillar(widths.w[h >> 5], (h >> 5) * 2 + 94, h);
+        Iris_DrawPillar(widths.widths[h >> 5], (h >> 5) * 2 + 94, h);
       }
       if (frame > 380) {
         struct SevenWidths widths = gIris_WideningPillarWidths;
@@ -1557,7 +1557,7 @@ void BattleEffect_RunIris(struct BattleEffectParams *args) {
         if (h > CANVAS_SIZE - 1)
           h = CANVAS_SIZE - 1;
         q = h / 19;
-        Iris_DrawPillar(widths.w[q], q + 12, h);
+        Iris_DrawPillar(widths.widths[q], q + 12, h);
       }
       if (frame > 382) {
         struct SevenWidths widths = gIris_NarrowingPillarWidths;
@@ -1567,7 +1567,7 @@ void BattleEffect_RunIris(struct BattleEffectParams *args) {
         if (h > CANVAS_SIZE - 1)
           h = CANVAS_SIZE - 1;
         q = h / 21;
-        Iris_DrawPillar(widths.w[q], q * 2 + 70, h);
+        Iris_DrawPillar(widths.widths[q], q * 2 + 70, h);
       }
       if (frame > 385) {
         s32 h = (frame - 385) << 2;
@@ -1780,8 +1780,8 @@ void BattleEffect_RunIris(struct BattleEffectParams *args) {
             s32 r = Random16() & 127;
 
             petals->life[s] = -0x7c00;
-            petals->x[s] = (leftSpans.p[(r + 1) >> 5].left +
-                            Random16() % leftSpans.p[(r + 1) >> 5].width)
+            petals->x[s] = (leftSpans.spans[(r + 1) >> 5].left +
+                            Random16() % leftSpans.spans[(r + 1) >> 5].width)
                            << 16;
             petals->y[s] = INTtoFIXED(r) + toFIXED(16);
             petals->vx[s] = (Random16() & 15) * 3 << 11;
@@ -1810,8 +1810,8 @@ void BattleEffect_RunIris(struct BattleEffectParams *args) {
             s32 r = Random16() & 127;
 
             petals->life[s] = -0x7c00;
-            petals->x[s] = (rightSpans.p[(r + 1) >> 5].left +
-                            Random16() % rightSpans.p[(r + 1) >> 5].width)
+            petals->x[s] = (rightSpans.spans[(r + 1) >> 5].left +
+                            Random16() % rightSpans.spans[(r + 1) >> 5].width)
                            << 16;
             petals->y[s] = INTtoFIXED(r) + toFIXED(16);
             petals->vx[s] = (Random16() & 15) * 3 << 11;
@@ -2632,7 +2632,7 @@ s32 BattleEffect_BuildBlitter(s32 slot, s32 widthShift, s32 heightShift,
    * touches. */
   u32 frame[34];
 
-  src = BattleEffect_PatchTemplateCode;
+  src = gBlitterTemplate;
   dst = (u32 *)436;
   dst = HeapSlot_Alloc(slot, (s32)dst);
 

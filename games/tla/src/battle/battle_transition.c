@@ -119,8 +119,7 @@ void BattleBackground_ShowZoomedPage(void) {
   struct BattleAffineHdma *records;
   u16 *record;
 
-  if (((struct BattleBackgroundView *)Ram_HeapSlots->battleBackground)->mode ==
-      BATTLE_BACKGROUND_ZOOMED) {
+  if ((Ram_HeapSlots->battleBackground)->mode == BATTLE_BACKGROUND_ZOOMED) {
     records = Ram_HeapSlots->battleScanlines;
     record = records->lines[records->page];
     Io_Write16(record[0], &REG_BG2CNT);
@@ -209,24 +208,24 @@ void BattleTransition_ResetBg0Scroll(void) {
 
 #define DMA3 ((volatile u32 *)0x040000d4)
 
-/// Opens the battle against formation kind with arg enemies: the curtain
+/// Opens the battle against formation kind with enemyCount enemies: the curtain
 /// opening, then each enemy announced (formations 74 to 76 and 638 wait a
 /// second instead); for formations 78 to 80 the shattering opening over the
 /// Serpent's stars.
-void BattleTransition_Run(s32 arg, s32 kind) {
+void BattleTransition_Run(s32 enemyCount, s32 kind) {
   struct BattlePresentationWork work;
   u16 owners[UNIT_MAX];
   u16 shown[UNIT_MAX];
   s32 *timer;
   struct BattleWork *battle;
-  struct BattleBackgroundView *view;
+  struct BattleBackgroundWork *view;
   struct HeapSlots *heap;
   s32 ownerCount;
   s32 count;
   u32 i;
 
   heap = Ram_HeapSlots;
-  view = (struct BattleBackgroundView *)heap->battleBackground;
+  view = heap->battleBackground;
   timer = HeapSlot_Alloc(HEAP_SLOT_BATTLE_ENTRY_TIMER, 4);
   if ((u32)(kind - FORMATION_DOOM_DRAGON_A) >
       FORMATION_DOOM_DRAGON_C - FORMATION_DOOM_DRAGON_A) {
@@ -309,7 +308,7 @@ void BattleTransition_Run(s32 arg, s32 kind) {
         kind == FORMATION_KARST_AND_AGATIO_VS_ISAAC)
       wait(60);
     else
-      BattleIntro_AnnounceEncounter(arg);
+      BattleIntro_AnnounceEncounter(enemyCount);
     Task_Remove(BattleTransition_AdvanceTimer);
     Task_Remove(BattleTransition_DrawRows);
     gBgScroll[0].y = 0;
@@ -369,7 +368,7 @@ void BattleTransition_Run(s32 arg, s32 kind) {
     }
     for (i = 0; i != count; i++)
       BattleHighlight_SetSpriteMode(shown[i], SPRITE_OPAQUE);
-    BattleIntro_AnnounceEncounter(arg);
+    BattleIntro_AnnounceEncounter(enemyCount);
     gBgScroll[0].y = 0;
     wait(1);
     Irq_SetHandler(IRQ_VCOUNT, 0, 0);

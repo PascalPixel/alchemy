@@ -833,7 +833,7 @@ void GabombaStatue_MouseShowsTheWay(struct Actor *object) {
 
 #include "text/msg_ids.h"
 
-void GabombaStatue_SendCharge(s32 id, s32 x, s32 z, s32 facing);
+void GabombaStatue_SendCharge(s32 id, s32 colorMode, s32 statueId, s32 angle);
 void ObjectTable_Snapshot(void);
 
 /// Takes charge id off the map, stopped and standing.
@@ -1512,10 +1512,11 @@ extern s32 gGabombaStatue_ChargeScript[];
 
 void Actor_SetSpriteColorMode(struct GabombaActor *object, s32 value);
 
-/// Starts a charge from its cell toward the target at the angle given.
-void GabombaStatue_SendCharge(s32 slot, s32 value, s32 targetId, s32 angle) {
-  struct GabombaActor *object = ((struct GabombaActor *)Actor_Get(slot));
-  struct GabombaActor *target = ((struct GabombaActor *)Actor_Get(targetId));
+/// Starts charge id from the orb statue statueId at the angle given, drawn in
+/// sprite colour mode colorMode.
+void GabombaStatue_SendCharge(s32 id, s32 colorMode, s32 statueId, s32 angle) {
+  struct GabombaActor *object = ((struct GabombaActor *)Actor_Get(id));
+  struct GabombaActor *target = ((struct GabombaActor *)Actor_Get(statueId));
 
   Actor_SelectAnimation(object, 0);
   Actor_StartScript(object, gGabombaStatue_ChargeScript);
@@ -1523,8 +1524,8 @@ void GabombaStatue_SendCharge(s32 slot, s32 value, s32 targetId, s32 angle) {
   object->motionFlags = 0;
   object->link = target;
   object->phase = angle / 256;
-  object->slot = slot;
-  Actor_SetSpriteColorMode(object, value);
+  object->slot = id;
+  Actor_SetSpriteColorMode(object, colorMode);
 }
 #undef DIFF_WITHIN
 #undef MARK
@@ -3007,12 +3008,12 @@ extern u32 gGabombaStatue_TileRiseScript[];
 // GabombaStatue_RunCharges passes the charge's actor id as well, which this
 // routine never reads.
 /// A charge's step along the channel's pieces, splashing at its end.
-void GabombaStatue_MoveCharge(struct Actor *ball, s32 step, s32 id) {
-  s16 *colp = &ball->chargeColumn;
+void GabombaStatue_MoveCharge(struct Actor *charge, s32 step, s32 id) {
+  s16 *colp = &charge->chargeColumn;
   s32 col = *colp;
-  s16 *rowp = &ball->chargeRow;
+  s16 *rowp = &charge->chargeRow;
   s32 row = *rowp;
-  u8 *headingp = &ball->chargeHeading;
+  u8 *headingp = &charge->chargeHeading;
   s32 heading = *headingp;
   s32 angle = heading << 14;
   s32 cell = row * CHANNEL_COLUMNS + col;
@@ -3031,10 +3032,10 @@ void GabombaStatue_MoveCharge(struct Actor *ball, s32 step, s32 id) {
   z = FIELD_CELL_CENTER(board->originZ + row);
   if (goal == 2) {
     heading = row = col = 0;
-    if (ball->chargeState == 1) {
+    if (charge->chargeState == 1) {
       Sound_Play(SE_DUST_PUFF);
-      Actor_StartScript(ball, gGabombaStatue_TileFallScript);
-      ball->chargeState = goal;
+      Actor_StartScript(charge, gGabombaStatue_TileFallScript);
+      charge->chargeState = goal;
     }
     goto done;
   }
@@ -3136,17 +3137,17 @@ void GabombaStatue_MoveCharge(struct Actor *ball, s32 step, s32 id) {
   case 266:
   case 522:
   case 778:
-    if (ball->chargeState == 1) {
-      ball->x.fixed = x;
-      ball->y.fixed = 0;
-      ball->z.fixed = z;
-      ball->facing = angle;
+    if (charge->chargeState == 1) {
+      charge->x.fixed = x;
+      charge->y.fixed = 0;
+      charge->z.fixed = z;
+      charge->facing = angle;
       if (FIELD_CELL(x) == 24 && FIELD_CELL(z) == 14) {
-        ball->chargeState = 7;
+        charge->chargeState = 7;
       } else {
         Sound_Play(SE_DUST_PUFF);
-        Actor_StartScript(ball, gGabombaStatue_TileFallScript);
-        ball->chargeState = 2;
+        Actor_StartScript(charge, gGabombaStatue_TileFallScript);
+        charge->chargeState = 2;
       }
     }
     break;
@@ -3155,10 +3156,10 @@ void GabombaStatue_MoveCharge(struct Actor *ball, s32 step, s32 id) {
     break;
   default:
     heading = row = col = 0;
-    if (ball->chargeState == 1) {
+    if (charge->chargeState == 1) {
       Sound_Play(SE_WATER);
-      Actor_StartScript(ball, gGabombaStatue_TileRiseScript);
-      ball->chargeState = 2;
+      Actor_StartScript(charge, gGabombaStatue_TileRiseScript);
+      charge->chargeState = 2;
     }
     break;
   }
@@ -3168,12 +3169,12 @@ done:
     *rowp = row;
     *headingp = heading;
   }
-  if (ball->chargeState == 1) {
-    ball->y.fixed = 0;
-    ball->x.fixed = x;
-    ball->z.fixed = z;
-    ball->facing = angle;
-    ball->riseBaseY++;
+  if (charge->chargeState == 1) {
+    charge->y.fixed = 0;
+    charge->x.fixed = x;
+    charge->z.fixed = z;
+    charge->facing = angle;
+    charge->riseBaseY++;
   }
 }
 
@@ -3186,10 +3187,10 @@ s32 GabombaStatue_RunCharges(s32 first, s32 check) {
   s32 result;
 
   actor = Actor_Get(first);
-  actor->timer = 0;
-  actor->userValue = 7;
-  actor->riseCounter = 2;
-  actor->riseEnabled = 1;
+  actor->chargeColumn = 0;
+  actor->chargeRow = 7;
+  actor->chargeHeading = 2;
+  actor->chargeState = 1;
   actor->riseBaseY = 0;
 #ifdef UBFIX
   Actor_StartIdle(actor);
@@ -3201,26 +3202,26 @@ s32 GabombaStatue_RunCharges(s32 first, s32 check) {
   Actor_SelectAnimation(actor, 2);
   id = second;
   actor = Actor_Get(id++);
-  actor->timer = 2;
-  actor->userValue = 7;
-  actor->riseCounter = 0;
-  actor->riseEnabled = 1;
+  actor->chargeColumn = 2;
+  actor->chargeRow = 7;
+  actor->chargeHeading = 0;
+  actor->chargeState = 1;
   actor->riseBaseY = 0;
   Actor_StartIdle(actor);
   Actor_SelectAnimation(actor, 2);
   actor = Actor_Get(id++);
-  actor->timer = 8;
-  actor->userValue = 7;
-  actor->riseCounter = 2;
-  actor->riseEnabled = 1;
+  actor->chargeColumn = 8;
+  actor->chargeRow = 7;
+  actor->chargeHeading = 2;
+  actor->chargeState = 1;
   actor->riseBaseY = 0;
   Actor_StartIdle(actor);
   Actor_SelectAnimation(actor, 2);
   actor = Actor_Get(id);
-  actor->timer = 10;
-  actor->userValue = 7;
-  actor->riseCounter = 0;
-  actor->riseEnabled = 1;
+  actor->chargeColumn = 10;
+  actor->chargeRow = 7;
+  actor->chargeHeading = 0;
+  actor->chargeState = 1;
   actor->riseBaseY = 0;
   Actor_StartIdle(actor);
   Actor_SelectAnimation(actor, 2);
@@ -3229,7 +3230,7 @@ s32 GabombaStatue_RunCharges(s32 first, s32 check) {
     for (frame = 0; frame <= 15; frame++) {
       for (id = first; id < first + 4; id++) {
         actor = Actor_Get(id);
-        if (actor->riseEnabled != 0 && actor->riseEnabled != 7)
+        if (actor->chargeState != 0 && actor->chargeState != 7)
           done = 0;
         GabombaStatue_MoveCharge(actor, frame, id);
       }
@@ -4052,13 +4053,13 @@ LATE_DATA u8 gGabombaStatue_TurnedPieces[] = {
 LATE_DATA u32 gGabombaStatue_TileRiseScript[] = {
     SC_ANIMATION(1),
     SC_LABEL(1),
-    SC_ADD(SW_SCALE_X, 0xa00),
-    SC_ADD(SW_SCALE_Y, 0xa00),
+    SC_ADD(SW_SCALE_X, FIXED_ONE * 5 / 128),
+    SC_ADD(SW_SCALE_Y, FIXED_ONE * 5 / 128),
     SC_WAIT(1),
     SC_LOOP(24, SC_TO(1)),
     SC_POSITION(0, 0, 0),
-    SC_SET(SW_SCALE_X, 0x10000),
-    SC_SET(SW_SCALE_Y, 0x10000),
+    SC_SET(SW_SCALE_X, FIXED_ONE),
+    SC_SET(SW_SCALE_Y, FIXED_ONE),
     SC_SET(SW_RISE_ENABLED, 0),
     SC_WAIT(1),
     SC_END,
@@ -4066,16 +4067,16 @@ LATE_DATA u32 gGabombaStatue_TileRiseScript[] = {
 
 LATE_DATA s32 gGabombaStatue_TileFallScript[] = {
     SC_ANIMATION(0),
-    SC_SET(SW_SCALE_X, 0x20000),
-    SC_SET(SW_SCALE_Y, 0x20000),
+    SC_SET(SW_SCALE_X, FIXED_ONE * 2),
+    SC_SET(SW_SCALE_Y, FIXED_ONE * 2),
     SC_LABEL(1),
-    SC_ADD(SW_SCALE_X, -2560),
-    SC_ADD(SW_SCALE_Y, -2560),
+    SC_ADD(SW_SCALE_X, -FIXED_ONE * 5 / 128),
+    SC_ADD(SW_SCALE_Y, -FIXED_ONE * 5 / 128),
     SC_WAIT(1),
     SC_LOOP(48, SC_TO(1)),
     SC_POSITION(0, 0, 0),
-    SC_SET(SW_SCALE_X, 0x10000),
-    SC_SET(SW_SCALE_Y, 0x10000),
+    SC_SET(SW_SCALE_X, FIXED_ONE),
+    SC_SET(SW_SCALE_Y, FIXED_ONE),
     SC_SET(SW_RISE_ENABLED, 0),
     SC_WAIT(1),
     SC_END,

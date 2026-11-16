@@ -196,14 +196,12 @@ void GaiaRock_StartMovingPillar(void) {
   MapGrid_CopyCellAttributes(7, 90, 1, 1, 8, 91);
 }
 
-// The Japanese edition drops an object with no cue; the later editions play
-// SE_BOOM as it drops. The first drop goes through the call layer.
+// The Japanese edition drops a pillar with no sound; the later editions play
+// SE_BOOM as it lands.
 #if !TLA_PATCH_1
-#define DROP_OBJECT_CALLED(id) GaiaRock_DropPillar(id)
-#define DROP_OBJECT(id) GaiaRock_DropPillar(id)
+#define DROP_PILLAR(id) GaiaRock_DropPillar(id)
 #else
-#define DROP_OBJECT_CALLED(id) GaiaRock_DropPillar(id, SE_BOOM)
-#define DROP_OBJECT(id) GaiaRock_DropPillar(id, SE_BOOM)
+#define DROP_PILLAR(id) GaiaRock_DropPillar(id, SE_BOOM)
 #endif
 
 /// A pillar set down after a Move: the first drops into its gap once Moved far
@@ -215,7 +213,7 @@ void GaiaRock_FinishMovingPillar(s32 unused, s32 id) {
   if (id == ACTOR_FIRST_PILLAR &&
       Event_GetFlag(FLAG_FIRST_PILLAR_DROPPED) == 0 &&
       (object->x.fixed >> 19) <= 11) {
-    DROP_OBJECT_CALLED(ACTOR_FIRST_PILLAR);
+    DROP_PILLAR(ACTOR_FIRST_PILLAR);
     Event_SetFlag(FLAG_FIRST_PILLAR_DROPPED);
     MapGrid_CopyCellAttributes(6, 27, 1, 1, 5, 27);
   }
@@ -224,7 +222,7 @@ void GaiaRock_FinishMovingPillar(s32 unused, s32 id) {
     if ((object->x.fixed >> 19) == 77)
       MapGrid_CopyCellAttributes(33, 102, 1, 2, 37, 102);
     if ((object->x.fixed >> 19) == 79 && (object->y.fixed >> 19) == 12) {
-      DROP_OBJECT(ACTOR_SECOND_PILLAR);
+      DROP_PILLAR(ACTOR_SECOND_PILLAR);
       MapGrid_CopyCellAttributes(38, 46, 1, 1, 39, 46);
     }
     if ((object->x.fixed >> 19) == 81) {

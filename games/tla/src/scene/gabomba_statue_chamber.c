@@ -68,20 +68,19 @@ enum {
   ACTOR_KRADEN,
   ACTOR_AKAFUBU,
   /// The Black Crystal as it rolls into the hole, drawn as its item icon.
-  ACTOR_BLACK_ORB
+  ACTOR_BLACK_CRYSTAL
 };
 
 /// The final chamber, where the Great Gabomba names the witch doctor: Kraden,
 /// Akafubu ("I have followed Oeia's instructions and entered the final
-/// chamber!"), the chest, and Akafubu again in the witch doctor's dress
-/// (sprite 27).
+/// chamber!"), the chest, and Akafubu again in the witch doctor's dress.
 enum {
-  ACTOR_CHAMBER_KRADEN = 9,
-  ACTOR_CHAMBER_AKAFUBU = 10,
-  ACTOR_CHAMBER_CHEST = 12,
+  ACTOR_CHAMBER_KRADEN = ACTOR_FIRST_PLACED + 1,
+  ACTOR_CHAMBER_AKAFUBU,
+  ACTOR_CHAMBER_CHEST = ACTOR_FIRST_PLACED + 4,
   /// An unseen actor the Great Gabomba's flash and a puzzled emote show at.
-  ACTOR_CHAMBER_MARKER = 13,
-  ACTOR_WITCH_DOCTOR = 14,
+  ACTOR_CHAMBER_MARKER,
+  ACTOR_WITCH_DOCTOR,
   ACTOR_FIRST_DOOR_HALF ///< the 18 halves of the stone doors in its floor
 };
 
@@ -723,7 +722,8 @@ extern u32 gGabombaStatueChamber_WalkOffScript[];
 /// In the chamber the party finds the Black Crystal gone: "The black orb...
 /// Where is it?"
 void GabombaStatueChamber_WhereIsTheOrb(void) {
-  struct Actor *orb = (struct Actor *)((s32)Actor_GetById(ACTOR_BLACK_ORB));
+  struct Actor *crystal =
+      (struct Actor *)((s32)Actor_GetById(ACTOR_BLACK_CRYSTAL));
   struct FieldSprite *sprite;
   u8 *block;
   s32 turnA, turnB;
@@ -732,8 +732,8 @@ void GabombaStatueChamber_WhereIsTheOrb(void) {
   Event_Start();
   Event_ResolvePendingActions(0);
   FieldCamera_MoveTo(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0);
-  FieldActor_SetPositionAndResetMotion(((s32)Actor_GetById(ACTOR_BLACK_ORB)),
-                                       toFIXED(392), 0, toFIXED(268));
+  FieldActor_SetPositionAndResetMotion(
+      ((s32)Actor_GetById(ACTOR_BLACK_CRYSTAL)), toFIXED(392), 0, toFIXED(268));
   wait(1);
   leader = gMainRoutineWork.leaderActorId;
   Actor_SetPositionAndFacing(leader, toFIXED(360), toFIXED(184),
@@ -743,14 +743,14 @@ void GabombaStatueChamber_WhereIsTheOrb(void) {
   Actor_SetPositionAndFacing(ACTOR_SHEBA, toFIXED(423), toFIXED(168),
                              turnB = FACING_NORTHWEST);
   Actor_SetPositionAndFacing(ACTOR_JENNA, toFIXED(408), toFIXED(184), turnB);
-  if (orb != 0) {
-    sprite = orb->sprite;
+  if (crystal != 0) {
+    sprite = crystal->sprite;
     sprite->flags = 0;
     sprite->countAndShadow[0] = 0;
     sprite->fullColor = 0;
     sprite->palette = 0;
     sprite->priority = 1;
-    orb->retainSpriteCache = 1;
+    crystal->retainSpriteCache = 1;
     block = (u8 *)HeapSlot_Alloc(HEAP_SLOT_GLYPH_TRANSFER, 0x608);
     Icon_DrawItem(ITEM_BLACK_CRYSTAL);
     VramCache_Load(sprite->slot, 0x80, (s32)(block + 0x400));
@@ -773,41 +773,41 @@ void GabombaStatueChamber_WhereIsTheOrb(void) {
   Actor_ShowEmoteById(ACTOR_JENNA, EMOTE_IN_FRONT | EMOTE_SWEAT_DROP, 20);
   // "It came in through there and rolled along this groove in the floor..."
   Event_ShowMessageAndWait(ACTOR_JENNA, 0);
-  FieldActor_SetPositionAndResetMotion(((s32)Actor_GetById(ACTOR_BLACK_ORB)),
-                                       toFIXED(392), 0, toFIXED(340));
+  FieldActor_SetPositionAndResetMotion(
+      ((s32)Actor_GetById(ACTOR_BLACK_CRYSTAL)), toFIXED(392), 0, toFIXED(340));
   Sound_Play(SOUND_FADE_OUT_BGM);
   PaletteFade_SetTarget(PALETTE_TINT_SEPIA, 0);
   PaletteFade_StartInterpolation(40);
   wait(40);
   Actor_SetAnimationById(ACTOR_LEFT_DRUM, 2);
   Actor_SetAnimationById(ACTOR_RIGHT_DRUM, 2);
-  Actor_WatchAndSetScript(gMainRoutineWork.leaderActorId, ACTOR_BLACK_ORB);
-  Actor_WatchAndSetScript(ACTOR_JENNA, ACTOR_BLACK_ORB);
-  Actor_WatchAndSetScript(ACTOR_SHEBA, ACTOR_BLACK_ORB);
-  Actor_WatchAndSetScript(ACTOR_PIERS, ACTOR_BLACK_ORB);
-  Actor_WatchAndSetScript(ACTOR_KRADEN, ACTOR_BLACK_ORB);
+  Actor_WatchAndSetScript(gMainRoutineWork.leaderActorId, ACTOR_BLACK_CRYSTAL);
+  Actor_WatchAndSetScript(ACTOR_JENNA, ACTOR_BLACK_CRYSTAL);
+  Actor_WatchAndSetScript(ACTOR_SHEBA, ACTOR_BLACK_CRYSTAL);
+  Actor_WatchAndSetScript(ACTOR_PIERS, ACTOR_BLACK_CRYSTAL);
+  Actor_WatchAndSetScript(ACTOR_KRADEN, ACTOR_BLACK_CRYSTAL);
   Event_Wait(10);
   FieldCamera_SetSpeed(0.8);
   FieldCamera_MoveTo(392, CAMERA_KEEP, 246, 1);
-  Actor_SetSpeed(ACTOR_BLACK_ORB, 0.8);
-  Actor_MoveToAndWait(ACTOR_BLACK_ORB, 392, 246);
+  Actor_SetSpeed(ACTOR_BLACK_CRYSTAL, 0.8);
+  Actor_MoveToAndWait(ACTOR_BLACK_CRYSTAL, 392, 246);
   Actor_SetAnimationById(ACTOR_LEFT_DRUM, 1);
   Actor_SetAnimationById(ACTOR_RIGHT_DRUM, 1);
-  orb->velocityY = toFIXED(3);
-  orb->gravity = toFIXED(1) / 2;
-  Actor_SetSpeed(ACTOR_BLACK_ORB, 1.6);
-  Actor_MoveToAndWait(ACTOR_BLACK_ORB, 392, 234);
+  crystal->velocityY = toFIXED(3);
+  crystal->gravity = toFIXED(1) / 2;
+  Actor_SetSpeed(ACTOR_BLACK_CRYSTAL, 1.6);
+  Actor_MoveToAndWait(ACTOR_BLACK_CRYSTAL, 392, 234);
   Event_Wait(10);
   FieldCamera_MoveTo(392, CAMERA_KEEP, 168, 1);
-  Actor_SetSpeed(ACTOR_BLACK_ORB, 0.8);
-  Actor_MoveToAndWaitById(ACTOR_BLACK_ORB, 392, 160);
+  Actor_SetSpeed(ACTOR_BLACK_CRYSTAL, 0.8);
+  Actor_MoveToAndWaitById(ACTOR_BLACK_CRYSTAL, 392, 160);
   Actor_Stop(gMainRoutineWork.leaderActorId);
   Actor_Stop(ACTOR_JENNA);
   Actor_Stop(ACTOR_SHEBA);
   Actor_Stop(ACTOR_PIERS);
   Actor_Stop(ACTOR_KRADEN);
   wait(1);
-  Actor_SetPosition(ACTOR_BLACK_ORB, 0, 0);
+  Actor_SetPosition(ACTOR_BLACK_CRYSTAL, 0, 0);
   Event_Wait(20);
   PaletteFade_SetTarget(PALETTE_TINT_NONE, 0);
   PaletteFade_StartInterpolation(40);

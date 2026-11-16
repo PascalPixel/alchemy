@@ -193,7 +193,9 @@ struct Actor {
     struct {
       u8 unusedBeforeChargeHeading[2]; ///< refused and frozen
       u8 chargeHeading;                ///< the quarter turn it runs toward
-      u8 chargeState; ///< 1 while it runs; it falls or rises on 2
+      /// 1 while it runs, 2 as it sinks or rises off the channel (its script
+      /// then sets 0), 7 once it reaches the cell (24, 14).
+      u8 chargeState;
     };
   };
   /// Two halfwords whose meaning depends on what runs the actor.

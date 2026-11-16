@@ -878,9 +878,6 @@ void DriftScene_Prepare(void) {
 /// without the orb that moved it. Alex joins them, the beacon is lit and the
 /// tremor tears Idejima away from Gondowan.
 void Idejima_BreakAwayFromGondowan(void) {
-  /* FAKEMATCH(temporary): the facing in a local set before its first use. */
-  s32 south;
-
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
   FieldCamera_MoveTo(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0);
@@ -889,8 +886,8 @@ void Idejima_BreakAwayFromGondowan(void) {
   System_Wait(1);
   MapGrid_CenterOnFollowedPoint();
   Actor_SetPosition(gMainRoutineWork.leaderActorId, 0, 0);
-  south = FACING_SOUTH;
-  Actor_SetPositionAndFacing(ACTOR_JENNA, toFIXED(184), toFIXED(168), south);
+  Actor_SetPositionAndFacing(ACTOR_JENNA, toFIXED(184), toFIXED(168),
+                             FACING_SOUTH);
   {
     struct Actor *ship = Actor_Get(ACTOR_KRADEN);
 
@@ -970,7 +967,7 @@ void Idejima_BreakAwayFromGondowan(void) {
   FieldActor_Jump(ACTOR_KRADEN, 6, 0);
   Actor_WalkToAndWait(ACTOR_KRADEN, 256, 198);
   Actor_SetPosition(ACTOR_KRADEN, 0, 0);
-  Actor_FaceDirection(ACTOR_JENNA, south, 20);
+  Actor_FaceDirection(ACTOR_JENNA, FACING_SOUTH, 20);
   Actor_ShowEmote(ACTOR_JENNA, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 40);
   // "Kraden, wait! Oh, I swear! You're like a kid with a new toy!"
   FieldEvent_ShowMessageThenWait(SPEAKER_WINDOW_BELOW | ACTOR_JENNA, 0, 20);
@@ -978,7 +975,7 @@ void Idejima_BreakAwayFromGondowan(void) {
   Actor_FaceDirection(ACTOR_JENNA, FACING_SOUTHEAST, 40);
   Actor_ShowEmote(ACTOR_JENNA, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 80);
   Actor_WalkToAndWait(ACTOR_JENNA, 242, 172);
-  Actor_FaceDirection(ACTOR_JENNA, south, 40);
+  Actor_FaceDirection(ACTOR_JENNA, FACING_SOUTH, 40);
   Actor_ShowEmote(ACTOR_JENNA, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 120);
   Actor_ShowEmote(ACTOR_JENNA, EMOTE_IN_FRONT | EMOTE_SCOWL, 40);
   FieldActor_Jump(ACTOR_JENNA, 2, 10);
@@ -1027,7 +1024,7 @@ void Idejima_BreakAwayFromGondowan(void) {
   // "Tricked us?"
   Event_ShowMessage(
       SPEAKER_WINDOW_BELOW | SPEAKER_PORTRAIT_RIGHT | ACTOR_KRADEN, 0);
-  Actor_FaceDirection(ACTOR_JENNA, south, 0);
+  Actor_FaceDirection(ACTOR_JENNA, FACING_SOUTH, 0);
   // "Yeah, by passing this dud boat off on us!"
   FieldEvent_ShowMessageThenWait(ACTOR_JENNA, 0, 20);
   Actor_SetAnimationAndWait(ACTOR_KRADEN, ANIM_SHAKE_HEAD);
@@ -1251,27 +1248,23 @@ void Idejima_FindFelixAndSheba(void) {
 /// in sight, and a tidal wave sweeps the island towards it.
 void Idejima_RideTheTidalWave(void) {
   struct Actor *leader = Actor_Get(gMainRoutineWork.leaderActorId);
-  s32 southSoutheast, northNortheast, south, west;
 
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
   FieldCamera_MoveTo(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0);
   DriftScene_Prepare();
-  southSoutheast = FACING_SOUTH_SOUTHEAST;
   Actor_SetPositionAndFacing(ACTOR_KRADEN, toFIXED(314), toFIXED(200),
-                             southSoutheast);
-  northNortheast = FACING_NORTH_NORTHEAST;
+                             FACING_SOUTH_SOUTHEAST);
   Actor_SetPositionAndFacing(ACTOR_ALEX, toFIXED(328), toFIXED(240),
-                             northNortheast);
-  south = FACING_SOUTH;
-  Actor_SetPositionAndFacing(ACTOR_JENNA, toFIXED(340), toFIXED(200), south);
+                             FACING_NORTH_NORTHEAST);
+  Actor_SetPositionAndFacing(ACTOR_JENNA, toFIXED(340), toFIXED(200),
+                             FACING_SOUTH);
   Actor_SetPositionAndFacing(ACTOR_SHEBA, toFIXED(342), toFIXED(230),
                              FACING_EAST);
   Actor_SetAnimation(ACTOR_SHEBA, ANIM_COLLAPSE);
   Actor_SetSpriteFlags(Actor_Get(ACTOR_SHEBA), 0);
-  west = FACING_WEST;
   Actor_SetPositionAndFacing(gMainRoutineWork.leaderActorId, toFIXED(312),
-                             toFIXED(230), west);
+                             toFIXED(230), FACING_WEST);
   Actor_SetAnimation(gMainRoutineWork.leaderActorId, 41);
   Actor_SetSpriteFlags(Actor_Get(gMainRoutineWork.leaderActorId), 0);
   System_Wait(1);
@@ -1289,7 +1282,7 @@ void Idejima_RideTheTidalWave(void) {
   Event_ShowMessage(ACTOR_JENNA, 0);
   Actor_SetAnimationAndWait(ACTOR_KRADEN, ANIM_NOD);
   Actor_RunRepeatedMotion(ACTOR_SHEBA, 2);
-  Actor_FaceDirection(ACTOR_ALEX, northNortheast, 0);
+  Actor_FaceDirection(ACTOR_ALEX, FACING_NORTH_NORTHEAST, 0);
   Actor_ShowEmote(ACTOR_ALEX, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 80);
   Actor_FaceDirection(ACTOR_ALEX, FACING_NORTH_NORTHWEST, 0);
   FieldEvent_ShowTwoMessagesAndWait(ACTOR_KRADEN, 9, 1, 7, 6, 10, 12, 16, 18,
@@ -1335,7 +1328,7 @@ void Idejima_RideTheTidalWave(void) {
   FieldEvent_Wait(40);
   Actor_FaceDirection(ACTOR_SHEBA, FACING_SOUTHEAST, 80);
   Actor_FaceDirection(ACTOR_SHEBA, FACING_NORTHEAST, 40);
-  Actor_FaceDirection(ACTOR_SHEBA, west, 0);
+  Actor_FaceDirection(ACTOR_SHEBA, FACING_WEST, 0);
   FieldEvent_ShowMessageThenWait(ACTOR_SHEBA, 0, 20);
   Event_ShowMessage(SPEAKER_PORTRAIT_LEFT | ACTOR_ALEX, 0);
   Actor_FaceDirection(ACTOR_SHEBA, FACING_NORTHEAST, 40);
@@ -1347,7 +1340,7 @@ void Idejima_RideTheTidalWave(void) {
   Event_ShowMessage(ACTOR_KRADEN, 0);
   FieldActor_Jump(ACTOR_JENNA, 4, 0);
   Event_ShowMessage(SPEAKER_PORTRAIT_LEFT | ACTOR_JENNA, 0);
-  Actor_FaceDirection(ACTOR_SHEBA, west, 20);
+  Actor_FaceDirection(ACTOR_SHEBA, FACING_WEST, 20);
   Actor_SetAnimationAndWait(ACTOR_ALEX, ANIM_NOD);
   Event_ShowMessage(SPEAKER_PORTRAIT_LEFT | ACTOR_ALEX, 0);
   Actor_SetSpeed(ACTOR_SHEBA, 1.6);
@@ -1360,7 +1353,7 @@ void Idejima_RideTheTidalWave(void) {
   Actor_SetSpeed(ACTOR_KRADEN, 0.4);
   Actor_WalkToAndWait(ACTOR_KRADEN, 320, 200);
   FieldEvent_ShowMessageThenWait(ACTOR_KRADEN, 0, 40);
-  Actor_FaceDirection(ACTOR_SHEBA, west, 40);
+  Actor_FaceDirection(ACTOR_SHEBA, FACING_WEST, 40);
   Event_ShowMessage(ACTOR_SHEBA, 0);
   Actor_ShowEmote(ACTOR_ALEX, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
   Event_ShowMessage(SPEAKER_PORTRAIT_LEFT | ACTOR_ALEX, 0);
@@ -1368,7 +1361,7 @@ void Idejima_RideTheTidalWave(void) {
   Actor_FaceDirection(ACTOR_SHEBA, FACING_SOUTHWEST, 0);
   Event_ShowMessage(SPEAKER_WINDOW_ABOVE | ACTOR_SHEBA, 0);
   Actor_FaceDirection(ACTOR_KRADEN, FACING_EAST, 0);
-  Actor_FaceDirection(ACTOR_JENNA, west, 0);
+  Actor_FaceDirection(ACTOR_JENNA, FACING_WEST, 0);
   Event_ShowMessage(ACTOR_JENNA, 0);
   Actor_FaceDirection(ACTOR_SHEBA, FACING_NORTHWEST, 0);
   Event_ShowMessage(ACTOR_SHEBA, 0);
@@ -1387,7 +1380,7 @@ void Idejima_RideTheTidalWave(void) {
   FieldEvent_ShowMessageThenWait(ACTOR_SHEBA, 0, 20);
   Actor_RunRepeatedMotion(gMainRoutineWork.leaderActorId, 2);
   FieldEvent_Wait(20);
-  Actor_FaceDirection(ACTOR_JENNA, south, 0);
+  Actor_FaceDirection(ACTOR_JENNA, FACING_SOUTH, 0);
   FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_LEFT | ACTOR_JENNA, 0, 20);
   Actor_ShowEmote(gMainRoutineWork.leaderActorId,
                   EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 0);
@@ -1409,7 +1402,7 @@ void Idejima_RideTheTidalWave(void) {
   FieldEvent_Wait(20);
   Actor_FaceDirection(ACTOR_KRADEN, FACING_SOUTH_SOUTHWEST, 0);
   Actor_FaceDirection(ACTOR_JENNA, FACING_SOUTHWEST, 0);
-  Actor_FaceDirection(ACTOR_SHEBA, west, 20);
+  Actor_FaceDirection(ACTOR_SHEBA, FACING_WEST, 20);
   Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | ACTOR_KRADEN, 0);
   Actor_ShowEmote(ACTOR_JENNA, EMOTE_IN_FRONT | EMOTE_SWEAT_DROP, 40);
   Event_ShowMessage(ACTOR_JENNA, 0);
@@ -1436,23 +1429,23 @@ void Idejima_RideTheTidalWave(void) {
   Actor_FaceDirection(ACTOR_ALEX, FACING_NORTH_NORTHWEST, 0);
   Event_ShowMessage(ACTOR_ALEX, 0);
   Actor_FaceDirection(gMainRoutineWork.leaderActorId, FACING_SOUTHEAST, 0);
-  Actor_FaceDirection(ACTOR_KRADEN, southSoutheast, 0);
+  Actor_FaceDirection(ACTOR_KRADEN, FACING_SOUTH_SOUTHEAST, 0);
   Actor_FaceDirection(ACTOR_SHEBA, FACING_SOUTHWEST, 0);
   Actor_FaceDirection(ACTOR_JENNA, FACING_SOUTHWEST, 0);
   Actor_SetAnimationAndWait(ACTOR_ALEX, ANIM_NOD);
   Event_ShowMessage(ACTOR_ALEX, 0);
   Actor_FaceDirection(ACTOR_KRADEN, FACING_EAST, 0);
-  Actor_FaceDirection(ACTOR_JENNA, west, 40);
+  Actor_FaceDirection(ACTOR_JENNA, FACING_WEST, 40);
   Actor_ShowEmote(ACTOR_JENNA, EMOTE_IN_FRONT | EMOTE_SWEAT_DROP, 20);
   Event_ShowMessage(ACTOR_JENNA, 0);
   Actor_FaceDirection(ACTOR_SHEBA, FACING_NORTHWEST, 20);
   Event_ShowMessage(ACTOR_SHEBA, 0);
-  Actor_FaceDirection(ACTOR_KRADEN, southSoutheast, 0);
+  Actor_FaceDirection(ACTOR_KRADEN, FACING_SOUTH_SOUTHEAST, 0);
   Event_ShowMessage(ACTOR_KRADEN, 0);
   Actor_FaceDirection(ACTOR_KRADEN, FACING_EAST, 0);
-  Actor_FaceDirection(ACTOR_JENNA, west, 0);
+  Actor_FaceDirection(ACTOR_JENNA, FACING_WEST, 0);
   Actor_FaceDirection(gMainRoutineWork.leaderActorId, FACING_EAST, 0);
-  Actor_FaceDirection(ACTOR_SHEBA, west, 20);
+  Actor_FaceDirection(ACTOR_SHEBA, FACING_WEST, 20);
   Actor_FaceDirection(ACTOR_ALEX, FACING_EAST, 0);
   Actor_SetAnimation(ACTOR_KRADEN, ANIM_NOD);
   Actor_SetAnimation(ACTOR_JENNA, ANIM_NOD);
@@ -1466,7 +1459,7 @@ void Idejima_RideTheTidalWave(void) {
   FieldActor_WaitForScriptEndById(ACTOR_SHEBA);
   Event_ShowMessage(SPEAKER_WINDOW_ABOVE | SPEAKER_PORTRAIT_LEFT | ACTOR_SHEBA,
                     0);
-  Actor_FaceDirection(ACTOR_KRADEN, southSoutheast, 0);
+  Actor_FaceDirection(ACTOR_KRADEN, FACING_SOUTH_SOUTHEAST, 0);
   Actor_FaceDirection(ACTOR_JENNA, FACING_SOUTHEAST, 0);
   Actor_FaceDirection(gMainRoutineWork.leaderActorId, FACING_SOUTHEAST, 0);
   Actor_WalkToAndWait(ACTOR_ALEX, 400, 264);

@@ -2,9 +2,7 @@
 void Embers_Spawn(s32 x, s32 y, s32 z, s32 speed) {
   s32 i;
 
-  i = 1;
-next:
-  {
+  for (i = 1; i >= 0; i--) {
     struct Actor *object = FieldActor_Create(SPRITE_TURNING_ROCK, x, y, z);
 
     if (object != NULL) {
@@ -32,6 +30,4 @@ next:
       Actor_SetSpriteColorMode(object, 1);
     }
   }
-  if (--i >= 0)
-    goto next;
 }

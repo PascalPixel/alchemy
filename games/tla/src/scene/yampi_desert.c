@@ -161,7 +161,7 @@ static inline void Scene_ArmCallback(s32 id, s32 angle, s32 flags) {
 
 /// Places an actor at (x, z) on the ground, facing a direction.
 static inline void YampiDesert_SetPositionAndFacing(s32 actorId, s32 x, s32 z,
-                                                    s32 facing) {
+                                                    u16 facing) {
   Actor_SetHorizontalPositionAndAngleWithTerrain(actorId, x, z, facing);
 }
 
@@ -569,14 +569,15 @@ void YampiDesert_StepOntoStakeTops(void) {
           (u8 *)((((s32)cells - (s32)Ram_MapCellBuffer) >> 2) + (s32)grid);
       s32 index = Actor_GetCellIndex(actor);
       s32 shape = MapGrid_GetTerrainKind(layer, actor->x.fixed, actor->z.fixed);
-      s32 height = Map_GetTerrainHeight(layer, actor->x.fixed, actor->z.fixed);
+      s32 height =
+          Map_GetTerrainHeight(layer, actor->x.fixed, actor->z.fixed) >> 19;
 
       cells += index;
       shapes += index;
       actor->motionFlags = 0;
       cells->collisionCode = 0;
       cells->attributeB |= 128;
-      *shapes = MapCollision_FindOrAddTag(layer, shape, (height >> 19) + 4);
+      *shapes = MapCollision_FindOrAddTag(layer, shape, height + 4);
     }
     list++;
   }
@@ -599,26 +600,24 @@ void YampiDesert_StepOffStakeTops(void) {
     return;
   while (*list != STAKE_LIST_END) {
     struct Actor *actor = Actor_GetById(*list);
-    s32 set;
 
     list += 2;
-    set = GameFlag_Get(*list);
-    if (!set) {
+    if (!GameFlag_Get(*list)) {
       s32 layer = actor->layer;
       struct MapCell *cells = map->layers[layer].cells;
       u8 *shapes =
           (u8 *)((((s32)cells - (s32)Ram_MapCellBuffer) >> 2) + (s32)grid);
-      /* FAKEMATCH(pin): the index in r10. */
-      register s32 index asm("r10") = Actor_GetCellIndex(actor);
+      s32 index = Actor_GetCellIndex(actor);
       s32 shape = MapGrid_GetTerrainKind(layer, actor->x.fixed, actor->z.fixed);
-      s32 height = Map_GetTerrainHeight(layer, actor->x.fixed, actor->z.fixed);
+      s32 height =
+          Map_GetTerrainHeight(layer, actor->x.fixed, actor->z.fixed) >> 19;
 
       cells += index;
       shapes += index;
-      actor->motionFlags = set;
+      actor->motionFlags = 0;
       cells->collisionCode = CELL_WALL;
       cells->attributeB &= 127;
-      *shapes = MapCollision_FindOrAddTag(layer, shape, (height >> 19) - 4);
+      *shapes = MapCollision_FindOrAddTag(layer, shape, height - 4);
     }
     list++;
   }
@@ -649,8 +648,7 @@ void YampiDesert_UnblockStakes(u16 *list) {
   struct MapCell *cell;
   s32 collisionCode;
 
-  if (*list != STAKE_LIST_END) {
-  loop:
+  while (*list != STAKE_LIST_END) {
     cell = &map->layers[2].cells[Actor_GetCellIndex(Actor_GetById(*list))];
     collisionCode = 232;
     /* FAKEMATCH(dead): the advance in a once-only block. */
@@ -658,8 +656,6 @@ void YampiDesert_UnblockStakes(u16 *list) {
       list += 3;
     } while (0);
     cell->collisionCode = collisionCode;
-    if (*list != STAKE_LIST_END)
-      goto loop;
   }
 }
 
@@ -756,7 +752,7 @@ void YampiDesert_BurstSand(s32 x, s32 y, s32 z) {
     velocity[1] = 0;
     velocity[2] = Trig_Sin(i << 14);
     velocity[0] += velocity[0] >> 1;
-    velocity[0] += ((u32)(Random16() << 17) >> 16) - toFIXED(1);
+    velocity[0] += (u16)(Random16() << 1) - toFIXED(1);
     velocity[2] += (u16)Random16() - toFIXED(1) / 2;
     FieldEffect_Spawn(x, y, z, velocity[0], velocity[1], velocity[2],
                       EFFECT_USE_UPDATE | 1, &options);
@@ -897,7 +893,6 @@ void YampiDesert_TrapKingScorpion(void) {
   struct Actor *scorpion =
       Actor_GetById(ACTOR_KING_SCORPION_ROOM_KING_SCORPION);
   u32 i;
-  s32 angle;
 
   if (!GameFlag_Get(FLAG_YAMPI_DESERT_SCORPION_CORNERED))
     return;
@@ -926,9 +921,8 @@ void YampiDesert_TrapKingScorpion(void) {
   Actor_SetSpeed(gMainRoutineWork.leaderActorId, 0.8);
   Actor_WalkToAndWaitById(gMainRoutineWork.leaderActorId, 232, 164);
   FieldEvent_Wait(20);
-  angle = FACING_SOUTH;
   YampiDesert_SetPositionAndFacing(ACTOR_KING_SCORPION_ROOM_KING_SCORPION,
-                                   toFIXED(232), toFIXED(184), angle);
+                                   toFIXED(232), toFIXED(184), FACING_SOUTH);
   wait(1);
   YampiDesert_BurstSand(toFIXED(232), 0, toFIXED(184));
   Sound_Play(SE_KOLIMA_BRIDGE_HOP);
@@ -941,7 +935,7 @@ void YampiDesert_TrapKingScorpion(void) {
                        1);
   Actor_SetSpeed(ACTOR_KING_SCORPION_ROOM_KING_SCORPION, 1.6);
   Actor_MoveToAndWaitById(ACTOR_KING_SCORPION_ROOM_KING_SCORPION, 216, 184);
-  Actor_FaceDirectionById(gMainRoutineWork.leaderActorId, angle, 0);
+  Actor_FaceDirectionById(gMainRoutineWork.leaderActorId, FACING_SOUTH, 0);
   Actor_FaceDirectionAndRefreshById(ACTOR_KING_SCORPION_ROOM_KING_SCORPION,
                                     FACING_EAST);
   FieldEvent_Wait(20);
@@ -1159,7 +1153,6 @@ extern u32 gYampiDesert_LastTravelersFollow[];
 /// way through.
 void YampiDesert_SeeTravelersAbove(s32 p0) {
   struct MainRoutineWork *state;
-  s32 angle;
 
   Call1((void (*)())Event_Start, p0);
   Event_ResolvePendingActions(0);
@@ -1288,37 +1281,22 @@ void YampiDesert_SeeTravelersAbove(s32 p0) {
   Actor_SetPosition(ACTOR_TRAVELER_WHO_WOULD_TURN_BACK, 0, 0);
   Actor_SetPosition(ACTOR_ELDER, 0, 0);
   Actor_SetPosition(ACTOR_MAYOR, 0, 0);
-  angle = FACING_NORTH_NORTHWEST;
   YampiDesert_SetPositionAndFacing(ACTOR_TRAVELER_FOLLOWING_THE_PIRATES,
-                                   toFIXED(520), toFIXED(242), angle);
-  {
-    s32 facing = FACING_WEST;
-
-    YampiDesert_SetPositionAndFacing(ACTOR_TRAVELER_SEEKING_EVIDENCE,
-                                     toFIXED(533), toFIXED(271), facing);
-  }
-  {
-    s32 facing = FACING_SOUTH_SOUTHEAST;
-
-    YampiDesert_SetPositionAndFacing(ACTOR_DIZZY_TRAVELER, toFIXED(435),
-                                     toFIXED(232), facing);
-  }
-  {
-    s32 facing = FACING_SOUTH_SOUTHWEST;
-
-    YampiDesert_SetPositionAndFacing(ACTOR_PARCHED_TRAVELER, toFIXED(467),
-                                     toFIXED(248), facing);
-  }
-  {
-    s32 facing = FACING_NORTH_NORTHEAST;
-
-    YampiDesert_SetPositionAndFacing(ACTOR_TRAVELER_WHO_WOULD_TURN_BACK,
-                                     toFIXED(462), toFIXED(340), facing);
-    YampiDesert_SetPositionAndFacing(ACTOR_ELDER, toFIXED(482), toFIXED(340),
-                                     facing);
-  }
+                                   toFIXED(520), toFIXED(242),
+                                   FACING_NORTH_NORTHWEST);
+  YampiDesert_SetPositionAndFacing(ACTOR_TRAVELER_SEEKING_EVIDENCE,
+                                   toFIXED(533), toFIXED(271), FACING_WEST);
+  YampiDesert_SetPositionAndFacing(ACTOR_DIZZY_TRAVELER, toFIXED(435),
+                                   toFIXED(232), FACING_SOUTH_SOUTHEAST);
+  YampiDesert_SetPositionAndFacing(ACTOR_PARCHED_TRAVELER, toFIXED(467),
+                                   toFIXED(248), FACING_SOUTH_SOUTHWEST);
+  YampiDesert_SetPositionAndFacing(ACTOR_TRAVELER_WHO_WOULD_TURN_BACK,
+                                   toFIXED(462), toFIXED(340),
+                                   FACING_NORTH_NORTHEAST);
+  YampiDesert_SetPositionAndFacing(ACTOR_ELDER, toFIXED(482), toFIXED(340),
+                                   FACING_NORTH_NORTHEAST);
   YampiDesert_SetPositionAndFacing(ACTOR_MAYOR, toFIXED(489), toFIXED(320),
-                                   angle);
+                                   FACING_NORTH_NORTHWEST);
   Actor_SetAnimationById(ACTOR_TRAVELER_FOLLOWING_THE_PIRATES, 1);
   Actor_SetAnimationById(ACTOR_TRAVELER_SEEKING_EVIDENCE, 1);
   Actor_SetAnimationById(ACTOR_DIZZY_TRAVELER, 1);
@@ -1937,7 +1915,6 @@ void YampiDesert_SetUpTrappedScorpion(void) {
       Actor_GetById(ACTOR_KING_SCORPION_ROOM_KING_SCORPION);
   struct Actor *actor;
   struct Actor **followed;
-  s32 angle;
 
   followed = &gYampiDesert_SandRipple;
   actor = Actor_GetById(ACTOR_KING_SCORPION_ROOM_SAND_RIPPLE);
@@ -1955,9 +1932,8 @@ void YampiDesert_SetUpTrappedScorpion(void) {
   Actor_GetById(ACTOR_KING_SCORPION_ROOM_KING_SCORPION)->motionFlags =
       ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
   if (GameFlag_Get(FLAG_YAMPI_DESERT_SCORPION_CORNERED)) {
-    angle = FACING_SOUTH;
     YampiDesert_SetPositionAndFacing(ACTOR_KING_SCORPION_ROOM_KING_SCORPION,
-                                     toFIXED(232), toFIXED(168), angle);
+                                     toFIXED(232), toFIXED(168), FACING_SOUTH);
   } else {
     Scene_TaskAdd(YampiDesert_PlayScorpionRumble, TASK_PASS_VBLANK);
     if (!GameFlag_Get(FLAG_KEEP_PARTY_POSITION)) {
@@ -2100,12 +2076,8 @@ void YampiDesert_LandAndFightKingScorpion(void) {
   leader->gravity = FIXED_ONE / 2;
   leader->bounce = 0;
   Actor_SetSpriteFlags(Actor_GetById(ACTOR_KING_SCORPION), 0);
-  {
-    s32 angle = FACING_SOUTH;
-
-    YampiDesert_SetPositionAndFacing(ACTOR_KING_SCORPION, toFIXED(232),
-                                     toFIXED(148), angle);
-  }
+  YampiDesert_SetPositionAndFacing(ACTOR_KING_SCORPION, toFIXED(232),
+                                   toFIXED(148), FACING_SOUTH);
   actor8->motionFlags = 0;
   actor8->y.fixed = toFIXED(130);
   actor8->gravity = FIXED_ONE / 2;
@@ -2196,7 +2168,6 @@ void YampiDesert_SetUpGuardianRingChest(void) {
 void YampiDesert_SetUpOasis(void) {
   s32 angleA;
   s32 angleB;
-  s32 angle;
 
   if (GameFlag_Get(FLAG_ALHAFRA_MADRANS_ARRIVED)) {
     Actor_SetPosition(ACTOR_TRAVELER_FOLLOWING_THE_PIRATES, 0, 0);
@@ -2210,15 +2181,12 @@ void YampiDesert_SetUpOasis(void) {
     angleA = FACING_NORTH_NORTHWEST;
     YampiDesert_SetPositionAndFacing(ACTOR_TRAVELER_FOLLOWING_THE_PIRATES,
                                      toFIXED(520), toFIXED(242), angleA);
-    angle = FACING_WEST;
     YampiDesert_SetPositionAndFacing(ACTOR_TRAVELER_SEEKING_EVIDENCE,
-                                     toFIXED(533), toFIXED(271), angle);
-    angle = FACING_SOUTH_SOUTHEAST;
+                                     toFIXED(533), toFIXED(271), FACING_WEST);
     YampiDesert_SetPositionAndFacing(ACTOR_DIZZY_TRAVELER, toFIXED(435),
-                                     toFIXED(232), angle);
-    angle = FACING_SOUTH_SOUTHWEST;
+                                     toFIXED(232), FACING_SOUTH_SOUTHEAST);
     YampiDesert_SetPositionAndFacing(ACTOR_PARCHED_TRAVELER, toFIXED(467),
-                                     toFIXED(248), angle);
+                                     toFIXED(248), FACING_SOUTH_SOUTHWEST);
     angleB = FACING_NORTH_NORTHEAST;
     YampiDesert_SetPositionAndFacing(ACTOR_TRAVELER_WHO_WOULD_TURN_BACK,
                                      toFIXED(462), toFIXED(340), angleB);
@@ -2591,35 +2559,28 @@ void YampiDesert_DrawRisingSand(void) {
       continue;
     actor = Actor_GetById(entry->id);
     frame = (gFrameCount % 12) / 3 * 8 + 32;
-    h = 0;
-    if (h >= entry->height)
-      goto top;
-  again:
-    if (count > 79)
-      goto next;
-    x = actor->x.fixed - viewX;
-    y = actor->y.fixed + INTtoFIXED(h) - originY;
-    z = actor->z.fixed - viewZ - originY;
-    sy = z - y;
-    x = FIXEDtoINT(x) - 8;
-    sy = (sy >> 16) - 16;
-    depth = ((y + z) >> 16) + 58;
-    if ((u32)(x + 15) > 334 || sy <= -16 || sy > 239)
-      goto next;
-    x &= 511;
-    sy &= 255;
-    p = oam;
-    *p++ = 0;
-    *p++ = sy | OBJ_X(x) | OBJ_SIZE_16X16 | OBJ_256_COLORS;
-    *p = (tile + frame) | OBJ_PRIORITY(2);
-    Oam_AddSpriteAtDepthClamped(oam, depth);
-    oam += 3;
-    count++;
-  next:
-    h += 16;
-    if (h < entry->height)
-      goto again;
-  top:
+    for (h = 0; h < entry->height; h += 16) {
+      if (count > 79)
+        continue;
+      x = actor->x.fixed - viewX;
+      y = actor->y.fixed + INTtoFIXED(h) - originY;
+      z = actor->z.fixed - viewZ - originY;
+      sy = z - y;
+      x = FIXEDtoINT(x) - 8;
+      sy = (sy >> 16) - 16;
+      depth = ((y + z) >> 16) + 58;
+      if ((u32)(x + 15) > 334 || sy <= -16 || sy > 239)
+        continue;
+      x &= 511;
+      sy &= 255;
+      p = oam;
+      *p++ = 0;
+      *p++ = sy | OBJ_X(x) | OBJ_SIZE_16X16 | OBJ_256_COLORS;
+      *p = (tile + frame) | OBJ_PRIORITY(2);
+      Oam_AddSpriteAtDepthClamped(oam, depth);
+      oam += 3;
+      count++;
+    }
     if (count > 79)
       continue;
     x = actor->x.fixed - viewX;

@@ -361,11 +361,8 @@ void ApojiiIslands_CycleSeaColors(void) {
   }
   phase = gApojiiIslands_SeaCycleFrame / 8 % 4;
   for (k = 0; k <= 3; k++) {
-    /* FAKEMATCH(dead): the phase and the first colour in a once-only block. */
-    do {
-      j = (phase + k) % 4;
-      gApojiiIslands_SeaCycled[12 + j] = gApojiiIslands_SeaColors[12 + k];
-    } while (0);
+    j = (phase + k) % 4;
+    gApojiiIslands_SeaCycled[12 + j] = gApojiiIslands_SeaColors[12 + k];
     gApojiiIslands_ShoreCycled[12 + j] = gApojiiIslands_ShoreColors[12 + k];
   }
   IO_WRITE_QUEUE_PUSH((u32)&BG_PLTT_COLOR(3, 0), (u32)gApojiiIslands_SeaCycled,
@@ -438,7 +435,7 @@ void ApojiiIslands_DouseAquaStone(s32 unused, s32 id) {
   Scene_QueueMusic(SE_AMBIENT_WATER);
   i = 3;
   do {
-    Value2((s32 (*)())PaletteFade_SetTarget, Random16() & 0x7fff, 0);
+    PaletteFade_SetTarget(Random16() & 0x7fff, 0);
     PaletteFade_StartInterpolation(15);
     wait(10);
     Value2((s32 (*)())PaletteFade_SetTarget, PALETTE_TINT_NONE, 0);
@@ -723,13 +720,12 @@ void Layer_TrackScroll(void) {
 /// The overlay's entry: sets the map mode and screen effect 0x202, then starts
 /// each room's own setup.
 s32 Scene_Initialize(void) {
-  s32 *effect;
   s16 scene;
   struct MainRoutineWork *party;
 
   Map_SetUpperLevelWading(Ram_HeapSlots->mapGrid);
-  effect = &gFieldWork->transition;
-  *effect = SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_NOISE);
+  gFieldWork->transition =
+      SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_NOISE);
   party = &gMainRoutineWork;
   scene = party->next;
   if (scene == SCENE_APOJII_ISLANDS_HAZE) {
@@ -739,7 +735,7 @@ s32 Scene_Initialize(void) {
     if (Event_GetFlag(FLAG_FATHER_SEES_THE_STONE))
       ApojiiIslands_FatherSeesTheStone();
   } else if (scene == SCENE_APOJII_ISLANDS_SHOPS) {
-    *effect = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
+    gFieldWork->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
     if (party->entrance == 6)
       ApojiiIslands_LeaveQuietly();
   }

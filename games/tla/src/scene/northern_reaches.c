@@ -378,7 +378,7 @@ void NorthernReaches_ShatterIceWall(s32 unused, s32 *position,
   // Unused: gives the stack frame its 4 bytes.
   u8 frameSlot[4];
   void *sheet;
-  s32 i, frame, column, zero, entry, sparkEntry, tiles, flying, sparkTiles;
+  s32 i, frame, column, entry, sparkEntry, tiles, flying, sparkTiles;
 
   work = HeapSlot_Alloc(HEAP_SLOT_MENU, sizeof(struct IceWallWork));
   flying = 0;
@@ -391,11 +391,10 @@ void NorthernReaches_ShatterIceWall(s32 unused, s32 *position,
   sprite = work->sprites;
   for (; i < ICE_SHARD_COUNT; i++) {
     EffectSprite_Init(sprite, 0, 0, OBJ_SIZE_16X16, (i & 3) * 8 + tiles);
-    zero = 0;
     sprite->depth = 250;
-    sprite->oam.priority = zero;
+    sprite->oam.priority = 0;
     sprite->oam.fullColor = 1;
-    sprite->oam.palette = zero;
+    sprite->oam.palette = 0;
     column = i / 6;
     particle->x = position[0] + FIELD_CELL_ORIGIN(column);
     particle->y = position[1] - FIELD_CELL_ORIGIN(i % 6);
@@ -404,8 +403,8 @@ void NorthernReaches_ShatterIceWall(s32 unused, s32 *position,
     particle->z = position[2];
     particle->velocityX = (Random16() * 3 >> 1) * column;
     particle->velocityY = (Random16() << 2) + toFIXED(2);
-    particle->velocityZ = zero;
-    particle->age = zero;
+    particle->velocityZ = 0;
+    particle->age = 0;
     particle++;
   }
   sparks = Heap_AllocEwram(SPARK_COUNT * sizeof(struct IceShardSpark));

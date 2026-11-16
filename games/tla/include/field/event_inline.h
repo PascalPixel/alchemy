@@ -113,7 +113,7 @@ static inline void Actor_FaceDirectionAndWait(s32 actorId, s32 facing) {
 /// Places an actor at a point at once, as Actor_SetPosition does, facing a
 /// direction.
 static inline void Actor_SetPositionAndFacing(s32 actorId, s32 fixed_x,
-                                              s32 fixed_z, s32 facing) {
+                                              s32 fixed_z, u16 facing) {
   Actor_SetHorizontalPositionAndAngleWithTerrain(actorId, fixed_x, fixed_z,
                                                  facing);
 }

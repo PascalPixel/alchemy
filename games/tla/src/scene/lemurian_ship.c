@@ -472,7 +472,6 @@ void LemurianShip_LiftLedgeCrate(void) {
 void LemurianShip_PushCrateOffLedge(void) {
   struct Actor *actor;
   s32 x;
-  u8 *flags;
   s32 moving;
 
   Actor_PlaceMovedBlock();
@@ -483,15 +482,14 @@ void LemurianShip_PushCrateOffLedge(void) {
     Event_ResolvePendingActions(0);
     MapGrid_CopyCellAttributes(16, 47, 1, 1, x, 46);
     wait(1);
-    flags = &actor->motionFlags;
-    *flags = 3;
+    actor->motionFlags = 3;
     do {
       wait(1);
       moving = actor->velocityY;
     } while (moving != 0);
     Event_PlaySound(SE_THUMP);
     wait(10);
-    *flags = moving;
+    actor->motionFlags = moving;
     Event_SetFlag(FLAG_CRATE_DROPPED);
     MapGrid_CopyCellAttributes(14, 46, 1, 1, 16, 46);
     Event_End();
@@ -526,7 +524,6 @@ void LemurianShip_StepOnLift(void) {
   struct Actor *leader;
   struct Actor *helper;
   s32 opened;
-  u8 *state;
 
   if (!Event_GetFlag(FLAG_SHIP_ENGINE_RUNNING)) {
     leader = ((struct Actor *)Actor_GetById(gMainRoutineWork.leaderActorId));
@@ -535,7 +532,6 @@ void LemurianShip_StepOnLift(void) {
     Actor_SetSpeed(gMainRoutineWork.leaderActorId, 0.8);
     Actor_WalkToAndWait(gMainRoutineWork.leaderActorId, 840, 72);
     opened = Event_GetFlag((FLAG_JELLIES_BEATEN + 2));
-    state = &leader->layer;
     if (opened) {
       Event_PlaySound(SE_LEMURIAN_SHIP_LIFT);
       Actor_SetAttachedEffect(gMainRoutineWork.leaderActorId,
@@ -544,7 +540,7 @@ void LemurianShip_StepOnLift(void) {
       Event_Wait(20);
       MapGrid_SetShake(0, 0, 0);
       MapGrid_CopyCellsTo(68, 68, 50, 64, 3, 3);
-      *state = 2;
+      leader->layer = 2;
       Event_Wait(20);
       Actor_Jump(gMainRoutineWork.leaderActorId, 4, 0);
       Actor_SetSpeed(gMainRoutineWork.leaderActorId, 1.6);
@@ -553,7 +549,7 @@ void LemurianShip_StepOnLift(void) {
       Event_PlaySound(SE_CRUNCH);
       MapGrid_CopyCellsTo(72, 68, 50, 64, 3, 3);
       Event_Wait(20);
-      *state = 1;
+      leader->layer = 1;
     } else {
       helper = ((struct Actor *)Actor_GetById(ACTOR_SIX_JELLY_ROOM_JELLY_A));
       Actor_SetSpritePriority(ACTOR_SIX_JELLY_ROOM_JELLY_A, 2);
@@ -562,16 +558,10 @@ void LemurianShip_StepOnLift(void) {
           ->steeringFlags &= ~ACTOR_FACES_MOTION;
       Actor_WalkToAndWait(ACTOR_SIX_JELLY_ROOM_JELLY_A, 824, 88);
       Event_Wait(1);
-      {
-        /* FAKEMATCH(temporary): the bit in a local the byte is or'ed into. */
-        u8 *bits =
-            &((struct Actor *)Actor_GetById(ACTOR_SIX_JELLY_ROOM_JELLY_A))
-                 ->steeringFlags;
-        s32 value = 1;
-
-        value |= *bits;
-        *bits = value;
-      }
+      ActorFlags_Set(
+          &((struct Actor *)Actor_GetById(ACTOR_SIX_JELLY_ROOM_JELLY_A))
+               ->steeringFlags,
+          ACTOR_FACES_MOTION);
       Event_PlaySound(SE_LEMURIAN_SHIP_LIFT);
       Actor_SetAttachedEffect(gMainRoutineWork.leaderActorId,
                               ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
@@ -579,20 +569,16 @@ void LemurianShip_StepOnLift(void) {
       Event_Wait(20);
       MapGrid_SetShake(0, 0, 0);
       MapGrid_CopyCellsTo(68, 68, 50, 64, 3, 3);
-      {
-        s32 two = 2;
-        *state = two;
-        Event_Wait(20);
-        Actor_FaceDirection(gMainRoutineWork.leaderActorId, FACING_SOUTHWEST,
-                            20);
-        Actor_Jump(gMainRoutineWork.leaderActorId, 4, 0);
-        Actor_SetSpeed(gMainRoutineWork.leaderActorId, 1.6);
-        Actor_MoveToAndWait(gMainRoutineWork.leaderActorId, 840, 88);
-        Actor_FaceDirectionAndWait(gMainRoutineWork.leaderActorId, FACING_WEST);
-        Actor_WatchAndSetScript(gMainRoutineWork.leaderActorId, 9);
-        helper->gravity = toFIXED(1);
-        helper->layer = two;
-      }
+      leader->layer = 2;
+      Event_Wait(20);
+      Actor_FaceDirection(gMainRoutineWork.leaderActorId, FACING_SOUTHWEST, 20);
+      Actor_Jump(gMainRoutineWork.leaderActorId, 4, 0);
+      Actor_SetSpeed(gMainRoutineWork.leaderActorId, 1.6);
+      Actor_MoveToAndWait(gMainRoutineWork.leaderActorId, 840, 88);
+      Actor_FaceDirectionAndWait(gMainRoutineWork.leaderActorId, FACING_WEST);
+      Actor_WatchAndSetScript(gMainRoutineWork.leaderActorId, 9);
+      helper->gravity = toFIXED(1);
+      helper->layer = 2;
       Actor_Jump(ACTOR_SIX_JELLY_ROOM_JELLY_A, 4, 0);
       Actor_MoveToAndWait(ACTOR_SIX_JELLY_ROOM_JELLY_A, 832, 74);
       Actor_Jump(ACTOR_SIX_JELLY_ROOM_JELLY_A, 4, 0);
@@ -604,7 +590,7 @@ void LemurianShip_StepOnLift(void) {
       MapGrid_CopyCellsTo(72, 68, 50, 64, 3, 3);
       Event_Wait(20);
       Actor_Stop(gMainRoutineWork.leaderActorId);
-      *state = 1;
+      leader->layer = 1;
       helper->layer = 0;
       wait(1);
       Event_ClearFlag(FLAG_JELLY_FLED);

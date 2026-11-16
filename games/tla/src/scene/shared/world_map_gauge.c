@@ -25,62 +25,61 @@ void Gauge_Draw(s32 progress) {
 
     if (kind == GAUGE_EMPTY) {
       copy(gGauge_Tiles, gGauge_SourceTiles[8], 4 * TILE_SIZE_4BPP);
-      goto done;
-    }
-    if (kind == GAUGE_SHOWN)
-      copy(gGauge_Tiles, gGauge_SourceTiles[4], 4 * TILE_SIZE_4BPP);
-    else
-      copy(gGauge_Tiles, gGauge_SourceTiles[8], 4 * TILE_SIZE_4BPP);
-  }
-  base = 0;
-  count = level;
-  if (count > 7) {
-    Iwram_CopyWordsEntry(gGauge_Tiles, gGauge_SourceTiles, TILE_SIZE_4BPP);
-    base = 8;
-    count -= 8;
-  }
-  if (level > 15) {
-    Iwram_CopyWordsEntry(gGauge_Tiles[1], gGauge_SourceTiles[1],
-                         TILE_SIZE_4BPP);
-    count = level;
-    base = 16;
-    count -= 16;
-  }
-  if (level > 23) {
-    Iwram_CopyWordsEntry(gGauge_Tiles[2], gGauge_SourceTiles[2],
-                         TILE_SIZE_4BPP);
-    count = level;
-    base = 24;
-    count -= 24;
-  }
-  if (level > 30) {
-    Iwram_CopyWordsEntry(gGauge_Tiles[3], gGauge_SourceTiles[3],
-                         TILE_SIZE_4BPP);
-    base = 0;
-    count = 0;
-  }
-  if (count != 0) {
-    for (i = 0; i < count; i++) {
-      u8 *source = &gGauge_SourceTiles[base / 8][4] + i / 2;
-      u8 *dest = &gGauge_Tiles[base / 8][4] + i / 2;
-      s32 j;
+    } else {
+      if (kind == GAUGE_SHOWN)
+        copy(gGauge_Tiles, gGauge_SourceTiles[4], 4 * TILE_SIZE_4BPP);
+      else
+        copy(gGauge_Tiles, gGauge_SourceTiles[8], 4 * TILE_SIZE_4BPP);
+      base = 0;
+      count = level;
+      if (count > 7) {
+        Iwram_CopyWordsEntry(gGauge_Tiles, gGauge_SourceTiles, TILE_SIZE_4BPP);
+        base = 8;
+        count -= 8;
+      }
+      if (level > 15) {
+        Iwram_CopyWordsEntry(gGauge_Tiles[1], gGauge_SourceTiles[1],
+                             TILE_SIZE_4BPP);
+        count = level;
+        base = 16;
+        count -= 16;
+      }
+      if (level > 23) {
+        Iwram_CopyWordsEntry(gGauge_Tiles[2], gGauge_SourceTiles[2],
+                             TILE_SIZE_4BPP);
+        count = level;
+        base = 24;
+        count -= 24;
+      }
+      if (level > 30) {
+        Iwram_CopyWordsEntry(gGauge_Tiles[3], gGauge_SourceTiles[3],
+                             TILE_SIZE_4BPP);
+        base = 0;
+        count = 0;
+      }
+      if (count != 0) {
+        for (i = 0; i < count; i++) {
+          u8 *source = &gGauge_SourceTiles[base / 8][4] + i / 2;
+          u8 *dest = &gGauge_Tiles[base / 8][4] + i / 2;
+          s32 j;
 
-      if ((i & 1) == 0) {
-        for (j = 1; j <= 3; j++) {
-          *dest = (*dest & 240) | (*source & 15);
-          source += 4;
-          dest += 4;
-        }
-      } else {
-        for (j = 2; j >= 0; j--) {
-          *dest = (*dest & 15) | (*source & 240);
-          source += 4;
-          dest += 4;
+          if ((i & 1) == 0) {
+            for (j = 1; j <= 3; j++) {
+              *dest = (*dest & 240) | (*source & 15);
+              source += 4;
+              dest += 4;
+            }
+          } else {
+            for (j = 2; j >= 0; j--) {
+              *dest = (*dest & 15) | (*source & 240);
+              source += 4;
+              dest += 4;
+            }
+          }
         }
       }
     }
   }
-done:
   Vram_Load(gGauge_Vram, GAUGE_SIZE, gGauge_Tiles);
 }
 

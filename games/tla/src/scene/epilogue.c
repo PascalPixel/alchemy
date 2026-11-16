@@ -102,8 +102,6 @@ void Epilogue_LoadNamePanel(void) {
   struct EffectSprite *sprite;
   s32 *slot;
   s32 *tileSlot;
-  s8 zero;
-  s32 priority;
   s32 value;
 
   Dma_Set(gEpilogueNamePanelPalette, (void *)&OBJ_PLTT_COLOR(14, 0),
@@ -122,10 +120,8 @@ void Epilogue_LoadNamePanel(void) {
   sprite->oam.fullColor = 0;
   sprite->oam.palette = 14;
   Heap_Release(buffer);
-  zero = 0;
-  gEpilogueNameShown = zero;
-  priority = TASK_PASS_VBLANK;
-  FieldTask_AddFrame(Epilogue_PlaceNamePanel, priority);
+  gEpilogueNameShown = 0;
+  FieldTask_AddFrame(Epilogue_PlaceNamePanel, TASK_PASS_VBLANK);
 }
 
 struct Window *Message_OpenWindow(s32 message, s32 x, s32 y, u32 packed);
@@ -238,9 +234,7 @@ s32 WindowSystem_InitField();
 /// clear screen. Returns 0.
 s32 Scene_Initialize(void) {
   struct MainRoutineWork *work;
-  u8 *eventMode;
   s32 savedSpeed;
-  s32 zero, one;
   s32 count;
   void *p;
   struct Actor *leader;
@@ -248,18 +242,15 @@ s32 Scene_Initialize(void) {
   struct BgScroll *scroll;
 
   work = &gMainRoutineWork;
-  eventMode = &work->messageSpeed;
-  savedSpeed = *eventMode;
+  savedSpeed = work->messageSpeed;
   leader = Actor_Get(work->leaderActorId);
-  zero = 0;
-  leader->motionFlags = zero;
-  one = 1;
-  *eventMode = one;
+  leader->motionFlags = 0;
+  work->messageSpeed = 1;
   EndingPicture_Start();
   WindowSystem_InitField();
   windowWork = (struct WindowWork *)Ram_HeapSlots->windowWork;
-  windowWork->holdTilemapUpload = one;
-  windowWork->textMode = one;
+  windowWork->holdTilemapUpload = 1;
+  windowWork->textMode = 1;
   gEpilogueMessage = (s32)MsgFinallyWeVe;
   Epilogue_LoadNamePanel();
   FieldEvent_Wait(30);
@@ -365,8 +356,8 @@ s32 Scene_Initialize(void) {
   Epilogue_ShowLine(SPRITE_DORA, 2, 40);
   Call3((void (*)())EndingPicture_Show, 0, (s32)Ram_MapCellBuffer, 0);
   FieldEvent_Wait(60);
-  scroll[3].y = zero;
-  scroll[2].y = zero;
+  scroll[3].y = 0;
+  scroll[2].y = 0;
   EndingPicture_LowerTopStrip(0);
   EndingPicture_Show(RESOURCE_ENDING_EMBRACE_PICTURE, (s32)Ram_MapCellBuffer,
                      0);

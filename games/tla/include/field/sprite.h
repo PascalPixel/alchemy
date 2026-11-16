@@ -162,8 +162,8 @@ struct PlacedSprite {
   u8 tileHigh : 2; ///< tile number bits 9..8
   u8 priority : 2;
   u8 palette : 4;
-  u8 unusedB[2]; ///< no code names it
-  FIXED scale;   ///< 16.16 fixed point
+  u8 unusedAfterPalette[2]; ///< no code names it
+  FIXED scale;              ///< 16.16 fixed point
   u8 slot;
   u8 retainCacheEntry; ///< bit 0
   u16 rotation;

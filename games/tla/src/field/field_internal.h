@@ -87,18 +87,18 @@ struct PlayerSprite {
   u8 mosaic : 1;
   u8 fullColor : 1;
   u8 shape : 2;
-  u8 unusedB[3];   ///< no code names it
-  u8 tileHigh : 2; ///< tile number bits 9..8
+  u8 unusedAfterShape[3]; ///< no code names it
+  u8 tileHigh : 2;        ///< tile number bits 9..8
   u8 priority : 2;
   u8 palette : 4;
-  u8 unusedC[7];     ///< no code names it
-  u8 cacheFlags : 2; ///< retainCacheEntry and useOwnScale
+  u8 unusedAfterPalette[7]; ///< no code names it
+  u8 cacheFlags : 2;        ///< retainCacheEntry and useOwnScale
   u8 sunkRows : 6; ///< rows the picture is sunk (flags bit 3) or shaded (bit 2)
   u16 rotation;
-  u8 unusedD[5]; ///< no code names it
+  u8 unusedAfterRotation[5]; ///< no code names it
   u8 dirty;
   u8 flags;
-  u8 unusedE[17];                      ///< no code names it
+  u8 unusedAfterFlags[17];             ///< no code names it
   struct SpriteAnimation *secondLayer; ///< entries[1]; above priority 3 hidden
 };
 
@@ -171,7 +171,7 @@ struct Child {
   u8 tileHigh : 2; ///< tile number bits 9..8
   u8 layer : 2;
   u8 palette : 4;
-  u8 unusedB[16]; ///< no code names it
+  u8 unusedAfterPalette[16]; ///< no code names it
   u8 flags;
 };
 

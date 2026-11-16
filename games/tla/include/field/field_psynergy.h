@@ -41,12 +41,12 @@ enum OrbKind {
 /// One moving point of the Arrow: a spark on the canvas (x and y only, counting
 /// delay) or a sprite's place in the world.
 struct BowMotion {
-  s32 x;
-  s32 y;
-  s32 z;
-  s32 velocityX;
-  s32 velocityY;
-  s32 velocityZ;
+  FIXED x; ///< 16.16 fixed-point pixels
+  FIXED y;
+  FIXED z;
+  FIXED velocityX; ///< 16.16 fixed-point pixels a frame
+  FIXED velocityY;
+  FIXED velocityZ;
   s32 delay;
 };
 
@@ -114,7 +114,7 @@ struct DescendingArcSprite {
       u8 palette : 4;
     } byte;
   } attr;
-  s32 scale;
+  FIXED scale;             ///< 16.16 fixed point, FIXED_ONE full size
   u8 slot;                 ///< the VRAM cache entry holding its tiles
   u8 retainCacheEntry : 1; ///< the borrowed tiles stay loaded
   u8 useOwnScale : 1;

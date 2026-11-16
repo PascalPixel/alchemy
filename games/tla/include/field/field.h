@@ -385,14 +385,14 @@ struct PartyPauseView {
 
 /// The point the map view follows (MapWork.origin), as the depth sort reads it.
 struct DepthOrigin {
-  s32 x;
+  FIXED x; ///< 16.16 fixed-point pixels
   FIXED y; ///< its height, 16.16 fixed-point pixels
 };
 
 /// The map view's place (MapWork.viewX and viewZ), read as a pair.
 struct DepthScroll {
-  s32 x;
-  s32 z;
+  FIXED x; ///< 16.16 fixed-point pixels
+  FIXED z; ///< 16.16 fixed-point pixels
 };
 
 /// MapWork as BattleEffect_GetObjectDepth reads it: its followed point and its

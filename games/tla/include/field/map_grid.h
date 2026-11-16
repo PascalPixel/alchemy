@@ -157,9 +157,9 @@ struct MapViewWork {
 
 /// A position on the world map, as its walkability check reads it.
 struct WorldPosition {
-  s32 x;
+  FIXED x;            ///< 16.16 fixed-point pixels
   u8 unusedAfterX[4]; ///< no code names it
-  s32 y;
+  FIXED y;
 };
 
 /// The world map's collision values (WorldMap_GetCollision), 1 to 15, as The

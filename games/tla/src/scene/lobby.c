@@ -46,10 +46,12 @@ void Event_End(void);
 void Sanctum_Run(s32 value);
 void GameFlag_SetByte(s32 flag, s32 value);
 
+/// Stores a byte in the eight game flags from `flag`.
 static inline void FieldGameFlag_SetByte(s32 flag, s32 value) {
   GameFlag_SetByte(flag, value);
 }
 
+/// Restarts the link with interrupts locked.
 void LinkLobby_InitializeSerial(void) {
   u32 saved;
 
@@ -107,6 +109,8 @@ struct LinkPeer {
 
 extern struct LinkPeer gLinkPeerSignatures[2];
 
+/// Returns 1 when the partner's payload holds slot's word in slot's column, 0
+/// when it does not or there is no link.
 s32 LinkLobby_PeerSlotMatches(s32 slot) {
   s32 id = -1;
 
@@ -136,6 +140,8 @@ s32 LinkLobby_PeerSlotMatches(s32 slot) {
   return 0;
 }
 
+/// Publishes slot's word in its column of this console's link payload, where
+/// the partner's LinkLobby_PeerSlotMatches reads it.
 void LinkLobby_WriteSlotValue(s32 slot) {
   s32 *dst = (s32 *)gSerialTransfer.payload;
   const s32 *src = &gLinkLobby_SlotValues[slot];
@@ -213,6 +219,8 @@ s32 LinkLobby_PollPeerReady(void) {
   return result;
 }
 
+/// The attendant asks the player into the circle once both consoles agree, and
+/// again after 300 calls.
 s32 LinkLobby_PromptToParticipate(void) {
   s32 set;
 
@@ -238,6 +246,7 @@ s32 LinkLobby_PromptToParticipate(void) {
   Event_End();
 }
 
+/// The attendant says the link was disconnected.
 s32 LinkLobby_ReportDisconnection(void) {
   struct FieldWork *work = Ram_HeapSlots->fieldWork;
 
@@ -261,6 +270,41 @@ s32 LinkLobby_ReportDisconnection(void) {
 #define LOBBY_PREFIX_LIMIT 4
 #endif
 
+// Both sizes are whole 20-byte blocks, since the serial runtime sends 20 bytes
+// a block and ends a send only when its count reaches exactly 0.
+/// The bytes sent for each party member: a Unit (332 bytes) and the eight
+/// bytes after it, 17 blocks of 20.
+#define LOBBY_UNIT_RECORD_BYTES (17 * 20)
+/// The bytes received for the Djinn recovery table after the party members,
+/// 17 blocks of 20.
+#define LOBBY_RECOVERY_RECORD_BYTES (17 * 20)
+/// The party members a linked battle takes. A smaller party sends absent
+/// records.
+#define LOBBY_UNIT_RECORD_COUNT 3
+/// gLinkStatus bits 0 and 1: both consoles were heard this frame.
+#define LOBBY_LINK_READY_MASK 3
+/// A record fails on the 25th frame it waits without a link or past the
+/// timeout.
+#define LOBBY_TRANSFER_RETRY_LIMIT 24
+/// Frames, about ten seconds, for the three party member records, and again
+/// for the recovery table.
+#define LOBBY_SEND_TIMEOUT_FRAMES 600
+/// Frames, about fifteen seconds, for all four records received.
+#define LOBBY_RECEIVE_TIMEOUT_FRAMES 900
+
+/// gMainRoutineWork.linkTallies, as the lobby keeps them.
+enum LinkTally {
+  LINK_TALLY_MONSTER_WINS = 0,
+  LINK_TALLY_MONSTER_LOSSES = 1,
+  LINK_TALLY_MONSTER_BEST_STREAK = 2, ///< the most won in a row
+  LINK_TALLY_MONSTER_STREAK = 3,      ///< those won in the current series
+  LINK_TALLY_LINKED_WINS = 4,
+  LINK_TALLY_LINKED_LOSSES = 5,
+  /// The most linked battles won in a row, on the wall board.
+  LINK_TALLY_LINKED_BEST_STREAK = 6,
+  LINK_TALLY_LINKED_STREAK = 7 ///< those won in a row now
+};
+
 /// The Broken Seal's BattleArena_ReceivePartyRecords: takes the other player's
 /// party records over the link.
 s32 LinkLobby_ReceivePartyRecords(void) {
@@ -274,17 +318,17 @@ s32 LinkLobby_ReceivePartyRecords(void) {
   s32 transfer;
   s32 i;
   s32 length;
-  u8 *record;
+  struct Unit *unit;
 
-  size = 0x154;
+  size = LOBBY_UNIT_RECORD_BYTES;
   heap = Heap_AllocEwram(size);
   result = 0;
-  timeout = 900;
+  timeout = LOBBY_RECEIVE_TIMEOUT_FRAMES;
   for (slot = 0;; slot++) {
-    if (slot > 2)
+    if (slot >= LOBBY_UNIT_RECORD_COUNT)
       goto second;
-    record = Unit_Get(slot + 128);
-    transfer = Serial_StartReceive(record);
+    unit = Unit_Get(slot + 128);
+    transfer = Serial_StartReceive(unit);
     tries = 0;
     if (transfer == -1)
       break;
@@ -294,8 +338,9 @@ s32 LinkLobby_ReceivePartyRecords(void) {
         goto done;
       }
       wait(1);
-      if (--timeout < 0 || (gLinkStatus & 3) != 3) {
-        if (++tries > 24) {
+      if (--timeout < 0 ||
+          (gLinkStatus & LOBBY_LINK_READY_MASK) != LOBBY_LINK_READY_MASK) {
+        if (++tries > LOBBY_TRANSFER_RETRY_LIMIT) {
           result = -1;
           goto done;
         }
@@ -305,7 +350,7 @@ s32 LinkLobby_ReceivePartyRecords(void) {
       result = -1;
       goto done;
     }
-    if (record[0x12a] != 0)
+    if (unit->side != BATTLE_SIDE_NONE)
       result++;
     wait(2);
     FieldMessage_DecodeRawUnbounded((s32)MsgEnemyLabel, namePrefix);
@@ -317,38 +362,39 @@ s32 LinkLobby_ReceivePartyRecords(void) {
 #else
     length = i;
 #endif
-    for (i = 14; i >= length; i--)
-      record[i] = record[i - length];
+    for (i = UNIT_NAME_SIZE - 1; i >= length; i--)
+      unit->name[i] = unit->name[i - length];
     for (i = 0; i < length; i++)
-      record[i] = namePrefix[i];
-    record[14] = 0;
+      unit->name[i] = namePrefix[i];
+    unit->name[UNIT_NAME_SIZE - 1] = 0;
   }
   goto failed;
   for (;;) {
   second:
     Heap_Release(heap);
-    size = 0x154;
+    size = LOBBY_RECOVERY_RECORD_BYTES;
     heap = Heap_AllocEwram(size);
     transfer = Serial_StartReceive(Djinn_GetRecoveryTable(1));
     tries = 0;
     if (transfer == -1)
       break;
     while (Serial_GetActiveTransfers() != 0) {
-      s32 limit = 0x154;
+      s32 limit = LOBBY_RECOVERY_RECORD_BYTES;
 
       if (gSerialReceivedSize > limit) {
         result = -1;
         goto done;
       }
       wait(1);
-      if (--timeout < 0 || (gLinkStatus & 3) != 3) {
-        if (++tries > 24) {
+      if (--timeout < 0 ||
+          (gLinkStatus & LOBBY_LINK_READY_MASK) != LOBBY_LINK_READY_MASK) {
+        if (++tries > LOBBY_TRANSFER_RETRY_LIMIT) {
           result = -1;
           goto done;
         }
       }
     }
-    if (gSerialReceivedSize != 0x154)
+    if (gSerialReceivedSize != LOBBY_RECOVERY_RECORD_BYTES)
       result = -1;
     else
       wait(2);
@@ -389,18 +435,6 @@ done:
   return count;
 }
 
-/// The list inside a sent recovery table, as ☀️'s DjinnRecoveryList.
-struct OfferList {
-  struct DjinnRecoveryEntry offers[72];
-  s32 count;
-};
-
-/// The recovery table as sent: the list from its eighth byte.
-struct OfferTable {
-  u8 unk00[8];
-  struct OfferList list;
-};
-
 s32 Serial_StartSend(void *data, s32 size);
 
 /// The Broken Seal's BattleArena_SendPartyRecords: sends the party's records to
@@ -418,12 +452,12 @@ s32 LinkLobby_SendPartyRecords(void) {
   s32 j;
   s32 k;
   u32 size;
-  struct OfferList *list;
+  struct DjinnRecoveryList *list;
 
-  size = 0x154;
+  size = LOBBY_UNIT_RECORD_BYTES;
   heap = Heap_AllocEwram(size);
   result = 0;
-  timeout = 600;
+  timeout = LOBBY_SEND_TIMEOUT_FRAMES;
   memberCount = LinkLobby_CopyPartyOwnerIds(memberIds);
   for (i = 0; i <= 7; i++)
     peerSlots[i] = 0;
@@ -436,7 +470,7 @@ s32 LinkLobby_SendPartyRecords(void) {
       s32 tries = 0;
 
       Iwram_CopyWordsEntry(heap, Unit_Get(memberIds[i]), size);
-      heap[0x12a] = 2;
+      ((struct Unit *)heap)->side = BATTLE_SIDE_PARTY;
       peerSlots[memberIds[i]] = i - 128;
       if ((transferResult = Serial_StartSend(heap, size)) == -1) {
         result = transferResult;
@@ -445,8 +479,9 @@ s32 LinkLobby_SendPartyRecords(void) {
       goto testMember;
     waitMember:
       wait(1);
-      if (--timeout < 0 || (gLinkStatus & 3) != 3) {
-        if (++tries > 24) {
+      if (--timeout < 0 ||
+          (gLinkStatus & LOBBY_LINK_READY_MASK) != LOBBY_LINK_READY_MASK) {
+        if (++tries > LOBBY_TRANSFER_RETRY_LIMIT) {
           result = -1;
           goto done;
         }
@@ -467,8 +502,9 @@ s32 LinkLobby_SendPartyRecords(void) {
   }
 wait:
   wait(1);
-  if (--timeout < 0 || (gLinkStatus & 3) != 3) {
-    if (++tries > 24) {
+  if (--timeout < 0 ||
+      (gLinkStatus & LOBBY_LINK_READY_MASK) != LOBBY_LINK_READY_MASK) {
+    if (++tries > LOBBY_TRANSFER_RETRY_LIMIT) {
       result = -1;
       goto done;
     }
@@ -479,29 +515,29 @@ test:
   wait(2);
   i++;
 next:
-  if (i <= 2) {
-    heap[0x12a] = tries = 0;
+  if (i < LOBBY_UNIT_RECORD_COUNT) {
+    ((struct Unit *)heap)->side = tries = 0;
     if ((transferResult = Serial_StartSend(heap, size)) != -1)
       goto test;
     result = transferResult;
     goto done;
   }
   Heap_Release(heap);
-  size = 0x154;
+  size = LOBBY_RECOVERY_RECORD_BYTES;
   heap = Heap_AllocEwram(size);
   IWRAM_COPY_WORDS(heap, Djinn_GetRecoveryTable(0), size);
   {
     s32 timeout;
     s32 tries;
 
-    list = &((struct OfferTable *)heap)->list;
+    list = &((struct DjinnRecoveryTable *)heap)->list;
     tries = 0;
-    timeout = 600;
+    timeout = LOBBY_SEND_TIMEOUT_FRAMES;
     for (j = 0; j < list->count; j++) {
-      list->offers[j].unitId = peerSlots[list->offers[j].unitId];
-      if (list->offers[j].unitId == 0) {
+      list->entries[j].unitId = peerSlots[list->entries[j].unitId];
+      if (list->entries[j].unitId == 0) {
         for (k = j; k < list->count - 1; k++)
-          list->offers[k] = list->offers[k + 1];
+          list->entries[k] = list->entries[k + 1];
         list->count--;
         j--;
       }
@@ -513,8 +549,9 @@ next:
     goto testOffers;
   waitOffers:
     wait(1);
-    if (--timeout < 0 || (gLinkStatus & 3) != 3) {
-      if (++tries > 24) {
+    if (--timeout < 0 ||
+        (gLinkStatus & LOBBY_LINK_READY_MASK) != LOBBY_LINK_READY_MASK) {
+      if (++tries > LOBBY_TRANSFER_RETRY_LIMIT) {
         result = -1;
         goto done;
       }
@@ -531,7 +568,6 @@ done:
 }
 
 /// Resets the transfer state, as LinkBattle_ResetTransferState does.
-// In The Lost Age's store order.
 static __inline__ void Lobby_ResetTransferState(void) {
   struct SerialTransferState *state;
   u32 saved;
@@ -768,7 +804,7 @@ s32 LinkLobby_ChooseBattleMode(void) {
         Event_ClearFlag(FLAG_LINK_BATTLE);
         Event_SetFlag(FLAG_SCENE_TEMP_02);
         line = msg + 7;
-        gMainRoutineWork.linkTallies[3] = answer;
+        gMainRoutineWork.linkTallies[LINK_TALLY_MONSTER_STREAK] = answer;
         goto message;
       }
       Event_ClearFlag(FLAG_MONSTER_BATTLE);
@@ -847,7 +883,7 @@ s32 LinkLobby_ReportWinTallies(s32 actor) {
   Actor_FaceActor(actor, gMainRoutineWork.leaderActorId, 0);
   if ((facing - 0xa001) <= 0x3ffe) {
     base = (s32)MsgLobbyItLooksLike;
-    count = &gMainRoutineWork.linkTallies[4];
+    count = &gMainRoutineWork.linkTallies[LINK_TALLY_LINKED_WINS];
     if (*count != 0) {
       MessageArgument_ClearAll();
       MessageArgument_Push(*count, MESSAGE_ARGUMENT_NUMBER);
@@ -861,7 +897,7 @@ s32 LinkLobby_ReportWinTallies(s32 actor) {
     }
   } else {
     base = (s32)MsgItLooksLikeThisIsYour;
-    count = &gMainRoutineWork.linkTallies[7];
+    count = &gMainRoutineWork.linkTallies[LINK_TALLY_LINKED_STREAK];
     if (*count != 0) {
       MessageArgument_ClearAll();
       MessageArgument_Push(*count, MESSAGE_ARGUMENT_NUMBER);
@@ -881,6 +917,7 @@ void WindowSprite_PrepareForRedraw();
 void Text_DrawNumber();
 s32 DebugParameterSet_Load();
 
+/// Talking to ACTOR_DEBUG_HELPER loads a debug parameter set.
 s32 LinkLobby_ChooseDebugParameterSet(s32 actorId) {
   s32 window;
   s32 choice;
@@ -1079,6 +1116,8 @@ void Import_EventSetDestination(s32 scene, s32 entrance);
 void Actor_FaceActorById(s32 actor, s32 target, s32 frames);
 void FieldMessage_Show(s32 no, s32 flags);
 
+/// Talking to a party member waiting in the lobby: what they say follows the
+/// last linked battle.
 s32 LinkLobby_TalkByProgress(s32 actor) {
   s32 base = (s32)MsgLobbyItsOurTurnLetsGo;
   s32 lead = LinkLobby_PartyContains(4);
@@ -1180,6 +1219,8 @@ s32 LinkLobby_TalkToVisitor(s32 actor) {
   Event_End();
 }
 
+/// Talking to ACTOR_PARTY_ORDER_VISITOR, who explains how up to three allies
+/// are chosen for a linked battle, by the party's size.
 s32 LinkLobby_ExplainPartyOrder(s32 actor) {
   s32 message;
 
@@ -1204,6 +1245,8 @@ s32 LinkLobby_ExplainPartyOrder(s32 actor) {
   Event_End();
 }
 
+/// Talking to ACTOR_MONSTER_WINS_TELLER, who reports the most Monster Battles
+/// won in a row, or before any, that he will count them.
 s32 LinkLobby_ReportMonsterRecord(s32 id) {
   struct MainRoutineWork *gs;
 
@@ -1211,8 +1254,9 @@ s32 LinkLobby_ReportMonsterRecord(s32 id) {
   Event_ResolvePendingActions(0);
   gs = &gMainRoutineWork;
   Actor_FaceActor(id, gs->leaderActorId, 0);
-  if (gs->linkTallies[2] != 0) {
-    MessageArgument_Push(gs->linkTallies[2], MESSAGE_ARGUMENT_NUMBER);
+  if (gs->linkTallies[LINK_TALLY_MONSTER_BEST_STREAK] != 0) {
+    MessageArgument_Push(gs->linkTallies[LINK_TALLY_MONSTER_BEST_STREAK],
+                         MESSAGE_ARGUMENT_NUMBER);
     Event_SetMessageId((s32)MsgLobbyYouveWonConsecutiveMonsterBattle);
   } else {
     Event_SetMessageId((s32)MsgLobbyICantWaitToSee);
@@ -1285,7 +1329,8 @@ s32 LinkLobby_Initialize(void) {
   gLinkLobby_WaitFrames = 0;
   gFieldWork->transition = SCENE_TRANSITION(TRANSITION_WINDOW, 1);
   Sound_LoadReverbCode(2);
-  LinkLobby_DrawThreeDigitValue(gMainRoutineWork.linkTallies[6]);
+  LinkLobby_DrawThreeDigitValue(
+      gMainRoutineWork.linkTallies[LINK_TALLY_LINKED_BEST_STREAK]);
   MapGrid_CopyCellAttributes(11, 11, 1, 1, 13, 10);
   LinkLobby_WriteSlotValue(4);
   wait(1);
@@ -1314,8 +1359,8 @@ s32 LinkLobby_Initialize(void) {
     Event_StartScreenTransition();
     Event_WaitTransitionFrames();
     LinkLobby_WriteSlotValue(5);
-    gMainRoutineWork.linkTallies[0]++;
-    gMainRoutineWork.linkTallies[3]++;
+    gMainRoutineWork.linkTallies[LINK_TALLY_MONSTER_WINS]++;
+    gMainRoutineWork.linkTallies[LINK_TALLY_MONSTER_STREAK]++;
     wins = (s8)GameFlag_GetByte(FLAG_MONSTER_BATTLE_WINS);
     msg = wins * 2 + 2;
     if (msg > 14)
@@ -1339,11 +1384,12 @@ s32 LinkLobby_Initialize(void) {
       Event_ClearFlag(FLAG_MONSTER_BATTLE);
       FieldGameFlag_SetByte(FLAG_MONSTER_BATTLE_WINS, -1);
       // score holds the row's address, then the score read through it.
-      score = (u32)&gMainRoutineWork.linkTallies[3];
+      score = (u32)&gMainRoutineWork.linkTallies[LINK_TALLY_MONSTER_STREAK];
       MessageArgument_Push(*(u16 *)score, MESSAGE_ARGUMENT_NUMBER);
       score = *(u16 *)score;
-      if (gMainRoutineWork.linkTallies[2] < score) {
-        gMainRoutineWork.linkTallies[2] = score;
+      if (gMainRoutineWork.linkTallies[LINK_TALLY_MONSTER_BEST_STREAK] <
+          score) {
+        gMainRoutineWork.linkTallies[LINK_TALLY_MONSTER_BEST_STREAK] = score;
         Event_SetMessageId((s32)MsgLobbyYouWonBattleYouBroke);
         // "You won ... battle. You broke the record!"
         Event_OpenMessage(ACTOR_ATTENDANT, 0);
@@ -1357,7 +1403,7 @@ s32 LinkLobby_Initialize(void) {
     }
     Event_End();
   } else if (gMainRoutineWork.entrance == 9) {
-    gMainRoutineWork.linkTallies[1]++;
+    gMainRoutineWork.linkTallies[LINK_TALLY_MONSTER_LOSSES]++;
     Event_Start();
     Event_ResolvePendingActions(0);
     Event_StartScreenTransition();
@@ -1365,11 +1411,11 @@ s32 LinkLobby_Initialize(void) {
     LinkLobby_WriteSlotValue(5);
     Actor_FaceActor(ACTOR_ATTENDANT, gMainRoutineWork.leaderActorId, 0);
     // score holds the row's address, then the score read through it.
-    score = (u32)&gMainRoutineWork.linkTallies[3];
+    score = (u32)&gMainRoutineWork.linkTallies[LINK_TALLY_MONSTER_STREAK];
     MessageArgument_Push(*(u16 *)score, MESSAGE_ARGUMENT_NUMBER);
     score = *(u16 *)score;
-    if (gMainRoutineWork.linkTallies[2] < score) {
-      gMainRoutineWork.linkTallies[2] = score;
+    if (gMainRoutineWork.linkTallies[LINK_TALLY_MONSTER_BEST_STREAK] < score) {
+      gMainRoutineWork.linkTallies[LINK_TALLY_MONSTER_BEST_STREAK] = score;
       Event_SetMessageId((s32)MsgLobbyYouWonBattleYouBroke);
       // "You won ... battle. You broke the record!"
       Event_OpenMessage(ACTOR_ATTENDANT, 0);
@@ -1379,7 +1425,7 @@ s32 LinkLobby_Initialize(void) {
       // "You won ... battle. I told you our monsters were tough! Please..."
       Event_OpenMessage(ACTOR_ATTENDANT, 0);
     }
-    gMainRoutineWork.linkTallies[3] = 0;
+    gMainRoutineWork.linkTallies[LINK_TALLY_MONSTER_STREAK] = 0;
     Event_ClearFlag(FLAG_MONSTER_BATTLE);
     FieldGameFlag_SetByte(FLAG_MONSTER_BATTLE_WINS, -1);
     LinkLobby_WriteSlotValue(0);
@@ -1403,10 +1449,10 @@ s32 LinkLobby_Initialize(void) {
       LinkLobby_WriteSlotValue(0);
       LinkLobby_WriteSlotValue(4);
     } else {
-      gMainRoutineWork.linkTallies[4]++;
-      v = gMainRoutineWork.linkTallies[7] + 1;
-      gMainRoutineWork.linkTallies[7] = v;
-      score = (u32)&gMainRoutineWork.linkTallies[6];
+      gMainRoutineWork.linkTallies[LINK_TALLY_LINKED_WINS]++;
+      v = gMainRoutineWork.linkTallies[LINK_TALLY_LINKED_STREAK] + 1;
+      gMainRoutineWork.linkTallies[LINK_TALLY_LINKED_STREAK] = v;
+      score = (u32)&gMainRoutineWork.linkTallies[LINK_TALLY_LINKED_BEST_STREAK];
       if (*(u16 *)score < (u16)v)
         *(u16 *)score = v;
       LinkLobby_DrawThreeDigitValue(*(u16 *)score);
@@ -1425,8 +1471,8 @@ s32 LinkLobby_Initialize(void) {
     LinkLobby_WriteSlotValue(0);
     LinkLobby_WriteSlotValue(4);
     if ((v = Event_GetFlag(FLAG_MONSTER_BATTLE)) == 0) {
-      gMainRoutineWork.linkTallies[5]++;
-      gMainRoutineWork.linkTallies[7] = v;
+      gMainRoutineWork.linkTallies[LINK_TALLY_LINKED_LOSSES]++;
+      gMainRoutineWork.linkTallies[LINK_TALLY_LINKED_STREAK] = v;
       LinkLobby_SaveBattleResults();
     }
     Event_SetFlag(FLAG_AREA_TEMP_04);

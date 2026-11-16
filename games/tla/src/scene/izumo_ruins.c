@@ -323,7 +323,8 @@ s32 Scene_Initialize(void) {
   struct Actor *object;
   s32 height;
 
-  work->transition = SCENE_TRANSITION(TRANSITION_WINDOW, 4);
+  work->transition =
+      SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE);
   Actor_Get(gMainRoutineWork.leaderActorId)->priorityFlags |=
       ACTOR_PRIORITY_IGNORES_RISES;
   FieldEffect_StartBlankOverlay(0);

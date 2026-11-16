@@ -204,7 +204,8 @@ void JupiterLighthouse_LeaveByCyclone(void) { Import_EventSetExitRequest(12); }
 const struct Trigger *Scene_GetTriggers(void) { return gSceneEvents; }
 
 s32 Scene_Initialize(void) {
-  gFieldWork->transition = SCENE_TRANSITION(TRANSITION_WINDOW, 4);
+  gFieldWork->transition =
+      SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE);
   HangingVine_Place(ACTOR_WEST_VINE, 1);
   HangingVine_Place(ACTOR_EAST_VINE, 1);
   if (Event_GetFlag(FLAG_KEEP_PARTY_POSITION) == 0 &&

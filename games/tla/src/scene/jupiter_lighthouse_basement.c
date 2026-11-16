@@ -230,7 +230,7 @@ void JupiterLighthouse_SpawnSparks(void) {
     object->update = (void (*)(void))JupiterLighthouse_UpdateSpark;
     object->riseEnabled = i << 3;
     Actor_SetSpriteFlags(object, 0);
-    FieldActor_SetSpriteColor(object, 2);
+    FieldActor_SetSpriteColor(object, SPRITE_COLOR_RBG);
     ((struct FieldSprite *)object->sprite)->priority = 1;
     Actor_SetBlendMode(object, 1);
     action = &object->timer;
@@ -250,7 +250,8 @@ void JupiterLighthouse_SpawnSparks(void) {
 }
 
 s32 Scene_Initialize(void) {
-  gFieldWork->transition = SCENE_TRANSITION(TRANSITION_WINDOW, 4);
+  gFieldWork->transition =
+      SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE);
   if (gMainRoutineWork.next ==
       (s32)&SceneId_JupiterLighthouseBasementTeleporters) {
     JupiterLighthouse_LoadPalettes(1);

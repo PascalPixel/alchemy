@@ -346,10 +346,9 @@ void JupiterLighthouse_RideTheBeam(void) {
   }
 }
 
-void JupiterLighthouse_PushEnergyBlock(s32 a0, s32 a1) {
-
-  Actor_Get(a1)->motionFlags = 0;
-  FieldActor_SetSpritePriority(a1, 1);
+void JupiterLighthouse_PushEnergyBlock(s32 unused, s32 id) {
+  Actor_Get(id)->motionFlags = 0;
+  FieldActor_SetSpritePriority(id, 1);
   FieldActor_SetSpritePriority(gMainRoutineWork.leaderActorId, 1);
 }
 
@@ -397,8 +396,8 @@ void JupiterLighthouse_DropEnergyBlock(s32 unused, s32 id) {
   }
 }
 
-void JupiterLighthouse_MoveBridgeBlock(s32 a0, s32 a1) {
-  Actor_SetSpritePriority(a1, 2);
+void JupiterLighthouse_MoveBridgeBlock(s32 unused, s32 id) {
+  Actor_SetSpritePriority(id, 2);
 }
 
 /// The fifth grey block, Moved to the end of the row at cell (18, 6) once the
@@ -470,7 +469,7 @@ void JupiterLighthouse_SpawnBeamMotes(void) {
     object->timer = Random16();
     object->userValue = phase;
     Actor_SetSpriteFlags(object, 0);
-    FieldActor_SetSpriteColor(object, 2);
+    FieldActor_SetSpriteColor(object, SPRITE_COLOR_RBG);
     ((struct FieldSprite *)object->sprite)->priority = 1;
   }
 }
@@ -481,7 +480,8 @@ void JupiterLighthouse_SpawnBeamMotes(void) {
 s32 Scene_Initialize(void) {
   struct FieldWork *work = Ram_HeapSlots->fieldWork;
 
-  work->transition = SCENE_TRANSITION(TRANSITION_WINDOW, 4);
+  work->transition =
+      SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE);
   FieldActor_SetSpritePriority(ACTOR_FIRST_BEAM_PILLAR, 3);
   FieldActor_SetSpritePriority(ACTOR_SECOND_BEAM_PILLAR, 3);
   Io_Write16(BLDCNT_TGT1_BG1 | BLDCNT_TGT1_BG2 | BLDCNT_TGT2_ALL, &REG_BLDCNT);
@@ -503,7 +503,8 @@ s32 Scene_Initialize(void) {
   }
   if (gMainRoutineWork.entrance == 3 || gMainRoutineWork.entrance == 6 ||
       gMainRoutineWork.entrance == 7)
-    Actor_Get(gMainRoutineWork.leaderActorId)->priorityFlags |= ACTOR_PRIORITY_WALKS_ON_PLATFORMS;
+    Actor_Get(gMainRoutineWork.leaderActorId)->priorityFlags |=
+        ACTOR_PRIORITY_WALKS_ON_PLATFORMS;
   if (Event_GetFlag(FLAG_JUPITER_LIGHTHOUSE_ACTIVATED)) {
     Actor_RaiseFromCell(ACTOR_FIRST_HOVERING_BLOCK);
     Actor_RaiseFromCell(ACTOR_FIRST_HOVERING_BLOCK + 1);
@@ -527,8 +528,8 @@ s32 Scene_PrepareMap(void) {
 
 extern s32 gPaletteCyclePausesInEvents;
 
-void PaletteCycle_SetPausesInEvents(s32 a0) {
-  gPaletteCyclePausesInEvents = a0;
+void PaletteCycle_SetPausesInEvents(s32 pauses) {
+  gPaletteCyclePausesInEvents = pauses;
 }
 
 extern s32 gPaletteCycleFrame;
@@ -625,7 +626,7 @@ void LightSprites_Add(s32 id, s32 value) {
   }
 }
 
-void LightSprites_SetPriority(s32 a0) { gLightSpritePriority = a0; }
+void LightSprites_SetPriority(s32 priority) { gLightSpritePriority = priority; }
 
 #include "../field/actor_set_sprite_priority.c"
 

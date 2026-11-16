@@ -11,6 +11,7 @@
 #include "field/event_inline.h"
 #include "battle/battle.h"
 #include "field/field.h"
+#include "field/field_sequence.h"
 #include "game/game.h"
 #include "graphics/graphics.h"
 #include "system/math_table.h"
@@ -1196,8 +1197,6 @@ void IzumoInteriors_ShowMove(void) {
 }
 
 void IzumoInteriors_GiveUzumeTheDoll(void) {
-  s32 t21, t31;
-
   Event_Start();
   Event_ResolvePendingActions(0);
   Event_SetMessageId((s32)&MsgAhCouldIt);
@@ -1225,8 +1224,7 @@ void IzumoInteriors_GiveUzumeTheDoll(void) {
   // "I think I may have something that might please you."
   Event_ShowMessageAndWait(ACTOR_UZUME, 0);
   BattleEffect_StartArcEffect();
-  t21 = ((s32)Actor_GetById(ACTOR_UZUME));
-  BattleEffect_SetObjectUpdateMode(t21, 2);
+  BattleEffect_SetObjectUpdateMode(Actor_GetById(ACTOR_UZUME), 2);
   Sound_Play(SE_ASCEND);
   Event_Wait(60);
   Actor_SetPosition(ACTOR_COAL, 144, 520);
@@ -1235,8 +1233,7 @@ void IzumoInteriors_GiveUzumeTheDoll(void) {
   Actor_WaitForMoveById(ACTOR_COAL);
   Actor_FaceDirectionById(ACTOR_COAL, FACING_SOUTH, 0);
   Event_Wait(60);
-  t31 = ((s32)Actor_GetById(ACTOR_UZUME));
-  BattleEffect_SetObjectUpdateMode(t31, 0);
+  BattleEffect_SetObjectUpdateMode(Actor_GetById(ACTOR_UZUME), 0);
   BattleEffect_WaitForArcGroups();
   BattleEffect_EndArcEffect();
   Event_Wait(30);
@@ -1284,7 +1281,8 @@ void IzumoInteriors_GiveUzumeTheDoll(void) {
 }
 
 s32 Scene_Initialize(void) {
-  gFieldWork->transition = SCENE_TRANSITION(TRANSITION_WINDOW, 1);
+  gFieldWork->transition =
+      SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_SHAPE);
   if (gMainRoutineWork.entrance != 7)
     Event_ClearFlag(FLAG_AREA_TEMP_50);
   if (GameFlag_Get(FLAG_SERPENT_SLAIN) &&

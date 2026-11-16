@@ -338,19 +338,25 @@ void JupiterLighthouse_PlacePathBlock(s32 unused, s32 id) {
 const struct Trigger *Scene_GetTriggers(void) { return gSceneEvents; }
 
 s32 Scene_Initialize(void) {
-  gFieldWork->transition = SCENE_TRANSITION(TRANSITION_WINDOW, 1);
+  gFieldWork->transition =
+      SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_SHAPE);
   if ((u16)(gMainRoutineWork.entrance - 3) <= 1)
     Actor_Get(gMainRoutineWork.leaderActorId)->priorityFlags |=
         ACTOR_PRIORITY_IGNORES_RISES;
   JupiterLighthouse_LoadPalettesZero(0);
   Import_HangingVinePlace(ACTOR_FIRST_VINE, 1);
   Import_HangingVinePlace(ACTOR_SECOND_VINE, 1);
-  Actor_Get(gMainRoutineWork.leaderActorId)->priorityFlags |= ACTOR_PRIORITY_WALKS_ON_PLATFORMS;
+  Actor_Get(gMainRoutineWork.leaderActorId)->priorityFlags |=
+      ACTOR_PRIORITY_WALKS_ON_PLATFORMS;
   Actor_Get(ACTOR_FIRST_RAISED_BLOCK)->priorityFlags |= ACTOR_PRIORITY_PLATFORM;
-  Actor_Get(ACTOR_FIRST_RAISED_BLOCK + 1)->priorityFlags |= ACTOR_PRIORITY_PLATFORM;
-  Actor_Get(ACTOR_FIRST_RAISED_BLOCK + 2)->priorityFlags |= ACTOR_PRIORITY_PLATFORM;
-  Actor_Get(ACTOR_FIRST_RAISED_BLOCK + 3)->priorityFlags |= ACTOR_PRIORITY_PLATFORM;
-  Actor_Get(ACTOR_FIRST_RAISED_BLOCK + 4)->priorityFlags |= ACTOR_PRIORITY_PLATFORM;
+  Actor_Get(ACTOR_FIRST_RAISED_BLOCK + 1)->priorityFlags |=
+      ACTOR_PRIORITY_PLATFORM;
+  Actor_Get(ACTOR_FIRST_RAISED_BLOCK + 2)->priorityFlags |=
+      ACTOR_PRIORITY_PLATFORM;
+  Actor_Get(ACTOR_FIRST_RAISED_BLOCK + 3)->priorityFlags |=
+      ACTOR_PRIORITY_PLATFORM;
+  Actor_Get(ACTOR_FIRST_RAISED_BLOCK + 4)->priorityFlags |=
+      ACTOR_PRIORITY_PLATFORM;
   Actor_Get(ACTOR_LAST_RAISED_BLOCK)->priorityFlags |= ACTOR_PRIORITY_PLATFORM;
   JupiterLighthouse_PlaceRaisedActors();
   return 0;
@@ -561,14 +567,14 @@ void JupiterLighthouse_FlickerBeam(struct Actor *object) {
   *fill = 2;
   switch (phase) {
   case 1:
-    Actor_SetSpriteColorMode(object, 13);
+    Actor_SetSpriteColorMode(object, SPRITE_COLOR_FILL);
     break;
   case 0:
   case 2:
-    Actor_SetSpriteColorMode(object, 4);
+    Actor_SetSpriteColorMode(object, SPRITE_COLOR_GBR);
     break;
   case 3:
-    Actor_SetSpriteColorMode(object, 4);
+    Actor_SetSpriteColorMode(object, SPRITE_COLOR_GBR);
     break;
   }
   (*step)++;
@@ -581,7 +587,7 @@ void JupiterLighthouse_StartBeamFlicker(struct Actor *object) {
 
 void JupiterLighthouse_StopBeamFlicker(struct Actor *object) {
   WORD_AT(object, 108) = 0;
-  Actor_SetSpriteColorMode(object, 4);
+  Actor_SetSpriteColorMode(object, SPRITE_COLOR_GBR);
 }
 
 struct BeamWork {

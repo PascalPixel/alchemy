@@ -171,7 +171,8 @@ s32 __modsi3();
 s32 Scene_Initialize(void) {
   struct FieldWork *work = Ram_HeapSlots->fieldWork;
 
-  work->transition = SCENE_TRANSITION(TRANSITION_WINDOW, 4);
+  work->transition =
+      SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE);
   if (Event_GetFlag(FLAG_JUPITER_LIGHTHOUSE_SHORTCUT_PILLAR_PLACED)) {
     Actor_SetPosition(ACTOR_SHORTCUT_PILLAR, 72, 600);
     JupiterLighthouse_OpenDoor(0);

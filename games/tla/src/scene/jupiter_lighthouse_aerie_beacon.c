@@ -320,7 +320,7 @@ void JupiterLighthouse_RaiseBeaconLight(void) {
     if (effect != 0) {
       sprite = effect->sprite;
       Actor_StartScript(effect, gJupiterLighthouse_BeaconSparkScript);
-      FieldActor_SetSpriteColor(effect, 1);
+      FieldActor_SetSpriteColor(effect, SPRITE_COLOR_GRB);
       effect->motionFlags = 0;
       angle = Random16() & 0xffff000;
       effect->timer = angle;
@@ -395,7 +395,7 @@ void JupiterLighthouse_SpawnBeaconParticle(void) {
   if (effect != 0) {
     sprite = effect->sprite;
     Actor_StartScript(effect, gJupiterLighthouse_BeaconParticleScript);
-    FieldActor_SetSpriteColor(effect, 1);
+    FieldActor_SetSpriteColor(effect, SPRITE_COLOR_GRB);
     effect->motionFlags = 0;
     angle = Random16() & 0xffff000;
     effect->timer = angle;
@@ -608,7 +608,8 @@ void JupiterLighthouse_CastTheJupiterStar(void) {
       FieldActor_SetSpritePriority(ACTOR_PIERS, 1);
       FieldEvent_Wait(20);
       Actor_SetSpriteFlags(Actor_GetById(ACTOR_BEAM_A), 0);
-      FieldActor_SetSpriteColor(Actor_GetById(ACTOR_BEAM_A), 7);
+      FieldActor_SetSpriteColor(Actor_GetById(ACTOR_BEAM_A),
+                                SPRITE_COLOR_WHITE);
       beamA = Actor_GetById(ACTOR_BEAM_A);
       beamA->scaleY = -FIXED_ONE;
       beamA->scaleX = FIXED_ONE / 10;
@@ -618,7 +619,8 @@ void JupiterLighthouse_CastTheJupiterStar(void) {
       beamA->z.fixed = toFIXED(264);
       beamA->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
       Actor_SetSpriteFlags(Actor_GetById(ACTOR_BEAM_B), 0);
-      FieldActor_SetSpriteColor(Actor_GetById(ACTOR_BEAM_B), 7);
+      FieldActor_SetSpriteColor(Actor_GetById(ACTOR_BEAM_B),
+                                SPRITE_COLOR_WHITE);
       beamB = Actor_GetById(ACTOR_BEAM_B);
       beamB->scaleY = -FIXED_ONE;
       beamB->scaleX = FIXED_ONE / 10;
@@ -1782,8 +1784,8 @@ void JupiterLighthouse_WeBeatThem(void) {
   Event_PlaySound(SOUND_FADE_OUT_BGM);
   FieldEvent_ShowMessageThenWait(ACTOR_KRADEN, 0, 0);
   {
-    s32 speed = 0xc000;
-    Actor_SetPositionAndFacing(ACTOR_KRADEN, toFIXED(512), toFIXED(328), speed);
+    s32 north = FACING_NORTH;
+    Actor_SetPositionAndFacing(ACTOR_KRADEN, toFIXED(512), toFIXED(328), north);
   }
   Actor_SetPositionAndFacing(ACTOR_ISAAC, toFIXED(536), toFIXED(336),
                              FACING_NORTH);
@@ -2190,7 +2192,8 @@ s32 Party_AddMember(s32 value);
 /// the beacon's light, and the event of the entrance taken (9 to 13).
 s32 Scene_Initialize(void) {
 
-  gFieldWork->transition = SCENE_TRANSITION(TRANSITION_WINDOW, 1);
+  gFieldWork->transition =
+      SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_SHAPE);
   Call2(HangingVine_Place, 0xf, 1);
   HangingVine_Place(16, 1);
   Actor_Get(gMainRoutineWork.leaderActorId)->priorityFlags |=
@@ -2493,16 +2496,19 @@ void JupiterLighthouse_EnergizeAngels(void) {
     rider->y.fixed += 0x1eb80;
     rider->x.fixed += -0x28f40;
     sprite->rotation += 0x800;
-    Actor_SetSpriteColorMode(Actor_GetById(ACTOR_LEFT_ANGEL), 4);
-    Actor_SetSpriteColorMode(Actor_GetById(ACTOR_LEFT_ARCHER), 4);
+    Actor_SetSpriteColorMode(Actor_GetById(ACTOR_LEFT_ANGEL), SPRITE_COLOR_GBR);
+    Actor_SetSpriteColorMode(Actor_GetById(ACTOR_LEFT_ARCHER),
+                             SPRITE_COLOR_GBR);
   }
   if (Event_GetFlag(FLAG_JUPITER_LIGHTHOUSE_RIGHT_ANGEL_ENERGIZED)) {
     right->y.fixed += 0x66640;
     rider->y.fixed += 0x1eb80;
     rider->x.fixed += 0x28f40;
     sprite->rotation -= 0x800;
-    Actor_SetSpriteColorMode(Actor_GetById(ACTOR_RIGHT_ANGEL), 4);
-    Actor_SetSpriteColorMode(Actor_GetById(ACTOR_RIGHT_ARCHER), 4);
+    Actor_SetSpriteColorMode(Actor_GetById(ACTOR_RIGHT_ANGEL),
+                             SPRITE_COLOR_GBR);
+    Actor_SetSpriteColorMode(Actor_GetById(ACTOR_RIGHT_ARCHER),
+                             SPRITE_COLOR_GBR);
   }
   if (Event_GetFlag(FLAG_JUPITER_LIGHTHOUSE_LEFT_ANGEL_ENERGIZED) &&
       Event_GetFlag(FLAG_JUPITER_LIGHTHOUSE_RIGHT_ANGEL_ENERGIZED)) {

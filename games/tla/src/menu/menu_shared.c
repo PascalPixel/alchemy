@@ -935,11 +935,13 @@ s32 PagedList_HandleInput(s32 horizontal, s32 count, s32 pageSize, s32 *cursor,
 
   result = -1;
   if (count == 0)
-    goto done;
+    return result;
+  // Animate the page arrows.
   Link_DrawPageArrowsFar(PAGE_ARROW_VRAM);
-  pages = __divsi3(count, pageSize);
-  if (__modsi3(count, pageSize) != 0)
+  pages = count / pageSize;
+  if (count % pageSize != 0)
     pages++;
+  // horizontal is reused for the page-back key.
   if (horizontal) {
     next = gInput.repeat & KEY_RIGHT;
     previous = gInput.repeat & KEY_LEFT;
@@ -962,7 +964,7 @@ s32 PagedList_HandleInput(s32 horizontal, s32 count, s32 pageSize, s32 *cursor,
     }
     Input_ResetKeyRepeat();
     result = 1;
-    goto done;
+    return result;
   }
   if (pageForward) {
     Sound_PlayFar(SE_MENU_CURSOR_MOVE);
@@ -975,7 +977,7 @@ s32 PagedList_HandleInput(s32 horizontal, s32 count, s32 pageSize, s32 *cursor,
     }
     Input_ResetKeyRepeat();
     result = 1;
-    goto done;
+    return result;
   }
   if (previous) {
     Sound_PlayFar(SE_MENU_CURSOR_MOVE);
@@ -985,11 +987,11 @@ s32 PagedList_HandleInput(s32 horizontal, s32 count, s32 pageSize, s32 *cursor,
       if (*cursor > pageSize - 1)
         *cursor = pageSize - 1;
     }
-    goto row_changed;
+    return 0;
   }
   result = -1;
   if (next == 0)
-    goto done;
+    return result;
   {
     Sound_PlayFar(SE_MENU_CURSOR_MOVE);
     result = 0;
@@ -998,10 +1000,7 @@ s32 PagedList_HandleInput(s32 horizontal, s32 count, s32 pageSize, s32 *cursor,
     if (*cursor > pageSize - 1)
       *cursor = result;
   }
-row_changed:
-  result = 0;
-done:
-  return result;
+  return 0;
 }
 
 /// Copies WINDOW_PALETTE into background palette paletteNumber and lightens its

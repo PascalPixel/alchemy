@@ -1245,7 +1245,7 @@ s32 DjinnMenu_SelectDjinn(s32 mode) {
           DjinnRecovery_AddStandbyFar(FELIX, ELEMENT_VENUS, DJINNI_ECHO);
           Unit_CalculateFar(FELIX);
           repeat = KEY_B;
-          goto pressB;
+          pressed = KEY_B;
         }
         break;
       case DJINN_TUTORIAL_GIVE:
@@ -1290,8 +1290,8 @@ s32 DjinnMenu_SelectDjinn(s32 mode) {
         break;
       case DJINN_TUTORIAL_SET_DONE:
         if (backdrop->tutorialTimer == 40) {
-          repeat = 2;
-          pressed = 2;
+          repeat = KEY_B;
+          pressed = KEY_B;
           backdrop->tutorialTimer = 0;
           backdrop->tutorialStep++;
         }
@@ -1358,8 +1358,8 @@ s32 DjinnMenu_SelectDjinn(s32 mode) {
         break;
       case DJINN_TUTORIAL_POWERS_MOVE:
         if (backdrop->tutorialTimer == 90) {
-          repeat = 32;
-          pressed = 32;
+          repeat = KEY_LEFT;
+          pressed = KEY_LEFT;
           backdrop->tutorialTimer = 0;
           backdrop->tutorialStep = DJINN_TUTORIAL_POWERS_CHOOSE;
         }
@@ -1369,7 +1369,6 @@ s32 DjinnMenu_SelectDjinn(s32 mode) {
           backdrop->tutorialTimer = 0;
           backdrop->tutorialStep = DJINN_TUTORIAL_POWERS_END;
           repeat = KEY_B;
-        pressB:
           pressed = KEY_B;
         }
         break;

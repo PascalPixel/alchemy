@@ -1743,8 +1743,8 @@ void ShamanVillage_GreetFortuneSeeker(void) {
   }
 }
 
-/// Growth on the sprout, actor 21: its cells become climbable, toward the
-/// Spirit Gloves' chest (FLAG_SHAMAN_VILLAGE_VINE_GROWN).
+/// Growth on the sprout, actor 21: its cells become climbable
+/// (FLAG_SHAMAN_VILLAGE_VINE_GROWN).
 void ShamanVillage_GrowVine(void) {
   MapGrid_CopyCellAttributes(0, 0, 1, 2, 2, 17);
   Event_SetFlag(FLAG_SHAMAN_VILLAGE_VINE_GROWN);

@@ -260,8 +260,8 @@ static __inline__ struct Actor *TaopoSwamp_CreateActor(s32 type, s32 x, s32 y,
 }
 
 /// The Mad Plant leaps out of its bush at the leader (MadPlant_LeapAtLeader).
-static __inline__ void MadPlant_LeapAtLeader_(s32 a, s32 b, s32 c) {
-  MadPlant_LeapAtLeader(a, b, c);
+static __inline__ void MadPlant_LeapAtLeader_(s32 sprite, s32 x, s32 z) {
+  MadPlant_LeapAtLeader(sprite, x, z);
 }
 
 s32 Vent_IsActive(s32 hole);
@@ -893,7 +893,7 @@ void TaopoSwamp_TremorPillar(void) {
 
       angle = Random16();
       speed = Random16();
-      scale = (Random16() >> 2) + 0x1000;
+      scale = (Random16() >> 2) + FIXED_ONE / 16;
       Actor_StartScript(clod, gTaopoSwamp_TremorPillarScript);
       Actor_SetSpriteFlags(clod, 0);
       clod->velocityY = (angle << 2) + toFIXED(2);
@@ -1141,7 +1141,8 @@ void TaopoSwamp_CycleDjinniVents(void) {
   }
   if ((u32)(timer - 251) <= 178 &&
       Event_GetFlag(FLAG_TAOPO_SWAMP_EAST_PILLAR_OVER_VENT) &&
-      !Event_GetFlag(59) && !Event_GetFlag(FLAG_TAOPO_SWAMP_FLOWER_OFF_LEDGE))
+      !Event_GetFlag(FLAG_DJINNI(DJINNI_FLOWER)) &&
+      !Event_GetFlag(FLAG_TAOPO_SWAMP_FLOWER_OFF_LEDGE))
     gFieldWork->raisedTrigger = 100;
   Vents_AdvanceCounter(480);
 }

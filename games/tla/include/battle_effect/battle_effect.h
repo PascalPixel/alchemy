@@ -299,17 +299,17 @@ enum {
 
 /// The four rock pillars' heights, in pixels.
 struct RockWallHeights {
-  s32 column[4]; // each pillar's height in pixels
+  s32 column[4]; ///< each pillar's height in pixels
 };
 
 /// The five widths a rising pillar takes.
 struct FiveWidths {
-  s32 w[5];
+  s32 widths[5];
 };
 
 /// The seven widths a widening pillar takes.
 struct SevenWidths {
-  s32 w[7];
+  s32 widths[7];
 };
 
 /// Where a strip's petals start across, by quarter of its rise: the left edge
@@ -318,7 +318,7 @@ struct FourSpans {
   struct {
     s32 left;
     s32 width;
-  } p[4];
+  } spans[4];
 };
 
 // A row of gFrost_Timings, one for each variant.

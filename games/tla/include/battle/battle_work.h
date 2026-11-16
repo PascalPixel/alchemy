@@ -115,7 +115,7 @@ struct BattleWork {
   u8 unusedAfterActions[292];          ///< no code names it
   struct BattleSpoils spoils;          ///< what the battle has won so far
   u16 palette[128]; ///< the backdrop's colours, before scaling
-  FIXED brightness; ///< the backdrop's brightness, 16.16, 0x10000 full
+  FIXED brightness; ///< the backdrop's brightness, 16.16, FIXED_ONE full
   /// Its first halfword is the battle background passed to the palette fade.
   u16 background;              ///< the battle background's id
   u8 unusedAfterBackground[4]; ///< no code names it

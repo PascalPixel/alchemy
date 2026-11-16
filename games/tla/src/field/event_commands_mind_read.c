@@ -647,14 +647,22 @@ void UpdateRisingParticleBurst(void *object) {
 /// and taken back at its end. Only the loop over the 64 actors is left; value
 /// goes unused.
 void Actor_SetRevealSpriteColor(s32 value) {
+  struct Actor *actor = Ram_HeapSlots->actors;
   s32 remainingActors = 63;
 
-  // DEAD: the loop over the actors, its body gone; the ROM keeps its count
-  // and its branch.
-loop:
-  remainingActors--;
-  if (remainingActors >= 0)
-    goto loop;
+  // DEAD: The Broken Seal's loop over the actors with what it did to a rock's
+  // sprite gone, so its tests do nothing; the ROM keeps its count and its
+  // branch.
+  do {
+    if (actor->script != NULL) {
+      u8 kind = actor->spriteStorageKind;
+
+      if (kind == ACTOR_SPRITE_ONE) {
+      }
+    }
+    remainingActors--;
+    actor++;
+  } while (remainingActors >= 0);
 }
 
 /// As The Broken Seal's, with this game's offsets: counts the timer down and,

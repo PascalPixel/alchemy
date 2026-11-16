@@ -230,35 +230,30 @@ s32 Actor_SailOnMap(struct Actor *interpreter) {
 
   collision = 0;
   pushed = 0;
-  // Debug: holding L spins through four empty loops, a short stall each
-  // frame.
+  // Debug: holding L counts the free sprite VRAM blocks, cache entries, actors
+  // and sprites.
+  // DEAD: nothing reads the four counts, so the tests are gone; the ROM keeps
+  // each loop's count and its branch (512, 96, 64 and 64 passes).
   if (gDebugMode != 0) {
-    s32 delayKeyMask;
+    if (gInput.held & KEY_L) {
+      s32 freeBlocks = 0;
+      s32 freeEntries = 0;
+      s32 freeActors = 0;
+      s32 freeSprites = 0;
+      s32 i;
 
-    delayKeyMask = KEY_L;
-    if (gInput.held & delayKeyMask) {
-      s32 delayIterations;
-
-      delayIterations = delayKeyMask;
-    wait_a:
-      --delayIterations;
-      if (delayIterations != 0)
-        goto wait_a;
-      delayIterations = 95;
-    wait_b:
-      delayIterations--;
-      if (delayIterations >= 0)
-        goto wait_b;
-      delayIterations = 63;
-    wait_c:
-      delayIterations--;
-      if (delayIterations >= 0)
-        goto wait_c;
-      delayIterations = 63;
-    wait_d:
-      delayIterations--;
-      if (delayIterations >= 0)
-        goto wait_d;
+      for (i = 0; i < VRAM_BLOCK_COUNT; i++)
+        if (gVramCacheBlockOwners[i] == VRAM_BLOCK_OWNER_FREE)
+          freeBlocks++;
+      for (i = 0; i < VRAM_CACHE_ENTRY_COUNT; i++)
+        if (gVramCacheEntries[i].offset == VRAM_CACHE_OFFSET_FREE)
+          freeEntries++;
+      for (i = 0; i < ACTOR_COUNT; i++)
+        if (((struct Actor *)Ram_HeapSlots->actors)[i].script == NULL)
+          freeActors++;
+      for (i = 0; i < ANIM_OBJECT_COUNT; i++)
+        if (((struct Sprite *)Ram_HeapSlots->sprites)[i].width == 0)
+          freeSprites++;
     }
   }
   actor->speedLimit = FIELD_WALK_SPEED;

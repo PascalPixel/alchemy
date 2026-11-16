@@ -729,8 +729,10 @@ struct RopeNode *Rope_FindNodeNear(s32 *position) {
   work = ROPE_WORK;
   if (work == NULL)
     return NULL;
-  /* FAKEMATCH(barrier): an empty asm. */
-  asm("");
+  /* FAKEMATCH(dead): node cleared under a test of position, before it is set.
+   */
+  if (position == NULL)
+    node = NULL;
   node = work->nodes;
   best = 0x10000000;
   for (i = 0; i < 128; i++, node++) {
@@ -833,8 +835,10 @@ struct TightropeNode *Tightrope_FindNodeNear(s32 *position) {
   work = TIGHTROPE_WORK;
   if (work == NULL)
     return NULL;
-  /* FAKEMATCH(barrier): an empty asm. */
-  asm("");
+  /* FAKEMATCH(dead): node cleared under a test of position, before it is set.
+   */
+  if (position == NULL)
+    node = NULL;
   node = work->nodes;
   best = 0x10000000;
   for (i = 0; i < 128; i++, node++) {

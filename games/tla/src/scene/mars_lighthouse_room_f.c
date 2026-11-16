@@ -95,10 +95,6 @@
 
 /// A flame thrower's flags (Ride_SetEntry and the flame thrower tables): the
 /// flame's reach in the low four bits, and which flame it sends, or none.
-/// The step trigger a flame or fireball raises when it hits the leader, which
-/// runs MarsLighthouseRoomF_KnockBack.
-enum { STEP_TRIGGER_FLAME_HIT = 88 };
-
 /// The Mars tower (F1). Its first rooms: the flame thrower the button sets
 /// moving, the dragon statue that becomes a torch once its flame is lit, the
 /// statue that shoots at the center wall and the wall itself. Its pipe room:
@@ -3457,7 +3453,7 @@ LATE_DATA struct Trigger gMarsLighthouseRoomF_Room3Triggers[] = {
     {PSYNERGY_ANYWHERE(ABILITY_REVEAL, PSYNERGY_PHASE_ACTS), 0, CONDITION_ALWAYS, EVENT(MarsLighthouseRoomF_RevealSteppingStones)},
     {PSYNERGY_ANYWHERE(ABILITY_REVEAL, PSYNERGY_PHASE_FADES), 0, CONDITION_ALWAYS, EVENT(MarsLighthouseRoomF_HideSteppingStones)},
     {TRIGGER_STEP, STEP_TRIGGER_FLAME_HIT, CONDITION_ALWAYS, EVENT(MarsLighthouseRoomF_KnockBack)},
-    {TRIGGER_STEP, 90, CONDITION_ALWAYS, EVENT(Fireball_CarryLeader)},
+    {TRIGGER_STEP, STEP_TRIGGER_FIREBALL_HIT, CONDITION_ALWAYS, EVENT(Fireball_CarryLeader)},
     {TRIGGER_STEP, 14, CONDITION_ALWAYS, EVENT(Fireball_CarryLeaderIfHit)},
     {TRIGGER_TABLE_END},
 };

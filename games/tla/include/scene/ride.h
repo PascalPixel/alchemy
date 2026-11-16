@@ -70,6 +70,14 @@ struct FlameHitWork {
   void *handle;
 };
 
+/// The step triggers the flame throwers raise: a flame that hits the leader
+/// raises the trigger FlameThrowers_Start is given, a rolling fireball that
+/// reaches him two more.
+enum {
+  STEP_TRIGGER_FLAME_HIT = 88,
+  STEP_TRIGGER_FIREBALL_HIT = STEP_TRIGGER_FLAME_HIT + 2
+};
+
 extern u8 gInventorySnapshot[];
 
 /// The flame-hit work, in the inventory snapshot's spare space.

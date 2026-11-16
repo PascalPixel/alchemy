@@ -18,12 +18,12 @@ s32 ItemMenu_ChooseCommand(void);
 s32 ItemMenu_CollectItems(struct Unit *owner, u16 *items, s32 mode);
 s32 ItemMenu_ConfirmDrop(s32 item);
 s32 ItemMenu_ConfirmEquip(s32 unused);
-s32 ItemMenu_CountItems(s32 owner_id);
+s32 ItemMenu_CountItems(s32 ownerId);
 void ItemMenu_DrawIcons(u16 *items, s32 style);
 void ItemMenu_DrawItemHead(void);
 void ItemMenu_DrawMessage(s32 unused, s32 message);
 s32 ItemMenu_GetItemQuantity(s32 owner, s32 item);
-s32 ItemMenu_IsStatRaisingItem(s32 item_id);
+s32 ItemMenu_IsStatRaisingItem(s32 itemId);
 void ItemMenu_RefreshMember(s32 ownerId, s32 mode);
 s32 ItemMenu_RunList(s32 pane);
 s32 ItemMenu_SelectGiveQuantity(s32 baseQuantity, s32 quantityRange,
@@ -100,9 +100,9 @@ s32 ItemMenu_Run(void) {
   s32 size;
 #endif
 
-  screen = HeapSlot_Alloc(HEAP_SLOT_MENU, 0xcec);
+  screen = HeapSlot_Alloc(HEAP_SLOT_MENU, MENU_WORK_SIZE);
 #if TLA_PATCH_1
-  size = 0x2000;
+  size = MENU_SAVED_TILE_BYTES;
   backup = Heap_AllocEwram(size);
 #endif
   Ram_HeapSlots->actorSystem->suspended = 1;
@@ -119,7 +119,7 @@ s32 ItemMenu_Run(void) {
 #if TLA_PATCH_1
   Menu_SuspendFieldTasks();
   Iwram_CopyWords(backup, (void *)BG_CHAR_BLOCK(1), size);
-  Iwram_FillWords((void *)BG_CHAR_BLOCK(1), size, 0x33333333);
+  Iwram_FillWords((void *)BG_CHAR_BLOCK(1), size, PIXELS_4BPP(3));
   Text_UseExtraTilesFar(1);
 #endif
 
@@ -135,7 +135,7 @@ s32 ItemMenu_Run(void) {
   }
 
   WindowSprite_ClearListFar(screen->statusWindow);
-  Ram_HeapSlots->windowWork[6] = 1;
+  ((struct WindowWork *)Ram_HeapSlots->windowWork)->holdTilemapUpload = 1;
   ItemMenu_Close();
   Window_DrawBorderFar(0, 0, 30, 20);
   Menu_ResetTwoResourceEntries();
@@ -145,14 +145,14 @@ s32 ItemMenu_Run(void) {
   Window_MarkVisibleTextTilesFar();
   Text_UseExtraTilesFar(0);
   Iwram_CopyWords((void *)BG_CHAR_BLOCK(1), backup, size);
-  Ram_HeapSlots->windowWork[6] = 0;
+  ((struct WindowWork *)Ram_HeapSlots->windowWork)->holdTilemapUpload = 0;
   Heap_Release(backup);
   wait(1);
   Menu_ResumeFieldTasks();
 #endif
   wait(1);
   Window_EraseBorderRectFar(0, 0, 30, 20);
-  Ram_HeapSlots->windowWork[6] = 0;
+  ((struct WindowWork *)Ram_HeapSlots->windowWork)->holdTilemapUpload = 0;
   Party_ClearUnusableShortcutsFar();
   return result;
 }
@@ -970,16 +970,14 @@ s32 ItemMenu_SelectMember(s32 pane) {
   return result;
 }
 
-/// The item menu's help, followed by the equipment help. "L+A: Arrange
-/// items"; the next message is "R: View equipment".
-extern u8 MsgArrangeItemsHelp[];
 #if LANGUAGE == LANGUAGE_JAPANESE
-/// The key names Japanese draws before the help: "L+A:" and "R:".
+/// `L+A:`, the key name Japanese draws before the arrange help.
 extern const u8 gItemMenu_ArrangeKeysString[];
+/// `R:`, the key name Japanese draws before the equipment help.
 extern const u8 gItemMenu_EquipmentKeyString[];
 #endif
 
-void ItemMenu_OpenCategory(s32 owner);
+void ItemMenu_OpenCategory(s32 ownerId);
 
 void ItemMenu_RefreshMember(s32 owner, s32 mode);
 
@@ -1093,12 +1091,14 @@ s32 ItemMenu_RunMemberSelection(u16 *ownerIds, u16 *items) {
   return result;
 }
 
-void ItemMenu_OpenCategory(s32 category) {
+/// Shows the equipment view of party member ownerId's items in the item
+/// window.
+void ItemMenu_OpenCategory(s32 ownerId) {
   struct ItemMenuWork *menu = Ram_HeapSlots->menuWork;
 
   ItemMenu_PositionCategory();
   WindowSprite_RedrawSavedRectFar(menu->itemWindow);
-  ItemMenu_DrawCategory(menu->itemWindow, category, 0);
+  ItemMenu_DrawCategory(menu->itemWindow, ownerId, 0);
 }
 
 #if (LANGUAGE == LANGUAGE_JAPANESE)
@@ -1261,9 +1261,9 @@ void EquipmentMenu_UpdateCompatibilityIndicators(void) {
       if (owner != -1) {
         if (Item_CanUnitEquip(owner,
                               menu->selectedItems[0] & INVENTORY_ITEM_ID_MASK))
-          Sprite_StartAnimationFar(menu->memberSprites[i], 3);
+          Sprite_StartAnimationFar(menu->memberSprites[i], ANIM_NOD);
         else
-          Sprite_StartAnimationFar(menu->memberSprites[i], 1);
+          Sprite_StartAnimationFar(menu->memberSprites[i], ANIM_STAND);
       }
     }
   }
@@ -1317,20 +1317,22 @@ void Menu_HideEmptyEntryIcons(const u16 *items) {
 }
 
 /// Counts the nonempty slots in the owner's inventory.
-s32 ItemMenu_CountItems(s32 owner_id) {
+s32 ItemMenu_CountItems(s32 ownerId) {
   s32 count = 0;
-  struct Unit *state = Unit_Get(owner_id);
+  struct Unit *state = Unit_Get(ownerId);
   s32 i;
 
   for (i = 0; i < INVENTORY_SLOTS; i++) {
-    s32 item_id = state->inventory[i] & INVENTORY_ITEM_ID_MASK;
+    s32 itemId = state->inventory[i] & INVENTORY_ITEM_ID_MASK;
 
-    if (item_id != 0)
+    if (itemId != 0)
       count++;
   }
   return count;
 }
 
+/// Returns how many of item party member owner holds, adding up every stack
+/// of it in the inventory.
 s32 ItemMenu_GetItemQuantity(s32 owner, s32 item) {
   struct Unit *state;
   s32 i;
@@ -1747,6 +1749,7 @@ s32 ItemMenu_ChooseCommand(void) {
 #define COMMAND_AVAILABLE 1
 
 s32 Item_ClassifyUseMode(s32 owner, s32 item);
+/// Returns whether the scene has an event for item on what the leader faces.
 s32 Scene_HasItemTriggerFar(s32 item);
 
 /// Fills commandStates (indexed by ItemMenuCommand) with
@@ -1815,8 +1818,6 @@ void ItemMenu_BuildCommands(s8 *commandStates) {
 }
 
 #undef COMMAND_AVAILABLE
-
-#define FIELD_AT_OFFSET(base, type, offset) (*(type *)((u8 *)(base) + (offset)))
 
 /// An item command's state when the selected item refuses it.
 #define ITEM_COMMAND_STATE_DISABLED (-1)
@@ -1946,7 +1947,7 @@ void ItemMenu_TryBreak(void) {
 
 #undef ITEM_COMMAND_TEXT_X
 
-void ItemMenu_DrawItemDetails(s32, s32);
+void ItemMenu_DrawItemDetails(s32 window, s32 item);
 
 /// Opens the details window (top left, 13 by 10 tiles) and describes the item
 /// in side itemIndex there. Returns 1.
@@ -2054,10 +2055,12 @@ s32 ItemMenu_ShowDetails(s32 value) {
 
 #undef DETAILS_WINDOW_WIDTH
 
-void ItemMenu_DrawItemDetailsWithCount(s32 a, s32 b, s32 c);
+void ItemMenu_DrawItemDetailsWithCount(s32 window, s32 item, s32 count);
 
-void ItemMenu_DrawItemDetails(s32 a, s32 b) {
-  ItemMenu_DrawItemDetailsWithCount(a, b, -1);
+/// Describes item in window with the entry's own count, through
+/// ItemMenu_DrawItemDetailsWithCount.
+void ItemMenu_DrawItemDetails(s32 window, s32 item) {
+  ItemMenu_DrawItemDetailsWithCount(window, item, -1);
 }
 
 // The headings are indented in English and Japanese; German, Spanish and
@@ -2092,10 +2095,7 @@ void ItemMenu_DrawItemDetails(s32 a, s32 b) {
 #define ITEM_DETAILS_MULTIPLIER_X 72
 #endif
 
-#if LANGUAGE == LANGUAGE_JAPANESE
-/// "ばい", times, after a multiplier.
-extern u8 MsgTimesSuffix[];
-#endif
+/// `.`, the decimal point of a multiplier.
 extern u8 gMenu_PointString[];
 
 void ItemMenu_DrawStat(s32 delta, s32 unused, s32 window, s32 x, s32 y);
@@ -2433,15 +2433,13 @@ void ItemMenu_FitMessageWindowToQuestion(void) {
 #define CURSOR_X 128
 #endif
 
-#if LANGUAGE == LANGUAGE_JAPANESE
-extern u8 MsgItemCommandUse[];
-#else
-// "How many?"
-extern u8 MsgHowMany[];
-#endif
+/// The item menu's quantity bar picture, which QuantityBar_FillFar fills in
+/// under the "How many?" question.
 extern const u8 gMenu_QuantityTiles[];
 
-void QuantityBar_FillFar(s32 value, s32 column, void *tiles);
+/// Colours the first count segments of the quantity bar in tiles, each two
+/// pixels wide: the left pixel in colour 1, the right in colour color.
+void QuantityBar_FillFar(s32 count, s32 color, void *tiles);
 
 /// Asks how many of the selected item stack to give or drop: Left and Right
 /// choose a number from 1 to quantityRange (shown as baseQuantity + 1 up to
@@ -2665,14 +2663,10 @@ s32 ItemMenu_ConfirmDrop(s32 item) {
 // The question is named in the English catalog alone; in every edition it is
 // the second message after MsgConfirmDrop.
 #if LANGUAGE == LANGUAGE_ENGLISH
-extern u8 MsgEquipThisItem[]; // the ☀️ twin's name
 #define EQUIP_QUESTION ((s32)MsgEquipThisItem)
 #else
-extern u8 MsgConfirmDrop[];
 #define EQUIP_QUESTION ((s32)MsgConfirmDrop + 2)
 #endif
-
-extern u8 MsgYes[]; // the ☀️ twin's name
 
 /// After giving or trading the selected item to the party member in side 1,
 /// offers to equip it there, showing the stats it would give.
@@ -2750,10 +2744,11 @@ void Resource_LoadPairedBlocks(void) {
   s32 value = VramCache_FindFreeEntry();
 
   state->resourceSlots[0] = value;
-  VramBlock_LoadResourceFar(value, 128, RESOURCE_MENU_ARROW_TILES);
+  VramBlock_LoadResourceFar(value, ICON_TILE_BYTES, RESOURCE_MENU_ARROW_TILES);
   value = VramCache_FindFreeEntry();
   state->resourceSlots[1] = value;
-  VramBlock_LoadResourceFar(value, 128, RESOURCE_MENU_SMALL_DOWN_ARROW_TILES);
+  VramBlock_LoadResourceFar(value, ICON_TILE_BYTES,
+                            RESOURCE_MENU_SMALL_DOWN_ARROW_TILES);
 }
 
 /// Splits the selected slot owner's items into pages of five rows.
@@ -2899,9 +2894,6 @@ s32 ItemMenu_DrawNamePage(s32 window, s32 unused,
 #else
 #define CHANGE_HELP_X 0
 #endif
-
-// "L/R: Change character", under the list in pane 0.
-extern u8 MsgChangeCharacterHelp[];
 
 /// The item list of the party member in sideIndex (0: the holder, 1: the
 /// receiver of a trade), five items a page. The cursor's item is named in the

@@ -20,12 +20,14 @@ void Resource_LoadPairedBlocksIfAvailable(void) {
   firstSlot = VramCache_FindFreeEntry();
   activeState->resourceSlots[0] = (s16)firstSlot;
   if (firstSlot != -1) {
-    VramBlock_LoadResourceFar(firstSlot, 0x80, RESOURCE_ITEM_MENU_TILES_A);
+    VramBlock_LoadResourceFar(firstSlot, ICON_TILE_BYTES,
+                              RESOURCE_ITEM_MENU_TILES_A);
   }
   secondSlot = VramCache_FindFreeEntry();
   activeState->resourceSlots[1] = (s16)secondSlot;
   if (secondSlot != -1) {
-    VramBlock_LoadResourceFar(secondSlot, 0x80, RESOURCE_ITEM_MENU_TILES_B);
+    VramBlock_LoadResourceFar(secondSlot, ICON_TILE_BYTES,
+                              RESOURCE_ITEM_MENU_TILES_B);
   }
 }
 
@@ -38,18 +40,19 @@ void Menu_ResetTwoResourceEntries(void) {
 }
 
 /// Decodes one icon into a temporary buffer and reloads its VRAM slot: the
-/// Psynergy icon of ability resourceId (Ability_LoadGlyphFar), built in 1544
-/// bytes of HEAP_SLOT_GLYPH_TRANSFER, which is released again.
+/// Psynergy icon of ability resourceId (Ability_LoadGlyphFar), built in a
+/// GlyphTransfer in HEAP_SLOT_GLYPH_TRANSFER, which is released again.
 s32 Icon_LoadResourceIntoSlot(s32 resourceId, s32 slot) {
   s32 resourceInfo;
   s32 selectedSlot;
   s32 buffer;
-  u8 *allocation;
+  GlyphTransfer *allocation;
 
-  allocation = HeapSlot_AllocEwram(HEAP_SLOT_GLYPH_TRANSFER, 0x608);
+  allocation =
+      HeapSlot_AllocEwram(HEAP_SLOT_GLYPH_TRANSFER, sizeof(GlyphTransfer));
   selectedSlot = slot;
   Ability_LoadGlyphFar(resourceId, 0, &selectedSlot, &resourceInfo, 1);
-  buffer = VramCache_Reload(slot, (s32)(allocation + 0x400));
+  buffer = VramCache_Reload(slot, (s32)allocation->tiles);
   HeapSlot_Release(HEAP_SLOT_GLYPH_TRANSFER);
   return buffer;
 }
@@ -231,22 +234,25 @@ void Menu_UpdateEntryObjectTransforms(void) {
 
   if (menu->memberSpritesShown != 0) {
     for (i = 0; i <= 7; i++) {
-      s32 top = 0x728000 - (menu->memberY[i] << 15);
+      // 114.5 less half the figure's screen y, in 16.16.
+      FIXED top = toFIXED(229) / 2 - menu->memberY[i] * (FIXED_ONE / 2);
 
       if (menu->memberSprites[i] != NULL) {
         scale[0] = menu->memberScale[i];
         scale[1] = menu->memberScale[i];
-        transform[0] = menu->memberX[i] << 16;
+        transform[0] = toFIXED(menu->memberX[i]);
         transform[1] = top;
-        transform[2] = (menu->memberY[i] << 16) + top;
+        transform[2] = toFIXED(menu->memberY[i]) + top;
         transform[3] = 0;
-        Render_ApplyProjectedPlacementAtDepthFar(
-            menu->memberSprites[i], transform, scale, FIXED_ONE / 4, 250);
+        Render_ApplyProjectedPlacementAtDepthFar(menu->memberSprites[i],
+                                                 transform, scale, FACING_SOUTH,
+                                                 MENU_FIGURE_DEPTH);
       }
     }
   }
 }
 
+/// Returns the sprite party member id's figure shows.
 s32 Party_GetCharacterSpriteFar(s32 id);
 
 /// Menu_CreateOwnerEntryObjects for two characters (-1 for none): their
@@ -274,9 +280,9 @@ void Menu_CreatePairEntryObjects(s32 first, s32 second) {
       menu->memberSpriteIds[i] = id;
       figure = Sprite_CreateFar(Party_GetCharacterSpriteFar(id));
       if (figure != NULL) {
-        Sprite_StartAnimationFar(figure, 1);
+        Sprite_StartAnimationFar(figure, ANIM_STAND);
         figure->image.priority = 0;
-        ((u8 *)figure)[26] = 0;
+        figure->flags = 0;
       }
       menu->memberSprites[i] = figure;
     }
@@ -288,7 +294,7 @@ void Menu_CreatePairEntryObjects(s32 first, s32 second) {
 void Menu_CreateOwnerEntryObjects(s32 first) {
   struct ItemMenuWork *menu = Ram_HeapSlots->menuWork;
   u16 owners[14];
-  u8 *object;
+  struct Sprite *object;
   s32 i;
 
   for (i = 0; i < 8; i++) {
@@ -304,9 +310,9 @@ void Menu_CreateOwnerEntryObjects(s32 first) {
     menu->memberSpriteIds[i] = owners[first + i];
     object = Sprite_CreateFar(Party_GetCharacterSpriteFar(owners[first + i]));
     if (object != NULL) {
-      Sprite_StartAnimationFar(object, 1);
-      ((s8 *)object)[9] &= -13;
-      object[26] = 0;
+      Sprite_StartAnimationFar(object, ANIM_STAND);
+      object->image.priority = 0;
+      object->flags = 0;
     }
     menu->memberSprites[i] = object;
   }
@@ -371,7 +377,8 @@ void DjinnFigures_UpdateTopRow(void) {
     struct Sprite *figure = menu->figures[i];
 
     if (figure != NULL) {
-      s32 placeY = 0x00728000 - (menu->memberY[i] << 15);
+      // 114.5 less half the figure's screen y, in 16.16.
+      FIXED placeY = toFIXED(229) / 2 - menu->memberY[i] * (FIXED_ONE / 2);
       s32 value = menu->figureScales[i];
 
       s32 next;
@@ -381,30 +388,31 @@ void DjinnFigures_UpdateTopRow(void) {
         scale.x = next;
         scale.y = next;
       } else {
-        next = value + (0x10000 - value) / 4;
+        next = value + (FIXED_ONE - value) / 4;
         scale.x = next;
         scale.y = next;
         menu->figureScales[i] = next;
       }
-      position.x = menu->figureX[i] << 16;
+      position.x = toFIXED(menu->figureX[i]);
       position.height = placeY;
-      position.y = (menu->figureY[i] << 16) + placeY;
+      position.y = toFIXED(menu->figureY[i]) + placeY;
       position.groundHeight = 0;
-      Render_ApplyProjectedPlacementAtDepthFar(figure, &position, &scale,
-                                               menu->figureDepths[i], 250);
+      Render_ApplyProjectedPlacementAtDepthFar(
+          figure, &position, &scale, menu->figureFacings[i], MENU_FIGURE_DEPTH);
     }
   }
 }
 
+/// The four Djinn figures' sprites, one an element (menu_tables.c).
 extern s32 gDjinnFigures_SpriteIds[];
 
 /// Replaces the four Djinn figures with one Djinni of each element
-/// (gDjinnFigures_SpriteIds) walking (animation 2), at (16, 200) until the
-/// screen moves them, and starts placing them each frame
-/// (DjinnFigures_UpdateTopRow).
+/// (gDjinnFigures_SpriteIds) walking (ANIM_WALK), at x 16 and
+/// MENU_FIGURE_HIDDEN_Y until the screen moves them, and starts placing them
+/// each frame (DjinnFigures_UpdateTopRow).
 void DjinnFigures_InitializeTopRow(void) {
   struct ItemMenuWork *menu = Ram_HeapSlots->menuWork;
-  s8 *object;
+  struct Sprite *object;
   s32 i;
 
   for (i = 0; i < 4; i++) {
@@ -416,14 +424,14 @@ void DjinnFigures_InitializeTopRow(void) {
   for (i = 0; i < 4; i++) {
     object = Sprite_CreateFar(gDjinnFigures_SpriteIds[i]);
     if (object != NULL) {
-      Sprite_StartAnimationFar(object, 2);
-      object[9] &= -13;
+      Sprite_StartAnimationFar(object, ANIM_WALK);
+      object->image.priority = 0;
     }
     menu->figures[i] = object;
     menu->figureX[i] = 16;
-    menu->figureY[i] = 200;
+    menu->figureY[i] = MENU_FIGURE_HIDDEN_Y;
     menu->figureScales[i] = FIXED_ONE;
-    menu->figureDepths[i] = 0x4000;
+    menu->figureFacings[i] = FACING_SOUTH;
   }
   menu->figuresShown = 1;
   Task_Add(DjinnFigures_UpdateTopRow, TASK_PASS_VBLANK);
@@ -447,7 +455,7 @@ void DjinnFigures_ReleaseTopRow(void) {
 /// (gDjinnFigures_SpriteIds) playing animation.
 void DjinnFigures_ReplaceSlot(s32 index, s32 kind, s32 animation) {
   struct ItemMenuWork *menu = Ram_HeapSlots->menuWork;
-  s8 *object;
+  struct Sprite *object;
 
   if (menu->figures[index] != NULL) {
     Sprite_DestroyFar(menu->figures[index]);
@@ -456,7 +464,7 @@ void DjinnFigures_ReplaceSlot(s32 index, s32 kind, s32 animation) {
   object = Sprite_CreateFar(gDjinnFigures_SpriteIds[kind]);
   if (object != NULL) {
     Sprite_StartAnimationFar(object, animation);
-    object[9] &= -13;
+    object->image.priority = 0;
   }
   menu->figures[index] = object;
 }
@@ -471,12 +479,12 @@ void DjinnFigures_SetSlotPosition(s32 index, s32 x, s32 y) {
   }
 }
 
-/// Sets the depth Djinn figure index is drawn at, if it exists.
-void DjinnFigures_SetSlotDepth(s32 index, s32 frame) {
+/// Turns Djinn figure index to face facing (enum Facing), if it exists.
+void DjinnFigures_SetSlotFacing(s32 index, s32 facing) {
   struct ItemMenuWork *menu = Ram_HeapSlots->menuWork;
 
   if (menu->figures[index] != NULL)
-    menu->figureDepths[index] = frame;
+    menu->figureFacings[index] = facing;
 }
 
 /// Sets Djinn figure index's scale, if it exists: positive grows towards full
@@ -540,6 +548,8 @@ void MenuIcon_LoadSlots(void) {
   Task_Add(MenuIcon_PushSlots, TASK_PASS_VBLANK + 10);
 }
 
+/// Stops MenuIcon_PushSlots and frees the five command icons' entries
+/// MenuIcon_LoadSlots took in the sprite cache.
 void MenuIcon_ReleaseSlots(void) {
   struct ItemMenuWork *menu = Ram_HeapSlots->menuWork;
   u16 *resource;
@@ -551,6 +561,7 @@ void MenuIcon_ReleaseSlots(void) {
     VramCache_FreeEntry(*resource++);
 }
 
+/// Moves command icon index to screen position (x, y).
 void MenuIcon_SetSlot(s32 index, u32 x, s32 y) {
   struct ItemMenuWork *menu = Ram_HeapSlots->menuWork;
 
@@ -558,6 +569,7 @@ void MenuIcon_SetSlot(s32 index, u32 x, s32 y) {
   menu->menuIcons[index].attr.y = y;
 }
 
+/// Shows the five command icons MenuIcon_PushSlots draws (1) or hides them (0).
 void MenuIcon_SetActive(s32 active) {
   struct ItemMenuWork *menu = Ram_HeapSlots->menuWork;
 
@@ -569,16 +581,16 @@ void MenuIcon_SetActive(s32 active) {
 void MenuPanel_DrawEntryList(struct Window *panel, s32 x, s32 y,
                              const u8 *enabled) {
   s32 count = 0;
-  s32 icon_x = (s16)panel->x * 8 + x + 8;
-  s32 icon_y = (s16)panel->y * 8 + y + 8;
+  s32 iconX = (s16)panel->x * 8 + x + 8;
+  s32 iconY = (s16)panel->y * 8 + y + 8;
   s32 i;
 
   for (i = 0; i <= 4; i++) {
     if (enabled[i] != 0) {
-      MenuIcon_SetSlot(i, icon_x, icon_y);
+      MenuIcon_SetSlot(i, iconX, iconY);
       Text_DrawMessageAsTilesFar((s32)MsgStatusNameDown + i, panel, x + 16, y);
       y += 16;
-      icon_y += 16;
+      iconY += 16;
       count++;
     } else {
       MenuIcon_SetSlot(i, -16, -16);

@@ -33,6 +33,13 @@
 #include "system/bg_scroll.h"
 #include "graphics/render_input.h"
 #include "text/msg_ids.h"
+#include "gamepak/far_call/window.h"
+#include "system/ram_buffer.h"
+#include "fixed_math.h"
+#include "window/window.h"
+#include "flags.h"
+#include "resource_ids.h"
+#include "field/flag_call.h"
 
 struct QueuedSprite;
 
@@ -44,7 +51,11 @@ struct DisplayScrollObject {
   u32 attr2;
 };
 
+/// Slides the crawl has released for the slideshow to show next; the
+/// slideshow waits while there are none.
 extern s16 gCredits_PendingSlides;
+/// The credits' sprite buffer, copied to OAM each frame: the border strips'
+/// sprites, then the text's.
 extern struct DisplayScrollObject *gDisplayScroll_Objects;
 extern const u32 gDisplayScroll_SlideResources[];
 extern const void *gDisplayScroll_LineTable[];
@@ -70,22 +81,21 @@ void Credits_InitCrawlSprites(void);
 void Credits_InitTextSpritesAtPage(s32 credits);
 void Credits_StopTextSprites(void);
 s32 Credits_DrawLine(const u8 *text, s32 firstTile, s32 alignment);
+/// Credits_DecodeBackground, the ARM decoder RamCode_Load copies into a heap
+/// block to run (credits_background_decode.s).
 extern const u8 Credits_DecodeBackgroundCode[];
+/// Credits_DecodeBackgroundCode's bytes, as its address.
 extern u8 Credits_DecodeBackgroundCodeSize[];
 extern const u8 gCredits_GlyphWidths[];
+/// The credits' font, the glyphs Credits_DrawLine draws a line's tiles from.
 extern const u8 gDisplayScroll_Font[];
 
 void EndingPicture_InitStrips(void);
+/// EndingPicture_Decode, the ARM decoder RamCode_Load copies into a heap block
+/// to run (ending_picture_decode.s).
 extern const u8 EndingPicture_DecodeCode[];
+/// EndingPicture_DecodeCode's bytes, as its address.
 extern u8 EndingPicture_DecodeCodeSize[];
-
-#include "gamepak/far_call/window.h"
-#include "system/ram_buffer.h"
-#include "fixed_math.h"
-#include "window/window.h"
-#include "flags.h"
-#include "resource_ids.h"
-#include "field/flag_call.h"
 
 extern u8 gDebugTextEnabled;
 
@@ -233,7 +243,7 @@ void Credits_LoadBackground(u32 resourceId, s32 alternate) {
     blue = (sum + blue * 5) / 16;
     green = (sum + green * 5) / 16;
     red = (sum + red * 5) / 16;
-    gWaitForFlashWrite[i] = blue << 10 | green << 5 | red;
+    gWaitForFlashWrite[i] = RGB(red, green, blue);
   }
   IO_WRITE_QUEUE_PUSH(paletteDestination, (u32)gWaitForFlashWrite,
                       DMA_COPY_WORDS(BACKDROP_PALETTE_BYTES / 4));
@@ -861,7 +871,7 @@ void EndingPicture_CopyMap(const u8 *source, u8 *destination, s32 position) {
   {
     volatile s32 *word = &gEndingPicture_Scroll;
 
-    *word = position << 16;
+    *word = toFIXED(position);
   }
   for (column = 0; column < ENDING_PICTURE_COLUMNS; column++) {
     from = (position / 8) * ENDING_PICTURE_ROW_BYTES;
@@ -919,18 +929,18 @@ void EndingPicture_Scroll(void) {
   {
     /* FAKEMATCH(temporary): the scroll read through a word pointer. */
     s32 *word = (s32 *)&gEndingPicture_Scroll;
-    FIXED target = gEndingPicture_Row << 16;
+    FIXED target = toFIXED(gEndingPicture_Row);
 
     scroll = *word;
     if (scroll != target) {
       d = target - scroll;
       if (ABS(d) > gEndingPicture_Speed << 14)
         d /= 8;
-      if (ABS(d) > gEndingPicture_Speed << 16) {
+      if (ABS(d) > toFIXED(gEndingPicture_Speed)) {
         if (d > 0)
-          d = gEndingPicture_Speed << 16;
+          d = toFIXED(gEndingPicture_Speed);
         else
-          d = -(gEndingPicture_Speed << 16);
+          d = -toFIXED(gEndingPicture_Speed);
       }
       gEndingPicture_Scroll += d;
       gEndingPicture_MapScroll += d;
@@ -1019,7 +1029,7 @@ static inline void CopyScrollMap(const u8 *source, u8 *destination,
 
   start = ENDING_PICTURE_ROW_OFFSET(gEndingPicture_MapScroll);
   gEndingPicture_TargetRow = gEndingPicture_Row = position;
-  gEndingPicture_Scroll = position << 16;
+  gEndingPicture_Scroll = toFIXED(position);
   for (column = 0; column < ENDING_PICTURE_COLUMNS; column++) {
     u8 *to = destination + column * ENDING_PICTURE_SCREEN_BYTES;
     const u8 *strip = source + column * ENDING_PICTURE_STRIP_BYTES;
@@ -1089,13 +1099,13 @@ void EndingPicture_Show(s32 resource, u8 *map, s32 position) {
 void EndingPicture_WaitForScroll(void) {
   s32 frames = 0;
 
-  if (gEndingPicture_Scroll != gEndingPicture_Row << 16) {
+  if (gEndingPicture_Scroll != toFIXED(gEndingPicture_Row)) {
     do {
       wait(1);
       frames++;
       if (frames >= ENDING_PICTURE_SCROLL_TIMEOUT)
         break;
-    } while (gEndingPicture_Scroll != gEndingPicture_Row << 16);
+    } while (gEndingPicture_Scroll != toFIXED(gEndingPicture_Row));
   }
 }
 
@@ -1162,8 +1172,8 @@ void EndingPicture_LowerTopStrip(s32 enable) {
   }
 }
 
-/// The slideshow backdrops, ending in 0. Nothing reads this list.
 // clang-format off
+/// The slideshow backdrops, ending in 0. Nothing reads this list.
 const u32 gDisplayScroll_UnusedSlideResources[] = {
     RESOURCE_VALE_STORM_BACKDROP,
     RESOURCE_SOL_SANCTUM_BACKDROP,
@@ -1226,6 +1236,7 @@ const u32 gDisplayScroll_SlideResources[25] = {
     0
 };
 
+/// An empty credits line, between the names.
 static const u8 sBlankCreditLine[] = "";
 
 /// Ends a section of the credits: the scroll stops on it, and a section's

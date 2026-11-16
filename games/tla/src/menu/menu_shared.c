@@ -13,13 +13,7 @@
 #define WINDOW_KEEP_EXISTING 0x100
 #define WINDOW_STYLE_MASK 0xff
 
-/// @file
-/// The pieces the menu screens share: windows, the status panel, numbers,
-/// icons, the party figures, the hand cursor, paged lists, palettes, the
-/// cancel sound and text colours.
-// Part of menu.c.
-
-s32 GameFlag_Set(s32 flag_no);
+s32 GameFlag_Set(s32 flag);
 
 /// Resumes the overlay tasks and tileset animations when a menu closes, and
 /// clears FLAG_WEATHER_HELD and FLAG_PALETTE_BLEND_HELD: undoes
@@ -47,7 +41,7 @@ s32 Menu_SuspendFieldTasks(void) {
 void Window_InitializeWork(s32 unused) {
   struct ItemMenuWork *work = Ram_HeapSlots->menuWork;
 
-  Dma_Fill32(0, work, 0x33b * 4);
+  Dma_Fill32(0, work, MENU_WORK_SIZE);
   work->sideIndex[0] = -1;
   work->sideCount[0] = 1;
   work->sideCount[1] = 1;
@@ -57,6 +51,7 @@ void Window_InitializeWork(s32 unused) {
 
 void Window_CloseFar();
 struct Window *Window_CreateFar(s32 x, s32 y, s32 width, s32 height, s32 style);
+/// Redraws a window empty, its border and fill, at its current rectangle.
 void WindowSprite_RedrawSavedRectFar(struct Window *window);
 
 /// Creates *handle's window if absent and returns 1. Otherwise returns 0,
@@ -133,13 +128,19 @@ enum StatusPanelKind {
 #define MESSAGE_WILL_LEARN ((s32)&MsgWillLearn)
 #define MESSAGE_LEARNED ((s32)&MsgLearned)
 
+/// The status panel's level label: `Lv`; `Nv.` in Spanish, `Niv` in French.
 extern const u8 gStatusPanel_LvString[];
 
-void Window_ClearInteriorTilesFar(struct Window *window, s32 x, s32 y,
-                                  s32 width, s32 height);
+/// Clears an area of a window's interior to the window fill: left, top, right
+/// and bottom are pixels inside it, and the area covers every tile they touch.
+void Window_ClearInteriorTilesFar(struct Window *window, s32 left, s32 top,
+                                  s32 right, s32 bottom);
+/// Releases every window sprite in a window's list and empties it.
 void WindowSprite_ClearListFar(struct Window *window);
-void *Portrait_CreateFar(s32 owner, s32 x, s32 y, struct Window *window, s32 a,
-                         s32 b);
+/// Creates party member owner's portrait in window at pixel (x, y), with side's
+/// palette.
+void *Portrait_CreateFar(s32 owner, s32 position, s32 side,
+                         struct Window *window, s32 x, s32 y);
 void Unit_UpdateClassFar(s32 owner);
 
 /// Draws the status panel of the Item and Psynergy screens for the party
@@ -245,7 +246,10 @@ void StatusPanel_Draw(struct Window *unused, s32 owner, s32 slot, s32 mode) {
       Inventory_EquipFar(owner, slot);
     }
     Unit_CalculateFar(owner);
-    Window_SetTilemapEntryFar((s32)window, 0xf12a, 3, 5, 0);
+    // XXX: tile 298, between the class line and the class the equipment would
+    // give, is in the text canvas (TEXT_CANVAS_FIRST_TILE + 2); what it holds
+    // while the panel is open would name it.
+    Window_SetTilemapEntryFar((s32)window, WINDOW_TILE(298), 3, 5, 0);
     value = unit->classId + MESSAGE_CLASS_NAME;
     Text_DrawMessageAsTilesFar(value, window, 0, 48);
     Iwram_CopyWords(unit, backup, sizeof(struct Unit));
@@ -554,14 +558,16 @@ struct Window *MenuCursor_Create(void *source) {
   work->sideIcon[1]->depth = sentinel;
   slot = VramCache_FindFreeEntry();
   if (slot < VRAM_CACHE_ENTRY_COUNT) {
-    VramBlock_LoadResourceFar(slot, 128, RESOURCE_SHOP_UP_ARROW_TILES);
+    VramBlock_LoadResourceFar(slot, ICON_TILE_BYTES,
+                              RESOURCE_SHOP_UP_ARROW_TILES);
     icon = WindowSprite_CreateFar(slot, OUTPUT_SIZE_16X16, window, 84, -4);
     icon->motion = ICON_HIDDEN;
     work->pageArrows[0] = icon;
   }
   slot = VramCache_FindFreeEntry();
   if (slot < VRAM_CACHE_ENTRY_COUNT) {
-    VramBlock_LoadResourceFar(slot, 128, RESOURCE_SHOP_DOWN_ARROW_TILES);
+    VramBlock_LoadResourceFar(slot, ICON_TILE_BYTES,
+                              RESOURCE_SHOP_DOWN_ARROW_TILES);
     icon = WindowSprite_CreateFar(slot, OUTPUT_SIZE_16X16, window, 84, 8);
     icon->motion = ICON_HIDDEN;
     work->pageArrows[1] = icon;
@@ -569,6 +575,9 @@ struct Window *MenuCursor_Create(void *source) {
   return window;
 }
 
+/// Task: each frame, places every party member sprite created by
+/// Menu_CreatePartyFigures at its menu position and scale, through the field's
+/// projected placement.
 void Menu_PlacePartyFigures(void) {
   struct PsynergyMenuWork *menu =
       (struct PsynergyMenuWork *)Ram_HeapSlots->menuWork;
@@ -580,23 +589,26 @@ void Menu_PlacePartyFigures(void) {
   count = (u16)Party_CountMembersFar();
   for (i = 0; i < count; i++) {
     struct Sprite *figure = menu->tabSprites[i];
-    s32 placeY = 0x00728000 - (menu->rowPositions[i] << 15);
+    // 114.5 less half the row's screen y, in 16.16.
+    FIXED placeY = toFIXED(229) / 2 - menu->rowPositions[i] * (FIXED_ONE / 2);
 
     if (figure != 0) {
       figure->image.priority = 0;
       scale.x = menu->memberScale[i];
       scale.y = menu->memberScale[i];
-      position.x = menu->tabX[i] << 16;
+      position.x = toFIXED(menu->tabX[i]);
       position.height = placeY;
-      position.y = (menu->rowPositions[i] << 16) + placeY;
+      position.y = toFIXED(menu->rowPositions[i]) + placeY;
       position.groundHeight = 0;
       Render_ApplyProjectedPlacementAtDepthFar(figure, &position, &scale,
-                                               0x4000, 250);
+                                               FACING_SOUTH, MENU_FIGURE_DEPTH);
     }
   }
 }
 
+/// The hand cursor's bob in x, a step every two frames (MenuCursor_Position).
 extern u8 gMenuCursor_BobX[];
+/// The hand cursor's bob in y: 0, -1, -1, -2, -2, -1, -1, 0.
 extern u8 gMenuCursor_BobY[];
 
 #define CURSOR_BOB_STEP() ((gFrameCount >> 1) & 7)
@@ -931,11 +943,13 @@ s32 PagedList_HandleInput(s32 horizontal, s32 count, s32 pageSize, s32 *cursor,
 
   result = -1;
   if (count == 0)
-    goto done;
+    return result;
+  // Animate the page arrows.
   Link_DrawPageArrowsFar(PAGE_ARROW_VRAM);
-  pages = __divsi3(count, pageSize);
-  if (__modsi3(count, pageSize) != 0)
+  pages = count / pageSize;
+  if (count % pageSize != 0)
     pages++;
+  // horizontal is reused for the page-back key.
   if (horizontal) {
     next = gInput.repeat & KEY_RIGHT;
     previous = gInput.repeat & KEY_LEFT;
@@ -958,7 +972,7 @@ s32 PagedList_HandleInput(s32 horizontal, s32 count, s32 pageSize, s32 *cursor,
     }
     Input_ResetKeyRepeat();
     result = 1;
-    goto done;
+    return result;
   }
   if (pageForward) {
     Sound_PlayFar(SE_MENU_CURSOR_MOVE);
@@ -971,7 +985,7 @@ s32 PagedList_HandleInput(s32 horizontal, s32 count, s32 pageSize, s32 *cursor,
     }
     Input_ResetKeyRepeat();
     result = 1;
-    goto done;
+    return result;
   }
   if (previous) {
     Sound_PlayFar(SE_MENU_CURSOR_MOVE);
@@ -981,11 +995,11 @@ s32 PagedList_HandleInput(s32 horizontal, s32 count, s32 pageSize, s32 *cursor,
       if (*cursor > pageSize - 1)
         *cursor = pageSize - 1;
     }
-    goto row_changed;
+    return 0;
   }
   result = -1;
   if (next == 0)
-    goto done;
+    return result;
   {
     Sound_PlayFar(SE_MENU_CURSOR_MOVE);
     result = 0;
@@ -994,12 +1008,12 @@ s32 PagedList_HandleInput(s32 horizontal, s32 count, s32 pageSize, s32 *cursor,
     if (*cursor > pageSize - 1)
       *cursor = result;
   }
-row_changed:
-  result = 0;
-done:
-  return result;
+  return 0;
 }
 
+/// Copies WINDOW_PALETTE into background palette paletteNumber and lightens its
+/// WINDOW_BACKGROUND_COLOR by HIGHLIGHT_LIGHTEN_STEPS in each channel: the
+/// highlight colour of the menu's selected rows.
 void Palette_LightenHighlight(s32 paletteNumber) {
   u16 *palette = (u16 *)&BG_PLTT_COLOR(paletteNumber, 0);
   u32 red;
@@ -1060,38 +1074,48 @@ void PagedList_DrawPageNumbers(s32 window, s32 itemCount, s32 pageSize,
   }
 }
 
-void Render_SetTilemapFlagRect(const struct Window *object, s32 x, s32 y,
-                               s32 width, s32 height, u32 field) {
+/// Switches a rectangle of a window's text between WINDOW_PALETTE (normal) and
+/// HIGHLIGHT_PALETTE (the highlight made by Palette_LightenHighlight): palette
+/// is the new palette number.
+void Render_SetTilemapFlagRect(const struct Window *window, s32 x, s32 y,
+                               s32 width, s32 height, u32 palette) {
   struct WindowWork *work = (struct WindowWork *)Ram_HeapSlots->windowWork;
 
-  x += (s16)object->x + 1;
-  y += (s16)object->y + 1;
-  field <<= 12;
+  x += (s16)window->x + 1;
+  y += (s16)window->y + 1;
+  palette = BG_TILE_PALETTE(palette);
   if (x < 0) {
     width += x;
     x = 0;
   }
-  if (x + width > (DISPLAY_TILE_WIDTH - 1)) {
+  if (x + width > DISPLAY_TILE_WIDTH - 1) {
     width = DISPLAY_TILE_WIDTH - x;
   }
   if (y < 0) {
     height += y;
     y = 0;
   }
-  if (y + height > 29) {
+  // BUG: tests the bottom against the screen's width but clips to its rows, so
+  // a rectangle ending in rows 20 to 28 is kept whole and writes past the 32
+  // by 20 tilemap into the windows after it.
+#ifdef BUGFIX
+  if (y + height > DISPLAY_TILE_HEIGHT - 1) {
+#else
+  if (y + height > DISPLAY_TILE_WIDTH - 1) {
+#endif
     height = DISPLAY_TILE_HEIGHT - y;
   }
   if (width > 0 && height > 0) {
     do {
-      u16 *pixel = &work->tilemap[y][x];
+      u16 *entry = &work->tilemap[y][x];
       s32 remaining = width;
       while (remaining != 0) {
-        u32 value = *pixel;
+        u32 value = *entry;
         value &= 0xFFFFEFFF;
-        value |= field;
+        value |= palette;
         remaining--;
-        *pixel = value;
-        pixel++;
+        *entry = value;
+        entry++;
       }
       height--;
       y++;
@@ -1100,6 +1124,9 @@ void Render_SetTilemapFlagRect(const struct Window *object, s32 x, s32 y,
   }
 }
 
+/// Lends HIGHLIGHT_PALETTE to the element icons: copies the first sprite
+/// palette, the icons' colours, into it, then WINDOW_BACKGROUND_COLOR over its
+/// TEXT_BACKGROUND_COLOR.
 void Palette_LoadIconsIntoHighlight(void) {
   Dma_Set((const void *)OBJ_PLTT, (void *)&BG_PLTT_COLOR(HIGHLIGHT_PALETTE, 0),
           DMA_COPY_HALFWORDS(16), REG_DMA3);

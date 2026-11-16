@@ -4,16 +4,17 @@
 #include "types.h"
 #include "game/item.h"
 #include "window/window.h"
+#include "sprite_ids.h"
 
 //--------------------------------------------------------------------------
 // Menu tables: cursor bobbing, list orders, cursor widths and resource ids.
 // The menus declare them without const, so they are not const here either.
 //--------------------------------------------------------------------------
 
-/// The cursor's bob, indexed by (gFrameCount >> 1) & 7
+/// The hand cursor's bob in x, indexed by (gFrameCount >> 1) & 7.
 u8 gMenuCursor_BobX[9] = {0, 1, 1, 2, 2, 1, 1, 0, 0};
-u8 gMenuCursor_BobY[9] = {0,    0xff, 0xff, 0xfe, 0xfe,
-                          0xff, 0xff, 0,    0}; // 0, -1, -1, -2 ...
+/// The hand cursor's bob in y, as bytes: 0, -1, -1, -2, -2, -1, -1, 0.
+u8 gMenuCursor_BobY[9] = {0, 0xff, 0xff, 0xfe, 0xfe, 0xff, 0xff, 0, 0};
 
 // The item menu's sort orders (enum ListSort, Menu_CopyListOrder): one item
 // type per byte, with LIST_ORDER_EQUIPPED for only the equipped items of that
@@ -73,14 +74,18 @@ s32 gItemMenu_CommandColumnXTable[6] = {
 // clang-format on
 #endif
 
-// The command names' widths
 #if (LANGUAGE == LANGUAGE_FRENCH)
+/// The highlight's width in tiles over each status row's label, French's.
 u8 gStatusScreen_CursorWidths[5] = {6, 7, 7, 6, 6};
 #else
+/// The highlight's width in tiles over each status row's label
+/// (StatusScreen_DrawSelectionCursor).
 u8 gStatusScreen_CursorWidths[5] = {9, 4, 6, 5, 7};
 #endif
 
-s32 gDjinnFigures_SpriteIds[4] = {0xf3, 0xf4, 0xf5, 0xf6};
+/// The four Djinn figures' sprites, one an element (DjinnFigures_ReplaceSlot).
+s32 gDjinnFigures_SpriteIds[4] = {SPRITE_VENUS_DJINNI, SPRITE_MERCURY_DJINNI,
+                                  SPRITE_MARS_DJINNI, SPRITE_JUPITER_DJINNI};
 
 /// The command icons the Status screen shows (MenuIcon_LoadSlots).
 u16 gStatusScreen_CommandIcons[5] = {COMMAND_ICON_SUMMON, COMMAND_ICON_PSYNERGY,

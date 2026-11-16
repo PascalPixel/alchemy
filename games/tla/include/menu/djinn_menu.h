@@ -132,8 +132,8 @@ struct DjinnMenuWork {
   void *figures[4];   ///< ItemMenuWork's; not named here
   u16 slotX[4];
   u16 slotY[4];
-  s32 figurePhases[4]; ///< ItemMenuWork's figureScales; not named here
-  u16 figureDepths[4]; ///< ItemMenuWork's; not named here
+  s32 figurePhases[4];  ///< ItemMenuWork's figureScales; not named here
+  u16 figureFacings[4]; ///< ItemMenuWork's; not named here
   u8 pairIndex[2];
   u8 pairElement[2];
   u8 pairMember[2];

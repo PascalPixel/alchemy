@@ -27,6 +27,13 @@
 /// until a screen places it.
 #define MENU_ICON_HIDDEN_X (DISPLAY_WIDTH + 8)
 #define MENU_ICON_HIDDEN_Y (DISPLAY_HEIGHT + 8)
+/// The y a party or Djinn figure is parked at below the screen, where the
+/// projected placement does not draw it.
+#define MENU_FIGURE_HIDDEN_Y 200
+/// The bytes of BG character block 1 the Item menu (from patch 1) and the
+/// event's item picker (from patch 2) keep aside and fill with a pattern while
+/// they are open.
+#define MENU_SAVED_TILE_BYTES 8192
 
 /// The bytes of the menu work, heap block HEAP_SLOT_MENU: ShopWork's size, the
 /// largest of the screens' views of it. Each screen's run function takes the
@@ -271,7 +278,7 @@ struct ItemMenuWork {
   s16 figureX[4];
   s16 figureY[4];
   FIXED figureScales[4];
-  u16 figureDepths[4];
+  u16 figureFacings[4];
   ///@}
   u8 unusedAfterFigures[6]; ///< DjinnMenuWork's pair; not named here
   s16 messageOffset;        ///< the item use's result, after MsgItemUseResult
@@ -317,7 +324,7 @@ STATIC_ASSERT(offsetof(struct ItemMenuWork, messageOffset) == 0x25e);
 STATIC_ASSERT(offsetof(struct ItemMenuWork, listMode) == 0x261);
 STATIC_ASSERT(offsetof(struct ItemMenuWork, selectedIndexByMember) == 0x264);
 STATIC_ASSERT(offsetof(struct ItemMenuWork, figures) == 0x220);
-STATIC_ASSERT(offsetof(struct ItemMenuWork, figureDepths) == 0x250);
+STATIC_ASSERT(offsetof(struct ItemMenuWork, figureFacings) == 0x250);
 STATIC_ASSERT(offsetof(struct ItemMenuWork, resourceSlots) == 0x4ee);
 STATIC_ASSERT(offsetof(struct ItemMenuWork, memberSpritesShown) == 0x509);
 STATIC_ASSERT(offsetof(struct ItemMenuWork, menuIcons) == 0xbcc);
@@ -482,17 +489,27 @@ struct DjinnMenuBackdrop;
 
 // What several parts call, declared once here for all of them.
 s32 GameFlag_Get(s32);
-void GameFlag_Clear(s32 flag_no);
+void GameFlag_Clear(s32 flag);
 s32 Inventory_EquipFar(s32 owner, s32 slot);
+/// Draws an empty window at tile (x, y), width by height tiles, and frees the
+/// text tiles the rectangle showed.
 void Window_DrawBorderFar(s32 x, s32 y, s32 width, s32 height);
+/// Erases a rectangle of the windows' tilemap, in tiles, and frees the text
+/// tiles it showed.
 void Window_EraseBorderRectFar(s32 x, s32 y, s32 width, s32 height);
+/// Frees the second range of text tiles and, with flag set, lets text take
+/// them too.
 void Text_UseExtraTilesFar(s32 flag);
+/// Marks the text tiles the tilemap shows and frees those it no longer shows.
 void Window_MarkVisibleTextTilesFar(void);
 void Menu_CreateOwnerEntryObjects(s32 first);
 void Menu_HighlightPageEntry(s32 unused, s32 index, s32 count);
 s32 Menu_MoveGridCursor(s32 *selection, s32 count, s32 columns);
+/// Loads entry id's icon of kind mode into sprite tile slot slot (a free one
+/// when -1).
 void Resource_LoadByModeIntoSlotFar(s32 mode, s32 id, s32 slot, s32 flags);
 s32 Sprite_StartAnimationFar(void *object, s32 argument);
+/// Animates the page arrows on a window's top border, from tile offset.
 void Link_DrawPageArrowsFar(s32 offset);
 void Menu_UpdateEntryObjectTransforms(void);
 void Input_ResetKeyRepeat(void);
@@ -511,10 +528,15 @@ void WindowSprite_PrepareForRedrawFar(s32 window);
 s32 Message_AllTypedFar(void);
 void DjinnFigures_SetSlotPhase(s32 index, s32 scale);
 void DjinnFigures_SetSlotPosition(s32 slot, s32 x, s32 y);
+/// The draw slot of the party and Djinn figures the menus place, among the
+/// windows' sprites.
+#define MENU_FIGURE_DEPTH (OAM_DEPTH_WINDOW + 10)
+/// Places a sprite through the field's projected placement, facing as an actor
+/// faces, into draw slot depth.
 void Render_ApplyProjectedPlacementAtDepthFar(struct Sprite *object,
                                               struct SpritePlacement *position,
                                               struct SpriteScale *scale,
-                                              s32 depth, s32 mode);
+                                              s32 facing, s32 depth);
 
 /// The result of using an item or Psynergy from the menu: its message,
 /// counted from MsgItemUseResult (Ability_ApplyToTargets).

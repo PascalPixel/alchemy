@@ -101,11 +101,18 @@ s32 StatusScreen_RunPages(void);
 void MenuIcon_LoadSlots(void);
 void MenuIcon_ReleaseSlots(void);
 
+/// The window tiles the Status menu saves and restores.
+#define STATUS_SAVED_TILE_BYTES 10240
+
+/// The Status screen, the field menu's Status, over the field: saves the
+/// background palettes and the window tiles it draws over, sets up the party
+/// row, the five command icons and, when the party has Djinn, the Djinn
+/// figures, runs the status pages, then puts everything back.
 s32 StatusScreen_Run(void) {
   struct StatusScreenWork *state =
-      (struct StatusScreenWork *)HeapSlot_Alloc(HEAP_SLOT_MENU, 0x0cec);
+      (struct StatusScreenWork *)HeapSlot_Alloc(HEAP_SLOT_MENU, MENU_WORK_SIZE);
   void *palette = Heap_AllocEwram(64);
-  void *tiles = Heap_AllocEwram(0x2800);
+  void *tiles = Heap_AllocEwram(STATUS_SAVED_TILE_BYTES);
   s32 result = -1;
   struct HeapSlots *heap;
   struct ScreenTransitionState *transition;
@@ -117,8 +124,9 @@ s32 StatusScreen_Run(void) {
   heap->actorSystem->suspended = 1;
   Window_DrawBorderFar(0, 0, 30, 20);
   wait(1);
-  saved = *(u16 *)&transition->active;
-  transition->active = 17;
+  saved = (u16)transition->active;
+  // Window 0 shows only the windows' layer and the sprites.
+  transition->active = WININ_WIN0_BG0 | WININ_WIN0_OBJ;
   Menu_SuspendFieldTasks();
   Window_InitializeWork(0);
   page = &state->page;
@@ -126,7 +134,7 @@ s32 StatusScreen_Run(void) {
   state->partyCount = Party_ListMembersFar(state->memberIds);
   StatusScreen_Initialize(0, 3, 0, 7);
   Iwram_CopyWords(palette, (void *)BG_PLTT, 64);
-  Iwram_CopyWords(tiles, (void *)BG_CHAR_BLOCK(1), 0x2800);
+  Iwram_CopyWords(tiles, (void *)BG_CHAR_BLOCK(1), STATUS_SAVED_TILE_BYTES);
   Palette_LightenHighlight(HIGHLIGHT_PALETTE);
   Dma_Set((void *)OBJ_PLTT, (void *)BG_PLTT, DMA_COPY_HALFWORDS(16), REG_DMA3);
   Dma_Set((void *)&BG_PLTT_COLOR(HIGHLIGHT_PALETTE, WINDOW_BACKGROUND_COLOR),
@@ -158,7 +166,7 @@ s32 StatusScreen_Run(void) {
   Window_MarkVisibleTextTilesFar();
   Text_UseExtraTilesFar(0);
   Iwram_CopyWords((void *)BG_PLTT, palette, 64);
-  Iwram_CopyWords((void *)BG_CHAR_BLOCK(1), tiles, 0x2800);
+  Iwram_CopyWords((void *)BG_CHAR_BLOCK(1), tiles, STATUS_SAVED_TILE_BYTES);
   Heap_Release(tiles);
   Heap_Release(palette);
   ((struct WindowWork *)heap->windowWork)->holdTilemapUpload = 1;
@@ -316,8 +324,9 @@ void DjinnMenu_ShowCurrentList(void) {
           djinn =
               element * DJINN_PER_ELEMENT + (row + (page * 8 + page) + 7) % 18;
           if (GameFlag_Get(FLAG_DJINNI(djinn))) {
-            Window_SetTilemapEntryFar(window, element + 0x1001, element * 7 + 1,
-                                      row + 1, 0);
+            // The element icons are tiles 1 to 4, drawn in palette 1.
+            Window_SetTilemapEntryFar(window, BG_TILE_PALETTE(1) + 1 + element,
+                                      element * 7 + 1, row + 1, 0);
             Text_DrawMessageAsTilesFar(djinn + MsgDjinnName, window,
                                        element * 56 + 16, row * 8 + 8);
           }
@@ -869,10 +878,14 @@ void StatusScreen_DrawSelectionLabels(s32 target, s32 selected,
 #define HELP_LENGTH 64
 #endif
 
-u32 Unit_GetExperienceForLevelFar(s32 owner_id, s32 level);
+/// Returns the experience party member memberId needs for level.
+u32 Unit_GetExperienceForLevelFar(s32 memberId, s32 level);
+/// Copies a message's text, its arguments expanded, into buffer: up to length
+/// characters with its terminator.
 void Message_CopyExpandedFar(s32 messageId, void *buffer, s32 length);
-void Text_DrawWideStringAtOffsetFar(void *buffer, void *destination, s32 offset,
-                                    s32 terminator);
+/// Draws a decoded string of 16-bit characters into window at pixel (x, y),
+/// all at once.
+void Text_DrawWideStringAtOffsetFar(void *text, void *window, s32 x, s32 y);
 
 /// Writes the help text of status entry messageVariant into destination: the
 /// entries skip Djinn when the party has none (preserveVariant 0); the
@@ -880,13 +893,13 @@ void Text_DrawWideStringAtOffsetFar(void *buffer, void *destination, s32 offset,
 /// gives the plain experience text. The text is copied into a heap buffer of
 /// STATUS_HELP_TEXT_MAX characters, freed before returning.
 void StatusScreen_ShowMemberProgressMessage(void *window, s32 help, s32 full) {
-  u8 *menu = Ram_HeapSlots->menuWork;
+  struct StatusScreenWork *menu = Ram_HeapSlots->menuWork;
   u8 *buffer;
 
   if (full == 0 && help > 3)
     help++;
   if (help == 1) {
-    u8 *owner = menu + 0x216;
+    u8 *owner = &menu->selectedIds[0];
     struct Unit *state = Unit_Get(*owner);
 
     if (state->level == UNIT_LEVEL_MAX)
@@ -906,7 +919,10 @@ void StatusScreen_ShowMemberProgressMessage(void *window, s32 help, s32 full) {
 
 #undef HELP_LENGTH
 
+/// The Status screen's level label: `Lv`; `Nv.` in Spanish, `Niv` in French.
 extern const u8 gMenu_LvString[];
+/// `/` between a current and a maximum HP or PP, and between a set and a held
+/// Djinn count.
 extern const u8 gMenu_SlashString[];
 
 void ItemMenu_DrawMemberStatus(s32 window, s32 owner, s32 flags);
@@ -999,7 +1015,10 @@ void StatusScreen_DrawStatusAilments(s32 window, s32 ownerId, s32 mode) {
   }
 }
 
+/// The HP label: `HP`; `KP` in German, `PV` in Spanish and French, `PS` in
+/// Italian.
 extern const u8 gMenu_HpString[];
+/// The PP label: `PP`; `EP` in German.
 extern const u8 gMenu_PpString[];
 
 // The stat column of the status page's top rows: three digits from 200 or
@@ -1108,6 +1127,9 @@ s32 PagedList_Build(struct PagedList *result, s32 index) {
 
 #undef PAGE_ROWS
 
+/// Pairs of 4-bit rows of dots in colour 5, each reaching further right than
+/// the last, that Menu_BuildPatternTiles XORs into its tile pairs
+/// (menu_strings.s).
 extern u32 gMenu_PatternRowMasks[][2];
 
 /// Builds two sets of six tile pairs (24 8x8 tiles) in background tile block
@@ -1186,16 +1208,6 @@ void PsynergyMenu_DrawRange(s32 window, s32 x, s32 y, s32 range, s32 unused) {
 #define USABLE_TOP 96
 #define USABLE_RIGHT 224
 #define USABLE_BOTTOM 104
-#endif
-
-#if LANGUAGE == LANGUAGE_JAPANESE
-extern u8 MsgExpLabel[];
-extern u8 MsgDjinnListHelp[];
-#else
-extern u8 MsgUsableInBattle[];
-extern u8 MsgUsableInField[];
-// In the English release its text is MsgUsableInField's again.
-extern u8 MsgUsableAnywhere[];
 #endif
 
 /// Updates the Psynergy page for the row under the cursor: the Psynergy's
@@ -1307,12 +1319,6 @@ s32 PsynergyMenu_DrawRangePage(s32 window, s32 unused,
 #undef USABLE_RIGHT
 #undef USABLE_BOTTOM
 
-// The psynergy menu work block, as this function reads it.
-#define PSY_LIST_OFFSET 0x1c4
-#define ACT_ID_MASK PSYNERGY_ABILITY_MASK
-#define OWNER_CLASS_MSG_OFFSET 0x129
-#define OWNER_LEVEL_OFFSET 15
-
 // The Japanese page lists six abilities rather than five, a row higher, and
 // lays its heading, names, costs, page icons and "no Psynergy" message out on
 // its own columns.
@@ -1343,25 +1349,25 @@ s32 PsynergyMenu_DrawRangePage(s32 window, s32 unused,
 s32 PsynergyMenu_DrawListPage(s32 window, s32 unused,
                               const struct PagedList *res) {
   struct PsynergyMenuWork *menu = Ram_HeapSlots->menuWork;
-  u8 *owner;
-  u32 first;
+  struct Unit *member;
+  u32 firstEntry;
   u32 rows;
   u8 row;
-  s32 offset;
+  s32 entryIndex;
 
   (void)unused;
 
-  owner = Unit_Get(menu->memberIds[0]);
+  member = Unit_Get(menu->memberIds[0]);
 
   WindowSprite_RedrawSavedRectFar(window);
 
-  first = res->page * PAGE_ROWS;
-  rows = (u8)(res->entryCount - first);
+  firstEntry = res->page * PAGE_ROWS;
+  rows = (u8)(res->entryCount - firstEntry);
   if (rows > PAGE_ROWS) {
     rows = PAGE_ROWS;
   }
 
-  Menu_SetPageIcons(PAGE_ROWS, first, window, PAGE_ICONS_X, PAGE_ICONS_Y);
+  Menu_SetPageIcons(PAGE_ROWS, firstEntry, window, PAGE_ICONS_X, PAGE_ICONS_Y);
   PagedList_DrawPageNumbers(window, res->entryCount, PAGE_ROWS, res->page, 28);
 
   Text_DrawMessageAsTilesFar((s32)MsgPsynergyChooseTarget + 2, window,
@@ -1369,21 +1375,24 @@ s32 PsynergyMenu_DrawListPage(s32 window, s32 unused,
 
   row = 0;
   if (rows > row) {
-    offset = (s32)(first * 2) + PSY_LIST_OFFSET;
+    entryIndex = firstEntry;
     do {
-      struct AbilityDefinition *act;
-      s32 msg;
+      struct AbilityDefinition *action;
+      s32 messageId;
       s32 y;
       s32 range;
-      act = Ability_Get(ACT_ID_MASK & *(u16 *)(offset + (s32)menu));
-      msg = (*(u16 *)(offset + (s32)menu) & ACT_ID_MASK) + (s32)MsgAbilityName;
+      action =
+          Ability_Get(PSYNERGY_ABILITY_MASK & menu->psynergies[entryIndex]);
+      messageId = (menu->psynergies[entryIndex] & PSYNERGY_ABILITY_MASK) +
+                  (s32)MsgAbilityName;
       y = row * 16 + FIRST_ROW_Y;
 
-      Text_DrawMessageAsTilesFar(msg, window, NAME_X, y);
-      Text_DrawNumberAtOffsetFar(act->ppCost, 2, window, COST_X, y);
+      Text_DrawMessageAsTilesFar(messageId, window, NAME_X, y);
+      Text_DrawNumberAtOffsetFar(action->ppCost, 2, window, COST_X, y);
 
-      range = act->range;
-      if (range == 0xff) {
+      // ABILITY_RANGE_ALL takes the last range icon, 11; range n takes n - 1.
+      range = action->range;
+      if (range == ABILITY_RANGE_ALL) {
         range = 11;
       } else {
         range--;
@@ -1391,7 +1400,7 @@ s32 PsynergyMenu_DrawListPage(s32 window, s32 unused,
       PsynergyMenu_DrawRange(window, 25, row * 2 + FIRST_RANGE_ROW, range, 0);
 
       row++;
-      offset += 2;
+      entryIndex++;
     } while (rows > row);
   }
 
@@ -1400,16 +1409,16 @@ s32 PsynergyMenu_DrawListPage(s32 window, s32 unused,
                                EMPTY_MESSAGE_Y);
   }
 
-  Text_DrawStringAtOffsetFar(owner, window, 40, 0);
-  Text_DrawMessageAsTilesFar(owner[OWNER_CLASS_MSG_OFFSET] + (s32)MsgClassName,
-                             window, 0, 32);
+  Text_DrawStringAtOffsetFar(member->name, window, 40, 0);
+  Text_DrawMessageAsTilesFar(member->classId + (s32)MsgClassName, window, 0,
+                             32);
   // Spanish and French draw the level label at an offset, as the owner's name.
 #if LANGUAGE == LANGUAGE_SPANISH || LANGUAGE == LANGUAGE_FRENCH
   Text_DrawStringAtOffsetFar(gMenu_LvString, window, 0, 48);
 #else
   Text_DrawStringInWindowFar(gMenu_LvString, window, 0, 48);
 #endif
-  Text_DrawNumberInWindowFar(owner[OWNER_LEVEL_OFFSET], 2, window, 24, 48);
+  Text_DrawNumberInWindowFar(member->level, 2, window, 24, 48);
 
   return 1;
 }
@@ -1751,6 +1760,8 @@ s32 ItemMenu_DrawItemPage(s32 window, s32 unused, struct PagedList *state) {
 #define CURSOR_X 96
 #endif
 
+/// The Status menu's equipment page: the party member's items, PAGE_ROWS to a
+/// page, beside the equipment window of what they wear.
 s32 ItemMenu_SelectItem(void) {
   struct ItemMenuWork *menu;
   struct Unit *owner;

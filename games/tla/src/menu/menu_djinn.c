@@ -118,7 +118,8 @@ s32 DjinnMenu_Run(void) {
   Text_UseExtraTilesFar(0);
   Iwram_CopyWords((void *)BG_CHAR_BLOCK(1), backdrop->tiles,
                   sizeof(backdrop->tiles));
-  Iwram_CopyWords((void *)&BG_PLTT_COLOR(4, 0), backdrop->palette, 128);
+  Iwram_CopyWords((void *)&BG_PLTT_COLOR(4, 0), backdrop->palette,
+                  sizeof(backdrop->palette));
   wait(1);
   Menu_ResumeFieldTasks();
   Window_EraseBorderRectFar(0, 0, 30, 20);
@@ -135,6 +136,8 @@ s32 DjinnMenu_SelectDjinn(s32 mode);
 s32 DjinnMenu_ShowMemberStatus(void);
 s32 DjinnMenu_ShowHelp(void);
 s32 PsynergyList_RunCompareLoop(u32 mode);
+/// Moves a Djinni from owner to recipient, set or on standby as it was;
+/// returns -1 when it cannot.
 s32 Djinn_TransferFar(s32 owner, s32 element, s32 index, s32 recipient);
 
 u32 Djinn_PutOnStandbyFar(s32 owner, s32 element, s32 index);
@@ -216,7 +219,7 @@ s32 DjinnMenu_RunScreen(void) {
       break;
     case DJINN_STEP_SELECT_DJINN:
       Menu_SetFirstActorRowCoordinates(0);
-      DjinnFigures_SetSlotPosition(1, 0, 200);
+      DjinnFigures_SetSlotPosition(1, 0, MENU_FIGURE_HIDDEN_Y);
       result = DjinnMenu_SelectDjinn(DJINN_SELECT_DJINNI);
       step = DJINN_STEP_SHOW_HELP;
       if (result == DJINN_RESULT_HELP)
@@ -456,6 +459,8 @@ void DjinnMenu_AdjustPalettes(s32 brightnessDelta) {
   }
 }
 
+/// Copies the window font's ten digit tiles twice into tiles, the first copy
+/// with colour 1 drawn as colour 10.
 void Graphics_ExpandVramTilesByColorTableFar(void *tiles);
 s32 Palette_GetBasicSpriteColors(void);
 
@@ -474,11 +479,14 @@ void Menu_OpenBackdropScreen(void) {
 
   Window_UpdateOrCreate(&menu->listWindow, 0, 5, 30, 15, 2);
   wait(1);
-  Iwram_CopyWords(backdrop->tiles, BG_CHAR_BLOCK(1), 0x2000);
-  Iwram_CopyWords(backdrop->palette, (void *)&BG_PLTT_COLOR(4, 0), 128);
-  Iwram_FillWords(BG_CHAR_BLOCK(1), 0x2000, PIXELS_4BPP(3));
-  Iwram_FillWords((void *)&BG_PLTT_COLOR(4, 0), 128, 0x55555555);
-  Graphics_ExpandVramTilesByColorTableFar(BG_CHAR_BLOCK(1) + 0x1000);
+  Iwram_CopyWords(backdrop->tiles, BG_CHAR_BLOCK(1), sizeof(backdrop->tiles));
+  Iwram_CopyWords(backdrop->palette, (void *)&BG_PLTT_COLOR(4, 0),
+                  sizeof(backdrop->palette));
+  Iwram_FillWords(BG_CHAR_BLOCK(1), sizeof(backdrop->tiles), PIXELS_4BPP(3));
+  Iwram_FillWords((void *)&BG_PLTT_COLOR(4, 0), sizeof(backdrop->palette),
+                  PIXELS_4BPP(5));
+  Graphics_ExpandVramTilesByColorTableFar(BG_CHAR_BLOCK(1) +
+                                          128 * TILE_SIZE_4BPP);
   Iwram_CopyWords(BG_CHAR_BLOCK(1) + 150 * TILE_SIZE_4BPP,
                   gMenu_BackdropBorderTile, TILE_SIZE_4BPP);
   Dma_Set(Palette_GetBasicSpriteColors(),
@@ -489,8 +497,10 @@ void Menu_OpenBackdropScreen(void) {
   Dma_Set((void *)&BG_PLTT_COLOR(WINDOW_PALETTE, 0),
           (void *)&BG_PLTT_COLOR(7, 0), DMA_COPY_HALFWORDS(16), REG_DMA3);
   DjinnMenu_AdjustPalettes(8);
-  BG_PLTT_COLOR(7, 4) = BG_PLTT_COLOR(WINDOW_PALETTE, WINDOW_BACKGROUND_COLOR);
-  BG_PLTT_COLOR(6, 4) = BG_PLTT_COLOR(WINDOW_PALETTE, WINDOW_BACKGROUND_COLOR);
+  BG_PLTT_COLOR(7, WINDOW_BACKGROUND_COLOR) =
+      BG_PLTT_COLOR(WINDOW_PALETTE, WINDOW_BACKGROUND_COLOR);
+  BG_PLTT_COLOR(6, WINDOW_BACKGROUND_COLOR) =
+      BG_PLTT_COLOR(WINDOW_PALETTE, WINDOW_BACKGROUND_COLOR);
   DjinnMenu_BuildLists(backdrop);
 
   window = menu->statusWindow;
@@ -500,7 +510,7 @@ void Menu_OpenBackdropScreen(void) {
   menu->cursor = icon;
   entry = VramCache_FindFreeEntry();
   if (entry < 96) {
-    VramBlock_LoadResourceFar(entry, 128, RESOURCE_SHOP_GEM_TILES);
+    VramBlock_LoadResourceFar(entry, ICON_TILE_BYTES, RESOURCE_SHOP_GEM_TILES);
     icon = WindowSprite_CreateFar(entry, OUTPUT_SIZE_16X16, window, 0, 0);
     icon->motion = ICON_HIDDEN;
     menu->pageArrows[0] = icon;
@@ -598,8 +608,6 @@ void DjinnMenu_BuildLists(struct DjinnMenuBackdrop *backdrop) {
   }
 }
 
-extern u8 MsgDjinnName[]; ///< the first djinni's name
-
 s32 Djinn_CanSetFar(s32 owner, s32 element, s32 index);
 s32 Djinn_IsSetFar(s32 owner, s32 element, s32 index);
 
@@ -630,16 +638,20 @@ void DjinnMenu_DrawEntry(s32 window, s32 x, s32 y, s32 entry) {
   s32 element = (entry & DJINN_ENTRY_ELEMENT) / 32;
 
   Text_DrawMessageAsTilesFar((s32)MsgDjinnName + element * DJINN_PER_ELEMENT +
-                                 (entry & 31),
+                                 DJINN_NUMBER(entry),
                              window, x + 8, y);
   Window_SetTilemapEntryFar(window, element + ELEMENT_ICON_TILE, x / 8, y / 8,
                             0);
   Text_SetColorFar(TEXT_COLOR_NORMAL);
 }
 
+/// Draws four party members' Djinn into the list window, one column of 56
+/// pixels each from party member page: each member's Djinn grouped by element,
+/// standby in red, set in white and the rest in yellow. Over the list it
+/// labels the unleash effects when the party has few enough Djinn to show them.
 void DjinnMenu_DrawPage(struct DjinnMenuBackdrop *backdrop, s32 page) {
   struct DjinnMenuWork *menu = Ram_HeapSlots->menuWork;
-  u8 *tiles = Ram_HeapSlots->windowWork;
+  struct WindowWork *work = Ram_HeapSlots->windowWork;
   s32 window = menu->listWindow;
   s32 owners;
   s32 column;
@@ -649,7 +661,7 @@ void DjinnMenu_DrawPage(struct DjinnMenuBackdrop *backdrop, s32 page) {
   s32 y;
   s32 djinn;
 
-  tiles[6] = 1;
+  work->holdTilemapUpload = 1;
   WindowSprite_RedrawSavedRectFar(window);
   owners = Party_CountMembersFar();
   djinn = Party_SumDjinnCountsFar(-1);
@@ -691,12 +703,12 @@ void DjinnMenu_DrawPage(struct DjinnMenuBackdrop *backdrop, s32 page) {
   // The Japanese release reads the window tiles again for the first store
   // and does not wait; from patch 1 the page waits three frames.
 #if TLA_PATCH_1
-  tiles[3] = 1;
-  tiles[6] = 0;
+  work->dirty = 1;
+  work->holdTilemapUpload = 0;
   wait(3);
 #else
-  Ram_HeapSlots->windowWork[3] = 1;
-  tiles[6] = 0;
+  ((struct WindowWork *)Ram_HeapSlots->windowWork)->dirty = 1;
+  work->holdTilemapUpload = 0;
 #endif
 }
 
@@ -707,68 +719,78 @@ void DjinnMenu_DrawPage(struct DjinnMenuBackdrop *backdrop, s32 page) {
 #define GRID_CELL_WIDTH 6
 #endif
 
+/// Draws the Djinn list's first page, the first four party members.
 void DjinnMenu_DrawFirstPage(struct DjinnMenuBackdrop *backdrop) {
   DjinnMenu_DrawPage(backdrop, 0);
 }
 
+/// Sets the palette of a rectangle of panel's interior, (x, y) and its size in
+/// tiles from the interior's corner, through Window_HighlightRectFar.
 void Window_SetInteriorPaletteBitRect(struct Window *panel, s32 x, s32 y,
-                                      s32 width, s32 height, s32 style) {
+                                      s32 width, s32 height, s32 palette) {
   Window_HighlightRectFar((s16)panel->x + x + 1, (s16)panel->y + y + 1, width,
-                          height, style);
+                          height, palette);
 }
 
 /// Highlights the cell of a four-column grid at index's column and row's line,
-/// with style 14 when selected and 15 otherwise.
+/// in HIGHLIGHT_PALETTE when selected and WINDOW_PALETTE otherwise.
 void UiPanel_HighlightGridCell(struct Window *panel, s32 index, s32 row,
                                s32 selected) {
-  s32 style = ((0u - selected) | selected) >> 31;
+  s32 palette = ((0u - selected) | selected) >> 31;
 
-  style = 15 - style;
-  Window_SetInteriorPaletteBitRect(panel, index % 4 * 7 + 1, row + 2,
-                                   GRID_CELL_WIDTH, 1, style);
+  palette = WINDOW_PALETTE - palette;
+  Window_SetInteriorPaletteBitRect(panel, index % 4 * DJINN_COLUMN_TILES + 1,
+                                   row + 2, GRID_CELL_WIDTH, 1, palette);
 }
 
 #undef GRID_CELL_WIDTH
 
-/// Gives every cell of a tile rectangle that uses palette 15 the palette
+/// Gives every cell of a tile rectangle that uses WINDOW_PALETTE the palette
 /// given instead, clipped to the screen, and marks its rows for upload.
 void Window_SetRectPalette(s32 x, s32 y, s32 width, s32 height, s32 palette) {
   struct WindowWork *tiles = (struct WindowWork *)Ram_HeapSlots->windowWork;
 
-  palette <<= 12;
+  palette = BG_TILE_PALETTE(palette);
 
   if (x < 0) {
     width += x;
     x = 0;
   }
-  if (x + width > (DISPLAY_TILE_WIDTH - 1)) {
+  if (x + width > DISPLAY_TILE_WIDTH - 1) {
     width = DISPLAY_TILE_WIDTH - x;
   }
   if (y < 0) {
     height += y;
     y = 0;
   }
-  if (y + height > 29) {
+  // BUG: tests the bottom against the screen's width but clips to its rows, so
+  // a rectangle ending in rows 20 to 28 is kept whole and recolours past the
+  // 32 by 20 tilemap.
+#ifdef BUGFIX
+  if (y + height > DISPLAY_TILE_HEIGHT - 1) {
+#else
+  if (y + height > DISPLAY_TILE_WIDTH - 1) {
+#endif
     height = DISPLAY_TILE_HEIGHT - y;
   }
 
   if (width > 0 && height > 0) {
     do {
-      u16 *p = &tiles->tilemap[y][x];
-      s32 col = width;
+      u16 *entry = &tiles->tilemap[y][x];
+      s32 column = width;
 
-      if (col != 0) {
+      if (column != 0) {
         do {
-          u32 tile = *p;
+          u32 tile = *entry;
 
           if (((tile >> 12) & 15) == WINDOW_PALETTE) {
             tile &= ~0xf000;
             tile |= palette;
-            *p = tile;
+            *entry = tile;
           }
-          col--;
-          p++;
-        } while (col != 0);
+          column--;
+          entry++;
+        } while (column != 0);
       }
       UiRender_MarkRow(tiles, y);
 
@@ -786,6 +808,8 @@ void Window_SetInteriorRectPalette(struct Window *panel, s32 x, s32 y,
                         height, palette);
 }
 
+/// Builds a message's render entries and queues them in window; returns 0 when
+/// the message is empty or there is no window.
 struct UiChannelSlot *Message_OpenDecodedFar(void *window, s32 message);
 
 /// The Djinn menu's help, opened by Select on the first chooser: a list of
@@ -924,12 +948,13 @@ s32 DjinnMenu_ShowHelp(void) {
 #define TRADE_HELP_DJINNI_FIRST 0
 #endif
 
+/// The level label: `Lv`; `Nv.` in Spanish, `Niv` in French.
 extern u8 gDjinnMenu_TextLevel[];
 
 s32 Djinn_MarkTradeOnlyRecipients(s8 *table, s32 self);
 
 void Menu_SetPageArrowsB(s32 index, s32 count);
-void DjinnFigures_SetSlotDepth(s32 index, s32 frame);
+void DjinnFigures_SetSlotFacing(s32 index, s32 facing);
 void DjinnFigures_ReplaceSlot(s32 index, s32 kind, s32 animation);
 
 void DjinnRecovery_CountDownFar(void);
@@ -1047,7 +1072,7 @@ s32 DjinnMenu_SelectDjinn(s32 mode) {
                 GRID_CELL_WIDTH, height, 6);
             menu->slotY[0] = 54;
           } else {
-            menu->slotY[0] = 200;
+            menu->slotY[0] = MENU_FIGURE_HIDDEN_Y;
           }
           for (i = 0, x = 8; i <= 3; i++, x += 56) {
             if (menu->memberSprites[i] != NULL) {
@@ -1080,28 +1105,28 @@ s32 DjinnMenu_SelectDjinn(s32 mode) {
       number = DJINN_NUMBER(djinn);
       state = DjinnMenu_GetEntryState(djinn);
       if (selectedRow == -1) {
-        DjinnFigures_SetSlotPosition(mode, 0, 200);
+        DjinnFigures_SetSlotPosition(mode, 0, MENU_FIGURE_HIDDEN_Y);
       } else {
-        s32 frame;
+        s32 facing;
         s32 animation;
 
         switch (state) {
         case DJINNI_STATE_STANDBY:
           animation = 1;
-          frame = 0x4000;
+          facing = FACING_SOUTH;
           break;
         case DJINNI_STATE_SET:
           animation = 2;
-          frame = 0x4000;
+          facing = FACING_SOUTH;
           break;
         default:
           animation = 1;
-          frame = 0x8000;
+          facing = FACING_WEST;
           break;
         }
         DjinnFigures_SetSlotPosition(mode, memberColumn % 4 * 56 + 48,
                                      mode == DJINN_SELECT_DJINNI ? 62 : 54);
-        DjinnFigures_SetSlotDepth(mode, frame);
+        DjinnFigures_SetSlotFacing(mode, facing);
         if (redraw & 2)
           DjinnFigures_SetSlotPhase(mode, 0);
         DjinnFigures_ReplaceSlot(mode, element, animation);
@@ -1238,7 +1263,7 @@ s32 DjinnMenu_SelectDjinn(s32 mode) {
           DjinnRecovery_AddStandbyFar(FELIX, ELEMENT_VENUS, DJINNI_ECHO);
           Unit_CalculateFar(FELIX);
           repeat = KEY_B;
-          goto pressB;
+          pressed = KEY_B;
         }
         break;
       case DJINN_TUTORIAL_GIVE:
@@ -1283,8 +1308,8 @@ s32 DjinnMenu_SelectDjinn(s32 mode) {
         break;
       case DJINN_TUTORIAL_SET_DONE:
         if (backdrop->tutorialTimer == 40) {
-          repeat = 2;
-          pressed = 2;
+          repeat = KEY_B;
+          pressed = KEY_B;
           backdrop->tutorialTimer = 0;
           backdrop->tutorialStep++;
         }
@@ -1351,8 +1376,8 @@ s32 DjinnMenu_SelectDjinn(s32 mode) {
         break;
       case DJINN_TUTORIAL_POWERS_MOVE:
         if (backdrop->tutorialTimer == 90) {
-          repeat = 32;
-          pressed = 32;
+          repeat = KEY_LEFT;
+          pressed = KEY_LEFT;
           backdrop->tutorialTimer = 0;
           backdrop->tutorialStep = DJINN_TUTORIAL_POWERS_CHOOSE;
         }
@@ -1362,7 +1387,6 @@ s32 DjinnMenu_SelectDjinn(s32 mode) {
           backdrop->tutorialTimer = 0;
           backdrop->tutorialStep = DJINN_TUTORIAL_POWERS_END;
           repeat = KEY_B;
-        pressB:
           pressed = KEY_B;
         }
         break;
@@ -1581,7 +1605,7 @@ s32 DjinnMenu_SelectDjinn(s32 mode) {
     menu->pairMember[mode] = DJINN_MEMBER(entry);
   }
   menu->selection[mode] = memberColumn + djinnRow * 10;
-  DjinnFigures_SetSlotDepth(mode, 0x4000);
+  DjinnFigures_SetSlotFacing(mode, FACING_SOUTH);
   return result;
 }
 
@@ -1701,6 +1725,7 @@ s32 DjinnMenu_DrawPairPreview(s32 mode, s32 pageIndex) {
 /// is tile column x.
 #define DJINN_PREVIEW_VALUE_X(x) ((x) * 8 + 72)
 
+/// `/` between the current and the maximum HP and PP in the Djinn preview.
 extern const char gDjinnMenu_TextSlash[];
 
 #if LANGUAGE != LANGUAGE_JAPANESE

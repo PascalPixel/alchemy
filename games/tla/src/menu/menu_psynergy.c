@@ -7,14 +7,12 @@
 #include "flags.h"
 #include "sounds.h"
 
-#define PSYNERGY_PROMPT_TILES_SIZE 8192
-
 /// A Psynergy shortcut, and the field's Psynergy request packed the same way:
 /// its party member above bit 10, the Psynergy's id below.
 #define PSYNERGY_SHORTCUT_MEMBER_SHIFT 10
 #define PSYNERGY_SHORTCUT_ID_MASK 0x3ff
 
-s32 PsynergyMenu_IsActionRestricted(s32 no);
+s32 PsynergyMenu_IsActionRestricted(s32 actionEntry);
 
 s32 PsynergyMenu_RunSteps(s32 *ownerOut, s32 *targetOut, s32 *itemOut);
 
@@ -35,9 +33,9 @@ s32 PsynergyMenu_Run(void) {
   s32 owner;
   s32 result;
 
-  screen = HeapSlot_Alloc(HEAP_SLOT_MENU, 0xcec);
+  screen = HeapSlot_Alloc(HEAP_SLOT_MENU, MENU_WORK_SIZE);
 #if TLA_PATCH_2
-  savedTiles = Heap_AllocEwram(0x2000);
+  savedTiles = Heap_AllocEwram(MENU_SAVED_TILE_BYTES);
 #endif
   Ram_HeapSlots->actorSystem->suspended = 1;
   Window_DrawBorderFar(0, 0, 30, 20);
@@ -45,8 +43,9 @@ s32 PsynergyMenu_Run(void) {
   Window_InitializeWork(0);
 #if TLA_PATCH_2
   Menu_SuspendFieldTasks();
-  Iwram_CopyWords(savedTiles, (void *)BG_CHAR_BLOCK(1), 0x2000);
-  Iwram_FillWords((void *)BG_CHAR_BLOCK(1), 0x2000, 0x33333333);
+  Iwram_CopyWords(savedTiles, (void *)BG_CHAR_BLOCK(1), MENU_SAVED_TILE_BYTES);
+  Iwram_FillWords((void *)BG_CHAR_BLOCK(1), MENU_SAVED_TILE_BYTES,
+                  PIXELS_4BPP(3));
   Text_UseExtraTilesFar(1);
 #endif
   screen->partyCount = Party_ListMembersFar(screen->memberIds);
@@ -68,7 +67,7 @@ s32 PsynergyMenu_Run(void) {
   }
 
   WindowSprite_ClearListFar(screen->statusWindow);
-  Ram_HeapSlots->windowWork[6] = 1;
+  ((struct WindowWork *)Ram_HeapSlots->windowWork)->holdTilemapUpload = 1;
   ItemMenu_Close();
   Window_DrawBorderFar(0, 0, 30, 20);
   HeapSlot_Release(HEAP_SLOT_MENU);
@@ -76,20 +75,21 @@ s32 PsynergyMenu_Run(void) {
 #if TLA_PATCH_2
   Window_MarkVisibleTextTilesFar();
   Text_UseExtraTilesFar(0);
-  Iwram_CopyWords((void *)BG_CHAR_BLOCK(1), savedTiles,
-                  PSYNERGY_PROMPT_TILES_SIZE);
-  Ram_HeapSlots->windowWork[6] = 0;
+  Iwram_CopyWords((void *)BG_CHAR_BLOCK(1), savedTiles, MENU_SAVED_TILE_BYTES);
+  ((struct WindowWork *)Ram_HeapSlots->windowWork)->holdTilemapUpload = 0;
   Heap_Release(savedTiles);
   wait(1);
   Menu_ResumeFieldTasks();
 #endif
   wait(1);
   Window_EraseBorderRectFar(0, 0, 30, 20);
-  Ram_HeapSlots->windowWork[6] = 0;
+  ((struct WindowWork *)Ram_HeapSlots->windowWork)->holdTilemapUpload = 0;
   Party_ClearUnusableShortcutsFar();
   return result;
 }
 
+/// Returns whether the scene has a trigger for field Psynergy type on what it
+/// would act on.
 s32 Scene_HasPsynergyTriggerFar(s32 type);
 
 /// PsynergyMenuWork.flags: the Psynergy list shows the shortcut help (Select
@@ -123,7 +123,7 @@ enum PsynergyMenuMode {
 
 s16 Unit_AddPpFar(s32 unit, s32 amount);
 
-s32 PsynergyMenu_SetShortcut(s32 kind, s32 id, s32 second);
+s32 PsynergyMenu_SetShortcut(s32 memberId, s32 id, s32 second);
 
 s32 PsynergyMenu_ClassifySelectedPsynergy(void);
 s32 PsynergyMenu_SelectPartySlot(s32 paneIndex);
@@ -323,7 +323,7 @@ s32 PsynergyMenu_ClassifySelectedPsynergy(void) {
   if (Scene_HasPsynergyTriggerFar(psynergy->fieldPsynergy) != 0)
     return 0;
   ret = 2;
-  if (psynergy->range != 0xff) {
+  if (psynergy->range != ABILITY_RANGE_ALL) {
     u8 kind = psynergy->targetMode;
 
     diff = kind ^ 2;
@@ -549,13 +549,14 @@ s32 PsynergyMenu_SelectTarget(s32 browseOnly) {
 #endif
           // Japanese draws the description as a resource string.
 #if LANGUAGE == LANGUAGE_JAPANESE
-          Text_DrawMessageFar((menu->sideAction[0] & 0x3fff) +
+          Text_DrawMessageFar((menu->sideAction[0] & PSYNERGY_ABILITY_MASK) +
                                   MsgAbilityDescription,
                               menu->infoWindow, 0, 0);
 #else
-          Text_DrawMessageAsTilesFar((menu->sideAction[0] & 0x3fff) +
-                                         MsgAbilityDescription,
-                                     menu->infoWindow, 0, 0);
+          Text_DrawMessageAsTilesFar(
+              (menu->sideAction[0] & PSYNERGY_ABILITY_MASK) +
+                  MsgAbilityDescription,
+              menu->infoWindow, 0, 0);
 #endif
           shown = 1;
         } else {
@@ -593,10 +594,11 @@ s32 PsynergyMenu_SelectTarget(s32 browseOnly) {
   return result;
 }
 
-/// Sets the L or R Psynergy shortcut (enum PsynergyShortcut):
+/// Sets the L Psynergy shortcut, or the R one when second is set, to
 /// memberId << 10 | the Psynergy's id. Returns 1.
-s32 PsynergyMenu_SetShortcut(s32 kind, s32 id, s32 second) {
-  u32 packed = (kind << PSYNERGY_SHORTCUT_MEMBER_SHIFT) | (id & 0x3fff);
+s32 PsynergyMenu_SetShortcut(s32 memberId, s32 id, s32 second) {
+  u32 packed = (memberId << PSYNERGY_SHORTCUT_MEMBER_SHIFT) |
+               (id & PSYNERGY_ABILITY_MASK);
 
   if (second == 0)
     gMainRoutineWork.firstShortcut = packed;
@@ -619,17 +621,17 @@ s32 PsynergyMenu_SetShortcut(s32 kind, s32 id, s32 second) {
 #endif
 
 #if LANGUAGE == LANGUAGE_JAPANESE
+/// `L`, before a wide shortcut name.
 extern const u8 gMenu_ShortcutLString[];
+/// `L:`, before the L shortcut's name.
 extern const u8 gMenu_ShortcutLColonString[];
+/// `R`, before a wide shortcut name.
 extern const u8 gMenu_ShortcutRString[];
+/// `R:`, before the R shortcut's name.
 extern const u8 gMenu_ShortcutRColonString[];
 #endif
 
-#if LANGUAGE == LANGUAGE_JAPANESE
-
-#else
-#endif
-
+#if LANGUAGE != LANGUAGE_JAPANESE
 /// Draws the two packed values of gMainRoutineWork (owner << 10 | ability), the
 /// shortcuts' messages, into a window: a heading (one when both are set,
 /// another otherwise), then for each its ability's name and the owner's name,
@@ -639,7 +641,6 @@ extern const u8 gMenu_ShortcutRColonString[];
 /// name when the ability's name is wide. Japanese draws "L" or "L:" (and "R"
 /// or "R:") itself, then the name, dropping the colon for a wide name. Returns
 /// 1. owner is not used.
-#if LANGUAGE != LANGUAGE_JAPANESE
 s32 PsynergyMenu_DrawShortcuts(s32 window, s32 owner) {
   s32 left;
   s32 top;
@@ -656,7 +657,8 @@ s32 PsynergyMenu_DrawShortcuts(s32 window, s32 owner) {
   else
     Text_DrawMessageAsTilesFar((s32)MsgShortcutSetL - 2, window, 0, -8);
 
-  name = &MsgAbilityName[gMainRoutineWork.firstShortcut & 0x3ff];
+  name = &MsgAbilityName[gMainRoutineWork.firstShortcut &
+                         PSYNERGY_SHORTCUT_ID_MASK];
   Text_GetMessageSizeFar(name, &left, &top, &width, &height);
 #if TLA_PATCH_2
   if (width < 0 || width > OWNER_NAME_WIDTH_LIMIT)
@@ -679,7 +681,8 @@ s32 PsynergyMenu_DrawShortcuts(s32 window, s32 owner) {
     Text_DrawMessageAsTilesFar((s32)MsgShortcutSetR + 2, window, 0, 0);
   }
 
-  name = &MsgAbilityName[gMainRoutineWork.secondShortcut & 0x3ff];
+  name = &MsgAbilityName[gMainRoutineWork.secondShortcut &
+                         PSYNERGY_SHORTCUT_ID_MASK];
   Text_GetMessageSizeFar(name, &left, &top, &width, &height);
 #if TLA_PATCH_2
   if (width < 0 || width > OWNER_NAME_WIDTH_LIMIT)
@@ -705,6 +708,8 @@ s32 PsynergyMenu_DrawShortcuts(s32 window, s32 owner) {
   return 1;
 }
 #else
+/// Japanese: draws "L" or "L:" and "R" or "R:" itself before each shortcut's
+/// name, dropping the colon for a wide name. Returns 1.
 s32 PsynergyMenu_DrawShortcuts(s32 window, s32 owner) {
   s32 left;
   s32 top;
@@ -718,7 +723,8 @@ s32 PsynergyMenu_DrawShortcuts(s32 window, s32 owner) {
   else
     Text_DrawMessageAsTilesFar((s32)MsgShortcutSetL - 2, window, 0, -8);
 
-  name = &MsgAbilityName[gMainRoutineWork.firstShortcut & 0x3ff];
+  name = &MsgAbilityName[gMainRoutineWork.firstShortcut &
+                         PSYNERGY_SHORTCUT_ID_MASK];
   Text_GetMessageSizeFar(name, &left, &top, &width, &height);
   if (gMainRoutineWork.firstShortcut != 0) {
     if (width < 0 || width > COLON_NAME_WIDTH_LIMIT) {
@@ -736,7 +742,8 @@ s32 PsynergyMenu_DrawShortcuts(s32 window, s32 owner) {
     Text_DrawMessageAsTilesFar((s32)MsgShortcutSetR + 2, window, 24, 0);
   }
 
-  name = &MsgAbilityName[gMainRoutineWork.secondShortcut & 0x3ff];
+  name = &MsgAbilityName[gMainRoutineWork.secondShortcut &
+                         PSYNERGY_SHORTCUT_ID_MASK];
   Text_GetMessageSizeFar(name, &left, &top, &width, &height);
   if (gMainRoutineWork.secondShortcut != 0) {
     if (width < 0 || width > COLON_NAME_WIDTH_LIMIT) {
@@ -792,11 +799,11 @@ s32 PsynergyMenu_CollectActions(struct Unit *unit, u16 *actions, s32 mode) {
   s32 offset;
 
   count = 0;
-  for (i = 0; i < 32; i++)
+  for (i = 0; i < PSYNERGY_SLOTS; i++)
     actions[i] = 0;
 
   if (mode == 1) {
-    for (i = 0; i < 32; i++) {
+    for (i = 0; i < PSYNERGY_SLOTS; i++) {
       if (unit->psynergy[i].encodedAction != 0) {
         if (Ability_Get(unit->psynergy[i].encodedAction & PSYNERGY_ABILITY_MASK)
                 ->fieldPsynergy != 0) {
@@ -806,22 +813,24 @@ s32 PsynergyMenu_CollectActions(struct Unit *unit, u16 *actions, s32 mode) {
       }
     }
   } else {
-    for (i = 0; i < 32; i++) {
+    for (i = 0; i < PSYNERGY_SLOTS; i++) {
       if (unit->psynergy[i].encodedAction != 0) {
         ability = Ability_Get(unit->psynergy[i].encodedAction &
                               PSYNERGY_ABILITY_MASK);
-        if (ability->fieldPsynergy != 0 || (ability->flags & 0x40) != 0) {
+        if (ability->fieldPsynergy != 0 ||
+            (ability->flags & ABILITY_USABLE_IN_FIELD) != 0) {
           actions[count] = unit->psynergy[i].encodedAction;
           count++;
         }
       }
     }
     if (mode != 2) {
-      for (i = 0; i < 32; i++) {
+      for (i = 0; i < PSYNERGY_SLOTS; i++) {
         if (unit->psynergy[i].encodedAction != 0) {
           ability = Ability_Get(unit->psynergy[i].encodedAction &
                                 PSYNERGY_ABILITY_MASK);
-          if (ability->fieldPsynergy == 0 && (ability->flags & 0x40) == 0) {
+          if (ability->fieldPsynergy == 0 &&
+              (ability->flags & ABILITY_USABLE_IN_FIELD) == 0) {
             actions[count] = unit->psynergy[i].encodedAction;
             count++;
           }
@@ -964,7 +973,7 @@ s32 PsynergyMenu_DrawActionPage(s32 window, s32 unused,
   WindowSprite_RedrawSavedRectFar(window);
   Window_DrawDividerLineFar(window, 0, 11, 16, 11);
 
-  if (PSYNERGY_MENU_SHORTCUT_HELP & *(u16 *)((u8 *)menu + 0x21c)) {
+  if (PSYNERGY_MENU_SHORTCUT_HELP & menu->flags) {
     Text_DrawMessageAsTilesFar((s32)MsgShortcutSetL - 1, window, 0, 88);
   } else {
     Text_DrawMessageAsTilesFar((s32)MsgArrangeItemsHelp + 2, window, HELP_X,
@@ -985,31 +994,29 @@ s32 PsynergyMenu_DrawActionPage(s32 window, s32 unused,
 
   row = 0;
   if (visibleCount > row) {
-    cursor = firstEntry * 2 + 0x1c4;
+    cursor = firstEntry;
     do {
       owner = Unit_Get(menu->memberIds[0]);
-      ability = Ability_Get(PSYNERGY_ABILITY_MASK &
-                            *(const u16 *)(cursor + (s32)menu));
+      ability = Ability_Get(PSYNERGY_ABILITY_MASK & menu->psynergies[cursor]);
 
       if (ability->ppCost > owner->pp) {
         Text_SetColorFar(TEXT_COLOR_RED);
       } else if (PsynergyMenu_IsActionRestricted(
-                     PSYNERGY_ABILITY_MASK &
-                     *(const u16 *)(cursor + (s32)menu)) != 0) {
+                     PSYNERGY_ABILITY_MASK & menu->psynergies[cursor]) != 0) {
         Text_SetColorFar(TEXT_COLOR_YELLOW);
       } else {
         Text_SetColorFar(TEXT_COLOR_NORMAL);
       }
 
       Text_DrawMessageAsTilesFar(
-          (PSYNERGY_ABILITY_MASK & *(const u16 *)(cursor + (s32)menu)) +
+          (PSYNERGY_ABILITY_MASK & menu->psynergies[cursor]) +
               (s32)MsgAbilityName,
           window, NAME_X, row * 16 + 8);
       Text_DrawNumberAtOffsetFar(ability->ppCost, 2, window, 104, row * 16 + 8);
       Text_SetColorFar(TEXT_COLOR_NORMAL);
 
       row++;
-      cursor += 2;
+      cursor++;
     } while (visibleCount > row);
   }
 
@@ -1255,6 +1262,8 @@ s32 PsynergyMenu_RunList(s32 paneIndex) {
 #undef CURSOR_X
 #undef CHANGE_HELP_X
 
+/// Returns 1 when actionEntry cannot be used from the menu: it has no field
+/// effect and is not usable both in the field and in battle.
 s32 PsynergyMenu_IsActionRestricted(s32 actionEntry) {
   // Mask the unsigned entry without overflowing a signed left shift.
   struct AbilityDefinition *action =

@@ -71,9 +71,9 @@ s32 Field_FindNearbyTalkTarget(s32 id) {
       if (distance > 11) {
         s32 diff = (s16)(angle - self->facing);
 
-        if (diff < -0x2fff)
+        if (diff < -(TRIG_TURN * 3 / 16 - 1))
           continue;
-        if (diff > 0x2fff)
+        if (diff > TRIG_TURN * 3 / 16 - 1)
           continue;
       }
 
@@ -283,7 +283,7 @@ void Leader_PushObjectAhead(void) {
 
   angle = ((angle + 2) & 12) << 12;
   position[0] = owner->x.fixed;
-  position[1] = (owner->y.fixed + 0x40000) & 0xfff80000;
+  position[1] = (owner->y.fixed + toFIXED(4)) & 0xfff80000;
   position[2] = owner->z.fixed;
   Vector_AddPolarOffset(toFIXED(16), angle, position);
   target = Actor_FindAtCell(position, 1);

@@ -567,13 +567,13 @@ s32 Actor_SailOnWorldMap(struct Actor *actor) {
           if (WorldMap_IsSailable(actor, &testPosition) == 0) {
             SET_POSITION(&testPosition, actor->x.fixed, actor->y.fixed,
                          actor->z.fixed);
-            Vector_AddPolarOffset(WORLD_MAP_PROBE_RADIUS, direction + DEGtoANG(45),
-                                  &testPosition);
+            Vector_AddPolarOffset(WORLD_MAP_PROBE_RADIUS,
+                                  direction + DEGtoANG(45), &testPosition);
             if (WorldMap_IsSailable(actor, &testPosition) == 0) {
               SET_POSITION(&testPosition, actor->x.fixed, actor->y.fixed,
                            actor->z.fixed);
-              Vector_AddPolarOffset(WORLD_MAP_PROBE_RADIUS, direction - DEGtoANG(45),
-                                    &testPosition);
+              Vector_AddPolarOffset(WORLD_MAP_PROBE_RADIUS,
+                                    direction - DEGtoANG(45), &testPosition);
               if (WorldMap_IsSailable(actor, &testPosition) == 0)
                 goto update_object;
             }
@@ -791,8 +791,8 @@ s32 Actor_FlyOnWorldMap(struct Actor *actor) {
         if (WorldMap_IsFlyable(actor, &testPosition) == 0) {
           SET_POSITION(&testPosition, actor->x.fixed, actor->y.fixed,
                        actor->z.fixed);
-          Vector_AddPolarOffset(WORLD_MAP_PROBE_RADIUS, direction - DEGtoANG(45),
-                                &testPosition);
+          Vector_AddPolarOffset(WORLD_MAP_PROBE_RADIUS,
+                                direction - DEGtoANG(45), &testPosition);
           if (WorldMap_IsFlyable(actor, &testPosition) == 0)
             goto check_objects;
         }

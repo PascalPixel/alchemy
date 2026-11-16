@@ -104,7 +104,7 @@ struct ChasingMote {
 /// pictures, the sparks and motes that fly between the tablet and the leader,
 /// and the circle they gather on.
 struct MoteWork {
-  u8 unused[0x800]; ///< no code names it
+  u8 unused[2048]; ///< no code names it
   struct ChasingMote sparks[TABLET_SPARK_COUNT];
   struct EffectSprite sparkSprites[TABLET_SPARK_COUNT];
   struct ChasingMote motes[TABLET_MOTE_COUNT];
@@ -243,7 +243,7 @@ void SummonTablet_PlayRunes(s32 targetId) {
   targetZ = pos[2];
   Decompress_TaggedLz(Resource_GetTableEntry(RESOURCE_RUNES), work);
   moteEntry = VramCache_FindFreeEntry();
-  moteTile = VramCache_Load(moteEntry, 0x800, work);
+  moteTile = VramCache_Load(moteEntry, 2048, work);
   mote = work->motes;
   i = 0;
   sprite = work->moteSprites;
@@ -264,7 +264,7 @@ void SummonTablet_PlayRunes(s32 targetId) {
   }
   Decompress_TaggedLz(Resource_GetTableEntry(RESOURCE_PEBBLES), work);
   sparkEntry = VramCache_FindFreeEntry();
-  sparkTile = VramCache_Load(sparkEntry, 0x800, work);
+  sparkTile = VramCache_Load(sparkEntry, 2048, work);
   work->sparkTile = sparkTile;
   mote = work->sparks;
   sprite = work->sparkSprites;

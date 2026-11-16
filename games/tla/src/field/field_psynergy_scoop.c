@@ -194,7 +194,7 @@ void Scoop_DigUpItem(void);
 /// ground that cannot be dug it stops with the error sound; else earth (or, in
 /// a lit place, sparkles) is thrown up and the place's Scoop event runs.
 void FieldPsynergy_Scoop(void) {
-  struct ScoopWork *work = HeapSlot_Alloc(HEAP_SLOT_BATTLE_EFFECT, 0x193c);
+  struct ScoopWork *work = HeapSlot_Alloc(HEAP_SLOT_BATTLE_EFFECT, 6460);
   struct FieldEffectWork *scene = Ram_HeapSlots->fieldEffectWork;
   struct FieldWork *event = Ram_HeapSlots->fieldWork;
   struct Actor *caster = scene->mainActor;
@@ -300,7 +300,7 @@ void FieldPsynergy_Scoop(void) {
   }
 
   if (scene->enabled != 0) {
-    if (Random16() < 0x1000)
+    if (Random16() < 4096)
       work->mode = 1;
     else if (*alternate == 0)
       work->mode = 0;
@@ -313,7 +313,7 @@ void FieldPsynergy_Scoop(void) {
   if (work->mode == 0) {
     Decompress_TaggedLz(Resource_GetTableEntry(RESOURCE_DUST_PUFF_A), work);
     particleEntry = VramCache_FindFreeEntry();
-    particleTile = VramCache_Load(particleEntry, 0x800, work);
+    particleTile = VramCache_Load(particleEntry, 2048, work);
     work->particleTile = particleTile;
     i = 0;
     particle = work->particles;
@@ -330,7 +330,7 @@ void FieldPsynergy_Scoop(void) {
       particle->velocityX = 0;
       particle->velocityY = 0;
       particle->velocityZ = 0;
-      Vector_AddPolarOffset(0x13333, Random16(), &particle->velocityX);
+      Vector_AddPolarOffset(toFIXED(1.2), Random16(), &particle->velocityX);
       particle->timer = -i * 2;
     }
   } else if (work->mode == 2) {
@@ -340,7 +340,7 @@ void FieldPsynergy_Scoop(void) {
       data = Resource_GetTableEntry(RESOURCE_DUST_PUFF_B);
     Decompress_TaggedLz(data, work);
     particleEntry = VramCache_FindFreeEntry();
-    particleTile = VramCache_Load(particleEntry, 0x800, work);
+    particleTile = VramCache_Load(particleEntry, 2048, work);
     work->particleTile = particleTile;
     i = 0;
     particle = work->particles;
@@ -362,7 +362,7 @@ void FieldPsynergy_Scoop(void) {
   } else if (work->mode == 3) {
     Decompress_TaggedLz(Resource_GetTableEntry(RESOURCE_WHITE_SPARKLE), work);
     particleEntry = VramCache_FindFreeEntry();
-    particleTile = VramCache_Load(particleEntry, 0x80, work);
+    particleTile = VramCache_Load(particleEntry, 128, work);
     work->particleTile = particleTile;
     i = 0;
     particle = work->particles;
@@ -385,7 +385,7 @@ void FieldPsynergy_Scoop(void) {
   if (work->mode == 0) {
     Decompress_TaggedLz(Resource_GetTableEntry(RESOURCE_SCOOP_EARTH), work);
     pictureEntry = VramCache_FindFreeEntry();
-    pictureTile = VramCache_Load(pictureEntry, 0x400, NULL);
+    pictureTile = VramCache_Load(pictureEntry, 1024, NULL);
     work->pictureTile = pictureTile;
     sprite = &work->pictureSprite;
     EffectSprite_Init(sprite, 16, 0, OBJ_SIZE_32X32, pictureTile);
@@ -509,7 +509,7 @@ void Scoop_DigUpItem(void) {
       return;
     event->actors[id] = actor;
   }
-  if (Random16() < 0xc000) {
+  if (Random16() < 49152) {
     item = gScoop_DugItems[(Random16() * 16) >> 16];
     if (PartyInventory_FindRoomFar(item) == -1)
       item = SCOOPED_COINS | 1;

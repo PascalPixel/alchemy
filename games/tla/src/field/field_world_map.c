@@ -146,7 +146,7 @@ UNREAD_RESULT WorldMap_InitializePerspective(void) {
   perspective->windowBottom = DISPLAY_HEIGHT - 1;
   Task_Add(WorldMap_UpdateView, TASK_PASS_VBLANK + 5);
   Task_Add(WorldMap_ApplyAffinePage, TASK_PASS_FRAME);
-  for (tileIndex = 0; tileIndex <= 0x3ff; tileIndex++)
+  for (tileIndex = 0; tileIndex <= 1024 - 1; tileIndex++)
     perspective->tileIds[tileIndex] = tileIndex;
 }
 
@@ -420,7 +420,7 @@ void WorldMap_UpdateView(void) {
       (struct WorldMapView *)Ram_HeapSlots->mapGrid;
   s32 *cameraPosition = (s32 *)(camera + 12);
   s32 *followedPosition = perspective->origin;
-  u8 *affinePages = affineWork + 0xc80;
+  u8 *affinePages = affineWork + 3200;
   s32 distance = perspective->farPlane;
   s32 height = perspective->distance;
   s32 tileRow;
@@ -492,7 +492,7 @@ void WorldMap_UpdateView(void) {
   Matrix_RotateY(perspective->yaw);
   Matrix_RotateX(perspective->pitch);
   if (perspective->fixedEye == 0) {
-    SET_POSITION(&eyeOffset, 0, 0, height + 0x10000);
+    SET_POSITION(&eyeOffset, 0, 0, height + toFIXED(1));
     Iwram_TransformVector(&eyeOffset, (s32 *)camera);
   }
   Matrix_Initialize();
@@ -508,7 +508,7 @@ void WorldMap_UpdateView(void) {
   }
   ((void (*)(void *, s32 *, void *, void *))Ram_HeapSlots->ramCode)(
       camera, cameraPosition, affineWork,
-      affinePages + (gFrameCount & 1) * 0x1400);
+      affinePages + (gFrameCount & 1) * 5120);
 }
 
 /// Loads and draws the 2x2 world map tiles around the player in both layers.
@@ -529,8 +529,8 @@ void WorldMap_UpdateCurrentTileBlock(void) {
     x0 = *p++;
     y0 = p[1];
   }
-  x0 = (x0 - 0x1000000) >> 25;
-  y0 = (y0 - 0x1400000) >> 25;
+  x0 = (x0 - toFIXED(256)) >> 25;
+  y0 = (y0 - toFIXED(320)) >> 25;
   for (layer = 0; layer < 2; layer++) {
     for (row = 0; row < 2; row++) {
       for (col = 0; col < 2; col++) {

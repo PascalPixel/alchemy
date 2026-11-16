@@ -299,7 +299,7 @@ extern const u16 gSpriteViewer_SkipStops[];
 
 /// Steps a number from 0 to 715 by delta: a step of one wraps around the
 /// range, a larger step forward goes to the next stop above value and one back
-/// to the last stop below it (gSpriteViewer_SkipStops, ended by 0xffff, from
+/// to the last stop below it (gSpriteViewer_SkipStops, ended by (u16)-1, from
 /// which a step forward wraps to 0). A delta of 0 returns value unchanged.
 s32 SpriteViewer_FindNextSpriteWithPictures(s32 value, s32 delta) {
   s32 step;
@@ -320,7 +320,7 @@ s32 SpriteViewer_FindNextSpriteWithPictures(s32 value, s32 delta) {
       for (i = 0; i < UI_SPRITE_VIEWER_COPY_COUNT; i++) {
         if (value < gSpriteViewer_SkipStops[i]) {
           value = gSpriteViewer_SkipStops[i];
-          if (value == 0xffff)
+          if (value == (u16)-1)
             value = 0;
           break;
         }
@@ -511,7 +511,7 @@ void SpriteViewer_StartStaggeredAnimations(s32 slot, s32 value) {
         entry->step = SPRITE_ANIMATION_NORMAL_STEP;
         entry->scriptOffset = index;
         entry->pictureBase = index;
-        entry->picture = 0xff;
+        entry->picture = SPRITE_PICTURE_NONE;
       }
       ((struct Sprite *)work)->offsetY = metadata->adjustY;
       ((struct Sprite *)work)->rotation = index;

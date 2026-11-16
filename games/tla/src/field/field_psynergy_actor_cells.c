@@ -6,11 +6,11 @@
 #include "field_psynergy_internal.h"
 #include "stddef.h"
 
-/// Makes each listed actor (ids, ended by ACTOR_LIST_END) a block in the map: its
-/// cell's shape is tagged 32 pixels above the ground, so the party can stand
-/// on it, its cell is marked raised (the old mark kept in the actor) and layer
-/// 2 blocks it. A leader below the new ground is lifted onto it. Scenes call it
-/// as they start, for the blocks Move pushes.
+/// Makes each listed actor (ids, ended by ACTOR_LIST_END) a block in the map:
+/// its cell's shape is tagged 32 pixels above the ground, so the party can
+/// stand on it, its cell is marked raised (the old mark kept in the actor) and
+/// layer 2 blocks it. A leader below the new ground is lifted onto it. Scenes
+/// call it as they start, for the blocks Move pushes.
 void Actor_PlaceBlocks(u16 *actors) {
   struct MapWork *map = Ram_HeapSlots->mapGrid;
   struct MapCell *blocks = map->layers[2].cells;
@@ -280,12 +280,12 @@ void EffectSprite_Draw(struct EffectSprite *sprite) {
       left = sprite->pivotX - (sprite->width >> 1) + width / 2;
       top = sprite->pivotY - (sprite->height >> 1) + height / 2;
     } else {
-      left =
-          ((scaleX * (sprite->pivotX - (sprite->width >> 1)) + (FIXED_ONE - 1)) >> 16) +
-          width / 2;
-      top =
-          ((scaleY * (sprite->pivotY - (sprite->height >> 1)) + (FIXED_ONE - 1)) >> 16) +
-          height / 2;
+      left = FIXEDtoINT(scaleX * (sprite->pivotX - (sprite->width >> 1)) +
+                        (FIXED_ONE - 1)) +
+             width / 2;
+      top = FIXEDtoINT(scaleY * (sprite->pivotY - (sprite->height >> 1)) +
+                       (FIXED_ONE - 1)) +
+            height / 2;
     }
   } else {
     FIXED sin = Trig_Sin(sprite->angle);

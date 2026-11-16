@@ -215,9 +215,9 @@ void Sand_SpawnGrain(struct EffectSprite *sprite,
   position[2] = 0;
   position[0] = 0;
   if (high)
-    Vector_AddPolarOffset(0x3333, Random16(), position);
+    Vector_AddPolarOffset(toFIXED(0.2), Random16(), position);
   else
-    Vector_AddPolarOffset(0xcccc, Random16(), position);
+    Vector_AddPolarOffset(toFIXED(0.8), Random16(), position);
   particle->velocityX = position[0];
   particle->velocityY = 0;
   particle->velocityZ = position[2];
@@ -340,7 +340,7 @@ void FieldPsynergy_EndSand(void) {
   {
     void *source = ((struct Sprite *)owner->sprite)->entries[0];
 
-    sprite = 0x400;
+    sprite = 1024;
     FieldPsynergy_DecodePicture(source, work->picture, sprite);
   }
   Animation_ApplyChildValueToFirstFar(owner->sprite, SPRITE_COLOR_HIDDEN);

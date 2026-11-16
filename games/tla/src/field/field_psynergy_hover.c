@@ -70,7 +70,7 @@ s32 HoverGlow_GetColor(s32 counter, s32 level) {
 /// Hover's work (heap slot HEAP_SLOT_BATTLE_EFFECT): the glowing ring under the
 /// hovering leader, its scale, tile and stage.
 struct HoverWork {
-  u8 unused[0x1000]; ///< no code names it
+  u8 unused[4096]; ///< no code names it
   struct EffectSprite sprite;
   s32 scale;
   s16 resource;
@@ -165,7 +165,7 @@ void FieldPsynergy_HoverOnTarget(void) { FieldPsynergy_Hover(); }
 /// (off a hover cell, or touching a solid actor) the ring shrinks away and the
 /// place's Hover event runs instead.
 void FieldPsynergy_Hover(void) {
-  struct HoverWork *work = HeapSlot_Alloc(HEAP_SLOT_BATTLE_EFFECT, 0x1038);
+  struct HoverWork *work = HeapSlot_Alloc(HEAP_SLOT_BATTLE_EFFECT, 4152);
   struct FieldEffectWork *scene = Ram_HeapSlots->fieldEffectWork;
   struct FieldWork *event = Ram_HeapSlots->fieldWork;
   struct Actor *player = scene->mainActor;
@@ -185,7 +185,7 @@ void FieldPsynergy_Hover(void) {
       Scene_SelectPsynergyTarget(scene->fieldPsynergy));
   Decompress_TaggedLz(Resource_GetTableEntry(RESOURCE_RING_ORB), work);
   slot = VramCache_FindFreeEntry();
-  tile = VramCache_Load(slot, 0x800, work);
+  tile = VramCache_Load(slot, 2048, work);
   work->resource = slot;
   work->tile = tile;
   work->scale = 0;

@@ -137,7 +137,7 @@ void Heading_Close(void) {
   REG_DISPCNT ^= DISPCNT_BG0_ON | DISPCNT_WIN0_ON;
   Dma_Fill32Cell(fill, HEADING_BLANK_CELL, (void *)BG_SCREEN_BLOCK(4), 2048);
   Dma_Set(Resource_GetTableEntry(RESOURCE_WINDOW_TILES),
-          (void *)BG_CHAR_BLOCK(0), DMA_COPY_WORDS(0x800), REG_DMA3);
+          (void *)BG_CHAR_BLOCK(0), DMA_COPY_WORDS(2048), REG_DMA3);
   REG_DISPCNT ^= DISPCNT_BG0_ON;
 }
 

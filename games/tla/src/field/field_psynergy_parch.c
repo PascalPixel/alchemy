@@ -43,7 +43,7 @@ enum ParchResult {
 struct ParchWork {
   u8 tiles[4096];
   struct EffectSprite disc;
-  u8 unusedAfterDisc[0x28]; ///< no code names it
+  u8 unusedAfterDisc[40]; ///< no code names it
   s32 discX;
   s32 discY;
   s32 discScaleX;
@@ -141,7 +141,7 @@ void FieldPsynergy_Parch(void) {
 loaded:
   {
     void *source = Resource_GetTableEntry(RESOURCE_GLOW_DISC);
-    dst = (u8 *)OBJ_VRAM0 + 0x1000 + vramWork->glyphTiles * 32;
+    dst = (u8 *)OBJ_VRAM0 + 4096 + vramWork->glyphTiles * 32;
     Decompress_TaggedLz(source, work);
   }
   Dma_Set(work, dst, DMA_COPY_WORDS(1024), REG_DMA3);
@@ -229,7 +229,7 @@ loaded:
         add = fade / 4;
       blue = Trig_Sin((frame / 2 + i) << 11); // blue reused for green's sine
       green = (blue * 8 >> 16) + 23;
-      blue = Trig_Sin(((frame / 4 + i) << 11) + 0x4800);
+      blue = Trig_Sin(((frame / 4 + i) << 11) + TRIG_TURN * 9 / 32);
       blue = (blue * 10 >> 16) + 12;
       red = add + 28;
       if (red > RGB_LEVEL_MAX)
@@ -271,7 +271,7 @@ loaded:
           Sound_PlayFar(SE_PARCH);
         work->discScaleX += FIXED_ONE * 3 / 256;
         work->discScaleY = work->discScaleX;
-        if (work->discScaleX > 0x3fff) {
+        if (work->discScaleX > toFIXED(0.25) - 1) {
           phase = 1;
           timer = -1;
         }
@@ -298,7 +298,7 @@ loaded:
           Sound_PlayFar(SE_SPIN);
         work->discScaleX += FIXED_ONE * 3 / 256;
         work->discScaleY = work->discScaleX;
-        if (work->discScaleX > 0xbfff) {
+        if (work->discScaleX > toFIXED(0.75) - 1) {
           phase = 1;
           timer = -1;
         }
@@ -333,7 +333,7 @@ loaded:
           Sound_PlayFar(SE_SPIN);
         work->discScaleX += FIXED_ONE * 3 / 256;
         work->discScaleY = work->discScaleX;
-        if (work->discScaleX > 0xbfff) {
+        if (work->discScaleX > toFIXED(0.75) - 1) {
           phase = 1;
           timer = -1;
         }

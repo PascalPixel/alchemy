@@ -71,8 +71,8 @@ void WorldMap_PreloadCurrentTileBlock(void) {
     x = *p++;
     y = p[1];
   }
-  x0 = (x - 0x1000000) >> 25;
-  y0 = (y - 0x1400000) >> 25;
+  x0 = (x - toFIXED(256)) >> 25;
+  y0 = (y - toFIXED(320)) >> 25;
   for (layer = 0; layer <= 1; layer++) {
     for (row = 0; row <= 1; row++) {
       for (col = 0; col <= 1; col++) {
@@ -113,7 +113,7 @@ void WorldMap_PreloadCurrentTileBlock(void) {
     return;
   if (value != 0)
     return;
-  buffer = Heap_Alloc(0x200);
+  buffer = Heap_Alloc(512);
   switch (perspective->reloadSteps) {
   case 12: {
     s16 backdropColor = *(s16 *)BG_PLTT;
@@ -186,7 +186,7 @@ void WorldMap_PresentStillPicture(void) {
   Io_Write16(BGCNT_PRIORITY(2) | BGCNT_256_COLORS | BGCNT_SCREEN_BASE(6),
              &REG_BG1CNT);
   Dma_Set(Ram_MapCellBuffer, (void *)BG_SCREEN_BLOCK(12),
-          DMA_COPY_WORDS(0xa000 / 4), REG_DMA3);
+          DMA_COPY_WORDS(40960 / 4), REG_DMA3);
 }
 
 /// Freezes the world map's perspective view as a still picture on BG1: decodes
@@ -212,10 +212,10 @@ void WorldMap_StartStillPicture(void) {
     Decompress_TaggedLz(Resource_GetTableEntry(resources[4]),
                         WORLD_MAP_TILE_SET(1));
   perspective->tileBufferUsed = 0;
-  Dma_Set((void *)BG_CHAR_BLOCK(1), gDecodeBuffer, DMA_COPY_WORDS(0x2000 / 4),
+  Dma_Set((void *)BG_CHAR_BLOCK(1), gDecodeBuffer, DMA_COPY_WORDS(8192 / 4),
           REG_DMA3);
   wait(1);
-  TileMap_DrawRowsFromRam(pages + (gFrameCount & one) * 0x1400 + 0xc80,
+  TileMap_DrawRowsFromRam(pages + (gFrameCount & one) * 5120 + 3200,
                           Ram_MapCellBuffer);
   perspective->windowTop = 200;
   perspective->windowBottom = 255;
@@ -232,7 +232,7 @@ void WorldMap_ShowBg1FromBuffer(void) {
                  BGCNT_WRAP | BGCNT_SIZE(2),
              &REG_BG2CNT);
   Io_Write16(BGCNT_PRIORITY(1) | BGCNT_SCREEN_BASE(5), &REG_BG1CNT);
-  Dma_Set(gBgTileBuffer, (void *)BG_CHAR_BLOCK(2), DMA_COPY_WORDS(0x8000 / 4),
+  Dma_Set(gBgTileBuffer, (void *)BG_CHAR_BLOCK(2), DMA_COPY_WORDS(32768 / 4),
           REG_DMA3);
 }
 
@@ -283,7 +283,7 @@ void WorldMap_LoadDefaultCellsAndUpdateBlock(void) {
 
   gVBlankCallback = WorldMap_ShowBg1FromBuffer;
   perspective->windowTop = 0;
-  perspective->windowBottom = 0x9f;
+  perspective->windowBottom = DISPLAY_HEIGHT - 1;
   wait(1);
   Decompress_TaggedLz(Resource_GetTableEntry(RESOURCE_DEFAULT_MAP_CELLS),
                       Ram_MapCellBuffer);
@@ -493,8 +493,8 @@ again:
     blend->cursor += 2;
     goto again;
   }
-  // Adding 0xffff to the halfword counts the wait down by one.
-  blend->delay = delayOrJumpIndex + 0xffff;
+  // Adding (u16)-1 to the halfword counts the wait down by one.
+  blend->delay = delayOrJumpIndex + (u16)-1;
 }
 
 /// Starts a map's blend script, unless it is empty. Clears the map work's
@@ -511,7 +511,7 @@ void BlendScript_Start(u16 *script) {
   Dma_Set((const void *)&zero, state,
           (DMA_ENABLE | DMA_32BIT | DMA_SRC_FIXED) << 16 | 3, REG_DMA3);
   first = *script;
-  if (first != 0xffff) {
+  if (first != BLEND_SCRIPT_LOOP) {
     state->script = script;
     state->cursor = script;
     state->delay = 0;
@@ -1222,10 +1222,10 @@ s32 WorldMap_GetBlockPlace(struct WorldPosition *position) {
   s32 x = position->x;
 
   if (x < 0)
-    x += 0x1fffff;
+    x += toFIXED(32) - 1;
   x = x >> 21 & 31;
   if (z < 0)
-    z += 0x1fffff;
+    z += toFIXED(32) - 1;
   z = z >> 21 & 31;
   return ((struct WorldMapBlocks *)gCellPictures)->blocks[x + z * 32].place;
 }
@@ -1247,11 +1247,11 @@ s32 WorldMap_GetCollision(struct WorldPosition *position) {
   collisionCell = (((halfPixelY / 8) & 63) << 6) + ((halfPixelX / 8) & 63);
   pixelOffset = (((halfPixelY / 2) & 3) << 1) + ((halfPixelX / 4) & 1);
 
-  // The upper layer: its tile map in screen block 10, its tiles 0x800 bytes
+  // The upper layer: its tile map in screen block 10, its tiles 2048 bytes
   // into the collision buffer.
   collisionTile = BG_SCREEN_BLOCK(10)[collisionCell];
   packedCollisions =
-      *(Ram_MapCollision + 0x800 + (collisionTile << 3) + pixelOffset);
+      *(Ram_MapCollision + 2048 + (collisionTile << 3) + pixelOffset);
   if (packedCollisions != 0) {
     if (halfPixelX & 2)
       result = packedCollisions >> 4;

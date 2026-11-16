@@ -505,7 +505,7 @@ enum BlazeMode {
 /// and 16 smoke puffs with their motion, where the jet starts and where it
 /// points, and the actor it has reached.
 struct BlazeWork {
-  u8 unused[0x1000]; ///< no code names it
+  u8 unused[4096]; ///< no code names it
   struct EffectSprite drops[BLAZE_DROPS];
   struct FieldPsynergyParticle dropMotion[BLAZE_DROPS];
   struct EffectSprite puffs[BLAZE_DROPS];
@@ -652,7 +652,7 @@ void Blaze_UpdateSpray(void) {
   target = scene->angle8 - DEGtoANG(90);
   turn = (s16)(work->targetAngle - work->angle);
   if ((u16)(work->targetAngle - target) - (u16)(work->angle - target) ==
-      0x8000) {
+      TRIG_TURN / 2) {
     work->angle = work->angle + TRIG_TURN / 64;
   } else {
     if (turn > TRIG_TURN / 64)

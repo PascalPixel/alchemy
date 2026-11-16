@@ -245,7 +245,7 @@ s32 ActorScript_FindLabel(struct Actor *interpreter, u32 key) {
       return index + 1;
     }
     index++;
-  } while (index <= 0x3FF);
+  } while (index <= 1024 - 1);
   return 0;
 }
 
@@ -261,7 +261,7 @@ s32 ActorScript_RepeatOrJump(struct Actor *interpreter) {
   arguments = &interpreter->script[interpreter->scriptCursor + 1];
   repeatLimit = *arguments++;
   jumpKey = *arguments;
-  if (repeatLimit == 0xFFFF) {
+  if (repeatLimit == SC_FOREVER) {
     interpreter->scriptCursor = ActorScript_FindLabel(interpreter, jumpKey);
   } else {
     repeatCount = &interpreter->repeatCount;
@@ -768,8 +768,8 @@ s32 Actor_ApproachWatchedActor(struct Actor *actor) {
   deltaZPixels = FIXEDtoINT(dz);
   distancePixels =
       Iwram_Sqrt((deltaXPixels * deltaXPixels) + (deltaZPixels * deltaZPixels));
-  if (distancePixels > 0x10) {
-    remainingDistance = distancePixels - 0x10;
+  if (distancePixels > 16) {
+    remainingDistance = distancePixels - 16;
     moveX = dx * remainingDistance / distancePixels;
     moveZ = dz * remainingDistance / distancePixels;
     Actor_SetMoveTarget(actor, actor->x.fixed + moveX, actor->y.fixed,

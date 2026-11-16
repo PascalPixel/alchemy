@@ -350,7 +350,7 @@ void Render_PlaceSpritePartPair(struct Sprite *sprite, FIXED screenX,
 
   /* FAKEMATCH(temporary): the height read through HEIGHT_COPY, a u8 copy, at
    * both uses. */
-  if (scaleX > 0x10000 || scaleY > FIXED_ONE) {
+  if (scaleX > FIXED_ONE || scaleY > FIXED_ONE) {
     affine = 3;
     halfWidth <<= 1;
     halfHeight <<= 1;
@@ -359,7 +359,8 @@ void Render_PlaceSpritePartPair(struct Sprite *sprite, FIXED screenX,
   }
   x = FIXEDtoINT(screenX) - halfWidth;
   y = FIXEDtoINT(screenY - height) - halfHeight -
-      ((((HEIGHT_COPY(sprite) >> 1) - sprite->offsetY) * scaleY + 0xffff) >>
+      ((((HEIGHT_COPY(sprite) >> 1) - sprite->offsetY) * scaleY +
+        (FIXED_ONE - 1)) >>
        16);
   sprite->image.affine = affine;
   sprite->image.x = x;
@@ -411,7 +412,7 @@ void Render_ApplyProjectedPlacement(struct Sprite *object, s32 *pos, s32 *scale,
   pz = *pos++;
   pw = *pos;
   flip = Sprite_ComposePicture(object, mode);
-  if (flip == 0 && scaleX == 0x10000 && scaleY == scaleX &&
+  if (flip == 0 && scaleX == FIXED_ONE && scaleY == scaleX &&
       object->rotation == 0) {
     affine = 0;
     matrix = 0;
@@ -456,8 +457,8 @@ void Render_ApplyProjectedPlacement(struct Sprite *object, s32 *pos, s32 *scale,
     anchorX = Iwram_MulFX(cos, offsetX) + Iwram_MulFX(sin, offsetY);
     anchorY = Iwram_MulFX(cos, offsetY) - Iwram_MulFX(sin, offsetX);
   }
-  x = FIXEDtoINT(px) - halfWidth + FIXEDtoINT(anchorX + 0xffff);
-  y = FIXEDtoINT(pz - py) - halfHeight - FIXEDtoINT(anchorY + 0xffff);
+  x = FIXEDtoINT(px) - halfWidth + FIXEDtoINT(anchorX + (FIXED_ONE - 1));
+  y = FIXEDtoINT(pz - py) - halfHeight - FIXEDtoINT(anchorY + (FIXED_ONE - 1));
   if (x < 240 && y < 160) {
     part = &object->image;
     part->x = x;
@@ -510,7 +511,7 @@ void Render_ApplyProjectedPlacementAtDepth(struct Sprite *object, s32 *pos,
   pz = *pos++;
   pw = *pos;
   flip = Sprite_ComposePicture(object, mode);
-  if (flip == 0 && scaleX == 0x10000 && scaleY == scaleX &&
+  if (flip == 0 && scaleX == FIXED_ONE && scaleY == scaleX &&
       object->rotation == 0) {
     affine = 0;
     matrix = 0;
@@ -523,7 +524,7 @@ void Render_ApplyProjectedPlacementAtDepth(struct Sprite *object, s32 *pos,
       effect.scaleX = -effect.scaleX;
     matrix = OamMatrix_AllocFromTransform(&effect);
   }
-  if (scaleX > 0x10000 || scaleY > FIXED_ONE) {
+  if (scaleX > FIXED_ONE || scaleY > FIXED_ONE) {
     affine = 3;
     halfWidth <<= 1;
     halfHeight <<= 1;
@@ -562,8 +563,8 @@ void Render_ApplyProjectedPlacementAtDepth(struct Sprite *object, s32 *pos,
     anchorX = Iwram_MulFX(cos, extentX) + Iwram_MulFX(sin, extentY);
     anchorY = Iwram_MulFX(cos, extentY) - Iwram_MulFX(sin, extentX);
   }
-  x = FIXEDtoINT(px) - halfWidth + FIXEDtoINT(anchorX + 0xffff);
-  y = FIXEDtoINT(pz - py) - halfHeight - FIXEDtoINT(anchorY + 0xffff);
+  x = FIXEDtoINT(px) - halfWidth + FIXEDtoINT(anchorX + (FIXED_ONE - 1));
+  y = FIXEDtoINT(pz - py) - halfHeight - FIXEDtoINT(anchorY + (FIXED_ONE - 1));
   if (x < 240 && y < 160) {
     part = &object->image;
     part->x = x;
@@ -599,27 +600,27 @@ void Render_PlaceProjectedSprite(struct Sprite *sprite, s32 *point, s32 *scale,
     if (screen[2] != 0 && (u32)(screen[0] + 32) <= 304 &&
         (u32)(screen[1] + 32) <= 240) {
       if (sprite->useOwnScale)
-        z = 0x10000;
+        z = FIXED_ONE;
       z = Iwram_MulFX(z, sprite->scale);
       flip = Sprite_ComposePicture(sprite, facing);
       z >>= 10;
       rounded = ((z + 1) >> 1) << 11;
       scaleX = Iwram_MulFX(rounded, scale[0]);
       scaleY = Iwram_MulFX(rounded, scale[1]);
-      if (scaleX > 0x1f800)
-        scaleX = 0x1f800;
-      if (scaleY > 0x1f800)
-        scaleY = 0x1f800;
+      if (scaleX > FIXED_ONE * 63 / 32)
+        scaleX = FIXED_ONE * 63 / 32;
+      if (scaleY > FIXED_ONE * 63 / 32)
+        scaleY = FIXED_ONE * 63 / 32;
       halfHeight = sprite->height >> 1;
       offsetY = Iwram_MulFX(sprite->offsetY - halfHeight, scaleY);
       halfWidth = sprite->width >> 1;
-      if (scaleX > 0x10000 || scaleY > FIXED_ONE) {
+      if (scaleX > FIXED_ONE || scaleY > FIXED_ONE) {
         affine = 3;
         halfWidth <<= 1;
         halfHeight <<= 1;
       } else {
         affine = 1;
-        if (scaleX == 0x10000 && sprite->rotation == 0 && scaleY == scaleX)
+        if (scaleX == FIXED_ONE && sprite->rotation == 0 && scaleY == scaleX)
           affine = 0;
       }
       if (flip)
@@ -638,7 +639,7 @@ void Render_PlaceProjectedSprite(struct Sprite *sprite, s32 *point, s32 *scale,
             ((u32)(screen[0] - halfWidth + offsetX) << 23 >> 7) |
             (u8)(screen[1] - halfHeight + offsetY);
         if (depth == 0) {
-          s32 slot = 0x180 - (screen[2] >> 1);
+          s32 slot = 384 - (screen[2] >> 1);
 
           if (slot <= 0)
             slot = 1;

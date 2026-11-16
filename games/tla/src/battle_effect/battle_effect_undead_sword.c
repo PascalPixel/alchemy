@@ -356,6 +356,9 @@ struct WaterVertex {
   s32 z : 8;
 };
 
+/// The water's 16 by 8 vertices, at the head of the map cell buffer.
+#define WATER_VERTICES ((struct WaterVertex *)Ram_MapCellBuffer)
+
 /// One triangle of the water's mesh: three vertex indices, then a texture
 /// coordinate for each.
 struct WaterTriangle {
@@ -510,7 +513,6 @@ void BattleEffect_RunWaterSheet(struct BattleEffectParams *args, s32 mode) {
     void *vertices;
     s32 shade;
     s32 angle;
-    s32 offset;
 
     if (frame == 0) {
       camera->yaw = savedYaw;
@@ -595,20 +597,15 @@ void BattleEffect_RunWaterSheet(struct BattleEffectParams *args, s32 mode) {
     phase = frame * 2;
     row = 1;
     angle = frame << 11;
-    for (offset = 64; row != 7; row++, offset += 64) {
-      s8 *vertex;
-
-      for (column = 0, vertex = (s8 *)gMapGridCellBuffer + offset + 1;
-           column != WATER_COLUMNS; column++, vertex += 4) {
+    for (; row != 7; row++) {
+      for (column = 0; column != WATER_COLUMNS; column++) {
         s32 amplitude = (16 - column) * height / 32;
         s32 y =
             (FIXEDtoINT(Trig_Sin(angle + column * 5000 + Trig_Sin(row * 3553)) *
                         amplitude)) -
             amplitude;
 
-        /* FAKEMATCH(temporary): the height stored through the vertex it is part
-         * of. */
-        ((struct WaterVertex *)(vertex - 1))->y = y + 64;
+        WATER_VERTICES[row * 16 + column].y = y + 64;
       }
     }
     i = 0;
@@ -1291,5 +1288,6 @@ void BattleEffect_RunDiamondBerg(struct BattleEffectParams *args) {
 #undef WATER_ROWS
 #undef WATER_QUADS
 #undef WATER_MESH
+#undef WATER_VERTICES
 #undef WAFT_SEGMENTS
 #undef DIAMOND_BERG_FRAMES

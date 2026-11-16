@@ -1271,6 +1271,10 @@ void BattleEffect_RunCharon(struct BattleEffectParams *arg) {
   Resource_LoadAndDecompress(RESOURCE_GLOW_RING_TEXTURE,
                              work->sheet + CHARON_GLOW_RING, 0, 0);
   Resource_LoadAndDecompress(RESOURCE_PARTICLE_SPRITES_A, glyphs, 0, 0);
+  // DEAD: a loop that counts i to 770, the bytes of a set of motes, by 35 and
+  // does nothing else; the ROM keeps the count, the add and the test. (A for
+  // loop matches here only with a body whose store dies after the loop pass,
+  // so the original's body left no instruction.)
   {
     s32 limit;
 

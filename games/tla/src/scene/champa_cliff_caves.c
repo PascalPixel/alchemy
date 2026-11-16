@@ -128,7 +128,7 @@ void ChampaCliffCaves_ObabaSeesAWeapon(s32 item);
 void ChampaCliffCaves_ObabaAsksForSecondPiece(s32 item);
 void ChampaCliffCaves_StartFlash(s32 id, s32 mode);
 /// A scale of the Champa forge's glow, 16.16; a union, so that a store to it
-/// keeps its place after the sprite's (ChampaCliffCaves_DrawSparks).
+/// keeps its place after the sprite's (ChampaCliffCaves_LoadDisc).
 union ChampaCliffCavesScale {
   FIXED value;
   u16 half;
@@ -153,9 +153,9 @@ struct ChampaCliffCavesWork {
   s16 frame;
 };
 
-void ChampaCliffCaves_DrawSparks(void);
+void ChampaCliffCaves_LoadDisc(void);
 void ChampaCliffCaves_DrawGlow(void);
-void ChampaCliffCaves_DrawFallingSparks(void);
+void ChampaCliffCaves_LoadColumn(void);
 
 void ChampaCliffCaves_ObabaAsksForBriggs(void);
 
@@ -179,7 +179,7 @@ void FieldEffect_StartBlankOverlay(s32 a);
     object->scaleCopy = object->scale;                                         \
   }
 
-DEFINE_CHAMPA_CLIFF_CAVES_GROW(ChampaCliffCaves_GrowThrown, 0x1000)
+DEFINE_CHAMPA_CLIFF_CAVES_GROW(ChampaCliffCaves_GrowThrown, FIXED_ONE / 16)
 
 const struct SceneEntrance *Scene_GetEntrances(void) { return gSceneEntrances; }
 
@@ -256,10 +256,13 @@ void ChampaCliffCaves_OpenDoorAndEnter(const struct DoorEdit *edit, s32 door,
   Event_End();
 }
 
+/// Stepping into the cliff's first door: it opens and the leader walks through.
 void ChampaCliffCaves_EnterDoor(s32 door) {
   ChampaCliffCaves_OpenDoorAndEnter(&gChampaCliffCaves_FirstDoor, door, 0);
 }
 
+/// Knocking at Obaba's door before Briggs is home: she comes out, asks whether
+/// her grandson has returned, and goes back in.
 void ChampaCliffCaves_ObabaAsksForBriggs(void) {
   const struct DoorEdit *edit;
   s32 msg;
@@ -295,6 +298,8 @@ void ChampaCliffCaves_ObabaAsksForBriggs(void) {
   Sound_Play(SE_DOOR_OPEN);
 }
 
+/// A villager at a door asks whether the party wants to come in, and answers
+/// the choice.
 void ChampaCliffCaves_AskToComeIn(s32 actor) {
   s32 msg = (s32)MsgWhatYouWant;
 
@@ -310,7 +315,9 @@ void ChampaCliffCaves_AskToComeIn(s32 actor) {
   Event_ShowMessageAndWait(actor, 0);
 }
 
-void ChampaCliffCaves_BriggsSurrenders(s32 actor) {
+/// One of Briggs's crew gives in ("I'll go back to Alhafra...but only if Briggs
+/// is going") and keeps watching the leader.
+void ChampaCliffCaves_CrewmanSurrenders(s32 actor) {
   struct Actor *object;
 
   Event_SetMessageId((s32)MsgAllRightI);
@@ -320,6 +327,8 @@ void ChampaCliffCaves_BriggsSurrenders(s32 actor) {
   Actor_WatchActor(object, Actor_GetById(gMainRoutineWork.leaderActorId));
 }
 
+/// "Aw, come on! I'm not doing anything! Leave me alone!": the speaker turns
+/// away and squashes down.
 void ChampaCliffCaves_TalkToBriggs(s32 actor) {
   Event_SetMessageId((s32)MsgAwComeOn);
   // "Aw, come on! I'm not doing anything! Leave me alone!"
@@ -328,11 +337,13 @@ void ChampaCliffCaves_TalkToBriggs(s32 actor) {
   Actor_SetMovementType(Actor_GetById(actor), MOVEMENT_TYPE_SQUASH);
 }
 
+/// Opens the wall into Avimander's room: its pictures and its walkable cells.
 void ChampaCliffCaves_OpenWall(void) {
   MapGrid_CopyCellPictureCellsRect(41, 97, 1, 4, 41, 77);
   Map_CopyCellAttributeRect(41, 33, 1, 4, 41, 13);
 }
 
+/// Closes the wall again, moving a leader who stands in its gap out of the way.
 void ChampaCliffCaves_CloseWall(void) {
   struct Actor *object;
   s32 x;
@@ -350,6 +361,7 @@ void ChampaCliffCaves_CloseWall(void) {
 
 extern struct Trigger gChampaCliffCaves_BriggsTriggers[];
 
+/// Picks up the forged Trident from beside Obaba's forge.
 void ChampaCliffCaves_PickUpTrident(s32 a) {
   Event_PickUpItem(a, ITEM_TRIDENT, FLAG_TRIDENT_TAKEN);
 }
@@ -407,6 +419,8 @@ s32 Scene_Initialize(void) {
 
 s32 Scene_PrepareMap(void) { return 0; }
 
+/// The leader walks to Obaba, holds up the given item over the counter and
+/// steps back.
 void ChampaCliffCaves_HandPieceToObaba(s32 actor) {
   Actor_WalkToAndWaitById(gMainRoutineWork.leaderActorId, 648, 200);
   Actor_FaceDirectionAndRefreshById(gMainRoutineWork.leaderActorId,
@@ -427,6 +441,8 @@ void ChampaCliffCaves_HandPieceToObaba(s32 actor) {
   Event_Wait(10);
 }
 
+/// Obaba steps up to take the item from the counter, and unless she is to forge
+/// it steps back.
 void ChampaCliffCaves_ObabaStepsForward(s32 value) {
   Actor_SetSpeed(ACTOR_OBABA, 0.8);
   Actor_GetById(ACTOR_OBABA)->steeringFlags &= ~ACTOR_FACES_MOTION;
@@ -482,6 +498,8 @@ void ChampaCliffCaves_FadeColours(u16 *from, u16 *to, s32 frames) {
   }
 }
 
+/// Obaba is handed the first prong: she knows it for part of the trident of
+/// Ankohl and offers to keep it until the party brings the other two.
 void ChampaCliffCaves_ObabaSeesAWeapon(s32 actor) {
   Event_Start();
   Event_ResolvePendingActions(0);
@@ -519,8 +537,8 @@ void ChampaCliffCaves_ObabaSeesAWeapon(s32 actor) {
   Actor_ShowEmoteById(ACTOR_OBABA, EMOTE_IN_FRONT | EMOTE_WINCE, 30);
   // "You seem unsure... You don't think I'll pull a fast one on you, do you?"
   // Yes: "Kids today. So mistrustful." No: "Ah, that's nice. Don't you worry!"
-  FieldMessage_ShowAtActor(8, 0);
-  if (Event_AskYesNoWithActorAnimation(4, 0) == 0) {
+  FieldMessage_ShowAtActor(ACTOR_OBABA, 0);
+  if (Event_AskYesNoWithActorAnimation(ACTOR_FELIX, 0) == 0) {
     Event_Wait(20);
     // "Kids today. So mistrustful."
     Event_ShowMessageThenWait(ACTOR_OBABA, 0, 5);
@@ -538,6 +556,7 @@ void ChampaCliffCaves_ObabaSeesAWeapon(s32 actor) {
   Event_End();
 }
 
+/// Obaba is handed the second prong and keeps it with the first.
 void ChampaCliffCaves_ObabaAsksForSecondPiece(s32 actor) {
   Event_Start();
   Event_ResolvePendingActions(0);
@@ -569,13 +588,15 @@ void ChampaCliffCaves_ObabaAsksForSecondPiece(s32 actor) {
 
 #include "text/msg_ids.h"
 
-/// The three animations a throw plays.
-struct ThrowAnimations {
-  s32 animations[3];
+/// The trident's three prongs, in the order Obaba throws them into the forge.
+struct TridentProngs {
+  s32 items[3];
 };
 
-extern struct ThrowAnimations gChampaCliffCaves_ThrowAnimations;
+extern struct TridentProngs gChampaCliffCaves_Prongs;
 
+/// Obaba is handed the last prong and throws the three into her forge, which
+/// flares, shakes the room and lifts out the Trident.
 void ChampaCliffCaves_ObabaForgesTrident(s32 value) {
   struct Actor *thrown = Actor_GetById(ACTOR_HELD_ITEM);
   u16 bright[5];
@@ -585,9 +606,9 @@ void ChampaCliffCaves_ObabaForgesTrident(s32 value) {
   struct Actor *object;
   u16 *palette;
 
-  glow[0] = 0x2960000;
+  glow[0] = toFIXED(662);
   glow[1] = 0;
-  glow[2] = 0xee0000;
+  glow[2] = toFIXED(238);
   palette = (u16 *)&BG_PLTT_COLOR(7, 2);
   bright[0] = *palette++;
   bright[1] = *palette++;
@@ -611,7 +632,7 @@ void ChampaCliffCaves_ObabaForgesTrident(s32 value) {
   // "That means I can begin work reforging the ancient trident of Ankohl!..."
   Event_ShowMessageThenWait(ACTOR_OBABA, 0, 5);
   ChampaCliffCaves_ObabaStepsForward(1);
-  Actor_WalkToAndWait(ACTOR_OBABA, 0x298, 200);
+  Actor_WalkToAndWait(ACTOR_OBABA, 664, 200);
   Actor_FaceDirectionAndWait(ACTOR_OBABA, FACING_SOUTH_SOUTHEAST);
   Event_Wait(10);
   Actor_FaceDirectionAndWait(ACTOR_OBABA, FACING_WEST);
@@ -619,7 +640,7 @@ void ChampaCliffCaves_ObabaForgesTrident(s32 value) {
   // "We'll just toss all three pieces in here, shall we?" Yes: "Just leave it
   // to me..." No: "There's nothing to be afraid of, dear. Just..."
   FieldMessage_ShowAtActor(ACTOR_OBABA, 0);
-  if (Event_AskYesNoWithActorAnimation(4, 0) == 0) {
+  if (Event_AskYesNoWithActorAnimation(ACTOR_FELIX, 0) == 0) {
     Event_Wait(20);
     // "Just leave it to me..."
     Event_ShowMessageThenWait(ACTOR_OBABA, 0, 5);
@@ -640,12 +661,12 @@ void ChampaCliffCaves_ObabaForgesTrident(s32 value) {
   // "Heart of the earth, fury of the forge's flames, grant me power!"
   Event_ShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | ACTOR_OBABA, 0, 5);
   for (i = 0; i <= 2; i++) {
-    struct ThrowAnimations animations;
+    struct TridentProngs prongs;
     FIXED landing[3];
-    animations = gChampaCliffCaves_ThrowAnimations;
+    prongs = gChampaCliffCaves_Prongs;
     Actor_SetAnimationById(ACTOR_OBABA, 9);
     Event_Wait(3);
-    Actor_ShowItemIconById(ACTOR_HELD_ITEM, animations.animations[i]);
+    Actor_ShowItemIconById(ACTOR_HELD_ITEM, prongs.items[i]);
     Actor_SetPosition(ACTOR_HELD_ITEM, 668, 200);
     thrown->gravity = toFIXED(1) / 4;
     Actor_Jump(ACTOR_HELD_ITEM, 4, 2);
@@ -689,7 +710,7 @@ void ChampaCliffCaves_ObabaForgesTrident(s32 value) {
                           ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   Event_Wait(50);
   Actor_ShowEmoteById(ACTOR_OBABA, EMOTE_IN_FRONT | EMOTE_QUESTION, 60);
-  Call2((void (*)())Field_StartColorTransition, 16, 0x1090);
+  Call2((void (*)())Field_StartColorTransition, 16, RGB(16, 4, 4));
   MapGrid_SetShake(2, 2, 1);
   ChampaCliffCaves_StartEmbers(glow);
   Actor_SetAnimationById(ACTOR_OBABA, ANIM_STAND);
@@ -701,7 +722,8 @@ void ChampaCliffCaves_ObabaForgesTrident(s32 value) {
   Actor_GetById(ACTOR_FELIX)->steeringFlags |= ACTOR_FACES_MOTION;
   Event_Wait(10);
   Actor_StartRepeatedMotion(ACTOR_OBABA, 3);
-  FieldEffect_SetAttached(8, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
+  FieldEffect_SetAttached(ACTOR_OBABA,
+                          ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   Event_Wait(30);
   // "What's going on?"
   FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | ACTOR_OBABA, 0, 5);
@@ -751,6 +773,8 @@ void ChampaCliffCaves_ObabaForgesTrident(s32 value) {
 
 static __inline__ s32 GameFlag_Test_(s32 flag) { return GameFlag_Get(flag); }
 
+/// Talking to Obaba at her counter: she takes the next prong the party carries,
+/// right, left then center, or talks of the trident when it has none.
 void ChampaCliffCaves_ObabaOffersHelp(s32 actor) {
   s32 item;
   // DEAD: each owner is stored and never read; the ROM keeps the copies of
@@ -814,7 +838,8 @@ chosen:
   }
 }
 
-DEFINE_CHAMPA_CLIFF_CAVES_GROW(ChampaCliffCaves_GrowThrownSlowly, 0xc00)
+DEFINE_CHAMPA_CLIFF_CAVES_GROW(ChampaCliffCaves_GrowThrownSlowly,
+                               FIXED_ONE * 3 / 64)
 
 #define PALETTE ((u16 *)&BG_PLTT_COLOR(0, 0))
 
@@ -824,6 +849,9 @@ struct Position {
   s32 z;
 };
 
+/// Entering Avimander's room: Briggs stops the party and Obaba asks Felix to
+/// back down; refused, she throws Briggs's salamander into her forge and it
+/// comes out as Avimander to fight.
 void ChampaCliffCaves_FightAvimander(void) {
   u16 current[5];
   u16 target[5];
@@ -946,7 +974,7 @@ void ChampaCliffCaves_FightAvimander(void) {
   Actor_GetById(ACTOR_SALAMANDER)->scaleY = FIXED_ONE * 6 / 5;
   Actor_SetSpriteFlags(Actor_GetById(ACTOR_SALAMANDER), 0);
   Event_OpenMessage(SPEAKER_PORTRAIT_RIGHT | ACTOR_OBABA, 0);
-  if (Event_AskYesNoWithActorAnimation(4, 0) == 0) {
+  if (Event_AskYesNoWithActorAnimation(ACTOR_FELIX, 0) == 0) {
     Scene_PlayMusic();
     Event_Wait(15);
     Actor_SetPosition(ACTOR_SALAMANDER, 0, 0);
@@ -1024,6 +1052,8 @@ void ChampaCliffCaves_FightAvimander(void) {
   Event_End();
 }
 
+/// After losing to Avimander: Briggs asks Felix whether he has learned his
+/// lesson, Obaba scolds, and the party is sent back.
 void ChampaCliffCaves_AskIfBriggsLearned(void) {
   struct FieldWork *work;
 
@@ -1202,7 +1232,7 @@ void ChampaCliffCaves_BriggsMournsSalamander(void) {
   // "Good. That greedy bag of hot air can do his..." No: "Felix, I know you
   // can't mean that. We didn't..."
   FieldMessage_ShowAtActor(SPEAKER_PORTRAIT_RIGHT | ACTOR_KRADEN, 0);
-  if (Event_AskYesNoWithActorAnimation(4, 0) == 0) {
+  if (Event_AskYesNoWithActorAnimation(ACTOR_FELIX, 0) == 0) {
     Event_Wait(20);
     Actor_FaceDirectionAndRefreshById(ACTOR_SHEBA, FACING_SOUTHEAST);
     Event_Wait(5);
@@ -1361,7 +1391,7 @@ void ChampaCliffCaves_BriggsMournsSalamander(void) {
   FieldMessage_ShowAtActor(ACTOR_BRIGGS, 0);
   Actor_FaceDirection(ACTOR_FELIX, FACING_NORTHEAST, 0);
   Actor_FaceDirectionAndWait(ACTOR_OBABA, FACING_SOUTH_SOUTHWEST);
-  if (Event_AskYesNoWithActorAnimation(4, 0) == 0) {
+  if (Event_AskYesNoWithActorAnimation(ACTOR_FELIX, 0) == 0) {
     Event_Wait(20);
     Actor_RunRepeatedMotion(ACTOR_OBABA, 2);
     Event_Wait(5);
@@ -1446,7 +1476,7 @@ void ChampaCliffCaves_BriggsMournsSalamander(void) {
   Actor_FaceDirectionById(ACTOR_JENNA, FACING_EAST, 0);
   Actor_FaceDirection(ACTOR_SHEBA, FACING_SOUTHEAST, 0);
   Actor_FaceDirectionAndWait(ACTOR_KRADEN, FACING_SOUTH_SOUTHWEST);
-  if (Event_AskYesNoWithActorAnimation(4, 0) == 0) {
+  if (Event_AskYesNoWithActorAnimation(ACTOR_FELIX, 0) == 0) {
     Event_Wait(15);
     Actor_SetAnimationAndWait(ACTOR_KRADEN, ANIM_NOD);
     Event_Wait(10);
@@ -1637,6 +1667,9 @@ struct FlashWork {
   struct EffectSprite sprite;
 };
 
+/// The explosion that hides an actor's change: the actor spins (mode 0) or not,
+/// is hidden, and the explosion's sprite plays over it, twice the size in mode
+/// 1.
 void ChampaCliffCaves_StartFlash(s32 id, s32 mode) {
   struct FlashWork *work = HeapSlot_Alloc(HEAP_SLOT_MENU, 0x428);
   struct Actor *object = Actor_GetById(id);
@@ -1716,7 +1749,9 @@ void ChampaCliffCaves_StartFlash(s32 id, s32 mode) {
 }
 #undef PALETTE
 
-void ChampaCliffCaves_DrawSparks(void) {
+/// Loads the forge's glowing disc into the glow's work, its picture moved onto
+/// the palette the glow cycles, and sets its sprite at no size.
+void ChampaCliffCaves_LoadDisc(void) {
   struct ChampaCliffCavesWork *work = Ram_HeapSlots->menuWork;
   struct EffectSprite *sprite;
   s32 i;
@@ -1739,7 +1774,7 @@ next:
   work->discEntry = entry;
   work->discVram = vram;
   sprite = &work->disc;
-  FieldEffectSprite_Init((struct EffectSprite *)sprite, 31, 31, 0xc0000000,
+  FieldEffectSprite_Init((struct EffectSprite *)sprite, 31, 31, OBJ_SIZE_64X64,
                          vram);
   sprite->oam.fullColor = 1;
   sprite->oam.palette = 0;
@@ -1749,7 +1784,9 @@ next:
   work->discTrailingScale.value = 0;
 }
 
-void ChampaCliffCaves_DrawFallingSparks(void) {
+/// Loads the forge's column of fire into the glow's work as
+/// ChampaCliffCaves_LoadDisc loads the disc.
+void ChampaCliffCaves_LoadColumn(void) {
   struct ChampaCliffCavesWork *work = Ram_HeapSlots->menuWork;
   struct EffectSprite *sprite;
   s32 i;
@@ -1772,7 +1809,7 @@ next:
   work->columnEntry = entry;
   work->columnVram = vram;
   sprite = &work->column;
-  FieldEffectSprite_Init((struct EffectSprite *)sprite, 15, 47, 0xc0008000,
+  FieldEffectSprite_Init((struct EffectSprite *)sprite, 15, 47, OBJ_SIZE_32X64,
                          vram);
   sprite->oam.fullColor = 1;
   sprite->oam.palette = 1;
@@ -1839,6 +1876,8 @@ loop:
   work->frame++;
 }
 
+/// The forge's fire at a spot: the disc grows, holds, and the column rises
+/// through it, while the room shakes.
 void ChampaCliffCaves_StartForgeFire(const s32 *position) {
   struct ChampaCliffCavesWork *work =
       HeapSlot_Alloc(HEAP_SLOT_MENU, sizeof(struct ChampaCliffCavesWork));
@@ -1848,12 +1887,12 @@ void ChampaCliffCaves_StartForgeFire(const s32 *position) {
   work->position[0] = position[0];
   work->position[1] = position[1];
   work->position[2] = position[2];
-  ChampaCliffCaves_DrawSparks();
-  ChampaCliffCaves_DrawFallingSparks();
+  ChampaCliffCaves_LoadDisc();
+  ChampaCliffCaves_LoadColumn();
   work->frame = 0;
   time = 0;
   {
-    s32 priority = 0x480;
+    s32 priority = TASK_PASS_VBLANK;
 
     Task_Add(ChampaCliffCaves_DrawGlow, priority);
   }
@@ -1862,7 +1901,8 @@ void ChampaCliffCaves_StartForgeFire(const s32 *position) {
   do {
     switch (state) {
     case 0:
-      if ((work->discScale.value += 0x600) >= FIXED_ONE * 13 / 10) {
+      if ((work->discScale.value += FIXED_ONE * 3 / 128) >=
+          FIXED_ONE * 13 / 10) {
         work->discScale.value = FIXED_ONE * 13 / 10;
         state = 1;
         time = -1;
@@ -1875,14 +1915,15 @@ void ChampaCliffCaves_StartForgeFire(const s32 *position) {
       }
       break;
     case 2:
-      if ((work->columnScale.value += 0x400) >= FIXED_ONE * 2 / 5) {
+      if ((work->columnScale.value += FIXED_ONE / 64) >= FIXED_ONE * 2 / 5) {
         work->columnScale.value = FIXED_ONE * 2 / 5;
         state = 3;
         time = -1;
       }
       break;
     case 3:
-      if ((work->columnScale.value += 0x3000) >= FIXED_ONE * 13 / 10) {
+      if ((work->columnScale.value += FIXED_ONE * 3 / 16) >=
+          FIXED_ONE * 13 / 10) {
         work->columnScale.value = FIXED_ONE * 13 / 10;
         state = 999;
       }
@@ -1893,6 +1934,8 @@ void ChampaCliffCaves_StartForgeFire(const s32 *position) {
   } while (state != 999);
 }
 
+/// Puts out the forge's fire: the column and then the disc shrink away and the
+/// glow's work is released.
 void ChampaCliffCaves_UpdateForgeFire(void) {
   struct ChampaCliffCavesWork *work = Ram_HeapSlots->menuWork;
   FIXED position[3];
@@ -1907,14 +1950,14 @@ void ChampaCliffCaves_UpdateForgeFire(void) {
   do {
     switch (state) {
     case 0:
-      if ((work->columnScale.value -= 0x1000) < 0) {
+      if ((work->columnScale.value -= FIXED_ONE / 16) < 0) {
         work->columnScale.value = 0;
         time = -1;
         state = 1;
       }
       break;
     case 1:
-      if ((work->discScale.value -= 0x800) < 0) {
+      if ((work->discScale.value -= FIXED_ONE / 32) < 0) {
         work->discScale.value = 0;
         state = 2;
         time = -1;
@@ -1941,6 +1984,7 @@ struct Vec3 {
   s32 z;
 };
 
+/// The forge's first glow at a spot: the disc alone grows to full size.
 void ChampaCliffCaves_StartEmbers(const struct Vec3 *origin) {
   struct ChampaCliffCavesWork *work =
       HeapSlot_Alloc(HEAP_SLOT_MENU, sizeof(struct ChampaCliffCavesWork));
@@ -1949,12 +1993,12 @@ void ChampaCliffCaves_StartEmbers(const struct Vec3 *origin) {
   work->position[0] = origin->x;
   work->position[1] = origin->y;
   work->position[2] = origin->z;
-  ChampaCliffCaves_DrawSparks();
+  ChampaCliffCaves_LoadDisc();
   work->columnScale.value = 0;
   work->columnTrailingScale.value = 0;
   work->frame = 0;
   {
-    s32 priority = 0x480;
+    s32 priority = TASK_PASS_VBLANK;
 
     Task_Add(ChampaCliffCaves_DrawGlow, priority);
   }
@@ -1962,7 +2006,7 @@ void ChampaCliffCaves_StartEmbers(const struct Vec3 *origin) {
   state = 0;
   do {
     if (state == 0) {
-      work->discScale.value += 0x1000;
+      work->discScale.value += FIXED_ONE / 16;
       if (work->discScale.value >= FIXED_ONE * 13 / 10) {
         work->discScale.value = FIXED_ONE * 13 / 10;
         state = 999;
@@ -1972,14 +2016,15 @@ void ChampaCliffCaves_StartEmbers(const struct Vec3 *origin) {
   } while (state != 999);
 }
 
+/// The column of fire rises through the disc already burning.
 void ChampaCliffCaves_StartSparks(void) {
   struct ChampaCliffCavesWork *work =
       HeapSlot_Alloc(HEAP_SLOT_MENU, sizeof(struct ChampaCliffCavesWork));
   s32 state;
 
-  ChampaCliffCaves_DrawFallingSparks();
+  ChampaCliffCaves_LoadColumn();
   {
-    s32 priority = 0x480;
+    s32 priority = TASK_PASS_VBLANK;
 
     Task_Add(ChampaCliffCaves_DrawGlow, priority);
   }
@@ -1988,14 +2033,14 @@ void ChampaCliffCaves_StartSparks(void) {
   do {
     switch (state) {
     case 0:
-      work->columnScale.value += 0x1000;
+      work->columnScale.value += FIXED_ONE / 16;
       if (work->columnScale.value >= FIXED_ONE * 2 / 5) {
         work->columnScale.value = FIXED_ONE * 2 / 5;
         state = 1;
       }
       break;
     case 1:
-      work->columnScale.value += 0x3000;
+      work->columnScale.value += FIXED_ONE * 3 / 16;
       if (work->columnScale.value >= FIXED_ONE * 13 / 10) {
         work->columnScale.value = FIXED_ONE * 13 / 10;
         state = 999;
@@ -2006,6 +2051,8 @@ void ChampaCliffCaves_StartSparks(void) {
   } while (state != 999);
 }
 
+/// The forge's last flare: the column flares to twice its size, then it and the
+/// disc die away and the glow's work is released.
 void ChampaCliffCaves_UpdateSparks(void) {
   struct ChampaCliffCavesWork *work = Ram_HeapSlots->menuWork;
   s32 state = 0;
@@ -2014,23 +2061,23 @@ void ChampaCliffCaves_UpdateSparks(void) {
   do {
     switch (state) {
     case 0:
-      if ((work->columnScale.value += 0x1000) >= FIXED_ONE * 2) {
+      if ((work->columnScale.value += FIXED_ONE / 16) >= FIXED_ONE * 2) {
         work->columnScale.value = FIXED_ONE * 2;
         state = 1;
         time = -1;
       }
       break;
     case 1:
-      if ((work->columnScale.value -= 0x1000) < FIXED_ONE * 13 / 10) {
+      if ((work->columnScale.value -= FIXED_ONE / 16) < FIXED_ONE * 13 / 10) {
         work->columnScale.value = FIXED_ONE * 13 / 10;
         state = 2;
         time = -1;
       }
       /* fall through */
     case 2:
-      if ((work->columnScale.value -= 0x1000) < 0)
+      if ((work->columnScale.value -= FIXED_ONE / 16) < 0)
         work->columnScale.value = 0;
-      if ((work->discScale.value -= 0x1000) < 0) {
+      if ((work->discScale.value -= FIXED_ONE / 16) < 0) {
         work->discScale.value = 0;
         state++;
         time = -1;
@@ -2050,7 +2097,8 @@ void ChampaCliffCaves_UpdateSparks(void) {
   HeapSlot_Release(HEAP_SLOT_MENU);
 }
 
-struct ThrowAnimations gChampaCliffCaves_ThrowAnimations = {{439, 440, 441}};
+struct TridentProngs gChampaCliffCaves_Prongs = {
+    {ITEM_RIGHT_PRONG, ITEM_LEFT_PRONG, ITEM_CENTER_PRONG}};
 
 #undef DEFINE_CHAMPA_CLIFF_CAVES_GROW
 #undef PALETTE
@@ -2435,7 +2483,7 @@ LATE_DATA struct Trigger gChampaCliffCaves_BriggsTriggers[] = {
     {TRIGGER_TALK, 8, IF_FLAG_SET(FLAG_BRIGGS_SAILED_FROM_ALHAFRA),
      MSGNO(MsgWhyDoYou)},
     {TRIGGER_TALK, 9, IF_FLAG_SET(FLAG_BRIGGS_SAILED_FROM_ALHAFRA),
-     EVENT(ChampaCliffCaves_BriggsSurrenders)},
+     EVENT(ChampaCliffCaves_CrewmanSurrenders)},
     {TRIGGER_TALK, 10, IF_FLAG_SET(FLAG_BRIGGS_SAILED_FROM_ALHAFRA),
      EVENT(ChampaCliffCaves_AskToComeIn)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8,

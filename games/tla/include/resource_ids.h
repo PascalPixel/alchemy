@@ -780,7 +780,7 @@ extern char ResourceId_LightningTiles;
 /// and NorthernReaches_ShatterIceWall.
 extern char ResourceId_FieldEffectExplosion;
 #define RESOURCE_FIELD_EFFECT_EXPLOSION ((s32)&ResourceId_FieldEffectExplosion)
-/// Loaded by ChampaCliffCaves_DrawSparks, FieldPsynergy_Burst,
+/// Loaded by ChampaCliffCaves_LoadDisc, FieldPsynergy_Burst,
 /// FieldPsynergy_Parch and FieldPsynergy_Pound.
 extern char ResourceId_GlowDisc;
 #define RESOURCE_GLOW_DISC ((s32)&ResourceId_GlowDisc)
@@ -1400,7 +1400,7 @@ extern char ResourceId_IntroGullSprites;
 /// Loaded by Title_ShowIntro.
 extern char ResourceId_TitleScreenPicture;
 #define RESOURCE_TITLE_SCREEN_PICTURE ((s32)&ResourceId_TitleScreenPicture)
-/// Loaded by ChampaCliffCaves_DrawFallingSparks.
+/// Loaded by ChampaCliffCaves_LoadColumn.
 extern char ResourceId_FireColumn;
 #define RESOURCE_FIRE_COLUMN ((s32)&ResourceId_FireColumn)
 /// Loaded by Epilogue_LoadNamePanel.

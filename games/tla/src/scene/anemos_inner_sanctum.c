@@ -1532,7 +1532,7 @@ s32 Scene_Initialize(void) {
       Actor_SetPosition(ACTOR_ORIHALCON_CHEST_FIRST_PILLAR, 264, 360);
     Call1((void (*)())Actor_PlaceBlocks,
           (s32)gAnemosInnerSanctum_OrihalconChestBlocks);
-    nearStairs = *(u16 *)&gMainRoutineWork.entrance;
+    nearStairs = (u16)gMainRoutineWork.entrance;
     entrance = gMainRoutineWork.entrance;
     if (entrance == 1) {
       CrackedTiles_Find(33, FLAG_SCENE_TEMP_80, FLAG_AREA_TEMP_80, 18, 68);

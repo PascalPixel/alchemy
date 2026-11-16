@@ -114,7 +114,7 @@ void Actor_UpdateAllThumb(void) {
   s32 standing;
 
   object = Ram_HeapSlots->actors;
-  for (objectsRemaining = 63; objectsRemaining >= 0;
+  for (objectsRemaining = ACTOR_COUNT - 1; objectsRemaining >= 0;
        objectsRemaining--, object++) {
     struct MotionScript *script;
 
@@ -212,7 +212,7 @@ void Actor_UpdateAllThumb(void) {
           dx = (object->targetX - x) / 65536;
           dz = (object->targetZ - z) / 65536;
           distance = toFIXED(Iwram_Sqrt(Object_Square(dx) + Object_Square(dz)));
-          if (distance <= 0x00ffffff) {
+          if (distance <= toFIXED(256) - 1) {
             dx = object->targetX - x;
             dz = object->targetZ - z;
             distance = Math_SqrtFX(Iwram_MulFX(dx, dx) + Iwram_MulFX(dz, dz));
@@ -252,7 +252,7 @@ void Actor_UpdateAllThumb(void) {
         }
 
         // Follow the ground, or the top of an object 16 pixels below.
-        if (object->motionFlags & 1) {
+        if (object->motionFlags & ACTOR_FOLLOWS_TERRAIN) {
           velocityX = x + object->velocityX;
           velocityZ = z + object->velocityZ;
           standing = 0;
@@ -261,7 +261,7 @@ void Actor_UpdateAllThumb(void) {
             struct MotionObject *other = Ram_HeapSlots->actors;
             s32 i;
 
-            for (i = 0; i < 64; i++, other++) {
+            for (i = 0; i < ACTOR_COUNT; i++, other++) {
               s32 dy;
 
               if (other->script == NULL)
@@ -276,7 +276,7 @@ void Actor_UpdateAllThumb(void) {
                 continue;
               dy = y - other->y;
               if ((dy - toFIXED(16) < 0 ? -(dy - toFIXED(16))
-                                        : dy - toFIXED(16)) > 0x7ffff)
+                                        : dy - toFIXED(16)) > toFIXED(8) - 1)
                 continue;
               standing = 1;
               ground = other->y + toFIXED(16);
@@ -296,7 +296,9 @@ void Actor_UpdateAllThumb(void) {
           if (velocityY > maximumChange)
             velocityY = maximumChange;
           velocityY *= 3;
-          if (velocityY != 0 && !(object->motionFlags & 16) && !standing) {
+          if (velocityY != 0 &&
+              !(object->motionFlags & ACTOR_KEEPS_SPEED_ON_SLOPES) &&
+              !standing) {
             dx = object->velocityX;
             dy = object->velocityY;
             dz = object->velocityZ;
@@ -316,7 +318,7 @@ void Actor_UpdateAllThumb(void) {
         }
 
         // Gravity, and a bounce that loses energy on landing.
-        if (object->motionFlags & 2) {
+        if (object->motionFlags & ACTOR_FALLS) {
           ground = object->groundHeight;
           if (y > ground)
             object->velocityY -= object->gravity;
@@ -337,10 +339,10 @@ void Actor_UpdateAllThumb(void) {
         }
 
         // Float: bob up and down on a triangle wave.
-        if (object->motionFlags & 4) {
+        if (object->motionFlags & ACTOR_FLOATS) {
           u32 phase = object->bounce & 63;
 
-          if (object->motionFlags & 8)
+          if (object->motionFlags & ACTOR_FLOATS_HIGH)
             object->velocityY =
                 gActorScript_CycleTable[phase >> 1] * object->gravity / 16;
           else
@@ -354,7 +356,7 @@ void Actor_UpdateAllThumb(void) {
     x += object->velocityX;
     y += object->velocityY;
     z += object->velocityZ;
-    if (object->collisionFlags & 0x80) {
+    if (object->collisionFlags & ACTOR_BLOCKED_BY_SOLID) {
       pos[0] = x;
       pos[1] = y;
       pos[2] = z;
@@ -366,7 +368,7 @@ void Actor_UpdateAllThumb(void) {
     }
 
     switch (object->arrivalAxis) {
-    case 16:
+    case ARRIVAL_AXIS_X:
       if (x == object->targetX ||
           ((object->x - object->targetX) ^ (x - object->targetX)) < 0)
         arrivedAtTarget = 1;
@@ -436,13 +438,13 @@ void Actor_MoveWithCarriers(void) {
   struct Actor *object = Ram_HeapSlots->actors;
   s32 i;
 
-  for (i = 63; i >= 0; i--, object++) {
+  for (i = ACTOR_COUNT - 1; i >= 0; i--, object++) {
     if (object->script != NULL) {
       FIXED x = object->x.fixed;
       FIXED y = object->y.fixed;
       FIXED z = object->z.fixed;
 
-      if (object->priorityFlags & 64) {
+      if (object->priorityFlags & ACTOR_PRIORITY_WALKS_ON_PLATFORMS) {
         struct Actor *carrier = object->carrier;
 
         if (carrier != NULL) {
@@ -531,16 +533,16 @@ void Actor_SetMoveTarget(struct Actor *object, FIXED x, FIXED y, FIXED z) {
   dy = y - object->y.fixed;
   dz = z - object->z.fixed;
   arrivalAxis = &object->arrivalAxis;
-  *arrivalAxis = 16;
+  *arrivalAxis = ARRIVAL_AXIS_X;
   if ((dx < 0 ? -dx : dx) < (dz < 0 ? -dz : dz)) {
-    *arrivalAxis = 18;
+    *arrivalAxis = ARRIVAL_AXIS_Z;
     dx = dz;
   }
   if (object->motionFlags == 0) {
     if (dx < 0)
       dx = -dx;
     if (dx < (dy < 0 ? -dy : dy))
-      *arrivalAxis = 17;
+      *arrivalAxis = ARRIVAL_AXIS_Y;
   }
 }
 

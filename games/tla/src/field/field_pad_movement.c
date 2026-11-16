@@ -279,7 +279,7 @@ s32 Actor_SailOnMap(struct Actor *interpreter) {
   if (object->priorityFlags & ACTOR_PRIORITY_WALKS_ON_PLATFORMS) {
     onObject = 0;
     other = (struct Actor *)Ram_HeapSlots->actors;
-    for (angleIndex = 0; angleIndex < 64; angleIndex++, other++) {
+    for (angleIndex = 0; angleIndex < ACTOR_COUNT; angleIndex++, other++) {
       FIXED dy;
 
       if (other->script == NULL)
@@ -290,7 +290,7 @@ s32 Actor_SailOnMap(struct Actor *interpreter) {
         continue;
       dy = object->y.fixed - other->y.fixed;
       if ((dy - toFIXED(16) < 0 ? -(dy - toFIXED(16)) : dy - toFIXED(16)) >
-          0x7ffff)
+          toFIXED(8) - 1)
         continue;
       if (SAME_CELL(object->x.fixed, other->x.fixed) &&
           SAME_CELL(object->z.fixed, other->z.fixed))
@@ -390,7 +390,7 @@ push_objects:
   SET_POSITION(&contact, object->x.fixed, object->y.fixed, object->z.fixed);
   Vector_AddPolarOffset(toFIXED(15), (u16)heading, &contact);
   other = (struct Actor *)Ram_HeapSlots->actors;
-  for (angleIndex = 63; angleIndex >= 0; angleIndex--, other++) {
+  for (angleIndex = ACTOR_COUNT - 1; angleIndex >= 0; angleIndex--, other++) {
     s32 radius;
 
     radius = object->radius - 2;
@@ -849,7 +849,8 @@ s32 Actor_FlyOnWorldMap(struct Actor *object) {
 
 check_objects:
   other = Ram_HeapSlots->actors;
-  for (angleIndex = 63; angleIndex >= 0; angleIndex -= 1, other++) {
+  for (angleIndex = ACTOR_COUNT - 1; angleIndex >= 0;
+       angleIndex -= 1, other++) {
     if (other->script != NULL && (other->collisionFlags & 1) &&
         other != object &&
         Field_CheckSpheresOverlap(&other->x.fixed, other->radius, &position.x,

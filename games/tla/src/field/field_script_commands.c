@@ -109,7 +109,7 @@ void Actor_UpdateAllMotion(void) {
         }
       }
       // Gravity, and a bounce that loses energy on landing.
-      if (actor->motionFlags & 2) {
+      if (actor->motionFlags & ACTOR_FALLS) {
         if (y > actor->groundHeight) {
           actor->velocityY -= actor->gravity;
         } else if (actor->velocityY < 0) {
@@ -451,7 +451,7 @@ s32 ActorScript_SetPositionAndResetMotion(struct Actor *actor) {
   FIXED height;
 
   Actor_SetPositionAndResetMotion(actor, x, y, z);
-  if (y == -1 && (actor->motionFlags & 1)) {
+  if (y == -1 && (actor->motionFlags & ACTOR_FOLLOWS_TERRAIN)) {
     height =
         MapGrid_GetTerrainHeight(actor->layer, actor->x.fixed, actor->z.fixed);
     actor->y.fixed = actor->y.fixed - actor->groundHeight + height;
@@ -467,7 +467,7 @@ s32 ActorScript_ResetToOrigin(struct Actor *actor) {
   FIXED height;
 
   Actor_SetPositionAndResetMotion(actor, 0, actor->y.fixed, 0);
-  if (actor->motionFlags & 1) {
+  if (actor->motionFlags & ACTOR_FOLLOWS_TERRAIN) {
     height =
         MapGrid_GetTerrainHeight(actor->layer, actor->x.fixed, actor->z.fixed);
     actor->y.fixed = actor->y.fixed - actor->groundHeight + height;
@@ -1191,7 +1191,7 @@ s32 Actor_UpdateHoverControl(struct Actor *actor) {
 
   movementAnimation = 2;
   collision = 0;
-  actor->motionFlags = 4;
+  actor->motionFlags = ACTOR_FLOATS;
   if (gInput.held & gMainRoutineWork.dashKeys) {
     actor->speedLimit = toFIXED(1) / 2;
     actor->acceleration = toFIXED(1) / 8;

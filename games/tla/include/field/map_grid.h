@@ -54,6 +54,9 @@ struct MapCell {
   u8 attributeB;
 };
 
+/// MapCell.attributeB: a wall the leader can climb (Actor_MoveByKeys).
+#define CELL_CLIMBABLE 0x40
+
 /// A row of gMaps: a layout's resources, each counted from ResourceId_EmptyMap.
 struct MapResources {
   u16 header;

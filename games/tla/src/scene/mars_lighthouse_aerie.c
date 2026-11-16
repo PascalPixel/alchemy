@@ -244,7 +244,7 @@ void MarsLighthouseAerie_OrbitBeaconFire(struct Actor *actor) {
   actor->z.fixed = across;
   actor->targetX = actor->x.fixed;
   actor->targetZ = across;
-  *pangle -= 0x800;
+  *pangle -= TRIG_TURN / 32;
 }
 
 const struct SceneEntrance *Scene_GetEntrances(void) { return gSceneEntrances; }
@@ -429,7 +429,7 @@ void MarsLighthouseAerie_SwingBeaconFlame(struct Actor *actor) {
     ((struct FieldSprite *)actor->sprite)->priority = 2;
   else
     ((struct FieldSprite *)actor->sprite)->priority = 1;
-  *pangle -= 0x200;
+  *pangle -= TRIG_TURN / 128;
 }
 
 /// The actor stands looking about.
@@ -597,7 +597,7 @@ void MarsLighthouseAerie_FaceDoomDragon(void) {
   Actor_MoveToAndWait(gMainRoutineWork.leaderActorId, 504, 320);
   Actor_Get(gMainRoutineWork.leaderActorId)->steeringFlags |=
       ACTOR_FACES_MOTION;
-  *palette = 0x7fff;
+  *palette = RGB_WHITE;
   System_Wait(1);
   // "So, you are still intent on lighting the beacon of Mars Lighthouse?"
   Event_ShowMessage(ACTOR_WISE_ONE, 0);
@@ -1722,8 +1722,8 @@ void MarsLighthouseAerie_UrgeOnToBeacon(void) {
   // "I knew what I was doing the moment I raised my sword."
   FieldEvent_ShowMessageThenWait(SPEAKER_WINDOW_BELOW | ACTOR_ISAAC, 0, 20);
   {
-    s32 third = 0x28;
-    s32 second = 0x105;
+    s32 third = 40;
+    s32 second = EMOTE_IN_FRONT | EMOTE_ELLIPSIS;
     s32 actor;
 
     actor = gMainRoutineWork.leaderActorId;
@@ -1830,7 +1830,7 @@ void Orb_UpdateRising(struct Actor *self) {
   self->z.fixed = z;
   self->targetX = x;
   self->targetZ = z;
-  self->timer += -0x800;
+  self->timer += -(TRIG_TURN / 32);
 }
 
 /// Every third frame, or every frame once the light has broken through, an orb
@@ -1949,7 +1949,7 @@ void MarsLighthouseAerie_RaiseBeaconFire(void) {
   if (spawn) {
     actor = FieldActor_Create(SPRITE_PARTICLE, anchor->x.fixed,
                               anchor->y.fixed - ((Random_Below(80)) << 16) -
-                                  0x80000,
+                                  toFIXED(8),
                               anchor->z.fixed);
     if (actor != NULL) {
       s32 mask;

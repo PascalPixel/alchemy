@@ -558,7 +558,7 @@ s32 Scene_Initialize(void) {
       }
       i = 0;
       do {
-        Actor_SetSpriteColorById(ACTOR_WISE_ONE, 0x100);
+        Actor_SetSpriteColorById(ACTOR_WISE_ONE, SPRITE_COLOR_BLINK);
         FieldEvent_Wait(3);
         Actor_SetSpriteColorById(ACTOR_WISE_ONE, 0);
         FieldEvent_Wait(3);

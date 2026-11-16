@@ -807,7 +807,7 @@ s32 Scene_PrepareMap(void) {
       }
       MarsLighthouseRoomM_StartDoorways(entrance);
       {
-        s32 priority = 0x480;
+        s32 priority = TASK_PASS_VBLANK;
 
         FieldTask_AddFrame(MarsLighthouseRoomM_CycleHallFlames, priority);
       }
@@ -1189,10 +1189,10 @@ void Ride_SpawnSpark(struct Vector3 *position, s32 value, s32 mode) {
   s32 spin;
 
   if (actor != 0) {
-    actor->bounce = Trig_Cos(((u32)(Random16() * 3 << 12) >> 16) + 0x3000);
+    actor->bounce = Trig_Cos(((u32)(Random16() * 3 << 12) >> 16) + TRIG_TURN * 3 / 16);
     actor->gravity = (u16)Random16();
     actor->riseBaseY = ((u32)(Random16() << 17) >> 16) + value;
-    spin = (u16)Random16() - 0x8000;
+    spin = (u16)Random16() - DEGtoANG(180);
     actor->timer = spin;
     ((void (*)())Actor_SetupScripted)(actor, 2);
     actor->update = Ride_UpdateDrift;

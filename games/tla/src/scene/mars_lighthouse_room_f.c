@@ -667,14 +667,14 @@ void MarsLighthouseRoomF_ScatterRubble(s32 id) {
                           (c << 4) + origin->z.fixed);
 
     if (actor != NULL) {
-      s32 angle = (Random16() >> 2) + 0xe000;
+      s32 angle = (Random16() >> 2) + DEGtoANG(315);
       s32 speed = Random16() << 3;
-      s32 scale = (Random16() >> 1) + 0x4000;
+      s32 scale = (Random16() >> 1) + FIXED_ONE / 4;
 
       {
         u32 pick = Random16();
 
-        if (pick <= 0x7fff)
+        if (pick <= 32767)
           Actor_StartScript(actor, gMarsLighthouseRoomF_RubbleScriptA);
         else
           Actor_StartScript(actor, gMarsLighthouseRoomF_RubbleScriptB);
@@ -1343,13 +1343,13 @@ UNUSED void Whirlwind_CarryLeader(void) {
   motion = &actor->motionFlags;
   *motion = 4;
   Actor_SetSpriteFlags(actor, 0);
-  flag = (u8 *)linked + 0x63;
+  flag = &linked->riseEnabled;
   while (*flag != 0) {
     actor->x.fixed = linked->x.fixed;
     actor->y.fixed = linked->y.fixed + i;
     actor->z.fixed = linked->z.fixed;
-    if (i <= 0x3ffff)
-      i += 0x1999;
+    if (i <= toFIXED(4) - 1)
+      i += toFIXED(0.1);
     actor->facing = (u8)gFrameCount << 12;
     actor->priorityFlags ^= 2 << (gFrameCount & 1);
     System_Wait(1);
@@ -1471,7 +1471,7 @@ UNUSED void JupiterLighthouse_PlaceRaisedActors(void) {
       lid->y.fixed += step;
     }
     lid->x.fixed -= 0x28f40;
-    sprite->rotation += 0x800;
+    sprite->rotation += TRIG_TURN / 32;
     Actor_SetSpriteColorMode(Actor_GetById(ACTOR_LEFT_ANGEL), 4);
     Actor_SetSpriteColorMode(Actor_GetById(ACTOR_LEFT_ARCHER), 4);
   }
@@ -1483,7 +1483,7 @@ UNUSED void JupiterLighthouse_PlaceRaisedActors(void) {
       lid->y.fixed += step;
     }
     lid->x.fixed += 0x28f40;
-    sprite->rotation -= 0x800;
+    sprite->rotation -= TRIG_TURN / 32;
     Actor_SetSpriteColorMode(Actor_GetById(ACTOR_RIGHT_ANGEL), 4);
     Actor_SetSpriteColorMode(Actor_GetById(ACTOR_RIGHT_ARCHER), 4);
   }
@@ -1821,7 +1821,7 @@ void Actor_LaunchAhead(struct Actor *self) {
   actor->steeringFlags = 0;
   actor->speedLimit = toFIXED(8);
   actor->acceleration = toFIXED(1) / 8;
-  sprite->rotation = angle - 0x4000;
+  sprite->rotation = angle - DEGtoANG(90);
   actor->scaleX = 0;
   actor->scaleY = 0;
   actor->timer = 0;
@@ -2145,12 +2145,12 @@ void PushTarget_Push(struct PushTarget target) {
 static inline void *BumpAlloc(s32 size) { return Heap_Alloc(size); }
 
 void LightSprites_InitA(void) {
-  u8 *buffer = BumpAlloc(0xc00);
+  u8 *buffer = BumpAlloc(3072);
 
   Iwram_ClearWordsEntry(gLightSpriteActors, sizeof(gLightSpriteActors));
   Decompress_TaggedLz(gField_CachedTilesA, buffer);
   gLightSpriteTile = VramCache_FindFreeEntry();
-  VramCache_Load(gLightSpriteTile, 0xc00, buffer);
+  VramCache_Load(gLightSpriteTile, 3072, buffer);
   Heap_Release(buffer);
   Task_Add(LightSprites_Draw, TASK_PASS_VBLANK);
   gLightSpriteCount = 0;
@@ -2159,12 +2159,12 @@ void LightSprites_InitA(void) {
 }
 
 void LightSprites_InitB(void) {
-  u8 *buffer = Heap_Alloc(0xc00);
+  u8 *buffer = Heap_Alloc(3072);
 
   Iwram_ClearWordsEntry(gLightSpriteActors, sizeof(gLightSpriteActors));
   Decompress_TaggedLz(gField_CachedTilesB, buffer);
   gLightSpriteTile = VramCache_FindFreeEntry();
-  Vram_Load(gLightSpriteTile, 0x800, buffer);
+  Vram_Load(gLightSpriteTile, 2048, buffer);
   Heap_Release(buffer);
   Task_AddFrame(LightSprites_Draw, TASK_PASS_VBLANK);
   gLightSpriteCount = 0;
@@ -2173,12 +2173,12 @@ void LightSprites_InitB(void) {
 }
 
 void LightSprites_InitC(void) {
-  u8 *buffer = BumpAlloc(0x800);
+  u8 *buffer = BumpAlloc(2048);
 
   Iwram_ClearWordsEntry(gLightSpriteActors, sizeof(gLightSpriteActors));
   Decompress_TaggedLz(gField_CachedTilesC, buffer);
   gLightSpriteTile = VramCache_FindFreeEntry();
-  Vram_Load(gLightSpriteTile, 0x800, buffer);
+  Vram_Load(gLightSpriteTile, 2048, buffer);
   Heap_Release(buffer);
   Task_AddFrame(LightSprites_Draw, TASK_PASS_VBLANK);
   gLightSpriteCount = 0;
@@ -2468,8 +2468,8 @@ s16 gSlideOnIce_SteerAngles[] = {
 };
 
 s16 gMarsLighthouseRoomF_JumpAnglesByKey[] = {
-    -1, 0, -0x8000, -1, -0x4000, -1, -1, -0x4000,
-    0x4000, -1, -1, 0x4000, -1, 0, -0x8000, -1,
+    -1, 0, -DEGtoANG(180), -1, -DEGtoANG(90), -1, -1, -DEGtoANG(90),
+    DEGtoANG(90), -1, -1, DEGtoANG(90), -1, 0, -DEGtoANG(180), -1,
 };
 
 s16 gSlideOnIce_AnglesByKey[] = {

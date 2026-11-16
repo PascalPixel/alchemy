@@ -1729,7 +1729,7 @@ void MagmaRockInside_StartStepCells(void) {
   s32 priority;
 
   gMagmaRockInside_LastStepCell = none;
-  priority = 0x480;
+  priority = TASK_PASS_VBLANK;
   FieldTask_AddFrame(MagmaRockInside_TrackStepCell, priority);
 }
 
@@ -1936,9 +1936,9 @@ struct SparkOrbiter {
   s32 x;
   s32 y;
   s32 z;
-  u8 beforeRadius[0x38];
+  u8 beforeRadius[56];
   s32 radius;
-  u8 beforeTimer[0x12];
+  u8 beforeTimer[18];
   u8 stepsLeft;
   u8 afterStepsLeft;
   u16 angle;
@@ -2096,7 +2096,7 @@ void MagmaRockInside_LearnBlaze(s32 a, s32 b) {
     spark = FieldActor_Create(SPRITE_PARTICLE, second->x.fixed, second->y.fixed,
                               second->z.fixed);
     Event_PlaySound(SE_SPARKS);
-    spark->timer = (Random16() & 0x7fff) + 0x8000;
+    spark->timer = (Random16() & 0x7fff) + DEGtoANG(180);
     spark->userValue = (((i & 1) << 1) - 1) << ((Random16() & 3) + 9);
     noMotion = 0;
     spark->motionFlags = noMotion;
@@ -2128,7 +2128,7 @@ void MagmaRockInside_LearnBlaze(s32 a, s32 b) {
                               second->y.fixed + i * toFIXED(1) - toFIXED(8),
                               second->z.fixed);
     riser->timer = Random16();
-    riser->userValue = 0x800;
+    riser->userValue = TRIG_TURN / 32;
     ((struct Orbit *)riser)->phase = i;
     ((struct Orbit *)riser)->growth = 1;
     riser->bounce = riser->x.fixed;

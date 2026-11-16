@@ -387,7 +387,7 @@ void MarsLighthouseEntrance_PoundIceCone(s32 mode, s32 index) {
                       EFFECT_USE_ROTATION | EFFECT_USE_TYPE |
                           EFFECT_USE_START_SCALE | EFFECT_USE_PRIORITY,
                       &options);
-    actor->scaleY -= 0x1f00;
+    actor->scaleY -= FIXED_ONE * 31 / 256;
   }
   if (mode == 1) {
     actor->scaleY = FIXED_ONE;
@@ -811,11 +811,11 @@ void MarsLighthouseEntrance_DrawHoleMask(void) {
   Oam_AddSpriteAtDepthClamped(gMarsLighthouseEntrance_HoleMaskSprite, depth);
 }
 
-/// Fills 0x100 bytes with colour 1, loads them into a VRAM block of their own
+/// Fills 256 bytes with colour 1, loads them into a VRAM block of their own
 /// and starts MarsLighthouseEntrance_DrawHoleMask.
 /// Masks the leader's sprite as he drops through the floor.
 void MarsLighthouseEntrance_StartHoleMask(void) {
-  u32 *buffer = Heap_Alloc(0x100);
+  u32 *buffer = Heap_Alloc(256);
   u32 *word = buffer;
   s32 count = 63;
 
@@ -823,7 +823,7 @@ void MarsLighthouseEntrance_StartHoleMask(void) {
     *word++ = 0x11111111;
   } while (--count >= 0);
   gMarsLighthouseEntrance_HoleMaskVram = VramCache_FindFreeEntry();
-  Vram_Load(gMarsLighthouseEntrance_HoleMaskVram, 0x100, buffer);
+  Vram_Load(gMarsLighthouseEntrance_HoleMaskVram, 256, buffer);
   Heap_Release(buffer);
   Task_AddFrame(MarsLighthouseEntrance_DrawHoleMask, TASK_PASS_VBLANK);
 }
@@ -1920,7 +1920,7 @@ UNUSED void Pound_SinkTarget(u16 *list, s32 mode, s32 count) {
       a = list[0];
       flag = list[1];
       if (count < 8)
-        actor->scaleY -= 0x1f00;
+        actor->scaleY -= FIXED_ONE * 31 / 256;
       if (mode == 1) {
         GameFlag_Set(flag);
         Actor_SetCellOpen(id, a, flag, actor->layer);

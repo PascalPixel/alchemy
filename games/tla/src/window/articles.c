@@ -8,9 +8,9 @@
 #include "graphics/text_font.h"
 
 #if (LANGUAGE == LANGUAGE_JAPANESE) || (LANGUAGE == LANGUAGE_ENGLISH)
+// clang-format off
 /// The glyph drawn over a kana for the mark in its code's top two bits: none,
 /// the voiced mark (dakuten) or the semi-voiced mark (handakuten).
-// clang-format off
 const u16 gFont_MarkGlyphCodes[] = {
     TEXT_MARK_NONE,
     TEXT_MARK_VOICED,

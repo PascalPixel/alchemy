@@ -5,10 +5,10 @@
 #include "edition.h"
 #include "window/screens.h"
 
+// clang-format off
 /// The Status screen's stops among its stats, each {help entry, column, row,
 /// highlight column, highlight row, highlight width}: nine for a member with
 /// Djinn, then seven for one without.
-// clang-format off
 const struct BattleSummaryStatCursor gOwnerStatus_StatCursors[] = {
     {.entry = 0, .column = 2, .row = 0, .highlightColumn = 0, .highlightRow = 0, .highlightWidth = 12},
     {.entry = 2, .column = 8, .row = 1, .highlightColumn = 0, .highlightRow = 1, .highlightWidth = 13},
@@ -52,20 +52,21 @@ const struct BattleSummaryCursor gOwnerStatus_ConditionCursors[] = {
 // The Status screen's labels: the German, Spanish, French and Italian
 // editions carry every language's level and HP abbreviations.
 #if LANGUAGE != LANGUAGE_JAPANESE && LANGUAGE != LANGUAGE_ENGLISH
-const u8 gOwnerStatus_NivString[] = "Niv";
-const u8 gOwnerStatus_NvString[] = "Nv.";
+const u8 gOwnerStatus_NivString[] = "Niv"; ///< level, in French
+const u8 gOwnerStatus_NvString[] = "Nv.";  ///< level, in Spanish
 #endif
-const u8 gOwnerStatus_LevelString[] = "Lv";
+const u8 gOwnerStatus_LevelString[] = "Lv"; ///< level, in the other languages
 #if LANGUAGE != LANGUAGE_JAPANESE && LANGUAGE != LANGUAGE_ENGLISH
-const u8 gOwnerStatus_KpString[] = "KP";
-const u8 gOwnerStatus_PvString[] = "PV";
-const u8 gOwnerStatus_HpString[] = "PS";
+const u8 gOwnerStatus_KpString[] = "KP"; ///< HP, in German
+const u8 gOwnerStatus_PvString[] = "PV"; ///< HP, in French and Spanish
+const u8 gOwnerStatus_HpString[] = "PS"; ///< HP, in Italian
 #else
-const u8 gOwnerStatus_HpString[] = "HP";
+const u8 gOwnerStatus_HpString[] = "HP"; ///< HP
 #endif
-const u8 gOwnerStatus_SlashString[] = "/";
+const u8 gOwnerStatus_SlashString[] = "/"; ///< between a value and its maximum
 #if LANGUAGE != LANGUAGE_JAPANESE
-const u8 gOwnerStatus_PpString[] = "PP";
+const u8 gOwnerStatus_PpString[] = "PP"; ///< PP
 #else
+/// PP, as the Japanese edition writes it.
 const u8 gOwnerStatus_PpString[] = "EP";
 #endif

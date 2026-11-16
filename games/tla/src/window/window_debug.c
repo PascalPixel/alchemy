@@ -462,7 +462,7 @@ void DebugShortcut_Release(void) {
   HeapSlot_Release(HEAP_SLOT_SETTINGS_MENU);
 }
 
-extern const u8 gPauseMenu_Icons[];
+extern const u8 gDebugShortcut_NoAbilityName[];
 
 /// Draws the ability's name; ability 0 draws a dash placeholder.
 void DebugShortcut_DrawAbility(s32 ability, s32 window, s32 x, s32 y) {
@@ -470,7 +470,7 @@ void DebugShortcut_DrawAbility(s32 ability, s32 window, s32 x, s32 y) {
     Text_DrawMessageAsTiles(ability + (s32)MsgAbilityName,
                             (struct Window *)window, x, y);
   else
-    Text_DrawStringInWindow((u8 *)gPauseMenu_Icons, window, x, y);
+    Text_DrawStringInWindow((u8 *)gDebugShortcut_NoAbilityName, window, x, y);
 }
 
 /// Opens the ability grid's window: eight dividers, then the four columns

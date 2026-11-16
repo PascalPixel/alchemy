@@ -92,11 +92,6 @@ void Message_UpdateAll(void) {
   } while (channelNo != 3);
 }
 
-extern const u8 gText_SpeedDelays[];
-extern const u8 gMessageSpeed_Delays[];
-extern const u8 gMessageSpeed_Steps[];
-extern const u8 gMessageSpeed_VoiceGaps[];
-
 void Text_ScrollCanvasUp(s32 step);
 void Text_StartCanvasScroll(struct UiChannelSlot *channel);
 void Message_ApplyStyle(struct UiChannelSlot *channel);
@@ -185,7 +180,7 @@ s32 Message_Type(struct UiChannelSlot *channel) {
 
       case TEXT_PAGE:
         if (channel->countdown == 0) {
-          channel->countdown = gMessageSpeed_Delays[TEXT_SPEED];
+          channel->countdown = gMessageSpeed_HeldPageDelays[TEXT_SPEED];
           if (work->mindRead != 0)
             gInput.pendingPressed = 0;
         }
@@ -252,7 +247,7 @@ s32 Message_Type(struct UiChannelSlot *channel) {
 
       case TEXT_WAIT_KEY:
         if (channel->countdown == 0) {
-          channel->countdown = gMessageSpeed_Delays[TEXT_SPEED];
+          channel->countdown = gMessageSpeed_HeldPageDelays[TEXT_SPEED];
           if (work->mindRead != 0)
             gInput.pendingPressed = 0;
         }
@@ -371,7 +366,7 @@ s32 Message_Type(struct UiChannelSlot *channel) {
         pixelY = (channel->y + 128) / 320 - 3;
       glyphWidth =
           Glyph_Draw(channel->work, code, pixelX, pixelY, GLYPH_DRAW_CHARACTER);
-      channel->glyphDelay = gText_SpeedDelays[TEXT_SPEED];
+      channel->glyphDelay = gMessageSpeed_Delays[TEXT_SPEED];
       if (glyphWidth == 0)
         return 9;
       if (work->speakerVoiceSound != 0) {

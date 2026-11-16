@@ -6,9 +6,9 @@
 #include "edition.h"
 #include "version.h"
 
+// clang-format off
 /// Each glyph's width in pixels from character 0x20: 224 in the Latin fonts,
 /// 96 in the Japanese one.
-// clang-format off
 const u8 gFont_GlyphWidths[] = {
 #if LANGUAGE != LANGUAGE_JAPANESE
     5, 4, 7, 7, 8, 8, 8, 4, 5, 5, 5, 6, 4, 5, 4, 6,
@@ -36,8 +36,8 @@ const u8 gFont_GlyphWidths[] = {
 };
 // clang-format on
 
-/// The {background, foreground} pens of the eight text colours.
 // clang-format off
+/// The {background, foreground} pens of the eight text colours.
 const u8 gText_ColourPens[16] = {
     0, 3,
     13, 13,

@@ -44,29 +44,32 @@ const u8 gPaletteGlow_WaveTable[96] = {
 };
 
 /// The settings menu's command icons for each setting's choices: message speed
-/// Slow, Normal and Fast; Speech Off and On; Auto-Sleep Off and On.
+/// Slow, Normal and Fast.
 const s8 gOptionMenu_SpeedIcons[3] = {
     COMMAND_ICON_SPEED_SLOW,
     COMMAND_ICON_SPEED_NORMAL,
     COMMAND_ICON_SPEED_FAST,
 };
 
+/// Speech Off and On.
 const s8 gOptionMenu_SpeechIcons[2] = {
     COMMAND_ICON_SPEECH_OFF,
     COMMAND_ICON_SPEECH_ON,
 };
 
+/// Auto-Sleep Off and On.
 const s8 gOptionMenu_SleepIcons[2] = {
     COMMAND_ICON_AUTO_SLEEP_OFF,
     COMMAND_ICON_AUTO_SLEEP_ON,
 };
 
 /// The window colour presets SELECT cycles through on the settings menu: the
-/// colour (hue, 0 to 23) and the brightness (0 to 14, 7 neutral) of each.
+/// colour (hue, 0 to 23) of each.
 const u8 gOptionMenu_FirstColorPresets[6] = {
     4, 16, 8, 21, 1, 13,
 };
 
+/// The brightness (0 to 14, 7 neutral) of each preset.
 const u8 gOptionMenu_SecondColorPresets[6] = {
     0, 11, 13, 7, 14, 14,
 };
@@ -84,7 +87,7 @@ const s8 gMenu_WorkspaceIcons[8] = {
 /// The sound test's starting music, jingle, sound effect and sound preset.
 const struct SoundTestValues gDebugSoundTest_StartValues = {{0, 80, 100, 2}};
 
-/// The sound test's row labels.
+/// The sound test's row labels: music, jingle, sound effect and sound preset.
 const u8 SoundTest_MusicString[] ALIGNED(4) = "Music";
 const u8 SoundTest_JingleString[] ALIGNED(4) = "Jingle";
 const u8 SoundTest_SeString[] ALIGNED(4) = "SE";
@@ -102,7 +105,7 @@ const u8 DebugWarp_Arafura2Name[] ALIGNED(4) = "1:Arafura2";
 const u8 DebugWarp_JupiterName[] ALIGNED(4) = "0:Jupiter";
 
 /// An empty ability's name, which the debug menu draws.
-const u8 gPauseMenu_Icons[] ALIGNED(4) = "----";
+const u8 gDebugShortcut_NoAbilityName[] ALIGNED(4) = "----";
 
 // clang-format off
 

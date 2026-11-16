@@ -5,15 +5,16 @@
 
 #include "types.h"
 
-/// Each element's icon offset in the Djinn menu, in tiles.
+/// Each element's icon column in the Djinn menu, in tiles.
 u8 gDjinnMenu_ElementXOffsets[4] = {0, 2, 0, 2};
+/// Each element's icon row in the Djinn menu, in tiles.
 u8 gDjinnMenu_ElementYOffsets[4] = {0, 0, 1, 1};
 
 /// The icon menu's wait at each step, in frames, by the icons still to go.
 u8 gMenu_SelectionStepDelays[8] = {46, 20, 28, 24, 30, 44, 29, 32};
 
-/// The top menu's command at each position, with Djinn and without.
 // clang-format off
+/// The top menu's command at each position, with Djinn and without.
 s8 gMenu_TopEntryCommandByPosition[] = {
     0, 1, 2, 3, 4, 5,
     0, 1, 3, 4, 5, 0,

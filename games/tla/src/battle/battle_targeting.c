@@ -720,23 +720,11 @@ void BattleParty_InsertUnitCentered(u16 *list, s32 unit) {
 
     if (value == BATTLE_UNIT_REMOVED) {
       if (divider >= 0 && slot >= 0) {
-        s32 distance = i - divider;
-
-        if (distance < 0)
-          distance = divider - i;
-        /* FAKEMATCH(barrier): an empty asm that, with the one below. */
-        __asm__("");
-        if (slot - divider >= 0) {
-          if (distance >= slot - divider)
-            goto next;
-        } else if (distance >= divider - slot) {
-          goto next;
-        }
+        if (ABS(i - divider) < ABS(slot - divider))
+          slot = i;
+      } else {
+        slot = i;
       }
-      slot = i;
-      /* FAKEMATCH(barrier): the second empty asm. */
-      __asm__("");
-    next:;
     } else {
       if (value == BATTLE_UNIT_LIST_END)
         break;

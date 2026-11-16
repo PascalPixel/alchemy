@@ -75,9 +75,7 @@ void LemurianShipDeck_EnterCabin(void) {
 
     Event_Start();
     FieldEvent_ResolvePendingActions(0);
-    i = ACTOR_FIRST_PLACED;
-  loop:
-    {
+    for (i = ACTOR_FIRST_PLACED; i < FIELD_TREASURE_ACTOR; i++) {
       struct Actor *object = Actor_Get(i);
 
       if (object != 0) {
@@ -85,9 +83,6 @@ void LemurianShipDeck_EnterCabin(void) {
         object->y.fixed = toFIXED(32);
       }
     }
-    i++;
-    if (i < FIELD_TREASURE_ACTOR)
-      goto loop;
     if (!Event_GetFlag(FLAG_SCENE_TEMP_01)) {
       Event_PlaySound(SE_DOOR_OPEN);
       MapGrid_CopyCellsTo(51, 38, 70, 22, 1, 2);

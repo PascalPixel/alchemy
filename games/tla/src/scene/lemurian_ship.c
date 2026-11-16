@@ -1263,20 +1263,17 @@ s32 Scene_Initialize(void) {
 s32 Scene_PrepareMap(void) {
   u32 i;
 
-  i = 0;
-nextActor:
-  if (Event_GetFlag(FLAG_FIGHTING_JELLY + i)) {
-    struct MainRoutineWork *party = &gMainRoutineWork;
+  for (i = 0; i < 16; i++) {
+    if (Event_GetFlag(FLAG_FIGHTING_JELLY + i)) {
+      struct MainRoutineWork *work = &gMainRoutineWork;
 
-    if (party->sequenceResult == 1) {
-      Event_SetFlag(FLAG_JELLIES_BEATEN + i);
-      Event_SetFlag(FLAG_JELLY_MELTING + i);
+      if (work->sequenceResult == 1) {
+        Event_SetFlag(FLAG_JELLIES_BEATEN + i);
+        Event_SetFlag(FLAG_JELLY_MELTING + i);
+      }
     }
+    Event_ClearFlag(FLAG_FIGHTING_JELLY + i);
   }
-  Event_ClearFlag(FLAG_FIGHTING_JELLY + i);
-  i++;
-  if (i < 16)
-    goto nextActor;
   return 0;
 }
 

@@ -379,13 +379,13 @@ void Lemuria_LeaveForAncientLemuria(void) {
 void Lemuria_GrowVine(void) {
   FIXED x;
   FIXED z;
-  s32 value;
+  s32 attribute;
 
   Event_SetFlag(FLAG_LEMURIA_VINE_GROWN);
   x = toFIXED(856);
   z = toFIXED(1016);
-  value = MapGrid_GetAttributeBAt(x, z, 0);
-  MapGrid_SetAttributeBAt(x, z, 0, value | 64);
+  attribute = MapGrid_GetAttributeBAt(x, z, 0);
+  MapGrid_SetAttributeBAt(x, z, 0, attribute | 64);
   z = toFIXED(1032);
   MapGrid_SetAttributeBAt(x, z, 0, MapGrid_GetAttributeBAt(x, z, 0) | 64);
 }

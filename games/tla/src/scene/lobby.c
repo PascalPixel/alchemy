@@ -985,10 +985,10 @@ s32 LinkLobby_ChooseDebugParameterSet(s32 actorId) {
 }
 
 /// The lobby's healer opens the sanctum.
-void LinkLobby_OpenSanctum(s32 value) {
+void LinkLobby_OpenSanctum(s32 actor) {
   Event_Start();
   Event_ResolvePendingActions(0);
-  Sanctum_Run(value);
+  Sanctum_Run(actor);
   Event_End();
 }
 

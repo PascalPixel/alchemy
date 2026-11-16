@@ -318,3 +318,5 @@ void FieldPsynergy_Teleport(void) {
   Actor_Lookup(Party_GetLeaderActor());
   gFieldWork->raisedTrigger = FIELD_RAISED_TRIGGER_TELEPORT;
 }
+#undef WHIRL_COUNT
+#undef SPARK_COUNT

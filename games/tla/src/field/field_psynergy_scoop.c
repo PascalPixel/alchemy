@@ -517,3 +517,4 @@ void Scoop_DigUpItem(void) {
   event->scoopedItem = item;
   BattleEffect_DropObjectAtAnchor(id);
 }
+#undef NEXT_PHASE

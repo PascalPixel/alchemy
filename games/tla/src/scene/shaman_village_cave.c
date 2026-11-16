@@ -760,7 +760,9 @@ u32 gSceneExits[] = {
 };
 
 s32 gShamanVillageCave_OvergrowthRests[] = {
-    22, 11, 0x18000, 46, (s32)ShamanVillageCave_SettleOvergrowth, 17,
+    SC_SET(11, FIXED_ONE * 3 / 2),
+    SC_CALL(ShamanVillageCave_SettleOvergrowth),
+    SC_END,
 };
 
 // clang-format off

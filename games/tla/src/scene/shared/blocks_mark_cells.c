@@ -1,6 +1,9 @@
-/// For each id of a list ended by 0xffff: clears the actor's mark and, on a
-/// cell with attribute bit 6, blocks the cells ahead of and behind it and sets
-/// the mark.
+/// The actor id that ends a list of actors or of (actor, kind, flag) entries.
+#define ACTOR_LIST_END 0xffff
+
+/// For each id of a list ended by ACTOR_LIST_END: clears the actor's mark and,
+/// on a cell with attribute bit 6, blocks the cells ahead of and behind it and
+/// sets the mark.
 void Blocks_MarkCells(u16 *ids) {
   struct Actor *actor;
   u8 *blocked;
@@ -9,7 +12,7 @@ void Blocks_MarkCells(u16 *ids) {
   struct MapCell *cell;
   s32 x, z;
 
-  while (*ids != 0xffff) {
+  while (*ids != ACTOR_LIST_END) {
     actor = Actor_Get(*ids);
     blocked = &actor->riseEnabled;
     *blocked = 0;

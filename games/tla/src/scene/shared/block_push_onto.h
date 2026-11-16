@@ -48,7 +48,7 @@ void MagmaRockInside_PushBlockOnto(void) {
     return;
 
   Actor_SelectAnimation(lead, 8);
-  rate = 0x3333;
+  rate = toFIXED(0.2);
   System_Wait(15);
   Event_PlaySound(SE_PUSH);
   next->speedLimit = rate;

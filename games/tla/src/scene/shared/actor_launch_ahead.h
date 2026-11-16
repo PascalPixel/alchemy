@@ -19,7 +19,7 @@ void Actor_LaunchAhead(struct Actor *self) {
   actor->steeringFlags = 0;
   actor->speedLimit = toFIXED(8);
   actor->acceleration = toFIXED(1) / 8;
-  sprite->rotation = angle - 0x4000;
+  sprite->rotation = angle - DEGtoANG(90);
   actor->scaleX = 0;
   actor->scaleY = 0;
   actor->timer = 0;

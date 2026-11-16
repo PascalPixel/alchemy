@@ -42,12 +42,12 @@ top:
   distance = Iwram_MulFX(dx, dx) + Iwram_MulFX(dz, dz);
   if (distance < toFIXED(4)) {
     heading = gSlideOnIce_AnglesByKey[(gInput.held >> 4) & 15];
-    if ((heading << 16) == -0x10000) {
+    if ((heading << 16) == -65536) {
       return;
     }
   } else {
     heading = (s16)Trig_Atan(z - actor->z.fixed, x - actor->x.fixed);
-    heading = (s16)((heading + 0x2000) & -0x4000);
+    heading = (s16)((heading + DEGtoANG(45)) & -0x4000);
   }
   FieldVector_AddPolarOffset(16, heading, &probe);
   nextBehavior =

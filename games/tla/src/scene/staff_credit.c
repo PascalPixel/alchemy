@@ -52,8 +52,8 @@ FIXED Party_GetPpRatio(void);
 
 /// The beacon's work buffer: the glow's or the beams' tiles, then from
 /// BEACON_MAPS their maps.
-#define BEACON_BUFFER_SIZE 0x6000
-#define BEACON_MAPS 0x2000
+#define BEACON_BUFFER_SIZE 24576
+#define BEACON_MAPS 8192
 /// The glow is drawn as a 64-pixel square, one byte a pixel, in levels of
 /// light 1 to 15, each a colour of the picture palette.
 #define GLOW_GRID_SIZE 64
@@ -707,7 +707,7 @@ UNUSED void StaffCredit_ShowPicture(s32 mode) {
     Event_PlaySound(SE_RUMBLE);
   }
   WorldMap_Freeze();
-  buffer = Heap_AllocEwram(0x4000);
+  buffer = Heap_AllocEwram(16384);
   Decompress_TaggedLz(gWorldMapPackedTiles, buffer);
   Decompress_TaggedLz(gWorldMapPackedPictures,
                       buffer + PICTURE_FIRST_TILE * TILE_SIZE_4BPP);
@@ -1028,11 +1028,13 @@ LATE_DATA s16 gStaffCredit_FlightReturns[][2] = {
 };
 
 LATE_DATA s32 gStaffCredit_StartZooms[] = {
-    0x8000, 0xcccc, 0x18000, 0x9999, 0xe666,
+    FIXED_ONE / 2, FIXED_ONE * 4 / 5, FIXED_ONE * 3 / 2,
+    FIXED_ONE * 3 / 5, FIXED_ONE * 9 / 10,
 };
 
 LATE_DATA s32 gStaffCredit_EndZooms[] = {
-    0x10000, 0xcccc, 0xb333, 0x14ccc, 0x9999,
+    FIXED_ONE, FIXED_ONE * 4 / 5, FIXED_ONE * 7 / 10,
+    FIXED_ONE * 13 / 10, FIXED_ONE * 3 / 5,
 };
 
 LATE_DATA u8 gStaffCredit_FlightFrames[] = {
@@ -1044,7 +1046,8 @@ LATE_DATA u8 gStaffCredit_FlightTurns[] = {
 };
 
 LATE_DATA u16 gStaffCredit_GlowFadeIn[] = {
-    0xe00, 0xd00, 0xc00, 0xb00, 0xa00, 0x900, 0x800,
+    BLEND_ALPHA(0, 14), BLEND_ALPHA(0, 13), BLEND_ALPHA(0, 12), BLEND_ALPHA(0, 11),
+    BLEND_ALPHA(0, 10), BLEND_ALPHA(0, 9),  BLEND_ALPHA(0, 8),
 };
 // clang-format on
 

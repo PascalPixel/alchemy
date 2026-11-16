@@ -23,8 +23,8 @@ void Party_TakeFallDamage(void) {
       work->survivorCount++;
     } else if (hp[i] != 0) {
       work->fallenOwners[(s16)work->fallenCount++] = main->party[i];
-      work->raisedTrigger = 0xffff;
-      ((u8 *)unit)[0x131] = 0;
+      work->raisedTrigger = FIELD_RAISED_TRIGGER_PARTY_FELL;
+      unit->poison = 0;
     }
   }
 }

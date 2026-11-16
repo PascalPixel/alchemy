@@ -3,9 +3,10 @@ s32 Leader_IsFacingNorth(void) {
   u16 turn;
   s32 facing;
 
-  turn = Actor_GetById(gMainRoutineWork.leaderActorId)->facing + 0x5fff;
+  turn = Actor_GetById(gMainRoutineWork.leaderActorId)->facing +
+         (DEGtoANG(135) - 1);
   facing = 1;
-  if (turn >= 0x3fff)
+  if (turn >= DEGtoANG(90) - 1)
     facing = 0;
   return facing;
 }

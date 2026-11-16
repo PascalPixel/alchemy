@@ -18,12 +18,12 @@ void Rock_Spawn(s32 x, s32 y, s32 z, s32 count) {
       rock->position[0] = x;
       rock->position[1] = y;
       rock->position[2] = z;
-      FieldVector_AddPolarOffsetFX((Random16() << 3) + 0x80000, angle,
+      FieldVector_AddPolarOffsetFX((Random16() << 3) + toFIXED(8), angle,
                                    rock->position);
       rock->velocity[0] = 0;
       rock->velocity[1] = toFIXED(5);
       rock->velocity[2] = 0;
-      FieldVector_AddPolarOffsetFX((Random16() << 1) + 0x20000, angle,
+      FieldVector_AddPolarOffsetFX((Random16() << 1) + toFIXED(2), angle,
                                    rock->velocity);
       work->next++;
       work->next &= 63;

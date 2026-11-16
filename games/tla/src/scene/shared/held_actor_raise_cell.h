@@ -28,6 +28,6 @@ void HeldActor_RaiseCell() {
   ((struct ShapeCell *)shapes)->shape = newShape;
   cells += index;
   ((struct MapCell *)cells)->attributeB |= 192;
-  cells += 0x200;
+  cells += MAPGRID_SIZE * sizeof(struct MapCell);
   ((struct MapCell *)cells)->attributeB |= 64;
 }

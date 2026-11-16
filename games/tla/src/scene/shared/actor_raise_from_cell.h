@@ -7,7 +7,7 @@ void Actor_RaiseFromCell(s32 id) {
   actor->motionFlags = ACTOR_FLOATS;
   height = actor->groundHeight;
   actor->bounce = 0;
-  actor->y.fixed = height + 0x200000;
+  actor->y.fixed = height + toFIXED(32);
   actor->priorityFlags |= 128;
   height = Map_GetTerrainHeight(actor->layer, actor->x.fixed, actor->z.fixed);
   MapGrid_SetCellHeight(actor->x.fixed, actor->z.fixed, 0, (height >> 19) + 6);

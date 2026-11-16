@@ -5,7 +5,7 @@ void Ride_SpawnSpark(s32 *position, s32 speed, s32 mode) {
   s32 spin;
 
   if (actor != NULL) {
-    actor->bounce = Trig_Cos((u16)(Random16() * 3 >> 4) + 0x3000);
+    actor->bounce = Trig_Cos((u16)(Random16() * 3 >> 4) + TRIG_TURN * 3 / 16);
     actor->gravity = (u16)Random16();
     actor->riseBaseY = (u16)(Random16() << 1) + speed;
     spin = (u16)Random16() + 0xffff8000;

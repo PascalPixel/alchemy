@@ -196,8 +196,8 @@ void Irq_SetHandler(s32 a, s32 b, void (*callback)(void));
 void Event_End(void);
 void ItemDisplay_ShowItem(s32 a, s32 b);
 
-extern u32 gSettlements_HesperiaSettlementHousesRegions[];
-extern u32 gSettlements_GondowanSettlementCaveRegions[];
+extern struct SceneRegion gSettlements_HesperiaSettlementHousesRegions[];
+extern struct SceneRegion gSettlements_GondowanSettlementCaveRegions[];
 
 #include "shared/tables.h"
 #include "shared/event_check_spheres_overlap.h"
@@ -347,9 +347,9 @@ s32 Settlements_ClearSpriteFlags(struct Actor *actor) {
 
 const struct SceneEntrance *Scene_GetEntrances(void) { return gSceneEntrances; }
 
-u32 *Scene_GetExitRegions(void) {
+const struct SceneRegion *Scene_GetExitRegions(void) {
   s32 scene = gMainRoutineWork.next;
-  u32 *placements;
+  struct SceneRegion *placements;
 
   if (scene == SCENE_HESPERIA_SETTLEMENT_HOUSES)
     return gSettlements_HesperiaSettlementHousesRegions;
@@ -1246,14 +1246,14 @@ struct SceneEntrance gSceneEntrances[] = {
     {SCENE_TABLE_END},
 };
 
-u32 gSettlements_HesperiaSettlementHousesRegions[] = {
-    0x2e02a0, 0x2b00190, 0x1a0003e, 0xeffff, 0xffff, 0,
-    0, 0,
+struct SceneRegion gSettlements_HesperiaSettlementHousesRegions[] = {
+    {672, 46, 400, 688, 62, 416, CONDITION_ALWAYS, 14},
+    {SCENE_TABLE_END},
 };
 
-u32 gSettlements_GondowanSettlementCaveRegions[] = {
-    0xc00d4, 0xdc0084, 0x8c0014, 0x1ffff, 0xffff, 0,
-    0, 0,
+struct SceneRegion gSettlements_GondowanSettlementCaveRegions[] = {
+    {212, 12, 132, 220, 20, 140, CONDITION_ALWAYS, 1},
+    {SCENE_TABLE_END},
 };
 
 u32 gSceneExits[] = {

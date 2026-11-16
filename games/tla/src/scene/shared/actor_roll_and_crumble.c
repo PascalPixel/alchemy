@@ -105,7 +105,8 @@ void Actor_RollAndCrumble(struct Actor *actor) {
     other = RIDE_WORK;
     target = Actor_Get(gMainRoutineWork.leaderActorId);
     if (ABS(actor->x.fixed - target->x.fixed) < toFIXED(20) &&
-        (u32)(actor->y.fixed - target->y.fixed + 0x7ffff) <= 0x1ffffe &&
+        (u32)(actor->y.fixed - target->y.fixed + (toFIXED(8) - 1)) <=
+            (toFIXED(32) - 2) &&
         ABS(actor->z.fixed - target->z.fixed) < toFIXED(20)) {
       other->active = 2;
       other->car = actor;

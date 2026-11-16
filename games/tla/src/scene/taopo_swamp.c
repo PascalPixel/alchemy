@@ -562,11 +562,11 @@ sink:
   leader->z.fixed += toFIXED(2);
   slip = (leader->x.fixed & 0xfffff) + 0xfff80000;
   {
-    s32 limit = 0x10001;
+    s32 limit = toFIXED(1) + 1;
 
     if (slip >= limit)
       slip = toFIXED(1);
-    limit = -0x10001;
+    limit = -(toFIXED(1) + 1);
     if (slip <= limit)
       slip = -toFIXED(1);
   }
@@ -606,7 +606,7 @@ void TaopoSwamp_BlowFlowerOffLedge(void) {
     actor->speedLimit = speed;
     actor->acceleration = speed / 2;
     Actor_WalkByAndWait(ACTOR_FLOWER, 0, 8);
-    speed += 0x4000;
+    speed += toFIXED(0.25);
   } while (--i >= 0);
   Event_PlaySound(SE_FALL);
   actor->velocityY = toFIXED(4);
@@ -903,7 +903,7 @@ void TaopoSwamp_TremorPillar(void) {
       clod->velocityZ = mul(speed, cosine);
       clod->velocityX = mul(speed, Math_Sin(angle));
       clod->acceleration = 0;
-      clod->gravity = 0x547a;
+      clod->gravity = toFIXED(0.33);
       clod->scaleX = scale;
       clod->scaleY = scale;
       clod->bounce = FIXED_ONE / 2;
@@ -1082,9 +1082,9 @@ s32 TaopoSwamp_LandDrop(struct Actor *actor) {
 
 /// Now and then a drop falls at a random place along the swamp's edge.
 void TaopoSwamp_DripAtRandom(void) {
-  if ((gFrameCount & 7) == 0 && (u32)Random16() < 0x4000) {
-    s32 x = (Random16() << 5) + 0x2080000;
-    s32 z = 0xb00000 - (Random16() << 3);
+  if ((gFrameCount & 7) == 0 && (u32)Random16() < 16384) {
+    s32 x = (Random16() << 5) + toFIXED(520);
+    s32 z = toFIXED(176) - (Random16() << 3);
     FIXED y = toFIXED(160);
     struct Actor *actor = FieldActor_Create(SPRITE_DROPLET, x, y, z);
     FIXED scale = FIXED_ONE * 33 / 100;
@@ -1092,7 +1092,7 @@ void TaopoSwamp_DripAtRandom(void) {
     if (actor != NULL) {
       actor->scaleX = scale;
       actor->scaleY = scale;
-      actor->gravity = 0x7333;
+      actor->gravity = toFIXED(0.45);
       Actor_StartScript(actor, gTaopoSwamp_DripAtRandomScript);
       Actor_SetSpriteFlags(actor, 0);
       Actor_SetSpritePriorityDirect(actor, 3);
@@ -1272,7 +1272,7 @@ void TaopoSwamp_DripFromCeiling(void) {
     if (actor != NULL) {
       actor->scaleX = scale;
       actor->scaleY = scale;
-      actor->gravity = 0x7333;
+      actor->gravity = toFIXED(0.45);
       Actor_StartScript(actor, gTaopoSwamp_DripFromCeilingScript);
       Actor_SetSpriteFlags(actor, 0);
     }
@@ -1289,7 +1289,7 @@ s32 TaopoSwamp_IsDropFalling(struct Actor *actor) {
 /// A task: now and then a drop falls from the ceiling near (n1, n2).
 #define DEFINE_DRIP_AT_RANDOM(name, n1, n2)                                    \
   void name(void) {                                                            \
-    if ((gFrameCount & 7) == 0 && (u32)Random16() < 0x4000) {                  \
+    if ((gFrameCount & 7) == 0 && (u32)Random16() < 16384) {                   \
       s32 offset = Random16() << 5;                                            \
       s32 x = offset + n1;                                                     \
       s32 z = n2 - offset;                                                     \
@@ -1302,16 +1302,16 @@ s32 TaopoSwamp_IsDropFalling(struct Actor *actor) {
         actor->scaleY = scale;                                                 \
         actor->motionFlags = ACTOR_FALLS;                                      \
         actor->groundHeight = -toFIXED(64);                                    \
-        actor->gravity = 0x7333;                                               \
+        actor->gravity = toFIXED(0.45);                                        \
         Actor_StartScript(actor, gTaopoSwamp_DropFalls);                       \
         Actor_SetSpriteFlags(actor, 0);                                        \
       }                                                                        \
     }                                                                          \
   }
 
-DEFINE_DRIP_AT_RANDOM(TaopoSwamp_DripInPillarGap, 0x1800000, 0x1900000)
+DEFINE_DRIP_AT_RANDOM(TaopoSwamp_DripInPillarGap, toFIXED(384), toFIXED(400))
 
-DEFINE_DRIP_AT_RANDOM(TaopoSwamp_DripInDripRoom, 0x1a00000, 0x1600000)
+DEFINE_DRIP_AT_RANDOM(TaopoSwamp_DripInDripRoom, toFIXED(416), toFIXED(352))
 
 extern u16 gTaopoSwampVentsVents[];
 extern u16 gTaopoSwampVentsVentPair[];
@@ -1770,7 +1770,7 @@ void TaopoSwamp_FocusMapOn(s32 x, s32 z) {
   layer->offsetX = fx;
   layer->offsetY = z << 19;
   layer->maskX = 127;
-  layer->maskY = 0x3f80;
+  layer->maskY = MAPGRID_ROW_MASK;
   layer->originY = z << 7;
   layer->originX = x;
   layer->speedX = 0;
@@ -1841,14 +1841,14 @@ void TaopoSwamp_SinkInMud(void) {
   sprite->flags &= ~SPRITE_FLAG_SHADOW;
   Io_Write8(1, &sprite->dirty);
   if (gInput & 0xf0) {
-    step = 0x1400;
+    step = 20 * 256;
     if (gInput & 2)
       step = step * 3 >> 1;
     state->timer += step / 96 + 1;
   }
   sprite->sunkRows = state->timer / 256;
   state->mode = 1;
-  if (state->timer < 0x1400)
+  if (state->timer < 20 * 256)
     return;
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
@@ -1947,7 +1947,8 @@ void Vent_Puff(s32 *position, s32 base) {
       SPRITE_DUST_CLOUD, position[0], position[1], position[2] - toFIXED(2));
 
   if (actor != 0) {
-    actor->bounce = Trig_Cos((Random_Below(0x3000)) + 0x3000);
+    actor->bounce =
+        Trig_Cos((Random_Below(TRIG_TURN * 3 / 16)) + TRIG_TURN * 3 / 16);
     actor->gravity = (u16)Random16();
     actor->riseBaseY = (u16)(Random16() << 1) + base;
     // A spin of up to half a turn a frame, either way.

@@ -17,7 +17,7 @@ void Leader_SlideOnIceAhead(void) {
   FIXED startZ;
 
   actor = Actor_Lookup(gMainRoutineWork.leaderActorId);
-  heading = (s16)((actor->facing + 0x2000) & -0x4000);
+  heading = (s16)((actor->facing + DEGtoANG(45)) & -0x4000);
 
 top:
   Leader_StopIfPending();

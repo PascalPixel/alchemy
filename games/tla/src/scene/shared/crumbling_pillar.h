@@ -1,7 +1,8 @@
 /// @file
 /// The crumbling and pounded pillars of the Izumo Ruins and Dehkan Plateau:
-/// lists of (actor, flag) or (actor, kind, flag) entries ended by 0xffff,
-/// placed from their flags and stepped on, struck or pounded until they fall.
+/// lists of (actor, flag) or (actor, kind, flag) entries ended by
+/// ACTOR_LIST_END, placed from their flags and stepped on, struck or pounded
+/// until they fall.
 #include "pillar_place.h"
 
 #include "pound_sink_target.h"
@@ -15,7 +16,7 @@ void CrumblingPillar_Place(u16 *list) {
   struct Actor *leader;
   s32 height;
 
-  while (list[0] != 0xffff) {
+  while (list[0] != ACTOR_LIST_END) {
     u32 id = list[0];
     struct Actor *actor = Actor_Get(id);
     s32 flag = list[1];
@@ -70,7 +71,7 @@ void CrumblingPillar_Step(u16 *list) {
   pillar = Actor_FindAtCell(position, 0);
   if (pillar == 0)
     return;
-  while (list[0] != 0xffff) {
+  while (list[0] != ACTOR_LIST_END) {
     u32 id = list[0];
 
     if (Actor_GetById(id) != pillar) {
@@ -129,7 +130,7 @@ void CrumblingPillar_Collapse(const void *data, s32 id) {
   struct Actor *actor = Actor_Get(id);
   s32 flag;
 
-  while (entry->actor != 0xffff) {
+  while (entry->actor != ACTOR_LIST_END) {
     if (entry->actor != id) {
       entry++;
       continue;
@@ -187,7 +188,7 @@ void CrumblingPillar_PlaceWithStandIns(u16 *list) {
   Actor_SetPosition(10, 0, 0);
   System_Wait(1);
   grid = gMapShapeGrid;
-  while (list[0] != 0xffff) {
+  while (list[0] != ACTOR_LIST_END) {
     u32 id = list[0];
     struct Actor *actor = Actor_Get(id);
     s32 flag = list[1];
@@ -243,7 +244,7 @@ void CrumblingPillar_StepWithStandIn(u16 *list) {
   pillar = Actor_FindAtCell(position, 0);
   if (pillar == 0)
     return;
-  while (list[0] != 0xffff) {
+  while (list[0] != ACTOR_LIST_END) {
     u32 id = list[0];
 
     if (Actor_GetById(id) != pillar) {

@@ -3,6 +3,9 @@
 /// copy of: the palette cycle over the circle's colours as the spell is cast,
 /// and the party's whirling arrival.
 
+/// The entry that ends the shimmer's lists of slots and colours.
+#define PALETTE_LIST_END 0xffff
+
 /// Records the shimmer's four lists and sets each listed BG colour from its
 /// red, green and blue; then copies the BG and OBJ palettes into the palette
 /// fade's buffer and fades to them untinted; in teleport state 2 the party
@@ -14,7 +17,7 @@ void Palette_SetColorsFade(u16 *slots, u16 *colours, u16 *a, u16 *b) {
   gPaletteColors = colours;
   gPaletteCycleColors = a;
   gPaletteCycleSlots = b;
-  if (*slots != 0xffff && *colours != 0xffff) {
+  if (*slots != PALETTE_LIST_END && *colours != PALETTE_LIST_END) {
   next:
     {
       int red = *colours++;
@@ -23,7 +26,7 @@ void Palette_SetColorsFade(u16 *slots, u16 *colours, u16 *a, u16 *b) {
       int blue = *colours++;
       SET_RGB(((u16 *)BG_PLTT)[index], red, green, blue);
     }
-    if (*slots != 0xffff && *colours != 0xffff)
+    if (*slots != PALETTE_LIST_END && *colours != PALETTE_LIST_END)
       goto next;
   }
   Dma_Set((const void *)BG_PLTT, saved, DMA_COPY_WORDS(112), REG_DMA3);

@@ -195,7 +195,10 @@ enum { ACTOR_WEST_POST = ACTOR_FIRST_STAGE_PIECE, ACTOR_EAST_POST };
 #define PILLAR_TOP_HEIGHT(top) *(u8 *)&top->riseEnabled
 
 /// A map cell's collision code for a wall: nothing steps onto it.
-#define CELL_WALL 0xff
+#define CELL_WALL 255
+
+/// The actor id that ends a list of actors or of (actor, kind, flag) entries.
+#define ACTOR_LIST_END 0xffff
 
 /// A fountain rises and falls once each FOUNTAIN_PERIOD frames, rising at
 /// FOUNTAIN_RISE_AT and falling at FOUNTAIN_FALL_AT.
@@ -320,7 +323,7 @@ union FieldObject;
 /// The map work's ground effects byte (MapWork.groundEffects), read as its
 /// bits.
 struct MapGroundEffectsView {
-  u8 padding[0x17];
+  u8 padding[23];
   u8 lowBits : 2;
   // XXX: what bits 2 and 3 select; the map code that reads them would settle
   // it.
@@ -381,7 +384,7 @@ struct TrialRoadLinkWork {
   s16 resource; ///< the recorded path's resource, once decoded
   s32 originX;  ///< the course's corner the markers measure from
   s32 originZ;
-  s16 path[0x1c20]; ///< x, z pairs in pixels, 0, 0 ending them
+  s16 path[7200]; ///< x, z pairs in pixels, 0, 0 ending them
 };
 
 s32 TrialRoad_IsMirrored(void);
@@ -1428,7 +1431,7 @@ void TrialRoad_DriftWithStream(void) {
   velocity[2] = FIXED_ONE;
   velocity[0] = 0;
   velocity[0] += ((Random16() << 17) >> 16) - toFIXED(1);
-  velocity[2] += ((Random16() << 16) >> 16) - 0x8000;
+  velocity[2] += ((Random16() << 16) >> 16) - toFIXED(0.5);
   FieldEffect_Spawn(leader->x.fixed, leader->y.fixed, leader->z.fixed,
                     velocity[0], velocity[1], velocity[2],
                     EFFECT_USE_UPDATE | 1, &options);
@@ -3043,13 +3046,13 @@ void TrialRoad_StartFountains(s32 unused, s32 shape) {
   void *buffer;
 
   if (!Event_GetFlag(FLAG_KEEP_PARTY_POSITION))
-    Iwram_ClearWords(work, 0x1c8);
-  buffer = Pool_Alloc(0x800);
+    Iwram_ClearWords(work, sizeof(*work));
+  buffer = Pool_Alloc(2048);
   Decompress_TaggedLz(gField_GeyserTiles, buffer);
   work->vramEntry = VramCache_FindFreeEntry();
-  VramCache_Load(work->vramEntry, 0x800, buffer);
+  VramCache_Load(work->vramEntry, 2048, buffer);
   Heap_Release(buffer);
-  work->sprites = Heap_AllocEwram(0x3c0);
+  work->sprites = Heap_AllocEwram(960);
   work->shape = shape;
   Task_Add(TrialRoad_UpdateFountains, TASK_PASS_VBLANK + 13);
   Task_Add(TrialRoad_DrawFountains, TASK_PASS_VBLANK);
@@ -3118,7 +3121,7 @@ void TrialRoad_CrumblePillar(const void *data, s32 id) {
   struct Actor *actor = Actor_GetById(id);
   s32 flag;
 
-  while (entry->actor != 0xffff) {
+  while (entry->actor != ACTOR_LIST_END) {
     if (entry->actor != id) {
       entry++;
       continue;
@@ -3154,10 +3157,10 @@ void TrialRoad_CrumblePillar(const void *data, s32 id) {
 #include "shared/pillar_take_out_of_play.c"
 
 void Actor_MoveToObject(s32 id, s32 owner);
-// Places actors 8, 9 and 10, then walks a 0xffff-ended list of (actor, flag)
-// halfword pairs: flag + 1 set parks the actor at (0, 0); otherwise its cell
-// gets attributeB 128 and its shape-grid byte is rewritten, and flag set makes
-// it copy actor 9's visual attributes.
+// Places actors 8, 9 and 10, then walks an ACTOR_LIST_END-ended list of (actor,
+// flag) halfword pairs: flag + 1 set parks the actor at (0, 0); otherwise its
+// cell gets attributeB 128 and its shape-grid byte is rewritten, and flag set
+// makes it copy actor 9's visual attributes.
 #include "shared/pillar_restore.h"
 
 /// Moves the actor to the target's place and the target out of sight.
@@ -3248,7 +3251,7 @@ void TrialRoad_StepOnTrap(const u16 *table) {
     Event_End();
     return;
   test:
-    if (*table != 0xffff)
+    if (*table != ACTOR_LIST_END)
       goto next;
   }
 }
@@ -3325,8 +3328,8 @@ void Rubble_Scatter(s32 spread) {
         effect->velocity.x = spread;
         effect->velocity.z = spread;
       }
-      effect->velocity.y = -(((Random16() << 14) >> 16) + 0x6000);
-      effect->spin = ((Random16() << 9) >> 16) - 0x100;
+      effect->velocity.y = -(((Random16() << 14) >> 16) + (toFIXED(3) / 8));
+      effect->spin = ((Random16() << 9) >> 16) - (TRIG_TURN / 256);
       effect->scaleRateX = -(FIXED_ONE / 32);
       effect->scaleRateY = -(FIXED_ONE * 3 / 128);
       effect->update = TrialRoad_DriftRubble;
@@ -3361,9 +3364,9 @@ void MagmaRockInside_SpawnDustRing(void) {
       effect->velocity.y = 0;
       effect->velocity.z = Trig_Sin(i << 12);
       effect->velocity.x += effect->velocity.x >> 1;
-      effect->velocity.x += ((Random16() * 3) << 14 >> 16) - 0x6000;
-      effect->velocity.z += ((Random16() * 3) << 13 >> 16) - 0x3000;
-      effect->spin = ((Random16() << 12) >> 16) - 0x800;
+      effect->velocity.x += ((Random16() * 3) << 14 >> 16) - (toFIXED(3) / 8);
+      effect->velocity.z += ((Random16() * 3) << 13 >> 16) - (toFIXED(3) / 16);
+      effect->spin = ((Random16() << 12) >> 16) - (TRIG_TURN / 32);
       effect->scaleRateX = 0;
       effect->scaleRateY = 0;
       effect->update = TrialRoad_DriftRubble;
@@ -4232,10 +4235,10 @@ LAST_DATA struct Trigger gTrialRoad_PillarStageTriggers[] = {
     {TRIGGER_STEP, 31, FLAG_STAGE_CHESTS_OPENED, EVENT(TrialRoad_OpenChests)},
     {TRIGGER_STEP, 40, IF_FLAG_SET(FLAG_STAGE_CHESTS_OPENED), EVENT(TrialRoad_StepPastChests)},
     {TRIGGER_STEP, 41, FLAG_STAGE_CHESTS_OPENED, EVENT(TrialRoad_OpenChests)},
-    {USE_ITEM_ON_ACTOR(ITEM_FILTER_EQUIPMENT), 0x409, IF_FLAG_SET(FLAG_INNER_CHEST_OPEN), EVENT(TrialRoad_PutItemInChest)},
-    {USE_ITEM_ON_ACTOR(ITEM_FILTER_EQUIPMENT), 0x40a, IF_FLAG_SET(FLAG_OUTER_CHEST_OPEN), EVENT(TrialRoad_PutItemInChest)},
-    {USE_ITEM_ON_ACTOR(ITEM_FILTER_EQUIPMENT), 0x40b, IF_FLAG_SET(FLAG_INNER_CHEST_OPEN), EVENT(TrialRoad_PutItemInChest)},
-    {USE_ITEM_ON_ACTOR(ITEM_FILTER_EQUIPMENT), 0x40c, IF_FLAG_SET(FLAG_OUTER_CHEST_OPEN), EVENT(TrialRoad_PutItemInChest)},
+    {USE_ITEM_ON_ACTOR(ITEM_FILTER_EQUIPMENT), TRIGGER_SUBJECT_OWN_EFFECT | 9, IF_FLAG_SET(FLAG_INNER_CHEST_OPEN), EVENT(TrialRoad_PutItemInChest)},
+    {USE_ITEM_ON_ACTOR(ITEM_FILTER_EQUIPMENT), TRIGGER_SUBJECT_OWN_EFFECT | 10, IF_FLAG_SET(FLAG_OUTER_CHEST_OPEN), EVENT(TrialRoad_PutItemInChest)},
+    {USE_ITEM_ON_ACTOR(ITEM_FILTER_EQUIPMENT), TRIGGER_SUBJECT_OWN_EFFECT | 11, IF_FLAG_SET(FLAG_INNER_CHEST_OPEN), EVENT(TrialRoad_PutItemInChest)},
+    {USE_ITEM_ON_ACTOR(ITEM_FILTER_EQUIPMENT), TRIGGER_SUBJECT_OWN_EFFECT | 12, IF_FLAG_SET(FLAG_OUTER_CHEST_OPEN), EVENT(TrialRoad_PutItemInChest)},
     {TRIGGER_TALK, 9, CONDITION_ALWAYS, EVENT(TrialRoad_ExamineChest)},
     {TRIGGER_TALK, 10, CONDITION_ALWAYS, EVENT(TrialRoad_ExamineChest)},
     {TRIGGER_TALK, 11, CONDITION_ALWAYS, EVENT(TrialRoad_ExamineChest)},
@@ -4271,10 +4274,10 @@ LAST_DATA struct Trigger gTrialRoad_TorchStageTriggers[] = {
     {TRIGGER_STEP, 31, FLAG_STAGE_CHESTS_OPENED, EVENT(TrialRoad_OpenChests)},
     {TRIGGER_STEP, 40, IF_FLAG_SET(FLAG_STAGE_CHESTS_OPENED), EVENT(TrialRoad_StepPastChests)},
     {TRIGGER_STEP, 41, FLAG_STAGE_CHESTS_OPENED, EVENT(TrialRoad_OpenChests)},
-    {USE_ITEM_ON_ACTOR(ITEM_FILTER_EQUIPMENT), 0x409, IF_FLAG_SET(FLAG_INNER_CHEST_OPEN), EVENT(TrialRoad_PutItemInChest)},
-    {USE_ITEM_ON_ACTOR(ITEM_FILTER_EQUIPMENT), 0x40a, IF_FLAG_SET(FLAG_OUTER_CHEST_OPEN), EVENT(TrialRoad_PutItemInChest)},
-    {USE_ITEM_ON_ACTOR(ITEM_FILTER_EQUIPMENT), 0x40b, IF_FLAG_SET(FLAG_INNER_CHEST_OPEN), EVENT(TrialRoad_PutItemInChest)},
-    {USE_ITEM_ON_ACTOR(ITEM_FILTER_EQUIPMENT), 0x40c, IF_FLAG_SET(FLAG_OUTER_CHEST_OPEN), EVENT(TrialRoad_PutItemInChest)},
+    {USE_ITEM_ON_ACTOR(ITEM_FILTER_EQUIPMENT), TRIGGER_SUBJECT_OWN_EFFECT | 9, IF_FLAG_SET(FLAG_INNER_CHEST_OPEN), EVENT(TrialRoad_PutItemInChest)},
+    {USE_ITEM_ON_ACTOR(ITEM_FILTER_EQUIPMENT), TRIGGER_SUBJECT_OWN_EFFECT | 10, IF_FLAG_SET(FLAG_OUTER_CHEST_OPEN), EVENT(TrialRoad_PutItemInChest)},
+    {USE_ITEM_ON_ACTOR(ITEM_FILTER_EQUIPMENT), TRIGGER_SUBJECT_OWN_EFFECT | 11, IF_FLAG_SET(FLAG_INNER_CHEST_OPEN), EVENT(TrialRoad_PutItemInChest)},
+    {USE_ITEM_ON_ACTOR(ITEM_FILTER_EQUIPMENT), TRIGGER_SUBJECT_OWN_EFFECT | 12, IF_FLAG_SET(FLAG_OUTER_CHEST_OPEN), EVENT(TrialRoad_PutItemInChest)},
     {TRIGGER_TALK, 9, CONDITION_ALWAYS, EVENT(TrialRoad_ExamineChest)},
     {TRIGGER_TALK, 10, CONDITION_ALWAYS, EVENT(TrialRoad_ExamineChest)},
     {TRIGGER_TALK, 11, CONDITION_ALWAYS, EVENT(TrialRoad_ExamineChest)},
@@ -4311,10 +4314,10 @@ LAST_DATA struct Trigger gTrialRoad_BushPillarStageTriggers[] = {
     {TRIGGER_STEP, 31, FLAG_STAGE_CHESTS_OPENED, EVENT(TrialRoad_OpenChests)},
     {TRIGGER_STEP, 40, IF_FLAG_SET(FLAG_STAGE_CHESTS_OPENED), EVENT(TrialRoad_StepPastChests)},
     {TRIGGER_STEP, 41, FLAG_STAGE_CHESTS_OPENED, EVENT(TrialRoad_OpenChests)},
-    {USE_ITEM_ON_ACTOR(ITEM_FILTER_EQUIPMENT), 0x409, IF_FLAG_SET(FLAG_INNER_CHEST_OPEN), EVENT(TrialRoad_PutItemInChest)},
-    {USE_ITEM_ON_ACTOR(ITEM_FILTER_EQUIPMENT), 0x40a, IF_FLAG_SET(FLAG_OUTER_CHEST_OPEN), EVENT(TrialRoad_PutItemInChest)},
-    {USE_ITEM_ON_ACTOR(ITEM_FILTER_EQUIPMENT), 0x40b, IF_FLAG_SET(FLAG_INNER_CHEST_OPEN), EVENT(TrialRoad_PutItemInChest)},
-    {USE_ITEM_ON_ACTOR(ITEM_FILTER_EQUIPMENT), 0x40c, IF_FLAG_SET(FLAG_OUTER_CHEST_OPEN), EVENT(TrialRoad_PutItemInChest)},
+    {USE_ITEM_ON_ACTOR(ITEM_FILTER_EQUIPMENT), TRIGGER_SUBJECT_OWN_EFFECT | 9, IF_FLAG_SET(FLAG_INNER_CHEST_OPEN), EVENT(TrialRoad_PutItemInChest)},
+    {USE_ITEM_ON_ACTOR(ITEM_FILTER_EQUIPMENT), TRIGGER_SUBJECT_OWN_EFFECT | 10, IF_FLAG_SET(FLAG_OUTER_CHEST_OPEN), EVENT(TrialRoad_PutItemInChest)},
+    {USE_ITEM_ON_ACTOR(ITEM_FILTER_EQUIPMENT), TRIGGER_SUBJECT_OWN_EFFECT | 11, IF_FLAG_SET(FLAG_INNER_CHEST_OPEN), EVENT(TrialRoad_PutItemInChest)},
+    {USE_ITEM_ON_ACTOR(ITEM_FILTER_EQUIPMENT), TRIGGER_SUBJECT_OWN_EFFECT | 12, IF_FLAG_SET(FLAG_OUTER_CHEST_OPEN), EVENT(TrialRoad_PutItemInChest)},
     {TRIGGER_TALK, 9, CONDITION_ALWAYS, EVENT(TrialRoad_ExamineChest)},
     {TRIGGER_TALK, 10, CONDITION_ALWAYS, EVENT(TrialRoad_ExamineChest)},
     {TRIGGER_TALK, 11, CONDITION_ALWAYS, EVENT(TrialRoad_ExamineChest)},
@@ -4350,10 +4353,10 @@ LAST_DATA struct Trigger gTrialRoad_PoundStageTriggers[] = {
     {TRIGGER_STEP, 31, FLAG_STAGE_CHESTS_OPENED, EVENT(TrialRoad_OpenChests)},
     {TRIGGER_STEP, 40, IF_FLAG_SET(FLAG_STAGE_CHESTS_OPENED), EVENT(TrialRoad_StepPastChests)},
     {TRIGGER_STEP, 41, FLAG_STAGE_CHESTS_OPENED, EVENT(TrialRoad_OpenChests)},
-    {USE_ITEM_ON_ACTOR(ITEM_FILTER_EQUIPMENT), 0x409, IF_FLAG_SET(FLAG_INNER_CHEST_OPEN), EVENT(TrialRoad_PutItemInChest)},
-    {USE_ITEM_ON_ACTOR(ITEM_FILTER_EQUIPMENT), 0x40a, IF_FLAG_SET(FLAG_OUTER_CHEST_OPEN), EVENT(TrialRoad_PutItemInChest)},
-    {USE_ITEM_ON_ACTOR(ITEM_FILTER_EQUIPMENT), 0x40b, IF_FLAG_SET(FLAG_INNER_CHEST_OPEN), EVENT(TrialRoad_PutItemInChest)},
-    {USE_ITEM_ON_ACTOR(ITEM_FILTER_EQUIPMENT), 0x40c, IF_FLAG_SET(FLAG_OUTER_CHEST_OPEN), EVENT(TrialRoad_PutItemInChest)},
+    {USE_ITEM_ON_ACTOR(ITEM_FILTER_EQUIPMENT), TRIGGER_SUBJECT_OWN_EFFECT | 9, IF_FLAG_SET(FLAG_INNER_CHEST_OPEN), EVENT(TrialRoad_PutItemInChest)},
+    {USE_ITEM_ON_ACTOR(ITEM_FILTER_EQUIPMENT), TRIGGER_SUBJECT_OWN_EFFECT | 10, IF_FLAG_SET(FLAG_OUTER_CHEST_OPEN), EVENT(TrialRoad_PutItemInChest)},
+    {USE_ITEM_ON_ACTOR(ITEM_FILTER_EQUIPMENT), TRIGGER_SUBJECT_OWN_EFFECT | 11, IF_FLAG_SET(FLAG_INNER_CHEST_OPEN), EVENT(TrialRoad_PutItemInChest)},
+    {USE_ITEM_ON_ACTOR(ITEM_FILTER_EQUIPMENT), TRIGGER_SUBJECT_OWN_EFFECT | 12, IF_FLAG_SET(FLAG_OUTER_CHEST_OPEN), EVENT(TrialRoad_PutItemInChest)},
     {TRIGGER_TALK, 9, CONDITION_ALWAYS, EVENT(TrialRoad_ExamineChest)},
     {TRIGGER_TALK, 10, CONDITION_ALWAYS, EVENT(TrialRoad_ExamineChest)},
     {TRIGGER_TALK, 11, CONDITION_ALWAYS, EVENT(TrialRoad_ExamineChest)},
@@ -4400,13 +4403,13 @@ LAST_DATA struct Trigger gTrialRoad_CrumblingStageTriggers[] = {
     {TRIGGER_STEP, 40, IF_FLAG_SET(FLAG_STAGE_CHESTS_OPENED),
      EVENT(TrialRoad_StepPastChests)},
     {TRIGGER_STEP, 41, FLAG_STAGE_CHESTS_OPENED, EVENT(TrialRoad_OpenChests)},
-    {USE_ITEM_ON_ACTOR(ITEM_FILTER_EQUIPMENT), 0x409,
+    {USE_ITEM_ON_ACTOR(ITEM_FILTER_EQUIPMENT), TRIGGER_SUBJECT_OWN_EFFECT | 9,
      IF_FLAG_SET(FLAG_INNER_CHEST_OPEN), EVENT(TrialRoad_PutItemInChest)},
-    {USE_ITEM_ON_ACTOR(ITEM_FILTER_EQUIPMENT), 0x40a,
+    {USE_ITEM_ON_ACTOR(ITEM_FILTER_EQUIPMENT), TRIGGER_SUBJECT_OWN_EFFECT | 10,
      IF_FLAG_SET(FLAG_OUTER_CHEST_OPEN), EVENT(TrialRoad_PutItemInChest)},
-    {USE_ITEM_ON_ACTOR(ITEM_FILTER_EQUIPMENT), 0x40b,
+    {USE_ITEM_ON_ACTOR(ITEM_FILTER_EQUIPMENT), TRIGGER_SUBJECT_OWN_EFFECT | 11,
      IF_FLAG_SET(FLAG_INNER_CHEST_OPEN), EVENT(TrialRoad_PutItemInChest)},
-    {USE_ITEM_ON_ACTOR(ITEM_FILTER_EQUIPMENT), 0x40c,
+    {USE_ITEM_ON_ACTOR(ITEM_FILTER_EQUIPMENT), TRIGGER_SUBJECT_OWN_EFFECT | 12,
      IF_FLAG_SET(FLAG_OUTER_CHEST_OPEN), EVENT(TrialRoad_PutItemInChest)},
     {TRIGGER_TALK, 9, CONDITION_ALWAYS, EVENT(TrialRoad_ExamineChest)},
     {TRIGGER_TALK, 10, CONDITION_ALWAYS, EVENT(TrialRoad_ExamineChest)},
@@ -4448,13 +4451,13 @@ LAST_DATA struct Trigger gTrialRoad_LogStageTriggers[] = {
     {TRIGGER_STEP, 40, IF_FLAG_SET(FLAG_STAGE_CHESTS_OPENED),
      EVENT(TrialRoad_StepPastChests)},
     {TRIGGER_STEP, 41, FLAG_STAGE_CHESTS_OPENED, EVENT(TrialRoad_OpenChests)},
-    {USE_ITEM_ON_ACTOR(ITEM_FILTER_EQUIPMENT), 0x409,
+    {USE_ITEM_ON_ACTOR(ITEM_FILTER_EQUIPMENT), TRIGGER_SUBJECT_OWN_EFFECT | 9,
      IF_FLAG_SET(FLAG_INNER_CHEST_OPEN), EVENT(TrialRoad_PutItemInChest)},
-    {USE_ITEM_ON_ACTOR(ITEM_FILTER_EQUIPMENT), 0x40a,
+    {USE_ITEM_ON_ACTOR(ITEM_FILTER_EQUIPMENT), TRIGGER_SUBJECT_OWN_EFFECT | 10,
      IF_FLAG_SET(FLAG_OUTER_CHEST_OPEN), EVENT(TrialRoad_PutItemInChest)},
-    {USE_ITEM_ON_ACTOR(ITEM_FILTER_EQUIPMENT), 0x40b,
+    {USE_ITEM_ON_ACTOR(ITEM_FILTER_EQUIPMENT), TRIGGER_SUBJECT_OWN_EFFECT | 11,
      IF_FLAG_SET(FLAG_INNER_CHEST_OPEN), EVENT(TrialRoad_PutItemInChest)},
-    {USE_ITEM_ON_ACTOR(ITEM_FILTER_EQUIPMENT), 0x40c,
+    {USE_ITEM_ON_ACTOR(ITEM_FILTER_EQUIPMENT), TRIGGER_SUBJECT_OWN_EFFECT | 12,
      IF_FLAG_SET(FLAG_OUTER_CHEST_OPEN), EVENT(TrialRoad_PutItemInChest)},
     {TRIGGER_TALK, 9, CONDITION_ALWAYS, EVENT(TrialRoad_ExamineChest)},
     {TRIGGER_TALK, 10, CONDITION_ALWAYS, EVENT(TrialRoad_ExamineChest)},
@@ -4512,13 +4515,13 @@ LAST_DATA struct Trigger gTrialRoad_FountainStageTriggers[] = {
     {TRIGGER_STEP, 40, IF_FLAG_SET(FLAG_STAGE_CHESTS_OPENED),
      EVENT(TrialRoad_StepPastChests)},
     {TRIGGER_STEP, 41, FLAG_STAGE_CHESTS_OPENED, EVENT(TrialRoad_OpenChests)},
-    {USE_ITEM_ON_ACTOR(ITEM_FILTER_EQUIPMENT), 0x409,
+    {USE_ITEM_ON_ACTOR(ITEM_FILTER_EQUIPMENT), TRIGGER_SUBJECT_OWN_EFFECT | 9,
      IF_FLAG_SET(FLAG_INNER_CHEST_OPEN), EVENT(TrialRoad_PutItemInChest)},
-    {USE_ITEM_ON_ACTOR(ITEM_FILTER_EQUIPMENT), 0x40a,
+    {USE_ITEM_ON_ACTOR(ITEM_FILTER_EQUIPMENT), TRIGGER_SUBJECT_OWN_EFFECT | 10,
      IF_FLAG_SET(FLAG_OUTER_CHEST_OPEN), EVENT(TrialRoad_PutItemInChest)},
-    {USE_ITEM_ON_ACTOR(ITEM_FILTER_EQUIPMENT), 0x40b,
+    {USE_ITEM_ON_ACTOR(ITEM_FILTER_EQUIPMENT), TRIGGER_SUBJECT_OWN_EFFECT | 11,
      IF_FLAG_SET(FLAG_INNER_CHEST_OPEN), EVENT(TrialRoad_PutItemInChest)},
-    {USE_ITEM_ON_ACTOR(ITEM_FILTER_EQUIPMENT), 0x40c,
+    {USE_ITEM_ON_ACTOR(ITEM_FILTER_EQUIPMENT), TRIGGER_SUBJECT_OWN_EFFECT | 12,
      IF_FLAG_SET(FLAG_OUTER_CHEST_OPEN), EVENT(TrialRoad_PutItemInChest)},
     {TRIGGER_TALK, 9, CONDITION_ALWAYS, EVENT(TrialRoad_ExamineChest)},
     {TRIGGER_TALK, 10, CONDITION_ALWAYS, EVENT(TrialRoad_ExamineChest)},
@@ -4563,13 +4566,13 @@ LAST_DATA struct Trigger gTrialRoad_SandStageTriggers[] = {
     {TRIGGER_STEP, 40, IF_FLAG_SET(FLAG_STAGE_CHESTS_OPENED),
      EVENT(TrialRoad_StepPastChests)},
     {TRIGGER_STEP, 41, FLAG_STAGE_CHESTS_OPENED, EVENT(TrialRoad_OpenChests)},
-    {USE_ITEM_ON_ACTOR(ITEM_FILTER_EQUIPMENT), 0x409,
+    {USE_ITEM_ON_ACTOR(ITEM_FILTER_EQUIPMENT), TRIGGER_SUBJECT_OWN_EFFECT | 9,
      IF_FLAG_SET(FLAG_INNER_CHEST_OPEN), EVENT(TrialRoad_PutItemInChest)},
-    {USE_ITEM_ON_ACTOR(ITEM_FILTER_EQUIPMENT), 0x40a,
+    {USE_ITEM_ON_ACTOR(ITEM_FILTER_EQUIPMENT), TRIGGER_SUBJECT_OWN_EFFECT | 10,
      IF_FLAG_SET(FLAG_OUTER_CHEST_OPEN), EVENT(TrialRoad_PutItemInChest)},
-    {USE_ITEM_ON_ACTOR(ITEM_FILTER_EQUIPMENT), 0x40b,
+    {USE_ITEM_ON_ACTOR(ITEM_FILTER_EQUIPMENT), TRIGGER_SUBJECT_OWN_EFFECT | 11,
      IF_FLAG_SET(FLAG_INNER_CHEST_OPEN), EVENT(TrialRoad_PutItemInChest)},
-    {USE_ITEM_ON_ACTOR(ITEM_FILTER_EQUIPMENT), 0x40c,
+    {USE_ITEM_ON_ACTOR(ITEM_FILTER_EQUIPMENT), TRIGGER_SUBJECT_OWN_EFFECT | 12,
      IF_FLAG_SET(FLAG_OUTER_CHEST_OPEN), EVENT(TrialRoad_PutItemInChest)},
     {TRIGGER_TALK, 9, CONDITION_ALWAYS, EVENT(TrialRoad_ExamineChest)},
     {TRIGGER_TALK, 10, CONDITION_ALWAYS, EVENT(TrialRoad_ExamineChest)},

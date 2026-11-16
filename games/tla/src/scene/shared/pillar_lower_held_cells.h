@@ -1,3 +1,6 @@
+/// The actor id that ends a list of actors or of (actor, kind, flag) entries.
+#define ACTOR_LIST_END 0xffff
+
 /// Lowers the cells under the held actor, or the one the leader carries, for
 /// each listed actor it is: the shape grid takes the shape for its new height
 /// and the cell flags under it are cleared; the field work keeps the actor as
@@ -15,7 +18,7 @@ void Pillar_LowerHeldCells(u16 *list) {
   }
   grid = Ram_MapShapeGrid;
   work->movedBlock = NULL;
-  if (*list != 0xffff) {
+  if (*list != ACTOR_LIST_END) {
   loop:
     if (held == Actor_GetById(*list)) {
       u8 *layer = &held->layer;
@@ -35,12 +38,12 @@ void Pillar_LowerHeldCells(u16 *list) {
       ((struct ShapeCell *)shape)->shape = result;
       cell += index;
       ((struct MapCell *)cell)->attributeB &= 63;
-      cell += 0x200;
+      cell += MAPGRID_SIZE * sizeof(struct MapCell);
       ((struct MapCell *)cell)->attributeB &= 191;
       work->movedBlock = held;
     }
     list++;
-    if (*list != 0xffff)
+    if (*list != ACTOR_LIST_END)
       goto loop;
   }
 }

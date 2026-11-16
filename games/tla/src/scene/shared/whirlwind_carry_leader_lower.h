@@ -17,8 +17,8 @@ void Whirlwind_CarryLeaderLower(void) {
     actor->x.fixed = linked->x.fixed;
     actor->y.fixed = linked->y.fixed + i;
     actor->z.fixed = linked->z.fixed;
-    if (i <= 0x3ffff)
-      i += 0x1999;
+    if (i <= toFIXED(4) - 1)
+      i += toFIXED(0.1);
     actor->facing = (u8)gFrameCount << 12;
     actor->priorityFlags ^= 2 << (gFrameCount & 1);
     System_Wait(1);

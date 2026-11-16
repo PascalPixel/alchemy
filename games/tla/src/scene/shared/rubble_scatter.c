@@ -29,10 +29,10 @@ void Rubble_Scatter(s32 spread) {
         effect->velocity.x = spread;
         effect->velocity.z = spread;
       }
-      effect->velocity.y = -(((Random16() << 14) >> 16) + 0x6000);
-      effect->spin = ((Random16() << 9) >> 16) - 0x100;
+      effect->velocity.y = -(((Random16() << 14) >> 16) + (toFIXED(3) / 8));
+      effect->spin = ((Random16() << 9) >> 16) - (TRIG_TURN / 256);
       effect->scaleRateX = -FIXED_ONE / 32;
-      effect->scaleRateY = -0x600;
+      effect->scaleRateY = -(FIXED_ONE * 3 / 128);
       effect->update = Effect_AdvanceMotionAtLeaderPriority;
     }
     i++;

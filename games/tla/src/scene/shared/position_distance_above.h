@@ -2,7 +2,7 @@
 /// second raised 6 pixels.
 s32 Position_DistanceAbove(FIXED *a, FIXED *b) {
   s32 dx = (*a++ - *b++) >> 16;
-  s32 dy = (*a - *b + 0x60000) >> 16;
+  s32 dy = (*a - *b + toFIXED(6)) >> 16;
 
   return Iwram_Sqrt(dx * dx + dy * dy);
 }

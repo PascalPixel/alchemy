@@ -109,7 +109,8 @@ retry:
           goto blocked;
       }
     }
-    /* FAKEMATCH(dead): q set to the position again. */
+    /* FAKEMATCH(dead): the form kept; as q set once, at the head of the loop,
+     * 33 of 345 instructions differ in tla-en. */
     q = position;
     targetX = q[0];
     targetZ = q[2];

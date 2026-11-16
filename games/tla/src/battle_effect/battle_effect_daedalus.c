@@ -10,8 +10,8 @@
 
 /// The three 64x64 cels of the burst, built in the sheet's first 0x3000
 /// bytes; the picture loads behind them.
-#define CEL_SIZE 0x1000
-#define PICTURE_OFFSET 0x4000
+#define CEL_SIZE 4096
+#define PICTURE_OFFSET 16384
 
 /// Copies a half-picture of width by height pixels into the bottom middle of
 /// a 64x64 cel, once as it is and once mirrored, so the cel is symmetrical.
@@ -41,10 +41,10 @@ void BattleEffect_RunMirroredWall(struct BattleEffectParams *args, s32 mode) {
   BattleEffect_StartCanvasLayer(0);
   Resource_LoadAndDecompress(RESOURCE_EARTH_WALL_SHEET,
                              work->sheet + PICTURE_OFFSET, 1, 1);
-  Iwram_ClearWords(work->sheet, 0x4000);
-  MIRROR_HALF(0, PICTURE_OFFSET + 0xa8e, 17, 49)
-  MIRROR_HALF(1, PICTURE_OFFSET + 0xdcf, 19, 55)
-  MIRROR_HALF(2, PICTURE_OFFSET + 0x11e4, 20, 64)
+  Iwram_ClearWords(work->sheet, 16384);
+  MIRROR_HALF(0, PICTURE_OFFSET + 2702, 17, 49)
+  MIRROR_HALF(1, PICTURE_OFFSET + 3535, 19, 55)
+  MIRROR_HALF(2, PICTURE_OFFSET + 4580, 20, 64)
   if (mode == MIRRORED_WALL_SACK)
     Iwram_CopyWords((void *)BG_PLTT,
                     Resource_GetTableEntry(RESOURCE_ORANGE_PALETTE_B),
@@ -187,16 +187,16 @@ typedef void (*BlitFunc)(void *, const void *, s32, s32, s32, s32);
   ((CopyFunc)(IwramIrqMain + Iwram_CopyWordsOffset))
 
 #define DECODE_BUFFER Ram_MapCellBuffer
-#define DAEDALUS_PARTICLES ((struct Particle *)(Ram_MapCellBuffer + 0x4000))
+#define DAEDALUS_PARTICLES ((struct Particle *)(Ram_MapCellBuffer + 16384))
 
 /// Where FlashBurstSheet is decoded in the effect's pictures.
-#define DAEDALUS_FLASH_BURST_PICTURES 0x6c0
+#define DAEDALUS_FLASH_BURST_PICTURES 1728
 
 /// Where BirdFlockSheet is decoded in the effect's frames.
-#define DAEDALUS_BIRD_FLOCK 0x36c0
+#define DAEDALUS_BIRD_FLOCK 14016
 
 /// Where RocketFlameSheet is decoded in the effect's frames.
-#define DAEDALUS_ROCKET_FLAMES 0x3000
+#define DAEDALUS_ROCKET_FLAMES 12288
 #define ROCKET_FLAME_WIDTH 12
 #define ROCKET_FLAME_HEIGHT 24
 
@@ -342,7 +342,7 @@ void BattleEffect_RunDaedalus(struct BattleEffectParams *args) {
       view->busy = 1;
       Resource_LoadAndDecompress(RESOURCE_PARTICLE_SPRITES_A, work->sheet, 0,
                                  0);
-      off = 0x700;
+      off = 1792;
       n = 3;
       for (j = 0; j != 10; j++) {
         k = j * step;
@@ -419,7 +419,7 @@ void BattleEffect_RunDaedalus(struct BattleEffectParams *args) {
       obj->priority = 1;
       work->sprites[DAEDALUS_MISSILE] = obj;
       Iwram_CopyWords((void *)(gVramCacheEntries[obj->slot].offset + OBJ_VRAM0),
-                      DECODE_BUFFER, 0x100);
+                      DECODE_BUFFER, 256);
       /* FAKEMATCH(barrier): an empty asm. */
       __asm__("");
       for (i = 0; i != DAEDALUS_MISSILE_COPIES; i++) {
@@ -443,7 +443,7 @@ void BattleEffect_RunDaedalus(struct BattleEffectParams *args) {
       pos.height = toFIXED(255);
       waveScroll += toFIXED(1) / 2;
       waveX = waveScroll + camera;
-      if (waveX > 0x1fffff) {
+      if (waveX > toFIXED(32) - 1) {
         wavePhase = (wavePhase + 7) % 8;
         waveX -= toFIXED(32);
         waveScroll -= toFIXED(32);
@@ -473,7 +473,7 @@ void BattleEffect_RunDaedalus(struct BattleEffectParams *args) {
             v = work->particles[row + (wavePhase + 64 + i) % 8].variant;
           }
           obj->tile = v & 0x3ff;
-          if (pos.x > 0xffffff)
+          if (pos.x > toFIXED(256) - 1)
             pos.x -= toFIXED(288);
           Render_ApplyProjectedPlacementFar(
               work->sprites[j * DAEDALUS_CANOPY_ROW + i], &pos, &scale, 0);
@@ -753,8 +753,8 @@ void BattleEffect_RunDaedalus(struct BattleEffectParams *args) {
           p->variant = 1;
           p->x += swayX;
           p->y += swayY - INTtoFIXED(gDaedalus_ShakeOffsets[work->shakeFrames]);
-          p->velocityY = (Random16() & TRIG_ANGLE_MASK) - 0x8000;
-          p->velocityZ = (Random16() & 0x3fff) - 0x2000;
+          p->velocityY = (Random16() & TRIG_ANGLE_MASK) - toFIXED(0.5);
+          p->velocityZ = (Random16() & 0x3fff) - toFIXED(0.125);
         }
       }
       if (frame <= 489) {
@@ -824,7 +824,7 @@ void BattleEffect_RunDaedalus(struct BattleEffectParams *args) {
             bobY;
         Render_ApplyProjectedPlacementFar(work->sprites[DAEDALUS_MACHINE + 1],
                                           &shipPlace, &shipScale, 0);
-        v += 0x800000;
+        v += toFIXED(128);
         shipPlace.x = v;
         shipPlace.y =
             INTtoFIXED(104 - gDaedalus_ShakeOffsets[work->shakeFrames]) +
@@ -1173,7 +1173,7 @@ void BattleEffect_RunDaedalus(struct BattleEffectParams *args) {
                   work->particles[row + (wavePhase + 64 + i) % 8].variant &
                   0x3ff;
             }
-            if (shipPlace.x > 0xffffff)
+            if (shipPlace.x > toFIXED(256) - 1)
               shipPlace.x -= toFIXED(288);
             Render_ApplyProjectedPlacementFar(
                 work->sprites[j * DAEDALUS_CANOPY_ROW + i], &shipPlace,
@@ -1316,7 +1316,7 @@ void BattleEffect_RunDaedalus(struct BattleEffectParams *args) {
           if (particlePlace.y > 0 && particlePlace.y < toFIXED(128))
             Render_ApplyProjectedPlacementFar(work->sprites[i], &particlePlace,
                                               &particleScale, 0);
-          if (p->y > 0x6fffff) {
+          if (p->y > toFIXED(112) - 1) {
             p->variant = 1;
             for (j = 0; j != 2; j++) {
               s32 speed;
@@ -1407,7 +1407,7 @@ void BattleEffect_RunDaedalus(struct BattleEffectParams *args) {
 /// The summon's placement source.
 extern const struct Scale gDaedalusAlt_SummonScale;
 /// The sparks, after the map cells.
-#define STRIKE_SPARKS ((struct Particle *)(Ram_MapCellBuffer + 0x4000))
+#define STRIKE_SPARKS ((struct Particle *)(Ram_MapCellBuffer + 16384))
 
 #define BLITTER ((DrawRectangle)Ram_HeapSlots->ramCode)
 #define DAEDALUS_FRAMES 108
@@ -1424,7 +1424,7 @@ struct SummonObject {
 };
 
 /// Where GlowBandTextureA is decoded in the effect's pictures.
-#define DAEDALUS_ALT_GLOW_BAND 0x4000
+#define DAEDALUS_ALT_GLOW_BAND 16384
 
 /// The summoned object glides in from the right and down over 92 frames
 /// while, from frame 56, a shaded disc swells at the centre and six rings of
@@ -1459,7 +1459,7 @@ void BattleEffect_RunDaedalusAlt(struct BattleEffectParams *args) {
               WININ_WIN1_BG2 | WININ_WIN1_CLR;
   BattleEffect_StartCanvasLayer(0);
   REG_BLDALPHA = EFFECT_BLEND_ADD;
-  BattleEffect_SpawnObjects(1, 0x296, 3);
+  BattleEffect_SpawnObjects(1, 662, 3);
   BattleEffect_SelectLivingTargets(work->args);
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, BLITTER_ADDITIVE);
   draw[0] = BLITTER;

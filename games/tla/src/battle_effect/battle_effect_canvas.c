@@ -14,16 +14,16 @@
 #define FLASHES ((struct Particle *)gEffectScratch)
 
 /// Where TornadoSheet is decoded in the effect's pictures.
-#define ECLIPSE_TORNADO_PICTURES 0x2000
+#define ECLIPSE_TORNADO_PICTURES 8192
 
 /// Where GlowBandTextureA is decoded in the effect's pictures.
-#define ECLIPSE_GLOW_BAND_A 0x4000
+#define ECLIPSE_GLOW_BAND_A 16384
 
 /// Where GlowBandTextureB is decoded in the effect's pictures.
-#define ECLIPSE_GLOW_BAND_B 0x3840
+#define ECLIPSE_GLOW_BAND_B 14400
 
 /// Where FlameBandTexture is decoded in the effect's pictures.
-#define ECLIPSE_FLAME_BAND 0x400
+#define ECLIPSE_FLAME_BAND 1024
 
 /// The glowing orb the dragon gathers: its radius in variant, drawn as shaded
 /// circles into the effect's pictures.
@@ -32,11 +32,11 @@
 #define ECLIPSE_RAMP_SIZE 120
 /// The landing's buffers in the map cell buffer: the dome's vertices (8 rings
 /// of 16) and its grid mesh, the band's vertices and mesh, and 512 motes.
-#define ECLIPSE_DOME_VERTICES (Ram_MapCellBuffer + 0x800)
-#define ECLIPSE_DOME_MESH (Ram_MapCellBuffer + 0x1000)
-#define ECLIPSE_BAND_VERTICES (Ram_MapCellBuffer + 0x2000)
-#define ECLIPSE_BAND_MESH (Ram_MapCellBuffer + 0x2800)
-#define ECLIPSE_MOTES ((struct Particle *)(Ram_MapCellBuffer + 0x4000))
+#define ECLIPSE_DOME_VERTICES (Ram_MapCellBuffer + 2048)
+#define ECLIPSE_DOME_MESH (Ram_MapCellBuffer + 4096)
+#define ECLIPSE_BAND_VERTICES (Ram_MapCellBuffer + 8192)
+#define ECLIPSE_BAND_MESH (Ram_MapCellBuffer + 10240)
+#define ECLIPSE_MOTES ((struct Particle *)(Ram_MapCellBuffer + 16384))
 #define ECLIPSE_MOTE_COUNT 512
 #define ECLIPSE_DOME_RINGS 8
 #define ECLIPSE_DOME_RING_VERTICES 16
@@ -123,8 +123,8 @@ void BattleEffect_RunEclipse(struct BattleEffectParams *args) {
                                            OBJ_SIZE_32X32 | OBJ_256_COLORS, 0);
         obj->image.priority = 2;
         work->sprites[i] = obj;
-        Iwram_CopyWords((void *)OBJ_TILES(obj), tiles, 0x400);
-        tiles += 0x400;
+        Iwram_CopyWords((void *)OBJ_TILES(obj), tiles, 1024);
+        tiles += 1024;
       }
       cells = Resource_GetTableEntry(RESOURCE_GOLDEN_DRAGON_HEAD_TILES);
       Iwram_CopyWords((void *)OBJ_PLTT, cells, 480);
@@ -134,7 +134,7 @@ void BattleEffect_RunEclipse(struct BattleEffectParams *args) {
                                          OBJ_SIZE_32X32 | OBJ_256_COLORS, 0);
       work->sprites[31] = obj;
       obj->image.priority = 2;
-      Iwram_CopyWords((void *)OBJ_TILES(obj), gMapGridCellBuffer, 0x400);
+      Iwram_CopyWords((void *)OBJ_TILES(obj), gMapGridCellBuffer, 1024);
     }
     scroll += 4;
     REG_BG2X = scroll << 8;
@@ -173,15 +173,15 @@ void BattleEffect_RunEclipse(struct BattleEffectParams *args) {
         Resource_LoadAndDecompress(RESOURCE_SWIRL_TEXTURE, FLASHES, 0, 0);
       }
       if (frame == 136) {
-        u8 *dst = Ram_MapCellBuffer + 0x400;
+        u8 *dst = Ram_MapCellBuffer + 1024;
         for (i = 0; i != 7; i++) {
 
           void *o = (void *)OBJ_TILES(
               (struct Sprite *)work->sprites[gEclipse_TileObjects[i]]);
           // Default: set for real below.
           s32 size = 0;
-          size = 0x400;
-          Iwram_CopyWordsEntry(o, &dst[i * 0x400], size);
+          size = 1024;
+          Iwram_CopyWordsEntry(o, &dst[i * 1024], size);
         }
       }
       if (frame == 48) {
@@ -205,8 +205,8 @@ void BattleEffect_RunEclipse(struct BattleEffectParams *args) {
       baseY += velocityY;
       if (frame > 171) {
         if (frame > 183) {
-          velocityX += -0x200;
-          velocityY += 0x400;
+          velocityX += -toFIXED(1) / 128;
+          velocityY += toFIXED(1) / 64;
         }
         if (frame <= 205) {
           velocityX = velocityX * 54 / DAMPING_SCALE;
@@ -234,7 +234,7 @@ void BattleEffect_RunEclipse(struct BattleEffectParams *args) {
           place[0] = baseX + INTtoFIXED(gEclipse_ObjectX[i]);
           place[2] = baseY + INTtoFIXED(gEclipse_ObjectZ[i]);
         }
-        if (place[2] <= 0xc7ffff) {
+        if (place[2] <= toFIXED(200) - 1) {
           Render_ApplyProjectedPlacementFar(work->sprites[i], place,
                                             (s32 *)&req, 0);
         }
@@ -325,7 +325,7 @@ void BattleEffect_RunEclipse(struct BattleEffectParams *args) {
             Matrix_Initialize();
             {
               s32 x = INTtoFIXED((i & 3) * 2) + toFIXED(2);
-              s32 o = -0x400000;
+              s32 o = -toFIXED(64);
               Matrix_Translate(cx + x + o, cy - INTtoFIXED((i & 3) + 2) + o, 0);
             }
             Matrix_Scale(FIXED_ONE / 2, FIXED_ONE, FIXED_ONE);
@@ -339,7 +339,7 @@ void BattleEffect_RunEclipse(struct BattleEffectParams *args) {
           }
         }
         if (frame >= 136 && frame <= 171) {
-          s32 s = 0x40000 - u * 6000;
+          s32 s = toFIXED(4) - u * 6000;
 
           modelShade = u * 4 - 64;
           if (modelShade > -16) {
@@ -510,7 +510,7 @@ void BattleEffect_RunEclipse(struct BattleEffectParams *args) {
           q->y += toFIXED(64);
         }
         if (frame <= 27) {
-          cells = work->sheet + 0x38c0;
+          cells = work->sheet + 14528;
           BattleEffect_DrawShadedCircles(cells, 96, FIXED_ONE);
           Canvas_BlitAtFoot(cells, FIXEDtoINT(q->x), FIXEDtoINT(q->y), 96);
         }
@@ -518,7 +518,7 @@ void BattleEffect_RunEclipse(struct BattleEffectParams *args) {
         Matrix_Translate(q->x - toFIXED(63), q->y - toFIXED(64), 0);
         Matrix_Scale(FIXED_ONE / 2, FIXED_ONE, FIXED_ONE / 2);
         Matrix_RotateZ(TRIG_TURN * 19 / 32);
-        Matrix_Scale(0xdc500, 0x29c40, FIXED_ONE / 2);
+        Matrix_Scale(902400, 171072, FIXED_ONE / 2);
         Render_TransformVertices(gBattleEffect_BeamCorners, verts, 4);
         Render_DrawModelList(model);
       }
@@ -713,7 +713,7 @@ void BattleEffect_RunEclipse(struct BattleEffectParams *args) {
           s32 t = frame + 24 - i * 6;
 
           if (t >= 0 && t <= 63) {
-            s32 s = (gEclipse_RingGrowth[i] * t << 10) + 0x4000;
+            s32 s = (gEclipse_RingGrowth[i] * t << 10) + toFIXED(0.25);
 
             shade = 0;
             if (t <= 15) {
@@ -769,10 +769,10 @@ void BattleEffect_ReservedNoOpB(void) {}
 #define CLIP (COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y)
 
 /// Where GlowBandTextureA is decoded in the effect's pictures.
-#define FORM_CHANGE_GLOW_BAND 0x3000
+#define FORM_CHANGE_GLOW_BAND 12288
 /// Where BillowTexture, the crystals' texture, is decoded in the map cell
 /// buffer.
-#define FORM_CHANGE_BILLOW (Ram_MapCellBuffer + 0x2000)
+#define FORM_CHANGE_BILLOW (Ram_MapCellBuffer + 8192)
 
 /// A glow on the canvas map widens over the user for 56 frames while 16
 /// spinning rings rise around it, four abreast. From frame 48 the screen
@@ -951,7 +951,7 @@ void BattleEffect_RunFormChange(struct BattleEffectParams *args, s32 kind) {
         }
       }
 
-      corners = Heap_AllocEwram(0x200);
+      corners = Heap_AllocEwram(512);
       model = Render_AllocateModelList(1);
       texture.logWidth = 5;
       bias = 0;
@@ -1092,20 +1092,20 @@ void BattleEffect_ProcessPendingGraphicsTransfer(void) {
   }
 }
 
-/// When a transfer is pending, copies the 0x1000-byte canvas at work 0x6780
-/// to the stamp's tiles (the pointer at work 0x7b74), then clears it.
+/// When a transfer is pending, copies the 4096-byte canvas at work byte 26496
+/// to the stamp's tiles (the pointer at work byte 31604), then clears it.
 void BattleEffect_ProcessPendingStampTransfer(void) {
   u8 *work = Ram_HeapSlots->battleEffect;
   u32 ime;
   s32 *pending;
 
   IRQ_LOCK(ime);
-  pending = (s32 *)(work + 0x78ec);
+  pending = &((struct BattleEffectWork *)work)->stampPending;
   if (*pending == 1) {
     *pending = 0;
     IRQ_UNLOCK(ime);
-    Iwram_CopyWords(*(void **)(work + 0x7b74), work + 0x6780, 0x1000);
-    Iwram_FillWords(work + 0x6780, 0x1000, 0);
+    Iwram_CopyWords(*(void **)(work + 31604), work + 26496, 4096);
+    Iwram_FillWords(work + 26496, 4096, 0);
   } else {
     IRQ_UNLOCK(ime);
   }
@@ -1204,10 +1204,10 @@ void BattleEffect_BuildCanvasTilemap(void) {
   s32 row;
   s32 column;
 
-  Iwram_FillWords((void *)map, 0x100, -1);
-  map += 0x40;
-  Iwram_FillWords((void *)map, 0x80, 0x03ff03ff);
-  map += 0x20;
+  Iwram_FillWords((void *)map, 256, -1);
+  map += 64;
+  Iwram_FillWords((void *)map, 128, 0x03ff03ff);
+  map += 32;
   tiles = (u32)(Ram_MapCellBuffer + 0x200);
   for (row = 0; row != 16; row++) {
     for (column = 0; column != 8; column++) {

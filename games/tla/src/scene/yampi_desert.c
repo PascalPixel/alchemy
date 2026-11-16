@@ -646,8 +646,8 @@ void YampiDesert_BlockPoundedStakes(u16 *list) {
   }
 }
 
-/// For each six-byte record up to STAKE_LIST_END, the cell under the actor
-/// in map layer 2 takes collision code 232.
+/// As Sand ends, gives each stake of a room's list its cell's collision code 232
+/// in the overhead layer again.
 void YampiDesert_UnblockStakes(u16 *list) {
   struct MapWork *map = Ram_HeapSlots->mapGrid;
   struct MapCell *cell;
@@ -893,14 +893,12 @@ void YampiDesert_RaiseSandCloud(void) {
   MapGrid_CopyCellPictureIndicesRect(74, 71, 77, 9, 3, 3);
 }
 
-#define OBJ(p) ((struct Actor *)(p))
-
 /// The trapped scorpion uses Scoop, the leader falls with it, and the King
 /// Scorpion's battle begins.
 void YampiDesert_TrapKingScorpion(void) {
-  struct Actor *leader = OBJ(Actor_GetById(gMainRoutineWork.leaderActorId));
-  struct Actor *partner =
-      OBJ(Actor_GetById(ACTOR_KING_SCORPION_ROOM_KING_SCORPION));
+  struct Actor *leader = Actor_GetById(gMainRoutineWork.leaderActorId);
+  struct Actor *scorpion =
+      Actor_GetById(ACTOR_KING_SCORPION_ROOM_KING_SCORPION);
   u32 i;
   s32 angle;
 
@@ -908,24 +906,21 @@ void YampiDesert_TrapKingScorpion(void) {
     return;
   Event_Start();
   Event_ResolvePendingActions(0);
-rippleShrinks:
-  OBJ(gYampiDesert_SandRipple)->scaleX -= FIXED_ONE * 8 / 100;
-  OBJ(gYampiDesert_SandRipple)->scaleY -= FIXED_ONE * 8 / 100;
-  wait(1);
-  if (OBJ(gYampiDesert_SandRipple)->scaleX >= FIXED_ONE * 8 / 10)
-    goto rippleShrinks;
-rippleGrows:
-  OBJ(gYampiDesert_SandRipple)->scaleX += FIXED_ONE / 10;
-  OBJ(gYampiDesert_SandRipple)->scaleY += FIXED_ONE / 10;
-  wait(1);
-  if (OBJ(gYampiDesert_SandRipple)->scaleX <= FIXED_ONE * 18 / 10)
-    goto rippleGrows;
-rippleFades:
-  OBJ(gYampiDesert_SandRipple)->scaleX -= FIXED_ONE * 4 / 100;
-  OBJ(gYampiDesert_SandRipple)->scaleY -= FIXED_ONE * 4 / 100;
-  wait(1);
-  if (OBJ(gYampiDesert_SandRipple)->scaleX >= FIXED_ONE * 2 / 10)
-    goto rippleFades;
+  do {
+    gYampiDesert_SandRipple->scaleX -= FIXED_ONE * 8 / 100;
+    gYampiDesert_SandRipple->scaleY -= FIXED_ONE * 8 / 100;
+    wait(1);
+  } while (gYampiDesert_SandRipple->scaleX >= FIXED_ONE * 8 / 10);
+  do {
+    gYampiDesert_SandRipple->scaleX += FIXED_ONE / 10;
+    gYampiDesert_SandRipple->scaleY += FIXED_ONE / 10;
+    wait(1);
+  } while (gYampiDesert_SandRipple->scaleX <= FIXED_ONE * 18 / 10);
+  do {
+    gYampiDesert_SandRipple->scaleX -= FIXED_ONE * 4 / 100;
+    gYampiDesert_SandRipple->scaleY -= FIXED_ONE * 4 / 100;
+    wait(1);
+  } while (gYampiDesert_SandRipple->scaleX >= FIXED_ONE * 2 / 10);
   Actor_SetPosition(ACTOR_KING_SCORPION_ROOM_SAND_RIPPLE, 0, 0);
   FieldEvent_Wait(20);
   FieldCamera_MoveTo(232, CAMERA_KEEP, 196, 1);
@@ -940,8 +935,8 @@ rippleFades:
   wait(1);
   YampiDesert_BurstSand(toFIXED(232), 0, toFIXED(184));
   Sound_Play(SE_KOLIMA_BRIDGE_HOP);
-  partner->velocityY = toFIXED(6);
-  partner->priorityFlags &= ~ACTOR_PRIORITY_UNDERFOOT;
+  scorpion->velocityY = toFIXED(6);
+  scorpion->priorityFlags &= ~ACTOR_PRIORITY_UNDERFOOT;
   Actor_SetSpritePriority(ACTOR_KING_SCORPION_ROOM_KING_SCORPION, 2);
   Actor_SetSpriteColor(Actor_GetById(ACTOR_KING_SCORPION_ROOM_KING_SCORPION),
                        0);
@@ -965,32 +960,26 @@ rippleFades:
   Actor_SetAnimationById(gMainRoutineWork.leaderActorId, 28);
   FieldEvent_Wait(10);
   Sound_Play(SE_DUST_PUFF);
-  i = 0;
-leaderSinks:
-  leader->scaleX -= FIXED_ONE / 64;
-  leader->scaleY -= FIXED_ONE / 64;
-  leader->y.fixed += -toFIXED(2);
-  wait(1);
-  i++;
-  if (i <= 13)
-    goto leaderSinks;
+  for (i = 0; i < 14; i++) {
+    leader->scaleX -= FIXED_ONE / 64;
+    leader->scaleY -= FIXED_ONE / 64;
+    leader->y.fixed += -toFIXED(2);
+    wait(1);
+  }
   Actor_SetSpriteColor(Actor_GetById(gMainRoutineWork.leaderActorId), 15);
   Sound_Play(SE_HIGH_JUMP);
-  partner->velocityY = toFIXED(8);
+  scorpion->velocityY = toFIXED(8);
   Actor_SetSpriteFlags(Actor_GetById(ACTOR_KING_SCORPION_ROOM_KING_SCORPION),
                        0);
   Actor_MoveToAndWaitById(ACTOR_KING_SCORPION_ROOM_KING_SCORPION, 232, 168);
   FieldEvent_Wait(3);
   Sound_Play(SE_DUST_PUFF);
-  i = 0;
-scorpionSinks:
-  partner->scaleX -= FIXED_ONE / 32;
-  partner->scaleY -= FIXED_ONE / 32;
-  partner->y.fixed += -toFIXED(7);
-  wait(1);
-  i++;
-  if (i <= 5)
-    goto scorpionSinks;
+  for (i = 0; i < 6; i++) {
+    scorpion->scaleX -= FIXED_ONE / 32;
+    scorpion->scaleY -= FIXED_ONE / 32;
+    scorpion->y.fixed += -toFIXED(7);
+    wait(1);
+  }
   Actor_SetPosition(ACTOR_KING_SCORPION_ROOM_KING_SCORPION, 0, 0);
   gFieldWork->transition = SCENE_TRANSITION(TRANSITION_WINDOW, 9);
   Event_FinishScreenTransition();
@@ -1428,7 +1417,6 @@ void YampiDesert_RippleFollowsScorpion(void) {
     gYampiDesert_SandRipple->facing = object->facing;
   }
 }
-#undef OBJ
 #undef MOVE_LEADER_TO
 
 void Actor_StartScript(struct Actor *object, const void *script);
@@ -2449,8 +2437,7 @@ void YampiDesert_PlaceStakes(const void *script) {
   if (*(const u16 *)script == STAKE_LIST_END)
     return;
   entry = script;
-loop:
-  {
+  do {
     s32 id = entry[0];
     struct Actor *object = Actor_GetById(id);
     s32 kind = (s16)entry[1];
@@ -2460,9 +2447,7 @@ loop:
     Actor_SetSpriteFlags(object, 0);
     Actor_SetCellOpen(id, (u16)kind, (u16)flag, object->layer);
     entry += 3;
-  }
-  if (entry[0] != STAKE_LIST_END)
-    goto loop;
+  } while (entry[0] != STAKE_LIST_END);
 }
 #undef WALK
 #undef ARRIVE
@@ -2767,7 +2752,6 @@ u32 gYampiDesert_SlideDust[] = {
 };
 // clang-format on
 
-#undef OBJ
 #undef MOVE_LEADER_TO
 #undef WALK
 #undef ARRIVE

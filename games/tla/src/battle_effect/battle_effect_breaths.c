@@ -506,7 +506,7 @@ void BattleEffect_RunCrescentSlash(struct BattleEffectParams *args, s32 mode) {
   DrawRectangle draw[2];
   s32 flags;
   s32 frame;
-  s32 position[3];
+  struct ScreenPoint position;
 
   // Set up the canvas and a clipped MAX blitter, mirrored to face the target
   // and flipped upside down for Echo Cut.
@@ -545,8 +545,7 @@ void BattleEffect_RunCrescentSlash(struct BattleEffectParams *args, s32 mode) {
 
   for (frame = 0; frame != CRESCENT_SLASH_FRAMES; frame++) {
     if (frame == 0)
-      EffectPosition_ProjectBattler(args->targets[0],
-                                    (struct ScreenPoint *)position);
+      EffectPosition_ProjectBattler(args->targets[0], &position);
     if (frame == 8)
       Sound_PlayFar(SE_POWER_UP);
 
@@ -568,9 +567,9 @@ void BattleEffect_RunCrescentSlash(struct BattleEffectParams *args, s32 mode) {
       s32 x;
 
       if (args->side == EFFECT_SIDE_ENEMIES)
-        x = position[0] / 2 - 48;
+        x = position.x / 2 - 48;
       else
-        x = position[0] / 2 - 80;
+        x = position.x / 2 - 80;
       if (mode == CRESCENT_SLASH_HUMAN_HUNT) {
         switch (step) {
         case CRESCENT_SLASH_STAR:

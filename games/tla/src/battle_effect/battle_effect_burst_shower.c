@@ -195,7 +195,7 @@ void BattleEffect_RunGravelBlow(struct BattleEffectParams *args) {
   BattleEffect_RunBurstShower(args, BURST_SHOWER_MODE_GRAVEL_BLOW);
 }
 
-/// From the user's action pose, the second projectile volley's showerFrames fly
+/// From the user's action pose, the second projectile volley's shots fly
 /// at each target.
 ///
 /// Abilities: Wheeze, Aging Gas.
@@ -209,7 +209,7 @@ void BattleEffect_RunAgingGas(struct BattleEffectParams *args) {
   Actor_SetAnimationSpeedFar(object, ANIMATION_STEP_NORMAL);
 }
 
-/// From the user's action pose, the second projectile volley's showerFrames fly
+/// From the user's action pose, the second projectile volley's shots fly
 /// at each target.
 ///
 /// Abilities: Gel, Fire Dance.
@@ -231,12 +231,12 @@ void BattleEffect_RunFireDance(struct BattleEffectParams *args) {
 // frames apart, and a fade over the last eight frames. The mode chooses
 // the picture and how it is prepared (holes punched at random, a level
 // remap, a doubled beam, a grey or violet ramp), the palette, the blending,
-// how many showerFrames and where they aim; modes 5 and 23 draw one big picture
+// how many shots and where they aim; modes 5 and 23 draw one big picture
 // at the user instead, mode 10 also draws motes into the user, mode 24 adds
 // glints around the targets, and modes 11, 14 and 18 hand over to
 // BattleEffect_RunStatReduction at the end.
 
-// A volley of showerFrames flies from the user at the targets, one launched
+// A volley of shots flies from the user at the targets, one launched
 // each frame toward the next target.
 
 /// Setup: an optional Djinni appears behind the user (the prelude); the
@@ -262,9 +262,9 @@ void BattleEffect_RunBurstShower(struct BattleEffectParams *args, u32 mode) {
   s32 origin[3];
   s32 djinniTarget[3];
   struct ScreenPoint userPosition;
-  s32 targets[8][3];
-  s32 aim[3];
-  s32 screen[3];
+  struct ScreenPoint targets[8];
+  struct ScreenPoint aim;
+  struct ScreenPoint screen;
   DrawRectangle pair[2];
 
   canvas = Ram_HeapSlots->battleCanvas;
@@ -536,11 +536,10 @@ void BattleEffect_RunBurstShower(struct BattleEffectParams *args, u32 mode) {
     else
       showerFrames = 56;
 
-    // Where the showerFrames leave from, and where the targets are.
+    // Where the shots leave from, and where the targets are.
     EffectPosition_ProjectSprite(args->user, user = &userPosition);
     for (i = 0; i != args->targetCount; i++)
-      EffectPosition_ProjectScaledBattler(args->targets[i],
-                                          (struct ScreenPoint *)targets[i]);
+      EffectPosition_ProjectScaledBattler(args->targets[i], &targets[i]);
     if (mode == BURST_SHOWER_MODE_TOXIC_BREATH ||
         mode == BURST_SHOWER_MODE_BLACK_ICE) {
       if (args->side == EFFECT_SIDE_ENEMIES)
@@ -584,7 +583,7 @@ void BattleEffect_RunBurstShower(struct BattleEffectParams *args, u32 mode) {
     if (mode == BURST_SHOWER_MODE_AGING_GAS) {
       user->y -= 24;
       for (i = 0; i != args->targetCount; i++)
-        targets[i][1] += 80;
+        targets[i].y += 80;
     }
     if (mode == BURST_SHOWER_MODE_DJINNI) {
       if (args->side == EFFECT_SIDE_PARTY)
@@ -681,11 +680,11 @@ void BattleEffect_RunBurstShower(struct BattleEffectParams *args, u32 mode) {
                   VIOLET_LIGHTNING_HEIGHT);
       } else {
         // Launch a shot at a point near this frame's target.
-        aim[0] = targets[target][0] + (Random16() & 31) - 16;
+        aim.x = targets[target].x + (Random16() & 31) - 16;
         if (mode == BURST_SHOWER_MODE_FUGUE ||
             mode == BURST_SHOWER_MODE_DJINNFEST ||
             mode == BURST_SHOWER_MODE_FIRE_DANCE_UNLEASH)
-          aim[1] = targets[target][1] + (Random16() & 127) - 32;
+          aim.y = targets[target].y + (Random16() & 127) - 32;
         else if (mode == BURST_SHOWER_MODE_TOXIC_BREATH ||
                  mode == BURST_SHOWER_MODE_BLACK_ICE ||
                  mode == BURST_SHOWER_MODE_HEAT_KISS ||
@@ -693,15 +692,15 @@ void BattleEffect_RunBurstShower(struct BattleEffectParams *args, u32 mode) {
                  mode == BURST_SHOWER_MODE_DARKSOL_GASP ||
                  mode == BURST_SHOWER_MODE_FURY ||
                  mode == BURST_SHOWER_MODE_TYPHOON_BLOW)
-          aim[1] = targets[target][1] + (Random16() & 127) - 64;
+          aim.y = targets[target].y + (Random16() & 127) - 64;
         else if (mode == BURST_SHOWER_MODE_CHAR)
-          aim[1] = targets[target][1] + Random16() % 96 - 32;
+          aim.y = targets[target].y + Random16() % 96 - 32;
         else if (mode == BURST_SHOWER_MODE_FIRE_DANCE) {
-          aim[1] = targets[target][1] + (Random16() & 255) - 192;
-          aim[1] = targets[target][1] +
-                   (FIXEDtoINT(Trig_Sin(frame << 12) << 8)) - 128;
+          aim.y = targets[target].y + (Random16() & 255) - 192;
+          aim.y = targets[target].y + (FIXEDtoINT(Trig_Sin(frame << 12) << 8)) -
+                  128;
         } else
-          aim[1] = targets[target][1] + (Random16() & 63) - 16;
+          aim.y = targets[target].y + (Random16() & 63) - 16;
         launchFrames = 16;
         if (mode != BURST_SHOWER_MODE_AGING_GAS)
           launchFrames = 48;
@@ -715,9 +714,9 @@ void BattleEffect_RunBurstShower(struct BattleEffectParams *args, u32 mode) {
           shot->x = x;
           y = INTtoFIXED(user->y);
           shot->y = y;
-          dx = aim[0] - user->x;
+          dx = aim.x - user->x;
           shot->velocityX = dx << 11;
-          dy = aim[1] - user->y;
+          dy = aim.y - user->y;
           shot->velocityY = dy << 11;
           shot->x = x + (dx << 12);
           shot->y = y + (dy << 12);
@@ -725,7 +724,7 @@ void BattleEffect_RunBurstShower(struct BattleEffectParams *args, u32 mode) {
         }
       }
 
-      // Draw and move the showerFrames in flight.
+      // Draw and move the shots in flight.
       for (i = 0; i != ARRAY_COUNT(work->particles); i++) {
         struct Particle *shot = &work->particles[i];
         s32 age = shot->variant;
@@ -851,10 +850,10 @@ void BattleEffect_RunBurstShower(struct BattleEffectParams *args, u32 mode) {
 
               angle = Random16() & TRIG_ANGLE_MASK;
               x = FIXEDtoINT(Trig_Sin(angle) << 4);
-              x += targets[i][0] / 2;
+              x += targets[i].x / 2;
               x -= gBattleEffect_GlintPictureWidths[cel] >> 1;
               y = FIXEDtoINT(Trig_Cos(angle) << 4);
-              y += targets[i][1];
+              y += targets[i].y;
               y -= gBattleEffect_GlintPictureHeights[cel] >> 1;
 
               EFFECT_RELEASE_BLITTERS();
@@ -941,11 +940,10 @@ void BattleEffect_RunBurstShower(struct BattleEffectParams *args, u32 mode) {
           s32 height = 12;
 
           if (mote->variant >= 0) {
-            EffectPosition_ProjectPoint((s32 *)mote,
-                                        (struct ScreenPoint *)screen);
-            screen[0] >>= 1;
-            pair[0](canvas, sheet + gBattleEffect_MotePictures[5],
-                    screen[0] - 3, screen[1] - height / 2, 6, height);
+            EffectPosition_ProjectPoint((s32 *)mote, &screen);
+            screen.x >>= 1;
+            pair[0](canvas, sheet + gBattleEffect_MotePictures[5], screen.x - 3,
+                    screen.y - height / 2, 6, height);
             BattleEffectKernels_IntegrateVector3(mote, 62, 0);
             if (frame > i + 16) {
               s32 dx = (object->x - mote->x) >> 7;

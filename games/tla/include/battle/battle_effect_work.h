@@ -17,7 +17,7 @@
 /// HEAP_SLOT_BATTLE_EFFECT heap slot.
 struct BattleEffectWork {
   struct Particle particles[64];
-  u8 sheet[0x6980];   ///< the effect's decoded pictures, at fixed offsets
+  u8 sheet[27008];    ///< the effect's decoded pictures, at fixed offsets
   s32 bg2xLines[160]; ///< BG2X for each scanline, for an HBlank DMA
   /// The rest of the pictures' storage, which no code names.
   u8 imageTail[832];

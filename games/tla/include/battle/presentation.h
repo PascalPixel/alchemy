@@ -56,7 +56,7 @@ typedef const u8 *(*ModelDecoder)(const u8 *source, void *destination);
 
 /// What BattleMotion_CallBeast saves of the battle object a called beast
 /// borrows, for BattleMotion_DismissBeast to put back.
-struct SavedBattleObj {
+struct SavedBattleObject {
   struct BattleObject object; ///< the borrowed object, copied whole
   /// The beast's pictures: a heap block of its own, or gActorSpriteSlots when
   /// the object borrowed is another side's.
@@ -83,9 +83,9 @@ struct AIEnemyRest {
 };
 
 /// The bit decoder BattleBackground_Load copies to RAM to decode a battle
-/// background's tiles (model_decode.s), and its size in bytes.
+/// background's tiles (model_decode.s).
 extern const u8 Model_DecodeCode[];
-extern u8 Model_DecodeCodeSize[];
+extern u8 Model_DecodeCodeSize[]; ///< Model_DecodeCode's bytes
 
 void Animation_SkipToStopFar(void *record);
 

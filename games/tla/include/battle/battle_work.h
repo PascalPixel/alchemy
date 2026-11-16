@@ -112,7 +112,7 @@ struct BattleWork {
   struct BattleObject slots[14];
   struct BattleActionRecord
       actions[BATTLE_ACTION_CAPACITY]; ///< the actions chosen for the turn
-  u8 unusedAfterActions[0x124];        ///< no code names it
+  u8 unusedAfterActions[292];          ///< no code names it
   struct BattleSpoils spoils;          ///< what the battle has won so far
   u16 palette[128]; ///< the backdrop's colours, before scaling
   FIXED brightness; ///< the backdrop's brightness, 16.16, 0x10000 full

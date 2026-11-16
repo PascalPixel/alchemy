@@ -138,7 +138,7 @@ extern const struct Scale gProcne_UnitScale; ///< the comets' unit scale
 /// The whole pixels of a stored 16.16 value, read as its upper halfword.
 // UB: the s32 is read through an s16.
 #ifdef UBFIX
-#define FIXED_INTEGER_PART(v) ((s32)(v) >> 16)
+#define FIXED_INTEGER_PART(v) FIXEDtoINT((s32)(v))
 #else
 #define FIXED_INTEGER_PART(v) (((s16 *)&(v))[1])
 #endif
@@ -1778,37 +1778,46 @@ extern const u32 BattleEffect_ColorForward[];
 
 // The model renderer's ARM routines, which run from IWRAM, each with its size
 // in bytes and, for three of them, in DMA words.
-/// An ARM build of Render_FillMesh (Render_RunFillMeshKernel).
+/// An ARM build of Render_FillMesh, which Render_RunFillMeshKernel runs.
 extern const u8 Render_FillMeshKernel[];
-extern u8 Render_FillMeshKernelCodeSize[];
+extern u8 Render_FillMeshKernelCodeSize[]; ///< Render_FillMeshKernel's bytes
 /// The vertex transform Render_TransformVertices runs.
 extern const u8 Render_TransformKernel[];
-extern u8 Render_TransformKernelCodeSize[];
-/// The rasterizer kernels, one for each ModelKind.
-extern const u8 Render_SolidKernel[];
-extern const u8 Render_SolidMaxKernel[];
-extern const u8 Render_SolidAdditiveKernel[];
-extern const u8 Render_TexturedKernel[];
-extern const u8 Render_TexturedMaxKernel[];
-extern const u8 Render_TexturedAdditiveKernel[];
-extern const u8 Render_ShadedMaxKernel[];
-extern const u8 Render_ShadedAdditiveKernel[];
-extern const u8 Render_ShadedKernel[];
-extern const u8 Render_TexturedNarrowKernel[];
-extern const u8 Render_SolidNarrowKernel[];
-extern u8 Render_SolidKernelCodeSize[];
-extern u8 Render_SolidMaxKernelCodeSize[];
-extern u8 Render_SolidAdditiveKernelCodeSize[];
-extern u8 Render_TexturedKernelCodeSize[];
-extern u8 Render_TexturedMaxKernelCodeSize[];
-extern u8 Render_TexturedAdditiveKernelCodeSize[];
-extern u8 Render_ShadedMaxKernelCodeSize[];
-extern u8 Render_ShadedAdditiveKernelCodeSize[];
-extern u8 Render_ShadedKernelCodeSize[];
-extern u8 Render_TexturedNarrowKernelCodeSize[];
-extern u8 Render_SolidNarrowKernelCodeSize[];
-extern u8 Render_TexturedKernelCodeWords[];
-extern u8 Render_ShadedKernelCodeWords[];
-extern u8 Render_TexturedNarrowKernelCodeWords[];
+extern u8 Render_TransformKernelCodeSize[]; ///< Render_TransformKernel's bytes
+
+// The rasterizer kernels Render_DrawModelList copies into IWRAM, one for each
+// ModelKind, with their sizes in bytes and, for three of them, in DMA words.
+extern const u8 Render_SolidKernel[];            ///< MODEL_SOLID
+extern const u8 Render_SolidMaxKernel[];         ///< MODEL_SOLID_MAX
+extern const u8 Render_SolidAdditiveKernel[];    ///< MODEL_SOLID_ADDITIVE
+extern const u8 Render_TexturedKernel[];         ///< MODEL_TEXTURED
+extern const u8 Render_TexturedMaxKernel[];      ///< MODEL_TEXTURED_MAX
+extern const u8 Render_TexturedAdditiveKernel[]; ///< MODEL_TEXTURED_ADDITIVE
+extern const u8 Render_ShadedMaxKernel[];        ///< MODEL_SHADED_MAX
+extern const u8 Render_ShadedAdditiveKernel[];   ///< MODEL_SHADED_ADDITIVE
+extern const u8 Render_ShadedKernel[];           ///< MODEL_SHADED
+extern const u8 Render_TexturedNarrowKernel[];   ///< MODEL_TEXTURED_NARROW
+extern const u8 Render_SolidNarrowKernel[];      ///< MODEL_SOLID_NARROW
+extern u8 Render_SolidKernelCodeSize[];          ///< Render_SolidKernel's bytes
+extern u8 Render_SolidMaxKernelCodeSize[]; ///< Render_SolidMaxKernel's bytes
+extern u8 Render_SolidAdditiveKernelCodeSize[]; ///< Render_SolidAdditiveKernel's
+                                                ///< bytes
+extern u8 Render_TexturedKernelCodeSize[]; ///< Render_TexturedKernel's bytes
+extern u8
+    Render_TexturedMaxKernelCodeSize[]; ///< Render_TexturedMaxKernel's bytes
+extern u8 Render_TexturedAdditiveKernelCodeSize[]; ///< Render_TexturedAdditiveKernel's
+                                                   ///< bytes
+extern u8 Render_ShadedMaxKernelCodeSize[]; ///< Render_ShadedMaxKernel's bytes
+extern u8 Render_ShadedAdditiveKernelCodeSize[]; ///< Render_ShadedAdditiveKernel's
+                                                 ///< bytes
+extern u8 Render_ShadedKernelCodeSize[]; ///< Render_ShadedKernel's bytes
+extern u8 Render_TexturedNarrowKernelCodeSize[]; ///< Render_TexturedNarrowKernel's
+                                                 ///< bytes
+extern u8
+    Render_SolidNarrowKernelCodeSize[]; ///< Render_SolidNarrowKernel's bytes
+extern u8 Render_TexturedKernelCodeWords[]; ///< Render_TexturedKernel's words
+extern u8 Render_ShadedKernelCodeWords[];   ///< Render_ShadedKernel's words
+extern u8 Render_TexturedNarrowKernelCodeWords[]; ///< Render_TexturedNarrowKernel's
+                                                  ///< words
 
 #endif // ALCHEMY_BATTLE_EFFECT_INTERNAL_H

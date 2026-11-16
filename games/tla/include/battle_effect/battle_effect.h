@@ -279,7 +279,7 @@ enum DjinniEntranceAnchor {
   ((element) | (side) << 4 | (anchor) << 5)
 #define DJINNI_ENTRANCE_ELEMENT(packed) ((packed) & 7)
 #define DJINNI_ENTRANCE_SIDE(packed) (((packed) >> 4) & 1)
-#define DJINNI_ENTRANCE_ANCHOR(packed) (((packed) >> 5) & 15)
+#define DJINNI_ENTRANCE_ANCHOR(packed) (((packed) >> 5) & 0xf)
 
 // Places in the sheet.
 enum SeriesBSheet {

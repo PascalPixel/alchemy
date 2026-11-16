@@ -7,8 +7,15 @@
 
 #include "edition.h"
 #include "static_assert.h"
+#include "game/item.h"
 
-enum { BATTLE_UNIT_SIZE = 0x14c, PSYNERGY_ABILITY_MASK = 0x3fff };
+/// The size the STATIC_ASSERTs below hold struct Unit to, and the action id's
+/// bits in an action list entry.
+enum {
+  /// Bytes in a struct Unit, which the code clears and copies whole.
+  BATTLE_UNIT_SIZE = 332,
+  PSYNERGY_ABILITY_MASK = 0x3fff ///< PsynergyEntry.encodedAction's action id
+};
 
 /// An entry in a unit's action list: the action's id (PSYNERGY_ABILITY_MASK)
 /// and marks for an action its class or an equipped item gave.
@@ -262,25 +269,43 @@ enum CurseFlag {
 #define DEFEND_TOTAL 3
 #define DEFEND_VANISHED 4
 
-/// A unit in battle: a party member's or an enemy's stats, Psynergy, items,
-/// Djinn and ailments.
 /// Unit ids from 128 are the enemies'.
 #define FIRST_ENEMY_UNIT 128
 
 /// How many actions a unit's list holds (Unit.psynergy).
 #define PSYNERGY_SLOTS 32
 
+/// An enemy's memory of its action choice (BattleAI_ChooseAction).
+struct BattleAIState {
+  /// ACTION_STRATEGY_RANDOM_START has drawn its start.
+  unsigned initialized : 1;
+  unsigned selection : 3; ///< the place in its action list, 0 to 7
+  unsigned form : 2; ///< the Dullahan's form, 0 to 2 (gBattleAI_DullahanForms)
+  unsigned remaining : 26; ///< not used here
+};
+
+/// A full HP or PP gauge (Unit.hpGauge, Unit.ppGauge): the gauge is the
+/// current value over the maximum in 2.14 fixed point, and the cap
+/// Unit_ClampGauge puts on hp / hpMax shifted up UNIT_GAUGE_SHIFT bits.
+#define UNIT_GAUGE_SHIFT 14
+#define UNIT_GAUGE_FULL (1 << UNIT_GAUGE_SHIFT)
+
+/// A unit's name buffer: 14 characters and the 0 that ends them.
+#define UNIT_NAME_SIZE 15
+
+/// A unit in battle: a party member's or an enemy's stats, Psynergy, items,
+/// Djinn and statuses.
 struct Unit {
-  u8 name[0x0f];      ///< one byte a character, ending in 0
-  u8 level;           ///< 1 to 99 for a character
-  s16 baseHp;         ///< before equipment, Djinn and class (Unit_Calculate)
-  s16 basePp;         ///< before equipment, Djinn and class (Unit_Calculate)
-  s16 hpGauge;        ///< hp / hpMax in 0..0x4000; 1 while any HP remains
-  s16 ppGauge;        ///< pp / ppMax in 0..0x4000; 1 while any PP remains
-  u16 baseAttack;     ///< before equipment, Djinn, class and stages
-  u16 baseDefense;    ///< before equipment, Djinn, class and stages
-  u16 baseAgility;    ///< before equipment, Djinn, class and stages
-  u8 baseLuck;        ///< before equipment, Djinn and class
+  u8 name[UNIT_NAME_SIZE]; ///< one byte a character, ending in 0
+  u8 level;                ///< 1 to 99 for a character
+  s16 baseHp;      ///< before equipment, Djinn and class (Unit_Calculate)
+  s16 basePp;      ///< before equipment, Djinn and class (Unit_Calculate)
+  s16 hpGauge;     ///< hp / hpMax in 0..UNIT_GAUGE_FULL; 1 while any HP remains
+  s16 ppGauge;     ///< pp / ppMax in 0..UNIT_GAUGE_FULL; 1 while any PP remains
+  u16 baseAttack;  ///< before equipment, Djinn, class and stages
+  u16 baseDefense; ///< before equipment, Djinn, class and stages
+  u16 baseAgility; ///< before equipment, Djinn, class and stages
+  u8 baseLuck;     ///< before equipment, Djinn and class
   u8 baseActionCount; ///< actions a turn before equipment
   u8 baseHpRegen;     ///< HP regained each turn before equipment
   u8 basePpRegen;     ///< PP regained each turn before equipment
@@ -288,7 +313,7 @@ struct Unit {
   /// Power and resistance before equipment and stages: an enemy's from its
   /// element preset, a character's from its element levels
   /// (Unit_CalculateBaseElements).
-  struct BattleElementStats baseElement[4];
+  struct BattleElementStats baseElement[ELEMENT_COUNT];
   s16 hpMax;         ///< maximum HP (Unit_Calculate)
   s16 ppMax;         ///< maximum PP (Unit_Calculate)
   s16 hp;            ///< current HP, 0 when downed
@@ -303,22 +328,24 @@ struct Unit {
   u8 unused[2];      ///< no code names it, as baseUnused
   /// Power and resistance in each element after equipment, element levels
   /// and Resistance stages (Unit_Calculate).
-  struct BattleElementStats element[4];
+  struct BattleElementStats element[ELEMENT_COUNT];
   /// The action list: Psynergy taught for good, then the class's and the
   /// equipment's. An empty entry is 0.
   struct PsynergyEntry psynergy[PSYNERGY_SLOTS];
   /// Items held, one entry each: bits 15..11 quantity | 10 broken |
   /// 9 equipped | 8..0 item id (INVENTORY_*). An empty entry is 0.
-  u16 inventory[15];
+  u16 inventory[INVENTORY_SLOTS];
   u8 paddingBeforeDjinn[2]; ///< up to the word djinnHeld starts on
   /// The Djinn held, one bit per Djinni (by its index) in each element's word.
-  u32 djinnHeld[4];
+  u32 djinnHeld[ELEMENT_COUNT];
   /// The Djinn set, one bit per Djinni.
-  u32 djinnSet[4];
-  u8 djinnOwnedCounts[4];  ///< the Djinn held in each element
-  u8 djinnActiveCounts[4]; ///< the Djinn set in each element
-  u32 rewards;             ///< 0 for an enemy (the BattleUnit_Set draft)
-  u32 experience;          ///< a character's experience points
+  u32 djinnSet[ELEMENT_COUNT];
+  u8 djinnHeldCounts[ELEMENT_COUNT]; ///< the Djinn held in each element
+  u8 djinnSetCounts[ELEMENT_COUNT];  ///< the Djinn set in each element
+  /// Cleared when an enemy is set up. During a battle the enemy's action
+  /// choice keeps its place in its action list here (BattleAI_ChooseAction).
+  struct BattleAIState aiState;
+  u32 experience; ///< a character's experience points
   /// A character's id (ISAAC to PIERS, below 8), written at a new game: the
   /// equipment masks and the battle presentation read it. Who any unit is,
   /// character or enemy, is enemyId.
@@ -334,7 +361,8 @@ struct Unit {
   /// 0 to 4: each guard effect raises it to its own level and no lower;
   /// Defend's is 1.
   u8 defendLevel;
-  s8 summonBoost[4]; ///< cleared by BattleParty_ResetActiveRuntimeFields
+  s8 summonBoost[ELEMENT_COUNT]; ///< cleared by
+                                 ///< BattleParty_ResetActiveRuntimeFields
   /// The curse: nonzero shows it in the menus and lets the sanctum remove it.
   s8 curse;
   s8 poison; ///< 1 poisoned, 2 deadly poison
@@ -392,27 +420,27 @@ STATIC_ASSERT(offsetof(struct Unit, baseAttack) == 0x18);
 STATIC_ASSERT(offsetof(struct Unit, psynergy) == 0x58);
 STATIC_ASSERT(offsetof(struct Unit, djinnHeld) == 0xf8);
 STATIC_ASSERT(offsetof(struct Unit, djinnSet) == 0x108);
-STATIC_ASSERT(offsetof(struct Unit, rewards) == 0x120);
+STATIC_ASSERT(offsetof(struct Unit, aiState) == 0x120);
 STATIC_ASSERT(offsetof(struct Unit, hp) == 0x038);
 STATIC_ASSERT(offsetof(struct Unit, baseElement) == 0x024);
 STATIC_ASSERT(offsetof(struct Unit, level) == 0x00f);
 STATIC_ASSERT(offsetof(struct Unit, element) == 0x048);
 STATIC_ASSERT(offsetof(struct Unit, ready) == 0x144);
 STATIC_ASSERT(offsetof(struct Unit, inventory) == 0x0d8);
-STATIC_ASSERT(offsetof(struct Unit, djinnOwnedCounts) == 0x118);
-STATIC_ASSERT(offsetof(struct Unit, djinnActiveCounts) == 0x11c);
+STATIC_ASSERT(offsetof(struct Unit, djinnHeldCounts) == 0x118);
+STATIC_ASSERT(offsetof(struct Unit, djinnSetCounts) == 0x11c);
 STATIC_ASSERT(offsetof(struct Unit, defendLevel) == 0x12b);
 STATIC_ASSERT(offsetof(struct Unit, charm) == 0x13a);
 STATIC_ASSERT(offsetof(struct Unit, haunt) == 0x140);
 
 STATIC_ASSERT(offsetof(struct Unit, enemyId) == 0x14a);
 
-/// Clamps a gauge ratio to 0..0x4000, where 0x4000 means full.
-static __inline__ s32 Vitals_Clamp(s32 ratio) {
+/// Clamps a gauge ratio to 0..UNIT_GAUGE_FULL.
+static __inline__ s32 Unit_ClampGauge(s32 ratio) {
   s32 clamped;
 
-  if (ratio > 0x4000)
-    clamped = 0x4000;
+  if (ratio > UNIT_GAUGE_FULL)
+    clamped = UNIT_GAUGE_FULL;
   else if (ratio < 0)
     clamped = 0;
   else
@@ -423,16 +451,21 @@ static __inline__ s32 Vitals_Clamp(s32 ratio) {
 /// Recalculates HP and PP gauges, keeping at least one when any points remain.
 #define Unit_UpdateGauges(unit)                                                \
   do {                                                                         \
-    (unit)->hpGauge = Vitals_Clamp(((unit)->hp << 14) / (unit)->hpMax);        \
+    (unit)->hpGauge =                                                          \
+        Unit_ClampGauge(((unit)->hp << UNIT_GAUGE_SHIFT) / (unit)->hpMax);     \
     if ((unit)->hpGauge == 0 && (unit)->hp != 0)                               \
       (unit)->hpGauge = 1;                                                     \
-    (unit)->ppGauge = Vitals_Clamp(((unit)->pp << 14) / (unit)->ppMax);        \
+    (unit)->ppGauge =                                                          \
+        Unit_ClampGauge(((unit)->pp << UNIT_GAUGE_SHIFT) / (unit)->ppMax);     \
     if ((unit)->ppGauge == 0 && (unit)->pp != 0)                               \
       (unit)->ppGauge = 1;                                                     \
   } while (0)
 
-extern struct Unit gCharacterUnits[];
+/// The eight characters' units, ISAAC to PIERS, kept in the save.
+extern struct Unit gCharacterUnits[PARTY_UNIT_COUNT];
 
+/// A unit's base stats from Unit.baseHp on, as BattleUnit_Strengthen's copy and
+/// the Clear Data read them.
 struct UnitBaseStats {
   s16 hp;
   s16 pp;

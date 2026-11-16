@@ -32,8 +32,8 @@ union OwnerDjinnFlags {
   u32 slots[8];
 };
 
-/// The Djinn held and set, counted by element (Unit.djinnOwnedCounts and
-/// djinnActiveCounts), read as one array of eight.
+/// The Djinn held and set, counted by element (Unit.djinnHeldCounts and
+/// djinnSetCounts), read as one array of eight.
 union OwnerDjinnCounts {
   struct {
     u8 owned[4];

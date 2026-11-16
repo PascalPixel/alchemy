@@ -294,7 +294,7 @@ void BattleSummon_UpdateAvailability(void) {
       for (partySlot = 0; partySlot < partySize; partySlot++) {
         struct Unit *member = Unit_Get(partyMembers[partySlot]);
 
-        totals[element] += member->djinnOwnedCounts[element];
+        totals[element] += member->djinnHeldCounts[element];
       }
     }
     element++;

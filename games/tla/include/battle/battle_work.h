@@ -156,8 +156,9 @@ struct BattleWork {
   /// its action starts.
   u8 actingAnimation;
   u8 paddingAfterActingAnimation[2]; ///< up to the word aiStates starts on
-  /// Each enemy's targeting memory (a struct AIState), by AI request.
-  u32 aiStates[4];
+  /// The action choice's memory of the enemies that act more than once a
+  /// turn, by AI request.
+  struct BattleAIState aiStates[4];
 };
 
 STATIC_ASSERT(offsetof(struct BattleWork, partyStatus) == 0x041);

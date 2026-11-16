@@ -28,7 +28,7 @@ s32 Unit_GetElementLevels(s32 record, const u8 *source, s32 output[4]) {
     s32 i;
 
     for (i = 0; i < ELEMENT_COUNT; i++)
-      output[i] = source[offsetof(struct Unit, djinnActiveCounts) -
+      output[i] = source[offsetof(struct Unit, djinnSetCounts) -
                          offsetof(struct Unit, djinnHeld) + i] *
                   10;
     if (record <= PIERS) {

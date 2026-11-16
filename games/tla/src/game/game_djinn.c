@@ -33,11 +33,11 @@ s32 Djinn_GiveToParty(s32 element, s32 djinn) {
   for (partyIndex = 0; partyIndex < partySize; partyIndex++) {
     struct Unit *unit = Unit_Get(gMainRoutineWork.party[partyIndex]);
 
-    if (unit->djinnOwnedCounts[element] <= 9) {
+    if (unit->djinnHeldCounts[element] <= 9) {
       s32 ownedDjinn = 0;
 
       for (elementIndex = 0; elementIndex < ELEMENT_COUNT; elementIndex++)
-        ownedDjinn += unit->djinnOwnedCounts[elementIndex];
+        ownedDjinn += unit->djinnHeldCounts[elementIndex];
       if (fewestDjinn > ownedDjinn) {
         fewestDjinn = ownedDjinn;
         leastLoadedMember = gMainRoutineWork.party[partyIndex];
@@ -59,11 +59,11 @@ s32 Djinn_GiveToParty(s32 element, s32 djinn) {
 s32 Djinn_Give(s32 unitId, s32 element, s32 djinnIndex) {
   struct Unit *unit = Unit_Get(unitId);
 
-  if (unit->djinnOwnedCounts[element] > 9)
+  if (unit->djinnHeldCounts[element] > 9)
     return -1;
   if ((unit->djinnHeld[element] & (1 << djinnIndex)) != 0)
     return -1;
-  unit->djinnOwnedCounts[element]++;
+  unit->djinnHeldCounts[element]++;
   unit->djinnHeld[element] |= 1 << djinnIndex;
   return 0;
 }
@@ -76,10 +76,10 @@ s32 Djinn_CanSet(s32 unitId, s32 element, s32 djinnIndex) {
   s32 entryIndex;
   s32 recoveryTurns;
 
-  if (unit->djinnOwnedCounts[element] == 0)
+  if (unit->djinnHeldCounts[element] == 0)
     return 0;
-  if (unit->djinnActiveCounts[element] > 9) {
-    unit->djinnActiveCounts[element] = 10;
+  if (unit->djinnSetCounts[element] > 9) {
+    unit->djinnSetCounts[element] = 10;
     return 0;
   }
   if ((unit->djinnHeld[element] & (1 << djinnIndex)) == 0)
@@ -119,7 +119,7 @@ s32 Djinn_Set(s32 unitId, s32 element, s32 djinnIndex) {
       unit->djinnSet[element] |= 1 << djinnIndex;
     else
       return 0;
-    unit->djinnActiveCounts[element]++;
+    unit->djinnSetCounts[element]++;
     Unit_UpdateClass(unitId);
   }
   return isReady;
@@ -132,7 +132,7 @@ u32 Djinn_PutOnStandby(s32 unitId, s32 element, s32 djinnIndex) {
   u32 wasActive = Djinn_IsSet(unitId, element, djinnIndex);
 
   if (wasActive != 0) {
-    unit->djinnActiveCounts[element]--;
+    unit->djinnSetCounts[element]--;
     unit->djinnSet[element] &= ~(1 << djinnIndex);
     Unit_UpdateClass(unitId);
   }
@@ -189,7 +189,7 @@ s32 Djinn_Transfer(s32 source, s32 element, s32 djinnIndex, s32 target) {
     if (Djinn_Give(target, element, djinnIndex) == 0) {
       Djinn_PutOnStandby(source, element, djinnIndex);
       sourceUnit->djinnHeld[element] &= ~(1 << djinnIndex);
-      sourceUnit->djinnOwnedCounts[element]--;
+      sourceUnit->djinnHeldCounts[element]--;
 
       if (wasActive != 0) {
         Djinn_Set(target, element, djinnIndex);
@@ -246,12 +246,12 @@ s32 Owner_SumDjinnCounts(s32 unitId, s32 index) {
 
   unit = Unit_Get(unitId);
   if (index == -1) {
-    result = unit->djinnOwnedCounts[0];
-    result += unit->djinnOwnedCounts[1];
-    result += unit->djinnOwnedCounts[2];
-    result += unit->djinnOwnedCounts[3];
+    result = unit->djinnHeldCounts[0];
+    result += unit->djinnHeldCounts[1];
+    result += unit->djinnHeldCounts[2];
+    result += unit->djinnHeldCounts[3];
   } else {
-    result = unit->djinnOwnedCounts[index];
+    result = unit->djinnHeldCounts[index];
   }
   return result;
 }
@@ -268,12 +268,12 @@ s32 Party_SumDjinnCounts(s32 element) {
     struct Unit *unit = Unit_Get(unitIds[i]);
 
     if (element == -1) {
-      djinnCount += unit->djinnOwnedCounts[0];
-      djinnCount += unit->djinnOwnedCounts[1];
-      djinnCount += unit->djinnOwnedCounts[2];
-      djinnCount += unit->djinnOwnedCounts[3];
+      djinnCount += unit->djinnHeldCounts[0];
+      djinnCount += unit->djinnHeldCounts[1];
+      djinnCount += unit->djinnHeldCounts[2];
+      djinnCount += unit->djinnHeldCounts[3];
     } else {
-      djinnCount += unit->djinnOwnedCounts[element];
+      djinnCount += unit->djinnHeldCounts[element];
     }
   }
   return djinnCount;

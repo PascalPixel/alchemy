@@ -69,13 +69,6 @@ struct FormationCandidate {
   s32 score : 16;
 };
 
-struct AIState {
-  unsigned initialized : 1;
-  unsigned selection : 3;
-  unsigned form : 2;
-  unsigned remaining : 26;
-};
-
 struct AIEnemyRest {
   u8 unk00[0x2c];
   u16 abilities[8];

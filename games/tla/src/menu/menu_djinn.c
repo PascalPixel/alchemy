@@ -1865,7 +1865,7 @@ s32 DjinnMenu_DrawStatPreview(s32 window, s32 x, s32 y, s32 ownerId,
         Window_SetTilemapEntryFar(window, tile, tileColumn, y + 5, 0);
         tileColumn++;
         Window_SetTilemapEntryFar(window,
-                                  unit->djinnActiveCounts[i] + WINDOW_TILE('0'),
+                                  unit->djinnSetCounts[i] + WINDOW_TILE('0'),
                                   tileColumn, y + 5, 0);
       }
       // An empty once-only block: it ends the tile loop's block before the

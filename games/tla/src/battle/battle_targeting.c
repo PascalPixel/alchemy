@@ -2348,7 +2348,7 @@ u32 Ability_IsPsynergy(s32 abilityId) {
 s32 BattleAI_ChooseAction(struct BattleActionRecord *request, s32 retry) {
   struct Unit *unit;
   u32 selection;
-  struct AIState *selectionMemory;
+  struct BattleAIState *selectionMemory;
   const struct EnemyDefinition *enemy;
   s32 itemsAllowed;
   s32 failedChoices;
@@ -2405,17 +2405,15 @@ s32 BattleAI_ChooseAction(struct BattleActionRecord *request, s32 retry) {
   if (unit->classId != CLASS_NONE)
     return -1;
 
-  selectionMemory = (struct AIState *)&unit->rewards;
+  selectionMemory = &unit->aiState;
   enemy = Enemy_GetDefinitionFar(unit->enemyId);
   if (unit->enemyId == ENEMY_POSEIDON) {
-    selectionMemory =
-        (struct AIState *)&((struct BattleWork *)Ram_HeapSlots->battleWork)
-            ->aiStates[request->turnAction];
+    selectionMemory = &((struct BattleWork *)Ram_HeapSlots->battleWork)
+                           ->aiStates[request->turnAction];
     if (request->turnAction == 1)
       enemy = Enemy_GetDefinitionFar(ENEMY_POSEIDON_SECOND_ACTION);
   } else if (unit->enemyId == ENEMY_DOOM_DRAGON_A) {
-    selectionMemory =
-        (struct AIState *)&AI_BATTLE->aiStates[request->turnAction];
+    selectionMemory = &AI_BATTLE->aiStates[request->turnAction];
     switch (request->turnAction) {
     case 1:
       AI_BATTLE->actingAnimation = 6;
@@ -2431,8 +2429,7 @@ s32 BattleAI_ChooseAction(struct BattleActionRecord *request, s32 retry) {
       break;
     }
   } else if (unit->enemyId == ENEMY_DOOM_DRAGON_E) {
-    selectionMemory =
-        (struct AIState *)&AI_BATTLE->aiStates[request->turnAction];
+    selectionMemory = &AI_BATTLE->aiStates[request->turnAction];
     switch (request->turnAction) {
     case 1:
       AI_BATTLE->actingAnimation = 6;
@@ -2444,8 +2441,7 @@ s32 BattleAI_ChooseAction(struct BattleActionRecord *request, s32 retry) {
       break;
     }
   } else if (unit->enemyId == ENEMY_DOOM_DRAGON_H) {
-    selectionMemory =
-        (struct AIState *)&AI_BATTLE->aiStates[request->turnAction];
+    selectionMemory = &AI_BATTLE->aiStates[request->turnAction];
     if (request->turnAction == 1) {
       AI_BATTLE->actingAnimation = 3;
       enemy = Enemy_GetDefinitionFar(ENEMY_DOOM_DRAGON_I);

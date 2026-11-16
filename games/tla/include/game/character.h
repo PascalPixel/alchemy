@@ -89,9 +89,6 @@ enum EnemyActionStrategy {
   ACTION_STRATEGY_SAME       ///< the place last picked
 };
 
-/// A unit's name buffer: 14 characters and the 0 that ends them.
-#define UNIT_NAME_SIZE 15
-
 /// An enemy's definition: its level and stats, items, element preset, the
 /// actions it chooses from and its rewards.
 struct EnemyDefinition {

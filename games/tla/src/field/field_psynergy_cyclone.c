@@ -227,7 +227,7 @@ void FieldPsynergy_Cyclone(void) {
   canvas->x = (s16)FIXEDtoINT(pos[0]);
   canvas->y = (s16)FIXEDtoINT(pos[2]);
   canvas->priority = 1;
-  canvas->depth = 240;
+  canvas->depth = OAM_DEPTH_WINDOW;
   canvas->mode = CANVAS_SPRITE_KEPT;
   canvas->scaleX = FIXED_ONE * 3 / 2;
   canvas->scaleY = FIXED_ONE * 3 / 2;

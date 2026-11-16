@@ -254,7 +254,7 @@ void SummonTablet_PlayRunes(s32 targetId) {
     sprite->oam.fullColor = 1;
     sprite->oam.palette = 0;
     sprite->oam.priority = 1;
-    sprite->depth = 240;
+    sprite->depth = OAM_DEPTH_WINDOW;
     mote->x = targetX;
     mote->z = targetZ;
     mote->targetX = ((i % TABLET_MOTE_ROW) * 3 << 18) + toFIXED(30);
@@ -274,7 +274,7 @@ void SummonTablet_PlayRunes(s32 targetId) {
     sprite->oam.fullColor = 1;
     sprite->oam.palette = 0;
     sprite->oam.priority = 0;
-    sprite->depth = 240;
+    sprite->depth = OAM_DEPTH_WINDOW;
     mote->timer = -1;
     sprite++;
     mote++;
@@ -456,19 +456,13 @@ struct ActorFlag {
 
 void FlagBlock_ApplyFlags(struct ActorFlag *list);
 
-/// Sets up a scene's flag blocks (pairs of actor and game flag, ended by
-/// actor 0xffff): each stands still on its cell, which nothing may enter, shown
-/// up (animation 0) or down (1) by its flag; then FlagBlock_ApplyFlags raises
-/// the cells of those up, and a leader below the ground is lifted onto it.
-/// Daila, Kibombo, Madra's catacombs, the Izumo ruins, Air's Rock and the
-/// Lemurian Ship call it as they start.
-// XXX: what the blocks are in the game (pillars, posts?); a render of Daila's
-// would settle it.
-/// Sets up a scene's flag blocks (actor and flag pairs, ended by actor 0xffff):
-/// each stops being solid and blocks its cell; one whose flag is set takes
-/// animation 0 and has the flag cleared, the others animation 1. Then
-/// FlagBlock_ApplyFlags applies them and the leader is lifted onto the ground
-/// if it now lies below it.
+/// Sets up a scene's flag blocks, the puddles Frost turns into pillars of ice
+/// (actor and flag pairs, ended by actor 0xffff): each stops being solid and
+/// blocks its cell; one whose flag is set takes animation 0 and has the flag
+/// cleared, the others animation 1. Then FlagBlock_ApplyFlags applies them and
+/// the leader is lifted onto the ground if it now lies below it. Daila,
+/// Kibombo, the Izumo ruins, Air's Rock and the Lemurian Ship call it as they
+/// start.
 void FlagBlock_PlaceAll(struct ActorFlag *actors) {
   struct MapWork *map = Ram_HeapSlots->mapGrid;
   struct ActorFlag *list = actors;

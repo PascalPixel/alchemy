@@ -109,7 +109,7 @@ void FieldPsynergy_GrindOnTarget(void) {
     sprite->oam.fullColor = 1;
     sprite->oam.palette = 0;
     sprite->oam.priority = 0;
-    sprite->depth = 240;
+    sprite->depth = OAM_DEPTH_WINDOW;
     particle->timer = -1;
     particle++;
   }

@@ -54,7 +54,7 @@ void Teleport_PlayWhirl(void) {
     sprite->oam.fullColor = 1;
     sprite->oam.palette = 0;
     sprite->oam.priority = 0;
-    sprite->depth = 240;
+    sprite->depth = OAM_DEPTH_WINDOW;
     spark->age = -1;
   }
   Sound_PlayFar(SE_SPARKLE_FALL);
@@ -195,7 +195,7 @@ void Teleport_PlaySparks(void) {
     sprite->oam.fullColor = 1;
     sprite->oam.palette = 0;
     sprite->oam.priority = 0;
-    sprite->depth = 240;
+    sprite->depth = OAM_DEPTH_WINDOW;
     particle->timer = -1;
   }
   wait(10);

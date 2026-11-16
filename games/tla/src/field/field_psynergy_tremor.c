@@ -85,7 +85,7 @@ void FieldPsynergy_TremorOnTarget(void) {
     sprite->oam.fullColor = 0;
     sprite->oam.palette = 14;
     sprite->oam.priority = 0;
-    sprite->depth = 240;
+    sprite->depth = OAM_DEPTH_WINDOW;
     particle->timer = -1;
   }
   BattleEffect_SetObjectUpdateMode(scene->mainActor, 0);

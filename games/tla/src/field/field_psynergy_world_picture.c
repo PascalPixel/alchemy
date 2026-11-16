@@ -49,7 +49,8 @@ void WorldPicture_Initialize(void) {
   markerTiles[26] = 0x1ffff;
   markerTiles[27] = 0x11ff0;
   markerTiles[28] = 0x1100;
-  tileAttributes = VramCache_Load(work->vramBlock, 128, markerTiles) | OBJ_PRIORITY(1);
+  tileAttributes =
+      VramCache_Load(work->vramBlock, 128, markerTiles) | OBJ_PRIORITY(1);
   for (i = 0; i < WORLD_PICTURE_PLACE_COUNT; i++) {
     *oam++ = 0;
     *oam++ = 0;

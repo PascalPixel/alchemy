@@ -206,7 +206,7 @@ void FieldPsynergy_Ring(void) {
       sprite->oam.fullColor = 1;
       sprite->oam.palette = 0;
       sprite->oam.priority = 0;
-      sprite->depth = 240;
+      sprite->depth = OAM_DEPTH_WINDOW;
       mote->timer = -i / 4;
     }
     work->sparkling = 0;
@@ -305,7 +305,7 @@ void FieldPsynergy_Ring(void) {
         heading = Random16();
         sprite = &work->sprites[i];
         EffectSprite_Init(sprite, 8, 8, OBJ_SIZE_16X16, moteTile);
-        sprite->depth = 240;
+        sprite->depth = OAM_DEPTH_WINDOW;
         sprite->oam.priority = 0;
         sprite->oam.fullColor = 0;
         sprite->oam.palette = RING_PALETTE;
@@ -408,7 +408,7 @@ void FieldPsynergy_EndRing(void) {
     sprite->oam.fullColor = 1;
     sprite->oam.palette = 0;
     sprite->oam.priority = 0;
-    sprite->depth = 240;
+    sprite->depth = OAM_DEPTH_WINDOW;
   }
   wait(1);
 

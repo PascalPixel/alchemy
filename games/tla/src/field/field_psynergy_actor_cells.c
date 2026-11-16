@@ -211,7 +211,7 @@ void EffectSprite_Init(struct EffectSprite *sprite, s32 pivotX, s32 pivotY,
   Iwram_FillWordsEntry(sprite, sizeof(*sprite), 0);
   sprite->scaleX = FIXED_ONE;
   sprite->scaleY = FIXED_ONE;
-  sprite->depth = 255;
+  sprite->depth = OAM_DEPTH_FRONT;
   sprite->pivotX = pivotX;
   sprite->pivotY = pivotY;
   shape = ((attributes >> 30) | (attributes >> 12)) & 15;

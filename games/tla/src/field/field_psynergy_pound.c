@@ -289,7 +289,7 @@ void FieldPsynergy_Pound(void) {
     sprite->oam.fullColor = 1;
     sprite->oam.palette = 0;
     sprite->oam.priority = 0;
-    sprite->depth = 240;
+    sprite->depth = OAM_DEPTH_WINDOW;
     sprite->scaleY = sprite->scaleX = FIXED_ONE * 4 / 5;
   }
   wait(1);

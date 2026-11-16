@@ -838,55 +838,54 @@ void AirsRock_RideWhirlwind(void) {
     i = 0;
     leader->y.fixed = (((ride->y.fixed >> 19) & ~1) + 3) << 19;
     leader->z.fixed = (((leader->z.fixed >> 19) & ~1) + 1) << 19;
-  waiting:
-    moved = 0;
-    if (gInput.held & KEY_UP) {
-      dx = 0;
-      dz = -toFIXED(16);
-      leader->facing = FACING_NORTH;
-      moved = 1;
-    }
-    if (gInput.held & KEY_RIGHT) {
-      dx = toFIXED(16);
-      dz = 0;
-      leader->facing = dz;
-      moved = 1;
-    }
-    if (gInput.held & KEY_LEFT) {
-      dx = -toFIXED(16);
-      leader->facing = FACING_WEST;
-      dz = 0;
-      moved = 1;
-    }
-    if (moved &&
-        MapCell_GetAttributes(2, FIELD_CELL(ride->x.fixed + dx),
-                              (ride->z.fixed - ride->y.fixed + dz) >> 20) >>
-                8 !=
-            255)
-      goto found;
-    wait(1);
-    if (++i != 60)
-      goto waiting;
+    do {
+      moved = 0;
+      if (gInput.held & KEY_UP) {
+        dx = 0;
+        dz = -toFIXED(16);
+        leader->facing = FACING_NORTH;
+        moved = 1;
+      }
+      if (gInput.held & KEY_RIGHT) {
+        dx = toFIXED(16);
+        dz = 0;
+        leader->facing = dz;
+        moved = 1;
+      }
+      if (gInput.held & KEY_LEFT) {
+        dx = -toFIXED(16);
+        leader->facing = FACING_WEST;
+        dz = 0;
+        moved = 1;
+      }
+      if (moved &&
+          MapCell_GetAttributes(2, FIELD_CELL(ride->x.fixed + dx),
+                                (ride->z.fixed - ride->y.fixed + dz) >> 20) >>
+                  8 !=
+              255)
+        goto found;
+      wait(1);
+    } while (++i != 60);
     dx = 0;
     leader->facing = FACING_NORTH;
     dz = -toFIXED(16);
     if ((u32)(MapCell_GetAttributes(2, FIELD_CELL(ride->x.fixed),
                                     (ride->z.fixed - ride->y.fixed + dz) >> 20)
               << 8) >>
-            16 !=
-        255)
-      goto found;
-    dx = toFIXED(16);
-    dz = 0;
-    leader->facing = dz;
-    if ((u32)(MapCell_GetAttributes(2, FIELD_CELL(ride->x.fixed + dx),
-                                    (ride->z.fixed - ride->y.fixed) >> 20)
-              << 8) >>
-            16 !=
-        255)
-      goto found;
-    dx = -toFIXED(16);
-    leader->facing = FACING_WEST;
+            16 ==
+        255) {
+      dx = toFIXED(16);
+      dz = 0;
+      leader->facing = dz;
+      if ((u32)(MapCell_GetAttributes(2, FIELD_CELL(ride->x.fixed + dx),
+                                      (ride->z.fixed - ride->y.fixed) >> 20)
+                << 8) >>
+              16 ==
+          255) {
+        dx = -toFIXED(16);
+        leader->facing = FACING_WEST;
+      }
+    }
   found:
     height = Map_GetTerrainHeight(rider->riseCounter, ride->x.fixed + dx,
                                   ride->z.fixed + dz);

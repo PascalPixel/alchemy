@@ -37,7 +37,7 @@ void Sound_Initialize(void) {
     *playerVolume = 0;
     playerVolume += 1;
   } while (remaining >= 0);
-  Sound_SetFixedSampleFreq(SOUND_MODE_FREQ_31536);
+  Sound_SetFixedSampleFreq(SOUND_MODE_FREQ_GAME);
 }
 
 void Sound_LoadReverbCode(s32 code);

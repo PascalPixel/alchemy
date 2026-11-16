@@ -222,6 +222,7 @@ enum DisplayControl {
 /// TMxCNT_H flags, as pret names them.
 #define TIMER_INTR_ENABLE 0x0040
 #define TIMER_ENABLE 0x0080 ///< starts the timer counting
+#define TIMER_256CLK 0x0002 ///< counts every 256 cycles, 65536 times a second
 
 /// The serial data: the 32-bit mode's word, or multiplayer's four received
 /// halfwords.

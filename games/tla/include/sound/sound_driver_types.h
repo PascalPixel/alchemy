@@ -27,9 +27,13 @@
 #define SOUND_MODE_MAXCHN_SHIFT 8
 #define SOUND_MODE_MASVOL 0x0000F000 ///< PCM volume
 #define SOUND_MODE_MASVOL_SHIFT 12
-#define SOUND_MODE_FREQ_13379 0x00040000 ///< rate 4: 13379 samples a second
-#define SOUND_MODE_FREQ_31536 0x00090000 ///< rate 9: 31536 samples a second
-#define SOUND_MODE_FREQ 0x000F0000       ///< the rate
+/// Rate 4, 13379 samples a second: the rate SoundInit starts the driver at
+/// (pret's SOUND_MODE_FREQ_13379).
+#define SOUND_MODE_FREQ_INITIAL 0x00040000
+/// Rate 9, 31536 samples a second: the rate Sound_Initialize fixes for the
+/// game (pret's SOUND_MODE_FREQ_31536).
+#define SOUND_MODE_FREQ_GAME 0x00090000
+#define SOUND_MODE_FREQ 0x000F0000 ///< the rate
 #define SOUND_MODE_FREQ_SHIFT 16
 #define SOUND_MODE_DA_BIT 0x00B00000 ///< the sound bias's resolution
 

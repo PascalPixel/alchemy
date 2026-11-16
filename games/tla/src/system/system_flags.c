@@ -27,6 +27,7 @@ struct Unit *Unit_Get(u32 unitId) {
   return NULL;
 }
 
+/// Returns 1 when `flag` is set and 0 when it is clear.
 s32 GameFlag_Get(s32 flag) {
   s32 bit;
   u32 index;

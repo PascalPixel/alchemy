@@ -377,8 +377,7 @@ void Matrix_BuildLookAt(FIXED *eye, FIXED *target, FIXED *out) {
     dot = (Dot3Fn)dst;
     mul = Iwram_MulFX;
     divide = Iwram_UnsignedDivideEntry;
-    Dma_Set(RelocatedInnerProduct, dst, (DMA_ENABLE | DMA_32BIT) << 16 | 8,
-            REG_DMA3);
+    Dma_Set(RelocatedInnerProduct, dst, DMA_COPY_WORDS(8), REG_DMA3);
   }
 
   // Unit viewing direction d, from target to eye.
@@ -493,7 +492,7 @@ s32 Render_ProjectPoint(const void *point, struct ProjectedPoint *screen) {
   depth = -view.z;
   projection = &gProjection;
   if (depth >= projection->near && depth <= projection->far) {
-    screen->z = depth >> 16;
+    screen->z = FIXEDtoINT(depth);
     if (projection->focal != 0) {
       u32 shifted = (u32)depth >> 11;
 

@@ -33,11 +33,14 @@ s32 Trig_Atan(s32 x, s32 y) {
   s32 result;
   u32 bit;
 
+  // Handle axes without dividing by zero; the quadrant correction below
+  // supplies the half-turn for a vector along -y.
   if (x == 0) {
     result = 0;
   } else if (y == 0) {
     result = DEGtoANG(90);
   } else {
+    // Search only the first quadrant, with |x| / |y| in 8.8 fixed point.
     ratio = y;
     if (ratio < 0)
       ratio = -ratio;
@@ -47,37 +50,40 @@ s32 Trig_Atan(s32 x, s32 y) {
 
     ratio = Iwram_UnsignedDivide(value << 8, ratio);
     result = DEGtoANG(90);
-    if (ratio <= 0xFB6A) {
+    // Beyond entry 255's tangent, use the quarter-turn limit instead of
+    // the largest angle the eight search bits can represent.
+    if (ratio <= 64362) {
+      // Eight comparisons choose angle bits 0x2000 down to 0x40.
       table = &gMath_TanTable[127];
       result = 0;
       bit = 0x2000;
 
       value = *table;
-      table -= 0x40;
+      table -= 64;
       if (ratio > value) {
         result += bit;
-        table += 0x80;
+        table += 128;
       }
       value = *table;
       bit >>= 1;
-      table -= 0x20;
+      table -= 32;
       if (ratio > value) {
         result += bit;
-        table += 0x40;
+        table += 64;
       }
       value = *table;
       bit >>= 1;
-      table -= 0x10;
+      table -= 16;
       if (ratio > value) {
         result += bit;
-        table += 0x20;
+        table += 32;
       }
       value = *table;
       bit >>= 1;
       table -= 8;
       if (ratio > value) {
         result += bit;
-        table += 0x10;
+        table += 16;
       }
       value = *table;
       bit >>= 1;
@@ -105,6 +111,7 @@ s32 Trig_Atan(s32 x, s32 y) {
     }
   }
 
+  // Restore the signs after searching magnitudes alone.
   if (y < 0)
     result = DEGtoANG(180) - result;
   if (x < 0)

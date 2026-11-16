@@ -537,7 +537,7 @@ s32 Serial_GetActiveTransfers(void) {
 }
 
 /// Clears the serial transfer for a link battle with interrupts off: nothing to
-/// send or receive, no flags, and status 0x80.
+/// send or receive, no flags, and status SERIAL_STATUS_RUNNING.
 void LinkBattle_ResetTransferState(void) {
   struct SerialTransferState *state;
   u32 saved;
@@ -546,7 +546,7 @@ void LinkBattle_ResetTransferState(void) {
   state = &gSerialTransfer;
   IRQ_LOCK(saved);
   zero = 0;
-  state->status = 0x80;
+  state->status = SERIAL_STATUS_RUNNING;
   *(u8 *)&state->peerFlags = zero;
   gSerialSendSource = zero;
   *(u8 *)&state->flags = zero;

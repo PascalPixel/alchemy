@@ -92,7 +92,7 @@ s32 Ability_ApplyToTargets(s32 effectId, s32 sourceId, s32 targetId,
           elementPower = caster->element[elementIndex].power;
         } else
           elementPower = 100;
-        amount = Battle_CalculateRecoveryFar(amount, elementPower, 0x100);
+        amount = Battle_CalculateRecoveryFar(amount, elementPower, 256);
       }
 
       if (target->hp <= 0) {
@@ -303,7 +303,8 @@ s32 Ability_ApplyToTargets(s32 effectId, s32 sourceId, s32 targetId,
 /// Plays the use sound of item's action (Ability_PlayUseAnimation). Called by
 /// ItemMenu_Use after a use that changed something.
 s32 Item_PlayUseAnimation(s32 item) {
-  return Ability_PlayUseAnimation(Item_GetDirectFar(item)->abilityId & 0x3fff);
+  return Ability_PlayUseAnimation(Item_GetDirectFar(item)->abilityId &
+                                  PSYNERGY_ABILITY_MASK);
 }
 
 /// Plays the sound of action used from the menu, and returns at once: no

@@ -47,7 +47,7 @@ s32 Menu_SuspendFieldTasks(void) {
 void Window_InitializeWork(s32 unused) {
   struct ItemMenuWork *work = Ram_HeapSlots->menuWork;
 
-  Dma_Fill32(0, work, 0x33b * 4);
+  Dma_Fill32(0, work, MENU_WORK_SIZE);
   work->sideIndex[0] = -1;
   work->sideCount[0] = 1;
   work->sideCount[1] = 1;

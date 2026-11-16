@@ -892,13 +892,13 @@ void Text_DrawWideStringAtOffsetFar(void *text, void *window, s32 x, s32 y);
 /// gives the plain experience text. The text is copied into a heap buffer of
 /// STATUS_HELP_TEXT_MAX characters, freed before returning.
 void StatusScreen_ShowMemberProgressMessage(void *window, s32 help, s32 full) {
-  u8 *menu = Ram_HeapSlots->menuWork;
+  struct StatusScreenWork *menu = Ram_HeapSlots->menuWork;
   u8 *buffer;
 
   if (full == 0 && help > 3)
     help++;
   if (help == 1) {
-    u8 *owner = menu + 0x216;
+    u8 *owner = &menu->selectedIds[0];
     struct Unit *state = Unit_Get(*owner);
 
     if (state->level == UNIT_LEVEL_MAX)

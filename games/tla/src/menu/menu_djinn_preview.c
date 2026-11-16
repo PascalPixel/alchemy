@@ -359,8 +359,9 @@ s32 PsynergyList_RunCompareLoop(u32 mode) {
       step = 0;
     if (step > 29)
       step = 29;
-    DjinnFigures_SetSlotPhase(0, 0xffff4000);
-    DjinnFigures_SetSlotPhase(1, 0xffff4000);
+    // Both figures held at three quarters of their size.
+    DjinnFigures_SetSlotPhase(0, -(FIXED_ONE * 3 / 4));
+    DjinnFigures_SetSlotPhase(1, -(FIXED_ONE * 3 / 4));
     if (mode <= DJINN_COMPARE_GIVE) {
       FIXED rise;
       s32 slide;

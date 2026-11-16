@@ -1,8 +1,11 @@
-/// Starts the beam over its targets and stops.
-void FlameThrowers_Start(u16 *targets, u16 *stops, s32 a2, s32 a3) {
-  struct MarsLighthouseBeam *beam =
-      (struct MarsLighthouseBeam *)(gInventorySnapshot + 0x188);
-  struct MarsLighthouseBeamTarget *target = beam->targets;
+/// Sets the flame throwers going: each listed actor with its flags and reach,
+/// the actors their flames stop at, what is called back when one does and the
+/// step trigger a hit raises; then blends the flames over the room and starts
+/// their puffs.
+void FlameThrowers_Start(u16 *targets, u16 *stops, s32 onBlocked,
+                         s32 hitTrigger) {
+  struct FlameHitWork *work = RIDE_WORK;
+  struct RideEntry *entry = work->entries;
   s32 id;
   s32 i;
   s32 value;
@@ -22,34 +25,34 @@ void FlameThrowers_Start(u16 *targets, u16 *stops, s32 a2, s32 a3) {
       targets++;
       if (object != NULL) {
         Actor_SetSpriteFlags(object, 0);
-        ((u8 *)object)[98] = one = 1;
-        if ((flags & 0x80) == 0)
+        *(u8 *)&object->riseCounter = one = 1;
+        if ((flags & FLAME_SPARK) == 0)
           object->collisionFlags = 0;
-        target->active = one;
-        target->flags = flags;
-        target->object = Actor_Get(id);
-        target->height = height << 16;
-        target->index = i;
-        target++;
+        entry->active = one;
+        entry->flags = flags;
+        entry->actor = Actor_Get(id);
+        entry->reach = toFIXED(height);
+        entry->timer = i;
+        entry++;
       }
     }
     if (stops != NULL) {
       for (i = 0; i < 4; i++) {
         value = *stops++;
-        beam->stops[i].unk00 = value;
+        work->slots[i].id = value;
         if (value <= 0)
           break;
-        beam->stops[i].unk02 = *stops++;
+        work->slots[i].blocked = *stops++;
       }
     }
   }
-  beam->unk10 = a2;
-  beam->unk0a = a3;
+  work->onBlocked = (void (*)(void))onBlocked;
+  work->hitTrigger = hitTrigger;
   if (REG_BLDCNT == 0) {
-    alpha = 0xc08;
+    alpha = BLEND_ALPHA(8, 12);
     REG_BLDALPHA = alpha;
-    control = 0x3f10;
+    control = BLDCNT_TGT1_OBJ | BLDCNT_TGT2_ALL;
     REG_BLDCNT = control;
   }
-  Task_AddFrame(FlameThrowers_Puff, 0x480);
+  Task_AddFrame(FlameThrowers_Puff, TASK_PASS_VBLANK);
 }

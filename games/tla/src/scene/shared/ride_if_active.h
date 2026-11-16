@@ -1,6 +1,6 @@
 /// Runs Fireball_CarryLeader while the ride is active; 1 when it ran.
 s32 Fireball_CarryLeaderIfHit(void) {
-  if (((struct FlameHitWork *)(gInventorySnapshot + 0x188))->active) {
+  if ((RIDE_WORK)->active) {
     Fireball_CarryLeader();
     return 1;
   }

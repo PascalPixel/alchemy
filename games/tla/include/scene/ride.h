@@ -12,7 +12,6 @@
 
 struct Actor;
 
-/// One of the ride's four entries.
 /// A flame thrower's flags (the flame thrower tables): the flame's reach in the
 /// low four bits, and which flame it sends, or none.
 enum FlameThrowerFlags {
@@ -24,6 +23,7 @@ enum FlameThrowerFlags {
   FLAME_SPARK = 0x80             ///< Ride_SpawnSpark
 };
 
+/// One of the work's four flame throwers.
 struct RideEntry {
   s16 active;
   s16 timer; ///< frames to the next puff, 8 after each
@@ -35,8 +35,6 @@ struct RideEntry {
   FIXED reach; ///< 16.16, the low nibble of flags << 16
 };
 
-/// An actor the ride checks against as it moves: a ride stops beside it
-/// unless it is marked blocked, which sets the ride's own blocked flag.
 /// The way a ride last moved along x and z, 1 or -1 (0xffff); the other axis
 /// is 0.
 struct RideDirection {
@@ -44,23 +42,29 @@ struct RideDirection {
   u16 z;
 };
 
+/// An actor the flames check against as they move: a flame stops beside it
+/// unless it is marked blocked, which sets the work's own blocked flag.
 struct RideSlot {
   u16 id; ///< the actor's id; 0 ends the list
   u16 blocked;
 };
 
+/// The flame throwers' work: the hit counter, what a flame met, the flame
+/// throwers and the actors they stop at, and the fireball carrying the leader.
 struct FlameHitWork {
   s32 counter; ///< Ride_AdvanceCounter's count
   s16 active;  ///< set once a flame or fireball has hit the leader
-  u16 blocked; ///< set when the ride met a blocked slot's actor
-  u8 unk08[2];
-  u16 value0a; ///< the step trigger raised when the leader is hit
-  u16 value0c;
-  s16 value0e;
-  u8 unk10[4];
+  /// Set when a flame met a blocked slot's actor, and called back once for.
+  u16 blocked;
+  s16 wasBlocked;          ///< blocked as it was the frame before
+  u16 hitTrigger;          ///< the step trigger raised when the leader is hit
+  u16 flameVramBlock;      ///< the kept flame's VRAM cache entry (Ride_Create)
+  s16 runsDuringPsynergy;  ///< Ride_SetMode: the flames are not paused by
+                           ///< Psynergy
+  void (*onBlocked)(void); ///< called once a flame meets its stop
   struct RideEntry entries[4];
   struct RideSlot slots[4];
-  u8 unk64[4];
+  u8 unusedAfterSlots[4]; ///< no code names it
   struct RideDirection direction;
   struct Actor *car; ///< the fireball carrying the hurt leader
   void *handle;

@@ -1153,9 +1153,8 @@ void WorldMap_FightBanditAndThieves(s32 entrance) {
     Actor_SetAnimationAndWait(ACTOR_BANDIT, 3);
     Event_Wait(10);
     Event_Wait(40);
-    Event_SetDestination(
-        ((struct SavedDestination *)&gMainRoutineWork)->scene,
-        ((struct SavedDestination *)&gMainRoutineWork)->entrance);
+    Event_SetDestination((s16)gMainRoutineWork.restartScene,
+                         (s16)gMainRoutineWork.restartEntrance);
     gFieldWork->transition = 0;
   } else {
     Event_ClearFlag(0xa76);

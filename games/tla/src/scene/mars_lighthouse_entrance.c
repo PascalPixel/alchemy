@@ -1590,7 +1590,7 @@ UNUSED void Ride_Release(void) {
   work->handle = NULL;
 }
 
-void Ride_SetMode(s16 value) { RIDE_WORK->value0e = value; }
+void Ride_SetMode(s16 value) { RIDE_WORK->runsDuringPsynergy = value; }
 
 void FlameThrowers_Puff(void);
 

@@ -1476,7 +1476,7 @@ void Actor_SetSpriteColorMode(struct Actor *object, s32 value);
 
 #include "shared/ride_release_handle.h"
 
-void Ride_SetMode(s16 value) { RIDE_WORK->value0e = value; }
+void Ride_SetMode(s16 value) { RIDE_WORK->runsDuringPsynergy = value; }
 
 #include "shared/beam_start.h"
 

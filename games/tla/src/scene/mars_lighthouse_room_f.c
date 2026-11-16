@@ -1758,8 +1758,7 @@ struct RideAnimation {
 };
 
 void Ride_Create(void) {
-  struct MarsLighthouseRoomFRideWork *work =
-      (struct MarsLighthouseRoomFRideWork *)RIDE_WORK;
+  struct FlameHitWork *work = RIDE_WORK;
   struct Actor *object;
   struct RideAnimation *animation;
 
@@ -1770,7 +1769,7 @@ void Ride_Create(void) {
   Actor_SelectAnimation(object, 1);
   animation = object->sprite;
   work->handle = object;
-  work->value0c = animation->vramBlock;
+  work->flameVramBlock = animation->vramBlock;
   animation->keepEntry = 1;
 }
 
@@ -1790,7 +1789,7 @@ void Ride_ReleaseHandle(void) {
   work->handle = NULL;
 }
 
-UNUSED void Ride_SetMode(s16 value) { RIDE_WORK->value0e = value; }
+UNUSED void Ride_SetMode(s16 value) { RIDE_WORK->runsDuringPsynergy = value; }
 
 #include "shared/beam_start.h"
 

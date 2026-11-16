@@ -1456,7 +1456,7 @@ void Ride_Create(void) {
   Actor_SelectAnimation(object, 1);
   animation = object->sprite;
   work->handle = object;
-  work->value0c = animation->vramBlock;
+  work->flameVramBlock = animation->vramBlock;
   animation->keepEntry = 1;
 }
 
@@ -1465,7 +1465,7 @@ void Actor_Release(struct Actor *object);
 
 #include "shared/ride_release_handle.h"
 
-void Ride_SetMode(s16 value) { RIDE_WORK->value0e = value; }
+void Ride_SetMode(s16 value) { RIDE_WORK->runsDuringPsynergy = value; }
 
 /// The ride work as FlameThrowers_Start fills it: the hit trigger and the stop
 /// callback, then the flame throwers and their stops.
@@ -1474,7 +1474,7 @@ struct FlameThrowerBeam {
   u16 hitTrigger; ///< the step trigger a flame that hits the leader raises
   u8 beforeOnStopped[4];
   s32 onStopped; ///< called once a flame reaches its stop
-  struct MarsLighthouseBeamTarget targets[4];
+  struct RideEntry targets[4];
   struct MarsLighthouseBeamStop {
     u16 kind;
     u16 value;
@@ -1484,7 +1484,7 @@ struct FlameThrowerBeam {
 void FlameThrowers_Start(u16 *targets, u16 *stops, s32 onStopped,
                          s32 hitTrigger) {
   struct FlameThrowerBeam *beam = (struct FlameThrowerBeam *)RIDE_WORK;
-  struct MarsLighthouseBeamTarget *target = beam->targets;
+  struct RideEntry *target = beam->targets;
   s32 id;
   s32 i;
 
@@ -1504,9 +1504,9 @@ void FlameThrowers_Start(u16 *targets, u16 *stops, s32 onStopped,
           object->collisionFlags = 0;
         target->active = 1;
         target->flags = flags;
-        target->object = Actor_Get(id);
-        target->height = height << 16;
-        target->index = i;
+        target->actor = Actor_Get(id);
+        target->reach = height << 16;
+        target->timer = i;
         target++;
       }
     }
@@ -1883,7 +1883,7 @@ void Actor_RollAndCrumble(struct Actor *actor) {
         ABS(actor->z.fixed - target->z.fixed) < toFIXED(20)) {
       other->active = 2;
       other->car = actor;
-      fieldWork->stepTrigger = other->value0a + 2;
+      fieldWork->stepTrigger = other->hitTrigger + 2;
     }
   } else if (state == 1) {
     actor->paused = 0;

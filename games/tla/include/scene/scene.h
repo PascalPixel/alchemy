@@ -304,35 +304,6 @@ struct HalfwordField {
   s16 value;
 };
 
-/// One object the beam reaches, as FlameThrowers_Start records it.
-struct MarsLighthouseBeamTarget {
-  u16 active;
-  u16 index;
-  u16 flags;
-  u16 unk06;
-  struct Actor *object;
-  FIXED height; ///< 16.16 pixels
-};
-
-struct MarsLighthouseBeam {
-  u8 unk00[10];
-  u16 unk0a;
-  u8 unk0c[4];
-  s32 unk10;
-  struct MarsLighthouseBeamTarget targets[4];
-  struct {
-    u16 unk00;
-    u16 unk02;
-  } stops[4];
-};
-
-struct MarsLighthouseRoomFRideWork {
-  u8 unk00[0x0c];
-  u16 value0c;
-  u8 unk0e[0x62];
-  struct Actor *handle;
-};
-
 struct UnitData {
   u8 filler[216];
   u16 items[15];
@@ -467,13 +438,6 @@ struct BobbingMarker {
   u8 riseEnabled;
   s16 angle;   ///< its place on the circle, 1/65536 turns, in timer
   s16 stopped; ///< nonzero holds it still, in userValue
-};
-
-/// gMainRoutineWork.restartScene and savedEntrance as this script reads them.
-struct SavedDestination {
-  u8 unk000[0x1e4];
-  s16 scene;
-  s16 entrance;
 };
 
 struct RescueMap {

@@ -1,7 +1,6 @@
 /// Sets a ride entry's height and flags from a packed value.
 void Ride_SetEntry(s32 index, s32 value) {
-  struct FlameHitWork *work =
-      (struct FlameHitWork *)(gInventorySnapshot + 0x188);
+  struct FlameHitWork *work = RIDE_WORK;
   struct RideEntry *entry = &work->entries[index];
 
   entry->reach = (value & 15) << 16;

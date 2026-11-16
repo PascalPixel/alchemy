@@ -460,104 +460,96 @@ static s32 BattleArena_ReceivePartyRecords(void) {
   buffer = Heap_AllocEwram(size);
   result = 0;
   timeout = LOBBY_RECEIVE_TIMEOUT_FRAMES;
-  slot = 0;
-  // Three records, each started at recordNext and waited for at recordTest,
-  // then the recovery table at recovery. Each receive waits a frame at a time;
-  // more than size bytes is an overrun and fewer once it ends a short record,
-  // and once the timeout has run out, or while the link is not ready, every
-  // frame is a try, failing past LOBBY_TRANSFER_RETRY_LIMIT.
-  goto recordNext;
-recordWait:
-  if (gSerialReceivedSize > size) {
-    result = -1;
-    goto done;
-  }
-  wait(1);
-  if (--timeout < 0 ||
-      (gLinkStatus & LOBBY_LINK_READY_MASK) != LOBBY_LINK_READY_MASK) {
-    if (++tries > LOBBY_TRANSFER_RETRY_LIMIT) {
+  // Three records, then the recovery table. Each receive waits a frame at a
+  // time; more than size bytes is an overrun and fewer once it ends a short
+  // record, and once the timeout has run out, or while the link is not ready,
+  // every frame is a try, failing past LOBBY_TRANSFER_RETRY_LIMIT. A receive
+  // that does not start leaves its loop for the failure below.
+  for (slot = 0;; slot++) {
+    if (slot >= LOBBY_UNIT_RECORD_COUNT)
+      goto table;
+    // The partner's party members become this battle's enemies 128 to 130.
+    unit = Unit_Get(slot + 128);
+    tries = 0;
+    if ((started = Serial_StartReceive(unit)) == -1)
+      break;
+    while (Serial_GetActiveTransfers() != 0) {
+      if (gSerialReceivedSize > size) {
+        result = -1;
+        goto done;
+      }
+      wait(1);
+      if (--timeout < 0 ||
+          (gLinkStatus & LOBBY_LINK_READY_MASK) != LOBBY_LINK_READY_MASK) {
+        if (++tries > LOBBY_TRANSFER_RETRY_LIMIT) {
+          result = -1;
+          goto done;
+        }
+      }
+    }
+    if (gSerialReceivedSize != size) {
       result = -1;
       goto done;
     }
-  }
-recordTest:
-  if (Serial_GetActiveTransfers() != 0) {
-    goto recordWait;
-  }
-  if (gSerialReceivedSize != size) {
-    result = -1;
-    goto done;
-  }
-  // The sender marks a party member BATTLE_SIDE_PARTY and a padding record
-  // BATTLE_SIDE_NONE.
-  if (unit->side != BATTLE_SIDE_NONE) {
-    result++;
-  }
-  wait(2);
-  FieldMessage_DecodeRawUnbounded(MsgEnemyLabel, namePrefix);
-  // The prefix's length, at most LOBBY_PREFIX_LIMIT + 1.
-  for (i = 0; i <= LOBBY_PREFIX_LIMIT && namePrefix[i] != 0; i++)
-    ;
-  // German, Spanish, French and Italian put a space after the prefix.
+    // The sender marks a party member BATTLE_SIDE_PARTY and a padding record
+    // BATTLE_SIDE_NONE.
+    if (unit->side != BATTLE_SIDE_NONE) {
+      result++;
+    }
+    wait(2);
+    FieldMessage_DecodeRawUnbounded(MsgEnemyLabel, namePrefix);
+    // The prefix's length, at most LOBBY_PREFIX_LIMIT + 1.
+    for (i = 0; i <= LOBBY_PREFIX_LIMIT && namePrefix[i] != 0; i++)
+      ;
+    // German, Spanish, French and Italian put a space after the prefix.
 #if LANGUAGE == LANGUAGE_GERMAN || LANGUAGE == LANGUAGE_SPANISH ||             \
     LANGUAGE == LANGUAGE_FRENCH || LANGUAGE == LANGUAGE_ITALIAN
-  namePrefix[i] = ' ';
-  prefixLength = i + 1;
+    namePrefix[i] = ' ';
+    prefixLength = i + 1;
 #else
-  prefixLength = i;
+    prefixLength = i;
 #endif
-  for (i = 14; i >= prefixLength; i--) {
-    unit->name[i] = unit->name[i - prefixLength];
-  }
-  for (i = 0; i < prefixLength; i++) {
-    unit->name[i] = namePrefix[i];
-  }
-  unit->name[14] = 0;
-  slot++;
-recordNext:
-  if (slot >= LOBBY_UNIT_RECORD_COUNT) {
-    goto recovery;
-  }
-  // The partner's party members become this battle's enemies 128 to 130.
-  unit = Unit_Get(slot + 128);
-  tries = 0;
-  if ((started = Serial_StartReceive(unit)) == -1) {
-    goto failed;
-  }
-  goto recordTest;
-recoveryWait:
-  started = gSerialReceivedSize;
-  if (started > LOBBY_RECOVERY_RECORD_BYTES) {
-    result = -1;
-    goto done;
-  }
-  wait(1);
-  if (--timeout < 0 ||
-      (gLinkStatus & LOBBY_LINK_READY_MASK) != LOBBY_LINK_READY_MASK) {
-    if (++tries > LOBBY_TRANSFER_RETRY_LIMIT) {
-      result = -1;
-      goto done;
+    for (i = 14; i >= prefixLength; i--) {
+      unit->name[i] = unit->name[i - prefixLength];
     }
+    for (i = 0; i < prefixLength; i++) {
+      unit->name[i] = namePrefix[i];
+    }
+    unit->name[14] = 0;
   }
-recoveryTest:
-  if (Serial_GetActiveTransfers() != 0) {
-    goto recoveryWait;
-  }
-  if (gSerialReceivedSize != LOBBY_RECOVERY_RECORD_BYTES) {
-    result = -1;
-  } else {
-    wait(2);
-  }
-  goto done;
-recovery:
+  goto failed;
+table:
   // Then the recovery table, into the enemy side's (unit 131's record).
-  Heap_Release(buffer);
-  size = LOBBY_RECOVERY_RECORD_BYTES;
-  buffer = Heap_AllocEwram(size);
-  tries = 0;
-  if ((started = Serial_StartReceive(Djinn_GetRecoveryTable(1))) != -1) {
-    goto recoveryTest;
-  }
+  do {
+    Heap_Release(buffer);
+    size = LOBBY_RECOVERY_RECORD_BYTES;
+    buffer = Heap_AllocEwram(size);
+    tries = 0;
+    if ((started = Serial_StartReceive(Djinn_GetRecoveryTable(1))) == -1)
+      break;
+    while (Serial_GetActiveTransfers() != 0) {
+      started = gSerialReceivedSize;
+      if (started > LOBBY_RECOVERY_RECORD_BYTES) {
+        result = -1;
+        goto done;
+      }
+      wait(1);
+      if (--timeout < 0 ||
+          (gLinkStatus & LOBBY_LINK_READY_MASK) != LOBBY_LINK_READY_MASK) {
+        if (++tries > LOBBY_TRANSFER_RETRY_LIMIT) {
+          result = -1;
+          goto done;
+        }
+      }
+    }
+    if (gSerialReceivedSize != LOBBY_RECOVERY_RECORD_BYTES) {
+      result = -1;
+    } else {
+      wait(2);
+    }
+    goto done;
+  } while (0);
+
 failed:
   result = started;
 done:
@@ -632,101 +624,100 @@ static s32 BattleArena_SendPartyRecords(void) {
   }
   // Each send waits a frame at a time to finish. Once the timeout has run out,
   // or while the link is not ready, every frame is a try, and past
-  // LOBBY_TRANSFER_RETRY_LIMIT tries the exchange fails.
-  for (i = 0; i < memberCount; i++) {
-    Iwram_CopyWords(buffer, Unit_Get(memberIds[i]), size);
-    ((struct Unit *)buffer)->side = BATTLE_SIDE_PARTY;
-    // As a u8, i - 128 is 128 + i: this party member's unit on the partner's
-    // side.
-    slotMap[memberIds[i]] = i - 128;
-    started = Serial_StartSend(buffer, size);
-    tries = 0;
-    if (started == -1) {
-      result = started;
-      goto done;
-    }
-    while (Serial_GetActiveTransfers() != 0) {
-      wait(1);
-      if (--timeout < 0 ||
-          (gLinkStatus & LOBBY_LINK_READY_MASK) != LOBBY_LINK_READY_MASK) {
-        if (++tries > LOBBY_TRANSFER_RETRY_LIMIT) {
-          result = -1;
-          goto done;
-        }
-      }
-    }
-    wait(2);
-  }
-  // Pad to three records with the last copy marked absent (BATTLE_SIDE_NONE):
-  // each pad is started at padNext and waited for at padTest.
-  for (; i < LOBBY_UNIT_RECORD_COUNT; i++) {
-    ((struct Unit *)buffer)->side = tries = 0;
-    if ((started = Serial_StartSend(buffer, size)) == -1)
-      break;
-    while (Serial_GetActiveTransfers() != 0) {
-      wait(1);
-      if (--timeout < 0 ||
-          (gLinkStatus & LOBBY_LINK_READY_MASK) != LOBBY_LINK_READY_MASK) {
-        if (++tries > LOBBY_TRANSFER_RETRY_LIMIT) {
-          result = -1;
-          goto done;
-        }
-      }
-    }
-    wait(2);
-  }
-  if (i < LOBBY_UNIT_RECORD_COUNT) {
-    result = started;
-    goto done;
-  }
-  Heap_Release(buffer);
-
-  // Then the recovery table.
-  size = LOBBY_RECOVERY_RECORD_BYTES;
-  buffer = Heap_AllocEwram(size);
-  IWRAM_COPY_WORDS(buffer, Djinn_GetRecoveryTable(0), size);
-  {
-    s32 timeout;
-    s32 tries;
-
-    list = &((struct DjinnRecoveryTable *)buffer)->list;
-    tries = 0;
-    timeout = LOBBY_SEND_TIMEOUT_FRAMES;
-    // Give each Djinni on the list its party member's number on the partner's
-    // side, and drop those of party members not sent (peerSlots 0).
-    for (j = 0; j < list->count; j++) {
-      list->entries[j].unitId = peerSlots[list->entries[j].unitId];
-      if (list->entries[j].unitId == 0) {
-        for (k = j; k < list->count - 1; k++) {
-          list->entries[k] = list->entries[k + 1];
-        }
-        list->count--;
-        j--;
-      }
-    }
-    if ((started = Serial_StartSend(buffer, size)) == -1) {
-      result = started;
-      goto done;
-    }
-    while (Serial_GetActiveTransfers() != 0) {
-      wait(1);
-      if (--timeout < 0 ||
-          (gLinkStatus & LOBBY_LINK_READY_MASK) != LOBBY_LINK_READY_MASK) {
-        if (++tries > LOBBY_TRANSFER_RETRY_LIMIT) {
-          result = -1;
-          goto done;
-        }
-      }
-    }
-    wait(1);
-    wait(2);
-  }
-  /* FAKEMATCH(dead): the shared exit in a once-only block. */
+  // LOBBY_TRANSFER_RETRY_LIMIT tries the exchange fails. A send that does not
+  // start breaks out to the release; the waits inside leave by done.
   do {
-  done:
+    for (i = 0; i < memberCount; i++) {
+      Iwram_CopyWords(buffer, Unit_Get(memberIds[i]), size);
+      ((struct Unit *)buffer)->side = BATTLE_SIDE_PARTY;
+      // As a u8, i - 128 is 128 + i: this party member's unit on the partner's
+      // side.
+      slotMap[memberIds[i]] = i - 128;
+      started = Serial_StartSend(buffer, size);
+      tries = 0;
+      if (started == -1) {
+        result = started;
+        goto done;
+      }
+      while (Serial_GetActiveTransfers() != 0) {
+        wait(1);
+        if (--timeout < 0 ||
+            (gLinkStatus & LOBBY_LINK_READY_MASK) != LOBBY_LINK_READY_MASK) {
+          if (++tries > LOBBY_TRANSFER_RETRY_LIMIT) {
+            result = -1;
+            goto done;
+          }
+        }
+      }
+      wait(2);
+    }
+    // Pad to three records with the last copy marked absent (BATTLE_SIDE_NONE).
+    for (; i < LOBBY_UNIT_RECORD_COUNT; i++) {
+      ((struct Unit *)buffer)->side = tries = 0;
+      if ((started = Serial_StartSend(buffer, size)) == -1)
+        break;
+      while (Serial_GetActiveTransfers() != 0) {
+        wait(1);
+        if (--timeout < 0 ||
+            (gLinkStatus & LOBBY_LINK_READY_MASK) != LOBBY_LINK_READY_MASK) {
+          if (++tries > LOBBY_TRANSFER_RETRY_LIMIT) {
+            result = -1;
+            goto done;
+          }
+        }
+      }
+      wait(2);
+    }
+    if (i < LOBBY_UNIT_RECORD_COUNT) {
+      result = started;
+      break;
+    }
     Heap_Release(buffer);
-    return result;
+
+    // Then the recovery table.
+    size = LOBBY_RECOVERY_RECORD_BYTES;
+    buffer = Heap_AllocEwram(size);
+    IWRAM_COPY_WORDS(buffer, Djinn_GetRecoveryTable(0), size);
+    {
+      s32 timeout;
+      s32 tries;
+
+      list = &((struct DjinnRecoveryTable *)buffer)->list;
+      tries = 0;
+      timeout = LOBBY_SEND_TIMEOUT_FRAMES;
+      // Give each Djinni on the list its party member's number on the partner's
+      // side, and drop those of party members not sent (peerSlots 0).
+      for (j = 0; j < list->count; j++) {
+        list->entries[j].unitId = peerSlots[list->entries[j].unitId];
+        if (list->entries[j].unitId == 0) {
+          for (k = j; k < list->count - 1; k++) {
+            list->entries[k] = list->entries[k + 1];
+          }
+          list->count--;
+          j--;
+        }
+      }
+      if ((started = Serial_StartSend(buffer, size)) == -1) {
+        result = started;
+        break;
+      }
+      while (Serial_GetActiveTransfers() != 0) {
+        wait(1);
+        if (--timeout < 0 ||
+            (gLinkStatus & LOBBY_LINK_READY_MASK) != LOBBY_LINK_READY_MASK) {
+          if (++tries > LOBBY_TRANSFER_RETRY_LIMIT) {
+            result = -1;
+            goto done;
+          }
+        }
+      }
+      wait(1);
+      wait(2);
+    }
   } while (0);
+done:
+  Heap_Release(buffer);
+  return result;
 }
 
 /// Exchanges the two parties. The parent sends first, and the child (area flag

@@ -360,56 +360,60 @@ void Colosso_OfferCheeringSpot(s32 mode, s32 guide, s32 stage) {
   actor = Actor_GetById(guide);
   guideX = actor->x.part[0].integer;
   guideZ = actor->z.part[0].integer;
-  if (mode != COLOSSO_GUIDE_NOTHING) {
-    memberCount = Party_CountMembers();
+  if (mode == COLOSSO_GUIDE_NOTHING) {
+    Event_SetMessageId(MsgColossoIfKnowWhoWantCheer);
+    Event_ShowMessage(guide, 0);
+    return;
+  }
+  memberCount = Party_CountMembers();
+  for (i = 0; i < memberCount; i++) {
+    members[i] = gMainRoutineWork.party[i];
+  }
+  if (memberCount <= 1) {
+    Event_SetMessageId(MsgColossoDoYourBest);
+    Event_ShowMessage(guide, 0);
+    return;
+  }
+  if (GameFlag_Get(stage + COLOSSO_STAGE_CHEERED) != 0) {
+    Event_SetMessageId(MsgColossoUnfortunatelyWeHaveFullHouse);
+    Event_ShowMessage(guide, 0);
+    return;
+  }
+  if (mode == COLOSSO_GUIDE_CHEER) {
+    answer = 0;
+    wait(6);
+  } else {
+    Event_SetMessageId(MsgColossoWouldLikeFriendCheerFor);
+    Event_OpenMessage(guide, 0);
+    answer = Event_AskYesNoWithActorAnimation(ACTOR_PARTY_LEADER, 0);
+  }
+  if (answer != 0) {
+    Event_SetMessageId(MsgColossoIfKnowWhoWantCheer);
+    Event_ShowMessage(guide, 0);
+    return;
+  }
+  if (answer < memberCount) {
     for (i = 0; i < memberCount; i++) {
-      members[i] = gMainRoutineWork.party[i];
-    }
-    if (memberCount <= 1) {
-      Event_SetMessageId(MsgColossoDoYourBest);
-      Event_ShowMessage(guide, 0);
-      return;
-    }
-    if (GameFlag_Get(stage + COLOSSO_STAGE_CHEERED) != 0) {
-      Event_SetMessageId(MsgColossoUnfortunatelyWeHaveFullHouse);
-      Event_ShowMessage(guide, 0);
-      return;
-    }
-    if (mode == COLOSSO_GUIDE_CHEER) {
-      answer = 0;
-      wait(6);
-    } else {
-      Event_SetMessageId(MsgColossoWouldLikeFriendCheerFor);
-      Event_OpenMessage(guide, 0);
-      answer = Event_AskYesNoWithActorAnimation(ACTOR_PARTY_LEADER, 0);
-    }
-    if (answer == 0) {
-      if (answer < memberCount) {
-        for (i = 0; i < memberCount; i++) {
-          Party_RemoveMember((s8)members[i]);
-        }
-      }
-      for (i = 0; i < memberCount; i++) {
-        if ((s8)members[i] != 0) {
-          Party_AddMember((s8)members[i]);
-        }
-      }
-      friendId = PartyMemberChooser_Open();
-      for (i = 0; i < memberCount; i++) {
-        Party_RemoveMember((s8)members[i]);
-      }
-      for (i = 0; i < memberCount; i++) {
-        Party_AddMember((s8)members[i]);
-      }
-      if (friendId != -1) {
-        goto L_main;
-      }
+      Party_RemoveMember((s8)members[i]);
     }
   }
-  Event_SetMessageId(MsgColossoIfKnowWhoWantCheer);
-  Event_ShowMessage(guide, 0);
-  return;
-L_main:
+  for (i = 0; i < memberCount; i++) {
+    if ((s8)members[i] != 0) {
+      Party_AddMember((s8)members[i]);
+    }
+  }
+  friendId = PartyMemberChooser_Open();
+  for (i = 0; i < memberCount; i++) {
+    Party_RemoveMember((s8)members[i]);
+  }
+  for (i = 0; i < memberCount; i++) {
+    Party_AddMember((s8)members[i]);
+  }
+  if (friendId == -1) {
+    Event_SetMessageId(MsgColossoIfKnowWhoWantCheer);
+    Event_ShowMessage(guide, 0);
+    return;
+  }
   MessageArgument_Push(friendId, MESSAGE_ARGUMENT_ACTOR);
   Event_SetMessageId(MsgColossoIsaacWillCheerForWay);
   Event_ShowMessage(guide, 0);

@@ -14,6 +14,7 @@
 #include "battle/battle.h"
 #include "field/actor.h"
 #include "field/actor_script.h"
+#include "field/call.h"
 #include "field/event_inline.h"
 #include "field/field.h"
 #include "field/field_event.h"
@@ -560,13 +561,6 @@ DEFINE_TRIAL_ROAD_OPEN_DOOR(TrialRoad_OpenLeaderDoor, 23, 57, 0, 9, 43, 1)
 
 /// Opens the door at the end of Moapa's stage, on his side of the road.
 DEFINE_TRIAL_ROAD_OPEN_DOOR(TrialRoad_OpenRivalDoor, 28, 62, 1, 4, 38, 0)
-
-#define FIELD_AT(base, type, off)                                              \
-  (((struct {                                                                  \
-     u8 pad[off];                                                              \
-     type v;                                                                   \
-   } *)(base))                                                                 \
-       ->v)
 
 /// A step at a stage's foot asks; giving up takes the party back to the start.
 s32 TrialRoad_OfferToGiveUp(void) {
@@ -1356,7 +1350,6 @@ void TrialRoad_RevealVine(void) {
 #include "../field/field_effect_move.c"
 
 #undef DEFINE_TRIAL_ROAD_OPEN_DOOR
-#undef FIELD_AT
 #undef DEFINE_TRIAL_ROAD_ON_FOOT
 // Trial Road's effect spawner and the sand stage's stream.
 
@@ -1919,13 +1912,6 @@ void TrialRoad_StartPaletteCycle(s32 mode) {
   }
 }
 
-#define FIELD_AT(base, type, off)                                              \
-  (((struct {                                                                  \
-     u8 pad[off];                                                              \
-     type v;                                                                   \
-   } *)(base))                                                                 \
-       ->v)
-
 void TrialRoad_LeaveMoapaWaiting(void);
 
 /// The mountain's peak: after the battle, the victory or the defeat; on
@@ -1971,8 +1957,7 @@ s32 Scene_Initialize(void) {
     if (entrance <= 7) {
       Event_SetFlag(FLAG_RETREAT_BLOCKED);
       Actor_GetById(gMainRoutineWork.leaderActorId)->priorityFlags |= 64;
-      /* FAKEMATCH(signature): the set-up called as returning s32. */
-      ((s32 (*)(void))gTrialRoad_StageSetUps[pattern & 7])();
+      Value0((s32 (*)())gTrialRoad_StageSetUps[pattern & 7]);
     } else if (entrance == TRIAL_ROAD_RULES_COURSE) {
       TrialRoad_ShowTraps();
     }
@@ -2407,7 +2392,7 @@ s32 TrialRoad_MirrorOffset(s32 x) {
 /// An angle on the mirrored road, turned round when it is.
 s32 TrialRoad_MirrorAngle(s32 angle) {
   if (TrialRoad_IsMirrored())
-    return (0x8000 - angle) & 0xffff;
+    return (DEGtoANG(180) - angle) & 0xffff;
   return angle & 0xffff;
 }
 
@@ -2971,7 +2956,6 @@ void TrialRoad_UpdateFountains(void) {
     }
   }
 }
-#undef FIELD_AT
 #undef SET_LAYER
 
 // Trial Road's movers' sprites, the setup of its gauge, a rising platform's
@@ -3355,7 +3339,8 @@ void MagmaRockInside_SpawnRubble(s32 spread) {
       effect->scaleY = effect->scaleX = FIXED_ONE * 7 / 10;
       effect->sprite->priority = 1;
       if (spread != 0) {
-        effect->velocity.x = Iwram_MulFX(Trig_Cos(i << 13), 0x13333);
+        effect->velocity.x =
+            Iwram_MulFX(Trig_Cos(i << 13), FIXED_ONE * 12 / 10);
         effect->velocity.z = Trig_Sin(i << 13);
       } else {
         effect->velocity.x = spread;
@@ -3363,8 +3348,8 @@ void MagmaRockInside_SpawnRubble(s32 spread) {
       }
       effect->velocity.y = -(((Random16() << 14) >> 16) + 0x6000);
       effect->spin = ((Random16() << 9) >> 16) - 0x100;
-      effect->scaleRateX = -0x800;
-      effect->scaleRateY = -0x600;
+      effect->scaleRateX = -(FIXED_ONE / 32);
+      effect->scaleRateY = -(FIXED_ONE * 3 / 128);
       effect->update = TrialRoad_DriftRubble;
     }
     i++;
@@ -3423,7 +3408,7 @@ void TrialRoad_SetActorCellShape(s32 level, s32 layer, s32 owner) {
 
   height += level;
 
-  shape += object->x.fixed / 0x100000 + object->z.fixed / 0x100000 * 128;
+  shape += object->x.fixed / toFIXED(16) + object->z.fixed / toFIXED(16) * 128;
   *shape = MapCollision_FindOrAddTag(object->layer, value, height);
 }
 
@@ -4042,7 +4027,6 @@ u32 gTrialRoad_RightKnightLeavesScript[] = {
 #undef MARKER
 
 #undef DEFINE_TRIAL_ROAD_SET_POOL_TILES
-#undef FIELD_AT
 #undef SET_LAYER
 #undef MARKER
 

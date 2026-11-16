@@ -1463,10 +1463,10 @@ void Kibombo_DeadEndByTheStatue(void) {
   // "Isn't it a little strange that there would be a path that just goes..."
   Event_ShowMessageAndWait(ACTOR_JENNA, 0);
   Actor_ShowEmoteById(ACTOR_KRADEN, EMOTE_IN_FRONT | EMOTE_LIGHT_BULB, 20);
-  Actor_WatchAndSetScript(gMainRoutineWork.leaderActorId, 26);
-  Actor_WatchAndSetScript(ACTOR_JENNA, 26);
-  Actor_WatchAndSetScript(ACTOR_SHEBA, 26);
-  Actor_WatchAndSetScript(ACTOR_PIERS, 26);
+  Actor_WatchAndSetScript(gMainRoutineWork.leaderActorId, ACTOR_KRADEN);
+  Actor_WatchAndSetScript(ACTOR_JENNA, ACTOR_KRADEN);
+  Actor_WatchAndSetScript(ACTOR_SHEBA, ACTOR_KRADEN);
+  Actor_WatchAndSetScript(ACTOR_PIERS, ACTOR_KRADEN);
   FieldCamera_SetSpeed(1.2);
   FieldCamera_MoveTo(268, CAMERA_KEEP, 146, 1);
   Actor_SetSpeed(ACTOR_KRADEN, 1.2);
@@ -1496,10 +1496,10 @@ void Kibombo_DeadEndByTheStatue(void) {
   Actor_SetAnimationAndWait(ACTOR_KRADEN, ANIM_NOD);
   // "So that's how it works..."
   Event_ShowMessageAndWait(ACTOR_KRADEN, 0);
-  Actor_WatchAndSetScript(gMainRoutineWork.leaderActorId, 26);
-  Actor_WatchAndSetScript(ACTOR_JENNA, 26);
-  Actor_WatchAndSetScript(ACTOR_SHEBA, 26);
-  Actor_WatchAndSetScript(ACTOR_PIERS, 26);
+  Actor_WatchAndSetScript(gMainRoutineWork.leaderActorId, ACTOR_KRADEN);
+  Actor_WatchAndSetScript(ACTOR_JENNA, ACTOR_KRADEN);
+  Actor_WatchAndSetScript(ACTOR_SHEBA, ACTOR_KRADEN);
+  Actor_WatchAndSetScript(ACTOR_PIERS, ACTOR_KRADEN);
   Event_Wait(20);
   Actor_GetById(ACTOR_KRADEN)->steeringFlags &= ~ACTOR_FACES_MOTION;
   Actor_WalkToAndWaitById(ACTOR_KRADEN, 248, 188);
@@ -1533,7 +1533,7 @@ void Kibombo_DeadEndByTheStatue(void) {
   Event_Wait(1);
   Actor_GetById(ACTOR_KRADEN)->steeringFlags |= ACTOR_FACES_MOTION;
   // "Dig there!"
-  FieldMessage_ShowAtActor(26, 0);
+  FieldMessage_ShowAtActor(ACTOR_KRADEN, 0);
   Actor_ShowEmoteById(gMainRoutineWork.leaderActorId,
                       EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
   Actor_FaceDirection(ACTOR_JENNA, FACING_WEST, 0);
@@ -1547,7 +1547,7 @@ ask:
     Event_ShowMessageAndWait(ACTOR_KRADEN, 0);
     ((struct FieldWork *)EVENT_WORK)->message -= 2;
     // "I see..."
-    FieldMessage_ShowAtActor(26, 0);
+    FieldMessage_ShowAtActor(ACTOR_KRADEN, 0);
     goto ask;
   }
   Event_SetFlag(FLAG_SCOOPING_SECOND_MARKING);

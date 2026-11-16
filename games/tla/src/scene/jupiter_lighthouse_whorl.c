@@ -463,8 +463,7 @@ void JupiterLighthouse_PlacePathBlock(s32 unused, s32 id) {
   }
   if (id != ACTOR_THIRD_PATH_BLOCK)
     return;
-  if (FIELD_CELL(object->x.fixed) == 8 &&
-      FIELD_CELL(*(s32 *)&object->z.fixed) == 12) {
+  if (FIELD_CELL(object->x.fixed) == 8 && FIELD_CELL(object->z.fixed) == 12) {
     Event_SetFlag(FLAG_THIRD_BLOCK_IN_GAP);
     Actor_SetSpriteFlags(Actor_GetById(ACTOR_THIRD_PATH_BLOCK), 0);
     Event_Wait(30);
@@ -498,7 +497,7 @@ void JupiterLighthouse_SinkPoundTarget(s32 mode, s32 frame) {
 void JupiterLighthouse_ThrowOutBlock(s32 id, s32 x, s32 z, s32 dx, s32 dz) {
   struct Actor *object = Actor_Get(id);
 
-  Actor_SetPositionFX(id, (x << 20) + toFIXED(8), (z << 20) + toFIXED(8));
+  Actor_SetPositionFX(id, FIELD_CELL_CENTER(x), FIELD_CELL_CENTER(z));
   object->motionFlags = 3;
   object->groundHeight = toFIXED(-16);
   object->y.fixed = toFIXED(-16);
@@ -605,7 +604,7 @@ void JupiterLighthouse_JumpOrPushBlock(void) {
   s32 z;
   s32 facing;
 
-  facing = (leader->facing + 0x2000) & 0xc000;
+  facing = (leader->facing + DEGtoANG(45)) & 0xc000;
   position[0] = leader->x.fixed;
   position[1] = leader->y.fixed;
   position[2] = leader->z.fixed;

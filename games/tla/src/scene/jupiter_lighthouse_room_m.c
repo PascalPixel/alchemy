@@ -60,6 +60,8 @@ void Leader_CenterInCell(void);
 /// The grey block pushed over the opened floor has dropped through, a
 /// shortcut to the rooms below.
 #define FLAG_GREY_BLOCK_DROPPED 0xa0d
+/// For this visit: Lash has tied the rope between the two tightrope posts.
+#define FLAG_ROPE_TIED FLAG_SCENE_TEMP_00
 #include "macros.h"
 
 /// Plays an actor's animation and lets frames pass before the event goes on.
@@ -166,6 +168,9 @@ enum { ENTRANCE_AFTER_THE_FIGHT = 77 };
 enum {
   /// The post the lightning strikes (JupiterLighthouse_FlashSky).
   ACTOR_STRUCK_PILLAR = 20,
+  /// The two tightrope posts Lash ties the rope between.
+  ACTOR_ROPE_POST_A = 21,
+  ACTOR_ROPE_POST_B = 22,
   /// The grey block pushed over the floor that opens by the aerie
   /// (JupiterLighthouse_OpenFloor).
   ACTOR_GREY_BLOCK = 23,
@@ -1601,7 +1606,7 @@ s32 Scene_Initialize(void) {
   HangingVine_Place(14, 1);
   HangingVine_Place(15, 1);
   Rope_Initialize();
-  Rope_Place(0, 512, 21, 22);
+  Rope_Place(0, FLAG_ROPE_TIED, ACTOR_ROPE_POST_A, ACTOR_ROPE_POST_B);
   gWhirlwindRiding = 0;
   object = Actor_Get(ACTOR_WEST_UPPER_GUST);
   object->motionFlags = 0;
@@ -2003,7 +2008,7 @@ LATE_DATA struct Trigger gSceneEvents[] = {
     {TRIGGER_PUSH, -1, CONDITION_ALWAYS, EVENT(JupiterLighthouse_StartMovingBlock)},
     {TRIGGER_PUSHED, -1, CONDITION_ALWAYS, EVENT(JupiterLighthouse_FinishMovingBlock)},
     {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 23, CONDITION_ALWAYS, 0},
-    {PSYNERGY_ON_ACTOR(ABILITY_LASH), 21, FLAG_SCENE_TEMP_00, 0},
+    {PSYNERGY_ON_ACTOR(ABILITY_LASH), ACTOR_ROPE_POST_A, FLAG_ROPE_TIED, 0},
     {TRIGGER_RAISED, 200, CONDITION_ALWAYS, EVENT(Whirlwind_CarryLeader)},
     {TRIGGER_TABLE_END},
 };

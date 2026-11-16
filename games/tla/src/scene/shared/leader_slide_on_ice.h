@@ -72,48 +72,42 @@ top:
   Actor_SetAnimationSpeed(actor, 48);
   FieldActor_WaitForMove(actor);
   actor->update = Actor_SteerByPad;
-  goto test;
-body:
-  if (Map_GetTerrainHeight(*layer, next->x, next->z) - actor->y.fixed >
-      toFIXED(8)) {
-    goto stop;
-  }
-  {
-    s32 radius = actor->radius - 2;
+  for (;;) {
+    FieldVector_AddPolarOffset(16, heading, &probe);
+    next = &probe;
+    nextBehavior = FieldMapGrid_GetCellBehaviorAt(*layer, next->x, next->z);
+    if (nextBehavior == 255) {
+      break;
+    }
+    if (Map_GetTerrainHeight(*layer, next->x, next->z) - actor->y.fixed >
+        toFIXED(8)) {
+      goto stop;
+    }
+    {
+      s32 radius = actor->radius - 2;
 
-    other = Ram_HeapSlots->actors;
-    flags = &other->collisionFlags;
-    for (i = 0; i < 64; i++, flags += 128, other++) {
-      if (other->script != NULL && (*flags & 1) && other != actor) {
-        /* FAKEMATCH(barrier): the empty asm clobbering sfp and r4 and
-         * reading next and actor. */
-        asm(""
-            :
-            : "r"(next), "r"(next), "r"(actor), "r"(actor), "r"(actor),
-              "r"(actor), "r"(actor), "r"(actor), "r"(actor), "r"(actor)
-            : SFP_CLOBBER, "r4");
-        if (Field_CheckSpheresOverlap(&other->x.fixed, radius, &probe,
-                                      other->radius - 2) >= 0) {
-          goto stop;
+      other = Ram_HeapSlots->actors;
+      flags = &other->collisionFlags;
+      for (i = 0; i < 64; i++, flags += 128, other++) {
+        if (other->script != NULL && (*flags & 1) && other != actor) {
+          if (Event_CheckSpheresOverlap(&other->x.fixed, radius, &probe.x,
+                                        other->radius - 2) >= 0) {
+            goto stop;
+          }
         }
       }
     }
-  }
-  x = next->x;
-  z = next->z;
-  actor->speedLimit = toFIXED(2);
-  actor->acceleration = toFIXED(1) / 10;
-  FieldActor_SetMoveTargetFX(actor, next->x, next->y, next->z);
-  FieldActor_WaitForMove(actor);
-  if (nextBehavior != startBehavior) {
-    goto blocked;
-  }
-test:
-  FieldVector_AddPolarOffset(16, heading, &probe);
-  next = &probe;
-  nextBehavior = FieldMapGrid_GetCellBehaviorAt(*layer, next->x, next->z);
-  if (nextBehavior != 255) {
-    goto body;
+    /* FAKEMATCH(dead): next set to the probe again. */
+    next = &probe;
+    x = next->x;
+    z = next->z;
+    actor->speedLimit = toFIXED(2);
+    actor->acceleration = toFIXED(1) / 10;
+    FieldActor_SetMoveTargetFX(actor, next->x, next->y, next->z);
+    FieldActor_WaitForMove(actor);
+    if (nextBehavior != startBehavior) {
+      goto blocked;
+    }
   }
 stop:
   actor->speedLimit = toFIXED(2);

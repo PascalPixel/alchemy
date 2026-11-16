@@ -85,57 +85,46 @@ retry:
   }
 #endif
   actor->update = (void (*)(void))Actor_SteerByPad;
-  goto walk;
-walkNext:
-  if (Map_GetTerrainHeight(*layer, q[0], q[2]) - actor->y.fixed > toFIXED(8))
-    goto blocked;
-  if (gSlideOnIce_Stopped != 0)
-#if !TLA_PATCH_1
-    goto blocked;
-#else
-    goto end;
-#endif
-  radius = actor->radius - 2;
-  entry = Ram_HeapSlots->actors;
-  j = 0;
-  flags = &entry->collisionFlags;
-overlap:
-  if (entry->script != NULL && (1 & *flags) && entry != actor) {
-    if (Event_CheckSpheresOverlap(&entry->x.fixed, radius, position,
-                                  entry->radius - 2) >= 0)
+  for (;;) {
+    FieldVector_AddPolarOffset(16, angle, position);
+    q = position;
+    cell = MapGrid_GetCellBehaviorAt(*layer, q[0], q[2]);
+    if (cell == 255)
+      break;
+    if (Map_GetTerrainHeight(*layer, q[0], q[2]) - actor->y.fixed > toFIXED(8))
       goto blocked;
+    if (gSlideOnIce_Stopped != 0)
+#if !TLA_PATCH_1
+      goto blocked;
+#else
+      goto end;
+#endif
+    radius = actor->radius - 2;
+    entry = Ram_HeapSlots->actors;
+    flags = &entry->collisionFlags;
+    for (j = 0; j <= 63; j++, flags += sizeof(*entry), entry++) {
+      if (entry->script != NULL && (1 & *flags) && entry != actor) {
+        if (Event_CheckSpheresOverlap(&entry->x.fixed, radius, position,
+                                      entry->radius - 2) >= 0)
+          goto blocked;
+      }
+    }
+    /* FAKEMATCH(dead): q set to the position again. */
+    q = position;
+    targetX = q[0];
+    targetZ = q[2];
+    actor->speedLimit = toFIXED(2);
+    actor->acceleration = toFIXED(1) / 10;
+    Actor_SetMoveTarget(actor, q[0], q[1], q[2]);
+    for (i = 0;
+         i <= 179 && Actor_HasArrived(actor) == 0 && gSlideOnIce_Stopped == 0;
+         i++)
+      System_Wait(1);
+    if (gSlideOnIce_Stopped != 0)
+      goto end;
+    if (cell != startCell)
+      goto changed;
   }
-  j++;
-  flags += sizeof(*entry);
-  entry++;
-  if (j <= 63)
-    goto overlap;
-  targetX = q[0];
-  targetZ = q[2];
-  actor->speedLimit = toFIXED(2);
-  actor->acceleration = toFIXED(1) / 10;
-  Actor_SetMoveTarget(actor, q[0], q[1], q[2]);
-  i = 0;
-  goto test;
-next:
-  System_Wait(1);
-  i++;
-test:
-  if (i <= 179 && Actor_HasArrived(actor) == 0 && gSlideOnIce_Stopped == 0)
-    goto next;
-  if (gSlideOnIce_Stopped != 0)
-    goto end;
-  if (cell != startCell)
-    goto changed;
-walk:
-  /* FAKEMATCH(barrier): an empty asm clobbering sfp stops gcse hoisting the
-   * position's address. */
-  __asm__("" : : : SFP_CLOBBER);
-  FieldVector_AddPolarOffset(16, angle, position);
-  q = position;
-  cell = MapGrid_GetCellBehaviorAt(*layer, q[0], q[2]);
-  if (cell != 255)
-    goto walkNext;
 blocked:
   actor->speedLimit = toFIXED(2);
   actor->acceleration = toFIXED(1);

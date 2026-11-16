@@ -250,18 +250,13 @@ void Palette_SetColors(u16 *slots, u16 *colours, u16 *cycleColors,
   gPaletteColors = colours;
   gPaletteCycleColors = cycleColors;
   gPaletteCycleSlots = cycleSlots;
-  if (*slots != 0xffff && *colours != 0xffff) {
-  next:
-    {
-      int index = *slots++;
-      int red = *colours++;
-      int green = *colours++;
-      int blue = *colours++;
+  while (*slots != 0xffff && *colours != 0xffff) {
+    int index = *slots++;
+    int red = *colours++;
+    int green = *colours++;
+    int blue = *colours++;
 
-      BG_PLTT_SET_RGB(index, red, green, blue);
-    }
-    if (*slots != 0xffff && *colours != 0xffff)
-      goto next;
+    BG_PLTT_SET_RGB(index, red, green, blue);
   }
   Dma_Set((const void *)BG_PLTT, saved, DMA_COPY_WORDS(112), REG_DMA3);
   Dma_Set((const void *)OBJ_PLTT, saved + 448, DMA_COPY_WORDS(112), REG_DMA3);
@@ -680,16 +675,11 @@ void AnemosInnerSanctum_LightThePillar(void) {
     break;
   }
 
-  i = (u16)base;
-  if (i != (u16)base + DJINN_FOUND_PER_ELEMENT) {
-  scan:
+  for (i = (u16)base; i != (u16)base + DJINN_FOUND_PER_ELEMENT; i++) {
     if (GameFlag_Get(i)) {
       found[count] = i - base;
       count++;
     }
-    i++;
-    if (i != (u16)base + DJINN_FOUND_PER_ELEMENT)
-      goto scan;
   }
   if (count == 0)
     return;
@@ -722,14 +712,9 @@ void AnemosInnerSanctum_LightThePillar(void) {
   column = cellX;
   row = cellZ;
   MapGrid_CopyCellsTo(cellX + 63, cellZ + 23, cellX + 63, cellZ - 3, 3, 5);
-  i = 0;
-  if (alpha != 0) {
-  fadeIn:
+  for (i = 0; i != alpha; i++) {
     REG_BLDALPHA = BLEND_ALPHA(i, BLEND_WEIGHT_MAX);
     System_Wait(8);
-    i++;
-    if (i != alpha)
-      goto fadeIn;
   }
   BlendScript_Resume();
   Event_PlaySound(SE_GLITTER);
@@ -971,7 +956,7 @@ void AnemosInnerSanctum_StepOnTile(void) {
                         FIELD_CELL(leader->z.fixed) + 64, 1, 1);
   Event_PlaySound(SE_DRIP);
   object =
-      FieldActor_Create(0x15d, (FIELD_CELL(leader->x.fixed) << 20) + toFIXED(8),
+      FieldActor_Create(349, (FIELD_CELL(leader->x.fixed) << 20) + toFIXED(8),
                         0, (FIELD_CELL(leader->z.fixed) << 20) + toFIXED(8));
   object->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
   object->motionFlags = 0;
@@ -1365,17 +1350,12 @@ void AnemosInnerSanctum_EnterTheRoom(void) {
 
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
-  i = 8;
-loop:
-  {
+  for (i = ACTOR_FIRST_PLACED; (u32)i <= 63; i++) {
     struct Actor *object = Actor_Get(i);
 
     if (object != NULL)
       object->motionFlags = 0;
   }
-  i++;
-  if ((u32)i <= 63)
-    goto loop;
   Event_PlaySound(SE_DOOR_OPEN);
   if (gMainRoutineWork.next == SCENE_ANEMOS_INNER_SANCTUM_DRAGON_SKIN_CHEST) {
     MapGrid_AnimateCells(gAnemosInnerSanctum_DoorFrames, 33, 7);
@@ -1456,19 +1436,19 @@ s32 Scene_Initialize(void) {
                       (s32)gAnemosInnerSanctum_DimColors,
                       (s32)gAnemosInnerSanctum_CycleSlots);
     if (Event_GetFlag(FLAG_ANEMOS_VENUS_SYMBOL_LIT)) {
-      AnemosInnerSanctum_DropSpark(0x208, 48, 0);
+      AnemosInnerSanctum_DropSpark(520, 48, 0);
       MapGrid_CopyCellsTo(85, 34, 85, 8, 9, 8);
     }
     if (Event_GetFlag(FLAG_ANEMOS_MERCURY_SYMBOL_LIT)) {
-      AnemosInnerSanctum_DropSpark(0x228, 48, 3);
+      AnemosInnerSanctum_DropSpark(552, 48, 3);
       MapGrid_CopyCellsTo(101, 34, 101, 8, 9, 8);
     }
     if (Event_GetFlag(FLAG_ANEMOS_MARS_SYMBOL_LIT)) {
-      AnemosInnerSanctum_DropSpark(0x1f8, 40, 10);
+      AnemosInnerSanctum_DropSpark(504, 40, 10);
       MapGrid_CopyCellsTo(85, 46, 85, 20, 9, 8);
     }
     if (Event_GetFlag(FLAG_ANEMOS_JUPITER_SYMBOL_LIT)) {
-      AnemosInnerSanctum_DropSpark(0x238, 40, 2);
+      AnemosInnerSanctum_DropSpark(568, 40, 2);
       MapGrid_CopyCellsTo(101, 46, 101, 20, 9, 8);
     }
     if (Event_GetFlag(FLAG_ANEMOS_ALL_SYMBOLS_LIT)) {
@@ -1485,9 +1465,10 @@ s32 Scene_Initialize(void) {
       Actor_SetPosition(ACTOR_ELEVATOR_SECOND_PILLAR, 440, 760);
     Call1((void (*)())Actor_PlaceBlocks,
           (s32)gAnemosInnerSanctum_ElevatorBlocks);
-    Actor_Get(gMainRoutineWork.leaderActorId)->priorityFlags |= 64;
+    Actor_Get(gMainRoutineWork.leaderActorId)->priorityFlags |=
+        ACTOR_PRIORITY_WALKS_ON_PLATFORMS;
     Actor_Get(ACTOR_ELEVATOR_STATUE)->motionFlags = 0;
-    Actor_Get(ACTOR_ELEVATOR_STATUE)->priorityFlags |= 128;
+    Actor_Get(ACTOR_ELEVATOR_STATUE)->priorityFlags |= ACTOR_PRIORITY_PLATFORM;
     if (gMainRoutineWork.entrance == 17 && Event_GetFlag(FLAG_AREA_TEMP_00)) {
       Actor_SetAnimation(ACTOR_ELEVATOR_STATUE, 2);
       Actor_SetPosition(ACTOR_ELEVATOR_STATUE, 728, 120);
@@ -1522,8 +1503,9 @@ s32 Scene_Initialize(void) {
     lift->motionFlags = ACTOR_FALLS;
     lift->groundHeight = -toFIXED(14);
     lift->y.fixed = -toFIXED(14);
-    lift->priorityFlags |= 128;
-    Actor_Get(gMainRoutineWork.leaderActorId)->priorityFlags |= 64;
+    lift->priorityFlags |= ACTOR_PRIORITY_PLATFORM;
+    Actor_Get(gMainRoutineWork.leaderActorId)->priorityFlags |=
+        ACTOR_PRIORITY_WALKS_ON_PLATFORMS;
     Actor_Get(ACTOR_SWITCHES_BOULDER)->riseCounter = 1;
     if (Event_GetFlag(FLAG_ANEMOS_SWITCHES_FIRST_PILLAR_PLACED))
       Actor_SetPosition(ACTOR_SWITCHES_FIRST_PILLAR, 56, 424);
@@ -1553,11 +1535,13 @@ s32 Scene_Initialize(void) {
     nearStairs = *(u16 *)&gMainRoutineWork.entrance;
     entrance = gMainRoutineWork.entrance;
     if (entrance == 1) {
-      CrackedTiles_Find(33, 0x280, 0x380, 18, 68);
+      CrackedTiles_Find(33, FLAG_SCENE_TEMP_80, FLAG_AREA_TEMP_80, 18, 68);
       if (Event_GetFlag(FLAG_AREA_TEMP_04) == 0) {
-        Actor_Get(gMainRoutineWork.leaderActorId)->priorityFlags |= 64;
+        Actor_Get(gMainRoutineWork.leaderActorId)->priorityFlags |=
+            ACTOR_PRIORITY_WALKS_ON_PLATFORMS;
         Actor_Get(ACTOR_ORIHALCON_CHEST_STATUE)->motionFlags = 0;
-        Actor_Get(ACTOR_ORIHALCON_CHEST_STATUE)->priorityFlags |= 128;
+        Actor_Get(ACTOR_ORIHALCON_CHEST_STATUE)->priorityFlags |=
+            ACTOR_PRIORITY_PLATFORM;
       } else {
         Actor_SetPosition(ACTOR_ORIHALCON_CHEST_STATUE, 0, 0);
         Event_SetFlag(FLAG_SCENE_TEMP_00);
@@ -1585,14 +1569,14 @@ s32 Scene_Initialize(void) {
       if (Event_GetFlag(FLAG_SCENE_TEMP_06))
         MapGrid_CopyCellsTo(17, 71, 10, 71, 1, 1);
     } else if (entrance == 11) {
-      CrackedTiles_Find(33, 0x280, 0x380, 18, 68);
+      CrackedTiles_Find(33, FLAG_SCENE_TEMP_80, FLAG_AREA_TEMP_80, 18, 68);
       CrackedTile_PlaceLanding(22, 0, FLAG_SCENE_TEMP_04);
     } else if (entrance == 12) {
-      CrackedTiles_Find(35, 0x280, 0x380, 18, 68);
+      CrackedTiles_Find(35, FLAG_SCENE_TEMP_80, FLAG_AREA_TEMP_80, 18, 68);
       if (Event_GetFlag(FLAG_KEEP_PARTY_POSITION) == 0)
         CrackedTile_PlaceLanding(36, -36, FLAG_SCENE_TEMP_04);
     } else if ((u32)((nearStairs - 4) << 16) <= 0x10000) {
-      CrackedTiles_Find(35, 0x280, 0x380, 18, 68);
+      CrackedTiles_Find(35, FLAG_SCENE_TEMP_80, FLAG_AREA_TEMP_80, 18, 68);
     }
   } else if (scene == SCENE_ANEMOS_INNER_SANCTUM_GUARDIAN) {
     struct MapWork *map = Ram_HeapSlots->mapGrid;
@@ -1602,10 +1586,12 @@ s32 Scene_Initialize(void) {
       if (Event_GetFlag(FLAG_AREA_TEMP_04) == 0)
         Actor_SetPosition(ACTOR_GUARDIAN_ROOM_STATUE, 0, 0);
     case 12:
-      Actor_Get(gMainRoutineWork.leaderActorId)->priorityFlags |= 64;
+      Actor_Get(gMainRoutineWork.leaderActorId)->priorityFlags |=
+          ACTOR_PRIORITY_WALKS_ON_PLATFORMS;
       Actor_SetAnimation(ACTOR_GUARDIAN_ROOM_STATUE, 2);
       Actor_Get(ACTOR_GUARDIAN_ROOM_STATUE)->motionFlags = 0;
-      Actor_Get(ACTOR_GUARDIAN_ROOM_STATUE)->priorityFlags |= 128;
+      Actor_Get(ACTOR_GUARDIAN_ROOM_STATUE)->priorityFlags |=
+          ACTOR_PRIORITY_PLATFORM;
       Actor_SetAnimation(ACTOR_GUARDIAN_ROOM_STATUE, 2);
       if (Event_GetFlag(FLAG_AREA_TEMP_04) == 0 &&
           gMainRoutineWork.entrance == 12)
@@ -1809,7 +1795,9 @@ void CrackedTile_DropIn(void) {
     velocity[0] += (Random16() * (toFIXED(3) / 4) >> 16) - (toFIXED(3) / 8);
     velocity[2] += (Random16() * (toFIXED(3) / 8) >> 16) - (toFIXED(3) / 16);
     FieldEffect_SpawnLocal(actor->x.fixed, actor->y.fixed, actor->z.fixed,
-                           velocity[0], velocity[1], velocity[2], 0x1090001,
+                           velocity[0], velocity[1], velocity[2],
+                           EFFECT_USE_UPDATE | EFFECT_USE_START_SCALE |
+                               EFFECT_USE_PALETTE | 1,
                            &options);
   }
   Event_PlaySound(SE_THUMP);

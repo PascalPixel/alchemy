@@ -307,8 +307,7 @@ void Pillars_Place(s16 *list) {
   if ((u16)list[0] == 0xffff)
     return;
   entry = list;
-next:
-  {
+  do {
     s32 id = (u16)entry[0];
     struct Actor *object = Actor_GetById(id);
     s32 kind = entry[1];
@@ -318,9 +317,7 @@ next:
     Actor_SetSpriteFlags(object, 0);
     Actor_SetCellOpen(id, (u16)kind, (u16)flag, object->layer);
     entry += 3;
-  }
-  if ((u16)entry[0] != 0xffff)
-    goto next;
+  } while ((u16)entry[0] != 0xffff);
 }
 
 /// Finds the current target's table row and shrinks it.
@@ -2694,20 +2691,18 @@ void AirsRockInside_TradePairedStatues(void) {
 
   leader = Actor_GetById(gMainRoutineWork.leaderActorId);
   pair = gAirsRockInside_PairedStatuesCones;
-  if (*pair == 0xffff)
-    goto found;
-search:
-  id = *pair;
-  first = Actor_GetById(id);
-  if (FIELD_CELL(first->x.fixed) == FIELD_CELL(leader->x.fixed) &&
-      FIELD_CELL(first->z.fixed) == FIELD_CELL(leader->z.fixed)) {
-    second = Actor_GetById(id - ((id & 1) << 1) + 1);
-    goto found;
+  if (*pair != 0xffff) {
+    do {
+      id = *pair;
+      first = Actor_GetById(id);
+      if (FIELD_CELL(first->x.fixed) == FIELD_CELL(leader->x.fixed) &&
+          FIELD_CELL(first->z.fixed) == FIELD_CELL(leader->z.fixed)) {
+        second = Actor_GetById(id - ((id & 1) << 1) + 1);
+        break;
+      }
+      pair += 3;
+    } while (*pair != 0xffff);
   }
-  pair += 3;
-  if (*pair != 0xffff)
-    goto search;
-found:
   busy = first->riseEnabled | second->riseEnabled;
   if (busy != 0)
     return;
@@ -2728,22 +2723,19 @@ found:
   first->watchedActor = (void *)((u8 *)first->watchedActor + 0x300);
   second->watchedActor = (void *)((u8 *)second->watchedActor + 0x300);
   leader->motionFlags = busy;
-  i = 0;
-step:
-  if (i <= 4) {
-    second->y.fixed += toFIXED(26) / 5;
-    Dma_Set(first->watchedActor, second->watchedActor, DMA_COPY_WORDS(48),
-            REG_DMA3);
-    first->watchedActor = (void *)((u8 *)first->watchedActor + 0x100);
-    second->watchedActor = (void *)((u8 *)second->watchedActor + 0x100);
+  for (i = 0; i != 8; i++) {
+    if (i <= 4) {
+      second->y.fixed += toFIXED(26) / 5;
+      Dma_Set(first->watchedActor, second->watchedActor, DMA_COPY_WORDS(48),
+              REG_DMA3);
+      first->watchedActor = (void *)((u8 *)first->watchedActor + 0x100);
+      second->watchedActor = (void *)((u8 *)second->watchedActor + 0x100);
+    }
+    leader->y.fixed += -(toFIXED(7) / 2);
+    leader->groundHeight = leader->y.fixed;
+    first->scaleY += -(FIXED_ONE * 31 / 256);
+    wait(1);
   }
-  leader->y.fixed += -(toFIXED(7) / 2);
-  leader->groundHeight = leader->y.fixed;
-  first->scaleY += -(FIXED_ONE * 31 / 256);
-  wait(1);
-  i++;
-  if (i != 8)
-    goto step;
   leader->motionFlags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
   first->scaleY = FIXED_ONE;
   second->y.fixed = second->groundHeight;

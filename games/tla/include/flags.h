@@ -428,6 +428,14 @@
 #define FLAG_DAILA_HEALER_SENT_TO_POI 0x847
 /// Set once the party has taken the Sea God's Tear from Daila's sanctuary.
 #define FLAG_SEA_GODS_TEAR_TAKEN 0xa20
+/// Set once the party has taken what Cyclone uncovers in Izumo's bushes: an
+/// Antidote at each of the first two spots, a Lucky Medal at the third.
+#define FLAG_IZUMO_FIRST_ANTIDOTE_TAKEN 0xf9f
+#define FLAG_IZUMO_SECOND_ANTIDOTE_TAKEN 0xfa0
+#define FLAG_IZUMO_LUCKY_MEDAL_TAKEN 0xfa1
+/// Set once the party has taken the Mint Cyclone uncovers in the grass before
+/// Jupiter Lighthouse.
+#define FLAG_JUPITER_LIGHTHOUSE_MINT_TAKEN 0xfe2
 
 // Scene flags, FLAG_SCENE_TEMP_00 to FLAG_SCENE_TEMP_FF: a scene says beside
 // its uses what each one holds there.

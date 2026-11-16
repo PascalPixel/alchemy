@@ -12,6 +12,7 @@
 #include "battle/battle.h"
 #include "field/field_sequence.h"
 #include "field/field.h"
+#include "scene/event_layer.h"
 #include "game/game.h"
 #include "graphics/graphics.h"
 #include "system/math_table.h"
@@ -77,6 +78,8 @@ struct LightOam gLightSpriteOam[16] BSS_DATA;
 s16 gLightSpriteLargeOam BSS_DATA;
 s16 gJupiterLighthouse_LightLevel BSS_DATA;
 struct CellTarget gCrackedTiles BSS_DATA;
+/// Sets a map cell's ground height (MapGrid_SetCellHeight, through the
+/// overlay's import).
 void Import_MapGridSetCellHeight();
 
 void Leader_CenterInCell(void);
@@ -109,44 +112,39 @@ const struct ActorPlacement *Scene_GetActorPlacements(void) {
 extern struct Trigger gJupiterLighthouseBasement_Triggers[];
 extern struct Trigger gJupiterLighthouseBasement_Room2Triggers[];
 
-void MadPlant_LeapAtLeader(s32 a, s32 b, s32 c);
-
-static __inline__ void JupiterLighthouse_CopyTouchedCells(s32 a, s32 b, s32 c,
-                                                          s32 d, s32 e, s32 f,
-                                                          s32 g) {
-  TileCopies_CopyTouchedCells(a, b, c, d, e, f, g);
-}
-
-static __inline__ void JupiterLighthouse_MadPlantLeaps(s32 a, s32 b, s32 c) {
-  MadPlant_LeapAtLeader(a, b, c);
-}
-
+/// Cyclone clears the first patch of the basement's bushes.
 void JupiterLighthouse_ClearFirstBushes(void) {
-  JupiterLighthouse_CopyTouchedCells(69, 0, 4, 4, 67, 24, 1);
+  FieldTileCopies_CopyTouchedCells(69, 0, 4, 4, 67, 24, 1);
 }
 
+/// Cyclone clears the second patch of bushes.
 void JupiterLighthouse_ClearSecondBushes(void) {
-  JupiterLighthouse_CopyTouchedCells(64, 0, 4, 3, 89, 28, 1);
+  FieldTileCopies_CopyTouchedCells(64, 0, 4, 3, 89, 28, 1);
 }
 
+/// Cyclone clears the bushes hiding a Mad Plant: until it is beaten it leaps at
+/// the leader and its battle begins.
 void JupiterLighthouse_UncoverMadPlant(void) {
-  JupiterLighthouse_CopyTouchedCells(64, 0, 4, 3, 89, 28, 1);
+  FieldTileCopies_CopyTouchedCells(64, 0, 4, 3, 89, 28, 1);
   if (!Event_GetFlag(FLAG_MAD_PLANT(3))) {
-    JupiterLighthouse_MadPlantLeaps(SPRITE_MAD_PLANT, 424, 488);
+    FieldMadPlant_LeapAtLeader(SPRITE_MAD_PLANT, 424, 488);
     gMainRoutineWork.pendingDjinni = IF_FLAG_SET(FLAG_MAD_PLANT(3));
     Battle_SetType(BATTLE_TYPE_NO_ESCAPE);
     Field_RequestBattleFromEncounterTable(ENCOUNTER_TABLE_MAD_PLANTS, 3);
   }
 }
 
+/// Cyclone clears the third patch of bushes.
 void JupiterLighthouse_ClearThirdBushes(void) {
-  JupiterLighthouse_CopyTouchedCells(69, 1, 4, 3, 108, 31, 1);
+  FieldTileCopies_CopyTouchedCells(69, 1, 4, 3, 108, 31, 1);
 }
 
+/// The teleporter's ring takes the party to the entrance (exit 4).
 void JupiterLighthouse_TeleportToEntrance(void) {
   Import_EventSetExitRequest(4);
 }
 
+/// The teleporter's ring takes the party to the ground floor (exit 6).
 void JupiterLighthouse_TeleportToGroundFloor(void) {
   Import_EventSetExitRequest(6);
 }
@@ -230,7 +228,7 @@ void JupiterLighthouse_SpawnSparks(void) {
     object->update = (void (*)(void))JupiterLighthouse_UpdateSpark;
     object->riseEnabled = i << 3;
     Actor_SetSpriteFlags(object, 0);
-    FieldActor_SetSpriteColor(object, 2);
+    FieldActor_SetSpriteColor(object, SPRITE_COLOR_RBG);
     ((struct FieldSprite *)object->sprite)->priority = 1;
     Actor_SetBlendMode(object, 1);
     action = &object->timer;
@@ -249,8 +247,12 @@ void JupiterLighthouse_SpawnSparks(void) {
   } while (i != 16);
 }
 
+/// Sets up the basement room being entered: the teleporters' palettes and the
+/// ring the party arrives in, or the Psynergy stone room's blended sparks.
+/// Returns 0.
 s32 Scene_Initialize(void) {
-  gFieldWork->transition = SCENE_TRANSITION(TRANSITION_WINDOW, 4);
+  gFieldWork->transition =
+      SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE);
   if (gMainRoutineWork.next ==
       (s32)&SceneId_JupiterLighthouseBasementTeleporters) {
     JupiterLighthouse_LoadPalettes(1);
@@ -270,6 +272,7 @@ s32 Scene_Initialize(void) {
   return 0;
 }
 
+/// Sets the scene's arrival flags before the map is built. Returns 0.
 s32 Scene_PrepareMap(void) {
   Scene_SetArrivalFlags(0);
   return 0;
@@ -290,6 +293,8 @@ static inline void PaletteCycle_SetFrame(s32 value) {
 
 #include "shared/palette_cycle_step_at.h"
 
+/// Loads palettes 12 and 13 (mode 2 keeps them), then cycles palette 12 once
+/// the lighthouse is activated (or in mode 1), or shows its unlit colours.
 void JupiterLighthouse_LoadPalettes(s32 mode) {
   gPaletteCyclePausesInEvents = 1;
   if (mode != 2) {
@@ -307,16 +312,18 @@ void JupiterLighthouse_LoadPalettes(s32 mode) {
   }
 }
 
+/// Lifts an actor 32 pixels over its ground as a platform others may stand on,
+/// and raises the map cell under it six height steps to match.
 void Actor_RaiseFromCell(s32 id) {
   struct Actor *object;
   s32 height;
 
   object = Actor_Get(id);
-  object->motionFlags = 4;
+  object->motionFlags = ACTOR_FLOATS;
   height = object->groundHeight;
   object->bounce = 0;
   object->y.fixed = height + toFIXED(32);
-  object->priorityFlags |= 128;
+  object->priorityFlags |= ACTOR_PRIORITY_PLATFORM;
   height =
       Map_GetTerrainHeight(object->layer, object->x.fixed, object->z.fixed);
   Import_MapGridSetCellHeight(object->x.fixed, object->z.fixed, 0,
@@ -338,6 +345,8 @@ void Actor_SetSpriteFlags(struct Actor *object, u32 value);
 
 #include "shared/whirlwind_spawn.h"
 
+/// An actor's update: every eighth frame, a sparkle rising from a random point
+/// of it.
 s32 JupiterLighthouse_RaiseSparkles(struct Actor *object) {
   struct EffectOptions params;
 
@@ -353,13 +362,17 @@ s32 JupiterLighthouse_RaiseSparkles(struct Actor *object) {
     y = object->y.fixed + toFIXED(32 - (Random_Below(20)));
     FieldEffect_Spawn(x, y, object->z.fixed, 0,
                       (s32)(toFIXED(Random_Below(5)) + toFIXED(5)) / 10, 0,
-                      toFIXED(11), &params);
+                      EFFECT_USE_START_SCALE | EFFECT_USE_PRIORITY |
+                          EFFECT_USE_PALETTE,
+                      &params);
   }
   return 0;
 }
 
 #include "shared/jupiter_lighthouse_place_raised_actors.h"
 
+/// A task: queues the lit actors' sprites, 16 by 16 or, when large, 32 by 64,
+/// at their animation picture and depth, skipping those off screen.
 void LightSprites_Draw(void) {
   struct MapWork *map = Ram_HeapSlots->mapGrid;
   s32 *view = &map->viewX;
@@ -436,6 +449,8 @@ void LightSprites_Draw(void) {
 
 static inline void *BumpAlloc(s32 size) { return Heap_Alloc(size); }
 
+/// Loads the first set of light pictures into VRAM and starts drawing the lit
+/// actors (none yet), small.
 void LightSprites_InitA(void) {
   u8 *buffer = BumpAlloc(0xc00);
 
@@ -450,6 +465,8 @@ void LightSprites_InitA(void) {
   gJupiterLighthouse_LightLevel = -1;
 }
 
+/// Loads the second set of light pictures into VRAM and starts drawing the lit
+/// actors (none yet), small.
 void LightSprites_InitB(void) {
   u8 *buffer = Heap_Alloc(0xc00);
 
@@ -464,6 +481,8 @@ void LightSprites_InitB(void) {
   gJupiterLighthouse_LightLevel = -1;
 }
 
+/// Loads the third set of light pictures into VRAM and starts drawing the lit
+/// actors (none yet), large.
 void LightSprites_InitC(void) {
   u8 *buffer = BumpAlloc(0x800);
 
@@ -480,6 +499,7 @@ void LightSprites_InitC(void) {
 
 #include "shared/light_sprites_add.h"
 
+/// Sets the priority the lit actors are drawn at; -1 takes each one's own.
 void JupiterLighthouse_SetLightLevel(s32 value) {
   gJupiterLighthouse_LightLevel = value;
 }

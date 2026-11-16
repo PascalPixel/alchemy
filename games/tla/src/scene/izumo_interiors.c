@@ -11,6 +11,7 @@
 #include "field/event_inline.h"
 #include "battle/battle.h"
 #include "field/field.h"
+#include "field/field_sequence.h"
 #include "game/game.h"
 #include "graphics/graphics.h"
 #include "system/math_table.h"
@@ -78,18 +79,7 @@ const struct SceneRegion *Scene_GetExitRegions(void) { return 0; }
 
 const u32 *Scene_GetExits(void) { return gSceneExits; }
 
-#define FIELD_AT(base, type, off)                                              \
-  (((struct {                                                                  \
-     u8 pad[off];                                                              \
-     type v;                                                                   \
-   } *)(base))                                                                 \
-       ->v)
-
 void Shop_Run(s32 slot, s32 actor);
-
-static inline void LeaderAnimate(s32 animation, s32 frames) {
-  Actor_ShowEmoteById(gMainRoutineWork.leaderActorId, animation, frames);
-}
 
 const struct ActorPlacement *Scene_GetActorPlacements(void) {
   if (GameFlag_Get(FLAG_SERPENT_SLAIN))
@@ -140,6 +130,9 @@ enum {
   ACTOR_COAL ///< the Mars Djinni Uzume gives the party
 };
 
+/// The healer: across the counter, the sanctum's healing; from elsewhere, why
+/// the guardian spirit would want a sacrifice, or once the Serpent is slain how
+/// the island flourishes.
 void IzumoInteriors_TalkToHealer(s32 actor) {
   u16 facing = Actor_GetById(gMainRoutineWork.leaderActorId)->facing;
 
@@ -167,6 +160,8 @@ enum { SHOP_IZUMO = 24 };
 /// Izumo's inn, as Inn_CheckIn numbers the inns.
 enum { IZUMO_INN = 9 };
 
+/// The innkeeper: across the counter, Izumo's inn; from elsewhere, the legend
+/// of the Serpent, or once it is slain news of Briggs.
 void IzumoInteriors_TalkToInnkeeper(s32 actor) {
   u16 facing = Actor_GetById(gMainRoutineWork.leaderActorId)->facing;
 
@@ -185,6 +180,8 @@ void IzumoInteriors_TalkToInnkeeper(s32 actor) {
   }
 }
 
+/// The merchant: across the counter, Izumo's shop; from elsewhere, the powers
+/// of Izumo's leaders.
 void IzumoInteriors_TalkToMerchant(s32 actor) {
   u16 facing = Actor_GetById(gMainRoutineWork.leaderActorId)->facing;
 
@@ -203,6 +200,8 @@ void IzumoInteriors_TalkToMerchant(s32 actor) {
   }
 }
 
+/// Lady Uzume, the first time, tells where Susa has gone and why; then she
+/// fears being left alone.
 void IzumoInteriors_AskAfterSusa(void) {
   Event_Start();
   Event_ResolvePendingActions(0);
@@ -238,6 +237,7 @@ void IzumoInteriors_AskAfterSusa(void) {
   Event_End();
 }
 
+/// Mind Read on Lady Uzume before the Serpent is slain: her prayer for Susa.
 void IzumoInteriors_ReadPrayerForSusa(void) {
   GameFlag_Set(FLAG_UZUMES_PRAYER_READ);
   Event_SetMessageId((s32)MsgIPrayThat);
@@ -245,8 +245,11 @@ void IzumoInteriors_ReadPrayerForSusa(void) {
   Event_ShowMessageAndWait(ACTOR_SUSAS_HOUSE_UZUME, 0);
 }
 
+/// Lady Uzume after the festival begins: she invites the party to enjoy it, and
+/// with the Dancing Idol in hand the field menu opens to give it; once she has
+/// it, she means to climb Mt. Mikage herself.
 void IzumoInteriors_TalkToUzume(void) {
-  void *work = Ram_HeapSlots->fieldWork;
+  struct FieldWork *work = Ram_HeapSlots->fieldWork;
 
   Event_Start();
   Event_ResolvePendingActions(0);
@@ -260,12 +263,14 @@ void IzumoInteriors_TalkToUzume(void) {
     // "If you have time, won't you enjoy a little of our celebratory festival?"
     Event_ShowMessageAndWait(ACTOR_UZUME, 0);
     if (PartyInventory_FindMember(ITEM_DANCING_IDOL) != -1)
-      FIELD_AT(work, u16, 346) = 1;
+      work->fieldMenu = 1;
   }
   Actor_FaceDirection(ACTOR_UZUME, FACING_SOUTH, 0);
   Event_End();
 }
 
+/// One of the men in Susa's house asks whether the party went into Mt. Mikage
+/// too, and answers by the reply.
 void IzumoInteriors_AskAboutMtMikage(void) {
   s32 msg;
 
@@ -286,6 +291,9 @@ void IzumoInteriors_AskAboutMtMikage(void) {
   Event_End();
 }
 
+/// Mind Read on Lady Uzume once the Serpent is slain: she catches the party,
+/// scolding it if her prayer was read before; the second time she sends it
+/// away.
 void IzumoInteriors_ReadUzumesMind(void) {
   Event_Start();
   Event_ResolvePendingActions(0);
@@ -299,10 +307,12 @@ void IzumoInteriors_ReadUzumesMind(void) {
     // "And what were you planning to do, once you'd read my mind, hm?"
     Event_ShowMessageAndWait(ACTOR_UZUME, 0);
     if (GameFlag_Get(FLAG_UZUMES_PRAYER_READ)) {
-      LeaderAnimate(256, 30);
+      Actor_ShowEmoteById(gMainRoutineWork.leaderActorId,
+                          EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 30);
       Actor_ShowEmoteById(ACTOR_UZUME, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 30);
       Event_ShowMessageAndWait(ACTOR_UZUME, 0);
-      LeaderAnimate(258, 30);
+      Actor_ShowEmoteById(gMainRoutineWork.leaderActorId,
+                          EMOTE_IN_FRONT | EMOTE_WINCE, 30);
       Actor_SetAnimationById(ACTOR_UZUME, ANIM_SHAKE_HEAD);
       Event_Wait(30);
       Event_ShowMessageAndWait(ACTOR_UZUME, 0);
@@ -313,6 +323,8 @@ void IzumoInteriors_ReadUzumesMind(void) {
   Event_End();
 }
 
+/// Kushinada, the first time, explains why she will be offered to the Serpent;
+/// then she asks Susa not to save her, and the leader steps back.
 s32 IzumoInteriors_KushinadaPleads(void) {
   Event_Start();
   Event_ResolvePendingActions(0);
@@ -353,10 +365,12 @@ s32 IzumoInteriors_KushinadaPleads(void) {
   return 0;
 }
 
+/// Entering Susa's house from the east, Izumo recognizes the heroes.
 void IzumoInteriors_HeroesComeFromTheEast(void) {
   IzumoInteriors_RecognizeTheHeroes(0);
 }
 
+/// Entering Susa's house from the west, Izumo recognizes the heroes.
 void IzumoInteriors_HeroesComeFromTheWest(void) {
   IzumoInteriors_RecognizeTheHeroes(1);
 }
@@ -665,7 +679,7 @@ void IzumoInteriors_RecognizeTheHeroes(s32 mode) {
   FieldEvent_Wait(120);
   Actor_SetSpeed(ACTOR_SUSA, 0.6);
   Actor_SetSpeed(ACTOR_SUSA, 0.6);
-  Actor_GetById(ACTOR_SUSA)->priorityFlags &= ~1;
+  Actor_GetById(ACTOR_SUSA)->priorityFlags &= ~ACTOR_PRIORITY_AUTOMATIC;
   Actor_WalkTo(ACTOR_SUSA, 144, 648);
   if (mode == 0) {
     Actor_WalkToAndWait(ACTOR_SUSA, 88, 648);
@@ -1185,9 +1199,9 @@ s32 IzumoInteriors_FindNoMoveTarget(void) { return -1; }
 void IzumoInteriors_ShowMove(void) {
   FieldPsynergy_LoadResources(ABILITY_MOVE, 1);
   FieldPsynergy_SetupActorPair(ACTOR_UZUME, -1);
-  FIELD_AT(Ram_HeapSlots->fieldEffectWork, HandlerFn, 36) =
-      IzumoInteriors_FindNoMoveTarget;
-  FIELD_AT(Ram_HeapSlots->fieldEffectWork, u8, 32) = 1;
+  ((struct FieldEffectWork *)Ram_HeapSlots->fieldEffectWork)->finishCallback =
+      (void (*)(void))IzumoInteriors_FindNoMoveTarget;
+  ((struct FieldEffectWork *)Ram_HeapSlots->fieldEffectWork)->enabled = 1;
   FieldPsynergy_StartCast();
   Event_Wait(10);
   FieldPsynergy_RunHandler(0);
@@ -1195,9 +1209,9 @@ void IzumoInteriors_ShowMove(void) {
   FieldPsynergy_End();
 }
 
+/// Lady Uzume takes the Dancing Idol, asks where it was found, and in thanks
+/// brings out Coal, the Mars Djinni.
 void IzumoInteriors_GiveUzumeTheDoll(void) {
-  s32 t21, t31;
-
   Event_Start();
   Event_ResolvePendingActions(0);
   Event_SetMessageId((s32)&MsgAhCouldIt);
@@ -1225,8 +1239,7 @@ void IzumoInteriors_GiveUzumeTheDoll(void) {
   // "I think I may have something that might please you."
   Event_ShowMessageAndWait(ACTOR_UZUME, 0);
   BattleEffect_StartArcEffect();
-  t21 = ((s32)Actor_GetById(ACTOR_UZUME));
-  BattleEffect_SetObjectUpdateMode(t21, 2);
+  BattleEffect_SetObjectUpdateMode(Actor_GetById(ACTOR_UZUME), 2);
   Sound_Play(SE_ASCEND);
   Event_Wait(60);
   Actor_SetPosition(ACTOR_COAL, 144, 520);
@@ -1235,8 +1248,7 @@ void IzumoInteriors_GiveUzumeTheDoll(void) {
   Actor_WaitForMoveById(ACTOR_COAL);
   Actor_FaceDirectionById(ACTOR_COAL, FACING_SOUTH, 0);
   Event_Wait(60);
-  t31 = ((s32)Actor_GetById(ACTOR_UZUME));
-  BattleEffect_SetObjectUpdateMode(t31, 0);
+  BattleEffect_SetObjectUpdateMode(Actor_GetById(ACTOR_UZUME), 0);
   BattleEffect_WaitForArcGroups();
   BattleEffect_EndArcEffect();
   Event_Wait(30);
@@ -1283,8 +1295,12 @@ void IzumoInteriors_GiveUzumeTheDoll(void) {
   Event_End();
 }
 
+/// Sets up Izumo's houses as the party enters: the window in, Susa's house for
+/// the heroes' welcome or the festival, and Kushinada and the villagers before
+/// the Serpent is slain. Returns 0.
 s32 Scene_Initialize(void) {
-  gFieldWork->transition = SCENE_TRANSITION(TRANSITION_WINDOW, 1);
+  gFieldWork->transition =
+      SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_SHAPE);
   if (gMainRoutineWork.entrance != 7)
     Event_ClearFlag(FLAG_AREA_TEMP_50);
   if (GameFlag_Get(FLAG_SERPENT_SLAIN) &&
@@ -1325,6 +1341,7 @@ s32 Scene_Initialize(void) {
   return 0;
 }
 
+/// Nothing to prepare before the map is built. Returns 0.
 s32 Scene_PrepareMap(void) { return 0; }
 
 extern s32 gIzumoInteriors_BounceScript[];
@@ -1664,55 +1681,55 @@ u32 gSceneExits[] = {
 
 // clang-format off
 struct ActorPlacement gIzumoInteriors_ActorPlacements[] = {
-    ACTOR_PLACEMENT(120, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 136, 0, 120, FACING_SOUTHEAST, TALK_FACING_PARTY_AND_BACK, 0),
-    ACTOR_PLACEMENT(120, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 152, 0, 152, FACING_NORTHWEST, TALK_FACING_PARTY_AND_BACK, 0),
-    ACTOR_PLACEMENT(120, CONDITION_ALWAYS, MOVEMENT_TYPE_WANDER, 88, 0, 88, FACING_EAST, TALK_FACING_PARTY_AND_BACK, 0),
-    ACTOR_PLACEMENT(124, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 424, 0, 96, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
-    ACTOR_PLACEMENT(124, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 312, 0, 80, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
-    ACTOR_PLACEMENT(124, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 384, 0, 104, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
-    ACTOR_PLACEMENT(124, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 280, 0, 84, FACING_SOUTHEAST, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(SPRITE_IZUMO_WOMAN_IN_RED, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 136, 0, 120, FACING_SOUTHEAST, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(SPRITE_IZUMO_WOMAN_IN_RED, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 152, 0, 152, FACING_NORTHWEST, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(SPRITE_IZUMO_WOMAN_IN_RED, CONDITION_ALWAYS, MOVEMENT_TYPE_WANDER, 88, 0, 88, FACING_EAST, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(SPRITE_IZUMO_OLD_MAN, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 424, 0, 96, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(SPRITE_IZUMO_OLD_MAN, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 312, 0, 80, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(SPRITE_IZUMO_OLD_MAN, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 384, 0, 104, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(SPRITE_IZUMO_OLD_MAN, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 280, 0, 84, FACING_SOUTHEAST, TALK_FACING_PARTY_AND_BACK, 0),
     ACTOR_PLACEMENT(SPRITE_IZUMO_OLD_WOMAN, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 328, 0, 136, FACING_NORTHWEST, TALK_FACING_PARTY_AND_BACK, 0),
     ACTOR_PLACEMENT(SPRITE_IZUMO_OLD_WOMAN, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 312, 0, 120, FACING_SOUTHEAST, TALK_FACING_PARTY_AND_BACK, 0),
     ACTOR_PLACEMENT(SPRITE_KUSHINADA, CONDITION_ALWAYS, (s32)gIzumoInteriors_BounceScript, 352, 0, 328, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
-    ACTOR_PLACEMENT(121, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 136, 0, 362, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
-    ACTOR_PLACEMENT(118, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 108, 0, 320, FACING_SOUTHEAST, TALK_FACING_PARTY_AND_BACK, 0),
-    ACTOR_PLACEMENT(119, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 536, 0, 104, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
-    ACTOR_PLACEMENT(123, CONDITION_ALWAYS, MOVEMENT_TYPE_WANDER, 632, 0, 88, FACING_EAST, TALK_FACING_PARTY_AND_BACK, 0),
-    ACTOR_PLACEMENT(201, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 560, 0, 328, FACING_SOUTH, TALK_FACING_PARTY, 0),
-    ACTOR_PLACEMENT(127, CONDITION_ALWAYS, (s32)gIzumoInteriors_RockingScript, 504, 0, 360, FACING_SOUTHWEST, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(127, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 536, 0, 392, FACING_NORTHWEST, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(SPRITE_IZUMO_WOMAN_IN_CREAM, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 136, 0, 362, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(SPRITE_IZUMO_MAN_WITH_TOPKNOT, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 108, 0, 320, FACING_SOUTHEAST, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(SPRITE_IZUMO_MAN_IN_RED, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 536, 0, 104, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(SPRITE_IZUMO_WOMAN_IN_ORANGE, CONDITION_ALWAYS, MOVEMENT_TYPE_WANDER, 632, 0, 88, FACING_EAST, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(SPRITE_HEALER, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 560, 0, 328, FACING_SOUTH, TALK_FACING_PARTY, 0),
+    ACTOR_PLACEMENT(SPRITE_IZUMO_GIRL, CONDITION_ALWAYS, (s32)gIzumoInteriors_RockingScript, 504, 0, 360, FACING_SOUTHWEST, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_IZUMO_GIRL, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 536, 0, 392, FACING_NORTHWEST, TALK_FACING_PARTY_AND_BACK, 0),
     {SCENE_TABLE_END},
 };
 // clang-format on
 
 // clang-format off
 struct ActorPlacement gIzumoInteriors_SusasHouseActorPlacements[] = {
-    ACTOR_PLACEMENT(30, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 144, 0, 520, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
-    ACTOR_PLACEMENT(120, CONDITION_ALWAYS, (s32)gIzumoInteriors_FirstPacerScript, 136, 0, 624, FACING_EAST, TALK_FACING_PARTY_AND_BACK, 0),
-    ACTOR_PLACEMENT(120, CONDITION_ALWAYS, (s32)gIzumoInteriors_SecondPacerScript, 152, 0, 624, FACING_WEST, TALK_FACING_PARTY_AND_BACK, 0),
-    ACTOR_PLACEMENT(124, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 90, 0, 622, FACING_WEST, TALK_FACING_PARTY_AND_BACK, 0),
-    ACTOR_PLACEMENT(124, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 198, 0, 622, FACING_EAST, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(SPRITE_LADY_UZUME, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 144, 0, 520, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(SPRITE_IZUMO_WOMAN_IN_RED, CONDITION_ALWAYS, (s32)gIzumoInteriors_FirstPacerScript, 136, 0, 624, FACING_EAST, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(SPRITE_IZUMO_WOMAN_IN_RED, CONDITION_ALWAYS, (s32)gIzumoInteriors_SecondPacerScript, 152, 0, 624, FACING_WEST, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(SPRITE_IZUMO_OLD_MAN, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 90, 0, 622, FACING_WEST, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(SPRITE_IZUMO_OLD_MAN, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 198, 0, 622, FACING_EAST, TALK_FACING_PARTY_AND_BACK, 0),
     {SCENE_TABLE_END},
 };
 // clang-format on
 
 // clang-format off
 struct ActorPlacement gIzumoInteriors_ActorPlacementsOnceTheSerpentIsSlain[] = {
-    ACTOR_PLACEMENT(121, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 136, 0, 362, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
-    ACTOR_PLACEMENT(118, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 108, 0, 320, FACING_SOUTHEAST, TALK_FACING_PARTY_AND_BACK, 0),
-    ACTOR_PLACEMENT(119, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 536, 0, 104, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
-    ACTOR_PLACEMENT(123, CONDITION_ALWAYS, MOVEMENT_TYPE_WANDER, 632, 0, 88, FACING_EAST, TALK_FACING_PARTY_AND_BACK, 0),
-    ACTOR_PLACEMENT(201, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 560, 0, 328, FACING_SOUTH, TALK_FACING_PARTY, 0),
-    ACTOR_PLACEMENT(127, CONDITION_ALWAYS, (s32)gIzumoInteriors_RockingScript, 600, 0, 360, FACING_WEST, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(127, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 536, 0, 376, FACING_NORTHEAST, TALK_FACING_PARTY_AND_BACK, 0),
-    ACTOR_PLACEMENT(30, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 144, 0, 520, FACING_SOUTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(120, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 136, 0, 624, FACING_EAST, TALK_FACING_PARTY_AND_BACK, 0),
-    ACTOR_PLACEMENT(120, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 152, 0, 624, FACING_WEST, TALK_FACING_PARTY_AND_BACK, 0),
-    ACTOR_PLACEMENT(124, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 88, 0, 616, FACING_NORTHEAST, TALK_FACING_PARTY_AND_BACK, 0),
-    ACTOR_PLACEMENT(124, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 200, 0, 616, FACING_NORTHWEST, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(SPRITE_IZUMO_WOMAN_IN_CREAM, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 136, 0, 362, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(SPRITE_IZUMO_MAN_WITH_TOPKNOT, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 108, 0, 320, FACING_SOUTHEAST, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(SPRITE_IZUMO_MAN_IN_RED, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 536, 0, 104, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(SPRITE_IZUMO_WOMAN_IN_ORANGE, CONDITION_ALWAYS, MOVEMENT_TYPE_WANDER, 632, 0, 88, FACING_EAST, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(SPRITE_HEALER, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 560, 0, 328, FACING_SOUTH, TALK_FACING_PARTY, 0),
+    ACTOR_PLACEMENT(SPRITE_IZUMO_GIRL, CONDITION_ALWAYS, (s32)gIzumoInteriors_RockingScript, 600, 0, 360, FACING_WEST, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_IZUMO_GIRL, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 536, 0, 376, FACING_NORTHEAST, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(SPRITE_LADY_UZUME, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 144, 0, 520, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_IZUMO_WOMAN_IN_RED, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 136, 0, 624, FACING_EAST, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(SPRITE_IZUMO_WOMAN_IN_RED, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 152, 0, 624, FACING_WEST, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(SPRITE_IZUMO_OLD_MAN, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 88, 0, 616, FACING_NORTHEAST, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(SPRITE_IZUMO_OLD_MAN, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 200, 0, 616, FACING_NORTHWEST, TALK_FACING_PARTY_AND_BACK, 0),
     ACTOR_PLACEMENT(SPRITE_KUSHINADA, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 128, 0, 520, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
     ACTOR_PLACEMENT(SPRITE_SUSA, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 120, 0, 552, FACING_NORTH, TALK_FACING_PARTY_AND_BACK, 0),
-    ACTOR_PLACEMENT(117, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 8, 0, 8, FACING_NORTH, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(SPRITE_IZUMO_WOMAN_WITH_PONYTAIL, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 8, 0, 8, FACING_NORTH, TALK_FACING_PARTY_AND_BACK, 0),
     ACTOR_PLACEMENT(SPRITE_KRADEN, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 8, 0, 8, FACING_NORTH, TALK_FACING_PARTY_AND_BACK, 0),
     ACTOR_PLACEMENT(SPRITE_PIERS, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 8, 0, 8, FACING_NORTH, TALK_FACING_PARTY_AND_BACK, 0),
     ACTOR_PLACEMENT(SPRITE_JENNA, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 8, 0, 8, FACING_NORTH, TALK_FACING_PARTY_AND_BACK, 0),

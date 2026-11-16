@@ -97,18 +97,23 @@ extern s32 gPaletteCyclePausesInEvents;
 void JupiterLighthouse_CloseDoor(void);
 void JupiterLighthouse_LoadPalettes(s32 value);
 
+/// A cracked tile of the lower floor under a grounded leader: as it gives way
+/// the party falls to the room below (exit 13).
 void JupiterLighthouse_StepOnLowerCrackedTile(s32 value) {
   if (Actor_Get(gMainRoutineWork.leaderActorId)->y.fixed == 0 &&
       CrackedTiles_Step(value))
     FieldEvent_SetExitRequest(13);
 }
 
+/// A cracked tile of the upper floor under a grounded leader: as it gives way
+/// the party falls to the room below (exit 14).
 void JupiterLighthouse_StepOnUpperCrackedTile(s32 value) {
   if (Actor_Get(gMainRoutineWork.leaderActorId)->y.fixed == 0 &&
       CrackedTiles_Step(value))
     FieldEvent_SetExitRequest(14);
 }
 
+/// Opens the door, with its sound and a step of its frames in mode 1.
 void JupiterLighthouse_OpenDoor(s32 mode) {
   if (mode == 1) {
     Event_PlaySound(SE_IMPACT);
@@ -119,6 +124,7 @@ void JupiterLighthouse_OpenDoor(s32 mode) {
   MapGrid_CopyCellAttributes(20, 38, 2, 1, 14, 42);
 }
 
+/// Closes the door with a thud.
 void JupiterLighthouse_CloseDoor(void) {
   Event_PlaySound(SE_HEAVY_IMPACT);
   MapGrid_CopyCellsLayered(84, 36, 2, 3, 78, 40);
@@ -127,6 +133,7 @@ void JupiterLighthouse_CloseDoor(void) {
   MapGrid_CopyCellAttributes(20, 44, 2, 1, 14, 42);
 }
 
+/// The shortcut pillar moved onto cell (4, 37) holds the door open for good.
 void JupiterLighthouse_CheckBlockOnCell(void) {
   struct Actor *object = Actor_Get(ACTOR_SHORTCUT_PILLAR);
 
@@ -137,6 +144,7 @@ void JupiterLighthouse_CheckBlockOnCell(void) {
   }
 }
 
+/// Stepping on the button opens the door.
 void JupiterLighthouse_StepOnButton(void) {
   if (!Event_GetFlag(FLAG_DOOR_BUTTON_HELD)) {
     Event_SetFlag(FLAG_DOOR_BUTTON_HELD);
@@ -144,6 +152,8 @@ void JupiterLighthouse_StepOnButton(void) {
   }
 }
 
+/// Stepping off the button closes the door, unless the shortcut pillar now
+/// holds it.
 void JupiterLighthouse_StepOffButton(void) {
   if (Event_GetFlag(FLAG_DOOR_BUTTON_HELD) == 1) {
     Event_ClearFlag(FLAG_DOOR_BUTTON_HELD);
@@ -152,6 +162,8 @@ void JupiterLighthouse_StepOffButton(void) {
   JupiterLighthouse_CheckBlockOnCell();
 }
 
+/// Move sets the shortcut pillar down: on the button's cell it holds the door
+/// open.
 void JupiterLighthouse_FinishMovingBlock(void) {
   System_Wait(10);
   JupiterLighthouse_CheckBlockOnCell();
@@ -168,10 +180,14 @@ static inline void PaletteCycle_SetFrame(s32 value) {
 
 s32 __modsi3();
 
+/// Sets up the room as the party enters: the window in, the door as the pillar
+/// or the button leaves it, and the cracked tiles of the floor entered, with
+/// the landing of a fall from above. Returns 0.
 s32 Scene_Initialize(void) {
   struct FieldWork *work = Ram_HeapSlots->fieldWork;
 
-  work->transition = SCENE_TRANSITION(TRANSITION_WINDOW, 4);
+  work->transition =
+      SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE);
   if (Event_GetFlag(FLAG_JUPITER_LIGHTHOUSE_SHORTCUT_PILLAR_PLACED)) {
     Actor_SetPosition(ACTOR_SHORTCUT_PILLAR, 72, 600);
     JupiterLighthouse_OpenDoor(0);
@@ -179,14 +195,18 @@ s32 Scene_Initialize(void) {
   if (Event_GetFlag(FLAG_DOOR_BUTTON_HELD))
     JupiterLighthouse_OpenDoor(0);
   if ((u16)(gMainRoutineWork.entrance - 5) <= 1) {
-    CrackedTiles_Find(33, 0x280, 0x380, 20, 31);
+    CrackedTiles_Find(33, FLAG_SCENE_TEMP_80, FLAG_AREA_TEMP_80, 20, 31);
   } else {
-    CrackedTiles_Find(43, 0x280, 0x380, 21, 31);
-    CrackedTile_PlaceLanding(21, -3, 0x204);
+    CrackedTiles_Find(43, FLAG_SCENE_TEMP_80, FLAG_AREA_TEMP_80, 21, 31);
+    CrackedTile_PlaceLanding(
+        21, -3,
+        SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE));
   }
   return 0;
 }
 
+/// Sets the scene's arrival flags and loads the lighthouse's palettes; the
+/// pillar goes back unless the party stays in place. Returns 0.
 s32 Scene_PrepareMap(void) {
   Scene_SetArrivalFlags(0);
   JupiterLighthouse_LoadPalettes(0);
@@ -212,11 +232,11 @@ UNUSED void JupiterLighthouse_FloatAboveGround(s32 id) {
   s32 height;
 
   object = Actor_Get(id);
-  object->motionFlags = 4;
+  object->motionFlags = ACTOR_FLOATS;
   height = object->groundHeight;
   object->bounce = 0;
   object->y.fixed = height + toFIXED(32);
-  object->priorityFlags |= 128;
+  object->priorityFlags |= ACTOR_PRIORITY_PLATFORM;
   height =
       Map_GetTerrainHeight(object->layer, object->x.fixed, object->z.fixed);
   MapGrid_SetCellHeight(object->x.fixed, object->z.fixed, 0,
@@ -238,6 +258,8 @@ void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
                        s32 velocityZ, u32 flags,
                        const struct EffectOptions *options);
 
+/// Raises a whirlwind eight pixels in front of an actor, moving along its
+/// facing (Whirlwind_Update), with a burst of light. Returns it.
 struct Actor *Whirlwind_Spawn(struct Actor *source) {
   struct Vector3 position;
   struct EffectOptions options;
@@ -253,7 +275,7 @@ struct Actor *Whirlwind_Spawn(struct Actor *source) {
   Import_ActorSelectAnimation(object, 2);
   Actor_SetSpriteFlags(object, 0);
   object->motionFlags = 0;
-  object->priorityFlags &= ~1;
+  object->priorityFlags &= ~ACTOR_PRIORITY_AUTOMATIC;
   object->facing = source->facing;
   object->timer = 0;
   object->riseCounter = 0;
@@ -263,7 +285,7 @@ struct Actor *Whirlwind_Spawn(struct Actor *source) {
   options.priority = 1;
   options.palette = 7;
   FieldEffect_Spawn(position.x, source->y.fixed, position.z - toFIXED(6), 0, 0,
-                    0, toFIXED(3), &options);
+                    0, EFFECT_USE_PRIORITY | EFFECT_USE_PALETTE, &options);
   return object;
 }
 
@@ -287,6 +309,7 @@ static inline void *BumpAlloc(s32 size) { return Heap_Alloc(size); }
 
 #include "shared/light_sprites_add_counted.h"
 
+/// Sets the priority the lit actors' sprites are drawn at.
 void LightSprites_SetPriority(u16 value) { gLightSpritePriority = value; }
 
 #include "../field/actor_set_sprite_priority.c"
@@ -342,16 +365,16 @@ u32 gSceneExits[] = {
 };
 
 struct ActorPlacement gActorPlacements[] = {
-    ACTOR_PLACEMENT(341, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 440, 0, 456, FACING_SOUTHWEST, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(341, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 568, 0, 456, FACING_SOUTHEAST, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE),
-    ACTOR_PLACEMENT(341, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 392, 0, 632, FACING_SOUTHWEST, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE),
-    ACTOR_PLACEMENT(341, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 424, 0, 632, FACING_SOUTHEAST, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE),
-    ACTOR_PLACEMENT(312, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 56, 0, 600, FACING_SOUTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(489, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(341, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 248, 0, 184, FACING_SOUTHWEST, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(341, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 296, 0, 184, FACING_SOUTHEAST, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE),
-    ACTOR_PLACEMENT(341, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 248, 0, 264, FACING_SOUTHWEST, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE),
-    ACTOR_PLACEMENT(341, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 296, 0, 264, FACING_SOUTHEAST, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE),
+    ACTOR_PLACEMENT(SPRITE_WHITE_WINGS, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 440, 0, 456, FACING_SOUTHWEST, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_WHITE_WINGS, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 568, 0, 456, FACING_SOUTHEAST, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE),
+    ACTOR_PLACEMENT(SPRITE_WHITE_WINGS, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 392, 0, 632, FACING_SOUTHWEST, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE),
+    ACTOR_PLACEMENT(SPRITE_WHITE_WINGS, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 424, 0, 632, FACING_SOUTHEAST, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE),
+    ACTOR_PLACEMENT(SPRITE_YELLOW_BLOCK, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 56, 0, 600, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_UNSEEN_MARKER, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_WHITE_WINGS, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 248, 0, 184, FACING_SOUTHWEST, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_WHITE_WINGS, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 296, 0, 184, FACING_SOUTHEAST, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE),
+    ACTOR_PLACEMENT(SPRITE_WHITE_WINGS, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 248, 0, 264, FACING_SOUTHWEST, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE),
+    ACTOR_PLACEMENT(SPRITE_WHITE_WINGS, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 296, 0, 264, FACING_SOUTHEAST, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE),
     {SCENE_TABLE_END},
 };
 

@@ -2034,7 +2034,7 @@ void BattleEffect_RunCoatlicue(struct BattleEffectParams *args) {
       Heap_Release(model);
       Heap_Release(verts);
     }
-    while (*(volatile u32 *)&work->vblanksSinceTransfer <= 1) {
+    while (work->vblanksSinceTransfer <= 1) {
     }
     EFFECT_PRESENT_CANVAS(work);
   }

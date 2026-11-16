@@ -1207,8 +1207,7 @@ void BattleEffect_RunCharon(struct BattleEffectParams *arg) {
       Heap_Release(texture);
       // DEAD: each test reads the count twice and drops the first read; the ROM
       // keeps both loads.
-      while (*(volatile u32 *)&work->vblanksSinceTransfer,
-             *(volatile u32 *)&work->vblanksSinceTransfer <= 1) {
+      while (work->vblanksSinceTransfer, work->vblanksSinceTransfer <= 1) {
       }
     }
     work->transferPending = 1;

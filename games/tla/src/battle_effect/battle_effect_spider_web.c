@@ -412,12 +412,8 @@ void BattleEffect_RunUlysses(struct BattleEffectParams *args) {
         z = toFIXED(33) / 32;
       }
       q16 = toFIXED(256) / z;
-      // DEAD: each scale is read before it is stored and the value dropped;
-      // the ROM keeps both loads.
-      *(volatile u16 *)&work->bg2pa;
-      *(volatile u16 *)&work->bg2pa = q16;
-      *(volatile u16 *)&work->bg2pd;
-      *(volatile u16 *)&work->bg2pd = q16;
+      work->bg2pa = q16;
+      work->bg2pd = q16;
       work->bg2x = (64 - toFIXED(184) / z) << 8;
       work->bg2y = (64 - toFIXED(76) / z) << 8;
       if (t <= 15) {

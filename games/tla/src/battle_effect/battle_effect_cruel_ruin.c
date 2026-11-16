@@ -730,8 +730,7 @@ void BattleEffect_EndElementStreaks(void) {
 
 #define ALT_BLITTER ((DrawRectangle)Ram_HeapSlots->ramCodePaired)
 #define WAIT_TRANSFER(work)                                                    \
-  while (*(volatile u32 *)&(work)->vblanksSinceTransfer,                       \
-         *(volatile u32 *)&(work)->vblanksSinceTransfer <= 1)
+  while ((work)->vblanksSinceTransfer, (work)->vblanksSinceTransfer <= 1)
 
 /// Where Cruel Ruin's pictures are built or decoded in the effect's pictures:
 /// SwirlTexture; GlowBandTextureA (GlowBandTextureB in the second act) and

@@ -552,13 +552,9 @@ void BattleEffect_RunMegiddo(struct BattleEffectParams *args) {
     Heap_Release(model);
     Heap_Release(verts);
 
-    {
-      volatile u32 *vblanks = (volatile u32 *)&work->vblanksSinceTransfer;
-
-      do {
-        (void)*vblanks;
-      } while (*vblanks <= 1);
-    }
+    do {
+      (void)work->vblanksSinceTransfer;
+    } while (work->vblanksSinceTransfer <= 1);
     EFFECT_END_FRAME(work);
   }
 

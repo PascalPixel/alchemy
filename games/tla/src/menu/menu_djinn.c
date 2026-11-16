@@ -481,7 +481,7 @@ void Menu_OpenBackdropScreen(void) {
   Iwram_CopyWords(backdrop->tiles, BG_CHAR_BLOCK(1), 0x2000);
   Iwram_CopyWords(backdrop->palette, (void *)&BG_PLTT_COLOR(4, 0), 128);
   Iwram_FillWords(BG_CHAR_BLOCK(1), 0x2000, PIXELS_4BPP(3));
-  Iwram_FillWords((void *)&BG_PLTT_COLOR(4, 0), 128, 0x55555555);
+  Iwram_FillWords((void *)&BG_PLTT_COLOR(4, 0), 128, PIXELS_4BPP(5));
   Graphics_ExpandVramTilesByColorTableFar(BG_CHAR_BLOCK(1) + 0x1000);
   Iwram_CopyWords(BG_CHAR_BLOCK(1) + 150 * TILE_SIZE_4BPP,
                   gMenu_BackdropBorderTile, TILE_SIZE_4BPP);
@@ -739,45 +739,52 @@ void UiPanel_HighlightGridCell(struct Window *panel, s32 index, s32 row,
 
 #undef GRID_CELL_WIDTH
 
-/// Gives every cell of a tile rectangle that uses palette 15 the palette
+/// Gives every cell of a tile rectangle that uses WINDOW_PALETTE the palette
 /// given instead, clipped to the screen, and marks its rows for upload.
 void Window_SetRectPalette(s32 x, s32 y, s32 width, s32 height, s32 palette) {
   struct WindowWork *tiles = (struct WindowWork *)Ram_HeapSlots->windowWork;
 
-  palette <<= 12;
+  palette = BG_TILE_PALETTE(palette);
 
   if (x < 0) {
     width += x;
     x = 0;
   }
-  if (x + width > (DISPLAY_TILE_WIDTH - 1)) {
+  if (x + width > DISPLAY_TILE_WIDTH - 1) {
     width = DISPLAY_TILE_WIDTH - x;
   }
   if (y < 0) {
     height += y;
     y = 0;
   }
-  if (y + height > 29) {
+  // BUG: tests the bottom against the screen's width but clips to its rows, so
+  // a rectangle ending in rows 20 to 28 is kept whole and recolours past the
+  // 32 by 20 tilemap.
+#ifdef BUGFIX
+  if (y + height > DISPLAY_TILE_HEIGHT - 1) {
+#else
+  if (y + height > DISPLAY_TILE_WIDTH - 1) {
+#endif
     height = DISPLAY_TILE_HEIGHT - y;
   }
 
   if (width > 0 && height > 0) {
     do {
-      u16 *p = &tiles->tilemap[y][x];
-      s32 col = width;
+      u16 *entry = &tiles->tilemap[y][x];
+      s32 column = width;
 
-      if (col != 0) {
+      if (column != 0) {
         do {
-          u32 tile = *p;
+          u32 tile = *entry;
 
           if (((tile >> 12) & 15) == WINDOW_PALETTE) {
             tile &= ~0xf000;
             tile |= palette;
-            *p = tile;
+            *entry = tile;
           }
-          col--;
-          p++;
-        } while (col != 0);
+          column--;
+          entry++;
+        } while (column != 0);
       }
       UiRender_MarkRow(tiles, y);
 

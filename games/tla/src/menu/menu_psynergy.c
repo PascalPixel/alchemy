@@ -46,7 +46,7 @@ s32 PsynergyMenu_Run(void) {
 #if TLA_PATCH_2
   Menu_SuspendFieldTasks();
   Iwram_CopyWords(savedTiles, (void *)BG_CHAR_BLOCK(1), 0x2000);
-  Iwram_FillWords((void *)BG_CHAR_BLOCK(1), 0x2000, 0x33333333);
+  Iwram_FillWords((void *)BG_CHAR_BLOCK(1), 0x2000, PIXELS_4BPP(3));
   Text_UseExtraTilesFar(1);
 #endif
   screen->partyCount = Party_ListMembersFar(screen->memberIds);
@@ -325,7 +325,7 @@ s32 PsynergyMenu_ClassifySelectedPsynergy(void) {
   if (Scene_HasPsynergyTriggerFar(psynergy->fieldPsynergy) != 0)
     return 0;
   ret = 2;
-  if (psynergy->range != 0xff) {
+  if (psynergy->range != ABILITY_RANGE_ALL) {
     u8 kind = psynergy->targetMode;
 
     diff = kind ^ 2;
@@ -801,11 +801,11 @@ s32 PsynergyMenu_CollectActions(struct Unit *unit, u16 *actions, s32 mode) {
   s32 offset;
 
   count = 0;
-  for (i = 0; i < 32; i++)
+  for (i = 0; i < PSYNERGY_SLOTS; i++)
     actions[i] = 0;
 
   if (mode == 1) {
-    for (i = 0; i < 32; i++) {
+    for (i = 0; i < PSYNERGY_SLOTS; i++) {
       if (unit->psynergy[i].encodedAction != 0) {
         if (Ability_Get(unit->psynergy[i].encodedAction & PSYNERGY_ABILITY_MASK)
                 ->fieldPsynergy != 0) {
@@ -815,22 +815,24 @@ s32 PsynergyMenu_CollectActions(struct Unit *unit, u16 *actions, s32 mode) {
       }
     }
   } else {
-    for (i = 0; i < 32; i++) {
+    for (i = 0; i < PSYNERGY_SLOTS; i++) {
       if (unit->psynergy[i].encodedAction != 0) {
         ability = Ability_Get(unit->psynergy[i].encodedAction &
                               PSYNERGY_ABILITY_MASK);
-        if (ability->fieldPsynergy != 0 || (ability->flags & 0x40) != 0) {
+        if (ability->fieldPsynergy != 0 ||
+            (ability->flags & ABILITY_USABLE_IN_FIELD) != 0) {
           actions[count] = unit->psynergy[i].encodedAction;
           count++;
         }
       }
     }
     if (mode != 2) {
-      for (i = 0; i < 32; i++) {
+      for (i = 0; i < PSYNERGY_SLOTS; i++) {
         if (unit->psynergy[i].encodedAction != 0) {
           ability = Ability_Get(unit->psynergy[i].encodedAction &
                                 PSYNERGY_ABILITY_MASK);
-          if (ability->fieldPsynergy == 0 && (ability->flags & 0x40) == 0) {
+          if (ability->fieldPsynergy == 0 &&
+              (ability->flags & ABILITY_USABLE_IN_FIELD) == 0) {
             actions[count] = unit->psynergy[i].encodedAction;
             count++;
           }

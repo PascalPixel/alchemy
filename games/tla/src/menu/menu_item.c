@@ -119,7 +119,7 @@ s32 ItemMenu_Run(void) {
 #if TLA_PATCH_1
   Menu_SuspendFieldTasks();
   Iwram_CopyWords(backup, (void *)BG_CHAR_BLOCK(1), size);
-  Iwram_FillWords((void *)BG_CHAR_BLOCK(1), size, 0x33333333);
+  Iwram_FillWords((void *)BG_CHAR_BLOCK(1), size, PIXELS_4BPP(3));
   Text_UseExtraTilesFar(1);
 #endif
 

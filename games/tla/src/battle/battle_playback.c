@@ -239,8 +239,7 @@ void BattlePlayback_Run(void) {
       prompt->tile = VramCache_Reload(events->arrowResource, pictureTiles);
       x = (s16)window->x * 8 + (offset->x >> 8) + 4;
       prompt->x = x;
-      prompt->y = Trig_Sin(gFrameCount << 12) / 32768 + (s16)window->y * 8 +
-                  (offset->y >> 8) + 6;
+      prompt->y = CURSOR_BOB_Y() + (s16)window->y * 8 + (offset->y >> 8) + 6;
       if ((gInput.held & KEY_B) || (gInput.pendingPressed & KEY_ADVANCE) ||
           ((u32)(gVBlankCount - events->timer) > 10 &&
            (gInput.held & KEY_ADVANCE))) {

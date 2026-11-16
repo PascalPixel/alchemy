@@ -503,8 +503,7 @@ void BattleMessage_WaitForAdvance(void) {
     prompt->tile = VramCache_Reload(tileSlot, pictureTiles);
     prompt->x = (s16)window->x * 8 + (offset->x >> 8) + 4;
     // Bob up and down by up to 2 pixels, once every 16 frames.
-    prompt->y = Trig_Sin(gFrameCount << 12) / 32768 + (s16)window->y * 8 +
-                (offset->y >> 8) + 6;
+    prompt->y = CURSOR_BOB_Y() + (s16)window->y * 8 + (offset->y >> 8) + 6;
     Oam_AddSpriteAtDepth(prompt, OAM_DEPTH_WINDOW);
     // A held advance key counts only after 16 frames, so one still held from
     // the previous message does not skip this one.

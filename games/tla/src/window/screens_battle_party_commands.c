@@ -118,7 +118,7 @@ s32 BattleParty_ChooseReserve(s32 slot) {
           PartyStatus_Draw(Ram_HeapSlots->battleWork->partyStatus);
           BattleObject_PutFar();
           selected[0] = newId;
-          selected[1] = 0xff;
+          selected[1] = BATTLE_UNIT_LIST_END;
           BattleHighlight_SetModesFar(selected, HIGHLIGHT_PULSE);
           PartyStatus_HighlightMembers(selected);
         }
@@ -132,7 +132,7 @@ s32 BattleParty_ChooseReserve(s32 slot) {
       result = -1;
       Sound_PlayFar(SE_MENU_CANCEL);
     done:
-      selected[0] = 0xff;
+      selected[0] = BATTLE_UNIT_LIST_END;
       BattleHighlight_SetModesFar(selected, HIGHLIGHT_OFF);
       PartyStatus_HighlightMembers(selected);
       PartyStatus_Draw(Ram_HeapSlots->battleWork->partyStatus);

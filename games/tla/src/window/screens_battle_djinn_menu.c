@@ -31,12 +31,13 @@
 #define DJINN_MESSAGE_COPY Message_DecodeRaw
 #endif
 
-/// The two BG tiles of the Djinn menu's arrow: DJINN_MENU_ARROW_TILE blinks,
-/// the one after it stays.
-#define DJINN_MENU_ARROW_TILE 808
 #define DJINN_MENU_ARROW_VRAM                                                  \
   (BG_CHAR_BLOCK(0) + DJINN_MENU_ARROW_TILE * TILE_SIZE_4BPP)
 
+// A selected Djinni packs its element and number (DJINN_COMMAND), standby bit
+// and recovery turns.
+#define DJINN_ENTRY_ELEMENT(entry) (((entry) & 0xf00) >> 8)
+#define DJINN_ENTRY_NUMBER(entry) ((entry) & 0xff)
 #define DJINN_ENTRY_STANDBY 0x10000
 #define DJINN_ENTRY_RECOVERY_MASK 0x3e0000
 #define DJINN_ENTRY_RECOVERY_SHIFT 17
@@ -122,9 +123,9 @@ s32 BattleDjinnMenu_Run(s32 member, s32 unused) {
     // djinnCount, 2 of 1246 differ.
     for (djinnIndex = 0,
         entryCursor = (u32 *)((djinnCount << 2) + (u32)djinnEntries);
-         djinnIndex <= 19; djinnIndex++) {
+         djinnIndex < DJINN_PER_ELEMENT; djinnIndex++) {
       if (unit->djinnSet[element] & (u32)(1 << djinnIndex)) {
-        *entryCursor = (u32)((element << 8) | djinnIndex);
+        *entryCursor = (u32)DJINN_COMMAND(element, djinnIndex);
         entryCursor++;
         djinnCount++;
       } else if (unit->djinnHeld[element] & (u32)(1 << djinnIndex)) {
@@ -139,7 +140,7 @@ s32 BattleDjinnMenu_Run(s32 member, s32 unused) {
             break;
           }
         }
-        v = (u32)((element << 8) | djinnIndex | DJINN_ENTRY_STANDBY);
+        v = (u32)(DJINN_COMMAND(element, djinnIndex) | DJINN_ENTRY_STANDBY);
         *entryCursor = v;
         if (list->entries[k].turns > 0) {
           v |= (u32)(list->entries[k].turns << DJINN_ENTRY_RECOVERY_SHIFT);
@@ -206,10 +207,10 @@ s32 BattleDjinnMenu_Run(s32 member, s32 unused) {
             MessageArgument_Push((selectedDjinn & DJINN_ENTRY_RECOVERY_MASK) >>
                                      DJINN_ENTRY_RECOVERY_SHIFT,
                                  MESSAGE_ARGUMENT_NUMBER);
-            DJINN_MESSAGE_COPY(((selectedDjinn & 0xf00) >> 8) *
-                                       DJINN_PER_ELEMENT +
-                                   (selectedDjinn & 0xff) + (s32)MsgDjinnEffect,
-                               messageText, DJINN_MESSAGE_CAPACITY);
+            DJINN_MESSAGE_COPY(
+                DJINN_ENTRY_ELEMENT(selectedDjinn) * DJINN_PER_ELEMENT +
+                    DJINN_ENTRY_NUMBER(selectedDjinn) + (s32)MsgDjinnEffect,
+                messageText, DJINN_MESSAGE_CAPACITY);
             if (previewWindow != NULL) {
               Window_Close(previewWindow, 1);
               previewWindow = NULL;
@@ -224,15 +225,15 @@ s32 BattleDjinnMenu_Run(s32 member, s32 unused) {
                 &previewPages);
             Message_CopyExpanded((s32)MsgReadyToSummon, messageText,
                                  DJINN_MESSAGE_CAPACITY);
-            standbyElements = 1 << ((selectedDjinn & 0xf00) >> 8);
+            standbyElements = 1 << DJINN_ENTRY_ELEMENT(selectedDjinn);
           }
         } else {
           previewWindow = BattleDjinnMenu_ShowChangePreview(
               previewWindow, member, selectedDjinn, previewPage, &previewPages);
-          DJINN_MESSAGE_COPY(((selectedDjinn & 0xf00) >> 8) *
-                                     DJINN_PER_ELEMENT +
-                                 (selectedDjinn & 0xff) + (s32)MsgDjinnEffect,
-                             messageText, DJINN_MESSAGE_CAPACITY);
+          DJINN_MESSAGE_COPY(
+              DJINN_ENTRY_ELEMENT(selectedDjinn) * DJINN_PER_ELEMENT +
+                  DJINN_ENTRY_NUMBER(selectedDjinn) + (s32)MsgDjinnEffect,
+              messageText, DJINN_MESSAGE_CAPACITY);
         }
       } else {
         DJINN_MESSAGE_COPY((s32)MsgNoDjinn, messageText,
@@ -261,16 +262,16 @@ s32 BattleDjinnMenu_Run(s32 member, s32 unused) {
              (encodedDjinn = djinnEntries[listEntry]) != DJINN_ENTRY_END;
              listEntry++) {
           Window_SetTilemapEntry(
-              listWindow, ((encodedDjinn & 0xf00) >> 8) + ELEMENT_ICON_TILE, 0,
-              j * 2, 0);
+              listWindow, DJINN_ENTRY_ELEMENT(encodedDjinn) + ELEMENT_ICON_TILE,
+              0, j * 2, 0);
           if (encodedDjinn & DJINN_ENTRY_RECOVERY_MASK)
             Text_SetColor(TEXT_COLOR_YELLOW);
           else if (encodedDjinn & DJINN_ENTRY_STANDBY)
             Text_SetColor(TEXT_COLOR_RED);
-          Text_DrawMessageAsTiles(((encodedDjinn & 0xf00) >> 8) *
-                                          DJINN_PER_ELEMENT +
-                                      (encodedDjinn & 0xff) + (s32)MsgDjinnName,
-                                  listWindow, 8, j * 16);
+          Text_DrawMessageAsTiles(
+              DJINN_ENTRY_ELEMENT(encodedDjinn) * DJINN_PER_ELEMENT +
+                  DJINN_ENTRY_NUMBER(encodedDjinn) + (s32)MsgDjinnName,
+              listWindow, 8, j * 16);
           if (encodedDjinn & DJINN_ENTRY_RECOVERY_MASK)
             Text_DrawNumberAtOffset(
                 (encodedDjinn & DJINN_ENTRY_RECOVERY_MASK) >>

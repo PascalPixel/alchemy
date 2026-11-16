@@ -138,6 +138,10 @@ struct FileListWork {
   FIXED partyMemberScale[4]; ///< 16.16 fixed point, FIXED_ONE full size
 };
 
+/// The two BG tiles of the Djinn menu's arrow: DJINN_MENU_ARROW_TILE blinks,
+/// the one after it stays (gDjinnMenu_BlinkTile).
+#define DJINN_MENU_ARROW_TILE 808
+
 extern const u8 gDjinnMenu_BlinkTile[32];
 
 extern u8 gDjinnMenu_ElementXOffsets[4];

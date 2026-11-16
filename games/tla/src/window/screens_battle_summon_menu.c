@@ -181,9 +181,9 @@ s32 BattleSummonMenu_Run(s32 unusedA, s32 unusedB, const u8 *standby) {
             Window_SetTilemapEntry(counts, element + ELEMENT_ICON_TILE,
                                    element * 2, 0, 0);
             if (standby[element] > 9)
-              tile = standby[element] + 0xf196;
+              tile = standby[element] + WINDOW_TILE(0x196);
             else
-              tile = (standby[element] + '0') | 0xf000;
+              tile = WINDOW_TILE(standby[element] + '0');
             Window_SetTilemapEntry(counts, tile, element * 2 + 1, 0,
                                    GLYPH_DRAW_CHARACTER);
           }

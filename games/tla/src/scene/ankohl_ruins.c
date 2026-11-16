@@ -60,9 +60,6 @@
 /// second.
 #define FLAG_FIRST_SAND_DOOR_OPENED 0x9e2
 #define FLAG_SECOND_SAND_DOOR_OPENED 0x9e3
-/// Set while the raft passes rows 31 to 36, the cells under its path
-/// shifted.
-#define FLAG_RAFT_CELLS_SHIFTED 0x146
 /// The sand rooms' switches pressed, the sand rising in each.
 #define FLAG_FIRST_SAND_SWITCH_PRESSED FLAG_SCENE_TEMP_02
 #define FLAG_SECOND_SAND_SWITCH_PRESSED FLAG_SCENE_TEMP_03
@@ -992,7 +989,7 @@ void AnkohlRuins_RaiseFirstSand(void) {
     cells = map->layers[2].cells;
     cells +=
         leader->x.fixed / toFIXED(16) + ((leader->z.fixed / toFIXED(16)) << 7);
-    if (cells->collisionCode == 232) {
+    if (cells->collisionCode == CELL_BEHAVIOR_SAND) {
       leader->y.fixed += gAnkohlRuins_SandStep;
       leader->groundHeight = leader->y.fixed;
     }
@@ -1077,7 +1074,7 @@ void AnkohlRuins_RaiseSecondSand(void) {
     cells = map->layers[2].cells;
     cells +=
         leader->x.fixed / toFIXED(16) + ((leader->z.fixed / toFIXED(16)) << 7);
-    if (cells->collisionCode == 232) {
+    if (cells->collisionCode == CELL_BEHAVIOR_SAND) {
       leader->y.fixed += gAnkohlRuins_SandStep;
       leader->groundHeight = leader->y.fixed;
     }
@@ -1207,8 +1204,8 @@ DEFINE_ANKOHL_RUINS_OPEN_ONCE(AnkohlRuins_OpenSecondSandDoor,
 /// Each frame, moves the raft (the great face) four fifths of a pixel down the
 /// sand and carries the leader and the camera's actor with it while the leader
 /// stands on it; shifts the cells under it in rows 31 to 37
-/// (FLAG_RAFT_CELLS_SHIFTED), and past row 41 removes itself, stops the
-/// shaking, opens the landing and sets FLAG_SCENE_TEMP_01.
+/// (setting FLAG_SAND_CANNOT_END meanwhile), and past row 41 removes itself,
+/// stops the shaking, opens the landing and sets FLAG_SCENE_TEMP_01.
 void AnkohlRuins_RideRaftDown(void) {
   struct Actor *rider = gFieldWork->camera;
   struct Actor *raft = Actor_GetById(ACTOR_GREAT_FACE);
@@ -1235,13 +1232,13 @@ void AnkohlRuins_RideRaftDown(void) {
     }
   }
   row = FIELD_CELL(raft->z.fixed);
-  if ((u16)(row - 31) <= 4 && !AnkohlRuins_FlagCheck(FLAG_RAFT_CELLS_SHIFTED)) {
+  if ((u16)(row - 31) <= 4 && !AnkohlRuins_FlagCheck(FLAG_SAND_CANNOT_END)) {
     MapGrid_CopyCellAttributes(35, 83, 5, 4, 12, 96);
-    Event_SetFlag(FLAG_RAFT_CELLS_SHIFTED);
+    Event_SetFlag(FLAG_SAND_CANNOT_END);
   }
-  if (row == 37 && AnkohlRuins_FlagCheck(FLAG_RAFT_CELLS_SHIFTED)) {
+  if (row == 37 && AnkohlRuins_FlagCheck(FLAG_SAND_CANNOT_END)) {
     MapGrid_CopyCellAttributes(40, 83, 5, 4, 12, 96);
-    Event_ClearFlag(FLAG_RAFT_CELLS_SHIFTED);
+    Event_ClearFlag(FLAG_SAND_CANNOT_END);
   }
   if (row > 41) {
     FieldTask_Remove(AnkohlRuins_RideRaftDown);

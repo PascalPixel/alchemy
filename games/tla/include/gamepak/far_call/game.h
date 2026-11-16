@@ -109,6 +109,6 @@ s32 Inventory_CheckUnequipFar(s32 unitId, s32 slot);
 void Unit_SetPpFar(struct Unit *unit, s32 pp);
 /// Returns the class series of a character whose strongest element is
 /// `primaryElement` and second `secondaryElement`, from the 4 by 4 table.
-void Class_GetSeriesFar(s32 value);
+void Summon_LearnFar(s32 summonId);
 
 #endif

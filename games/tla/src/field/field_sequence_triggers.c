@@ -298,7 +298,7 @@ s32 Scene_TalkToActor(s32 id) {
         Event_ResolvePendingActions(0);
         SummonTablet_PlayRunes(index);
         Summon_ShowLearnedMessageFar(contents);
-        Class_GetSeriesFar(contents);
+        Summon_LearnFar(contents);
         ObjectEvent_Remove(index);
         if (flag != -1)
           GameFlag_Set(flag);

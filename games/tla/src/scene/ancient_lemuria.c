@@ -360,16 +360,16 @@ s32 Scene_PrepareMap(void) {
   s32 entrance = gMainRoutineWork.entrance;
 
   if (entrance == 1)
-    GameFlag_Set(0x960);
+    GameFlag_Set(FLAG_LEMURIA_OTHER_WAY_IN);
   else if (entrance == 2)
-    GameFlag_Clear(0x960);
+    GameFlag_Clear(FLAG_LEMURIA_OTHER_WAY_IN);
   else if (entrance == 3)
-    GameFlag_Clear(0x960);
+    GameFlag_Clear(FLAG_LEMURIA_OTHER_WAY_IN);
   else if (entrance == 4)
-    GameFlag_Set(0x960);
+    GameFlag_Set(FLAG_LEMURIA_OTHER_WAY_IN);
   else if (entrance == 5)
-    GameFlag_Set(0x960);
-  if (GameFlag_Get(0x960)) {
+    GameFlag_Set(FLAG_LEMURIA_OTHER_WAY_IN);
+  if (GameFlag_Get(FLAG_LEMURIA_OTHER_WAY_IN)) {
     MapGrid_CopyCellPictureCellsRect(38, 47, 26, 12, 8, 47);
     MapGrid_CopyCellPictureCellsRect(102, 47, 26, 12, 72, 47);
     Map_CopyCellAttributeRect(38, 47, 26, 12, 8, 47);

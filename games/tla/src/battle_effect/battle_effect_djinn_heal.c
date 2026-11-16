@@ -32,7 +32,7 @@ void BattleEffect_RunTumblingQuads(struct BattleEffectParams *args, s32 mode) {
   struct Particle *quad;
   s32 x;
   s32 frame;
-  struct RenderModel *job;
+  struct RenderModel *model;
   void *vertices;
   void *canvas;
   // Unused: draws[1] gives the stack frame its 4 bytes.
@@ -155,25 +155,25 @@ void BattleEffect_RunTumblingQuads(struct BattleEffectParams *args, s32 mode) {
       }
     }
 
-    // The quads: each a render job of one textured face, placed by its own
+    // The quads: each a render model of one textured face, placed by its own
     // translation, scale, pitch and roll.
     Matrix_Initialize();
     gProjection.centerY = 104;
     // DEAD: frame never passes 63 here; the ROM keeps the compare and branch.
     if (frame <= 63) {
       vertices = Heap_AllocEwram(32);
-      job = Render_AllocateModelList(1);
+      model = Render_AllocateModelList(1);
       fade = 0;
       if (frame > 55)
         fade = (56 - frame) * 8;
-      job->shade = fade;
+      model->shade = fade;
       texture.logWidth = 6;
       texture.logHeight = 6;
       texture.pixels = work->sheet + SHEET_TEXTURE;
-      job->kind = MODEL_SHADED_MAX;
-      job->texture = &texture;
-      job->mesh = gBattleEffect_SquareMesh;
-      job->vertices = vertices;
+      model->kind = MODEL_SHADED_MAX;
+      model->texture = &texture;
+      model->mesh = gBattleEffect_SquareMesh;
+      model->vertices = vertices;
 
       for (i = 0; i != QUAD_COUNT; i++) {
         FIXED scale;
@@ -208,10 +208,10 @@ void BattleEffect_RunTumblingQuads(struct BattleEffectParams *args, s32 mode) {
           quad->velocityZ += toFIXED(1) / 64;
           Render_TransformVertices(gBattleEffect_GroundSquareCorners, vertices,
                                    4);
-          Render_DrawModelList(job);
+          Render_DrawModelList(model);
         }
       }
-      Heap_Release(job);
+      Heap_Release(model);
       Heap_Release(vertices);
     }
     gProjection.centerX = BATTLE_PROJECTION_CENTER_X;

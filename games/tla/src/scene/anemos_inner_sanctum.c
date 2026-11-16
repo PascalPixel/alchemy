@@ -855,10 +855,12 @@ void AnemosInnerSanctum_StartMovingBlock(void) {
                                 CELL_BEHAVIOR_WALL);
         Field_SetCellBehaviorAt(2, toFIXED(296), toFIXED(360),
                                 CELL_BEHAVIOR_WALL);
-        Field_SetCellBehaviorAt(2, toFIXED(280), toFIXED(360), 232);
+        Field_SetCellBehaviorAt(2, toFIXED(280), toFIXED(360),
+                                CELL_BEHAVIOR_SAND);
         Field_SetCellBehaviorAt(2, toFIXED(520), toFIXED(632),
                                 CELL_BEHAVIOR_WALL);
-        Field_SetCellBehaviorAt(2, toFIXED(520), toFIXED(616), 232);
+        Field_SetCellBehaviorAt(2, toFIXED(520), toFIXED(616),
+                                CELL_BEHAVIOR_SAND);
       }
     }
   }
@@ -880,15 +882,15 @@ void AnemosInnerSanctum_FinishMovingBlock(void) {
   x = leader->x.fixed >> 19;
   z = leader->z.fixed >> 19;
   if (gMainRoutineWork.next == SCENE_ANEMOS_INNER_SANCTUM_SWITCHES) {
-    Field_SetCellBehaviorAt(2, toFIXED(72), toFIXED(440), 232);
+    Field_SetCellBehaviorAt(2, toFIXED(72), toFIXED(440), CELL_BEHAVIOR_SAND);
     if (x != 8)
-      Field_SetCellBehaviorAt(2, toFIXED(72), toFIXED(424), 232);
+      Field_SetCellBehaviorAt(2, toFIXED(72), toFIXED(424), CELL_BEHAVIOR_SAND);
   }
   if (gMainRoutineWork.next == SCENE_ANEMOS_INNER_SANCTUM_ORIHALCON_CHEST) {
     Field_SetCellBehaviorAt(2, toFIXED(280), toFIXED(344), 0);
-    Field_SetCellBehaviorAt(2, toFIXED(280), toFIXED(376), 232);
+    Field_SetCellBehaviorAt(2, toFIXED(280), toFIXED(376), CELL_BEHAVIOR_SAND);
     Field_SetCellBehaviorAt(2, toFIXED(296), toFIXED(360), 0);
-    Field_SetCellBehaviorAt(2, toFIXED(520), toFIXED(632), 232);
+    Field_SetCellBehaviorAt(2, toFIXED(520), toFIXED(632), CELL_BEHAVIOR_SAND);
   }
   if (gMainRoutineWork.next == SCENE_ANEMOS_INNER_SANCTUM_ELEVATOR) {
     if (x == 37 && z == 31) {

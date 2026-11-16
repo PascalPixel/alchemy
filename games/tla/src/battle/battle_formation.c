@@ -127,24 +127,6 @@ s32 BattleFormation_SelectLevelMatchedCandidate(s32 *outMargin) {
   return result;
 }
 
-/// A unit's base stats as they were before its level or strength changed: a
-/// copy from Unit.baseHp on, as The Broken Seal's.
-struct BattleBaseStats {
-  s16 baseHp;
-  s16 basePp;
-  s16 hpGauge; ///< copied, not read
-  s16 ppGauge; ///< copied, not read
-  u16 baseAttack;
-  u16 baseDefense;
-  u16 baseAgility;
-  u8 baseLuck;                                      ///< copied, not read
-  u8 actionCount;                                   ///< copied, not read
-  u8 hpRegen;                                       ///< copied, not read
-  u8 ppRegen;                                       ///< copied, not read
-  u8 unused[2];                                     ///< Unit's baseUnused
-  struct BattleElementStats element[ELEMENT_COUNT]; ///< the base power is read
-};
-
 /// Raises an enemy by levels, The Broken Seal's BattleEnemy_AdjustLevel with
 /// HP capped at 16383 instead of 9999: each base stat gains its share a level
 /// and keeps at least 7/10 of what it was. Returns nothing, though declared s32

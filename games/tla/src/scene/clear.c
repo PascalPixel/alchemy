@@ -1425,18 +1425,19 @@ void Clear_ApplyImportedData(s32 mode, u8 *in) {
       statsOffset += 15;
     }
     for (i = 0; i != 4; i++) {
-      struct UnitBaseStats *stats =
-          (struct UnitBaseStats *)&Unit_Get(gClear_ImportedMembers[i])->baseHp;
+      struct BattleBaseStats *stats =
+          (struct BattleBaseStats *)&Unit_Get(gClear_ImportedMembers[i])
+              ->baseHp;
       s32 at = i * 8;
 
 #define WORD (*(u32 *)((u8 *)packedStats + at))
-      stats->hp = WORD >> 21;
-      stats->pp = WORD << 11 >> 21;
-      stats->attack = WORD & 0x1ff;
+      stats->baseHp = WORD >> 21;
+      stats->basePp = WORD << 11 >> 21;
+      stats->baseAttack = WORD & 0x1ff;
       at += 4;
-      stats->defense = WORD >> 22 & 0x1ff;
-      stats->agility = WORD >> 12 & 0x1ff;
-      stats->luck = WORD >> 4 & 0x7f;
+      stats->baseDefense = WORD >> 22 & 0x1ff;
+      stats->baseAgility = WORD >> 12 & 0x1ff;
+      stats->baseLuck = WORD >> 4 & 0x7f;
 #undef WORD
     }
   }
@@ -1592,46 +1593,48 @@ UNUSED s32 Clear_PackPasswordData(s32 unused, s32 mode, u8 *out) {
   outputIndex = 4;
   for (; i != 4; i++) {
     struct Unit *unit = Unit_Get(gClear_PasswordMembers[i]);
-    struct UnitBaseStats *base = (struct UnitBaseStats *)&unit->baseHp;
+    struct BattleBaseStats *base = (struct BattleBaseStats *)&unit->baseHp;
     s32 value;
 
-    if (base->hp > UNIT_CHARACTER_HP_MAX)
-      base->hp = UNIT_CHARACTER_HP_MAX;
-    value = (u16)base->hp;
+    if (base->baseHp > UNIT_CHARACTER_HP_MAX)
+      base->baseHp = UNIT_CHARACTER_HP_MAX;
+    value = (u16)base->baseHp;
     if ((s16)value < 0)
-      base->hp = 0;
-    if (base->pp > UNIT_CHARACTER_HP_MAX)
-      base->pp = UNIT_CHARACTER_HP_MAX;
-    value = (u16)base->pp;
+      base->baseHp = 0;
+    if (base->basePp > UNIT_CHARACTER_HP_MAX)
+      base->basePp = UNIT_CHARACTER_HP_MAX;
+    value = (u16)base->basePp;
     if ((s16)value < 0)
-      base->pp = 0;
-    if (base->attack > UNIT_STAT_MAX)
-      base->attack = UNIT_STAT_MAX;
-    value = base->attack;
+      base->basePp = 0;
+    if (base->baseAttack > UNIT_STAT_MAX)
+      base->baseAttack = UNIT_STAT_MAX;
+    value = base->baseAttack;
     if (value < 0)
       value = 0;
-    base->attack = value;
-    if (base->defense > UNIT_STAT_MAX)
-      base->defense = UNIT_STAT_MAX;
-    value = base->defense;
+    base->baseAttack = value;
+    if (base->baseDefense > UNIT_STAT_MAX)
+      base->baseDefense = UNIT_STAT_MAX;
+    value = base->baseDefense;
     if (value < 0)
       value = 0;
-    base->defense = value;
-    if (base->agility > UNIT_STAT_MAX)
-      base->agility = UNIT_STAT_MAX;
-    value = base->agility;
+    base->baseDefense = value;
+    if (base->baseAgility > UNIT_STAT_MAX)
+      base->baseAgility = UNIT_STAT_MAX;
+    value = base->baseAgility;
     if (value < 0)
       value = 0;
-    base->agility = value;
-    if (base->luck > UNIT_LUCK_MAX)
-      base->luck = UNIT_LUCK_MAX;
-    value = base->luck;
+    base->baseAgility = value;
+    if (base->baseLuck > UNIT_LUCK_MAX)
+      base->baseLuck = UNIT_LUCK_MAX;
+    value = base->baseLuck;
     if (value < 0)
       value = 0;
-    base->luck = value;
-    packedStats[i * 2] = (u32)base->hp << 21 | base->pp << 10 | base->attack;
-    *(u32 *)((u8 *)packedStats + outputIndex) =
-        (u32)base->defense << 22 | base->agility << 12 | base->luck << 4;
+    base->baseLuck = value;
+    packedStats[i * 2] =
+        (u32)base->baseHp << 21 | base->basePp << 10 | base->baseAttack;
+    *(u32 *)((u8 *)packedStats + outputIndex) = (u32)base->baseDefense << 22 |
+                                                base->baseAgility << 12 |
+                                                base->baseLuck << 4;
     if (unit->level > UNIT_LEVEL_MAX)
       unit->level = UNIT_LEVEL_MAX;
     value = unit->level;

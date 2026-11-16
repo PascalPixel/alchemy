@@ -99,7 +99,7 @@ FarCall_GameTable:
 	export InventorySnapshot_RestoreFar, InventorySnapshot_Restore
 	export Party_FindOwnerWithActionFar, Party_FindOwnerWithAction
 	export PartyInventory_FindRoomFar, PartyInventory_FindRoom
-	export Class_GetSeriesFar, Class_GetSeries
+	export Summon_LearnFar, Summon_Learn
 	export Djinn_ActivateOfferedForPartyFar, Djinn_ActivateOfferedForParty
 	export Inventory_ClearSlotFar, Inventory_ClearSlot
 	export Party_DrainPpFar, Party_DrainPp

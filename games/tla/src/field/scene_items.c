@@ -2,6 +2,7 @@
 /// The treasure spots of each scene: its chests, Psynergy Stones, tablets and
 /// buried finds, which Field_PlaceTreasureSpots places.
 
+#include "flags.h"
 #include "item_ids.h"
 #include "types.h"
 
@@ -341,7 +342,7 @@ s16 gSceneItems[] = {
         SCENE_ITEM(128, 5, 0xf87, ITEM_HARD_NUT),
         SCENE_ITEM(128, 6, 0xf88, ITEM_CRYSTAL_POWDER),
     SCENE_ITEMS(212, -1), // SCENE_TUNDARIA_TOWER_BURST_BROOCH
-        SCENE_ITEM(131, 1, 0x949, ITEM_BURST_BROOCH),
+        SCENE_ITEM(131, 1, FLAG_BURST_BROOCH_TAKEN, ITEM_BURST_BROOCH),
     SCENE_ITEMS(202, -1), // SCENE_LEMURIA
         SCENE_ITEM(131, 101, 0xfb6, ITEM_WATER_OF_LIFE),
         SCENE_ITEM(131, 102, 0xfb7, ITEM_NUT),

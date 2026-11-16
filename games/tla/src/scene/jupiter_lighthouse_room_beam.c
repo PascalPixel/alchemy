@@ -415,7 +415,8 @@ void JupiterLighthouse_DropEnergyBlock(s32 unused, s32 id) {
     FieldEvent_Wait(20);
     Event_PlaySound(SE_MAP_TRANSITION);
     MapGrid_CopyCellsLayered(93, 41, 1, 1, 85, 41);
-    FieldMapGrid_SetCellBehavior(toFIXED(336), toFIXED(656), 2, 236);
+    FieldMapGrid_SetCellBehavior(toFIXED(336), toFIXED(656), 2,
+                                 CELL_BEHAVIOR_HOVER);
   }
 }
 
@@ -525,7 +526,8 @@ s32 Scene_Initialize(void) {
     MapGrid_CopyCellAttributes(28, 39, 1, 1, 20, 39);
     MapGrid_CopyCellsLayered(28, 39, 1, 1, 20, 39);
     MapGrid_CopyCellsLayered(92, 39, 2, 3, 84, 39);
-    FieldMapGrid_SetCellBehavior(toFIXED(336), toFIXED(656), 2, 236);
+    FieldMapGrid_SetCellBehavior(toFIXED(336), toFIXED(656), 2,
+                                 CELL_BEHAVIOR_HOVER);
   } else {
     LightSprites_InitB();
     LightSprites_Add(ACTOR_ENERGY_BLOCK, 0);

@@ -156,7 +156,7 @@ void Inn_CheckIn(s32 kind, s32 value);
 void ItemPicker_RunToShow(s32 *a, s32 *b);
 void NameEntry_EditMemberName(s32 index);
 void Summon_ShowLearnedMessage(s32 value);
-void Class_GetSeries(s32 value);
+void Summon_Learn(s32 summonId);
 void DebugBrowser_Icons(void);
 void DebugBrowser_Portraits(void);
 
@@ -607,7 +607,7 @@ void ShopTest_NoOp(void) {}
 void ShopTest_GiveMuramasaAndSummon(void) {
   PartyInventory_GiveItem(ITEM_MURAMASA, 0);
   Summon_ShowLearnedMessage(SUMMON_ECLIPSE);
-  Class_GetSeries(SUMMON_ECLIPSE);
+  Summon_Learn(SUMMON_ECLIPSE);
 }
 
 const struct Trigger *Scene_GetTriggers(void) { return gSceneEvents; }

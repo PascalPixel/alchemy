@@ -1978,9 +1978,9 @@ void Islets_DriftIcebergs(void) {
       Actor_GetById(i)->paused = 1;
     {
       s16 *countdown = &work->raisedTrigger;
-      s32 ticks = 200;
+      s32 frames = 200;
 
-      *countdown = ticks;
+      *countdown = frames;
     }
     return;
   }

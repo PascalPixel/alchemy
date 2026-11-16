@@ -69,7 +69,7 @@ s32 System_GetLanguage(void);
 // The signed rounding is spelled out: as bob / 32768, 344 of 1647 differ.
 #define TARGET_BOB(y)                                                          \
   {                                                                            \
-    s32 bob = Trig_Sin(gFrameCount << 12);                                     \
+    s32 bob = Trig_Sin(gFrameCount * (TRIG_TURN / 16));                        \
                                                                                \
     if (bob < 0)                                                               \
       bob += 32767;                                                            \

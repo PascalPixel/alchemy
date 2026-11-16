@@ -644,7 +644,7 @@ update_object:
   if (gInput.pressed & gMainRoutineWork.dashKeys) {
     struct FieldWork *keyWork = Ram_HeapSlots->fieldWork;
     if (keyWork->hoverReady != 0) {
-      GameFlag_Clear(0x147);
+      GameFlag_Clear(FLAG_SHIP_HOVERING);
       ((struct FieldWork *)keyWork)->raisedTrigger = WORLD_MAP_RAISED_TAKE_OFF;
     }
   }

@@ -50,7 +50,7 @@ s32 MapGrid_CanScoop(s32 x, s32 z, s32 layer) {
 
   if (event->mode == ACTOR_SYSTEM_WORLD_MAP)
     return MapGrid_IsSandCell(x, z, layer);
-  if (MapGrid_GetCycloneCellKind(x, z, layer) != 0 ||
+  if (MapGrid_GetCycloneCellKind(x, z, layer) != CYCLONE_CELL_NONE ||
       MapGrid_IsWaterCell(x, z, layer) != 0 ||
       MapGrid_GetCellAttributeLowNibbleFar(layer, x, z) != 0)
     return 0;
@@ -128,19 +128,18 @@ s32 MapGrid_IsWaterCell(s32 x, s32 z, s32 layer) {
 }
 
 /// The Cyclone's kind of the cell at (x, z), from the overhead layer's
-/// collision code: 1 for CELL_BEHAVIOR_CYCLONE, 2 for
-/// CELL_BEHAVIOR_CYCLONE_CARRY, 3 for CELL_BEHAVIOR_CYCLONE_LIFT, else 0.
+/// collision code (enum CycloneCellKind).
 /// FieldPsynergy_GatherNearbyCells lists them.
 s32 MapGrid_GetCycloneCellKind(s32 x, s32 z, s32 layer) {
   u8 code = MapGrid_GetCellAt(x, z, MAPGRID_LAYER_OVERHEAD)->collisionCode;
 
   if (code == CELL_BEHAVIOR_CYCLONE)
-    return 1;
+    return CYCLONE_CELL_BURST;
   if (code == CELL_BEHAVIOR_CYCLONE_CARRY)
-    return 2;
+    return CYCLONE_CELL_CARRY;
   if (code == CELL_BEHAVIOR_CYCLONE_LIFT)
-    return 3;
-  return 0;
+    return CYCLONE_CELL_LIFT;
+  return CYCLONE_CELL_NONE;
 }
 
 /// Returns the behaviour (collision code) of the map cell at x, z in layer.

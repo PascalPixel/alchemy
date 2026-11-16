@@ -161,10 +161,10 @@ void MapGrid_SetCellHeight(s32 x, s32 z, s32 layer, s32 height);
 /// set, the upper layer's cell is marked 0xff in its high byte, the lower
 /// cell loses bit 7, the height drops 4 when the object's ground height is not
 /// the map's and the sprite takes priority 3; clear, the upper cell's high byte
-/// becomes 232 where the lower cell's is 232 and 0xff otherwise, the lower cell
-/// gains bit 7, the height rises 4 and the sprite takes priority 2. Both cells
-/// are written back and MapGrid_SetCellHeight is given the cell's position and
-/// height.
+/// becomes CELL_BEHAVIOR_SAND where the lower cell's is that too, and 0xff
+/// otherwise, the lower cell gains bit 7, the height rises 4 and the sprite
+/// takes priority 2. Both cells are written back and MapGrid_SetCellHeight is
+/// given the cell's position and height.
 void IzumoRuins_ShowPillarState(struct Actor *actor) {
   s32 column = FIELD_CELL(actor->x.fixed);
   s32 row = FIELD_CELL(actor->z.fixed);
@@ -266,14 +266,14 @@ void IzumoRuins_FreezePuddle(void) {
   Event_End();
 }
 
-/// Where the cell under the leader is sand (232 in its high byte), the leader
-/// walks on the upper layer, in the sand.
+/// Where the cell under the leader is sand (CELL_BEHAVIOR_SAND in its high
+/// byte), the leader walks on the upper layer, in the sand.
 void IzumoRuins_SinkIntoSand(void) {
   struct Actor *leader = Actor_Get(gMainRoutineWork.leaderActorId);
   s32 cell = MapGrid_GetCellWord(2, FIELD_CELL(leader->x.fixed),
                                  FIELD_CELL(leader->z.fixed));
 
-  if (cell >> 8 == 232)
+  if (cell >> 8 == CELL_BEHAVIOR_SAND)
     leader->layer = 2;
 }
 

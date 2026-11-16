@@ -56,9 +56,6 @@
 #include "scene/sparkle.h"
 #include "text/msg_ids.h"
 
-/// Set as the party leaves the Mercury Lighthouse at the end: the beacon's
-/// fire burns at the aerie from then on.
-#define FLAG_MARS_BEACON_BURNING 0xa3c
 /// The voice has asked for the Mars Star; stepping back from the beacon asks
 /// again.
 #define FLAG_ASKED_FOR_MARS_STAR FLAG_SCENE_TEMP_02

@@ -464,17 +464,23 @@ static __inline__ s32 Unit_ClampGauge(s32 ratio) {
 /// The eight characters' units, ISAAC to PIERS, kept in the save.
 extern struct Unit gCharacterUnits[PARTY_UNIT_COUNT];
 
-/// A unit's base stats from Unit.baseHp on, as the Clear Data reads them
-/// (battle_formation.c copies the whole block as struct BattleBaseStats).
-struct UnitBaseStats {
-  s16 hp;
-  s16 pp;
-  s16 hpGauge;
-  s16 ppGauge;
-  u16 attack;
-  u16 defense;
-  u16 agility;
-  u8 luck;
+/// A unit's base stats from Unit.baseHp on, as The Broken Seal's: the
+/// formations copy the block before a level or strength change, and the Clear
+/// Data writes the imported and password members' stats through it.
+struct BattleBaseStats {
+  s16 baseHp;
+  s16 basePp;
+  s16 hpGauge; ///< copied, not read
+  s16 ppGauge; ///< copied, not read
+  u16 baseAttack;
+  u16 baseDefense;
+  u16 baseAgility;
+  u8 baseLuck;                                      ///< copied, not read
+  u8 actionCount;                                   ///< copied, not read
+  u8 hpRegen;                                       ///< copied, not read
+  u8 ppRegen;                                       ///< copied, not read
+  u8 unused[2];                                     ///< Unit's baseUnused
+  struct BattleElementStats element[ELEMENT_COUNT]; ///< the base power is read
 };
 
 #endif

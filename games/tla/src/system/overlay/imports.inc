@@ -226,7 +226,7 @@
 	export BuildStamp_GetTime, BuildStamp_GetTimeFar
 	export Party_GetPpRatio, Party_GetPpRatioFar
 	export PartyInventory_FindRoom, PartyInventory_FindRoomFar
-	export Class_GetSeries, Class_GetSeriesFar
+	export Summon_Learn, Summon_LearnFar
 	export InventorySnapshot_Restore, InventorySnapshot_RestoreFar
 	export FieldEvent_Wait, Event_WaitFar
 	export Inventory_ClearSlot, Inventory_ClearSlotFar

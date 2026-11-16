@@ -96,7 +96,7 @@ extern u16 gLemuriaSpring_ObstacleHeadings[];
 void LemuriaSpring_SetSpriteStorageKind(s32 actor, s32 active);
 
 s32 Party_RestoreHpPp();
-s32 Class_GetSeries();
+void Summon_Learn(s32 summonId);
 
 struct SpringTossMotion gLemuriaSpring_Toss BSS_DATA ALIGNED(16);
 s32 gLemuriaSpring_TossChoice BSS_DATA;
@@ -524,7 +524,7 @@ void LemuriaSpring_GivePrize(s32 item) {
                             ANIM_LEADER_ARMS_RAISED);
     SummonTablet_PlayRunes(ACTOR_LEMURIA_SPRING_PRIZE);
     Summon_ShowLearnedMessage(SUMMON_ECLIPSE);
-    Class_GetSeries(SUMMON_ECLIPSE);
+    Summon_Learn(SUMMON_ECLIPSE);
     Actor_SetPosition(ACTOR_LEMURIA_SPRING_PRIZE, 0, 0);
     FieldActor_SetAnimation(gMainRoutineWork.leaderActorId, ANIM_STAND);
   } else {

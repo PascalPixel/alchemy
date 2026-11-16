@@ -6,6 +6,32 @@
 #include "types.h"
 #include "edition.h"
 
+/// A class's plain attack (BattleSpriteDefinition.attackEffect), which
+/// BattleEffect_RunByIdRange plays: BattleEffect_RunAttackSlash's beam from
+/// the attacker and the target's recoil, or the canvas burst.
+enum AttackEffect {
+  ATTACK_EFFECT_SLASH = 1,    ///< a blue arc; the target is nudged
+  ATTACK_EFFECT_CLAW,         ///< three blue arcs; the target is nudged
+  ATTACK_EFFECT_THRUST,       ///< a beam reaching further each picture
+  ATTACK_EFFECT_WAVE,         ///< a wave, played backwards
+  ATTACK_EFFECT_RISING_SLASH, ///< the arc upside down; the target hops
+  ATTACK_EFFECT_UPPERCUT, ///< as ATTACK_EFFECT_RISING_SLASH, 16 pixels lower
+  ATTACK_EFFECT_HURL,     ///< no beam; the target is hurled (KNOCKBACK_HURL)
+  ATTACK_EFFECT_SHOVE,    ///< no beam; the target is pushed to 150 percent
+  ATTACK_EFFECT_BLOW,     ///< no beam; the target is nudged
+  ATTACK_EFFECT_BURST     ///< BattleEffect_RunCanvasModeByCount's small ball
+};
+
+/// A fallen class's cry (BattleSpriteDefinition.defeatSound): the sound is
+/// SE_ENEMY_CRY plus it, after one less as the class flashes.
+enum DefeatSound {
+  DEFEAT_SOUND_ENEMY_CRY,    ///< SE_ENEMY_CRY
+  DEFEAT_SOUND_BEAST_CRY,    ///< SE_BEAST_CRY
+  DEFEAT_SOUND_BOSS_ROAR,    ///< SE_BOSS_ROAR
+  DEFEAT_SOUND_MONSTER_ROAR, ///< SE_MONSTER_ROAR
+  DEFEAT_SOUND_UNUSED_CRY    ///< SE_UNUSED_DEFEAT_CRY; no class has it
+};
+
 /// An enemy class's battle sprite: its animation, size, attack effect,
 /// palette and defeat-sound kind.
 struct BattleSpriteDefinition {
@@ -14,7 +40,7 @@ struct BattleSpriteDefinition {
   /// bits: 7..5 attackHop | 4..1 attackEffect | 0 isSmall
   ///@{
   u8 isSmall : 1;      ///< 1 for a small enemy, which takes one sprite slot
-  u8 attackEffect : 4; ///< the beam its attack plays; 0 reads as 1
+  u8 attackEffect : 4; ///< enum AttackEffect; 0 reads as ATTACK_EFFECT_SLASH
   u8 attackHop : 3;    ///< the attack-hop height
   ///@}
   /// The byte at 3.
@@ -22,7 +48,7 @@ struct BattleSpriteDefinition {
   ///@{
   u8 heavyImpact : 1; ///< 1 for an enemy whose beam blow lands heavily
   u8 palette : 4;     ///< the sprite's palette
-  u8 defeatSound : 3; ///< the defeat-sound kind; above 4 reads as none
+  u8 defeatSound : 3; ///< enum DefeatSound; above 4 reads as none
   ///@}
   /// The height a battle effect is drawn at over the enemy, in pixels; 0 for
   /// its size's default.

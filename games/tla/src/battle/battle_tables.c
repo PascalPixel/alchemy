@@ -11,8 +11,9 @@
 #include "battle/range_falloff.h"
 #include "battle/weapon_kind.h"
 
-/// Unused: a word no code names, at the head of the tables.
-const u32 gBattleTables_Unk_0 = 17;
+/// Unused: a word no code names, at the head of the tables; The Broken Seal's
+/// is 16.
+const u32 gBattleTables_UnusedWord = 17;
 
 const s8 gBattleParty_CenterOrderOffsets[] = {0, -1, 1, -2, 2, -3, 3, -4, 4};
 

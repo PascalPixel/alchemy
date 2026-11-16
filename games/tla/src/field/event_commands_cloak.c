@@ -407,7 +407,8 @@ void FieldPsynergy_SteerLiftedTarget(s32 targetId) {
                  target->z.fixed);
     Vector_AddPolarOffset(toFIXED(16), angle, &position);
     i = ActorScript_CheckOverlapFar(target, &position);
-    // Both tests jump into the blocked path, which keeps it ahead of the drop
+    // Both tests jump into the one blocked arm; as one || test the routine
+    // differs in 382 of its 551 instructions.
     if (i != 0)
       goto blocked;
     if (Actor_ProbeRaised(target, &position) > 0) {

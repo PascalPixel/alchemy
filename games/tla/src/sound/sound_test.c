@@ -118,26 +118,22 @@ s32 SoundFlag_Test(s32 sound) {
 /// Sets sound `sound`'s bit in gSoundFlags.
 void SoundFlag_Set(s32 sound) {
   s32 mask;
-  s32 bits;
   u8 *bytes;
 
   mask = 1 << (7 & sound);
-  bits = 0x300;
   bytes = gSoundFlags;
-  sound = (sound & (bits + 0xff)) >> 3;
+  sound = (sound & (SOUND_FLAG_COUNT - 1)) >> 3;
   bytes[sound] = (u8)(bytes[sound] | mask);
 }
 
 /// Clears sound `sound`'s bit in gSoundFlags.
 void SoundFlag_Clear(s32 sound) {
   s32 mask;
-  s32 bits;
   u8 *bytes;
 
   mask = 1 << (7 & sound);
-  bits = 0x300;
   bytes = gSoundFlags;
-  sound = (sound & (bits + 0xff)) >> 3;
+  sound = (sound & (SOUND_FLAG_COUNT - 1)) >> 3;
   bytes[sound] = (u8)(bytes[sound] & ~mask);
 }
 

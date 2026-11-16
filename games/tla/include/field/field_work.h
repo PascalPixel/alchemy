@@ -31,7 +31,8 @@ struct Window;
 /// without its "checked the ..." message, as Scoop opens what it digs up; the
 /// actor id is in the bits under it.
 #define FIELD_TALK_SILENT 0x1000
-#define FIELD_TALK_ACTOR 0xfff
+/// Scene_TalkToActor's id: the actor id, under FIELD_TALK_SILENT.
+#define FIELD_TALK_ACTOR_MASK 0xfff
 /// FieldWork.talk: set with the actor id under it to ask for that actor's talk.
 #define FIELD_TALK_REQUEST 0x4000
 /// The frames of a scene's default fade in, from the backdrop colour, as The

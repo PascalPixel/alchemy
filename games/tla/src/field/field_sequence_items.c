@@ -42,7 +42,7 @@ s32 Party_GetLeaderActor(void) {
   struct MainRoutineWork *state = &gMainRoutineWork;
   s32 actor;
 
-  // On the ship its stand, the first placed actor, stands for the party.
+  // While the party sails, the first placed actor, the ship, stands for it.
   actor = ACTOR_FIRST_PLACED;
   if (state->ownerOverride == 0)
     actor = state->leaderActorId;

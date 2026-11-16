@@ -17,7 +17,7 @@
 enum {
   /// DJINN_PER_ELEMENT flags per element: the Djinn flags are 48 to 127, their
   /// hiding flags the next 80.
-  ACTOR_DJINNI_FLAG_COUNT = ELEMENT_COUNT * DJINN_PER_ELEMENT
+  DJINN_FLAG_COUNT = ELEMENT_COUNT * DJINN_PER_ELEMENT
 };
 
 /// The actor snapshot (gSnapshotObjects): how many actors it keeps, and the
@@ -79,7 +79,7 @@ void Event_SpawnObjectTable(struct ActorPlacement *entry, s32 slot) {
     condition = entry->condition;
     if (!GameFlag_IsConditionActive(condition))
       continue;
-    if ((u32)(condition - FLAG_DJINN_FIRST) <= ACTOR_DJINNI_FLAG_COUNT - 1) {
+    if ((u32)(condition - FLAG_DJINN_FIRST) <= DJINN_FLAG_COUNT - 1) {
       s32 element = (condition - FLAG_DJINN_FIRST) / DJINN_PER_ELEMENT;
 
       // The last flag of an element stands for the Djinni the scene chose

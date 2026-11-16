@@ -83,7 +83,7 @@ void Event_Start(void) {
 }
 
 /// Ends an event: stops the debug fast-forward task, gives the camera back to
-/// the leader (or to the ship's stand, the first placed actor, while
+/// the leader (or to the first placed actor, the ship, while
 /// gMainRoutineWork.ownerOverride is set) and refreshes the Lure Cap's flag
 /// (GameFlag_RefreshLureCap).
 void Event_End(void) {
@@ -340,7 +340,7 @@ void Actor_WaitForAnimationEnd(s32 actorId, s32 animation) {
 /// read, asks yes or no below it, or above it when the message windows reach
 /// past row 15 (unless forceBottom is set). The speaker nods (ANIM_NOD) at yes
 /// and shakes its head (ANIM_SHAKE_HEAD) at no; at the fastest message speed
-/// the nod is not waited for.
+/// neither is waited for.
 s32 Event_AskYesNoWithActorAnimation(s32 actor, s32 forceBottom) {
   struct FieldWork *work = Ram_HeapSlots->fieldWork;
   s32 sprite = *(s16 *)Scene_FindActorPlacement(work->speaker);

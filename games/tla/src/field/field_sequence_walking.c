@@ -468,13 +468,12 @@ void WorldMap_ReloadPendingAreaGraphics(void) {
   }
 }
 
-/// Returns the actor that stands for the party: the leader's, or on the ship
-/// its stand.
-void *Field_GetPartyActor(void) {
+/// Returns the actor that stands for the party: the leader's, or the first
+/// placed actor while gMainRoutineWork.ownerOverride gives the party's control
+/// to it (the ship, when the party sails it).
+struct Actor *Field_GetPartyActor(void) {
   struct MainRoutineWork *party = &gMainRoutineWork;
   struct FieldWork *work = Ram_HeapSlots->fieldWork;
-
-  // On the ship its stand, the first placed actor, stands for the party.
   struct Actor *leader;
 
   if (party->ownerOverride == 0)

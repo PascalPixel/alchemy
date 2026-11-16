@@ -21,7 +21,7 @@
 
 /// The encounter zone whose slots hold the Mimics' formations; slots from 8
 /// go on in the next zone.
-#define ENCOUNTER_ZONE_MIMICS 104
+#define ENCOUNTER_ZONE_MIMIC 104
 
 /// The Broken Seal's Scene_FindActorPlacement: finds actor id's placement in
 /// the event work's four tables (ids up to 7 by sprite, later ones counted
@@ -203,10 +203,10 @@ s32 Scene_TalkToActor(s32 id) {
   busyFlags = 0;
   silent = id & FIELD_TALK_SILENT;
   event = Ram_HeapSlots->fieldWork;
-  id &= FIELD_TALK_ACTOR;
+  id &= FIELD_TALK_ACTOR_MASK;
   found = 0;
   object = Actor_GetById(id);
-  if (id > FIELD_TREASURE_ACTOR - 1) {
+  if (id >= FIELD_TREASURE_ACTOR) {
     if (id != FIELD_SCOOP_ACTOR) {
       row = SceneItem_GetRows();
       if (row != NULL) {
@@ -272,7 +272,7 @@ s32 Scene_TalkToActor(s32 id) {
                              FIELD_MESSAGE_ZOOM |
                                  FIELD_MESSAGE_WAITING_FOR_SOUND);
         Party_AddPp(1999, 0);
-        PartyStatus_CreateWindowFar(1);
+        PartyStatus_CreateWindowFar(PARTY_STATUS_SHOW_PP);
         Sound_PlayFar(SE_RECOVERY);
         if (Party_CountMembersFar() == 1)
           FieldMessage_ShowFar((s32)&MsgGotPsynergyStone + 6,
@@ -282,7 +282,7 @@ s32 Scene_TalkToActor(s32 id) {
                                FIELD_MESSAGE_ZOOM);
         PartyStatus_CloseFar();
         trap->update = NULL;
-        Actor_SelectAnimationFar(trap, ANIM_WALK);
+        Actor_SelectAnimationFar(trap, 2);
         Sound_PlayFar(SE_GLITTER);
         Event_Wait(30);
         FieldMessage_ShowFar((s32)&MsgPsynergyStoneDisappeared,
@@ -311,12 +311,12 @@ s32 Scene_TalkToActor(s32 id) {
           gMainRoutineWork.pendingDjinni = flag | CONDITION_FLAG_SET;
         if (contents > 7)
           work->encounter = Encounter_GetFormationAtSlot(
-              ENCOUNTER_ZONE_MIMICS + 1, contents - 8);
+              ENCOUNTER_ZONE_MIMIC + 1, contents - 8);
         else
           work->encounter =
-              Encounter_GetFormationAtSlot(ENCOUNTER_ZONE_MIMICS, contents);
+              Encounter_GetFormationAtSlot(ENCOUNTER_ZONE_MIMIC, contents);
         gMainRoutineWork.battleType = BATTLE_TYPE_NO_ESCAPE;
-        BattleEffect_SelectBattleCue(ENCOUNTER_ZONE_MIMICS, contents);
+        BattleEffect_SelectBattleCue(ENCOUNTER_ZONE_MIMIC, contents);
         Sound_PlayFar(gMainRoutineWork.battleMusic);
         FieldMessage_ShowFar((s32)&MsgChestWasMimic, FIELD_MESSAGE_ZOOM);
         goto done;
@@ -462,7 +462,7 @@ s32 Scene_TalkToActor(s32 id) {
       if (object->script[object->scriptCursor] == SCRIPT_CMD_END) {
         if ((s8)placement->talkFacing == TALK_FACING_PARTY_THEN_WATCH) {
           object->watchedActor = Actor_GetById(gMainRoutineWork.leaderActorId);
-          object->steeringFlags |= 1;
+          object->steeringFlags |= ACTOR_FACES_MOTION;
           Actor_SetMovementType(object, (s32)gActor_FaceWatchedScript);
         } else if ((s8)placement->talkFacing == TALK_FACING_PARTY_AND_BACK) {
           object->timer = savedAngle;
@@ -551,10 +551,11 @@ s32 Scene_RunStepTriggerOrExit(s32 value) {
 }
 
 /// Runs the push cell the leader pushes against (attributes, its cell's
-/// attribute bits) once it has pushed for more than 12 frames, idle while
-/// gMainRoutineWork.pendingThird is set: a ledge (bit 5) with KEY_DOWN held
-/// jumps down it, a jump (bit 7) jumps forward, a climb (bit 6) climbs down or
-/// up by the key held, and a push (bit 1) pushes the actor ahead, running the
+/// attribute bits) once it has pushed for more than FIELD_PUSH_FRAMES, idle
+/// while gMainRoutineWork.pendingThird is set: a MAP_CELL_LEDGE with KEY_DOWN
+/// held jumps down it, a MAP_CELL_JUMP jumps forward, a MAP_CELL_CLIMBABLE
+/// climbs down or up by the key held, and a MAP_CELL_PUSH pushes the actor
+/// ahead, running the
 /// scene's TRIGGER_PUSH trigger for it and TRIGGER_PUSHED for the cell. Always
 /// returns 0.
 s32 Field_RunPushCell(s32 attributes) {
@@ -630,9 +631,7 @@ s32 Field_ExamineCell(s32 id) {
   s32 condition;
   u32 result;
 
-  // Each fixed spot has its own pair of lines, chosen through
-  // gField_ExamineTriggerMessageOffsets; the unsigned compare also rejects
-  // codes below CELL_BEHAVIOR_JAR.
+  // The unsigned compare also rejects codes below CELL_BEHAVIOR_JAR.
   index = id - CELL_BEHAVIOR_JAR;
   if ((u32)index <= CELL_BEHAVIOR_WELL - CELL_BEHAVIOR_JAR) {
     Leader_StopMoving();
@@ -655,8 +654,9 @@ s32 Field_ExamineCell(s32 id) {
     } else {
       GameFlag_Clear(FLAG_NOTHING_HAPPENS);
     }
-    // The value is a function address (bits 27 to 24 set) or a FIND_ value
-    // whose top 12 bits give its type; only a message is shown here.
+    // The value is a function's address (FIND_FUNCTION_BITS set), which is
+    // called, or a FIND_ value: a FIND_MESSAGE is shown and any other type
+    // does nothing here.
     result = event->value;
     if ((result & FIND_FUNCTION_BITS) != 0 ||
         (result & FIND_TYPE_MASK) == FIND_MESSAGE(0)) {

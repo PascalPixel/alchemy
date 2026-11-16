@@ -381,7 +381,6 @@ const s32 *gFieldEffect_DurationScripts[] = {
 
 extern const s32 *gFieldEffect_DurationScripts[];
 
-
 #define EFFECT_SPAWN FieldEffect_Spawn
 #define EFFECT_CREATE Import_ActorCreate
 #define EFFECT_SET_MODE Actor_SelectAnimation

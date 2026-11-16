@@ -60,7 +60,7 @@ u16 gPaletteCycleColors[16] BSS_DATA;
 /// Palette 13's first two colours; it is copied whole, with the unlit colours
 /// after them.
 u16 gPaletteCycleUnlitPalette[2] BSS_DATA;
-u16 gLighthouseUnlitColors[14] BSS_DATA;
+u16 gPaletteCycleUnlitColors[14] BSS_DATA;
 s16 gLightSpriteTile BSS_DATA;
 s16 gLightSpriteCount BSS_DATA;
 u32 gLightSpriteActors[16] BSS_DATA;
@@ -184,24 +184,8 @@ static inline void PaletteCycle_SetFrame(s32 value) {
 
 void MapGrid_SetCellHeight();
 
-/// Loads palettes 12 and 13 (mode 2 keeps them), then cycles palette 12 once
-/// the lighthouse is activated (or in mode 1), or shows its unlit colours.
-void JupiterLighthouse_LoadPalettes(s32 mode) {
-  gPaletteCyclePausesInEvents = 1;
-  if (mode != 2) {
-    Iwram_CopyWordsEntry(gPaletteCycleColors, (void *)&BG_PLTT_COLOR(12, 0),
-                         32);
-    Iwram_CopyWordsEntry(gPaletteCycleUnlitPalette,
-                         (void *)&BG_PLTT_COLOR(13, 0), 32);
-  }
-  if (Event_GetFlag(FLAG_JUPITER_LIGHTHOUSE_ACTIVATED) || mode == 1) {
-    PaletteCycle_SetFrame(0);
-    Task_Add(PaletteCycle_StepAt, TASK_PASS_VBLANK);
-  } else {
-    Dma_Set(gLighthouseUnlitColors, (void *)&BG_PLTT_COLOR(12, 2),
-            DMA_COPY_WORDS(2), REG_DMA3);
-  }
-}
+#define PALETTE_CYCLE_TASK PaletteCycle_StepAt
+#include "shared/jupiter_lighthouse_load_palettes.h"
 
 #include "shared/actor_raise_from_cell.h"
 
@@ -327,7 +311,6 @@ const s32 *gFieldEffect_DurationScripts[] = {
 // spawner, and the cracked tiles, found, cracked and fallen through.
 
 extern const s32 *gFieldEffect_DurationScripts[];
-
 
 #define EFFECT_SPAWN FieldEffect_Spawn
 #define EFFECT_CREATE Import_ActorCreate

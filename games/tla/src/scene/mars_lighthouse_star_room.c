@@ -1819,33 +1819,7 @@ static __inline__ void SetWorkTriple(FIXED a, FIXED b, FIXED c) {
 
 void GameFlag_SetByte(s32 flag, s32 value);
 
-s32 CrackedTiles_Step(void) {
-  struct Actor *object = Actor_Get(gMainRoutineWork.leaderActorId);
-  s32 x = FIELD_CELL(object->x.fixed);
-  s32 z = FIELD_CELL(object->z.fixed);
-  struct CellTarget *work = &gCrackedTiles;
-  struct CellTargetEntry *entry = work->entries;
-  s32 i;
-
-  for (i = 0; i < work->count; i++, entry++) {
-    if (entry->x == x && entry->z == z) {
-      if (Event_GetFlag(entry->flag) == 0) {
-        CrackedTile_Crack(work, entry);
-        Event_SetFlag(entry->flag);
-        work->current = i;
-        break;
-      }
-      if (i == work->current)
-        break;
-      work->current = i;
-      CrackedTile_Fall(work, entry);
-      GameFlag_SetByte(work->flagByte, x);
-      GameFlag_SetByte(work->flagByte + 8, z);
-      return 1;
-    }
-  }
-  return 0;
-}
+#include "shared/cracked_tiles_step.h"
 
 void CrackedTile_PlaceLanding(s32 x, s32 z, s32 effect) {
   struct Actor *leader = Actor_Get(gMainRoutineWork.leaderActorId);

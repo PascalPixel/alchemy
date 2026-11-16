@@ -135,7 +135,6 @@ void Gauge_Init(void);
 void WorldMap_EndFlight(void);
 void Gauge_End(void);
 
-
 void WorldMap_FightBanditAndThieves(s32 entrance);
 
 void WorldMap_DeliverLohoCannon(void);

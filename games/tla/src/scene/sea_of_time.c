@@ -66,21 +66,7 @@ void SeaOfTime_PlaceRock(s32 x, s32 z, s32 actor);
 /// Trig_Cos, through an inline as the swirl's turn calls it.
 static inline s32 SeaOfTime_Cos(s32 angle) { return Trig_Cos(angle); }
 
-struct Actor *Scene_CreateImportedActor(s32 x, s32 y, s32 z, s32 type) {
-  struct Actor *object = Import_ActorCreate(type, x, y, z);
-
-  if (object != NULL) {
-    Scene_SetActorSpritePriority(object, 1);
-    object->motionFlags = 0;
-    object->collisionFlags = ACTOR_NOT_TARGETED;
-    Actor_SetSpriteFlags(object, 0);
-    Actor_SetSpriteColor(object, SPRITE_COLOR_HIDDEN);
-    object->priorityFlags |=
-        ACTOR_PRIORITY_IGNORES_RISES | ACTOR_PRIORITY_UNDERFOOT;
-    return object;
-  }
-  return NULL;
-}
+#include "shared/scene_create_imported_actor.h"
 
 #include "../field/field_effect_move.c"
 

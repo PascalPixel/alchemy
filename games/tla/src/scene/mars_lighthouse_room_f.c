@@ -1641,12 +1641,7 @@ struct RideRow {
 
 void Actor_SetupScriptedFor(struct Actor *object, s32 unused);
 
-void Ride_ReleaseHandle(void) {
-  struct FlameHitWork *work = RIDE_WORK;
-
-  Actor_Release(work->handle);
-  work->handle = NULL;
-}
+#include "shared/ride_release_handle.h"
 
 UNUSED void Ride_SetMode(s16 value) { RIDE_WORK->runsDuringPsynergy = value; }
 
@@ -1956,12 +1951,7 @@ void Actor_SetSpritePriorityDirect(struct Actor *object, s32 mode);
 extern u8 gInventorySnapshot[];
 void Actor_SetupScriptedFor(struct Actor *object, s32 unused);
 
-s32 Actor_Park(struct Actor *object) {
-  Actor_LaunchAhead(object);
-  SET_ACTOR_POSITION(object, 0, 0, 0);
-  SET_VELOCITY(object, 0, 0, 0);
-  return 0;
-}
+#include "shared/actor_park.h"
 
 #include "../field/actor_set_sprite_priority.c"
 
@@ -2324,82 +2314,7 @@ void PushTarget_Push(struct PushTarget target) {
 #include "shared/actor_stop_at_push_target.h"
 #undef ABS
 
-/// Queues the lit actors' sprites: for each listed actor with a position,
-/// projects it from the map's view, skips it off screen, and writes a 16 by 16
-/// sprite, or a 32 by 64 one when the big switch is set, at its animation
-/// picture and depth.
-void LightSprites_Draw(void) {
-  struct MapWork *map = Ram_HeapSlots->mapGrid;
-  s32 *view = &map->viewX;
-  s32 viewX, viewZ, tile, viewY;
-  struct LightOam *oam;
-  s32 i;
-  viewX = view[0] & FIELD_PIXEL_MASK;
-  viewZ = view[1] & FIELD_PIXEL_MASK;
-  tile = gVramCacheEntries[gLightSpriteTile].offset >> 5;
-  viewY = map->origin[1];
-  oam = gLightSpriteOams;
-
-  for (i = 0; i < gLightSpriteCount; i++) {
-    struct Actor *actor = gLightSpriteActors[i];
-    if (actor != 0 && actor->x.fixed != 0) {
-      s32 big, ox;
-      FIXED y, z;
-      s32 oy, depth;
-      s32 frame;
-      u32 *word;
-      ox = actor->x.fixed - viewX;
-      y = actor->y.fixed - viewY + toFIXED(8);
-      z = actor->z.fixed - viewZ - viewY;
-      oy = z - y;
-      depth = ((y + z) >> 16) + 58;
-      big = gLightSpritesLarge;
-      if (big == 0) {
-        s32 x, sy;
-        frame = actor->timer;
-        x = ox >> 16;
-        sy = oy >> 16;
-        ox = x - 8;
-        oy = sy - 16;
-        if ((u32)(x + 7) > 334 || oy <= -16 || oy > 239)
-          continue;
-        ox &= 0x1ff;
-        oy &= 0xff;
-        word = (u32 *)oam;
-        *word++ = 0;
-        *word++ = oy | (ox << 16) | 0x40002000;
-        *word = (tile + frame * 8) | 0x800;
-        if (gLightSpritePriority == -1)
-          oam->priority = BattleEffect_GetObjectPriority(actor);
-        else
-          oam->priority = gLightSpritePriority;
-        Oam_AddSpriteAtDepthClamped(oam, depth);
-        oam++;
-      } else {
-        s32 x, sy;
-        frame = actor->timer;
-        x = ox >> 16;
-        sy = oy >> 16;
-        ox = x - 8;
-        oy = sy - 64;
-        if ((u32)(x + 23) > 350 || oy <= -64 || oy > 175)
-          continue;
-        ox &= 0x1ff;
-        oy &= 0xff;
-        word = (u32 *)oam;
-        *word++ = 0;
-        *word++ = oy | (ox << 16) | 0xc000a000;
-        *word = (tile + frame * 8) | 0x800;
-        if (gLightSpritePriority == -1)
-          oam->priority = BattleEffect_GetObjectPriority(actor);
-        else
-          oam->priority = gLightSpritePriority;
-        Oam_AddSpriteAtDepthClamped(oam, depth);
-        oam++;
-      }
-    }
-  }
-}
+#include "shared/light_sprites_draw.h"
 
 static inline void *BumpAlloc(s32 size) { return Heap_Alloc(size); }
 
@@ -2445,18 +2360,7 @@ void LightSprites_InitC(void) {
   gLightSpritePriority = -1;
 }
 
-void LightSprites_Add(s32 id, s32 value) {
-  struct Actor *object = Actor_Get(id);
-
-  if (object != NULL) {
-    s16 *count;
-
-    object->timer = value;
-    count = &gLightSpriteCount;
-    gLightSpriteActors[*count] = object;
-    (*count)++;
-  }
-}
+#include "shared/light_sprites_add.h"
 
 void LightSprites_SetPriority(s32 value) { gLightSpritePriority = value; }
 

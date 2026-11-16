@@ -320,34 +320,7 @@ void Pillars_Place(s16 *list) {
   } while ((u16)entry[0] != 0xffff);
 }
 
-/// Finds the current target's table row and shrinks it.
-void Pound_SinkTarget(u16 *list, s32 mode, s32 count) {
-  struct FieldEffectWork *work = Ram_HeapSlots->fieldEffectWork;
-
-  while (*list != 0xffff) {
-    s32 entry = *list;
-    s32 id = work->secondActorId;
-
-    if (id == entry) {
-      struct Actor *object = Actor_GetById(id);
-      s32 a;
-      s32 flag;
-
-      list++;
-      a = list[0];
-      flag = list[1];
-      if (count < 8)
-        object->scaleY -= FIXED_ONE * 31 / 256;
-      if (mode == 1) {
-        GameFlag_Set(flag);
-        Actor_SetCellOpen(id, a, flag, object->layer);
-        object->scaleY = FIXED_ONE;
-      }
-      break;
-    }
-    list += 3;
-  }
-}
+#include "shared/pound_sink_target.h"
 
 #include "shared/actor_set_cell_open.h"
 
@@ -2391,25 +2364,7 @@ s32 AirsRockInside_OrbitAnchor(struct Orbiter *orbiter) {
   return 1;
 }
 
-/// Moves around in a circle.
-s32 Orbit_Update(struct Orbit *object) {
-  FIXED z;
-
-  object->angle += object->speed;
-  object->x = IwramMulFX(Trig_Cos(object->angle), object->orbitRadius);
-  z = IwramMulFX(Trig_Sin(object->angle), object->orbitRadius);
-  object->x += object->centreX;
-  object->z = (z >> 1) + object->centreZ;
-  if (object->growth != 141 && (gFrameCount & 1)) {
-    object->orbitRadius = object->growth * Trig_Sin(object->phase << 10);
-    object->growth += 10;
-  }
-  if (object->speed == 0)
-    return 0;
-  if (object->growth == 141)
-    object->speed -= 128;
-  return 1;
-}
+#include "shared/orbit_update.h"
 
 #include "shared/actor_aim_at_watched.h"
 

@@ -1063,9 +1063,9 @@ void Palette_SetColorsFade(u16 *slots, u16 *colours, u16 *a, u16 *b) {
 #define DEFINE_TELEPORT_START_SHIMMER(name, period, countdown)                 \
   void name(void) {                                                            \
     gPaletteCycleIndex = 0;                                                    \
-    gPaletteCycleLength = List_CountEntries(gPaletteSlots);              \
-    gPaletteCycleDelay = period;                                             \
-    gPaletteCycleTimer = countdown;                                       \
+    gPaletteCycleLength = List_CountEntries(gPaletteSlots);                    \
+    gPaletteCycleDelay = period;                                               \
+    gPaletteCycleTimer = countdown;                                            \
     gPaletteCycleBright = 1;                                                   \
     Task_AddFrame(PaletteCycle_Fade, TASK_PASS_VBLANK);                        \
   }

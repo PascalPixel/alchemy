@@ -120,19 +120,13 @@ union NameCursor {
   struct MenuCursor cursor;
 };
 
-/// The first two words of gMainRoutineWork as the save writes them: the build
-/// stamp and the play time.
-struct SaveGameWords {
-  u32 buildStamp;
-  u32 playTime;
-};
-
-/// The menu work as the file list reads it, ShopWork's party row: the party
+/// The menus' work (heap slot HEAP_SLOT_MENU) as the file list reads it: the
+/// party row of the shop's ShopWork (shop/shop_internal.h), holding the party
 /// sprites of the file under the cursor, where each stands and its scale.
 struct FileListWork {
-  u8 unk000[0xf8];
-  void *partyMemberIcons[4]; ///< up to four party sprites, null for none
-  u8 unk108[0x10];
+  u8 menuScreens[0xf8]; ///< the windows and lists before the party row
+  /// Up to four party sprites, null for none; the row has room for eight.
+  void *partyMemberIcons[8];
   s16 partyMemberX[8];       ///< pixels
   s16 partyMemberY[8];       ///< pixels
   FIXED partyMemberScale[4]; ///< 16.16 fixed point, FIXED_ONE full size

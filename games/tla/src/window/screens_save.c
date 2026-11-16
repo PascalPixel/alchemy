@@ -10,9 +10,18 @@
 #include "system/system.h"
 #include "window/screens.h"
 
+// The three save files.
 #define SAVE_FILE_COUNT 3
-
 #define SAVE_NO_FREE_FILE 999
+
+// What the save functions return when they fail, after showing the message.
+#define SAVE_ERROR_READ -2 ///< a part could not be read
+/// Writing failed. "Failed to save." (or "Failed to erase.")
+#define SAVE_ERROR_WRITE -3
+#define SAVE_ERROR_ERASE -4   ///< erasing failed. "Failed to erase."
+#define SAVE_ERROR_NO_FILE -5 ///< no empty file to copy into
+/// No backup memory. "Unable to detect backup memory."
+#define SAVE_ERROR_NO_MEMORY -9
 
 /// The play time shown stops at PLAY_TIME_HOURS_MAX hours and 59 minutes.
 #define PLAY_TIME_HOURS_MAX 999
@@ -31,7 +40,9 @@ enum FileMenuMode {
   FILE_LIST_ERASE,    ///< erasing: any file with data
   /// The title's Battle: files with any of game flags 48-127 set.
   FILE_LIST_EXTRA,
-  FILE_LIST_CLEARED ///< the title's Send: cleared files only
+  FILE_LIST_CLEARED, ///< the title's Send: cleared files only
+  /// The title's Update: files saved before FLAG_REUNITED was set.
+  FILE_LIST_UPDATE
 };
 
 #include "window/window.h"
@@ -121,7 +132,7 @@ struct Window *SaveProgress_Open(u32 kind) {
 struct Window *SaveProgress_Close(struct Window *window) {
   wait(10);
   Scene_PlayQueuedMusicFar();
-  Sound_SetBgmVolumeTargetFar(0x100, 30);
+  Sound_SetBgmVolumeTargetFar(BGM_UNITY_SCALE, 30);
   Window_Close(window, 0);
   return window;
 }
@@ -129,8 +140,8 @@ struct Window *SaveProgress_Close(struct Window *window) {
 #define DMA_STOP(n)                                                            \
   do {                                                                         \
     volatile u16 *dma = REG_DMA0 + (n) * 6;                                    \
-    dma[5] &= 0xc5ff;                                                          \
-    dma[5] &= 0x7fff;                                                          \
+    dma[5] &= (u16)~DMA_START_TIMING_DRQ_REPEAT;                               \
+    dma[5] &= (u16)~DMA_ENABLE;                                                \
     dma[5];                                                                    \
   } while (0)
 
@@ -295,7 +306,7 @@ void *String_FormatPlayTime(s32 frames, u8 *out) {
 }
 
 /// Returns the first save file whose summary shows it empty (level 0), or
-/// 999 when all three are in use. The summaries must be loaded.
+/// SAVE_NO_FREE_FILE when all three are in use. The summaries must be loaded.
 u32 Save_FindFreeFile(void) {
   struct SaveWorkspace *work = Ram_HeapSlots->saveWork;
   struct SaveSummary *p;
@@ -310,52 +321,58 @@ u32 Save_FindFreeFile(void) {
 }
 
 /// Returns how many save files there are, leaving out those whose summary has
-/// its send flag set when flag is nonzero, or -9 when the backup memory cannot
-/// be read. It opens and releases the save workspace itself.
-s32 Save_CountFilesExcludingSent(s32 flag) {
+/// its send flag set (the files saved at the end of the game) when
+/// `excludeSent` is nonzero, or SAVE_ERROR_NO_MEMORY when the backup memory
+/// cannot be read. It opens and releases the save workspace itself.
+s32 Save_CountFilesExcludingSent(s32 excludeSent) {
   s32 i;
-  s32 cnt;
+  s32 count;
   struct SaveSummary *summary;
   struct SaveWorkspace *work;
 
   if (Save_InitializeWork() != 0) {
-    cnt = -9;
+    count = SAVE_ERROR_NO_MEMORY;
   } else {
-    cnt = Save_LoadFileSummaries();
-    if (flag != 0) {
+    count = Save_LoadFileSummaries();
+    if (excludeSent != 0) {
       work = Ram_HeapSlots->saveWork;
       summary = work->summary;
       for (i = 0; i < SAVE_FILE_COUNT; i++) {
         if (summary[i].sendFlag != 0)
-          cnt--;
+          count--;
       }
     }
   }
   Save_ReleaseWork();
-  return cnt;
+  return count;
 }
 
+/// Loads the save file summaries for the File Screen and returns how many files
+/// there are: plus SAVE_SCAN_ALL_CLEARED when every file is cleared (its send
+/// excludeSent set), or SAVE_ERROR_NO_MEMORY when the backup memory cannot be
+/// read. Sets the title's options from them: Battle when a file has any of game
+/// flags 48-127 set, Update when a file has a level and FLAG_REUNITED clear.
 s32 Save_ScanFileSummaries(void) {
-  s32 err;
-  s32 cnt;
-  s32 ret;
+  s32 error;
+  s32 sentCount;
+  s32 fileCount;
 
-  err = Save_InitializeWork();
-  cnt = 0;
-  ret = -9;
-  if (err == 0) {
+  error = Save_InitializeWork();
+  sentCount = 0;
+  fileCount = SAVE_ERROR_NO_MEMORY;
+  if (error == 0) {
     s32 i;
     struct SaveWorkspace *work;
 
-    ret = Save_LoadFileSummaries();
+    fileCount = Save_LoadFileSummaries();
     work = Ram_HeapSlots->saveWork;
     gAnyFileCleared = 0;
     gTitleBattleOptionEnabled = 0;
     gTitleUpdateOptionEnabled = 0;
-    for (i = 0; i < 3; i++) {
+    for (i = 0; i < SAVE_FILE_COUNT; i++) {
       if (work->summary[i].sendFlag != 0) {
         gAnyFileCleared = 1;
-        cnt++;
+        sentCount++;
       }
       if (work->summary[i].flagCount != 0)
         gTitleBattleOptionEnabled = 1;
@@ -364,53 +381,52 @@ s32 Save_ScanFileSummaries(void) {
     }
   }
   Save_ReleaseWork();
-  if (ret != 0 && cnt == ret)
-    return ret + 100;
-  return ret;
+  if (fileCount != 0 && sentCount == fileCount)
+    return fileCount + SAVE_SCAN_ALL_CLEARED;
+  return fileCount;
 }
 
-#define SAVE_GAME_WORDS ((struct SaveGameWords *)&gMainRoutineWork)
-
-// Builds the save header.
 /// Prepares the save buffer for writing: stamps the main routine's work with
 /// the time and options, then fills the file summary shown on the file menus
 /// (the leader's name, level and class, the play time, area, coins, Djinn of
 /// each element, the party, the send flag and how many of game flags 48-127 are
 /// set) and its checksum, the sum of the 968 words from gGameFlagBytes on.
 s32 Save_BuildFileSummary(void) {
-  u16 owners[14];
+  u16 members[14];
   struct SaveSummary *summary;
-  struct Unit *owner;
+  struct Unit *leader;
   u8 *source;
   u8 *destination;
   u32 *word;
   s32 i;
   u32 sum = 0;
 
+  // The summary's 16-byte header comes before the save buffer.
   summary = (struct SaveSummary *)(gSaveBuffer - 16);
-  SAVE_GAME_WORDS->buildStamp = BuildStamp_GetTimeFar(0);
-  SAVE_GAME_WORDS->playTime = gPlayTimeFrames;
+  gMainRoutineWork.buildStamp = BuildStamp_GetTimeFar(0);
+  gMainRoutineWork.playTime = gPlayTimeFrames;
   // A second copy of the play time, at the start of gSceneLocalState.
   *(u32 *)gSceneLocalState = gPlayTimeFrames;
   gMainRoutineWork.idleSleepEnabled = gIdleSleepEnabled;
-  owner = Unit_Get(gMainRoutineWork.leaderActorId);
+  leader = Unit_Get(gMainRoutineWork.leaderActorId);
   destination = summary->name;
-  source = owner->name;
+  source = leader->name;
   for (i = 11; i >= 0; i--)
     *destination++ = *source++;
-  summary->level = owner->level;
-  summary->playTime = SAVE_GAME_WORDS->playTime;
+  summary->level = leader->level;
+  summary->playTime = gMainRoutineWork.playTime;
   summary->area =
       Area_GetNameIndexFar(gMainRoutineWork.next, gMainRoutineWork.entrance);
-  summary->classId = owner->classId;
+  summary->classId = leader->classId;
   summary->coins = gMainRoutineWork.coins;
   summary->djinn[0] = Party_SumDjinnCountsFar(0);
   summary->djinn[1] = Party_SumDjinnCountsFar(1);
   summary->djinn[2] = Party_SumDjinnCountsFar(2);
   summary->djinn[3] = Party_SumDjinnCountsFar(3);
-  Party_ListMembersFar((s16 *)owners);
-  for (i = 0; i <= 3 && owners[i] != 255; i++)
-    summary->party[i] = owners[i];
+  // Up to four party members, ended by -1.
+  Party_ListMembersFar((s16 *)members);
+  for (i = 0; i <= 3 && members[i] != 255; i++)
+    summary->party[i] = members[i];
   summary->party[i] = -1;
   summary->windowHue = gMainRoutineWork.windowHue;
   summary->windowBrightness = gMainRoutineWork.windowBrightness;
@@ -425,10 +441,11 @@ s32 Save_BuildFileSummary(void) {
     s32 n;
     u32 frames;
 
-    frames = SAVE_GAME_WORDS->buildStamp;
+    frames = gMainRoutineWork.buildStamp;
     word = (u32 *)gGameFlagBytes;
     /* FAKEMATCH(barrier): an empty asm reading frames and word. */
     __asm__("" : : "r"(frames), "r"(word));
+    // The checksum covers 242 * 4 = 968 words (3872 bytes) from the flags.
     n = 242;
     i = 0;
     n <<= 2;
@@ -453,51 +470,58 @@ s32 Save_WriteFile(s32 file) {
 
   if (Save_InitializeWork() != 0) {
     FieldMessage_Show((s32)&MsgNoBackupMemory, FIELD_MESSAGE_ZOOM);
-    result = -9;
+    result = SAVE_ERROR_NO_MEMORY;
   } else if (Save_WritePartMasked(file, gSaveBuffer) != 0) {
     FieldMessage_Show((s32)&MsgSaveFailed, FIELD_MESSAGE_ZOOM);
-    result = -3;
+    result = SAVE_ERROR_WRITE;
   }
   Save_ReleaseWork();
   return result;
 }
 
+/// Writes the link lobby's tallies (gMainRoutineWork.linkTallies) into the
+/// current file's first part (gSaveSlot), under the saving screen, leaving the
+/// rest of the part as it was saved. Returns -1 when no file is current.
 s32 Save_ProcessSelectedFile(void) {
-  void *buffer;
+  void *part;
   s32 value;
   s32 result;
-  s32 found;
-  s32 token;
+  s32 error;
+  s32 progress;
 
   result = 0;
-  buffer = Heap_AllocEwram(0x3000);
+  part = Heap_AllocEwram(0x3000);
   value = gSaveSlot;
   if (value != -1) {
-    found = Save_InitializeWork();
-    if (found != 0) {
+    error = Save_InitializeWork();
+    if (error != 0) {
       FieldMessage_Show((s32)&MsgNoBackupMemory, FIELD_MESSAGE_ZOOM);
-      result = -9;
+      result = SAVE_ERROR_NO_MEMORY;
     } else {
-      u8 *dst;
+      u8 *tallies;
 
-      found = Save_ReadPart(gSaveSlot, buffer);
-      if (found != 0) {
-        FieldMessage_Show((s32)&MsgSaveFailed, 1);
-        result = -2;
-      }
-      dst = (u8 *)buffer + (s32)gMainRoutineWork.linkTallies;
-      dst -= (s32)gSaveBuffer;
-      Iwram_CopyWordsEntry(dst, gMainRoutineWork.linkTallies, 16);
-      token = (s32)SaveProgress_Open(SAVE_PROGRESS_SAVING);
-      found = Save_WritePartMasked(gSaveSlot, buffer);
-      SaveProgress_Close((struct Window *)token);
-      if (found != 0) {
+      error = Save_ReadPart(gSaveSlot, part);
+      // A failed read is reported, but the part is still written below from
+      // whatever the buffer holds.
+      if (error != 0) {
         FieldMessage_Show((s32)&MsgSaveFailed, FIELD_MESSAGE_ZOOM);
-        result = -3;
+        result = SAVE_ERROR_READ;
+      }
+      // The tallies' place in the part is their place in the save buffer.
+      tallies = (u8 *)part + (s32)gMainRoutineWork.linkTallies;
+      tallies -= (s32)gSaveBuffer;
+      Iwram_CopyWordsEntry(tallies, gMainRoutineWork.linkTallies,
+                           sizeof(gMainRoutineWork.linkTallies));
+      progress = (s32)SaveProgress_Open(SAVE_PROGRESS_SAVING);
+      error = Save_WritePartMasked(gSaveSlot, part);
+      SaveProgress_Close((struct Window *)progress);
+      if (error != 0) {
+        FieldMessage_Show((s32)&MsgSaveFailed, FIELD_MESSAGE_ZOOM);
+        result = SAVE_ERROR_WRITE;
       }
     }
     Save_ReleaseWork();
-    Heap_Release(buffer);
+    Heap_Release(part);
     value = result;
   }
   return value;
@@ -511,13 +535,15 @@ s32 Save_ToFile(u32 slot) {
   if (slot > 2)
     slot = 2;
   if (Save_InitializeWork() != 0) {
-    FieldMessage_Show((s32)&MsgNoBackupMemory, 1);
-    result = -9;
+    FieldMessage_Show((s32)&MsgNoBackupMemory, FIELD_MESSAGE_ZOOM);
+    result = SAVE_ERROR_NO_MEMORY;
   } else {
     Save_LoadFileSummaries();
     gSaveSlot = slot;
     Sound_PlayFar(MUS_SAVED);
-    FieldMessage_Show((s32)&MsgSaving, 13);
+    FieldMessage_Show((s32)&MsgSaving, FIELD_MESSAGE_ZOOM |
+                                           FIELD_MESSAGE_KEEP_OPEN |
+                                           FIELD_MESSAGE_LOWER);
     Save_BuildFileSummary();
     ObjectTable_SnapshotFar();
     found = Save_WritePartMasked(slot, gSaveBuffer);
@@ -525,10 +551,11 @@ s32 Save_ToFile(u32 slot) {
       wait(1);
     Message_CloseFinishedWindows();
     if (found != 0) {
-      FieldMessage_Show((s32)&MsgSaveFailed, 1);
-      result = -3;
+      FieldMessage_Show((s32)&MsgSaveFailed, FIELD_MESSAGE_ZOOM);
+      result = SAVE_ERROR_WRITE;
     } else {
-      FieldMessage_Show((s32)&MsgGameSaved, 9);
+      FieldMessage_Show((s32)&MsgGameSaved,
+                        FIELD_MESSAGE_ZOOM | FIELD_MESSAGE_LOWER);
     }
   }
   Save_ReleaseWork();
@@ -546,7 +573,7 @@ s32 Save_ToChosenFile(void) {
 
   if (Save_InitializeWork() != 0) {
     FieldMessage_Show((s32)&MsgNoBackupMemory, FIELD_MESSAGE_ZOOM);
-    result = -9;
+    result = SAVE_ERROR_NO_MEMORY;
   } else {
     Save_LoadFileSummaries();
     slot = FileList_SelectFile(gSaveSlot, FILE_LIST_SAVE);
@@ -575,7 +602,7 @@ s32 Save_ToChosenFile(void) {
       Message_CloseFinishedWindows();
       if (found != 0) {
         FieldMessage_Show((s32)&MsgSaveFailed, FIELD_MESSAGE_ZOOM);
-        result = -3;
+        result = SAVE_ERROR_WRITE;
       } else {
         FieldMessage_Show((s32)&MsgGameSaved,
                           FIELD_MESSAGE_ZOOM | FIELD_MESSAGE_LOWER);
@@ -594,7 +621,7 @@ s32 Save_ChooseAndLoadFile(s32 mode) {
 
   if (Save_InitializeWork() != 0) {
     FieldMessage_Show((s32)&MsgNoBackupMemory, FIELD_MESSAGE_ZOOM);
-    result = -9;
+    result = SAVE_ERROR_NO_MEMORY;
   } else {
     Save_LoadFileSummaries();
     file = FileList_SelectFile(gSaveSlot, mode);
@@ -602,9 +629,9 @@ s32 Save_ChooseAndLoadFile(s32 mode) {
       result = file;
     } else if (Save_ReadPart(file, gSaveBuffer) != 0) {
       FieldMessage_Show((s32)&MsgLoadFailed, FIELD_MESSAGE_ZOOM);
-      result = -2;
+      result = SAVE_ERROR_READ;
     } else {
-      gPlayTimeFrames = SAVE_GAME_WORDS->playTime;
+      gPlayTimeFrames = gMainRoutineWork.playTime;
       gIdleSleepEnabled = gMainRoutineWork.idleSleepEnabled;
       gIdleFrames = 0;
       gSaveSlot = file;
@@ -622,10 +649,10 @@ s32 Save_CopyFile(void) {
 
   if (Save_InitializeWork() != 0) {
     FieldMessage_Show((s32)&MsgNoBackupMemory, FIELD_MESSAGE_ZOOM);
-    result = -9;
+    result = SAVE_ERROR_NO_MEMORY;
   } else {
     Save_LoadFileSummaries();
-    value = FileList_SelectFile(0, 2);
+    value = FileList_SelectFile(0, FILE_LIST_COPY);
     if (value == -1) {
       result = value;
     } else {
@@ -633,20 +660,20 @@ s32 Save_CopyFile(void) {
 
       value = Save_ReadPart(value, buffer);
       if (value != 0) {
-        FieldMessage_Show((s32)&MsgLoadFailed, 1);
-        result = -2;
+        FieldMessage_Show((s32)&MsgLoadFailed, FIELD_MESSAGE_ZOOM);
+        result = SAVE_ERROR_READ;
       } else {
         value = Save_FindFreeFile();
-        if (value == 999) {
-          FieldMessage_Show((s32)&MsgEraseFailed, 1);
-          result = -5;
+        if (value == SAVE_NO_FREE_FILE) {
+          FieldMessage_Show((s32)&MsgEraseFailed, FIELD_MESSAGE_ZOOM);
+          result = SAVE_ERROR_NO_FILE;
         } else {
           token = (s32)SaveProgress_Open(SAVE_PROGRESS_COPYING);
           value = Save_WritePartMasked(value, buffer);
           SaveProgress_Close((struct Window *)token);
           if (value != 0) {
             FieldMessage_Show((s32)&MsgEraseFailed, FIELD_MESSAGE_ZOOM);
-            result = -3;
+            result = SAVE_ERROR_WRITE;
           } else {
             FieldMessage_Show((s32)&MsgFileCopied, FIELD_MESSAGE_ZOOM);
           }
@@ -673,10 +700,10 @@ s32 Save_EraseSelectedFile(void) {
 
   if (Save_InitializeWork() != 0) {
     FieldMessage_Show((s32)&MsgNoBackupMemory, FIELD_MESSAGE_ZOOM);
-    result = -9;
+    result = SAVE_ERROR_NO_MEMORY;
   } else {
     Save_LoadFileSummaries();
-    value = FileList_SelectFile(0, 3);
+    value = FileList_SelectFile(0, FILE_LIST_ERASE);
     if (value == -1) {
       result = value;
     } else {
@@ -692,7 +719,7 @@ s32 Save_EraseSelectedFile(void) {
         SaveProgress_Close((struct Window *)token);
         if (found != 0) {
           FieldMessage_Show((s32)&MsgEraseFailed, FIELD_MESSAGE_ZOOM);
-          result = -4;
+          result = SAVE_ERROR_ERASE;
         } else {
           FieldMessage_Show((s32)&MsgFileErased, FIELD_MESSAGE_ZOOM);
         }
@@ -703,8 +730,8 @@ s32 Save_EraseSelectedFile(void) {
   return result;
 }
 
-/// Updates four RGB555 colors with an eight-VBlank phase offset between them.
-/// For s = sin / 16384, red is 22 + 2s, green 16 + s, and blue 20 + s.
+/// A task that makes colours 8-11 of HIGHLIGHT_PALETTE glow: each follows a
+/// sine wave of the frame counter, eight frames behind the one before.
 void FileList_UpdatePulse(void) {
   s32 *vblankCount;
   volatile u16 *palette;
@@ -746,8 +773,13 @@ void FileList_StartPulse(void) {
   Task_Add((s32)FileList_UpdatePulse, TASK_PASS_VBLANK);
 }
 
+/// Stops the palette glow.
 void FileList_StopPulse(void) { Task_Remove((u32)((s32)FileList_UpdatePulse)); }
 
+/// Fills the `width` x `height` tile rectangle at (x, y) inside `window`,
+/// clipped to the screen as Window_SetTextTileBitRect clips, with the tile
+/// entry of tile 6 in HIGHLIGHT_PALETTE, the palette FileList_UpdatePulse
+/// animates.
 void Window_FillTilemapRect(struct Window *window, s32 x, s32 y, s32 width,
                             s32 height) {
   struct WindowWork *work = (struct WindowWork *)Ram_HeapSlots->windowWork;
@@ -773,6 +805,7 @@ void Window_FillTilemapRect(struct Window *window, s32 x, s32 y, s32 width,
     height = DISPLAY_TILE_HEIGHT - y;
 
   if (width > 0 && height > 0) {
+    // Byte offsets: 32 entries of 2 bytes a row.
     s32 yOffset = y << 6;
     s32 xOffset = x << 1;
     s32 offset = yOffset + ((s32)work + xOffset);
@@ -782,7 +815,7 @@ void Window_FillTilemapRect(struct Window *window, s32 x, s32 y, s32 width,
       if (remaining != 0) {
         do {
           remaining--;
-          *cell++ = 0xE006;
+          *cell++ = BG_TILE_PALETTE(HIGHLIGHT_PALETTE) | 6;
         } while (remaining != 0);
       }
       height--;
@@ -792,26 +825,29 @@ void Window_FillTilemapRect(struct Window *window, s32 x, s32 y, s32 width,
   }
 }
 
-void FileList_ShowPartySprites(struct Window *origin, s32 x, s32 y,
-                               struct SaveSummary *descriptor) {
-  struct FileListWork *state = Ram_HeapSlots->menuWork;
+/// Shows the party of save file `summary` (up to four party members) as sprites
+/// in a row from tile (x, y) inside `window`, and starts placing them every
+/// frame (FileList_PlacePartySprites).
+void FileList_ShowPartySprites(struct Window *window, s32 x, s32 y,
+                               struct SaveSummary *summary) {
+  struct FileListWork *menu = Ram_HeapSlots->menuWork;
   s32 i;
 
-  for (i = 0; i < 4 && descriptor->party[i] != -1; i++) {
-    struct FieldSprite *object =
-        (struct FieldSprite *)Sprite_CreateFar(descriptor->party[i]);
+  for (i = 0; i < 4 && summary->party[i] != -1; i++) {
+    struct FieldSprite *sprite =
+        (struct FieldSprite *)Sprite_CreateFar(summary->party[i]);
 
-    if (object != 0) {
-      Sprite_StartAnimationFar(object, ANIM_STAND);
-      object->flags = 0;
-      object->priority = 0;
+    if (sprite != 0) {
+      Sprite_StartAnimationFar(sprite, ANIM_STAND);
+      sprite->flags = 0;
+      sprite->priority = 0;
     }
 
-    state->partyMemberIcons[i] = object;
-    state->partyMemberX[i] =
-        (x + (s16)origin->x + i * FILE_LIST_SPRITE_SPACING) * 8 + 0x10;
-    state->partyMemberY[i] = (y + (s16)origin->y) * 8 + 0x10;
-    state->partyMemberScale[i] = FIXED_ONE;
+    menu->partyMemberIcons[i] = sprite;
+    menu->partyMemberX[i] =
+        (x + (s16)window->x + i * FILE_LIST_SPRITE_SPACING) * 8 + 16;
+    menu->partyMemberY[i] = (y + (s16)window->y) * 8 + 16;
+    menu->partyMemberScale[i] = FIXED_ONE;
   }
 
   Task_Add(FileList_PlacePartySprites, TASK_PASS_VBLANK);
@@ -819,25 +855,16 @@ void FileList_ShowPartySprites(struct Window *origin, s32 x, s32 y,
 
 /// Stops placing the party sprites of the file list and releases them.
 void FileList_HidePartySprites(void) {
-  u8 *base = (u8 *)Ram_HeapSlots->menuWork;
-  s32 offset;
-  s32 zero;
-  s32 count;
+  struct FileListWork *menu = Ram_HeapSlots->menuWork;
+  s32 i;
 
   Task_Remove((s32)FileList_PlacePartySprites);
-  zero = 0;
-  offset = 248;
-  count = 3;
-  do {
-    void *entry = *(void **)(offset + (unsigned int)base);
-
-    if (entry != 0) {
-      Sprite_DestroyFar(entry);
-      *(s32 *)(offset + (unsigned int)base) = zero;
+  for (i = 0; i < 4; i++) {
+    if (menu->partyMemberIcons[i] != NULL) {
+      Sprite_DestroyFar(menu->partyMemberIcons[i]);
+      menu->partyMemberIcons[i] = NULL;
     }
-    count--;
-    offset += 4;
-  } while (count >= 0);
+  }
 }
 
 /// A task: draws each party sprite of the file list at its place and scale for
@@ -955,8 +982,13 @@ void FileList_DrawSummary(s32 win, struct SaveSummary *summary) {
 #define FILE_LIST_AREA_X 62
 #endif
 
+/// FileList_SelectFile's result when no file can be chosen in its mode.
 #define SAVE_MENU_NO_FILE -2
 
+/// The file list: lists the three files with each one's leader and area (or
+/// why it cannot be chosen) and, for the file under the cursor, its summary,
+/// its party and its Djinn, with the file's own palette glow. Returns the file
+/// chosen in mode `menuMode` (enum FileMenuMode), -1 when cancelled.
 s32 FileList_SelectFile(s32 selectedFile, s32 menuMode) {
   struct Window *fileList;
   struct SaveWorkspace *save;
@@ -1020,7 +1052,7 @@ s32 FileList_SelectFile(s32 selectedFile, s32 menuMode) {
       result = SAVE_MENU_NO_FILE;
       goto done;
     }
-  } else if (menuMode == 6) {
+  } else if (menuMode == FILE_LIST_UPDATE) {
     for (i = 0;
          i < SAVE_FILE_COUNT && (save->summary[selectedFile].level == 0 ||
                                  save->summary[selectedFile].reunited != 0);
@@ -1033,7 +1065,7 @@ s32 FileList_SelectFile(s32 selectedFile, s32 menuMode) {
       result = SAVE_MENU_NO_FILE;
       goto done;
     }
-  } else if (menuMode != 0) {
+  } else if (menuMode != FILE_LIST_SAVE) {
     for (i = 0; i < SAVE_FILE_COUNT && save->summary[selectedFile].level == 0;
          i++) {
       selectedFile++;
@@ -1060,7 +1092,7 @@ s32 FileList_SelectFile(s32 selectedFile, s32 menuMode) {
     } else if (menuMode == FILE_LIST_CLEARED &&
                save->summary[i].sendFlag == 0) {
       Text_DrawMessage((s32)MsgSaveNotCleared, (s32)fileList, 10, i * 16);
-    } else if (menuMode == 6 && save->summary[i].reunited != 0) {
+    } else if (menuMode == FILE_LIST_UPDATE && save->summary[i].reunited != 0) {
       Text_DrawMessage((s32)MsgSavePostReunion, (s32)fileList, 10, i * 16);
     } else {
       y = i * 16;
@@ -1140,7 +1172,8 @@ s32 FileList_SelectFile(s32 selectedFile, s32 menuMode) {
                 save->summary[selectedFile].flagCount == 0) ||
                (menuMode == FILE_LIST_CLEARED &&
                 save->summary[selectedFile].sendFlag == 0) ||
-               (menuMode == 6 && save->summary[selectedFile].reunited != 0));
+               (menuMode == FILE_LIST_UPDATE &&
+                save->summary[selectedFile].reunited != 0));
     } else if (gInput.repeat & KEY_DOWN) {
       Sound_PlayFar(SE_MENU_CURSOR_MOVE);
       summaryDirty = 1;
@@ -1155,7 +1188,8 @@ s32 FileList_SelectFile(s32 selectedFile, s32 menuMode) {
                 save->summary[selectedFile].flagCount == 0) ||
                (menuMode == FILE_LIST_CLEARED &&
                 save->summary[selectedFile].sendFlag == 0) ||
-               (menuMode == 6 && save->summary[selectedFile].reunited != 0));
+               (menuMode == FILE_LIST_UPDATE &&
+                save->summary[selectedFile].reunited != 0));
     } else if (gInput.pressed & KEY_B) {
       Sound_PlayFar(SE_MENU_CANCEL);
       result = -1;
@@ -1185,7 +1219,6 @@ done:
 #undef ERASING_X
 #undef COPYING_X
 #undef DMA_STOP
-#undef SAVE_GAME_WORDS
 #undef ERASE_CONFIRM_X
 #undef Text_DrawStringAtOffset
 #undef Text_DrawNumberAtOffset

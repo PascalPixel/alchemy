@@ -36,12 +36,24 @@
 // The battle the step on cell 30 starts, once.
 #define FLAG_BATTLE_FOUGHT FLAG_SCENE_TEMP_20
 
+/// The room's actors, numbered in the order of gActorPlacements.
+enum PsynergyTest2ActorId {
+  ACTOR_FIRE = 8,    ///< Douse and Pound take it off the map
+  ACTOR_STAKE,       ///< Grind and Tremor are tried on it; talked to, rocks fly
+  ACTOR_FIRST_POST,  ///< the rope's first end; Lash at it does nothing
+  ACTOR_SECOND_POST, ///< the rope's other end
+};
+
+#define ROCK_COUNT 64
+#define ROCK_SHEET_BYTES 1280 ///< the falling rock's pictures, decompressed
+#define ROCK_FRAMES 20        ///< how long a rock flies
+
 /// The rocks a talk scatters, in heap slot 220: their tiles, 64 rocks and their
 /// sprites, the next rock to use, and where the tiles are in VRAM.
 struct RockWork {
-  u8 tiles[0x500];
-  struct Particle rocks[64];
-  struct EffectSprite sprites[64];
+  u8 tiles[ROCK_SHEET_BYTES];
+  struct Particle rocks[ROCK_COUNT];
+  struct EffectSprite sprites[ROCK_COUNT];
   s16 next;
   u16 tileBase;
   s16 resource;
@@ -52,7 +64,7 @@ void PsynergyTest2_SpawnRocks(s32 x, s32 y, s32 z, s32 count);
 void PsynergyTest2_StartRocks(void);
 void PsynergyTest2_EndRocks(void);
 
-void Rope_Coil(s32 a, s32 b, s32 c);
+void Rope_Coil(s32 rope, s32 firstActor, s32 secondActor);
 
 void BattleEffect_StepVector3(struct Particle *particle, s32 damping,
                               s32 gravity);
@@ -69,20 +81,20 @@ const struct ActorPlacement *Scene_GetActorPlacements(void) {
   return gActorPlacements;
 }
 
-/// Douse on actor 8 takes it off the map.
-void PsynergyTest2_DouseTarget(void) { Actor_SetPosition(8, 0, 0); }
+/// Douse on ACTOR_FIRE takes it off the map.
+void PsynergyTest2_DouseTarget(void) { Actor_SetPosition(ACTOR_FIRE, 0, 0); }
 
 /// So does Pound, as it acts.
 void PsynergyTest2_PoundTarget(s32 mode) {
   if (mode == 1)
-    Actor_SetPosition(8, 0, 0);
+    Actor_SetPosition(ACTOR_FIRE, 0, 0);
 }
 
-/// The event for Tremor on actor 9, which does nothing.
+/// The event for Tremor on ACTOR_STAKE, which does nothing.
 void PsynergyTest2_IgnoreTremor(void) {}
 
-/// Grind on actor 9 puts it in mode 3.
-void PsynergyTest2_GrindActor(void) { Actor_SetAnimationById(9, 3); }
+/// Grind on ACTOR_STAKE sets its animation 3.
+void PsynergyTest2_GrindActor(void) { Actor_SetAnimationById(ACTOR_STAKE, 3); }
 
 /// Burst on cell 50 copies in the broken wall, a 1 by 2 block from (49, 1),
 /// cell behaviors and all.
@@ -101,7 +113,7 @@ void PsynergyTest2_StepIntoBattle(void) {
   }
 }
 
-/// Talking to actor 9: twenty rocks burst out around it and fall for 20
+/// Talking to ACTOR_STAKE: twenty rocks burst out around it and fall for 20
 /// frames.
 void PsynergyTest2_ScatterRocks(s32 id) {
   struct Actor *object = Actor_Get(id);
@@ -124,9 +136,9 @@ s32 Scene_Initialize(void) {
   work->sceneAttributeLow = 0;
   gMainRoutineWork.messageSpeed = 2;
   Rope_Initialize();
-  // Coils rope 0 between actors 10 and 11.
-  Value3((s32 (*)())Rope_Coil, 0, 10, 11);
-  Actor_SetAnimation(9, 4);
+  // Coils rope 0 between the two posts.
+  Value3((s32 (*)())Rope_Coil, 0, ACTOR_FIRST_POST, ACTOR_SECOND_POST);
+  Actor_SetAnimation(ACTOR_STAKE, 4);
   return 0;
 }
 
@@ -142,11 +154,11 @@ void PsynergyTest2_UpdateRocks(void) {
   struct Particle *particle = work->rocks;
   struct EffectSprite *sprite = work->sprites;
   s32 i;
-  s32 step = -0x8000;
+  s32 step = -toFIXED(1) / 2;
 
-  i = 63;
+  i = ROCK_COUNT - 1;
   do {
-    if ((u32)particle->variant <= 19) {
+    if ((u32)particle->variant < ROCK_FRAMES) {
       sprite->oam.index = work->tileBase + ((particle->variant >> 2) & 7) * 8;
       EffectSprite_DrawAtWorldPosition(sprite, particle);
       BattleEffect_StepVector3(particle, 63, step);
@@ -186,17 +198,18 @@ struct ActorPlacement gActorPlacements[] = {
 };
 
 struct Trigger gSceneEvents[] = {
-    {TRIGGER_TALK, 9, CONDITION_ALWAYS, EVENT(PsynergyTest2_ScatterRocks)},
+    {TRIGGER_TALK, ACTOR_STAKE, CONDITION_ALWAYS,
+     EVENT(PsynergyTest2_ScatterRocks)},
     {TRIGGER_STEP, 30, CONDITION_ALWAYS, EVENT(PsynergyTest2_StepIntoBattle)},
-    {PSYNERGY_ON_ACTOR(ABILITY_DOUSE), 8, CONDITION_ALWAYS,
+    {PSYNERGY_ON_ACTOR(ABILITY_DOUSE), ACTOR_FIRE, CONDITION_ALWAYS,
      EVENT(PsynergyTest2_DouseTarget)},
-    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_POUND, PSYNERGY_PHASE_ACTS), 8,
+    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_POUND, PSYNERGY_PHASE_ACTS), ACTOR_FIRE,
      CONDITION_ALWAYS, EVENT(PsynergyTest2_PoundTarget)},
-    {PSYNERGY_ON_ACTOR(ABILITY_TREMOR), 9, CONDITION_ALWAYS,
+    {PSYNERGY_ON_ACTOR(ABILITY_TREMOR), ACTOR_STAKE, CONDITION_ALWAYS,
      EVENT(PsynergyTest2_IgnoreTremor)},
-    {PSYNERGY_ON_ACTOR(ABILITY_GRIND), 9, CONDITION_ALWAYS,
+    {PSYNERGY_ON_ACTOR(ABILITY_GRIND), ACTOR_STAKE, CONDITION_ALWAYS,
      EVENT(PsynergyTest2_GrindActor)},
-    {PSYNERGY_ON_ACTOR(ABILITY_LASH), 10, CONDITION_ALWAYS, 0},
+    {PSYNERGY_ON_ACTOR(ABILITY_LASH), ACTOR_FIRST_POST, CONDITION_ALWAYS, 0},
     {PSYNERGY_PHASE_ON_CELL(ABILITY_BURST, PSYNERGY_PHASE_ACTS), 50,
      CONDITION_ALWAYS, EVENT(PsynergyTest2_BurstWall)},
     {TRIGGER_TABLE_END},
@@ -212,25 +225,24 @@ void PsynergyTest2_SpawnRocks(s32 x, s32 y, s32 z, s32 count) {
 
   if (count > 0) {
     i = count;
-  loop:
-    angle = Random16();
-    rock = &work->rocks[work->next];
-    rock->variant = 0;
-    rock->x = x;
-    rock->y = y;
-    rock->z = z;
-    FieldVector_AddPolarOffsetFX((Random16() << 3) + toFIXED(8), angle,
-                                 &rock->x);
-    rock->velocityX = 0;
-    rock->velocityY = toFIXED(5);
-    rock->velocityZ = 0;
-    FieldVector_AddPolarOffsetFX((Random16() << 1) + toFIXED(2), angle,
-                                 &rock->velocityX);
-    work->next++;
-    work->next &= 63;
-    i--;
-    if (i != 0)
-      goto loop;
+    do {
+      angle = Random16();
+      rock = &work->rocks[work->next];
+      rock->variant = 0;
+      rock->x = x;
+      rock->y = y;
+      rock->z = z;
+      FieldVector_AddPolarOffsetFX((Random16() << 3) + toFIXED(8), angle,
+                                   &rock->x);
+      rock->velocityX = 0;
+      rock->velocityY = toFIXED(5);
+      rock->velocityZ = 0;
+      FieldVector_AddPolarOffsetFX((Random16() << 1) + toFIXED(2), angle,
+                                   &rock->velocityX);
+      work->next++;
+      work->next &= ROCK_COUNT - 1;
+      i--;
+    } while (i != 0);
   }
 }
 
@@ -246,12 +258,12 @@ void PsynergyTest2_StartRocks(void) {
 
   Decompress_TaggedLz(Resource_GetTableEntry(RESOURCE_FALLING_ROCK), work);
   entry = VramCache_FindFreeEntry();
-  tile = Vram_Load(entry, 0x500, work);
+  tile = Vram_Load(entry, ROCK_SHEET_BYTES, work);
   work->tileBase = tile;
   work->resource = entry;
   rock = work->rocks;
   sprite = work->sprites;
-  for (i = 63; i >= 0; i--, sprite++, rock++) {
+  for (i = ROCK_COUNT - 1; i >= 0; i--, sprite++, rock++) {
     EffectSprite_Init(sprite, 8, 8, OBJ_SIZE_16X16, tile);
     sprite->oam.fullColor = 1;
     sprite->oam.palette = 0;
@@ -277,10 +289,12 @@ void PsynergyTest2_EndRocks(void) {
 }
 
 /// Unused: the Psynergy test's PsynergyTest_DigCells again.
-UNUSED void PsynergyTest2_DigCells(s32 mode, s32 a, s32 b, s32 c, s32 d, s32 e,
-                                   s32 f) {
+UNUSED void PsynergyTest2_DigCells(s32 mode, s32 sourceX, s32 sourceY,
+                                   s32 width, s32 height, s32 destinationX,
+                                   s32 destinationY) {
   if (mode == 1)
-    MapGrid_CopyCells(a, b, c, d, e, f);
+    MapGrid_CopyCells(sourceX, sourceY, width, height, destinationX,
+                      destinationY);
 }
 
 /// Unused: the Psynergy test's PsynergyTest_GrowActor again.
@@ -328,7 +342,7 @@ UNUSED void PsynergyTest2_RaiseMonster(s32 mode, s32 x, s32 z, s32 row,
   struct Actor *object;
 
   if (mode == 1) {
-    object = FieldActor_Create(354, toFIXED(x), 0, toFIXED(z));
+    object = FieldActor_Create(SPRITE_BROWN_BOULDER, toFIXED(x), 0, toFIXED(z));
     if (object != NULL) {
       Actor_SetSpriteFlags(object, 0);
       object->priorityFlags = 2;

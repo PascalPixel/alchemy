@@ -33,6 +33,20 @@
 #include "system/dma.h"
 #include "field/actor.h"
 #include "fixed_math.h"
+#include "battle/battle_unit.h"
+#include "window/window.h"
+
+/// The shops the shopkeepers open: Daila's three and Izumo's, by their rows
+/// of the shop stock table.
+enum {
+  SHOP_DAILA_WEAPONS = 1,
+  SHOP_DAILA_ARMOR = 2,
+  SHOP_DAILA_ITEMS = 3,
+  SHOP_IZUMO = 24
+};
+
+/// The entrance that brings Isaac's party in (Party_AddIsaacsParty).
+#define ENTRANCE_WITH_ISAACS_PARTY 99
 
 /// The room's people, numbered in the order of gActorPlacements.
 enum ShopTestActorId {
@@ -76,11 +90,9 @@ const struct ActorPlacement *Scene_GetActorPlacements(void) {
 }
 
 void *Portrait_OpenWindow(s32, s32, s32, s32);
-void MessageArgument_Push(s32, s32);
 void Message_CloseFinishedWindows(void);
 void Message_OpenWindow(s32, s32, s32, s32);
 s32 Message_AllTyped(void);
-void Window_Close(void *window, s32 mode);
 
 /// Browses `count` messages from `message`, each typed out at once: A for the
 /// next, B to close; each moves on by itself after 10 frames held, or 60
@@ -92,56 +104,47 @@ void ShopTest_BrowseMessageRange(s32 message, s32 count) {
   s32 typed;
 
   window = Portrait_OpenWindow(SPRITE_YOUNG_MAN_IN_GREEN, 0, 0, 0);
-  i = 0;
-  if (i >= count)
-    goto done;
-loop:
-  // Sample name, item and number substitutions before each message: Garet,
-  // the Shamshir and 123456.
-  MessageArgument_Push(GARET, MESSAGE_ARGUMENT_ACTOR);
-  MessageArgument_Push(ITEM_SHAMSHIR, MESSAGE_ARGUMENT_ITEM);
-  MessageArgument_Push(123456, MESSAGE_ARGUMENT_NUMBER);
-  Message_CloseFinishedWindows();
-  Message_OpenWindow(message, 5, 0, 0x22);
-  frames = 0;
-  if (gInput.held & 3)
-    goto shown;
-  do {
-    wait(1);
-    frames++;
-    if (frames > 59)
-      goto shown;
-  } while (!(gInput.held & 3));
-  for (;;) {
-  shown:
-    typed = Message_AllTyped();
-    if (typed != 0)
-      break;
-    gInput.held = 1;
-    gInput.pressed = 1;
-    gInput.repeat = 1;
-    wait(1);
+  for (i = 0; i < count; i++) {
+    // Sample name, item and number substitutions before each message: Garet,
+    // the Shamshir and 123456.
+    MessageArgument_Push(GARET, MESSAGE_ARGUMENT_ACTOR);
+    MessageArgument_Push(ITEM_SHAMSHIR, MESSAGE_ARGUMENT_ITEM);
+    MessageArgument_Push(123456, MESSAGE_ARGUMENT_NUMBER);
+    Message_CloseFinishedWindows();
+    Message_OpenWindow(message, 5, 0, 0x22);
+    frames = 0;
+    if (!(gInput.held & (KEY_A | KEY_B))) {
+      do {
+        wait(1);
+        frames++;
+        if (frames > 59)
+          break;
+      } while (!(gInput.held & (KEY_A | KEY_B)));
+    }
+    for (;;) {
+      typed = Message_AllTyped();
+      if (typed != 0)
+        break;
+      gInput.held = KEY_A;
+      gInput.pressed = KEY_A;
+      gInput.repeat = KEY_A;
+      wait(1);
+    }
+    frames = 0;
+    if (gInput.held & KEY_B)
+      goto done;
+    if (!(gInput.held & KEY_A)) {
+      do {
+        wait(1);
+        frames++;
+        if (frames > 9)
+          break;
+        if (gInput.held & KEY_B)
+          goto done;
+      } while (!(gInput.held & KEY_A));
+    }
+    message++;
   }
-  frames = 0;
-  if (gInput.held & KEY_B)
-    goto done;
-  if (!(gInput.held & KEY_A))
-    goto hold;
-  goto next;
-hold:
-  wait(1);
-  frames++;
-  if (frames > 9)
-    goto next;
-  if (gInput.held & KEY_B)
-    goto done;
-  if (!(gInput.held & KEY_A))
-    goto hold;
-next:
-  message++;
-  i++;
-  if (i < count)
-    goto loop;
 done:
   Message_CloseFinishedWindows();
   Window_Close(window, 2);
@@ -183,16 +186,18 @@ void ShopTest_BrowseSanctumMessages(void) {
 }
 
 /// The shops and the inn, each passed the keeper's actor id.
-void ShopTest_OpenWeaponShop(s32 keeper) { Shop_Run(1, keeper); }
+void ShopTest_OpenWeaponShop(s32 keeper) {
+  Shop_Run(SHOP_DAILA_WEAPONS, keeper);
+}
 
 /// Opens the armor shop.
-void ShopTest_OpenArmorShop(s32 keeper) { Shop_Run(2, keeper); }
+void ShopTest_OpenArmorShop(s32 keeper) { Shop_Run(SHOP_DAILA_ARMOR, keeper); }
 
 /// Opens the item shop.
-void ShopTest_OpenItemShop(s32 keeper) { Shop_Run(3, keeper); }
+void ShopTest_OpenItemShop(s32 keeper) { Shop_Run(SHOP_DAILA_ITEMS, keeper); }
 
 /// Opens the general store.
-void ShopTest_OpenGeneralStore(s32 keeper) { Shop_Run(24, keeper); }
+void ShopTest_OpenGeneralStore(s32 keeper) { Shop_Run(SHOP_IZUMO, keeper); }
 
 /// Opens the inn.
 void ShopTest_OpenInn(s32 keeper) { Inn_CheckIn(0, keeper); }
@@ -207,12 +212,12 @@ void Forge_SetItem(s32 value);
 s32 Forge_GetItem(void);
 
 /// Sunshine, as in Yallam (YallamInteriors_TalkToSunshine) without his walk to
-/// the anvil: flag 0x10f says the party has forge material, and he forges
-/// with it.
+/// the anvil: FLAG_HAS_FORGE_MATERIAL says the party has forge material, and he
+/// forges with it.
 void ShopTest_TalkToSunshine(s32 actor) {
   s32 message;
 
-  if (!Event_GetFlag(0x10f)) {
+  if (!Event_GetFlag(FLAG_HAS_FORGE_MATERIAL)) {
     message = (s32)MsgAhSoYou;
     Event_SetMessageId(message);
     FieldMessage_ShowAtActor(actor, 0);
@@ -250,7 +255,7 @@ void ShopTest_TalkToSunshine(s32 actor) {
 /// Sunshine's wife, as in Yallam (YallamInteriors_TalkToSunshinesWife): she
 /// hands over what Sunshine made and takes the payment.
 void ShopTest_TalkToSunshinesWife(s32 actor) {
-  if (!Event_GetFlag(0x10f)) {
+  if (!Event_GetFlag(FLAG_HAS_FORGE_MATERIAL)) {
     Event_SetMessageId((s32)MsgThisThisIs);
     Event_ShowMessageAndWait(actor, 0);
   } else if (Event_GetFlag(FLAG_SCENE_TEMP_00)) {
@@ -592,12 +597,12 @@ void ShopTest_GivePartyDjinn(void) {
 /// The event for talking to ACTOR_IDLE_A to ACTOR_IDLE_D.
 void ShopTest_NoOp(void) {}
 
-/// Gives a Muramasa, then announces and unlocks summon 22. Talking to
+/// Gives a Muramasa, then announces and unlocks Eclipse. Talking to
 /// ACTOR_MURAMASA_AND_SUMMON.
 void ShopTest_GiveMuramasaAndSummon(void) {
   PartyInventory_GiveItem(ITEM_MURAMASA, 0);
-  Summon_ShowLearnedMessage(22);
-  Class_GetSeries(22);
+  Summon_ShowLearnedMessage(SUMMON_ECLIPSE);
+  Class_GetSeries(SUMMON_ECLIPSE);
 }
 
 const struct Trigger *Scene_GetTriggers(void) { return gSceneEvents; }
@@ -606,13 +611,13 @@ void Party_AddIsaacsParty(void);
 
 /// Sets screen transition 256 and event mode 2, puts the message browsers in
 /// mode 5 and actors 30 to 33 in mode 6, and brings Isaac's party in when the
-/// party came in by entrance 99.
+/// party came in by ENTRANCE_WITH_ISAACS_PARTY.
 s32 Scene_Initialize(void) {
   struct FieldWork *work = Ram_HeapSlots->fieldWork;
   s32 *effect = &work->transition;
   struct MainRoutineWork *party = &gMainRoutineWork;
 
-  *effect = 256;
+  *effect = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
   party->messageSpeed = 2;
   Actor_SetAnimationById(ACTOR_SANCTUM_MESSAGES, 5);
   Actor_SetAnimationById(ACTOR_WEAPON_SHOP_MESSAGES, 5);
@@ -622,7 +627,7 @@ s32 Scene_Initialize(void) {
   Actor_SetAnimationById(ACTOR_IDLE_B, 6);
   Actor_SetAnimationById(ACTOR_IDLE_C, 6);
   Actor_SetAnimationById(ACTOR_IDLE_D, 6);
-  if (party->entrance == 99)
+  if (party->entrance == ENTRANCE_WITH_ISAACS_PARTY)
     Party_AddIsaacsParty();
   return 0;
 }
@@ -645,20 +650,16 @@ void ShopTest_AdjustPartyLevels(s32 levels) {
   }
 }
 
-void *Window_Create(s32 x, s32 y, s32 width, s32 height, s32 flags);
 void Text_DrawMessage(s32 message, s32 window, s32 x, s32 y);
 void Text_DrawStringAtOffset(const void *text, void *window, s32 x, s32 y);
-void Text_DrawStringInWindow(const void *text, void *window, s32 x, s32 y);
-void Text_DrawNumberInWindow(s32 value, s32 a, void *window, s32 x, s32 y);
-void WindowSprite_RedrawSavedRect(void *window);
 
 /// The level-raising window, as Increase item and level's
 /// (IncreaseItemAndLevel_RunLevelEditor): shows the leader's name and level,
 /// raises every party member 5 levels on Start or Select and 1 on A, and
 /// closes on B. Talking to ACTOR_LEVEL_EDITOR.
 void ShopTest_RunLevelEditor(void) {
-  u8 *unit = Unit_Get(gMainRoutineWork.leaderActorId);
-  void *window = Window_Create(0, 0, 30, 9, 2);
+  struct Unit *unit = Unit_Get(gMainRoutineWork.leaderActorId);
+  void *window = Window_Create(0, 0, 30, 9, WINDOW_FLAG_INSTANT);
   const u8 *message = MsgRaiseEveryoneS;
   s32 redraw;
 
@@ -669,10 +670,10 @@ void ShopTest_RunLevelEditor(void) {
   for (;;) {
     if (redraw) {
       WindowSprite_RedrawSavedRect(window);
-      Text_DrawStringAtOffset(unit, window, 0, 48);
+      Text_DrawStringAtOffset(unit->name, window, 0, 48);
       Text_DrawStringInWindow(gShopTest_LvLabel, window, 48, 48);
       redraw = 0;
-      Text_DrawNumberInWindow(unit[15], 0, window, 72, 48);
+      Text_DrawNumberInWindow(unit->level, 0, window, 72, 48);
     }
     wait(1);
     if ((gInput.pressed & KEY_START) || (gInput.pressed & KEY_SELECT)) {
@@ -700,6 +701,9 @@ s32 PartyInventory_Add(s32 item);
 void ItemMenu_DrawItemDetails(void *window, s32 item);
 
 #define ITEM_COUNT 500
+#define BROWSER_ROW_STEP 10  ///< Right and Left move ten items.
+#define BROWSER_PAGE_STEP 30 ///< R and L move thirty.
+#define INVENTORY_ITEM_ID_MASK 0x1ff
 
 /// The item selector, as Increase item and level's
 /// (IncreaseItemAndLevel_SelectItem): Up and Down move one item, Right and Left
@@ -717,11 +721,12 @@ void ShopTest_SelectItem(void) {
   step = 0;
   item = 1;
   redraw = 1;
-  window = Window_Create(0, 0, 30, 7, 2);
-  details = Window_Create(0, 8, 13, 10, 2);
-  Dma_Set((const void *)OBJ_PLTT, (void *)&BG_PLTT_COLOR(14, 0),
+  window = Window_Create(0, 0, 30, 7, WINDOW_FLAG_INSTANT);
+  details = Window_Create(0, 8, 13, 10, WINDOW_FLAG_INSTANT);
+  Dma_Set((const void *)OBJ_PLTT, (void *)&BG_PLTT_COLOR(HIGHLIGHT_PALETTE, 0),
           DMA_COPY_HALFWORDS(16), REG_DMA3);
-  Dma_Set((const void *)(BG_PLTT + 244), (void *)(BG_PLTT + 238),
+  Dma_Set((const void *)&BG_PLTT_COLOR(WINDOW_PALETTE, WINDOW_BACKGROUND_COLOR),
+          (void *)&BG_PLTT_COLOR(HIGHLIGHT_PALETTE, TEXT_BACKGROUND_COLOR),
           DMA_COPY_HALFWORDS(1), REG_DMA3);
   Sound_Play(SE_MENU_CONFIRM);
   wait(1);
@@ -767,37 +772,37 @@ void ShopTest_SelectItem(void) {
     }
     if (gInput.repeat & KEY_RIGHT) {
       step = 1;
-      item += 10;
+      item += BROWSER_ROW_STEP;
       redraw = 1;
       Sound_Play(SE_MENU_CURSOR_MOVE);
     }
     if (gInput.repeat & KEY_LEFT) {
       step = -1;
-      item -= 10;
+      item -= BROWSER_ROW_STEP;
       redraw = 1;
       Sound_Play(SE_MENU_CURSOR_MOVE);
     }
     if (gInput.repeat & KEY_R) {
       step = 1;
-      item += 30;
+      item += BROWSER_PAGE_STEP;
       redraw = 1;
       Sound_Play(SE_MENU_CURSOR_MOVE);
     }
     if (gInput.repeat & KEY_L) {
       step = -1;
-      item -= 30;
+      item -= BROWSER_PAGE_STEP;
       redraw = 1;
       Sound_Play(SE_MENU_CURSOR_MOVE);
     }
     if (step == -1) {
       for (item = (item + ITEM_COUNT) % entryCount;
-           Item_GetDirect(item & 0x1ff)->icon == 0;
+           Item_GetDirect(item & INVENTORY_ITEM_ID_MASK)->icon == 0;
            item = (item + ITEM_COUNT - 1) % entryCount)
         ;
     }
     if (step == 1) {
       for (item = (item + ITEM_COUNT) % entryCount;
-           Item_GetDirect(item & 0x1ff)->icon == 0;
+           Item_GetDirect(item & INVENTORY_ITEM_ID_MASK)->icon == 0;
            item = (item + ITEM_COUNT + 1) % entryCount)
         ;
     }
@@ -860,8 +865,8 @@ UNUSED void ShopTest_DropActor(s32 mode, s32 id, s32 x, s32 z) {
 
 void Field_RequestBattleFromEncounterTable(s32 scene, s32 entrance);
 
-/// Mode 1 places object kind 354 at (x, z) in pixels; mode 2 grows object
-/// kind 252 there from 0x6666 to full size while it turns, then turns it
+/// Mode 1 places a brown boulder at (x, z) in pixels; mode 2 grows a winged
+/// statue there from two fifths to full size while it turns, then turns it
 /// opposite the leader's facing and passes scene and entrance on to
 /// Field_RequestBattleFromEncounterTable.
 UNUSED void ShopTest_RaiseMonster(s32 mode, s32 x, s32 z, s32 scene,

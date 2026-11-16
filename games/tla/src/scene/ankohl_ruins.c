@@ -1384,7 +1384,7 @@ void AnkohlRuins_RaiseDust(struct Actor *object) {
       dx = mask & Random16();
     }
     dy = Random16() & 7;
-    params.type = 673;
+    params.type = SPRITE_SPARKLE;
     FieldEffect_Spawn(object->x.fixed + INTtoFIXED(dx - 8),
                       object->y.fixed + INTtoFIXED(dy - 8), object->z.fixed, 0,
                       toFIXED(1) / 2, phase, EFFECT_USE_TYPE, &params);

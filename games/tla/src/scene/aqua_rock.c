@@ -1608,7 +1608,7 @@ void AquaRock_SetCellMarkerAnchor(s32 id) {
 #include "shared/ground_particles_draw.h"
 
 /// Starts the sparkles: 64 sprites on the ground at the origin, their tiles
-/// decoded into VRAM, and GroundParticles_Draw scheduled at priority 0x480 to
+/// decoded into VRAM, and GroundParticles_Draw scheduled in TASK_PASS_VBLANK to
 /// move them; the overlay's copy of FieldEffect_InitializeSparkles.
 void AquaRock_StartSparkles(void) {
   struct GroundParticleWork *work =

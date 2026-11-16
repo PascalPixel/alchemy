@@ -47,6 +47,9 @@ extern u8 gMapGridShapes[];
 /// their height in its second byte: Apojii's cell markers and Aqua Rock's
 /// spouts.
 #define MAP_SHAPE_MARKED 120
+/// The shape a scene gives the one cell under a pillar it raises alone, its
+/// entry rewritten as MAP_SHAPE_MARKED's: Aqua Rock's water pillar.
+#define MAP_SHAPE_RAISED_ALONE 121
 
 void WorldMap_UpdateRegionTint(s32 region, s32 gradual);
 

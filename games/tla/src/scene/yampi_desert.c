@@ -752,7 +752,7 @@ void YampiDesert_BurstSand(s32 x, s32 y, s32 z) {
     velocity[1] = 0;
     velocity[2] = Trig_Sin(i << 14);
     velocity[0] += velocity[0] >> 1;
-    velocity[0] += ((u32)(Random16() << 17) >> 16) - toFIXED(1);
+    velocity[0] += (u16)(Random16() << 1) - toFIXED(1);
     velocity[2] += (u16)Random16() - toFIXED(1) / 2;
     FieldEffect_Spawn(x, y, z, velocity[0], velocity[1], velocity[2],
                       EFFECT_USE_UPDATE | 1, &options);

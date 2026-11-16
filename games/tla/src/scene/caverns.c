@@ -350,8 +350,8 @@ void Caverns_FinishMovingAngaraBlock(void) {
         velocity[1] = 0;
         velocity[2] = Trig_Sin(angle) * 2;
         velocity[0] += velocity[0] >> 1;
-        velocity[0] += ((u32)(Random16() * 3 << 14) >> 16) - (toFIXED(3) / 8);
-        velocity[2] += ((u32)(Random16() * 3 << 13) >> 16) - (toFIXED(3) / 16);
+        velocity[0] += (u16)(Random16() * 3 >> 2) - (toFIXED(3) / 8);
+        velocity[2] += (u16)(Random16() * 3 >> 3) - (toFIXED(3) / 16);
         /* FAKEMATCH(dead): sum, never read again, assigned the flags inside the
          * call's arguments. */
         FieldEffect_Spawn(actor->x.fixed, actor->y.fixed, actor->z.fixed,

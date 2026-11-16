@@ -42,6 +42,9 @@ enum MapGridLayerIndex {
   MAPGRID_LAYER_OVERHEAD = 2, ///< `BG1`: roofs and tree tops, over the actors
 };
 
+/// A cell the leader jumps across, as The Broken Seal's
+/// CELL_BEHAVIOR_JUMP_FORWARD.
+#define CELL_BEHAVIOR_JUMP_FORWARD 254
 /// A cell's collision code that blocks whatever the heights, as The Broken
 /// Seal's CELL_BEHAVIOR_WALL.
 #define CELL_BEHAVIOR_WALL 255

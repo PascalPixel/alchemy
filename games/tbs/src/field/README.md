@@ -59,9 +59,14 @@ The fighters in a battle are actors too.
 ### How an actor script runs
 
 An [actor script](../../glossary.md#actor-script) is a list of orders
-written with `SC_` macros: set an animation, set a speed, move to a spot,
-wait, loop. An order that takes no time runs at once, and one that takes
-time holds the script there until it is done. The boy running round
+written with `SC_` macros (script command): set an animation, set a speed,
+move to a spot, wait, loop. It is a table of numbers, not code. One
+[task](../../glossary.md#task), `Actor_UpdateAllMotion`, visits every actor
+each frame and reads its script on from where it stopped. An order that
+takes no time runs at once, and one that takes time holds the script there
+until it is done: `SC_WAIT(20)` sets a count in the actor that the task
+takes one off each frame, which is not the `wait()` an event calls
+([Two kinds of waiting](../../system.md#two-kinds-of-waiting)). The boy running round
 Vault's well is a few lines in [vault.c](../scene/vault.c).
 
 Moving is eased. An actor has a top speed and an acceleration, gains speed

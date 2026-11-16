@@ -79,10 +79,15 @@ nothing is pressed for three minutes and idle sleep is on.
 
 ### Waiting from anywhere
 
-Any routine may call `wait()`, however deep in its own calls it is. The
-loop runs on a stack of its own: when the caller's stack has grown past
-the loop's, the part in use is copied aside first and put back when
-`wait()` returns.
+Any routine may call `wait()`, however deep in its own calls it is, but
+for a [task](../../glossary.md#task) and the VBlank handler: a task is
+called from inside `wait()` and must return for the frame to end. Code that
+a task might reach checks first (`gTasksRunning`).
+
+There is one line of execution throughout: `wait()` starts no second one.
+It does move the stack. The loop always runs from the same fixed place in
+memory, so when the caller's stack has grown past that place, the part in
+use is copied aside first and put back when `wait()` returns.
 
 ## The task runner
 

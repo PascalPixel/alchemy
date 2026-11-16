@@ -62,47 +62,135 @@ turn of it, and the routine itself is `MainRoutine_Run` in
 
 ![A villager by Vale's river says `I don't blame Felix.` and waits for the A Button. Watch the river behind him: it keeps flowing the whole time he waits.](https://alchemy.pascalpixel.com/guides/engine/waiting-talk.gif)
 
-Inside a sequence there is no loop that polls a state machine each frame.
-Code that needs time to pass calls [`wait()`](glossary.md#wait) with a
-number of frames and simply stands still.
+The game has no loop at the top that turns once a frame and calls
+everything else. Its frame loop is inside one function, [`wait()`](glossary.md#wait),
+and this is all of its shape:
 
-The trick is that the game runs inside the wait. For every frame it is
-asked for, `wait()` runs one whole frame of the game, then sleeps until the
-console has shown the picture.
+```c
+void wait(s32 frames) {
+  for (frame = 0; frame < frames; frame++) {
+    // every task runs once
+    // this frame's sprites are put in order
+    // sleep until VBlank, when the frame is copied to the screen
+  }
+}
+```
+
+So `wait(10)` does not stand aside while something else runs the game. It
+runs ten frames of the game, there and then, and returns.
+
+One piece of code calls it at a time: the code that is telling the story
+just now, a cutscene, a menu, the field's own routine. That code is plain C.
+It runs once from top to bottom, and wherever it says `wait()` it stands
+still while the loop inside goes round.
 
 ```mermaid
 %%{init: {"theme": "base", "themeVariables": {"lineColor": "#9AA3AE", "edgeLabelBackground": "#FFFFFF"}, "flowchart": {"curve": "basis", "padding": 12}}}%%
 flowchart TD
-  call(["Code calls wait"]) --> tasks(["Every task runs once"])
-  tasks --> halt(["Sleep until the picture is shown"])
+  code(["The story's code runs until it calls wait"]) --> tasks(["Every task runs once"])
+  tasks --> halt(["Sleep until VBlank"])
   halt -- "frames left" --> tasks
-  halt -- "done" --> back(["The code's next line runs"])
+  halt -- "done" --> back(["wait returns: the code's next line runs"])
   classDef code fill:#DDE3EC,stroke:#8FA0B8,color:#2E3C50
   classDef frame fill:#D2EEF3,stroke:#7FC3D0,color:#1E5966
-  class call,back code
+  class code,back code
   class tasks,halt frame
 ```
 
 This is what lets a cutscene or a menu be written as a plain list, top to
 bottom, in the order things happen. A night at an inn is: wait, fade to
-black, play the tune and wait for it to end, wait, fade back in. Nothing in
-that list keeps the game alive. The waits do.
+black, play the tune and wait for it to end, wait, fade back in. No state
+is kept between frames to remember how far the night has got: the place in
+the code is the memory.
 
-A [task](glossary.md#task) is the other half. It is a routine on a short
-list that `wait()` calls once in every frame, highest rank first. A task
-does one frame's worth of something and returns at once: move the actors a
-step, type the next letters into a window, swap the river's tiles. Whatever
-needs work done every frame puts a task on the list and takes it off when
-it is done.
+### Tasks
 
-If you have used coroutines, the waiting code is the one coroutine and the
-tasks are the scheduler's callbacks, except that the scheduler lives inside
-the yield. If you have not, think of two kinds of code: code that tells a
-story and waits, and code that keeps the world moving while it does.
+A [task](glossary.md#task) is a function on a short list, which holds 20.
+Each trip round the loop calls every task on it once, highest rank first
+(the code calls the rank a `priority`). A task does one frame's worth of
+something and returns at once: move the actors a step, type the next
+letters into a window, swap the river's tiles.
 
-A task has one frame, so it cannot start something long, like a
+Four things about tasks are easy to get wrong:
+
+- Tasks run only from inside `wait()`. If no code is waiting, nothing in the
+  game moves. The river in the picture above flows because the villager's
+  code is waiting for a button.
+- A task must never call `wait()`. It is being called from inside one, and
+  must return for the frame to end.
+- A task is a whole piece of work, not a thing in the world. A villager is not a
+  task, and neither is a footprint. They are [actors](glossary.md#actor),
+  rows in a table, and one task visits all of them each frame.
+- The list keeps a function and a rank and nothing else. What a task needs
+  to remember lives with whatever put it on the list: the field's work, a
+  window's.
+
+Anything may put a task on the list and take it off again. The field and
+the windows keep theirs there as long as they run, a scene adds its own for
+a waterfall or a puzzle, and the [main routine](#the-main-routine) takes
+every one off between two sequences. A few tasks are called from the VBlank
+handler instead, once a VBlank: the ones that copy something to the screen.
+
+### Two kinds of waiting
+
+An actor has to pause too: a villager stands a while between two strolls.
+It cannot call `wait()`, because the task that moves it has to return. So an
+[actor script](glossary.md#actor-script) has a wait of its own, which is
+only a number kept in the actor. This is the script of a villager who
+wanders near home:
+
+```c
+SC_ANIMATION(2),          // walk
+SC_WANDER_HOME(4, 8, 16), // pick a spot near home and head for it
+SC_SYNC,                  // stay on this line until it arrives
+SC_ANIMATION(1),          // stand
+SC_WAIT(20),              // stand for 20 frames
+```
+
+These are numbers in a table, not code that runs (`SC_` is for script
+command). Each frame the actors' task comes to this villager. If his count
+is above zero it takes one off and goes on to the next actor; otherwise it
+reads his script on from where he stopped. Twenty villagers can all be
+part-way through a pause, each with a count of his own.
+
+| | `wait(20)` in C | `SC_WAIT(20)` in an actor script |
+| --- | --- | --- |
+| What it is | a function that runs 20 frames of the game | an order that sets a count to 20 |
+| Who uses it | the one piece of code telling the story | every actor, each for itself |
+| Does it hold anything up? | that code stands still | no: the task passes that actor by for 20 frames |
+| How many at once | one | as many as there are actors |
+
+The second happens inside the first. The story's code is in `wait()`, the
+loop there runs the tasks, one task steps the actors, and each actor counts
+its own pause down.
+
+### One waiter at a time
+
+The game has one line of execution, so two pieces of code never wait side
+by side. What does happen is one wait after another, at any depth: an event
+shows a message, and showing a message waits for the A Button before it
+returns.
+
+When two things must take time together, neither of them waits. The code
+tells each actor where to go, which returns at once, and then waits once
+for both:
+
+```c
+Actor_WalkTo(ACTOR_PARTY_LEADER, 120, 96); // returns at once
+Actor_WalkTo(ACTOR_GARET, 136, 96);        // so does this
+wait(40);                                  // both walk while this runs
+```
+
+An event command whose name ends `AndWait` does the last two steps
+together: it gives the order, then waits until that actor has arrived.
+
+Because a task cannot wait, it cannot start something long, like a
 conversation. It leaves a [request](glossary.md#field-request) instead, and
-the waiting code picks it up.
+the field's routine, which is the code waiting, reads the requests each time
+its `wait(1)` returns.
+
+If you have used coroutines: the story's code is the one coroutine, and
+`wait()` is its yield and the scheduler in one.
 
 [The frame loop](src/system/README.md#the-frame-loop) has a frame's order
 in full, and [The task runner](src/system/README.md#the-task-runner) says

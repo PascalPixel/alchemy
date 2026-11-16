@@ -287,8 +287,11 @@ Evidence: tradition: フレーム, one pass of a game's processing.
 ### Wait
 
 To wait is to let [frames](#frame) go by in the middle of a piece of code.
-`wait(10)` lets ten frames of the game run and then carries on with the next
-line. When a woman in Vale feels a tremor, her code starts the screen
+`wait(10)` runs ten frames of the game, there inside the call, and then
+carries on with the next line: the game's frame loop is this function, and
+there is no other. One piece of code waits at a time. An
+[actor script](#actor-script)'s `SC_WAIT` is another thing, a count kept in
+the actor. When a woman in Vale feels a tremor, her code starts the screen
 shaking, waits ten frames, and only then goes on to her line. So a scene can
 be written top to bottom, in the order things happen
 ([System](system.md#waiting-and-tasks)).
@@ -297,8 +300,11 @@ Evidence: tradition: WAIT, the period's word for it.
 
 ### Task
 
-A task is a routine the game runs once in every [frame](#frame), even
-while other code is [waiting](#wait), until it is taken off the list. The
+A task is a routine on a list that [`wait()`](#wait) calls once in every
+[frame](#frame), until it is taken off the list. Tasks run only while some
+code is waiting, and a task never waits itself. A task is a whole piece
+of work, such as moving every [actor](#actor) a step, not one thing in the
+world. The
 task that types a villager's line into its window letter by letter is
 one. The list, `gTasks`, has room for 20
 ([System code](src/system/README.md#the-task-runner)).
@@ -751,7 +757,9 @@ Evidence: plain English for what a row does, place an actor.
 
 An actor script is the list of small commands an [actor](#actor) follows, a
 little each [frame](#frame): move here, wait, jump, go back to the start.
-The commands' names start `SC_`. A villager who wanders near home is running
+The commands' names start `SC_`, for script command. A script does not run by
+itself: one [task](#task) steps every actor's script each frame, and a
+script's wait is a count in the actor, not [`wait()`](#wait). A villager who wanders near home is running
 one. A command can also hand the actor to a built-in script, a piece of the
 field's own code that steers it, and the player's control of the leader is
 one of those

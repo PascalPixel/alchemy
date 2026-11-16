@@ -99,6 +99,13 @@ Every actor carries an [actor script](glossary.md#actor-script), a short
 list of orders it works through a little each frame. A footprint's is two
 orders long: wait two seconds, disappear.
 
+An actor does not run itself. It is a row in a table, and one
+[task](glossary.md#task) visits every row each frame and carries that
+actor's script on from where it stopped. The footprint's two seconds are a
+count in its row that the task takes one off each frame: not the
+[`wait()`](glossary.md#wait) a cutscene calls
+([Waiting and tasks](system.md#two-kinds-of-waiting)).
+
 Isaac is an actor like any other. While the player steers, his script is
 one order on repeat: do what the D-pad says. When an event needs him, it
 swaps that script for another. That swap is all "the game takes control"

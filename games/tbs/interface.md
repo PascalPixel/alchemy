@@ -16,7 +16,7 @@ A box is a [window](glossary.md#window). Whoever wants one asks for it
 once, then carries on or waits. It never draws it.
 
 The drawing is done by the windows' own [task](glossary.md#task), which
-runs once in every frame whatever else is going on. Each frame it grows
+runs once in every frame from inside whatever code is waiting. Each frame it grows
 every opening window a little, shrinks every closing one, and types the
 next letters into any that have text coming. That is why a line and the
 portrait beside it can both be on the move while the conversation that
@@ -40,7 +40,7 @@ player gave Isaac.
 Showing one is two steps. First the whole message is decoded: unpacked,
 with its blanks filled from the game's state at that moment. Then the
 windows' task types it a few letters a frame, stops at the end of each
-page, and waits for a button.
+page, and each frame after that looks for a button.
 
 [Decoding a message](src/window/README.md#decoding-a-message) shows the
 packing and what a blank can hold.

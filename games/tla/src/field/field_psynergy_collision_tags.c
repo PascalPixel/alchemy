@@ -45,24 +45,6 @@ void FlagBlock_PlaceAllMarkingEdges(struct ActorFlag *list) {
         owner->layer, owner->x.fixed, owner->z.fixed);
 }
 
-struct SwitchCell {
-  u8 unused[2]; ///< no code names it
-  u8 block;
-  u8 unk03_0 : 7;
-  u8 raised : 1;
-};
-
-struct RestoreLayer {
-  u8 unused[0x138 - 0x108]; ///< no code names it
-  struct SwitchCell *cells;
-  u8 unusedAfterCells[4]; ///< no code names it
-};
-
-struct RestoreMap {
-  u8 unused[0x108]; ///< no code names it
-  struct RestoreLayer layers[1];
-};
-
 /// For each flag block whose picture disagrees with its flag: with the flag
 /// set its cell is lowered 32 pixels and the flag cleared, with it clear the
 /// cell is raised and the flag set; the event work remembers the block.
@@ -85,9 +67,8 @@ void FlagBlock_ApplyFlags(struct ActorFlag *list) {
         change = 1;
     }
     if (change) {
-      struct SwitchCell *cells = ((struct RestoreMap *)Ram_HeapSlots->mapGrid)
-                                     ->layers[object->layer]
-                                     .cells;
+      struct MapCell *cells =
+          Ram_HeapSlots->mapGrid->layers[object->layer].cells;
       u8 *shapes;
       s32 slot;
       u32 key;
@@ -117,13 +98,12 @@ void FlagBlock_ApplyFlags(struct ActorFlag *list) {
         if (GameFlag_Get(flag)) {
           s32 bits;
 
-          cells->block = 0;
-          // The bit set in int arithmetic, where the clear below is a bitfield.
-          bits = ((u8 *)cells)[3] | 0x80;
-          ((u8 *)cells)[3] = bits;
+          cells->collisionCode = 0;
+          bits = cells->attributeB | 0x80;
+          cells->attributeB = bits;
         } else {
-          cells->block = 0xff;
-          cells->raised = 0;
+          cells->collisionCode = 0xff;
+          cells->attributeB &= 0x7f;
         }
       }
     }

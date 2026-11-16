@@ -38,7 +38,7 @@ void BattleEffect_PlotCanvasPixel(s32 x, s32 y, s32 color) {
   u8 *canvas = Ram_HeapSlots->battleCanvas;
 
   if (x > 63) {
-    canvas += 0x1000;
+    canvas += CANVAS_SIZE;
     x -= 64;
   }
   canvas[map[(y << 6) + x]] = color;
@@ -249,7 +249,7 @@ void BattleEffect_DrawCanvasSprite(void) {
     if (work->mode == CANVAS_SPRITE_16_COLORS) {
       EffectSprite_Init(&work->sprite, 32, 32, OAM_SQUARE_64X64, work->tile);
       work->sprite.oam.fullColor = 0;
-      work->sprite.oam.palette = 14;
+      work->sprite.oam.palette = CANVAS_PALETTE;
       work->sprite.oam.priority = work->priority;
       work->sprite.depth = work->depth;
       work->sprite.x = x;
@@ -345,10 +345,12 @@ void BattleEffect_EndCanvasSprite(void) {
 
 /// Actor_VanishInSparks' work, in heap slot 92: the sparks' picture, then the
 /// sparks and their sprites.
+#define VANISH_SPARK_COUNT 64
+
 struct VanishSparksWork {
-  u8 picture[0x400];
-  struct WhirlSpark sparks[64];
-  struct EffectSprite sprites[64];
+  u8 picture[1024];
+  struct WhirlSpark sparks[VANISH_SPARK_COUNT];
+  struct EffectSprite sprites[VANISH_SPARK_COUNT];
 };
 
 #define SPARK_LIFE 50
@@ -382,7 +384,7 @@ void Actor_VanishInSparks(s32 objectId) {
 
   i = 0;
   spark = work->sparks;
-  for (; i < 64; i++, spark++) {
+  for (; i < VANISH_SPARK_COUNT; i++, spark++) {
     sprite = &work->sprites[i];
     EffectSprite_Init(sprite, 4, 4, 0, tiles + (i & 15) * 2);
     sprite->oam.fullColor = 1;
@@ -414,12 +416,12 @@ void Actor_VanishInSparks(s32 objectId) {
         next++;
         spark->angle = sparkAngle;
         spark->radius = radius;
-        next %= 64;
+        next %= VANISH_SPARK_COUNT;
       }
     }
     spark = work->sparks;
     sprite = work->sprites;
-    i = 63;
+    i = VANISH_SPARK_COUNT - 1;
     for (; i >= 0; i--, sprite++, spark++) {
       if (spark->age >= 0) {
         struct EffectSprite *drawn = sprite;
@@ -445,8 +447,8 @@ void Actor_VanishInSparks(s32 objectId) {
           drawn->oam.index = tiles + (spark->age & 3) * 2;
           EffectSprite_Draw(drawn);
           spark->angle += TRIG_TURN / 32;
-          spark->radius -= 0x3333;
-          spark->y -= 0x4000;
+          spark->radius -= toFIXED(1) / 5;
+          spark->y -= toFIXED(1) / 4;
         }
         if (++spark->age == SPARK_LIFE)
           spark->age = -1;
@@ -512,14 +514,14 @@ void FieldEffect_DrawScaledActor(struct FieldParticle *object) {
 
   sprite = object->object;
   offset = 0;
-  if (object->flags & 4)
-    offset = 0x1fc0000 - object->z;
+  if (object->flags & FIELD_PARTICLE_LIFTED_BY_Z)
+    offset = toFIXED(508) - object->z;
   scale[0] = Iwram_MulFX(object->scaleX, sprite->scale);
   scale[1] = Iwram_MulFX(object->scaleY, sprite->scale);
   SET_VECTOR(position, object->x, offset, object->z + offset);
   position[3] = 0;
-  if (object->x > -toFIXED(32) && object->x < 0x1100000 &&
-      object->z > -toFIXED(32) && object->z < 0xe00000)
+  if (object->x > -toFIXED(32) && object->x < toFIXED(272) &&
+      object->z > -toFIXED(32) && object->z < toFIXED(224))
     Render_ApplyProjectedPlacementFar(sprite, position, scale, 0);
 }
 
@@ -546,7 +548,7 @@ void FieldParticle_UpdateMotion(struct FieldParticle *effect) {
     ix = dx / FIXED_ONE;
     iz = dz / FIXED_ONE;
     distance = toFIXED(Iwram_Sqrt(ix * ix + iz * iz));
-    if (distance < 0x800000)
+    if (distance < toFIXED(128))
       distance = Math_SqrtFX(Iwram_MulFX(dx, dx) + Iwram_MulFX(dz, dz));
     if (distance <= toFIXED(8)) {
       FieldParticle_SetPosition(effect, effect->targetX, effect->targetZ);

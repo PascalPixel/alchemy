@@ -11,6 +11,7 @@
 #include "system/system.h"
 #include "gamepak/far_call/field.h"
 #include "field/field.h"
+#include "field/emote.h"
 
 /// For each cell the Cyclone touched (the event work's point list from
 /// FieldPsynergy_GatherNearbyCells) inside the width by height rectangle at
@@ -20,10 +21,10 @@
 /// catacombs call it after a Cyclone.
 void Cyclone_CopyTouchedCells(s32 x, s32 z, s16 layerIndex, s16 width,
                               s16 height, s32 toX, s32 toZ) {
-  u8 *event = Ram_HeapSlots->fieldWork;
+  struct FieldWork *event = Ram_HeapSlots->fieldWork;
   struct Actor *owner = Actor_GetById(Party_GetLeaderActor());
   struct MapLayer *layer = Ram_HeapSlots->mapGrid->layers;
-  struct TouchCell *cell = (struct TouchCell *)(event + 0xcc0);
+  struct TouchCell *cell = (struct TouchCell *)event->psynergyCells;
   s32 lift;
   s32 scrollX = FIELD_CELL(layer->offsetX);
   s32 scrollZ = FIELD_CELL(layer->offsetY);
@@ -59,7 +60,7 @@ void Cyclone_CopyTouchedCells(s32 x, s32 z, s16 layerIndex, s16 width,
       MapGrid_GetCellAt(FIELD_CELL_ORIGIN(cx), FIELD_CELL_ORIGIN(cz), 2)
           ->collisionCode = 0;
       n = gTouchCopies.count;
-      if (n < 64) {
+      if (n < (s32)ARRAY_COUNT(gTouchCopies.copies)) {
         gTouchCopies.copies[n].toX = toX + dx;
         gTouchCopies.copies[n].toZ = toZ + dz;
         gTouchCopies.copies[n].fromX = x + dx;
@@ -88,21 +89,22 @@ void MadPlant_LeapAtLeader(s32 sprite, s32 x, s32 z) {
   if (object == NULL)
     return;
   Actor_SetSpriteFlagsFar(object, 0);
-  object->gravity = 0x5999;
+  object->gravity = toFIXED(7) / 20;
   object->velocityY = toFIXED(5);
   object->scaleY = object->scaleX = FIXED_ONE * 2 / 5;
   do {
     wait(1);
-    object->scaleY = object->scaleX = object->scaleX + 0x3d7;
+    object->scaleY = object->scaleX = object->scaleX + FIXED_ONE * 3 / 200;
     object->facing += FACING_STEP;
-  } while (object->scaleX <= 0xffff);
+  } while (object->scaleX < FIXED_ONE);
   object->scaleY = object->scaleX = FIXED_ONE;
   Actor_SelectAnimationFar(owner, 1);
   Actor_TurnPairToFaceEachOther(object, owner);
   owner->timer = owner->facing;
   Event_Wait(10);
   Actor_StartRepeatedMotion(ownerId, 3);
-  FieldEffect_SetAttached(ownerId, 258);
+  FieldEffect_SetAttached(ownerId,
+                          ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   Event_Wait(32);
   object->gravity = toFIXED(1);
   object->velocityY = toFIXED(6);
@@ -143,7 +145,7 @@ void Cyclone_PlotArc(s32 radius, s32 angle, u16 *offsets, u8 *pixels) {
     s32 value = i / 2 + 225;
 
     pixels[offsets[y * 64 + x]] = value;
-    angle += 0x170;
+    angle += 368;
   }
 }
 
@@ -154,9 +156,9 @@ void ParticleBurst_Start(void) {
   struct ParticleBurstWork *work =
       (struct ParticleBurstWork *)Ram_HeapSlots->battleEffect;
   struct FieldEffectWork *effect = Ram_HeapSlots->fieldEffectWork;
-  u8 *event = Ram_HeapSlots->fieldWork;
+  struct FieldWork *event = Ram_HeapSlots->fieldWork;
   struct Actor *owner = effect->mainActor;
-  struct BurstCell *cell = (struct BurstCell *)(event + 0xcc0);
+  struct BurstCell *cell = (struct BurstCell *)event->psynergyCells;
   FIXED dx = FIELD_CELL_ORIGIN(cell->x) - owner->x.fixed + toFIXED(8);
   FIXED dz = FIELD_CELL_ORIGIN(cell->z) - owner->z.fixed + toFIXED(8);
   s32 heading = (u16)Trig_Atan(dz, dx);
@@ -174,7 +176,8 @@ void ParticleBurst_Start(void) {
   work->cacheEntry = resource;
   work->tile = vram;
 
-  for (i = 0, particle = work->particles; i < 96; i++, particle++) {
+  for (i = 0, particle = work->particles; i < PARTICLE_BURST_COUNT;
+       i++, particle++) {
     sprite = &work->sprites[i];
     EffectSprite_Init(sprite, 4, 4, 0, vram);
     sprite->depth = 250;
@@ -185,7 +188,7 @@ void ParticleBurst_Start(void) {
     Vector_AddPolarOffset(Random16() * 8 + toFIXED(8), Random16(),
                           &particle->x);
     particle->heading = heading;
-    particle->speed = Random16() + 0x10000;
+    particle->speed = Random16() + toFIXED(1);
     particle->spin = (Random16() >> 6) + 384;
     if (i & 1)
       particle->spin = -particle->spin;

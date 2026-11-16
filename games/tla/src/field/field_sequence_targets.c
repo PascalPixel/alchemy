@@ -11,14 +11,14 @@
 #include "system/system.h"
 
 /// Picks the object nearest object id, under 32 pixels away and 48 pixels in
-/// height. Distances to ids above 63 count double and to objects with
-/// collision flag 4 ten thirteenths; beyond 11 pixels the object must also lie
+/// height. Distances to treasure spots count double and to actors with
+/// ACTOR_NEAR_TALK ten thirteenths; beyond 11 pixels the object must also lie
 /// within 0x2fff of id's facing. Returns -1 when none qualifies.
 s32 Field_FindNearbyTalkTarget(s32 id) {
-  struct Actor *src;
-  struct Actor *obj;
+  struct Actor *self;
+  struct Actor *candidate;
   s32 best;
-  s32 bestDist;
+  s32 bestDistance;
   s32 i;
   s32 dx;
   s32 dy;
@@ -26,49 +26,50 @@ s32 Field_FindNearbyTalkTarget(s32 id) {
   s32 xx;
   s32 yy;
   s32 zz;
-  s32 sq;
-  s32 dist;
+  s32 distanceSquared;
+  s32 distance;
   s32 angle;
 
   best = -1;
-  bestDist = 32;
-  src = Actor_Lookup(id);
-  if (src != 0) {
-    for (i = 0; i <= 80; i++) {
+  bestDistance = 32;
+  self = Actor_Lookup(id);
+  if (self != 0) {
+    for (i = 0; i <= FIELD_ACTOR_COUNT; i++) {
       if (i == id)
         continue;
 
-      obj = Actor_Lookup(i);
-      if (obj == 0 || (obj->collisionFlags & 8) != 0)
+      candidate = Actor_Lookup(i);
+      if (candidate == 0 ||
+          (candidate->collisionFlags & ACTOR_NOT_TARGETED) != 0)
         continue;
 
-      if (obj->y.fixed - src->y.fixed >= 0) {
-        if (obj->y.fixed - src->y.fixed >= toFIXED(48))
+      if (candidate->y.fixed - self->y.fixed >= 0) {
+        if (candidate->y.fixed - self->y.fixed >= toFIXED(48))
           continue;
-      } else if (src->y.fixed - obj->y.fixed >= toFIXED(48)) {
+      } else if (self->y.fixed - candidate->y.fixed >= toFIXED(48)) {
         continue;
       }
 
-      dx = (obj->x.fixed - src->x.fixed) / FIXED_ONE;
-      dy = (obj->y.fixed - src->y.fixed) / FIXED_ONE;
-      dz = (obj->z.fixed - src->z.fixed) / FIXED_ONE;
+      dx = (candidate->x.fixed - self->x.fixed) / FIXED_ONE;
+      dy = (candidate->y.fixed - self->y.fixed) / FIXED_ONE;
+      dz = (candidate->z.fixed - self->z.fixed) / FIXED_ONE;
 
       xx = dx * dx;
       yy = dy * dy;
       zz = dz * dz;
-      sq = xx + yy + zz;
-      dist = Iwram_Sqrt(sq);
-      if (i > 63)
-        dist <<= 1;
-      if ((obj->collisionFlags & 4) != 0)
-        dist = dist * 10 / 13;
-      if (dist >= bestDist)
+      distanceSquared = xx + yy + zz;
+      distance = Iwram_Sqrt(distanceSquared);
+      if (i > FIELD_TREASURE_ACTOR - 1)
+        distance <<= 1;
+      if ((candidate->collisionFlags & ACTOR_NEAR_TALK) != 0)
+        distance = distance * 10 / 13;
+      if (distance >= bestDistance)
         continue;
 
-      angle = (u16)Trig_Atan(obj->z.fixed - src->z.fixed,
-                             obj->x.fixed - src->x.fixed);
-      if (dist > 11) {
-        s32 diff = (s16)(angle - src->facing);
+      angle = (u16)Trig_Atan(candidate->z.fixed - self->z.fixed,
+                             candidate->x.fixed - self->x.fixed);
+      if (distance > 11) {
+        s32 diff = (s16)(angle - self->facing);
 
         if (diff < -0x2fff)
           continue;
@@ -77,7 +78,7 @@ s32 Field_FindNearbyTalkTarget(s32 id) {
       }
 
       best = i;
-      bestDist = dist;
+      bestDistance = distance;
     }
   }
   return best;
@@ -129,7 +130,8 @@ s32 Field_MeasurePsynergyReach(s32 animation, s32 selfId, s32 otherId) {
 
   self = Actor_Lookup(selfId);
   other = Actor_Lookup(otherId);
-  if (self == 0 || other == 0 || (other->collisionFlags & 8) != 0)
+  if (self == 0 || other == 0 ||
+      (other->collisionFlags & ACTOR_NOT_TARGETED) != 0)
     return -1;
 
   // Height: within the rule's pixels above or below.
@@ -143,10 +145,10 @@ s32 Field_MeasurePsynergyReach(s32 animation, s32 selfId, s32 otherId) {
       return -1;
   }
 
-  // Distance over the ground; small objects (flag 0x10) count from half as
-  // far again.
+  // Distance over the ground; actors with ACTOR_NEAR_PSYNERGY count from half
+  // as far again.
   range = rule->range + 1;
-  if ((other->collisionFlags & 0x10) != 0)
+  if ((other->collisionFlags & ACTOR_NEAR_PSYNERGY) != 0)
     range = range * 3 / 2;
   dx = (other->x.fixed - self->x.fixed) / FIXED_ONE;
   dz = (other->z.fixed - self->z.fixed) / FIXED_ONE;
@@ -180,7 +182,7 @@ s32 Field_FindNearbyPsynergyTarget(s32 self, s32 effect) {
   s32 found = -1;
   s32 i;
 
-  for (i = 0; i <= 80; i++) {
+  for (i = 0; i <= FIELD_ACTOR_COUNT; i++) {
     if (i != self) {
       s32 distance = Field_MeasurePsynergyReach(effect, self, i);
 
@@ -211,8 +213,6 @@ s32 FieldEffect_PlayCueAndStartEmitterOnTarget(s32 actorId, s32 target,
   return emitter;
 }
 
-#define BYTE_AT(base, offset) (*(u8 *)((u8 *)(base) + (offset)))
-
 /// Whether the object 16 pixels in front of the current owner, along its
 /// facing rounded to a quarter turn, can be pushed on by 16 pixels: 1 when
 /// nothing solid stands on the cell beyond it or above it and its terrain
@@ -240,7 +240,7 @@ s32 Leader_CanPushObjectAhead(void) {
   target = Actor_FindAtCell(position, 1);
   if (target == 0)
     return 0;
-  if (BYTE_AT(target, 98) != 0)
+  if (target->riseCounter != 0)
     return 0;
 #if TLA_PATCH_1
   id = gMainRoutineWork.haltedActor;
@@ -252,13 +252,13 @@ s32 Leader_CanPushObjectAhead(void) {
   position[2] = target->z.fixed;
   Vector_AddPolarOffset(toFIXED(16), angle, position);
   hit = Actor_FindAtCell(position, 1);
-  if (hit != 0 && (hit->collisionFlags & 1))
+  if (hit != 0 && (hit->collisionFlags & ACTOR_SOLID))
     return 0;
   above[0] = target->x.fixed;
   above[1] = target->y.fixed + toFIXED(16);
   above[2] = target->z.fixed;
   hit = Actor_FindAtCell(above, 1);
-  if (hit != 0 && (hit->collisionFlags & 1))
+  if (hit != 0 && (hit->collisionFlags & ACTOR_SOLID))
     return 0;
   terrain = target->layer;
   target->layer = 2;
@@ -268,8 +268,6 @@ s32 Leader_CanPushObjectAhead(void) {
     return 0;
   return 1;
 }
-
-#define S16_AT(base, offset) (*(s16 *)((u8 *)(base) + (offset)))
 
 /// Pushes the object ahead of the current owner on by 16 pixels, as
 /// Leader_CanPushObjectAhead allowed.
@@ -298,7 +296,7 @@ void Leader_PushObjectAhead(void) {
   result = MapGrid_CheckCollisionFar(target, position);
   target->layer = terrain;
   if (result <= 0) {
-    Actor_SelectAnimationFar(owner, 8);
+    Actor_SelectAnimationFar(owner, ANIM_PUSH);
     wait(15);
     Sound_PlayFar(SE_PUSH);
     target->speedLimit = toFIXED(1) / 5;
@@ -315,9 +313,10 @@ void Leader_PushObjectAhead(void) {
     Event_NoOp();
     Actor_SetPositionAndResetMotionFar(target, position[0], position[1],
                                        position[2]);
-    Actor_SetPositionAndResetMotionFar(owner, S16_AT(owner, 10) << 16,
-                                       owner->y.fixed, S16_AT(owner, 18) << 16);
-    Actor_SelectAnimationFar(owner, 1);
+    Actor_SetPositionAndResetMotionFar(owner, toFIXED(owner->x.part[0].integer),
+                                       owner->y.fixed,
+                                       toFIXED(owner->z.part[0].integer));
+    Actor_SelectAnimationFar(owner, ANIM_STAND);
     owner->speedLimit = speed;
     owner->acceleration = acceleration;
   }

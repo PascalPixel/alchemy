@@ -49,8 +49,8 @@
 #include "field/ground_mask.h"
 #include "resource_ids.h"
 
-/// Unused: only the far-call table refers to it. Finds the first of actors 64
-/// to 79 within 16 pixels of the leader on both axes and puts the leader 20
+/// Unused: only the far-call table refers to it. Finds the first treasure spot
+/// actor within 16 pixels of the leader on both axes and puts the leader 20
 /// pixels from it, on the line from it to the leader, with no destination.
 void Leader_StepAwayFromNearbyActor(void) {
   struct Actor *leader;
@@ -60,8 +60,8 @@ void Leader_StepAwayFromNearbyActor(void) {
   s32 i;
 
   leader = Actor_Lookup(Party_GetLeaderActor());
-  for (i = 0; i <= 15; i++) {
-    other = Actor_Lookup(i + 64);
+  for (i = 0; i <= FIELD_SCOOP_ACTOR - FIELD_TREASURE_ACTOR; i++) {
+    other = Actor_Lookup(i + FIELD_TREASURE_ACTOR);
     dx = leader->x.fixed - other->x.fixed;
     dz = leader->z.fixed - other->z.fixed;
     if (dx > -toFIXED(16) && dx < toFIXED(16))
@@ -139,7 +139,7 @@ struct Actor *ItemDisplay_ShowItemInFront(s32 actor, s32 item) {
   struct Actor *object;
   struct Sprite *sprite;
   FIXED position[3];
-  u8 *buffer;
+  GlyphTransfer *transfer;
   s32 tile;
   s32 i;
 
@@ -168,8 +168,8 @@ struct Actor *ItemDisplay_ShowItemInFront(s32 actor, s32 item) {
     } while (i >= 0);
   }
   wait(3);
-  picture =
-      Actor_CreateFar(489, position[0], position[1] + toFIXED(16), position[2]);
+  picture = Actor_CreateFar(SPRITE_UNSEEN_MARKER, position[0],
+                            position[1] + toFIXED(16), position[2]);
   if (picture == NULL)
     return NULL;
   Actor_StartScriptFar(picture, gFieldEffect_ParticleEmitterScript);
@@ -179,13 +179,13 @@ struct Actor *ItemDisplay_ShowItemInFront(s32 actor, s32 item) {
   sprite->image.fullColor = 0;
   sprite->image.palette = 0;
   sprite->image.priority = 1;
-  picture->motionFlags = 2;
+  picture->motionFlags = ACTOR_FALLS;
   picture->groundHeight = position[1];
   picture->velocityY = toFIXED(2);
   picture->gravity = toFIXED(1) / 4;
-  buffer = HeapSlot_Alloc(HEAP_SLOT_GLYPH_TRANSFER, sizeof(GlyphTransfer));
+  transfer = HeapSlot_Alloc(HEAP_SLOT_GLYPH_TRANSFER, sizeof(GlyphTransfer));
   Icon_DrawItemFar(item);
-  tile = VramCache_Load(sprite->slot, 4 * TILE_SIZE_4BPP, buffer + 1024);
+  tile = VramCache_Load(sprite->slot, 4 * TILE_SIZE_4BPP, transfer->tiles);
   sprite->image.tile = tile;
   HeapSlot_Release(HEAP_SLOT_GLYPH_TRANSFER);
   picture->update = ItemDisplay_EmitSparkles;
@@ -269,9 +269,11 @@ void ItemDisplay_ShowPicture(struct Actor *object, s32 flags) {
 /// flags bit 0 adds sparkles and bit 1 raises it as a found item.
 void ItemDisplay_ShowItem(s32 item, s32 flags) {
   struct Actor *owner = Actor_Lookup(Party_GetLeaderActor());
-  u8 *buffer = HeapSlot_Alloc(HEAP_SLOT_GLYPH_TRANSFER, sizeof(GlyphTransfer));
-  struct Actor *object = Actor_CreateFar(
-      489, owner->x.fixed, owner->y.fixed + toFIXED(36), owner->z.fixed);
+  GlyphTransfer *transfer =
+      HeapSlot_Alloc(HEAP_SLOT_GLYPH_TRANSFER, sizeof(GlyphTransfer));
+  struct Actor *object =
+      Actor_CreateFar(SPRITE_UNSEEN_MARKER, owner->x.fixed,
+                      owner->y.fixed + toFIXED(36), owner->z.fixed);
 
   if (object != 0) {
     struct Sprite *sprite = object->sprite;
@@ -283,7 +285,7 @@ void ItemDisplay_ShowItem(s32 item, s32 flags) {
     sprite->image.priority = 1;
 
     Icon_DrawItemFar(item);
-    VramCache_Load(sprite->slot, 4 * TILE_SIZE_4BPP, buffer + 1024);
+    VramCache_Load(sprite->slot, 4 * TILE_SIZE_4BPP, transfer->tiles);
     HeapSlot_Release(HEAP_SLOT_GLYPH_TRANSFER);
 
     if (flags & 1)
@@ -329,7 +331,7 @@ void FieldEffect_SpawnRevealMarkers(void) {
   // apart from the bottom one.
   s16 *entry = SceneItem_GetRows();
   u8 *map = (u8 *)Ram_HeapSlots->mapGrid;
-  s32 *origin = (s32 *)(map + 228);
+  s32 *origin = &((struct MapWork *)map)->viewX;
   s32 originX = origin[0] & FIELD_PIXEL_MASK;
   s32 originZ = origin[1] & FIELD_PIXEL_MASK;
   // One object in the frame: a word of the map header, then the point
@@ -358,22 +360,23 @@ void FieldEffect_SpawnRevealMarkers(void) {
     id = entry[0];
     flag = entry[1];
     entry += 3;
-    if (type != 128 && flag != -1 && GameFlag_Get(flag))
+    if (type != CONTAINER_CHEST && flag != -1 && GameFlag_Get(flag))
       continue;
     if (SceneItem_FindPosition(id, found.position))
       continue;
-    object = TreasureSpot_GetActor(i + 64);
+    object = TreasureSpot_GetActor(i + FIELD_TREASURE_ACTOR);
     if (object == NULL)
       continue;
     // A tile event's object holds its map cell, marked by this value.
-    if (object->riseBaseY == 0x31415927) {
+    if (object->riseBaseY == TREASURE_SPOT_ON_CELL) {
       x = toFIXED(object->timer);
       z = toFIXED((s16)object->userValue);
       y = MapGrid_GetTerrainHeightFar(0, x, z);
     } else {
-      if ((u16)(type - 128) <= 1)
+      if ((u16)(type - CONTAINER_CHEST) <= CONTAINER_MIMIC - CONTAINER_CHEST)
         continue;
-      if (type == 130 || type == 132 || type == 133 || type == 131)
+      if (type == CONTAINER_PSYNERGY_STONE || type == CONTAINER_STONE_TABLET ||
+          type == CONTAINER_POND || type == CONTAINER_BURIED)
         continue;
       x = object->x.fixed;
       y = object->y.fixed;
@@ -393,7 +396,7 @@ void FieldEffect_SpawnRevealMarkers(void) {
       Actor_StartScriptFar((struct Actor *)object,
                            gBattleEffect_MarkerParticleScript);
       Actor_SetSpriteFlagsFar((struct Actor *)object, 0);
-      Actor_SelectAnimationFar(object, 1);
+      Actor_SelectAnimationFar(object, ANIM_STAND);
       ((struct Sprite *)object->sprite)->image.priority = 1;
     }
   }

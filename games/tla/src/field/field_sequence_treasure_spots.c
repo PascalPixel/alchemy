@@ -154,8 +154,9 @@ void Field_PlaceTreasureSpots(void) {
   } while (!(type & 0x4000));
 }
 
-/// Mode 0 moves the actor to x and z 0 and marks it with riseBaseY 0x31415927;
-/// any other mode draws its sprite wide (shape 1), 4 pixels lower.
+/// Mode 0 moves the actor to x and z 0 and marks it with riseBaseY
+/// TREASURE_SPOT_ON_CELL; any other mode draws its sprite wide (shape 1), 4
+/// pixels lower.
 void Actor_SetWideSprite(u32 objectId, s32 mode) {
   struct Actor *object;
   struct Sprite *sprite;
@@ -166,7 +167,7 @@ void Actor_SetWideSprite(u32 objectId, s32 mode) {
   if (mode == 0) {
     object->x.fixed = 0;
     object->z.fixed = 0;
-    object->riseBaseY = 0x31415927;
+    object->riseBaseY = TREASURE_SPOT_ON_CELL;
     return;
   }
   sprite = object->sprite;

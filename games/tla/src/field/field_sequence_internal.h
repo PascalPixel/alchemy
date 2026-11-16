@@ -162,6 +162,9 @@ struct ContainerRow {
 /// ContainerRow.contents and FieldWork.scoopedItem: coins rather than an item,
 /// their count in the bits under it.
 #define CONTAINER_COINS 0x8000
+/// Actor.riseBaseY of a treasure spot that stands for a map cell rather than an
+/// actor: its cell is in timer and userValue, and it stands at x and z 0.
+#define TREASURE_SPOT_ON_CELL 0x31415927
 
 /// A box of the map in whole cells (16.16 when compared) and the value it
 /// selects while its condition holds; a row with minX -1 ends the list.

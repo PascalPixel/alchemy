@@ -227,7 +227,7 @@ const struct SummonDefinition *SummonDefinition_GetNear(u32 summonId) {
 }
 
 /// Lets the party call summon `summonId` from now on, setting its bit in the
-/// party's summon mask: a summon tablet's contents and Lemuria's spring.
+/// party's summon mask. A summon tablet and Lemuria's spring call it.
 void Class_GetSeries(s32 summonId) {
   Djinn_GetRecoveryTable(DJINN_RECOVERY_PARTY)->summonMask |= 1 << summonId;
 }

@@ -421,7 +421,7 @@ static __inline__ FIXED Owner_GetPpRatio(s32 owner) {
 
   if (unit->ppMax <= 0)
     return 0;
-  return INTtoFIXED(unit->pp) / unit->ppMax;
+  return toFIXED(unit->pp) / unit->ppMax;
 }
 
 /// Returns the party's PP over its maximum PP, in 16.16; 0 with no members.
@@ -441,7 +441,7 @@ FIXED Party_GetPpRatio(void) {
   }
   if (max == 0)
     return 0;
-  return INTtoFIXED(pp) / max;
+  return toFIXED(pp) / max;
 }
 
 /// Takes 1 PP from the member whose PP is fullest for its maximum.

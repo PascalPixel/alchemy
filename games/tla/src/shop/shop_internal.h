@@ -217,8 +217,8 @@ struct ShopWork {
   u8 figuresShown; ///< ItemMenuWork's; not named here
   /// The item picker's check: 0 for an item to drop, 1 for one to remove.
   s8 itemMode;
-  struct FieldParticle
-      effects[SANCTUM_PARTICLE_COUNT]; ///< the sanctum service's particles
+  /// The sanctum service's particles.
+  struct FieldParticle effects[SANCTUM_PARTICLE_COUNT];
   u8 menuIcons[72]; ///< ItemMenuWork's five menu icons; not named here
   /// The item icon grid (ItemIconGrid_ShowInventory): a sprite and a VRAM
   /// cache slot (ICON_NONE when empty) for each inventory slot.

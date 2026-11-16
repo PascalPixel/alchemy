@@ -489,7 +489,8 @@ void Sanctum_UpdateBurst(void) {
 void Sprite_SetAnimationSpeedFar(void *object, s32 speed);
 
 /// Plays the service's burst on a party member's icon: its tune, the colours
-/// tinted, and 18 sparkles flying in around the icon as it changes colour.
+/// tinted, and SANCTUM_BURST_SPARKLES sparkles flying in around the icon as it
+/// changes colour.
 void Sanctum_RunMemberIconBurst(s32 member) {
   struct ShopWork *shop;
   s8 savedCursorMode;

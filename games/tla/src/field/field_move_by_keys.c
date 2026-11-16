@@ -79,12 +79,12 @@ s32 Actor_MoveByKeys(struct Actor *object) {
         !(sourceCell->attributeB & 64) || !(destinationCell->attributeB & 64)) {
       collisionFlags = 4;
       animation = 12;
-    } else if (gInput.held & 64) {
+    } else if (gInput.held & KEY_UP) {
       terrainHeight = MapGrid_GetTerrainHeight(object->layer, position.x,
                                                position.z - toFIXED(16));
       if (terrainHeight - object->y.fixed < toFIXED(16))
         goto refused;
-    } else if (gInput.held & 128) {
+    } else if (gInput.held & KEY_DOWN) {
       terrainHeight =
           MapGrid_GetTerrainHeight(object->layer, position.x, position.z);
       if (terrainHeight - object->y.fixed > -toFIXED(8)) {

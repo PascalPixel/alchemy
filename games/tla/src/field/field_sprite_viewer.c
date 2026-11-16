@@ -122,7 +122,7 @@ restart:
 next:
   wait(1);
   for (;;) {
-    if (gInput.held & 8) {
+    if (gInput.held & KEY_START) {
       if (gInput.held & KEY_LEFT)
         x--;
       if (gInput.held & KEY_RIGHT)
@@ -183,7 +183,7 @@ next:
 
       changed = 0;
       steps = 1;
-      if (gInput.held & 8)
+      if (gInput.held & KEY_START)
         steps = 10;
       if (gInput.repeat & KEY_L) {
         layers[selectedLayer].spriteId =
@@ -240,12 +240,12 @@ next:
       if (gInput.repeat & KEY_L) {
         layers[selectedLayer].colorMode--;
         if (layers[selectedLayer].colorMode < 0)
-          layers[selectedLayer].colorMode = 15;
+          layers[selectedLayer].colorMode = SPRITE_COLOR_HIDDEN;
         changed = 1;
       }
       if (gInput.repeat & KEY_R) {
         layers[selectedLayer].colorMode++;
-        if (layers[selectedLayer].colorMode > 15)
+        if (layers[selectedLayer].colorMode > SPRITE_COLOR_HIDDEN)
           layers[selectedLayer].colorMode = 0;
         changed = 1;
       }
@@ -364,7 +364,7 @@ void SpriteViewer_BuildProbeRing(s32 centerX, s32 centerY,
   if ((gInput.held & KEY_B) != 0)
     angle = (s16)(gVBlankCount << 8);
   switch ((u32)kind) {
-  case 3:
+  case ANIM_FACING_THREE_PICTURES:
     for (i = 0; i < 6; i++) {
       angle <<= 16;
       positions->x = toFIXED(centerX);
@@ -375,11 +375,11 @@ void SpriteViewer_BuildProbeRing(s32 centerX, s32 centerY,
       positions++;
       angle = (s16)(angle + DEGtoANG(60));
     }
-    for (; i < 10; i++)
+    for (; i < UI_SPRITE_VIEWER_COPY_COUNT; i++)
       positions++;
     break;
-  case 5:
-  case 8:
+  case ANIM_FACING_SIX_PICTURES:
+  case ANIM_FACING_EIGHT_PICTURES:
   case 44:
   case 88:
     for (i = 0; i < 8; i++) {
@@ -392,7 +392,7 @@ void SpriteViewer_BuildProbeRing(s32 centerX, s32 centerY,
       positions++;
       angle = (s16)(angle + DEGtoANG(45));
     }
-    for (; i < 10; i++)
+    for (; i < UI_SPRITE_VIEWER_COPY_COUNT; i++)
       positions++;
     break;
   case 4:
@@ -408,7 +408,7 @@ void SpriteViewer_BuildProbeRing(s32 centerX, s32 centerY,
       angle = (s16)(angle + DEGtoANG(36));
     }
     break;
-  case 20:
+  case ANIM_FACING_TWO_PART:
     turn = angle;
     angle = (s16)(turn + DEGtoANG(90));
     i = 0;
@@ -445,7 +445,7 @@ void SpriteViewer_BuildProbeRing(s32 centerX, s32 centerY,
       positions++;
       angle = (s16)(angle + DEGtoANG(90));
     }
-    for (i = 4; i < 10; i++)
+    for (i = 4; i < UI_SPRITE_VIEWER_COPY_COUNT; i++)
       positions++;
     break;
   }
@@ -454,15 +454,17 @@ void SpriteViewer_BuildProbeRing(s32 centerX, s32 centerY,
 /// Gives layer slot of each of the viewer's ten sprites the colour mode value.
 void SpriteViewer_SetGridColumnColorMode(s32 slot, s32 value) {
   u8 *base = Ram_HeapSlots->sprites;
-  s32 offset = (slot & 3) * 4 + 40;
+  s32 offset = (slot & 3) * sizeof(struct SpriteAnimation *) +
+               offsetof(struct Sprite, entries);
   s32 count = 9;
 
   do {
-    u8 *entry = *(u8 **)(base + offset);
+    struct SpriteAnimation *entry =
+        *(struct SpriteAnimation **)(base + offset);
 
     count--;
-    entry[5] = value;
-    base += 56;
+    entry->colorMode = value;
+    base += sizeof(struct Sprite);
   } while (count >= 0);
 }
 
@@ -470,15 +472,17 @@ void SpriteViewer_SetGridColumnColorMode(s32 slot, s32 value) {
 /// value.
 void SpriteViewer_SetGridColumnPriority(s32 slot, s32 value) {
   u8 *base = Ram_HeapSlots->sprites;
-  s32 offset = (slot & 3) * 4 + 40;
+  s32 offset = (slot & 3) * sizeof(struct SpriteAnimation *) +
+               offsetof(struct Sprite, entries);
   s32 count = 9;
 
   do {
-    u8 *entry = *(u8 **)(base + offset);
+    struct SpriteAnimation *entry =
+        *(struct SpriteAnimation **)(base + offset);
 
     count--;
-    entry[6] = value;
-    base += 56;
+    entry->priority = value;
+    base += sizeof(struct Sprite);
   } while (count >= 0);
 }
 
@@ -527,15 +531,17 @@ void SpriteViewer_SetGridColumnNumber(s32 slot, s32 no) {
   s32 count;
 
   Resource_GetMetadataRecordFar(no);
-  offset = (slot & 3) * 4 + 40;
+  offset = (slot & 3) * sizeof(struct SpriteAnimation *) +
+           offsetof(struct Sprite, entries);
   count = 9;
   do {
-    u8 *entry = *(u8 **)(base + offset);
+    struct SpriteAnimation *entry =
+        *(struct SpriteAnimation **)(base + offset);
 
     count--;
-    *(u16 *)entry = no;
+    entry->animationId = no;
     SpriteAnimation_Reset(entry);
-    base += 56;
+    base += sizeof(struct Sprite);
   } while (count >= 0);
 }
 
@@ -544,8 +550,8 @@ extern const struct SpriteScale gSpriteViewer_Scale;
 /// Each frame in the sprite viewer: places each copy of the sprite at its ring
 /// position, facing the way that position stands for.
 void SpriteViewer_PlaceRing(void) {
-  u8 *actor = Ram_HeapSlots->sprites;
-  u32 kind = (*(u8 **)(actor + 40))[4];
+  struct Sprite *sprites = Ram_HeapSlots->sprites;
+  u32 kind = sprites->entries[0]->kind;
   struct SpriteScale scale;
   u8 *table;
   u16 angle;
@@ -557,8 +563,9 @@ void SpriteViewer_PlaceRing(void) {
   scale = gSpriteViewer_Scale;
   table = (u8 *)Ram_HeapSlots->battleWork;
 
+  // Kinds 4, 6, 44 and 88 are The Broken Seal's, which no sprite here takes.
   switch (kind) {
-  case 3:
+  case ANIM_FACING_THREE_PICTURES:
     angle = 0;
     step = DEGtoANG(60);
     cnt = 6;
@@ -577,10 +584,10 @@ void SpriteViewer_PlaceRing(void) {
     step = DEGtoANG(36);
     cnt = 10;
     break;
-  case 20:
+  case ANIM_FACING_TWO_PART:
     angle = 0;
     step = 0;
-    odd = 0x8000;
+    odd = DEGtoANG(180);
     cnt = 4;
     break;
   default:
@@ -591,9 +598,9 @@ void SpriteViewer_PlaceRing(void) {
   }
 
   for (i = 0; i < cnt; i++) {
-    Render_ApplyProjectedPlacement(actor, (s32 *)(table + i * 16),
+    Render_ApplyProjectedPlacement(sprites, (s32 *)(table + i * 16),
                                    (s32 *)&scale, angle);
-    actor += 56;
+    sprites++;
     angle += step;
     if (i & 1)
       angle += odd;

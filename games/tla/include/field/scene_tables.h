@@ -389,7 +389,16 @@ extern struct SceneEntrance gSceneEntrances[];
 extern struct ActorPlacement gActorPlacements[];
 extern struct Trigger gSceneEvents[];
 
-struct SceneRegion;
+/// An exit region: a box of the scene, in pixels, that takes the exit whose
+/// number is its value while its condition holds (Field_CheckExitRegions), as
+/// The Broken Seal's SceneExitRegion.
+struct SceneRegion {
+  s16 minX, minY, minZ; ///< pixels, inclusive; minX -1 ends the table
+  s16 maxX, maxY, maxZ; ///< pixels, exclusive
+  s16 condition; ///< CONDITION_ALWAYS, a flag | CONDITION_FLAG_SET set, else
+                 ///< the flag clear
+  s16 value;     ///< the exit, stored in FieldWork's exit
+};
 
 /// The table a scene overlay starts with (gOverlayArea): a veneer word and an
 /// entry point for each of its tables.

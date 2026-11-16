@@ -43,10 +43,42 @@
 #include "fixed_math.h"
 #include "text/msg_ids.h"
 
-/// The ledge where the party finds Susa beaten (SceneId_GaiaRockSusa): Susa
-/// ("Kushinada's safe... She's safe! Nothing else matters.") and the statue
-/// that blows wind.
-enum { ACTOR_WIND_STATUE = 17, ACTOR_SUSA = 20 };
+/// The ledge where the party finds Susa beaten (SceneId_GaiaRockSusa): the
+/// eight vines the wind swings, the two pillars Moved into the gaps, the statue
+/// that blows wind and its whirlwind, and Susa ("Kushinada's safe... She's
+/// safe! Nothing else matters.").
+enum {
+  ACTOR_FIRST_VINE = ACTOR_FIRST_PLACED,
+  ACTOR_FIRST_PILLAR = ACTOR_FIRST_VINE + 8,
+  ACTOR_WIND_STATUE,
+  ACTOR_WHIRLWIND,
+  ACTOR_SECOND_PILLAR,
+  ACTOR_SUSA
+};
+
+/// The room of the three statue spots (SceneId_GaiaRockStatueSpots): seven
+/// vines, two wind statues, and the three statues that rise under the leader.
+enum {
+  ACTOR_FIRST_RISING_STATUE = ACTOR_FIRST_VINE + 9,
+  ACTOR_SECOND_RISING_STATUE,
+  ACTOR_THIRD_RISING_STATUE
+};
+
+/// The room of the Dancing Idol (SceneId_GaiaRockDancingIdol): the pillar the
+/// party pushes, the altar and the Dancing Idol on it.
+enum {
+  ACTOR_PUSHED_PILLAR = ACTOR_FIRST_PLACED,
+  ACTOR_ALTAR = ACTOR_FIRST_PLACED + 7,
+  ACTOR_DANCING_IDOL
+};
+
+/// The three statue spots, each set once its statue has risen.
+#define FLAG_FIRST_STATUE_RISEN FLAG_AREA_TEMP_00
+#define FLAG_SECOND_STATUE_RISEN FLAG_AREA_TEMP_01
+#define FLAG_THIRD_STATUE_RISEN FLAG_AREA_TEMP_02
+
+/// Set once the party has taken the Dancing Idol from the altar.
+#define FLAG_DANCING_IDOL_TAKEN 0xf74
 
 /// The two pillars Moved into the gaps: the first dropped in at the west end,
 /// the second at (79, 12).
@@ -55,8 +87,8 @@ enum { ACTOR_WIND_STATUE = 17, ACTOR_SUSA = 20 };
 
 struct Actor;
 
-extern s16 gGaiaRock_SusaExitRegions[];
-extern u32 gGaiaRock_StatueSpotsExitRegions[];
+extern struct SceneRegion gGaiaRock_SusaExitRegions[];
+extern struct SceneRegion gGaiaRock_StatueSpotsExitRegions[];
 
 void GaiaRock_StatueRisesUnderLeader(s32 id, s32 flag);
 
@@ -64,7 +96,7 @@ extern struct ActorPlacement gGaiaRock_Placements[];
 extern struct ActorPlacement gGaiaRock_SusaActorPlacements[];
 
 extern struct ActorPlacement gGaiaRock_StatueSpotsActorPlacements[];
-extern s16 gGaiaRock_DancingIdolActorPlacements[];
+extern struct ActorPlacement gGaiaRock_DancingIdolActorPlacements[];
 
 extern struct Trigger gGaiaRock_SusaTriggers[];
 extern struct Trigger gGaiaRock_StatueSpotsTriggers[];
@@ -85,9 +117,9 @@ const struct SceneEntrance *Scene_GetEntrances(void) { return gSceneEntrances; }
 
 const struct SceneRegion *Scene_GetExitRegions(void) {
   if (gMainRoutineWork.next == SCENE_GAIA_ROCK_SUSA)
-    return (const struct SceneRegion *)gGaiaRock_SusaExitRegions;
+    return gGaiaRock_SusaExitRegions;
   if (gMainRoutineWork.next == SCENE_GAIA_ROCK_STATUE_SPOTS)
-    return (const struct SceneRegion *)gGaiaRock_StatueSpotsExitRegions;
+    return gGaiaRock_StatueSpotsExitRegions;
   return 0;
 }
 
@@ -95,30 +127,35 @@ const u32 *Scene_GetExits(void) { return gSceneExits; }
 
 const struct ActorPlacement *Scene_GetActorPlacements(void) {
   if (gMainRoutineWork.next == SCENE_GAIA_ROCK_SUSA)
-    return (const struct ActorPlacement *)gGaiaRock_SusaActorPlacements;
+    return gGaiaRock_SusaActorPlacements;
   if (gMainRoutineWork.next == SCENE_GAIA_ROCK_STATUE_SPOTS)
-    return (const struct ActorPlacement *)gGaiaRock_StatueSpotsActorPlacements;
+    return gGaiaRock_StatueSpotsActorPlacements;
   if (gMainRoutineWork.next == SCENE_GAIA_ROCK_DANCING_IDOL)
-    return (const struct ActorPlacement *)gGaiaRock_DancingIdolActorPlacements;
-  return (const struct Trigger *)gGaiaRock_Placements;
+    return gGaiaRock_DancingIdolActorPlacements;
+  return gGaiaRock_Placements;
 }
 
+/// Raises the first statue under the leader on its spot.
 void GaiaRock_StepOnFirstStatueSpot(void) {
-  GaiaRock_StatueRisesUnderLeader(17, 0x300);
+  GaiaRock_StatueRisesUnderLeader(ACTOR_FIRST_RISING_STATUE,
+                                  FLAG_FIRST_STATUE_RISEN);
 }
 
+/// Raises the second statue under the leader on its spot.
 void GaiaRock_StepOnSecondStatueSpot(void) {
-  GaiaRock_StatueRisesUnderLeader(18, 0x301);
+  GaiaRock_StatueRisesUnderLeader(ACTOR_SECOND_RISING_STATUE,
+                                  FLAG_SECOND_STATUE_RISEN);
 }
 
+/// Raises the third statue under the leader on its spot.
 void GaiaRock_StepOnThirdStatueSpot(void) {
-  GaiaRock_StatueRisesUnderLeader(19, 0x302);
+  GaiaRock_StatueRisesUnderLeader(ACTOR_THIRD_RISING_STATUE,
+                                  FLAG_THIRD_STATUE_RISEN);
 }
 
-// Sets the object's motion flags to 3 while it moves, for at most 60 frames
-// until its vertical speed is 0, then clears them ten frames later. The
-// editions after the Japanese one also run the given cue first.
 #if !TLA_PATCH_1
+/// Lets pillar id fall until it lands, for at most 60 frames, and stands it
+/// still ten frames later.
 void GaiaRock_DropPillar(s32 id) {
   s32 frames = 60;
   struct Actor *object = Actor_Get(id);
@@ -134,6 +171,8 @@ void GaiaRock_DropPillar(s32 id) {
   object->motionFlags = 0;
 }
 #else
+/// Lets pillar id fall until it lands, for at most 60 frames, plays cue (when
+/// not 0) and stands it still ten frames later.
 void GaiaRock_DropPillar(s32 id, s32 cue) {
   s32 frames = 60;
   struct Actor *object = Actor_Get(id);
@@ -152,18 +191,19 @@ void GaiaRock_DropPillar(s32 id, s32 cue) {
 }
 #endif
 
+/// As Move takes the first pillar, frees the cells under its gap.
 void GaiaRock_StartMovingPillar(void) {
   MapGrid_CopyCellAttributes(7, 90, 1, 1, 8, 91);
 }
 
 // The Japanese edition drops an object with no cue; the later editions play
-// cue 181 as it drops. The first drop goes through the call layer.
+// SE_BOOM as it drops. The first drop goes through the call layer.
 #if !TLA_PATCH_1
 #define DROP_OBJECT_CALLED(id) GaiaRock_DropPillar(id)
 #define DROP_OBJECT(id) GaiaRock_DropPillar(id)
 #else
-#define DROP_OBJECT_CALLED(id) GaiaRock_DropPillar(id, 181)
-#define DROP_OBJECT(id) GaiaRock_DropPillar(id, 181)
+#define DROP_OBJECT_CALLED(id) GaiaRock_DropPillar(id, SE_BOOM)
+#define DROP_OBJECT(id) GaiaRock_DropPillar(id, SE_BOOM)
 #endif
 
 /// A pillar set down after a Move: the first drops into its gap once Moved far
@@ -172,17 +212,19 @@ void GaiaRock_FinishMovingPillar(s32 unused, s32 id) {
   struct Actor *object = Actor_Get(id);
 
   MapGrid_CopyCellAttributes(8, 90, 1, 1, 8, 91);
-  if (id == 16 && Event_GetFlag(FLAG_FIRST_PILLAR_DROPPED) == 0 &&
+  if (id == ACTOR_FIRST_PILLAR &&
+      Event_GetFlag(FLAG_FIRST_PILLAR_DROPPED) == 0 &&
       (object->x.fixed >> 19) <= 11) {
-    DROP_OBJECT_CALLED(16);
+    DROP_OBJECT_CALLED(ACTOR_FIRST_PILLAR);
     Event_SetFlag(FLAG_FIRST_PILLAR_DROPPED);
     MapGrid_CopyCellAttributes(6, 27, 1, 1, 5, 27);
   }
-  if (id == 19 && Event_GetFlag(FLAG_SECOND_PILLAR_DROPPED) == 0) {
+  if (id == ACTOR_SECOND_PILLAR &&
+      Event_GetFlag(FLAG_SECOND_PILLAR_DROPPED) == 0) {
     if ((object->x.fixed >> 19) == 77)
       MapGrid_CopyCellAttributes(33, 102, 1, 2, 37, 102);
     if ((object->x.fixed >> 19) == 79 && (object->y.fixed >> 19) == 12) {
-      DROP_OBJECT(19);
+      DROP_OBJECT(ACTOR_SECOND_PILLAR);
       MapGrid_CopyCellAttributes(38, 46, 1, 1, 39, 46);
     }
     if ((object->x.fixed >> 19) == 81) {
@@ -196,27 +238,32 @@ void GaiaRock_FinishMovingPillar(s32 unused, s32 id) {
 void TileCopies_CopyTouchedCells(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f,
                                  s32 g);
 
+/// As the pillar is pushed or Moved, frees the cell it stands on.
 void GaiaRock_StartPushingBlock(void) {
-  MapGrid_CopyCellAttributes(13, 18, 1, 1, 13,
-                             FIELD_CELL(Actor_Get(8)->z.fixed));
+  MapGrid_CopyCellAttributes(
+      13, 18, 1, 1, 13, FIELD_CELL(Actor_Get(ACTOR_PUSHED_PILLAR)->z.fixed));
 }
 
+/// Once the pillar stops, blocks the cell it now stands on.
 void GaiaRock_FinishPushingBlock(void) {
-  MapGrid_CopyCellAttributes(11, 14, 1, 1, 13,
-                             FIELD_CELL(Actor_Get(8)->z.fixed));
+  MapGrid_CopyCellAttributes(
+      11, 14, 1, 1, 13, FIELD_CELL(Actor_Get(ACTOR_PUSHED_PILLAR)->z.fixed));
 }
 
+/// Cyclone on the overgrown wall: copies the cleared cells over it, opening
+/// the way.
 void GaiaRock_CycloneClearsWall(void) {
   FieldTileCopies_CopyTouchedCells(110, 64, 14, 12, 110, 47, 1);
 }
 
+/// Reveal: shows the Dancing Idol on the altar until it is taken.
 void GaiaRock_RevealIdol(void) {
   struct Actor *object = Actor_Get(FIELD_TREASURE_ACTOR);
   s32 done;
 
   if (object == NULL)
     return;
-  done = Event_GetFlag(0xf74);
+  done = Event_GetFlag(FLAG_DANCING_IDOL_TAKEN);
   if (done == 0) {
     Actor_SetPosition(FIELD_TREASURE_ACTOR, 657, 246);
     object->motionFlags = done;
@@ -224,18 +271,21 @@ void GaiaRock_RevealIdol(void) {
   }
 }
 
+/// As Reveal fades, hides the Dancing Idol again.
 void GaiaRock_HideIdol(void) {
   if (Actor_Get(FIELD_TREASURE_ACTOR) != NULL)
     Actor_SetPosition(FIELD_TREASURE_ACTOR, 0, 0);
 }
 
+/// The altar: with the Dancing Idol revealed the party takes it; before that
+/// the leader senses something and the field menu opens, and after, nothing.
 void GaiaRock_CheckAltar(void) {
   struct Actor *object = Actor_Get(FIELD_TREASURE_ACTOR);
 
   Message_ShowCentered(MsgCheckedTheAltar, 1);
   if (object != NULL && object->x.fixed != 0) {
-    Scene_TalkToActor(4160);
-  } else if (Event_GetFlag(0xf74) == 0) {
+    Scene_TalkToActor(0x1000 | FIELD_TREASURE_ACTOR);
+  } else if (Event_GetFlag(FLAG_DANCING_IDOL_TAKEN) == 0) {
     struct FieldWork *work = Ram_HeapSlots->fieldWork;
 
     Message_ShowCentered(MsgIMSensing, 1);
@@ -245,6 +295,8 @@ void GaiaRock_CheckAltar(void) {
   }
 }
 
+/// Once the Serpent is slain, Susa rejoices as the party passes ("You're
+/// going...").
 void GaiaRock_SusaRejoices(void) {
   if (Event_GetFlag(FLAG_SERPENT_SLAIN)) {
     Event_Start();
@@ -258,6 +310,7 @@ void GaiaRock_SusaRejoices(void) {
   }
 }
 
+/// Talking to Susa, before and after he has rejoiced.
 void GaiaRock_TalkToSusa(void) {
   if (Event_GetFlag(FLAG_SUSA_REJOICED)) {
     FieldEvent_SetMessageId(MsgYouReGoing);
@@ -269,6 +322,7 @@ void GaiaRock_TalkToSusa(void) {
   }
 }
 
+/// Mind Read on Susa, before and after he has rejoiced.
 void GaiaRock_MindReadSusa(void) {
   if (Event_GetFlag(FLAG_SUSA_REJOICED)) {
     FieldEvent_SetMessageId(MsgKushinadaSSafe);
@@ -312,22 +366,24 @@ struct OrbitEffect {
 
 FIXED Trig_Cos(s32 angle);
 
+/// Each frame, carries a leaf round a wobbling circle, now and then turning
+/// faster for a moment, and releases it at its 71st frame.
 void GaiaRock_CircleLeaf(struct OrbitEffect *effect) {
   s32 radius;
   s32 angle;
   FIXED dx;
   FIXED dz;
 
-  radius = Random16() + 0x20000;
+  radius = Random16() + toFIXED(2);
   angle = effect->facing;
   dx = Iwram_MulFX(radius, Trig_Cos(angle));
   dz = Iwram_MulFX(radius, Math_Sin(angle));
   effect->x += dx;
   effect->z += dz;
-  effect->facing += 0xfff0;
+  effect->facing -= 16;
   if (effect->pause != 0) {
     effect->pause--;
-    effect->facing += 0x800;
+    effect->facing += TRIG_TURN / 32;
   } else if ((Random16() << 5) >> 16 == 0) {
     effect->pause = ((Random16() << 4) >> 16) + 8;
   }
@@ -335,6 +391,8 @@ void GaiaRock_CircleLeaf(struct OrbitEffect *effect) {
     Actor_StartScript((struct Actor *)effect, gGaiaRock_LeafScript);
 }
 
+/// The whirlwind's 16 leaves, spawned in a column around it, each circling
+/// from its own start.
 s32 GaiaRock_SpawnCirclingLeaves(struct OrbitEffect *source) {
   s32 i;
   s32 timer;
@@ -348,18 +406,19 @@ s32 GaiaRock_SpawnCirclingLeaves(struct OrbitEffect *source) {
       FIXED position[3];
 
       position[0] = source->x;
-      position[1] = source->y + i * 0xcccc + toFIXED(4);
+      position[1] = source->y + i * (toFIXED(4) / 5) + toFIXED(4);
       position[2] = source->z;
       radius = Random16();
       FieldVector_AddPolarOffsetFX(radius * 5 + toFIXED(3), Random16(),
                                    position);
-      effect = (struct OrbitEffect *)Value4(
-          (s32 (*)())Actor_Spawn, 308, position[0], position[1], position[2]);
+      effect =
+          (struct OrbitEffect *)Value4((s32 (*)())Actor_Spawn, SPRITE_LEAF,
+                                       position[0], position[1], position[2]);
       if (effect != NULL) {
         effect->update = GaiaRock_CircleLeaf;
         effect->timer = timer;
         effect->pause = 0;
-        effect->gravity = 0x1999;
+        effect->gravity = toFIXED(1) / 10;
         effect->velocityY = toFIXED(3);
         effect->facing = Random16();
         effect->priorityFlags = 0;
@@ -372,6 +431,7 @@ s32 GaiaRock_SpawnCirclingLeaves(struct OrbitEffect *source) {
   return 0;
 }
 
+/// The hanging vine of actor id, or null (as HangingVine_FindSlot).
 static inline struct HangingVineSlot *FindSlot(s32 id) {
   struct HangingVineWork *work = HANGING_VINE_WORK;
   struct HangingVineSlot *found = NULL;
@@ -389,30 +449,33 @@ static inline struct HangingVineSlot *FindSlot(s32 id) {
   return found;
 }
 
+/// The whirlwind reaches the first vine and starts it swinging.
 void GaiaRock_StartVineSwing(void) {
-  struct HangingVineSlot *slot = FindSlot(8);
+  struct HangingVineSlot *slot = FindSlot(ACTOR_FIRST_VINE);
 
-  slot->phase = 0x4000;
+  slot->phase = DEGtoANG(90);
   slot->swing = 64;
 }
 
+/// The whirlwind swings the first vine wider.
 void GaiaRock_SwingVineHarder(void) {
-  struct HangingVineSlot *slot = FindSlot(8);
+  struct HangingVineSlot *slot = FindSlot(ACTOR_FIRST_VINE);
 
-  slot->phase = 0x4000;
+  slot->phase = DEGtoANG(90);
   slot->swing += 128;
 }
 
 void Actor_PlaySoundInView(struct Actor *object, s32 a);
 
+/// Every 256 frames the wind statue blows a whirlwind westward.
 void GaiaRock_StatueBlowsWind(void) {
   struct Actor *object = Actor_Get(ACTOR_WIND_STATUE);
   u8 phase = gFrameCount;
 
   if (phase == 0) {
-    Actor_PlaySoundInView(object, 202);
-    object =
-        Actor_Spawn(0x118, object->x.fixed, object->y.fixed, object->z.fixed);
+    Actor_PlaySoundInView(object, SE_FLAME_FLARE);
+    object = Actor_Spawn(SPRITE_WHIRLWIND, object->x.fixed, object->y.fixed,
+                         object->z.fixed);
     if (object != NULL) {
       object->acceleration = toFIXED(2);
       object->speedLimit = toFIXED(2);
@@ -429,9 +492,11 @@ void GaiaRock_StatueBlowsWind(void) {
 }
 
 #if !TLA_PATCH_1
-#define SCREEN_EFFECT 0x201
+#define SCREEN_EFFECT                                                          \
+  SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_SHAPE)
 #else
-#define SCREEN_EFFECT 0x204
+#define SCREEN_EFFECT                                                          \
+  SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE)
 #endif
 
 s32 HangingVine_Place();
@@ -442,28 +507,28 @@ s32 Scene_Initialize(void) {
 
   gFieldWork->transition = SCREEN_EFFECT;
   gMainRoutineWork.retreatScene = SCENE_GAIA_ROCK_SUSA;
-  gMainRoutineWork.retreatEntrance = 5;
+  gMainRoutineWork.retreatEntrance = GAIA_ROCK_SUSA_FROM_WORLD_MAP;
   Actor_GetById(Party_GetLeaderActor())->priorityFlags |=
       ACTOR_PRIORITY_IGNORES_RISES;
   if (gMainRoutineWork.next == SCENE_GAIA_ROCK_SUSA) {
     Task_Add((s32)GaiaRock_StatueBlowsWind, TASK_PASS_VBLANK);
-    Call2((void (*)())HangingVine_Place, 8, 1);
-    Call2((void (*)())HangingVine_Place, 9, 1);
-    Call2((void (*)())HangingVine_Place, 10, 1);
-    Call2((void (*)())HangingVine_Place, 11, 1);
-    Call2((void (*)())HangingVine_Place, 12, 1);
-    Call2((void (*)())HangingVine_Place, 13, 1);
-    Call2((void (*)())HangingVine_Place, 14, 1);
-    HangingVine_Place(15, 1);
+    Call2((void (*)())HangingVine_Place, ACTOR_FIRST_VINE, 1);
+    Call2((void (*)())HangingVine_Place, ACTOR_FIRST_VINE + 1, 1);
+    Call2((void (*)())HangingVine_Place, ACTOR_FIRST_VINE + 2, 1);
+    Call2((void (*)())HangingVine_Place, ACTOR_FIRST_VINE + 3, 1);
+    Call2((void (*)())HangingVine_Place, ACTOR_FIRST_VINE + 4, 1);
+    Call2((void (*)())HangingVine_Place, ACTOR_FIRST_VINE + 5, 1);
+    Call2((void (*)())HangingVine_Place, ACTOR_FIRST_VINE + 6, 1);
+    HangingVine_Place(ACTOR_FIRST_VINE + 7, 1);
     if (GameFlag_Get(FLAG_FIRST_PILLAR_DROPPED)) {
-      actor = Actor_GetById(16);
+      actor = Actor_GetById(ACTOR_FIRST_PILLAR);
       actor->motionFlags = 0;
       actor->x.fixed = toFIXED(88);
       actor->y.fixed = toFIXED(128);
       Actor_SetSpriteFlags(actor, 0);
       MapGrid_CopyCellAttributes(6, 27, 1, 1, 5, 27);
     }
-    actor = Actor_GetById(19);
+    actor = Actor_GetById(ACTOR_SECOND_PILLAR);
     actor->priorityFlags = 0;
     if (GameFlag_Get(FLAG_SECOND_PILLAR_DROPPED)) {
       actor->motionFlags = 0;
@@ -503,24 +568,27 @@ s32 Scene_Initialize(void) {
       }
     }
   } else if (gMainRoutineWork.next == SCENE_GAIA_ROCK_STATUE_SPOTS) {
-    Call2((void (*)())HangingVine_Place, 8, 1);
-    Call2((void (*)())HangingVine_Place, 9, 1);
-    Call2((void (*)())HangingVine_Place, 10, 1);
-    Call2((void (*)())HangingVine_Place, 11, 1);
-    Call2((void (*)())HangingVine_Place, 12, 1);
-    Call2((void (*)())HangingVine_Place, 13, 1);
-    HangingVine_Place(14, 1);
+    Call2((void (*)())HangingVine_Place, ACTOR_FIRST_VINE, 1);
+    Call2((void (*)())HangingVine_Place, ACTOR_FIRST_VINE + 1, 1);
+    Call2((void (*)())HangingVine_Place, ACTOR_FIRST_VINE + 2, 1);
+    Call2((void (*)())HangingVine_Place, ACTOR_FIRST_VINE + 3, 1);
+    Call2((void (*)())HangingVine_Place, ACTOR_FIRST_VINE + 4, 1);
+    Call2((void (*)())HangingVine_Place, ACTOR_FIRST_VINE + 5, 1);
+    HangingVine_Place(ACTOR_FIRST_VINE + 6, 1);
     if ((u16)(gMainRoutineWork.entrance - 3) <= 1) {
       GaiaRock_StartWallTriggers();
     }
-    if (GameFlag_Get(FLAG_AREA_TEMP_00)) {
-      GaiaRock_PlaceStatue(17, toFIXED(764), -toFIXED(391), toFIXED(424));
+    if (GameFlag_Get(FLAG_FIRST_STATUE_RISEN)) {
+      GaiaRock_PlaceStatue(ACTOR_FIRST_RISING_STATUE, toFIXED(764),
+                           -toFIXED(391), toFIXED(424));
     }
-    if (GameFlag_Get(FLAG_AREA_TEMP_01)) {
-      GaiaRock_PlaceStatue(18, toFIXED(789), -toFIXED(248), toFIXED(424));
+    if (GameFlag_Get(FLAG_SECOND_STATUE_RISEN)) {
+      GaiaRock_PlaceStatue(ACTOR_SECOND_RISING_STATUE, toFIXED(789),
+                           -toFIXED(248), toFIXED(424));
     }
-    if (GameFlag_Get(FLAG_AREA_TEMP_02)) {
-      GaiaRock_PlaceStatue(19, toFIXED(778), -toFIXED(119), toFIXED(424));
+    if (GameFlag_Get(FLAG_THIRD_STATUE_RISEN)) {
+      GaiaRock_PlaceStatue(ACTOR_THIRD_RISING_STATUE, toFIXED(778),
+                           -toFIXED(119), toFIXED(424));
     }
   } else if (gMainRoutineWork.next == SCENE_GAIA_ROCK_DANCING_IDOL) {
     actor = Actor_GetById(FIELD_TREASURE_ACTOR);
@@ -528,9 +596,9 @@ s32 Scene_Initialize(void) {
       Actor_SetPosition(FIELD_TREASURE_ACTOR, 0, 0);
     }
     work = Ram_HeapSlots->fieldWork;
-    actor = work->actors[16];
-    work->actors[64] = actor;
-    actor = Actor_GetById(8);
+    actor = work->actors[ACTOR_DANCING_IDOL];
+    work->actors[FIELD_TREASURE_ACTOR] = actor;
+    actor = Actor_GetById(ACTOR_PUSHED_PILLAR);
     actor->motionFlags = 0;
     MapGrid_CopyCellAttributes(11, 14, 1, 1, 13, FIELD_CELL(actor->z.fixed));
   }
@@ -540,16 +608,17 @@ s32 Scene_Initialize(void) {
 s32 Scene_PrepareMap(void) {
   if (gMainRoutineWork.next == SCENE_GAIA_ROCK_STATUE_SPOTS &&
       (u16)(gMainRoutineWork.entrance - 3) <= 1) {
-    s32 *layer = (s32 *)&Ram_HeapSlots->mapGrid->layers[1];
+    struct MapLayer *layer = &Ram_HeapSlots->mapGrid->layers[1];
 
-    layer[2] = -toFIXED(128);
-    layer[3] = 0x4480000;
+    layer->offsetX = -toFIXED(128);
+    layer->offsetY = toFIXED(1096);
   }
   return 0;
 }
 
+/// While the leader climbs, runs the step trigger of the wall cell under him.
 void GaiaRock_TriggerWallCell(void) {
-  if (gMainRoutineWork.movementMode == 2) {
+  if (gMainRoutineWork.movementMode == LEADER_MOVEMENT_KEYS) {
     struct FieldWork *work = Ram_HeapSlots->fieldWork;
     struct MapWork *map = Ram_HeapSlots->mapGrid;
     struct Actor *object = Actor_Get(gMainRoutineWork.leaderActorId);
@@ -564,6 +633,8 @@ void GaiaRock_TriggerWallCell(void) {
   }
 }
 
+/// Stands statue id risen on the cell under (x, y, z), in 16.16 pixels, and
+/// blocks that cell.
 void GaiaRock_PlaceStatue(s32 id, s32 x, s32 y, s32 z) {
   struct Actor *object = Actor_Get(id);
   struct MapCell *cell = Ram_HeapSlots->mapGrid->layers[2].cells;
@@ -580,6 +651,8 @@ void GaiaRock_PlaceStatue(s32 id, s32 x, s32 y, s32 z) {
   Actor_SetSpriteFlags(object, 0);
 }
 
+/// The statue id rises under the leader in a burst of dust and lifts him; once
+/// he is back on the ground, the flag is set.
 void GaiaRock_StatueRisesUnderLeader(s32 id, s32 flag) {
   struct Actor *leader = Actor_Get(gMainRoutineWork.leaderActorId);
   s32 gravity = leader->gravity;
@@ -608,7 +681,7 @@ void GaiaRock_StatueRisesUnderLeader(s32 id, s32 flag) {
       angle = Random16();
       speed = Random16();
       size = Random16();
-      scale = (size >> 1) + 0x2000;
+      scale = (size >> 1) + FIXED_ONE / 8;
       dust->velocityY = Iwram_MulFX(speed * 8, Trig_Cos(angle));
       dust->velocityX = Iwram_MulFX(speed * 8, Math_Sin(angle));
       dust->acceleration = 0;
@@ -654,6 +727,7 @@ void GaiaRock_StatueRisesUnderLeader(s32 id, s32 flag) {
   Event_SetFlag(flag);
 }
 
+/// Starts GaiaRock_TriggerWallCell each frame.
 void GaiaRock_StartWallTriggers(void) {
   Task_AddFrame(GaiaRock_TriggerWallCell, TASK_PASS_VBLANK);
 }
@@ -664,15 +738,16 @@ struct SceneEntrance gSceneEntrances[] = {
 };
 
 // clang-format off
-s16 gGaiaRock_SusaExitRegions[] = {
-    771, -28, 484, 779, -20, 492, -1, 2,
-    771, 180, 707, 779, 188, 715, -1, 3,
-    -1, 0, 0, 0, 0, 0, 0, 0,
+struct SceneRegion gGaiaRock_SusaExitRegions[] = {
+    {771, -28, 484, 779, -20, 492, CONDITION_ALWAYS, 2},
+    {771, 180, 707, 779, 188, 715, CONDITION_ALWAYS, 3},
+    {SCENE_TABLE_END},
 };
 
-u32 gGaiaRock_StatueSpotsExitRegions[] = {
-    0x12800c3, 0xcb0143, 0x14b0130, 0x2ffff, 0xfdd602c3, 0x2cb01c4,
-    0x1ccfdde, 0x3ffff, 0xffff, 0, 0, 0,
+struct SceneRegion gGaiaRock_StatueSpotsExitRegions[] = {
+    {195, 296, 323, 203, 304, 331, CONDITION_ALWAYS, 2},
+    {707, -554, 452, 715, -546, 460, CONDITION_ALWAYS, 3},
+    {SCENE_TABLE_END},
 };
 
 u32 gSceneExits[] = {
@@ -734,23 +809,22 @@ struct ActorPlacement gGaiaRock_StatueSpotsActorPlacements[] = {
     {SCENE_TABLE_END},
 };
 
-s16 gGaiaRock_DancingIdolActorPlacements[] = {
-    272, -1, 1, 0, 0, 216, 0, 0,
-    0, 232, 0x4000, 2, 272, -1, 1, 0,
-    0, 680, 0, 0, 0, 216, 0x4000, 258,
-    272, -1, 1, 0, 0, 712, 0, 0,
-    0, 248, 0x4000, 258, 272, -1, 1, 0,
-    0, 680, 0, 0, 0, 280, 0x4000, 258,
-    272, -1, 1, 0, 0, 632, 0, 0,
-    0, 280, 0x4000, 258, 272, -1, 1, 0,
-    0, 600, 0, 0, 0, 248, 0x4000, 258,
-    272, -1, 1, 0, 0, 632, 0, 0,
-    0, 216, 0x4000, 258, 385, -1, 1, 0,
-    0, 656, 0, 0, 0, 248, 0x4000, 2,
-    397, -1, 1, 0, 0, 0, 0, 0,
-    0, 0, 0x4000, 2, -1, 0, 0, 0,
-    0, 0, 0, 0, 0, 0, 0, 0,
-    -1, -1, 0, 0, 0, 0,
+struct ActorPlacement gGaiaRock_DancingIdolActorPlacements[] = {
+    ACTOR_PLACEMENT(SPRITE_STONE_PILLAR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 216, 0, 232, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_STONE_PILLAR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 680, 0, 216, FACING_SOUTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE),
+    ACTOR_PLACEMENT(SPRITE_STONE_PILLAR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 712, 0, 248, FACING_SOUTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE),
+    ACTOR_PLACEMENT(SPRITE_STONE_PILLAR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 680, 0, 280, FACING_SOUTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE),
+    ACTOR_PLACEMENT(SPRITE_STONE_PILLAR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 632, 0, 280, FACING_SOUTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE),
+    ACTOR_PLACEMENT(SPRITE_STONE_PILLAR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 600, 0, 248, FACING_SOUTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE),
+    ACTOR_PLACEMENT(SPRITE_STONE_PILLAR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 632, 0, 216, FACING_SOUTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE),
+    ACTOR_PLACEMENT(SPRITE_ALTAR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 656, 0, 248, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_DOLL, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    {SCENE_TABLE_END},
+};
+
+/// Unused: an empty trigger table nothing returns.
+struct Trigger gGaiaRock_UnusedTriggers[] = {
+    {TRIGGER_TABLE_END},
 };
 
 struct Trigger gGaiaRock_SusaTriggers[] = {
@@ -758,20 +832,20 @@ struct Trigger gGaiaRock_SusaTriggers[] = {
     {TRIGGER_EXIT, 4, CONDITION_ALWAYS, 4},
     {TRIGGER_EXIT, 5, CONDITION_ALWAYS, 5},
     {TRIGGER_STEP, 42, FLAG_SUSA_REJOICED, EVENT(GaiaRock_SusaRejoices)},
-    {TRIGGER_TALK, 20, CONDITION_ALWAYS, EVENT(GaiaRock_TalkToSusa)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 20, CONDITION_ALWAYS, EVENT(GaiaRock_MindReadSusa)},
-    {PSYNERGY_ON_ACTOR(ABILITY_WHIRLWIND), 8, CONDITION_ALWAYS, 0},
-    {PSYNERGY_ON_ACTOR(ABILITY_WHIRLWIND), 9, CONDITION_ALWAYS, 0},
-    {PSYNERGY_ON_ACTOR(ABILITY_WHIRLWIND), 10, CONDITION_ALWAYS, 0},
-    {PSYNERGY_ON_ACTOR(ABILITY_WHIRLWIND), 11, CONDITION_ALWAYS, 0},
-    {PSYNERGY_ON_ACTOR(ABILITY_WHIRLWIND), 12, CONDITION_ALWAYS, 0},
-    {PSYNERGY_ON_ACTOR(ABILITY_WHIRLWIND), 13, CONDITION_ALWAYS, 0},
-    {PSYNERGY_ON_ACTOR(ABILITY_WHIRLWIND), 14, CONDITION_ALWAYS, 0},
-    {PSYNERGY_ON_ACTOR(ABILITY_WHIRLWIND), 15, CONDITION_ALWAYS, 0},
+    {TRIGGER_TALK, ACTOR_SUSA, CONDITION_ALWAYS, EVENT(GaiaRock_TalkToSusa)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_SUSA, CONDITION_ALWAYS, EVENT(GaiaRock_MindReadSusa)},
+    {PSYNERGY_ON_ACTOR(ABILITY_WHIRLWIND), ACTOR_FIRST_VINE, CONDITION_ALWAYS, 0},
+    {PSYNERGY_ON_ACTOR(ABILITY_WHIRLWIND), ACTOR_FIRST_VINE + 1, CONDITION_ALWAYS, 0},
+    {PSYNERGY_ON_ACTOR(ABILITY_WHIRLWIND), ACTOR_FIRST_VINE + 2, CONDITION_ALWAYS, 0},
+    {PSYNERGY_ON_ACTOR(ABILITY_WHIRLWIND), ACTOR_FIRST_VINE + 3, CONDITION_ALWAYS, 0},
+    {PSYNERGY_ON_ACTOR(ABILITY_WHIRLWIND), ACTOR_FIRST_VINE + 4, CONDITION_ALWAYS, 0},
+    {PSYNERGY_ON_ACTOR(ABILITY_WHIRLWIND), ACTOR_FIRST_VINE + 5, CONDITION_ALWAYS, 0},
+    {PSYNERGY_ON_ACTOR(ABILITY_WHIRLWIND), ACTOR_FIRST_VINE + 6, CONDITION_ALWAYS, 0},
+    {PSYNERGY_ON_ACTOR(ABILITY_WHIRLWIND), ACTOR_FIRST_VINE + 7, CONDITION_ALWAYS, 0},
     {PSYNERGY_PHASE_ON_CELL(ABILITY_CYCLONE, PSYNERGY_PHASE_ACTS), 20, CONDITION_ALWAYS, EVENT(GaiaRock_CycloneClearsWall)},
-    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), 16, FLAG_FIRST_PILLAR_DROPPED, EVENT(GaiaRock_StartMovingPillar)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 16, FLAG_FIRST_PILLAR_DROPPED, EVENT(GaiaRock_FinishMovingPillar)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 19, FLAG_SECOND_PILLAR_DROPPED, EVENT(GaiaRock_FinishMovingPillar)},
+    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), ACTOR_FIRST_PILLAR, FLAG_FIRST_PILLAR_DROPPED, EVENT(GaiaRock_StartMovingPillar)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_FIRST_PILLAR, FLAG_FIRST_PILLAR_DROPPED, EVENT(GaiaRock_FinishMovingPillar)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_SECOND_PILLAR, FLAG_SECOND_PILLAR_DROPPED, EVENT(GaiaRock_FinishMovingPillar)},
     {TRIGGER_PUSHED, 0, CONDITION_ALWAYS, EVENT(GaiaRock_FinishMovingPillar)},
     {TRIGGER_TABLE_END},
 };
@@ -779,24 +853,24 @@ struct Trigger gGaiaRock_SusaTriggers[] = {
 struct Trigger gGaiaRock_StatueSpotsTriggers[] = {
     {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
     {TRIGGER_EXIT, 4, CONDITION_ALWAYS, 4},
-    {TRIGGER_STEP, 20, FLAG_AREA_TEMP_00, EVENT(GaiaRock_StepOnFirstStatueSpot)},
-    {TRIGGER_STEP, 21, FLAG_AREA_TEMP_01, EVENT(GaiaRock_StepOnSecondStatueSpot)},
-    {TRIGGER_STEP, 22, FLAG_AREA_TEMP_02, EVENT(GaiaRock_StepOnThirdStatueSpot)},
-    {PSYNERGY_ON_ACTOR(ABILITY_WHIRLWIND), 8, CONDITION_ALWAYS, 0},
-    {PSYNERGY_ON_ACTOR(ABILITY_WHIRLWIND), 9, CONDITION_ALWAYS, 0},
-    {PSYNERGY_ON_ACTOR(ABILITY_WHIRLWIND), 10, CONDITION_ALWAYS, 0},
-    {PSYNERGY_ON_ACTOR(ABILITY_WHIRLWIND), 11, CONDITION_ALWAYS, 0},
-    {PSYNERGY_ON_ACTOR(ABILITY_WHIRLWIND), 12, CONDITION_ALWAYS, 0},
-    {PSYNERGY_ON_ACTOR(ABILITY_WHIRLWIND), 13, CONDITION_ALWAYS, 0},
-    {PSYNERGY_ON_ACTOR(ABILITY_WHIRLWIND), 14, CONDITION_ALWAYS, 0},
+    {TRIGGER_STEP, 20, FLAG_FIRST_STATUE_RISEN, EVENT(GaiaRock_StepOnFirstStatueSpot)},
+    {TRIGGER_STEP, 21, FLAG_SECOND_STATUE_RISEN, EVENT(GaiaRock_StepOnSecondStatueSpot)},
+    {TRIGGER_STEP, 22, FLAG_THIRD_STATUE_RISEN, EVENT(GaiaRock_StepOnThirdStatueSpot)},
+    {PSYNERGY_ON_ACTOR(ABILITY_WHIRLWIND), ACTOR_FIRST_VINE, CONDITION_ALWAYS, 0},
+    {PSYNERGY_ON_ACTOR(ABILITY_WHIRLWIND), ACTOR_FIRST_VINE + 1, CONDITION_ALWAYS, 0},
+    {PSYNERGY_ON_ACTOR(ABILITY_WHIRLWIND), ACTOR_FIRST_VINE + 2, CONDITION_ALWAYS, 0},
+    {PSYNERGY_ON_ACTOR(ABILITY_WHIRLWIND), ACTOR_FIRST_VINE + 3, CONDITION_ALWAYS, 0},
+    {PSYNERGY_ON_ACTOR(ABILITY_WHIRLWIND), ACTOR_FIRST_VINE + 4, CONDITION_ALWAYS, 0},
+    {PSYNERGY_ON_ACTOR(ABILITY_WHIRLWIND), ACTOR_FIRST_VINE + 5, CONDITION_ALWAYS, 0},
+    {PSYNERGY_ON_ACTOR(ABILITY_WHIRLWIND), ACTOR_FIRST_VINE + 6, CONDITION_ALWAYS, 0},
     {TRIGGER_TABLE_END},
 };
 
 struct Trigger gGaiaRock_Triggers[] = {
     {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
-    {TRIGGER_TALK, 15, CONDITION_ALWAYS, EVENT(GaiaRock_CheckAltar)},
-    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), 8, CONDITION_ALWAYS, EVENT(GaiaRock_StartPushingBlock)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 8, CONDITION_ALWAYS, EVENT(GaiaRock_FinishPushingBlock)},
+    {TRIGGER_TALK, ACTOR_ALTAR, CONDITION_ALWAYS, EVENT(GaiaRock_CheckAltar)},
+    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), ACTOR_PUSHED_PILLAR, CONDITION_ALWAYS, EVENT(GaiaRock_StartPushingBlock)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_PUSHED_PILLAR, CONDITION_ALWAYS, EVENT(GaiaRock_FinishPushingBlock)},
     {TRIGGER_PUSH, 0, CONDITION_ALWAYS, EVENT(GaiaRock_StartPushingBlock)},
     {TRIGGER_PUSHED, 0, CONDITION_ALWAYS, EVENT(GaiaRock_FinishPushingBlock)},
     {PSYNERGY_ANYWHERE(ABILITY_REVEAL, PSYNERGY_PHASE_ACTS), 0, CONDITION_ALWAYS, EVENT(GaiaRock_RevealIdol)},
@@ -809,12 +883,12 @@ u32 gGaiaRock_LeafScript[] = {
 };
 
 s32 gGaiaRock_WindScript[] = {
-    SC_ADD(SW_SCALE_X, 0x1999),
-    SC_ADD(SW_SCALE_Y, 0x1999),
+    SC_ADD(SW_SCALE_X, FIXED_ONE / 10),
+    SC_ADD(SW_SCALE_Y, FIXED_ONE / 10),
     SC_WAIT(1),
     SC_LOOP(12, SC_TOP),
-    SC_SET(SW_SCALE_X, 0x1b333),
-    SC_SET(SW_SCALE_Y, 0x14ccc),
+    SC_SET(SW_SCALE_X, FIXED_ONE * 17 / 10),
+    SC_SET(SW_SCALE_Y, FIXED_ONE * 13 / 10),
     SC_SYNC,
     SC_ANIMATION(1),
     SC_WAIT(6),
@@ -835,50 +909,55 @@ s32 gGaiaRock_WindScript[] = {
 };
 
 u32 gGaiaRock_DustScript[] = {
-    0, 40, 0x80010000, 22, 25, 0,
-    0, 1, 22, 25, 1, 0,
-    1, 13, 10, 0xc0010000, 38,
+    SC_WAIT(40),
+    SC_LABEL(1),
+    SC_SET(SW_SPRITE_KIND, ACTOR_SPRITE_NONE),
+    SC_WAIT(1),
+    SC_SET(SW_SPRITE_KIND, ACTOR_SPRITE_ONE),
+    SC_WAIT(1),
+    SC_LOOP(10, SC_TO(1)),
+    SC_RELEASE,
 };
 
-s32 gGaiaRock_StatueRiseScript[] = {                                                               
-      SC_ADD(SW_SCALE_X, 0x8000),                                              
-      SC_ADD(SW_SCALE_Y, 0x8000),                                              
-      SC_WAIT(2),                                                              
-      SC_ADD(SW_SCALE_X, -0x4000),                                             
-      SC_ADD(SW_SCALE_Y, -0x4000),                                             
-      SC_WAIT(2),                                                              
-      SC_ADD(SW_SCALE_X, -0x2000),                                             
-      SC_ADD(SW_SCALE_Y, -0x2000),                                             
-      SC_WAIT(2),                                                              
-      SC_ADD(SW_SCALE_X, -0x2000),                                             
-      SC_ADD(SW_SCALE_Y, -0x2000),                                             
-      SC_WAIT(4),                                                              
-      SC_ADD(SW_SCALE_X, 0x8000),                                              
-      SC_ADD(SW_SCALE_Y, 0x8000),                                              
-      SC_WAIT(2),                                                              
-      SC_ADD(SW_SCALE_X, -0x4000),                                             
-      SC_ADD(SW_SCALE_Y, -0x4000),                                             
-      SC_WAIT(2),                                                              
-      SC_ADD(SW_SCALE_X, -0x2000),                                             
-      SC_ADD(SW_SCALE_Y, -0x2000),                                             
-      SC_WAIT(2),                                                              
-      SC_ADD(SW_SCALE_X, -0x2000),                                             
-      SC_ADD(SW_SCALE_Y, -0x2000),                                             
-      SC_WAIT(4),                                                              
-      SC_ADD(SW_SCALE_X, 0x8000),                                              
-      SC_ADD(SW_SCALE_Y, 0x8000),                                              
-      SC_WAIT(2),                                                              
-      SC_ADD(SW_SCALE_X, -0x4000),                                             
-      SC_ADD(SW_SCALE_Y, -0x4000),                                             
-      SC_WAIT(2),                                                              
-      SC_ADD(SW_SCALE_X, -0x2000),                                             
-      SC_ADD(SW_SCALE_Y, -0x2000),                                             
-      SC_WAIT(2),                                                              
-      SC_ADD(SW_SCALE_X, -0x2000),                                             
-      SC_ADD(SW_SCALE_Y, -0x2000),                                             
-      SC_WAIT(4),                                                              
-      SC_WAIT(20),                                                             
-      SC_LOOP(3, SC_TOP),                                                      
-      SC_END,                                                                  
-  };
+s32 gGaiaRock_StatueRiseScript[] = {
+    SC_ADD(SW_SCALE_X, FIXED_ONE / 2),
+    SC_ADD(SW_SCALE_Y, FIXED_ONE / 2),
+    SC_WAIT(2),
+    SC_ADD(SW_SCALE_X, -FIXED_ONE / 4),
+    SC_ADD(SW_SCALE_Y, -FIXED_ONE / 4),
+    SC_WAIT(2),
+    SC_ADD(SW_SCALE_X, -FIXED_ONE / 8),
+    SC_ADD(SW_SCALE_Y, -FIXED_ONE / 8),
+    SC_WAIT(2),
+    SC_ADD(SW_SCALE_X, -FIXED_ONE / 8),
+    SC_ADD(SW_SCALE_Y, -FIXED_ONE / 8),
+    SC_WAIT(4),
+    SC_ADD(SW_SCALE_X, FIXED_ONE / 2),
+    SC_ADD(SW_SCALE_Y, FIXED_ONE / 2),
+    SC_WAIT(2),
+    SC_ADD(SW_SCALE_X, -FIXED_ONE / 4),
+    SC_ADD(SW_SCALE_Y, -FIXED_ONE / 4),
+    SC_WAIT(2),
+    SC_ADD(SW_SCALE_X, -FIXED_ONE / 8),
+    SC_ADD(SW_SCALE_Y, -FIXED_ONE / 8),
+    SC_WAIT(2),
+    SC_ADD(SW_SCALE_X, -FIXED_ONE / 8),
+    SC_ADD(SW_SCALE_Y, -FIXED_ONE / 8),
+    SC_WAIT(4),
+    SC_ADD(SW_SCALE_X, FIXED_ONE / 2),
+    SC_ADD(SW_SCALE_Y, FIXED_ONE / 2),
+    SC_WAIT(2),
+    SC_ADD(SW_SCALE_X, -FIXED_ONE / 4),
+    SC_ADD(SW_SCALE_Y, -FIXED_ONE / 4),
+    SC_WAIT(2),
+    SC_ADD(SW_SCALE_X, -FIXED_ONE / 8),
+    SC_ADD(SW_SCALE_Y, -FIXED_ONE / 8),
+    SC_WAIT(2),
+    SC_ADD(SW_SCALE_X, -FIXED_ONE / 8),
+    SC_ADD(SW_SCALE_Y, -FIXED_ONE / 8),
+    SC_WAIT(4),
+    SC_WAIT(20),
+    SC_LOOP(3, SC_TOP),
+    SC_END,
+};
 // clang-format on

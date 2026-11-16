@@ -10,40 +10,42 @@
 
 #define Decompress_ByteLz ((void (*)(void *, void *))Decompress_ByteLz)
 
-/// Decompresses picture `picture` of gMenuTitlePictures, a 64x16
+/// Decompresses picture `picture` of gRenderResource_PairSourceTable, a 64x16
 /// heading (Save, Continue, Copy, Erase, Battle, Link, Pause, Setup) of 512
 /// bytes, into VRAM slot `slot`, through a 1 KB staging block in
 /// HEAP_SLOT_TILE_SCRATCH. The heap block is not freed when `slot` is not a
 /// valid VRAM slot.
-void MenuTitle_Load(s32 groupIndex, s32 resourceIndex) {
-  void *stagingBuffer = HeapSlot_AllocEwram(HEAP_SLOT_TILE_SCRATCH, 0x400);
-  s32 resourceAddress = gRenderResource_PairSourceTable[groupIndex];
+void MenuTitle_Load(s32 picture, s32 slot) {
+  void *stagingBuffer = HeapSlot_AllocEwram(HEAP_SLOT_TILE_SCRATCH, 1024);
+  s32 resource = gRenderResource_PairSourceTable[picture];
 
-  if (resourceIndex < VRAM_CACHE_ENTRY_COUNT) {
-    Decompress_ByteLz((void *)resourceAddress, stagingBuffer);
-    VramCache_Load(resourceIndex, 0x200, stagingBuffer);
+  if (slot < VRAM_CACHE_ENTRY_COUNT) {
+    Decompress_ByteLz((void *)resource, stagingBuffer);
+    VramCache_Load(slot, 512, stagingBuffer);
     HeapSlot_Release(HEAP_SLOT_TILE_SCRATCH);
   }
 }
 
-/// Shows heading `picture` of gMenuTitlePictures as two 32x16 sprites side by
-/// side at (x, y) in `window`, on draw layer 253, and returns the left one (the
-/// right one follows it in the window's list).
-struct WindowSprite *MenuTitle_Create(s32 group, struct Window *input, s32 x,
+/// Shows heading `picture` of gRenderResource_PairSourceTable as two 32x16
+/// sprites side by side at (x, y) in `window`, on draw layer 253, and returns
+/// the left one (the right one follows it in the window's list).
+struct WindowSprite *MenuTitle_Create(s32 picture, struct Window *window, s32 x,
                                       s32 y) {
-  s32 index;
+  s32 slot;
   struct WindowSprite *first;
   struct WindowSprite *second;
 
-  index = VramCache_FindFreeEntry();
-  if (index >= VRAM_CACHE_ENTRY_COUNT)
+  slot = VramCache_FindFreeEntry();
+  if (slot >= VRAM_CACHE_ENTRY_COUNT)
     return NULL;
 
-  MenuTitle_Load(group, index);
-  first = WindowSprite_Create(index, OUTPUT_SIZE_32X16, input, x, y);
+  // The picture is 8 tiles. Neither sprite is checked for NULL.
+  MenuTitle_Load(picture, slot);
+  first = WindowSprite_Create(slot, OUTPUT_SIZE_32X16, window, x, y);
   first->depth = OAM_DEPTH_FRONT - 2;
-  second = WindowSprite_Create(index, OUTPUT_SIZE_32X16, input, x + 32, y);
+  second = WindowSprite_Create(slot, OUTPUT_SIZE_32X16, window, x + 32, y);
   second->depth = OAM_DEPTH_FRONT - 2;
+  // The right half's tiles, after the left half's 8.
   second->sprite.oam.index += 8;
   return first;
 }
@@ -69,16 +71,16 @@ void MenuTitle_Bob(struct WindowSprite *obj) {
 /// Decompresses command icon `icon` (a 32x32 picture of 256 colours, 1 KB)
 /// into VRAM slot `slot`, remapping its first 768 bytes' colours by table
 /// when `remap` is nonzero.
-void CommandIcon_Load(s32 index, s32 value, s32 flag) {
+void CommandIcon_Load(s32 icon, s32 slot, s32 remap) {
   s32 size = 1024;
   void *buffer = HeapSlot_AllocEwram(HEAP_SLOT_TILE_SCRATCH, size);
-  u16 *base = Resource_GetTableEntry(RESOURCE_COMMAND_ICONS);
+  u16 *offsetTable = Resource_GetTableEntry(RESOURCE_COMMAND_ICONS);
 
-  if (value < VRAM_CACHE_ENTRY_COUNT) {
-    Decompress_ByteLz((void *)((u32)base + base[index]), buffer);
-    if (flag != 0)
+  if (slot < VRAM_CACHE_ENTRY_COUNT) {
+    Decompress_ByteLz((void *)((u32)offsetTable + offsetTable[icon]), buffer);
+    if (remap != 0)
       SpriteColor_RemapPixelsFar(buffer, 768);
-    VramCache_Load(value, size, buffer);
+    VramCache_Load(slot, size, buffer);
     HeapSlot_Release(HEAP_SLOT_TILE_SCRATCH);
   }
 }
@@ -132,6 +134,7 @@ s32 Djinn_GetGiveTutorialMessage(void) {
   return (s32)MsgDjinnGiveTutorialA;
 }
 
+/// One word of a tile marked by XOR with `mask`.
 static __inline__ u32 XorWord(u32 word, u32 mask) { return word ^ mask; }
 
 #define RANGE_PATTERN_SET_COUNT 2
@@ -141,61 +144,59 @@ static __inline__ u32 XorWord(u32 word, u32 mask) { return word ^ mask; }
 /// draws as tilemap entries.
 #define RANGE_ICON_FIRST_TILE 788
 
-// Builds twelve two-tile patterns as the 24 BG tiles from
-// RANGE_ICON_FIRST_TILE, the ones Window_DrawThreeTileColumn draws: each tile
-// filled with colour 4, then rows 1 to 7 marked by XOR with
-// gMenu_BarPatternRows. The first set grows its pattern with the row, the
-// second skips row 1. It is declared to return s32 but returns no value, and
-// its caller reads none.
-s32 Menu_BuildLocalizedPatternTiles(void) {
-  s32 set;
-  s32 n;
+/// Builds the twelve range icons Window_DrawThreeTileColumn draws, as the 24 BG
+/// tiles from RANGE_ICON_FIRST_TILE: icon n is a centre tile and an end tile,
+/// filled with colour 4, then rows 1 to 7 marked by XOR with
+/// gMenu_BarPatternRows. The first set grows its pattern with the row, the
+/// second skips row 1.
+UNREAD_RESULT Menu_BuildLocalizedPatternTiles(void) {
+  s32 patternSet;
+  s32 patternIndex;
 
-  for (set = 0; set < RANGE_PATTERN_SET_COUNT; set++) {
-    for (n = 0; n < RANGE_PATTERN_COUNT; n++) {
-      u32 *tile =
-          (u32 *)(set * (RANGE_PATTERN_COUNT * RANGE_PATTERN_PAIR_BYTES) +
-                  n * RANGE_PATTERN_PAIR_BYTES + (u32)BG_CHAR_BLOCK(0) +
-                  RANGE_ICON_FIRST_TILE * TILE_SIZE_4BPP);
-      s32 x;
+  for (patternSet = 0; patternSet < RANGE_PATTERN_SET_COUNT; patternSet++) {
+    for (patternIndex = 0; patternIndex < RANGE_PATTERN_COUNT; patternIndex++) {
+      u32 *tile = (u32 *)(patternSet *
+                              (RANGE_PATTERN_COUNT * RANGE_PATTERN_PAIR_BYTES) +
+                          patternIndex * RANGE_PATTERN_PAIR_BYTES +
+                          (u32)BG_CHAR_BLOCK(0) +
+                          RANGE_ICON_FIRST_TILE * TILE_SIZE_4BPP);
+      s32 row;
 
-      Iwram_FillWordsEntry(tile, 64, TEXT_CANVAS_BACKGROUND_WORD);
-      for (x = 1; x <= 7; x++) {
-        s32 mi = n;
+      Iwram_FillWordsEntry(tile, RANGE_PATTERN_PAIR_BYTES,
+                           TEXT_CANVAS_BACKGROUND_WORD);
+      for (row = 1; row <= 7; row++) {
+        s32 sourcePattern = patternIndex;
 
-        if (set == 1 && x <= 1) {
+        if (patternSet == 1 && row <= 1) {
           continue;
         }
-        if (set == 0 && n > x - 2) {
-          mi = x - 2;
-          if (mi < 0) {
-            mi = 0;
+        if (patternSet == 0 && patternIndex > row - 2) {
+          sourcePattern = row - 2;
+          if (sourcePattern < 0) {
+            sourcePattern = 0;
           }
         }
-        tile[x] = XorWord(tile[x], gMenu_BarPatternRows[mi].firstTile);
-        tile[x + 8] = XorWord(tile[x + 8], gMenu_BarPatternRows[mi].secondTile);
+        tile[row] =
+            XorWord(tile[row], gMenu_BarPatternRows[sourcePattern].firstTile);
+        tile[row + 8] = XorWord(tile[row + 8],
+                                gMenu_BarPatternRows[sourcePattern].secondTile);
       }
     }
   }
 }
 
-// UB: it is declared to return int but returns no value, and no caller reads
-// one; UBFIX makes it void.
-#ifdef UBFIX
-void Window_DrawThreeTileColumn(s32 window, s32 x, s32 y, s32 pattern,
-                                s32 unused) {
-#else
-int Window_DrawThreeTileColumn(s32 window, s32 x, s32 y, s32 pattern,
-                               s32 unused) {
-#endif
-  s32 tile_offset = pattern * 2;
-  s32 tile = tile_offset + WINDOW_TILE(RANGE_ICON_FIRST_TILE + 1);
+/// Draws range icon `pattern` across tiles (x, y) to (x + 2, y) of `window`'s
+/// interior: its end tile mirrored, its centre tile and its end tile, in the UI
+/// palette.
+UNREAD_RESULT Window_DrawThreeTileColumn(struct Window *window, s32 x, s32 y,
+                                         s32 pattern, s32 unused) {
+  s32 patternOffset = pattern * 2;
+  s32 rightTile = patternOffset + WINDOW_TILE(RANGE_ICON_FIRST_TILE + 1);
 
-  Window_SetTilemapEntry((struct Window *)window, TILE_HFLIP | tile, x, y, 0);
-  Window_SetTilemapEntry((struct Window *)window,
-                         tile_offset + WINDOW_TILE(RANGE_ICON_FIRST_TILE),
-                         x + 1, y, 0);
-  Window_SetTilemapEntry((struct Window *)window, tile, x + 2, y, 0);
+  Window_SetTilemapEntry(window, TILE_HFLIP | rightTile, x, y, 0);
+  Window_SetTilemapEntry(
+      window, patternOffset + WINDOW_TILE(RANGE_ICON_FIRST_TILE), x + 1, y, 0);
+  Window_SetTilemapEntry(window, rightTile, x + 2, y, 0);
 }
 
 /// Merges two 8x8 4bpp tiles row by row into `output`: `second` moved `shift`
@@ -273,8 +274,9 @@ void Link_DrawPageArrows(s32 offset) {
       (u32 *)(gRomShiftedTilePair + 32), (u32 *)(offset + 32), phase);
 }
 
-/// Link_DrawPageArrows with both arrows merged into the one tile at VRAM
-/// 0x06000400; the battle's status screen calls it each frame.
+/// Link_DrawPageArrows for the Status screen's own arrows: both slide over the
+/// window's fill tile (WINDOW_TILE_WINDOW_FILL) rather than the border's. The
+/// battle's status screen calls it each frame.
 void BattleStatus_DrawPageArrows(s32 offset) {
   s32 phase = (gFrameCount >> 2) & 3;
 
@@ -285,11 +287,14 @@ void BattleStatus_DrawPageArrows(s32 offset) {
     phase = 1;
   }
   phase = phase + 1;
-  Graphics_MergeShiftedTileRows((u32 *)0x06000400, (u32 *)gRomShiftedTilePair,
-                                (u32 *)offset, -phase);
-  Graphics_MergeShiftedTileRows((u32 *)0x06000400,
-                                (u32 *)(gRomShiftedTilePair + 32),
-                                (u32 *)(offset + 32), phase);
+  Graphics_MergeShiftedTileRows(
+      (u32 *)(BG_CHAR_BLOCK(0) +
+              (WINDOW_TILE_WINDOW_FILL & TILE_NUMBER_MASK) * TILE_SIZE_4BPP),
+      (u32 *)gRomShiftedTilePair, (u32 *)offset, -phase);
+  Graphics_MergeShiftedTileRows(
+      (u32 *)(BG_CHAR_BLOCK(0) +
+              (WINDOW_TILE_WINDOW_FILL & TILE_NUMBER_MASK) * TILE_SIZE_4BPP),
+      (u32 *)(gRomShiftedTilePair + 32), (u32 *)(offset + 32), phase);
 }
 
 /// Copies the UI's ten digit tiles ('0' to '9', tiles 48 to 57) twice into
@@ -386,12 +391,16 @@ s32 Resource_LoadIndexedEntryToBuffer(s32 resource, s32 index) {
   return result;
 }
 
-s32 Portrait_Load(u32 entry, s32 slot) {
+/// Loads the portrait of character `member` (ISAAC to PIERS, 0 to 7; any higher
+/// value shows Isaac's) into VRAM cache entry `cacheSlot`, in PORTRAIT_PALETTE,
+/// and returns its first tile.
+s32 Portrait_Load(u32 member, s32 cacheSlot) {
   s32 tile;
 
-  if (entry > 7)
-    entry = 0;
-  Icon_LoadWithPalette(Portrait_GetForSpeaker(entry), 0, &slot, &tile, 14, 1);
+  if (member > PIERS)
+    member = ISAAC;
+  Icon_LoadWithPalette(Portrait_GetForSpeaker(member), 0, &cacheSlot, &tile,
+                       PORTRAIT_PALETTE, 1);
   return tile;
 }
 
@@ -405,13 +414,13 @@ s32 WindowSprite_GetPointerTiles(s32 no) {
   return gWindow_FixedTileBlocks[no];
 }
 
-/// Copies the 4bpp decompression routine to RAM and runs it on the stream
-/// whose address the work holds at 0x604, decoding into the work.
-void Icon_Decompress(u8 *work) {
+/// Copies the 4bpp decoder into RAM, calls it with the transfer's encoded
+/// source and byte buffer, then releases the copied code.
+UNUSED void Icon_Decompress(GlyphTransfer *work) {
   void (*routine)(void *, void *);
 
   RamCode_Load(routine, Tile_Decompress4bppCode, Tile_Decompress4bppCodeSize);
-  routine(*(void **)(work + 0x604), work);
+  routine(work->encoded, work->input);
   Heap_Release(routine);
 }
 
@@ -457,8 +466,8 @@ void BattleCommandRow_LoadIconTiles(struct GlyphPalette *palette, s32 glyph,
   GlyphTransfer *decoded;
   u8 *font;
   u8 *remapped;
-  u8 *src;
-  u8 *dst;
+  u8 *source;
+  u8 *destination;
   s32 i;
   u32 index;
 
@@ -467,11 +476,11 @@ void BattleCommandRow_LoadIconTiles(struct GlyphPalette *palette, s32 glyph,
   font = Resource_GetTableEntry(RESOURCE_COMMAND_ICONS);
   decoded->encoded = font + ((u16 *)font)[glyph];
   Decompress_ByteLz(decoded->encoded, decoded);
-  remapped = Heap_Alloc(0x400);
-  src = decoded->input;
-  dst = remapped;
-  for (i = 0; i < 0x400; i++) {
-    index = *src++;
+  remapped = Heap_Alloc(32 * 32);
+  source = decoded->input;
+  destination = remapped;
+  for (i = 0; i < 32 * 32; i++) {
+    index = *source++;
     if (palette->slot[index] == 255) {
       palette->slot[index] = palette->count;
       if (palette->count < 64) {
@@ -479,7 +488,7 @@ void BattleCommandRow_LoadIconTiles(struct GlyphPalette *palette, s32 glyph,
         palette->count++;
       }
     }
-    *dst++ = palette->slot[index];
+    *destination++ = palette->slot[index];
   }
   Dma_Set(remapped, BG_CHAR_BLOCK(1) + tile * 64, DMA_COPY_WORDS(256),
           REG_DMA3);
@@ -512,23 +521,19 @@ void BattleCommandRow_LoadIcon(struct BattleCommandRowWork *work, s32 index,
 /// line 136 (tile row 17, the top of the row's icons), so that BG1 is behind
 /// above the strip and in front from it down.
 void CommandRow_PutBg1Behind(void) {
-  u32 mask = 4;
   u32 value = REG_BG1CNT;
 
-  mask = -mask;
-  value &= mask;
-  value |= 3;
+  value &= ~BGCNT_PRIORITY(3);
+  value |= BGCNT_PRIORITY(3);
   REG_BG1CNT = value;
 }
 
 /// Brings BG1 to the front (priority 0): the command row's VCount handler,
 /// run at line 136, the top of its icon strip (tile row 17).
 void CommandRow_PutBg1InFront(void) {
-  u32 mask = 4;
   u32 value = REG_BG1CNT;
 
-  mask = -mask;
-  value &= mask;
+  value &= ~BGCNT_PRIORITY(3);
   REG_BG1CNT = value;
 }
 

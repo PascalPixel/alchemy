@@ -474,7 +474,8 @@ void MarsLighthouseEntrance_Teleport(void) {
     FieldEvent_ResolvePendingActions(0);
     Teleport_PlaySparks();
     Actor_Get(gMainRoutineWork.leaderActorId)->update = NULL;
-    FieldActor_SetSpriteColor(Actor_Get(gMainRoutineWork.leaderActorId), 0);
+    FieldActor_SetSpriteColor(Actor_Get(gMainRoutineWork.leaderActorId),
+                              SPRITE_COLOR_NORMAL);
     Actor_SetHorizontalPositionWithTerrain_(gMainRoutineWork.leaderActorId,
                                             toFIXED(688), toFIXED(360));
     FieldCamera_MoveTo(688, CAMERA_KEEP, 360, 1);
@@ -801,7 +802,7 @@ void MarsLighthouseEntrance_DrawHoleMask(void) {
   sy &= 0xff;
   word = gMarsLighthouseEntrance_HoleMaskSprite;
   *word++ = 0;
-  *word++ = sy | (sx << 16) | 0x80008800;
+  *word++ = sy | (sx << 16) | OBJ_SIZE_16X32 | OBJ_MODE(OBJ_MODE_WINDOW);
   *word = tile | 0x400;
   Oam_AddSpriteAtDepthClamped(gMarsLighthouseEntrance_HoleMaskSprite, depth);
 }
@@ -1041,7 +1042,7 @@ void MarsLighthouseEntrance_FlickerDragonFace(struct Actor *object) {
     Actor_SetSpriteColorMode(object, 0);
     break;
   case 6:
-    Actor_SetSpriteColorMode(object, 10);
+    Actor_SetSpriteColorMode(object, SPRITE_COLOR_RED_TINT);
     break;
   }
 }

@@ -6,7 +6,7 @@
 #include "sounds.h"
 
 /// The sparks live in the map cell buffer's second 16 KB, 128 for each sword.
-#define SPARKS ((struct Particle *)(Ram_MapCellBuffer + 0x4000))
+#define SPARKS ((struct Particle *)(Ram_MapCellBuffer + 16384))
 #define SPARK_COUNT 512
 #define LEGEND_SWORD_SPARKS 128
 
@@ -14,10 +14,10 @@
 // pixels.
 
 /// Where BladeSheet is decoded in the effect's pictures.
-#define LEGEND_BLADE_PICTURES 0x4000
+#define LEGEND_BLADE_PICTURES 16384
 
 /// Where FlameGradientTexture is decoded in the effect's pictures.
-#define LEGEND_FLAME_GRADIENT 0x5000
+#define LEGEND_FLAME_GRADIENT 20480
 
 /// Legend: a fan of eight blades opens over the target for
 /// 50 frames while a rune, mirrored from one corner, rises and turns behind
@@ -292,7 +292,7 @@ void BattleEffect_RunThunderCard(struct BattleEffectParams *args) {
 
 /// Where the card's element pictures are decoded in the effect's pictures:
 /// CrystalSheet, FlashBurstSheet, SmokeSheet or JaggedStreakSheet.
-#define ELEMENT_CARDS_PICTURES 0x800
+#define ELEMENT_CARDS_PICTURES 2048
 /// The work's particles: the shards, smoke or pictures the card throws, then
 /// one strike countdown for each target. Each target has its own run of the
 /// sparks, and a strike throws up the next free 16 of them.
@@ -445,7 +445,7 @@ void BattleEffect_RunElementCards(struct BattleEffectParams *args, s32 mode) {
           if ((u32)step->variant <= 1023) {
             s32 cell = i % 5 * 3 + step->variant / 96 % 3;
 
-            draw[0](canvas, work->sheet + gPrism_ShardPictures[cell] + 0x1000,
+            draw[0](canvas, work->sheet + gPrism_ShardPictures[cell] + 4096,
                     FIXED_INTEGER_PART(step->x) - gPrism_ShardWidths[cell] / 2,
                     FIXED_INTEGER_PART(step->y) - gPrism_ShardHeights[cell] / 2,
                     gPrism_ShardWidths[cell], gPrism_ShardHeights[cell]);
@@ -607,7 +607,7 @@ void BattleEffect_RunElementCards(struct BattleEffectParams *args, s32 mode) {
             struct Particle *step = &work->particles[i];
 
             step->velocityY = i << 13;
-            step->z = ((first + i) % 3 << 12) + 0x800;
+            step->z = ((first + i) % 3 << 12) + 2048;
           }
         }
         for (i = 0; i != 4; i++) {
@@ -626,7 +626,7 @@ void BattleEffect_RunElementCards(struct BattleEffectParams *args, s32 mode) {
             struct Particle *step = &work->particles[i];
 
             step->velocityZ = (Random16() & 0x1fff) + 8096;
-            step->z = ((first + i) % 3 << 12) + 0x800;
+            step->z = ((first + i) % 3 << 12) + 2048;
           }
         }
       }

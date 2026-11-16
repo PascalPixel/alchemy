@@ -5,7 +5,7 @@
 #include "battle_effect_internal.h"
 
 /// Where ParticleSpritesD is decoded in the effect's pictures.
-#define NEPTUNE_PARTICLE_SPRITES_D_PICTURES 0x4e20
+#define NEPTUNE_PARTICLE_SPRITES_D_PICTURES 20000
 
 /// The first stage's flares converging on Neptune's head, and the burst at
 /// its end.
@@ -134,7 +134,7 @@ void BattleEffect_RunNeptune(struct BattleEffectParams *args) {
   for (i = 0; i != PARTICLE_POOL_COUNT; i++)
     PARTICLES[i].variant = -1;
   for (i = 0, glintSeed = work->particles; i != 32; i++, glintSeed++) {
-    s32 a = (Random16() & 0x3fff) + 0x8000;
+    s32 a = (Random16() & 0x3fff) + DEGtoANG(180);
     s32 r = (Random16() & 127) + 255;
 
     glintSeed->x = (Trig_Sin(a) * r) >> 2;
@@ -149,8 +149,8 @@ void BattleEffect_RunNeptune(struct BattleEffectParams *args) {
 
     PARTICLES[i].x = ((Trig_Sin(a) * r) >> 3) + toFIXED(128);
     PARTICLES[i].y = ((Trig_Cos(a) * r) >> 4) + toFIXED(96);
-    PARTICLES[i].velocityX = (-(Random16() & 0x1fff) - 0x800) << 5;
-    PARTICLES[i].velocityY = (-(Random16() & 0xfff) - 0x1800) << 5;
+    PARTICLES[i].velocityX = (-(Random16() & 0x1fff) - 2048) << 5;
+    PARTICLES[i].velocityY = (-(Random16() & 0xfff) - 6144) << 5;
     PARTICLES[i].variant = 0;
   }
 
@@ -495,7 +495,7 @@ void BattleEffect_RunNeptune(struct BattleEffectParams *args) {
               s32 a;
 
               r &= Random16();
-              a = (Random16() & 0x7fff) - 0x4000;
+              a = (Random16() & 0x7fff) - DEGtoANG(90);
               PARTICLES[j].x = INTtoFIXED(pillarX);
               PARTICLES[j].y = INTtoFIXED(ground);
               r += 32;

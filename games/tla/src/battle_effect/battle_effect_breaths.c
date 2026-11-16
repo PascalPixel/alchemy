@@ -9,13 +9,13 @@
 enum CrescentSlashMode { CRESCENT_SLASH_HUMAN_HUNT, CRESCENT_SLASH_ECHO_CUT };
 
 /// The jaws' texture, unpacked into the map cell buffer's second 16 KB.
-#define JAW_TEXTURE (Ram_MapCellBuffer + 0x4000)
+#define JAW_TEXTURE (Ram_MapCellBuffer + 16384)
 /// The Beam's 16 fading rings of 32x32, one after another in the sheet, and the
 /// glow every breath draws at the mouth after them.
 #define BEAM_RING_SIZE 32
 #define BEAM_RING_COUNT 16
 #define BEAM_RING_BYTES (BEAM_RING_SIZE * BEAM_RING_SIZE)
-#define BREATH_GLOW 0x4000
+#define BREATH_GLOW 16384
 /// The motes that gather at the mouth, after the rolling ball.
 #define BREATH_MOTES (work->particles + 32)
 #define BREATH_MOTE_COUNT 32
@@ -314,7 +314,7 @@ void BattleEffect_RunBreaths(struct BattleEffectParams *args, s32 mode) {
                 else
                   Matrix_Translate(INTtoFIXED(mouthX - 56),
                                    INTtoFIXED(mouthY - 64), 0);
-                Matrix_RotateY(0x32c8);
+                Matrix_RotateY(13000);
                 Matrix_RotateX(DEGtoANG(90));
               }
               if (mode == BREATH_PIKE)
@@ -367,7 +367,7 @@ void BattleEffect_RunBreaths(struct BattleEffectParams *args, s32 mode) {
                         INTtoFIXED(mouthY - 64), 0);
                 }
                 Matrix_Scale(scale, scale, scale);
-                Matrix_RotateY(0x36b0);
+                Matrix_RotateY(14000);
                 Matrix_RotateX(DEGtoANG(90));
                 Matrix_RotateY(frame << 10);
                 Render_TransformVertices(gBattleEffect_CylinderCorners,
@@ -382,7 +382,7 @@ void BattleEffect_RunBreaths(struct BattleEffectParams *args, s32 mode) {
         // frame 32.
         if (mode == BREATH_BLAST) {
           s32 alpha = 0;
-          s32 angle = 0x3060;
+          s32 angle = 12384;
 
           if (frame > 31)
             alpha = (32 - frame) * 4;
@@ -396,7 +396,7 @@ void BattleEffect_RunBreaths(struct BattleEffectParams *args, s32 mode) {
           Matrix_Translate(INTtoFIXED(mouthX - 64), INTtoFIXED(mouthY - 64), 0);
           Matrix_Scale(FIXED_ONE / 2, FIXED_ONE, FIXED_ONE);
           if (frame > 7)
-            angle = (frame << 7) + 0x2c60;
+            angle = (frame << 7) + 11360;
           if (args->side == EFFECT_SIDE_PARTY)
             angle = -angle;
           Matrix_RotateZ(angle);

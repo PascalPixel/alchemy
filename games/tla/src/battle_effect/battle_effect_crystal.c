@@ -14,7 +14,7 @@
 #define CRYSTAL_DISC_OFFSETS 10000
 
 /// Where VenusDjinnSmallSheet is decoded in the effect's pictures.
-#define CRYSTAL_VENUS_DJINN_SMALL_PICTURES 0x65c0
+#define CRYSTAL_VENUS_DJINN_SMALL_PICTURES 26048
 
 /// Abilities: Crystal.
 ///
@@ -44,14 +44,14 @@ void BattleEffect_RunCrystal(struct BattleEffectParams *args) {
   canvas = Ram_HeapSlots->battleCanvas;
   discOffsets = (u16 *)(work->sheet + CRYSTAL_DISC_OFFSETS);
   cells = (s32)gMapGridCellBuffer;
-  Iwram_ClearWords((void *)cells, 0x8000);
+  Iwram_ClearWords((void *)cells, 32768);
   for (offset = 0, i = 0, size = 2; i != CRYSTAL_DISCS; size += 2, i++) {
     BattleEffect_DrawShadedCircles((u8 *)(offset + cells), size, FIXED_ONE);
     discOffsets[i] = offset;
     offset += (i * 2 + 3) * size / 2;
   }
   Resource_LoadAndDecompress(RESOURCE_COG_TEXTURE, work->sheet, 0, 0);
-  Picture_MirrorIntoQuadrants(work->sheet, Ram_MapCellBuffer + 0x4000, 64, 64);
+  Picture_MirrorIntoQuadrants(work->sheet, Ram_MapCellBuffer + 16384, 64, 64);
   BattleEffect_StartCanvasLayer(0);
   BattleEffect_RunDjinniEntrance(
       args,
@@ -94,7 +94,7 @@ void BattleEffect_RunCrystal(struct BattleEffectParams *args) {
                        target->x.fixed + ((Trig_Sin(angle) * radius) >> 1),
                        toFIXED(8), (Trig_Cos(angle) * radius) >> 1);
           shard->velocityX = Random16();
-          shard->velocityY = (Random16() & TRIG_ANGLE_MASK) + 0x40000;
+          shard->velocityY = (Random16() & TRIG_ANGLE_MASK) + toFIXED(4);
           shard->velocityZ = (Random16() & 7) + 4;
           shard->variant = -1;
         }
@@ -172,7 +172,7 @@ void BattleEffect_RunCrystal(struct BattleEffectParams *args) {
         model->vertices = vertices;
         texture.logWidth = 7;
         texture.logHeight = 7;
-        texture.pixels = Ram_MapCellBuffer + 0x4000;
+        texture.pixels = Ram_MapCellBuffer + 16384;
         if (frame > 15) {
           FIXED scale = (frame << 12) - FIXED_ONE;
 

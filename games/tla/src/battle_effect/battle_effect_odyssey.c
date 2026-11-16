@@ -9,15 +9,15 @@
 #define KIND125_FRAMES 114
 
 /// Where DustBlobSheet is decoded in the effect's pictures.
-#define ODYSSEY_DUST_BLOB_PICTURES 0x2f10
+#define ODYSSEY_DUST_BLOB_PICTURES 12048
 
 /// Where FlameGradientTexture is decoded in the map cell buffer.
-#define ODYSSEY_FLAME_GRADIENT 0x4000
+#define ODYSSEY_FLAME_GRADIENT 16384
 
 /// Where GiantSwordBladeSheet is decoded in the effect's pictures.
-#define ODYSSEY_SWORD_BLADE 0xc80
+#define ODYSSEY_SWORD_BLADE 3200
 /// The shards the hit scatters, in the map cell buffer.
-#define ODYSSEY_SHARDS ((struct Particle *)(Ram_MapCellBuffer + 0x6000))
+#define ODYSSEY_SHARDS ((struct Particle *)(Ram_MapCellBuffer + 24576))
 #define ODYSSEY_SHARD_COUNT 128
 
 /// 114 frames. The screen turns to a scrolling red haze
@@ -170,8 +170,8 @@ void BattleEffect_RunOdyssey(struct BattleEffectParams *args) {
         shard->velocityX = (Trig_Sin(angle) * speed) >> 6;
         shard->velocityY = -(Trig_Cos(angle) * speed) >> 5;
         shard->z = Random16();
-        shard->velocityZ = (Random16() & 0x3ff) + 0x400;
-        shard->variant = (Random16() & 0x3fff) + 0x2000;
+        shard->velocityZ = (Random16() & 0x3ff) + toFIXED(1) / 64;
+        shard->variant = (Random16() & 0x3fff) + 8192;
         shard++;
       }
     }

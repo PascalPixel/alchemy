@@ -14,8 +14,8 @@
 #define QUAD_COUNT 16
 
 /// Where the quads' texture and the Djinn sit in the sheet.
-#define SHEET_TEXTURE 0x2710
-#define SHEET_DJINN 0x65c0
+#define SHEET_TEXTURE 10000
+#define SHEET_DJINN 26048
 
 /// Sixteen textured quads tumble down over the targets (or, from the first
 /// target, rise), three frames apart, for 64 frames; with a prelude a Djinn
@@ -108,7 +108,7 @@ void BattleEffect_RunTumblingQuads(struct BattleEffectParams *args, s32 mode) {
         quad->velocityY = ((Random16() & TRIG_ANGLE_MASK) << 1) + toFIXED(1);
         quad->velocityX = Random16() & TRIG_ANGLE_MASK;
         quad->velocityZ = Random16() & TRIG_ANGLE_MASK;
-        quad->variant = (Random16() & 0x3fff) + 0x2000;
+        quad->variant = (Random16() & 0x3fff) + 8192;
         height += -toFIXED(4);
       }
     }
@@ -268,7 +268,7 @@ void BattleEffect_RunZagan(struct BattleEffectParams *args) {
 
   none = 0;
   ringPixels =
-      Ram_MapCellBuffer + 0x4000; // the rings' texture, for the whole function
+      Ram_MapCellBuffer + 16384; // the rings' texture, for the whole function
   battle = Ram_HeapSlots->battleWork;
   canvas = Ram_HeapSlots->battleCanvas;
   work = Ram_HeapSlots->battleEffect;
@@ -550,7 +550,7 @@ void BattleEffect_RunZagan(struct BattleEffectParams *args) {
         if (frame > 156) {
           s32 k;
 
-          vertices = Heap_AllocEwram(0x400);
+          vertices = Heap_AllocEwram(1024);
           model = Render_AllocateModelList(1);
           texture.logWidth = 7;
           texture.logHeight = 7;

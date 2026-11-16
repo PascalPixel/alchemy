@@ -11,16 +11,16 @@ struct MeshTriangle;
 #define DOME_COLUMNS 16
 
 /// Where VenusDjinnSmallSheet is decoded in the effect's pictures.
-#define GEODE_VENUS_DJINN_SMALL_PICTURES 0x65c0
+#define GEODE_VENUS_DJINN_SMALL_PICTURES 26048
 
 #define GEODE_FRAMES 74
 
 /// Where BillowTexture is decoded in the effect's pictures.
-#define GEODE_BILLOW 0x4710
+#define GEODE_BILLOW 18192
 /// The dome's projected corners, its corners and its mesh, in the effect's
 /// pictures.
-#define GEODE_VERTICES 0x800
-#define GEODE_MESH 0xc00
+#define GEODE_VERTICES 2048
+#define GEODE_MESH 3072
 
 /// The Venus Djinni tears up the battlefield itself: the screen is copied
 /// into a texture and peeled up into a spinning dome over the target as the
@@ -264,7 +264,7 @@ void BattleEffect_RunGeode(struct BattleEffectParams *args) {
       work->bg2x = (64 - (centerX << 5) / size) << 8;
       work->bg2y = centerY << 8;
       {
-        s32 ratio = 0x2000 / size;
+        s32 ratio = 8192 / size;
 
         // DEAD: each scale is read before it is stored and the value dropped;
         // the ROM keeps both loads.
@@ -322,7 +322,7 @@ void BattleEffect_RunGeode(struct BattleEffectParams *args) {
 
     // Rings of dust.
     if (frame > 47) {
-      void *ring = Heap_AllocEwram(0x200);
+      void *ring = Heap_AllocEwram(512);
 
       rings = Render_AllocateModelList(1);
       dust.logWidth = 6;
@@ -376,7 +376,7 @@ void BattleEffect_RunGeode(struct BattleEffectParams *args) {
       BattleBackground_LoadFar(BATTLE_BACKGROUND_FIXED, battle->background, -1);
     }
     if ((u32)(frame - 63) <= 4) {
-      battle->brightness = (frame << 13) - 0x7c000;
+      battle->brightness = (frame << 13) - toFIXED(7.75);
       ColorBuffer_ScaleFar(battle->palette, (void *)&BG_PLTT_COLOR(6, 0),
                            battle->brightness, BATTLE_BACKGROUND_COLORS);
     }

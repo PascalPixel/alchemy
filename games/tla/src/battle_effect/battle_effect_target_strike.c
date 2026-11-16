@@ -693,8 +693,7 @@ void BattleEffect_RunTargetStrike(struct BattleEffectParams *args, s32 mode) {
               step->velocityX += dx;
               step->velocityY += dy;
               step->velocityZ += dz;
-              if ((dx >= -0xfff && dx <= 0xfff) &&
-                  (dz >= -0xfff && dz <= 0xfff))
+              if ((dx >= -4095 && dx <= 4095) && (dz >= -4095 && dz <= 4095))
                 step->variant = -1;
             }
           }
@@ -1115,7 +1114,7 @@ void BattleEffect_RunBackgroundFadeIn(struct BattleEffectParams *args) {
 
   // Keep the picture at 0x06008000 aside, show the battle background with
   // its colours black, and flash the first target.
-  Iwram_CopyWords(Ram_MapCellBuffer, (void *)BG_CHAR_BLOCK(2), 0x7800);
+  Iwram_CopyWords(Ram_MapCellBuffer, (void *)BG_CHAR_BLOCK(2), 30720);
   Iwram_FillWords(Ram_MapCellBuffer, BATTLE_BACKGROUND_BYTES,
                   CANVAS_FILL_WORD(1));
   work->savedBg1X = gBgScroll[1].x;

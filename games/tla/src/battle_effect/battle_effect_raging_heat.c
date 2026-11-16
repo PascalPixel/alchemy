@@ -7,8 +7,8 @@
 
 struct StripQuad;
 
-#define TEXTURE_PIXELS (Ram_MapCellBuffer + 0x1000)
-#define EMBERS ((struct Particle *)(Ram_MapCellBuffer + 0x5000))
+#define TEXTURE_PIXELS (Ram_MapCellBuffer + 4096)
+#define EMBERS ((struct Particle *)(Ram_MapCellBuffer + 20480))
 
 #define RAGING_HEAT_FRAMES 96
 
@@ -18,7 +18,7 @@ struct StripQuad;
 // pillar of flame (two mirrored halves) falls onto them, bursting into
 // sparks and embers when it lands, under a second, fading ring.
 /// Where FlashBurstSheet is decoded in the effect's pictures.
-#define RAGING_HEAT_FLASH_BURST_PICTURES 0x4000
+#define RAGING_HEAT_FLASH_BURST_PICTURES 16384
 
 /// Raging Heat: a spinning ring of heat over the targets, and a pillar of
 /// flame that falls onto them and bursts into sparks and embers.

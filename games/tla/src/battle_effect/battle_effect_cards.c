@@ -5,11 +5,11 @@
 #include "battle_effect_internal.h"
 #include "sounds.h"
 
-#define CARD (gMapGridCellBuffer + 0x603e)
-#define CARD_NOISE (CARD + 0x800)
+#define CARD (gMapGridCellBuffer + 24638)
+#define CARD_NOISE (CARD + 2048)
 
 /// Where PaletteRampImage is decoded in the effect's pictures.
-#define CARDS_PALETTE_RAMP_PICTURES 0x2580
+#define CARDS_PALETTE_RAMP_PICTURES 9600
 /// PaletteRampImage's bytes, which the Sword Card copies seven times, darker
 /// each time, after it.
 #define CARDS_PALETTE_RAMP_BYTES 696
@@ -17,7 +17,7 @@
 #define CARD_WIDTH 32
 #define CARD_HEIGHT 64
 /// SheepCardSheet's four jumping sheep, each 32x32, after the card's picture.
-#define CARD_SHEEP (Ram_MapCellBuffer + 0x603e + CARD_WIDTH * CARD_HEIGHT)
+#define CARD_SHEEP (Ram_MapCellBuffer + 24638 + CARD_WIDTH * CARD_HEIGHT)
 #define SHEEP_WIDTH 32
 #define SHEEP_HEIGHT 32
 
@@ -179,7 +179,7 @@ void BattleEffect_RunCards(struct BattleEffectParams *args, s32 mode) {
       REG_BG2X = -x;
       scroll = -x;
       card.y--;
-      scale += 0x400;
+      scale += toFIXED(1) / 64;
       if (scale > FIXED_ONE / 2)
         scale = FIXED_ONE / 2;
     }
@@ -249,7 +249,7 @@ void BattleEffect_RunCards(struct BattleEffectParams *args, s32 mode) {
                        0);
       if (frame <= 47) {
         if (args->side == EFFECT_SIDE_ENEMIES)
-          Matrix_RotateZ((frame << 10) - 0xd000);
+          Matrix_RotateZ((frame << 10) - 53248);
         else
           Matrix_RotateZ((52 - frame) << 10);
         Matrix_RotateX((52 - frame) << 10);
@@ -260,7 +260,7 @@ void BattleEffect_RunCards(struct BattleEffectParams *args, s32 mode) {
           Matrix_RotateZ(TRIG_TURN / 16);
         Matrix_RotateX(TRIG_TURN / 16);
       }
-      Matrix_RotateY(0x1770);
+      Matrix_RotateY(6000);
       Matrix_ScaleUniform(scale);
       Matrix_Scale(FIXED_ONE, FIXED_ONE * 2, FIXED_ONE);
       Render_TransformVertices(gBattleEffect_SquareCorners, vertices, 4);

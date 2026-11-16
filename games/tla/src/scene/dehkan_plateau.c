@@ -1168,12 +1168,12 @@ void DehkanPlateau_CrumblePillar(s32 id, s32 center, s32 flag) {
   FIXED y;
 
   Sound_Play(SE_CHEST_CLOSE);
-  Actor_SetSpriteColor(Actor_GetById(id), 7);
+  Actor_SetSpriteColor(Actor_GetById(id), SPRITE_COLOR_WHITE);
   wait(2);
   Actor_SetAnimationById(id, 0);
-  Actor_SetSpriteColor(Actor_GetById(id), 7);
+  Actor_SetSpriteColor(Actor_GetById(id), SPRITE_COLOR_WHITE);
   wait(4);
-  Actor_SetSpriteColor(Actor_GetById(id), 0);
+  Actor_SetSpriteColor(Actor_GetById(id), SPRITE_COLOR_NORMAL);
   leader = Actor_GetById(center);
   frame = 0;
   for (i = 0; i <= 7; i++) {

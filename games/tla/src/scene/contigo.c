@@ -725,20 +725,20 @@ void Contigo_ReadSuperDiceSign(void) {
 
 #include "shared/scene_show_entrance_locked.h"
 
-/// A villager asks whether the party knows the legend of the people who could
+/// A young man asks whether the party knows the legend of the people who could
 /// fly on the wind.
 void Contigo_AskAboutWindLegend(void) {
   Event_Start();
   Event_ResolvePendingActions(0);
   Event_SetMessageId((s32)MsgContigoDoYouKnowAnythingAbout);
   // "Do you know anything about a legend about these people who could..."
-  Event_AskYesNoAndShowResponse(8, 0);
+  Event_AskYesNoAndShowResponse(ACTOR_YOUNG_MAN_ON_THE_WIND_LEGEND, 0);
   Event_End();
 }
 
-/// The update of a mote over the thinking baby: it circles on a random radius,
+/// The update of a leaf in the baby's whirlwind: it circles on a random radius,
 /// now and then pausing to spin faster, and is released after 101 frames.
-void Contigo_CircleMote(struct Actor *effect) {
+void Contigo_WhirlLeaf(struct Actor *effect) {
   FIXED radius;
   s32 angle;
   FIXED dx;
@@ -761,15 +761,16 @@ void Contigo_CircleMote(struct Actor *effect) {
     Actor_Release(effect);
 }
 
-/// A task that spawns a mote over the baby every eighth frame, flung up to fall
-/// back as it circles.
-void Contigo_RaiseMotes(void) {
+/// A task that spawns a leaf in the baby's whirlwind every eighth frame, flung
+/// up to fall back as it circles.
+void Contigo_RaiseLeaves(void) {
   if ((gFrameCount & 7) == 0) {
-    struct Actor *object = Actor_Spawn(308, toFIXED(706), 52428, toFIXED(116));
+    struct Actor *object =
+        Actor_Spawn(SPRITE_LEAF, toFIXED(706), 52428, toFIXED(116));
 
     if (object != NULL) {
       Actor_SetSpriteFlags(object, 0);
-      object->update = Contigo_CircleMote;
+      object->update = Contigo_WhirlLeaf;
       object->motionFlags = 0;
       object->timer = -(s32)(Random_Below(16)) * 2 + 20;
       object->userValue = 0;
@@ -780,9 +781,9 @@ void Contigo_RaiseMotes(void) {
   }
 }
 
-/// Examining the baby: its brow furrows, a whirl of light grows over it and
-/// motes rise while the room dims, then it babbles and its family talk of the
-/// house.
+/// Examining the baby: its brow furrows, a whirlwind grows over it and leaves
+/// whirl up in it while the room dims, then it babbles and its family talk of
+/// the house.
 void Contigo_BabyThinks(void) {
   struct Actor *effect;
   FIXED x = toFIXED(706);
@@ -819,9 +820,9 @@ void Contigo_BabyThinks(void) {
       i++;
     } while (i < 28);
   }
-  Task_Add(Contigo_RaiseMotes, TASK_PASS_VBLANK);
+  Task_Add(Contigo_RaiseLeaves, TASK_PASS_VBLANK);
   Event_Wait(120);
-  Task_Remove(Contigo_RaiseMotes);
+  Task_Remove(Contigo_RaiseLeaves);
   if (effect != 0) {
     i = 0;
     do {
@@ -885,7 +886,7 @@ enum { CONTIGO_INN = 12 };
 /// the wings.
 void Contigo_TalkToItemMerchant(void) {
   if (Leader_IsFacingNorth()) {
-    Shop_Run(SHOP_CONTIGO_ITEMS, 13);
+    Shop_Run(SHOP_CONTIGO_ITEMS, ACTOR_ITEM_MERCHANT);
   } else {
     Event_Start();
     Event_ResolvePendingActions(0);
@@ -903,7 +904,7 @@ void Contigo_TalkToItemMerchant(void) {
 /// of Atteka's traditions.
 void Contigo_TalkToWeaponMerchant(void) {
   if (Leader_IsFacingNorth()) {
-    Shop_Run(SHOP_CONTIGO_WEAPONS, 18);
+    Shop_Run(SHOP_CONTIGO_WEAPONS, ACTOR_WEAPON_MERCHANT);
   } else {
     Event_Start();
     Event_ResolvePendingActions(0);
@@ -921,7 +922,7 @@ void Contigo_TalkToWeaponMerchant(void) {
 /// of the mining in the ruins.
 void Contigo_TalkToArmorMerchant(void) {
   if (Leader_IsFacingNorth()) {
-    Shop_Run(SHOP_CONTIGO_ARMOR, 19);
+    Shop_Run(SHOP_CONTIGO_ARMOR, ACTOR_ARMOR_MERCHANT);
   } else {
     Event_Start();
     Event_ResolvePendingActions(0);
@@ -939,7 +940,7 @@ void Contigo_TalkToArmorMerchant(void) {
 /// visitors and the wings.
 void Contigo_TalkToInnkeeper(void) {
   if (Leader_IsFacingNorth()) {
-    Inn_CheckIn(CONTIGO_INN, 20);
+    Inn_CheckIn(CONTIGO_INN, ACTOR_INNKEEPER);
   } else {
     Event_Start();
     Event_ResolvePendingActions(0);
@@ -959,7 +960,7 @@ void Contigo_TalkToInnkeeper(void) {
 /// miracle of the wings.
 void Contigo_TalkToHealer(void) {
   if (Leader_IsFacingNorth()) {
-    Sanctum_Run(28);
+    Sanctum_Run(ACTOR_HEALER);
   } else {
     Event_Start();
     Event_ResolvePendingActions(0);
@@ -975,17 +976,18 @@ void Contigo_TalkToHealer(void) {
   }
 }
 
-/// The Super Lucky Dice guide asks whether the party has played before.
+/// A player in the dice hall asks whether the party has played Super Lucky Dice
+/// before.
 void Contigo_AskAboutSuperDice(void) {
   Event_Start();
   Event_ResolvePendingActions(0);
   Event_SetMessageId((s32)MsgContigoSoTellMePalHave);
   // "So, tell me, pal... Have you ever played Superdice before?"
-  Event_AskYesNoAndShowResponse(10, 0);
+  Event_AskYesNoAndShowResponse(ACTOR_MAN_WARY_OF_UNLUCKY_PLAYERS, 0);
   Event_End();
 }
 
-/// The Super Lucky Dice guide explains the rules, nine messages.
+/// Reading the sign of Super Lucky Dice's rules.
 void Contigo_ExplainSuperDice(void) {
   s32 msg;
 
@@ -1004,7 +1006,7 @@ void Contigo_ExplainSuperDice(void) {
   Event_End();
 }
 
-/// The Lucky Dice guide explains the rules.
+/// Reading the first sign of Lucky Dice's rules.
 void Contigo_ExplainLuckyDice(void) {
   s32 msg;
 
@@ -1018,7 +1020,7 @@ void Contigo_ExplainLuckyDice(void) {
   Event_End();
 }
 
-/// The Lucky Dice guide's longer explanation.
+/// Reading the second sign of Lucky Dice's rules.
 void Contigo_ExplainLuckyDiceAgain(void) {
   s32 msg;
 
@@ -1034,7 +1036,7 @@ void Contigo_ExplainLuckyDiceAgain(void) {
   Event_End();
 }
 
-/// The Lucky Wheels attendant, spoken to.
+/// Talking to the Lucky Wheels attendant (Contigo_SendToLuckyWheels).
 void Contigo_TalkToWheelsAttendant(void) {
   Event_Start();
   Event_ResolvePendingActions(0);
@@ -1042,7 +1044,7 @@ void Contigo_TalkToWheelsAttendant(void) {
   Event_End();
 }
 
-/// The Lucky Wheels guide explains the rules.
+/// Reading the sign of Lucky Wheels' rules.
 void Contigo_ExplainLuckyWheels(void) {
   s32 msg;
 
@@ -1058,7 +1060,7 @@ void Contigo_ExplainLuckyWheels(void) {
   Event_End();
 }
 
-/// The Lucky Wheels guide lists the prizes.
+/// Reading the sign of Lucky Wheels' prizes.
 void Contigo_ListLuckyWheelsPrizes(void) {
   s32 msg;
 
@@ -1077,13 +1079,13 @@ void Contigo_ListLuckyWheelsPrizes(void) {
   Event_End();
 }
 
-/// A villager asks whether the party has looked at the Anemos geoglyph.
+/// A scholar asks whether the party has looked at the Anemos geoglyph.
 void Contigo_AskAboutGeoglyph(void) {
   Event_Start();
   Event_ResolvePendingActions(0);
   Event_SetMessageId((s32)MsgContigoHaveYouTakenAGood);
   // "Have you taken a good look at the Anemos geoglyph?"
-  Event_AskYesNoAndShowResponse(14, 0);
+  Event_AskYesNoAndShowResponse(ACTOR_SCHOLAR_A, 0);
   Event_End();
 }
 
@@ -1314,7 +1316,7 @@ void Contigo_ForceFreesDjinni(void) {
                       velocity[0], velocity[1] + (toFIXED(1) / 10), velocity[2],
                       EFFECT_USE_PRIORITY, &options);
   }
-  Actor_SetSpriteColor(Actor_GetById(ACTOR_SHINE), 0);
+  Actor_SetSpriteColor(Actor_GetById(ACTOR_SHINE), SPRITE_COLOR_NORMAL);
   Actor_SetSpriteFlags(Actor_GetById(ACTOR_SHINE), 1);
   Actor_SetSpeed(ACTOR_SHINE, 3);
   object->velocityY = toFIXED(12);
@@ -1568,8 +1570,8 @@ void Contigo_SendToSuperLuckyDice(void) {
   Event_End();
 }
 
-/// Draws an actor at seven tenths of its size, as the dice hall shows its small
-/// hosts and guides.
+/// Draws an actor at seven tenths of its size, as the geoglyph's and the dice
+/// hall's signs are drawn.
 void Contigo_ShrinkActor(s32 id) {
   struct Actor *object = Actor_GetById(id);
 
@@ -1878,7 +1880,8 @@ void Contigo_TheReunion(void) {
   FieldActor_ShowEmote(ACTOR_ISAAC, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 0);
   FieldActor_ShowEmote(ACTOR_GARET, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 20);
   Sound_Play(MUS_SILENCE);
-  Actor_SetSpriteColor(((struct Actor *)Actor_GetById(ACTOR_HAMA)), 15);
+  Actor_SetSpriteColor(((struct Actor *)Actor_GetById(ACTOR_HAMA)),
+                       SPRITE_COLOR_HIDDEN);
   angle = FACING_NORTH_NORTHWEST;
   Actor_SetHorizontalPositionAndAngleWithTerrain(ACTOR_HAMA, toFIXED(160),
                                                  toFIXED(466), angle);
@@ -1892,7 +1895,8 @@ void Contigo_TheReunion(void) {
   Actor_WatchAndSetScript(ACTOR_GARET, ACTOR_HAMA);
   Actor_WatchAndSetScript(ACTOR_MIA, ACTOR_HAMA);
   Actor_WatchAndSetScript(ACTOR_IVAN, ACTOR_HAMA);
-  Actor_SetSpriteColor(((struct Actor *)Actor_GetById(ACTOR_HAMA)), 0);
+  Actor_SetSpriteColor(((struct Actor *)Actor_GetById(ACTOR_HAMA)),
+                       SPRITE_COLOR_NORMAL);
   FieldCamera_SetSpeed(2.4);
   FieldCamera_MoveTo(180, CAMERA_KEEP, 410, 1);
   FieldCamera_WaitForArrival();
@@ -2445,7 +2449,7 @@ void Contigo_InitializeVillage(void) {
       GameFlag_Get(FLAG_SHINE_CAUGHT) == 0) {
     Actor_SetPosition(ACTOR_SHINE, 32, 708);
   } else {
-    Actor_SetSpriteColor(Actor_GetById(ACTOR_SHINE), 15);
+    Actor_SetSpriteColor(Actor_GetById(ACTOR_SHINE), SPRITE_COLOR_HIDDEN);
     Actor_SetSpriteFlags(Actor_GetById(ACTOR_SHINE), 0);
   }
   if (GameFlag_Get(FLAG_KEEP_PARTY_POSITION) == 0) {
@@ -2475,7 +2479,7 @@ void Contigo_InitializeVillage(void) {
 /// after, they and their workers are gone, the scholars too until the party
 /// sets out.
 void Contigo_InitializeGeoglyph(void) {
-  Contigo_ShrinkActor(18);
+  Contigo_ShrinkActor(ACTOR_SIGN);
   if (GameFlag_Get(FLAG_JUPITER_BEACON_LIT) != 0) {
     MapGrid_CopyCellAttributes(44, 40, 8, 3, 44, 36);
     Actor_SetPosition(ACTOR_WING_FRAME_A, 0, 0);
@@ -2569,19 +2573,21 @@ void Contigo_InitializeLuckyDice(void) {
   s32 item;
 
   gFieldWork->transition = SCENE_TRANSITION(TRANSITION_WINDOW, 9);
-  Contigo_ShrinkActor(13);
-  Contigo_ShrinkActor(16);
-  Contigo_ShrinkActor(17);
-  Contigo_ShrinkActor(19);
-  Contigo_ShrinkActor(20);
+  Contigo_ShrinkActor(ACTOR_SUPER_LUCKY_DICE_SIGN);
+  Contigo_ShrinkActor(ACTOR_LUCKY_DICE_SIGN);
+  Contigo_ShrinkActor(ACTOR_SECOND_LUCKY_DICE_SIGN);
+  Contigo_ShrinkActor(ACTOR_LUCKY_WHEELS_SIGN);
+  Contigo_ShrinkActor(ACTOR_LUCKY_WHEELS_PRIZE_SIGN);
   Actor_SetSpriteColor(((struct Actor *)Actor_GetById(ACTOR_LUCKY_DICE_HOST)),
-                       1);
+                       SPRITE_COLOR_GRB);
   Actor_SetSpriteColor(((struct Actor *)Actor_GetById(ACTOR_LUCKY_DICE_GUIDE)),
-                       2);
+                       SPRITE_COLOR_RBG);
   Actor_SetSpriteColor(
-      ((struct Actor *)Actor_GetById(ACTOR_SUPER_LUCKY_DICE_HOST)), 0);
+      ((struct Actor *)Actor_GetById(ACTOR_SUPER_LUCKY_DICE_HOST)),
+      SPRITE_COLOR_NORMAL);
   Actor_SetSpriteColor(
-      ((struct Actor *)Actor_GetById(ACTOR_SUPER_LUCKY_DICE_GUIDE)), 3);
+      ((struct Actor *)Actor_GetById(ACTOR_SUPER_LUCKY_DICE_GUIDE)),
+      SPRITE_COLOR_BGR);
   if (!Event_GetFlag(FLAG_LEFT_FOR_A_GAME))
     return;
   GameFlag_Clear(FLAG_LEFT_FOR_A_GAME);
@@ -2700,7 +2706,7 @@ void Contigo_RaiseSparkle(struct Actor *object) {
     }
   } else if (object->riseCounter == 1) {
     if (work->heights[0] > 31 && work->heights[1] > 31) {
-      Actor_SetSpriteColorMode(object, 0);
+      Actor_SetSpriteColorMode(object, SPRITE_COLOR_NORMAL);
       VramCache_FreeEntry(work->vramEntry);
       object->update = 0;
       return;
@@ -2767,7 +2773,7 @@ void Contigo_StartSparkle(struct Actor *object, struct SparkleWork *work) {
   object->watchedActor = (struct Actor *)work;
   for (row = 0; row <= 1; row++) {
     for (col = 1, sprite = work->sprites + row + row; col >= 0; col--) {
-      EffectSprite_Init(sprite, 16, 16, 0x80004000, tile);
+      EffectSprite_Init(sprite, 16, 16, OBJ_SIZE_32X16, tile);
       sprite->oam.fullColor = 0;
       sprite->oam.palette = 0;
       sprite->oam.priority = BattleEffect_GetObjectPriority(object);

@@ -230,8 +230,8 @@ void GarohInteriors_TalkToInnkeeper(s32 actor) {
 void GarohInteriors_TalkToHealer(void) {
   s16 facing;
 
-  facing = ((Actor_GetById(gMainRoutineWork.leaderActorId)->facing) + 0x2000) &
-           ~0x3fff;
+  facing = FACING_NEAREST_CARDINAL(
+      Actor_GetById(gMainRoutineWork.leaderActorId)->facing);
   Actor_FaceActorById(ACTOR_HEALER, gMainRoutineWork.leaderActorId, 0);
   if ((u16)facing == FACING_NORTH) {
     Sanctum_Run(ACTOR_HEALER);
@@ -392,6 +392,12 @@ const struct Trigger *Scene_GetTriggers(void) {
   return gGarohInteriors_DoorTriggers;
 }
 
+/// The map grid layers the rooms show at night (MapGrid_SetShownLayers): BG1
+/// and BG3.
+#define GAROH_INTERIORS_NIGHT_LAYERS (DISPCNT_BG1_ON | DISPCNT_BG3_ON)
+
+/// Sets up the room being entered: the travelers in their beds at night, or
+/// up once the secret is shared; waking at the inn, and night's layers.
 s32 Scene_Initialize(void) {
   s32 turn;
 
@@ -404,7 +410,8 @@ s32 Scene_Initialize(void) {
         gMainRoutineWork.entrance == ENTRANCE_WAKE_AT_INN) {
       Actor_SetPosition(ACTOR_DISAPPOINTED_TRAVELERS_BED, 0, 0);
       Actor_SetPosition(ACTOR_STUBBORN_TRAVELERS_BED, 0, 0);
-      Actor_SetMovementTypeById(ACTOR_STUBBORN_TRAVELER, 3);
+      Actor_SetMovementTypeById(ACTOR_STUBBORN_TRAVELER,
+                                MOVEMENT_TYPE_WANDER_NEAR);
     } else {
       turn = FACING_SOUTHEAST;
       Actor_SetPositionAndFacing(ACTOR_DISAPPOINTED_TRAVELER, toFIXED(306),
@@ -426,7 +433,7 @@ s32 Scene_Initialize(void) {
       Actor_GetById(ACTOR_DISAPPOINTED_TRAVELERS_BED)->y.fixed = 0;
       Actor_GetById(ACTOR_STUBBORN_TRAVELERS_BED)->motionFlags = 0;
       Actor_GetById(ACTOR_STUBBORN_TRAVELERS_BED)->y.fixed = 0;
-      Actor_SetSpriteRotationById(ACTOR_DISAPPOINTED_TRAVELER, 0xe000);
+      Actor_SetSpriteRotationById(ACTOR_DISAPPOINTED_TRAVELER, DEGtoANG(315));
       Actor_SetSpriteFlags(Actor_GetById(ACTOR_DISAPPOINTED_TRAVELER), 0);
       Actor_SetSpriteRotationById(ACTOR_STUBBORN_TRAVELER, turn);
       Actor_SetSpriteFlags(Actor_GetById(ACTOR_STUBBORN_TRAVELER), 0);
@@ -438,7 +445,7 @@ s32 Scene_Initialize(void) {
   if (GameFlag_Get(FLAG_GAROH_SECRET_SHARED))
     GameFlag_Clear(FLAG_GAROH_NIGHT);
   if (GameFlag_Get(FLAG_GAROH_NIGHT))
-    MapGrid_SetShownLayers(0xa00);
+    MapGrid_SetShownLayers(GAROH_INTERIORS_NIGHT_LAYERS);
   return 0;
 }
 

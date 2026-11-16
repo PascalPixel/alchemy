@@ -17,8 +17,6 @@ void DehkanPlateau_SetActorsHidden(s32 show);
 void Actor_DropAndWait(struct Actor *object);
 void DehkanPlateau_SetTightropesSecondPillarInPlace(void);
 
-void Import_ActorRelease(struct Actor *object);
-
 void DehkanPlateau_PoundLeaderThrough(void);
 void DehkanPlateau_CannonCornered(void);
 
@@ -110,6 +108,7 @@ void DehkanPlateau_SetTightropesStandingPillarCells(void);
 void DehkanPlateau_RestoreTightropesCracks(void);
 void DehkanPlateau_HideTightropesActors(void);
 
+/// Sets up the field's ropes for the scene (Rope_Initialize).
 void DehkanPlateau_InitializeRopes(void);
 
 void DehkanPlateau_HideMintChestActors(void);

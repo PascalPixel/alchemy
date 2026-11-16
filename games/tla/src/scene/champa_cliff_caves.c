@@ -90,14 +90,6 @@ struct DoorEdit {
   u16 z;
 };
 
-struct RiseObject {
-  u8 unk00[0x18];
-  s32 scale;
-  s32 scaleCopy;
-  u8 unk20[0x4c];
-  s32 update;
-};
-
 extern LATE_DATA struct DoorEdit gChampaCliffCaves_FirstDoor;
 extern LATE_DATA struct DoorEdit gChampaCliffCaves_SecondDoor;
 
@@ -170,13 +162,13 @@ extern s16 gChampaCliffCaves_OtherDoorFrames[];
 void FieldEffect_StartBlankOverlay(s32 a);
 
 #define DEFINE_CHAMPA_CLIFF_CAVES_GROW(name, n1)                               \
-  void name(struct RiseObject *object) {                                       \
-    object->scale += n1;                                                       \
-    if (object->scale >= FIXED_ONE) {                                          \
-      object->scale = FIXED_ONE;                                               \
+  void name(struct Actor *object) {                                            \
+    object->scaleX += n1;                                                      \
+    if (object->scaleX >= FIXED_ONE) {                                         \
+      object->scaleX = FIXED_ONE;                                              \
       object->update = 0;                                                      \
     }                                                                          \
-    object->scaleCopy = object->scale;                                         \
+    object->scaleY = object->scaleX;                                           \
   }
 
 DEFINE_CHAMPA_CLIFF_CAVES_GROW(ChampaCliffCaves_GrowThrown, FIXED_ONE / 16)

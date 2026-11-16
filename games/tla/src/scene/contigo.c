@@ -1329,7 +1329,7 @@ void Contigo_ForceFreesDjinni(void) {
     velocity[0] += velocity[0] / 3;
     FieldEffect_Spawn(object->x.fixed, object->y.fixed, object->z.fixed,
                       velocity[0], velocity[1] + (toFIXED(1) / 10), velocity[2],
-                      toFIXED(2), &options);
+                      EFFECT_USE_PRIORITY, &options);
   }
   Actor_SetSpriteColor(Actor_GetById(ACTOR_SHINE), 0);
   Actor_SetSpriteFlags(Actor_GetById(ACTOR_SHINE), 1);

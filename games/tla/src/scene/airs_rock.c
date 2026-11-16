@@ -627,14 +627,14 @@ void AirsRock_SwirlLeaf(struct Actor *actor) {
     Scene_SetActorSpritePriority(actor, 1);
   else
     Scene_SetActorSpritePriority(actor, 2);
-  ((struct FieldSprite *)actor->sprite)->rotation += 0x1800;
+  ((struct FieldSprite *)actor->sprite)->rotation += TRIG_TURN * 3 / 32;
 }
 
 /// Whirlwind on the twister rock of the first slope: the mud is blown from the
 /// wall so it can be climbed.
 void AirsRock_WhirlwindClearsWall(void) {
   struct MainRoutineWork *work;
-  u16 *buffer = Heap_Alloc(0x680);
+  u16 *buffer = Heap_Alloc(1664);
   u16 *cell;
   struct Actor *spark;
   u32 i;
@@ -645,8 +645,7 @@ void AirsRock_WhirlwindClearsWall(void) {
   REG_DISPCNT &= ~DISPCNT_BG0_ON;
   Decompress_TaggedLz(Resource_GetTableEntry(RESOURCE_WHIRLWIND_TILES), buffer);
   Dma_Set(buffer, BG_SCREEN_BLOCK(29), DMA_COPY_WORDS(208), REG_DMA3);
-  Dma_Set((u8 *)buffer + 0x340, (void *)0x600ec00, DMA_COPY_WORDS(208),
-          REG_DMA3);
+  Dma_Set((u8 *)buffer + 832, (void *)0x600ec00, DMA_COPY_WORDS(208), REG_DMA3);
   Heap_Release(buffer);
   FieldActor_SetSpritePriority(gMainRoutineWork.leaderActorId, 1);
   FieldActor_SetSpritePriority(ACTOR_TWISTER_ROCK_BY_THE_WALL, 1);
@@ -657,12 +656,12 @@ void AirsRock_WhirlwindClearsWall(void) {
   }
   REG_BG1CNT &= ~BGCNT_PRIORITY(3);
   REG_BG1CNT |= BGCNT_PRIORITY(2);
-  Dma_Fill16(0x10, (void *)0x6002000, 0x500);
-  buffer = Heap_Alloc(0x240);
+  Dma_Fill16(16, (void *)0x6002000, 1280);
+  buffer = Heap_Alloc(576);
   Decompress_TaggedLz(Resource_GetTableEntry(RESOURCE_WHIRLWIND_MAP), buffer);
   cell = buffer;
-  for (i = 0; i != 0x120; i++) {
-    *cell += 0xff40;
+  for (i = 0; i != 288; i++) {
+    *cell -= 192;
     cell++;
   }
   cell = buffer;
@@ -1187,7 +1186,7 @@ void AirsRock_CrumbleRock(s32 x, s32 z) {
 /// way crumble with a crash (AirsRock_CrumbleRock) and the way to the top
 /// opens; sets flag FLAG_AIRS_ROCK_TOP_OPENED.
 void AirsRock_WhirlwindOpensTheTop(void) {
-  u16 *buffer = Heap_Alloc(0x800);
+  u16 *buffer = Heap_Alloc(2048);
   u16 *cell;
   struct Actor *spark;
   u32 i;
@@ -1199,8 +1198,8 @@ void AirsRock_WhirlwindOpensTheTop(void) {
   Decompress_TaggedLz(Resource_GetTableEntry(RESOURCE_LIGHTNING_TILES), buffer);
   Dma_Set(buffer, (void *)BG_CHAR_BLOCK(0), DMA_COPY_WORDS(512), REG_DMA3);
   Heap_Release(buffer);
-  Dma_Fill16(0, (void *)BG_SCREEN_BLOCK(4), 0x800);
-  buffer = Heap_Alloc(0x80);
+  Dma_Fill16(0, (void *)BG_SCREEN_BLOCK(4), 2048);
+  buffer = Heap_Alloc(128);
   Decompress_TaggedLz(Resource_GetTableEntry(RESOURCE_LIGHTNING_MAP), buffer);
   cell = buffer;
   for (i = 0; i != 64; i++) {
@@ -1402,7 +1401,7 @@ void AirsRock_LiftFog(void) {
 /// Whirlwind on the stone in the fog: the fog lifts (AirsRock_LiftFog) and
 /// stays clear.
 void AirsRock_WhirlwindClearsFog(void) {
-  u16 *buffer = Heap_Alloc(0x680);
+  u16 *buffer = Heap_Alloc(1664);
   struct MapLayer *fog = &Ram_HeapSlots->mapGrid->layers[2];
   u16 *cell;
   struct Actor *spark;
@@ -1414,8 +1413,7 @@ void AirsRock_WhirlwindClearsFog(void) {
   REG_DISPCNT &= ~DISPCNT_BG0_ON;
   Decompress_TaggedLz(Resource_GetTableEntry(RESOURCE_WHIRLWIND_TILES), buffer);
   Dma_Set(buffer, BG_SCREEN_BLOCK(29), DMA_COPY_WORDS(208), REG_DMA3);
-  Dma_Set((u8 *)buffer + 0x340, (void *)0x600ec00, DMA_COPY_WORDS(208),
-          REG_DMA3);
+  Dma_Set((u8 *)buffer + 832, (void *)0x600ec00, DMA_COPY_WORDS(208), REG_DMA3);
   Heap_Release(buffer);
   {
     s32 control = BGCNT_PRIORITY(2) | BGCNT_CHAR_BASE(3) | BGCNT_SCREEN_BASE(4);
@@ -1425,13 +1423,13 @@ void AirsRock_WhirlwindClearsFog(void) {
   // A once-only loop: its loop notes order the fill's address ahead of its
   // value.
   do {
-    Dma_Fill16(0x10, (void *)0x6002000, 0x500);
+    Dma_Fill16(16, (void *)0x6002000, 1280);
   } while (0);
-  buffer = Heap_Alloc(0x240);
+  buffer = Heap_Alloc(576);
   Decompress_TaggedLz(Resource_GetTableEntry(RESOURCE_WHIRLWIND_MAP), buffer);
   cell = buffer;
-  for (i = 0; i != 0x120; i++) {
-    *cell += 0xff40;
+  for (i = 0; i != 288; i++) {
+    *cell -= 192;
     cell++;
   }
   cell = buffer;
@@ -1765,11 +1763,11 @@ s32 Scene_Initialize(void) {
         Actor_SetPosition(ACTOR_SECOND_PILLAR, 520, 872);
       AirsRock_MoveSecondPillar();
       beam = (s32 *)Ram_HeapSlots->mapGrid;
-      beam = (s32 *)((u8 *)beam + 0x178);
+      beam = (s32 *)&((struct MapWork *)beam)->layers[2];
       beam[2] = toFIXED(1408);
       beam[3] = toFIXED(576);
-      beam[4] = 0x4000;
-      beam[5] = 0x4000;
+      beam[4] = toFIXED(0.25);
+      beam[5] = toFIXED(0.25);
       MapGrid_CenterOnFollowedPoint();
       System_Wait(1);
       break;
@@ -1814,8 +1812,8 @@ s32 Scene_Initialize(void) {
           ;
         Task_AddFrame(AirsRock_DriftFog, TASK_PASS_FRAME);
         beam = (s32 *)Ram_HeapSlots->mapGrid;
-        beam = (s32 *)((u8 *)beam + 0x178);
-        beam[6] = 0x4000;
+        beam = (s32 *)&((struct MapWork *)beam)->layers[2];
+        beam[6] = toFIXED(0.25);
         beam[7] = 0xffff8000;
         {
           s16 *scale = (s16 *)beam;
@@ -1842,11 +1840,11 @@ s32 Scene_Initialize(void) {
       Leader_Lift(-toFIXED(48));
     case 14:
       beam = (s32 *)Ram_HeapSlots->mapGrid;
-      beam = (s32 *)((u8 *)beam + 0x178);
+      beam = (s32 *)&((struct MapWork *)beam)->layers[2];
       beam[2] = toFIXED(1152);
       beam[3] = toFIXED(800);
-      beam[4] = 0xd000;
-      beam[5] = 0xd000;
+      beam[4] = toFIXED(0.8125);
+      beam[5] = toFIXED(0.8125);
       if (!GameFlag_Get(FLAG_AIRS_ROCK_TOP_OPENED)) {
         MapGrid_CopyCellsTo(29, 9, 62, 2, 9, 9);
         MapGrid_CopyCellAttributes(29, 9, 9, 9, 62, 2);
@@ -1922,7 +1920,7 @@ const s32 *gFieldEffect_DurationScripts[] = {
 };
 
 s32 gAirsRock_WindStoneScript[] = {
-    SC_SET(SW_SCALE_Y, 0x18000),
+    SC_SET(SW_SCALE_Y, toFIXED(1.5)),
     SC_ANIMATION(2),
     SC_CALL((s32)AirsRock_ClearScriptedActorSpriteFlags),
     SC_END,

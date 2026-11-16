@@ -582,8 +582,9 @@ void ApojiiIslands_EnterDoor(void) {
 s32 ApojiiIslands_TalkToSon(void) {
   u16 facing;
 
-  facing = (s16)((Actor_Get(gMainRoutineWork.leaderActorId)->facing + 0x2000) &
-                 0xc000);
+  facing =
+      (s16)((Actor_Get(gMainRoutineWork.leaderActorId)->facing + DEGtoANG(45)) &
+            0xc000);
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
   if (facing) {
@@ -601,8 +602,9 @@ s32 ApojiiIslands_TalkToSon(void) {
 s32 ApojiiIslands_MindReadSon(void) {
   u16 facing;
 
-  facing = (s16)((Actor_Get(gMainRoutineWork.leaderActorId)->facing + 0x2000) &
-                 0xc000);
+  facing =
+      (s16)((Actor_Get(gMainRoutineWork.leaderActorId)->facing + DEGtoANG(45)) &
+            0xc000);
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
   if (facing) {
@@ -640,8 +642,8 @@ enum { APOJII_INN = 8 };
 /// The innkeeper: across the counter, the inn; from elsewhere, his words about
 /// the fancy boat.
 void ApojiiIslands_TalkToInnkeeper(s32 actor) {
-  if ((u16)((Actor_Get(gMainRoutineWork.leaderActorId)->facing + 0x2000) &
-            0xc000) == 0xc000) {
+  if ((u16)((Actor_Get(gMainRoutineWork.leaderActorId)->facing + DEGtoANG(45)) &
+            0xc000) == FACING_NORTH) {
     Inn_CheckIn(APOJII_INN, actor);
     return;
   }
@@ -679,8 +681,8 @@ void ApojiiIslands_AskAboutWarriors(s32 actor) {
 /// The merchant: across the counter, the shop; from elsewhere, her wish for
 /// imported goods.
 void ApojiiIslands_TalkToMerchant(s32 actor) {
-  if ((u16)((Actor_Get(gMainRoutineWork.leaderActorId)->facing + 0x2000) &
-            0xc000) == 0xc000) {
+  if ((u16)((Actor_Get(gMainRoutineWork.leaderActorId)->facing + DEGtoANG(45)) &
+            0xc000) == FACING_NORTH) {
     Shop_Run(SHOP_APOJII, actor);
     return;
   }
@@ -727,7 +729,7 @@ s32 Scene_Initialize(void) {
 
   Map_SetUpperLevelWading(Ram_HeapSlots->mapGrid);
   effect = &gFieldWork->transition;
-  *effect = 0x202;
+  *effect = SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_NOISE);
   party = &gMainRoutineWork;
   scene = party->next;
   if (scene == SCENE_APOJII_ISLANDS_HAZE) {
@@ -737,7 +739,7 @@ s32 Scene_Initialize(void) {
     if (Event_GetFlag(FLAG_FATHER_SEES_THE_STONE))
       ApojiiIslands_FatherSeesTheStone();
   } else if (scene == SCENE_APOJII_ISLANDS_SHOPS) {
-    *effect = 0x100;
+    *effect = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
     if (party->entrance == 6)
       ApojiiIslands_LeaveQuietly();
   }
@@ -874,7 +876,7 @@ void Leader_SpinAway(s32 entrance) {
       Event_FinishScreenTransition();
     leader->y.fixed -= toFIXED(1) / 4;
     angle = leader->facing;
-    leader->facing = angle + 0x1000;
+    leader->facing = angle + TRIG_TURN / 16;
     if ((i & 7) == 0)
       ApojiiIslands_SpawnSplash(Actor_Get(15));
     System_Wait(1);
@@ -971,7 +973,7 @@ void ApojiiIslands_StartCellMarkers(void) {
   Iwram_ClearWordsEntry(&gApojiiIslands_CellMarkers,
                         sizeof(struct CellMarkers));
   gApojiiIslands_CellMarkers.block = VramCache_FindFreeEntry();
-  Vram_Load(gApojiiIslands_CellMarkers.block, 0x200, 0);
+  Vram_Load(gApojiiIslands_CellMarkers.block, 512, 0);
   FieldTask_AddFrame(ApojiiIslands_DrawCellMarkers, TASK_PASS_VBLANK);
 }
 
@@ -1053,10 +1055,10 @@ void ApojiiIslands_StartSparkles(void) {
           (DMA_ENABLE | DMA_32BIT | DMA_SRC_FIXED) << 16 |
               sizeof(struct GroundParticleWork) / 4,
           REG_DMA3);
-  buf = HeapSlot_AllocEwram(HEAP_SLOT_TILE_SCRATCH, 0x400);
+  buf = HeapSlot_AllocEwram(HEAP_SLOT_TILE_SCRATCH, 1024);
   Decompress_ByteLz(gField_GroundTiles, buf);
   work->entry = VramCache_FindFreeEntry();
-  work->tileBase = Vram_Load(work->entry, 0x300, buf);
+  work->tileBase = Vram_Load(work->entry, 768, buf);
   HeapSlot_Release(HEAP_SLOT_TILE_SCRATCH);
   work->leader = (s32 *)size;
   i = 0;

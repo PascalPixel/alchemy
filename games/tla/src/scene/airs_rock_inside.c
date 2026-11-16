@@ -63,6 +63,9 @@
 #define FLAG_AIRS_ROCK_VIAL_CHEST_STATUE_WOKEN 0x899
 #define FLAG_REVEAL_TABLET_READ 0x8d4
 
+/// Ends a u16 list of actor ids, written -1 in its table.
+#define ACTOR_LIST_END ((u16)-1)
+
 /// The hall's entrance from the Reveal tablet's room, and where the party
 /// lands after dropping from the Vial chest room (AirsRockInside_LandInHall);
 /// the Vial chest room's entrance on the lift from the hall
@@ -304,7 +307,7 @@ void AirsRockInside_SetConeCells(struct Actor *actor);
 void Pillar_Place(s16 *list) {
   s16 *entry;
 
-  if ((u16)list[0] == 0xffff)
+  if ((u16)list[0] == ACTOR_LIST_END)
     return;
   entry = list;
   do {
@@ -317,7 +320,7 @@ void Pillar_Place(s16 *list) {
     Actor_SetSpriteFlags(actor, 0);
     Actor_SetCellOpen(id, (u16)kind, (u16)flag, actor->layer);
     entry += 3;
-  } while ((u16)entry[0] != 0xffff);
+  } while ((u16)entry[0] != ACTOR_LIST_END);
 }
 
 #include "shared/pound_sink_target.h"
@@ -475,14 +478,14 @@ void AirsRockInside_PoundCone(s32 mode, s32 step) {
     Dma_Fill32(step, second->watchedActor, entry->size);
     Dma_Set(first->watchedActor, second->watchedActor, DMA_COPY_WORDS(192),
             REG_DMA3);
-    first->watchedActor = (void *)((u8 *)first->watchedActor + 0x300);
-    second->watchedActor = (void *)((u8 *)second->watchedActor + 0x300);
+    first->watchedActor = (void *)((u8 *)first->watchedActor + 768);
+    second->watchedActor = (void *)((u8 *)second->watchedActor + 768);
   } else if (step <= 5) {
     second->y.fixed += toFIXED(26) / 5;
     Dma_Set(first->watchedActor, second->watchedActor, DMA_COPY_WORDS(48),
             REG_DMA3);
-    first->watchedActor = (void *)((u8 *)first->watchedActor + 0x100);
-    second->watchedActor = (void *)((u8 *)second->watchedActor + 0x100);
+    first->watchedActor = (void *)((u8 *)first->watchedActor + 256);
+    second->watchedActor = (void *)((u8 *)second->watchedActor + 256);
   }
   if (step <= 7)
     first->scaleY += -(FIXED_ONE * 31 / 256);
@@ -509,7 +512,7 @@ void AirsRockInside_PlaceCones(u16 *list) {
   s32 flag, base;
   u16 *entry;
 
-  if (*list == 0xffff)
+  if (*list == ACTOR_LIST_END)
     return;
   entry = list;
   do {
@@ -532,7 +535,7 @@ void AirsRockInside_PlaceCones(u16 *list) {
     actor->timer = flag;
     AirsRockInside_SetConeCells(actor);
     entry += 3;
-  } while (*entry != 0xffff);
+  } while (*entry != ACTOR_LIST_END);
 }
 
 /// The leader rides a statue's whirlwind along its path until it fades.
@@ -576,7 +579,7 @@ void AirsRockInside_RideWhirlwind(void) {
   priority = &leader->priorityFlags;
   facing = ride->facing;
   switch (facing) {
-  case 0xc000:
+  case DEGtoANG(270):
     rider = ride->watchedActor;
     dx = 0;
     dz = 0;
@@ -971,7 +974,7 @@ void AirsRockInside_UpdateVentPuff(struct Actor *actor) {
   s32 *pos;
   u8 i;
 
-  if (*(s8 *)((u8 *)Ram_HeapSlots->paletteFade + 0x2a01) != 0)
+  if (((struct PaletteFade *)Ram_HeapSlots->paletteFade)->duration != 0)
     return;
   if (work->transitionActive == 0)
     return;
@@ -1399,29 +1402,29 @@ shrink:
   if (gMainRoutineWork.next == SCENE_AIRS_ROCK_INSIDE_TIGHTROPES) {
     if (hit == 5) {
       SHAKE();
-      MapGrid_CopyCellsTo(79, 0x40, 29, 85, 5, 7);
+      MapGrid_CopyCellsTo(79, 64, 29, 85, 5, 7);
       FieldEvent_Wait(30);
       SHAKE();
-      MapGrid_CopyCellsTo(69, 0x40, 29, 85, 5, 7);
+      MapGrid_CopyCellsTo(69, 64, 29, 85, 5, 7);
       MapGrid_CopyCellAttributes(46, 20, 5, 5, 29, 21);
-      MapGrid_CopyCellAttributes(0x20, 89, 1, 1, 31, 89);
+      MapGrid_CopyCellAttributes(32, 89, 1, 1, 31, 89);
       MapGrid_CopyCellAttributes(50, 86, 1, 1, 33, 87);
       GameFlag_Set(FLAG_AREA_TEMP_01);
     } else if (hit == 6) {
       SHAKE();
-      MapGrid_CopyCellsTo(74, 0x40, 29, 85, 5, 7);
+      MapGrid_CopyCellsTo(74, 64, 29, 85, 5, 7);
       FieldEvent_Wait(30);
       SHAKE();
-      MapGrid_CopyCellsTo(0x40, 0x40, 29, 85, 5, 7);
+      MapGrid_CopyCellsTo(64, 64, 29, 85, 5, 7);
       MapGrid_CopyCellAttributes(52, 20, 5, 5, 29, 21);
       MapGrid_CopyCellAttributes(33, 88, 1, 1, 33, 87);
-      MapGrid_CopyCellAttributes(0x30, 88, 1, 1, 31, 89);
+      MapGrid_CopyCellAttributes(48, 88, 1, 1, 31, 89);
       GameFlag_Clear(FLAG_AREA_TEMP_01);
     }
   } else if (gMainRoutineWork.next == SCENE_AIRS_ROCK_INSIDE_ELIXIR_CHEST) {
     if (hit == 5) {
       SHAKE();
-      MapGrid_CopyCellsTo(79, 0x40, 0x20, 79, 5, 7);
+      MapGrid_CopyCellsTo(79, 64, 32, 79, 5, 7);
       if (Actor_GetById(ACTOR_ELIXIR_CHEST_PILLAR)->x.fixed >> 19 == 65) {
         velocity.x =
             Actor_GetById(ACTOR_ELIXIR_CHEST_PILLAR)->x.fixed - toFIXED(8);
@@ -1433,19 +1436,19 @@ shrink:
           dust.priority = 1;
           FieldEffect_Spawn(velocity.x + INTtoFIXED(Random16() & 15),
                             velocity.y + INTtoFIXED(Random16() & 31),
-                            velocity.z, 0, 0, -0x8000, EFFECT_USE_PRIORITY,
-                            &dust);
+                            velocity.z, 0, 0, -(toFIXED(1) / 2),
+                            EFFECT_USE_PRIORITY, &dust);
         }
         wait(30);
         SHAKE();
-        MapGrid_CopyCellsTo(0x40, 0x40, 0x20, 79, 5, 7);
+        MapGrid_CopyCellsTo(64, 64, 32, 79, 5, 7);
         Actor_GetById(ACTOR_ELIXIR_CHEST_PILLAR)->priorityFlags |=
             ACTOR_PRIORITY_AUTOMATIC;
       } else {
         FieldEvent_Wait(30);
         SHAKE();
-        MapGrid_CopyCellsTo(69, 0x40, 0x20, 79, 5, 7);
-        MapGrid_CopyCellAttributes(49, 15, 5, 5, 0x20, 15);
+        MapGrid_CopyCellsTo(69, 64, 32, 79, 5, 7);
+        MapGrid_CopyCellAttributes(49, 15, 5, 5, 32, 15);
         MapGrid_CopyCellAttributes(33, 82, 1, 1, 34, 82);
         MapGrid_CopyCellAttributes(52, 81, 1, 1, 36, 81);
         GameFlag_Clear(FLAG_AREA_TEMP_02);
@@ -1466,12 +1469,12 @@ shrink:
         }
         wait(20);
       } else {
-        MapGrid_CopyCellsTo(79, 0x40, 0x20, 79, 5, 7);
+        MapGrid_CopyCellsTo(79, 64, 32, 79, 5, 7);
         Sound_Play(SE_GATE_MOVE);
         FieldEvent_Wait(30);
         SHAKE();
-        MapGrid_CopyCellsTo(0x40, 0x40, 0x20, 79, 5, 7);
-        MapGrid_CopyCellAttributes(49, 21, 5, 5, 0x20, 15);
+        MapGrid_CopyCellsTo(64, 64, 32, 79, 5, 7);
+        MapGrid_CopyCellAttributes(49, 21, 5, 5, 32, 15);
         MapGrid_CopyCellAttributes(35, 81, 1, 1, 36, 81);
         MapGrid_CopyCellAttributes(50, 82, 1, 1, 34, 82);
         GameFlag_Set(FLAG_AREA_TEMP_02);
@@ -1557,7 +1560,7 @@ void AirsRockInside_StartRestoringCells(void) {
 
   gAirsRockInside_StampedCell = value;
   {
-    s32 priority = 0x480;
+    s32 priority = 1152;
     Task_Add(AirsRockInside_RestoreCellBehindLeader, priority);
   }
 }
@@ -1761,7 +1764,7 @@ void AirsRockInside_FlickerTarget(struct Actor *actor) {
 /// the statue beside it, which starts breathing whirlwinds
 /// (FLAG_AIRS_ROCK_HALL_STATUE_WOKEN).
 void AirsRockInside_WakeHallStatue(void) {
-  u16 *buffer = Heap_Alloc(0x800);
+  u16 *buffer = Heap_Alloc(2048);
   u16 *cell;
   struct Actor *spark;
   u32 i;
@@ -1773,8 +1776,8 @@ void AirsRockInside_WakeHallStatue(void) {
   Decompress_TaggedLz(Resource_GetTableEntry(RESOURCE_LIGHTNING_TILES), buffer);
   Dma_Set(buffer, (void *)BG_CHAR_BLOCK(0), DMA_COPY_WORDS(512), REG_DMA3);
   Heap_Release(buffer);
-  Dma_Fill16(0, (void *)BG_SCREEN_BLOCK(4), 0x800);
-  buffer = Heap_Alloc(0x80);
+  Dma_Fill16(0, (void *)BG_SCREEN_BLOCK(4), 2048);
+  buffer = Heap_Alloc(128);
   Decompress_TaggedLz(Resource_GetTableEntry(RESOURCE_LIGHTNING_MAP), buffer);
   cell = buffer;
   for (i = 0; i != 64; i++) {
@@ -1852,7 +1855,7 @@ void AirsRockInside_WakeHallStatue(void) {
   PaletteFade_StartInterpolation(60);
   wait(30);
   Sound_Play(SE_BOSS_ROAR);
-  AirsRockInside_BurstDust(0x1380000, 0x2d00000);
+  AirsRockInside_BurstDust(toFIXED(312), toFIXED(720));
   MapGrid_CopyCellsTo(64, 78, 18, 105, 3, 5);
   Camera_SetSpeedParameters(toFIXED(3) / 2, toFIXED(3) / 16);
   FieldCamera_MoveToActorById(ACTOR_HALL_TWISTER_STATUE, 1);
@@ -2050,7 +2053,7 @@ void AirsRockInside_FinishPushingPillar(void) {
 /// with the light it sends, which flashes across the room, opens the cells at
 /// (68, 84) and wakes the statue (FLAG_AIRS_ROCK_VIAL_CHEST_STATUE_WOKEN).
 void AirsRockInside_WakeVialChestStatue(void) {
-  u16 *buffer = Heap_Alloc(0x800);
+  u16 *buffer = Heap_Alloc(2048);
   u16 *cell;
   struct Actor *spark;
   u32 i;
@@ -2062,8 +2065,8 @@ void AirsRockInside_WakeVialChestStatue(void) {
   Decompress_TaggedLz(Resource_GetTableEntry(RESOURCE_LIGHTNING_TILES), buffer);
   Dma_Set(buffer, (void *)BG_CHAR_BLOCK(0), DMA_COPY_WORDS(512), REG_DMA3);
   Heap_Release(buffer);
-  Dma_Fill16(0, (void *)BG_SCREEN_BLOCK(4), 0x800);
-  buffer = Heap_Alloc(0x80);
+  Dma_Fill16(0, (void *)BG_SCREEN_BLOCK(4), 2048);
+  buffer = Heap_Alloc(128);
   Decompress_TaggedLz(Resource_GetTableEntry(RESOURCE_LIGHTNING_MAP), buffer);
   cell = buffer;
   for (i = 0; i != 64; i++) {
@@ -2144,7 +2147,7 @@ void AirsRockInside_WakeVialChestStatue(void) {
   PaletteFade_StartInterpolation(60);
   wait(30);
   Sound_Play(SE_BOSS_ROAR);
-  AirsRockInside_BurstDust(0xd80000, 0x12d0000);
+  AirsRockInside_BurstDust(toFIXED(216), toFIXED(301));
   MapGrid_CopyCellsTo(68, 84, 12, 77, 3, 6);
   Camera_SetSpeedParameters(toFIXED(3) / 2, toFIXED(3) / 16);
   FieldCamera_MoveToActorById(8, 1);
@@ -2439,7 +2442,7 @@ void AirsRockInside_ShebaLearnsReveal(s32 idA, s32 idB) {
         FieldActor_Create(SPRITE_PARTICLE, b->x.fixed, b->y.fixed, b->z.fixed);
     Sound_Play(SE_SPARKS);
     angle = &spark->timer;
-    *angle = (Random16() & 0x7fff) + 0x8000;
+    *angle = (Random16() & 0x7fff) + DEGtoANG(180);
     spark->userValue = ((i & 1) * 2 - 1) << ((Random16() & 3) + 9);
     spark->motionFlags = 0;
     spark->riseBaseY = toFIXED(122);
@@ -2469,7 +2472,7 @@ void AirsRockInside_ShebaLearnsReveal(s32 idA, s32 idB) {
         FieldActor_Create(SPRITE_PARTICLE, b->x.fixed,
                           b->y.fixed + i * 65536 - toFIXED(8), b->z.fixed);
     spark->timer = Random16();
-    spark->userValue = 0x800;
+    spark->userValue = TRIG_TURN / 32;
     spark->riseCounter = i;
     spark->riseEnabled = 1;
     spark->bounce = spark->x.fixed;
@@ -2655,7 +2658,7 @@ void AirsRockInside_TradePairedStatues(void) {
 
   leader = Actor_GetById(gMainRoutineWork.leaderActorId);
   pair = gAirsRockInside_PairedStatuesCones;
-  if (*pair != 0xffff) {
+  if (*pair != ACTOR_LIST_END) {
     do {
       id = *pair;
       first = Actor_GetById(id);
@@ -2665,7 +2668,7 @@ void AirsRockInside_TradePairedStatues(void) {
         break;
       }
       pair += 3;
-    } while (*pair != 0xffff);
+    } while (*pair != ACTOR_LIST_END);
   }
   busy = first->riseEnabled | second->riseEnabled;
   if (busy != 0)
@@ -2684,16 +2687,16 @@ void AirsRockInside_TradePairedStatues(void) {
   Dma_Fill32(busy, second->watchedActor, entry->size);
   Dma_Set(first->watchedActor, second->watchedActor, DMA_COPY_WORDS(192),
           REG_DMA3);
-  first->watchedActor = (void *)((u8 *)first->watchedActor + 0x300);
-  second->watchedActor = (void *)((u8 *)second->watchedActor + 0x300);
+  first->watchedActor = (void *)((u8 *)first->watchedActor + 768);
+  second->watchedActor = (void *)((u8 *)second->watchedActor + 768);
   leader->motionFlags = busy;
   for (i = 0; i != 8; i++) {
     if (i <= 4) {
       second->y.fixed += toFIXED(26) / 5;
       Dma_Set(first->watchedActor, second->watchedActor, DMA_COPY_WORDS(48),
               REG_DMA3);
-      first->watchedActor = (void *)((u8 *)first->watchedActor + 0x100);
-      second->watchedActor = (void *)((u8 *)second->watchedActor + 0x100);
+      first->watchedActor = (void *)((u8 *)first->watchedActor + 256);
+      second->watchedActor = (void *)((u8 *)second->watchedActor + 256);
     }
     leader->y.fixed += -(toFIXED(7) / 2);
     leader->groundHeight = leader->y.fixed;
@@ -3456,7 +3459,7 @@ u32 gAirsRockInside_PooledWhirlwindFadesScript[] = {
 };
 
 u32 gAirsRockInside_StatueScript[] = {
-    SC_SET(SW_SCALE_Y, 0x18000),
+    SC_SET(SW_SCALE_Y, toFIXED(1.5)),
     SC_SET(SW_STEERING, 0),
     SC_ANIMATION(2),
     SC_END,

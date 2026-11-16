@@ -305,17 +305,17 @@ again:
     Vector_AddPolarOffset(distance, actor->facing + (a >> 2) - (b >> 2), p);
     x = p->x;
     if (x < 0)
-      x += 0xffff;
+      x += FIXED_ONE - 1;
     dx = (x >> 16) - actor->timer;
     coordinate = p->z;
     if (coordinate < 0)
-      coordinate += 0xffff;
+      coordinate += FIXED_ONE - 1;
     dz = (coordinate >> 16) - (s16)actor->userValue;
     if (dx * dx + dz * dz > maxDistanceSquared)
       goto again;
     goto found;
   }
-  actor->facing += 0x8000;
+  actor->facing += DEGtoANG(180);
   actor->wait = 1;
   goto end;
 found:
@@ -334,7 +334,7 @@ void AquaRock_TurnSprite(struct Actor *actor) {
 
   angle = actor->facing;
   sprite = actor->sprite;
-  sprite->rotation = angle + 0x4000;
+  sprite->rotation = angle + DEGtoANG(90);
 }
 
 /// A drifter's script call: hides its sprite and gives it its speed and its
@@ -373,7 +373,7 @@ void AquaRock_SinkOrFlow(struct Actor *actor) {
 
 /// Now and then a drop falls from somewhere along the actor's 48-pixel width.
 void AquaRock_DripAtRandom(struct Actor *actor) {
-  if ((u32)Random16() < 0x1000) {
+  if ((u32)Random16() < 4096) {
     struct Actor *child;
     s32 spread = Random16();
     FIXED x = actor->x.fixed;
@@ -723,8 +723,8 @@ void AquaRock_RideStreamUp(void) {
       Event_Wait(5);
       for (i = 59; i >= 0; i--) {
         leader->y.fixed += toFIXED(2);
-        leader->facing += 0x1000;
-        if (Random16() <= 0xfff)
+        leader->facing += TRIG_TURN / 16;
+        if (Random16() <= 4095)
           AquaRock_SpawnSplash(leader);
         wait(1);
       }
@@ -965,7 +965,7 @@ void AquaRock_SpinOut(void) {
   for (i = 15; i >= 0; i--) {
     actor->y.fixed += toFIXED(1);
     angle = actor->facing;
-    angle += 0x2000;
+    angle += DEGtoANG(45);
     actor->facing = angle;
     wait(1);
   }
@@ -999,7 +999,7 @@ void AquaRock_DropIn(void) {
   for (i = 23; i >= 0; i--) {
     actor->y.fixed += toFIXED(2);
     angle = actor->facing;
-    angle += 0x2000;
+    angle += DEGtoANG(45);
     actor->facing = angle;
     wait(1);
   }
@@ -1016,11 +1016,11 @@ void AquaRock_SwayMoai(struct Actor *actor) {
   struct FieldSprite *sprite = actor->sprite;
   s16 *amplitude;
 
-  actor->timer += 0x2000;
+  actor->timer += DEGtoANG(45);
   amplitude = (s16 *)&actor->userValue;
   *amplitude += 32;
-  if (*amplitude > 0x200)
-    *amplitude = 0x200;
+  if (*amplitude > TRIG_TURN / 128)
+    *amplitude = TRIG_TURN / 128;
   sprite->rotation = Iwram_MulFX(Trig_Sin(actor->timer), *amplitude);
 }
 
@@ -1029,7 +1029,7 @@ void AquaRock_SwayMoaiBack(struct Actor *actor) {
   struct FieldSprite *sprite = actor->sprite;
   s16 *amplitude;
 
-  actor->timer += 0x2000;
+  actor->timer += DEGtoANG(45);
   amplitude = (s16 *)&actor->userValue;
   *amplitude -= 16;
   if (*amplitude < 0) {
@@ -1042,8 +1042,8 @@ void AquaRock_SwayMoaiBack(struct Actor *actor) {
 void AquaRock_RockMoai(struct Actor *actor) {
   struct FieldSprite *sprite = actor->sprite;
 
-  actor->timer += 0x100;
-  sprite->rotation = Trig_Sin(actor->timer) / 64 + 0x600;
+  actor->timer += TRIG_TURN / 256;
+  sprite->rotation = Trig_Sin(actor->timer) / 64 + TRIG_TURN * 3 / 128;
 }
 
 /// Scatters objects 17 to 21 under cue 184, lines them up 32 pixels apart
@@ -1342,7 +1342,7 @@ void AquaRock_SetMoaiFace(s32 id) {
   struct Actor *actor = Actor_GetById(id);
 
   if (actor != 0) {
-    u8 *meta = Sprite_AddAnimation(actor->sprite, 0x17d);
+    u8 *meta = Sprite_AddAnimation(actor->sprite, 381);
 
     meta[5] = 0;
     meta[6] = 0;
@@ -1370,7 +1370,7 @@ void AquaRock_SpinUpAndAway(s32 exit) {
       Event_FinishScreenTransition();
     actor->y.fixed -= toFIXED(1) / 4;
     angle = actor->facing;
-    angle += 0x1000;
+    angle += TRIG_TURN / 16;
     actor->facing = angle;
     if ((i & 7) == 0)
       AquaRock_SpawnSplash(Actor_GetById(ACTOR_STREAM_SOURCE));
@@ -1468,7 +1468,7 @@ void AquaRock_DrawRisingCellMarkers(void) {
   struct Bubble *entry;
   s32 i, x, y, z, screenX, screenY;
 
-  if (Random16() < 0x1000 && (source = work->object) != 0) {
+  if (Random16() < 4096 && (source = work->object) != 0) {
     entry = &work->bubbles[work->next];
     entry->x = source->x.fixed + Random16() * 3 * 16 - toFIXED(24);
     entry->y = source->y.fixed;
@@ -1534,7 +1534,7 @@ void AquaRock_DrawFallingCellMarkers(void) {
   struct Bubble *bubble;
   s32 i, x, y, depth, screenX, screenY, z, row;
 
-  if (Random16() < 0x1000 && (source = work->object) != 0) {
+  if (Random16() < 4096 && (source = work->object) != 0) {
     bubble = &work->bubbles[work->next];
     bubble->x = source->x.fixed + Random16() * 3 * 8 - toFIXED(12);
     bubble->y = source->y.fixed;
@@ -1594,10 +1594,10 @@ void AquaRock_StartCellMarkers(void) {
   void *buffer;
 
   Iwram_ClearWordsEntry(work, sizeof(struct AquaRockWork));
-  buffer = MemAlloc_(0x100);
+  buffer = MemAlloc_(256);
   Decompress_TaggedLz(gAquaRock_MarkerTiles, buffer);
   work->vramEntry = VramCache_FindFreeEntry();
-  VramCache_Load(work->vramEntry, 0x100, buffer);
+  VramCache_Load(work->vramEntry, 256, buffer);
   Heap_Release(buffer);
   ((s32 (*)(void *, s32))Task_Add)(AquaRock_DrawCellMarkers, TASK_PASS_VBLANK);
 }
@@ -1638,10 +1638,10 @@ void AquaRock_StartSparkles(void) {
           (DMA_ENABLE | DMA_32BIT | DMA_SRC_FIXED) << 16 |
               sizeof(struct GroundParticleWork) / 4,
           REG_DMA3);
-  buf = HeapSlot_AllocEwram(HEAP_SLOT_TILE_SCRATCH, 0x400);
+  buf = HeapSlot_AllocEwram(HEAP_SLOT_TILE_SCRATCH, 1024);
   Decompress_ByteLz(gField_GroundTiles, buf);
   work->entry = VramCache_FindFreeEntry();
-  work->tileBase = VramCache_Load(work->entry, 0x300, buf);
+  work->tileBase = VramCache_Load(work->entry, 768, buf);
   HeapSlot_Release(HEAP_SLOT_TILE_SCRATCH);
   work->leader = (s32 *)size;
   i = 0;

@@ -465,12 +465,12 @@ static inline void *BumpAlloc(s32 size) { return Heap_Alloc(size); }
 /// Sets up the glow sprites from the field's cached tiles D, with no picture
 /// row chosen yet.
 void AnemosInnerSanctumEntrance_StartLightSprites(void) {
-  u8 *buffer = BumpAlloc(0x1800);
+  u8 *buffer = BumpAlloc(6144);
 
   Iwram_ClearWordsEntry(gLightSpriteActors, 64);
   Decompress_TaggedLz(gField_CachedTilesD, buffer);
   gLightSpriteTile = VramCache_FindFreeEntry();
-  VramCache_Load(gLightSpriteTile, 0x1800, buffer);
+  VramCache_Load(gLightSpriteTile, 6144, buffer);
   Heap_Release(buffer);
   Task_Add(LightSprites_Draw, TASK_PASS_VBLANK);
   gLightSpriteCount = 0;

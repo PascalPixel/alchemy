@@ -208,6 +208,12 @@ struct Actor {
       u16 orbitFrames; ///< frames left of the spiral, 100 at the start
       s16 orbitAngle;  ///< its start on the circle, 1/65536 turns
     };
+    /// A Whirlwind particle (FieldEffect_CircleAnchor,
+    /// FieldEffect_WanderAroundAnchor).
+    struct {
+      u16 swirlFrames; ///< frames it has circled or wandered so far
+      s16 turnFrames;  ///< frames left of a sharp turn
+    };
     /// A spin that speeds up (FieldEffect_AdvanceAngleWithRamp).
     struct {
       s16 spinRampFrames; ///< frames the spin has been speeding up for

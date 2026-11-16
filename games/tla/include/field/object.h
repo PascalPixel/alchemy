@@ -43,6 +43,14 @@ void Rope_Lash(s32 index, s32 fromId, s32 toId);
 
 void HangingVine_Swing(s32 id);
 
+/// What Cyclone does at a cell (MapGrid_GetCycloneCellKind).
+enum CycloneCellKind {
+  CYCLONE_CELL_NONE = 0,
+  CYCLONE_CELL_BURST = 1, ///< blown away, with the particle burst
+  CYCLONE_CELL_CARRY = 2, ///< the whirlwind carries the leader to it
+  CYCLONE_CELL_LIFT = 3   ///< the whirlwind lifts the leader to it
+};
+
 s32 MapGrid_GetCycloneCellKind(s32 x, s32 z, s32 layer);
 
 void Djinn_RunBattleStartHop(s32 djinniId);

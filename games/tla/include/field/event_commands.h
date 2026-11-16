@@ -80,10 +80,13 @@ struct BurstParticle {
 
 /// The particle burst's work (ParticleBurst_Start): its tiles, 96 sprites and
 /// particles, its VRAM cache entry, a flash on frame 30 and its frame count.
+/// The particles of the particle burst.
+#define PARTICLE_BURST_COUNT 96
+
 struct ParticleBurstWork {
   u8 tiles[384];
-  struct EffectSprite sprites[96];
-  struct BurstParticle particles[96];
+  struct EffectSprite sprites[PARTICLE_BURST_COUNT];
+  struct BurstParticle particles[PARTICLE_BURST_COUNT];
   s16 cacheEntry; ///< the VRAM cache entry holding the leaves' tiles
   s16 tile;       ///< their first tile in OBJ VRAM
   s16 flash;      ///< set on frame 30 only

@@ -20,6 +20,10 @@
 #define CANVAS_SPRITE_256_COLORS 2 ///< rebuilt each frame, in 256 colours
 #define CANVAS_SPRITE_KEPT 3       ///< drawn as the effect left it
 
+/// The OBJ palette a 16-colour canvas is drawn in. The effects that draw in
+/// 256 colours keep their own colours in it and the next, colours 224 to 255.
+#define CANVAS_PALETTE 14
+
 /// What BattleEffect_UploadCanvas does with the canvas in the next frame.
 #define CANVAS_UPLOAD_AND_CLEAR 1
 #define CANVAS_UPLOAD 2

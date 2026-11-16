@@ -16,10 +16,13 @@ struct SpriteAnimation;
 
 /// The scatter's work (heap slot HEAP_SLOT_BATTLE_EFFECT): its tiles, 64
 /// sprites and particles, the actor it scatters from, and its stage.
+/// The particles of a scatter, a power of two: the next one wraps by a mask.
+#define SCATTER_PARTICLE_COUNT 64
+
 struct ScatterWork {
   u8 tiles[4096];
-  struct EffectSprite sprites[64];
-  struct FieldPsynergyParticle particles[64];
+  struct EffectSprite sprites[SCATTER_PARTICLE_COUNT];
+  struct FieldPsynergyParticle particles[SCATTER_PARTICLE_COUNT];
   struct Actor *object;
   s16 phase;
   s16 timer;
@@ -34,8 +37,8 @@ struct ScatterWork {
 enum OrbKind {
   ORB_PLAIN,    // the scene is enabled: the orb only comes and goes
   ORB_ORBITING, // motes circle the orb while the target shrinks
-  ORB_WANDER,   // target 372: motes wander off, the target is handed on
-  ORB_HANDOFF,  // target 373: the target is handed on
+  ORB_WANDER,   // sprouting leaves: leaves wander off, the target is handed on
+  ORB_HANDOFF,  // a seedling: the target is handed on
 };
 
 /// One moving point of the Arrow: a spark on the canvas (x and y only, counting
@@ -53,9 +56,22 @@ struct BowMotion {
 /// The Arrow's work (FieldPsynergy_Arrow, in heap slot
 /// HEAP_SLOT_BATTLE_EFFECT): its 32 sparks, the arrow and the bow with their
 /// motions, the points the arrow flies between, and the phase of its task.
+/// Tiles in one of the bow's drawing poses, which follow each other from
+/// BowWork.bowTile.
+#define BOW_POSE_TILES 32
+
+/// The glints the Arrow throws off the bow while it draws.
+#define BOW_SPARK_COUNT 32
+
+/// The bow's six drawing poses, 32 by 32 pixels in 256 colours.
+#define BOW_TILE_BYTES (6 * 32 * 32)
+
+/// BowWork.frame while the bow holds its pose and is not drawing.
+#define BOW_FRAME_IDLE 999
+
 struct BowWork {
   u8 *tiles;
-  struct BowMotion sparks[32];
+  struct BowMotion sparks[BOW_SPARK_COUNT];
   struct BowMotion arrowMotion;
   struct EffectSprite arrow;
   struct BowMotion bowMotion;
@@ -145,6 +161,11 @@ extern const s32 gArrow_WobbleFades[4];
 /// (arrow_glint.s).
 extern const u8 gArrow_GlintPixels[];
 
-extern const s8 gFieldPsynergy_NearbyCellOffsets[];
+/// The cells around the caster Cyclone looks at.
+#define FIELD_PSYNERGY_NEARBY_CELLS 21
+
+/// The tile offsets of those cells from the caster, signed x, z pairs.
+extern const s8
+    gFieldPsynergy_NearbyCellOffsets[FIELD_PSYNERGY_NEARBY_CELLS * 2];
 
 #endif

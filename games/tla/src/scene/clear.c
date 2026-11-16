@@ -110,7 +110,6 @@ const struct Trigger *Scene_GetTriggers(void) { return gSceneEvents; }
 
 /// The logo background, as the title's Title_LoadBackground, then the party
 /// leader's motion flags cleared.
-// As ☀️'s Clear_LoadBackground.
 void Clear_LoadBackground(void) {
   u8 *res;
   s32 id;
@@ -155,7 +154,6 @@ void Clear_LoadBackground(void) {
 /// Queues an alpha blend of BG0 and the sprites over the rest whose first
 /// weight rises by one every second frame (the second weight 16 less), and
 /// removes the callback once the first weight passes 15.
-// As ☀️'s Clear_UpdateBlend.
 void Clear_FadeInBlend(void) {
   s32 frame;
   u32 level;
@@ -214,7 +212,10 @@ void Clear_CheckButtonCodes(void) {
   }
 }
 
-s32 Clear_CanRetreat(void) {
+/// Nonzero (-1) while Retreat is blocked where the save was made, off the world
+/// map and outside the scenes of type 2: the clear screen then cannot send the
+/// party back to the Sanctum for a sound or recovered save.
+s32 Clear_IsRetreatBlocked(void) {
   struct MainRoutineWork *party;
   s32 mode;
 
@@ -451,8 +452,8 @@ top:
       WindowColor_Apply(party->windowHue, party->windowBrightness);
       if (party->buildStamp != BuildStamp_GetTime()) {
         RETURN_TO_SAVED(party)
-      } else if (mask = 0x208, (gInput.held & mask) == mask) {
-        if (Clear_CanRetreat()) {
+      } else if (mask = KEY_L | KEY_START, (gInput.held & mask) == mask) {
+        if (Clear_IsRetreatBlocked()) {
           failure = (s32)MsgDataCouldNotBeRecovered;
           goto refuse;
         }
@@ -467,7 +468,7 @@ top:
           goto top;
         }
         Message_CloseFinishedWindows();
-        if (Clear_CanRetreat()) {
+        if (Clear_IsRetreatBlocked()) {
           failure = recovery + 2;
         refuse:
           FieldMessage_Show(failure, FIELD_MESSAGE_ZOOM | FIELD_MESSAGE_LOWER);
@@ -944,6 +945,9 @@ static inline void Cursor_Show(struct MenuCursor *cursor, s32 x, s32 y) {
   }
 #endif
 
+/// The password screen: chooses the password's level, then lets the player
+/// enter it on the grid of symbols, checks it and applies it; returns -1 when
+/// cancelled.
 s32 Clear_EnterPassword(void) {
   struct MenuCursor cursorStore;
   struct MenuCursor gridStore;
@@ -981,7 +985,7 @@ s32 Clear_EnterPassword(void) {
   palette = (u16 *)&BG_PLTT_COLOR(14, 0);
   Dma_Set((const void *)&BG_PLTT_COLOR(15, 0), palette, DMA_COPY_WORDS(8),
           REG_DMA3);
-  palette[4] = 0x6318;
+  palette[4] = RGB(24, 24, 24);
   mode = IconMenu_ChooseSendOption(RESOURCE_LAYOUT_PASSWORD_LEVEL);
   if (mode == -1)
     return -1;
@@ -991,7 +995,7 @@ s32 Clear_EnterPassword(void) {
   row = 0;
   work = Heap_AllocEwram(sizeof(struct PasswordWork));
   advance = 0;
-  Graphics_ExpandVramTilesByColorTable((void *)0x06006000);
+  Graphics_ExpandVramTilesByColorTable(BG_CHAR_BLOCK(0) + 768 * TILE_SIZE_4BPP);
   if (mode == PASSWORD_LEVEL_GOLD) {
     length = PASSWORD_GOLD_LENGTH;
   } else {

@@ -81,7 +81,7 @@ top:
     }
     if (Map_GetTerrainHeight(*layer, next->x, next->z) - actor->y.fixed >
         toFIXED(8)) {
-      goto stop;
+      break;
     }
     {
       s32 radius = actor->radius - 2;

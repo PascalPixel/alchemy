@@ -164,15 +164,15 @@ void Teleport_PlaySparks(void);
 struct HallColors {
   u16 colors[2 * PALETTE_COLORS];
 };
-u16 gPaletteCycle_Flash BSS_DATA;
-u16 *gPaletteCycle_Order BSS_DATA;
-u16 gPaletteCycle_Countdown BSS_DATA;
-u16 gPaletteCycle_Period BSS_DATA ALIGNED(4);
-u16 *gPaletteCycle_Slots BSS_DATA;
-u16 *gPaletteCycle_FlashColors BSS_DATA;
-u16 *gPaletteCycle_Colors BSS_DATA;
-u16 gPaletteCycle_Count BSS_DATA;
-u16 gPaletteCycle_Step BSS_DATA ALIGNED(4);
+u16 gPaletteCycleBright BSS_DATA;
+u16 *gPaletteCycleSlots BSS_DATA;
+u16 gPaletteCycleTimer BSS_DATA;
+u16 gPaletteCycleDelay BSS_DATA ALIGNED(4);
+u16 *gPaletteSlots BSS_DATA;
+u16 *gPaletteColors BSS_DATA;
+u16 *gPaletteCycleColors BSS_DATA;
+u16 gPaletteCycleLength BSS_DATA;
+u16 gPaletteCycleIndex BSS_DATA ALIGNED(4);
 u16 gMarsLighthouseRoomM_LedgeFlameColors[2 * PALETTE_COLORS] BSS_DATA
     ALIGNED(4);
 u16 gMarsLighthouseRoomM_LedgePalette[2 * PALETTE_COLORS] BSS_DATA;
@@ -1035,10 +1035,10 @@ void Teleport_ArriveWhirling(void);
 void Palette_SetColorsFade(u16 *slots, u16 *colours, u16 *a, u16 *b) {
   u8 *saved = Ram_HeapSlots->paletteFade;
 
-  gPaletteCycle_Slots = slots;
-  gPaletteCycle_FlashColors = colours;
-  gPaletteCycle_Colors = a;
-  gPaletteCycle_Order = b;
+  gPaletteSlots = slots;
+  gPaletteColors = colours;
+  gPaletteCycleColors = a;
+  gPaletteCycleSlots = b;
   if (*slots != 0xffff && *colours != 0xffff) {
   next:
     {
@@ -1062,11 +1062,11 @@ void Palette_SetColorsFade(u16 *slots, u16 *colours, u16 *a, u16 *b) {
 /// frames and then quicker down to every other frame.
 #define DEFINE_TELEPORT_START_SHIMMER(name, period, countdown)                 \
   void name(void) {                                                            \
-    gPaletteCycle_Step = 0;                                                    \
-    gPaletteCycle_Count = List_CountEntries(gPaletteCycle_Slots);              \
-    gPaletteCycle_Period = period;                                             \
-    gPaletteCycle_Countdown = countdown;                                       \
-    gPaletteCycle_Flash = 1;                                                   \
+    gPaletteCycleIndex = 0;                                                    \
+    gPaletteCycleLength = List_CountEntries(gPaletteSlots);              \
+    gPaletteCycleDelay = period;                                             \
+    gPaletteCycleTimer = countdown;                                       \
+    gPaletteCycleBright = 1;                                                   \
     Task_AddFrame(PaletteCycle_Fade, TASK_PASS_VBLANK);                        \
   }
 
@@ -1097,50 +1097,7 @@ DEFINE_TELEPORT_START_SHIMMER(Teleport_StartFastShimmer, 2, 2)
 
 #include "shared/list_count_entries.h"
 
-/// Each frame of the shimmer, once its countdown runs out: the listed colours
-/// take the step's order, and the last listed slot flashes between its two
-/// colours.
-void PaletteCycle_Fade(void) {
-  s32 step;
-  u32 i;
-  u16 *src;
-  volatile u16 *dst;
-  int red, green, blue;
-
-  step = 0;
-  if (gPaletteCycle_Countdown != 0) {
-    if (--gPaletteCycle_Countdown == 0) {
-      step = 1;
-      gPaletteCycle_Countdown = gPaletteCycle_Period;
-      if (gPaletteCycle_Period > 2)
-        gPaletteCycle_Period--;
-    }
-  }
-  if (step == 0)
-    return;
-  src = gPaletteCycle_Colors;
-  for (i = 0; i < gPaletteCycle_Count; i++) {
-    dst =
-        &BG_PLTT[gPaletteCycle_Order[gPaletteCycle_Step * gPaletteCycle_Count +
-                                     i]];
-    red = *src++;
-    green = *src++;
-    blue = *src++;
-    SET_RGB(*dst, red, green, blue);
-  }
-  dst = &BG_PLTT[gPaletteCycle_Slots[gPaletteCycle_Count]];
-  if (gPaletteCycle_Flash != 0)
-    src = gPaletteCycle_FlashColors + gPaletteCycle_Count * 3;
-  else
-    src = gPaletteCycle_Colors + gPaletteCycle_Count * 3;
-  red = *src++;
-  green = *src++;
-  blue = *src++;
-  SET_RGB(*dst, red, green, blue);
-  gPaletteCycle_Flash ^= 1;
-  if (++gPaletteCycle_Step == gPaletteCycle_Count)
-    gPaletteCycle_Step = 0;
-}
+#include "shared/palette_cycle_fade.h"
 
 /// Arriving by Teleport: the screen comes up from white as the circle whirls.
 void Teleport_ArriveWhirling(void) {

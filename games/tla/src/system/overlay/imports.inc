@@ -73,7 +73,6 @@
 	export SpriteAnimation_Clear, SpriteAnimation_ClearFar
 	export Sprite_StartAnimation, Sprite_StartAnimationFar
 	export Sprite_AddAnimation, Sprite_AddAnimationFar
-	export Import_ActorSelectAnimation, Actor_SelectAnimationFar
 	export Actor_SelectAnimation, Actor_SelectAnimationFar
 	export Actor_SetAnimationSpeed, Actor_SetAnimationSpeedFar
 	export TundariaTower_StartEffectScript, Actor_StartScriptFar

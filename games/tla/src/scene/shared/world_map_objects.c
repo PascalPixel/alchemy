@@ -64,7 +64,6 @@ extern struct Actor *gWorldMap_PlacedActors[];
 extern s32 gWorldMap_PlacedActorScript[];
 
 void Actor_StartScript(struct Actor *object, const s32 *script);
-void Import_ActorSelectAnimation(struct Actor *object, s32 mode);
 void Actor_Release(struct Actor *object);
 
 void WorldMap_UpdatePlacedActors(void) {
@@ -133,7 +132,7 @@ void WorldMap_UpdatePlacedActors(void) {
           object->motionFlags = 0;
           object->collisionFlags = ACTOR_SOLID;
           object->facing = placement->facing;
-          Import_ActorSelectAnimation(object, 1);
+          Actor_SelectAnimation(object, 1);
           sprite = object->sprite;
           sprite->scale = Iwram_MulFX(sprite->scale, FIXED_ONE * 3 / 4);
           *slot = object;

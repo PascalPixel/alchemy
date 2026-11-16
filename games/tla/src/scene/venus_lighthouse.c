@@ -139,7 +139,6 @@ VenusLighthouse_CreateOccludingPassageEffect(s32 x, s32 y, s32 z, s32 type) {
 
 #undef Actor_SetSpriteFlags
 
-extern void Import_ActorSelectAnimation(struct FieldEffect *effect, s32 mode);
 extern void Actor_StartScript(struct FieldEffect *effect, const s32 *script);
 extern const s32 *gFieldEffect_DurationScripts[];
 
@@ -162,7 +161,7 @@ void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
     return;
 
   sprite = effect->sprite;
-  Import_ActorSelectAnimation(effect, (flags + 1) & EFFECT_SCRIPT_MASK);
+  Actor_SelectAnimation((void *)effect, (flags + 1) & EFFECT_SCRIPT_MASK);
   Actor_StartScript(effect,
                     gFieldEffect_DurationScripts[flags & EFFECT_SCRIPT_MASK]);
   effect->motionFlags = 0;
@@ -205,7 +204,7 @@ void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
     }
   }
   if ((flags & EFFECT_USE_SCRIPT) != 0) {
-    Import_ActorSelectAnimation(effect, 1);
+    Actor_SelectAnimation((void *)effect, 1);
     Actor_StartScript(effect, options->script);
   }
   if ((flags & EFFECT_USE_ROTATION) != 0)
@@ -277,7 +276,7 @@ UNUSED void VenusLighthouse_PushAdjacentPillar(void) {
   if (transitionBusy != 0)
     return;
 
-  Import_ActorSelectAnimation(leader, ANIM_PUSH);
+  Actor_SelectAnimation(leader, ANIM_PUSH);
   moveRate = toFIXED(1) / 5;
   System_Wait(15);
   Event_PlaySound(SE_PUSH);
@@ -301,7 +300,7 @@ UNUSED void VenusLighthouse_PushAdjacentPillar(void) {
   leader->velocityZ = transitionBusy;
   leader->x.fixed = INTtoFIXED(leader->x.part[0].integer);
   leader->z.fixed = INTtoFIXED(leader->z.part[0].integer);
-  Import_ActorSelectAnimation(leader, ANIM_STAND);
+  Actor_SelectAnimation(leader, ANIM_STAND);
 }
 
 #include "../field/map_cell_fill_byte.c"

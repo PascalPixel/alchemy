@@ -135,7 +135,6 @@ void Gauge_Init(void);
 void WorldMap_EndFlight(void);
 void Gauge_End(void);
 
-void Import_ActorSelectAnimation(struct Actor *object, s32 mode);
 
 void WorldMap_FightBanditAndThieves(s32 entrance);
 
@@ -516,11 +515,11 @@ void WorldMap_BoardShip(void) {
   gMainRoutineWork.shipZ = ship->z.fixed;
   gMainRoutineWork.shipFacing = ship->facing;
   Event_PlaySound(SOUND_FADE_OUT_BGM);
-  Import_ActorSelectAnimation(leader, 6);
+  Actor_SelectAnimation(leader, 6);
   System_Wait(6);
   Event_PlaySound(SE_JUMP);
   Actor_SetSpriteFlags(leader, 0);
-  Import_ActorSelectAnimation(leader, 7);
+  Actor_SelectAnimation(leader, 7);
   leader->speedLimit = toFIXED(3);
   leader->acceleration = toFIXED(2);
   leader->velocityY = toFIXED(4);
@@ -528,7 +527,7 @@ void WorldMap_BoardShip(void) {
   Actor_StartIdle(leader);
   FieldActor_SetMoveTargetFX(leader, ship->x.fixed, 0, ship->z.fixed);
   FieldActor_WaitForMove(leader);
-  Import_ActorSelectAnimation(leader, 6);
+  Actor_SelectAnimation(leader, 6);
   System_Wait(6);
   leader->groundHeight = 0;
   Actor_SetPosition(gMainRoutineWork.leaderActorId, 0, 0);
@@ -601,10 +600,10 @@ void WorldMap_LeaveShip(void) {
     leader->z.fixed = ship->z.fixed;
     leader->motionFlags = 0;
     Actor_SetSpriteFlags(leader, 0);
-    Import_ActorSelectAnimation(leader, 6);
+    Actor_SelectAnimation(leader, 6);
     System_Wait(6);
     Event_PlaySound(SE_JUMP);
-    Import_ActorSelectAnimation(leader, 7);
+    Actor_SelectAnimation(leader, 7);
     leader->speedLimit = toFIXED(3);
     leader->acceleration = toFIXED(2);
     leader->velocityY = toFIXED(4);
@@ -612,7 +611,7 @@ void WorldMap_LeaveShip(void) {
     Actor_StartIdle(leader);
     FieldActor_SetMoveTargetFX(leader, position[0], 0, position[2]);
     FieldActor_WaitForMove(leader);
-    Import_ActorSelectAnimation(leader, 6);
+    Actor_SelectAnimation(leader, 6);
     System_Wait(6);
     Event_End();
     Scene_ChooseMusic();
@@ -1693,7 +1692,7 @@ void WorldMap_SpawnCollapseDust(void) {
     *motionFlags = 0;
     obj->scaleX = scale;
     obj->scaleY = scale;
-    Import_ActorSelectAnimation(obj, 1);
+    Actor_SelectAnimation(obj, 1);
     Actor_StartScript(obj, gWorldMap_CollapseDustScript);
   }
 }
@@ -1835,7 +1834,7 @@ void WorldMap_SpawnIdejimaWake(void) {
   obj->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
   obj->motionFlags = leader->motionFlags;
   FieldActor_SetSpriteColor(obj, 9);
-  Import_ActorSelectAnimation(obj, 2);
+  Actor_SelectAnimation(obj, 2);
   Actor_StartScript(obj, gWorldMap_IdejimaWakeScript);
 }
 
@@ -2280,7 +2279,7 @@ void WorldMap_SpawnAquaRockTrail(struct Actor *parent) {
 
     if (object != NULL) {
       Actor_StartScript(object, gWorldMap_AquaRockTrailScript);
-      Import_ActorSelectAnimation(object, 1);
+      Actor_SelectAnimation(object, 1);
       Actor_SetSpriteFlags(object, 0);
       object->motionFlags = 0;
       object->scaleX = FIXED_ONE * 2;

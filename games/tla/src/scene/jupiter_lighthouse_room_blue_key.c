@@ -88,7 +88,6 @@ struct LightOam gLightSpriteOams[16] BSS_DATA;
 s16 gLightSpritesLarge BSS_DATA;
 s16 gLightSpritePriority BSS_DATA;
 struct CellTarget gCrackedTiles BSS_DATA;
-void Import_ActorSelectAnimation(struct FieldEffect *effect, s32 mode);
 void MapGrid_SetCellHeight(s32 x, s32 z, s32 a, s32 b);
 
 const struct SceneEntrance *Scene_GetEntrances(void) { return gSceneEntrances; }
@@ -267,36 +266,7 @@ void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
                        s32 velocityZ, u32 flags,
                        const struct EffectOptions *options);
 
-/// Raises a whirlwind eight pixels in front of an actor, moving along its
-/// facing (Whirlwind_Update), with a burst of light. Returns it.
-struct Actor *Whirlwind_Spawn(struct Actor *source) {
-  struct Vector3 position;
-  struct EffectOptions options;
-  struct Actor *object;
-
-  Event_PlaySound(SE_WHIRLWIND);
-  position.x =
-      source->x.fixed + Math_MulFX(toFIXED(8), Trig_Cos(source->facing));
-  position.z =
-      source->z.fixed + Math_MulFX(toFIXED(8), Math_Sin(source->facing));
-  object = FieldActor_Create(SPRITE_WHIRLWIND, position.x, source->y.fixed,
-                             position.z);
-  Import_ActorSelectAnimation(object, 2);
-  Actor_SetSpriteFlags(object, 0);
-  object->motionFlags = 0;
-  object->priorityFlags &= ~ACTOR_PRIORITY_AUTOMATIC;
-  object->facing = source->facing;
-  object->timer = 0;
-  object->riseCounter = 0;
-  object->riseEnabled = 0;
-  object->update = Whirlwind_Update;
-  object->speedLimit = toFIXED(3) / 2;
-  options.priority = 1;
-  options.palette = 7;
-  FieldEffect_Spawn(position.x, source->y.fixed, position.z - toFIXED(6), 0, 0,
-                    0, EFFECT_USE_PRIORITY | EFFECT_USE_PALETTE, &options);
-  return object;
-}
+#include "shared/whirlwind_spawn.h"
 
 #include "shared/actor_emit_rising_sparks.h"
 
@@ -418,9 +388,9 @@ void PushTarget_PushFill(struct PushTarget target) {
   Actor_Get(gMainRoutineWork.leaderActorId)->update = PushTarget_UpdatePusher;
   System_Wait(4);
   if ((u32)(direction - 6) <= 7)
-    Import_ActorSelectAnimation(object, 3);
+    Actor_SelectAnimation(object, 3);
   else
-    Import_ActorSelectAnimation(object, 2);
+    Actor_SelectAnimation(object, 2);
   Event_PlaySound(SE_HEAVY_MOVE);
   Actor_SetSpeedAndAcceleration(target.id, 0.5, 0.1);
   FieldActor_SetMoveTargetFX(object, target.x, target.y, target.z);
@@ -442,7 +412,7 @@ void PushTarget_PushFill(struct PushTarget target) {
   Event_PlaySound(SE_HEAVY_STOP);
   FieldActor_SetPositionAndResetMotion(object, target.x, object->y.fixed,
                                        target.z);
-  Import_ActorSelectAnimation(object, 1);
+  Actor_SelectAnimation(object, 1);
   target.x = target.x + toFIXED(gPushFootprints[footprint][0]);
   target.z = target.z + toFIXED(gPushFootprints[footprint][1]);
   target.x >>= 20;
@@ -548,7 +518,6 @@ struct Actor;
 struct CellTarget;
 struct FieldEffect;
 s32 CrackedTiles_Step(void);
-void Import_ActorSelectAnimation(struct FieldEffect *effect, s32 mode);
 void Leader_CenterInCell(void);
 void CrackedTile_Crack(struct CellTarget *table, struct CellTargetEntry *entry);
 
@@ -556,7 +525,7 @@ extern const s32 *gFieldEffect_DurationScripts[];
 
 #define EFFECT_SPAWN FieldEffect_Spawn
 #define EFFECT_CREATE Import_ActorCreate
-#define EFFECT_SET_MODE Import_ActorSelectAnimation
+#define EFFECT_SET_MODE Actor_SelectAnimation
 #define EFFECT_SET_SCRIPT Actor_StartScript
 #define EFFECT_SCRIPTS gFieldEffect_DurationScripts
 #include "../field/field_effect_spawn.c"

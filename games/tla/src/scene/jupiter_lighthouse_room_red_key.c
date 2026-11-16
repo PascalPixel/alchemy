@@ -138,7 +138,6 @@ struct FieldEffect;
 
 void Actor_PlaceMovedBlock(void);
 void MapGrid_SetAttributeBAt();
-void Import_ActorSelectAnimation(struct FieldEffect *effect, s32 mode);
 void JupiterLighthouse_DrawSparkSprite(struct EffectSprite *sprite);
 
 const struct SceneEntrance *Scene_GetEntrances(void) { return gSceneEntrances; }
@@ -706,7 +705,7 @@ UNUSED struct Actor *Whirlwind_Spawn(struct Actor *source) {
       source->z.fixed + Math_MulFX(toFIXED(8), Math_Sin(source->facing));
   object = FieldActor_Create(SPRITE_WHIRLWIND, position.x, source->y.fixed,
                              position.z);
-  Import_ActorSelectAnimation(object, 2);
+  Actor_SelectAnimation(object, 2);
   Actor_SetSpriteFlags(object, 0);
   object->motionFlags = 0;
   object->priorityFlags &= ~ACTOR_PRIORITY_AUTOMATIC;
@@ -940,7 +939,7 @@ void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
     return;
 
   sprite = effect->sprite;
-  Import_ActorSelectAnimation(effect, (flags + 1) & EFFECT_SCRIPT_MASK);
+  Actor_SelectAnimation((void *)effect, (flags + 1) & EFFECT_SCRIPT_MASK);
   Actor_StartScript(effect,
                     gFieldEffect_DurationScripts[flags & EFFECT_SCRIPT_MASK]);
   effect->motionFlags = 0;
@@ -982,7 +981,7 @@ void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
     }
   }
   if ((flags & EFFECT_USE_SCRIPT) != 0) {
-    Import_ActorSelectAnimation(effect, 1);
+    Actor_SelectAnimation((void *)effect, 1);
     Actor_StartScript(effect, options->script);
   }
   if ((flags & EFFECT_USE_ROTATION) != 0)

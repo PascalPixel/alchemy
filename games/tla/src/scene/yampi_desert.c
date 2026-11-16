@@ -1702,7 +1702,7 @@ void YampiDesert_ScorpionRoamsPsynergyStone(struct Actor *object) {
     break;
   case 7:
     if (YampiDesert_HasArrived(object)) {
-      if (GameFlag_Get(FLAG_SCENE_TEMP_03)) {
+      if (GameFlag_Get(FLAG_STAKE_POUNDED(3))) {
         object->update = NULL;
         gYampiDesert_RaisedEvent = RAISED_STIR_SCORPION;
       } else {
@@ -1721,10 +1721,12 @@ void YampiDesert_ScorpionRoamsPsynergyStone(struct Actor *object) {
   }
 }
 
-/// Readies actors 16 and 17 and the room's callbacks; actor 17 becomes the
-/// followed actor (gYampiDesert_SandRipple).
+/// Readies the Psynergy Stone room's King Scorpion and the sand ripple that
+/// follows it under the sand, and sets the scorpion on its round unless the
+/// party is back from a battle.
 void YampiDesert_SetUpPsynergyStoneScorpion(void) {
-  struct Actor *leader = Actor_GetById(ACTOR_PSYNERGY_STONE_ROOM_KING_SCORPION);
+  struct Actor *scorpion =
+      Actor_GetById(ACTOR_PSYNERGY_STONE_ROOM_KING_SCORPION);
   struct Actor *object;
   struct Actor **followed;
 
@@ -1739,14 +1741,14 @@ void YampiDesert_SetUpPsynergyStoneScorpion(void) {
   (*followed)->motionFlags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
   Actor_SetSpritePriority(ACTOR_PSYNERGY_STONE_ROOM_SAND_RIPPLE, 3);
   Actor_SetSpeed(ACTOR_PSYNERGY_STONE_ROOM_KING_SCORPION, 1.6);
-  Actor_SetSpriteColor((struct Actor *)leader, 15);
+  Actor_SetSpriteColor((struct Actor *)scorpion, 15);
   Actor_SetSpritePriority(ACTOR_PSYNERGY_STONE_ROOM_KING_SCORPION, 3);
   Actor_DisableById(ACTOR_PSYNERGY_STONE_ROOM_KING_SCORPION);
   Actor_GetById(ACTOR_PSYNERGY_STONE_ROOM_KING_SCORPION)->motionFlags =
       ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
   if (!GameFlag_Get(FLAG_KEEP_PARTY_POSITION)) {
-    leader->riseCounter = 0;
-    leader->update = YampiDesert_ScorpionRoamsPsynergyStone;
+    scorpion->riseCounter = 0;
+    scorpion->update = YampiDesert_ScorpionRoamsPsynergyStone;
   }
   YampiDesert_ClearRaisedEvent();
   Task_Add(YampiDesert_RippleFollowsScorpion, TASK_PASS_VBLANK);
@@ -1778,7 +1780,7 @@ void YampiDesert_ScorpionRoamsKingScorpion(struct Actor *object) {
     WALK(4, toFIXED(246), toFIXED(728))
   case 5:
     if (YampiDesert_HasArrived(object)) {
-      if (GameFlag_Get(FLAG_SCENE_TEMP_00)) {
+      if (GameFlag_Get(FLAG_STAKE_POUNDED(0))) {
         object->update = NULL;
         gYampiDesert_RaisedEvent = RAISED_STIR_SCORPION_AGAIN;
       } else {
@@ -1799,7 +1801,7 @@ void YampiDesert_ScorpionRoamsKingScorpion(struct Actor *object) {
     WALK(16, toFIXED(232), toFIXED(744))
   case 17:
     if (YampiDesert_HasArrived(object)) {
-      if (!GameFlag_Get(FLAG_SCENE_TEMP_00))
+      if (!GameFlag_Get(FLAG_STAKE_POUNDED(0)))
         *state = 18;
       else
         *state = 32;
@@ -1822,11 +1824,11 @@ void YampiDesert_ScorpionRoamsKingScorpion(struct Actor *object) {
   }
 }
 
-/// YampiDesert_SetUpPsynergyStoneScorpion's counterpart for actors 21 and 22:
-/// actor 22 becomes the followed actor, and until flag 0x109 actor 21 is placed
-/// and given the update YampiDesert_ScorpionRoamsKingScorpion.
+/// YampiDesert_SetUpPsynergyStoneScorpion's counterpart in the King Scorpion's
+/// room, which also places the scorpion at the start of its round.
 void YampiDesert_SetUpKingScorpionScorpion(void) {
-  struct Actor *leader = Actor_GetById(ACTOR_KING_SCORPION_ROOM_KING_SCORPION);
+  struct Actor *scorpion =
+      Actor_GetById(ACTOR_KING_SCORPION_ROOM_KING_SCORPION);
   struct Actor *object;
   struct Actor **followed;
 
@@ -1841,7 +1843,7 @@ void YampiDesert_SetUpKingScorpionScorpion(void) {
   (*followed)->motionFlags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
   Actor_SetSpritePriority(ACTOR_KING_SCORPION_ROOM_SAND_RIPPLE, 3);
   Actor_SetSpeed(ACTOR_KING_SCORPION_ROOM_KING_SCORPION, 1.6);
-  Actor_SetSpriteColor((struct Actor *)leader, 15);
+  Actor_SetSpriteColor((struct Actor *)scorpion, 15);
   Actor_SetSpritePriority(ACTOR_KING_SCORPION_ROOM_KING_SCORPION, 3);
   Actor_DisableById(ACTOR_KING_SCORPION_ROOM_KING_SCORPION);
   Actor_GetById(ACTOR_KING_SCORPION_ROOM_KING_SCORPION)->motionFlags =
@@ -1849,8 +1851,8 @@ void YampiDesert_SetUpKingScorpionScorpion(void) {
   if (!GameFlag_Get(FLAG_KEEP_PARTY_POSITION)) {
     YampiDesert_SetPositionAndFacing(ACTOR_KING_SCORPION_ROOM_KING_SCORPION,
                                      toFIXED(232), toFIXED(664), 0);
-    leader->riseCounter = 0;
-    leader->update = YampiDesert_ScorpionRoamsKingScorpion;
+    scorpion->riseCounter = 0;
+    scorpion->update = YampiDesert_ScorpionRoamsKingScorpion;
   }
   YampiDesert_ClearRaisedEvent();
   Task_Add(YampiDesert_RippleFollowsScorpion, TASK_PASS_VBLANK);
@@ -1890,19 +1892,19 @@ void YampiDesert_ScorpionRoamsToTrap(struct Actor *object) {
     WALK(2, toFIXED(312), toFIXED(344))
     ARRIVE(3, 4)
     WALK(4, toFIXED(296), toFIXED(344))
-    ARRIVE_OR(5, 0x202, 32, 6)
+    ARRIVE_OR(5, FLAG_STAKE_POUNDED(2), 32, 6)
     WALK(6, toFIXED(168), toFIXED(344))
     ARRIVE(7, 8)
     WALK(8, toFIXED(168), toFIXED(296))
     ARRIVE(9, 10)
     WALK(10, toFIXED(184), toFIXED(296))
-    ARRIVE_OR(11, 0x201, 48, 12)
+    ARRIVE_OR(11, FLAG_STAKE_POUNDED(1), 48, 12)
     WALK(12, toFIXED(280), toFIXED(296))
     ARRIVE(13, 14)
     WALK(14, toFIXED(280), toFIXED(328))
   case 15:
     if (YampiDesert_HasArrived(object)) {
-      if (GameFlag_Get(FLAG_SCENE_TEMP_02)) {
+      if (GameFlag_Get(FLAG_STAKE_POUNDED(2))) {
         object->update = NULL;
         gYampiDesert_RaisedEvent = RAISED_CORNER_SCORPION;
       } else {
@@ -1915,7 +1917,7 @@ void YampiDesert_ScorpionRoamsToTrap(struct Actor *object) {
     WALK(18, toFIXED(200), toFIXED(360))
     ARRIVE(19, 20)
     WALK(20, toFIXED(200), toFIXED(312))
-    ARRIVE_OR(21, 0x201, 34, 22)
+    ARRIVE_OR(21, FLAG_STAKE_POUNDED(1), 34, 22)
     WALK(22, toFIXED(200), toFIXED(264))
     ARRIVE(23, 0)
     WALK_ON(32, toFIXED(296), toFIXED(312))
@@ -1937,14 +1939,15 @@ void YampiDesert_ScorpionRoamsToTrap(struct Actor *object) {
   }
 }
 
-/// YampiDesert_SetUpPsynergyStoneScorpion's counterpart for actors 21 and 22 in
-/// the King Scorpion's room: once the scorpion is cornered
-/// (FLAG_YAMPI_DESERT_SCORPION_CORNERED) actor 21 is placed facing south;
+/// YampiDesert_SetUpPsynergyStoneScorpion's counterpart in the King Scorpion's
+/// room once it is stirred again: once the scorpion is cornered
+/// (FLAG_YAMPI_DESERT_SCORPION_CORNERED) it is placed facing south;
 /// otherwise, unless the party is back from a battle
 /// (FLAG_KEEP_PARTY_POSITION), it is placed and given the update
 /// YampiDesert_ScorpionRoamsToTrap.
 void YampiDesert_SetUpTrappedScorpion(void) {
-  struct Actor *leader = Actor_GetById(ACTOR_KING_SCORPION_ROOM_KING_SCORPION);
+  struct Actor *scorpion =
+      Actor_GetById(ACTOR_KING_SCORPION_ROOM_KING_SCORPION);
   struct Actor *object;
   struct Actor **followed;
   s32 angle;
@@ -1959,7 +1962,7 @@ void YampiDesert_SetUpTrappedScorpion(void) {
   Actor_SetSpritePriority(ACTOR_KING_SCORPION_ROOM_SAND_RIPPLE, 3);
   (*followed)->motionFlags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
   Actor_SetSpeed(ACTOR_KING_SCORPION_ROOM_KING_SCORPION, 1.6);
-  Actor_SetSpriteColor((struct Actor *)leader, 15);
+  Actor_SetSpriteColor((struct Actor *)scorpion, 15);
   Actor_SetSpritePriority(ACTOR_KING_SCORPION_ROOM_KING_SCORPION, 3);
   Actor_DisableById(ACTOR_KING_SCORPION_ROOM_KING_SCORPION);
   Actor_GetById(ACTOR_KING_SCORPION_ROOM_KING_SCORPION)->motionFlags =
@@ -1973,8 +1976,8 @@ void YampiDesert_SetUpTrappedScorpion(void) {
     if (!GameFlag_Get(FLAG_KEEP_PARTY_POSITION)) {
       YampiDesert_SetPositionAndFacing(ACTOR_KING_SCORPION_ROOM_KING_SCORPION,
                                        toFIXED(200), toFIXED(264), 0);
-      leader->riseCounter = 0;
-      leader->update = YampiDesert_ScorpionRoamsToTrap;
+      scorpion->riseCounter = 0;
+      scorpion->update = YampiDesert_ScorpionRoamsToTrap;
     }
   }
   YampiDesert_ClearRaisedEvent();
@@ -2341,10 +2344,6 @@ void YampiDesert_SetUpKingScorpion(void) {
   }
 }
 
-/// A halfword of gMainRoutineWork that has no field name yet.
-#define MAIN_ROUTINE_WORK_U16(offset)                                          \
-  (*(u16 *)((u8 *)&gMainRoutineWork + (offset)))
-
 /// Sets up the treasure pit's room: its treasure stays hidden until it is dug
 /// up.
 void YampiDesert_SetUpTreasurePit(void) {
@@ -2466,7 +2465,6 @@ loop:
 #undef ARRIVE
 #undef WALK_ON
 #undef ARRIVE_OR
-#undef MAIN_ROUTINE_WORK_U16
 
 // Finds the current target's table row and shrinks it.
 #include "shared/pound_sink_target.h"
@@ -2483,16 +2481,18 @@ struct RideEntry {
   s16 fallAt;
   s16 max;
   s16 min;
-  s16 unk10;
+  s16 unusedAfterMin; ///< set to 1 as the platform is placed; nothing reads it
   s16 step;
-  s16 unk14;
+  s16 unusedAfterStep; ///< cleared as the platform is placed; nothing reads it
   s16 phase;
   struct Actor *rider;
 };
 
+/// The rising platforms' work: their tiles, their terrain ids and the
+/// platforms.
 struct RideWork {
-  s16 entry;
-  s16 value;
+  s16 cacheEntry;     ///< the VRAM cache entry of the platforms' tiles
+  s16 firstTerrainId; ///< the first platform's terrain id and collision slot
   struct RideEntry entries[16];
   void *block;
 };
@@ -2504,7 +2504,7 @@ void YampiDesert_UpdateRisingSand(void) {
   struct RideWork *work = (struct RideWork *)(gInventorySnapshot + 0x188);
   struct MapWork *map = Ram_HeapSlots->mapGrid;
   struct RideEntry *entry = work->entries;
-  s32 value = work->value;
+  s32 value = work->firstTerrainId;
   u8 *terrain = map->layers[0].terrainIds;
   struct MapCell *cells = map->layers[0].cells;
   s32 i = 0;
@@ -2547,7 +2547,7 @@ void YampiDesert_UpdateRisingSand(void) {
         entry->timer = 0;
     }
     index = (FIELD_CELL(object->x.fixed)) + (FIELD_CELL(object->z.fixed)) * 128;
-    terrain[index] = (u8)work->value + i;
+    terrain[index] = (u8)work->firstTerrainId + i;
     *collision = ((object->y.part[0].integer + entry->height) / 8) << 8;
     cell = &cells[index];
     if (entry->step != 0)
@@ -2582,7 +2582,7 @@ void YampiDesert_DrawRisingSand(void) {
   struct RideWork *work = (struct RideWork *)(gInventorySnapshot + 0x188);
   struct RideEntry *entry = work->entries;
   s32 i;
-  u32 tile = gVramCacheEntries[work->entry].offset >> 5;
+  u32 tile = gVramCacheEntries[work->cacheEntry].offset >> 5;
   s32 frame;
   u32 *oam = work->block;
   s32 count = 0;
@@ -2669,11 +2669,11 @@ void YampiDesert_StartRisingSand(s32 unused, s32 value) {
     Iwram_ClearWords((s32)work, 456);
   buffer = (void *)Value1((s32 (*)())Heap_AllocEwram, 0x800);
   Decompress_TaggedLz(gField_GeyserTiles, buffer);
-  work->entry = VramCache_FindFreeEntry();
-  VramCache_Load(work->entry, 0x800, buffer);
+  work->cacheEntry = VramCache_FindFreeEntry();
+  VramCache_Load(work->cacheEntry, 0x800, buffer);
   Heap_Release(buffer);
   work->block = Heap_AllocEwram(0x3c0);
-  work->value = value;
+  work->firstTerrainId = value;
   Task_Add((s32)YampiDesert_UpdateRisingSand, TASK_PASS_VBLANK + 13);
   Task_Add((s32)YampiDesert_DrawRisingSand, TASK_PASS_VBLANK);
   Actor_GetById(Party_GetLeaderActor())->priorityFlags |= 0x40;
@@ -2704,12 +2704,12 @@ struct RideEntry *YampiDesert_AddRisingSand(s32 slot, s32 id, s32 timer,
     entry->riseAt = 60;
     entry->fallAt = 240;
     entry->min = low;
-    entry->unk10 = 1;
+    entry->unusedAfterMin = 1;
     object->motionFlags = 0;
     object->collisionFlags = ACTOR_NOT_TARGETED;
     entry->step = 0;
     entry->phase = 0;
-    entry->unk14 = 0;
+    entry->unusedAfterStep = 0;
     object->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
   }
   rider = Import_ActorCreate(0x8000, object->x.fixed, object->y.fixed,
@@ -2770,7 +2770,6 @@ u32 gYampiDesert_SlideDust[] = {
 #undef ARRIVE
 #undef WALK_ON
 #undef ARRIVE_OR
-#undef MAIN_ROUTINE_WORK_U16
 #undef Actor_SetAnimationAndWait
 #undef Actor_SetMovementTypeAndWaitById
 

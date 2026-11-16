@@ -443,7 +443,7 @@ s32 Link_CreateCountdownLabelWindow(void) {
   return win;
 }
 
-/// Decodes command icon `icon` (ResourceId_CommandIcons, 1 KB of 256-colour
+/// Decodes command icon `icon` (RESOURCE_COMMAND_ICONS, 1 KB of 256-colour
 /// pixels) in a block taken from HEAP_SLOT_GLYPH_TRANSFER, reloads VRAM cache
 /// entry `slotIndex` with it and returns the entry's first tile.
 s32 Resource_LoadIndexedIntoBuffer(s32 slotIndex, s32 icon) {
@@ -452,13 +452,13 @@ s32 Resource_LoadIndexedIntoBuffer(s32 slotIndex, s32 icon) {
   u16 *base = Resource_GetTableEntry(RESOURCE_COMMAND_ICONS);
   u8 **slot = &buffer->encoded;
   void *target = (void *)((u32)base + base[icon]);
-  s32 ret;
+  s32 tile;
 
   *slot = target;
   Decompress_ByteLz(target, buffer);
-  ret = VramCache_Reload(slotIndex, (s32)buffer);
+  tile = VramCache_Reload(slotIndex, (s32)buffer);
   HeapSlot_Release(HEAP_SLOT_GLYPH_TRANSFER);
-  return ret;
+  return tile;
 }
 
 /// Loads command icon `glyph` as 8bpp BG tiles into character block 1 from
@@ -506,7 +506,7 @@ void BattleCommandRow_LoadIcon(struct BattleCommandRowWork *work, s32 index,
                                u32 icon) {
   struct BattleCommandRowIcon *entry = &work->entries[index];
 
-  BattleCommandRow_LoadIconTiles((struct GlyphPalette *)work, icon, index * 16);
+  BattleCommandRow_LoadIconTiles(&work->palette, icon, index * 16);
   work->entries[index].kind = icon;
   MenuSprite_Initialize(entry->sprite, OBJ_SIZE_32X32 | OBJ_256_COLORS);
   entry->sprite.oam.f.tile =

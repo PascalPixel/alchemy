@@ -398,7 +398,7 @@ s32 Battle_CollectPartyCommands(struct BattleAction *commands, u16 *actors,
         u8 *pick;
         s32 cost;
         s32 handle;
-        s32 cnt;
+        s32 count;
         s32 entryValue;
 
         Sound_PlayFar(SE_MENU_CONFIRM);
@@ -408,15 +408,15 @@ s32 Battle_CollectPartyCommands(struct BattleAction *commands, u16 *actors,
         list = state->listAbilities;
         pick = state->listSlots;
         COMMAND_ICON_X(state) = PSYNERGY_MENU_ICON_X;
-        cnt = 0;
+        count = 0;
         k = 0;
         entryValue = unit->psynergy[k].encodedAction & PSYNERGY_ABILITY_MASK;
         if (entryValue != 0) {
           do {
             if (Ability_Get(entryValue)->flags & ABILITY_USABLE_IN_BATTLE) {
-              pick[cnt] = k;
-              list[cnt] = entryValue;
-              cnt++;
+              pick[count] = k;
+              list[count] = entryValue;
+              count++;
             }
             k++;
             if (k == PSYNERGY_SLOTS)
@@ -425,9 +425,9 @@ s32 Battle_CollectPartyCommands(struct BattleAction *commands, u16 *actors,
                 unit->psynergy[k].encodedAction & PSYNERGY_ABILITY_MASK;
           } while (entryValue != 0);
         }
-        pick[cnt] = 0;
-        list[cnt] = 0;
-        mode = BattlePsynergyMenu_Run(actorId, list, cnt);
+        pick[count] = 0;
+        list[count] = 0;
+        mode = BattlePsynergyMenu_Run(actorId, list, count);
         if (mode == -1)
           goto mark_visible;
         parameter =
@@ -641,7 +641,7 @@ s32 Battle_CollectPartyCommands(struct BattleAction *commands, u16 *actors,
         u8 *pick;
         s32 cost;
         s32 handle;
-        s32 cnt;
+        s32 count;
         s32 entryValue;
         s32 selection;
 
@@ -652,15 +652,15 @@ s32 Battle_CollectPartyCommands(struct BattleAction *commands, u16 *actors,
         COMMAND_ICON_X(state) = 96;
         pick = state->listSlots;
         list = state->listAbilities;
-        cnt = 0;
+        count = 0;
         k = 0;
         entryValue = unit->inventory[k];
         if (entryValue != 0) {
           do {
             Item_GetDirectFar(entryValue);
             if (Item_ClassifyUseAbility(actorId, entryValue) == 0) {
-              list[cnt] = entryValue;
-              pick[cnt++] = k;
+              list[count] = entryValue;
+              pick[count++] = k;
             }
             k++;
             if (k == 15)
@@ -674,8 +674,8 @@ s32 Battle_CollectPartyCommands(struct BattleAction *commands, u16 *actors,
           do {
             Item_GetDirectFar(entryValue);
             if (Item_ClassifyUseAbility(actorId, entryValue) != 0) {
-              list[cnt] = entryValue;
-              pick[cnt++] = k;
+              list[count] = entryValue;
+              pick[count++] = k;
             }
             k++;
             if (k == 15)
@@ -683,8 +683,8 @@ s32 Battle_CollectPartyCommands(struct BattleAction *commands, u16 *actors,
             entryValue = unit->inventory[k];
           } while (entryValue != 0);
         }
-        list[cnt] = 0;
-        mode = BattleItemMenu_Run(actorId, list, cnt);
+        list[count] = 0;
+        mode = BattleItemMenu_Run(actorId, list, count);
         if (mode == -1)
           goto mark_visible;
         selection = pick[mode];
@@ -1216,17 +1216,17 @@ static __inline__ s32 TableGet(s8 *table, s32 index) { return table[index]; }
 s32 FieldMenu_SelectCommand(s32 selection) {
   s32 group = 0;
   s32 offset;
-  s32 triple;
-  s32 ret;
+  s32 groupTriple;
+  s32 result;
   s8 *table;
 
   if (Party_SumDjinnCountsFar(-1) == 0) {
     group = 1;
   }
 
-  triple = group * 3;
+  groupTriple = group * 3;
   table = gMenu_TopEntryPositionByCommand;
-  offset = triple << 1;
+  offset = groupTriple << 1;
   selection = TableGet(table, selection + offset) - 1;
   if (selection < 0) {
     selection = 0;
@@ -1240,18 +1240,18 @@ s32 FieldMenu_SelectCommand(s32 selection) {
   IconMenu_AddIcon(COMMAND_ICON_ITEM);
   IconMenu_AddIcon(COMMAND_ICON_STATUS);
   IconMenu_Center(17, SELECT_MENU_WIDTH, 0);
-  ret = IconMenu_Run(selection);
+  result = IconMenu_Run(selection);
   IconMenu_Close();
 
-  if (ret >= 0) {
+  if (result >= 0) {
     s8 *commands = gMenu_TopEntryCommandByPosition;
     s32 index;
 
-    index = ret + offset + 1;
-    ret = commands[index];
+    index = result + offset + 1;
+    result = commands[index];
   }
 
-  return ret;
+  return result;
 }
 
 /// Opens the field command menu and animates from start to the command's icon.
@@ -1285,23 +1285,23 @@ s32 Menu_AnimateSelectionToEntry(s32 start, s32 command) {
 /// Continue, and only Erase with three such files. Battle and Send follow when
 /// enabled. The file list runs it (scene/file_screen.c).
 s32 FileList_SelectAction(void) {
-  s32 type;
-  s32 ret;
+  s32 fileState;
+  s32 result;
   s32 initial;
   u32 group;
 
   group = 0;
   initial = 0;
-  type = Save_ScanFileSummaries();
-  if (type < 0)
+  fileState = Save_ScanFileSummaries();
+  if (fileState < 0)
     return -1;
-  if (type == 0)
+  if (fileState == 0)
     return 0;
-  if (type == 3)
+  if (fileState == 3)
     group = 1;
-  else if (type == SAVE_SCAN_ALL_CLEARED + 3)
+  else if (fileState == SAVE_SCAN_ALL_CLEARED + 3)
     group = 2;
-  else if (type > SAVE_SCAN_ALL_CLEARED)
+  else if (fileState > SAVE_SCAN_ALL_CLEARED)
     group = 3;
   else
     initial = 1;
@@ -1318,16 +1318,16 @@ s32 FileList_SelectAction(void) {
   if (gTitleUpdateOptionEnabled != 0)
     IconMenu_AddIcon(COMMAND_ICON_UPDATE);
   IconMenu_Center(17, SAVE_SLOT_MENU_WIDTH, 0);
-  ret = IconMenu_Run(initial);
+  result = IconMenu_Run(initial);
   IconMenu_Close();
-  if (ret >= 0) {
+  if (result >= 0) {
     u32 twice = group * 2;
 
-    ret = gMenu_SaveSlotActionByPosition[ret + (twice + group) * 2];
+    result = gMenu_SaveSlotActionByPosition[result + (twice + group) * 2];
   }
-  if (gTitleBattleOptionEnabled == 0 && ret == 4)
-    ret = 5;
-  return ret;
+  if (gTitleBattleOptionEnabled == 0 && result == 4)
+    result = 5;
+  return result;
 }
 
 // The label area is narrower in Japanese and wider in French.
@@ -1619,12 +1619,10 @@ s32 IconMenu_ChooseSendOption(s32 mode) {
 
 // Menu: select command icons, such as Yes and No.
 
-/// Selects a shop command from icons 0x11-0x14, centred on row 17, showing
-/// the selected command's name in a window. Icons are indices into
-/// ResourceId_CommandIcons.
-/// selection: initial selection. Returns the selected position.
+/// Selects a shop command (Buy, Sell, Artifacts, Repair), centred on row 17,
+/// starting on position `selection`, and returns the position chosen.
 s32 Menu_SelectShopCommand(s32 selection) {
-  s32 ret;
+  s32 result;
 
   IconMenu_Open();
   IconMenu_AddIcon(COMMAND_ICON_BUY);
@@ -1638,14 +1636,15 @@ s32 Menu_SelectShopCommand(s32 selection) {
 #else
   IconMenu_Center(17, 6, 0);
 #endif
-  ret = IconMenu_Run(selection);
+  result = IconMenu_Run(selection);
   IconMenu_Close();
-  return ret;
+  return result;
 }
 
-/// Selects a sanctum service from icons 0x19-0x1c, centred on row 17.
+/// Selects a Sanctum service (Revive, Cure Poison, Repel Evil, Remove Curse),
+/// centred on row 17, starting on position `selection`.
 s32 Menu_SelectSanctumService(s32 selection) {
-  s32 ret;
+  s32 result;
 
   IconMenu_Open();
   IconMenu_AddIcon(COMMAND_ICON_REVIVE);
@@ -1657,9 +1656,9 @@ s32 Menu_SelectSanctumService(s32 selection) {
 #else
   IconMenu_Center(17, 8, 0);
 #endif
-  ret = IconMenu_Run(selection);
+  result = IconMenu_Run(selection);
   IconMenu_Close();
-  return ret;
+  return result;
 }
 
 /// Selects Yes or No (icons 5 and 6). Cancel returns 1 (No).

@@ -177,7 +177,7 @@ void Party_ShowPairJoinedMessage(s32 first, s32 second) {
     p = firstEntry;
     *p++ = 0;
     *p++ = OBJ_SIZE_32X32 | OBJ_X(12) | 12;
-    *p = palette | PORTRAIT_PALETTE << 12;
+    *p = palette | OBJ_PALETTE(PORTRAIT_PALETTE);
 
     secondEntry = secondSprite;
     Icon_LoadWithPalette(
@@ -186,7 +186,7 @@ void Party_ShowPairJoinedMessage(s32 first, s32 second) {
     p = secondEntry;
     *p++ = 0;
     *p++ = OBJ_SIZE_32X32 | OBJ_X(44) | 12;
-    *p = palette | (PORTRAIT_PALETTE + 1) << 12;
+    *p = palette | OBJ_PALETTE(PORTRAIT_PALETTE + 1);
 
     work->speakerVoiceSound = 0;
     work->speakerVoiceCountdown = 0;

@@ -187,14 +187,14 @@ s32 DebugBrowser_Portraits(void) {
   struct Window *portrait;
   s32 redraw;
   struct Window *window;
-  s32 count;
-  s32 total;
+  s32 characterCount;
+  s32 entryCount;
   s32 index;
   s32 i;
   s32 glyph;
   s32 tile;
   s32 slot;
-  s32 cancel;
+  s32 cancelKey;
   u32 slotOffset;
   s32 palette;
 
@@ -203,15 +203,17 @@ s32 DebugBrowser_Portraits(void) {
   portrait = Portrait_OpenWindow(0, 0, 10, 5);
   window = Window_Create(10, 10, 14, 3, WINDOW_FLAG_INSTANT);
   index = 0;
-  palette = 15;
+  palette = PORTRAIT_PALETTE + 1;
   for (i = 0; gPortrait_CharacterMap[i * 2] != -1; i++) {
   }
-  count = i;
+  characterCount = i;
   for (i = 0; gPortrait_SpriteMap[i * 2] != -1; i++) {
   }
-  total = count + i;
+  entryCount = characterCount + i;
   /* FAKEMATCH(dead): a zero from the count. */
-  cancel = ((u32)(u16)count >> 16) | 2;
+  cancelKey = ((u32)(u16)characterCount >> 16) | KEY_B;
+  /* FAKEMATCH(temporary): the second portrait slot read through its offset,
+   * held in a local. */
   slotOffset = offsetof(struct WindowWork, outputIds[1]);
   while (1) {
     if (gInput.repeat & KEY_LEFT) {
@@ -232,16 +234,16 @@ s32 DebugBrowser_Portraits(void) {
     }
     if (gInput.repeat & KEY_A)
       break;
-    if (gInput.repeat & cancel)
+    if (gInput.repeat & cancelKey)
       break;
     if (redraw) {
       redraw = 0;
-      index = (index + total) % total;
+      index = (index + entryCount) % entryCount;
       WindowSprite_PrepareForRedraw(window);
-      if (index < count)
+      if (index < characterCount)
         glyph = gPortrait_CharacterMap[index * 2 + 1];
       else
-        glyph = gPortrait_SpriteMap[(index - count) * 2 + 1] + 128;
+        glyph = gPortrait_SpriteMap[(index - characterCount) * 2 + 1] + 128;
       slot = *(u16 *)((u8 *)work + slotOffset);
       Icon_LoadWithPalette(glyph, 0, &slot, &tile, palette, 1);
       Text_DrawNumberInWindow(index, 2, window, 0, 0);

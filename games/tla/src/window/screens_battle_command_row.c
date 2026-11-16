@@ -75,8 +75,8 @@ s32 BattleCommandRow_Run(s32 mode, s32 fleeAllowed) {
   battleMenu = BATTLE_MENU_WORK;
   selectionUi = Heap_AllocEwram(sizeof(*selectionUi));
   for (i = 255; i >= 0; i--)
-    selectionUi->paletteSlots[i] = 255;
-  selectionUi->paletteCount = 1;
+    selectionUi->palette.slot[i] = 255;
+  selectionUi->palette.count = 1;
   if (mode == COMMAND_ROW_PARTY)
     selectionUi->window = Window_Create(20, 17, 10, 3, 6);
   else

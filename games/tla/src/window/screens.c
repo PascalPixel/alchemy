@@ -64,8 +64,9 @@ struct CommandRowAffine {
 /// The command row's work block: the icons' shared palette, up to six icons,
 /// the label window, the pulsing icon's transform and the selection.
 struct BattleCommandRowWork {
-  u8 paletteSlots[256];
-  s32 paletteCount;
+  /// BG palette slots for the icons' 256-colour pixels, filled as each icon
+  /// is loaded (BattleCommandRow_LoadIconTiles).
+  struct GlyphPalette palette;
   struct BattleCommandRowIcon entries[6];
   void *window;
   s32 iconCount;

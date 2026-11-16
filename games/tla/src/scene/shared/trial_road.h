@@ -11,17 +11,6 @@
 
 #define OBJECT_BYTE(object, offset) (((u8 *)(object))[offset])
 
-struct TrialRoadMapLayer {
-  u8 unk00[0x30];
-  u8 *cells;
-  u8 unk34[4];
-};
-
-struct TrialRoadMapWork {
-  u8 unk000[0x108];
-  struct TrialRoadMapLayer layers[3];
-};
-
 /// Trial Road's progress, kept in the inventory snapshot while the trial runs.
 struct TrialRoadState {
   s16 order[8]; ///< the dealt stage patterns, two to a stage
@@ -43,7 +32,6 @@ void Actor_StartScript(struct Actor *object, const void *script);
 void Actor_JumpDownLedge(s32 id, s32 a, s32 b);
 s32 Field_FindNearbyTalkTarget(s32 id);
 s32 Import_FieldTryJumpForward(void);
-void Func_02005a38(void);
 
 void Field_RequestBattleFromEncounterTable(s32 a, s32 b);
 void TrialRoad_CopyTouchedCells(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f,

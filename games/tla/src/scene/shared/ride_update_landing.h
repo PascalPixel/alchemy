@@ -16,7 +16,7 @@ void Flame_UpdateLanding(struct Actor *object) {
   object->riseBaseY = dz - dz / 16;
   object->scaleX += object->speedLimit;
   object->scaleY += object->acceleration;
-  ((struct SpriteParts *)object->sprite)->unk12 += object->timer;
+  ((struct FieldSprite *)object->sprite)->rotation += object->timer;
   if (other->y.fixed == other->groundHeight &&
       Actor_IsTouching(object, other) && gMainRoutineWork.movementMode == 0) {
     if (object->riseBaseY != 0) {

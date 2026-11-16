@@ -14,6 +14,7 @@
 #include "field/event_inline.h"
 #include "system/system.h"
 #include "field/actor.h"
+#include "field/world_map.h"
 #include "field/field_sprite.h"
 #include "macros.h"
 #include "field/actor_view.h"
@@ -59,36 +60,17 @@ void WorldMap_SelectExitByZ(s32 slot, s32 exitBefore, s32 exitAfter) {
   Event_PlaySound(SE_MAP_EXIT);
 }
 
-/// One of the scene's placed objects, 20 bytes; a zero kind ends the list.
-struct WorldMapPlacement {
-  u8 kind;
-  u8 unk01; ///< 15 skips it
-  s16 sprite;
-  s16 x; ///< pixels
-  s16 z; ///< pixels
-  u16 angle;
-  s16 flag; ///< -1 always shown; bit 12 shown while set, else while clear
-  u8 unk0c[8];
-};
-
-struct WorldMapSprite {
-  u8 unk00[0x0c];
-  s32 scale;
-};
-
 extern struct Actor *gWorldMap_PlacedActors[];
 extern s32 gWorldMap_PlacedActorScript[];
 
-struct WorldMapPlacement *FlagEntries_GetTable(void);
 void Actor_StartScript(struct Actor *object, const s32 *script);
 void Import_ActorSelectAnimation(struct Actor *object, s32 mode);
 void Actor_Release(struct Actor *object);
 
 void WorldMap_UpdatePlacedActors(void) {
-  struct WorldMapPlacement *placement = FlagEntries_GetTable();
+  const struct FlagEntry *placement = FlagEntries_GetTable();
   struct Actor *leader = Actor_GetById(Party_GetLeaderActor());
-  s32 leaderReach =
-      ((struct WorldMapSprite *)leader->sprite)->scale * leader->radius;
+  s32 leaderReach = ((struct Sprite *)leader->sprite)->scale * leader->radius;
   u32 i;
   s32 next;
   FIXED left, right, top, bottom;
@@ -99,7 +81,7 @@ void WorldMap_UpdatePlacedActors(void) {
   struct Actor *object = work->camera;
   s32 zoom = map->zoom;
   FIXED x = object->x.fixed;
-  u8 kind = placement->kind;
+  u8 kind = placement->flag;
   FIXED z = object->z.fixed;
   struct Actor **objects = gWorldMap_PlacedActors;
 
@@ -124,13 +106,13 @@ void WorldMap_UpdatePlacedActors(void) {
   while (next != 0) {
     FIXED px, pz;
 
-    if (placement->unk01 == 15)
+    if (placement->value == WORLD_MAP_MARKER_SHIP)
       goto next;
     object = *slot;
     px = placement->x << 16;
     pz = placement->z << 16;
     if (px > left && px < right && pz > top && pz < bottom) {
-      s32 flag = placement->flag;
+      s32 flag = placement->shownFlag;
       s32 shown;
 
       if (flag == -1)
@@ -141,7 +123,7 @@ void WorldMap_UpdatePlacedActors(void) {
         shown = Flag_IsClear(flag);
       if (shown) {
         if (object == NULL) {
-          struct WorldMapSprite *sprite;
+          struct Sprite *sprite;
 
           object = ((struct Actor *)Import_ActorCreate(placement->sprite, px, 0,
                                                        pz));
@@ -150,14 +132,14 @@ void WorldMap_UpdatePlacedActors(void) {
           Actor_StartScript(object, gWorldMap_PlacedActorScript);
           object->motionFlags = 0;
           object->collisionFlags = ACTOR_SOLID;
-          object->facing = placement->angle;
+          object->facing = placement->facing;
           Import_ActorSelectAnimation(object, 1);
           sprite = object->sprite;
           sprite->scale = Iwram_MulFX(sprite->scale, FIXED_ONE * 3 / 4);
           *slot = object;
         }
         if (gMainRoutineWork.ownerOverride == 0) {
-          s32 scale = ((struct WorldMapSprite *)object->sprite)->scale;
+          s32 scale = ((struct Sprite *)object->sprite)->scale;
           FIXED dx;
           s32 reach;
           FIXED dz;
@@ -190,7 +172,7 @@ void WorldMap_UpdatePlacedActors(void) {
     placement++;
     if (i > 127)
       break;
-    next = placement->kind;
+    next = placement->flag;
   }
 }
 

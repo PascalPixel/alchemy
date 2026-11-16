@@ -16,11 +16,6 @@
 
 #include "field/scene_tables.h"
 
-struct TundariaTowerSparkWork {
-  u8 unk0000[0x1604];
-  s16 resource;
-};
-
 struct TundariaTowerPosition {
   s32 x;
   s32 y;

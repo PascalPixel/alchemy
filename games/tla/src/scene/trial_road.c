@@ -695,12 +695,11 @@ void TrialRoad_ExamineChest(s32 id) {
 void TrialRoad_StepPastChests(void) {}
 
 void TrialRoad_BlockCellUnder(s32 id) {
-  struct TrialRoadMapWork *map =
-      (struct TrialRoadMapWork *)Ram_HeapSlots->mapGrid;
+  struct MapWork *map = Ram_HeapSlots->mapGrid;
   struct Actor *object = Actor_GetById(id);
 
   if (object != NULL) {
-    u8 *cells = map->layers[0].cells;
+    u8 *cells = (u8 *)map->layers[0].cells;
     u8 *cell =
         cells +
         (((FIELD_CELL(object->x.fixed)) + ((FIELD_CELL(object->z.fixed)) << 7))
@@ -712,12 +711,11 @@ void TrialRoad_BlockCellUnder(s32 id) {
 }
 
 void TrialRoad_UnblockCellUnder(s32 id) {
-  struct TrialRoadMapWork *map =
-      (struct TrialRoadMapWork *)Ram_HeapSlots->mapGrid;
+  struct MapWork *map = Ram_HeapSlots->mapGrid;
   struct Actor *object = Actor_GetById(id);
 
   if (object != NULL) {
-    u8 *cells = map->layers[0].cells;
+    u8 *cells = (u8 *)map->layers[0].cells;
     u8 *cell =
         cells +
         (((FIELD_CELL(object->x.fixed)) + ((FIELD_CELL(object->z.fixed)) << 7))
@@ -1087,7 +1085,7 @@ void TrialRoad_CrumbleEastPillar(s32 phase) {
 /// code 255): the column above and below it in mode 0, the row beside it
 /// otherwise.
 void TrialRoad_BlockLogCells(s32 id, s32 mode) {
-  struct TrialRoadMapWork *map = Ram_HeapSlots->mapGrid;
+  struct MapWork *map = Ram_HeapSlots->mapGrid;
   struct Actor *object = Actor_GetById(id);
   s32 index;
   struct MapCell *low;
@@ -1096,8 +1094,8 @@ void TrialRoad_BlockLogCells(s32 id, s32 mode) {
   if (object == 0)
     return;
   index = (FIELD_CELL(object->x.fixed)) + ((FIELD_CELL(object->z.fixed)) << 7);
-  low = (struct MapCell *)map->layers[0].cells + index;
-  high = (struct MapCell *)map->layers[2].cells + index;
+  low = map->layers[0].cells + index;
+  high = map->layers[2].cells + index;
   if (mode == 0) {
     low[-MAPGRID_SIZE].collisionCode = CELL_WALL;
     low->collisionCode = CELL_WALL;
@@ -1129,15 +1127,14 @@ void TrialRoad_BlockLogs(void) {
 
 s32 TrialRoad_IsLogBlocked(s32 x, s32 z) {
   struct Actor *object = Actor_GetById(ACTOR_PILLAR_A);
-  struct TrialRoadMapWork *map =
-      (struct TrialRoadMapWork *)Ram_HeapSlots->mapGrid;
+  struct MapWork *map = Ram_HeapSlots->mapGrid;
   u8 *cells;
   u8 *cell;
   s32 value;
 
   if (FIELD_CELL(object->x.fixed) == x && FIELD_CELL(object->z.fixed) == z)
     return 1;
-  cells = map->layers[0].cells;
+  cells = (u8 *)map->layers[0].cells;
   cell = cells + ((x + (z << 7)) << 2);
   value = cell[2];
   return IsZero(value ^ 0xff);
@@ -2832,10 +2829,10 @@ void TrialRoad_ShowTraps(void) {
 void TrialRoad_UpdateFountains(void) {
   struct TrialRoadFountains *work = TRIAL_ROAD_FOUNTAINS;
   struct TrialRoadFountain *mover = work->fountains;
-  struct TrialRoadMapWork *map = Ram_HeapSlots->mapGrid;
+  struct MapWork *map = Ram_HeapSlots->mapGrid;
   s32 shape = work->shape;
-  u8 *shapes = *(u8 **)((u8 *)map + 316);
-  u8 *cells = map->layers[0].cells;
+  u8 *shapes = map->layers[0].terrainIds;
+  u8 *cells = (u8 *)map->layers[0].cells;
   s32 *collision;
   struct Actor *actor;
   struct Actor *marker;

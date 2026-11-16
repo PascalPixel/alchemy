@@ -402,7 +402,7 @@ void BattleEffect_RunMegiddo(struct BattleEffectParams *args) {
           Matrix_RotateY(angle);
           Render_TransformVertices(meshA, transformed, 32);
           Render_DrawModelList(model);
-          angle += 0x1800;
+          angle += TRIG_TURN * 3 / 32;
         }
       }
       Heap_Release(model);

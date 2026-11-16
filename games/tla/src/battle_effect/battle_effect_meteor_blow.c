@@ -177,9 +177,9 @@ void BattleEffect_RunMeteorBlow(struct BattleEffectParams *args) {
     if (frame == 0) {
       x = toFIXED(272);
       z = toFIXED(88);
-      size = 0x400;
-      pitch = 0xd00;
-      yaw = 0x2500;
+      size = FIXED_ONE / 64;
+      pitch = 3328;
+      yaw = 9472;
       work->frame = 8;
       Sound_PlayFar(SE_WAVE);
     }
@@ -272,7 +272,7 @@ void BattleEffect_RunMeteorBlow(struct BattleEffectParams *args) {
       model->shade = shade;
       model->scrollU = 0;
       if (frame > 127) {
-        s32 d = (frame << 6) - 0x2000;
+        s32 d = (frame << 6) - FIXED_ONE / 8;
 
         if (d > 1023) {
           d = 1024;
@@ -293,7 +293,7 @@ void BattleEffect_RunMeteorBlow(struct BattleEffectParams *args) {
         Matrix_RotateY(angle);
         Render_TransformVertices(meshA, projected, 32);
         Render_DrawModelList(model);
-        angle += 0x1800;
+        angle += TRIG_TURN * 3 / 32;
         scroll += 20;
       }
       Heap_Release(model);
@@ -353,16 +353,16 @@ void BattleEffect_RunMeteorBlow(struct BattleEffectParams *args) {
     Render_ApplyProjectedPlacementFar(work->sprites[0], place, req, 0);
     speed = toFIXED(1) / 32;
     {
-      s32 a = 0x6000;
+      s32 a = DEGtoANG(135);
 
       if (frame > 23) {
-        a = a - frame * 286 + 0x11e0;
+        a = a - frame * 286 + 4576;
         if (a < 0) {
           a = 0;
         }
       }
       if (frame > 87) {
-        speed = speed - (frame << 6) + 0x1600;
+        speed = speed - (frame << 6) + toFIXED(11) / 128;
         if (speed < 0) {
           speed = 0;
         }

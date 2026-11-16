@@ -110,7 +110,7 @@ enum {
 void Actor_StartScript(struct Actor *object, const void *script);
 
 /// The task MercuryLighthouse_HearVoices starts: every 16 frames it starts a
-/// flickering mote (sprite 0x2a2) at a random spot in front of the
+/// flickering mote (SPRITE_GLINT) at a random spot in front of the
 /// lighthouse, and it counts the frames in gMercuryLighthouse_MoteFrames.
 void MercuryLighthouse_SpawnMotes(void) {
   struct Actor *object;
@@ -262,8 +262,9 @@ void MercuryLighthouse_HearVoices(void) {
   gFieldWork->transition = SCENE_TRANSITION(TRANSITION_WINDOW, 1);
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();
-  Event_SetFlag(0xa3c);
-  Import_EventSetExitRequest(3);
+  Event_SetFlag(FLAG_MARS_BEACON_BURNING);
+  Import_EventSetExitRequest(
+      MERCURY_LIGHTHOUSE_TO_MARS_LIGHTHOUSE_AERIE_EAST_B);
 }
 
 s32 Scene_Initialize(void) {

@@ -263,12 +263,13 @@ s32 Scene_Initialize(void) {
   Actor_Get(gMainRoutineWork.leaderActorId)->priorityFlags |=
       ACTOR_PRIORITY_IGNORES_RISES;
   if (gMainRoutineWork.next == SCENE_MIKASALLA_INTERIORS_HOUSES) {
-    if (gMainRoutineWork.entrance == 5)
+    if (gMainRoutineWork.entrance ==
+        MIKASALLA_INTERIORS_HOUSES_FROM_ISLETS_PRETTY_STONE)
       Scene_FadeInAndClearFlag();
     else if (!Event_GetFlag(FLAG_TRANSFERRED_WON_COLOSSO) ||
              (Event_GetFlag(FLAG_MIKASALLA_GALAHAD_MET) &&
               !Event_GetFlag(FLAG_MIKASALLA_GALAHAD_MET_THIS_VISIT)) ||
-             Event_GetFlag(34))
+             Event_GetFlag(FLAG_REUNITED))
       Actor_SetPosition(ACTOR_GALAHAD, 0, 0);
     else
       FieldActor_SetSpriteColor(Actor_Get(ACTOR_GALAHAD), 4);

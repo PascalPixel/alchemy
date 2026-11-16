@@ -77,7 +77,7 @@ void Rope_Lash(s32 a, s32 b, s32 c);
 /// The party lashes the second rope, from post ACTOR_THIRD_ROPE_POST to
 /// ACTOR_FOURTH_ROPE_POST, and it stays tied for the rest of the visit.
 void OseniaCliffs_LashRope(void) {
-  Rope_Lash(1, 13, 14);
+  Rope_Lash(1, ACTOR_THIRD_ROPE_POST, ACTOR_FOURTH_ROPE_POST);
   Event_SetFlag(FLAG_ROPE_LASHED);
 }
 

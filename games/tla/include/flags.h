@@ -393,6 +393,9 @@
 /// "only Mars Lighthouse still needs lighting" while it is clear and thank the
 /// party for lighting the beacon once it is set.
 #define FLAG_MARS_BEACON_LIT 0xa3d
+/// Set as the party leaves the Mercury Lighthouse at the end: the beacon's
+/// fire burns at the aerie from then on.
+#define FLAG_MARS_BEACON_BURNING 0xa3c
 /// Set in the dragon hall once the Mars Star is set in the statue's face: the
 /// lighthouse turns to fire and its ice is gone, and battles there take the
 /// dragon hall's backdrop A in place of B.

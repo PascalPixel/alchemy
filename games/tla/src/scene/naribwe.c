@@ -202,6 +202,9 @@ void Naribwe_PraiseFortuneTeller(s32 actor) {
   Event_End();
 }
 
+/// The item shopkeeper once Gabomba's message is carried: across the counter,
+/// the shop; from anywhere else, strangers should visit the fortune-teller's
+/// hut.
 void Naribwe_PraiseFortuneTellerOnReturn(s32 actor) {
   if (FACING_NEAREST_CARDINAL(
           Actor_GetById(gMainRoutineWork.leaderActorId)->facing) ==
@@ -234,6 +237,8 @@ void Naribwe_TalkToPilgrim(s32 actor) {
   Event_End();
 }
 
+/// The pilgrim once Gabomba's message is carried: across the counter, the
+/// sanctum; from anywhere else, how cold it grows to the south.
 void Naribwe_TalkToPilgrimOnReturn(s32 actor) {
   if (FACING_NEAREST_CARDINAL(
           Actor_GetById(gMainRoutineWork.leaderActorId)->facing) ==
@@ -283,8 +288,8 @@ void Naribwe_EnterDoor(void) {
   Event_End();
 }
 
-/// Whirlwind blows away the ivy in the back yard, uncovering the ladder (flag
-/// 0x201).
+/// Whirlwind blows away the ivy in the back yard, uncovering the ladder
+/// (FLAG_SCENE_TEMP_01).
 void Naribwe_BlowAwayIvy(void) {
   Event_Start();
   Event_ResolvePendingActions(0);
@@ -305,11 +310,14 @@ UNUSED void Naribwe_SetRopeWork(void) {
 /// Reveal shows the stone that hides the Unicorn Ring.
 void Naribwe_RevealStone(void) {
   Actor_SetPosition(ACTOR_STONE, 0, 0);
-  TreasureSpot_SetPosition(65, toFIXED(104), toFIXED(104));
+  TreasureSpot_SetPosition(FIELD_TREASURE_ACTOR + 1, toFIXED(104),
+                           toFIXED(104));
 }
 
+/// Puts the stone over the Unicorn Ring's treasure spot, which it hides until
+/// Reveal shows it.
 void Naribwe_HideStone(void) {
-  TreasureSpot_SetActorPosition(65, 0, 0);
+  TreasureSpot_SetActorPosition(FIELD_TREASURE_ACTOR + 1, 0, 0);
   Actor_SetPosition(ACTOR_STONE, 104, 104);
 }
 
@@ -325,7 +333,7 @@ s32 Scene_Initialize(void) {
   if (Event_GetFlag(FLAG_SCENE_TEMP_01))
     Actor_SetPosition(ACTOR_IVY, 0, 0);
   Rope_Initialize();
-  Rope_Place(0, 0x202, ACTOR_ROPE_POST_A, ACTOR_ROPE_POST_B);
+  Rope_Place(0, FLAG_SCENE_TEMP_02, ACTOR_ROPE_POST_A, ACTOR_ROPE_POST_B);
   Actor_SetSpriteFlags(Actor_GetById(ACTOR_ROPE_POST_A), 0);
   Actor_DisableById(ACTOR_ROPE_POST_B);
   return 0;
@@ -366,10 +374,10 @@ void Naribwe_HideStone(void);
        0, toFIXED(132), FACING_SOUTH, 0, 0},                                   \
       {SPRITE_BRAZIER, CONDITION_ALWAYS, gNaribwe_BrazierBurns, toFIXED(372),  \
        0, toFIXED(132), FACING_SOUTH, 0, 0},                                   \
-      {410, CONDITION_ALWAYS, gNaribwe_FlameRises, toFIXED(316), 0,            \
-       toFIXED(132), FACING_SOUTH, 0, 0},                                      \
-      {410, CONDITION_ALWAYS, gNaribwe_FlameRises, toFIXED(372), 0,            \
-       toFIXED(132), FACING_SOUTH, 0, 0},                                      \
+      {SPRITE_EXCLAMATION_BUBBLE, CONDITION_ALWAYS, gNaribwe_FlameRises,       \
+       toFIXED(316), 0, toFIXED(132), FACING_SOUTH, 0, 0},                     \
+      {SPRITE_EXCLAMATION_BUBBLE, CONDITION_ALWAYS, gNaribwe_FlameRises,       \
+       toFIXED(372), 0, toFIXED(132), FACING_SOUTH, 0, 0},                     \
       ACTOR_PLACEMENT(SPRITE_SUNSHINES_CHILD, CONDITION_ALWAYS,                \
                       MOVEMENT_TYPE_STAND, 248, 0, 344, FACING_SOUTH,          \
                       TALK_FACING_PARTY_AND_BACK, 0),                          \

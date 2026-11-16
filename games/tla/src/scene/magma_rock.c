@@ -791,7 +791,8 @@ s32 MagmaRock_FireFromStatue(struct Actor *source) {
     attributes = MapCell_GetAttributes(2, FIELD_CELL(position[0]),
                                        FIELD_CELL(position[2] - position[1])) >>
                  8;
-    if (attributes == 212 || attributes == 222)
+    if (attributes == MAGMA_ROCK_CELL_FIRE_EDGE ||
+        attributes == MAGMA_ROCK_CELL_LAVA_FALL)
       goto stop;
     for (i = 8; i != 64; i++) {
       other = gFieldWork->actors[i];

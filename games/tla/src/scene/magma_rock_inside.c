@@ -28,6 +28,7 @@
 #include "field/field.h"
 #include "field/field_coordinate.h"
 #include "field/object.h"
+#include "scene/magma_rock.h"
 #include "scene/mars_lighthouse_aerie.h"
 #include "scene/scene.h"
 #include "system/scene.h"
@@ -875,7 +876,7 @@ void MagmaRockInside_FireFromStatue(struct Actor *source) {
     cell = MapCell_Get(2, FIELD_CELL(position[0]),
                        FIELD_CELL(position[2] - position[1])) >>
            8;
-    if (cell == 212 || cell == 222)
+    if (cell == MAGMA_ROCK_CELL_FIRE_EDGE || cell == MAGMA_ROCK_CELL_LAVA_FALL)
       goto end;
     for (id = ACTOR_FIRST_PLACED; id != FIELD_TREASURE_ACTOR; id++) {
       other = gFieldWork->actors[id];
@@ -923,7 +924,7 @@ end:
     System_Wait(1);
   }
   System_Wait(24);
-  if (cell == 222) {
+  if (cell == MAGMA_ROCK_CELL_LAVA_FALL) {
     MagmaRockInside_RaiseLava();
     Event_End();
     return;
@@ -1443,7 +1444,7 @@ void MagmaRockInside_SmokeEmber(struct Actor *object) {
     config.palette = SPRITE_COLOR_RED_TINT;
     config.script = gMagmaRockInside_EmberScript;
     FieldEffect_Spawn(object->x.fixed, object->y.fixed, object->z.fixed, 0,
-                      0x1000, 0,
+                      toFIXED(1) / 16, 0,
                       EFFECT_USE_SCRIPT | EFFECT_USE_TYPE |
                           EFFECT_USE_PRIORITY | EFFECT_USE_PALETTE,
                       &config);
@@ -1809,7 +1810,7 @@ void MagmaRockInside_OpenFlamePassage(s32 x, s32 z) {
   x >>= 4;
   cellZ = (z >> 4) - 1;
   MapGrid_CopyCellsTo(65, 1, x + 64, cellZ, 1, 2);
-  MagmaRockInside_SwapCells(0, x, cellZ, 0xff00);
+  MagmaRockInside_SwapCells(0, x, cellZ, CELL_BEHAVIOR_WALL << 8);
   Actor_Release(object);
   Event_End();
   REG_BLDCNT = 0;
@@ -2607,7 +2608,7 @@ s32 Scene_Initialize(void) {
       if (Event_GetFlag(FLAG_EAST_PILLAR_PUSHED))
         Actor_SetAnimation(ACTOR_EAST_PILLAR, 4);
       if (Event_GetFlag(FLAG_NORTH_PILLAR_PUSHED))
-        MagmaRockInside_SwapCells(2, 46, 8, 0xff00);
+        MagmaRockInside_SwapCells(2, 46, 8, CELL_BEHAVIOR_WALL << 8);
       MagmaRockInside_SwapCells(0, 10, 45, 0);
       MagmaRockInside_SwapCells(0, 53, 40, 0);
     } else {
@@ -2638,7 +2639,7 @@ s32 Scene_Initialize(void) {
       Lower(ACTOR_BLOCKING_PILLAR, -toFIXED(32));
       Actor_SetAnimation(ACTOR_BLOCKING_PILLAR, 4);
     } else {
-      MagmaRockInside_SwapCells(0, 38, 18, 0xff00);
+      MagmaRockInside_SwapCells(0, 38, 18, CELL_BEHAVIOR_WALL << 8);
     }
     if (Event_GetFlag(FLAG_MAGMA_BALL_TAKEN))
       Actor_SetAnimation(ACTOR_EMBER_STONE, 0);
@@ -2659,7 +2660,8 @@ s32 Scene_Initialize(void) {
         s32 y = 24 - i * 2;
 
         MapGrid_CopyCellsTo(65, 1, 80, y, 1, 2);
-        Call4((void (*)())MagmaRockInside_SwapCells, 0, 16, y, 0xff00);
+        Call4((void (*)())MagmaRockInside_SwapCells, 0, 16, y,
+              CELL_BEHAVIOR_WALL << 8);
       }
     } while (++i != 6);
     Actor_SetSpriteFlags(Actor_GetById(ACTOR_SOURCE_FLAME), 0);
@@ -2668,7 +2670,7 @@ s32 Scene_Initialize(void) {
       Lower(ACTOR_TORCH_PILLAR, -toFIXED(32));
       Actor_SetAnimation(ACTOR_TORCH_PILLAR, 4);
     } else {
-      MagmaRockInside_SwapCells(0, 7, 21, 0xff00);
+      MagmaRockInside_SwapCells(0, 7, 21, CELL_BEHAVIOR_WALL << 8);
       Actor_SetPosition(ACTOR_TORCH_FLAME, 0, 0);
     }
     Lower(ACTOR_BLAZE_TABLET, toFIXED(16));

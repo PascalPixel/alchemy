@@ -382,7 +382,7 @@ s32 BattleStaging_RunFlee(struct BattlePlan *plan) {
 
   completed = 0;
   presentation->targetYaw = YAW_PARTY_ACTION;
-  presentation->active = 1;
+  presentation->busy = 1;
   BattleHighlight_SetModes(0, HIGHLIGHT_OFF);
 
   if (aid <= ALLY_MAX) {
@@ -423,7 +423,7 @@ s32 BattleStaging_RunFlee(struct BattlePlan *plan) {
     BattleMessage_WaitForAdvance();
   }
 
-  presentation->active = 0;
+  presentation->busy = 0;
   return completed;
 }
 

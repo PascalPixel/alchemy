@@ -119,8 +119,7 @@ void BattleBackground_ShowZoomedPage(void) {
   struct BattleAffineHdma *records;
   u16 *record;
 
-  if (((struct BattleBackgroundView *)Ram_HeapSlots->battleBackground)->mode ==
-      BATTLE_BACKGROUND_ZOOMED) {
+  if ((Ram_HeapSlots->battleBackground)->mode == BATTLE_BACKGROUND_ZOOMED) {
     records = Ram_HeapSlots->battleScanlines;
     record = records->lines[records->page];
     Io_Write16(record[0], &REG_BG2CNT);
@@ -219,14 +218,14 @@ void BattleTransition_Run(s32 arg, s32 kind) {
   u16 shown[UNIT_MAX];
   s32 *timer;
   struct BattleWork *battle;
-  struct BattleBackgroundView *view;
+  struct BattleBackgroundWork *view;
   struct HeapSlots *heap;
   s32 ownerCount;
   s32 count;
   u32 i;
 
   heap = Ram_HeapSlots;
-  view = (struct BattleBackgroundView *)heap->battleBackground;
+  view = heap->battleBackground;
   timer = HeapSlot_Alloc(HEAP_SLOT_BATTLE_ENTRY_TIMER, 4);
   if ((u32)(kind - FORMATION_DOOM_DRAGON_A) >
       FORMATION_DOOM_DRAGON_C - FORMATION_DOOM_DRAGON_A) {

@@ -54,18 +54,6 @@ struct BattlePresentationWork;
 /// the source after the last halfword it read.
 typedef const u8 *(*ModelDecoder)(const u8 *source, void *destination);
 
-struct DjinnRecoveryEntryDraft {
-  u8 element;
-  u8 index;
-  u8 unitId;
-  s8 turns;
-};
-
-struct DjinnRecoveryListDraft {
-  struct DjinnRecoveryEntryDraft entries[72];
-  s32 count;
-};
-
 struct SavedBattleObj {
   struct BattleObject object;
   u32 *buffer;
@@ -81,11 +69,6 @@ struct FormationCandidate {
   s32 score : 16;
 };
 
-struct OwnerElementStats {
-  s16 power;
-  s16 res;
-};
-
 struct AIState {
   unsigned initialized : 1;
   unsigned selection : 3;
@@ -96,10 +79,6 @@ struct AIState {
 struct AIEnemyRest {
   u8 unk00[0x2c];
   u16 abilities[8];
-};
-
-struct BattleGroupOrder {
-  s32 group[2];
 };
 
 extern const u8 Model_DecodeCode[];
@@ -132,7 +111,7 @@ extern u8 gBattleTransition_CurtainTiles[];
 
 void BattleEffect_RunShatteringOpeningFar(struct BattlePresentationWork *work);
 
-extern const struct BattleGroupOrder gBattleParty_TurnEndSideOrder;
+extern const struct BattleSideOrder gBattleParty_TurnEndSideOrder;
 
 void BattleUnit_DrainDjinn(s32 unitId, s32 all, s32 announce);
 

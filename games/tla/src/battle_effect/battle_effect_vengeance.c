@@ -1303,7 +1303,7 @@ void BattleEffect_RunCoatlicue(struct BattleEffectParams *args) {
   blit[0] = (DrawRectangle)Ram_HeapSlots->ramCode;
   Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, sprites, 0, 0);
   EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_THREE_QUARTERS);
-  table = (u16 *)(work->unk7300 + 0x340);
+  table = work->backdropLines;
   level = -8;
   color = 0;
   for (i = 0; i != 15; i++) {
@@ -1426,7 +1426,7 @@ void BattleEffect_RunCoatlicue(struct BattleEffectParams *args) {
       Sound_PlayFar(SE_SOL_SANCTUM_LIGHT_UP);
     }
     if (frame <= 1999999) {
-      u16 *row = (u16 *)(work->unk7300 + 0x340);
+      u16 *row = work->backdropLines;
       s32 shade = frame / 32 - 8;
 
       if (shade > 8) {

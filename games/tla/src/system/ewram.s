@@ -532,8 +532,8 @@ Data_02013c56:
 	.global Data_02013e18
 Data_02013e18:
 	.space 0x000001e8
-	.global gData_02014000
-gData_02014000:
+	.global gEffectScratch
+gEffectScratch:
 	.space 0x00000002
 	.global gFlora_PetalTiles
 gFlora_PetalTiles:

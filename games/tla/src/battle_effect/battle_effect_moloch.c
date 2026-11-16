@@ -397,7 +397,7 @@ void Iris_ChangeBackdrop(void) {
       blue = 0;
     *palette++ = RGB(blue, red, green);
   }
-  transition->active = 1;
+  transition->busy = 1;
   gBgScroll[1].x = 0;
 }
 

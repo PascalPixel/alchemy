@@ -11,7 +11,7 @@
 #include "resource_ids.h"
 
 /// The flashes, after the map cells.
-#define FLASHES ((struct Particle *)gData_02014000)
+#define FLASHES ((struct Particle *)gEffectScratch)
 
 /// Where TornadoSheet is decoded in the effect's pictures.
 #define ECLIPSE_TORNADO_PICTURES 0x2000
@@ -1308,8 +1308,7 @@ void BattleEffect_StartCanvasLayer(s32 bgControl) {
   struct BattleEffectWork *work = Ram_HeapSlots->battleEffect;
   struct BattleWork *battle = Ram_HeapSlots->battleWork;
   void *canvas = Ram_HeapSlots->battleCanvas;
-  struct BattleBackgroundView *display =
-      (struct BattleBackgroundView *)Ram_HeapSlots->battleBackground;
+  struct BattleBackgroundWork *display = Ram_HeapSlots->battleBackground;
   s32 row;
   s32 col;
   s32 offset;
@@ -1386,8 +1385,7 @@ void BattleEffect_OpenCanvasLayer(s32 bgControl) {
   struct BattleEffectWork *work = Ram_HeapSlots->battleEffect;
   struct BattleWork *battle = Ram_HeapSlots->battleWork;
   void *canvas = Ram_HeapSlots->battleCanvas;
-  struct BattleBackgroundView *display =
-      (struct BattleBackgroundView *)Ram_HeapSlots->battleBackground;
+  struct BattleBackgroundWork *display = Ram_HeapSlots->battleBackground;
   s32 row;
   s32 col;
   s32 offset;
@@ -1535,8 +1533,7 @@ void BattleEffect_HideBg1AndRestoreBackdrop(void) {
   struct BattleWork *battle;
   s32 *flag;
 
-  flag = &((struct BattleBackgroundView *)Ram_HeapSlots->battleBackground)
-              ->secondMode;
+  flag = &(Ram_HeapSlots->battleBackground)->secondMode;
   battle = Ram_HeapSlots->battleWork;
   *flag = 1;
   IoWriteQueue_Store16((u32)&REG_DISPCNT,
@@ -1555,8 +1552,7 @@ void BattleEffect_HideBg1AndRestoreBackdrop(void) {
 void BattleEffect_SetupCanvasTileMap(void) {
   void *canvas = Ram_HeapSlots->battleCanvas;
   struct BattleWork *screen = Ram_HeapSlots->battleWork;
-  struct BattleBackgroundView *layer =
-      (struct BattleBackgroundView *)Ram_HeapSlots->battleBackground;
+  struct BattleBackgroundWork *layer = Ram_HeapSlots->battleBackground;
   s32 row;
   s32 column;
   s32 byteOffset;

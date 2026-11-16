@@ -10,7 +10,7 @@
 
 struct StripQuad;
 
-/// Flora's petals in the scratch block at 0x02014000: the bloom's fifteen
+/// Flora's petals in gEffectScratch: the bloom's fifteen
 /// tile numbers, each petal's animation phase, position and velocity, and
 /// the object palette as it fades.
 struct FloraWork {
@@ -81,7 +81,7 @@ void BattleEffect_RunFlora(struct BattleEffectParams *args) {
   work = Ram_HeapSlots->battleEffect;
   savedScroll = gBgScroll[1].x;
   transition = (s32 *)Ram_HeapSlots->battleBackground;
-  petals = (s32)gData_02014000;
+  petals = (s32)gEffectScratch;
   source = Ram_MapCellBuffer;
   sprites = Ram_HeapSlots->battleSheet;
   BattleEffect_StartCanvasLayer(0);

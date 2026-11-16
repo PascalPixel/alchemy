@@ -136,7 +136,7 @@ struct OwnerStats {
   u8 hpRegen;
   u8 ppRegen;
   u8 unused[2]; ///< no code names it
-  struct OwnerElementStats element[4];
+  struct BattleElementStats element[ELEMENT_COUNT];
 };
 
 /// A unit as BattleEnemy_AdjustLevel reads it: its level and its stats.

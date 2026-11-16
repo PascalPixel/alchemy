@@ -7,7 +7,7 @@
 #include "battle/presentation.h"
 #include "system/matrix.h"
 
-const struct BattleGroupOrder gBattleParty_TurnEndSideOrder = {
+const struct BattleSideOrder gBattleParty_TurnEndSideOrder = {
     {BATTLE_SIDE_MASK_PARTY, BATTLE_SIDE_MASK_ENEMIES},
 };
 

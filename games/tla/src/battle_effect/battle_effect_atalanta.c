@@ -164,7 +164,7 @@ void BattleEffect_RunAtalanta(struct BattleEffectParams *args) {
   work->scrollStepX = -1;
   work->scrollStepY = 0;
   Task_Add(BattleEffect_AdvanceScrollOnInterval, TASK_PASS_FRAME);
-  presentation->active = 1;
+  presentation->busy = 1;
   BattleEffect_WipeCanvas(CANVAS_WIPE_DOWN, CANVAS_WIPE_CLEAR);
   EFFECT_SHOW_WIDE_CANVAS(BLEND_WEIGHT_MAX);
   pathX = 0;
@@ -306,7 +306,7 @@ void BattleEffect_RunAtalanta(struct BattleEffectParams *args) {
   // Atalanta leaves: the sky stops, the palette is restored and the
   // pieces go.
   Task_Remove(BattleEffect_AdvanceScrollOnInterval);
-  presentation->active = 0;
+  presentation->busy = 0;
   gBgScroll[1].x = scrollX;
   BattleEffect_SetupBlendedDisplay();
   Palette_LoadBasicSpriteColors();

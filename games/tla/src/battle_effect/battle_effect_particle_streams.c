@@ -625,7 +625,7 @@ void Palette_BrightenSavedBattleBg(s32 redDelta, s32 greenDelta,
 /// Stops DMA 0, then arms it to copy one palette line from the battle effect
 /// work into the BG palette at each horizontal blank.
 void BattleEffect_ArmPaletteHBlankDma(void) {
-  u8 *work = Ram_HeapSlots->battleEffect;
+  struct BattleEffectWork *work = Ram_HeapSlots->battleEffect;
   volatile u16 *channel = REG_DMA0;
   u32 palette;
 
@@ -633,8 +633,8 @@ void BattleEffect_ArmPaletteHBlankDma(void) {
   channel[DMA_CONTROL_HALF] &= (u16)~DMA_ENABLE;
   palette = 0xa0;
   (void)channel[DMA_CONTROL_HALF];
-  Dma_Set(work + 0x7640, (void *)(palette << 19), DMA_HBLANK_HALFWORD_PER_LINE,
-          (volatile u32 *)channel);
+  Dma_Set(work->backdropLines, (void *)(palette << 19),
+          DMA_HBLANK_HALFWORD_PER_LINE, (volatile u32 *)channel);
 }
 
 /// The particle streams in mode 0.
@@ -865,7 +865,7 @@ void BattleEffect_RunParticleStreams(struct BattleEffectParams *args,
     EFFECT_SET_TRANSFER(work, transferMode, CANVAS_FILL_WORD(2));
     Task_Add(BattleEffect_ArmPaletteHBlankDma, TASK_PASS_FRAME + 126);
     EFFECT_FREE_PARTICLES(i, work->particles, 64);
-    transition->active = 1;
+    transition->busy = 1;
     work->frame = 0;
     frame = 0;
     do {
@@ -1051,7 +1051,7 @@ void BattleEffect_RunParticleStreams(struct BattleEffectParams *args,
       work->frame++;
     } while (frame != STREAM_FRAMES);
     wait(1);
-    transition->active = 0;
+    transition->busy = 0;
     Task_Remove(BattleEffect_AdvanceBg2OnInterval);
     Task_Remove(BattleEffect_ArmPaletteHBlankDma);
     Task_Remove(BattleEffect_FlushPendingGraphicsTransfer);

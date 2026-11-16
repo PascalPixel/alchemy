@@ -50,7 +50,7 @@ void BattleEffect_RunLiquifier(struct BattleEffectParams *args) {
                              0);
   Resource_LoadAndDecompress((s32)&ResourceId_GlowBandTextureA,
                              work->sheet + LIQUIFIER_GLOW_BAND, 0, 0);
-  Resource_LoadAndDecompress((s32)&ResourceId_FireRingTexture, gData_02014000,
+  Resource_LoadAndDecompress((s32)&ResourceId_FireRingTexture, gEffectScratch,
                              0, 0);
   Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, graphics, 0, 0);
   LOAD_BG_PALETTE(ResourceId_OrangePaletteB);
@@ -189,7 +189,7 @@ void BattleEffect_RunLiquifier(struct BattleEffectParams *args) {
     {
       void *projected = Heap_AllocEwram(32);
       struct RenderModel *model = Render_AllocateModelList(1);
-      void *splash = gData_02014000;
+      void *splash = gEffectScratch;
 
       // Eight flashes turn about the caster, each for 16 frames from its
       // start, swinging wider and back with a sine.

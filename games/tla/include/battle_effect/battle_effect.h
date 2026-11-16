@@ -78,17 +78,6 @@ struct Texture {
   void *pixels;
 };
 
-/// An animation slot of a sprite: its object, its entries and whether it is
-/// fading.
-struct FxSlot {
-  void *object;
-  u8 unk04[28];
-  struct FxGroupEntry *animationEntry;
-  struct FxGroupEntry *effectEntry;
-  u8 unk28[2];
-  u8 fading;
-};
-
 /// A point or a velocity, 16.16 pixels.
 struct Point2D {
   FIXED x;
@@ -200,7 +189,6 @@ void BattleEffect_ClearActorTimers(void);
 void BattleEffect_DrawClippedCanvasLine(s32 x0, s32 y0, s32 x1, s32 y1,
                                         s32 color);
 void BattleEffect_SetupCanvasWindows(void); // the BG2 canvas's registers
-extern u8 gData_02014000[];
 void BattleEffect_DrawShadedCirclesMirrored(u8 *map, s32 size, s32 scale);
 void BattleEffect_RunRamses(struct BattleEffectParams *effect);
 void BattleEffect_RunNereid(struct BattleEffectParams *effect);
@@ -353,12 +341,12 @@ enum VolleyBSheet {
 
 /// A growing column, laid over struct Particle in work->particles.
 struct DualColumn {
-  s32 x; // root on the canvas
-  s32 y;
-  u8 unk08[8];
-  s32 height; // full length
-  u8 unk14[4];
-  s32 start; // the frame it starts to grow
+  s32 x;                   ///< the root on the canvas
+  s32 y;                   ///< the root on the canvas
+  u8 unused[8];            ///< no code names it
+  s32 height;              ///< the full length
+  u8 unusedAfterHeight[4]; ///< no code names it
+  s32 start;               ///< the frame it starts to grow
 };
 
 void BattleEffect_StepPaletteToResource(s32);
@@ -372,14 +360,6 @@ extern const struct RockWallHeights gRockWall_Heights;
 void BattleEffect_RunEruption(struct BattleEffectParams *effect, s32 mode);
 void BattleEffect_RunGrowingColumns(struct BattleEffectParams *effect,
                                     s32 mode);
-/// One animation entry of a sprite group.
-struct FxGroupEntry {
-  u8 unk00[5];
-  u8 param;
-  u8 unk06[16];
-  u8 frame;
-};
-
 /// Copies `size` bytes of colour levels, halving each.
 void ColorBuffer_Halve(void *source, void *destination, s32 size);
 /// Copies `size` bytes of colour levels at three quarters of each.

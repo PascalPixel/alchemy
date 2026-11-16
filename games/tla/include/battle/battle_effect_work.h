@@ -19,7 +19,11 @@ struct BattleEffectWork {
   struct Particle particles[64];
   u8 sheet[0x6980];   ///< the effect's decoded pictures, at fixed offsets
   s32 bg2xLines[160]; ///< BG2X for each scanline, for an HBlank DMA
-  u8 unk7300[0x480];  ///< some drafts keep a colour table at 0x340
+  /// The rest of the pictures' storage, which no code names.
+  u8 imageTail[832];
+  /// The backdrop's 160 colours, one a line, that
+  /// BattleEffect_ArmPaletteHBlankDma streams into colour 0.
+  u16 backdropLines[160];
   /// How the canvas transfer callback treats the canvas after each copy: 0
   /// copies, 1 also fills it with transferValue, 2 keeps 50 or 75 percent, 3
   /// darkens and 4 brightens it.
@@ -82,6 +86,7 @@ struct BattleEffectWork {
 
 STATIC_ASSERT(offsetof(struct BattleEffectWork, sheet) == 0x700);
 STATIC_ASSERT(offsetof(struct BattleEffectWork, bg2xLines) == 0x7080);
+STATIC_ASSERT(offsetof(struct BattleEffectWork, backdropLines) == 0x7640);
 STATIC_ASSERT(offsetof(struct BattleEffectWork, transferMode) == 0x7780);
 STATIC_ASSERT(offsetof(struct BattleEffectWork, shakeFrames) == 0x77a8);
 STATIC_ASSERT(offsetof(struct BattleEffectWork, fadeStep) == 0x77b8);

@@ -119,7 +119,7 @@ void BattleEffect_RunOdyssey(struct BattleEffectParams *args) {
         blue = blue > RGB_LEVEL_MAX ? RGB_LEVEL_MAX : blue;
         *palette++ = red << 10 | ((u16)red >> 1) << 5 | blue;
       }
-      transition->active = 1;
+      transition->busy = 1;
     }
     if (frame > 1)
       gBgScroll[1].x += 8;
@@ -414,7 +414,7 @@ void BattleEffect_RunOdyssey(struct BattleEffectParams *args) {
 
   // The battle's own scene again.
   BattleObject_PutFar();
-  transition->active = 0;
+  transition->busy = 0;
   gBgScroll[1].x = savedScrollX;
   BattleBackground_LoadFar(BATTLE_BACKGROUND_FIXED,
                            BATTLE_BACKGROUND_ID(Ram_HeapSlots->battleWork), 24);
@@ -497,7 +497,7 @@ void BattleEffect_RunCloudSwirl(struct BattleEffectParams *args) {
   }
   draw = (DrawRectangle)Ram_HeapSlots->ramCode;
   Task_Add(BattleEffect_FlushPendingGraphicsTransfer, TASK_PASS_FRAME);
-  transition->active = enabled;
+  transition->busy = enabled;
   /* FAKEMATCH(wrapper): the blit through Swirl_Draw with the constant buffer.
    */
   Swirl_Draw(draw, Ram_MapCellBuffer, canvas, 0, 128);
@@ -541,7 +541,7 @@ void BattleEffect_RunCloudSwirl(struct BattleEffectParams *args) {
   }
 
   gBgScroll[1].x = savedScrollX;
-  transition->active = 0;
+  transition->busy = 0;
   Task_Remove(BattleEffect_FlushPendingGraphicsTransfer);
   HeapSlot_Release(HEAP_SLOT_RAM_CODE);
   BattleEffect_EndCanvasLayer();
@@ -734,7 +734,7 @@ void Iris_RestoreBattle(void) {
     object->verticalMotionStrength = 0xab85;
     BattleMotion_ApplyKnockbackFar(work->args->targets[i], KNOCKBACK_HOP);
   }
-  transition->active = 0;
+  transition->busy = 0;
   gProjection.centerX = BATTLE_PROJECTION_CENTER_X;
   gProjection.centerY = BATTLE_PROJECTION_CENTER_Y;
   Palette_LoadBasicSpriteColors();

@@ -55,8 +55,7 @@ void BattleBackground_SetPaletteLevel(s32 unused, s32 level) {
 /// BattleBackground_ShowZoomedPage at 0xcff and its IO write of 0x1f83 to
 /// BG1CNT.
 void BattleBackground_SetMode(s32 mode, s32 value, s32 fade) {
-  struct BattleBackgroundView *transition =
-      (struct BattleBackgroundView *)Ram_HeapSlots->battleBackground;
+  struct BattleBackgroundWork *transition = Ram_HeapSlots->battleBackground;
 
   if (transition->mode == BATTLE_BACKGROUND_NONE)
     Task_Add(BattleBackground_ShowZoomedPage, TASK_PASS_FRAME + 127);
@@ -172,8 +171,7 @@ void BattleBackground_Load(s32 mode, s32 resource, s32 level) {
 /// the plane lies flat, from 1 it wraps and turns with the camera.
 void BattleCamera_SetRange(FIXED centerX, FIXED centerY, s32 offsetX,
                            s32 offsetY, FIXED scale) {
-  struct BattleBackgroundView *view =
-      (struct BattleBackgroundView *)Ram_HeapSlots->battleBackground;
+  struct BattleBackgroundWork *view = Ram_HeapSlots->battleBackground;
   struct BattleAffineHdma *scanlines = Ram_HeapSlots->battleScanlines;
   struct BattleCamera *camera = Ram_HeapSlots->cameraWork;
   s32 panX;

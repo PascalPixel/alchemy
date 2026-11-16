@@ -66,20 +66,6 @@ void *EffectSprite_CreateWithTiles(s32 width, s32 height, s32 attributes,
 // The three kinds the scenes ask for.
 enum { KIND_RIGHT = 78, KIND_LEFT = 79, KIND_FINALE = 80 };
 
-/// The battle effect work as Cruel Ruin's fade reads it.
-struct BattleFxFadeWork {
-  s32 unk00;
-  s32 halvePending;
-  s32 framesLeft;
-  s32 step;
-};
-
-/// The battle effect work as Cruel Ruin's streaks read it.
-struct StreakWork {
-  s32 frame;
-  s32 transferPending;
-};
-
 /// A point of a streak: x, y and z.
 struct StreakPoint {
   s32 x;
@@ -98,18 +84,20 @@ struct Streak {
   s32 unusedB;
 };
 
-/// The backdrop's work, in place of the battle effect work.
-struct StreakSceneWork {
-  s32 frame;        // the streaks' frame count (BattleEffect_DrawStreaks)
-  s32 halvePending; // the streaks are drawn: halve the canvas into VRAM
-  s32 fadeFrames;   // frames of the background's fade left
-                    // (BattleEffect_DimBackgroundStep)
-  s32 fadeStep;
+/// The element streaks' work, which BattleEffect_StartElementStreaks allocates
+/// in the HEAP_SLOT_BATTLE_EFFECT heap slot in place of the battle effect work.
+struct ElementStreaksWork {
+  s32 frame;        ///< the streaks' frame count (BattleEffect_DrawStreaks)
+  s32 halvePending; ///< the streaks are drawn: halve the canvas into VRAM
+  /// Frames of the background's fade left (BattleEffect_DimBackgroundStep).
+  s32 fadeFrames;
+  s32 fadeStep; ///< the fade's steps so far, CANVAS_FADE_STEP each
 };
 
-/// A sprite as Cruel Ruin reads its tile, priority, palette and resource.
+/// An EffectSprite as Cruel Ruin reads its OAM attribute 2: its tile, priority
+/// and palette, as fields or as one halfword.
 struct RuinObject {
-  u8 unk0[8];
+  u8 unusedBeforeAttr[8]; ///< the sprite's next and OAM attributes 0 and 1
   union {
     struct {
       u16 tile : 10;
@@ -118,9 +106,11 @@ struct RuinObject {
     } bits;
     u16 all;
   } attr;
-  u8 unk0a[4];
-  u8 resource;
 };
+
+/// The map cell buffer from its second 16 KB on, which some effects borrow as
+/// scratch: no map is loaded during a battle.
+extern u8 gEffectScratch[];
 
 /// The map cell buffer holds WIN0's line table and then the splashes.
 struct DropSplashBuffer {
@@ -1692,7 +1682,6 @@ extern const struct Scale gGaia_UnitScale;
 extern const struct SpriteScale gUlysses_ParticleScale;
 
 // The 64 sparks, past the map cells' first 16 KB.
-extern u8 gData_02014000[];
 
 /// neptune.c
 extern const struct Scale gNeptune_UnitScale; ///< the serpent's scale

@@ -1008,7 +1008,7 @@ void BattleEffect_RunBackgroundFadeIn(struct BattleEffectParams *args) {
   struct BattleEffectWork *work;
   void *canvas;
   struct BattleWork *battle;
-  struct BattleBackgroundView *view;
+  struct BattleBackgroundWork *view;
   s32 frame;
   s32 i;
   s32 j;
@@ -1017,7 +1017,7 @@ void BattleEffect_RunBackgroundFadeIn(struct BattleEffectParams *args) {
   work = HeapSlot_Alloc(HEAP_SLOT_BATTLE_EFFECT, BATTLE_EFFECT_WORK_SIZE);
   canvas = HeapSlot_Alloc(HEAP_SLOT_BATTLE_CANVAS, CANVAS_BYTES);
   battle = Ram_HeapSlots->battleWork;
-  view = (struct BattleBackgroundView *)Ram_HeapSlots->battleBackground;
+  view = Ram_HeapSlots->battleBackground;
   work->args = args;
   work->vblanksSinceTransfer = 1;
   BattleEffect_RunCloudSwirl(args);

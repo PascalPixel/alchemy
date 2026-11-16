@@ -497,8 +497,7 @@ s32 BattleStaging_RunItem(struct BattlePlan *plan, s32 unused,
   s32 inventoryEntry;
   struct Unit *unit;
   struct ItemDefinition *itemDefinition;
-  struct BattleBackgroundWork *transition =
-      (struct BattleBackgroundWork *)Ram_HeapSlots->battleBackground;
+  struct BattleBackgroundWork *transition = Ram_HeapSlots->battleBackground;
   s32 targetYaw;
 
   if (plan->unitId > 4)

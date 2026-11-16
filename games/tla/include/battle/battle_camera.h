@@ -38,15 +38,19 @@ STATIC_ASSERT(offsetof(struct BattleCamera, yaw) == 0x36);
 
 extern struct BattleCamera *gCameraWork;
 
-/// The battle background's heap slot as the camera reads it: the yaw the
-/// camera eases toward and the frames left to ease it.
+/// The HEAP_SLOT_BATTLE_BACKGROUND heap slot: the yaw the battle camera eases
+/// toward and the frames left to ease it, and how the battle background is
+/// shown.
 struct BattleBackgroundWork {
-  s32 targetYaw;  ///< 1/65536 turns
-  s32 frames;     ///< frames left to ease the yaw, a sixteenth a frame
-  s32 mode;       ///< BattleBackgroundView's mode
-  s32 secondMode; ///< BattleBackgroundView's secondMode
-  s32 active;     ///< BattleBackgroundView's busy, at the same offset
-  s32 flag;       ///< 0 lets the camera update set the background's range
+  s32 targetYaw; ///< 1/65536 turns
+  s32 frames;    ///< frames left to ease the yaw, a sixteenth a frame
+  s32 mode;      ///< enum BattleBackgroundMode
+  /// BATTLE_BACKGROUND_FIXED also sets BG1's scroll whatever the mode; the
+  /// battle effects' canvas layers set it.
+  s32 secondMode;
+  s32 busy; ///< while set, an effect owns BG1's scroll and the camera leaves it
+  /// 0 lets the camera update set the background's range each frame.
+  s32 flag;
   s32 unusedAfterFlag[2]; ///< cleared when a battle starts; nothing reads them
 };
 
@@ -67,12 +71,13 @@ struct BattlePresentationWork {
 };
 
 STATIC_ASSERT(sizeof(struct BattleBackgroundWork) == 0x20);
-STATIC_ASSERT(offsetof(struct BattleBackgroundWork, active) == 0x10);
+STATIC_ASSERT(offsetof(struct BattleBackgroundWork, mode) == 0x08);
+STATIC_ASSERT(offsetof(struct BattleBackgroundWork, busy) == 0x10);
 STATIC_ASSERT(sizeof(struct BattlePresentationWork) == 0x58);
 STATIC_ASSERT(offsetof(struct BattlePresentationWork, actors) == 0x24);
 STATIC_ASSERT(offsetof(struct BattlePresentationWork, params) == 0x36);
 
-/// BattleBackgroundView.mode and secondMode: how the battle background is
+/// BattleBackgroundWork.mode and secondMode: how the battle background is
 /// shown.
 enum BattleBackgroundMode {
   /// Not loaded yet.
@@ -88,15 +93,6 @@ enum BattleBackgroundMode {
 /// BattleBackground_SetMode's fade that restores the saved palette instead of
 /// taking from each colour channel.
 #define BATTLE_BACKGROUND_FADE_RESTORE 128
-
-/// The battle background's heap slot as the background code reads it: its
-/// display mode.
-struct BattleBackgroundView {
-  u8 unk00[8];    ///< BattleBackgroundWork's targetYaw and frames
-  s32 mode;       ///< enum BattleBackgroundMode
-  s32 secondMode; ///< set by an effect while its canvas is open
-  s32 busy;
-};
 
 /// The battle background's affine parameters and reference point, copied
 /// whole to the BG2PA registers.
@@ -114,8 +110,6 @@ struct BattleAffineHdma {
   u16 lines[2][160];
 };
 
-STATIC_ASSERT(sizeof(struct BattleBackgroundView) == 0x14);
-STATIC_ASSERT(offsetof(struct BattleBackgroundView, mode) == 0x08);
 STATIC_ASSERT(sizeof(struct BattleAffineHdma) == 0x2a0);
 STATIC_ASSERT(offsetof(struct BattleAffineHdma, affine) == 0x10);
 STATIC_ASSERT(offsetof(struct BattleAffineHdma, lines) == 0x20);

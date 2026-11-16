@@ -11,6 +11,7 @@
 #include "system/io_reg.h"
 #include "item_ids.h"
 #include "flags.h"
+#include "field/actor_script.h"
 
 /// Set once Avimander is beaten and Briggs gives in.
 #define FLAG_CHAMPA_AVIMANDER_BEATEN 0x97e
@@ -1075,10 +1076,10 @@ void ChampaCliffCaves_AskIfBriggsLearned(void) {
                        (s16)gMainRoutineWork.restartEntrance);
 }
 
-extern u32 gChampaCliffCaves_BriggsFirstScript[];
-extern u32 gChampaCliffCaves_BriggsSecondScript[];
-extern u32 gChampaCliffCaves_AvimanderScript[];
-extern u32 gChampaCliffCaves_BriggsLastScript[];
+extern u32 gChampaCliffCaves_ChaseToNorthScript[];
+extern u32 gChampaCliffCaves_ChaseToEastScript[];
+extern u32 gChampaCliffCaves_ChaseToWestScript[];
+extern u32 gChampaCliffCaves_ChaseToSouthScript[];
 
 /// Briggs mourns his beaten salamander ("My salamander! You... beat my
 /// salamander..."), talks with the party through three answers, each counted
@@ -1248,18 +1249,18 @@ void ChampaCliffCaves_BriggsMournsSalamander(void) {
   Actor_StartRepeatedMotion(ACTOR_BRIGGS, 3);
   Actor_SetAttachedEffect(ACTOR_BRIGGS,
                           ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
-  scriptA = gChampaCliffCaves_BriggsFirstScript;
+  scriptA = gChampaCliffCaves_ChaseToNorthScript;
   Actor_SetMovementTypeById(ACTOR_OBABA, scriptA);
   Event_Wait(20);
   Actor_WalkToById(ACTOR_BRIGGS, 664, 290);
   Actor_WaitForScriptEndById(ACTOR_OBABA);
-  scriptB = gChampaCliffCaves_BriggsSecondScript;
+  scriptB = gChampaCliffCaves_ChaseToEastScript;
   Actor_SetMovementTypeById(ACTOR_OBABA, scriptB);
   Actor_WaitForMoveById(ACTOR_BRIGGS);
-  scriptC = gChampaCliffCaves_AvimanderScript;
+  scriptC = gChampaCliffCaves_ChaseToWestScript;
   Actor_SetMovementTypeById(ACTOR_BRIGGS, scriptC);
   Actor_WaitForScriptEndById(ACTOR_OBABA);
-  scriptD = gChampaCliffCaves_BriggsLastScript;
+  scriptD = gChampaCliffCaves_ChaseToSouthScript;
   Actor_SetMovementTypeById(ACTOR_OBABA, scriptD);
   Actor_WaitForScriptEndById(ACTOR_BRIGGS);
   Actor_SetMovementTypeById(ACTOR_BRIGGS, scriptA);
@@ -1597,7 +1598,7 @@ void ChampaCliffCaves_BriggsMournsSalamander(void) {
   // "Ah, well... To be young and foolish again. If you ever need to..."
   Event_ShowMessageThenWait(ACTOR_OBABA, 0, 5);
   Actor_SetSpeed(ACTOR_BRIGGS, 0.7);
-  Actor_SetMovementTypeById(ACTOR_OBABA, gChampaCliffCaves_BriggsFirstScript);
+  Actor_SetMovementTypeById(ACTOR_OBABA, gChampaCliffCaves_ChaseToNorthScript);
   Event_Wait(30);
   Actor_Stop(ACTOR_OBABA);
   Actor_WalkToAndWait(ACTOR_OBABA, 648, 188);
@@ -2614,28 +2615,65 @@ LATE_DATA struct Trigger gChampaCliffCaves_AvimanderTriggers[] = {
     {TRIGGER_TABLE_END},
 };
 
-LATE_DATA u32 gChampaCliffCaves_BriggsFirstScript[] = {
-    39,       2, 4,  0x2680000, 0, 0xdc0000, 1,  4, 0x2780000, 0,
-    0xce0000, 1, 4,  0x2880000, 0, 0xc80000, 1,  4, 0x2980000, 0,
-    0xc60000, 1, 39, 1,         0, 1,        17,
+/// Obaba chasing Briggs round her forge: the four quarters of the way round,
+/// each walked to its end.
+LATE_DATA u32 gChampaCliffCaves_ChaseToNorthScript[] = {
+    SC_ANIMATION(ANIM_WALK),
+    SC_MOVE(616, 0, 220),
+    SC_SYNC,
+    SC_MOVE(632, 0, 206),
+    SC_SYNC,
+    SC_MOVE(648, 0, 200),
+    SC_SYNC,
+    SC_MOVE(664, 0, 198),
+    SC_SYNC,
+    SC_ANIMATION(ANIM_STAND),
+    SC_WAIT(1),
+    SC_END,
 };
 
-LATE_DATA u32 gChampaCliffCaves_BriggsSecondScript[] = {
-    39,       2,  4, 0x2a80000, 0, 0xc80000, 1, 4,  0x2b60000, 0,
-    0xce0000, 1,  4, 0x2c60000, 0, 0xd80000, 1, 4,  0x2d00000, 0,
-    0xe80000, 1,  4, 0x2d00000, 0, 0xf60000, 1, 39, 1,         0,
-    1,        17,
+LATE_DATA u32 gChampaCliffCaves_ChaseToEastScript[] = {
+    SC_ANIMATION(ANIM_WALK),
+    SC_MOVE(680, 0, 200),
+    SC_SYNC,
+    SC_MOVE(694, 0, 206),
+    SC_SYNC,
+    SC_MOVE(710, 0, 216),
+    SC_SYNC,
+    SC_MOVE(720, 0, 232),
+    SC_SYNC,
+    SC_MOVE(720, 0, 246),
+    SC_SYNC,
+    SC_ANIMATION(ANIM_STAND),
+    SC_WAIT(1),
+    SC_END,
 };
 
-LATE_DATA u32 gChampaCliffCaves_BriggsLastScript[] = {
-    39,        2,  4,         0x2c60000, 0, 0x1080000, 1, 4,
-    0x2ba0000, 0,  0x1160000, 1,         4, 0x2980000, 0, 0x1220000,
-    1,         39, 1,         0,         1, 17,
+LATE_DATA u32 gChampaCliffCaves_ChaseToSouthScript[] = {
+    SC_ANIMATION(ANIM_WALK),
+    SC_MOVE(710, 0, 264),
+    SC_SYNC,
+    SC_MOVE(698, 0, 278),
+    SC_SYNC,
+    SC_MOVE(664, 0, 290),
+    SC_SYNC,
+    SC_ANIMATION(ANIM_STAND),
+    SC_WAIT(1),
+    SC_END,
 };
 
-LATE_DATA u32 gChampaCliffCaves_AvimanderScript[] = {
-    39,        2, 4,  0x2780000, 0, 0x1180000, 1,  4, 0x2680000, 0,
-    0x10a0000, 1, 4,  0x2600000, 0, 0xf80000,  1,  4, 0x2600000, 0,
-    0xe60000,  1, 39, 1,         0, 1,         17,
+LATE_DATA u32 gChampaCliffCaves_ChaseToWestScript[] = {
+    SC_ANIMATION(ANIM_WALK),
+    SC_MOVE(632, 0, 280),
+    SC_SYNC,
+    SC_MOVE(616, 0, 266),
+    SC_SYNC,
+    SC_MOVE(608, 0, 248),
+    SC_SYNC,
+    SC_MOVE(608, 0, 230),
+    SC_SYNC,
+    SC_ANIMATION(ANIM_STAND),
+    SC_WAIT(1),
+    SC_END,
 };
 // clang-format on

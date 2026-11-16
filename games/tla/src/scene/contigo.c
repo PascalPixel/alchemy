@@ -732,37 +732,26 @@ void Contigo_AskAboutWindLegend(void) {
   Event_End();
 }
 
-struct OrbitEffect {
-  u8 unk00[6];
-  u16 angle;
-  s32 x;
-  s32 y;
-  s32 z;
-  u8 unk14[80];
-  u16 timer;
-  s16 pause;
-};
-
 /// The update of a mote over the thinking baby: it circles on a random radius,
 /// now and then pausing to spin faster, and is released after 101 frames.
-void Contigo_CircleGlow(struct OrbitEffect *effect) {
+void Contigo_CircleGlow(struct Actor *effect) {
   FIXED radius;
   s32 angle;
   FIXED dx;
   FIXED dz;
 
   radius = Random16() + toFIXED(2);
-  angle = effect->angle;
+  angle = effect->facing;
   dx = Iwram_MulFX(radius, Trig_Cos(angle));
   dz = Iwram_MulFX(radius, Trig_Sin(angle));
-  effect->x += dx;
-  effect->z += dz;
-  effect->angle += 0xfff0;
-  if (effect->pause != 0) {
-    effect->pause--;
-    effect->angle += 0x800;
+  effect->x.fixed += dx;
+  effect->z.fixed += dz;
+  effect->facing -= 16;
+  if (effect->userValue != 0) {
+    effect->userValue--;
+    effect->facing += TRIG_TURN / 32;
   } else if ((Random16() << 5) >> 16 == 0) {
-    effect->pause = ((Random16() << 4) >> 16) + 8;
+    effect->userValue = ((Random16() << 4) >> 16) + 8;
   }
   if (++effect->timer == 101)
     Actor_Release(effect);
@@ -787,20 +776,11 @@ void Contigo_RaiseMotes(void) {
   }
 }
 
-struct ContigoGlow {
-  u8 unk00[0x0c];
-  s32 y;
-  u8 unk10[8];
-  s32 scaleX;
-  s32 scaleY;
-  u8 unk20[0x35];
-  u8 motionFlags;
-};
-
-/// The glow that grows over actor 17 and sinks away again, then the scene goes
-/// on.
+/// Examining the baby: its brow furrows, a whirl of light grows over it and
+/// motes rise while the room dims, then it babbles and its family talk of the
+/// house.
 void Contigo_BabyThinks(void) {
-  struct ContigoGlow *effect;
+  struct Actor *effect;
   FIXED x = toFIXED(706);
   FIXED z = toFIXED(116);
   u32 i;
@@ -820,8 +800,7 @@ void Contigo_BabyThinks(void) {
   BattleEffect_StartArcEffect();
   BattleEffect_SetObjectUpdateMode(((struct Actor *)Actor_GetById(ACTOR_BABY)),
                                    2);
-  effect =
-      ((struct ContigoGlow *)Import_ActorCreate(SPRITE_WHIRLWIND, x, 0, z));
+  effect = ((struct Actor *)Import_ActorCreate(SPRITE_WHIRLWIND, x, 0, z));
   if (effect != 0) {
     Actor_SetSpriteFlags(effect, 0);
     Actor_SelectAnimation(effect, 2);
@@ -844,7 +823,7 @@ void Contigo_BabyThinks(void) {
     do {
       effect->scaleX -= FIXED_ONE / 40;
       effect->scaleY -= FIXED_ONE / 40;
-      effect->y += toFIXED(1) / 2;
+      effect->y.fixed += toFIXED(1) / 2;
       wait(1);
       i++;
     } while (i < 28);
@@ -2434,12 +2413,11 @@ void Contigo_KeepPriorityWithLeader(void) {
   }
 }
 
-/// Schedules Contigo_KeepPriorityWithLeader and gives objects 14 and 15 their
-/// flag bytes and Contigo_FaceTalker as their update (object 15 brought in and
-/// placed while flag 0xa21 is set and FLAG_SET_OUT_WITH_WINGS clear), places or
-/// hides object 17 by flags FLAG_SHINE_FREED and 0x9e6, sets flag 0x200 on
-/// entrances 1 to 4 unless flag 0x109 is set, and while flag 0x200 is set has
-/// the camera follow the leader; it ends with Palette_SetColors.
+/// Sets up the village: the wanderer and the girl by the ship turn to whoever
+/// talks to them (Contigo_FaceTalker), the girl and the old woman gone and the
+/// games' rooms open once the beacon is lit; Shine waits where it landed until
+/// caught; arriving by entrances 1 to 4, the camera follows the leader across
+/// the whole village; then the water's colours are set.
 void Contigo_InitializeVillage(void) {
   struct Actor *object = Actor_GetById(ACTOR_WANDERER);
 

@@ -38,6 +38,8 @@ void Actor_FaceDirectionById(s32 actorId, s32 angle, s32 frames) {
   }
 }
 
+/// Turns actor objectId to angle through gActor_StepAngleScript, which steps
+/// it round, and waits for the script to end.
 void Actor_FaceDirectionAndRefreshById(s32 objectId, s32 angle) {
   struct Actor *object = Actor_Lookup(objectId);
 

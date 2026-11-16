@@ -107,8 +107,12 @@ struct SparklePicture {
 extern const s32 gDustPuff_LongScript[];
 extern const s32 gDustPuff_ShortScript[];
 
+/// PartyInventory_FindRoom through its far call: the first party member with
+/// room for item, or -1.
 s32 PartyInventory_FindRoomFar(s32 item);
 
+/// ItemPicker_RunToDrop through its far call: the item picker for an item to
+/// drop, which sets the member and slot chosen.
 s32 ItemPicker_RunToDropFar(s32 *member, s32 *slot);
 
 void FieldEffect_AdvanceHueCycle(void);
@@ -118,12 +122,16 @@ void Actor_SetSpritePalette(void *object, s32 value);
 void FieldParticle_Initialize(struct FieldParticle *effect, s32 kind, s32 x,
                               s32 z);
 
+/// ActorScript_CheckOverlap through its far call: -1 when the actor at position
+/// would overlap a solid actor, otherwise 0.
 s32 ActorScript_CheckOverlapFar(struct Actor *object, struct Vector3 *position);
 
 void FieldPsynergy_WatchLeaderDistance(void);
 
 void FieldEffect_SpawnBurstParticleField(void);
 
+/// Actor_GetSpriteId through its far call: the sprite id the actor is drawn
+/// with, or 0 for none.
 s32 Actor_GetSpriteIdFar(struct Actor *object);
 
 extern const s32 gFieldEffect_SourceHoldScript[];
@@ -139,6 +147,8 @@ struct Actor *Actor_Spawn(s32 kind, s32 x, s32 y, s32 z);
 
 struct Actor *FieldEffect_SpawnCarryHand(s32 x, s32 y, s32 z, s32 angle);
 
+/// MapGrid_CopyCellPictureCellsRect through its far call: copies width by
+/// height cells as they are from (fromX, fromZ) to (toX, toZ).
 void MapGrid_CopyCellPictureCellsRectFar(s32 toX, s32 toZ, s32 width,
                                          s32 height, s32 fromX, s32 fromZ);
 
@@ -335,7 +345,6 @@ void FieldPsynergy_RestoreMindReadPalette(void);
 void FieldEffect_ArmBg0HBlankDma(void);
 
 struct Actor;
-struct Vec3;
 
 /// Three coordinates of a burst piece's place, x, y and z, filled in turn as
 /// Vector_AddPolarOffset reads them.
@@ -397,8 +406,10 @@ s32 SpawnHeavyImpactEffect(struct Actor *source);
 
 extern const u8 gAnim_ChildPaletteCycle[];
 
+/// ActorScript_FindOverlappingEntry through its far call: the first solid actor
+/// the actor at position would overlap, or NULL.
 struct Actor *ActorScript_FindOverlappingEntryFar(struct Actor *object,
-                                                  struct Vec3 *position);
+                                                  struct Vector3 *position);
 
 extern const u8 gUnused_BattleEffectBytes[];
 

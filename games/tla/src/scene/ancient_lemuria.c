@@ -302,27 +302,16 @@ const struct Trigger *Scene_GetTriggers(void) { return gSceneEvents; }
 /// gAncientLemuria_ShimmerColors.
 s32 AncientLemuria_CycleWaterColors(void) {
   if ((*Ram_FrameCount & 3) == 0) {
-    volatile u16 *palette;
     s16 saved;
     s32 index;
 
     saved = BG_PLTT_COLOR(7, 14);
-    index = 14;
-  first:
-    palette = (u16 *)&BG_PLTT_COLOR(7, 0);
-    palette[index] = (palette - 1)[index];
-    index--;
-    if (index != 1)
-      goto first;
+    for (index = 14; index != 1; index--)
+      BG_PLTT_COLOR(7, index) = BG_PLTT_COLOR(7, index - 1);
     BG_PLTT_COLOR(7, 1) = saved;
     saved = BG_PLTT_COLOR(8, 14);
-    index = 14;
-  second:
-    palette = (u16 *)&BG_PLTT_COLOR(8, 0);
-    palette[index] = (palette - 1)[index];
-    index--;
-    if (index != 1)
-      goto second;
+    for (index = 14; index != 1; index--)
+      BG_PLTT_COLOR(8, index) = BG_PLTT_COLOR(8, index - 1);
     BG_PLTT_COLOR(8, 1) = saved;
   }
   {

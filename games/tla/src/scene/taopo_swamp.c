@@ -552,34 +552,28 @@ void TaopoSwamp_StepOnVent(s32 hole) {
   leader = Actor_Get(gMainRoutineWork.leaderActorId);
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
-  goto test;
-sink:
-  if (result < 0) {
-    leader->facing = FACING_SOUTH;
-    TaopoSwamp_FallThroughHole(hole);
-    return;
-  }
-  leader->z.fixed += toFIXED(2);
-  slip = (leader->x.fixed & 0xfffff) + 0xfff80000;
-  {
-    s32 limit = toFIXED(1) + 1;
-
-    if (slip >= limit)
+  for (;;) {
+    position.x = leader->x.fixed;
+    position.y = leader->y.fixed;
+    position.z = leader->z.fixed + toFIXED(8);
+    result = MapGrid_CheckCollision(leader, &position);
+    if (result > 0)
+      break;
+    if (result < 0) {
+      leader->facing = FACING_SOUTH;
+      TaopoSwamp_FallThroughHole(hole);
+      return;
+    }
+    leader->z.fixed += toFIXED(2);
+    slip = (leader->x.fixed & 0xfffff) + 0xfff80000;
+    if (slip > toFIXED(1))
       slip = toFIXED(1);
-    limit = -(toFIXED(1) + 1);
-    if (slip <= limit)
+    if (slip < -toFIXED(1))
       slip = -toFIXED(1);
+    leader->x.fixed -= slip;
+    leader->facing += TRIG_TURN / 16;
+    System_Wait(1);
   }
-  leader->x.fixed -= slip;
-  leader->facing += TRIG_TURN / 16;
-  System_Wait(1);
-test:
-  position.x = leader->x.fixed;
-  position.y = leader->y.fixed;
-  position.z = leader->z.fixed + toFIXED(8);
-  result = MapGrid_CheckCollision(leader, &position);
-  if (result <= 0)
-    goto sink;
 }
 
 /// The gust from the covered vent knocks Flower, the Venus Djinni, down one

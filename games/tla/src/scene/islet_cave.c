@@ -116,17 +116,12 @@ void Palette_SetColors(u16 *slots, u16 *colours, u16 *cycleColours,
   gPaletteColors = colours;
   gPaletteCycleColors = cycleColours;
   gPaletteCycleSlots = cycleSlots;
-  if (*slots != PALETTE_LIST_END && *colours != PALETTE_LIST_END) {
-  next:
-    {
-      int red = *colours++;
-      int index = *slots++;
-      int green = *colours++;
-      int blue = *colours++;
-      SET_RGB(((u16 *)BG_PLTT)[index], red, green, blue);
-    }
-    if (*slots != PALETTE_LIST_END && *colours != PALETTE_LIST_END)
-      goto next;
+  while (*slots != PALETTE_LIST_END && *colours != PALETTE_LIST_END) {
+    int index = *slots++;
+    int red = *colours++;
+    int green = *colours++;
+    int blue = *colours++;
+    SET_RGB(BG_PLTT[index], red, green, blue);
   }
   Dma_Set((const void *)BG_PLTT, fade->palette, DMA_COPY_WORDS(112), REG_DMA3);
   Dma_Set((const void *)OBJ_PLTT, &fade->palette[224], DMA_COPY_WORDS(112),
@@ -412,22 +407,21 @@ extern s32 gIsletCave_TremorTargetScript[];
 /// water's colours, the Sentinel gone once beaten, or Serac hidden in the
 /// winged statue until Tremor; the corridors darken a step a room.
 s32 Scene_Initialize(void) {
-  s32 scene, dim;
+  s32 dim;
 
   gFieldWork->transition = SCENE_TRANSITION(TRANSITION_WINDOW, 9);
   FieldEffect_StartBlankOverlay(0);
-  scene = gMainRoutineWork.next;
-  if (scene == SCENE_ISLET_CAVE_MELD) {
+  if (gMainRoutineWork.next == SCENE_ISLET_CAVE_MELD) {
     IsletCave_PlaceLogs();
     Palette_SetColors(gIsletCave_PaletteSlots, gIsletCave_PaletteColors,
                       gIsletCave_DimColors, gIsletCave_CycleSlots);
-  } else if (scene == SCENE_ISLET_CAVE_SENTINEL) {
+  } else if (gMainRoutineWork.next == SCENE_ISLET_CAVE_SENTINEL) {
     Actor_SetSpriteFlags(Actor_GetById(ACTOR_FIRST_FIRE), 0);
     if (gMainRoutineWork.entrance == ENTRANCE_AFTER_BATTLE) {
       Actor_SetPosition(ACTOR_SENTINEL, 0, 0);
       GameFlag_Set(FLAG_SENTINEL_DEFEATED);
     }
-  } else if (scene == SCENE_ISLET_CAVE_SERAC) {
+  } else if (gMainRoutineWork.next == SCENE_ISLET_CAVE_SERAC) {
     if (GameFlag_Get(FLAG_DJINNI(DJINNI_SERAC)) ||
         GameFlag_Get(FLAG_DJINNI_HIDING(DJINNI_SERAC))) {
       GameFlag_Set(FLAG_SCENE_TEMP_30);
@@ -436,14 +430,9 @@ s32 Scene_Initialize(void) {
       Actor_SetMovementTypeById(ACTOR_WINGED_STATUE,
                                 gIsletCave_TremorTargetScript);
     }
-  } else {
-    goto other;
   }
-  if (gMainRoutineWork.next == SCENE_ISLET_CAVE_SERAC)
-    goto fade;
-other:
-  if (gMainRoutineWork.next == SCENE_ISLET_CAVE_SENTINEL) {
-  fade:
+  if (gMainRoutineWork.next == SCENE_ISLET_CAVE_SERAC ||
+      gMainRoutineWork.next == SCENE_ISLET_CAVE_SENTINEL) {
     if (gMainRoutineWork.next == SCENE_ISLET_CAVE_SERAC)
       dim = (gMainRoutineWork.entrance - 3) / 2;
     else

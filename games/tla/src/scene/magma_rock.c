@@ -53,6 +53,9 @@
 #include "field/actor_script.h"
 #include "text/msg_ids.h"
 
+/// The -1 that ends a list of actor ids or table rows, read as a u16.
+#define ID_LIST_END 0xffff
+
 // Each pushed pillar's flag keeps it where it was pushed: two on the slide,
 // one on each of the Salamander Tail room's lower, middle and upper levels and
 // two on its top.
@@ -230,7 +233,7 @@ s32 MapCollision_FindOrAddTag(s32 layer, s32 shape, s32 height);
 /// copies the cell under it, and blocks the cells ahead of and behind it on a
 /// cell with attribute bit 6.
 void MagmaRock_SettleBlocks(u16 *ids) {
-  while (*ids != 0xffff) {
+  while (*ids != ID_LIST_END) {
     struct Actor *actor = Actor_Get(*ids);
     u8 *terrainId = &actor->layer;
     s32 height =
@@ -643,7 +646,7 @@ s32 MagmaRock_FindStatue(u16 *table) {
       MapCell_GetAttributes(0, FIELD_CELL(work->x), FIELD_CELL(work->z)) >> 8;
   s32 id;
 
-  for (; *table != 0xffff; result = *table++) {
+  for (; *table != ID_LIST_END; result = *table++) {
     id = *table++;
     if (code == *table++) {
       work->child = Actor_Get(id);
@@ -660,7 +663,7 @@ s32 MagmaRock_LookUpCellStatue(s32 x, s32 z, u16 *table) {
   s32 result = 0;
   s32 code = MapCell_GetAttributes(0, FIELD_CELL(x), FIELD_CELL(z)) >> 8;
 
-  while (*table != 0xffff) {
+  while (*table != ID_LIST_END) {
     table++;
     if (code == *table) {
       result = table[1];
@@ -864,7 +867,7 @@ void MagmaRock_IgniteStatue(void) {
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
   actor = work->child;
-  actor->timer = 0x400;
+  actor->timer = 1024;
   actor->update = MagmaRock_WarnStatue;
   MagmaRock_EndEvent();
 }
@@ -958,7 +961,7 @@ void MagmaRock_RaiseFlameTop(union FieldObject *object) {
     config.script = gMagmaRock_EmberScript;
     FieldEffect_Spawn(object->effect.x + toFIXED(1),
                       object->effect.y - toFIXED(4), object->effect.z,
-                      ((Random16() & mask) - 3) << 14, -0x20000, step,
+                      ((Random16() & mask) - 3) << 14, -toFIXED(2), step,
                       EFFECT_USE_UPDATE | EFFECT_USE_SCRIPT | EFFECT_USE_TYPE |
                           EFFECT_USE_PRIORITY | EFFECT_USE_PALETTE,
                       &config);
@@ -1510,8 +1513,8 @@ void MagmaRock_LaunchLeader(void) {
     velocity[1] = 0;
     velocity[2] = Math_Sin(angle);
     velocity[0] += velocity[0] >> 1;
-    velocity[0] += ((Random16() * 3) << 14 >> 16) - 0x6000;
-    velocity[2] += ((Random16() * 3) << 13 >> 16) - 0x3000;
+    velocity[0] += ((Random16() * 3) << 14 >> 16) - toFIXED(3) / 8;
+    velocity[2] += ((Random16() * 3) << 13 >> 16) - toFIXED(3) / 16;
     FieldEffect_Spawn(leader->x.fixed, leader->y.fixed, leader->z.fixed,
                       velocity[0], velocity[1], velocity[2],
                       EFFECT_USE_UPDATE | EFFECT_USE_START_SCALE |
@@ -1874,7 +1877,7 @@ void MagmaRock_RestoreCrumblingPillars(const u16 *table) {
   struct Actor *leader;
   s32 ground;
 
-  while (*table != 0xffff) {
+  while (*table != ID_LIST_END) {
     id = table[0];
     actor = Actor_Get(id);
     flag = table[1];
@@ -1931,7 +1934,7 @@ void MagmaRock_StepOnCrumblingPillar(u16 *list) {
   target = Actor_FindAtCell(position, 0);
   if (target == NULL)
     return;
-  while (list[0] != 0xffff) {
+  while (list[0] != ID_LIST_END) {
     s32 id = list[0];
 
     if (Actor_GetById(id) != target) {
@@ -1991,7 +1994,7 @@ void MagmaRock_CrumblePillar(struct MagmaRockCrumblingPillar *entry, s32 id) {
   s32 nextFlag;
 
   target = Actor_Get(id);
-  while (entry->id != 0xffff) {
+  while (entry->id != ID_LIST_END) {
     if (entry->id != id) {
       entry++;
       continue;
@@ -2060,7 +2063,7 @@ void MagmaRock_StepOnTrap(u16 *list) {
   target = Actor_FindAtCell(position, 0);
   if (target == 0)
     return;
-  while (*list != 0xffff) {
+  while (*list != ID_LIST_END) {
     u32 id = list[0];
 
     if (Actor_GetById(id) != target) {
@@ -2159,9 +2162,9 @@ void MagmaRock_SpawnDustRing(void) {
       effect->velocity.y = 0;
       effect->velocity.z = Math_Sin(angle);
       effect->velocity.x += effect->velocity.x >> 1;
-      effect->velocity.x += (Random_Below(0xc000)) - 0x6000;
-      effect->velocity.z += (Random_Below(0x6000)) - 0x3000;
-      effect->spin = (Random_Below(0x1000)) - 0x800;
+      effect->velocity.x += (Random_Below(toFIXED(3) / 4)) - toFIXED(3) / 8;
+      effect->velocity.z += (Random_Below(toFIXED(3) / 8)) - toFIXED(3) / 16;
+      effect->spin = (Random_Below(TRIG_TURN / 16)) - TRIG_TURN / 32;
       effect->scaleRateX = 0;
       effect->scaleRateY = 0;
       effect->update = Effect_AdvanceMotionAtLeaderPriority;
@@ -2204,7 +2207,7 @@ void BattleEffect_StepVector3(struct Particle *particle, s32 damping,
 #include "shared/particle_update_falling.h"
 
 struct RockWork {
-  u8 tiles[0x500];
+  u8 tiles[1280];
   struct Rock rocks[64];
   struct EffectSprite sprites[64];
   s16 next;
@@ -2266,7 +2269,7 @@ void MagmaRock_StartFallingRocks(void) {
   Import_DecompressTaggedLz(Resource_GetTableEntry(RESOURCE_FALLING_ROCK),
                             work);
   entry = VramCache_FindFreeEntry();
-  tile = Vram_Load(entry, 0x500, work);
+  tile = Vram_Load(entry, 1280, work);
   work->tileBase = tile;
   work->resource = entry;
   rock = work->rocks;

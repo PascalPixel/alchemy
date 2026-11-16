@@ -70,6 +70,9 @@
 #include "system/frame.h"
 #include "text/msg_ids.h"
 
+/// The -1 that ends a list of actor ids or table rows, read as a u16.
+#define ID_LIST_END 0xffff
+
 #define FLAG_TELEPORTED_ONCE 0xa36
 /// Grind on the dead end cracked the ice sheet a floor below.
 #define FLAG_ICE_GROUND 0xa3e
@@ -344,7 +347,7 @@ void MarsLighthouseEntrance_PlaceIceCones(u16 *table) {
   s16 flag;
   s16 animation;
 
-  if (table[0] == 0xffff)
+  if (table[0] == ID_LIST_END)
     return;
   row = table;
   do {
@@ -359,7 +362,7 @@ void MarsLighthouseEntrance_PlaceIceCones(u16 *table) {
     object->timer = flag;
     MarsLighthouseEntrance_SetIceConeCells(object);
     row += 3;
-  } while (row[0] != 0xffff);
+  } while (row[0] != ID_LIST_END);
 }
 
 /// While index is at most 7, spawns effect type 0x117 index steps below the
@@ -1847,8 +1850,8 @@ void MarsLighthouseEntrance_LandFromCrack(void) {
     velocity.y = 0;
     velocity.z = Math_Sin(angle);
     velocity.x += velocity.x >> 1;
-    velocity.x += ((u32)(Random16() * 3 << 14) >> 16) - 0x6000;
-    velocity.z += ((u32)(Random16() * 3 << 13) >> 16) - 0x3000;
+    velocity.x += ((u32)(Random16() * 3 << 14) >> 16) - toFIXED(3) / 8;
+    velocity.z += ((u32)(Random16() * 3 << 13) >> 16) - toFIXED(3) / 16;
     FieldEffect_Spawn(leader->x.fixed, leader->y.fixed, leader->z.fixed,
                       velocity.x, velocity.y, velocity.z,
                       EFFECT_USE_UPDATE | EFFECT_USE_START_SCALE |
@@ -1904,7 +1907,7 @@ void CrackedTile_PlaceLanding(s32 x, s32 z, s32 effect) {
 UNUSED void Pound_SinkTarget(u16 *list, s32 mode, s32 count) {
   struct FieldEffectWork *work = Ram_HeapSlots->fieldEffectWork;
 
-  while (*list != 0xffff) {
+  while (*list != ID_LIST_END) {
     s32 entry = *list;
     s32 id = work->secondActorId;
 

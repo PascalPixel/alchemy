@@ -13,6 +13,7 @@
 #include "field/field.h"
 #include "game/game.h"
 #include "graphics/graphics.h"
+#include "graphics/glyph.h"
 #include "system/math_table.h"
 #include "menu/menu.h"
 #include "sound/sound.h"
@@ -767,9 +768,9 @@ struct Actor *LemurianShipDeck_CreateBlackCrystal(void) {
   actor->retainSpriteCache = 1;
   sprite->flags = 0;
   sprite->countAndShadow[0] = 0;
-  buffer = HeapSlot_Alloc(HEAP_SLOT_GLYPH_TRANSFER, 0x608);
+  buffer = HeapSlot_Alloc(HEAP_SLOT_GLYPH_TRANSFER, sizeof(GlyphTransfer));
   Icon_DrawItem(ITEM_BLACK_CRYSTAL);
-  VramCache_Load(sprite->slot, 128, buffer + 0x400);
+  VramCache_Load(sprite->slot, 128, ((GlyphTransfer *)buffer)->tiles);
   HeapSlot_Release(HEAP_SLOT_GLYPH_TRANSFER);
   return actor;
 }

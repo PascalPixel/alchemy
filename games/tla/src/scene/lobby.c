@@ -35,6 +35,9 @@
 #include "scene_ids.h"
 #include "text/msg_ids.h"
 
+/// A gMainRoutineWork.party byte with no member in it.
+#define PARTY_SLOT_EMPTY 0xff
+
 const struct SceneEntrance *Scene_GetEntrances(void) { return gSceneEntrances; }
 
 const struct SceneRegion *Scene_GetExitRegions(void) { return 0; }
@@ -429,7 +432,8 @@ done:
   return result;
 }
 
-/// Writes up to three active party owners to out, ending the list with 0xff.
+/// Writes up to three active party owners to out, ending the list with
+/// PARTY_SLOT_EMPTY.
 s32 LinkLobby_CopyPartyOwnerIds(u16 *out) {
   struct MainRoutineWork *party;
   s32 count = Party_CountMembers();
@@ -453,7 +457,7 @@ next:
     goto next;
 done:
   if (out != NULL)
-    *out = 0xff;
+    *out = PARTY_SLOT_EMPTY;
   return count;
 }
 
@@ -597,7 +601,7 @@ static __inline__ void Lobby_ResetTransferState(void) {
   state = &gSerialTransfer;
   IRQ_LOCK(saved);
   state = &gSerialTransfer;
-  state->status = 0x80;
+  state->status = SERIAL_STATUS_RUNNING;
   *(u8 *)&state->peerFlags = 0;
   gSerialSendSource = 0;
   *(u8 *)&state->flags = 0;
@@ -718,7 +722,7 @@ s32 LinkLobby_EnterBattle(void) {
     wait(5);
   }
   if (!failed) {
-    buf = HeapSlot_AllocEwram(HEAP_SLOT_ENEMY_UNITS, 0x7c8);
+    buf = HeapSlot_AllocEwram(HEAP_SLOT_ENEMY_UNITS, 1992);
     Task_Remove(LinkLobby_PollPeerReady);
     TilesetAnim_Resume(5);
     wait(8);
@@ -905,7 +909,7 @@ s32 LinkLobby_ReportWinTallies(s32 actor) {
   Event_Start();
   Event_ResolvePendingActions(0);
   Actor_FaceActor(actor, gMainRoutineWork.leaderActorId, 0);
-  if ((facing - 0xa001) <= 0x3ffe) {
+  if (facing > FACING_NORTHWEST && facing < FACING_NORTHEAST) {
     base = (s32)MsgLobbyItLooksLike;
     count = &gMainRoutineWork.linkTallies[LINK_TALLY_LINKED_WINS];
     if (*count != 0) {
@@ -1029,7 +1033,7 @@ s32 LinkLobby_PartyContains(s32 owner) {
   if (count > limit)
     count = limit;
   for (i = 0; i < count; i++) {
-    if (gMainRoutineWork.party[i] == 0xff)
+    if (gMainRoutineWork.party[i] == PARTY_SLOT_EMPTY)
       return 0;
     if (gMainRoutineWork.party[i] == owner)
       return 1;

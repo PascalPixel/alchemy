@@ -283,12 +283,12 @@ inPlace:
   table = (struct LohoSpark *)Heap_AllocEwram(LOHO_SPARK_COUNT *
                                               sizeof(struct LohoSpark));
   {
-    void *buffer = Heap_Alloc(0x1000);
+    void *buffer = Heap_Alloc(4096);
 
     sheet = Resource_GetTableEntry(RESOURCE_FIELD_EFFECT_EXPLOSION);
     Decompress_TaggedLz(sheet, buffer);
     entry = VramCache_FindFreeEntry();
-    tiles = VramCache_Load(entry, 0x400, buffer);
+    tiles = VramCache_Load(entry, 1024, buffer);
     Heap_Release(buffer);
   }
   spark = (struct LohoSpark *)&table->age;

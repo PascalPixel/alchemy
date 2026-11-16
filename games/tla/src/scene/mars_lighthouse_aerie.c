@@ -29,6 +29,7 @@
 #include "field/field.h"
 #include "game/game.h"
 #include "graphics/graphics.h"
+#include "graphics/glyph.h"
 #include "system/math_table.h"
 #include "menu/menu.h"
 #include "sound/sound.h"
@@ -2071,9 +2072,9 @@ void MarsLighthouseAerie_LightBeacon(void) {
     object->speedLimit = toFIXED(2) / 5;
     object->acceleration = toFIXED(1) / 20;
     object->gravity = toFIXED(1) / 2;
-    block = HeapSlot_Alloc(HEAP_SLOT_GLYPH_TRANSFER, 0x608);
+    block = HeapSlot_Alloc(HEAP_SLOT_GLYPH_TRANSFER, sizeof(GlyphTransfer));
     Item_LoadIcon(ITEM_MARS_STAR);
-    tiles = (block + 0x400);
+    tiles = block + offsetof(GlyphTransfer, tiles);
     Vram_Load(sprite->vramBlock, 128, tiles);
     HeapSlot_Release(HEAP_SLOT_GLYPH_TRANSFER);
     object->motionFlags = zero;

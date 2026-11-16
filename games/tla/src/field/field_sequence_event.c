@@ -143,12 +143,12 @@ void Event_PrepareTwoObjectsAndApply(s32 first, s32 second) {
 /// Checks an L or R button shortcut, packed as the party member in bits 10 to
 /// 13 and the Psynergy in bits 0 to 9.
 s32 Party_CheckShortcut(u32 shortcut) {
-  s32 member = (shortcut >> 10) & 0xf;
-  s32 ability = shortcut & 0x3ff;
+  s32 member = ACT_UNIT(shortcut);
+  s32 ability = ABILITY_ID(shortcut);
 
   if (member > ALLY_MAX)
     return -1;
-  if (GameFlag_Get(member) == 0)
+  if (GameFlag_Get(FLAG_IN_PARTY(member)) == 0)
     return -2;
   if (Unit_KnowsPsynergyFar(member, ability) == 0)
     return -3;

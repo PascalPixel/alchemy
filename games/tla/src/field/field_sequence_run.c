@@ -121,7 +121,7 @@ s32 FieldSequence_Run(void) {
   if (!GameFlag_Get(FLAG_KEEP_PARTY_POSITION)) {
     Scene_SetRestartPoint();
     gMainRoutineWork.hazardLimit = 16;
-    gMainRoutineWork.hazardMode = 0;
+    gMainRoutineWork.hazardMode = HAZARD_COUNT_ON_CELLS;
     gMainRoutineWork.hazardDamage = 1;
     gMainRoutineWork.haltedActor = -1;
     gMainRoutineWork.cloaked = 0;

@@ -186,7 +186,7 @@ s32 Scene_TalkToActor(s32 id) {
   struct Actor *shown;
   struct ContainerRow *row;
   struct TriggerView *talk;
-  s32 noHint;
+  s32 point;
   u8 *busy;
   s32 found;
   s32 type;
@@ -217,7 +217,7 @@ s32 Scene_TalkToActor(s32 id) {
         index = id;
         found = 1;
         p = (s16 *)(end - 0x1fe);
-        noHint = *p;
+        point = *p;
         p = (s16 *)(end - 0x1fc);
         flag = *p;
         p = (s16 *)(end - 0x1fa);
@@ -225,7 +225,7 @@ s32 Scene_TalkToActor(s32 id) {
       }
     } else {
       type = CONTAINER_BURIED;
-      noHint = result;
+      point = result;
       flag = result;
       contents = event->scoopedItem;
       index = FIELD_SCOOP_ACTOR;
@@ -246,7 +246,7 @@ s32 Scene_TalkToActor(s32 id) {
       *busy = 1;
       if (silent == 0)
         FieldMessage_ShowFar(found + (s32)&MsgTileChecked, FIELD_MESSAGE_ZOOM);
-      if (gMainRoutineWork.next == SCENE_VENUS_LIGHTHOUSE && noHint == 0 &&
+      if (gMainRoutineWork.next == SCENE_VENUS_LIGHTHOUSE && point == 0 &&
           !GameFlag_Get(flag)) {
         MessageArgument_PushFar(contents, MESSAGE_ARGUMENT_ITEM);
         FieldMessage_ShowFar((s32)&MsgChestAlreadyOpen, FIELD_MESSAGE_ZOOM);

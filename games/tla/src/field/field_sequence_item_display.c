@@ -356,7 +356,8 @@ void FieldEffect_SpawnRevealMarkers(void) {
   found.headerWord = (*(s32 **)map)[1];
   if (entry == NULL)
     return;
-  for (i = 0; i <= 15 && (type = *entry++) != 0 && !(type & 0x4000); i++) {
+  for (i = 0; i <= 15 && (type = *entry++) != 0 && !(type & SCENE_ITEMS_HEADER);
+       i++) {
     id = entry[0];
     flag = entry[1];
     entry += 3;

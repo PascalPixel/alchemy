@@ -748,6 +748,14 @@ void BattleEffect_EndElementStreaks(void) {
 /// CornerRuneASheet's 64x64 rune mirrored into a 128x128 one, in the map cell
 /// buffer.
 #define CRUEL_RUIN_RUNE_CIRCLE 0x4000
+/// The pillar's strip mesh, in the map cell buffer.
+#define CRUEL_RUIN_STRIP_MESH (Ram_MapCellBuffer + 0x2000)
+/// The particles of the first act: rays of light from the caster, the motes
+/// that rise around it, and the black sphere that falls on the foes.
+#define CRUEL_RUIN_RAYS 24
+#define CRUEL_RUIN_FIRST_MOTE 32
+#define CRUEL_RUIN_MOTES 31
+#define CRUEL_RUIN_SPHERE 63
 
 /// Cruel Ruin: a pillar of dark light swallows the caster, a shadowed sky
 /// rains ruin in six blasts while the ground splits, then a black sphere
@@ -861,13 +869,13 @@ void BattleEffect_RunCruelRuin(struct BattleEffectParams *args) {
   dg = 0;
   db = 0;
   steps = 0;
-  for (i = 0; i != 24; i++) {
+  for (i = 0; i != CRUEL_RUIN_RAYS; i++) {
     struct Particle *p = &work->particles[i];
     p->z = i * 0xaaa + (Random16() & 0xfff);
     p->variant = -(Random16() & 15);
   }
-  for (i = 0; i != 31; i++) {
-    struct Particle *p = &work->particles[i + 32];
+  for (i = 0; i != CRUEL_RUIN_MOTES; i++) {
+    struct Particle *p = &work->particles[CRUEL_RUIN_FIRST_MOTE + i];
     SET_POSITION(p, Random16() & 127, (Random16() & 31) + 88,
                  (Random16() & 3) + 5);
     p->variant = i * -2;
@@ -997,8 +1005,8 @@ void BattleEffect_RunCruelRuin(struct BattleEffectParams *args) {
           Canvas_BlitAtFoot(work->sheet, 60, y, size);
         }
         if (frame > 127) {
-          for (i = 0; i != 31; i++) {
-            struct Particle *p = &work->particles[i + 32];
+          for (i = 0; i != CRUEL_RUIN_MOTES; i++) {
+            struct Particle *p = &work->particles[CRUEL_RUIN_FIRST_MOTE + i];
 
             if ((u32)p->variant <= 15) {
               s32 s = FIXEDtoINT(Trig_Sin(p->variant << 10) * p->z);
@@ -1111,7 +1119,7 @@ void BattleEffect_RunCruelRuin(struct BattleEffectParams *args) {
           model->kind = MODEL_SHADED_MAX;
           shade = -16;
           model->shade = shade;
-          for (i = 0; i != 24; i++) {
+          for (i = 0; i != CRUEL_RUIN_RAYS; i++) {
             struct Particle *p = &work->particles[i];
 
             if (p->variant >= 0) {
@@ -1136,7 +1144,7 @@ void BattleEffect_RunCruelRuin(struct BattleEffectParams *args) {
             Palette_BrightenBgEntries(2, 2, 2);
           }
           if (frame > 159) {
-            struct Particle *q = &work->particles[63];
+            struct Particle *q = &work->particles[CRUEL_RUIN_SPHERE];
             s32 r = frame * 2 + -288;
 
             if (r > 64) {
@@ -1186,7 +1194,7 @@ void BattleEffect_RunCruelRuin(struct BattleEffectParams *args) {
   {
     s32 count = -1;
     s32 fadeStep = 2;
-    u8 *strip = Ram_MapCellBuffer + 0x2000;
+    u8 *strip = CRUEL_RUIN_STRIP_MESH;
     void *verts;
     Render_BuildQuadStrip(strip, 8, 16, 32);
     for (k = 0; k != 2; k++) {
@@ -1237,9 +1245,9 @@ void BattleEffect_RunCruelRuin(struct BattleEffectParams *args) {
     {
       u8 *e = Resource_GetTableEntry(RESOURCE_FOREST_CANOPY_TILES);
 
-      Iwram_FillWords((void *)&OBJ_PLTT_COLOR(15, 0), 32,
+      Iwram_FillWords((void *)&OBJ_PLTT_COLOR(15, 0), PALETTE_BANK_BYTES,
                       COLOR_PAIR(RGB_WHITE));
-      Decompress_TaggedLz(e + 32, work->sheet);
+      Decompress_TaggedLz(e + PALETTE_BANK_BYTES, work->sheet);
     }
     {
       s32 q;
@@ -1248,7 +1256,7 @@ void BattleEffect_RunCruelRuin(struct BattleEffectParams *args) {
         struct RuinObject *obj;
 
         i = 0;
-        src = work->sheet + q * 0x1000;
+        src = work->sheet + q * 8 * OBJ_32X32_4BPP_BYTES;
         for (; i != 8; i++) {
           obj = EffectSprite_CreateWithTiles(32, 32, OBJ_SIZE_32X32,
                                              OBJ_PALETTE(15));
@@ -1259,8 +1267,8 @@ void BattleEffect_RunCruelRuin(struct BattleEffectParams *args) {
             x |= 4;
             ((u8 *)obj)[9] = x;
           }
-          Iwram_CopyWords((void *)OBJ_TILES(obj), src, 512);
-          src += 512;
+          Iwram_CopyWords((void *)OBJ_TILES(obj), src, OBJ_32X32_4BPP_BYTES);
+          src += OBJ_32X32_4BPP_BYTES;
         }
         obj = EffectSprite_Acquire(32, 32, OBJ_SIZE_32X32, OBJ_PALETTE(15));
         work->sprites[q * 9 + 8] = obj;
@@ -1697,7 +1705,7 @@ void BattleEffect_RunCruelRuin(struct BattleEffectParams *args) {
           model->kind = MODEL_SHADED_MAX;
         }
         if (frame > 31) {
-          struct Particle *q = &work->particles[63];
+          struct Particle *q = &work->particles[CRUEL_RUIN_SPHERE];
           s32 r = frame * 2 - 32;
 
           if (r > 64) {

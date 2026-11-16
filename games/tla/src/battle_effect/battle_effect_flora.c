@@ -127,7 +127,9 @@ void BattleEffect_RunFlora(struct BattleEffectParams *args) {
             16, 16, OBJ_SIZE_16X16, OBJ_PALETTE(15));
         work->sprites[FLORA_PETAL_SPRITES + i] = obj;
         obj->image.priority = 2;
-        Iwram_CopyWordsEntry((void *)OBJ_TILES(obj), cells + i * 128, 128);
+        Iwram_CopyWordsEntry((void *)OBJ_TILES(obj),
+                             cells + i * OBJ_16X16_4BPP_BYTES,
+                             OBJ_16X16_4BPP_BYTES);
         FLORA_PETALS->tiles[i] =
             ((struct Sprite *)work->sprites[FLORA_PETAL_SPRITES + i])
                 ->image.tile;
@@ -800,7 +802,8 @@ void BattleEffect_RunFlora(struct BattleEffectParams *args) {
     for (i = 0; i != 64; i++, p++) {
       if (frame > i) {
         draw[0](canvas,
-                work->sheet + FLORA_STORM_PETALS + (p->variant / 4 % 15 << 8),
+                work->sheet + FLORA_STORM_PETALS +
+                    (p->variant / 4 % FLORA_BLOOM_TILES << 8),
                 FIXED_INTEGER_PART(p->x) - 4, FIXED_INTEGER_PART(p->y), 16, 16);
         BattleEffectKernels_IntegrateVector2(p, PARTICLE_DAMPING_NONE, 0);
         p->velocityX += -toFIXED(1) / 16;

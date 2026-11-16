@@ -182,12 +182,14 @@ void BattleEffect_RunGaspFamily(struct BattleEffectParams *args, s32 mode) {
     s32 k;
 
     Resource_LoadAndDecompress(RESOURCE_LIGHTNING_BOLT_SHEET, cells, 1, 1);
-    Iwram_ClearWordsEntry(work->sheet, 0x4000);
+    // The four bolts, each 4 pixels in from the left of a 32x128 cel.
+    Iwram_ClearWordsEntry(work->sheet, 4 * 32 * 128);
     for (i = 0; i != 4; i++)
-      for (k = 0; k != 120; k++)
-        for (j = 0; j != 24; j++)
-          work->sheet[4 + i * 0x1000 + k * 32 + j] =
-              cells[(i * 45 << 6) + k * 24 + j];
+      for (k = 0; k != LIGHTNING_BOLT_HEIGHT; k++)
+        for (j = 0; j != LIGHTNING_BOLT_WIDTH; j++)
+          work->sheet[4 + i * 32 * 128 + k * 32 + j] =
+              cells[i * LIGHTNING_BOLT_PICTURE_BYTES +
+                    k * LIGHTNING_BOLT_WIDTH + j];
     LOAD_BG_PALETTE(RESOURCE_VIOLET_PALETTE_F);
     frames = 60;
   } else if (mode == GASP_MODE_COUNTER_RUSH) {
@@ -211,7 +213,7 @@ void BattleEffect_RunGaspFamily(struct BattleEffectParams *args, s32 mode) {
     Resource_LoadAndDecompress(RESOURCE_FIRE_RING_TEXTURE,
                                work->sheet + GASP_FIRE_RING, 0, 0);
     Resource_LoadAndDecompress(RESOURCE_SMOKE_SHEET, work->sheet, 1, 0);
-    for (i = 0, p = work->sheet; i != 0x1b00; i++, p++) {
+    for (i = 0, p = work->sheet; i != 6 * PICTURE_BYTES(SMOKE_PUFF); i++, p++) {
       *p <<= 1;
       if (*p > CANVAS_LEVEL_BRIGHTEST)
         *p = CANVAS_LEVEL_BRIGHTEST;
@@ -294,7 +296,7 @@ void BattleEffect_RunGaspFamily(struct BattleEffectParams *args, s32 mode) {
     } else if (mode == GASP_MODE_UNUSED && frame > 31) {
       u16 *pal = (u16 *)&BG_PLTT_COLOR(0, 1);
 
-      for (i = 0; i != 63; i++, pal++) {
+      for (i = 0; i != SHEET_PALETTE_COLORS - 1; i++, pal++) {
         s32 r = RGB_RED(*pal);
         s32 g = RGB_GREEN(*pal);
         s32 b = RGB_BLUE(*pal);
@@ -346,7 +348,7 @@ void BattleEffect_RunGaspFamily(struct BattleEffectParams *args, s32 mode) {
       }
       if (frame > 37) {
         if (frame == 38) {
-          for (i = 0; i != 63; i++) {
+          for (i = 0; i != GASP_CENTRE; i++) {
             struct Particle *p = &work->particles[i];
             s32 s;
 
@@ -364,7 +366,7 @@ void BattleEffect_RunGaspFamily(struct BattleEffectParams *args, s32 mode) {
           BattleEffect_TintBattler(args->targets[0], SPRITE_COLOR_WHITE,
                                    POSE_DAMAGE, 0, 8);
         }
-        for (i = 0; i != 63; i++) {
+        for (i = 0; i != GASP_CENTRE; i++) {
           struct Particle *p = &work->particles[i];
 
           if (p->variant >= 0) {
@@ -415,7 +417,7 @@ void BattleEffect_RunGaspFamily(struct BattleEffectParams *args, s32 mode) {
       if (frame == 62)
         Sound_PlayFar(SE_DJINNI_SET);
       if (frame == 0) {
-        for (i = 0; i != 63; i++) {
+        for (i = 0; i != GASP_CENTRE; i++) {
           struct Particle *p = &work->particles[i];
 
           p->z = Random16();

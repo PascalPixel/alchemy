@@ -1,13 +1,4 @@
 	.section .rodata
-@ Another copy of The Broken Seal's gWorldMap_CursorDirectionAngles;
-@ read by WorldPicture_UpdateMarkers
-	.global gWorldMap_CursorDirectionAngles
-gWorldMap_CursorDirectionAngles:
-	.2byte 0xffff, 0x0000, 0x8000, 0xffff
-	.2byte 0xc000, 0xe000, 0xa000, 0xc000
-	.2byte 0x4000, 0x2000, 0x6000, 0x4000
-	.2byte 0xffff, 0x0000, 0x8000, 0xffff
-
 @ 20-byte entries keyed by a flag (0x180 + flag), which FlagEntries_GetTable
 @ returns: WorldMap_MarkPlaceVisited sets the flag of the entry whose id matches (and
 @ whose variant does, unless it is -1), FlagEntries_GetValue returns an entry's

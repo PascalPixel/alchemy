@@ -1,63 +1,69 @@
+@ One row: the packed resource that holds the pictures of animation `number`.
+	.macro sprite_source resource:req, number:req
+	.2byte ResourceId_\resource, \number
+	.endm
+
 	.section .rodata
 	.global gActor_ShadowTiles
 gActor_ShadowTiles:
 	.incbin "games/tbs/src/field/actor_shadow.8bpp"
 
-@ Enemy sprite resource IDs and enemy IDs
+@ Where each animation number's pictures are (SpritePictureCache_Load): the
+@ table ends at number 0.
 	.global gSpritePictureCache_Sources
 gSpritePictureCache_Sources:
-	.2byte ResourceId_AxeGoblinSprites, 400
-	.2byte ResourceId_GhoulSprites, 401
-	.2byte ResourceId_HarpySprites, 402
-	.2byte ResourceId_TrollSprites, 403
-	.2byte ResourceId_WitchSprites, 404
-	.2byte ResourceId_GriffinSprites, 408
-	.2byte ResourceId_ShieldKnightSprites, 409
-	.2byte ResourceId_OrcSprites, 410
-	.2byte ResourceId_ChimeraSprites, 411
-	.2byte ResourceId_LivingArmorSprites, 415
-	.2byte ResourceId_ManticoreSprites, 417
-	.2byte ResourceId_OrcLordSprites, 421
-	.2byte ResourceId_GargoyleSprites, 424
-	.2byte ResourceId_LizardManSprites, 429
-	.2byte ResourceId_OgreSprites, 430
-	.2byte ResourceId_TailedImpSprites, 433
-	.2byte ResourceId_WispGhostSprites, 434
-	.2byte ResourceId_SalamanderSprites, 435
-	.2byte ResourceId_AquaBeastSprites, 436
-	.2byte ResourceId_HoundSprites, 448
-	.2byte ResourceId_BearSprites, 450
-	.2byte ResourceId_SirenSprites, 451
-	.2byte ResourceId_BlueWispSprites, 453
-	.2byte ResourceId_MushroomSprites, 454
-	.2byte ResourceId_RedWormSprites, 455
-	.2byte ResourceId_FairySprites, 456
-	.2byte ResourceId_BatSprites, 457
-	.2byte ResourceId_SmallLizardSprites, 458
-	.2byte ResourceId_WalkingPlantSprites, 459
-	.2byte ResourceId_FlySprites, 460
-	.2byte ResourceId_CrabSprites, 461
-	.2byte ResourceId_SmallBirdSprites, 462
-	.2byte ResourceId_MothSprites, 463
-	.2byte ResourceId_FrogSprites, 464
-	.2byte ResourceId_ManedLionSprites, 465
-	.2byte ResourceId_SerpentSprites, 466
-	.2byte ResourceId_WingedDragonSprites, 467
-	.2byte ResourceId_BlueMageSprites, 468
-	.2byte ResourceId_SkeletonSprites, 469
-	.2byte ResourceId_FlameSkullSprites, 470
-	.2byte ResourceId_FireDragonSprites, 471
-	.2byte ResourceId_CrawlerSprites, 472
-	.2byte ResourceId_MimicSprites, 473
-	.2byte ResourceId_SeaBeastSprites, 474
-	.2byte ResourceId_SpiritHorseSprites, 475
-	.2byte ResourceId_KrakenSprites, 476
-	.2byte ResourceId_SlimeSprites, 477
-	.2byte ResourceId_SaturosSprites, 478
-	.2byte ResourceId_MenardiSprites, 479
-	.2byte ResourceId_GhostHeadSprites, 481
-	.2byte ResourceId_FusionDragonSprites, 483
-	.2byte ResourceId_PurpleBeastSprites, 484
-	.2byte ResourceId_RedWarriorSprites, 485
-	.2byte ResourceId_SwordGirlSprites, 486
-	.2byte 0, 0
+	sprite_source AxeGoblinSprites, 400
+	sprite_source GhoulSprites, 401
+	sprite_source HarpySprites, 402
+	sprite_source TrollSprites, 403
+	sprite_source WitchSprites, 404
+	sprite_source GriffinSprites, 408
+	sprite_source ShieldKnightSprites, 409
+	sprite_source OrcSprites, 410
+	sprite_source ChimeraSprites, 411
+	sprite_source LivingArmorSprites, 415
+	sprite_source ManticoreSprites, 417
+	sprite_source OrcLordSprites, 421
+	sprite_source GargoyleSprites, 424
+	sprite_source LizardManSprites, 429
+	sprite_source OgreSprites, 430
+	sprite_source TailedImpSprites, 433
+	sprite_source WispGhostSprites, 434
+	sprite_source SalamanderSprites, 435
+	sprite_source AquaBeastSprites, 436
+	sprite_source HoundSprites, 448
+	sprite_source BearSprites, 450
+	sprite_source SirenSprites, 451
+	sprite_source BlueWispSprites, 453
+	sprite_source MushroomSprites, 454
+	sprite_source RedWormSprites, 455
+	sprite_source FairySprites, 456
+	sprite_source BatSprites, 457
+	sprite_source SmallLizardSprites, 458
+	sprite_source WalkingPlantSprites, 459
+	sprite_source FlySprites, 460
+	sprite_source CrabSprites, 461
+	sprite_source SmallBirdSprites, 462
+	sprite_source MothSprites, 463
+	sprite_source FrogSprites, 464
+	sprite_source ManedLionSprites, 465
+	sprite_source SerpentSprites, 466
+	sprite_source WingedDragonSprites, 467
+	sprite_source BlueMageSprites, 468
+	sprite_source SkeletonSprites, 469
+	sprite_source FlameSkullSprites, 470
+	sprite_source FireDragonSprites, 471
+	sprite_source CrawlerSprites, 472
+	sprite_source MimicSprites, 473
+	sprite_source SeaBeastSprites, 474
+	sprite_source SpiritHorseSprites, 475
+	sprite_source KrakenSprites, 476
+	sprite_source SlimeSprites, 477
+	sprite_source SaturosSprites, 478
+	sprite_source MenardiSprites, 479
+	sprite_source GhostHeadSprites, 481
+	sprite_source FusionDragonSprites, 483
+	sprite_source PurpleBeastSprites, 484
+	sprite_source RedWarriorSprites, 485
+	sprite_source SwordGirlSprites, 486
+	.2byte 0, 0 @ the end

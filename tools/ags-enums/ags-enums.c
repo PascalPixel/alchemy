@@ -2,7 +2,8 @@
  * ags-enums.c
  *
  * Give assembly a C header's enum constants, so a table in a .s file names an
- * id the way the C does. Each enumerator becomes an .equiv with its value. An
+ * id the way the C does. Each enumerator becomes an .equiv with its value, and
+ * so does each macro defined as one integer literal (a flag of flags.h). An
  * initializer is an integer literal or an earlier enumerator; anything else,
  * or a conditional inside an enum, is refused, since only C could evaluate it.
  */
@@ -16,44 +17,13 @@ typedef struct
 } Constants;
 
 static const char *path;
+static Constants *defines;
 static unsigned line = 1;
 
 static _Noreturn void
 refuse(const char *what)
 {
 	fail("%s:%u: %s", path, line, what);
-}
-
-/* Skip blanks, comments and preprocessor lines; a conditional is refused. */
-static const char *
-skip(const char *at, bool inEnum)
-{
-	for (;;)
-	{
-		if (*at == '\n')
-			line++;
-		if (isspace((unsigned char) *at))
-			at++;
-		else if (at[0] == '/' && at[1] == '/')
-			at += strcspn(at, "\n");
-		else if (at[0] == '/' && at[1] == '*')
-		{
-			const char *end = strstr(at + 2, "*/");
-			if (!end)
-				refuse("unterminated comment");
-			for (; at < end; at++)
-				line += *at == '\n';
-			at = end + 2;
-		}
-		else if (*at == '#')
-		{
-			if (inEnum)
-				refuse("a preprocessor line inside an enum");
-			at += strcspn(at, "\n");
-		}
-		else
-			return at;
-	}
 }
 
 static bool
@@ -107,6 +77,82 @@ add(Constants *constants, const char *name, long value)
 	addString(&constants->names, name);
 }
 
+
+/*
+ * A `#define NAME literal` line, `at` on its #: the name takes the literal's
+ * value. Any other preprocessor line is left alone.
+ */
+static void
+define(const char *at)
+{
+	at++;
+	at += strspn(at, " \t");
+	if (strncmp(at, "define", 6) || identifierChar(at[6]))
+		return;
+	at += 6;
+	at += strspn(at, " \t");
+	const char *name = at;
+	while (identifierChar(*at))
+		at++;
+	size_t length = (size_t) (at - name);
+	if (!length || *at == '(')
+		return;
+	for (;;)
+	{
+		at += strspn(at, " \t");
+		if (at[0] != '\\' || at[1] != '\n')
+			break;
+		at += 2;
+	}
+	if (!isdigit((unsigned char) *at))
+		return;
+	char *end;
+	long value = strtol(at, &end, 0);
+	end += strspn(end, " \t");
+	if (*end != '\n' && *end != '\0' && !(end[0] == '/' && end[1] == '/'))
+		return;
+	char *text = allocate(length + 1, 1);
+	memcpy(text, name, length);
+	add(defines, text, value);
+	free(text);
+}
+
+/*
+ * Skip blanks, comments and preprocessor lines, taking what a line defines; a
+ * preprocessor line inside an enum is refused.
+ */
+static const char *
+skip(const char *at, bool inEnum)
+{
+	for (;;)
+	{
+		if (*at == '\n')
+			line++;
+		if (isspace((unsigned char) *at))
+			at++;
+		else if (at[0] == '/' && at[1] == '/')
+			at += strcspn(at, "\n");
+		else if (at[0] == '/' && at[1] == '*')
+		{
+			const char *end = strstr(at + 2, "*/");
+			if (!end)
+				refuse("unterminated comment");
+			for (; at < end; at++)
+				line += *at == '\n';
+			at = end + 2;
+		}
+		else if (*at == '#')
+		{
+			if (inEnum)
+				refuse("a preprocessor line inside an enum");
+			define(at);
+			at += strcspn(at, "\n");
+		}
+		else
+			return at;
+	}
+}
+
 /* One enum body, from after its opening brace to after its closing one. */
 static const char *
 enumerators(Constants *constants, const char *at)
@@ -151,6 +197,7 @@ main(int argc, char **argv)
 	path = argv[1];
 	Buffer header = readFile(path);
 	Constants constants = {0};
+	defines = &constants;
 	const char *at = (const char *) header.data;
 	while (*(at = skip(at, false)))
 	{

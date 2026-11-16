@@ -1,4 +1,5 @@
 	.include "games/tbs/include/edition.inc"
+	.include "enums/flags.inc"
 	.include "enums/sounds.inc"
 
 @ Field music: the music (a MUS_ id) of the first rule matching the scene or
@@ -42,49 +43,49 @@ gScene_MusicRules:
 	area_music 2, 70, -1, MUS_TOLBI_BOUND_SHIP
 	area_music 2, 75, -1, MUS_TOLBI_BOUND_SHIP
 	area_music 2, 73, -1, MUS_ELEMENTAL_STARS
-	area_music 2, -1, 0x16e, MUS_DJINN_LESSON
+	area_music 2, -1, FLAG_DJINN_LESSON, MUS_DJINN_LESSON
 	area_music 2, -1, -1, MUS_WORLD_MAP
-	scene_music Sanctum, -1, 0x9f0, MUS_FILE_SCREEN
-	scene_music Sanctum, -1, 0x814, MUS_TOWN_IN_TROUBLE
+	scene_music Sanctum, -1, FLAG_SANCTUM_QUEST_ACCEPTED, MUS_FILE_SCREEN
+	scene_music Sanctum, -1, FLAG_SOL_SANCTUM_ERUPTED, MUS_TOWN_IN_TROUBLE
 	scene_music Sanctum, -1, -1, MUS_FILE_SCREEN
 	scene_music CottageRoomsB, 19, -1, MUS_PALACE
-	area_music 3, -1, 0x9f0, MUS_VALE
-	area_music 3, -1, 0x814, MUS_TOWN_IN_TROUBLE
-	area_music 3, -1, 0x901, MUS_VALE
-	area_music 3, -1, 0x900, MUS_DANGER
+	area_music 3, -1, FLAG_SANCTUM_QUEST_ACCEPTED, MUS_VALE
+	area_music 3, -1, FLAG_SOL_SANCTUM_ERUPTED, MUS_TOWN_IN_TROUBLE
+	area_music 3, -1, FLAG_VALE_THREE_YEARS_LATER, MUS_VALE
+	area_music 3, -1, FLAG_VALE_STORM_MONSTER_FOUGHT, MUS_DANGER
 	area_music 3, -1, -1, MUS_SILENCE
 	scene_music SolSanctumElementalStarRoom, -1, -1, MUS_ELEMENTAL_STARS
 	scene_music SolSanctumEruption, -1, -1, MUS_ERUPTION
-	area_music 4, -1, 0x9f0, MUS_TOWN_IN_TROUBLE
-	area_music 4, -1, 0x814, MUS_ERUPTION
+	area_music 4, -1, FLAG_SANCTUM_QUEST_ACCEPTED, MUS_TOWN_IN_TROUBLE
+	area_music 4, -1, FLAG_SOL_SANCTUM_ERUPTED, MUS_ERUPTION
 	scene_music SolEntrance, -1, -1, MUS_SOL_SANCTUM
 	area_music 4, -1, -1, MUS_SOL_SANCTUM
 	scene_music StoneRooms, 2, -1, MUS_TOWN
 	area_music 5, -1, -1, MUS_VALE
 	area_music 6, -1, -1, MUS_WORLD_MAP
 	area_music 7, -1, -1, MUS_CAVE
-	area_music 8, -1, 0x845, MUS_TOWN
+	area_music 8, -1, FLAG_KOLIMA_CURSE_LIFTED, MUS_TOWN
 	area_music 8, -1, -1, MUS_TOWN_IN_TROUBLE
 	area_music 9, -1, -1, MUS_PALACE
-	area_music 10, -1, 0x845, MUS_TOWN
+	area_music 10, -1, FLAG_KOLIMA_CURSE_LIFTED, MUS_TOWN
 	area_music 10, -1, -1, MUS_TOWN_IN_TROUBLE
 	scene_music KolimaTunnel, -1, -1, MUS_TOWN_IN_TROUBLE
-	area_music 11, -1, 0x845, MUS_TOWN
+	area_music 11, -1, FLAG_KOLIMA_CURSE_LIFTED, MUS_TOWN
 	area_music 11, -1, -1, MUS_TOWN_IN_TROUBLE
-	area_music 12, -1, 0x845, MUS_TOWN
+	area_music 12, -1, FLAG_KOLIMA_CURSE_LIFTED, MUS_TOWN
 	area_music 12, -1, -1, MUS_TOWN_IN_TROUBLE
-	area_music 13, -1, 0x845, MUS_TOWN
+	area_music 13, -1, FLAG_KOLIMA_CURSE_LIFTED, MUS_TOWN
 	area_music 13, -1, -1, MUS_FOREST
-	area_music 14, -1, 0x845, MUS_TOWN
-	area_music 14, -1, 0x844, MUS_FOREST
+	area_music 14, -1, FLAG_KOLIMA_CURSE_LIFTED, MUS_TOWN
+	area_music 14, -1, FLAG_TRET_DEFEATED, MUS_FOREST
 	area_music 14, -1, -1, MUS_TRET_TREE
 	scene_music BilibinCaveEntrance, -1, -1, MUS_WORLD_MAP
 	area_music 15, -1, -1, MUS_CAVE
-	area_music 17, -1, 0x881, MUS_SUHALLA
+	area_music 17, -1, FLAG_SATUROS_BEATEN_AT_MERCURY, MUS_SUHALLA
 	area_music 17, -1, -1, MUS_TOWN_IN_TROUBLE
 	area_music 18, -1, -1, MUS_CAVE
 	scene_music MercuryLighthouseAerie, -1, -1, MUS_ELEMENTAL_STARS
-	area_music 19, -1, 0x881, MUS_ELEMENTAL_STARS
+	area_music 19, -1, FLAG_SATUROS_BEATEN_AT_MERCURY, MUS_ELEMENTAL_STARS
 	area_music 19, -1, -1, MUS_MERCURY_LIGHTHOUSE
 	scene_music LacquerRoomsA, 3, -1, MUS_IVAN
 	area_music 20, -1, -1, MUS_FUCHIN_TEMPLE
@@ -92,7 +93,7 @@ gScene_MusicRules:
 	area_music 22, -1, -1, MUS_FOREST
 	area_music 23, -1, -1, MUS_FUCHIN_TEMPLE
 	area_music 24, -1, -1, MUS_WORLD_MAP
-	area_music 25, -1, 0x909, MUS_VALE
+	area_music 25, -1, FLAG_HYDROS_STATUES_DEFEATED, MUS_VALE
 	area_music 25, -1, -1, MUS_TRET_TREE
 	area_music 26, -1, -1, MUS_DANGER
 	area_music 27, -1, -1, MUS_FUCHIN_TEMPLE
@@ -106,13 +107,13 @@ gScene_MusicRules:
 	area_music 34, -1, -1, MUS_TOWN
 	area_music 35, -1, -1, MUS_CAVE
 	area_music 36, -1, -1, MUS_KALAY
-	area_music 37, -1, 0x8f0, MUS_CONFRONTATION
+	area_music 37, -1, FLAG_TOLBI_SHIP_MONSTERS_SIGHTED, MUS_CONFRONTATION
 	area_music 37, -1, -1, MUS_TOLBI_BOUND_SHIP
 	area_music 38, -1, -1, MUS_KALAY
 	scene_music CrossboneIsle, -1, -1, MUS_WORLD_MAP
 	scene_music PirateShip, -1, -1, MUS_OMINOUS
 	area_music 39, -1, -1, MUS_DUNGEON
-	area_music 40, -1, 0x950, MUS_TOWN
+	area_music 40, -1, FLAG_COLOSSO_OVER, MUS_TOWN
 	area_music 40, -1, -1, MUS_TOLBI
 	area_music 41, -1, -1, MUS_PALACE
 	scene_music ColosseumAzartMatch, 1, -1, MUS_COLOSSO_INTRO
@@ -128,7 +129,7 @@ gScene_MusicRules:
 	scene_music Colosseum, 21, -1, MUS_PALACE
 	scene_music Colosseum, 31, -1, MUS_PALACE
 	scene_music Colosseum, 64, -1, MUS_PALACE
-	scene_music ColosseumEntrance, -1, 0x950, MUS_TOWN
+	scene_music ColosseumEntrance, -1, FLAG_COLOSSO_OVER, MUS_TOWN
 	area_music 42, -1, -1, MUS_COLOSSO
 	area_music 43, -1, -1, MUS_CONFRONTATION
 	area_music 44, -1, -1, MUS_WORLD_MAP
@@ -145,11 +146,11 @@ gScene_MusicRules:
 	scene_music TunnelRuinsLadyStatues, 3, -1, MUS_DUNGEON
 	area_music 53, -1, -1, MUS_CONFRONTATION
 	area_music 54, -1, -1, MUS_DUNGEON
-	area_music 55, -1, 0x9a7, MUS_TOWN
+	area_music 55, -1, FLAG_VENUS_LIGHTHOUSE_PARTY_RETURNED, MUS_TOWN
 	area_music 55, -1, -1, MUS_TOWN_IN_TROUBLE
 	area_music 56, -1, -1, MUS_MERCURY_LIGHTHOUSE
-	scene_music VenusLighthouseAerie, -1, 0x351, MUS_ELEMENTAL_STARS
-	scene_music VenusLighthouseAerie, -1, 0x350, MUS_BABI
+	scene_music VenusLighthouseAerie, -1, FLAG_AREA_TEMP_51, MUS_ELEMENTAL_STARS
+	scene_music VenusLighthouseAerie, -1, FLAG_AREA_TEMP_50, MUS_BABI
 	scene_music VenusLighthouseAerie, -1, -1, MUS_SILENCE
 	area_music 57, -1, -1, MUS_VENUS_LIGHTHOUSE
 	area_music 58, -1, -1, MUS_ELEMENTAL_STARS

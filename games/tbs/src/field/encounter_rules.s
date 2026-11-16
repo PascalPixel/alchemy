@@ -1,3 +1,5 @@
+	.include "enums/flags.inc"
+
 @ The encounter zones of field scenes (Encounter_SelectMapZones).
 @ {scene, entrance (-1 for any), flag (-1 for always, else the rule holds while
 @ the flag is clear), first zone on ground 0 rather than 1, first zone}
@@ -10,15 +12,15 @@
 	.balign 4
 	.global gScene_EncounterRules
 gScene_EncounterRules:
-	encounter_rule SolSanctumCorridor, -1, 0x814, 1, 1
-	encounter_rule SolSanctumReliefs, 1, 0x814, 0, 2
-	encounter_rule SolSanctumReliefs, 2, 0x814, 0, 2
-	encounter_rule SolSanctumReliefs, 3, 0x814, 1, 3
-	encounter_rule SolSanctumReliefs, 6, 0x814, 1, 3
-	encounter_rule SolSanctumReliefs, 7, 0x814, 1, 3
-	encounter_rule SolSanctumMaze, -1, 0x814, 1, 4
-	encounter_rule SolSanctumReliefs, 10, 0x814, 1, 5
-	encounter_rule SolSanctumLunaSolRooms, -1, 0x814, 0, 6
+	encounter_rule SolSanctumCorridor, -1, FLAG_SOL_SANCTUM_ERUPTED, 1, 1
+	encounter_rule SolSanctumReliefs, 1, FLAG_SOL_SANCTUM_ERUPTED, 0, 2
+	encounter_rule SolSanctumReliefs, 2, FLAG_SOL_SANCTUM_ERUPTED, 0, 2
+	encounter_rule SolSanctumReliefs, 3, FLAG_SOL_SANCTUM_ERUPTED, 1, 3
+	encounter_rule SolSanctumReliefs, 6, FLAG_SOL_SANCTUM_ERUPTED, 1, 3
+	encounter_rule SolSanctumReliefs, 7, FLAG_SOL_SANCTUM_ERUPTED, 1, 3
+	encounter_rule SolSanctumMaze, -1, FLAG_SOL_SANCTUM_ERUPTED, 1, 4
+	encounter_rule SolSanctumReliefs, 10, FLAG_SOL_SANCTUM_ERUPTED, 1, 5
+	encounter_rule SolSanctumLunaSolRooms, -1, FLAG_SOL_SANCTUM_ERUPTED, 0, 6
 	encounter_rule GomaCavePond, -1, -1, 1, 9
 	encounter_rule GomaCavePillar, -1, -1, 1, 10
 	encounter_rule GomaCaveStream, -1, -1, 1, 11

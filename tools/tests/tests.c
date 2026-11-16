@@ -853,6 +853,11 @@ enums(void)
 					  "  ID_AGAIN = ID_FIRST\n"
 					  "};\n"
 					  "enum { ANON = -2u, ANON_NEXT };\n"
+					  "#define FLAG_A 0x845 ///< a flag\n"
+					  "#define FLAG_WRAPPED \\\n  0x3f0\n"
+					  "#define NOT_A_NUMBER ID_FIRST\n"
+					  "#define NOT_ONE(x) 1\n"
+					  "#define NOT_ALONE 1 + 2\n"
 					  "#endif\n");
 	RUN("enums", true, "ids.h", "ids.inc");
 	Buffer out = readFile("ids.inc");
@@ -861,9 +866,11 @@ enums(void)
 									 "\t.equiv ID_THIRD, 17\n"
 									 "\t.equiv ID_AGAIN, 0\n"
 									 "\t.equiv ANON, -2\n"
-									 "\t.equiv ANON_NEXT, -1\n") &&
-			  !strstr((char *) out.data, "NOT_THIS"),
-		  "enum constants take their values in order");
+									 "\t.equiv ANON_NEXT, -1\n"
+									 "\t.equiv FLAG_A, 2117\n"
+									 "\t.equiv FLAG_WRAPPED, 1008\n") &&
+			  !strstr((char *) out.data, "NOT_"),
+		  "enum constants and literal macros take their values in order");
 	free(out.data);
 	textFile("bad.h", "enum Bad {\n#if X\n  BAD_A,\n#endif\n};\n");
 	RUN("enums", false, "bad.h", "bad.inc");

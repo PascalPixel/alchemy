@@ -2262,7 +2262,7 @@ inner:
   }
   entry++;
   {
-    FIXED next = (i << 16) + 0x10000;
+    FIXED next = (i << 16) + toFIXED(1);
 
     i = next >> 16;
     if (next != toFIXED(4))
@@ -2635,7 +2635,7 @@ struct ActionScript gIslets_SpinScript = {{
 
 s32 gIslets_EnterDoorScript[] = {                                                               
       SC_SET(SW_MOTION, 0),                                                    
-      SC_ADD(SW_Z, -0x8000),                                                   
+      SC_ADD(SW_Z, toFIXED(-0.5)),                                                   
       SC_ADD(SW_SCALE_X, -FIXED_ONE / 64),                                               
       SC_ADD(SW_SCALE_Y, -FIXED_ONE / 64),                                               
       SC_WAIT(1),                                                              
@@ -2656,18 +2656,30 @@ s8 gPushFootprints[][4] = {
 
 u32 gIslets_DogWanderScript[] = {
 #if !TLA_PATCH_1
-    22, 30, 131, 22, 16, 0x6666,
+    SC_SET(SW_COLLISION, 131),
+    SC_ACCELERATION(0.4),
 #else
-    22, 30, 129, 22, 16, 0x6666,
+    SC_SET(SW_COLLISION, 129),
+    SC_ACCELERATION(0.4),
 #endif
-    22, 15, 0x6666, 39, 2, 4,
-    0x1780000, 0, 0xd80000, 1, 4, 0x1880000,
-    0, 0xe00000, 1, 39, 1, 0,
-    1, 22, 3, 0x3000, 0, 80,
-    39, 2, 4, 0x1780000, 0, 0xd80000,
-    1, 4, 0x1780000, 0, 0xb80000, 1,
-    39, 1, 0, 40, 13, 0xffff,
-    0,
+    SC_SPEED(0.4),
+    SC_ANIMATION(2),
+    SC_MOVE(376, 0, 216),
+    SC_SYNC,
+    SC_MOVE(392, 0, 224),
+    SC_SYNC,
+    SC_ANIMATION(1),
+    SC_WAIT(1),
+    SC_SET(SW_FACING, FACING_SOUTH_SOUTHEAST),
+    SC_WAIT(80),
+    SC_ANIMATION(2),
+    SC_MOVE(376, 0, 216),
+    SC_SYNC,
+    SC_MOVE(376, 0, 184),
+    SC_SYNC,
+    SC_ANIMATION(1),
+    SC_WAIT(40),
+    SC_LOOP(SC_FOREVER, SC_TOP),
 };
 
 u32 gIslets_GullScript[] = {
@@ -2816,10 +2828,10 @@ u32 gIslets_TurtleWalksScript[] = {
   };
 
 u32 gIslets_PierPaceScript[] = {
-    39, 2, 4, 0xb80000, 0, 0x3a80000,
+    39, 2, 4, toFIXED(184), 0, toFIXED(936),
     1, 39, 1, 1, 80, 39,
-    2, 4, 0x580000, 0, 0x3a80000, 1,
-    39, 1, 0, 80, 13, 0xffff,
+    2, 4, toFIXED(88), 0, toFIXED(936), 1,
+    39, 1, 0, 80, 13, SC_FOREVER,
     0,
 };
 
@@ -3029,9 +3041,9 @@ struct Trigger gIslets_PierTriggers[] = {
      EVENT(Islets_SaveCratePositions)},
     {TRIGGER_PUSH, 0, FLAG_SCENE_TEMP_12, EVENT(Islets_StartPushingCrate)},
     {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), 12,
-     0x212, EVENT(Islets_StartPushingCrate)},
+     FLAG_SCENE_TEMP_12, EVENT(Islets_StartPushingCrate)},
     {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), 13,
-     0x212, EVENT(Islets_StartPushingCrate)},
+     FLAG_SCENE_TEMP_12, EVENT(Islets_StartPushingCrate)},
     {TRIGGER_PUSHED, 0, FLAG_SCENE_TEMP_12, EVENT(Islets_FinishPushingCrate)},
     {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 12, FLAG_SCENE_TEMP_12,
      EVENT(Islets_FinishPushingCrate)},

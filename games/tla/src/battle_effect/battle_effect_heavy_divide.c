@@ -54,7 +54,7 @@ void BattleEffect_RunHeavyBlow(struct BattleEffectParams *args, s32 mode) {
 
     // Four after-images, each in its own dimmer colour.
     for (k = 1; k != 5; k++) {
-      ((u16 *)BG_PLTT)[HEAVY_DIVIDE_FIRST_AFTER_IMAGE_COLOR - 1 + k] =
+      BG_PLTT[HEAVY_DIVIDE_FIRST_AFTER_IMAGE_COLOR - 1 + k] =
           RGB(0, 0, (4 - k) * 4 + 15);
       for (i = 0; i != PICTURE_BYTES(HEAVY_DIVIDE_SWORD); i++) {
         if (work->sheet[i] == 0) {

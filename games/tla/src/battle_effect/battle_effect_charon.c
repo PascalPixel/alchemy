@@ -1259,7 +1259,7 @@ void BattleEffect_RunCharon(struct BattleEffectParams *arg) {
     if (b < 0) {
       b = 0;
     }
-    ((u16 *)BG_PLTT)[i] = RGB(r, g, b);
+    BG_PLTT[i] = RGB(r, g, b);
   }
   arg->targets[arg->targetCount] = BATTLE_UNIT_LIST_END;
   BattleActor_SpawnObjectsForListFar(arg->targets, 0);

@@ -1727,7 +1727,7 @@ void Kibombo_FlickerColor(s32 index, s32 entry, s32 delta) {
   g = Kibombo_ClampColor(g);
   b = Kibombo_ClampColor(b);
   {
-    u16 *dst = &((u16 *)BG_PLTT)[index];
+    u16 *dst = &BG_PLTT[index];
 
     r |= (b << 10) | (g << 5);
     *dst = r;
@@ -1751,7 +1751,7 @@ void Kibombo_FlickerRedderColor(s32 index, s32 entry, s32 delta) {
   g = Kibombo_ClampColor(g);
   b = Kibombo_ClampColor(b);
   {
-    u16 *dst = &((u16 *)BG_PLTT)[index];
+    u16 *dst = &BG_PLTT[index];
 
     r |= (b << 10) | (g << 5);
     *dst = r;

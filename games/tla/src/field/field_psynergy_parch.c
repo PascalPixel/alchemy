@@ -241,7 +241,7 @@ loaded:
       if (blue > RGB_LEVEL_MAX)
         blue = RGB_LEVEL_MAX;
       Io_Write16((blue << 10) | (green << 5) | red,
-                 &((u16 *)OBJ_PLTT)[255 - i]);
+                 &OBJ_PLTT[255 - i]);
     }
     if (fade != -1 && fade <= 126)
       fade++;

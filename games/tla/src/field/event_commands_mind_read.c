@@ -915,8 +915,8 @@ void FieldEffect_SpawnBurstParticleField(void) {
     child->attributes.bytes.palette = visual->attributes.bytes.palette;
 
     if (obj != 0) {
-      obj->scaleY = 0xb333;
-      obj->scaleX = 0xb333;
+      obj->scaleY = toFIXED(0.7);
+      obj->scaleX = toFIXED(0.7);
       obj->acceleration = toFIXED(3) / 2;
       obj->speedLimit = toFIXED(3) / 2;
       obj->motionFlags = 0;
@@ -1669,7 +1669,7 @@ void FieldPsynergy_Ply(void) {
 }
 
 /// A task of Cloak: when the controlled character does not
-/// stand on a tile Cloak can hide on, requests CLOAK_END (0x2092).
+/// stand on a tile Cloak can hide on, requests CLOAK_END (Cloak, packed).
 void FieldEffect_CheckCloakTile(void) {
   struct FieldWork *event = Ram_HeapSlots->fieldWork;
   struct Actor *leader = Actor_Lookup(Party_GetLeaderActor());

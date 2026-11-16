@@ -27,10 +27,10 @@ void GroundParticles_Start(void) {
   Scene_QueueMusic(SE_AMBIENT_WATER);
   particle = work->particles;
   Dma_Fill32(zero, work, sizeof(struct WeatherWork));
-  words = HeapSlot_AllocEwram(HEAP_SLOT_TILE_SCRATCH, 0x400);
+  words = HeapSlot_AllocEwram(HEAP_SLOT_TILE_SCRATCH, 1024);
   Decompress_ByteLz(gFieldEffect_GroundParticleTiles, words);
   work->entry = VramCache_FindFreeEntry();
-  work->tileBase = VramCache_Load(work->entry, 0x300, words);
+  work->tileBase = VramCache_Load(work->entry, 768, words);
   HeapSlot_Release(HEAP_SLOT_TILE_SCRATCH);
   for (i = 0; i < 64; i++) {
     s32 x;
@@ -112,7 +112,7 @@ void RisingParticles_Update(void) {
 /// frames, and schedules the update.
 void RisingParticles_Start(void) {
   struct RisingParticleWork *work =
-      HeapSlot_AllocEwram(HEAP_SLOT_WEATHER, 0x814);
+      HeapSlot_AllocEwram(HEAP_SLOT_WEATHER, 2068);
   struct RisingParticle *particle = work->particles;
   volatile u32 fill;
   /* FAKEMATCH(pin): the fill's zero held in r2, built after the copy of work.
@@ -123,11 +123,11 @@ void RisingParticles_Start(void) {
   u32 i;
 
   zero = 0;
-  Dma_Fill32Cell(fill, zero, work, 0x814);
-  tiles = HeapSlot_AllocEwram(HEAP_SLOT_TILE_SCRATCH, 0x400);
+  Dma_Fill32Cell(fill, zero, work, 2068);
+  tiles = HeapSlot_AllocEwram(HEAP_SLOT_TILE_SCRATCH, 1024);
   Decompress_ByteLz(gFieldEffect_MoteTiles, tiles);
   work->vramEntry = VramCache_FindFreeEntry();
-  work->tile = VramCache_Load(work->vramEntry, 0x300, tiles);
+  work->tile = VramCache_Load(work->vramEntry, 768, tiles);
   HeapSlot_Release(HEAP_SLOT_TILE_SCRATCH);
   for (i = 0; i < 64; i++, particle++) {
     u32 *sprite = particle->sprite.words;
@@ -162,7 +162,7 @@ void FieldMotes_Update(void) {
     s32 x;
     s32 y;
 
-    if (--mote->timer != 0xffff) {
+    if (--mote->timer != (u16)-1) {
       s32 *camera = &map->viewX;
       s32 cameraX = camera[0];
       s32 cameraZ = camera[1];
@@ -203,8 +203,8 @@ void FieldMotes_Update(void) {
     if (spawned < 8 && mote->timer == 0) {
       s32 *leader = map->origin;
 
-      x = leader[0] + (Random16() << 8) - 0x800000;
-      y = leader[2] + (Random16() << 8) - 0x800000;
+      x = leader[0] + (Random16() << 8) - toFIXED(128);
+      y = leader[2] + (Random16() << 8) - toFIXED(128);
       mote->posX = x;
       mote->posZ = y;
       mote->posY = MapGrid_GetTerrainHeightFar(0, x, y);

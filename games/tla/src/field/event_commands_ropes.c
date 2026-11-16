@@ -34,12 +34,12 @@
 void Rope_Initialize(void) {
   struct RopeWork *work =
       HeapSlot_AllocEwram(HEAP_SLOT_ROPE, sizeof(struct RopeWork));
-  void *buffer = Heap_Alloc(0x100);
+  void *buffer = Heap_Alloc(256);
 
   Dma_Fill32(0, work, sizeof(struct RopeWork));
   work->vramEntry = VramCache_FindFreeEntry();
   Decompress_TaggedLz(gRope_Tiles, buffer);
-  VramCache_Load(work->vramEntry, 0x100, buffer);
+  VramCache_Load(work->vramEntry, 256, buffer);
   Task_Add(Rope_Draw, TASK_PASS_VBLANK);
   Task_Add(Rope_Update, TASK_PASS_VBLANK + 15);
   Heap_Release(buffer);
@@ -105,8 +105,8 @@ void Rope_Draw(void) {
           ((u32 *)&node->sprite)[2] = OBJ_PRIORITY(2) | tile;
           if (angle != 0) {
             transform.angle = angle;
-            transform.scaleX = 0x100;
-            transform.scaleY = 0x100;
+            transform.scaleX = 256;
+            transform.scaleY = 256;
             node->sprite.affine = 1;
             node->sprite.affineIndex = OamMatrix_AllocFromTransform(&transform);
           }
@@ -487,7 +487,7 @@ s32 Rope_Throw(s32 index, s32 x, s32 y, s32 z, s32 toX, s32 toY, s32 toZ) {
     return;
   slot->state = 1;
   segments = slot->segments;
-  cursor = nodes = Heap_Alloc(0x200);
+  cursor = nodes = Heap_Alloc(512);
   for (i = 0; i <= segments; i++) {
     *cursor++ = node;
     node = node->next;
@@ -584,7 +584,7 @@ s32 Rope_Recoil(s32 index, s32 x, s32 y, s32 z) {
     return;
   slot->state = zero;
   segments = slot->segments;
-  cursor = nodes = Heap_Alloc(0x200);
+  cursor = nodes = Heap_Alloc(512);
   slot->swinging = zero;
   if (slot->flag != 0)
     GameFlag_Clear(slot->flag);
@@ -755,7 +755,7 @@ void Rope_Place(s32 index, s32 flag, s32 a2, s32 a3) {
 void Tightrope_Initialize(void) {
   struct TightropeWork *work =
       HeapSlot_AllocEwram(HEAP_SLOT_TIGHTROPE, sizeof(struct TightropeWork));
-  void *buffer = Heap_Alloc(0x900);
+  void *buffer = Heap_Alloc(2304);
 
   Dma_Fill32(0, work, sizeof(struct TightropeWork));
   work->vramEntry = VramCache_FindFreeEntry();
@@ -793,8 +793,8 @@ void Tightrope_Draw(void) {
 
     if (angle != 0) {
       transform.angle = angle;
-      transform.scaleX = 0x100;
-      transform.scaleY = 0x100;
+      transform.scaleX = 256;
+      transform.scaleY = 256;
       affine = 1;
       matrix = OamMatrix_AllocFromTransform(&transform);
     } else {
@@ -1110,7 +1110,7 @@ s32 Tightrope_Throw(s32 index, s32 x, s32 y, s32 z, s32 toX, s32 toY, s32 toZ) {
   s32 i;
   u16 angle;
 
-  cursor = nodes = Heap_Alloc(0x200);
+  cursor = nodes = Heap_Alloc(512);
   if (segments >= 0) {
     i = segments + 1;
     do {
@@ -1209,7 +1209,7 @@ s32 Tightrope_Recoil(s32 slot, s32 x1, s32 y1, s32 z1, s32 x2, s32 y2, s32 z2,
   dist = Iwram_MulFX(dx, dx) + Iwram_MulFX(dy, dy) + Iwram_MulFX(dz, dz);
   count = Iwram_Sqrt(dist) / 6 + 1;
   node = work->slots[slot].head;
-  entry = nodes = Heap_Alloc(0x200);
+  entry = nodes = Heap_Alloc(512);
   work->slots[slot].wobbling = wobbling;
   if (count >= 0) {
     i = count + 1;
@@ -1304,7 +1304,7 @@ extern const u8 gHangingVine_VineTopPicture[], gHangingVine_VineUpperPicture[],
 extern const u8 gHangingVine_VineBottomPicture[],
     gHangingVine_ChainTopPicture[], gHangingVine_ChainMiddlePicture[];
 
-#define PICTURE_SIZE 0x100
+#define PICTURE_SIZE 256
 
 // The hanging vines (HEAP_SLOT_HANGING_VINE): eight slots, each seven links
 // hung below an anchor object, which sway, swing less while the leader stands
@@ -1408,8 +1408,8 @@ void HangingVine_Draw(void) {
           ((u32 *)&link->sprite)[2] = tile | OBJ_PRIORITY(2);
           if (angle != 0) {
             transform.angle = angle;
-            transform.scaleX = 0x100;
-            transform.scaleY = 0x100;
+            transform.scaleX = 256;
+            transform.scaleY = 256;
             link->sprite.affine = 1;
             link->sprite.affineIndex = OamMatrix_AllocFromTransform(&transform);
           }
@@ -1449,7 +1449,7 @@ void HangingVine_Update(void) {
 
   i = 0;
   leader = Actor_GetById(Party_GetLeaderActor());
-  target = 0x100;
+  target = 256;
   for (slot = work->slots; i <= 7; i++, slot++) {
     if (slot->root == 0 || slot->active == 0)
       continue;
@@ -1465,7 +1465,7 @@ void HangingVine_Update(void) {
     // of the anchor, and between 8 above and 80 below it.
     if ((x - leader->x.fixed >= 0 ? x - leader->x.fixed < toFIXED(8)
                                   : leader->x.fixed - x < toFIXED(8)) &&
-        (u32)(z - leader->z.fixed + 0xfffff) <= 0xffffe &&
+        (u32)(z - leader->z.fixed + (toFIXED(16) - 1)) <= toFIXED(16) - 2 &&
         y + toFIXED(8) > leader->y.fixed && y - toFIXED(80) < leader->y.fixed)
       target = 32;
 
@@ -1635,7 +1635,7 @@ void HangingVine_Hang(s32 objectId, s32 grow) {
   }
   slot->active = 1;
   slot->phase = 0;
-  slot->swing = 0x100;
+  slot->swing = 256;
   slot->id = objectId;
   slot->spacing = toFIXED(14);
 }

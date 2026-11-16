@@ -102,12 +102,12 @@ void Djinn_RunBattleStartHop(s32 djinniId) {
 #if TLA_PATCH_1
   Sound_PlayFar(SE_JUMP);
 #endif
-  djinni->velocityY = 0x4cccc;
+  djinni->velocityY = toFIXED(4.8);
   wait(35);
 #if TLA_PATCH_1
   Sound_PlayFar(SE_JUMP);
 #endif
-  djinni->velocityY = 0x4e666;
+  djinni->velocityY = toFIXED(4.9);
   wait(38);
 
   djinni->update = NULL;
@@ -147,8 +147,8 @@ void Djinn_RunBattleStartHop(s32 djinniId) {
     }
   }
 
-  djinni->speedLimit = 0x4ccc;
-  djinni->acceleration = 0x4ccc;
+  djinni->speedLimit = toFIXED(0.3);
+  djinni->acceleration = toFIXED(0.3);
   Actor_SetTargetPositionFromMagnitudeAngle(djinni, toFIXED(16),
                                             dir + DEGtoANG(180));
   Sound_PlayFar(LEAP_SOUND);
@@ -184,7 +184,7 @@ void Djinn_JoinParty(s32 actor, s32 element, s32 djinni) {
   s32 owner;
 
   if (djinni == 19) {
-    s32 recorded = gSceneLocalState[element + 0x1950];
+    s32 recorded = gSceneLocalState[element + 6480];
 
     if (recorded == 0)
       return;
@@ -334,7 +334,7 @@ void FieldEffect_UpdateAllSlots(void) {
   s32 remainingSlots;
 
   scene = Ram_HeapSlots->fieldEffectWork;
-  remainingSlots = 0x17;
+  remainingSlots = 24 - 1;
   slot = scene->particles;
   do {
     remainingSlots -= 1;

@@ -327,7 +327,7 @@ s32 BattleEffect_GetObjectDepth(struct Actor *actor) {
     point[1] = actor->y.fixed;
     point[2] = actor->z.fixed;
     Render_ProjectPoint(point, out);
-    depth = (0x200 - out[2]) / 2 + 128;
+    depth = (512 - out[2]) / 2 + 128;
     if (depth <= 0)
       depth = 1;
   } else {
@@ -365,10 +365,10 @@ void FieldPsynergy_StartSceneSprite(void) {
   mainActor = effectWork->mainActor;
   if (effectWork->angle == FACING_NORTH) {
     effectWork->spriteActive = 1;
-    buffer = Heap_Alloc(0x200);
-    IWRAM_FILL_WORDS(buffer, 0x200, 0);
+    buffer = Heap_Alloc(512);
+    IWRAM_FILL_WORDS(buffer, 512, 0);
     slot = VramCache_FindFreeEntry();
-    tiles = VramCache_Load(slot, 0x200, buffer);
+    tiles = VramCache_Load(slot, 512, buffer);
     effectWork->spriteVramSlot = slot;
     Heap_Release(buffer);
     sprite = &effectWork->sprite;

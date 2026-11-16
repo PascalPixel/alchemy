@@ -295,9 +295,9 @@ struct Actor *Actor_FindNearestFacingTarget(struct Actor *self, s32 id) {
                            entry->x.fixed - self->x.fixed);
     if (dist > 23) {
       turn = (s16)(angle - self->facing);
-      if (turn < -0x2fff)
+      if (turn < -(TRIG_TURN * 3 / 16 - 1))
         continue;
-      if (turn > 0x2fff)
+      if (turn > TRIG_TURN * 3 / 16 - 1)
         continue;
     }
     found = entry;
@@ -375,7 +375,7 @@ again:
   if (leader->priorityFlags & ACTOR_PRIORITY_WALKS_ON_PLATFORMS) {
     entry = Ram_HeapSlots->actors;
     for (i = 0; i < 64; i++, entry++) {
-      s32 bound = 0x7ffff;
+      s32 bound = toFIXED(8) - 1;
       FIXED delta;
       FIXED dy;
 
@@ -741,7 +741,7 @@ struct RopeNode *Rope_FindNodeNear(s32 *position) {
       s32 distance =
           Iwram_MulFX(dx, dx) + Iwram_MulFX(dy, dy) + Iwram_MulFX(dz, dz);
 
-      if (distance <= 0x400 && best > distance) {
+      if (distance <= 1024 && best > distance) {
         best = distance;
         found = node;
       }
@@ -845,7 +845,7 @@ struct TightropeNode *Tightrope_FindNodeNear(s32 *position) {
       s32 distance =
           Iwram_MulFX(dx, dx) + Iwram_MulFX(dy, dy) + Iwram_MulFX(dz, dz);
 
-      if (distance <= 0x400 && best > distance) {
+      if (distance <= 1024 && best > distance) {
         best = distance;
         found = node;
       }

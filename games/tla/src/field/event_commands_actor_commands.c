@@ -206,17 +206,17 @@ void Actor_ShowItemIconById(s32 id, s32 resource) {
       sprite = actor->sprite;
       if (resource & 0x8000)
         resource = 0;
-      buffer = HeapSlot_Alloc(HEAP_SLOT_GLYPH_TRANSFER, 0x608);
+      buffer = HeapSlot_Alloc(HEAP_SLOT_GLYPH_TRANSFER, 1544);
       zero = 0;
-      buffer += 0x400;
-      Dma_Fill32(zero, buffer, 0x80);
+      buffer += 1024;
+      Dma_Fill32(zero, buffer, 128);
 #ifdef UBFIX
       Icon_DrawItemFar(resource);
 #else
       // UB: Icon_DrawItem takes the item alone; the call passes the buffer too.
       ((void (*)(s32, u8 *))Icon_DrawItemFar)(resource, buffer);
 #endif
-      tile = VramCache_Load(sprite->slot, 0x80, buffer);
+      tile = VramCache_Load(sprite->slot, 128, buffer);
       HeapSlot_Release(HEAP_SLOT_GLYPH_TRANSFER);
       actor->retainSpriteCache = kind;
       SpriteAnimation_ClearFar(sprite->entries[0]);

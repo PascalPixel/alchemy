@@ -27,7 +27,7 @@ void GroundParticles_Update(void) {
     s32 x;
     s32 y;
 
-    if (--particle->timer == 0xffff)
+    if (--particle->timer == (u16)-1)
       continue;
     if (GameFlag_Get(FLAG_WEATHER_HELD))
       particle->timer++;
@@ -78,7 +78,7 @@ void Weather_UpdateRain(void) {
     s32 x;
     s32 y;
 
-    if (--particle->timer == 0xffff)
+    if (--particle->timer == (u16)-1)
       continue;
     if (GameFlag_Get(FLAG_WEATHER_HELD))
       particle->timer++;

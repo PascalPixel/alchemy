@@ -27,10 +27,10 @@ void FieldMotes_Start(void) {
   // size, done with once the work is allocated, carries the fill's 0.
   size = 0;
   Dma_Fill32(size, work, sizeof(*work));
-  tiles = HeapSlot_AllocEwram(HEAP_SLOT_TILE_SCRATCH, 0x400);
+  tiles = HeapSlot_AllocEwram(HEAP_SLOT_TILE_SCRATCH, 1024);
   Decompress_ByteLz(gFieldEffect_MoteTiles, tiles);
   work->entry = VramCache_FindFreeEntry();
-  work->tileBase = VramCache_Load(work->entry, 0x300, tiles);
+  work->tileBase = VramCache_Load(work->entry, 768, tiles);
   HeapSlot_Release(HEAP_SLOT_TILE_SCRATCH);
   i = 0;
   slots = Ram_HeapSlots;
@@ -84,10 +84,10 @@ void Weather_StartRain(s32 withCue) {
   // size, done with once the work is allocated, carries the fill's 0.
   size = 0;
   Dma_Fill32(size, work, sizeof(*work));
-  tiles = HeapSlot_AllocEwram(HEAP_SLOT_TILE_SCRATCH, 0x400);
+  tiles = HeapSlot_AllocEwram(HEAP_SLOT_TILE_SCRATCH, 1024);
   Decompress_ByteLz(gFieldEffect_StreakTiles, tiles);
   work->entry = VramCache_FindFreeEntry();
-  work->tileBase = VramCache_Load(work->entry, 0x300, tiles);
+  work->tileBase = VramCache_Load(work->entry, 768, tiles);
   HeapSlot_Release(HEAP_SLOT_TILE_SCRATCH);
   i = 0;
   slots = Ram_HeapSlots;
@@ -200,8 +200,8 @@ void FieldEffect_UpdateSparkles(void) {
         delay += 4;
       } else if ((Random16() & 255) == 0) {
         leader = map->origin;
-        spawnX = leader[0] + (Random16() << 8) - 0x800000;
-        spawnZ = leader[2] + (Random16() << 8) - 0x800000;
+        spawnX = leader[0] + (Random16() << 8) - toFIXED(128);
+        spawnZ = leader[2] + (Random16() << 8) - toFIXED(128);
         sparkle->posX = spawnX;
         sparkle->posZ = spawnZ;
         sparkle->posY = MapGrid_GetTerrainHeightFar(0, sx, sy);
@@ -237,10 +237,10 @@ void FieldEffect_InitializeSparkles(void) {
           (DMA_ENABLE | DMA_32BIT | DMA_SRC_FIXED) << 16 |
               (sizeof(struct WeatherWork) / 4),
           REG_DMA3);
-  buf = HeapSlot_AllocEwram(HEAP_SLOT_TILE_SCRATCH, 0x400);
+  buf = HeapSlot_AllocEwram(HEAP_SLOT_TILE_SCRATCH, 1024);
   Decompress_ByteLz(gFieldEffect_SparkleTiles, buf);
   work->entry = VramCache_FindFreeEntry();
-  work->tileBase = VramCache_Load(work->entry, 0x200, buf);
+  work->tileBase = VramCache_Load(work->entry, 512, buf);
   HeapSlot_Release(HEAP_SLOT_TILE_SCRATCH);
 
   i = 0;
@@ -296,11 +296,11 @@ void Weather_StartLightning(void) {
   Task_Add(Weather_UpdateLightning, TASK_PASS_VBLANK);
 }
 
-/// Stops the lightning: no flash for 0x7fff frames, and none after.
+/// Stops the lightning: no flash for 32767 frames, and none after.
 void Weather_StopLightning(void) {
   struct FieldBlendWork *state =
       HeapSlot_AllocEwram(HEAP_SLOT_FIELD_BLEND, sizeof(struct FieldBlendWork));
-  state->timer = 0x7FFF;
+  state->timer = 32767;
   state->enabled = 0;
 }
 

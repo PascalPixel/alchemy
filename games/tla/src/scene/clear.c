@@ -49,6 +49,7 @@
 #include "window/cursor.h"
 #include "graphics/vram_tab.h"
 #include "item_ids.h"
+#include "djinn_ids.h"
 #include "field/field_sequence.h"
 
 /// A question's window, left open for the Yes/No menu below it.
@@ -1417,17 +1418,18 @@ void Clear_ApplyImportedData(s32 mode, u8 *in) {
       statsOffset += 15;
     }
     for (i = 0; i != 4; i++) {
-      s16 *stats = &Unit_Get(gClear_ImportedMembers[i])->baseHp;
+      struct UnitBaseStats *stats =
+          (struct UnitBaseStats *)&Unit_Get(gClear_ImportedMembers[i])->baseHp;
       s32 at = i * 8;
 
 #define WORD (*(u32 *)((u8 *)packedStats + at))
-      stats[0] = WORD >> 21;
-      stats[1] = WORD << 11 >> 21;
-      stats[4] = WORD & 0x1ff;
+      stats->hp = WORD >> 21;
+      stats->pp = WORD << 11 >> 21;
+      stats->attack = WORD & 0x1ff;
       at += 4;
-      stats[5] = WORD >> 22 & 0x1ff;
-      stats[6] = WORD >> 12 & 0x1ff;
-      ((u8 *)stats)[14] = WORD >> 4 & 0x7f;
+      stats->defense = WORD >> 22 & 0x1ff;
+      stats->agility = WORD >> 12 & 0x1ff;
+      stats->luck = WORD >> 4 & 0x7f;
 #undef WORD
     }
   }
@@ -1456,16 +1458,17 @@ void Clear_ApplyImportedData(s32 mode, u8 *in) {
       Iwram_ClearWordsEntry(unit->djinnHeld, 40);
   }
 
-  for (i = 0; i != 28; i++) {
-    s32 element = i / 7;
-    s32 number = i % 7;
+  for (i = 0; i != ELEMENT_COUNT * TRANSFERRED_DJINN_PER_ELEMENT; i++) {
+    s32 element = i / TRANSFERRED_DJINN_PER_ELEMENT;
+    s32 number = i % TRANSFERRED_DJINN_PER_ELEMENT;
 
-    GameFlag_Clear(element * 20 + number + 48);
+    GameFlag_Clear(FLAG_DJINNI(element * DJINN_PER_ELEMENT + number));
   }
 
-  for (i = 0; i != 28; i++) {
+  for (i = 0; i != ELEMENT_COUNT * TRANSFERRED_DJINN_PER_ELEMENT; i++) {
     if ((djinnBits >> i) & 1)
-      Djinn_GiveToParty(i / 7, i % 7);
+      Djinn_GiveToParty(i / TRANSFERRED_DJINN_PER_ELEMENT,
+                        i % TRANSFERRED_DJINN_PER_ELEMENT);
   }
 
   if (mode != PASSWORD_LEVEL_GOLD) {
@@ -1792,26 +1795,23 @@ u16 Clear_CalculatePasswordCrc16(u32 length, u8 *p) {
   crc = 0xffff;
   i = 0;
   if (length != 0) {
-  next_byte:
-    crc ^= *p << 8;
-    j = 0;
-  next_bit:
-    // One bit: shift, adding the polynomial when the top bit was set.
-    {
-      u32 high = crc & 0x8000;
-      u32 next = crc << 1;
+    do {
+      crc ^= *p << 8;
+      j = 0;
+      // One bit at a time: shift, adding the polynomial when the top bit was
+      // set.
+      do {
+        u32 high = crc & 0x8000;
+        u32 next = crc << 1;
 
-      j++;
-      crc = next + 0xffffefdf;
-      if (high == 0)
-        crc = next;
-    }
-    if (j != 8)
-      goto next_bit;
-    i++;
-    p++;
-    if (i != length)
-      goto next_byte;
+        j++;
+        crc = next + 0xffffefdf;
+        if (high == 0)
+          crc = next;
+      } while (j != 8);
+      i++;
+      p++;
+    } while (i != length);
   }
   return ~crc;
 }

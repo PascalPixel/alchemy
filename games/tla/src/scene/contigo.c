@@ -20,9 +20,16 @@
 #include "scene/sparkle.h"
 #include "graphics/palette_buffers.h"
 
-/// The party set out on the winged ship (as Atteka Inlet names it).
 /// Force has freed Shine from the ground it was stuck in.
 #define FLAG_SHINE_FREED 0x9e7
+/// Set as Shine, freed, joins the party; until then it waits where it landed.
+#define FLAG_SHINE_CAUGHT 0x9e6
+/// Set once the Bramble Seed in the bushes over Salt is picked up
+/// (gSceneItems).
+#define FLAG_CONTIGO_BRAMBLE_SEED_TAKEN 0xfc7
+/// Set as Kraden comes out to greet the party in the house once it has set out
+/// with the wings (Contigo_ReturnToNewHome).
+#define FLAG_CONTIGO_KRADEN_GREETED_PARTY 0x9d1
 
 /// Set as the party leaves the dice hall for one of its games, so that the
 /// hall greets it on its way back by the game's entrance.
@@ -243,7 +250,11 @@ void Contigo_StartSlowPaletteCycle(void);
 
 void Contigo_StopPaletteCycle(void);
 
-extern u32 gContigo_Topics[];
+extern u32 gContigo_WheelsPrizes[];
+/// The Lucky Wheels' prize tiers, and the items of each
+/// (gContigo_WheelsPrizes); a won tier of WHEELS_PRIZE_TIERS is any tier at
+/// random.
+enum { WHEELS_PRIZE_TIERS = 5, WHEELS_PRIZES_PER_TIER = 3 };
 extern s32 gContigo_EnterGameDoorScript[];
 extern u32 gContigo_HostScript[];
 void Contigo_InitializeVillage(void);
@@ -360,6 +371,8 @@ void Palette_SetColors(u16 *slots, u16 *colours, u16 *a, u16 *b) {
     Contigo_TeleportIn();
 }
 
+/// Starts the slow cycle of the village's water colours, a step every 16
+/// frames, as a VBlank task.
 void Contigo_StartSlowPaletteCycle(void) {
   gPaletteCycleIndex = 0;
   gPaletteCycleLength = List_CountEntries(gPaletteSlots);
@@ -369,6 +382,8 @@ void Contigo_StartSlowPaletteCycle(void) {
   Task_Add(PaletteCycle_Fade, TASK_PASS_VBLANK);
 }
 
+/// Stops the cycle of colours and leaves the scene's next transition a backdrop
+/// fade.
 void Contigo_StopPaletteCycle(void) {
   struct FieldWork *work = Ram_HeapSlots->fieldWork;
 
@@ -376,6 +391,8 @@ void Contigo_StopPaletteCycle(void) {
   Task_Remove(PaletteCycle_Fade);
 }
 
+/// Starts the fast cycle of colours, a step every 2 frames, which spins the
+/// colours as the party teleports.
 void Contigo_StartFastPaletteCycle(void) {
   gPaletteCycleIndex = 0;
   gPaletteCycleLength = List_CountEntries(gPaletteSlots);
@@ -385,6 +402,7 @@ void Contigo_StartFastPaletteCycle(void) {
   Task_Add(PaletteCycle_Fade, TASK_PASS_VBLANK);
 }
 
+/// Counts a list of palette slots ended by 0xffff, less one.
 s32 List_CountEntries(u16 *list) {
   s32 count = 0;
 
@@ -396,6 +414,8 @@ s32 List_CountEntries(u16 *list) {
 
 #include "shared/palette_cycle_fade.h"
 
+/// The party's arrival by teleport from Anemos: the scene fades in through grey
+/// while the colours spin and the whirl plays, then settles.
 void Contigo_TeleportIn(void) {
   struct FieldWork *work = Ram_HeapSlots->fieldWork;
   s32 saved;
@@ -500,17 +520,21 @@ void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
     effect->update = options->update;
 }
 
+/// Salt, found in the bushes, joins the party.
 void Contigo_SaltJoinsParty(void) {
   Djinn_JoinParty(ACTOR_SALT, DJINNI_SALT / DJINN_PER_ELEMENT,
                   DJINNI_INDEX(DJINNI_SALT));
 }
 
+/// Shine, freed from the ground by Force, joins the party.
 void Contigo_FreedDjinniJoinsParty(void) {
   Djinn_JoinParty(ACTOR_SHINE, DJINNI_SHINE / DJINN_PER_ELEMENT,
                   DJINNI_INDEX(DJINNI_SHINE));
-  GameFlag_Set(2534);
+  GameFlag_Set(FLAG_SHINE_CAUGHT);
 }
 
+/// The distance in whole pixels between two positions of three 16.16
+/// coordinates, as Lemuria's copy of it.
 s32 Lemuria_Distance(s32 *a, s32 *b) {
   s32 dx = (*a++ - *b++) >> 16;
   s32 dy = (*a++ - *b++) >> 16;
@@ -547,6 +571,10 @@ s32 Actor_IsFacingNear(struct Actor *self, struct Actor *other, s32 range) {
 void Actor_SetSpritePriorityDirect(struct Actor *object, s32 value);
 s32 BattleEffect_GetObjectPriority(struct Actor *object);
 
+/// The update of the wanderer and the girl by the ship: each turns to the one
+/// it talks with (ANIM_STAND's frames, near) while the leader or the other
+/// villager stands close and faces it, or Mind Read is cast on it, and
+/// otherwise looks away.
 s32 Contigo_FaceTalker(struct Actor *self) {
   struct FieldWork *event = Ram_HeapSlots->fieldWork;
   u8 *state;
@@ -559,7 +587,7 @@ s32 Contigo_FaceTalker(struct Actor *self) {
                 Actor_GetById(gMainRoutineWork.leaderActorId)));
   mode = 0x3ff & event->psynergy;
   state = &self->paused;
-  if (mode == 141) {
+  if (mode == ABILITY_MIND_READ) {
     effect = Ram_HeapSlots->fieldEffectWork;
     if (effect[0x713] != 0)
       goto near;
@@ -588,6 +616,7 @@ near:
   return 0;
 }
 
+/// A question mark over the woman who talks of Anemos.
 s32 Contigo_ShowSurprise(void) {
   FieldActor_ShowEmote(ACTOR_WOMAN_ON_THE_ANEMOS,
                        EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
@@ -645,6 +674,7 @@ const struct Trigger *Scene_GetTriggers(void) {
   return gContigo_Triggers;
 }
 
+/// Examining the wall by the geoglyph: characters are carved into it.
 void Contigo_ExamineWall(void) {
   Event_Start();
   Event_ResolvePendingActions(0);
@@ -653,6 +683,7 @@ void Contigo_ExamineWall(void) {
   Event_End();
 }
 
+/// Reading the sign that translates the wall's characters.
 void Contigo_ReadSign(void) {
   Event_Start();
   Event_ResolvePendingActions(0);
@@ -661,6 +692,7 @@ void Contigo_ReadSign(void) {
   Event_End();
 }
 
+/// Reading the sign to the Lucky Wheels.
 void Contigo_ReadLuckyWheelsSign(void) {
   Event_Start();
   Event_ResolvePendingActions(0);
@@ -669,6 +701,7 @@ void Contigo_ReadLuckyWheelsSign(void) {
   Event_End();
 }
 
+/// Reading the sign to the Lucky Dice.
 void Contigo_ReadLuckyDiceSign(void) {
   Event_Start();
   Event_ResolvePendingActions(0);
@@ -677,6 +710,7 @@ void Contigo_ReadLuckyDiceSign(void) {
   Event_End();
 }
 
+/// Reading the sign to the Super Lucky Dice.
 void Contigo_ReadSuperDiceSign(void) {
   Event_Start();
   Event_ResolvePendingActions(0);
@@ -687,6 +721,8 @@ void Contigo_ReadSuperDiceSign(void) {
 
 #include "shared/scene_show_entrance_locked.h"
 
+/// A villager asks whether the party knows the legend of the people who could
+/// fly on the wind.
 void Contigo_AskAboutWindLegend(void) {
   Event_Start();
   Event_ResolvePendingActions(0);
@@ -707,6 +743,8 @@ struct OrbitEffect {
   s16 pause;
 };
 
+/// The update of a mote over the thinking baby: it circles on a random radius,
+/// now and then pausing to spin faster, and is released after 101 frames.
 void Contigo_CircleGlow(struct OrbitEffect *effect) {
   FIXED radius;
   s32 angle;
@@ -730,6 +768,8 @@ void Contigo_CircleGlow(struct OrbitEffect *effect) {
     Actor_Release(effect);
 }
 
+/// A task that spawns a mote over the baby every eighth frame, flung up to fall
+/// back as it circles.
 void Contigo_RaiseMotes(void) {
   if ((gFrameCount & 7) == 0) {
     struct Actor *object = Actor_Spawn(308, toFIXED(706), 52428, toFIXED(116));
@@ -789,27 +829,25 @@ void Contigo_BabyThinks(void) {
     effect->scaleX = FIXED_ONE / 10;
     effect->scaleY = FIXED_ONE / 10;
     i = 0;
-  grow:
-    effect->scaleX += FIXED_ONE / 40;
-    effect->scaleY += FIXED_ONE / 40;
-    wait(1);
-    i++;
-    if (i < 28)
-      goto grow;
+    do {
+      effect->scaleX += FIXED_ONE / 40;
+      effect->scaleY += FIXED_ONE / 40;
+      wait(1);
+      i++;
+    } while (i < 28);
   }
   Task_Add(Contigo_RaiseMotes, TASK_PASS_VBLANK);
   Event_Wait(120);
   Task_Remove(Contigo_RaiseMotes);
   if (effect != 0) {
     i = 0;
-  shrink:
-    effect->scaleX += 0xfffff99a;
-    effect->scaleY += 0xfffff99a;
-    effect->y += 0x8000;
-    wait(1);
-    i++;
-    if (i < 28)
-      goto shrink;
+    do {
+      effect->scaleX -= FIXED_ONE / 40;
+      effect->scaleY -= FIXED_ONE / 40;
+      effect->y += toFIXED(1) / 2;
+      wait(1);
+      i++;
+    } while (i < 28);
     Actor_Release(effect);
   }
   BattleEffect_SetObjectUpdateMode(((struct Actor *)Actor_GetById(ACTOR_BABY)),
@@ -860,6 +898,8 @@ enum {
 /// Contigo's inn, as Inn_CheckIn numbers the inns.
 enum { CONTIGO_INN = 12 };
 
+/// The item merchant: facing the counter opens the shop; otherwise he talks of
+/// the wings.
 void Contigo_TalkToItemMerchant(void) {
   if (Leader_IsFacingNorth()) {
     Shop_Run(SHOP_CONTIGO_ITEMS, 13);
@@ -876,6 +916,8 @@ void Contigo_TalkToItemMerchant(void) {
   }
 }
 
+/// The weapon merchant: facing the counter opens the shop; otherwise he talks
+/// of Atteka's traditions.
 void Contigo_TalkToWeaponMerchant(void) {
   if (Leader_IsFacingNorth()) {
     Shop_Run(SHOP_CONTIGO_WEAPONS, 18);
@@ -892,6 +934,8 @@ void Contigo_TalkToWeaponMerchant(void) {
   }
 }
 
+/// The armor merchant: facing the counter opens the shop; otherwise she talks
+/// of the mining in the ruins.
 void Contigo_TalkToArmorMerchant(void) {
   if (Leader_IsFacingNorth()) {
     Shop_Run(SHOP_CONTIGO_ARMOR, 19);
@@ -908,6 +952,8 @@ void Contigo_TalkToArmorMerchant(void) {
   }
 }
 
+/// The innkeeper: facing the counter checks in; otherwise she talks of the
+/// visitors and the wings.
 void Contigo_TalkToInnkeeper(void) {
   if (Leader_IsFacingNorth()) {
     Inn_CheckIn(CONTIGO_INN, 20);
@@ -926,6 +972,8 @@ void Contigo_TalkToInnkeeper(void) {
   }
 }
 
+/// The healer: facing the counter opens the Sanctum; otherwise he talks of the
+/// miracle of the wings.
 void Contigo_TalkToHealer(void) {
   if (Leader_IsFacingNorth()) {
     Sanctum_Run(28);
@@ -944,6 +992,7 @@ void Contigo_TalkToHealer(void) {
   }
 }
 
+/// The Super Lucky Dice guide asks whether the party has played before.
 void Contigo_AskAboutSuperDice(void) {
   Event_Start();
   Event_ResolvePendingActions(0);
@@ -953,6 +1002,7 @@ void Contigo_AskAboutSuperDice(void) {
   Event_End();
 }
 
+/// The Super Lucky Dice guide explains the rules, nine messages.
 void Contigo_ExplainSuperDice(void) {
   s32 msg;
 
@@ -971,6 +1021,7 @@ void Contigo_ExplainSuperDice(void) {
   Event_End();
 }
 
+/// The Lucky Dice guide explains the rules.
 void Contigo_ExplainLuckyDice(void) {
   s32 msg;
 
@@ -984,6 +1035,7 @@ void Contigo_ExplainLuckyDice(void) {
   Event_End();
 }
 
+/// The Lucky Dice guide's longer explanation.
 void Contigo_ExplainLuckyDiceAgain(void) {
   s32 msg;
 
@@ -999,6 +1051,7 @@ void Contigo_ExplainLuckyDiceAgain(void) {
   Event_End();
 }
 
+/// The Lucky Wheels attendant, spoken to.
 void Contigo_TalkToWheelsAttendant(void) {
   Event_Start();
   Event_ResolvePendingActions(0);
@@ -1006,6 +1059,7 @@ void Contigo_TalkToWheelsAttendant(void) {
   Event_End();
 }
 
+/// The Lucky Wheels guide explains the rules.
 void Contigo_ExplainLuckyWheels(void) {
   s32 msg;
 
@@ -1021,6 +1075,7 @@ void Contigo_ExplainLuckyWheels(void) {
   Event_End();
 }
 
+/// The Lucky Wheels guide lists the prizes.
 void Contigo_ListLuckyWheelsPrizes(void) {
   s32 msg;
 
@@ -1039,6 +1094,7 @@ void Contigo_ListLuckyWheelsPrizes(void) {
   Event_End();
 }
 
+/// A villager asks whether the party has looked at the Anemos geoglyph.
 void Contigo_AskAboutGeoglyph(void) {
   Event_Start();
   Event_ResolvePendingActions(0);
@@ -1048,6 +1104,8 @@ void Contigo_AskAboutGeoglyph(void) {
   Event_End();
 }
 
+/// The wanderer talks of the geoglyphs and of Anemos, turning to the leader
+/// unless Mind Read is cast on him, and back after.
 void Contigo_TalkToWanderer(void) {
   struct FieldWork *work = Ram_HeapSlots->fieldWork;
   struct Actor *object = ((struct Actor *)Actor_GetById(ACTOR_WANDERER));
@@ -1079,6 +1137,8 @@ void Contigo_TalkToWanderer(void) {
   Event_End();
 }
 
+/// The girl by the ship talks of the wings, turning to the leader unless Mind
+/// Read is cast on her, and back after.
 void Contigo_TalkAboutTheShip(void) {
   struct FieldWork *event = Ram_HeapSlots->fieldWork;
   struct Actor *object =
@@ -1110,6 +1170,8 @@ void Contigo_TalkAboutTheShip(void) {
 
 void Teleport_PlaySparks(void);
 
+/// Teleport from Contigo: the colours spin, the sparks play, and the party
+/// leaves for the Anemos Inner Sanctum, to arrive by teleport.
 void Contigo_TeleportOut(void) {
   Contigo_StartSlowPaletteCycle();
   Teleport_PlaySparks();
@@ -1120,6 +1182,8 @@ void Contigo_TeleportOut(void) {
   Contigo_StopPaletteCycle();
 }
 
+/// Clears a clump of bushes where Whirlwind touched them, as each of the clumps
+/// and hedge rows below does with its own cells.
 void Contigo_ClearFirstBushes(void) {
   FieldTileCopies_CopyTouchedCells(3, 50, 1, 1, 8, 54, 0);
 }
@@ -1128,16 +1192,19 @@ void Contigo_ClearSecondBushes(void) {
   FieldTileCopies_CopyTouchedCells(4, 43, 2, 1, 2, 43, 0);
 }
 
+/// The scene's own name for TileCopies_CopyTouchedCells.
 static __inline__ void Contigo_CopyTouchedCells(s32 a, s32 b, s32 c, s32 d,
                                                 s32 e, s32 f, s32 g) {
   TileCopies_CopyTouchedCells(a, b, c, d, e, f, g);
 }
 
+/// Clears the bushes over Salt; unless the Bramble Seed there was taken it is
+/// shown, and a leader standing on its spot hops back.
 void Contigo_ClearBushesBySalt(void) {
   struct Actor *leader = Actor_GetById(gMainRoutineWork.leaderActorId);
 
   Contigo_CopyTouchedCells(16, 37, 1, 1, 17, 37, 0);
-  if (GameFlag_Get(0xfc7) == 0) {
+  if (GameFlag_Get(FLAG_CONTIGO_BRAMBLE_SEED_TAKEN) == 0) {
     Actor_SetPosition(66, 280, 664);
     if (FIELD_CELL(leader->x.fixed) == 17 &&
         FIELD_CELL(leader->z.fixed) == 41) {
@@ -1193,16 +1260,21 @@ void Contigo_ClearFifthHedgeRow(void) {
   FieldTileCopies_CopyTouchedCells(32, 55, 3, 1, 40, 61, 0);
 }
 
+/// Lets the camera follow the leader across the whole village, held by a scene
+/// flag.
 void Contigo_WidenCameraBounds(void) {
   Field_SetCameraBounds(0, 0x2000000, 0x3700000, 0x4000000);
   GameFlag_Set(FLAG_SCENE_TEMP_00);
 }
 
+/// Holds the camera to the village's western part again.
 void Contigo_NarrowCameraBounds(void) {
   Field_SetCameraBounds(0, 0x2000000, 0x2000000, 0x4000000);
   GameFlag_Clear(FLAG_SCENE_TEMP_00);
 }
 
+/// Scoop by the bushes: until the party has Salt, Salt appears beside the
+/// leader and turns to him.
 void Contigo_ScoopForSalt(void) {
   if (!GameFlag_Get(FLAG_DJINNI(DJINNI_SALT))) {
     struct FieldWork *work = Ram_HeapSlots->fieldWork;
@@ -1217,18 +1289,23 @@ void Contigo_ScoopForSalt(void) {
   }
 }
 
+/// Draws the steps by the dice hall's door and makes them walkable.
 void Contigo_RevealSteps(void) {
   MapGrid_CopyCellsTo(27, 4, 48, 12, 1, 2);
   MapGrid_CopyCellPictureIndicesRect(27, 6, 49, 12, 1, 2);
   MapGrid_CopyCellAttributes(48, 1, 2, 1, 48, 19);
 }
 
+/// Takes the steps away again.
 void Contigo_HideSteps(void) {
   MapGrid_CopyCellsTo(27, 8, 48, 12, 1, 2);
   MapGrid_CopyCellPictureIndicesRect(27, 10, 49, 12, 1, 2);
   MapGrid_CopyCellAttributes(48, 0, 2, 1, 48, 19);
 }
 
+/// Force on the ground where Shine is stuck: the ground shakes, a ring of dust
+/// bursts out, and Shine leaps free, the leader hopping aside if it lands on
+/// him.
 void Contigo_ForceFreesDjinni(void) {
   struct Actor *object = Actor_GetById(ACTOR_SHINE);
   struct Actor *leader;
@@ -1270,10 +1347,11 @@ void Contigo_ForceFreesDjinni(void) {
   MapGrid_SetShake(0, 0, 0);
   Actor_TurnToFaceEachOther(gMainRoutineWork.leaderActorId, ACTOR_SHINE, 0);
   Event_Wait(10);
-  GameFlag_Set(2535);
+  GameFlag_Set(FLAG_SHINE_FREED);
   Event_End();
 }
 
+/// Opens the doors of the games' rooms once the beacon is lit.
 void Contigo_OpenGamesRooms(void) {
   MapGrid_CopyCellsTo(0, 1, 26, 42, 1, 2);
   MapGrid_CopyCellPictureIndicesRect(0, 1, 26, 48, 1, 2);
@@ -1404,28 +1482,26 @@ void Contigo_SendToLuckyWheels(s32 spoken) {
                                   ENTRANCE_FROM_LUCKY_WHEELS);
 }
 
-struct ContigoTopicState {
-  u8 unk000[340];
-  s8 cursor[6];
-};
-
-s32 Contigo_PickTopic(s32 topic) {
-  struct ContigoTopicState *state;
+/// The item of a won Lucky Wheels prize tier: one of the tier's three, never
+/// the one it gave last; tier WHEELS_PRIZE_TIERS is a tier at random, and a
+/// negative tier gives nothing.
+s32 Contigo_PickPrize(s32 tier) {
+  struct MainRoutineWork *state;
   s32 cursor;
   s32 variant;
   s32 index;
 
-  if (topic < 0)
+  if (tier < 0)
     return 0;
-  if (topic == 5)
-    topic = (s32)(Random_Below(5));
-  state = (struct ContigoTopicState *)&gMainRoutineWork;
-  cursor = state->cursor[topic];
-  variant = (cursor + (s32)(Random_Below(2)) + 4) % 3;
-  state->cursor[topic] = variant;
-  index = topic * 2;
+  if (tier == WHEELS_PRIZE_TIERS)
+    tier = (s32)(Random_Below(WHEELS_PRIZE_TIERS));
+  state = &gMainRoutineWork;
+  cursor = state->wheelsPrizeCursors[tier];
+  variant = (cursor + (s32)(Random_Below(2)) + 4) % WHEELS_PRIZES_PER_TIER;
+  state->wheelsPrizeCursors[tier] = variant;
+  index = tier * 2;
 
-  return gContigo_Topics[index + topic + variant];
+  return gContigo_WheelsPrizes[index + tier + variant];
 }
 
 extern u8 gSceneState[];
@@ -1509,6 +1585,8 @@ void Contigo_SendToSuperLuckyDice(void) {
   Event_End();
 }
 
+/// Draws an actor at seven tenths of its size, as the dice hall shows its small
+/// hosts and guides.
 void Contigo_ShrinkActor(s32 id) {
   struct Actor *object = Actor_GetById(id);
 
@@ -1517,6 +1595,8 @@ void Contigo_ShrinkActor(s32 id) {
   object->radius = 8;
 }
 
+/// Opens a game's door in the dice hall, two cells of map edits, and walks the
+/// leader in.
 void Contigo_OpenGameDoor(s32 a, s32 b, s32 c, s32 d) {
   Event_Start();
   Event_ResolvePendingActions(0);
@@ -1538,16 +1618,19 @@ void Contigo_OpenGameDoor(s32 a, s32 b, s32 c, s32 d) {
   Event_WaitTransitionFrames();
 }
 
+/// Enters the Lucky Wheels' door.
 void Contigo_EnterLuckyWheels(void) {
   Contigo_OpenGameDoor(27, 0, 42, 13);
   Import_EventSetExitRequest(22);
 }
 
+/// Enters the Lucky Dice's door.
 void Contigo_EnterLuckyDice(void) {
   Contigo_OpenGameDoor(27, 4, 48, 12);
   Import_EventSetExitRequest(23);
 }
 
+/// Enters the Super Lucky Dice's door.
 void Contigo_EnterSuperLuckyDice(void) {
   Contigo_OpenGameDoor(27, 0, 54, 13);
   Import_EventSetExitRequest(24);
@@ -2055,6 +2138,8 @@ void Contigo_TheReunion(void) {
 
 extern u32 gContigo_LeaderVisitsScript[];
 
+/// Once the party has set out with the wings, stepping into the house brings
+/// Kraden out to greet them, once.
 void Contigo_ReturnToNewHome(void) {
   if (GameFlag_Get(FLAG_SET_OUT_WITH_WINGS)) {
     Event_Start();
@@ -2318,16 +2403,10 @@ void Contigo_ReturnToNewHome(void) {
     Actor_SetMovementTypeById(ACTOR_IVAN, gContigo_HostScript);
     Actor_SetMovementTypeById(ACTOR_ISAAC, gContigo_HostScript);
     Actor_SetMovementTypeAndWaitById(ACTOR_KRADEN, gContigo_HostScript);
-    GameFlag_Set(2513);
+    GameFlag_Set(FLAG_CONTIGO_KRADEN_GREETED_PARTY);
     Event_End();
   }
 }
-
-struct SpriteAttributes {
-  u8 unk00[9];
-  u8 unk09_0 : 2;
-  u8 priority : 2;
-};
 
 s32 Scene_Initialize(void) {
   s32 scene = gMainRoutineWork.next;
@@ -2345,12 +2424,13 @@ s32 Scene_Initialize(void) {
 
 s32 Scene_PrepareMap(void) { return 0; }
 
+/// A task that draws actor 65 at the leader's sprite priority.
 void Contigo_KeepPriorityWithLeader(void) {
   if (Actor_GetById(65) != 0) {
     struct Actor *owner = Actor_GetById(gMainRoutineWork.leaderActorId);
 
-    Actor_SetSpritePriority(
-        65, ((struct SpriteAttributes *)owner->sprite)->priority);
+    Actor_SetSpritePriority(65,
+                            ((struct FieldSprite *)owner->sprite)->priority);
   }
 }
 
@@ -2377,9 +2457,10 @@ void Contigo_InitializeVillage(void) {
     object = Actor_GetById(ACTOR_GIRL_ON_THE_SHIP);
     object->riseCounter = 0;
     object->riseEnabled = 0;
-    *(void **)((u8 *)object + 108) = Contigo_FaceTalker;
+    object->update = Contigo_FaceTalker;
   }
-  if (GameFlag_Get(FLAG_SHINE_FREED) != 0 && GameFlag_Get(0x9e6) == 0) {
+  if (GameFlag_Get(FLAG_SHINE_FREED) != 0 &&
+      GameFlag_Get(FLAG_SHINE_CAUGHT) == 0) {
     Actor_SetPosition(ACTOR_SHINE, 32, 708);
   } else {
     Actor_SetSpriteColor(Actor_GetById(ACTOR_SHINE), 15);
@@ -2408,6 +2489,9 @@ void Contigo_InitializeVillage(void) {
                     gContigo_DimColors, gContigo_CycleSlots);
 }
 
+/// Sets up the geoglyph: before the beacon is lit the wings' parts lie by it;
+/// after, they and their workers are gone, the scholars too until the party
+/// sets out.
 void Contigo_InitializeGeoglyph(void) {
   Contigo_ShrinkActor(18);
   if (GameFlag_Get(FLAG_JUPITER_BEACON_LIT) != 0) {
@@ -2447,6 +2531,8 @@ void Contigo_InitializeGeoglyph(void) {
   }
 }
 
+/// Sets up the shops' room: the reunion with Isaac's party on its entrance, or
+/// the baby and the villagers by the progress of the story.
 void Contigo_InitializeShops(void) {
   gFieldWork->transition = SCENE_TRANSITION(TRANSITION_WINDOW, 9);
   if (gMainRoutineWork.entrance == 4) {
@@ -2490,13 +2576,10 @@ void Contigo_InitializeShops(void) {
 #define MSG_COME_AGAIN ((s32)MsgContigoComeAgain)
 #endif
 
-struct ContigoPrizes {
-  u8 unk000[0x14c];
-  s8 list[8];
-};
-
 void ItemDisplay_ShowItem(s32 item, s32 count);
 
+/// Sets up the dice hall: its small hosts and their colours, and on the party's
+/// return from a game the coins won or lost and the prizes.
 void Contigo_InitializeLuckyDice(void) {
   s32 diff;
   s8 *list;
@@ -2569,7 +2652,7 @@ void Contigo_InitializeLuckyDice(void) {
     }
     Event_End();
   } else if (gMainRoutineWork.entrance == ENTRANCE_FROM_LUCKY_WHEELS) {
-    list = ((struct ContigoPrizes *)&gMainRoutineWork)->list;
+    list = gMainRoutineWork.wheelsPrizes;
     Event_Start();
     Event_ResolvePendingActions(0);
     Event_StartScreenTransition();
@@ -2585,22 +2668,21 @@ void Contigo_InitializeLuckyDice(void) {
       Event_ShowMessageAndWait(ACTOR_LUCKY_WHEELS_ATTENDANT, 0);
       if (list[0] != -1) {
         prize = list;
-      next:
-        if (prize == list)
-          Event_SetMessageId(MSG_FIRST_PRIZE);
-        else
-          Event_SetMessageId(MSG_NEXT_PRIZE);
-        item = Contigo_PickTopic(*prize);
-        MessageArgument_Push(item, MESSAGE_ARGUMENT_ITEM);
-        Event_ShowMessageAndWait(ACTOR_LUCKY_WHEELS_ATTENDANT, 0);
-        ItemDisplay_ShowItem(item, 3);
-        PartyInventory_GiveItem(item, 0);
-        Actor_FaceDirectionAndWait(ACTOR_ISAAC, FACING_NORTH);
-        prize++;
-        if (*prize != -1)
-          goto next;
+        do {
+          if (prize == list)
+            Event_SetMessageId(MSG_FIRST_PRIZE);
+          else
+            Event_SetMessageId(MSG_NEXT_PRIZE);
+          item = Contigo_PickPrize(*prize);
+          MessageArgument_Push(item, MESSAGE_ARGUMENT_ITEM);
+          Event_ShowMessageAndWait(ACTOR_LUCKY_WHEELS_ATTENDANT, 0);
+          ItemDisplay_ShowItem(item, 3);
+          PartyInventory_GiveItem(item, 0);
+          Actor_FaceDirectionAndWait(ACTOR_ISAAC, FACING_NORTH);
+          prize++;
+        } while (*prize != -1);
       }
-      ((struct ContigoPrizes *)&gMainRoutineWork)->list[0] = -2;
+      gMainRoutineWork.wheelsPrizes[0] = -2;
       Event_SetMessageId(MSG_COME_AGAIN);
       Event_ShowMessageAndWait(ACTOR_LUCKY_WHEELS_ATTENDANT, 0);
     }
@@ -2779,10 +2861,14 @@ u32 gContigo_LongScript[] = {
     SC_END,
 };
 
-u32 gContigo_Topics[] = {
-    250, 251, 252, 256, 257, 258,
-    262, 263, 264, 183, 182, 181,
-    189, 186, 188,
+/// The Lucky Wheels' prizes, three to a tier, five tiers; the attendant hands
+/// out each tier's three in turn (Contigo_PickPrize).
+u32 gContigo_WheelsPrizes[] = {
+    ITEM_MYTHRIL_SHIRT, ITEM_SILK_SHIRT,  ITEM_RUNNING_SHIRT,
+    ITEM_HYPER_BOOTS,   ITEM_QUICK_BOOTS, ITEM_FUR_BOOTS,
+    ITEM_ADEPT_RING,    ITEM_WAR_RING,    ITEM_SLEEP_RING,
+    ITEM_POTION,        ITEM_VIAL,        ITEM_NUT,
+    ITEM_WATER_OF_LIFE, ITEM_PSY_CRYSTAL, ITEM_ELIXIR,
 };
 
 s32 gContigo_EnterGameDoorScript[] = {
@@ -3324,7 +3410,7 @@ struct Trigger gContigo_ShopsReunionTriggers[] = {
     {TRIGGER_EXIT, 4, CONDITION_ALWAYS, 4},
     {TRIGGER_TALK, ACTOR_HAMA, CONDITION_ALWAYS, MSGNO(MsgContigoNoMatterWhatHappensYou)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_HAMA, CONDITION_ALWAYS, MSGNO(MsgContigoMyHeartIsWithYou)},
-    {TRIGGER_STEP, 20, 0x9d1, EVENT(Contigo_ReturnToNewHome)},
+    {TRIGGER_STEP, 20, FLAG_CONTIGO_KRADEN_GREETED_PARTY, EVENT(Contigo_ReturnToNewHome)},
     {EXAMINE_TRIGGER(EXAMINE_OVEN), 200, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgContigoTheresABrightRedSoup))},
     {EXAMINE_TRIGGER(EXAMINE_OVEN), 201, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgContigoAhTheSmellOfFresh))},
     {EXAMINE_TRIGGER(EXAMINE_OVEN), 202, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgContigoContigosFamousForTheseCookies))},

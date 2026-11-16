@@ -214,7 +214,7 @@ s32 DebugBrowser_Portraits(void) {
   cancelKey = ((u32)(u16)characterCount >> 16) | KEY_B;
   /* FAKEMATCH(temporary): the second portrait slot read through its offset,
    * held in a local. */
-  slotOffset = offsetof(struct WindowWork, outputIds[1]);
+  slotOffset = offsetof(struct WindowWork, portraitSprites[1]);
   while (1) {
     if (gInput.repeat & KEY_LEFT) {
       redraw = 1;

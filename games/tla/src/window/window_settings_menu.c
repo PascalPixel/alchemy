@@ -332,7 +332,7 @@ struct Window *SettingsMenu_Open(void) {
 #endif
 
 // The heading above the settings window, a picture of
-// gRenderResource_PairSourceTable: Japanese takes 8, the Setup heading; from
+// gMenuTitlePictures: Japanese takes 8, the Setup heading; from
 // patch 1 the screen takes 7, the Pause heading the pause menu also shows.
 #if TLA_PATCH_1
 #define SETTINGS_HEADING 7

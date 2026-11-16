@@ -706,7 +706,7 @@ void Portrait_ClearSlots(void) {
   s32 index = 0;
 
   do {
-    work->resourceIds[index] = PORTRAIT_SLOT_EMPTY;
+    work->portraitPictures[index] = PORTRAIT_SLOT_EMPTY;
     index++;
   } while (index != 2);
 }
@@ -824,15 +824,15 @@ void Portrait_CloseWindow(s32 id) {
   if (id == -1)
     return;
 
-  if (state->resourceIds[1] == id) {
+  if (state->portraitPictures[1] == id) {
     index = 1;
-  } else if (state->resourceIds[0] == id) {
+  } else if (state->portraitPictures[0] == id) {
     index = 0;
   } else {
     return;
   }
 
-  id = state->outputIds[index];
+  id = state->portraitSprites[index];
 
   for (i = 0; i != WINDOW_COUNT; i++, work++) {
     entity = work->sprites.head;

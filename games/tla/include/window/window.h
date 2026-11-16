@@ -60,9 +60,10 @@ struct WindowWork {
   u16 glyphTiles;        ///< first sprite tile of the glyph sheet (picture 95)
   u32 argumentValues[8]; ///< message argument values (MessageArgument_Push)
   u16 argumentKinds[8];  ///< the MESSAGE_ARGUMENT_ kind of each; 0 when free
-  u16 resourceIds[2];    ///< picture shown in each portrait slot; 999 when free
-  u16 outputIds[2];      ///< VRAM cache slot of each portrait slot's picture
-  u16 speakerVoiceSound; ///< first of four voice blip sounds; 0 for none
+  u16 portraitPictures[2]; ///< picture shown in each portrait slot; 999 when
+                           ///< free
+  u16 portraitSprites[2];  ///< VRAM cache slot of each portrait slot's picture
+  u16 speakerVoiceSound;   ///< first of four voice blip sounds; 0 for none
   u16 speakerVoiceCountdown; ///< characters until the next voice blip
   u8 pageArrowShown;         ///< 1 while the next-page arrow is shown
   u8 waitingForSound;        ///< set while a message waits on its sound

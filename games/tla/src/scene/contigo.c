@@ -578,8 +578,8 @@ s32 BattleEffect_GetObjectPriority(struct Actor *object);
 
 /// The update of the wanderer and the girl by the ship: each stands still
 /// while it faces the other within 18 pixels or the leader within 26, or while
-/// Mind Read is cast, and walks on otherwise or when the leader comes within
-/// 11.
+/// Mind Read is cast, and walks on otherwise or when the leader comes within 11
+/// pixels.
 s32 Contigo_PauseWhenFaced(struct Actor *self) {
   struct FieldWork *event = Ram_HeapSlots->fieldWork;
   u8 *state;

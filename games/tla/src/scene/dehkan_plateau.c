@@ -316,7 +316,7 @@ void DehkanPlateau_StepOnThemisAxeChestPillars(void) {
       gDehkanPlateau_ThemisAxeChestCrumblingPillars);
   DehkanPlateau_SetThemisAxeChestStandingPillarCells();
   y = Actor_GetById(gMainRoutineWork.leaderActorId)->y.fixed;
-  if (y < 0x80000) {
+  if (y < toFIXED(8)) {
     Actor_SetSpritePriority(gMainRoutineWork.leaderActorId, 2);
     Actor_GetById(gMainRoutineWork.leaderActorId)->priorityFlags |=
         ACTOR_PRIORITY_AUTOMATIC;
@@ -350,7 +350,7 @@ void DehkanPlateau_StepOnCannonPillar(void) {
 
   CrumblingPillars_Step(gDehkanPlateau_CannonCrumblingPillar);
   y = Actor_GetById(gMainRoutineWork.leaderActorId)->y.fixed;
-  if (y < 0x180000)
+  if (y < toFIXED(24))
     DehkanPlateau_LeaveConeCell();
 }
 
@@ -653,19 +653,19 @@ void DehkanPlateau_StepOnCrack(void) {
 
   if (gMainRoutineWork.next == SCENE(DehkanPlateauFullMetalVestChest)) {
     n = work->stepTrigger - 11;
-    flag = work->stepTrigger + 0x235;
+    flag = FLAG_CRACK_OPENED_FIRST + n;
     record = &gDehkanPlateau_FullMetalVestChestCracks[n][1];
   } else if (gMainRoutineWork.next == SCENE(DehkanPlateauThemisAxeChest)) {
     n = work->stepTrigger - 14;
-    flag = work->stepTrigger + 0x232;
+    flag = FLAG_CRACK_OPENED_FIRST + n;
     record = &gDehkanPlateau_ThemisAxeChestCracks[n][1];
   } else if (gMainRoutineWork.next == SCENE(DehkanPlateauTightropes)) {
     n = work->stepTrigger - 12;
-    flag = work->stepTrigger + 0x234;
+    flag = FLAG_CRACK_OPENED_FIRST + n;
     record = &gDehkanPlateau_TightropesCracks[n][1];
   } else if (gMainRoutineWork.next == SCENE(DehkanPlateauPoundCube)) {
     n = work->stepTrigger - 18;
-    flag = work->stepTrigger + 0x22e;
+    flag = FLAG_CRACK_OPENED_FIRST + n;
     record = &gDehkanPlateau_PoundCubeCracks[n][1];
     if (GameFlag_Get(FLAG_AREA_TEMP_3A))
       gDehkanPlateau_PoundCubeCracks[4][3] = 3;

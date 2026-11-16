@@ -204,8 +204,8 @@ void MarsLighthouseAerie_Throb(struct Actor *object) {
   u8 *timer;
   s32 scale = object->scaleX;
 
-  if (scale > 0x10000) {
-    object->scaleX = scale - 0x800;
+  if (scale > FIXED_ONE) {
+    object->scaleX = scale - FIXED_ONE / 32;
     object->scaleY -= FIXED_ONE / 64;
   }
   timer = &object->riseCounter;

@@ -567,8 +567,8 @@ void MarsLighthouseEntrance_CrackLapisIceSheet(void) {
   if (!Flag_IsSet(FLAG_LAPIS_SECOND_SHEET_BURST)) {
     Event_PlaySound(SE_ICE_CRACK);
     Flag_Set(FLAG_LAPIS_SECOND_SHEET_SHOWN);
-    object->x.fixed = object->homeX << 16;
-    object->z.fixed = object->homeZ << 16;
+    object->x.fixed = INTtoFIXED(object->homeX);
+    object->z.fixed = INTtoFIXED(object->homeZ);
     Flag_Set(FLAG_LAPIS_SECOND_SHEET_CRACKED);
     MarsLighthouseEntrance_DrawLapisCrackedSheet();
   }
@@ -675,8 +675,8 @@ void MarsLighthouseEntrance_CrackHiddenCircleIceSheet(void) {
   if (!Flag_IsSet(FLAG_HIDDEN_CIRCLE_SHEET_BURST)) {
     Event_PlaySound(SE_ICE_CRACK);
     Flag_Set(FLAG_HIDDEN_CIRCLE_SHEET_SHOWN);
-    object->x.fixed = object->homeX << 16;
-    object->z.fixed = object->homeZ << 16;
+    object->x.fixed = INTtoFIXED(object->homeX);
+    object->z.fixed = INTtoFIXED(object->homeZ);
     Flag_Set(FLAG_HIDDEN_CIRCLE_SHEET_CRACKED);
   }
 }
@@ -781,8 +781,8 @@ void MarsLighthouseEntrance_PushStatueIntoValkyrieFlames(s32 unused, s32 id) {
 void MarsLighthouseEntrance_DrawHoleMask(void) {
   struct MapWork *map = Ram_HeapSlots->mapGrid;
   s32 *camera = (s32 *)((u8 *)map + 228);
-  s32 x = camera[0] & 0xffff0000;
-  s32 cameraZ = camera[1] & 0xffff0000;
+  s32 x = camera[0] & FIELD_PIXEL_MASK;
+  s32 cameraZ = camera[1] & FIELD_PIXEL_MASK;
   s32 originY = map->origin[1];
   s32 tile =
       gVramCacheEntries[gMarsLighthouseEntrance_HoleMaskVram].offset >> 5;
@@ -880,8 +880,8 @@ void MarsLighthouseEntrance_FallIntoHole(s32 arg) {
     if (i == 5)
       Event_PlaySound(SE_DUST_PUFF);
     actor->scaleX -= FIXED_ONE / 64;
-    actor->scaleY -= 0x300;
-    actor->y.fixed -= 0x9999;
+    actor->scaleY -= FIXED_ONE * 3 / 256;
+    actor->y.fixed -= toFIXED(6) / 10;
     System_Wait(1);
   }
   Actor_Get(gMainRoutineWork.leaderActorId)->spriteStorageKind = 0;
@@ -956,8 +956,8 @@ void MarsLighthouseEntrance_FallThroughCrack(const struct MapCell *cell) {
     if (i == 5)
       Event_PlaySound(SE_DUST_PUFF);
     leader->scaleX -= FIXED_ONE / 64;
-    leader->scaleY -= 0x300;
-    leader->y.fixed -= 0x9999;
+    leader->scaleY -= FIXED_ONE * 3 / 256;
+    leader->y.fixed -= toFIXED(6) / 10;
     System_Wait(1);
   }
   Actor_Get(gMainRoutineWork.leaderActorId)->spriteStorageKind = 0;
@@ -2141,8 +2141,8 @@ void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
       effect->scaleRateX = (target - effect->scaleX) / frames;
       effect->scaleRateY = (options->targetScaleY - effect->scaleY) / script[3];
     } else {
-      effect->scaleRateX = (target - 0x10000) / frames;
-      effect->scaleRateY = (options->targetScaleY - 0x10000) / script[3];
+      effect->scaleRateX = (target - FIXED_ONE) / frames;
+      effect->scaleRateY = (options->targetScaleY - FIXED_ONE) / script[3];
     }
   }
   if ((flags & EFFECT_USE_SCRIPT) != 0) {
@@ -2210,8 +2210,8 @@ void MarsLighthouseEntrance_DropThroughCrack(struct CellTarget *table,
     if (x == 5)
       Event_PlaySound(SE_DUST_PUFF);
     object->scaleX -= FIXED_ONE / 64;
-    object->scaleY -= 0x300;
-    object->y.fixed -= 0x9999;
+    object->scaleY -= FIXED_ONE * 3 / 256;
+    object->y.fixed -= toFIXED(6) / 10;
     System_Wait(1);
   }
   Actor_Get(gMainRoutineWork.leaderActorId)->spriteStorageKind = 0;

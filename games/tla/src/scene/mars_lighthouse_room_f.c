@@ -528,8 +528,8 @@ void MarsLighthouseRoomF_UncoverFlameThrower(s32 unused, s32 id) {
   s32 kind;
 
   kind = gMarsLighthouseRoomF_StatueFlameThrowers[id - ACTOR_TRAP_STATUE_A];
-  Actor_SetPositionFX(kind, object->homeX << 16,
-                      (object->homeZ << 16) - toFIXED(8));
+  Actor_SetPositionFX(kind, INTtoFIXED(object->homeX),
+                      (INTtoFIXED(object->homeZ)) - toFIXED(8));
 }
 
 /// Moved back to where it stood, the statue covers its flame thrower again.
@@ -1900,17 +1900,17 @@ s32 MarsLighthouseRoomF_KnockBack(void) {
         x = actor->x.fixed += (s16)work->direction.x << 17;
         z = actor->z.fixed + ((s16)work->direction.z << 17);
         actor->z.fixed = z;
-        off = (x & 0xfffff) + 0xfff80000;
+        off = (x & ~FIELD_CELL_MASK) - toFIXED(8);
         if (off > FIXED_ONE)
           off = FIXED_ONE;
-        if (off < (s32)0xffff0000)
-          off = 0xffff0000;
+        if (off < -FIXED_ONE)
+          off = -FIXED_ONE;
         actor->x.fixed = x - off;
-        off = (z & 0xfffff) + 0xfff80000;
+        off = (z & ~FIELD_CELL_MASK) - toFIXED(8);
         if (off > FIXED_ONE)
           off = FIXED_ONE;
-        if (off < (s32)0xffff0000)
-          off = 0xffff0000;
+        if (off < -FIXED_ONE)
+          off = -FIXED_ONE;
         actor->z.fixed = z - off;
         work->active = 0;
         System_Wait(1);
@@ -2347,8 +2347,8 @@ void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
       effect->scaleRateX = (targetX - effect->scaleX) / count;
       effect->scaleRateY = (options->targetScaleY - effect->scaleY) / script[3];
     } else {
-      effect->scaleRateX = (targetX - 0x10000) / count;
-      effect->scaleRateY = (options->targetScaleY - 0x10000) / script[3];
+      effect->scaleRateX = (targetX - FIXED_ONE) / count;
+      effect->scaleRateY = (options->targetScaleY - FIXED_ONE) / script[3];
     }
   }
   if ((flags & EFFECT_USE_SCRIPT) != 0) {
@@ -2648,8 +2648,8 @@ void LightSprites_Draw(void) {
   s32 viewX, viewZ, tile, viewY;
   struct LightOam *oam;
   s32 i;
-  viewX = view[0] & 0xffff0000;
-  viewZ = view[1] & 0xffff0000;
+  viewX = view[0] & FIELD_PIXEL_MASK;
+  viewZ = view[1] & FIELD_PIXEL_MASK;
   tile = gVramCacheEntries[gLightSpriteTile].offset >> 5;
   viewY = map->origin[1];
   oam = gLightSpriteOams;

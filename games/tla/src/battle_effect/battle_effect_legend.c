@@ -8,6 +8,7 @@
 /// The sparks live in the map cell buffer's second 16 KB, 128 for each sword.
 #define SPARKS ((struct Particle *)(Ram_MapCellBuffer + 0x4000))
 #define SPARK_COUNT 512
+#define LEGEND_SWORD_SPARKS 128
 
 // A texture for the model kernels: its size as powers of two, then its
 // pixels.
@@ -107,8 +108,8 @@ void BattleEffect_RunLegend(struct BattleEffectParams *args) {
         BattleEffect_TintBattler(args->targets[0], SPRITE_COLOR_WHITE,
                                  POSE_DAMAGE, 0, 8);
         work->shakeFrames = 4;
-        for (j = 0; j != 128; j++) {
-          struct Particle *spark = &SPARKS[i * 128 + j];
+        for (j = 0; j != LEGEND_SWORD_SPARKS; j++) {
+          struct Particle *spark = &SPARKS[i * LEGEND_SWORD_SPARKS + j];
           s32 angle;
           s32 force;
 
@@ -292,6 +293,13 @@ void BattleEffect_RunThunderCard(struct BattleEffectParams *args) {
 /// Where the card's element pictures are decoded in the effect's pictures:
 /// CrystalSheet, FlashBurstSheet, SmokeSheet or JaggedStreakSheet.
 #define ELEMENT_CARDS_PICTURES 0x800
+/// The work's particles: the shards, smoke or pictures the card throws, then
+/// one strike countdown for each target. Each target has its own run of the
+/// sparks, and a strike throws up the next free 16 of them.
+#define CARD_PIECES 56
+#define CARD_FIRST_STRIKE CARD_PIECES
+#define CARD_SPARKS_PER_TARGET 64
+#define CARD_STRIKE_SPARKS 16
 
 /// The four cards (Bramble, Frost, Flame and Thunder Card): a card rises from
 /// the user, spinning and growing, for 48 frames, then shows its picture.
@@ -354,9 +362,9 @@ void BattleEffect_RunElementCards(struct BattleEffectParams *args, s32 mode) {
     // find the user and every target.
     if (frame == 0) {
       Sound_PlayFar(SE_WARP);
-      EFFECT_FREE_PARTICLES(i, work->particles, 56);
+      EFFECT_FREE_PARTICLES(i, work->particles, CARD_PIECES);
       for (i = 0; i != args->targetCount; i++)
-        work->particles[56 + i].variant = (Random16() & 3) + 2;
+        work->particles[CARD_FIRST_STRIKE + i].variant = (Random16() & 3) + 2;
       for (i = 0; i != SPARK_COUNT; i++)
         SPARKS[i].variant = -1;
       EffectPosition_ProjectSprite(args->user, &card);
@@ -418,7 +426,7 @@ void BattleEffect_RunElementCards(struct BattleEffectParams *args, s32 mode) {
         else if (mode == CARD_FLAME)
           aim.y = targets[member].y + (Random16() & 63) + 32;
         if (frame <= 95) {
-          struct Particle *step = &work->particles[frame % 56];
+          struct Particle *step = &work->particles[frame % CARD_PIECES];
 
           step->x = card.x << 15;
           step->y = INTtoFIXED(card.y);
@@ -431,7 +439,7 @@ void BattleEffect_RunElementCards(struct BattleEffectParams *args, s32 mode) {
 
       if (mode == CARD_FROST) {
         // The shards tumble through their three cells, bounce and slow.
-        for (i = 0; i != 56; i++) {
+        for (i = 0; i != CARD_PIECES; i++) {
           struct Particle *step = &work->particles[i];
 
           if ((u32)step->variant <= 1023) {
@@ -452,7 +460,7 @@ void BattleEffect_RunElementCards(struct BattleEffectParams *args, s32 mode) {
         }
       } else if (mode == CARD_FLAME) {
         // The smoke flies to the ground and plays its six cells.
-        for (i = 0; i != 56; i++) {
+        for (i = 0; i != CARD_PIECES; i++) {
           struct Particle *step = &work->particles[i];
 
           if (step->variant >= 0) {
@@ -493,7 +501,7 @@ void BattleEffect_RunElementCards(struct BattleEffectParams *args, s32 mode) {
       s32 speed = (frame - 68) * 3;
 
       for (i = 0; i != args->targetCount; i++) {
-        struct Particle *step = &work->particles[56 + i];
+        struct Particle *step = &work->particles[CARD_FIRST_STRIKE + i];
 
         if (--step->variant == 0) {
           s32 burst;
@@ -515,8 +523,8 @@ void BattleEffect_RunElementCards(struct BattleEffectParams *args, s32 mode) {
                                    TINT_KEEP, i, 8);
           burst = 0;
           EffectPosition_ProjectScaledBattler(args->targets[i], &aim);
-          for (j = 0; j != 64; j++) {
-            struct Particle *spark = &SPARKS[i * 64 + j];
+          for (j = 0; j != CARD_SPARKS_PER_TARGET; j++) {
+            struct Particle *spark = &SPARKS[i * CARD_SPARKS_PER_TARGET + j];
 
             if (spark->variant < 0) {
               s32 angle;
@@ -533,7 +541,7 @@ void BattleEffect_RunElementCards(struct BattleEffectParams *args, s32 mode) {
                 spark->velocityY /= 2;
               }
               spark->variant = (Random16() & 7) + 16;
-              if (++burst == 16)
+              if (++burst == CARD_STRIKE_SPARKS)
                 break;
             }
           }

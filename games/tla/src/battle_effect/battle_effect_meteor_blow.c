@@ -197,7 +197,10 @@ void BattleEffect_RunMeteorBlow(struct BattleEffectParams *args) {
       Task_Remove(BattleEffect_FlushPendingGraphicsTransfer);
       Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_FRAME);
       IO_WRITE_QUEUE_PUSH((u32)&REG_BG2PA, Q_8_8(0.5), IO_WRITE_HALFWORD);
-      IO_WRITE_QUEUE_PUSH((u32)&REG_BG2CNT, 0x784, IO_WRITE_HALFWORD);
+      IO_WRITE_QUEUE_PUSH((u32)&REG_BG2CNT,
+                          BGCNT_CHAR_BASE(1) | BGCNT_256_COLORS |
+                              BGCNT_SCREEN_BASE(7),
+                          IO_WRITE_HALFWORD);
     }
     if (frame > 128) {
       BattleEffect_StepPaletteToResource(RESOURCE_ORANGE_PALETTE_B);
@@ -212,7 +215,7 @@ void BattleEffect_RunMeteorBlow(struct BattleEffectParams *args) {
     // DEAD: frame never reaches 1600 here; the ROM keeps the compare and
     // branch.
     if (frame <= 1599) {
-      u16 *dst = (u16 *)((u8 *)work + 0x7640);
+      u16 *dst = work->backdropLines;
       s32 value = work->frame;
       s32 base = value / 2 + 16;
 
@@ -416,13 +419,8 @@ void BattleEffect_RunMeteorBlow(struct BattleEffectParams *args) {
   Resource_LoadAndDecompress(RESOURCE_FLAME_BAND_TEXTURE,
                              work->sheet + METEOR_BLOW_FLAME_BAND, 0, 0);
   LOAD_BG_PALETTE(RESOURCE_ORANGE_PALETTE_B);
-  {
-    s32 *q = (s32 *)((s32 *)(Ram_MapCellBuffer + 0x18));
-
-    for (i = 0; i != 256; i++, q += 7) {
-      *q = 0;
-    }
-  }
+  for (i = 0; i != 256; i++)
+    PARTICLES[i].variant = 0;
   Palette_BrightenBattleBg(5, -4, -12);
 
   // The impact: the meteor lands, rings of fire and shards fly.

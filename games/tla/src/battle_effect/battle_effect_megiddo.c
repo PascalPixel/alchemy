@@ -41,7 +41,7 @@ void BattleEffect_RunMegiddo(struct BattleEffectParams *args) {
   u8 *meshA;
   u8 *meshB;
   s32 casterValue;
-  s32 *caster;
+  struct MotionObject *caster;
   FIXED x;
   FIXED z;
   FIXED scale;
@@ -101,13 +101,13 @@ void BattleEffect_RunMegiddo(struct BattleEffectParams *args) {
                    FIXEDtoINT(Trig_Cos(m << 13) * r));
     }
   }
-  casterValue = caster[18];
+  casterValue = caster->verticalMotionStrength;
   Actor_SetAnimationSpeedFar(caster, 0);
-  caster[9] = 0;
-  caster[10] = 0;
-  caster[11] = 0;
-  caster[13] = 0;
-  caster[18] = 0;
+  caster->velocityX = 0;
+  caster->velocityY = 0;
+  caster->velocityZ = 0;
+  caster->acceleration = 0;
+  caster->verticalMotionStrength = 0;
 
   for (frame = 0; frame != MEGIDDO_FRAMES; frame++) {
     if (frame == 4) {
@@ -164,7 +164,7 @@ void BattleEffect_RunMegiddo(struct BattleEffectParams *args) {
                                RESOURCE_RED_HAZE_BACKDROP, 0);
       BattleEffect_BuildRepeatingTilemap();
       Palette_BrightenBattleBg(8, 2, 2);
-      BattleEffect_SpawnObjects(1, 0x299, 2);
+      BattleEffect_SpawnObjects(1, SPRITE_SUN, 2);
     }
     EffectPosition_ProjectScaledBattler(args->user, &pos);
     if (frame == 3) {
@@ -294,7 +294,7 @@ void BattleEffect_RunMegiddo(struct BattleEffectParams *args) {
     }
 
     if (frame > 1) {
-      u8 *obj;
+      struct FieldSprite *obj;
       s32 *pair;
       s32 v = 0; // Default: set before it is read.
 
@@ -317,9 +317,9 @@ void BattleEffect_RunMegiddo(struct BattleEffectParams *args) {
       place[0] = x;
       place[2] = z;
       obj = work->sprites[0];
-      obj[23] = 32;
-      obj[22] = zero;
-      if ((u32)(place[2] + toFIXED(52)) <= 0xfbffff) {
+      obj->box[3] = 32;
+      obj->box[2] = zero;
+      if ((u32)(place[2] + toFIXED(52)) < toFIXED(252)) {
         Render_ApplyProjectedPlacementFar(obj, place, pair, 0);
       }
     }
@@ -560,13 +560,11 @@ void BattleEffect_RunMegiddo(struct BattleEffectParams *args) {
   }
 
   Sprite_DestroyFar(work->sprites[0]);
-  caster[18] = casterValue;
+  caster->verticalMotionStrength = casterValue;
   BattleObject_PutFar();
   transition[4] = 0;
-  // The background id is the low halfword of the word at 0x670.
-  BattleBackground_LoadFar(
-      BATTLE_BACKGROUND_FIXED,
-      (u16)*(s32 *)((u8 *)Ram_HeapSlots->battleWork + 0x670), 24);
+  BattleBackground_LoadFar(BATTLE_BACKGROUND_FIXED,
+                           Ram_HeapSlots->battleWork->background, 24);
   EFFECT_FINISH_CANVAS_ONE_BLITTER();
 }
 #undef BLITTER

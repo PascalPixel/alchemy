@@ -1368,7 +1368,7 @@ void SelectionMenu_LoadLargeIcon(void) {
   table = Resource_GetTableEntry(RESOURCE_COMMAND_ICONS);
   {
     u8 **destination = &buffer->encoded;
-    resource = table + *(u16 *)(table + selection->base * 2);
+    resource = table + ((u16 *)table)[selection->base];
     *destination = resource;
   }
   Decompress_ByteLz(resource, buffer);

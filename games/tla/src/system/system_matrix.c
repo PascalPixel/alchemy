@@ -344,8 +344,8 @@ void Matrix_RotateTranslateScale(s32 *angles, FIXED *position, FIXED *scale) {
 /// Square root of a 16.16 fixed-point value, in 16.16. The square root of
 /// the raw value is the result in 8.8, so the low eight bits are always 0.
 #define Math_SqrtFX(v) (Iwram_Sqrt(v) << 8)
-/// Matrix_BuildLookAt's ARM dot product, seven words it copies onto its
-/// stack to run.
+/// Matrix_BuildLookAt's dot product, a Thumb entry and its ARM code: eight
+/// words it copies onto its stack to run.
 #define RelocatedInnerProduct Math_InnerProductCode
 
 /// Builds in `out` the camera matrix of an eye at `eye` looking at `target`.
@@ -363,8 +363,8 @@ void Matrix_BuildLookAt(FIXED *eye, FIXED *target, FIXED *out) {
   s32 vx, vy, vz;
   s32 scale;
   s32 ez;
-  s32 t;
-  FIXED w;
+  s32 length;
+  FIXED levelSquared;
   u32 num = 0x80000000; // Dividend 2^31 for calculating the reciprocal.
   /* FAKEMATCH(pin): divide held in r9. */
   register u32 (*divide)(u32 dividend, u32 divisor) asm("r9");
@@ -384,8 +384,9 @@ void Matrix_BuildLookAt(FIXED *eye, FIXED *target, FIXED *out) {
   dx = target[0] - eye[0];
   dy = target[1] - eye[1];
   dz = target[2] - eye[2];
-  t = Iwram_Sqrt(dot(dx >> 8, dx >> 8, dy >> 8, dy >> 8, dz >> 8, dz >> 8));
-  scale = divide(num, t) >> 15;
+  length =
+      Iwram_Sqrt(dot(dx >> 8, dx >> 8, dy >> 8, dy >> 8, dz >> 8, dz >> 8));
+  scale = divide(num, length) >> 15;
   scale = -scale;
   /* FAKEMATCH(dead): the normalization in a once-only block. */
   do {
@@ -396,10 +397,10 @@ void Matrix_BuildLookAt(FIXED *eye, FIXED *target, FIXED *out) {
   } while (0);
 
   // Normalize the horizontal axis u = (dz, 0, -dx).
-  w = FIXED_ONE - mul(dy, dy);
+  levelSquared = FIXED_ONE - mul(dy, dy);
   scale = FIXED_ONE;
-  if (w > 0)
-    scale = divide(num, Math_SqrtFX(w)) << 1;
+  if (levelSquared > 0)
+    scale = divide(num, Math_SqrtFX(levelSquared)) << 1;
   ux = mul(dz, scale);
   uz = mul(uz, scale);
 

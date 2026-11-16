@@ -689,21 +689,22 @@ void SerialTest_Delay(void) {}
 void SerialTest_Run(void) {
   u16 *tile;
   s32 value;
-  s32 n;
+  s32 remaining;
   s32 delay;
   volatile u32 *held;
 
   Sound_PlayFar(MUS_CHAMPA);
   Serial_Initialize();
-  n = 19;
-  tile = (u16 *)BG_SCREEN_BLOCK(4) + 16 * 32 + 19;
-  value = (s16)0xf093;
+  // Window-palette tiles 0x93 down to 0x80 on row 16, columns 19 down to 0.
+  remaining = 19;
+  tile = (u16 *)BG_SCREEN_BLOCK(4) + 16 * BG_SCREEN_WIDTH + 19;
+  value = (s16)(BG_TILE_PALETTE(WINDOW_PALETTE) | 0x93);
   do {
-    n--;
+    remaining--;
     *tile = value;
     tile--;
     value--;
-  } while (n >= 0);
+  } while (remaining >= 0);
   Cpu_Fill32(0, gMapGridCellBuffer, 0x400);
   Serial_WaitForStatusMask(3);
 restart:

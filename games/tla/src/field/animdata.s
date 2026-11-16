@@ -11,8 +11,8 @@ gActor_ShadowTiles:
 
 @ {sprite resource, metadata number}: SpritePictureCache_Load finds the number it
 @ is given and decodes that resource. A zero number ends the table.
-	.global gResourceSlot_NumberTable
-gResourceSlot_NumberTable:
+	.global gSpritePictureCache_Sources
+gSpritePictureCache_Sources:
 	sprite_source BlueDevilSprites, 526
 	sprite_source PinkBruteSprites, 527
 	sprite_source ClubTrollSprites, 528

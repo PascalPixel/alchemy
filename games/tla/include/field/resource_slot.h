@@ -10,29 +10,9 @@
 struct Actor;
 struct SpriteAnimation;
 
-struct MetadataSlotState {
-  u8 unused[0x0c]; ///< no code names it
-  s32 scale;
-  u8 unusedAfterScale[4]; ///< no code names it
-  u8 width;
-  u8 height;
-  s8 offsetX;
-  s8 offsetY;
-  u8 unusedAfterOffsetY[3]; ///< no code names it
-  u8 count;
-  u8 unusedAfterCount[0x0c]; ///< no code names it
-  s32 slots[4];
-};
-
-struct ResourceObjectWork {
-  u8 unused[16];           ///< no code names it
-  u8 resource;             ///< VRAM cache index.
-  u8 flags;                ///< Bit 0: do not return the VRAM cache entry.
-  u8 unusedAfterFlags[22]; ///< no code names it
-  void *children[4];
-};
-
 s32 Party_GetPpRatioFar(void);
+/// Matrix_UpdateVertices' Thumb entry and ARM code (world_map_lines_entry.s),
+/// copied to RAM to run.
 extern const u8 Matrix_UpdateVerticesCode[];
 s32 MapGrid_IsClimbableCellFar(s32 x, s32 z, s32 kind);
 s32 Actor_GetCellIndexFar(struct Actor *object);

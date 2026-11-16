@@ -41,7 +41,9 @@ STATIC_ASSERT(offsetof(struct WorldMapWork, mode) == 0x642);
 STATIC_ASSERT(offsetof(struct WorldMapWork, searchZ) == 0x648);
 
 /// The game flag that marks a World Map place visited, from its FlagEntry.flag.
-#define FLAG_PLACE_VISITED(place) ((place) + 0x180)
+/// The first of those flags, a place's FlagEntry.flag being added to it.
+#define FLAG_PLACE_VISITED_FIRST 0x180
+#define FLAG_PLACE_VISITED(place) ((place) + FLAG_PLACE_VISITED_FIRST)
 /// FlagEntry.value's markers, besides the marker pictures 1 to 14.
 enum WorldMapMarkerKind {
   WORLD_MAP_MARKER_NONE = 0, ///< the place is not drawn
@@ -79,15 +81,16 @@ STATIC_ASSERT(offsetof(struct FlagEntry, visitScene) == 0x0c);
 STATIC_ASSERT(offsetof(struct FlagEntry, scene) == 0x10);
 STATIC_ASSERT(sizeof(struct FlagEntry) == 20);
 
-/// Data_02000500, gMainRoutineWork.worldPictureFlag under a label of its own:
-/// the destination last chosen on the world map. Written through the member,
-/// WorldPicture_Show compiles otherwise.
+/// gMainRoutineWork.worldPictureFlag under a label of its own,
+/// gWorldPictureChoice: the destination last chosen on the world map. Written
+/// through the member, WorldPicture_Show compiles otherwise.
 struct WorldMapChoice {
   s16 flag; ///< the chosen FlagEntry's flag; -1 when cancelled
 };
 
 extern struct WorldMapWork gWorldMapWork;
-extern struct WorldMapChoice Data_02000500;
+/// The destination last chosen on the world map (struct WorldMapChoice).
+extern struct WorldMapChoice gWorldPictureChoice;
 const struct FlagEntry *FlagEntries_GetTable(void);
 u32 WorldMapPlace_GetMarker(const struct FlagEntry *place);
 

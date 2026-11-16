@@ -493,14 +493,14 @@ s32 Scene_Initialize(void) {
     Actor_SetSpriteFlags(Actor_GetById(ACTOR_HOLE_WORKER), 0);
     object = Actor_GetById(ACTOR_HOLE_WORKER);
     object->radius = Actor_GetById(ACTOR_HOLE_WORKER)->radius * 4 / 3;
-    ((struct FieldSprite *)Actor_GetById(ACTOR_HOLE_WORKER)->sprite)
-        ->nextFrame |= 8;
+    ((struct FieldSprite *)Actor_GetById(ACTOR_HOLE_WORKER)->sprite)->flags |=
+        8;
     {
       struct FieldSprite *sprite = Actor_GetById(ACTOR_HOLE_WORKER)->sprite;
 
-      sprite->unk11 = (sprite->unk11 & 3) | 32;
+      sprite->cacheBits = (sprite->cacheBits & 3) | 32;
     }
-    ((struct FieldSprite *)Actor_GetById(ACTOR_HOLE_WORKER)->sprite)->unk19 = 1;
+    ((struct FieldSprite *)Actor_GetById(ACTOR_HOLE_WORKER)->sprite)->dirty = 1;
     if (Event_GetFlag(FLAG_GABOMBA_MESSAGE_CARRIED) == 0 &&
         Event_GetFlag(FLAG_BRIGGS_CAUGHT) != 0) {
       Actor_SetPosition(ACTOR_ICE_SHAFT_WITNESS, 0, 0);

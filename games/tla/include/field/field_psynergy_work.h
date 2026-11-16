@@ -83,7 +83,7 @@ struct FieldEffectWork {
   u8 savedPriorityFlags;
   u8 savedSpritePriority;
   ///@}
-  u8 unusedAfterSavedSpritePriority[0xaa]; ///< no code names it
+  u8 unusedAfterSavedSpritePriority[170]; ///< no code names it
   /// A lasting Psynergy's stage and frame, passed to its event as it runs.
   ///@{
   s16 stage;

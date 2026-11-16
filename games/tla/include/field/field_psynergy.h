@@ -17,7 +17,7 @@ struct SpriteAnimation;
 /// The scatter's work (heap slot HEAP_SLOT_BATTLE_EFFECT): its tiles, 64
 /// sprites and particles, the actor it scatters from, and its stage.
 struct ScatterWork {
-  u8 tiles[0x1000];
+  u8 tiles[4096];
   struct EffectSprite sprites[64];
   struct FieldPsynergyParticle particles[64];
   struct Actor *object;
@@ -38,18 +38,21 @@ enum OrbKind {
   ORB_HANDOFF,  // target 373: the target is handed on
 };
 
-// One moving point: a spark on the canvas (x and y only, counting delay) or
-// a sprite's place in the world.
+/// One moving point of the Arrow: a spark on the canvas (x and y only, counting
+/// delay) or a sprite's place in the world.
 struct BowMotion {
-  s32 x;
-  s32 y;
-  s32 z;
-  s32 velocityX;
-  s32 velocityY;
-  s32 velocityZ;
+  FIXED x; ///< 16.16 fixed-point pixels
+  FIXED y;
+  FIXED z;
+  FIXED velocityX; ///< 16.16 fixed-point pixels a frame
+  FIXED velocityY;
+  FIXED velocityZ;
   s32 delay;
 };
 
+/// The Arrow's work (FieldPsynergy_Arrow, in heap slot
+/// HEAP_SLOT_BATTLE_EFFECT): its 32 sparks, the arrow and the bow with their
+/// motions, the points the arrow flies between, and the phase of its task.
 struct BowWork {
   u8 *tiles;
   struct BowMotion sparks[32];
@@ -75,20 +78,12 @@ struct BowWork {
 /// FieldWork as FieldPsynergy_GatherNearbyCells writes it: the cells a Psynergy
 /// touches and the Cyclone's two spots, here unsigned.
 struct PointWork {
-  u8 unused[0xcc0]; ///< no code names it
+  u8 unused[3264]; ///< no code names it
   s16 points[62];
   u16 cycloneCarryX;
   u16 cycloneCarryZ;
   u16 cycloneLiftX;
   u16 cycloneLiftZ;
-};
-
-struct ArcWork {
-  struct EffectSprite sprites[2][2];
-  s16 age[2];
-  s16 resource;
-  s16 group;
-  struct Actor *target;
 };
 
 /// A falling arc's sprite (struct Sprite), seen as the image attributes, VRAM
@@ -119,7 +114,7 @@ struct DescendingArcSprite {
       u8 palette : 4;
     } byte;
   } attr;
-  s32 scale;
+  FIXED scale;             ///< 16.16 fixed point, FIXED_ONE full size
   u8 slot;                 ///< the VRAM cache entry holding its tiles
   u8 retainCacheEntry : 1; ///< the borrowed tiles stay loaded
   u8 useOwnScale : 1;
@@ -137,6 +132,8 @@ struct DescendingArcSprite {
   struct SpriteAnimation *firstEntry; ///< entries[0], its first layer
 };
 
+/// The arc sparks' tiles, a copy of The Broken Seal's
+/// gBattleEffect_ArcSparkTiles (field_effects.s).
 extern const u8 gFieldEffect_ArcSparkTiles[];
 
 void Actor_WaitForTrackEndFar(struct Actor *object);
@@ -144,6 +141,8 @@ void Actor_WaitForTrackEndFar(struct Actor *object);
 extern const s32 gArrow_WobbleAngles[8];
 extern const s32 gArrow_WobbleFades[4];
 
+/// Three 8 by 8 glints the Arrow draws into its canvas, a byte a pixel
+/// (arrow_glint.s).
 extern const u8 gArrow_GlintPixels[];
 
 extern const s8 gFieldPsynergy_NearbyCellOffsets[];

@@ -281,11 +281,10 @@ void TaopoSwamp_GrowVine(void) {
   Event_SetFlag(FLAG_SCENE_TEMP_20);
 }
 
-struct AnimationGroup;
 struct ChildGroup;
 
 extern u32 gTaopoSwamp_SplashFades[];
-s32 Sprite_StartAnimation(struct AnimationGroup *state, s32 flags);
+s32 Sprite_StartAnimation(struct Sprite *state, s32 flags);
 void Sprite_SetAnimationColorModes(struct FieldSprite *record, u32 value);
 void Sprite_SetAnimationSpeed(struct ChildGroup *group, s32 value);
 
@@ -314,10 +313,10 @@ void TaopoSwamp_SinkPillar(s32 unused, s32 id) {
   i = 0;
   do {
     ((struct Sprite *)sprite)->sunkRows = i;
-    sprite->nextFrame |= 8;
-    sprite->nextFrame &= ~1;
+    sprite->flags |= 8;
+    sprite->flags &= ~1;
     k = i;
-    sprite->unk19 = 1;
+    sprite->dirty = 1;
     k &= 3;
     if (k == 0) {
       x = actor->x.fixed + Random16() * 2 - Random16() * 2;
@@ -330,7 +329,7 @@ void TaopoSwamp_SinkPillar(s32 unused, s32 id) {
         splash->motionFlags = 0;
         if (splashSprite != 0) {
           ((s32 (*)())Sprite_StartAnimation)(splashSprite, 1);
-          splashSprite->nextFrame = k;
+          splashSprite->flags = k;
           splashSprite->priority = sprite->priority;
           Sprite_SetAnimationColorModes(splashSprite, 13);
           Sprite_SetAnimationSpeed(splashSprite, 8);
@@ -358,7 +357,7 @@ void TaopoSwamp_SinkPillar(s32 unused, s32 id) {
       spark->layer = 1;
       if (sparkSprite != 0) {
         Sprite_StartAnimation(sparkSprite, 2);
-        sparkSprite->nextFrame = zero;
+        sparkSprite->flags = zero;
         sparkSprite->priority = 2;
       }
     }
@@ -1792,7 +1791,7 @@ void TaopoSwamp_SinkInMud(void) {
       spark->layer = 1;
       if (sparkSprite != 0) {
         Sprite_StartAnimation(sparkSprite, 2);
-        sparkSprite->nextFrame = 0;
+        sparkSprite->flags = 0;
         sparkSprite->priority = 2;
       }
     }

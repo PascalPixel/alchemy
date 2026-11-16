@@ -71,7 +71,7 @@ void Animation_SkipToStop(struct Sprite *player) {
 s32 Sprite_ComposePicture(struct Sprite *obj, u32 dir) {
   s32 mirrored;
   u32 size;
-  struct ObjectSystemColours *system;
+  struct ActorSystemWork *system;
   DrawFn decodePicture;
   s32 decoderWasLoaded;
   struct SpriteAnimation *layer;
@@ -90,7 +90,7 @@ s32 Sprite_ComposePicture(struct Sprite *obj, u32 dir) {
   void *vram;
 
   mirrored = 0;
-  system = (struct ObjectSystemColours *)Ram_HeapSlots->actorSystem;
+  system = Ram_HeapSlots->actorSystem;
   decoderWasLoaded = 1;
   decodePicture = Ram_HeapSlots->frameScratch;
   if (decodePicture == NULL) {

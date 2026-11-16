@@ -106,7 +106,7 @@ void TileMap_DrawRowsFromRam(s32 lines, s32 pixels) {
 
 /// Rebuilds the ground plane's scanline terms when the world map pitch changes.
 void WorldMap_BuildScanlineTable(FIXED pitchSlope, s32 *position,
-                                 struct ScanlineRow *row) {
+                                 struct WorldMapScanline *row) {
   s32 vector[3];
   s32 result[3];
   FIXED height;

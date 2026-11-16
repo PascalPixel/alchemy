@@ -21,7 +21,7 @@ struct WorldMapView {
             ///< at load
   u8 fadeStep; ///< MapWork's wideTiles, 0x80 at load
   /// As MapWork: footprints, tileset animations and blend script.
-  u8 animationsAndBlend[0xe4 - 0x17];
+  u8 animationsAndBlend[205];
   FIXED viewX;             ///< the view's left, 16.16 fixed-point pixels
   FIXED viewY;             ///< the view's top, 16.16 fixed-point pixels
   FIXED scaleX;            ///< 32 in 16.16 at load
@@ -52,7 +52,7 @@ struct WorldMapView {
   u16 yaw;   ///< 1/65536 turns
   /// A row of gWorldMap_GraphicsResources, by the region the party is in.
   const u32 *resources;
-  u8 unusedAfterResources[0x24];
+  u8 unusedAfterResources[36];
   u16 tileIds[32 * 32]; ///< the world map tile in each of 32 by 32 cells
   /// The tile each quarter of each layer's block buffer shows, so an unchanged
   /// quarter is not decoded again.

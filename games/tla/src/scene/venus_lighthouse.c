@@ -166,7 +166,7 @@ void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
   Actor_StartScript(effect,
                     gFieldEffect_DurationScripts[flags & EFFECT_SCRIPT_MASK]);
   effect->motionFlags = 0;
-  sprite->nextFrame = 0;
+  sprite->flags = 0;
   effect->update = FieldEffect_UpdateMotionScaleAndSpin;
   effect->velocity.x = velocityX;
   effect->velocity.y = velocityY;

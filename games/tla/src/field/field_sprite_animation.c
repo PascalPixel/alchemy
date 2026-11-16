@@ -60,15 +60,15 @@ struct ResourceSprite {
 #undef SpriteAnimation_Alloc
 
 /// Loads the pictures of animation id number into picture cache slot's buffer:
-/// the resource listed for it in gResourceSlot_NumberTable, decoded, its
+/// the resource listed for it in gSpritePictureCache_Sources, decoded, its
 /// picture offsets turned into pointers, and for variant 1-5 its pixel colours
 /// (those up to 223, the basic sprite palettes 0 to 13) remapped through that
 /// variant's conversion table; a variant above 5 uses variant 1's.
 s32 SpritePictureCache_Load(u32 slot, u32 *buffer, s32 number, u32 variant) {
   struct AnimationMetadata *metadata;
-  struct ObjectSystemWork *work;
-  struct ResourceSlot *record;
-  struct ResourceSlotNumber *entry;
+  struct ActorSystemWork *work;
+  struct SpritePictureCache *record;
+  struct SpritePictureCacheSource *entry;
   u32 *offset;
   u8 *text;
   u8 *end;
@@ -79,15 +79,15 @@ s32 SpritePictureCache_Load(u32 slot, u32 *buffer, s32 number, u32 variant) {
   u16 entryNumber;
   s32 resource;
 
-  if (slot >= RESOURCE_SLOT_COUNT)
+  if (slot >= SPRITE_PICTURE_CACHE_COUNT)
     return 0;
   work = Ram_HeapSlots->actorSystem;
-  record = &work->slots[slot];
+  record = &work->pictureCaches[slot];
   metadata = Resource_GetMetadataRecordFar(number);
   record->tag = (slot << 12) | number;
-  record->buffer = buffer;
+  record->pictures = buffer;
 
-  entry = gResourceSlot_NumberTable;
+  entry = gSpritePictureCache_Sources;
   for (count = 0; count < 256; count++) {
     s16 *numbers = &entry->number;
 
@@ -129,14 +129,14 @@ s32 SpritePictureCache_Load(u32 slot, u32 *buffer, s32 number, u32 variant) {
 
 /// Returns the buffer loaded into the sprite picture cache with this tag, or 0.
 s32 SpritePictureCache_FindByTag(s32 key) {
-  struct ObjectSystemWork *work = Ram_HeapSlots->actorSystem;
+  struct ActorSystemWork *work = Ram_HeapSlots->actorSystem;
   u32 no;
-  struct ResourceSlot *p;
+  struct SpritePictureCache *p;
 
   no = 0;
-  for (p = work->slots; no < RESOURCE_SLOT_COUNT; no++, p++) {
+  for (p = work->pictureCaches; no < SPRITE_PICTURE_CACHE_COUNT; no++, p++) {
     if (p->tag == key)
-      return (s32)p->buffer;
+      return (s32)p->pictures;
   }
   return 0;
 }
@@ -533,9 +533,6 @@ void SpriteAnimation_Clear(void *dst) {
 // Resources: create/release animated sprite objects and calculate frame
 // durations.
 
-typedef char
-    ResourceObjectWork_size[sizeof(struct ResourceObjectWork) == 56 ? 1 : -1];
-
 /// Creates an animated sprite object for animation id, using one of 64 free
 /// objects and a VRAM cache entry. Returns the object, or NULL on failure.
 struct ResourceObject *Sprite_Create(s32 id) {
@@ -625,25 +622,25 @@ struct ResourceObject *Sprite_Create(s32 id) {
   return freeSprite;
 }
 
-/// Releases an object: gives back its VRAM cache entry unless flags bit 0 is
-/// set, releases its four children and zeroes the 56-byte workspace.
-void Sprite_Destroy(struct ResourceObjectWork *work) {
+/// Releases a sprite: gives back its VRAM cache entry unless it keeps it
+/// (retainCacheEntry), clears its four sprite animations and zeroes it.
+void Sprite_Destroy(struct Sprite *sprite) {
   volatile u32 zero;
   s32 n;
-  void **child;
+  struct SpriteAnimation **layer;
 
-  if (work) {
-    if (!(work->flags & 1))
-      VramCache_FreeEntry(work->resource);
-    child = work->children;
+  if (sprite) {
+    if (!sprite->retainCacheEntry)
+      VramCache_FreeEntry(sprite->slot);
+    layer = sprite->entries;
     n = 3;
     do {
-      SpriteAnimation_Clear(*child++);
+      SpriteAnimation_Clear(*layer++);
     } while (--n >= 0);
     zero = 0;
-    Dma_Set(&zero, work,
+    Dma_Set(&zero, sprite,
             ((DMA_ENABLE | DMA_32BIT | DMA_SRC_FIXED) << 16) |
-                (sizeof(*work) / 4),
+                (sizeof(*sprite) / 4),
             REG_DMA3);
   }
 }

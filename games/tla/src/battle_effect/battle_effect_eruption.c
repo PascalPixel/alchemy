@@ -197,7 +197,7 @@ void BattleEffect_SpawnObjects(s32 entryCount, s32 kind, u32 variant) {
 
     work->sprites[entryIndex] = object;
     if (object != NULL) {
-      object->nextFrame = 0;
+      object->flags = 0;
       Sprite_StartAnimationFar(object, entryIndex);
       ((struct FieldSprite *)work->sprites[entryIndex])->priority = variant;
     }

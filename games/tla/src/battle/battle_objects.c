@@ -253,7 +253,7 @@ void BattleObject_SpawnObjectsForList(s16 *unitIds, s32 refreshPoses,
         (battleObject->resource & 0xfff) == 579 ||
         (battleObject->resource & 0xfff) == 581 ||
         (battleObject->resource & SPRITE_ID_MASK) == 583) {
-      records = (struct Sprite **)Ram_HeapSlots->actorSystem->unk08 +
+      records = (struct Sprite **)Ram_HeapSlots->actorSystem->spriteGroups +
                 Ram_HeapSlots->actorSystem->count;
       spriteId = battleObject->resource;
       object->recordStorageKind = ACTOR_SPRITE_GROUP;

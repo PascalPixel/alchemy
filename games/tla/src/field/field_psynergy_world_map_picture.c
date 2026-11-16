@@ -262,7 +262,7 @@ void WorldPicture_UpdateMarkers(void) {
   i = 0;
   do {
     if (place->flag == 0) {
-      if (gData_0202a642 != 0)
+      if (gWorldPicture_FirstListOnly != 0)
         break;
       place = &places[128];
       i = 128;
@@ -725,7 +725,7 @@ s32 WorldPicture_Show(s32 mode) {
   s32 screenY;
   struct MapWork *map = Ram_HeapSlots->mapGrid;
   struct FieldWork *event = Ram_HeapSlots->fieldWork;
-  struct ObjectSystemWork *objects = Ram_HeapSlots->actorSystem;
+  struct ActorSystemWork *objects = Ram_HeapSlots->actorSystem;
   s16 blend;
   s32 messageShown = 0;
   s32 zoomed = 0;
@@ -750,7 +750,7 @@ s32 WorldPicture_Show(s32 mode) {
   s32 limitX;
   s32 limitZ;
   s32 value;
-  struct WorldMapChoice *choice = &Data_02000500;
+  struct WorldMapChoice *choice = &gWorldPictureChoice;
   struct MainRoutineWork *routine = &gMainRoutineWork;
 
   world->mode = mode;

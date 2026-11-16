@@ -1653,7 +1653,7 @@ void WorldMap_SpawnCollapseDust(void) {
   if (obj != NULL) {
     sprite = obj->sprite;
     scale = ((Random16() << 15) >> 16) + 0x13333;
-    sprite->nextFrame = 0;
+    sprite->flags = 0;
     sprite->priority = 2;
     motionFlags = &obj->motionFlags;
     *motionFlags = 0;
@@ -1790,7 +1790,7 @@ void WorldMap_SpawnIdejimaWake(void) {
     value = (s32)value >> 1;
     obj->z.fixed += value;
   }
-  spr->nextFrame = 0;
+  spr->flags = 0;
   spr->priority = ((struct FieldSprite *)leader->sprite)->priority;
   obj->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
   obj->motionFlags = leader->motionFlags;
@@ -2567,12 +2567,11 @@ void WorldMap_SpawnTwinSparks(struct Actor *parent) {
       child->watchedActor = parent;
       if (sprite != NULL) {
         Sprite_StartAnimation(sprite, 0);
-        sprite->nextFrame = 0;
-        VramCache_FreeEntry(sprite->vramBlock);
-        sprite->vramBlock = work->vramBlock;
-        ((struct SpriteCacheBits *)&sprite->unk11)->retainCacheEntry = 1;
-        sprite->tile =
-            (gVramCacheEntries[sprite->vramBlock].offset >> 5) & 0x3ff;
+        sprite->flags = 0;
+        VramCache_FreeEntry(sprite->slot);
+        sprite->slot = work->vramBlock;
+        ((struct SpriteCacheBits *)&sprite->cacheBits)->retainCacheEntry = 1;
+        sprite->tile = (gVramCacheEntries[sprite->slot].offset >> 5) & 0x3ff;
         sprite->fullColor = 0;
         sprite->shape = 1;
         ((struct WorldMapOam *)sprite)->size = 2;

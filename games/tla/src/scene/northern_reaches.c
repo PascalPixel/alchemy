@@ -93,7 +93,7 @@ struct IceWallWork {
 
 /// Starts an actor's animation from its first frame, on map layer 1.
 s32 NorthernReaches_ResetAnimationFrame(struct Actor *object) {
-  ((struct FieldSprite *)object->sprite)->nextFrame = 0;
+  ((struct FieldSprite *)object->sprite)->flags = 0;
   object->layer = 1;
   return 1;
 }

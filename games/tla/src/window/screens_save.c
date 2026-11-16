@@ -802,7 +802,7 @@ void FileList_ShowPartySprites(struct RenderInput *origin, s32 x, s32 y,
 
     if (object != 0) {
       Sprite_StartAnimationFar(object, ANIM_STAND);
-      object->nextFrame = 0;
+      object->flags = 0;
       object->priority = 0;
     }
 
@@ -857,7 +857,7 @@ void FileList_PlacePartySprites(void) {
       request[1] = toFIXED(500);
       request[2] = toFIXED(state->partyMemberY[index]) + toFIXED(500);
       request[3] = 0;
-      Render_ApplyProjectedPlacementFar((struct ScaledSprite *)handle, request,
+      Render_ApplyProjectedPlacementFar((struct Sprite *)handle, request,
                                         source, FACING_SOUTH);
     }
     index += 1;

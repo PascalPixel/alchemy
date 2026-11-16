@@ -768,11 +768,11 @@ struct Actor *LemurianShipDeck_CreateBlackCrystal(void) {
   sprite->priority = 1;
   object->motionFlags = 0;
   object->retainSpriteCache = 1;
-  sprite->nextFrame = 0;
-  sprite->unk1b[0] = 0;
+  sprite->flags = 0;
+  sprite->countAndShadow[0] = 0;
   buffer = HeapSlot_Alloc(HEAP_SLOT_GLYPH_TRANSFER, 0x608);
   Icon_DrawItem(ITEM_BLACK_CRYSTAL);
-  VramCache_Load(sprite->vramBlock, 128, buffer + 0x400);
+  VramCache_Load(sprite->slot, 128, buffer + 0x400);
   HeapSlot_Release(HEAP_SLOT_GLYPH_TRANSFER);
   return object;
 }

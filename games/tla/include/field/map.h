@@ -11,19 +11,8 @@
 
 struct Actor;
 
-struct ReflectionSprite {
-  u8 unused[2]; ///< no code names it
-  u16 unk02;
-  u8 unusedB[12]; ///< no code names it
-  s32 unk10;
-  u8 unk14;
-};
-
-struct ReflectionAnimation {
-  u8 unused[0x28]; ///< no code names it
-  struct ReflectionSprite *sprite;
-};
-
+/// One block of the world map, an entry of WorldMapBlocks: the place it belongs
+/// to and its terrain.
 struct WorldMapBlock {
   u8 unused[2];        ///< no code names it
   u8 place;            ///< WORLD_MAP_NO_PLACE where the map has no block
@@ -40,50 +29,10 @@ struct WorldMapBlocks {
 /// WorldMapBlock.place where the world map has no block: nothing may go there.
 #define WORLD_MAP_NO_PLACE 255
 
-struct WorldMover {
-  u8 unused[12]; ///< no code names it
-  s32 height;
-};
-
-struct ScanlineRow {
-  s32 scale;
-  s32 depth;
-  s32 offsetX;
-  s32 offsetY;
-  s32 unusedAfterOffsetY; ///< no code names it
-};
-
-struct SpriteViewerLayer {
-  s16 spriteId;
-  s16 animationIndex;
-  u8 enabled;
-  s8 priority;
-  s8 colorMode;
-};
-
-struct ViewerSprite {
-  u8 unused[0x1a]; ///< no code names it
-  u8 flags;
-  u8 unusedAfterFlags[0x1d]; ///< no code names it
-};
-
-struct ProbeShape {
-  u8 unused[4]; ///< no code names it
-  u8 kind;
-};
-
-struct ProbeObjects {
-  u8 unused[40]; ///< no code names it
-  struct ProbeShape *shape;
-};
-
-struct Vec2 {
-  s32 x;
-  s32 y;
-};
-
 struct Actor *Actor_FindAtCell(s32 *position, s32 check_y);
 
+/// 32 KB of EWRAM holding background tiles, such as the world map's char blocks
+/// 2 and 3, as The Broken Seal's.
 extern u8 gBgTileBuffer[];
 /// The world map area's four tile sets, decoded one after another into
 /// gBgTileBuffer and copied to the two halves of BG char blocks 2 and 3, as
@@ -91,12 +40,16 @@ extern u8 gBgTileBuffer[];
 #define WORLD_MAP_TILE_SET_BYTES 0x2000
 #define WORLD_MAP_TILE_SET(n)                                                  \
   (Ram_BgTileBuffer + (n) * WORLD_MAP_TILE_SET_BYTES)
+/// The map's shape table, 16 KB of EWRAM: 4-byte entries that a map cell's
+/// shape indexes, as The Broken Seal's.
 extern u8 gMapGridShapes[];
 
 void WorldMap_UpdateRegionTint(s32 region, s32 gradual);
 
 s32 ScreenTransition_IsScanlineActiveFar(void);
 
+/// 16 KB of EWRAM that pictures and tiles are decoded into before they are
+/// copied on.
 extern u8 gDecodeBuffer[];
 
 void TilesetAnim_Update(void);
@@ -105,12 +58,14 @@ s32 MapCollision_FindOrAddTagFar(s32 layer, s32 unused, s32 value);
 
 s32 Actor_LiftTargetBlockFar(s32 layer, s32 unused, s32 value);
 
+/// The world map's row drawer, its Thumb entry and ARM code (draw_map.s),
+/// copied to RAM to run.
 extern const u8 Render_DrawMapCode[];
+/// The size of Render_DrawMapCode (draw_map.s).
 extern u8 Render_DrawMapCodeSize[];
 
 s32 SpriteViewer_FindNextSpriteWithPictures(s32 spriteId, s32 direction);
 void SpriteViewer_PlaceRing(void);
-extern struct BattleCells gSpriteObjects;
 
 void BlendScript_Start(u16 *script);
 s32 MapGrid_CheckCollisionAt(FIXED px, FIXED pz, s32 layer, s32 height);

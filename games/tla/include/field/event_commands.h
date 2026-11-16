@@ -16,11 +16,6 @@ struct Actor;
 struct SpriteAnimation;
 struct Vector3;
 
-struct ItemHead {
-  u8 unused[3]; ///< no code names it
-  u8 flags;
-};
-
 /// A hue's degrees, a full turn of the colour wheel.
 #define HUE_DEGREES 360
 
@@ -41,29 +36,15 @@ struct MindReadWork {
   u8 counter;
 };
 
-struct ScatterPosition {
-  s32 x;
-  s32 y;
-  s32 z;
-};
-
+/// A cell a Psynergy touched, in cells, as FieldWork.psynergyCells lists them
+/// (x of -1 ends the list).
 struct TouchCell {
   s16 x;
   s16 z;
 };
 
-struct TouchLayer {
-  u8 unused[8]; ///< no code names it
-  s32 x;
-  s32 z;
-  u8 unusedAfterZ[40]; ///< no code names it
-};
-
-struct TouchMap {
-  u8 unused[264]; ///< no code names it
-  struct TouchLayer layers[1];
-};
-
+/// A cell picture Cyclone copied (TileCopies_CopyTouchedCells): where it went,
+/// where it came from and the touched cell it opened, each in cells.
 struct TouchCopy {
   u8 toX;
   u8 toZ;
@@ -116,11 +97,8 @@ struct BurstCell {
   s16 z;
 };
 
-struct ScaledSprite {
-  u8 unused[0xc]; ///< no code names it
-  s32 scale;
-};
-
+/// One step of a sparkle's rise (gFieldEffect_SparklePictures): its height
+/// above its spot in screen pixels, and its tile.
 struct SparklePicture {
   s16 dy;
   u16 tile;
@@ -188,7 +166,12 @@ s32 MapCollision_FindOrAddTag(s32 unused, s32 key, s32 value);
 
 void WorldPicture_GetLeaderPoint(s32 *screenX, s32 *screenY);
 
-extern s16 gData_0202a642;
+/// Never set (EWRAM, zero from boot). Set, the world map picture would list
+/// only the places before the first end of the place table, not the second list
+/// from entry 128 on, and show each place's second marker (the high nibble of
+/// its value). XXX: what the switch was for; a write to it in an edition or a
+/// debug room would settle it.
+extern s16 gWorldPicture_FirstListOnly;
 
 void FieldPsynergy_Lash(void);
 
@@ -311,28 +294,11 @@ void Party_RemoveMemberRestored(s32 owner);
 
 struct Actor;
 
-struct FallingObject {
-  u8 unused[0xc]; ///< no code names it
-  s32 y;
-  u8 unusedAfterY[4]; ///< no code names it
-  s32 floor;
-  u8 unusedAfterFloor[0x46]; ///< no code names it
-  s16 dispatchState;
-  u8 unusedAfterDispatchState[0xc]; ///< no code names it
-  void *update;
-};
-
-struct FxPosition {
-  s32 x;
-  s32 y;
-  s32 z;
-};
-
-// A halfword typed beside a word, for the FAKEMATCH that reads the name box's
-// y; no such data exists.
+/// A halfword typed beside a word, for the FAKEMATCH that reads the name box's
+/// y in WorldPicture_UpdateMarkers; no such data exists.
 struct WorldMapAliasedHalfword {
   s16 value;
-  s32 unk04;
+  s32 word; ///< never read: the word that gives the struct its alignment
 };
 
 void FieldEffect_CheckCloakTile(void);
@@ -346,11 +312,18 @@ extern const u8 gWorldMap_MarkerBlendCycle[];
 
 extern const u16 gWorldMap_CursorDirectionAngles[];
 
+/// Where the world picture's cursor glides to on its own, 16.16; 0 when it does
+/// not.
 extern s32 gWorldPicture_GlideTargetX;
+/// As gWorldPicture_GlideTargetX, the second coordinate.
 extern s32 gWorldPicture_GlideTargetY;
+/// Nonzero while the world picture is zoomed in.
 extern s16 gWorldPicture_Zoomed;
+/// Set while the place name waits to be drawn again.
 extern s16 gWorldPicture_NameRedrawPending[];
+/// Frames before the place name is drawn again.
 extern s16 gWorldPicture_NameRedrawDelay[];
+/// The world picture's cursor marker.
 extern struct WorldMapMarker gWorldPicture_CursorMarker;
 
 void FieldPsynergy_GreyMindReadPalette(void);
@@ -364,49 +337,53 @@ void FieldEffect_ArmBg0HBlankDma(void);
 struct Actor;
 struct Vec3;
 
-struct ResourceEntry {
-  u8 unused[0x10]; ///< no code names it
-  u8 vramBlock;
-};
-
+/// Three coordinates of a burst piece's place, x, y and z, filled in turn as
+/// Vector_AddPolarOffset reads them.
 struct BurstParticleVector {
   s32 values[3];
 };
 
+/// One part of a sprite (struct AnimationSpritePart) as Mind Read's burst
+/// copies its image's attributes to its shadow: a byte at a time, under the OAM
+/// attributes' names.
 struct BurstParticleVisual {
-  u8 unused[5]; ///< no code names them
-  u8 flagsALow : 5;
-  u8 flip : 1;
-  u8 flagsAHigh : 2;
-  u8 unusedAfterFlagsAHigh; ///< no code names it
-  u8 flagsBLow : 6;
-  u8 flagsBHigh : 2;
+  u8 unused[5];            ///< the part's link and attribute 0's y
+  u8 affineModeMosaic : 5; ///< attribute 0's affine, objectMode and mosaic
+  u8 fullColor : 1;        ///< 256 colours
+  u8 shape : 2;            ///< 0 square, 1 wide, 2 tall
+  u8 unusedAfterShape;     ///< attribute 1's x, low byte
+  u8 xHighAffineIndex : 6; ///< x bit 8 and the affine matrix
+  u8 size : 2;             ///< with shape, the sprite's size
   union {
     struct {
-      u16 shape : 10;
-      u16 unused : 6;
+      u16 tile : 10; ///< first sprite tile in VRAM
+      u16 priorityPalette : 6;
     } bits;
     struct {
-      u8 lo;
-      u8 highLow : 4;
+      u8 tileLow;
+      u8 tileHighPriority : 4;
       u8 palette : 4;
     } bytes;
-  } attributes;
+  } attributes; ///< attribute 2
 };
 
-/// A sprite whose second part is 28 bytes in.
+/// A sprite (struct Sprite) as Mind Read's burst reads it: its image, and its
+/// shadow 28 bytes in.
 struct BurstParticleVisualGroup {
   struct BurstParticleVisual primary;
   u8 unusedAfterPrimary[16]; ///< no code names them
   struct BurstParticleVisual child;
 };
 
+/// The lifted actor as Lift on a target reads it: struct Actor's y, motionFlags
+/// (flag) and update (callback); read through struct Actor, the flag store
+/// moves after the anchor's load.
 struct EffectChild {
   u8 unused[12]; ///< no code names them
   s32 y;
-  u8 unusedAfterY[0x55 - 0x10]; ///< no code names them
+  u8 unusedAfterY[69]; ///< no code names them
   u8 flag;
-  u8 unusedAfterFlag[0x6c - 0x56]; ///< no code names them
+  u8 unusedAfterFlag[22]; ///< no code names them
   void (*callback)(void);
 };
 

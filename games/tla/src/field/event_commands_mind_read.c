@@ -914,10 +914,10 @@ void FieldEffect_SpawnBurstParticleField(void) {
     obj = Actor_Spawn(SPRITE_PARTICLE, pos[0], pos[1], pos[2]);
     visual = &((struct BurstParticleVisualGroup *)obj->sprite)->primary;
     child = &((struct BurstParticleVisualGroup *)obj->sprite)->child;
-    child->flip = visual->flip;
-    child->flagsBHigh = visual->flagsBHigh;
-    child->flagsAHigh = visual->flagsAHigh;
-    child->attributes.bits.shape = visual->attributes.bits.shape;
+    child->fullColor = visual->fullColor;
+    child->size = visual->size;
+    child->shape = visual->shape;
+    child->attributes.bits.tile = visual->attributes.bits.tile;
     child->attributes.bytes.palette = visual->attributes.bytes.palette;
 
     if (obj != 0) {
@@ -1017,7 +1017,7 @@ void FieldPsynergy_Lift(void) {
   struct FieldEffectWork *work;
   struct Actor *obj;
   struct Actor *pair[2];
-  struct ScatterPosition pos;
+  struct Vector3 pos;
   struct Actor **walk;
   s32 n;
   FIXED dist;
@@ -1192,7 +1192,7 @@ void FieldPsynergy_Force(void) {
   struct Actor *object;
   struct Actor *copy;
   struct FieldParticle *slot;
-  struct ResourceEntry *resource;
+  struct Sprite *resource;
   struct PendingEvent *event;
   s32 scale;
   s32 i;
@@ -1264,7 +1264,7 @@ void FieldPsynergy_Force(void) {
       resource = Sprite_ShareVramCacheEntry(copy->sprite, resource);
     }
   }
-  marker = resource->vramBlock;
+  marker = resource->slot;
 
   if (scene->enabled != 0) {
     source = scene->mainActor;

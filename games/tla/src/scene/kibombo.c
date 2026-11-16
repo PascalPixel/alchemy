@@ -1754,11 +1754,11 @@ void Kibombo_CreateBlackCrystal(void) {
     sprite->priority = 1;
     object->motionFlags = zero;
     object->retainSpriteCache = 1;
-    sprite->nextFrame = zero;
-    sprite->unk1b[0] = zero;
+    sprite->flags = zero;
+    sprite->countAndShadow[0] = zero;
     buffer = HeapSlot_Alloc(HEAP_SLOT_GLYPH_TRANSFER, 0x608);
     Icon_DrawItem(ITEM_BLACK_CRYSTAL);
-    VramCache_Load(sprite->vramBlock, 128, buffer + 0x400);
+    VramCache_Load(sprite->slot, 128, buffer + 0x400);
     HeapSlot_Release(HEAP_SLOT_GLYPH_TRANSFER);
   }
 }
@@ -2080,8 +2080,7 @@ void Kibombo_SpinSpark(struct Actor *actor) {
     }
     break;
   case 7:
-    VramCache_FreeEntry(
-        ((struct FieldSprite *)object->actor.sprite)->vramBlock);
+    VramCache_FreeEntry(((struct FieldSprite *)object->actor.sprite)->slot);
     Actor_Release(&object->actor);
     break;
   }

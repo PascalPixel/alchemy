@@ -27,6 +27,7 @@
 #include "field/lucky_wheels_title.h"
 #include "field/field.h"
 #include "field/field_sequence.h"
+#include "battle/battle_effect_work.h"
 #include "resource_ids.h"
 #include "graphics/graphics.h"
 #include "item_ids.h"
@@ -218,7 +219,7 @@ s32 LuckyWheels_ScaleRgb555(u16 *src, u16 *dst, FIXED scale, s32 count) {
 /// sends the canvas to its tiles in VRAM (LUCKY_WHEELS_CANVAS_TILES), then
 /// clears it or fades it into trails as transferMode says.
 void LuckyWheels_TransferCanvas(void) {
-  struct BattleFxTransferWork *work;
+  struct BattleEffectWork *work;
   u8 *buf;
 
   work = Ram_HeapSlots->battleEffect;
@@ -572,7 +573,7 @@ void LuckyWheels_Update(void) {
                                  work->subWindow, LUCKY_WHEELS_COIN_X, 0);
       Text_DrawNumberInWindowFar(work->bet, 2, work->subWindow, 64, 8);
       if (work->pressed & KEY_B) {
-        struct ReelSave *save = (struct ReelSave *)Data_0200024c;
+        struct ReelSave *save = (struct ReelSave *)gPartyDjinnRecovery;
 
         work->state = LUCKY_WHEELS_DONE;
         save->wonPrizes[0] = -2;
@@ -795,7 +796,7 @@ void LuckyWheels_Update(void) {
       }
 
       if (stoppedReels == LUCKY_WHEELS_REEL_COUNT) {
-        struct ReelSave *save = (struct ReelSave *)Data_0200024c;
+        struct ReelSave *save = (struct ReelSave *)gPartyDjinnRecovery;
         s32 hits = 0;
 
         for (col = 0; col != LUCKY_WHEELS_PAYLINES; col++) {
@@ -1255,7 +1256,7 @@ void LuckyWheels_Run(void) {
   state =
       HeapSlot_AllocEwram(HEAP_SLOT_CANVAS_MAP, sizeof(struct LuckyWheelsWork));
   tiles = Ram_MapCellBuffer;
-  save = (struct ReelSave *)Data_0200024c;
+  save = (struct ReelSave *)gPartyDjinnRecovery;
   Resource_ReservedNoOp((s32)&ResourceId_BattleEffectFarCalls);
   save->wonPrizes[0] = -1;
   state->repeat = 0;

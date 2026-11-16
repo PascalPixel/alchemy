@@ -7,7 +7,6 @@
 #include "types.h"
 
 struct Actor;
-struct ResourceEntry;
 
 /// A crumbling pillar of Magma Rock (MagmaRock_CrumblePillar): its actor and
 /// its flag.

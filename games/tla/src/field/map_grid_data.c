@@ -97,11 +97,8 @@ const u32 gWorldMap_UnitScale[2] = {
     0x10000,
 };
 
-/// The battle formation's placement scale (16.16).
-const s32 gBattle_FormationPlacementScale[2] = {
-    0x10000,
-    0x10000,
-};
+/// The sprite viewer's scale for its ring of copies: full size.
+const struct SpriteScale gSpriteViewer_Scale = {{{FIXED_ONE, FIXED_ONE}}};
 
 //--------------------------------------------------------------------------
 // Field object scripts: the ones the field starts by itself, the command

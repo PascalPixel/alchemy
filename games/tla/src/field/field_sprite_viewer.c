@@ -26,10 +26,19 @@ enum UiSpriteViewerEditMode {
   UI_SPRITE_VIEWER_EDIT_COUNT
 };
 
+/// One sprite animation the sprite viewer edits.
+struct UiSpriteViewerLayer {
+  s16 spriteId;       ///< metadata record selected for this layer
+  s16 animationIndex; ///< animation script selected from that metadata
+  u8 enabled;         ///< zero hides it by a priority above the drawing range
+  s8 priority;        ///< drawing order, 0 to 3
+  s8 colorMode;       ///< SpriteColorMode; the viewer cycles through 0 to 15
+};
+
 /// The debug sprite viewer, in The Broken Seal's form with this game's
 /// changes; it never returns.
 void SpriteViewer_Run(void) {
-  struct SpriteViewerLayer layers[ANIM_LAYER_COUNT];
+  struct UiSpriteViewerLayer layers[ANIM_LAYER_COUNT];
   volatile u32 zero;
   s32 x;
   s32 y;
@@ -76,7 +85,7 @@ restart:
       ANIM_FACING_TWO_PART)
     SpritePictureCache_Load(1, gActorSpriteSlots, layers[0].spriteId + 1, 0);
   for (i = 0; i < UI_SPRITE_VIEWER_COPY_COUNT; i++) {
-    struct ViewerSprite *sprite;
+    struct Sprite *sprite;
     s32 part = 0;
 
     if (Resource_GetMetadataRecordFar(layers[0].spriteId)->drawKind ==
@@ -137,7 +146,7 @@ next:
     }
 
     if (gInput.pressed & KEY_START) {
-      struct ViewerSprite *sprites = Ram_HeapSlots->sprites;
+      struct Sprite *sprites = Ram_HeapSlots->sprites;
 
       shadowsEnabled ^= 1;
       for (i = 0; i < UI_SPRITE_VIEWER_COPY_COUNT; i++) {
@@ -352,7 +361,7 @@ void SpriteViewer_BuildProbeRing(s32 centerX, s32 centerY,
   u8 kind;
 
   angle = 0;
-  kind = ((struct ProbeObjects *)Ram_HeapSlots->sprites)->shape->kind;
+  kind = ((struct Sprite *)Ram_HeapSlots->sprites)->entries[0]->kind;
   if ((gInput.held & KEY_B) != 0)
     angle = (s16)(gVBlankCount << 8);
   switch ((u32)kind) {
@@ -531,14 +540,14 @@ void SpriteViewer_SetGridColumnNumber(s32 slot, s32 no) {
   } while (count >= 0);
 }
 
-extern struct Vec2 gBattle_FormationPlacementScale;
+extern const struct SpriteScale gSpriteViewer_Scale;
 
 /// Each frame in the sprite viewer: places each copy of the sprite at its ring
 /// position, facing the way that position stands for.
 void SpriteViewer_PlaceRing(void) {
   u8 *actor = Ram_HeapSlots->sprites;
   u32 kind = (*(u8 **)(actor + 40))[4];
-  struct Vec2 scale;
+  struct SpriteScale scale;
   u8 *table;
   u16 angle;
   u16 step;
@@ -546,7 +555,7 @@ void SpriteViewer_PlaceRing(void) {
   u32 cnt;
   u32 i;
 
-  scale = gBattle_FormationPlacementScale;
+  scale = gSpriteViewer_Scale;
   table = (u8 *)Ram_HeapSlots->battleWork;
 
   switch (kind) {

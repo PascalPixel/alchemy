@@ -1244,7 +1244,7 @@ void BattleEffect_SetObjectUpdateMode(struct Actor *object, s32 mode) {
 /// target's priority, then restarts that group's age, records the target and
 /// switches to the other group.
 void BattleEffect_SpawnScaledArcObjects(struct Actor *target) {
-  struct ArcWork *work = Ram_HeapSlots->arcEffect;
+  struct ArcEffectWork *work = Ram_HeapSlots->arcEffect;
   s32 tiles = gVramCacheEntries[work->resource].offset >> 5;
   s32 group = work->group;
   struct EffectSprite *sprite;
@@ -1267,7 +1267,7 @@ void BattleEffect_SpawnScaledArcObjects(struct Actor *target) {
 /// frame, the second arc of a pair upside down, one in front of the actor and
 /// one behind.
 void BattleEffect_UpdateArcEffect(void) {
-  struct ArcWork *work = Ram_HeapSlots->arcEffect;
+  struct ArcEffectWork *work = Ram_HeapSlots->arcEffect;
   struct Actor *target = work->target;
   s32 group;
   FIXED position[3];
@@ -1612,9 +1612,6 @@ again:
 /// targeted dispatch has no case for animation 29.
 void FieldPsynergy_ArrowOnTarget(void) { FieldPsynergy_Arrow(); }
 
-// One moving point: a spark on the canvas (x and y only, counting delay) or
-// a sprite's place in the world.
-
 void FieldPsynergy_Arrow(void) {
   struct BowWork *work =
       HeapSlot_Alloc(HEAP_SLOT_BATTLE_EFFECT, sizeof(struct BowWork));
@@ -1864,16 +1861,16 @@ void TileCopies_CopyTouchedCells(s32 sourceX, s32 sourceZ, s32 width,
   struct Actor *owner = Actor_GetById(Party_GetLeaderActor());
   struct TouchCell *cell = (struct TouchCell *)event->psynergyCells;
   s32 ownerHeight = FIELD_CELL(owner->groundHeight);
-  struct TouchMap *map = (struct TouchMap *)Ram_HeapSlots->mapGrid;
-  struct TouchLayer *layer = &map->layers[layerIndex];
+  struct MapWork *map = Ram_HeapSlots->mapGrid;
+  struct MapLayer *layer = &map->layers[layerIndex];
   s32 i;
 
   for (i = 0; cell[i].x != -1; i++) {
     s32 x = cell[i].x - windowX;
     s32 z = cell[i].z - windowZ - ownerHeight;
 
-    x += FIELD_CELL(layer->x);
-    z += FIELD_CELL(layer->z);
+    x += FIELD_CELL(layer->offsetX);
+    z += FIELD_CELL(layer->offsetY);
 
     if (x >= 0 && x < width && z >= 0 && z < height) {
       s32 n;

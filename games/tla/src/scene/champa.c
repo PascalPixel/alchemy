@@ -632,7 +632,7 @@ void Champa_SpawnGlareSpark(s32 x, s32 y, s32 z, s32 angle, s32 frames) {
     } *)object)
         ->frames = frames;
 
-    sprite->nextFrame = 0;
+    sprite->flags = 0;
     sprite->rotation = value;
   }
 }

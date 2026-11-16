@@ -559,8 +559,8 @@ s32 JupiterLighthouse_SwayGaret(void) {
       Actor_SetAttachedEffect(ACTOR_GARETS_GRIP,
                               ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
     if (sprite != NULL) {
-      *(sprite->unk14 + 3) = 30;
-      *(sprite->unk14 + 2) = 252;
+      *(sprite->box + 3) = 30;
+      *(sprite->box + 2) = 252;
       sprite->rotation = Math_Sin(gFrameCount * 728) / 128 - 0x800;
     }
   }

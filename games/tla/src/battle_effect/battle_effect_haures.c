@@ -101,7 +101,7 @@ void BattleEffect_RunHaures(struct BattleEffectParams *args) {
     sprite = Sprite_CreateFar(0x294);
     work->sprites[HAURES_FLAMES + i] = sprite;
     if (sprite != NULL) {
-      sprite->nextFrame = 0;
+      sprite->flags = 0;
       Sprite_StartAnimationFar(sprite, 0);
       {
         struct FieldSprite *added = work->sprites[HAURES_FLAMES + i];
@@ -115,7 +115,7 @@ void BattleEffect_RunHaures(struct BattleEffectParams *args) {
     sprite = Sprite_CreateFar(0x295);
     work->sprites[HAURES_DOTS + i] = sprite;
     if (sprite != NULL) {
-      sprite->nextFrame = 0;
+      sprite->flags = 0;
       Sprite_StartAnimationFar(sprite, 0);
       {
         struct FieldSprite *added = work->sprites[HAURES_DOTS + i];
@@ -128,7 +128,7 @@ void BattleEffect_RunHaures(struct BattleEffectParams *args) {
       EffectSprite_CreateWithTiles(64, 64, OBJ_SIZE_64X64 | OBJ_256_COLORS, 0);
   ((struct FieldSprite **)work->sprites)[HAURES_STAMP] = sprite;
   sprite->blendMode = 1;
-  STAMP_TILES(work) = gVramCacheEntries[sprite->vramBlock].offset + OBJ_VRAM0;
+  STAMP_TILES(work) = gVramCacheEntries[sprite->slot].offset + OBJ_VRAM0;
   {
     u8 *c = work->sheet;
 

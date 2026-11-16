@@ -9,9 +9,9 @@
 /// One link of a hanging vine: a point on the vine and its sprite.
 struct HangingVineLink {
   struct HangingVineLink *next;
-  s32 x;
-  s32 y;
-  s32 z;
+  FIXED x; ///< 16.16 fixed-point pixels
+  FIXED y;
+  FIXED z;
   u16 angle;
   s8 kind;            ///< 0 or 1: not drawn; else its picture, from 2
   u8 unusedAfterKind; ///< no code names it

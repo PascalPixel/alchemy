@@ -730,8 +730,8 @@ const struct Trigger *Scene_GetTriggers(void) {
 /// The leader's reflection in the ice, mirrored across the room's line.
 void TundariaTower_ReflectLeader(struct Actor *object) {
   struct Actor *leader = Actor_GetById(gMainRoutineWork.leaderActorId);
-  struct ReflectionAnimation *leaderAnimation = leader->sprite;
-  struct ReflectionAnimation *animation = object->sprite;
+  struct Sprite *leaderSprite = leader->sprite;
+  struct Sprite *reflection = object->sprite;
 
   if (leader->z.fixed <= object->riseBaseY) {
     object->z.fixed = 0;
@@ -745,18 +745,18 @@ void TundariaTower_ReflectLeader(struct Actor *object) {
       object->z.fixed = 0;
       object->x.fixed = 0;
     } else {
-      struct ReflectionSprite *sprite = animation->sprite;
-      struct ReflectionSprite *source;
+      struct SpriteAnimation *animation = reflection->entries[0];
+      struct SpriteAnimation *source;
 
       object->x.fixed = leader->x.fixed;
       object->y.fixed = leader->y.fixed;
       object->z.fixed =
           object->riseBaseY - (leader->z.fixed - object->riseBaseY);
       object->facing = ~leader->facing;
-      source = leaderAnimation->sprite;
-      sprite->unk10 = source->unk10;
-      sprite->unk02 = source->unk02;
-      sprite->unk14 = source->unk14;
+      source = leaderSprite->entries[0];
+      animation->script = source->script;
+      animation->timer = source->timer;
+      animation->scriptOffset = source->scriptOffset;
     }
   }
 }

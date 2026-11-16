@@ -24,9 +24,7 @@ struct ScreenPoint;
 
 extern const FIXED gCamera_FixedViewMatrix[];
 extern u8 gSpriteDissolve_PixelOrder[];
-extern const s32 gActor_DefaultScript[];
 extern const u8 gWorldMap_TerrainBehaviorTable[];
-extern u8 Render_DecodePictureCodeSize[];
 extern u8 gSpriteColorRemapTables[];
 s32 BattleUnit_ProjectToScreen(s32 unit, s32 *screen);
 s32 Party_CheckShortcut(u32 packed_id);
@@ -35,7 +33,6 @@ void FieldCamera_FollowActor(s32 id, s32 flag);
 void Actor_UpdateAllMotion(void);
 void Actor_UpdateAllThumb(void);
 void Actor_SetSpriteFlags(struct Actor *object, u32 flags);
-void ObjectSystem_UpdateCamera(void);
 void ActorSystem_ProjectSprites(void);
 s32 Actor_FindLastActiveId(void);
 void BattleMotion_ProjectPositionFar(s32, s32 *);
@@ -57,15 +54,14 @@ struct Actor;
 
 extern u32 gDriftScene_SpawnScript[];
 extern u32 gSceneExits[];
+/// The actors ObjectTable_Snapshot saved, up to 32, after their slot numbers.
 extern struct Actor gSnapshotObjects[];
 extern u8 gLinkLobby_SlotColumns[];
 extern s32 gLinkLobby_SlotValues[];
 extern const u8 gActor_BlinkSpriteColors[4];
 extern const u8 gActor_StepAngleScript[];
 extern u16 gScript_MainScript[];
-s32 Animation_InitializeObjects(struct Sprite *);
 void Actor_SetBlendMode(struct Actor *object, u32 value);
-void AnimationObject_SetActiveTimerSteps(struct Sprite *, s32);
 s32 PaletteFade_SetTargetFar(s32, s32);
 void FieldPsynergy_FinishMindRead(void);
 void FieldPsynergy_Dispatch(void);
@@ -153,8 +149,11 @@ enum ActorCreateKind {
   ACTOR_CREATE_NO_SPRITE = 8
 };
 
+/// The world map's still picture (story.s): its tiles, packed (tagged LZ).
 extern u8 gWorldMapPackedTiles[];
+/// The still picture's tile map, packed (tagged LZ), decoded after its tiles.
 extern u8 gWorldMapPackedPictures[];
+/// The still picture's palettes, one for each of its modes.
 extern u8 gWorldMapPalettes[];
 
 struct Sprite;
@@ -176,8 +175,8 @@ typedef s32 (*ScriptCommandFn)();
 
 typedef void (*TargetHook)(struct Actor *, s32 *, s32 *);
 
-/// One sprite's two OAM words.
-// volatile: the words are built in place for the DMA to copy to OAM.
+/// One sprite's two OAM words, volatile because they are built in place for the
+/// DMA to copy to OAM.
 struct OamWords {
   volatile u32 attr01; ///< attr0 | attr1 << 16
   volatile u32 attr2;  ///< attr2 | affine value << 16
@@ -234,13 +233,6 @@ struct DiceCamera {
   FIXED focus[3];
 };
 
-struct ObjectSystemColours {
-  u16 used;
-  u8 unusedAfterUsed[4]; ///< no code names it
-  u8 edge;
-  u8 fill;
-};
-
 /// A party member's unit as the field reads it: its gauges and its HP and PP.
 struct FieldUnit {
   u8 unused[20]; ///< no code names it
@@ -263,15 +255,6 @@ struct LuckyDiceSprites {
   struct RenderInput *helpWindow;
 };
 
-struct BattleFxTransferWork {
-  u8 unused[0x7780]; ///< no code names it
-  s32 transferMode;
-  s32 transferValue;
-  u8 unusedAfterTransferValue[0x78e4 - 0x7788]; ///< no code names it
-  s32 vblanksSinceTransfer;
-  s32 transferPending;
-};
-
 /// A Lucky Wheels reel: its turn, its 21 symbols, whether it is held and
 /// where it stops.
 struct Reel {
@@ -288,20 +271,21 @@ struct ReelEffectWork {
   /// No code names it.
   u8 unusedAfterParticles[0x700 -
                           LUCKY_WHEELS_TITLE_LETTERS * sizeof(struct Particle)];
-  u16 bgShade[0x100];
-  u16 objShade[0x100];
-  u8 unusedAfterObjShade[0x7780 - 0xb00]; ///< no code names it
+  u16 bgShade[256];
+  u16 objShade[256];
+  u8 unusedAfterObjShade[27776]; ///< no code names it
   s32 transferMode;
   s32 transferValue;
   u8 unusedAfterTransferValue[4]; ///< no code names it
   s32 frame;
-  u8 unusedAfterFrame[0x78e8 - 0x7790]; ///< no code names it
+  u8 unusedAfterFrame[344]; ///< no code names it
   s32 transferPending;
 };
 
-/// The save as Lucky Wheels reads it: the prizes won.
+/// The main routine work from gPartyDjinnRecovery on, as Lucky Wheels reads it:
+/// the prizes won, kept after the spring game's prize weights.
 struct ReelSave {
-  u8 unused[0x140]; ///< no code names it
+  u8 unused[320]; ///< summons, coins, Djinn recovery, shops, prize weights
   s8 wonPrizes[16];
 };
 
@@ -387,29 +371,23 @@ struct TightropeWork {
 
 #define TIGHTROPE_WORK ((struct TightropeWork *)Ram_HeapSlots->tightrope)
 
-/// unk26a from main_routine_work.h.
-struct PartyPauseView {
-  u8 unused[0x26a]; ///< no code names it
-  s16 pausedObject;
-};
-
 /// The point the map view follows (MapWork.origin), as the depth sort reads it.
 struct DepthOrigin {
-  s32 x;
+  FIXED x; ///< 16.16 fixed-point pixels
   FIXED y; ///< its height, 16.16 fixed-point pixels
 };
 
 /// The map view's place (MapWork.viewX and viewZ), read as a pair.
 struct DepthScroll {
-  s32 x;
-  s32 z;
+  FIXED x; ///< 16.16 fixed-point pixels
+  FIXED z; ///< 16.16 fixed-point pixels
 };
 
 /// MapWork as BattleEffect_GetObjectDepth reads it: its followed point and its
 /// view, through a pointer to the pair.
 struct DepthMap {
   struct DepthOrigin *origin;
-  u8 unusedAfterOrigin[0xe0]; ///< no code names it
+  u8 unusedAfterOrigin[224]; ///< no code names it
   struct DepthScroll view;
 };
 
@@ -457,28 +435,25 @@ struct RisingParticleWork {
 struct EffectOwner {
   u8 unused[8]; ///< no code names it
   struct Vector3 position;
-  u8 unusedAfterPosition[0x3c]; ///< no code names it
+  u8 unusedAfterPosition[60]; ///< no code names it
   struct Sprite *sprite;
 };
 
-struct OrbitPosition {
-  s32 x;
-  s32 y;
-  s32 z;
-};
-
+/// The line scroll's work, as The Broken Seal's: two pages of BG1 to BG3
+/// scroll offsets for each of the 160 scanlines, and the sine wave that bends
+/// them on each axis.
 struct LineScrollWork {
-  struct BgScroll rows[2][160][3];
-  u8 page;
-  u8 mode;
-  u16 frame;
-  u8 unusedAfterFrame[4]; ///< no code names it
-  s32 freqX;
-  s32 freqY;
-  s32 stepX;
-  s32 stepY;
-  s32 ampX;
-  s32 ampY;
+  struct BgScroll rows[2][160][3]; ///< per page and scanline: BG3, BG2, BG1
+  u8 page;      ///< the page the HBlank DMA shows; the other is built
+  u8 mode;      ///< set at the start; not read by name
+  u16 frame;    ///< frames built so far, added to BG3's y for the wave's phase
+  u8 unused[4]; ///< zeroed with the block; nothing reads or writes it
+  FIXED freqX;  ///< phase per frame and per BG3 row, 16.16 wave table entries
+  FIXED freqY;  ///< phase per frame and per BG3 row, 16.16 wave table entries
+  FIXED stepX;  ///< 16.16 wave table entries a scanline, 256 a cycle
+  FIXED stepY;  ///< 16.16 wave table entries a scanline, 256 a cycle
+  FIXED ampX;   ///< 16.16 scale on the sine entry, which is then divided by 256
+  FIXED ampY;   ///< 16.16 scale on the sine entry, which is then divided by 256
 };
 
 /// One node of a rope Lash throws and ties (Rope_Initialize's work): a point on
@@ -520,17 +495,6 @@ struct RopeWork {
 
 #define ROPE_WORK ((struct RopeWork *)Ram_HeapSlots->rope)
 
-struct AnimationGroup {
-  u8 unused[0x16]; ///< no code names it
-  s8 offsetX;
-  s8 offsetY;
-  u8 lastNo;
-  u8 unusedAfterLastNo[2]; ///< no code names it
-  u8 count;
-  u8 unusedAfterCount[0x0c]; ///< no code names it
-  struct SpriteAnimation *entries[4];
-};
-
 extern const u8 gSuperLuckyDice_FaceTiles[];
 s32 SuperLuckyDice_ScaleRgb555Buffer(u16 *source, u16 *destination, s32 scale,
                                      s32 count);
@@ -570,18 +534,31 @@ void Event_NoOp(void);
 
 void Actor_UpdateBlink(struct Actor *object);
 
+/// The world map camera's yaw, in 1/65536 turns, the scanline parameters were
+/// built for; the vertex update rebuilds them when it changes.
 extern u32 gScanlineAngle;
 
+/// Every sprite animation's metadata, by number (graphics/sprite/sprites.s).
 extern struct AnimationMetadata gSprite_AnimationMetadata[];
 
+/// Render_DecodePicture's Thumb entry and ARM code (picture_decode.s), which
+/// Render_LoadDecoder copies into the frame scratch slot.
 extern u8 Render_DecodePictureCode[];
 
+/// The end of the colour tables kept after Render_DecodePicture's code, where
+/// its copy stops (picture_decode_data.s).
 extern u8 Render_DecodePictureCopyEnd[];
 
+/// The size of the frame scratch block for Render_DecodePicture and its tables,
+/// an address equal to the size (ld_script.ld).
 extern u8 Render_DecodePictureBlockSize[];
 
+/// The grid outliner's Thumb entry and ARM code (grid_outline_entry.s), which
+/// RamCode_Load copies to RAM.
 extern const u8 Grid_DrawOutlineCode[];
 
+/// The size of Grid_DrawOutlineCode, an address equal to the size
+/// (ld_script.ld).
 extern u8 Grid_DrawOutlineCodeSize[];
 
 extern const u8 gSpriteColorShadeTables[];
@@ -594,6 +571,8 @@ s32 Party_CheckItemLimit(s32 item);
 
 s32 WorldMap_GetCollisionFar(s32 *position);
 
+/// The map's scene data in EWRAM, loaded from its resource: its entrance
+/// stream, then from the halfword offsets after it its edits and its bounds.
 extern u8 gMapScene[];
 
 void Party_ClearUnusableShortcuts(void);
@@ -646,13 +625,17 @@ void ColorBuffer_HalveNonzero(u8 *source, u8 *destination, s32 size);
 void ColorBuffer_ScaleNonzeroThreeQuarters(u8 *source, u8 *destination,
                                            s32 size);
 
-extern u8 Data_0200024c[];
+/// gMainRoutineWork from its summonMask on, under a label of its own: the
+/// party's DjinnRecoveryTable, which Djinn_GetRecoveryTable returns. Lucky
+/// Wheels reads its won prizes 320 bytes in (ReelSave).
+extern u8 gPartyDjinnRecovery[];
 
 extern const u16 gLuckyWheels_SparkCellOffsets[];
 
 s32 BattleEffect_BuildBlitterFar(s32 slot, s32 widthShift, s32 heightShift,
                                  s32 flags, u32 mode);
 
+/// The tileset animations' tiles, 16 KB of EWRAM, as The Broken Seal's.
 extern u8 gMapGridAnimTiles[];
 
 s32 WorldMap_WriteLayerCellTile(s32 layer, s32 x, s32 y, s32 tile, s32 update);
@@ -762,14 +745,18 @@ void SpriteAnimation_ClearFar(void *record);
 
 void Djinn_ShowJoinedMessageFar(s32 owner, s32 element, s32 djinni);
 
+/// The rope's tiles, tagged LZ (rope_vine_pictures.s).
 extern const u8 gRope_Tiles[];
+/// The bottom link of a hanging vine's chain, tagged LZ (rope_vine_pictures.s).
 extern const u8 gHangingVine_ChainBottomPicture[];
 
 s32 Field_FindNearbyPsynergyTarget(s32 self, s32 effect);
 
 s32 MapGrid_GetCellAttributeLowNibbleFar(s32 layer, s32 x, s32 z);
 
+/// The ground particles' tiles, byte LZ (field_effect_particles.s).
 extern const u8 gFieldEffect_GroundParticleTiles[];
+/// The motes' tiles, byte LZ (field_effect_particles.s).
 extern const u8 gFieldEffect_MoteTiles[];
 
 extern const u32 gBattleEffect_PulseScales[];
@@ -778,10 +765,12 @@ extern const s16 gLineScroll_WaveSine[];
 
 extern const s16 gFieldEffect_GroundParticleFrames[];
 
+/// The streaks' tiles, byte LZ (field_effect_particles.s).
 extern const u8 gFieldEffect_StreakTiles[];
 
 extern const struct SparklePicture gFieldEffect_SparklePictures[];
 
+/// The sparkles' tiles, byte LZ (field_effect_particles.s).
 extern const u8 gFieldEffect_SparkleTiles[];
 
 void Actor_SpawnWaterSplashFar(struct Actor *object, s32 kind);
@@ -793,6 +782,7 @@ s32 MapGrid_IsWallAtFar(s32 *position);
 extern const u16 gRope_KeyHeadings[];
 extern const u16 gFieldEffect_CyclePatternWords[];
 
+/// The world map camera's pitch the scanline parameters were built for.
 extern u32 gScanlinePitch;
 
 extern const s16 gGroundParticle_Offsets[];

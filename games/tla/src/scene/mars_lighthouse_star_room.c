@@ -626,12 +626,12 @@ void MarsLighthouseStarRoom_CreateMarsStar(s32 rise) {
   object->retainSpriteCache = 1;
   object->update = MarsLighthouseStarRoom_KeepStarAtLeaderPriority;
   size = 0x608;
-  sprite->nextFrame = zero;
-  sprite->unk1b[0] = zero;
+  sprite->flags = zero;
+  sprite->countAndShadow[0] = zero;
   block = HeapSlot_Alloc(HEAP_SLOT_GLYPH_TRANSFER, size);
   Item_LoadIcon(ITEM_MARS_STAR);
   block += 0x400;
-  Vram_Load(sprite->vramBlock, 128, block);
+  Vram_Load(sprite->slot, 128, block);
   HeapSlot_Release(HEAP_SLOT_GLYPH_TRANSFER);
   if (rise) {
     System_Wait(1);
@@ -807,17 +807,17 @@ void MarsLighthouseStarRoom_UseMarsStar(void) {
   *slot = object;
   if (object != 0) {
     sprite = object->sprite;
-    sprite->nextFrame = 0;
+    sprite->flags = 0;
     sprite->fullColor = 0;
     sprite->palette = 0;
     sprite->priority = 2;
     object->motionFlags = 0;
     object->retainSpriteCache = 1;
-    sprite->unk1b[0] = 0;
+    sprite->countAndShadow[0] = 0;
     object->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
     buffer = HeapSlot_Alloc(HEAP_SLOT_GLYPH_TRANSFER, 0x608);
     Item_LoadIcon(ITEM_MARS_STAR);
-    Vram_Load(sprite->vramBlock, 128, buffer + 0x400);
+    Vram_Load(sprite->slot, 128, buffer + 0x400);
     HeapSlot_Release(HEAP_SLOT_GLYPH_TRANSFER);
   }
   FieldEvent_Wait(20);
@@ -932,17 +932,17 @@ void MarsLighthouseStarRoom_UseMarsStar(void) {
     *slot = object;
     if (object != 0) {
       sprite = object->sprite;
-      sprite->nextFrame = 0;
+      sprite->flags = 0;
       sprite->fullColor = 0;
       sprite->palette = 0;
       sprite->priority = 2;
       object->motionFlags = 0;
       object->retainSpriteCache = 1;
-      sprite->unk1b[0] = 0;
+      sprite->countAndShadow[0] = 0;
       object->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
       buffer = HeapSlot_Alloc(HEAP_SLOT_GLYPH_TRANSFER, 0x608);
       Item_LoadIcon(ITEM_MARS_STAR);
-      Vram_Load(sprite->vramBlock, 128, buffer + 0x400);
+      Vram_Load(sprite->slot, 128, buffer + 0x400);
       HeapSlot_Release(HEAP_SLOT_GLYPH_TRANSFER);
     }
     FieldEvent_Wait(20);
@@ -997,8 +997,8 @@ void MarsLighthouseStarRoom_UseMarsStar(void) {
   *placedStarSlot = placedStar;
   if (placedStar != 0) {
     placedStarSprite = placedStar->sprite;
-    placedStarSprite->nextFrame = 0;
-    placedStarSprite->unk1b[0] = 0;
+    placedStarSprite->flags = 0;
+    placedStarSprite->countAndShadow[0] = 0;
     placedStarSprite->fullColor = 0;
     placedStarSprite->palette = 0;
     placedStarSprite->priority = 2;
@@ -1007,7 +1007,7 @@ void MarsLighthouseStarRoom_UseMarsStar(void) {
     placedStar->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
     placedStarGlyphs = HeapSlot_Alloc(HEAP_SLOT_GLYPH_TRANSFER, 0x608);
     Item_LoadIcon(ITEM_MARS_STAR);
-    Vram_Load(placedStarSprite->vramBlock, 128, placedStarGlyphs + 0x400);
+    Vram_Load(placedStarSprite->slot, 128, placedStarGlyphs + 0x400);
     HeapSlot_Release(HEAP_SLOT_GLYPH_TRANSFER);
   }
   FieldEvent_Wait(20);

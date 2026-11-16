@@ -837,7 +837,7 @@ void GaiaRockInside_SaveSusa(void) {
   Iwram_CopyWordsEntry(&gGaiaRockInside_SavedSusa, object,
                        sizeof(struct Actor));
   gGaiaRockInside_SavedSusaAnimation = record[21];
-  gGaiaRockInside_SavedSusaFrame = sprite->frame;
+  gGaiaRockInside_SavedSusaFrame = sprite->lastNo;
   {
     FIXED x = object->x.fixed;
     FIXED z;

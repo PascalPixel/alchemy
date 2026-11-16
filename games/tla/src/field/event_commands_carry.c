@@ -26,7 +26,7 @@ void FieldPsynergy_Carry(void) {
   struct FieldEffectWork *work;
   struct Actor *obj;
   struct Actor *pair[2];
-  struct ScatterPosition pos;
+  struct Vector3 pos;
   struct Actor **walk;
   s32 n;
   FIXED dist;

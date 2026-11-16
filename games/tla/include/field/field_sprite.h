@@ -1,6 +1,7 @@
 #ifndef ALCHEMY_FIELD_SPRITE_H
 #define ALCHEMY_FIELD_SPRITE_H
 
+#include "fixed_math.h"
 #include "types.h"
 
 /// An animated sprite on the field: its image's sprite attributes, VRAM
@@ -24,23 +25,24 @@ struct FieldSprite {
   u16 palette : 4;
   ///@}
   u8 unusedAfterPalette[2]; ///< no code names it
-  s32 scale;    ///< 16.16, in the projection draft's layout (LayeredSprite)
-  u8 vramBlock; ///< VRAM cache entry holding its tiles
-  /// The keep-cache-entry and own-scale bits in the projection draft's layout.
-  u8 unk11;
+  FIXED scale;              ///< 16.16 fixed point, FIXED_ONE full size
+  u8 slot;                  ///< VRAM cache entry holding its tiles
+  /// Sprite's retainCacheEntry (bit 0), useOwnScale (bit 1) and sunkRows
+  /// (bits 2 to 7) as one byte.
+  u8 cacheBits;
   u16 rotation; ///< 1/65536 turns
-  /// Width, height and the signed x and y offsets in that layout; scene code
-  /// moves the offsets (bytes 2 and 3).
-  u8 unk14[4];
-  /// The animation number last selected, saved with the object's snapshot.
-  u8 frame;
-  u8 unk19; ///< nonzero redraws its pixels (dirty in that layout)
-  /// The sprite flags, saved with the object's snapshot; zeroed for sprites
-  /// shown without them.
-  u8 nextFrame;
-  /// Byte 0 is the layer count, cleared with the first layer; then the
-  /// shadow's link and attributes 0 and 1.
-  u8 unk1b[9];
+  /// Sprite's width and height in pixels and its signed x and y offsets, as
+  /// bytes; scene code moves the offsets (bytes 2 and 3).
+  u8 box[4];
+  /// The animation number last selected, saved with the actor's snapshot.
+  u8 lastNo;
+  u8 dirty; ///< nonzero redraws its pixels into VRAM when next drawn
+  /// The sprite flags (enum SpriteFlag), saved with the actor's snapshot;
+  /// zeroed for sprites shown without them.
+  u8 flags;
+  /// Byte 0 is the layer count (Sprite.count), cleared with the first layer;
+  /// then the shadow's link and attributes 0 and 1.
+  u8 countAndShadow[9];
   /// The shadow's OAM attribute 2.
   ///@{
   u16 secondTile : 10;

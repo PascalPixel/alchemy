@@ -1866,7 +1866,7 @@ void Orbs_SpawnRising(void) {
     effect->userValue = 0;
     effect->update = (void (*)(void))Orbs_UpdateRising;
     effect->speedLimit = Math_Sin((u32)(Random16() * 0xffff) >> 20) * 24 >> 16;
-    sprite->nextFrame = 0;
+    sprite->flags = 0;
     sprite->priority = 2;
   }
 }

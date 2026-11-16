@@ -10,15 +10,15 @@
 #define SPRITE_SECOND_PART 0x2001
 
 struct ResourceObject;
-struct ResourceObjectWork;
+struct Sprite;
 
 struct ResourceObject *Sprite_Create(s32 resource);
-void Sprite_Destroy(struct ResourceObjectWork *work);
+void Sprite_Destroy(struct Sprite *sprite);
 /// Creates an animated sprite object for animation id, using one of 64 free
 /// objects and a VRAM cache entry.
 struct ResourceObject *Sprite_CreateFar(s32 resource);
 /// Releases an object.
-void Sprite_DestroyFar(struct ResourceObjectWork *work);
+void Sprite_DestroyFar(struct Sprite *sprite);
 
 void *Resource_GetTableEntry(s32 resourceId);
 

@@ -283,9 +283,10 @@ struct ReelEffectWork {
   s32 transferPending;
 };
 
-/// The save as Lucky Wheels reads it: the prizes won.
+/// The main routine work from gPartyDjinnRecovery on, as Lucky Wheels reads it:
+/// the prizes won, kept after the spring game's prize weights.
 struct ReelSave {
-  u8 unused[320]; ///< no code names it
+  u8 unused[320]; ///< summons, coins, Djinn recovery, shops, prize weights
   s8 wonPrizes[16];
 };
 
@@ -616,7 +617,10 @@ void ColorBuffer_HalveNonzero(u8 *source, u8 *destination, s32 size);
 void ColorBuffer_ScaleNonzeroThreeQuarters(u8 *source, u8 *destination,
                                            s32 size);
 
-extern u8 Data_0200024c[];
+/// gMainRoutineWork from its summonMask on, under a label of its own: the
+/// party's DjinnRecoveryTable, which Djinn_GetRecoveryTable returns. Lucky
+/// Wheels reads its won prizes 320 bytes in (ReelSave).
+extern u8 gPartyDjinnRecovery[];
 
 extern const u16 gLuckyWheels_SparkCellOffsets[];
 

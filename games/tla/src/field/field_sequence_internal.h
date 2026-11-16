@@ -107,7 +107,7 @@ struct SceneRegionEntry {
   s32 x;
   u8 unusedAfterX[4]; ///< no code names it
   s32 z;
-  u8 unk14[4];
+  u8 unusedAfterZ[4]; ///< no code names it
 };
 
 /// A row of the scenes' encounter rules (gScene_EncounterRules): a scene and
@@ -128,6 +128,8 @@ struct TerrainRule {
   s16 zone;
 };
 
+/// A point that Vector_AddPolarOffset moves as three coordinates and the item
+/// display reads as a Vector3.
 union PolarOffsetPosition {
   struct Vector3 vector;
   s32 coordinates[3];

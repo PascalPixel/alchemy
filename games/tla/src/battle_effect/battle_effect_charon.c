@@ -503,7 +503,7 @@ void BattleEffect_RunCharon(struct BattleEffectParams *arg) {
     }
     if (frame >= 132 && frame < 860) {
       if (frame == 132) {
-        Sprite_DestroyFar((struct ResourceObjectWork *)OBJECTS[0]);
+        Sprite_DestroyFar((struct Sprite *)OBJECTS[0]);
         source =
             (u8 *)Resource_GetTableEntry((s32)&ResourceId_CrimsonBeastTiles);
         Iwram_FillWords((u16 *)&OBJ_PLTT_COLOR(0, 0), 0x180,
@@ -1203,14 +1203,14 @@ void BattleEffect_RunCharon(struct BattleEffectParams *arg) {
 
   Sound_PlayFar(SE_WAVE);
   if (frame < 132) {
-    Sprite_DestroyFar((struct ResourceObjectWork *)OBJECTS[0]);
+    Sprite_DestroyFar((struct Sprite *)OBJECTS[0]);
   } else {
     for (i = 0; i != CHARON_OBJECTS; i++) {
-      Sprite_DestroyFar((struct ResourceObjectWork *)OBJECTS[i]);
+      Sprite_DestroyFar((struct Sprite *)OBJECTS[i]);
     }
   }
   for (i = 0; i != CHARON_ARROWS; i++) {
-    Sprite_DestroyFar((struct ResourceObjectWork *)SPRITES[i]);
+    Sprite_DestroyFar((struct Sprite *)SPRITES[i]);
   }
   EFFECT_RELEASE_BLITTERS();
   Palette_LoadBasicSpriteColors();

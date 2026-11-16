@@ -21,6 +21,8 @@ struct SpeakerDefinition {
   u8 haltedLines;
 };
 
+/// An actor (struct Actor) as the ground mask reads it: its place, its ground
+/// height's halves and its layer.
 struct FadeActor {
   u8 unused[8]; ///< no code names it
   s32 x;
@@ -32,11 +34,16 @@ struct FadeActor {
   u8 terrainId;
 };
 
+/// The map work (struct MapWork) as the ground mask reads its view position:
+/// viewX and viewZ as halfwords, the second of each its whole pixels.
 struct FadeView {
-  u8 unused[228]; ///< no code names it
+  u8 unused[228]; ///< MapWork up to viewX
   s16 camera[4];
 };
 
+/// A run of lines of a window transition's shape (TransitionShape): its count
+/// of lines and its WIN_RANGE, or when that is 0 the window edges it moves
+/// between.
 struct TransitionSpan {
   u16 count;
   u16 value;

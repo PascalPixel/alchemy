@@ -573,7 +573,7 @@ void LuckyWheels_Update(void) {
                                  work->subWindow, LUCKY_WHEELS_COIN_X, 0);
       Text_DrawNumberInWindowFar(work->bet, 2, work->subWindow, 64, 8);
       if (work->pressed & KEY_B) {
-        struct ReelSave *save = (struct ReelSave *)Data_0200024c;
+        struct ReelSave *save = (struct ReelSave *)gPartyDjinnRecovery;
 
         work->state = LUCKY_WHEELS_DONE;
         save->wonPrizes[0] = -2;
@@ -796,7 +796,7 @@ void LuckyWheels_Update(void) {
       }
 
       if (stoppedReels == LUCKY_WHEELS_REEL_COUNT) {
-        struct ReelSave *save = (struct ReelSave *)Data_0200024c;
+        struct ReelSave *save = (struct ReelSave *)gPartyDjinnRecovery;
         s32 hits = 0;
 
         for (col = 0; col != LUCKY_WHEELS_PAYLINES; col++) {
@@ -1256,7 +1256,7 @@ void LuckyWheels_Run(void) {
   state =
       HeapSlot_AllocEwram(HEAP_SLOT_CANVAS_MAP, sizeof(struct LuckyWheelsWork));
   tiles = Ram_MapCellBuffer;
-  save = (struct ReelSave *)Data_0200024c;
+  save = (struct ReelSave *)gPartyDjinnRecovery;
   Resource_ReservedNoOp((s32)&ResourceId_BattleEffectFarCalls);
   save->wonPrizes[0] = -1;
   state->repeat = 0;

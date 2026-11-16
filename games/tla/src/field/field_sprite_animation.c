@@ -533,9 +533,6 @@ void SpriteAnimation_Clear(void *dst) {
 // Resources: create/release animated sprite objects and calculate frame
 // durations.
 
-typedef char
-    ResourceObjectWork_size[sizeof(struct ResourceObjectWork) == 56 ? 1 : -1];
-
 /// Creates an animated sprite object for animation id, using one of 64 free
 /// objects and a VRAM cache entry. Returns the object, or NULL on failure.
 struct ResourceObject *Sprite_Create(s32 id) {
@@ -625,25 +622,25 @@ struct ResourceObject *Sprite_Create(s32 id) {
   return freeSprite;
 }
 
-/// Releases an object: gives back its VRAM cache entry unless flags bit 0 is
-/// set, releases its four children and zeroes the 56-byte workspace.
-void Sprite_Destroy(struct ResourceObjectWork *work) {
+/// Releases a sprite: gives back its VRAM cache entry unless it keeps it
+/// (retainCacheEntry), clears its four sprite animations and zeroes it.
+void Sprite_Destroy(struct Sprite *sprite) {
   volatile u32 zero;
   s32 n;
-  void **child;
+  struct SpriteAnimation **layer;
 
-  if (work) {
-    if (!(work->flags & 1))
-      VramCache_FreeEntry(work->resource);
-    child = work->children;
+  if (sprite) {
+    if (!sprite->retainCacheEntry)
+      VramCache_FreeEntry(sprite->slot);
+    layer = sprite->entries;
     n = 3;
     do {
-      SpriteAnimation_Clear(*child++);
+      SpriteAnimation_Clear(*layer++);
     } while (--n >= 0);
     zero = 0;
-    Dma_Set(&zero, work,
+    Dma_Set(&zero, sprite,
             ((DMA_ENABLE | DMA_32BIT | DMA_SRC_FIXED) << 16) |
-                (sizeof(*work) / 4),
+                (sizeof(*sprite) / 4),
             REG_DMA3);
   }
 }

@@ -8,8 +8,8 @@ gGameFlagBytes:
 	.global gMainRoutineWork
 gMainRoutineWork:
 	.space 0x0000000c
-	.global Data_0200024c
-Data_0200024c:
+	.global gPartyDjinnRecovery
+gPartyDjinnRecovery:
 	.space 0x000001d6
 	.space 0x00000014
 	.space 0x00000012
@@ -23,8 +23,8 @@ Data_0200024c:
 	.space 0x00000002
 	.space 0x0000000c
 	.space 0x00000048
-	.global Data_02000500
-Data_02000500:
+	.global gWorldPictureChoice
+gWorldPictureChoice:
 	.space 0x00000004
 	.space 0x0000001c
 	.global gCharacterUnits

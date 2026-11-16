@@ -750,7 +750,7 @@ s32 WorldPicture_Show(s32 mode) {
   s32 limitX;
   s32 limitZ;
   s32 value;
-  struct WorldMapChoice *choice = &Data_02000500;
+  struct WorldMapChoice *choice = &gWorldPictureChoice;
   struct MainRoutineWork *routine = &gMainRoutineWork;
 
   world->mode = mode;

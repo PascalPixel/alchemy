@@ -102,11 +102,6 @@ struct PlayerSprite {
   struct SpriteAnimation *secondLayer; ///< entries[1]; above priority 3 hidden
 };
 
-struct MapFlagsWork {
-  u8 unused[23];    ///< no code names it
-  u8 groundEffects; ///< bits: 3..2 the wading kind | 1..0 footprints
-};
-
 /// One background layer's setup in a layout's header: its origin, its
 /// parallax and drift, and where it wraps.
 struct MapHeaderLayer {

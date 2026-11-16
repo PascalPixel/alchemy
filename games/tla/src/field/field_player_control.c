@@ -486,7 +486,7 @@ s32 Actor_UpdatePlayerControl(struct Actor *object) {
   s32 footprintAngle;
   s32 onObject;
   struct FieldWork *work;
-  struct MapFlagsWork *map;
+  struct MapWork *map;
   u16 angle;
   u16 direction;
   struct Actor *other;
@@ -497,7 +497,7 @@ s32 Actor_UpdatePlayerControl(struct Actor *object) {
   movementAnimation = ANIM_WALK;
   onObject = 0;
   work = Ram_HeapSlots->fieldWork;
-  map = (struct MapFlagsWork *)Ram_HeapSlots->mapGrid;
+  map = Ram_HeapSlots->mapGrid;
   collision = 0;
   pushed = 0;
   if (gInput.held & gMainRoutineWork.dashKeys) {

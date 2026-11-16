@@ -339,7 +339,8 @@ void BattleEffect_RunSparkGroups(struct BattleEffectParams *args, s32 kind) {
             draw[0](canvas,
                     work->sheet +
                         (gPlasma_FlashPictures[point->variant / 3] << 11),
-                    x - 16, y - 32, FLASH_BURST_WIDTH, FLASH_BURST_HEIGHT);
+                    x - FLASH_BURST_WIDTH / 2, y - FLASH_BURST_HEIGHT / 2,
+                    FLASH_BURST_WIDTH, FLASH_BURST_HEIGHT);
           if (point->variant > 0)
             point->variant--;
           else

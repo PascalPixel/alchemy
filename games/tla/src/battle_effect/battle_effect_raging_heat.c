@@ -133,10 +133,10 @@ void BattleEffect_RunRagingHeat(struct BattleEffectParams *args) {
             if (particle->variant > 1) {
               draw[0](canvas,
                       work->sheet + RAGING_HEAT_FLASH_BURST_PICTURES +
-                          ((particle->variant / 4) << 11),
-                      FIXED_INTEGER_PART(particle->x) - 16,
-                      FIXED_INTEGER_PART(particle->y) - 32, FLASH_BURST_WIDTH,
-                      FLASH_BURST_HEIGHT);
+                          (particle->variant / 4) * PICTURE_BYTES(FLASH_BURST),
+                      FIXED_INTEGER_PART(particle->x) - FLASH_BURST_WIDTH / 2,
+                      FIXED_INTEGER_PART(particle->y) - FLASH_BURST_HEIGHT / 2,
+                      FLASH_BURST_WIDTH, FLASH_BURST_HEIGHT);
             }
             BattleEffectKernels_IntegrateVector2(particle, 60,
                                                  -toFIXED(1) / 16);

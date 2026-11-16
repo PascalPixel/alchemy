@@ -194,7 +194,7 @@ void BattleEffect_RunTargetBursts(struct BattleEffectParams *args) {
                        screen.x - 12, screen.y - 36, SMOKE_PUFF_WIDTH,
                        SMOKE_PUFF_HEIGHT);
           } else {
-            BattleEffectKernels_IntegrateVector3(p, 60, 0x200);
+            BattleEffectKernels_IntegrateVector3(p, 60, toFIXED(1) / 128);
             rectangleB(canvas, work->sheet + cel * 0x480, screen.x - 12,
                        screen.y - 36, SMOKE_PUFF_WIDTH, SMOKE_PUFF_HEIGHT);
           }

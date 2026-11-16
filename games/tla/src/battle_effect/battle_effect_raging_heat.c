@@ -293,11 +293,11 @@ void BattleEffect_RunJuggle(struct BattleEffectParams *args) {
   Task_Add((s32)BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_FRAME);
   lift = 0;
   {
-    s32 *life = ((s32 *)(Ram_MapCellBuffer + 0x18));
+    s32 *life = &((struct Particle *)Ram_MapCellBuffer)->variant;
 
     for (i = 0; i != SPARK_COUNT; i++) {
       *life = -1;
-      life += 7;
+      life += sizeof(struct Particle) / sizeof(*life);
     }
   }
 

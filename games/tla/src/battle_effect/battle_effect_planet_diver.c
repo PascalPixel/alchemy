@@ -74,7 +74,7 @@ void BattleEffect_RunHaunt(struct BattleEffectParams *args) {
     row = work->bg2xLines;
     if (args->side == EFFECT_SIDE_ENEMIES) {
       for (i = 0; i != DISPLAY_HEIGHT; i++)
-        *row++ = (0x60000 - Trig_Sin((frame + i) << 11) * 6) >> 10;
+        *row++ = (toFIXED(6) - Trig_Sin((frame + i) << 11) * 6) >> 10;
     } else {
       for (i = 0; i != DISPLAY_HEIGHT; i++)
         *row++ = Trig_Sin((frame + i) << 11) * 6 >> 10;
@@ -188,7 +188,7 @@ void BattleEffect_RunUnusedOrbitingSpirals(struct BattleEffectParams *args) {
       s32 angle;
       s32 base;
 
-      for (i = 0, base = 0x80000, angle = frame << 10; i != DISPLAY_HEIGHT;
+      for (i = 0, base = toFIXED(8), angle = frame << 10; i != DISPLAY_HEIGHT;
            i++) {
         *row++ = (base - (Trig_Sin(angle) << 3)) >> 10;
         angle += 1024;
@@ -197,7 +197,7 @@ void BattleEffect_RunUnusedOrbitingSpirals(struct BattleEffectParams *args) {
       s32 angle;
 
       for (i = 0, angle = frame << 10; i != DISPLAY_HEIGHT; i++) {
-        *row++ = ((Trig_Sin(angle) << 3) >> 10) - 0x7000;
+        *row++ = ((Trig_Sin(angle) << 3) >> 10) - toFIXED(7) / 16;
         angle += 1024;
       }
     }

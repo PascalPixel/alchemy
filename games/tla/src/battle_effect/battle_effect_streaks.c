@@ -159,7 +159,7 @@ void BattleEffect_RunStreakVolley(struct BattleEffectParams *args, s32 mode) {
       // Wobble BG2's 160 lines on a sine wave, and fade the last 16
       // frames out.
       for (k = 0; k != DISPLAY_HEIGHT; k++)
-        *row++ = (0x80000 - Trig_Sin((frame + k) << 12) * 2) >> 10;
+        *row++ = (toFIXED(8) - Trig_Sin((frame + k) << 12) * 2) >> 10;
       if (frame > total - 16)
         REG_BLDALPHA = BLEND_ALPHA(total - frame, BLEND_WEIGHT_MAX);
 
@@ -407,7 +407,7 @@ void BattleEffect_RunMoteFountain(struct BattleEffectParams *args, s32 mode) {
         // slowly. Sleep Star's drift away from the user's side.
         if (mode == MOTE_FOUNTAIN_SLAVER) {
           BattleEffectKernels_IntegrateVector3(mote, 62, -toFIXED(1) / 8);
-          if (mote->y <= 0x4ffff)
+          if (mote->y < toFIXED(5))
             mote->velocityY = -mote->velocityY;
         } else {
           BattleEffectKernels_IntegrateVector3(mote, 62, toFIXED(1) / 64);

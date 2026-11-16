@@ -8,6 +8,11 @@
 #define BLITTER ((DrawRectangle)Ram_HeapSlots->ramCode)
 #define OCEAN_FIST_FRAMES 92
 #define OCEAN_DROPS 512
+/// WhirlBeamSheet's three pictures of the column, each three 64-line bands.
+#define OCEAN_FIST_COLUMN_WIDTH 96
+#define OCEAN_FIST_COLUMN_HEIGHT 64
+/// Where FlashBurstSheet, the spray, is decoded in the map cell buffer.
+#define OCEAN_FIST_SPRAY 0x4000
 
 /// A column of water (three pictures of the work's sheet, each halved in
 /// brightness from frame 32 to 43) rises at the target and is drawn top-down
@@ -18,7 +23,7 @@
 ///
 /// Abilities: Ocean Fist.
 void BattleEffect_RunOceanFist(struct BattleEffectParams *args) {
-  u8 *spraySheet = Ram_MapCellBuffer + 0x4000;
+  u8 *spraySheet = Ram_MapCellBuffer + OCEAN_FIST_SPRAY;
   void *canvas;
   struct BattleEffectWork *work;
   u8 *sprites;
@@ -51,19 +56,19 @@ void BattleEffect_RunOceanFist(struct BattleEffectParams *args) {
     s32 scroll = 0;
     for (frame = 0; frame != OCEAN_FIST_FRAMES; scroll += 8, frame++) {
       if (frame == 0) {
-        s32 *life = ((s32 *)(Ram_MapCellBuffer + 0x18));
+        s32 *life = &((struct Particle *)Ram_MapCellBuffer)->variant;
 
         for (i = 0; i != OCEAN_DROPS; i++) {
           *life = -1;
-          life += 7;
+          life += sizeof(struct Particle) / sizeof(*life);
         }
         Resource_LoadAndDecompress(RESOURCE_WHIRL_BEAM_SHEET, work->sheet, 1,
                                    0);
         Sound_PlayFar(SE_CRASH);
         work->shakeFrames = 4;
-        halfWidth = 48;
-        width = 96;
-        sheet = Ram_MapCellBuffer + 0x4000;
+        halfWidth = OCEAN_FIST_COLUMN_WIDTH / 2;
+        width = OCEAN_FIST_COLUMN_WIDTH;
+        sheet = Ram_MapCellBuffer + OCEAN_FIST_SPRAY;
       }
       if (frame == 32) {
         BattleEffect_TintBattler(args->targets[0], SPRITE_COLOR_WHITE,
@@ -78,9 +83,10 @@ void BattleEffect_RunOceanFist(struct BattleEffectParams *args) {
 
       // Frames 32 to 43: each in turn, the column's pictures dim.
       if ((u32)(frame - 32) <= 11) {
-        u8 *pixel = work->sheet + (frame % 3) * 3 * 0x800;
+        u8 *pixel =
+            work->sheet + (frame % 3) * PICTURE_BYTES(OCEAN_FIST_COLUMN);
 
-        for (i = 0; i != 0x1800; i++) {
+        for (i = 0; i != PICTURE_BYTES(OCEAN_FIST_COLUMN); i++) {
           s32 value = *pixel;
 
           *pixel = value >> 1;
@@ -110,7 +116,9 @@ void BattleEffect_RunOceanFist(struct BattleEffectParams *args) {
               height -= top - y;
               y = top;
             }
-            blitters[1](canvas, work->sheet + picture * 3 * 0x800,
+            blitters[1](canvas,
+                        work->sheet +
+                            picture * PICTURE_BYTES(OCEAN_FIST_COLUMN),
                         x - halfWidth, y, width, height);
           }
         }
@@ -214,3 +222,6 @@ void BattleEffect_RunOceanFist(struct BattleEffectParams *args) {
 #undef BLITTER
 #undef OCEAN_FIST_FRAMES
 #undef OCEAN_DROPS
+#undef OCEAN_FIST_COLUMN_WIDTH
+#undef OCEAN_FIST_COLUMN_HEIGHT
+#undef OCEAN_FIST_SPRAY

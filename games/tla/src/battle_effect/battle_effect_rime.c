@@ -149,7 +149,7 @@ void BattleEffect_RunDjinniSign(struct BattleEffectParams *args, s32 mode) {
       model->shade = brightness;
       texture.pixels = work->sheet + CRYSTAL_OFFSET;
       for (i = 0; i != 2; i++) {
-        FIXED scale = FIXED_ONE * 2 - frame * 0x800;
+        FIXED scale = FIXED_ONE * 2 - frame * (FIXED_ONE / 32);
 
         if (frame > 31 && i == 1)
           continue;

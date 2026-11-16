@@ -180,7 +180,7 @@ void BattleEffect_RunStatBoost(struct BattleEffectParams *args, u32 mode) {
     mode = STAT_BOOST_IMPACT;
     start = 53;
   }
-  REG_BG2PA = 0xcc; // 1.25 times as wide
+  REG_BG2PA = Q_8_8(0.8); // 1.25 times as wide
 
   // The pictures and the colors.
   Resource_LoadAndDecompress(RESOURCE_PARTICLE_SPRITES_D,

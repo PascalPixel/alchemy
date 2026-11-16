@@ -52,6 +52,11 @@ void Graphics_LoadGreyRamp(void) {
   } while (i != 63);
 }
 
+/// Draws the upper left quarter of a shaded disc into a map `size` / 2 bytes
+/// wide and `size` rows tall, centred on its bottom right corner and squeezed
+/// to half width: each ring is darker than the one inside it by a cosine
+/// falloff, scaled by `scale` (FIXED_ONE at full strength) and clamped at
+/// CANVAS_LEVEL_BRIGHTEST.
 void BattleEffect_DrawShadedCircles(u8 *map, s32 size, FIXED scale) {
   s32 half = size / 2;
   s32 center = half - 1;
@@ -87,6 +92,9 @@ void BattleEffect_DrawShadedCircles(u8 *map, s32 size, FIXED scale) {
   }
 }
 
+/// Draws the whole shaded disc BattleEffect_DrawShadedCircles draws a quarter
+/// of, mirrored into the four quarters of a map `size` bytes wide and twice
+/// `size` rows tall.
 void BattleEffect_DrawShadedCirclesMirrored(u8 *map, s32 size, s32 scale) {
   s32 center = size / 2 - 1;
   s32 last = size - 1;

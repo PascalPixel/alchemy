@@ -1,13 +1,13 @@
 /// Aims an actor at the actor it watches, to reach it in ten steps.
-s32 Actor_AimAtWatched(struct Actor *object) {
-  struct Actor *target = object->watchedActor;
+s32 Actor_AimAtWatched(struct Actor *actor) {
+  struct Actor *target = actor->watchedActor;
   s32 steps;
   FIXED from;
 
-  object->bounce = (target->x.fixed - object->x.fixed) / (steps = 10);
-  from = object->y.fixed;
-  object->riseBaseY = (target->y.fixed - from + toFIXED(16)) / steps;
-  object->gravity = (target->z.fixed - object->z.fixed) / steps;
-  object->riseCounter = steps;
+  actor->bounce = (target->x.fixed - actor->x.fixed) / (steps = 10);
+  from = actor->y.fixed;
+  actor->riseBaseY = (target->y.fixed - from + toFIXED(16)) / steps;
+  actor->gravity = (target->z.fixed - actor->z.fixed) / steps;
+  actor->riseCounter = steps;
   return 0;
 }

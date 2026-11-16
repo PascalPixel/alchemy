@@ -237,17 +237,17 @@ void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
 
 /// Scatters count dust puffs in a ring of radius around Alex.
 void MtAlephSummit_ScatterDustRing(s32 radius, u32 count) {
-  struct Actor *object;
+  struct Actor *actor;
   struct EffectOptions options;
   struct Vector3 dir;
   u32 i;
   s32 angle;
 
-  object = Actor_Get(ACTOR_ALEX);
+  actor = Actor_Get(ACTOR_ALEX);
   options.update = FieldEffect_AdvanceMotion;
   options.startScaleX = FIXED_ONE * 4 / 5;
   options.startScaleY = FIXED_ONE * 4 / 5;
-  options.priority = ((struct FieldSprite *)object->sprite)->priority;
+  options.priority = ((struct FieldSprite *)actor->sprite)->priority;
   i = 0;
   do {
     angle = i * (TRIG_TURN / (s32)count);
@@ -258,7 +258,7 @@ void MtAlephSummit_ScatterDustRing(s32 radius, u32 count) {
     dir.x += ((Random16() * 3) << 14 >> 16) - 0x6000;
     dir.z += ((Random16() * 3) << 13 >> 16) - 0x3000;
     FieldEffect_Spawn(
-        object->x.fixed, object->y.fixed, object->z.fixed, dir.x, dir.y, dir.z,
+        actor->x.fixed, actor->y.fixed, actor->z.fixed, dir.x, dir.y, dir.z,
         EFFECT_USE_UPDATE | EFFECT_USE_START_SCALE | EFFECT_USE_PRIORITY | 1,
         &options);
     i++;
@@ -279,7 +279,7 @@ s32 Scene_Initialize(void) {
   s32 c;
   u16 *color, *out;
   u8 *message;
-  struct Actor *object;
+  struct Actor *actor;
   volatile u32 *held;
   struct HeapSlots *slots;
 
@@ -373,9 +373,9 @@ s32 Scene_Initialize(void) {
     FieldCamera_MoveTo(256, CAMERA_KEEP, 144, 0);
     FieldCamera_SetSpeed(1);
     Actor_SetAnimation(ACTOR_ALEX, 14);
-    object = Actor_Get(ACTOR_ALEX);
+    actor = Actor_Get(ACTOR_ALEX);
     scale = 0;
-    object->facing = scale;
+    actor->facing = scale;
     Actor_Get(ACTOR_ALEX)->x.fixed = toFIXED(248);
     Actor_Get(ACTOR_ALEX)->z.fixed = toFIXED(152);
     IO_WRITE_QUEUE_PUSH((u32)&REG_BLDCNT,

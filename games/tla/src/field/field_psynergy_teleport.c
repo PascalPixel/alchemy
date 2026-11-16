@@ -32,7 +32,7 @@ void Teleport_PlayWhirl(void) {
   s32 position[3];
   struct TeleportWhirlWork *work =
       HeapSlot_Alloc(HEAP_SLOT_BATTLE_EFFECT, sizeof(*work));
-  struct Actor *object = Actor_Lookup(Party_GetLeaderActor());
+  struct Actor *actor = Actor_Lookup(Party_GetLeaderActor());
   struct WhirlSpark *spark;
   struct EffectSprite *sprite;
   s32 next;
@@ -59,9 +59,9 @@ void Teleport_PlayWhirl(void) {
   }
   Sound_PlayFar(SE_SPARKLE_FALL);
   wait(20);
-  object->scaleX = 0;
-  object->scaleY = 0;
-  Actor_SetSpriteFlagsFar(object, 0);
+  actor->scaleX = 0;
+  actor->scaleY = 0;
+  Actor_SetSpriteFlagsFar(actor, 0);
 
   count = 2;
   state = 0;
@@ -75,8 +75,8 @@ void Teleport_PlayWhirl(void) {
         angle = Random16();
         spark = &work->sparks[next];
         spark->age = 0;
-        SET_POSITION(spark, object->x.fixed, object->y.fixed + Random16() * 20,
-                     object->z.fixed);
+        SET_POSITION(spark, actor->x.fixed, actor->y.fixed + Random16() * 20,
+                     actor->z.fixed);
         Vector_AddPolarOffset(Random16() << 3, angle, &spark->x);
         next++;
         spark->angle = angle;
@@ -120,11 +120,11 @@ void Teleport_PlayWhirl(void) {
       }
       break;
     case 1:
-      object->facing += DEGtoANG(45);
-      object->scaleX = FIXED_ONE * frame / 30;
-      if (object->scaleX > FIXED_ONE)
-        object->scaleX = FIXED_ONE;
-      object->scaleY = object->scaleX;
+      actor->facing += DEGtoANG(45);
+      actor->scaleX = FIXED_ONE * frame / 30;
+      if (actor->scaleX > FIXED_ONE)
+        actor->scaleX = FIXED_ONE;
+      actor->scaleY = actor->scaleX;
       if (frame == 40) {
         state = 2;
         frame = -1;
@@ -132,8 +132,8 @@ void Teleport_PlayWhirl(void) {
       break;
     case 2:
       if (frame == 0) {
-        object->facing = DEGtoANG(90);
-        Actor_SetSpriteFlagsFar(object, 1);
+        actor->facing = DEGtoANG(90);
+        Actor_SetSpriteFlagsFar(actor, 1);
         count = 3;
       }
       if (frame == 10)
@@ -169,7 +169,7 @@ void Teleport_PlaySparks(void) {
   struct SparkWork *work =
       HeapSlot_Alloc(HEAP_SLOT_BATTLE_EFFECT, sizeof(*work));
   s32 owner = Party_GetLeaderActor();
-  struct Actor *object = Actor_Lookup(Party_GetLeaderActor());
+  struct Actor *actor = Actor_Lookup(Party_GetLeaderActor());
   struct FieldPsynergyParticle *particle;
   struct EffectSprite *sprite;
   s32 state;
@@ -201,14 +201,14 @@ void Teleport_PlaySparks(void) {
   wait(10);
   Actor_FaceDirectionById(owner, FACING_SOUTH, 0);
   wait(20);
-  Actor_SelectAnimationFar(object, ANIM_LEADER_ARMS_RAISED);
-  object->update = Actor_CycleSpriteColors;
+  Actor_SelectAnimationFar(actor, ANIM_LEADER_ARMS_RAISED);
+  actor->update = Actor_CycleSpriteColors;
   Sound_PlayFar(SE_PSYNERGY_SPARKLE);
   wait(30);
   Sound_PlayFar(SE_SHIMMER);
-  Actor_SelectAnimationFar(object, 3);
+  Actor_SelectAnimationFar(actor, 3);
   for (spin = 0, frame = 49; frame >= 0; frame--, spin += 60) {
-    object->facing += spin + FACING_STEP;
+    actor->facing += spin + FACING_STEP;
     wait(1);
   }
 
@@ -221,8 +221,8 @@ void Teleport_PlaySparks(void) {
       angle = Random16();
       particle = &work->particles[next];
       particle->timer = zero;
-      SET_POSITION(particle, object->x.fixed, object->y.fixed + Random16() * 20,
-                   object->z.fixed);
+      SET_POSITION(particle, actor->x.fixed, actor->y.fixed + Random16() * 20,
+                   actor->z.fixed);
       Vector_AddPolarOffset(Random16() << 3, angle, &particle->x);
       if (next & 1) {
         particle->velocityX = zero;
@@ -266,7 +266,7 @@ void Teleport_PlaySparks(void) {
     case 0:
       if (frame == 10)
         Sound_PlayFar(SE_KOLIMA_BRIDGE_POST);
-      object->facing += DEGtoANG(45);
+      actor->facing += DEGtoANG(45);
       if (frame == 40)
         count = 3;
       if (frame == 50)
@@ -278,12 +278,12 @@ void Teleport_PlaySparks(void) {
       }
       break;
     case 1:
-      object->facing += DEGtoANG(45);
-      object->scaleX = FIXED_ONE - FIXED_ONE * frame / 30;
-      if (object->scaleX < 0)
-        object->scaleX = 0;
-      object->scaleY = object->scaleX;
-      Actor_SetSpriteFlagsFar(object, 0);
+      actor->facing += DEGtoANG(45);
+      actor->scaleX = FIXED_ONE - FIXED_ONE * frame / 30;
+      if (actor->scaleX < 0)
+        actor->scaleX = 0;
+      actor->scaleY = actor->scaleX;
+      Actor_SetSpriteFlagsFar(actor, 0);
       if (frame == 30) {
         state = 2;
         frame = -1;

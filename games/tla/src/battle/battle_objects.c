@@ -356,7 +356,7 @@ void ResetMotionRecordGroup(void *recordGroup) {
 /// no place.
 static inline struct BattleObject *BattleObject_GetInline(s32 unitId) {
   struct BattleWork *battle = Ram_HeapSlots->battleWork;
-  struct BattleObject *objects = battle->slots;
+  struct BattleObject *battleObject = battle->slots;
   s32 placementIndex;
 
   if (unitId > ALLY_MAX)
@@ -364,7 +364,7 @@ static inline struct BattleObject *BattleObject_GetInline(s32 unitId) {
   placementIndex = unitId;
   if (battle->placement[placementIndex] == BATTLE_OBJECT_NONE)
     return 0;
-  return &objects[battle->placement[placementIndex]];
+  return &battleObject[battle->placement[placementIndex]];
 }
 
 /// Task, each frame of a battle: advances every unit's status icon, sets its

@@ -248,11 +248,11 @@ void AlhafranCave_TrackLeadersLevel(void) {
 
 /// The jail's task: draws the crate's sprite where the crate stands.
 s32 AlhafranCave_DrawCrateSprite(void) {
-  struct Actor *object = Actor_Get(ACTOR_CRATE);
+  struct Actor *actor = Actor_Get(ACTOR_CRATE);
 
   BattleEffect_DrawSpriteAtWorldPosition(
-      &gAlhafranCave_CrateSprite, object->x.fixed,
-      object->y.fixed + toFIXED(28), object->z.fixed);
+      &gAlhafranCave_CrateSprite, actor->x.fixed, actor->y.fixed + toFIXED(28),
+      actor->z.fixed);
   return 0;
 }
 
@@ -283,14 +283,14 @@ s32 Scene_Initialize(void) {
 #endif
 }
 
-void Actor_SetSpriteColorMode(struct Actor *object, s32 value);
+void Actor_SetSpriteColorMode(struct Actor *actor, s32 value);
 
 /// Sets up the cave: its pillars, the pushed pillars, the puddle, and the way
 /// to the jail if it is open.
 void AlhafranCave_SetUpCave(void) {
   struct MapWorkGroundEffects *map =
       (struct MapWorkGroundEffects *)Ram_HeapSlots->mapGrid;
-  struct Actor *object;
+  struct Actor *actor;
 
   Actor_Get(gMainRoutineWork.leaderActorId)->priorityFlags |=
       ACTOR_PRIORITY_IGNORES_RISES;
@@ -298,24 +298,24 @@ void AlhafranCave_SetUpCave(void) {
   Task_AddFrame(AlhafranCave_TrackLeadersLevel, TASK_PASS_VBLANK);
   if (Event_GetFlag(FLAG_WAY_TO_JAIL_OPEN))
     AlhafranCave_OpenWayToJail();
-  object = Actor_Get(ACTOR_CAVE_FIRST_PILLAR);
-  object->motionFlags = 0;
-  object->y.fixed = toFIXED(12);
-  object = Actor_Get(ACTOR_CAVE_SECOND_PILLAR);
-  object->motionFlags = 0;
-  object->y.fixed = toFIXED(12);
-  object = Actor_Get(ACTOR_CAVE_THIRD_PILLAR);
-  object->motionFlags = 0;
-  object->y.fixed = toFIXED(12);
+  actor = Actor_Get(ACTOR_CAVE_FIRST_PILLAR);
+  actor->motionFlags = 0;
+  actor->y.fixed = toFIXED(12);
+  actor = Actor_Get(ACTOR_CAVE_SECOND_PILLAR);
+  actor->motionFlags = 0;
+  actor->y.fixed = toFIXED(12);
+  actor = Actor_Get(ACTOR_CAVE_THIRD_PILLAR);
+  actor->motionFlags = 0;
+  actor->y.fixed = toFIXED(12);
   Actor_SetSpriteColorMode(Actor_Get(ACTOR_CAVE_FIRST_PILLAR), 6);
   Actor_SetSpriteColorMode(Actor_Get(ACTOR_CAVE_SECOND_PILLAR), 6);
   Actor_SetSpriteColorMode(Actor_Get(ACTOR_CAVE_THIRD_PILLAR), 6);
-  object = Actor_Get(ACTOR_CAVE_SECOND_PILLAR_PIECE);
-  object->motionFlags = 0;
-  object->y.fixed = toFIXED(16);
-  object = Actor_Get(ACTOR_CAVE_FIRST_PILLAR_PIECE);
-  object->motionFlags = 0;
-  object->y.fixed = toFIXED(16);
+  actor = Actor_Get(ACTOR_CAVE_SECOND_PILLAR_PIECE);
+  actor->motionFlags = 0;
+  actor->y.fixed = toFIXED(16);
+  actor = Actor_Get(ACTOR_CAVE_FIRST_PILLAR_PIECE);
+  actor->motionFlags = 0;
+  actor->y.fixed = toFIXED(16);
   FieldActor_SetSpriteRotationById(ACTOR_CAVE_LEANING_PILLAR, TRIG_TURN / 16);
   Actor_SetAnimation(ACTOR_CAVE_FIRST_PILLAR_PIECE, 2);
   Actor_SetAnimation(ACTOR_CAVE_SECOND_PILLAR_PIECE, 3);
@@ -336,16 +336,16 @@ void AlhafranCave_SetUpCave(void) {
     Actor_SetPosition(ACTOR_CAVE_FIRST_PUSHED_PILLAR, 200, 136);
     Actor_SetPosition(ACTOR_CAVE_SECOND_PUSHED_PILLAR, 392, 360);
   }
-  object = Actor_Get(ACTOR_CAVE_FIRST_PUSHED_PILLAR);
-  object->motionFlags = 0;
-  object->groundHeight = 0;
-  object->y.fixed = 0;
-  MapGrid_SetCellHeight(object->x.fixed, object->z.fixed, 0, 4);
-  object = Actor_Get(ACTOR_CAVE_SECOND_PUSHED_PILLAR);
-  object->motionFlags = 0;
-  object->groundHeight = 0;
-  object->y.fixed = 0;
-  MapGrid_SetCellHeight(object->x.fixed, object->z.fixed, 0, 4);
+  actor = Actor_Get(ACTOR_CAVE_FIRST_PUSHED_PILLAR);
+  actor->motionFlags = 0;
+  actor->groundHeight = 0;
+  actor->y.fixed = 0;
+  MapGrid_SetCellHeight(actor->x.fixed, actor->z.fixed, 0, 4);
+  actor = Actor_Get(ACTOR_CAVE_SECOND_PUSHED_PILLAR);
+  actor->motionFlags = 0;
+  actor->groundHeight = 0;
+  actor->y.fixed = 0;
+  MapGrid_SetCellHeight(actor->x.fixed, actor->z.fixed, 0, 4);
   FlagBlock_PlaceAllMarkingEdges(gAlhafranCave_Puddles);
   Actor_SetMovementType(Actor_Get(ACTOR_CAVE_PUDDLE),
                         MOVEMENT_TYPE_TAKE_LEADER_LAYER);

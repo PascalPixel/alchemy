@@ -102,7 +102,7 @@ s32 BattleParty_ChooseReserve(s32 slot) {
         if (redraw) {
           struct BattleObject *from;
           struct BattleObject *to;
-          struct Actor *object;
+          struct Actor *actor;
           struct Actor *place;
 
           redraw = 0;
@@ -111,9 +111,9 @@ s32 BattleParty_ChooseReserve(s32 slot) {
           to = BattleObject_GetFar(newId);
           to->anchorX = from->anchorX;
           place = (struct Actor *)from->object;
-          object = (struct Actor *)to->object;
+          actor = (struct Actor *)to->object;
           to->anchorZ = from->anchorZ;
-          Actor_SetPositionAndResetMotionFar(object, place->x.fixed,
+          Actor_SetPositionAndResetMotionFar(actor, place->x.fixed,
                                              place->y.fixed, place->z.fixed);
           PartyStatus_Draw(Ram_HeapSlots->battleWork->partyStatus);
           BattleObject_PutFar();

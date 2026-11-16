@@ -196,7 +196,7 @@ void MapGrid_SetCellHeight();
 extern s32 gWhirlwindEndScript[];
 
 s32 MapGrid_GetCellBehavior(s32 x, s32 z, s32 layer);
-void Actor_StartScript(struct Actor *object, const s32 *script);
+void Actor_StartScript(struct Actor *actor, const s32 *script);
 
 #include "shared/whirlwind_update_lower.h"
 
@@ -204,7 +204,7 @@ void Actor_StartScript(struct Actor *object, const s32 *script);
 
 /// An actor's update: every eighth frame, a mote rising from a random point of
 /// it.
-s32 JupiterLighthouse_EmitRisingMotes(struct Actor *object) {
+s32 JupiterLighthouse_EmitRisingMotes(struct Actor *actor) {
   struct EffectOptions params;
   s32 phase;
   FIXED x, y, speed;
@@ -215,10 +215,10 @@ s32 JupiterLighthouse_EmitRisingMotes(struct Actor *object) {
     params.startScaleX = FIXED_ONE * 7 / 10;
     params.startScaleY = FIXED_ONE * 7 / 10;
     params.palette = 14;
-    x = object->x.fixed + INTtoFIXED((s32)(Random_Below(9)) - 4);
-    y = object->y.fixed + INTtoFIXED(32 - (s32)(Random_Below(20)));
+    x = actor->x.fixed + INTtoFIXED((s32)(Random_Below(9)) - 4);
+    y = actor->y.fixed + INTtoFIXED(32 - (s32)(Random_Below(20)));
     speed = (INTtoFIXED((s32)(Random_Below(5))) + toFIXED(5)) / 10;
-    FieldEffect_Spawn(x, y, object->z.fixed, 0, speed, phase,
+    FieldEffect_Spawn(x, y, actor->z.fixed, 0, speed, phase,
                       EFFECT_USE_START_SCALE | EFFECT_USE_PRIORITY |
                           EFFECT_USE_PALETTE,
                       &params);

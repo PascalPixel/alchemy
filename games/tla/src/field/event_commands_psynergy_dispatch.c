@@ -289,43 +289,43 @@ void Actor_CycleSpriteColors(struct Actor *actor) {
 }
 
 /// Sends the actor toward the point magnitude away from it at angle.
-void Actor_SetTargetPositionFromMagnitudeAngle(struct Actor *object,
+void Actor_SetTargetPositionFromMagnitudeAngle(struct Actor *actor,
                                                s32 magnitude, s32 angle) {
   s32 values[3];
 
-  if (object != 0) {
-    SET_VECTOR(values, object->x.fixed, object->y.fixed, object->z.fixed);
+  if (actor != 0) {
+    SET_VECTOR(values, actor->x.fixed, actor->y.fixed, actor->z.fixed);
     Vector_AddPolarOffset(magnitude, angle, values);
-    Actor_SetMoveTargetFar(object, values[0], values[1], values[2]);
+    Actor_SetMoveTargetFar(actor, values[0], values[1], values[2]);
   }
 }
 
 /// The OBJ priority a Psynergy's canvas takes: the caster's own when it
 /// casts facing away (FACING_NORTH), else 0, in front of everything.
-s32 FieldPsynergy_GetCanvasPriority(struct Actor *object, s32 facing) {
+s32 FieldPsynergy_GetCanvasPriority(struct Actor *actor, s32 facing) {
   if (facing == FACING_NORTH)
-    return ((struct PlacedSprite *)object->sprite)->priority;
+    return ((struct PlacedSprite *)actor->sprite)->priority;
   return 0;
 }
 
 /// Returns the 2-bit OBJ priority of the object's animation record.
-s32 BattleEffect_GetObjectPriority(struct Actor *object) {
-  return ((struct PlacedSprite *)object->sprite)->priority;
+s32 BattleEffect_GetObjectPriority(struct Actor *actor) {
+  return ((struct PlacedSprite *)actor->sprite)->priority;
 }
 
 /// Returns the object's sort depth: from its projected z on the world map
 /// (mode 3), otherwise from its y and z against the map's scroll.
-s32 BattleEffect_GetObjectDepth(struct Actor *object) {
+s32 BattleEffect_GetObjectDepth(struct Actor *actor) {
   FIXED point[3];
   s32 screen[3];
   s32 depth;
   s32 *out;
 
   if (gFieldWork->mode == ACTOR_SYSTEM_WORLD_MAP) {
-    point[0] = object->x.fixed;
+    point[0] = actor->x.fixed;
     out = screen;
-    point[1] = object->y.fixed;
-    point[2] = object->z.fixed;
+    point[1] = actor->y.fixed;
+    point[2] = actor->z.fixed;
     Render_ProjectPoint(point, out);
     depth = (0x200 - out[2]) / 2 + 128;
     if (depth <= 0)
@@ -337,7 +337,7 @@ s32 BattleEffect_GetObjectDepth(struct Actor *object) {
     s32 base = map->origin->y;
 
     depth =
-        FIXEDtoINT(object->y.fixed - base + object->z.fixed - base - bias) + 62;
+        FIXEDtoINT(actor->y.fixed - base + actor->z.fixed - base - bias) + 62;
   }
   return depth;
 }

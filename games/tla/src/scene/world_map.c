@@ -129,7 +129,7 @@ void Gauge_Update(void);
 
 void WorldMap_SelectExitByZ(s32 slot, s32 exitBefore, s32 exitAfter);
 
-void Actor_SetFlightMode(struct Actor *object, s32 mode);
+void Actor_SetFlightMode(struct Actor *actor, s32 mode);
 
 void Gauge_Init(void);
 void WorldMap_EndFlight(void);
@@ -198,9 +198,9 @@ extern u8 gWorldMapPackedTilesB[];
 extern u8 gWorldMapPackedPicturesB[];
 extern u8 gWorldMapPalettesB[];
 
-void WorldMap_SpawnTwinSparks(struct Actor *object);
+void WorldMap_SpawnTwinSparks(struct Actor *actor);
 
-void Actor_Release(struct Actor *object);
+void Actor_Release(struct Actor *actor);
 
 void Party_DrainPp(s32 value);
 FIXED Party_GetPpRatio(void);
@@ -210,7 +210,7 @@ void WorldMap_WatchVenusLighthouseCollapse(void);
 s32 Event_PickUpItem(s32 a, s32 b, s32 c);
 void Actor_StartRenderModeScript(void);
 s32 Field_FindNearbyTalkTarget(s32 owner);
-s32 WorldMap_IsWalkable(struct Actor *object, s32 *position);
+s32 WorldMap_IsWalkable(struct Actor *actor, s32 *position);
 void Party_GivePiersDjinn(void);
 void Event_WaitForZoomTransition(void);
 void DjinnMenu_Run(void);
@@ -346,9 +346,9 @@ s32 WorldMap_SetUpEcho(struct Actor *actor) {
 }
 
 /// Turns the island's sprite with the World Map's view and shows it.
-s32 WorldMap_SetIslandTile(struct Actor *object) {
+s32 WorldMap_SetIslandTile(struct Actor *actor) {
   u16 *tile = (u16 *)((u8 *)Ram_HeapSlots->mapGrid + 286);
-  struct FieldSprite *sprite = object->sprite;
+  struct FieldSprite *sprite = actor->sprite;
 
   sprite->rotation = *tile;
   sprite->flags = 0;
@@ -356,24 +356,24 @@ s32 WorldMap_SetIslandTile(struct Actor *object) {
 }
 
 /// Shows the tidal wave's sprite.
-s32 WorldMap_SetUpWave(struct Actor *object) {
-  Actor_SetSpriteFlags(object, 0);
+s32 WorldMap_SetUpWave(struct Actor *actor) {
+  Actor_SetSpriteFlags(actor, 0);
   return 0;
 }
 
 /// With flag 0x200 set the object is released, takes acceleration and speed
 /// limit 0x1000 and is sent to an offset of its position.
-s32 WorldMap_SendWaveIn(struct Actor *object) {
+s32 WorldMap_SendWaveIn(struct Actor *actor) {
   FIXED x, z;
 
   if (!Event_GetFlag(FLAG_SCENE_TEMP_00))
     return 1;
-  Actor_SetSpriteFlags(object, 0);
-  x = object->x.fixed;
-  object->acceleration = toFIXED(1) / 16;
-  object->speedLimit = toFIXED(1) / 16;
-  z = object->z.fixed;
-  FieldActor_SetMoveTargetFX(object, x - toFIXED(30), object->y.fixed,
+  Actor_SetSpriteFlags(actor, 0);
+  x = actor->x.fixed;
+  actor->acceleration = toFIXED(1) / 16;
+  actor->speedLimit = toFIXED(1) / 16;
+  z = actor->z.fixed;
+  FieldActor_SetMoveTargetFX(actor, x - toFIXED(30), actor->y.fixed,
                              z + toFIXED(8));
   return 0;
 }
@@ -486,7 +486,7 @@ void WorldMap_SetUpShip(void) {
     Unit_AddPp(gMainRoutineWork.leaderActorId, 1);
 }
 
-void Actor_StartIdle(struct Actor *object);
+void Actor_StartIdle(struct Actor *actor);
 
 /// The leader jumps aboard the ship, actor 8, when close enough.
 void WorldMap_BoardShip(void) {
@@ -658,7 +658,7 @@ static __inline__ void Actor_JoinLeader(s32 actor) {
 /// Once Jupiter Lighthouse is lit and before the parties meet at Contigo,
 /// Jenna stops Felix leaving by any other exit: they must go to Contigo.
 void WorldMap_RefuseToRunAway(void) {
-  struct Actor *object;
+  struct Actor *actor;
   s32 x;
   s32 z;
   s32 southwest = FACING_SOUTHWEST;
@@ -666,9 +666,9 @@ void WorldMap_RefuseToRunAway(void) {
 
   if (Event_GetFlag(FLAG_JUPITER_BEACON_LIT) &&
       !Event_GetFlag(FLAG_REUNITED_AT_CONTIGO)) {
-    object = Actor_Get(gMainRoutineWork.leaderActorId);
-    x = object->x.fixed;
-    z = object->z.fixed;
+    actor = Actor_Get(gMainRoutineWork.leaderActorId);
+    x = actor->x.fixed;
+    z = actor->z.fixed;
     x >>= 20;
     z >>= 20;
     Event_Start();
@@ -812,13 +812,13 @@ void WorldMap_PickUpGoldenBoots(void) {
 /// Places the Golden Boots on the map as an item icon
 /// (FLAG_GOLDEN_BOOTS_ON_MAP).
 void WorldMap_ShowGoldenBoots(void) {
-  struct Actor *object;
+  struct Actor *actor;
   struct FieldSprite *sprite;
   s32 a, id;
 
   FieldActor_ShowItemIconById(ACTOR_GOLDEN_BOOTS, ITEM_GOLDEN_BOOTS);
-  object = Actor_Get(ACTOR_GOLDEN_BOOTS);
-  sprite = object->sprite;
+  actor = Actor_Get(ACTOR_GOLDEN_BOOTS);
+  sprite = actor->sprite;
   ((struct SpriteCacheBits *)&sprite->cacheBits)->retainCacheEntry = 1;
   Actor_SetSpriteFlags(Actor_Get(ACTOR_GOLDEN_BOOTS), 0);
   a = FACING_SOUTH;
@@ -1335,11 +1335,11 @@ void WorldMap_FightBanditAndThieves(s32 entrance) {
     Actor_SetSpeed(ACTOR_KRADEN, 1.2);
     Actor_SetAnimation(ACTOR_KRADEN, 2);
     {
-      struct Actor *object = Actor_Get(ACTOR_FELIX);
+      struct Actor *actor = Actor_Get(ACTOR_FELIX);
 
-      if (object != NULL)
-        Actor_SetDestination(ACTOR_KRADEN, object->x.part[0].integer,
-                             object->z.part[0].integer);
+      if (actor != NULL)
+        Actor_SetDestination(ACTOR_KRADEN, actor->x.part[0].integer,
+                             actor->z.part[0].integer);
     }
     Actor_WaitForMoveById(ACTOR_KRADEN);
     Actor_SetPosition(ACTOR_KRADEN, 0, 0);
@@ -1703,10 +1703,10 @@ static __inline__ void PosSet(s32 id, s32 x, s32 z) {
 
 /// Moves the actor by whole pixels.
 void WorldMap_ShiftActor(s32 id, s32 dx, s32 dz) {
-  struct Actor *object = Actor_Get(id);
+  struct Actor *actor = Actor_Get(id);
 
-  if (object != NULL)
-    PosSet(id, object->x.part[0].integer + dx, object->z.part[0].integer + dz);
+  if (actor != NULL)
+    PosSet(id, actor->x.part[0].integer + dx, actor->z.part[0].integer + dz);
 }
 
 /// Breaks a piece of Idejima's tiles away and moves the party on it with
@@ -1804,7 +1804,7 @@ extern s32 gWorldMap_IdejimaWakeScript[];
 void WorldMap_SpawnIdejimaWake(void) {
   struct Actor *leader;
   struct Actor *obj;
-  struct FieldSprite *spr;
+  struct FieldSprite *sprite;
   u32 value;
 
   if ((gFrameCount & 15) != 0)
@@ -1816,7 +1816,7 @@ void WorldMap_SpawnIdejimaWake(void) {
     return;
   obj->scaleX = FIXED_ONE / 2;
   obj->scaleY = FIXED_ONE / 2;
-  spr = obj->sprite;
+  sprite = obj->sprite;
   if (Random_Below(2)) {
     FIXED back = (Random_Below(48)) << 16;
 
@@ -1828,8 +1828,8 @@ void WorldMap_SpawnIdejimaWake(void) {
     value = (s32)value >> 1;
     obj->z.fixed += value;
   }
-  spr->flags = 0;
-  spr->priority = ((struct FieldSprite *)leader->sprite)->priority;
+  sprite->flags = 0;
+  sprite->priority = ((struct FieldSprite *)leader->sprite)->priority;
   obj->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
   obj->motionFlags = leader->motionFlags;
   FieldActor_SetSpriteColor(obj, 9);
@@ -2260,9 +2260,9 @@ void WorldMap_TakeOff(void) {
 }
 
 /// A sparkle of the trail flickers through the colour modes at random.
-s32 WorldMap_TwinkleTrail(struct Actor *object) {
+s32 WorldMap_TwinkleTrail(struct Actor *actor) {
   if (Random16() < 0x4000)
-    Actor_SetSpriteColorMode(object, Random_Below(8));
+    Actor_SetSpriteColorMode(actor, Random_Below(8));
   return 0;
 }
 
@@ -2274,15 +2274,15 @@ void WorldMap_SpawnAquaRockTrail(struct Actor *parent) {
     FIXED x = parent->x.fixed;
     FIXED y = parent->y.fixed;
     FIXED z = parent->z.fixed;
-    struct Actor *object = (FieldActor_Create(SPRITE_SPARKLE, x, y, z));
+    struct Actor *actor = (FieldActor_Create(SPRITE_SPARKLE, x, y, z));
 
-    if (object != NULL) {
-      Actor_StartScript(object, gWorldMap_AquaRockTrailScript);
-      Actor_SelectAnimation(object, 1);
-      Actor_SetSpriteFlags(object, 0);
-      object->motionFlags = 0;
-      object->scaleX = FIXED_ONE * 2;
-      object->scaleY = FIXED_ONE * 2;
+    if (actor != NULL) {
+      Actor_StartScript(actor, gWorldMap_AquaRockTrailScript);
+      Actor_SelectAnimation(actor, 1);
+      Actor_SetSpriteFlags(actor, 0);
+      actor->motionFlags = 0;
+      actor->scaleX = FIXED_ONE * 2;
+      actor->scaleY = FIXED_ONE * 2;
     }
   }
 }
@@ -2321,9 +2321,9 @@ void WorldMap_CarryPartyToAquaRock(void) {
 }
 
 /// Turns a placed actor's sprite with the World Map's view and shows it.
-s32 WorldMap_SetPlacedActorTile(struct Actor *object) {
+s32 WorldMap_SetPlacedActorTile(struct Actor *actor) {
   u16 *tile = (u16 *)((u8 *)Ram_HeapSlots->mapGrid + 286);
-  struct FieldSprite *sprite = object->sprite;
+  struct FieldSprite *sprite = actor->sprite;
 
   sprite->rotation = *tile;
   sprite->flags = 0;
@@ -2333,14 +2333,14 @@ s32 WorldMap_SetPlacedActorTile(struct Actor *object) {
 #include "shared/world_map_objects.c"
 
 /// The ship's flicker and its sparks while it powers up (flight mode 1).
-void WorldMap_FlashPoweringUp(struct Actor *object) {
+void WorldMap_FlashPoweringUp(struct Actor *actor) {
   if ((gFrameCount & 2) != 0) {
-    Actor_SetSpriteColorMode(object, SPRITE_COLOR_WHITE);
+    Actor_SetSpriteColorMode(actor, SPRITE_COLOR_WHITE);
   } else {
-    Actor_SetSpriteColorMode(object, SPRITE_COLOR_NORMAL);
+    Actor_SetSpriteColorMode(actor, SPRITE_COLOR_NORMAL);
   }
   if ((gFrameCount & 15) == 0) {
-    WorldMap_SpawnSparkPair(object);
+    WorldMap_SpawnSparkPair(actor);
   }
 }
 
@@ -2349,27 +2349,27 @@ extern s32 gWorldMap_GlowColorStep;
 
 /// The ship's glow and its trail in flight (flight mode 2): the colour cycles
 /// every other frame, and a particle every fourth.
-void WorldMap_GlowInFlight(struct Actor *object) {
+void WorldMap_GlowInFlight(struct Actor *actor) {
   if (gFrameCount & 1) {
-    Actor_SetSpriteColorMode(object,
+    Actor_SetSpriteColorMode(actor,
                              gWorldMap_GlowColorModes[gWorldMap_GlowColorStep]);
     gWorldMap_GlowColorStep = (gWorldMap_GlowColorStep + 1) & 3;
   }
   if (!(gFrameCount & 3)) {
-    WorldMap_SpawnParticle(object);
+    WorldMap_SpawnParticle(actor);
   }
 }
 
 /// Sets the ship's look by flight mode: 0 plain, 1 powering up, 2 in flight.
-void Actor_SetFlightMode(struct Actor *object, s32 mode) {
+void Actor_SetFlightMode(struct Actor *actor, s32 mode) {
   if (mode == 0) {
-    object->update = 0;
-    Actor_SetSpriteColorMode(object, SPRITE_COLOR_NORMAL);
+    actor->update = 0;
+    Actor_SetSpriteColorMode(actor, SPRITE_COLOR_NORMAL);
     Event_PlaySound(SOUND_FADE_OUT_ACTION_SE);
   } else if (mode == 1) {
-    object->update = (void (*)(void))WorldMap_FlashPoweringUp;
+    actor->update = (void (*)(void))WorldMap_FlashPoweringUp;
   } else {
-    object->update = (void (*)(void))WorldMap_GlowInFlight;
+    actor->update = (void (*)(void))WorldMap_GlowInFlight;
     Event_PlaySound(SE_TAKE_FLIGHT);
   }
 }
@@ -2575,25 +2575,25 @@ void WorldMap_LoadTidalWave(void) {
 }
 
 /// The actor flashes white, with a pair of sparks every sixteenth frame.
-void WorldMap_FlashWithSparks(struct Actor *object) {
+void WorldMap_FlashWithSparks(struct Actor *actor) {
   if ((gFrameCount & 2) != 0) {
-    Actor_SetSpriteColorMode(object, SPRITE_COLOR_WHITE);
+    Actor_SetSpriteColorMode(actor, SPRITE_COLOR_WHITE);
   } else {
-    Actor_SetSpriteColorMode(object, SPRITE_COLOR_NORMAL);
+    Actor_SetSpriteColorMode(actor, SPRITE_COLOR_NORMAL);
   }
   if ((gFrameCount & 15) == 0) {
-    WorldMap_SpawnTwinSparks(object);
+    WorldMap_SpawnTwinSparks(actor);
   }
 }
 
 /// Animates an actor, running WorldMap_SpawnTwinSparks every sixteenth frame.
-void Actor_AnimateAndEmit(struct Actor *object) {
+void Actor_AnimateAndEmit(struct Actor *actor) {
   u32 frame = gFrameCount;
 
   if (frame & 1)
-    Actor_SetSpriteColorMode(object, (frame >> 1) % 6);
+    Actor_SetSpriteColorMode(actor, (frame >> 1) % 6);
   if ((gFrameCount & 15) == 0)
-    WorldMap_SpawnTwinSparks(object);
+    WorldMap_SpawnTwinSparks(actor);
 }
 
 #include "shared/actor_animate.h"

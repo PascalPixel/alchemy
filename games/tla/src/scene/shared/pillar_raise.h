@@ -7,11 +7,10 @@ void Pillar_Raise(u16 *list) {
   /* FAKEMATCH(signature): the form kept; as *list != 0xffff and *shapes =
    * newShape, 6 of 123 instructions differ in tla-en. */
   while (((struct ListedActor *)list)->id != 0xffff) {
-    struct Actor *object = Actor_GetById(*list);
-    u8 *layer = &object->layer;
-    s32 shape =
-        MapGrid_GetTerrainKind(*layer, object->x.fixed, object->z.fixed);
-    s32 level = Map_GetTerrainHeight(*layer, object->x.fixed, object->z.fixed);
+    struct Actor *actor = Actor_GetById(*list);
+    u8 *layer = &actor->layer;
+    s32 shape = MapGrid_GetTerrainKind(*layer, actor->x.fixed, actor->z.fixed);
+    s32 level = Map_GetTerrainHeight(*layer, actor->x.fixed, actor->z.fixed);
     s32 index;
     u8 *cells;
     u8 *shapes;
@@ -19,14 +18,14 @@ void Pillar_Raise(u16 *list) {
     u8 *grid;
 
     level >>= 19;
-    index = Actor_GetCellIndex(object);
+    index = Actor_GetCellIndex(actor);
     cells = (u8 *)map->layers[*layer].cells;
     grid = Ram_MapShapeGrid;
     shapes = grid +
              (((struct MapCell *)cells) - (struct MapCell *)Ram_MapCellBuffer);
-    object->motionFlags = 0;
-    object->collisionFlags = 0;
-    Actor_SetSpriteFlags(object, 0);
+    actor->motionFlags = 0;
+    actor->collisionFlags = 0;
+    Actor_SetSpriteFlags(actor, 0);
     level += 4;
     newShape = MapCollision_FindOrAddTag(*layer, shape, level);
     shapes += index;

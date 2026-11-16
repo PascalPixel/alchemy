@@ -1,5 +1,5 @@
 /// Mist rises from an actor every other frame.
-s32 Actor_EmitMist(struct Actor *object) {
+s32 Actor_EmitMist(struct Actor *actor) {
   s32 params[10];
 
   if (gFrameCount & 1) {
@@ -14,10 +14,10 @@ s32 Actor_EmitMist(struct Actor *object) {
     params[3] = 0xcccc;
     params[0] = 0;
     drift = ((u32)(Random16() << 3) >> 16) * 0x3333;
-    x = object->x.fixed;
-    y = object->y.fixed;
+    x = actor->x.fixed;
+    y = actor->y.fixed;
     FieldEffect_Spawn(x + ((8 - (gFrameCount & 15)) << 16), y + 0x1a0000,
-                      object->z.fixed, 0, -drift, 0, toFIXED(11), params);
+                      actor->z.fixed, 0, -drift, 0, toFIXED(11), params);
   }
   return 0;
 }

@@ -57,7 +57,7 @@ struct ResourceSprite {
 /// variant's conversion table; a variant above 5 uses variant 1's.
 s32 SpritePictureCache_Load(u32 slot, u32 *buffer, s32 number, u32 variant) {
   struct AnimationMetadata *metadata;
-  struct ActorSystemWork *work;
+  struct ActorSystemWork *system;
   struct SpritePictureCache *record;
   struct SpritePictureCacheSource *entry;
   u32 *offset;
@@ -72,8 +72,8 @@ s32 SpritePictureCache_Load(u32 slot, u32 *buffer, s32 number, u32 variant) {
 
   if (slot >= SPRITE_PICTURE_CACHE_COUNT)
     return 0;
-  work = Ram_HeapSlots->actorSystem;
-  record = &work->pictureCaches[slot];
+  system = Ram_HeapSlots->actorSystem;
+  record = &system->pictureCaches[slot];
   metadata = Resource_GetMetadataRecordFar(number);
   record->tag = (slot << 12) | number;
   record->pictures = buffer;

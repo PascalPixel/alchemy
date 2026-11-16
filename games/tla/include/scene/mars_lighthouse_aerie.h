@@ -90,7 +90,7 @@ void MarsLighthouseAerie_UrgeOnToBeacon(void);
 
 void MarsLighthouseAerie_LightBeacon(void);
 void MarsLighthouseAerie_WatchGoldenSunRise(void);
-void MarsLighthouseAerie_EndRisingRings(struct Actor *object);
+void MarsLighthouseAerie_EndRisingRings(struct Actor *actor);
 
 void Orb_UpdateRising(struct Actor *self);
 
@@ -109,7 +109,7 @@ void Teleport_ArriveWhirling(void);
 
 extern s32 gMarsLighthouseAerie_RisingRingTiles[];
 
-void MarsLighthouseAerie_UpdateRisingRings(struct Actor *object);
+void MarsLighthouseAerie_UpdateRisingRings(struct Actor *actor);
 void MarsLighthouseAerie_HoldBackFromParents(void);
 void MarsLighthouseAerie_HoldBackFromParentsAgain(void);
 void MarsLighthouseAerie_OfferToCastMarsStar(void);

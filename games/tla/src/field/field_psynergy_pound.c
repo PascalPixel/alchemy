@@ -23,7 +23,7 @@ struct PoundWork {
   struct FieldPsynergyParticle particles[POUND_SPARK_COUNT];
   struct EffectSprite sprites[POUND_SPARK_COUNT];
   struct EffectSprite glow;
-  struct Actor *object; ///< the fist, then what sinks into the ground
+  struct Actor *actor; ///< the fist, then what sinks into the ground
   s16 state;   ///< the stage of the fall; FIELD_PSYNERGY_FINISHED once it ends
   s16 timer;   ///< frames into the stage
   s8 sparkles; ///< nonzero draws the sparks
@@ -74,7 +74,7 @@ void FieldPsynergy_UpdatePound(void) {
   }
   switch (work->state) {
   case 0:
-    work->object->y.fixed -= toFIXED(7) / 2;
+    work->actor->y.fixed -= toFIXED(7) / 2;
     if (work->timer == 8) {
       canvas->scaleX = FIXED_ONE / 8;
       canvas->scaleY = FIXED_ONE / 8;
@@ -114,7 +114,7 @@ void FieldPsynergy_UpdatePound(void) {
     }
     break;
   case 4:
-    work->object->y.fixed += toFIXED(3) / 2;
+    work->actor->y.fixed += toFIXED(3) / 2;
     if (work->timer == 13)
       work->state = FIELD_PSYNERGY_FINISHED;
     break;
@@ -128,11 +128,11 @@ void BattleEffect_SinkAndShrinkObject(void) {
   struct PoundWork *work = Ram_HeapSlots->battleEffect;
 
   if (work->state == 0) {
-    struct Actor *object = work->object;
+    struct Actor *actor = work->actor;
 
-    object->y.fixed += -(toFIXED(5) / 2);
-    object->scaleX += -(FIXED_ONE / 64);
-    object->scaleY += -(FIXED_ONE / 64);
+    actor->y.fixed += -(toFIXED(5) / 2);
+    actor->scaleX += -(FIXED_ONE / 64);
+    actor->scaleY += -(FIXED_ONE / 64);
     if (work->timer == 8)
       work->state = FIELD_PSYNERGY_FINISHED;
   }
@@ -143,7 +143,7 @@ void BattleEffect_SinkAndShrinkObject(void) {
 void FieldPsynergy_PoundOnTarget(void) { FieldPsynergy_Pound(); }
 
 void FieldPsynergy_StartSceneSprite(void);
-void FieldPsynergy_ShrinkToCaster(struct Actor *object, s32 x, s32 y, s32 z);
+void FieldPsynergy_ShrinkToCaster(struct Actor *actor, s32 x, s32 y, s32 z);
 
 /// Pound ("Drive objects into the ground."): a giant fist forms over the spot
 /// 32 pixels before the caster, or over the target, and comes down on it. Out
@@ -156,7 +156,7 @@ void FieldPsynergy_Pound(void) {
   struct FieldWork *event = Ram_HeapSlots->fieldWork;
   struct Actor *child = scene->child;
   struct Actor *caster = scene->mainActor;
-  struct Actor *object;
+  struct Actor *actor;
   struct Actor *shine;
   struct CanvasSpriteWork *canvas;
   struct EffectSprite *sprite;
@@ -196,11 +196,11 @@ void FieldPsynergy_Pound(void) {
     inReach = NONZERO(spot);
     if (inReach == 1) {
       for (j = 0; j < FIELD_ACTOR_COUNT; j++) {
-        object = event->actors[j];
-        if (object != NULL && object->script != NULL &&
-            (object->collisionFlags & ACTOR_SOLID) &&
-            FieldPsynergy_CheckOverlap(&scene->x, 4, &object->x.fixed,
-                                       object->radius - 2) >= 0)
+        actor = event->actors[j];
+        if (actor != NULL && actor->script != NULL &&
+            (actor->collisionFlags & ACTOR_SOLID) &&
+            FieldPsynergy_CheckOverlap(&scene->x, 4, &actor->x.fixed,
+                                       actor->radius - 2) >= 0)
           goto outOfReach;
       }
     }
@@ -215,7 +215,7 @@ void FieldPsynergy_Pound(void) {
   FieldPsynergy_FadeToCastColor();
   Sound_PlayFar(SE_ITEM_BREAK);
   shine = Actor_Spawn(SPRITE_POUND_FIST, 0, 0, 0);
-  work->object = shine;
+  work->actor = shine;
   if (shine == NULL)
     goto end;
   shine->motionFlags = 0;

@@ -2,16 +2,16 @@
 /// makes the flame whose sprite the crumbs share, keeping its VRAM entry.
 void Ride_Create(void) {
   struct FlameHitWork *work = RIDE_WORK;
-  struct Actor *object;
+  struct Actor *actor;
   struct Sprite *animation;
 
   if (!Event_GetFlag(FLAG_KEEP_PARTY_POSITION))
     Iwram_ClearWordsEntry(work, sizeof(*work));
-  object = (struct Actor *)FieldActor_Create(SPRITE_SMALL_FLAME, 1, 0, 0);
-  object->retainSpriteCache = 2;
-  Actor_SelectAnimation(object, 1);
-  animation = object->sprite;
-  work->handle = object;
+  actor = (struct Actor *)FieldActor_Create(SPRITE_SMALL_FLAME, 1, 0, 0);
+  actor->retainSpriteCache = 2;
+  Actor_SelectAnimation(actor, 1);
+  animation = actor->sprite;
+  work->handle = actor;
   work->flameVramBlock = animation->slot;
   animation->retainCacheEntry = 1;
 }

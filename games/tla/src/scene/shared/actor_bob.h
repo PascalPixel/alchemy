@@ -1,16 +1,16 @@
 /// Bobs an actor up and down, rocking its sprite.
-s32 Actor_Bob(struct Actor *object) {
-  s32 step = object->riseCounter & 63;
-  struct FieldSprite *sprite = object->sprite;
+s32 Actor_Bob(struct Actor *actor) {
+  s32 step = actor->riseCounter & 63;
+  struct FieldSprite *sprite = actor->sprite;
 
-  object->motionFlags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
+  actor->motionFlags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
   if (step == 0)
-    object->velocityY = toFIXED(3);
+    actor->velocityY = toFIXED(3);
   if (step == 16)
-    object->velocityY = toFIXED(2);
+    actor->velocityY = toFIXED(2);
   if (step == 24)
-    object->velocityY = toFIXED(3);
+    actor->velocityY = toFIXED(3);
   sprite->rotation = Trig_Cos(step << 12) / 64;
-  object->riseCounter++;
+  actor->riseCounter++;
   return -1;
 }

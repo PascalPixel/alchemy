@@ -514,8 +514,8 @@ s32 Actor_IsFacingNear(struct Actor *self, struct Actor *other, s32 range) {
   return result;
 }
 
-void Actor_SetSpritePriorityDirect(struct Actor *object, s32 value);
-s32 BattleEffect_GetObjectPriority(struct Actor *object);
+void Actor_SetSpritePriorityDirect(struct Actor *actor, s32 value);
+s32 BattleEffect_GetObjectPriority(struct Actor *actor);
 
 /// The update of the wanderer and the girl by the ship: each stands still
 /// while it faces the other within 18 pixels or the leader within 26, or while
@@ -707,18 +707,18 @@ void Contigo_WhirlLeaf(struct Actor *effect) {
 /// up to fall back as it circles.
 void Contigo_RaiseLeaves(void) {
   if ((gFrameCount & 7) == 0) {
-    struct Actor *object =
+    struct Actor *actor =
         Actor_Spawn(SPRITE_LEAF, toFIXED(706), 52428, toFIXED(116));
 
-    if (object != NULL) {
-      Actor_SetSpriteFlags(object, 0);
-      object->update = Contigo_WhirlLeaf;
-      object->motionFlags = 0;
-      object->timer = -(s32)(Random_Below(16)) * 2 + 20;
-      object->userValue = 0;
-      object->gravity = toFIXED(1) / 10;
-      object->velocityY = toFIXED(3);
-      object->facing = Random16();
+    if (actor != NULL) {
+      Actor_SetSpriteFlags(actor, 0);
+      actor->update = Contigo_WhirlLeaf;
+      actor->motionFlags = 0;
+      actor->timer = -(s32)(Random_Below(16)) * 2 + 20;
+      actor->userValue = 0;
+      actor->gravity = toFIXED(1) / 10;
+      actor->velocityY = toFIXED(3);
+      actor->facing = Random16();
     }
   }
 }
@@ -1035,12 +1035,12 @@ void Contigo_AskAboutGeoglyph(void) {
 /// unless Mind Read is cast on him, and back after.
 void Contigo_TalkToWanderer(void) {
   struct FieldWork *work = Ram_HeapSlots->fieldWork;
-  struct Actor *object = ((struct Actor *)Actor_GetById(ACTOR_WANDERER));
-  s16 angle = object->facing;
+  struct Actor *actor = ((struct Actor *)Actor_GetById(ACTOR_WANDERER));
+  s16 angle = actor->facing;
 
   Event_Start();
   Event_ResolvePendingActions(0);
-  object->riseEnabled = 1;
+  actor->riseEnabled = 1;
   if (work->psynergy == 0) {
     Actor_FaceActorById(ACTOR_WANDERER, gMainRoutineWork.leaderActorId, 0);
     if (GameFlag_Get(FLAG_SET_OUT_WITH_WINGS) != 0)
@@ -1059,8 +1059,8 @@ void Contigo_TalkToWanderer(void) {
   }
   Event_ShowMessageAndWait(ACTOR_WANDERER, 0);
   if (work->psynergy == 0)
-    object->facing = angle;
-  object->riseEnabled = 0;
+    actor->facing = angle;
+  actor->riseEnabled = 0;
   Event_End();
 }
 
@@ -1068,13 +1068,12 @@ void Contigo_TalkToWanderer(void) {
 /// Read is cast on her, and back after.
 void Contigo_TalkAboutTheShip(void) {
   struct FieldWork *event = Ram_HeapSlots->fieldWork;
-  struct Actor *object =
-      ((struct Actor *)Actor_GetById(ACTOR_GIRL_ON_THE_SHIP));
-  s16 angle = object->facing;
+  struct Actor *actor = ((struct Actor *)Actor_GetById(ACTOR_GIRL_ON_THE_SHIP));
+  s16 angle = actor->facing;
 
   Event_Start();
   Event_ResolvePendingActions(0);
-  object->riseEnabled = 1;
+  actor->riseEnabled = 1;
   if (event->psynergy == 0) {
     Actor_FaceActorById(ACTOR_GIRL_ON_THE_SHIP, gMainRoutineWork.leaderActorId,
                         0);
@@ -1090,8 +1089,8 @@ void Contigo_TalkAboutTheShip(void) {
   }
   Event_ShowMessageAndWait(ACTOR_GIRL_ON_THE_SHIP, 0);
   if (event->psynergy == 0)
-    object->facing = angle;
-  object->riseEnabled = 0;
+    actor->facing = angle;
+  actor->riseEnabled = 0;
   Event_End();
 }
 
@@ -1244,7 +1243,7 @@ void Contigo_HideSteps(void) {
 /// bursts out, and Shine leaps free, the leader hopping aside if it lands on
 /// him.
 void Contigo_ForceFreesDjinni(void) {
-  struct Actor *object = Actor_GetById(ACTOR_SHINE);
+  struct Actor *actor = Actor_GetById(ACTOR_SHINE);
   struct Actor *leader;
   struct EffectOptions options;
   FIXED velocity[3];
@@ -1264,19 +1263,19 @@ void Contigo_ForceFreesDjinni(void) {
     velocity[1] = 0;
     velocity[2] = Trig_Sin(angle);
     velocity[0] += velocity[0] / 3;
-    FieldEffect_Spawn(object->x.fixed, object->y.fixed, object->z.fixed,
+    FieldEffect_Spawn(actor->x.fixed, actor->y.fixed, actor->z.fixed,
                       velocity[0], velocity[1] + (toFIXED(1) / 10), velocity[2],
                       EFFECT_USE_PRIORITY, &options);
   }
   Actor_SetSpriteColor(Actor_GetById(ACTOR_SHINE), SPRITE_COLOR_NORMAL);
   Actor_SetSpriteFlags(Actor_GetById(ACTOR_SHINE), 1);
   Actor_SetSpeed(ACTOR_SHINE, 3);
-  object->velocityY = toFIXED(12);
+  actor->velocityY = toFIXED(12);
   Actor_MoveToAndWait(ACTOR_SHINE, 40, 680);
   Event_Wait(10);
   leader = Actor_GetById(gMainRoutineWork.leaderActorId);
-  if (FIELD_CELL(object->x.fixed) == FIELD_CELL(leader->x.fixed) &&
-      FIELD_CELL(object->z.fixed) == FIELD_CELL(leader->z.fixed)) {
+  if (FIELD_CELL(actor->x.fixed) == FIELD_CELL(leader->x.fixed) &&
+      FIELD_CELL(actor->z.fixed) == FIELD_CELL(leader->z.fixed)) {
     Actor_Jump(gMainRoutineWork.leaderActorId, 6, 0);
     Actor_SetSpeed(gMainRoutineWork.leaderActorId, 2);
     Actor_MoveToAndWait(gMainRoutineWork.leaderActorId, 68, 680);
@@ -1302,13 +1301,13 @@ void Contigo_OpenGamesRooms(void) {
 
 /// Lays a frame or feather of the wings flat on the ground, drawn behind.
 void Contigo_PlaceWingPart(s32 id) {
-  struct Actor *object = Actor_GetById(id);
+  struct Actor *actor = Actor_GetById(id);
 
   Actor_SetSpritePriority(id, 3);
-  object->collisionFlags = ACTOR_NOT_TARGETED;
-  object->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
-  object->motionFlags = 0;
-  object->y.fixed = toFIXED(64);
+  actor->collisionFlags = ACTOR_NOT_TARGETED;
+  actor->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
+  actor->motionFlags = 0;
+  actor->y.fixed = toFIXED(64);
 }
 
 /// Lays out the wings' parts by the geoglyph: each frame and feather shows
@@ -1525,11 +1524,11 @@ void Contigo_SendToSuperLuckyDice(void) {
 /// Draws an actor at seven tenths of its size, as the geoglyph's and the dice
 /// hall's signs are drawn.
 void Contigo_ShrinkActor(s32 id) {
-  struct Actor *object = Actor_GetById(id);
+  struct Actor *actor = Actor_GetById(id);
 
-  object->scaleX = FIXED_ONE * 7 / 10;
-  object->scaleY = FIXED_ONE * 7 / 10;
-  object->radius = 8;
+  actor->scaleX = FIXED_ONE * 7 / 10;
+  actor->scaleY = FIXED_ONE * 7 / 10;
+  actor->radius = 8;
 }
 
 /// Opens a game's door in the dice hall, two cells of map edits, and walks the
@@ -1582,11 +1581,11 @@ struct SparkleWork gContigo_SparkleWork BSS_DATA ALIGNED(16);
 
 /// The reunion scene. It opens with "Glad you kept your promise".
 void Contigo_TheReunion(void) {
-  struct Actor *object;
+  struct Actor *actor;
   s32 answer;
   s32 angle;
 
-  object = ((struct Actor *)Actor_GetById(ACTOR_HAMA));
+  actor = ((struct Actor *)Actor_GetById(ACTOR_HAMA));
   Event_Start();
   Event_ResolvePendingActions(0);
   Sound_Play(SOUND_FADE_OUT_BGM);
@@ -1940,17 +1939,17 @@ void Contigo_TheReunion(void) {
   Actor_SetAnimationById(ACTOR_HAMA, ANIM_SHAKE_HEAD);
   Event_ShowMessageAndWait(ACTOR_HAMA, 0);
   Event_ShowMessageThenWait(ACTOR_JENNA, 0, 10);
-  Contigo_StartSparkle(object, &gContigo_SparkleWork);
+  Contigo_StartSparkle(actor, &gContigo_SparkleWork);
   Event_Wait(80);
-  Contigo_StopSparkle(object);
+  Contigo_StopSparkle(actor);
   Actor_SetAnimationAndWait(ACTOR_HAMA, ANIM_SHAKE_HEAD);
   Event_ShowMessageAndWait(ACTOR_HAMA, 0);
   Actor_SetAttachedEffect(ACTOR_PIERS,
                           ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   Event_ShowMessageThenWait(ACTOR_PIERS, 0, 10);
-  Contigo_StartSparkle(object, &gContigo_SparkleWork);
+  Contigo_StartSparkle(actor, &gContigo_SparkleWork);
   Event_Wait(80);
-  Contigo_StopSparkle(object);
+  Contigo_StopSparkle(actor);
   Actor_FaceDirectionAndWait(ACTOR_HAMA, FACING_NORTH_NORTHEAST);
   Actor_SetAnimationById(ACTOR_HAMA, ANIM_SHAKE_HEAD);
   Event_ShowMessageAndWait(ACTOR_HAMA, 0);
@@ -2379,12 +2378,12 @@ void Contigo_KeepPriorityWithLeader(void) {
 /// caught; arriving by entrances 1 to 4, the camera follows the leader across
 /// the whole village; then the water's colours are set.
 void Contigo_InitializeVillage(void) {
-  struct Actor *object = Actor_GetById(ACTOR_WANDERER);
+  struct Actor *actor = Actor_GetById(ACTOR_WANDERER);
 
   Task_Add(Contigo_KeepPriorityWithLeader, TASK_PASS_VBLANK);
-  object->riseCounter = 1;
-  object->riseEnabled = 0;
-  object->update = Contigo_PauseWhenFaced;
+  actor->riseCounter = 1;
+  actor->riseEnabled = 0;
+  actor->update = Contigo_PauseWhenFaced;
   if (GameFlag_Get(FLAG_JUPITER_BEACON_LIT) != 0 &&
       GameFlag_Get(FLAG_SET_OUT_WITH_WINGS) == 0) {
     Actor_Stop(ACTOR_GIRL_ON_THE_SHIP);
@@ -2392,10 +2391,10 @@ void Contigo_InitializeVillage(void) {
     Actor_SetPosition(ACTOR_OLD_WOMAN_ON_THE_GEOGLYPHS, 0, 0);
     Contigo_OpenGamesRooms();
   } else {
-    object = Actor_GetById(ACTOR_GIRL_ON_THE_SHIP);
-    object->riseCounter = 0;
-    object->riseEnabled = 0;
-    object->update = Contigo_PauseWhenFaced;
+    actor = Actor_GetById(ACTOR_GIRL_ON_THE_SHIP);
+    actor->riseCounter = 0;
+    actor->riseEnabled = 0;
+    actor->update = Contigo_PauseWhenFaced;
   }
   if (GameFlag_Get(FLAG_SHINE_FREED) != 0 &&
       GameFlag_Get(FLAG_SHINE_CAUGHT) == 0) {
@@ -2634,33 +2633,33 @@ void Contigo_InitializeLuckyDice(void) {
 // starting when its counter is cleared, until both counters pass 31.
 
 void Actor_SetSpriteColorMode(struct Actor *, u32);
-s32 BattleEffect_GetObjectDepth(struct Actor *object);
+s32 BattleEffect_GetObjectDepth(struct Actor *actor);
 
-/// The sparkle's update: raises two pairs of sprites over the object, each pair
+/// The sparkle's update: raises two pairs of sprites over the actor, each pair
 /// starting when its counter is cleared, until both counters pass 31.
-void Contigo_RaiseSparkle(struct Actor *object) {
+void Contigo_RaiseSparkle(struct Actor *actor) {
   struct Vector3 position;
   s32 x, z;
   FIXED sine;
   s32 i, j;
-  struct SparkleWork *work = (struct SparkleWork *)object->watchedActor;
-  u8 *count = &object->riseEnabled;
+  struct SparkleWork *work = (struct SparkleWork *)actor->watchedActor;
+  u8 *count = &actor->riseEnabled;
   struct EffectSprite *sprite;
 
   if (*count & 1)
     Actor_SetSpriteColorMode(
-        object, (u8)((u32)((struct CounterBits *)count)->rest % 6));
-  if (object->riseCounter == 0) {
+        actor, (u8)((u32)((struct CounterBits *)count)->rest % 6));
+  if (actor->riseCounter == 0) {
     if ((*count & 15) == 0) {
       Sound_Play(SE_RISING_RINGS);
       work->heights[work->nextPair] = 0;
       work->nextPair ^= 1;
     }
-  } else if (object->riseCounter == 1) {
+  } else if (actor->riseCounter == 1) {
     if (work->heights[0] > 31 && work->heights[1] > 31) {
-      Actor_SetSpriteColorMode(object, SPRITE_COLOR_NORMAL);
+      Actor_SetSpriteColorMode(actor, SPRITE_COLOR_NORMAL);
       VramCache_FreeEntry(work->vramEntry);
-      object->update = 0;
+      actor->update = 0;
       return;
     }
   }
@@ -2669,9 +2668,9 @@ void Contigo_RaiseSparkle(struct Actor *object) {
     sine = Trig_Sin(work->heights[i] << 10);
     if (work->heights[i] >= 0) {
       if (work->heights[i] <= 31) {
-        position.x = object->x.fixed;
-        position.y = object->y.fixed + toFIXED(work->heights[i]);
-        position.z = object->z.fixed;
+        position.x = actor->x.fixed;
+        position.y = actor->y.fixed + toFIXED(work->heights[i]);
+        position.z = actor->z.fixed;
         Camera_WorldToScreen(&position);
         x = position.x;
         z = position.z;
@@ -2682,9 +2681,9 @@ void Contigo_RaiseSparkle(struct Actor *object) {
           sprite->scaleX = sine;
           sprite->scaleY = sine;
           if (j == 0) {
-            sprite->depth = BattleEffect_GetObjectDepth(object) - 1;
+            sprite->depth = BattleEffect_GetObjectDepth(actor) - 1;
           } else {
-            sprite->depth = BattleEffect_GetObjectDepth(object) + 1;
+            sprite->depth = BattleEffect_GetObjectDepth(actor) + 1;
             sprite->y -= toFIXED(1);
             sprite->scaleY = -sprite->scaleY;
           }
@@ -2706,7 +2705,7 @@ void Contigo_RaiseSparkle(struct Actor *object) {
 
 /// Sets up the sparkle: loads its picture and its four 16 by 16 sprites, and
 /// hands the object to its update, Contigo_RaiseSparkle.
-void Contigo_StartSparkle(struct Actor *object, struct SparkleWork *work) {
+void Contigo_StartSparkle(struct Actor *actor, struct SparkleWork *work) {
   struct EffectSprite *sprite;
   s32 tile;
   s32 row;
@@ -2717,25 +2716,25 @@ void Contigo_StartSparkle(struct Actor *object, struct SparkleWork *work) {
   work->nextPair = 0;
   work->heights[0] = 999;
   work->heights[1] = 999;
-  work->object = object;
-  object->riseCounter = 0;
-  object->riseEnabled = 0;
-  object->update = Contigo_RaiseSparkle;
+  work->actor = actor;
+  actor->riseCounter = 0;
+  actor->riseEnabled = 0;
+  actor->update = Contigo_RaiseSparkle;
   tile = gVramCacheEntries[work->vramEntry].offset >> 5;
-  object->watchedActor = (struct Actor *)work;
+  actor->watchedActor = (struct Actor *)work;
   for (row = 0; row <= 1; row++) {
     for (col = 1, sprite = work->sprites + row + row; col >= 0; col--) {
       EffectSprite_Init(sprite, 16, 16, OBJ_SIZE_32X16, tile);
       sprite->oam.fullColor = 0;
       sprite->oam.palette = 0;
-      sprite->oam.priority = BattleEffect_GetObjectPriority(object);
+      sprite->oam.priority = BattleEffect_GetObjectPriority(actor);
       sprite++;
     }
   }
 }
 
 /// Ends the sparkle: its update finishes once both pairs have risen.
-void Contigo_StopSparkle(struct Actor *object) { object->riseCounter = 1; }
+void Contigo_StopSparkle(struct Actor *actor) { actor->riseCounter = 1; }
 
 // clang-format off
 s32 gContigo_SparkleTiles[] = {

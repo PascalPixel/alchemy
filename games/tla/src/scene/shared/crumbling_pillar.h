@@ -17,33 +17,33 @@ void CrumblingPillar_Place(u16 *list) {
 
   while (list[0] != 0xffff) {
     u32 id = list[0];
-    struct Actor *object = Actor_Get(id);
+    struct Actor *actor = Actor_Get(id);
     s32 flag = list[1];
     s32 next = flag + 1;
-    struct MapCell *cells = map->layers[object->layer].cells;
+    struct MapCell *cells = map->layers[actor->layer].cells;
     u8 *shapes = gMapShapeGrid + (cells - (struct MapCell *)Ram_MapCellBuffer);
 
     if (Event_GetFlag(next)) {
       Actor_SetPosition(id, 0, 0);
     } else {
-      s32 index = Actor_GetCellIndex(object);
+      s32 index = Actor_GetCellIndex(actor);
       struct MapCell *cell;
       u8 *slot;
       s32 shape, ground;
 
       cell = cells + index;
       slot = shapes + index;
-      shape = MapGrid_GetTerrainKind(object->layer, object->x.fixed,
-                                     object->z.fixed);
+      shape =
+          MapGrid_GetTerrainKind(actor->layer, actor->x.fixed, actor->z.fixed);
       ground =
-          Map_GetTerrainHeight(object->layer, object->x.fixed, object->z.fixed);
+          Map_GetTerrainHeight(actor->layer, actor->x.fixed, actor->z.fixed);
 
       Actor_DisableById(id);
       cell->attributeB = 128;
       *slot =
-          MapCollision_FindOrAddTag(object->layer, shape, (ground >> 19) + 4);
+          MapCollision_FindOrAddTag(actor->layer, shape, (ground >> 19) + 4);
       if (Event_GetFlag(flag))
-        Actor_SelectAnimation(object, 0);
+        Actor_SelectAnimation(actor, 0);
     }
     list += 2;
   }
@@ -126,7 +126,7 @@ void CrumblingPillar_Step(u16 *list) {
 
 void CrumblingPillar_Collapse(const void *data, s32 id) {
   const struct TrapEntry *entry = data;
-  struct Actor *object = Actor_Get(id);
+  struct Actor *actor = Actor_Get(id);
   s32 flag;
 
   while (entry->actor != 0xffff) {
@@ -142,13 +142,13 @@ void CrumblingPillar_Collapse(const void *data, s32 id) {
         MapGrid_SetShake(1, 4, 1);
         Rubble_Spray(0);
         System_Wait(8);
-        Actor_SelectAnimation(object, 2);
-        Actor_SetCellShape(-4, object->layer, id);
+        Actor_SelectAnimation(actor, 2);
+        Actor_SetCellShape(-4, actor->layer, id);
         Rubble_Spray(1);
         System_Wait(16);
         MapGrid_SetShake(SHAKE_KEEP, SHAKE_KEEP, 0.9);
         System_Wait(8);
-        FieldActor_SetPositionAndResetMotion(object, 0, 0, 0);
+        FieldActor_SetPositionAndResetMotion(actor, 0, 0, 0);
         System_Wait(2);
         Event_PlaySound(SE_THUMP);
         Rubble_Burst();
@@ -221,8 +221,8 @@ void CrumblingPillar_PlaceWithStandIns(u16 *list) {
   System_Wait(10);
 }
 
-void Actor_TakePlaceOf(struct Actor *object, struct Actor *target) {
-  FieldActor_SetPositionAndResetMotion(object, target->x.fixed, target->y.fixed,
+void Actor_TakePlaceOf(struct Actor *actor, struct Actor *target) {
+  FieldActor_SetPositionAndResetMotion(actor, target->x.fixed, target->y.fixed,
                                        target->z.fixed);
   FieldActor_SetPositionAndResetMotion(target, 0, 0, 0);
 }

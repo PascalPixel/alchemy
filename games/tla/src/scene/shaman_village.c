@@ -278,12 +278,12 @@ extern const s32 *gFieldEffect_DurationScripts[];
 void Shop_Run(s32 shop, s32 keeper);
 void Sanctum_Run(s32 keeper);
 void Inn_CheckIn(s32 shop, s32 keeper);
-void Actor_Release(struct Actor *object);
+void Actor_Release(struct Actor *actor);
 
 void Rope_Initialize(void);
 void Rope_Place(s32 a, s32 b, s32 c, s32 d);
 
-void Actor_MoveToObject(s32 actor, s32 target);
+void Actor_MoveToObject(s32 actorId, s32 target);
 
 void InventorySnapshot_Save(void);
 
@@ -408,51 +408,51 @@ void ShamanVillage_ScrollSandLayer(void) {
 }
 
 /// The sand mound's update while Whirlwind blows: its colour flickers.
-void ShamanVillage_FlickerRock(struct Actor *object) {
-  s32 bit = (((u32)gFrameCount & 3) >> object->flickerShift) & 1;
+void ShamanVillage_FlickerRock(struct Actor *actor) {
+  s32 bit = (((u32)gFrameCount & 3) >> actor->flickerShift) & 1;
 
-  FieldActor_SetSpriteColor(object, (u8)(bit * object->flickerColor));
+  FieldActor_SetSpriteColor(actor, (u8)(bit * actor->flickerColor));
 }
 
 /// Circles the object around the centre it keeps in bounce and riseBaseY (x,
 /// z), twice as wide as it is deep, the radius growing with its height, rising
 /// by gravity a frame, its step counted in speedLimit, 256 to a lap; it blinks
 /// every other two frames.
-void Effect_CircleAndBlink(struct Actor *object) {
-  s32 radius = object->y.fixed;
-  s32 step = object->speedLimit;
+void Effect_CircleAndBlink(struct Actor *actor) {
+  s32 radius = actor->y.fixed;
+  s32 step = actor->speedLimit;
 
   radius >>= 2;
   radius += toFIXED(12);
-  object->x.fixed =
-      object->bounce + Iwram_MulFX(Trig_Cos((step & 255) << 11), radius) * 2;
-  object->z.fixed =
-      object->riseBaseY +
-      Iwram_MulFX(Trig_Sin((object->speedLimit & 255) << 11), radius);
-  object->y.fixed += object->gravity;
-  object->speedLimit++;
-  FieldActor_SetSpriteColor(object, ((gFrameCount & 2) >> 1) * 9);
+  actor->x.fixed =
+      actor->bounce + Iwram_MulFX(Trig_Cos((step & 255) << 11), radius) * 2;
+  actor->z.fixed =
+      actor->riseBaseY +
+      Iwram_MulFX(Trig_Sin((actor->speedLimit & 255) << 11), radius);
+  actor->y.fixed += actor->gravity;
+  actor->speedLimit++;
+  FieldActor_SetSpriteColor(actor, ((gFrameCount & 2) >> 1) * 9);
 }
 
 /// Swings an object about x = 168: left of it the object speeds up rightward
 /// and grows, right of it leftward and shrinks. It takes sprite priority 1
 /// while it moves right, 2 otherwise, and spins.
-void ShamanVillage_SwirlSandGrain(struct Actor *object) {
-  object->x.fixed += object->bounce;
-  object->y.fixed += object->gravity;
-  object->z.fixed += object->riseBaseY;
-  if (FIXEDtoINT(object->x.fixed) < 168) {
-    object->bounce += FIXED_ONE * 3 / 2;
-    object->scaleY = object->scaleX += FIXED_ONE * 5 / 100;
+void ShamanVillage_SwirlSandGrain(struct Actor *actor) {
+  actor->x.fixed += actor->bounce;
+  actor->y.fixed += actor->gravity;
+  actor->z.fixed += actor->riseBaseY;
+  if (FIXEDtoINT(actor->x.fixed) < 168) {
+    actor->bounce += FIXED_ONE * 3 / 2;
+    actor->scaleY = actor->scaleX += FIXED_ONE * 5 / 100;
   } else {
-    object->bounce -= FIXED_ONE * 3 / 2;
-    object->scaleY = object->scaleX -= FIXED_ONE * 2 / 100;
+    actor->bounce -= FIXED_ONE * 3 / 2;
+    actor->scaleY = actor->scaleX -= FIXED_ONE * 2 / 100;
   }
-  if (object->bounce > 0)
-    Scene_SetActorSpritePriority(object, 1);
+  if (actor->bounce > 0)
+    Scene_SetActorSpritePriority(actor, 1);
   else
-    Scene_SetActorSpritePriority(object, 2);
-  ((struct FieldSprite *)object->sprite)->rotation += TRIG_TURN * 3 / 32;
+    Scene_SetActorSpritePriority(actor, 2);
+  ((struct FieldSprite *)actor->sprite)->rotation += TRIG_TURN * 3 / 32;
 }
 
 extern u32 gFieldEffect_MediumScript[];
@@ -1309,19 +1309,19 @@ void ShamanVillage_TakeRightPath(void) {
 /// Move on the pillar, actor 14, to cell (32, 11): it drops into place as a
 /// bridge.
 void ShamanVillage_DropPillar(void) {
-  struct Actor *object =
+  struct Actor *actor =
       ((struct Actor *)Actor_GetById(ACTOR_AROMA_ROOM_PILLAR));
 
-  if (FIELD_CELL(object->x.fixed) == 32 && FIELD_CELL(object->z.fixed) == 11) {
+  if (FIELD_CELL(actor->x.fixed) == 32 && FIELD_CELL(actor->z.fixed) == 11) {
     Event_Start();
     Event_ResolvePendingActions(0);
-    object->motionFlags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
+    actor->motionFlags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
     do {
       wait(1);
-    } while (object->velocityY != 0);
+    } while (actor->velocityY != 0);
     Event_PlaySound(SE_THUMP);
     wait(10);
-    object->motionFlags = 0;
+    actor->motionFlags = 0;
     MapGrid_CopyCellAttributes(30, 11, 1, 1, 32, 11);
     wait(1);
     Event_SetFlag(FLAG_SHAMAN_VILLAGE_PILLAR_BRIDGE_DROPPED);
@@ -1403,20 +1403,20 @@ void ShamanVillage_MeetMoapa(void) {
 
 /// The Shaman's Rod (item 65) drawn as an actor over the leader.
 struct Actor *ShamanVillage_CreateRodIcon(void) {
-  struct Actor *object = ((struct Actor *)Import_ActorCreate(
+  struct Actor *actor = ((struct Actor *)Import_ActorCreate(
       SPRITE_UNSEEN_MARKER, toFIXED(120), toFIXED(64), toFIXED(264)));
   u8 *buffer = NULL;
 
-  if (object == NULL)
+  if (actor == NULL)
     return NULL;
   {
-    struct FieldSprite *sprite = object->sprite;
+    struct FieldSprite *sprite = actor->sprite;
 
     sprite->fullColor = 0;
     sprite->palette = 0;
     sprite->priority = 1;
-    object->motionFlags = 0;
-    object->retainSpriteCache = 1;
+    actor->motionFlags = 0;
+    actor->retainSpriteCache = 1;
     sprite->flags = 0;
     sprite->countAndShadow[0] = 0;
     buffer = HeapSlot_Alloc(HEAP_SLOT_GLYPH_TRANSFER, 0x608);
@@ -1424,7 +1424,7 @@ struct Actor *ShamanVillage_CreateRodIcon(void) {
     VramCache_Load(sprite->slot, 128, buffer + 0x400);
     HeapSlot_Release(HEAP_SLOT_GLYPH_TRANSFER);
   }
-  return object;
+  return actor;
 }
 
 extern u32 gShamanVillage_JennaStandsByRodScript[];
@@ -1432,7 +1432,7 @@ extern u32 gShamanVillage_GuardLeavesHouseScript[];
 
 void ShamanVillage_ShowShamansRod(void) {
   struct Actor *rod;
-  struct Actor *object;
+  struct Actor *actor;
   s32 angle;
 
   Event_Start();
@@ -1589,8 +1589,8 @@ void ShamanVillage_ShowShamansRod(void) {
     FieldCamera_SetSpeed(0.4);
     FieldCamera_MoveToFX(toFIXED(180), 0x200000, z, 1);
   }
-  object = ((struct Actor *)Actor_GetById(ACTOR_WEST_GUARD));
-  object->riseEnabled = 0;
+  actor = ((struct Actor *)Actor_GetById(ACTOR_WEST_GUARD));
+  actor->riseEnabled = 0;
   Actor_WatchAndSetScript(gMainRoutineWork.leaderActorId, ACTOR_MOAPA);
   Actor_WatchAndSetScript(ACTOR_JENNA, ACTOR_MOAPA);
   Actor_WatchAndSetScript(ACTOR_SHEBA, ACTOR_MOAPA);
@@ -1606,7 +1606,7 @@ void ShamanVillage_ShowShamansRod(void) {
   Event_PlaySound(SOUND_FADE_OUT_BGM);
   do {
     wait(1);
-  } while (object->riseEnabled == 0);
+  } while (actor->riseEnabled == 0);
   Actor_Stop(gMainRoutineWork.leaderActorId);
   Actor_Stop(ACTOR_KRADEN);
   Actor_Stop(ACTOR_PIERS);
@@ -2073,7 +2073,7 @@ void ShamanVillage_CountDownToStart(void) {
 /// and the sand is gone.
 void ShamanVillage_ShebaClearsSand(void) {
   u8 *work = Ram_HeapSlots->fieldEffectWork;
-  struct Actor *object = ((struct Actor *)Actor_GetById(ACTOR_WEST_GUARD));
+  struct Actor *actor = ((struct Actor *)Actor_GetById(ACTOR_WEST_GUARD));
 
   s32 result;
   s32 owner;
@@ -2324,7 +2324,7 @@ void ShamanVillage_ShebaClearsSand(void) {
   Actor_FaceDirection(ACTOR_KRADEN, FACING_EAST, 0);
   Actor_FaceDirection(ACTOR_PIERS, FACING_NORTHWEST, 0);
   result = Event_AskYesNoWithActorAnimation(gMainRoutineWork.leaderActorId, 0);
-  done = &object->riseEnabled;
+  done = &actor->riseEnabled;
   owner = gMainRoutineWork.leaderActorId;
   if (result == 0) {
     Actor_WaitForAnimationChange(owner);
@@ -2423,7 +2423,7 @@ void ShamanVillage_CastWhirlwindOnSand(void) {
 void ShamanVillage_EnterDoor(s32 sourceX, s32 sourceY, s32 destinationX,
                              s32 destinationY, s32 width, s32 height) {
   struct FieldWork *work = Ram_HeapSlots->fieldWork;
-  struct Actor *object;
+  struct Actor *actor;
   s32 cell;
 
   Event_Start();
@@ -2437,12 +2437,12 @@ void ShamanVillage_EnterDoor(s32 sourceX, s32 sourceY, s32 destinationX,
   Event_Wait(20);
   Actor_SetSpeed(gMainRoutineWork.leaderActorId, 0.5);
   if (width == 1) {
-    object = ((struct Actor *)Actor_GetById(gMainRoutineWork.leaderActorId));
-    cell = FIXEDtoINT(object->x.fixed);
-    Actor_SetMoveTarget(object, toFIXED(8 - cell % 16) + object->x.fixed,
-                        object->y.fixed, object->z.fixed);
-    FieldActor_WaitForMove(object);
-    object->facing = FACING_NORTH;
+    actor = ((struct Actor *)Actor_GetById(gMainRoutineWork.leaderActorId));
+    cell = FIXEDtoINT(actor->x.fixed);
+    Actor_SetMoveTarget(actor, toFIXED(8 - cell % 16) + actor->x.fixed,
+                        actor->y.fixed, actor->z.fixed);
+    FieldActor_WaitForMove(actor);
+    actor->facing = FACING_NORTH;
   }
   Actor_SetScript(gMainRoutineWork.leaderActorId,
                   gShamanVillage_EnterDoorScript);
@@ -2648,7 +2648,7 @@ void ShamanVillage_SetUpTrialGrounds(void) {
 }
 
 void ShamanVillage_SetUpAromaRoom(void) {
-  struct Actor *object;
+  struct Actor *actor;
 
   Actor_SetAnimation(ACTOR_FIRST_TORCH, 2);
   Actor_SetAnimation(ACTOR_FIRST_TORCH + 1, 2);
@@ -2673,10 +2673,10 @@ void ShamanVillage_SetUpAromaRoom(void) {
     MapGrid_CopyCellsTo(48, 40, 101, 11, 1, 2);
   else
     Actor_SetPosition(ACTOR_FORTUNE_TELLER, 0, 0);
-  object = ((struct Actor *)Actor_GetById(ACTOR_FORTUNE_TELLERS_FLAME));
-  object->collisionFlags = ACTOR_NOT_TARGETED;
-  object->scaleX = FIXED_ONE * 8 / 10;
-  object->scaleY = FIXED_ONE * 8 / 10;
+  actor = ((struct Actor *)Actor_GetById(ACTOR_FORTUNE_TELLERS_FLAME));
+  actor->collisionFlags = ACTOR_NOT_TARGETED;
+  actor->scaleX = FIXED_ONE * 8 / 10;
+  actor->scaleY = FIXED_ONE * 8 / 10;
   Actor_SetSpriteFlags(
       ((struct Actor *)Actor_GetById(ACTOR_FORTUNE_TELLERS_FLAME)), 0);
 }
@@ -2684,42 +2684,42 @@ void ShamanVillage_SetUpAromaRoom(void) {
 /// A smoke puff's update: it drifts on in x ever faster, rises half a pixel a
 /// frame and grows, and is released when the frames its creator counted into
 /// watchedActor run out.
-void ShamanVillage_DriftSmoke(struct Actor *object) {
+void ShamanVillage_DriftSmoke(struct Actor *actor) {
   s32 step;
 
-  object->x.fixed += object->timer << 8;
+  actor->x.fixed += actor->timer << 8;
 
-  object->y.fixed += toFIXED(1) / 2;
+  actor->y.fixed += toFIXED(1) / 2;
 
   step = 0x51e;
-  object->scaleX += step;
-  object->scaleY += step;
-  object->timer += 2;
-  if (--*(s32 *)&object->watchedActor == 0)
-    Actor_Release(object);
+  actor->scaleX += step;
+  actor->scaleY += step;
+  actor->timer += 2;
+  if (--*(s32 *)&actor->watchedActor == 0)
+    Actor_Release(actor);
 }
 
 /// Puffs a blended cloud of smoke at x, y, z, half its size, that
 /// ShamanVillage_DriftSmoke moves for 60 frames.
 void ShamanVillage_SpawnSmoke(s32 x, s32 y, s32 z) {
-  struct Actor *object =
+  struct Actor *actor =
       ((struct Actor *)Import_ActorCreate(SPRITE_DUST_CLOUD, x, y, z));
 
-  if (object != NULL) {
-    object->retainSpriteCache = 2;
-    object->motionFlags = 0;
-    object->timer = 0;
-    object->priorityFlags &= ~ACTOR_PRIORITY_AUTOMATIC;
-    FieldActor_SetSpriteColor(object, 7);
-    ((struct FieldSprite *)object->sprite)->priority = 1;
-    object->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
-    Actor_SetSpriteFlags(object, 0);
-    object->scaleX = FIXED_ONE / 2;
-    object->scaleY = FIXED_ONE / 2;
-    *(s32 *)&object->watchedActor = 60;
-    object->update = ShamanVillage_DriftSmoke;
-    Import_ActorSetMode(object, 5);
-    Actor_SetBlendMode(object, 1);
+  if (actor != NULL) {
+    actor->retainSpriteCache = 2;
+    actor->motionFlags = 0;
+    actor->timer = 0;
+    actor->priorityFlags &= ~ACTOR_PRIORITY_AUTOMATIC;
+    FieldActor_SetSpriteColor(actor, 7);
+    ((struct FieldSprite *)actor->sprite)->priority = 1;
+    actor->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
+    Actor_SetSpriteFlags(actor, 0);
+    actor->scaleX = FIXED_ONE / 2;
+    actor->scaleY = FIXED_ONE / 2;
+    *(s32 *)&actor->watchedActor = 60;
+    actor->update = ShamanVillage_DriftSmoke;
+    Import_ActorSetMode(actor, 5);
+    Actor_SetBlendMode(actor, 1);
   }
 }
 

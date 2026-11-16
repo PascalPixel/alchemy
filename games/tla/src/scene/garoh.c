@@ -2,7 +2,7 @@
 /// Garoh, the village under Air's Rock whose people, its protectors, say there
 /// are no werewolves while one prowls its paths at night, in five rooms and a
 /// house that share this overlay (SceneId_Garoh to SceneId_GarohWerewolfCave,
-/// SceneId_GarohInteriorsSanctum).
+/// SceneId_GarohRoomsSanctum).
 #include "../field/actor_set_sprite_priority.c"
 
 #include "../field/field_effect_move.c"
@@ -29,7 +29,7 @@ void Actor_PlaceBlocks(const void *data);
 void Actor_LiftTargetBlock(const void *data);
 void Actor_PlaceMovedBlock(void);
 
-void Garoh_RaisePillar(s32 id, struct Actor *object);
+void Garoh_RaisePillar(s32 id, struct Actor *actor);
 void Garoh_RaiseFirstPillarOnCell(void);
 void Garoh_RaiseSecondPillarOnCell(void);
 void Garoh_CheckThirdPillar(void);
@@ -282,8 +282,8 @@ DEFINE_GAROH_LOAD_PALETTE(Garoh_LoadHypnosSwordChestNightColors,
                           gGaroh_HypnosSwordChestNightColors, 97, 9)
 
 /// A script's call: clears the actor's sprite flags.
-s32 Garoh_ClearScriptedActorSpriteFlags(struct Actor *object) {
-  Actor_SetSpriteFlags(object, 0);
+s32 Garoh_ClearScriptedActorSpriteFlags(struct Actor *actor) {
+  Actor_SetSpriteFlags(actor, 0);
   return 0;
 }
 
@@ -334,10 +334,10 @@ void Garoh_OpenDoorAndEnter(void) {
   i = 8;
   do {
     {
-      struct Actor *object = Actor_Get(i);
+      struct Actor *actor = Actor_Get(i);
 
-      if (object != NULL)
-        object->motionFlags = 0;
+      if (actor != NULL)
+        actor->motionFlags = 0;
     }
     i++;
   } while ((u32)i <= 63);
@@ -659,7 +659,7 @@ s32 Scene_Initialize(void) {
     } else if (gMainRoutineWork.next == SCENE_GAROH_BLOCKS) {
       Garoh_InitializeBlocks();
       if (Event_GetFlag(FLAG_GAROH_REACHED_VILLAGE)) {
-        gMainRoutineWork.restartScene = SCENE_GAROH_INTERIORS_SANCTUM;
+        gMainRoutineWork.restartScene = SCENE_GAROH_ROOMS_SANCTUM;
         gMainRoutineWork.restartEntrance = 2;
       }
     }
@@ -761,14 +761,14 @@ void Garoh_LiftPillar(void) { Actor_LiftTargetBlock(gGaroh_Pillars); }
 void Garoh_LiftPushedPillar(void) { Actor_LiftTargetBlock(gGaroh_Pillars); }
 
 /// A block left on its cell rises with a whoosh and a ring of dust.
-void Garoh_RaisePillar(s32 id, struct Actor *object) {
+void Garoh_RaisePillar(s32 id, struct Actor *actor) {
   s32 i;
   s32 saved;
 
-  object->motionFlags = 0;
+  actor->motionFlags = 0;
   saved = id;
   for (i = 16; i > 0; i--) {
-    object->y.fixed -= toFIXED(2);
+    actor->y.fixed -= toFIXED(2);
     FieldEvent_Wait(1);
   }
   Event_PlaySound(SE_WHOOSH);
@@ -777,15 +777,15 @@ void Garoh_RaisePillar(s32 id, struct Actor *object) {
 
 #define DEFINE_GAROH_TRIGGER_AT_CELL(name, actorId, flag, cellX, cellZ)        \
   void name(void) {                                                            \
-    struct Actor *object = Actor_Get(actorId);                                 \
-    s32 x = FIELD_CELL(object->x.fixed);                                       \
+    struct Actor *actor = Actor_Get(actorId);                                  \
+    s32 x = FIELD_CELL(actor->x.fixed);                                        \
     s32 raw;                                                                   \
     s32 z;                                                                     \
                                                                                \
-    raw = object->z.fixed;                                                     \
+    raw = actor->z.fixed;                                                      \
     z = FIELD_CELL(raw);                                                       \
     if (!Flag_IsSet(flag) && x == cellX && z == cellZ) {                       \
-      Garoh_RaisePillar(actorId, object);                                      \
+      Garoh_RaisePillar(actorId, actor);                                       \
       Flag_Set(flag);                                                          \
     }                                                                          \
   }
@@ -807,12 +807,12 @@ void Garoh_CheckThirdPillar(void) {
 
 /// The fourth pillar rises once it stands on its cell.
 void Garoh_RaiseFourthPillarOnCell(void) {
-  struct Actor *object = Actor_Get(ACTOR_FOURTH_PILLAR);
-  s32 x = FIELD_CELL(object->x.fixed);
-  s32 z = FIELD_CELL(object->z.fixed);
+  struct Actor *actor = Actor_Get(ACTOR_FOURTH_PILLAR);
+  s32 x = FIELD_CELL(actor->x.fixed);
+  s32 z = FIELD_CELL(actor->z.fixed);
 
   if (!Flag_IsSet(FLAG_FOURTH_PILLAR_RAISED) && x == 15 && z == 25) {
-    Garoh_RaisePillar(ACTOR_FOURTH_PILLAR, object);
+    Garoh_RaisePillar(ACTOR_FOURTH_PILLAR, actor);
     Flag_Set(FLAG_FOURTH_PILLAR_RAISED);
   }
 }
@@ -963,7 +963,7 @@ void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
 /// A ring of puffs of dust spreads out from the actor, one every eighth of a
 /// turn: nine, the first and last both to the east.
 void Garoh_PuffAround(s32 objectId) {
-  struct Actor *object;
+  struct Actor *actor;
   struct Vector3 vec;
   struct EffectOptions params;
   u32 angleStep;
@@ -971,7 +971,7 @@ void Garoh_PuffAround(s32 objectId) {
   s32 x;
   FIXED z;
 
-  object = Actor_Get(objectId);
+  actor = Actor_Get(objectId);
   params.update = FieldEffect_AdvanceMotion;
   angleStep = 0;
   do {
@@ -983,8 +983,8 @@ void Garoh_PuffAround(s32 objectId) {
     vec.z = z;
     x += x / 3;
     vec.x = x;
-    FieldEffect_Spawn(object->x.fixed, object->y.fixed, object->z.fixed, x,
-                      vec.y, z, EFFECT_USE_UPDATE | 1, &params);
+    FieldEffect_Spawn(actor->x.fixed, actor->y.fixed, actor->z.fixed, x, vec.y,
+                      z, EFFECT_USE_UPDATE | 1, &params);
     angleStep += 2;
   } while (angleStep <= 16);
 }
@@ -1028,14 +1028,14 @@ s32 timer;
 
 /// Two puffs rise from an actor's head.
 void Garoh_PuffFrom(s32 id) {
-  struct Actor *object = Actor_Get(id);
+  struct Actor *actor = Actor_Get(id);
 
-  Garoh_SpawnPuff(object->x.fixed + toFIXED(8), object->y.fixed + toFIXED(28),
-                  object->z.fixed, TRIG_TURN / 16, 20);
+  Garoh_SpawnPuff(actor->x.fixed + toFIXED(8), actor->y.fixed + toFIXED(28),
+                  actor->z.fixed, TRIG_TURN / 16, 20);
   Event_PlaySound(SE_LIGHT_APPEAR);
   FieldEvent_Wait(20);
-  Garoh_SpawnPuff(object->x.fixed - toFIXED(8), object->y.fixed + toFIXED(28),
-                  object->z.fixed, TRIG_TURN * 15 / 16, 20);
+  Garoh_SpawnPuff(actor->x.fixed - toFIXED(8), actor->y.fixed + toFIXED(28),
+                  actor->z.fixed, TRIG_TURN * 15 / 16, 20);
   Event_PlaySound(SE_LIGHT_APPEAR);
   FieldEvent_Wait(20);
 }
@@ -2044,7 +2044,7 @@ void Garoh_WerewolvesRevealThemselves(void) {
   }
   EventCamera_FollowActor(gMainRoutineWork.leaderActorId, 1);
   Garoh_MetWerewolves();
-  FieldEvent_SetExitRequest(GAROH_WEREWOLF_CAVE_TO_GAROH_INTERIORS_HOUSES);
+  FieldEvent_SetExitRequest(GAROH_WEREWOLF_CAVE_TO_GAROH_ROOMS_HOUSES);
   Event_End();
 }
 
@@ -2783,12 +2783,12 @@ s32 gGaroh_ShrunkenSpriteScript[] = {
 
 u32 gSceneExits[] = {
     SCENE_EXITS(Garoh),
-    SCENE_EXIT_UNLESS(1, GarohInteriorsHouses, 1, EXIT_FLAG_NONE),
-    SCENE_EXIT_UNLESS(2, GarohInteriorsShop, 4, EXIT_FLAG_NONE),
-    SCENE_EXIT_UNLESS(3, GarohInteriorsHouses, 3, EXIT_FLAG_NONE),
-    SCENE_EXIT_UNLESS(4, GarohInteriorsHouses, 4, EXIT_FLAG_NONE),
-    SCENE_EXIT_UNLESS(5, GarohInteriorsHouses, 5, EXIT_FLAG_NONE),
-    SCENE_EXIT_UNLESS(6, GarohInteriorsSanctum, 2, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(1, GarohRoomsHouses, 1, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(2, GarohRoomsShop, 4, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(3, GarohRoomsHouses, 3, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(4, GarohRoomsHouses, 4, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(5, GarohRoomsHouses, 5, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(6, GarohRoomsSanctum, 2, EXIT_FLAG_NONE),
     SCENE_EXIT_UNLESS(7, GarohTunnels, 4, EXIT_FLAG_NONE),
     SCENE_EXIT_UNLESS(8, GarohTunnels, 1, EXIT_FLAG_NONE),
     SCENE_EXIT_UNLESS(9, GarohTunnels, 11, EXIT_FLAG_NONE),
@@ -2807,10 +2807,10 @@ u32 gSceneExits[] = {
     SCENE_EXIT_UNLESS(2, GarohTunnels, 3, EXIT_FLAG_NONE),
     SCENE_EXIT_UNLESS(3, GarohTunnels, 2, EXIT_FLAG_NONE),
     SCENE_EXIT_UNLESS(4, Garoh, 7, EXIT_FLAG_NONE),
-    SCENE_EXIT_UNLESS(5, GarohInteriorsShop, 3, EXIT_FLAG_NONE),
-    SCENE_EXIT_UNLESS(6, GarohInteriorsShop, 5, EXIT_FLAG_NONE),
-    SCENE_EXIT_UNLESS(7, GarohInteriorsHouses, 6, EXIT_FLAG_NONE),
-    SCENE_EXIT_UNLESS(8, GarohInteriorsHouses, 7, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(5, GarohRoomsShop, 3, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(6, GarohRoomsShop, 5, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(7, GarohRoomsHouses, 6, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(8, GarohRoomsHouses, 7, EXIT_FLAG_NONE),
     SCENE_EXIT_UNLESS(9, GarohTunnels, 10, EXIT_FLAG_NONE),
     SCENE_EXIT_UNLESS(10, GarohTunnels, 9, EXIT_FLAG_NONE),
     SCENE_EXIT_UNLESS(11, Garoh, 9, EXIT_FLAG_NONE),
@@ -2822,7 +2822,7 @@ u32 gSceneExits[] = {
     SCENE_EXIT_UNLESS(5, GarohWerewolfCave, 3, EXIT_FLAG_NONE),
     SCENE_EXIT_UNLESS(6, GarohWerewolfCave, 7, EXIT_FLAG_NONE),
     SCENE_EXIT_UNLESS(7, GarohWerewolfCave, 6, EXIT_FLAG_NONE),
-    SCENE_EXIT_UNLESS(11, GarohInteriorsHouses, 99, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(11, GarohRoomsHouses, 99, EXIT_FLAG_NONE),
     SCENE_EXITS_END,
 };
 

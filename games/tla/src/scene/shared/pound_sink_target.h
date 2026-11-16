@@ -9,7 +9,7 @@ void Pound_SinkTarget(u16 *list, s32 mode, s32 count) {
     s32 id = work->secondActorId;
 
     if (id == entry) {
-      struct Actor *object = Actor_GetById(id);
+      struct Actor *actor = Actor_GetById(id);
       s32 a;
       s32 flag;
 
@@ -17,11 +17,11 @@ void Pound_SinkTarget(u16 *list, s32 mode, s32 count) {
       a = list[0];
       flag = list[1];
       if (count < 8)
-        object->scaleY -= FIXED_ONE * 31 / 256;
+        actor->scaleY -= FIXED_ONE * 31 / 256;
       if (mode == 1) {
         GameFlag_Set(flag);
-        Actor_SetCellOpen(id, a, flag, object->layer);
-        object->scaleY = FIXED_ONE;
+        Actor_SetCellOpen(id, a, flag, actor->layer);
+        actor->scaleY = FIXED_ONE;
       }
       break;
     }

@@ -4,7 +4,7 @@ struct Actor *PushTarget_FindAhead(s32 *direction, s32 *slot, s32 *kind) {
   struct FieldWork *work = Ram_HeapSlots->fieldWork;
   struct Actor *leader = Actor_Get(gMainRoutineWork.leaderActorId);
   struct Actor **entry;
-  struct Actor *object;
+  struct Actor *actor;
   u32 i, k;
   s32 x, z, left, top, right, bottom;
 
@@ -12,29 +12,29 @@ struct Actor *PushTarget_FindAhead(s32 *direction, s32 *slot, s32 *kind) {
   i = 8;
   entry = &work->actors[8];
 outer:
-  object = *entry;
+  actor = *entry;
   k = 0;
 inner:
-  if (((struct Sprite *)object->sprite)->entries[0]->animationId ==
+  if (((struct Sprite *)actor->sprite)->entries[0]->animationId ==
       gPushKinds[k]) {
     x = (PIXEL_PART(leader->x.fixed) + (gPushLeaderSteps[*direction] >> 16)) >>
         4;
     z = (PIXEL_PART(leader->z.fixed) + (s16)gPushLeaderSteps[*direction]) >> 4;
-    left = (PIXEL_PART(object->x.fixed) + gPushFootprints[k][0]) >> 4;
-    top = (PIXEL_PART(object->z.fixed) + gPushFootprints[k][1]) >> 4;
-    right = (PIXEL_PART(object->x.fixed) + gPushFootprints[k][2]) >> 4;
-    bottom = (PIXEL_PART(object->z.fixed) + gPushFootprints[k][3]) >> 4;
+    left = (PIXEL_PART(actor->x.fixed) + gPushFootprints[k][0]) >> 4;
+    top = (PIXEL_PART(actor->z.fixed) + gPushFootprints[k][1]) >> 4;
+    right = (PIXEL_PART(actor->x.fixed) + gPushFootprints[k][2]) >> 4;
+    bottom = (PIXEL_PART(actor->z.fixed) + gPushFootprints[k][3]) >> 4;
     if (left <= x && x < right && top <= z && z < bottom) {
       *kind = k;
       if (k & 1) {
         if (left != FIELD_CELL(leader->x.fixed)) {
           *slot = i;
-          return object;
+          return actor;
         }
       } else {
         if (top != FIELD_CELL(leader->z.fixed)) {
           *slot = i;
-          return object;
+          return actor;
         }
       }
     }

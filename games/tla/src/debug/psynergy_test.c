@@ -91,7 +91,7 @@ void PsynergyTest_DigCells(s32, s32, s32, s32, s32, s32, s32);
 void PsynergyTest_GrowActor(s32, s32, s32, s32);
 void PsynergyTest_DropActor(s32, s32, s32, s32);
 void PsynergyTest_RaiseMonster(s32, s32, s32, s32, s32);
-void PsynergyTest_StartRings(struct Actor *object, struct SparkleWork *work);
+void PsynergyTest_StartRings(struct Actor *actor, struct SparkleWork *work);
 void PsynergyTest_StopRings(struct Actor *);
 void Actor_FallOverWithAnimationById(s32 actor, s32 angle, s32 frames);
 void Actor_FallOverById(s32 actor, s32 angle);
@@ -100,10 +100,10 @@ void DebugBrowser_Icons();
 void Sanctum_Run();
 void Actor_SetSpriteColorMode(struct Actor *, u32);
 void Actor_ArriveInRing(s32 actor);
-s32 BattleEffect_GetObjectPriority(struct Actor *object);
+s32 BattleEffect_GetObjectPriority(struct Actor *actor);
 void Field_RequestBattleFromEncounterTable(s32, s32);
 void Event_PickUpItem(s32, s32, s32);
-s32 BattleEffect_GetObjectDepth(struct Actor *object);
+s32 BattleEffect_GetObjectDepth(struct Actor *actor);
 void NameEntry_EditMemberName(s32);
 void Shop_Run(s32, s32);
 void Message_OpenWindow(s32, s32, s32, s32);
@@ -327,7 +327,7 @@ void PsynergyTest_SetSandLayer(void) { Actor_GetById(FELIX)->layer = 2; }
 void PsynergyTest_ClearSandLayer(void) { Actor_GetById(FELIX)->layer = 0; }
 
 /// As Blaze reaches him, the practising man shouts and jumps to the other of
-/// his two spots, as he does in Daila (DailaInteriors_PracticeShout).
+/// his two spots, as he does in Daila (DailaRooms_PracticeShout).
 void PsynergyTest_PracticeShout(s32 unused, s32 actor) {
   Actor_ShowEmote(actor, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 50);
   FieldActor_Jump(actor, 6, 15);
@@ -350,7 +350,7 @@ void PsynergyTest_PracticeShout(s32 unused, s32 actor) {
 }
 
 /// Once Blaze has ended, the practising man turns to Felix, startled, as in
-/// Daila (DailaInteriors_StartleAtTheLeader).
+/// Daila (DailaRooms_StartleAtTheLeader).
 void PsynergyTest_StartleAfterBlaze(s32 unused, s32 actor) {
   Actor_FaceActor(actor, FELIX, 0);
   FieldEvent_Wait(10);
@@ -567,39 +567,39 @@ void PsynergyTest_DigCells(s32 mode, s32 sourceX, s32 sourceY, s32 width,
 /// At the first stage of a dig, places the actor at (x, z) in pixels with no
 /// size; at the second, grows it to full size.
 void PsynergyTest_GrowActor(s32 mode, s32 id, s32 x, s32 z) {
-  struct Actor *object;
+  struct Actor *actor;
   s32 scale;
 
-  object = Actor_Get(id);
+  actor = Actor_Get(id);
   if (mode == 1) {
     Actor_SetPosition(id, x, z);
-    object->scaleX = 0;
-    object->scaleY = 0;
+    actor->scaleX = 0;
+    actor->scaleY = 0;
   }
   if (mode == 2) {
-    while (object->scaleX < FIXED_ONE) {
+    while (actor->scaleX < FIXED_ONE) {
       System_Wait(1);
-      scale = object->scaleX;
+      scale = actor->scaleX;
       scale += 0x51e;
-      object->scaleX = scale;
-      object->scaleY = scale;
+      actor->scaleX = scale;
+      actor->scaleY = scale;
     }
-    object->scaleX = FIXED_ONE;
-    object->scaleY = FIXED_ONE;
+    actor->scaleX = FIXED_ONE;
+    actor->scaleY = FIXED_ONE;
   }
 }
 
 /// At the second stage of a dig, drops the actor onto (x, z) in pixels from 32
 /// pixels up.
 void PsynergyTest_DropActor(s32 mode, s32 id, s32 x, s32 z) {
-  struct Actor *object;
+  struct Actor *actor;
 
-  object = Actor_Get(id);
+  actor = Actor_Get(id);
   if (mode == 2) {
     Actor_SetPosition(id, x, z);
-    object->y.fixed = toFIXED(32);
-    object->motionFlags = 3;
-    object->gravity = 0x170a;
+    actor->y.fixed = toFIXED(32);
+    actor->motionFlags = 3;
+    actor->gravity = 0x170a;
     System_Wait(50);
   }
 }
@@ -609,35 +609,35 @@ void PsynergyTest_DropActor(s32 mode, s32 id, s32 x, s32 z) {
 /// it turns, faces it away from the leader and starts the battle of row and
 /// column of the encounter table.
 void PsynergyTest_RaiseMonster(s32 mode, s32 x, s32 z, s32 row, s32 column) {
-  struct Actor *object;
+  struct Actor *actor;
 
   if (mode == 1) {
-    object = FieldActor_Create(SPRITE_BROWN_BOULDER, toFIXED(x), 0, toFIXED(z));
-    if (object != NULL) {
-      Actor_SetSpriteFlags(object, 0);
-      object->priorityFlags = 2;
+    actor = FieldActor_Create(SPRITE_BROWN_BOULDER, toFIXED(x), 0, toFIXED(z));
+    if (actor != NULL) {
+      Actor_SetSpriteFlags(actor, 0);
+      actor->priorityFlags = 2;
     }
   }
   if (mode == 2) {
-    object =
+    actor =
         (FieldActor_Create(SPRITE_WINGED_STATUE, toFIXED(x), 0, toFIXED(z)));
-    if (object != NULL) {
+    if (actor != NULL) {
       s32 scale;
 
-      Actor_SetSpriteFlags(object, 0);
-      object->velocityY = toFIXED(6);
-      object->scaleX = FIXED_ONE * 2 / 5;
-      object->scaleY = FIXED_ONE * 2 / 5;
-      while (object->scaleX < FIXED_ONE) {
+      Actor_SetSpriteFlags(actor, 0);
+      actor->velocityY = toFIXED(6);
+      actor->scaleX = FIXED_ONE * 2 / 5;
+      actor->scaleY = FIXED_ONE * 2 / 5;
+      while (actor->scaleX < FIXED_ONE) {
         System_Wait(1);
-        scale = object->scaleX + 0x51e;
-        object->facing += FACING_STEP;
-        object->scaleX = scale;
-        object->scaleY = scale;
+        scale = actor->scaleX + 0x51e;
+        actor->facing += FACING_STEP;
+        actor->scaleX = scale;
+        actor->scaleY = scale;
       }
-      object->scaleX = FIXED_ONE;
-      object->scaleY = FIXED_ONE;
-      object->facing =
+      actor->scaleX = FIXED_ONE;
+      actor->scaleY = FIXED_ONE;
+      actor->facing =
           Actor_Get(gMainRoutineWork.leaderActorId)->facing + DEGtoANG(180);
       Field_RequestBattleFromEncounterTable(row, column);
     }
@@ -651,29 +651,29 @@ void PsynergyTest_RaiseMonster(s32 mode, s32 x, s32 z, s32 row, s32 column) {
 /// Each frame of an actor's rings: two rings of four sprites climb 32 pixels
 /// up the actor, a new one every 16 frames with a chime, its colour cycling;
 /// once stopped, the rings climb out and the actor's colours come back.
-void PsynergyTest_UpdateRings(struct Actor *object) {
+void PsynergyTest_UpdateRings(struct Actor *actor) {
   struct Vector3 position;
   s32 x, z;
   FIXED sine;
   s32 i, j;
-  struct SparkleWork *work = (struct SparkleWork *)object->watchedActor;
-  u8 *count = &object->riseEnabled;
+  struct SparkleWork *work = (struct SparkleWork *)actor->watchedActor;
+  u8 *count = &actor->riseEnabled;
   struct EffectSprite *sprite;
 
   if (*count & 1)
     Actor_SetSpriteColorMode(
-        object, (u8)((u32)((struct CounterBits *)count)->rest % 6));
-  if (object->riseCounter == 0) {
+        actor, (u8)((u32)((struct CounterBits *)count)->rest % 6));
+  if (actor->riseCounter == 0) {
     if ((*count & 15) == 0) {
       Event_PlaySound(SE_RISING_RINGS);
       work->heights[work->nextPair] = 0;
       work->nextPair ^= 1;
     }
-  } else if (object->riseCounter == 1) {
+  } else if (actor->riseCounter == 1) {
     if (work->heights[0] >= RING_CLIMB && work->heights[1] >= RING_CLIMB) {
-      Actor_SetSpriteColorMode(object, SPRITE_COLOR_NORMAL);
+      Actor_SetSpriteColorMode(actor, SPRITE_COLOR_NORMAL);
       VramCache_FreeEntry(work->vramEntry);
-      object->update = 0;
+      actor->update = 0;
       return;
     }
   }
@@ -684,9 +684,9 @@ void PsynergyTest_UpdateRings(struct Actor *object) {
       if (work->heights[i] < RING_CLIMB) {
         struct Vector3 *p = &position;
 
-        SET_POSITION(p, object->x.fixed,
-                     object->y.fixed + toFIXED(work->heights[i]),
-                     object->z.fixed);
+        SET_POSITION(p, actor->x.fixed,
+                     actor->y.fixed + toFIXED(work->heights[i]),
+                     actor->z.fixed);
         Camera_WorldToScreen(p);
         x = p->x;
         j = 0;
@@ -698,9 +698,9 @@ void PsynergyTest_UpdateRings(struct Actor *object) {
           sprite->scaleX = sine;
           sprite->scaleY = sine;
           if (j == 0) {
-            sprite->depth = BattleEffect_GetObjectDepth(object) - 1;
+            sprite->depth = BattleEffect_GetObjectDepth(actor) - 1;
           } else {
-            sprite->depth = BattleEffect_GetObjectDepth(object) + 1;
+            sprite->depth = BattleEffect_GetObjectDepth(actor) + 1;
             sprite->y -= toFIXED(1);
             sprite->scaleY = -sprite->scaleY;
           }
@@ -942,7 +942,7 @@ struct Trigger gSceneEvents[] = {
 
 /// Starts an actor's rings, kept in `work`: loads their tiles and hooks
 /// PsynergyTest_UpdateRings to the actor.
-void PsynergyTest_StartRings(struct Actor *object, struct SparkleWork *work) {
+void PsynergyTest_StartRings(struct Actor *actor, struct SparkleWork *work) {
   struct EffectSprite *sprite;
   s32 tile;
   s32 row;
@@ -954,12 +954,12 @@ void PsynergyTest_StartRings(struct Actor *object, struct SparkleWork *work) {
   work->nextPair = 0;
   work->heights[0] = RING_NOT_STARTED;
   work->heights[1] = RING_NOT_STARTED;
-  work->object = object;
-  object->riseCounter = 0;
-  object->riseEnabled = 0;
-  object->update = PsynergyTest_UpdateRings;
+  work->actor = actor;
+  actor->riseCounter = 0;
+  actor->riseEnabled = 0;
+  actor->update = PsynergyTest_UpdateRings;
   tile = gVramCacheEntries[work->vramEntry].offset >> 5;
-  object->watchedActor = (struct Actor *)work;
+  actor->watchedActor = (struct Actor *)work;
   for (row = 0; row <= 1; row++) {
     col = 1;
     offset = (row * 2) * sizeof(struct EffectSprite);
@@ -968,11 +968,11 @@ void PsynergyTest_StartRings(struct Actor *object, struct SparkleWork *work) {
       EffectSprite_Init(sprite, 16, 16, OBJ_SIZE_32X16, tile);
       sprite->oam.fullColor = 0;
       sprite->oam.palette = 0;
-      sprite->oam.priority = BattleEffect_GetObjectPriority(object);
+      sprite->oam.priority = BattleEffect_GetObjectPriority(actor);
       sprite++;
     }
   }
 }
 
 /// Lets an actor's rings climb out.
-void PsynergyTest_StopRings(struct Actor *object) { object->riseCounter = 1; }
+void PsynergyTest_StopRings(struct Actor *actor) { actor->riseCounter = 1; }

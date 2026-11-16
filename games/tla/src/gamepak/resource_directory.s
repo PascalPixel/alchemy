@@ -680,18 +680,18 @@ Resource_DirectoryTable:
 	resource , Tileset_DailaFloodedTilesC
 	resource , Tileset_DailaFloodedTilesD
 	resource , Field_Daila
-	resource , Field_DailaInteriorsHouses
-	resource , Tileset_DailaInteriorsHousesPalette
-	resource , Tileset_DailaInteriorsHousesTilesA
-	resource , Tileset_DailaInteriorsHousesTilesB
-	resource , Tileset_DailaInteriorsHousesTilesC
-	resource , Tileset_DailaInteriorsHousesTilesD
-	resource , Field_DailaInteriorsSanctum
-	resource , Tileset_DailaInteriorsSanctumPalette
-	resource , Tileset_DailaInteriorsSanctumTilesA
-	resource , Tileset_DailaInteriorsSanctumTilesB
-	resource , Tileset_DailaInteriorsSanctumTilesC
-	resource , Tileset_DailaInteriorsSanctumTilesD
+	resource , Field_DailaRoomsHouses
+	resource , Tileset_DailaRoomsHousesPalette
+	resource , Tileset_DailaRoomsHousesTilesA
+	resource , Tileset_DailaRoomsHousesTilesB
+	resource , Tileset_DailaRoomsHousesTilesC
+	resource , Tileset_DailaRoomsHousesTilesD
+	resource , Field_DailaRoomsSanctum
+	resource , Tileset_DailaRoomsSanctumPalette
+	resource , Tileset_DailaRoomsSanctumTilesA
+	resource , Tileset_DailaRoomsSanctumTilesB
+	resource , Tileset_DailaRoomsSanctumTilesC
+	resource , Tileset_DailaRoomsSanctumTilesD
 	resource , Field_KandoreanTempleMimic
 	resource , Tileset_KandoreanTempleMimicPalette
 	resource , Tileset_KandoreanTempleMimicTilesA
@@ -785,18 +785,18 @@ Resource_DirectoryTable:
 	resource , Tileset_MadraTilesB
 	resource , Tileset_MadraTilesC
 	resource , Tileset_MadraTilesD
-	resource , Field_MadraInteriors
-	resource , Tileset_MadraInteriorsPalette
-	resource , Tileset_MadraInteriorsTilesA
-	resource , Tileset_MadraInteriorsTilesB
-	resource , Tileset_MadraInteriorsTilesC
-	resource , Tileset_MadraInteriorsTilesD
-	resource , Field_MadraInteriorsCavernHomes
-	resource , Tileset_MadraInteriorsCavernHomesPalette
-	resource , Tileset_MadraInteriorsCavernHomesTilesA
-	resource , Tileset_MadraInteriorsCavernHomesTilesB
-	resource , Tileset_MadraInteriorsCavernHomesTilesC
-	resource , Tileset_MadraInteriorsCavernHomesTilesD
+	resource , Field_MadraRooms
+	resource , Tileset_MadraRoomsPalette
+	resource , Tileset_MadraRoomsTilesA
+	resource , Tileset_MadraRoomsTilesB
+	resource , Tileset_MadraRoomsTilesC
+	resource , Tileset_MadraRoomsTilesD
+	resource , Field_MadraRoomsCavernHomes
+	resource , Tileset_MadraRoomsCavernHomesPalette
+	resource , Tileset_MadraRoomsCavernHomesTilesA
+	resource , Tileset_MadraRoomsCavernHomesTilesB
+	resource , Tileset_MadraRoomsCavernHomesTilesC
+	resource , Tileset_MadraRoomsCavernHomesTilesD
 	resource , Field_MadraCatacombsEntrance
 	resource , Tileset_MadraCatacombsEntrancePalette
 	resource , Tileset_MadraCatacombsEntranceTilesA
@@ -847,18 +847,18 @@ Resource_DirectoryTable:
 	resource , Tileset_Mikasalla2TilesB
 	resource , Tileset_Mikasalla2TilesC
 	resource , Tileset_Mikasalla2TilesD
-	resource , Field_MikasallaInteriors
-	resource , Tileset_MikasallaInteriorsPalette
-	resource , Tileset_MikasallaInteriorsTilesA
-	resource , Tileset_MikasallaInteriorsTilesB
-	resource , Tileset_MikasallaInteriorsTilesC
-	resource , Tileset_MikasallaInteriorsTilesD
-	resource , Field_MikasallaInteriorsSanctum
-	resource , Tileset_MikasallaInteriorsSanctumPalette
-	resource , Tileset_MikasallaInteriorsSanctumTilesA
-	resource , Tileset_MikasallaInteriorsSanctumTilesB
-	resource , Tileset_MikasallaInteriorsSanctumTilesC
-	resource , Tileset_MikasallaInteriorsSanctumTilesD
+	resource , Field_MikasallaRooms
+	resource , Tileset_MikasallaRoomsPalette
+	resource , Tileset_MikasallaRoomsTilesA
+	resource , Tileset_MikasallaRoomsTilesB
+	resource , Tileset_MikasallaRoomsTilesC
+	resource , Tileset_MikasallaRoomsTilesD
+	resource , Field_MikasallaRoomsSanctum
+	resource , Tileset_MikasallaRoomsSanctumPalette
+	resource , Tileset_MikasallaRoomsSanctumTilesA
+	resource , Tileset_MikasallaRoomsSanctumTilesB
+	resource , Tileset_MikasallaRoomsSanctumTilesC
+	resource , Tileset_MikasallaRoomsSanctumTilesD
 	resource , Field_Garoh
 	resource , Tileset_PaletteGaroh
 	resource , Field_GarohHypnosSwordChest
@@ -869,9 +869,9 @@ Resource_DirectoryTable:
 	resource , Field_GarohWerewolfCave
 	resource , Tileset_PaletteGarohWerewolfCaveA
 	resource , Tileset_PaletteGarohWerewolfCaveB
-	resource , Field_GarohInteriors
-	resource , Tileset_PaletteGarohInteriors
-	resource , Tileset_PaletteGarohInteriorsB
+	resource , Field_GarohRooms
+	resource , Tileset_PaletteGarohRooms
+	resource , Tileset_PaletteGarohRoomsB
 	resource , Field_YampiDesertGuardianRingChest
 	resource , Tileset_YampiDesertGuardianRingChestPalette
 	resource , Tileset_YampiDesertGuardianRingChestTilesA
@@ -928,7 +928,7 @@ Resource_DirectoryTable:
 	resource , Tileset_AirsRockInsidePsynergyStoneTilesD
 	resource , Field_Alhafra
 	resource , Tileset_PaletteAlhafra
-	resource , Field_AlhafraInteriors
+	resource , Field_AlhafraRooms
 	resource , Tileset_AlhafraPalette
 	resource , Tileset_AlhafraTilesA
 	resource , Field_AlhafraManor
@@ -958,12 +958,12 @@ Resource_DirectoryTable:
 	resource , Tileset_NaribweTilesB
 	resource , Tileset_NaribweTilesC
 	resource , Tileset_NaribweTilesD
-	resource , Field_NaribweInteriors
-	resource , Tileset_NaribweInteriorsPalette
-	resource , Tileset_NaribweInteriorsTilesA
-	resource , Tileset_NaribweInteriorsTilesB
-	resource , Tileset_NaribweInteriorsTilesC
-	resource , Tileset_NaribweInteriorsTilesD
+	resource , Field_NaribweRooms
+	resource , Tileset_NaribweRoomsPalette
+	resource , Tileset_NaribweRoomsTilesA
+	resource , Tileset_NaribweRoomsTilesB
+	resource , Tileset_NaribweRoomsTilesC
+	resource , Tileset_NaribweRoomsTilesD
 	resource , Field_GondowanCliffs
 	resource , Tileset_GondowanCliffsPalette
 	resource , Tileset_GondowanCliffsTilesA
@@ -1086,15 +1086,15 @@ Resource_DirectoryTable:
 	resource , Tileset_IsletsTurtleTilesD
 	resource , Field_Yallam
 	resource , Tileset_PaletteYallam
-	resource , Field_YallamInteriors
-	resource , Tileset_YallamInteriorsPalette
-	resource , Tileset_YallamInteriorsTilesA
-	resource , Tileset_YallamInteriorsTilesB
-	resource , Tileset_YallamInteriorsTilesC
-	resource , Tileset_YallamInteriorsTilesD
-	resource , Field_YallamInteriorsShops
-	resource , Tileset_PaletteYallamInteriorsShopsA
-	resource , Tileset_PaletteYallamInteriorsShopsB
+	resource , Field_YallamRooms
+	resource , Tileset_YallamRoomsPalette
+	resource , Tileset_YallamRoomsTilesA
+	resource , Tileset_YallamRoomsTilesB
+	resource , Tileset_YallamRoomsTilesC
+	resource , Tileset_YallamRoomsTilesD
+	resource , Field_YallamRoomsShops
+	resource , Tileset_PaletteYallamRoomsShopsA
+	resource , Tileset_PaletteYallamRoomsShopsB
 	resource , Field_TaopoSwampEntrance
 	resource , Tileset_TaopoSwampEntrancePalette
 	resource , Tileset_TaopoSwampEntranceTilesA
@@ -1175,12 +1175,12 @@ Resource_DirectoryTable:
 	resource , Tileset_IzumoTilesB
 	resource , Tileset_IzumoTilesC
 	resource , Tileset_IzumoTilesD
-	resource , Field_IzumoInteriors
-	resource , Tileset_IzumoInteriorsPalette
-	resource , Tileset_IzumoInteriorsTilesA
-	resource , Tileset_IzumoInteriorsTilesB
-	resource , Tileset_IzumoInteriorsTilesC
-	resource , Tileset_IzumoInteriorsTilesD
+	resource , Field_IzumoRooms
+	resource , Tileset_IzumoRoomsPalette
+	resource , Tileset_IzumoRoomsTilesA
+	resource , Tileset_IzumoRoomsTilesB
+	resource , Tileset_IzumoRoomsTilesC
+	resource , Tileset_IzumoRoomsTilesD
 	resource , Field_IzumoRuinsFirstRoom
 	resource , Tileset_IzumoRuinsFirstRoomPalette
 	resource , Tileset_IzumoRuinsFirstRoomTilesA
@@ -1208,8 +1208,8 @@ Resource_DirectoryTable:
 	resource , Field_GaiaRockInsideAltar
 	resource , Field_Champa
 	resource , Tileset_PaletteChampa
-	resource , Field_ChampaInteriors
-	resource , Tileset_PaletteChampaInteriors
+	resource , Field_ChampaRooms
+	resource , Tileset_PaletteChampaRooms
 	resource , Field_ChampaCliffCavesBriggs
 	resource , Tileset_ChampaCliffCavesBriggsPalette
 	resource , Tileset_ChampaCliffCavesBriggsTilesA
@@ -1264,12 +1264,12 @@ Resource_DirectoryTable:
 	resource , Tileset_LemuriaPalaceTilesB
 	resource , Tileset_LemuriaPalaceTilesC
 	resource , Tileset_LemuriaPalaceTilesD
-	resource , Field_LemuriaInteriors
-	resource , Tileset_LemuriaInteriorsPalette
-	resource , Tileset_LemuriaInteriorsTilesA
-	resource , Tileset_LemuriaInteriorsTilesB
-	resource , Tileset_LemuriaInteriorsTilesC
-	resource , Tileset_LemuriaInteriorsTilesD
+	resource , Field_LemuriaRooms
+	resource , Tileset_LemuriaRoomsPalette
+	resource , Tileset_LemuriaRoomsTilesA
+	resource , Tileset_LemuriaRoomsTilesB
+	resource , Tileset_LemuriaRoomsTilesC
+	resource , Tileset_LemuriaRoomsTilesD
 	resource , Field_LemuriaSpring
 	resource , Tileset_LemuriaSpringPalette
 	resource , Tileset_LemuriaSpringTilesA
@@ -1440,12 +1440,12 @@ Resource_DirectoryTable:
 	resource , Tileset_LohoTilesB
 	resource , Tileset_LohoTilesC
 	resource , Tileset_LohoTilesD
-	resource , Field_LohoInteriors
-	resource , Tileset_LohoInteriorsPalette
-	resource , Tileset_LohoInteriorsTilesA
-	resource , Tileset_LohoInteriorsTilesB
-	resource , Tileset_LohoInteriorsTilesC
-	resource , Tileset_LohoInteriorsTilesD
+	resource , Field_LohoRooms
+	resource , Tileset_LohoRoomsPalette
+	resource , Tileset_LohoRoomsTilesA
+	resource , Tileset_LohoRoomsTilesB
+	resource , Tileset_LohoRoomsTilesC
+	resource , Tileset_LohoRoomsTilesD
 	resource , Field_NorthernReaches
 	resource , Tileset_PaletteNorthernReaches
 	resource , Field_ProxSouthGate

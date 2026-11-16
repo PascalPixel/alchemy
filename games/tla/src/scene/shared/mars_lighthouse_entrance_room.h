@@ -13,11 +13,11 @@
 
 #define ABS(value) ((value) < 0 ? -(value) : (value))
 
-void Actor_SetSpriteColorMode(struct Actor *object, s32 value);
+void Actor_SetSpriteColorMode(struct Actor *actor, s32 value);
 s32 Map_GetTerrainHeight(s32 terrain, s32 x, s32 z);
 
 s32 Ride_GetEntryFlags(s32 index);
-void Actor_StartScript(struct Actor *object, const void *script);
+void Actor_StartScript(struct Actor *actor, const void *script);
 void ObjectTable_Snapshot(void);
 FIXED Trig_Cos(s32 angle);
 

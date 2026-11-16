@@ -21,7 +21,7 @@ gScene_AreaNameRules:
 	area_name AREA_VENUS_LIGHTHOUSE, -1, 4
 	area_name AREA_SUHALLA_GATE, -1, 5
 	area_name AREA_IDEJIMA, -1, 6
-	scene_name DailaInteriorsHouses, 7, 7
+	scene_name DailaRoomsHouses, 7, 7
 	area_name AREA_DAILA, -1, 8
 	area_name AREA_KANDOREAN_TEMPLE, -1, 9
 	area_name AREA_KANDOREAN_TEMPLE_GATE, -1, 9
@@ -31,9 +31,9 @@ gScene_AreaNameRules:
 	area_name AREA_MADRA_CATACOMBS, -1, 13
 	area_name AREA_MADRA_DRAWBRIDGE, -1, 14
 	area_name AREA_OSENIA_CLIFFS, -1, 15
-	scene_name MikasallaInteriorsHouses, 5, 16
-	scene_name MikasallaInteriorsSanctum, 4, 17
-	scene_name MikasallaInteriorsSanctum, 5, 18
+	scene_name MikasallaRoomsHouses, 5, 16
+	scene_name MikasallaRoomsSanctum, 4, 17
+	scene_name MikasallaRoomsSanctum, 5, 18
 	area_name AREA_MIKASALLA, -1, 19
 	area_name AREA_GAROH, -1, 20
 	area_name AREA_YAMPI_DESERT, -1, 21
@@ -69,8 +69,8 @@ gScene_AreaNameRules:
 	area_name AREA_AQUA_ROCK_INSIDE, -1, 46
 	area_name AREA_IZUMO, -1, 47
 	area_name AREA_IZUMO_RUINS, -1, 48
-	scene_name ChampaInteriors, 8, 49
-	scene_name ChampaInteriors, 9, 50
+	scene_name ChampaRooms, 8, 49
+	scene_name ChampaRooms, 9, 50
 	area_name AREA_CHAMPA, -1, 51
 	area_name AREA_SEA_OF_TIME, -1, 52
 	area_name AREA_ANKOHL_RUINS, -1, 53

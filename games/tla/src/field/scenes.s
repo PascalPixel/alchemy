@@ -31,8 +31,8 @@ gScenes:
 	scene SuhallaGatePsynergyStone, 0x64f, AREA_SUHALLA_GATE, SCENE_TYPE_OTHER, 7, 1
 	scene Idejima, 0x650, AREA_IDEJIMA, SCENE_TYPE_TOWN, 8, 1
 	scene DailaFlooded, 0x651, AREA_DAILA, SCENE_TYPE_TOWN, 9, 1
-	scene DailaInteriorsHouses, 0x652, AREA_DAILA, SCENE_TYPE_TOWN, 11, 0
-	scene DailaInteriorsSanctum, 0x652, AREA_DAILA, SCENE_TYPE_TOWN, 12, 0
+	scene DailaRoomsHouses, 0x652, AREA_DAILA, SCENE_TYPE_TOWN, 11, 0
+	scene DailaRoomsSanctum, 0x652, AREA_DAILA, SCENE_TYPE_TOWN, 12, 0
 	scene Daila, 0x651, AREA_DAILA, SCENE_TYPE_TOWN, 10, 1
 	scene KandoreanTempleLifts, 0x653, AREA_KANDOREAN_TEMPLE, SCENE_TYPE_OTHER, 14, 0
 	scene KandoreanTempleMimic, 0x653, AREA_KANDOREAN_TEMPLE, SCENE_TYPE_OTHER, 13, 0
@@ -65,8 +65,8 @@ gScenes:
 	scene LemurianShipTiller, 0x657, AREA_LEMURIAN_SHIP, SCENE_TYPE_OTHER, 185, 0
 	scene LemurianShipMainDeck, 0x657, AREA_EAST_INDRA_SHORE, SCENE_TYPE_OTHER, 126, 0
 	scene Madra, 0x658, AREA_MADRA, SCENE_TYPE_TOWN, 40, 1
-	scene MadraInteriorsHouses, 0x659, AREA_MADRA, SCENE_TYPE_TOWN, 41, 0
-	scene MadraInteriorsCavernHomes, 0x659, AREA_MADRA, SCENE_TYPE_TOWN, 42, 0
+	scene MadraRoomsHouses, 0x659, AREA_MADRA, SCENE_TYPE_TOWN, 41, 0
+	scene MadraRoomsCavernHomes, 0x659, AREA_MADRA, SCENE_TYPE_TOWN, 42, 0
 	scene MadraCatacombsEntrance, 0x65a, AREA_MADRA_CATACOMBS, SCENE_TYPE_OTHER, 43, 0
 	scene MadraCatacombsLadders, 0x65a, AREA_MADRA_CATACOMBS, SCENE_TYPE_OTHER, 44, 1
 	scene MadraCatacombsChampaTunnel, 0x65a, AREA_MADRA_CATACOMBS, SCENE_TYPE_OTHER, 45, 1
@@ -77,16 +77,16 @@ gScenes:
 	scene OseniaCliffs, 0x65c, AREA_OSENIA_CLIFFS, SCENE_TYPE_OTHER, 50, 0
 	scene Mikasalla, 0x65d, AREA_MIKASALLA, SCENE_TYPE_TOWN, 51, 1
 	scene MikasallaNorth, 0x65d, AREA_MIKASALLA, SCENE_TYPE_TOWN, 52, 1
-	scene MikasallaInteriorsHouses, 0x65e, AREA_MIKASALLA, SCENE_TYPE_TOWN, 53, 0
-	scene MikasallaInteriorsSanctum, 0x65e, AREA_MIKASALLA, SCENE_TYPE_TOWN, 54, 0
+	scene MikasallaRoomsHouses, 0x65e, AREA_MIKASALLA, SCENE_TYPE_TOWN, 53, 0
+	scene MikasallaRoomsSanctum, 0x65e, AREA_MIKASALLA, SCENE_TYPE_TOWN, 54, 0
 	scene Garoh, 0x65f, AREA_GAROH, SCENE_TYPE_TOWN, 55, 1
 	scene GarohHypnosSwordChest, 0x65f, AREA_GAROH, SCENE_TYPE_TOWN, 56, 1
 	scene GarohBlocks, 0x65f, AREA_GAROH, SCENE_TYPE_TOWN, 57, 1
 	scene GarohTunnels, 0x65f, AREA_GAROH, SCENE_TYPE_TOWN, 58, 1
 	scene GarohWerewolfCave, 0x65f, AREA_GAROH, SCENE_TYPE_TOWN, 59, 1
-	scene GarohInteriorsHouses, 0x660, AREA_GAROH, SCENE_TYPE_TOWN, 61, 0
-	scene GarohInteriorsShop, 0x660, AREA_GAROH, SCENE_TYPE_TOWN, 62, 0
-	scene GarohInteriorsSanctum, 0x660, AREA_GAROH, SCENE_TYPE_TOWN, 60, 0
+	scene GarohRoomsHouses, 0x660, AREA_GAROH, SCENE_TYPE_TOWN, 61, 0
+	scene GarohRoomsShop, 0x660, AREA_GAROH, SCENE_TYPE_TOWN, 62, 0
+	scene GarohRoomsSanctum, 0x660, AREA_GAROH, SCENE_TYPE_TOWN, 60, 0
 	scene YampiDesertGuardianRingChest, 0x661, AREA_YAMPI_DESERT, SCENE_TYPE_OTHER, 63, 1
 	scene YampiDesertOasis, 0x661, AREA_YAMPI_DESERT, SCENE_TYPE_OTHER, 64, 1
 	scene YampiDesertBlitz, 0x661, AREA_YAMPI_DESERT, SCENE_TYPE_OTHER, 65, 1
@@ -116,7 +116,7 @@ gScenes:
 	scene AirsRockInsideCoinsChest, 0x664, AREA_AIRS_ROCK_INSIDE, SCENE_TYPE_OTHER, 89, 0
 	scene AirsRockInsidePsynergyStone, 0x664, AREA_AIRS_ROCK_INSIDE, SCENE_TYPE_OTHER, 90, 0
 	scene Alhafra, 0x665, AREA_ALHAFRA, SCENE_TYPE_TOWN, 91, 1
-	scene AlhafraInteriors, 0x666, AREA_ALHAFRA, SCENE_TYPE_TOWN, 92, 0
+	scene AlhafraRooms, 0x666, AREA_ALHAFRA, SCENE_TYPE_TOWN, 92, 0
 	scene AlhafraManor, 0x667, AREA_ALHAFRA, SCENE_TYPE_TOWN, 93, 0
 	scene EasternAlhafra, 0x668, AREA_EASTERN_ALHAFRA, SCENE_TYPE_TOWN, 94, 0
 	scene EasternAlhafraShip, 0x669, AREA_EASTERN_ALHAFRA, SCENE_TYPE_TOWN, 95, 0
@@ -126,7 +126,7 @@ gScenes:
 	scene GondowanCliffsPass, 0x66b, AREA_GONDOWAN_CLIFFS, SCENE_TYPE_OTHER, 101, 1
 	scene GondowanCliffsHideout, 0x66c, AREA_GONDOWAN_CLIFFS, SCENE_TYPE_OTHER, 39, 1
 	scene Naribwe, 0x66d, AREA_NARIBWE, SCENE_TYPE_TOWN, 98, 1
-	scene NaribweInteriors, 0x66e, AREA_NARIBWE, SCENE_TYPE_TOWN, 99, 0
+	scene NaribweRooms, 0x66e, AREA_NARIBWE, SCENE_TYPE_TOWN, 99, 0
 	scene KibomboMountainsWaft, 0x66f, AREA_KIBOMBO_MOUNTAINS, SCENE_TYPE_OTHER, 102, 1
 	scene KibomboMountainsDiskAxeChest, 0x66f, AREA_KIBOMBO_MOUNTAINS, SCENE_TYPE_OTHER, 103, 1
 	scene KibomboMountainsCavern, 0x66f, AREA_KIBOMBO_MOUNTAINS, SCENE_TYPE_OTHER, 104, 1
@@ -161,8 +161,8 @@ gScenes:
 	scene IsletCaveSentinel, 0x675, AREA_ISLET_CAVE, SCENE_TYPE_OTHER, 316, 0
 	scene Yallam, 0x676, AREA_YALLAM, SCENE_TYPE_TOWN, 133, 1
 	scene YallamCave, 0x676, AREA_YALLAM, SCENE_TYPE_TOWN, 136, 1
-	scene YallamInteriorsInn, 0x677, AREA_YALLAM, SCENE_TYPE_TOWN, 134, 0
-	scene YallamInteriorsShops, 0x677, AREA_YALLAM, SCENE_TYPE_TOWN, 135, 0
+	scene YallamRoomsInn, 0x677, AREA_YALLAM, SCENE_TYPE_TOWN, 134, 0
+	scene YallamRoomsShops, 0x677, AREA_YALLAM, SCENE_TYPE_TOWN, 135, 0
 	scene TaopoSwampEntrance, 0x678, AREA_TAOPO_SWAMP_ENTRANCE, SCENE_TYPE_OTHER, 137, 1
 	scene TaopoSwampMud, 0x678, AREA_TAOPO_SWAMP_ENTRANCE, SCENE_TYPE_OTHER, 138, 0
 	scene TaopoSwampTearStones, 0x678, AREA_TAOPO_SWAMP, SCENE_TYPE_OTHER, 140, 1
@@ -190,7 +190,7 @@ gScenes:
 	scene AquaRockInsideTightrope, 0x67c, AREA_AQUA_ROCK_INSIDE, SCENE_TYPE_OTHER, 161, 0
 	scene AquaRockInsideTearStone, 0x67c, AREA_AQUA_ROCK_INSIDE, SCENE_TYPE_OTHER, 162, 0
 	scene AquaRockInsideParchTablet, 0x67c, AREA_AQUA_ROCK_INSIDE, SCENE_TYPE_OTHER, 163, 0
-	scene IzumoInteriors, 0x67d, AREA_IZUMO, SCENE_TYPE_TOWN, 165, 0
+	scene IzumoRooms, 0x67d, AREA_IZUMO, SCENE_TYPE_TOWN, 165, 0
 	scene Izumo, 0x67e, AREA_IZUMO, SCENE_TYPE_TOWN, 164, 1
 	scene IzumoRuinsFirstRoom, 0x67f, AREA_IZUMO_RUINS, SCENE_TYPE_OTHER, 166, 1
 	scene IzumoRuinsSecondRoom, 0x67f, AREA_IZUMO_RUINS, SCENE_TYPE_OTHER, 167, 1
@@ -203,7 +203,7 @@ gScenes:
 	scene GaiaRockInsidePlatforms, 0x681, AREA_GAIA_ROCK_INSIDE, SCENE_TYPE_OTHER, 174, 0
 	scene GaiaRockInsideAltar, 0x681, AREA_GAIA_ROCK_INSIDE, SCENE_TYPE_OTHER, 175, 0
 	scene Champa, 0x682, AREA_CHAMPA, SCENE_TYPE_TOWN, 176, 1
-	scene ChampaInteriors, 0x683, AREA_CHAMPA, SCENE_TYPE_TOWN, 177, 0
+	scene ChampaRooms, 0x683, AREA_CHAMPA, SCENE_TYPE_TOWN, 177, 0
 	scene ChampaSanctum, 0x684, AREA_CHAMPA, SCENE_TYPE_TOWN, 182, 0
 	scene ChampaCliffCavesBriggs, 0x685, AREA_CHAMPA, SCENE_TYPE_TOWN, 178, 0
 	scene ChampaCliffCavesHouses, 0x685, AREA_CHAMPA, SCENE_TYPE_TOWN, 179, 0
@@ -223,7 +223,7 @@ gScenes:
 	scene LemuriaDock, 0x689, AREA_LEMURIA_ENTRANCE, SCENE_TYPE_TOWN, 194, 0
 	scene AncientLemuria, 0x68a, AREA_LEMURIA_ENTRANCE, SCENE_TYPE_TOWN, 197, 1
 	scene Lemuria, 0x68b, AREA_LEMURIA, SCENE_TYPE_TOWN, 196, 1
-	scene LemuriaInteriors, 0x68c, AREA_LEMURIA, SCENE_TYPE_TOWN, 199, 0
+	scene LemuriaRooms, 0x68c, AREA_LEMURIA, SCENE_TYPE_TOWN, 199, 0
 	scene LemuriaPalace, 0x68d, AREA_LEMURIA, SCENE_TYPE_TOWN, 198, 0
 	scene LemuriaSpring, 0x68e, AREA_LEMURIA, SCENE_TYPE_TOWN, 200, 0
 	scene TundariaTowerEntrance, 0x68f, AREA_TUNDARIA_TOWER, SCENE_TYPE_OTHER, 206, 1
@@ -287,7 +287,7 @@ gScenes:
 	scene JupiterLighthouseAerie, 0x6a4, AREA_JUPITER_LIGHTHOUSE, SCENE_TYPE_OTHER, 260, 0
 	scene JupiterLighthouseAerieBeacon, 0x6a5, AREA_JUPITER_LIGHTHOUSE, SCENE_TYPE_OTHER, 260, 0
 	scene Loho, 0x6a6, AREA_LOHO, SCENE_TYPE_TOWN, 261, 1
-	scene LohoInteriors, 0x6a6, AREA_LOHO, SCENE_TYPE_TOWN, 262, 0
+	scene LohoRooms, 0x6a6, AREA_LOHO, SCENE_TYPE_TOWN, 262, 0
 	scene NorthernReaches, 0x6a7, AREA_NORTHERN_REACHES, SCENE_TYPE_OTHER, 263, 0
 	scene ProxSouthGate, 0x6a8, AREA_PROX, SCENE_TYPE_TOWN, 264, 1
 	scene Prox, 0x6a8, AREA_PROX, SCENE_TYPE_TOWN, 265, 1

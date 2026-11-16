@@ -108,7 +108,7 @@ and what runs.
 
 ```c
 {TRIGGER_TALK, ACTOR_WEAPON_MERCHANT, CONDITION_ALWAYS,
- EVENT(GarohInteriors_TalkToWeaponMerchant)},
+ EVENT(GarohRooms_TalkToWeaponMerchant)},
 {PSYNERGY_ON_ACTOR(ABILITY_FROST), ACTOR_FIFTH_PUDDLE,
  FLAG_DAILA_PUDDLE_FROZEN_FIRST + 4, EVENT(Scene_RaiseHeldActor)},
 ```
@@ -251,7 +251,7 @@ of its own: rooms sit side by side on one map, a
 [sheet of rooms](../../glossary.md#sheet-of-rooms), and the entrance picks
 the room. Champa's houses are one scene, and the same scene entered from
 the islets at entrance 8 or 9 is a house out on an islet. So a file like
-`champa_interiors.c` can hold a room that isn't in Champa at all.
+`champa_rooms.c` can hold a room that isn't in Champa at all.
 
 And the scene table gives each scene its overlay, its area, its kind and
 its map separately, with one more number The Broken Seal leaves zero,

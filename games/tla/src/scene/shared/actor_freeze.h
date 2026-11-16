@@ -1,10 +1,10 @@
 /// Stops an actor where it stands.
 void Actor_Freeze(s32 id) {
-  struct Actor *object = Actor_Get(id);
+  struct Actor *actor = Actor_Get(id);
 
-  if (object != NULL) {
-    Actor_SetSpriteFlags(object, 0);
-    object->collisionFlags = 0;
-    object->motionFlags = 0;
+  if (actor != NULL) {
+    Actor_SetSpriteFlags(actor, 0);
+    actor->collisionFlags = 0;
+    actor->motionFlags = 0;
   }
 }

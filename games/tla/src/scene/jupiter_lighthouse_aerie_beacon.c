@@ -227,7 +227,7 @@ s32 MapGrid_GetCellBehavior();
 
 void MapGrid_SetCellHeight(s32 x, s32 z, s32 layer, s32 height);
 
-void Actor_StartScript(struct Actor *object, const void *script);
+void Actor_StartScript(struct Actor *actor, const void *script);
 
 /// Runs one frame of the beacon's light rising, counted by
 /// gJupiterLighthouse_BeaconStage: the tower shakes and flashes, the light
@@ -411,13 +411,13 @@ void JupiterLighthouse_SpawnBeaconParticle(void) {
 /// full size on odd frames, or at y 0x688000 and 1.3 times the size on even
 /// ones; beyond it, calls Actor_SetPosition(ACTOR_BEACON_ORB, 0, 0).
 void JupiterLighthouse_PulseBeacon(void) {
-  struct Actor *object = Actor_Get(ACTOR_BEACON_ORB);
+  struct Actor *actor = Actor_Get(ACTOR_BEACON_ORB);
   struct MapWork *map = Ram_HeapSlots->mapGrid;
 
   Random16();
 #if TLA_PATCH_1
-  // From patch 1; the Japanese release goes on when object 36 is missing.
-  if (object == NULL)
+  // From patch 1; the Japanese release goes on when actor 36 is missing.
+  if (actor == NULL)
     return;
 #endif
   if (FIXEDtoINT(map->viewZ) <= 177) {
@@ -2026,11 +2026,11 @@ void JupiterLighthouse_FindObjectsInBeam(s32 *out, s32 zArg) {
 
   z = 64 - FIELD_CELL(z);
   for (slot = 0; slot <= 63; slot++) {
-    struct Actor *object = work->actors[slot];
+    struct Actor *actor = work->actors[slot];
 
-    if (object != NULL) {
-      s32 column = FIELD_CELL(object->x.fixed);
-      s32 row = FIELD_CELL(object->z.fixed);
+    if (actor != NULL) {
+      s32 column = FIELD_CELL(actor->x.fixed);
+      s32 row = FIELD_CELL(actor->z.fixed);
 
       if (column >= 4 && column <= 8 && z + 8 <= row && row < z + 11)
         *out++ = slot;
@@ -2279,20 +2279,18 @@ static inline void PaletteCycle_SetFrame(s32 value) {
 /// Lifts an actor 32 pixels over its ground as a platform others may stand on,
 /// and raises the map cell under it six height steps to match.
 void Actor_RaiseFromCell(s32 id) {
-  struct Actor *object;
+  struct Actor *actor;
   s32 height;
 
-  object = Actor_Get(id);
-  object->motionFlags = ACTOR_FLOATS;
-  height = object->groundHeight;
-  object->bounce = 0;
-  object->y.fixed = height + toFIXED(32);
-  object->priorityFlags |= ACTOR_PRIORITY_PLATFORM;
-  height =
-      Map_GetTerrainHeight(object->layer, object->x.fixed, object->z.fixed);
-  MapGrid_SetCellHeight(object->x.fixed, object->z.fixed, 0,
-                        (height >> 19) + 6);
-  MapGrid_SetAttributeBAt(object->x.fixed, object->z.fixed, 0, 128);
+  actor = Actor_Get(id);
+  actor->motionFlags = ACTOR_FLOATS;
+  height = actor->groundHeight;
+  actor->bounce = 0;
+  actor->y.fixed = height + toFIXED(32);
+  actor->priorityFlags |= ACTOR_PRIORITY_PLATFORM;
+  height = Map_GetTerrainHeight(actor->layer, actor->x.fixed, actor->z.fixed);
+  MapGrid_SetCellHeight(actor->x.fixed, actor->z.fixed, 0, (height >> 19) + 6);
+  MapGrid_SetAttributeBAt(actor->x.fixed, actor->z.fixed, 0, 128);
 }
 
 /// The leader rides the whirlwind it stepped onto, spinning, until it stops
@@ -2440,7 +2438,7 @@ void Whirlwind_Update(struct WhirlwindActor *object) {
   gJupiterLighthouse_WhirlwindRiding = 0;
 }
 
-void Actor_SetSpriteFlags(struct Actor *object, u32 value);
+void Actor_SetSpriteFlags(struct Actor *actor, u32 value);
 void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
                        s32 velocityZ, u32 flags,
                        const struct EffectOptions *options);
@@ -2449,7 +2447,7 @@ void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
 
 #include "shared/actor_emit_rising_sparks_b.h"
 
-void Actor_SetSpriteColorMode(struct Actor *object, s32 value);
+void Actor_SetSpriteColorMode(struct Actor *actor, s32 value);
 
 /// Places the lid and the angels over the well, raising each angel and tilting
 /// the lid toward it for each angel whose archer has been energized, and

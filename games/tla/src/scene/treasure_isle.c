@@ -376,29 +376,29 @@ void TreasureIsle_RaiseLastSpikyRock(void) {
 /// switch sets its flag, and the chests' room's second pillar on its switch
 /// raises the last spiky rock (TreasureIsle_RaiseLastSpikyRock).
 void TreasureIsle_SettleMovedPillar(s32 unused, s32 id) {
-  struct Actor *object = Actor_Get(id);
+  struct Actor *actor = Actor_Get(id);
 
   if (gMainRoutineWork.next == SCENE_TREASURE_ISLE_ENTRANCE) {
-    if (id == ACTOR_PUSHED_PILLAR_A && FIELD_CELL(object->x.fixed) == 16)
+    if (id == ACTOR_PUSHED_PILLAR_A && FIELD_CELL(actor->x.fixed) == 16)
       Event_SetFlag(FLAG_TREASURE_ISLE_ENTRANCE_PILLAR_MOVED(0));
-    if (id == ACTOR_PUSHED_PILLAR_B && FIELD_CELL(object->x.fixed) == 20)
+    if (id == ACTOR_PUSHED_PILLAR_B && FIELD_CELL(actor->x.fixed) == 20)
       Event_SetFlag(FLAG_TREASURE_ISLE_ENTRANCE_PILLAR_MOVED(1));
-    if (id == ACTOR_PUSHED_PILLAR_C && FIELD_CELL(object->x.fixed) == 27)
+    if (id == ACTOR_PUSHED_PILLAR_C && FIELD_CELL(actor->x.fixed) == 27)
       Event_SetFlag(FLAG_TREASURE_ISLE_ENTRANCE_PILLAR_MOVED(2));
   }
   if (gMainRoutineWork.next == SCENE_TREASURE_ISLE_CHESTS) {
-    if (id == ACTOR_STONE_PILLAR && object->x.fixed >> 19 == 33)
+    if (id == ACTOR_STONE_PILLAR && actor->x.fixed >> 19 == 33)
       Event_SetFlag(FLAG_TREASURE_ISLE_CHESTS_PILLAR_MOVED);
-    if (id == ACTOR_SECOND_STONE_PILLAR && object->x.fixed >> 19 == 85 &&
-        object->z.fixed >> 19 == 83)
+    if (id == ACTOR_SECOND_STONE_PILLAR && actor->x.fixed >> 19 == 85 &&
+        actor->z.fixed >> 19 == 83)
       TreasureIsle_RaiseLastSpikyRock();
   }
   if (gMainRoutineWork.next == SCENE_TREASURE_ISLE_JESTERS_ARMLET_CHEST) {
-    if (id == ACTOR_STONE_PILLAR && object->x.fixed >> 19 == 83)
+    if (id == ACTOR_STONE_PILLAR && actor->x.fixed >> 19 == 83)
       Event_SetFlag(FLAG_TREASURE_ISLE_ARMLET_PILLAR_MOVED);
   }
   if (gMainRoutineWork.next == SCENE_TREASURE_ISLE_GALE) {
-    if (id == ACTOR_GALE_ROOM_PILLAR && object->x.fixed >> 19 == 87)
+    if (id == ACTOR_GALE_ROOM_PILLAR && actor->x.fixed >> 19 == 87)
       Event_SetFlag(FLAG_TREASURE_ISLE_GALE_ROOM_PILLAR_MOVED);
   }
 }

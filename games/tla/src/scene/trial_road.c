@@ -221,15 +221,15 @@ extern struct ActorPlacement gTrialRoad_SummitPlacements[];
 extern s32 gTrialRoad_StagesPlacements[];
 
 /// Sets an actor on the ground two pixels up, still, and half again as tall.
-s32 TrialRoad_SettleOnGround(struct Actor *object) {
+s32 TrialRoad_SettleOnGround(struct Actor *actor) {
   s32 height =
-      Map_GetTerrainHeight(0, object->x.fixed, object->z.fixed) + toFIXED(2);
+      Map_GetTerrainHeight(0, actor->x.fixed, actor->z.fixed) + toFIXED(2);
 
-  object->groundHeight = height;
-  object->y.fixed = height;
-  object->motionFlags = 0;
-  object->collisionFlags = 0;
-  object->scaleY = FIXED_ONE * 3 / 2;
+  actor->groundHeight = height;
+  actor->y.fixed = height;
+  actor->motionFlags = 0;
+  actor->collisionFlags = 0;
+  actor->scaleY = FIXED_ONE * 3 / 2;
   return 0;
 }
 
@@ -264,7 +264,7 @@ s32 TrialRoad_RivalIsAhead(s32 fallback) {
 }
 
 s32 TrialRoad_OfferToGiveUp(void);
-void Actor_SetSpriteColorMode(struct Actor *object, u32 mode);
+void Actor_SetSpriteColorMode(struct Actor *actor, u32 mode);
 
 /// Taking the stairs at a stage's foot or top, with the race's rules: while the
 /// party's equipment is held, the first stairs offer to give up.
@@ -546,7 +546,7 @@ void TrialRoad_SetActorCellShape(s32 a, s32 b, s32 c);
 
 void TrialRoad_DriftRubble(union FieldObject *object);
 
-void Actor_StartIdle(struct Actor *object);
+void Actor_StartIdle(struct Actor *actor);
 
 extern const u16 gTrialRoad_ProgressPalette[];
 
@@ -720,13 +720,13 @@ void TrialRoad_StepPastChests(void) {}
 /// Makes the cell under the actor a wall.
 void TrialRoad_BlockCellUnder(s32 id) {
   struct MapWork *map = Ram_HeapSlots->mapGrid;
-  struct Actor *object = Actor_GetById(id);
+  struct Actor *actor = Actor_GetById(id);
 
-  if (object != NULL) {
+  if (actor != NULL) {
     u8 *cells = (u8 *)map->layers[0].cells;
     u8 *cell =
         cells +
-        (((FIELD_CELL(object->x.fixed)) + ((FIELD_CELL(object->z.fixed)) << 7))
+        (((FIELD_CELL(actor->x.fixed)) + ((FIELD_CELL(actor->z.fixed)) << 7))
          << 2);
     s32 bit = 128;
 
@@ -737,13 +737,13 @@ void TrialRoad_BlockCellUnder(s32 id) {
 /// Opens the cell under the actor again.
 void TrialRoad_UnblockCellUnder(s32 id) {
   struct MapWork *map = Ram_HeapSlots->mapGrid;
-  struct Actor *object = Actor_GetById(id);
+  struct Actor *actor = Actor_GetById(id);
 
-  if (object != NULL) {
+  if (actor != NULL) {
     u8 *cells = (u8 *)map->layers[0].cells;
     u8 *cell =
         cells +
-        (((FIELD_CELL(object->x.fixed)) + ((FIELD_CELL(object->z.fixed)) << 7))
+        (((FIELD_CELL(actor->x.fixed)) + ((FIELD_CELL(actor->z.fixed)) << 7))
          << 2);
 
     cell[3] &= 0x7f;
@@ -751,13 +751,13 @@ void TrialRoad_UnblockCellUnder(s32 id) {
 }
 
 /// A pillar top's update: it stays on its pillar at the pillar's lift.
-s32 TrialRoad_FollowPillar(struct Actor *object) {
-  struct Actor *owner = object->watchedActor;
+s32 TrialRoad_FollowPillar(struct Actor *actor) {
+  struct Actor *owner = actor->watchedActor;
 
-  SET_ACTOR_POSITION(object, owner->x.fixed,
-                     owner->y.fixed + toFIXED(PILLAR_TOP_HEIGHT(object)),
+  SET_ACTOR_POSITION(actor, owner->x.fixed,
+                     owner->y.fixed + toFIXED(PILLAR_TOP_HEIGHT(actor)),
                      owner->z.fixed);
-  object->groundHeight = owner->groundHeight;
+  actor->groundHeight = owner->groundHeight;
   return 1;
 }
 
@@ -766,32 +766,32 @@ extern s32 gTrialRoad_PillarTopScript[];
 /// Puts an invisible top on the pillar for the leader to stand on.
 void TrialRoad_AddPillarTop(s32 id) {
   struct Actor *owner = Actor_GetById(id);
-  struct Actor *object;
+  struct Actor *actor;
 
   if (owner != NULL) {
-    object = FieldActor_Create(SPRITE_UNSEEN_MARKER, owner->x.fixed,
-                               owner->y.fixed, owner->z.fixed);
-    if (object != NULL) {
-      Actor_SetSpriteFlags(object, 0);
-      Actor_StartScript(object, gTrialRoad_PillarTopScript);
-      object->watchedActor = owner;
-      object->priorityFlags |= 0x80;
-      object->motionFlags = 0;
-      object->collisionFlags = 0;
-      PILLAR_TOP_HEIGHT(object) = 16;
-      owner->watchedActor = object;
+    actor = FieldActor_Create(SPRITE_UNSEEN_MARKER, owner->x.fixed,
+                              owner->y.fixed, owner->z.fixed);
+    if (actor != NULL) {
+      Actor_SetSpriteFlags(actor, 0);
+      Actor_StartScript(actor, gTrialRoad_PillarTopScript);
+      actor->watchedActor = owner;
+      actor->priorityFlags |= 0x80;
+      actor->motionFlags = 0;
+      actor->collisionFlags = 0;
+      PILLAR_TOP_HEIGHT(actor) = 16;
+      owner->watchedActor = actor;
     }
   }
 }
 
 /// Sets how many pixels above the pillar its top stands.
 void TrialRoad_SetPillarTopLift(s32 id, s32 value) {
-  struct Actor *object = Actor_GetById(id);
+  struct Actor *actor = Actor_GetById(id);
 
-  if (object != NULL) {
-    object = object->watchedActor;
-    if (object != NULL)
-      PILLAR_TOP_HEIGHT(object) = value;
+  if (actor != NULL) {
+    actor = actor->watchedActor;
+    if (actor != NULL)
+      PILLAR_TOP_HEIGHT(actor) = value;
   }
 }
 
@@ -827,11 +827,11 @@ void TrialRoad_JumpForward(void) { Field_TryJumpForward(); }
 
 /// Opens the cell where the actor stands.
 void TrialRoad_OpenSpoutCell(s32 id) {
-  struct Actor *object = Actor_GetById(id);
+  struct Actor *actor = Actor_GetById(id);
 
-  if (object != NULL)
-    MapGrid_CopyCellsLayered(14, 27, 1, 1, FIELD_CELL(object->x.fixed),
-                             FIELD_CELL(object->z.fixed));
+  if (actor != NULL)
+    MapGrid_CopyCellsLayered(14, 27, 1, 1, FIELD_CELL(actor->x.fixed),
+                             FIELD_CELL(actor->z.fixed));
 }
 
 /// Notes whether the leader stands on the pillars' tops.
@@ -882,10 +882,10 @@ void TrialRoad_MeltIceBesideTorch(s32 a, s32 id) {
     s32 flag = id + FLAG_PUDDLE_MELTED_BASE;
 
     if (Event_GetFlag(flag) == 0) {
-      struct Actor *object = Actor_GetById(id);
+      struct Actor *actor = Actor_GetById(id);
 
-      object->update = NULL;
-      Actor_SetSpriteColorMode(object, 0);
+      actor->update = NULL;
+      Actor_SetSpriteColorMode(actor, 0);
       Actor_SetAnimation(id, 6);
       TrialRoad_SetPillarTopLift(id, -16);
       Event_SetFlag(flag);
@@ -902,12 +902,12 @@ void TrialRoad_JumpMeltedPuddle(void) {
 
 /// Frost freezes a melted puddle into a pillar again.
 void TrialRoad_FreezePuddle(s32 a, s32 id) {
-  struct Actor *object = Actor_GetById(id);
+  struct Actor *actor = Actor_GetById(id);
 
   TrialRoad_SetPillarTopLift(id, 16);
   Event_ClearFlag(id + FLAG_PUDDLE_MELTED_BASE);
-  if (object != NULL)
-    object->priorityFlags &= ~ACTOR_PRIORITY_UNDERFOOT;
+  if (actor != NULL)
+    actor->priorityFlags &= ~ACTOR_PRIORITY_UNDERFOOT;
 }
 
 /// Whirlwind blows the bush off a pillar, which can then be pushed.
@@ -918,25 +918,25 @@ void TrialRoad_BlowBushOffPillar(s32 a, s32 id) {
 
 /// Lowers a pillar into the ground, its top with it.
 void TrialRoad_LowerPillar(s32 id) {
-  struct Actor *object = Actor_GetById(id);
+  struct Actor *actor = Actor_GetById(id);
 
-  if (object != NULL) {
+  if (actor != NULL) {
     TrialRoad_SetPillarTopLift(id, -16);
-    object->collisionFlags = 0;
-    object->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
-    Actor_SelectAnimation(object, 6);
+    actor->collisionFlags = 0;
+    actor->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
+    Actor_SelectAnimation(actor, 6);
   }
 }
 
 /// Raises a pillar out of the ground, its top with it.
 void TrialRoad_RaisePillar(s32 id) {
-  struct Actor *object = Actor_GetById(id);
+  struct Actor *actor = Actor_GetById(id);
 
-  if (object != NULL) {
+  if (actor != NULL) {
     TrialRoad_SetPillarTopLift(id, 16);
-    object->collisionFlags = 1;
-    object->priorityFlags &= ~ACTOR_PRIORITY_UNDERFOOT;
-    Actor_SelectAnimation(object, 5);
+    actor->collisionFlags = 1;
+    actor->priorityFlags &= ~ACTOR_PRIORITY_UNDERFOOT;
+    Actor_SelectAnimation(actor, 5);
   }
 }
 
@@ -956,18 +956,17 @@ void TrialRoad_CheckPoundedPillarsCovered(s32 a, s32 b) {
 
   id = ACTOR_WEST_PILLAR;
   do {
-    struct Actor *object = Actor_GetById(id);
-    s32 x = FIELD_CELL(object->x.fixed);
-    s32 z = FIELD_CELL(object->z.fixed);
+    struct Actor *actor = Actor_GetById(id);
+    s32 x = FIELD_CELL(actor->x.fixed);
+    s32 z = FIELD_CELL(actor->z.fixed);
     u8 *covered = &PILLAR_TOP_HEIGHT(
         Actor_GetById(gTrialRoad_PoundPartners[(id - ACTOR_WEST_PILLAR) & 3]));
     s32 other;
 
     *covered = 0;
     for (other = ACTOR_PILLAR_A; other <= ACTOR_PILLAR_C; other++) {
-      object = Actor_GetById(other);
-      if (x == FIELD_CELL(object->x.fixed) &&
-          z == FIELD_CELL(object->z.fixed)) {
+      actor = Actor_GetById(other);
+      if (x == FIELD_CELL(actor->x.fixed) && z == FIELD_CELL(actor->z.fixed)) {
         *covered = 1;
         break;
       }
@@ -980,14 +979,14 @@ void TrialRoad_CheckPoundedPillarsCovered(s32 a, s32 b) {
 /// (gTrialRoad_PoundPartners).
 void TrialRoad_PoundPillar(s32 id, s32 phase, s32 frame) {
   s32 other = gTrialRoad_PoundPartners[(id - ACTOR_WEST_PILLAR) & 3];
-  struct Actor *object = Actor_GetById(id);
+  struct Actor *actor = Actor_GetById(id);
   struct Actor *partner = Actor_GetById(other);
   struct Actor *leader = Actor_GetById(gMainRoutineWork.leaderActorId);
 
   if (frame <= 10)
-    object->scaleY = FIXED_ONE - (frame << 12);
+    actor->scaleY = FIXED_ONE - (frame << 12);
   else
-    object->scaleY = FIXED_ONE;
+    actor->scaleY = FIXED_ONE;
   if (phase == 1) {
     TrialRoad_LowerPillar(id);
     TrialRoad_RaisePillar(other);
@@ -1044,11 +1043,11 @@ void TrialRoad_PoundEastPillar(s32 phase, s32 frame) {
 
 /// Stepping onto a raised pillar of a pair sinks it and raises its partner.
 void TrialRoad_StepOnSeesawPillar(s32 id, s32 other, s32 flag, s32 side) {
-  struct Actor *object = Actor_GetById(id);
+  struct Actor *actor = Actor_GetById(id);
   struct Actor *partner = Actor_GetById(other);
   FIXED t;
 
-  if (PILLAR_TOP_HEIGHT(object) != 0)
+  if (PILLAR_TOP_HEIGHT(actor) != 0)
     return;
   Event_Start();
   Event_ResolvePendingActions(0);
@@ -1058,12 +1057,12 @@ void TrialRoad_StepOnSeesawPillar(s32 id, s32 other, s32 flag, s32 side) {
   t = FIXED_ONE / 8;
   do {
     TrialRoad_SetPillarTopLift(id, (FIXED_ONE / 2 - t) / (FIXED_ONE / 32));
-    object->scaleY = FIXED_ONE - t;
+    actor->scaleY = FIXED_ONE - t;
     partner->scaleY = t;
     wait(1);
     t += FIXED_ONE / 8;
   } while (t <= FIXED_ONE);
-  object->scaleY = FIXED_ONE;
+  actor->scaleY = FIXED_ONE;
   TrialRoad_LowerPillar(id);
   Event_PlaySound(SE_ITEM_BREAK);
   if (side != 0)
@@ -1137,14 +1136,14 @@ void TrialRoad_CrumbleEastPillar(s32 phase) {
 /// otherwise.
 void TrialRoad_BlockLogCells(s32 id, s32 mode) {
   struct MapWork *map = Ram_HeapSlots->mapGrid;
-  struct Actor *object = Actor_GetById(id);
+  struct Actor *actor = Actor_GetById(id);
   s32 index;
   struct MapCell *low;
   struct MapCell *high;
 
-  if (object == 0)
+  if (actor == 0)
     return;
-  index = (FIELD_CELL(object->x.fixed)) + ((FIELD_CELL(object->z.fixed)) << 7);
+  index = (FIELD_CELL(actor->x.fixed)) + ((FIELD_CELL(actor->z.fixed)) << 7);
   low = map->layers[0].cells + index;
   high = map->layers[2].cells + index;
   if (mode == 0) {
@@ -1179,13 +1178,13 @@ void TrialRoad_BlockLogs(void) {
 
 /// Whether a log rolling to the cell is stopped by the block or a wall.
 s32 TrialRoad_IsLogBlocked(s32 x, s32 z) {
-  struct Actor *object = Actor_GetById(ACTOR_PILLAR_A);
+  struct Actor *actor = Actor_GetById(ACTOR_PILLAR_A);
   struct MapWork *map = Ram_HeapSlots->mapGrid;
   u8 *cells;
   u8 *cell;
   s32 value;
 
-  if (FIELD_CELL(object->x.fixed) == x && FIELD_CELL(object->z.fixed) == z)
+  if (FIELD_CELL(actor->x.fixed) == x && FIELD_CELL(actor->z.fixed) == z)
     return 1;
   cells = (u8 *)map->layers[0].cells;
   cell = cells + ((x + (z << 7)) << 2);
@@ -1195,10 +1194,10 @@ s32 TrialRoad_IsLogBlocked(s32 x, s32 z) {
 
 /// Pushes a log, which rolls on until something stops it.
 void TrialRoad_PushLog(s32 id, s32 dx, s32 dz, s32 axis) {
-  struct Actor *object = Actor_GetById(id);
+  struct Actor *actor = Actor_GetById(id);
   struct Actor *leader = Actor_GetById(gMainRoutineWork.leaderActorId);
-  s32 fromX = FIELD_CELL(object->x.fixed);
-  s32 fromZ = FIELD_CELL(object->z.fixed);
+  s32 fromX = FIELD_CELL(actor->x.fixed);
+  s32 fromZ = FIELD_CELL(actor->z.fixed);
   s32 toX = fromX;
   s32 toZ = fromZ;
   s32 n;
@@ -1241,13 +1240,13 @@ void TrialRoad_PushLog(s32 id, s32 dx, s32 dz, s32 axis) {
   Event_ResolvePendingActions(0);
   Actor_SetAnimationById(gMainRoutineWork.leaderActorId, 8);
   Event_Wait(6);
-  object->speedLimit = toFIXED(1) / 2;
-  object->acceleration = toFIXED(1) / 5;
+  actor->speedLimit = toFIXED(1) / 2;
+  actor->acceleration = toFIXED(1) / 5;
   Sound_Play(SE_HEAVY_MOVE);
   if (dx < 0 || dz < 0)
     mode = 3;
-  Actor_SelectAnimation(object, mode);
-  Actor_SetMoveTarget(object, FIELD_CELL_CENTER(toX), 0,
+  Actor_SelectAnimation(actor, mode);
+  Actor_SetMoveTarget(actor, FIELD_CELL_CENTER(toX), 0,
                       z = FIELD_CELL_CENTER(toZ));
   Event_Wait(6);
   Actor_SetAnimationById(gMainRoutineWork.leaderActorId, ANIM_WALK);
@@ -1256,20 +1255,20 @@ void TrialRoad_PushLog(s32 id, s32 dx, s32 dz, s32 axis) {
                                  dz << 3);
   Event_Wait(24);
   Actor_SetAnimationById(gMainRoutineWork.leaderActorId, ANIM_STAND);
-  Actor_WaitForMove(object);
+  Actor_WaitForMove(actor);
   if (toX <= 17) {
-    Actor_SelectAnimation(object, 1);
+    Actor_SelectAnimation(actor, 1);
     Sound_Play(SE_STOP_EXIT_SE);
     Sound_Play(SE_HEAVY_STOP);
   } else {
-    Actor_SelectAnimation(object, 3);
-    Actor_SetMoveTarget(object, toFIXED(312), 0, z);
+    Actor_SelectAnimation(actor, 3);
+    Actor_SetMoveTarget(actor, toFIXED(312), 0, z);
     Event_Wait(30);
-    Actor_SelectAnimation(object, 8);
-    Actor_WaitForMove(object);
+    Actor_SelectAnimation(actor, 8);
+    Actor_WaitForMove(actor);
     {
       /* FAKEMATCH(pin): the 2 held in r2 while the address takes r3. */
-      u8 *flags = &object->priorityFlags;
+      u8 *flags = &actor->priorityFlags;
       register s32 value asm("r2") = 2;
 
       *flags = value;
@@ -1327,14 +1326,14 @@ void TrialRoad_PushEastLogSouthOrClimbDown(void) {
 /// ground at its own place (its timer and user value) and its cell opens.
 void TrialRoad_UncoverSpout(s32 id, s32 phase, s32 frame) {
   if (frame == 30) {
-    struct Actor *object = Actor_GetById(id);
+    struct Actor *actor = Actor_GetById(id);
     s32 height;
 
-    object->x.fixed = toFIXED(object->timer);
-    object->z.fixed = toFIXED((s16)object->userValue);
-    height = Map_GetTerrainHeight(0, object->x.fixed, object->z.fixed);
-    object->groundHeight = height;
-    object->y.fixed = height;
+    actor->x.fixed = toFIXED(actor->timer);
+    actor->z.fixed = toFIXED((s16)actor->userValue);
+    height = Map_GetTerrainHeight(0, actor->x.fixed, actor->z.fixed);
+    actor->groundHeight = height;
+    actor->y.fixed = height;
     TrialRoad_OpenSpoutCell(id);
     Event_SetFlag(id + FLAG_SPOUT_UNCOVERED_BASE);
   }
@@ -1519,12 +1518,12 @@ void TrialRoad_ChallengeMoapa(void) {
 /// When the object stands in column 8, sets FLAG_TRIAL_ROAD_PEAK_PILLAR_PLACED,
 /// stops its motion and lifts it one pixel.
 void TrialRoad_SetSummitPillar(s32 a, s32 id) {
-  struct Actor *object = Actor_GetById(id);
+  struct Actor *actor = Actor_GetById(id);
 
-  if (FIELD_CELL(object->x.fixed) == 8) {
+  if (FIELD_CELL(actor->x.fixed) == 8) {
     Event_SetFlag(FLAG_TRIAL_ROAD_PEAK_PILLAR_PLACED);
-    object->motionFlags = 0;
-    object->y.fixed -= toFIXED(1);
+    actor->motionFlags = 0;
+    actor->y.fixed -= toFIXED(1);
   }
 }
 
@@ -1821,16 +1820,16 @@ extern s32 gTrialRoad_PaletteCycleRunning;
 /// TrialRoad_GaspFlees.
 void TrialRoad_SetUpPoolRoom(void) {
   if (!Event_GetFlag(FLAG_DJINNI(DJINNI_GASP))) {
-    struct Actor *object = Actor_GetById(ACTOR_GASP);
+    struct Actor *actor = Actor_GetById(ACTOR_GASP);
     s32 started = Event_GetFlag(FLAG_SCENE_TEMP_88);
-    u8 *flags = &object->motionFlags;
+    u8 *flags = &actor->motionFlags;
 
     if (!started) {
       *flags = 5;
-      object->y.fixed += toFIXED(17) / 2;
+      actor->y.fixed += toFIXED(17) / 2;
     } else {
       *flags = 3;
-      object->y.fixed = 0;
+      actor->y.fixed = 0;
     }
     Task_Add(TrialRoad_GaspFlees, TASK_PASS_VBLANK);
   }
@@ -2400,7 +2399,7 @@ void Actor_MoveToObject(s32 actor, s32 value);
 
 /// The party reaches the peak first, before Moapa's men.
 void TrialRoad_ReachPeakFirst(void) {
-  struct Actor *object;
+  struct Actor *actor;
 
   Event_Start();
   Event_ResolvePendingActions(0);
@@ -2430,37 +2429,37 @@ void TrialRoad_ReachPeakFirst(void) {
   Event_PlaySound(SE_ITEM_BREAK);
   wait(20);
   TrialRoad_PlaceActor(ACTOR_MOAPA, 344, 296, FACING_NORTH);
-  object = Actor_GetById(ACTOR_MOAPA);
-  object->speedLimit = toFIXED(1);
-  object->acceleration = toFIXED(1) / 2;
-  object->motionFlags = 0;
-  Actor_SetMoveTarget(object, object->x.fixed, object->y.fixed + toFIXED(88),
-                      object->z.fixed);
-  Actor_SelectAnimation(object, 2);
-  FieldActor_WaitForMove(object);
-  Actor_SelectAnimation(object, 1);
-  object->motionFlags = ACTOR_FALLS;
-  object->groundHeight = toFIXED(128);
-  object->velocityY = toFIXED(4);
-  object->speedLimit = toFIXED(3);
-  object->acceleration = toFIXED(2);
-  Actor_SetMoveTarget(object, object->x.fixed, object->y.fixed,
-                      object->z.fixed - toFIXED(16));
-  FieldActor_WaitForMove(object);
+  actor = Actor_GetById(ACTOR_MOAPA);
+  actor->speedLimit = toFIXED(1);
+  actor->acceleration = toFIXED(1) / 2;
+  actor->motionFlags = 0;
+  Actor_SetMoveTarget(actor, actor->x.fixed, actor->y.fixed + toFIXED(88),
+                      actor->z.fixed);
+  Actor_SelectAnimation(actor, 2);
+  FieldActor_WaitForMove(actor);
+  Actor_SelectAnimation(actor, 1);
+  actor->motionFlags = ACTOR_FALLS;
+  actor->groundHeight = toFIXED(128);
+  actor->velocityY = toFIXED(4);
+  actor->speedLimit = toFIXED(3);
+  actor->acceleration = toFIXED(2);
+  Actor_SetMoveTarget(actor, actor->x.fixed, actor->y.fixed,
+                      actor->z.fixed - toFIXED(16));
+  FieldActor_WaitForMove(actor);
   wait(12);
-  object->speedLimit = toFIXED(1);
-  object->acceleration = toFIXED(1) / 2;
-  FieldActor_SetMoveTargetFX(object, toFIXED(TrialRoad_MirrorCellX(41)),
-                             object->y.fixed, toFIXED(264));
-  FieldActor_WaitForMove(object);
+  actor->speedLimit = toFIXED(1);
+  actor->acceleration = toFIXED(1) / 2;
+  FieldActor_SetMoveTargetFX(actor, toFIXED(TrialRoad_MirrorCellX(41)),
+                             actor->y.fixed, toFIXED(264));
+  FieldActor_WaitForMove(actor);
   wait(6);
   Event_PlaySound(SE_JUMP);
-  object->velocityY = toFIXED(6);
-  object->speedLimit = toFIXED(3);
-  object->acceleration = toFIXED(2);
-  Actor_SetMoveTarget(object, toFIXED(TrialRoad_MirrorCellX(37)),
-                      object->y.fixed, toFIXED(264));
-  FieldActor_WaitForMove(object);
+  actor->velocityY = toFIXED(6);
+  actor->speedLimit = toFIXED(3);
+  actor->acceleration = toFIXED(2);
+  Actor_SetMoveTarget(actor, toFIXED(TrialRoad_MirrorCellX(37)), actor->y.fixed,
+                      toFIXED(264));
+  FieldActor_WaitForMove(actor);
   wait(6);
   Actor_MoveToObject(ACTOR_WEST_GUARD, 8);
   Actor_MoveToObject(ACTOR_EAST_GUARD, 8);
@@ -2717,10 +2716,10 @@ void TrialRoad_ShowTraps(void) {
   Actor_SetPosition(gMainRoutineWork.leaderActorId, 0, 1016);
   Actor_SetPosition(ACTOR_MOAPA, 1016, 1016);
   for (i = 9; i < 80; i++) {
-    struct Actor *object = Actor_GetById(i);
+    struct Actor *actor = Actor_GetById(i);
 
-    if (object->x.fixed != 0)
-      object->x.fixed -= toFIXED(144);
+    if (actor->x.fixed != 0)
+      actor->x.fixed -= toFIXED(144);
   }
   FieldCamera_MoveTo(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0);
   Actor_SetMovementTypeById(ACTOR_WEST_GUARD,
@@ -2960,7 +2959,7 @@ void TrialRoad_DrawFountains(void) {
   FIXED rise;
   struct MapWork *map;
   s32 *view;
-  struct Actor *object;
+  struct Actor *actor;
   u32 *entry;
   u32 *cursor;
   s32 lift;
@@ -2984,16 +2983,16 @@ void TrialRoad_DrawFountains(void) {
   for (i = 0; i < 16; i++, mover++) {
     if (mover->id == 0 || mover->height == 0)
       continue;
-    object = Actor_GetById(mover->id);
+    actor = Actor_GetById(mover->id);
     frame = ((gFrameCount % 12) / 3) * 8 + 32;
     lift = 0;
     if (lift < mover->height) {
       do {
         if (count > 79)
           continue;
-        x = object->x.fixed - viewX;
-        height = object->y.fixed + toFIXED(lift) - viewY;
-        z = object->z.fixed - viewZ - viewY;
+        x = actor->x.fixed - viewX;
+        height = actor->y.fixed + toFIXED(lift) - viewY;
+        z = actor->z.fixed - viewZ - viewY;
         x = FIXEDtoINT(x) - 8;
         sy = z - height;
         sy = (sy >> 16) - 16;
@@ -3013,9 +3012,9 @@ void TrialRoad_DrawFountains(void) {
     }
     if (count > 79)
       continue;
-    x = object->x.fixed - viewX;
-    height = object->y.fixed + toFIXED(mover->height) - viewY;
-    z = object->z.fixed - viewZ - viewY;
+    x = actor->x.fixed - viewX;
+    height = actor->y.fixed + toFIXED(mover->height) - viewY;
+    z = actor->z.fixed - viewZ - viewY;
     x = FIXEDtoINT(x) - 8;
     sy = z - height;
     bob = Iwram_MulFX(rise, Trig_Sin(mover->bob));
@@ -3062,11 +3061,11 @@ struct TrialRoadFountain *TrialRoad_AddFountain(s32 slot, s32 id, s32 timer,
                                                 s32 low, s32 high) {
   struct TrialRoadFountains *work = TRIAL_ROAD_FOUNTAINS;
   struct TrialRoadFountain *fountain = &work->fountains[slot];
-  struct Actor *object = Actor_GetById(id);
+  struct Actor *actor = Actor_GetById(id);
   struct Actor *spout;
 
   Actor_GetById(id);
-  Actor_SetSpriteFlags(object, 0);
+  Actor_SetSpriteFlags(actor, 0);
   if (!Event_GetFlag(FLAG_KEEP_PARTY_POSITION)) {
     if (high < low) {
       s32 swap = low;
@@ -3083,15 +3082,15 @@ struct TrialRoadFountain *TrialRoad_AddFountain(s32 slot, s32 id, s32 timer,
     fountain->fallAt = 240;
     fountain->low = low;
     fountain->unusedAfterLow = 1;
-    object->motionFlags = 0;
-    object->collisionFlags = ACTOR_NOT_TARGETED;
+    actor->motionFlags = 0;
+    actor->collisionFlags = ACTOR_NOT_TARGETED;
     fountain->speed = 0;
     fountain->bob = 0;
     fountain->unusedAfterSpeed = 0;
-    object->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
+    actor->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
   }
-  spout = ((struct Actor *)Import_ActorCreate(
-      0x8000, object->x.fixed, object->y.fixed, object->z.fixed));
+  spout = ((struct Actor *)Import_ActorCreate(0x8000, actor->x.fixed,
+                                              actor->y.fixed, actor->z.fixed));
   spout->collisionFlags = 0;
   spout->motionFlags = 0;
   spout->priorityFlags |= 128;
@@ -3116,7 +3115,7 @@ struct TrialRoadFountain *TrialRoad_AddFountain(s32 slot, s32 id, s32 timer,
 /// away.
 void TrialRoad_CrumblePillar(const void *data, s32 id) {
   const struct TrapEntry *entry = data;
-  struct Actor *object = Actor_GetById(id);
+  struct Actor *actor = Actor_GetById(id);
   s32 flag;
 
   while (entry->actor != 0xffff) {
@@ -3132,13 +3131,13 @@ void TrialRoad_CrumblePillar(const void *data, s32 id) {
         MapGrid_SetShake(1, 4, 1);
         Rubble_Scatter(0);
         wait(8);
-        Actor_SelectAnimation(object, 2);
-        TrialRoad_SetActorCellShape(-4, object->layer, id);
+        Actor_SelectAnimation(actor, 2);
+        TrialRoad_SetActorCellShape(-4, actor->layer, id);
         Rubble_Scatter(1);
         wait(16);
         MapGrid_SetShake(SHAKE_KEEP, SHAKE_KEEP, 0.9);
         wait(8);
-        Actor_SetPositionAndResetMotion(object, 0, 0, 0);
+        Actor_SetPositionAndResetMotion(actor, 0, 0, 0);
         wait(2);
         Event_PlaySound(SE_THUMP);
         MagmaRockInside_SpawnDustRing();
@@ -3162,8 +3161,8 @@ void Actor_MoveToObject(s32 id, s32 owner);
 #include "shared/pillar_restore.h"
 
 /// Moves the actor to the target's place and the target out of sight.
-void TrialRoad_TakePlaceOf(struct Actor *object, struct Actor *target) {
-  Actor_SetPositionAndResetMotion(object, target->x.fixed, target->y.fixed,
+void TrialRoad_TakePlaceOf(struct Actor *actor, struct Actor *target) {
+  Actor_SetPositionAndResetMotion(actor, target->x.fixed, target->y.fixed,
                                   target->z.fixed);
   Actor_SetPositionAndResetMotion(target, 0, 0, 0);
 }
@@ -3377,19 +3376,18 @@ void MagmaRockInside_SpawnDustRing(void) {
 
 /// Sets the shape of the cell under an actor (Actor_SetCellShape).
 void TrialRoad_SetActorCellShape(s32 level, s32 layer, s32 owner) {
-  struct Actor *object = Actor_GetById(owner);
+  struct Actor *actor = Actor_GetById(owner);
   u8 *shape = Ram_MapShapeGrid + (Ram_HeapSlots->mapGrid->layers[layer].cells -
                                   (struct MapCell *)Ram_MapCellBuffer);
   s32 value =
-      MapGrid_GetTerrainKind(object->layer, object->x.fixed, object->z.fixed);
+      MapGrid_GetTerrainKind(actor->layer, actor->x.fixed, actor->z.fixed);
   s32 height =
-      Map_GetTerrainHeight(object->layer, object->x.fixed, object->z.fixed) >>
-      19;
+      Map_GetTerrainHeight(actor->layer, actor->x.fixed, actor->z.fixed) >> 19;
 
   height += level;
 
-  shape += object->x.fixed / toFIXED(16) + object->z.fixed / toFIXED(16) * 128;
-  *shape = MapCollision_FindOrAddTag(object->layer, value, height);
+  shape += actor->x.fixed / toFIXED(16) + actor->z.fixed / toFIXED(16) * 128;
+  *shape = MapCollision_FindOrAddTag(actor->layer, value, height);
 }
 
 void MagmaRockInside_SetLeaderCellShape(s32 a, s32 b) {
@@ -3730,7 +3728,7 @@ void TrialRoad_DrawProgress(void) {
 
 /// Shows the race's progress for both sides.
 void TrialRoad_ShowProgress(s32 leaderId, s32 rivalId) {
-  struct TrialRoadLinkWork *link = HeapSlot_AllocEwram(
+  struct TrialRoadLinkWork *work = HeapSlot_AllocEwram(
       HEAP_SLOT_TRIAL_ROAD_LINK, sizeof(struct TrialRoadLinkWork));
   void *buffer = Heap_AllocEwram(576);
   s32 zero;
@@ -3741,14 +3739,14 @@ void TrialRoad_ShowProgress(s32 leaderId, s32 rivalId) {
   s32 *originZ;
   s16 *vramEntry;
 
-  link->leaderId = leaderId;
-  link->rivalId = rivalId;
+  work->leaderId = leaderId;
+  work->rivalId = rivalId;
   owner = gMainRoutineWork.leaderActorId;
-  originX = &link->originX;
-  originZ = &link->originZ;
-  fade = &link->fade;
-  holdFade = &link->holdFade;
-  vramEntry = &link->vramEntry;
+  originX = &work->originX;
+  originZ = &work->originZ;
+  fade = &work->fade;
+  holdFade = &work->holdFade;
+  vramEntry = &work->vramEntry;
   if (leaderId == owner) {
     *originX = toFIXED(160);
     *originZ = toFIXED(-1632);

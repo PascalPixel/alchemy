@@ -298,10 +298,10 @@ typedef char Actor_size[sizeof(struct Actor) == 0x80 ? 1 : -1];
 typedef char Actor_collision_flags_offset
     [(u32)&((struct Actor *)0)->collisionFlags == 0x59 ? 1 : -1];
 
-void Actor_SetPositionAndResetMotion(struct Actor *object, FIXED x, FIXED y,
+void Actor_SetPositionAndResetMotion(struct Actor *actor, FIXED x, FIXED y,
                                      FIXED z);
-void Actor_MoveHalfwayTowardTarget(struct Actor *object);
-void Actor_MoveHalfwayTowardTargetCopy(struct Actor *object);
+void Actor_MoveHalfwayTowardTarget(struct Actor *actor);
+void Actor_MoveHalfwayTowardTargetCopy(struct Actor *actor);
 
 struct Actor *Actor_Lookup(u32 objectId);
 void Actor_StartIdleFar(struct Actor *);
@@ -313,7 +313,7 @@ void Actor_SelectAnimationFar(struct Actor *, s32);
 void Actor_WaitForScriptEndFar(struct Actor *);
 void Actor_SetMovementType(struct Actor *, s32);
 void Actor_SetSpritePriority(u32, s32);
-void OverlayObject_WaitUntilIdle(struct Actor *object);
+void OverlayObject_WaitUntilIdle(struct Actor *actor);
 void Actor_WaitForAnimationChange(u32);
 void Actor_SetAnimationById(u32, s32);
 void Actor_WaitForScriptEndById(u32);

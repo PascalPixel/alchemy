@@ -117,7 +117,7 @@ struct Actor;
 
 extern u16 gYampiDesertCave_LogSprites[];
 
-void YampiDesertCave_StopLeaderAtLog(struct Actor *object);
+void YampiDesertCave_StopLeaderAtLog(struct Actor *actor);
 
 void YampiDesertCave_ArriveByTeleport(void);
 
@@ -160,8 +160,8 @@ extern s8 gYampiDesertCave_LogFootprints[];
 /// is no log.
 s32 YampiDesertCave_SetLogCells(s32 id) {
   struct MapWork *map = Ram_HeapSlots->mapGrid;
-  struct Actor *object = Actor_GetById(id);
-  s16 sprite = ((struct Sprite *)object->sprite)->entries[0]->animationId;
+  struct Actor *actor = Actor_GetById(id);
+  s16 sprite = ((struct Sprite *)actor->sprite)->entries[0]->animationId;
   s16 i;
   u32 kind;
   s32 w, h, x, z;
@@ -189,9 +189,9 @@ s32 YampiDesertCave_SetLogCells(s32 id) {
   // cells below.
   i = gYampiDesertCave_LogFootprints[kind * 4 + 1];
   h = (ABS(i) + ABS(gYampiDesertCave_LogFootprints[kind * 4 + 3])) >> 4;
-  x = FIELD_CELL(object->x.fixed +
+  x = FIELD_CELL(actor->x.fixed +
                  toFIXED(gYampiDesertCave_LogFootprints[kind * 4]));
-  z = FIELD_CELL(object->z.fixed + toFIXED(i));
+  z = FIELD_CELL(actor->z.fixed + toFIXED(i));
   i = FIELD_CELL(map->layers[1].offsetX);
   az = FIELD_CELL(map->layers[1].offsetY);
   bx = map->layers[2].offsetX;
@@ -235,16 +235,15 @@ static inline s32 FieldActor_CheckMovementCollision(struct Actor *actor,
 s32 YampiDesertCave_FindLogSlide(struct LogSlide *slide) {
   FIXED probe[3];
   s32 direction;
-  struct Actor *object;
+  struct Actor *actor;
   s32 kind, w, h, dx;
   FIXED dz;
   s32 count, i, j;
   u8 *state;
   s32 offset;
 
-  object =
-      YampiDesertCave_FindPushedLog(&direction, &slide->slot, &slide->kind);
-  if (object != NULL) {
+  actor = YampiDesertCave_FindPushedLog(&direction, &slide->slot, &slide->kind);
+  if (actor != NULL) {
     kind = slide->kind;
     w = (ABS(gYampiDesertCave_LogFootprints[kind * 4]) +
          ABS(gYampiDesertCave_LogFootprints[kind * 4 + 2])) >>
@@ -256,11 +255,11 @@ s32 YampiDesertCave_FindLogSlide(struct LogSlide *slide) {
     dz = toFIXED(gPushLeaderSteps[direction]);
     slide->onPushed = NULL;
     count = 0;
-    state = &object->layer;
+    state = &actor->layer;
     *state = 2;
-    slide->x = object->x.fixed + dx;
-    slide->z = object->z.fixed + dz;
-    probe[1] = object->y.fixed;
+    slide->x = actor->x.fixed + dx;
+    slide->z = actor->z.fixed + dz;
+    probe[1] = actor->y.fixed;
     // The row loop is built from labels: as a loop it grows by 14 bytes.
   next:
     offset = kind;
@@ -273,7 +272,7 @@ s32 YampiDesertCave_FindLogSlide(struct LogSlide *slide) {
   row:
     probe[0] = slide->x + toFIXED(gYampiDesertCave_LogFootprints[offset]);
     for (i = 0; i < w; i++) {
-      if (FieldActor_CheckMovementCollision(object, probe) == 2)
+      if (FieldActor_CheckMovementCollision(actor, probe) == 2)
         goto hit;
       probe[0] += toFIXED(16);
     }
@@ -290,9 +289,9 @@ s32 YampiDesertCave_FindLogSlide(struct LogSlide *slide) {
     *state = 0;
     if (count == 0)
       return 0;
-    slide->x = object->x.fixed + dx * count;
-    slide->y = object->y.fixed;
-    slide->z = object->z.fixed + dz * count;
+    slide->x = actor->x.fixed + dx * count;
+    slide->y = actor->y.fixed;
+    slide->z = actor->z.fixed + dz * count;
     return 1;
   } else {
     return 0;
@@ -307,7 +306,7 @@ struct Actor *YampiDesertCave_FindPushedLog(s32 *direction, s32 *slot,
   struct FieldWork *work = Ram_HeapSlots->fieldWork;
   struct Actor *leader = Actor_GetById(gMainRoutineWork.leaderActorId);
   struct Actor **entry;
-  struct Actor *object;
+  struct Actor *actor;
   u32 i, k;
   s32 x, z, left, top, right, bottom;
 
@@ -315,25 +314,25 @@ struct Actor *YampiDesertCave_FindPushedLog(s32 *direction, s32 *slot,
   i = ACTOR_FIRST_PLACED;
   entry = &work->actors[ACTOR_FIRST_PLACED];
   do {
-    object = *entry;
+    actor = *entry;
     for (k = 0; k < LOG_KIND_COUNT; k++) {
-      if (((struct Sprite *)object->sprite)->entries[0]->animationId ==
+      if (((struct Sprite *)actor->sprite)->entries[0]->animationId ==
           gYampiDesertCave_LogSprites[k]) {
         x = (PIXEL_PART(leader->x.fixed) +
              (gPushLeaderSteps[*direction] >> 16)) >>
             4;
         z = (PIXEL_PART(leader->z.fixed) + (s16)gPushLeaderSteps[*direction]) >>
             4;
-        left = (PIXEL_PART(object->x.fixed) +
+        left = (PIXEL_PART(actor->x.fixed) +
                 gYampiDesertCave_LogFootprints[k * 4]) >>
                4;
-        top = (PIXEL_PART(object->z.fixed) +
+        top = (PIXEL_PART(actor->z.fixed) +
                gYampiDesertCave_LogFootprints[k * 4 + 1]) >>
               4;
-        right = (PIXEL_PART(object->x.fixed) +
+        right = (PIXEL_PART(actor->x.fixed) +
                  gYampiDesertCave_LogFootprints[k * 4 + 2]) >>
                 4;
-        bottom = (PIXEL_PART(object->z.fixed) +
+        bottom = (PIXEL_PART(actor->z.fixed) +
                   gYampiDesertCave_LogFootprints[k * 4 + 3]) >>
                  4;
         if (left <= x && x < right && top <= z && z < bottom) {
@@ -341,12 +340,12 @@ struct Actor *YampiDesertCave_FindPushedLog(s32 *direction, s32 *slot,
           if (k & 1) {
             if (left != FIELD_CELL(leader->x.fixed)) {
               *slot = i;
-              return object;
+              return actor;
             }
           } else {
             if (top != FIELD_CELL(leader->z.fixed)) {
               *slot = i;
-              return object;
+              return actor;
             }
           }
         }
@@ -384,7 +383,7 @@ void YampiDesertCave_PushLog(struct LogSlide slide) {
       (struct MapWork *)((struct HeapSlotWords *)Ram_HeapSlots)->mapWork;
   s32 w, h;
   struct Actor *leader = Actor_GetById(gMainRoutineWork.leaderActorId);
-  struct Actor *object = Actor_GetById(slide.slot);
+  struct Actor *actor = Actor_GetById(slide.slot);
   // Always 0: angle is a u16. Direction 0 of the table of steps.
   s32 i = leader->facing >> 16;
   s32 kind = slide.kind;
@@ -396,11 +395,11 @@ void YampiDesertCave_PushLog(struct LogSlide slide) {
   FIXED offset;
   s32 ax, az, bx, bz;
 
-  from[0] = object->x.fixed;
-  from[2] = object->z.fixed;
-  cell[0] = FIELD_CELL(object->x.fixed +
+  from[0] = actor->x.fixed;
+  from[2] = actor->z.fixed;
+  cell[0] = FIELD_CELL(actor->x.fixed +
                        toFIXED(gYampiDesertCave_LogFootprints[kind * 4]));
-  cell[2] = FIELD_CELL(object->z.fixed +
+  cell[2] = FIELD_CELL(actor->z.fixed +
                        toFIXED(gYampiDesertCave_LogFootprints[kind * 4 + 1]));
   w = (ABS(gYampiDesertCave_LogFootprints[kind * 4]) +
        ABS(gYampiDesertCave_LogFootprints[kind * 4 + 2])) >>
@@ -419,10 +418,10 @@ void YampiDesertCave_PushLog(struct LogSlide slide) {
   Actor_GetById(gMainRoutineWork.leaderActorId)->update =
       YampiDesertCave_StopLeaderAtLog;
   wait(4);
-  Actor_SelectAnimation(object, 2);
+  Actor_SelectAnimation(actor, 2);
   Event_PlaySound(SE_HEAVY_MOVE);
   Actor_SetSpeedAndAcceleration(slide.slot, 0.5, 0.1);
-  Actor_SetMoveTarget(object, slide.x, slide.y, slide.z);
+  Actor_SetMoveTarget(actor, slide.x, slide.y, slide.z);
   /* FAKEMATCH(dead): a loop of one pass with an untaken two-test branch. */
   for (j = 0; j < 1; j++) {
     if (j != 0 && j != 5)
@@ -441,11 +440,11 @@ void YampiDesertCave_PushLog(struct LogSlide slide) {
   leader->update = NULL;
   leader->speedLimit = speed;
   leader->acceleration = acceleration;
-  FieldActor_WaitForMove(object);
+  FieldActor_WaitForMove(actor);
   Event_PlaySound(SE_STOP_EXIT_SE);
   Event_PlaySound(SE_HEAVY_STOP);
-  Actor_SetPositionAndResetMotion(object, slide.x, object->y.fixed, slide.z);
-  Actor_SelectAnimation(object, 1);
+  Actor_SetPositionAndResetMotion(actor, slide.x, actor->y.fixed, slide.z);
+  Actor_SelectAnimation(actor, 1);
   slide.x =
       FIELD_CELL(slide.x + toFIXED(gYampiDesertCave_LogFootprints[kind * 4]));
   slide.z = FIELD_CELL(slide.z +
@@ -474,16 +473,16 @@ void YampiDesertCave_PushLog(struct LogSlide slide) {
 }
 
 /// The leader's update while pushing: it stops at a wall or another log.
-void YampiDesertCave_StopLeaderAtLog(struct Actor *object) {
+void YampiDesertCave_StopLeaderAtLog(struct Actor *actor) {
   FIXED position[3];
   struct Actor *hit;
   u32 i;
-  s32 angle = object->facing >> 12;
+  s32 angle = actor->facing >> 12;
 
   angle = ((angle + 2) & 12) << 12;
-  position[0] = object->x.fixed;
-  position[1] = object->y.fixed;
-  position[2] = object->z.fixed;
+  position[0] = actor->x.fixed;
+  position[1] = actor->y.fixed;
+  position[2] = actor->z.fixed;
   Vector_AddPolarOffset(toFIXED(16), angle, position);
   hit = Actor_FindAtCell(position, 1);
   if (hit != 0) {
@@ -492,15 +491,15 @@ void YampiDesertCave_StopLeaderAtLog(struct Actor *object) {
           gYampiDesertCave_LogSprites[i])
         return;
     }
-    Actor_SetPositionAndResetMotion(object, object->x.fixed, object->y.fixed,
-                                    object->z.fixed);
+    Actor_SetPositionAndResetMotion(actor, actor->x.fixed, actor->y.fixed,
+                                    actor->z.fixed);
   }
-  position[0] = object->x.fixed;
-  position[1] = object->y.fixed;
-  position[2] = object->z.fixed;
-  if (MapGrid_CheckCollision(object, position) > 0)
-    Actor_SetPositionAndResetMotion(object, object->x.fixed, object->y.fixed,
-                                    object->z.fixed);
+  position[0] = actor->x.fixed;
+  position[1] = actor->y.fixed;
+  position[2] = actor->z.fixed;
+  if (MapGrid_CheckCollision(actor, position) > 0)
+    Actor_SetPositionAndResetMotion(actor, actor->x.fixed, actor->y.fixed,
+                                    actor->z.fixed);
 }
 
 /// Keeps the marks' palette lists, colours the marks' palette entries, saves
@@ -640,13 +639,13 @@ void YampiDesertCave_PlaceStakes(const u16 *list) {
   entry = list;
   do {
     u32 id = entry[0];
-    struct Actor *object = Actor_GetById(id);
+    struct Actor *actor = Actor_GetById(id);
     s16 kind = entry[1];
     s16 flag = entry[2];
 
-    object->collisionFlags &= ~1;
-    Actor_SetSpriteFlags(object, 0);
-    Actor_SetCellOpen(id, (u16)kind, (u16)flag, object->layer);
+    actor->collisionFlags &= ~1;
+    Actor_SetSpriteFlags(actor, 0);
+    Actor_SetCellOpen(id, (u16)kind, (u16)flag, actor->layer);
     entry += 3;
   } while (entry[0] != 0xffff);
 }
@@ -742,10 +741,10 @@ void YampiDesertCave_StartMovingPillar(s32 unused, s32 id) {
       MapGrid_CopyCellAttributes(43, 14, 1, 1, 39, 16);
     }
     if (id == ACTOR_WEST_PILLAR) {
-      struct Actor *object = Actor_GetById(ACTOR_WEST_PILLAR);
+      struct Actor *actor = Actor_GetById(ACTOR_WEST_PILLAR);
 
-      s32 column = FIELD_CELL(object->x.fixed);
-      s32 row = FIELD_CELL(object->z.fixed);
+      s32 column = FIELD_CELL(actor->x.fixed);
+      s32 row = FIELD_CELL(actor->z.fixed);
 
       MapGrid_CopyCellAttributes(7, 10, 1, 1, column, row);
     }
@@ -755,13 +754,13 @@ void YampiDesertCave_StartMovingPillar(s32 unused, s32 id) {
 /// Move sets a pillar down: where it opens the way it stays for good, and the
 /// cells under it close again.
 void YampiDesertCave_FinishMovingPillar(s32 unused, s32 id) {
-  struct Actor *object = Actor_GetById(id);
+  struct Actor *actor = Actor_GetById(id);
 
   if (gMainRoutineWork.next == SCENE_YAMPI_DESERT_CAVE_GUARDIAN) {
-    s32 row = FIELD_CELL(object->z.fixed);
+    s32 row = FIELD_CELL(actor->z.fixed);
 
     if (row == 13) {
-      object->motionFlags = 0;
+      actor->motionFlags = 0;
       Event_SetFlag(FLAG_YAMPI_DESERT_CAVE_GUARDIAN_PILLAR_MOVED);
       MapGrid_CopyCellAttributes(32, 13, 1, 1, 34, row);
       MapGrid_CopyCellAttributes(95, 3, 3, 3, 97, 12);
@@ -776,7 +775,7 @@ void YampiDesertCave_FinishMovingPillar(s32 unused, s32 id) {
       s32 column;
 
       MapGrid_CopyCellAttributes(103, 16, 1, 1, 103, 15);
-      column = FIELD_CELL(object->x.fixed);
+      column = FIELD_CELL(actor->x.fixed);
       if (column == 38) {
         Event_SetFlag(FLAG_YAMPI_DESERT_CAVE_EAST_PILLAR_MOVED);
         MapGrid_CopyCellAttributes(38, 15, 1, 1, column, 16);
@@ -785,11 +784,10 @@ void YampiDesertCave_FinishMovingPillar(s32 unused, s32 id) {
       }
     }
     if (id == ACTOR_WEST_PILLAR) {
-      if (FIELD_CELL(object->x.fixed) == 10 &&
-          FIELD_CELL(object->z.fixed) == 11)
+      if (FIELD_CELL(actor->x.fixed) == 10 && FIELD_CELL(actor->z.fixed) == 11)
         Event_SetFlag(FLAG_YAMPI_DESERT_CAVE_WEST_PILLAR_MOVED);
-      MapGrid_CopyCellAttributes(12, 11, 1, 1, FIELD_CELL(object->x.fixed),
-                                 FIELD_CELL(object->z.fixed));
+      MapGrid_CopyCellAttributes(12, 11, 1, 1, FIELD_CELL(actor->x.fixed),
+                                 FIELD_CELL(actor->z.fixed));
     }
   }
 }

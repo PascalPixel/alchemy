@@ -27,7 +27,7 @@ Field_ShamanVillageInn:
 	.incbin "games/tla/src/map/shaman_village_inn/animation.script.lz"
 	.balign 4, 0
 .LField_ShamanVillageInn_BLEND:
-	.incbin "games/tla/src/map/daila_interiors_houses/blend.script.lz"
+	.incbin "games/tla/src/map/daila_rooms_houses/blend.script.lz"
 	.balign 4, 0
 .LField_ShamanVillageInn_SCENE:
 	.incbin "games/tla/src/map/shaman_village_inn/scene.scene.lz"

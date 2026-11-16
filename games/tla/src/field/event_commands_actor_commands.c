@@ -41,11 +41,11 @@ void Actor_FaceDirectionById(s32 actorId, s32 angle, s32 frames) {
 /// Turns actor objectId to angle through gActor_StepAngleScript, which steps
 /// it round, and waits for the script to end.
 void Actor_FaceDirectionAndRefreshById(s32 objectId, s32 angle) {
-  struct Actor *object = Actor_Lookup(objectId);
+  struct Actor *actor = Actor_Lookup(objectId);
 
-  if (object != NULL) {
-    object->timer = angle;
-    Actor_StartScriptFar(object, (u32)gActor_StepAngleScript);
+  if (actor != NULL) {
+    actor->timer = angle;
+    Actor_StartScriptFar(actor, (u32)gActor_StepAngleScript);
     Actor_WaitForScriptEndById(objectId);
   }
 }
@@ -54,14 +54,14 @@ void Actor_FaceDirectionAndRefreshById(s32 objectId, s32 angle) {
 /// actor's sprite and its shadow, which then no longer follow its depth
 /// (clears priorityFlags bit 0).
 void Actor_SetSpritePriority(u32 objectId, s32 priority) {
-  struct Actor *object = Actor_Lookup(objectId);
+  struct Actor *actor = Actor_Lookup(objectId);
 
-  if (object != NULL && (object->spriteStorageKind & 0xF) == 1) {
-    struct Sprite *sprite = object->sprite;
+  if (actor != NULL && (actor->spriteStorageKind & 0xF) == 1) {
+    struct Sprite *sprite = actor->sprite;
 
     sprite->image.priority = priority;
     sprite->shadow.priority = priority;
-    object->priorityFlags &= ~ACTOR_PRIORITY_AUTOMATIC;
+    actor->priorityFlags &= ~ACTOR_PRIORITY_AUTOMATIC;
   }
 }
 
@@ -86,19 +86,19 @@ void Actor_CopyGraphics(u32 targetId, u32 sourceId) {
 
 /// Stops actor id moving and colliding and hides it.
 void Actor_DisableById(u32 id) {
-  struct Actor *object = Actor_GetById(id);
+  struct Actor *actor = Actor_GetById(id);
 
-  object->motionFlags = 0;
-  object->collisionFlags = 0;
-  Actor_SetSpriteFlagsFar(object, 0);
+  actor->motionFlags = 0;
+  actor->collisionFlags = 0;
+  Actor_SetSpriteFlagsFar(actor, 0);
 }
 
 /// Turns actor id's sprite to rotation (1/65536 turns).
 void Actor_SetSpriteRotationById(s32 id, s32 rotation) {
-  struct Actor *object = Actor_GetById(id);
-  struct Sprite *sprite = object->sprite;
+  struct Actor *actor = Actor_GetById(id);
+  struct Sprite *sprite = actor->sprite;
 
-  if (object != NULL && sprite != NULL)
+  if (actor != NULL && sprite != NULL)
     sprite->rotation = rotation;
 }
 
@@ -107,18 +107,18 @@ void Actor_SetSpriteRotationById(s32 id, s32 rotation) {
 /// cell beyond it.
 void Actor_FallOverById(u32 id, u32 angle) {
   FIXED position[3];
-  struct Actor *object = Actor_GetById(id);
-  struct Sprite *sprite = object->sprite;
+  struct Actor *actor = Actor_GetById(id);
+  struct Sprite *sprite = actor->sprite;
 
-  if (object != NULL && sprite != NULL) {
-    Actor_SelectAnimationFar(object, ANIM_STILL);
+  if (actor != NULL && sprite != NULL) {
+    Actor_SelectAnimationFar(actor, ANIM_STILL);
     angle = (angle + DEGtoANG(45)) & TRIG_TURN * 3 / 4;
-    position[0] = object->x.fixed;
-    position[2] = object->z.fixed;
-    MapGrid_SetCellBehaviorAtFar(object->layer, position[0], position[2],
+    position[0] = actor->x.fixed;
+    position[2] = actor->z.fixed;
+    MapGrid_SetCellBehaviorAtFar(actor->layer, position[0], position[2],
                                  CELL_BEHAVIOR_WALL);
     Vector_AddPolarOffset(toFIXED(16), angle, position);
-    MapGrid_SetCellBehaviorAtFar(object->layer, position[0], position[2],
+    MapGrid_SetCellBehaviorAtFar(actor->layer, position[0], position[2],
                                  CELL_BEHAVIOR_WALL);
     switch (angle) {
     case FACING_EAST:
@@ -136,8 +136,8 @@ void Actor_FallOverById(u32 id, u32 angle) {
       sprite->offsetY += 5;
       break;
     }
-    object->collisionFlags = 0;
-    object->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
+    actor->collisionFlags = 0;
+    actor->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
     sprite->flags = 0;
     sprite->rotation = angle + DEGtoANG(90);
   }
@@ -146,32 +146,32 @@ void Actor_FallOverById(u32 id, u32 angle) {
 /// Actor_FallOverById with an animation (mode, -1 for none) and the fall
 /// moving the actor itself half a cell the way it falls.
 void Actor_FallOverWithAnimationById(s32 id, u32 angle, s32 mode) {
-  struct Actor *object = Actor_GetById(id);
-  struct Sprite *sprite = object->sprite;
+  struct Actor *actor = Actor_GetById(id);
+  struct Sprite *sprite = actor->sprite;
   FIXED position[3];
 
-  if (object == NULL || sprite == NULL)
+  if (actor == NULL || sprite == NULL)
     return;
   if (mode != -1)
-    Actor_SelectAnimationFar(object, mode);
-  position[0] = object->x.fixed;
+    Actor_SelectAnimationFar(actor, mode);
+  position[0] = actor->x.fixed;
   angle = (angle + DEGtoANG(45)) & TRIG_TURN * 3 / 4;
-  position[2] = object->z.fixed;
-  MapGrid_SetCellBehaviorAtFar(object->layer, position[0], position[2],
+  position[2] = actor->z.fixed;
+  MapGrid_SetCellBehaviorAtFar(actor->layer, position[0], position[2],
                                CELL_BEHAVIOR_WALL);
   Vector_AddPolarOffset(toFIXED(16), angle, position);
-  MapGrid_SetCellBehaviorAtFar(object->layer, position[0], position[2],
+  MapGrid_SetCellBehaviorAtFar(actor->layer, position[0], position[2],
                                CELL_BEHAVIOR_WALL);
   switch (angle) {
   case FACING_EAST:
-    object->x.fixed += toFIXED(8);
-    object->z.fixed += toFIXED(1);
+    actor->x.fixed += toFIXED(8);
+    actor->z.fixed += toFIXED(1);
     sprite->offsetX -= 4;
     sprite->offsetY += 15;
     break;
   case FACING_WEST:
-    object->x.fixed -= toFIXED(8);
-    object->z.fixed += toFIXED(1);
+    actor->x.fixed -= toFIXED(8);
+    actor->z.fixed += toFIXED(1);
     sprite->offsetX += 3;
     sprite->offsetY += 16;
     break;
@@ -179,12 +179,12 @@ void Actor_FallOverWithAnimationById(s32 id, u32 angle, s32 mode) {
     sprite->offsetY += 1;
     break;
   case FACING_SOUTH:
-    object->z.fixed += toFIXED(8);
+    actor->z.fixed += toFIXED(8);
     sprite->offsetY += 13;
     break;
   }
-  object->collisionFlags = 0;
-  object->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
+  actor->collisionFlags = 0;
+  actor->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
   sprite->flags = 0;
   sprite->rotation = angle + DEGtoANG(90);
 }
@@ -193,17 +193,17 @@ void Actor_FallOverWithAnimationById(s32 id, u32 angle, s32 mode) {
 /// into a cleared 128-byte buffer, or a blank one when bit 15 is set, loaded
 /// into the sprite's VRAM block as its tile.
 void Actor_ShowItemIconById(s32 id, s32 resource) {
-  struct Actor *object = Actor_GetById(id);
+  struct Actor *actor = Actor_GetById(id);
   struct Sprite *sprite;
   u8 *buffer;
   s32 zero;
   s32 tile;
   u8 kind;
 
-  if (object != NULL) {
-    kind = object->spriteStorageKind;
+  if (actor != NULL) {
+    kind = actor->spriteStorageKind;
     if (kind == ACTOR_SPRITE_ONE) {
-      sprite = object->sprite;
+      sprite = actor->sprite;
       if (resource & 0x8000)
         resource = 0;
       buffer = HeapSlot_Alloc(HEAP_SLOT_GLYPH_TRANSFER, 0x608);
@@ -218,7 +218,7 @@ void Actor_ShowItemIconById(s32 id, s32 resource) {
 #endif
       tile = VramCache_Load(sprite->slot, 0x80, buffer);
       HeapSlot_Release(HEAP_SLOT_GLYPH_TRANSFER);
-      object->retainSpriteCache = kind;
+      actor->retainSpriteCache = kind;
       SpriteAnimation_ClearFar(sprite->entries[0]);
       sprite->entries[0] = NULL;
       sprite->count = zero;
@@ -239,10 +239,10 @@ void Event_SetMessageId(s32 message) { gFieldWork->message = message; }
 s32 Actor_GetSpriteById(s32 key) {
   struct FieldWork *event = Ram_HeapSlots->fieldWork;
   s32 result = -1;
-  struct Actor *object = event->actors[key & SPEAKER_ACTOR_MASK];
+  struct Actor *actor = event->actors[key & SPEAKER_ACTOR_MASK];
 
-  if (object != NULL && object->spriteStorageKind == ACTOR_SPRITE_ONE)
-    result = ((struct Sprite *)object->sprite)->entries[0]->animationId;
+  if (actor != NULL && actor->spriteStorageKind == ACTOR_SPRITE_ONE)
+    result = ((struct Sprite *)actor->sprite)->entries[0]->animationId;
   return result;
 }
 
@@ -252,12 +252,12 @@ s32 Actor_FindBySprite(s32 value) {
   struct FieldWork *event = Ram_HeapSlots->fieldWork;
   s32 result = -1;
   s32 index;
-  struct Actor *object;
+  struct Actor *actor;
 
   for (index = ACTOR_FIRST_PLACED; index < FIELD_ACTOR_COUNT; index++) {
-    object = event->actors[index];
-    if (object != NULL && object->spriteStorageKind == ACTOR_SPRITE_ONE &&
-        ((struct Sprite *)object->sprite)->entries[0]->animationId == value) {
+    actor = event->actors[index];
+    if (actor != NULL && actor->spriteStorageKind == ACTOR_SPRITE_ONE &&
+        ((struct Sprite *)actor->sprite)->entries[0]->animationId == value) {
       result = index;
       break;
     }

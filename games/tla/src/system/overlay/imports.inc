@@ -420,7 +420,7 @@
 	export Kibombo_CountAnswer, Event_CountAnswerFar
 	export Actor_FallOverWithAnimationById, Actor_FallOverWithAnimationByIdFar
 	export TrialRoad_CopyTouchedCells, Cyclone_CopyTouchedCellsFar
-	export MadraInteriors_CountAnswer, Event_CountAnswerFar
+	export MadraRooms_CountAnswer, Event_CountAnswerFar
 	export EasternAlhafra_InitializeRockSprite, EffectSprite_InitFar
 	export EffectSprite_Init, EffectSprite_InitFar
 	export Exit_StartStairsUp, Exit_StartStairsUpFar

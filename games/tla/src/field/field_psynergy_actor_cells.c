@@ -19,14 +19,14 @@ void Actor_PlaceBlocks(u16 *actors) {
   s32 height;
 
   for (; *actors != 0xffff; actors++) {
-    struct Actor *object = Actor_GetById(*actors);
-    u32 key = MapGrid_GetTerrainKindFar(object->layer, object->x.fixed,
-                                        object->z.fixed);
-    s32 level = MapGrid_GetTerrainHeightFar(object->layer, object->x.fixed,
-                                            object->z.fixed) >>
+    struct Actor *actor = Actor_GetById(*actors);
+    u32 key =
+        MapGrid_GetTerrainKindFar(actor->layer, actor->x.fixed, actor->z.fixed);
+    s32 level = MapGrid_GetTerrainHeightFar(actor->layer, actor->x.fixed,
+                                            actor->z.fixed) >>
                 19;
-    s32 slot = Actor_GetCellIndex(object);
-    struct MapCell *cells = map->layers[object->layer].cells;
+    s32 slot = Actor_GetCellIndex(actor);
+    struct MapCell *cells = map->layers[actor->layer].cells;
     // The row's address as an integer sum, index first: &grid[row] adds the
     // grid first.
     u8 *shapes =
@@ -35,14 +35,14 @@ void Actor_PlaceBlocks(u16 *actors) {
     s32 tag;
     u8 flags;
 
-    object->motionFlags = 0;
-    object->collisionFlags = 0;
-    Actor_SetSpriteFlagsFar(object, 0);
+    actor->motionFlags = 0;
+    actor->collisionFlags = 0;
+    Actor_SetSpriteFlagsFar(actor, 0);
     shapes += slot;
-    tag = MapCollision_FindOrAddTag(object->layer, key, level + 4);
+    tag = MapCollision_FindOrAddTag(actor->layer, key, level + 4);
     cell = &cells[slot];
     flags = cell->attributeB;
-    object->riseBaseY = flags;
+    actor->riseBaseY = flags;
     cell->attributeB = flags | 0x80;
     *shapes = tag;
     // Reused for the block in layer 2's table.
@@ -64,11 +64,11 @@ struct Actor *Leader_FindActorAhead(void);
 /// event work remembers it for Actor_PlaceMovedBlock.
 void Actor_LiftTargetBlock(u16 *actors) {
   struct FieldWork *event = Ram_HeapSlots->fieldWork;
-  struct FieldEffectWork *effect = Ram_HeapSlots->fieldEffectWork;
+  struct FieldEffectWork *work = Ram_HeapSlots->fieldEffectWork;
   struct Actor *target;
 
-  if (effect != NULL && event->psynergy != 0)
-    target = effect->child;
+  if (work != NULL && event->psynergy != 0)
+    target = work->child;
   else
     target = Leader_FindActorAhead();
   event->movedBlock = NULL;
@@ -179,17 +179,17 @@ struct Actor *Actor_FindAtCell(s32 *position, s32 checkY) {
 
   for (i = 8; i < 64; i++) {
     struct FieldWork *event = Ram_HeapSlots->fieldWork;
-    struct Actor *object = event->actors[i];
+    struct Actor *actor = event->actors[i];
 
     if (checkY) {
-      if (FIELD_CELL(position[0]) == FIELD_CELL(object->x.fixed) &&
-          position[1] / FIXED_ONE == object->y.fixed / FIXED_ONE &&
-          FIELD_CELL(position[2]) == FIELD_CELL(object->z.fixed))
-        return object;
+      if (FIELD_CELL(position[0]) == FIELD_CELL(actor->x.fixed) &&
+          position[1] / FIXED_ONE == actor->y.fixed / FIXED_ONE &&
+          FIELD_CELL(position[2]) == FIELD_CELL(actor->z.fixed))
+        return actor;
     } else {
-      if (FIELD_CELL(position[0]) == FIELD_CELL(object->x.fixed) &&
-          FIELD_CELL(position[2]) == FIELD_CELL(object->z.fixed))
-        return object;
+      if (FIELD_CELL(position[0]) == FIELD_CELL(actor->x.fixed) &&
+          FIELD_CELL(position[2]) == FIELD_CELL(actor->z.fixed))
+        return actor;
     }
   }
   return NULL;

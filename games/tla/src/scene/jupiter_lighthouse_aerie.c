@@ -97,7 +97,7 @@ struct LightOam;
 
 void LightSprites_SetPriority(s32 value);
 
-void JupiterLighthouse_StartBeamFlicker(struct Actor *object);
+void JupiterLighthouse_StartBeamFlicker(struct Actor *actor);
 
 void JupiterLighthouse_StartBeam(s32 archerId, s32 angelId, s32 side);
 void LightSprites_InitB(void);
@@ -260,35 +260,34 @@ void JupiterLighthouse_EnergizeRightAngel(void) {
 }
 
 /// Move lifts an energy path block: the cell it leaves drops to height 4.
-void JupiterLighthouse_LiftPathBlock(s32 unused, s32 actor) {
-  struct Actor *object = Actor_Get(actor);
+void JupiterLighthouse_LiftPathBlock(s32 unused, s32 actorId) {
+  struct Actor *actor = Actor_Get(actorId);
 
-  MapGrid_SetCellHeight(object->x.fixed, object->z.fixed, 0, 4);
+  MapGrid_SetCellHeight(actor->x.fixed, actor->z.fixed, 0, 4);
 }
 
 /// An energy path block set down: in its side's gap, cell (6, 12) on the
 /// left or (57, 12) on the right, it lights the path to the archer, which
 /// shoots at its angel; once both angels are energized the lid is off.
 void JupiterLighthouse_PlacePathBlock(s32 unused, s32 id) {
-  struct Actor *object = Actor_Get(id);
+  struct Actor *actor = Actor_Get(id);
   s32 i;
 
   if (id == ACTOR_LEFT_PATH_BLOCK) {
-    if (FIELD_CELL(object->x.fixed) == 6 && FIELD_CELL(object->z.fixed) == 12) {
+    if (FIELD_CELL(actor->x.fixed) == 6 && FIELD_CELL(actor->z.fixed) == 12) {
       Event_SetFlag(FLAG_JUPITER_LIGHTHOUSE_LEFT_ANGEL_ENERGIZED);
-      object->motionFlags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
+      actor->motionFlags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
       System_Wait(2);
       i = 0;
-      if (object->y.fixed > object->groundHeight || object->velocityY != 0) {
+      if (actor->y.fixed > actor->groundHeight || actor->velocityY != 0) {
         do {
           System_Wait(1);
           i++;
           if (i > 29)
             break;
-        } while (object->y.fixed > object->groundHeight ||
-                 object->velocityY != 0);
+        } while (actor->y.fixed > actor->groundHeight || actor->velocityY != 0);
       }
-      object->motionFlags = 0;
+      actor->motionFlags = 0;
       FieldActor_Stop(gMainRoutineWork.leaderActorId);
       Actor_SetPosition(id, 0, 0);
       Event_PlaySound(SE_HEAVY_IMPACT);
@@ -301,26 +300,24 @@ void JupiterLighthouse_PlacePathBlock(s32 unused, s32 id) {
       FieldEvent_Wait(20);
       JupiterLighthouse_EnergizeLeftAngel();
     } else {
-      MapGrid_SetCellHeight(object->x.fixed, object->z.fixed, 0, 6);
+      MapGrid_SetCellHeight(actor->x.fixed, actor->z.fixed, 0, 6);
     }
   }
   if (id == ACTOR_RIGHT_PATH_BLOCK) {
-    if (FIELD_CELL(object->x.fixed) == 57 &&
-        FIELD_CELL(object->z.fixed) == 12) {
+    if (FIELD_CELL(actor->x.fixed) == 57 && FIELD_CELL(actor->z.fixed) == 12) {
       Event_SetFlag(FLAG_JUPITER_LIGHTHOUSE_RIGHT_ANGEL_ENERGIZED);
-      object->motionFlags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
+      actor->motionFlags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
       System_Wait(2);
       i = 0;
-      if (object->y.fixed > object->groundHeight || object->velocityY != 0) {
+      if (actor->y.fixed > actor->groundHeight || actor->velocityY != 0) {
         do {
           System_Wait(1);
           i++;
           if (i > 29)
             break;
-        } while (object->y.fixed > object->groundHeight ||
-                 object->velocityY != 0);
+        } while (actor->y.fixed > actor->groundHeight || actor->velocityY != 0);
       }
-      object->motionFlags = 0;
+      actor->motionFlags = 0;
       FieldActor_Stop(gMainRoutineWork.leaderActorId);
       Actor_SetPosition(id, 0, 0);
       Event_PlaySound(SE_HEAVY_IMPACT);
@@ -333,7 +330,7 @@ void JupiterLighthouse_PlacePathBlock(s32 unused, s32 id) {
       FieldEvent_Wait(20);
       JupiterLighthouse_EnergizeRightAngel();
     } else {
-      MapGrid_SetCellHeight(object->x.fixed, object->z.fixed, 0, 6);
+      MapGrid_SetCellHeight(actor->x.fixed, actor->z.fixed, 0, 6);
     }
   }
   if (Event_GetFlag(FLAG_JUPITER_LIGHTHOUSE_LEFT_ANGEL_ENERGIZED) &&
@@ -373,7 +370,7 @@ s32 Scene_Initialize(void) {
 /// Lays out the energy path blocks: gone into their gaps, their paths lit,
 /// for each angel already energized.
 s32 Scene_PrepareMap(void) {
-  struct Actor *object;
+  struct Actor *actor;
 
   Scene_SetArrivalFlags(0);
   LightSprites_InitB();
@@ -388,12 +385,12 @@ s32 Scene_PrepareMap(void) {
     Actor_Get(ACTOR_LEFT_PATH_BLOCK)->priorityFlags |=
         ACTOR_PRIORITY_IGNORES_RISES;
   }
-  object = Actor_Get(ACTOR_LEFT_PATH_BLOCK);
-  object->motionFlags = 0;
+  actor = Actor_Get(ACTOR_LEFT_PATH_BLOCK);
+  actor->motionFlags = 0;
   {
     s32 height = 6;
 
-    MapGrid_SetCellHeight(object->x.fixed, object->z.fixed, 0, height);
+    MapGrid_SetCellHeight(actor->x.fixed, actor->z.fixed, 0, height);
   }
   if (Event_GetFlag(FLAG_JUPITER_LIGHTHOUSE_RIGHT_ANGEL_ENERGIZED)) {
     Actor_SetPosition(ACTOR_RIGHT_PATH_BLOCK, 0, 0);
@@ -406,12 +403,12 @@ s32 Scene_PrepareMap(void) {
     Actor_Get(ACTOR_RIGHT_PATH_BLOCK)->priorityFlags |=
         ACTOR_PRIORITY_IGNORES_RISES;
   }
-  object = Actor_Get(ACTOR_RIGHT_PATH_BLOCK);
-  object->motionFlags = 0;
+  actor = Actor_Get(ACTOR_RIGHT_PATH_BLOCK);
+  actor->motionFlags = 0;
   {
     s32 height = 6;
 
-    MapGrid_SetCellHeight(object->x.fixed, object->z.fixed, 0, height);
+    MapGrid_SetCellHeight(actor->x.fixed, actor->z.fixed, 0, height);
   }
   Actor_Get(ACTOR_LEFT_ARCHER)->riseCounter = 1;
   Actor_Get(ACTOR_RIGHT_ARCHER)->riseCounter = 1;
@@ -515,7 +512,7 @@ void JupiterLighthouse_RideTheBeam(void) {
 extern s32 gWhirlwindEndScript[];
 
 s32 MapGrid_GetCellBehavior(s32 x, s32 z, s32 layer);
-void Actor_StartScript(struct Actor *object, const s32 *script);
+void Actor_StartScript(struct Actor *actor, const s32 *script);
 
 #include "shared/whirlwind_update.h"
 
@@ -523,7 +520,7 @@ void Actor_StartScript(struct Actor *object, const s32 *script);
 
 /// An actor's update: every eighth frame, a spark rising from a random point of
 /// the beam.
-s32 JupiterLighthouse_SparkBeam(struct Actor *object) {
+s32 JupiterLighthouse_SparkBeam(struct Actor *actor) {
   struct EffectOptions spark;
   s32 frame = gFrameCount & 7;
 
@@ -536,10 +533,10 @@ s32 JupiterLighthouse_SparkBeam(struct Actor *object) {
     spark.startScaleX = FIXED_ONE * 7 / 10;
     spark.startScaleY = FIXED_ONE * 7 / 10;
     spark.palette = 14;
-    x = object->x.fixed + toFIXED((Random_Below(9)) - 4);
-    y = object->y.fixed + toFIXED(32 - (Random_Below(20)));
+    x = actor->x.fixed + toFIXED((Random_Below(9)) - 4);
+    y = actor->y.fixed + toFIXED(32 - (Random_Below(20)));
     speed = (s32)(toFIXED(Random_Below(5)) + toFIXED(5)) / 10;
-    FieldEffect_Spawn(x, y, object->z.fixed, 0, speed, frame,
+    FieldEffect_Spawn(x, y, actor->z.fixed, 0, speed, frame,
                       EFFECT_USE_START_SCALE | EFFECT_USE_PRIORITY |
                           EFFECT_USE_PALETTE,
                       &spark);
@@ -551,37 +548,37 @@ s32 JupiterLighthouse_SparkBeam(struct Actor *object) {
 
 /// An actor's update: flickers its sprite between filled and its beam's
 /// colours, a step a frame.
-void JupiterLighthouse_FlickerBeam(struct Actor *object) {
+void JupiterLighthouse_FlickerBeam(struct Actor *actor) {
   u8 *fill = &gDecodeFillByte;
-  u8 *step = &object->riseEnabled;
+  u8 *step = &actor->riseEnabled;
   s32 phase = *step & 3;
 
   *fill = 2;
   switch (phase) {
   case 1:
-    Actor_SetSpriteColorMode(object, SPRITE_COLOR_FILL);
+    Actor_SetSpriteColorMode(actor, SPRITE_COLOR_FILL);
     break;
   case 0:
   case 2:
-    Actor_SetSpriteColorMode(object, SPRITE_COLOR_GBR);
+    Actor_SetSpriteColorMode(actor, SPRITE_COLOR_GBR);
     break;
   case 3:
-    Actor_SetSpriteColorMode(object, SPRITE_COLOR_GBR);
+    Actor_SetSpriteColorMode(actor, SPRITE_COLOR_GBR);
     break;
   }
   (*step)++;
 }
 
 /// Starts an actor's flicker (JupiterLighthouse_FlickerBeam).
-void JupiterLighthouse_StartBeamFlicker(struct Actor *object) {
-  object->riseEnabled = 0;
-  object->update = (void (*)(void))JupiterLighthouse_FlickerBeam;
+void JupiterLighthouse_StartBeamFlicker(struct Actor *actor) {
+  actor->riseEnabled = 0;
+  actor->update = (void (*)(void))JupiterLighthouse_FlickerBeam;
 }
 
 /// Stops an actor's flicker and leaves it in its beam's colours.
-void JupiterLighthouse_StopBeamFlicker(struct Actor *object) {
-  object->update = 0;
-  Actor_SetSpriteColorMode(object, SPRITE_COLOR_GBR);
+void JupiterLighthouse_StopBeamFlicker(struct Actor *actor) {
+  actor->update = 0;
+  Actor_SetSpriteColorMode(actor, SPRITE_COLOR_GBR);
 }
 
 /// An archer's beam (JupiterLighthouse_StartBeam), in the menu's heap slot: the
@@ -775,7 +772,7 @@ void JupiterLighthouse_UpdateBeam(void) {
 }
 #undef LERP
 
-void Actor_StartIdle(struct Actor *object);
+void Actor_StartIdle(struct Actor *actor);
 
 /// An archer shoots its beam at an angel (side 0 the left, 1 the right): loads
 /// the sparks and the trident into VRAM and holds the event until the beam's
@@ -895,7 +892,7 @@ void LightSprites_SetPriority(s32 value) { gLightSpritePriority = value; }
 
 extern const s32 *gFieldEffect_DurationScripts[];
 
-void Actor_SetSpriteFlags(struct Actor *object, u32 value);
+void Actor_SetSpriteFlags(struct Actor *actor, u32 value);
 
 #define EFFECT_SPAWN FieldEffect_Spawn
 #define EFFECT_CREATE Import_ActorCreate
@@ -946,7 +943,7 @@ void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
 /// cell below the one that gave way, offset by (dx, dz), drops it in, and sets
 /// the scene's transition.
 void JupiterLighthouse_CheckCrackedTile(s32 dx, s32 dz, s32 value) {
-  struct Actor *object = Actor_Get(gMainRoutineWork.leaderActorId);
+  struct Actor *actor = Actor_Get(gMainRoutineWork.leaderActorId);
   struct FieldWork *field = Ram_HeapSlots->fieldWork;
   struct CellTarget *work = &gCrackedTiles;
   s32 x = FieldGameFlag_GetByte(work->flagByte);
@@ -957,11 +954,11 @@ void JupiterLighthouse_CheckCrackedTile(s32 dx, s32 dz, s32 value) {
 
     GameFlag_SetByte(work->flagByte, 0);
     GameFlag_SetByte(work->flagByte + 8, 0);
-    object->x.fixed = FIELD_CELL_CENTER(x + dx);
-    object->z.fixed = FIELD_CELL_CENTER(z + dz);
+    actor->x.fixed = FIELD_CELL_CENTER(x + dx);
+    actor->z.fixed = FIELD_CELL_CENTER(z + dz);
     shadow = field->camera;
-    shadow->x.fixed = object->x.fixed;
-    shadow->z.fixed = object->z.fixed;
+    shadow->x.fixed = actor->x.fixed;
+    shadow->z.fixed = actor->z.fixed;
     MapGrid_CenterOnFollowedPoint();
     CrackedTile_DropIn();
     gFieldWork->transition = value;

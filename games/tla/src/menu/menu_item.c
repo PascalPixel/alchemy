@@ -1929,8 +1929,8 @@ void Inventory_BreakFar(s32 owner, s32 slot);
 /// breaks one time in eight, with the break sound and "It broke!" in the info
 /// window. Called only after a successful use on a chosen party member.
 void ItemMenu_TryBreak(void) {
-  struct ItemMenuWork *work = Ram_HeapSlots->menuWork;
-  u32 item = work->selectedItems[0];
+  struct ItemMenuWork *menu = Ram_HeapSlots->menuWork;
+  u32 item = menu->selectedItems[0];
   u32 mask;
 
   mask = INVENTORY_ITEM_ID_MASK;
@@ -1938,10 +1938,10 @@ void ItemMenu_TryBreak(void) {
   // One time in eight: 8192 of Random16's 65536 values.
   if (Item_GetDirectFar(mask)->useType == ITEM_USE_MAY_BREAK &&
       Random16() < 8192) {
-    Inventory_BreakFar(work->sideMember[0], work->selectedSlots[0]);
+    Inventory_BreakFar(menu->sideMember[0], menu->selectedSlots[0]);
     Sound_PlayFar(SE_ITEM_BREAK);
     ItemMenu_ShowMessage((s32)MsgItBroke, 0, -1);
-    WindowSprite_RedrawSavedRectFar(work->infoWindow);
+    WindowSprite_RedrawSavedRectFar(menu->infoWindow);
   }
 }
 

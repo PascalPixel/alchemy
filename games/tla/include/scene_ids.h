@@ -31,10 +31,10 @@ extern char SceneId_SuhallaGatePsynergyStone;
   ((s32)&SceneId_SuhallaGatePsynergyStone)
 extern char SceneId_Idejima;
 #define SCENE_IDEJIMA ((s32)&SceneId_Idejima)
-extern char SceneId_DailaInteriorsHouses;
-#define SCENE_DAILA_INTERIORS_HOUSES ((s32)&SceneId_DailaInteriorsHouses)
-extern char SceneId_DailaInteriorsSanctum;
-#define SCENE_DAILA_INTERIORS_SANCTUM ((s32)&SceneId_DailaInteriorsSanctum)
+extern char SceneId_DailaRoomsHouses;
+#define SCENE_DAILA_ROOMS_HOUSES ((s32)&SceneId_DailaRoomsHouses)
+extern char SceneId_DailaRoomsSanctum;
+#define SCENE_DAILA_ROOMS_SANCTUM ((s32)&SceneId_DailaRoomsSanctum)
 extern char SceneId_DailaFlooded;
 #define SCENE_DAILA_FLOODED ((s32)&SceneId_DailaFlooded)
 extern char SceneId_Daila;
@@ -141,8 +141,8 @@ extern char SceneId_AirsRockInsidePsynergyStone;
 /// Alhafra itself, the town's one outdoor scene.
 extern char SceneId_Alhafra;
 #define SCENE_ALHAFRA ((s32)&SceneId_Alhafra)
-extern char SceneId_AlhafraInteriors;
-#define SCENE_ALHAFRA_INTERIORS ((s32)&SceneId_AlhafraInteriors)
+extern char SceneId_AlhafraRooms;
+#define SCENE_ALHAFRA_ROOMS ((s32)&SceneId_AlhafraRooms)
 extern char SceneId_SeaOfTimeWhirlpool;
 #define SCENE_SEA_OF_TIME_WHIRLPOOL ((s32)&SceneId_SeaOfTimeWhirlpool)
 extern char SceneId_SeaOfTimeToLemuria;
@@ -153,11 +153,10 @@ extern char SceneId_LemuriaDock;
 #define SCENE_LEMURIA_DOCK ((s32)&SceneId_LemuriaDock)
 extern char SceneId_AncientLemuria;
 #define SCENE_ANCIENT_LEMURIA ((s32)&SceneId_AncientLemuria)
-extern char SceneId_MadraInteriorsHouses;
-#define SCENE_MADRA_INTERIORS_HOUSES ((s32)&SceneId_MadraInteriorsHouses)
-extern char SceneId_MadraInteriorsCavernHomes;
-#define SCENE_MADRA_INTERIORS_CAVERN_HOMES                                     \
-  ((s32)&SceneId_MadraInteriorsCavernHomes)
+extern char SceneId_MadraRoomsHouses;
+#define SCENE_MADRA_ROOMS_HOUSES ((s32)&SceneId_MadraRoomsHouses)
+extern char SceneId_MadraRoomsCavernHomes;
+#define SCENE_MADRA_ROOMS_CAVERN_HOMES ((s32)&SceneId_MadraRoomsCavernHomes)
 extern char SceneId_MadraCatacombsEntrance;
 #define SCENE_MADRA_CATACOMBS_ENTRANCE ((s32)&SceneId_MadraCatacombsEntrance)
 extern char SceneId_MadraCatacombsLadders;
@@ -183,14 +182,12 @@ extern char SceneId_GondowanCliffsHideout;
 #define SCENE_GONDOWAN_CLIFFS_HIDEOUT ((s32)&SceneId_GondowanCliffsHideout)
 extern char SceneId_Naribwe;
 #define SCENE_NARIBWE ((s32)&SceneId_Naribwe)
-extern char SceneId_NaribweInteriors;
-#define SCENE_NARIBWE_INTERIORS ((s32)&SceneId_NaribweInteriors)
-extern char SceneId_MikasallaInteriorsHouses;
-#define SCENE_MIKASALLA_INTERIORS_HOUSES                                       \
-  ((s32)&SceneId_MikasallaInteriorsHouses)
-extern char SceneId_MikasallaInteriorsSanctum;
-#define SCENE_MIKASALLA_INTERIORS_SANCTUM                                      \
-  ((s32)&SceneId_MikasallaInteriorsSanctum)
+extern char SceneId_NaribweRooms;
+#define SCENE_NARIBWE_ROOMS ((s32)&SceneId_NaribweRooms)
+extern char SceneId_MikasallaRoomsHouses;
+#define SCENE_MIKASALLA_ROOMS_HOUSES ((s32)&SceneId_MikasallaRoomsHouses)
+extern char SceneId_MikasallaRoomsSanctum;
+#define SCENE_MIKASALLA_ROOMS_SANCTUM ((s32)&SceneId_MikasallaRoomsSanctum)
 extern char SceneId_Garoh;
 #define SCENE_GAROH ((s32)&SceneId_Garoh)
 extern char SceneId_GarohHypnosSwordChest;
@@ -212,8 +209,8 @@ extern char SceneId_AlhafranCave;
 #define SCENE_ALHAFRAN_CAVE ((s32)&SceneId_AlhafranCave)
 extern char SceneId_AlhafraJail;
 #define SCENE_ALHAFRA_JAIL ((s32)&SceneId_AlhafraJail)
-extern char SceneId_ChampaInteriors;
-#define SCENE_CHAMPA_INTERIORS ((s32)&SceneId_ChampaInteriors)
+extern char SceneId_ChampaRooms;
+#define SCENE_CHAMPA_ROOMS ((s32)&SceneId_ChampaRooms)
 extern char SceneId_ChampaSanctum;
 #define SCENE_CHAMPA_SANCTUM ((s32)&SceneId_ChampaSanctum)
 extern char SceneId_Contigo;
@@ -224,12 +221,12 @@ extern char SceneId_ContigoLuckyDice;
 #define SCENE_CONTIGO_LUCKY_DICE ((s32)&SceneId_ContigoLuckyDice)
 extern char SceneId_ContigoGeoglyph;
 #define SCENE_CONTIGO_GEOGLYPH ((s32)&SceneId_ContigoGeoglyph)
-extern char SceneId_GarohInteriorsHouses;
-#define SCENE_GAROH_INTERIORS_HOUSES ((s32)&SceneId_GarohInteriorsHouses)
-extern char SceneId_GarohInteriorsShop;
-#define SCENE_GAROH_INTERIORS_SHOP ((s32)&SceneId_GarohInteriorsShop)
-extern char SceneId_GarohInteriorsSanctum;
-#define SCENE_GAROH_INTERIORS_SANCTUM ((s32)&SceneId_GarohInteriorsSanctum)
+extern char SceneId_GarohRoomsHouses;
+#define SCENE_GAROH_ROOMS_HOUSES ((s32)&SceneId_GarohRoomsHouses)
+extern char SceneId_GarohRoomsShop;
+#define SCENE_GAROH_ROOMS_SHOP ((s32)&SceneId_GarohRoomsShop)
+extern char SceneId_GarohRoomsSanctum;
+#define SCENE_GAROH_ROOMS_SANCTUM ((s32)&SceneId_GarohRoomsSanctum)
 extern char SceneId_GabombaStatueBoneArmletChest;
 #define SCENE_GABOMBA_STATUE_BONE_ARMLET_CHEST                                 \
   ((s32)&SceneId_GabombaStatueBoneArmletChest)
@@ -432,8 +429,8 @@ extern char SceneId_AquaRockInsideWaterOfLifeChest;
 extern char SceneId_AquaRockInsideParchTablet;
 #define SCENE_AQUA_ROCK_INSIDE_PARCH_TABLET                                    \
   ((s32)&SceneId_AquaRockInsideParchTablet)
-extern char SceneId_IzumoInteriors;
-#define SCENE_IZUMO_INTERIORS ((s32)&SceneId_IzumoInteriors)
+extern char SceneId_IzumoRooms;
+#define SCENE_IZUMO_ROOMS ((s32)&SceneId_IzumoRooms)
 extern char SceneId_Izumo;
 #define SCENE_IZUMO ((s32)&SceneId_Izumo)
 extern char SceneId_IzumoRuinsFirstRoom;
@@ -603,10 +600,10 @@ extern char SceneId_LemurianShipCabins;
 /// The Lemurian Ship's hold, where the Aqua Hydra is fought.
 extern char SceneId_LemurianShipAquaHydra;
 #define SCENE_LEMURIAN_SHIP_AQUA_HYDRA ((s32)&SceneId_LemurianShipAquaHydra)
-extern char SceneId_YallamInteriorsInn;
-#define SCENE_YALLAM_INTERIORS_INN ((s32)&SceneId_YallamInteriorsInn)
-extern char SceneId_YallamInteriorsShops;
-#define SCENE_YALLAM_INTERIORS_SHOPS ((s32)&SceneId_YallamInteriorsShops)
+extern char SceneId_YallamRoomsInn;
+#define SCENE_YALLAM_ROOMS_INN ((s32)&SceneId_YallamRoomsInn)
+extern char SceneId_YallamRoomsShops;
+#define SCENE_YALLAM_ROOMS_SHOPS ((s32)&SceneId_YallamRoomsShops)
 extern char SceneId_TaopoSwampEntrance;
 #define SCENE_TAOPO_SWAMP_ENTRANCE ((s32)&SceneId_TaopoSwampEntrance)
 extern char SceneId_TaopoSwampMud;
@@ -771,8 +768,8 @@ extern char SceneId_MikasallaNorth;
 #define SCENE_MIKASALLA_NORTH ((s32)&SceneId_MikasallaNorth)
 extern char SceneId_Lemuria;
 #define SCENE_LEMURIA ((s32)&SceneId_Lemuria)
-extern char SceneId_LemuriaInteriors;
-#define SCENE_LEMURIA_INTERIORS ((s32)&SceneId_LemuriaInteriors)
+extern char SceneId_LemuriaRooms;
+#define SCENE_LEMURIA_ROOMS ((s32)&SceneId_LemuriaRooms)
 extern char SceneId_LemuriaPalace;
 #define SCENE_LEMURIA_PALACE ((s32)&SceneId_LemuriaPalace)
 extern char SceneId_LemuriaSpring;
@@ -798,8 +795,8 @@ extern char SceneId_JupiterLighthouseAerieBeacon;
   ((s32)&SceneId_JupiterLighthouseAerieBeacon)
 extern char SceneId_Loho;
 #define SCENE_LOHO ((s32)&SceneId_Loho)
-extern char SceneId_LohoInteriors;
-#define SCENE_LOHO_INTERIORS ((s32)&SceneId_LohoInteriors)
+extern char SceneId_LohoRooms;
+#define SCENE_LOHO_ROOMS ((s32)&SceneId_LohoRooms)
 extern char SceneId_NorthernReaches;
 #define SCENE_NORTHERN_REACHES ((s32)&SceneId_NorthernReaches)
 

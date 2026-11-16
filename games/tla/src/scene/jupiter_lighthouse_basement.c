@@ -158,7 +158,7 @@ const struct Trigger *Scene_GetTriggers(void) {
 
 /// Sends a spark back to a random place within its circle on the side room's
 /// floor, to rise for its lifetime again (116 or 212 frames).
-void JupiterLighthouse_RestartSpark(struct Actor *object) {
+void JupiterLighthouse_RestartSpark(struct Actor *actor) {
   if (Random16() & 0xff) {
     s32 position[3];
     s32 radius;
@@ -168,13 +168,13 @@ void JupiterLighthouse_RestartSpark(struct Actor *object) {
     radius = Random16();
     angle = Random16();
     FieldVector_AddPolarOffsetFX((radius << 5) + toFIXED(8), angle, position);
-    SET_ACTOR_POSITION(object, position[0], position[1], position[2]);
+    SET_ACTOR_POSITION(actor, position[0], position[1], position[2]);
   }
-  object->userValue = object->timer;
-  if (object->timer == 212)
-    Actor_SelectAnimation(object, 9);
+  actor->userValue = actor->timer;
+  if (actor->timer == 212)
+    Actor_SelectAnimation(actor, 9);
   else
-    Actor_SelectAnimation(object, 10);
+    Actor_SelectAnimation(actor, 10);
 }
 
 void TilesetAnim_SuspendAll(void);
@@ -183,28 +183,28 @@ void JupiterLighthouse_LoadPalettes(s32 mode);
 
 /// A spark's update: it stands still while Psynergy or a menu is up, waits out
 /// its starting delay, and otherwise rises, swaying, until it restarts.
-void JupiterLighthouse_UpdateSpark(struct Actor *object) {
+void JupiterLighthouse_UpdateSpark(struct Actor *actor) {
   struct FieldWork *work = Ram_HeapSlots->fieldWork;
 
   if (work->psynergy != 0 || work->fieldMenu != 0 || work->pauseMenu != 0 ||
       work->item != 0) {
-    Actor_SetAnimationSpeed(object, 0);
+    Actor_SetAnimationSpeed(actor, 0);
     TilesetAnim_SuspendAll();
     return;
   }
-  Actor_SetAnimationSpeed(object, ANIMATION_STEP_NORMAL);
+  Actor_SetAnimationSpeed(actor, ANIMATION_STEP_NORMAL);
   TilesetAnim_ResumeAll();
-  if (object->riseEnabled != 0) {
+  if (actor->riseEnabled != 0) {
     if ((gFrameCount & 7) == 0)
-      object->riseEnabled--;
+      actor->riseEnabled--;
     return;
   }
-  if (object->userValue == 0)
-    JupiterLighthouse_RestartSpark(object);
-  object->userValue--;
-  object->x.fixed +=
-      Trig_Cos(((object->z.fixed >> 14) + (object->y.fixed >> 15)) << 8) / 2;
-  object->y.fixed += object->speedLimit;
+  if (actor->userValue == 0)
+    JupiterLighthouse_RestartSpark(actor);
+  actor->userValue--;
+  actor->x.fixed +=
+      Trig_Cos(((actor->z.fixed >> 14) + (actor->y.fixed >> 15)) << 8) / 2;
+  actor->y.fixed += actor->speedLimit;
 }
 
 /// Places the side room's sixteen sparks, each starting a little later and
@@ -213,26 +213,26 @@ void JupiterLighthouse_SpawnSparks(void) {
   s32 i;
   s32 next;
 
-  struct Actor *object;
+  struct Actor *actor;
   s16 *action;
   s16 *timer;
 
   i = 0;
   do {
-    object = (FieldActor_Create(SPRITE_PARTICLE, 0, 0, 0));
+    actor = (FieldActor_Create(SPRITE_PARTICLE, 0, 0, 0));
 
-    object->motionFlags = 0;
-    object->priorityFlags = 0;
-    object->speedLimit = (i << 12) + toFIXED(1) / 2;
-    object->acceleration = (i << 12) + toFIXED(1) / 2;
-    object->update = (void (*)(void))JupiterLighthouse_UpdateSpark;
-    object->riseEnabled = i << 3;
-    Actor_SetSpriteFlags(object, 0);
-    FieldActor_SetSpriteColor(object, SPRITE_COLOR_RBG);
-    ((struct FieldSprite *)object->sprite)->priority = 1;
-    Actor_SetBlendMode(object, 1);
-    action = &object->timer;
-    timer = (s16 *)&object->userValue;
+    actor->motionFlags = 0;
+    actor->priorityFlags = 0;
+    actor->speedLimit = (i << 12) + toFIXED(1) / 2;
+    actor->acceleration = (i << 12) + toFIXED(1) / 2;
+    actor->update = (void (*)(void))JupiterLighthouse_UpdateSpark;
+    actor->riseEnabled = i << 3;
+    Actor_SetSpriteFlags(actor, 0);
+    FieldActor_SetSpriteColor(actor, SPRITE_COLOR_RBG);
+    ((struct FieldSprite *)actor->sprite)->priority = 1;
+    Actor_SetBlendMode(actor, 1);
+    action = &actor->timer;
+    timer = (s16 *)&actor->userValue;
     next = i + 1;
     if (i & 1) {
       s32 parameter = 212;
@@ -299,20 +299,19 @@ static inline void PaletteCycle_SetFrame(s32 value) {
 /// Lifts an actor 32 pixels over its ground as a platform others may stand on,
 /// and raises the map cell under it six height steps to match.
 void Actor_RaiseFromCell(s32 id) {
-  struct Actor *object;
+  struct Actor *actor;
   s32 height;
 
-  object = Actor_Get(id);
-  object->motionFlags = ACTOR_FLOATS;
-  height = object->groundHeight;
-  object->bounce = 0;
-  object->y.fixed = height + toFIXED(32);
-  object->priorityFlags |= ACTOR_PRIORITY_PLATFORM;
-  height =
-      Map_GetTerrainHeight(object->layer, object->x.fixed, object->z.fixed);
-  Import_MapGridSetCellHeight(object->x.fixed, object->z.fixed, 0,
+  actor = Actor_Get(id);
+  actor->motionFlags = ACTOR_FLOATS;
+  height = actor->groundHeight;
+  actor->bounce = 0;
+  actor->y.fixed = height + toFIXED(32);
+  actor->priorityFlags |= ACTOR_PRIORITY_PLATFORM;
+  height = Map_GetTerrainHeight(actor->layer, actor->x.fixed, actor->z.fixed);
+  Import_MapGridSetCellHeight(actor->x.fixed, actor->z.fixed, 0,
                               (height >> 19) + 6);
-  MapGrid_SetAttributeBAt(object->x.fixed, object->z.fixed, 0, 128);
+  MapGrid_SetAttributeBAt(actor->x.fixed, actor->z.fixed, 0, 128);
 }
 
 #include "shared/whirlwind_carry_leader_lower.h"
@@ -321,17 +320,17 @@ void Actor_RaiseFromCell(s32 id) {
 
 extern s32 gWhirlwindEndScript[];
 
-void Actor_StartScript(struct Actor *object, const s32 *script);
+void Actor_StartScript(struct Actor *actor, const s32 *script);
 
 #include "shared/whirlwind_update_lower.h"
 
-void Actor_SetSpriteFlags(struct Actor *object, u32 value);
+void Actor_SetSpriteFlags(struct Actor *actor, u32 value);
 
 #include "shared/whirlwind_spawn.h"
 
 /// An actor's update: every eighth frame, a sparkle rising from a random point
 /// of it.
-s32 JupiterLighthouse_RaiseSparkles(struct Actor *object) {
+s32 JupiterLighthouse_RaiseSparkles(struct Actor *actor) {
   struct EffectOptions params;
 
   if ((gFrameCount & 7) == 0) {
@@ -342,9 +341,9 @@ s32 JupiterLighthouse_RaiseSparkles(struct Actor *object) {
     params.startScaleX = FIXED_ONE * 7 / 10;
     params.startScaleY = FIXED_ONE * 7 / 10;
     params.palette = 14;
-    x = object->x.fixed + toFIXED((Random_Below(9)) - 4);
-    y = object->y.fixed + toFIXED(32 - (Random_Below(20)));
-    FieldEffect_Spawn(x, y, object->z.fixed, 0,
+    x = actor->x.fixed + toFIXED((Random_Below(9)) - 4);
+    y = actor->y.fixed + toFIXED(32 - (Random_Below(20)));
+    FieldEffect_Spawn(x, y, actor->z.fixed, 0,
                       (s32)(toFIXED(Random_Below(5)) + toFIXED(5)) / 10, 0,
                       EFFECT_USE_START_SCALE | EFFECT_USE_PRIORITY |
                           EFFECT_USE_PALETTE,
@@ -508,7 +507,7 @@ extern const s32 *gFieldEffect_DurationScripts[];
 
 void TilesetAnim_SuspendAll(void);
 void TilesetAnim_ResumeAll(void);
-void JupiterLighthouse_RestartSpark(struct Actor *object);
+void JupiterLighthouse_RestartSpark(struct Actor *actor);
 void JupiterLighthouse_LoadPalettes(s32 mode);
 
 #include "shared/leader_center_in_cell.h"

@@ -23,33 +23,33 @@ void FieldCamera_MoveWithinMapBounds(FIXED requestedX, FIXED requestedY,
   FIXED positionZ;
   FIXED positionY;
   struct MapWork *map;
-  struct Actor *object;
+  struct Actor *actor;
 
   positionX = requestedX;
   positionY = requestedY;
   shouldUseSetter = useSetter;
   positionZ = requestedZ;
   runtimeBlock = HeapSlot_AllocEwram(HEAP_SLOT_FIELD, sizeof(struct FieldWork));
-  object = runtimeBlock->camera;
+  actor = runtimeBlock->camera;
   map = Ram_HeapSlots->mapGrid;
   // Keep the screen inside the map: the view centre stays 120 pixels from
   // either side, 96 from the top and 64 from the bottom, the z limits moved
   // down the map by its height.
   minimumX = map->minX + toFIXED(120);
-  objectZOffset = object->y.fixed;
+  objectZOffset = actor->y.fixed;
   minimumZ = map->minZ + objectZOffset + toFIXED(96);
   maximumX = map->maxX - toFIXED(120);
   maximumZ = map->maxZ + objectZOffset - toFIXED(64);
-  map->origin = &object->x.fixed;
-  Actor_StartIdleFar(object);
+  map->origin = &actor->x.fixed;
+  Actor_StartIdleFar(actor);
   if (positionX == -1) {
-    positionX = object->x.fixed;
+    positionX = actor->x.fixed;
   }
   if (positionY == -1) {
-    positionY = object->y.fixed;
+    positionY = actor->y.fixed;
   }
   if (positionZ == -1) {
-    positionZ = object->z.fixed;
+    positionZ = actor->z.fixed;
   }
   if (positionX < minimumX) {
     positionX = minimumX;
@@ -64,13 +64,13 @@ void FieldCamera_MoveWithinMapBounds(FIXED requestedX, FIXED requestedY,
     positionZ = maximumZ;
   }
   if (shouldUseSetter == 0) {
-    SET_ACTOR_POSITION(object, positionX, positionY, positionZ);
+    SET_ACTOR_POSITION(actor, positionX, positionY, positionZ);
     wait(1U);
     if (runtimeBlock->mode != ACTOR_SYSTEM_WORLD_MAP) {
       MapGrid_CenterOnFollowedPointFar();
     }
   } else {
-    Actor_SetMoveTargetFar(object, positionX, positionY, positionZ);
+    Actor_SetMoveTargetFar(actor, positionX, positionY, positionZ);
   }
 }
 

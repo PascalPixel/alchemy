@@ -129,10 +129,10 @@ void Actor_StartRepeatedMotion(u32 objectId, s32 variant);
 void Actor_WatchAndSetScript(s32 actorId, s32 watchedActorId);
 void Actor_WaitForMoveById(s32 actorId);
 void FieldCamera_FollowActor(s32 id, s32 flag);
-void Actor_SetPositionAndResetMotion(struct Actor *object, FIXED x, FIXED y,
+void Actor_SetPositionAndResetMotion(struct Actor *actor, FIXED x, FIXED y,
                                      FIXED z);
 void Actor_WaitForScriptEndById(u32 actorId);
-void Actor_SetSpriteColor(struct Actor *object, s32 attribute);
+void Actor_SetSpriteColor(struct Actor *actor, s32 attribute);
 void Actor_Stop(s32 actorId);
 void Import_EventSetExitRequest(s32 countdown);
 void Actor_WaitForMove(struct Actor *actor);

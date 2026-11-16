@@ -31,7 +31,7 @@ s32 FieldMessage_ShowAtActor(s32 localId, s32 unused) {
   s32 portrait;
   s32 flags;
   s32 message;
-  struct Actor *object;
+  struct Actor *actor;
   s32 x;
   s32 y;
   s32 found;
@@ -49,14 +49,14 @@ s32 FieldMessage_ShowAtActor(s32 localId, s32 unused) {
   message = work->message;
   localId &= SPEAKER_ACTOR_MASK;
   x = 0;
-  object = Actor_Lookup(localId);
+  actor = Actor_Lookup(localId);
   work->speaker = localId;
   y = 0;
   found = 0;
   if (work->fastForward == 0) {
-    if (object != 0) {
+    if (actor != 0) {
       if (work->mode == ACTOR_SYSTEM_WORLD_MAP) {
-        Render_ProjectPoint(&object->x.fixed, pos);
+        Render_ProjectPoint(&actor->x.fixed, pos);
         x = pos[0] >> 3;
         y = pos[1] >> 3;
         found = 1;
@@ -71,9 +71,9 @@ s32 FieldMessage_ShowAtActor(s32 localId, s32 unused) {
       }
     } else if (localId <= 7) {
       sprite = localId;
-      object = Actor_Lookup(Party_GetLeaderActor());
+      actor = Actor_Lookup(Party_GetLeaderActor());
       if (work->mode == ACTOR_SYSTEM_WORLD_MAP) {
-        Render_ProjectPoint(&object->x.fixed, pos);
+        Render_ProjectPoint(&actor->x.fixed, pos);
         x = pos[0] >> 3;
         y = pos[1] >> 3;
         found = 1;

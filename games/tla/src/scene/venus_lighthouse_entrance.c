@@ -48,7 +48,7 @@
 void Field_StartColorTransition(s32 frames, s32 color);
 void VenusLighthouseEntrance_BlastActorSkyward(s32 id);
 void Party_RestoreHpPp(s32 cureConditions);
-s32 BattleEffect_GetObjectPriority(struct Actor *object);
+s32 BattleEffect_GetObjectPriority(struct Actor *actor);
 void Actor_Release(struct Actor *actor);
 
 /// Set as Tolbi's soldiers ambush the party; the soldiers and workmen are gone
@@ -104,8 +104,7 @@ struct Actor;
 
 /// Starts the next dust puff at a random place near the given point, rising
 /// and drifting outwards.
-void VenusLighthouseEntrance_EmitDust(struct Actor *object, s32 x, s32 y,
-                                      s32 z);
+void VenusLighthouseEntrance_EmitDust(struct Actor *actor, s32 x, s32 y, s32 z);
 /// Loads the dust puffs' pictures and starts drawing them each frame.
 void VenusLighthouseEntrance_StartDust(void);
 /// Stops the dust puffs and frees their pictures and work.
@@ -169,24 +168,24 @@ void VenusLighthouseEntrance_BlastActorWithPsynergy(void *object) {
 
 /// A running soldier's update: it kicks up dust where it is, with a scuff
 /// every eighth frame.
-void VenusLighthouseEntrance_TrailDust(struct Actor *object) {
-  VenusLighthouseEntrance_EmitDust(object, object->x.fixed, object->y.fixed,
-                                   object->z.fixed);
-  if (++object->timer % 8 == 0)
+void VenusLighthouseEntrance_TrailDust(struct Actor *actor) {
+  VenusLighthouseEntrance_EmitDust(actor, actor->x.fixed, actor->y.fixed,
+                                   actor->z.fixed);
+  if (++actor->timer % 8 == 0)
     Event_PlaySound(SE_CHEST_CLOSE);
 }
 
 /// Talked to, a soldier runs 96 pixels out and back trailing dust.
-void VenusLighthouseEntrance_RunWithDustTrail(s32 actor) {
-  struct Actor *object = Actor_Get(actor);
+void VenusLighthouseEntrance_RunWithDustTrail(s32 actorId) {
+  struct Actor *actor = Actor_Get(actorId);
 
   VenusLighthouseEntrance_StartDust();
-  object->update = VenusLighthouseEntrance_TrailDust;
-  object->priorityFlags = 0;
-  Actor_WalkByAndWait(actor, 96, -96);
-  Actor_WalkByAndWait(actor, -96, 96);
-  object->update = 0;
-  object->priorityFlags = 1;
+  actor->update = VenusLighthouseEntrance_TrailDust;
+  actor->priorityFlags = 0;
+  Actor_WalkByAndWait(actorId, 96, -96);
+  Actor_WalkByAndWait(actorId, -96, 96);
+  actor->update = 0;
+  actor->priorityFlags = 1;
   FieldEvent_Wait(30);
   VenusLighthouseEntrance_StopDust();
 }
@@ -1133,7 +1132,7 @@ void VenusLighthouseEntrance_RuffianWaitsForBackup(void) {
 
 /// Kraden jumps out from behind Jenna to send her west, and she steps back.
 void VenusLighthouseEntrance_PointToMeetingSpot(void) {
-  struct Actor *object;
+  struct Actor *actor;
 
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
@@ -1143,10 +1142,10 @@ void VenusLighthouseEntrance_PointToMeetingSpot(void) {
   // "Not that way, Jenna! The meeting spot is west of here. We must go..."
   FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | ACTOR_KRADEN, 0, 10);
   Actor_SetAnimation(ACTOR_KRADEN, ANIM_WALK);
-  object = Actor_Get(ACTOR_JENNA);
-  if (object != 0) {
-    Actor_SetDestination(ACTOR_KRADEN, object->x.part[0].integer,
-                         object->z.part[0].integer);
+  actor = Actor_Get(ACTOR_JENNA);
+  if (actor != 0) {
+    Actor_SetDestination(ACTOR_KRADEN, actor->x.part[0].integer,
+                         actor->z.part[0].integer);
   }
   FieldActor_WaitForMoveById(ACTOR_KRADEN);
   Actor_SetPosition(ACTOR_KRADEN, 0, 0);
@@ -1158,7 +1157,7 @@ void VenusLighthouseEntrance_PointToMeetingSpot(void) {
 /// After a lost battle in the prologue, Jenna wakes by the door with Kraden and
 /// Alex beside her; Alex leaves again for Lalivero.
 void VenusLighthouseEntrance_WakeUp(void) {
-  struct Actor *object;
+  struct Actor *actor;
 
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
@@ -1265,10 +1264,10 @@ void VenusLighthouseEntrance_WakeUp(void) {
   FieldEvent_Wait(20);
   Actor_SetSpeed(ACTOR_KRADEN, 1.2);
   Actor_SetAnimation(ACTOR_KRADEN, ANIM_WALK);
-  object = Actor_Get(ACTOR_JENNA);
-  if (object != 0) {
-    Actor_SetDestination(ACTOR_KRADEN, object->x.part[0].integer,
-                         object->z.part[0].integer);
+  actor = Actor_Get(ACTOR_JENNA);
+  if (actor != 0) {
+    Actor_SetDestination(ACTOR_KRADEN, actor->x.part[0].integer,
+                         actor->z.part[0].integer);
   }
   FieldActor_WaitForMoveById(ACTOR_KRADEN);
   Actor_SetPosition(ACTOR_KRADEN, 0, 0);
@@ -1301,7 +1300,7 @@ struct BlastColumnWork {
 
 void VenusLighthouseEntrance_UpdateBlastColumn(void) {
   struct BlastColumnWork *work = Ram_HeapSlots->menuWork;
-  struct Actor *object = work->object;
+  struct Actor *actor = work->object;
   struct Actor *effect = work->effect;
   s32 i, y;
   FIXED scale;
@@ -1332,8 +1331,8 @@ void VenusLighthouseEntrance_UpdateBlastColumn(void) {
     break;
   case 3:
     if (work->timer == 0) {
-      object->motionFlags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
-      object->velocityY = toFIXED(24);
+      actor->motionFlags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
+      actor->velocityY = toFIXED(24);
       work->follow = 0;
       Sound_Play(SE_HEAVY_IMPACT);
     }
@@ -1347,8 +1346,8 @@ void VenusLighthouseEntrance_UpdateBlastColumn(void) {
     s16 *timer = &work->timer;
 
     if (work->timer == 10) {
-      object->z.fixed = 0;
-      object->x.fixed = 0;
+      actor->z.fixed = 0;
+      actor->x.fixed = 0;
     }
     if (*timer == 30) {
       work->stage++;
@@ -1401,7 +1400,7 @@ void VenusLighthouseEntrance_UpdateBlastColumn(void) {
     break;
   }
   }
-  object->facing += TRIG_TURN / 16;
+  actor->facing += TRIG_TURN / 16;
   if (work->height > 0) {
     for (i = 0, y = 0; i < 16 && y < work->height - 8; i++, y += 16) {
       state = &work->states[i];
@@ -1427,7 +1426,7 @@ void VenusLighthouseEntrance_UpdateBlastColumn(void) {
       sprite->oam.index = work->tile + ((state->frame >> 2) & 3) * 8;
       EffectSprite_DrawAtWorldPosition(sprite, &state->x);
       if (work->follow != 0)
-        object->y.fixed = state->y;
+        actor->y.fixed = state->y;
     }
   }
   work->timer++;

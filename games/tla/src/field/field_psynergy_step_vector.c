@@ -369,9 +369,9 @@ void Actor_VanishInSparks(s32 objectId) {
   s32 entry;
   s32 tiles;
   s32 spawning;
-  struct Actor *object = Actor_Lookup(objectId);
-  s32 depth = BattleEffect_GetObjectDepth(object);
-  s32 angle = (u16)object->facing;
+  struct Actor *actor = Actor_Lookup(objectId);
+  s32 depth = BattleEffect_GetObjectDepth(actor);
+  s32 angle = (u16)actor->facing;
   struct WhirlSpark *spark;
   struct EffectSprite *sprite;
   s32 i;
@@ -390,13 +390,13 @@ void Actor_VanishInSparks(s32 objectId) {
     EffectSprite_Init(sprite, 4, 4, 0, tiles + (i & 15) * 2);
     sprite->oam.fullColor = 1;
     sprite->oam.palette = 0;
-    sprite->depth = BattleEffect_GetObjectDepth(object);
-    sprite->oam.priority = BattleEffect_GetObjectPriority(object);
+    sprite->depth = BattleEffect_GetObjectDepth(actor);
+    sprite->oam.priority = BattleEffect_GetObjectPriority(actor);
     spark->age = -1;
   }
-  object->scaleX = 0;
-  object->scaleY = FIXED_ONE;
-  Actor_SetSpriteFlagsFar(object, 0);
+  actor->scaleX = 0;
+  actor->scaleY = FIXED_ONE;
+  Actor_SetSpriteFlagsFar(actor, 0);
   spawning = 1;
   phase = 0;
   next = 0;
@@ -410,9 +410,9 @@ void Actor_VanishInSparks(s32 objectId) {
         spark = &work->sparks[next];
 
         spark->age = 0;
-        spark->x = object->x.fixed;
-        spark->y = object->y.fixed + toFIXED(20);
-        spark->z = object->z.fixed;
+        spark->x = actor->x.fixed;
+        spark->y = actor->y.fixed + toFIXED(20);
+        spark->z = actor->z.fixed;
         Vector_AddPolarOffset(Random16(), sparkAngle, &spark->x);
         next++;
         spark->angle = sparkAngle;
@@ -438,7 +438,7 @@ void Actor_VanishInSparks(s32 objectId) {
           pos[1] = spark->y;
           pos[2] = spark->z;
           Vector_AddPolarOffset(radius, sparkAngle, pos);
-          if (pos[2] > object->z.fixed)
+          if (pos[2] > actor->z.fixed)
             sprite->depth = depth + 2;
           else
             sprite->depth = depth - 2;
@@ -464,14 +464,14 @@ void Actor_VanishInSparks(s32 objectId) {
       break;
     case 1:
       if (frame < 64) {
-        object->facing -= FACING_STEP;
-        object->scaleX = frame << 10;
-        if (object->scaleX > FIXED_ONE)
-          object->scaleX = FIXED_ONE;
+        actor->facing -= FACING_STEP;
+        actor->scaleX = frame << 10;
+        if (actor->scaleX > FIXED_ONE)
+          actor->scaleX = FIXED_ONE;
       }
       if (frame == 64) {
-        object->facing = angle;
-        Actor_SetSpriteFlagsFar(object, 1);
+        actor->facing = angle;
+        Actor_SetSpriteFlagsFar(actor, 1);
       }
       if (frame == 10)
         spawning = 0;

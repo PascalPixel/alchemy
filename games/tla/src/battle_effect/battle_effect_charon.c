@@ -1678,19 +1678,10 @@ void BattleEffect_RunCharon(struct BattleEffectParams *arg) {
   BattleEffect_EndCanvasLayer();
 }
 
-/// Two triangles of a strip: three vertex indices and a texture coordinate
-/// pair for each corner.
-struct StripTriangle {
-  u8 vertex[3];
-  u8 pad;
-  u8 uv[3][2];
-  u8 endPad[2];
-};
-
 /// One quad of a vertex strip: its upper and lower triangles.
 struct StripQuad {
-  struct StripTriangle upper;
-  struct StripTriangle lower;
+  struct MeshTriangle upper;
+  struct MeshTriangle lower;
 };
 
 /// Builds count quads of a vertex strip two vertices apart, each width texels

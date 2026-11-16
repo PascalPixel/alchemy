@@ -73,7 +73,7 @@ enum {
   ENTRANCE_VIAL_CHEST_ON_THE_LIFT = 3
 };
 
-void Actor_StartScript(struct Actor *object, const u8 *data);
+void Actor_StartScript(struct Actor *actor, const u8 *data);
 
 /// The actors of each inner room, numbering its placement table. The wind
 /// statues (SPRITE_WIND_STATUE) breathe whirlwinds once Whirlwind on their
@@ -296,10 +296,10 @@ void AirsRockInside_IgnoreStep(void);
 extern u32 gFieldEffect_MediumScript[];
 extern u32 gAirsRockInside_StatueScript[];
 
-void Actor_PlaySoundInView(struct Actor *object, s32 cue);
-s32 Actor_HasArrived(struct Actor *object);
+void Actor_PlaySoundInView(struct Actor *actor, s32 cue);
+s32 Actor_HasArrived(struct Actor *actor);
 
-void AirsRockInside_SetConeCells(struct Actor *object);
+void AirsRockInside_SetConeCells(struct Actor *actor);
 
 void Pillar_Place(s16 *list) {
   s16 *entry;
@@ -309,13 +309,13 @@ void Pillar_Place(s16 *list) {
   entry = list;
   do {
     s32 id = (u16)entry[0];
-    struct Actor *object = Actor_GetById(id);
+    struct Actor *actor = Actor_GetById(id);
     s32 kind = entry[1];
     s32 flag = entry[2];
 
-    object->collisionFlags &= ~ACTOR_SOLID;
-    Actor_SetSpriteFlags(object, 0);
-    Actor_SetCellOpen(id, (u16)kind, (u16)flag, object->layer);
+    actor->collisionFlags &= ~ACTOR_SOLID;
+    Actor_SetSpriteFlags(actor, 0);
+    Actor_SetCellOpen(id, (u16)kind, (u16)flag, actor->layer);
     entry += 3;
   } while ((u16)entry[0] != 0xffff);
 }
@@ -352,44 +352,44 @@ void TilesetAnim_ResumeAll(void);
 /// On most frames, moves the object to a random spot: x 176 to 431 pixels, y
 /// and z up to 31 and 127 pixels past the leader's. Then it keeps its action as
 /// the previous one and sets mode 9 after action 212, mode 10 otherwise.
-void AirsRockInside_ScatterMote(struct Actor *object) {
+void AirsRockInside_ScatterMote(struct Actor *actor) {
   struct Actor *leader = Actor_GetById(gMainRoutineWork.leaderActorId);
 
   if (Random16() & 0xff) {
-    object->x.fixed = INTtoFIXED(Random16() & 0xff) + toFIXED(176);
-    object->y.fixed = leader->y.fixed + INTtoFIXED(Random16() & 31);
-    object->z.fixed = leader->z.fixed + INTtoFIXED(Random16() & 127);
+    actor->x.fixed = INTtoFIXED(Random16() & 0xff) + toFIXED(176);
+    actor->y.fixed = leader->y.fixed + INTtoFIXED(Random16() & 31);
+    actor->z.fixed = leader->z.fixed + INTtoFIXED(Random16() & 127);
   }
-  object->userValue = object->timer;
-  if (object->timer == 212)
-    Actor_SelectAnimation(object, 9);
+  actor->userValue = actor->timer;
+  if (actor->timer == 212)
+    Actor_SelectAnimation(actor, 9);
   else
-    Actor_SelectAnimation(object, 10);
+    Actor_SelectAnimation(actor, 10);
 }
 
 /// A mote's update, stopped while a menu or Psynergy is up.
-void AirsRockInside_DriftMote(struct Actor *object) {
+void AirsRockInside_DriftMote(struct Actor *actor) {
   struct FieldWork *work = Ram_HeapSlots->fieldWork;
 
   if (work->psynergy != 0 || work->fieldMenu != 0 || work->pauseMenu != 0 ||
       work->item != 0) {
-    Actor_SetAnimationSpeed(object, 0);
+    Actor_SetAnimationSpeed(actor, 0);
     TilesetAnim_SuspendAll();
     return;
   }
-  Actor_SetAnimationSpeed(object, ANIMATION_STEP_NORMAL);
+  Actor_SetAnimationSpeed(actor, ANIMATION_STEP_NORMAL);
   TilesetAnim_ResumeAll();
-  if (object->riseEnabled != 0) {
+  if (actor->riseEnabled != 0) {
     if ((gFrameCount & 7) == 0)
-      object->riseEnabled--;
+      actor->riseEnabled--;
     return;
   }
-  if (object->userValue == 0)
-    AirsRockInside_ScatterMote(object);
-  object->userValue--;
-  object->x.fixed +=
-      Trig_Cos(((object->z.fixed >> 14) + (object->y.fixed >> 15)) << 8) / 2;
-  object->y.fixed += object->speedLimit;
+  if (actor->userValue == 0)
+    AirsRockInside_ScatterMote(actor);
+  actor->userValue--;
+  actor->x.fixed +=
+      Trig_Cos(((actor->z.fixed >> 14) + (actor->y.fixed >> 15)) << 8) / 2;
+  actor->y.fixed += actor->speedLimit;
 }
 
 /// Whirlwind on a twister rock or statue: the scene's own effect runs in place
@@ -413,38 +413,37 @@ void AirsRockInside_TakeOverWhirlwind(void) {
 /// walls both cells off, rises 4 pixels and takes priority 1;
 /// then it writes both cells back and moves the object's height
 /// (MapGrid_SetCellHeight).
-void AirsRockInside_SetConeCells(struct Actor *object) {
-  s32 x = FIELD_CELL(object->x.fixed);
-  s32 z = FIELD_CELL(object->z.fixed);
+void AirsRockInside_SetConeCells(struct Actor *actor) {
+  s32 x = FIELD_CELL(actor->x.fixed);
+  s32 z = FIELD_CELL(actor->z.fixed);
   s32 ground = MapCell_GetAttributes(0, x, z);
   s32 cell = MapCell_GetAttributes(2, x, z);
   s32 height =
-      Map_GetTerrainHeight(object->layer, object->x.fixed, object->z.fixed) >>
-      19;
-  s32 set = GameFlag_Get(object->timer);
-  u8 *flags = &object->priorityFlags;
+      Map_GetTerrainHeight(actor->layer, actor->x.fixed, actor->z.fixed) >> 19;
+  s32 set = GameFlag_Get(actor->timer);
+  u8 *flags = &actor->priorityFlags;
   s32 px = x << 20;
   s32 pz = z << 20;
 
   if (set) {
     cell &= 0xffff00ff;
     ground = 0;
-    if (object->groundHeight >> 19 != height)
+    if (actor->groundHeight >> 19 != height)
       height -= 4;
     // Through the field: through flags the byte, not the 2, would take the
     // result register.
-    object->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
-    Scene_SetActorSpritePriority(object, 3);
+    actor->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
+    Scene_SetActorSpritePriority(actor, 3);
   } else {
     cell |= 0xff00;
     ground |= 0xd480;
     *flags &= ~2;
     height += 4;
-    Scene_SetActorSpritePriority(object, 1);
+    Scene_SetActorSpritePriority(actor, 1);
   }
   MapCell_SetAttributes(0, x, z, ground);
   MapCell_SetAttributes(2, x, z, cell);
-  MapGrid_SetCellHeight(px, pz, object->layer, height);
+  MapGrid_SetCellHeight(px, pz, actor->layer, height);
 }
 
 /// One step of Pound on one of two paired cones: the Psynergy's target is the
@@ -506,7 +505,7 @@ void AirsRockInside_PoundCone(s32 mode, s32 step) {
 /// picks between them; the object stops moving, loses its solid bit and keeps
 /// the flag as its action parameter.
 void AirsRockInside_PlaceCones(u16 *list) {
-  struct Actor *object;
+  struct Actor *actor;
   s32 flag, base;
   u16 *entry;
 
@@ -514,10 +513,10 @@ void AirsRockInside_PlaceCones(u16 *list) {
     return;
   entry = list;
   do {
-    object = Actor_GetById(*entry);
+    actor = Actor_GetById(*entry);
     base = ((s16 *)entry)[1];
     flag = ((s16 *)entry)[2];
-    Actor_SetSpriteFlags(object, 0);
+    Actor_SetSpriteFlags(actor, 0);
     {
       s32 choice = GameFlag_Get((u16)flag);
 
@@ -527,11 +526,11 @@ void AirsRockInside_PlaceCones(u16 *list) {
       base += base << 1;
       base += choice;
     }
-    Actor_SelectAnimation(object, base);
-    object->motionFlags = 0;
-    object->collisionFlags &= ~ACTOR_SOLID;
-    object->timer = flag;
-    AirsRockInside_SetConeCells(object);
+    Actor_SelectAnimation(actor, base);
+    actor->motionFlags = 0;
+    actor->collisionFlags &= ~ACTOR_SOLID;
+    actor->timer = flag;
+    AirsRockInside_SetConeCells(actor);
     entry += 3;
   } while (*entry != 0xffff);
 }
@@ -776,7 +775,7 @@ void AirsRockInside_MoveWhirlwind(struct Actor *shot) {
 /// work's four busy counters is set it counts frames in its action parameter,
 /// and at 240 launches a shot 8 pixels ahead along its angle with a dust effect
 /// below it.
-void AirsRockInside_StatueBreathesWhirlwind(struct Actor *object) {
+void AirsRockInside_StatueBreathesWhirlwind(struct Actor *actor) {
   struct FieldWork *work = Ram_HeapSlots->fieldWork;
   struct Actor *shot;
   struct Vector3 position;
@@ -785,45 +784,45 @@ void AirsRockInside_StatueBreathesWhirlwind(struct Actor *object) {
   if (work->psynergy != 0 || work->fieldMenu != 0 || work->pauseMenu != 0 ||
       work->item != 0)
     return;
-  if (object->timer == 240) {
+  if (actor->timer == 240) {
     if (!GameFlag_Get(FLAG_SCENE_TEMP_50))
-      Actor_PlaySoundInView(object, SE_FLAME_FLARE);
-    if (object->facing == FACING_NORTH) {
-      position.x = object->x.fixed;
-      position.z = object->z.fixed;
+      Actor_PlaySoundInView(actor, SE_FLAME_FLARE);
+    if (actor->facing == FACING_NORTH) {
+      position.x = actor->x.fixed;
+      position.z = actor->z.fixed;
     } else {
       position.x =
-          object->x.fixed + Math_MulFX(toFIXED(8), Trig_Cos(object->facing));
+          actor->x.fixed + Math_MulFX(toFIXED(8), Trig_Cos(actor->facing));
       position.z =
-          object->z.fixed + Math_MulFX(toFIXED(8), Trig_Sin(object->facing));
+          actor->z.fixed + Math_MulFX(toFIXED(8), Trig_Sin(actor->facing));
     }
     shot = (struct Actor *)Import_ActorCreate(SPRITE_WHIRLWIND, position.x,
-                                              object->y.fixed, position.z);
+                                              actor->y.fixed, position.z);
     Actor_SelectAnimation(shot, 2);
     Actor_SetSpriteFlags(shot, 0);
     ((struct FieldSprite *)shot->sprite)->priority = 1;
     shot->motionFlags = 0;
     shot->riseCounter = 0;
     shot->riseEnabled = 0;
-    shot->facing = object->facing;
+    shot->facing = actor->facing;
     shot->update = AirsRockInside_MoveWhirlwind;
-    shot->watchedActor = object;
-    object->timer = 0;
+    shot->watchedActor = actor;
+    actor->timer = 0;
     options.priority = 1;
     options.palette = 7;
-    FieldEffect_Spawn(position.x, object->y.fixed, position.z - toFIXED(6), 0,
-                      0, 0, EFFECT_USE_PRIORITY | EFFECT_USE_PALETTE, &options);
+    FieldEffect_Spawn(position.x, actor->y.fixed, position.z - toFIXED(6), 0, 0,
+                      0, EFFECT_USE_PRIORITY | EFFECT_USE_PALETTE, &options);
   }
-  object->timer++;
+  actor->timer++;
 }
 
 /// Wakes a statue: it starts breathing whirlwinds after the frames given.
-void AirsRockInside_WakeStatue(struct Actor *object, s16 timer, u8 value) {
+void AirsRockInside_WakeStatue(struct Actor *actor, s16 timer, u8 value) {
   if (!GameFlag_Get(FLAG_KEEP_PARTY_POSITION)) {
-    object->steeringFlags = 0;
-    object->timer = timer;
-    object->riseCounter = value;
-    object->update = (s32)AirsRockInside_StatueBreathesWhirlwind;
+    actor->steeringFlags = 0;
+    actor->timer = timer;
+    actor->riseCounter = value;
+    actor->update = (s32)AirsRockInside_StatueBreathesWhirlwind;
   }
 }
 
@@ -898,7 +897,7 @@ void AirsRockInside_MovePooledWhirlwind(struct Actor *shot) {
 /// whirlwind) it launches the first free one of actors 13 to 15 from 8 pixels
 /// ahead along its angle, with AirsRockInside_MovePooledWhirlwind as its
 /// update, and a dust effect below it.
-void AirsRockInside_StatueBreathesPooledWhirlwind(struct Actor *object) {
+void AirsRockInside_StatueBreathesPooledWhirlwind(struct Actor *actor) {
   struct FieldWork *work = Ram_HeapSlots->fieldWork;
   struct Actor *shot;
   struct Vector3 position;
@@ -910,18 +909,18 @@ void AirsRockInside_StatueBreathesPooledWhirlwind(struct Actor *object) {
     return;
   for (i = 0; i != 3;)
     Actor_GetById(13 + i++);
-  if (object->timer == 240) {
+  if (actor->timer == 240) {
     shot = 0;
     if (!GameFlag_Get(FLAG_SCENE_TEMP_50))
-      Actor_PlaySoundInView(object, SE_FLAME_FLARE);
-    if (object->facing == FACING_NORTH) {
-      position.x = object->x.fixed;
-      position.z = object->z.fixed;
+      Actor_PlaySoundInView(actor, SE_FLAME_FLARE);
+    if (actor->facing == FACING_NORTH) {
+      position.x = actor->x.fixed;
+      position.z = actor->z.fixed;
     } else {
       position.x =
-          object->x.fixed + Math_MulFX(toFIXED(8), Trig_Cos(object->facing));
+          actor->x.fixed + Math_MulFX(toFIXED(8), Trig_Cos(actor->facing));
       position.z =
-          object->z.fixed + Math_MulFX(toFIXED(8), Trig_Sin(object->facing));
+          actor->z.fixed + Math_MulFX(toFIXED(8), Trig_Sin(actor->facing));
     }
     for (i = 0; i != 3; i++) {
       shot = Actor_GetById(13 + i);
@@ -929,7 +928,7 @@ void AirsRockInside_StatueBreathesPooledWhirlwind(struct Actor *object) {
         break;
     }
     shot->x.fixed = position.x;
-    shot->y.fixed = object->y.fixed;
+    shot->y.fixed = actor->y.fixed;
     shot->z.fixed = position.z;
     Actor_SelectAnimation(shot, 2);
     Actor_SetSpriteFlags(shot, 0);
@@ -938,35 +937,34 @@ void AirsRockInside_StatueBreathesPooledWhirlwind(struct Actor *object) {
     shot->motionFlags = 0;
     shot->riseCounter = 0;
     shot->riseEnabled = 0;
-    shot->facing = object->facing;
-    shot->watchedActor = object;
+    shot->facing = actor->facing;
+    shot->watchedActor = actor;
     shot->update = AirsRockInside_MovePooledWhirlwind;
-    object->timer = 0;
+    actor->timer = 0;
     options.priority = 1;
     options.palette = 7;
-    FieldEffect_Spawn(position.x, object->y.fixed, position.z - toFIXED(6), 0,
-                      0, 0, EFFECT_USE_PRIORITY | EFFECT_USE_PALETTE, &options);
+    FieldEffect_Spawn(position.x, actor->y.fixed, position.z - toFIXED(6), 0, 0,
+                      0, EFFECT_USE_PRIORITY | EFFECT_USE_PALETTE, &options);
   }
-  object->timer++;
+  actor->timer++;
 }
 
 /// Sets a pool statue breathing whirlwinds from timer, with value in its
 /// riseCounter, unless the party keeps its place.
-void AirsRockInside_WakePooledStatue(struct Actor *object, s16 timer,
-                                     u8 value) {
+void AirsRockInside_WakePooledStatue(struct Actor *actor, s16 timer, u8 value) {
   if (!GameFlag_Get(FLAG_KEEP_PARTY_POSITION)) {
-    object->steeringFlags = 0;
-    object->timer = timer;
-    object->riseCounter = value;
-    object->update = (s32)AirsRockInside_StatueBreathesPooledWhirlwind;
-    Actor_SetSpriteFlags(object, 0);
+    actor->steeringFlags = 0;
+    actor->timer = timer;
+    actor->riseCounter = value;
+    actor->update = (s32)AirsRockInside_StatueBreathesPooledWhirlwind;
+    Actor_SetSpriteFlags(actor, 0);
   }
 }
 
 /// A vent's puff: drifts and grows until its time runs out; reaching the
 /// leader it raises trigger 201 and bounces back, as it bounces off the room's
 /// pillars.
-void AirsRockInside_UpdateVentPuff(struct Actor *object) {
+void AirsRockInside_UpdateVentPuff(struct Actor *actor) {
   struct FieldWork *work = Ram_HeapSlots->fieldWork;
   struct Actor *leader = Actor_GetById(gMainRoutineWork.leaderActorId);
   struct Actor *other;
@@ -979,69 +977,69 @@ void AirsRockInside_UpdateVentPuff(struct Actor *object) {
     return;
   if (work->psynergy != 0 || work->fieldMenu != 0 || work->pauseMenu != 0 ||
       work->item != 0) {
-    Actor_SetAnimationSpeed(object, 0);
+    Actor_SetAnimationSpeed(actor, 0);
     return;
   }
-  Actor_SetAnimationSpeed(object, ANIMATION_STEP_NORMAL);
-  if (object->timer == 0) {
-    if (object->x.fixed == 0) {
-      Actor_Release(object);
+  Actor_SetAnimationSpeed(actor, ANIMATION_STEP_NORMAL);
+  if (actor->timer == 0) {
+    if (actor->x.fixed == 0) {
+      Actor_Release(actor);
     } else {
-      object->z.fixed = 0;
-      object->x.fixed = 0;
+      actor->z.fixed = 0;
+      actor->x.fixed = 0;
     }
     return;
   }
-  if (Position_FlatDistance(&leader->x.fixed, pos = &object->x.fixed) <= 8 &&
-      leader->y.part[0].integer == object->y.part[0].integer) {
+  if (Position_FlatDistance(&leader->x.fixed, pos = &actor->x.fixed) <= 8 &&
+      leader->y.part[0].integer == actor->y.part[0].integer) {
     work->raisedTrigger = 201;
-    object->riseBaseY = 0;
-    object->speedLimit = -object->speedLimit >> 1;
-    object->z.fixed = leader->z.fixed - toFIXED(8);
+    actor->riseBaseY = 0;
+    actor->speedLimit = -actor->speedLimit >> 1;
+    actor->z.fixed = leader->z.fixed - toFIXED(8);
   }
   if (gMainRoutineWork.next == SCENE_AIRS_ROCK_INSIDE_CLARITY_CIRCLET_CHEST) {
     other = Actor_GetById(ACTOR_CLARITY_CIRCLET_CHEST_FIRST_PILLAR);
     if (Position_FlatDistance(&other->x.fixed, pos) <= 8) {
-      object->speedLimit = -object->speedLimit >> 1;
-      object->riseBaseY = 0;
-      object->z.fixed = other->z.fixed - toFIXED(8);
+      actor->speedLimit = -actor->speedLimit >> 1;
+      actor->riseBaseY = 0;
+      actor->z.fixed = other->z.fixed - toFIXED(8);
     }
   } else if (gMainRoutineWork.next == SCENE_AIRS_ROCK_INSIDE_FACE_WARP) {
     for (i = 0; i != 3; i++) {
       struct Actor *pillar = Actor_GetById(i + ACTOR_FACE_WARP_THIRD_PILLAR);
 #define other pillar
       if (Position_FlatDistance(&other->x.fixed, pos) <= 8) {
-        object->speedLimit = -object->speedLimit >> 1;
-        object->riseBaseY = 0;
-        object->z.fixed = other->z.fixed - toFIXED(8);
+        actor->speedLimit = -actor->speedLimit >> 1;
+        actor->riseBaseY = 0;
+        actor->z.fixed = other->z.fixed - toFIXED(8);
       }
     }
 #undef other
   }
-  object->timer--;
-  object->z.fixed += object->speedLimit;
-  object->x.fixed += object->acceleration;
-  object->speedLimit -= object->riseBaseY;
-  object->scaleX += FIXED_ONE / 20;
-  object->scaleY += FIXED_ONE / 20;
+  actor->timer--;
+  actor->z.fixed += actor->speedLimit;
+  actor->x.fixed += actor->acceleration;
+  actor->speedLimit -= actor->riseBaseY;
+  actor->scaleX += FIXED_ONE / 20;
+  actor->scaleY += FIXED_ONE / 20;
 }
 
 /// A puff of air rising from a vent.
 void AirsRockInside_PuffVent(s32 x, s32 y, s32 z) {
-  struct Actor *object = Import_ActorCreate(SPRITE_DUST_CLOUD, x, y, z);
+  struct Actor *actor = Import_ActorCreate(SPRITE_DUST_CLOUD, x, y, z);
 
-  Actor_SelectAnimation(object, 1);
-  Actor_SetSpriteFlags(object, 0);
-  Actor_SetSpriteColor(object, SPRITE_COLOR_GREY);
-  Actor_SetBlendMode(object, 1);
-  object->timer = 27;
-  object->motionFlags = 0;
-  object->steeringFlags = 0;
-  object->scaleX = FIXED_ONE / 2;
-  object->speedLimit = toFIXED(4);
-  object->acceleration = ((Random16() & 0x7fff) << 1) + 0xffff8001;
-  object->riseBaseY = toFIXED(7) / 32;
-  object->update = (s32)AirsRockInside_UpdateVentPuff;
+  Actor_SelectAnimation(actor, 1);
+  Actor_SetSpriteFlags(actor, 0);
+  Actor_SetSpriteColor(actor, SPRITE_COLOR_GREY);
+  Actor_SetBlendMode(actor, 1);
+  actor->timer = 27;
+  actor->motionFlags = 0;
+  actor->steeringFlags = 0;
+  actor->scaleX = FIXED_ONE / 2;
+  actor->speedLimit = toFIXED(4);
+  actor->acceleration = ((Random16() & 0x7fff) << 1) + 0xffff8001;
+  actor->riseBaseY = toFIXED(7) / 32;
+  actor->update = (s32)AirsRockInside_UpdateVentPuff;
 }
 
 /// Every eighth frame pair, while none of the event work's four busy counters
@@ -1105,30 +1103,30 @@ void AirsRockInside_PuffVents(void) {
 
 /// An actor a gust carries: it rides 8 pixels above the gust, its draw order
 /// flickering.
-void AirsRockInside_FollowGust(struct Actor *object) {
-  struct Actor *target = object->watchedActor;
+void AirsRockInside_FollowGust(struct Actor *actor) {
+  struct Actor *target = actor->watchedActor;
 
-  object->priorityFlags ^= 2 << (gFrameCount & 1);
-  SET_ACTOR_POSITION(object, target->x.fixed, target->y.fixed + toFIXED(8),
+  actor->priorityFlags ^= 2 << (gFrameCount & 1);
+  SET_ACTOR_POSITION(actor, target->x.fixed, target->y.fixed + toFIXED(8),
                      target->z.fixed);
 }
 
-void AirsRockInside_SpiralGust(struct Actor *object);
+void AirsRockInside_SpiralGust(struct Actor *actor);
 
 #define TARGET(effect) ((effect)->child)
 
-/// The gust picks up an object it passes over, to drop it at cell `at`
+/// The gust picks up an actor it passes over, to drop it at cell `at`
 /// (x in the high half, z in the low).
-#define PICK_UP(object, at)                                                    \
+#define PICK_UP(actor, at)                                                     \
   do {                                                                         \
-    (object)->watchedActor = gust;                                             \
-    (object)->update = AirsRockInside_FollowGust;                              \
-    (object)->motionFlags = 0;                                                 \
-    (object)->priorityFlags &= ~ACTOR_PRIORITY_AUTOMATIC;                      \
-    Actor_SetSpriteFlags(object, 0);                                           \
-    ((struct FieldSprite *)(object)->sprite)->priority =                       \
+    (actor)->watchedActor = gust;                                              \
+    (actor)->update = AirsRockInside_FollowGust;                               \
+    (actor)->motionFlags = 0;                                                  \
+    (actor)->priorityFlags &= ~ACTOR_PRIORITY_AUTOMATIC;                       \
+    Actor_SetSpriteFlags(actor, 0);                                            \
+    ((struct FieldSprite *)(actor)->sprite)->priority =                        \
         ((struct FieldSprite *)gust->sprite)->priority;                        \
-    gust->watchedActor = (object);                                             \
+    gust->watchedActor = (actor);                                              \
     carried = (at);                                                            \
   } while (0)
 
@@ -1142,7 +1140,7 @@ void AirsRockInside_SpiralGust(struct Actor *object);
 void AirsRockInside_BlowGust(void) {
   struct Actor *leader = Actor_GetById(gMainRoutineWork.leaderActorId);
   struct FieldEffectWork *effect = Ram_HeapSlots->fieldEffectWork;
-  struct Actor *gust, *spark, *object;
+  struct Actor *gust, *spark, *actor;
   struct Vector3 velocity;
   struct EffectOptions leaves, dust;
   struct Cell dir, cell;
@@ -1249,21 +1247,21 @@ void AirsRockInside_BlowGust(void) {
   carried = 0;
   while (Actor_HasArrived(gust) == 0) {
     if (gMainRoutineWork.next == SCENE_AIRS_ROCK_INSIDE_ELIXIR_CHEST) {
-      object = Actor_GetById(ACTOR_ELIXIR_CHEST_PILLAR);
-      if (gust->x.fixed >> 19 == object->x.fixed >> 19 && carried == 0)
-        PICK_UP(object, 0x270025);
+      actor = Actor_GetById(ACTOR_ELIXIR_CHEST_PILLAR);
+      if (gust->x.fixed >> 19 == actor->x.fixed >> 19 && carried == 0)
+        PICK_UP(actor, 0x270025);
     } else if (gMainRoutineWork.next == SCENE_AIRS_ROCK_INSIDE_FACE_WARP) {
-      object = Actor_GetById(ACTOR_FACE_WARP_SECOND_PILLAR);
-      if (FIELD_CELL(gust->x.fixed) == FIELD_CELL(object->x.fixed) &&
-          FIELD_CELL(gust->z.fixed) == FIELD_CELL(object->z.fixed) &&
+      actor = Actor_GetById(ACTOR_FACE_WARP_SECOND_PILLAR);
+      if (FIELD_CELL(gust->x.fixed) == FIELD_CELL(actor->x.fixed) &&
+          FIELD_CELL(gust->z.fixed) == FIELD_CELL(actor->z.fixed) &&
           carried == 0)
-        PICK_UP(object, 0x290069);
+        PICK_UP(actor, 0x290069);
     } else if (gMainRoutineWork.next == SCENE_AIRS_ROCK_INSIDE_COINS_CHEST) {
-      object = Actor_GetById(ACTOR_COINS_CHEST_STATUE);
-      if (FIELD_CELL(gust->x.fixed) == FIELD_CELL(object->x.fixed) &&
-          FIELD_CELL(gust->z.fixed) == FIELD_CELL(object->z.fixed) &&
+      actor = Actor_GetById(ACTOR_COINS_CHEST_STATUE);
+      if (FIELD_CELL(gust->x.fixed) == FIELD_CELL(actor->x.fixed) &&
+          FIELD_CELL(gust->z.fixed) == FIELD_CELL(actor->z.fixed) &&
           carried == 0)
-        PICK_UP(object, 0xf0033);
+        PICK_UP(actor, 0xf0033);
     }
     if ((gFrameCount & 1) == 0) {
       leaves.priority = 1;
@@ -1279,41 +1277,41 @@ void AirsRockInside_BlowGust(void) {
     FieldEvent_Wait(1);
   }
   if (carried != 0) {
-    object = gust->watchedActor;
-    object->x.fixed = (carried >> 16) << 19;
-    object->z.fixed = carried << 19;
-    object->velocityY = toFIXED(8);
-    object->update = 0;
-    object->motionFlags = ACTOR_FALLS;
-    object->priorityFlags |= ACTOR_PRIORITY_AUTOMATIC;
-    object->priorityFlags &=
+    actor = gust->watchedActor;
+    actor->x.fixed = (carried >> 16) << 19;
+    actor->z.fixed = carried << 19;
+    actor->velocityY = toFIXED(8);
+    actor->update = 0;
+    actor->motionFlags = ACTOR_FALLS;
+    actor->priorityFlags |= ACTOR_PRIORITY_AUTOMATIC;
+    actor->priorityFlags &=
         ~(ACTOR_PRIORITY_UNDERFOOT | ACTOR_PRIORITY_OVERHEAD);
-    Actor_SetSpriteFlags(object, 1);
-    Scene_SetActorSpritePriority(object, 2);
+    Actor_SetSpriteFlags(actor, 1);
+    Scene_SetActorSpritePriority(actor, 2);
     if (gMainRoutineWork.next == SCENE_AIRS_ROCK_INSIDE_ELIXIR_CHEST) {
-      object->groundHeight = -toFIXED(32);
+      actor->groundHeight = -toFIXED(32);
       MapGrid_CopyCellAttributes(19, 16, 1, 1, 19, 18);
       GameFlag_Set(FLAG_AIRS_ROCK_ELIXIR_CHEST_PILLAR_MOVED);
     } else if (gMainRoutineWork.next == SCENE_AIRS_ROCK_INSIDE_FACE_WARP) {
       MapGrid_CopyCellAttributes(19, 38, 1, 1, 20, 38);
-      OverlayObject_WaitUntilIdle(object);
+      OverlayObject_WaitUntilIdle(actor);
       wait(1);
-      OverlayObject_WaitUntilIdle(object);
-      object->motionFlags = 0;
-      object->groundHeight = 0;
-      object->y.fixed = 0;
+      OverlayObject_WaitUntilIdle(actor);
+      actor->motionFlags = 0;
+      actor->groundHeight = 0;
+      actor->y.fixed = 0;
       MapGrid_SetCellHeight(toFIXED(320), toFIXED(832), 0, 4);
     } else if (gMainRoutineWork.next == SCENE_AIRS_ROCK_INSIDE_COINS_CHEST) {
-      OverlayObject_WaitUntilIdle(object);
+      OverlayObject_WaitUntilIdle(actor);
       wait(1);
-      OverlayObject_WaitUntilIdle(object);
-      Actor_SetSpriteFlags(object, 0);
-      object->motionFlags = 0;
-      object->groundHeight = 0;
-      object->y.fixed = 0;
+      OverlayObject_WaitUntilIdle(actor);
+      Actor_SetSpriteFlags(actor, 0);
+      actor->motionFlags = 0;
+      actor->groundHeight = 0;
+      actor->y.fixed = 0;
       MapGrid_SetCellHeight(toFIXED(120), toFIXED(408), 0, 4);
       if (GameFlag_Get(FLAG_AIRS_ROCK_VIAL_CHEST_STATUE_WOKEN))
-        AirsRockInside_WakeStatue(object, 60, 0);
+        AirsRockInside_WakeStatue(actor, 60, 0);
     }
   }
   if (hit == 255) {
@@ -1525,15 +1523,15 @@ const struct ActorPlacement *Scene_GetActorPlacements(void) {
 /// the last are restored; in the Reveal tablet room the cell's attribute raises
 /// its trigger (200 on).
 void AirsRockInside_RestoreCellBehindLeader(void) {
-  struct Actor *object = Actor_GetById(Party_GetLeaderActor());
-  s32 x = FIELD_CELL(object->x.fixed);
-  s32 z = FIELD_CELL(object->z.fixed);
+  struct Actor *actor = Actor_GetById(Party_GetLeaderActor());
+  s32 x = FIELD_CELL(actor->x.fixed);
+  s32 z = FIELD_CELL(actor->z.fixed);
   s32 key = (x << 16) + z;
   s32 last;
   s32 value;
   struct FieldWork *work;
 
-  if (object->velocityX != 0 || object->velocityZ != 0)
+  if (actor->velocityX != 0 || actor->velocityZ != 0)
     return;
   last = gAirsRockInside_StampedCell;
   if (last == -1 || key == last)
@@ -1638,10 +1636,10 @@ void AirsRockInside_StampOtherCellUnderLeader(void) {
 /// below it at (73, 72) and stamps the cells kept at (72, 72) in their place.
 #define DEFINE_AIRS_ROCK_INSIDE_TRACK_LEADER_CELL(name, n1)                    \
   void name(void) {                                                            \
-    struct Actor *object = Actor_GetById(Party_GetLeaderActor());              \
-    s32 x = FIELD_CELL(object->x.fixed);                                       \
-    s32 y = FIELD_CELL(object->y.fixed);                                       \
-    s32 z = FIELD_CELL(object->z.fixed);                                       \
+    struct Actor *actor = Actor_GetById(Party_GetLeaderActor());               \
+    s32 x = FIELD_CELL(actor->x.fixed);                                        \
+    s32 y = FIELD_CELL(actor->y.fixed);                                        \
+    s32 z = FIELD_CELL(actor->z.fixed);                                        \
     s32 key = (x << 16) + z;                                                   \
                                                                                \
     if (key != gAirsRockInside_StampedCell) {                                  \
@@ -1715,48 +1713,48 @@ void AirsRockInside_ScatterSparks(s32 x, s32 z) {
 
 /// A gust's spark: circles the centre kept in bounce and riseBaseY, a lap every
 /// 32 frames, its radius growing as it rises above the ground.
-void AirsRockInside_SpiralGust(struct Actor *object) {
-  FIXED radius = ((object->y.fixed - object->groundHeight) >> 1) + toFIXED(16);
+void AirsRockInside_SpiralGust(struct Actor *actor) {
+  FIXED radius = ((actor->y.fixed - actor->groundHeight) >> 1) + toFIXED(16);
 
-  object->x.fixed =
-      object->bounce +
-      Iwram_MulFX(Trig_Cos((object->speedLimit & 255) << 11), radius);
-  object->z.fixed =
-      object->riseBaseY +
-      Iwram_MulFX(Trig_Sin((object->speedLimit & 255) << 11), radius) / 3;
-  object->y.fixed += object->gravity;
-  object->speedLimit++;
+  actor->x.fixed =
+      actor->bounce +
+      Iwram_MulFX(Trig_Cos((actor->speedLimit & 255) << 11), radius);
+  actor->z.fixed =
+      actor->riseBaseY +
+      Iwram_MulFX(Trig_Sin((actor->speedLimit & 255) << 11), radius) / 3;
+  actor->y.fixed += actor->gravity;
+  actor->speedLimit++;
 }
 
 /// A spark: circles the centre kept in bounce and riseBaseY on an ellipse twice
 /// as wide as deep, the radius growing with its height; it rises by its gravity
 /// each frame and turns blue (SPRITE_COLOR_BLUE_TINT) and back every two
 /// frames.
-void AirsRockInside_SpiralSpark(struct Actor *object) {
-  FIXED y = object->y.fixed;
+void AirsRockInside_SpiralSpark(struct Actor *actor) {
+  FIXED y = actor->y.fixed;
   s32 phase;
   FIXED radius;
 
-  phase = object->speedLimit;
+  phase = actor->speedLimit;
   radius = toFIXED(12) + (y >> 2);
-  object->x.fixed =
-      object->bounce + Iwram_MulFX(Trig_Cos((phase & 255) << 11), radius) * 2;
-  object->z.fixed =
-      object->riseBaseY +
-      Iwram_MulFX(Trig_Sin((object->speedLimit & 255) << 11), radius);
-  object->y.fixed += object->gravity;
-  object->speedLimit++;
-  Actor_SetSpriteColor(object,
+  actor->x.fixed =
+      actor->bounce + Iwram_MulFX(Trig_Cos((phase & 255) << 11), radius) * 2;
+  actor->z.fixed =
+      actor->riseBaseY +
+      Iwram_MulFX(Trig_Sin((actor->speedLimit & 255) << 11), radius);
+  actor->y.fixed += actor->gravity;
+  actor->speedLimit++;
+  Actor_SetSpriteColor(actor,
                        ((gFrameCount & 2) >> 1) * SPRITE_COLOR_BLUE_TINT);
 }
 
 /// A Whirlwind target's update while the gust gathers: it flickers to the
 /// colour mode in riseCounter (a SpriteColorMode), at the rate riseEnabled
 /// sets.
-void AirsRockInside_FlickerTarget(struct Actor *object) {
-  s32 bit = ((gFrameCount & 3) >> object->riseEnabled) & 1;
+void AirsRockInside_FlickerTarget(struct Actor *actor) {
+  s32 bit = ((gFrameCount & 3) >> actor->riseEnabled) & 1;
 
-  Actor_SetSpriteColor(object, (u8)(bit * object->riseCounter));
+  Actor_SetSpriteColor(actor, (u8)(bit * actor->riseCounter));
 }
 
 /// Whirlwind on the hall's twister rock: it glows and the light it sends wakes
@@ -2284,10 +2282,10 @@ void AirsRockInside_StepOnVanishingStone(void) {
 /// cells 64 columns across from the controlled object at (73, 72) and stamps
 /// the cells kept at (70, 74) in their place.
 void AirsRockInside_StampWideCellUnderLeader(void) {
-  struct Actor *object = Actor_GetById(Party_GetLeaderActor());
-  s32 x = FIELD_CELL(object->x.fixed);
-  s32 y = FIELD_CELL(object->y.fixed);
-  s32 z = FIELD_CELL(object->z.fixed);
+  struct Actor *actor = Actor_GetById(Party_GetLeaderActor());
+  s32 x = FIELD_CELL(actor->x.fixed);
+  s32 y = FIELD_CELL(actor->y.fixed);
+  s32 z = FIELD_CELL(actor->z.fixed);
   s32 key = (x << 16) + z;
 
   if (key != gAirsRockInside_StampedCell) {
@@ -2322,18 +2320,18 @@ DEFINE_AIRS_ROCK_INSIDE_SET_DOORS(AirsRockInside_RevealDoors, 25, 89)
 
 /// Leaves a small spark where the orbiter is.
 void AirsRockInside_SpawnOrbitSpark(struct Actor *source) {
-  struct Actor *object = FieldActor_Create(SPRITE_PARTICLE, source->x.fixed,
-                                           source->y.fixed, source->z.fixed);
+  struct Actor *actor = FieldActor_Create(SPRITE_PARTICLE, source->x.fixed,
+                                          source->y.fixed, source->z.fixed);
 
-  object->scaleY = FIXED_ONE * 2 / 5;
-  object->scaleX = FIXED_ONE * 2 / 5;
-  object->motionFlags = 0;
-  Actor_SetSpriteColor(object, SPRITE_COLOR_RBG);
-  Scene_SetActorSpritePriority(object, 1);
-  Actor_SelectAnimation(object, 1);
-  Actor_SetSpriteFlags(object, 0);
-  Actor_SetBlendMode(object, 1);
-  Actor_StartScript(object, gAirsRockInside_OrbitSparkScript);
+  actor->scaleY = FIXED_ONE * 2 / 5;
+  actor->scaleX = FIXED_ONE * 2 / 5;
+  actor->motionFlags = 0;
+  Actor_SetSpriteColor(actor, SPRITE_COLOR_RBG);
+  Scene_SetActorSpritePriority(actor, 1);
+  Actor_SelectAnimation(actor, 1);
+  Actor_SetSpriteFlags(actor, 0);
+  Actor_SetBlendMode(actor, 1);
+  Actor_StartScript(actor, gAirsRockInside_OrbitSparkScript);
 }
 
 /// An orbiter's update: circles 8 pixels above its anchor, closing in 4 pixels
@@ -2517,7 +2515,7 @@ s32 Actor_MoveToObject();
 /// (FLAG_REVEAL_TABLET_READ) Sheba learns Reveal, as Magma Rock's tablet does
 /// for Blaze.
 void AirsRockInside_ReadRevealTablet(void) {
-  struct Actor *object;
+  struct Actor *actor;
 
   Event_Start();
   Event_ResolvePendingActions(0);
@@ -2569,10 +2567,10 @@ void AirsRockInside_ReadRevealTablet(void) {
     FieldEvent_Wait(20);
     Actor_SetSpeedFX(ACTOR_SHEBA, toFIXED(6) / 5, toFIXED(3) / 5);
     Actor_SetAnimationById(ACTOR_SHEBA, ANIM_WALK);
-    object = Actor_GetById(gMainRoutineWork.leaderActorId);
-    if (object != 0)
-      Actor_SetDestinationById(ACTOR_SHEBA, object->x.part[0].integer,
-                               object->z.part[0].integer);
+    actor = Actor_GetById(gMainRoutineWork.leaderActorId);
+    if (actor != 0)
+      Actor_SetDestinationById(ACTOR_SHEBA, actor->x.part[0].integer,
+                               actor->z.part[0].integer);
     Actor_WaitForMoveById(ACTOR_SHEBA);
     Actor_SetHorizontalPositionWithTerrain(ACTOR_SHEBA, 0, 0);
     Actor_SetMovementType(Actor_GetById(ACTOR_REVEAL_TABLET),
@@ -2643,7 +2641,7 @@ void AirsRockInside_PoundPairedStatuesCone(s32 mode, s32 step) {
 }
 
 extern u16 gAirsRockInside_PairedStatuesCones[];
-void AirsRockInside_SetConeCells(struct Actor *object);
+void AirsRockInside_SetConeCells(struct Actor *actor);
 
 /// Move on one of the paired statues: it and its partner trade places, their
 /// sprites flattening and rising in turn.
@@ -2890,32 +2888,32 @@ void AirsRockInside_RiseOnLift(void) {
 
 /// Eight motes of light drift about the hall.
 void AirsRockInside_SpawnMotes(void) {
-  struct Actor *object;
+  struct Actor *actor;
   s32 i = 0;
   struct FieldSprite *sprite;
 
   do {
-    object = Import_ActorCreate(SPRITE_PARTICLE, 0, 0, 0);
-    sprite = object->sprite;
+    actor = Import_ActorCreate(SPRITE_PARTICLE, 0, 0, 0);
+    sprite = actor->sprite;
     sprite->priority = 1;
-    object->riseEnabled = i << 4;
+    actor->riseEnabled = i << 4;
     {
       s32 zero = 0;
-      object->motionFlags = zero;
-      object->priorityFlags = zero;
+      actor->motionFlags = zero;
+      actor->priorityFlags = zero;
     }
-    object->acceleration = object->speedLimit = (i << 12) + (toFIXED(1) / 2);
-    object->update = AirsRockInside_DriftMote;
-    Actor_SetSpriteFlags(object, 0);
-    Actor_SetSpriteColor(object, SPRITE_COLOR_RBG);
+    actor->acceleration = actor->speedLimit = (i << 12) + (toFIXED(1) / 2);
+    actor->update = AirsRockInside_DriftMote;
+    Actor_SetSpriteFlags(actor, 0);
+    Actor_SetSpriteColor(actor, SPRITE_COLOR_RBG);
     if (i & 1) {
-      object->timer = 212;
-      object->userValue = 0;
+      actor->timer = 212;
+      actor->userValue = 0;
     } else {
-      object->timer = 116;
-      object->userValue = 0;
+      actor->timer = 116;
+      actor->userValue = 0;
     }
-    Actor_SetBlendMode(object, 1);
+    Actor_SetBlendMode(actor, 1);
     i++;
   } while (i != 8);
 }
@@ -3039,7 +3037,7 @@ void AirsRockInside_LandInHall(void) {
 void AirsRockInside_PuffVents(void);
 
 s32 Scene_Initialize(void) {
-  struct Actor *object;
+  struct Actor *actor;
   s32 i, z, one;
 
   gFieldWork->transition = SCENE_TRANSITION(TRANSITION_WINDOW, 4);
@@ -3208,9 +3206,9 @@ s32 Scene_Initialize(void) {
       i++;
     } while (i != 6);
     Actor_GetById(ACTOR_REVEAL_TABLET)->motionFlags = 0;
-    object = Actor_GetById(ACTOR_REVEAL_TABLET);
+    actor = Actor_GetById(ACTOR_REVEAL_TABLET);
     Actor_GetById(ACTOR_REVEAL_TABLET)->groundHeight = toFIXED(16);
-    object->y.fixed = toFIXED(16);
+    actor->y.fixed = toFIXED(16);
     Actor_SetMovementType(Actor_GetById(ACTOR_REVEAL_TABLET),
                           MOVEMENT_TYPE_TAKE_LEADER_LAYER);
   } else if (gMainRoutineWork.next == SCENE_AIRS_ROCK_INSIDE_ELIXIR_CHEST) {

@@ -11,7 +11,7 @@ struct Actor;
 struct Actor;
 
 void *Actor_FindFree(void);
-void Actor_Release(struct Actor *object);
-void Actor_StartScriptFar(struct Actor *object, const s32 *script);
+void Actor_Release(struct Actor *actor);
+void Actor_StartScriptFar(struct Actor *actor, const s32 *script);
 
 #endif

@@ -1,7 +1,7 @@
 /// Puts the pillars of a list back where their flags left them.
 void MagmaRockInside_RestorePillars(u16 *list) {
   struct MapWork *map = Ram_HeapSlots->mapGrid;
-  struct Actor *object;
+  struct Actor *actor;
   s32 id;
   s32 flag;
   s32 nextFlag;
@@ -28,12 +28,12 @@ void MagmaRockInside_RestorePillars(u16 *list) {
     goto done;
 next:
   id = list[0];
-  object = Actor_Get(id);
+  actor = Actor_Get(id);
   flag = list[1];
   nextFlag = flag + 1;
-  cells = map->layers[object->layer].cells;
+  cells = map->layers[actor->layer].cells;
   shapes = grid + (cells - (struct MapCell *)Ram_MapCellBuffer);
-  object->retainSpriteCache = 3;
+  actor->retainSpriteCache = 3;
   if (Event_GetFlag(nextFlag)) {
     Actor_SetPosition(id, 0, 0);
   } else {
@@ -41,16 +41,15 @@ next:
     u8 *slot;
     s32 height;
 
-    index = Actor_GetCellIndex(object);
+    index = Actor_GetCellIndex(actor);
     cell = &cells[index];
     slot = shapes + index;
     shape =
-        MapGrid_GetTerrainKind(object->layer, object->x.fixed, object->z.fixed);
-    height =
-        Map_GetTerrainHeight(object->layer, object->x.fixed, object->z.fixed);
+        MapGrid_GetTerrainKind(actor->layer, actor->x.fixed, actor->z.fixed);
+    height = Map_GetTerrainHeight(actor->layer, actor->x.fixed, actor->z.fixed);
     Actor_DisableById(id);
     cell->attributeB = 128;
-    *slot = MapCollision_FindOrAddTag(object->layer, shape, (height >> 19) + 4);
+    *slot = MapCollision_FindOrAddTag(actor->layer, shape, (height >> 19) + 4);
     if (Event_GetFlag(flag))
       Actor_CopyGraphics(id, 9);
   }

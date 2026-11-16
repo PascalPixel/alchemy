@@ -206,7 +206,7 @@ enum ProxCavesActorId { ACTOR_OLD_MAN_FEARING_FOR_WEYARD = ACTOR_FIRST_PLACED };
 
 extern void Actor_StartScript(struct FieldEffect *effect, const s32 *script);
 extern const s32 *gFieldEffect_DurationScripts[];
-void Actor_SetSpriteFlags(struct Actor *object, u32 value);
+void Actor_SetSpriteFlags(struct Actor *actor, u32 value);
 #define EFFECT_SPAWN FieldEffect_Spawn
 #define EFFECT_CREATE Import_ActorCreate
 #define EFFECT_SET_MODE Actor_SelectAnimation
@@ -345,41 +345,41 @@ void Prox_PuffFromRoofs(void);
 
 /// Runs a child at its target while it is near and ahead, and says whether it
 /// is chasing.
-s32 Prox_ChaseTarget(struct Actor *object, struct Actor *target, s32 range,
+s32 Prox_ChaseTarget(struct Actor *actor, struct Actor *target, s32 range,
                      s32 force) {
   s32 result = 0;
   s32 *targetPos;
   s32 *objectPos;
 
   // A child being talked to holds still.
-  if (object->riseEnabled != 0) {
-    object->paused = 1;
+  if (actor->riseEnabled != 0) {
+    actor->paused = 1;
     return 1;
   }
   targetPos = &target->x.fixed;
-  objectPos = &object->x.fixed;
+  objectPos = &actor->x.fixed;
   if (SceneActor_CalculateFixedPointDistance(targetPos, objectPos) < range ||
       force != 0) {
-    u32 angle = (u16)Trig_Atan(target->z.fixed - object->z.fixed,
+    u32 angle = (u16)Trig_Atan(target->z.fixed - actor->z.fixed,
                                *targetPos - *objectPos);
     u32 left = (angle - TRIG_TURN / 16) & 0xf000;
     u32 right = (angle + TRIG_TURN / 16) & 0xf000;
     u32 ahead = angle & 0xf000;
-    u32 facing = object->facing & 0xf000;
+    u32 facing = actor->facing & 0xf000;
 
     if (ahead == facing || right == facing || left == facing || force != 0) {
       if (gFieldWork->blockedSteps > 120) {
-        object->paused = 0;
-        Actor_SelectAnimation(object, 2);
+        actor->paused = 0;
+        Actor_SelectAnimation(actor, 2);
       } else {
-        object->paused = 1;
-        Actor_SelectAnimation(object, 1);
+        actor->paused = 1;
+        Actor_SelectAnimation(actor, 1);
         result = 1;
       }
     }
   } else {
-    object->paused = 0;
-    Actor_SelectAnimation(object, 2);
+    actor->paused = 0;
+    Actor_SelectAnimation(actor, 2);
   }
   return result;
 }
@@ -605,12 +605,12 @@ void Prox_FearForWeyard(void) {
 /// igloo; then turns back and plays on.
 void Prox_TalkToPlayingChild(void) {
   struct FieldWork *work = Ram_HeapSlots->fieldWork;
-  struct Actor *object = Actor_Get(ACTOR_PLAYING_CHILD);
-  s16 angle = object->facing;
+  struct Actor *actor = Actor_Get(ACTOR_PLAYING_CHILD);
+  s16 angle = actor->facing;
 
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
-  object->riseEnabled = 1;
+  actor->riseEnabled = 1;
   if (work->psynergy == 0) {
     Actor_FaceActor(ACTOR_PLAYING_CHILD, gMainRoutineWork.leaderActorId, 0);
     FieldEvent_SetMessageId((s32)MsgProxWeeeeWhatFunNow);
@@ -620,8 +620,8 @@ void Prox_TalkToPlayingChild(void) {
   // "Now that the lighthouse is lit, we don't have to play in that stupid..."
   Event_ShowMessage(ACTOR_PLAYING_CHILD, 0);
   if (work->psynergy == 0)
-    object->facing = angle;
-  object->riseEnabled = 0;
+    actor->facing = angle;
+  actor->riseEnabled = 0;
   Prox_EndEvent();
 }
 
@@ -629,12 +629,12 @@ void Prox_TalkToPlayingChild(void) {
 /// outside, or under Mind Read thinks how unreal the blizzard was.
 void Prox_TalkToRestlessChild(void) {
   struct FieldWork *work = Ram_HeapSlots->fieldWork;
-  struct Actor *object = Actor_Get(ACTOR_RESTLESS_CHILD);
-  s16 angle = object->facing;
+  struct Actor *actor = Actor_Get(ACTOR_RESTLESS_CHILD);
+  s16 angle = actor->facing;
 
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
-  object->riseEnabled = 1;
+  actor->riseEnabled = 1;
   if (work->psynergy == 0) {
     Actor_FaceActor(ACTOR_RESTLESS_CHILD, gMainRoutineWork.leaderActorId, 0);
     FieldEvent_SetMessageId((s32)MsgProxIMissRunningAroundOutside);
@@ -644,8 +644,8 @@ void Prox_TalkToRestlessChild(void) {
   // "That blizzard was unreal, but it's gone now, and the weather's..."
   Event_ShowMessage(ACTOR_RESTLESS_CHILD, 0);
   if (work->psynergy == 0)
-    object->facing = angle;
-  object->riseEnabled = 0;
+    actor->facing = angle;
+  actor->riseEnabled = 0;
   Prox_EndEvent();
 }
 
@@ -653,12 +653,12 @@ void Prox_TalkToRestlessChild(void) {
 /// warrior like Felix, or under Mind Read thinks snow makes better exercise.
 void Prox_TalkToTrainingChild(void) {
   struct FieldWork *work = Ram_HeapSlots->fieldWork;
-  struct Actor *object = Actor_Get(ACTOR_TRAINING_CHILD);
-  s16 angle = object->facing;
+  struct Actor *actor = Actor_Get(ACTOR_TRAINING_CHILD);
+  s16 angle = actor->facing;
 
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
-  object->riseEnabled = 1;
+  actor->riseEnabled = 1;
   if (work->psynergy == 0) {
     Actor_FaceActor(ACTOR_TRAINING_CHILD, gMainRoutineWork.leaderActorId, 0);
     FieldEvent_SetMessageId((s32)MsgProxIfImGoing);
@@ -668,8 +668,8 @@ void Prox_TalkToTrainingChild(void) {
   // "You get more exercise running in the snow, because it's a lot harder..."
   Event_ShowMessage(ACTOR_TRAINING_CHILD, 0);
   if (work->psynergy == 0)
-    object->facing = angle;
-  object->riseEnabled = 0;
+    actor->facing = angle;
+  actor->riseEnabled = 0;
   Prox_EndEvent();
 }
 
@@ -1116,31 +1116,31 @@ void Prox_MeetPuelle(void) {
 }
 
 void Prox_MoldHidesInSnow(void) {
-  struct Actor *object;
+  struct Actor *actor;
 
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
   Actor_SetSpeed(gMainRoutineWork.leaderActorId, 2);
   Actor_SetSpeed(ACTOR_MOLD, 2);
-  object = Actor_Get(ACTOR_MOLD);
-  object->layer = 1;
+  actor = Actor_Get(ACTOR_MOLD);
+  actor->layer = 1;
   FieldActor_SetSpritePriority(ACTOR_MOLD, 3);
-  object = Actor_Get(gMainRoutineWork.leaderActorId);
-  object->steeringFlags &= ~ACTOR_FACES_MOTION;
+  actor = Actor_Get(gMainRoutineWork.leaderActorId);
+  actor->steeringFlags &= ~ACTOR_FACES_MOTION;
   Actor_WalkToAndWait(gMainRoutineWork.leaderActorId, 408, 326);
   FieldEvent_Wait(1);
-  object = Actor_Get(gMainRoutineWork.leaderActorId);
-  object->steeringFlags |= ACTOR_FACES_MOTION;
+  actor = Actor_Get(gMainRoutineWork.leaderActorId);
+  actor->steeringFlags |= ACTOR_FACES_MOTION;
   Actor_FaceDirection(gMainRoutineWork.leaderActorId, FACING_NORTH, 0);
   Event_PlaySound(SE_RATTLE);
-  object = (struct Actor *)((s32)FieldCamera_GetActor());
-  object->y.fixed += toFIXED(2);
-  object = Actor_Get(ACTOR_MOLD);
-  object->steeringFlags &= ~ACTOR_FACES_MOTION;
+  actor = (struct Actor *)((s32)FieldCamera_GetActor());
+  actor->y.fixed += toFIXED(2);
+  actor = Actor_Get(ACTOR_MOLD);
+  actor->steeringFlags &= ~ACTOR_FACES_MOTION;
   Actor_WalkToAndWait(ACTOR_MOLD, 408, 200);
   FieldEvent_Wait(1);
-  object = Actor_Get(ACTOR_MOLD);
-  object->steeringFlags |= ACTOR_FACES_MOTION;
+  actor = Actor_Get(ACTOR_MOLD);
+  actor->steeringFlags |= ACTOR_FACES_MOTION;
   Actor_SetPosition(ACTOR_MOLD, 0, 0);
   Event_PlaySound(SE_KOLIMA_BRIDGE_HOP);
   MapGrid_SetShake(1, 2, 1);
@@ -1153,8 +1153,8 @@ void Prox_MoldHidesInSnow(void) {
   Actor_ShowEmote(gMainRoutineWork.leaderActorId,
                   EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 40);
   FieldActor_SetSpritePriority(ACTOR_MOLD, 2);
-  object = Actor_Get(ACTOR_MOLD);
-  object->priorityFlags |= ACTOR_PRIORITY_AUTOMATIC;
+  actor = Actor_Get(ACTOR_MOLD);
+  actor->priorityFlags |= ACTOR_PRIORITY_AUTOMATIC;
   MapGrid_CopyCellsTo(72, 3, 69, 3, 3, 3);
   MapGrid_CopyCellsTo(48, 36, 69, 8, 3, 2);
   MapGrid_CopyCellAttributes(72, 13, 1, 3, 70, 20);
@@ -1197,34 +1197,34 @@ void Prox_EndScoop(void) { MapGrid_CopyCellAttributes(25, 3, 1, 1, 25, 9); }
 
 /// Drifts a roof's puff sideways ever faster, raises and widens it, and
 /// releases it when its frames run out.
-void Prox_RisePuff(struct Actor *object) {
-  object->x.fixed += object->timer << 8;
-  object->y.fixed += toFIXED(1) / 2;
-  object->scaleX += FIXED_ONE / 50;
-  object->scaleY += FIXED_ONE / 50;
-  object->timer += 2;
-  if (--*(s32 *)&object->watchedActor == 0)
-    Actor_Release(object);
+void Prox_RisePuff(struct Actor *actor) {
+  actor->x.fixed += actor->timer << 8;
+  actor->y.fixed += toFIXED(1) / 2;
+  actor->scaleX += FIXED_ONE / 50;
+  actor->scaleY += FIXED_ONE / 50;
+  actor->timer += 2;
+  if (--*(s32 *)&actor->watchedActor == 0)
+    Actor_Release(actor);
 }
 
 /// Adds one puff rising from a roof.
 void Prox_AddPuff(s32 x, s32 y, s32 z) {
-  struct Actor *object = FieldActor_Create(SPRITE_DUST_CLOUD, x, y, z);
+  struct Actor *actor = FieldActor_Create(SPRITE_DUST_CLOUD, x, y, z);
 
-  if (object != NULL) {
-    object->retainSpriteCache = 2;
-    object->motionFlags = 0;
-    object->timer = 0;
-    object->priorityFlags &= ~ACTOR_PRIORITY_AUTOMATIC;
-    FieldActor_SetSpriteColor(object, SPRITE_COLOR_WHITE);
-    ((struct FieldSprite *)object->sprite)->priority = 1;
-    Actor_SetSpriteFlags(object, 0);
-    object->scaleX = FIXED_ONE / 2;
-    object->scaleY = FIXED_ONE / 2;
-    *(s32 *)&object->watchedActor = 60;
-    object->update = (void (*)(void))Prox_RisePuff;
-    Actor_SelectAnimation(object, 5);
-    Actor_SetBlendMode(object, 1);
+  if (actor != NULL) {
+    actor->retainSpriteCache = 2;
+    actor->motionFlags = 0;
+    actor->timer = 0;
+    actor->priorityFlags &= ~ACTOR_PRIORITY_AUTOMATIC;
+    FieldActor_SetSpriteColor(actor, SPRITE_COLOR_WHITE);
+    ((struct FieldSprite *)actor->sprite)->priority = 1;
+    Actor_SetSpriteFlags(actor, 0);
+    actor->scaleX = FIXED_ONE / 2;
+    actor->scaleY = FIXED_ONE / 2;
+    *(s32 *)&actor->watchedActor = 60;
+    actor->update = (void (*)(void))Prox_RisePuff;
+    Actor_SelectAnimation(actor, 5);
+    Actor_SetBlendMode(actor, 1);
   }
 }
 
@@ -1254,7 +1254,7 @@ void Prox_PuffFromRoofs(void) {
 void Prox_EnterDoor(s32 sourceX, s32 sourceY, s32 x, s32 y, s32 width,
                     s32 height) {
   struct FieldWork *work = Ram_HeapSlots->fieldWork;
-  struct Actor *object;
+  struct Actor *actor;
   s32 cell;
 
   Event_Start();
@@ -1269,12 +1269,12 @@ void Prox_EnterDoor(s32 sourceX, s32 sourceY, s32 x, s32 y, s32 width,
   }
   Actor_SetSpeed(gMainRoutineWork.leaderActorId, 0.5);
   if (width == 1) {
-    object = Actor_Get(gMainRoutineWork.leaderActorId);
-    cell = FIXEDtoINT(object->x.fixed);
-    FieldActor_SetMoveTargetFX(object, toFIXED(8 - cell % 16) + object->x.fixed,
-                               object->y.fixed, object->z.fixed);
-    FieldActor_WaitForMove(object);
-    object->facing = FACING_NORTH;
+    actor = Actor_Get(gMainRoutineWork.leaderActorId);
+    cell = FIXEDtoINT(actor->x.fixed);
+    FieldActor_SetMoveTargetFX(actor, toFIXED(8 - cell % 16) + actor->x.fixed,
+                               actor->y.fixed, actor->z.fixed);
+    FieldActor_WaitForMove(actor);
+    actor->facing = FACING_NORTH;
   }
   Actor_SetScript(gMainRoutineWork.leaderActorId, gProx_EnterDoorScript);
   System_Wait(12);
@@ -1312,16 +1312,16 @@ void Prox_OpenUpperHouseDoor(void) { Prox_EnterDoor(89, 0, 77, 16, 1, 2); }
 void Prox_ClimbStairs(void) {
   struct FieldWork *work = Ram_HeapSlots->fieldWork;
   s32 stairsExit = work->stepTrigger;
-  struct Actor *object = Actor_Get(gMainRoutineWork.leaderActorId);
+  struct Actor *actor = Actor_Get(gMainRoutineWork.leaderActorId);
   s32 cell;
   s32 id;
 
   Actor_SetSpeed(gMainRoutineWork.leaderActorId, 0.5);
-  cell = FIXEDtoINT(object->x.fixed);
-  FieldActor_SetMoveTargetFX(object, toFIXED(8 - cell % 16) + object->x.fixed,
-                             object->y.fixed, object->z.fixed - toFIXED(4));
-  FieldActor_WaitForMove(object);
-  object->facing = FACING_NORTH;
+  cell = FIXEDtoINT(actor->x.fixed);
+  FieldActor_SetMoveTargetFX(actor, toFIXED(8 - cell % 16) + actor->x.fixed,
+                             actor->y.fixed, actor->z.fixed - toFIXED(4));
+  FieldActor_WaitForMove(actor);
+  actor->facing = FACING_NORTH;
   Event_PlaySound(SE_STAIRS_UP);
   Actor_SetSpriteFlags(Actor_Get(gMainRoutineWork.leaderActorId), 0);
   id = gMainRoutineWork.leaderActorId;
@@ -1338,24 +1338,24 @@ void Prox_ClimbStairs(void) {
 /// Arrives down the stairs into the cave homes: the leader appears beside the
 /// stairs (westOrSouth for the west and south ones), steps down and walks on.
 void Prox_ComeDownStairs(s32 westOrSouth) {
-  struct Actor *object;
+  struct Actor *actor;
 
-  object = Actor_Get(gMainRoutineWork.leaderActorId);
+  actor = Actor_Get(gMainRoutineWork.leaderActorId);
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
   if (westOrSouth != 0) {
     Actor_SetSpriteFlags(((s32)Actor_Get(gMainRoutineWork.leaderActorId)), 0);
-    FieldActor_SetPositionAndResetMotion(
-        object, (object->x.fixed + -toFIXED(1)), object->y.fixed,
-        (object->z.fixed + -toFIXED(6)));
+    FieldActor_SetPositionAndResetMotion(actor, (actor->x.fixed + -toFIXED(1)),
+                                         actor->y.fixed,
+                                         (actor->z.fixed + -toFIXED(6)));
     System_Wait(1);
     Event_StartScreenTransition();
     Actor_SetAnimationAndWait(gMainRoutineWork.leaderActorId,
                               ANIM_LEADER_ARRIVE_ALTERNATE);
   } else {
-    FieldActor_SetPositionAndResetMotion(object, (object->x.fixed + toFIXED(1)),
-                                         object->y.fixed,
-                                         (object->z.fixed + -toFIXED(6)));
+    FieldActor_SetPositionAndResetMotion(actor, (actor->x.fixed + toFIXED(1)),
+                                         actor->y.fixed,
+                                         (actor->z.fixed + -toFIXED(6)));
     System_Wait(1);
     Event_StartScreenTransition();
     Actor_SetAnimationAndWait(gMainRoutineWork.leaderActorId,
@@ -1796,7 +1796,7 @@ void Prox_InitializeTown(void) {
 /// Sets up the north of the village: the warrior and the upper house's door by
 /// the overheard talk, Puelle's facing, and Mold's snow dug out or not.
 void Prox_InitializeMold(void) {
-  struct Actor *object;
+  struct Actor *actor;
 
   FieldActor_SetSpritePriority(ACTOR_MOLD_CRATE, 1);
   FieldActor_SetSpriteColor(((s32)Actor_Get(ACTOR_MOLD_CRATE)), 0xf);
@@ -1808,8 +1808,8 @@ void Prox_InitializeMold(void) {
       MapGrid_CopyCellsTo(89, 0, 77, 16, 1, 2);
     }
     if (Event_GetFlag(FLAG_CLAN_SPOKE_OF_LIGHTHOUSE)) {
-      object = Actor_Get(ACTOR_PUELLE);
-      object->facing = FACING_NORTH_NORTHWEST;
+      actor = Actor_Get(ACTOR_PUELLE);
+      actor->facing = FACING_NORTH_NORTHWEST;
       System_Wait(1);
     }
   }
@@ -1832,12 +1832,11 @@ void Prox_InitializeMold(void) {
 
 /// Each frame, draws the hiding child at the leader's sprite priority.
 void Prox_MatchHousesPriority(void) {
-  struct Actor *object;
+  struct Actor *actor;
 
-  object = Actor_Get(gMainRoutineWork.leaderActorId);
-  FieldActor_SetSpritePriority(
-      ACTOR_CHILD_HIDING_FROM_THE_WIND,
-      ((struct FieldSprite *)object->sprite)->priority);
+  actor = Actor_Get(gMainRoutineWork.leaderActorId);
+  FieldActor_SetSpritePriority(ACTOR_CHILD_HIDING_FROM_THE_WIND,
+                               ((struct FieldSprite *)actor->sprite)->priority);
 }
 
 void Prox_InitializeHouses(void) {
@@ -2341,7 +2340,7 @@ extern s16 gSlideOnIce_AnglesByKey[];
 
 volatile s16 gSlideOnIce_Stopped BSS_DATA;
 
-s32 Actor_HasArrived(struct Actor *object);
+s32 Actor_HasArrived(struct Actor *actor);
 
 #include "shared/slide_on_ice_from_edge.c"
 

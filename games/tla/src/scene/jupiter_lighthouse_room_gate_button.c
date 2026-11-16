@@ -123,10 +123,10 @@ void JupiterLighthouse_CloseDoor(void) {
 /// Opens the gates for good once the pillar stands on the button, cell (17,
 /// 33).
 void JupiterLighthouse_CheckBlockOnCell(void) {
-  struct Actor *object = Actor_Get(ACTOR_GATES_PILLAR);
+  struct Actor *actor = Actor_Get(ACTOR_GATES_PILLAR);
 
   if (!Event_GetFlag(FLAG_JUPITER_LIGHTHOUSE_GATES_PILLAR_PLACED) &&
-      FIELD_CELL(object->x.fixed) == 17 && FIELD_CELL(object->z.fixed) == 33) {
+      FIELD_CELL(actor->x.fixed) == 17 && FIELD_CELL(actor->z.fixed) == 33) {
     Event_SetFlag(FLAG_JUPITER_LIGHTHOUSE_GATES_PILLAR_PLACED);
     JupiterLighthouse_OpenDoor(1);
   }
@@ -227,7 +227,7 @@ void JupiterLighthouse_LoadPalettes(s32 mode) {
 extern s32 gWhirlwindEndScript[];
 
 s32 Position_FlatDistance(FIXED *from, FIXED *to);
-void Actor_StartScript(struct Actor *object, const s32 *script);
+void Actor_StartScript(struct Actor *actor, const s32 *script);
 
 #include "shared/whirlwind_update_lower.h"
 

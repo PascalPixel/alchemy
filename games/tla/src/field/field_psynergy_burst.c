@@ -317,7 +317,7 @@ void FieldPsynergy_BurstOnTarget(void) { FieldPsynergy_Burst(); }
 /// The tiles of the sparks that fly into Burst's glow, 64 bytes.
 extern const u8 gBurst_GlowTiles[];
 
-s32 FieldPsynergy_GetCanvasPriority(struct Actor *object, s32 facing);
+s32 FieldPsynergy_GetCanvasPriority(struct Actor *actor, s32 facing);
 
 /// Burst: a glow disc swells in front of the caster as sparks fly into it, then
 /// explosions burst round the target, shaking the screen, the last and largest

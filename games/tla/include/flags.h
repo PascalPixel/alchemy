@@ -257,7 +257,7 @@
 /// into the catacombs and Daila skips Alex's event.
 #define FLAG_MADRA_GATE_INSPECTED 0x910
 /// Set at the end of the jail scene where Piers wards off his interrogator
-/// with Frost (MadraInteriors_InterrogatePiers); then the two witnesses of the
+/// with Frost (MadraRooms_InterrogatePiers); then the two witnesses of the
 /// ice stand outside the jail and the lady can grant passage to Osenia.
 #define FLAG_PIERS_INTERROGATED 0x911
 /// Set as the lady grants passage over the drawbridge ("Then I hereby grant my
@@ -279,7 +279,7 @@
 /// learned Reveal; he then only sighs about his wasted years.
 #define FLAG_GAROH_ASKED_ABOUT_REVEAL 0x91a
 /// Set as the party wakes at Garoh's inn after the night with Maha
-/// (GarohInteriors_WakeAtInn): from then on it is day in Garoh and its people
+/// (GarohRooms_WakeAtInn): from then on it is day in Garoh and its people
 /// no longer hide that they are werewolves.
 #define FLAG_GAROH_SECRET_SHARED 0x91b
 
@@ -351,10 +351,10 @@
 /// celebrates and takes its tables for after.
 #define FLAG_SERPENT_SLAIN 0x927
 /// Set once Izumo has recognized the party as the warriors who slew the
-/// serpent (IzumoInteriors_RecognizeTheHeroes).
+/// serpent (IzumoRooms_RecognizeTheHeroes).
 #define FLAG_IZUMO_RECOGNIZED_THE_HEROES 0x928
 /// Set once the party has given Lady Uzume the dancing doll of Mt. Mikage
-/// (IzumoInteriors_GiveUzumeTheDoll).
+/// (IzumoRooms_GiveUzumeTheDoll).
 #define FLAG_UZUME_HAS_THE_DOLL 0x92c
 
 /// Set as the party throws the boy Tavi the rope at the Shrine of the Sea God;
@@ -1067,10 +1067,10 @@
 /// fortune teller then sends the party to the village on the eastern shore.
 #define FLAG_WORKERS_TOLD_MAYOR 0x905
 /// Set as Piers leaves the party to visit his mother's grave
-/// (LemuriaInteriors_LeavePiersToMourn); Lemuria reads it too.
+/// (LemuriaRooms_LeavePiersToMourn); Lemuria reads it too.
 #define FLAG_PIERS_AT_MOTHERS_GRAVE 0x966
 /// Set once Sheba has told why Piers is not with the party
-/// (LemuriaInteriors_AskWherePiersIs); Lemuria reads it too.
+/// (LemuriaRooms_AskWherePiersIs); Lemuria reads it too.
 #define FLAG_TOLD_OF_PIERS_MOTHER 0x969
 /// Set as the guard takes Felix in to King Hydros and his council; Lemuria's
 /// palace door is then locked while the senate meets.

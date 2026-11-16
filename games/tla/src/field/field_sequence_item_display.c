@@ -92,7 +92,7 @@ static inline void Actor_InitializeSparkle(struct Actor *actor) {
 /// within 16 pixels of it.
 void ItemDisplay_EmitSparkles(struct Actor *emitter) {
   union PolarOffsetPosition position;
-  struct Actor *object;
+  struct Actor *actor;
   u32 randomRadius;
 
   // Once the picture's rise has all but stopped (under 1/256 pixel a frame),
@@ -110,9 +110,9 @@ void ItemDisplay_EmitSparkles(struct Actor *emitter) {
   position.vector.z = emitter->z.fixed;
   randomRadius = Random16();
   Vector_AddPolarOffset(randomRadius << 4, Random16(), position.coordinates);
-  object = Actor_Spawn(SPRITE_SPARKLE, position.vector.x, position.vector.y,
-                       position.vector.z);
-  Actor_InitializeSparkle(object);
+  actor = Actor_Spawn(SPRITE_SPARKLE, position.vector.x, position.vector.y,
+                      position.vector.z);
+  Actor_InitializeSparkle(actor);
 }
 
 /// Returns 1 while Reveal is active, else 0.
@@ -133,10 +133,10 @@ void Reveal_EmitSparkles(struct Actor *source);
 
 /// Shows the picture of item above actor (in front of the controlled owner,
 /// on the centre of the cell), clearing Reveal's sparkles first.
-struct Actor *ItemDisplay_ShowItemInFront(s32 actor, s32 item) {
+struct Actor *ItemDisplay_ShowItemInFront(s32 actorId, s32 item) {
   struct FieldWork *work = Ram_HeapSlots->fieldWork;
-  struct Actor *picture = work->actors[actor];
-  struct Actor *object;
+  struct Actor *picture = work->actors[actorId];
+  struct Actor *actor;
   struct Sprite *sprite;
   FIXED position[3];
   GlyphTransfer *transfer;
@@ -148,23 +148,23 @@ struct Actor *ItemDisplay_ShowItemInFront(s32 actor, s32 item) {
   position[0] = picture->x.fixed;
   position[1] = picture->y.fixed;
   position[2] = picture->z.fixed;
-  if (actor == Party_GetLeaderActor()) {
+  if (actorId == Party_GetLeaderActor()) {
     Vector_AddPolarOffset(toFIXED(16), picture->facing, position);
     position[0] = (position[0] & FIELD_CELL_MASK) + toFIXED(8);
     position[2] = (position[2] & FIELD_CELL_MASK) + toFIXED(8);
   }
   if (work->revealActive != 0) {
-    object = Ram_HeapSlots->actors;
+    actor = Ram_HeapSlots->actors;
     i = 63;
     do {
-      if (object->script != NULL) {
-        if (object->update == Reveal_EmitSparkles)
-          Actor_ReleaseFar(object);
-        if (object->script == (s32 *)gBattleEffect_ParticleScript)
-          Actor_ReleaseFar(object);
+      if (actor->script != NULL) {
+        if (actor->update == Reveal_EmitSparkles)
+          Actor_ReleaseFar(actor);
+        if (actor->script == (s32 *)gBattleEffect_ParticleScript)
+          Actor_ReleaseFar(actor);
       }
       i--;
-      object++;
+      actor++;
     } while (i >= 0);
   }
   wait(3);
@@ -207,9 +207,9 @@ struct Actor *ItemDisplay_ShowItemInFront(s32 actor, s32 item) {
 }
 
 /// Releases object unless it is NULL.
-void Actor_ReleaseIfPresent(struct Actor *object) {
-  if (object != 0)
-    Actor_ReleaseFar(object);
+void Actor_ReleaseIfPresent(struct Actor *actor) {
+  if (actor != 0)
+    Actor_ReleaseFar(actor);
 }
 
 /// Does nothing; nothing in the image calls it.
@@ -243,22 +243,22 @@ void ItemDisplay_RaiseAboveLeader(struct Actor *actor) {
 /// Shows a found item's picture: flags bit 0 adds sparkles and bit 1 raises it
 /// above the leader, with waits of 60 and 80 frames around that when both are
 /// set.
-void ItemDisplay_ShowPicture(struct Actor *object, s32 flags) {
+void ItemDisplay_ShowPicture(struct Actor *actor, s32 flags) {
   struct Actor *owner;
 
-  if (object != NULL) {
+  if (actor != NULL) {
     owner = Actor_Lookup(Party_GetLeaderActor());
     if (flags & 1) {
-      Actor_SetSpriteFlagsFar(object, 0);
-      Actor_StartScriptFar(object, gFieldEffect_ParticleEmitterScript);
-      ((struct Actor *)object)->velocityY = toFIXED(2);
-      ((struct Actor *)object)->gravity = toFIXED(1) / 4;
-      ((struct Actor *)object)->update = ItemDisplay_EmitSparkles;
+      Actor_SetSpriteFlagsFar(actor, 0);
+      Actor_StartScriptFar(actor, gFieldEffect_ParticleEmitterScript);
+      ((struct Actor *)actor)->velocityY = toFIXED(2);
+      ((struct Actor *)actor)->gravity = toFIXED(1) / 4;
+      ((struct Actor *)actor)->update = ItemDisplay_EmitSparkles;
     }
     if (flags == 3)
       wait(60);
     if (flags & 2)
-      ItemDisplay_RaiseAboveLeader(object);
+      ItemDisplay_RaiseAboveLeader(actor);
     if (flags == 3)
       wait(80);
     Actor_SelectAnimationFar(owner, ANIM_STAND);
@@ -271,12 +271,12 @@ void ItemDisplay_ShowItem(s32 item, s32 flags) {
   struct Actor *owner = Actor_Lookup(Party_GetLeaderActor());
   GlyphTransfer *transfer =
       HeapSlot_Alloc(HEAP_SLOT_GLYPH_TRANSFER, sizeof(GlyphTransfer));
-  struct Actor *object =
+  struct Actor *actor =
       Actor_CreateFar(SPRITE_UNSEEN_MARKER, owner->x.fixed,
                       owner->y.fixed + toFIXED(36), owner->z.fixed);
 
-  if (object != 0) {
-    struct Sprite *sprite = object->sprite;
+  if (actor != 0) {
+    struct Sprite *sprite = actor->sprite;
 
     sprite->flags = 0;
     sprite->count = 0;
@@ -289,13 +289,13 @@ void ItemDisplay_ShowItem(s32 item, s32 flags) {
     HeapSlot_Release(HEAP_SLOT_GLYPH_TRANSFER);
 
     if (flags & 1)
-      object->update = ItemDisplay_EmitSparkles;
+      actor->update = ItemDisplay_EmitSparkles;
     if (flags & 2)
-      ItemDisplay_RaiseAboveLeader(object);
+      ItemDisplay_RaiseAboveLeader(actor);
 
     wait(80);
     Actor_SelectAnimationFar(owner, ANIM_STAND);
-    Actor_ReleaseFar(object);
+    Actor_ReleaseFar(actor);
   }
 }
 
@@ -334,13 +334,13 @@ void FieldEffect_SpawnRevealMarkers(void) {
   s32 *origin = &((struct MapWork *)map)->viewX;
   s32 originX = origin[0] & FIELD_PIXEL_MASK;
   s32 originZ = origin[1] & FIELD_PIXEL_MASK;
-  // One object in the frame: a word of the map header, then the point
+  // One actor in the frame: a word of the map header, then the point
   // SceneItem_FindPosition fills for each row.
   struct {
     s32 headerWord;
     s32 position[3];
   } found;
-  struct Actor *object;
+  struct Actor *actor;
   s16 type;
   s32 id;
   s32 flag;
@@ -365,13 +365,13 @@ void FieldEffect_SpawnRevealMarkers(void) {
       continue;
     if (SceneItem_FindPosition(id, found.position))
       continue;
-    object = TreasureSpot_GetActor(i + FIELD_TREASURE_ACTOR);
-    if (object == NULL)
+    actor = TreasureSpot_GetActor(i + FIELD_TREASURE_ACTOR);
+    if (actor == NULL)
       continue;
-    // A tile event's object holds its map cell, marked by this value.
-    if (object->riseBaseY == TREASURE_SPOT_ON_CELL) {
-      x = toFIXED(object->timer);
-      z = toFIXED((s16)object->userValue);
+    // A tile event's actor holds its map cell, marked by this value.
+    if (actor->riseBaseY == TREASURE_SPOT_ON_CELL) {
+      x = toFIXED(actor->timer);
+      z = toFIXED((s16)actor->userValue);
       y = MapGrid_GetTerrainHeightFar(0, x, z);
     } else {
       if ((u16)(type - CONTAINER_CHEST) <= CONTAINER_MIMIC - CONTAINER_CHEST)
@@ -379,9 +379,9 @@ void FieldEffect_SpawnRevealMarkers(void) {
       if (type == CONTAINER_PSYNERGY_STONE || type == CONTAINER_STONE_TABLET ||
           type == CONTAINER_POND || type == CONTAINER_BURIED)
         continue;
-      x = object->x.fixed;
-      y = object->y.fixed;
-      z = object->z.fixed;
+      x = actor->x.fixed;
+      y = actor->y.fixed;
+      z = actor->z.fixed;
     }
     dx = x - originX;
     dz = z - originZ - y;
@@ -391,14 +391,14 @@ void FieldEffect_SpawnRevealMarkers(void) {
       continue;
     if (flag == -1 || GameFlag_Get(flag))
       continue;
-    object = Actor_CreateFar(SPRITE_SPARKLE, x, y, z);
-    if (object != NULL) {
-      object->motionFlags = 0;
-      Actor_StartScriptFar((struct Actor *)object,
+    actor = Actor_CreateFar(SPRITE_SPARKLE, x, y, z);
+    if (actor != NULL) {
+      actor->motionFlags = 0;
+      Actor_StartScriptFar((struct Actor *)actor,
                            gBattleEffect_MarkerParticleScript);
-      Actor_SetSpriteFlagsFar((struct Actor *)object, 0);
-      Actor_SelectAnimationFar(object, ANIM_STAND);
-      ((struct Sprite *)object->sprite)->image.priority = 1;
+      Actor_SetSpriteFlagsFar((struct Actor *)actor, 0);
+      Actor_SelectAnimationFar(actor, ANIM_STAND);
+      ((struct Sprite *)actor->sprite)->image.priority = 1;
     }
   }
 }

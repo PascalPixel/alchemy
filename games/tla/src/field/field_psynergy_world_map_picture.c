@@ -726,7 +726,7 @@ s32 WorldPicture_Show(s32 mode) {
   s32 messageShown = 0;
   s32 zoomed = 0;
   s32 gliding = 0;
-  struct WorldMapWork *world = &gWorldMapWork;
+  struct WorldMapWork *work = &gWorldMapWork;
   struct MapAnimation *layer;
   const struct FlagEntry *place;
   u32 *tiles;
@@ -749,7 +749,7 @@ s32 WorldPicture_Show(s32 mode) {
   struct WorldMapChoice *choice = &gWorldPictureChoice;
   struct MainRoutineWork *routine = &gMainRoutineWork;
 
-  world->mode = mode;
+  work->mode = mode;
   if (mode != 0 || event->mode != ACTOR_SYSTEM_WORLD_MAP)
     ObjectTable_Snapshot();
   if (event->mode == ACTOR_SYSTEM_WORLD_MAP) {
@@ -879,20 +879,20 @@ s32 WorldPicture_Show(s32 mode) {
         *wayZ = *cursorZ;
       }
       if (input->repeat & KEY_SELECT) {
-        world->shown = -1;
-        WindowSprite_PrepareForRedrawFar(world->window);
+        work->shown = -1;
+        WindowSprite_PrepareForRedrawFar(work->window);
         Io_Write16(DISPCNT_OBJ_1D_MAP, &REG_DISPCNT);
         zoomed ^= 1;
         if (*cursorX != 0) {
-          world->x = *cursorX;
-          world->z = *cursorZ;
+          work->x = *cursorX;
+          work->z = *cursorZ;
           zero = 0;
           limitX = toFIXED(272);
           limitZ = toFIXED(224);
           scrollX = &gWorldPicture_ScrollX;
-          *scrollX = world->x - toFIXED(120);
+          *scrollX = work->x - toFIXED(120);
           scrollZ = &gWorldPicture_ScrollY;
-          *scrollZ = world->z - toFIXED(80);
+          *scrollZ = work->z - toFIXED(80);
           value = *scrollX;
           if (value < 0) {
             *scrollX = zero;
@@ -913,10 +913,10 @@ s32 WorldPicture_Show(s32 mode) {
       if (input->repeat & KEY_A) {
         if (mode == 0)
           goto done;
-        if (world->shown == -1)
+        if (work->shown == -1)
           continue;
         place = FlagEntries_GetTable();
-        place += world->shown;
+        place += work->shown;
         routine->teleportScene = SCENE_WORLD_MAP;
         choice->flag = place->flag;
         WorldMap_SetReturnForScene(place->scene, place->entrance);

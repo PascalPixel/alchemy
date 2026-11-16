@@ -12,7 +12,7 @@ struct CellTarget;
 struct CellTargetEntry;
 
 s32 Leader_KnockBack(void);
-void Actor_LaunchAhead(struct Actor *object);
+void Actor_LaunchAhead(struct Actor *actor);
 
 void MarsLighthouseStarRoom_ShootFireballs(void);
 
@@ -23,7 +23,7 @@ void Party_TakeFallDamage(void);
 void Actor_RollAndCrumble(struct Actor *actor);
 
 void Leader_StopIfPending(void);
-void Actor_SteerByPad(struct Actor *object);
+void Actor_SteerByPad(struct Actor *actor);
 
 void CrackedTile_Crack(struct CellTarget *table, struct CellTargetEntry *entry);
 

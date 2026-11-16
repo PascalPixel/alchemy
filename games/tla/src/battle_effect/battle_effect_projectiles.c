@@ -358,13 +358,13 @@ void BattleEffect_RunWingBeat(struct BattleEffectParams *args) {
 ///
 /// Abilities: Cutting Edge.
 void BattleEffect_RunCuttingEdge(struct BattleEffectParams *args) {
-  struct Actor *object;
+  struct Actor *actor;
 
-  object = (struct Actor *)BattleObject_GetFar(args->user)->object;
-  Actor_SelectAnimationFar(object, 2);
-  Actor_SetAnimationSpeedFar(object, ANIMATION_STEP_NORMAL * 3);
+  actor = (struct Actor *)BattleObject_GetFar(args->user)->object;
+  Actor_SelectAnimationFar(actor, 2);
+  Actor_SetAnimationSpeedFar(actor, ANIMATION_STEP_NORMAL * 3);
   BattleEffect_RunProjectileVolley(args, PROJECTILE_VOLLEY_CUTTING_EDGE);
-  Actor_SetAnimationSpeedFar(object, ANIMATION_STEP_NORMAL);
+  Actor_SetAnimationSpeedFar(actor, ANIMATION_STEP_NORMAL);
 }
 
 /// From the user's action pose, seven fireballs trailing embers fly at each
@@ -372,13 +372,13 @@ void BattleEffect_RunCuttingEdge(struct BattleEffectParams *args) {
 ///
 /// Abilities: Heat Wave.
 void BattleEffect_RunHeatWave(struct BattleEffectParams *args) {
-  struct Actor *object;
+  struct Actor *actor;
 
-  object = (struct Actor *)BattleObject_GetFar(args->user)->object;
-  Actor_SelectAnimationFar(object, 2);
-  Actor_SetAnimationSpeedFar(object, ANIMATION_STEP_NORMAL * 3);
+  actor = (struct Actor *)BattleObject_GetFar(args->user)->object;
+  Actor_SelectAnimationFar(actor, 2);
+  Actor_SetAnimationSpeedFar(actor, ANIMATION_STEP_NORMAL * 3);
   BattleEffect_RunProjectileVolley(args, PROJECTILE_VOLLEY_HEAT_WAVE);
-  Actor_SetAnimationSpeedFar(object, ANIMATION_STEP_NORMAL);
+  Actor_SetAnimationSpeedFar(actor, ANIMATION_STEP_NORMAL);
 }
 
 /// Abilities: Sleet.
@@ -391,13 +391,13 @@ void BattleEffect_RunSleet(struct BattleEffectParams *args) {
 ///
 /// Abilities: Blizzard.
 void BattleEffect_RunBlizzard(struct BattleEffectParams *args) {
-  struct Actor *object;
+  struct Actor *actor;
 
-  object = (struct Actor *)BattleObject_GetFar(args->user)->object;
-  Actor_SelectAnimationFar(object, 2);
-  Actor_SetAnimationSpeedFar(object, ANIMATION_STEP_NORMAL * 3);
+  actor = (struct Actor *)BattleObject_GetFar(args->user)->object;
+  Actor_SelectAnimationFar(actor, 2);
+  Actor_SetAnimationSpeedFar(actor, ANIMATION_STEP_NORMAL * 3);
   BattleEffect_RunProjectileVolley(args, PROJECTILE_VOLLEY_BLIZZARD);
-  Actor_SetAnimationSpeedFar(object, ANIMATION_STEP_NORMAL);
+  Actor_SetAnimationSpeedFar(actor, ANIMATION_STEP_NORMAL);
 }
 
 /// From the user's action pose, the projectile volley's shots fly at each
@@ -405,13 +405,13 @@ void BattleEffect_RunBlizzard(struct BattleEffectParams *args) {
 ///
 /// Abilities: Steel, Blaze Rush.
 void BattleEffect_RunBlazeRush(struct BattleEffectParams *args) {
-  struct Actor *object;
+  struct Actor *actor;
 
-  object = (struct Actor *)BattleObject_GetFar(args->user)->object;
-  Actor_SelectAnimationFar(object, 2);
-  Actor_SetAnimationSpeedFar(object, ANIMATION_STEP_NORMAL * 3);
+  actor = (struct Actor *)BattleObject_GetFar(args->user)->object;
+  Actor_SelectAnimationFar(actor, 2);
+  Actor_SetAnimationSpeedFar(actor, ANIMATION_STEP_NORMAL * 3);
   BattleEffect_RunProjectileVolley(args, PROJECTILE_VOLLEY_BLAZE_RUSH);
-  Actor_SetAnimationSpeedFar(object, ANIMATION_STEP_NORMAL);
+  Actor_SetAnimationSpeedFar(actor, ANIMATION_STEP_NORMAL);
 }
 
 /// From the user's action pose, the projectile volley's shots fly at each
@@ -419,13 +419,13 @@ void BattleEffect_RunBlazeRush(struct BattleEffectParams *args) {
 ///
 /// Abilities: Hydro Slash.
 void BattleEffect_RunHydroSlash(struct BattleEffectParams *args) {
-  struct Actor *object;
+  struct Actor *actor;
 
-  object = (struct Actor *)BattleObject_GetFar(args->user)->object;
-  Actor_SelectAnimationFar(object, 2);
-  Actor_SetAnimationSpeedFar(object, ANIMATION_STEP_NORMAL * 3);
+  actor = (struct Actor *)BattleObject_GetFar(args->user)->object;
+  Actor_SelectAnimationFar(actor, 2);
+  Actor_SetAnimationSpeedFar(actor, ANIMATION_STEP_NORMAL * 3);
   BattleEffect_RunProjectileVolley(args, PROJECTILE_VOLLEY_HYDRO_SLASH);
-  Actor_SetAnimationSpeedFar(object, ANIMATION_STEP_NORMAL);
+  Actor_SetAnimationSpeedFar(actor, ANIMATION_STEP_NORMAL);
 }
 
 /// From the user's action pose, the projectile volley's shots fly at each
@@ -433,13 +433,13 @@ void BattleEffect_RunHydroSlash(struct BattleEffectParams *args) {
 ///
 /// Abilities: Diamond Dust.
 void BattleEffect_RunDiamondDust(struct BattleEffectParams *args) {
-  struct Actor *object;
+  struct Actor *actor;
 
-  object = (struct Actor *)BattleObject_GetFar(args->user)->object;
-  Actor_SelectAnimationFar(object, 2);
-  Actor_SetAnimationSpeedFar(object, ANIMATION_STEP_NORMAL * 3);
+  actor = (struct Actor *)BattleObject_GetFar(args->user)->object;
+  Actor_SelectAnimationFar(actor, 2);
+  Actor_SetAnimationSpeedFar(actor, ANIMATION_STEP_NORMAL * 3);
   BattleEffect_RunProjectileVolley(args, PROJECTILE_VOLLEY_DIAMOND_DUST);
-  Actor_SetAnimationSpeedFar(object, ANIMATION_STEP_NORMAL);
+  Actor_SetAnimationSpeedFar(actor, ANIMATION_STEP_NORMAL);
 }
 
 /// Abilities: Beast Needle.
@@ -1279,18 +1279,18 @@ void BattleEffect_RunProjectileVolley(struct BattleEffectParams *args,
 /// Sends a unit back to its place (its anchor) with a hop.
 void BattleEffect_InitializeRisingObject(s32 slot) {
   struct BattleObject *context = BattleObject_GetFar(slot);
-  struct Actor *object = context->object;
+  struct Actor *actor = context->object;
 
-  object->acceleration = toFIXED(2);
-  object->speedLimit = toFIXED(8);
-  object->velocityY = toFIXED(4);
-  object->gravity = BATTLE_UNIT_GRAVITY;
-  object->bounce = 0;
-  object->steeringFlags = 0;
-  object->snapToTarget = 1;
-  Actor_StartIdleFar(object);
-  Actor_SetMoveTargetFar(object, context->anchorX, 0, context->anchorZ);
-  Actor_SelectAnimationFar(object, 1);
+  actor->acceleration = toFIXED(2);
+  actor->speedLimit = toFIXED(8);
+  actor->velocityY = toFIXED(4);
+  actor->gravity = BATTLE_UNIT_GRAVITY;
+  actor->bounce = 0;
+  actor->steeringFlags = 0;
+  actor->snapToTarget = 1;
+  Actor_StartIdleFar(actor);
+  Actor_SetMoveTargetFar(actor, context->anchorX, 0, context->anchorZ);
+  Actor_SelectAnimationFar(actor, 1);
 }
 
 /// Moves the object rate percent of the way to the target's object in the

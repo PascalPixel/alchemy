@@ -144,9 +144,9 @@ const s16 *Scene_GetActorPlacements(void) {
 
 /// The leader's update while it walks into one of the two cliff doorways: it
 /// shrinks by 3/128 of its size each frame.
-void Champa_ShrinkIntoDoorway(struct Actor *object) {
-  object->scaleX += -(FIXED_ONE * 3 / 128);
-  object->scaleY += -(FIXED_ONE * 3 / 128);
+void Champa_ShrinkIntoDoorway(struct Actor *actor) {
+  actor->scaleX += -(FIXED_ONE * 3 / 128);
+  actor->scaleY += -(FIXED_ONE * 3 / 128);
 }
 
 /// Stepping into a door: it opens, the leader walks through and the scene
@@ -288,16 +288,16 @@ void Champa_SailorsSpotFelix(void) {
 
 /// The boy practicing Psynergy stands up straight, tells of Eoleo's strange
 /// ability and goes back to squashing himself.
-void Champa_TalkToPracticingBoy(s32 actor) {
-  struct Actor *object = Actor_Get(actor);
+void Champa_TalkToPracticingBoy(s32 actorId) {
+  struct Actor *actor = Actor_Get(actorId);
 
-  object->scaleY = FIXED_ONE;
-  object->scaleX = FIXED_ONE;
+  actor->scaleY = FIXED_ONE;
+  actor->scaleX = FIXED_ONE;
   FieldEvent_SetMessageId((s32)MsgChampaEoleoBriggssSonHasA);
   // "Eoleo, Briggs's son, has a really strange ability... I'll bet if I..."
-  Event_ShowMessage(actor, 0);
-  Actor_FaceDirectionAndWait(actor, FACING_EAST);
-  Actor_SetMovementType(object, MOVEMENT_TYPE_SQUASH);
+  Event_ShowMessage(actorId, 0);
+  Actor_FaceDirectionAndWait(actorId, FACING_EAST);
+  Actor_SetMovementType(actor, MOVEMENT_TYPE_SQUASH);
 }
 
 /// A villager asks whether the party came to Champa for Briggs's treasure, and
@@ -642,21 +642,21 @@ s32 Scene_PrepareMap(void) {
 
 extern u32 gChampa_GlareSparkScript[];
 
-void Actor_StartScript(struct Actor *object, const void *script);
+void Actor_StartScript(struct Actor *actor, const void *script);
 
 /// A spark at a point, its sprite turned to `angle`, for `frames` frames.
 void Champa_SpawnGlareSpark(s32 x, s32 y, s32 z, s32 angle, s32 frames) {
   s16 value = angle;
-  struct Actor *object;
+  struct Actor *actor;
   struct FieldSprite *sprite;
 
-  object = FieldActor_Create(SPRITE_EMOTE, x, y, z);
-  if (object != 0) {
-    sprite = object->sprite;
-    Actor_SelectAnimation(object, 1);
-    Actor_StartScript(object, gChampa_GlareSparkScript);
-    object->motionFlags = 0;
-    object->wait = frames;
+  actor = FieldActor_Create(SPRITE_EMOTE, x, y, z);
+  if (actor != 0) {
+    sprite = actor->sprite;
+    Actor_SelectAnimation(actor, 1);
+    Actor_StartScript(actor, gChampa_GlareSparkScript);
+    actor->motionFlags = 0;
+    actor->wait = frames;
 
     sprite->flags = 0;
     sprite->rotation = value;
@@ -1476,12 +1476,12 @@ struct SceneEntrance gSceneEntrances[] = {
 
 u32 gSceneExits[] = {
     SCENE_EXITS(Champa),
-    SCENE_EXIT_UNLESS(1, ChampaInteriors, 1, EXIT_FLAG_NONE),
-    SCENE_EXIT_UNLESS(2, ChampaInteriors, 2, EXIT_FLAG_NONE),
-    SCENE_EXIT_UNLESS(3, ChampaInteriors, 3, EXIT_FLAG_NONE),
-    SCENE_EXIT_UNLESS(4, ChampaInteriors, 4, EXIT_FLAG_NONE),
-    SCENE_EXIT_UNLESS(5, ChampaInteriors, 5, EXIT_FLAG_NONE),
-    SCENE_EXIT_UNLESS(6, ChampaInteriors, 6, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(1, ChampaRooms, 1, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(2, ChampaRooms, 2, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(3, ChampaRooms, 3, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(4, ChampaRooms, 4, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(5, ChampaRooms, 5, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(6, ChampaRooms, 6, EXIT_FLAG_NONE),
     SCENE_EXIT_UNLESS(7, ChampaSanctum, 1, EXIT_FLAG_NONE),
     SCENE_EXIT_UNLESS(8, ChampaCliffCavesBriggs, 1, EXIT_FLAG_NONE),
     SCENE_EXIT_UNLESS(9, WorldMap, 40, EXIT_FLAG_NONE),

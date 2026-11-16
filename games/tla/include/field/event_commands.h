@@ -119,23 +119,23 @@ s32 PartyInventory_FindRoomFar(s32 item);
 s32 ItemPicker_RunToDropFar(s32 *member, s32 *slot);
 
 void FieldEffect_AdvanceHueCycle(void);
-void FieldEffect_ReleaseOnArrival(struct Actor *object);
-void Actor_SetSpritePalette(void *object, s32 value);
+void FieldEffect_ReleaseOnArrival(struct Actor *actor);
+void Actor_SetSpritePalette(void *actor, s32 value);
 
 void FieldParticle_Initialize(struct FieldParticle *effect, s32 kind, s32 x,
                               s32 z);
 
-/// ActorScript_CheckOverlap through its far call: -1 when the actor at position
-/// would overlap a solid actor, otherwise 0.
-s32 ActorScript_CheckOverlapFar(struct Actor *object, struct Vector3 *position);
+/// ActorScript_CheckOverlap through its far call: -1 when the actorId at
+/// position would overlap a solid actorId, otherwise 0.
+s32 ActorScript_CheckOverlapFar(struct Actor *actor, struct Vector3 *position);
 
 void FieldPsynergy_WatchLeaderDistance(void);
 
 void FieldEffect_SpawnBurstParticleField(void);
 
-/// Actor_GetSpriteId through its far call: the sprite id the actor is drawn
+/// Actor_GetSpriteId through its far call: the sprite id the actorId is drawn
 /// with, or 0 for none.
-s32 Actor_GetSpriteIdFar(struct Actor *object);
+s32 Actor_GetSpriteIdFar(struct Actor *actor);
 
 extern const s32 gFieldEffect_SourceHoldScript[];
 
@@ -157,7 +157,7 @@ void MapGrid_CopyCellPictureCellsRectFar(s32 toX, s32 toZ, s32 width,
 
 void ParticleBurst_Update(void);
 
-void BattleEffect_SetObjectUpdateMode(struct Actor *object, s32 mode);
+void BattleEffect_SetObjectUpdateMode(struct Actor *actor, s32 mode);
 
 void FieldPsynergy_Blaze(void);
 
@@ -174,7 +174,7 @@ void FieldPsynergy_Hover(void);
 
 void FieldPsynergy_EndSand(void);
 
-s32 Actor_GetCellIndex(struct Actor *object);
+s32 Actor_GetCellIndex(struct Actor *actor);
 s32 MapCollision_FindOrAddTag(s32 unused, s32 key, s32 value);
 
 void WorldPicture_GetLeaderPoint(s32 *screenX, s32 *screenY);
@@ -188,7 +188,7 @@ extern s16 gWorldPicture_FirstListOnly;
 
 void FieldPsynergy_Lash(void);
 
-void FieldEffect_ShrinkActorScaleUntilHalf(struct Actor *object);
+void FieldEffect_ShrinkActorScaleUntilHalf(struct Actor *actor);
 
 void Camera_WorldToScreen(struct Vector3 *position);
 
@@ -234,13 +234,13 @@ void Actor_JumpDownLedge(s32 id, s32 mode, s32 particle);
 
 void *Sprite_ShareVramCacheEntry(void *sprite, void *last);
 
-void Djinn_RunVenusJoinEffect(s32 actor);
+void Djinn_RunVenusJoinEffect(s32 actorId);
 
-void Djinn_RunMercuryJoinEffect(s32 actor);
+void Djinn_RunMercuryJoinEffect(s32 actorId);
 
-void Djinn_RunMarsJoinEffect(s32 actor);
+void Djinn_RunMarsJoinEffect(s32 actorId);
 
-void Djinn_RunJupiterJoinEffect(s32 actor);
+void Djinn_RunJupiterJoinEffect(s32 actorId);
 
 void FieldPsynergy_Move(void);
 
@@ -425,7 +425,7 @@ extern const u8 gAnim_ChildPaletteCycle[];
 
 /// ActorScript_FindOverlappingEntry through its far call: the first solid actor
 /// the actor at position would overlap, or NULL.
-struct Actor *ActorScript_FindOverlappingEntryFar(struct Actor *object,
+struct Actor *ActorScript_FindOverlappingEntryFar(struct Actor *actor,
                                                   struct Vector3 *position);
 
 extern const u8 gUnused_BattleEffectBytes[];

@@ -40,26 +40,26 @@ s32 MapGrid_IsClimbableCell(s32 x, s32 z, s32 layer);
 void FieldPsynergy_WatchSandGround(void) {
   struct FieldWork *event = Ram_HeapSlots->fieldWork;
   struct MainRoutineWork *party = &gMainRoutineWork;
-  struct Actor *object = Actor_Lookup(party->leaderActorId);
+  struct Actor *actor = Actor_Lookup(party->leaderActorId);
   s32 reason = 0;
 
   if (party->onUpperLevel != 0)
     reason = 1;
-  if (MapGrid_IsSandCell(object->x.fixed, object->z.fixed, object->layer) == 0)
+  if (MapGrid_IsSandCell(actor->x.fixed, actor->z.fixed, actor->layer) == 0)
     reason = 2;
-  if (party->movementMode == LEADER_MOVEMENT_SAND && object->userValue != 0 &&
-      object->timer == 0) {
+  if (party->movementMode == LEADER_MOVEMENT_SAND && actor->userValue != 0 &&
+      actor->timer == 0) {
     FIXED x;
     FIXED z;
 
-    if (MapGrid_IsClimbableCell(object->x.fixed, object->z.fixed, 2) == 0)
+    if (MapGrid_IsClimbableCell(actor->x.fixed, actor->z.fixed, 2) == 0)
       reason = 3;
-    x = (object->x.fixed & FIELD_CELL_MASK) + toFIXED(8);
-    z = (object->z.fixed & FIELD_CELL_MASK) - toFIXED(8);
+    x = (actor->x.fixed & FIELD_CELL_MASK) + toFIXED(8);
+    z = (actor->z.fixed & FIELD_CELL_MASK) - toFIXED(8);
     if (MapGrid_IsClimbableCell(x, z, 2) == 0)
       reason = 4;
   }
-  if (reason != 0 && (Actor_CheckBlocked(object) & 2) == 0)
+  if (reason != 0 && (Actor_CheckBlocked(actor) & 2) == 0)
     event->psynergy = ABILITY_SAND | ACT_PACKED;
 }
 
@@ -267,7 +267,7 @@ void GrowingParticle_Update(struct EffectSprite *sprite,
 struct PendingEvent;
 
 /// Gives an actor's first sprite layer another sprite's animations.
-void Actor_SetFirstSpriteAnimationFar(struct Actor *object, s32 index);
+void Actor_SetFirstSpriteAnimationFar(struct Actor *actor, s32 index);
 /// Sets a sprite's first layer to a SpriteColorMode and redraws it.
 void Animation_ApplyChildValueToFirstFar(void *animation, s32 value);
 

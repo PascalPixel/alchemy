@@ -1032,14 +1032,6 @@ void BattleEffect_RunHaures(struct BattleEffectParams *args) {
 #define COLUMN_WIDTH 8
 #define COLUMN_HEIGHT 16
 
-/// A mesh triangle: its three vertex numbers and their texture coordinates.
-struct MeshTriangle {
-  u8 vertex[3];
-  u8 unusedA; ///< nothing reads or writes it
-  u8 texCoord[3][2];
-  u8 unusedB[2]; ///< nothing reads or writes them
-};
-
 /// Builds the mesh of an open cylinder, the band Coatlicue shows: two rings of
 /// `segments` vertices of radius 96 around the y axis, and two textured
 /// triangles for each side of the band, joining the first ring (texture row 0)
@@ -1068,21 +1060,21 @@ void Mesh_BuildCylinderBand(struct MeshVertex *vertices,
         s32 left = i * COLUMN_WIDTH;
         s32 right = left + COLUMN_WIDTH - 1;
 
-        triangle[0].texCoord[0][0] = right;
-        triangle[0].texCoord[0][1] = 0;
-        triangle[0].texCoord[1][0] = right;
-        triangle[0].texCoord[1][1] = COLUMN_HEIGHT - 1;
-        triangle[0].texCoord[2][0] = left;
-        triangle[0].texCoord[2][1] = COLUMN_HEIGHT - 1;
+        triangle[0].uv[0][0] = right;
+        triangle[0].uv[0][1] = 0;
+        triangle[0].uv[1][0] = right;
+        triangle[0].uv[1][1] = COLUMN_HEIGHT - 1;
+        triangle[0].uv[2][0] = left;
+        triangle[0].uv[2][1] = COLUMN_HEIGHT - 1;
         {
           struct MeshTriangle *second = triangle + 1;
 
-          second->texCoord[0][0] = left;
-          second->texCoord[0][1] = 0;
-          second->texCoord[1][0] = right;
-          second->texCoord[1][1] = 0;
-          second->texCoord[2][0] = left;
-          second->texCoord[2][1] = COLUMN_HEIGHT - 1;
+          second->uv[0][0] = left;
+          second->uv[0][1] = 0;
+          second->uv[1][0] = right;
+          second->uv[1][1] = 0;
+          second->uv[2][0] = left;
+          second->uv[2][1] = COLUMN_HEIGHT - 1;
 
           // (next, next on ring 1, this on ring 1), then (this, next, this on
           // ring 1).

@@ -1335,7 +1335,7 @@ void LuckyWheels_Run(void) {
 
   {
     u16 *bgShade = work->bgShade;
-    u16 *shade = work->objShade;
+    u16 *shade = work->spriteShade;
     s32 size = LUCKY_WHEELS_CANVAS_SIZE;
 
     state->state = LUCKY_WHEELS_BETTING;

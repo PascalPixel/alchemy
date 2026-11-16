@@ -15,7 +15,7 @@ void Sprite_SetAnimationSpeed(struct Sprite *, s32);
 s32 Sprite_ResetAnimations(struct Sprite *);
 s32 Sprite_AddAnimation(struct Sprite *, s32);
 void Actor_StartScript(struct Actor *, const s32 *);
-void Actor_SetSpriteFlagsFar(struct Actor *object, u32 flags);
+void Actor_SetSpriteFlagsFar(struct Actor *actor, u32 flags);
 void Sprite_SetAnimationColorModes(struct Sprite *, u32);
 void Sprite_SetAnimationColorModesFar(struct Sprite *, u32);
 void Actor_SetSpriteColorMode(struct Actor *, u32);

@@ -97,7 +97,7 @@ extern LATE_DATA struct DoorEdit gChampaCliffCaves_SecondDoor;
 void ChampaCliffCaves_OpenDoorAndEnter(const struct DoorEdit *edit, s32 door,
                                        s32 mode);
 void Event_PickUpItem(s32 a, s32 b, s32 c);
-void Actor_WatchActor(struct Actor *object, struct Actor *target);
+void Actor_WatchActor(struct Actor *actor, struct Actor *target);
 
 extern struct ActorPlacement gChampaCliffCaves_BriggsPlacements[];
 extern struct ActorPlacement gChampaCliffCaves_HousesPlacements[];
@@ -166,13 +166,13 @@ extern s16 gChampaCliffCaves_OtherDoorFrames[];
 void FieldEffect_StartBlankOverlay(s32 a);
 
 #define DEFINE_CHAMPA_CLIFF_CAVES_GROW(name, n1)                               \
-  void name(struct Actor *object) {                                            \
-    object->scaleX += n1;                                                      \
-    if (object->scaleX >= FIXED_ONE) {                                         \
-      object->scaleX = FIXED_ONE;                                              \
-      object->update = 0;                                                      \
+  void name(struct Actor *actor) {                                             \
+    actor->scaleX += n1;                                                       \
+    if (actor->scaleX >= FIXED_ONE) {                                          \
+      actor->scaleX = FIXED_ONE;                                               \
+      actor->update = 0;                                                       \
     }                                                                          \
-    object->scaleY = object->scaleX;                                           \
+    actor->scaleY = actor->scaleX;                                             \
   }
 
 DEFINE_CHAMPA_CLIFF_CAVES_GROW(ChampaCliffCaves_GrowThrown, FIXED_ONE / 16)
@@ -313,14 +313,14 @@ void ChampaCliffCaves_AskToComeIn(s32 actor) {
 
 /// One of Briggs's crew gives in ("I'll go back to Alhafra...but only if Briggs
 /// is going") and keeps watching the leader.
-void ChampaCliffCaves_CrewmanSurrenders(s32 actor) {
-  struct Actor *object;
+void ChampaCliffCaves_CrewmanSurrenders(s32 actorId) {
+  struct Actor *actor;
 
   Event_SetMessageId((s32)MsgAllRightI);
   // "All right, I surrender! I'll go back to Alhafra...but only if Briggs..."
-  Event_ShowMessageAndWait(actor, 0);
-  object = Actor_GetById(actor);
-  Actor_WatchActor(object, Actor_GetById(gMainRoutineWork.leaderActorId));
+  Event_ShowMessageAndWait(actorId, 0);
+  actor = Actor_GetById(actorId);
+  Actor_WatchActor(actor, Actor_GetById(gMainRoutineWork.leaderActorId));
 }
 
 /// One of Briggs's crew at Obaba's forge tells the party to leave him alone,
@@ -341,15 +341,15 @@ void ChampaCliffCaves_OpenWall(void) {
 
 /// Closes the wall again, moving a leader who stands in its gap out of the way.
 void ChampaCliffCaves_CloseWall(void) {
-  struct Actor *object;
+  struct Actor *actor;
   s32 x;
   s32 z;
 
   MapGrid_CopyCellPictureCellsRect(50, 97, 1, 4, 41, 77);
   Map_CopyCellAttributeRect(46, 33, 1, 4, 41, 13);
-  object = Actor_GetById(gMainRoutineWork.leaderActorId);
-  x = FIELD_CELL(object->x.fixed);
-  z = FIELD_CELL(object->z.fixed);
+  actor = Actor_GetById(gMainRoutineWork.leaderActorId);
+  x = FIELD_CELL(actor->x.fixed);
+  z = FIELD_CELL(actor->z.fixed);
   if (gMainRoutineWork.next == SCENE_CHAMPA_CLIFF_CAVES_AVIMANDER && x == 41 &&
       (u32)(z - 13) <= 4)
     Actor_SetPosition(gMainRoutineWork.leaderActorId, 664, 280);
@@ -599,7 +599,7 @@ void ChampaCliffCaves_ObabaForgesTrident(s32 value) {
   u16 dim[5];
   s32 glow[3];
   s32 i;
-  struct Actor *object;
+  struct Actor *actor;
   u16 *palette;
 
   glow[0] = toFIXED(662);
@@ -681,8 +681,8 @@ void ChampaCliffCaves_ObabaForgesTrident(s32 value) {
     ChampaCliffCaves_FadeColours(dim, bright, 48);
     Event_Wait(10);
   }
-  object = Actor_GetById(gMainRoutineWork.leaderActorId);
-  object->steeringFlags &= ~ACTOR_FACES_MOTION;
+  actor = Actor_GetById(gMainRoutineWork.leaderActorId);
+  actor->steeringFlags &= ~ACTOR_FACES_MOTION;
   Actor_WalkByAndWaitById(gMainRoutineWork.leaderActorId, 12, 12);
   Event_Wait(1);
   Actor_GetById(gMainRoutineWork.leaderActorId)->steeringFlags |=
@@ -847,7 +847,7 @@ void ChampaCliffCaves_FightAvimander(void) {
   u16 target[5];
   struct Vector3 position;
   const u16 *colour;
-  struct Actor *object = Actor_GetById(ACTOR_AVIMANDER);
+  struct Actor *actor = Actor_GetById(ACTOR_AVIMANDER);
 
   if (Flag_IsSet(FLAG_CHAMPA_AVIMANDER_BEATEN))
     return;
@@ -985,9 +985,9 @@ void ChampaCliffCaves_FightAvimander(void) {
     FieldMapGrid_SetCellHeight(toFIXED(656), toFIXED(224), 0, -4);
     FieldMapGrid_SetCellHeight(toFIXED(656), toFIXED(240), 0, -4);
     FieldMapGrid_SetCellHeight(toFIXED(656), toFIXED(256), 0, -4);
-    object->gravity = toFIXED(1) / 4;
-    object->motionFlags = ACTOR_FALLS;
-    object->groundHeight = -toFIXED(999);
+    actor->gravity = toFIXED(1) / 4;
+    actor->motionFlags = ACTOR_FALLS;
+    actor->groundHeight = -toFIXED(999);
     Actor_Jump(ACTOR_SALAMANDER, 10, 0);
     Sound_Play(SE_ENEMY_CRY);
     Actor_SetSpritePriority(ACTOR_SALAMANDER, 1);
@@ -1021,13 +1021,13 @@ void ChampaCliffCaves_FightAvimander(void) {
     ChampaCliffCaves_StartForgeFire(&position);
     Sound_Play(SE_BEAST_CRY);
     Actor_SetPosition(ACTOR_AVIMANDER, 664, 248);
-    object->gravity = toFIXED(1);
-    object->motionFlags = ACTOR_FALLS;
-    object->groundHeight = 0;
-    object->y.fixed = toFIXED(32);
-    object->scaleX = FIXED_ONE / 4;
-    object->update = (s32)ChampaCliffCaves_GrowThrownSlowly;
-    object->scaleY = FIXED_ONE / 4;
+    actor->gravity = toFIXED(1);
+    actor->motionFlags = ACTOR_FALLS;
+    actor->groundHeight = 0;
+    actor->y.fixed = toFIXED(32);
+    actor->scaleX = FIXED_ONE / 4;
+    actor->update = (s32)ChampaCliffCaves_GrowThrownSlowly;
+    actor->scaleY = FIXED_ONE / 4;
     Actor_Jump(ACTOR_AVIMANDER, 11, 0);
     Sound_Play(SE_BEAST_CRY);
     Actor_SetSpeed(ACTOR_AVIMANDER, 3.2);
@@ -1662,7 +1662,7 @@ struct FlashWork {
 /// 1.
 void ChampaCliffCaves_StartFlash(s32 id, s32 mode) {
   struct FlashWork *work = HeapSlot_Alloc(HEAP_SLOT_MENU, 0x428);
-  struct Actor *object = Actor_GetById(id);
+  struct Actor *actor = Actor_GetById(id);
   s32 slot;
   s32 tile;
   struct EffectSprite *sprite;
@@ -1672,15 +1672,15 @@ void ChampaCliffCaves_StartFlash(s32 id, s32 mode) {
 
   if (mode == 0) {
     for (i = 15; i >= 0; i--) {
-      s32 angle = object->facing;
+      s32 angle = actor->facing;
       angle += 0x2000;
-      object->facing = angle;
+      actor->facing = angle;
       wait(1);
     }
   }
   wait(2);
-  object->scaleX = 0;
-  Actor_SetSpriteFlags(object, 0);
+  actor->scaleX = 0;
+  Actor_SetSpriteFlags(actor, 0);
   Dma_Set(Field_ExplosionPalette, (void *)&OBJ_PLTT_COLOR(15, 0),
           DMA_COPY_HALFWORDS(16), REG_DMA3);
   Decompress_TaggedLz(Resource_GetTableEntry(RESOURCE_FIELD_EFFECT_EXPLOSION),
@@ -1693,9 +1693,9 @@ void ChampaCliffCaves_StartFlash(s32 id, s32 mode) {
   sprite->oam.priority = 1;
   sprite->oam.fullColor = 0;
   sprite->oam.palette = 15;
-  position[0] = object->x.fixed;
-  position[1] = object->y.fixed;
-  position[2] = object->z.fixed;
+  position[0] = actor->x.fixed;
+  position[1] = actor->y.fixed;
+  position[2] = actor->z.fixed;
   Camera_WorldToScreen(position);
   sprite->x = position[0];
   sprite->y = z = position[2];

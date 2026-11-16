@@ -72,7 +72,7 @@ enum MercurySheetPicture {
 /// fall back under gravity. The effect runs 96 frames; at frame 56 the battle
 /// resumes and resolves the targets (hit cue 133).
 void BattleEffect_RunMercury(struct BattleEffectParams *args) {
-  struct HeapSlots *slots;
+  struct HeapSlots *heap;
   struct BattleEffectWork *work;
   void *canvas;
   s32 frame;
@@ -86,10 +86,10 @@ void BattleEffect_RunMercury(struct BattleEffectParams *args) {
   s32 j;
 
   // Setup: the canvas, the blitter pair, the sheets.
-  slots = Ram_HeapSlots;
-  work = (struct BattleEffectWork *)slots->battleEffect;
-  canvas = slots->battleCanvas;
-  sheet = slots->battleSheet;
+  heap = Ram_HeapSlots;
+  work = (struct BattleEffectWork *)heap->battleEffect;
+  canvas = heap->battleCanvas;
+  sheet = heap->battleSheet;
   BattleEffect_StartCanvasLayer(0);
   draw = blit;
   BattleEffect_FetchRectangleBlitters(0, draw);

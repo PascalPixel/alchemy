@@ -48,7 +48,7 @@ void FieldPsynergy_UpdateMindReadWave(void) {
   struct PlacedSprite *sprite;
   struct Actor *source;
   struct Actor *target;
-  struct Actor *object;
+  struct Actor *actor;
   u16 *line;
   s32 i;
 
@@ -104,17 +104,17 @@ void FieldPsynergy_UpdateMindReadWave(void) {
         to.x -= toFIXED(6);
         to.y -= toFIXED(12);
       }
-      object = Actor_CreateFar(SPRITE_CRESCENT, to.x, to.y, to.z);
-      if (object != NULL) {
-        sprite = object->sprite;
-        object->motionFlags = 0;
-        object->speedLimit = toFIXED(16) / 25; // 0.64 pixels a frame
-        object->acceleration = toFIXED(16) / 25;
-        object->facing = Trig_Atan(from.z - to.z, from.x - to.x);
-        object->update = (void (*)(void))FieldEffect_ReleaseOnArrival;
+      actor = Actor_CreateFar(SPRITE_CRESCENT, to.x, to.y, to.z);
+      if (actor != NULL) {
+        sprite = actor->sprite;
+        actor->motionFlags = 0;
+        actor->speedLimit = toFIXED(16) / 25; // 0.64 pixels a frame
+        actor->acceleration = toFIXED(16) / 25;
+        actor->facing = Trig_Atan(from.z - to.z, from.x - to.x);
+        actor->update = (void (*)(void))FieldEffect_ReleaseOnArrival;
         sprite->flags = 0;
         sprite->priority = 1;
-        Actor_SetMoveTargetFar(object, from.x, from.y, from.z);
+        Actor_SetMoveTargetFar(actor, from.x, from.y, from.z);
       }
     }
   }
@@ -699,7 +699,7 @@ void FieldPsynergy_WatchLeaderDistance(void) {
 void FieldPsynergy_Reveal(void) {
   struct FieldEffectWork *scene = Ram_HeapSlots->fieldEffectWork;
   struct FieldWork *event;
-  struct ScreenTransitionState *transition;
+  struct ScreenTransitionState *state;
   struct Actor *caster;
   void *pending;
   s32 frame;
@@ -707,10 +707,10 @@ void FieldPsynergy_Reveal(void) {
   Actor_SetRevealSpriteColor(6);
   event = Ram_HeapSlots->fieldWork;
   ScreenTransition_InitializeBattleEffectState(FIELD_PSYNERGY_REVEAL);
-  transition = Ram_HeapSlots->screenTransition;
+  state = Ram_HeapSlots->screenTransition;
   caster = scene->mainActor;
-  transition->centreX = caster->x.fixed;
-  transition->centreY = caster->z.fixed - caster->y.fixed;
+  state->centreX = caster->x.fixed;
+  state->centreY = caster->z.fixed - caster->y.fixed;
   PaletteFade_SetSource(FIXED_ONE, 0);
   PaletteFade_SetTarget(PALETTE_TINT_GRAYSCALE, 1);
   PaletteFade_StartInterpolation(1);
@@ -724,15 +724,15 @@ void FieldPsynergy_Reveal(void) {
     Field_RunPsynergyEvent(pending, scene->firstActorId, scene->secondActorId);
   Sound_PlayFar(SE_PSYNERGY_SPARKLE);
   Io_Write8(1, &event->revealActive);
-  event->revealCenterX = transition->centreX / FIXED_ONE;
-  event->revealCenterY = transition->centreY / FIXED_ONE;
+  event->revealCenterX = state->centreX / FIXED_ONE;
+  event->revealCenterY = state->centreY / FIXED_ONE;
   event->revealFrames = REVEAL_FRAMES;
   event->effectTimerRunning = 1;
   FieldEffect_SpawnRevealMarkers();
   frame = 0;
   do {
     wait(1);
-    transition->value = frame;
+    state->value = frame;
     frame++;
   } while (frame <= 18);
   if ((s8)scene->mode == 0)
@@ -1054,30 +1054,30 @@ void FieldPsynergy_Lift(void) {
 /// Spawns object 278 and grows it from a quarter to full size, an eighth of a
 /// turn a frame, then faces it to angle.
 struct Actor *FieldEffect_SpawnLiftHand(s32 x, s32 y, s32 z, s32 angle) {
-  struct Actor *object;
+  struct Actor *actor;
   s32 scale;
 
   Sound_PlayFar(SE_ITEM_BREAK);
-  object = Actor_Spawn(SPRITE_MOVE_HAND, x, y, z);
-  if (object != NULL) {
-    object->scaleX = object->scaleY = FIXED_ONE / 4;
-    object->acceleration = object->speedLimit = toFIXED(3);
-    ((struct Sprite *)object->sprite)->image.priority = 0;
-    Actor_SelectAnimationFar(object, 3);
-    scale = object->scaleX;
+  actor = Actor_Spawn(SPRITE_MOVE_HAND, x, y, z);
+  if (actor != NULL) {
+    actor->scaleX = actor->scaleY = FIXED_ONE / 4;
+    actor->acceleration = actor->speedLimit = toFIXED(3);
+    ((struct Sprite *)actor->sprite)->image.priority = 0;
+    Actor_SelectAnimationFar(actor, 3);
+    scale = actor->scaleX;
     if (scale < FIXED_ONE) {
       do {
         scale += FIXED_ONE / 32;
-        object->scaleY = scale;
-        object->scaleX = scale;
-        object->facing += DEGtoANG(45);
+        actor->scaleY = scale;
+        actor->scaleX = scale;
+        actor->facing += DEGtoANG(45);
         wait(1);
-        scale = object->scaleX;
+        scale = actor->scaleX;
       } while (scale < FIXED_ONE);
     }
-    object->facing = angle;
+    actor->facing = angle;
   }
-  return object;
+  return actor;
 }
 
 /// Field effect sprite callback of Force's particles (enum OutAndBackState):
@@ -1183,7 +1183,7 @@ void FieldPsynergy_Force(void) {
   struct FieldEffectWork *scene;
   struct Actor *target;
   struct Actor *source;
-  struct Actor *object;
+  struct Actor *actor;
   struct Actor *copy;
   struct FieldParticle *slot;
   struct Sprite *resource;
@@ -1217,35 +1217,35 @@ void FieldPsynergy_Force(void) {
   SET_POSITION(&pos, source->x.fixed, source->y.fixed + toFIXED(16),
                source->z.fixed);
   Vector_AddPolarOffset(toFIXED(8), scene->angle, &pos);
-  object = Actor_Spawn(SPRITE_MOVE_HAND, pos.x, pos.y, pos.z);
-  if (object == NULL) {
+  actor = Actor_Spawn(SPRITE_MOVE_HAND, pos.x, pos.y, pos.z);
+  if (actor == NULL) {
     FieldPsynergy_FadeFromCastColor();
     return;
   }
-  object->scaleY = FIXED_ONE / 4;
-  object->scaleX = FIXED_ONE / 4;
-  object->facing = scene->angle;
-  object->speedLimit = toFIXED(4);
-  object->acceleration = toFIXED(4);
-  object->motionFlags = 0;
-  Actor_SelectAnimationFar(object, 5);
-  Actor_SetSpriteColorModeFar(object, SPRITE_COLOR_BGR);
-  scale = object->scaleX;
+  actor->scaleY = FIXED_ONE / 4;
+  actor->scaleX = FIXED_ONE / 4;
+  actor->facing = scene->angle;
+  actor->speedLimit = toFIXED(4);
+  actor->acceleration = toFIXED(4);
+  actor->motionFlags = 0;
+  Actor_SelectAnimationFar(actor, 5);
+  Actor_SetSpriteColorModeFar(actor, SPRITE_COLOR_BGR);
+  scale = actor->scaleX;
   if (scale < FIXED_ONE) {
     do {
       scale += FIXED_ONE * 5 / 256;
-      object->scaleY = scale;
-      object->scaleX = scale;
+      actor->scaleY = scale;
+      actor->scaleX = scale;
       wait(1);
-      scale = object->scaleX;
+      scale = actor->scaleX;
     } while (scale < FIXED_ONE);
   }
   wait(3);
 
   resource = NULL;
   for (i = 2; i >= 0; i--) {
-    copy = copies[i] = Actor_Spawn(SPRITE_MOVE_HAND, object->x.fixed,
-                                   object->y.fixed, object->z.fixed);
+    copy = copies[i] = Actor_Spawn(SPRITE_MOVE_HAND, actor->x.fixed,
+                                   actor->y.fixed, actor->z.fixed);
     if (copy != NULL) {
       copy->scaleY = AFTERIMAGE_SCALE;
       copy->scaleX = AFTERIMAGE_SCALE;
@@ -1268,8 +1268,8 @@ void FieldPsynergy_Force(void) {
   } else {
     SET_POSITION(&pos, scene->x, scene->y + toFIXED(16), scene->z);
   }
-  Actor_SetMoveTargetFar(object, pos.x, pos.y, pos.z);
-  Actor_StartScriptFar(object, gBattleEffect_HeavyImpactScript);
+  Actor_SetMoveTargetFar(actor, pos.x, pos.y, pos.z);
+  Actor_StartScriptFar(actor, gBattleEffect_HeavyImpactScript);
   for (i = 0; i < 3; i++) {
     copy = copies[i];
     if (copy != NULL) {
@@ -1279,7 +1279,7 @@ void FieldPsynergy_Force(void) {
     }
   }
 
-  for (i = 0; i <= 59 && object->script != NULL; i++)
+  for (i = 0; i <= 59 && actor->script != NULL; i++)
     wait(1);
 
   if (target != NULL && scene->childMode == 0) {

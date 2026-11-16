@@ -26,7 +26,7 @@ gScene_CueRuleTable:
 	area_music AREA_VENUS_LIGHTHOUSE, -1, -1, MUS_VENUS_LIGHTHOUSE
 	area_music AREA_SUHALLA_GATE, -1, -1, MUS_SUHALLA_GATE
 	area_music AREA_IDEJIMA, -1, -1, MUS_IDEJIMA
-	scene_music DailaInteriorsHouses, 7, -1, MUS_MADRA
+	scene_music DailaRoomsHouses, 7, -1, MUS_MADRA
 	area_music AREA_DAILA, -1, -1, MUS_DAILA
 	area_music AREA_KANDOREAN_TEMPLE, -1, -1, MUS_KANDOREAN_TEMPLE
 	area_music AREA_KANDOREAN_TEMPLE_GATE, -1, -1, MUS_CHAMPA
@@ -41,12 +41,12 @@ gScene_CueRuleTable:
 	area_music AREA_MADRA_CATACOMBS, -1, -1, MUS_MADRA_CATACOMBS
 	area_music AREA_OSENIA_CLIFFS, -1, FLAG_REUNITED, MUS_WORLD_MAP_REUNITED
 	area_music AREA_OSENIA_CLIFFS, -1, -1, MUS_WORLD_MAP
-	scene_music MikasallaInteriorsSanctum, 4, -1, MUS_YALLAM
-	scene_music MikasallaInteriorsSanctum, 5, -1, MUS_APOJII_ISLANDS
-	scene_music MikasallaInteriorsHouses, 5, -1, MUS_SUHALLA
+	scene_music MikasallaRoomsSanctum, 4, -1, MUS_YALLAM
+	scene_music MikasallaRoomsSanctum, 5, -1, MUS_APOJII_ISLANDS
+	scene_music MikasallaRoomsHouses, 5, -1, MUS_SUHALLA
 	scene_music MikasallaNorth, -1, -1, MUS_MADRA_CATACOMBS
 	area_music AREA_MIKASALLA, -1, -1, MUS_MADRA
-	scene_music GarohInteriorsSanctum, -1, -1, MUS_GAROH
+	scene_music GarohRoomsSanctum, -1, -1, MUS_GAROH
 	area_music AREA_GAROH, -1, -1, MUS_GAROH
 	area_music AREA_YAMPI_DESERT, -1, -1, MUS_YAMPI_DESERT
 	area_music AREA_YAMPI_DESERT_CAVE, -1, -1, MUS_SUHALLA_GATE
@@ -90,8 +90,8 @@ gScene_CueRuleTable:
 	area_music AREA_IZUMO_RUINS, -1, -1, MUS_IZUMO
 	area_music AREA_GAIA_ROCK, -1, -1, MUS_GAIA_ROCK
 	area_music AREA_GAIA_ROCK_INSIDE, -1, -1, MUS_GAIA_ROCK
-	scene_music ChampaInteriors, 8, -1, MUS_KALT_ISLAND
-	scene_music ChampaInteriors, 9, -1, MUS_DAILA
+	scene_music ChampaRooms, 8, -1, MUS_KALT_ISLAND
+	scene_music ChampaRooms, 9, -1, MUS_DAILA
 	area_music AREA_CHAMPA, -1, -1, MUS_CHAMPA
 	area_music AREA_ANKOHL_RUINS, -1, -1, MUS_ANKOHL_RUINS
 	area_music AREA_SEA_OF_TIME, -1, -1, MUS_SEA_OF_TIME

@@ -120,7 +120,7 @@ struct ActionScript {
   u32 words[9];
 };
 
-void Actor_Release(struct Actor *object);
+void Actor_Release(struct Actor *actor);
 void FieldPsynergy_GreyMindReadPalette(void);
 void FieldPsynergy_RestoreMindReadPalette(void);
 void FieldCamera_WaitForArrival(void);
@@ -128,7 +128,7 @@ void TileCopies_CopyTouchedCells();
 
 s32 PushTarget_FillFootprint(s32 id);
 
-void Actor_DisableById(s32 actor);
+void Actor_DisableById(s32 actorId);
 
 /// The islets' people and animals, room by room, numbered by the rows of
 /// each room's placements.
@@ -191,7 +191,7 @@ const u32 *Scene_GetExits(void) { return gSceneExits; }
 #include "system/frame.h"
 #include "system/vector3.h"
 
-void Actor_StartScript(struct Actor *object, const void *script);
+void Actor_StartScript(struct Actor *actor, const void *script);
 void Islets_StopWaterShimmer(void);
 
 void Islets_StartWaveDma(void);
@@ -244,16 +244,16 @@ void Islets_SetCellCollision(s32 x, s32 z, s32 layers, s32 value);
 void Islets_FinishPushingCrate(void);
 void Islets_SetDockBlocksByHeight(void);
 void Leader_PushObjectAhead(void);
-s32 MapGrid_CheckCollision(struct Actor *object, struct Vector3 *position);
+s32 MapGrid_CheckCollision(struct Actor *actor, struct Vector3 *position);
 struct Actor *Actor_FindAtCell(struct Vector3 *position, s32 mode);
 s32 PushTarget_FindSlide(struct PushTarget *target);
 void PushTarget_Push(struct PushTarget target);
 
 void Islets_PlayFootsteps(void);
-void Islets_RideOnLonesomeGeorge(struct Actor *object);
-void Actor_EmitSmoke(struct Actor *object);
+void Islets_RideOnLonesomeGeorge(struct Actor *actor);
+void Actor_EmitSmoke(struct Actor *actor);
 void Islets_StartWaterShimmer(void);
-void Actor_MoveToObject(s32 actor, s32 target);
+void Actor_MoveToObject(s32 actorId, s32 target);
 void FieldPsynergy_StopMindReadWave(void);
 
 #endif
@@ -281,22 +281,22 @@ const struct ActorPlacement *Scene_GetActorPlacements(void) {
 /// for Pengulina.
 void Islets_PushLogIntoWater(void) {
   struct PushTarget target;
-  struct Actor *object = Actor_Get(ACTOR_LOG);
+  struct Actor *actor = Actor_Get(ACTOR_LOG);
 
   if (PushTarget_FindSlide(&target)) {
     PushTarget_Push(target);
     System_Wait(5);
-    object->gravity = toFIXED(1) / 2;
+    actor->gravity = toFIXED(1) / 2;
     Actor_SetAnimation(ACTOR_LOG, 3);
     Actor_SetDestinationOffset(ACTOR_LOG, 0, 8);
     FieldEvent_Wait(22);
     Event_PlaySound(SE_LOG_FALL);
     Actor_SetAnimation(ACTOR_LOG, 8);
-    object->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
-    object->motionFlags = 0;
-    object->velocityY = 0;
-    object->y.fixed = toFIXED(-8);
-    object->groundHeight = toFIXED(-8);
+    actor->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
+    actor->motionFlags = 0;
+    actor->velocityY = 0;
+    actor->y.fixed = toFIXED(-8);
+    actor->groundHeight = toFIXED(-8);
     MapGrid_CopyCellAttributes(9, 1, 4, 1, 9, 10);
     MapGrid_CopyCellAttributes(9, 8, 4, 1, 9, 9);
     MapGrid_CopyCellAttributes(9, 64, 4, 1, 9, 74);
@@ -499,7 +499,7 @@ void Islets_TalkToBird(void) {
 /// Cloth in return.
 void Islets_TradeWithBird(void) {
   struct Actor *leader;
-  struct Actor *object;
+  struct Actor *actor;
   struct Actor *spawned;
 
   Event_Start();
@@ -514,7 +514,7 @@ void Islets_TradeWithBird(void) {
     Event_ShowMessage(ACTOR_BIRD, 0);
   } else {
     leader = Actor_Get(gMainRoutineWork.leaderActorId);
-    object = Actor_Get(ACTOR_BIRD);
+    actor = Actor_Get(ACTOR_BIRD);
     Actor_FaceActor(ACTOR_BIRD, gMainRoutineWork.leaderActorId, 0);
     FieldActor_Jump(ACTOR_BIRD, 4, 10);
     FieldEvent_SetMessageId((s32)MsgOhMyThat);
@@ -522,10 +522,10 @@ void Islets_TradeWithBird(void) {
     Event_ShowMessage(ACTOR_BIRD, 0);
     Actor_SetAnimation(ACTOR_BIRD, 4);
     FieldActor_SetPositionAndResetMotion(
-        object, (leader->x.fixed + object->x.fixed) / 2, leader->y.fixed,
-        (leader->z.fixed + object->z.fixed) / 2);
+        actor, (leader->x.fixed + actor->x.fixed) / 2, leader->y.fixed,
+        (leader->z.fixed + actor->z.fixed) / 2);
     System_Wait(20);
-    FieldActor_SetPositionAndResetMotion(object, toFIXED(120), toFIXED(128),
+    FieldActor_SetPositionAndResetMotion(actor, toFIXED(120), toFIXED(128),
                                          toFIXED(312));
     Actor_SetAnimation(ACTOR_BIRD, 5);
     System_Wait(10);
@@ -744,11 +744,11 @@ void Islets_TradeWithCow(void) {
 
 /// Shows an item's icon over an actor's head, the leader holding up its arms.
 /// Returns the icon's actor, or null.
-struct Actor *Islets_ShowItemAbove(struct Actor *object, s32 value) {
+struct Actor *Islets_ShowItemAbove(struct Actor *actor, s32 value) {
   struct Actor *spawned;
 
-  spawned = FieldActor_Create(SPRITE_UNSEEN_MARKER, object->x.fixed,
-                              object->y.fixed + toFIXED(24), object->z.fixed);
+  spawned = FieldActor_Create(SPRITE_UNSEEN_MARKER, actor->x.fixed,
+                              actor->y.fixed + toFIXED(24), actor->z.fixed);
   if (spawned != 0) {
     Actor_SetAnimation(gMainRoutineWork.leaderActorId, ANIM_LEADER_ARMS_RAISED);
     spawned->motionFlags = 0;
@@ -761,12 +761,12 @@ struct Actor *Islets_ShowItemAbove(struct Actor *object, s32 value) {
 
 /// An actor's update: every fourth frame, a puff of the wake behind it
 /// (gSmokeScript).
-void Actor_EmitSmoke(struct Actor *object) {
+void Actor_EmitSmoke(struct Actor *actor) {
   struct Actor *spawned;
 
   if ((gFrameCount & 3) == 0) {
-    spawned = FieldActor_Create(14, object->x.fixed, object->y.fixed,
-                                object->z.fixed);
+    spawned =
+        FieldActor_Create(14, actor->x.fixed, actor->y.fixed, actor->z.fixed);
     if (spawned != 0) {
       Actor_SetSpriteFlags(spawned, 0);
       Actor_SelectAnimation(spawned, 1);
@@ -900,12 +900,12 @@ void Islets_TradeWithDog(void) {
 
 /// The leader's update while it rides Lonesome George: kept 16 pixels above
 /// him, facing his way.
-void Islets_RideOnLonesomeGeorge(struct Actor *object) {
+void Islets_RideOnLonesomeGeorge(struct Actor *actor) {
   struct Actor *source = Actor_Get(ACTOR_LONESOME_GEORGE);
 
   FieldActor_SetPositionAndResetMotion(
-      object, source->x.fixed, source->y.fixed + toFIXED(16), source->z.fixed);
-  object->facing = source->facing;
+      actor, source->x.fixed, source->y.fixed + toFIXED(16), source->z.fixed);
+  actor->facing = source->facing;
 }
 
 /// The window the scene closes through as Lonesome George swims off: around the
@@ -1165,7 +1165,7 @@ extern u32 gIslets_TurtleWalksScript[];
 /// back.
 void Islets_RideBackToIsland(void) {
   struct Actor *leader = Actor_Get(gMainRoutineWork.leaderActorId);
-  struct Actor *object = Actor_Get(ACTOR_LONESOME_GEORGE);
+  struct Actor *actor = Actor_Get(ACTOR_LONESOME_GEORGE);
   void (*update)(void);
   s32 result;
   u8 *done;
@@ -1198,9 +1198,9 @@ void Islets_RideBackToIsland(void) {
     Actor_SetSpeed(ACTOR_LONESOME_GEORGE, 1.6);
     Actor_SetSpeed(ACTOR_LIL_TURTLE, 1.6);
     update = (void (*)(void))Actor_EmitSmoke;
-    done = (u8 *)object + 99;
+    done = (u8 *)actor + 99;
     *done = 0;
-    object->update = update;
+    actor->update = update;
     Actor_SetScript(ACTOR_LONESOME_GEORGE, gIslets_GeorgeWalksScript);
     FieldEvent_Wait(30);
     Actor_Get(ACTOR_LIL_TURTLE)->update = update;
@@ -1321,14 +1321,14 @@ void Islets_StartWave(void) {
 /// Once the log carrying Pengulina reaches Pengus, the two and the leader react
 /// and the party is given the Pretty Stone.
 void Islets_PengusGivesPrettyStone(void) {
-  struct Actor *object = Actor_GetById(ACTOR_PENGULINA);
+  struct Actor *actor = Actor_GetById(ACTOR_PENGULINA);
   struct Actor *leader;
   struct Actor *item;
   FIXED z;
 
-  if (object->x.fixed < toFIXED(228) || object->x.fixed > toFIXED(236))
+  if (actor->x.fixed < toFIXED(228) || actor->x.fixed > toFIXED(236))
     return;
-  z = object->z.fixed;
+  z = actor->z.fixed;
   if (z < toFIXED(164))
     return;
   if (z > toFIXED(172))
@@ -1381,34 +1381,34 @@ void Islets_PlayFootsteps(void) {
 
 /// Coming near the nest, the bird flies back onto it.
 void Islets_BirdReturnsToNest(void) {
-  struct Actor *object = Actor_Get(ACTOR_BIRD);
+  struct Actor *actor = Actor_Get(ACTOR_BIRD);
 
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
   FieldActor_Stop(ACTOR_BIRD);
   System_Wait(1);
-  object->motionFlags = 0;
+  actor->motionFlags = 0;
   Actor_SetSpeed(ACTOR_BIRD, 1.6);
-  FieldActor_SetPositionAndResetMotion(object, toFIXED(268), toFIXED(64),
+  FieldActor_SetPositionAndResetMotion(actor, toFIXED(268), toFIXED(64),
                                        toFIXED(390));
   System_Wait(1);
-  object->groundHeight = toFIXED(128);
+  actor->groundHeight = toFIXED(128);
   System_Wait(1);
-  object->y.fixed = toFIXED(160);
+  actor->y.fixed = toFIXED(160);
   System_Wait(1);
   FieldTask_AddFrame(Islets_PlayFootsteps, TASK_PASS_VBLANK);
-  FieldActor_SetMoveTarget(object, 132, 128, 320);
-  FieldActor_WaitForMove(object);
+  FieldActor_SetMoveTarget(actor, 132, 128, 320);
+  FieldActor_WaitForMove(actor);
   FieldTask_Remove(Islets_PlayFootsteps);
   Actor_SetAnimation(ACTOR_BIRD, 5);
-  object->motionFlags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
+  actor->motionFlags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
   FieldActor_SetSpritePriority(ACTOR_BIRD, 2);
   Actor_FaceActor(ACTOR_BIRD, gMainRoutineWork.leaderActorId, 0);
   FieldEvent_Wait(10);
   FieldActor_Jump(ACTOR_BIRD, 4, 0);
   Actor_MoveToAndWait(ACTOR_BIRD, 120, 312);
   Actor_SetAnimation(ACTOR_BIRD, 5);
-  object->motionFlags = 0;
+  actor->motionFlags = 0;
   Actor_FaceDirectionAndWait(ACTOR_BIRD, FACING_EAST);
   Event_SetFlag(FLAG_SCENE_TEMP_15);
   System_Wait(1);
@@ -1459,20 +1459,20 @@ void Islets_SetCellCollision(s32 x, s32 z, s32 layers, s32 value) {
 /// Keeps the two crates' places as they are pushed; a crate pushed into the
 /// water at (7, 28) or (12, 25) floats there, the way over it open.
 void Islets_StartPushingCrate(void) {
-  struct Actor *object;
+  struct Actor *actor;
   s32 *x0;
   s32 *z0;
   FIXED x1;
   FIXED z1;
 
-  object = Actor_Get(ACTOR_CRATE_A);
+  actor = Actor_Get(ACTOR_CRATE_A);
   x0 = &gIslets_FirstCrateX;
   z0 = &gIslets_FirstCrateZ;
-  *x0 = object->x.fixed;
-  *z0 = object->z.fixed;
-  object = Actor_Get(ACTOR_CRATE_B);
-  gIslets_SecondCrateX = x1 = object->x.fixed;
-  gIslets_SecondCrateZ = z1 = object->z.fixed;
+  *x0 = actor->x.fixed;
+  *z0 = actor->z.fixed;
+  actor = Actor_Get(ACTOR_CRATE_B);
+  gIslets_SecondCrateX = x1 = actor->x.fixed;
+  gIslets_SecondCrateZ = z1 = actor->z.fixed;
   if (FIELD_CELL(*x0) == 7 && FIELD_CELL(*z0) == 29 && FIELD_CELL(x1) == 7 &&
       FIELD_CELL(z1) == 28)
     Islets_SetCellCollision(*x0, *z0, 2, 0);
@@ -1596,15 +1596,15 @@ void Islets_FreezePuddle(void) {
 
 /// Holding up at the iceberg's edge, the leader steps up onto it.
 void Islets_StepUpOntoIceberg(void) {
-  struct Actor *object;
+  struct Actor *actor;
 
   if (gInput.held & KEY_UP) {
-    object = Actor_Get(gMainRoutineWork.leaderActorId);
+    actor = Actor_Get(gMainRoutineWork.leaderActorId);
     Event_Start();
     FieldEvent_ResolvePendingActions(0);
-    object->motionFlags = 0;
+    actor->motionFlags = 0;
     Actor_WalkToAndWait(gMainRoutineWork.leaderActorId, 72, 280);
-    object->motionFlags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
+    actor->motionFlags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
     Event_End();
   }
 }
@@ -1612,18 +1612,18 @@ void Islets_StepUpOntoIceberg(void) {
 /// Holding down, the leader steps off the iceberg back to the shore, unless the
 /// icebergs are mid-drift (between steps 10 and 210 of their cycle).
 void Islets_StepDownFromIceberg(void) {
-  struct Actor *object;
+  struct Actor *actor;
   u16 *state;
 
   if (gInput.held & KEY_DOWN) {
     state = gSceneState;
-    object = Actor_Get(gMainRoutineWork.leaderActorId);
+    actor = Actor_Get(gMainRoutineWork.leaderActorId);
     if ((u16)(*state - 10) > 200) {
       Event_Start();
       FieldEvent_ResolvePendingActions(0);
-      object->motionFlags = 0;
+      actor->motionFlags = 0;
       Actor_WalkToAndWait(gMainRoutineWork.leaderActorId, 72, 296);
-      object->motionFlags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
+      actor->motionFlags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
       Event_End();
     }
   }
@@ -1686,21 +1686,21 @@ void Islets_ClearSixthPatch(void) {
 void Islets_OpenDoorAndEnter(void) {
   struct FieldWork *work = Ram_HeapSlots->fieldWork;
   struct MainRoutineWork *party = &gMainRoutineWork;
-  struct Actor *object;
+  struct Actor *actor;
   s16 *exit;
   s32 index;
 
-  object = Actor_Get(party->leaderActorId);
+  actor = Actor_Get(party->leaderActorId);
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
   FieldCamera_MoveTo(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0);
   Actor_SetAnimation(party->leaderActorId, ANIM_WALK);
   Actor_SetSpeed(party->leaderActorId, 0.5);
   FieldActor_SetMoveTargetFX(
-      object, toFIXED(8 - FIXEDtoINT(object->x.fixed) % 16) + object->x.fixed,
-      object->y.fixed, object->z.fixed);
-  FieldActor_WaitForMove(object);
-  object->facing = FACING_NORTH;
+      actor, toFIXED(8 - FIXEDtoINT(actor->x.fixed) % 16) + actor->x.fixed,
+      actor->y.fixed, actor->z.fixed);
+  FieldActor_WaitForMove(actor);
+  actor->facing = FACING_NORTH;
   exit = &work->stepTrigger;
   index = *exit;
   Event_PlaySound(SE_DOOR_OPEN);
@@ -1733,19 +1733,19 @@ void Islets_LeaveByStep(void) {
 void Islets_EnterDoor(void) {
   struct FieldWork *work = Ram_HeapSlots->fieldWork;
   struct MainRoutineWork *party = &gMainRoutineWork;
-  struct Actor *object;
+  struct Actor *actor;
 
-  object = Actor_Get(party->leaderActorId);
+  actor = Actor_Get(party->leaderActorId);
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
   FieldCamera_MoveTo(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0);
   Actor_SetAnimation(party->leaderActorId, ANIM_WALK);
   Actor_SetSpeed(party->leaderActorId, 0.5);
   FieldActor_SetMoveTargetFX(
-      object, toFIXED(8 - FIXEDtoINT(object->x.fixed) % 16) + object->x.fixed,
-      object->y.fixed, object->z.fixed);
-  FieldActor_WaitForMove(object);
-  object->facing = FACING_NORTH;
+      actor, toFIXED(8 - FIXEDtoINT(actor->x.fixed) % 16) + actor->x.fixed,
+      actor->y.fixed, actor->z.fixed);
+  FieldActor_WaitForMove(actor);
+  actor->facing = FACING_NORTH;
   Actor_SetScript(party->leaderActorId, gIslets_EnterDoorScript);
   System_Wait(12);
   Event_PlaySound(SE_MAP_EXIT);
@@ -1758,12 +1758,12 @@ void Islets_EnterDoor(void) {
 void Islets_ArriveAtSecretSpot(void) {
   struct FieldWork *work;
   struct Actor *owner = Actor_Get(gMainRoutineWork.leaderActorId);
-  struct Actor *object = Actor_Get(ACTOR_LONESOME_GEORGE);
+  struct Actor *actor = Actor_Get(ACTOR_LONESOME_GEORGE);
 
   Actor_MoveToObject(ACTOR_LONESOME_GEORGE, gMainRoutineWork.leaderActorId);
   Actor_SetPosition(ACTOR_LIL_TURTLE, 273, 520);
   System_Wait(1);
-  object->facing = FACING_NORTH;
+  actor->facing = FACING_NORTH;
   owner->update = (void (*)(void))Islets_RideOnLonesomeGeorge;
   FieldActor_SetSpriteColor(Actor_Get(gMainRoutineWork.leaderActorId),
                             SPRITE_COLOR_HIDDEN);
@@ -1777,12 +1777,12 @@ void Islets_ArriveAtSecretSpot(void) {
   Actor_SetSpeed(ACTOR_LONESOME_GEORGE, 0.6);
   Actor_SetSpeed(ACTOR_LIL_TURTLE, 0.6);
   Actor_Get(ACTOR_LIL_TURTLE)->update = (void (*)(void))Actor_EmitSmoke;
-  object->update = (void (*)(void))Actor_EmitSmoke;
+  actor->update = (void (*)(void))Actor_EmitSmoke;
   Actor_WalkTo(ACTOR_LIL_TURTLE, 280, 468);
   Actor_MoveToAndWait(ACTOR_LONESOME_GEORGE, 296, 452);
   Actor_SetAnimation(ACTOR_LIL_TURTLE, 1);
   owner->update = 0;
-  object->update = 0;
+  actor->update = 0;
   Actor_Get(ACTOR_LIL_TURTLE)->update = 0;
   FieldPsynergy_StartMindReadWave(gMainRoutineWork.leaderActorId, 9);
   FieldEvent_SetMessageId((s32)MsgHereWeAre);
@@ -1931,24 +1931,24 @@ void Islets_InitializeDog(void) {
 
 /// Readies an iceberg to drift: a platform that moves at 0.3 pixels a frame.
 void Islets_StartIceberg(s32 id) {
-  struct Actor *object = Actor_Get(id);
+  struct Actor *actor = Actor_Get(id);
 
-  Actor_SetSpriteFlags(object, 0);
-  object->retainSpriteCache = 3;
-  object->motionFlags = 0;
-  object->priorityFlags |= ACTOR_PRIORITY_PLATFORM;
-  object->acceleration = toFIXED(3) / 20;
-  object->speedLimit = toFIXED(3) / 10;
+  Actor_SetSpriteFlags(actor, 0);
+  actor->retainSpriteCache = 3;
+  actor->motionFlags = 0;
+  actor->priorityFlags |= ACTOR_PRIORITY_PLATFORM;
+  actor->acceleration = toFIXED(3) / 20;
+  actor->speedLimit = toFIXED(3) / 10;
 }
 
 /// Sends an iceberg two cells (32 pixels) a column and row from where it was
 /// placed.
 void Islets_MoveIceberg(s32 id, s32 column, s32 row) {
-  struct Actor *object = Actor_Get(id);
-  FIXED x = toFIXED(column * 32 + object->timer);
-  FIXED z = toFIXED(row * 32 + (s16)object->userValue);
+  struct Actor *actor = Actor_Get(id);
+  FIXED x = toFIXED(column * 32 + actor->timer);
+  FIXED z = toFIXED(row * 32 + (s16)actor->userValue);
 
-  FieldActor_SetMoveTargetFX(object, x, object->y.fixed, z);
+  FieldActor_SetMoveTargetFX(actor, x, actor->y.fixed, z);
 }
 
 /// The Islets' marching guards (objects 11 to 18): while the event work is busy
@@ -2023,7 +2023,7 @@ extern u32 gIslets_PenguinsHopScript[];
 
 /// The room's setup: flags, the objects' places and the scene state.
 void Islets_InitializePrettyStone(void) {
-  struct Actor *object;
+  struct Actor *actor;
   struct Actor *other;
   u16 *state;
   u16 *next;
@@ -2045,13 +2045,13 @@ void Islets_InitializePrettyStone(void) {
   }
   FieldTask_AddFrame(Islets_DriftIcebergs, TASK_PASS_VBLANK);
   if (Event_GetFlag(FLAG_LOG_PUSHED_INTO_WATER)) {
-    object = Actor_Get(ACTOR_LOG);
+    actor = Actor_Get(ACTOR_LOG);
     Actor_SetPosition(ACTOR_LOG, 176, 168);
     Actor_SetAnimation(ACTOR_LOG, 4);
-    object->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
-    object->motionFlags = 0;
-    object->y.fixed = toFIXED(-8);
-    object->groundHeight = toFIXED(-8);
+    actor->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
+    actor->motionFlags = 0;
+    actor->y.fixed = toFIXED(-8);
+    actor->groundHeight = toFIXED(-8);
     MapGrid_CopyCellAttributes(9, 1, 4, 1, 9, 10);
     MapGrid_CopyCellAttributes(9, 64, 4, 1, 9, 74);
   } else {
@@ -2110,7 +2110,7 @@ void Islets_InitializeCow(void) {
 /// Sets up the room's actors and map work.
 void Islets_InitializePier(void) {
   struct MapWork *map = Ram_HeapSlots->mapGrid;
-  struct Actor *object = Actor_Get(ACTOR_BIRD);
+  struct Actor *actor = Actor_Get(ACTOR_BIRD);
   struct Actor *last;
   s32 set;
   s32 zero = 0;
@@ -2120,7 +2120,7 @@ void Islets_InitializePier(void) {
   if (gMainRoutineWork.entrance == 11)
     Event_ClearFlag(FLAG_SHOW_AREA_NAME);
   if (!Event_GetFlag(FLAG_KEEP_PARTY_POSITION)) {
-    object->motionFlags = zero;
+    actor->motionFlags = zero;
     FieldActor_SetSpritePriority(ACTOR_BIRD, 1);
   }
   Actor_SetPosition(11, 0, 0);
@@ -2421,9 +2421,9 @@ extern s32 gPushLeaderSteps[];
 
 /// Whether an actor at a position would collide with the map
 /// (MapGrid_CheckCollision).
-static __inline__ s32 PushTarget_CheckCollision(struct Actor *object,
+static __inline__ s32 PushTarget_CheckCollision(struct Actor *actor,
                                                 struct Vector3 *cell) {
-  return MapGrid_CheckCollision(object, cell);
+  return MapGrid_CheckCollision(actor, cell);
 }
 
 #include "shared/push_target_find_slide.h"
@@ -2437,7 +2437,7 @@ struct Actor *PushTarget_FindAhead(s32 *direction, s32 *slot, s32 *kind) {
   struct FieldWork *work = Ram_HeapSlots->fieldWork;
   struct Actor *leader = Actor_Get(gMainRoutineWork.leaderActorId);
   struct Actor **entry;
-  struct Actor *object;
+  struct Actor *actor;
   u32 i, k;
   s32 x, z, left, top, right, bottom;
 
@@ -2445,30 +2445,30 @@ struct Actor *PushTarget_FindAhead(s32 *direction, s32 *slot, s32 *kind) {
   i = 8;
   entry = &work->actors[8];
   do {
-    object = *entry;
+    actor = *entry;
     for (k = 0; k <= 5; k++) {
-      if (((struct Sprite *)object->sprite)->entries[0]->animationId ==
+      if (((struct Sprite *)actor->sprite)->entries[0]->animationId ==
           gPushKinds[k]) {
         x = (leader->x.part[0].integer +
              (gPushLeaderSteps[*direction] >> 16)) >>
             4;
         z = (leader->z.part[0].integer + (s16)gPushLeaderSteps[*direction]) >>
             4;
-        left = (object->x.part[0].integer + gPushFootprints[k][0]) >> 4;
-        top = (object->z.part[0].integer + gPushFootprints[k][1]) >> 4;
-        right = (object->x.part[0].integer + gPushFootprints[k][2]) >> 4;
-        bottom = (object->z.part[0].integer + gPushFootprints[k][3]) >> 4;
+        left = (actor->x.part[0].integer + gPushFootprints[k][0]) >> 4;
+        top = (actor->z.part[0].integer + gPushFootprints[k][1]) >> 4;
+        right = (actor->x.part[0].integer + gPushFootprints[k][2]) >> 4;
+        bottom = (actor->z.part[0].integer + gPushFootprints[k][3]) >> 4;
         if (left <= x && x < right && top <= z && z < bottom) {
           *kind = k;
           if (k & 1) {
             if (left != FIELD_CELL(leader->x.fixed)) {
               *slot = i;
-              return object;
+              return actor;
             }
           } else {
             if (top != FIELD_CELL(leader->z.fixed)) {
               *slot = i;
-              return object;
+              return actor;
             }
           }
         }
@@ -2480,17 +2480,17 @@ struct Actor *PushTarget_FindAhead(s32 *direction, s32 *slot, s32 *kind) {
   return NULL;
 }
 
-void Actor_StopAtPushTarget(struct Actor *object);
+void Actor_StopAtPushTarget(struct Actor *actor);
 
 #define ABS(x) ((x) < 0 ? -(x) : (x))
 
-/// Pushes an object to its target, the leader following, and moves its cells
+/// Pushes an actor to its target, the leader following, and moves its cells
 /// with it.
 void PushTarget_Push(struct PushTarget target) {
   struct MapWork *map =
       (struct MapWork *)((struct HeapSlotWords *)Ram_HeapSlots)->mapWork;
   struct Actor *leader = Actor_Get(gMainRoutineWork.leaderActorId);
-  struct Actor *object = Actor_Get(target.id);
+  struct Actor *actor = Actor_Get(target.id);
   s32 cell[3];
   FIXED from[3];
   s32 footprint;
@@ -2506,12 +2506,10 @@ void PushTarget_Push(struct PushTarget target) {
   footprint = target.footprint;
   speed = leader->speedLimit;
   acceleration = leader->acceleration;
-  from[0] = object->x.fixed;
-  from[2] = object->z.fixed;
-  cell[0] =
-      FIELD_CELL(object->x.fixed + toFIXED(gPushFootprints[footprint][0]));
-  cell[2] =
-      FIELD_CELL(object->z.fixed + toFIXED(gPushFootprints[footprint][1]));
+  from[0] = actor->x.fixed;
+  from[2] = actor->z.fixed;
+  cell[0] = FIELD_CELL(actor->x.fixed + toFIXED(gPushFootprints[footprint][0]));
+  cell[2] = FIELD_CELL(actor->z.fixed + toFIXED(gPushFootprints[footprint][1]));
   width = (ABS(gPushFootprints[footprint][0]) +
            ABS(gPushFootprints[footprint][2])) >>
           4;
@@ -2531,12 +2529,12 @@ void PushTarget_Push(struct PushTarget target) {
   Actor_Get(gMainRoutineWork.leaderActorId)->update = Actor_StopAtPushTarget;
   System_Wait(4);
   if ((u32)(direction - 6) <= 7)
-    Actor_SelectAnimation(object, 3);
+    Actor_SelectAnimation(actor, 3);
   else
-    Actor_SelectAnimation(object, 2);
+    Actor_SelectAnimation(actor, 2);
   Event_PlaySound(SE_HEAVY_MOVE);
   Actor_SetSpeedAndAcceleration(target.id, 0.5, 0.1);
-  FieldActor_SetMoveTargetFX(object, target.x, target.y, target.z);
+  FieldActor_SetMoveTargetFX(actor, target.x, target.y, target.z);
   FieldActor_WaitForMoveById(gMainRoutineWork.leaderActorId);
   Actor_SetAnimation(gMainRoutineWork.leaderActorId, ANIM_WALK);
   Actor_SetSpeedAndAcceleration(gMainRoutineWork.leaderActorId, 0.3, 0.1);
@@ -2550,12 +2548,12 @@ void PushTarget_Push(struct PushTarget target) {
   leader->update = 0;
   leader->speedLimit = speed;
   leader->acceleration = acceleration;
-  FieldActor_WaitForMove(object);
+  FieldActor_WaitForMove(actor);
   Event_PlaySound(SE_STOP_EXIT_SE);
   Event_PlaySound(SE_HEAVY_STOP);
-  FieldActor_SetPositionAndResetMotion(object, target.x, object->y.fixed,
+  FieldActor_SetPositionAndResetMotion(actor, target.x, actor->y.fixed,
                                        target.z);
-  Actor_SelectAnimation(object, 1);
+  Actor_SelectAnimation(actor, 1);
   target.x = target.x + toFIXED(gPushFootprints[footprint][0]);
   target.z = target.z + toFIXED(gPushFootprints[footprint][1]);
   target.x >>= 20;
@@ -2579,16 +2577,16 @@ void PushTarget_Push(struct PushTarget target) {
 
 /// Stops an actor that walks into another actor that cannot be pushed, or into
 /// a wall.
-void Actor_StopAtPushTarget(struct Actor *object) {
+void Actor_StopAtPushTarget(struct Actor *actor) {
   struct Vector3 position;
   struct Actor *hit;
   u32 i;
-  s32 angle = object->facing >> 12;
+  s32 angle = actor->facing >> 12;
 
   angle = ((angle + 2) & 12) << 12;
-  position.x = object->x.fixed;
-  position.y = object->y.fixed;
-  position.z = object->z.fixed;
+  position.x = actor->x.fixed;
+  position.y = actor->y.fixed;
+  position.z = actor->z.fixed;
   FieldVector_AddPolarOffset(16, angle, &position);
   hit = Actor_FindAtCell(&position, 1);
   if (hit != 0) {
@@ -2597,15 +2595,15 @@ void Actor_StopAtPushTarget(struct Actor *object) {
           gPushKinds[i])
         return;
     }
-    FieldActor_SetPositionAndResetMotion(object, object->x.fixed,
-                                         object->y.fixed, object->z.fixed);
+    FieldActor_SetPositionAndResetMotion(actor, actor->x.fixed, actor->y.fixed,
+                                         actor->z.fixed);
   }
-  position.x = object->x.fixed;
-  position.y = object->y.fixed;
-  position.z = object->z.fixed;
-  if (MapGrid_CheckCollision(object, &position) > 0)
-    FieldActor_SetPositionAndResetMotion(object, object->x.fixed,
-                                         object->y.fixed, object->z.fixed);
+  position.x = actor->x.fixed;
+  position.y = actor->y.fixed;
+  position.z = actor->z.fixed;
+  if (MapGrid_CheckCollision(actor, &position) > 0)
+    FieldActor_SetPositionAndResetMotion(actor, actor->x.fixed, actor->y.fixed,
+                                         actor->z.fixed);
 }
 
 #undef TLA_ISLETS_H
@@ -2847,19 +2845,19 @@ struct SceneEntrance gSceneEntrances[] = {
 u32 gSceneExits[] = {
     SCENE_EXITS(IsletsDog),
     SCENE_EXIT(ISLETS_DOG_TO_WORLD_MAP, WorldMap, WORLD_MAP_FROM_ISLETS_DOG),
-    SCENE_EXIT(ISLETS_DOG_TO_CHAMPA_INTERIORS, ChampaInteriors, CHAMPA_INTERIORS_FROM_ISLETS_DOG),
+    SCENE_EXIT(ISLETS_DOG_TO_CHAMPA_ROOMS, ChampaRooms, CHAMPA_ROOMS_FROM_ISLETS_DOG),
     SCENE_EXITS(IsletsPrettyStone),
     SCENE_EXIT(ISLETS_PRETTY_STONE_TO_WORLD_MAP, WorldMap, WORLD_MAP_FROM_ISLETS_PRETTY_STONE),
-    SCENE_EXIT(ISLETS_PRETTY_STONE_TO_MIKASALLA_INTERIORS_HOUSES, MikasallaInteriorsHouses, MIKASALLA_INTERIORS_HOUSES_FROM_ISLETS_PRETTY_STONE),
+    SCENE_EXIT(ISLETS_PRETTY_STONE_TO_MIKASALLA_ROOMS_HOUSES, MikasallaRoomsHouses, MIKASALLA_ROOMS_HOUSES_FROM_ISLETS_PRETTY_STONE),
     SCENE_EXIT(3, IsletsPrettyStone, ISLETS_PRETTY_STONE_FROM_WORLD_MAP),
     SCENE_EXITS(IsletsCow),
     SCENE_EXIT(ISLETS_COW_TO_WORLD_MAP_A, WorldMap, WORLD_MAP_FROM_ISLETS_COW_A),
     SCENE_EXIT(ISLETS_COW_TO_WORLD_MAP_B, WorldMap, WORLD_MAP_FROM_ISLETS_COW_B),
-    SCENE_EXIT(ISLETS_COW_TO_DAILA_INTERIORS_HOUSES, DailaInteriorsHouses, DAILA_INTERIORS_HOUSES_FROM_ISLETS_COW),
+    SCENE_EXIT(ISLETS_COW_TO_DAILA_ROOMS_HOUSES, DailaRoomsHouses, DAILA_ROOMS_HOUSES_FROM_ISLETS_COW),
     SCENE_EXIT(ISLETS_COW_TO_WORLD_MAP_C, WorldMap, WORLD_MAP_FROM_ISLETS_COW_C),
     SCENE_EXITS(IsletsPier),
     SCENE_EXIT(ISLETS_PIER_TO_WORLD_MAP, WorldMap, WORLD_MAP_FROM_ISLETS_PIER),
-    SCENE_EXIT(ISLETS_PIER_TO_CHAMPA_INTERIORS, ChampaInteriors, CHAMPA_INTERIORS_FROM_ISLETS_PIER),
+    SCENE_EXIT(ISLETS_PIER_TO_CHAMPA_ROOMS, ChampaRooms, CHAMPA_ROOMS_FROM_ISLETS_PIER),
     SCENE_EXITS(IsletsTurtle),
     SCENE_EXIT(ISLETS_TURTLE_TO_WORLD_MAP, WorldMap, WORLD_MAP_FROM_ISLETS_TURTLE),
     SCENE_EXIT(ISLETS_TURTLE_TO_APOJII_ISLANDS_SHOPS, ApojiiIslandsShops, APOJII_ISLANDS_SHOPS_FROM_ISLETS_TURTLE),

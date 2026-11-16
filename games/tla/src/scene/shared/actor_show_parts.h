@@ -1,13 +1,13 @@
 /// Shows an actor's parts.
 void Actor_ShowParts(s32 id) {
-  struct Actor *object = Actor_Get(id);
+  struct Actor *actor = Actor_Get(id);
 
-  if (object != 0) {
-    u8 *meta = Sprite_AddAnimation(object->sprite, 0x17d);
+  if (actor != 0) {
+    u8 *meta = Sprite_AddAnimation(actor->sprite, 0x17d);
 
     meta[5] = 0;
     meta[6] = 0;
-    Actor_SelectAnimation(object, 0);
-    Actor_SelectAnimation(object, 2);
+    Actor_SelectAnimation(actor, 0);
+    Actor_SelectAnimation(actor, 2);
   }
 }

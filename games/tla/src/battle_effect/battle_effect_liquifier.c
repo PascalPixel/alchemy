@@ -347,13 +347,13 @@ void BattleEffect_RunShred(struct BattleEffectParams *args) {
 ///
 /// Abilities: Mine Ball.
 void BattleEffect_RunMineBall(struct BattleEffectParams *args) {
-  struct Actor *object;
+  struct Actor *actor;
 
-  object = (struct Actor *)BattleObject_GetFar(args->user)->object;
-  Actor_SelectAnimationFar(object, 2);
-  Actor_SetAnimationSpeedFar(object, ANIMATION_STEP_NORMAL * 7 / 4);
+  actor = (struct Actor *)BattleObject_GetFar(args->user)->object;
+  Actor_SelectAnimationFar(actor, 2);
+  Actor_SetAnimationSpeedFar(actor, ANIMATION_STEP_NORMAL * 7 / 4);
   BattleEffect_RunCanvasBurst(args, 3);
-  Actor_SetAnimationSpeedFar(object, ANIMATION_STEP_NORMAL);
+  Actor_SetAnimationSpeedFar(actor, ANIMATION_STEP_NORMAL);
 }
 
 #define ball (&work->particles[63])

@@ -1161,25 +1161,25 @@ void IconMenu_AddIcon(s32 icon) {
 /// wide and 3 tall, follows them; the centring counts two thirds of the
 /// window's width.
 void IconMenu_Center(s32 row, s32 width, s32 resourceBase) {
-  struct IconMenuWork *menu = Ram_HeapSlots->iconMenu;
+  struct IconMenuWork *work = Ram_HeapSlots->iconMenu;
   s32 x;
   s32 i;
   s32 count;
 
   width += 2;
-  menu->width = width;
-  menu->labelBase = resourceBase;
-  menu->row = row;
-  count = menu->count;
-  x = 15 - (count * 3 + menu->width * 2 / 3) / 2;
-  for (i = 0; i < menu->count; i++) {
-    struct IconMenuEntry *entry = &menu->entries[i];
+  work->width = width;
+  work->labelBase = resourceBase;
+  work->row = row;
+  count = work->count;
+  x = 15 - (count * 3 + work->width * 2 / 3) / 2;
+  for (i = 0; i < work->count; i++) {
+    struct IconMenuEntry *entry = &work->entries[i];
 
     entry->x = x * 8;
     entry->y = row * 8;
     x += 3;
   }
-  menu->window = Window_Create(x, row, menu->width, 3, WINDOW_FLAG_INSTANT);
+  work->window = Window_Create(x, row, work->width, 3, WINDOW_FLAG_INSTANT);
 }
 
 /// Lays the entries out in a row three cells apart from x, on row y, and

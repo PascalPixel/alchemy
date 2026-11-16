@@ -812,7 +812,17 @@ struct SpriteAnimation;
 struct BattleEffectParams;
 struct ScreenPoint;
 struct Particle;
-struct MeshTriangle;
+
+/// A mesh triangle: its three vertex numbers and the texture coordinates of
+/// each corner. A strip quad is two of them; a triangle whose three vertices
+/// are 0 ends a list.
+struct MeshTriangle {
+  u8 vertex[3];
+  u8 unusedA; ///< nothing reads or writes it
+  u8 uv[3][2];
+  u8 unusedB[2]; ///< nothing reads or writes them
+};
+
 struct PoolEntry;
 struct SpriteScale;
 struct SpriteScale;

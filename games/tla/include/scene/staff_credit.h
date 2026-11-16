@@ -40,13 +40,13 @@ static inline void Scene_QueueIoWrite16(u32 address, u32 value) {
 enum { GAUGE_EMPTY = 0, GAUGE_SHOWN = 100, GAUGE_LOW = 200 };
 
 extern u32 gStaffCredit_GlowColorModes[];
-void StaffCredit_SpawnGrowingPair(struct Actor *object);
+void StaffCredit_SpawnGrowingPair(struct Actor *actor);
 
 void WorldMap_UpdatePlacedActors(void);
 
 void WorldMap_StartPlacedActors(void);
 
-void WorldMap_SpawnSparkPair(struct Actor *object);
-void WorldMap_SpawnParticle(struct Actor *object);
+void WorldMap_SpawnSparkPair(struct Actor *actor);
+void WorldMap_SpawnParticle(struct Actor *actor);
 
 #endif

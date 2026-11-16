@@ -35,9 +35,8 @@
 #include "fixed_math.h"
 #include "field/event_commands.h"
 
-void Actor_StartScript(struct Actor *object, const void *script);
-s32 MapGrid_CheckCollision(struct Actor *object,
-                           struct FieldPosition *position);
+void Actor_StartScript(struct Actor *actor, const void *script);
+s32 MapGrid_CheckCollision(struct Actor *actor, struct FieldPosition *position);
 void Event_End(void);
 void Cyclone_CopyTouchedCells(s32 x, s32 z, s32 layerIndex, s32 width,
                               s32 height, s32 toX, s32 toZ);
@@ -356,116 +355,116 @@ void GabombaCatacombs_HideWall(void) {
 /// Frost on the first puddle freezes it into a pillar, which blocks its
 /// cell.
 void GabombaCatacombs_FreezeFirstPuddle(void) {
-  struct Actor *object = Actor_GetById(ACTOR_FIRST_PUDDLE);
+  struct Actor *actor = Actor_GetById(ACTOR_FIRST_PUDDLE);
 
   GameFlag_Set(FLAG_FIRST_PUDDLE_FROZEN);
-  object->motionFlags = 0;
-  object->priorityFlags = 0;
+  actor->motionFlags = 0;
+  actor->priorityFlags = 0;
   MapGrid_CopyCellAttributes(6, 23, 1, 1, 8, 23);
 }
 
 /// Frost on the second puddle freezes it into a pillar, which blocks its
 /// cell.
 void GabombaCatacombs_FreezeSecondPuddle(void) {
-  struct Actor *object = Actor_GetById(ACTOR_SECOND_PUDDLE);
+  struct Actor *actor = Actor_GetById(ACTOR_SECOND_PUDDLE);
 
   GameFlag_Set(FLAG_SECOND_PUDDLE_FROZEN);
-  object->motionFlags = 0;
-  object->priorityFlags = 0;
+  actor->motionFlags = 0;
+  actor->priorityFlags = 0;
   MapGrid_CopyCellAttributes(0, 4, 1, 1, 8, 15);
 }
 
 /// Frost on the third puddle freezes it into a pillar, which blocks its
 /// cell.
 void GabombaCatacombs_FreezeThirdPuddle(void) {
-  struct Actor *object = Actor_GetById(ACTOR_THIRD_PUDDLE);
+  struct Actor *actor = Actor_GetById(ACTOR_THIRD_PUDDLE);
 
   GameFlag_Set(FLAG_THIRD_PUDDLE_FROZEN);
-  object->motionFlags = 0;
-  object->priorityFlags = 0;
+  actor->motionFlags = 0;
+  actor->priorityFlags = 0;
   MapGrid_CopyCellAttributes(0, 4, 1, 1, 9, 16);
 }
 
 /// Frost on the fourth puddle freezes it into a pillar, which blocks its
 /// cell.
 void GabombaCatacombs_FreezeFourthPuddle(void) {
-  struct Actor *object = Actor_GetById(ACTOR_FOURTH_PUDDLE);
+  struct Actor *actor = Actor_GetById(ACTOR_FOURTH_PUDDLE);
 
   GameFlag_Set(FLAG_FOURTH_PUDDLE_FROZEN);
-  object->motionFlags = 0;
-  object->priorityFlags = 0;
+  actor->motionFlags = 0;
+  actor->priorityFlags = 0;
   MapGrid_CopyCellAttributes(0, 4, 1, 1, 8, 17);
 }
 
 /// Frost on the fifth puddle freezes it into a pillar, which blocks its
 /// cell.
 void GabombaCatacombs_FreezeFifthPuddle(void) {
-  struct Actor *object = Actor_GetById(ACTOR_FIFTH_PUDDLE);
+  struct Actor *actor = Actor_GetById(ACTOR_FIFTH_PUDDLE);
 
   GameFlag_Set(FLAG_FIFTH_PUDDLE_FROZEN);
-  object->motionFlags = 0;
-  object->priorityFlags = 0;
+  actor->motionFlags = 0;
+  actor->priorityFlags = 0;
   MapGrid_CopyCellAttributes(0, 4, 1, 1, 6, 17);
 }
 
 /// Frost on the sixth puddle freezes it into a pillar, which blocks its
 /// cell.
 void GabombaCatacombs_FreezeSixthPuddle(void) {
-  struct Actor *object = Actor_GetById(ACTOR_SIXTH_PUDDLE);
+  struct Actor *actor = Actor_GetById(ACTOR_SIXTH_PUDDLE);
 
   GameFlag_Set(FLAG_SIXTH_PUDDLE_FROZEN);
-  object->motionFlags = 0;
-  object->priorityFlags = 0;
+  actor->motionFlags = 0;
+  actor->priorityFlags = 0;
   MapGrid_CopyCellAttributes(0, 4, 1, 1, 5, 16);
 }
 
 /// Frost on the seventh puddle freezes it into a pillar, which blocks its
 /// cell.
 void GabombaCatacombs_FreezeSeventhPuddle(void) {
-  struct Actor *object = Actor_GetById(ACTOR_SEVENTH_PUDDLE);
+  struct Actor *actor = Actor_GetById(ACTOR_SEVENTH_PUDDLE);
 
   GameFlag_Set(FLAG_SEVENTH_PUDDLE_FROZEN);
-  object->motionFlags = 0;
-  object->priorityFlags = 0;
+  actor->motionFlags = 0;
+  actor->priorityFlags = 0;
   MapGrid_CopyCellAttributes(0, 4, 1, 1, 6, 15);
 }
 
 /// Frost on the stream puddle freezes it into a pillar, which blocks its
 /// cell.
 void GabombaCatacombs_FreezeStreamPuddle(void) {
-  struct Actor *object = Actor_GetById(ACTOR_STREAM_PUDDLE);
+  struct Actor *actor = Actor_GetById(ACTOR_STREAM_PUDDLE);
 
   GameFlag_Set(FLAG_STREAM_PUDDLE_FROZEN);
-  object->motionFlags = 0;
-  object->priorityFlags = 0;
+  actor->motionFlags = 0;
+  actor->priorityFlags = 0;
   MapGrid_CopyCellAttributes(15, 18, 1, 1, 17, 18);
 }
 
 /// Moves the leader and camera along z by dz when nothing is in the way.
-void GabombaCatacombs_DriftWithStream(struct Actor *object, s32 dz) {
+void GabombaCatacombs_DriftWithStream(struct Actor *actor, s32 dz) {
   struct Actor *camera;
   struct FieldPosition position;
 
   camera = gFieldWork->camera;
 
-  position.x = object->x.fixed;
-  position.y = object->y.fixed;
-  position.z = object->z.fixed + dz;
-  MapGrid_CheckCollision(object, &position);
-  position.x = object->x.fixed;
-  position.y = object->y.fixed;
-  position.z = object->z.fixed + toFIXED(8);
-  if (MapGrid_CheckCollision(object, &position) <= 0) {
-    position.x = object->x.fixed + toFIXED(57) / 10;
-    position.y = object->y.fixed;
-    position.z = object->z.fixed + toFIXED(57) / 10;
-    if (MapGrid_CheckCollision(object, &position) <= 0) {
-      position.x = object->x.fixed - toFIXED(57) / 10;
-      position.y = object->y.fixed;
-      position.z = object->z.fixed + toFIXED(57) / 10;
-      if (MapGrid_CheckCollision(object, &position) <= 0) {
+  position.x = actor->x.fixed;
+  position.y = actor->y.fixed;
+  position.z = actor->z.fixed + dz;
+  MapGrid_CheckCollision(actor, &position);
+  position.x = actor->x.fixed;
+  position.y = actor->y.fixed;
+  position.z = actor->z.fixed + toFIXED(8);
+  if (MapGrid_CheckCollision(actor, &position) <= 0) {
+    position.x = actor->x.fixed + toFIXED(57) / 10;
+    position.y = actor->y.fixed;
+    position.z = actor->z.fixed + toFIXED(57) / 10;
+    if (MapGrid_CheckCollision(actor, &position) <= 0) {
+      position.x = actor->x.fixed - toFIXED(57) / 10;
+      position.y = actor->y.fixed;
+      position.z = actor->z.fixed + toFIXED(57) / 10;
+      if (MapGrid_CheckCollision(actor, &position) <= 0) {
         camera->z.fixed += dz;
-        object->z.fixed += dz;
+        actor->z.fixed += dz;
       }
     }
   }
@@ -491,14 +490,14 @@ void GabombaCatacombs_WadeStream(void) {
 }
 
 /// Each frame, shrinks the glow by a twentieth of its full size.
-s32 GabombaCatacombs_ShrinkGlow(struct Actor *object) {
-  object->scaleX -= FIXED_ONE / 20;
-  object->scaleY -= FIXED_ONE / 20;
+s32 GabombaCatacombs_ShrinkGlow(struct Actor *actor) {
+  actor->scaleX -= FIXED_ONE / 20;
+  actor->scaleY -= FIXED_ONE / 20;
   return 0;
 }
 
-void Actor_SetSpriteColorMode(struct Actor *object, s32 value);
-void Actor_MoveToObject(s32 actor, s32 target);
+void Actor_SetSpriteColorMode(struct Actor *actor, s32 value);
+void Actor_MoveToObject(s32 actorId, s32 target);
 
 #define TALK()                                                                 \
   EventMessage_ShowCentered((s16)((union EventLine *)&work->message)->line++,  \
@@ -618,9 +617,9 @@ void GabombaCatacombs_GabombaBestowsPower(void) {
 /// The seated idol: once the Great Gabomba has shown it, the party takes the
 /// Tomegathericon.
 void GabombaCatacombs_TalkToStatue(void) {
-  struct Actor *object = Actor_GetById(FIELD_TREASURE_ACTOR);
+  struct Actor *actor = Actor_GetById(FIELD_TREASURE_ACTOR);
 
-  if (object != NULL && object->x.fixed != 0)
+  if (actor != NULL && actor->x.fixed != 0)
     Scene_TalkToActor(0x1000 | FIELD_TREASURE_ACTOR);
 }
 

@@ -238,17 +238,17 @@ s32 IsletCave_ClearScriptedActorSpriteFlags(struct Actor *actor) {
 
 /// The winged statue's script while Serac hides in it: every 64 frames it
 /// hops, rocking its sprite through the first half of the cycle.
-s32 IsletCave_HopWingedStatue(struct Actor *object) {
-  s32 step = object->riseCounter & 63;
-  struct FieldSprite *sprite = object->sprite;
+s32 IsletCave_HopWingedStatue(struct Actor *actor) {
+  s32 step = actor->riseCounter & 63;
+  struct FieldSprite *sprite = actor->sprite;
 
-  object->motionFlags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
+  actor->motionFlags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
   if (step < 32) {
     if (step == 0)
-      object->velocityY = toFIXED(1);
+      actor->velocityY = toFIXED(1);
     sprite->rotation = Trig_Cos(step << 12) / 128;
   }
-  object->riseCounter++;
+  actor->riseCounter++;
   return -1;
 }
 
@@ -381,10 +381,10 @@ void IsletCave_OpenDoorAndEnter(void) {
   Event_Start();
   Event_ResolvePendingActions(0);
   for (i = ACTOR_FIRST_PLACED; i <= 63; i++) {
-    struct Actor *object = Actor_GetById(i);
+    struct Actor *actor = Actor_GetById(i);
 
-    if (object != 0)
-      object->motionFlags = 0;
+    if (actor != 0)
+      actor->motionFlags = 0;
   }
   index = work->stepTrigger - 1;
   Sound_Play(SE_DOOR_OPEN);
@@ -798,7 +798,7 @@ void IsletCave_RideSeventhLogSouth(void) {
 /// Sentinel fights.
 void IsletCave_SentinelAwaits(void) {
   s32 cue;
-  struct Actor *object;
+  struct Actor *actor;
 
   Event_Start();
   Event_ResolvePendingActions(0);
@@ -812,10 +812,10 @@ void IsletCave_SentinelAwaits(void) {
   PaletteFade_SetTarget(PALETTE_TINT_NONE, 0);
   PaletteFade_StartInterpolation(60);
   Event_Wait(60);
-  object = Actor_GetById(gMainRoutineWork.leaderActorId);
-  if (object != 0) {
-    Actor_SetDestinationById(ACTOR_SENTINEL, object->x.part[0].integer,
-                             object->z.part[0].integer);
+  actor = Actor_GetById(gMainRoutineWork.leaderActorId);
+  if (actor != 0) {
+    Actor_SetDestinationById(ACTOR_SENTINEL, actor->x.part[0].integer,
+                             actor->z.part[0].integer);
   }
   Event_Wait(20);
   FieldEvent_SetAfterBattleDestination(SCENE_ISLET_CAVE_SENTINEL,
@@ -829,16 +829,16 @@ void IsletCave_SentinelAwaits(void) {
 /// Tremor on the shaking spot: Serac drops out.
 void IsletCave_TremorRevealsSerac(void) {
   if (!Event_GetFlag(FLAG_SCENE_TEMP_30)) {
-    struct Actor *object = Actor_GetById(ACTOR_SERAC);
+    struct Actor *actor = Actor_GetById(ACTOR_SERAC);
     struct Actor *owner = Actor_GetById(gMainRoutineWork.leaderActorId);
 
     Event_SetFlag(FLAG_SCENE_TEMP_30);
     Actor_SetPosition(ACTOR_SERAC, 296, 160);
-    object->speedLimit = toFIXED(3) / 2;
-    object->velocityY = toFIXED(15);
+    actor->speedLimit = toFIXED(3) / 2;
+    actor->velocityY = toFIXED(15);
     Actor_MoveToAndWait(ACTOR_SERAC, 344, ((owner->z.fixed >> 19) << 3) + 24);
     Actor_Stop(ACTOR_WINGED_STATUE);
-    object->speedLimit = toFIXED(1);
+    actor->speedLimit = toFIXED(1);
     Actor_TurnToFaceEachOther(gMainRoutineWork.leaderActorId, ACTOR_SERAC, 0);
   }
 }

@@ -201,20 +201,19 @@ void Izumo_CycloneFirstPatch(void) {
 /// Cyclone clears the second patch and, unless its flag is set, uncovers a
 /// treasure spot there, pushing off a leader standing on it.
 void Izumo_CycloneSecondPatch(void) {
-  struct Actor *object = Actor_GetById(gMainRoutineWork.leaderActorId);
+  struct Actor *actor = Actor_GetById(gMainRoutineWork.leaderActorId);
 
   FieldTileCopies_CopyTouchedCells(53, 5, 8, 9, 23, 30, 0);
   if (!GameFlag_Get(FLAG_IZUMO_FIRST_ANTIDOTE_TAKEN)) {
     Call3((void (*)())Actor_SetHorizontalPositionWithTerrain,
           FIELD_TREASURE_ACTOR, toFIXED(456), toFIXED(584));
-    if (FIELD_CELL(object->x.fixed) == 28 &&
-        FIELD_CELL(object->z.fixed) == 36) {
+    if (FIELD_CELL(actor->x.fixed) == 28 && FIELD_CELL(actor->z.fixed) == 36) {
       Event_Start();
       Event_ResolvePendingActions(0);
       FieldEffect_SetAttached(gMainRoutineWork.leaderActorId,
                               ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
       Actor_SetDestinationOffsetById(gMainRoutineWork.leaderActorId, -16, 0);
-      object->velocityY = toFIXED(6);
+      actor->velocityY = toFIXED(6);
       Actor_WaitForMoveById(gMainRoutineWork.leaderActorId);
       Event_End();
     }
@@ -223,21 +222,20 @@ void Izumo_CycloneSecondPatch(void) {
 
 /// Cyclone clears the third patch, as the second does with its own cell.
 void Izumo_CycloneThirdPatch(void) {
-  struct Actor *object = Actor_GetById(gMainRoutineWork.leaderActorId);
+  struct Actor *actor = Actor_GetById(gMainRoutineWork.leaderActorId);
 
   FieldTileCopies_CopyTouchedCells(53, 5, 8, 9, 23, 30, 0);
   if (!GameFlag_Get(FLAG_IZUMO_SECOND_ANTIDOTE_TAKEN)) {
     Call3((void (*)())Actor_SetHorizontalPositionWithTerrain,
           FIELD_TREASURE_ACTOR + 1, toFIXED(472), toFIXED(552));
-    if (FIELD_CELL(object->x.fixed) == 29 &&
-        FIELD_CELL(object->z.fixed) == 34) {
+    if (FIELD_CELL(actor->x.fixed) == 29 && FIELD_CELL(actor->z.fixed) == 34) {
       Event_Start();
       Event_ResolvePendingActions(0);
       FieldEffect_SetAttached(gMainRoutineWork.leaderActorId,
                               ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
       Call3((void (*)())Actor_SetDestinationOffsetById,
             gMainRoutineWork.leaderActorId, 0, -16);
-      object->velocityY = toFIXED(6);
+      actor->velocityY = toFIXED(6);
       Actor_WaitForMoveById(gMainRoutineWork.leaderActorId);
       Event_End();
     }
@@ -261,20 +259,19 @@ void Izumo_CycloneSixthPatch(void) {
 
 /// Cyclone clears the seventh patch, as the second does with its own cell.
 void Izumo_CycloneSeventhPatch(void) {
-  struct Actor *object = Actor_GetById(gMainRoutineWork.leaderActorId);
+  struct Actor *actor = Actor_GetById(gMainRoutineWork.leaderActorId);
 
   FieldTileCopies_CopyTouchedCells(42, 0, 6, 2, 9, 18, 0);
   if (!GameFlag_Get(FLAG_IZUMO_LUCKY_MEDAL_TAKEN)) {
     Call3((void (*)())Actor_SetHorizontalPositionWithTerrain,
           FIELD_TREASURE_ACTOR + 2, toFIXED(168), toFIXED(328));
-    if (FIELD_CELL(object->x.fixed) == 10 &&
-        FIELD_CELL(object->z.fixed) == 20) {
+    if (FIELD_CELL(actor->x.fixed) == 10 && FIELD_CELL(actor->z.fixed) == 20) {
       Event_Start();
       Event_ResolvePendingActions(0);
       FieldEffect_SetAttached(gMainRoutineWork.leaderActorId,
                               ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
       Actor_SetDestinationOffsetById(gMainRoutineWork.leaderActorId, 16, 0);
-      object->velocityY = toFIXED(6);
+      actor->velocityY = toFIXED(6);
       Actor_WaitForMoveById(gMainRoutineWork.leaderActorId);
       Event_End();
     }
@@ -598,9 +595,9 @@ s32 Scene_PrepareMap(void) { return 0; }
 
 /// Reveal on the stone circle: shows the way down if the stone is in place.
 void Izumo_RevealTheStoneCircle(void) {
-  struct Actor *object = Actor_GetById(gMainRoutineWork.leaderActorId);
-  s32 x = FIELD_CELL(object->x.fixed);
-  s32 z = FIELD_CELL(object->z.fixed);
+  struct Actor *actor = Actor_GetById(gMainRoutineWork.leaderActorId);
+  s32 x = FIELD_CELL(actor->x.fixed);
+  s32 z = FIELD_CELL(actor->z.fixed);
 
   GameFlag_Set(FLAG_REVEALING);
   if (GameFlag_Get(FLAG_STONE_IN_PLACE)) {
@@ -854,13 +851,13 @@ u32 gIzumo_SixthSpinnerScript[] = {
 u32 gSceneExits[] = {
     SCENE_EXITS(Izumo),
     SCENE_EXIT_UNLESS(1, WorldMap, 38, EXIT_FLAG_NONE),
-    SCENE_EXIT_UNLESS(2, IzumoInteriors, 1, EXIT_FLAG_NONE),
-    SCENE_EXIT_UNLESS(3, IzumoInteriors, 2, EXIT_FLAG_NONE),
-    SCENE_EXIT_UNLESS(4, IzumoInteriors, 3, EXIT_FLAG_NONE),
-    SCENE_EXIT_UNLESS(5, IzumoInteriors, 4, EXIT_FLAG_NONE),
-    SCENE_EXIT_UNLESS(6, IzumoInteriors, 5, EXIT_FLAG_NONE),
-    SCENE_EXIT_UNLESS(7, IzumoInteriors, 6, EXIT_FLAG_NONE),
-    SCENE_EXIT_UNLESS(8, IzumoInteriors, 7, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(2, IzumoRooms, 1, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(3, IzumoRooms, 2, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(4, IzumoRooms, 3, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(5, IzumoRooms, 4, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(6, IzumoRooms, 5, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(7, IzumoRooms, 6, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(8, IzumoRooms, 7, EXIT_FLAG_NONE),
     SCENE_EXIT_UNLESS(10, IzumoRuinsFirstRoom, 1, EXIT_FLAG_NONE),
     SCENE_EXITS_END,
 };

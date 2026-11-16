@@ -134,26 +134,25 @@ void JupiterLighthouse_StartMovingBlock(void) {}
 /// The pillar pushed into the hole at cell (6, 14) drops in with a thud: once
 /// it has landed (at most 30 frames) it stays there, level with the floor.
 void JupiterLighthouse_DropBlockIntoHole(s32 unused, s32 id) {
-  struct Actor *object = Actor_Get(id);
+  struct Actor *actor = Actor_Get(id);
   s32 i;
 
-  if (FIELD_CELL(object->x.fixed) == 6 && FIELD_CELL(object->z.fixed) == 14) {
+  if (FIELD_CELL(actor->x.fixed) == 6 && FIELD_CELL(actor->z.fixed) == 14) {
     Event_SetFlag(FLAG_PILLAR_DROPPED);
     System_Wait(10);
     Event_PlaySound(SE_HEAVY_IMPACT);
     i = 0;
-    if (object->y.fixed > object->groundHeight || object->velocityY != 0) {
+    if (actor->y.fixed > actor->groundHeight || actor->velocityY != 0) {
       do {
         System_Wait(1);
         i++;
         if (i > 29)
           break;
-      } while (object->y.fixed > object->groundHeight ||
-               object->velocityY != 0);
+      } while (actor->y.fixed > actor->groundHeight || actor->velocityY != 0);
     }
-    object->motionFlags = 0;
-    MapGrid_SetCellHeight(object->x.fixed, object->z.fixed, 0, 0);
-    MapGrid_SetAttributeBAt(object->x.fixed, object->z.fixed, 0, 128);
+    actor->motionFlags = 0;
+    MapGrid_SetCellHeight(actor->x.fixed, actor->z.fixed, 0, 0);
+    MapGrid_SetAttributeBAt(actor->x.fixed, actor->z.fixed, 0, 128);
   }
 }
 
@@ -200,14 +199,14 @@ s32 Scene_PrepareMap(void) {
   if (Event_GetFlag(FLAG_KEEP_PARTY_POSITION) == 0)
     Event_ClearFlag(FLAG_PILLAR_DROPPED);
   if (Event_GetFlag(FLAG_PILLAR_DROPPED)) {
-    struct Actor *object = Actor_Get(ACTOR_PILLAR);
+    struct Actor *actor = Actor_Get(ACTOR_PILLAR);
 
-    object->motionFlags = 0;
-    object->groundHeight = -toFIXED(32);
-    object->y.fixed = -toFIXED(32);
+    actor->motionFlags = 0;
+    actor->groundHeight = -toFIXED(32);
+    actor->y.fixed = -toFIXED(32);
     Actor_SetPosition(ACTOR_PILLAR, 104, 232);
-    MapGrid_SetCellHeight(object->x.fixed, object->z.fixed, 0, 0);
-    MapGrid_SetAttributeBAt(object->x.fixed, object->z.fixed, 0, 128);
+    MapGrid_SetCellHeight(actor->x.fixed, actor->z.fixed, 0, 0);
+    MapGrid_SetAttributeBAt(actor->x.fixed, actor->z.fixed, 0, 128);
   }
   return 0;
 }
@@ -241,7 +240,7 @@ static inline void PaletteCycle_SetFrame(s32 value) {
 extern s32 gWhirlwindEndScript[];
 
 s32 MapGrid_GetCellBehavior(s32 x, s32 z, s32 layer);
-void Actor_StartScript(struct Actor *object, const s32 *script);
+void Actor_StartScript(struct Actor *actor, const s32 *script);
 
 #include "shared/whirlwind_update.h"
 
@@ -263,8 +262,8 @@ extern s8 gPushFootprints[][4];
 /// its sprite. Returns 1, or 0 for a sprite that is not pushable.
 s32 PushTarget_FillFootprint(s32 id) {
   struct MapWork *map = Ram_HeapSlots->mapGrid;
-  struct Actor *object = Actor_Get(id);
-  s16 shape = *(s16 *)((struct FieldSprite *)object->sprite)->record;
+  struct Actor *actor = Actor_Get(id);
+  s16 shape = *(s16 *)((struct FieldSprite *)actor->sprite)->record;
   s16 i = 0;
   u32 j;
   s32 width;
@@ -287,8 +286,8 @@ s32 PushTarget_FillFootprint(s32 id) {
     return 0;
   width = (ABS(gPushFootprints[j][0]) + ABS(gPushFootprints[j][2])) >> 4;
   height = (ABS(gPushFootprints[j][1]) + ABS(gPushFootprints[j][3])) >> 4;
-  x = FIELD_CELL(object->x.fixed + toFIXED(gPushFootprints[j][0]));
-  z = FIELD_CELL(object->z.fixed + toFIXED(gPushFootprints[j][1]));
+  x = FIELD_CELL(actor->x.fixed + toFIXED(gPushFootprints[j][0]));
+  z = FIELD_CELL(actor->z.fixed + toFIXED(gPushFootprints[j][1]));
   mapX = FIELD_CELL(map->layers[1].offsetX);
   i = mapX;
   mapZ = FIELD_CELL(map->layers[1].offsetY);
@@ -306,9 +305,9 @@ extern s32 gPushLeaderSteps[];
 
 #define ABS(x) ((x) < 0 ? -(x) : (x))
 
-static inline s32 PushTarget_CheckCollision(struct Actor *object,
+static inline s32 PushTarget_CheckCollision(struct Actor *actor,
                                             s32 *position) {
-  return MapGrid_CheckCollision(object, position);
+  return MapGrid_CheckCollision(actor, position);
 }
 
 /// Finds the object the leader is pushing and steps its footprint, one cell
@@ -322,7 +321,7 @@ static inline s32 PushTarget_CheckCollision(struct Actor *object,
 
 #include "shared/push_target_find_ahead.h"
 
-void PushTarget_UpdatePusher(struct Actor *object);
+void PushTarget_UpdatePusher(struct Actor *actor);
 
 /// The leader pushes an actor to its resting place: both walk there, then the
 /// cells it left are opened and those it covers made solid.
@@ -330,7 +329,7 @@ void PushTarget_PushFill(struct PushTarget target) {
   struct MapWork *map =
       (struct MapWork *)((struct HeapSlotWords *)Ram_HeapSlots)->mapWork;
   struct Actor *leader = Actor_Get(gMainRoutineWork.leaderActorId);
-  struct Actor *object = Actor_Get(target.id);
+  struct Actor *actor = Actor_Get(target.id);
   s32 cell[3];
   FIXED from[3];
   s32 footprint;
@@ -346,12 +345,10 @@ void PushTarget_PushFill(struct PushTarget target) {
   footprint = target.footprint;
   speed = leader->speedLimit;
   acceleration = leader->acceleration;
-  from[0] = object->x.fixed;
-  from[2] = object->z.fixed;
-  cell[0] =
-      FIELD_CELL(object->x.fixed + toFIXED(gPushFootprints[footprint][0]));
-  cell[2] =
-      FIELD_CELL(object->z.fixed + toFIXED(gPushFootprints[footprint][1]));
+  from[0] = actor->x.fixed;
+  from[2] = actor->z.fixed;
+  cell[0] = FIELD_CELL(actor->x.fixed + toFIXED(gPushFootprints[footprint][0]));
+  cell[2] = FIELD_CELL(actor->z.fixed + toFIXED(gPushFootprints[footprint][1]));
   width = (ABS(gPushFootprints[footprint][0]) +
            ABS(gPushFootprints[footprint][2])) >>
           4;
@@ -371,12 +368,12 @@ void PushTarget_PushFill(struct PushTarget target) {
   Actor_Get(gMainRoutineWork.leaderActorId)->update = PushTarget_UpdatePusher;
   System_Wait(4);
   if ((u32)(direction - 6) <= 7)
-    Actor_SelectAnimation(object, 3);
+    Actor_SelectAnimation(actor, 3);
   else
-    Actor_SelectAnimation(object, 2);
+    Actor_SelectAnimation(actor, 2);
   Event_PlaySound(SE_HEAVY_MOVE);
   Actor_SetSpeedAndAcceleration(target.id, 0.5, 0.1);
-  FieldActor_SetMoveTargetFX(object, target.x, target.y, target.z);
+  FieldActor_SetMoveTargetFX(actor, target.x, target.y, target.z);
   FieldActor_WaitForMoveById(gMainRoutineWork.leaderActorId);
   Actor_SetAnimation(gMainRoutineWork.leaderActorId, ANIM_WALK);
   Actor_SetSpeedAndAcceleration(gMainRoutineWork.leaderActorId, 0.3, 0.1);
@@ -390,12 +387,12 @@ void PushTarget_PushFill(struct PushTarget target) {
   leader->update = 0;
   leader->speedLimit = speed;
   leader->acceleration = acceleration;
-  FieldActor_WaitForMove(object);
+  FieldActor_WaitForMove(actor);
   Event_PlaySound(SE_STOP_EXIT_SE);
   Event_PlaySound(SE_HEAVY_STOP);
-  FieldActor_SetPositionAndResetMotion(object, target.x, object->y.fixed,
+  FieldActor_SetPositionAndResetMotion(actor, target.x, actor->y.fixed,
                                        target.z);
-  Actor_SelectAnimation(object, 1);
+  Actor_SelectAnimation(actor, 1);
   target.x = target.x + toFIXED(gPushFootprints[footprint][0]);
   target.z = target.z + toFIXED(gPushFootprints[footprint][1]);
   target.x >>= 20;
@@ -419,16 +416,16 @@ void PushTarget_PushFill(struct PushTarget target) {
 
 /// The leader's update while it pushes: stops it against anything but a
 /// pushable actor, or a wall.
-void PushTarget_UpdatePusher(struct Actor *object) {
+void PushTarget_UpdatePusher(struct Actor *actor) {
   struct Vector3 position;
   struct Actor *hit;
   u32 i;
-  s32 angle = object->facing >> 12;
+  s32 angle = actor->facing >> 12;
 
   angle = ((angle + 2) & 12) << 12;
-  position.x = object->x.fixed;
-  position.y = object->y.fixed;
-  position.z = object->z.fixed;
+  position.x = actor->x.fixed;
+  position.y = actor->y.fixed;
+  position.z = actor->z.fixed;
   FieldVector_AddPolarOffset(16, angle, &position);
   hit = Actor_FindAtCell(&position, 1);
   if (hit != 0) {
@@ -437,15 +434,15 @@ void PushTarget_UpdatePusher(struct Actor *object) {
           gPushKinds[i])
         return;
     }
-    FieldActor_SetPositionAndResetMotion(object, object->x.fixed,
-                                         object->y.fixed, object->z.fixed);
+    FieldActor_SetPositionAndResetMotion(actor, actor->x.fixed, actor->y.fixed,
+                                         actor->z.fixed);
   }
-  position.x = object->x.fixed;
-  position.y = object->y.fixed;
-  position.z = object->z.fixed;
-  if (MapGrid_CheckCollision(object, &position) > 0)
-    FieldActor_SetPositionAndResetMotion(object, object->x.fixed,
-                                         object->y.fixed, object->z.fixed);
+  position.x = actor->x.fixed;
+  position.y = actor->y.fixed;
+  position.z = actor->z.fixed;
+  if (MapGrid_CheckCollision(actor, &position) > 0)
+    FieldActor_SetPositionAndResetMotion(actor, actor->x.fixed, actor->y.fixed,
+                                         actor->z.fixed);
 }
 
 /// Queues the lit actors' sprites: for each listed actor with a position,

@@ -581,21 +581,21 @@ void LemuriaSpring_GivePrize(s32 item) {
 /// facing, colour mode and animation step.
 void LemuriaSpring_SetActorAppearance(s32 id, s32 *position, s32 facing,
                                       s32 colorMode, s32 step) {
-  struct Actor *object = Actor_Get(id);
+  struct Actor *actor = Actor_Get(id);
   struct Sprite *sprite;
   struct SpriteAnimation **entry;
   s32 i;
 
-  if (object != NULL) {
-    object->x.fixed = *position++;
-    object->y.fixed = *position++;
-    object->z.fixed = *position;
-    object->facing = facing;
-    object->motionFlags = 0;
-    ((struct Sprite *)object->sprite)->flags = 0;
-    Actor_SetAnimationSpeed(object, step);
+  if (actor != NULL) {
+    actor->x.fixed = *position++;
+    actor->y.fixed = *position++;
+    actor->z.fixed = *position;
+    actor->facing = facing;
+    actor->motionFlags = 0;
+    ((struct Sprite *)actor->sprite)->flags = 0;
+    Actor_SetAnimationSpeed(actor, step);
   }
-  sprite = object->sprite;
+  sprite = actor->sprite;
   i = 0;
   if (i < sprite->count) {
     entry = sprite->entries;
@@ -613,11 +613,11 @@ void LemuriaSpring_SetActorAppearance(s32 id, s32 *position, s32 facing,
 
 /// Sets how actor `id` keeps its sprites (Actor.spriteStorageKind).
 void LemuriaSpring_SetSpriteStorageKind(s32 id, s32 kind) {
-  struct Actor *object;
+  struct Actor *actor;
 
-  object = Actor_GetById(id);
-  if (object != 0) {
-    object->spriteStorageKind = kind;
+  actor = Actor_GetById(id);
+  if (actor != 0) {
+    actor->spriteStorageKind = kind;
   }
 }
 

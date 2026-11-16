@@ -1,5 +1,5 @@
 /// Actor_EmitRisingSparks with the spark settings in a plain array.
-s32 Actor_EmitRisingSparksB(struct Actor *object) {
+s32 Actor_EmitRisingSparksB(struct Actor *actor) {
   s32 params[10];
 
   if ((gFrameCount & 7) == 0) {
@@ -10,9 +10,9 @@ s32 Actor_EmitRisingSparksB(struct Actor *object) {
     params[2] = 0xb333;
     params[3] = 0xb333;
     params[1] = 14;
-    x = object->x.fixed + (((Random_Below(9)) - 4) << 16);
-    y = object->y.fixed + ((32 - (Random_Below(20))) << 16);
-    FieldEffect_Spawn(x, y, object->z.fixed, 0,
+    x = actor->x.fixed + (((Random_Below(9)) - 4) << 16);
+    y = actor->y.fixed + ((32 - (Random_Below(20))) << 16);
+    FieldEffect_Spawn(x, y, actor->z.fixed, 0,
                       (s32)(((Random_Below(5)) << 16) + 0x50000) / 10, 0,
                       0xb0000, params);
   }

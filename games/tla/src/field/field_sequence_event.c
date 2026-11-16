@@ -42,17 +42,17 @@ void Event_Wait(s32 frames) {
 /// speed (1.0) and acceleration (0.5), no destination, and the standing pose,
 /// or ANIM_LEADER_CLING while the leader is on a climbable wall.
 void Leader_StopMoving(void) {
-  struct Actor *object = Actor_Lookup(Party_GetLeaderActor());
-  object->speedLimit = FIXED_ONE;
-  object->acceleration = toFIXED(1) / 2;
-  object->targetX = TARGET_UNSET;
-  object->targetZ = TARGET_UNSET;
-  object->velocityX = 0;
-  object->velocityZ = 0;
+  struct Actor *actor = Actor_Lookup(Party_GetLeaderActor());
+  actor->speedLimit = FIXED_ONE;
+  actor->acceleration = toFIXED(1) / 2;
+  actor->targetX = TARGET_UNSET;
+  actor->targetZ = TARGET_UNSET;
+  actor->velocityX = 0;
+  actor->velocityZ = 0;
   if (gMainRoutineWork.movementMode == LEADER_MOVEMENT_KEYS)
-    Actor_SelectAnimationFar(object, ANIM_LEADER_CLING);
+    Actor_SelectAnimationFar(actor, ANIM_LEADER_CLING);
   else
-    Actor_SelectAnimationFar(object, ANIM_STAND);
+    Actor_SelectAnimationFar(actor, ANIM_STAND);
 }
 
 /// Begins an event: closes any area name window, stops the leader, ends the

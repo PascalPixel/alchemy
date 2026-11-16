@@ -163,16 +163,16 @@ const struct Trigger *Scene_GetTriggers(void) {
 /// Stands a sleeper up where it lay: its standing animation, upright and 12
 /// pixels to the west, with a hop.
 void Idejima_GetUp(s32 id) {
-  struct Actor *object = Actor_Get(id);
+  struct Actor *actor = Actor_Get(id);
 
   Actor_SetAnimation(id, 1);
   Actor_SetSpriteFlags(Actor_Get(id), 1);
-  object->x.fixed -= toFIXED(12);
-  ((struct FieldSprite *)object->sprite)->rotation = 0;
+  actor->x.fixed -= toFIXED(12);
+  ((struct FieldSprite *)actor->sprite)->rotation = 0;
   System_Wait(1);
   Actor_SetSpriteFlags(Actor_Get(id), 1);
-  object->velocityY = toFIXED(4);
-  object->motionFlags = 3;
+  actor->velocityY = toFIXED(4);
+  actor->motionFlags = 3;
   System_Wait(40);
 }
 
@@ -1615,7 +1615,7 @@ void Idejima_FelixWakes(void) {
 }
 
 /// Starts the wave scroll, then runs the cutscene of the entrance taken: the
-/// shore of the new continent (2 and 4, which also make a Daila interior the
+/// shore of the new continent (2 and 4, which also make a Daila room the
 /// place a defeat returns the party to), or one of the story's three before it.
 s32 Scene_Initialize(void) {
   s32 entrance;
@@ -1635,7 +1635,7 @@ s32 Scene_Initialize(void) {
   case ENTRANCE_WAKE_AGAIN: {
     struct MainRoutineWork *party = &gMainRoutineWork;
 
-    party->restartScene = SCENE_DAILA_INTERIORS_SANCTUM;
+    party->restartScene = SCENE_DAILA_ROOMS_SANCTUM;
     party->restartEntrance = 1;
   }
     Idejima_PlaceTheSleepers();
@@ -1657,15 +1657,15 @@ s32 Scene_PrepareMap(void) { return 0; }
 
 /// Unused: lays an actor down, the reverse of Idejima_GetUp.
 UNUSED void Idejima_LieDown(s32 id) {
-  struct Actor *object = Actor_Get(id);
+  struct Actor *actor = Actor_Get(id);
 
   Actor_SetSpriteFlags(Actor_Get(id), 0);
-  object->facing = FACING_SOUTH;
-  object->motionFlags = 0;
-  object->x.fixed += toFIXED(12);
-  object->y.fixed = toFIXED(16);
-  object->collisionFlags = 0;
-  ((struct FieldSprite *)object->sprite)->rotation = DEGtoANG(270);
+  actor->facing = FACING_SOUTH;
+  actor->motionFlags = 0;
+  actor->x.fixed += toFIXED(12);
+  actor->y.fixed = toFIXED(16);
+  actor->collisionFlags = 0;
+  ((struct FieldSprite *)actor->sprite)->rotation = DEGtoANG(270);
 }
 
 /// Lays Kraden, Jenna and Sheba wherever they have not yet woken, and wakes

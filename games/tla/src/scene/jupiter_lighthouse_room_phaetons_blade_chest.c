@@ -109,20 +109,20 @@ void JupiterLighthouse_StopHovering(void) {
 /// Stepping on event 30 or 31 on the floor: unless a whirlwind is already
 /// carrying the party, the stone face there blows one across the hall.
 void JupiterLighthouse_RaiseWhirlwind(s32 id) {
-  struct Actor *object;
+  struct Actor *actor;
 
   if (gWhirlwindRiding == 0) {
-    object = Actor_Get(ACTOR_WHIRLWIND_SOURCE);
+    actor = Actor_Get(ACTOR_WHIRLWIND_SOURCE);
     if (id == 30) {
       Actor_SetPosition(ACTOR_WHIRLWIND_SOURCE, 296, 600);
-      object->y.fixed = 0;
-      object->facing = FACING_WEST;
+      actor->y.fixed = 0;
+      actor->facing = FACING_WEST;
     } else if (id == 31) {
       Actor_SetPosition(ACTOR_WHIRLWIND_SOURCE, 136, 680);
-      object->y.fixed = 0;
-      object->facing = 0;
+      actor->y.fixed = 0;
+      actor->facing = 0;
     }
-    Whirlwind_SpawnUpper(object);
+    Whirlwind_SpawnUpper(actor);
     gWhirlwindRiding = 1;
   }
 }
@@ -131,30 +131,30 @@ void JupiterLighthouse_RaiseWhirlwind(s32 id) {
 /// carrying the party, the stone face there blows a slower one, at a pixel a
 /// frame, from 32 pixels up.
 void JupiterLighthouse_RaiseUpperWhirlwind(s32 id) {
-  struct Actor *object;
+  struct Actor *actor;
   struct Actor *motion;
 
   if (gWhirlwindRiding == 0 &&
       Actor_Get(gMainRoutineWork.leaderActorId)->y.fixed > 0) {
-    object = Actor_Get(ACTOR_WHIRLWIND_SOURCE);
+    actor = Actor_Get(ACTOR_WHIRLWIND_SOURCE);
     if (id == 50) {
       Actor_SetPosition(ACTOR_WHIRLWIND_SOURCE, 488, 280);
-      object->y.fixed = toFIXED(32);
-      object->facing = FACING_WEST;
+      actor->y.fixed = toFIXED(32);
+      actor->facing = FACING_WEST;
     } else if (id == 51) {
       Actor_SetPosition(ACTOR_WHIRLWIND_SOURCE, 472, 184);
-      object->y.fixed = toFIXED(32);
-      object->facing = FACING_WEST;
+      actor->y.fixed = toFIXED(32);
+      actor->facing = FACING_WEST;
     } else if (id == 52) {
       Actor_SetPosition(ACTOR_WHIRLWIND_SOURCE, 616, 280);
-      object->y.fixed = toFIXED(32);
-      object->facing = 0;
+      actor->y.fixed = toFIXED(32);
+      actor->facing = 0;
     } else if (id == 53) {
       Actor_SetPosition(ACTOR_WHIRLWIND_SOURCE, 632, 184);
-      object->y.fixed = toFIXED(32);
-      object->facing = 0;
+      actor->y.fixed = toFIXED(32);
+      actor->facing = 0;
     }
-    motion = Whirlwind_SpawnUpper(object);
+    motion = Whirlwind_SpawnUpper(actor);
     if (motion != NULL)
       motion->speedLimit = toFIXED(1);
     gWhirlwindRiding = 1;
@@ -286,7 +286,7 @@ static inline void PaletteCycle_SetFrame(s32 value) {
 extern s32 gWhirlwindEndScript[];
 
 s32 MapGrid_GetCellBehavior(s32 x, s32 z, s32 layer);
-void Actor_StartScript(struct Actor *object, const s32 *script);
+void Actor_StartScript(struct Actor *actor, const s32 *script);
 
 #include "shared/whirlwind_update.h"
 

@@ -168,22 +168,22 @@ s32 Scene_PrepareMap(void) { return 0; }
 /// Hydros raises a hand and two glints fly up, as each map is called up. The
 /// caller passes an actor, but the glints always come from Hydros.
 void LemuriaPalace_CastMapSparks(s32 actorId) {
-  struct Actor *object = Actor_Get(ACTOR_HYDROS);
+  struct Actor *actor = Actor_Get(ACTOR_HYDROS);
   struct Actor *first;
   struct Actor *second;
 
   Actor_SetAnimation(ACTOR_HYDROS, 5);
   FieldEvent_Wait(28);
   Event_PlaySound(SE_MENU_CONFIRM);
-  first = Actor_Spawn(SPRITE_GLINT, object->x.fixed + toFIXED(10),
-                      object->y.fixed + toFIXED(16), object->z.fixed);
+  first = Actor_Spawn(SPRITE_GLINT, actor->x.fixed + toFIXED(10),
+                      actor->y.fixed + toFIXED(16), actor->z.fixed);
   first->speedLimit = toFIXED(2);
   first->acceleration = toFIXED(2);
   first->motionFlags = 0;
   FieldActor_SetMoveTargetFX(first, first->x.fixed + toFIXED(6),
                              first->y.fixed + toFIXED(8), first->z.fixed);
-  second = Actor_Spawn(SPRITE_GLINT, object->x.fixed + toFIXED(10),
-                       object->y.fixed + toFIXED(16), object->z.fixed);
+  second = Actor_Spawn(SPRITE_GLINT, actor->x.fixed + toFIXED(10),
+                       actor->y.fixed + toFIXED(16), actor->z.fixed);
   second->speedLimit = toFIXED(2);
   second->acceleration = toFIXED(2);
   second->motionFlags = 0;

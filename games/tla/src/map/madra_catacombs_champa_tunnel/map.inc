@@ -36,7 +36,7 @@ Tileset_MadraCatacombsChampaTunnelPalette:
 	.global Tileset_MadraCatacombsChampaTunnelTilesA
 Tileset_MadraCatacombsChampaTunnelTilesA:
 	.incbin "games/tla/src/graphics/tileset/madra_catacombs_champa_tunnel/tiles_a.4bpp.mtf"
-	.byte 0x70	@ PACKER: left in the buffer by Field_MadraInteriorsCavernHomes+0x22d3
+	.byte 0x70	@ PACKER: left in the buffer by Field_MadraRoomsCavernHomes+0x22d3
 	.global Tileset_MadraCatacombsChampaTunnelTilesB
 Tileset_MadraCatacombsChampaTunnelTilesB:
 	.incbin "games/tla/src/graphics/tileset/madra_catacombs_champa_tunnel/tiles_b.4bpp.mtf"

@@ -194,17 +194,17 @@ static inline s32 AnkohlRuins_FlagCheck(s32 flag) { return GameFlag_Get(flag); }
 /// Creates a hidden, still actor of `type` at a point, untargeted, in colour 15
 /// and drawn underfoot.
 struct Actor *AnkohlRuins_CreateActor(s32 x, s32 y, s32 z, s32 type) {
-  struct Actor *object = FieldActor_Create(type, x, y, z);
+  struct Actor *actor = FieldActor_Create(type, x, y, z);
 
-  if (object != NULL) {
-    Scene_SetActorSpritePriority(object, 1);
-    object->motionFlags = 0;
-    object->collisionFlags = ACTOR_NOT_TARGETED;
-    Actor_SetSpriteFlags(object, 0);
-    FieldActor_SetSpriteColor(object, 15);
-    object->priorityFlags |=
+  if (actor != NULL) {
+    Scene_SetActorSpritePriority(actor, 1);
+    actor->motionFlags = 0;
+    actor->collisionFlags = ACTOR_NOT_TARGETED;
+    Actor_SetSpriteFlags(actor, 0);
+    FieldActor_SetSpriteColor(actor, 15);
+    actor->priorityFlags |=
         ACTOR_PRIORITY_UNDERFOOT | ACTOR_PRIORITY_IGNORES_RISES;
-    return object;
+    return actor;
   }
   return NULL;
 }
@@ -331,12 +331,12 @@ void AnkohlRuins_LandFromFall(void) {
 
 /// The call gAnkohlRuins_ShrunkenSpriteScript makes: hides the tuft of ivy,
 /// sets its sprite's priority to 2 and stands it four pixels lower.
-s32 AnkohlRuins_ClearScriptedActorSpriteFlags(struct Actor *object) {
-  Actor_SetSpriteFlags(object, 0);
-  ((struct FieldSprite *)object->sprite)->priority = 2;
-  object->priorityFlags &= ~ACTOR_PRIORITY_AUTOMATIC;
-  object->motionFlags = 0;
-  object->y.fixed -= toFIXED(4);
+s32 AnkohlRuins_ClearScriptedActorSpriteFlags(struct Actor *actor) {
+  Actor_SetSpriteFlags(actor, 0);
+  ((struct FieldSprite *)actor->sprite)->priority = 2;
+  actor->priorityFlags &= ~ACTOR_PRIORITY_AUTOMATIC;
+  actor->motionFlags = 0;
+  actor->y.fixed -= toFIXED(4);
   return 0;
 }
 
@@ -423,11 +423,11 @@ void AnkohlRuins_StartMovingFace(s32 unused, s32 id) {
 /// 3, 4 and 5, and sets flags FLAG_FIRST_ROOM_PILLAR_MOVED to
 /// FLAG_FIFTH_ROOM_PILLAR_MOVED when it stands at the end of its track.
 void AnkohlRuins_FinishMovingFace(s32 unused, s32 id) {
-  struct Actor *object = Actor_Get(id);
+  struct Actor *actor = Actor_Get(id);
 
   if (id == ACTOR_FIRST_ROOM_PILLAR &&
       gMainRoutineWork.next == SCENE_ANKOHL_RUINS_STONE_FACES) {
-    if (FIELD_CELL(object->x.fixed) == 4) {
+    if (FIELD_CELL(actor->x.fixed) == 4) {
       MapGrid_CopyCellAttributes(4, 68, 1, 1, 2, 69);
       Event_SetFlag(FLAG_FIRST_ROOM_PILLAR_MOVED);
     }
@@ -438,7 +438,7 @@ void AnkohlRuins_FinishMovingFace(s32 unused, s32 id) {
       gMainRoutineWork.next == SCENE_ANKOHL_RUINS_GREAT_FACE) {
     MapGrid_CopyCellAttributes(32, 71, 1, 1, 33, 71);
     MapGrid_CopyCellAttributes(31, 70, 1, 1, 32, 70);
-    if (FIELD_CELL(object->x.fixed) == 32) {
+    if (FIELD_CELL(actor->x.fixed) == 32) {
       MapGrid_CopyCellAttributes(32, 69, 1, 1, 33, 69);
       Event_SetFlag(FLAG_THIRD_ROOM_PILLAR_MOVED);
     }
@@ -446,18 +446,18 @@ void AnkohlRuins_FinishMovingFace(s32 unused, s32 id) {
   if (gMainRoutineWork.next == SCENE_ANKOHL_RUINS_FACE_HALVES) {
     if (id == ACTOR_FOURTH_ROOM_PILLAR) {
       MapGrid_CopyCellAttributes(3, 114, 1, 1, 3, 113);
-      if (FIELD_CELL(object->x.fixed) == 2)
+      if (FIELD_CELL(actor->x.fixed) == 2)
         Event_SetFlag(FLAG_FOURTH_ROOM_PILLAR_MOVED);
     }
     if (id == ACTOR_FOURTH_ROOM_SECOND_PILLAR) {
       MapGrid_CopyCellAttributes(40, 94, 1, 1, 40, 93);
-      if (FIELD_CELL(object->x.fixed) == 39)
+      if (FIELD_CELL(actor->x.fixed) == 39)
         Event_SetFlag(FLAG_FOURTH_ROOM_SECOND_PILLAR_MOVED);
     }
     if (id == ACTOR_FOURTH_ROOM_THIRD_PILLAR) {
       MapGrid_CopyCellAttributes(36, 72, 1, 1, 38, 72);
       MapGrid_CopyCellAttributes(37, 74, 1, 1, 37, 73);
-      if (FIELD_CELL(object->x.fixed) == 38) {
+      if (FIELD_CELL(actor->x.fixed) == 38) {
         MapGrid_CopyCellAttributes(37, 70, 1, 1, 37, 71);
         Event_SetFlag(FLAG_FOURTH_ROOM_THIRD_PILLAR_MOVED);
       }
@@ -468,7 +468,7 @@ void AnkohlRuins_FinishMovingFace(s32 unused, s32 id) {
     MapGrid_CopyCellAttributes(16, 83, 1, 1, 17, 83);
     MapGrid_CopyCellAttributes(19, 82, 1, 1, 18, 82);
     MapGrid_CopyCellAttributes(19, 82, 1, 1, 19, 83);
-    if (FIELD_CELL(object->x.fixed) == 17) {
+    if (FIELD_CELL(actor->x.fixed) == 17) {
       MapGrid_CopyCellAttributes(16, 84, 1, 1, 18, 84);
       Event_SetFlag(FLAG_FIFTH_ROOM_PILLAR_MOVED);
     }
@@ -479,16 +479,16 @@ void AnkohlRuins_FinishMovingFace(s32 unused, s32 id) {
 /// set.
 void AnkohlRuins_DropPillar(s32 unused, s32 objectId) {
   s32 id = objectId;
-  struct Actor *object = Actor_Get(id);
+  struct Actor *actor = Actor_Get(id);
   s16 frames = 60;
 
-  if (FIELD_CELL(object->z.fixed) == 31) {
-    object->motionFlags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
-    Actor_SetSpritePriorityDirect(object, 3);
+  if (FIELD_CELL(actor->z.fixed) == 31) {
+    actor->motionFlags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
+    Actor_SetSpritePriorityDirect(actor, 3);
     Event_PlaySound(SE_DUST_PUFF);
     while (frames != 0) {
       System_Wait(1);
-      if (object->velocityY == 0)
+      if (actor->velocityY == 0)
         break;
       frames--;
     }
@@ -516,19 +516,19 @@ void AnkohlRuins_DropPillar(s32 unused, s32 objectId) {
 /// function.
 void AnkohlRuins_SettleObject(s32 id, s32 cue) {
   s32 frames = 60;
-  struct Actor *object = Actor_Get(id);
+  struct Actor *actor = Actor_Get(id);
 
-  object->motionFlags = 3;
+  actor->motionFlags = 3;
   while (frames != 0) {
     System_Wait(1);
     frames--;
-    if (object->velocityY == 0)
+    if (actor->velocityY == 0)
       break;
   }
   if (cue != 0)
     Event_PlaySound(cue);
   System_Wait(10);
-  object->motionFlags = 0;
+  actor->motionFlags = 0;
 }
 
 /// Places count effects in a row, rows times, each row two pixels further down,
@@ -574,9 +574,9 @@ void AnkohlRuins_PourSand(s32 rows, s32 frames, s32 x, s32 y, s32 startZ,
 /// pour sand between them, as AnkohlRuins_PlaceFacePiece does for the
 /// Thanatos Mace room's half.
 void AnkohlRuins_PlacePillarPair(s32 unused, s32 id) {
-  struct Actor *object = Actor_GetById(id);
-  s32 column = FIELD_CELL(object->x.fixed);
-  s32 row = FIELD_CELL(object->z.fixed);
+  struct Actor *actor = Actor_GetById(id);
+  s32 column = FIELD_CELL(actor->x.fixed);
+  s32 row = FIELD_CELL(actor->z.fixed);
   s32 toColumn;
   s32 lowRow;
   s32 highRow;
@@ -674,19 +674,19 @@ void AnkohlRuins_PlaceFacePiece(s32 unused, s32 id) {
 /// Move on the great face's half to cell (15, 24): it settles, the great face's
 /// eyes glow, and the face can be ridden down the sand.
 void AnkohlRuins_PushRaftPillar(s32 unused, s32 id) {
-  struct Actor *object = Actor_GetById(id);
-  s32 x = FIELD_CELL(object->x.fixed);
-  s32 z = FIELD_CELL(object->z.fixed);
+  struct Actor *actor = Actor_GetById(id);
+  s32 x = FIELD_CELL(actor->x.fixed);
+  s32 z = FIELD_CELL(actor->z.fixed);
 
   if (id == ACTOR_GREAT_FACE_HALF && x == 15 && z == 24) {
     Actor_SetSpriteFlags(Actor_GetById(ACTOR_GREAT_FACE_HALF), 0);
-    object->y.fixed -= toFIXED(2);
+    actor->y.fixed -= toFIXED(2);
     FieldEvent_Wait(1);
-    object->y.fixed -= toFIXED(2);
+    actor->y.fixed -= toFIXED(2);
     FieldEvent_Wait(1);
-    object->y.fixed -= toFIXED(4);
+    actor->y.fixed -= toFIXED(4);
     FieldEvent_Wait(1);
-    object->y.fixed -= toFIXED(8);
+    actor->y.fixed -= toFIXED(8);
     FieldEvent_Wait(1);
     Actor_SetAnimation(ACTOR_GREAT_FACE, 3);
     Actor_SetPosition(ACTOR_GREAT_FACE_HALF, 0, 0);
@@ -739,15 +739,15 @@ void AnkohlRuins_FlowWithSand(void) {
 
 /// The leader, pushed off a ledge, slips forward, is startled and falls.
 void AnkohlRuins_PushedOffLedge(void) {
-  struct Actor *object = Actor_Get(gMainRoutineWork.leaderActorId);
+  struct Actor *actor = Actor_Get(gMainRoutineWork.leaderActorId);
 
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
   Actor_SetAnimation(gMainRoutineWork.leaderActorId, ANIM_STILL);
   Actor_SetAttachedEffect(gMainRoutineWork.leaderActorId,
                           ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
-  object->motionFlags = 0;
-  object->steeringFlags = 0;
+  actor->motionFlags = 0;
+  actor->steeringFlags = 0;
   {
     s32 zero;
 
@@ -761,7 +761,7 @@ void AnkohlRuins_PushedOffLedge(void) {
   FieldCamera_MoveTo(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0);
   Event_PlaySound(SE_DUST_PUFF);
   AnkohlRuins_SettleObject(gMainRoutineWork.leaderActorId, SE_THUMP);
-  object->steeringFlags = ACTOR_FACES_MOTION;
+  actor->steeringFlags = ACTOR_FACES_MOTION;
   Event_End();
 }
 
@@ -1314,9 +1314,9 @@ extern struct Trigger gAnkohlRuins_LeftProngTriggers[];
 /// Move on the fifth room's half face to cell (26, 35): it drops into the gap
 /// and the scene reloads.
 void AnkohlRuins_PushStatueIntoGap(void) {
-  struct Actor *object = Actor_Get(ACTOR_FACE_HALF_FOR_THE_GAP);
+  struct Actor *actor = Actor_Get(ACTOR_FACE_HALF_FOR_THE_GAP);
 
-  if (FIELD_CELL(object->x.fixed) == 26 && FIELD_CELL(object->z.fixed) == 35) {
+  if (FIELD_CELL(actor->x.fixed) == 26 && FIELD_CELL(actor->z.fixed) == 35) {
     Event_SetFlag(FLAG_FACE_HALF_PUSHED_INTO_GAP);
     Event_PlaySound(SE_DUST_PUFF);
     AnkohlRuins_SettleObject(ACTOR_FACE_HALF_FOR_THE_GAP, 0);
@@ -1372,7 +1372,7 @@ const struct Trigger *Scene_GetTriggers(void) {
 }
 
 /// A dust puff every eighth frame near the actor, as the raft scrapes.
-void AnkohlRuins_RaiseDust(struct Actor *object) {
+void AnkohlRuins_RaiseDust(struct Actor *actor) {
   struct EffectOptions params;
   u32 phase = gFrameCount & 7;
   s32 dx;
@@ -1386,8 +1386,8 @@ void AnkohlRuins_RaiseDust(struct Actor *object) {
     }
     dy = Random16() & 7;
     params.type = SPRITE_SPARKLE;
-    FieldEffect_Spawn(object->x.fixed + INTtoFIXED(dx - 8),
-                      object->y.fixed + INTtoFIXED(dy - 8), object->z.fixed, 0,
+    FieldEffect_Spawn(actor->x.fixed + INTtoFIXED(dx - 8),
+                      actor->y.fixed + INTtoFIXED(dy - 8), actor->z.fixed, 0,
                       toFIXED(1) / 2, phase, EFFECT_USE_TYPE, &params);
   }
 }
@@ -1431,7 +1431,7 @@ void AnkohlRuins_LandFromFall(void);
 s32 Scene_Initialize(s32 a0) {
   struct MainRoutineWork *work = &gMainRoutineWork;
   s32 scene = work->next;
-  struct Actor *object;
+  struct Actor *actor;
 
   if (scene == SCENE_ANKOHL_RUINS_STONE_FACES) {
     FieldEffect_StartBlankOverlay(0);
@@ -1491,8 +1491,8 @@ s32 Scene_Initialize(s32 a0) {
     if (GameFlag_Get(FLAG_THANATOS_FACE_HALF_PLACED)) {
       s32 width;
 
-      object = Actor_GetById(ACTOR_THANATOS_FACE_HALF);
-      object->motionFlags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
+      actor = Actor_GetById(ACTOR_THANATOS_FACE_HALF);
+      actor->motionFlags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
       Actor_SetPosition(ACTOR_THANATOS_FACE_HALF, 200, 88);
       width = 10;
       MapGrid_CopyCells(35, 6, 7, 16, width, 7);
@@ -1540,14 +1540,14 @@ s32 Scene_Initialize(s32 a0) {
       MapGrid_CopyCells(37, 70, 1, 1, 37, 71);
     }
     if (GameFlag_Get(FLAG_LEFT_FACE_HALF_PLACED)) {
-      object = Actor_GetById(ACTOR_LEFT_FACE_HALF);
-      object->motionFlags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
+      actor = Actor_GetById(ACTOR_LEFT_FACE_HALF);
+      actor->motionFlags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
       Actor_SetPosition(ACTOR_LEFT_FACE_HALF, 200, 728);
     }
     if (GameFlag_Get(FLAG_RIGHT_FACE_HALF_PLACED)) {
-      object = Actor_GetById(ACTOR_RIGHT_FACE_HALF);
+      actor = Actor_GetById(ACTOR_RIGHT_FACE_HALF);
       Actor_SetPosition(ACTOR_RIGHT_FACE_HALF, 232, 728);
-      object->motionFlags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
+      actor->motionFlags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
     } else if (GameFlag_Get(FLAG_FACE_HALF_PUSHED_INTO_GAP) &&
                !GameFlag_Get(FLAG_KEEP_PARTY_POSITION)) {
       Actor_SetPosition(ACTOR_RIGHT_FACE_HALF, 328, 760);
@@ -1582,14 +1582,14 @@ s32 Scene_Initialize(s32 a0) {
         Actor_SetPosition(ACTOR_RIGHT_FACE_HALF, 0, 0);
         Event_StartScreenTransition();
         FieldEvent_Wait(15);
-        object = Actor_GetById(ACTOR_RIGHT_FACE_HALF);
+        actor = Actor_GetById(ACTOR_RIGHT_FACE_HALF);
         Actor_SetPosition(ACTOR_RIGHT_FACE_HALF, 328, 760);
-        object->y.fixed += toFIXED(128);
+        actor->y.fixed += toFIXED(128);
         frames = 60;
-        object->motionFlags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
+        actor->motionFlags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
         for (; frames != 0; frames--) {
           System_Wait(1);
-          if (object->velocityY > -1)
+          if (actor->velocityY > -1)
             break;
         }
         Event_PlaySound(SE_THUMP);
@@ -1666,19 +1666,19 @@ s32 Scene_Initialize(s32 a0) {
         }
         MapGrid_CopyCellsLayered(69, 24, 1, 4, 68, z);
       }
-      object = Actor_GetById(work->leaderActorId);
-      object->groundHeight = level;
-      object->y.fixed = level;
+      actor = Actor_GetById(work->leaderActorId);
+      actor->groundHeight = level;
+      actor->y.fixed = level;
       FieldEvent_Wait(1);
       MapGrid_CenterOnFollowedPoint();
     }
   } else if (scene == SCENE_ANKOHL_RUINS_LEFT_PRONG) {
-    object = Actor_GetById(ACTOR_LEFT_PRONG_CHEST);
-    if (object != NULL) {
-      object->motionFlags = 0;
-      object->groundHeight = toFIXED(72);
-      object->y.fixed = toFIXED(72);
-      object->update = (void (*)(void))AnkohlRuins_RaiseDust;
+    actor = Actor_GetById(ACTOR_LEFT_PRONG_CHEST);
+    if (actor != NULL) {
+      actor->motionFlags = 0;
+      actor->groundHeight = toFIXED(72);
+      actor->y.fixed = toFIXED(72);
+      actor->update = (void (*)(void))AnkohlRuins_RaiseDust;
     }
   }
   return 0;
@@ -1702,7 +1702,7 @@ void FieldEffect_StartBlankOverlay();
 s32 Scene_Initialize(s32 a0) {
   struct MainRoutineWork *work = &gMainRoutineWork;
   s32 scene = work->next;
-  struct Actor *object;
+  struct Actor *actor;
 
   if (scene == SCENE_ANKOHL_RUINS_STONE_FACES) {
     FieldEffect_StartBlankOverlay(0);
@@ -1762,8 +1762,8 @@ s32 Scene_Initialize(s32 a0) {
     if (GameFlag_Get(FLAG_THANATOS_FACE_HALF_PLACED)) {
       s32 width;
 
-      object = Actor_GetById(ACTOR_THANATOS_FACE_HALF);
-      object->motionFlags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
+      actor = Actor_GetById(ACTOR_THANATOS_FACE_HALF);
+      actor->motionFlags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
       Actor_SetPosition(ACTOR_THANATOS_FACE_HALF, 200, 88);
       width = 10;
       MapGrid_CopyCells(35, 6, 7, 16, width, 7);
@@ -1811,14 +1811,14 @@ s32 Scene_Initialize(s32 a0) {
       MapGrid_CopyCells(37, 70, 1, 1, 37, 71);
     }
     if (GameFlag_Get(FLAG_LEFT_FACE_HALF_PLACED)) {
-      object = Actor_GetById(ACTOR_LEFT_FACE_HALF);
-      object->motionFlags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
+      actor = Actor_GetById(ACTOR_LEFT_FACE_HALF);
+      actor->motionFlags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
       Actor_SetPosition(ACTOR_LEFT_FACE_HALF, 200, 728);
     }
     if (GameFlag_Get(FLAG_RIGHT_FACE_HALF_PLACED)) {
-      object = Actor_GetById(ACTOR_RIGHT_FACE_HALF);
+      actor = Actor_GetById(ACTOR_RIGHT_FACE_HALF);
       Actor_SetPosition(ACTOR_RIGHT_FACE_HALF, 232, 728);
-      object->motionFlags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
+      actor->motionFlags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
     } else if (GameFlag_Get(FLAG_FACE_HALF_PUSHED_INTO_GAP) &&
                !GameFlag_Get(FLAG_KEEP_PARTY_POSITION)) {
       Actor_SetPosition(ACTOR_RIGHT_FACE_HALF, 328, 760);
@@ -1846,14 +1846,14 @@ s32 Scene_Initialize(s32 a0) {
         Actor_SetPosition(ACTOR_RIGHT_FACE_HALF, 0, 0);
         Event_StartScreenTransition();
         FieldEvent_Wait(15);
-        object = Actor_GetById(ACTOR_RIGHT_FACE_HALF);
+        actor = Actor_GetById(ACTOR_RIGHT_FACE_HALF);
         Actor_SetPosition(ACTOR_RIGHT_FACE_HALF, 328, 760);
-        object->y.fixed += toFIXED(128);
+        actor->y.fixed += toFIXED(128);
         frames = 60;
-        object->motionFlags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
+        actor->motionFlags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
         for (; frames != 0; frames--) {
           System_Wait(1);
-          if (object->velocityY > -1)
+          if (actor->velocityY > -1)
             break;
         }
         Event_PlaySound(SE_THUMP);
@@ -1930,19 +1930,19 @@ s32 Scene_Initialize(s32 a0) {
         }
         MapGrid_CopyCellsLayered(69, 24, 1, 4, 68, z);
       }
-      object = Actor_GetById(work->leaderActorId);
-      object->groundHeight = level;
-      object->y.fixed = level;
+      actor = Actor_GetById(work->leaderActorId);
+      actor->groundHeight = level;
+      actor->y.fixed = level;
       FieldEvent_Wait(1);
       MapGrid_CenterOnFollowedPoint();
     }
   } else if (scene == SCENE_ANKOHL_RUINS_LEFT_PRONG) {
-    object = Actor_GetById(ACTOR_LEFT_PRONG_CHEST);
-    if (object != NULL) {
-      object->motionFlags = 0;
-      object->groundHeight = toFIXED(72);
-      object->y.fixed = toFIXED(72);
-      object->update = (void (*)(void))AnkohlRuins_RaiseDust;
+    actor = Actor_GetById(ACTOR_LEFT_PRONG_CHEST);
+    if (actor != NULL) {
+      actor->motionFlags = 0;
+      actor->groundHeight = toFIXED(72);
+      actor->y.fixed = toFIXED(72);
+      actor->update = (void (*)(void))AnkohlRuins_RaiseDust;
     }
   }
   return 0;

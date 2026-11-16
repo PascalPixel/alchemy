@@ -24,16 +24,16 @@ void ItemDisplay_ShowItem(s32 item, s32 flags);
 void FieldEffect_SpawnRevealMarkers(void);
 
 void HangingVine_Hang(s32 objectId, s32 grow);
-void Actor_SetTargetPositionFromMagnitudeAngle(struct Actor *object,
+void Actor_SetTargetPositionFromMagnitudeAngle(struct Actor *actor,
                                                s32 magnitude, s32 angle);
-s32 BattleEffect_GetObjectDepth(struct Actor *object);
+s32 BattleEffect_GetObjectDepth(struct Actor *actor);
 
 s32 FieldPsynergy_CheckOverlap(s32 *a, s32 radius_a, s32 *b, s32 radius_b);
 
-s32 BattleEffect_GetObjectPriority(struct Actor *object);
+s32 BattleEffect_GetObjectPriority(struct Actor *actor);
 
 s32 MapGrid_IsSandCell(s32 x, s32 z, s32 layer);
-void FieldPsynergy_GrowFromCaster(struct Actor *object, s32 x, s32 y, s32 z);
+void FieldPsynergy_GrowFromCaster(struct Actor *actor, s32 x, s32 y, s32 z);
 struct Actor *BattleEffect_SpawnScatterParticle(s32 x, s32 y, s32 z);
 s32 MapGrid_IsWaterCell(s32 x, s32 z, s32 layer);
 
@@ -79,7 +79,7 @@ void ItemDisplay_EmitSparkles(struct Actor *emitter);
 
 extern const u32 gWorldMap_GraphicsResources[4][9];
 
-void Actor_SetSpritePriorityDirectFar(struct Actor *object, s32 priority);
+void Actor_SetSpritePriorityDirectFar(struct Actor *actor, s32 priority);
 
 s32 PaletteFade_ClampComponent(s32 value);
 s32 PaletteFade_ClampShiftedComponent(s32 value);

@@ -1,5 +1,5 @@
 /// Bubbles rise from an actor every eighth frame.
-void Actor_EmitBubbles(struct Actor *object) {
+void Actor_EmitBubbles(struct Actor *actor) {
   s32 phase = gFrameCount & 7;
 
   if (phase == 0) {
@@ -9,9 +9,9 @@ void Actor_EmitBubbles(struct Actor *object) {
     options.palette = 7;
     options.type = 0x2a1;
     options.priority = 1;
-    position[0] = object->x.fixed + (((Random16() & 31) - 16) << 16);
-    position[1] = object->y.fixed + ((Random16() & 31) << 16) + toFIXED(8);
-    position[2] = object->z.fixed;
+    position[0] = actor->x.fixed + (((Random16() & 31) - 16) << 16);
+    position[1] = actor->y.fixed + ((Random16() & 31) << 16) + toFIXED(8);
+    position[2] = actor->z.fixed;
     FieldEffect_Spawn(
         position[0], position[1], position[2] + 0x40000, 0, 0x8000, phase,
         EFFECT_USE_TYPE | EFFECT_USE_PRIORITY | EFFECT_USE_PALETTE, &options);

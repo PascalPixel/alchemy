@@ -1,10 +1,10 @@
 /// A drop falls from an actor every sixteenth frame.
-void Actor_EmitWaterDrop(struct Actor *object) {
+void Actor_EmitWaterDrop(struct Actor *actor) {
   s32 phase = gFrameCount & 15;
 
   if (phase == 0) {
-    struct Actor *child = Import_ActorCreate_(0x10d, object->x.fixed,
-                                              object->y.fixed, object->z.fixed);
+    struct Actor *child = Import_ActorCreate_(0x10d, actor->x.fixed,
+                                              actor->y.fixed, actor->z.fixed);
 
     if (child != 0) {
       struct FieldSprite *sprite = child->sprite;

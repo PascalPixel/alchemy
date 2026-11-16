@@ -99,10 +99,10 @@ enum BattleHighlight {
 
 void BattleHighlight_SetModesFar(u16 *, s32);
 void SpriteDissolve_RunManyFar(void **, s32);
-void Actor_SetPositionAndResetMotionFar(struct Actor *object, s32 x, s32 y,
+void Actor_SetPositionAndResetMotionFar(struct Actor *actor, s32 x, s32 y,
                                         s32 z);
 /// Sets the timer step of every sprite of an actor (16 is normal speed).
-void Actor_SetAnimationSpeedFar(struct Actor *object, s32 value);
+void Actor_SetAnimationSpeedFar(struct Actor *actor, s32 value);
 /// Sets the unit's HP, kept between 0 and its maximum, and updates its gauges.
 void Unit_SetHpFar(struct Unit *unit, s32 hp);
 void MessageArgument_ClearAllFar(void);
@@ -142,7 +142,7 @@ void Field_AdvanceWithGravity3D(s32 *vector, s32 damping, s32 gravity);
 s32 Encounter_ResolveWorldMapZoneAndBackdrop(void *position);
 void BattleEffect_RunBurstShower(struct BattleEffectParams *effect, u32 mode);
 void BattleEffect_RunSparkGroups(struct BattleEffectParams *effect, s32 kind);
-void FieldEffect_SnapScaleToFull(struct Actor *object);
+void FieldEffect_SnapScaleToFull(struct Actor *actor);
 void PaletteFade_StartInterpolation(s32 frames);
 struct Actor *ItemDisplay_ShowItemInFront(s32 actor, s32 item);
 void BattleEffect_UpdateArcEffect(void);
@@ -173,8 +173,8 @@ void BattleEffect_RunCanvasBurst(struct BattleEffectParams *effect, u32 mode);
 void GameFlag_ClearFar(s32 flag);
 void GameFlag_SetFar(s32 flag);
 s32 SpriteDissolve_RunFar(void *object);
-void Actor_ReleaseFar(struct Actor *object);
-void Actor_SnapToTerrain(void *object);
+void Actor_ReleaseFar(struct Actor *actor);
+void Actor_SnapToTerrain(void *actor);
 s32 Enemy_GetAttackElement(void *state);
 #ifndef OWN_Unit_CalculateFar
 /// Works a unit's stats out again from its base stats, equipment, set Djinn,

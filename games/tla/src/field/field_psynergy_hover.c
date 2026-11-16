@@ -274,37 +274,37 @@ void FieldPsynergy_Hover(void) {
 /// is freed.
 void FieldPsynergy_EndHover(void) {
   struct HoverWork *work = (struct HoverWork *)Ram_HeapSlots->battleEffect;
-  struct Actor *object = Actor_GetById(Party_GetLeaderActor());
+  struct Actor *actor = Actor_GetById(Party_GetLeaderActor());
   s32 i;
 
   Task_Remove(HoverGlow_Update);
-  Actor_SetPositionAndResetMotionFar(object, object->x.fixed, object->y.fixed,
-                                     object->z.fixed);
-  object->motionFlags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
+  Actor_SetPositionAndResetMotionFar(actor, actor->x.fixed, actor->y.fixed,
+                                     actor->z.fixed);
+  actor->motionFlags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
   gMainRoutineWork.movementMode = LEADER_MOVEMENT_WALK;
   for (i = 0; i < 60; i++) {
-    if (object->y.fixed <= object->groundHeight)
+    if (actor->y.fixed <= actor->groundHeight)
       break;
     wait(1);
   }
   Sound_PlayFar(SE_WATER);
   wait(1);
   for (i = 0; i < 20; i++) {
-    if (object->y.fixed <= object->groundHeight)
+    if (actor->y.fixed <= actor->groundHeight)
       break;
     wait(1);
   }
   wait(1);
   for (i = 0; i < 20; i++) {
-    if (object->y.fixed <= object->groundHeight)
+    if (actor->y.fixed <= actor->groundHeight)
       break;
     wait(1);
   }
   wait(1);
-  object->bounce = 0;
-  object->velocityY = 0;
-  object->y.fixed = object->groundHeight;
-  object->gravity = toFIXED(1);
+  actor->bounce = 0;
+  actor->velocityY = 0;
+  actor->y.fixed = actor->groundHeight;
+  actor->gravity = toFIXED(1);
   VramCache_FreeEntry(work->resource);
   HeapSlot_Release(HEAP_SLOT_BATTLE_EFFECT);
 }

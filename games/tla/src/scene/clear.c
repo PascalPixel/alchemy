@@ -314,7 +314,7 @@ top:
   if (result < 0 && gDebugMode) {
     gMainRoutineWork.idleSleepEnabled = 1;
     gIdleSleepEnabled = 1;
-    FieldMessage_ShowCentered(SCENE_DAILA_INTERIORS_HOUSES, 1, 8);
+    FieldMessage_ShowCentered(SCENE_DAILA_ROOMS_HOUSES, 1, 8);
   }
   if (result == 0 && !started) {
     wait(30);

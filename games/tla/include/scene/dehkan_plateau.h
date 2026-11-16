@@ -14,7 +14,7 @@ void Pound_SinkTarget(u16 *list, s32 mode, s32 count);
 
 void DehkanPlateau_SetActorsHidden(s32 show);
 
-void Actor_DropAndWait(struct Actor *object);
+void Actor_DropAndWait(struct Actor *actor);
 void DehkanPlateau_SetTightropesSecondPillarInPlace(void);
 
 void DehkanPlateau_PoundLeaderThrough(void);

@@ -25,7 +25,7 @@ s32 Field_UsePsynergy(u32 code) {
   struct PendingEvent *after;
   struct PendingEvent *during;
   struct PendingEvent *pending;
-  struct Actor *object;
+  struct Actor *actor;
   s32 selector;
   s32 target;
   s32 cost;
@@ -128,9 +128,8 @@ s32 Field_UsePsynergy(u32 code) {
     Unit_AddPpFar(userId, -ppCost);
   }
   if (group == FIELD_PSYNERGY_SAND) {
-    object = Actor_Lookup(Party_GetLeaderActor());
-    if (MapGrid_IsSandCell(object->x.fixed, object->z.fixed, object->layer) ==
-        0) {
+    actor = Actor_Lookup(Party_GetLeaderActor());
+    if (MapGrid_IsSandCell(actor->x.fixed, actor->z.fixed, actor->layer) == 0) {
       before = NULL;
       after = NULL;
       during = NULL;

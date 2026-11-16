@@ -115,8 +115,8 @@ extern s16 gYallam_ThirdDoorOpening[];
 extern s16 gYallam_FourthDoorOpening[];
 
 /// Unused: turns an actor's sprite half a turn, as an actor script's call.
-UNUSED s32 Yallam_TurnSpriteAround(struct Actor *object) {
-  struct FieldSprite *sprite = object->sprite;
+UNUSED s32 Yallam_TurnSpriteAround(struct Actor *actor) {
+  struct FieldSprite *sprite = actor->sprite;
 
   sprite->rotation = DEGtoANG(180);
   return 0;
@@ -124,8 +124,8 @@ UNUSED s32 Yallam_TurnSpriteAround(struct Actor *object) {
 
 /// Hides an actor's sprite, as an actor script's call: the pillar's parts once
 /// they have moved.
-s32 Yallam_HideSprite(struct Actor *object) {
-  Actor_SetSpriteFlags(object, 0);
+s32 Yallam_HideSprite(struct Actor *actor) {
+  Actor_SetSpriteFlags(actor, 0);
   return 0;
 }
 
@@ -148,41 +148,41 @@ struct SongRunnerState gYallam_SavedSongGame[5] BSS_DATA ALIGNED(16);
 extern struct MapGridCellAnimation gYallam_Doors[];
 
 s32 SceneActor_CalculateFixedPointDistance(s32 *a, s32 *b);
-s32 Yallam_FaceIfNear(struct Actor *object, struct Actor *target, s32 range,
+s32 Yallam_FaceIfNear(struct Actor *actor, struct Actor *target, s32 range,
                       s32 force);
 void Yallam_UpdateSongGame(void);
 
 /// Stops an actor and turns it to the target when it is within range (or
 /// forced) and already faces near it; returns whether it did.
-s32 Yallam_FaceIfNear(struct Actor *object, struct Actor *target, s32 range,
+s32 Yallam_FaceIfNear(struct Actor *actor, struct Actor *target, s32 range,
                       s32 force) {
   s32 result = 0;
   s32 *targetPos;
   s32 *objectPos;
 
-  if (object->riseEnabled != 0) {
-    object->paused = 1;
+  if (actor->riseEnabled != 0) {
+    actor->paused = 1;
     return 1;
   }
   targetPos = &target->x.fixed;
-  objectPos = &object->x.fixed;
+  objectPos = &actor->x.fixed;
   if (SceneActor_CalculateFixedPointDistance(targetPos, objectPos) < range ||
       force != 0) {
-    u32 angle = (u16)Trig_Atan(target->z.fixed - object->z.fixed,
+    u32 angle = (u16)Trig_Atan(target->z.fixed - actor->z.fixed,
                                *targetPos - *objectPos);
     u32 left = (angle - FACING_STEP) & 0xf000;
     u32 right = (angle + FACING_STEP) & 0xf000;
     u32 ahead = angle & 0xf000;
-    u32 facing = object->facing & 0xf000;
+    u32 facing = actor->facing & 0xf000;
 
     if (ahead == facing || right == facing || left == facing || force != 0) {
-      object->paused = 1;
-      Actor_SelectAnimation(object, 1);
+      actor->paused = 1;
+      Actor_SelectAnimation(actor, 1);
       result = 1;
     }
   } else {
-    object->paused = 0;
-    Actor_SelectAnimation(object, 2);
+    actor->paused = 0;
+    Actor_SelectAnimation(actor, 2);
   }
   return result;
 }
@@ -192,7 +192,7 @@ s32 Yallam_FaceIfNear(struct Actor *object, struct Actor *target, s32 range,
 /// A villager watching the song game: walks on while the leader is close by;
 /// otherwise turns to the child its timer word names (bit 0) and, failing that,
 /// to the leader, always while a talk or a window is open if bit 1 is set.
-s32 Yallam_WatchSongGame(struct Actor *object) {
+s32 Yallam_WatchSongGame(struct Actor *actor) {
   u8 *tiles = Ram_HeapSlots->windowWork;
   struct FieldWork *event = Ram_HeapSlots->fieldWork;
   struct Actor *leader;
@@ -203,42 +203,42 @@ s32 Yallam_WatchSongGame(struct Actor *object) {
   leader = Actor_Get(gMainRoutineWork.leaderActorId);
 
   if (SceneActor_CalculateFixedPointDistance(&leader->x.fixed,
-                                             &object->x.fixed) <= 11) {
-    object->paused = 0;
-    Actor_SelectAnimation(object, 2);
+                                             &actor->x.fixed) <= 11) {
+    actor->paused = 0;
+    Actor_SelectAnimation(actor, 2);
     return 0;
   }
-  flags = (u16 *)&object->timer;
+  flags = (u16 *)&actor->timer;
   if (*flags & 1)
     target = Actor_Get(ACTOR_GAME_CHILD);
   else
     target = Actor_Get(ACTOR_CIRCLES_CHILD);
-  if (Yallam_FaceIfNear(object, target, 24, 0) == 0) {
+  if (Yallam_FaceIfNear(actor, target, 24, 0) == 0) {
     leader = Actor_Get(gMainRoutineWork.leaderActorId);
     if ((event->talk != 0 || tiles[4] != 0) && (*flags & 2))
       force = 1;
-    Yallam_FaceIfNear(object, leader, 24, force);
+    Yallam_FaceIfNear(actor, leader, 24, force);
   }
   return 0;
 }
 #else
-s32 Yallam_WatchSongGame(struct Actor *object) {
+s32 Yallam_WatchSongGame(struct Actor *actor) {
   u8 *tiles = Ram_HeapSlots->windowWork;
   struct FieldWork *event = Ram_HeapSlots->fieldWork;
   s32 force = 0;
   struct Actor *target;
-  u16 *flags = (u16 *)&object->timer;
+  u16 *flags = (u16 *)&actor->timer;
 
   if (*flags & 1)
     target = Actor_Get(ACTOR_GAME_CHILD);
   else
     target = Actor_Get(ACTOR_CIRCLES_CHILD);
-  if (Yallam_FaceIfNear(object, target, 24, 0) == 0) {
+  if (Yallam_FaceIfNear(actor, target, 24, 0) == 0) {
     struct Actor *leader = Actor_Get(gMainRoutineWork.leaderActorId);
 
     if ((event->talk != 0 || tiles[4] != 0) && (*flags & 2))
       force = 1;
-    Yallam_FaceIfNear(object, leader, 24, force);
+    Yallam_FaceIfNear(actor, leader, 24, force);
   }
   return 0;
 }
@@ -400,12 +400,12 @@ void Yallam_OfferYeppSong(void) {
 /// tough."
 void Yallam_TalkAboutSongCircles(void) {
   struct FieldWork *work = Ram_HeapSlots->fieldWork;
-  struct Actor *object = Actor_Get(ACTOR_CIRCLES_CHILD);
-  s16 angle = object->facing;
+  struct Actor *actor = Actor_Get(ACTOR_CIRCLES_CHILD);
+  s16 angle = actor->facing;
 
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
-  object->riseEnabled = 1;
+  actor->riseEnabled = 1;
   if (work->psynergy == 0) {
     Actor_FaceActor(ACTOR_CIRCLES_CHILD, gMainRoutineWork.leaderActorId, 0);
     FieldEvent_SetMessageId(MsgRunningAroundIn);
@@ -415,8 +415,8 @@ void Yallam_TalkAboutSongCircles(void) {
   // "There's a lot of stuff to remember for each song. It's tough to play..."
   Event_ShowMessage(ACTOR_CIRCLES_CHILD, 0);
   if (work->psynergy == 0)
-    object->facing = angle;
-  object->riseEnabled = 0;
+    actor->facing = angle;
+  actor->riseEnabled = 0;
   Event_End();
 }
 
@@ -424,12 +424,12 @@ void Yallam_TalkAboutSongCircles(void) {
 /// play something else."
 void Yallam_TalkAboutSongGame(void) {
   struct FieldWork *work = Ram_HeapSlots->fieldWork;
-  struct Actor *object = Actor_Get(ACTOR_GAME_CHILD);
-  s16 angle = object->facing;
+  struct Actor *actor = Actor_Get(ACTOR_GAME_CHILD);
+  s16 angle = actor->facing;
 
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
-  object->riseEnabled = 1;
+  actor->riseEnabled = 1;
   if (work->psynergy == 0) {
     Actor_FaceActor(ACTOR_GAME_CHILD, gMainRoutineWork.leaderActorId, 0);
     FieldEvent_SetMessageId(MsgThereSAGame);
@@ -439,705 +439,704 @@ void Yallam_TalkAboutSongGame(void) {
   // "I once heard that children's songs and stories have hidden meanings...."
   Event_ShowMessage(ACTOR_GAME_CHILD, 0);
   if (work->psynergy == 0)
-    object->facing = angle;
-  object->riseEnabled = 0;
+    actor->facing = angle;
+  actor->riseEnabled = 0;
   Event_End();
 }
 
 /// Whether an actor has reached its target, which is then unset.
-s32 Yallam_HasArrived(struct Actor *object) {
-  s32 x = object->targetX;
+s32 Yallam_HasArrived(struct Actor *actor) {
+  s32 x = actor->targetX;
 
-  if (x == TARGET_UNSET && object->targetZ == TARGET_UNSET)
+  if (x == TARGET_UNSET && actor->targetZ == TARGET_UNSET)
     return 1;
   return 0;
 }
 
 /// One step of a runner's path round the village in the song game, by its
 /// step counter, stopping or going on by the game's mode.
-void Yallam_RunSongPath(s32 actor) {
-  /* FAKEMATCH(pin): the object in r5. */
-  register struct Actor *object asm("r5") = Actor_GetById(actor);
-  u8 *state = &object->riseCounter;
+void Yallam_RunSongPath(s32 actorId) {
+  /* FAKEMATCH(pin): the actor in r5. */
+  register struct Actor *actor asm("r5") = Actor_GetById(actorId);
+  u8 *state = &actor->riseCounter;
   u8 s = *state;
   s16 *timer;
 
   if (s == 1)
     return;
-  timer = &object->timer;
+  timer = &actor->timer;
   switch (s) {
   case 0:
-    Actor_SelectAnimation(object, 2);
+    Actor_SelectAnimation(actor, 2);
     break;
   case 1:
     break;
   case 3:
-    Actor_SelectAnimation(object, 1);
+    Actor_SelectAnimation(actor, 1);
   case 2:
-    Actor_SetMoveTarget(object, object->x.fixed, object->y.fixed,
-                        object->z.fixed);
+    Actor_SetMoveTarget(actor, actor->x.fixed, actor->y.fixed, actor->z.fixed);
     *timer &= ~1;
     *state = 1;
     return;
   }
   switch (*timer) {
   case 0:
-    Actor_SetDestination(actor, 344, 824);
+    Actor_SetDestination(actorId, 344, 824);
     (*timer)++;
     return;
   case 2:
-    Actor_SetDestination(actor, 324, 820);
+    Actor_SetDestination(actorId, 324, 820);
     (*timer)++;
     return;
   case 4:
-    Actor_SetDestination(actor, 320, 808);
+    Actor_SetDestination(actorId, 320, 808);
     (*timer)++;
     return;
   case 6:
-    Actor_SetDestination(actor, 324, 796);
+    Actor_SetDestination(actorId, 324, 796);
     (*timer)++;
     return;
   case 8:
-    Actor_SetDestination(actor, 344, 792);
+    Actor_SetDestination(actorId, 344, 792);
     (*timer)++;
     return;
   case 10:
-    Actor_SetDestination(actor, 364, 796);
+    Actor_SetDestination(actorId, 364, 796);
     (*timer)++;
     return;
   case 12:
-    Actor_SetDestination(actor, 368, 808);
+    Actor_SetDestination(actorId, 368, 808);
     (*timer)++;
     return;
   case 14:
-    Actor_SetDestination(actor, 364, 820);
+    Actor_SetDestination(actorId, 364, 820);
     (*timer)++;
     return;
   case 16:
-    Actor_SetDestination(actor, 344, 824);
+    Actor_SetDestination(actorId, 344, 824);
     (*timer)++;
     return;
   case 18:
-    Actor_SetDestination(actor, 324, 820);
+    Actor_SetDestination(actorId, 324, 820);
     (*timer)++;
     return;
   case 20:
-    Actor_SetDestination(actor, 320, 808);
+    Actor_SetDestination(actorId, 320, 808);
     (*timer)++;
     return;
   case 22:
-    Actor_SetDestination(actor, 324, 796);
+    Actor_SetDestination(actorId, 324, 796);
     (*timer)++;
     return;
   case 24:
-    Actor_SetDestination(actor, 344, 792);
+    Actor_SetDestination(actorId, 344, 792);
     (*timer)++;
     return;
   case 26:
-    Actor_SetDestination(actor, 364, 796);
+    Actor_SetDestination(actorId, 364, 796);
     (*timer)++;
     return;
   case 28:
-    Actor_SetDestination(actor, 368, 808);
+    Actor_SetDestination(actorId, 368, 808);
     (*timer)++;
     return;
   case 30:
-    Actor_SetDestination(actor, 364, 820);
+    Actor_SetDestination(actorId, 364, 820);
     (*timer)++;
     return;
   case 32:
-    Actor_SetDestination(actor, 344, 824);
+    Actor_SetDestination(actorId, 344, 824);
     (*timer)++;
     return;
   case 34:
-    Actor_SetSpeedAndAcceleration(actor, 1.8, 1.8);
-    Actor_SetDestination(actor, 364, 820);
+    Actor_SetSpeedAndAcceleration(actorId, 1.8, 1.8);
+    Actor_SetDestination(actorId, 364, 820);
     (*timer)++;
     return;
   case 36:
-    Actor_SetDestination(actor, 368, 808);
+    Actor_SetDestination(actorId, 368, 808);
     (*timer)++;
     return;
   case 38:
-    Actor_SetDestination(actor, 392, 808);
+    Actor_SetDestination(actorId, 392, 808);
     (*timer)++;
     return;
   case 40:
-    Actor_SetDestination(actor, 392, 744);
+    Actor_SetDestination(actorId, 392, 744);
     (*timer)++;
     return;
   case 42:
-    Actor_SetSpeedAndAcceleration(actor, 1.2, 1.2);
-    Actor_SetDestination(actor, 372, 740);
+    Actor_SetSpeedAndAcceleration(actorId, 1.2, 1.2);
+    Actor_SetDestination(actorId, 372, 740);
     (*timer)++;
     return;
   case 44:
-    Actor_SetDestination(actor, 368, 728);
+    Actor_SetDestination(actorId, 368, 728);
     (*timer)++;
     return;
   case 46:
-    Actor_SetDestination(actor, 372, 716);
+    Actor_SetDestination(actorId, 372, 716);
     (*timer)++;
     return;
   case 48:
-    Actor_SetDestination(actor, 392, 712);
+    Actor_SetDestination(actorId, 392, 712);
     (*timer)++;
     return;
   case 50:
-    Actor_SetDestination(actor, 412, 716);
+    Actor_SetDestination(actorId, 412, 716);
     (*timer)++;
     return;
   case 52:
-    Actor_SetDestination(actor, 416, 728);
+    Actor_SetDestination(actorId, 416, 728);
     (*timer)++;
     return;
   case 54:
-    Actor_SetDestination(actor, 412, 740);
+    Actor_SetDestination(actorId, 412, 740);
     (*timer)++;
     return;
   case 56:
-    Actor_SetDestination(actor, 392, 744);
+    Actor_SetDestination(actorId, 392, 744);
     (*timer)++;
     return;
   case 58:
-    Actor_SetDestination(actor, 372, 740);
+    Actor_SetDestination(actorId, 372, 740);
     (*timer)++;
     return;
   case 60:
-    Actor_SetDestination(actor, 368, 728);
+    Actor_SetDestination(actorId, 368, 728);
     (*timer)++;
     return;
   case 62:
-    Actor_SetDestination(actor, 372, 716);
+    Actor_SetDestination(actorId, 372, 716);
     (*timer)++;
     return;
   case 64:
-    Actor_SetDestination(actor, 392, 712);
+    Actor_SetDestination(actorId, 392, 712);
     (*timer)++;
     return;
   case 66:
-    Actor_SetDestination(actor, 412, 716);
+    Actor_SetDestination(actorId, 412, 716);
     (*timer)++;
     return;
   case 68:
-    Actor_SetDestination(actor, 416, 728);
+    Actor_SetDestination(actorId, 416, 728);
     (*timer)++;
     return;
   case 70:
-    Actor_SetDestination(actor, 412, 740);
+    Actor_SetDestination(actorId, 412, 740);
     (*timer)++;
     return;
   case 72:
-    Actor_SetDestination(actor, 392, 744);
+    Actor_SetDestination(actorId, 392, 744);
     (*timer)++;
     return;
   case 74:
-    Actor_SetDestination(actor, 372, 740);
+    Actor_SetDestination(actorId, 372, 740);
     (*timer)++;
     return;
   case 76:
-    Actor_SetDestination(actor, 368, 728);
+    Actor_SetDestination(actorId, 368, 728);
     (*timer)++;
     return;
   case 78:
-    Actor_SetDestination(actor, 372, 716);
+    Actor_SetDestination(actorId, 372, 716);
     (*timer)++;
     return;
   case 80:
-    Actor_SetDestination(actor, 392, 712);
+    Actor_SetDestination(actorId, 392, 712);
     (*timer)++;
     return;
   case 82:
-    Actor_SetDestination(actor, 412, 716);
+    Actor_SetDestination(actorId, 412, 716);
     (*timer)++;
     return;
   case 84:
-    Actor_SetDestination(actor, 416, 728);
+    Actor_SetDestination(actorId, 416, 728);
     (*timer)++;
     return;
   case 86:
-    Actor_SetDestination(actor, 412, 740);
+    Actor_SetDestination(actorId, 412, 740);
     (*timer)++;
     return;
   case 88:
-    Actor_SetDestination(actor, 392, 744);
+    Actor_SetDestination(actorId, 392, 744);
     (*timer)++;
     return;
   case 90:
-    Actor_SetDestination(actor, 372, 740);
+    Actor_SetDestination(actorId, 372, 740);
     (*timer)++;
     return;
   case 92:
-    Actor_SetDestination(actor, 368, 728);
+    Actor_SetDestination(actorId, 368, 728);
     (*timer)++;
     return;
   case 94:
-    Actor_SetDestination(actor, 372, 716);
+    Actor_SetDestination(actorId, 372, 716);
     (*timer)++;
     return;
   case 96:
-    Actor_SetDestination(actor, 392, 712);
+    Actor_SetDestination(actorId, 392, 712);
     (*timer)++;
     return;
   case 98:
-    Actor_SetDestination(actor, 392, 696);
+    Actor_SetDestination(actorId, 392, 696);
     (*timer)++;
     return;
   case 100:
-    Actor_SetDestination(actor, 412, 692);
+    Actor_SetDestination(actorId, 412, 692);
     (*timer)++;
     return;
   case 102:
-    Actor_SetDestination(actor, 416, 680);
+    Actor_SetDestination(actorId, 416, 680);
     (*timer)++;
     return;
   case 104:
-    Actor_SetDestination(actor, 412, 668);
+    Actor_SetDestination(actorId, 412, 668);
     (*timer)++;
     return;
   case 106:
-    Actor_SetDestination(actor, 392, 664);
+    Actor_SetDestination(actorId, 392, 664);
     (*timer)++;
     return;
   case 108:
-    Actor_SetDestination(actor, 372, 668);
+    Actor_SetDestination(actorId, 372, 668);
     (*timer)++;
     return;
   case 110:
-    Actor_SetDestination(actor, 368, 680);
+    Actor_SetDestination(actorId, 368, 680);
     (*timer)++;
     return;
   case 112:
-    Actor_SetDestination(actor, 320, 680);
+    Actor_SetDestination(actorId, 320, 680);
     (*timer)++;
     return;
   case 114:
-    Actor_SetDestination(actor, 316, 692);
+    Actor_SetDestination(actorId, 316, 692);
     (*timer)++;
     return;
   case 116:
-    Actor_SetDestination(actor, 296, 696);
+    Actor_SetDestination(actorId, 296, 696);
     (*timer)++;
     return;
   case 118:
-    Actor_SetDestination(actor, 276, 692);
+    Actor_SetDestination(actorId, 276, 692);
     (*timer)++;
     return;
   case 120:
-    Actor_SetDestination(actor, 272, 680);
+    Actor_SetDestination(actorId, 272, 680);
     (*timer)++;
     return;
   case 122:
-    Actor_SetDestination(actor, 276, 668);
+    Actor_SetDestination(actorId, 276, 668);
     (*timer)++;
     return;
   case 124:
-    Actor_SetDestination(actor, 296, 664);
+    Actor_SetDestination(actorId, 296, 664);
     (*timer)++;
     return;
   case 126:
-    Actor_SetDestination(actor, 316, 668);
+    Actor_SetDestination(actorId, 316, 668);
     (*timer)++;
     return;
   case 128:
-    Actor_SetDestination(actor, 320, 680);
+    Actor_SetDestination(actorId, 320, 680);
     (*timer)++;
     return;
   case 130:
-    Actor_SetDestination(actor, 316, 692);
+    Actor_SetDestination(actorId, 316, 692);
     (*timer)++;
     return;
   case 132:
-    Actor_SetDestination(actor, 296, 696);
+    Actor_SetDestination(actorId, 296, 696);
     (*timer)++;
     return;
   case 134:
-    Actor_SetDestination(actor, 276, 692);
+    Actor_SetDestination(actorId, 276, 692);
     (*timer)++;
     return;
   case 136:
-    Actor_SetDestination(actor, 272, 680);
+    Actor_SetDestination(actorId, 272, 680);
     (*timer)++;
     return;
   case 138:
-    Actor_SetDestination(actor, 276, 668);
+    Actor_SetDestination(actorId, 276, 668);
     (*timer)++;
     return;
   case 140:
-    Actor_SetDestination(actor, 296, 664);
+    Actor_SetDestination(actorId, 296, 664);
     (*timer)++;
     return;
   case 142:
-    Actor_SetDestination(actor, 316, 668);
+    Actor_SetDestination(actorId, 316, 668);
     (*timer)++;
     return;
   case 144:
-    Actor_SetDestination(actor, 320, 680);
+    Actor_SetDestination(actorId, 320, 680);
     (*timer)++;
     return;
   case 146:
-    Actor_SetDestination(actor, 316, 692);
+    Actor_SetDestination(actorId, 316, 692);
     (*timer)++;
     return;
   case 148:
-    Actor_SetDestination(actor, 296, 696);
+    Actor_SetDestination(actorId, 296, 696);
     (*timer)++;
     return;
   case 150:
-    Actor_SetDestination(actor, 296, 728);
+    Actor_SetDestination(actorId, 296, 728);
     (*timer)++;
     return;
   case 152:
-    Actor_SetDestination(actor, 272, 728);
+    Actor_SetDestination(actorId, 272, 728);
     (*timer)++;
     return;
   case 154:
-    Actor_SetDestination(actor, 268, 740);
+    Actor_SetDestination(actorId, 268, 740);
     (*timer)++;
     return;
   case 156:
-    Actor_SetDestination(actor, 248, 744);
+    Actor_SetDestination(actorId, 248, 744);
     (*timer)++;
     return;
   case 158:
-    Actor_SetDestination(actor, 228, 740);
+    Actor_SetDestination(actorId, 228, 740);
     (*timer)++;
     return;
   case 160:
-    Actor_SetDestination(actor, 224, 728);
+    Actor_SetDestination(actorId, 224, 728);
     (*timer)++;
     return;
   case 162:
-    Actor_SetDestination(actor, 228, 716);
+    Actor_SetDestination(actorId, 228, 716);
     (*timer)++;
     return;
   case 164:
-    Actor_SetDestination(actor, 248, 712);
+    Actor_SetDestination(actorId, 248, 712);
     (*timer)++;
     return;
   case 166:
-    Actor_SetDestination(actor, 268, 716);
+    Actor_SetDestination(actorId, 268, 716);
     (*timer)++;
     return;
   case 168:
-    Actor_SetDestination(actor, 272, 728);
+    Actor_SetDestination(actorId, 272, 728);
     (*timer)++;
     return;
   case 170:
-    Actor_SetDestination(actor, 268, 740);
+    Actor_SetDestination(actorId, 268, 740);
     (*timer)++;
     return;
   case 172:
-    Actor_SetDestination(actor, 248, 744);
+    Actor_SetDestination(actorId, 248, 744);
     (*timer)++;
     return;
   case 174:
-    Actor_SetDestination(actor, 228, 740);
+    Actor_SetDestination(actorId, 228, 740);
     (*timer)++;
     return;
   case 176:
-    Actor_SetDestination(actor, 224, 728);
+    Actor_SetDestination(actorId, 224, 728);
     (*timer)++;
     return;
   case 178:
-    Actor_SetDestination(actor, 228, 716);
+    Actor_SetDestination(actorId, 228, 716);
     (*timer)++;
     return;
   case 180:
-    Actor_SetDestination(actor, 248, 712);
+    Actor_SetDestination(actorId, 248, 712);
     (*timer)++;
     return;
   case 182:
-    Actor_SetDestination(actor, 268, 716);
+    Actor_SetDestination(actorId, 268, 716);
     (*timer)++;
     return;
   case 184:
-    Actor_SetDestination(actor, 272, 728);
+    Actor_SetDestination(actorId, 272, 728);
     (*timer)++;
     return;
   case 186:
-    Actor_SetDestination(actor, 268, 740);
+    Actor_SetDestination(actorId, 268, 740);
     (*timer)++;
     return;
   case 188:
-    Actor_SetDestination(actor, 248, 744);
+    Actor_SetDestination(actorId, 248, 744);
     (*timer)++;
     return;
   case 190:
-    Actor_SetDestination(actor, 228, 740);
+    Actor_SetDestination(actorId, 228, 740);
     (*timer)++;
     return;
   case 192:
-    Actor_SetDestination(actor, 224, 728);
+    Actor_SetDestination(actorId, 224, 728);
     (*timer)++;
     return;
   case 194:
-    Actor_SetDestination(actor, 228, 716);
+    Actor_SetDestination(actorId, 228, 716);
     (*timer)++;
     return;
   case 196:
-    Actor_SetDestination(actor, 248, 712);
+    Actor_SetDestination(actorId, 248, 712);
     (*timer)++;
     return;
   case 198:
-    Actor_SetDestination(actor, 268, 716);
+    Actor_SetDestination(actorId, 268, 716);
     (*timer)++;
     return;
   case 200:
-    Actor_SetDestination(actor, 272, 728);
+    Actor_SetDestination(actorId, 272, 728);
     (*timer)++;
     return;
   case 202:
-    Actor_SetDestination(actor, 268, 740);
+    Actor_SetDestination(actorId, 268, 740);
     (*timer)++;
     return;
   case 204:
-    Actor_SetDestination(actor, 248, 744);
+    Actor_SetDestination(actorId, 248, 744);
     (*timer)++;
     return;
   case 206:
-    Actor_SetDestination(actor, 248, 760);
+    Actor_SetDestination(actorId, 248, 760);
     (*timer)++;
     return;
   case 208:
-    Actor_SetDestination(actor, 228, 764);
+    Actor_SetDestination(actorId, 228, 764);
     (*timer)++;
     return;
   case 210:
-    Actor_SetDestination(actor, 224, 776);
+    Actor_SetDestination(actorId, 224, 776);
     (*timer)++;
     return;
   case 212:
-    Actor_SetDestination(actor, 228, 788);
+    Actor_SetDestination(actorId, 228, 788);
     (*timer)++;
     return;
   case 214:
-    Actor_SetDestination(actor, 248, 792);
+    Actor_SetDestination(actorId, 248, 792);
     (*timer)++;
     return;
   case 216:
-    Actor_SetDestination(actor, 248, 840);
+    Actor_SetDestination(actorId, 248, 840);
     (*timer)++;
     return;
   case 218:
-    Actor_SetDestination(actor, 228, 844);
+    Actor_SetDestination(actorId, 228, 844);
     (*timer)++;
     return;
   case 220:
-    Actor_SetDestination(actor, 224, 856);
+    Actor_SetDestination(actorId, 224, 856);
     (*timer)++;
     return;
   case 222:
-    Actor_SetDestination(actor, 228, 868);
+    Actor_SetDestination(actorId, 228, 868);
     (*timer)++;
     return;
   case 226:
-    Actor_SetDestination(actor, 268, 868);
+    Actor_SetDestination(actorId, 268, 868);
     (*timer)++;
     return;
   case 228:
-    Actor_SetDestination(actor, 272, 856);
+    Actor_SetDestination(actorId, 272, 856);
     (*timer)++;
     return;
   case 230:
-    Actor_SetDestination(actor, 268, 844);
+    Actor_SetDestination(actorId, 268, 844);
     (*timer)++;
     return;
   case 232:
-    Actor_SetDestination(actor, 248, 840);
+    Actor_SetDestination(actorId, 248, 840);
     (*timer)++;
     return;
   case 234:
-    Actor_SetDestination(actor, 228, 844);
+    Actor_SetDestination(actorId, 228, 844);
     (*timer)++;
     return;
   case 236:
-    Actor_SetDestination(actor, 224, 856);
+    Actor_SetDestination(actorId, 224, 856);
     (*timer)++;
     return;
   case 238:
-    Actor_SetDestination(actor, 228, 868);
+    Actor_SetDestination(actorId, 228, 868);
     (*timer)++;
     return;
   case 223:
   case 239:
-    if (Yallam_HasArrived(object) != 0)
+    if (Yallam_HasArrived(actor) != 0)
       (*timer)++;
   case 224:
   case 240:
-    Actor_SetDestination(actor, 248, 872);
+    Actor_SetDestination(actorId, 248, 872);
     {
-      /* FAKEMATCH(pin): the timer's address rebuilt in r2 from the object. */
-      register u8 *step asm("r2") = (u8 *)object;
+      /* FAKEMATCH(pin): the timer's address rebuilt in r2 from the actor. */
+      register u8 *step asm("r2") = (u8 *)actor;
 
       step += 100;
       (*(s16 *)step)++;
     }
     return;
   case 242:
-    Actor_SetDestination(actor, 268, 868);
+    Actor_SetDestination(actorId, 268, 868);
     (*timer)++;
     return;
   case 244:
-    Actor_SetDestination(actor, 272, 856);
+    Actor_SetDestination(actorId, 272, 856);
     (*timer)++;
     return;
   case 246:
-    Actor_SetDestination(actor, 268, 844);
+    Actor_SetDestination(actorId, 268, 844);
     (*timer)++;
     return;
   case 248:
-    Actor_SetDestination(actor, 248, 840);
+    Actor_SetDestination(actorId, 248, 840);
     (*timer)++;
     return;
   case 250:
-    Actor_SetDestination(actor, 228, 844);
+    Actor_SetDestination(actorId, 228, 844);
     (*timer)++;
     return;
   case 252:
-    Actor_SetDestination(actor, 224, 856);
+    Actor_SetDestination(actorId, 224, 856);
     (*timer)++;
     return;
   case 254:
-    Actor_SetSpeedAndAcceleration(actor, 1.8, 1.8);
-    Actor_SetDestination(actor, 200, 856);
+    Actor_SetSpeedAndAcceleration(actorId, 1.8, 1.8);
+    Actor_SetDestination(actorId, 200, 856);
     (*timer)++;
     return;
   case 256:
-    Actor_SetDestination(actor, 200, 744);
+    Actor_SetDestination(actorId, 200, 744);
     (*timer)++;
     return;
   case 258:
-    Actor_SetSpeedAndAcceleration(actor, 1.2, 1.2);
-    Actor_SetDestination(actor, 180, 740);
+    Actor_SetSpeedAndAcceleration(actorId, 1.2, 1.2);
+    Actor_SetDestination(actorId, 180, 740);
     (*timer)++;
     return;
   case 260:
-    Actor_SetDestination(actor, 176, 728);
+    Actor_SetDestination(actorId, 176, 728);
     (*timer)++;
     return;
   case 262:
-    Actor_SetDestination(actor, 180, 716);
+    Actor_SetDestination(actorId, 180, 716);
     (*timer)++;
     return;
   case 264:
-    Actor_SetDestination(actor, 200, 712);
+    Actor_SetDestination(actorId, 200, 712);
     (*timer)++;
     return;
   case 266:
-    Actor_SetDestination(actor, 220, 716);
+    Actor_SetDestination(actorId, 220, 716);
     (*timer)++;
     return;
   case 268:
-    Actor_SetDestination(actor, 224, 728);
+    Actor_SetDestination(actorId, 224, 728);
     (*timer)++;
     return;
   case 270:
-    Actor_SetDestination(actor, 220, 740);
+    Actor_SetDestination(actorId, 220, 740);
     (*timer)++;
     return;
   case 272:
-    Actor_SetDestination(actor, 200, 744);
+    Actor_SetDestination(actorId, 200, 744);
     (*timer)++;
     return;
   case 274:
-    Actor_SetDestination(actor, 180, 740);
+    Actor_SetDestination(actorId, 180, 740);
     (*timer)++;
     return;
   case 276:
-    Actor_SetDestination(actor, 176, 728);
+    Actor_SetDestination(actorId, 176, 728);
     (*timer)++;
     return;
   case 278:
-    Actor_SetDestination(actor, 180, 716);
+    Actor_SetDestination(actorId, 180, 716);
     (*timer)++;
     return;
   case 280:
-    Actor_SetDestination(actor, 200, 712);
+    Actor_SetDestination(actorId, 200, 712);
     (*timer)++;
     return;
   case 282:
-    Actor_SetDestination(actor, 220, 716);
+    Actor_SetDestination(actorId, 220, 716);
     (*timer)++;
     return;
   case 284:
-    Actor_SetDestination(actor, 224, 728);
+    Actor_SetDestination(actorId, 224, 728);
     (*timer)++;
     return;
   case 286:
-    Actor_SetDestination(actor, 220, 740);
+    Actor_SetDestination(actorId, 220, 740);
     (*timer)++;
     return;
   case 288:
-    Actor_SetDestination(actor, 200, 744);
+    Actor_SetDestination(actorId, 200, 744);
     (*timer)++;
     return;
   case 290:
-    Actor_SetDestination(actor, 180, 740);
+    Actor_SetDestination(actorId, 180, 740);
     (*timer)++;
     return;
   case 292:
-    Actor_SetDestination(actor, 176, 728);
+    Actor_SetDestination(actorId, 176, 728);
     (*timer)++;
     return;
   case 294:
-    Actor_SetDestination(actor, 180, 716);
+    Actor_SetDestination(actorId, 180, 716);
     (*timer)++;
     return;
   case 296:
-    Actor_SetDestination(actor, 200, 712);
+    Actor_SetDestination(actorId, 200, 712);
     (*timer)++;
     return;
   case 298:
-    Actor_SetDestination(actor, 220, 716);
+    Actor_SetDestination(actorId, 220, 716);
     (*timer)++;
     return;
   case 300:
-    Actor_SetDestination(actor, 224, 728);
+    Actor_SetDestination(actorId, 224, 728);
     (*timer)++;
     return;
   case 302:
-    Actor_SetDestination(actor, 220, 740);
+    Actor_SetDestination(actorId, 220, 740);
     (*timer)++;
     return;
   case 304:
-    Actor_SetDestination(actor, 200, 744);
+    Actor_SetDestination(actorId, 200, 744);
     (*timer)++;
     return;
   case 306:
-    Actor_SetDestination(actor, 180, 740);
+    Actor_SetDestination(actorId, 180, 740);
     (*timer)++;
     return;
   case 308:
-    Actor_SetDestination(actor, 176, 728);
+    Actor_SetDestination(actorId, 176, 728);
     (*timer)++;
     return;
   case 310:
-    Actor_SetDestination(actor, 180, 716);
+    Actor_SetDestination(actorId, 180, 716);
     (*timer)++;
     return;
   case 312:
-    Actor_SetDestination(actor, 200, 712);
+    Actor_SetDestination(actorId, 200, 712);
     (*timer)++;
     return;
   case 314:
-    Actor_SetDestination(actor, 200, 680);
+    Actor_SetDestination(actorId, 200, 680);
     (*timer)++;
     return;
   case 316:
-    Actor_SetDestination(actor, 212, 676);
+    Actor_SetDestination(actorId, 212, 676);
     (*timer)++;
     return;
   case 318:
-    Actor_SetDestination(actor, 216, 664);
+    Actor_SetDestination(actorId, 216, 664);
     (*timer)++;
     return;
   case 320:
-    Actor_SetDestination(actor, 212, 652);
+    Actor_SetDestination(actorId, 212, 652);
     (*timer)++;
     return;
   case 322:
-    Actor_SetDestination(actor, 200, 648);
+    Actor_SetDestination(actorId, 200, 648);
     (*timer)++;
     return;
   case 1:
@@ -1300,7 +1299,7 @@ void Yallam_RunSongPath(s32 actor) {
   case 319:
   case 321:
   case 323:
-    if (Yallam_HasArrived(object) == 0)
+    if (Yallam_HasArrived(actor) == 0)
       return;
     (*timer)++;
     return;
@@ -1352,65 +1351,65 @@ void Yallam_UpdateSongGame(void) {
 
 /// Saves every runner's state and stops the game's task.
 void Yallam_PauseSongGame(void) {
-  struct Actor *object;
+  struct Actor *actor;
 
-  object = Actor_Get(ACTOR_SONG_LEADER);
-  gYallam_SavedSongGame[0].timer = object->timer;
-  gYallam_SavedSongGame[0].userValue = (s16)object->userValue;
-  gYallam_SavedSongGame[0].riseCounter = object->riseCounter;
-  gYallam_SavedSongGame[0].riseEnabled = object->riseEnabled;
-  object = Actor_Get(ACTOR_GAME_CHILD);
-  gYallam_SavedSongGame[1].timer = object->timer;
-  gYallam_SavedSongGame[1].userValue = (s16)object->userValue;
-  gYallam_SavedSongGame[1].riseCounter = object->riseCounter;
-  gYallam_SavedSongGame[1].riseEnabled = object->riseEnabled;
-  object = Actor_Get(ACTOR_CIRCLES_CHILD);
-  gYallam_SavedSongGame[2].timer = object->timer;
-  gYallam_SavedSongGame[2].userValue = (s16)object->userValue;
-  gYallam_SavedSongGame[2].riseCounter = object->riseCounter;
-  gYallam_SavedSongGame[2].riseEnabled = object->riseEnabled;
-  object = Actor_Get(ACTOR_STORY_CHILD);
-  gYallam_SavedSongGame[3].timer = object->timer;
-  gYallam_SavedSongGame[3].userValue = (s16)object->userValue;
-  gYallam_SavedSongGame[3].riseCounter = object->riseCounter;
-  gYallam_SavedSongGame[3].riseEnabled = object->riseEnabled;
-  object = Actor_Get(gMainRoutineWork.leaderActorId);
-  gYallam_SavedSongGame[4].timer = object->timer;
-  gYallam_SavedSongGame[4].userValue = (s16)object->userValue;
-  gYallam_SavedSongGame[4].riseCounter = object->riseCounter;
-  gYallam_SavedSongGame[4].riseEnabled = object->riseEnabled;
+  actor = Actor_Get(ACTOR_SONG_LEADER);
+  gYallam_SavedSongGame[0].timer = actor->timer;
+  gYallam_SavedSongGame[0].userValue = (s16)actor->userValue;
+  gYallam_SavedSongGame[0].riseCounter = actor->riseCounter;
+  gYallam_SavedSongGame[0].riseEnabled = actor->riseEnabled;
+  actor = Actor_Get(ACTOR_GAME_CHILD);
+  gYallam_SavedSongGame[1].timer = actor->timer;
+  gYallam_SavedSongGame[1].userValue = (s16)actor->userValue;
+  gYallam_SavedSongGame[1].riseCounter = actor->riseCounter;
+  gYallam_SavedSongGame[1].riseEnabled = actor->riseEnabled;
+  actor = Actor_Get(ACTOR_CIRCLES_CHILD);
+  gYallam_SavedSongGame[2].timer = actor->timer;
+  gYallam_SavedSongGame[2].userValue = (s16)actor->userValue;
+  gYallam_SavedSongGame[2].riseCounter = actor->riseCounter;
+  gYallam_SavedSongGame[2].riseEnabled = actor->riseEnabled;
+  actor = Actor_Get(ACTOR_STORY_CHILD);
+  gYallam_SavedSongGame[3].timer = actor->timer;
+  gYallam_SavedSongGame[3].userValue = (s16)actor->userValue;
+  gYallam_SavedSongGame[3].riseCounter = actor->riseCounter;
+  gYallam_SavedSongGame[3].riseEnabled = actor->riseEnabled;
+  actor = Actor_Get(gMainRoutineWork.leaderActorId);
+  gYallam_SavedSongGame[4].timer = actor->timer;
+  gYallam_SavedSongGame[4].userValue = (s16)actor->userValue;
+  gYallam_SavedSongGame[4].riseCounter = actor->riseCounter;
+  gYallam_SavedSongGame[4].riseEnabled = actor->riseEnabled;
   FieldTask_Remove(Yallam_UpdateSongGame);
 }
 
 /// Restores every runner's state and starts the game's task again.
 void Yallam_ResumeSongGame(void) {
-  struct Actor *object;
+  struct Actor *actor;
 
-  object = Actor_Get(ACTOR_SONG_LEADER);
-  object->timer = gYallam_SavedSongGame[0].timer;
-  object->userValue = gYallam_SavedSongGame[0].userValue;
-  object->riseCounter = gYallam_SavedSongGame[0].riseCounter;
-  object->riseEnabled = gYallam_SavedSongGame[0].riseEnabled;
-  object = Actor_Get(ACTOR_GAME_CHILD);
-  object->timer = gYallam_SavedSongGame[1].timer;
-  object->userValue = gYallam_SavedSongGame[1].userValue;
-  object->riseCounter = gYallam_SavedSongGame[1].riseCounter;
-  object->riseEnabled = gYallam_SavedSongGame[1].riseEnabled;
-  object = Actor_Get(ACTOR_CIRCLES_CHILD);
-  object->timer = gYallam_SavedSongGame[2].timer;
-  object->userValue = gYallam_SavedSongGame[2].userValue;
-  object->riseCounter = gYallam_SavedSongGame[2].riseCounter;
-  object->riseEnabled = gYallam_SavedSongGame[2].riseEnabled;
-  object = Actor_Get(ACTOR_STORY_CHILD);
-  object->timer = gYallam_SavedSongGame[3].timer;
-  object->userValue = gYallam_SavedSongGame[3].userValue;
-  object->riseCounter = gYallam_SavedSongGame[3].riseCounter;
-  object->riseEnabled = gYallam_SavedSongGame[3].riseEnabled;
-  object = Actor_Get(gMainRoutineWork.leaderActorId);
-  object->timer = gYallam_SavedSongGame[4].timer;
-  object->userValue = gYallam_SavedSongGame[4].userValue;
-  object->riseCounter = gYallam_SavedSongGame[4].riseCounter;
-  object->riseEnabled = gYallam_SavedSongGame[4].riseEnabled;
+  actor = Actor_Get(ACTOR_SONG_LEADER);
+  actor->timer = gYallam_SavedSongGame[0].timer;
+  actor->userValue = gYallam_SavedSongGame[0].userValue;
+  actor->riseCounter = gYallam_SavedSongGame[0].riseCounter;
+  actor->riseEnabled = gYallam_SavedSongGame[0].riseEnabled;
+  actor = Actor_Get(ACTOR_GAME_CHILD);
+  actor->timer = gYallam_SavedSongGame[1].timer;
+  actor->userValue = gYallam_SavedSongGame[1].userValue;
+  actor->riseCounter = gYallam_SavedSongGame[1].riseCounter;
+  actor->riseEnabled = gYallam_SavedSongGame[1].riseEnabled;
+  actor = Actor_Get(ACTOR_CIRCLES_CHILD);
+  actor->timer = gYallam_SavedSongGame[2].timer;
+  actor->userValue = gYallam_SavedSongGame[2].userValue;
+  actor->riseCounter = gYallam_SavedSongGame[2].riseCounter;
+  actor->riseEnabled = gYallam_SavedSongGame[2].riseEnabled;
+  actor = Actor_Get(ACTOR_STORY_CHILD);
+  actor->timer = gYallam_SavedSongGame[3].timer;
+  actor->userValue = gYallam_SavedSongGame[3].userValue;
+  actor->riseCounter = gYallam_SavedSongGame[3].riseCounter;
+  actor->riseEnabled = gYallam_SavedSongGame[3].riseEnabled;
+  actor = Actor_Get(gMainRoutineWork.leaderActorId);
+  actor->timer = gYallam_SavedSongGame[4].timer;
+  actor->userValue = gYallam_SavedSongGame[4].userValue;
+  actor->riseCounter = gYallam_SavedSongGame[4].riseCounter;
+  actor->riseEnabled = gYallam_SavedSongGame[4].riseEnabled;
   Task_AddFrame(Yallam_UpdateSongGame, TASK_PASS_VBLANK);
 }
 
@@ -1564,7 +1563,7 @@ extern u8 MsgIfYouWant[];
 
 /// "If you want to go to the moon, if you want to go to the moon."
 void Yallam_SingMoonSong(void) {
-  struct Actor *object = Actor_Get(ACTOR_SONG_LEADER);
+  struct Actor *actor = Actor_Get(ACTOR_SONG_LEADER);
 
   Actor_FaceDirection(ACTOR_SONG_LEADER, FACING_WEST, 0);
   Actor_FaceDirection(ACTOR_GAME_CHILD, FACING_WEST, 0);
@@ -1575,32 +1574,32 @@ void Yallam_SingMoonSong(void) {
   // "If you want to go to the moon, if you want to go to the moon."
   Event_ShowMessage(ACTOR_SONG_LEADER, 0);
   Yallam_ResumeSongGame();
-  object->userValue = 1;
+  actor->userValue = 1;
   do
     System_Wait(1);
-  while (object->timer != 114);
-  object->userValue = 2;
+  while (actor->timer != 114);
+  actor->userValue = 2;
   System_Wait(1);
   Event_ShowMessage(ACTOR_SONG_LEADER, 0);
-  object->userValue = 1;
+  actor->userValue = 1;
   do
     System_Wait(1);
-  while (object->timer != 150);
-  object->userValue = 2;
+  while (actor->timer != 150);
+  actor->userValue = 2;
   System_Wait(1);
   Event_ShowMessage(ACTOR_SONG_LEADER, 0);
-  object->userValue = 1;
+  actor->userValue = 1;
   do
     System_Wait(1);
-  while (object->timer != 154);
-  object->userValue = 2;
+  while (actor->timer != 154);
+  actor->userValue = 2;
   System_Wait(1);
   Event_ShowMessage(ACTOR_SONG_LEADER, 0);
-  object->userValue = 1;
+  actor->userValue = 1;
   do
     System_Wait(1);
-  while (object->timer != 216);
-  object->userValue = 3;
+  while (actor->timer != 216);
+  actor->userValue = 3;
   System_Wait(1);
   Event_ShowMessage(ACTOR_SONG_LEADER, 0);
   Yallam_PauseSongGame();
@@ -1632,7 +1631,7 @@ extern u8 MsgIfYouWantTo[];
 
 /// "If you want to go to the sun, if you want to go to the sun."
 void Yallam_SingSunSong(void) {
-  struct Actor *object = Actor_Get(ACTOR_SONG_LEADER);
+  struct Actor *actor = Actor_Get(ACTOR_SONG_LEADER);
   FIXED x, z;
 
   Actor_FaceDirection(ACTOR_SONG_LEADER, FACING_SOUTH_SOUTHEAST, 0);
@@ -1644,78 +1643,78 @@ void Yallam_SingSunSong(void) {
   // "If you want to go to the sun, if you want to go to the sun."
   Event_ShowMessage(ACTOR_SONG_LEADER, 0);
   Yallam_ResumeSongGame();
-  object->userValue = 1;
+  actor->userValue = 1;
   do
     System_Wait(1);
-  while (object->timer != 218);
-  object->userValue = 2;
+  while (actor->timer != 218);
+  actor->userValue = 2;
   System_Wait(1);
   Event_ShowMessage(ACTOR_SONG_LEADER, 0);
-  object->userValue = 1;
+  actor->userValue = 1;
   do
     System_Wait(1);
-  while (object->timer != 254);
-  object->userValue = 2;
+  while (actor->timer != 254);
+  actor->userValue = 2;
   System_Wait(1);
   Event_ShowMessage(ACTOR_SONG_LEADER, 0);
-  object->userValue = 1;
+  actor->userValue = 1;
   do
     System_Wait(1);
-  while (object->timer != 258);
-  object->userValue = 2;
+  while (actor->timer != 258);
+  actor->userValue = 2;
   System_Wait(1);
   Event_ShowMessage(ACTOR_SONG_LEADER, 0);
-  object->userValue = 1;
+  actor->userValue = 1;
   do
     System_Wait(1);
-  while (object->timer != 324);
-  object->userValue = 3;
+  while (actor->timer != 324);
+  actor->userValue = 3;
   System_Wait(1);
   Event_ShowMessage(ACTOR_SONG_LEADER, 0);
   Yallam_PauseSongGame();
   Actor_FaceDirectionAndWait(ACTOR_SONG_LEADER, FACING_SOUTH_SOUTHWEST);
   Actor_Get(ACTOR_SONG_LEADER)->steeringFlags &= ~1;
-  object = Actor_Get(ACTOR_SONG_LEADER);
-  z = object->z.fixed;
-  x = object->x.fixed;
+  actor = Actor_Get(ACTOR_SONG_LEADER);
+  z = actor->z.fixed;
+  x = actor->x.fixed;
   Actor_SetSpeed(ACTOR_SONG_LEADER, 2.4);
   FieldActor_Jump(ACTOR_SONG_LEADER, 6, 0);
   Actor_MoveToAndWait(ACTOR_SONG_LEADER, 200, 670);
   FieldActor_Jump(ACTOR_SONG_LEADER, 4, 0);
-  FieldActor_SetMoveTargetFX(object, x, 0, z);
+  FieldActor_SetMoveTargetFX(actor, x, 0, z);
   FieldEvent_Wait(5);
   Actor_FaceDirectionAndWait(ACTOR_GAME_CHILD, FACING_SOUTH_SOUTHWEST);
   Actor_Get(ACTOR_GAME_CHILD)->steeringFlags &= ~1;
-  object = Actor_Get(ACTOR_GAME_CHILD);
-  z = object->z.fixed;
-  x = object->x.fixed;
+  actor = Actor_Get(ACTOR_GAME_CHILD);
+  z = actor->z.fixed;
+  x = actor->x.fixed;
   Actor_SetSpeed(ACTOR_GAME_CHILD, 2.4);
   FieldActor_Jump(ACTOR_GAME_CHILD, 6, 0);
   Actor_MoveToAndWait(ACTOR_GAME_CHILD, 200, 670);
   FieldActor_Jump(ACTOR_GAME_CHILD, 4, 0);
-  FieldActor_SetMoveTargetFX(object, x, 0, z);
+  FieldActor_SetMoveTargetFX(actor, x, 0, z);
   FieldEvent_Wait(5);
   Actor_FaceDirectionAndWait(ACTOR_CIRCLES_CHILD, FACING_WEST);
   Actor_Get(ACTOR_CIRCLES_CHILD)->steeringFlags &= ~1;
-  object = Actor_Get(ACTOR_CIRCLES_CHILD);
-  z = object->z.fixed;
-  x = object->x.fixed;
+  actor = Actor_Get(ACTOR_CIRCLES_CHILD);
+  z = actor->z.fixed;
+  x = actor->x.fixed;
   Actor_SetSpeed(ACTOR_CIRCLES_CHILD, 2.4);
   FieldActor_Jump(ACTOR_CIRCLES_CHILD, 6, 0);
   Actor_MoveToAndWait(ACTOR_CIRCLES_CHILD, 200, 670);
   FieldActor_Jump(ACTOR_CIRCLES_CHILD, 4, 0);
-  FieldActor_SetMoveTargetFX(object, x, 0, z);
+  FieldActor_SetMoveTargetFX(actor, x, 0, z);
   FieldEvent_Wait(10);
   Actor_FaceDirectionAndWait(ACTOR_STORY_CHILD, FACING_NORTH_NORTHWEST);
   Actor_Get(ACTOR_STORY_CHILD)->steeringFlags &= ~1;
-  object = Actor_Get(ACTOR_STORY_CHILD);
-  z = object->z.fixed;
-  x = object->x.fixed;
+  actor = Actor_Get(ACTOR_STORY_CHILD);
+  z = actor->z.fixed;
+  x = actor->x.fixed;
   Actor_SetSpeed(ACTOR_STORY_CHILD, 2.4);
   FieldActor_Jump(ACTOR_STORY_CHILD, 6, 0);
   Actor_MoveToAndWait(ACTOR_STORY_CHILD, 200, 670);
   FieldActor_Jump(ACTOR_STORY_CHILD, 4, 0);
-  FieldActor_SetMoveTargetFX(object, x, 0, z);
+  FieldActor_SetMoveTargetFX(actor, x, 0, z);
   FieldActor_WaitForMoveById(ACTOR_STORY_CHILD);
   Actor_SetSpeed(gMainRoutineWork.leaderActorId, 0.8);
   Actor_WalkToAndWait(gMainRoutineWork.leaderActorId, 184, 686);
@@ -1769,37 +1768,37 @@ void Yallam_DoNothing(void) {}
 void Yallam_ForcePillarDown(void) {
   s32 step;
   s32 i;
-  struct Actor *object = Actor_Get(ACTOR_FALLING_LOG);
-  struct FieldSprite *sprite = object->sprite;
+  struct Actor *actor = Actor_Get(ACTOR_FALLING_LOG);
+  struct FieldSprite *sprite = actor->sprite;
 
   Event_SetFlag(FLAG_YALLAM_LOG_TOPPLED);
-  object->acceleration = toFIXED(3) / 2;
-  object->speedLimit = toFIXED(8);
+  actor->acceleration = toFIXED(3) / 2;
+  actor->speedLimit = toFIXED(8);
   Event_PlaySound(SE_TOPPLE);
-  FieldActor_SetMoveTarget(object, 176, 40, 184);
+  FieldActor_SetMoveTarget(actor, 176, 40, 184);
   step = 0;
   for (i = 15; i >= 0; i--) {
     sprite->rotation -= step;
     System_Wait(1);
     step += 40;
   }
-  FieldActor_SetMoveTarget(object, 168, 16, 184);
+  FieldActor_SetMoveTarget(actor, 168, 16, 184);
   step = 400;
   for (i = 25; i >= 0; i--) {
     sprite->rotation -= step;
     System_Wait(1);
     step += 40;
   }
-  FieldActor_WaitForMove(object);
+  FieldActor_WaitForMove(actor);
   FieldEvent_Wait(2);
   Event_PlaySound(SE_LOG_FALL);
   i = 0;
   sprite->rotation = i;
-  object->x.fixed = toFIXED(168);
-  object->z.fixed = toFIXED(192);
-  object->y.fixed = i;
-  object->velocityY = i;
-  object->velocityX = i;
+  actor->x.fixed = toFIXED(168);
+  actor->z.fixed = toFIXED(192);
+  actor->y.fixed = i;
+  actor->velocityY = i;
+  actor->velocityX = i;
   MapGrid_CopyCellAttributes(8, 12, 1, 1, 10, 12);
 }
 
@@ -2019,14 +2018,14 @@ u32 gYallam_CirclesChildStarts[] = {
 
 u32 gSceneExits[] = {
     SCENE_EXITS(Yallam),
-    SCENE_EXIT(YALLAM_TO_YALLAM_INTERIORS_INN_SOUTHEAST, YallamInteriorsInn, YALLAM_INTERIORS_INN_FROM_YALLAM_SOUTHEAST),
-    SCENE_EXIT(YALLAM_TO_YALLAM_INTERIORS_INN_SOUTH, YallamInteriorsInn, YALLAM_INTERIORS_INN_FROM_YALLAM_SOUTH),
-    SCENE_EXIT(YALLAM_TO_YALLAM_INTERIORS_SHOPS_EAST, YallamInteriorsShops, YALLAM_INTERIORS_SHOPS_FROM_YALLAM_EAST),
-    SCENE_EXIT(YALLAM_TO_YALLAM_INTERIORS_INN_WEST, YallamInteriorsInn, YALLAM_INTERIORS_INN_FROM_YALLAM_WEST),
-    SCENE_EXIT(YALLAM_TO_YALLAM_INTERIORS_SHOPS_NORTH, YallamInteriorsShops, YALLAM_INTERIORS_SHOPS_FROM_YALLAM_NORTH),
-    SCENE_EXIT(YALLAM_TO_YALLAM_INTERIORS_SHOPS_WEST, YallamInteriorsShops, YALLAM_INTERIORS_SHOPS_FROM_YALLAM_WEST),
-    SCENE_EXIT(YALLAM_TO_YALLAM_INTERIORS_INN_NORTHEAST, YallamInteriorsInn, YALLAM_INTERIORS_INN_FROM_YALLAM_NORTHEAST),
-    SCENE_EXIT(YALLAM_TO_MIKASALLA_INTERIORS_SANCTUM, MikasallaInteriorsSanctum, MIKASALLA_INTERIORS_SANCTUM_FROM_YALLAM),
+    SCENE_EXIT(YALLAM_TO_YALLAM_ROOMS_INN_SOUTHEAST, YallamRoomsInn, YALLAM_ROOMS_INN_FROM_YALLAM_SOUTHEAST),
+    SCENE_EXIT(YALLAM_TO_YALLAM_ROOMS_INN_SOUTH, YallamRoomsInn, YALLAM_ROOMS_INN_FROM_YALLAM_SOUTH),
+    SCENE_EXIT(YALLAM_TO_YALLAM_ROOMS_SHOPS_EAST, YallamRoomsShops, YALLAM_ROOMS_SHOPS_FROM_YALLAM_EAST),
+    SCENE_EXIT(YALLAM_TO_YALLAM_ROOMS_INN_WEST, YallamRoomsInn, YALLAM_ROOMS_INN_FROM_YALLAM_WEST),
+    SCENE_EXIT(YALLAM_TO_YALLAM_ROOMS_SHOPS_NORTH, YallamRoomsShops, YALLAM_ROOMS_SHOPS_FROM_YALLAM_NORTH),
+    SCENE_EXIT(YALLAM_TO_YALLAM_ROOMS_SHOPS_WEST, YallamRoomsShops, YALLAM_ROOMS_SHOPS_FROM_YALLAM_WEST),
+    SCENE_EXIT(YALLAM_TO_YALLAM_ROOMS_INN_NORTHEAST, YallamRoomsInn, YALLAM_ROOMS_INN_FROM_YALLAM_NORTHEAST),
+    SCENE_EXIT(YALLAM_TO_MIKASALLA_ROOMS_SANCTUM, MikasallaRoomsSanctum, MIKASALLA_ROOMS_SANCTUM_FROM_YALLAM),
     SCENE_EXIT(YALLAM_TO_YALLAM_CAVE_EAST, YallamCave, YALLAM_CAVE_FROM_YALLAM_EAST),
     SCENE_EXIT(YALLAM_TO_WORLD_MAP_SOUTH, WorldMap, WORLD_MAP_FROM_YALLAM_SOUTH_B),
     SCENE_EXIT(YALLAM_TO_WORLD_MAP_NORTH, WorldMap, WORLD_MAP_FROM_YALLAM_SOUTH_A),

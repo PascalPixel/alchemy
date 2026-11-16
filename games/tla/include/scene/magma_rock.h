@@ -34,11 +34,11 @@ extern s16 gMagmaRock_SalamanderTailMiddlePillars[];
 extern s16 gMagmaRock_SalamanderTailUpperPillars[];
 extern s16 gMagmaRock_SalamanderTailTopPillars[];
 
-void MagmaRock_RollMagmaRock(struct Actor *object);
+void MagmaRock_RollMagmaRock(struct Actor *actor);
 
 extern u32 gMagmaRock_EmberScript[];
 
-void MagmaRock_BurnStatue(struct Actor *object);
+void MagmaRock_BurnStatue(struct Actor *actor);
 
 extern s16 gMagmaRock_SlideStatues[];
 extern s16 gMagmaRock_SalamanderTailLowerStatues[];
@@ -47,7 +47,7 @@ extern s16 gMagmaRock_SalamanderTailUpperStatues[];
 extern s16 gMagmaRock_SalamanderTailTopStatues[];
 extern s16 gMagmaRock_StatueStatues[];
 
-void MagmaRock_FlashStatue(struct Actor *object);
+void MagmaRock_FlashStatue(struct Actor *actor);
 
 void MagmaRock_DropRocks(s32 x, s32 y, s32 z, s32 count);
 void MagmaRock_StartFallingRocks(void);

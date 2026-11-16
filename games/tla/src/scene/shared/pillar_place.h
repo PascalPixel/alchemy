@@ -9,13 +9,13 @@ void Pillar_Place(const u16 *list) {
   entry = list;
   do {
     u32 id = entry[0];
-    struct Actor *object = Actor_Get(id);
+    struct Actor *actor = Actor_Get(id);
     s16 kind = entry[1];
     s16 flag = entry[2];
 
-    object->collisionFlags &= ~ACTOR_SOLID;
-    Actor_SetSpriteFlags(object, 0);
-    Actor_SetCellOpen(id, (u16)kind, (u16)flag, object->layer);
+    actor->collisionFlags &= ~ACTOR_SOLID;
+    Actor_SetSpriteFlags(actor, 0);
+    Actor_SetCellOpen(id, (u16)kind, (u16)flag, actor->layer);
     entry += 3;
   } while (entry[0] != 0xffff);
 }

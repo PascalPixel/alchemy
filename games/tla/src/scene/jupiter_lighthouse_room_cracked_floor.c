@@ -134,10 +134,10 @@ void JupiterLighthouse_CloseDoor(void) {
 
 /// The shortcut pillar moved onto cell (4, 37) holds the door open for good.
 void JupiterLighthouse_CheckBlockOnCell(void) {
-  struct Actor *object = Actor_Get(ACTOR_SHORTCUT_PILLAR);
+  struct Actor *actor = Actor_Get(ACTOR_SHORTCUT_PILLAR);
 
   if (!Event_GetFlag(FLAG_JUPITER_LIGHTHOUSE_SHORTCUT_PILLAR_PLACED) &&
-      FIELD_CELL(object->x.fixed) == 4 && FIELD_CELL(object->z.fixed) == 37) {
+      FIELD_CELL(actor->x.fixed) == 4 && FIELD_CELL(actor->z.fixed) == 37) {
     Event_SetFlag(FLAG_JUPITER_LIGHTHOUSE_SHORTCUT_PILLAR_PLACED);
     JupiterLighthouse_OpenDoor(1);
   }
@@ -222,20 +222,18 @@ void MapGrid_CenterOnFollowedPoint(void);
 
 /// Unused: holds an actor 32 pixels above its ground, without gravity.
 UNUSED void JupiterLighthouse_FloatAboveGround(s32 id) {
-  struct Actor *object;
+  struct Actor *actor;
   s32 height;
 
-  object = Actor_Get(id);
-  object->motionFlags = ACTOR_FLOATS;
-  height = object->groundHeight;
-  object->bounce = 0;
-  object->y.fixed = height + toFIXED(32);
-  object->priorityFlags |= ACTOR_PRIORITY_PLATFORM;
-  height =
-      Map_GetTerrainHeight(object->layer, object->x.fixed, object->z.fixed);
-  MapGrid_SetCellHeight(object->x.fixed, object->z.fixed, 0,
-                        (height >> 19) + 6);
-  MapGrid_SetAttributeBAt(object->x.fixed, object->z.fixed, 0, 128);
+  actor = Actor_Get(id);
+  actor->motionFlags = ACTOR_FLOATS;
+  height = actor->groundHeight;
+  actor->bounce = 0;
+  actor->y.fixed = height + toFIXED(32);
+  actor->priorityFlags |= ACTOR_PRIORITY_PLATFORM;
+  height = Map_GetTerrainHeight(actor->layer, actor->x.fixed, actor->z.fixed);
+  MapGrid_SetCellHeight(actor->x.fixed, actor->z.fixed, 0, (height >> 19) + 6);
+  MapGrid_SetAttributeBAt(actor->x.fixed, actor->z.fixed, 0, 128);
 }
 
 #include "shared/whirlwind_carry_leader.h"
@@ -244,7 +242,7 @@ UNUSED void JupiterLighthouse_FloatAboveGround(s32 id) {
 
 extern s32 gWhirlwindEndScript[];
 
-void Actor_StartScript(struct Actor *object, const s32 *script);
+void Actor_StartScript(struct Actor *actor, const s32 *script);
 
 #include "shared/whirlwind_update.h"
 

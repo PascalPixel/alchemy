@@ -164,7 +164,7 @@ struct Actor *Leader_FindActorAhead(void);
 void Actor_PlaceMovedBlock(void);
 void Leader_PushObjectAhead(void);
 
-s32 Actor_GetCellIndex(struct Actor *object);
+s32 Actor_GetCellIndex(struct Actor *actor);
 
 // Raises each listed actor's cells: the shape grid and the cell flags under it,
 // then lifts the leader if the new terrain is above the leader.
@@ -244,15 +244,15 @@ void MadraCatacombs_TryLockedDoor(void) {
 /// The pillar Move pushes onto cell (40, 13) drops into the hole there, which
 /// it fills for good .
 void MadraCatacombs_DropPillarIntoHole(void) {
-  struct Actor *object = Actor_GetById(ACTOR_HOLE_PILLAR);
+  struct Actor *actor = Actor_GetById(ACTOR_HOLE_PILLAR);
   s32 z;
 
-  if (FIELD_CELL(object->x.fixed) == 40) {
-    z = FIELD_CELL(object->z.fixed);
+  if (FIELD_CELL(actor->x.fixed) == 40) {
+    z = FIELD_CELL(actor->z.fixed);
     if (z == 13) {
       Event_Start();
       Event_ResolvePendingActions(0);
-      Actor_DropAndWait(object);
+      Actor_DropAndWait(actor);
       MapGrid_CopyCellAttributes(41, 13, 2, 1, 39, z);
       Event_SetFlag(FLAG_MADRA_CATACOMBS_HOLE_FILLED);
       Event_End();
@@ -267,10 +267,10 @@ void MadraCatacombs_StartMovingPushedPillar(void) {
 
 /// The second pillar, moved onto cell (44, 26), stays there .
 void MadraCatacombs_FinishMovingPushedPillar(void) {
-  struct Actor *object = Actor_GetById(ACTOR_PUSHED_PILLAR);
+  struct Actor *actor = Actor_GetById(ACTOR_PUSHED_PILLAR);
 
   Actor_PlaceMovedBlock();
-  if (FIELD_CELL(object->x.fixed) == 44 && FIELD_CELL(object->z.fixed) == 26)
+  if (FIELD_CELL(actor->x.fixed) == 44 && FIELD_CELL(actor->z.fixed) == 26)
     Event_SetFlag(FLAG_MADRA_CATACOMBS_PILLAR_PLACED);
 }
 
@@ -345,7 +345,7 @@ void FlagBlock_PlaceAll(const void *data);
 void Actor_PlaceBlocks(const void *data);
 /// The climbable pillar settles where Move left it, its cells raised; on cell
 /// (35, 17) it stays there .
-void MadraCatacombs_SettleClimbablePillar(struct Actor *object);
+void MadraCatacombs_SettleClimbablePillar(struct Actor *actor);
 /// Arriving in the Champa tunnel by a way the Champa have since blocked: the
 /// leader leaves again.
 void MadraCatacombs_LeaveBlockedTunnel(void);
@@ -399,17 +399,17 @@ void MadraCatacombs_HearEyesOfTruth(void) {
 /// Tremor shakes the bookshelf; once the chest on it has rocked past its edge
 /// it falls through to the room below.
 void MadraCatacombs_ShakeBookshelf(void) {
-  struct Actor *object;
+  struct Actor *actor;
   FIXED x;
 
   if (Event_GetFlag(FLAG_MADRA_CATACOMBS_CHEST_FELL) == 0) {
-    object = Actor_GetById(ACTOR_SHAKEN_CHEST);
-    x = object->x.fixed;
+    actor = Actor_GetById(ACTOR_SHAKEN_CHEST);
+    x = actor->x.fixed;
     if (x < (toFIXED(186))) {
       Event_Start();
       Event_ResolvePendingActions(0);
       Event_PlaySound(SE_DUST_PUFF);
-      object->motionFlags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
+      actor->motionFlags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
       wait(10);
       Actor_SetPosition(ACTOR_SHAKEN_CHEST, 0, 0);
       Event_SetFlag(FLAG_MADRA_CATACOMBS_CHEST_FELL);
@@ -418,23 +418,23 @@ void MadraCatacombs_ShakeBookshelf(void) {
   }
 }
 
-void MadraCatacombs_SettleClimbablePillar(struct Actor *object) {
+void MadraCatacombs_SettleClimbablePillar(struct Actor *actor) {
   HeldActor_RaiseCell();
-  if (FIELD_CELL(object->x.fixed) == 35 && FIELD_CELL(object->z.fixed) == 17)
+  if (FIELD_CELL(actor->x.fixed) == 35 && FIELD_CELL(actor->z.fixed) == 17)
     Event_SetFlag(FLAG_MADRA_CATACOMBS_CLIMBABLE_PILLAR_PLACED);
 }
 
 /// Walking into the climbable pillar while holding it with Move pushes it a
 /// cell on.
 void MadraCatacombs_PushClimbablePillar(void) {
-  struct Actor *object;
+  struct Actor *actor;
 
   if (Leader_CanPushObjectAhead() != 0) {
-    object = Actor_GetById(
+    actor = Actor_GetById(
         Field_FindNearbyTalkTarget(gMainRoutineWork.leaderActorId));
     Pillar_LowerHeldCells(gMadraCatacombs_ClimbablePillar);
     Leader_PushObjectAhead();
-    MadraCatacombs_SettleClimbablePillar(object);
+    MadraCatacombs_SettleClimbablePillar(actor);
   }
 }
 
@@ -507,21 +507,21 @@ void MadraCatacombs_RockChestWithBookshelf(void) {
 void MadraCatacombs_EnterDoorway(void) {
   struct FieldWork *work = Ram_HeapSlots->fieldWork;
   struct MainRoutineWork *party = &gMainRoutineWork;
-  struct Actor *object;
+  struct Actor *actor;
   s32 cell;
 
-  object = Actor_GetById(party->leaderActorId);
+  actor = Actor_GetById(party->leaderActorId);
   Event_Start();
   Event_ResolvePendingActions(0);
   FieldCamera_MoveTo(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0);
   Actor_SetAnimation(party->leaderActorId, ANIM_WALK);
   Actor_SetSpeed(party->leaderActorId, 0.5);
-  cell = FIXEDtoINT(object->x.fixed);
-  Actor_SetMoveTarget(object,
-                      toFIXED(8 - cell % MAPGRID_CELL_PIXELS) + object->x.fixed,
-                      object->y.fixed, object->z.fixed);
-  FieldActor_WaitForMove(object);
-  object->facing = FACING_NORTH;
+  cell = FIXEDtoINT(actor->x.fixed);
+  Actor_SetMoveTarget(actor,
+                      toFIXED(8 - cell % MAPGRID_CELL_PIXELS) + actor->x.fixed,
+                      actor->y.fixed, actor->z.fixed);
+  FieldActor_WaitForMove(actor);
+  actor->facing = FACING_NORTH;
   Actor_SetScript(party->leaderActorId, gMadraCatacombs_WalkIntoDoorway);
   wait(12);
   Event_PlaySound(SE_MAP_EXIT);
@@ -536,7 +536,7 @@ void MadraCatacombs_EnterDoorway(void) {
 void MadraCatacombs_OpenDoorAndEnter(s32 sourceX, s32 sourceZ, s32 x, s32 z,
                                      s32 width, s32 height) {
   struct FieldWork *work = Ram_HeapSlots->fieldWork;
-  struct Actor *object;
+  struct Actor *actor;
   s32 cell;
 
   Event_Start();
@@ -549,13 +549,13 @@ void MadraCatacombs_OpenDoorAndEnter(s32 sourceX, s32 sourceZ, s32 x, s32 z,
   Event_Wait(20);
   Actor_SetSpeed(gMainRoutineWork.leaderActorId, 0.5);
   if (width == 1) {
-    object = Actor_GetById(gMainRoutineWork.leaderActorId);
-    cell = FIXEDtoINT(object->x.fixed);
+    actor = Actor_GetById(gMainRoutineWork.leaderActorId);
+    cell = FIXEDtoINT(actor->x.fixed);
     Actor_SetMoveTarget(
-        object, toFIXED(8 - cell % MAPGRID_CELL_PIXELS) + object->x.fixed,
-        object->y.fixed, object->z.fixed);
-    FieldActor_WaitForMove(object);
-    object->facing = FACING_NORTH;
+        actor, toFIXED(8 - cell % MAPGRID_CELL_PIXELS) + actor->x.fixed,
+        actor->y.fixed, actor->z.fixed);
+    FieldActor_WaitForMove(actor);
+    actor->facing = FACING_NORTH;
   }
   Actor_SetScript(gMainRoutineWork.leaderActorId,
                   gMadraCatacombs_WalkIntoDoorway);
@@ -691,17 +691,17 @@ void MadraCatacombs_SetUpRoomBelowBookshelf(void) {
 /// Sets up the bookshelf room: the shaken chest stands on top of its shelf
 /// until it has fallen.
 void MadraCatacombs_SetUpBookshelfRoom(void) {
-  struct Actor *object;
+  struct Actor *actor;
 
   if (Event_GetFlag(FLAG_MADRA_CATACOMBS_CHEST_FELL) != 0) {
     Actor_SetPosition(ACTOR_SHAKEN_CHEST, 0, 0);
   } else {
-    object = Actor_GetById(ACTOR_SHAKEN_CHEST);
-    object->collisionFlags = ACTOR_NOT_TARGETED;
-    object->motionFlags = ACTOR_FALLS;
-    object->y.fixed = toFIXED(32);
-    object->groundHeight = toFIXED(32);
-    object->update = MadraCatacombs_RockChestWithBookshelf;
+    actor = Actor_GetById(ACTOR_SHAKEN_CHEST);
+    actor->collisionFlags = ACTOR_NOT_TARGETED;
+    actor->motionFlags = ACTOR_FALLS;
+    actor->y.fixed = toFIXED(32);
+    actor->groundHeight = toFIXED(32);
+    actor->update = MadraCatacombs_RockChestWithBookshelf;
     Actor_GetById(ACTOR_BOOKSHELF)->scaleY = FIXED_ONE * 4 / 5;
   }
 }

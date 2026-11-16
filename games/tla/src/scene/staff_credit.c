@@ -618,14 +618,14 @@ s32 Scene_PrepareMap(void) { return 0; }
 #include "shared/world_map_objects.c"
 
 /// The ship's flicker and its sparks while it powers up (flight mode 1).
-void StaffCredit_FlashPoweringUp(struct Actor *object) {
+void StaffCredit_FlashPoweringUp(struct Actor *actor) {
   if ((gFrameCount & 2) != 0) {
-    Actor_SetSpriteColorMode(object, 7);
+    Actor_SetSpriteColorMode(actor, 7);
   } else {
-    Actor_SetSpriteColorMode(object, 0);
+    Actor_SetSpriteColorMode(actor, 0);
   }
   if ((gFrameCount & 15) == 0) {
-    WorldMap_SpawnSparkPair(object);
+    WorldMap_SpawnSparkPair(actor);
   }
 }
 
@@ -633,27 +633,27 @@ void StaffCredit_FlashPoweringUp(struct Actor *object) {
 extern s32 gStaffCredit_GlowColorStep;
 
 /// The ship's glow and its trail in flight (flight mode 2).
-void StaffCredit_GlowInFlight(struct Actor *object) {
+void StaffCredit_GlowInFlight(struct Actor *actor) {
   if (gFrameCount & 1) {
     Actor_SetSpriteColorMode(
-        object, gStaffCredit_GlowColorModes[gStaffCredit_GlowColorStep]);
+        actor, gStaffCredit_GlowColorModes[gStaffCredit_GlowColorStep]);
     gStaffCredit_GlowColorStep = (gStaffCredit_GlowColorStep + 1) & 3;
   }
   if (!(gFrameCount & 3)) {
-    WorldMap_SpawnParticle(object);
+    WorldMap_SpawnParticle(actor);
   }
 }
 
 /// Sets the ship's look by flight mode: 0 plain, 1 powering up, 2 in flight.
-void Actor_SetFlightMode(struct Actor *object, s32 mode) {
+void Actor_SetFlightMode(struct Actor *actor, s32 mode) {
   if (mode == 0) {
-    object->update = 0;
-    Actor_SetSpriteColorMode(object, 0);
+    actor->update = 0;
+    Actor_SetSpriteColorMode(actor, 0);
     Event_PlaySound(SOUND_FADE_OUT_ACTION_SE);
   } else if (mode == 1) {
-    object->update = (void (*)(void))StaffCredit_FlashPoweringUp;
+    actor->update = (void (*)(void))StaffCredit_FlashPoweringUp;
   } else {
-    object->update = (void (*)(void))StaffCredit_GlowInFlight;
+    actor->update = (void (*)(void))StaffCredit_GlowInFlight;
     Event_PlaySound(SE_TAKE_FLIGHT);
   }
 }
@@ -808,26 +808,26 @@ UNUSED void StaffCredit_ShowPicture(s32 mode) {
 
 /// Unused: an update that flashes an actor every other two frames and sends
 /// out a growing pair of sparks every sixteenth frame.
-UNUSED void StaffCredit_FlashAndEmit(struct Actor *object) {
+UNUSED void StaffCredit_FlashAndEmit(struct Actor *actor) {
   if ((gFrameCount & 2) != 0) {
-    Actor_SetSpriteColorMode(object, 7);
+    Actor_SetSpriteColorMode(actor, 7);
   } else {
-    Actor_SetSpriteColorMode(object, 0);
+    Actor_SetSpriteColorMode(actor, 0);
   }
   if ((gFrameCount & 15) == 0) {
-    StaffCredit_SpawnGrowingPair(object);
+    StaffCredit_SpawnGrowingPair(actor);
   }
 }
 
 /// Cycles an actor's colour mode, sending out a growing pair of sparks every
 /// sixteenth frame.
-void Actor_AnimateAndEmit(struct Actor *object) {
+void Actor_AnimateAndEmit(struct Actor *actor) {
   u32 frame = gFrameCount;
 
   if (frame & 1)
-    Actor_SetSpriteColorMode(object, (frame >> 1) % 6);
+    Actor_SetSpriteColorMode(actor, (frame >> 1) % 6);
   if ((gFrameCount & 15) == 0)
-    StaffCredit_SpawnGrowingPair(object);
+    StaffCredit_SpawnGrowingPair(actor);
 }
 
 #include "shared/actor_animate.h"

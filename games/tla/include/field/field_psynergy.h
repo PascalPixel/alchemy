@@ -23,7 +23,7 @@ struct ScatterWork {
   u8 tiles[4096];
   struct EffectSprite sprites[SCATTER_PARTICLE_COUNT];
   struct FieldPsynergyParticle particles[SCATTER_PARTICLE_COUNT];
-  struct Actor *object;
+  struct Actor *actor;
   s16 phase;
   s16 timer;
   s16 spawnCount;
@@ -152,7 +152,7 @@ struct DescendingArcSprite {
 /// gBattleEffect_ArcSparkTiles (field_effects.s).
 extern const u8 gFieldEffect_ArcSparkTiles[];
 
-void Actor_WaitForTrackEndFar(struct Actor *object);
+void Actor_WaitForTrackEndFar(struct Actor *actor);
 
 extern const s32 gArrow_WobbleAngles[8];
 extern const s32 gArrow_WobbleFades[4];

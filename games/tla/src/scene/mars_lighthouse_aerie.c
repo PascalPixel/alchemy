@@ -133,7 +133,7 @@ enum {
 struct Trigger;
 
 u32 Random16(void);
-void MarsLighthouseAerie_LookAround(struct Actor *object);
+void MarsLighthouseAerie_LookAround(struct Actor *actor);
 void MarsLighthouseAerie_StartTalkWhileHalted(s32 id);
 void MarsLighthouseAerie_EndTalkWhileHalted(s32 id);
 void Teleport_StartShimmer(void);
@@ -176,54 +176,54 @@ s32 List_CountEntries(u16 *list);
 void Map_CopyPalette(s32 scene, s32 a1);
 void FieldCamera_WaitForArrival();
 void Party_RestoreHpPp();
-void Weather_StartRain(struct Actor *object);
+void Weather_StartRain(struct Actor *actor);
 
 /// Each frame while waiting in the storm: now and then the actor looks
 /// another way.
-void MarsLighthouseAerie_LookAround(struct Actor *object) {
-  u8 *timer = &object->riseCounter;
+void MarsLighthouseAerie_LookAround(struct Actor *actor) {
+  u8 *timer = &actor->riseCounter;
 
   if (*timer != 0) {
     (*timer)--;
   } else {
     *timer = (Random_Below(80)) + 60;
-    object->facing = Random16();
+    actor->facing = Random16();
   }
 }
 
 /// The actor flickers: hidden for two frames, shown for two.
-void MarsLighthouseAerie_Flicker(struct Actor *object) {
+void MarsLighthouseAerie_Flicker(struct Actor *actor) {
   if ((gFrameCount >> 1) & 1)
-    FieldActor_SetSpriteColor(object, SPRITE_COLOR_HIDDEN);
+    FieldActor_SetSpriteColor(actor, SPRITE_COLOR_HIDDEN);
   else
-    FieldActor_SetSpriteColor(object, SPRITE_COLOR_NORMAL);
+    FieldActor_SetSpriteColor(actor, SPRITE_COLOR_NORMAL);
 }
 
 /// The actor swells now and then and shrinks back, as if breathing.
-void MarsLighthouseAerie_Throb(struct Actor *object) {
+void MarsLighthouseAerie_Throb(struct Actor *actor) {
   u8 *timer;
-  s32 scale = object->scaleX;
+  s32 scale = actor->scaleX;
 
   if (scale > FIXED_ONE) {
-    object->scaleX = scale - FIXED_ONE / 32;
-    object->scaleY -= FIXED_ONE / 64;
+    actor->scaleX = scale - FIXED_ONE / 32;
+    actor->scaleY -= FIXED_ONE / 64;
   }
-  timer = &object->riseCounter;
+  timer = &actor->riseCounter;
   if (*timer != 0) {
     (*timer)--;
   } else {
     u32 r = Random16();
 
     *timer = *timer + ((((r << 2) + r) * 16) >> 16) + 40;
-    object->scaleX = FIXED_ONE * 9 / 8;
-    object->scaleY = FIXED_ONE * 17 / 16;
+    actor->scaleX = FIXED_ONE * 9 / 8;
+    actor->scaleY = FIXED_ONE * 17 / 16;
   }
 }
 
 /// A spark of the beacon's fire circles it as it rises.
-void MarsLighthouseAerie_OrbitBeaconFire(struct Actor *object) {
+void MarsLighthouseAerie_OrbitBeaconFire(struct Actor *actor) {
   struct Actor *anchor = Actor_GetById(ACTOR_BEACON_FIRE);
-  u16 *pangle = (u16 *)&object->timer;
+  u16 *pangle = (u16 *)&actor->timer;
   s32 angle = *pangle;
   FIXED cosine;
   FIXED sine;
@@ -232,20 +232,20 @@ void MarsLighthouseAerie_OrbitBeaconFire(struct Actor *object) {
   u8 *counter;
 
   cosine = Trig_Cos(angle);
-  counter = &object->riseCounter;
+  counter = &actor->riseCounter;
   {
-    s32 radius = object->speedLimit + *counter;
+    s32 radius = actor->speedLimit + *counter;
     struct Actor *a;
 
     a = anchor;
     along = a->x.fixed + cosine * (radius + 6);
   }
-  object->x.fixed = along;
+  actor->x.fixed = along;
   sine = Math_Sin(angle);
   across = anchor->z.fixed + sine * (*counter + 4);
-  object->z.fixed = across;
-  object->targetX = object->x.fixed;
-  object->targetZ = across;
+  actor->z.fixed = across;
+  actor->targetX = actor->x.fixed;
+  actor->targetZ = across;
   *pangle -= 0x800;
 }
 
@@ -281,13 +281,13 @@ extern s16 gMarsLighthouseAerie_FadeColorsFrom[];
 extern s16 gMarsLighthouseAerie_FadeColorsTo[];
 extern u32 gMarsLighthouseAerie_FadeOrder[];
 
-void Actor_SetSpriteColorMode(struct Actor *object, s32 value);
+void Actor_SetSpriteColorMode(struct Actor *actor, s32 value);
 void Palette_SetColorsFade(u16 *slots, u16 *colours, u16 *a, u16 *b);
 void MarsLighthouseAerie_SpawnBeaconFlames(void);
 
 /// The beacon's colours and its fire, burning once the beacon is lit.
 void MarsLighthouseAerie_SetUpBeacon(void) {
-  struct Actor *object;
+  struct Actor *actor;
   s32 i;
 
   Palette_SetColorsFade(
@@ -295,9 +295,9 @@ void MarsLighthouseAerie_SetUpBeacon(void) {
       gMarsLighthouseAerie_FadeColorsTo, gMarsLighthouseAerie_FadeOrder);
   Actor_Get(gMainRoutineWork.leaderActorId)->priorityFlags |= 0x40;
   for (i = 10; i <= 16; i++) {
-    object = Actor_Get(i);
-    object->priorityFlags |= 0x80;
-    Actor_SetSpriteColorMode(object, 5);
+    actor = Actor_Get(i);
+    actor->priorityFlags |= 0x80;
+    Actor_SetSpriteColorMode(actor, 5);
   }
   if (!Event_GetFlag(FLAG_MARS_BEACON_BURNING))
     return;
@@ -305,23 +305,23 @@ void MarsLighthouseAerie_SetUpBeacon(void) {
   Actor_SetPosition(ACTOR_BEACON_GLOW, 512, 271);
   System_Wait(1);
   FieldActor_SetSpritePriority(ACTOR_BEACON_FIRE, 1);
-  object = Actor_Get(ACTOR_BEACON_FIRE);
-  object->motionFlags = ACTOR_FLOATS;
-  object->y.fixed = toFIXED(112);
-  Actor_SetSpriteColorMode(object, 5);
-  Actor_SetSpriteFlags(object, 0);
-  object->priorityFlags |= ACTOR_PRIORITY_IGNORES_RISES;
+  actor = Actor_Get(ACTOR_BEACON_FIRE);
+  actor->motionFlags = ACTOR_FLOATS;
+  actor->y.fixed = toFIXED(112);
+  Actor_SetSpriteColorMode(actor, 5);
+  Actor_SetSpriteFlags(actor, 0);
+  actor->priorityFlags |= ACTOR_PRIORITY_IGNORES_RISES;
   FieldActor_SetSpritePriority(ACTOR_BEACON_GLOW, 2);
-  object = Actor_Get(ACTOR_BEACON_GLOW);
-  object->motionFlags = ACTOR_FLOATS;
-  object->y.fixed = toFIXED(112);
-  object->scaleX = FIXED_ONE * 13 / 10;
-  object->scaleY = FIXED_ONE * 13 / 10;
-  Actor_SetSpriteColorMode(object, 5);
-  Actor_SetSpriteFlags(object, 0);
-  object->priorityFlags |= ACTOR_PRIORITY_IGNORES_RISES;
-  object->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
-  Actor_SetBlendMode(object, 1);
+  actor = Actor_Get(ACTOR_BEACON_GLOW);
+  actor->motionFlags = ACTOR_FLOATS;
+  actor->y.fixed = toFIXED(112);
+  actor->scaleX = FIXED_ONE * 13 / 10;
+  actor->scaleY = FIXED_ONE * 13 / 10;
+  Actor_SetSpriteColorMode(actor, 5);
+  Actor_SetSpriteFlags(actor, 0);
+  actor->priorityFlags |= ACTOR_PRIORITY_IGNORES_RISES;
+  actor->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
+  Actor_SetBlendMode(actor, 1);
   gMarsLighthouseAerie_BeaconFlameFrame = 0;
   FieldTask_AddFrame(MarsLighthouseAerie_SpawnBeaconFlames, TASK_PASS_VBLANK);
 }
@@ -379,36 +379,36 @@ s32 Scene_PrepareMap(void) {
 
 extern s32 gMarsLighthouseAerie_BeaconFlameScript[];
 
-void Actor_StartScript(struct Actor *object, const u8 *script);
-void MarsLighthouseAerie_SwingBeaconFlame(struct Actor *object);
+void Actor_StartScript(struct Actor *actor, const u8 *script);
+void MarsLighthouseAerie_SwingBeaconFlame(struct Actor *actor);
 
 /// Every sixteenth frame a flame rises from the beacon's fire.
 void MarsLighthouseAerie_SpawnBeaconFlames(void) {
   struct Actor *anchor = Actor_Get(ACTOR_BEACON_FIRE);
   FIXED offset = (Random_Below(48)) << 16;
-  struct Actor *object;
+  struct Actor *actor;
   struct MarsLighthouseAerieSprite *sprite;
   u32 phase;
   s32 angle;
 
   if (anchor != NULL &&
       (phase = gMarsLighthouseAerie_BeaconFlameFrame & 15) == 0) {
-    object = FieldActor_Create(SPRITE_PARTICLE, anchor->x.fixed + toFIXED(8),
-                               anchor->y.fixed + offset + toFIXED(8),
-                               anchor->z.fixed);
+    actor = FieldActor_Create(SPRITE_PARTICLE, anchor->x.fixed + toFIXED(8),
+                              anchor->y.fixed + offset + toFIXED(8),
+                              anchor->z.fixed);
     offset = (offset / toFIXED(6)) << 16;
-    if (object != NULL) {
+    if (actor != NULL) {
 
-      sprite = object->sprite;
-      Actor_StartScript(object, gMarsLighthouseAerie_BeaconFlameScript);
-      FieldActor_SetSpriteColor(object, SPRITE_COLOR_RED_TINT);
-      object->motionFlags = phase;
+      sprite = actor->sprite;
+      Actor_StartScript(actor, gMarsLighthouseAerie_BeaconFlameScript);
+      FieldActor_SetSpriteColor(actor, SPRITE_COLOR_RED_TINT);
+      actor->motionFlags = phase;
       angle = Random16() & 0xffff000;
-      object->timer = angle;
-      object->userValue = phase;
-      object->update = MarsLighthouseAerie_SwingBeaconFlame;
-      object->watchedActor = anchor;
-      object->speedLimit = Math_Sin((offset & 0xfffff) >> 4) * 24 >> 16;
+      actor->timer = angle;
+      actor->userValue = phase;
+      actor->update = MarsLighthouseAerie_SwingBeaconFlame;
+      actor->watchedActor = anchor;
+      actor->speedLimit = Math_Sin((offset & 0xfffff) >> 4) * 24 >> 16;
       ((u8 *)sprite)[26] = 0;
       sprite->priority =
           ((struct MarsLighthouseAerieSprite *)anchor->sprite)->priority;
@@ -418,30 +418,29 @@ void MarsLighthouseAerie_SpawnBeaconFlames(void) {
 }
 
 /// A flame swings round the beacon's fire, behind it and then in front.
-void MarsLighthouseAerie_SwingBeaconFlame(struct Actor *object) {
-  u16 *pangle = (u16 *)&object->timer;
+void MarsLighthouseAerie_SwingBeaconFlame(struct Actor *actor) {
+  u16 *pangle = (u16 *)&actor->timer;
   u16 angle = *pangle;
-  struct Actor *parent = object->watchedActor;
+  struct Actor *parent = actor->watchedActor;
 
-  object->x.fixed =
-      parent->x.fixed + Trig_Cos(angle) * (object->speedLimit + 28);
-  object->z.fixed = (Math_Sin(angle) << 4) + toFIXED(264);
-  object->targetX = object->x.fixed;
-  object->targetZ = object->z.fixed;
-  if (object->z.fixed < toFIXED(264))
-    ((struct FieldSprite *)object->sprite)->priority = 2;
+  actor->x.fixed = parent->x.fixed + Trig_Cos(angle) * (actor->speedLimit + 28);
+  actor->z.fixed = (Math_Sin(angle) << 4) + toFIXED(264);
+  actor->targetX = actor->x.fixed;
+  actor->targetZ = actor->z.fixed;
+  if (actor->z.fixed < toFIXED(264))
+    ((struct FieldSprite *)actor->sprite)->priority = 2;
   else
-    ((struct FieldSprite *)object->sprite)->priority = 1;
+    ((struct FieldSprite *)actor->sprite)->priority = 1;
   *pangle -= 0x200;
 }
 
 /// The actor stands looking about.
 void MarsLighthouseAerie_StartLookingAround(s32 id) {
-  struct Actor *object = Actor_Get(id);
+  struct Actor *actor = Actor_Get(id);
 
   FieldActor_Stop(id);
-  object->riseCounter = (Random_Below(40)) + 20;
-  object->update = (void (*)(void))MarsLighthouseAerie_LookAround;
+  actor->riseCounter = (Random_Below(40)) + 20;
+  actor->update = (void (*)(void))MarsLighthouseAerie_LookAround;
 }
 
 /// The actor stops looking about and faces the beacon.
@@ -1212,22 +1211,22 @@ void MarsLighthouseAerie_FaceDoomDragon(void) {
 }
 
 /// The Doom Dragon's parts flicker white, ever faster.
-void MarsLighthouseAerie_FlickerDragon(struct Actor *object) {
+void MarsLighthouseAerie_FlickerDragon(struct Actor *actor) {
   if ((gMarsLighthouseAerie_FlickerFrame >> gMarsLighthouseAerie_FlickerRate) &
       1)
-    FieldActor_SetSpriteColor(object, SPRITE_COLOR_HIDDEN);
+    FieldActor_SetSpriteColor(actor, SPRITE_COLOR_HIDDEN);
   else
-    FieldActor_SetSpriteColor(object, SPRITE_COLOR_NORMAL);
+    FieldActor_SetSpriteColor(actor, SPRITE_COLOR_NORMAL);
   gMarsLighthouseAerie_FlickerFrame++;
 }
 
 /// The three it was flicker white out of step with the dragon.
-void MarsLighthouseAerie_FlickerParent(struct Actor *object) {
+void MarsLighthouseAerie_FlickerParent(struct Actor *actor) {
   if ((gMarsLighthouseAerie_FlickerFrame >> gMarsLighthouseAerie_FlickerRate) &
       1)
-    FieldActor_SetSpriteColor(object, SPRITE_COLOR_NORMAL);
+    FieldActor_SetSpriteColor(actor, SPRITE_COLOR_NORMAL);
   else
-    FieldActor_SetSpriteColor(object, SPRITE_COLOR_HIDDEN);
+    FieldActor_SetSpriteColor(actor, SPRITE_COLOR_HIDDEN);
 }
 
 extern u32 gMarsLighthouseAerie_ShebaToBodiesScript[];
@@ -1560,10 +1559,10 @@ void MarsLighthouseAerie_FindWhoTheDragonWas(void) {
 
 /// The actor stands where the party will pass, no longer in the way.
 void MarsLighthouseAerie_StandAside(s32 id) {
-  struct Actor *object = Actor_Get(id);
+  struct Actor *actor = Actor_Get(id);
 
-  object->collisionFlags = 0;
-  object->motionFlags = 0;
+  actor->collisionFlags = 0;
+  actor->motionFlags = 0;
   FieldActor_SetSpritePriority(id, 1);
 }
 
@@ -1887,14 +1886,14 @@ void Teleport_PlayWhirl(void);
 
 extern s32 gMarsLighthouseAerie_BeaconFireScript[];
 
-void Actor_StartScript(struct Actor *object, const u8 *script);
+void Actor_StartScript(struct Actor *actor, const u8 *script);
 
 /// The beacon's fire: a flash and a quake, then it falls from above into the
 /// beacon with glittering sparks.
 void MarsLighthouseAerie_RaiseBeaconFire(void) {
   struct Actor *anchor = Actor_GetById(ACTOR_BEACON_FIRE);
   s32 spawn = 0;
-  struct Actor *object;
+  struct Actor *actor;
   struct MarsLighthouseAerieSprite *sprite;
   s32 angle;
   u8 phase;
@@ -1950,25 +1949,25 @@ void MarsLighthouseAerie_RaiseBeaconFire(void) {
     break;
   }
   if (spawn) {
-    object = FieldActor_Create(SPRITE_PARTICLE, anchor->x.fixed,
-                               anchor->y.fixed - ((Random_Below(80)) << 16) -
-                                   0x80000,
-                               anchor->z.fixed);
-    if (object != NULL) {
+    actor = FieldActor_Create(SPRITE_PARTICLE, anchor->x.fixed,
+                              anchor->y.fixed - ((Random_Below(80)) << 16) -
+                                  0x80000,
+                              anchor->z.fixed);
+    if (actor != NULL) {
       s32 mask;
 
-      sprite = object->sprite;
-      Actor_StartScript(object, gMarsLighthouseAerie_BeaconSparkScript);
-      FieldActor_SetSpriteColor(object, SPRITE_COLOR_GRB);
-      object->motionFlags = 0;
+      sprite = actor->sprite;
+      Actor_StartScript(actor, gMarsLighthouseAerie_BeaconSparkScript);
+      FieldActor_SetSpriteColor(actor, SPRITE_COLOR_GRB);
+      actor->motionFlags = 0;
       angle = Random16() & 0xffff000;
-      object->timer = angle;
-      object->userValue = 0;
+      actor->timer = angle;
+      actor->userValue = 0;
       phase = Random16() >> 13;
-      object->riseCounter = phase;
-      object->update = MarsLighthouseAerie_OrbitBeaconFire;
-      object->speedLimit = Math_Sin(Random16() * 0xffff >> 20) * 24;
-      object->speedLimit = anchor->speedLimit >> 16;
+      actor->riseCounter = phase;
+      actor->update = MarsLighthouseAerie_OrbitBeaconFire;
+      actor->speedLimit = Math_Sin(Random16() * 0xffff >> 20) * 24;
+      actor->speedLimit = anchor->speedLimit >> 16;
       sprite->nextFrame = 0;
       mask = -13;
       ((u8 *)sprite)[9] = (((u8 *)sprite)[9] & mask) | 4;
@@ -1981,22 +1980,22 @@ void MarsLighthouseAerie_RaiseBeaconFire(void) {
 
 /// The actor steps back from the beam, to the left.
 void MarsLighthouseAerie_StepBackLeft(s32 id) {
-  struct Actor *object = Actor_Get(id);
+  struct Actor *actor = Actor_Get(id);
 
   FieldActor_SetSpritePriority(id, 1);
-  FieldActor_SetPositionAndResetMotion(object, object->x.fixed - toFIXED(16),
-                                       object->y.fixed,
-                                       object->z.fixed + toFIXED(32));
+  FieldActor_SetPositionAndResetMotion(actor, actor->x.fixed - toFIXED(16),
+                                       actor->y.fixed,
+                                       actor->z.fixed + toFIXED(32));
 }
 
 /// The actor steps back from the beam, to the right.
 void MarsLighthouseAerie_StepBackRight(s32 id) {
-  struct Actor *object = Actor_Get(id);
+  struct Actor *actor = Actor_Get(id);
 
   FieldActor_SetSpritePriority(id, 1);
-  FieldActor_SetPositionAndResetMotion(object, object->x.fixed + toFIXED(16),
-                                       object->y.fixed,
-                                       object->z.fixed + toFIXED(32));
+  FieldActor_SetPositionAndResetMotion(actor, actor->x.fixed + toFIXED(16),
+                                       actor->y.fixed,
+                                       actor->z.fixed + toFIXED(32));
 }
 
 /// The actor keeps to the ground as the beacon's beam rises.
@@ -2863,16 +2862,16 @@ void MarsLighthouseAerie_TalkToJennasFather(void) {
 /// From patch 1: Halt on one of the three holds the speaker beside them.
 void MarsLighthouseAerie_HaltSpeaker(s32 spot, s32 speaker) {
   struct Actor *found = Actor_Get(spot);
-  struct Actor *object;
+  struct Actor *actor;
   struct Actor *target;
   struct MainRoutineWork *party = &gMainRoutineWork;
 
   party->pausedPose = 0;
-  object = found;
+  actor = found;
   party->haltedActor = speaker;
   target = Actor_Get(speaker);
-  target->update = object->update;
-  object->update = NULL;
+  target->update = actor->update;
+  actor->update = NULL;
 }
 #endif
 
@@ -2904,32 +2903,32 @@ void MarsLighthouseAerie_HaltJennasFather(void) {
 
 #include "shared/teleport_shimmer.c"
 
-void Actor_SetSpriteColorMode(struct Actor *object, s32 value);
+void Actor_SetSpriteColorMode(struct Actor *actor, s32 value);
 
 /// Rings of light rise round the actor, two at a time, until told to end.
-void MarsLighthouseAerie_UpdateRisingRings(struct Actor *object) {
+void MarsLighthouseAerie_UpdateRisingRings(struct Actor *actor) {
   struct Vector3 position;
   s32 x, z;
   FIXED sine;
   s32 i, j;
-  struct SparkleWork *work = (struct SparkleWork *)object->watchedActor;
-  u8 *count = &object->riseEnabled;
+  struct SparkleWork *work = (struct SparkleWork *)actor->watchedActor;
+  u8 *count = &actor->riseEnabled;
   struct EffectSprite *sprite;
 
   if (*count & 1)
     Actor_SetSpriteColorMode(
-        object, (u8)((u32)((struct CounterBits *)count)->rest % 6));
-  if (object->riseCounter == 0) {
+        actor, (u8)((u32)((struct CounterBits *)count)->rest % 6));
+  if (actor->riseCounter == 0) {
     if ((*count & 15) == 0) {
       Event_PlaySound(SE_RISING_RINGS);
       work->heights[work->nextPair] = 0;
       work->nextPair ^= 1;
     }
-  } else if (object->riseCounter == 1) {
+  } else if (actor->riseCounter == 1) {
     if (work->heights[0] > 31 && work->heights[1] > 31) {
-      Actor_SetSpriteColorMode(object, 0);
+      Actor_SetSpriteColorMode(actor, 0);
       VramCache_FreeEntry(work->vramEntry);
-      object->update = NULL;
+      actor->update = NULL;
       return;
     }
   }
@@ -2940,9 +2939,9 @@ void MarsLighthouseAerie_UpdateRisingRings(struct Actor *object) {
       if (work->heights[i] <= 31) {
         struct Vector3 *p = &position;
 
-        p->x = object->x.fixed;
-        p->y = object->y.fixed + (work->heights[i] << 16);
-        p->z = object->z.fixed;
+        p->x = actor->x.fixed;
+        p->y = actor->y.fixed + (work->heights[i] << 16);
+        p->z = actor->z.fixed;
         Camera_WorldToScreen(p);
         x = p->x;
         j = 0;
@@ -2954,9 +2953,9 @@ void MarsLighthouseAerie_UpdateRisingRings(struct Actor *object) {
           sprite->scaleX = sine;
           sprite->scaleY = sine;
           if (j == 0) {
-            sprite->depth = BattleEffect_GetObjectDepth(object) - 1;
+            sprite->depth = BattleEffect_GetObjectDepth(actor) - 1;
           } else {
-            sprite->depth = BattleEffect_GetObjectDepth(object) + 1;
+            sprite->depth = BattleEffect_GetObjectDepth(actor) + 1;
             sprite->y -= toFIXED(1);
             sprite->scaleY = -sprite->scaleY;
           }
@@ -2971,7 +2970,7 @@ void MarsLighthouseAerie_UpdateRisingRings(struct Actor *object) {
 #undef A
 
 /// Rings of light begin to rise round the actor.
-void MarsLighthouseAerie_StartRisingRings(struct Actor *object,
+void MarsLighthouseAerie_StartRisingRings(struct Actor *actor,
                                           struct SparkleWork *work) {
   struct EffectSprite *sprite;
   s32 tile;
@@ -2984,12 +2983,12 @@ void MarsLighthouseAerie_StartRisingRings(struct Actor *object,
   work->nextPair = 0;
   work->heights[0] = 999;
   work->heights[1] = 999;
-  work->object = object;
-  object->riseCounter = 0;
-  object->riseEnabled = 0;
-  object->update = MarsLighthouseAerie_UpdateRisingRings;
+  work->actor = actor;
+  actor->riseCounter = 0;
+  actor->riseEnabled = 0;
+  actor->update = MarsLighthouseAerie_UpdateRisingRings;
   tile = gVramCacheEntries[work->vramEntry].offset >> 5;
-  object->watchedActor = (struct Actor *)work;
+  actor->watchedActor = (struct Actor *)work;
   for (row = 0; row <= 1; row++) {
     col = 1;
     offset = (row * 2) * sizeof(struct EffectSprite);
@@ -2998,15 +2997,15 @@ void MarsLighthouseAerie_StartRisingRings(struct Actor *object,
       EffectSprite_Init(sprite, 16, 16, OBJ_SIZE_32X16, tile);
       sprite->oam.fullColor = 0;
       sprite->oam.palette = 0;
-      sprite->oam.priority = BattleEffect_GetObjectPriority(object);
+      sprite->oam.priority = BattleEffect_GetObjectPriority(actor);
       sprite++;
     }
   }
 }
 
 /// The rings round the actor rise out and stop.
-void MarsLighthouseAerie_EndRisingRings(struct Actor *object) {
-  object->riseCounter = 1;
+void MarsLighthouseAerie_EndRisingRings(struct Actor *actor) {
+  actor->riseCounter = 1;
 }
 
 void Scene_LeaveByExit(void);

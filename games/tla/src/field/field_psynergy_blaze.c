@@ -32,10 +32,10 @@ void FieldPsynergy_Blaze(void) {
   struct FieldWork *event;
   struct FieldEffectWork *scene;
   struct Actor *caster;
-  struct Actor *object;
+  struct Actor *actor;
   struct EffectSprite *sprite;
   union {
-    struct Actor *object;
+    struct Actor *actor;
     struct FieldPsynergyParticle *particle;
   } cursor;
   void *pending;
@@ -60,9 +60,9 @@ void FieldPsynergy_Blaze(void) {
   event = Ram_HeapSlots->fieldWork;
   caster = scene->mainActor;
   look = 0;
-  object = scene->child;
-  if (Actor_GetSpriteIdFar(object) == SPRITE_MARS_TORCH_LIT) {
-    kind = ACTOR_FIRST_LAYER(object)->colorMode;
+  actor = scene->child;
+  if (Actor_GetSpriteIdFar(actor) == SPRITE_MARS_TORCH_LIT) {
+    kind = ACTOR_FIRST_LAYER(actor)->colorMode;
     if (kind == 4)
       look = 1;
     if (kind == 1)
@@ -78,22 +78,22 @@ void FieldPsynergy_Blaze(void) {
     work->origin[2] = scene->z;
     best = 9999;
     for (i = 0; i < FIELD_ACTOR_COUNT; i++) {
-      cursor.object = event->actors[i];
-      id = ACTOR_FIRST_LAYER(cursor.object)->animationId;
-      if (cursor.object != NULL && cursor.object->script != NULL &&
+      cursor.actor = event->actors[i];
+      id = ACTOR_FIRST_LAYER(cursor.actor)->animationId;
+      if (cursor.actor != NULL && cursor.actor->script != NULL &&
           (id == 410 || id == 304 || id == 386 || id == 418)) {
         distance = Field_MeasurePsynergyReach(scene->fieldPsynergy,
                                               scene->firstActorId, i);
         if (distance != -1 && best > distance) {
           height = toFIXED((s8)Resource_GetMetadataRecordFarFar(
-                               ACTOR_FIRST_LAYER(cursor.object)->animationId)
+                               ACTOR_FIRST_LAYER(cursor.actor)->animationId)
                                ->boxX);
           work->mode = BLAZE_LIGHT_TORCH;
-          work->origin[0] = cursor.object->x.fixed;
-          work->origin[1] = cursor.object->y.fixed + height;
-          work->origin[2] = cursor.object->z.fixed;
+          work->origin[0] = cursor.actor->x.fixed;
+          work->origin[1] = cursor.actor->y.fixed + height;
+          work->origin[2] = cursor.actor->z.fixed;
           scene->secondActorId = i;
-          scene->child = cursor.object;
+          scene->child = cursor.actor;
           best = distance;
         }
       }
@@ -119,16 +119,16 @@ void FieldPsynergy_Blaze(void) {
     pos[0] = work->origin[0];
     pos[1] = work->origin[1];
     pos[2] = work->origin[2];
-    object = Actor_Spawn(SPRITE_BLAZE_FLAME, pos[0], pos[1], pos[2]);
-    if (object == NULL)
+    actor = Actor_Spawn(SPRITE_BLAZE_FLAME, pos[0], pos[1], pos[2]);
+    if (actor == NULL)
       goto end;
-    object->motionFlags = 0;
-    object->scaleX = FIXED_ONE * 5 / 4;
-    object->scaleY = FIXED_ONE * 5 / 4;
-    Actor_SelectAnimationFar(object, 2);
+    actor->motionFlags = 0;
+    actor->scaleX = FIXED_ONE * 5 / 4;
+    actor->scaleY = FIXED_ONE * 5 / 4;
+    Actor_SelectAnimationFar(actor, 2);
     Sound_PlayFar(SE_SOL_SANCTUM_LIGHT_UP);
     wait(50);
-    Actor_ReleaseFar(object);
+    Actor_ReleaseFar(actor);
     wait(10);
     goto end;
   }
@@ -136,14 +136,14 @@ void FieldPsynergy_Blaze(void) {
     pos[0] = work->origin[0];
     pos[1] = work->origin[1];
     pos[2] = work->origin[2];
-    object = Actor_Spawn(SPRITE_BLAZE_FLICKER, pos[0], pos[1], pos[2]);
-    if (object == NULL)
+    actor = Actor_Spawn(SPRITE_BLAZE_FLICKER, pos[0], pos[1], pos[2]);
+    if (actor == NULL)
       goto end;
-    object->motionFlags = mode;
-    Actor_SelectAnimationFar(object, 2);
+    actor->motionFlags = mode;
+    Actor_SelectAnimationFar(actor, 2);
     Sound_PlayFar(SE_SOL_SANCTUM_LIGHT_UP);
     wait(45);
-    Actor_ReleaseFar(object);
+    Actor_ReleaseFar(actor);
     wait(10);
     goto end;
   }
@@ -256,7 +256,7 @@ s32 MapGrid_CheckCollisionAtFar(s32 x, s32 z, s32 layer, s32 height);
 /// Says whether object is blocked: 1 when, outside event mode 3,
 /// MapGrid_CheckCollisionAtFar reports its cell, ORed with 2 when it overlaps
 /// any other collidable script object (each radius less 2 pixels).
-s32 Actor_CheckBlocked(struct Actor *object) {
+s32 Actor_CheckBlocked(struct Actor *actor) {
   s32 result;
   struct Actor *other;
   s32 i;
@@ -264,15 +264,15 @@ s32 Actor_CheckBlocked(struct Actor *object) {
   struct FieldWork *work = Ram_HeapSlots->fieldWork;
   result = 0;
   if (work->mode != EVENT_MODE_NO_CELL_TEST) {
-    if (MapGrid_CheckCollisionAtFar(object->x.fixed, object->z.fixed, 0,
-                                    object->groundHeight) != 0)
+    if (MapGrid_CheckCollisionAtFar(actor->x.fixed, actor->z.fixed, 0,
+                                    actor->groundHeight) != 0)
       result = 1;
   }
   other = Ram_HeapSlots->actors;
   for (i = SCRIPT_OBJECT_COUNT - 1; i >= 0; i--, other++) {
     if (other->script != NULL && (other->collisionFlags & ACTOR_SOLID) &&
-        other != object) {
-      if (Field_CheckSpheresOverlapFar(&object->x.fixed, object->radius - 2,
+        other != actor) {
+      if (Field_CheckSpheresOverlapFar(&actor->x.fixed, actor->radius - 2,
                                        &other->x.fixed, other->radius - 2) >= 0)
         result |= 2;
     }

@@ -39,7 +39,7 @@ Tileset_LemuriaSpringPalette:
 	.global Tileset_LemuriaSpringTilesA
 Tileset_LemuriaSpringTilesA:
 	.incbin "games/tla/src/graphics/tileset/lemuria_spring/tiles_a.4bpp.mtf"
-	.byte 0xd5, 0x83	@ PACKER: left in the buffer by Tileset_LemuriaInteriorsTilesA+0x1b0a
+	.byte 0xd5, 0x83	@ PACKER: left in the buffer by Tileset_LemuriaRoomsTilesA+0x1b0a
 	.global Tileset_LemuriaSpringTilesB
 Tileset_LemuriaSpringTilesB:
 	.incbin "games/tla/src/graphics/tileset/lemuria_spring/tiles_b.4bpp.mtf"

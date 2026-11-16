@@ -63,8 +63,8 @@ void BattleEffect_RunEclipse(struct BattleEffectParams *args) {
   s32 scroll;
   FIXED baseX;
   FIXED baseY;
-  s32 velX;
-  s32 velY;
+  s32 velocityX;
+  s32 velocityY;
   FIXED cx;
   FIXED cy;
   u32 u;
@@ -147,8 +147,8 @@ void BattleEffect_RunEclipse(struct BattleEffectParams *args) {
   REG_BG2X = 0;
   baseX = 0;
   baseY = 0;
-  velX = 0;
-  velY = 0;
+  velocityX = 0;
+  velocityY = 0;
   EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, BLITTER_MAX);
   blit[0] = Ram_HeapSlots->ramCode;
@@ -165,8 +165,8 @@ void BattleEffect_RunEclipse(struct BattleEffectParams *args) {
       if (frame == 0) {
         baseX = -toFIXED(48);
         baseY = toFIXED(212);
-        velX = toFIXED(4);
-        velY = -toFIXED(10);
+        velocityX = toFIXED(4);
+        velocityY = -toFIXED(10);
         work->fadeFrames = 1;
         work->fadeStep = frame;
         ECLIPSE_ORB.variant = frame;
@@ -201,23 +201,23 @@ void BattleEffect_RunEclipse(struct BattleEffectParams *args) {
       req = gEclipse_Scales;
       place[3] = 0;
       place[1] = toFIXED(255);
-      baseX += velX;
-      baseY += velY;
+      baseX += velocityX;
+      baseY += velocityY;
       if (frame > 171) {
         if (frame > 183) {
-          velX += -0x200;
-          velY += 0x400;
+          velocityX += -0x200;
+          velocityY += 0x400;
         }
         if (frame <= 205) {
-          velX = velX * 54 / DAMPING_SCALE;
-          velY = velY * 54 / DAMPING_SCALE;
+          velocityX = velocityX * 54 / DAMPING_SCALE;
+          velocityY = velocityY * 54 / DAMPING_SCALE;
         }
       } else {
-        if (velY < 0) {
-          velY += toFIXED(1) / 4;
+        if (velocityY < 0) {
+          velocityY += toFIXED(1) / 4;
         }
-        if (velX > 0) {
-          velX += -toFIXED(1) / 8;
+        if (velocityX > 0) {
+          velocityX += -toFIXED(1) / 8;
         }
         if (frame > 31) {
           baseY += Trig_Sin((frame - 32) << 9) << 2 >> 4;
@@ -258,8 +258,8 @@ void BattleEffect_RunEclipse(struct BattleEffectParams *args) {
           if (frame == 172) {
             ECLIPSE_ORB.variant = 64;
             BattleEffect_DrawShadedCircles(work->sheet, 128, FIXED_ONE);
-            velX = toFIXED(3);
-            velY = -toFIXED(3);
+            velocityX = toFIXED(3);
+            velocityY = -toFIXED(3);
           }
           if (frame > 203 && ECLIPSE_ORB.variant > 1) {
             ECLIPSE_ORB.variant -= 4;
@@ -270,8 +270,8 @@ void BattleEffect_RunEclipse(struct BattleEffectParams *args) {
                                            FIXED_ONE);
           }
         } else if (frame > 135) {
-          velX += -toFIXED(1) / 32;
-          velY += toFIXED(1) / 32;
+          velocityX += -toFIXED(1) / 32;
+          velocityY += toFIXED(1) / 32;
           if (++ECLIPSE_ORB.variant <= 32) {
             BattleEffect_DrawShadedCircles(work->sheet, ECLIPSE_ORB.variant * 2,
                                            FIXED_ONE);

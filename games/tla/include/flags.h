@@ -84,6 +84,10 @@
 /// one (a random battle clears it, so the scene's own music plays).
 /// FieldSequence_Run clears it once the scene starts.
 #define FLAG_KEEP_PARTY_POSITION 0x109
+/// Sunshine the blacksmith forges for the party: Yallam sets it while the party
+/// carries a rusty weapon or a forging material, and keeps it while he works
+/// or his wife holds what he made.
+#define FLAG_FORGE_OPEN 0x10f
 /// The next scene keeps the music that is playing; main_routine.c clears
 /// FLAG_KEEP_MUSIC_ONCE as it does, and leaves FLAG_KEEP_MUSIC_HELD set.
 #define FLAG_KEEP_MUSIC_ONCE 0x11a
@@ -1060,6 +1064,11 @@
 #define FLAG_YAMPI_DESERT_ENTERED_BY_GUARDIAN_RING_CHEST 0xa29
 #define FLAG_YAMPI_DESERT_ENTERED_BY_TRAINERS_WHIP_CHEST 0xa2a
 #define FLAG_YAMPI_DESERT_ENTERED_BY_MEDAL_SPOT 0xa2b
+/// Yallam's hidden Nut, uncovered with Cyclone, as The Broken Seal names its
+/// treasure flags.
+#define FLAG_YALLAM_NUT 0xf60
+/// Yallam's hidden Antidote, uncovered with Cyclone.
+#define FLAG_YALLAM_ANTIDOTE 0xf62
 /// Set in Madra as Karst comes in (Madra_MeetKarst) once flag 0x825 or 0x826
 /// is; the bandit and his two thieves then wait on the World Map, and their
 /// battle clears it.

@@ -51,6 +51,9 @@ enum MapGridLayerIndex {
 /// A cell of the overhead layer Hover holds the party up over
 /// (MapGrid_IsHoverCell).
 #define CELL_BEHAVIOR_HOVER 236
+/// Open ground, where nothing happens, as The Broken Seal's
+/// CELL_BEHAVIOR_NORMAL.
+#define CELL_BEHAVIOR_NORMAL 0
 
 /// One cell of a map layer: its cell picture and flags, its collision
 /// code and a second attribute byte.

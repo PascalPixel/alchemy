@@ -133,10 +133,10 @@ void BattleEffect_RunRagingHeat(struct BattleEffectParams *args) {
             if (particle->variant > 1) {
               draw[0](canvas,
                       work->sheet + RAGING_HEAT_FLASH_BURST_PICTURES +
-                          ((particle->variant / 4) << 11),
-                      FIXED_INTEGER_PART(particle->x) - 16,
-                      FIXED_INTEGER_PART(particle->y) - 32, FLASH_BURST_WIDTH,
-                      FLASH_BURST_HEIGHT);
+                          (particle->variant / 4) * PICTURE_BYTES(FLASH_BURST),
+                      FIXED_INTEGER_PART(particle->x) - FLASH_BURST_WIDTH / 2,
+                      FIXED_INTEGER_PART(particle->y) - FLASH_BURST_HEIGHT / 2,
+                      FLASH_BURST_WIDTH, FLASH_BURST_HEIGHT);
             }
             BattleEffectKernels_IntegrateVector2(particle, 60,
                                                  -toFIXED(1) / 16);
@@ -293,11 +293,11 @@ void BattleEffect_RunJuggle(struct BattleEffectParams *args) {
   Task_Add((s32)BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_FRAME);
   lift = 0;
   {
-    s32 *life = ((s32 *)(Ram_MapCellBuffer + 0x18));
+    s32 *life = &((struct Particle *)Ram_MapCellBuffer)->variant;
 
     for (i = 0; i != SPARK_COUNT; i++) {
       *life = -1;
-      life += 7;
+      life += sizeof(struct Particle) / sizeof(s32);
     }
   }
 
@@ -362,7 +362,7 @@ void BattleEffect_RunJuggle(struct BattleEffectParams *args) {
       y = ((s16 *)place)[3];
       place[1] = y + 64;
       blitters[gJuggle_Styles[args->variant][RING_BLITTER]](
-          canvas, work->sheet + cel * 1024, x + 56, y + 16, 16, 64);
+          canvas, work->sheet + cel * (16 * 64), x + 56, y + 16, 16, 64);
     }
 
     // The strike: sparks burst from every target.

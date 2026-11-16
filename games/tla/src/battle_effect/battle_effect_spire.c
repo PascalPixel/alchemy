@@ -9,12 +9,14 @@
 
 /// The shards live in the map cell buffer, 21 for each boulder.
 #define SHARDS ((struct Particle *)Ram_MapCellBuffer)
-#define SHARDS_PER_ROCK 21
+#define SPIRE_SHARDS 21 ///< shards per rock
 /// A boulder shatters this many frames after it starts to fall.
-#define FALL_FRAMES 18
+#define SPIRE_FALL_FRAMES 18
 
 #define SPIRE_ROCK_WIDTH 34  ///< the boulder picture, the first in the sheet
 #define SPIRE_ROCK_HEIGHT 62 ///< the boulder picture's height
+/// The shard pictures, after the boulder.
+#define SPIRE_SHARD_PICTURES (SPIRE_ROCK_WIDTH * SPIRE_ROCK_HEIGHT)
 
 /// Boulders drop along the row of targets, centred on it, and shatter into
 /// tumbling shards, hitting every target as each lands.
@@ -63,8 +65,8 @@ void BattleEffect_RunSpire(struct BattleEffectParams *args) {
     rock->velocityY = 0;
   }
   for (i = 0; i != rocks; i++) {
-    for (j = 0; j != SHARDS_PER_ROCK; j++) {
-      struct Particle *seed = &SHARDS[i * SHARDS_PER_ROCK + j];
+    for (j = 0; j != SPIRE_SHARDS; j++) {
+      struct Particle *seed = &SHARDS[i * SPIRE_SHARDS + j];
 
       seed->x = INTtoFIXED(gSpire_ShardOffsets[j * 2] + gSpire_RockX[i]);
       seed->y = INTtoFIXED(gSpire_ShardOffsets[j * 2 + 1]);
@@ -82,7 +84,7 @@ void BattleEffect_RunSpire(struct BattleEffectParams *args) {
     for (i = 0; i != rocks; i++) {
       rock = &work->particles[i];
       // The crash: the first one resumes the battle, the others sound.
-      if (frame == gSpire_DropFrames[i] + FALL_FRAMES) {
+      if (frame == gSpire_DropFrames[i] + SPIRE_FALL_FRAMES) {
         if (i == 0)
           EFFECT_SHOW_DAMAGE(SE_HEAVY_IMPACT);
         else
@@ -91,11 +93,12 @@ void BattleEffect_RunSpire(struct BattleEffectParams *args) {
       }
       // The shards fly, each tumbling through its kind's three cels more
       // slowly every other frame.
-      if (frame >= gSpire_DropFrames[i] + FALL_FRAMES) {
-        for (j = 0; j != SHARDS_PER_ROCK; j++) {
-          shard = &SHARDS[i * SHARDS_PER_ROCK + j];
+      if (frame >= gSpire_DropFrames[i] + SPIRE_FALL_FRAMES) {
+        for (j = 0; j != SPIRE_SHARDS; j++) {
+          shard = &SHARDS[i * SPIRE_SHARDS + j];
           cel = (j % 5) * 3 + shard->variant / 96 % 3;
-          blit(canvas, work->sheet + gSpire_ShardPictures[cel] + 0x83c,
+          blit(canvas,
+               work->sheet + gSpire_ShardPictures[cel] + SPIRE_SHARD_PICTURES,
                FIXED_INTEGER_PART(shard->x) -
                    ((width = gSpire_ShardWidths[cel]) >> 1),
                FIXED_INTEGER_PART(shard->y) -
@@ -110,7 +113,7 @@ void BattleEffect_RunSpire(struct BattleEffectParams *args) {
       }
       // Until then the boulder falls, a pixel a frame faster each frame,
       // and rests at y 50.
-      if (frame < gSpire_DropFrames[i] + FALL_FRAMES) {
+      if (frame < gSpire_DropFrames[i] + SPIRE_FALL_FRAMES) {
         if (frame >= gSpire_DropFrames[i])
           blit(canvas, work->sheet, gSpire_RockX[i] + 47,
                FIXED_INTEGER_PART(rock->y), SPIRE_ROCK_WIDTH,
@@ -122,7 +125,7 @@ void BattleEffect_RunSpire(struct BattleEffectParams *args) {
           rock->y = toFIXED(50);
       }
       // Every target flashes for eight frames at each crash.
-      if (frame == gSpire_DropFrames[i] + FALL_FRAMES) {
+      if (frame == gSpire_DropFrames[i] + SPIRE_FALL_FRAMES) {
         for (j = 0; j != args->targetCount; j++)
           BattleEffect_TintBattler(args->targets[j], SPRITE_COLOR_WHITE,
                                    POSE_DAMAGE, j, 8);

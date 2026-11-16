@@ -11,6 +11,17 @@
 #define STAR_DROPS 192
 #define DROPS ((struct Particle *)Ram_MapCellBuffer)
 
+/// Where the two stars are built in the effect's pictures, each a 24 by 48
+/// picture mirrored from one half of BlueCrescentSheet's.
+#define STAR_MINE_STAR_PICTURES 0x1200
+#define STAR_WIDTH 24
+#define STAR_HEIGHT 48
+/// The bytes of a star's source in BlueCrescentSheet, 24 by 24: each row's
+/// even pixels are the right half of the star's row, its odd ones the left.
+#define STAR_HALF (PICTURE_BYTES(STAR) / 2)
+/// The sparks and the drops each star bursts into.
+#define STAR_BURST_SPARKS 4
+#define STAR_BURST_DROPS (STAR_DROPS / STARS)
 /// Where FlashBurstSheet is decoded in the effect's pictures.
 #define STAR_MINE_FLASH_BURST_PICTURES 0x4000
 
@@ -47,19 +58,22 @@ void BattleEffect_RunStarMine(struct BattleEffectParams *args) {
   // The star: each half of the sheet's 24-wide picture mirrored left to
   // right and top to bottom.
   for (i = 0; i != 2; i++) {
-    u8 *picture = work->sheet + 0x1200 + i * 24 * 48;
+    u8 *picture =
+        work->sheet + STAR_MINE_STAR_PICTURES + i * PICTURE_BYTES(STAR);
     s32 y;
 
-    for (y = 0; y != 24; y++) {
+    for (y = 0; y != STAR_HEIGHT / 2; y++) {
       s32 x;
 
-      for (x = 0; x != 12; x++) {
-        picture[y * 24 + x] = work->sheet[i * 24 * 24 + y * 24 + x * 2 + 1];
-        picture[y * 24 + 23 - x] = work->sheet[i * 24 * 24 + y * 24 + x * 2];
-        picture[(47 - y) * 24 + x] =
-            work->sheet[i * 24 * 24 + y * 24 + x * 2 + 1];
-        picture[(47 - y) * 24 + 23 - x] =
-            work->sheet[i * 24 * 24 + y * 24 + x * 2];
+      for (x = 0; x != STAR_WIDTH / 2; x++) {
+        picture[y * STAR_WIDTH + x] =
+            work->sheet[i * STAR_HALF + y * STAR_WIDTH + x * 2 + 1];
+        picture[y * STAR_WIDTH + STAR_WIDTH - 1 - x] =
+            work->sheet[i * STAR_HALF + y * STAR_WIDTH + x * 2];
+        picture[(STAR_HEIGHT - 1 - y) * STAR_WIDTH + x] =
+            work->sheet[i * STAR_HALF + y * STAR_WIDTH + x * 2 + 1];
+        picture[(STAR_HEIGHT - 1 - y) * STAR_WIDTH + STAR_WIDTH - 1 - x] =
+            work->sheet[i * STAR_HALF + y * STAR_WIDTH + x * 2];
       }
     }
   }
@@ -109,7 +123,7 @@ void BattleEffect_RunStarMine(struct BattleEffectParams *args) {
     Matrix_SetLookAt(camera->eye, camera->focus);
 
     for (i = 0, star = work->particles, delay = 0, firstDrop = 0; i != STARS;
-         star++, delay += 8, firstDrop += 32, i++) {
+         star++, delay += 8, firstDrop += STAR_BURST_DROPS, i++) {
       s32 k;
       struct Actor *target;
       s32 height;
@@ -129,8 +143,11 @@ void BattleEffect_RunStarMine(struct BattleEffectParams *args) {
       picture = ((frame + i) / 2) & 1;
       EffectPosition_ProjectPoint(star, &pos);
       pos.x >>= 1;
-      blitters[0](canvas, work->sheet + 0x1200 + picture * 24 * 48, pos.x - 12,
-                  pos.y - 24, 24, 48);
+      blitters[0](canvas,
+                  work->sheet + STAR_MINE_STAR_PICTURES +
+                      picture * PICTURE_BYTES(STAR),
+                  pos.x - STAR_WIDTH / 2, pos.y - STAR_HEIGHT / 2, STAR_WIDTH,
+                  STAR_HEIGHT);
       BattleEffectKernels_IntegrateVector3(star, 63, 0);
       if (frame <= delay + 10) {
         continue;
@@ -154,7 +171,7 @@ void BattleEffect_RunStarMine(struct BattleEffectParams *args) {
       }
 
       // Passed its target: the burst.
-      for (k = 0; k != 4; k++) {
+      for (k = 0; k != STAR_BURST_SPARKS; k++) {
         particle = &work->particles[STARS + delay + k];
         particle->x = INTtoFIXED(pos.x);
         particle->y = INTtoFIXED(pos.y);
@@ -162,7 +179,7 @@ void BattleEffect_RunStarMine(struct BattleEffectParams *args) {
         particle->velocityY = (192 - (Random16() & 255)) << 10;
         particle->variant = 0;
       }
-      for (k = 0; k != 32; k++) {
+      for (k = 0; k != STAR_BURST_DROPS; k++) {
         s32 angle;
         s32 speed;
 
@@ -191,10 +208,10 @@ void BattleEffect_RunStarMine(struct BattleEffectParams *args) {
         if (particle->variant > 1) {
           blitters[0](canvas,
                       work->sheet + STAR_MINE_FLASH_BURST_PICTURES +
-                          ((particle->variant / 4) << 11),
-                      FIXED_INTEGER_PART(particle->x) - 16,
-                      FIXED_INTEGER_PART(particle->y) - 32, FLASH_BURST_WIDTH,
-                      FLASH_BURST_HEIGHT);
+                          (particle->variant / 4) * PICTURE_BYTES(FLASH_BURST),
+                      FIXED_INTEGER_PART(particle->x) - FLASH_BURST_WIDTH / 2,
+                      FIXED_INTEGER_PART(particle->y) - FLASH_BURST_HEIGHT / 2,
+                      FLASH_BURST_WIDTH, FLASH_BURST_HEIGHT);
         }
         BattleEffectKernels_IntegrateVector2(particle, 60, -toFIXED(1) / 16);
         particle->variant++;
@@ -231,7 +248,7 @@ void BattleEffect_BuildRepeatingTilemap(void) {
         *dst++ = y * 32 + (x & 15) + 48;
     } else {
       for (x = 0; x != 32; x++)
-        *dst++ = y * 32 + (x & 15) + 0x210;
+        *dst++ = y * 32 + (x & 15) + 528;
     }
   }
 }
@@ -242,7 +259,14 @@ struct StripQuad;
 struct CornerRow {
   struct Corner corners[2];
 };
+/// The dragon's buffers in the map cell buffer: its strip's corners, their
+/// transformed vertices, the strip mesh, and the sparks: the first half thrown
+/// up at the start and at frame 134, the second the trail behind the dragon.
+#define RISING_DRAGON_ENEMY_VERTICES 0x1000
+#define RISING_DRAGON_ENEMY_STRIP 0x2000
 #define SPARKS ((struct Particle *)(Ram_MapCellBuffer + 0x4000))
+#define SPARK_COUNT 256
+#define TRAIL_SPARKS (SPARK_COUNT / 2)
 
 #define SEGMENTS 33
 
@@ -288,8 +312,8 @@ void BattleEffect_RunRisingDragonEnemy(struct BattleEffectParams *args) {
   s32 i;
   s32 j;
 
-  vertices = Ram_MapCellBuffer + 0x1000;
-  strip = Ram_MapCellBuffer + 0x2000;
+  vertices = Ram_MapCellBuffer + RISING_DRAGON_ENEMY_VERTICES;
+  strip = Ram_MapCellBuffer + RISING_DRAGON_ENEMY_STRIP;
   cells = (struct CornerRow *)Ram_MapCellBuffer;
   work = Ram_HeapSlots->battleEffect;
   canvas = Ram_HeapSlots->battleCanvas;
@@ -328,10 +352,10 @@ void BattleEffect_RunRisingDragonEnemy(struct BattleEffectParams *args) {
       for (i = 0; i != ARRAY_COUNT(work->particles); i++) {
         work->particles[i].variant = -1;
       }
-      for (i = 0; i != 128; i++) {
-        SPARKS[128 + i].variant = -1;
+      for (i = 0; i != TRAIL_SPARKS; i++) {
+        SPARKS[TRAIL_SPARKS + i].variant = -1;
       }
-      for (i = 0, spawned = SPARKS; i != 128; i++, spawned++) {
+      for (i = 0, spawned = SPARKS; i != TRAIL_SPARKS; i++, spawned++) {
         s32 angle;
         s32 speed;
 
@@ -355,7 +379,7 @@ void BattleEffect_RunRisingDragonEnemy(struct BattleEffectParams *args) {
     }
     if (frame == 164) {
       BattleBackground_LoadFar(BATTLE_BACKGROUND_FIXED,
-                               ((u16 *)Ram_HeapSlots->battleWork)[824], 24);
+                               Ram_HeapSlots->battleWork->background, 24);
     }
     if (frame == 165) {
       gProjection.centerY = BATTLE_PROJECTION_CENTER_Y;
@@ -379,277 +403,280 @@ void BattleEffect_RunRisingDragonEnemy(struct BattleEffectParams *args) {
     }
     if (frame > 165) {
       EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_DARKEN, CANVAS_FILL_WORD(4));
-      goto next;
-    }
-
-    if (frame == 59) {
-      Iwram_FillWordsEntry(canvas, CANVAS_BYTES,
-                           CANVAS_FILL_WORD(CANVAS_LEVEL_BRIGHTEST));
-    }
-    if (frame == 60) {
-      u16 *color;
-      s32 max; // One constant, set in the for: red takes its 31 from it.
-
-      // Into the sky: the red haze, its palette made grey-blue.
-      BattleBackground_LoadFar(BATTLE_BACKGROUND_FIXED,
-                               RESOURCE_RED_HAZE_BACKDROP, 0);
-      for (color = (u16 *)&BG_PLTT_COLOR(6, 0), i = 0, max = 31;
-           i != BATTLE_BACKGROUND_COLORS; i++, color++) {
-        s32 entry = *color;
-        s32 red;
-        s32 green;
-        s32 blue;
-
-        red = max & entry;
-        /* LEFTOVER(template): green, taken and clamped as
-         * BattleEffect_RunCoatlicue and BattleEffect_RunJudgment take all
-         * three channels in their palette loops, and left out of the colour
-         * here; as no green at all, 329 of 1034 instructions differ in tla-en.
-         */
-        green = RGB_GREEN((u16)entry);
-        blue = RGB_BLUE((u16)entry);
-        // DEAD: red and blue are already at most 31; the ROM keeps both
-        // compares.
-        if (red > RGB_LEVEL_MAX) {
-          red = RGB_LEVEL_MAX;
-        }
-        if (green > RGB_LEVEL_MAX) {
-          green = RGB_LEVEL_MAX;
-        }
-        if (blue > RGB_LEVEL_MAX) {
-          blue = RGB_LEVEL_MAX;
-        }
-        *color = RGB(blue, red, red);
-      }
-      BattleEffect_BuildRepeatingTilemap();
-      gBgScroll[1].y = 104;
-      gProjection.centerY = SUMMON_PROJECTION_CENTER_Y;
-      if (args->side == EFFECT_SIDE_ENEMIES) {
-        yaw = DEGtoANG(90);
-        camera->yaw = yaw;
-      } else {
-        yaw = TRIG_TURN * 3 / 4;
-        camera->yaw = yaw;
-      }
-      for (i = 0; i != 256; i++) {
-        SPARKS[i].variant = -1;
-      }
-      height = 220;
-    }
-    if (frame == 134) {
-      Sound_PlayFar(SE_CRASH);
-      Iwram_FillWordsEntry(canvas, CANVAS_BYTES,
-                           CANVAS_FILL_WORD(CANVAS_LEVEL_BRIGHTEST));
-    }
-    if (frame > 59) {
-      s32 scroll = gBgScroll[1].y;
-      s32 climb;
-
-      if (scroll > 104) {
-        scroll -= 0x10000;
-      }
-      scroll -= 8;
-      if (scroll < -16) {
-        scroll += 120;
-      }
-      gBgScroll[1].y = scroll;
-      climb = 4 - (frame - 60) / 8;
-      if (climb < 0) {
-        climb = 0;
-      }
-      if (frame > 119) {
-        climb = frame - 120;
-      }
-      height -= climb;
     } else {
-      height = 200 - frame * 8;
-    }
-    if (height <= 55) {
-      height = 56;
-    }
-    victim->verticalMotionStrength = 0;
-    if ((u32)(frame - 4) <= 55) {
-      victim->y = INTtoFIXED(frame * 9) - toFIXED(18);
-    } else if (frame > 59) {
-      victim->x = 0;
-      victim->y = INTtoFIXED(294 - height);
-      victim->z = -(Trig_Sin(frame << 10) << 3);
+
+      if (frame == 59) {
+        Iwram_FillWordsEntry(canvas, CANVAS_BYTES,
+                             CANVAS_FILL_WORD(CANVAS_LEVEL_BRIGHTEST));
+      }
       if (frame == 60) {
-        EffectPosition_ProjectBattler(args->targets[0], &source);
-      }
-      EffectPosition_ProjectBattler(args->targets[0], &target);
-    }
-    if ((u32)(frame - 152) <= 15) {
-      EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_CLEAR, CANVAS_FILL_WORD(32));
-      if (frame > 162) {
-        work->transferValue = CANVAS_FILL_WORD(CANVAS_LEVEL_BRIGHTEST);
-      }
-      Palette_BrightenBgEntries(2, 2, 2);
-    }
-    // DEAD: frame is never negative; the ROM keeps the compare and branch.
-    if (frame < 0) {
-      goto next;
-    }
+        u16 *color;
+        s32 max; // One constant, set in the for: red takes its 31 from it.
 
-    // The dragon's body, swaying.
-    for (j = 0; j != SEGMENTS; j++) {
-      for (i = 0; i != 2; i++) {
-        ((struct Corner *)(cells + j))[i].x =
-            i * 20 + (FIXEDtoINT(Trig_Sin(j * 2018 + (frame << 10)) * 2)) - 10;
-        ((struct Corner *)(cells + j))[i].z = 0;
-        ((struct Corner *)(cells + j))[i].y = j * 2 - 64;
-      }
-    }
-    zero = 0;
-    model = Render_AllocateModelList(1);
-    tex = &texture;
-    model->kind = MODEL_SHADED_MAX;
-    model->shade = zero;
-    model->scrollV = zero;
-    model->vertices = vertices;
-    tex->logWidth = 6;
-    tex->logHeight = 5;
-    model->texture = tex;
-    tex->pixels = work->sheet;
-    model->mesh = strip;
-    model->scrollU = 127 & ~(frame << 2);
-    Matrix_Initialize();
-    Matrix_Scale(FIXED_ONE / 2, FIXED_ONE, FIXED_ONE / 2);
-    Matrix_Push();
-    Matrix_Translate(INTtoFIXED(source.x - 128), INTtoFIXED(height), 0);
-    if (args->side == EFFECT_SIDE_PARTY) {
-      Matrix_RotateY(DEGtoANG(180));
-    }
-    Matrix_ScaleUniform(0x21770);
-    Render_TransformVertices(cells, vertices, 66);
-    Render_DrawModelList(model);
-    Matrix_Pop();
-    if (frame <= 133 && (u32)(frame - 17) > 42) {
-      // The claw.
-      tex->logWidth = 6;
-      tex->logHeight = 6;
-      model->mesh = gBattleEffect_SquareMesh;
-      model->scrollU = zero;
-      tex->pixels = work->sheet + RISING_DRAGON_ENEMY_CLAW_SLASH_PICTURES;
-      Matrix_Translate(INTtoFIXED(target.x - 124), INTtoFIXED(height - 144), 0);
-      Matrix_RotateZ(DEGtoANG(90));
-      Matrix_Scale(0x19c40, 0x14e20, FIXED_ONE);
-      Render_TransformVertices(gBattleEffect_SquareCorners, vertices, 4);
-      Render_DrawModelList(model);
-    }
-    Heap_Release(model);
+        // Into the sky: the red haze, its palette made grey-blue.
+        BattleBackground_LoadFar(BATTLE_BACKGROUND_FIXED,
+                                 RESOURCE_RED_HAZE_BACKDROP, 0);
+        for (color = (u16 *)&BG_PLTT_COLOR(6, 0), i = 0, max = 31;
+             i != BATTLE_BACKGROUND_COLORS; i++, color++) {
+          s32 entry = *color;
+          s32 red;
+          s32 green;
+          s32 blue;
 
-    if (frame == 134) {
-      for (i = 0, scatter = SPARKS; i != 256; i++, scatter++) {
-        s32 angle;
-        s32 speed;
-
-        scatter->x = INTtoFIXED(source.x / 2);
-        scatter->y = 0;
-        angle = (Random16() & 0x7fff) - DEGtoANG(90);
-        speed = (Random16() & 255) + 32;
-        scatter->velocityX = (Trig_Sin(angle) * speed) >> 5;
-        scatter->velocityY = (Trig_Cos(angle) * speed) >> 5;
-        scatter->variant = (Random16() & 7) + 32;
-      }
-    }
-    burstFrame = frame - 134;
-    if ((u32)burstFrame <= 7) {
-      s32 first = burstFrame * 4;
-      for (i = 0; i != 4; i++) {
-        struct Particle *burst = &work->particles[first + i];
-        s32 angle;
-        s32 speed;
-
-        burst->x = INTtoFIXED(source.x / 2);
-        burst->y = 0;
-        angle = (Random16() & 0x7fff) - DEGtoANG(90);
-        speed = (Random16() & 255) + 32;
-        burst->velocityX = (Trig_Sin(angle) * speed) >> 5;
-        burst->velocityY = (Trig_Cos(angle) * speed) >> 5;
-        burst->variant = 0;
-      }
-    }
-    for (i = 0, particle = work->particles; i != 32; i++, particle++) {
-      s32 picture = particle->variant;
-
-      if ((u32)picture <= 23) {
-        if (picture > 1) {
-          blit[0](canvas,
-                  work->sheet + RISING_DRAGON_ENEMY_FLASH_BURST_PICTURES +
-                      ((picture / 4) << 11),
-                  FIXED_INTEGER_PART(particle->x) - 16,
-                  FIXED_INTEGER_PART(particle->y) - 32, FLASH_BURST_WIDTH,
-                  FLASH_BURST_HEIGHT);
+          red = max & entry;
+          /* LEFTOVER(template): green, taken and clamped as
+           * BattleEffect_RunCoatlicue and BattleEffect_RunJudgment take all
+           * three channels in their palette loops, and left out of the colour
+           * here; as no green at all, 329 of 1034 instructions differ in
+           * tla-en.
+           */
+          green = RGB_GREEN((u16)entry);
+          blue = RGB_BLUE((u16)entry);
+          // DEAD: red and blue are already at most 31; the ROM keeps both
+          // compares.
+          if (red > RGB_LEVEL_MAX) {
+            red = RGB_LEVEL_MAX;
+          }
+          if (green > RGB_LEVEL_MAX) {
+            green = RGB_LEVEL_MAX;
+          }
+          if (blue > RGB_LEVEL_MAX) {
+            blue = RGB_LEVEL_MAX;
+          }
+          *color = RGB(blue, red, red);
         }
-        BattleEffectKernels_IntegrateVector2(particle, 60, -toFIXED(1) / 16);
-        particle->variant++;
+        BattleEffect_BuildRepeatingTilemap();
+        gBgScroll[1].y = 104;
+        gProjection.centerY = SUMMON_PROJECTION_CENTER_Y;
+        if (args->side == EFFECT_SIDE_ENEMIES) {
+          yaw = DEGtoANG(90);
+          camera->yaw = yaw;
+        } else {
+          yaw = TRIG_TURN * 3 / 4;
+          camera->yaw = yaw;
+        }
+        for (i = 0; i != SPARK_COUNT; i++) {
+          SPARKS[i].variant = -1;
+        }
+        height = 220;
       }
-    }
-    if ((u32)frame <= 133) {
-      struct Particle *trail;
-      FIXED startY;
-      s32 slot;
-      s32 first;
-      s32 y;
-
-      slot = (frame - 16) & 63;
-      y = 120;
+      if (frame == 134) {
+        Sound_PlayFar(SE_CRASH);
+        Iwram_FillWordsEntry(canvas, CANVAS_BYTES,
+                             CANVAS_FILL_WORD(CANVAS_LEVEL_BRIGHTEST));
+      }
       if (frame > 59) {
-        y = height - 80;
-      }
-      first = slot * 2;
-      for (i = 0, startY = INTtoFIXED(y), trail = &SPARKS[128 + first]; i != 2;
-           i++, trail++) {
-        s32 random;
-        s32 angle;
-        s32 speed;
-        s32 x = source.x / 2;
+        s32 scroll = gBgScroll[1].y;
+        s32 climb;
 
-        trail->y = startY;
-        trail->x = INTtoFIXED(x);
-        random = Random16() & 0x7fff;
-        angle = random + DEGtoANG(90);
-        if (frame > 59) {
-          angle = random + TRIG_TURN * 3 / 4;
+        if (scroll > 104) {
+          scroll -= 0x10000;
         }
-        speed = (Random16() & 255) + 32;
-        trail->velocityX = (Trig_Sin(angle) * speed) >> 6;
-        trail->velocityY = (Trig_Cos(angle) * speed) >> 6;
-        if (frame > 59) {
-          trail->velocityX /= 2;
+        scroll -= 8;
+        if (scroll < -16) {
+          scroll += 120;
         }
-        trail->variant = (Random16() & 7) + 32;
+        gBgScroll[1].y = scroll;
+        climb = 4 - (frame - 60) / 8;
+        if (climb < 0) {
+          climb = 0;
+        }
+        if (frame > 119) {
+          climb = frame - 120;
+        }
+        height -= climb;
+      } else {
+        height = 200 - frame * 8;
+      }
+      if (height <= 55) {
+        height = 56;
+      }
+      victim->verticalMotionStrength = 0;
+      if ((u32)(frame - 4) <= 55) {
+        victim->y = INTtoFIXED(frame * 9) - toFIXED(18);
+      } else if (frame > 59) {
+        victim->x = 0;
+        victim->y = INTtoFIXED(294 - height);
+        victim->z = -(Trig_Sin(frame << 10) << 3);
+        if (frame == 60) {
+          EffectPosition_ProjectBattler(args->targets[0], &source);
+        }
+        EffectPosition_ProjectBattler(args->targets[0], &target);
+      }
+      if ((u32)(frame - 152) <= 15) {
+        EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_CLEAR, CANVAS_FILL_WORD(32));
+        if (frame > 162) {
+          work->transferValue = CANVAS_FILL_WORD(CANVAS_LEVEL_BRIGHTEST);
+        }
+        Palette_BrightenBgEntries(2, 2, 2);
+      }
+      // DEAD: frame is never negative; the ROM keeps the compare and branch.
+      if (frame >= 0) {
+
+        // The dragon's body, swaying.
+        for (j = 0; j != SEGMENTS; j++) {
+          for (i = 0; i != 2; i++) {
+            ((struct Corner *)(cells + j))[i].x =
+                i * 20 + (FIXEDtoINT(Trig_Sin(j * 2018 + (frame << 10)) * 2)) -
+                10;
+            ((struct Corner *)(cells + j))[i].z = 0;
+            ((struct Corner *)(cells + j))[i].y = j * 2 - 64;
+          }
+        }
+        zero = 0;
+        model = Render_AllocateModelList(1);
+        tex = &texture;
+        model->kind = MODEL_SHADED_MAX;
+        model->shade = zero;
+        model->scrollV = zero;
+        model->vertices = vertices;
+        tex->logWidth = 6;
+        tex->logHeight = 5;
+        model->texture = tex;
+        tex->pixels = work->sheet;
+        model->mesh = strip;
+        model->scrollU = 127 & ~(frame << 2);
+        Matrix_Initialize();
+        Matrix_Scale(FIXED_ONE / 2, FIXED_ONE, FIXED_ONE / 2);
+        Matrix_Push();
+        Matrix_Translate(INTtoFIXED(source.x - 128), INTtoFIXED(height), 0);
+        if (args->side == EFFECT_SIDE_PARTY) {
+          Matrix_RotateY(DEGtoANG(180));
+        }
+        Matrix_ScaleUniform(0x21770);
+        Render_TransformVertices(cells, vertices, SEGMENTS * 2);
+        Render_DrawModelList(model);
+        Matrix_Pop();
+        if (frame <= 133 && (u32)(frame - 17) > 42) {
+          // The claw.
+          tex->logWidth = 6;
+          tex->logHeight = 6;
+          model->mesh = gBattleEffect_SquareMesh;
+          model->scrollU = zero;
+          tex->pixels = work->sheet + RISING_DRAGON_ENEMY_CLAW_SLASH_PICTURES;
+          Matrix_Translate(INTtoFIXED(target.x - 124), INTtoFIXED(height - 144),
+                           0);
+          Matrix_RotateZ(DEGtoANG(90));
+          Matrix_Scale(0x19c40, 0x14e20, FIXED_ONE);
+          Render_TransformVertices(gBattleEffect_SquareCorners, vertices, 4);
+          Render_DrawModelList(model);
+        }
+        Heap_Release(model);
+
+        if (frame == 134) {
+          for (i = 0, scatter = SPARKS; i != SPARK_COUNT; i++, scatter++) {
+            s32 angle;
+            s32 speed;
+
+            scatter->x = INTtoFIXED(source.x / 2);
+            scatter->y = 0;
+            angle = (Random16() & 0x7fff) - DEGtoANG(90);
+            speed = (Random16() & 255) + 32;
+            scatter->velocityX = (Trig_Sin(angle) * speed) >> 5;
+            scatter->velocityY = (Trig_Cos(angle) * speed) >> 5;
+            scatter->variant = (Random16() & 7) + 32;
+          }
+        }
+        burstFrame = frame - 134;
+        if ((u32)burstFrame <= 7) {
+          s32 first = burstFrame * 4;
+          for (i = 0; i != 4; i++) {
+            struct Particle *burst = &work->particles[first + i];
+            s32 angle;
+            s32 speed;
+
+            burst->x = INTtoFIXED(source.x / 2);
+            burst->y = 0;
+            angle = (Random16() & 0x7fff) - DEGtoANG(90);
+            speed = (Random16() & 255) + 32;
+            burst->velocityX = (Trig_Sin(angle) * speed) >> 5;
+            burst->velocityY = (Trig_Cos(angle) * speed) >> 5;
+            burst->variant = 0;
+          }
+        }
+        for (i = 0, particle = work->particles; i != 32; i++, particle++) {
+          s32 picture = particle->variant;
+
+          if ((u32)picture <= 23) {
+            if (picture > 1) {
+              blit[0](canvas,
+                      work->sheet + RISING_DRAGON_ENEMY_FLASH_BURST_PICTURES +
+                          (picture / 4) * PICTURE_BYTES(FLASH_BURST),
+                      FIXED_INTEGER_PART(particle->x) - FLASH_BURST_WIDTH / 2,
+                      FIXED_INTEGER_PART(particle->y) - FLASH_BURST_HEIGHT / 2,
+                      FLASH_BURST_WIDTH, FLASH_BURST_HEIGHT);
+            }
+            BattleEffectKernels_IntegrateVector2(particle, 60,
+                                                 -toFIXED(1) / 16);
+            particle->variant++;
+          }
+        }
+        if ((u32)frame <= 133) {
+          struct Particle *trail;
+          FIXED startY;
+          s32 slot;
+          s32 first;
+          s32 y;
+
+          slot = (frame - 16) & 63;
+          y = 120;
+          if (frame > 59) {
+            y = height - 80;
+          }
+          first = slot * 2;
+          for (i = 0, startY = INTtoFIXED(y),
+              trail = &SPARKS[TRAIL_SPARKS + first];
+               i != 2; i++, trail++) {
+            s32 random;
+            s32 angle;
+            s32 speed;
+            s32 x = source.x / 2;
+
+            trail->y = startY;
+            trail->x = INTtoFIXED(x);
+            random = Random16() & 0x7fff;
+            angle = random + DEGtoANG(90);
+            if (frame > 59) {
+              angle = random + TRIG_TURN * 3 / 4;
+            }
+            speed = (Random16() & 255) + 32;
+            trail->velocityX = (Trig_Sin(angle) * speed) >> 6;
+            trail->velocityY = (Trig_Cos(angle) * speed) >> 6;
+            if (frame > 59) {
+              trail->velocityX /= 2;
+            }
+            trail->variant = (Random16() & 7) + 32;
+          }
+        }
+        {
+          struct Particle *spark;
+          FIXED gravity = -toFIXED(1) / 16;
+
+          if (frame > 59) {
+            gravity = toFIXED(1) / 4;
+          }
+          for (i = 0, spark = SPARKS; i != SPARK_COUNT; i++, spark++) {
+            s32 size;
+
+            if (spark->variant < 0) {
+              continue;
+            }
+            size = (spark->variant - 8) / 8;
+            if (frame > 59) {
+              size += 2;
+            }
+            if (size <= 0) {
+              size = 1;
+            }
+            blit[0](canvas, sprites + gBattleEffect_MotePictures[size - 1],
+                    FIXED_INTEGER_PART(spark->x) - size / 2,
+                    FIXED_INTEGER_PART(spark->y) - size, size, size * 2);
+            BattleEffectKernels_IntegrateVector2(spark, 60, gravity);
+            spark->variant--;
+          }
+        }
       }
     }
-    {
-      struct Particle *spark;
-      FIXED gravity = -toFIXED(1) / 16;
-
-      if (frame > 59) {
-        gravity = toFIXED(1) / 4;
-      }
-      for (i = 0, spark = SPARKS; i != 256; i++, spark++) {
-        s32 size;
-
-        if (spark->variant < 0) {
-          continue;
-        }
-        size = (spark->variant - 8) / 8;
-        if (frame > 59) {
-          size += 2;
-        }
-        if (size <= 0) {
-          size = 1;
-        }
-        blit[0](canvas, sprites + gBattleEffect_MotePictures[size - 1],
-                FIXED_INTEGER_PART(spark->x) - size / 2,
-                FIXED_INTEGER_PART(spark->y) - size, size, size * 2);
-        BattleEffectKernels_IntegrateVector2(spark, 60, gravity);
-        spark->variant--;
-      }
-    }
-  next:
     BattleEffect_CountDownBattlerTints();
     if ((u32)(frame - 32) > 133) {
       BattleCamera_Shake(8, 8);
@@ -695,6 +722,16 @@ void BattleEffect_RunLivingArmor(struct BattleEffectParams *args) {
 #undef STAR_SPARKS
 #undef STAR_DROPS
 #undef DROPS
+#undef STAR_MINE_STAR_PICTURES
+#undef STAR_WIDTH
+#undef STAR_HEIGHT
+#undef STAR_HALF
+#undef STAR_BURST_SPARKS
+#undef STAR_BURST_DROPS
 #undef BLITTER
 #undef SPARKS
+#undef SPARK_COUNT
+#undef TRAIL_SPARKS
+#undef RISING_DRAGON_ENEMY_VERTICES
+#undef RISING_DRAGON_ENEMY_STRIP
 #undef SEGMENTS

@@ -16,6 +16,9 @@
 
 /// Where GiantSwordBladeSheet is decoded in the effect's pictures.
 #define ODYSSEY_SWORD_BLADE 0xc80
+/// The shards the hit scatters, in the map cell buffer.
+#define ODYSSEY_SHARDS ((struct Particle *)(Ram_MapCellBuffer + 0x6000))
+#define ODYSSEY_SHARD_COUNT 128
 
 /// 114 frames. The screen turns to a scrolling red haze
 /// with only the caster and the target on it (frame 2); two textured flashes
@@ -93,7 +96,7 @@ void BattleEffect_RunOdyssey(struct BattleEffectParams *args) {
 
       list[0] = args->user;
       list[1] = args->targets[0];
-      list[2] = 0xff;
+      list[2] = BATTLE_UNIT_LIST_END;
       BattleActor_SpawnObjectsForListFar(list, 0);
       BattleBackground_LoadFar(BATTLE_BACKGROUND_FIXED,
                                RESOURCE_RED_HAZE_BACKDROP, 0);
@@ -155,8 +158,8 @@ void BattleEffect_RunOdyssey(struct BattleEffectParams *args) {
       BattleEffect_TintBattler(args->targets[0], SPRITE_COLOR_WHITE,
                                POSE_DAMAGE, 0, 16);
       work->shakeFrames = 8;
-      shard = Ram_MapCellBuffer + 0x6000;
-      for (i = 0; i != 128; i++) {
+      shard = ODYSSEY_SHARDS;
+      for (i = 0; i != ODYSSEY_SHARD_COUNT; i++) {
         s32 speed = (Random16() & 0x1ff) + 32;
         s32 angle = Random16() & 0x7fff;
 
@@ -387,7 +390,7 @@ void BattleEffect_RunOdyssey(struct BattleEffectParams *args) {
         EFFECT_SET_TRANSFER(work, fillMode, CANVAS_FILL_WORD(2));
         Palette_BrightenBgEntries(2, 2, 2);
       }
-      for (i = 0, step = Ram_MapCellBuffer + 0x6000; i != 128; i++) {
+      for (i = 0, step = ODYSSEY_SHARDS; i != ODYSSEY_SHARD_COUNT; i++) {
         color[0] = (i & 7) + 32;
         model->shade = (long)color;
         Matrix_Initialize();
@@ -468,12 +471,12 @@ void BattleEffect_RunCloudSwirl(struct BattleEffectParams *args) {
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, BLITTER_MAX);
   sheetDraw[0] = (DrawRectangle)Ram_HeapSlots->ramCode;
   palette = Resource_GetTableEntry(RESOURCE_CLOUD_SWIRL_SHEET);
-  Iwram_CopyWords((void *)&BG_PLTT_COLOR(6, 0), palette, 128);
+  Iwram_CopyWords((void *)&BG_PLTT_COLOR(6, 0), palette, SHEET_PALETTE_BYTES);
   palette += SHEET_PALETTE_BYTES;
   Decompress_TaggedLz(palette, work->sheet);
   palette = Resource_GetTableEntry(RESOURCE_EMBER_STREAK_SHEET);
-  Iwram_CopyWords((void *)&BG_PLTT_COLOR(6, 0), palette, 128);
-  for (i = 0; i != 0x4000; i++)
+  Iwram_CopyWords((void *)&BG_PLTT_COLOR(6, 0), palette, SHEET_PALETTE_BYTES);
+  for (i = 0; i != CANVAS_BYTES; i++)
     work->sheet[i] += 96;
   Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_FRAME);
   sheetDraw[0](canvas, work->sheet, 0, 0, 128, 128);
@@ -484,7 +487,7 @@ void BattleEffect_RunCloudSwirl(struct BattleEffectParams *args) {
   // The swirl itself in the canvas (colour 0 made 1, so none is clear),
   // copied twice side by side into the map buffer.
   Resource_LoadAndDecompress(RESOURCE_CLOUD_SWIRL_SHEET, canvas, 1, 1);
-  for (i = 0; i != 0x4000; i++) {
+  for (i = 0; i != CANVAS_BYTES; i++) {
     if (canvas[i] == 0)
       canvas[i] = 1;
   }
@@ -511,7 +514,8 @@ void BattleEffect_RunCloudSwirl(struct BattleEffectParams *args) {
       break;
 
     if (frame == 0)
-      Iwram_FillWordsEntry((void *)BG_PLTT, 128, COLOR_PAIR(RGB_WHITE));
+      Iwram_FillWordsEntry((void *)BG_PLTT, SHEET_PALETTE_BYTES,
+                           COLOR_PAIR(RGB_WHITE));
     if (frame > 119)
       Palette_BrightenBgEntries(-1, -1, -1);
     else if ((frame & 3) == 1)
@@ -528,12 +532,12 @@ void BattleEffect_RunCloudSwirl(struct BattleEffectParams *args) {
     IO_WRITE_QUEUE_PUSH((u32)&REG_BG2PD, cosine, IO_WRITE_HALFWORD);
     IO_WRITE_QUEUE_PUSH((u32)&REG_BG2X,
                         (Iwram_MulFX(-120 << 24, cosine) +
-                         Iwram_MulFX(-72 << 24, sine) + 0x400000) >>
+                         Iwram_MulFX(-72 << 24, sine) + toFIXED(64)) >>
                             8,
                         IO_WRITE_WORD);
     IO_WRITE_QUEUE_PUSH((u32)&REG_BG2Y,
                         (Iwram_MulFX(-120 << 24, -sine) +
-                         Iwram_MulFX(-72 << 24, cosine) + 0x400000) >>
+                         Iwram_MulFX(-72 << 24, cosine) + toFIXED(64)) >>
                             8,
                         IO_WRITE_WORD);
     wait(1);
@@ -624,17 +628,18 @@ UNUSED void Sprite_SetColorMode(struct Sprite *sprite, s32 mode) {
   sprite->dirty = 1;
 }
 
-/// Fills count bytes of table with a rising shade ramp (0 to 63, by a step
-/// scaled by scale), then repeats it seven more times.
+/// Fills count bytes of table with a rising shade ramp (0 to
+/// CANVAS_LEVEL_BRIGHTEST, by a step scaled by scale), then repeats it seven
+/// more times.
 void BattleEffect_BuildShadeRamp(u8 *table, u32 count, s32 scale) {
   u32 step = count * 2;
   s32 total = 0;
   u32 i;
   s32 j;
 
-  if (step > 63)
-    step = 63;
-  step = 63 / step;
+  if (step > CANVAS_LEVEL_BRIGHTEST)
+    step = CANVAS_LEVEL_BRIGHTEST;
+  step = CANVAS_LEVEL_BRIGHTEST / step;
   if (step < 6)
     step = 6;
   for (i = 0; i != count; i++) {
@@ -642,8 +647,8 @@ void BattleEffect_BuildShadeRamp(u8 *table, u32 count, s32 scale) {
 
     total += step;
     value = FIXEDtoINT(scale * total);
-    if (value > 63)
-      value = 63;
+    if (value > CANVAS_LEVEL_BRIGHTEST)
+      value = CANVAS_LEVEL_BRIGHTEST;
     table[i] = value;
   }
   for (j = 1; j != 8; j++) {
@@ -661,9 +666,9 @@ void BattleEffect_BuildShadeRampWave(u8 *table, u32 count, u32 repeats,
   u32 i;
   u32 j;
 
-  if (step > 63)
-    step = 63;
-  step = 63 / step;
+  if (step > CANVAS_LEVEL_BRIGHTEST)
+    step = CANVAS_LEVEL_BRIGHTEST;
+  step = CANVAS_LEVEL_BRIGHTEST / step;
   if (step < 6)
     step = 6;
   for (i = 0; i != count; i++) {
@@ -671,8 +676,8 @@ void BattleEffect_BuildShadeRampWave(u8 *table, u32 count, u32 repeats,
 
     total += step;
     value = FIXEDtoINT(scale * total);
-    if (value > 63)
-      value = 63;
+    if (value > CANVAS_LEVEL_BRIGHTEST)
+      value = CANVAS_LEVEL_BRIGHTEST;
     table[i] = value;
   }
   for (i = 0; i != count; i++)
@@ -691,9 +696,9 @@ void BattleEffect_BuildSteepShadeRampWave(u8 *table, u32 count, u32 repeats,
   u32 i;
   u32 j;
 
-  if (step > 63)
-    step = 63;
-  step = 63 / step;
+  if (step > CANVAS_LEVEL_BRIGHTEST)
+    step = CANVAS_LEVEL_BRIGHTEST;
+  step = CANVAS_LEVEL_BRIGHTEST / step;
   if (step < 6)
     step = 6;
   step *= 2;
@@ -702,8 +707,8 @@ void BattleEffect_BuildSteepShadeRampWave(u8 *table, u32 count, u32 repeats,
 
     total += step;
     value = FIXEDtoINT(scale * total);
-    if (value > 63)
-      value = 63;
+    if (value > CANVAS_LEVEL_BRIGHTEST)
+      value = CANVAS_LEVEL_BRIGHTEST;
     table[i] = value;
   }
   for (i = 0; i != count; i++)
@@ -730,7 +735,7 @@ void Iris_RestoreBattle(void) {
         BattleObject_GetFar(work->args->targets[i])->object;
 
     SET_POSITION(object, 0, toFIXED(120), 0);
-    object->verticalMotionStrength = 0xab85;
+    object->verticalMotionStrength = BATTLE_UNIT_GRAVITY;
     BattleMotion_ApplyKnockbackFar(work->args->targets[i], KNOCKBACK_HOP);
   }
   transition->busy = 0;
@@ -741,4 +746,6 @@ void Iris_RestoreBattle(void) {
   BattleBackground_LoadFar(BATTLE_BACKGROUND_FIXED, battle->background, 24);
 }
 #undef KIND125_FRAMES
+#undef ODYSSEY_SHARDS
+#undef ODYSSEY_SHARD_COUNT
 #undef SWIRL_MAX_FRAMES

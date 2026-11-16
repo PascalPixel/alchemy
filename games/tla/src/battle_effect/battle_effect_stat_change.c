@@ -95,6 +95,14 @@ void BattleEffect_RunCrucibleFire(struct BattleEffectParams *args) {
   BattleEffect_RunStatBoost(args, STAT_BOOST_CRUCIBLE_FIRE);
 }
 
+/// Where each picture sits in the sheet.
+enum StatBoostSheet {
+  STAT_BOOST_FLARES = 0,      ///< flares (ParticleSpritesD)
+  STAT_BOOST_BURST = 1550,    ///< six bursts of light (GlowOrb)
+  STAT_BOOST_PICTURE = 11150, ///< the picture the mode picks
+  STAT_BOOST_DJINNI = 26048   ///< the Djinni
+};
+
 /// Build a blitter in its heap slot and fetch its entry.
 #define LOAD_BLITTER(out, flags, mode)                                         \
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, flags, mode);                        \
@@ -180,17 +188,17 @@ void BattleEffect_RunStatBoost(struct BattleEffectParams *args, u32 mode) {
     mode = STAT_BOOST_IMPACT;
     start = 53;
   }
-  REG_BG2PA = 0xcc; // 1.25 times as wide
+  REG_BG2PA = Q_8_8(0.8); // 1.25 times as wide
 
   // The pictures and the colors.
   Resource_LoadAndDecompress(RESOURCE_PARTICLE_SPRITES_D,
-                             work->sheet + SERIES_B_FLARES, 0, 0);
+                             work->sheet + STAT_BOOST_FLARES, 0, 0);
   Resource_LoadAndDecompress(RESOURCE_GLOW_ORB_SHEET,
-                             work->sheet + SERIES_B_BURST, 1, 1);
+                             work->sheet + STAT_BOOST_BURST, 1, 1);
   if (mode == STAT_BOOST_GRANITE || mode == STAT_BOOST_FLASH ||
       mode == STAT_BOOST_SHADE || mode == STAT_BOOST_GUARD_AURA) {
     Resource_LoadAndDecompress(RESOURCE_VIOLET_STREAK_SHEET,
-                               work->sheet + SERIES_B_PICTURE, 1, 1);
+                               work->sheet + STAT_BOOST_PICTURE, 1, 1);
     if (mode == STAT_BOOST_GRANITE) {
       LOAD_BG_PALETTE(RESOURCE_VENUS_DJINN_SHEET);
     } else if (mode == STAT_BOOST_FLASH) {
@@ -200,20 +208,20 @@ void BattleEffect_RunStatBoost(struct BattleEffectParams *args, u32 mode) {
     }
   } else if (mode == STAT_BOOST_ZEPHYR) {
     Resource_LoadAndDecompress(RESOURCE_WISP_SHEET,
-                               work->sheet + SERIES_B_PICTURE, 1, 1);
+                               work->sheet + STAT_BOOST_PICTURE, 1, 1);
   } else if (mode == STAT_BOOST_COAL) {
     Resource_LoadAndDecompress(RESOURCE_WISP_SHEET,
-                               work->sheet + SERIES_B_PICTURE, 1, 0);
+                               work->sheet + STAT_BOOST_PICTURE, 1, 0);
     LOAD_BG_PALETTE(RESOURCE_MARS_DJINN_SHEET);
   } else {
     void *palette;
 
     if (mode == STAT_BOOST_IMPACT)
       Resource_LoadAndDecompress(RESOURCE_DAGGER_SHEET,
-                                 work->sheet + SERIES_B_PICTURE, 1, 0);
+                                 work->sheet + STAT_BOOST_PICTURE, 1, 0);
     else
       Resource_LoadAndDecompress(RESOURCE_SHIELD_SHEET,
-                                 work->sheet + SERIES_B_PICTURE, 1, 0);
+                                 work->sheet + STAT_BOOST_PICTURE, 1, 0);
     if (mode == STAT_BOOST_IMPACT)
       palette = Resource_GetTableEntry(RESOURCE_MARS_DJINN_SHEET);
     else if (mode == STAT_BOOST_WARD || mode == STAT_BOOST_ZEPHYR)
@@ -234,19 +242,19 @@ void BattleEffect_RunStatBoost(struct BattleEffectParams *args, u32 mode) {
   }
   if (mode == STAT_BOOST_GRANITE || mode == STAT_BOOST_IRON)
     Resource_LoadAndDecompress(RESOURCE_VENUS_DJINN_SHEET,
-                               work->sheet + SERIES_B_DJINNI, 1, 0);
+                               work->sheet + STAT_BOOST_DJINNI, 1, 0);
   else if (mode == STAT_BOOST_GUARD_AURA)
     Graphics_LoadGreyRamp();
   else if (mode == STAT_BOOST_WARD || mode == STAT_BOOST_ZEPHYR)
     Resource_LoadAndDecompress(RESOURCE_JUPITER_DJINN_SHEET,
-                               work->sheet + SERIES_B_DJINNI, 1, 0);
+                               work->sheet + STAT_BOOST_DJINNI, 1, 0);
   else if (mode == STAT_BOOST_UNUSED || mode == STAT_BOOST_SHADE ||
            mode == STAT_BOOST_STEAM)
     Resource_LoadAndDecompress(RESOURCE_MERCURY_DJINN_SHEET,
-                               work->sheet + SERIES_B_DJINNI, 1, 0);
+                               work->sheet + STAT_BOOST_DJINNI, 1, 0);
   else
     Resource_LoadAndDecompress(RESOURCE_MARS_DJINN_SHEET,
-                               work->sheet + SERIES_B_DJINNI, 1, 0);
+                               work->sheet + STAT_BOOST_DJINNI, 1, 0);
 
   // The lights: 25 pixels across and deep, 50 up and down.
   for (i = 0; i != 512; i++) {
@@ -304,10 +312,10 @@ void BattleEffect_RunStatBoost(struct BattleEffectParams *args, u32 mode) {
 
       if (frame > 32)
         y = y - frame * 2 + 64;
-      draw[0](canvas, work->sheet + SERIES_B_DJINNI, x, y, DJINNI_WIDTH,
+      draw[0](canvas, work->sheet + STAT_BOOST_DJINNI, x, y, DJINNI_WIDTH,
               DJINNI_HEIGHT);
       if (frame <= 3)
-        draw[1](canvas, work->sheet + SERIES_B_DJINNI, x, y, DJINNI_WIDTH,
+        draw[1](canvas, work->sheet + STAT_BOOST_DJINNI, x, y, DJINNI_WIDTH,
                 DJINNI_HEIGHT);
       EFFECT_RELEASE_BLITTERS();
     }
@@ -405,7 +413,7 @@ void BattleEffect_RunStatBoost(struct BattleEffectParams *args, u32 mode) {
 
         LOAD_BLITTER(draw[0], flags, BLITTER_MAX);
         draw[0](canvas,
-                work->sheet + cel * PICTURE_BYTES(GLOW_ORB) + SERIES_B_BURST,
+                work->sheet + cel * PICTURE_BYTES(GLOW_ORB) + STAT_BOOST_BURST,
                 screen.x - GLOW_ORB_WIDTH / 2, screen.y - GLOW_ORB_HEIGHT / 2,
                 GLOW_ORB_WIDTH, GLOW_ORB_HEIGHT);
         HeapSlot_Release(HEAP_SLOT_RAM_CODE);
@@ -420,7 +428,8 @@ void BattleEffect_RunStatBoost(struct BattleEffectParams *args, u32 mode) {
 
           LOAD_BLITTER(draw[0], flags, BLITTER_MAX);
           draw[0](canvas,
-                  work->sheet + cel * PICTURE_BYTES(DAGGER) + SERIES_B_PICTURE,
+                  work->sheet + cel * PICTURE_BYTES(DAGGER) +
+                      STAT_BOOST_PICTURE,
                   screen.x - DAGGER_WIDTH / 2, screen.y - DAGGER_HEIGHT / 2,
                   DAGGER_WIDTH, DAGGER_HEIGHT);
           HeapSlot_Release(HEAP_SLOT_RAM_CODE);
@@ -435,7 +444,7 @@ void BattleEffect_RunStatBoost(struct BattleEffectParams *args, u32 mode) {
           LOAD_BLITTER(draw[0], flags, BLITTER_MAX);
           draw[0](canvas,
                   work->sheet + cel * PICTURE_BYTES(VIOLET_STREAK) +
-                      SERIES_B_PICTURE,
+                      STAT_BOOST_PICTURE,
                   screen.x - VIOLET_STREAK_WIDTH / 2,
                   screen.y - VIOLET_STREAK_HEIGHT / 2, VIOLET_STREAK_WIDTH,
                   VIOLET_STREAK_HEIGHT);
@@ -454,7 +463,8 @@ void BattleEffect_RunStatBoost(struct BattleEffectParams *args, u32 mode) {
           draw[0] = (DrawRectangle)Ram_HeapSlots->ramCode;
           BattleEffect_BuildBlitter(HEAP_SLOT_RAM_CODE_PAIRED, 7, 7, lowerFlags,
                                     BLITTER_MAX);
-          picture = work->sheet + cel * PICTURE_BYTES(WISP) + SERIES_B_PICTURE;
+          picture =
+              work->sheet + cel * PICTURE_BYTES(WISP) + STAT_BOOST_PICTURE;
           draw[1] = (DrawRectangle)Ram_HeapSlots->ramCodePaired;
           draw[0](canvas, picture, screen.x - WISP_WIDTH / 2, screen.y - 24,
                   WISP_WIDTH, WISP_HEIGHT);
@@ -470,7 +480,8 @@ void BattleEffect_RunStatBoost(struct BattleEffectParams *args, u32 mode) {
 
           LOAD_BLITTER(draw[0], flags, BLITTER_ADDITIVE);
           draw[0](canvas,
-                  work->sheet + cel * PICTURE_BYTES(SHIELD) + SERIES_B_PICTURE,
+                  work->sheet + cel * PICTURE_BYTES(SHIELD) +
+                      STAT_BOOST_PICTURE,
                   screen.x - SHIELD_WIDTH / 2, screen.y - SHIELD_HEIGHT / 2,
                   SHIELD_WIDTH, SHIELD_HEIGHT);
           HeapSlot_Release(HEAP_SLOT_RAM_CODE);

@@ -470,18 +470,30 @@ void BattleEffect_RunChillBreath(struct BattleEffectParams *args) {
 #define ABS(v) ((v) < 0 ? -(v) : (v))
 
 /// The particle buffer at the map cell buffer: flashes from 0, sparks from
-/// 100, smoke from 512, the falling-streak particles from 960.
-#define PTCL_SPARKS 100
-#define PTCL_SMOKE 512
-#define PTCL_STREAKS 960
-#define PTCL_MAX 1024
+/// 100, the smoke trails from 512, the falling-streak particles from 960.
+#define PROJECTILE_VOLLEY_PARTICLE_COUNT PARTICLE_POOL_COUNT
+#define PROJECTILE_VOLLEY_FIRST_SPARK 100  ///< the first spark in PARTICLES
+#define PROJECTILE_VOLLEY_FIRST_TRAIL 512  ///< the first trail in PARTICLES
+#define PROJECTILE_VOLLEY_FIRST_STREAK 960 ///< the first streak in PARTICLES
+#define PROJECTILE_VOLLEY_STREAKS                                              \
+  (PROJECTILE_VOLLEY_PARTICLE_COUNT - PROJECTILE_VOLLEY_FIRST_STREAK)
+/// The stings' short streak, then the smoke or water spray drawn where each
+/// lands.
+#define SHORT_STREAK_WIDTH 17
+#define SHORT_STREAK_HEIGHT 2
+#define PROJECTILE_VOLLEY_STING_SPRAY_PICTURES PICTURE_BYTES(SHORT_STREAK)
+/// Hydro Slash's beam, every second byte of BlueBeamSheet's picture.
+#define PROJECTILE_VOLLEY_HALVED_BEAM_PICTURES 0x1000
+#define PROJECTILE_VOLLEY_HALVED_BEAM_BYTES 1458
 
-// The five bytes of a mode in gProjectileVolley_Modes.
-#define VOLLEY_SHOTS 0   ///< shots at each target
-#define VOLLEY_STEPS 1   ///< frames a shot takes to reach its target
-#define VOLLEY_STAGGER 2 ///< frames between shots
-#define VOLLEY_DELAY 3   ///< frames between targets
-#define VOLLEY_SPARKS 4  ///< sparks on impact
+/// The bytes of a gProjectileVolley_Modes row.
+enum VolleyField {
+  PROJECTILE_VOLLEY_SHOTS,   ///< shots at each target
+  PROJECTILE_VOLLEY_STEPS,   ///< frames a shot takes to reach its target
+  PROJECTILE_VOLLEY_STAGGER, ///< frames between shots
+  PROJECTILE_VOLLEY_DELAY,   ///< frames between targets
+  PROJECTILE_VOLLEY_SPARKS   ///< sparks thrown on each hit
+};
 
 /// BattleEffect_LoadBlitter(slot, mode << 4 | flags) loads a blitter into a
 /// heap slot.
@@ -490,15 +502,29 @@ void BattleEffect_RunChillBreath(struct BattleEffectParams *args) {
 /// The second blitter, loaded again for each draw that needs its own.
 #define DRAW_ALTERNATE ((DrawRectangle)Ram_HeapSlots->ramCodePaired)
 
-#define CUE_FIRE 136
-#define CUE_IMPACT 132
-
 /// Where WindStreakSheet is decoded in the effect's pictures.
 #define PROJECTILE_VOLLEY_WIND_STREAK_PICTURES 0x2000
 /// Where MercuryDjinnSmallSheet is decoded in the effect's pictures.
 #define PROJECTILE_VOLLEY_MERCURY_DJINN_SMALL_PICTURES 0x65c0
 
 #define PROJECTILE_VOLLEY_COMET_PICTURES 4096 ///< comets: the top half of each
+/// The hit flashes turned on their side, after the upright ones.
+#define PROJECTILE_VOLLEY_FLASH_TURNED                                         \
+  (12 * 10 + 18 * 15 + 24 * 18 + 30 * 22 + 36 * 27 + 39 * 28 + 40 * 30)
+/// The yellow spark sheet: the small spark first, then the medium one, then
+/// the large one.
+#define PROJECTILE_VOLLEY_SMALL_SPARK_PICTURE_WIDTH 12
+#define PROJECTILE_VOLLEY_SMALL_SPARK_PICTURE_HEIGHT 8
+#define PROJECTILE_VOLLEY_MEDIUM_SPARK_PICTURE_WIDTH 18
+#define PROJECTILE_VOLLEY_MEDIUM_SPARK_PICTURE_HEIGHT 13
+#define PROJECTILE_VOLLEY_LARGE_SPARK_PICTURE_WIDTH 29
+#define PROJECTILE_VOLLEY_LARGE_SPARK_PICTURE_HEIGHT 23
+#define PROJECTILE_VOLLEY_SMALL_SPARK_PICTURE 0
+#define PROJECTILE_VOLLEY_MEDIUM_SPARK_PICTURE                                 \
+  PICTURE_BYTES(PROJECTILE_VOLLEY_SMALL_SPARK_PICTURE)
+#define PROJECTILE_VOLLEY_LARGE_SPARK_PICTURE                                  \
+  (PROJECTILE_VOLLEY_MEDIUM_SPARK_PICTURE +                                    \
+   PICTURE_BYTES(PROJECTILE_VOLLEY_MEDIUM_SPARK_PICTURE))
 /// The comets' width, and the shuriken's six pictures.
 #define PROJECTILE_VOLLEY_COMET_WIDTH 32
 #define SHURIKEN_WIDTH 32
@@ -611,14 +637,16 @@ void BattleEffect_RunProjectileVolley(struct BattleEffectParams *args,
       Iwram_CopyWordsEntry((void *)BG_PLTT,
                            Resource_GetTableEntry(RESOURCE_LIME_PALETTE),
                            SHEET_PALETTE_BYTES);
-      Resource_LoadAndDecompress(RESOURCE_SMOKE_SHEET, work->sheet + 0x22, 1,
-                                 0);
+      Resource_LoadAndDecompress(
+          RESOURCE_SMOKE_SHEET,
+          work->sheet + PROJECTILE_VOLLEY_STING_SPRAY_PICTURES, 1, 0);
     } else {
       Iwram_CopyWordsEntry((void *)BG_PLTT,
                            Resource_GetTableEntry(RESOURCE_WATER_SPRAY_SHEET),
                            SHEET_PALETTE_BYTES);
-      Resource_LoadAndDecompress(RESOURCE_TORNADO_SHEET, work->sheet + 0x22, 1,
-                                 0);
+      Resource_LoadAndDecompress(
+          RESOURCE_TORNADO_SHEET,
+          work->sheet + PROJECTILE_VOLLEY_STING_SPRAY_PICTURES, 1, 0);
     }
   } else if (mode == PROJECTILE_VOLLEY_SHURIKEN) {
     Resource_LoadAndDecompress(RESOURCE_SHURIKEN_SHEET, work->sheet, 1, 1);
@@ -645,13 +673,13 @@ void BattleEffect_RunProjectileVolley(struct BattleEffectParams *args,
     EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_CLEAR, 0);
   } else if (mode == PROJECTILE_VOLLEY_HYDRO_SLASH) {
     // The beam is unpacked once and then halved, every second byte, into
-    // place at 0x1000.
+    // place.
     u8 *beam;
 
     Resource_LoadAndDecompress(RESOURCE_BLUE_BEAM_SHEET, beam = work->sheet, 1,
                                1);
-    for (i = 0; i != 0x5b2; i++) {
-      work->sheet[0x1000 + i] = *beam;
+    for (i = 0; i != PROJECTILE_VOLLEY_HALVED_BEAM_BYTES; i++) {
+      work->sheet[PROJECTILE_VOLLEY_HALVED_BEAM_PICTURES + i] = *beam;
       beam += 2;
     }
     EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
@@ -666,11 +694,11 @@ void BattleEffect_RunProjectileVolley(struct BattleEffectParams *args,
 
   // Where each shot starts and how fast it flies.
   user = BattleObject_GetFar(args->user)->object;
-  shots = gProjectileVolley_Modes[mode][VOLLEY_SHOTS];
-  steps = gProjectileVolley_Modes[mode][VOLLEY_STEPS];
+  shots = gProjectileVolley_Modes[mode][PROJECTILE_VOLLEY_SHOTS];
+  steps = gProjectileVolley_Modes[mode][PROJECTILE_VOLLEY_STEPS];
   {
-    s32 stagger = gProjectileVolley_Modes[mode][VOLLEY_STAGGER];
-    s32 delay = gProjectileVolley_Modes[mode][VOLLEY_DELAY];
+    s32 stagger = gProjectileVolley_Modes[mode][PROJECTILE_VOLLEY_STAGGER];
+    s32 delay = gProjectileVolley_Modes[mode][PROJECTILE_VOLLEY_DELAY];
     s32 height = BattleUnit_GetEffectHeightFar(args->user);
 
     if (shots * args->targetCount > 63) // the shots must fit particles[64]
@@ -769,13 +797,13 @@ void BattleEffect_RunProjectileVolley(struct BattleEffectParams *args,
         shot->variant = 0;
       }
     }
-    for (i = 0; i != PTCL_MAX; i++)
+    for (i = 0; i != PROJECTILE_VOLLEY_PARTICLE_COUNT; i++)
       PARTICLES[i].variant = 0;
 
     // The falling-streak particles start on the first target, held.
     EffectPosition_ProjectBattler(args->targets[0], &origin);
-    for (i = 0; i != 64; i++) {
-      struct Particle *p = &PARTICLES[PTCL_STREAKS + i];
+    for (i = 0; i != PROJECTILE_VOLLEY_STREAKS; i++) {
+      struct Particle *p = &PARTICLES[PROJECTILE_VOLLEY_FIRST_STREAK + i];
 
       SET_POSITION(p, INTtoFIXED(origin.x / 2), toFIXED(80), 0);
       p->velocityX = ((Random16() & 255) - 128) << 9;
@@ -807,7 +835,7 @@ void BattleEffect_RunProjectileVolley(struct BattleEffectParams *args,
           mode == PROJECTILE_VOLLEY_HYDRO_SLASH ||
           mode == PROJECTILE_VOLLEY_DIAMOND_DUST) {
         if (frame == 4)
-          Sound_PlayFar(CUE_FIRE);
+          Sound_PlayFar(SE_WHOOSH);
         if (frame == 32)
           EFFECT_SHOW_DAMAGE(SE_HEAVY_IMPACT);
       } else if (mode == PROJECTILE_VOLLEY_CRAZY_VOICE) {
@@ -879,7 +907,8 @@ void BattleEffect_RunProjectileVolley(struct BattleEffectParams *args,
               mode == PROJECTILE_VOLLEY_BLAZE_RUSH) {
             // Two puffs of smoke behind the fireball.
             shift = 0;
-            for (k = PTCL_SMOKE; k != PTCL_STREAKS; k++) {
+            for (k = PROJECTILE_VOLLEY_FIRST_TRAIL;
+                 k != PROJECTILE_VOLLEY_FIRST_STREAK; k++) {
               struct Particle *p = &PARTICLES[k];
 
               if (p->variant == 0) {
@@ -932,7 +961,7 @@ void BattleEffect_RunProjectileVolley(struct BattleEffectParams *args,
                          mode != PROJECTILE_VOLLEY_DIAMOND_DUST &&
                          seWait == 0) {
                 seWait = 8;
-                Sound_PlayFar(CUE_IMPACT);
+                Sound_PlayFar(SE_WATER);
               }
               if (mode == PROJECTILE_VOLLEY_CRAZY_VOICE) {
                 // The pellet bounces off.
@@ -974,12 +1003,14 @@ void BattleEffect_RunProjectileVolley(struct BattleEffectParams *args,
                 for (n = 0, held = 0; n != 1; n++) {
                   /* FAKEMATCH(barrier): the asm operand. */
                   __asm__("" : "+r"(held));
-                  PARTICLES[PTCL_STREAKS + j + n].variant = held;
+                  PARTICLES[PROJECTILE_VOLLEY_FIRST_STREAK + j + n].variant =
+                      held;
                 }
               } else if (mode != PROJECTILE_VOLLEY_BEAST_NEEDLE) {
                 // Sparks.
                 shift = mode == PROJECTILE_VOLLEY_CUTTING_EDGE ? 12 : 11;
-                for (k = PTCL_SPARKS; k != PTCL_SMOKE; k++) {
+                for (k = PROJECTILE_VOLLEY_FIRST_SPARK;
+                     k != PROJECTILE_VOLLEY_FIRST_TRAIL; k++) {
                   struct Particle *p = &PARTICLES[k];
 
                   if (p->variant == 0) {
@@ -989,7 +1020,8 @@ void BattleEffect_RunProjectileVolley(struct BattleEffectParams *args,
                     p->velocityY = ((Random16() & 255) - 128) << shift;
                     p->variant = (Random16() & 7) + 16;
                     spawned++;
-                    if (spawned == gProjectileVolley_Modes[mode][VOLLEY_SPARKS])
+                    if (spawned ==
+                        gProjectileVolley_Modes[mode][PROJECTILE_VOLLEY_SPARKS])
                       break;
                   }
                 }
@@ -1039,15 +1071,20 @@ void BattleEffect_RunProjectileVolley(struct BattleEffectParams *args,
                     work->sheet + gProjectileVolley_PelletPictures[j & 3],
                     pos->x - 4, pos->y - 4, 8, 8);
           } else if (mode == PROJECTILE_VOLLEY_CRAZY_VOICE) {
-            draw[0](canvas, work->sheet + j % 6 * 128, pos->x - 4, pos->y - 8,
-                    8, 16);
+            draw[0](canvas, work->sheet + j % 6 * (8 * 16), pos->x - 4,
+                    pos->y - 8, 8, 16);
           } else if (mode == PROJECTILE_VOLLEY_WING_FLUTTER) {
-            draw[0](canvas, work->sheet + 96, pos->x - 9, pos->y - 7, 18, 13);
+            EFFECT_DRAW_PICTURE(draw[0], canvas, work->sheet,
+                                PROJECTILE_VOLLEY_MEDIUM_SPARK_PICTURE,
+                                pos->x - 9, pos->y - 7);
           } else if (mode == PROJECTILE_VOLLEY_WING_BEAT) {
-            draw[0](canvas, work->sheet, pos->x - 6, pos->y - 4, 12, 8);
+            EFFECT_DRAW_PICTURE(draw[0], canvas, work->sheet,
+                                PROJECTILE_VOLLEY_SMALL_SPARK_PICTURE,
+                                pos->x - 6, pos->y - 4);
           } else if (mode >= PROJECTILE_VOLLEY_BEAST_NEEDLE &&
                      mode <= PROJECTILE_VOLLEY_STUN_STING) {
-            draw[0](canvas, work->sheet, pos->x - 8, pos->y - 1, 17, 2);
+            draw[0](canvas, work->sheet, pos->x - 8, pos->y - 1,
+                    SHORT_STREAK_WIDTH, SHORT_STREAK_HEIGHT);
           } else if (mode == PROJECTILE_VOLLEY_HYDRO_SLASH) {
             draw[0](canvas, work->sheet, pos->x - 12, pos->y - 12, 24, 24);
           } else if (mode == PROJECTILE_VOLLEY_DIAMOND_DUST) {
@@ -1055,7 +1092,8 @@ void BattleEffect_RunProjectileVolley(struct BattleEffectParams *args,
             s32 cel = (i * shots + j) % 5 * 3 + frame / 4 % 3;
             u32 width;
             u32 height;
-            u8 *picture = work->sheet + gPrism_ShardPictures[cel] + 0x800;
+            u8 *picture = work->sheet + gPrism_ShardPictures[cel] +
+                          PICTURE_BYTES(CRYSTAL);
             s32 left;
             s32 top;
 
@@ -1065,8 +1103,9 @@ void BattleEffect_RunProjectileVolley(struct BattleEffectParams *args,
             top = pos->y - (height >> 1);
             draw[0](canvas, picture, left, top, width, height);
           } else if (mode == PROJECTILE_VOLLEY_WING_STROKE) {
-            draw[0](canvas, work->sheet + 330, pos->x - 15, pos->y - 12, 29,
-                    23);
+            EFFECT_DRAW_PICTURE(draw[0], canvas, work->sheet,
+                                PROJECTILE_VOLLEY_LARGE_SPARK_PICTURE,
+                                pos->x - 15, pos->y - 12);
           } else {
             draw[0](canvas, work->sheet, pos->x - 20, pos->y - 32,
                     FLAMEBALL_WIDTH, FLAMEBALL_HEIGHT);
@@ -1114,7 +1153,8 @@ void BattleEffect_RunProjectileVolley(struct BattleEffectParams *args,
                                   BLITTER_MAX);
               DRAW_ALTERNATE(canvas,
                              work->sheet +
-                                 gProjectileVolley_FlashPictures[step] + 0x128a,
+                                 gProjectileVolley_FlashPictures[step] +
+                                 PROJECTILE_VOLLEY_FLASH_TURNED,
                              flash->x - gProjectileVolley_FlashRises[step],
                              flash->y - gProjectileVolley_FlashWidths[step],
                              gProjectileVolley_FlashHeights[step],
@@ -1125,7 +1165,8 @@ void BattleEffect_RunProjectileVolley(struct BattleEffectParams *args,
                                   BLITTER_MAX);
               DRAW_ALTERNATE(canvas,
                              work->sheet +
-                                 gProjectileVolley_FlashPictures[step] + 0x128a,
+                                 gProjectileVolley_FlashPictures[step] +
+                                 PROJECTILE_VOLLEY_FLASH_TURNED,
                              flash->x + gProjectileVolley_FlashSteps[step] -
                                  gProjectileVolley_FlashRises[step],
                              flash->y, gProjectileVolley_FlashHeights[step],
@@ -1140,7 +1181,8 @@ void BattleEffect_RunProjectileVolley(struct BattleEffectParams *args,
       }
 
       // Sparks fall and bounce at y = 112 (the beam's float up).
-      for (i = PTCL_SPARKS; i != PTCL_SMOKE; i++) {
+      for (i = PROJECTILE_VOLLEY_FIRST_SPARK;
+           i != PROJECTILE_VOLLEY_FIRST_TRAIL; i++) {
         struct Particle *p = &PARTICLES[i];
 
         if (p->variant > 0) {
@@ -1160,7 +1202,8 @@ void BattleEffect_RunProjectileVolley(struct BattleEffectParams *args,
       }
 
       // Smoke rises.
-      for (i = PTCL_SMOKE; i != PTCL_STREAKS; i++) {
+      for (i = PROJECTILE_VOLLEY_FIRST_TRAIL;
+           i != PROJECTILE_VOLLEY_FIRST_STREAK; i++) {
         struct Particle *p = &PARTICLES[i];
 
         if (p->variant > 0) {
@@ -1177,15 +1220,16 @@ void BattleEffect_RunProjectileVolley(struct BattleEffectParams *args,
       if (mode == PROJECTILE_VOLLEY_POISON_STING) {
         // Smoke billows up where each streak landed: six cels, four frames
         // each.
-        for (i = 0; i != 64; i++) {
-          struct Particle *p = &PARTICLES[PTCL_STREAKS + i];
+        for (i = 0; i != PROJECTILE_VOLLEY_STREAKS; i++) {
+          struct Particle *p = &PARTICLES[PROJECTILE_VOLLEY_FIRST_STREAK + i];
 
           if ((u32)p->variant <= 23) {
-            draw[0](
-                canvas,
-                work->sheet + 0x22 + p->variant / 4 * PICTURE_BYTES(SMOKE_PUFF),
-                FIXED_INTEGER_PART(p->x) - 12, FIXED_INTEGER_PART(p->y) - 24,
-                SMOKE_PUFF_WIDTH, SMOKE_PUFF_HEIGHT);
+            draw[0](canvas,
+                    work->sheet + PROJECTILE_VOLLEY_STING_SPRAY_PICTURES +
+                        p->variant / 4 * PICTURE_BYTES(SMOKE_PUFF),
+                    FIXED_INTEGER_PART(p->x) - SMOKE_PUFF_WIDTH / 2,
+                    FIXED_INTEGER_PART(p->y) - SMOKE_PUFF_HEIGHT / 2,
+                    SMOKE_PUFF_WIDTH, SMOKE_PUFF_HEIGHT);
             BattleEffectKernels_IntegrateVector2(p, 62, -toFIXED(1) / 64);
             p->variant++;
           }
@@ -1193,8 +1237,8 @@ void BattleEffect_RunProjectileVolley(struct BattleEffectParams *args,
       } else if (mode == PROJECTILE_VOLLEY_STUN_STING) {
         // Glints of water spray scatter about each landed streak, each with
         // a random palette.
-        for (i = 0; i != 64; i++) {
-          struct Particle *p = &PARTICLES[PTCL_STREAKS + i];
+        for (i = 0; i != PROJECTILE_VOLLEY_STREAKS; i++) {
+          struct Particle *p = &PARTICLES[PROJECTILE_VOLLEY_FIRST_STREAK + i];
 
           if ((u32)p->variant <= 7) {
             s32 glint = frame & 3;
@@ -1209,10 +1253,13 @@ void BattleEffect_RunProjectileVolley(struct BattleEffectParams *args,
                          (gBattleEffect_GlintPictureHeights[glint] >> 1);
             u32 flip = Random16();
 
-            EFFECT_LOAD_BLITTER(
-                188, gProjectileVolley_GlintFlips[flip & 3] | CLIP, 0);
+            EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED,
+                                gProjectileVolley_GlintFlips[flip & 3] | CLIP,
+                                0);
             DRAW_ALTERNATE(
-                canvas, work->sheet + 0x22 + gBattleEffect_GlintPictures[glint],
+                canvas,
+                work->sheet + PROJECTILE_VOLLEY_STING_SPRAY_PICTURES +
+                    gBattleEffect_GlintPictures[glint],
                 glintX, glintY, gBattleEffect_GlintPictureWidths[glint],
                 gBattleEffect_GlintPictureHeights[glint]);
             HeapSlot_Release(HEAP_SLOT_RAM_CODE_PAIRED);
@@ -1237,7 +1284,7 @@ void BattleEffect_InitializeRisingObject(s32 slot) {
   object->acceleration = toFIXED(2);
   object->speedLimit = toFIXED(8);
   object->velocityY = toFIXED(4);
-  object->gravity = 0xAB85;
+  object->gravity = BATTLE_UNIT_GRAVITY;
   object->bounce = 0;
   object->steeringFlags = 0;
   object->snapToTarget = 1;
@@ -1271,7 +1318,7 @@ void BattleEffect_SetApproachMotion(s32 id, s32 targetId, s32 frames,
   obj->acceleration = dist;
   obj->speedLimit = dist;
   obj->snapToTarget = 1;
-  obj->gravity = 0xab85;
+  obj->gravity = BATTLE_UNIT_GRAVITY;
   obj->velocityY = 0;
   obj->bounce = 0;
   obj->steeringFlags = 1;

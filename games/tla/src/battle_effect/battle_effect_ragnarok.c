@@ -211,7 +211,7 @@ void BattleEffect_RunRagnarok(struct BattleEffectParams *args) {
               spark->velocityY = -spark->velocityY / 2;
             } else {
               x = spark->x;
-              if ((x >= 0 && x <= 0x7effff) && y >= 0) {
+              if ((x >= 0 && x <= toFIXED(127) - 1) && y >= 0) {
                 u8 *picture;
                 s32 lane;
                 s32 py = FIXEDtoINT(y);
@@ -262,14 +262,22 @@ void BattleEffect_RunAcheronsGrief(struct BattleEffectParams *args) {
   BattleEffect_RunFallingSword(args, FALLING_SWORD_ACHERONS_GRIEF);
 }
 
-// The sheet: the fire pillar, the flashes after it, the sword far after.
-#define FLASH_SHEET (221 << 4)
-#define SWORD_SHEET 20000
-
-/// The map cell buffer: 684 motes of dust, then the sword's sparks.
+/// The map cell buffer: the dust, then the sword's sparks.
 #define DUST ((struct Particle *)Ram_MapCellBuffer)
-#define SPARK                                                                  \
-  ((struct Particle *)(Ram_MapCellBuffer + 684 * sizeof(struct Particle)))
+#define TITAN_BLADE_SWORD_SPARKS                                               \
+  ((struct Particle *)(Ram_MapCellBuffer +                                     \
+                       TITAN_BLADE_DUST * sizeof(struct Particle)))
+
+#define TITAN_BLADE_FRAMES 102
+#define TITAN_BLADE_SWORD_PICTURE 20000 ///< the sword picture in the sheet
+#define TITAN_BLADE_FLASHES 32          ///< flashes scattered
+#define TITAN_BLADE_RING 16             ///< of which drawn as the ring
+#define TITAN_BLADE_DUST 684       ///< dust slots in DUST, before the sparks
+#define TITAN_BLADE_FIRST_DUST 256 ///< dust lit at once on frame 28
+#define TITAN_BLADE_DRAWN_DUST 342 ///< dust moved and drawn
+#define TITAN_BLADE_SPARKS 340     ///< sparks after the dust
+/// The flash pictures in the sheet, after the 34x104 fire pillar.
+#define TITAN_BLADE_FLASH_PICTURES PICTURE_BYTES(FIRE_PILLAR)
 
 /// The sword strikes: the crash, the damage and the canvas filled bright.
 #define TITAN_BLADE_STRIKE_FRAME 60
@@ -311,12 +319,13 @@ void BattleEffect_RunFallingSword(struct BattleEffectParams *args, s32 mode) {
                       BLITTER_TRANSPARENT);
   draw[1] = (DrawRectangle)Ram_HeapSlots->ramCodePaired;
 
+  // No caller passes a mode 2: both abilities draw the sword.
   if (mode != 2)
-    Resource_LoadAndDecompress(RESOURCE_SWORD_SHEET, work->sheet + SWORD_SHEET,
-                               1, 1);
+    Resource_LoadAndDecompress(RESOURCE_SWORD_SHEET,
+                               work->sheet + TITAN_BLADE_SWORD_PICTURE, 1, 1);
   Resource_LoadAndDecompress(RESOURCE_FIRE_PILLAR_SHEET_A, work->sheet, 1, 0);
   Resource_LoadAndDecompress(RESOURCE_FLASH_BURST_SHEET,
-                             work->sheet + FLASH_SHEET, 1, 0);
+                             work->sheet + TITAN_BLADE_FLASH_PICTURES, 1, 0);
   Resource_LoadAndDecompress(RESOURCE_PARTICLE_SPRITES_A, cells, 0, 0);
 
   // Mode 1 turns the first 64 BG colours: red to blue, blue to green, green
@@ -346,19 +355,19 @@ void BattleEffect_RunFallingSword(struct BattleEffectParams *args, s32 mode) {
     flash->y = -(Trig_Cos(angle) * scale);
     flash->variant = i / 2 + 25;
     i++;
-  } while (i != 32);
+  } while (i != TITAN_BLADE_FLASHES);
 
   i = 0;
   do {
     DUST[i].variant = -1;
     i++;
-  } while (i != 171 << 2);
+  } while (i != TITAN_BLADE_DUST);
 
   // The sparks wait at the target's feet.
   i = 0;
   origin = INTtoFIXED(centerX);
   do {
-    struct Particle *spark = &SPARK[i];
+    struct Particle *spark = &TITAN_BLADE_SWORD_SPARKS[i];
     s32 speed;
     s32 angle;
 
@@ -371,7 +380,7 @@ void BattleEffect_RunFallingSword(struct BattleEffectParams *args, s32 mode) {
     spark->velocityY = -(Trig_Cos(angle) * (speed + 32)) >> 6;
     spark->variant = (Random16() & 7) + 32;
     i++;
-  } while (i != 170 << 1);
+  } while (i != TITAN_BLADE_SPARKS);
 
   frame = 0;
   do {
@@ -421,12 +430,13 @@ void BattleEffect_RunFallingSword(struct BattleEffectParams *args, s32 mode) {
         if (life >= 0 && life <= 17)
           draw[0](canvas,
                   work->sheet + (gTitanBlade_FlashPictures[life / 3] << 11) +
-                      FLASH_SHEET,
-                  x - 16, y + 48, FLASH_BURST_WIDTH, FLASH_BURST_HEIGHT);
+                      TITAN_BLADE_FLASH_PICTURES,
+                  x - FLASH_BURST_WIDTH / 2, y + 48, FLASH_BURST_WIDTH,
+                  FLASH_BURST_HEIGHT);
         life = flash->variant;
         flash->variant = life > 0 ? life - 1 : -1;
         i++;
-      } while (i != 16);
+      } while (i != TITAN_BLADE_RING);
     }
 
     // The dust: a fountain at frame 28, then 16 more a frame until 63.
@@ -448,7 +458,7 @@ void BattleEffect_RunFallingSword(struct BattleEffectParams *args, s32 mode) {
           dust->variant = 0;
         }
         i++;
-      } while (i != 128 << 1);
+      } while (i != TITAN_BLADE_FIRST_DUST);
     }
 
     step = frame - 32;
@@ -476,7 +486,7 @@ void BattleEffect_RunFallingSword(struct BattleEffectParams *args, s32 mode) {
             break;
         }
         i++;
-      } while (i != 171 << 2);
+      } while (i != TITAN_BLADE_DUST);
     }
 
     if (step >= 0 && step <= 31) {
@@ -520,7 +530,7 @@ void BattleEffect_RunFallingSword(struct BattleEffectParams *args, s32 mode) {
           dust->x += dust->velocityX;
           dust->y += dust->velocityY;
           if (frame > 80)
-            dust->velocityY += -32768;
+            dust->velocityY -= toFIXED(1) / 2;
           else
             dust->velocityY += gTitanBlade_DustGravity[i & 3];
           dust->velocityX = dust->velocityX * 62 / DAMPING_SCALE;
@@ -530,7 +540,7 @@ void BattleEffect_RunFallingSword(struct BattleEffectParams *args, s32 mode) {
             dust->variant = -1;
         }
         i++;
-      } while (i != 171 << 1);
+      } while (i != TITAN_BLADE_DRAWN_DUST);
     }
 
     // The sword: down for 10 frames, held, sinking from 33, plunging after
@@ -553,14 +563,15 @@ void BattleEffect_RunFallingSword(struct BattleEffectParams *args, s32 mode) {
       if (top + 120 > 108)
         high = high - top - 12;
       if (high > 0)
-        draw[1](canvas, work->sheet + SWORD_SHEET, x, top, 36, high);
+        draw[1](canvas, work->sheet + TITAN_BLADE_SWORD_PICTURE, x, top, 36,
+                high);
     }
 
     // The sparks bounce on the ground.
     if (frame > 59) {
       i = 0;
       do {
-        struct Particle *spark = &SPARK[i];
+        struct Particle *spark = &TITAN_BLADE_SWORD_SPARKS[i];
 
         if (spark->variant > 0) {
           s32 x;
@@ -568,20 +579,20 @@ void BattleEffect_RunFallingSword(struct BattleEffectParams *args, s32 mode) {
           s32 size;
 
           BattleEffectKernels_IntegrateVector2(spark, PARTICLE_DAMPING_NONE,
-                                               128 << 6);
+                                               toFIXED(1) / 8);
           y = spark->y;
           spark->variant--;
           if (y > toFIXED(108)) {
             spark->velocityY = -spark->velocityY / 2;
           } else {
             x = spark->x;
-            if ((x >= 0 && x <= 0x7effff) && y >= 0) {
+            if ((x >= 0 && x <= toFIXED(127) - 1) && y >= 0) {
               u8 *cell;
 
               size = spark->variant / 5 + 1;
               cell = cells + gBattleEffect_MotePictures[size - 1];
-              x >>= 16;
-              y >>= 16;
+              x = FIXEDtoINT(x);
+              y = FIXEDtoINT(y);
               x -= size / 2;
               y -= size;
               draw[0](canvas, cell, x, y, size, size * 2);
@@ -589,7 +600,7 @@ void BattleEffect_RunFallingSword(struct BattleEffectParams *args, s32 mode) {
           }
         }
         i++;
-      } while (i != 170 << 1);
+      } while (i != TITAN_BLADE_SPARKS);
     }
 
     // The hit, and the canvas flooded at frames 9 and 60.
@@ -602,18 +613,32 @@ void BattleEffect_RunFallingSword(struct BattleEffectParams *args, s32 mode) {
     if (frame == 9) {
       BattleEffect_TintBattler(args->targets[0], SPRITE_COLOR_WHITE,
                                POSE_DAMAGE, 0, 8);
-      Iwram_FillWordsEntry(canvas, 128 << 7, 0x3F3F3F3F);
+      Iwram_FillWordsEntry(canvas, CANVAS_BYTES,
+                           CANVAS_FILL_WORD(CANVAS_LEVEL_BRIGHTEST));
     }
     if (frame == TITAN_BLADE_STRIKE_FRAME)
-      Iwram_FillWordsEntry(canvas, 128 << 7, 0x3F3F3F3F);
+      Iwram_FillWordsEntry(canvas, CANVAS_BYTES,
+                           CANVAS_FILL_WORD(CANVAS_LEVEL_BRIGHTEST));
 
     BattleCamera_Shake(16, 16);
     EFFECT_END_FRAME(work);
     frame++;
-  } while (frame != 102);
+  } while (frame != TITAN_BLADE_FRAMES);
 
   EFFECT_FINISH_CANVAS();
 }
+
+#undef DUST
+#undef TITAN_BLADE_SWORD_SPARKS
+#undef TITAN_BLADE_FRAMES
+#undef TITAN_BLADE_SWORD_PICTURE
+#undef TITAN_BLADE_FLASHES
+#undef TITAN_BLADE_RING
+#undef TITAN_BLADE_DUST
+#undef TITAN_BLADE_FIRST_DUST
+#undef TITAN_BLADE_DRAWN_DUST
+#undef TITAN_BLADE_SPARKS
+#undef TITAN_BLADE_FLASH_PICTURES
 
 struct StripQuad;
 

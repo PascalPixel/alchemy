@@ -7,46 +7,72 @@
 #include "gamepak/far_call/battle.h"
 #include "resource_ids.h"
 
+/// The streak volley's styles (BattleEffect_RunStreakVolley), each a row of
+/// gStreaks_Styles.
+enum StreakStyle {
+  STREAKS_STYLE_EMBER,  ///< Sonic Wave
+  STREAKS_STYLE_LIME,   ///< Shriek and Harpy, and the unused
+                        ///< BattleEffect_RunLimeStreaks
+  STREAKS_STYLE_VIOLET, ///< Banshee Howl
+  STREAKS_STYLE_RED,    ///< Wicked Howl
+  STREAKS_STYLE_CYAN    ///< War Cry
+};
+
+/// Three streaks of ember light fly from the user at each target in turn; each
+/// target flashes and recoils.
+///
 /// Abilities: Sonic Wave.
 void BattleEffect_RunSonicWave(struct BattleEffectParams *args) {
-  BattleEffect_RunStreakVolley(args, 0);
+  BattleEffect_RunStreakVolley(args, STREAKS_STYLE_EMBER);
 }
 
+/// Three streaks of lime light fly from the user at each target in turn; each
+/// target flashes and recoils.
+///
 /// Abilities: Shriek, Harpy.
 void BattleEffect_RunShriek(struct BattleEffectParams *args) {
-  BattleEffect_RunStreakVolley(args, 1);
+  BattleEffect_RunStreakVolley(args, STREAKS_STYLE_LIME);
 }
 
+/// Three streaks of violet light fly from the user at each target in turn; each
+/// target flashes and trembles.
+///
 /// Abilities: Banshee Howl.
 void BattleEffect_RunBansheeHowl(struct BattleEffectParams *args) {
-  BattleEffect_RunStreakVolley(args, 2);
+  BattleEffect_RunStreakVolley(args, STREAKS_STYLE_VIOLET);
 }
 
+/// Three flickering cyan streaks fly from the user at each target in turn;
+/// each target flashes and recoils.
+///
 /// Abilities: War Cry.
 void BattleEffect_RunWarCry(struct BattleEffectParams *args) {
-  BattleEffect_RunStreakVolley(args, 4);
+  BattleEffect_RunStreakVolley(args, STREAKS_STYLE_CYAN);
 }
 
+/// Three flickering red streaks fly from the user at each target in turn; each
+/// target flashes and trembles.
+///
 /// Abilities: Wicked Howl.
 void BattleEffect_RunWickedHowl(struct BattleEffectParams *args) {
-  BattleEffect_RunStreakVolley(args, 3);
+  BattleEffect_RunStreakVolley(args, STREAKS_STYLE_RED);
 }
 
-/// The streak volley in lime (mode 1). UNUSED: no effect table entry
-/// points here.
-void BattleEffect_RunLimeStreaks(struct BattleEffectParams *args) {
-  BattleEffect_RunStreakVolley(args, 1);
+/// Unused: no entry of the effect table points here. It would have played
+/// the same lime streaks as Shriek.
+UNUSED void BattleEffect_RunLimeStreaks(struct BattleEffectParams *args) {
+  BattleEffect_RunStreakVolley(args, STREAKS_STYLE_LIME);
 }
 
 #define CLIP (COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y)
 
-#define RECORD(mode, field) gStreaks_Styles[(mode) * 4 + (field)]
-#define RECORD_ANIMATE 0 ///< cycle the streak through its three pictures
-#define RECORD_HIT 1     ///< sound the hit and flash the target
-#define RECORD_MOTION 2  ///< the target's recoil motion, or -1
-#define RECORD_SHAKE 3   ///< tremble the target after the hit
+#define STREAKS_VALUE(mode, n) gStreaks_Styles[(mode) * 4 + (n)]
+#define STREAKS_ANIMATE 0 ///< cycle the streak through its three pictures
+#define STREAKS_HIT 1     ///< sound the hit and flash the target
+#define STREAKS_MOTION 2  ///< the target's recoil motion, or -1
+#define STREAKS_SHAKE 3   ///< tremble the target after the hit
 
-#define STREAK_MAX 3 ///< streaks for each target
+#define STREAKS_MAX 3 ///< streaks for each target
 
 // Sonic Wave (mode 0), Shriek (1), Banshee Howl (2), Wicked Howl (3) and War
 // Cry (4): effect kinds 300 to 305.
@@ -76,7 +102,7 @@ void BattleEffect_RunStreakVolley(struct BattleEffectParams *args, s32 mode) {
   s32 resource;
   s32 frame;
   s32 j;
-  s32 streaks = STREAK_MAX;
+  s32 streaks = STREAKS_MAX;
   s32 lift = toFIXED(20);
 
   /* FAKEMATCH(dead): heap set through its own address, so it is in memory
@@ -159,7 +185,7 @@ void BattleEffect_RunStreakVolley(struct BattleEffectParams *args, s32 mode) {
       // Wobble BG2's 160 lines on a sine wave, and fade the last 16
       // frames out.
       for (k = 0; k != DISPLAY_HEIGHT; k++)
-        *row++ = (0x80000 - Trig_Sin((frame + k) << 12) * 2) >> 10;
+        *row++ = (toFIXED(8) - Trig_Sin((frame + k) << 12) * 2) >> 10;
       if (frame > total - 16)
         REG_BLDALPHA = BLEND_ALPHA(total - frame, BLEND_WEIGHT_MAX);
 
@@ -192,7 +218,7 @@ void BattleEffect_RunStreakVolley(struct BattleEffectParams *args, s32 mode) {
               step = streak->variant / 8;
               if (step > 5)
                 step = 5;
-              if (RECORD(mode, RECORD_ANIMATE)) {
+              if (STREAKS_VALUE(mode, STREAKS_ANIMATE)) {
                 u8 *cell = &work->sheet[step * 800 +
                                         frame / 2 % 3 * STREAK_FRAME_BYTES];
 
@@ -218,7 +244,7 @@ void BattleEffect_RunStreakVolley(struct BattleEffectParams *args, s32 mode) {
 
           // From 6 frames after the hit, tremble the target sideways for
           // 32 frames.
-          if (RECORD(mode, RECORD_SHAKE) &&
+          if (STREAKS_VALUE(mode, STREAKS_SHAKE) &&
               frame >= k * STREAKS_TARGET_DELAY + 30 &&
               frame < k * STREAKS_TARGET_DELAY + 62) {
             struct MotionObject *struck =
@@ -236,7 +262,7 @@ void BattleEffect_RunStreakVolley(struct BattleEffectParams *args, s32 mode) {
 
           // The hit: a sound and two flashes, 16 frames apart. The first
           // hit lets the battle show its results.
-          if (RECORD(mode, RECORD_HIT)) {
+          if (STREAKS_VALUE(mode, STREAKS_HIT)) {
             if (frame == k * STREAKS_TARGET_DELAY + 24) {
               Sound_PlayFar(SE_IMPACT);
               if (k == 0)
@@ -248,11 +274,11 @@ void BattleEffect_RunStreakVolley(struct BattleEffectParams *args, s32 mode) {
               BattleEffect_TintBattler(args->targets[k], SPRITE_COLOR_WHITE,
                                        POSE_DAMAGE, k, 8);
           }
-          if (RECORD(mode, RECORD_MOTION) != -1 &&
+          if (STREAKS_VALUE(mode, STREAKS_MOTION) != -1 &&
               frame == k * STREAKS_TARGET_DELAY + 24) {
             work->shakeFrames = 4;
             BattleMotion_ApplyKnockbackFar(args->targets[k],
-                                           RECORD(mode, RECORD_MOTION));
+                                           STREAKS_VALUE(mode, STREAKS_MOTION));
           }
         }
       }
@@ -407,7 +433,7 @@ void BattleEffect_RunMoteFountain(struct BattleEffectParams *args, s32 mode) {
         // slowly. Sleep Star's drift away from the user's side.
         if (mode == MOTE_FOUNTAIN_SLAVER) {
           BattleEffectKernels_IntegrateVector3(mote, 62, -toFIXED(1) / 8);
-          if (mote->y <= 0x4ffff)
+          if (mote->y < toFIXED(5))
             mote->velocityY = -mote->velocityY;
         } else {
           BattleEffectKernels_IntegrateVector3(mote, 62, toFIXED(1) / 64);

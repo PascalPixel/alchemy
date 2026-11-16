@@ -10,8 +10,8 @@
 /// camera.
 s32 BattleUnit_ProjectToScreen(s32 unit, s32 *screen) {
   struct BattleCamera *camera;
-  s32 *object;
-  u8 *info;
+  struct MotionObject *object;
+  struct Sprite *info;
   FIXED scale;
 
   camera = Ram_HeapSlots->cameraWork;
@@ -19,8 +19,7 @@ s32 BattleUnit_ProjectToScreen(s32 unit, s32 *screen) {
   info = GetMotionRecordFar(object, 0);
   Matrix_Initialize();
   Matrix_SetLookAt(camera->eye, camera->focus);
-  scale =
-      Iwram_MulFX(Render_ProjectPoint(object + 2, screen), *(s32 *)(info + 12));
+  scale = Iwram_MulFX(Render_ProjectPoint(&object->x, screen), info->scale);
   screen[1] -= Iwram_MulFX(scale, BattleUnit_GetEffectHeightFar(unit) >> 17);
   return 0;
 }
@@ -36,7 +35,7 @@ void BattleEffect_ProbeKeysForExtendedActor(void) {
 
   // DEAD: nothing uses the held keys read here; the ROM keeps the test and the
   // load.
-  if (args->targets[0] > 0x7f)
+  if (args->targets[0] >= FIRST_ENEMY_UNIT)
     (void)gInput.held;
 }
 
@@ -331,7 +330,7 @@ void BattleEffect_RunCriticalHit(struct BattleEffectParams *args) {
   struct MotionObject *object;
   struct MotionObject *target;
   u16 *background;
-  s32 words = 0x3c00;
+  s32 bytes = CANVAS_VIEW_BYTES;
   s32 big;
   s32 half;
   s32 frame;
@@ -454,8 +453,8 @@ void BattleEffect_RunCriticalHit(struct BattleEffectParams *args) {
 
   // The burst: clear both canvases, blend, and centre the layer on the
   // first target, kept within 128 pixels.
-  Iwram_ClearWordsEntry(canvas, words);
-  Iwram_ClearWordsEntry((void *)BG_CHAR_BLOCK(1), words);
+  Iwram_ClearWordsEntry(canvas, bytes);
+  Iwram_ClearWordsEntry((void *)BG_CHAR_BLOCK(1), bytes);
   EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_THREE_QUARTERS);
   REG_BG1CNT = BGCNT_PRIORITY(1) | BGCNT_256_COLORS | BGCNT_SCREEN_BASE(31);
   EffectPosition_ProjectScaledBattler(args->targets[0], &anchor);
@@ -497,14 +496,15 @@ void BattleEffect_RunCriticalHit(struct BattleEffectParams *args) {
     pos.y += 16;
     // The flash: four cels, two frames each.
     if (frame <= 1)
-      draw[0](canvas, work->sheet, 0, 0, SLASH_PICTURE_SIZE, 120);
+      draw[0](canvas, work->sheet, 0, 0, SLASH_PICTURE_SIZE,
+              SLASH_PICTURE_SIZE);
     else if (frame <= 3)
       draw[0](canvas, Ram_MapCellBuffer, -4, 0, 128, 128);
     else if (frame <= 5)
-      draw[0](canvas, Ram_MapCellBuffer + 0x4000, -4, 0, 128, 128);
+      draw[0](canvas, Ram_MapCellBuffer + CANVAS_BYTES, -4, 0, 128, 128);
     else if (frame <= 7)
-      draw[0](canvas, work->sheet + 0x3840, 0, 0, SLASH_PICTURE_SIZE,
-              SLASH_PICTURE_SIZE);
+      draw[0](canvas, work->sheet + SLASH_PICTURE_SIZE * SLASH_PICTURE_SIZE, 0,
+              0, SLASH_PICTURE_SIZE, SLASH_PICTURE_SIZE);
     Matrix_Initialize();
     Matrix_SetLookAt(camera->eye, camera->focus);
     // From frame 4 the sparks fly, two to each particle, through the two
@@ -566,7 +566,7 @@ void BattleEffect_StartActorMotion(s32 id, s32 force, s32 acceleration,
     Actor_SetMoveTargetFar(object, slot->anchorX * percent / 100, 0,
                            slot->anchorZ);
   }
-  object->verticalMotionStrength = 0x9999;
+  object->verticalMotionStrength = toFIXED(3) / 5;
   object->verticalMotionPhase = 0;
   object->autoFaceMotion = 0;
   Actor_SelectAnimationFar(object, 5);

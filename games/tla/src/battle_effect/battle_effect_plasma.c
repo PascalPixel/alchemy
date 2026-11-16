@@ -7,7 +7,10 @@
 #include "gamepak/far_call/battle.h"
 #include "resource_ids.h"
 
-#define SPARK_MAX 1024
+#define PLASMA_SPARK_COUNT                                                     \
+  PARTICLE_POOL_COUNT ///< sparks in PARTICLES, shared by every pillar
+/// Volcano, later in the object, counts its sparks in the same pool by this.
+#define SPARK_MAX PLASMA_SPARK_COUNT
 #define PILLAR_BASE_Y 104
 
 #define PLASMA_SPACING 8 ///< frames between pillars
@@ -55,7 +58,7 @@ void BattleEffect_RunPlasma(struct BattleEffectParams *args) {
 
   // Every spark starts at rest.
   variant = &((struct Particle *)Ram_MapCellBuffer)->variant;
-  for (k = 0; k != SPARK_MAX; k++) {
+  for (k = 0; k != PLASMA_SPARK_COUNT; k++) {
     *variant = 0;
     variant += 7;
   }
@@ -103,7 +106,7 @@ void BattleEffect_RunPlasma(struct BattleEffectParams *args) {
         if (frame == start + 2) {
           s32 thrown = 0;
 
-          for (k = 0; k != SPARK_MAX; k++) {
+          for (k = 0; k != PLASMA_SPARK_COUNT; k++) {
             spark = &sparks[k];
             if (spark->variant == 0) {
               s32 speed;
@@ -138,7 +141,7 @@ void BattleEffect_RunPlasma(struct BattleEffectParams *args) {
 
     // The sparks fall and bounce at half speed off the ground, drawn
     // smaller as they die out.
-    for (k = 0; k != SPARK_MAX; k++) {
+    for (k = 0; k != PLASMA_SPARK_COUNT; k++) {
       spark = &sparks[k];
       if (spark->variant > 0) {
         spark->variant--;
@@ -179,9 +182,9 @@ void BattleEffect_RunDynamite(struct BattleEffectParams *args) {
   BattleEffect_RunSparkGroups(args, SPARK_GROUPS_DYNAMITE);
 }
 
-#define FLASH_POINTS 16 ///< flash points kept for each group
-#define FLASH_DRAWN 12  ///< of which the first 12 are drawn
-#define FLASH_FRAMES 18 ///< six cels of three frames
+#define SPARK_GROUPS_FLASHES 16     ///< flashes kept per burst
+#define SPARK_GROUPS_RING 12        ///< of which drawn as the ring
+#define SPARK_GROUPS_FLASH_DRAWN 18 ///< a flash is drawn for its last 18 frames
 #define GROUND_Y toFIXED(108)
 
 #define SHAPE(n) gPlasma_Shapes[args->variant][n]
@@ -246,12 +249,12 @@ void BattleEffect_RunSparkGroups(struct BattleEffectParams *args, s32 kind) {
 
   for (i = 0; i != GROUP_COUNT; i++) {
     // The group's ring of flash points, wider and later further out.
-    for (j = 0; j != FLASH_POINTS; j++) {
+    for (j = 0; j != SPARK_GROUPS_FLASHES; j++) {
       struct Particle *point;
       s32 radius;
       s32 angle;
 
-      point = &work->particles[i * FLASH_POINTS + j];
+      point = &work->particles[i * SPARK_GROUPS_FLASHES + j];
       radius = j * 2;
       angle = Random16() & TRIG_ANGLE_MASK;
       point->x = Trig_Sin(angle) * radius;
@@ -324,22 +327,23 @@ void BattleEffect_RunSparkGroups(struct BattleEffectParams *args, s32 kind) {
 
       // The ring of small flashes, each counting down through six cels.
       if (frame >= start) {
-        for (j = 0; j != FLASH_DRAWN; j++) {
+        for (j = 0; j != SPARK_GROUPS_RING; j++) {
           struct Particle *point;
           s32 x;
           s32 y;
 
-          point = &work->particles[i * FLASH_POINTS + j];
+          point = &work->particles[i * SPARK_GROUPS_FLASHES + j];
           y = FIXED_INTEGER_PART(point->y) + originY;
           if (args->side == EFFECT_SIDE_PARTY)
             x = FIXED_INTEGER_PART(point->x) + originX - GROUP_X(i) + 28;
           else
             x = FIXED_INTEGER_PART(point->x) + originX + GROUP_X(i) - 28;
-          if (point->variant >= 0 && point->variant < FLASH_FRAMES)
+          if (point->variant >= 0 && point->variant < SPARK_GROUPS_FLASH_DRAWN)
             draw[0](canvas,
                     work->sheet +
                         (gPlasma_FlashPictures[point->variant / 3] << 11),
-                    x - 16, y - 32, FLASH_BURST_WIDTH, FLASH_BURST_HEIGHT);
+                    x - FLASH_BURST_WIDTH / 2, y - FLASH_BURST_HEIGHT / 2,
+                    FLASH_BURST_WIDTH, FLASH_BURST_HEIGHT);
           if (point->variant > 0)
             point->variant--;
           else

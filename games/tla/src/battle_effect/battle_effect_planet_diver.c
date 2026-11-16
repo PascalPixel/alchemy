@@ -19,7 +19,7 @@ enum GatheringLightsMode {
 
 /// The skulls live in the map buffer, 64 for each target.
 
-#define SKULLS 8 ///< per target
+#define HAUNT_SKULLS 8 ///< skulls drawn around each target
 #define SKULL_SIZE 24
 #define SKULL_CELL (24 * 24)
 
@@ -74,7 +74,7 @@ void BattleEffect_RunHaunt(struct BattleEffectParams *args) {
     row = work->bg2xLines;
     if (args->side == EFFECT_SIDE_ENEMIES) {
       for (i = 0; i != DISPLAY_HEIGHT; i++)
-        *row++ = (0x60000 - Trig_Sin((frame + i) << 11) * 6) >> 10;
+        *row++ = (toFIXED(6) - Trig_Sin((frame + i) << 11) * 6) >> 10;
     } else {
       for (i = 0; i != DISPLAY_HEIGHT; i++)
         *row++ = Trig_Sin((frame + i) << 11) * 6 >> 10;
@@ -99,7 +99,7 @@ void BattleEffect_RunHaunt(struct BattleEffectParams *args) {
 
         // A skull moves one part in its distance toward the centre each
         // frame, and is gone once it arrives.
-        for (i = 0; i != SKULLS; i++) {
+        for (i = 0; i != HAUNT_SKULLS; i++) {
           struct Particle *skull = &PARTICLES[k * HAUNT_SLOTS + i];
 
           if (frame > (k * 8 + i) * 4) {
@@ -188,7 +188,7 @@ void BattleEffect_RunUnusedOrbitingSpirals(struct BattleEffectParams *args) {
       s32 angle;
       s32 base;
 
-      for (i = 0, base = 0x80000, angle = frame << 10; i != DISPLAY_HEIGHT;
+      for (i = 0, base = toFIXED(8), angle = frame << 10; i != DISPLAY_HEIGHT;
            i++) {
         *row++ = (base - (Trig_Sin(angle) << 3)) >> 10;
         angle += 1024;
@@ -197,7 +197,7 @@ void BattleEffect_RunUnusedOrbitingSpirals(struct BattleEffectParams *args) {
       s32 angle;
 
       for (i = 0, angle = frame << 10; i != DISPLAY_HEIGHT; i++) {
-        *row++ = ((Trig_Sin(angle) << 3) >> 10) - 0x7000;
+        *row++ = ((Trig_Sin(angle) << 3) >> 10) - toFIXED(7) / 16;
         angle += 1024;
       }
     }

@@ -5,8 +5,10 @@
 #include "battle_effect_internal.h"
 #include "sounds.h"
 
-#define PILLAR_W 40        ///< pixels
-#define ROCK_OFFSET 0x1e00 ///< the rock picture in the sheet, after the band
+#define QUAKE_PILLAR_WIDTH 40 ///< a pillar's width in pixels
+/// The rock picture in the sheet; the sheet starts with the 40x16 strip of
+/// ground cut from the background.
+#define QUAKE_WALL_PICTURE 7680
 
 /// The byte of pixel (x, y) in a 32-tile-wide 8bpp character block.
 #define BG_DOT(x, y)                                                           \
@@ -43,16 +45,16 @@ void BattleEffect_RunQuake(struct BattleEffectParams *args) {
   EFFECT_START_NARROW_CANVAS(BGCNT_PRIORITY(1)); // no horizontal stretch
   REG_BLDCNT = 0;                                // no blending
   Resource_LoadAndDecompress(RESOURCE_ROCK_WALL_SHEET,
-                             work->sheet + ROCK_OFFSET, 1, 1);
+                             work->sheet + QUAKE_WALL_PICTURE, 1, 1);
 
   // Copy the background's characters and cut the band out of them.
   Iwram_CopyWords(Ram_MapCellBuffer, (void *)BG_CHAR_BLOCK(2), 0x8000);
   for (row = 0; row != 16; row++) {
     y = row + 96;
-    for (col = 0; col != PILLAR_W; col++) {
+    for (col = 0; col != QUAKE_PILLAR_WIDTH; col++) {
       s32 pixel = BG_DOT(col + 32, y);
 
-      work->sheet[row * PILLAR_W + col] = Ram_MapCellBuffer[pixel];
+      work->sheet[row * QUAKE_PILLAR_WIDTH + col] = Ram_MapCellBuffer[pixel];
     }
   }
 
@@ -102,10 +104,10 @@ void BattleEffect_RunQuake(struct BattleEffectParams *args) {
         if (height < 0)
           height = -height;
         top = 112 - height;
-        draw(canvas, work->sheet + ROCK_OFFSET, column * PILLAR_W + 8, top,
-             PILLAR_W, height);
-        draw(canvas, work->sheet, column * PILLAR_W + 8, 96 - height, PILLAR_W,
-             16);
+        draw(canvas, work->sheet + QUAKE_WALL_PICTURE,
+             column * QUAKE_PILLAR_WIDTH + 8, top, QUAKE_PILLAR_WIDTH, height);
+        draw(canvas, work->sheet, column * QUAKE_PILLAR_WIDTH + 8, 96 - height,
+             QUAKE_PILLAR_WIDTH, 16);
 
         // Launch the targets standing on the pillar.
         for (member = 0; member != args->targetCount; member++) {
@@ -117,10 +119,12 @@ void BattleEffect_RunQuake(struct BattleEffectParams *args) {
           point[2] = object->z;
           EffectPosition_ProjectPoint(point, &screen);
           screen.x += xOffset;
-          if (screen.x >= column * PILLAR_W + 8 &&
-              screen.x <= column * PILLAR_W + 8 + PILLAR_W && screen.y >= top) {
+          if (screen.x >= column * QUAKE_PILLAR_WIDTH + 8 &&
+              screen.x <=
+                  column * QUAKE_PILLAR_WIDTH + 8 + QUAKE_PILLAR_WIDTH &&
+              screen.y >= top) {
             object->velocityY = toFIXED(12); // 12 pixels a frame upward
-            object->verticalMotionStrength = 0xab85;
+            object->verticalMotionStrength = BATTLE_UNIT_GRAVITY;
           }
           if (object->y < 0)
             BattleEffect_TintBattler(args->targets[member], SPRITE_COLOR_NORMAL,

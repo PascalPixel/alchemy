@@ -1133,10 +1133,10 @@ void WorldMap_FightBanditAndThieves(s32 entrance) {
     Actor_SetPositionAndFacing(ACTOR_THIEF_B, toFIXED(10184), toFIXED(9616),
                                facingSouth);
     {
-      s32 a3 = 0xe000;
+      s32 facingNortheast = FACING_NORTHEAST;
 
       Actor_SetPositionAndFacing(ACTOR_KRADEN, toFIXED(10152), toFIXED(9664),
-                                 a3);
+                                 facingNortheast);
     }
     Actor_SetPositionAndFacing(ACTOR_FELIX, toFIXED(10168), toFIXED(9648),
                                FACING_NORTHWEST);
@@ -1262,7 +1262,7 @@ void WorldMap_FightBanditAndThieves(s32 entrance) {
     Actor_FaceDirectionAndWait(ACTOR_BANDIT, southB);
     Event_Wait(20);
     // "Are you guys, like, wandering sheriffs or something?"
-    Event_OpenMessage(20, 0);
+    Event_OpenMessage(ACTOR_BANDIT, 0);
     if (FieldEvent_AskYesNoWithActorAnimation(ACTOR_FELIX, 0) == 0) {
       Actor_ShowEmote(ACTOR_BANDIT, EMOTE_IN_FRONT | EMOTE_SWEAT_DROP, 30);
       // "Because we could be really useful to you if you are. We know all..."

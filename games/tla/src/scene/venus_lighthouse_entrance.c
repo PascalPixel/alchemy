@@ -994,12 +994,7 @@ void VenusLighthouseEntrance_SoldiersAmbushParty(void) {
   Actor_GetById(ACTOR_SOLDIER_CAPTAIN)->steeringFlags &= ~ACTOR_FACES_MOTION;
   Actor_WalkToAndWait(ACTOR_SOLDIER_CAPTAIN, 504, 440);
   FieldEvent_Wait(1);
-  {
-    u8 *flags = ((u8 *)Actor_GetById(ACTOR_SOLDIER_CAPTAIN)) + 90;
-    u8 v = *flags | 1;
-
-    *flags = v;
-  }
+  Actor_GetById(ACTOR_SOLDIER_CAPTAIN)->steeringFlags |= ACTOR_FACES_MOTION;
   Actor_SetPosition(ACTOR_SOLDIER_CAPTAIN, 0, 0);
   FieldEvent_Wait(10);
   Actor_SetSpeed(ACTOR_ALEX, 0.8);
@@ -1035,11 +1030,11 @@ void VenusLighthouseEntrance_SoldiersAmbushParty(void) {
   Actor_ShowEmote(ACTOR_JENNA, EMOTE_IN_FRONT | EMOTE_SWEAT_DROP, 80);
   FieldEvent_Wait(10);
   {
-    s32 a1 = EMOTE_IN_FRONT | EMOTE_LIGHT_BULB;
-    s32 a2 = 40;
-    s32 a0 = ACTOR_KRADEN;
+    s32 emote = EMOTE_IN_FRONT | EMOTE_LIGHT_BULB;
+    s32 frames = 40;
+    s32 actorId = ACTOR_KRADEN;
 
-    Actor_ShowEmote(a0, a1, a2);
+    Actor_ShowEmote(actorId, emote, frames);
   }
   // "Ah... You're worried about hurting any innocents?" Yes: "Well, just try
   // to hold back when you're fighting." No: "Oh. You must be concerned

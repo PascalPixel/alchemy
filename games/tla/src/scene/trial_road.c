@@ -559,8 +559,10 @@ void TrialRoad_UpdateFountains(void);
     }                                                                          \
   }
 
+/// Opens the door at the end of the leader's stage, on his side of the road.
 DEFINE_TRIAL_ROAD_OPEN_DOOR(TrialRoad_OpenLeaderDoor, 23, 57, 0, 9, 43, 1)
 
+/// Opens the door at the end of Moapa's stage, on his side of the road.
 DEFINE_TRIAL_ROAD_OPEN_DOOR(TrialRoad_OpenRivalDoor, 28, 62, 1, 4, 38, 0)
 
 /// A step at a stage's foot asks; giving up takes the party back to the start.
@@ -1468,7 +1470,7 @@ void TrialRoad_DriftWithStream(void) {
   velocity[1] = 0;
   velocity[2] = FIXED_ONE;
   velocity[0] = 0;
-  velocity[0] += ((Random16() << 17) >> 16) - 0x10000;
+  velocity[0] += ((Random16() << 17) >> 16) - toFIXED(1);
   velocity[2] += ((Random16() << 16) >> 16) - 0x8000;
   FieldEffect_Spawn(leader->x.fixed, leader->y.fixed, leader->z.fixed,
                     velocity[0], velocity[1], velocity[2],
@@ -1511,8 +1513,10 @@ s32 TrialRoad_ReturnTrue(void) { return 1; }
     Map_CopyCellsRect(n2, 30, 1, 1, 82, 15);                                   \
   }
 
+/// Shows the pools' hidden tiles.
 DEFINE_TRIAL_ROAD_SET_POOL_TILES(TrialRoad_RevealPoolTiles, 33, 35)
 
+/// Hides the pools' tiles again.
 DEFINE_TRIAL_ROAD_SET_POOL_TILES(TrialRoad_HidePoolTiles, 34, 36)
 
 /// The gate at the top opens while the party's equipment is held.
@@ -3461,29 +3465,29 @@ extern u8 gSceneState[];
 /// Does nothing.
 void TrialRoad_Idle(void) {}
 
-/// Marks the scene's balance state ready (9).
-void TrialRoad_SetBalanceStateReady(void) {
-  u16 *state = (u16 *)gSceneState;
-  u16 ready = 9;
-
-  *state = ready;
+/// Stops Moapa's party where it stands, as at the end of its recording.
+void TrialRoad_StopRival(void) {
+  ((struct TrialRoadReplay *)gSceneState)->mode = RIVAL_WAITING;
 }
 
-/// Waits until the scene's balance state is ready.
-void TrialRoad_WaitForBalanceState(void) {
-  s16 *state = (s16 *)gSceneState;
+/// Waits until Moapa's party has finished its recording.
+void TrialRoad_WaitForRival(void) {
+  struct TrialRoadReplay *state = (struct TrialRoadReplay *)gSceneState;
 
-  while (*state != 9) {
+  while (state->mode != RIVAL_WAITING) {
     wait(1);
   }
 }
 
 // The Trial Road rival's per-frame update.
 
-/// Updates the Trial Road rival by the scene state's mode: 4 follows the
-/// leader's position mirrored across the course; 3 places the rival and its
-/// partner from the linked player's record; 1 replays the recorded path; 2
-/// records the actor's position.
+/// The most the rival turns in a frame: a sixteenth of a turn.
+#define RIVAL_MAX_TURN (TRIG_TURN / 16)
+
+/// Updates the Trial Road rival by its mode: RIVAL_MIRROR follows the leader's
+/// position mirrored across the course; RIVAL_LINKED places the rival and its
+/// partner from the linked player's record; RIVAL_REPLAY replays the recorded
+/// path; RIVAL_RECORD records the actor's position.
 void TrialRoad_MoveRival(void) {
   struct TrialRoadLinkWork *work =
       (struct TrialRoadLinkWork *)Ram_HeapSlots->trialRoadLink;
@@ -3510,10 +3514,10 @@ void TrialRoad_MoveRival(void) {
       dz = z - rival->z.fixed;
       heading = Trig_Atan(dz, dx);
       turn = (s16)(heading - rival->facing);
-      if (turn > 0x1000)
-        turn = 0x1000;
-      if (turn < -0x1000)
-        turn = -0x1000;
+      if (turn > RIVAL_MAX_TURN)
+        turn = RIVAL_MAX_TURN;
+      if (turn < -RIVAL_MAX_TURN)
+        turn = -RIVAL_MAX_TURN;
       rival->facing += turn;
       rival->x.fixed = x;
       rival->z.fixed = z;
@@ -3604,10 +3608,10 @@ void TrialRoad_MoveRival(void) {
       dz = z - rival->z.fixed;
       heading = Trig_Atan(dz, dx);
       turn = (s16)(heading - rival->facing);
-      if (turn > 0x1000)
-        turn = 0x1000;
-      if (turn < -0x1000)
-        turn = -0x1000;
+      if (turn > RIVAL_MAX_TURN)
+        turn = RIVAL_MAX_TURN;
+      if (turn < -RIVAL_MAX_TURN)
+        turn = -RIVAL_MAX_TURN;
       rival->facing += turn;
       rival->x.fixed = x;
       rival->z.fixed = z;

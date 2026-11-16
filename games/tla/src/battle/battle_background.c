@@ -114,10 +114,10 @@ void BattleBackground_SetMode(s32 mode, s32 value, s32 fade) {
 
 /// Allocates the zoomed background's scanline work.
 void BattleBackground_Init(void) {
-  void *block = HeapSlot_AllocEwram(HEAP_SLOT_BATTLE_SCANLINES, 0x2a0);
+  void *block = HeapSlot_AllocEwram(HEAP_SLOT_BATTLE_SCANLINES, 672);
   struct BattleBackgroundWork *work = Ram_HeapSlots->battleBackground;
 
-  IWRAM_FILL_WORDS(block, 0x2a0, 0);
+  IWRAM_FILL_WORDS(block, 672, 0);
   work->mode = 0;
 }
 
@@ -212,8 +212,8 @@ void BattleCamera_SetRange(FIXED centerX, FIXED centerY, s32 offsetX,
   affine->pd = step;
   x = Iwram_MulFX(ratio, Iwram_MulFX(centerX, scale - FIXED_ONE));
   y = Iwram_MulFX(ratio, Iwram_MulFX(centerY, scale - FIXED_ONE));
-  affine->x = ((x + 0x7fff) >> 8) + offsetX + panX;
-  affine->y = ((y + 0x7fff) >> 8) + offsetY - (16 << 8);
+  affine->x = ((x + toFIXED(0.5) - 1) >> 8) + offsetX + panX;
+  affine->y = ((y + toFIXED(0.5) - 1) >> 8) + offsetY - (16 << 8);
   lowerHalfLine =
       (Iwram_RatioMulQ14((s16)affine->pd, (64 << 8) - affine->y) >> 16) + 1;
   scanline = 0;
@@ -282,7 +282,7 @@ UNUSED void BattleCamera_SetViewAtDepth(s32 x, s32 depth, s32 y) {
       toFIXED(BATTLE_PROJECTION_CENTER_X), toFIXED(BATTLE_PROJECTION_CENTER_Y),
       (BATTLE_PROJECTION_CENTER_X - measuredBounds[0]) << 8,
       (BATTLE_PROJECTION_CENTER_Y - measuredBounds[1]) << 8, scale);
-  half = scale * 0xff;
+  half = scale * 255;
   width = half * 2;
   result = Iwram_RatioMulQ14(width, alpha);
   Projection_Set(width, result, half * 4);
@@ -333,7 +333,7 @@ void BattleCamera_SetView(s32 x, s32 depth, s32 y, s32 zoom) {
       toFIXED(BATTLE_PROJECTION_CENTER_X), toFIXED(BATTLE_PROJECTION_CENTER_Y),
       (BATTLE_PROJECTION_CENTER_X - measuredBounds[0]) << 8,
       (BATTLE_PROJECTION_CENTER_Y - measuredBounds[1]) << 8, scale);
-  half = scale * 0xff;
+  half = scale * 255;
   width = half * 2;
   result = Iwram_RatioMulQ14(width, alpha);
   Projection_Set(width, result, half * 4);
@@ -715,7 +715,7 @@ void ElementGlow_UpdateStarField(void) {
       dist = Math_SqrtFX((spark->pos[0] >> 8) * (spark->pos[0] >> 8) +
                          (spark->pos[1] >> 8) * (spark->pos[1] >> 8) +
                          (spark->pos[2] >> 8) * (spark->pos[2] >> 8));
-      if (dist <= 0xfff) {
+      if (dist <= 4095) {
         spark->life = 0;
       } else {
         scale = Iwram_RatioMulQ14(dist, FIXED_ONE);
@@ -741,7 +741,7 @@ void ElementGlow_UpdateStarField(void) {
         spark->pos[0] = -spark->pos[0];
       if (spark->pos[1] & 1)
         spark->pos[1] = -spark->pos[1];
-      spark->pos[2] = (u32)(Random16() + 0x8000) >> 2;
+      spark->pos[2] = (u32)(Random16() + 32768) >> 2;
       spark->pos[3] = (-spark->pos[0] >> 7) + (spark->pos[1] >> 8);
       spark->pos[4] = (-spark->pos[1] >> 7) + (-spark->pos[0] >> 8);
       spark->pos[5] = 0;
@@ -839,22 +839,22 @@ s32 ElementGlow_InitializeStarField(s32 mode) {
       spark->pos[0] = -spark->pos[0];
     if (spark->pos[1] & 1)
       spark->pos[1] = -spark->pos[1];
-    spark->pos[2] = (u32)(Random16() + 0x8000) >> 2;
+    spark->pos[2] = (u32)(Random16() + 32768) >> 2;
     spark->pos[3] = (-spark->pos[0] >> 7) + (spark->pos[1] >> 8);
     spark->pos[4] = (-spark->pos[1] >> 7) + (-spark->pos[0] >> 8);
     spark->pos[5] = 0;
     spark->life = (radius >> 13) + 1;
   }
   for (i = 0; i < STAR_FIELD_RINGS; i++) {
-    FIXED radius = 0x1000;
+    FIXED radius = toFIXED(1) / 16;
     s32 angle;
 
     ring = &work->rings[i];
     angle = i * (DEGtoANG(120));
     ring->x = PolarX(angle, radius);
     ring->y = PolarY(angle, radius);
-    ring->velocityX = PolarX(angle, 0x200);
-    ring->velocityY = PolarY(angle, 0x200);
+    ring->velocityX = PolarX(angle, toFIXED(1) / 128);
+    ring->velocityY = PolarY(angle, toFIXED(1) / 128);
     ring->age = 0;
   }
   work->frames = 0;

@@ -163,7 +163,7 @@ s32 BattleEnemy_RecordDefeat(s32 unitId, s32 djinnBonus) {
   spoils->defeated++;
   if (GameFlag_Get(FLAG_MONSTER_BATTLE))
     return 0;
-  if (unit->enemyId < 0x200)
+  if (unit->enemyId < 512)
     GameFlag_Set(ENEMY_DEFEATED_FLAG(unit->enemyId));
   enemy = Enemy_GetDefinitionFar(unit->enemyId);
   if (djinnBonus != 0) {
@@ -231,7 +231,7 @@ void Battle_AwardSpoils(void) {
   s16 gains[8];
   u16 units[10];
 
-  spoils = (struct BattleSpoils *)((u8 *)Ram_HeapSlots->battleWork + 0x550);
+  spoils = &Ram_HeapSlots->battleWork->spoils;
   if (spoils->experience != 0) {
     MessageArgument_PushFar(spoils->experience, MESSAGE_ARGUMENT_NUMBER);
     // "You got N experience points."

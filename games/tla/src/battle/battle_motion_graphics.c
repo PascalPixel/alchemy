@@ -195,14 +195,14 @@ BattleMotion_CallBeast(struct BattlePlan *plan,
   BattleObject_Reset(BattleObject_Get(saved->unitId), single);
   BattleObject_Get(saved->unitId)->scale = FIXED_ONE * 6 / 5;
   if (single)
-    saved->buffer = Heap_AllocEwram(0x8000);
+    saved->buffer = Heap_AllocEwram(32768);
   else
     saved->buffer = gActorSpriteSlots;
   i = SpritePictureCache_LoadFar(7, saved->buffer,
                                  BattleSprite_GetSprite(saved->classId),
                                  BattleSprite_GetPalette(saved->classId));
   if (i != 0) {
-    battleObject->resource = BattleSprite_GetSprite(saved->classId) + 0x7000;
+    battleObject->resource = BattleSprite_GetSprite(saved->classId) + 28672;
     if (!single)
       saved->buffer = NULL;
   } else {
@@ -775,7 +775,7 @@ void BattleMotion_FlashHit(s32 id, s32 unusedA, s32 unusedB) {
   selected = selection;
   remaining = 1;
   do {
-    target = 0xff;
+    target = BATTLE_UNIT_LIST_END;
     selected[1] = target;
     selected[0] = id;
     PartyStatus_HighlightMembersFar(selected);
@@ -864,7 +864,7 @@ void BattleMotion_ShowDowned(s32 id) {
       ent = rec->entries[0];
       recs[n] = rec;
       ent->colorMode = SPRITE_COLOR_GREY;
-      ent->picture = 0xff;
+      ent->picture = SPRITE_PICTURE_NONE;
       n++;
     }
     wait(4);

@@ -613,19 +613,16 @@ void AirsRockInside_RideWhirlwind(void) {
     dx = 0;
     dz = -toFIXED(16);
     leader->facing = FACING_NORTH;
-    if ((u32)(MapCell_GetAttributes(2, FIELD_CELL(ride->x.fixed),
-                                    (ride->z.fixed - ride->y.fixed + dz) >> 20)
-              << 8) >>
-            16 ==
-        255) {
+    if ((u16)(MapCell_GetAttributes(2, FIELD_CELL(ride->x.fixed),
+                                    (ride->z.fixed - ride->y.fixed + dz) >>
+                                        20) >>
+              8) == 255) {
       dx = toFIXED(16);
       dz = 0;
       leader->facing = 0;
-      if ((u32)(MapCell_GetAttributes(2, FIELD_CELL(ride->x.fixed + dx),
-                                      (ride->z.fixed - ride->y.fixed) >> 20)
-                << 8) >>
-              16 ==
-          255) {
+      if ((u16)(MapCell_GetAttributes(2, FIELD_CELL(ride->x.fixed + dx),
+                                      (ride->z.fixed - ride->y.fixed) >> 20) >>
+                8) == 255) {
         dx = -toFIXED(16);
         leader->facing = FACING_WEST;
       }

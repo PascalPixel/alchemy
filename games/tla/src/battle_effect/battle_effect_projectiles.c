@@ -74,22 +74,18 @@ void BattleEffect_RunDjinniEntrance(struct BattleEffectParams *args, u32 packed,
   Iwram_CopyWords((void *)BG_PLTT, palette, SHEET_PALETTE_BYTES);
   switch (element) {
   case ELEMENT_VENUS:
-    resource = RESOURCE_VENUS_DJINN_SMALL_SHEET;
+    palette = Resource_GetTableEntry(RESOURCE_VENUS_DJINN_SMALL_SHEET);
     break;
   case ELEMENT_MERCURY:
-    resource = RESOURCE_MERCURY_DJINN_SMALL_SHEET;
+    palette = Resource_GetTableEntry(RESOURCE_MERCURY_DJINN_SMALL_SHEET);
     break;
   case ELEMENT_MARS:
-    resource = RESOURCE_MARS_DJINN_SMALL_SHEET;
+    palette = Resource_GetTableEntry(RESOURCE_MARS_DJINN_SMALL_SHEET);
     break;
   default:
-    resource = RESOURCE_JUPITER_DJINN_SMALL_SHEET;
+    palette = Resource_GetTableEntry(RESOURCE_JUPITER_DJINN_SMALL_SHEET);
     break;
   }
-  palette = Resource_GetTableEntry(resource);
-  /* FAKEMATCH(barrier): an empty asm between the picture's table entry and its
-   * + 128 copies the entry before the sheet is read. */
-  asm("");
   palette += SHEET_PALETTE_BYTES;
   Decompress_TaggedLz(palette, work->sheet);
   Resource_LoadAndDecompress(RESOURCE_PARTICLE_SPRITES_A, sheet, 0, 0);

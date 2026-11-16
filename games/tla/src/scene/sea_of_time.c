@@ -1218,10 +1218,10 @@ void SeaOfTime_Open(void) {
   Task_Add(SeaOfTime_AnimateSea, TASK_PASS_FRAME);
   Event_WaitTransitionFrames();
   Event_Wait(60);
-  SeaOfTime_RaiseRock(21, 23, 9);
-  SeaOfTime_RaiseRock(37, 17, 10);
-  SeaOfTime_RaiseRock(47, 27, 12);
-  SeaOfTime_RaiseRock(59, 19, 13);
+  SeaOfTime_RaiseRock(21, 23, ACTOR_ROCK_A);
+  SeaOfTime_RaiseRock(37, 17, ACTOR_ROCK_B);
+  SeaOfTime_RaiseRock(47, 27, ACTOR_ROCK_D);
+  SeaOfTime_RaiseRock(59, 19, ACTOR_ROCK_E);
   MapGrid_WaitForShakeToSettle();
   FieldCamera_MoveTo(352, CAMERA_KEEP, 196, 1);
   FieldCamera_WaitForArrival();

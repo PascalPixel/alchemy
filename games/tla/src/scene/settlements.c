@@ -404,6 +404,7 @@ void Settlements_WarnOfRiddleOfRock(s32 actor) {
   Event_ShowMessage(actor, 0);
 }
 
+/// Cyclone clears the bush on the left of Gondowan Settlement.
 void Settlements_CutLeftBush(void) {
   FieldTileCopies_CopyTouchedCells(5, 70, 9, 7, 5, 43, 1);
 }
@@ -765,8 +766,10 @@ void Settlements_CycleWaterColors(void) {
     u16 *colors = gSettlements_WaterColors;
     s32 (*copy)(void *, const void *, s32) = Iwram_CopyWordsEntry;
 
-    copy(colors, (void *)&BG_PLTT_COLOR(3, 0), 32);
-    copy(gSettlements_WaterColorsSaved, colors, 32);
+    copy(colors, (void *)&BG_PLTT_COLOR(3, 0),
+         sizeof(gSettlements_WaterColors));
+    copy(gSettlements_WaterColorsSaved, colors,
+         sizeof(gSettlements_WaterColors));
     *frame = 0;
   }
   phase = (*frame / 8) % 4;

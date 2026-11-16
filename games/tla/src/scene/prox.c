@@ -1342,22 +1342,29 @@ void Prox_EnterDoor(s32 sourceX, s32 sourceY, s32 x, s32 y, s32 width,
   FieldEvent_SetExitRequest(work->stepTrigger);
 }
 
-/// The village's house doors, the cave door and the doors of the cave homes and
-/// the upper house, each opened by Prox_EnterDoor from its picture in the map.
+/// The first of the village's house doors. Each door here is opened by
+/// Prox_EnterDoor from its picture in the map.
 void Prox_OpenHouseDoorA(void) { Prox_EnterDoor(48, 39, 57, 26, 1, 2); }
 
+/// The second of the village's house doors.
 void Prox_OpenHouseDoorB(void) { Prox_EnterDoor(49, 39, 65, 24, 1, 2); }
 
+/// The third of the village's house doors.
 void Prox_OpenHouseDoorC(void) { Prox_EnterDoor(50, 39, 56, 19, 1, 2); }
 
+/// The fourth of the village's house doors.
 void Prox_OpenHouseDoorD(void) { Prox_EnterDoor(51, 39, 61, 13, 1, 2); }
 
+/// The fifth of the village's house doors.
 void Prox_OpenHouseDoorE(void) { Prox_EnterDoor(51, 39, 80, 16, 1, 2); }
 
+/// The caves' double door.
 void Prox_OpenCavesDoor(void) { Prox_EnterDoor(52, 39, 50, 9, 2, 2); }
 
+/// The door into the cave homes.
 void Prox_OpenCaveHomesDoor(void) { Prox_EnterDoor(87, 2, 80, 7, 1, 2); }
 
+/// The upper house's door, which the warrior leaves open.
 void Prox_OpenUpperHouseDoor(void) { Prox_EnterDoor(89, 0, 77, 16, 1, 2); }
 
 void Prox_ClimbStairs(void) {
@@ -2409,7 +2416,8 @@ void Leader_SetSlideStopped(s32 stopped) { gSlideOnIce_Stopped = stopped; }
 
 void EffectSprite_DrawAtWorldPosition(struct ParticleSprite *sprite,
                                       struct Particle *particle);
-void BattleEffect_StepVector3(struct Particle *particle, s32 unk1, s32 step);
+void BattleEffect_StepVector3(struct Particle *particle, s32 damping,
+                              s32 gravity);
 
 #include "shared/particles_update_falling.h"
 
@@ -2453,7 +2461,7 @@ UNUSED void Prox_StartFallingRocks(void) {
   rock = work->rocks;
   sprite = work->sprites;
   for (i = 63; i >= 0; i--, sprite++, rock++) {
-    Prox_InitRockSprite(sprite, 8, 8, 0x40000000, tile);
+    Prox_InitRockSprite(sprite, 8, 8, OBJ_SIZE_16X16, tile);
     sprite->oam.fullColor = 1;
     sprite->oam.palette = 0;
     sprite->oam.priority = 0;

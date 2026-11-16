@@ -975,6 +975,9 @@
 /// way to Lemuria follows it, and Naribwe's fortune teller then sees "None in
 /// the eastern world can stand against the power you possess."
 #define FLAG_SEA_OF_TIME_OPENED 0x940
+/// Set in Eastern Alhafra once its workers have told the mayor; Naribwe's
+/// fortune teller then sends the party to the village on the eastern shore.
+#define FLAG_WORKERS_TOLD_MAYOR 0x905
 /// Set as Piers leaves the party to visit his mother's grave
 /// (LemuriaInteriors_LeavePiersToMourn); Lemuria reads it too.
 #define FLAG_PIERS_AT_MOTHERS_GRAVE 0x966

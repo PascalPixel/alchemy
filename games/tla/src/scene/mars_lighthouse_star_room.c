@@ -578,16 +578,6 @@ void MarsLighthouseStarRoom_WakeAfterBattle(void) {
   Event_End();
 }
 
-struct SpriteBits {
-  u8 unk0 : 2;
-  u8 priority : 2;
-} __attribute__((packed));
-
-struct SpriteAttributes {
-  u8 unk00[9];
-  struct SpriteBits bits;
-};
-
 /// The Mars Star's update: drawn at the leader's sprite priority.
 void MarsLighthouseStarRoom_KeepStarAtLeaderPriority(struct Actor *object) {
   struct Actor *owner = Actor_Get(gMainRoutineWork.leaderActorId);

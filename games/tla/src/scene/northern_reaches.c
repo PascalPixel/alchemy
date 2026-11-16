@@ -75,6 +75,8 @@ struct IceShard {
   u32 age;
 };
 
+/// A spark of the explosion: an OAM entry on the sprite list and its frames,
+/// negative while it waits to appear.
 struct IceShardSpark {
   struct IceShardSpark *next; ///< The sprite list's link.
   union SparkOam oam;
@@ -85,6 +87,8 @@ struct IceShardSpark {
 #define ICE_SHARD_COUNT 54
 #define SPARK_COUNT 96
 
+/// The shattering's work: the shards' sheet, and each shard's sprite and
+/// motion.
 struct IceWallWork {
   u8 sheet[0x1000];
   struct EffectSprite sprites[ICE_SHARD_COUNT];
@@ -353,7 +357,8 @@ s32 Scene_PrepareMap(void) {
   return 0;
 }
 
-void BattleEffect_StepVector3(struct IceShard *particle, s32 a, s32 b);
+void BattleEffect_StepVector3(struct IceShard *particle, s32 damping,
+                              s32 gravity);
 
 /// The Magma Ball's flight and the wall's ice shards
 /// (ResourceId_FieldEffectIceShard); `callback` draws the wall gone.
@@ -381,7 +386,7 @@ void NorthernReaches_ShatterIceWall(s32 unused, s32 *position,
   particle = work->particles;
   sprite = work->sprites;
   for (; i < ICE_SHARD_COUNT; i++) {
-    EffectSprite_Init(sprite, 0, 0, 0x40000000, (i & 3) * 8 + tiles);
+    EffectSprite_Init(sprite, 0, 0, OBJ_SIZE_16X16, (i & 3) * 8 + tiles);
     zero = 0;
     sprite->depth = 250;
     sprite->oam.priority = zero;
@@ -450,7 +455,7 @@ void NorthernReaches_ShatterIceWall(s32 unused, s32 *position,
     spark = sparks;
     do {
       if (spark->timer == 0) {
-        spark->oam.words.first = 0x40000000;
+        spark->oam.words.first = OBJ_SIZE_16X16;
         spark->oam.words.second = 0;
         spark->oam.oam.x = (Random16() << 7 >> 16) + 52;
         spark->oam.oam.y = (Random16() << 6 >> 16) + 16;

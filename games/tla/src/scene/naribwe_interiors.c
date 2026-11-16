@@ -638,7 +638,8 @@ s32 NaribweInteriors_NextPath(void) {
           FieldPartyInventory_FindMember(ITEM_LEFT_PRONG) == -1 ||
           FieldPartyInventory_FindMember(ITEM_CENTER_PRONG) == -1)
         return READING_FORGE_WEAPON;
-      return (Event_GetFlag(0x905) != 0) + READING_RAISE_COLUMN;
+      return (Event_GetFlag(FLAG_WORKERS_TOLD_MAYOR) != 0) +
+             READING_RAISE_COLUMN;
     }
   } else {
     if (Event_GetFlag(FLAG_SEA_OF_TIME_OPENED) == 0)

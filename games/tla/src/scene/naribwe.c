@@ -62,6 +62,8 @@ enum NaribweActorId {
 
 extern u32 gSceneExits[];
 
+/// A door of Naribwe: the cell animation that opens it and the cell it plays
+/// at.
 struct WarpEntry {
   const void *script;
   u16 x;

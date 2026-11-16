@@ -2601,7 +2601,7 @@ s32 Scene_Initialize(void) {
       alpha = *(u8 *)&alpha;
       while (alpha != 0) {
         REG_BLDALPHA = alpha | BLEND_ALPHA(0, 16);
-        alpha = alpha + 0xffff;
+        alpha = alpha - 1;
         wait(1);
       }
       REG_DISPCNT &= (u16)~DISPCNT_BG1_ON;

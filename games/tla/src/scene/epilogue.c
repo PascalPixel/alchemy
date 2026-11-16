@@ -235,7 +235,6 @@ s32 WindowSystem_InitField();
 s32 Scene_Initialize(void) {
   struct MainRoutineWork *work;
   s32 savedSpeed;
-  s32 one;
   s32 count;
   void *p;
   struct Actor *leader;
@@ -246,13 +245,12 @@ s32 Scene_Initialize(void) {
   savedSpeed = work->messageSpeed;
   leader = Actor_Get(work->leaderActorId);
   leader->motionFlags = 0;
-  one = 1;
-  work->messageSpeed = one;
+  work->messageSpeed = 1;
   EndingPicture_Start();
   WindowSystem_InitField();
   windowWork = (struct WindowWork *)Ram_HeapSlots->windowWork;
-  windowWork->holdTilemapUpload = one;
-  windowWork->textMode = one;
+  windowWork->holdTilemapUpload = 1;
+  windowWork->textMode = 1;
   gEpilogueMessage = (s32)MsgFinallyWeVe;
   Epilogue_LoadNamePanel();
   FieldEvent_Wait(30);

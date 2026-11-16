@@ -544,7 +544,7 @@ void AirsRockInside_RideWhirlwind(void) {
   FIXED dx, dz;
   s32 moved, i, height;
   u16 facing;
-  s32 angle, noFlags;
+  s32 angle;
 
   Event_Start();
   Event_ResolvePendingActions(0);
@@ -656,7 +656,6 @@ void AirsRockInside_RideWhirlwind(void) {
     angle = ride->facing;
     leader->x.fixed = (((ride->x.fixed >> 19) & ~1) + (angle >>= 13) - 1) << 19;
     leader->z.fixed = (((ride->z.fixed >> 19) & ~1) - (angle & 2) + 1) << 19;
-    noFlags = 0;
     Actor_SetSpriteFlags(leader, 1);
     leader->velocityY = toFIXED(6);
     leader->priorityFlags = 33;
@@ -665,7 +664,7 @@ void AirsRockInside_RideWhirlwind(void) {
     dust = FieldCamera_GetActor();
     dust->speedLimit = toFIXED(8);
     dust->acceleration = toFIXED(1);
-    dust->motionFlags = noFlags;
+    dust->motionFlags = 0;
     Actor_SetMoveTarget(
         dust, leader->x.fixed,
         Map_GetTerrainHeight(0, leader->x.fixed, leader->z.fixed),

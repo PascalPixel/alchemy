@@ -569,20 +569,16 @@ void LemurianShip_StepOnLift(void) {
       Event_Wait(20);
       MapGrid_SetShake(0, 0, 0);
       MapGrid_CopyCellsTo(68, 68, 50, 64, 3, 3);
-      {
-        s32 two = 2;
-        leader->layer = two;
-        Event_Wait(20);
-        Actor_FaceDirection(gMainRoutineWork.leaderActorId, FACING_SOUTHWEST,
-                            20);
-        Actor_Jump(gMainRoutineWork.leaderActorId, 4, 0);
-        Actor_SetSpeed(gMainRoutineWork.leaderActorId, 1.6);
-        Actor_MoveToAndWait(gMainRoutineWork.leaderActorId, 840, 88);
-        Actor_FaceDirectionAndWait(gMainRoutineWork.leaderActorId, FACING_WEST);
-        Actor_WatchAndSetScript(gMainRoutineWork.leaderActorId, 9);
-        helper->gravity = toFIXED(1);
-        helper->layer = two;
-      }
+      leader->layer = 2;
+      Event_Wait(20);
+      Actor_FaceDirection(gMainRoutineWork.leaderActorId, FACING_SOUTHWEST, 20);
+      Actor_Jump(gMainRoutineWork.leaderActorId, 4, 0);
+      Actor_SetSpeed(gMainRoutineWork.leaderActorId, 1.6);
+      Actor_MoveToAndWait(gMainRoutineWork.leaderActorId, 840, 88);
+      Actor_FaceDirectionAndWait(gMainRoutineWork.leaderActorId, FACING_WEST);
+      Actor_WatchAndSetScript(gMainRoutineWork.leaderActorId, 9);
+      helper->gravity = toFIXED(1);
+      helper->layer = 2;
       Actor_Jump(ACTOR_SIX_JELLY_ROOM_JELLY_A, 4, 0);
       Actor_MoveToAndWait(ACTOR_SIX_JELLY_ROOM_JELLY_A, 832, 74);
       Actor_Jump(ACTOR_SIX_JELLY_ROOM_JELLY_A, 4, 0);

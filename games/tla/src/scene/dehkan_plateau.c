@@ -1603,6 +1603,7 @@ void DehkanPlateau_InitializeThemisAxeChest(void) {
 extern s16 gDehkanPlateau_TightropesRaisedPillars[];
 
 void DehkanPlateau_ForgetCrackOnLeaving(void);
+void Tightrope_Initialize(void);
 
 /// The room entry written in the scene layer of
 /// DehkanPlateau_InitializeThemisAxeChest and
@@ -1623,10 +1624,6 @@ void DehkanPlateau_InitializeTightropes(void) {
   Actor_SetSpritePriority(ACTOR_TIGHTROPES_FIRST_TIGHTROPE_EAST_POST, 1);
   Actor_SetSpritePriority(ACTOR_TIGHTROPES_SECOND_TIGHTROPE_WEST_POST, 1);
   Actor_SetSpritePriority(ACTOR_TIGHTROPES_SECOND_TIGHTROPE_EAST_POST, 1);
-  /* FAKEMATCH(dead): the form kept; as no block, 2 of 276 instructions differ
-   * in tla-en. */
-  do {
-  } while (0);
   Tightrope_Initialize();
   Tightrope_Place(0, ACTOR_TIGHTROPES_FIRST_TIGHTROPE_WEST_POST,
                   ACTOR_TIGHTROPES_FIRST_TIGHTROPE_EAST_POST);

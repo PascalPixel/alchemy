@@ -9,5 +9,7 @@
 #define SPEAKER_PORTRAIT_RIGHT 0x2000 ///< the portrait right of the speaker
 #define SPEAKER_WINDOW_ABOVE 0x4000   ///< the message window above the speaker
 #define SPEAKER_WINDOW_BELOW 0x8000   ///< the message window never above it
+#define SPEAKER_FLAGS 0xf000          ///< the four bits above
+#define SPEAKER_ACTOR_MASK 0xfff      ///< the actor id below them
 
 #endif

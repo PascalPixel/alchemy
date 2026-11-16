@@ -101,16 +101,16 @@ s32 BattleSummonMenu_Run(s32 unusedA, s32 unusedB, const u8 *standby) {
     orderedCount = 0;
     for (i = count - 1; i >= 0; i--) {
       const struct SummonDefinition *definition;
-      s32 n;
+      s32 element;
       s32 k;
 
       k = learnedSummons[i];
       definition = SummonDefinition_Get(k);
-      for (n = 0; n <= 3; n++) {
-        if (definition->djinnRequired[n] > standby[n])
+      for (element = 0; element <= 3; element++) {
+        if (definition->djinnRequired[element] > standby[element])
           break;
       }
-      if (n == 4) {
+      if (element == 4) {
         orderedSummons[orderedCount] = k;
         learnedSummons[i] = SUMMON_END;
         orderedCount++;

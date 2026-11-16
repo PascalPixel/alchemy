@@ -309,12 +309,12 @@ void *String_FormatPlayTime(s32 frames, u8 *out) {
 /// SAVE_NO_FREE_FILE when all three are in use. The summaries must be loaded.
 u32 Save_FindFreeFile(void) {
   struct SaveWorkspace *work = Ram_HeapSlots->saveWork;
-  struct SaveSummary *p;
+  struct SaveSummary *summary;
   u32 i;
 
-  p = work->summary;
-  for (i = 0; i < SAVE_FILE_COUNT; i++, p++) {
-    if (p->level == 0)
+  summary = work->summary;
+  for (i = 0; i < SAVE_FILE_COUNT; i++, summary++) {
+    if (summary->level == 0)
       return i;
   }
   return SAVE_NO_FREE_FILE;

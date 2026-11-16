@@ -15,20 +15,20 @@
 /// Formats value as decimal text and copies its 14 characters, one a halfword,
 /// into out.
 s32 String_FormatNumberToHalfwords(s16 *out, s32 value) {
-  s16 *dst;
-  s32 n;
-  u8 *src;
+  s16 *destination;
+  s32 remaining;
+  u8 *source;
 
-  dst = out;
+  destination = out;
   String_FormatDecimal(value);
-  src = gNumberTextBuffer;
-  n = 0xD;
+  source = gNumberTextBuffer;
+  remaining = 13;
   do {
-    n -= 1;
-    *dst = *src;
-    src += 1;
-    dst += 1;
-  } while (n >= 0);
+    remaining -= 1;
+    *destination = *source;
+    source += 1;
+    destination += 1;
+  } while (remaining >= 0);
 }
 
 /// A changed stat's arrow, right of its value on window tile row `row` (HP

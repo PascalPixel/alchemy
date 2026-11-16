@@ -166,8 +166,8 @@ void DebugFlagEditor_DrawTable(s32 window, s32 startFlag) {
     Text_DrawStringInWindow((s32)gMenu_ColonString, window, 32, y);
 
     for (i = 0; i < 16; i++) {
-      s32 val = GameFlag_Get(flag);
-      bits[i] = (val != 0) + '0';
+      s32 set = GameFlag_Get(flag);
+      bits[i] = (set != 0) + '0';
       flag++;
     }
     bits[i] = 0;

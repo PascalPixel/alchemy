@@ -19,27 +19,27 @@ void PartyStatus_BuildLayoutBounds(s32 flags) {
   struct PartyStatusWindow *state = Ram_HeapSlots->partyStatus;
   struct WindowWork *work = (struct WindowWork *)Ram_HeapSlots->windowWork;
   s32 height = 4;
-  s32 n;
+  s32 members;
   s32 width;
   s32 x;
 
   if (work->battleMode != WINDOW_FIELD) {
-    n = BattleParty_PrepareMembersFar(0);
+    members = BattleParty_PrepareMembersFar(0);
     height = 3;
   } else {
-    n = Party_CountMembersFar();
-    if ((u32)n > 4)
-      n = 4;
+    members = Party_CountMembersFar();
+    if ((u32)members > 4)
+      members = 4;
   }
   if (flags & PARTY_STATUS_SHOW_PP)
     height++;
   else
-    flags &= -3;
+    flags &= ~PARTY_STATUS_SHOW_DJINN;
 
-  n *= PARTY_STATUS_COLUMN_WIDTH;
-  width = n + 1;
+  members *= PARTY_STATUS_COLUMN_WIDTH;
+  width = members + 1;
   if (flags & PARTY_STATUS_SHOW_DJINN)
-    width = n + 6;
+    width = members + 6;
 
   x = 30;
   x -= width;

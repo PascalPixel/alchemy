@@ -476,11 +476,12 @@ void MagmaRock_ThrowEmbers(struct Actor *object) {
         dx = mask & Random16();
       }
       dy = Random16() & 31;
-      FieldEffect_Spawn(
-          object->x.fixed + ((dx - 8) << 16),
-          object->y.fixed + (dy << 16) - toFIXED(8), object->z.fixed, 0, phase,
-          phase, EFFECT_USE_SCRIPT | EFFECT_USE_TYPE | EFFECT_USE_PRIORITY | 1,
-          &params);
+      FieldEffect_Spawn(object->x.fixed + INTtoFIXED(dx - 8),
+                        object->y.fixed + INTtoFIXED(dy) - toFIXED(8),
+                        object->z.fixed, 0, phase, phase,
+                        EFFECT_USE_SCRIPT | EFFECT_USE_TYPE |
+                            EFFECT_USE_PRIORITY | 1,
+                        &params);
     }
     if (gFrameCount & 4)
       FieldActor_SetSpriteColor(object, SPRITE_COLOR_RED_TINT);
@@ -1249,7 +1250,7 @@ void MagmaRock_AmplifyBurst(void) {
       s32 r = Random16();
 
       offset = position;
-      offset[0] = ((r & 15) << 16) - toFIXED(8);
+      offset[0] = toFIXED(r & 15) - toFIXED(8);
     }
     offset[1] = (Random16() & 15) << 16;
     FieldEffect_Spawn(
@@ -1269,7 +1270,7 @@ void MagmaRock_AmplifyBurst(void) {
   do {
     phase = gFrameCount & 1;
     if (phase == 0) {
-      offset[0] = ((Random16() & 15) << 16) - toFIXED(8);
+      offset[0] = toFIXED(Random16() & 15) - toFIXED(8);
       offset[1] = (Random16() & 15) << 16;
       FieldEffect_Spawn(
           leader->x.fixed + offset[0], leader->y.fixed + offset[1],
@@ -1407,9 +1408,9 @@ void MagmaRock_ScatterEmbers(s32 x, s32 z) {
   config.script = gMagmaRock_EmberScript;
   config.priority = kind;
   for (i = 0; i != 4; i++) {
-    position[0] = x + ((Random16() & 63) << 16) - FIXED_ONE * 32;
+    position[0] = x + toFIXED(Random16() & 63) - FIXED_ONE * 32;
     position[1] = (Random16() & 15) << 12;
-    position[2] = z + ((Random16() & 63) << 16) - FIXED_ONE * 32;
+    position[2] = z + toFIXED(Random16() & 63) - FIXED_ONE * 32;
     FieldEffect_Spawn(position[0], 0, position[2], 0, position[1], 0,
                       EFFECT_USE_SCRIPT | EFFECT_USE_TYPE |
                           EFFECT_USE_START_SCALE | EFFECT_USE_PRIORITY | 1,

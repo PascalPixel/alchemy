@@ -1284,8 +1284,8 @@ void MagmaRockInside_DrainLava(void) {
   FieldEvent_ResolvePendingActions(0);
   position[0] = (leader->x.fixed & FIELD_CELL_MASK) + toFIXED(8);
   position[2] = (leader->z.fixed & FIELD_CELL_MASK) + toFIXED(8);
-  Actor_WalkToAndWait(gMainRoutineWork.leaderActorId, position[0] >> 16,
-                      position[2] >> 16);
+  Actor_WalkToAndWait(gMainRoutineWork.leaderActorId, FIXEDtoINT(position[0]),
+                      FIXEDtoINT(position[2]));
   FieldEvent_Wait(20);
   Event_PlaySound(SE_BUTTON_PRESS);
   flags = &leader->priorityFlags;
@@ -1487,8 +1487,8 @@ void MagmaRockInside_ReleaseRocks(void) {
   position[1] = 0;
   i = 0;
   do {
-    position[0] = ((Random16() & 31) << 16) + (toFIXED(760));
-    position[2] = ((Random16() & 31) << 16) + (toFIXED(256));
+    position[0] = toFIXED(Random16() & 31) + (toFIXED(760));
+    position[2] = toFIXED(Random16() & 31) + (toFIXED(256));
     FieldEffect_Spawn(position[0], position[1], position[2], 0, toFIXED(1), 0,
                       EFFECT_USE_SCRIPT | EFFECT_USE_TYPE |
                           EFFECT_USE_START_SCALE | EFFECT_USE_PRIORITY |
@@ -1785,7 +1785,7 @@ void MagmaRockInside_OpenFlamePassage(s32 x, s32 z) {
   s32 i;
   s32 cellZ;
 
-  object = FieldActor_Create(SPRITE_STACKED_CRATES, x << 16, 0, z << 16);
+  object = FieldActor_Create(SPRITE_STACKED_CRATES, toFIXED(x), 0, toFIXED(z));
   REG_BLDALPHA = 16;
   REG_BLDCNT = BLDCNT_TGT1_BG2 | BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_ALL;
   Scene_SetActorSpritePriority(object, 0);
@@ -2009,7 +2009,7 @@ void MagmaRockInside_TrailSparks(struct Actor *object) {
   options.type = SPRITE_SPARKLE;
   options.priority = 1;
   position[0] = object->x.fixed + (((Random16() & 31) - 16) << 16);
-  position[1] = object->y.fixed + ((Random16() & 31) << 16) + toFIXED(8);
+  position[1] = object->y.fixed + toFIXED(Random16() & 31) + toFIXED(8);
   position[2] = object->z.fixed;
   FieldEffect_Spawn(position[0], position[1], position[2] + toFIXED(4), 0,
                     toFIXED(1) / 2, frame,
@@ -2045,9 +2045,9 @@ void MagmaRockInside_LearnBlaze(s32 a, s32 b) {
   Event_PlaySound(SOUND_FADE_OUT_BGM);
   Event_Wait(30);
   FieldCamera_SetSpeed(0.5);
-  FieldCamera_MoveToFX(first->x.part[0].integer << 16,
-                       first->y.part[0].integer << 16,
-                       first->z.part[0].integer << 16, 1);
+  FieldCamera_MoveToFX(toFIXED(first->x.part[0].integer),
+                       toFIXED(first->y.part[0].integer),
+                       toFIXED(first->z.part[0].integer), 1);
   Event_PlaySound(SE_RUMBLE);
   MapGrid_SetShake(2, 2, 1);
   PaletteFade_SetSource(PALETTE_TINT_NONE, 0);

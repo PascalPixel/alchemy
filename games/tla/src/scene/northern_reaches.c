@@ -519,8 +519,10 @@ struct ActorPlacement gActorPlacements[] = {
 struct Trigger gSceneEvents[] = {
     {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
     {TRIGGER_EXIT, 4, CONDITION_ALWAYS, 4},
-    {TRIGGER_STEP, 20, 0x190a, EVENT(NorthernReaches_DiscussIceWall)},
-    {TRIGGER_STEP, 21, 0x190a, EVENT(NorthernReaches_FireMagmaBall)},
+    {TRIGGER_STEP, 20, IF_FLAG_SET(FLAG_SHIP_CARRIES_CANNON),
+     EVENT(NorthernReaches_DiscussIceWall)},
+    {TRIGGER_STEP, 21, IF_FLAG_SET(FLAG_SHIP_CARRIES_CANNON),
+     EVENT(NorthernReaches_FireMagmaBall)},
     {TRIGGER_STEP, 22, FLAG_SHIP_CARRIES_CANNON,
      EVENT(NorthernReaches_SightIceWall)},
     {TRIGGER_TABLE_END},

@@ -508,11 +508,14 @@ void ApojiiIslands_FatherSeesTheStone(void) {
   Event_ClearFlag(FLAG_FATHER_SEES_THE_STONE);
 }
 
-/// Whirlwind or Cyclone on the village's first bush clears its cells.
+/// Cyclone on the village's first bush clears its cells.
 void ApojiiIslands_ClearFirstBush(void) {
   FieldTileCopies_CopyTouchedCells(68, 38, 39, 24, 68, 4, 1);
 }
 
+/// Defines a bush's clearing: its cells copied in, and while flag n5 is clear
+/// actor n6 set at (n7, n8), the leader hopping aside when he stands on cell
+/// (n9, n10).
 #define DEFINE_APOJII_ISLANDS_SHIFT_CELLS_AND_HOP(name, n1, n2, n3, n4, n5,    \
                                                   n6, n7, n8, n9, n10)         \
   void name(void) {                                                            \
@@ -536,9 +539,11 @@ void ApojiiIslands_ClearFirstBush(void) {
     }                                                                          \
   }
 
+/// Cyclone on the village's second bush clears its cells.
 DEFINE_APOJII_ISLANDS_SHIFT_CELLS_AND_HOP(ApojiiIslands_ClearSecondBush, 68, 38,
                                           21, 4, 0xf9b, 65, 376, 376, 23, 23)
 
+/// Cyclone on the village's third bush clears its cells.
 DEFINE_APOJII_ISLANDS_SHIFT_CELLS_AND_HOP(ApojiiIslands_ClearThirdBush, 68, 38,
                                           21, 4, 0xf9a, 64, 600, 408, 37, 25)
 
@@ -547,6 +552,7 @@ void ApojiiIslands_ClearShopsBushes(void) {
   FieldTileCopies_CopyTouchedCells(67, 38, 11, 6, 67, 8, 1);
 }
 
+/// Cyclone on the houses' small bush clears its cells.
 DEFINE_APOJII_ISLANDS_SHIFT_CELLS_AND_HOP(ApojiiIslands_ClearShopsSmallBush, 67,
                                           11, 6, 8, 0xf9e, 64, 200, 152, 12, 9)
 
@@ -1139,6 +1145,7 @@ u32 gWaterDropScript[] = {
     SC_RELEASE,
 };
 
+/// The sparkles' frames, read by GroundParticles_Draw.
 s16 gGroundParticleFrames[] = {                                                               
       -8,  -12,  20,  0,   1,    -8,  -12,  20,  0,    1,   -8,   -12,         
       20,  0,    1,   -8,  -12,  16,  0,    1,   -8,   -12, 16,   0,           

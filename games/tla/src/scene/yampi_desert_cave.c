@@ -111,6 +111,10 @@ enum { ACTOR_HIDDEN_TREASURE = 64 };
 
 struct Actor;
 
+/// The kinds of log, the rows of gYampiDesertCave_LogSprites and
+/// gYampiDesertCave_LogFootprints.
+#define LOG_KIND_COUNT 6
+
 extern u16 gYampiDesertCave_LogSprites[];
 
 void YampiDesertCave_StopLeaderAtLog(struct Actor *object);
@@ -171,11 +175,12 @@ s32 YampiDesertCave_SetLogCells(s32 id) {
     kind = (u16)i;
     kind = (u16)(kind + 1);
     i = (s16)kind;
-    if (kind <= 5 && (u16)sprite != gYampiDesertCave_LogSprites[kind])
+    if (kind < LOG_KIND_COUNT &&
+        (u16)sprite != gYampiDesertCave_LogSprites[kind])
       goto loop;
   }
   kind = (u16)i;
-  if (kind == 6)
+  if (kind == LOG_KIND_COUNT)
     return 0;
   w = (ABS(gYampiDesertCave_LogFootprints[kind * 4]) +
        ABS(gYampiDesertCave_LogFootprints[kind * 4 + 2])) >>
@@ -307,51 +312,49 @@ struct Actor *YampiDesertCave_FindPushedLog(s32 *direction, s32 *slot,
   s32 x, z, left, top, right, bottom;
 
   *direction = leader->facing >> 12;
-  i = 8;
-  entry = &work->actors[8];
-outer:
-  object = *entry;
-  k = 0;
-inner:
-  if (((struct Sprite *)object->sprite)->entries[0]->animationId ==
-      gYampiDesertCave_LogSprites[k]) {
-    x = (PIXEL_PART(leader->x.fixed) + (gPushLeaderSteps[*direction] >> 16)) >>
-        4;
-    z = (PIXEL_PART(leader->z.fixed) + (s16)gPushLeaderSteps[*direction]) >> 4;
-    left =
-        (PIXEL_PART(object->x.fixed) + gYampiDesertCave_LogFootprints[k * 4]) >>
-        4;
-    top = (PIXEL_PART(object->z.fixed) +
-           gYampiDesertCave_LogFootprints[k * 4 + 1]) >>
-          4;
-    right = (PIXEL_PART(object->x.fixed) +
-             gYampiDesertCave_LogFootprints[k * 4 + 2]) >>
+  i = ACTOR_FIRST_PLACED;
+  entry = &work->actors[ACTOR_FIRST_PLACED];
+  do {
+    object = *entry;
+    for (k = 0; k < LOG_KIND_COUNT; k++) {
+      if (((struct Sprite *)object->sprite)->entries[0]->animationId ==
+          gYampiDesertCave_LogSprites[k]) {
+        x = (PIXEL_PART(leader->x.fixed) +
+             (gPushLeaderSteps[*direction] >> 16)) >>
             4;
-    bottom = (PIXEL_PART(object->z.fixed) +
-              gYampiDesertCave_LogFootprints[k * 4 + 3]) >>
-             4;
-    if (left <= x && x < right && top <= z && z < bottom) {
-      *kind = k;
-      if (k & 1) {
-        if (left != FIELD_CELL(leader->x.fixed)) {
-          *slot = i;
-          return object;
-        }
-      } else {
-        if (top != FIELD_CELL(leader->z.fixed)) {
-          *slot = i;
-          return object;
+        z = (PIXEL_PART(leader->z.fixed) + (s16)gPushLeaderSteps[*direction]) >>
+            4;
+        left = (PIXEL_PART(object->x.fixed) +
+                gYampiDesertCave_LogFootprints[k * 4]) >>
+               4;
+        top = (PIXEL_PART(object->z.fixed) +
+               gYampiDesertCave_LogFootprints[k * 4 + 1]) >>
+              4;
+        right = (PIXEL_PART(object->x.fixed) +
+                 gYampiDesertCave_LogFootprints[k * 4 + 2]) >>
+                4;
+        bottom = (PIXEL_PART(object->z.fixed) +
+                  gYampiDesertCave_LogFootprints[k * 4 + 3]) >>
+                 4;
+        if (left <= x && x < right && top <= z && z < bottom) {
+          *kind = k;
+          if (k & 1) {
+            if (left != FIELD_CELL(leader->x.fixed)) {
+              *slot = i;
+              return object;
+            }
+          } else {
+            if (top != FIELD_CELL(leader->z.fixed)) {
+              *slot = i;
+              return object;
+            }
+          }
         }
       }
     }
-  }
-  k++;
-  if (k <= 5)
-    goto inner;
-  entry++;
-  i++;
-  if (i <= 63)
-    goto outer;
+    entry++;
+    i++;
+  } while (i < 64);
   return NULL;
 }
 
@@ -484,14 +487,11 @@ void YampiDesertCave_StopLeaderAtLog(struct Actor *object) {
   Vector_AddPolarOffset(0x100000, angle, position);
   hit = Actor_FindAtCell(position, 1);
   if (hit != 0) {
-    i = 0;
-  next:
-    if (((struct Sprite *)hit->sprite)->entries[0]->animationId ==
-        gYampiDesertCave_LogSprites[i])
-      return;
-    i++;
-    if (i <= 5)
-      goto next;
+    for (i = 0; i < LOG_KIND_COUNT; i++) {
+      if (((struct Sprite *)hit->sprite)->entries[0]->animationId ==
+          gYampiDesertCave_LogSprites[i])
+        return;
+    }
     Actor_SetPositionAndResetMotion(object, object->x.fixed, object->y.fixed,
                                     object->z.fixed);
   }
@@ -638,8 +638,7 @@ void YampiDesertCave_PlaceStakes(const u16 *list) {
   if (list[0] == 0xffff)
     return;
   entry = list;
-loop:
-  {
+  do {
     u32 id = entry[0];
     struct Actor *object = Actor_GetById(id);
     s16 kind = entry[1];
@@ -649,9 +648,7 @@ loop:
     Actor_SetSpriteFlags(object, 0);
     Actor_SetCellOpen(id, (u16)kind, (u16)flag, object->layer);
     entry += 3;
-  }
-  if (entry[0] != 0xffff)
-    goto loop;
+  } while (entry[0] != 0xffff);
 }
 
 // Finds the current target's table row and shrinks it.

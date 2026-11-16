@@ -685,14 +685,8 @@ void Prox_SearchForParents(void) {
     MapGrid_CopyCellsTo(89, 0, 77, 16, 1, 2);
     Event_SetFlag(FLAG_DOOR_LEFT_OPEN);
     FieldEvent_Wait(10);
-    {
-      /* FAKEMATCH(temporary): the facing built from a smaller number in a
-       * block local; passed as FACING_SOUTH_SOUTHEAST, 4 of 178 instructions
-       * differ in tla-en. */
-      s32 facing = FACING_SOUTH_SOUTHEAST >> 6;
-      Actor_SetPositionAndFacing(ACTOR_WARRIOR_SENT_FOR_PARENTS, toFIXED(520),
-                                 toFIXED(360), facing << 6);
-    }
+    Actor_SetPositionAndFacing(ACTOR_WARRIOR_SENT_FOR_PARENTS, toFIXED(520),
+                               toFIXED(360), FACING_SOUTH_SOUTHEAST);
     FieldCamera_GetActor()->motionFlags = lit;
     FieldCamera_SetSpeed(1.6);
     FieldCamera_MoveTo(552, CAMERA_KEEP, 388, 1);
@@ -1172,14 +1166,8 @@ void Prox_ScoopUpMold(void) {
 
     Event_Start();
     FieldEvent_ResolvePendingActions(1);
-    {
-      /* FAKEMATCH(temporary): the facing built from a smaller number in a
-       * block local; passed as FACING_SOUTH, 2 of 46 instructions differ in
-       * tla-en. */
-      s32 facing = FACING_SOUTH >> 7;
-      Actor_SetPositionAndFacing(ACTOR_MOLD, toFIXED(408), toFIXED(145),
-                                 facing << 7);
-    }
+    Actor_SetPositionAndFacing(ACTOR_MOLD, toFIXED(408), toFIXED(145),
+                               FACING_SOUTH);
     System_Wait(1);
     FieldActor_Jump(ACTOR_MOLD, 4, 20);
     Actor_FaceActor(ACTOR_MOLD, gMainRoutineWork.leaderActorId, 0);
@@ -1386,9 +1374,6 @@ s32 Prox_EndEvent();
 void Prox_GiveThanksForBeacon(void) {
   s32 answer;
   struct Actor *leader;
-  s32 north;
-  s32 northNorthwest;
-  s32 facing;
 
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
@@ -1396,19 +1381,14 @@ void Prox_GiveThanksForBeacon(void) {
   FieldActor_Stop(ACTOR_VILLAGER_ON_THE_RESCUED);
   System_Wait(1);
   Actor_SetPosition(gMainRoutineWork.leaderActorId, 184, 484);
-  /* FAKEMATCH(temporary): the three facings held in locals set before their
-   * first placement, where as constants each placement rebuilds them and the
-   * later turns cannot share them. */
-  north = FACING_NORTH;
-  northNorthwest = FACING_NORTH_NORTHWEST;
-  Actor_SetPositionAndFacing(ACTOR_ISAAC, toFIXED(168), toFIXED(484), north);
+  Actor_SetPositionAndFacing(ACTOR_ISAAC, toFIXED(168), toFIXED(484),
+                             FACING_NORTH);
   Actor_SetPositionAndFacing(ACTOR_HOUSES_KRADEN, toFIXED(200), toFIXED(484),
-                             northNorthwest);
-  facing = FACING_SOUTH_SOUTHEAST;
+                             FACING_NORTH_NORTHWEST);
   Actor_SetPositionAndFacing(ACTOR_CHILD_SENT_OUTSIDE, toFIXED(138),
-                             toFIXED(412), facing);
+                             toFIXED(412), FACING_SOUTH_SOUTHEAST);
   Actor_SetPositionAndFacing(ACTOR_VILLAGER_ON_THE_RESCUED, toFIXED(220),
-                             toFIXED(600), northNorthwest);
+                             toFIXED(600), FACING_NORTH_NORTHWEST);
   Actor_SetPosition(ACTOR_JENNA, 184, 684);
   System_Wait(1);
   EVENT_WORK->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);

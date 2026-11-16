@@ -37,7 +37,7 @@ void BattleEffect_StartActorMotionRandomDistance(s32 id) {
     Actor_SetMoveTargetFar(object, slot->anchorX * percent / 100, 0,
                            slot->anchorZ);
   }
-  object->verticalMotionStrength = 0x9999;
+  object->verticalMotionStrength = toFIXED(3) / 5;
   object->verticalMotionPhase = 0;
   object->autoFaceMotion = 0;
   Actor_SelectAnimationFar(object, 5);
@@ -50,7 +50,7 @@ void BattleEffect_StartActorMotionRandomDistance(s32 id) {
 #define EMBER_COUNT 1024
 #define PILLAR_SHEET 0x6e4 ///< the fire pillar after the spray in the sheet
 
-#define FORMATION 649
+#define FORMATION SPRITE_NEREID
 #define FORMATION_SIZE 12
 
 #define SCENE_FRAMES 124
@@ -513,7 +513,11 @@ void BattleEffect_RunImpactBurst(s32 formation, s32 x, FIXED y) {
         cell = (frame - 36) / 7;
         px = FIXED_INTEGER_PART(shard->x);
         py = FIXED_INTEGER_PART(shard->y);
-        maxBlend(canvas, work->sheet + cell * 0x120 + SHARD_E, px - 6, py - 12,
+        maxBlend(canvas,
+                 work->sheet + cell * PICTURE_BYTES(IMPACT_BURST_FRAGMENT) +
+                     SHARD_E,
+                 px - IMPACT_BURST_FRAGMENT_WIDTH / 2,
+                 py - IMPACT_BURST_FRAGMENT_HEIGHT / 2,
                  IMPACT_BURST_FRAGMENT_WIDTH, IMPACT_BURST_FRAGMENT_HEIGHT);
       }
     }
@@ -657,9 +661,6 @@ void BattleEffect_RunOuterSpace(struct BattleEffectParams *args) {
 #define FLASHES ((struct Particle *)Ram_MapCellBuffer)
 #define EMBERS (&FLASHES[128])
 
-/// The scanline palette the HBlank DMA feeds into BG colour 0, in the work.
-#define HEAT_LINES(work) ((u16 *)((u8 *)(work) + 0x7640))
-
 /// BattleEffect_LoadBlitter's argument: the blitter mode in the high nibble,
 /// the COMPOSITE_ flags in the low one.
 
@@ -670,6 +671,9 @@ void BattleEffect_RunOuterSpace(struct BattleEffectParams *args) {
 
 #define PARTICLE_STREAMS_LARGE_GLOW_SIZE 24
 #define PARTICLE_STREAMS_SMALL_GLOW_SIZE 8
+/// Where the two glows are in the sheet.
+#define PARTICLE_STREAMS_LARGE_GLOW 0x1c80
+#define PARTICLE_STREAMS_SMALL_GLOW 0x1f40
 /// The burst's flashes in PARTICLES, then its embers.
 #define PARTICLE_STREAMS_FLASHES 128
 #define PARTICLE_STREAMS_EMBER_COUNT 512
@@ -741,7 +745,7 @@ void BattleEffect_RunParticleStreams(struct BattleEffectParams *args,
     struct MotionObject *user = BattleObject_GetFar(args->user)->object;
 
     user->velocityY = toFIXED(10);
-    user->verticalMotionStrength = 0x91eb;
+    user->verticalMotionStrength = toFIXED(57) / 100;
     BattleEffect_TintBattler(args->user, TINT_KEEP, 2, TINT_KEEP, 0);
     Sound_PlayFar(SE_CRASH);
     direction = args->side == EFFECT_SIDE_PARTY ? mode : -1;
@@ -761,7 +765,8 @@ void BattleEffect_RunParticleStreams(struct BattleEffectParams *args,
   // The Fusion Dragon's two halves (Outer Space), or the Meteor.
   if (mode == PARTICLE_STREAMS_OUTER_SPACE) {
     for (i = 0; i != 2; i++) {
-      struct Sprite *sprite = Sprite_CreateFar(638 + i * SPRITE_SECOND_PART);
+      struct Sprite *sprite = Sprite_CreateFar(SPRITE_BATTLE_FUSION_DRAGON +
+                                               i * SPRITE_SECOND_PART);
 
       work->sprites[i] = sprite;
       if (sprite != 0) {
@@ -892,7 +897,7 @@ void BattleEffect_RunParticleStreams(struct BattleEffectParams *args,
       /* FAKEMATCH(barrier): count and base through an empty asm clobbering r1
        * and r3. */
       asm("" : "=r"(base) : "0"(base), "r"(count) : "r1", "r3");
-      line = HEAT_LINES(base);
+      line = ((struct BattleEffectWork *)base)->backdropLines;
 
       if (mode == PARTICLE_STREAMS_OUTER_SPACE) {
         if ((gInput.repeat & (KEY_A | KEY_B)) && frame > 16)
@@ -995,7 +1000,7 @@ void BattleEffect_RunParticleStreams(struct BattleEffectParams *args,
       // The ring of seven orbs, turning.
       point.x = 0;
       point.y = 0;
-      point.depth = 0x2000000;
+      point.depth = toFIXED(512);
       Matrix_Initialize();
       Matrix_TranslateVector(&point.x);
       Matrix_RotateZ(TRIG_TURN / 32);
@@ -1007,7 +1012,10 @@ void BattleEffect_RunParticleStreams(struct BattleEffectParams *args,
         EffectPosition_ProjectPoint(vector, pos = &spot);
         pos->x = FIXED_INTEGER_PART(pos->x) + 128;
         pos->y = FIXED_INTEGER_PART(pos->y) + 60;
-        draw(Ram_MapCellBuffer, work->sheet + 0x1f40, pos->x - 4, pos->y - 4, 8,
+        draw(Ram_MapCellBuffer, work->sheet + PARTICLE_STREAMS_SMALL_GLOW,
+             pos->x - PARTICLE_STREAMS_SMALL_GLOW_SIZE / 2,
+             pos->y - PARTICLE_STREAMS_SMALL_GLOW_SIZE / 2,
+             PARTICLE_STREAMS_SMALL_GLOW_SIZE,
              PARTICLE_STREAMS_SMALL_GLOW_SIZE);
       }
 
@@ -1021,8 +1029,11 @@ void BattleEffect_RunParticleStreams(struct BattleEffectParams *args,
         s32 drop = gParticleStreams_FireballPoints[i][1] + y;
 
         if (drop <= 93)
-          draw(Ram_MapCellBuffer, work->sheet + 0x1c80,
-               gParticleStreams_FireballPoints[i][0] + x - 12, drop - 12, 24,
+          draw(Ram_MapCellBuffer, work->sheet + PARTICLE_STREAMS_LARGE_GLOW,
+               gParticleStreams_FireballPoints[i][0] + x -
+                   PARTICLE_STREAMS_LARGE_GLOW_SIZE / 2,
+               drop - PARTICLE_STREAMS_LARGE_GLOW_SIZE / 2,
+               PARTICLE_STREAMS_LARGE_GLOW_SIZE,
                PARTICLE_STREAMS_LARGE_GLOW_SIZE);
         else if (drop <= 95)
           AddFlame(INTtoFIXED(gParticleStreams_FireballPoints[i][0] + x),
@@ -1038,7 +1049,7 @@ void BattleEffect_RunParticleStreams(struct BattleEffectParams *args,
                FIXED_INTEGER_PART(mote->x) - 16,
                FIXED_INTEGER_PART(mote->y) - 16, WATER_WAVE_WIDTH,
                WATER_WAVE_HEIGHT);
-          mote->x -= direction * 0x14000;
+          mote->x -= direction * (toFIXED(5) / 4);
           mote->y -= toFIXED(5);
           mote->variant++;
           if (mote->variant == 6)
@@ -1209,7 +1220,7 @@ void BattleEffect_RunParticleStreams(struct BattleEffectParams *args,
     else
       x = 56 - frame / 2;
     y = 64 - frame * 2;
-    grow = (frame << 8) + 0x20000;
+    grow = (frame << 8) + toFIXED(2);
     position[3] = 0;
     position[1] = toFIXED(255);
     if (mode == PARTICLE_STREAMS_OUTER_SPACE) {

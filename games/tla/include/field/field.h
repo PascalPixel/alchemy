@@ -25,9 +25,6 @@ struct ScreenPoint;
 extern const FIXED gCamera_FixedViewMatrix[];
 extern u8 gSpriteDissolve_PixelOrder[];
 extern const u8 gWorldMap_TerrainBehaviorTable[];
-/// The size of Render_DecodePicture, copied to HEAP_SLOT_FRAME_SCRATCH; an
-/// address equal to the size (ld_script.ld).
-extern u8 Render_DecodePictureCodeSize[];
 extern u8 gSpriteColorRemapTables[];
 s32 BattleUnit_ProjectToScreen(s32 unit, s32 *screen);
 s32 Party_CheckShortcut(u32 packed_id);
@@ -376,12 +373,6 @@ struct TightropeWork {
 };
 
 #define TIGHTROPE_WORK ((struct TightropeWork *)Ram_HeapSlots->tightrope)
-
-/// unk26a from main_routine_work.h.
-struct PartyPauseView {
-  u8 unused[618]; ///< no code names it
-  s16 pausedObject;
-};
 
 /// The point the map view follows (MapWork.origin), as the depth sort reads it.
 struct DepthOrigin {

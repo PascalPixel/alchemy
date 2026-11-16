@@ -995,6 +995,11 @@
 #define FLAG_YAMPI_DESERT_ENTERED_BY_GUARDIAN_RING_CHEST 0xa29
 #define FLAG_YAMPI_DESERT_ENTERED_BY_TRAINERS_WHIP_CHEST 0xa2a
 #define FLAG_YAMPI_DESERT_ENTERED_BY_MEDAL_SPOT 0xa2b
+/// Yallam's buried Nut, dug up with Scoop, as The Broken Seal names its
+/// treasure flags.
+#define FLAG_YALLAM_NUT 0xf60
+/// Yallam's buried Antidote, dug up with Scoop.
+#define FLAG_YALLAM_ANTIDOTE 0xf62
 /// Set in Madra as Karst comes in (Madra_MeetKarst) once flag 0x825 or 0x826
 /// is; the bandit and his two thieves then wait on the World Map, and their
 /// battle clears it.

@@ -153,12 +153,16 @@ const struct ActorPlacement *Scene_GetActorPlacements(void) {
 
 extern s16 gJupiterLighthouse_Room5Blocks[];
 
+/// As Move lifts one of the hall's blocks: lifts it off its cells.
 void JupiterLighthouse_LiftPushedBlock(void) {
   Actor_LiftTargetBlock(gJupiterLighthouse_Room5Blocks);
 }
 
 void Actor_RaiseFromCell(s32 id);
 
+/// As a block is set down: the middle grey block, once the lighthouse is
+/// activated and it sits in its gap at cell (13, 34), rises 32 pixels and
+/// hovers for good; any other block is set on its cells.
 void JupiterLighthouse_PlacePushedBlock(s32 unused, s32 id) {
   struct Actor *object;
   s32 i;
@@ -180,11 +184,12 @@ void JupiterLighthouse_PlacePushedBlock(s32 unused, s32 id) {
   }
 }
 
-u32 __umodsi3();
 void Actor_SetSpriteColorMode();
 
 #include "shared/actor_cycle_pictures.h"
 
+/// An actor's update while the lighthouse wakes: every other frame its sprite
+/// steps through six colour modes.
 void JupiterLighthouse_ShimmerColors(struct Actor *object) {
   u32 frameCount = gFrameCount;
 
@@ -229,7 +234,7 @@ void Orbs_SpawnRising(void) {
     u32 random;
 
     random = Random16();
-    effect = FieldActor_Create(0x2a0, center->x.fixed,
+    effect = FieldActor_Create(SPRITE_PARTICLE, center->x.fixed,
                                (s32)((u32)(random << 8) >> 16 << 16) +
                                    center->y.fixed - toFIXED(28),
                                center->z.fixed);
@@ -237,7 +242,7 @@ void Orbs_SpawnRising(void) {
     u32 random;
 
     random = Random16();
-    effect = FieldActor_Create(0x2a0, center->x.fixed,
+    effect = FieldActor_Create(SPRITE_PARTICLE, center->x.fixed,
                                (s32)((u32)(random << 6) >> 16 << 16) +
                                    center->y.fixed - toFIXED(28),
                                center->z.fixed);
@@ -262,6 +267,8 @@ extern s32 gJupiterLighthouse_PulseOn;
 
 void JupiterLighthouse_AddSparks();
 
+/// A frame task while the spark ring pulses: adds the step's sparks, with the
+/// rising sound while the pulse is on.
 void JupiterLighthouse_PulseAscend(void) {
   if (gJupiterLighthouse_PulseOn != 0)
     Event_PlaySound(SE_ASCEND);
@@ -273,14 +280,16 @@ extern s32 gJupiterLighthouse_PulseScript[];
 
 void JupiterLighthouse_EndSparkRing(void);
 
-static __inline__ void Bring(s32 id) {
+/// Shows one half of the beam of light, drawn underfoot at priority 2 in colour
+/// 7, flat and upside down at first, and starts the script that brings it in.
+static __inline__ void JupiterLighthouse_BringInBeam(s32 id) {
   struct Actor *object;
 
   Actor_SetSpritePriority(id, 2);
   Actor_SetSpriteColor(Actor_GetById(id), 7);
   object = Actor_GetById(id);
   object->motionFlags = 0;
-  object->priorityFlags |= 2;
+  object->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
   object->scaleY = -FIXED_ONE;
   object->scaleX = FIXED_ONE / 10;
   Actor_SetMovementTypeById(id, gJupiterLighthouse_BringInScript);
@@ -340,8 +349,8 @@ void JupiterLighthouse_ActivateTheLighthouse(void) {
   gJupiterLighthouse_PulseStep = 3;
   gJupiterLighthouse_PulseOn = 0;
   FieldEvent_Wait(40);
-  Bring(ACTOR_LOWER_BEAM);
-  Bring(ACTOR_UPPER_BEAM);
+  JupiterLighthouse_BringInBeam(ACTOR_LOWER_BEAM);
+  JupiterLighthouse_BringInBeam(ACTOR_UPPER_BEAM);
   Task_AddFrame(Orbs_SpawnRising, TASK_PASS_VBLANK);
   Event_PlaySound(SE_CLATTER);
   MapGrid_SetShake(6, 6, 1);
@@ -409,6 +418,8 @@ void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
                        s32 velocityZ, u32 flags,
                        const struct EffectOptions *options);
 
+/// Stepping into the hall's centre: the screen warms and a voice asks for the
+/// power of Anemos, once until the party leaves the centre.
 void JupiterLighthouse_HearTheVoice(void) {
   if (!Event_GetFlag(FLAG_VOICE_HEARD)) {
     Event_SetFlag(FLAG_VOICE_HEARD);
@@ -427,6 +438,7 @@ void JupiterLighthouse_HearTheVoice(void) {
   }
 }
 
+/// Stepping out of the centre: the voice speaks again next time.
 void JupiterLighthouse_LeaveTheCenter(void) {
   GameFlag_Clear(FLAG_VOICE_HEARD);
 }
@@ -478,6 +490,8 @@ void JupiterLighthouse_AlexAppears(void) {
   Actor_SetSpriteFlags(Actor_Get(ACTOR_ALEX), 1);
 }
 
+/// The healer raises arcs of light over the target, which spins and flashes
+/// for two seconds to the revival jingle and then stands facing north.
 void JupiterLighthouse_HealWithArc(s32 actor, s32 target) {
   s32 i;
 
@@ -543,7 +557,7 @@ void JupiterLighthouse_AlexHealsTheParty(void) {
   FieldCamera_MoveTo(68, CAMERA_KEEP, 240, 1);
   // "Have you come here to light the beacon?" Yes: "And you're sure that's all
   // you're going to..." No: "Hmph. They consider you their enemy, and..."
-  Event_OpenMessage(22, 0);
+  Event_OpenMessage(ACTOR_ALEX, 0);
   if (FieldEvent_AskYesNoWithActorAnimation(ACTOR_FELIX, 0) == 0) {
     Actor_SetAnimationAndWait(ACTOR_ALEX, ANIM_SHAKE_HEAD);
     // "And you're sure that's all you're going to do?"
@@ -573,7 +587,7 @@ void JupiterLighthouse_AlexHealsTheParty(void) {
   FieldCamera_MoveTo(68, CAMERA_KEEP, 256, 1);
   Actor_WalkByAndWait(ACTOR_ALEX, 0, 16);
   FieldEvent_Wait(30);
-  JupiterLighthouse_HealWithArc(22, 4);
+  JupiterLighthouse_HealWithArc(ACTOR_ALEX, ACTOR_FELIX);
   Party_RestoreHpPp(1);
   Message_ShowCentered((s16)EVENT_WORK->message++, 5);
   FieldEvent_Wait(30);
@@ -603,7 +617,8 @@ s32 Scene_Initialize(void) {
     Actor_SetPositionAndFacing(ACTOR_ALEX, toFIXED(64), toFIXED(225), angle);
   }
   Actor_PlaceBlocks(gJupiterLighthouse_Room5Blocks);
-  Actor_SetMovementType(Actor_Get(FIELD_TREASURE_ACTOR), 9);
+  Actor_SetMovementType(Actor_Get(FIELD_TREASURE_ACTOR),
+                        MOVEMENT_TYPE_TAKE_LEADER_LAYER);
   object = Actor_Get(ACTOR_LOWER_BEAM);
   object->scaleX = 0;
   object->motionFlags = 0;
@@ -627,9 +642,10 @@ s32 Scene_Initialize(void) {
 s32 Scene_PrepareMap(void) {
   Scene_SetArrivalFlags(0);
   JupiterLighthouse_LoadPalettes(0);
-  Actor_Get(gMainRoutineWork.leaderActorId)->priorityFlags |= 0x40;
+  Actor_Get(gMainRoutineWork.leaderActorId)->priorityFlags |=
+      ACTOR_PRIORITY_WALKS_ON_PLATFORMS;
   if (Event_GetFlag(FLAG_JUPITER_LIGHTHOUSE_ACTIVATED))
-    MapGrid_SetCellBehavior(0xd00000, 0x2a00000, 2, 236);
+    MapGrid_SetCellBehavior(toFIXED(208), toFIXED(672), 2, CELL_BEHAVIOR_HOVER);
   if (Event_GetFlag(FLAG_JUPITER_LIGHTHOUSE_ACTIVATED)) {
     Actor_RaiseFromCell(ACTOR_WEST_GREY_BLOCK);
     Actor_RaiseFromCell(ACTOR_EAST_GREY_BLOCK);
@@ -675,7 +691,9 @@ s32 MapGrid_GetCellBehavior(s32 x, s32 z, s32 layer);
 
 #include "shared/whirlwind_update.h"
 
-struct Actor *JupiterLighthouse_SpawnGust(struct Actor *source) {
+/// Unused: raises a whirlwind 8 pixels ahead of the source, facing its way,
+/// with a puff of dust; returns it.
+UNUSED struct Actor *JupiterLighthouse_SpawnGust(struct Actor *source) {
   struct Vector3 position;
   struct EffectOptions options;
   struct Actor *object;
@@ -690,7 +708,7 @@ struct Actor *JupiterLighthouse_SpawnGust(struct Actor *source) {
   Import_ActorSelectAnimation(object, 2);
   Actor_SetSpriteFlags(object, 0);
   object->motionFlags = 0;
-  object->priorityFlags &= ~1;
+  object->priorityFlags &= ~ACTOR_PRIORITY_AUTOMATIC;
   object->facing = source->facing;
   object->timer = 0;
   object->riseCounter = 0;
@@ -704,33 +722,37 @@ struct Actor *JupiterLighthouse_SpawnGust(struct Actor *source) {
   return object;
 }
 
-s32 JupiterLighthouse_UpdateGust(struct Actor *object) {
+/// Unused: every eighth frame, sends a spark up from a random spot about the
+/// actor.
+UNUSED s32 JupiterLighthouse_UpdateGust(struct Actor *object) {
   struct EffectOptions options;
   s32 phase;
   FIXED x, y, speed;
 
   phase = gFrameCount & 7;
-  if (phase != 0)
-    goto done;
-  options.priority = 3;
-  options.startScaleX = FIXED_ONE * 7 / 10;
-  options.startScaleY = FIXED_ONE * 7 / 10;
-  options.palette = 14;
-  x = object->x.fixed + INTtoFIXED((s32)(Random_Below(9)) - 4);
-  y = object->y.fixed + INTtoFIXED(32 - (s32)(Random_Below(20)));
-  speed = (INTtoFIXED((s32)(Random_Below(5))) + 0x50000) / 10;
-  FieldEffect_Spawn(x, y, object->z.fixed, 0, speed, phase,
-                    EFFECT_USE_PALETTE | EFFECT_USE_PRIORITY |
-                        EFFECT_USE_START_SCALE,
-                    &options);
-done:
+  if (phase == 0) {
+    options.priority = 3;
+    options.startScaleX = FIXED_ONE * 7 / 10;
+    options.startScaleY = FIXED_ONE * 7 / 10;
+    options.palette = 14;
+    x = object->x.fixed + INTtoFIXED((s32)(Random_Below(9)) - 4);
+    y = object->y.fixed + INTtoFIXED(32 - (s32)(Random_Below(20)));
+    speed = (INTtoFIXED((s32)(Random_Below(5))) + 0x50000) / 10;
+    FieldEffect_Spawn(x, y, object->z.fixed, 0, speed, phase,
+                      EFFECT_USE_PALETTE | EFFECT_USE_PRIORITY |
+                          EFFECT_USE_START_SCALE,
+                      &options);
+  }
   return 0;
 }
 
 #include "shared/jupiter_lighthouse_place_raised_actors.h"
 
+/// One spark of the ring: its sideways and upward swing, in pixels, and its
+/// age along the way from one end to the other; it is drawn only while its age
+/// runs from 0 to its duration.
 struct Spark {
-  u8 unk00[0x0c];
+  u8 unused[12]; ///< never read or written
   s32 dx;
   s32 dy;
   s32 duration;
@@ -750,6 +772,8 @@ struct SparkWork {
   s16 vramEntry;
 };
 
+/// A frame task: moves each live spark along the way between the ring's ends,
+/// swinging out and back on a half sine, and draws it.
 void JupiterLighthouse_UpdateSparkRing(void) {
   struct SparkWork *work = Ram_HeapSlots->menuWork;
   struct Spark *spark = work->sparks;
@@ -784,7 +808,7 @@ void JupiterLighthouse_UpdateSparkRing(void) {
 }
 
 /// Adds count sparks to the spark ring's 96 entries in heap slot 220, each
-/// with a random angle from 0x6000 across three quarters of a turn, the
+/// with a random angle from 135 degrees across three quarters of a turn, the
 /// cosine and negated sine of it at 64 pixels as its direction, a random
 /// speed of 16 to 31 and an age of 0.
 void JupiterLighthouse_AddSparks(s32 count) {
@@ -799,7 +823,7 @@ void JupiterLighthouse_AddSparks(s32 count) {
     i = count;
     do {
       spark = &work->sparks[work->next];
-      angle = ((Random16() * 3) >> 2) + 0x6000;
+      angle = ((Random16() * 3) >> 2) + DEGtoANG(135);
       radius = toFIXED(64);
       speed = ((Random16() << 4) >> 16) + 16;
       spark->dx = Iwram_MulFX(Trig_Cos(angle), radius) >> 16;
@@ -812,6 +836,9 @@ void JupiterLighthouse_AddSparks(s32 count) {
   }
 }
 
+/// Starts the spark ring between two points: loads the coloured orbs'
+/// pictures, readies 96 sprites at the leader's priority and just in front of
+/// it, and starts the update task.
 void JupiterLighthouse_StartSparkRing(const s32 *from, const s32 *to) {
   struct SparkWork *work =
       HeapSlot_Alloc(HEAP_SLOT_MENU, sizeof(struct SparkWork));
@@ -857,6 +884,7 @@ void JupiterLighthouse_StartSparkRing(const s32 *from, const s32 *to) {
   Task_AddFrame(JupiterLighthouse_UpdateSparkRing, TASK_PASS_VBLANK);
 }
 
+/// Stops the spark ring and frees its pictures and work.
 void JupiterLighthouse_EndSparkRing(void) {
   struct SparkWork *work = Ram_HeapSlots->menuWork;
 
@@ -1054,8 +1082,8 @@ u32 gSceneExits[] = {
   };
 
 struct ActorPlacement gActorPlacements[] = {
-    ACTOR_PLACEMENT(341, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 536, 0, 608, FACING_SOUTHWEST, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(341, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 824, 0, 608, FACING_SOUTHEAST, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE),
+    ACTOR_PLACEMENT(SPRITE_WHITE_WINGS, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 536, 0, 608, FACING_SOUTHWEST, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_WHITE_WINGS, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 824, 0, 608, FACING_SOUTHEAST, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE),
     ACTOR_PLACEMENT(SPRITE_BALANCE_PLATFORM, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 184, 0, 552, FACING_SOUTHEAST, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(SPRITE_BALANCE_PLATFORM, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 216, 0, 600, FACING_EAST, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE),
     ACTOR_PLACEMENT(SPRITE_BALANCE_PLATFORM, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 248, 0, 552, FACING_EAST, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE),
@@ -1063,12 +1091,12 @@ struct ActorPlacement gActorPlacements[] = {
     ACTOR_PLACEMENT(SPRITE_BALANCE_PLATFORM, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 648, 0, 664, FACING_EAST, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE),
     ACTOR_PLACEMENT(SPRITE_BALANCE_PLATFORM, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 712, 0, 664, FACING_EAST, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE),
     ACTOR_PLACEMENT(SPRITE_BALANCE_PLATFORM, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 744, 0, 664, FACING_EAST, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE),
-    ACTOR_PLACEMENT(312, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 152, 0, 280, FACING_SOUTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(312, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 264, 0, 296, FACING_SOUTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(312, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 328, 0, 232, FACING_SOUTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(341, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 72, 0, 328, FACING_SOUTHWEST, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(341, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 488, 0, 328, FACING_SOUTHEAST, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE),
-    ACTOR_PLACEMENT(57, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(SPRITE_YELLOW_BLOCK, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 152, 0, 280, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_YELLOW_BLOCK, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 264, 0, 296, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_YELLOW_BLOCK, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 328, 0, 232, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_WHITE_WINGS, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 72, 0, 328, FACING_SOUTHWEST, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_WHITE_WINGS, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 488, 0, 328, FACING_SOUTHEAST, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE),
+    ACTOR_PLACEMENT(SPRITE_ALEX, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
     ACTOR_PLACEMENT(SPRITE_PIPE_NORTH_SOUTH, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(SPRITE_PIPE_NORTH_SOUTH, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE),
     ACTOR_PLACEMENT(SPRITE_PIPE_NORTH_SOUTH, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE),

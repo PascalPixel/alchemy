@@ -1438,113 +1438,119 @@ void BattleEffect_RunCoatlicue(struct BattleEffectParams *args) {
       FILL_GRADIENT(row, i, shade, color);
     }
     if ((u32)(frame - 282) <= 17) {
-      s32 g = (frame - 282) / 2 + 14;
+      s32 green = (frame - 282) / 2 + 14;
       u16 *dst = (u16 *)OBJ_PLTT;
-      s32 b = frame - 253;
-      u32 c;
+      s32 blue = frame - 253;
+      u32 color;
 
-      if (g > RGB_LEVEL_MAX) {
-        g = RGB_LEVEL_MAX;
+      if (green > RGB_LEVEL_MAX) {
+        green = RGB_LEVEL_MAX;
       }
-      if (b > RGB_LEVEL_MAX) {
-        b = RGB_LEVEL_MAX;
+      if (blue > RGB_LEVEL_MAX) {
+        blue = RGB_LEVEL_MAX;
       }
       i = 0;
-      c = b << 10 | g << 5;
+      color = RGB(0, green, blue);
       for (; i != 256; i++) {
-        *dst++ = c;
+        *dst++ = color;
       }
     }
+    // From frame 300 every sprite colour steps two levels a frame toward the
+    // maiden's own, lifted by redLift, greenLift and k in blue: first to white,
+    // then less, then to her colours.
     if (frame > 299) {
-      u16 *e = Resource_GetTableEntry(RESOURCE_BELL_MAIDEN_TILES);
+      u16 *source = Resource_GetTableEntry(RESOURCE_BELL_MAIDEN_TILES);
       u16 *dst = (u16 *)OBJ_PLTT;
-      s32 tr = RGB_LEVEL_MAX;
-      s32 tg = RGB_LEVEL_MAX;
+      s32 redLift = RGB_LEVEL_MAX;
+      s32 greenLift = RGB_LEVEL_MAX;
 
       k = 15;
 
       if (frame > 315) {
-        tr = 4;
-        tg = 12;
+        redLift = 4;
+        greenLift = 12;
         k = 16;
       }
       if (frame > 337) {
-        tr = 0;
-        tg = 0;
+        redLift = 0;
+        greenLift = 0;
         k = 0;
       }
-      for (i = 0; i != 256; i++, e++, dst++) {
-        s32 c = *dst;
-        s32 s = *e;
-        s32 cb = RGB_BLUE((u16)c);
-        s32 cg = RGB_GREEN((u16)c);
-        s32 cr = RGB_RED(c);
-        s32 sb = RGB_BLUE((u16)s) + k;
-        s32 sg = RGB_GREEN((u16)s) + tg;
-        s32 t = RGB_RED(s);
-        s32 sr;
+      for (i = 0; i != 256; i++, source++, dst++) {
+        s32 color = *dst;
+        s32 goal = *source;
+        s32 blue = RGB_BLUE((u16)color);
+        s32 green = RGB_GREEN((u16)color);
+        s32 red = RGB_RED(color);
+        s32 goalBlue = RGB_BLUE((u16)goal) + k;
+        s32 goalGreen = RGB_GREEN((u16)goal) + greenLift;
+        s32 goalRedBase = RGB_RED(goal);
+        s32 goalRed;
 
-        /* FAKEMATCH(barrier): t held apart from s through an empty asm. */
-        __asm__("" : "=r"(t) : "0"(t));
-        sr = t + tr;
-        if (cb < sb - 1) {
-          cb += 2;
-        } else if (cb > sb + 1) {
-          cb -= 2;
+        /* FAKEMATCH(barrier): goalRedBase held apart from goal through an
+         * empty asm. */
+        __asm__("" : "=r"(goalRedBase) : "0"(goalRedBase));
+        goalRed = goalRedBase + redLift;
+        if (blue < goalBlue - 1) {
+          blue += 2;
+        } else if (blue > goalBlue + 1) {
+          blue -= 2;
         }
-        if (cg < sg - 1) {
-          cg += 2;
-        } else if (cg > sg + 1) {
-          cg -= 2;
+        if (green < goalGreen - 1) {
+          green += 2;
+        } else if (green > goalGreen + 1) {
+          green -= 2;
         }
-        if (cr < sr - 1) {
-          cr += 2;
-        } else if (cr > sr + 1) {
-          cr -= 2;
+        if (red < goalRed - 1) {
+          red += 2;
+        } else if (red > goalRed + 1) {
+          red -= 2;
         }
-        if (cb > RGB_LEVEL_MAX) {
-          cb = RGB_LEVEL_MAX;
+        if (blue > RGB_LEVEL_MAX) {
+          blue = RGB_LEVEL_MAX;
         }
-        if (cg > RGB_LEVEL_MAX) {
-          cg = RGB_LEVEL_MAX;
+        if (green > RGB_LEVEL_MAX) {
+          green = RGB_LEVEL_MAX;
         }
-        if (cr > RGB_LEVEL_MAX) {
-          cr = RGB_LEVEL_MAX;
+        if (red > RGB_LEVEL_MAX) {
+          red = RGB_LEVEL_MAX;
         }
-        if (cb < 0) {
-          cb = 0;
+        if (blue < 0) {
+          blue = 0;
         }
-        if (cg < 0) {
-          cg = 0;
+        if (green < 0) {
+          green = 0;
         }
-        if (cr < 0) {
-          cr = 0;
+        if (red < 0) {
+          red = 0;
         }
-        *dst = RGB(cr, cg, cb);
+        *dst = RGB(red, green, blue);
       }
     }
+    // From frame 520 the maiden's colours brighten, red fastest and blue
+    // slowest.
     if (frame > 519) {
-      s32 d = frame - 520;
-      u16 *e = Resource_GetTableEntry(RESOURCE_BELL_MAIDEN_TILES);
+      s32 lift = frame - 520;
+      u16 *source = Resource_GetTableEntry(RESOURCE_BELL_MAIDEN_TILES);
       u16 *dst = (u16 *)OBJ_PLTT;
       s32 half;
 
       i = 0;
-      half = d / 2;
-      for (; i != 256; i++, e++, dst++) {
+      half = lift / 2;
+      for (; i != 256; i++, source++, dst++) {
         s32 b;
         s32 g;
         s32 r;
-        s32 s;
-        s32 t;
+        s32 color;
+        s32 sourceRed;
 
-        s = *e;
+        color = *source;
         /* FAKEMATCH(temporary): red through a temporary set twice. */
-        t = 31;
-        t &= s;
-        r = t + d;
-        g = RGB_GREEN((u16)s) + half;
-        b = RGB_BLUE((u16)s) + d / 4;
+        sourceRed = 31;
+        sourceRed &= color;
+        r = sourceRed + lift;
+        g = RGB_GREEN((u16)color) + half;
+        b = RGB_BLUE((u16)color) + lift / 4;
 
         if (r > RGB_LEVEL_MAX) {
           r = RGB_LEVEL_MAX;

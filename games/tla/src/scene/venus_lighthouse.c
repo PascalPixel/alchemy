@@ -277,7 +277,7 @@ UNUSED void VenusLighthouse_PushAdjacentPillar(void) {
   if (transitionBusy != 0)
     return;
 
-  Import_ActorSelectAnimation(leader, 8);
+  Import_ActorSelectAnimation(leader, ANIM_PUSH);
   moveRate = toFIXED(1) / 5;
   System_Wait(15);
   Event_PlaySound(SE_PUSH);
@@ -356,11 +356,13 @@ const struct SceneRegion *Scene_GetExitRegions(void) { return 0; }
 
 const u32 *Scene_GetExits(void) { return gSceneExits; }
 
+/// It draws the actor in the colour mode of its VENUS_COLOR_MARK.
 s32 VenusLighthouse_UpdateChildFromTimer(struct Actor *actor) {
   FieldActor_SetSpriteColor(actor, actor->timer & 15);
   return 0;
 }
 
+/// Clears the scripted actor's sprite flags and advances its script.
 s32 VenusLighthouse_ClearScriptedSpriteFlags(void *actor) {
   Actor_SetSpriteFlags(actor, 0);
   return 0;
@@ -421,17 +423,20 @@ void VenusLighthouse_RepelLeader(void) {
   Event_Wait(1);
   SetFlagBits(&Actor_GetById(leader)->steeringFlags, ACTOR_FACES_MOTION);
   Event_Wait(20);
-  Actor_SetSpriteColor(actor, 0);
+  Actor_SetSpriteColor(actor, SPRITE_COLOR_NORMAL);
   actor->update = VenusLighthouse_EmitRisingParticles;
   FieldActor_ShowEmote(leader, EMOTE_IN_FRONT | EMOTE_WINCE, 60);
-  Actor_SetAnimationAndWait(leader, 4);
-  Actor_SetSpriteColor(Actor_GetById(leader), 0);
-  Actor_SetAnimationAndWait(leader, 4);
+  Actor_SetAnimationAndWait(leader, ANIM_SHAKE_HEAD);
+  Actor_SetSpriteColor(Actor_GetById(leader), SPRITE_COLOR_NORMAL);
+  Actor_SetAnimationAndWait(leader, ANIM_SHAKE_HEAD);
 
   actor->update = 0;
   Event_End();
 }
 
+/// Standing on the floor switch presses it
+/// (FLAG_VENUS_LIGHTHOUSE_SWITCH_PRESSED) and lowers the leader into it;
+/// stepping off releases it.
 void VenusLighthouse_StepOnFloorSwitch(void) {
   struct Actor *leader = Actor_GetById(Party_GetLeaderActor());
   s32 z = leader->z.part[0].integer;
@@ -440,7 +445,7 @@ void VenusLighthouse_StepOnFloorSwitch(void) {
     MapGrid_CopyCellPictureIndicesRect(53, 50, 42, 49, 1, 1);
     MapGrid_CopyCellsTo(55, 117, 41, 117, 3, 5);
     GameFlag_Clear(FLAG_VENUS_LIGHTHOUSE_SWITCH_PRESSED);
-    leader->motionFlags |= 1;
+    leader->motionFlags |= ACTOR_FOLLOWS_TERRAIN;
     leader->groundHeight = 0;
     leader->y.fixed = 0;
   } else if (!Event_GetFlag(FLAG_VENUS_LIGHTHOUSE_SWITCH_PRESSED)) {
@@ -451,7 +456,7 @@ void VenusLighthouse_StepOnFloorSwitch(void) {
     MapGrid_CopyCellsTo(52, 117, 41, 117, 3, 5);
     GameFlag_Set(FLAG_VENUS_LIGHTHOUSE_SWITCH_PRESSED);
     Sound_Play(SE_RATTLE);
-    leader->motionFlags &= ~1;
+    leader->motionFlags &= ~ACTOR_FOLLOWS_TERRAIN;
     leader->groundHeight = -toFIXED(2);
     leader->y.fixed = -toFIXED(2);
     Event_End();
@@ -484,19 +489,21 @@ void VenusLighthouse_SinkStatue(void) {
   Event_End();
 }
 
+/// Searching the relief shows its words.
 void VenusLighthouse_ReadRelief(void) {
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
-  Actor_SetAnimation(FieldParty_GetLeaderActor(), 1);
+  Actor_SetAnimation(FieldParty_GetLeaderActor(), ANIM_STAND);
   // "There are words carved into the relief... If ye seek to climb Venus..."
   Message_ShowCentered((s32)MsgVenusLighthouseReliefWords, 1);
   Event_End();
 }
 
+/// Searching the other relief shows that only a true heart knows the road.
 void VenusLighthouse_ReadTrueHeart(void) {
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
-  Actor_SetAnimation(FieldParty_GetLeaderActor(), 1);
+  Actor_SetAnimation(FieldParty_GetLeaderActor(), ANIM_STAND);
   // "The true road can only be known by he who bears a true heart."
   Message_ShowCentered((s32)MsgVenusLighthouseTrueHeart, 1);
   Event_End();
@@ -549,6 +556,7 @@ void VenusLighthouse_RevealPaths(void) {
 
 const struct Trigger *Scene_GetTriggers(void) { return gSceneEvents; }
 
+/// Does nothing: the end of Felix's Move, which leaves the rest to the event.
 s32 VenusLighthouse_Idle(void) { return 0; }
 
 /// Felix casts Move on the statue.
@@ -645,8 +653,9 @@ s32 Scene_Initialize(void) {
 
 s32 Scene_PrepareMap(void) { return 0; }
 
-static inline void Venus_ObjEffectSet(s32 actor, s32 value) {
-  Exit_PrepareActorAnimation(actor, value);
+/// Has the actor go down the stairs (Exit_PrepareActorAnimation).
+static inline void VenusLighthouse_GoDownStairs(s32 actor, s32 side) {
+  Exit_PrepareActorAnimation(actor, side);
 }
 
 /// The prologue's opening: Felix moves the statue aside with Psynergy and
@@ -708,6 +717,8 @@ void VenusLighthouse_FelixLeaves(void) {
   Actor_SetPosition(ACTOR_FELIX, 0, 0);
 }
 
+/// Jenna doubts they should have left Felix; Alex appears in sparks and asks
+/// after him, and the three go down the stairs to leave the lighthouse.
 void VenusLighthouse_DoubtLeaving(void) {
   struct Actor *actor;
   struct FieldWork *work;
@@ -1181,7 +1192,7 @@ void VenusLighthouse_DoubtLeaving(void) {
   Actor_WalkToAndWait(ACTOR_JENNA, 728, 928);
   Actor_SetPosition(ACTOR_JENNA, 728, 912);
   Event_PlaySound(SE_STAIRS_DOWN);
-  Venus_ObjEffectSet(ACTOR_JENNA, -1);
+  VenusLighthouse_GoDownStairs(ACTOR_JENNA, -1);
   FieldEvent_Wait(40);
   MapGrid_CopyCellsTo(53, 50, 42, 49, 1, 1);
   MapGrid_CopyCellsTo(55, 117, 41, 117, 3, 5);

@@ -422,6 +422,9 @@
 #define FLAG_DAILA_HEALER_SENT_TO_POI 0x847
 /// Set once the party has taken the Sea God's Tear from Daila's sanctuary.
 #define FLAG_SEA_GODS_TEAR_TAKEN 0xa20
+/// Set once the party has taken the Burst Brooch in Tundaria Tower; after
+/// that, searching the crystal round the Center Prong opens the field menu.
+#define FLAG_BURST_BROOCH_TAKEN 0x949
 
 // Scene flags, FLAG_SCENE_TEMP_00 to FLAG_SCENE_TEMP_FF: a scene says beside
 // its uses what each one holds there.

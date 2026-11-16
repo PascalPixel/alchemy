@@ -14,6 +14,7 @@
 ///   (VenusLighthouseEntrance_WakeUp).
 #include "fixed_math.h"
 #include "scene_ids.h"
+#include "sprite_ids.h"
 #include "types.h"
 #include "battle/battle.h"
 #include "debug/debug.h"
@@ -101,16 +102,23 @@ enum VenusLighthouseEntranceActorId {
 
 struct Actor;
 
+/// Starts the next dust puff at a random place near the given point, rising
+/// and drifting outwards.
 void VenusLighthouseEntrance_EmitDust(struct Actor *object, s32 x, s32 y,
                                       s32 z);
+/// Loads the dust puffs' pictures and starts drawing them each frame.
 void VenusLighthouseEntrance_StartDust(void);
+/// Stops the dust puffs and frees their pictures and work.
 void VenusLighthouseEntrance_StopDust(void);
 extern u32 gVenusLighthouseEntrance_BirdLands[];
 
 void EffectSprite_DrawAtWorldPosition(struct EffectSprite *sprite,
                                       s32 *position);
 
+/// Each frame of the water column: it rises, holds, hurls the actor off the
+/// top of the screen, sinks, and its puddle dries away as the ground shakes.
 void VenusLighthouseEntrance_UpdateBlastColumn(void);
+/// Each frame, draws and moves the dust puffs still playing.
 void VenusLighthouseEntrance_UpdateDust(void);
 
 void VenusLighthouseEntrance_BirdsFlyOff(void);
@@ -145,8 +153,10 @@ const struct ActorPlacement *Scene_GetActorPlacements(void) {
   return gActorPlacements;
 }
 
+/// Alex's Psynergy: the screen tints blue while he gathers power, and the
+/// actor is blasted skyward on a column of water.
 void VenusLighthouseEntrance_BlastActorWithPsynergy(void *object) {
-  Field_StartColorTransition(8, 0x4084);
+  Field_StartColorTransition(8, RGB(4, 4, 16));
   BattleEffect_StartArcEffect();
   BattleEffect_SetObjectUpdateMode(Actor_Get(ACTOR_JENNA), 2);
   FieldEvent_Wait(20);
@@ -157,6 +167,8 @@ void VenusLighthouseEntrance_BlastActorWithPsynergy(void *object) {
   Field_StartPaletteTransition(8);
 }
 
+/// A running soldier's update: it kicks up dust where it is, with a scuff
+/// every eighth frame.
 void VenusLighthouseEntrance_TrailDust(struct Actor *object) {
   VenusLighthouseEntrance_EmitDust(object, object->x.fixed, object->y.fixed,
                                    object->z.fixed);
@@ -650,7 +662,7 @@ void VenusLighthouseEntrance_SoldiersAmbushParty(void) {
   BattleEffect_SetObjectUpdateMode(actor, 2);
   Event_PlaySound(SE_GATHERING_POWER);
   FieldEvent_Wait(20);
-  Field_StartColorTransition(8, 0x4084);
+  Field_StartColorTransition(8, RGB(4, 4, 16));
   FieldEvent_Wait(60);
   Event_PlaySound(SOUND_FADE_OUT_ACTION_SE);
   FieldActor_SetSpritePriority(ACTOR_SHOUTING_SOLDIER, 0);
@@ -1394,7 +1406,7 @@ void VenusLighthouseEntrance_UpdateBlastColumn(void) {
     break;
   }
   }
-  object->facing += 0x1000;
+  object->facing += TRIG_TURN / 16;
   if (work->height > 0) {
     for (i = 0, y = 0; i < 16 && y < work->height - 8; i++, y += 16) {
       state = &work->states[i];
@@ -1415,7 +1427,7 @@ void VenusLighthouseEntrance_UpdateBlastColumn(void) {
       state->z = work->z;
       state->frame++;
       state->y +=
-          Math_MulFX(0xfffe0000, Math_Sin(state->frame << 12)) + 0xfffe0000;
+          Math_MulFX(-toFIXED(2), Math_Sin(state->frame << 12)) - toFIXED(2);
       sprite = &work->sprites[i];
       sprite->oam.index = work->tile + ((state->frame >> 2) & 3) * 8;
       EffectSprite_DrawAtWorldPosition(sprite, &state->x);
@@ -1454,7 +1466,7 @@ void VenusLighthouseEntrance_BlastActorSkyward(s32 id) {
   state = work->states;
   sprite = work->sprites;
   for (i = 15; i >= 0;) {
-    EffectSprite_Init(sprite, 8, 8, 0x40000000, tile);
+    EffectSprite_Init(sprite, 8, 8, OBJ_SIZE_16X16, tile);
     sprite->depth = BattleEffect_GetObjectDepth(actor) - 2;
     sprite->oam.priority = BattleEffect_GetObjectPriority(actor);
     sprite->oam.fullColor = 1;
@@ -1464,14 +1476,14 @@ void VenusLighthouseEntrance_BlastActorSkyward(s32 id) {
     sprite++;
     state++;
   }
-  effect =
-      (FieldActor_Create(290, actor->x.fixed, actor->y.fixed, actor->z.fixed));
+  effect = (FieldActor_Create(SPRITE_PUDDLE, actor->x.fixed, actor->y.fixed,
+                              actor->z.fixed));
   work->effect = effect;
   Actor_SelectAnimation(effect, 1);
   Actor_SetSpriteFlags(effect, 0);
   effect->priorityFlags = 2;
   Actor_SetSpriteFlags(actor, 0);
-  ((struct Sprite *)actor->sprite)->rotation = 0x4000;
+  ((struct Sprite *)actor->sprite)->rotation = DEGtoANG(90);
   actor->x.fixed += -toFIXED(12);
   actor->motionFlags = 0;
   work->stage = 0;
@@ -1480,12 +1492,8 @@ void VenusLighthouseEntrance_BlastActorSkyward(s32 id) {
   work->follow = 1;
   Event_PlaySound(SE_RISE_WITH_SPARKS);
   Task_AddFrame(VenusLighthouseEntrance_UpdateBlastColumn, TASK_PASS_VBLANK);
-  if (work->stage != BLAST_FINISHED) {
-  wait:
+  while (work->stage != BLAST_FINISHED)
     System_Wait(1);
-    if (work->stage != BLAST_FINISHED)
-      goto wait;
-  }
   FieldTask_Remove(VenusLighthouseEntrance_UpdateBlastColumn);
   Actor_Release(effect);
   VramCache_FreeEntry(resource);
@@ -1527,9 +1535,9 @@ void VenusLighthouseEntrance_EmitDust(struct Actor *source, s32 x, s32 y,
   state->x = x;
   state->y = y;
   state->z = z;
-  FieldVector_AddPolarOffsetFX(Random16() * 2 + 0x20000, angle, &state->x);
+  FieldVector_AddPolarOffsetFX(Random16() * 2 + toFIXED(2), angle, &state->x);
   state->velocityX = 0;
-  state->velocityY = (Random16() >> 1) + 0xc000;
+  state->velocityY = (Random16() >> 1) + toFIXED(3) / 4;
   state->velocityZ = 0;
   FieldVector_AddPolarOffsetFX(Random16() >> 2, angle, &state->velocityX);
   *next = *next + 1;
@@ -1553,7 +1561,7 @@ void VenusLighthouseEntrance_StartDust(void) {
   state = work->particles;
   sprite = work->sprites;
   for (i = 95; i >= 0; i--) {
-    EffectSprite_Init(sprite, 8, 8, 0x40000000, tileBase);
+    EffectSprite_Init(sprite, 8, 8, OBJ_SIZE_16X16, tileBase);
     sprite->oam.fullColor = 1;
     sprite->oam.palette = 0;
     sprite->oam.priority = 0;

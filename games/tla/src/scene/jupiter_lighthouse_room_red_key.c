@@ -434,8 +434,8 @@ void JupiterLighthouse_LeaveTheCenter(void) {
 
 /// Alex appears out of a shower of rising sparks.
 void JupiterLighthouse_AlexAppears(void) {
-  struct EffectParams params;
-  struct EffectParams *p;
+  struct EffectOptions params;
+  struct EffectOptions *p;
   struct Actor *actor;
   u32 i;
   FIXED x;
@@ -448,11 +448,11 @@ void JupiterLighthouse_AlexAppears(void) {
   Event_PlaySound(SE_WARP);
   Actor_SetSpriteFlags(Actor_Get(ACTOR_ALEX), 0);
   p = &params;
-  p->count = 1;
-  p->kind = 5;
-  p->tile = 0x2a0;
-  p->spread = 0x6666;
-  p->rise = toFIXED(3);
+  p->priority = 1;
+  p->palette = 5;
+  p->type = SPRITE_PARTICLE;
+  p->startScaleX = FIXED_ONE * 2 / 5;
+  p->startScaleY = FIXED_ONE * 3;
   for (i = 0; i <= 31; i++) {
     FieldEvent_Wait(1);
     if (!(i & 1)) {
@@ -467,7 +467,10 @@ void JupiterLighthouse_AlexAppears(void) {
       randomY = Random16();
       y = actor->y.fixed;
       FieldEffect_Spawn(x, y + (((randomY << 5) >> 16) << 16) + toFIXED(32),
-                        actor->z.fixed, 0, -toFIXED(4), 0, toFIXED(27), p);
+                        actor->z.fixed, 0, -toFIXED(4), 0,
+                        EFFECT_USE_TYPE | EFFECT_USE_START_SCALE |
+                            EFFECT_USE_PRIORITY | EFFECT_USE_PALETTE,
+                        p);
     }
     if (i == 20)
       Actor_SetSpriteColorById(ACTOR_ALEX, 0x100);

@@ -145,30 +145,6 @@ struct DoorStep {
   u16 z;
 };
 
-struct CellMapCell {
-  u8 unk00[2];
-  u8 event;
-  u8 unk03;
-};
-
-struct CellMapLayer {
-  s32 unk00[2];
-  s32 originX;
-  s32 originZ;
-  u8 unk10[0x20];
-  struct CellMapCell *cells;
-};
-
-struct CellMapWork {
-  u8 unk000[0xec];
-  s32 minX;
-  s32 minZ;
-  s32 maxX;
-  s32 maxZ;
-  u8 unk0fc[0xc];
-  struct CellMapLayer layers[4];
-};
-
 struct LightOam {
   u32 link;
   u32 attr01;
@@ -309,17 +285,6 @@ struct BeamSpark {
   u32 age;
 };
 
-struct EffectParams {
-  s32 count;
-  s32 kind;
-  s32 spread;
-  s32 rise;
-  u8 unk10[8];
-  u16 tile;
-  u16 unk1a;
-  u8 unk1c[12];
-};
-
 struct Probe {
   s32 unk00[6];
 };
@@ -373,25 +338,6 @@ struct MadraPlacement {
   const void *data;
   u16 x;
   u16 y;
-};
-
-/// The cell watch's work: the object found on the leader's cell.
-struct CellWatch {
-  u8 unk00[4];
-  s32 x;
-  u8 unk08[4];
-  s32 z;
-  u8 unk10[4];
-  struct Actor *object;
-};
-
-struct MagmaRockInsideWork {
-  s32 unk00;
-  s32 x;
-  s32 y;
-  s32 z;
-  s32 unk10;
-  struct Actor *target;
 };
 
 struct MarsLighthouseAerieSprite {
@@ -531,14 +477,6 @@ struct TreasureIsleCell {
   s32 unk08;
   u16 flag; ///< set once the cell has been opened (Func_020003fc)
   u16 unk0e;
-};
-
-struct SceneEffectParams {
-  s32 priority;      ///< the sprite's priority
-  s32 palette;       ///< the sprite's palette
-  FIXED startScaleX; ///< 16.16 fixed point, 0x10000 full size
-  FIXED startScaleY; ///< 16.16 fixed point, 0x10000 full size
-  u8 unk10[0x18];
 };
 
 struct SparkState {

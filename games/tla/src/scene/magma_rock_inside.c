@@ -738,7 +738,7 @@ void MagmaRockInside_FlashStatue(struct Actor *object) {
 // passed (0 for none).
 
 s32 MagmaRockInside_FindStatue(u16 *table) {
-  struct CellWatch *watch = Ram_HeapSlots->fieldEffectWork;
+  struct FieldEffectWork *watch = Ram_HeapSlots->fieldEffectWork;
   s32 result = 0;
   s32 cell = MapCell_Get(0, FIELD_CELL(watch->x), FIELD_CELL(watch->z)) >> 8;
   u32 id;
@@ -751,7 +751,7 @@ test:
     id = *table++;
     if (cell != *table++)
       goto again;
-    watch->object = Actor_Get(id);
+    watch->child = Actor_Get(id);
     result = *table;
   }
   return result;
@@ -772,7 +772,7 @@ void MagmaRockInside_FlashStatue(struct Actor *object);
 /// mode 2 or bit 1 in mode 3.
 void MagmaRockInside_TargetStatue(s32 mode) {
   u16 *table;
-  struct CellWatch *watch = Ram_HeapSlots->fieldEffectWork;
+  struct FieldEffectWork *watch = Ram_HeapSlots->fieldEffectWork;
   s32 scene;
 
   table = gMagmaRockInside_Statues;
@@ -787,7 +787,7 @@ void MagmaRockInside_TargetStatue(s32 mode) {
     struct Actor *object;
 
     MagmaRockInside_FindStatue(table);
-    object = watch->object;
+    object = watch->child;
     object->riseEnabled = 4;
     object->update = (void (*)(void))MagmaRockInside_FlashStatue;
   }
@@ -795,7 +795,7 @@ void MagmaRockInside_TargetStatue(s32 mode) {
     struct Actor *object;
 
     MagmaRockInside_FindStatue(table);
-    object = watch->object;
+    object = watch->child;
     object->riseEnabled = 2;
     object->update = (void (*)(void))MagmaRockInside_FlashStatue;
   }
@@ -937,46 +937,46 @@ hit:
 void MagmaRockInside_EndFallingRocks(void);
 
 void MagmaRockInside_FireStatue(void) {
-  struct MagmaRockInsideWork *work = Ram_HeapSlots->fieldEffectWork;
+  struct FieldEffectWork *work = Ram_HeapSlots->fieldEffectWork;
   struct Actor *object;
 
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
   FieldEvent_Wait(10);
-  object = work->target;
+  object = work->child;
   object->update = NULL;
   FieldActor_SetSpriteColor(object, 7);
   FieldEvent_Wait(3);
-  FieldActor_SetSpriteColor(work->target, 0);
+  FieldActor_SetSpriteColor(work->child, 0);
   FieldEvent_Wait(1);
-  MagmaRockInside_FireFromStatue(work->target);
+  MagmaRockInside_FireFromStatue(work->child);
   Event_End();
 }
 
 void MagmaRockInside_BurstStatue(s32 mode, s32 cue) {
-  struct MagmaRockInsideWork *work = Ram_HeapSlots->fieldEffectWork;
+  struct FieldEffectWork *work = Ram_HeapSlots->fieldEffectWork;
 
   if (cue == 0)
     MagmaRockInside_StartFallingRocks();
   if (mode == 2) {
-    struct Actor *object = work->target;
+    struct Actor *object = work->child;
 
     MagmaRockInside_DropRocks(object->x.fixed, object->y.fixed + toFIXED(15),
                               object->z.fixed, 1);
   }
   if (mode == 3) {
-    struct Actor *object = work->target;
+    struct Actor *object = work->child;
     struct Actor *target;
 
     MagmaRockInside_DropRocks(object->x.fixed, object->y.fixed + toFIXED(15),
                               object->z.fixed, 8);
-    target = work->target;
+    target = work->child;
     SET_ACTOR_POSITION(target, 0, 0, 0);
   }
   if (cue == 0x3e7)
     MagmaRockInside_EndFallingRocks();
   if (cue == 178)
-    Actor_SelectAnimation(work->target, 3);
+    Actor_SelectAnimation(work->child, 3);
 }
 
 void MagmaRockInside_PushPillarIntoLava(void) {

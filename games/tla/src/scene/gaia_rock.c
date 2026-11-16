@@ -642,7 +642,7 @@ void GaiaRock_PlaceStatue(s32 id, s32 x, s32 y, s32 z) {
   s32 cellZ = (z - y + 0x7fff) / toFIXED(16);
 
   cell += cellX + (cellZ << 7);
-  cell->collisionCode = 255;
+  cell->collisionCode = CELL_BEHAVIOR_WALL;
   object->x.fixed = (x & FIELD_CELL_MASK) + toFIXED(8);
   object->z.fixed = (z & FIELD_CELL_MASK) + toFIXED(8);
   object->y.fixed = object->z.fixed - (cellZ << 20);

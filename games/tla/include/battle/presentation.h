@@ -21,7 +21,7 @@ s32 BattleFormation_BuildEnemyList(s32 recordId);
 void BattleBackground_Init(void);
 void BattleBackground_Load(s32 mode, s32 resource, s32 level);
 
-void BattleTransition_Run(s32 arg, s32 kind);
+void BattleTransition_Run(s32 enemyCount, s32 kind);
 
 void Battle_TurnEndNoOp(void);
 
@@ -91,7 +91,7 @@ void Animation_SkipToStopFar(void *record);
 
 void Sprite_RemoveAnimationAtFar(void *record, s32 slot);
 
-s32 SpriteAnimation_SumCommandLengthsFar(s32 animation, s32 a, s32 b);
+s32 SpriteAnimation_SumCommandLengthsFar(s32 id, s32 animation, s32 timedCount);
 
 void ColorBuffer_Scale(u16 *source, u32 destination, s32 value, s32 size);
 

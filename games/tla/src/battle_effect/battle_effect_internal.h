@@ -1029,14 +1029,15 @@ void BattleBackground_SetPaletteLevelFar(s32 background, s32 level);
 /// Turns the battle camera, over `frames` frames, to look at the point between
 /// two units.
 void BattleCamera_SetViewAtPairMidpointFar(s32 actor, s32 target, s32 frames);
-void BattleCamera_SetViewFar(s32 a, s32 b, s32 c, s32 d);
+void BattleCamera_SetViewFar(s32 x, s32 depth, s32 y, s32 zoom);
 /// Glowing orbs spiral in on each target.
 ///
 /// Abilities: Mystic Flame.
-void BattleEffect_RunMysticFlame(struct BattleEffectParams *);
+void BattleEffect_RunMysticFlame(struct BattleEffectParams *args);
 void BattleObject_PutFar(void);
 /// Spawns the battle objects of a list of units through its far call.
-void BattleObject_SpawnObjectsForListFar(s16 *actors, s32 a, s32 b);
+void BattleObject_SpawnObjectsForListFar(s16 *unitIds, s32 refreshPoses,
+                                         s32 releaseOthers);
 /// BattlePlayback_Start through its far call.
 void BattlePlayback_StartFar(s32 phase);
 /// Whether an enemy's sprite takes the heavy impact, through its far call.
@@ -1800,24 +1801,29 @@ extern const u8 Render_TexturedNarrowKernel[];   ///< MODEL_TEXTURED_NARROW
 extern const u8 Render_SolidNarrowKernel[];      ///< MODEL_SOLID_NARROW
 extern u8 Render_SolidKernelCodeSize[];          ///< Render_SolidKernel's bytes
 extern u8 Render_SolidMaxKernelCodeSize[]; ///< Render_SolidMaxKernel's bytes
-extern u8 Render_SolidAdditiveKernelCodeSize[]; ///< Render_SolidAdditiveKernel's
-                                                ///< bytes
+extern u8
+    Render_SolidAdditiveKernelCodeSize[];  ///< Render_SolidAdditiveKernel's
+                                           ///< bytes
 extern u8 Render_TexturedKernelCodeSize[]; ///< Render_TexturedKernel's bytes
 extern u8
     Render_TexturedMaxKernelCodeSize[]; ///< Render_TexturedMaxKernel's bytes
-extern u8 Render_TexturedAdditiveKernelCodeSize[]; ///< Render_TexturedAdditiveKernel's
-                                                   ///< bytes
+extern u8 Render_TexturedAdditiveKernelCodeSize
+    [];                                     ///< Render_TexturedAdditiveKernel's
+                                            ///< bytes
 extern u8 Render_ShadedMaxKernelCodeSize[]; ///< Render_ShadedMaxKernel's bytes
-extern u8 Render_ShadedAdditiveKernelCodeSize[]; ///< Render_ShadedAdditiveKernel's
-                                                 ///< bytes
-extern u8 Render_ShadedKernelCodeSize[]; ///< Render_ShadedKernel's bytes
-extern u8 Render_TexturedNarrowKernelCodeSize[]; ///< Render_TexturedNarrowKernel's
-                                                 ///< bytes
+extern u8
+    Render_ShadedAdditiveKernelCodeSize[]; ///< Render_ShadedAdditiveKernel's
+                                           ///< bytes
+extern u8 Render_ShadedKernelCodeSize[];   ///< Render_ShadedKernel's bytes
+extern u8
+    Render_TexturedNarrowKernelCodeSize[]; ///< Render_TexturedNarrowKernel's
+                                           ///< bytes
 extern u8
     Render_SolidNarrowKernelCodeSize[]; ///< Render_SolidNarrowKernel's bytes
 extern u8 Render_TexturedKernelCodeWords[]; ///< Render_TexturedKernel's words
 extern u8 Render_ShadedKernelCodeWords[];   ///< Render_ShadedKernel's words
-extern u8 Render_TexturedNarrowKernelCodeWords[]; ///< Render_TexturedNarrowKernel's
-                                                  ///< words
+extern u8
+    Render_TexturedNarrowKernelCodeWords[]; ///< Render_TexturedNarrowKernel's
+                                            ///< words
 
 #endif // ALCHEMY_BATTLE_EFFECT_INTERNAL_H

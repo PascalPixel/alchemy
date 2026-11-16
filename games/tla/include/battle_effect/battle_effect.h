@@ -150,14 +150,15 @@ void BattleEffect_DrawShadedCircles(u8 *map, s32 size, FIXED scale);
 void Picture_MirrorIntoQuadrants(u8 *src, u8 *dst, s32 width, s32 height);
 void BattleEffect_RunDjinniEntrance(struct BattleEffectParams *effect,
                                     u32 packed, s32 *screen, s32 *world);
-void Canvas_BlitAtFoot(void *, s32, s32, s32);
+void Canvas_BlitAtFoot(void *source, s32 x, s32 y, s32 size);
 struct PoolEntry *Render_AllocateModelList(s32 count);
 void Render_TransformVertices(const void *corners, void *vertices, s32 count);
 void EffectPosition_ProjectBattler(s32 id, struct ScreenPoint *position);
 void BattleEffect_SpawnObjects(s32 entryCount, s32 kind, u32 variant);
 void BattleEffect_SelectLivingTargets(
     struct BattleEffectParams *party); // SelectLivingTargets
-void BattleEffect_StartActorMotion(s32, s32, s32, s32, s32, s32);
+void BattleEffect_StartActorMotion(s32 id, s32 force, s32 acceleration,
+                                   s32 speedLimit, s32 velocityY, s32 percent);
 void BattleEffect_FetchRectangleBlitters(s32 flip, void **out);
 void BattleCamera_Shake(s32 rangeX, u32 rangeY);
 /// Moves a particle one frame on the screen: its velocity scaled by `gravity`
@@ -349,8 +350,8 @@ struct DualColumn {
   s32 start;               ///< the frame it starts to grow
 };
 
-void BattleEffect_StepPaletteToResource(s32);
-void BattleEffect_WipeCanvas(s32, s32);
+void BattleEffect_StepPaletteToResource(s32 resourceId);
+void BattleEffect_WipeCanvas(s32 direction, s32 fill);
 void EffectPosition_ProjectSprite(s32 id, struct ScreenPoint *position);
 void BattleEffect_BuildWindowEdgeTable(void);
 void BattleEffect_RunDrainMotes(struct BattleEffectParams *effect, s32 mode);

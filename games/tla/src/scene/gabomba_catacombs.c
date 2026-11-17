@@ -1,6 +1,6 @@
 /// @file
 /// The Gabomba Catacombs, under the Gabomba Statue, in the rooms of this
-/// overlay: stones hidden under bushes that carry the party a level down once
+/// overlay: stones hidden under weeds that carry the party a level down once
 /// Cyclone clears them, and the Venus Djinni Mud, who fights
 /// (GabombaCatacombs_FightMud).
 
@@ -41,14 +41,15 @@ void Event_End(void);
 void Cyclone_CopyTouchedCells(s32 x, s32 z, s32 layerIndex, s32 width,
                               s32 height, s32 toX, s32 toZ);
 
-extern u32 gGabombaCatacombs_SprayScript[];
+extern u32 gGabombaCatacombs_SplashScript[];
 
-/// Cyclone on bushes: clears the touched cells of the width by height
-/// rectangle at (x, z) of the layer with the cells at (toX, toZ).
-static __inline__ void GabombaCatacombs_ClearBushes(s32 x, s32 z,
-                                                    s32 layerIndex, s32 width,
-                                                    s32 height, s32 toX,
-                                                    s32 toZ) {
+/// Cyclone scatters the weeds it touches: their cells of the width by height
+/// rectangle at (x, z) of the layer take those of the scattered weeds, kept at
+/// (toX, toZ) in the map.
+static __inline__ void GabombaCatacombs_ScatterWeeds(s32 x, s32 z,
+                                                     s32 layerIndex, s32 width,
+                                                     s32 height, s32 toX,
+                                                     s32 toZ) {
   Cyclone_CopyTouchedCells(x, z, layerIndex, width, height, toX, toZ);
 }
 
@@ -76,6 +77,11 @@ void Actor_DepartInRing(s32 id);
 
 #include "text/msg_ids.h"
 
+/// Whether the leader stands on the cell (cellX, cellZ).
+#define LEADER_ON_CELL(leader, cellX, cellZ)                                   \
+  (FIELD_CELL((leader)->x.fixed) == (cellX) &&                                 \
+   FIELD_CELL((leader)->z.fixed) == (cellZ))
+
 #define LEADER_HOP()                                                           \
   do {                                                                         \
     Event_Start();                                                             \
@@ -87,7 +93,7 @@ void Actor_DepartInRing(s32 id);
 /// Mud, the Djinni waiting in this room.
 enum { ACTOR_MUD = ACTOR_FIRST_PLACED };
 
-/// The hidden wall's seven puddles under the bushes Cyclone clears, the
+/// The hidden wall's seven puddles under the weeds Cyclone clears, the
 /// stream's puddle, and the Tomegathericon's room: the seated idol the Great
 /// Gabomba speaks through, and Kraden.
 enum {
@@ -112,7 +118,7 @@ enum { ACTOR_SEATED_IDOL = ACTOR_FIRST_PLACED, ACTOR_KRADEN };
 #define FLAG_SEVENTH_PUDDLE_FROZEN FLAG_SCENE_TEMP_06
 #define FLAG_STREAM_PUDDLE_FROZEN FLAG_SCENE_TEMP_00
 
-/// Set once the Mint hidden under the bushes by the statue is taken.
+/// Set once the Mint hidden under the weeds by the statue is taken.
 #define FLAG_HIDDEN_WALL_MINT_TAKEN 0xf53
 /// Set once the Tomegathericon is taken from the seated idol.
 #define FLAG_TOMEGATHERICON_TAKEN 0xf93
@@ -122,46 +128,45 @@ void GabombaCatacombs_FightMud(void) {
   Field_RequestDjinnBattle(ACTOR_MUD, DJINNI_MUD);
 }
 
-/// Cyclone on the teleporter room's bushes.
-void GabombaCatacombs_ClearTeleportersBushes(void) {
-  GabombaCatacombs_ClearBushes(7, 63, 1, 16, 16, 57, 63);
+/// Cyclone on the weeds of the teleport stones' room.
+void GabombaCatacombs_ScatterTeleportersWeeds(void) {
+  GabombaCatacombs_ScatterWeeds(7, 63, 1, 16, 16, 57, 63);
 }
 
-/// Cyclone on the bushes by the statue in the hidden wall's room.
-void GabombaCatacombs_ClearHiddenWallBushes(void) {
-  GabombaCatacombs_ClearBushes(22, 15, 0, 5, 5, 63, 52);
+/// Cyclone on the weeds by the statue in the hidden wall's room.
+void GabombaCatacombs_ScatterHiddenWallWeeds(void) {
+  GabombaCatacombs_ScatterWeeds(22, 15, 0, 5, 5, 63, 52);
 }
 
-/// Cyclone on the small bushes of the hidden wall's room.
-void GabombaCatacombs_ClearHiddenWallSmallBushes(void) {
-  GabombaCatacombs_ClearBushes(7, 22, 0, 3, 3, 56, 58);
+/// Cyclone on the small weeds of the hidden wall's room.
+void GabombaCatacombs_ScatterHiddenWallSmallWeeds(void) {
+  GabombaCatacombs_ScatterWeeds(7, 22, 0, 3, 3, 56, 58);
 }
 
-/// Cyclone on the stream room's bushes.
-void GabombaCatacombs_ClearStreamBushes(void) {
-  GabombaCatacombs_ClearBushes(44, 25, 0, 4, 3, 66, 57);
+/// Cyclone on the stream room's weeds.
+void GabombaCatacombs_ScatterStreamWeeds(void) {
+  GabombaCatacombs_ScatterWeeds(44, 25, 0, 4, 3, 66, 57);
 }
 
-/// Cyclone on the stream room's wide bushes.
-void GabombaCatacombs_ClearStreamWideBushes(void) {
-  GabombaCatacombs_ClearBushes(16, 13, 0, 4, 8, 61, 52);
+/// Cyclone on the stream room's wide weeds.
+void GabombaCatacombs_ScatterStreamWideWeeds(void) {
+  GabombaCatacombs_ScatterWeeds(16, 13, 0, 4, 8, 61, 52);
 }
 
-/// Cyclone on the stream room's small bushes.
-void GabombaCatacombs_ClearStreamSmallBushes(void) {
-  GabombaCatacombs_ClearBushes(21, 9, 0, 2, 2, 57, 52);
+/// Cyclone on the stream room's small weeds.
+void GabombaCatacombs_ScatterStreamSmallWeeds(void) {
+  GabombaCatacombs_ScatterWeeds(21, 9, 0, 2, 2, 57, 52);
 }
 
-/// Cyclone on the bushes before the statue, hopping the leader off the cleared
-/// patch.
-void GabombaCatacombs_ClearBushesByTheStatue(void) {
+/// Cyclone on the weeds before the statue: until it is taken, the Mint hidden
+/// there shows, and the leader hops a cell east off its spot.
+void GabombaCatacombs_ScatterWeedsByTheStatue(void) {
   struct Actor *leader = Actor_GetById(gMainRoutineWork.leaderActorId);
 
-  GabombaCatacombs_ClearBushes(22, 15, 0, 5, 5, 63, 52);
+  GabombaCatacombs_ScatterWeeds(22, 15, 0, 5, 5, 63, 52);
   if (GameFlag_Get(FLAG_HIDDEN_WALL_MINT_TAKEN) == 0) {
     Actor_SetPosition(FIELD_TREASURE_ACTOR, 392, 344);
-    if (FIELD_CELL(leader->x.fixed) == 24 &&
-        FIELD_CELL(leader->z.fixed) == 21) {
+    if (LEADER_ON_CELL(leader, 24, 21)) {
       LEADER_HOP();
       Actor_SetDestinationOffsetById(gMainRoutineWork.leaderActorId, 16, 0);
       leader->velocityY = toFIXED(6);
@@ -171,33 +176,36 @@ void GabombaCatacombs_ClearBushesByTheStatue(void) {
   }
 }
 
-/// Cyclone on the bushes uncovers the teleporter stone, which carries the party
-/// a level down.
-void GabombaCatacombs_UncoverFirstTeleporter(void) {
+/// Cyclone on the weeds uncovers the first teleport stone, which carries the
+/// party a level down.
+void GabombaCatacombs_UncoverFirstTeleportStone(void) {
   MapGrid_CopyCellsLayered(51, 83, 3, 1, 9, 65);
-  Import_EventSetExitRequest(3);
+  Import_EventSetExitRequest(
+      GABOMBA_CATACOMBS_TELEPORTERS_TO_GABOMBA_CATACOMBS_MUD_WEST);
 }
 
-/// Cyclone on the bushes uncovers the second teleporter stone, which carries
+/// Cyclone on the weeds uncovers the second teleport stone, which carries
 /// the party a level down.
-void GabombaCatacombs_UncoverSecondTeleporter(void) {
+void GabombaCatacombs_UncoverSecondTeleportStone(void) {
   MapGrid_CopyCellsLayered(51, 83, 3, 1, 18, 66);
-  Import_EventSetExitRequest(4);
+  Import_EventSetExitRequest(
+      GABOMBA_CATACOMBS_TELEPORTERS_TO_GABOMBA_CATACOMBS_MUD_EAST);
 }
 
-/// Cyclone on the third teleporter stone carries the party a level down.
-void GabombaCatacombs_TakeThirdTeleporter(void) {
-  Import_EventSetExitRequest(5);
+/// Cyclone on the third teleport stone carries the party a level down.
+void GabombaCatacombs_TakeThirdTeleportStone(void) {
+  Import_EventSetExitRequest(
+      GABOMBA_CATACOMBS_TELEPORTERS_TO_GABOMBA_CATACOMBS_MUD_SOUTH);
 }
 
-/// Cyclone on the bushes over the first puddle uncovers it, hopping the
+/// Cyclone on the weeds over the first puddle uncovers it, hopping the
 /// leader off it if he stands there.
 void GabombaCatacombs_UncoverFirstPuddle(void) {
   struct Actor *leader = Actor_GetById(gMainRoutineWork.leaderActorId);
 
-  GabombaCatacombs_ClearBushes(7, 22, 0, 3, 3, 56, 58);
+  GabombaCatacombs_ScatterWeeds(7, 22, 0, 3, 3, 56, 58);
   Actor_SetPosition(ACTOR_FIRST_PUDDLE, 136, 376);
-  if (FIELD_CELL(leader->x.fixed) == 8 && FIELD_CELL(leader->z.fixed) == 23) {
+  if (LEADER_ON_CELL(leader, 8, 23)) {
     LEADER_HOP();
     Actor_SetDestinationOffsetById(gMainRoutineWork.leaderActorId, 16, 0);
     leader->velocityY = toFIXED(6);
@@ -206,14 +214,14 @@ void GabombaCatacombs_UncoverFirstPuddle(void) {
   }
 }
 
-/// Cyclone on the bushes over the second puddle uncovers it, hopping the
+/// Cyclone on the weeds over the second puddle uncovers it, hopping the
 /// leader off it if he stands there.
 void GabombaCatacombs_UncoverSecondPuddle(void) {
   struct Actor *leader = Actor_GetById(gMainRoutineWork.leaderActorId);
 
-  GabombaCatacombs_ClearBushes(5, 13, 0, 5, 3, 56, 52);
+  GabombaCatacombs_ScatterWeeds(5, 13, 0, 5, 3, 56, 52);
   Actor_SetPosition(ACTOR_SECOND_PUDDLE, 136, 248);
-  if (FIELD_CELL(leader->x.fixed) == 8 && FIELD_CELL(leader->z.fixed) == 15) {
+  if (LEADER_ON_CELL(leader, 8, 15)) {
     LEADER_HOP();
     Actor_SetDestinationOffsetById(gMainRoutineWork.leaderActorId, 16, 0);
     leader->velocityY = toFIXED(6);
@@ -222,14 +230,14 @@ void GabombaCatacombs_UncoverSecondPuddle(void) {
   }
 }
 
-/// Cyclone on the bushes over the third puddle uncovers it, hopping the leader
+/// Cyclone on the weeds over the third puddle uncovers it, hopping the leader
 /// off it westward if he stands there.
 void GabombaCatacombs_UncoverThirdPuddle(void) {
   struct Actor *leader = Actor_GetById(gMainRoutineWork.leaderActorId);
 
-  GabombaCatacombs_ClearBushes(5, 13, 0, 5, 3, 56, 52);
+  GabombaCatacombs_ScatterWeeds(5, 13, 0, 5, 3, 56, 52);
   Actor_SetPosition(ACTOR_THIRD_PUDDLE, 152, 264);
-  if (FIELD_CELL(leader->x.fixed) == 9 && FIELD_CELL(leader->z.fixed) == 16) {
+  if (LEADER_ON_CELL(leader, 9, 16)) {
     Event_Start();
     Event_ResolvePendingActions(0);
     FieldEffect_SetAttached(gMainRoutineWork.leaderActorId,
@@ -241,14 +249,14 @@ void GabombaCatacombs_UncoverThirdPuddle(void) {
   }
 }
 
-/// Cyclone on the bushes over the fourth puddle uncovers it, hopping the
+/// Cyclone on the weeds over the fourth puddle uncovers it, hopping the
 /// leader off it if he stands there.
 void GabombaCatacombs_UncoverFourthPuddle(void) {
   struct Actor *leader = Actor_GetById(gMainRoutineWork.leaderActorId);
 
-  GabombaCatacombs_ClearBushes(5, 13, 0, 5, 3, 56, 52);
+  GabombaCatacombs_ScatterWeeds(5, 13, 0, 5, 3, 56, 52);
   Actor_SetPosition(ACTOR_FOURTH_PUDDLE, 136, 280);
-  if (FIELD_CELL(leader->x.fixed) == 8 && FIELD_CELL(leader->z.fixed) == 17) {
+  if (LEADER_ON_CELL(leader, 8, 17)) {
     LEADER_HOP();
     Actor_SetDestinationOffsetById(gMainRoutineWork.leaderActorId, 16, 0);
     leader->velocityY = toFIXED(6);
@@ -257,14 +265,14 @@ void GabombaCatacombs_UncoverFourthPuddle(void) {
   }
 }
 
-/// Cyclone on the bushes over the fifth puddle uncovers it, hopping the
+/// Cyclone on the weeds over the fifth puddle uncovers it, hopping the
 /// leader off it if he stands there.
 void GabombaCatacombs_UncoverFifthPuddle(void) {
   struct Actor *leader = Actor_GetById(gMainRoutineWork.leaderActorId);
 
-  GabombaCatacombs_ClearBushes(5, 13, 0, 5, 3, 56, 52);
+  GabombaCatacombs_ScatterWeeds(5, 13, 0, 5, 3, 56, 52);
   Actor_SetPosition(ACTOR_FIFTH_PUDDLE, 104, 280);
-  if (FIELD_CELL(leader->x.fixed) == 6 && FIELD_CELL(leader->z.fixed) == 17) {
+  if (LEADER_ON_CELL(leader, 6, 17)) {
     LEADER_HOP();
     Actor_SetDestinationOffsetById(gMainRoutineWork.leaderActorId, 16, 0);
     leader->velocityY = toFIXED(6);
@@ -273,14 +281,14 @@ void GabombaCatacombs_UncoverFifthPuddle(void) {
   }
 }
 
-/// Cyclone on the bushes over the sixth puddle uncovers it, hopping the
+/// Cyclone on the weeds over the sixth puddle uncovers it, hopping the
 /// leader off it if he stands there.
 void GabombaCatacombs_UncoverSixthPuddle(void) {
   struct Actor *leader = Actor_GetById(gMainRoutineWork.leaderActorId);
 
-  GabombaCatacombs_ClearBushes(5, 13, 0, 5, 3, 56, 52);
+  GabombaCatacombs_ScatterWeeds(5, 13, 0, 5, 3, 56, 52);
   Actor_SetPosition(ACTOR_SIXTH_PUDDLE, 88, 264);
-  if (FIELD_CELL(leader->x.fixed) == 5 && FIELD_CELL(leader->z.fixed) == 16) {
+  if (LEADER_ON_CELL(leader, 5, 16)) {
     LEADER_HOP();
     Actor_SetDestinationOffsetById(gMainRoutineWork.leaderActorId, 16, 0);
     leader->velocityY = toFIXED(6);
@@ -289,14 +297,14 @@ void GabombaCatacombs_UncoverSixthPuddle(void) {
   }
 }
 
-/// Cyclone on the bushes over the seventh puddle uncovers it, hopping the
+/// Cyclone on the weeds over the seventh puddle uncovers it, hopping the
 /// leader off it if he stands there.
 void GabombaCatacombs_UncoverSeventhPuddle(void) {
   struct Actor *leader = Actor_GetById(gMainRoutineWork.leaderActorId);
 
-  GabombaCatacombs_ClearBushes(5, 13, 0, 5, 3, 56, 52);
+  GabombaCatacombs_ScatterWeeds(5, 13, 0, 5, 3, 56, 52);
   Actor_SetPosition(ACTOR_SEVENTH_PUDDLE, 104, 248);
-  if (FIELD_CELL(leader->x.fixed) == 6 && FIELD_CELL(leader->z.fixed) == 15) {
+  if (LEADER_ON_CELL(leader, 6, 15)) {
     LEADER_HOP();
     Actor_SetDestinationOffsetById(gMainRoutineWork.leaderActorId, 16, 0);
     leader->velocityY = toFIXED(6);
@@ -305,14 +313,14 @@ void GabombaCatacombs_UncoverSeventhPuddle(void) {
   }
 }
 
-/// Cyclone on the bushes over the stream's puddle uncovers it, hopping the
+/// Cyclone on the weeds over the stream's puddle uncovers it, hopping the
 /// leader off it northward if he stands there.
 void GabombaCatacombs_UncoverStreamPuddle(void) {
   struct Actor *leader = Actor_GetById(gMainRoutineWork.leaderActorId);
 
-  GabombaCatacombs_ClearBushes(16, 13, 0, 4, 8, 61, 52);
+  GabombaCatacombs_ScatterWeeds(16, 13, 0, 4, 8, 61, 52);
   Actor_SetPosition(ACTOR_STREAM_PUDDLE, 280, 296);
-  if (FIELD_CELL(leader->x.fixed) == 17 && FIELD_CELL(leader->z.fixed) == 18) {
+  if (LEADER_ON_CELL(leader, 17, 18)) {
     Event_Start();
     Event_ResolvePendingActions(0);
     FieldEffect_SetAttached(gMainRoutineWork.leaderActorId,
@@ -324,14 +332,14 @@ void GabombaCatacombs_UncoverStreamPuddle(void) {
   }
 }
 
-/// Cyclone on the bushes of the Tomegathericon's room.
-void GabombaCatacombs_ClearTomegathericonBushes(void) {
-  GabombaCatacombs_ClearBushes(7, 23, 0, 4, 5, 60, 56);
+/// Cyclone on the weeds of the Tomegathericon's room.
+void GabombaCatacombs_ScatterTomegathericonWeeds(void) {
+  GabombaCatacombs_ScatterWeeds(7, 23, 0, 4, 5, 60, 56);
 }
 
-/// Cyclone on the last bushes: a Mad Plant hides there, and attacks.
+/// Cyclone on the last weeds: a Mad Plant hides there, and attacks.
 void GabombaCatacombs_UncoverMadPlant(void) {
-  GabombaCatacombs_ClearBushes(7, 23, 0, 4, 5, 60, 56);
+  GabombaCatacombs_ScatterWeeds(7, 23, 0, 4, 5, 60, 56);
   if (GameFlag_Get(FLAG_MAD_PLANT(0)) == 0) {
     GabombaCatacombs_MadPlantLeaps(SPRITE_MAD_PLANT, 168, 424);
     gMainRoutineWork.pendingDjinni = IF_FLAG_SET(FLAG_MAD_PLANT(0));
@@ -470,19 +478,20 @@ void GabombaCatacombs_DriftWithStream(struct Actor *actor, s32 dz) {
   }
 }
 
-/// Walking in the stream: spray rises every eighth frame and the water pushes
-/// the leader along.
+/// Walking in the stream: a splash rises every eighth frame and the water
+/// pushes the leader along.
 void GabombaCatacombs_WadeStream(void) {
   struct Actor *leader = Actor_GetById(gMainRoutineWork.leaderActorId);
-  struct Actor *spray;
+  struct Actor *splash;
 
   if ((gFrameCount & 7) == 0) {
-    spray = ((struct Actor *)Import_ActorCreate(
-        14, leader->x.fixed, leader->y.fixed + toFIXED(6), leader->z.fixed));
-    if (spray) {
-      Actor_SetSpriteFlags(spray, 0);
-      Actor_SelectAnimation(spray, 1);
-      Actor_StartScript(spray, gGabombaCatacombs_SprayScript);
+    splash = ((struct Actor *)Import_ActorCreate(
+        SPRITE_WADING_SPLASH, leader->x.fixed, leader->y.fixed + toFIXED(6),
+        leader->z.fixed));
+    if (splash) {
+      Actor_SetSpriteFlags(splash, 0);
+      Actor_SelectAnimation(splash, 1);
+      Actor_StartScript(splash, gGabombaCatacombs_SplashScript);
     }
     Sound_Play(SE_WADE);
   }
@@ -552,7 +561,7 @@ void GabombaCatacombs_GabombaBestowsPower(void) {
   Actor_SetDestinationById(ACTOR_KRADEN, 184, 188);
   Actor_WaitForMoveById(ACTOR_KRADEN);
   Actor_FaceDirection(ACTOR_KRADEN, FACING_WEST, 0);
-  // "By reaching this place, you have proven your power."
+  // "I am grateful for your promise...But I am worried that we have done..."
   Event_ShowMessageAndWait(ACTOR_KRADEN, 0);
   Actor_FaceDirectionById(gMainRoutineWork.leaderActorId, FACING_EAST, 0);
   Actor_SetAnimationById(gMainRoutineWork.leaderActorId, ANIM_NOD);
@@ -561,7 +570,7 @@ void GabombaCatacombs_GabombaBestowsPower(void) {
   Actor_ShowEmoteById(ACTOR_KRADEN, EMOTE_IN_FRONT | EMOTE_WINCE, 0);
   Actor_FaceDirection(ACTOR_KRADEN, FACING_NORTH_NORTHWEST, 0);
   Event_Wait(30);
-  // "By rights, Akafubu should bear this power... But I shall keep my..."
+  // "Then what are we to do? Does this mean we won't receive your magic?"
   Event_ShowMessageAndWait(ACTOR_KRADEN, 0);
   TALK();
   Actor_ShowEmote(ACTOR_KRADEN, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 0);
@@ -569,7 +578,7 @@ void GabombaCatacombs_GabombaBestowsPower(void) {
   TALK();
   Actor_ShowEmoteById(ACTOR_KRADEN, EMOTE_IN_FRONT | EMOTE_SWEAT_DROP, 0);
   Event_Wait(30);
-  // "I am grateful for your promise... But I am worried that we have done..."
+  // "Wh-What kind of conditions?"
   Event_ShowMessageAndWait(ACTOR_KRADEN, 0);
   TALK();
   Actor_FaceDirectionById(gMainRoutineWork.leaderActorId, FACING_EAST, 0);
@@ -591,7 +600,7 @@ void GabombaCatacombs_GabombaBestowsPower(void) {
   Actor_SetAnimationById(gMainRoutineWork.leaderActorId, ANIM_NOD);
   Event_Wait(40);
   Actor_SetAnimationById(ACTOR_KRADEN, ANIM_NOD);
-  // "Akafubu has not honed his own powers, and the fault lies with him..."
+  // "Of course!"
   Event_ShowMessageAndWait(ACTOR_KRADEN, 0);
   Actor_SetAnimationById(ACTOR_SEATED_IDOL, 2);
   TALK();
@@ -620,7 +629,7 @@ void GabombaCatacombs_TalkToStatue(void) {
   struct Actor *actor = Actor_GetById(FIELD_TREASURE_ACTOR);
 
   if (actor != NULL && actor->x.fixed != 0)
-    Scene_TalkToActor(0x1000 | FIELD_TREASURE_ACTOR);
+    Scene_TalkToActor(TALK_WITHOUT_CHECK_MESSAGE | FIELD_TREASURE_ACTOR);
 }
 
 const struct SceneEntrance *Scene_GetEntrances(void) { return gSceneEntrances; }
@@ -728,7 +737,7 @@ s32 Scene_Initialize(void) {
 s32 Scene_PrepareMap(void) { return 0; }
 
 // clang-format off
-u32 gGabombaCatacombs_SprayScript[] = {
+u32 gGabombaCatacombs_SplashScript[] = {
     SC_WAIT(15),
     SC_POSITION_ORIGIN,
     SC_WAIT(1),
@@ -815,13 +824,13 @@ struct Trigger gGabombaCatacombs_Triggers[] = {
 struct Trigger gGabombaCatacombs_TeleportersTriggers[] = {
     {TRIGGER_EXIT | EXIT_STYLE_STAIRS_DOWN, 2, CONDITION_ALWAYS, 2},
     {PSYNERGY_PHASE_ON_CELL(ABILITY_CYCLONE, PSYNERGY_PHASE_ACTS), 41,
-     CONDITION_ALWAYS, EVENT(GabombaCatacombs_ClearTeleportersBushes)},
+     CONDITION_ALWAYS, EVENT(GabombaCatacombs_ScatterTeleportersWeeds)},
     {PSYNERGY_PHASE_ON_CELL(ABILITY_CYCLONE, PSYNERGY_PHASE_ACTS), 43,
-     CONDITION_ALWAYS, EVENT(GabombaCatacombs_UncoverFirstTeleporter)},
+     CONDITION_ALWAYS, EVENT(GabombaCatacombs_UncoverFirstTeleportStone)},
     {PSYNERGY_PHASE_ON_CELL(ABILITY_CYCLONE, PSYNERGY_PHASE_ACTS), 44,
-     CONDITION_ALWAYS, EVENT(GabombaCatacombs_UncoverSecondTeleporter)},
+     CONDITION_ALWAYS, EVENT(GabombaCatacombs_UncoverSecondTeleportStone)},
     {PSYNERGY_PHASE_ON_CELL(ABILITY_CYCLONE, PSYNERGY_PHASE_ACTS), 45,
-     CONDITION_ALWAYS, EVENT(GabombaCatacombs_TakeThirdTeleporter)},
+     CONDITION_ALWAYS, EVENT(GabombaCatacombs_TakeThirdTeleportStone)},
     {TRIGGER_TABLE_END},
 };
 
@@ -841,9 +850,9 @@ struct Trigger gGabombaCatacombs_HiddenWallTriggers[] = {
     {PSYNERGY_ANYWHERE(ABILITY_REVEAL, PSYNERGY_PHASE_FADES), 0,
      CONDITION_ALWAYS, EVENT(GabombaCatacombs_HideWall)},
     {PSYNERGY_PHASE_ON_CELL(ABILITY_CYCLONE, PSYNERGY_PHASE_ACTS), 40,
-     CONDITION_ALWAYS, EVENT(GabombaCatacombs_ClearHiddenWallBushes)},
+     CONDITION_ALWAYS, EVENT(GabombaCatacombs_ScatterHiddenWallWeeds)},
     {PSYNERGY_PHASE_ON_CELL(ABILITY_CYCLONE, PSYNERGY_PHASE_ACTS), 41,
-     CONDITION_ALWAYS, EVENT(GabombaCatacombs_ClearHiddenWallSmallBushes)},
+     CONDITION_ALWAYS, EVENT(GabombaCatacombs_ScatterHiddenWallSmallWeeds)},
     {PSYNERGY_PHASE_ON_CELL(ABILITY_CYCLONE, PSYNERGY_PHASE_ACTS), 42,
      CONDITION_ALWAYS, EVENT(GabombaCatacombs_UncoverFirstPuddle)},
     {PSYNERGY_PHASE_ON_CELL(ABILITY_CYCLONE, PSYNERGY_PHASE_ACTS), 43,
@@ -859,7 +868,7 @@ struct Trigger gGabombaCatacombs_HiddenWallTriggers[] = {
     {PSYNERGY_PHASE_ON_CELL(ABILITY_CYCLONE, PSYNERGY_PHASE_ACTS), 48,
      CONDITION_ALWAYS, EVENT(GabombaCatacombs_UncoverSeventhPuddle)},
     {PSYNERGY_PHASE_ON_CELL(ABILITY_CYCLONE, PSYNERGY_PHASE_ACTS), 49,
-     CONDITION_ALWAYS, EVENT(GabombaCatacombs_ClearBushesByTheStatue)},
+     CONDITION_ALWAYS, EVENT(GabombaCatacombs_ScatterWeedsByTheStatue)},
     {PSYNERGY_ON_ACTOR(ABILITY_FROST), ACTOR_FIRST_PUDDLE,
      FLAG_FIRST_PUDDLE_FROZEN, EVENT(GabombaCatacombs_FreezeFirstPuddle)},
     {PSYNERGY_ON_ACTOR(ABILITY_FROST), ACTOR_SECOND_PUDDLE,
@@ -884,7 +893,7 @@ struct Trigger gGabombaCatacombs_TomegathericonTriggers[] = {
     {TRIGGER_TALK, ACTOR_SEATED_IDOL, FLAG_TOMEGATHERICON_TAKEN,
      EVENT(GabombaCatacombs_TalkToStatue)},
     {PSYNERGY_PHASE_ON_CELL(ABILITY_CYCLONE, PSYNERGY_PHASE_ACTS), 30,
-     CONDITION_ALWAYS, EVENT(GabombaCatacombs_ClearTomegathericonBushes)},
+     CONDITION_ALWAYS, EVENT(GabombaCatacombs_ScatterTomegathericonWeeds)},
     {PSYNERGY_PHASE_ON_CELL(ABILITY_CYCLONE, PSYNERGY_PHASE_ACTS), 31,
      CONDITION_ALWAYS, EVENT(GabombaCatacombs_UncoverMadPlant)},
     {TRIGGER_TABLE_END},
@@ -894,11 +903,11 @@ struct Trigger gGabombaCatacombs_StreamTriggers[] = {
     {TRIGGER_EXIT | EXIT_STYLE_STAIRS_UP, 1, CONDITION_ALWAYS, 1},
     {TRIGGER_EXIT | EXIT_STYLE_STAIRS_UP, 2, CONDITION_ALWAYS, 2},
     {PSYNERGY_PHASE_ON_CELL(ABILITY_CYCLONE, PSYNERGY_PHASE_ACTS), 40,
-     CONDITION_ALWAYS, EVENT(GabombaCatacombs_ClearStreamBushes)},
+     CONDITION_ALWAYS, EVENT(GabombaCatacombs_ScatterStreamWeeds)},
     {PSYNERGY_PHASE_ON_CELL(ABILITY_CYCLONE, PSYNERGY_PHASE_ACTS), 41,
-     CONDITION_ALWAYS, EVENT(GabombaCatacombs_ClearStreamWideBushes)},
+     CONDITION_ALWAYS, EVENT(GabombaCatacombs_ScatterStreamWideWeeds)},
     {PSYNERGY_PHASE_ON_CELL(ABILITY_CYCLONE, PSYNERGY_PHASE_ACTS), 43,
-     CONDITION_ALWAYS, EVENT(GabombaCatacombs_ClearStreamSmallBushes)},
+     CONDITION_ALWAYS, EVENT(GabombaCatacombs_ScatterStreamSmallWeeds)},
     {PSYNERGY_PHASE_ON_CELL(ABILITY_CYCLONE, PSYNERGY_PHASE_ACTS), 42,
      CONDITION_ALWAYS, EVENT(GabombaCatacombs_UncoverStreamPuddle)},
     {TRIGGER_STEP, 50, CONDITION_ALWAYS, EVENT(GabombaCatacombs_WadeStream)},

@@ -1098,7 +1098,7 @@ void GaiaRockInside_SpawnSpark(struct Orbiter *source) {
 /// Turns an orbiting object by half its speed and puts it out from its anchor,
 /// raised 8 pixels, by its radius.
 static inline void Orbiter_Step(struct Orbiter *orbiter, struct Actor *anchor) {
-  orbiter->angle += (s32)(orbiter->speed << 16) >> 17;
+  orbiter->angle += (s16)orbiter->speed >> 1;
   orbiter->x = anchor->x.fixed;
   orbiter->y = anchor->y.fixed + toFIXED(8);
   orbiter->z = anchor->z.fixed;
@@ -1154,6 +1154,11 @@ extern s32 gGaiaRockInside_FelixSettleScript[];
 
 /// The sparks that rise from the slate as it lifts, and that circle Felix.
 enum { SAND_RISING_SPARKS = 16, SAND_CIRCLING_SPARKS = 16 };
+
+/// The circling sparks start SAND_SPARK_INTERVAL frames apart, 122 pixels out
+/// from Felix, and close 8 pixels a frame (Orbiter_Spiral) to 2 pixels in
+/// SAND_SPIRAL_FRAMES; each one's countdown ends with the last's.
+enum { SAND_SPARK_INTERVAL = 8, SAND_SPIRAL_FRAMES = 15 };
 
 /// Felix touches the slate in the lair and learns Sand: he and the slate rise
 /// among circling sparks, then settle.
@@ -1222,7 +1227,8 @@ void GaiaRockInside_FelixLearnsSand(s32 idA, s32 idB) {
     spark->motionFlags = 0;
     spark->riseBaseY = toFIXED(122);
     spark->watchedActor = b;
-    spark->riseCounter = (SAND_CIRCLING_SPARKS - i) * 8 + 15;
+    spark->riseCounter =
+        (SAND_CIRCLING_SPARKS - i) * SAND_SPARK_INTERVAL + SAND_SPIRAL_FRAMES;
     Actor_SetSpriteColor(spark, 2);
     Scene_SetActorSpritePriority(spark, 1);
     Actor_SelectAnimation(spark, 7);
@@ -1237,7 +1243,7 @@ void GaiaRockInside_FelixLearnsSand(s32 idA, s32 idB) {
       b->speedLimit = toFIXED(1) / 5;
       Actor_SetMovementTypeById(idB, gGaiaRockInside_FelixRiseScript);
     }
-    wait(8);
+    wait(SAND_SPARK_INTERVAL);
   }
   Sound_Play(SE_SHIMMER);
   wait(16);
@@ -1422,8 +1428,11 @@ void GaiaRockInside_RingOfDust(void) {
   } while (i <= 16);
 }
 
+/// The pixels the slate rises from the lair's floor, one every 2 frames.
+enum { TABLET_RISE_PIXELS = 20 };
+
 /// Stepping before the slain Serpent the first time: the ground shakes and the
-/// slate rises from the floor a pixel every 2 frames, in two rings of dust.
+/// slate rises from the floor, in two rings of dust.
 void GaiaRockInside_RaiseSandTablet(void) {
   struct Actor *person;
   struct Actor *actor;
@@ -1451,8 +1460,8 @@ void GaiaRockInside_RaiseSandTablet(void) {
                                       SPRITE_SLATE);
   Actor_SetPosition(ACTOR_SAND_TABLET, 464, 348);
   GaiaRockInside_RingOfDust();
-  for (i = 0; i <= 19; i++) {
-    if (i == 10)
+  for (i = 0; i < TABLET_RISE_PIXELS; i++) {
+    if (i == TABLET_RISE_PIXELS / 2)
       GaiaRockInside_RingOfDust();
     person->z.fixed -= toFIXED(1);
     FieldEvent_Wait(2);
@@ -1558,6 +1567,17 @@ void GaiaRockInside_CheckAltar(void) {
 #include "text/msg_ids.h"
 void Actor_MoveToObject(s32 id, s32 target);
 
+/// How a stone face trembles while the doll dances on its altar: for
+/// FACE_TREMBLE_FRAMES, then on as it slides aside, for FACE_SLIDE_FRAMES_MAX
+/// at most, and FACE_SETTLE_FRAMES more once there; a face already slid aside
+/// only trembles, for FACE_TREMBLE_LONG_FRAMES.
+enum {
+  FACE_TREMBLE_FRAMES = 20,
+  FACE_SLIDE_FRAMES_MAX = 300,
+  FACE_SETTLE_FRAMES = 10,
+  FACE_TREMBLE_LONG_FRAMES = 120
+};
+
 /// Placing the doll on the first altar: its two faces stir.
 void GaiaRockInside_PlaceDollOnFirstAltar(void) {
   struct Actor *westFace = Actor_Get(ACTOR_FIRST_ALTAR_WEST_FACE);
@@ -1595,7 +1615,7 @@ void GaiaRockInside_PlaceDollOnFirstAltar(void) {
   FieldEvent_Wait(40);
   Event_PlaySound(SE_191);
   if (!Event_GetFlag(FLAG_FIRST_ALTAR_FACES_MOVED)) {
-    for (i = 0; i < 20; i++) {
+    for (i = 0; i < FACE_TREMBLE_FRAMES; i++) {
       westFace->velocityY = Random16();
       eastFace->velocityY = Random16();
       System_Wait(1);
@@ -1604,12 +1624,12 @@ void GaiaRockInside_PlaceDollOnFirstAltar(void) {
     Actor_SetSpeedAndAcceleration(ACTOR_FIRST_ALTAR_EAST_FACE, 0.25, 0.05);
     Actor_SetDestinationOffset(ACTOR_FIRST_ALTAR_WEST_FACE, 24, 0);
     Actor_SetDestinationOffset(ACTOR_FIRST_ALTAR_EAST_FACE, -24, 0);
-    for (i = 0; i < 300 && westFace->arrivalAxis != 0; i++) {
+    for (i = 0; i < FACE_SLIDE_FRAMES_MAX && westFace->arrivalAxis != 0; i++) {
       westFace->velocityY = Random16();
       eastFace->velocityY = Random16();
       System_Wait(1);
     }
-    for (i = 0; i < 10; i++) {
+    for (i = 0; i < FACE_SETTLE_FRAMES; i++) {
       westFace->velocityY = Random16();
       eastFace->velocityY = Random16();
       System_Wait(1);
@@ -1619,7 +1639,7 @@ void GaiaRockInside_PlaceDollOnFirstAltar(void) {
     MapGrid_CopyCells(119, 31, 1, 2, 100, i);
     Event_SetFlag(FLAG_FIRST_ALTAR_FACES_MOVED);
   } else {
-    for (i = 0; i < 120; i++) {
+    for (i = 0; i < FACE_TREMBLE_LONG_FRAMES; i++) {
       westFace->velocityY = Random16();
       eastFace->velocityY = Random16();
       System_Wait(1);
@@ -1673,7 +1693,7 @@ void GaiaRockInside_PlaceDollOnWestAltar(void) {
   Event_Wait(40);
   Sound_Play(SE_191);
   if (!GameFlag_Get(FLAG_WEST_ALTAR_STREAM_OPEN)) {
-    for (i = 0; i < 20; i++) {
+    for (i = 0; i < FACE_TREMBLE_FRAMES; i++) {
       actor->velocityY = Random16();
       wait(1);
     }
@@ -1686,12 +1706,12 @@ void GaiaRockInside_PlaceDollOnWestAltar(void) {
       do {
         actor->velocityY = Random16();
         wait(1);
-        if (++i > 299)
+        if (++i >= FACE_SLIDE_FRAMES_MAX)
           break;
       } while (actor->arrivalAxis != 0);
     }
     MapGrid_CopyCells(2, 93, 1, 5, 28, 85);
-    for (i = 0; i < 10; i++) {
+    for (i = 0; i < FACE_SETTLE_FRAMES; i++) {
       actor->velocityY = Random16();
       wait(1);
     }
@@ -1710,13 +1730,14 @@ void GaiaRockInside_PlaceDollOnWestAltar(void) {
       GameFlag_Set(FLAG_WEST_ALTAR_STREAM_TO_SHOW);
       Event_Wait(30);
       ObjectTable_Snapshot();
-      Import_EventSetExitRequest(20);
+      Import_EventSetExitRequest(
+          GAIA_ROCK_INSIDE_TWIN_ALTARS_TO_GAIA_ROCK_INSIDE_MAZE);
     } else {
       GameFlag_Set(FLAG_WEST_ALTAR_STREAM_OPEN);
       Event_End();
     }
   } else {
-    for (i = 0; i < 120; i++) {
+    for (i = 0; i < FACE_TREMBLE_LONG_FRAMES; i++) {
       actor->velocityY = Random16();
       wait(1);
     }
@@ -1766,7 +1787,7 @@ void GaiaRockInside_PlaceDollOnEastAltar(void) {
   Event_Wait(40);
   Sound_Play(SE_191);
   if (!GameFlag_Get(FLAG_EAST_ALTAR_STREAM_OPEN)) {
-    for (i = 0; i < 20; i++) {
+    for (i = 0; i < FACE_TREMBLE_FRAMES; i++) {
       actor->velocityY = Random16();
       wait(1);
     }
@@ -1779,12 +1800,12 @@ void GaiaRockInside_PlaceDollOnEastAltar(void) {
       do {
         actor->velocityY = Random16();
         wait(1);
-        if (++i > 299)
+        if (++i >= FACE_SLIDE_FRAMES_MAX)
           break;
       } while (actor->arrivalAxis != 0);
     }
     MapGrid_CopyCells(2, 93, 1, 5, 36, 85);
-    for (i = 0; i < 10; i++) {
+    for (i = 0; i < FACE_SETTLE_FRAMES; i++) {
       actor->velocityY = Random16();
       wait(1);
     }
@@ -1803,13 +1824,14 @@ void GaiaRockInside_PlaceDollOnEastAltar(void) {
       GameFlag_Set(FLAG_EAST_ALTAR_STREAM_TO_SHOW);
       Event_Wait(30);
       ObjectTable_Snapshot();
-      Import_EventSetExitRequest(20);
+      Import_EventSetExitRequest(
+          GAIA_ROCK_INSIDE_TWIN_ALTARS_TO_GAIA_ROCK_INSIDE_MAZE);
     } else {
       GameFlag_Set(FLAG_EAST_ALTAR_STREAM_OPEN);
       Event_End();
     }
   } else {
-    for (i = 0; i < 120; i++) {
+    for (i = 0; i < FACE_TREMBLE_LONG_FRAMES; i++) {
       actor->velocityY = Random16();
       wait(1);
     }
@@ -1859,7 +1881,7 @@ void GaiaRockInside_PlaceDollOnAltarAltar(void) {
   Event_Wait(40);
   Sound_Play(SE_191);
   if (!GameFlag_Get(FLAG_ALTAR_ROOM_STREAM_OPEN)) {
-    for (i = 0; i < 20; i++) {
+    for (i = 0; i < FACE_TREMBLE_FRAMES; i++) {
       actor->velocityY = Random16();
       wait(1);
     }
@@ -1872,12 +1894,12 @@ void GaiaRockInside_PlaceDollOnAltarAltar(void) {
       do {
         actor->velocityY = Random16();
         wait(1);
-        if (++i > 299)
+        if (++i >= FACE_SLIDE_FRAMES_MAX)
           break;
       } while (actor->arrivalAxis != 0);
     }
     MapGrid_CopyCells(1, 85, 1, 4, 25, 85);
-    for (i = 0; i < 10; i++) {
+    for (i = 0; i < FACE_SETTLE_FRAMES; i++) {
       actor->velocityY = Random16();
       wait(1);
     }
@@ -1895,13 +1917,14 @@ void GaiaRockInside_PlaceDollOnAltarAltar(void) {
       GameFlag_Set(FLAG_ALTAR_ROOM_STREAM_TO_SHOW);
       Event_Wait(30);
       ObjectTable_Snapshot();
-      Import_EventSetExitRequest(20);
+      Import_EventSetExitRequest(
+          GAIA_ROCK_INSIDE_ALTAR_TO_GAIA_ROCK_INSIDE_MAZE_B);
     } else {
       GameFlag_Set(FLAG_ALTAR_ROOM_STREAM_OPEN);
       Event_End();
     }
   } else {
-    for (i = 0; i < 120; i++) {
+    for (i = 0; i < FACE_TREMBLE_LONG_FRAMES; i++) {
       actor->velocityY = Random16();
       wait(1);
     }
@@ -2244,8 +2267,9 @@ s32 Scene_Initialize(void) {
       Event_WaitTransitionFrames();
       Event_Wait(60);
       {
-        // The lair has no exit 20: one stream is always waiting to be shown.
-        s32 ending = 20;
+        // The door the party came in by, which the lair cannot be left by: one
+        // stream is always waiting to be shown.
+        s32 ending = GAIA_ROCK_INSIDE_MAZE_FROM_GAIA_ROCK_INSIDE_TWIN_ALTARS_A;
         if (Test(FLAG_ALTAR_ROOM_STREAM_TO_SHOW)) {
           GameFlag_Clear(FLAG_ALTAR_ROOM_STREAM_TO_SHOW);
           GameFlag_Set(FLAG_ALTAR_ROOM_STREAM_OPEN);
@@ -2651,7 +2675,7 @@ s32 Scene_Initialize(void) {
         actor = OverlayObject_PrepareObject(toFIXED(464), -toFIXED(32),
                                             toFIXED(348), SPRITE_SLATE);
         Actor_SetPosition(ACTOR_SAND_TABLET, 464, 348);
-        for (i = 0; i < 20; i++) {
+        for (i = 0; i < TABLET_RISE_PIXELS; i++) {
           if (i % 5 == 0)
             GaiaRockInside_RingOfDust();
           other->z.fixed += -toFIXED(1);
@@ -3355,6 +3379,9 @@ void GaiaRockInside_PlaceStatue(s32 id, s32 x, s32 y, s32 z) {
 extern s32 gGaiaRockInside_StatueRiseScript[];
 extern u32 gGaiaRockInside_FlyingRockScript[];
 
+/// The rocks that burst out as a statue rises.
+enum { STATUE_ROCKS = 16 };
+
 /// A statue rises under the leader in a burst of rocks, lifting him with it;
 /// he lands on top, and its flag is set.
 void GaiaRockInside_StatueRisesUnderLeader(s32 id, s32 flag) {
@@ -3370,7 +3397,7 @@ void GaiaRockInside_StatueRisesUnderLeader(s32 id, s32 flag) {
   GaiaRockInside_PlaceStatue(id, leader->x.fixed, leader->y.fixed,
                              leader->z.fixed);
   Actor_StartScript(pillar, gGaiaRockInside_StatueRiseScript);
-  for (i = 0; i < 16; i++) {
+  for (i = 0; i < STATUE_ROCKS; i++) {
     struct Actor *rock =
         FieldActor_Create(SPRITE_ROCK, leader->x.fixed,
                           leader->y.fixed + toFIXED(16), leader->z.fixed);

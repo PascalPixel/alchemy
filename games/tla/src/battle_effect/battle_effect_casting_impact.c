@@ -1115,11 +1115,10 @@ void BattleEffect_RunCastingImpact(struct BattleEffectParams *action,
         // The wave: each line's BG2 offset, from 0 to 2 pixels.
         s32 *scanline;
         scanline = work->bg2xLines;
-        for (i = 0; i != DISPLAY_HEIGHT; i++)
-          *scanline++ =
-              (toFIXED(4) -
-               Trig_Sin(frame * (TRIG_TURN / 16) + i * (TRIG_TURN / 32)) * 4) >>
-              10;
+        for (i = 0; i != DISPLAY_HEIGHT; i++) {
+          s32 phase = frame * (TRIG_TURN / 16) + i * (TRIG_TURN / 32);
+          *scanline++ = (toFIXED(4) - Trig_Sin(phase) * 4) >> 10;
+        }
       }
       // Step the background palette towards the impact's colours.
       switch (kind) {

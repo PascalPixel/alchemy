@@ -657,6 +657,9 @@ struct StripQuad;
 #define IRIS_CONE_TEXTURE                                                      \
   (IRIS_TEXTURES + IRIS_GLOW_TEXTURES * IRIS_TEXTURE_BYTES)
 #define IRIS_CONE_TEXTURE_SIZE 32
+/// The battle camera's yaw (BattleCamera.yaw), read as a signed halfword of
+/// the camera work.
+#define IRIS_CAMERA_YAW (offsetof(struct BattleCamera, yaw) / sizeof(s16))
 /// The 128 background colours the scene fades (entries 96 to 223).
 #define IRIS_FADE_COLORS 128
 
@@ -753,7 +756,7 @@ static inline void Iris_DrawSplash(s32 t, s32 x, s32 y, s32 small) {
       s32 px;
       s32 a;
       s32 py;
-      a = point << 10;
+      a = point << 10; // IRIS_SPLASH_POINTS points about a turn
       px = (FIXEDtoINT(r * Trig_Sin(a) / 2)) + x;
       py = (FIXEDtoINT(r * Trig_Cos(a))) + y;
       draw(canvas, sprites + cel8 + IRIS_DOTS, px, py - 2, IRIS_DOT_WIDTH,
@@ -1105,15 +1108,17 @@ void BattleEffect_RunIris(struct BattleEffectParams *args) {
   REG_BLDALPHA = EFFECT_BLEND_ADD;
   REG_BLDCNT = BLDCNT_TGT1_BG2 | BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_ALL;
   EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_THREE_QUARTERS);
-  savedYaw = camera[27];
+  // The camera is turned a quarter turn, the other way on the party's side,
+  // until the summon ends.
+  savedYaw = camera[IRIS_CAMERA_YAW];
   if (args->side == EFFECT_SIDE_ENEMIES) {
     s32 yaw = DEGtoANG(90);
 
-    camera[27] = yaw;
+    camera[IRIS_CAMERA_YAW] = yaw;
   } else {
     s32 yaw = TRIG_TURN * 3 / 4;
 
-    camera[27] = yaw;
+    camera[IRIS_CAMERA_YAW] = yaw;
   }
   tileBuffer = gIris_TileBuffer;
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, BLITTER_MAX);
@@ -1239,6 +1244,9 @@ void BattleEffect_RunIris(struct BattleEffectParams *args) {
           }
         }
       }
+      // To frame 71 the circle rises and narrows while the background
+      // brightens a level every 16 frames; then it widens, and every eight
+      // frames each background colour steps toward red 23, green 1, blue 15.
       if (frame <= 71) {
         scene->y -= toFIXED(1);
         scene->radius -= toFIXED(1) / 16;
@@ -1412,6 +1420,9 @@ void BattleEffect_RunIris(struct BattleEffectParams *args) {
           *pal++ = RGB(r, g, b);
         }
       }
+      // She drops into place on a sine until frame 229; from frame 351 she
+      // sinks 64 pixels on a sine, a 64th of a turn a frame, then rises away
+      // ten pixels a frame.
       if (frame <= 385) {
         if ((u32)(frame - 351) <= 14)
           lift = Trig_Sin((frame - 350) << 10) << 6;
@@ -1459,6 +1470,7 @@ void BattleEffect_RunIris(struct BattleEffectParams *args) {
         }
       }
     }
+    // As she appears her petals fly out, shrinking a 32nd every two frames.
     if ((u32)(frame - 177) <= 46) {
       for (i = 0; i != IRIS_PETALS; i++) {
         shrink.x = shrink.y = toFIXED(1) - ((frame - 177) >> 1 << 11);
@@ -1702,7 +1714,7 @@ void BattleEffect_RunIris(struct BattleEffectParams *args) {
              (v = (i - top) * 2, i <= CANVAS_SIZE - 1);
            i++) {
         if (i >= 0) {
-          /* FAKEMATCH(dead): i / 3 into dead, which flow deletes. */
+          /* FAKEMATCH(dead): i / 3 into dead. */
           dead = i / 3;
           if (v > CANVAS_LEVEL_BRIGHTEST)
             v = CANVAS_LEVEL_BRIGHTEST;
@@ -2125,6 +2137,7 @@ void BattleEffect_RunIris(struct BattleEffectParams *args) {
       Matrix_TranslateVector(place);
       Matrix_RotateZ(TRIG_TURN * 19 / 32);
       grow[0] = FIXED_ONE;
+      // The cone stretches to its full size, a 64th a frame.
       grow[1] = (frame - 758) << 10;
       if (grow[1] > FIXED_ONE)
         grow[1] = FIXED_ONE;
@@ -2146,19 +2159,21 @@ void BattleEffect_RunIris(struct BattleEffectParams *args) {
         petals->vx[s] = -(Random16() & 31) << 12;
         petals->vy[s] = ((Random16() & 31) - 16) << 12;
       }
+      // Every four frames a mote flies out along the cone, one to two and a
+      // half pixels a frame, and a glow drifts down and to the left.
       if (!(frame & 3)) {
         s32 n = FindFreeParticle();
 
         if (n != -1) {
-          s32 spin = Random16() & 3;
+          s32 speed = Random16() & 3;
 
           work->particles[n].x = toFIXED(96);
           work->particles[n].y = INTtoFIXED(Random16() & 7) + toFIXED(36);
           work->particles[n].z = frame;
           work->particles[n].velocityX =
-              Iwram_MulFX((spin + 2) << 15, Trig_Sin(TRIG_TURN * 19 / 32));
+              Iwram_MulFX((speed + 2) << 15, Trig_Sin(TRIG_TURN * 19 / 32));
           work->particles[n].velocityY =
-              -Iwram_MulFX((spin + 2) << 15, Trig_Cos(TRIG_TURN * 19 / 32));
+              -Iwram_MulFX((speed + 2) << 15, Trig_Cos(TRIG_TURN * 19 / 32));
           work->particles[n].variant = (Random16() & 3) | IRIS_MOTE_FADING;
         }
         n = FindFreeParticle();
@@ -2208,7 +2223,7 @@ void BattleEffect_RunIris(struct BattleEffectParams *args) {
     EFFECT_PRESENT_CANVAS(work);
   }
 
-  camera[27] = savedYaw;
+  camera[IRIS_CAMERA_YAW] = savedYaw;
   HeapSlot_Release(HEAP_SLOT_RAM_CODE);
   Iris_RestoreBattle();
   IWRAM_FILL_WORDS(canvas, CANVAS_BYTES, 0);

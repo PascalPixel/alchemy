@@ -158,9 +158,6 @@ void Text_DrawMessage(s32 message, s32 window, s32 x, s32 y);
 /// The sprite palette of portrait slot 0; slot 1 uses the next.
 #define PORTRAIT_PALETTE 14
 
-/// The BG palette of the windows and their text, the UI palette.
-#define WINDOW_PALETTE 15
-
 /// The BG palette the menus keep for their selected row or page: a copy of
 /// WINDOW_PALETTE with its background lightened (Palette_LightenHighlight),
 /// which the item icons borrow.
@@ -331,7 +328,7 @@ enum {
 };
 
 /// How a window sprite moves (WindowSprite.motion), run each frame by
-/// WindowSprite_UpdateAll, as The Broken Seal's; 0 is a free window sprite and
+/// WindowSprite_UpdateAll; 0 is a free window sprite and
 /// WINDOW_SPRITE_MOTION_PAGE_ARROW (2) is window.h's.
 enum {
   WINDOW_SPRITE_MOTION_STILL = 1,
@@ -345,8 +342,7 @@ enum {
       11, ///< shrinks from 1.5 times to its size, once
   WINDOW_SPRITE_MOTION_SHRINK_HALF = 12, ///< the same at half the scale
   WINDOW_SPRITE_MOTION_HIDDEN = 13,      ///< not drawn
-  // A hop and back, each a way of its own here where The Broken Seal's 14
-  // and 16 hop down as 15 does.
+  // A hop and back, each in a direction of its own.
   WINDOW_SPRITE_MOTION_HOP_RIGHT = 14,
   WINDOW_SPRITE_MOTION_HOP_DOWN_NEXT_PAGE = 15,
   WINDOW_SPRITE_MOTION_HOP_LEFT = 16,
@@ -516,11 +512,11 @@ enum CenteredMessageMode {
 
 /// The flags FieldMessage_Show takes.
 enum FieldMessageFlag {
-  FIELD_MESSAGE_ZOOM = 1, ///< the window zooms open and shut
-  FIELD_MESSAGE_WAITING_FOR_SOUND =
-      2,                            ///< the window work is busy while it shows
-  FIELD_MESSAGE_KEEP_OPEN = 4,      ///< the window is left open
-  FIELD_MESSAGE_LOWER = 8,          ///< 4 tiles below the top rows' centre
+  FIELD_MESSAGE_ZOOM = 0x01, ///< the window zooms open and shut
+  /// The window work is busy while it shows.
+  FIELD_MESSAGE_WAITING_FOR_SOUND = 0x02,
+  FIELD_MESSAGE_KEEP_OPEN = 0x04,   ///< the window is left open
+  FIELD_MESSAGE_LOWER = 0x08,       ///< 4 tiles below the top rows' centre
   FIELD_MESSAGE_HOLD_UPLOAD = 0x20, ///< the tilemap upload is held off
   FIELD_MESSAGE_LOWEST = 0x40       ///< 12 tiles below the top rows' centre
 };

@@ -315,6 +315,9 @@ enum DisplayControl {
 #define DMA_START_SPECIAL 0x3000 ///< channels 1 and 2: a sound FIFO's request
 #define DMA_INTR_ENABLE 0x4000   ///< an interrupt when it ends
 #define DMA_ENABLE 0x8000        ///< arms the channel
+/// DMA_ENABLE in a channel's 32-bit count and control word, which the hardware
+/// clears once the transfer is done.
+#define DMA_BUSY ((u32)DMA_ENABLE << 16)
 /// A DMA control's start timing (bits 12 and 13), cartridge request (bit 11)
 /// and repeat (bit 9): the bits cleared before a channel is stopped.
 #define DMA_START_TIMING_DRQ_REPEAT                                            \
@@ -380,6 +383,9 @@ enum ObjMode {
 /// A sprite's x in the attr01 word of an OamWords entry, whose attribute 1 is
 /// its high half.
 #define OBJ_X(x) ((x) << 16)
+/// An affine sprite's matrix number, attribute 1's bits 9 to 13, in the attr01
+/// word.
+#define OBJ_MATRIX(n) ((n) << 25)
 /// Attribute 1's nine bits of x: a sprite left of the screen is at 512 less
 /// its distance.
 #define OBJ_X_MASK 0x1ff

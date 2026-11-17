@@ -182,17 +182,17 @@ static void TretTreeBranch_EnterTretTreeRooms(void) {
 }
 
 /// Reveal's window round the leader (WINDOW_TRANSITION_LEADER): inside it
-/// every layer shows without the colour effect, and outside it everything shows
-/// with BG1's blend. REVEAL_WINDOW_STEPS is how far it is open.
-#define REVEAL_WININ (WININ_WIN0_ALL & ~WININ_WIN0_CLR)
-#define REVEAL_WINOUT (WINOUT_WIN01_ALL | WINOUT_WINOBJ_ALL)
+/// everything shows with BG1's blend, and outside it every layer shows without
+/// the colour effect. REVEAL_WINDOW_STEPS is how far it is open.
+#define REVEAL_WININ (WININ_WIN0_ALL | WININ_WIN1_ALL)
+#define REVEAL_WINOUT (WINOUT_WIN01_ALL & ~WINOUT_WIN01_CLR)
 #define REVEAL_WINDOW_STEPS 10
 
 /// Selects the same window for Reveal and scene entry.
 static inline void
 TretTreeBranch_SetRevealWindow(struct ScreenTransitionState *state) {
-  state->mask = REVEAL_WINOUT;
-  state->active = REVEAL_WININ;
+  state->mask = REVEAL_WININ;
+  state->active = REVEAL_WINOUT;
   state->value = REVEAL_WINDOW_STEPS;
 }
 

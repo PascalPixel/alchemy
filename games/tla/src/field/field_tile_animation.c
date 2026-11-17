@@ -70,10 +70,15 @@
 /// flat.
 #define TERRAIN_BUMP 99
 
+/// The frames a world map graphics set takes to reload, one step a frame,
+/// counted down from this: its palette, animations and shapes, then each tile
+/// set decoded and copied to VRAM.
+#define WORLD_MAP_RELOAD_STEPS 12
+
 /// Loads the first of the 2x2 world map tiles around the player that is not
 /// shown yet (at most one a frame), without drawing it. When the region under
-/// the party picks another graphics set, reloads that set over the next 12
-/// frames, one step a frame, unless a screen transition is running.
+/// the party picks another graphics set, reloads that set over the next
+/// WORLD_MAP_RELOAD_STEPS frames, unless a screen transition is running.
 void WorldMap_PreloadCurrentTileBlock(void) {
   struct WorldMapView *perspective =
       (struct WorldMapView *)Ram_HeapSlots->mapGrid;
@@ -133,7 +138,7 @@ void WorldMap_PreloadCurrentTileBlock(void) {
   resources = gWorldMap_GraphicsResources[graphicsSet];
   if (resources != perspective->resources) {
     perspective->resources = resources;
-    perspective->reloadSteps = 12;
+    perspective->reloadSteps = WORLD_MAP_RELOAD_STEPS;
   }
   value = ScreenTransition_IsScanlineActiveFar();
   if (perspective->reloadSteps == 0)
@@ -142,7 +147,7 @@ void WorldMap_PreloadCurrentTileBlock(void) {
     return;
   buffer = Heap_Alloc(512);
   switch (perspective->reloadSteps) {
-  case 12: {
+  case WORLD_MAP_RELOAD_STEPS: {
     s16 backdropColor = *(s16 *)BG_PLTT;
 
     Decompress_ByteLz(Resource_GetTableEntry(resources[0]), buffer);
@@ -1401,6 +1406,10 @@ s32 WorldMap_IsFlyable(struct Actor *mover, struct WorldPosition *position) {
           if ((u32)(collision - 4) <= 4)
             return 0;
         }
+        // XXX (no evidence): what ground collision 10 is, which a battle
+        // counts as grassland as it does 7, 8, 11 and 12; the render probe
+        // shows a scene's actors and triggers, not the World Map's collision
+        // under a point, and no text names it.
         if (collision == 10)
           return 0;
       }

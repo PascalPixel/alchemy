@@ -29,9 +29,10 @@
 #include "scene/dehkan_plateau.h"
 #include "scene/gabomba_statue.h"
 #include "graphics/palette_buffers.h"
+#include "window/window.h"
 
 /// Set once Move has left the hall's movable statue on half cell (103, 41).
-#define FLAG_AIRS_ROCK_HALL_PILLAR_PLACED 0xa8e
+#define FLAG_AIRS_ROCK_HALL_MOVABLE_STATUE_PLACED 0xa8e
 /// Set once Move has left the Vial chest room's western pillar on (13, 49).
 #define FLAG_AIRS_ROCK_VIAL_CHEST_WEST_PILLAR_PLACED 0x898
 /// Set once Move has left its eastern pillar on (41, 49).
@@ -45,11 +46,12 @@
 #define FLAG_AIRS_ROCK_CLARITY_CIRCLET_CHEST_THIRD_PILLAR_PLACED 0x89d
 /// Set once Move has left the tightropes room's pillar on (81, 37).
 #define FLAG_AIRS_ROCK_TIGHTROPES_PILLAR_PLACED 0x89e
-/// Set once Move has moved the Elixir chest room's pillar
-/// (AirsRockInside_MoveElixirChestPillar).
+/// Set once a gust has dropped the Elixir chest room's pillar below its bridge
+/// (AirsRockInside_BlowGust). The set-up sets it on every entry, so the room
+/// always shows the pillar dropped and its Move trigger never runs.
 #define FLAG_AIRS_ROCK_ELIXIR_CHEST_PILLAR_MOVED 0x89f
-/// Set once Move has left the paired statues room's pillar on (43, 87).
-#define FLAG_AIRS_ROCK_PAIRED_STATUES_PILLAR_PLACED 0x8d0
+/// Set once Move has left the paired stakes room's pillar on (43, 87).
+#define FLAG_AIRS_ROCK_PAIRED_STAKES_PILLAR_PLACED 0x8d0
 /// Set once Move has left the face warp room's first pillar on (35, 59).
 #define FLAG_AIRS_ROCK_FACE_WARP_FIRST_PILLAR_PLACED 0x8d1
 /// Its second, on (45, 105).
@@ -69,7 +71,7 @@
 /// statues breathe theirs without a flare.
 #define FLAG_RIDING_WHIRLWIND FLAG_SCENE_TEMP_50
 
-/// The paired statues room's stakes, each set while it is down; B and C go
+/// The paired stakes room's stakes, each set while it is down; B and C go
 /// down as the party comes in.
 #define FLAG_STAKE_A_DOWN FLAG_SCENE_TEMP_00
 #define FLAG_STAKE_B_DOWN FLAG_SCENE_TEMP_01
@@ -88,16 +90,17 @@
 #define FLAG_STONE_VANISHED FLAG_SCENE_TEMP_00
 #define FLAG_FIRST_STONE_VANISHED FLAG_SCENE_TEMP_02
 
-/// What the gusts leave for the rest of the visit: a golden barrier blown away
-/// (the tightropes room's, which the set-up sets on every entry, and the paired
-/// statues and coins chest rooms'), a turning bridge turned from its first lie,
-/// and the Elixir chest room's pillar left on its bridge.
-#define FLAG_TIGHTROPES_BARRIER_BLOWN_AWAY FLAG_AREA_TEMP_00
+/// What the gusts leave for the rest of the visit: the cells a gust clears on
+/// its path in the tightropes room (the set-up sets it on every entry, so the
+/// room always shows them cleared), a turning bridge turned from its first lie,
+/// the Elixir chest room's pillar left on its bridge, and a golden barrier
+/// blown away in the paired stakes and coins chest rooms.
+#define FLAG_TIGHTROPES_GUST_PATH_CLEARED FLAG_AREA_TEMP_00
 #define FLAG_TIGHTROPES_BRIDGE_TURNED FLAG_AREA_TEMP_01
 #define FLAG_ELIXIR_CHEST_BRIDGE_TURNED FLAG_AREA_TEMP_02
 #define FLAG_ELIXIR_CHEST_PILLAR_ON_BRIDGE FLAG_AREA_TEMP_03
-#define FLAG_PAIRED_STATUES_NORTH_BARRIER_BLOWN_AWAY FLAG_AREA_TEMP_04
-#define FLAG_PAIRED_STATUES_SOUTH_BARRIER_BLOWN_AWAY FLAG_AREA_TEMP_05
+#define FLAG_PAIRED_STAKES_NORTH_BARRIER_BLOWN_AWAY FLAG_AREA_TEMP_04
+#define FLAG_PAIRED_STAKES_SOUTH_BARRIER_BLOWN_AWAY FLAG_AREA_TEMP_05
 #define FLAG_COINS_CHEST_BARRIER_BLOWN_AWAY FLAG_AREA_TEMP_06
 
 /// The Elixir chest room's pillar column, in half cells, that stands it on
@@ -118,8 +121,9 @@ enum {
 };
 
 /// The hall's entrances by the part of it they open on: up to the first of
-/// these, and ENTRANCE_HALL_FROM_REVEAL_TABLET, the great hall itself; then its
-/// northeast room; past the second, its east room.
+/// these the great hall itself, then its northeast room, and past the second
+/// its east room. ENTRANCE_HALL_FROM_REVEAL_TABLET, past both, takes the great
+/// hall's set-up and the east room's.
 enum {
   HALL_LAST_GREAT_HALL_ENTRANCE = 11,
   HALL_LAST_NORTHEAST_ROOM_ENTRANCE = 13
@@ -145,10 +149,6 @@ enum {
 /// copied into the top left of a screen block whose rows hold 32 entries.
 enum { LIGHTNING_MAP_ROWS = 16, LIGHTNING_MAP_COLUMNS = 4 };
 #define BG_SCREEN_ROW_BYTES (32 * 2)
-
-/// A stake's picture (SPRITE_STAKE) is four tiles wide: a row of its tiles,
-/// 8 pixels high, takes this many bytes.
-#define STAKE_TILE_ROW_BYTES (4 * 32)
 
 /// A map grid cell kept in one word, x in the high half and z in the low, as
 /// the cell stampers keep the leader's.
@@ -193,23 +193,27 @@ enum AirsRockInsideFaceWarpVent {
 /// Where a gust stops on the overhead layer (AirsRockInside_BlowGust), its
 /// code less CELL_BEHAVIOR_AIRS_ROCK_INSIDE_GUST_STOP: up to LAST_BARRIER it
 /// blows on, clearing what blocks its path, as the golden barriers of the
-/// paired statues and coins chest rooms; the turning bridge reads TURN_BRIDGE
-/// while it lies one way and TURN_BRIDGE_BACK the other.
+/// paired stakes and coins chest rooms; a turning bridge reads
+/// BRIDGE_NORTH_SOUTH while it runs north and south, and BRIDGE_EAST_WEST while
+/// it lies east and west, and the gust turns it the other way.
 #define CELL_BEHAVIOR_AIRS_ROCK_INSIDE_GUST_STOP 30
 enum AirsRockInsideGustStop {
-  GUST_STOP_PAIRED_STATUES_NORTH_BARRIER = 0,
+  GUST_STOP_PAIRED_STAKES_NORTH_BARRIER = 0,
   GUST_STOP_LAST_BARRIER = 4,
-  GUST_STOP_TURN_BRIDGE = 5,
-  GUST_STOP_TURN_BRIDGE_BACK = 6
+  GUST_STOP_BRIDGE_NORTH_SOUTH = 5,
+  GUST_STOP_BRIDGE_EAST_WEST = 6
 };
 
-/// The triggers this scene raises (FieldWork.raisedTrigger): a statue's
-/// whirlwind carrying the leader, a vent's puff reaching him, and a vanishing
-/// stone he has left, by its collision code.
+/// The triggers this scene raises (FieldWork.raisedTrigger), each room reading
+/// them its own way: a statue's whirlwind carrying the leader, a vent's puff
+/// reaching him, and in the Reveal tablet room, a cell he has left, as
+/// TRIGGER_LEFT_CELL plus its collision code.
 enum AirsRockInsideRaisedTrigger {
   TRIGGER_RIDE_WHIRLWIND = 200,
   TRIGGER_PUFF_REACHES_LEADER = 201,
-  TRIGGER_FIRST_VANISHING_STONE = 202
+  TRIGGER_LEFT_CELL = 200,
+  TRIGGER_FIRST_VANISHING_STONE = TRIGGER_LEFT_CELL +
+      CELL_BEHAVIOR_AIRS_ROCK_INSIDE_FIRST_VANISHING_STONE
 };
 
 void Actor_StartScript(struct Actor *actor, const u8 *data);
@@ -279,20 +283,20 @@ enum AirsRockInsideElixirChestActorId {
   ACTOR_ELIXIR_CHEST_POST_F
 };
 
-enum AirsRockInsidePairedStatuesActorId {
-  ACTOR_PAIRED_STATUES_PILLAR = ACTOR_FIRST_PLACED,
+enum AirsRockInsidePairedStakesActorId {
+  ACTOR_PAIRED_STAKES_PILLAR = ACTOR_FIRST_PLACED,
   /// The three pillars pushed among the stakes.
-  ACTOR_PAIRED_STATUES_PILLAR_A,
-  ACTOR_PAIRED_STATUES_PILLAR_B,
-  ACTOR_PAIRED_STATUES_PILLAR_C,
+  ACTOR_PAIRED_STAKES_PILLAR_A,
+  ACTOR_PAIRED_STAKES_PILLAR_B,
+  ACTOR_PAIRED_STAKES_PILLAR_C,
   /// The four stakes (SPRITE_STAKE), in two pairs: as one sinks, the other
   /// rises.
-  ACTOR_PAIRED_STATUES_STAKE_A,
-  ACTOR_PAIRED_STATUES_STAKE_B,
-  ACTOR_PAIRED_STATUES_STAKE_C,
-  ACTOR_PAIRED_STATUES_STAKE_D,
-  ACTOR_PAIRED_STATUES_NORTH_WIND_STONE,
-  ACTOR_PAIRED_STATUES_SOUTH_WIND_STONE
+  ACTOR_PAIRED_STAKES_STAKE_A,
+  ACTOR_PAIRED_STAKES_STAKE_B,
+  ACTOR_PAIRED_STAKES_STAKE_C,
+  ACTOR_PAIRED_STAKES_STAKE_D,
+  ACTOR_PAIRED_STAKES_NORTH_WIND_STONE,
+  ACTOR_PAIRED_STAKES_SOUTH_WIND_STONE
 };
 
 enum AirsRockInsideFaceWarpActorId {
@@ -374,7 +378,7 @@ extern s16 gAirsRockInside_HallPillars[];
 extern s16 gAirsRockInside_VialChestPillars[];
 extern s16 gAirsRockInside_ClarityCircletChestPillars[];
 extern s16 gAirsRockInside_TightropesPillars[];
-extern s16 gAirsRockInside_PairedStatuesPillars[];
+extern s16 gAirsRockInside_PairedStakesPillars[];
 extern s16 gAirsRockInside_FaceWarpPillars[];
 extern s16 gAirsRockInside_CoinsChestPillars[];
 
@@ -390,7 +394,7 @@ extern struct Trigger gAirsRockInside_ClarityCircletChestTriggers[];
 extern struct Trigger gAirsRockInside_TightropesTriggers[];
 extern struct Trigger gAirsRockInside_RevealTabletTriggers[];
 extern struct Trigger gAirsRockInside_ElixirChestTriggers[];
-extern struct Trigger gAirsRockInside_PairedStatuesTriggers[];
+extern struct Trigger gAirsRockInside_PairedStakesTriggers[];
 extern struct Trigger gAirsRockInside_FaceWarpTriggers[];
 extern struct Trigger gAirsRockInside_CoinsChestTriggers[];
 extern struct Trigger gAirsRockInside_PsynergyStoneTriggers[];
@@ -420,7 +424,7 @@ void AirsRockInside_StartPushingPillar(void);
 void AirsRockInside_FinishPushingPillar(void);
 void AirsRockInside_WakeVialChestStatue(void);
 void AirsRockInside_JumpDownLedge(void);
-void AirsRockInside_StepOffRide(void);
+void AirsRockInside_RideClarityCircletVent(void);
 void AirsRockInside_StepOnVanishingStone(void);
 void AirsRockInside_StampWideCellUnderLeader(void);
 void AirsRockInside_HideRevealedDoors(void);
@@ -429,7 +433,7 @@ void AirsRockInside_WalkToRevealTablet(void);
 void AirsRockInside_ReadTabletFacingWest(void);
 void AirsRockInside_ReadTabletFacingEast(void);
 void AirsRockInside_MoveElixirChestPillar(void);
-void AirsRockInside_PoundPairedStatuesStake(s32 mode, s32 step);
+void AirsRockInside_PoundPairedStakesStake(s32 mode, s32 step);
 void AirsRockInside_StepOntoStake(void);
 void AirsRockInside_RideFaceWarp(void);
 void AirsRockInside_CheckPsynergyStone(void);
@@ -484,7 +488,7 @@ void Pillar_Place(s16 *list) {
 
 extern struct ActorPlacement gAirsRockInside_TightropesPlacements[];
 extern struct ActorPlacement gAirsRockInside_ElixirChestPlacements[];
-extern struct ActorPlacement gAirsRockInside_PairedStatuesPlacements[];
+extern struct ActorPlacement gAirsRockInside_PairedStakesPlacements[];
 extern struct ActorPlacement gAirsRockInside_FaceWarpPlacements[];
 extern struct ActorPlacement gAirsRockInside_CoinsChestPlacements[];
 
@@ -493,7 +497,8 @@ void TilesetAnim_ResumeAll(void);
 
 /// A mote of light moves on to a random spot, x 176 to 431 pixels and y and z
 /// up to 31 and 127 pixels past the leader's, to drift there for its timer's
-/// frames: the slower motes take the sheet's animation 9, the others 10.
+/// frames: the motes that drift for 212 frames take the sheet's animation 9,
+/// the others 10.
 void AirsRockInside_ScatterMote(struct Actor *actor) {
   struct Actor *leader = Actor_GetById(gMainRoutineWork.leaderActorId);
 
@@ -559,8 +564,8 @@ void AirsRockInside_TakeOverWhirlwind(void) {
 void AirsRockInside_SetStakeCells(struct Actor *actor) {
   s32 x = FIELD_CELL(actor->x.fixed);
   s32 z = FIELD_CELL(actor->z.fixed);
-  s32 ground = MapCell_GetAttributes(0, x, z);
-  s32 cell = MapCell_GetAttributes(2, x, z);
+  s32 ground = MapCell_GetAttributes(MAPGRID_LAYER_GROUND, x, z);
+  s32 cell = MapCell_GetAttributes(MAPGRID_LAYER_OVERHEAD, x, z);
   s32 height = CELL_HEIGHT_STEPS(
       Map_GetTerrainHeight(actor->layer, actor->x.fixed, actor->z.fixed));
   s32 set = GameFlag_Get(actor->timer);
@@ -583,8 +588,8 @@ void AirsRockInside_SetStakeCells(struct Actor *actor) {
     height += 4;
     Scene_SetActorSpritePriority(actor, 1);
   }
-  MapCell_SetAttributes(0, x, z, ground);
-  MapCell_SetAttributes(2, x, z, cell);
+  MapCell_SetAttributes(MAPGRID_LAYER_GROUND, x, z, ground);
+  MapCell_SetAttributes(MAPGRID_LAYER_OVERHEAD, x, z, cell);
   MapGrid_SetCellHeight(px, pz, actor->layer, height);
 }
 
@@ -615,19 +620,21 @@ void AirsRockInside_PoundStake(s32 mode, s32 step) {
     first->watchedActor = (void *)(entry->offset + OBJ_VRAM0);
     Dma_Fill32(step, second->watchedActor, entry->size);
     Dma_Set(first->watchedActor, second->watchedActor,
-            DMA_COPY_WORDS(STAKE_TILE_ROW_BYTES * 6 / 4), REG_DMA3);
+            DMA_COPY_WORDS(24 * TILE_SIZE_4BPP / 4), REG_DMA3);
     first->watchedActor =
-        (void *)((u8 *)first->watchedActor + STAKE_TILE_ROW_BYTES * 6);
+        (void *)((u8 *)first->watchedActor + 24 * TILE_SIZE_4BPP);
     second->watchedActor =
-        (void *)((u8 *)second->watchedActor + STAKE_TILE_ROW_BYTES * 6);
+        (void *)((u8 *)second->watchedActor + 24 * TILE_SIZE_4BPP);
   } else if (step <= 5) {
+    // XXX: why each step copies 6 tiles but moves on 8; the shape of the
+    // stake's sprite in its VRAM cache entry would settle it.
     second->y.fixed += toFIXED(26) / 5;
     Dma_Set(first->watchedActor, second->watchedActor,
-            DMA_COPY_WORDS(STAKE_TILE_ROW_BYTES * 3 / 2 / 4), REG_DMA3);
+            DMA_COPY_WORDS(6 * TILE_SIZE_4BPP / 4), REG_DMA3);
     first->watchedActor =
-        (void *)((u8 *)first->watchedActor + STAKE_TILE_ROW_BYTES * 2);
+        (void *)((u8 *)first->watchedActor + 8 * TILE_SIZE_4BPP);
     second->watchedActor =
-        (void *)((u8 *)second->watchedActor + STAKE_TILE_ROW_BYTES * 2);
+        (void *)((u8 *)second->watchedActor + 8 * TILE_SIZE_4BPP);
   }
   if (step <= 7)
     first->scaleY += -(FIXED_ONE * 31 / 256);
@@ -665,7 +672,8 @@ void AirsRockInside_PlaceStakes(u16 *list) {
     {
       s32 choice = GameFlag_Get((u16)flag);
 
-      // The first pose as an unsigned halfword.
+      /* FAKEMATCH(signature): the first pose read as a signed halfword and
+         cut back to unsigned. */
       base <<= 16;
       base = (u32)base >> 16;
       base += base << 1;
@@ -705,7 +713,7 @@ void AirsRockInside_RideWhirlwind(void) {
     if (rise < toFIXED(12))
       rise += toFIXED(1) / 10;
     leader->facing = (u8)gFrameCount * FACING_STEP;
-    leader->priorityFlags ^= 2 << (gFrameCount & 1);
+    leader->priorityFlags ^= ACTOR_PRIORITY_UNDERFOOT << (gFrameCount & 1);
     wait(1);
   }
   Sound_Play(SE_STOP_ACTION_SE);
@@ -719,7 +727,7 @@ void AirsRockInside_RideWhirlwind(void) {
   }
   facing = ride->facing;
   switch (facing) {
-  case DEGtoANG(270):
+  case FACING_NORTH:
     rider = ride->watchedActor;
     dx = 0;
     dz = 0;
@@ -752,7 +760,7 @@ void AirsRockInside_RideWhirlwind(void) {
         moved = 1;
       }
       if (moved && CELL_CODE(MapCell_GetAttributes(
-                       2, FIELD_CELL(ride->x.fixed + dx),
+                       MAPGRID_LAYER_OVERHEAD, FIELD_CELL(ride->x.fixed + dx),
                        FIELD_CELL(ride->z.fixed - ride->y.fixed + dz))) !=
                        CELL_BEHAVIOR_WALL)
         goto found;
@@ -763,14 +771,14 @@ void AirsRockInside_RideWhirlwind(void) {
     dz = -toFIXED(16);
     leader->facing = FACING_NORTH;
     if ((u16)CELL_CODE(MapCell_GetAttributes(
-            2, FIELD_CELL(ride->x.fixed),
+            MAPGRID_LAYER_OVERHEAD, FIELD_CELL(ride->x.fixed),
             FIELD_CELL(ride->z.fixed - ride->y.fixed + dz))) ==
         CELL_BEHAVIOR_WALL) {
       dx = toFIXED(16);
       dz = 0;
       leader->facing = FACING_EAST;
       if ((u16)CELL_CODE(MapCell_GetAttributes(
-              2, FIELD_CELL(ride->x.fixed + dx),
+              MAPGRID_LAYER_OVERHEAD, FIELD_CELL(ride->x.fixed + dx),
               FIELD_CELL(ride->z.fixed - ride->y.fixed))) ==
           CELL_BEHAVIOR_WALL) {
         dx = -toFIXED(16);
@@ -809,7 +817,6 @@ void AirsRockInside_RideWhirlwind(void) {
     leader->velocityY = toFIXED(6);
     leader->priorityFlags =
         ACTOR_PRIORITY_IGNORES_RISES | ACTOR_PRIORITY_AUTOMATIC;
-
     leader->motionFlags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
     FieldCamera_MoveToFX(-1, -1, -1, 0);
     dust = FieldCamera_GetActor();
@@ -841,10 +848,11 @@ extern u32 gAirsRockInside_WhirlwindFadesScript[];
 extern u32 gAirsRockInside_WhirlwindRisesScript[];
 
 /// A statue's whirlwind: it moves 1.5 pixels a frame the way it faces, upward
-/// when it faces north, and fades where the overhead layer reads
-/// CELL_BEHAVIOR_AIRS_ROCK_INSIDE_WHIRLWIND_END. The first time it reaches the
-/// leader (within 16 pixels above him while he moves by the keys alone, else 8
-/// on his level) it carries him along (TRIGGER_RIDE_WHIRLWIND). It stops while
+/// when it faces north, and where the overhead layer reads
+/// CELL_BEHAVIOR_AIRS_ROCK_INSIDE_WHIRLWIND_END it fades (facing north) or
+/// rises. The first time it reaches the leader (within 16 pixels above him
+/// while something else moves him, else 8 on his level) it carries him along
+/// (TRIGGER_RIDE_WHIRLWIND). It stops while
 /// the leader moves as sand, a menu or Psynergy is up, or an item is in use.
 void AirsRockInside_MoveWhirlwind(struct Actor *shot) {
   struct Actor *leader = Actor_GetById(gMainRoutineWork.leaderActorId);
@@ -861,9 +869,9 @@ void AirsRockInside_MoveWhirlwind(struct Actor *shot) {
     return;
   }
   Actor_SetAnimationSpeed(shot, ANIMATION_STEP_NORMAL);
-  if (CELL_CODE(
-          MapCell_GetAttributes(2, FIELD_CELL(shot->x.fixed),
-                                FIELD_CELL(shot->z.fixed - shot->y.fixed))) ==
+  if (CELL_CODE(MapCell_GetAttributes(
+          MAPGRID_LAYER_OVERHEAD, FIELD_CELL(shot->x.fixed),
+          FIELD_CELL(shot->z.fixed - shot->y.fixed))) ==
       CELL_BEHAVIOR_AIRS_ROCK_INSIDE_WHIRLWIND_END) {
     shot->riseEnabled = 0;
     shot->update = 0;
@@ -967,8 +975,8 @@ void AirsRockInside_WakeStatue(struct Actor *actor, s16 timer, u8 value) {
 extern u32 gAirsRockInside_PooledWhirlwindFadesScript[];
 
 /// A whirlwind of the hall's movable statue, one of three it uses in turn: as
-/// AirsRockInside_MoveWhirlwind, but it stops whenever no transition is under
-/// way.
+/// AirsRockInside_MoveWhirlwind, but it also holds still until the room's
+/// opening transition has begun (FieldWork.transitionActive).
 void AirsRockInside_MovePooledWhirlwind(struct Actor *shot) {
   struct Actor *leader = Actor_GetById(gMainRoutineWork.leaderActorId);
   struct FieldWork *work = Ram_HeapSlots->fieldWork;
@@ -983,9 +991,9 @@ void AirsRockInside_MovePooledWhirlwind(struct Actor *shot) {
     return;
   }
   Actor_SetAnimationSpeed(shot, ANIMATION_STEP_NORMAL);
-  if (CELL_CODE(
-          MapCell_GetAttributes(2, FIELD_CELL(shot->x.fixed),
-                                FIELD_CELL(shot->z.fixed - shot->y.fixed))) ==
+  if (CELL_CODE(MapCell_GetAttributes(
+          MAPGRID_LAYER_OVERHEAD, FIELD_CELL(shot->x.fixed),
+          FIELD_CELL(shot->z.fixed - shot->y.fixed))) ==
       CELL_BEHAVIOR_AIRS_ROCK_INSIDE_WHIRLWIND_END) {
     Actor_PlaySoundInView(shot, SE_SAND_EMERGE);
     shot->riseEnabled = 0;
@@ -1042,6 +1050,8 @@ void AirsRockInside_StatueBreathesPooledWhirlwind(struct Actor *actor) {
   if (work->psynergy != 0 || work->fieldMenu != 0 || work->pauseMenu != 0 ||
       work->item != 0)
     return;
+  // DEAD: the three whirlwinds looked up, results unused; the ROM keeps the
+  // three calls.
   for (i = 0; i != 3;)
     Actor_GetById(ACTOR_HALL_FIRST_WHIRLWIND + i++);
   if (actor->timer == 240) {
@@ -1171,8 +1181,7 @@ void AirsRockInside_PuffVent(s32 x, s32 y, s32 z) {
   actor->steeringFlags = 0;
   actor->scaleX = FIXED_ONE / 2;
   actor->speedLimit = toFIXED(4);
-  actor->acceleration = ((Random16() & 0x7fff) << 1) - (FIXED_ONE / 2 - 1);
-
+  actor->acceleration = ((Random16() & 0x7fff) << 1) - (toFIXED(1) / 2 - 1);
   actor->riseBaseY = toFIXED(7) / 32;
   actor->update = (s32)AirsRockInside_UpdateVentPuff;
 }
@@ -1244,7 +1253,7 @@ void AirsRockInside_PuffVents(void) {
 void AirsRockInside_FollowGust(struct Actor *actor) {
   struct Actor *target = actor->watchedActor;
 
-  actor->priorityFlags ^= 2 << (gFrameCount & 1);
+  actor->priorityFlags ^= ACTOR_PRIORITY_UNDERFOOT << (gFrameCount & 1);
   SET_ACTOR_POSITION(actor, target->x.fixed, target->y.fixed + toFIXED(8),
                      target->z.fixed);
 }
@@ -1362,7 +1371,7 @@ void AirsRockInside_BlowGust(void) {
     dir.z = -1;
   }
   do {
-    hit = MapCell_GetAttributes(2, cell.x, cell.z);
+    hit = MapCell_GetAttributes(MAPGRID_LAYER_OVERHEAD, cell.x, cell.z);
     hit >>= 8;
     if (Map_GetTerrainHeight(2, FIELD_CELL_ORIGIN(cell.x),
                              FIELD_CELL_ORIGIN(cell.z)) != gust->groundHeight)
@@ -1371,7 +1380,7 @@ void AirsRockInside_BlowGust(void) {
     cell.z += dir.z;
     steps += 2;
   } while (hit == 0);
-  MapCell_GetAttributes(2, cell.x, cell.z);
+  MapCell_GetAttributes(MAPGRID_LAYER_OVERHEAD, cell.x, cell.z);
   {
     s32 x;
     s32 z;
@@ -1494,7 +1503,7 @@ void AirsRockInside_BlowGust(void) {
       }
       if ((gFrameCount & 3) == 0) {
         if (gMainRoutineWork.next == SCENE_AIRS_ROCK_INSIDE_TIGHTROPES) {
-          GameFlag_Set(FLAG_TIGHTROPES_BARRIER_BLOWN_AWAY);
+          GameFlag_Set(FLAG_TIGHTROPES_GUST_PATH_CLEARED);
           cell.x = FIELD_CELL(gust->x.fixed) + 64;
           cell.z = FIELD_CELL(gust->z.fixed);
           MapGrid_CopyCellPictureIndicesRect(90, 25, cell.x + 1, cell.z, 1, 3);
@@ -1505,13 +1514,13 @@ void AirsRockInside_BlowGust(void) {
                    SCENE_AIRS_ROCK_INSIDE_PAIRED_STATUES) {
           cell.x = FIELD_CELL(gust->x.fixed);
           cell.z = FIELD_CELL(gust->z.fixed - gust->y.fixed) + 64;
-          if (hit == GUST_STOP_PAIRED_STATUES_NORTH_BARRIER) {
-            GameFlag_Set(FLAG_PAIRED_STATUES_NORTH_BARRIER_BLOWN_AWAY);
+          if (hit == GUST_STOP_PAIRED_STAKES_NORTH_BARRIER) {
+            GameFlag_Set(FLAG_PAIRED_STAKES_NORTH_BARRIER_BLOWN_AWAY);
             MapGrid_CopyCellPictureIndicesRect(39, 82, cell.x, cell.z, 1, 1);
             Map_CopyCellAttributeRect(39, 82, 1, 1, 38, 82);
             MapGrid_CopyCellAttributes(38, 19, 1, 1, 38, 18);
           } else {
-            GameFlag_Set(FLAG_PAIRED_STATUES_SOUTH_BARRIER_BLOWN_AWAY);
+            GameFlag_Set(FLAG_PAIRED_STAKES_SOUTH_BARRIER_BLOWN_AWAY);
             MapGrid_CopyCellsTo(39, 82, cell.x, cell.z, 1, 1);
             MapGrid_CopyCellAttributes(38, 98, 1, 1, 38, 99);
             MapGrid_CopyCellAttributes(38, 35, 1, 1, 38, 37);
@@ -1544,7 +1553,7 @@ shrink:
   }
   Actor_Release(gust);
   if (gMainRoutineWork.next == SCENE_AIRS_ROCK_INSIDE_TIGHTROPES) {
-    if (hit == GUST_STOP_TURN_BRIDGE) {
+    if (hit == GUST_STOP_BRIDGE_NORTH_SOUTH) {
       SHAKE();
       MapGrid_CopyCellsTo(79, 64, 29, 85, 5, 7);
       FieldEvent_Wait(30);
@@ -1554,7 +1563,7 @@ shrink:
       MapGrid_CopyCellAttributes(32, 89, 1, 1, 31, 89);
       MapGrid_CopyCellAttributes(50, 86, 1, 1, 33, 87);
       GameFlag_Set(FLAG_TIGHTROPES_BRIDGE_TURNED);
-    } else if (hit == GUST_STOP_TURN_BRIDGE_BACK) {
+    } else if (hit == GUST_STOP_BRIDGE_EAST_WEST) {
       SHAKE();
       MapGrid_CopyCellsTo(74, 64, 29, 85, 5, 7);
       FieldEvent_Wait(30);
@@ -1566,12 +1575,11 @@ shrink:
       GameFlag_Clear(FLAG_TIGHTROPES_BRIDGE_TURNED);
     }
   } else if (gMainRoutineWork.next == SCENE_AIRS_ROCK_INSIDE_ELIXIR_CHEST) {
-    if (hit == GUST_STOP_TURN_BRIDGE) {
+    if (hit == GUST_STOP_BRIDGE_NORTH_SOUTH) {
       SHAKE();
       MapGrid_CopyCellsTo(79, 64, 32, 79, 5, 7);
       if (FIELD_HALF_CELL(Actor_GetById(ACTOR_ELIXIR_CHEST_PILLAR)->x.fixed) ==
           ELIXIR_CHEST_PILLAR_ON_BRIDGE_X) {
-
         velocity.x =
             Actor_GetById(ACTOR_ELIXIR_CHEST_PILLAR)->x.fixed - toFIXED(8);
         velocity.y = Actor_GetById(ACTOR_ELIXIR_CHEST_PILLAR)->y.fixed;
@@ -1599,11 +1607,10 @@ shrink:
         MapGrid_CopyCellAttributes(52, 81, 1, 1, 36, 81);
         GameFlag_Clear(FLAG_ELIXIR_CHEST_BRIDGE_TURNED);
       }
-    } else if (hit == GUST_STOP_TURN_BRIDGE_BACK) {
+    } else if (hit == GUST_STOP_BRIDGE_EAST_WEST) {
       SHAKE();
       if (FIELD_HALF_CELL(Actor_GetById(ACTOR_ELIXIR_CHEST_PILLAR)->x.fixed) ==
           ELIXIR_CHEST_PILLAR_ON_BRIDGE_X) {
-
         velocity.x =
             Actor_GetById(ACTOR_ELIXIR_CHEST_PILLAR)->x.fixed - toFIXED(8);
         velocity.y = Actor_GetById(ACTOR_ELIXIR_CHEST_PILLAR)->y.fixed;
@@ -1662,7 +1669,7 @@ const struct ActorPlacement *Scene_GetActorPlacements(void) {
   if (gMainRoutineWork.next == SCENE_AIRS_ROCK_INSIDE_ELIXIR_CHEST)
     return gAirsRockInside_ElixirChestPlacements;
   if (gMainRoutineWork.next == SCENE_AIRS_ROCK_INSIDE_PAIRED_STATUES)
-    return gAirsRockInside_PairedStatuesPlacements;
+    return gAirsRockInside_PairedStakesPlacements;
   if (gMainRoutineWork.next == SCENE_AIRS_ROCK_INSIDE_FACE_WARP)
     return gAirsRockInside_FaceWarpPlacements;
   if (gMainRoutineWork.next == SCENE_AIRS_ROCK_INSIDE_COINS_CHEST)
@@ -1671,8 +1678,9 @@ const struct ActorPlacement *Scene_GetActorPlacements(void) {
 }
 
 /// A task: once the leader stands still on a new cell, the cells stamped under
-/// the last are restored; in the Reveal tablet room, leaving a vanishing stone
-/// raises its trigger (TRIGGER_FIRST_VANISHING_STONE on).
+/// the last are restored; in the Reveal tablet room, leaving a cell with a
+/// collision code raises TRIGGER_LEFT_CELL plus the code, which for a vanishing
+/// stone is its trigger (TRIGGER_FIRST_VANISHING_STONE on).
 void AirsRockInside_RestoreCellBehindLeader(void) {
   struct Actor *actor = Actor_GetById(Party_GetLeaderActor());
   s32 x = FIELD_CELL(actor->x.fixed);
@@ -1696,11 +1704,9 @@ void AirsRockInside_RestoreCellBehindLeader(void) {
   if (gMainRoutineWork.next != SCENE_AIRS_ROCK_INSIDE_REVEAL_TABLET)
     return;
   work = Ram_HeapSlots->fieldWork;
-  value = CELL_CODE(MapCell_GetAttributes(2, x, z));
+  value = CELL_CODE(MapCell_GetAttributes(MAPGRID_LAYER_OVERHEAD, x, z));
   if (value != 0) {
-    work->raisedTrigger = value -
-                          CELL_BEHAVIOR_AIRS_ROCK_INSIDE_FIRST_VANISHING_STONE +
-                          TRIGGER_FIRST_VANISHING_STONE;
+    work->raisedTrigger = TRIGGER_LEFT_CELL + value;
   }
 }
 
@@ -2048,7 +2054,8 @@ void AirsRockInside_OpenTabletRoomDoor(void) {
   s32 width;
   s32 height;
 
-  if (CELL_CODE(MapCell_GetAttributes(1, FIELD_CELL(leader->x.fixed),
+  if (CELL_CODE(MapCell_GetAttributes(MAPGRID_LAYER_MIDDLE,
+                                      FIELD_CELL(leader->x.fixed),
                                       FIELD_CELL(leader->z.fixed) - 1)) !=
       CELL_BEHAVIOR_AIRS_ROCK_INSIDE_TOWER_DOOR)
     return;
@@ -2093,7 +2100,7 @@ void AirsRockInside_StartPushingPillar(void) {
   } else if (scene == SCENE_AIRS_ROCK_INSIDE_PAIRED_STATUES) {
     FieldMapGrid_SetCellHeight(toFIXED(608), toFIXED(336), 2, 0);
     MapGrid_SetCellHeight(toFIXED(624), toFIXED(336), 2, 0);
-    Actor_LiftTargetBlock(gAirsRockInside_PairedStatuesPillars);
+    Actor_LiftTargetBlock(gAirsRockInside_PairedStakesPillars);
   } else if (scene == SCENE_AIRS_ROCK_INSIDE_FACE_WARP) {
     Actor_LiftTargetBlock(gAirsRockInside_FaceWarpPillars);
   } else if (scene == SCENE_AIRS_ROCK_INSIDE_COINS_CHEST) {
@@ -2128,7 +2135,7 @@ void AirsRockInside_FinishPushingPillar(void) {
   z = FIELD_HALF_CELL(pushed->z.fixed);
   if (gMainRoutineWork.next == SCENE_AIRS_ROCK_INSIDE_HALL) {
     if (x == 103 && z == 41)
-      GameFlag_Set(FLAG_AIRS_ROCK_HALL_PILLAR_PLACED);
+      GameFlag_Set(FLAG_AIRS_ROCK_HALL_MOVABLE_STATUE_PLACED);
   } else if (gMainRoutineWork.next == SCENE_AIRS_ROCK_INSIDE_VIAL_CHEST) {
     if (x == 13 && z == 49)
       GameFlag_Set(FLAG_AIRS_ROCK_VIAL_CHEST_WEST_PILLAR_PLACED);
@@ -2149,26 +2156,26 @@ void AirsRockInside_FinishPushingPillar(void) {
     FieldMapGrid_SetCellHeight(toFIXED(608), toFIXED(336), 2, -4);
     FieldMapGrid_SetCellHeight(toFIXED(624), toFIXED(336), 2, -4);
     if (x == 43 && z == 87)
-      GameFlag_Set(FLAG_AIRS_ROCK_PAIRED_STATUES_PILLAR_PLACED);
+      GameFlag_Set(FLAG_AIRS_ROCK_PAIRED_STAKES_PILLAR_PLACED);
     if ((FIELD_HALF_CELL(
-             Actor_GetById(ACTOR_PAIRED_STATUES_PILLAR_A)->x.fixed) == 73 &&
+             Actor_GetById(ACTOR_PAIRED_STAKES_PILLAR_A)->x.fixed) == 73 &&
          FIELD_HALF_CELL(
-             Actor_GetById(ACTOR_PAIRED_STATUES_PILLAR_A)->z.fixed) == 43) ||
+             Actor_GetById(ACTOR_PAIRED_STAKES_PILLAR_A)->z.fixed) == 43) ||
         (FIELD_HALF_CELL(
-             Actor_GetById(ACTOR_PAIRED_STATUES_PILLAR_B)->x.fixed) == 73 &&
+             Actor_GetById(ACTOR_PAIRED_STAKES_PILLAR_B)->x.fixed) == 73 &&
          FIELD_HALF_CELL(
-             Actor_GetById(ACTOR_PAIRED_STATUES_PILLAR_B)->z.fixed) == 43))
-      Actor_GetById(ACTOR_PAIRED_STATUES_STAKE_B)->riseEnabled = 1;
+             Actor_GetById(ACTOR_PAIRED_STAKES_PILLAR_B)->z.fixed) == 43))
+      Actor_GetById(ACTOR_PAIRED_STAKES_STAKE_B)->riseEnabled = 1;
     else
-      Actor_GetById(ACTOR_PAIRED_STATUES_STAKE_B)->riseEnabled = 0;
+      Actor_GetById(ACTOR_PAIRED_STAKES_STAKE_B)->riseEnabled = 0;
     if (pushed->x.fixed ==
-            Actor_GetById(ACTOR_PAIRED_STATUES_PILLAR_C)->x.fixed &&
+            Actor_GetById(ACTOR_PAIRED_STAKES_PILLAR_C)->x.fixed &&
         pushed->z.fixed ==
-            Actor_GetById(ACTOR_PAIRED_STATUES_PILLAR_C)->z.fixed) {
+            Actor_GetById(ACTOR_PAIRED_STAKES_PILLAR_C)->z.fixed) {
       if (x == 83 && z == 43)
-        Actor_GetById(ACTOR_PAIRED_STATUES_STAKE_C)->riseEnabled = 1;
+        Actor_GetById(ACTOR_PAIRED_STAKES_STAKE_C)->riseEnabled = 1;
       else
-        Actor_GetById(ACTOR_PAIRED_STATUES_STAKE_C)->riseEnabled = 0;
+        Actor_GetById(ACTOR_PAIRED_STAKES_STAKE_C)->riseEnabled = 0;
     }
   } else if (gMainRoutineWork.next == SCENE_AIRS_ROCK_INSIDE_FACE_WARP) {
     if (x == 35 && z == 59)
@@ -2188,16 +2195,19 @@ void AirsRockInside_FinishPushingPillar(void) {
     if (x == 77 && z == 19)
       GameFlag_Clear(FLAG_NORTHEAST_VENT_STILL);
     MapCell_SetAttributes(
-        2, FIELD_CELL(Actor_GetById(ACTOR_FACE_WARP_FIRST_PILLAR)->x.fixed),
+        MAPGRID_LAYER_OVERHEAD,
+        FIELD_CELL(Actor_GetById(ACTOR_FACE_WARP_FIRST_PILLAR)->x.fixed),
         FIELD_CELL(Actor_GetById(ACTOR_FACE_WARP_FIRST_PILLAR)->z.fixed), 0);
     MapCell_SetAttributes(
-        2, FIELD_CELL(Actor_GetById(ACTOR_FACE_WARP_SECOND_PILLAR)->x.fixed),
+        MAPGRID_LAYER_OVERHEAD,
+        FIELD_CELL(Actor_GetById(ACTOR_FACE_WARP_SECOND_PILLAR)->x.fixed),
         FIELD_CELL(Actor_GetById(ACTOR_FACE_WARP_SECOND_PILLAR)->z.fixed), 0);
   } else if (gMainRoutineWork.next == SCENE_AIRS_ROCK_INSIDE_COINS_CHEST) {
     if (x == 45 && z == 33)
       GameFlag_Set(FLAG_AIRS_ROCK_COINS_CHEST_PILLAR_PLACED);
     MapCell_SetAttributes(
-        2, FIELD_CELL(Actor_GetById(ACTOR_COINS_CHEST_STATUE)->x.fixed),
+        MAPGRID_LAYER_OVERHEAD,
+        FIELD_CELL(Actor_GetById(ACTOR_COINS_CHEST_STATUE)->x.fixed),
         FIELD_CELL(Actor_GetById(ACTOR_COINS_CHEST_STATUE)->z.fixed), 0);
   }
   Event_End();
@@ -2339,7 +2349,7 @@ void AirsRockInside_JumpDownLedge(void) {
   Event_ResolvePendingActions(0);
   OverlayObject_PrepareObject(toFIXED(216), -toFIXED(32), toFIXED(544),
                               SPRITE_CRATE);
-  Actor_JumpDownLedge(gMainRoutineWork.leaderActorId, 6, 0);
+  Actor_JumpDownLedge(gMainRoutineWork.leaderActorId, ANIM_LEADER_SPRING, 0);
   Event_SetExitRequest(
       AIRS_ROCK_INSIDE_VIAL_CHEST_TO_AIRS_ROCK_INSIDE_HALL_SOUTH);
   Event_End();
@@ -2348,9 +2358,7 @@ void AirsRockInside_JumpDownLedge(void) {
 /// A vent's puff has reached the leader in the Clarity Circlet chest room:
 /// north of z 654 he is blown down to (376, 668) with a chime, without
 /// turning.
-void AirsRockInside_StepOffRide(void) {
-  u8 *flags;
-  u8 bit = 1;
+void AirsRockInside_RideClarityCircletVent(void) {
 
   if (Actor_GetById(gMainRoutineWork.leaderActorId)->z.part[0].integer > 653)
     return;
@@ -2362,8 +2370,8 @@ void AirsRockInside_StepOffRide(void) {
   Actor_SetSpeedParameters(gMainRoutineWork.leaderActorId, toFIXED(4),
                            toFIXED(2));
   Actor_MoveToAndWaitById(gMainRoutineWork.leaderActorId, 376, 668);
-  flags = &Actor_GetById(gMainRoutineWork.leaderActorId)->steeringFlags;
-  *flags = bit | *flags;
+  Actor_GetById(gMainRoutineWork.leaderActorId)->steeringFlags |=
+      ACTOR_FACES_MOTION;
   Event_End();
 }
 
@@ -2375,7 +2383,7 @@ void AirsRockInside_VanishStone(s32 x, s32 y) {
 
   marker = Import_ActorCreate(SPRITE_STACKED_CRATES, INTtoFIXED(x), 0,
                               INTtoFIXED(y));
-  REG_BLDALPHA = BLEND_ALPHA(16, 0);
+  REG_BLDALPHA = BLEND_ALPHA(BLEND_WEIGHT_MAX, 0);
   REG_BLDCNT = BLDCNT_TGT1_BG2 | BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_ALL;
   Scene_SetActorSpritePriority(marker, 0);
   Actor_SetSpriteFlags(marker, 0);
@@ -2398,7 +2406,7 @@ void AirsRockInside_VanishStone(s32 x, s32 y) {
   cellX = x >> 4;
   cellY = (y >> 4) - 1;
   MapGrid_CopyCellsTo(65, 1, cellX + 64, cellY, 1, 2);
-  MapCell_SetAttributes(0, cellX, cellY,
+  MapCell_SetAttributes(MAPGRID_LAYER_GROUND, cellX, cellY,
                         CELL_ATTRIBUTES(CELL_BEHAVIOR_WALL, 0));
   Actor_Release(marker);
   Event_End();
@@ -2406,8 +2414,9 @@ void AirsRockInside_VanishStone(s32 x, s32 y) {
   REG_DISPCNT &= ~DISPCNT_OBJWIN_ON;
 }
 
-/// Stepping onto a vanishing stone: on a cell whose attribute is 1 or 7 the
-/// stone only vanishes again once FLAG_STONE_VANISHED is set; elsewhere the
+/// Stepping off a vanishing stone: on either end of the row
+/// (CELL_BEHAVIOR_AIRS_ROCK_INSIDE_STONES_SOUTH_END or _NORTH_END) the stone
+/// only vanishes once FLAG_STONE_VANISHED is set; elsewhere the
 /// cell under the leader is stamped, the stone in the trigger's row vanishes,
 /// and FLAG_STONE_VANISHED and the stone's own flag are set.
 void AirsRockInside_StepOnVanishingStone(void) {
@@ -2416,8 +2425,9 @@ void AirsRockInside_StepOnVanishingStone(void) {
   s32 cell, row = 54;
 
   leader = Actor_GetById(gMainRoutineWork.leaderActorId);
-  cell = MapCell_GetAttributes(2, FIELD_CELL(leader->x.fixed),
-                               FIELD_CELL(leader->z.fixed));
+  cell =
+      MapCell_GetAttributes(MAPGRID_LAYER_OVERHEAD, FIELD_CELL(leader->x.fixed),
+                            FIELD_CELL(leader->z.fixed));
   // The stone's row in half cells: the first's is 50, each next four north.
   row -= (work->raisedTrigger - TRIGGER_FIRST_VANISHING_STONE + 1) << 2;
   cell = CELL_CODE(cell);
@@ -2601,7 +2611,7 @@ void AirsRockInside_ShebaLearnsReveal(s32 tabletId, s32 shebaId) {
     spark->motionFlags = 0;
     spark->riseBaseY = toFIXED(122);
     spark->watchedActor = sheba;
-    // Every spiral ends 15 frames after the last spark sets out.
+    // All spirals end together, 15 frames after the loop's last wait.
     spark->riseCounter = (ORBITING_SPARKS - i) * ORBITING_SPARK_FRAMES + 15;
     Actor_SetSpriteColor(spark, SPRITE_COLOR_RBG);
     Scene_SetActorSpritePriority(spark, 1);
@@ -2676,7 +2686,9 @@ void AirsRockInside_ReadRevealTablet(void) {
   Event_Start();
   Event_ResolvePendingActions(0);
   // "Felix checked the tablet. It has strange characters written on it."
-  FieldMessage_Show(MsgCheckedTheTablet, 1);
+  // "Wielder of Wind's might... Lay your hands upon this stone."
+  // "We bestow upon thee the power to see the truth unclouded..."
+  FieldMessage_Show(MsgCheckedTheTablet, FIELD_MESSAGE_ZOOM);
   if (Event_GetFlag(FLAG_REVEAL_TABLET_READ) != 0) {
     Event_End();
   } else {
@@ -2711,7 +2723,7 @@ void AirsRockInside_ReadRevealTablet(void) {
     Actor_FaceDirectionById(ACTOR_SHEBA, FACING_NORTH, 0);
     FieldEvent_Wait(20);
     // "Sheba touched the tablet."
-    FieldMessage_Show(MsgCheckedTheTablet + 2, 1);
+    FieldMessage_Show(MsgCheckedTheTablet + 2, FIELD_MESSAGE_ZOOM);
     MapGrid_SetShake(5, 7, 1);
     MapGrid_SetShake(SHAKE_KEEP, SHAKE_KEEP, 0.9);
     MapGrid_WaitForShakeToSettle();
@@ -2743,7 +2755,7 @@ void AirsRockInside_WalkToRevealTablet(void) {
   if (GameFlag_Get(FLAG_REVEAL_TABLET_READ)) {
     Event_Start();
     Event_ResolvePendingActions(0);
-    FieldMessage_Show(MsgCheckedTheTablet, 1);
+    FieldMessage_Show(MsgCheckedTheTablet, FIELD_MESSAGE_ZOOM);
     Event_End();
   } else {
     Actor_WalkToAndWaitById(gMainRoutineWork.leaderActorId, 248, 107);
@@ -2760,7 +2772,7 @@ void AirsRockInside_WalkToRevealTablet(void) {
     if (GameFlag_Get(FLAG_REVEAL_TABLET_READ)) {                               \
       Event_Start();                                                           \
       Event_ResolvePendingActions(0);                                          \
-      FieldMessage_Show(MsgCheckedTheTablet, 1);                               \
+      FieldMessage_Show(MsgCheckedTheTablet, FIELD_MESSAGE_ZOOM);              \
       Event_End();                                                             \
     } else {                                                                   \
       Actor_WalkToAndWaitById(gMainRoutineWork.leaderActorId, n1, 136);        \
@@ -2794,13 +2806,13 @@ void AirsRockInside_MoveElixirChestPillar(void) {
   Event_End();
 }
 
-/// Pound on one of the paired statues room's stakes
+/// Pound on one of the paired stakes room's stakes
 /// (AirsRockInside_PoundStake).
-void AirsRockInside_PoundPairedStatuesStake(s32 mode, s32 step) {
+void AirsRockInside_PoundPairedStakesStake(s32 mode, s32 step) {
   AirsRockInside_PoundStake(mode, step);
 }
 
-extern u16 gAirsRockInside_PairedStatuesStakes[];
+extern u16 gAirsRockInside_PairedStakesStakes[];
 void AirsRockInside_SetStakeCells(struct Actor *actor);
 
 /// Stepping onto a raised stake's top: unless a pillar stands on its pair, the
@@ -2815,7 +2827,7 @@ void AirsRockInside_StepOntoStake(void) {
   s32 busy;
 
   leader = Actor_GetById(gMainRoutineWork.leaderActorId);
-  pair = gAirsRockInside_PairedStatuesStakes;
+  pair = gAirsRockInside_PairedStakesStakes;
   if (*pair != ACTOR_LIST_END) {
     do {
       id = *pair;
@@ -2844,21 +2856,21 @@ void AirsRockInside_StepOntoStake(void) {
   first->watchedActor = (void *)(entry->offset + OBJ_VRAM0);
   Dma_Fill32(busy, second->watchedActor, entry->size);
   Dma_Set(first->watchedActor, second->watchedActor,
-          DMA_COPY_WORDS(STAKE_TILE_ROW_BYTES * 6 / 4), REG_DMA3);
+          DMA_COPY_WORDS(24 * TILE_SIZE_4BPP / 4), REG_DMA3);
   first->watchedActor =
-      (void *)((u8 *)first->watchedActor + STAKE_TILE_ROW_BYTES * 6);
+      (void *)((u8 *)first->watchedActor + 24 * TILE_SIZE_4BPP);
   second->watchedActor =
-      (void *)((u8 *)second->watchedActor + STAKE_TILE_ROW_BYTES * 6);
+      (void *)((u8 *)second->watchedActor + 24 * TILE_SIZE_4BPP);
   leader->motionFlags = busy;
   for (i = 0; i != 8; i++) {
     if (i <= 4) {
       second->y.fixed += toFIXED(26) / 5;
       Dma_Set(first->watchedActor, second->watchedActor,
-              DMA_COPY_WORDS(STAKE_TILE_ROW_BYTES * 3 / 2 / 4), REG_DMA3);
+              DMA_COPY_WORDS(6 * TILE_SIZE_4BPP / 4), REG_DMA3);
       first->watchedActor =
-          (void *)((u8 *)first->watchedActor + STAKE_TILE_ROW_BYTES * 2);
+          (void *)((u8 *)first->watchedActor + 8 * TILE_SIZE_4BPP);
       second->watchedActor =
-          (void *)((u8 *)second->watchedActor + STAKE_TILE_ROW_BYTES * 2);
+          (void *)((u8 *)second->watchedActor + 8 * TILE_SIZE_4BPP);
     }
     leader->y.fixed += -(toFIXED(7) / 2);
     leader->groundHeight = leader->y.fixed;
@@ -2924,7 +2936,6 @@ void AirsRockInside_RideFaceWarp(void) {
     z = 188;
     break;
   case CELL_BEHAVIOR_AIRS_ROCK_INSIDE_NORTHEAST_VENT:
-
     x = 648;
     z = 188;
     break;
@@ -2943,13 +2954,13 @@ void AirsRockInside_CheckPsynergyStone(void) {
   Event_ResolvePendingActions(0);
   message = MsgCheckedThePsynergy;
   // "Felix checked the Psynergy Stone."
-  FieldMessage_Show(message, 1);
+  FieldMessage_Show(message, FIELD_MESSAGE_ZOOM);
   Sound_Play(SE_RECOVERY);
   Party_AddPp(PARTY_PP_REPLENISH, 0);
   FieldEvent_Wait(10);
   GameFlag_Clear(FLAG_NOTHING_HAPPENS);
   // "Everyone's PP was replenished!"
-  FieldMessage_Show(message + 1, 1);
+  FieldMessage_Show(message + 1, FIELD_MESSAGE_ZOOM);
   Event_End();
 }
 
@@ -2970,7 +2981,7 @@ const struct Trigger *Scene_GetTriggers(void) {
   if (scene == SCENE_AIRS_ROCK_INSIDE_ELIXIR_CHEST)
     return gAirsRockInside_ElixirChestTriggers;
   if (scene == SCENE_AIRS_ROCK_INSIDE_PAIRED_STATUES)
-    return gAirsRockInside_PairedStatuesTriggers;
+    return gAirsRockInside_PairedStakesTriggers;
   if (scene == SCENE_AIRS_ROCK_INSIDE_FACE_WARP)
     return gAirsRockInside_FaceWarpTriggers;
   if (scene == SCENE_AIRS_ROCK_INSIDE_COINS_CHEST)
@@ -3015,7 +3026,7 @@ void AirsRockInside_RiseOnLift(void) {
   Event_StartScreenTransition();
   while (!Actor_HasArrived(leader)) {
     leader->facing = (u8)gFrameCount * FACING_STEP;
-    leader->priorityFlags ^= 2 << (gFrameCount & 1);
+    leader->priorityFlags ^= ACTOR_PRIORITY_UNDERFOOT << (gFrameCount & 1);
     wait(1);
   }
   Sound_Play(SE_STOP_ACTION_SE);
@@ -3070,7 +3081,6 @@ void AirsRockInside_SpawnMotes(void) {
     actor->priorityFlags = 0;
     actor->acceleration = actor->speedLimit =
         i * (toFIXED(1) / 16) + (toFIXED(1) / 2);
-
     actor->update = AirsRockInside_DriftMote;
     Actor_SetSpriteFlags(actor, 0);
     Actor_SetSpriteColor(actor, SPRITE_COLOR_RBG);
@@ -3210,7 +3220,7 @@ s32 Scene_Initialize(void) {
   gFieldWork->transition = SCENE_TRANSITION(TRANSITION_WINDOW, 4);
   Actor_GetById(gMainRoutineWork.leaderActorId)->priorityFlags |=
       ACTOR_PRIORITY_IGNORES_RISES;
-  GameFlag_Set(FLAG_TIGHTROPES_BARRIER_BLOWN_AWAY);
+  GameFlag_Set(FLAG_TIGHTROPES_GUST_PATH_CLEARED);
   GameFlag_Set(FLAG_AIRS_ROCK_ELIXIR_CHEST_PILLAR_MOVED);
   if (gMainRoutineWork.next == SCENE_AIRS_ROCK_INSIDE_HALL) {
     AirsRockInside_StartRestoringCells();
@@ -3231,7 +3241,7 @@ s32 Scene_Initialize(void) {
       AirsRockInside_SpawnMotes();
     }
     if (gMainRoutineWork.entrance > HALL_LAST_NORTHEAST_ROOM_ENTRANCE) {
-      if (GameFlag_Get(FLAG_AIRS_ROCK_HALL_PILLAR_PLACED))
+      if (GameFlag_Get(FLAG_AIRS_ROCK_HALL_MOVABLE_STATUE_PLACED))
         Actor_SetPositionFX(ACTOR_HALL_MOVABLE_STATUE, toFIXED(824),
                             toFIXED(328));
       Actor_PlaceBlocks(gAirsRockInside_HallPillars);
@@ -3353,7 +3363,7 @@ s32 Scene_Initialize(void) {
       MapGrid_CopyCellAttributes(33, 88, 1, 1, 33, 87);
       MapGrid_CopyCellAttributes(48, 88, 1, 1, 31, 89);
     }
-    if (GameFlag_Get(FLAG_TIGHTROPES_BARRIER_BLOWN_AWAY)) {
+    if (GameFlag_Get(FLAG_TIGHTROPES_GUST_PATH_CLEARED)) {
       MapGrid_CopyCellsTo(90, 25, 86, 25, 4, 3);
       MapGrid_CopyCellsTo(21, 88, 24, 89, 1, 2);
       MapGrid_CopyCellAttributes(23, 92, 2, 1, 23, 89);
@@ -3370,7 +3380,7 @@ s32 Scene_Initialize(void) {
       if (GameFlag_Get(FLAG_FIRST_STONE_VANISHED + i)) {
         z = 24 - (i << 1);
         MapGrid_CopyCellsTo(65, 1, 80, z, 1, 2);
-        FieldMapCell_SetAttributes(0, 16, z,
+        FieldMapCell_SetAttributes(MAPGRID_LAYER_GROUND, 16, z,
                                    CELL_ATTRIBUTES(CELL_BEHAVIOR_WALL, 0));
       }
       i++;
@@ -3411,25 +3421,25 @@ s32 Scene_Initialize(void) {
     }
   } else if (gMainRoutineWork.next == SCENE_AIRS_ROCK_INSIDE_PAIRED_STATUES) {
     AirsRockInside_StartRestoringCells();
-    Actor_GetById(ACTOR_PAIRED_STATUES_STAKE_A)->riseCounter = 1;
-    Actor_GetById(ACTOR_PAIRED_STATUES_STAKE_B)->riseCounter = 1;
-    Actor_GetById(ACTOR_PAIRED_STATUES_STAKE_C)->riseCounter = 1;
-    Actor_GetById(ACTOR_PAIRED_STATUES_STAKE_D)->riseCounter = 1;
+    Actor_GetById(ACTOR_PAIRED_STAKES_STAKE_A)->riseCounter = 1;
+    Actor_GetById(ACTOR_PAIRED_STAKES_STAKE_B)->riseCounter = 1;
+    Actor_GetById(ACTOR_PAIRED_STAKES_STAKE_C)->riseCounter = 1;
+    Actor_GetById(ACTOR_PAIRED_STAKES_STAKE_D)->riseCounter = 1;
     if (!GameFlag_Get(FLAG_KEEP_PARTY_POSITION)) {
       GameFlag_Set(FLAG_STAKE_B_DOWN);
       GameFlag_Set(FLAG_STAKE_C_DOWN);
     }
-    AirsRockInside_PlaceStakes(gAirsRockInside_PairedStatuesStakes);
-    if (GameFlag_Get(FLAG_AIRS_ROCK_PAIRED_STATUES_PILLAR_PLACED))
-      Actor_SetPositionFX(ACTOR_PAIRED_STATUES_PILLAR, toFIXED(344),
+    AirsRockInside_PlaceStakes(gAirsRockInside_PairedStakesStakes);
+    if (GameFlag_Get(FLAG_AIRS_ROCK_PAIRED_STAKES_PILLAR_PLACED))
+      Actor_SetPositionFX(ACTOR_PAIRED_STAKES_PILLAR, toFIXED(344),
                           toFIXED(696));
-    Actor_PlaceBlocks(gAirsRockInside_PairedStatuesPillars);
-    if (GameFlag_Get(FLAG_PAIRED_STATUES_NORTH_BARRIER_BLOWN_AWAY)) {
+    Actor_PlaceBlocks(gAirsRockInside_PairedStakesPillars);
+    if (GameFlag_Get(FLAG_PAIRED_STAKES_NORTH_BARRIER_BLOWN_AWAY)) {
       MapGrid_CopyCellsTo(39, 82, 38, 82, 1, 3);
       MapGrid_CopyCellAttributes(39, 82, 1, 1, 38, 82);
       MapGrid_CopyCellAttributes(38, 19, 1, 1, 38, 18);
     }
-    if (GameFlag_Get(FLAG_PAIRED_STATUES_SOUTH_BARRIER_BLOWN_AWAY)) {
+    if (GameFlag_Get(FLAG_PAIRED_STAKES_SOUTH_BARRIER_BLOWN_AWAY)) {
       MapGrid_CopyCellsTo(39, 82, 38, 99, 1, 3);
       MapGrid_CopyCellAttributes(38, 98, 1, 1, 38, 99);
       MapGrid_CopyCellAttributes(38, 35, 1, 1, 38, 37);
@@ -3453,10 +3463,12 @@ s32 Scene_Initialize(void) {
     Actor_SetSpritePriority(ACTOR_FACE_WARP_SECOND_PILLAR, 2);
     Actor_PlaceBlocks(gAirsRockInside_FaceWarpPillars);
     MapCell_SetAttributes(
-        2, FIELD_CELL(Actor_GetById(ACTOR_FACE_WARP_FIRST_PILLAR)->x.fixed),
+        MAPGRID_LAYER_OVERHEAD,
+        FIELD_CELL(Actor_GetById(ACTOR_FACE_WARP_FIRST_PILLAR)->x.fixed),
         FIELD_CELL(Actor_GetById(ACTOR_FACE_WARP_FIRST_PILLAR)->z.fixed), 0);
     MapCell_SetAttributes(
-        2, FIELD_CELL(Actor_GetById(ACTOR_FACE_WARP_SECOND_PILLAR)->x.fixed),
+        MAPGRID_LAYER_OVERHEAD,
+        FIELD_CELL(Actor_GetById(ACTOR_FACE_WARP_SECOND_PILLAR)->x.fixed),
         FIELD_CELL(Actor_GetById(ACTOR_FACE_WARP_SECOND_PILLAR)->z.fixed), 0);
     if (!GameFlag_Get(FLAG_AIRS_ROCK_VIAL_CHEST_STATUE_WOKEN))
       Actor_SetSpriteColor(Actor_GetById(ACTOR_FACE_WARP_STATUE),
@@ -3470,7 +3482,8 @@ s32 Scene_Initialize(void) {
       Actor_SetPositionFX(ACTOR_COINS_CHEST_PILLAR, toFIXED(360), toFIXED(264));
     Actor_PlaceBlocks(gAirsRockInside_CoinsChestPillars);
     MapCell_SetAttributes(
-        2, FIELD_CELL(Actor_GetById(ACTOR_COINS_CHEST_STATUE)->x.fixed),
+        MAPGRID_LAYER_OVERHEAD,
+        FIELD_CELL(Actor_GetById(ACTOR_COINS_CHEST_STATUE)->x.fixed),
         FIELD_CELL(Actor_GetById(ACTOR_COINS_CHEST_STATUE)->z.fixed), 0);
     Actor_GetById(ACTOR_COINS_CHEST_STATUE)->steeringFlags = 0;
     if (!GameFlag_Get(FLAG_AIRS_ROCK_VIAL_CHEST_STATUE_WOKEN))
@@ -3522,9 +3535,9 @@ s16 gAirsRockInside_TightropesPillars[] = {
     ACTOR_TIGHTROPES_PILLAR, -1,
 };
 
-s16 gAirsRockInside_PairedStatuesPillars[] = {
-    ACTOR_PAIRED_STATUES_PILLAR,   ACTOR_PAIRED_STATUES_PILLAR_A,
-    ACTOR_PAIRED_STATUES_PILLAR_B, ACTOR_PAIRED_STATUES_PILLAR_C,
+s16 gAirsRockInside_PairedStakesPillars[] = {
+    ACTOR_PAIRED_STAKES_PILLAR,   ACTOR_PAIRED_STAKES_PILLAR_A,
+    ACTOR_PAIRED_STAKES_PILLAR_B, ACTOR_PAIRED_STAKES_PILLAR_C,
     -1,
 };
 
@@ -3631,12 +3644,12 @@ u32 gAirsRockInside_WindStoneScript[] = {
     SC_END,
 };
 
-u16 gAirsRockInside_PairedStatuesStakes[] = {
-    ACTOR_PAIRED_STATUES_STAKE_A, 1, FLAG_STAKE_A_DOWN,
-    ACTOR_PAIRED_STATUES_STAKE_B, 1, FLAG_STAKE_B_DOWN,
-    ACTOR_PAIRED_STATUES_STAKE_C, 1, FLAG_STAKE_C_DOWN,
-    ACTOR_PAIRED_STATUES_STAKE_D, 1, FLAG_STAKE_D_DOWN,
-    -1, 0,
+u16 gAirsRockInside_PairedStakesStakes[] = {
+    ACTOR_PAIRED_STAKES_STAKE_A, 1, FLAG_STAKE_A_DOWN,
+    ACTOR_PAIRED_STAKES_STAKE_B, 1, FLAG_STAKE_B_DOWN,
+    ACTOR_PAIRED_STAKES_STAKE_C, 1, FLAG_STAKE_C_DOWN,
+    ACTOR_PAIRED_STAKES_STAKE_D, 1, FLAG_STAKE_D_DOWN,
+    ACTOR_LIST_END, 0,
 };
 
 struct SceneEntrance gAirsRockInside_Entrances[] = {
@@ -3784,7 +3797,7 @@ struct ActorPlacement gAirsRockInside_ElixirChestPlacements[] = {
     {SCENE_TABLE_END},
 };
 
-struct ActorPlacement gAirsRockInside_PairedStatuesPlacements[] = {
+struct ActorPlacement gAirsRockInside_PairedStakesPlacements[] = {
     {SPRITE_STONE_PILLAR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 1, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_AT_SCENE_POINT},
     {SPRITE_STONE_PILLAR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 2, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_AT_SCENE_POINT},
     {SPRITE_STONE_PILLAR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 3, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_AT_SCENE_POINT},
@@ -3884,7 +3897,7 @@ struct Trigger gAirsRockInside_ClarityCircletChestTriggers[] = {
     {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), ACTOR_CLARITY_CIRCLET_CHEST_STATUE_B, CONDITION_ALWAYS, EVENT(AirsRockInside_StartPushingPillar)},
     {PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_CLARITY_CIRCLET_CHEST_STATUE_B, CONDITION_ALWAYS, EVENT(AirsRockInside_FinishPushingPillar)},
     {TRIGGER_RAISED, TRIGGER_RIDE_WHIRLWIND, CONDITION_ALWAYS, EVENT(AirsRockInside_RideWhirlwind)},
-    {TRIGGER_RAISED, TRIGGER_PUFF_REACHES_LEADER, CONDITION_ALWAYS, EVENT(AirsRockInside_StepOffRide)},
+    {TRIGGER_RAISED, TRIGGER_PUFF_REACHES_LEADER, CONDITION_ALWAYS, EVENT(AirsRockInside_RideClarityCircletVent)},
     {TRIGGER_TABLE_END},
 };
 
@@ -3941,31 +3954,31 @@ struct Trigger gAirsRockInside_ElixirChestTriggers[] = {
     {TRIGGER_TABLE_END},
 };
 
-struct Trigger gAirsRockInside_PairedStatuesTriggers[] = {
+struct Trigger gAirsRockInside_PairedStakesTriggers[] = {
     {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
     {TRIGGER_EXIT | EXIT_STYLE_STAIRS_DOWN, 2, CONDITION_ALWAYS, 2},
     {TRIGGER_STEP, 80, CONDITION_ALWAYS, EVENT(AirsRockInside_StampCellUnderLeader)},
     {TRIGGER_STEP, CELL_BEHAVIOR_AIRS_ROCK_INSIDE_STAKE_TOP, CONDITION_ALWAYS, EVENT(AirsRockInside_StepOntoStake)},
     {TRIGGER_PUSH, 0, CONDITION_ALWAYS, EVENT(AirsRockInside_StartPushingPillar)},
     {TRIGGER_PUSHED, 0, CONDITION_ALWAYS, EVENT(AirsRockInside_FinishPushingPillar)},
-    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), ACTOR_PAIRED_STATUES_PILLAR, FLAG_AIRS_ROCK_PAIRED_STATUES_PILLAR_PLACED, EVENT(AirsRockInside_StartPushingPillar)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_PAIRED_STATUES_PILLAR, FLAG_AIRS_ROCK_PAIRED_STATUES_PILLAR_PLACED, EVENT(AirsRockInside_FinishPushingPillar)},
-    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), ACTOR_PAIRED_STATUES_PILLAR_A, CONDITION_ALWAYS, EVENT(AirsRockInside_StartPushingPillar)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_PAIRED_STATUES_PILLAR_A, CONDITION_ALWAYS, EVENT(AirsRockInside_FinishPushingPillar)},
-    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), ACTOR_PAIRED_STATUES_PILLAR_B, CONDITION_ALWAYS, EVENT(AirsRockInside_StartPushingPillar)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_PAIRED_STATUES_PILLAR_B, CONDITION_ALWAYS, EVENT(AirsRockInside_FinishPushingPillar)},
-    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), ACTOR_PAIRED_STATUES_PILLAR_C, CONDITION_ALWAYS, EVENT(AirsRockInside_StartPushingPillar)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_PAIRED_STATUES_PILLAR_C, CONDITION_ALWAYS, EVENT(AirsRockInside_FinishPushingPillar)},
-    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_POUND, PSYNERGY_PHASE_ACTS), ACTOR_PAIRED_STATUES_STAKE_A, FLAG_STAKE_A_DOWN, EVENT(AirsRockInside_PoundPairedStatuesStake)},
-    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_POUND, PSYNERGY_PHASE_ACTS), ACTOR_PAIRED_STATUES_STAKE_B, FLAG_STAKE_B_DOWN, EVENT(AirsRockInside_PoundPairedStatuesStake)},
-    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_POUND, PSYNERGY_PHASE_ACTS), ACTOR_PAIRED_STATUES_STAKE_C, FLAG_STAKE_C_DOWN, EVENT(AirsRockInside_PoundPairedStatuesStake)},
-    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_POUND, PSYNERGY_PHASE_ACTS), ACTOR_PAIRED_STATUES_STAKE_D, FLAG_STAKE_D_DOWN, EVENT(AirsRockInside_PoundPairedStatuesStake)},
-    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_WHIRLWIND, PSYNERGY_PHASE_FIRST), ACTOR_PAIRED_STATUES_NORTH_WIND_STONE, CONDITION_ALWAYS, EVENT(AirsRockInside_StartWhirlwind)},
-    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_WHIRLWIND, PSYNERGY_PHASE_BEFORE_CAST), ACTOR_PAIRED_STATUES_NORTH_WIND_STONE, CONDITION_ALWAYS, EVENT(AirsRockInside_TakeOverWhirlwind)},
-    {PSYNERGY_ON_ACTOR(ABILITY_WHIRLWIND), ACTOR_PAIRED_STATUES_NORTH_WIND_STONE, CONDITION_ALWAYS, EVENT(AirsRockInside_BlowGust)},
-    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_WHIRLWIND, PSYNERGY_PHASE_FIRST), ACTOR_PAIRED_STATUES_SOUTH_WIND_STONE, CONDITION_ALWAYS, EVENT(AirsRockInside_StartWhirlwind)},
-    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_WHIRLWIND, PSYNERGY_PHASE_BEFORE_CAST), ACTOR_PAIRED_STATUES_SOUTH_WIND_STONE, CONDITION_ALWAYS, EVENT(AirsRockInside_TakeOverWhirlwind)},
-    {PSYNERGY_ON_ACTOR(ABILITY_WHIRLWIND), ACTOR_PAIRED_STATUES_SOUTH_WIND_STONE, CONDITION_ALWAYS, EVENT(AirsRockInside_BlowGust)},
+    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), ACTOR_PAIRED_STAKES_PILLAR, FLAG_AIRS_ROCK_PAIRED_STAKES_PILLAR_PLACED, EVENT(AirsRockInside_StartPushingPillar)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_PAIRED_STAKES_PILLAR, FLAG_AIRS_ROCK_PAIRED_STAKES_PILLAR_PLACED, EVENT(AirsRockInside_FinishPushingPillar)},
+    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), ACTOR_PAIRED_STAKES_PILLAR_A, CONDITION_ALWAYS, EVENT(AirsRockInside_StartPushingPillar)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_PAIRED_STAKES_PILLAR_A, CONDITION_ALWAYS, EVENT(AirsRockInside_FinishPushingPillar)},
+    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), ACTOR_PAIRED_STAKES_PILLAR_B, CONDITION_ALWAYS, EVENT(AirsRockInside_StartPushingPillar)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_PAIRED_STAKES_PILLAR_B, CONDITION_ALWAYS, EVENT(AirsRockInside_FinishPushingPillar)},
+    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), ACTOR_PAIRED_STAKES_PILLAR_C, CONDITION_ALWAYS, EVENT(AirsRockInside_StartPushingPillar)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_PAIRED_STAKES_PILLAR_C, CONDITION_ALWAYS, EVENT(AirsRockInside_FinishPushingPillar)},
+    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_POUND, PSYNERGY_PHASE_ACTS), ACTOR_PAIRED_STAKES_STAKE_A, FLAG_STAKE_A_DOWN, EVENT(AirsRockInside_PoundPairedStakesStake)},
+    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_POUND, PSYNERGY_PHASE_ACTS), ACTOR_PAIRED_STAKES_STAKE_B, FLAG_STAKE_B_DOWN, EVENT(AirsRockInside_PoundPairedStakesStake)},
+    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_POUND, PSYNERGY_PHASE_ACTS), ACTOR_PAIRED_STAKES_STAKE_C, FLAG_STAKE_C_DOWN, EVENT(AirsRockInside_PoundPairedStakesStake)},
+    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_POUND, PSYNERGY_PHASE_ACTS), ACTOR_PAIRED_STAKES_STAKE_D, FLAG_STAKE_D_DOWN, EVENT(AirsRockInside_PoundPairedStakesStake)},
+    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_WHIRLWIND, PSYNERGY_PHASE_FIRST), ACTOR_PAIRED_STAKES_NORTH_WIND_STONE, CONDITION_ALWAYS, EVENT(AirsRockInside_StartWhirlwind)},
+    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_WHIRLWIND, PSYNERGY_PHASE_BEFORE_CAST), ACTOR_PAIRED_STAKES_NORTH_WIND_STONE, CONDITION_ALWAYS, EVENT(AirsRockInside_TakeOverWhirlwind)},
+    {PSYNERGY_ON_ACTOR(ABILITY_WHIRLWIND), ACTOR_PAIRED_STAKES_NORTH_WIND_STONE, CONDITION_ALWAYS, EVENT(AirsRockInside_BlowGust)},
+    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_WHIRLWIND, PSYNERGY_PHASE_FIRST), ACTOR_PAIRED_STAKES_SOUTH_WIND_STONE, CONDITION_ALWAYS, EVENT(AirsRockInside_StartWhirlwind)},
+    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_WHIRLWIND, PSYNERGY_PHASE_BEFORE_CAST), ACTOR_PAIRED_STAKES_SOUTH_WIND_STONE, CONDITION_ALWAYS, EVENT(AirsRockInside_TakeOverWhirlwind)},
+    {PSYNERGY_ON_ACTOR(ABILITY_WHIRLWIND), ACTOR_PAIRED_STAKES_SOUTH_WIND_STONE, CONDITION_ALWAYS, EVENT(AirsRockInside_BlowGust)},
     {TRIGGER_TABLE_END},
 };
 

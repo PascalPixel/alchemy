@@ -149,8 +149,7 @@ struct ActorPlacement {
   FIXED y;       ///< 16.16 fixed-point pixels
   FIXED z;       ///< 16.16 fixed-point pixels
   u16 facing;    ///< 1/65536 turns (enum Facing)
-  u8 talkFacing; ///< enum ActorTalkFacing; 3 follows the leader
-                 ///< afterwards
+  u8 talkFacing; ///< enum ActorTalkFacing
   u8 flags;      ///< ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE
 };
 
@@ -254,10 +253,6 @@ enum TriggerKind {
   TRIGGER_TALK_HALTED = 7
 };
 
-// Isaac's sheet (isaac.png) and a recording of a stairs exit show them:
-// leaving animations 25 and 26 take the leader, his back turned, into the
-// stair opening, darkening and smaller each picture until he is gone; arrivals
-// 23 and 24 bring him out of it facing the player.
 /// An exit trigger's control bits 5..4: how the leader leaves
 /// (Scene_RunStepTriggerOrExit).
 enum ExitStyle {
@@ -295,14 +290,13 @@ enum ExitStyle {
 /// When a Psynergy trigger runs around its field Psynergy, control bits 30..28.
 enum PsynergyPhase {
   /// After the field Psynergy (Field_UsePsynergy), PSYNERGY_ON_ACTOR's phase.
-  /// With
-  /// PSYNERGY_EVENT_PLAYS_CAST the event plays the cast itself.
+  /// With PSYNERGY_EVENT_PLAYS_CAST the event plays the cast itself.
   PSYNERGY_PHASE_AFTER_CAST = 0,
-  PSYNERGY_PHASE_BEFORE_CAST =
-      1, ///< once the PP is paid, before the field Psynergy
+  /// Once the PP is paid, before the field Psynergy.
+  PSYNERGY_PHASE_BEFORE_CAST = 1,
   /// After a Psynergy that runs out by itself has ended:
-  /// Field_RunPsynergyEndEvents
-  /// runs it for a use with ACT_PACKED, as Cloak fades or Reveal runs out.
+  /// Field_RunPsynergyEndEvents runs it for a use with ACT_PACKED, as Cloak
+  /// fades or Reveal runs out.
   PSYNERGY_PHASE_AFTER_END = 2,
   PSYNERGY_PHASE_BEFORE_END = 3, ///< as PSYNERGY_PHASE_AFTER_END, before it
   /// As Reveal's colours come back (FieldPsynergy_EndReveal): the scenes
@@ -328,8 +322,7 @@ enum PsynergyPhase {
 /// actor's number.
 enum PsynergyEventTarget {
   /// Field_UsePsynergy clears FLAG_PLAY_PSYNERGY_CAST and plays no cast of
-  /// its
-  /// own, leaving it to the event.
+  /// its own, leaving it to the event.
   PSYNERGY_EVENT_PLAYS_CAST = 0x400
 };
 /// A Psynergy trigger on an actor at one phase of the cast, as

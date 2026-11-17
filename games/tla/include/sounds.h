@@ -496,6 +496,8 @@ enum SoundId {
   SOUND_FADE_OUT_EXIT_SE = 395,
   /// The field Psynergy Lash.
   SE_LASH = 512,
+  /// SE_CAST's notes an octave lower on voice 99, against a falling line on
+  /// voice 98; nothing plays it.
   SE_520 = 520,
   SE_521,
   /// The beams of Jupiter Lighthouse's aerie flickering as its angels are
@@ -513,6 +515,8 @@ enum SoundId {
   SE_529,
   /// The Sea of Time opening a way (SeaOfTime_Open).
   SE_SEA_OF_TIME_OPENS,
+  /// SE_SANDSTORM's second track alone, six semitones lower and played once;
+  /// nothing plays it.
   SE_531,
   SE_532,
   SE_533,
@@ -529,6 +533,8 @@ enum SoundId {
   /// The sand mound sinking away as Sand ends (FieldPsynergy_EndSand).
   SE_SAND_END,
   SE_545,
+  /// SE_SETTLE's notes played once instead of held, with voice 93 in its
+  /// first track; nothing plays it.
   SE_546,
   SE_547,
   SE_548,
@@ -635,6 +641,7 @@ enum SoundId {
   SE_UNUSED_COIN_PAYOUT_B,
   /// Played as the leader spins away.
   SE_SPIN_AWAY,
+  /// SE_SPIN_AWAY's first track alone, two octaves higher; nothing plays it.
   SE_613,
   SE_614,
   SE_615,
@@ -648,7 +655,9 @@ enum SoundId {
   /// One long note: Piers's uncle calling the bird in Lemuria, and the Gasp
   /// battle effect's burst.
   SE_619,
+  /// SE_COIN_PAYOUT's second track alone, on voice 100; nothing plays it.
   SE_620,
+  /// SE_620 an octave higher and slower, on voice 118; nothing plays it.
   SE_621,
   SE_622,
   /// Played as an actor wades through water.

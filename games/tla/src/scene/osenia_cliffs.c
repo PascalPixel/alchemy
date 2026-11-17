@@ -103,22 +103,31 @@ s32 Scene_Initialize(void) {
   return 0;
 }
 
+/// The palette cycle: the eight colours of one background palette, and the
+/// four of another that show four of them in turn.
+#define CYCLE_SOURCE_PALETTE 12
+#define CYCLE_SOURCE_COLORS 8
+#define CYCLE_PALETTE 6
+
 /// The palette cycle Scene_Initialize schedules: every 16 frames it copies four
-/// of the eight colours at 0x05000180, starting one further each time, to the
-/// colours at 0x050000c2.
+/// of CYCLE_SOURCE_PALETTE's eight colours, starting one further each time, to
+/// colours 1 to 4 of CYCLE_PALETTE.
 void OseniaCliffs_CyclePalette(void) {
   if ((gFrameCount & 15) == 0) {
     volatile u16 *colors;
     s32 i;
 
-    if (gOseniaCliffs_PaletteCycleStep[0] == 8)
+    if (gOseniaCliffs_PaletteCycleStep[0] == CYCLE_SOURCE_COLORS)
       gOseniaCliffs_PaletteCycleStep[0] = 0;
     i = gOseniaCliffs_PaletteCycleStep[0]++;
-    colors = (u16 *)&BG_PLTT_COLOR(12, 0);
-    BG_PLTT_COLOR(6, 1) = colors[i];
-    BG_PLTT_COLOR(6, 2) = colors[(i + 1) & 7];
-    BG_PLTT_COLOR(6, 3) = colors[(i + 2) & 7];
-    BG_PLTT_COLOR(6, 4) = colors[(i + 3) & 7];
+    colors = (u16 *)&BG_PLTT_COLOR(CYCLE_SOURCE_PALETTE, 0);
+    BG_PLTT_COLOR(CYCLE_PALETTE, 1) = colors[i];
+    BG_PLTT_COLOR(CYCLE_PALETTE, 2) =
+        colors[(i + 1) & (CYCLE_SOURCE_COLORS - 1)];
+    BG_PLTT_COLOR(CYCLE_PALETTE, 3) =
+        colors[(i + 2) & (CYCLE_SOURCE_COLORS - 1)];
+    BG_PLTT_COLOR(CYCLE_PALETTE, 4) =
+        colors[(i + 3) & (CYCLE_SOURCE_COLORS - 1)];
   }
 }
 

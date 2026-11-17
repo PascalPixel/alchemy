@@ -30,8 +30,8 @@
 /// shift first differs in 239 of BattleDjinnMenu_Run's 1246 instructions.
 #define DJINN_PACKED_ELEMENT(entry) (((entry) & 0xf00) >> 8)
 #define DJINN_ENTRY_STANDBY 0x10000
-#define DJINN_ENTRY_RECOVERY_MASK 0x3e0000
 #define DJINN_ENTRY_RECOVERY_SHIFT 17
+#define DJINN_ENTRY_RECOVERY_MASK (0x1f << DJINN_ENTRY_RECOVERY_SHIFT)
 #define DJINN_ENTRY_END 0x80000000
 
 /// The battle Djinn menu for unit `member`: its Djinn in element and number
@@ -494,10 +494,11 @@ s32 BattleDjinnMenu_Run(s32 member, s32 unused) {
     iconWindow = (struct Window *)partyStatus->window;
     if (partyStatus->flags & 2) {
       for (i = 0; i <= 3; i++) {
-        s32 palette = 15 - (blinkPhase != 0);
+        // HIGHLIGHT_PALETTE, one below, while the blink is on.
+        s32 palette = WINDOW_PALETTE - (blinkPhase != 0);
 
         if (((1 << i) & standbyElements) == 0)
-          palette = 15;
+          palette = WINDOW_PALETTE;
         Window_HighlightRect(
             (s16)iconWindow->x + gDjinnMenu_ElementXOffsets[i] + 1,
             (s16)iconWindow->y + gDjinnMenu_ElementYOffsets[i] + 1, 2, 1,

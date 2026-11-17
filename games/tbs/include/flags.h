@@ -632,6 +632,10 @@
 #define FLAG_KOLIMA_APPLE 0xf57
 /// A jar in the village.
 #define FLAG_KOLIMA_HERB 0xf58
+/// A jar in one of the village's houses (LogRoomsC).
+#define FLAG_KOLIMA_LUCKY_MEDAL 0xf59
+/// A barrel in one of the village's houses (LogRoomsC): 7 coins.
+#define FLAG_KOLIMA_COINS 0xf5a
 
 // Kolima Forest
 /// Catch took the clearing's Nut.

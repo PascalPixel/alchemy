@@ -343,6 +343,8 @@ enum SoundId {
   SE_THUMP,
   SE_STONE_GRIND,
   SE_WARP,
+  /// Something heavy shuddering: Gaia Rock's altar faces as they part, Zagan
+  /// as it gallops in, and Megiddo's dive (BattleEffect_RunMegiddo).
   SE_191,
   /// Shriek's and Harpy's cry as their streaks set out
   /// (BattleEffect_RunStreakVolley, mode 1): SE_SPARKS's notes on voice 25; The
@@ -394,6 +396,8 @@ enum SoundId {
   SE_WHIRLWIND,
   SE_LIFT,
   SE_224,
+  /// Moloch's shower of motes as it starts to gather toward the middle
+  /// (BattleEffect_RunMoloch, frame 90).
   SE_225,
   SE_LOG_PUSH,
   SE_TOPPLE,
@@ -428,6 +432,7 @@ enum SoundId {
   /// ready.
   SE_GABOMBA_STATUE_ARROW,
   SE_249,
+  /// SE_BLACK_CRYSTAL_SET seven semitones lower; nothing plays it.
   SE_250,
   /// Played as the Black Crystal is set on the Lemurian Ship.
   SE_BLACK_CRYSTAL_SET,
@@ -469,10 +474,13 @@ enum SoundId {
   SE_VOICE_MAN_C,
   SE_VOICE_MAN_D,
   SE_STOP_ACTION_SE,
+  /// SE_TAKE_FLIGHT higher, its first track six semitones up without the
+  /// chord's low note and its second four; nothing plays it.
   SE_290 = 290,
   /// Played as an actor takes flight.
   SE_TAKE_FLIGHT,
   SE_ERUPTION_COLUMNS,
+  /// SE_ERUPTION_COLUMNS four semitones lower; nothing plays it.
   SE_293,
   SE_STOP_EXIT_SE = 298,
   SE_TOLBI_SPRING_TOSS = 300,
@@ -536,6 +544,7 @@ enum SoundId {
   /// SE_SETTLE's notes played once instead of held, with voice 93 in its
   /// first track; nothing plays it.
   SE_546,
+  /// SE_TABLET_RISE two semitones lower and softer; nothing plays it.
   SE_547,
   SE_548,
   SE_549,
@@ -607,6 +616,9 @@ enum SoundId {
   SE_580,
   /// The leader jumping down a hole of the Gabomba Statue.
   SE_GABOMBA_STATUE_HOLE,
+  /// A mechanism set off as a puzzle is done: the Anemos Inner Sanctum's
+  /// statue once its seven tiles glow, and the Gabomba Statue's flashing cog
+  /// as it stops.
   SE_582,
   SE_583,
   /// Played as the party presses a switch or button in Mars Lighthouse, the
@@ -652,8 +664,8 @@ enum SoundId {
   /// SE_RISE_WITH_SPARKS's notes ending with the last one instead of held;
   /// nothing plays it.
   SE_UNUSED_RISE_WITH_SPARKS_SHORT,
-  /// One long note: Piers's uncle calling the bird in Lemuria, and the Gasp
-  /// battle effect's burst.
+  /// One long note: Piers's uncle calling the bird that carries his letter to
+  /// Lunpa in Lemuria, and the Gasp battle effect's burst.
   SE_619,
   /// SE_COIN_PAYOUT's second track alone, on voice 100; nothing plays it.
   SE_620,

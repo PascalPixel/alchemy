@@ -42,7 +42,7 @@ enum SpriteColorMode {
 #define SPRITE_PICTURE_NONE 255
 
 /// An animation number's bit 7: keep the place and timer of the script already
-/// running, as The Broken Seal's.
+/// running.
 #define SPRITE_ANIMATION_KEEP_PLACE 0x80
 #define SPRITE_ANIMATION_INDEX_MASK 0x7f
 
@@ -212,8 +212,7 @@ enum ActorAnimation {
   ANIM_NOD = 3,
   ANIM_SHAKE_HEAD = 4,
   /// Running, leaning forward, four frames a step to the walk's six. This and
-  /// the leader's other poses below are as the leader's sprite draws them, as
-  /// The Broken Seal numbers them.
+  /// the leader's other poses below are as the leader's sprite draws them.
   ANIM_LEADER_RUN = 5,
   ANIM_LEADER_SPRING = 6, ///< leaning back for a moment before a jump
   ANIM_LEADER_LEAP = 7,   ///< in mid-stride, leaning forward

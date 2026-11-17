@@ -140,7 +140,8 @@ enum KandoreanTempleFogRoomActorId {
   ACTOR_FOG_ROPE_POLE = ACTOR_FIRST_PLACED,
   ACTOR_FOG_ROPE_OTHER_POLE,
   /// The student who has given up on the test: "It seems I may not have been
-  /// ready after all..." He levitates until the party has met Poi.
+  /// ready after all..." He sits on the floor, squashing and stretching now
+  /// and then, until the party has met Poi.
   ACTOR_STUDENT_WHO_GAVE_UP,
   /// Fog, the Mercury Djinni.
   ACTOR_FOG
@@ -223,7 +224,7 @@ enum {
   /// The trap door in Poi's room, or the passage by the gate's well, is open.
   FLAG_TRAP_DOOR_OPEN = FLAG_SCENE_TEMP_12,
   FLAG_WELL_PASSAGE_OPEN = FLAG_SCENE_TEMP_12,
-  /// Kraden has eyed the suspicious wall by the gate on this visit.
+  /// Kraden has pointed out the suspicious wall by the gate on this visit.
   FLAG_KRADEN_SAW_THE_WALL = FLAG_SCENE_TEMP_30,
   /// Where the vent room's pillar stands, which also decides which of the lift
   /// room's lifts runs.
@@ -2613,8 +2614,8 @@ void KandoreanTemple_StartSteamRoom(void) {
   FieldEffect_StartBlankOverlay(0);
 }
 
-/// Sets up Fog's room: the rope to Fog, and the student who gave up levitating
-/// until the party has met Poi.
+/// Sets up Fog's room: the rope to Fog and, until the party has met Poi, the
+/// student who gave up, sitting on the floor.
 void KandoreanTemple_StartFogRoom(void) {
   Rope_Initialize();
   Rope_Place(0, FLAG_FOG_ROPE_TIED, ACTOR_FOG_ROPE_POLE,

@@ -133,6 +133,7 @@ enum DisplayControl {
 #define BLDCNT_EFFECT_BLEND 0x0040   ///< weighted by REG_BLDALPHA
 #define BLDCNT_EFFECT_LIGHTEN 0x0080 ///< towards white by REG_BLDY
 #define BLDCNT_EFFECT_DARKEN 0x00c0  ///< towards black by REG_BLDY
+#define BLDCNT_EFFECT_MASK 0x00c0    ///< the effect's two bits
 #define BLDCNT_TGT2_BG0 0x0100       ///< second target: BG0
 #define BLDCNT_TGT2_BG1 0x0200       ///< second target: BG1
 #define BLDCNT_TGT2_BG2 0x0400       ///< second target: BG2
@@ -171,12 +172,16 @@ enum DisplayControl {
 #define BG_PLTT_SIZE 512 ///< bytes of background colours, 256 of them
 #define BG_PLTT_COLORS (BG_PLTT_SIZE / 2) ///< the background's 256 colours
 #define OBJ_PLTT_SIZE 512 ///< bytes of sprite colours, 256 of them
+#define OBJ_PLTT_COLORS (OBJ_PLTT_SIZE / 2) ///< the sprites' 256 colours
 /// Colours in palette RAM: the background's, then the sprites'.
 #define PLTT_COLORS (2 * BG_PLTT_COLORS)
 
 #define BG_PLTT ((volatile u16 *)0x05000000) ///< 16 palettes of 16 colours
 /// Colours in one 16-colour palette.
 #define PALETTE_COLORS 16
+/// Bytes in one 16-colour palette, as a 16-colour picture's resource begins
+/// with one.
+#define PALETTE_BYTES (PALETTE_COLORS * 2)
 /// Colour `color` of 16-colour background palette `palette`.
 #define BG_PLTT_COLOR(palette, color)                                          \
   (BG_PLTT[(palette) * PALETTE_COLORS + (color)])
@@ -185,9 +190,13 @@ enum DisplayControl {
 #define OBJ_PLTT_COLOR(palette, color)                                         \
   (OBJ_PLTT[(palette) * PALETTE_COLORS + (color)])
 
+/// Where a 15-bit colour keeps its green and blue levels, above red's five
+/// bits.
+#define RGB_GREEN_SHIFT 5
+#define RGB_BLUE_SHIFT 10
 /// A 15-bit colour from its red, green and blue levels (0 to 31 each), as
 /// the palette stores it: blue in the high bits.
-#define RGB(r, g, b) (((b) << 10) | ((g) << 5) | (r))
+#define RGB(r, g, b) (((b) << RGB_BLUE_SHIFT) | ((g) << RGB_GREEN_SHIFT) | (r))
 
 /// Stores an RGB colour, built in a local of its own, as the palette routines
 /// several scenes copy store each colour (scene/shared/palette_cycle_fade.h and
@@ -211,6 +220,11 @@ enum DisplayControl {
 #define BG_SCREEN_BLOCK(n) ((u8 *)VRAM + (n) * BG_SCREEN_SIZE)
 #define TILE_SIZE_4BPP 32 ///< bytes in an 8x8 tile of 16 colours
 #define TILE_SIZE_8BPP 64 ///< bytes in an 8x8 tile of 256 colours
+/// The tiles a sprite of `width` by `height` pixels takes in sprite tile
+/// memory, counted in its 32-byte steps, of 16 colours and of 256 (two steps a
+/// tile): a picture's sprites follow one another so.
+#define SPRITE_TILES(width, height) ((width) / 8 * ((height) / 8))
+#define SPRITE_TILES_8BPP(width, height) (2 * SPRITE_TILES(width, height))
 /// Sprite tile memory: the 32 KB from 0x06010000.
 #define OBJ_VRAM0 0x06010000
 
@@ -404,8 +418,8 @@ enum KeyMask {
 #define DISPLAY_TILE_HEIGHT (DISPLAY_HEIGHT / 8)
 /// A 15-bit colour's red, green and blue levels, 0 to 31 each.
 #define RGB_RED(color) ((color) & 0x1f)
-#define RGB_GREEN(color) (((color) >> 5) & 0x1f)
-#define RGB_BLUE(color) (((color) >> 10) & 0x1f)
+#define RGB_GREEN(color) (((color) >> RGB_GREEN_SHIFT) & 0x1f)
+#define RGB_BLUE(color) (((color) >> RGB_BLUE_SHIFT) & 0x1f)
 /// A colour channel's brightest level.
 #define RGB_LEVEL_MAX 31
 /// The brightest colour, every channel at its highest level.
@@ -416,6 +430,10 @@ enum KeyMask {
 #define BG_SCREEN_SIZE 2048 ///< bytes in a screen block, 2 KB
 /// Tiles in a row of a screen block, whose map is 32 tiles square.
 #define BG_SCREEN_WIDTH 32
+/// Two screen entries in a word, tiles n and n + 1 side by side, for numbering
+/// a map's tiles two at a time; adding TILE_PAIR_STEP moves both on by two.
+#define TILE_PAIR(n) ((u32)((n) + 1) << 16 | (n))
+#define TILE_PAIR_STEP ((u32)2 << 16 | 2)
 /// A screen block entry's 16-colour palette, in its top four bits.
 #define BG_TILE_PALETTE(n) ((n) << 12)
 /// A word of eight 4-bit pixels, all colour `color`: one row of a 16-colour

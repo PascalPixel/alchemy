@@ -395,6 +395,9 @@ enum ObjMode {
 /// Attribute 1's nine bits of x: a sprite left of the screen is at 512 less
 /// its distance.
 #define OBJ_X_MASK 0x1ff
+/// Attribute 2's ten bits of tile number, counted in 4-bit tiles from the
+/// start of sprite VRAM.
+#define OBJ_TILE_MASK 0x3ff
 /// Attribute 0 holds eight bits of a sprite's y, so its y wraps round at 256
 /// lines.
 #define OBJ_Y_RANGE 256

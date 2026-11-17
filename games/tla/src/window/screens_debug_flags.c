@@ -10,8 +10,6 @@
 /// DEBUG_ROW_VALUE_MAX, its second number (an entrance) 0 to DEBUG_ROW_SUB_MAX.
 #define DEBUG_ROW_VALUE_MAX 324
 #define DEBUG_ROW_SUB_MAX 99
-/// The step R and L take: ten scenes, entrances or flag pages.
-#define DEBUG_LARGE_STEP 10
 
 /// The flag browser's pages of DEBUG_FLAG_ROWS rows of DEBUG_FLAGS_PER_ROW
 /// flags, 256 a page: every game flag.

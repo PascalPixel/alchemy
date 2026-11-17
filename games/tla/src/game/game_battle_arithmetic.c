@@ -164,9 +164,8 @@ s32 RollWeaponUnleash(struct Unit *owner) {
   if (item->unleashAbility == 0) {
     return 1;
   }
-  rate =
-      toFIXED(Equipment_GetUnleashRateBonus(owner) + item->unleashChance * 5) /
-      100;
+  rate = FIXED_ONE *
+         (Equipment_GetUnleashRateBonus(owner) + item->unleashChance * 5) / 100;
   if (rate > (s32)(Battle_Random() & 0xFFFF)) {
     return item->unleashAbility;
   }

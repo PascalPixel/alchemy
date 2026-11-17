@@ -94,14 +94,14 @@ s32 BattlePsynergyMenu_Run(s32 unitId, u16 *actions, s32 count) {
     iconSlots[i] = VramCache_AllocEntry(128);
     sprites[i].oam.f.tile = VramCache_Reload(iconSlots[i], (const void *)-1);
   }
-  // XXX (no evidence): what shows tiles 512, 513, 528 and 529, which take the
-  // top and bottom tees here as in the battle item list, tiles 0, 1, 16 and 17
-  // of the second text range (TEXT_EXTRA_TILE_FIRST); no window code names an
-  // entry of them, and an open battle list is beyond the render probe.
-  Vram_CopyTile(WINDOW_TILE_BORDER_TOP_TEE, 512);
-  Vram_CopyTile(WINDOW_TILE_BORDER_TOP_TEE, 513);
-  Vram_CopyTile(WINDOW_TILE_BORDER_BOTTOM_TEE, 528);
-  Vram_CopyTile(WINDOW_TILE_BORDER_BOTTOM_TEE, 529);
+  // XXX (no evidence): what shows tiles 0, 1, 16 and 17 of the second text
+  // range (TEXT_EXTRA_TILE_FIRST), which take the top and bottom tees here;
+  // no window code names an entry of them, and there is no recording of an
+  // open battle list.
+  Vram_CopyTile(WINDOW_TILE_BORDER_TOP_TEE, TEXT_EXTRA_TILE_FIRST);
+  Vram_CopyTile(WINDOW_TILE_BORDER_TOP_TEE, TEXT_EXTRA_TILE_FIRST + 1);
+  Vram_CopyTile(WINDOW_TILE_BORDER_BOTTOM_TEE, TEXT_EXTRA_TILE_FIRST + 16);
+  Vram_CopyTile(WINDOW_TILE_BORDER_BOTTOM_TEE, TEXT_EXTRA_TILE_FIRST + 17);
 
   for (;;) {
     iconSprite = &cursor;

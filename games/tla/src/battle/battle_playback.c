@@ -286,8 +286,8 @@ void BattlePlayback_Run(void) {
       events->phase = BATTLE_PLAYBACK_PHASE_DISPATCH;
       events->timer = 0;
     } else if (events->phase == PLAY_FELLED) {
-      // A fallen enemy: with the Djinn bonus it first cycles its colours for 30
-      // frames, then turns grey, leaves the lists and dissolves.
+      // A fallen enemy: with the Djinn bonus it first cycles its colours for
+      // FELLED_FLASH_FRAMES, then turns grey, leaves the lists and dissolves.
       if (events->timer == 0 || events->timer >= FELLED_FLASH) {
         s32 colorMode = SPRITE_COLOR_GREY;
 
@@ -321,6 +321,8 @@ void BattlePlayback_Run(void) {
           struct Sprite **slot;
           s32 noPicture;
 
+          /* FAKEMATCH(temporary): SPRITE_PICTURE_NONE held in noPicture, set
+             as the loop starts. */
           for (recordIndex = 0, slot = records, noPicture = SPRITE_PICTURE_NONE;
                (record =
                     GetMotionRecord(BattleObject_Get(events->unitId)->object,
@@ -333,6 +335,9 @@ void BattlePlayback_Run(void) {
             child = record->entries[0];
             previousPicture = child->picture;
             child->colorMode = colorMode;
+            // DEAD: the old picture is read and ORed with SPRITE_PICTURE_NONE,
+            // which stores SPRITE_PICTURE_NONE whatever it was; the ROM keeps
+            // the load and the OR.
             child->picture = previousPicture | noPicture;
           }
         }

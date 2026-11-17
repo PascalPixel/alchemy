@@ -20,8 +20,6 @@
 #define BACKGROUND_PLANE_LOWER                                                 \
   (BGCNT_SIZE(1) | BGCNT_SCREEN_BASE(7) | BGCNT_256_COLORS |                   \
    BGCNT_CHAR_BASE(3) | BGCNT_PRIORITY(2))
-/// Lines outside the plane read the padded map in this screen block.
-#define BACKGROUND_PADDED_SCREEN 31
 #define BACKGROUND_PLANE_OFF                                                   \
   (BGCNT_WRAP | BGCNT_SCREEN_BASE(BACKGROUND_PADDED_SCREEN) |                  \
    BGCNT_256_COLORS | BGCNT_CHAR_BASE(3) | BGCNT_PRIORITY(2))

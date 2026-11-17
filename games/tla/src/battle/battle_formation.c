@@ -16,8 +16,8 @@
 #define FORMATION_SCORE_ABOVE_ALL 999
 
 /// Chooses a monster battle's formation for the party's level plus its winning
-/// streak, at random among those at most 3 above it, and returns it with the
-/// levels its enemies must gain in outMargin.
+/// streak, at random among those at most FORMATION_LEVEL_MARGIN above it, and
+/// returns it with the levels its enemies must gain in outMargin.
 s32 BattleFormation_SelectLevelMatchedCandidate(s32 *outMargin) {
   s32 matchCount = 0;
   struct FormationCandidate *pool =
@@ -83,8 +83,8 @@ s32 BattleFormation_SelectLevelMatchedCandidate(s32 *outMargin) {
         gBattleFormation_LevelMatchedEnemies[candidateOrUnitIndex]));
   // BUG: the three enemies formations 241 to 248 are made of are set by
   // their enemy ids, not their defeated flags, so they stay unavailable
-  // unless beaten, and Spritz's and Ether's Djinni flags (71 and 117) and
-  // flag 230 are set instead.
+  // unless beaten, and FLAG_DJINNI(DJINNI_SPRITZ), FLAG_DJINNI(DJINNI_ETHER)
+  // and flag 0xe6 are set instead.
 #ifdef BUGFIX
   GameFlag_Set(ENEMY_DEFEATED_FLAG(ENEMY_PUNCH_ANT));
   GameFlag_Set(ENEMY_DEFEATED_FLAG(ENEMY_GIANT_BAT));
@@ -209,9 +209,9 @@ void BattleUnit_Strengthen(s32 unitId) {
 /// The name letters an enemy can take: the alphabet in Japanese, nine digits
 /// elsewhere, as String_FindFirstDigit reads them back.
 #if LANGUAGE == LANGUAGE_JAPANESE
-#define ENEMY_NAME_SUFFIX_COUNT 26
+#define NAME_LETTER_COUNT NAME_LETTER_ALPHABET
 #else
-#define ENEMY_NAME_SUFFIX_COUNT 9
+#define NAME_LETTER_COUNT 9
 #endif
 /// The letters a class's mask holds, one bit each.
 #define NAME_LETTER_MASK_BITS 32
@@ -243,7 +243,7 @@ s32 BattleEnemy_ClaimNameLetter(s32 classId, s32 unused) {
     // last one tried is reused.
     for (; attempt < NAME_LETTER_MASK_BITS; attempt++) {
       battle->lastNameLetter[classIndex] =
-          (battle->lastNameLetter[classIndex] + 1) % ENEMY_NAME_SUFFIX_COUNT;
+          (battle->lastNameLetter[classIndex] + 1) % NAME_LETTER_COUNT;
       if ((battle->nameLetterMasks[classIndex] &
            (1 << battle->lastNameLetter[classIndex])) == 0)
         break;
@@ -257,7 +257,7 @@ s32 BattleEnemy_ClaimNameLetter(s32 classId, s32 unused) {
     battle->enemyKinds[classCount] = classId;
     battle->nameLetterMasks[classCount] = 0;
     battle->enemyKindCount = classCount + 1;
-    return ENEMY_NAME_SUFFIX_COUNT;
+    return NAME_LETTER_COUNT;
   }
   return -1;
 }
@@ -269,7 +269,7 @@ UNREAD_RESULT BattleEnemy_ReleaseNameLetter(s32 unitId) {
   s32 count = battle->enemyKindCount;
   s32 index;
   s32 nameLength;
-  s32 suffixIndex;
+  s32 letter;
   s32 classId;
 
   unit = Unit_Get(unitId);
@@ -290,16 +290,16 @@ UNREAD_RESULT BattleEnemy_ReleaseNameLetter(s32 unitId) {
   }
 
   // UB: an empty name shifts by NAME_LETTER_MASK_BITS, which the ARM turns
-  // into 0, so no letter is freed. A name with no suffix instead uses its
-  // last character as a suffix.
-  suffixIndex = NAME_LETTER_MASK_BITS;
+  // into 0, so no letter is freed. A name with no letter instead uses its
+  // last character as one.
+  letter = NAME_LETTER_MASK_BITS;
 #ifdef UBFIX
   if (nameLength == 0)
     return;
 #endif
   if (nameLength > 0)
-    suffixIndex = unit->name[nameLength - 1] - LIST_MARKER_CHAR;
-  battle->nameLetterMasks[index] &= ~(1 << suffixIndex);
+    letter = unit->name[nameLength - 1] - LIST_MARKER_CHAR;
+  battle->nameLetterMasks[index] &= ~(1 << letter);
 }
 
 /// Gives the first enemy of the class on the field the first letter (0),
@@ -530,17 +530,17 @@ s32 BattleFormation_BuildEnemyList(s32 recordId) {
   memberOrEnemyIndex = 0;
   if (enemyClasses[0] != 0) {
     for (;;) {
-      // Repeated enemy classes get distinct suffixes within this encounter.
-      s32 suffixCode =
+      // Repeated enemy classes get distinct letters within this encounter.
+      s32 letter =
           BattleEnemy_ClaimNameLetter(enemyClasses[memberOrEnemyIndex], 1);
       struct Unit *unit;
       s32 enemyId;
 
-      if (suffixCode & NAME_LETTER_FIRST_TOO)
+      if (letter & NAME_LETTER_FIRST_TOO)
         BattleEnemy_LetterFirstOfKind(enemyClasses[memberOrEnemyIndex]);
       BattleUnit_SetFar(memberOrEnemyIndex + FIRST_ENEMY_UNIT,
                         enemyClasses[memberOrEnemyIndex],
-                        suffixCode & NAME_LETTER_MASK);
+                        letter & NAME_LETTER_MASK);
       unit = Unit_Get(memberOrEnemyIndex + FIRST_ENEMY_UNIT);
       if (levelAdjustment != 0)
         BattleEnemy_AdjustLevel(memberOrEnemyIndex + FIRST_ENEMY_UNIT,

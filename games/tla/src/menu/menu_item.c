@@ -702,7 +702,6 @@ s32 ItemMenu_RunCommands(s32 *ownerOut, s32 *targetOut, s32 *itemOut) {
       state = ITEM_STEP_MEMBER;
       break;
 
-    // Equip it.
     case ITEM_STEP_EQUIP:
       result = Inventory_EquipFar(menu->sideMember[0], menu->selectedSlots[0]);
       if (result == -1) {
@@ -739,7 +738,6 @@ s32 ItemMenu_RunCommands(s32 *ownerOut, s32 *targetOut, s32 *itemOut) {
       state = ITEM_STEP_ITEM;
       break;
 
-    // Unequip it.
     case ITEM_STEP_REMOVE:
       (Unit_Get(menu->sideMember[0]))->inventory[menu->selectedSlots[0]] &=
           ~INVENTORY_EQUIPPED;
@@ -760,7 +758,6 @@ s32 ItemMenu_RunCommands(s32 *ownerOut, s32 *targetOut, s32 *itemOut) {
       state = ITEM_STEP_ITEM;
       break;
 
-    // Show its description.
     case ITEM_STEP_INSPECT:
       menu->sideIcons[0]->motion = ICON_HIDDEN;
       ItemMenu_ShowDetails(menu->selectedItems[0]);
@@ -1171,12 +1168,14 @@ s32 ItemMenu_SelectTarget(s32 mode) {
 
   Window_SetBounds(window, 13, 5, 17, 12);
   WindowSprite_RedrawSavedRectFar(menu->itemWindow);
+  // DEAD: Unit_Get's result is not used; the ROM keeps the call.
   Unit_Get(menu->memberIds[menu->sideIndex[0]]);
   Task_Add(EquipmentMenu_UpdateCompatibilityIndicators, TASK_PASS_FRAME);
   redraw = 2;
   while (!GameFlag_Get(FLAG_MENU_START_PRESSED)) {
     if (redraw) {
       window = menu->itemWindow;
+      // DEAD: Unit_Get's result is not used; the ROM keeps the call.
       Unit_Get(menu->memberIds[selection]);
       marker = menu->sideIcons[1];
       marker->sprite.oam.x = marker->x =
@@ -2874,10 +2873,6 @@ s32 ItemMenu_DrawItemDetailPage(s32 listWindow, void *memberWork,
 #define PAGE_X 116
 #define ENTRY_X 24
 #endif
-/// The page numbers end, with their right arrow, at tile 15 of the list
-/// window's top border.
-#define PAGE_NUMBERS_RIGHT 15
-
 /// Draws the names on one five-row page of the item list: The Broken Seal's
 /// ItemMenu_DrawNamePage over this game's menu offsets.
 s32 ItemMenu_DrawNamePage(s32 window, s32 unused,
@@ -2919,7 +2914,6 @@ s32 ItemMenu_DrawNamePage(s32 window, s32 unused,
 }
 
 #undef PAGE_X
-#undef PAGE_NUMBERS_RIGHT
 #undef ENTRY_X
 
 // The Japanese list puts its help line at another column.

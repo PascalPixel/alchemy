@@ -95,6 +95,20 @@
 /// passing the letter to BattleUnit_SetFar.
 #define NAME_LETTER_FIRST_TOO 0x8000
 #define NAME_LETTER_MASK 0x7fff
+/// The letters the Japanese edition names enemies with, A to Z; elsewhere they
+/// are nine digits (battle_formation.c's NAME_LETTER_COUNT).
+#define NAME_LETTER_ALPHABET 26
+
+/// A list place code's side bit, set for the enemies' list, and its place in
+/// the list (Battle_GetUnitAtPlace): PLACE_ENEMY is PLACE_PARTY with the side
+/// bit set.
+#define PLACE_ENEMY_SIDE 0x80
+#define PLACE_INDEX_MASK 0xf
+
+/// What an action that comes first adds to its priority (a Djinni that
+/// shields, guards or defends, an enemy's Counter or Guard Aura stance): more
+/// than any agility, so it is taken before every other action of the turn.
+#define PRIORITY_FIRST_IN_TURN 10000
 
 /// The length of a unit's name, its terminator excluded.
 #define UNIT_NAME_LENGTH 14
@@ -107,21 +121,10 @@
 /// gLinkStatus: both consoles are connected.
 #define LINK_BOTH_CONNECTED 3
 
-/// The frames a link battle tolerates without a connection before it gives
-/// up: a count above it pauses the battle (BattleWork.linkPaused) or fails
-/// the sync or transfer under way (battle_link.c, battle_turn.c).
-#define LINK_MAX_MISSED_FRAMES 24
-
 /// BattleAI_ChooseTarget's results when it picks no one: the side it
 /// may target lists no one, or no one there is worth the ability.
 #define TARGET_PICK_SIDE_EMPTY -2
 #define TARGET_PICK_NONE -1
-
-/// The list place codes the target pickers return (targeting.c,
-/// Battle_FindUnitPlace): a place in the party's list or the enemies',
-/// or'd with the side's tag.
-#define PLACE_PARTY 0x100
-#define PLACE_ENEMY 0x180
 
 /// BattleWork.placement of a unit with no place on the battlefield:
 /// BattleUnit_RefreshPlacement fills the list with it.

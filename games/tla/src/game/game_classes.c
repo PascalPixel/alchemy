@@ -8,9 +8,8 @@
 
 /// Element levels are counted in tenths: a Djinni set adds a whole level.
 #define ELEMENT_LEVEL_SCALE 10
-/// One tenth in 0.32 fixed point, rounded up: Math_UnsignedMulHigh by it
-/// divides by ELEMENT_LEVEL_SCALE.
-#define ONE_TENTH_Q32 (0xffffffffu / ELEMENT_LEVEL_SCALE + 1)
+/// 2^32 / 10, rounded up: the high word of a product by it divides by 10.
+#define RECIPROCAL_OF_10 (0xffffffffU / 10 + 1)
 /// The highest whole element level, the last row of
 /// gElement_PowerResistByLevel.
 #define ELEMENT_LEVEL_MAX 15
@@ -113,7 +112,7 @@ void Unit_CalculateBaseElements(s32 unitId,
     s32 level;
 
     // levels[i] / ELEMENT_LEVEL_SCALE, as a multiply by the reciprocal.
-    level = Math_UnsignedMulHigh(levels[i], ONE_TENTH_Q32);
+    level = Math_UnsignedMulHigh(levels[i], RECIPROCAL_OF_10);
     tenths = levels[i] - level * ELEMENT_LEVEL_SCALE;
 
     if (level > ELEMENT_LEVEL_MAX)

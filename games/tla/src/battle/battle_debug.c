@@ -147,9 +147,8 @@ void Unit_UpdateClassFar(s32 owner);
 /// From this parameter set on, an even set is loaded together with the odd one
 /// after it.
 #define DEBUG_PAIRED_SETS_FIRST 70
-/// Each element's Djinn, the first seven of them, to Bane, The Broken Seal's:
-/// a set's Djinn are given from this game's own first.
-#define DJINN_FOUND_PER_ELEMENT 18
+/// Each element's eighteen Djinn (to DJINNI_SPARE_FIRST); the first seven are
+/// The Broken Seal's, so a set's Djinn are given from the eighth.
 #define DJINN_OWN_FIRST 7
 
 /// Debug: replaces the party with parameter set number preset, each member at
@@ -217,11 +216,9 @@ s32 DebugParameterSet_Load(s32 preset) {
     for (i = 0; i < ELEMENT_COUNT; i++) {
       for (j = 0; j < gDebug_ParameterSets[row].djinnCounts[i]; j++) {
         Djinn_GiveFar(owner, i,
-                      (nextDjinn[i] + DJINN_OWN_FIRST) %
-                          DJINN_FOUND_PER_ELEMENT);
+                      (nextDjinn[i] + DJINN_OWN_FIRST) % DJINNI_SPARE_FIRST);
         Djinn_SetFar(owner, i,
-                     (nextDjinn[i] + DJINN_OWN_FIRST) %
-                         DJINN_FOUND_PER_ELEMENT);
+                     (nextDjinn[i] + DJINN_OWN_FIRST) % DJINNI_SPARE_FIRST);
         nextDjinn[i]++;
       }
     }
@@ -248,8 +245,9 @@ extern u8 gDebugTextEnabled;
 /// Broken Seal's Djinn tutorial encounter, here an unused Mars Djinni's
 /// battle: rows of formations.c.
 #define DEBUG_FIRST_ENCOUNTER 69
-/// Up and Down step the chooser's encounter by ten, Left and Right by one.
-#define DEBUG_ENCOUNTER_STEP 10
+/// Up and Down step the chooser's encounter by DEBUG_LARGE_STEP, as the other
+/// debug menus' L and R, Left and Right by one.
+#define DEBUG_LARGE_STEP 10
 #define DJINN_TUTORIAL_ENCOUNTER 28
 
 /// Debug: the battle test menu, which never returns. It fights encounter 69
@@ -293,9 +291,9 @@ restart:
         if (input->repeat & KEY_LEFT)
           encounter--;
         if (input->repeat & KEY_UP)
-          encounter -= DEBUG_ENCOUNTER_STEP;
+          encounter -= DEBUG_LARGE_STEP;
         if (input->repeat & KEY_DOWN)
-          encounter += DEBUG_ENCOUNTER_STEP;
+          encounter += DEBUG_LARGE_STEP;
         if (input->repeat & KEY_R)
           preset++;
         if (input->repeat & KEY_L)

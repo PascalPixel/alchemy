@@ -461,8 +461,9 @@ s32 DjinnRecovery_CountDownSide(s32 side) {
     BattleMessage_WaitForAdvance();                                            \
   }
 
-/// The Serpents and Dullahan regenerate ten times their hpRegen each turn.
-#define SERPENT_REGEN_MULTIPLE 10
+/// The bosses whose regeneration is multiplied, the Serpents and Dullahan,
+/// regenerate BOSS_REGEN_MULTIPLE times their hpRegen each turn.
+#define BOSS_REGEN_MULTIPLE 10
 
 /// Ends a turn: counts down the recovering Djinn and sets those recovered, then
 /// gives each unit its regeneration and counts down its stat changes and
@@ -577,7 +578,7 @@ void Battle_ProcessTurnEnd(void) {
             case ENEMY_SERPENT_6:
             case ENEMY_SERPENT_7:
             case ENEMY_DULLAHAN:
-              hpAmount *= SERPENT_REGEN_MULTIPLE;
+              hpAmount *= BOSS_REGEN_MULTIPLE;
               break;
             }
             if (unit->hp + hpAmount > unit->hpMax) {

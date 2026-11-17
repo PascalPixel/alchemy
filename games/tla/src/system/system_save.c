@@ -30,8 +30,8 @@ static __inline__ void WaitDma(struct DmaRegisters volatile *channel) {
 /// gSceneLocalState, which opens the save image's second sector, after the
 /// part's header.
 #define SAVE_SECOND_PLAY_TIME_OFFSET SAVE_HEADER_BYTES
-/// Where The Broken Seal keeps that copy, 256 bytes further into
-/// gSceneLocalState; Save_LoadExtraSummary still reads it there.
+/// Where The Broken Seal reads that copy, 256 bytes further into
+/// gSceneLocalState: Save_LoadExtraSummary reads part SAVE_PART_EXTRA's there.
 #define SAVE_BROKEN_SEAL_SECOND_PLAY_TIME_OFFSET (SAVE_HEADER_BYTES + 256)
 
 extern const u8 gSave_HeaderTemplate[];
@@ -389,9 +389,9 @@ s32 Save_LoadFileSummaries(void) {
   return count;
 }
 
-/// Reads part SAVE_PART_EXTRA's summary into the save work's extra summary,
-/// with four bytes from its next sector; returns 1, or 0 when the part has no
-/// copy.
+/// Unused: reads part SAVE_PART_EXTRA's summary into the save work's extra
+/// summary, with its second play time from its next sector; returns 1, or 0
+/// when the part has no copy.
 s32 Save_LoadExtraSummary(void) {
   struct SaveWorkspace *work;
   struct SaveSummary *summary;
@@ -403,6 +403,9 @@ s32 Save_LoadExtraSummary(void) {
   index = Save_FindLatestSector(SAVE_PART_EXTRA);
   if (index < SAVE_SECTOR_COUNT) {
     ReadFlash(index, 0, (u8 *)summary, sizeof(*summary));
+    // XXX (no evidence): whether part SAVE_PART_EXTRA keeps The Broken Seal's
+    // layout; nothing in this game calls this reader, and no code names a
+    // writer of the part.
     ReadFlash(index + 1, SAVE_BROKEN_SEAL_SECOND_PLAY_TIME_OFFSET,
               (u8 *)&work->extra.secondPartPlayTime,
               sizeof(work->extra.secondPartPlayTime));

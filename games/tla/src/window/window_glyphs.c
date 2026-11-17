@@ -69,7 +69,7 @@ s32 Text_DrawGlyphPair(s32 code, u32 *out) {
   }
   Iwram_ClearWordsEntry(pixels, GLYPH_PIXELS_SIZE);
 #else
-  // A joined pair carries its second character in bits 8 to 15.
+  // A joined pair carries its second character above bit 8.
   secondIndex = (code << 8) >> 16;
   code &= TEXT_LAST_FONT_CODE;
   firstIndex = code - TEXT_SPACE;
@@ -282,7 +282,7 @@ void Text_DrawWideStringAtOffset(u16 *text, struct Window *window, s32 x,
         break;
       case 14:
       case TEXT_WINDOW_STATE:
-      case 28:
+      case TEXT_ACTOR_NAME_START:
         text++;
       case 11:
       case 12:
@@ -398,7 +398,7 @@ void Text_DrawWideStringInWindow(s16 *text, struct Window *window, s32 x,
           break;
         case 14:
         case TEXT_WINDOW_STATE:
-        case 28:
+        case TEXT_ACTOR_NAME_START:
           text++;
         case TEXT_COLORS_RESET:
         case TEXT_COLOR:
@@ -434,7 +434,7 @@ u32 Math_UnsignedMulHigh(u32 a, u32 b);
 #define NUMBER_DIGITS 12
 
 /// 2^32 / 10, rounded up: the high word of a product by it divides by 10.
-#define RECIPROCAL_OF_10 0x1999999a
+#define RECIPROCAL_OF_10 (0xffffffffU / 10 + 1)
 
 /// Writes value as decimal text into buffer (14 bytes) and returns where the
 /// text starts. With width 0 the number has no padding and a minus sign when

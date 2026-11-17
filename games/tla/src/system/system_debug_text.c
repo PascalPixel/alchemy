@@ -14,6 +14,8 @@
 #define DECIMAL_DIGITS_MAX 10
 /// The most characters DebugText_Print writes of a string.
 #define DEBUG_TEXT_MAX_LENGTH 32
+/// 2^32 / 10, rounded up: the high word of a product by it divides by 10.
+#define RECIPROCAL_OF_10 (0xffffffffU / 10 + 1)
 
 /// Writes `value` as HEX_DIGITS hexadecimal digits to the number buffer.
 void String_FormatHex(u32 value) {
@@ -47,8 +49,7 @@ void String_FormatDecimal(s32 value) {
   }
   gNumberTextBuffer[DECIMAL_DIGITS_MAX + 1] = 0;
   for (i = DECIMAL_DIGITS_MAX; value != 0; i--) {
-    // The high word of value times 2^32 / 10, rounded up, is value / 10.
-    quotient = Math_UnsignedMulHigh(value, 0xffffffffU / 10 + 1);
+    quotient = Math_UnsignedMulHigh(value, RECIPROCAL_OF_10);
     value -= quotient * 10;
     gNumberTextBuffer[i] = value + '0';
     value = quotient;
@@ -79,9 +80,8 @@ void DebugText_PrintBlanks(u32 count) {
 }
 
 /// Prints the string `text` (at most DEBUG_TEXT_MAX_LENGTH characters) at the
-/// debug text cursor,
-/// wrapping from the end of the screen to its start, when debug text is on; the
-/// cursor moves past it.
+/// debug text cursor, wrapping from the end of the screen to its start, when
+/// debug text is on; the cursor moves past it.
 void DebugText_Print(const u8 *text) {
   if (gDebugTextEnabled != 0) {
     u16 *cursor = gDebugTextCursor;

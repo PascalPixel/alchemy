@@ -83,9 +83,10 @@ void BattleCamera_Create(void) {
 }
 
 /// Name letters past every edition's last, which leave an enemy's name bare:
-/// 255, and 26, the count of the Japanese alphabet's letters.
+/// 255, and NAME_LETTER_ALPHABET, past Z, the last letter the Japanese edition
+/// gives.
 #define NAME_LETTER_NONE 255
-#define NAME_LETTER_PAST_ALPHABET 26
+#define NAME_LETTER_PAST_ALL NAME_LETTER_ALPHABET
 
 /// Replaces the first enemy with the Doom Dragon's next form:
 /// ENEMY_DOOM_DRAGON_E after FORMATION_DOOM_DRAGON_A, else ENEMY_DOOM_DRAGON_H.
@@ -422,7 +423,7 @@ won:
           // The first defeated enemy's name for the message, with no letter.
           BattleUnit_SetFar(FIRST_ENEMY_UNIT,
                             battle->enemyKinds[battle->firstDefeated],
-                            NAME_LETTER_PAST_ALPHABET);
+                            NAME_LETTER_PAST_ALL);
           MessageArgument_ClearAllFar();
           MessageArgument_PushFar(FIRST_ENEMY_UNIT, MESSAGE_ARGUMENT_ACTOR);
           BattleMessage_ShowAndWaitFar(battle->defeatState + (s32)MsgDowned);

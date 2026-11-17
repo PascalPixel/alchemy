@@ -22,8 +22,9 @@ s32 AutoBattle_BuildActions(struct BattleActionRecord *entries) {
   struct BattleActionRecord *entry;
   struct Unit *unit;
 
-  // The party's actions. The four lookups' results are never used.
+  // The party's actions.
   partyCount = BattleUnit_ListLiving(BATTLE_SIDE_MASK_PARTY, unitIds);
+  // DEAD: Unit_Get's results are not used; the ROM keeps the calls.
   for (index = 0; index != PARTY_BATTLE_SIZE; index++)
     Unit_Get(index);
   for (index = 0; index < partyCount; index++) {
@@ -329,6 +330,7 @@ s32 AutoBattle_RunApproachAttack(struct BattleActionRecord *input) {
   if (BattleObject_IsValidId(work.actors[0]) < 0)
     return -1;
 
+  // DEAD: Unit_Get's results are not used; the ROM keeps the calls.
   Unit_Get(work.actor);
   Unit_Get(work.actors[0]);
   Random16();

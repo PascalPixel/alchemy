@@ -310,7 +310,7 @@ struct Window *BattleDjinnMenu_ShowChangePreview(struct Window *window,
                                visibleRow * 2, 0);
       rangePattern = ability->range;
       if (rangePattern == ABILITY_RANGE_ALL)
-        rangePattern = 11;
+        rangePattern = RANGE_ICON_ALL;
       else
         rangePattern--;
       Window_DrawThreeTileColumn(window, 16, visibleRow * 2, rangePattern, 0);

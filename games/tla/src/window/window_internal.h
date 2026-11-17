@@ -135,6 +135,10 @@ enum {
   /// MESSAGE_ACTOR_NAME as Message_DecodeRaw keeps it, unexpanded: the next
   /// entry names the unit, and drawing and measuring skip both.
   TEXT_ACTOR_NAME = 17,
+  /// MESSAGE_ACTOR_NAME_START as Message_DecodeRaw keeps it, unexpanded: the
+  /// next two entries name the unit and its letters, and drawing and measuring
+  /// skip all three.
+  TEXT_ACTOR_NAME_START = 28,
   /// MESSAGE_ARTICLE_CLASS as Message_DecodeRaw keeps it outside Japanese, at
   /// the head of an item or class name: drawing skips it and its class.
   TEXT_ARTICLE_CLASS = 29,
@@ -272,8 +276,53 @@ enum BattleTargetHint {
   /// Cures Restore's statuses, poison and the evil spirit, as Tonic does
   /// (ABILITY_EFFECT_CURE_ALL).
   TARGET_HINT_CURE_ALL = 6,
-  TARGET_HINT_SET_DJINNI = 7 ///< setting a Djinni: "Set Djinni"
+  TARGET_HINT_SET_DJINNI = 7, ///< setting a Djinni: "Set Djinni"
+  /// Switch: starts on the party member the last command was aimed at
+  /// (BattleMenuWork.lastTarget).
+  TARGET_HINT_LAST_TARGET = 8
 };
+
+/// The command window's top tile row: it runs along the bottom three rows.
+#define COMMAND_ROW_TOP 17
+
+/// A space's width in pixels.
+#if LANGUAGE == LANGUAGE_JAPANESE
+#define WINDOW_SPRITE_SPACE_WIDTH 7
+#else
+#define WINDOW_SPRITE_SPACE_WIDTH 5
+#endif
+
+/// The last of the twelve range icons, which ABILITY_RANGE_ALL takes; range n
+/// takes icon n - 1.
+#define RANGE_ICON_ALL 11
+
+/// A sprite speaker's portrait is numbered PORTRAIT_FIRST_SPRITE_PORTRAIT more
+/// than its entry in gPortrait_SpriteMap: Icon_LoadWithPalette takes portrait
+/// PORTRAIT_FIRST_SPRITE_PORTRAIT + n from icon PORTRAIT_FIRST_SPRITE_ICON + n.
+#define PORTRAIT_FIRST_SPRITE_PORTRAIT 128
+
+/// The step the debug menus take on L and R: ten scenes, entrances, flag
+/// pages, portraits or sound numbers.
+#define DEBUG_LARGE_STEP 10
+
+/// A battle Djinn list entry, as the battle Status screen's Djinn page and the
+/// battle Djinn menu pack it: bits 21..17 the recovery turns left, 16 set for a
+/// Djinni not set (on standby or recovering), 11..8 its element and 7..0 its
+/// number (DJINN_COMMAND); BATTLE_DJINN_END ends the list.
+#define BATTLE_DJINN_ELEMENT_SHIFT 8
+#define BATTLE_DJINN_ELEMENT (0xf << BATTLE_DJINN_ELEMENT_SHIFT)
+#define BATTLE_DJINN_NUMBER 0xff
+#define BATTLE_DJINN_UNSET 0x10000
+#define BATTLE_DJINN_TURNS_SHIFT 17
+#define BATTLE_DJINN_TURNS (0x1f << BATTLE_DJINN_TURNS_SHIFT)
+#define BATTLE_DJINN_END 0x80000000
+/// An entry's element.
+#define BATTLE_DJINN_ELEMENT_OF(entry)                                         \
+  (((entry) & BATTLE_DJINN_ELEMENT) >> BATTLE_DJINN_ELEMENT_SHIFT)
+/// An entry's Djinni, for its name and effect messages.
+#define BATTLE_DJINNI(entry)                                                   \
+  (BATTLE_DJINN_ELEMENT_OF(entry) * DJINN_PER_ELEMENT +                        \
+   ((entry) & BATTLE_DJINN_NUMBER))
 
 /// What Save_ScanFileSummaries adds to its count of files when every file is
 /// cleared (its sendFlag set by saving at the game's end).

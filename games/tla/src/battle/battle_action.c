@@ -621,7 +621,7 @@ s32 BattleActionRun_Build(struct BattleActionRecord *request,
     if (target->hp != 0) {
       if ((Battle_RandomFar() & 31) == 0)
         plan->targetCritical[0] = CRITICAL_HIT;
-      else if (toFIXED(Equipment_GetUnleashRateBonusFar(actor)) / 200 >
+      else if (FIXED_ONE * Equipment_GetUnleashRateBonusFar(actor) / 200 >
                (Battle_RandomFar() & 0xffff))
         plan->targetCritical[0] = CRITICAL_HIT;
     }

@@ -52,9 +52,9 @@ enum Element {
 /// AbilityFormula).
 #define ABILITY_FORMULA_MASK 15
 
-/// An ability kind picks what the ability's power does to each target, as
-/// The Broken Seal's: ABILITY_FORMULA_BLANK, ABILITY_FORMULA_EFFECT_ONLY and
-/// ABILITY_FORMULA_NO_POWER apply no power.
+/// An ability kind picks what the ability's power does to each target;
+/// ABILITY_FORMULA_BLANK, ABILITY_FORMULA_EFFECT_ONLY and
+/// ABILITY_FORMULA_NO_POWER apply none.
 enum AbilityFormula {
   ABILITY_FORMULA_BLANK = 0,             ///< no ability
   ABILITY_FORMULA_HEAL_HP = 1,           ///< Cure, Fizz, healing items
@@ -228,7 +228,7 @@ enum BattleActionUse {
   ACTION_USABLE_IN_BATTLE = 0x80 ///< can be used in battle
 };
 
-/// The curse bits of Unit.curse, as The Broken Seal's Unit.curse.
+/// The curse bits of Unit.curse.
 enum CurseFlag {
   CURSE_BOUND = 0x01,      ///< the unit is bound: one action in four is lost
   CURSE_ITEM = 0x02,       ///< a cursed item is equipped
@@ -467,9 +467,9 @@ static __inline__ s32 Unit_ClampGauge(s32 ratio) {
 /// The eight characters' units, ISAAC to PIERS, kept in the save.
 extern struct Unit gCharacterUnits[PARTY_UNIT_COUNT];
 
-/// A unit's base stats from Unit.baseHp on, as The Broken Seal's: the
-/// formations copy the block before a level or strength change, and the Clear
-/// Data writes the imported and password members' stats through it.
+/// A unit's base stats from Unit.baseHp on: the formations copy the block
+/// before a level or strength change, and the Clear Data writes the imported
+/// and password members' stats through it.
 struct BattleBaseStats {
   s16 baseHp;
   s16 basePp;

@@ -6,6 +6,9 @@
 #include "gamepak/flash_data.h"
 #include "system/io_reg.h"
 
+/// The erases a sector is given before it reads blank.
+#define FLASH_ERASE_ATTEMPTS 81
+
 /// Issues the chip-erase command and waits for an erased byte.
 u16 EraseFlashChip(void) {
   u8 savedCode[64];
@@ -26,8 +29,8 @@ u16 EraseFlashChip(void) {
   return result;
 }
 
-/// Erases one of sixteen sectors, restoring the cartridge wait setting
-/// afterward: the chip's own SRAM wait while erasing, 3 after.
+/// Erases one of the sixteen sectors, with the chip's own SRAM wait while
+/// erasing and WAITCNT_SRAM_SLOWEST after.
 u16 EraseFlashSector(u16 sector) {
   u8 savedCode[64];
   u16 result;
@@ -96,7 +99,7 @@ u16 ProgramFlashSectorWithEraseRetry(u16 sector, u8 *source) {
     remaining = remaining - 2;
   }
 
-  // Retry until erase verification succeeds or all 81 attempts fail.
+  // Retry until erase verification succeeds or every attempt fails.
   attempt = 0;
   for (;;) {
     status = EraseFlashSector(sector);
@@ -107,7 +110,7 @@ u16 ProgramFlashSectorWithEraseRetry(u16 sector, u8 *source) {
       }
     }
     attempt = attempt + 1;
-    if (attempt == 81) {
+    if (attempt == FLASH_ERASE_ATTEMPTS) {
       return status;
     }
   }

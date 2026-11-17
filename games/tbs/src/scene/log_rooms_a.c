@@ -82,6 +82,7 @@
 #include "field/event_inline.h"
 #include "field/field.h"
 #include "field/field_sequence.h"
+#include "field/map_grid.h"
 #include "field/scene.h"
 #include "field/scene_tables.h"
 #include "field/sprite.h"
@@ -101,16 +102,33 @@
 /// A connection's stopIndex when there is none.
 enum { LOG_STOP_NONE = 255 };
 
+/// The chase's stops (gLogRoomsA_Stops), LOG_STOP_COUNT of them, are placed
+/// in 8-pixel half cells counted from (LOG_STOPS_ORIGIN_X, LOG_STOPS_ORIGIN_Z);
+/// each covers two by two of them, around its middle.
+#define LOG_STOP_COUNT 37
+#define LOG_STOPS_ORIGIN_X 64
+#define LOG_STOPS_ORIGIN_Z 624
+/// The 16.16 middle of a stop.
+#define LOG_STOP_X(stop)                                                       \
+  (FIELD_HALF_CELL_ORIGIN((stop)->gridX) + toFIXED(LOG_STOPS_ORIGIN_X + 8))
+#define LOG_STOP_Z(stop)                                                       \
+  (FIELD_HALF_CELL_ORIGIN((stop)->gridZ) + toFIXED(LOG_STOPS_ORIGIN_Z + 8))
+
+/// Where Move leaves the crate aside, its map column, which opens the way up
+/// to the inn's loft.
+#define CRATE_MOVED_COLUMN 42
+
 struct LogRoomsAStopConnection {
   u8 stopIndex; ///< the stop it leads to, or LOG_STOP_NONE
   u8 facing;    ///< the heading toward it, a facing's high byte
   u8 padding[2];
 };
 
-/// A stop on the route network, two cells square, with its links to others.
+/// A stop on the route network, two half cells square, with its links to
+/// others.
 struct LogRoomsAStop {
-  u8 gridX; ///< 8-pixel cells from x 64
-  u8 gridZ; ///< 8-pixel cells from z 624
+  u8 gridX; ///< half cells from LOG_STOPS_ORIGIN_X
+  u8 gridZ; ///< half cells from LOG_STOPS_ORIGIN_Z
   u8 padding[2];
   struct LogRoomsAStopConnection connections[3];
 };
@@ -118,7 +136,7 @@ struct LogRoomsAStop {
 STATIC_ASSERT(sizeof(struct LogRoomsAStopConnection) == 4);
 STATIC_ASSERT(sizeof(struct LogRoomsAStop) == 16);
 
-extern struct LogRoomsAStop gLogRoomsA_Stops[];
+extern struct LogRoomsAStop gLogRoomsA_Stops[LOG_STOP_COUNT];
 extern s32 gLogRoomsA_ActionTable[];
 extern s32 gLogRoomsA_FirstThiefEntryScript[];
 extern s32 gLogRoomsA_SecondThiefEntryScript[];
@@ -403,7 +421,7 @@ static void LogRoomsA_JumpAcrossRoofGap(void) {
 /// Once Move pushes the crate aside, the way up to the inn's loft opens.
 static void LogRoomsA_CheckCrateMoved(void) {
   Event_Start();
-  if (FIELD_CELL(Actor_Get(ACTOR_CRATE)->x.fixed) == 42) {
+  if (FIELD_CELL(Actor_Get(ACTOR_CRATE)->x.fixed) == CRATE_MOVED_COLUMN) {
     MapGrid_CopyCellAttributes(101, 24, 3, 4, 41, 24);
     GameFlag_Set(FLAG_VAULT_CRATE_MOVED);
   }
@@ -2935,13 +2953,13 @@ static void LogRoomsA_PlayAnimationAndWait(s32 actorId, s32 animation,
 /// Finds the route node containing the actor's position on the
 /// eight-pixel grid.
 static struct LogRoomsAStop *LogRoomsA_FindStopAtPosition(s32 *position) {
-  s32 gridX = (position[0] - toFIXED(64)) >> 19;
-  s32 gridZ = (position[2] - toFIXED(624)) >> 19;
+  s32 gridX = FIELD_HALF_CELL(position[0] - toFIXED(LOG_STOPS_ORIGIN_X));
+  s32 gridZ = FIELD_HALF_CELL(position[2] - toFIXED(LOG_STOPS_ORIGIN_Z));
   struct LogRoomsAStop *stop = gLogRoomsA_Stops;
   struct LogRoomsAStop *result = NULL;
   u32 i;
 
-  for (i = 0; i <= 36; i++, stop++) {
+  for (i = 0; i < LOG_STOP_COUNT; i++, stop++) {
     s32 stopX = stop->gridX;
 
     if (stopX == gridX || stopX + 1 == gridX) {
@@ -3008,7 +3026,8 @@ static s32 LogRoomsA_IsWithinHalfCellOfStop(s32 x, s32 z, s32 id) {
 
   targetX = FIXEDtoINT(targetX - x);
   targetZ = FIXEDtoINT(targetZ - z);
-  if (targetX * targetX + targetZ * targetZ <= 64)
+  if (targetX * targetX + targetZ * targetZ <=
+      (MAPGRID_CELL_PIXELS / 2) * (MAPGRID_CELL_PIXELS / 2))
     return 1;
   return 0;
 }
@@ -3028,7 +3047,7 @@ static s32 LogRoomsA_IsWithinCellOfStop(s32 x, s32 z, s32 id) {
     az = actor->z.fixed;
   ax = FIXEDtoINT(ax - x);
   az = FIXEDtoINT(az - z);
-  if (ax * ax + az * az <= 16 * 16)
+  if (ax * ax + az * az <= MAPGRID_CELL_PIXELS * MAPGRID_CELL_PIXELS)
     return 1;
   return 0;
 }
@@ -3042,8 +3061,8 @@ static s32 LogRoomsA_CheckStopOccupancy(struct LogRoomsAStop *stop) {
   if (stop == NULL) {
     return 1;
   }
-  x = (stop->gridX << 19) + toFIXED(72);
-  z = (stop->gridZ << 19) + toFIXED(632);
+  x = LOG_STOP_X(stop);
+  z = LOG_STOP_Z(stop);
   if (LogRoomsA_IsWithinCellOfStop(x, z, ACTOR_PARTY_LEADER) != 0 ||
       LogRoomsA_IsWithinHalfCellOfStop(x, z, ACTOR_IVAN) != 0 ||
       LogRoomsA_IsWithinHalfCellOfStop(x, z, ACTOR_SUSPECTED_LEADER) != 0 ||
@@ -3056,8 +3075,7 @@ static s32 LogRoomsA_CheckStopOccupancy(struct LogRoomsAStop *stop) {
 /// Sets the actor's destination to the route stop's cell center.
 static void LogRoomsA_MoveActorToStop(struct Actor *actor,
                                       struct LogRoomsAStop *stop) {
-  FieldActor_SetMoveTargetFX(actor, (stop->gridX << 19) + toFIXED(72), 0,
-                             (stop->gridZ << 19) + toFIXED(632));
+  FieldActor_SetMoveTargetFX(actor, LOG_STOP_X(stop), 0, LOG_STOP_Z(stop));
 }
 
 /// Steers Ivan and both suspects through the graph and detects a sustained
@@ -3122,9 +3140,9 @@ static void LogRoomsA_UpdateActorStops(void) {
     u32 turn = Random_Below(2);
     s32 currentFacing;
 
-    turn *= TRIG_TURN * 6 / 16 << 16;
+    turn *= INTtoFIXED(FACING_STEP * 6);
     currentFacing = actor->facing;
-    facing = ((turn - (TRIG_TURN * 3 / 16 << 16)) >> 16) + currentFacing;
+    facing = FIXEDtoINT(turn - INTtoFIXED(FACING_STEP * 3)) + currentFacing;
     destination = LogRoomsA_SnapToNearestStop(entry, &facing);
     if (LogRoomsA_CheckStopOccupancy(destination) != 0) {
       facing = actor->facing + DEGtoANG(180);
@@ -3147,9 +3165,9 @@ static void LogRoomsA_UpdateActorStops(void) {
     u32 turn = Random_Below(3);
     s32 currentFacing;
 
-    turn *= TRIG_TURN * 3 / 16 << 16;
+    turn *= INTtoFIXED(FACING_STEP * 3);
     currentFacing = actor->facing;
-    facing = ((turn - (TRIG_TURN * 3 / 16 << 16)) >> 16) + currentFacing;
+    facing = FIXEDtoINT(turn - INTtoFIXED(FACING_STEP * 3)) + currentFacing;
     destination = LogRoomsA_SnapToNearestStop(entry, &facing);
     if (LogRoomsA_CheckStopOccupancy(destination) != 0) {
       facing = actor->facing + DEGtoANG(180);
@@ -3214,7 +3232,7 @@ static void LogRoomsA_StartActorStops(void) {
 // byte.
 #define NO_CONNECTION {LOG_STOP_NONE, 255, {0, 0}}
 #define CONNECTION(stop, direction) {stop, (direction) >> 8, {0, 0}}
-struct LogRoomsAStop gLogRoomsA_Stops[] = {
+struct LogRoomsAStop gLogRoomsA_Stops[LOG_STOP_COUNT] = {
     {4, 0, {0},
      {CONNECTION(1, FACING_EAST), CONNECTION(30, FACING_WEST), NO_CONNECTION}},
     {6, 0, {0},

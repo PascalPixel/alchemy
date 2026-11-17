@@ -1,4 +1,5 @@
-/// Raises the cell under the held actor.
+/// Raises the cell under the pillar a push or Move has just set down
+/// (FieldWork.movedBlock), as Pillar_Raise does.
 void HeldActor_RaiseCell() {
   struct Actor *held = gFieldWork->movedBlock;
   u8 *cells;
@@ -16,14 +17,14 @@ void HeldActor_RaiseCell() {
   shape = MapGrid_GetTerrainKind(held->layer, held->x.fixed, held->z.fixed);
   level = Map_GetTerrainHeight(held->layer, held->x.fixed, held->z.fixed);
   index = Actor_GetCellIndex(held);
-  level >>= 19;
+  level = CELL_HEIGHT_STEPS(level);
   level += 4;
   newShape = MapCollision_FindOrAddTag(held->layer, shape, level);
   shapes += index;
   index <<= 2;
   shapes->shape = newShape;
   cells += index;
-  ((struct MapCell *)cells)->attributeB |= 192;
+  ((struct MapCell *)cells)->attributeB |= MAP_CELL_JUMP | MAP_CELL_CLIMBABLE;
   cells += MAPGRID_SIZE * sizeof(struct MapCell);
-  ((struct MapCell *)cells)->attributeB |= 64;
+  ((struct MapCell *)cells)->attributeB |= MAP_CELL_CLIMBABLE;
 }

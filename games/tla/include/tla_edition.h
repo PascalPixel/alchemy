@@ -6,8 +6,7 @@
 
 #include "edition.h"
 
-/// The window renderer's windows: 12 in every edition, where The Broken Seal's
-/// international editions have 8.
+/// The window renderer's windows, 12 in every edition.
 #define WINDOW_COUNT 12
 
 // The window text ring: 256 codes in Japanese, 512 in the others.

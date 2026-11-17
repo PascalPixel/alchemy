@@ -149,7 +149,8 @@ void BattleStatusIcon_Cycle(struct BattleObject *slot) {
 }
 
 /// Sets a unit's pose to match its state, held, down or standing, and sets its
-/// sway a little out of step with its neighbours'.
+/// sway a little out of step with its neighbours': from two steps below normal
+/// speed to one above, by its id.
 void BattleObject_UpdatePose(s32 id) {
   struct Unit *state;
   s32 value;
@@ -167,7 +168,7 @@ void BattleObject_UpdatePose(s32 id) {
 
   Actor_SelectAnimationFar((struct Actor *)BattleObject_Get(id)->object, value);
   Actor_SetAnimationSpeedFar((struct Actor *)BattleObject_Get(id)->object,
-                             (id & 3) + 14);
+                             ANIMATION_STEP_NORMAL - 2 + (id & 3));
 }
 
 /// Releases all graphics the object owns and marks it as having none.
@@ -265,7 +266,8 @@ void BattleObject_SpawnObjectsForList(s16 *unitIds, s32 refreshPoses,
       spriteId = battleObject->resource;
       object->recordStorageKind = ACTOR_SPRITE_GROUP;
       object->records = records;
-      Iwram_ClearWordsEntry(records, 16);
+      Iwram_ClearWordsEntry(records,
+                            ACTOR_SPRITE_GROUP_SIZE * sizeof(struct Sprite *));
       record = (struct Sprite *)Sprite_CreateFar(spriteId);
       if (record != 0) {
         record->scale = Iwram_MulFX(record->scale, battleObject->scale);
@@ -345,7 +347,8 @@ void ResetMotionRecordGroup(void *recordGroup) {
   s32 entryIndex;
 
   if (record != NULL) {
-    for (entryIndex = 0; entryIndex < 4; entryIndex++) {
+    for (entryIndex = 0; entryIndex < (s32)ARRAY_COUNT(record->entries);
+         entryIndex++) {
       if (record->entries[entryIndex] != NULL)
         record->entries[entryIndex]->script = NULL;
     }
@@ -368,8 +371,8 @@ static inline struct BattleObject *BattleObject_GetInline(s32 unitId) {
 }
 
 /// Task, each frame of a battle: advances every unit's status icon, sets its
-/// shadow's priority by whether it is airborne and draws the nearer side in
-/// front.
+/// shadow's priority by whether it is airborne, draws the nearer side in front
+/// and draws a unit under Haze (DEFEND_VANISHED) as an outline.
 void BattleObject_UpdateSpritePriorities(void) {
   struct BattleWork *work = Ram_HeapSlots->battleWork;
   u16 unitIds[UNIT_MAX];
@@ -438,14 +441,15 @@ void BattleObject_UpdateSpritePriorities(void) {
       case ACTOR_SPRITE_ONE:
         record = object->records;
         record->image.priority = partyPriority;
-        if (Unit_Get(unitIds[unitIndex])->defendLevel == 4)
-          record->flags |= 2;
+        if (Unit_Get(unitIds[unitIndex])->defendLevel == DEFEND_VANISHED)
+          record->flags |= SPRITE_FLAG_OUTLINED;
         else
-          record->flags &= ~2;
+          record->flags &= ~SPRITE_FLAG_OUTLINED;
         break;
       case ACTOR_SPRITE_GROUP:
         records = object->records;
-        for (recordIndex = 0; recordIndex < 4; recordIndex++) {
+        for (recordIndex = 0; recordIndex < ACTOR_SPRITE_GROUP_SIZE;
+             recordIndex++) {
           struct Sprite *part = *records++;
 
           if (part != 0) {
@@ -466,14 +470,15 @@ void BattleObject_UpdateSpritePriorities(void) {
       case ACTOR_SPRITE_ONE:
         record = object->records;
         record->image.priority = enemyPriority;
-        if (Unit_Get(unitIds[unitIndex])->defendLevel == 4)
-          record->flags |= 2;
+        if (Unit_Get(unitIds[unitIndex])->defendLevel == DEFEND_VANISHED)
+          record->flags |= SPRITE_FLAG_OUTLINED;
         else
-          record->flags &= ~2;
+          record->flags &= ~SPRITE_FLAG_OUTLINED;
         break;
       case ACTOR_SPRITE_GROUP:
         records = object->records;
-        for (recordIndex = 0; recordIndex < 4; recordIndex++) {
+        for (recordIndex = 0; recordIndex < ACTOR_SPRITE_GROUP_SIZE;
+             recordIndex++) {
           struct Sprite *part = *records++;
 
           if (part != 0) {
@@ -559,7 +564,7 @@ void BattleMotion_DestroyAllSlotObjects(void) {
       slot->active = 0;
     }
     i += 1;
-  } while (i <= 13);
+  } while (i < UNIT_MAX);
 }
 
 /// Writes a battle object's anchor to out, at height 0.

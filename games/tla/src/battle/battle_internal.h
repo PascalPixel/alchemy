@@ -240,6 +240,10 @@ struct BattleLinkedActionState {
 /// Inventory_GetEquippedItemFar's slot for the weapon.
 #define EQUIP_WEAPON 1
 
+/// A group's sprite word (ACTOR_SPRITE_GROUP) points to a table of four
+/// sprites.
+#define ACTOR_SPRITE_GROUP_SIZE 4
+
 // What BattleActionRun_Build returns besides 0, which stages the action.
 #define ACTION_REPORTED -1 ///< the action failed and its message is shown
 #define ACTION_NOTHING_TO_SHOW -2 ///< nothing to stage or show

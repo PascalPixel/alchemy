@@ -39,8 +39,8 @@
 #define ECLIPSE_DRAGON_COLORS 240
 #define ECLIPSE_BODY_PICTURES 31
 #define ECLIPSE_DRAGON_SPRITES 32
-/// The head's other pictures, its jaws open, which as many of the dragon's
-/// sprites take (gEclipse_TileObjects).
+/// GoldenDragonHeadTiles' other pictures, which as many of the dragon's sprites
+/// take (gEclipse_TileObjects) as it opens its jaws and moves its wings.
 #define ECLIPSE_OPEN_JAW_PICTURES 7
 /// The sprite that shows a wing tip until the jaws open, then the tip of the
 /// snout at (32, 64) about the dragon.
@@ -1256,8 +1256,9 @@ void BattleEffect_ProcessPendingGraphicsTransfer(void) {
 }
 
 /// The 64x64 stamp Haures draws in 256 colours: the VRAM address of its
-/// sprite's tiles and the picture drawn for them, both in the effect's work
-/// block past what struct BattleEffectWork names (BATTLE_EFFECT_WORK_SIZE).
+/// sprite's tiles, past what struct BattleEffectWork names in the effect's
+/// work block (BATTLE_EFFECT_WORK_SIZE), and the picture drawn for them, the
+/// 4 KB before transferMode.
 #define STAMP_TILES(work) (*(u32 *)((u8 *)(work) + 31604))
 #define STAMP_CANVAS(work) ((u8 *)(work) + 26496)
 

@@ -755,9 +755,9 @@ void Menu_RunSelectionHook(void);
 
 void Menu_AllocateSelectionWorkspace(void);
 void Menu_ReleaseSelectionWorkspace(void);
-void SettingsMenu_ReservedNoOpC9BC(void);
-void SettingsMenu_ReservedNoOpC9C0(void);
-void SettingsMenu_ReservedNoOpC9C4(void);
+void SettingsMenu_ReservedNoOpA(void);
+void SettingsMenu_ReservedNoOpB(void);
+void SettingsMenu_ReservedNoOpC(void);
 void SettingsMenu_ResetEntries(struct OptionMenuWork *work);
 void WindowColor_CalculateTint(struct OptionMenuWork *work);
 void WindowColor_WritePalette(struct OptionMenuWork *work);

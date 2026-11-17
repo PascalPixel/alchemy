@@ -99,8 +99,8 @@ enum DailaRoomsActorIdAfterRescue {
   ACTOR_ARMOR_COUNTER_AFTER_RESCUE
 };
 
-/// The way into the house on the islet with the cow (IsletsCow), which this
-/// overlay also holds: the family by entrance 7.
+/// The way into the house on the islet with the cow (NorthOseniaIslet), which
+/// this overlay also holds: the family by entrance 7.
 enum { ENTRANCE_COW_ISLET_HOUSE = 7 };
 
 /// The shops of Daila, as Shop_Run numbers them.
@@ -839,7 +839,7 @@ s32 gDailaRooms_Exits[] = {
     SCENE_EXIT_UNLESS(4, DailaFlooded, 4, EXIT_FLAG_NONE),
     SCENE_EXIT_UNLESS(5, DailaFlooded, 5, EXIT_FLAG_NONE),
     SCENE_EXIT_UNLESS(6, DailaFlooded, 6, EXIT_FLAG_NONE),
-    SCENE_EXIT_UNLESS(7, IsletsCow, 3, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(7, NorthOseniaIslet, 3, EXIT_FLAG_NONE),
     SCENE_EXITS(DailaRoomsSanctum),
     SCENE_EXIT_UNLESS(1, DailaFlooded, 7, EXIT_FLAG_NONE),
     SCENE_EXITS_END,
@@ -854,7 +854,7 @@ s32 gDailaRooms_ExitsOnceTaviIsRescued[] = {
     SCENE_EXIT_UNLESS(4, Daila, 4, EXIT_FLAG_NONE),
     SCENE_EXIT_UNLESS(5, Daila, 5, EXIT_FLAG_NONE),
     SCENE_EXIT_UNLESS(6, Daila, 6, EXIT_FLAG_NONE),
-    SCENE_EXIT_UNLESS(7, IsletsCow, 3, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(7, NorthOseniaIslet, 3, EXIT_FLAG_NONE),
     SCENE_EXITS(DailaRoomsSanctum),
     SCENE_EXIT_UNLESS(1, Daila, 7, EXIT_FLAG_NONE),
     SCENE_EXITS_END,

@@ -1,5 +1,5 @@
 /// Sets or clears bit 0x10 of count actors' priority flags from first.
-void Actors_SetHidden(s32 show, s32 first, u32 count) {
+void Actors_SetDrawn(s32 show, s32 first, u32 count) {
   u32 i;
 
   for (i = 0; i < count; i++) {

@@ -1,10 +1,14 @@
-#ifndef GUARD_TLA_EDITION_H
-#define GUARD_TLA_EDITION_H
+#ifndef ALCHEMY_TLA_EDITION_H
+#define ALCHEMY_TLA_EDITION_H
+
+/// @file
+/// Values that differ by language, chosen once for their code, as The Broken
+/// Seal's tbs_edition.h.
 
 #include "edition.h"
 
-#define RENDER_CHANNEL_OFFSET 1720
-#define RENDER_DIRECT_OFFSET 1288
+/// The window renderer's windows: 12 in every edition, where The Broken Seal's
+/// international editions have 8.
 #define WINDOW_COUNT 12
 
 // The window text ring: 256 codes in Japanese, 512 in the others, as The Broken
@@ -15,20 +19,17 @@
 #define TEXT_BUFFER_MASK 0x1FF
 #endif
 
+// Two icon menus' widths, wider outside Japanese: the field menu's (Psynergy,
+// Djinn, Item, Status) and the title's (New Game, Continue, Copy, Erase).
 #if (LANGUAGE != LANGUAGE_JAPANESE)
 #define SELECT_MENU_WIDTH 7
-#else
-#define SELECT_MENU_WIDTH 5
-#endif
-
-// The save-slot action menu's width.
-#if (LANGUAGE != LANGUAGE_JAPANESE)
 #define SAVE_SLOT_MENU_WIDTH 7
 #else
+#define SELECT_MENU_WIDTH 5
 #define SAVE_SLOT_MENU_WIDTH 4
 #endif
 
-// Where the destination row's cursor text sits; further right in Japanese.
+// Where the debug destination list's cursor sits; further right in Japanese.
 #if (LANGUAGE != LANGUAGE_JAPANESE)
 #define MENU_TEXT_X 74
 #else
@@ -36,6 +37,8 @@
 #endif
 #define MENU_TEXT_Y 60
 
+// A link battle's opponent names take up to 8 letters of prefix, then a space,
+// in the European editions, instead of 5.
 #if (LANGUAGE == LANGUAGE_GERMAN) || (LANGUAGE == LANGUAGE_SPANISH) ||         \
     (LANGUAGE == LANGUAGE_FRENCH) || (LANGUAGE == LANGUAGE_ITALIAN)
 #define NAME_PREFIX_LAST_INDEX 7
@@ -43,6 +46,8 @@
 #define NAME_PREFIX_LAST_INDEX 4
 #endif
 
+// The first of the letters that tell enemies of one kind apart in battle: the
+// alphabet from 'A' in Japanese, the digits from '1' in the others.
 #if (LANGUAGE == LANGUAGE_JAPANESE)
 #define SUMMON_CHANNEL_MARKER 'A'
 #else

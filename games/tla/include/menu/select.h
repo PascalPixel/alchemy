@@ -28,8 +28,8 @@ struct SelectionSprite {
 struct SelectionNode {
   struct SelectionNode *previous; ///< the icon before it in its row
   struct SelectionNode *next;     ///< the icon after it in its row
-  u16 base; ///< the entry's id, as listed in SelectionScreen.bases
-  u16 kind; ///< the entry's kind, as listed in SelectionScreen.kinds
+  u16 base; ///< the entry's id, as listed in SelectionMenuWork.bases
+  u16 kind; ///< the entry's kind, as listed in SelectionMenuWork.kinds
   u16 slot;
   u16 tile;
   s16 x;       ///< screen pixels
@@ -60,7 +60,7 @@ enum IconKind {
   ICON_KIND_PATTERN = 8 ///< one of the other icons
 };
 
-/// The entries of SelectionScreen.records.
+/// The entries of SelectionMenuWork.records.
 enum SelectionRecord {
   SELECTION_RECORD_ROW = 2,    ///< the first of the row's seven icons
   SELECTION_RECORD_CHOSEN = 9, ///< the first of the five icons chosen
@@ -72,7 +72,7 @@ enum SelectionRecord {
 /// The selection screen (HEAP_SLOT_SELECTION_MENU): the row of icons the player
 /// picks from, with arrows at each end and a pointing hand over the chosen
 /// target.
-struct SelectionScreen {
+struct SelectionMenuWork {
   /// 0 and 1 the arrows at the row's ends, 2 to 8 the row's icons, 9 to 13 the
   /// icons chosen so far, 14 the pointing hand and 15 the large icon.
   struct SelectionNode records[SELECTION_RECORD_COUNT];
@@ -93,17 +93,20 @@ struct SelectionScreen {
   /// The entry under the hand, from top; SELECTION_CURSOR_RESET asks the next
   /// list to start again from its first entry.
   u16 cursorIndex;
-  u16 verticalScroll; ///< pixels added to the icons' y
-  u16 status;         ///< 1 shown, 33 while scrolling
-  u16 pathTop[5];     ///< top, kept for each icon chosen on the path
-  u16 pathCursor[5];  ///< cursorIndex, kept for each icon chosen on the path
-  /// 1 from Menu_RunSelectionForValue, 999 once the window opens. While 0,
-  /// a mode 6 window opens at the top of the screen.
+  u16 verticalScroll; ///< pixels added to the icons' y; 32 at setup
+  /// NODE_STATUS_SCROLLING while the cursor steps, NODE_STATUS_SHOWN after
+  /// (window_selection.c); each frame drawn adds 1.
+  u16 status;
+  u16 pathTop[5];    ///< top, kept for each icon chosen on the path
+  u16 pathCursor[5]; ///< cursorIndex, kept for each icon chosen on the path
+  /// 999 from setup and once a yes or no window opens, 1 from
+  /// Menu_RunSelectionForValue. Nothing sets 0, which would open a yes or no
+  /// row and its window at the top of the screen.
   u16 locked;
   u8 unused[42]; ///< no code names it
 };
 
-/// SelectionScreen.status: the cursor stepping, or the row shown.
+/// SelectionMenuWork.status: the cursor stepping, or the row shown.
 #define NODE_STATUS_SCROLLING 33
 #define NODE_STATUS_SHOWN 1
 
@@ -111,11 +114,11 @@ STATIC_ASSERT(sizeof(struct SelectionSprite) == 12);
 STATIC_ASSERT(sizeof(struct SelectionNode) == 52);
 STATIC_ASSERT(offsetof(struct SelectionNode, message) == 32);
 STATIC_ASSERT(offsetof(struct SelectionNode, sprite) == 40);
-STATIC_ASSERT(offsetof(struct SelectionScreen, head) == 840);
-STATIC_ASSERT(offsetof(struct SelectionScreen, kinds) == 852);
-STATIC_ASSERT(offsetof(struct SelectionScreen, cursorIndex) == 926);
-STATIC_ASSERT(offsetof(struct SelectionScreen, locked) == 952);
-STATIC_ASSERT(sizeof(struct SelectionScreen) == 996);
+STATIC_ASSERT(offsetof(struct SelectionMenuWork, head) == 840);
+STATIC_ASSERT(offsetof(struct SelectionMenuWork, kinds) == 852);
+STATIC_ASSERT(offsetof(struct SelectionMenuWork, cursorIndex) == 926);
+STATIC_ASSERT(offsetof(struct SelectionMenuWork, locked) == 952);
+STATIC_ASSERT(sizeof(struct SelectionMenuWork) == 996);
 
 /// The bit of SelectionMenuWork.cursorIndex set as an entry is chosen, on
 /// which SelectionMenu_Clear puts the next list's top and cursor back to its

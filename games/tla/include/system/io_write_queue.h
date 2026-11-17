@@ -1,16 +1,23 @@
 #ifndef ALCHEMY_IO_WRITE_QUEUE_H
 #define ALCHEMY_IO_WRITE_QUEUE_H
 
+/// @file
+/// The I/O write queue: register writes held until VBlank.
+
 #include "edition.h"
 #include "irq_lock.h"
 #include "types.h"
 
+/// The writes the queue holds.
+#define IO_WRITE_QUEUE_SIZE 32
+
 /// The register writes VBlank carries out once the frame loop has finished a
-/// frame; IoWriteQueue_FlushPending empties it.
+/// frame, each its value, address and control word; IoWriteQueue_FlushPending
+/// empties it.
 struct IoWriteQueue {
   u16 count;
   u16 pad;
-  u32 entries[32][3];
+  u32 entries[IO_WRITE_QUEUE_SIZE][3];
 };
 
 /// The queue IO_WRITE_QUEUE_PUSH and the IoWriteQueue_Store writers fill, and
@@ -43,8 +50,8 @@ void IoWriteQueue_ClearBits16(u32 address, u32 value);
 void IoWriteQueue_ClearBits32(u32 address, u32 value);
 void IoWriteQueue_FlushPending(void);
 
-/// Disables interrupts to enqueue one I/O write; a full 32-entry queue is
-/// ignored. address: destination, value: value to write, control: delay frames
+/// Disables interrupts to enqueue one I/O write; a write to a full queue is
+/// dropped. address: destination, value: value to write, control: delay frames
 /// << 16 or a DMA control word.
 #define IO_WRITE_QUEUE_PUSH(address, value, control)                           \
   {                                                                            \
@@ -54,7 +61,7 @@ void IoWriteQueue_FlushPending(void);
                                                                                \
     IRQ_LOCK(saved);                                                           \
     count = *&q->count;                                                        \
-    if (count <= 31) {                                                         \
+    if (count < IO_WRITE_QUEUE_SIZE) {                                         \
       u32 *entry = q->entries[count];                                          \
                                                                                \
       *&q->count = count + 1;                                                  \
@@ -78,7 +85,7 @@ void IoWriteQueue_FlushPending(void);
     IME_SAVE(ime, saved);                                                      \
     IME_DISABLE(ime);                                                          \
     count = *&q->count;                                                        \
-    if (count <= 31) {                                                         \
+    if (count < IO_WRITE_QUEUE_SIZE) {                                         \
       u32 *entry = q->entries[count];                                          \
                                                                                \
       *&q->count = count + 1;                                                  \

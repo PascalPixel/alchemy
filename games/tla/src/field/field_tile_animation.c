@@ -1,7 +1,8 @@
 /// @file
 /// Timed map changes (the map animations, the blend script and the palette
 /// queue), then the ground heights and the collision of cells and the world
-/// map, as The Broken Seal's tile_animation.c and terrain.c have them.
+/// map, as The Broken Seal's field_tile_animation.c and field_terrain.c have
+/// them.
 // Part of field.c.
 
 #include "field_internal.h"
@@ -25,11 +26,14 @@
 #define TILESET_ANIM_OPCODE_MASK 0xff00 ///< the high byte: the command
 #define TILESET_ANIM_JUMP 0xfe00 ///< low byte: the halfword pair to jump to
 #define TILESET_ANIM_STOP 0xff   ///< TILESET_ANIM_JUMP's low byte to stop
+#define TILESET_ANIM_ARGUMENT_MASK                                             \
+  0xff ///< the low byte: the command's argument
 /// A layout with wide tiles animates 64-byte (256-colour) tiles in char block
 /// 2; others animate 16-colour ones in char block 1.
 #define TILESET_ANIM_WIDE_TILE_BYTES (TILE_SIZE_4BPP * 2)
 #define TILESET_ANIM_MARKER 0xfd00 ///< low four bits: the animation it starts
 #define TILESET_ANIM_MARKER_PAUSED 0x80 ///< a marker's bit: start it paused
+#define TILESET_ANIM_MARKER_CHANNEL_MASK 0xf ///< a marker's animation
 // The first source tile read from gMapGridAnimTiles rather than VRAM, for
 // 32-byte and for 64-byte (wide) tiles: both bases put it at its start.
 #define TILESET_ANIM_RAM_TILE 1536
@@ -41,8 +45,30 @@
 #define BLEND_SCRIPT_OPCODE_MASK 0xff00
 #define BLEND_SCRIPT_JUMP 0xfe00
 #define BLEND_SCRIPT_STOP 0xff
+#define BLEND_SCRIPT_ARGUMENT_MASK 0xff
 #define BLEND_SCRIPT_BLDCNT_MASK 0xf000
 #define BLEND_SCRIPT_BLDCNT (BLDCNT_TGT2_OBJ | BLDCNT_TGT2_BD)
+
+/// BLDCNT's effect, bits 7 and 6 (BLDCNT_EFFECT_NONE to BLDCNT_EFFECT_DARKEN).
+#define BLDCNT_EFFECT_MASK 0x00c0
+
+/// A world map collision tile: 4 by 4 values of 4 bits, each for 4 by 4 pixels,
+/// in 8 bytes. The collision buffer holds the 256 tiles of the lower layer's,
+/// then the upper layer's.
+#define WORLD_MAP_COLLISION_TILE_BYTES 8
+#define WORLD_MAP_COLLISION_TILES 256
+/// The world map's two tile maps, of 64 by 64 one-byte tiles: BG3's, the lower
+/// layer, and BG2's, the upper (WorldMap_ShowBg1FromBuffer).
+#define WORLD_MAP_LOWER_TILE_MAP BG_SCREEN_BLOCK(8)
+#define WORLD_MAP_UPPER_TILE_MAP BG_SCREEN_BLOCK(10)
+
+/// A map cell shape's terrain kind, the low four bits of its first byte, as The
+/// Broken Seal names it.
+#define MAPGRID_SHAPE_KIND_MASK 0xf
+/// MapGrid_GetCellAttributeLowNibbleOrBump's kind for a rounded square whose
+/// two samples differ: a bump or a hollow, where TERRAIN_ROUNDED_SQUARE is
+/// flat.
+#define TERRAIN_BUMP 99
 
 /// Loads the first of the 2x2 world map tiles around the player that is not
 /// shown yet (at most one a frame), without drawing it. When the region under
@@ -53,8 +79,8 @@ void WorldMap_PreloadCurrentTileBlock(void) {
       (struct WorldMapView *)Ram_HeapSlots->mapGrid;
   s32 x = 0;
   s32 y = 0;
-  s32 x0;
-  s32 y0;
+  s32 firstQuarterX;
+  s32 firstQuarterY;
   s32 layer;
   s32 row;
   s32 col;
@@ -71,16 +97,17 @@ void WorldMap_PreloadCurrentTileBlock(void) {
     x = *p++;
     y = p[1];
   }
-  x0 = (x - toFIXED(256)) >> 25;
-  y0 = (y - toFIXED(320)) >> 25;
+  firstQuarterX = WORLD_MAP_TILE(x - toFIXED(256));
+  firstQuarterY = WORLD_MAP_TILE(y - toFIXED(320));
   for (layer = 0; layer <= 1; layer++) {
     for (row = 0; row <= 1; row++) {
       for (col = 0; col <= 1; col++) {
-        tile = (((y0 + row) & 31) << 5) + ((x0 + col) & 31);
+        tile = (((firstQuarterY + row) & (WORLD_MAP_TILES_ACROSS - 1)) << 5) +
+               ((firstQuarterX + col) & (WORLD_MAP_TILES_ACROSS - 1));
         tile = perspective->tileIds[tile];
-        tile += layer << 10;
-        if (WorldMap_WriteLayerCellTile(layer, x0 + col, y0 + row, tile, 0) !=
-            0)
+        tile += layer * WORLD_MAP_LAYER_TILES;
+        if (WorldMap_WriteLayerCellTile(layer, firstQuarterX + col,
+                                        firstQuarterY + row, tile, 0) != 0)
           return;
       }
     }
@@ -89,7 +116,7 @@ void WorldMap_PreloadCurrentTileBlock(void) {
           (((x / toFIXED(32)) & 31) + (((y / toFIXED(32)) & 31) << 5));
   WorldMap_UpdateRegionTint(block->region, 1);
   value = block->region;
-  switch (value / 10) {
+  switch (value / WORLD_MAP_REGION_GROUP) {
   case 3:
     graphicsSet = 3;
     break;
@@ -185,8 +212,11 @@ void WorldMap_PresentStillPicture(void) {
              &REG_BG2CNT);
   Io_Write16(BGCNT_PRIORITY(2) | BGCNT_256_COLORS | BGCNT_SCREEN_BASE(6),
              &REG_BG1CNT);
-  Dma_Set(Ram_MapCellBuffer, (void *)BG_SCREEN_BLOCK(12),
-          DMA_COPY_WORDS(40960 / 4), REG_DMA3);
+  Dma_Set(Ram_MapCellBuffer,
+          BG_CHAR_BLOCK(0) + STILL_PICTURE_FIRST_TILE * TILE_SIZE_8BPP,
+          DMA_COPY_WORDS(STILL_PICTURE_TILES_ACROSS * STILL_PICTURE_TILE_ROWS *
+                         TILE_SIZE_8BPP / 4),
+          REG_DMA3);
 }
 
 /// Freezes the world map's perspective view as a still picture on BG1: decodes
@@ -194,33 +224,29 @@ void WorldMap_PresentStillPicture(void) {
 /// tiles, draws the current affine frame into pixels and hands the window and
 /// VBlank to it.
 void WorldMap_StartStillPicture(void) {
-  u8 *pages = Ram_HeapSlots->worldMapAffine;
+  struct WorldMapAffineWork *affineWork = Ram_HeapSlots->worldMapAffine;
   struct WorldMapView *perspective =
       (struct WorldMapView *)Ram_HeapSlots->mapGrid;
   u32 *resources;
-  s32 one;
-  s8 *active;
 
-  active = &perspective->animationActive;
-  one = 1;
-  *active = one;
+  perspective->animationActive = 1;
   Task_SuspendAll(TilesetAnim_Update);
-  perspective->viewHeld = one;
+  perspective->viewHeld = 1;
   resources = perspective->resources;
   Decompress_TaggedLz(Resource_GetTableEntry(resources[3]), gBgTileBuffer);
   if (perspective->tileBufferUsed != 0)
     Decompress_TaggedLz(Resource_GetTableEntry(resources[4]),
                         WORLD_MAP_TILE_SET(1));
   perspective->tileBufferUsed = 0;
-  Dma_Set((void *)BG_CHAR_BLOCK(1), gDecodeBuffer, DMA_COPY_WORDS(8192 / 4),
-          REG_DMA3);
+  Dma_Set((void *)BG_CHAR_BLOCK(1), gDecodeBuffer,
+          DMA_COPY_WORDS(WORLD_MAP_TILE_SET_BYTES / 4), REG_DMA3);
   wait(1);
-  TileMap_DrawRowsFromRam(pages + (gFrameCount & one) * 5120 + 3200,
+  TileMap_DrawRowsFromRam(affineWork->pages[gFrameCount & 1],
                           Ram_MapCellBuffer);
-  perspective->windowTop = 200;
-  perspective->windowBottom = 255;
+  perspective->windowTop = STILL_PICTURE_WINDOW_TOP;
+  perspective->windowBottom = STILL_PICTURE_WINDOW_BOTTOM;
   gVBlankCallback = WorldMap_PresentStillPicture;
-  perspective->stillPictureShown = one;
+  perspective->stillPictureShown = 1;
 }
 
 /// VBlank: shows BG1 and copies the area's tiles back into VRAM.
@@ -232,8 +258,8 @@ void WorldMap_ShowBg1FromBuffer(void) {
                  BGCNT_WRAP | BGCNT_SIZE(2),
              &REG_BG2CNT);
   Io_Write16(BGCNT_PRIORITY(1) | BGCNT_SCREEN_BASE(5), &REG_BG1CNT);
-  Dma_Set(gBgTileBuffer, (void *)BG_CHAR_BLOCK(2), DMA_COPY_WORDS(32768 / 4),
-          REG_DMA3);
+  Dma_Set(gBgTileBuffer, (void *)BG_CHAR_BLOCK(2),
+          DMA_COPY_WORDS(4 * WORLD_MAP_TILE_SET_BYTES / 4), REG_DMA3);
 }
 
 /// Reloads the world map area's palette and tiles after the still picture, puts
@@ -262,7 +288,7 @@ s32 WorldMap_LoadAreaGraphics(void) {
   Decompress_TaggedLz(Resource_GetTableEntry(resources[8]), &gWorldMapWork);
   gVBlankCallback = WorldMap_ShowBg1FromBuffer;
   perspective->windowTop = 0;
-  perspective->windowBottom = 159;
+  perspective->windowBottom = DISPLAY_HEIGHT - 1;
   wait(1);
   Decompress_TaggedLz(Resource_GetTableEntry(RESOURCE_DEFAULT_MAP_CELLS),
                       buffer);
@@ -297,7 +323,8 @@ void TilesetAnim_Update(void) {
   struct MapWork *gridState = Ram_HeapSlots->mapGrid;
   u32 channelIndex;
 
-  for (channelIndex = 0; channelIndex <= 15; channelIndex++) {
+  for (channelIndex = 0; channelIndex < ARRAY_COUNT(gridState->anim);
+       channelIndex++) {
     const u16 *commands;
     u32 sourceTileOrOpcode;
     u32 tileCount;
@@ -324,11 +351,12 @@ void TilesetAnim_Update(void) {
       // the halfword pair its low byte names.
       if ((sourceTileOrOpcode & TILESET_ANIM_OPCODE_MASK) ==
           TILESET_ANIM_JUMP) {
-        if ((sourceTileOrOpcode & 0xff) == TILESET_ANIM_STOP)
+        if ((sourceTileOrOpcode & TILESET_ANIM_ARGUMENT_MASK) ==
+            TILESET_ANIM_STOP)
           continue;
         (gridState->anim + channelIndex)->cursor =
             (gridState->anim + channelIndex)->start +
-            (sourceTileOrOpcode & 0xff) * 2;
+            (sourceTileOrOpcode & TILESET_ANIM_ARGUMENT_MASK) * 2;
         goto next;
       }
       tileCount = *commands++;
@@ -369,7 +397,7 @@ void TilesetAnim_Update(void) {
   }
 }
 
-/// Resumes tileset animation no by clearing its paused byte.
+/// Resumes tileset animation channelIndex.
 void TilesetAnim_Resume(u32 channelIndex) {
   struct MapWork *gridState = Ram_HeapSlots->mapGrid;
   struct MapAnimation *channel = &gridState->anim[channelIndex];
@@ -377,7 +405,7 @@ void TilesetAnim_Resume(u32 channelIndex) {
   channel->paused = 0;
 }
 
-/// Pauses tileset animation no by setting its paused byte.
+/// Pauses tileset animation channelIndex.
 void TilesetAnim_Pause(u32 channelIndex) {
   struct MapWork *gridState = Ram_HeapSlots->mapGrid;
   struct MapAnimation *channel = &gridState->anim[channelIndex];
@@ -404,7 +432,7 @@ void TilesetAnim_StartAll(const u16 *script) {
   while (marker != TILESET_ANIM_LOOP) {
     if ((marker & TILESET_ANIM_OPCODE_MASK) == TILESET_ANIM_MARKER) {
       struct MapAnimation *channel;
-      u32 channelIndex = marker & 15;
+      u32 channelIndex = marker & TILESET_ANIM_MARKER_CHANNEL_MASK;
       u32 paused = 0;
 
       if (marker & TILESET_ANIM_MARKER_PAUSED)
@@ -467,7 +495,7 @@ again:
     }
 
     if ((instruction & BLEND_SCRIPT_OPCODE_MASK) == BLEND_SCRIPT_JUMP) {
-      delayOrJumpIndex = instruction & 0xff;
+      delayOrJumpIndex = instruction & BLEND_SCRIPT_ARGUMENT_MASK;
       if (delayOrJumpIndex == BLEND_SCRIPT_STOP)
         return;
       blend->cursor = blend->script + delayOrJumpIndex * 2;
@@ -483,9 +511,8 @@ again:
       goto again;
     }
 
-    // BLDCNT's effect bits (7..6) of 1 are alpha blending; 2 and 3 fade
-    // to white or black by BLDY.
-    if ((gridState->blendControl & 0xc0) == BLDCNT_EFFECT_BLEND)
+    // A level is BLDALPHA's while the effect blends, else BLDY's.
+    if ((gridState->blendControl & BLDCNT_EFFECT_MASK) == BLDCNT_EFFECT_BLEND)
       REG_BLDALPHA = instruction;
     else
       REG_BLDY = instruction;
@@ -508,8 +535,8 @@ void BlendScript_Start(u16 *script) {
   started = 0;
   zero = 0;
   state = &Ram_HeapSlots->mapGrid->blend;
-  Dma_Set((const void *)&zero, state,
-          (DMA_ENABLE | DMA_32BIT | DMA_SRC_FIXED) << 16 | 3, REG_DMA3);
+  Dma_Set((const void *)&zero, state, DMA_FILL_WORDS(sizeof(*state) / 4),
+          REG_DMA3);
   first = *script;
   if (first != BLEND_SCRIPT_LOOP) {
     state->script = script;
@@ -546,7 +573,8 @@ UNUSED void PaletteCycle_Initialize(void) {
     cycle->timer = 0;
     cycle->delay = 0;
     cycle->count = 0;
-    for (colorIndex = 0; colorIndex != 16; colorIndex++) {
+    for (colorIndex = 0; colorIndex != ARRAY_COUNT(cycle->colors);
+         colorIndex++) {
       cycle->colors[colorIndex] = 0;
     }
     cycle++;
@@ -564,8 +592,11 @@ void PaletteQueue_Stop(void) {
   HeapSlot_Release(HEAP_SLOT_PALETTE_CYCLES);
 }
 
+/// Starts the palette cycles' task.
 void PaletteCycle_Start(void) { Task_Add(PaletteCycle_Step, TASK_PASS_FRAME); }
 
+/// The palette cycles' task: each queued cycle whose timer has run out rotates
+/// its run of colours one place further.
 void PaletteCycle_Step(void) {
   struct PaletteCycleWork *paletteQueue = Ram_HeapSlots->paletteCycles;
   u8 cycleIndex;
@@ -605,20 +636,28 @@ void PaletteCycle_Step(void) {
   }
 }
 
-/// Tints the world map for the encounter region under the party: region 9
-/// brightens it by 12 steps, region 18 darkens it by 6 until flag 0x8ef is
-/// set, any other clears the tint. Gradually, the tint moves one step every 16
-/// frames; at once, it jumps there. Flag 0x106 holds the tint as it is.
+/// The encounter regions the world map is tinted in, and their tints in BLDY's
+/// sixteenths: one brightened, one darkened until the Gabomba ceremony ends.
+#define TINT_BRIGHT_REGION 9
+#define TINT_BRIGHT 12
+#define TINT_DARK_REGION 18
+#define TINT_DARK 6
+
+/// Tints the world map for the encounter region under the party, any region but
+/// TINT_BRIGHT_REGION and TINT_DARK_REGION clearing the tint. Gradually, the
+/// tint moves one step every 16 frames; at once, it jumps there. While a menu
+/// is open the tint stays as it is.
 void WorldMap_UpdateRegionTint(s32 region, s32 gradual) {
   struct WorldMapView *perspective =
       (struct WorldMapView *)Ram_HeapSlots->mapGrid;
 
   if (perspective->tintRegion != region) {
     perspective->tintRegion = region;
-    if (region == 9)
-      perspective->tintTarget = 12;
-    else if (region == 18 && !GameFlag_Get(FLAG_GABOMBA_CEREMONY_ENDED))
-      perspective->tintTarget = -6;
+    if (region == TINT_BRIGHT_REGION)
+      perspective->tintTarget = TINT_BRIGHT;
+    else if (region == TINT_DARK_REGION &&
+             !GameFlag_Get(FLAG_GABOMBA_CEREMONY_ENDED))
+      perspective->tintTarget = -TINT_DARK;
     else
       perspective->tintTarget = 0;
   }
@@ -903,6 +942,22 @@ typedef s32 (*TerrainHeightFn)(u8 *heights, s32 x, s32 z);
 
 extern TerrainHeightFn gMapGrid_TerrainHeightFunctions[16];
 
+/// The ground height the shape at code gives at pixel (x, z) of its cell, in
+/// 16.16 pixels: its terrain kind's height function on its samples.
+// UB: the kind byte is read, and the samples after it passed, in one
+// unsequenced expression.
+#ifdef UBFIX
+#define SHAPE_HEIGHT(code, x, z)                                               \
+  gMapGrid_TerrainHeightFunctions[(code)[0] & MAPGRID_SHAPE_KIND_MASK](        \
+      (code) + 1, (x) & (MAPGRID_CELL_PIXELS - 1),                             \
+      (z) & (MAPGRID_CELL_PIXELS - 1))
+#else
+#define SHAPE_HEIGHT(code, x, z)                                               \
+  gMapGrid_TerrainHeightFunctions[*(code)++ & MAPGRID_SHAPE_KIND_MASK](        \
+      (code), (x) & (MAPGRID_CELL_PIXELS - 1),                                 \
+      (z) & (MAPGRID_CELL_PIXELS - 1))
+#endif
+
 /// Returns the ground height of a layer at (x, z) in 16.16 pixels, as The
 /// Broken Seal's: the height function of the cell's terrain kind applied to
 /// its samples.
@@ -919,7 +974,7 @@ FIXED MapGrid_GetTerrainHeight(s32 layer, FIXED x, FIXED z) {
     grid = gMapShapeGrid;
   grid += x / MAPGRID_CELL_PIXELS + (z / MAPGRID_CELL_PIXELS << 7);
   code = Ram_MapCollision + *grid * 4;
-  return gMapGrid_TerrainHeightFunctions[*code++ & 15](code, x & 15, z & 15);
+  return SHAPE_HEIGHT(code, x, z);
 }
 
 /// Returns the terrain kind of a layer's cell at (x, z) in 16.16 pixels, as
@@ -937,11 +992,11 @@ s32 MapGrid_GetCellAttributeLowNibble(s32 layer, FIXED x, FIXED z) {
   return Ram_MapCollision[grid[x / MAPGRID_CELL_PIXELS +
                                (z / MAPGRID_CELL_PIXELS << 7)] *
                           4] &
-         15;
+         MAPGRID_SHAPE_KIND_MASK;
 }
 
 /// As MapGrid_GetCellAttributeLowNibble, but a rounded square whose two
-/// samples differ (a real bump or hollow, not a flat cell) reads as 99.
+/// samples differ reads as TERRAIN_BUMP.
 s32 MapGrid_GetCellAttributeLowNibbleOrBump(s32 layer, s32 x, s32 z) {
   struct MapWork *work = Ram_HeapSlots->mapGrid;
   u8 *grid;
@@ -958,8 +1013,8 @@ s32 MapGrid_GetCellAttributeLowNibbleOrBump(s32 layer, s32 x, s32 z) {
       &Ram_MapCollision
           [grid[x / MAPGRID_CELL_PIXELS + (z / MAPGRID_CELL_PIXELS << 7)] * 4];
   kind = code[0];
-  if (kind == 7 && code[1] != code[2])
-    kind = 99;
+  if (kind == TERRAIN_ROUNDED_SQUARE && code[1] != code[2])
+    kind = TERRAIN_BUMP;
   return kind;
 }
 
@@ -1000,7 +1055,7 @@ void MapGrid_SetCellHeight(s32 x, s32 z, s32 layer, s32 height) {
 
 /// The ground height at (x, z) of layer, in 8-pixel steps.
 s32 MapGrid_GetCellHeight(FIXED x, FIXED z, s32 layer) {
-  return MapGrid_GetTerrainHeight(layer, x, z) >> 19;
+  return MapGrid_GetTerrainHeight(layer, x, z) >> CURVE_VALUE_SHIFT;
 }
 
 /// As MapGrid_GetCellAttributeLowNibble, a second copy.
@@ -1017,18 +1072,17 @@ s32 MapGrid_GetTerrainKind(s32 layer, s32 x, s32 z) {
   return Ram_MapCollision[grid[x / MAPGRID_CELL_PIXELS +
                                (z / MAPGRID_CELL_PIXELS << 7)] *
                           4] &
-         15;
+         MAPGRID_SHAPE_KIND_MASK;
 }
 
-/// Returns the cell behavior of a layer's cell at (x, y) in 16.16 pixels. The
-/// shift by 20 takes 16.16 pixels straight to 16-pixel cells.
+/// Returns the cell behavior of a layer's cell at (x, y) in 16.16 pixels.
 u8 MapGrid_GetCellBehaviorAt(s32 layer, FIXED x, FIXED y) {
   struct MapWork *state;
   struct MapCell *cells;
 
   state = Ram_HeapSlots->mapGrid;
-  x >>= 20;
-  y >>= 20;
+  x = FIELD_CELL(x);
+  y = FIELD_CELL(y);
   cells = (struct MapCell *)gMapGridCellBuffer;
   if (state != NULL) {
     cells = state->layers[layer & 3].cells;
@@ -1042,8 +1096,8 @@ u8 MapGrid_GetCellBehaviorAt(s32 layer, FIXED x, FIXED y) {
 void MapGrid_SetCellBehaviorAt(u32 layer, FIXED x, FIXED y, u32 collisionCode) {
   struct MapWork *state = Ram_HeapSlots->mapGrid;
 
-  x >>= 20;
-  y >>= 20;
+  x = FIELD_CELL(x);
+  y = FIELD_CELL(y);
   if (state != NULL) {
     struct MapCell *cells = state->layers[layer & 3].cells;
 
@@ -1053,8 +1107,8 @@ void MapGrid_SetCellBehaviorAt(u32 layer, FIXED x, FIXED y, u32 collisionCode) {
 }
 
 /// The height of the ground at (px, pz) (16.16 pixels) on the given layer,
-/// less base; a layer past 2 reads the shape grid. With no map, or while the
-/// event mode is 3, it is 0.
+/// less base; a layer past 2 reads the shape grid. With no map, or on the
+/// World Map, it is 0.
 FIXED MapGrid_GetTerrainHeightAbove(FIXED px, FIXED pz, s32 layer, FIXED base) {
   s32 x = FIXEDtoINT(px);
   s32 z = FIXEDtoINT(pz);
@@ -1073,15 +1127,14 @@ FIXED MapGrid_GetTerrainHeightAbove(FIXED px, FIXED pz, s32 layer, FIXED base) {
     shapes = gMapShapeGrid;
   code = Ram_MapCollision +
          shapes[x / MAPGRID_CELL_PIXELS + (z / MAPGRID_CELL_PIXELS << 7)] * 4;
-  return gMapGrid_TerrainHeightFunctions[*code++ & 15](code, x & 15, z & 15) -
-         base;
+  return SHAPE_HEIGHT(code, x, z) - base;
 }
 
 /// How the ground at (px, pz) (16.16 pixels) on the given layer stands to
-/// height: 2 when the cell has no tile, 1 when the ground rises more than 8
-/// pixels above it, -1 when it falls more than 12 below, else 0. A layer past
-/// 2 reads the cell buffer and shape grid. With no map, or while the event
-/// mode is 3, every point is level (0).
+/// height: 2 on a wall, 1 when the ground rises more than 8 pixels above it,
+/// -1 when it falls more than 12 below, else 0. A layer past 2 reads the cell
+/// buffer and shape grid. With no map, or on the World Map, every point is
+/// level (0).
 s32 MapGrid_CheckCollisionAt(FIXED px, FIXED pz, s32 layer, s32 height) {
   s32 x = FIXEDtoINT(px);
   s32 z = FIXEDtoINT(pz);
@@ -1110,8 +1163,7 @@ s32 MapGrid_CheckCollisionAt(FIXED px, FIXED pz, s32 layer, s32 height) {
   if (cells[2] == CELL_BEHAVIOR_WALL)
     return 2;
   code = Ram_MapCollision + *shapes * 4;
-  rise = gMapGrid_TerrainHeightFunctions[*code++ & 15](code, x & 15, z & 15) -
-         height;
+  rise = SHAPE_HEIGHT(code, x, z) - height;
   if (rise > toFIXED(8))
     return 1;
   if (rise < -toFIXED(12))
@@ -1150,8 +1202,7 @@ s32 MapGrid_CheckCollision(struct Actor *actor,
   if (cells[2] == CELL_BEHAVIOR_WALL)
     return 2;
   code = Ram_MapCollision + *shapes * 4;
-  rise = gMapGrid_TerrainHeightFunctions[*code++ & 15](code, x & 15, z & 15) -
-         actor->groundHeight;
+  rise = SHAPE_HEIGHT(code, x, z) - actor->groundHeight;
   if (rise > toFIXED(8))
     return 1;
   if (rise < -toFIXED(12))
@@ -1159,9 +1210,8 @@ s32 MapGrid_CheckCollision(struct Actor *actor,
   return 0;
 }
 
-/// As MapGrid_CheckCollision, against the actor's height and with no -1: 2
-/// when the cell has no tile, 1 when the ground rises more than 8 pixels above
-/// it, else 0.
+/// As MapGrid_CheckCollision, against the actor's height and with no -1: 2 on
+/// a wall, 1 when the ground rises more than 8 pixels above it, else 0.
 s32 MapGrid_CheckCollisionAbove(struct Actor *actor,
                                 struct FieldPosition *position) {
   s32 x = ((struct FieldCoordinate *)&position->x)->part[0].integer;
@@ -1190,19 +1240,16 @@ s32 MapGrid_CheckCollisionAbove(struct Actor *actor,
   if (cells[2] == CELL_BEHAVIOR_WALL)
     return 2;
   code = Ram_MapCollision + *shapes * 4;
-  if (gMapGrid_TerrainHeightFunctions[*code++ & 15](code, x & 15, z & 15) -
-          actor->y.fixed >
-      toFIXED(8))
+  if (SHAPE_HEIGHT(code, x, z) - actor->y.fixed > toFIXED(8))
     return 1;
   return 0;
 }
 
 /// Returns -1 when the cell under position (its x, and z less its height) in
-/// the overhead layer is a wall (cell behavior 255), else 0; also 0 before the
-/// map work exists.
+/// the overhead layer is a wall, else 0; also 0 before the map work exists.
 s32 MapGrid_IsWallAt(s32 *position) {
   s32 x = position[0] / FIXED_ONE;
-  s32 z = (u32)((position[2] & FIELD_CELL_MASK) - position[1]) >> 16;
+  s32 z = (u32)((position[2] & FIELD_CELL_MASK) - position[1]) / FIXED_ONE;
   struct MapWork *map = Ram_HeapSlots->mapGrid;
   struct MapCell *cell;
 
@@ -1214,19 +1261,20 @@ s32 MapGrid_IsWallAt(s32 *position) {
 }
 
 /// The place of the world map block under position (blocks 32 pixels square on
-/// a 32 by 32 grid), WORLD_MAP_NO_PLACE where the map has none.
+/// a 32 by 32 grid), WORLD_MAP_NO_PLACE where the map has none. A place is the
+/// block's cell behavior, which the World Map's step triggers answer (100
+/// enters Daila, 92 meets Iron), WORLD_MAP_NO_PLACE being CELL_BEHAVIOR_WALL.
 s32 WorldMap_GetBlockPlace(struct WorldPosition *position) {
-  // XXX: what the byte numbers besides 255; the world map scene's events of
-  // kind 2 against the blocks in gCellPictures would settle it.
   s32 z = position->y;
   s32 x = position->x;
 
+  // Rounded towards zero, as a division would.
   if (x < 0)
     x += toFIXED(32) - 1;
-  x = x >> 21 & 31;
+  x = WORLD_MAP_BLOCK(x) & 31;
   if (z < 0)
     z += toFIXED(32) - 1;
-  z = z >> 21 & 31;
+  z = WORLD_MAP_BLOCK(z) & 31;
   return ((struct WorldMapBlocks *)gCellPictures)->blocks[x + z * 32].place;
 }
 
@@ -1234,9 +1282,9 @@ s32 WorldMap_GetBlockPlace(struct WorldPosition *position) {
 /// collision layer where it has one, else the lower, else
 /// WORLD_MAP_COLLISION_DEFAULT.
 s32 WorldMap_GetCollision(struct WorldPosition *position) {
-  s32 halfPixelX = position->x >> 17;
+  s32 halfPixelX = FIXEDtoINT(position->x) >> 1;
   s32 y = position->y;
-  s32 halfPixelY = y >> 17;
+  s32 halfPixelY = FIXEDtoINT(y) >> 1;
   u32 collisionCell;
   u32 pixelOffset;
   u8 collisionTile;
@@ -1247,28 +1295,31 @@ s32 WorldMap_GetCollision(struct WorldPosition *position) {
   collisionCell = (((halfPixelY / 8) & 63) << 6) + ((halfPixelX / 8) & 63);
   pixelOffset = (((halfPixelY / 2) & 3) << 1) + ((halfPixelX / 4) & 1);
 
-  // The upper layer: its tile map in screen block 10, its tiles 2048 bytes
-  // into the collision buffer.
-  collisionTile = BG_SCREEN_BLOCK(10)[collisionCell];
+  // The upper layer's collision tiles follow the lower layer's.
+  collisionTile = WORLD_MAP_UPPER_TILE_MAP[collisionCell];
   packedCollisions =
-      *(Ram_MapCollision + 2048 + (collisionTile << 3) + pixelOffset);
+      *(Ram_MapCollision +
+        WORLD_MAP_COLLISION_TILES * WORLD_MAP_COLLISION_TILE_BYTES +
+        collisionTile * WORLD_MAP_COLLISION_TILE_BYTES + pixelOffset);
   if (packedCollisions != 0) {
     if (halfPixelX & 2)
       result = packedCollisions >> 4;
     else
-      result = packedCollisions & 15;
+      result = packedCollisions & 0xf;
     if (result != 0)
       return result;
   }
 
-  // The lower layer: its tile map in screen block 8, its tiles at the start.
-  collisionTile = BG_SCREEN_BLOCK(8)[collisionCell];
-  packedCollisions = *(Ram_MapCollision + (collisionTile << 3) + pixelOffset);
+  // The lower layer's, at the start of the buffer.
+  collisionTile = WORLD_MAP_LOWER_TILE_MAP[collisionCell];
+  packedCollisions =
+      *(Ram_MapCollision + collisionTile * WORLD_MAP_COLLISION_TILE_BYTES +
+        pixelOffset);
   if (packedCollisions != 0) {
     if (halfPixelX & 2)
       result = packedCollisions >> 4;
     else
-      result = packedCollisions & 15;
+      result = packedCollisions & 0xf;
     if (result != 0)
       return result;
   }

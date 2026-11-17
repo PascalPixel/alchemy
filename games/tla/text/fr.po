@@ -53178,7 +53178,7 @@ msgstr ""
 "comment serait-ce\n"
 "possible de pêcher?{end_wait}"
 
-msgctxt "MsgOooogOw2"
+msgctxt "MsgOooogOw"
 msgid "09976"
 msgstr "Ouille... Aïe...{end_wait}"
 
@@ -53188,7 +53188,7 @@ msgstr ""
 "Pourquoi le destin\n"
 "s'acharne-t-il sur moi?{end_wait}"
 
-msgctxt "MsgStupidBriggs2"
+msgctxt "MsgStupidBriggs"
 msgid "09978"
 msgstr "Ce Briggs, quel diable!{end_wait}"
 

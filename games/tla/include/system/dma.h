@@ -1,5 +1,8 @@
-#ifndef GUARD_DMA_H
-#define GUARD_DMA_H
+#ifndef ALCHEMY_DMA_H
+#define ALCHEMY_DMA_H
+
+/// @file
+/// DMA and the BIOS copy service: fills, and one transfer on a channel.
 
 #include "io_reg.h"
 #include "types.h"
@@ -20,15 +23,14 @@ struct DmaRegisters {
   {                                                                            \
     volatile u16 fill_ = (value);                                              \
     Dma_Set((const void *)&fill_, (destination),                               \
-            (DMA_ENABLE | DMA_SRC_FIXED) << 16 | ((size) / 2), REG_DMA3);      \
+            DMA_FILL_HALFWORDS((size) / 2), REG_DMA3);                         \
   }
 
 /// Fills `size` bytes at `destination` with the word `value` by DMA3.
 #define Dma_Fill32(value, destination, size)                                   \
   {                                                                            \
     volatile u32 fill_ = (value);                                              \
-    Dma_Set((const void *)&fill_, (destination),                               \
-            (DMA_ENABLE | DMA_32BIT | DMA_SRC_FIXED) << 16 | ((size) / 4),     \
+    Dma_Set((const void *)&fill_, (destination), DMA_FILL_WORDS((size) / 4),   \
             REG_DMA3);                                                         \
   }
 
@@ -40,8 +42,7 @@ struct DmaRegisters {
 #define Dma_Fill32Cell(cell, value, destination, size)                         \
   {                                                                            \
     (cell) = (value);                                                          \
-    Dma_Set((const void *)&(cell), (destination),                              \
-            (DMA_ENABLE | DMA_32BIT | DMA_SRC_FIXED) << 16 | ((size) / 4),     \
+    Dma_Set((const void *)&(cell), (destination), DMA_FILL_WORDS((size) / 4),  \
             REG_DMA3);                                                         \
   }
 

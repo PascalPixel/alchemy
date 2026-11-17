@@ -288,7 +288,7 @@ s32 BattleActionRun_Build(struct BattleActionRecord *request,
     abilityId = ABILITY_DJINN_COUNTER;
     // Poseidon answers with a plain attack.
     if ((u16)(actor->enemyId - ENEMY_POSEIDON) <=
-        ENEMY_UNUSED_POSEIDON - ENEMY_POSEIDON)
+        ENEMY_POSEIDON_3 - ENEMY_POSEIDON)
       abilityId = ABILITY_ATTACK;
     if (selectedTargetId == BATTLE_UNIT_LIST_END)
       return ACTION_NOTHING_TO_SHOW;

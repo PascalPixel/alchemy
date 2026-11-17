@@ -409,8 +409,7 @@ void MarsLighthouseEntrance_ScatterIceChips(s32 id) {
   for (i = 0; i < 6; i++) {
     FIXED x = source->x.fixed + (Random16() << 4) - (Random16() << 4);
     struct Actor *actor = Import_ActorCreate_(
-        SPRITE_TURNING_ROCK, x,
-        (Random16() << 3) + source->y.fixed + toFIXED(4),
+        SPRITE_WIND_STONE, x, (Random16() << 3) + source->y.fixed + toFIXED(4),
         source->z.fixed + (Random16() << 4) - (Random16() << 4));
 
     if (actor != NULL) {

@@ -15,6 +15,7 @@
 #include "types.h"
 #include "field/scene_tables.h"
 #include "field/event_inline.h"
+#include "macros.h"
 
 /// The actors the talk events answer: the first Djinni of each element. The
 /// room's actor list is empty, so none of them is ever there.
@@ -94,11 +95,8 @@ struct Trigger gSceneEvents[] = {
     {TRIGGER_TABLE_END},
 };
 
-/// Unused: four halfwords (512, 512, 1024, 864) and an end of -1s after the
-/// room's tables; nothing reads them.
-s32 gTestScenes_UnusedRow[] = {
-    0x2000200,
-    0x3600400,
-    -1,
-    -1,
+/// Unused: four halfwords and an end of -1s after the room's tables; nothing
+/// reads them.
+s16 gTestScenes_UnusedRow[] ALIGNED(4) = {
+    512, 512, 1024, 864, -1, -1, -1, -1,
 };

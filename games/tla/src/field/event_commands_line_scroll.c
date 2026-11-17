@@ -8,8 +8,28 @@
 #include "sounds.h"
 #include "field/field.h"
 
-/// Writes the current page's first entry each frame; HBlank DMA writes the
-/// rest.
+/// Where a DMA channel's control halfword (the DMA_ flags) sits in its 32-bit
+/// count word.
+#define DMA_CONTROL_SHIFT 16
+
+/// LineScrollWork.mode: 0 waves BG1, BG2 and BG3 alike; any other mode waves
+/// BG3 alone (Mars Lighthouse's rain ledges).
+#define LINE_SCROLL_ALL_LAYERS 0
+/// gLineScroll_WaveSine's entries, a whole cycle: a phase is 16.16 entries.
+#define LINE_SCROLL_WAVE_ENTRIES 256
+/// The sine's units in a pixel: its peak, 4096, is 16 pixels at an amplitude
+/// of FIXED_ONE.
+#define LINE_SCROLL_WAVE_UNITS 256
+/// The wave's offset in pixels at phase, for a 16.16 amplitude.
+#define LINE_SCROLL_WAVE(phase, amplitude)                                     \
+  (Iwram_MulFX(gLineScroll_WaveSine[FIXEDtoINT(phase) &                        \
+                                    (LINE_SCROLL_WAVE_ENTRIES - 1)],           \
+               (amplitude)) /                                                  \
+   LINE_SCROLL_WAVE_UNITS)
+
+/// VBlank-pass task for the line scroll: restarts DMA 0 each VBlank to copy the
+/// current page's BG1 to BG3 scroll offsets into the scroll registers one
+/// scanline at a time, but not while Reveal shows or a battle is due.
 void LineScroll_ArmDma(void) {
   struct LineScrollWork *work = Ram_HeapSlots->lineScroll;
   u32 *line = (u32 *)work->rows[work->page];
@@ -18,7 +38,6 @@ void LineScroll_ArmDma(void) {
   volatile u32 *target;
 
   if (event != NULL) {
-    // Not while Reveal shows or a battle's transition runs.
     if (event->revealActive != 0)
       return;
     if (event->encounter != 0)
@@ -40,14 +59,15 @@ void LineScroll_ArmDma(void) {
   Dma_Set(
       line, (void *)target,
       (DMA_ENABLE | DMA_START_HBLANK | DMA_REPEAT | DMA_DEST_RELOAD | DMA_32BIT)
-              << 16 |
-          3,
+              << DMA_CONTROL_SHIFT |
+          sizeof(work->rows[0][0]) / 4,
       REG_DMA0);
 }
 
-/// Task for the line scroll: fills the hidden page with each scanline's BG3,
-/// BG2 and BG1 offsets, the scroll plus a sine wave for x and for y (an axis
-/// with no step stays flat), then shows that page.
+/// Task for the line scroll: fills the hidden page with each scanline's BG1,
+/// BG2 and BG3 offsets, the scroll plus a sine wave for x and for y (an axis
+/// with no step stays flat; outside LINE_SCROLL_ALL_LAYERS only BG3 waves),
+/// its phase following BG1's y, then shows that page.
 void LineScroll_BuildPage(void) {
   struct LineScrollWork *work = Ram_HeapSlots->lineScroll;
   u8 mode = work->mode;
@@ -69,7 +89,7 @@ void LineScroll_BuildPage(void) {
 
   if (event != NULL && event->revealActive != 0)
     return;
-  if (mode == 0) {
+  if (mode == LINE_SCROLL_ALL_LAYERS) {
     row = &work->rows[work->page ^ 1][0][0].x;
     step = work->stepX;
     phase = (work->frame + (u16)y1) * work->freqX;
@@ -86,9 +106,7 @@ void LineScroll_BuildPage(void) {
       waveX3 = x3;
       amplitude = work->ampX;
       for (scanline = 0; scanline != DISPLAY_HEIGHT; scanline++) {
-        wave =
-            Iwram_MulFX(gLineScroll_WaveSine[(phase >> 16) & 255], amplitude) /
-            256;
+        wave = LINE_SCROLL_WAVE(phase, amplitude);
         row[0] = a + wave;
         row[2] = b + wave;
         row[4] = waveX3 + wave;
@@ -111,9 +129,7 @@ void LineScroll_BuildPage(void) {
       waveY3 = y3;
       amplitude = work->ampY;
       for (scanline = 0; scanline != DISPLAY_HEIGHT; scanline++) {
-        wave =
-            Iwram_MulFX(gLineScroll_WaveSine[(phase >> 16) & 255], amplitude) /
-            256;
+        wave = LINE_SCROLL_WAVE(phase, amplitude);
         *row = a + wave;
         row += 2;
         *row = b + wave;
@@ -137,9 +153,7 @@ void LineScroll_BuildPage(void) {
       waveX3 = x3;
       amplitude = work->ampX;
       for (scanline = 0; scanline != DISPLAY_HEIGHT; scanline++) {
-        wave =
-            Iwram_MulFX(gLineScroll_WaveSine[(phase >> 16) & 255], amplitude) /
-            256;
+        wave = LINE_SCROLL_WAVE(phase, amplitude);
         row[0] = x1;
         row[2] = x2;
         row[4] = waveX3 + wave;
@@ -160,9 +174,7 @@ void LineScroll_BuildPage(void) {
       waveY3 = y3;
       amplitude = work->ampY;
       for (scanline = 0; scanline != DISPLAY_HEIGHT; scanline++) {
-        wave =
-            Iwram_MulFX(gLineScroll_WaveSine[(phase >> 16) & 255], amplitude) /
-            256;
+        wave = LINE_SCROLL_WAVE(phase, amplitude);
         row[0] = y1;
         row[2] = y2;
         row[4] = waveY3 + wave;
@@ -176,8 +188,8 @@ void LineScroll_BuildPage(void) {
 }
 
 /// Waits for a DMA channel to finish.
-static inline void WaitDma(volatile u32 *channel) {
-  while (channel[2] & DMA_ENABLE << 16) {
+static inline void WaitDma(volatile struct DmaRegisters *channel) {
+  while (channel->control & DMA_ENABLE << DMA_CONTROL_SHIFT) {
   }
 }
 
@@ -215,3 +227,9 @@ void LineScroll_Stop(void) {
   dma0[5] = (u16)~DMA_ENABLE & dma0[5];
   (void)dma0[5];
 }
+
+#undef DMA_CONTROL_SHIFT
+#undef LINE_SCROLL_ALL_LAYERS
+#undef LINE_SCROLL_WAVE_ENTRIES
+#undef LINE_SCROLL_WAVE_UNITS
+#undef LINE_SCROLL_WAVE

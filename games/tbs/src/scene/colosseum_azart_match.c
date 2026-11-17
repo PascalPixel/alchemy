@@ -237,6 +237,21 @@ enum {
   FLAG_ARENA_REACHED = FLAG_SCENE_TEMP_11
 };
 
+/// The Broken Bridge's cycle, in frames, counted down: the bridge lies down,
+/// walkable, for the last 60 of each.
+#define BRIDGE_CYCLE_FRAMES 120
+
+/// The Lumber Water Crossing Area's logs float on fixed lines. The north-south
+/// log lies across columns 64 to 66 and floats three cells between row 8 and
+/// LOG_SOUTH_ROW, where it bars the way of the east-west log; that one lies
+/// across rows 9 to 11 and floats ten cells from the west bank's column 63 to
+/// the east bank, or six from column 67, where the other log stops it.
+#define LOG_NORTH_ROW 8
+#define LOG_SOUTH_ROW 11
+#define LOG_NORTH_SOUTH_FLOAT 48
+#define LOG_EAST_WEST_FLOAT 160
+#define LOG_EAST_WEST_SHORT_FLOAT 96
+
 const struct SceneEntrance *Scene_GetEntrances(void) {
   return gColosseumAzartMatch_Entrances;
 }
@@ -274,7 +289,7 @@ static void ColosseumAzartMatch_UpdateBrokenBridge(void) {
     MapGrid_CopyCellsLayered(92, 29, 2, 2, 54, 38);
     Actor_SetAnimation(ACTOR_BRIDGE_OPERATOR, 12);
     MapGrid_CopyCellAttributes(50, 24, 6, 1, 50, 12);
-    gColosseumAzartMatch_Countdown = 120;
+    gColosseumAzartMatch_Countdown = BRIDGE_CYCLE_FRAMES;
     break;
   }
   gColosseumAzartMatch_Countdown--;
@@ -301,7 +316,8 @@ static void ColosseumAzartMatch_WaitForBridgeOpening(void) {
   s32 i;
 
   wait(10);
-  for (i = 0; i < 120 && gColosseumAzartMatch_Countdown != 22; i++)
+  for (i = 0; i < BRIDGE_CYCLE_FRAMES && gColosseumAzartMatch_Countdown != 22;
+       i++)
     wait(1);
 }
 
@@ -424,9 +440,9 @@ static void ColosseumAzartMatch_RollLogNorthSouth(void) {
 
   actor = Actor_Get(gMainRoutineWork.leaderActorId);
   row = FIELD_CELL(actor->z.fixed);
-  offset = -48;
-  if (row <= 8) {
-    offset = 48;
+  offset = -LOG_NORTH_SOUTH_FLOAT;
+  if (row <= LOG_NORTH_ROW) {
+    offset = LOG_NORTH_SOUTH_FLOAT;
   }
   MapGrid_CopyCellAttributes(67, 8, 3, 1, 64, row);
   ColosseumAzartMatch_MoveActorPairByOffset(ACTOR_LOG_NORTH_SOUTH, 0, offset);
@@ -450,20 +466,20 @@ static void ColosseumAzartMatch_RollLogEastWest(void) {
   }
   offset = FIELD_CELL(Actor_Get(ACTOR_LOG_NORTH_SOUTH)->z.fixed);
   if (column == 63) {
-    if (offset == 11) {
+    if (offset == LOG_SOUTH_ROW) {
       return;
     }
-    offset = 160;
+    offset = LOG_EAST_WEST_FLOAT;
   } else if (column == 67) {
-    if (offset == 11 && direction == -1) {
+    if (offset == LOG_SOUTH_ROW && direction == -1) {
       return;
     }
-    offset = 96;
+    offset = LOG_EAST_WEST_SHORT_FLOAT;
   } else {
-    if (offset == 11) {
-      offset = 96;
+    if (offset == LOG_SOUTH_ROW) {
+      offset = LOG_EAST_WEST_SHORT_FLOAT;
     } else {
-      offset = 160;
+      offset = LOG_EAST_WEST_FLOAT;
     }
     offset = -offset;
   }
@@ -659,8 +675,8 @@ static void ColosseumAzartMatch_MarkFinishTerrain(s32 actorId) {
 
   target = Actor_Get(actorId);
   if (target != NULL) {
-    column = target->x.fixed >> 19;
-    row = target->z.fixed >> 19;
+    column = FIELD_HALF_CELL(target->x.fixed);
+    row = FIELD_HALF_CELL(target->z.fixed);
     if (column >= 94 && column <= 95 && row > 23 && row <= 26) {
       target->layer = 1;
     }
@@ -1152,7 +1168,8 @@ static void ColosseumAzartMatch_TalkToLumberAttendant(s32 actorId) {
     Colosso_WalkActorToAndStand(ACTOR_PARTY_LEADER, 1000, 176);
     Colosso_WalkActorToAndStand(ACTOR_PARTY_LEADER, 1016, 168);
     Event_Wait(15);
-    COLOSSEUM_AZART_MATCH_PLACE_STAGED_PAIR(ACTOR_LOG_EAST_WEST, 160, 0);
+    COLOSSEUM_AZART_MATCH_PLACE_STAGED_PAIR(ACTOR_LOG_EAST_WEST,
+                                            LOG_EAST_WEST_FLOAT, 0);
     FieldCamera_MoveTo(1088, CAMERA_KEEP, 168, 1);
     Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_STAND);
     Event_Wait(10);

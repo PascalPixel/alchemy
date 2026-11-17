@@ -298,8 +298,8 @@ struct ReelSave {
   s8 wonPrizes[16];
 };
 
-/// One 32-pixel cell of the World Map, as The Broken Seal's: its tile and its
-/// encounter region; Ram_MapBlocks holds 32 by 32 of them.
+/// One 32-pixel cell of the World Map: its tile and its encounter region;
+/// Ram_MapBlocks holds 32 by 32 of them.
 struct WorldMapCell {
   u32 tile : 24; ///< low halfword: the cell picture
   /// Passed to WorldMap_UpdateRegionTint; region / 10 picks the graphics set.
@@ -307,9 +307,8 @@ struct WorldMapCell {
   u32 unusedHigh : 2; ///< no code names them
 };
 
-/// A map cell's terrain kind, as The Broken Seal's enum TerrainKind: the low
-/// four bits of its shape's first byte, which pick its height function. This
-/// game has no bends along an axis; its sample tables take their kinds.
+/// A map cell's terrain kind: the low four bits of its shape's first byte,
+/// which pick its height function.
 enum TerrainKind {
   TERRAIN_FLAT = 0,
   TERRAIN_SLOPE_X = 1,
@@ -460,9 +459,8 @@ struct EffectOwner {
   struct Sprite *sprite;
 };
 
-/// The line scroll's work, as The Broken Seal's: two pages of BG1 to BG3
-/// scroll offsets for each of the 160 scanlines, and the sine wave that bends
-/// them on each axis.
+/// The line scroll's work: two pages of BG1 to BG3 scroll offsets for each of
+/// the 160 scanlines, and the sine wave that bends them on each axis.
 struct LineScrollWork {
   struct BgScroll rows[2][160][3]; ///< per page and scanline: BG3, BG2, BG1
   u8 page;      ///< the page the HBlank DMA shows; the other is built
@@ -619,9 +617,9 @@ void BattleMap_ApplySceneEntranceView(void);
 void PaletteEditor_Run(void);
 
 struct TriggerView *Scene_FindTrigger(s32 kind, s32 target);
-/// Scene_TalkToActor's mark on an actor id: a container is opened without the
-/// message that the leader checked it.
-#define TALK_WITHOUT_CHECK_MESSAGE 0x1000
+/// Scene_TalkToActor's mark on an actor id, FIELD_TALK_SILENT: a container is
+/// opened without the message that the leader checked it.
+#define TALK_WITHOUT_CHECK_MESSAGE FIELD_TALK_SILENT
 s32 Scene_TalkToActor(s32 id);
 s32 Scene_RunRaisedTrigger(s32 id);
 s32 Scene_RunStepTriggerOrExit(s32 value);
@@ -662,7 +660,7 @@ extern const u16 gLuckyWheels_SparkCellOffsets[];
 s32 BattleEffect_BuildBlitterFar(s32 slot, s32 widthShift, s32 heightShift,
                                  s32 flags, u32 mode);
 
-/// The tileset animations' tiles, 16 KB of EWRAM, as The Broken Seal's.
+/// The tileset animations' tiles, 16 KB of EWRAM.
 extern u8 gMapGridAnimTiles[];
 
 s32 WorldMap_WriteLayerCellTile(s32 layer, s32 x, s32 y, s32 tile, s32 update);

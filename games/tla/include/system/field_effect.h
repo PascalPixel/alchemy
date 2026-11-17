@@ -88,11 +88,6 @@ union FieldObject {
   struct FieldEffect effect;
 };
 
-#define SCRIPT_WAIT(frames) 0, (frames)
-#define SCRIPT_SET_POSITION(x, y, z) 2, (x), (y), (z)
-#define SCRIPT_REPEAT(count, label) 12, (count), (label)
-#define SCRIPT_DELETE 27
-
 /// The flags of a scene's effect spawner (FieldEffect_Spawn): a script number
 /// in the low bits and which of the spawn options' fields to use.
 enum EffectSpawnFlags {

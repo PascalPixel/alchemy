@@ -13,10 +13,6 @@
 #include "system/bg_scroll.h"
 
 #define WHIRL_COUNT 100
-/// The orbs of RESOURCE_COLOURED_ORBS, eight colours each large and small, one
-/// 256-colour tile apiece.
-#define ORB_PICTURES 16
-#define ORB_TILE (TILE_SIZE_8BPP / TILE_SIZE_4BPP)
 /// The frames an orb flies before it vanishes.
 #define ORB_FRAMES 20
 /// Before the sparks, the leader spins for SPARKS_SPIN_FRAMES, its turn each
@@ -334,8 +330,6 @@ void FieldPsynergy_Teleport(void) {
   gFieldWork->raisedTrigger = FIELD_RAISED_TRIGGER_TELEPORT;
 }
 #undef WHIRL_COUNT
-#undef ORB_PICTURES
-#undef ORB_TILE
 #undef ORB_FRAMES
 #undef SPARKS_SPIN_FRAMES
 #undef SPARKS_SPIN_ACCELERATION

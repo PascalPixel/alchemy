@@ -117,4 +117,9 @@ struct CycloneWork {
 #define GLOW_BLUE 12
 #define GLOW_BLUE_SWING 10
 
+/// The orbs of RESOURCE_COLOURED_ORBS, eight colours each large and small, and
+/// a 256-colour picture's size in the 16-colour tiles a sprite counts.
+#define ORB_PICTURES 16
+#define ORB_TILE (TILE_SIZE_8BPP / TILE_SIZE_4BPP)
+
 #endif // ALCHEMY_FIELD_PSYNERGY_INTERNAL_H

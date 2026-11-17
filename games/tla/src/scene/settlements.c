@@ -43,6 +43,7 @@
 #include "system/field_effect.h"
 #include "field/field_effect.h"
 #include "scene/scene.h"
+#include "field/field_sequence.h"
 #include "field/field_sequence_event.h"
 #include "field/call.h"
 #include "scene/event_layer.h"
@@ -81,10 +82,21 @@
 #define FLAG_BOULDER_LIFTED FLAG_SCENE_TEMP_08
 /// Hesperia Settlement: the party walks along the top of the wall.
 #define FLAG_ON_WALL FLAG_SCENE_TEMP_20
-/// Hesperia Settlement: the crate has dropped off the wall into the water.
+/// Hesperia Settlement: the crate has dropped off the wall.
 #define FLAG_WALL_CRATE_DROPPED FLAG_SCENE_TEMP_21
+/// Hesperia Settlement: the crate has dropped off the wall at (16, 15), the
+/// wall's whole height, to the ground below.
+#define FLAG_WALL_CRATE_ON_GROUND FLAG_SCENE_TEMP_05
+/// Hesperia Settlement: the crate, dropped onto the step at (12, 15), has been
+/// pushed east off it to the ground at (13, 15).
+#define FLAG_WALL_CRATE_OFF_STEP FLAG_SCENE_TEMP_04
 /// Hesperia Settlement: Growth has made the sprout a vine.
 #define FLAG_VINE_GROWN FLAG_SCENE_TEMP_30
+
+/// The water's four colours in SW Atteka Islet's background palette 3, which
+/// turn in place (Settlements_CycleWaterColors).
+#define FIRST_WATER_COLOR 12
+#define WATER_COLORS 4
 
 /// The bush on the Gondowan Settlement's stairs is cut.
 #define FLAG_STAIRS_BUSH_CUT 0xa60
@@ -314,7 +326,7 @@ s32 gSettlements_WaterfallLine BSS_DATA;
 u16 gSettlements_WaterfallScrollAbove BSS_DATA;
 u16 gSettlements_WaterfallScrollBelow BSS_DATA;
 
-void Settlements_SpawnSplashRing(s32 objectId);
+void Settlements_SpawnDustRing(s32 actorId);
 
 void Settlements_MovePillar(void);
 
@@ -788,9 +800,10 @@ void Settlements_CycleWaterColors(void) {
     *frame = 0;
   }
   phase = (*frame / 8) % 4;
-  for (i = 0; i <= 3; i++)
-    gSettlements_WaterColorsSaved[12 + (phase + i) % 4] =
-        gSettlements_WaterColors[12 + i];
+  for (i = 0; i < WATER_COLORS; i++)
+    gSettlements_WaterColorsSaved[FIRST_WATER_COLOR +
+                                  (phase + i) % WATER_COLORS] =
+        gSettlements_WaterColors[FIRST_WATER_COLOR + i];
   {
     struct IoWriteQueue *q = &gIoWriteQueue;
     u32 saved;
@@ -798,7 +811,7 @@ void Settlements_CycleWaterColors(void) {
 
     IRQ_LOCK(saved);
     count = q->count;
-    if (count <= 31) {
+    if (count < IO_WRITE_QUEUE_SIZE) {
       u32 *entry = q->entries[count];
 
       *entry++ = (u32)gSettlements_WaterColorsSaved;
@@ -814,7 +827,8 @@ void Settlements_CycleWaterColors(void) {
 /// Starts SW Atteka Islet's falls: the water's colours, its sound and the
 /// hblank split of its scroll.
 void Settlements_StartWaterfall(void) {
-  gFieldWork->transition = SCENE_TRANSITION(TRANSITION_WINDOW, 2);
+  gFieldWork->transition =
+      SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_NOISE);
   FieldTask_AddFrame(Settlements_CycleWaterColors, TASK_PASS_FRAME);
   Scene_QueueMusic(SE_AMBIENT_WATER);
   Scroll_StartHBlank();
@@ -971,7 +985,8 @@ void Settlements_MoveCrate(void) {
 /// the falls by where it stands.
 void Settlements_PushIntoFalls(void) {
   Actor_PlaceMovedBlock();
-  Actor_Get(gMainRoutineWork.leaderActorId)->priorityFlags += 254;
+  Actor_Get(gMainRoutineWork.leaderActorId)->priorityFlags -=
+      ACTOR_PRIORITY_UNDERFOOT;
   Settlements_SinkPillar();
   Settlements_SlideCrateDownFalls();
 }
@@ -1033,9 +1048,10 @@ void Settlements_UnblockCrate(void) {
 
 extern s32 gSettlements_CrateDropScript[];
 
-/// Hesperia Settlement's crate pushed off the wall: where it lands it sinks
-/// into the water, and at (19, 15), while Tinder is not yet met, it runs the
-/// crate's drop script.
+/// Hesperia Settlement's crate pushed off the wall's south edge drops to the
+/// ground below it in a ring of dust: 64 pixels onto the steps at (12, 15) and
+/// (19, 15), where Tinder, not yet met, is startled away; 96 to the ground at
+/// (16, 15); and from the step at (12, 15) east to the ground at (13, 15).
 void Settlements_DropCrate(void) {
   struct Actor *actor;
   s32 column;
@@ -1048,41 +1064,41 @@ void Settlements_DropCrate(void) {
   actor = Actor_Get(ACTOR_WALL_CRATE);
   column = FIELD_CELL(actor->x.fixed);
   row = FIELD_CELL(actor->z.fixed);
-  // XXX: the two sinkings with flags of their own, at (16, 15) and (13, 15)
-  // (FLAG_SCENE_TEMP_05 and 04), are named once the map shows what lies there.
   if (column == 12 && row == 15) {
     Event_SetFlag(FLAG_WALL_CRATE_DROPPED);
     actor->motionFlags = 0;
     SINK(32);
-    Settlements_SpawnSplashRing(ACTOR_WALL_CRATE);
+    Settlements_SpawnDustRing(ACTOR_WALL_CRATE);
     FieldEvent_Wait(20);
-  } else if (!Event_GetFlag(FLAG_SCENE_TEMP_05) && column == 16 && row == 15) {
+  } else if (!Event_GetFlag(FLAG_WALL_CRATE_ON_GROUND) && column == 16 &&
+             row == 15) {
     actor->motionFlags = 0;
-    Event_SetFlag(FLAG_SCENE_TEMP_05);
+    Event_SetFlag(FLAG_WALL_CRATE_ON_GROUND);
     Event_SetFlag(FLAG_WALL_CRATE_DROPPED);
     SINK(48);
-    Settlements_SpawnSplashRing(ACTOR_WALL_CRATE);
+    Settlements_SpawnDustRing(ACTOR_WALL_CRATE);
     FieldEvent_Wait(30);
   } else if (column == 19 && row == 15) {
     MapGrid_CopyCellAttributes(18, 16, 1, 1, column, row);
     actor->motionFlags = 0;
     Event_SetFlag(FLAG_WALL_CRATE_DROPPED);
     SINK(32);
-    Settlements_SpawnSplashRing(ACTOR_WALL_CRATE);
+    Settlements_SpawnDustRing(ACTOR_WALL_CRATE);
     if (!Event_GetFlag(FLAG_DJINNI(DJINNI_TINDER))) {
       Actor_SetPosition(ACTOR_TINDER, 0, 0);
       Actor_SetScript(ACTOR_WALL_CRATE, gSettlements_CrateDropScript);
       FieldEvent_Wait(20);
     }
     FieldEvent_Wait(20);
-  } else if (!Event_GetFlag(FLAG_SCENE_TEMP_04) && column == 13 && row == 15) {
+  } else if (!Event_GetFlag(FLAG_WALL_CRATE_OFF_STEP) && column == 13 &&
+             row == 15) {
     MapGrid_CopyCellAttributes(1, 3, 1, 1, 12, row);
     MapGrid_CopyCellAttributes(1, 3, 1, 1, column, row);
     actor->motionFlags = 0;
     SINK(16);
-    Settlements_SpawnSplashRing(ACTOR_WALL_CRATE);
+    Settlements_SpawnDustRing(ACTOR_WALL_CRATE);
     FieldEvent_Wait(20);
-    Event_SetFlag(FLAG_SCENE_TEMP_04);
+    Event_SetFlag(FLAG_WALL_CRATE_OFF_STEP);
   } else if (column == 14 && row == 15) {
     MapGrid_CopyCellAttributes(1, 3, 1, 1, 12, row);
     MapGrid_CopyCellAttributes(1, 3, 1, 1, column, row);
@@ -1133,29 +1149,29 @@ void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
                        s32 velocityZ, u32 flags,
                        const struct EffectOptions *options);
 
-/// A ring of nine splashes thrown out around an actor.
-void Settlements_SpawnSplashRing(s32 objectId) {
+/// Puffs a ring of dust out from an actor as it lands.
+void Settlements_SpawnDustRing(s32 actorId) {
   struct Actor *actor;
-  struct Vector3 vec;
-  struct EffectOptions params;
+  struct Vector3 velocity;
+  struct EffectOptions options;
   u32 angleStep;
   s32 angle;
-  s32 x;
-  FIXED z;
+  s32 velocityX;
+  FIXED velocityZ;
 
-  actor = Actor_Get(objectId);
-  params.update = FieldEffect_AdvanceMotion;
-  for (angleStep = 0; angleStep <= 16; angleStep += 2) {
-    angle = angleStep << 12;
-    vec.x = Trig_Cos(angle);
-    vec.y = 0;
-    z = Math_Sin(angle);
-    x = vec.x;
-    vec.z = z;
-    x += x / 3;
-    vec.x = x;
-    FieldEffect_Spawn(actor->x.fixed, actor->y.fixed, actor->z.fixed, x, vec.y,
-                      z, EFFECT_USE_UPDATE | 1, &params);
+  actor = Actor_Get(actorId);
+  options.update = FieldEffect_AdvanceMotion;
+  for (angleStep = 0; angleStep <= TRIG_TURN / FACING_STEP; angleStep += 2) {
+    angle = angleStep * FACING_STEP;
+    velocity.x = Trig_Cos(angle);
+    velocity.y = 0;
+    velocityZ = Math_Sin(angle);
+    velocityX = velocity.x;
+    velocity.z = velocityZ;
+    velocityX += velocityX / 3;
+    velocity.x = velocityX;
+    FieldEffect_Spawn(actor->x.fixed, actor->y.fixed, actor->z.fixed, velocityX,
+                      velocity.y, velocityZ, EFFECT_USE_UPDATE | 1, &options);
   }
 }
 
@@ -1202,11 +1218,11 @@ extern u32 gFieldEffect_LongScript[];
 #include "shared/field_effect_duration_scripts.c"
 
 s16 gSettlements_FallsObjects[] = {
-    9, 10, -1,
+    ACTOR_PILLAR, ACTOR_FALLS_CRATE, ACTOR_LIST_END,
 };
 
 s16 gSettlements_WallCrate[] = {
-    10, -1,
+    ACTOR_WALL_CRATE, ACTOR_LIST_END,
 };
 
 #include "shared/slide_on_ice_angles.c"
@@ -1312,7 +1328,7 @@ struct ActorPlacement gSettlements_GondowanSettlementHousesPlacements[] = {
 
 struct ActorPlacement gSettlements_HesperiaSettlementPlacements[] = {
     ACTOR_PLACEMENT(SPRITE_MAN_WITH_CURLY_HAIR, CONDITION_ALWAYS, MOVEMENT_TYPE_WANDER, 392, 0, 280, FACING_NORTH, TALK_FACING_PARTY_AND_BACK, 0),
-    ACTOR_PLACEMENT(SPRITE_SPROUT, CONDITION_ALWAYS, 7, 56, 0, 240, FACING_NORTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_SPROUT, CONDITION_ALWAYS, MOVEMENT_TYPE_CLEAR_COLLISION, 56, 0, 240, FACING_NORTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(SPRITE_TALL_CRATE, CONDITION_ALWAYS, gSettlements_CrateBobScript, 280, 0, 184, FACING_NORTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(SPRITE_MARS_DJINNI, FLAG_DJINNI(DJINNI_TINDER), MOVEMENT_TYPE_STAND, 312, 0, 248, FACING_WEST, TALK_FACING_PARTY, 0),
     {SCENE_TABLE_END},
@@ -1353,7 +1369,7 @@ struct ActorPlacement gSettlements_KaltIslandPlacements[] = {
     ACTOR_PLACEMENT(SPRITE_TIGHTROPE_POST, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 120, 0, 200, FACING_NORTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(SPRITE_TIGHTROPE_POST, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 184, 0, 200, FACING_NORTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(SPRITE_MERCURY_DJINNI, FLAG_DJINNI(DJINNI_GEL), MOVEMENT_TYPE_STAND, 312, 0, 296, FACING_WEST, TALK_FACING_PARTY, 0),
-    ACTOR_PLACEMENT(SPRITE_UNSEEN_MARKER, CONDITION_ALWAYS, 7, 88, 0, 336, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_UNSEEN_MARKER, CONDITION_ALWAYS, MOVEMENT_TYPE_CLEAR_COLLISION, 88, 0, 336, FACING_SOUTH, TALK_FACING_KEEP, 0),
     {SCENE_TABLE_END},
 };
 
@@ -1425,8 +1441,8 @@ struct Trigger gSettlements_HesperiaSettlementTriggers[] = {
      MSGNO(MsgSettlementsForContinentAsDesolate)},
     {TRIGGER_TALK, ACTOR_TINDER, CONDITION_ALWAYS,
      EVENT(Settlements_MeetTinder)},
-    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), 10,
-     CONDITION_ALWAYS, EVENT(Settlements_UnblockCrate)},
+    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST),
+     ACTOR_WALL_CRATE, CONDITION_ALWAYS, EVENT(Settlements_UnblockCrate)},
     {PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_WALL_CRATE, CONDITION_ALWAYS,
      EVENT(Settlements_BlockCrate)},
     {TRIGGER_PUSH, 0, CONDITION_ALWAYS, EVENT(Settlements_UnblockCrate)},
@@ -1490,12 +1506,13 @@ struct Trigger gSettlements_AttekaIsletTriggers[] = {
      EVENT(Settlements_MeetLostJupiterDjinni)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_ISLANDER, CONDITION_ALWAYS,
      MSGNO(MsgSettlementsMyBuddyThinksImNuts)},
-    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), 9,
-     0x204, EVENT(Settlements_UnblockFallsObjects)},
+    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST),
+     ACTOR_PILLAR, FLAG_PILLAR_SUNK, EVENT(Settlements_UnblockFallsObjects)},
     {PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_PILLAR, FLAG_PILLAR_SUNK,
      EVENT(Settlements_MovePillar)},
-    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), 10,
-     0x205, EVENT(Settlements_UnblockFallsObjects)},
+    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST),
+     ACTOR_FALLS_CRATE, FLAG_FALLS_CRATE_AT_REST,
+     EVENT(Settlements_UnblockFallsObjects)},
     {PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_FALLS_CRATE,
      FLAG_FALLS_CRATE_AT_REST, EVENT(Settlements_MoveCrate)},
     {TRIGGER_PUSH, 0, CONDITION_ALWAYS, EVENT(Settlements_BlockFallsObject)},

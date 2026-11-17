@@ -7,6 +7,14 @@
 #define FLARE_FRAMES 80 ///< frames of the flare
 
 #define FLARE_ARC_COUNT 9 ///< flames on the arc
+/// The half ellipse's radii, across and up and down, in canvas pixels.
+#define FLARE_ARC_RADIUS_X 32
+#define FLARE_ARC_RADIUS_Y 16
+/// A flame's six pictures, four frames each, before it goes out.
+#define FLARE_FLAME_PICTURES 6
+#define FLARE_PICTURE_FRAMES 4
+/// The canvas's usual weight over the battle, in sixteenths.
+#define CANVAS_BLEND_LEVEL 14
 
 /// Nine flames rise one after another along half an ellipse.
 ///
@@ -30,7 +38,7 @@ void BattleEffect_RunFlare(struct BattleEffectParams *args) {
   BattleEffect_StartCanvasLayer(0);
   REG_BLDCNT =
       BLDCNT_TGT1_BG1 | BLDCNT_TGT1_BG2 | BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_ALL;
-  REG_BLDALPHA = EFFECT_BLEND_CANVAS(14);
+  REG_BLDALPHA = EFFECT_BLEND_CANVAS(CANVAS_BLEND_LEVEL);
   Resource_LoadAndDecompress(RESOURCE_EMBER_STREAK_SHEET, work->sheet, 1, 1);
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS,
                       COMPOSITE_ADDITIVE);
@@ -49,8 +57,10 @@ void BattleEffect_RunFlare(struct BattleEffectParams *args) {
 
     arcFlame = &work->particles[i];
     arcFlame->x =
-        ((direction * FIXEDtoINT(Trig_Sin(angle) * 32)) + originX) + 20;
-    arcFlame->y = FIXEDtoINT(Trig_Cos(angle) * 16) + 40;
+        ((direction * FIXEDtoINT(Trig_Sin(angle) * FLARE_ARC_RADIUS_X)) +
+         originX) +
+        20;
+    arcFlame->y = FIXEDtoINT(Trig_Cos(angle) * FLARE_ARC_RADIUS_Y) + 40;
     arcFlame->variant = -i * 4;
   }
 
@@ -67,11 +77,12 @@ void BattleEffect_RunFlare(struct BattleEffectParams *args) {
       EFFECT_SHOW_DAMAGE(SE_IMPACT);
     }
 
-    // Each flame plays six pictures and goes out.
+    // Each flame plays its pictures and goes out.
     for (i = 0; i != FLARE_ARC_COUNT; i++) {
       flame = &work->particles[i];
-      if ((flame->variant >= 0) && (flame->variant <= 23)) {
-        picture = flame->variant / 4;
+      if (flame->variant >= 0 &&
+          flame->variant < FLARE_FLAME_PICTURES * FLARE_PICTURE_FRAMES) {
+        picture = flame->variant / FLARE_PICTURE_FRAMES;
         // UB: width is assigned in one argument and read in another.
 #ifdef UBFIX
         width = gBattleEffect_PuffArcPictureWidths[picture];
@@ -159,4 +170,10 @@ UNUSED s32 BattleEffect_BuildCenteredIndexList(BattleEffectIndexWindow *window,
   return outputCount;
 }
 
+#undef FLARE_FRAMES
 #undef FLARE_ARC_COUNT
+#undef FLARE_ARC_RADIUS_X
+#undef FLARE_ARC_RADIUS_Y
+#undef FLARE_FLAME_PICTURES
+#undef FLARE_PICTURE_FRAMES
+#undef CANVAS_BLEND_LEVEL

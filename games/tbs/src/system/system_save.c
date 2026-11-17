@@ -3,6 +3,7 @@
 // Part of system.c.
 
 #include "system_internal.h"
+#include "macros.h"
 
 // Saving.
 
@@ -19,6 +20,12 @@ enum {
   /// Payload bytes summed into the checksum: all 4080 but the last eight.
   SAVE_CHECKSUM_BYTES = 4072
 };
+
+/// Where a file's second copy of the play time lies in its second part:
+/// Save_BuildFileSummary (window/screens_save.c) writes it 256 bytes into
+/// gSceneLocalState, which opens the save image's second half, after the part's
+/// header.
+#define SAVE_SECOND_PLAY_TIME_OFFSET (sizeof(struct SaveSectorHeader) + 256)
 
 /// Allocates the save workspace (heap slot HEAP_SLOT_SAVE), installs the flash
 /// library's SAVE_FLASH_TIMER handler, identifies the flash chip (up to eight
@@ -130,7 +137,7 @@ u32 Save_WriteSector(s32 sector) {
   if (gProgramFlashSector(index, work->slot.bytes) != 0)
     return 1;
   result = Flash_VerifySector(index, work->slot.bytes);
-  return (u32)(-result | result) >> 31; // 1 for any nonzero result
+  return NONZERO(result);
 }
 
 /// Reads flash sector `index` into the workspace's sector buffer.
@@ -233,7 +240,7 @@ u32 Save_DeletePart(s32 partId) {
     return 1U;
   }
   deletionResult = Save_InvalidateSector(index);
-  return (u32)((0 - deletionResult) | deletionResult) >> 31;
+  return NONZERO(deletionResult);
 }
 
 /// Sums the first 4072 payload bytes of the workspace's sector buffer; the
@@ -364,7 +371,8 @@ s32 Save_LoadFileSummaries(void) {
     }
     index = Save_FindLatestSector(group + SAVE_FILE_COUNT);
     if (index < SAVE_SECTOR_COUNT)
-      ReadFlash(index, 0x110, (u8 *)&summary->secondPartPlayTime,
+      ReadFlash(index, SAVE_SECOND_PLAY_TIME_OFFSET,
+                (u8 *)&summary->secondPartPlayTime,
                 sizeof(summary->secondPartPlayTime));
     else
       summary->secondPartPlayTime = 0;
@@ -384,3 +392,5 @@ u32 Save_ReleaseWork(void) {
   return 0;
 #endif
 }
+
+#undef SAVE_SECOND_PLAY_TIME_OFFSET

@@ -657,6 +657,8 @@ void Portrait_CloseWindow(u32 entry);
 
 #define WINDOW_WORK ((struct WindowWork *)gWindowWork[0])
 
+/// The action id in a PsynergyEntry's encodedAction, below the marks for an
+/// action the class or an equipped item gave (PSYNERGY_ABILITY_MASK).
 #define ACTION_ID_MASK 0x3fff
 
 /// Defines name(no, x, y, width, height): decodes message no and fits a window

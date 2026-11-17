@@ -550,6 +550,8 @@ enum SoundId {
   /// SE_TABLET_RISE two semitones lower and softer; nothing plays it.
   SE_547,
   SE_548,
+  /// SE_BOOKSHELF_SLIDE with its first note three semitones higher; nothing
+  /// plays it.
   SE_549,
   /// Played as the party drops through a hole on an islet.
   SE_DROP_THROUGH_HOLE,
@@ -669,6 +671,8 @@ enum SoundId {
   /// SE_613's rhythm on its voice, six of its eleven notes changed, at tempo
   /// 32; nothing plays it.
   SE_614,
+  /// SE_KOLIMA_BRIDGE_HOP's voice and rhythm with three of its five notes;
+  /// nothing plays it.
   SE_615,
   /// SE_WHIRLWIND an octave lower; nothing plays it.
   SE_UNUSED_WHIRLWIND_LOW_A,

@@ -55,12 +55,15 @@ struct PillarEntry {
   u32 column[3];
 };
 
+/// The most water pillars and spouts a room has.
+#define PILLAR_ENTRIES 32
+
 /// The water pillars and spouts AquaRockInside_DrawPillars draws, and their
 /// VRAM entry.
 struct PillarWork {
   u16 vramEntry;
   u16 count;
-  struct PillarEntry entries[32];
+  struct PillarEntry entries[PILLAR_ENTRIES];
 };
 
 /// The head of one of the two streams a Water Stone sends: its place and the
@@ -83,12 +86,15 @@ struct Splash {
   u32 sprite[3];
 };
 
+/// The most splashes the streams leave at once.
+#define SPLASH_ENTRIES 32
+
 /// The streams and their splashes, which AquaRockInside_DrawSplashes draws.
 struct BeamWork {
   u16 vramEntry;
   u16 count;
   struct BeamEntry entries[2];
-  struct Splash splashes[32];
+  struct Splash splashes[SPLASH_ENTRIES];
 };
 
 /// A vent: whether it blows, its timer, its place and its value.
@@ -1323,9 +1329,9 @@ void AquaRockInside_PiersLearnsParch(s32 firstId, s32 secondId) {
   Sound_Play(SOUND_FADE_OUT_BGM);
   Event_Wait(30);
   FieldCamera_SetSpeed(0.5);
-  FieldCamera_MoveWithinMapBounds(FIXEDtoINT(first->x.fixed) << 16,
-                                  FIXEDtoINT(first->y.fixed) << 16,
-                                  FIXEDtoINT(first->z.fixed) << 16, 1);
+  FieldCamera_MoveWithinMapBounds(INTtoFIXED(FIXEDtoINT(first->x.fixed)),
+                                  INTtoFIXED(FIXEDtoINT(first->y.fixed)),
+                                  INTtoFIXED(FIXEDtoINT(first->z.fixed)), 1);
   Sound_Play(SE_RUMBLE);
   MapGrid_SetShake(2, 2, 1);
   PaletteFade_SetSource(PALETTE_TINT_NONE, PALETTES_ALL);
@@ -2115,9 +2121,9 @@ s32 Scene_PrepareMap(void) {
 
 /// A splash at the actor's feet, on its sprite's priority.
 void AquaRockInside_SpawnSplash(struct Actor *actor) {
-  struct Actor *child =
-      FieldActor_Create(14, actor->x.fixed, actor->y.fixed + toFIXED(4),
-                        actor->z.fixed + toFIXED(4));
+  struct Actor *child = FieldActor_Create(SPRITE_WADING_SPLASH, actor->x.fixed,
+                                          actor->y.fixed + toFIXED(4),
+                                          actor->z.fixed + toFIXED(4));
   struct FieldSprite *source = actor->sprite;
 
   if (child != 0) {
@@ -2254,7 +2260,7 @@ void AquaRockInside_DrawPillars(void) {
   originY = Ram_HeapSlots->mapGrid->origin[1];
   tile = gVramCacheEntries[work->vramEntry].offset >> 5;
 
-  for (i = 0; i < 32; i++) {
+  for (i = 0; i < PILLAR_ENTRIES; i++) {
     if (entry->state != 0) {
       s32 *position = entry->position;
       s32 x;
@@ -2426,7 +2432,7 @@ void AquaRockInside_SetPillarsHeight(s32 height) {
   *(s32 *)(Ram_MapCollision + MAP_SHAPE_MARKED * 4) =
       ((height / toFIXED(8)) & 0xff) << 8;
   entry = work->entries;
-  for (i = 0; i < 32; i++) {
+  for (i = 0; i < PILLAR_ENTRIES; i++) {
     if (entry->x != 0)
       entry->height = height;
     entry++;
@@ -2439,7 +2445,7 @@ void AquaRockInside_SetPillarHeight(u32 index, s32 height) {
   struct MapWork *map = Ram_HeapSlots->mapGrid;
   struct PillarWork *work = &gAquaRockInside_Pillars;
 
-  if (index <= 31) {
+  if (index < PILLAR_ENTRIES) {
     struct PillarEntry *entry = &work->entries[index];
 
     if (entry->x != 0) {
@@ -2474,7 +2480,7 @@ void AquaRockInside_DrawSplashes(void) {
   originY = map->origin[1];
   tile = gVramCacheEntries[splashes->vramEntry].offset >> 5;
   splash = splashes->splashes;
-  i = 31;
+  i = SPLASH_ENTRIES - 1;
 
   do {
     if (splash->active != 0) {
@@ -2600,8 +2606,8 @@ s32 AquaRockInside_AdvanceStreams(s32 first, s32 target) {
     stream++;
   }
   splash = &state->splashes[count];
-  if (count < 32) {
-    i = 32 - count;
+  if (count < SPLASH_ENTRIES) {
+    i = SPLASH_ENTRIES - count;
     do {
       if (splash->active != 0)
         splash->active = 0;

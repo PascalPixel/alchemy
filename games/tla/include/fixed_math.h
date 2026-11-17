@@ -3,7 +3,7 @@
 
 /// @file
 /// 16.16 fixed-point constants and pixels, sine and cosine, and the library
-/// division, as The Broken Seal's fixed_math.h.
+/// division.
 
 #include "types.h"
 

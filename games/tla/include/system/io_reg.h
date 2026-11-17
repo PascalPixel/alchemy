@@ -2,7 +2,7 @@
 #define ALCHEMY_IO_REG_H
 
 /// @file
-/// The hardware's I/O registers and their bits, as pret names them.
+/// The hardware's I/O registers and their bits.
 
 #include "types.h"
 
@@ -198,14 +198,11 @@ enum DisplayControl {
     (lvalue) = rgb;                                                            \
   } while (0)
 
-/// The start of the 32 KB of IWRAM, the CPU's fast internal work memory, as
-/// pret names it.
+/// The start of the 32 KB of IWRAM, the CPU's fast internal work memory.
 #define IWRAM_START 0x03000000
-/// The start of the 256 KB of EWRAM, the slower external work memory, as pret
-/// names it.
+/// The start of the 256 KB of EWRAM, the slower external work memory.
 #define EWRAM_START 0x02000000
-/// The end of EWRAM, as pret names it: the limit the EWRAM heap's allocators
-/// test.
+/// The end of EWRAM: the limit the EWRAM heap's allocators test.
 #define EWRAM_END 0x02040000
 
 /// Background tile memory's 16 KB character block `n`, 0 to 3.
@@ -214,7 +211,7 @@ enum DisplayControl {
 #define BG_SCREEN_BLOCK(n) ((u8 *)VRAM + (n) * BG_SCREEN_SIZE)
 #define TILE_SIZE_4BPP 32 ///< bytes in an 8x8 tile of 16 colours
 #define TILE_SIZE_8BPP 64 ///< bytes in an 8x8 tile of 256 colours
-/// Sprite tile memory, as pret names it: the 32 KB from 0x06010000.
+/// Sprite tile memory: the 32 KB from 0x06010000.
 #define OBJ_VRAM0 0x06010000
 
 /// Timer 3's reload value and control as one word; it paces the serial
@@ -222,7 +219,7 @@ enum DisplayControl {
 #define REG_TM3CNT (*(volatile u32 *)0x0400010c)
 #define REG_TM3CNT_H (*(volatile u16 *)0x0400010e) ///< timer 3's control
 
-/// TMxCNT_H flags, as pret names them.
+/// TMxCNT_H flags.
 #define TIMER_INTR_ENABLE 0x0040
 #define TIMER_ENABLE 0x0080 ///< starts the timer counting
 #define TIMER_256CLK 0x0002 ///< counts every 256 cycles, 65536 times a second
@@ -239,7 +236,7 @@ enum DisplayControl {
 #define REG_KEYCNT (*(volatile u16 *)0x04000132)   ///< keys for the keypad IRQ
 #define REG_RCNT (*(volatile u16 *)0x04000134)     ///< the serial port's mode
 
-/// SIOCNT flags, as pret names them.
+/// SIOCNT flags.
 #define SIO_115200_BPS 0x0003  ///< multiplayer's fastest baud rate
 #define SIO_START 0x0080       ///< starts a transfer; set while one runs
 #define SIO_32BIT_MODE 0x1000  ///< normal mode, 32 bits a transfer
@@ -251,7 +248,7 @@ enum DisplayControl {
 #define RCNT_SIO_MODE 0x0000
 #define RCNT_GPIO_MODE 0x8000 ///< the port as general-purpose pins
 
-/// DMAxCNT_H flags, as pret names them. A 32-bit control word takes them
+/// DMAxCNT_H flags. A 32-bit control word takes them
 /// shifted above its count: (DMA_ENABLE | DMA_32BIT) << 16 | words.
 #define DMA_DEST_INC 0x0000    ///< destination steps up
 #define DMA_DEST_DEC 0x0020    ///< destination steps down
@@ -326,7 +323,7 @@ enum KeyMask {
 #define REG_BG0VOFS (*(volatile u16 *)0x04000012) ///< BG0's vertical scroll
 /// Direct sound's mixing: volumes, speakers, timers and FIFO resets.
 #define REG_SOUNDCNT_H (*(volatile u16 *)0x04000082)
-/// SOUNDCNT_H flags, as pret names them: the mixing volumes, then each direct
+/// SOUNDCNT_H flags: the mixing volumes, then each direct
 /// sound channel's speakers, timer and FIFO reset.
 #define SOUND_CGB_MIX_FULL 0x0002 ///< the four tone channels at full volume
 #define SOUND_A_MIX_FULL 0x0004   ///< direct sound A at full, not half
@@ -379,7 +376,7 @@ enum KeyMask {
 /// WAITCNT_SRAM_8: the wait the flash routines read the chip with;
 /// programming and erasing use the chip's wait[0], then restore it.
 #define WAITCNT_SRAM_SLOWEST 0x0003
-/// WAITCNT's SRAM wait bits, as pret names them.
+/// WAITCNT's SRAM wait bits.
 #define WAITCNT_SRAM_MASK 0x0003
 #define REG_IME (*(volatile u16 *)0x04000208) ///< all interrupts' master switch
 
@@ -413,7 +410,7 @@ enum KeyMask {
 #define RGB_LEVEL_MAX 31
 /// The brightest colour, every channel at its highest level.
 #define RGB_WHITE RGB(RGB_LEVEL_MAX, RGB_LEVEL_MAX, RGB_LEVEL_MAX)
-/// Video RAM, as pret names it: background tiles and maps, then sprite tiles.
+/// Video RAM: background tiles and maps, then sprite tiles.
 #define VRAM 0x06000000
 #define BG_CHAR_SIZE 16384  ///< bytes in a character block, 16 KB
 #define BG_SCREEN_SIZE 2048 ///< bytes in a screen block, 2 KB

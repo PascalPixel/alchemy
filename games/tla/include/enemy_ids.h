@@ -170,14 +170,9 @@ enum EnemyId {
   ENEMY_AQUA_HYDRA,
   ENEMY_HYDRA,
   ENEMY_PYRODRA,
-  /// Gaia Rock's Serpent: a row for each number of the four openings into its
-  /// lair that are open as it is fought, counted by
+  /// Gaia Rock's Serpent: a row for each number of the four beams of sunlight
+  /// let into its lair as it is fought, counted by
   /// GaiaRockInside_ChallengeSerpent, this one for none.
-  /// XXX: beams of sunlight or streams of Dragonsbane? Izumo says "The serpent
-  /// can't stand sunlight", gaia_rock_inside.c names the openings streams of
-  /// Dragonsbane, and the lair looks the same with all four open as with none
-  /// from entrances 10 and 20; a recording of entrance 20 as an opening is
-  /// shown would settle it.
   ENEMY_SERPENT,
   ENEMY_SERPENT_ONE_BEAM,
   ENEMY_SERPENT_TWO_BEAMS,

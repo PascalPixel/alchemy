@@ -1,6 +1,7 @@
 #ifndef ALCHEMY_MAP_GRID_H
 #define ALCHEMY_MAP_GRID_H
 
+#include "field/field_coordinate.h"
 #include "fixed_math.h"
 #include "types.h"
 #include "static_assert.h"
@@ -24,10 +25,9 @@ struct MapAnimation {
   u16 paused;
 };
 
-/// The map grid: 128 by 128 cells, each 16 pixels square, wrapping at its
-/// edges.
+/// The map grid: 128 by 128 cells, each MAPGRID_CELL_PIXELS square, wrapping
+/// at its edges.
 #define MAPGRID_SIZE 128
-#define MAPGRID_CELL_PIXELS 16
 /// A layer window's row mask (MapLayer.maskY) over the whole grid, which wraps
 /// there rather than at a window of its own.
 #define MAPGRID_ROW_MASK ((MAPGRID_SIZE - 1) * MAPGRID_SIZE)

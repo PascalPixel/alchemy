@@ -1273,7 +1273,7 @@ void BattleEffect_RunDiamondBerg(struct BattleEffectParams *args) {
         if ((u32)shard->variant >= DIAMOND_BERG_SHARD_SPIN) {
           continue;
         }
-        cell = i % 5 * 3 + shard->variant / 96 % 3;
+        cell = i % 5 * 3 + shard->variant / SHARD_TURN % 3;
         pixels =
             work->sheet + PRISM_SHARD_PICTURES + gPrism_ShardPictures[cell];
         width = gPrism_ShardWidths[cell];

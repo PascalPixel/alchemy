@@ -197,6 +197,11 @@ enum BattleCastKind {
 /// or'd with the side's tag.
 #define PLACE_PARTY 0x100
 #define PLACE_ENEMY 0x180
+/// A place code's side bit, set for the enemies' list, and its place in the
+/// list (Battle_GetUnitAtPlace): PLACE_ENEMY is PLACE_PARTY with the side bit
+/// set.
+#define PLACE_ENEMY_SIDE (1 << 7)
+#define PLACE_INDEX_MASK ((1 << 4) - 1)
 
 /// BattleAction.target of a held unit's lost action (COMMAND_NONE, from
 /// Battle_BuildEnemyActions and

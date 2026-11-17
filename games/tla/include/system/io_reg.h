@@ -194,7 +194,7 @@ enum DisplayControl {
 /// its kin).
 #define SET_RGB(lvalue, r, g, b)                                               \
   do {                                                                         \
-    int rgb = ((b) << 10) | ((g) << 5) | (r);                                  \
+    int rgb = RGB(r, g, b);                                                    \
     (lvalue) = rgb;                                                            \
   } while (0)
 

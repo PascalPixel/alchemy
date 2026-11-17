@@ -653,9 +653,6 @@ void UpdateRisingParticleBurst(void *object) {
   Actor_ReleaseFar(src);
 }
 
-/// The actors of Ram_HeapSlots->actors, as the field's ACTOR_COUNT.
-#define HEAP_ACTOR_COUNT 64
-
 /// Reveal's colour for the rocks it shows (sprite 200), given at its start
 /// and taken back at its end. Only the loop over the actors is left; value
 /// goes unused.

@@ -184,10 +184,18 @@ enum KandoreanTemplePoisRoomActorId {
   ACTOR_POIS_ROOM_KRADEN
 };
 
-/// Poi's room's story entrances: finding the rope still lying on the floor
+/// Poi's room's story exits, each leading back into the room by the entrance of
+/// its number: finding the rope still lying on the floor
 /// (KandoreanTemple_FindTheRopeOnTheFloor), and coming in through the cave to
 /// meet Poi (KandoreanTemple_MeetPoi).
-enum { ENTRANCE_ROPE_ON_THE_FLOOR = 13, ENTRANCE_THROUGH_THE_CAVE = 14 };
+enum {
+  KANDOREAN_TEMPLE_POI_ROPE_ON_THE_FLOOR = 13,
+  KANDOREAN_TEMPLE_POI_THROUGH_THE_CAVE = 14
+};
+
+/// The Chestbeaters' room's entrance after their battle, which no exit leads
+/// to: the party is back before the north wall, and the ladder comes down.
+enum { ENTRANCE_AFTER_CHESTBEATER_BATTLE = 3 };
 
 /// The temple's scene and area flags, by the rooms that read them.
 enum {
@@ -1604,14 +1612,16 @@ void KandoreanTemple_ClimbDownTheWell(void) {
   Actor_FaceDirectionAndRefreshById(gMainRoutineWork.leaderActorId,
                                     FACING_NORTH);
   Actor_SetSpriteFlags(Actor_GetById(gMainRoutineWork.leaderActorId), 0);
-  Actor_SetAnimationById(gMainRoutineWork.leaderActorId, 13);
+  Actor_SetAnimationById(gMainRoutineWork.leaderActorId,
+                         ANIM_LEADER_CLIMB_DOWN_FROM_TOP);
   FieldActor_SetMoveTarget(leader, 168, -12, 80);
   Actor_WaitForMove(leader);
-  Actor_SetAnimationById(gMainRoutineWork.leaderActorId, 10);
+  Actor_SetAnimationById(gMainRoutineWork.leaderActorId, ANIM_LEADER_CLIMB);
   Sound_Play(SE_MAP_EXIT);
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();
-  Import_EventSetExitRequest(8);
+  Import_EventSetExitRequest(
+      KANDOREAN_TEMPLE_POI_TO_KANDOREAN_TEMPLE_CHESTBEATERS);
 }
 
 /// Opens the trap door in Poi's room.
@@ -1643,7 +1653,7 @@ void KandoreanTemple_DropThroughTheTrapDoor(void) {
   Sound_Play(SE_MAP_EXIT);
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();
-  Import_EventSetExitRequest(9);
+  Import_EventSetExitRequest(KANDOREAN_TEMPLE_POI_TO_KANDOREAN_TEMPLE_MIMIC);
 }
 
 /// The leader squeezes north into the crack in the wall.
@@ -1663,14 +1673,16 @@ void KandoreanTemple_SlipIntoTheCrack(void) {
     leader->z.fixed += toFIXED(1);
     wait(1);
   }
-  Actor_SetAnimationById(gMainRoutineWork.leaderActorId, 13);
+  Actor_SetAnimationById(gMainRoutineWork.leaderActorId,
+                         ANIM_LEADER_CLIMB_DOWN_FROM_TOP);
   for (frame = 0; frame < 8; frame++) {
     leader->y.fixed -= toFIXED(1);
     wait(1);
   }
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();
-  Import_EventSetExitRequest(4);
+  Import_EventSetExitRequest(
+      KANDOREAN_TEMPLE_GATE_TO_KANDOREAN_TEMPLE_STREAM_EAST);
 }
 
 /// Move lifts the lift room's pillar.
@@ -1921,7 +1933,8 @@ void KandoreanTemple_FightChestbeaters(void) {
   Actor_MoveToAndWaitById(ACTOR_EAST_CHESTBEATER, 356, 164);
   Event_Wait(40);
   Battle_SetType(BATTLE_TYPE_NO_ESCAPE);
-  Event_SetAfterBattleDestination(SCENE_KANDOREAN_TEMPLE_CHESTBEATERS, 3);
+  Event_SetAfterBattleDestination(SCENE_KANDOREAN_TEMPLE_CHESTBEATERS,
+                                  ENTRANCE_AFTER_CHESTBEATER_BATTLE);
   Field_RequestBattleFromEncounterTable(9, 4);
   Event_End();
 }
@@ -2009,9 +2022,11 @@ void KandoreanTemple_StartLiftRoom(void) {
   gKandoreanTemple_WestFloatPhase = 0;
   gKandoreanTemple_EastFloatPhase = 0;
   if (GameFlag_Get(FLAG_KEEP_PARTY_POSITION) == 0) {
-    if (gMainRoutineWork.entrance == 5)
+    if (gMainRoutineWork.entrance ==
+        KANDOREAN_TEMPLE_LIFTS_FROM_KANDOREAN_TEMPLE_PILLAR_WEST_A)
       KandoreanTemple_ArriveOnWestLift();
-    else if (gMainRoutineWork.entrance == 6)
+    else if (gMainRoutineWork.entrance ==
+             KANDOREAN_TEMPLE_LIFTS_FROM_KANDOREAN_TEMPLE_PILLAR_WEST_B)
       KandoreanTemple_ArriveOnEastLift();
   }
   if (GameFlag_Get(FLAG_PILLAR_ON_EAST_VENT))
@@ -2026,7 +2041,8 @@ void KandoreanTemple_StartLiftRoom(void) {
 void KandoreanTemple_StartMimicRoom(void) {
   FieldEffect_StartBlankOverlay(0);
 #if TLA_PATCH_1 /* From patch 1. */
-  if (gMainRoutineWork.entrance == 1)
+  if (gMainRoutineWork.entrance ==
+      KANDOREAN_TEMPLE_MIMIC_FROM_KANDOREAN_TEMPLE_POI)
     GameFlag_Clear(FLAG_SHOW_AREA_NAME);
 #endif
 }
@@ -2070,9 +2086,10 @@ void KandoreanTemple_StartChestbeaterRoom(void) {
     Actor_SetPosition(ACTOR_EAST_CHESTBEATER, 0, 0);
   }
   if (GameFlag_Get(FLAG_KEEP_PARTY_POSITION) == 0) {
-    if (gMainRoutineWork.entrance == 2) {
+    if (gMainRoutineWork.entrance ==
+        KANDOREAN_TEMPLE_CHESTBEATERS_FROM_KANDOREAN_TEMPLE_POI) {
       Actor_GetById(gMainRoutineWork.leaderActorId)->y.fixed = toFIXED(64);
-    } else if (gMainRoutineWork.entrance == 3 &&
+    } else if (gMainRoutineWork.entrance == ENTRANCE_AFTER_CHESTBEATER_BATTLE &&
                Event_GetFlag(FLAG_LADDER_LOWERED) == 0) {
       Actor_SetPosition(ACTOR_MIDDLE_CHESTBEATER, 0, 0);
       Actor_SetPosition(ACTOR_WEST_CHESTBEATER, 0, 0);
@@ -2081,7 +2098,8 @@ void KandoreanTemple_StartChestbeaterRoom(void) {
     }
   }
 #if TLA_PATCH_1
-  if (gMainRoutineWork.entrance == 2)
+  if (gMainRoutineWork.entrance ==
+      KANDOREAN_TEMPLE_CHESTBEATERS_FROM_KANDOREAN_TEMPLE_POI)
     GameFlag_Clear(FLAG_SHOW_AREA_NAME);
 #endif
 }
@@ -2134,9 +2152,11 @@ void KandoreanTemple_StartVentRoom(void) {
   KandoreanTemple_PrepareColumn(ACTOR_EAST_COLUMN_FOOT);
   Actor_PlaceBlocks(gKandoreanTemple_PillarActors);
   if (!GameFlag_Get(FLAG_KEEP_PARTY_POSITION)) {
-    if (gMainRoutineWork.entrance == 3)
+    if (gMainRoutineWork.entrance ==
+        KANDOREAN_TEMPLE_PILLAR_FROM_KANDOREAN_TEMPLE_LIFTS_WEST)
       KandoreanTemple_ArriveOnWestVent();
-    else if (gMainRoutineWork.entrance == 4)
+    else if (gMainRoutineWork.entrance ==
+             KANDOREAN_TEMPLE_PILLAR_FROM_KANDOREAN_TEMPLE_LIFTS_SOUTHEAST)
       KandoreanTemple_ArriveOnEastVent();
   }
   gKandoreanTemple_WestTimer = 0;
@@ -2145,7 +2165,9 @@ void KandoreanTemple_StartVentRoom(void) {
   gKandoreanTemple_EastFloatPhase = 0;
   Task_AddFrame(KandoreanTemple_RunWestVent, TASK_PASS_FRAME);
   Task_Add(KandoreanTemple_RunEastVent, TASK_PASS_FRAME);
-  if (!GameFlag_Get(FLAG_KEEP_PARTY_POSITION) && gMainRoutineWork.entrance == 5)
+  if (!GameFlag_Get(FLAG_KEEP_PARTY_POSITION) &&
+      gMainRoutineWork.entrance ==
+          KANDOREAN_TEMPLE_PILLAR_FROM_KANDOREAN_TEMPLE_LIFTS_EAST)
     KandoreanTemple_LandFromAbove();
   Task_AddFrame(KandoreanTemple_WatchVents, TASK_PASS_FRAME);
   Actor_SetSpritePriority(gMainRoutineWork.leaderActorId, 2);
@@ -2397,13 +2419,15 @@ void KandoreanTemple_LeaveBySteam(void) {
 /// Rises on the west vent's steam to the room above.
 void KandoreanTemple_LeaveByWestVent(void) {
   KandoreanTemple_LeaveBySteam();
-  Import_EventSetExitRequest(3);
+  Import_EventSetExitRequest(
+      KANDOREAN_TEMPLE_PILLAR_TO_KANDOREAN_TEMPLE_LIFTS_WEST);
 }
 
 /// Rises on the east vent's steam to the room above.
 void KandoreanTemple_LeaveByEastVent(void) {
   KandoreanTemple_LeaveBySteam();
-  Import_EventSetExitRequest(4);
+  Import_EventSetExitRequest(
+      KANDOREAN_TEMPLE_PILLAR_TO_KANDOREAN_TEMPLE_LIFTS_SOUTHEAST);
 }
 
 /// The leader slips into the lift room's shaft of steam and is carried away.
@@ -2429,9 +2453,9 @@ void KandoreanTemple_SinkIntoTheSteam(void) {
   actor->facing = FACING_SOUTH;
   FieldEffect_SetAttached(party->leaderActorId,
                           ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
-  Actor_SetAnimationById(party->leaderActorId, 27);
+  Actor_SetAnimationById(party->leaderActorId, ANIM_LEADER_WALK_BACKWARDS);
   Event_Wait(30);
-  Actor_SetAnimationById(party->leaderActorId, 28);
+  Actor_SetAnimationById(party->leaderActorId, ANIM_LEADER_ARMS_RAISED);
   Event_Wait(10);
   Actor_SetSpritePriority(party->leaderActorId, 3);
   for (frame = 0; frame <= 39; frame++) {
@@ -2451,7 +2475,8 @@ void KandoreanTemple_SinkIntoTheSteam(void) {
       Event_FinishScreenTransition();
     }
   }
-  Import_EventSetExitRequest(5);
+  Import_EventSetExitRequest(
+      KANDOREAN_TEMPLE_LIFTS_TO_KANDOREAN_TEMPLE_PILLAR_WEST_A);
 }
 
 /// The leader rises into view on a lift while its column grows under it.
@@ -2534,7 +2559,8 @@ void KandoreanTemple_RideWestLiftDown(void) {
       SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER);
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();
-  Import_EventSetExitRequest(6);
+  Import_EventSetExitRequest(
+      KANDOREAN_TEMPLE_LIFTS_TO_KANDOREAN_TEMPLE_PILLAR_WEST_B);
 }
 
 /// As KandoreanTemple_RideWestLiftDown, on the east lift.
@@ -2554,7 +2580,8 @@ void KandoreanTemple_RideEastLiftDown(void) {
       SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER);
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();
-  Import_EventSetExitRequest(7);
+  Import_EventSetExitRequest(
+      KANDOREAN_TEMPLE_LIFTS_TO_KANDOREAN_TEMPLE_PILLAR_SOUTHEAST);
 }
 
 /// Sets up the stream room, where the party wades and the current of steam
@@ -2567,7 +2594,10 @@ void KandoreanTemple_StartStreamRoom(void) {
   map->wading = 1;
   FieldEffect_StartBlankOverlay(0);
 #if TLA_PATCH_1
-  if (gMainRoutineWork.entrance == 1 || gMainRoutineWork.entrance == 2)
+  if (gMainRoutineWork.entrance ==
+          KANDOREAN_TEMPLE_STREAM_FROM_KANDOREAN_TEMPLE_GATE_WEST ||
+      gMainRoutineWork.entrance ==
+          KANDOREAN_TEMPLE_STREAM_FROM_KANDOREAN_TEMPLE_GATE_EAST)
     GameFlag_Clear(FLAG_SHOW_AREA_NAME);
 #endif
 }
@@ -2646,7 +2676,10 @@ void KandoreanTemple_StartGate(void) {
     MapGrid_CopyCellAttributes(32, 30, 2, 1, 17, 25);
   }
 #if TLA_PATCH_1 /* From patch 1. */
-  if (gMainRoutineWork.entrance == 3 || gMainRoutineWork.entrance == 4)
+  if (gMainRoutineWork.entrance ==
+          KANDOREAN_TEMPLE_GATE_FROM_KANDOREAN_TEMPLE_STREAM_WEST ||
+      gMainRoutineWork.entrance ==
+          KANDOREAN_TEMPLE_GATE_FROM_KANDOREAN_TEMPLE_STREAM_EAST)
     GameFlag_Clear(FLAG_SHOW_AREA_NAME);
 #endif
 }
@@ -2682,7 +2715,7 @@ void KandoreanTemple_StartPoisRoom(void) {
   Actor_SetAnimationById(ACTOR_SECOND_TESTED_STUDENT, 5);
   Task_Add(KandoreanTemple_MatchStudentsToLeader, TASK_PASS_FRAME);
   if ((gMainRoutineWork.entrance >= 4 && gMainRoutineWork.entrance <= 6) ||
-      gMainRoutineWork.entrance == ENTRANCE_THROUGH_THE_CAVE) {
+      gMainRoutineWork.entrance == KANDOREAN_TEMPLE_POI_THROUGH_THE_CAVE) {
     if (GameFlag_Get(FLAG_LASH_RECEIVED)) {
       Actor_SetPositionAndFacing(ACTOR_POI, toFIXED(432), toFIXED(394),
                                  FACING_SOUTH_SOUTHWEST);
@@ -2693,7 +2726,8 @@ void KandoreanTemple_StartPoisRoom(void) {
     }
   }
   if ((gMainRoutineWork.entrance >= 1 && gMainRoutineWork.entrance <= 3) ||
-      gMainRoutineWork.entrance == 9) {
+      gMainRoutineWork.entrance ==
+          KANDOREAN_TEMPLE_POI_FROM_KANDOREAN_TEMPLE_MIMIC) {
     if (GameFlag_Get(FLAG_TRAP_DOOR_OPEN))
       KandoreanTemple_OpenTheTrapDoor();
     if (GameFlag_Get(FLAG_MET_POI)) {
@@ -2711,14 +2745,19 @@ void KandoreanTemple_StartPoisRoom(void) {
   } else if (gMainRoutineWork.entrance == 6) {
     if (GameFlag_Get(FLAG_MET_POI) == 0)
       KandoreanTemple_PassTheTest();
-  } else if (gMainRoutineWork.entrance == ENTRANCE_ROPE_ON_THE_FLOOR) {
+  } else if (gMainRoutineWork.entrance ==
+             KANDOREAN_TEMPLE_POI_ROPE_ON_THE_FLOOR) {
     KandoreanTemple_FindTheRopeOnTheFloor();
-  } else if (gMainRoutineWork.entrance == ENTRANCE_THROUGH_THE_CAVE) {
+  } else if (gMainRoutineWork.entrance ==
+             KANDOREAN_TEMPLE_POI_THROUGH_THE_CAVE) {
     if (GameFlag_Get(FLAG_MET_POI) == 0)
       KandoreanTemple_MeetPoi();
   }
 #if TLA_PATCH_1 /* From patch 1. */
-  if (gMainRoutineWork.entrance >= 8 && gMainRoutineWork.entrance <= 9)
+  if (gMainRoutineWork.entrance ==
+          KANDOREAN_TEMPLE_POI_FROM_KANDOREAN_TEMPLE_CHESTBEATERS ||
+      gMainRoutineWork.entrance ==
+          KANDOREAN_TEMPLE_POI_FROM_KANDOREAN_TEMPLE_MIMIC)
     GameFlag_Clear(FLAG_SHOW_AREA_NAME);
 #endif
 }
@@ -3018,7 +3057,7 @@ void KandoreanTemple_PassTheTest(void) {
       SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_NOISE);
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();
-  Import_EventSetExitRequest(13);
+  Import_EventSetExitRequest(KANDOREAN_TEMPLE_POI_ROPE_ON_THE_FLOOR);
 }
 
 /// Finding the rope still lying on the floor.
@@ -3051,7 +3090,7 @@ void KandoreanTemple_FindTheRopeOnTheFloor(void) {
   Actor_WalkToAndWait(ACTOR_POI, 472, 648);
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();
-  Import_EventSetExitRequest(14);
+  Import_EventSetExitRequest(KANDOREAN_TEMPLE_POI_THROUGH_THE_CAVE);
 }
 
 /// Poi walks up to the north rope and speaks from above.
@@ -3535,8 +3574,8 @@ u32 gSceneExits[] = {
     SCENE_EXIT(7, KandoreanTemplePoi, 6),
     SCENE_EXIT(KANDOREAN_TEMPLE_POI_TO_KANDOREAN_TEMPLE_CHESTBEATERS, KandoreanTempleChestbeaters, KANDOREAN_TEMPLE_CHESTBEATERS_FROM_KANDOREAN_TEMPLE_POI),
     SCENE_EXIT(KANDOREAN_TEMPLE_POI_TO_KANDOREAN_TEMPLE_MIMIC, KandoreanTempleMimic, KANDOREAN_TEMPLE_MIMIC_FROM_KANDOREAN_TEMPLE_POI),
-    SCENE_EXIT(13, KandoreanTemplePoi, 13),
-    SCENE_EXIT(14, KandoreanTemplePoi, 14),
+    SCENE_EXIT(KANDOREAN_TEMPLE_POI_ROPE_ON_THE_FLOOR, KandoreanTemplePoi, KANDOREAN_TEMPLE_POI_ROPE_ON_THE_FLOOR),
+    SCENE_EXIT(KANDOREAN_TEMPLE_POI_THROUGH_THE_CAVE, KandoreanTemplePoi, KANDOREAN_TEMPLE_POI_THROUGH_THE_CAVE),
     SCENE_EXITS_END,
 };
 

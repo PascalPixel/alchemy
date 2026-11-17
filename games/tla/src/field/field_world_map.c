@@ -18,6 +18,13 @@
 
 #define WORLD_MAP_BG_PALETTE ((s16 *)BG_PLTT)
 
+/// The still picture on BG1 (WorldMap_StartStillPicture): 32 by 20 tiles of
+/// 256 colours from tile STILL_PICTURE_FIRST_TILE on, which BG1's map lays out
+/// row by row.
+#define STILL_PICTURE_TILES_ACROSS 32
+#define STILL_PICTURE_TILE_ROWS 20
+#define STILL_PICTURE_FIRST_TILE 384
+
 /// Sets up the world map's perspective view: BG2 and BG3 in affine mode, the
 /// camera work, the projection, the per-scanline ground plane routine in RAM
 /// (Matrix_UpdateVertices) and its first frame, and the per-frame view and

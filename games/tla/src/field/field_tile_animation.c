@@ -221,8 +221,11 @@ void WorldMap_PresentStillPicture(void) {
              &REG_BG2CNT);
   Io_Write16(BGCNT_PRIORITY(2) | BGCNT_256_COLORS | BGCNT_SCREEN_BASE(6),
              &REG_BG1CNT);
-  Dma_Set(Ram_MapCellBuffer, (void *)BG_SCREEN_BLOCK(12),
-          DMA_COPY_WORDS(640 * TILE_SIZE_8BPP / 4), REG_DMA3);
+  Dma_Set(Ram_MapCellBuffer,
+          BG_CHAR_BLOCK(0) + STILL_PICTURE_FIRST_TILE * TILE_SIZE_8BPP,
+          DMA_COPY_WORDS(STILL_PICTURE_TILES_ACROSS * STILL_PICTURE_TILE_ROWS *
+                         TILE_SIZE_8BPP / 4),
+          REG_DMA3);
 }
 
 /// While the still picture shows, the perspective's window lies below the
@@ -235,7 +238,7 @@ void WorldMap_PresentStillPicture(void) {
 /// tiles, draws the current affine frame into pixels and hands the window and
 /// VBlank to it.
 void WorldMap_StartStillPicture(void) {
-  u8 *pages = Ram_HeapSlots->worldMapAffine;
+  struct WorldMapAffineWork *affineWork = Ram_HeapSlots->worldMapAffine;
   struct WorldMapView *perspective =
       (struct WorldMapView *)Ram_HeapSlots->mapGrid;
   u32 *resources;
@@ -252,7 +255,7 @@ void WorldMap_StartStillPicture(void) {
   Dma_Set((void *)BG_CHAR_BLOCK(1), gDecodeBuffer,
           DMA_COPY_WORDS(WORLD_MAP_TILE_SET_BYTES / 4), REG_DMA3);
   wait(1);
-  TileMap_DrawRowsFromRam(pages + (gFrameCount & 1) * 5120 + 3200,
+  TileMap_DrawRowsFromRam(affineWork->pages[gFrameCount & 1],
                           Ram_MapCellBuffer);
   perspective->windowTop = STILL_PICTURE_WINDOW_TOP;
   perspective->windowBottom = STILL_PICTURE_WINDOW_BOTTOM;
@@ -546,8 +549,8 @@ void BlendScript_Start(u16 *script) {
   started = 0;
   zero = 0;
   state = &Ram_HeapSlots->mapGrid->blend;
-  Dma_Set((const void *)&zero, state,
-          (DMA_ENABLE | DMA_32BIT | DMA_SRC_FIXED) << 16 | 3, REG_DMA3);
+  Dma_Set((const void *)&zero, state, DMA_FILL_WORDS(sizeof(*state) / 4),
+          REG_DMA3);
   first = *script;
   if (first != BLEND_SCRIPT_LOOP) {
     state->script = script;
@@ -1316,7 +1319,7 @@ s32 WorldMap_GetCollision(struct WorldPosition *position) {
     if (halfPixelX & 2)
       result = packedCollisions >> 4;
     else
-      result = packedCollisions & 15;
+      result = packedCollisions & 0xf;
     if (result != 0)
       return result;
   }
@@ -1330,7 +1333,7 @@ s32 WorldMap_GetCollision(struct WorldPosition *position) {
     if (halfPixelX & 2)
       result = packedCollisions >> 4;
     else
-      result = packedCollisions & 15;
+      result = packedCollisions & 0xf;
     if (result != 0)
       return result;
   }

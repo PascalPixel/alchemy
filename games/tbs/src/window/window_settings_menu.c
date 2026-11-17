@@ -7,10 +7,26 @@
 /// The pixels a settings slider's marker runs across, from OPTION_SLIDER_X.
 #define OPTION_SLIDER_WIDTH 60
 
-/// Nothing calls them.
-UNUSED void SettingsMenu_ReservedNoOpC9BC(void) {}
-UNUSED void SettingsMenu_ReservedNoOpC9C0(void) {}
-UNUSED void SettingsMenu_ReservedNoOpC9C4(void) {}
+/// The settings menu's rows, in the order of their help messages
+/// (MsgOptionHelp on) and of OptionMenuWork.option.
+enum SettingsMenuRow {
+  SETTINGS_ROW_WINDOW_COLOR = 0, ///< "Window color"
+  SETTINGS_ROW_WINDOW_BRIGHTNESS = 1,
+  SETTINGS_ROW_MESSAGE_SPEED = 2,
+  SETTINGS_ROW_SPEECH = 3, ///< "Turn voice sounds on or off."
+  SETTINGS_ROW_AUTO_SLEEP = 4,
+  SETTINGS_MENU_ROWS = 5
+};
+
+/// The window colours the window colour settings set: WINDOW_PALETTE's colours
+/// from its background (shade 0, WINDOW_BACKGROUND_COLOR) to shade 6.
+#define WINDOW_COLOR_SHADE(n)                                                  \
+  BG_PLTT_COLOR(WINDOW_PALETTE, WINDOW_BACKGROUND_COLOR + (n))
+
+/// Unused: three that do nothing.
+UNUSED void SettingsMenu_ReservedNoOpA(void) {}
+UNUSED void SettingsMenu_ReservedNoOpB(void) {}
+UNUSED void SettingsMenu_ReservedNoOpC(void) {}
 
 /// One of the seven entries of the settings menu's work
 /// (OptionMenuWork.entries); only its state is known, and only the unused
@@ -56,8 +72,8 @@ UNUSED void WindowColor_CalculateTint(struct OptionMenuWork *work) {
   s32 red;
   s32 green;
 
-  phase = (gMainRoutineWork.windowHue + WINDOW_HUE_COUNT / 2) %
-          WINDOW_HUE_COUNT * 4;
+  phase = (gMainRoutineWork.windowHue + WINDOW_COLOR_COUNT / 2) %
+          WINDOW_COLOR_COUNT * 4;
   bias = gMainRoutineWork.windowBrightness - WINDOW_BRIGHTNESS_NEUTRAL;
   red = gWindowColor_WaveTable[(phase % WINDOW_COLOR_WHEEL_STEPS)];
   green = gWindowColor_WaveTable[(phase + WINDOW_COLOR_WHEEL_STEPS / 3) %
@@ -84,22 +100,22 @@ UNUSED void WindowColor_CalculateTint(struct OptionMenuWork *work) {
   work->tint[2] = blue;
 }
 
-/// Writes window colours 4 to 10 of WINDOW_PALETTE, each a fixed scale of the
-/// window tint.
+/// Writes the window colours (shades 0 to 6 of WINDOW_COLOR_SHADE), each a
+/// fixed scale of the window tint.
 UNUSED void WindowColor_WritePalette(struct OptionMenuWork *work) {
-  *(s16 *)&BG_PLTT_COLOR(WINDOW_PALETTE, 4) = WindowColor_ScaleTint(
-      work, FIXED_ONE * 14 / 15, FIXED_ONE * 4 / 5, 0x11110);
-  *(s16 *)&BG_PLTT_COLOR(WINDOW_PALETTE, 5) = WindowColor_ScaleTint(
+  *(s16 *)&WINDOW_COLOR_SHADE(0) = WindowColor_ScaleTint(
+      work, FIXED_ONE * 14 / 15, FIXED_ONE * 4 / 5, toFIXED(1.06666));
+  *(s16 *)&WINDOW_COLOR_SHADE(1) = WindowColor_ScaleTint(
       work, FIXED_ONE * 5 / 6, FIXED_ONE * 11 / 15, FIXED_ONE * 14 / 15);
-  *(s16 *)&BG_PLTT_COLOR(WINDOW_PALETTE, 6) = WindowColor_ScaleTint(
+  *(s16 *)&WINDOW_COLOR_SHADE(2) = WindowColor_ScaleTint(
       work, FIXED_ONE * 11 / 15, FIXED_ONE * 2 / 3, FIXED_ONE * 4 / 5);
-  *(s16 *)&BG_PLTT_COLOR(WINDOW_PALETTE, 7) =
-      WindowColor_ScaleTint(work, 0xA221, FIXED_ONE * 3 / 5, FIXED_ONE * 2 / 3);
-  *(s16 *)&BG_PLTT_COLOR(WINDOW_PALETTE, 8) = WindowColor_ScaleTint(
+  *(s16 *)&WINDOW_COLOR_SHADE(3) = WindowColor_ScaleTint(
+      work, toFIXED(0.63333), FIXED_ONE * 3 / 5, FIXED_ONE * 2 / 3);
+  *(s16 *)&WINDOW_COLOR_SHADE(4) = WindowColor_ScaleTint(
       work, FIXED_ONE * 31 / 30, FIXED_ONE * 13 / 15, FIXED_ONE * 6 / 5);
-  *(s16 *)&BG_PLTT_COLOR(WINDOW_PALETTE, 9) = WindowColor_ScaleTint(
-      work, 0x12221, FIXED_ONE * 14 / 15, FIXED_ONE * 4 / 3);
-  *(s16 *)&BG_PLTT_COLOR(WINDOW_PALETTE, 10) = WindowColor_ScaleTint(
+  *(s16 *)&WINDOW_COLOR_SHADE(5) = WindowColor_ScaleTint(
+      work, toFIXED(1.13333), FIXED_ONE * 14 / 15, FIXED_ONE * 4 / 3);
+  *(s16 *)&WINDOW_COLOR_SHADE(6) = WindowColor_ScaleTint(
       work, FIXED_ONE * 37 / 30, FIXED_ONE, FIXED_ONE * 22 / 15);
 }
 
@@ -111,9 +127,9 @@ u16 WindowColor_ScaleTint(struct OptionMenuWork *work, FIXED redScale,
   s32 green;
   s32 blue;
 
-  red = Iwram_MulFX(work->tint[0] << 16, redScale) >> 16;
-  green = Iwram_MulFX(work->tint[1] << 16, greenScale) >> 16;
-  blue = Iwram_MulFX(work->tint[2] << 16, blueScale) >> 16;
+  red = FIXEDtoINT(Iwram_MulFX(INTtoFIXED(work->tint[0]), redScale));
+  green = FIXEDtoINT(Iwram_MulFX(INTtoFIXED(work->tint[1]), greenScale));
+  blue = FIXEDtoINT(Iwram_MulFX(INTtoFIXED(work->tint[2]), blueScale));
   if (red < 0)
     red = 0;
   if (green < 0)
@@ -138,17 +154,17 @@ u16 Color_ScaleComponents(s16 *rgb, FIXED redScale, FIXED greenScale,
   s32 green;
   s32 blue;
 
-  red = Iwram_MulFX(rgb[0] << 16, redScale) >> 16;
-  green = Iwram_MulFX(rgb[1] << 16, greenScale) >> 16;
-  blue = Iwram_MulFX(rgb[2] << 16, blueScale) >> 16;
+  red = FIXEDtoINT(Iwram_MulFX(INTtoFIXED(rgb[0]), redScale));
+  green = FIXEDtoINT(Iwram_MulFX(INTtoFIXED(rgb[1]), greenScale));
+  blue = FIXEDtoINT(Iwram_MulFX(INTtoFIXED(rgb[2]), blueScale));
   CLAMP(red, 0, RGB_LEVEL_MAX);
   CLAMP(green, 0, RGB_LEVEL_MAX);
   CLAMP(blue, 0, RGB_LEVEL_MAX);
   return red + ((blue << 10) + (green << 5));
 }
 
-/// Sets the window colours (WINDOW_PALETTE, colours 4 to 10) for a window hue
-/// (0 to 23) and brightness (0 to 14, 7 neutral).
+/// Sets the window colours (WINDOW_COLOR_SHADE) for a window hue (0 to 23) and
+/// brightness (0 to 14, 7 neutral).
 void WindowColor_Apply(s32 phase, s32 brightness) {
   s16 rgb[3];
   s16 step;
@@ -158,7 +174,7 @@ void WindowColor_Apply(s32 phase, s32 brightness) {
   s16 offset;
 
   // The 24 hues are every fourth step of the 96-step wheel, hue 0 at step 48.
-  step = ((phase + WINDOW_HUE_COUNT / 2) % WINDOW_HUE_COUNT) * 4;
+  step = ((phase + WINDOW_COLOR_COUNT / 2) % WINDOW_COLOR_COUNT) * 4;
   offset = brightness - WINDOW_BRIGHTNESS_NEUTRAL;
   red = gWindowColor_WaveTable[(step % WINDOW_COLOR_WHEEL_STEPS)] + offset;
   green = gWindowColor_WaveTable[(step + WINDOW_COLOR_WHEEL_STEPS / 3) %
@@ -173,29 +189,29 @@ void WindowColor_Apply(s32 phase, s32 brightness) {
   rgb[0] = red;
   rgb[1] = green;
   rgb[2] = blue;
-  // Each colour scales the tint by channel, in 16.16 (FIXED_ONE is 1): colours
-  // 4 to 7 grow darker, from about 0.93, 0.8 and 1.07 to 0.63, 0.6 and 0.67,
-  // and 8 to 10 lighter, up to about 1.23, 1 and 1.47.
-  BG_PLTT_COLOR(WINDOW_PALETTE, 4) = Color_ScaleComponents(
-      rgb, FIXED_ONE * 14 / 15, FIXED_ONE * 4 / 5, 0x11110);
-  BG_PLTT_COLOR(WINDOW_PALETTE, 5) = Color_ScaleComponents(
+  // Each shade scales the tint by channel, in 16.16 (FIXED_ONE is 1): shades
+  // 0 to 3 grow darker, from about 0.93, 0.8 and 1.07 to 0.63, 0.6 and 0.67,
+  // and 4 to 6 lighter, up to about 1.23, 1 and 1.47.
+  WINDOW_COLOR_SHADE(0) = Color_ScaleComponents(
+      rgb, FIXED_ONE * 14 / 15, FIXED_ONE * 4 / 5, toFIXED(1.06666));
+  WINDOW_COLOR_SHADE(1) = Color_ScaleComponents(
       rgb, FIXED_ONE * 5 / 6, FIXED_ONE * 11 / 15, FIXED_ONE * 14 / 15);
-  BG_PLTT_COLOR(WINDOW_PALETTE, 6) = Color_ScaleComponents(
+  WINDOW_COLOR_SHADE(2) = Color_ScaleComponents(
       rgb, FIXED_ONE * 11 / 15, FIXED_ONE * 2 / 3, FIXED_ONE * 4 / 5);
-  BG_PLTT_COLOR(WINDOW_PALETTE, 7) =
-      Color_ScaleComponents(rgb, 0xa221, FIXED_ONE * 3 / 5, FIXED_ONE * 2 / 3);
-  BG_PLTT_COLOR(WINDOW_PALETTE, 8) = Color_ScaleComponents(
+  WINDOW_COLOR_SHADE(3) = Color_ScaleComponents(
+      rgb, toFIXED(0.63333), FIXED_ONE * 3 / 5, FIXED_ONE * 2 / 3);
+  WINDOW_COLOR_SHADE(4) = Color_ScaleComponents(
       rgb, FIXED_ONE * 31 / 30, FIXED_ONE * 13 / 15, FIXED_ONE * 6 / 5);
-  BG_PLTT_COLOR(WINDOW_PALETTE, 9) = Color_ScaleComponents(
-      rgb, 0x12221, FIXED_ONE * 14 / 15, FIXED_ONE * 4 / 3);
-  BG_PLTT_COLOR(WINDOW_PALETTE, 10) = Color_ScaleComponents(
-      rgb, FIXED_ONE * 37 / 30, FIXED_ONE, FIXED_ONE * 22 / 15);
+  WINDOW_COLOR_SHADE(5) = Color_ScaleComponents(
+      rgb, toFIXED(1.13333), FIXED_ONE * 14 / 15, FIXED_ONE * 4 / 3);
+  WINDOW_COLOR_SHADE(6) = Color_ScaleComponents(rgb, FIXED_ONE * 37 / 30,
+                                                FIXED_ONE, FIXED_ONE * 22 / 15);
 }
 
 /// The rows of the unused three-row settings cursor (OptionMenuWork.page).
 enum OptionMenuRow {
   OPTION_ROW_MESSAGE_SPEED = 0,
-  OPTION_ROW_WINDOW_HUE = 1,
+  OPTION_ROW_WINDOW_COLOR = 1,
   OPTION_ROW_WINDOW_BRIGHTNESS = 2
 };
 
@@ -216,15 +232,15 @@ UNUSED void SettingsMenu_NextRow(struct OptionMenuWork *work) {
     work->page = OPTION_ROW_MESSAGE_SPEED;
 }
 
-/// Lowers the setting on the three-row cursor's row: message speed, window hue
-/// or window brightness.
+/// Lowers the setting on the three-row cursor's row: message speed, window
+/// color or window brightness.
 UNUSED void SettingsMenu_LowerSetting(struct OptionMenuWork *work) {
   switch (work->page) {
   case OPTION_ROW_MESSAGE_SPEED:
     if (gMainRoutineWork.messageSpeed != 0)
       gMainRoutineWork.messageSpeed--;
     break;
-  case OPTION_ROW_WINDOW_HUE:
+  case OPTION_ROW_WINDOW_COLOR:
     if (gMainRoutineWork.windowHue != 0)
       gMainRoutineWork.windowHue--;
     break;
@@ -235,16 +251,16 @@ UNUSED void SettingsMenu_LowerSetting(struct OptionMenuWork *work) {
   }
 }
 
-/// Raises the setting on the three-row cursor's row: message speed, window hue
-/// or window brightness.
+/// Raises the setting on the three-row cursor's row: message speed, window
+/// color or window brightness.
 UNUSED void SettingsMenu_RaiseSetting(struct OptionMenuWork *work) {
   switch (work->page) {
   case OPTION_ROW_MESSAGE_SPEED:
-    if (gMainRoutineWork.messageSpeed <= 1)
+    if (gMainRoutineWork.messageSpeed < MESSAGE_SPEED_FAST)
       gMainRoutineWork.messageSpeed++;
     break;
-  case OPTION_ROW_WINDOW_HUE:
-    if (gMainRoutineWork.windowHue <= WINDOW_HUE_COUNT - 1)
+  case OPTION_ROW_WINDOW_COLOR:
+    if (gMainRoutineWork.windowHue <= WINDOW_COLOR_COUNT - 1)
       gMainRoutineWork.windowHue++;
     break;
   case OPTION_ROW_WINDOW_BRIGHTNESS:
@@ -273,7 +289,7 @@ void SettingsMenu_AnimateCursors(void) {
   MenuCursor_MoveTowardTargetFar(&work->marker[0].cursor);
   MenuCursor_MoveTowardTargetFar(&work->marker[1].cursor);
 
-  if (selectedOption == 0) {
+  if (selectedOption == SETTINGS_ROW_WINDOW_COLOR) {
     cursorResource = (work->cursorFrame & 7) + RESOURCE_MENU_CURSOR_PICTURES;
   } else {
     cursorResource = RESOURCE_MENU_CURSOR_PICTURES;
@@ -281,7 +297,7 @@ void SettingsMenu_AnimateCursors(void) {
   VramCache_Load((u8)work->marker[0].sprite->index, 256,
                  Resource_GetTableEntry(cursorResource));
 
-  if (selectedOption == 1) {
+  if (selectedOption == SETTINGS_ROW_WINDOW_BRIGHTNESS) {
     markerResource = (work->cursorFrame & 7) + RESOURCE_MENU_CURSOR_PICTURES;
   } else {
     markerResource = RESOURCE_MENU_CURSOR_PICTURES;
@@ -289,9 +305,10 @@ void SettingsMenu_AnimateCursors(void) {
   VramCache_Load((u8)work->marker[1].sprite->index, 256,
                  Resource_GetTableEntry(markerResource));
 
-  if (selectedOption > 1)
+  if (selectedOption > SETTINGS_ROW_WINDOW_BRIGHTNESS)
     WindowSprite_Pulse(
-        work->choiceIcons[selectedOption - 2][work->option[selectedOption]]);
+        work->choiceIcons[selectedOption - SETTINGS_ROW_MESSAGE_SPEED]
+                         [work->option[selectedOption]]);
   work->cursorFrame++;
 }
 
@@ -303,16 +320,17 @@ void SettingsMenu_InitializeWork(void) {
   work = HeapSlot_AllocEwram(HEAP_SLOT_SETTINGS_MENU,
                              sizeof(struct OptionMenuWork));
   Dma_Fill32(0, work, sizeof(struct OptionMenuWork));
-  work->option[0] = gMainRoutineWork.windowHue;
-  work->optionCount[0] = WINDOW_HUE_COUNT;
-  work->option[1] = gMainRoutineWork.windowBrightness;
-  work->optionCount[1] = WINDOW_BRIGHTNESS_COUNT;
-  work->option[2] = gMainRoutineWork.messageSpeed;
-  work->optionCount[2] = 3;
-  work->option[3] = gMainRoutineWork.speech;
-  work->optionCount[3] = 2;
-  work->option[4] = gMainRoutineWork.idleSleepEnabled;
-  work->optionCount[4] = 2;
+  work->option[SETTINGS_ROW_WINDOW_COLOR] = gMainRoutineWork.windowHue;
+  work->optionCount[SETTINGS_ROW_WINDOW_COLOR] = WINDOW_COLOR_COUNT;
+  work->option[SETTINGS_ROW_WINDOW_BRIGHTNESS] =
+      gMainRoutineWork.windowBrightness;
+  work->optionCount[SETTINGS_ROW_WINDOW_BRIGHTNESS] = WINDOW_BRIGHTNESS_COUNT;
+  work->option[SETTINGS_ROW_MESSAGE_SPEED] = gMainRoutineWork.messageSpeed;
+  work->optionCount[SETTINGS_ROW_MESSAGE_SPEED] = MESSAGE_SPEED_FAST + 1;
+  work->option[SETTINGS_ROW_SPEECH] = gMainRoutineWork.speech;
+  work->optionCount[SETTINGS_ROW_SPEECH] = 2;
+  work->option[SETTINGS_ROW_AUTO_SLEEP] = gMainRoutineWork.idleSleepEnabled;
+  work->optionCount[SETTINGS_ROW_AUTO_SLEEP] = 2;
   Task_Add(SettingsMenu_AnimateCursors, TASK_PASS_FRAME);
 }
 
@@ -323,10 +341,14 @@ void SettingsMenu_Release(void) {
   HeapSlot_Release(HEAP_SLOT_SETTINGS_MENU);
 }
 
-#define SLIDER_PALETTE 14 ///< the sprite palette of the hue slider's ends
+/// The sprite palettes of the sliders' ends, which gSettingsMenu_SliderPalette
+/// fills.
+#define WINDOW_COLOR_SLIDER_PALETTE 14
+#define WINDOW_BRIGHTNESS_SLIDER_PALETTE (WINDOW_COLOR_SLIDER_PALETTE + 1)
 
-/// Opens the settings menu's window: the labels, the hue and brightness sliders
-/// with their markers, the cursor and the setting icons. Returns the window.
+/// Opens the settings menu's window: the labels, the window color and
+/// brightness sliders with their markers, the cursor and the setting icons.
+/// Returns the window.
 struct Window *SettingsMenu_Open(void) {
   struct OptionMenuWork *work;
   struct Window *window;
@@ -368,30 +390,29 @@ struct Window *SettingsMenu_Open(void) {
   }
 
   // The ends of both sliders: OUTPUT_SIZE_32X8 sprites, the right end 4 tiles
-  // into the picture; the hue slider's in palette 14, the brightness slider's
-  // in 15.
+  // into the picture, each slider in its own palette.
   x = VramCache_FindFreeEntry();
   if (x < VRAM_CACHE_ENTRY_COUNT) {
     Dma_Set(gSettingsMenu_SliderPalette,
-            (void *)&OBJ_PLTT_COLOR(SLIDER_PALETTE, 0), DMA_COPY_HALFWORDS(32),
-            REG_DMA3);
+            (void *)&OBJ_PLTT_COLOR(WINDOW_COLOR_SLIDER_PALETTE, 0),
+            DMA_COPY_HALFWORDS(2 * PALETTE_COLORS), REG_DMA3);
     VramCache_Load(x, 256, gSettingsMenu_SliderTiles);
     y = 0;
     marker = WindowSprite_Create(x, OUTPUT_SIZE_32X8, window,
                                  OPTION_SLIDER_X - 6, y);
-    marker->oam.palette = SLIDER_PALETTE;
+    marker->oam.palette = WINDOW_COLOR_SLIDER_PALETTE;
     marker = WindowSprite_Create(x, OUTPUT_SIZE_32X8, window,
                                  OPTION_SLIDER_X + 26, y);
     marker->oam.index += 4;
-    marker->oam.palette = SLIDER_PALETTE;
+    marker->oam.palette = WINDOW_COLOR_SLIDER_PALETTE;
     y = 16;
     marker = WindowSprite_Create(x, OUTPUT_SIZE_32X8, window,
                                  OPTION_SLIDER_X - 6, y);
-    marker->oam.palette = 15;
+    marker->oam.palette = WINDOW_BRIGHTNESS_SLIDER_PALETTE;
     marker = WindowSprite_Create(x, OUTPUT_SIZE_32X8, window,
                                  OPTION_SLIDER_X + 26, y);
     marker->oam.index += 4;
-    marker->oam.palette = 15;
+    marker->oam.palette = WINDOW_BRIGHTNESS_SLIDER_PALETTE;
   }
 
   // The two markers: 16x16 sprites of 256 colours, whose 256 bytes
@@ -403,7 +424,8 @@ struct Window *SettingsMenu_Open(void) {
     marker->oam.fullColor = 1;
     work->marker[0].sprite = marker;
     x = window->x * 8 + OPTION_SLIDER_X;
-    x += work->option[0] * OPTION_SLIDER_WIDTH / work->optionCount[0];
+    x += work->option[SETTINGS_ROW_WINDOW_COLOR] * OPTION_SLIDER_WIDTH /
+         work->optionCount[SETTINGS_ROW_WINDOW_COLOR];
     y = window->y * 8 + 4;
     MenuCursor_SetPositionImmediateFar(&work->marker[0].cursor, x, y);
   }
@@ -415,7 +437,8 @@ struct Window *SettingsMenu_Open(void) {
     marker->oam.fullColor = 1;
     work->marker[1].sprite = marker;
     x = window->x * 8 + OPTION_SLIDER_X;
-    x += work->option[1] * OPTION_SLIDER_WIDTH / work->optionCount[1];
+    x += work->option[SETTINGS_ROW_WINDOW_BRIGHTNESS] * OPTION_SLIDER_WIDTH /
+         work->optionCount[SETTINGS_ROW_WINDOW_BRIGHTNESS];
     y = window->y * 8 + 20;
     MenuCursor_SetPositionImmediateFar(&work->marker[1].cursor, x, y);
   }
@@ -470,23 +493,22 @@ s32 SettingsMenu_Run(void) {
   // Picture 7 of gMenuTitlePictures, the Setup heading.
   pair = MenuTitle_Create(7, settingsWindow, 64, -48);
   wait(1);
-  hue = &work->option[0];
-  brightness = &work->option[1];
+  hue = &work->option[SETTINGS_ROW_WINDOW_COLOR];
+  brightness = &work->option[SETTINGS_ROW_WINDOW_BRIGHTNESS];
 
   for (;;) {
     if (redraw != 0) {
       redraw = 0;
-      // Rows 0 to 4 are hue, brightness, text speed, voice sounds and
-      // auto-sleep, in the order of their help messages.
-      selectedOption = (selectedOption + 5) % 5;
+      selectedOption =
+          (selectedOption + SETTINGS_MENU_ROWS) % SETTINGS_MENU_ROWS;
       work->option[selectedOption] =
           (work->option[selectedOption] + work->optionCount[selectedOption]) %
           work->optionCount[selectedOption];
       work->page = selectedOption;
       if (gSleepDisabled != 0)
-        work->option[4] = 0;
+        work->option[SETTINGS_ROW_AUTO_SLEEP] = 0;
 
-      // Redraw each choice's icon at depth slot 251, dimmed unless it is
+      // Redraw each choice's icon at OAM_DEPTH_FRONT - 4, dimmed unless it is
       // the row's setting.
       for (i = 0; i <= 2; i++) {
         frame = work->choiceIcons[0][i];
@@ -494,7 +516,7 @@ s32 SettingsMenu_Run(void) {
         Icon_PrepareActorFar(frame);
         resourceIndex = (u8)work->choiceIcons[0][i]->index;
         dimmed = 0;
-        if (i != work->option[2])
+        if (i != work->option[SETTINGS_ROW_MESSAGE_SPEED])
           dimmed = 1;
         CommandIcon_Load(gSettingsMenu_SpeedIcons[i], resourceIndex, dimmed);
       }
@@ -504,7 +526,7 @@ s32 SettingsMenu_Run(void) {
         Icon_PrepareActorFar(frame);
         resourceIndex = (u8)work->choiceIcons[1][i]->index;
         dimmed = 0;
-        if (i != work->option[3])
+        if (i != work->option[SETTINGS_ROW_SPEECH])
           dimmed = 1;
         CommandIcon_Load(gSettingsMenu_SpeechIcons[i], resourceIndex, dimmed);
       }
@@ -514,29 +536,31 @@ s32 SettingsMenu_Run(void) {
         Icon_PrepareActorFar(frame);
         resourceIndex = (u8)work->choiceIcons[2][i]->index;
         dimmed = 0;
-        if (i != work->option[4])
+        if (i != work->option[SETTINGS_ROW_AUTO_SLEEP])
           dimmed = 1;
         CommandIcon_Load(gSettingsMenu_SleepIcons[i], resourceIndex, dimmed);
       }
 
       x = settingsWindow->x * 8 + OPTION_SLIDER_X;
-      x += (*hue * OPTION_SLIDER_WIDTH) / work->optionCount[0];
+      x += (*hue * OPTION_SLIDER_WIDTH) /
+           work->optionCount[SETTINGS_ROW_WINDOW_COLOR];
       y = settingsWindow->y * 8 + 4;
       MenuCursor_SetFar(&work->marker[0].cursor, x, y, 1);
       x = settingsWindow->x * 8 + OPTION_SLIDER_X;
-      x += (*brightness * OPTION_SLIDER_WIDTH) / work->optionCount[1];
+      x += (*brightness * OPTION_SLIDER_WIDTH) /
+           work->optionCount[SETTINGS_ROW_WINDOW_BRIGHTNESS];
       y = settingsWindow->y * 8 + 20;
       MenuCursor_SetFar(&work->marker[1].cursor, x, y, 1);
 
-      x = work->option[2] + MsgMessageSpeedSetting;
+      x = work->option[SETTINGS_ROW_MESSAGE_SPEED] + MsgMessageSpeedSetting;
       Window_ClearInteriorTiles(settingsWindow, OPTION_SETTING_X, 40,
                                 OPTION_SPEED_END, 48);
       Text_DrawMessageAsTiles(x, settingsWindow, OPTION_SETTING_X, 40);
-      x = work->option[3] + MsgSpeechSetting;
+      x = work->option[SETTINGS_ROW_SPEECH] + MsgSpeechSetting;
       Window_ClearInteriorTiles(settingsWindow, OPTION_SETTING_X, 64,
                                 OPTION_SETTING_END, 72);
       Text_DrawMessageAsTiles(x, settingsWindow, OPTION_SETTING_X, 64);
-      x = work->option[4] + MsgAutoSleepSetting;
+      x = work->option[SETTINGS_ROW_AUTO_SLEEP] + MsgAutoSleepSetting;
       Window_ClearInteriorTiles(settingsWindow, OPTION_SETTING_X, 88,
                                 OPTION_SETTING_END, 96);
       Text_DrawMessageAsTiles(x, settingsWindow, OPTION_SETTING_X, 88);
@@ -548,7 +572,7 @@ s32 SettingsMenu_Run(void) {
       // (`Change the window's color.` for the first).
       x = settingsWindow->x * 8;
       y = (selectedOption * 3 + settingsWindow->y) * 8 + 4;
-      if (selectedOption == 0)
+      if (selectedOption == SETTINGS_ROW_WINDOW_COLOR)
         y += 8;
       MenuCursor_SetFar(&work->cursor.cursor, x, y, 3);
       WindowSprite_ClearList(helpWindow);
@@ -557,12 +581,12 @@ s32 SettingsMenu_Run(void) {
     MenuTitle_Bob(pair);
     wait(1);
 
-    // SELECT steps through the six colour presets (window/scales.c).
+    // SELECT steps through the colour presets (window/scales.c).
     if (gKeysPressed & KEY_SELECT) {
       Sound_PlayFar(SE_MENU_CONFIRM);
       work->preset++;
       redraw = 1;
-      if (work->preset > 5)
+      if (work->preset > ARRAY_COUNT(gSettingsMenu_HuePresets) - 1)
         work->preset = 0;
       *hue = gSettingsMenu_HuePresets[work->preset];
       *brightness = gSettingsMenu_BrightnessPresets[work->preset];
@@ -605,11 +629,12 @@ s32 SettingsMenu_Run(void) {
   // Keep the edits, auto-sleep also taking effect at once
   // (gIdleSleepEnabled); or put the saved window colours back.
   if (result == 0) {
-    gMainRoutineWork.windowHue = work->option[0];
-    gMainRoutineWork.windowBrightness = work->option[1];
-    gMainRoutineWork.messageSpeed = work->option[2];
-    gMainRoutineWork.speech = work->option[3];
-    gMainRoutineWork.idleSleepEnabled = work->option[4];
+    gMainRoutineWork.windowHue = work->option[SETTINGS_ROW_WINDOW_COLOR];
+    gMainRoutineWork.windowBrightness =
+        work->option[SETTINGS_ROW_WINDOW_BRIGHTNESS];
+    gMainRoutineWork.messageSpeed = work->option[SETTINGS_ROW_MESSAGE_SPEED];
+    gMainRoutineWork.speech = work->option[SETTINGS_ROW_SPEECH];
+    gMainRoutineWork.idleSleepEnabled = work->option[SETTINGS_ROW_AUTO_SLEEP];
     gIdleSleepEnabled = gMainRoutineWork.idleSleepEnabled;
   } else {
     WindowColor_Apply(gMainRoutineWork.windowHue,
@@ -835,3 +860,12 @@ s32 PauseMenu_Choose(void) {
   }
   return result;
 }
+
+#undef OPTION_SLIDER_WIDTH
+#undef WINDOW_COLOR_SHADE
+#undef WINDOW_COLOR_SLIDER_PALETTE
+#undef WINDOW_BRIGHTNESS_SLIDER_PALETTE
+#undef PAUSE_MENU_ROWS
+#undef PAUSE_MENU_DEBUG_ROWS
+#undef PAUSE_MENU_ROW_HEIGHT
+#undef PAUSE_MENU_TEXT_X

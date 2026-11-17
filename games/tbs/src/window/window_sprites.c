@@ -20,6 +20,9 @@ typedef s32 (*GlyphRoutine)(struct Window *, u32, u32, u32, const u8 *);
 /// from offset 0x10.
 #define SPRITE_CELL(output) ((struct CursorSprite *)(output)->link)
 
+/// A glyph sprite's size in OAM attribute 1: 16x16, with the square shape.
+#define GLYPH_SPRITE_SIZE (OBJ_SIZE_16X16 >> 16)
+
 /// Draws a character of a window's text with its top-left corner at pixel (x,
 /// y) of the window's interior and returns how far the text advances.
 s32 Glyph_Draw(struct Window *window, s32 character, s32 x, s32 y, s32 mode) {
@@ -130,15 +133,14 @@ s32 Glyph_Draw(struct Window *window, s32 character, s32 x, s32 y, s32 mode) {
     } else {
       // Copy the glyph's tiles to its sprite tiles (sprite VRAM) and place it:
       // half the line spacing below y and half the letter spacing right of x,
-      // in screen pixels. 0x4000 in attribute 1 is size 1, with the square
-      // shape a 16x16 sprite.
+      // in screen pixels.
       Dma_Set(tiles,
               (void *)(OBJ_VRAM0 + (work->glyphTiles + index) * TILE_SIZE_4BPP),
               DMA_COPY_WORDS(32), REG_DMA3);
       ((u16 *)&windowSprite->oam)[0] =
           y + (spacingY >> 1) + window->y * 8 + GLYPH_SPRITE_Y_OFFSET;
       ((u16 *)&windowSprite->oam)[1] =
-          (x + (spacingX >> 1) + window->x * 8 + 2) | 0x4000;
+          (x + (spacingX >> 1) + window->x * 8 + 2) | GLYPH_SPRITE_SIZE;
       ((u16 *)&windowSprite->oam)[2] = work->glyphTiles + index;
       sprite = SPRITE_CELL(windowSprite);
     }
@@ -243,6 +245,11 @@ void Window_PutGlyph(struct Window *win, u32 tile, u32 x, u32 y, s32 mode) {
 
 #else
 
+/// The tiles a voiced mark takes in place of its own over the frame's top edge
+/// and over a divider; a semi-voiced mark takes the next.
+#define MARK_OVER_BORDER_TILE 30
+#define MARK_OVER_DIVIDER_TILE 14
+
 /// The Japanese Window_PutGlyph, which also places the kana marks.
 void Window_PutGlyph(struct Window *win, u32 tile, u32 x, u32 y, s32 mode) {
   u8 *work = gWindowWork[0];
@@ -293,16 +300,22 @@ void Window_PutGlyph(struct Window *win, u32 tile, u32 x, u32 y, s32 mode) {
     WindowSprite_AppendToList(&win->sprites, (struct WindowSprite *)out);
   } else if (tile <= TEXT_LAST_FONT_CODE) {
     if (tile - TEXT_MARK_VOICED <= 1) {
-      // A kana mark goes in the tile above the character before it.
+      // A kana mark goes in the tile above the character before it. Over the
+      // frame's top edge or a divider it takes another tile.
+      // XXX (no evidence): whether a mark ever lands on a top edge or a
+      // divider, where this puts tiles 30 and 31 (in window_tiles_ja.png parts
+      // of the HP and PP labels) or 14 and 15 (the dividers themselves); the
+      // render probe stages scenes only, and cannot open a tbs-ja window drawn
+      // in tiles with a voiced kana on its top line.
       u32 line;
 
       line = (win->y + y) * BG_SCREEN_WIDTH;
       switch (*(((struct WindowWork *)base)->tilemap + (line + (win->x + x)))) {
       case WINDOW_TILE_BORDER_TOP:
-        tile -= 192;
+        tile -= TEXT_MARK_VOICED - MARK_OVER_BORDER_TILE;
         break;
       case WINDOW_TILE_DIVIDER_HORIZONTAL:
-        tile -= 208;
+        tile -= TEXT_MARK_VOICED - MARK_OVER_DIVIDER_TILE;
         break;
       }
     } else {
@@ -375,6 +388,9 @@ void Window_SetTilemapEntry(struct Window *window, s32 value, s32 x, s32 y,
   }
 }
 
+/// The steps of gWindowSprite_BounceScales: a swell to 1.5 times and back.
+#define BOUNCE_SCALE_STEPS 32
+
 /// Steps a scaling sprite's animation (WINDOW_SPRITE_MOTION_SWELL to
 /// WINDOW_SPRITE_MOTION_SHRINK_HALF) and sets its affine scale for this frame.
 void WindowSprite_UpdateScaleAnimation(struct WindowSprite *windowSprite) {
@@ -385,21 +401,25 @@ void WindowSprite_UpdateScaleAnimation(struct WindowSprite *windowSprite) {
 
   switch ((u8)windowSprite->motion) {
   case WINDOW_SPRITE_MOTION_SWELL:
-    scale = gWindowSprite_BounceScales[windowSprite->animationStep++ & 31];
+    scale = gWindowSprite_BounceScales[windowSprite->animationStep++ &
+                                       (BOUNCE_SCALE_STEPS - 1)];
     break;
   case WINDOW_SPRITE_MOTION_SWELL_HALF:
-    scale = gWindowSprite_BounceScales[windowSprite->animationStep++ & 31] >> 1;
+    scale = gWindowSprite_BounceScales[windowSprite->animationStep++ &
+                                       (BOUNCE_SCALE_STEPS - 1)] >>
+            1;
     break;
+  // The shrinks play the bounce's second half at twice its pace.
   case WINDOW_SPRITE_MOTION_SHRINK:
-    if (windowSprite->animationStep <= 7)
-      scale =
-          gWindowSprite_BounceScales[windowSprite->animationStep++ * 2 + 16];
+    if (windowSprite->animationStep < BOUNCE_SCALE_STEPS / 4)
+      scale = gWindowSprite_BounceScales[windowSprite->animationStep++ * 2 +
+                                         BOUNCE_SCALE_STEPS / 2];
     break;
   case WINDOW_SPRITE_MOTION_SHRINK_HALF:
-    if (windowSprite->animationStep <= 7)
-      scale =
-          gWindowSprite_BounceScales[windowSprite->animationStep++ * 2 + 16] >>
-          1;
+    if (windowSprite->animationStep < BOUNCE_SCALE_STEPS / 4)
+      scale = gWindowSprite_BounceScales[windowSprite->animationStep++ * 2 +
+                                         BOUNCE_SCALE_STEPS / 2] >>
+              1;
     break;
   }
   if (scale == Q_8_8(1)) {
@@ -426,6 +446,12 @@ void WindowSprite_UpdateScaleAnimation(struct WindowSprite *windowSprite) {
     }
   }
 }
+
+/// A frame of the next-page arrow: an 8 by 16 sprite of 256 colours.
+#define PAGE_ARROW_FRAME_BYTES (2 * TILE_SIZE_8BPP)
+/// The steps of gWindowSprite_WobbleOffsets and gWindowSprite_BounceOffsets.
+#define WOBBLE_STEPS 20
+#define HOP_STEPS 16
 
 /// The per-frame sprite update: moves each sprite that an open window carries
 /// by its animation mode (WINDOW_SPRITE_MOTION_) and queues it for drawing, at
@@ -456,9 +482,11 @@ void WindowSprite_UpdateAll(void) {
       case WINDOW_SPRITE_MOTION_PAGE_ARROW:
         // VRAM_CACHE_ENTRY_COUNT means no entry was free for the arrow.
         if (work->glyphResource != VRAM_CACHE_ENTRY_COUNT) {
-          const u8 *tiles = &gWindowSprite_PageArrowTiles[phase * 128];
+          const u8 *tiles =
+              &gWindowSprite_PageArrowTiles[phase * PAGE_ARROW_FRAME_BYTES];
 
-          sprite->tile = VramCache_Load(work->glyphResource, 128, tiles);
+          sprite->tile = VramCache_Load(work->glyphResource,
+                                        PAGE_ARROW_FRAME_BYTES, tiles);
           windowSprite->index = sprite->tile;
           sprite->mode = 0;
           sprite->mosaic = 0;
@@ -482,8 +510,8 @@ void WindowSprite_UpdateAll(void) {
         }
         break;
       case WINDOW_SPRITE_MOTION_POP:
-        // Double size (512 in 8.8) for animationStep frames, which
-        // Glyph_Draw starts at 8.
+        // Twice its size for animationStep frames, which Glyph_Draw starts
+        // at 8.
         if (windowSprite->animationStep == 0) {
           sprite->affineIndex = 0;
           sprite->affine = 0;
@@ -501,11 +529,12 @@ void WindowSprite_UpdateAll(void) {
         windowSprite->animationStep--;
         break;
       case WINDOW_SPRITE_MOTION_SPIN:
-        // animationStep is the angle, 65536 a turn: 768 a frame, a turn in
-        // about 85 frames, while the sprite circles its place.
+        // animationStep is the angle, three 256ths of a turn a frame, a turn
+        // in about 85 frames, while the sprite circles its place four pixels
+        // out (a sine shifted down 14 bits).
         effect.scaleX = Q_8_8(1);
         effect.scaleY = Q_8_8(1);
-        windowSprite->animationStep += 768;
+        windowSprite->animationStep += TRIG_TURN * 3 / 256;
         effect.angle = windowSprite->animationStep;
         sprite->affineIndex = OamMatrix_AllocFromTransform(&effect);
         sprite->affine = 1;
@@ -515,39 +544,39 @@ void WindowSprite_UpdateAll(void) {
                     (Trig_Cos(effect.angle + TRIG_TURN * 13 / 32) >> 14) - 2;
         break;
       case WINDOW_SPRITE_MOTION_WOBBLE:
-        // One step of the 20 of gWindowSprite_WobbleOffsets every other frame.
+        // One step of gWindowSprite_WobbleOffsets every other frame.
         if (gVBlankCount & 1)
           windowSprite->animationStep++;
-        sprite->x =
-            windowSprite->x +
-            gWindowSprite_WobbleOffsets[windowSprite->animationStep % 20][0];
-        sprite->y =
-            windowSprite->y +
-            gWindowSprite_WobbleOffsets[windowSprite->animationStep % 20][1] -
-            2;
+        sprite->x = windowSprite->x +
+                    gWindowSprite_WobbleOffsets[windowSprite->animationStep %
+                                                WOBBLE_STEPS][0];
+        sprite->y = windowSprite->y +
+                    gWindowSprite_WobbleOffsets[windowSprite->animationStep %
+                                                WOBBLE_STEPS][1] -
+                    2;
         break;
       case WINDOW_SPRITE_MOTION_HOP_UP:
         windowSprite->animationStep++;
-        sprite->y =
-            windowSprite->y -
-            gWindowSprite_BounceOffsets[windowSprite->animationStep & 15];
+        sprite->y = windowSprite->y -
+                    gWindowSprite_BounceOffsets[windowSprite->animationStep &
+                                                (HOP_STEPS - 1)];
         break;
       case WINDOW_SPRITE_MOTION_HOP_DOWN:
       case WINDOW_SPRITE_MOTION_HOP_DOWN_NEXT_PAGE:
       case WINDOW_SPRITE_MOTION_HOP_DOWN_UNUSED:
         windowSprite->animationStep++;
-        sprite->y =
-            windowSprite->y +
-            gWindowSprite_BounceOffsets[windowSprite->animationStep & 15];
+        sprite->y = windowSprite->y +
+                    gWindowSprite_BounceOffsets[windowSprite->animationStep &
+                                                (HOP_STEPS - 1)];
         break;
       case WINDOW_SPRITE_MOTION_HOP_DOWN_LEFT:
         windowSprite->animationStep++;
-        sprite->x =
-            windowSprite->x -
-            gWindowSprite_BounceOffsets[windowSprite->animationStep & 15];
-        sprite->y =
-            windowSprite->y +
-            gWindowSprite_BounceOffsets[windowSprite->animationStep & 15];
+        sprite->x = windowSprite->x -
+                    gWindowSprite_BounceOffsets[windowSprite->animationStep &
+                                                (HOP_STEPS - 1)];
+        sprite->y = windowSprite->y +
+                    gWindowSprite_BounceOffsets[windowSprite->animationStep &
+                                                (HOP_STEPS - 1)];
         break;
       case WINDOW_SPRITE_MOTION_PULSE:
         // 1.25 times for animationStep frames, then its own size.
@@ -589,3 +618,10 @@ void WindowSprite_UpdateAll(void) {
 
 #undef PAGE_ARROW_Y_OFFSET
 #undef GLYPH_SPRITE_Y_OFFSET
+#undef GLYPH_SPRITE_SIZE
+#undef BOUNCE_SCALE_STEPS
+#undef PAGE_ARROW_FRAME_BYTES
+#undef WOBBLE_STEPS
+#undef HOP_STEPS
+#undef MARK_OVER_BORDER_TILE
+#undef MARK_OVER_DIVIDER_TILE

@@ -14,6 +14,15 @@
 /// The sparks of Pound's shine; the first 12 are drawn.
 #define POUND_SPARK_COUNT 32
 #define POUND_DRAWN_SPARKS 12
+/// The shine's colours, two palettes of the canvas: blue full, red and green
+/// swinging together round their middle as the cycle steps.
+#define POUND_SHINE_COLORS (2 * PALETTE_COLORS)
+#define POUND_SHINE_MIDDLE 16
+#define POUND_SHINE_SWING 12
+/// The pieces the fist shatters into when it cannot come down.
+#define POUND_SHATTER_PIECES 16
+/// The glow under the fist, 64 pixels square in 16 colours.
+#define POUND_GLOW_SIZE 64
 
 /// Pound's work (heap slot HEAP_SLOT_BATTLE_EFFECT): the star tiles, the
 /// shine's 32 sparks, the glow under the fist, the fist itself and the stage of
@@ -48,14 +57,19 @@ void FieldPsynergy_UpdatePound(void) {
      * the loop. */
     frames = &canvas->drawnFrames;
     base = 9;
-    base <<= 16;
-    blue = RGB(0, 0, 31);
-    for (; i < 32; i++) {
-      red = Trig_Sin((((((u32)*frames >> 1) + i) << 16) + base) >> 5) * 12;
-      green = Trig_Sin((((((u32)*frames >> 1) + i) << 16) + base) >> 5) * 12;
-      red = (red >> 16) + 16;
-      green = (green >> 16) + 16;
-      Io_Write16((green << 5) | blue | red, &OBJ_PLTT_COLOR(CANVAS_PALETTE, i));
+    base = INTtoFIXED(base);
+    blue = RGB(0, 0, RGB_LEVEL_MAX);
+    // Each colour is a 32nd of a turn further along the cycle, which moves on
+    // every other frame.
+    for (; i < POUND_SHINE_COLORS; i++) {
+      red = Trig_Sin((INTtoFIXED(((u32)*frames >> 1) + i) + base) >> 5) *
+            POUND_SHINE_SWING;
+      green = Trig_Sin((INTtoFIXED(((u32)*frames >> 1) + i) + base) >> 5) *
+              POUND_SHINE_SWING;
+      red = FIXEDtoINT(red) + POUND_SHINE_MIDDLE;
+      green = FIXEDtoINT(green) + POUND_SHINE_MIDDLE;
+      Io_Write16(RGB(0, green, 0) | blue | red,
+                 &OBJ_PLTT_COLOR(CANVAS_PALETTE, i));
     }
   }
   if (work->sparkles) {
@@ -169,7 +183,7 @@ void FieldPsynergy_Pound(void) {
   FIXED lift;
   s32 glowTile;
   s32 spot;
-  s32 size = 2048;
+  s32 size = POUND_GLOW_SIZE * POUND_GLOW_SIZE / 2;
   s32 rise;
   s32 speed;
   s32 angle;
@@ -181,7 +195,7 @@ void FieldPsynergy_Pound(void) {
   if (child == NULL) {
     SET_POSITION(scene, caster->x.fixed, caster->y.fixed, caster->z.fixed);
     Vector_AddPolarOffset(lift, scene->angle, &scene->x);
-  } else if (child->motionFlags & 4) {
+  } else if (child->motionFlags & ACTOR_FLOATS) {
     /* FAKEMATCH(dead): lift cleared under a test of the ground's height. */
     if (child->groundHeight == 300)
       lift = 0;
@@ -218,7 +232,8 @@ void FieldPsynergy_Pound(void) {
   if (shine != NULL) {
     shine->motionFlags = 0;
     if (event->psynergyDrawFlags & 2) {
-      if ((shine->spriteStorageKind & 15) == ACTOR_SPRITE_ONE) {
+      if ((shine->spriteStorageKind & ACTOR_SPRITE_KIND_MASK) ==
+          ACTOR_SPRITE_ONE) {
         ((struct EffectSprite *)shine->sprite)->oam.priority = 1;
         shine->priorityFlags &= ~ACTOR_PRIORITY_AUTOMATIC;
       }
@@ -309,7 +324,7 @@ void FieldPsynergy_Pound(void) {
       while (work->state != FIELD_PSYNERGY_FINISHED)
         wait(1);
       Task_Remove(BattleEffect_SinkAndShrinkObject);
-      for (j = 0; j < 16; j++)
+      for (j = 0; j < POUND_SHATTER_PIECES; j++)
         BattleEffect_SpawnScatterParticle(shine->x.fixed, shine->y.fixed,
                                           shine->z.fixed);
       Sound_PlayFar(SE_MENU_ERROR);
@@ -346,32 +361,41 @@ void FieldPsynergy_Pound(void) {
   HeapSlot_Release(HEAP_SLOT_BATTLE_EFFECT);
 }
 
+/// The pictures Picture_ShiftColumnsByWave shifts, 32 pixels square.
+#define WAVE_PICTURE_SIZE 32
+
 /// Copies a 32 by 32 byte picture into a cleared one stretched down, its rows
 /// four pixels apart, each column slid down by phase (1.6 pixels a step, from
 /// 124 pixels up) less a sine wave across the columns; what falls outside is
 /// dropped. The
 /// Scoop draws its rising picture with it.
 void Picture_ShiftColumnsByWave(u8 *source, u8 *destination, s32 phase) {
-  s32 width = 32;
+  s32 width = WAVE_PICTURE_SIZE;
   s32 height;
   s32 column;
   s32 row;
 
-  Iwram_ClearWordsEntry(destination, 32 * 32);
+  Iwram_ClearWordsEntry(destination, WAVE_PICTURE_SIZE * WAVE_PICTURE_SIZE);
   // Set after the clear, which keeps it out of the call's registers.
-  height = 32;
+  height = WAVE_PICTURE_SIZE;
   for (column = 0; column < width; column++) {
-    FIXED wave = (Trig_Sin(column << 13) << 3) + FIXED_ONE * 8;
+    FIXED wave = Trig_Sin(column * (TRIG_TURN / 8)) * 8 + FIXED_ONE * 8;
 
     for (row = 0; row < height; row++) {
       FIXED position =
           phase * (toFIXED(8) / 5) - FIXED_ONE * 124 + row * (FIXED_ONE * 4);
       // In two steps: the wave subtracted, then the shift.
       s32 shift = position - wave;
-      shift >>= 16;
+      shift = FIXEDtoINT(shift);
 
       if (shift >= 0 && shift < height)
         destination[(shift << 5) + column] = source[row * width + column];
     }
   }
 }
+#undef POUND_SHINE_COLORS
+#undef POUND_SHINE_MIDDLE
+#undef POUND_SHINE_SWING
+#undef POUND_SHATTER_PIECES
+#undef POUND_GLOW_SIZE
+#undef WAVE_PICTURE_SIZE

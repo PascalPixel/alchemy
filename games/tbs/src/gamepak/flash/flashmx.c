@@ -9,20 +9,20 @@
 /// and its control.
 // clang-format off
 const u16 Flash_MaxTimeMacronix[] = {
-    10, 0xffbd, 0xc2,
-    10, 0xffbd, 0xc2,
-    2000, 0xffbd, 0xc2,
-    2000, 0xffbd, 0xc2,
+    10, FLASH_TIMER_RELOAD, FLASH_TIMER_CONTROL,
+    10, FLASH_TIMER_RELOAD, FLASH_TIMER_CONTROL,
+    2000, FLASH_TIMER_RELOAD, FLASH_TIMER_CONTROL,
+    2000, FLASH_TIMER_RELOAD, FLASH_TIMER_CONTROL,
 };
 // clang-format on
 
 /// The Panasonic chip's waits, as Flash_MaxTimeMacronix's.
 // clang-format off
 const u16 Flash_MaxTimePanasonic[] = {
-    10, 0xffbd, 0xc2,
-    10, 0xffbd, 0xc2,
-    500, 0xffbd, 0xc2,
-    500, 0xffbd, 0xc2,
+    10, FLASH_TIMER_RELOAD, FLASH_TIMER_CONTROL,
+    10, FLASH_TIMER_RELOAD, FLASH_TIMER_CONTROL,
+    500, FLASH_TIMER_RELOAD, FLASH_TIMER_CONTROL,
+    500, FLASH_TIMER_RELOAD, FLASH_TIMER_CONTROL,
 };
 // clang-format on
 

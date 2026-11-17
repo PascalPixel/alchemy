@@ -10,6 +10,7 @@
 #include "field/particle.h"
 #include "battle/battle_effect_params.h"
 #include "static_assert.h"
+#include "system/io_reg.h"
 #include "types.h"
 
 /// The running battle effect's work: its canvas image, 64 particles, the
@@ -62,15 +63,14 @@ struct BattleEffectWork {
   u16 padding; ///< aligns bg2x
   /// BG2's reference point, written to BG2X and BG2Y by
   /// Display_ApplyBg2Reference and Display_ApplyBg2Affine. Volatile, as the
-  /// scale below: the tasks that copy them out read each in its turn.
+  /// scale below.
   ///@{
   volatile s32 bg2x;
   volatile s32 bg2y;
   ///@}
   /// BG2's scale, written to BG2PA and BG2PD by Display_ApplyBg2Affine.
-  /// Volatile: the task that copies them out runs behind the effect's back,
-  /// and the ROM shows it (each store reads the halfword first, as the old
-  /// compiler stores to a volatile halfword).
+  /// Volatile: Display_ApplyBg2Affine copies them out from the VBlank handler
+  /// (TASK_PASS_VBLANK).
   ///@{
   volatile u16 bg2pa;
   volatile u16 bg2pd;
@@ -105,10 +105,9 @@ STATIC_ASSERT(offsetof(struct BattleEffectWork, actorTimers) == 30940);
 STATIC_ASSERT(offsetof(struct BattleEffectWork, transferPending) == 30952);
 STATIC_ASSERT(offsetof(struct BattleEffectWork, args) == 30960);
 
-/// The heap slot of the battle canvas, as canvas_sprite.h has it.
 /// The battle canvas the effects draw into: 128 by 128 pixels, a byte each.
 #define CANVAS_BYTES (128 * 128)
 /// A word of four canvas pixels at one level, for filling the canvas.
-#define CANVAS_FILL_WORD(level) ((level) * 0x01010101)
+#define CANVAS_FILL_WORD(level) PIXELS_8BPP(level)
 
 #endif

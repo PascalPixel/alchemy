@@ -8,13 +8,54 @@
 /// Procne appears in the violet sky, and the targets it lifted drop.
 #define PROCNE_ARRIVAL_FRAME 160
 #define PROCNE_DROP_FRAME 395
+/// The first comet leaves Procne, and the next each 12 frames after.
+#define PROCNE_COMET_FRAME 330
+#define PROCNE_COMET_INTERVAL 12
 
-/// The whirlwind sheet: three whirlwind pictures, then the dust.
-#define PROCNE_DUST (3 * (48 * 64))
+#define PROCNE_SPRITES 9 ///< Procne's sprites, on gProcne_GridX and _GridY
+
+/// The whirlwind sheet: three whirlwind cels, shown 4 frames each, then the
+/// dust.
+#define PROCNE_WHIRLWIND_WIDTH 48
+#define PROCNE_WHIRLWIND_HEIGHT 64
+#define PROCNE_WHIRLWIND_CEL (PROCNE_WHIRLWIND_WIDTH * PROCNE_WHIRLWIND_HEIGHT)
+/// The whirlwind rises in two pieces: its foot, a cel's upper rows, then a
+/// whole cel above it.
+#define PROCNE_WHIRLWIND_FOOT_HEIGHT 48
+#define PROCNE_DUST (3 * PROCNE_WHIRLWIND_CEL)
 #define PROCNE_COMETS 13824
 
-/// A whirlwind lifts the targets, then Procne, a great bird in a violet sky,
-/// strikes them with comets.
+#define PROCNE_DUST_MOTES 24 ///< dust motes that swirl up the whirlwind
+/// The distance from the whirlwind's centre, in half pixels, that the lifted
+/// targets spiral in to.
+#define PROCNE_CORE_RADIUS 16
+
+/// Procne's particles in work->particles: the sparks that gather on it, the
+/// ring of light each comet leaves, then one per comet.
+#define PROCNE_GATHERING_SPARKS 32
+#define PROCNE_RING PROCNE_GATHERING_SPARKS
+#define PROCNE_RING_MOTES 28
+#define PROCNE_COMET_PARTICLES (PROCNE_RING + PROCNE_RING_MOTES)
+
+/// The four strikes, at gProcne_Frames: each throws out its sparks from its
+/// own rows of PARTICLES.
+#define PROCNE_STRIKES 4
+#define PROCNE_STRIKE_SPARKS 96
+#define PROCNE_STRIKE_SPARK_ROWS 128
+
+/// The depths a spark is drawn between.
+#define PROCNE_DEPTH_NEAR 170
+#define PROCNE_DEPTH_FAR 350
+/// A spark's mote size at `depth`: `largest` at PROCNE_DEPTH_NEAR, down to 1
+/// at PROCNE_DEPTH_FAR.
+#define PROCNE_SPARK_SIZE(depth, largest)                                      \
+  ((largest) - ((depth) - PROCNE_DEPTH_NEAR) /                                 \
+                   ((PROCNE_DEPTH_FAR - PROCNE_DEPTH_NEAR) / ((largest) - 1)))
+
+/// A whirlwind lifts the targets and spins them while dust swirls up it; then
+/// Procne, a great bird in a violet sky, gathers sparks and strikes them with
+/// four comets, each throwing out a burst of sparks. A or B skips to Procne's
+/// arrival, then to the drop.
 ///
 /// Abilities: Procne.
 void BattleEffect_RunProcne(struct BattleEffectParams *args) {
@@ -32,7 +73,7 @@ void BattleEffect_RunProcne(struct BattleEffectParams *args) {
   struct BattleObject *battleObject;
   struct Particle *point;
   struct Particle *spark;
-  struct Particle *mark;
+  struct Particle *comet;
   u8 *resource;
   u8 *image;
   s32 index;
@@ -40,8 +81,8 @@ void BattleEffect_RunProcne(struct BattleEffectParams *args) {
   s32 size;
   s32 span;
   s32 dist;
-  s32 alive;
-  s32 width = 48;
+  s32 arrived;
+  s32 width = PROCNE_WHIRLWIND_WIDTH;
   s32 heading[8];
   s32 radius[8];
   s32 spin[8];
@@ -101,7 +142,7 @@ void BattleEffect_RunProcne(struct BattleEffectParams *args) {
     actor->gravity = 0;
   }
 
-  for (index = 0; index != 64; index++) {
+  for (index = 0; index != ARRAY_COUNT(work->particles); index++) {
     point = &work->particles[index];
     point->z = 120;
     point->y = 0;
@@ -133,6 +174,8 @@ void BattleEffect_RunProcne(struct BattleEffectParams *args) {
     if (frame == 372)
       Sound_PlayFar(SE_POWER_UP);
 
+    // The targets, one every 16 frames, spiral in toward the centre and rise,
+    // spinning faster; each strike flashes them.
     EFFECT_FOR_EACH_TARGET(index, work->args) {
       if (frame > index * 16) {
         battleObject = GetBattleObjectSlotFar(work->args->targets[index]);
@@ -151,6 +194,8 @@ void BattleEffect_RunProcne(struct BattleEffectParams *args) {
             actor->y.fixed = toFIXED(124);
         }
 
+        // DEAD: always true, as the effect ends at frame 399; the ROM keeps
+        // the test.
         if (frame <= 490) {
           heading[index] += spin[index];
           if (heading[index] > TRIG_TURN)
@@ -161,7 +206,7 @@ void BattleEffect_RunProcne(struct BattleEffectParams *args) {
         if (frame == PROCNE_DROP_FRAME)
           actor->gravity = BATTLE_UNIT_GRAVITY;
 
-        for (slot = 0; slot != 4; slot++) {
+        for (slot = 0; slot != PROCNE_STRIKES; slot++) {
           if (frame == gProcne_Frames[slot]) {
             actor->velocityY = 0;
             BattleEffect_TintBattler(work->args->targets[index],
@@ -169,39 +214,46 @@ void BattleEffect_RunProcne(struct BattleEffectParams *args) {
           }
         }
 
-        if (radius[index] > 16)
+        if (radius[index] > PROCNE_CORE_RADIUS)
           radius[index] -= 2;
       }
     }
 
+    // The whirlwind's foot grows from frame 16, its top from 48; once Procne
+    // arrives it stands two cels high.
     if (frame >= 16 && frame < PROCNE_ARRIVAL_FRAME) {
       size = frame * 2 - 32;
-      if (size > 48)
-        size = 48;
+      if (size > PROCNE_WHIRLWIND_FOOT_HEIGHT)
+        size = PROCNE_WHIRLWIND_FOOT_HEIGHT;
+      /* FAKEMATCH(temporary): width stands for PROCNE_WHIRLWIND_FOOT_HEIGHT,
+       * the same 48. */
       draw[0](canvas,
-              &work->sheet[frame / 4 % 3 * (48 * 64) + (width - size) * 48], 32,
-              112 - size, width, size);
+              &work->sheet[frame / 4 % 3 * PROCNE_WHIRLWIND_CEL +
+                           (width - size) * PROCNE_WHIRLWIND_WIDTH],
+              32, 112 - size, width, size);
     }
 
     if (frame >= 48 && frame < PROCNE_ARRIVAL_FRAME) {
       size = frame * 2 - 96;
-      if (size > 64)
-        size = 64;
+      if (size > PROCNE_WHIRLWIND_HEIGHT)
+        size = PROCNE_WHIRLWIND_HEIGHT;
       draw[0](canvas,
-              &work->sheet[frame / 4 % 3 * (48 * 64) + (64 - size) * 48], 32,
-              64 - size, width, size);
+              &work->sheet[frame / 4 % 3 * PROCNE_WHIRLWIND_CEL +
+                           (PROCNE_WHIRLWIND_HEIGHT - size) *
+                               PROCNE_WHIRLWIND_WIDTH],
+              32, 64 - size, width, size);
     }
 
     if (frame >= PROCNE_ARRIVAL_FRAME && frame < PROCNE_FRAMES) {
-      image = work->sheet + frame / 4 % 3 * (48 * 64);
-      draw[0](canvas, image, 8, 0, width, 64);
-      draw[0](canvas, image, 8, 64, width, 64);
+      image = work->sheet + frame / 4 % 3 * PROCNE_WHIRLWIND_CEL;
+      draw[0](canvas, image, 8, 0, width, PROCNE_WHIRLWIND_HEIGHT);
+      draw[0](canvas, image, 8, 64, width, PROCNE_WHIRLWIND_HEIGHT);
     }
 
     // The dust spirals in and up.
     if (frame < PROCNE_ARRIVAL_FRAME) {
       point = work->particles;
-      for (index = 0; index != 24; index++) {
+      for (index = 0; index != PROCNE_DUST_MOTES; index++) {
         if (point[index].variant == 0) {
           world.x = point[index].z * Trig_Sin(point[index].velocityY);
           world.y = point[index].y;
@@ -220,9 +272,9 @@ void BattleEffect_RunProcne(struct BattleEffectParams *args) {
           if (point[index].velocityY > TRIG_TURN)
             point[index].velocityY -= TRIG_TURN;
           point[index].velocityX += 50;
-          if (point[index].velocityX > 4096)
-            point[index].velocityX = 4096;
-          point[index].velocityY += 2048;
+          if (point[index].velocityX > TRIG_TURN / 16)
+            point[index].velocityX = TRIG_TURN / 16;
+          point[index].velocityY += TRIG_TURN / 32;
           point[index].y += point[index].velocityY * 2;
           if (point[index].y > toFIXED(48)) {
             point[index].y = 0;
@@ -245,14 +297,15 @@ void BattleEffect_RunProcne(struct BattleEffectParams *args) {
       BattleBackground_SetModeFar(BATTLE_BACKGROUND_FIXED,
                                   RESOURCE_VIOLET_SKY_BACKDROP, 8);
       BattleEffect_SelectLivingTargets(work->args);
-      BattleEffect_SpawnObjects(9, SPRITE_PROCNE, 2);
+      BattleEffect_SpawnObjects(PROCNE_SPRITES, SPRITE_PROCNE, 2);
 
       resource = Resource_GetTableEntry(RESOURCE_VIOLET_COMET_SHEET);
       Iwram_CopyWords(BG_PLTT, resource, SHEET_PALETTE_BYTES);
       resource += SHEET_PALETTE_BYTES;
       Decompress_TaggedLz(resource, work->sheet + PROCNE_COMETS);
 
-      for (index = 0; index != 512; index++) {
+      for (index = 0; index != PROCNE_STRIKES * PROCNE_STRIKE_SPARK_ROWS;
+           index++) {
         PARTICLES[index].variant = 0;
       }
 
@@ -264,9 +317,9 @@ void BattleEffect_RunProcne(struct BattleEffectParams *args) {
 
       gProjection.centerX = 72;
 
-      for (index = 0; index != 32; index++) {
+      for (index = 0; index != PROCNE_GATHERING_SPARKS; index++) {
         speed = Random16() & 127;
-        angle = (Random16() & 0x7fff) + 0x9fff;
+        angle = (Random16() & 0x7fff) + DEGtoANG(225) - 1;
         work->particles[index].x = Trig_Sin(angle) * speed;
         work->particles[index].y = Trig_Cos(angle) * speed;
         work->particles[index].z = INTtoFIXED(Random16() % 200 - 100);
@@ -274,7 +327,7 @@ void BattleEffect_RunProcne(struct BattleEffectParams *args) {
       }
 
       EFFECT_FOR_EACH_TARGET(index, work->args) {
-        radius[index] = 16;
+        radius[index] = PROCNE_CORE_RADIUS;
         spin[index] = 6000;
       }
     }
@@ -298,7 +351,7 @@ void BattleEffect_RunProcne(struct BattleEffectParams *args) {
       place.groundHeight = 0;
       // Sprite i stands lower and higher by the same amount, which cancel on
       // the screen but give it a later draw slot.
-      for (index = 0; index != 9; index++) {
+      for (index = 0; index != PROCNE_SPRITES; index++) {
         place.x = INTtoFIXED(gProcne_GridX[index]) + wave.x + toFIXED(40);
         place.height = toFIXED(255) + index * toFIXED(64);
         place.y = INTtoFIXED(gProcne_GridY[index] + index * 64) + wave.y;
@@ -307,17 +360,20 @@ void BattleEffect_RunProcne(struct BattleEffectParams *args) {
       }
 
       if (frame > 255) {
-        s32 threshold;
+        s32 launch;
 
         depthOffset.z = toFIXED(256);
-        alive = 0;
+        arrived = 0;
         depthOffset.x = 0;
         depthOffset.y = 0;
         Matrix_Initialize();
         Matrix_TranslateVector(Vector3_Coordinates(&depthOffset));
 
-        if (frame <= 329) {
-          for (index = 0; index != 32; index++) {
+        // Until the first comet, the sparks gather on Procne, each a part of
+        // its distance a frame; those that have arrived make one spark that
+        // grows with their number.
+        if (frame < PROCNE_COMET_FRAME) {
+          for (index = 0; index != PROCNE_GATHERING_SPARKS; index++) {
             s32 xx;
             s32 yy;
             s32 zz;
@@ -329,86 +385,98 @@ void BattleEffect_RunProcne(struct BattleEffectParams *args) {
             dist = Iwram_Sqrt(xx + yy + zz) >> 9;
             if (dist != 0) {
               Projection_Point(&point->x, &screen);
-              screen.x = (screen.x >> 17) + (wave.x >> 17) + 32;
+              // The canvas is shown at twice its width.
+              screen.x =
+                  (FIXEDtoINT(screen.x) >> 1) + (FIXEDtoINT(wave.x) >> 1) + 32;
               screen.y = FIXEDtoINT(screen.y) + FIXEDtoINT(wave.y) - 4;
               screen.depth = FIXEDtoINT(screen.depth);
-              if (screen.depth <= 169)
-                screen.depth = 170;
-              if (screen.depth > 350)
-                screen.depth = 350;
-              span = 6 - (screen.depth - 170) / 36;
+              CLAMP(screen.depth, PROCNE_DEPTH_NEAR, PROCNE_DEPTH_FAR);
+              span = PROCNE_SPARK_SIZE(screen.depth, 6);
               EFFECT_DRAW_MOTE(draw[1], canvas, graphics, screen.x, screen.y,
                                span);
               point->x -= point->x / dist;
               point->y -= point->y / dist;
               point->z -= point->z / dist;
             } else {
-              alive++;
+              arrived++;
             }
           }
 
-          if (alive > 0) {
-            span = alive / 10 + 1;
+          if (arrived > 0) {
+            span = arrived / 10 + 1;
             draw[1](canvas, graphics + gBattleEffect_MotePictures[span - 1],
-                    (wave.x >> 17) - span / 2 + 32,
+                    (FIXEDtoINT(wave.x) >> 1) - span / 2 + 32,
                     FIXEDtoINT(wave.y) - span - 4, span, span * 2);
           }
         }
 
         // Each strike throws out sparks.
-        for (slot = 0; slot != 4; slot++) {
+        for (slot = 0; slot != PROCNE_STRIKES; slot++) {
           if (frame == gProcne_Frames[slot]) {
             s32 speed;
             s32 angle;
 
-            for (index = 0; index != 96; index++) {
+            for (index = 0; index != PROCNE_STRIKE_SPARKS; index++) {
               speed = (Random16() & 127) + 16;
               angle = Random16() & TRIG_ANGLE_MASK;
-              spark = &PARTICLES[slot * 128 + index];
+              spark = &PARTICLES[slot * PROCNE_STRIKE_SPARK_ROWS + index];
               spark->velocityX = (Trig_Sin(angle) * speed) >> 6;
               spark->velocityY = -(Trig_Cos(angle) * speed) >> 6;
+              // BUG: the random depth speed is stored over velocityY, not in
+              // velocityZ as the other bursts store it, and z moves by
+              // velocityY: the up-and-down speed just set is lost, and a
+              // spark's depth moves with its height.
+#ifdef BUGFIX
+              spark->velocityZ = ((Random16() & 255) - 128) << 10;
+#else
               spark->velocityY = ((Random16() & 255) - 128) << 10;
+#endif
               SET_POSITION(spark, 0, 0, 0);
               spark->variant = (Random16() & 15) + 64;
             }
           }
 
+          // Inside the strikes' loop, so the sparks move and fade four
+          // steps a frame.
           if (frame >= gProcne_Frames[0]) {
             spark = PARTICLES;
-            for (index = 0; index != 512; index++) {
+            for (index = 0; index != PROCNE_STRIKES * PROCNE_STRIKE_SPARK_ROWS;
+                 index++) {
               if (spark[index].variant > 0) {
                 Projection_Point(&spark[index].x, &screen);
-                screen.x = (screen.x >> 17) + 32;
+                screen.x = (FIXEDtoINT(screen.x) >> 1) + 32;
                 screen.y = FIXEDtoINT(screen.y) + 56;
                 screen.depth = FIXEDtoINT(screen.depth);
-                if (screen.depth <= 169)
-                  screen.depth = 170;
-                if (screen.depth > 350)
-                  screen.depth = 350;
-                span = 3 - (screen.depth - 170) / 90;
+                CLAMP(screen.depth, PROCNE_DEPTH_NEAR, PROCNE_DEPTH_FAR);
+                span = PROCNE_SPARK_SIZE(screen.depth, 3);
                 EFFECT_DRAW_MOTE(draw[0], canvas, graphics, screen.x, screen.y,
                                  span);
                 spark[index].x += spark[index].velocityX;
                 spark[index].y += spark[index].velocityY;
+#ifdef BUGFIX
+                spark[index].z += spark[index].velocityZ;
+#else
                 spark[index].z += spark[index].velocityY;
+#endif
                 spark[index].variant--;
               }
             }
           }
         }
 
-        // The four comets.
-        for (index = 0; index != 4; index++) {
-          mark = &work->particles[index + 60];
-          threshold = index * 12 + 330;
-          if (frame == threshold) {
-            mark->x = (wave.x >> 17) + 32;
-            mark->y = FIXEDtoINT(wave.y) - 4;
-            mark->velocityX = (wave.x >> 17) + 32;
-            mark->velocityY = FIXEDtoINT(wave.y) - 4;
+        // The comets leave Procne one after another; each pushes it back
+        // and shakes the screen.
+        for (index = 0; index != PROCNE_STRIKES; index++) {
+          comet = &work->particles[index + PROCNE_COMET_PARTICLES];
+          launch = index * PROCNE_COMET_INTERVAL + PROCNE_COMET_FRAME;
+          if (frame == launch) {
+            comet->x = (FIXEDtoINT(wave.x) >> 1) + 32;
+            comet->y = FIXEDtoINT(wave.y) - 4;
+            comet->velocityX = (FIXEDtoINT(wave.x) >> 1) + 32;
+            comet->velocityY = FIXEDtoINT(wave.y) - 4;
 
-            for (slot = 0; slot != 28; slot++) {
-              work->particles[slot + 32].variant = 4;
+            for (slot = 0; slot != PROCNE_RING_MOTES; slot++) {
+              work->particles[slot + PROCNE_RING].variant = 4;
             }
 
             drift.x = toFIXED(8);
@@ -416,43 +484,46 @@ void BattleEffect_RunProcne(struct BattleEffectParams *args) {
             work->shakeFrames = 8;
           }
 
-          if (frame >= threshold) {
-            s32 size;
+          if (frame >= launch) {
+            s32 picture;
 
-            size = (frame - threshold) / 2;
-            if (size > 2)
-              size = 2;
-            draw[1](canvas, work->sheet + gProcne_Pictures[size], mark->x,
-                    mark->y - gProcne_PictureBiasY[size],
-                    gProcne_PictureWidths[size], gProcne_PictureHeights[size]);
-            mark->x -= 8;
-            mark->y += 2;
+            // The comet grows over its first frames as it flies.
+            picture = (frame - launch) / 2;
+            if (picture > 2)
+              picture = 2;
+            draw[1](canvas, work->sheet + gProcne_Pictures[picture], comet->x,
+                    comet->y - gProcne_PictureBiasY[picture],
+                    gProcne_PictureWidths[picture],
+                    gProcne_PictureHeights[picture]);
+            comet->x -= 8;
+            comet->y += 2;
 
-            if (frame < threshold + 8) {
+            if (frame < launch + 8) {
               // A ring of light grows where the comet left Procne.
-              Matrix_RotateZ(-2048);
-              Matrix_RotateY(-4096);
+              Matrix_RotateZ(-DEGtoANG(11.25));
+              Matrix_RotateY(-DEGtoANG(22.5));
 
-              spark = &work->particles[32];
-              for (slot = 0; slot != 28; slot++) {
+              spark = &work->particles[PROCNE_RING];
+              for (slot = 0; slot != PROCNE_RING_MOTES; slot++) {
                 struct Particle *step;
 
                 step = &spark[slot];
                 world.x = 0;
-                world.y = step->variant * Trig_Cos(slot * 2340);
-                world.z = step->variant * Trig_Sin(slot * 2340);
+                world.y = step->variant *
+                          Trig_Cos(slot * (TRIG_TURN / PROCNE_RING_MOTES));
+                world.z = step->variant *
+                          Trig_Sin(slot * (TRIG_TURN / PROCNE_RING_MOTES));
                 step->variant += 2;
                 Projection_Point(&world.x, &screen);
                 screen.x =
-                    (screen.x >> 17) + work->particles[index + 60].velocityX;
-                screen.y = FIXEDtoINT(screen.y) +
-                           work->particles[index + 60].velocityY;
+                    (FIXEDtoINT(screen.x) >> 1) +
+                    work->particles[index + PROCNE_COMET_PARTICLES].velocityX;
+                screen.y =
+                    FIXEDtoINT(screen.y) +
+                    work->particles[index + PROCNE_COMET_PARTICLES].velocityY;
                 screen.depth = FIXEDtoINT(screen.depth);
-                if (screen.depth <= 169)
-                  screen.depth = 170;
-                if (screen.depth > 350)
-                  screen.depth = 350;
-                span = 3 - (screen.depth - 170) / 90;
+                CLAMP(screen.depth, PROCNE_DEPTH_NEAR, PROCNE_DEPTH_FAR);
+                span = PROCNE_SPARK_SIZE(screen.depth, 3);
                 EFFECT_DRAW_MOTE(draw[0], canvas, graphics, screen.x, screen.y,
                                  span);
               }
@@ -482,12 +553,34 @@ void BattleEffect_RunProcne(struct BattleEffectParams *args) {
 
   BattleEffect_SetupBlendedDisplay();
 
-  for (index = 0; index != 9; index++) {
+  for (index = 0; index != PROCNE_SPRITES; index++) {
     Sprite_DestroyFar(work->sprites[index]);
   }
 
   EFFECT_FINISH_CANVAS();
 }
 
+#undef PROCNE_FRAMES
+#undef PROCNE_ARRIVAL_FRAME
+#undef PROCNE_DROP_FRAME
+#undef PROCNE_COMET_FRAME
+#undef PROCNE_COMET_INTERVAL
+#undef PROCNE_SPRITES
+#undef PROCNE_WHIRLWIND_WIDTH
+#undef PROCNE_WHIRLWIND_HEIGHT
+#undef PROCNE_WHIRLWIND_CEL
+#undef PROCNE_WHIRLWIND_FOOT_HEIGHT
 #undef PROCNE_DUST
 #undef PROCNE_COMETS
+#undef PROCNE_DUST_MOTES
+#undef PROCNE_CORE_RADIUS
+#undef PROCNE_GATHERING_SPARKS
+#undef PROCNE_RING
+#undef PROCNE_RING_MOTES
+#undef PROCNE_COMET_PARTICLES
+#undef PROCNE_STRIKES
+#undef PROCNE_STRIKE_SPARKS
+#undef PROCNE_STRIKE_SPARK_ROWS
+#undef PROCNE_DEPTH_NEAR
+#undef PROCNE_DEPTH_FAR
+#undef PROCNE_SPARK_SIZE

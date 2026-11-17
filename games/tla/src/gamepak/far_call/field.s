@@ -110,7 +110,7 @@ FarCall_FieldTable:
 	export Animation_WaitForTrackEndFar, Animation_WaitForTrackEnd
 	export Actor_WaitForTrackEndFar, Actor_WaitForTrackEnd
 	export Field_CheckSpheresOverlapFar, Field_CheckSpheresOverlap
-	export WorldMap_GetBlockPlaceFar, WorldMap_GetBlockPlace
+	export WorldMap_GetBlockPlaceFar, WorldMap_GetBlockCellBehavior
 	export WorldMap_GetCollisionFar, WorldMap_GetCollision
 	export MapGrid_SetCellHeightFar, MapGrid_SetCellHeight
 	export MapGrid_GetCellHeightFar, MapGrid_GetCellHeight

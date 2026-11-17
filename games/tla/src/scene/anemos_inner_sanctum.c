@@ -1,9 +1,12 @@
 /// @file
-/// The Anemos Inner Sanctum, the rooms beneath Contigo reached by Teleport from
-/// its entrance: blocks Moved onto switches, tiles that glow underfoot
-/// (AnemosInnerSanctum_StepOnTile), pillars of light
-/// (AnemosInnerSanctum_LightThePillar) and Sand, up to the guardian summoned at
-/// the end (AnemosInnerSanctum_SummonTheGuardian).
+/// The Anemos Inner Sanctum, reached by Teleport from Contigo's circle: the
+/// Dragon Skin room, whose four element symbols light a plate for each Djinni
+/// the party has found and, with all eighteen of an element, that element's
+/// torch over the north door (AnemosInnerSanctum_LightSymbol); round switches
+/// that ready a lift (AnemosInnerSanctum_PressRoundSwitch), pillars Moved onto
+/// switches, cracked floors and Sand; mimic stones that mirror the leader's
+/// steps onto their buttons (AnemosInnerSanctum_MimicLeader); and Charon's
+/// slate (AnemosInnerSanctum_ApproachCharonSlate).
 #include "field/field_sequence.h"
 #include "field/map_grid.h"
 #include "graphics/output.h"
@@ -56,9 +59,10 @@ struct Actor;
 struct CellTarget;
 struct CellTargetEntry;
 
-/// An actor as the spiral mover keeps its spiral: its own place, the fall,
-/// step, height, centre, radius, angle and spin in the actor's motion fields.
-struct Mover {
+/// A spark sent spiralling in to a Djinni's plate, as an actor's motion fields
+/// hold it: the plate it closes on (originX, originZ), the radius, angle and
+/// spin of its spiral, and the height it falls from by fall a step.
+struct Spark {
   const s32 *script;
   s16 scriptCursor;
   u16 facing;
@@ -90,12 +94,6 @@ struct Mover {
   s16 spin;
 };
 
-struct AnemosInnerSanctumPicture {
-  const void *data;
-  u16 a;
-  u16 b;
-};
-
 u16 gPaletteCycleBright BSS_DATA;
 u16 *gPaletteCycleSlots BSS_DATA;
 u16 gPaletteCycleTimer BSS_DATA;
@@ -120,48 +118,39 @@ void Leader_CenterInCell(void);
 
 struct CellTarget gCrackedTiles BSS_DATA;
 
-void AnemosInnerSanctum_LightThePillar(void);
-void AnemosInnerSanctum_StepOntoCenter(void);
+void AnemosInnerSanctum_LightSymbol(void);
+void AnemosInnerSanctum_StepOffSymbol(void);
 void AnemosInnerSanctum_StartMovingBlock(void);
 void AnemosInnerSanctum_FinishMovingBlock(void);
-void AnemosInnerSanctum_StepOnTile(void);
-void AnemosInnerSanctum_RaisePlatform(void);
+void AnemosInnerSanctum_PressRoundSwitch(void);
+void AnemosInnerSanctum_RideLiftUp(void);
 void AnemosInnerSanctum_SinkIntoSand(void);
-void Leader_SetLayerByte(void);
-void AnemosInnerSanctum_PressFirstSwitch(void);
-void AnemosInnerSanctum_PressSecondSwitch(void);
+void AnemosInnerSanctum_EndSand(void);
+void AnemosInnerSanctum_PressSwitch(void);
+void AnemosInnerSanctum_StepOffSwitch(void);
 void AnemosInnerSanctum_FallThroughFirstCracks(void);
 void AnemosInnerSanctum_FallThroughSecondCracks(void);
 
-void AnemosInnerSanctum_StartFollower(void);
-void AnemosInnerSanctum_RaiseDust(void);
-void AnemosInnerSanctum_MarkEntrance(void);
-void AnemosInnerSanctum_SummonTheGuardian(void);
+void AnemosInnerSanctum_StartMimicStone(void);
+void AnemosInnerSanctum_DropMimicStone(void);
+void AnemosInnerSanctum_OpenMimicStoneDoor(void);
+void AnemosInnerSanctum_ApproachCharonSlate(void);
 void AnemosInnerSanctum_TeleportOut(void);
 
 extern u32 gAnemosInnerSanctum_ShortScript[];
 extern u32 gAnemosInnerSanctum_MediumScript[];
 extern u32 gAnemosInnerSanctum_LongScript[];
 extern u32 gFieldEffect_LongScript[];
-extern s32 gAnemosInnerSanctum_StatueScript[];
-extern s16 gAnemosInnerSanctum_OtherDoorFrames[];
+extern s32 gAnemosInnerSanctum_NoShadowScript[];
+extern s16 gAnemosInnerSanctum_MimicStoneDoorFrames[];
 extern s32 gAnemosInnerSanctum_OrbScript[];
 
-/// Writes one background palette entry from its red, green and blue.
-#define BG_PLTT_SET_RGB(index, r, g, b)                                        \
-  do {                                                                         \
-    int value = RGB(r, g, b);                                                  \
-                                                                               \
-    BG_PLTT[index] = value;                                                    \
-  } while (0)
-
-/// The actors of the inner rooms the set-up and the switches move, numbering
-/// each room's placement table: stone pillars (SPRITE_STONE_PILLAR) Moved onto
-/// the floor's marks, and the statues (SPRITE_ARROW_PANEL) that rise when the
-/// tiles or the switches ask.
+/// The actors of the rooms Move and the lifts work in, numbering each room's
+/// placement table: stone pillars (SPRITE_STONE_PILLAR) Moved onto their
+/// places, and the lifts (SPRITE_ARROW_PANEL) the round switches ready.
 enum AnemosInnerSanctumElevatorActorId {
   ACTOR_ELEVATOR_FIRST_PILLAR = ACTOR_FIRST_PLACED,
-  ACTOR_ELEVATOR_STATUE,
+  ACTOR_ELEVATOR_LIFT,
   ACTOR_ELEVATOR_SECOND_PILLAR
 };
 
@@ -172,55 +161,72 @@ enum AnemosInnerSanctumSwitchesActorId {
   ACTOR_SWITCHES_PILLAR_A,
   ACTOR_SWITCHES_PILLAR_B,
   ACTOR_SWITCHES_THIRD_PILLAR,
-  /// The first switch, sunk into the floor until it is pressed
-  /// (AnemosInnerSanctum_PressFirstSwitch).
-  ACTOR_SWITCHES_FIRST_SWITCH
+  /// An unseen marker standing on the switch, 14 pixels down, as a platform:
+  /// taken away as the switch is pressed (AnemosInnerSanctum_PressSwitch), put
+  /// back as the leader steps off it (AnemosInnerSanctum_StepOffSwitch).
+  ACTOR_SWITCHES_SWITCH_MARKER
 };
 
 enum AnemosInnerSanctumOrihalconChestActorId {
-  ACTOR_ORIHALCON_CHEST_STATUE = ACTOR_FIRST_PLACED,
+  ACTOR_ORIHALCON_CHEST_LIFT = ACTOR_FIRST_PLACED,
   ACTOR_ORIHALCON_CHEST_FIRST_PILLAR,
   ACTOR_ORIHALCON_CHEST_SECOND_PILLAR
 };
 
-/// The guardian room's three mimic stones (SPRITE_MIMIC_STONE), one by each way
-/// in from above: entered by entrance 1, 3 or 5, that one's stone follows the
-/// leader's steps (AnemosInnerSanctum_StartFollower) until it drops into its
-/// hole.
+/// The guardian room's three mimic stones (SPRITE_MIMIC_STONE), one in each
+/// room off its north side: entered from the south by entrance 1, 3 or 5, that
+/// room's stone mirrors the leader's steps (AnemosInnerSanctum_MimicLeader)
+/// until it reaches its button or falls into a hole.
 #define ACTOR_MIMIC_STONE_A ACTOR_FIRST_PLACED
 #define ACTOR_MIMIC_STONE_B (ACTOR_FIRST_PLACED + 1)
 #define ACTOR_MIMIC_STONE_C (ACTOR_FIRST_PLACED + 2)
 
-/// The guardian room's ways in from above beside the first two mimic stones;
-/// the third stone's is entrance 5.
-enum { ENTRANCE_BY_MIMIC_STONE_A = 1, ENTRANCE_BY_MIMIC_STONE_B = 3 };
+/// The guardian room's ways in from the south, one below each mimic stone.
+enum {
+  ENTRANCE_BY_MIMIC_STONE_A = 1,
+  ENTRANCE_BY_MIMIC_STONE_B = 3,
+  ENTRANCE_BY_MIMIC_STONE_C = 5
+};
 
-/// Set as each mimic stone drops into its hole
-/// (AnemosInnerSanctum_MarkEntrance), so that the set-up leaves it there.
-#define FLAG_MIMIC_STONE_A_DROPPED FLAG_AREA_TEMP_01
-#define FLAG_MIMIC_STONE_B_DROPPED FLAG_AREA_TEMP_02
-#define FLAG_MIMIC_STONE_C_DROPPED FLAG_AREA_TEMP_03
+/// Set as each mimic stone reaches its button and opens its room's north door
+/// (AnemosInnerSanctum_OpenMimicStoneDoor), so that the set-up leaves it there.
+#define FLAG_MIMIC_STONE_A_ON_BUTTON FLAG_AREA_TEMP_01
+#define FLAG_MIMIC_STONE_B_ON_BUTTON FLAG_AREA_TEMP_02
+#define FLAG_MIMIC_STONE_C_ON_BUTTON FLAG_AREA_TEMP_03
 
-/// The step triggers of the Dragon Skin's room: its four element symbols, each
-/// lit by the Djinn of its element the party has
-/// (AnemosInnerSanctum_LightThePillar), and the centre between them.
+/// The step triggers of the Dragon Skin room: its four element symbols, whose
+/// plates light for the Djinn of the element the party has
+/// (AnemosInnerSanctum_LightSymbol), the floor between them, and the Teleport
+/// circle in its middle.
 enum AnemosInnerSanctumSymbolTrigger {
+  TRIGGER_TELEPORT_CIRCLE = 30,
   TRIGGER_VENUS_SYMBOL = 50,
   TRIGGER_MERCURY_SYMBOL,
   TRIGGER_MARS_SYMBOL,
   TRIGGER_JUPITER_SYMBOL,
-  TRIGGER_CENTER
+  TRIGGER_FLOOR_BETWEEN_SYMBOLS
 };
 
-/// The first of the seven glowing tiles' step triggers, each with its own
-/// scene flag from FLAG_SCENE_TEMP_00 (AnemosInnerSanctum_StepOnTile).
-enum { TRIGGER_FIRST_TILE = 50 };
+/// The first of the seven round switches' step triggers, each with its own
+/// scene flag from FLAG_SCENE_TEMP_00 (AnemosInnerSanctum_PressRoundSwitch);
+/// FLAG_SCENE_TEMP_07 is set once all seven are pressed and the lift is ready.
+enum { TRIGGER_FIRST_ROUND_SWITCH = 50, ROUND_SWITCHES = 7 };
+/// The ready lift's step trigger, in the elevator and Orihalcon chest rooms.
+enum { TRIGGER_LIFT = 11 };
+/// The switches room's step triggers: the switch, and the cell east of it
+/// that a leader stepping off it crosses.
+enum { TRIGGER_SWITCH = 50, TRIGGER_EAST_OF_SWITCH };
+/// The step trigger before Charon's slate.
+enum { TRIGGER_BEFORE_CHARON_SLATE = 30 };
+/// SPRITE_ARROW_PANEL's animation with its arrow pointing up: a lift ready.
+#define ARROW_PANEL_ANIMATION_UP 2
 
 /// The Djinn of each element the game places, before its two spares.
 enum { DJINN_FOUND_PER_ELEMENT = 18 };
 
-/// The sanctum's lasting flags: each pillar Moved onto its mark, each element
-/// symbol lit, all four lit (the door opens), and the guardian's words heard.
+/// The sanctum's lasting flags: each pillar Moved onto its place, each
+/// element's torch lit, the Dragon Skin room's north door opened by all four,
+/// and Charon's slate's words heard.
 #define FLAG_ANEMOS_ELEVATOR_FIRST_PILLAR_PLACED 0xa80
 #define FLAG_ANEMOS_ELEVATOR_SECOND_PILLAR_PLACED 0xa81
 #define FLAG_ANEMOS_SWITCHES_FIRST_PILLAR_PLACED 0xa82
@@ -228,23 +234,107 @@ enum { DJINN_FOUND_PER_ELEMENT = 18 };
 #define FLAG_ANEMOS_SWITCHES_THIRD_PILLAR_PLACED 0xa84
 #define FLAG_ANEMOS_SWITCHES_PILLAR_B_PLACED 0xa85
 #define FLAG_ANEMOS_ORIHALCON_CHEST_FIRST_PILLAR_PLACED 0xa86
-#define FLAG_ANEMOS_VENUS_SYMBOL_LIT 0xa87
-#define FLAG_ANEMOS_MERCURY_SYMBOL_LIT 0xa88
-#define FLAG_ANEMOS_MARS_SYMBOL_LIT 0xa89
-#define FLAG_ANEMOS_JUPITER_SYMBOL_LIT 0xa8a
-#define FLAG_ANEMOS_ALL_SYMBOLS_LIT 0xa8b
-#define FLAG_ANEMOS_GUARDIAN_SPOKE 0xa8c
+#define FLAG_ANEMOS_VENUS_TORCH_LIT 0xa87
+#define FLAG_ANEMOS_MERCURY_TORCH_LIT 0xa88
+#define FLAG_ANEMOS_MARS_TORCH_LIT 0xa89
+#define FLAG_ANEMOS_JUPITER_TORCH_LIT 0xa8a
+#define FLAG_ANEMOS_NORTH_DOOR_OPEN 0xa8b
+#define FLAG_ANEMOS_CHARON_SLATE_SPOKE 0xa8c
 
-/// The guardian room's statue (SPRITE_ARROW_PANEL) that rises at its entrance
-/// 12 (AnemosInnerSanctum_RaiseSecondStatue).
-#define ACTOR_GUARDIAN_ROOM_STATUE (ACTOR_FIRST_PLACED + 3)
+/// The guardian room's lift (SPRITE_ARROW_PANEL), which brings the party up
+/// from the Orihalcon chest room (AnemosInnerSanctum_ArriveOnGuardianLift).
+#define ACTOR_GUARDIAN_LIFT (ACTOR_FIRST_PLACED + 3)
+
+/// The BG colours a palette fade keeps, palettes 0 to 13, before its OBJ
+/// colours.
+#define PALETTE_FADE_BG_COLORS (14 * PALETTE_COLORS)
+
+/// The spawner's flags that ask for one of the options' fields
+/// (EFFECT_USE_PALETTE and up).
+#define EFFECT_OPTION_MASK 0xffff0000
+
+/// The first column of the middle layer's cells in these rooms' maps (their
+/// map_layer 128, 0): the Dragon Skin room draws its plates, torches' light and
+/// pillar of light there.
+#define MIDDLE_LAYER_COLUMN (MAPGRID_SIZE / 2)
+/// The first row of the overhead layer's cells in these rooms' maps (their
+/// map_layer 0, 128).
+#define OVERHEAD_LAYER_ROW (MAPGRID_SIZE / 2)
+/// How far below a plate or the pillar of light its lit picture is kept, in
+/// cells.
+#define LIT_PICTURE_ROWS 26
+
+/// A spark ring's sixteenths of a turn; an orb starts at every second one.
+#define SPARK_RING_STEPS 16
+
+/// Sixteen puffs of dust in a ring round the leader as he lands, the first
+/// thrown twice.
+#define DUST_RING_PUFFS 16
+
+/// The leader's animation sitting on the floor, legs out, arms flung up and
+/// then lowered.
+#define ANIM_LEADER_SIT 49
+
+/// A small blue orb and the rings it bursts into (spr_349).
+#define SPRITE_ENERGY_CHARGE 349
+/// SPRITE_ENERGY_CHARGE's animation that bursts the orb into rings.
+#define ENERGY_CHARGE_ANIMATION_BURST 3
+
+/// A 16.16 coordinate's 8-pixel half cell, the unit Move sets pillars down in.
+#define FIELD_HALF_CELL(coordinate) ((coordinate) >> 19)
+
+/// The elevator room's exit up its lift, to the room above.
+#define EXIT_UP_THE_LIFT 11
+/// The elevator room's ways within it: the room above the lift, walked into or
+/// ridden up to, and the round switches' room below it.
+enum {
+  ENTRANCE_ROUND_SWITCHES = 10,
+  ENTRANCE_ABOVE_THE_LIFT = 17,
+  ENTRANCE_UP_THE_LIFT = 18
+};
+/// Set when the elevator room's lift has carried the party up; it stays above.
+#define FLAG_ELEVATOR_LIFT_RISEN FLAG_AREA_TEMP_00
+/// Set when the Orihalcon chest room's lift has carried the party up to the
+/// guardian room; it stays there, and the round switches below stay pressed.
+#define FLAG_GUARDIAN_LIFT_RISEN FLAG_AREA_TEMP_04
+
+/// The Orihalcon chest room's two cracked floors: a cell's step trigger is its
+/// floor's when whole, the next when cracked.
+enum {
+  TRIGGER_FIRST_CRACKED_FLOOR = 33,
+  TRIGGER_SECOND_CRACKED_FLOOR = TRIGGER_FIRST_CRACKED_FLOOR + 2
+};
+/// The Orihalcon chest room's ways down through its cracked floors, each an
+/// exit and the entrance below of one number.
+enum { THROUGH_FIRST_CRACKED_FLOOR = 11, THROUGH_SECOND_CRACKED_FLOOR = 12 };
+/// The west way into the second cracked floor's room; the next entrance is its
+/// way in from the sanctum's entrance.
+#define ENTRANCE_SECOND_CRACKED_FLOOR_WEST 4
+
+/// The row the mimic stones start on: one follows the leader's steps only
+/// while he is north of it, and never goes south of it.
+#define MIMIC_STONE_LINE_Z 248
+/// The guardian room's step triggers by the mimic stones: the floor where the
+/// leader's steps start one following, and the cell behaviors a following
+/// stone stops on, a hole it falls into and the button that opens its door.
+enum AnemosInnerSanctumMimicStoneTrigger {
+  TRIGGER_MIMIC_STONE_START = 50,
+  TRIGGER_MIMIC_STONE_HOLE,
+  TRIGGER_MIMIC_STONE_BUTTON,
+  /// Raised when the stone falls into a hole
+  /// (AnemosInnerSanctum_DropMimicStone).
+  TRIGGER_MIMIC_STONE_IN_HOLE = 200,
+  /// Raised when the stone reaches the button
+  /// (AnemosInnerSanctum_OpenMimicStoneDoor).
+  TRIGGER_MIMIC_STONE_ON_BUTTON
+};
 
 /// Writes each listed background colour from its red, green and blue, keeps
 /// the lists for the palette cycle, and saves the palettes as the fade's
 /// source; arriving by Teleport, the party then teleports in.
 void Palette_SetColors(u16 *slots, u16 *colours, u16 *cycleColors,
                        u16 *cycleSlots) {
-  u8 *saved = Ram_HeapSlots->paletteFade;
+  struct PaletteFade *fade = Ram_HeapSlots->paletteFade;
 
   gPaletteSlots = slots;
   gPaletteColors = colours;
@@ -256,16 +346,18 @@ void Palette_SetColors(u16 *slots, u16 *colours, u16 *cycleColors,
     int green = *colours++;
     int blue = *colours++;
 
-    BG_PLTT_SET_RGB(index, red, green, blue);
+    SET_RGB(BG_PLTT[index], red, green, blue);
   }
-  Dma_Set((const void *)BG_PLTT, saved, DMA_COPY_WORDS(112), REG_DMA3);
-  Dma_Set((const void *)OBJ_PLTT, saved + 448, DMA_COPY_WORDS(112), REG_DMA3);
+  Dma_Set((const void *)BG_PLTT, fade->palette, DMA_COPY_WORDS(112), REG_DMA3);
+  Dma_Set((const void *)OBJ_PLTT, &fade->palette[PALETTE_FADE_BG_COLORS],
+          DMA_COPY_WORDS(112), REG_DMA3);
   PaletteFade_ApplyTarget(PALETTE_TINT_NONE, PALETTES_ALL);
   if (gMainRoutineWork.teleportState == 2)
     AnemosInnerSanctum_TeleportIn();
 }
 
-/// Starts a palette cycle's task.
+/// Starts the palette cycle at its slow pace, as Teleport is cast: the first
+/// step after 16 frames, each after a frame less, down to two.
 void PaletteCycle_Start(void) {
   gPaletteCycleIndex = 0;
   gPaletteCycleLength = List_CountEntries(gPaletteSlots);
@@ -328,7 +420,6 @@ void AnemosInnerSanctum_TeleportIn(void) {
 
 #include "../field/field_effect_move.c"
 
-#undef BG_PLTT_SET_RGB
 extern s32 gAnemosInnerSanctum_DurationScripts[];
 
 /// Spawns a field effect at x, y, z moving at the velocity given, its type,
@@ -366,7 +457,7 @@ void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
   effect->scaleRateY = 0;
   effect->spin = 0;
 
-  if ((flags & 0xffff0000) == 0 || options == 0)
+  if ((flags & EFFECT_OPTION_MASK) == 0 || options == 0)
     return;
   if ((flags & EFFECT_USE_PALETTE) != 0)
     FieldActor_SetSpriteColor(effect, options->palette);
@@ -428,10 +519,10 @@ s32 AnemosInnerSanctum_CircleOrb(struct Actor *actor) {
   return 0;
 }
 
-extern u32 gAnemosInnerSanctum_MoteScript[];
+extern u32 gAnemosInnerSanctum_FadingSparkScript[];
 
-/// Leaves a fading mote of the source's palette where the source is.
-void AnemosInnerSanctum_SpawnMote(struct Actor *source) {
+/// Leaves a fading spark of the source's palette where the source is.
+void AnemosInnerSanctum_LeaveSpark(struct Actor *source) {
   struct Actor *actor = (FieldActor_Create(SPRITE_PARTICLE, source->x.fixed,
                                            source->y.fixed, source->z.fixed));
 
@@ -440,36 +531,36 @@ void AnemosInnerSanctum_SpawnMote(struct Actor *source) {
   Scene_SetActorSpritePriority(actor, 2);
   Actor_SelectAnimation(actor, 1);
   Actor_SetSpriteFlags(actor, 0);
-  Actor_StartScript(actor, gAnemosInnerSanctum_MoteScript);
+  Actor_StartScript(actor, gAnemosInnerSanctum_FadingSparkScript);
   Actor_SetBlendMode(actor, 1);
 }
 
 /// A spark's update: two steps a frame along its spiral, closing in and
-/// falling, leaving a mote at each; 0 once it reaches the centre.
-s32 AnemosInnerSanctum_SpiralMover(struct Mover *mover) {
-  if (mover->radius < mover->step)
+/// falling, leaving a fading spark at each; 0 once it reaches its plate.
+s32 AnemosInnerSanctum_SpiralIn(struct Spark *spark) {
+  if (spark->radius < spark->step)
     return 0;
-  mover->angle += mover->spin >> 1;
-  mover->x = mover->originX;
-  mover->y = mover->height;
-  mover->z = mover->originZ;
-  FieldVector_AddPolarOffsetFX(mover->radius, mover->angle, &mover->x);
-  AnemosInnerSanctum_SpawnMote(mover);
-  mover->radius -= mover->step >> 1;
-  mover->angle += mover->spin >> 1;
-  mover->x = mover->originX;
-  mover->y = mover->height;
-  mover->z = mover->originZ;
-  FieldVector_AddPolarOffsetFX(mover->radius, mover->angle, &mover->x);
-  AnemosInnerSanctum_SpawnMote(mover);
-  mover->radius -= mover->step >> 1;
-  mover->height -= mover->fall;
+  spark->angle += spark->spin >> 1;
+  spark->x = spark->originX;
+  spark->y = spark->height;
+  spark->z = spark->originZ;
+  FieldVector_AddPolarOffsetFX(spark->radius, spark->angle, &spark->x);
+  AnemosInnerSanctum_LeaveSpark(spark);
+  spark->radius -= spark->step >> 1;
+  spark->angle += spark->spin >> 1;
+  spark->x = spark->originX;
+  spark->y = spark->height;
+  spark->z = spark->originZ;
+  FieldVector_AddPolarOffsetFX(spark->radius, spark->angle, &spark->x);
+  AnemosInnerSanctum_LeaveSpark(spark);
+  spark->radius -= spark->step >> 1;
+  spark->height -= spark->fall;
   return 1;
 }
 
-/// Puffs sparks of the actor's palette where it is, and copies the cell
-/// picture under its centre.
-s32 AnemosInnerSanctum_SpawnOrbitSparks(struct Actor *actor) {
+/// A spark reaches its plate: a puff of sparks of its palette, and the plate
+/// shows its lit picture.
+s32 AnemosInnerSanctum_LightPlate(struct Actor *actor) {
   struct EffectOptions options;
   s32 x;
   s32 y;
@@ -479,9 +570,9 @@ s32 AnemosInnerSanctum_SpawnOrbitSparks(struct Actor *actor) {
   FieldEffect_Spawn(actor->x.fixed, actor->y.fixed, actor->z.fixed, 0,
                     toFIXED(1), 0, EFFECT_USE_PRIORITY | EFFECT_USE_PALETTE,
                     &options);
-  x = FIELD_CELL(actor->bounce) + 64;
+  x = FIELD_CELL(actor->bounce) + MIDDLE_LAYER_COLUMN;
   y = FIELD_CELL(actor->gravity);
-  MapGrid_CopyCellsTo(x, y + 26, x, y, 1, 1);
+  MapGrid_CopyCellsTo(x, y + LIT_PICTURE_ROWS, x, y, 1, 1);
   return 0;
 }
 
@@ -497,7 +588,7 @@ extern struct ActorPlacement gAnemosInnerSanctum_Placements[];
 extern struct ActorPlacement gAnemosInnerSanctum_DragonSkinChestPlacements[];
 extern struct ActorPlacement gAnemosInnerSanctum_ElevatorPlacements[];
 extern struct ActorPlacement gAnemosInnerSanctum_SwitchesPlacements[];
-extern s32 gAnemosInnerSanctum_OrihalconChestPlacements[];
+extern struct ActorPlacement gAnemosInnerSanctum_OrihalconChestPlacements[];
 extern struct ActorPlacement gAnemosInnerSanctum_GuardianPlacements[];
 
 const struct ActorPlacement *Scene_GetActorPlacements(void) {
@@ -522,36 +613,36 @@ void AnemosInnerSanctum_SendSpark(from, to, palette) struct Vector3 *from;
 struct Vector3 *to;
 s16 palette;
 {
-  struct Mover *actor;
+  struct Spark *spark;
   s32 x, z, distance;
 
-  actor = ((struct Mover *)FieldActor_Create(SPRITE_PARTICLE, from->x, from->y,
+  spark = ((struct Spark *)FieldActor_Create(SPRITE_PARTICLE, from->x, from->y,
                                              from->z));
-  x = (from->x - to->x) >> 16;
-  z = (from->z - to->z) >> 16;
-  actor->angle = Trig_Atan(from->z - to->z, from->x - to->x);
-  actor->spin = (((Random16() & 2) - 1) * (Random16() & 15)) << 8;
-  actor->palette = palette;
-  actor->motionFlags = 0;
-  actor->originX = to->x;
-  actor->originZ = to->z;
+  x = FIXEDtoINT(from->x - to->x);
+  z = FIXEDtoINT(from->z - to->z);
+  spark->angle = Trig_Atan(from->z - to->z, from->x - to->x);
+  spark->spin = (((Random16() & 2) - 1) * (Random16() & 15)) << 8;
+  spark->palette = palette;
+  spark->motionFlags = 0;
+  spark->originX = to->x;
+  spark->originZ = to->z;
   distance = INTtoFIXED(Iwram_Sqrt(x * x + z * z));
-  actor->radius = distance;
-  actor->step = distance / 16;
-  actor->height = from->y;
-  actor->fall = (from->y - to->y) / 16;
-  Actor_SetBlendMode(actor, 1);
-  FieldActor_SetSpriteColor(actor, (u16)palette);
-  Scene_SetActorSpritePriority(actor, 2);
-  Actor_SelectAnimation(actor, 7);
-  Actor_SetSpriteFlags(actor, 0);
-  FieldVector_AddPolarOffsetFX(actor->radius, actor->angle, &actor->x);
-  Actor_StartScript(actor, gAnemosInnerSanctum_SparkScript);
-  AnemosInnerSanctum_SpiralMover(actor);
+  spark->radius = distance;
+  spark->step = distance / 16;
+  spark->height = from->y;
+  spark->fall = (from->y - to->y) / 16;
+  Actor_SetBlendMode(spark, 1);
+  FieldActor_SetSpriteColor(spark, (u16)palette);
+  Scene_SetActorSpritePriority(spark, 2);
+  Actor_SelectAnimation(spark, 7);
+  Actor_SetSpriteFlags(spark, 0);
+  FieldVector_AddPolarOffsetFX(spark->radius, spark->angle, &spark->x);
+  Actor_StartScript(spark, gAnemosInnerSanctum_SparkScript);
+  AnemosInnerSanctum_SpiralIn(spark);
 }
 
-/// Rings a point at x, y with eight orbs of the given palette that circle in
-/// at the given speed.
+/// Rings a torch at x, y (16.16) with eight orbs of the given palette that
+/// circle in on it at the given speed.
 void AnemosInnerSanctum_SparkRing(x, y, palette, speed) s32 x;
 s32 y;
 s16 palette;
@@ -559,10 +650,10 @@ s16 speed;
 {
   s32 i;
 
-  for (i = 0; i != 16;) {
+  for (i = 0; i != SPARK_RING_STEPS;) {
     struct Actor *object =
         (FieldActor_Create(SPRITE_PARTICLE, x, y, toFIXED(152)));
-    s32 angle = i << 12;
+    s32 angle = i * (TRIG_TURN / SPARK_RING_STEPS);
 
     FieldVector_AddPolarOffset(32, angle, &object->x.fixed);
     object->timer = angle;
@@ -583,8 +674,8 @@ s16 speed;
   }
 }
 
-/// Drops a spark of the given palette on the cell x, z.
-void AnemosInnerSanctum_DropSpark(x, z, palette) s32 x;
+/// Leaves a flame of the given palette burning on the torch at x, z.
+void AnemosInnerSanctum_LightTorch(x, z, palette) s32 x;
 s32 z;
 s16 palette;
 {
@@ -601,31 +692,35 @@ s16 palette;
 
 #include "text/msg_ids.h"
 
-extern u32 gAnemosInnerSanctum_PillarRisesScript[];
-extern s32 gAnemosInnerSanctum_PillarSparkScript[];
-extern s32 gAnemosInnerSanctum_SparkOffsets[][2];
+extern u32 gAnemosInnerSanctum_DjinniRisesScript[];
+extern s32 gAnemosInnerSanctum_DjinniSinksScript[];
+extern s32 gAnemosInnerSanctum_PlateOffsets[][2];
 
-/// Stepping onto an element's symbol in the Dragon Skin's room: the leader
-/// faces south and that element's Djinn the party has found fly out as
-/// sparks; with all eighteen the symbol is lit and the sparks ring it, and
-/// with all four lit the door opens. Already lit, or with none, nothing.
-void AnemosInnerSanctum_LightThePillar(void) {
+/// Stepping onto an element's symbol in the Dragon Skin room: the leader
+/// raises his arms in a pillar of light and a Djinni of the element rises over
+/// him, and each of the element's Djinn the party has found sends a spark to
+/// its own plate. Short of all eighteen, the plates and the light go out
+/// again; with all eighteen, the element's torch over the north door is lit,
+/// and with all four lit the door opens. Nothing if the torch is lit already
+/// or the party has none of the element's Djinn.
+void AnemosInnerSanctum_LightSymbol(void) {
   struct FieldWork *work = Ram_HeapSlots->fieldWork;
   struct Actor *leader = Actor_GetById(gMainRoutineWork.leaderActorId);
+  /* FAKEMATCH(volatile): the blend weights held in a volatile local. */
   volatile u16 alpha = REG_BLDALPHA;
   s32 x, z;
   s32 targetX = 0;
   s32 targetZ = 0;
   s16 type = work->stepTrigger - TRIGGER_VENUS_SYMBOL + SPRITE_VENUS_DJINNI;
-  s16 room = work->stepTrigger;
-  s32 index = room - TRIGGER_VENUS_SYMBOL;
+  s16 trigger = work->stepTrigger;
+  s32 index = trigger - TRIGGER_VENUS_SYMBOL;
   s32 base;
   u8 count;
   s32 palette;
   s32 column, row, cellX, cellZ;
   s32 i;
   u8 last;
-  struct Actor *actor;
+  struct Actor *djinni;
   u8 found[20];
   u8 order[20];
   struct Vector3 from;
@@ -634,44 +729,44 @@ void AnemosInnerSanctum_LightThePillar(void) {
   x = ((index & 1) << 8) + 408;
   base = 0;
   count = 0;
-  palette = 0;
+  palette = SPRITE_COLOR_NORMAL;
   z = (index & 2) * 3 * 32 + 168;
-  switch (room) {
+  switch (trigger) {
   case TRIGGER_VENUS_SYMBOL:
     base = FLAG_DJINNI(DJINNI_FLINT);
     targetX = 520;
     targetZ = 48;
-    if (GameFlag_Get(FLAG_ANEMOS_VENUS_SYMBOL_LIT)) {
+    if (GameFlag_Get(FLAG_ANEMOS_VENUS_TORCH_LIT)) {
       GameFlag_Set(FLAG_SCENE_TEMP_00);
       return;
     }
     break;
   case TRIGGER_MERCURY_SYMBOL:
-    palette = 3;
+    palette = SPRITE_COLOR_BGR;
     base = FLAG_DJINNI(DJINNI_FIZZ);
     targetX = 552;
     targetZ = 48;
-    if (GameFlag_Get(FLAG_ANEMOS_MERCURY_SYMBOL_LIT)) {
+    if (GameFlag_Get(FLAG_ANEMOS_MERCURY_TORCH_LIT)) {
       GameFlag_Set(FLAG_SCENE_TEMP_00);
       return;
     }
     break;
   case TRIGGER_MARS_SYMBOL:
-    palette = 10;
+    palette = SPRITE_COLOR_RED_TINT;
     base = FLAG_DJINNI(DJINNI_FORGE);
     targetX = 504;
     targetZ = 40;
-    if (GameFlag_Get(FLAG_ANEMOS_MARS_SYMBOL_LIT)) {
+    if (GameFlag_Get(FLAG_ANEMOS_MARS_TORCH_LIT)) {
       GameFlag_Set(FLAG_SCENE_TEMP_00);
       return;
     }
     break;
   case TRIGGER_JUPITER_SYMBOL:
-    palette = 2;
+    palette = SPRITE_COLOR_RBG;
     base = FLAG_DJINNI(DJINNI_GUST);
     targetX = 568;
     targetZ = 40;
-    if (GameFlag_Get(FLAG_ANEMOS_JUPITER_SYMBOL_LIT)) {
+    if (GameFlag_Get(FLAG_ANEMOS_JUPITER_TORCH_LIT)) {
       GameFlag_Set(FLAG_SCENE_TEMP_00);
       return;
     }
@@ -695,26 +790,28 @@ void AnemosInnerSanctum_LightThePillar(void) {
   FieldCamera_MoveToFX(INTtoFIXED(x), -1, INTtoFIXED(z), 1);
   FieldActor_WaitForMoveById(gMainRoutineWork.leaderActorId);
   Actor_FaceDirectionAndWait(gMainRoutineWork.leaderActorId, FACING_SOUTH);
-  Actor_SetAnimation(gMainRoutineWork.leaderActorId, 28);
-  actor = (FieldActor_Create((u16)type, leader->x.fixed,
-                             leader->y.fixed + toFIXED(8), leader->z.fixed));
-  actor->motionFlags = 0;
-  actor->scaleY = FIXED_ONE / 10;
-  actor->scaleX = FIXED_ONE / 10;
-  Actor_SetSpriteFlags((s32)actor, 0);
-  Actor_StartScript(actor, gAnemosInnerSanctum_PillarRisesScript);
-  Actor_SetBlendMode(actor, 1);
+  Actor_SetAnimation(gMainRoutineWork.leaderActorId, ANIM_LEADER_ARMS_RAISED);
+  djinni = (FieldActor_Create((u16)type, leader->x.fixed,
+                              leader->y.fixed + toFIXED(8), leader->z.fixed));
+  djinni->motionFlags = 0;
+  djinni->scaleY = FIXED_ONE / 10;
+  djinni->scaleX = FIXED_ONE / 10;
+  Actor_SetSpriteFlags((s32)djinni, 0);
+  Actor_StartScript(djinni, gAnemosInnerSanctum_DjinniRisesScript);
+  Actor_SetBlendMode(djinni, 1);
   PaletteFade_ApplySource(PALETTE_TINT_NONE, PALETTES_ALL);
   PaletteFade_ApplyTarget(PALETTE_TINT_WARM, PALETTES_BG);
   PaletteFade_Interpolate(60);
   BlendScript_Suspend();
-  alpha = alpha & 255;
-  REG_BLDALPHA = BLEND_ALPHA(0, 16);
+  alpha = alpha & 0xff;
+  REG_BLDALPHA = BLEND_ALPHA(0, BLEND_WEIGHT_MAX);
   cellX = x >> 4;
   cellZ = z >> 4;
   column = cellX;
   row = cellZ;
-  MapGrid_CopyCellsTo(cellX + 63, cellZ + 23, cellX + 63, cellZ - 3, 3, 5);
+  MapGrid_CopyCellsTo(MIDDLE_LAYER_COLUMN + cellX - 1,
+                      cellZ - 3 + LIT_PICTURE_ROWS,
+                      MIDDLE_LAYER_COLUMN + cellX - 1, cellZ - 3, 3, 5);
   for (i = 0; i != alpha; i++) {
     REG_BLDALPHA = BLEND_ALPHA(i, BLEND_WEIGHT_MAX);
     System_Wait(8);
@@ -740,10 +837,10 @@ void AnemosInnerSanctum_LightThePillar(void) {
     from.z = leader->z.fixed + INTtoFIXED(Random16() & 15) - toFIXED(8);
     slot = order[i];
     to.x =
-        leader->x.fixed + INTtoFIXED(gAnemosInnerSanctum_SparkOffsets[slot][0]);
+        leader->x.fixed + INTtoFIXED(gAnemosInnerSanctum_PlateOffsets[slot][0]);
     to.y = leader->y.fixed;
     to.z =
-        leader->z.fixed + INTtoFIXED(gAnemosInnerSanctum_SparkOffsets[slot][1]);
+        leader->z.fixed + INTtoFIXED(gAnemosInnerSanctum_PlateOffsets[slot][1]);
     AnemosInnerSanctum_SendSpark(&from, &to, palette);
     if (i & 1)
       Event_PlaySound(SE_SPARKS);
@@ -753,9 +850,9 @@ void AnemosInnerSanctum_LightThePillar(void) {
 
   if (count != DJINN_FOUND_PER_ELEMENT) {
     FieldEvent_Wait(96);
-    Actor_StartScript(actor, gAnemosInnerSanctum_PillarSparkScript);
+    Actor_StartScript(djinni, gAnemosInnerSanctum_DjinniSinksScript);
     BlendScript_Suspend();
-    alpha = REG_BLDALPHA & 255;
+    alpha = REG_BLDALPHA & 0xff;
     PaletteFade_ApplyTarget(PALETTE_TINT_NONE, PALETTES_BG);
     PaletteFade_Interpolate(60);
     for (i = alpha; i != 0;) {
@@ -768,23 +865,22 @@ void AnemosInnerSanctum_LightThePillar(void) {
 
       i++;
       MapGrid_CopyCellsTo(
-          64, 0,
-          ((leader->x.fixed +
-            INTtoFIXED(gAnemosInnerSanctum_SparkOffsets[slot][0])) >>
-           20) +
-              64,
-          (leader->z.fixed +
-           INTtoFIXED(gAnemosInnerSanctum_SparkOffsets[slot][1])) >>
-              20,
+          MIDDLE_LAYER_COLUMN, 0,
+          FIELD_CELL(leader->x.fixed +
+                     INTtoFIXED(gAnemosInnerSanctum_PlateOffsets[slot][0])) +
+              MIDDLE_LAYER_COLUMN,
+          FIELD_CELL(leader->z.fixed +
+                     INTtoFIXED(gAnemosInnerSanctum_PlateOffsets[slot][1])),
           1, 1);
     }
-    MapGrid_CopyCellsTo(64, 0, column + 63, row - 3, 3, 5);
+    MapGrid_CopyCellsTo(MIDDLE_LAYER_COLUMN, 0,
+                        MIDDLE_LAYER_COLUMN + column - 1, row - 3, 3, 5);
     BlendScript_Resume();
     Event_WaitTransitionFrames();
   } else {
     Event_SetFlag((s16)work->stepTrigger - TRIGGER_VENUS_SYMBOL +
-                  FLAG_ANEMOS_VENUS_SYMBOL_LIT);
-    Actor_StartScript(actor, gAnemosInnerSanctum_PillarSparkScript);
+                  FLAG_ANEMOS_VENUS_TORCH_LIT);
+    Actor_StartScript(djinni, gAnemosInnerSanctum_DjinniSinksScript);
     FieldEvent_Wait(60);
     FieldCamera_SetSpeed(4);
     FieldCamera_MoveTo(536, CAMERA_KEEP, 120, 1);
@@ -808,13 +904,13 @@ void AnemosInnerSanctum_LightThePillar(void) {
     PaletteFade_ApplyTarget(PALETTE_TINT_NONE, PALETTES_ALL);
     PaletteFade_Interpolate(32);
     Event_PlaySound(SE_FLASH);
-    AnemosInnerSanctum_DropSpark(targetX, targetZ, palette);
+    AnemosInnerSanctum_LightTorch(targetX, targetZ, palette);
     FieldEvent_Wait(80);
-    if (GameFlag_Get(FLAG_ANEMOS_VENUS_SYMBOL_LIT) &&
-        GameFlag_Get(FLAG_ANEMOS_MERCURY_SYMBOL_LIT) &&
-        GameFlag_Get(FLAG_ANEMOS_MARS_SYMBOL_LIT) &&
-        GameFlag_Get(FLAG_ANEMOS_JUPITER_SYMBOL_LIT)) {
-      Event_SetFlag(FLAG_ANEMOS_ALL_SYMBOLS_LIT);
+    if (GameFlag_Get(FLAG_ANEMOS_VENUS_TORCH_LIT) &&
+        GameFlag_Get(FLAG_ANEMOS_MERCURY_TORCH_LIT) &&
+        GameFlag_Get(FLAG_ANEMOS_MARS_TORCH_LIT) &&
+        GameFlag_Get(FLAG_ANEMOS_JUPITER_TORCH_LIT)) {
+      Event_SetFlag(FLAG_ANEMOS_NORTH_DOOR_OPEN);
       Event_PlaySound(SE_THUMP);
       MapGrid_CopyCellsTo(52, 7, 33, 7, 1, 2);
       System_Wait(5);
@@ -824,7 +920,7 @@ void AnemosInnerSanctum_LightThePillar(void) {
     }
   }
 
-  Actor_Release(actor);
+  Actor_Release(djinni);
   Event_SetFlag(FLAG_SCENE_TEMP_00);
   EventCamera_FollowActor(gMainRoutineWork.leaderActorId, 1);
   FieldCamera_WaitForArrival();
@@ -832,8 +928,9 @@ void AnemosInnerSanctum_LightThePillar(void) {
   Event_End();
 }
 
-/// Stepping onto the centre between the symbols lets them light again.
-void AnemosInnerSanctum_StepOntoCenter(void) {
+/// Stepping off a symbol onto the floor between them lets the symbols be
+/// stepped onto again.
+void AnemosInnerSanctum_StepOffSymbol(void) {
   GameFlag_Clear(FLAG_SCENE_TEMP_00);
 }
 
@@ -841,60 +938,68 @@ extern s16 gAnemosInnerSanctum_ElevatorBlocks[];
 extern s16 gAnemosInnerSanctum_SwitchesBlocks[];
 extern s16 gAnemosInnerSanctum_OrihalconChestBlocks[];
 
-/// Move lifts a pillar: in the switches' and the Orihalcon chest's rooms the
-/// cells around its marks are walled while it moves.
+/// Move picks up a pillar: in the switches' and the Orihalcon chest's rooms,
+/// sand cells by the pillars' places are walled while it is carried, and a
+/// cell or two beside them made sand.
 void AnemosInnerSanctum_StartMovingBlock(void) {
   if (gMainRoutineWork.next == SCENE_ANEMOS_INNER_SANCTUM_ELEVATOR) {
     Actor_LiftTargetBlock((s32)gAnemosInnerSanctum_ElevatorBlocks);
   } else {
     if (gMainRoutineWork.next == SCENE_ANEMOS_INNER_SANCTUM_SWITCHES) {
       Actor_LiftTargetBlock((s32)gAnemosInnerSanctum_SwitchesBlocks);
-      Field_SetCellBehaviorAt(2, toFIXED(72), toFIXED(440), CELL_BEHAVIOR_WALL);
+      Field_SetCellBehaviorAt(MAPGRID_LAYER_OVERHEAD, toFIXED(72), toFIXED(440),
+                              CELL_BEHAVIOR_WALL);
     } else {
       if (gMainRoutineWork.next == SCENE_ANEMOS_INNER_SANCTUM_ORIHALCON_CHEST) {
         Actor_LiftTargetBlock((s32)gAnemosInnerSanctum_OrihalconChestBlocks);
-        Field_SetCellBehaviorAt(2, toFIXED(280), toFIXED(344),
-                                CELL_BEHAVIOR_WALL);
-        Field_SetCellBehaviorAt(2, toFIXED(280), toFIXED(376),
-                                CELL_BEHAVIOR_WALL);
-        Field_SetCellBehaviorAt(2, toFIXED(296), toFIXED(360),
-                                CELL_BEHAVIOR_WALL);
-        Field_SetCellBehaviorAt(2, toFIXED(280), toFIXED(360),
-                                CELL_BEHAVIOR_SAND);
-        Field_SetCellBehaviorAt(2, toFIXED(520), toFIXED(632),
-                                CELL_BEHAVIOR_WALL);
-        Field_SetCellBehaviorAt(2, toFIXED(520), toFIXED(616),
-                                CELL_BEHAVIOR_SAND);
+        Field_SetCellBehaviorAt(MAPGRID_LAYER_OVERHEAD, toFIXED(280),
+                                toFIXED(344), CELL_BEHAVIOR_WALL);
+        Field_SetCellBehaviorAt(MAPGRID_LAYER_OVERHEAD, toFIXED(280),
+                                toFIXED(376), CELL_BEHAVIOR_WALL);
+        Field_SetCellBehaviorAt(MAPGRID_LAYER_OVERHEAD, toFIXED(296),
+                                toFIXED(360), CELL_BEHAVIOR_WALL);
+        Field_SetCellBehaviorAt(MAPGRID_LAYER_OVERHEAD, toFIXED(280),
+                                toFIXED(360), CELL_BEHAVIOR_SAND);
+        Field_SetCellBehaviorAt(MAPGRID_LAYER_OVERHEAD, toFIXED(520),
+                                toFIXED(632), CELL_BEHAVIOR_WALL);
+        Field_SetCellBehaviorAt(MAPGRID_LAYER_OVERHEAD, toFIXED(520),
+                                toFIXED(616), CELL_BEHAVIOR_SAND);
       }
     }
   }
 }
 
-/// Move has set a pillar down: reads where it stands in 8-pixel cells, restores
-/// the cells StartMovingBlock opened, and where a pillar has reached its mark
-/// sets that pillar's flag. In the switches' room the second pillar on its mark
-/// presses the first switch and opens the way; the pillar B set down short of
-/// its mark trades places with the third pillar until that one is placed.
+/// Move has set a pillar down: the cells StartMovingBlock changed are put
+/// back, and a pillar set down on its place (in 8-pixel half cells) sets its
+/// flag. In the switches' room a pillar on the switch holds it down and its
+/// door open; whichever pillar is set down on pillar B's place counts as
+/// pillar B, the two trading places while the third pillar is not on its own.
 void AnemosInnerSanctum_FinishMovingBlock(void) {
-  struct Actor *leader = gFieldWork->movedBlock;
+  struct Actor *block = gFieldWork->movedBlock;
   s32 x;
   s32 z;
 
   Event_Start();
   Event_ResolvePendingActions(0);
   Actor_PlaceMovedBlock();
-  x = leader->x.fixed >> 19;
-  z = leader->z.fixed >> 19;
+  x = FIELD_HALF_CELL(block->x.fixed);
+  z = FIELD_HALF_CELL(block->z.fixed);
   if (gMainRoutineWork.next == SCENE_ANEMOS_INNER_SANCTUM_SWITCHES) {
-    Field_SetCellBehaviorAt(2, toFIXED(72), toFIXED(440), CELL_BEHAVIOR_SAND);
+    Field_SetCellBehaviorAt(MAPGRID_LAYER_OVERHEAD, toFIXED(72), toFIXED(440),
+                            CELL_BEHAVIOR_SAND);
     if (x != 8)
-      Field_SetCellBehaviorAt(2, toFIXED(72), toFIXED(424), CELL_BEHAVIOR_SAND);
+      Field_SetCellBehaviorAt(MAPGRID_LAYER_OVERHEAD, toFIXED(72), toFIXED(424),
+                              CELL_BEHAVIOR_SAND);
   }
   if (gMainRoutineWork.next == SCENE_ANEMOS_INNER_SANCTUM_ORIHALCON_CHEST) {
-    Field_SetCellBehaviorAt(2, toFIXED(280), toFIXED(344), 0);
-    Field_SetCellBehaviorAt(2, toFIXED(280), toFIXED(376), CELL_BEHAVIOR_SAND);
-    Field_SetCellBehaviorAt(2, toFIXED(296), toFIXED(360), 0);
-    Field_SetCellBehaviorAt(2, toFIXED(520), toFIXED(632), CELL_BEHAVIOR_SAND);
+    Field_SetCellBehaviorAt(MAPGRID_LAYER_OVERHEAD, toFIXED(280), toFIXED(344),
+                            CELL_BEHAVIOR_NORMAL);
+    Field_SetCellBehaviorAt(MAPGRID_LAYER_OVERHEAD, toFIXED(280), toFIXED(376),
+                            CELL_BEHAVIOR_SAND);
+    Field_SetCellBehaviorAt(MAPGRID_LAYER_OVERHEAD, toFIXED(296), toFIXED(360),
+                            CELL_BEHAVIOR_NORMAL);
+    Field_SetCellBehaviorAt(MAPGRID_LAYER_OVERHEAD, toFIXED(520), toFIXED(632),
+                            CELL_BEHAVIOR_SAND);
   }
   if (gMainRoutineWork.next == SCENE_ANEMOS_INNER_SANCTUM_ELEVATOR) {
     if (x == 37 && z == 31) {
@@ -908,7 +1013,7 @@ void AnemosInnerSanctum_FinishMovingBlock(void) {
       GameFlag_Set(FLAG_ANEMOS_SWITCHES_FIRST_PILLAR_PLACED);
     if (x == 67 && z == 45) {
       MapGrid_CopyCellsTo(50, 22, 33, 22, 1, 1);
-      Actor_SetPosition(ACTOR_SWITCHES_FIRST_SWITCH, 0, 0);
+      Actor_SetPosition(ACTOR_SWITCHES_SWITCH_MARKER, 0, 0);
       Event_PlaySound(SE_BUTTON_PRESS);
       FieldEvent_Wait(30);
       Event_PlaySound(SE_THUMP);
@@ -926,9 +1031,9 @@ void AnemosInnerSanctum_FinishMovingBlock(void) {
         s32 fromX =
             INTtoFIXED(FIXEDtoINT(Actor_Get(ACTOR_SWITCHES_PILLAR_B)->x.fixed));
 
-        Actor_SetPositionFX(
-            ACTOR_SWITCHES_THIRD_PILLAR, fromX,
-            FIXEDtoINT(Actor_Get(ACTOR_SWITCHES_PILLAR_B)->z.fixed) << 16);
+        Actor_SetPositionFX(ACTOR_SWITCHES_THIRD_PILLAR, fromX,
+                            INTtoFIXED(FIXEDtoINT(
+                                Actor_Get(ACTOR_SWITCHES_PILLAR_B)->z.fixed)));
         Actor_SetPosition(ACTOR_SWITCHES_PILLAR_B, 728, 472);
       }
       GameFlag_Set(FLAG_ANEMOS_SWITCHES_PILLAR_B_PLACED);
@@ -940,12 +1045,13 @@ void AnemosInnerSanctum_FinishMovingBlock(void) {
   Event_End();
 }
 
-extern s32 gAnemosInnerSanctum_TileGlowScript[];
+extern s32 gAnemosInnerSanctum_SwitchGlowScript[];
 
-/// A glowing tile stepped on: lights the tile under the leader with a glow
-/// and sets the tile's scene flag; once all seven are lit, the room's statue
-/// floats up (FLAG_SCENE_TEMP_07), ready to raise the party.
-void AnemosInnerSanctum_StepOnTile(void) {
+/// A round switch stepped on: it lights under the leader in a burst of blue
+/// rings and its scene flag is set; once all seven are pressed, the room's
+/// lift floats up with its arrow pointing up (FLAG_SCENE_TEMP_07), ready to
+/// carry the party.
+void AnemosInnerSanctum_PressRoundSwitch(void) {
   struct FieldWork *work = Ram_HeapSlots->fieldWork;
   struct Actor *leader = Actor_Get(gMainRoutineWork.leaderActorId);
   struct Actor *actor;
@@ -955,40 +1061,42 @@ void AnemosInnerSanctum_StepOnTile(void) {
 
   if (gMainRoutineWork.next == SCENE_ANEMOS_INNER_SANCTUM_ORIHALCON_CHEST)
     MapGrid_CopyCellsTo(17, 71, FIELD_CELL(leader->x.fixed),
-                        FIELD_CELL(leader->z.fixed) + 64, 1, 1);
+                        FIELD_CELL(leader->z.fixed) + OVERHEAD_LAYER_ROW, 1, 1);
   else
     MapGrid_CopyCellsTo(54, 87, FIELD_CELL(leader->x.fixed),
-                        FIELD_CELL(leader->z.fixed) + 64, 1, 1);
+                        FIELD_CELL(leader->z.fixed) + OVERHEAD_LAYER_ROW, 1, 1);
   Event_PlaySound(SE_DRIP);
-  actor =
-      FieldActor_Create(349, (FIELD_CELL(leader->x.fixed) << 20) + toFIXED(8),
-                        0, (FIELD_CELL(leader->z.fixed) << 20) + toFIXED(8));
+  actor = FieldActor_Create(
+      SPRITE_ENERGY_CHARGE,
+      FIELD_CELL_ORIGIN(FIELD_CELL(leader->x.fixed)) + toFIXED(8), 0,
+      FIELD_CELL_ORIGIN(FIELD_CELL(leader->z.fixed)) + toFIXED(8));
   actor->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
   actor->motionFlags = 0;
   FieldActor_SetSpriteColor(actor, SPRITE_COLOR_GBR);
   actor->scaleY = FIXED_ONE * 11 / 8;
   actor->scaleX = FIXED_ONE * 11 / 8;
   Scene_SetActorSpritePriority(actor, 2);
-  Actor_SelectAnimation(actor, 3);
+  Actor_SelectAnimation(actor, ENERGY_CHARGE_ANIMATION_BURST);
   Actor_SetSpriteFlags(actor, 0);
-  Actor_StartScript(actor, gAnemosInnerSanctum_TileGlowScript);
-  Event_SetFlag(work->stepTrigger - TRIGGER_FIRST_TILE + FLAG_SCENE_TEMP_00);
+  Actor_StartScript(actor, gAnemosInnerSanctum_SwitchGlowScript);
+  Event_SetFlag(work->stepTrigger - TRIGGER_FIRST_ROUND_SWITCH +
+                FLAG_SCENE_TEMP_00);
   all = Event_GetFlag(FLAG_SCENE_TEMP_00);
-  for (i = 1; i != 7; i++)
+  for (i = 1; i != ROUND_SWITCHES; i++)
     all &= Event_GetFlag(FLAG_SCENE_TEMP_00 + i);
   if (all) {
     Event_Start();
     FieldEvent_ResolvePendingActions(0);
     FieldEvent_Wait(10);
     FieldCamera_SetSpeed(0.8);
-    id = ACTOR_ELEVATOR_STATUE;
+    id = ACTOR_ELEVATOR_LIFT;
     if (gMainRoutineWork.next == SCENE_ANEMOS_INNER_SANCTUM_ORIHALCON_CHEST)
-      id = ACTOR_ORIHALCON_CHEST_STATUE;
+      id = ACTOR_ORIHALCON_CHEST_LIFT;
     FieldCamera_MoveToActorById(id, 1);
     FieldCamera_WaitForArrival();
     FieldEvent_Wait(10);
     Event_PlaySound(SE_582);
-    Actor_SetAnimation(id, 2);
+    Actor_SetAnimation(id, ARROW_PANEL_ANIMATION_UP);
     Event_SetFlag(FLAG_SCENE_TEMP_07);
     Actor_Get(id)->motionFlags = ACTOR_FLOATS;
     FieldEvent_Wait(80);
@@ -996,21 +1104,22 @@ void AnemosInnerSanctum_StepOnTile(void) {
   }
 }
 
-/// Centres the leader on its cell and raises the room's statue with the party
-/// on it, 4 pixels at once and then 128 more, as the room is left by its
-/// upper exit.
-void AnemosInnerSanctum_RaisePlatform(void) {
+/// Stepping onto the ready lift: the leader is centred on it facing south, and
+/// it rises with the party, 4 pixels and then 128 more, as the room is left by
+/// the exit up.
+void AnemosInnerSanctum_RideLiftUp(void) {
   struct Actor *leader = Actor_Get(gMainRoutineWork.leaderActorId);
-  struct Actor *actor;
+  struct Actor *lift;
 
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
   if (gMainRoutineWork.next == SCENE_ANEMOS_INNER_SANCTUM_ORIHALCON_CHEST) {
-    actor = Actor_Get(ACTOR_ORIHALCON_CHEST_STATUE);
-    FieldEvent_SetExitRequest(13);
+    lift = Actor_Get(ACTOR_ORIHALCON_CHEST_LIFT);
+    FieldEvent_SetExitRequest(
+        ANEMOS_INNER_SANCTUM_ORIHALCON_CHEST_TO_ANEMOS_INNER_SANCTUM_GUARDIAN_SOUTHWEST);
   } else {
-    actor = Actor_Get(ACTOR_ELEVATOR_STATUE);
-    FieldEvent_SetExitRequest(11);
+    lift = Actor_Get(ACTOR_ELEVATOR_LIFT);
+    FieldEvent_SetExitRequest(EXIT_UP_THE_LIFT);
   }
   {
     s32 x = (FIELD_CELL(leader->x.fixed) << 4) + 8;
@@ -1020,50 +1129,52 @@ void AnemosInnerSanctum_RaisePlatform(void) {
   }
   Actor_FaceDirection(gMainRoutineWork.leaderActorId, FACING_SOUTH, 10);
   FieldEvent_Wait(30);
-  actor->motionFlags = 0;
+  lift->motionFlags = 0;
   FieldCamera_MoveTo(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0);
-  actor->speedLimit = toFIXED(2);
-  actor->acceleration = toFIXED(1) / 32;
+  lift->speedLimit = toFIXED(2);
+  lift->acceleration = toFIXED(1) / 32;
   Event_PlaySound(SE_KOLIMA_BRIDGE_POST);
-  FieldActor_SetMoveTargetFX(actor, actor->x.fixed, actor->y.fixed + toFIXED(4),
-                             actor->z.fixed);
-  FieldActor_WaitForMove(actor);
+  FieldActor_SetMoveTargetFX(lift, lift->x.fixed, lift->y.fixed + toFIXED(4),
+                             lift->z.fixed);
+  FieldActor_WaitForMove(lift);
   Scene_SetActorSpritePriority(leader, 1);
-  Scene_SetActorSpritePriority(actor, 1);
-  FieldActor_SetMoveTargetFX(actor, actor->x.fixed,
-                             actor->y.fixed + toFIXED(128), actor->z.fixed);
+  Scene_SetActorSpritePriority(lift, 1);
+  FieldActor_SetMoveTargetFX(lift, lift->x.fixed, lift->y.fixed + toFIXED(128),
+                             lift->z.fixed);
   FieldEvent_Wait(80);
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();
   Event_End();
 }
 
-/// Sand on a cell of behavior 232: the leader sinks into the layer below.
+/// Sand cast on a cell of sand: while it lasts, the leader moves on the
+/// overhead layer.
 void AnemosInnerSanctum_SinkIntoSand(void) {
   struct Actor *actor;
   s32 behavior;
 
   actor = Actor_Get(gMainRoutineWork.leaderActorId);
-  behavior = FieldMapGrid_GetCellBehaviorAt(2, actor->x.fixed, actor->z.fixed);
-  if (behavior == 232) {
-    actor->layer = 2;
+  behavior = FieldMapGrid_GetCellBehaviorAt(MAPGRID_LAYER_OVERHEAD,
+                                            actor->x.fixed, actor->z.fixed);
+  if (behavior == CELL_BEHAVIOR_SAND) {
+    actor->layer = MAPGRID_LAYER_OVERHEAD;
   }
 }
 
-/// As Sand fades, the leader rises back to its own layer.
-void Leader_SetLayerByte(void) {
-  Actor_Get(gMainRoutineWork.leaderActorId)->layer = 0;
+/// As Sand fades, the leader moves on the ground layer again.
+void AnemosInnerSanctum_EndSand(void) {
+  Actor_Get(gMainRoutineWork.leaderActorId)->layer = MAPGRID_LAYER_GROUND;
 }
 
-/// Stepping onto the first switch: the leader walks onto it, it sinks with a
-/// thump and the way opens.
-void AnemosInnerSanctum_PressFirstSwitch(void) {
+/// Stepping onto the switch: the leader walks onto its middle, it sinks with a
+/// click and the door west of it opens with a thump.
+void AnemosInnerSanctum_PressSwitch(void) {
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
   Actor_WalkToAndWait(gMainRoutineWork.leaderActorId, 536, 360);
   FieldEvent_Wait(8);
   MapGrid_CopyCellsTo(50, 22, 33, 22, 1, 1);
-  Actor_SetPosition(ACTOR_SWITCHES_FIRST_SWITCH, 0, 0);
+  Actor_SetPosition(ACTOR_SWITCHES_SWITCH_MARKER, 0, 0);
   Event_PlaySound(SE_BUTTON_PRESS);
   FieldEvent_Wait(30);
   Event_PlaySound(SE_THUMP);
@@ -1075,18 +1186,18 @@ void AnemosInnerSanctum_PressFirstSwitch(void) {
   Event_End();
 }
 
-/// Stepping onto the second switch once the first is pressed: the first
-/// switch's actor sinks under it and the way opens.
-void AnemosInnerSanctum_PressSecondSwitch(void) {
-  struct Actor *actor;
+/// Stepping off the pressed switch to the east: it rises again with a click
+/// and its door shuts with a thump.
+void AnemosInnerSanctum_StepOffSwitch(void) {
+  struct Actor *platform;
 
-  actor = Actor_Get(ACTOR_SWITCHES_FIRST_SWITCH);
+  platform = Actor_Get(ACTOR_SWITCHES_SWITCH_MARKER);
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
-  actor->x.fixed = toFIXED(536);
-  actor->z.fixed = toFIXED(360);
-  actor->groundHeight = -toFIXED(14);
-  actor->y.fixed = -toFIXED(14);
+  platform->x.fixed = toFIXED(536);
+  platform->z.fixed = toFIXED(360);
+  platform->groundHeight = -toFIXED(14);
+  platform->y.fixed = -toFIXED(14);
   MapGrid_CopyCellsTo(51, 22, 33, 22, 1, 1);
   Event_PlaySound(SE_BUTTON_PRESS);
   FieldEvent_Wait(30);
@@ -1111,30 +1222,31 @@ s32 CrackedTile_Step();
     }                                                                          \
   }
 
-/// Stepping onto the first cracked floor: once it gives way the party falls
-/// through to the room below, by exit 11.
+/// Stepping onto the first cracked floor: once a tile gives way, the party
+/// falls through to the part of the room below.
 DEFINE_ANEMOS_INNER_SANCTUM_EXIT_IF(AnemosInnerSanctum_FallThroughFirstCracks,
-                                    11)
+                                    THROUGH_FIRST_CRACKED_FLOOR)
 
-/// As AnemosInnerSanctum_FallThroughFirstCracks for the second, by exit 12.
+/// As AnemosInnerSanctum_FallThroughFirstCracks, for the second floor.
 DEFINE_ANEMOS_INNER_SANCTUM_EXIT_IF(AnemosInnerSanctum_FallThroughSecondCracks,
-                                    12)
+                                    THROUGH_SECOND_CRACKED_FLOOR)
 
 extern s32 gAnemosInnerSanctum_DustScript[];
 
-/// The update of an object that moves with the leader: once the leader is past
-/// z 248 it settles on its cell and clears FLAG_SCENE_TEMP_00; otherwise it
-/// repeats the leader's step, raising dust on each step, and stops where the
-/// cell kind under it is 52 or 51, raising trigger 201 or 200. riseBaseY and
-/// acceleration hold the leader's last x and z.
-void AnemosInnerSanctum_FollowLeader(struct Actor *self) {
+/// A mimic stone's update: each step the leader takes, it takes too, mirrored
+/// east for west, scraping up dust, unless a wall stands in its way; on its
+/// button or over a hole it stops and raises that trigger. Once the leader
+/// goes back south of its row, it settles on its cell and may be started
+/// again. riseBaseY and acceleration hold the leader's last x and z.
+void AnemosInnerSanctum_MimicLeader(struct Actor *self) {
   struct Actor *leader = Actor_Get(gMainRoutineWork.leaderActorId);
   FIXED next[2];
   FIXED ahead[3];
   struct Actor *dust;
   s32 kind;
 
-  if (FIXEDtoINT(Actor_Get(gMainRoutineWork.leaderActorId)->z.fixed) > 248) {
+  if (FIXEDtoINT(Actor_Get(gMainRoutineWork.leaderActorId)->z.fixed) >
+      MIMIC_STONE_LINE_Z) {
     self->update = 0;
     Event_ClearFlag(FLAG_SCENE_TEMP_00);
     self->x.fixed = (self->x.fixed & FIELD_CELL_MASK) + toFIXED(8);
@@ -1161,7 +1273,7 @@ void AnemosInnerSanctum_FollowLeader(struct Actor *self) {
     if ((gFrameCount & 3) == 0)
       Event_PlaySound(SE_DRIP);
   }
-  if (ahead[2] >> 16 > 248)
+  if (FIXEDtoINT(ahead[2]) > MIMIC_STONE_LINE_Z)
     return;
   FieldVector_AddPolarOffset(7, DEGtoANG(180) - leader->facing, ahead);
   if (FieldMapGrid_GetCellBehaviorAt(self->layer, ahead[0], ahead[2]) ==
@@ -1174,11 +1286,11 @@ void AnemosInnerSanctum_FollowLeader(struct Actor *self) {
     self->z.fixed = next[1];
     kind = FieldMapGrid_GetCellBehaviorAt(self->layer, x, next[1]);
   }
-  if (kind == 52) {
-    gFieldWork->raisedTrigger = 201;
+  if (kind == TRIGGER_MIMIC_STONE_BUTTON) {
+    gFieldWork->raisedTrigger = TRIGGER_MIMIC_STONE_ON_BUTTON;
     self->update = 0;
-  } else if (kind == 51) {
-    gFieldWork->raisedTrigger = 200;
+  } else if (kind == TRIGGER_MIMIC_STONE_HOLE) {
+    gFieldWork->raisedTrigger = TRIGGER_MIMIC_STONE_IN_HOLE;
     self->update = 0;
   }
 }
@@ -1189,9 +1301,9 @@ void Actor_PlaceBlocks(void);
 
 void AnemosInnerSanctum_StartFastPaletteCycle(void);
 
-/// Stepping by a mimic stone in the guardian's room: the stone of the way
-/// the party came in by starts to follow the leader's steps.
-void AnemosInnerSanctum_StartFollower(void) {
+/// Stepping onto the floor before a mimic stone: the stone of the room the
+/// party came into starts to mirror the leader's steps.
+void AnemosInnerSanctum_StartMimicStone(void) {
   struct Actor *actor;
 
   if (gMainRoutineWork.entrance == ENTRANCE_BY_MIMIC_STONE_A)
@@ -1200,109 +1312,115 @@ void AnemosInnerSanctum_StartFollower(void) {
     actor = Actor_Get(ACTOR_MIMIC_STONE_B);
   else
     actor = Actor_Get(ACTOR_MIMIC_STONE_C);
-  if (Actor_Get(gMainRoutineWork.leaderActorId)->z.part[0].integer <= 247) {
+  if (Actor_Get(gMainRoutineWork.leaderActorId)->z.part[0].integer <
+      MIMIC_STONE_LINE_Z) {
     actor->motionFlags = 0;
-    actor->update = AnemosInnerSanctum_FollowLeader;
+    actor->update = AnemosInnerSanctum_MimicLeader;
     actor->riseBaseY = Actor_Get(gMainRoutineWork.leaderActorId)->x.fixed;
     actor->acceleration = Actor_Get(gMainRoutineWork.leaderActorId)->z.fixed;
     Event_SetFlag(FLAG_SCENE_TEMP_00);
   }
 }
 
-/// A mimic stone reaches its hole: it settles into the middle of its cell in
-/// a cloud of dust and drops in.
-void AnemosInnerSanctum_RaiseDust(void) {
-  struct Actor *actor;
-  struct Actor *effect;
+/// A mimic stone falls into a hole: it slides to the hole's middle and drops in
+/// with a puff of dust, hidden below the hole's edge by a crate's silhouette
+/// drawn as an object window, and is taken away.
+void AnemosInnerSanctum_DropMimicStone(void) {
+  struct Actor *stone;
+  struct Actor *mask;
   struct FieldSprite *sprite;
   FIXED position[3];
 
   if (gMainRoutineWork.entrance == ENTRANCE_BY_MIMIC_STONE_A)
-    actor = Actor_Get(ACTOR_MIMIC_STONE_A);
+    stone = Actor_Get(ACTOR_MIMIC_STONE_A);
   else if (gMainRoutineWork.entrance == ENTRANCE_BY_MIMIC_STONE_B)
-    actor = Actor_Get(ACTOR_MIMIC_STONE_B);
+    stone = Actor_Get(ACTOR_MIMIC_STONE_B);
   else
-    actor = Actor_Get(ACTOR_MIMIC_STONE_C);
-  position[0] = (actor->x.fixed & FIELD_CELL_MASK) + toFIXED(8);
-  position[2] = (actor->z.fixed & FIELD_CELL_MASK) + toFIXED(8);
-  actor->acceleration = toFIXED(1);
-  actor->speedLimit = toFIXED(1);
+    stone = Actor_Get(ACTOR_MIMIC_STONE_C);
+  position[0] = (stone->x.fixed & FIELD_CELL_MASK) + toFIXED(8);
+  position[2] = (stone->z.fixed & FIELD_CELL_MASK) + toFIXED(8);
+  stone->acceleration = toFIXED(1);
+  stone->speedLimit = toFIXED(1);
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
-  FieldActor_SetMoveTargetFX(actor, position[0], 0, position[2]);
-  effect = OverlayObject_PrepareObject(actor->x.fixed, 0,
-                                       position[2] + toFIXED(59), 286);
-  effect->scaleX = FIXED_ONE * 3 / 2;
-  effect->scaleY = FIXED_ONE * 3 / 2;
-  sprite = effect->sprite;
+  FieldActor_SetMoveTargetFX(stone, position[0], 0, position[2]);
+  mask = OverlayObject_PrepareObject(stone->x.fixed, 0,
+                                     position[2] + toFIXED(59), SPRITE_CRATE);
+  mask->scaleX = FIXED_ONE * 3 / 2;
+  mask->scaleY = FIXED_ONE * 3 / 2;
+  sprite = mask->sprite;
   sprite->blendMode = OBJ_MODE_WINDOW;
   REG_WINOUT = WINOUT_WIN01_ALL | WINOUT_WINOBJ_BG0 | WINOUT_WINOBJ_BG1 |
                WINOUT_WINOBJ_BG2 | WINOUT_WINOBJ_BG3 | WINOUT_WINOBJ_CLR;
   REG_DISPCNT |= DISPCNT_OBJWIN_ON;
   Event_PlaySound(SE_DUST_PUFF);
-  actor->motionFlags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
-  OverlayObject_WaitUntilIdle(actor);
-  actor->x.fixed = 0;
-  actor->y.fixed = 0;
-  actor->z.fixed = 0;
+  stone->motionFlags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
+  OverlayObject_WaitUntilIdle(stone);
+  stone->x.fixed = 0;
+  stone->y.fixed = 0;
+  stone->z.fixed = 0;
+  // Stone A goes too, whichever stone fell; the room places it again when it
+  // is next entered.
   Actor_SetPosition(ACTOR_MIMIC_STONE_A, 0, 0);
-  Actor_Release(effect);
+  Actor_Release(mask);
   Event_End();
 }
 
-/// By the entrance taken, sets that entrance's flag, moves its actor to the
-/// middle of its cell and copies a cell picture column twice beside it.
-void AnemosInnerSanctum_MarkEntrance(void) {
-  struct Actor *actor;
+/// A mimic stone reaches its button: it settles on the button's middle with a
+/// thump, and its room's north door opens, its flag keeping both so.
+void AnemosInnerSanctum_OpenMimicStoneDoor(void) {
+  struct Actor *stone;
   s32 column;
   FIXED target[3];
 
   if (gMainRoutineWork.entrance == ENTRANCE_BY_MIMIC_STONE_A) {
-    actor = Actor_Get(ACTOR_MIMIC_STONE_A);
-    Event_SetFlag(FLAG_MIMIC_STONE_A_DROPPED);
+    stone = Actor_Get(ACTOR_MIMIC_STONE_A);
+    Event_SetFlag(FLAG_MIMIC_STONE_A_ON_BUTTON);
     column = 11;
   } else if (gMainRoutineWork.entrance == ENTRANCE_BY_MIMIC_STONE_B) {
-    actor = Actor_Get(ACTOR_MIMIC_STONE_B);
-    Event_SetFlag(FLAG_MIMIC_STONE_B_DROPPED);
+    stone = Actor_Get(ACTOR_MIMIC_STONE_B);
+    Event_SetFlag(FLAG_MIMIC_STONE_B_ON_BUTTON);
     column = 26;
   } else {
-    actor = Actor_Get(ACTOR_MIMIC_STONE_C);
-    Event_SetFlag(FLAG_MIMIC_STONE_C_DROPPED);
+    stone = Actor_Get(ACTOR_MIMIC_STONE_C);
+    Event_SetFlag(FLAG_MIMIC_STONE_C_ON_BUTTON);
     column = 53;
   }
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
-  target[0] = (actor->x.fixed & FIELD_CELL_MASK) + toFIXED(8);
-  target[2] = (actor->z.fixed & FIELD_CELL_MASK) + toFIXED(8);
-  actor->acceleration = toFIXED(1);
-  actor->speedLimit = toFIXED(1);
+  target[0] = (stone->x.fixed & FIELD_CELL_MASK) + toFIXED(8);
+  target[2] = (stone->z.fixed & FIELD_CELL_MASK) + toFIXED(8);
+  stone->acceleration = toFIXED(1);
+  stone->speedLimit = toFIXED(1);
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
-  FieldActor_SetMoveTargetFX(actor, target[0], 0, target[2]);
-  FieldActor_WaitForMove(actor);
+  FieldActor_SetMoveTargetFX(stone, target[0], 0, target[2]);
+  FieldActor_WaitForMove(stone);
   Event_PlaySound(SE_THUMP);
   MapGrid_CopyCellsTo(18, 4, column, 4, 1, 2);
   System_Wait(5);
   MapGrid_CopyCellsTo(18, 7, column, 4, 1, 2);
   System_Wait(5);
-  MapGrid_SetCellHeight(column << 20, toFIXED(88), 0, 0);
+  MapGrid_SetCellHeight(FIELD_CELL_ORIGIN(column), toFIXED(88), 0, 0);
   Event_End();
 }
 
-/// At the end of the sanctum: the room darkens and the guardian's words are
-/// shown, once.
-void AnemosInnerSanctum_SummonTheGuardian(void) {
+/// Stepping before Charon's slate the first time: the room darkens and the
+/// slate's words are shown.
+void AnemosInnerSanctum_ApproachCharonSlate(void) {
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
   PaletteFade_ApplySource(PALETTE_TINT_NONE, PALETTES_ALL);
   PaletteFade_ApplyTarget(PALETTE_TINT_WARM, PALETTES_BG);
   PaletteFade_Interpolate(60);
   FieldEvent_Wait(60);
+  // "We inherited the power of the land to create a great darkness. If you
+  // crave this power, attack this slate!"
   FieldMessage_ShowCentered((s32)MsgSummonInheritedEarthDarkness, 0, 6);
   PaletteFade_ApplyTarget(PALETTE_TINT_NONE, PALETTES_ALL);
   PaletteFade_Interpolate(60);
   FieldEvent_Wait(60);
-  Event_SetFlag(FLAG_ANEMOS_GUARDIAN_SPOKE);
+  Event_SetFlag(FLAG_ANEMOS_CHARON_SLATE_SPOKE);
   Event_End();
 }
 
@@ -1327,34 +1445,37 @@ const struct Trigger *Scene_GetTriggers(void) {
   return gAnemosInnerSanctum_Triggers;
 }
 
-/// Teleport on the sanctum's pad: the party teleports back to Contigo.
+/// Teleport cast on the Dragon Skin room's circle: the party teleports back to
+/// Contigo.
 void AnemosInnerSanctum_TeleportOut(void) {
   PaletteCycle_Start();
   Teleport_PlaySparks();
   gMainRoutineWork.teleportState = 2;
-  Event_SetDestination(SCENE_CONTIGO, 99);
+  Event_SetDestination(SCENE_CONTIGO,
+                       CONTIGO_FROM_ANEMOS_INNER_SANCTUM_DRAGON_SKIN_CHEST);
   FieldEvent_Wait(40);
   AnemosInnerSanctum_StopPaletteCycle();
 }
 
-extern s16 gAnemosInnerSanctum_DoorFrames[];
-extern struct MapGridCellAnimation gAnemosInnerSanctum_Doors[];
+extern s16 gAnemosInnerSanctum_NorthDoorFrames[];
+extern struct MapGridCellAnimation gAnemosInnerSanctum_MimicStoneDoors[];
 
 /// Plays a door's map edit at x, y.
-static __inline__ void AnemosInnerSanctum_PlayMapEdit(const void *steps, s32 x,
+static __inline__ void AnemosInnerSanctum_AnimateDoor(const void *steps, s32 x,
                                                       s32 y) {
   MapGrid_PlayMapEdit(steps, x, y);
 }
 
-/// The scene opening: clears the actors' motion flags, plays the entrance's
-/// map edit and steps the leader in.
-void AnemosInnerSanctum_EnterTheRoom(void) {
+/// Unused: stills every placed actor, opens the north door or a mimic stone's
+/// door by the step trigger's number, and walks the leader out by the exit of
+/// that number.
+UNUSED void AnemosInnerSanctum_EnterTheRoom(void) {
   struct FieldWork *work = Ram_HeapSlots->fieldWork;
   s32 i;
 
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
-  for (i = ACTOR_FIRST_PLACED; (u32)i <= 63; i++) {
+  for (i = ACTOR_FIRST_PLACED; (u32)i < FIELD_TREASURE_ACTOR; i++) {
     struct Actor *actor = Actor_Get(i);
 
     if (actor != NULL)
@@ -1362,13 +1483,14 @@ void AnemosInnerSanctum_EnterTheRoom(void) {
   }
   Event_PlaySound(SE_DOOR_OPEN);
   if (gMainRoutineWork.next == SCENE_ANEMOS_INNER_SANCTUM_DRAGON_SKIN_CHEST) {
-    MapGrid_AnimateCells(gAnemosInnerSanctum_DoorFrames, 33, 7);
+    MapGrid_AnimateCells(gAnemosInnerSanctum_NorthDoorFrames, 33, 7);
   } else {
     s32 index = work->stepTrigger / 2 - 1;
 
-    AnemosInnerSanctum_PlayMapEdit(gAnemosInnerSanctum_Doors[index].steps,
-                                   gAnemosInnerSanctum_Doors[index].x,
-                                   gAnemosInnerSanctum_Doors[index].y);
+    AnemosInnerSanctum_AnimateDoor(
+        gAnemosInnerSanctum_MimicStoneDoors[index].steps,
+        gAnemosInnerSanctum_MimicStoneDoors[index].x,
+        gAnemosInnerSanctum_MimicStoneDoors[index].y);
   }
   Actor_SetAnimation(gMainRoutineWork.leaderActorId, ANIM_WALK);
   Actor_SetSpeed(gMainRoutineWork.leaderActorId, 0.5);
@@ -1380,82 +1502,84 @@ void AnemosInnerSanctum_EnterTheRoom(void) {
   Event_End();
 }
 
-/// Entering the elevator room on its statue: the statue rises 48 pixels with
-/// the leader on it, up to the floor.
-void AnemosInnerSanctum_RaiseFirstStatue(void) {
-  struct Actor *actor = Actor_Get(ACTOR_ELEVATOR_STATUE);
+/// Arriving up the elevator room's lift: it rises the last 48 pixels with the
+/// leader on it, its arrow up, and stays there.
+void AnemosInnerSanctum_ArriveOnElevatorLift(void) {
+  struct Actor *lift = Actor_Get(ACTOR_ELEVATOR_LIFT);
 
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
-  Actor_SetAnimation(ACTOR_ELEVATOR_STATUE, 2);
-  actor->y.fixed = -toFIXED(64);
-  Actor_SetPosition(ACTOR_ELEVATOR_STATUE, 728, 120);
+  Actor_SetAnimation(ACTOR_ELEVATOR_LIFT, ARROW_PANEL_ANIMATION_UP);
+  lift->y.fixed = -toFIXED(64);
+  Actor_SetPosition(ACTOR_ELEVATOR_LIFT, 728, 120);
   Actor_SetPosition(gMainRoutineWork.leaderActorId, 728, 120);
   Actor_Get(gMainRoutineWork.leaderActorId)->y.fixed = -toFIXED(48);
   Event_StartScreenTransition();
-  actor->acceleration = toFIXED(1);
-  actor->speedLimit = toFIXED(1);
-  FieldActor_SetMoveTargetFX(actor, actor->x.fixed,
-                             actor->y.fixed + toFIXED(48), actor->z.fixed);
-  FieldActor_WaitForMove(actor);
-  Event_SetFlag(FLAG_AREA_TEMP_00);
+  lift->acceleration = toFIXED(1);
+  lift->speedLimit = toFIXED(1);
+  FieldActor_SetMoveTargetFX(lift, lift->x.fixed, lift->y.fixed + toFIXED(48),
+                             lift->z.fixed);
+  FieldActor_WaitForMove(lift);
+  Event_SetFlag(FLAG_ELEVATOR_LIFT_RISEN);
   Event_End();
 }
 
-/// As AnemosInnerSanctum_RaiseFirstStatue, on the guardian room's statue.
-void AnemosInnerSanctum_RaiseSecondStatue(void) {
-  struct Actor *actor = Actor_Get(ACTOR_GUARDIAN_ROOM_STATUE);
+/// As AnemosInnerSanctum_ArriveOnElevatorLift, on the guardian room's lift.
+void AnemosInnerSanctum_ArriveOnGuardianLift(void) {
+  struct Actor *lift = Actor_Get(ACTOR_GUARDIAN_LIFT);
 
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
-  actor->motionFlags = 0;
-  actor->y.fixed = -toFIXED(64);
+  lift->motionFlags = 0;
+  lift->y.fixed = -toFIXED(64);
   Actor_Get(gMainRoutineWork.leaderActorId)->y.fixed = -toFIXED(48);
   Event_StartScreenTransition();
-  actor->acceleration = toFIXED(1);
-  actor->speedLimit = toFIXED(1);
-  FieldActor_SetMoveTargetFX(actor, actor->x.fixed,
-                             actor->y.fixed + toFIXED(48), actor->z.fixed);
-  FieldActor_WaitForMove(actor);
-  Event_SetFlag(FLAG_AREA_TEMP_04);
+  lift->acceleration = toFIXED(1);
+  lift->speedLimit = toFIXED(1);
+  FieldActor_SetMoveTargetFX(lift, lift->x.fixed, lift->y.fixed + toFIXED(48),
+                             lift->z.fixed);
+  FieldActor_WaitForMove(lift);
+  Event_SetFlag(FLAG_GUARDIAN_LIFT_RISEN);
   Event_End();
 }
 
 s32 CrackedTile_Find();
+void CrackedTile_PlaceLanding(s32 x, s32 z, s32 effect);
 extern s16 gAnemosInnerSanctum_PaletteSlots[];
 extern s16 gAnemosInnerSanctum_PaletteColors[];
-extern s16 gAnemosInnerSanctum_DimColors[];
+extern s16 gAnemosInnerSanctum_CycleColors[];
 extern u16 gAnemosInnerSanctum_CycleSlots[];
 
 s32 Scene_Initialize(void) {
   s32 scene;
-  s32 nearStairs;
+  s32 entranceHalfword;
   s32 entrance;
 
-  gFieldWork->transition = SCENE_TRANSITION(TRANSITION_WINDOW, 4);
+  gFieldWork->transition =
+      SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE);
   scene = gMainRoutineWork.next;
   if (scene == SCENE_ANEMOS_INNER_SANCTUM_DRAGON_SKIN_CHEST) {
     Palette_SetColors((s32)gAnemosInnerSanctum_PaletteSlots,
                       (s32)gAnemosInnerSanctum_PaletteColors,
-                      (s32)gAnemosInnerSanctum_DimColors,
+                      (s32)gAnemosInnerSanctum_CycleColors,
                       (s32)gAnemosInnerSanctum_CycleSlots);
-    if (Event_GetFlag(FLAG_ANEMOS_VENUS_SYMBOL_LIT)) {
-      AnemosInnerSanctum_DropSpark(520, 48, 0);
+    if (Event_GetFlag(FLAG_ANEMOS_VENUS_TORCH_LIT)) {
+      AnemosInnerSanctum_LightTorch(520, 48, SPRITE_COLOR_NORMAL);
       MapGrid_CopyCellsTo(85, 34, 85, 8, 9, 8);
     }
-    if (Event_GetFlag(FLAG_ANEMOS_MERCURY_SYMBOL_LIT)) {
-      AnemosInnerSanctum_DropSpark(552, 48, 3);
+    if (Event_GetFlag(FLAG_ANEMOS_MERCURY_TORCH_LIT)) {
+      AnemosInnerSanctum_LightTorch(552, 48, SPRITE_COLOR_BGR);
       MapGrid_CopyCellsTo(101, 34, 101, 8, 9, 8);
     }
-    if (Event_GetFlag(FLAG_ANEMOS_MARS_SYMBOL_LIT)) {
-      AnemosInnerSanctum_DropSpark(504, 40, 10);
+    if (Event_GetFlag(FLAG_ANEMOS_MARS_TORCH_LIT)) {
+      AnemosInnerSanctum_LightTorch(504, 40, SPRITE_COLOR_RED_TINT);
       MapGrid_CopyCellsTo(85, 46, 85, 20, 9, 8);
     }
-    if (Event_GetFlag(FLAG_ANEMOS_JUPITER_SYMBOL_LIT)) {
-      AnemosInnerSanctum_DropSpark(568, 40, 2);
+    if (Event_GetFlag(FLAG_ANEMOS_JUPITER_TORCH_LIT)) {
+      AnemosInnerSanctum_LightTorch(568, 40, SPRITE_COLOR_RBG);
       MapGrid_CopyCellsTo(101, 46, 101, 20, 9, 8);
     }
-    if (Event_GetFlag(FLAG_ANEMOS_ALL_SYMBOLS_LIT)) {
+    if (Event_GetFlag(FLAG_ANEMOS_NORTH_DOOR_OPEN)) {
       MapGrid_CopyCellsTo(54, 7, 33, 7, 1, 2);
       MapGrid_SetCellHeight(toFIXED(536), toFIXED(136), 0, 0);
     }
@@ -1471,19 +1595,21 @@ s32 Scene_Initialize(void) {
           (s32)gAnemosInnerSanctum_ElevatorBlocks);
     Actor_Get(gMainRoutineWork.leaderActorId)->priorityFlags |=
         ACTOR_PRIORITY_WALKS_ON_PLATFORMS;
-    Actor_Get(ACTOR_ELEVATOR_STATUE)->motionFlags = 0;
-    Actor_Get(ACTOR_ELEVATOR_STATUE)->priorityFlags |= ACTOR_PRIORITY_PLATFORM;
-    if (gMainRoutineWork.entrance == 17 && Event_GetFlag(FLAG_AREA_TEMP_00)) {
-      Actor_SetAnimation(ACTOR_ELEVATOR_STATUE, 2);
-      Actor_SetPosition(ACTOR_ELEVATOR_STATUE, 728, 120);
+    Actor_Get(ACTOR_ELEVATOR_LIFT)->motionFlags = 0;
+    Actor_Get(ACTOR_ELEVATOR_LIFT)->priorityFlags |= ACTOR_PRIORITY_PLATFORM;
+    if (gMainRoutineWork.entrance == ENTRANCE_ABOVE_THE_LIFT &&
+        Event_GetFlag(FLAG_ELEVATOR_LIFT_RISEN)) {
+      Actor_SetAnimation(ACTOR_ELEVATOR_LIFT, ARROW_PANEL_ANIMATION_UP);
+      Actor_SetPosition(ACTOR_ELEVATOR_LIFT, 728, 120);
     }
-    if (gMainRoutineWork.entrance == 18 && GameFlag_Get(FLAG_AREA_TEMP_00) == 0)
-      AnemosInnerSanctum_RaiseFirstStatue();
-    if (gMainRoutineWork.entrance == 10) {
-      if (Event_GetFlag(FLAG_AREA_TEMP_00))
-        Actor_SetPosition(ACTOR_ELEVATOR_STATUE, 0, 0);
+    if (gMainRoutineWork.entrance == ENTRANCE_UP_THE_LIFT &&
+        GameFlag_Get(FLAG_ELEVATOR_LIFT_RISEN) == 0)
+      AnemosInnerSanctum_ArriveOnElevatorLift();
+    if (gMainRoutineWork.entrance == ENTRANCE_ROUND_SWITCHES) {
+      if (Event_GetFlag(FLAG_ELEVATOR_LIFT_RISEN))
+        Actor_SetPosition(ACTOR_ELEVATOR_LIFT, 0, 0);
       if (Event_GetFlag(FLAG_SCENE_TEMP_07))
-        Actor_Get(ACTOR_ELEVATOR_STATUE)->motionFlags = ACTOR_FLOATS;
+        Actor_Get(ACTOR_ELEVATOR_LIFT)->motionFlags = ACTOR_FLOATS;
       if (Event_GetFlag(FLAG_SCENE_TEMP_00))
         MapGrid_CopyCellsTo(54, 87, 44, 86, 1, 1);
       if (Event_GetFlag(FLAG_SCENE_TEMP_01))
@@ -1502,12 +1628,12 @@ s32 Scene_Initialize(void) {
           ACTOR_PRIORITY_IGNORES_RISES;
     }
   } else if (scene == SCENE_ANEMOS_INNER_SANCTUM_SWITCHES) {
-    struct Actor *lift = Actor_Get(ACTOR_SWITCHES_FIRST_SWITCH);
+    struct Actor *firstSwitch = Actor_Get(ACTOR_SWITCHES_SWITCH_MARKER);
 
-    lift->motionFlags = ACTOR_FALLS;
-    lift->groundHeight = -toFIXED(14);
-    lift->y.fixed = -toFIXED(14);
-    lift->priorityFlags |= ACTOR_PRIORITY_PLATFORM;
+    firstSwitch->motionFlags = ACTOR_FALLS;
+    firstSwitch->groundHeight = -toFIXED(14);
+    firstSwitch->y.fixed = -toFIXED(14);
+    firstSwitch->priorityFlags |= ACTOR_PRIORITY_PLATFORM;
     Actor_Get(gMainRoutineWork.leaderActorId)->priorityFlags |=
         ACTOR_PRIORITY_WALKS_ON_PLATFORMS;
     Actor_Get(ACTOR_SWITCHES_BOULDER)->riseCounter = 1;
@@ -1536,18 +1662,20 @@ s32 Scene_Initialize(void) {
       Actor_SetPosition(ACTOR_ORIHALCON_CHEST_FIRST_PILLAR, 264, 360);
     Call1((void (*)())Actor_PlaceBlocks,
           (s32)gAnemosInnerSanctum_OrihalconChestBlocks);
-    nearStairs = (u16)gMainRoutineWork.entrance;
+    entranceHalfword = (u16)gMainRoutineWork.entrance;
     entrance = gMainRoutineWork.entrance;
-    if (entrance == 1) {
-      CrackedTile_Find(33, FLAG_SCENE_TEMP_80, FLAG_AREA_TEMP_80, 18, 68);
-      if (Event_GetFlag(FLAG_AREA_TEMP_04) == 0) {
+    if (entrance ==
+        ANEMOS_INNER_SANCTUM_ORIHALCON_CHEST_FROM_ANEMOS_INNER_SANCTUM_SWITCHES_NORTHWEST) {
+      CrackedTile_Find(TRIGGER_FIRST_CRACKED_FLOOR, FLAG_SCENE_TEMP_80,
+                       FLAG_AREA_TEMP_80, 18, 68);
+      if (Event_GetFlag(FLAG_GUARDIAN_LIFT_RISEN) == 0) {
         Actor_Get(gMainRoutineWork.leaderActorId)->priorityFlags |=
             ACTOR_PRIORITY_WALKS_ON_PLATFORMS;
-        Actor_Get(ACTOR_ORIHALCON_CHEST_STATUE)->motionFlags = 0;
-        Actor_Get(ACTOR_ORIHALCON_CHEST_STATUE)->priorityFlags |=
+        Actor_Get(ACTOR_ORIHALCON_CHEST_LIFT)->motionFlags = 0;
+        Actor_Get(ACTOR_ORIHALCON_CHEST_LIFT)->priorityFlags |=
             ACTOR_PRIORITY_PLATFORM;
       } else {
-        Actor_SetPosition(ACTOR_ORIHALCON_CHEST_STATUE, 0, 0);
+        Actor_SetPosition(ACTOR_ORIHALCON_CHEST_LIFT, 0, 0);
         Event_SetFlag(FLAG_SCENE_TEMP_00);
         Event_SetFlag(FLAG_SCENE_TEMP_01);
         Event_SetFlag(FLAG_SCENE_TEMP_02);
@@ -1557,7 +1685,7 @@ s32 Scene_Initialize(void) {
         Event_SetFlag(FLAG_SCENE_TEMP_06);
       }
       if (Event_GetFlag(FLAG_SCENE_TEMP_07))
-        Actor_Get(ACTOR_ORIHALCON_CHEST_STATUE)->motionFlags = ACTOR_FLOATS;
+        Actor_Get(ACTOR_ORIHALCON_CHEST_LIFT)->motionFlags = ACTOR_FLOATS;
       if (Event_GetFlag(FLAG_SCENE_TEMP_00))
         MapGrid_CopyCellsTo(17, 71, 8, 69, 1, 1);
       if (Event_GetFlag(FLAG_SCENE_TEMP_05))
@@ -1572,40 +1700,50 @@ s32 Scene_Initialize(void) {
         MapGrid_CopyCellsTo(17, 71, 8, 73, 1, 1);
       if (Event_GetFlag(FLAG_SCENE_TEMP_06))
         MapGrid_CopyCellsTo(17, 71, 10, 71, 1, 1);
-    } else if (entrance == 11) {
-      CrackedTile_Find(33, FLAG_SCENE_TEMP_80, FLAG_AREA_TEMP_80, 18, 68);
-      CrackedTile_PlaceLanding(22, 0, FLAG_SCENE_TEMP_04);
-    } else if (entrance == 12) {
-      CrackedTile_Find(35, FLAG_SCENE_TEMP_80, FLAG_AREA_TEMP_80, 18, 68);
+    } else if (entrance == THROUGH_FIRST_CRACKED_FLOOR) {
+      CrackedTile_Find(TRIGGER_FIRST_CRACKED_FLOOR, FLAG_SCENE_TEMP_80,
+                       FLAG_AREA_TEMP_80, 18, 68);
+      CrackedTile_PlaceLanding(
+          22, 0,
+          SCENE_TRANSITION(TRANSITION_WINDOW,
+                           WINDOW_TRANSITION_INTERLACED_WIPE));
+    } else if (entrance == THROUGH_SECOND_CRACKED_FLOOR) {
+      CrackedTile_Find(TRIGGER_SECOND_CRACKED_FLOOR, FLAG_SCENE_TEMP_80,
+                       FLAG_AREA_TEMP_80, 18, 68);
       if (Event_GetFlag(FLAG_KEEP_PARTY_POSITION) == 0)
-        CrackedTile_PlaceLanding(36, -36, FLAG_SCENE_TEMP_04);
-    } else if ((u32)((nearStairs - 4) << 16) <= 1 << 16) {
-      CrackedTile_Find(35, FLAG_SCENE_TEMP_80, FLAG_AREA_TEMP_80, 18, 68);
+        CrackedTile_PlaceLanding(
+            36, -36,
+            SCENE_TRANSITION(TRANSITION_WINDOW,
+                             WINDOW_TRANSITION_INTERLACED_WIPE));
+    } else if ((u16)(entranceHalfword - ENTRANCE_SECOND_CRACKED_FLOOR_WEST) <=
+               1) {
+      CrackedTile_Find(TRIGGER_SECOND_CRACKED_FLOOR, FLAG_SCENE_TEMP_80,
+                       FLAG_AREA_TEMP_80, 18, 68);
     }
   } else if (scene == SCENE_ANEMOS_INNER_SANCTUM_GUARDIAN) {
     struct MapWork *map = Ram_HeapSlots->mapGrid;
 
     switch (gMainRoutineWork.entrance) {
-    case 7:
-      if (Event_GetFlag(FLAG_AREA_TEMP_04) == 0)
-        Actor_SetPosition(ACTOR_GUARDIAN_ROOM_STATUE, 0, 0);
-    case 12:
+    case ANEMOS_INNER_SANCTUM_GUARDIAN_FROM_ANEMOS_INNER_SANCTUM_SWITCHES_SOUTHWEST:
+      if (Event_GetFlag(FLAG_GUARDIAN_LIFT_RISEN) == 0)
+        Actor_SetPosition(ACTOR_GUARDIAN_LIFT, 0, 0);
+    case ANEMOS_INNER_SANCTUM_GUARDIAN_FROM_ANEMOS_INNER_SANCTUM_ORIHALCON_CHEST_SOUTHWEST:
       Actor_Get(gMainRoutineWork.leaderActorId)->priorityFlags |=
           ACTOR_PRIORITY_WALKS_ON_PLATFORMS;
-      Actor_SetAnimation(ACTOR_GUARDIAN_ROOM_STATUE, 2);
-      Actor_Get(ACTOR_GUARDIAN_ROOM_STATUE)->motionFlags = 0;
-      Actor_Get(ACTOR_GUARDIAN_ROOM_STATUE)->priorityFlags |=
-          ACTOR_PRIORITY_PLATFORM;
-      Actor_SetAnimation(ACTOR_GUARDIAN_ROOM_STATUE, 2);
-      if (Event_GetFlag(FLAG_AREA_TEMP_04) == 0 &&
-          gMainRoutineWork.entrance == 12)
-        AnemosInnerSanctum_RaiseSecondStatue();
+      Actor_SetAnimation(ACTOR_GUARDIAN_LIFT, ARROW_PANEL_ANIMATION_UP);
+      Actor_Get(ACTOR_GUARDIAN_LIFT)->motionFlags = 0;
+      Actor_Get(ACTOR_GUARDIAN_LIFT)->priorityFlags |= ACTOR_PRIORITY_PLATFORM;
+      Actor_SetAnimation(ACTOR_GUARDIAN_LIFT, ARROW_PANEL_ANIMATION_UP);
+      if (Event_GetFlag(FLAG_GUARDIAN_LIFT_RISEN) == 0 &&
+          gMainRoutineWork.entrance ==
+              ANEMOS_INNER_SANCTUM_GUARDIAN_FROM_ANEMOS_INNER_SANCTUM_ORIHALCON_CHEST_SOUTHWEST)
+        AnemosInnerSanctum_ArriveOnGuardianLift();
       else
-        Actor_Get(ACTOR_GUARDIAN_ROOM_STATUE)->y.fixed = -toFIXED(16);
+        Actor_Get(ACTOR_GUARDIAN_LIFT)->y.fixed = -toFIXED(16);
       break;
-    case 1:
-    case 2:
-      if (Event_GetFlag(FLAG_MIMIC_STONE_A_DROPPED)) {
+    case ENTRANCE_BY_MIMIC_STONE_A:
+    case ANEMOS_INNER_SANCTUM_GUARDIAN_FROM_ANEMOS_INNER_SANCTUM_ELEVATOR_NORTHWEST:
+      if (Event_GetFlag(FLAG_MIMIC_STONE_A_ON_BUTTON)) {
         Actor_SetPosition(ACTOR_MIMIC_STONE_A, 120, 120);
         Event_SetFlag(FLAG_SCENE_TEMP_00);
       } else {
@@ -1613,9 +1751,9 @@ s32 Scene_Initialize(void) {
         MapGrid_SetCellHeight(toFIXED(184), toFIXED(88), 0, 2);
       }
       break;
-    case 3:
-    case 4:
-      if (Event_GetFlag(FLAG_MIMIC_STONE_B_DROPPED)) {
+    case ENTRANCE_BY_MIMIC_STONE_B:
+    case ANEMOS_INNER_SANCTUM_GUARDIAN_FROM_ANEMOS_INNER_SANCTUM_SWITCHES_NORTHEAST:
+      if (Event_GetFlag(FLAG_MIMIC_STONE_B_ON_BUTTON)) {
         Actor_SetPosition(ACTOR_MIMIC_STONE_B, 552, 120);
         Event_SetFlag(FLAG_SCENE_TEMP_00);
       } else {
@@ -1623,9 +1761,9 @@ s32 Scene_Initialize(void) {
         MapGrid_SetCellHeight(toFIXED(424), toFIXED(88), 0, 2);
       }
       break;
-    case 5:
-    case 6:
-      if (Event_GetFlag(FLAG_MIMIC_STONE_C_DROPPED)) {
+    case ENTRANCE_BY_MIMIC_STONE_C:
+    case ANEMOS_INNER_SANCTUM_GUARDIAN_FROM_ANEMOS_INNER_SANCTUM_ORIHALCON_CHEST_NORTHEAST:
+      if (Event_GetFlag(FLAG_MIMIC_STONE_C_ON_BUTTON)) {
         Actor_SetPosition(ACTOR_MIMIC_STONE_C, 792, 120);
         Event_SetFlag(FLAG_SCENE_TEMP_00);
       } else {
@@ -1700,7 +1838,7 @@ void FieldEffect_SpawnLocal(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
   effect->scaleRateY = 0;
   effect->spin = 0;
 
-  if ((flags & 0xffff0000) == 0 || options == 0)
+  if ((flags & EFFECT_OPTION_MASK) == 0 || options == 0)
     return;
   if ((flags & EFFECT_USE_PALETTE) != 0)
     FieldActor_SetSpriteColor(effect, options->palette);
@@ -1747,12 +1885,6 @@ void FieldEffect_SpawnLocal(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
 
 #include "shared/leader_center_in_cell.h"
 
-// Map_CopyCellsRect through this overlay's import.
-
-// Centers the leader on its cell, plays sound 161 and copies the cell below
-// the table's source cell over the leader's, keeping the source column's and
-// row's 64 bit; CrackedTile_Step calls it the first time the leader steps on
-// one of the table's cells.
 #include "shared/cracked_tile_crack.h"
 
 #include "shared/cracked_tile_fall.h"
@@ -1761,8 +1893,10 @@ void FieldEffect_SpawnLocal(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
 
 #undef DEFINE_ANEMOS_INNER_SANCTUM_EXIT_IF
 #undef CELL_PUSH_SLOT_ENTRY
+/// The leader lands from the cracked floor above in a ring of dust, as Mars
+/// Lighthouse's lands from its cracks (MarsLighthouseEntrance_LandFromCrack).
 void CrackedTile_DropIn(void) {
-  struct Actor *actor = Actor_Get(gMainRoutineWork.leaderActorId);
+  struct Actor *leader = Actor_Get(gMainRoutineWork.leaderActorId);
   u32 i;
   struct EffectOptions options;
 
@@ -1771,26 +1905,26 @@ void CrackedTile_DropIn(void) {
   FieldCamera_MoveTo(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0);
   MapGrid_CenterOnFollowedPoint();
   System_Wait(1);
-  actor->y.fixed = toFIXED(130);
-  actor->gravity = toFIXED(1) / 2;
-  actor->bounce = 0;
-  actor->motionFlags = 0;
+  leader->y.fixed = toFIXED(130);
+  leader->gravity = toFIXED(1) / 2;
+  leader->bounce = 0;
+  leader->motionFlags = 0;
   gFieldWork->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
   Event_PlaySound(SE_DUST_PUFF);
-  actor->motionFlags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
+  leader->motionFlags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
   FieldEvent_Wait(24);
-  options.palette = 7;
+  options.palette = SPRITE_COLOR_WHITE;
   options.update = FieldEffect_AdvanceMotion;
   options.startScaleX = FIXED_ONE * 16 / 25;
   options.startScaleY = FIXED_ONE * 16 / 25;
-  for (i = 0; i <= 16; i++) {
+  for (i = 0; i <= DUST_RING_PUFFS; i++) {
     s32 angle;
     s32 velocity[3];
     FIXED cosine;
 
-    angle = i << 12;
+    angle = i * (TRIG_TURN / DUST_RING_PUFFS);
     cosine = Trig_Cos(angle);
     velocity[0] = cosine;
     velocity[1] = 0;
@@ -1798,7 +1932,7 @@ void CrackedTile_DropIn(void) {
     velocity[0] += velocity[0] >> 1;
     velocity[0] += (Random16() * (toFIXED(3) / 4) >> 16) - (toFIXED(3) / 8);
     velocity[2] += (Random16() * (toFIXED(3) / 8) >> 16) - (toFIXED(3) / 16);
-    FieldEffect_SpawnLocal(actor->x.fixed, actor->y.fixed, actor->z.fixed,
+    FieldEffect_SpawnLocal(leader->x.fixed, leader->y.fixed, leader->z.fixed,
                            velocity[0], velocity[1], velocity[2],
                            EFFECT_USE_UPDATE | EFFECT_USE_START_SCALE |
                                EFFECT_USE_PALETTE | 1,
@@ -1807,14 +1941,14 @@ void CrackedTile_DropIn(void) {
   Event_PlaySound(SE_THUMP);
   Actor_SetAttachedEffect(gMainRoutineWork.leaderActorId,
                           ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ATTACH);
-  Actor_SetAnimation(gMainRoutineWork.leaderActorId, 49);
+  Actor_SetAnimation(gMainRoutineWork.leaderActorId, ANIM_LEADER_SIT);
   MapGrid_SetShake(5, 5, 1);
   MapGrid_SetShake(SHAKE_KEEP, SHAKE_KEEP, 0.9);
   FieldMapGrid_WaitForShakeToSettle();
   Actor_SetAttachedEffect(gMainRoutineWork.leaderActorId,
                           ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_REMOVE);
-  actor->gravity = toFIXED(1);
-  actor->bounce = FIXED_ONE / 4;
+  leader->gravity = toFIXED(1);
+  leader->bounce = FIXED_ONE / 4;
   FieldEvent_Wait(10);
   Actor_SetAnimation(gMainRoutineWork.leaderActorId, ANIM_STAND);
   Event_End();
@@ -1859,54 +1993,53 @@ u32 gAnemosInnerSanctum_LongScript[] = {
     SC_END,
 };
 
-s32 gAnemosInnerSanctum_TileGlowScript[] = {
+s32 gAnemosInnerSanctum_SwitchGlowScript[] = {
     SC_WAIT(20),
     SC_RELEASE,
     SC_END,
 };
 
-s32 gAnemosInnerSanctum_OrbScript[] = {                                                               
-      46,                                                                      
-      (s32)AnemosInnerSanctum_CircleOrb,                                                              
-      38,                                                                      
-      17,                                                                      
-  };
+s32 gAnemosInnerSanctum_OrbScript[] = {
+    SC_CALL(AnemosInnerSanctum_CircleOrb),
+    SC_RELEASE,
+    SC_END,
+};
 
 s32 gAnemosInnerSanctum_DustScript[] = {
     SC_LABEL(1),
-    SC_ADD(SW_SCALE_X, -6553),
-    SC_ADD(SW_SCALE_Y, -6553),
+    SC_ADD(SW_SCALE_X, -FIXED_ONE / 10),
+    SC_ADD(SW_SCALE_Y, -FIXED_ONE / 10),
     SC_WAIT(1),
     SC_LOOP(8, SC_TO(1)),
     SC_RELEASE,
     SC_END,
 };
 
-u32 gAnemosInnerSanctum_PillarRisesScript[] = {
+u32 gAnemosInnerSanctum_DjinniRisesScript[] = {
     SC_WAIT(50),
     SC_LABEL(1),
-    SC_ADD(SW_SCALE_X, 6553),
-    SC_ADD(SW_SCALE_Y, 6553),
+    SC_ADD(SW_SCALE_X, FIXED_ONE / 10),
+    SC_ADD(SW_SCALE_Y, FIXED_ONE / 10),
     SC_ADD(SW_Y, toFIXED(3)),
     SC_WAIT(2),
     SC_LOOP(10, SC_TO(1)),
-    SC_SET(SW_MOTION, 4),
+    SC_SET(SW_MOTION, ACTOR_FLOATS),
     SC_END,
 };
 
-s32 gAnemosInnerSanctum_PillarSparkScript[] = {
+s32 gAnemosInnerSanctum_DjinniSinksScript[] = {
     SC_WAIT(30),
     SC_SET(SW_MOTION, 0),
     SC_LABEL(1),
-    SC_ADD(SW_SCALE_X, -6553),
-    SC_ADD(SW_SCALE_Y, -6553),
+    SC_ADD(SW_SCALE_X, -FIXED_ONE / 10),
+    SC_ADD(SW_SCALE_Y, -FIXED_ONE / 10),
     SC_ADD(SW_Y, -toFIXED(3)),
     SC_WAIT(2),
     SC_LOOP(10, SC_TO(1)),
     SC_END,
 };
 
-u32 gAnemosInnerSanctum_MoteScript[] = {
+u32 gAnemosInnerSanctum_FadingSparkScript[] = {
     SC_WAIT(3),
     SC_RELEASE,
     SC_END,
@@ -1916,12 +2049,12 @@ s32 gAnemosInnerSanctum_SparkScript[] = {
     SC_SET(SW_SCALE_X, FIXED_ONE * 2),
     SC_SET(SW_SCALE_Y, FIXED_ONE * 2),
     SC_LABEL(1),
-    SC_ADD(SW_SCALE_X, -6553),
-    SC_ADD(SW_SCALE_Y, -6553),
+    SC_ADD(SW_SCALE_X, -FIXED_ONE / 10),
+    SC_ADD(SW_SCALE_Y, -FIXED_ONE / 10),
     SC_WAIT(2),
     SC_LOOP(10, SC_TO(1)),
-    SC_CALL((s32)AnemosInnerSanctum_SpiralMover),
-    SC_CALL((s32)AnemosInnerSanctum_SpawnOrbitSparks),
+    SC_CALL((s32)AnemosInnerSanctum_SpiralIn),
+    SC_CALL((s32)AnemosInnerSanctum_LightPlate),
     SC_RELEASE,
     SC_END,
 };
@@ -1940,7 +2073,7 @@ s16 gAnemosInnerSanctum_OrihalconChestBlocks[] = {
     ACTOR_ORIHALCON_CHEST_FIRST_PILLAR, ACTOR_ORIHALCON_CHEST_SECOND_PILLAR, -1,
 };
 
-s32 gAnemosInnerSanctum_SparkOffsets[][2] = {
+s32 gAnemosInnerSanctum_PlateOffsets[][2] = {
     {-48, -32}, {48, -32}, {-64, -16}, {64, -16}, {-32, -16}, {32, -16},
     {-48, 0}, {48, 0}, {-32, 0}, {32, 0}, {-64, 16}, {64, 16}, {-32, 16},
     {32, 16}, {-48, 32}, {48, 32}, {-16, 32}, {16, 32},
@@ -1964,7 +2097,7 @@ s16 gAnemosInnerSanctum_PaletteColors[] = {
     25, 22, 23, 25, 22, -1,
 };
 
-s16 gAnemosInnerSanctum_DimColors[] = {
+s16 gAnemosInnerSanctum_CycleColors[] = {
     30, 27, 31, 22, 21, 31, 20, 18,
     31, 13, 11, 27, 11, 8, 24, 8,
     5, 21, 31, 31, 31, -1,
@@ -1975,7 +2108,7 @@ u16 gAnemosInnerSanctum_CycleSlots[] = {
       91, 92, 93, 94, 89, 90, 90, 91, 92, 93, 94, 89, 89, 90, 91, 92, 93, 94,  
   };
 
-s32 gAnemosInnerSanctum_StatueScript[] = {
+s32 gAnemosInnerSanctum_NoShadowScript[] = {
     SC_CALL((s32)AnemosInnerSanctum_ClearScriptedActorSpriteFlags),
     SC_END,
 };
@@ -2062,7 +2195,7 @@ struct ActorPlacement gAnemosInnerSanctum_DragonSkinChestPlacements[] = {
 
 struct ActorPlacement gAnemosInnerSanctum_ElevatorPlacements[] = {
     {SPRITE_STONE_PILLAR, CONDITION_ALWAYS, MOVEMENT_TYPE_CLEAR_COLLISION, 1, 0, 0, FACING_NORTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_AT_SCENE_POINT},
-    {SPRITE_ARROW_PANEL, CONDITION_ALWAYS, (s32)gAnemosInnerSanctum_StatueScript, 2, 0, 0, FACING_NORTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_AT_SCENE_POINT},
+    {SPRITE_ARROW_PANEL, CONDITION_ALWAYS, (s32)gAnemosInnerSanctum_NoShadowScript, 2, 0, 0, FACING_NORTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_AT_SCENE_POINT},
     {SPRITE_STONE_PILLAR, CONDITION_ALWAYS, MOVEMENT_TYPE_CLEAR_COLLISION, 3, 0, 0, FACING_NORTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_AT_SCENE_POINT},
     {SCENE_TABLE_END},
 };
@@ -2078,20 +2211,22 @@ struct ActorPlacement gAnemosInnerSanctum_SwitchesPlacements[] = {
     {SCENE_TABLE_END},
 };
 
-s32 gAnemosInnerSanctum_OrihalconChestPlacements[] = {                                                               
-      (s32)0xffff01b0, (s32)gAnemosInnerSanctum_StatueScript, 3, 0, 0, 0x202c000, (s32)0xffff0110, 7, 4, 0, 0, 0x202c000,    
-      (s32)0xffff0110, 7,         5, 0, 0, 0x202c000, 0xffff,          0,  0,  0, 0, 0,     
-  };
+struct ActorPlacement gAnemosInnerSanctum_OrihalconChestPlacements[] = {
+    {SPRITE_ARROW_PANEL, CONDITION_ALWAYS, (s32)gAnemosInnerSanctum_NoShadowScript, 3, 0, 0, FACING_NORTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_AT_SCENE_POINT},
+    {SPRITE_STONE_PILLAR, CONDITION_ALWAYS, MOVEMENT_TYPE_CLEAR_COLLISION, 4, 0, 0, FACING_NORTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_AT_SCENE_POINT},
+    {SPRITE_STONE_PILLAR, CONDITION_ALWAYS, MOVEMENT_TYPE_CLEAR_COLLISION, 5, 0, 0, FACING_NORTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_AT_SCENE_POINT},
+    {SCENE_TABLE_END},
+};
 
 struct ActorPlacement gAnemosInnerSanctum_GuardianPlacements[] = {
     {SPRITE_MIMIC_STONE, CONDITION_ALWAYS, MOVEMENT_TYPE_CLEAR_COLLISION, 1, 0, 0, FACING_NORTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_AT_SCENE_POINT},
     {SPRITE_MIMIC_STONE, CONDITION_ALWAYS, MOVEMENT_TYPE_CLEAR_COLLISION, 2, 0, 0, FACING_NORTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_AT_SCENE_POINT},
     {SPRITE_MIMIC_STONE, CONDITION_ALWAYS, MOVEMENT_TYPE_CLEAR_COLLISION, 3, 0, 0, FACING_NORTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_AT_SCENE_POINT},
-    {SPRITE_ARROW_PANEL, CONDITION_ALWAYS, (s32)gAnemosInnerSanctum_StatueScript, 4, 0, 0, FACING_NORTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_AT_SCENE_POINT},
-    ACTOR_PLACEMENT(SPRITE_COILED_DRAGON_STATUE, CONDITION_ALWAYS, (s32)gAnemosInnerSanctum_StatueScript, 584, 0, 582, FACING_WEST, TALK_FACING_PARTY_AND_BACK, 0),
-    ACTOR_PLACEMENT(SPRITE_COILED_DRAGON_STATUE, CONDITION_ALWAYS, (s32)gAnemosInnerSanctum_StatueScript, 584, 0, 630, FACING_WEST, TALK_FACING_PARTY_AND_BACK, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE),
-    ACTOR_PLACEMENT(SPRITE_COILED_DRAGON_STATUE, CONDITION_ALWAYS, (s32)gAnemosInnerSanctum_StatueScript, 680, 0, 582, FACING_EAST, TALK_FACING_PARTY_AND_BACK, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE),
-    ACTOR_PLACEMENT(SPRITE_COILED_DRAGON_STATUE, CONDITION_ALWAYS, (s32)gAnemosInnerSanctum_StatueScript, 680, 0, 630, FACING_EAST, TALK_FACING_PARTY_AND_BACK, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE),
+    {SPRITE_ARROW_PANEL, CONDITION_ALWAYS, (s32)gAnemosInnerSanctum_NoShadowScript, 4, 0, 0, FACING_NORTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_AT_SCENE_POINT},
+    ACTOR_PLACEMENT(SPRITE_COILED_DRAGON_STATUE, CONDITION_ALWAYS, (s32)gAnemosInnerSanctum_NoShadowScript, 584, 0, 582, FACING_WEST, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(SPRITE_COILED_DRAGON_STATUE, CONDITION_ALWAYS, (s32)gAnemosInnerSanctum_NoShadowScript, 584, 0, 630, FACING_WEST, TALK_FACING_PARTY_AND_BACK, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE),
+    ACTOR_PLACEMENT(SPRITE_COILED_DRAGON_STATUE, CONDITION_ALWAYS, (s32)gAnemosInnerSanctum_NoShadowScript, 680, 0, 582, FACING_EAST, TALK_FACING_PARTY_AND_BACK, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE),
+    ACTOR_PLACEMENT(SPRITE_COILED_DRAGON_STATUE, CONDITION_ALWAYS, (s32)gAnemosInnerSanctum_NoShadowScript, 680, 0, 630, FACING_EAST, TALK_FACING_PARTY_AND_BACK, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE),
     {SCENE_TABLE_END},
 };
 
@@ -2102,12 +2237,12 @@ struct Trigger gAnemosInnerSanctum_Triggers[] = {
 struct Trigger gAnemosInnerSanctum_DragonSkinChestTriggers[] = {
     {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
     {TRIGGER_EXIT, 2, CONDITION_ALWAYS, 2},
-    {TRIGGER_STEP, TRIGGER_CENTER, CONDITION_ALWAYS, EVENT(AnemosInnerSanctum_StepOntoCenter)},
-    {TRIGGER_STEP, TRIGGER_VENUS_SYMBOL, FLAG_SCENE_TEMP_00, EVENT(AnemosInnerSanctum_LightThePillar)},
-    {TRIGGER_STEP, TRIGGER_MERCURY_SYMBOL, FLAG_SCENE_TEMP_00, EVENT(AnemosInnerSanctum_LightThePillar)},
-    {TRIGGER_STEP, TRIGGER_MARS_SYMBOL, FLAG_SCENE_TEMP_00, EVENT(AnemosInnerSanctum_LightThePillar)},
-    {TRIGGER_STEP, TRIGGER_JUPITER_SYMBOL, FLAG_SCENE_TEMP_00, EVENT(AnemosInnerSanctum_LightThePillar)},
-    {PSYNERGY_PHASE_ON_CELL(ABILITY_TELEPORT, PSYNERGY_PHASE_AFTER_CAST), 30, CONDITION_ALWAYS, EVENT(AnemosInnerSanctum_TeleportOut)},
+    {TRIGGER_STEP, TRIGGER_FLOOR_BETWEEN_SYMBOLS, CONDITION_ALWAYS, EVENT(AnemosInnerSanctum_StepOffSymbol)},
+    {TRIGGER_STEP, TRIGGER_VENUS_SYMBOL, FLAG_SCENE_TEMP_00, EVENT(AnemosInnerSanctum_LightSymbol)},
+    {TRIGGER_STEP, TRIGGER_MERCURY_SYMBOL, FLAG_SCENE_TEMP_00, EVENT(AnemosInnerSanctum_LightSymbol)},
+    {TRIGGER_STEP, TRIGGER_MARS_SYMBOL, FLAG_SCENE_TEMP_00, EVENT(AnemosInnerSanctum_LightSymbol)},
+    {TRIGGER_STEP, TRIGGER_JUPITER_SYMBOL, FLAG_SCENE_TEMP_00, EVENT(AnemosInnerSanctum_LightSymbol)},
+    {PSYNERGY_PHASE_ON_CELL(ABILITY_TELEPORT, PSYNERGY_PHASE_AFTER_CAST), TRIGGER_TELEPORT_CIRCLE, CONDITION_ALWAYS, EVENT(AnemosInnerSanctum_TeleportOut)},
     {TRIGGER_TABLE_END},
 };
 
@@ -2128,14 +2263,14 @@ struct Trigger gAnemosInnerSanctum_ElevatorTriggers[] = {
     {TRIGGER_EXIT, 15, CONDITION_ALWAYS, 15},
     {TRIGGER_EXIT | EXIT_STYLE_STAIRS_UP, 16, CONDITION_ALWAYS, 16},
     {TRIGGER_EXIT, 17, CONDITION_ALWAYS, 17},
-    {TRIGGER_STEP, 11, IF_FLAG_SET(FLAG_SCENE_TEMP_07), EVENT(AnemosInnerSanctum_RaisePlatform)},
-    {TRIGGER_STEP, 50, FLAG_SCENE_TEMP_00, EVENT(AnemosInnerSanctum_StepOnTile)},
-    {TRIGGER_STEP, 51, FLAG_SCENE_TEMP_01, EVENT(AnemosInnerSanctum_StepOnTile)},
-    {TRIGGER_STEP, 52, FLAG_SCENE_TEMP_02, EVENT(AnemosInnerSanctum_StepOnTile)},
-    {TRIGGER_STEP, 53, FLAG_SCENE_TEMP_03, EVENT(AnemosInnerSanctum_StepOnTile)},
-    {TRIGGER_STEP, 54, FLAG_SCENE_TEMP_04, EVENT(AnemosInnerSanctum_StepOnTile)},
-    {TRIGGER_STEP, 55, FLAG_SCENE_TEMP_05, EVENT(AnemosInnerSanctum_StepOnTile)},
-    {TRIGGER_STEP, 56, FLAG_SCENE_TEMP_06, EVENT(AnemosInnerSanctum_StepOnTile)},
+    {TRIGGER_STEP, TRIGGER_LIFT, IF_FLAG_SET(FLAG_SCENE_TEMP_07), EVENT(AnemosInnerSanctum_RideLiftUp)},
+    {TRIGGER_STEP, TRIGGER_FIRST_ROUND_SWITCH, FLAG_SCENE_TEMP_00, EVENT(AnemosInnerSanctum_PressRoundSwitch)},
+    {TRIGGER_STEP, TRIGGER_FIRST_ROUND_SWITCH + 1, FLAG_SCENE_TEMP_01, EVENT(AnemosInnerSanctum_PressRoundSwitch)},
+    {TRIGGER_STEP, TRIGGER_FIRST_ROUND_SWITCH + 2, FLAG_SCENE_TEMP_02, EVENT(AnemosInnerSanctum_PressRoundSwitch)},
+    {TRIGGER_STEP, TRIGGER_FIRST_ROUND_SWITCH + 3, FLAG_SCENE_TEMP_03, EVENT(AnemosInnerSanctum_PressRoundSwitch)},
+    {TRIGGER_STEP, TRIGGER_FIRST_ROUND_SWITCH + 4, FLAG_SCENE_TEMP_04, EVENT(AnemosInnerSanctum_PressRoundSwitch)},
+    {TRIGGER_STEP, TRIGGER_FIRST_ROUND_SWITCH + 5, FLAG_SCENE_TEMP_05, EVENT(AnemosInnerSanctum_PressRoundSwitch)},
+    {TRIGGER_STEP, TRIGGER_FIRST_ROUND_SWITCH + 6, FLAG_SCENE_TEMP_06, EVENT(AnemosInnerSanctum_PressRoundSwitch)},
     {TRIGGER_PUSH, 0, CONDITION_ALWAYS, EVENT(AnemosInnerSanctum_StartMovingBlock)},
     {TRIGGER_PUSHED, 0, CONDITION_ALWAYS, EVENT(AnemosInnerSanctum_FinishMovingBlock)},
     {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), ACTOR_ELEVATOR_FIRST_PILLAR, FLAG_ANEMOS_ELEVATOR_FIRST_PILLAR_PLACED, EVENT(AnemosInnerSanctum_StartMovingBlock)},
@@ -2164,9 +2299,9 @@ struct Trigger gAnemosInnerSanctum_SwitchesTriggers[] = {
     {TRIGGER_EXIT, 16, CONDITION_ALWAYS, 16},
     {TRIGGER_EXIT, 17, CONDITION_ALWAYS, 17},
     {PSYNERGY_ANYWHERE(ABILITY_SAND, PSYNERGY_PHASE_AFTER_CAST), 0, CONDITION_ALWAYS, EVENT(AnemosInnerSanctum_SinkIntoSand)},
-    {PSYNERGY_ANYWHERE(ABILITY_SAND, PSYNERGY_PHASE_FADES), 0, CONDITION_ALWAYS, EVENT(Leader_SetLayerByte)},
-    {TRIGGER_STEP, 50, FLAG_SCENE_TEMP_00, EVENT(AnemosInnerSanctum_PressFirstSwitch)},
-    {TRIGGER_STEP, 51, IF_FLAG_SET(FLAG_SCENE_TEMP_00), EVENT(AnemosInnerSanctum_PressSecondSwitch)},
+    {PSYNERGY_ANYWHERE(ABILITY_SAND, PSYNERGY_PHASE_FADES), 0, CONDITION_ALWAYS, EVENT(AnemosInnerSanctum_EndSand)},
+    {TRIGGER_STEP, TRIGGER_SWITCH, FLAG_SCENE_TEMP_00, EVENT(AnemosInnerSanctum_PressSwitch)},
+    {TRIGGER_STEP, TRIGGER_EAST_OF_SWITCH, IF_FLAG_SET(FLAG_SCENE_TEMP_00), EVENT(AnemosInnerSanctum_StepOffSwitch)},
     {PSYNERGY_ON_ACTOR(ABILITY_LIFT), ACTOR_SWITCHES_BOULDER, CONDITION_ALWAYS, 0},
     {TRIGGER_PUSH, 0, CONDITION_ALWAYS, EVENT(AnemosInnerSanctum_StartMovingBlock)},
     {TRIGGER_PUSHED, 0, CONDITION_ALWAYS, EVENT(AnemosInnerSanctum_FinishMovingBlock)},
@@ -2194,20 +2329,20 @@ struct Trigger gAnemosInnerSanctum_OrihalconChestTriggers[] = {
     {TRIGGER_EXIT, 8, CONDITION_ALWAYS, 8},
     {TRIGGER_EXIT | EXIT_STYLE_STAIRS_DOWN, 9, CONDITION_ALWAYS, 9},
     {TRIGGER_EXIT, 10, CONDITION_ALWAYS, 10},
-    {TRIGGER_STEP, 11, IF_FLAG_SET(FLAG_SCENE_TEMP_07), EVENT(AnemosInnerSanctum_RaisePlatform)},
-    {TRIGGER_STEP, 50, FLAG_SCENE_TEMP_00, EVENT(AnemosInnerSanctum_StepOnTile)},
-    {TRIGGER_STEP, 51, FLAG_SCENE_TEMP_01, EVENT(AnemosInnerSanctum_StepOnTile)},
-    {TRIGGER_STEP, 52, FLAG_SCENE_TEMP_02, EVENT(AnemosInnerSanctum_StepOnTile)},
-    {TRIGGER_STEP, 53, FLAG_SCENE_TEMP_03, EVENT(AnemosInnerSanctum_StepOnTile)},
-    {TRIGGER_STEP, 54, FLAG_SCENE_TEMP_04, EVENT(AnemosInnerSanctum_StepOnTile)},
-    {TRIGGER_STEP, 55, FLAG_SCENE_TEMP_05, EVENT(AnemosInnerSanctum_StepOnTile)},
-    {TRIGGER_STEP, 56, FLAG_SCENE_TEMP_06, EVENT(AnemosInnerSanctum_StepOnTile)},
-    {TRIGGER_STEP, 33, CONDITION_ALWAYS, EVENT(AnemosInnerSanctum_FallThroughFirstCracks)},
-    {TRIGGER_STEP, 34, CONDITION_ALWAYS, EVENT(AnemosInnerSanctum_FallThroughFirstCracks)},
-    {TRIGGER_STEP, 35, CONDITION_ALWAYS, EVENT(AnemosInnerSanctum_FallThroughSecondCracks)},
-    {TRIGGER_STEP, 36, CONDITION_ALWAYS, EVENT(AnemosInnerSanctum_FallThroughSecondCracks)},
+    {TRIGGER_STEP, TRIGGER_LIFT, IF_FLAG_SET(FLAG_SCENE_TEMP_07), EVENT(AnemosInnerSanctum_RideLiftUp)},
+    {TRIGGER_STEP, TRIGGER_FIRST_ROUND_SWITCH, FLAG_SCENE_TEMP_00, EVENT(AnemosInnerSanctum_PressRoundSwitch)},
+    {TRIGGER_STEP, TRIGGER_FIRST_ROUND_SWITCH + 1, FLAG_SCENE_TEMP_01, EVENT(AnemosInnerSanctum_PressRoundSwitch)},
+    {TRIGGER_STEP, TRIGGER_FIRST_ROUND_SWITCH + 2, FLAG_SCENE_TEMP_02, EVENT(AnemosInnerSanctum_PressRoundSwitch)},
+    {TRIGGER_STEP, TRIGGER_FIRST_ROUND_SWITCH + 3, FLAG_SCENE_TEMP_03, EVENT(AnemosInnerSanctum_PressRoundSwitch)},
+    {TRIGGER_STEP, TRIGGER_FIRST_ROUND_SWITCH + 4, FLAG_SCENE_TEMP_04, EVENT(AnemosInnerSanctum_PressRoundSwitch)},
+    {TRIGGER_STEP, TRIGGER_FIRST_ROUND_SWITCH + 5, FLAG_SCENE_TEMP_05, EVENT(AnemosInnerSanctum_PressRoundSwitch)},
+    {TRIGGER_STEP, TRIGGER_FIRST_ROUND_SWITCH + 6, FLAG_SCENE_TEMP_06, EVENT(AnemosInnerSanctum_PressRoundSwitch)},
+    {TRIGGER_STEP, TRIGGER_FIRST_CRACKED_FLOOR, CONDITION_ALWAYS, EVENT(AnemosInnerSanctum_FallThroughFirstCracks)},
+    {TRIGGER_STEP, TRIGGER_FIRST_CRACKED_FLOOR + 1, CONDITION_ALWAYS, EVENT(AnemosInnerSanctum_FallThroughFirstCracks)},
+    {TRIGGER_STEP, TRIGGER_SECOND_CRACKED_FLOOR, CONDITION_ALWAYS, EVENT(AnemosInnerSanctum_FallThroughSecondCracks)},
+    {TRIGGER_STEP, TRIGGER_SECOND_CRACKED_FLOOR + 1, CONDITION_ALWAYS, EVENT(AnemosInnerSanctum_FallThroughSecondCracks)},
     {PSYNERGY_ANYWHERE(ABILITY_SAND, PSYNERGY_PHASE_AFTER_CAST), 0, CONDITION_ALWAYS, EVENT(AnemosInnerSanctum_SinkIntoSand)},
-    {PSYNERGY_ANYWHERE(ABILITY_SAND, PSYNERGY_PHASE_FADES), 0, CONDITION_ALWAYS, EVENT(Leader_SetLayerByte)},
+    {PSYNERGY_ANYWHERE(ABILITY_SAND, PSYNERGY_PHASE_FADES), 0, CONDITION_ALWAYS, EVENT(AnemosInnerSanctum_EndSand)},
     {TRIGGER_PUSH, 0, CONDITION_ALWAYS, EVENT(AnemosInnerSanctum_StartMovingBlock)},
     {TRIGGER_PUSHED, 0, CONDITION_ALWAYS, EVENT(AnemosInnerSanctum_FinishMovingBlock)},
     {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), ACTOR_ORIHALCON_CHEST_FIRST_PILLAR, FLAG_ANEMOS_ORIHALCON_CHEST_FIRST_PILLAR_PLACED, EVENT(AnemosInnerSanctum_StartMovingBlock)},
@@ -2229,13 +2364,14 @@ struct Trigger gAnemosInnerSanctum_GuardianTriggers[] = {
     {TRIGGER_EXIT | EXIT_STYLE_STAIRS_DOWN, 9, CONDITION_ALWAYS, 9},
     {TRIGGER_EXIT, 10, CONDITION_ALWAYS, 10},
     {TRIGGER_EXIT, 11, CONDITION_ALWAYS, 11},
-    {TRIGGER_STEP, 50, FLAG_SCENE_TEMP_00, EVENT(AnemosInnerSanctum_StartFollower)},
-    {TRIGGER_STEP, 51, FLAG_SCENE_TEMP_00, EVENT(AnemosInnerSanctum_StartFollower)},
-    {TRIGGER_STEP, 52, FLAG_SCENE_TEMP_00, EVENT(AnemosInnerSanctum_StartFollower)},
-    {TRIGGER_STEP, 30, FLAG_ANEMOS_GUARDIAN_SPOKE, EVENT(AnemosInnerSanctum_SummonTheGuardian)},
-    {TRIGGER_RAISED, 200, CONDITION_ALWAYS, EVENT(AnemosInnerSanctum_RaiseDust)},
-    {TRIGGER_RAISED, 201, CONDITION_ALWAYS, EVENT(AnemosInnerSanctum_MarkEntrance)},
+    {TRIGGER_STEP, TRIGGER_MIMIC_STONE_START, FLAG_SCENE_TEMP_00, EVENT(AnemosInnerSanctum_StartMimicStone)},
+    {TRIGGER_STEP, TRIGGER_MIMIC_STONE_HOLE, FLAG_SCENE_TEMP_00, EVENT(AnemosInnerSanctum_StartMimicStone)},
+    {TRIGGER_STEP, TRIGGER_MIMIC_STONE_BUTTON, FLAG_SCENE_TEMP_00, EVENT(AnemosInnerSanctum_StartMimicStone)},
+    {TRIGGER_STEP, TRIGGER_BEFORE_CHARON_SLATE, FLAG_ANEMOS_CHARON_SLATE_SPOKE, EVENT(AnemosInnerSanctum_ApproachCharonSlate)},
+    {TRIGGER_RAISED, TRIGGER_MIMIC_STONE_IN_HOLE, CONDITION_ALWAYS, EVENT(AnemosInnerSanctum_DropMimicStone)},
+    {TRIGGER_RAISED, TRIGGER_MIMIC_STONE_ON_BUTTON, CONDITION_ALWAYS, EVENT(AnemosInnerSanctum_OpenMimicStoneDoor)},
     {TRIGGER_TABLE_END},
+    // Unused: rows past the table's end.
     {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
     {TRIGGER_EXIT, 2, CONDITION_ALWAYS, 2},
     {TRIGGER_EXIT, 3, CONDITION_ALWAYS, 3},
@@ -2244,21 +2380,21 @@ struct Trigger gAnemosInnerSanctum_GuardianTriggers[] = {
     {TRIGGER_TABLE_END},
 };
 
-s16 gAnemosInnerSanctum_DoorFrames[] = {
+s16 gAnemosInnerSanctum_NorthDoorFrames[] = {
     52, 7, 1, 2, 2, 54, 7, 1,
     2, 2, -1,
 };
 
-s16 gAnemosInnerSanctum_OtherDoorFrames[] = {
+s16 gAnemosInnerSanctum_MimicStoneDoorFrames[] = {
     18, 4, 1, 2, 2, 18, 7, 1,
     2, 2, -1,
 };
 // clang-format on
 
-struct MapGridCellAnimation gAnemosInnerSanctum_Doors[] = {
-    {gAnemosInnerSanctum_OtherDoorFrames, 11, 4},
-    {gAnemosInnerSanctum_OtherDoorFrames, 26, 4},
-    {gAnemosInnerSanctum_OtherDoorFrames, 53, 4},
+struct MapGridCellAnimation gAnemosInnerSanctum_MimicStoneDoors[] = {
+    {gAnemosInnerSanctum_MimicStoneDoorFrames, 11, 4},
+    {gAnemosInnerSanctum_MimicStoneDoorFrames, 26, 4},
+    {gAnemosInnerSanctum_MimicStoneDoorFrames, 53, 4},
 };
 
 s32 gFieldEffect_DurationScripts[] = {

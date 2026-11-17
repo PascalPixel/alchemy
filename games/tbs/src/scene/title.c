@@ -138,6 +138,12 @@ s32 Scene_Initialize(void) {
   return 0;
 }
 
+/// The lettering's sprite palette.
+enum { LETTERING_PALETTE = 15 };
+/// In the German, Spanish, French and Italian pictures, the lettering's rows at
+/// the bottom of the screen, and the colours the picture opens with.
+enum { LETTERING_ROWS = 32, LETTERING_PICTURE_COLORS = 224 };
+
 /// Loads the logo's lettering sprites and their palette.
 static void Title_LoadSprites(s32 unused) {
   u8 *decodedSprites;
@@ -146,34 +152,35 @@ static void Title_LoadSprites(s32 unused) {
     LANGUAGE == LANGUAGE_FRENCH || LANGUAGE == LANGUAGE_ITALIAN
   u8 *encodedGraphics;
 
-  decodedSprites = Heap_AllocEwram(240 * 160);
+  decodedSprites = Heap_AllocEwram(DISPLAY_WIDTH * DISPLAY_HEIGHT);
   encodedGraphics = Resource_GetTableEntry(RESOURCE_INTRO_TILES_B);
   if (gTitleVramBlock == -1)
     gTitleVramBlock = VramCache_FindFreeEntry();
-  // The resource opens with 224 colours of palette (112 words)
-  // before its compressed data.
-  Dma_Set(encodedGraphics, (void *)OBJ_PLTT, DMA_COPY_WORDS(112), REG_DMA3);
-  encodedGraphics += 224 * 2;
+  // The resource opens with its colours, before its compressed data.
+  Dma_Set(encodedGraphics, (void *)OBJ_PLTT,
+          DMA_COPY_WORDS(LETTERING_PICTURE_COLORS / 2), REG_DMA3);
+  encodedGraphics += LETTERING_PICTURE_COLORS * 2;
   FieldDecompress_TaggedLz(encodedGraphics, decodedSprites);
-  // The picture is a whole 240 x 160 screen (to_be_continued_de.png and the
-  // others). The lettering is its bottom 32 rows, the last 240 * 32 bytes: 120
-  // sprites of one 64-byte tile. The 240 * 128 bytes before it are the 480
-  // tiles of one colour above, which nothing loads.
-  Vram_Load(gTitleVramBlock, 240 * 32, decodedSprites + 240 * 128);
+  // The picture is a whole screen in 256 colours (to_be_continued_de.png and
+  // the others). The lettering is its bottom LETTERING_ROWS rows: 120 sprites
+  // of one 64-byte tile. The tiles of one colour above it are not loaded.
+  Vram_Load(gTitleVramBlock, DISPLAY_WIDTH * LETTERING_ROWS,
+            decodedSprites + DISPLAY_WIDTH * (DISPLAY_HEIGHT - LETTERING_ROWS));
 #else
-  // The decoded data opens with its 16-colour palette (8 words), then 40
-  // 4-bit tiles of lettering.
-  decodedSprites = Heap_AllocEwram(32 + 40 * TILE_SIZE_4BPP);
+  // The decoded data opens with its 16-colour palette, then 40 4-bit tiles of
+  // lettering.
+  decodedSprites = Heap_AllocEwram(PALETTE_COLORS * 2 + 40 * TILE_SIZE_4BPP);
   if (gTitleVramBlock == -1)
     gTitleVramBlock = VramCache_FindFreeEntry();
   FieldDecompress_TaggedLz(Resource_GetTableEntry(RESOURCE_INTRO_TILES_B),
                            decodedSprites);
-  Dma_Set(decodedSprites, (void *)&OBJ_PLTT_COLOR(15, 0), DMA_COPY_WORDS(8),
-          REG_DMA3);
-  Vram_Load(gTitleVramBlock, 40 * TILE_SIZE_4BPP, decodedSprites + 32);
+  Dma_Set(decodedSprites, (void *)&OBJ_PLTT_COLOR(LETTERING_PALETTE, 0),
+          DMA_COPY_WORDS(PALETTE_COLORS / 2), REG_DMA3);
+  Vram_Load(gTitleVramBlock, 40 * TILE_SIZE_4BPP,
+            decodedSprites + PALETTE_COLORS * 2);
 #endif
   dma3 = REG_DMA3;
-  while (dma3[2] & (DMA_ENABLE << 16))
+  while (dma3[2] & DMA_BUSY)
     ;
   Heap_Release(decodedSprites);
 }
@@ -194,9 +201,9 @@ static void Title_UpdateSpriteReveal(void) {
     LANGUAGE == LANGUAGE_FRENCH || LANGUAGE == LANGUAGE_ITALIAN
   s32 row;
 
-  // Four rows of 30 8-by-8 sprites across the screen at y 128 to 152:
-  // 0x2400 is 256 colours and semi-transparent. A 256-colour tile is two of
-  // the 32-byte tile numbers the cache offset counts in.
+  // Four rows of 30 8-by-8 sprites across the screen at y 128 to 152, in 256
+  // colours and semi-transparent. A 256-colour tile is two of the 32-byte tile
+  // numbers the cache offset counts in.
   sprite = gTitleSprites;
   attributes = gTitleSprites[0].attr;
   tileIndex = gVramCacheEntries[gTitleVramBlock].offset >> 5;
@@ -210,7 +217,8 @@ static void Title_UpdateSpriteReveal(void) {
       attributes = sprite->attr;
 #endif
       *attributes++ = 0;
-      *attributes++ = (column * 8 << 16) | screenY | 0x2400;
+      *attributes++ = OBJ_X(column * 8) | screenY | OBJ_256_COLORS |
+                      OBJ_MODE(OBJ_MODE_SEMI_TRANSPARENT);
       *attributes++ = tileIndex;
       revealAge = gTitleRevealFrame / 2 - column;
       if (revealAge < 0)
@@ -226,8 +234,8 @@ static void Title_UpdateSpriteReveal(void) {
   }
 #else
 
-  // One row of 18 sprites of 8 by 16 pixels at y 136 and x 88 to 224: 0x8400
-  // is the tall shape and semi-transparent, 0xf000 palette 15.
+  // One row of 18 semi-transparent sprites of 8 by 16 pixels at y 136 and x 88
+  // to 224.
   sprite = gTitleSprites;
   attributes = gTitleSprites[0].attr;
   tileIndex = gVramCacheEntries[gTitleVramBlock].offset >> 5;
@@ -239,8 +247,9 @@ static void Title_UpdateSpriteReveal(void) {
     attributes = gTitleSprites[column].attr;
 #endif
     *attributes++ = 0;
-    *attributes++ = (screenX << 16) | screenY | 0x8400;
-    *attributes++ = 0xf000 | tileIndex;
+    *attributes++ = OBJ_X(screenX) | screenY | OBJ_SIZE_8X16 |
+                    OBJ_MODE(OBJ_MODE_SEMI_TRANSPARENT);
+    *attributes++ = OBJ_PALETTE(LETTERING_PALETTE) | tileIndex;
     revealAge = gTitleRevealFrame / 2 - column;
     if (revealAge < 0)
       revealAge = 0;
@@ -263,9 +272,9 @@ static void Title_RevealScreen(s32 unused) {
   gTitleRevealFrame = 0;
   Title_LoadSprites(0);
   Task_AddFrame(Title_UpdateSpriteReveal, TASK_PASS_FRAME);
-  // Show BG0, BG2 and the sprites. BG1 to BG3 start fully darkened (BLDY
-  // 16), so the logo on BG2 is black; the semi-transparent lettering is
-  // blended onto the layers under it at full weight (BLEND_ALPHA(16, 16)).
+  // Show BG0, BG2 and the sprites. BG1 to BG3 start fully darkened, so the
+  // logo on BG2 is black; the semi-transparent lettering is blended onto the
+  // layers under it at full weight.
   IO_WRITE_QUEUE_PUSH((u32)&REG_DISPCNT,
                       DISPCNT_OBJ_1D_MAP | DISPCNT_BG0_ON | DISPCNT_BG2_ON |
                           DISPCNT_OBJ_ON,
@@ -276,12 +285,14 @@ static void Title_RevealScreen(s32 unused) {
                           BLDCNT_TGT2_BG1 | BLDCNT_TGT2_BG2 | BLDCNT_TGT2_BG3 |
                           BLDCNT_TGT2_BD,
                       IO_WRITE_HALFWORD);
-  IO_WRITE_QUEUE_PUSH((u32)&REG_BLDY, 16, IO_WRITE_HALFWORD);
-  IO_WRITE_QUEUE_PUSH((u32)&REG_BLDALPHA, BLEND_ALPHA(16, 16),
+  IO_WRITE_QUEUE_PUSH((u32)&REG_BLDY, BLEND_FADE_MAX, IO_WRITE_HALFWORD);
+  IO_WRITE_QUEUE_PUSH((u32)&REG_BLDALPHA,
+                      BLEND_ALPHA(BLEND_WEIGHT_MAX, BLEND_WEIGHT_MAX),
                       IO_WRITE_HALFWORD);
   Event_Wait(120);
-  for (brightnessStep = 0; brightnessStep <= 16; brightnessStep++) {
-    IO_WRITE_QUEUE_PUSH((u32)&REG_BLDY, 16 - brightnessStep, IO_WRITE_HALFWORD);
+  for (brightnessStep = 0; brightnessStep <= BLEND_FADE_MAX; brightnessStep++) {
+    IO_WRITE_QUEUE_PUSH((u32)&REG_BLDY, BLEND_FADE_MAX - brightnessStep,
+                        IO_WRITE_HALFWORD);
     wait(3);
   }
   gFieldWork->transition = 0;
@@ -301,15 +312,16 @@ static void Title_LoadBackground(void) {
   u32 screenY;
   u16 tileIndex;
   struct ScrollPair *bgScroll;
-  s32 blankTile = LOGO_BLANK_TILE;
+  s32 blankTile = OFFSCREEN_TILE;
 
   resourceId = RESOURCE_GOLDEN_SUN_LOGO;
   ScreenFade_ToBlack(0);
   REG_BG2CNT = LOGO_BGCNT;
   gBgScroll[2].y = 0;
   encodedGraphics = Resource_GetTableEntry(resourceId);
-  Dma_Set(encodedGraphics, (void *)BG_PLTT, DMA_COPY_WORDS(112), REG_DMA3);
-  encodedGraphics += 224 * 2;
+  Dma_Set(encodedGraphics, (void *)BG_PLTT,
+          DMA_COPY_WORDS(LOGO_PALETTE_COLORS / 2), REG_DMA3);
+  encodedGraphics += LOGO_PALETTE_COLORS * 2;
   FieldDecompress_TaggedLz(encodedGraphics, Ram_MapGridCellBuffer);
   Dma_Set((void *)Ram_MapGridCellBuffer, LOGO_TILES, DMA_COPY_WORDS(9600),
           REG_DMA3);

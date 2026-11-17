@@ -116,7 +116,7 @@
 	export Sprite_SetAnimationColorModes, Sprite_SetAnimationColorModesFar
 	export Actor_SetSpriteColorMode, Actor_SetSpriteColorModeFar
 	export WorldMap_IsWalkable, WorldMap_IsWalkableFar
-	export WorldMap_GetBlockPlace, WorldMap_GetBlockPlaceFar
+	export WorldMap_GetBlockCellBehavior, WorldMap_GetBlockPlaceFar
 	export TilesetAnim_SuspendAll, TilesetAnim_SuspendAllFar
 	export Map_LoadCellsAndShapes, Map_LoadCellsAndShapesFar
 	export Actor_SetSpritePriorityDirect, Actor_SetSpritePriorityDirectFar

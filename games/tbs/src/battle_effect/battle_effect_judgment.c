@@ -6,15 +6,23 @@
 /// The bytes of Judgment's work block before its dimmed mote copies.
 #define JUDGMENT_SHEET_BYTES 10000
 
+/// The dimmed copies of the mote pictures: DIMMED_MOTE_SETS sets of
+/// MOTE_SET_BYTES, set i with every level capped at DIMMED_MOTE_CAP(i), 7
+/// levels lower than the set before, set 0 not at all.
+#define DIMMED_MOTE_SETS 8
+#define DIMMED_MOTE_CAP(set) (CANVAS_LEVEL_BRIGHTEST + 1 - (set) * 7)
+/// The battle background's colours, BG palettes 6 to 13.
+#define BATTLE_BACKGROUND_COLORS (8 * PALETTE_COLORS)
+
 /// Judgment's work block, laid over struct BattleEffectWork from its start; the
 /// sweep's wave picture later overwrites the gathering's part of it.
 struct JudgmentWork {
   /// The gathering's pictures: the pink burst, the burst's quarters and the
   /// tornado sheet.
   u8 sheet[JUDGMENT_SHEET_BYTES];
-  /// Eight copies of the mote sheet, copy i with every level capped at
-  /// 64 - 7i; the gathering's ring of motes steps through them.
-  u8 ramp[8][MOTE_SET_BYTES];
+  /// The dimmed motes, which the gathering's ring of motes steps through as
+  /// it fades.
+  u8 dimmedMotes[DIMMED_MOTE_SETS][MOTE_SET_BYTES];
 };
 
 /// The gathering's motes in PARTICLES, then its sparks.
@@ -31,7 +39,28 @@ struct JudgmentWork {
 /// frame.
 #define JUDGMENT_BEAM_FRAME 144
 #define JUDGMENT_FORMATION_OBJECTS 16 ///< sprites in the formation, 4x4
-#define JUDGMENT_DEBRIS_OBJECTS 16    ///< debris sprites of the sweep
+#define JUDGMENT_FORMATION_COLUMNS 4
+#define JUDGMENT_FORMATION_SPRITE_SIZE 32 ///< each sprite is 32 pixels square
+/// The formation's animations, one a sprite for each of Judgment's poses:
+/// its lion shield at its side, swinging round, then held before it.
+#define JUDGMENT_POSE_SHIELD_SWINGING JUDGMENT_FORMATION_OBJECTS
+#define JUDGMENT_POSE_SHIELD_FORWARD (2 * JUDGMENT_FORMATION_OBJECTS)
+#define JUDGMENT_DEBRIS_OBJECTS 16 ///< debris sprites of the sweep
+
+/// Where the motes gather on the canvas, at Judgment's shield: the burst's
+/// quarters and shards and the falling beams are drawn about it.
+#define JUDGMENT_BURST_X 60
+#define JUDGMENT_BURST_Y 80
+/// How far from the burst's centre its shards flicker.
+#define JUDGMENT_SHARD_RADIUS 16
+/// The gathering motes' depths either side of the burst, which set the size
+/// each is drawn at.
+#define JUDGMENT_MOTE_DEPTH 60
+/// The unused sparks stage's depths, and the depth it starts its nearest
+/// from, above any a spark can have.
+#define JUDGMENT_SPARK_DEPTH_NEAR 100
+#define JUDGMENT_SPARK_DEPTH_FAR 900
+#define JUDGMENT_SPARK_DEPTH_NONE 65535
 /// The pink burst's beam picture, at the sheet's start.
 #define JUDGMENT_BEAM_WIDTH 24
 #define JUDGMENT_BEAM_HEIGHT 64
@@ -78,18 +107,28 @@ struct JudgmentWork {
 #define JUDGMENT_SWEEP_FOREST 214
 #define JUDGMENT_SWEEP_RETURN 280
 #define JUDGMENT_WAVE_SIZE 120 ///< the wave picture is 120x120
+/// The level the wave's rings are drawn at.
+#define JUDGMENT_RING_LEVEL 20
+/// Where the canvas sits on the screen in the sweep: the wave picture
+/// centred.
+#define JUDGMENT_SWEEP_CANVAS_X ((DISPLAY_WIDTH - JUDGMENT_WAVE_SIZE) / 2)
+/// The column of the wave picture the flare falls down and the aerial view's
+/// rings spread from.
+#define JUDGMENT_FLARE_X (JUDGMENT_WAVE_SIZE / 2)
 
 /// Sets a ring's four mirrored points (left or right, top or bottom) of the
-/// wave picture to level 20.
+/// wave picture to JUDGMENT_RING_LEVEL.
 #define JUDGMENT_PLOT_RING_POINTS(left, right, top, bottom)                    \
-  (work->sheet[(bottom) * JUDGMENT_WAVE_SIZE + (right)] = 20,                  \
-   work->sheet[(top) * JUDGMENT_WAVE_SIZE + (right)] = 20,                     \
-   work->sheet[(bottom) * JUDGMENT_WAVE_SIZE + (left)] = 20,                   \
-   work->sheet[(top) * JUDGMENT_WAVE_SIZE + (left)] = 20)
+  (work->sheet[(bottom) * JUDGMENT_WAVE_SIZE + (right)] = JUDGMENT_RING_LEVEL, \
+   work->sheet[(top) * JUDGMENT_WAVE_SIZE + (right)] = JUDGMENT_RING_LEVEL,    \
+   work->sheet[(bottom) * JUDGMENT_WAVE_SIZE + (left)] = JUDGMENT_RING_LEVEL,  \
+   work->sheet[(top) * JUDGMENT_WAVE_SIZE + (left)] = JUDGMENT_RING_LEVEL)
 
-/// The battle wipes away to a violet sky where Judgment flies forward while
-/// motes gather into it; it bursts in a flash, and the blast falls on the land
-/// below and spreads in rings of light.
+/// The battle wipes away to a violet sky where Judgment, a winged knight with a
+/// lion shield, flies forward while motes gather into its shield; they burst in
+/// a flash, a flare falls on the land below and explodes in rings of light, and
+/// the blast sweeps over a beach and through a forest, throwing up rocks,
+/// before the battle returns.
 ///
 /// Abilities: Judgment.
 void BattleEffect_RunJudgment(struct BattleEffectParams *args) {
@@ -106,7 +145,7 @@ void BattleEffect_RunJudgment(struct BattleEffectParams *args) {
   struct BattleBackgroundWork *view;
   DrawRectangle draw[2];
   s32 frame;
-  u8 *ramp;
+  u8 *motes;
   struct BattleCamera *camera;
   FIXED depth;
   s32 zoom;
@@ -133,7 +172,7 @@ void BattleEffect_RunJudgment(struct BattleEffectParams *args) {
   work = HEAP_SLOT_FROM(heap, HEAP_SLOT_BATTLE_CANVAS, HEAP_SLOT_BATTLE_EFFECT);
   view = HEAP_SLOT_FROM(heap, HEAP_SLOT_BATTLE_CANVAS,
                         HEAP_SLOT_BATTLE_BACKGROUND);
-  ramp = HEAP_SLOT_FROM(heap, HEAP_SLOT_BATTLE_CANVAS, HEAP_SLOT_BATTLE_SHEET);
+  motes = HEAP_SLOT_FROM(heap, HEAP_SLOT_BATTLE_CANVAS, HEAP_SLOT_BATTLE_SHEET);
   camera = HEAP_SLOT_FROM(heap, HEAP_SLOT_BATTLE_CANVAS, HEAP_SLOT_CAMERA);
   work->args = args;
   EFFECT_START_NARROW_CANVAS(BGCNT_WRAP);
@@ -161,21 +200,21 @@ void BattleEffect_RunJudgment(struct BattleEffectParams *args) {
   EFFECT_SHOW_WIDE_CANVAS(BLEND_WEIGHT_MAX);
   depth = -toFIXED(64);
   zoom = toFIXED(8);
-  minimumDepth = 65535;
+  minimumDepth = JUDGMENT_SPARK_DEPTH_NONE;
   maximumDepth = 0;
   Resource_LoadAndDecompress(RESOURCE_PINK_BURST_SHEET, work->sheet, 1, 1);
   Resource_LoadAndDecompress(RESOURCE_OVERLAY_IMAGE_B,
                              work->sheet + JUDGMENT_SHEET_BURST, 0, 0);
   Resource_LoadAndDecompress(RESOURCE_TORNADO_SHEET,
                              work->sheet + JUDGMENT_SHEET_TORNADO, 1, 0);
-  Resource_LoadAndDecompress(RESOURCE_PARTICLE_SPRITES_A, ramp, 0, 0);
+  Resource_LoadAndDecompress(RESOURCE_PARTICLE_SPRITES_A, motes, 0, 0);
 
-  for (i = 0; i != 8; i++) {
-    u8 *src = ramp;
+  for (i = 0; i != DIMMED_MOTE_SETS; i++) {
+    u8 *src = motes;
     for (j = 0; j != MOTE_SET_BYTES; j++) {
       s32 v = *src++;
-      EFFECT_CAP_LEVEL(v, 64 - i * 7);
-      ((struct JudgmentWork *)work)->ramp[i][j] = v;
+      EFFECT_CAP_LEVEL(v, DIMMED_MOTE_CAP(i));
+      ((struct JudgmentWork *)work)->dimmedMotes[i][j] = v;
     }
   }
 
@@ -191,10 +230,10 @@ void BattleEffect_RunJudgment(struct BattleEffectParams *args) {
 
   for (i = 0; i != JUDGMENT_SPARK_COUNT; i++) {
     s32 angle = Random16() & TRIG_ANGLE_MASK;
-    s32 amp = 255;
+    s32 amplitude = 255;
     s32 speed = 0;
-    JUDGMENT_SPARKS[i].x = (Trig_Sin(angle) * amp) >> 2;
-    JUDGMENT_SPARKS[i].z = (Trig_Cos(angle) * amp) >> 2;
+    JUDGMENT_SPARKS[i].x = (Trig_Sin(angle) * amplitude) >> 2;
+    JUDGMENT_SPARKS[i].z = (Trig_Cos(angle) * amplitude) >> 2;
     JUDGMENT_SPARKS[i].y = INTtoFIXED((Random16() & 63) + 32);
     JUDGMENT_SPARKS[i].velocityX = speed;
     JUDGMENT_SPARKS[i].velocityY = speed;
@@ -231,13 +270,9 @@ void BattleEffect_RunJudgment(struct BattleEffectParams *args) {
         Projection_Point(&JUDGMENT_SPARKS[i], &projectedPosition);
         projectedPosition.x >>= 1;
         projectedPosition.y -= 120;
-        if (projectedPosition.depth < 100) {
-          projectedPosition.depth = 100;
-        }
-        if (projectedPosition.depth > 900) {
-          projectedPosition.depth = 900;
-        }
-        z = projectedPosition.depth - 100;
+        CLAMP(projectedPosition.depth, JUDGMENT_SPARK_DEPTH_NEAR,
+              JUDGMENT_SPARK_DEPTH_FAR);
+        z = projectedPosition.depth - JUDGMENT_SPARK_DEPTH_NEAR;
         projectedPosition.depth = z;
         size = (z / 100) + 1;
         if (minimumDepth > z) {
@@ -246,7 +281,7 @@ void BattleEffect_RunJudgment(struct BattleEffectParams *args) {
         if (maximumDepth < z) {
           maximumDepth = z;
         }
-        EFFECT_DRAW_MOTE(draw[0], canvas, ramp, projectedPosition.x,
+        EFFECT_DRAW_MOTE(draw[0], canvas, motes, projectedPosition.x,
                          projectedPosition.y, size);
         if (frame == 64) {
           JUDGMENT_SPARKS[i].velocityX +=
@@ -262,9 +297,11 @@ void BattleEffect_RunJudgment(struct BattleEffectParams *args) {
       work->fadeStep = 0;
     }
 
+    // The first half of the motes gather into Judgment's shield, four more
+    // each frame from frame 80.
     anchor[2] = 0;
     anchor[1] = 0;
-    for (i = 0; i != 64; i++) {
+    for (i = 0; i != JUDGMENT_MOTES / 2; i++) {
       if (frame > i / 4 + 80 && PARTICLES[i].x > 0) {
         s32 size;
 
@@ -278,17 +315,13 @@ void BattleEffect_RunJudgment(struct BattleEffectParams *args) {
           PARTICLES[i].x = 0;
         }
         Projection_Point(anchor, &projectedPosition);
-        if (projectedPosition.depth < -60) {
-          projectedPosition.depth = -60;
-        }
-        if (projectedPosition.depth > 60) {
-          projectedPosition.depth = 60;
-        }
-        projectedPosition.depth += 60;
+        CLAMP(projectedPosition.depth, -JUDGMENT_MOTE_DEPTH,
+              JUDGMENT_MOTE_DEPTH);
+        projectedPosition.depth += JUDGMENT_MOTE_DEPTH;
         size = projectedPosition.depth / 20 + 2;
-        projectedPosition.x += 60;
-        projectedPosition.y += 80;
-        EFFECT_DRAW_MOTE(draw[0], canvas, ramp, projectedPosition.x,
+        projectedPosition.x += JUDGMENT_BURST_X;
+        projectedPosition.y += JUDGMENT_BURST_Y;
+        EFFECT_DRAW_MOTE(draw[0], canvas, motes, projectedPosition.x,
                          projectedPosition.y, size);
       }
     }
@@ -298,8 +331,12 @@ void BattleEffect_RunJudgment(struct BattleEffectParams *args) {
     place.groundHeight = 0;
     place.height = 0;
     for (i = 0; i != JUDGMENT_FORMATION_OBJECTS; i++) {
-      place.x = INTtoFIXED(i % 4 * 32) + toFIXED(76);
-      place.y = INTtoFIXED(i / 4 * 32) + depth;
+      place.x = INTtoFIXED(i % JUDGMENT_FORMATION_COLUMNS *
+                           JUDGMENT_FORMATION_SPRITE_SIZE) +
+                toFIXED(76);
+      place.y = INTtoFIXED(i / JUDGMENT_FORMATION_COLUMNS *
+                           JUDGMENT_FORMATION_SPRITE_SIZE) +
+                depth;
       Actor_ApplyProjectedPlacementFar(work->sprites[i], &place, &pair, 0);
     }
 
@@ -319,12 +356,14 @@ void BattleEffect_RunJudgment(struct BattleEffectParams *args) {
 
     if (frame == 72) {
       for (i = 0; i != JUDGMENT_FORMATION_OBJECTS; i++) {
-        Sprite_StartAnimationFar(work->sprites[i], i + 16);
+        Sprite_StartAnimationFar(work->sprites[i],
+                                 i + JUDGMENT_POSE_SHIELD_SWINGING);
       }
     }
     if (frame == 76) {
       for (i = 0; i != JUDGMENT_FORMATION_OBJECTS; i++) {
-        Sprite_StartAnimationFar(work->sprites[i], i + 32);
+        Sprite_StartAnimationFar(work->sprites[i],
+                                 i + JUDGMENT_POSE_SHIELD_FORWARD);
       }
     }
 
@@ -340,38 +379,43 @@ void BattleEffect_RunJudgment(struct BattleEffectParams *args) {
 
       EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED, EFFECT_CLIP_BOUNDS,
                           COMPOSITE_LIGHTEN);
-      EFFECT_BLITTERS[HEAP_SLOT_RAM_CODE_PAIRED](canvas, work->sheet + picture,
-                                                 60 - high, 80 - high * 2, high,
-                                                 high * 2);
+      EFFECT_BLITTERS[HEAP_SLOT_RAM_CODE_PAIRED](
+          canvas, work->sheet + picture, JUDGMENT_BURST_X - high,
+          JUDGMENT_BURST_Y - high * 2, high, high * 2);
       HeapSlot_Release(HEAP_SLOT_RAM_CODE_PAIRED);
       EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED,
                           EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X,
                           COMPOSITE_LIGHTEN);
       EFFECT_BLITTERS[HEAP_SLOT_RAM_CODE_PAIRED](
-          canvas, work->sheet + picture, 60, 80 - high * 2, high, high * 2);
+          canvas, work->sheet + picture, JUDGMENT_BURST_X,
+          JUDGMENT_BURST_Y - high * 2, high, high * 2);
       HeapSlot_Release(HEAP_SLOT_RAM_CODE_PAIRED);
       EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED,
                           EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_Y,
                           COMPOSITE_LIGHTEN);
-      EFFECT_BLITTERS[HEAP_SLOT_RAM_CODE_PAIRED](canvas, work->sheet + picture,
-                                                 60 - high, 80, high, high * 2);
+      EFFECT_BLITTERS[HEAP_SLOT_RAM_CODE_PAIRED](
+          canvas, work->sheet + picture, JUDGMENT_BURST_X - high,
+          JUDGMENT_BURST_Y, high, high * 2);
       HeapSlot_Release(HEAP_SLOT_RAM_CODE_PAIRED);
       EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED,
                           EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X |
                               COMPOSITE_FLIP_Y,
                           COMPOSITE_LIGHTEN);
-      EFFECT_BLITTERS[HEAP_SLOT_RAM_CODE_PAIRED](canvas, work->sheet + picture,
-                                                 60, 80, high, high * 2);
+      EFFECT_BLITTERS[HEAP_SLOT_RAM_CODE_PAIRED](
+          canvas, work->sheet + picture, JUDGMENT_BURST_X, JUDGMENT_BURST_Y,
+          high, high * 2);
       HeapSlot_Release(HEAP_SLOT_RAM_CODE_PAIRED);
 
       for (i = 0; i != 6; i++) {
         s32 k = i & 3;
         s32 angle = Random16() & TRIG_ANGLE_MASK;
-        s32 x = FIXEDtoINT(Trig_Sin(angle) * 16) - gJudgment_ShardWidths[k] / 2;
-        s32 y =
-            FIXEDtoINT(Trig_Cos(angle) * 16) - gJudgment_ShardHeights[k] / 2;
-        draw[0](canvas, work->sheet + gJudgment_ShardPictures[k], x + 60,
-                y + 80, gJudgment_ShardWidths[k], gJudgment_ShardHeights[k]);
+        s32 x = FIXEDtoINT(Trig_Sin(angle) * JUDGMENT_SHARD_RADIUS) -
+                gJudgment_ShardWidths[k] / 2;
+        s32 y = FIXEDtoINT(Trig_Cos(angle) * JUDGMENT_SHARD_RADIUS) -
+                gJudgment_ShardHeights[k] / 2;
+        draw[0](canvas, work->sheet + gJudgment_ShardPictures[k],
+                x + JUDGMENT_BURST_X, y + JUDGMENT_BURST_Y,
+                gJudgment_ShardWidths[k], gJudgment_ShardHeights[k]);
       }
     }
 
@@ -381,15 +425,15 @@ void BattleEffect_RunJudgment(struct BattleEffectParams *args) {
       s32 r;
       EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED, EFFECT_CLIP_BOUNDS,
                           COMPOSITE_ADDITIVE);
-      blitters[HEAP_SLOT_RAM_CODE_PAIRED](canvas, work->sheet, 36, top,
-                                          JUDGMENT_BEAM_WIDTH,
-                                          JUDGMENT_BEAM_HEIGHT);
+      blitters[HEAP_SLOT_RAM_CODE_PAIRED](
+          canvas, work->sheet, JUDGMENT_BURST_X - JUDGMENT_BEAM_WIDTH, top,
+          JUDGMENT_BEAM_WIDTH, JUDGMENT_BEAM_HEIGHT);
       HeapSlot_Release(HEAP_SLOT_RAM_CODE_PAIRED);
       EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED,
                           EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X,
                           COMPOSITE_ADDITIVE);
-      blitters[HEAP_SLOT_RAM_CODE_PAIRED](canvas, work->sheet, 60, top,
-                                          JUDGMENT_BEAM_WIDTH,
+      blitters[HEAP_SLOT_RAM_CODE_PAIRED](canvas, work->sheet, JUDGMENT_BURST_X,
+                                          top, JUDGMENT_BEAM_WIDTH,
                                           JUDGMENT_BEAM_HEIGHT);
       HeapSlot_Release(HEAP_SLOT_RAM_CODE_PAIRED);
 
@@ -405,9 +449,11 @@ void BattleEffect_RunJudgment(struct BattleEffectParams *args) {
         blit = blitters[HEAP_SLOT_RAM_CODE_PAIRED];
         for (i = 0; i != JUDGMENT_RING_MOTES; i++) {
           s32 angle = i * (TRIG_TURN / JUDGMENT_RING_MOTES);
+          // The ring lies flat, half as tall as it is wide.
           s32 x = FIXEDtoINT(r * Trig_Sin(angle)) - high / 2;
-          s32 y = (r * Trig_Cos(angle)) >> 17;
-          blit(canvas, work->sheet + picture, x + 60, y + 72, high, high * 2);
+          s32 y = FIXEDtoINT(r * Trig_Cos(angle)) >> 1;
+          blit(canvas, work->sheet + picture, x + JUDGMENT_BURST_X,
+               y + JUDGMENT_BURST_Y - high, high, high * 2);
         }
         HeapSlot_Release(HEAP_SLOT_RAM_CODE_PAIRED);
       }
@@ -441,10 +487,12 @@ void BattleEffect_RunJudgment(struct BattleEffectParams *args) {
                              work->sheet + JUDGMENT_SHEET_FLARE_A, 1, 1);
 
   for (i = 0; i != MOTE_SET_BYTES; i++) {
-    if (ramp[i] > 32) {
-      ramp[i] += 224;
-    } else if (ramp[i] != 0) {
-      ramp[i] = 1;
+    // The sweep's motes are dimmer: a level in the brighter half drops by
+    // half the levels, and any other but 0 becomes 1.
+    if (motes[i] > (CANVAS_LEVEL_BRIGHTEST + 1) / 2) {
+      motes[i] -= (CANVAS_LEVEL_BRIGHTEST + 1) / 2;
+    } else if (motes[i] != 0) {
+      motes[i] = 1;
     }
   }
 
@@ -454,13 +502,13 @@ void BattleEffect_RunJudgment(struct BattleEffectParams *args) {
   BattleBackground_LoadFar(BATTLE_BACKGROUND_FIXED,
                            RESOURCE_AERIAL_VIEW_BACKDROP, 0);
   REG_BG2PA = Q_8_8(1);
-  REG_BG2X = -(60 << 8);
+  REG_BG2X = -(JUDGMENT_SWEEP_CANVAS_X << 8);
   REG_BG2CNT = BGCNT_PRIORITY(0) | BGCNT_CHAR_BASE(1) | BGCNT_256_COLORS |
                BGCNT_SCREEN_BASE(7);
 
   Dma_Fill32Cell(fill, 0, canvas, CANVAS_BYTES);
 
-  cx = 60;
+  cx = JUDGMENT_FLARE_X;
   cy = 44;
   squash = 6;
   shift = 0;
@@ -522,7 +570,7 @@ void BattleEffect_RunJudgment(struct BattleEffectParams *args) {
     if (frame == 66) {
       // Invert the battle background's colours, background palettes 6 to 13.
       u16 *pal = (u16 *)&BG_PLTT_COLOR(6, 0);
-      for (i = 0; i != 128; i++, pal++) {
+      for (i = 0; i != BATTLE_BACKGROUND_COLORS; i++, pal++) {
         *pal ^= RGB_WHITE;
       }
     }
@@ -591,7 +639,7 @@ void BattleEffect_RunJudgment(struct BattleEffectParams *args) {
     // The canvas's colours brighten to white.
     if (frame >= JUDGMENT_SWEEP_RETURN) {
       volatile u16 *pal = &BG_PLTT_COLOR(0, 1);
-      for (i = 0; i != 63; i++, pal++) {
+      for (i = 0; i != SHEET_PALETTE_COLORS - 1; i++, pal++) {
         s32 c = *pal;
         s32 b = RGB_BLUE((u16)c);
         s32 g = RGB_GREEN((u16)c);
@@ -629,31 +677,32 @@ void BattleEffect_RunJudgment(struct BattleEffectParams *args) {
       }
       EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED, EFFECT_CLIP_BOUNDS,
                           COMPOSITE_LIGHTEN);
-      EFFECT_BLITTERS[HEAP_SLOT_RAM_CODE_PAIRED](canvas, sheet, 36, top - 24,
-                                                 JUDGMENT_FLARE_WIDTH,
-                                                 JUDGMENT_FLARE_HEIGHT);
+      EFFECT_BLITTERS[HEAP_SLOT_RAM_CODE_PAIRED](
+          canvas, sheet, JUDGMENT_FLARE_X - JUDGMENT_FLARE_WIDTH,
+          top - JUDGMENT_FLARE_HEIGHT, JUDGMENT_FLARE_WIDTH,
+          JUDGMENT_FLARE_HEIGHT);
       HeapSlot_Release(HEAP_SLOT_RAM_CODE_PAIRED);
       EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED,
                           EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X,
                           COMPOSITE_LIGHTEN);
-      EFFECT_BLITTERS[HEAP_SLOT_RAM_CODE_PAIRED](canvas, sheet, 59, top - 24,
-                                                 JUDGMENT_FLARE_WIDTH,
-                                                 JUDGMENT_FLARE_HEIGHT);
+      EFFECT_BLITTERS[HEAP_SLOT_RAM_CODE_PAIRED](
+          canvas, sheet, JUDGMENT_FLARE_X - 1, top - JUDGMENT_FLARE_HEIGHT,
+          JUDGMENT_FLARE_WIDTH, JUDGMENT_FLARE_HEIGHT);
       HeapSlot_Release(HEAP_SLOT_RAM_CODE_PAIRED);
       EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED,
                           EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_Y,
                           COMPOSITE_LIGHTEN);
-      EFFECT_BLITTERS[HEAP_SLOT_RAM_CODE_PAIRED](canvas, sheet, 36, top - 1,
-                                                 JUDGMENT_FLARE_WIDTH,
-                                                 JUDGMENT_FLARE_HEIGHT);
+      EFFECT_BLITTERS[HEAP_SLOT_RAM_CODE_PAIRED](
+          canvas, sheet, JUDGMENT_FLARE_X - JUDGMENT_FLARE_WIDTH, top - 1,
+          JUDGMENT_FLARE_WIDTH, JUDGMENT_FLARE_HEIGHT);
       HeapSlot_Release(HEAP_SLOT_RAM_CODE_PAIRED);
       EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED,
                           EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X |
                               COMPOSITE_FLIP_Y,
                           COMPOSITE_LIGHTEN);
-      EFFECT_BLITTERS[HEAP_SLOT_RAM_CODE_PAIRED](canvas, sheet, 59, top - 1,
-                                                 JUDGMENT_FLARE_WIDTH,
-                                                 JUDGMENT_FLARE_HEIGHT);
+      EFFECT_BLITTERS[HEAP_SLOT_RAM_CODE_PAIRED](
+          canvas, sheet, JUDGMENT_FLARE_X - 1, top - 1, JUDGMENT_FLARE_WIDTH,
+          JUDGMENT_FLARE_HEIGHT);
       HeapSlot_Release(HEAP_SLOT_RAM_CODE_PAIRED);
     }
 
@@ -702,8 +751,8 @@ void BattleEffect_RunJudgment(struct BattleEffectParams *args) {
       for (i = 0; i != JUDGMENT_FLASH_RING_MOTES; i++) {
         s32 angle = i * (TRIG_TURN / JUDGMENT_FLASH_RING_MOTES);
         s32 x = FIXEDtoINT(Trig_Sin(angle) * radius) - (size >> 1);
-        s32 y = (Trig_Cos(angle) * radius) >> 17;
-        draw[0](canvas, ramp + gBattleEffect_MotePictures[size - 1], x + 60,
+        s32 y = FIXEDtoINT(Trig_Cos(angle) * radius) >> 1;
+        draw[0](canvas, motes + gBattleEffect_MotePictures[size - 1], x + 60,
                 y + 50, size, size * 2);
       }
     }
@@ -815,7 +864,8 @@ void BattleEffect_RunJudgment(struct BattleEffectParams *args) {
       shift -= 8;
     }
 
-    // Never true: the sweep ends before JUDGMENT_SWEEP_FRAMES.
+    // DEAD: never true, as the sweep's last frame is JUDGMENT_SWEEP_FRAMES - 1;
+    // the ROM keeps the test and the tint.
     if (frame >= JUDGMENT_SWEEP_FRAMES) {
       EFFECT_FOR_EACH_TARGET(i, work->args) {
         BattleEffect_TintBattler(work->args->targets[i], SPRITE_COLOR_BLACK,
@@ -932,3 +982,20 @@ void BattleEffect_RunJudgment(struct BattleEffectParams *args) {
 #undef JUDGMENT_SHEET_FLASH_GLOW
 #undef JUDGMENT_EXPLOSION_PICTURE_BYTES
 #undef JUDGMENT_WAVE_SIZE
+#undef DIMMED_MOTE_SETS
+#undef DIMMED_MOTE_CAP
+#undef BATTLE_BACKGROUND_COLORS
+#undef JUDGMENT_FORMATION_COLUMNS
+#undef JUDGMENT_FORMATION_SPRITE_SIZE
+#undef JUDGMENT_POSE_SHIELD_SWINGING
+#undef JUDGMENT_POSE_SHIELD_FORWARD
+#undef JUDGMENT_BURST_X
+#undef JUDGMENT_BURST_Y
+#undef JUDGMENT_SHARD_RADIUS
+#undef JUDGMENT_MOTE_DEPTH
+#undef JUDGMENT_SPARK_DEPTH_NEAR
+#undef JUDGMENT_SPARK_DEPTH_FAR
+#undef JUDGMENT_SPARK_DEPTH_NONE
+#undef JUDGMENT_RING_LEVEL
+#undef JUDGMENT_SWEEP_CANVAS_X
+#undef JUDGMENT_FLARE_X

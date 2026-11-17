@@ -574,8 +574,8 @@ void Battle_ProcessTurnEnd(void) {
             case ENEMY_SERPENT_TWO_BEAMS:
             case ENEMY_SERPENT_THREE_BEAMS:
             case ENEMY_SERPENT_FOUR_BEAMS:
-            case ENEMY_UNUSED_SERPENT_A:
-            case ENEMY_UNUSED_SERPENT_B:
+            case ENEMY_SERPENT_6:
+            case ENEMY_SERPENT_7:
             case ENEMY_DULLAHAN:
               hpAmount *= SERPENT_REGEN_MULTIPLE;
               break;

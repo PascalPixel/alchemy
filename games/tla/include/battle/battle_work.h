@@ -72,7 +72,12 @@ STATIC_ASSERT(sizeof(struct BattleMessageOffset) == 8);
 STATIC_ASSERT(sizeof(struct BattleMessageWork) == 12);
 
 /// BattleWork.opponentSlots of a party unit with no slot as a link opponent.
-#define OPPONENT_SLOT_NONE 0xff
+#define OPPONENT_SLOT_NONE 255
+
+/// The frames a link battle tolerates without a connection before it gives
+/// up: a count above it pauses the battle (BattleWork.linkPaused) or fails
+/// the sync or transfer under way.
+#define LINK_MAX_MISSED_FRAMES 24
 
 /// The battle's own work: its enemies, units and their objects, the turn's
 /// actions, the background palette and the events.

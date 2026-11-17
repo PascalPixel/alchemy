@@ -1,5 +1,5 @@
-#ifndef FIELD_H
-#define FIELD_H
+#ifndef ALCHEMY_FIELD_H
+#define ALCHEMY_FIELD_H
 
 /// @file
 /// The field's routines and tables other banks call, and the field Psynergy's
@@ -152,6 +152,8 @@ enum ActorCreateKind {
 /// The sprite id in Actor_Create's id, below its enum ActorCreateKind (id /
 /// 4096).
 #define ACTOR_CREATE_SPRITE_MASK 0xfff
+/// An Actor_Create id of enum ActorCreateKind `kind`, above its sprite.
+#define ACTOR_CREATE_KIND(kind) ((kind) << 12)
 
 /// The world map's still picture (story.s): its tiles, packed (tagged LZ).
 extern u8 gWorldMapPackedTiles[];
@@ -191,6 +193,9 @@ struct OamWords {
 #define OBJ_POSITION(x, y) (OBJ_X((x) & 0x1ff) | ((y) & 0xff))
 /// An affine sprite's matrix, of the 32, in its attr01 word.
 #define OBJ_AFFINE_MATRIX(n) ((n) << 25)
+/// An affine parameter in an OamWords entry's attr2 word, its high half: the
+/// entries 4n to 4n + 3 hold affine matrix n's four.
+#define OBJ_AFFINE_PARAMETER(value) ((value) << 16)
 
 // The casino's four-dice game, built
 // like LuckyDice_Run (four dice in a round dome, Slots_DomePicture): A throws
@@ -293,8 +298,8 @@ struct ReelSave {
   s8 wonPrizes[16];
 };
 
-/// One 32-pixel cell of the World Map, as The Broken Seal's: its tile and its
-/// encounter region; Ram_MapBlocks holds 32 by 32 of them.
+/// One 32-pixel cell of the World Map: its tile and its encounter region;
+/// Ram_MapBlocks holds 32 by 32 of them.
 struct WorldMapCell {
   u32 tile : 24; ///< low halfword: the cell picture
   /// Passed to WorldMap_UpdateRegionTint; region / 10 picks the graphics set.
@@ -302,9 +307,8 @@ struct WorldMapCell {
   u32 unusedHigh : 2; ///< no code names them
 };
 
-/// A map cell's terrain kind, as The Broken Seal's enum TerrainKind: the low
-/// four bits of its shape's first byte, which pick its height function. This
-/// game has no bends along an axis; its sample tables take their kinds.
+/// A map cell's terrain kind: the low four bits of its shape's first byte,
+/// which pick its height function.
 enum TerrainKind {
   TERRAIN_FLAT = 0,
   TERRAIN_SLOPE_X = 1,
@@ -330,7 +334,19 @@ enum TerrainKind {
   /// Above y 8, the first sample; below, the second left of x 8 and the third
   /// right of it.
   TERRAIN_SPLIT_BOTTOM_STEP = 15,
-  TERRAIN_KIND_COUNT = 16
+  TERRAIN_KIND_COUNT = 16,
+  /// Not a shape's kind: what MapGrid_GetCellAttributeLowNibbleOrBump gives
+  /// for a TERRAIN_ROUNDED_SQUARE whose two samples differ, a bump or a hollow.
+  TERRAIN_BUMP = 99
+};
+
+/// What MapGrid_CheckCollision says of a step to a position, as The Broken
+/// Seal's.
+enum Collision {
+  COLLISION_TOO_LOW = -1,  ///< the ground there is more than 12 pixels lower
+  COLLISION_NONE = 0,      ///< the actor can step there
+  COLLISION_TOO_HIGH = 1,  ///< the ground there is more than 8 pixels higher
+  COLLISION_IMPASSABLE = 2 ///< the cell there is a wall (CELL_BEHAVIOR_WALL)
 };
 
 /// One node of a tightrope (Tightrope_Initialize's work): a point on the rope,
@@ -443,9 +459,8 @@ struct EffectOwner {
   struct Sprite *sprite;
 };
 
-/// The line scroll's work, as The Broken Seal's: two pages of BG1 to BG3
-/// scroll offsets for each of the 160 scanlines, and the sine wave that bends
-/// them on each axis.
+/// The line scroll's work: two pages of BG1 to BG3 scroll offsets for each of
+/// the 160 scanlines, and the sine wave that bends them on each axis.
 struct LineScrollWork {
   struct BgScroll rows[2][160][3]; ///< per page and scanline: BG3, BG2, BG1
   u8 page;      ///< the page the HBlank DMA shows; the other is built
@@ -586,6 +601,9 @@ void BattleBackground_SelectForMap(void);
 s32 ScenePoint_GetPosition(s32 id, FIXED *position);
 void ObjectTable_Clear(void);
 
+/// Party_AddPp's amount that fills every member's PP: "Everyone's PP was
+/// replenished!"
+#define PARTY_PP_REPLENISH 999
 void Party_AddPp(s32 amount, s32 unused);
 void Party_AddHp(s32 amount, s32 scaled);
 s32 Party_ApplyPoisonDamage(void);
@@ -599,9 +617,6 @@ void BattleMap_ApplySceneEntranceView(void);
 void PaletteEditor_Run(void);
 
 struct TriggerView *Scene_FindTrigger(s32 kind, s32 target);
-/// Scene_TalkToActor's mark on an actor id: a container is opened without the
-/// message that the leader checked it.
-#define TALK_WITHOUT_CHECK_MESSAGE 0x1000
 s32 Scene_TalkToActor(s32 id);
 s32 Scene_RunRaisedTrigger(s32 id);
 s32 Scene_RunStepTriggerOrExit(s32 value);
@@ -642,7 +657,7 @@ extern const u16 gLuckyWheels_SparkCellOffsets[];
 s32 BattleEffect_BuildBlitterFar(s32 slot, s32 widthShift, s32 heightShift,
                                  s32 flags, u32 mode);
 
-/// The tileset animations' tiles, 16 KB of EWRAM, as The Broken Seal's.
+/// The tileset animations' tiles, 16 KB of EWRAM.
 extern u8 gMapGridAnimTiles[];
 
 s32 WorldMap_WriteLayerCellTile(s32 layer, s32 x, s32 y, s32 tile, s32 update);

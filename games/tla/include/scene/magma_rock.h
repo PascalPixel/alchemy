@@ -66,26 +66,26 @@ void MagmaRock_RestoreCrumblingPillars(const u16 *table);
 void MagmaRock_PlaceTightrope();
 s32 Field_TryJumpForward(void);
 
-void Rubble_Scatter(s32 spread);
+void Dust_Scatter(s32 spread);
 void MagmaRock_SetLeaderCellShape(s32 heightOffset, s32 layer);
-extern u32 gRubble_ScatterScript[];
+extern u32 gDust_ScatterScript[];
 
 extern u32 gMagmaRock_DustScript[];
 
 void MagmaRock_FireStatue(void);
 
 void MagmaRock_IgniteStatue(void);
-void MagmaRock_ClearSlideFlag(void);
+void MagmaRock_ReopenCaveDoor(void);
 
-void MagmaRock_SlideDown(void);
+void MagmaRock_EnterCave(void);
 
 void MagmaRock_ResolveBeforeBurst(void);
 void MagmaRock_CheckCrumblingPillars(void);
 
-void MagmaRock_SetLedgeBehavior(void);
+void MagmaRock_ReadyLowerStatue(void);
 
-void MagmaRock_ClearLedgeBehavior(void);
-void MagmaRock_AmplifyBurst(void);
+void MagmaRock_UnreadyLowerStatue(void);
+void MagmaRock_KnockLeaderOffWall(void);
 void MagmaRock_PushPillarEast(void);
 void MagmaRock_PushPillarWest(void);
 

@@ -527,7 +527,7 @@ void Icon_PrepareActor(struct WindowSprite *object) {
 
 /// Loads the graphics of party member unit into menu entry slot 0. The calling
 /// menu argument is not used.
-void PsynergyMenu_CallIconRoutineWithValue(s32 menu, s32 unit) {
+void Menu_ReloadMemberPortrait(s32 menu, s32 unit) {
   Portrait_ReloadFar(0, unit, 0);
 }
 

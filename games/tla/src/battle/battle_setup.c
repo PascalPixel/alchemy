@@ -163,7 +163,7 @@ void BattleTransition_ClearBg0Vofs(void) {
 }
 
 /// Does nothing; Battle_Run calls it with 1 as the battle is set up.
-void Party_ReservedNoOp5B14(s32 value) {}
+void Party_BattleSetupNoOp(s32 value) {}
 
 /// Clears the party's battle-only states, and works their stats out again, as a
 /// battle ends.

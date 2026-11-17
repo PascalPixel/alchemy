@@ -1,8 +1,8 @@
-#ifndef GAME_H
-#define GAME_H
+#ifndef ALCHEMY_GAME_H
+#define ALCHEMY_GAME_H
 
 /// @file
-/// GAME
+/// The item and summon tables and the game bank's routines.
 
 #include "types.h"
 #include "edition.h"
@@ -21,7 +21,6 @@ struct SummonDefinition;
 /// A field Psynergy, as the field kind: an ability's fieldPsynergy, named for
 /// the abilities that have it (the English release's names in
 /// gAbilityDefinitions). The field effect keeps it as its animation.
-/// The Broken Seal has 1 to 16; The Lost Age adds 17 to 30.
 enum FieldPsynergy {
   FIELD_PSYNERGY_MOVE = 1,
   FIELD_PSYNERGY_MIND_READ = 2,
@@ -104,12 +103,12 @@ void Party_ClearUnusableShortcutsFar(void);
 s32 Inventory_AddItemFar(s32, s32);
 /// Takes one item out of slot, closing up the inventory when it was the last.
 s32 Inventory_RemoveFar(s32 owner, s32 slot);
-void Unit_CalculateBaseElements(s32 owner_id,
-                                struct BattleElementStats *elements);
+void Unit_CalculateBaseElements(s32 unitId,
+                                struct BattleElementStats *destination);
 s32 Class_Determine(s32 classId, u32 *djinn, s32 item);
 s32 Unit_GetElementLevels(s32 record, const u8 *source, s32 *output);
 void Unit_RefreshPsynergy(s32);
-s32 Owner_UpdateClassActions(s32 owner_id);
+s32 Owner_UpdateClassActions(s32 owner);
 /// Expands message into buffer without an upper length bound.
 void Message_DecodeRawUnboundedFar(s32, u16 *);
 
@@ -158,8 +157,8 @@ extern const u8 gSummon_OrderList[SUMMON_COUNT];
 extern const u32 gCharacter_LevelExpTable[];
 
 extern const s16 gElement_PowerResistCurve[5][2];
-/// The power and resistance by element level (element_table.c): a table
-/// nothing writes, defined writable in .rodata as The Broken Seal's is.
+/// The power and resistance by element level (element_table.c); nothing writes
+/// it.
 extern struct ElementLevelBonus gElement_PowerResistByLevel[16];
 extern const struct EnemyElementPreset gEnemy_ElementPresetTable[];
 extern const struct CharacterDefinition gCharacter_DefinitionTable[];
@@ -185,7 +184,7 @@ extern const s32 gClass_SeriesByElements[4][4];
 s32 Unit_KnowsPsynergy(s32 owner, s32 value);
 struct LevelUpResult *Unit_TryLevelUp(s32 unitId, struct LevelUpResult *gains);
 void MainRoutineWork_InitializeDefaults(void);
-extern const u8 Data_080b1f2c[4][5];
+extern const u8 gNewGame_SceneStateTable[4][5];
 void Party_InitializeCharacters(void);
 s32 Party_AddMember(s32 owner);
 s32 Unit_LearnPsynergy(s32 owner, s32 ability);
@@ -198,7 +197,7 @@ void Party_BalanceDjinn(void);
 /// Adds delta to unit `owner`'s PP, clamped to 0 and its maximum, and returns
 /// the new PP.
 s16 Unit_AddPp(s32 owner, s32 delta);
-s32 PartyInventory_Remove(s32 item_id);
+s32 PartyInventory_Remove(s32 itemId);
 s32 PartyInventory_CountItem(s32 itemId);
 s32 PartyInventory_CountFreeSlots(void);
 u32 Party_GetAverageLevel(void);
@@ -209,5 +208,9 @@ void Party_SetLeaderJenna(void);
 void Party_SetLeaderFelix(void);
 
 extern u8 gInventorySnapshot[];
+/// Where gInventorySnapshot's spare space begins, past the party's equipment
+/// InventorySnapshot_Save keeps and the Trial Road's state: the scenes keep
+/// their own work there (scene/ride.h's RIDE_WORK).
+#define INVENTORY_SNAPSHOT_SPARE 392
 
 #endif

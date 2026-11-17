@@ -11,8 +11,16 @@ enum {
   UI_SPRITE_VIEWER_SPRITE_LIMIT = 512,    ///< sprite ids 0 to 511 are offered
   UI_SPRITE_VIEWER_ANIMATION_LIMIT = 100, ///< animations 0 to 99
   /// A sprite animation priority above 3, which Sprite_ComposePicture skips.
-  UI_SPRITE_VIEWER_HIDDEN_PRIORITY = 8
+  UI_SPRITE_VIEWER_HIDDEN_PRIORITY = 8,
+  /// The sprites with an image L and R step over while Start is held.
+  UI_SPRITE_VIEWER_FAST_STEP = 10
 };
+
+/// A sprite id with the sprite picture cache its pictures load into, as a
+/// SpritePictureCache's tag holds them.
+#define SPRITE_PICTURE_TAG(slot, id) ((id) + ((slot) << 12))
+/// An angle's bits: shifted up and back down, a value keeps only them.
+#define ANGLE_BITS 16
 
 /// What left and right choose for L and R to change on the selected sprite
 /// animation.
@@ -60,7 +68,7 @@ void SpriteViewer_Run(void) {
   volatile u32 *repeatedKeys;
   u32 i;
 
-  // The ring's centre, in pixels.
+  // The ring's center, in pixels.
   x = 144;
   y = 96;
   editMode = UI_SPRITE_VIEWER_EDIT_SPRITE;
@@ -87,7 +95,7 @@ void SpriteViewer_Run(void) {
   gDebugMode = 2;
   // Only BG0 and the sprites are shown.
   REG_BLDCNT = BLDCNT_TGT1_BG1 | BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_ALL;
-  // A green backdrop (BGR555 green 15).
+  // A green backdrop.
   PLTT_BACKDROP = RGB(0, 15, 0);
   REG_DISPCNT = DISPCNT_OBJ_1D_MAP | DISPCNT_BG0_ON | DISPCNT_OBJ_ON;
   ScreenFade_FromBlack(1);
@@ -120,9 +128,9 @@ restart:
     if (spriteMetadata->drawKind == ANIM_FACING_TWO_PART && (i & 1) != 0) {
       spriteWork.resourceOffset = 1;
     }
-    spriteWork.sprite =
-        Sprite_Create(layers[0].spriteId + spriteWork.resourceOffset +
-                      (spriteWork.resourceOffset << 12));
+    spriteWork.sprite = Sprite_Create(
+        SPRITE_PICTURE_TAG(spriteWork.resourceOffset,
+                           layers[0].spriteId + spriteWork.resourceOffset));
     // Sprite animations 1 to 3 are added to every copy whether shown or not; a
     // hidden sprite animation is kept out of the drawing by its priority below.
     Sprite_AddAnimation(spriteWork.sprite, layers[1].spriteId);
@@ -240,7 +248,7 @@ next:
       changed = 0;
       spriteSteps = 1;
       if ((*heldKeys & KEY_START) != 0) {
-        spriteSteps = 10;
+        spriteSteps = UI_SPRITE_VIEWER_FAST_STEP;
       }
       if ((*repeatedKeys & KEY_L) != 0) {
         for (i = 0; i < spriteSteps; i++) {
@@ -425,9 +433,9 @@ void SpriteViewer_BuildProbeRing(s32 centerX, s32 centerY,
   switch ((u32)facingKind) {
   case ANIM_FACING_THREE_PICTURES:
     for (facingIndex = 0; facingIndex < 6; facingIndex++) {
-      angle = (u32)angle << 16;
+      angle = (u32)angle << ANGLE_BITS;
       positions->x = toFIXED(centerX);
-      angle = (u32)angle >> 16;
+      angle = (u32)angle >> ANGLE_BITS;
       positions->height = 0;
       positions->y = toFIXED(centerY);
       Vector_AddPolarOffset(toFIXED(56), (u16)angle,
@@ -443,9 +451,9 @@ void SpriteViewer_BuildProbeRing(s32 centerX, s32 centerY,
   case ANIM_FACING_EIGHT_NO_TABLE:
   case ANIM_FACING_EIGHT_PICTURES_MIRRORED:
     for (facingIndex = 0; facingIndex < 8; facingIndex++) {
-      angle = (u32)angle << 16;
+      angle = (u32)angle << ANGLE_BITS;
       positions->x = toFIXED(centerX);
-      angle = (u32)angle >> 16;
+      angle = (u32)angle >> ANGLE_BITS;
       positions->height = 0;
       positions->y = toFIXED(centerY);
       Vector_AddPolarOffset(toFIXED(56), (u16)angle,
@@ -460,9 +468,9 @@ void SpriteViewer_BuildProbeRing(s32 centerX, s32 centerY,
   case ANIM_FACING_SIX_PICTURES:
     for (facingIndex = 0; facingIndex < UI_SPRITE_VIEWER_COPY_COUNT;
          facingIndex++) {
-      angle = (u32)angle << 16;
+      angle = (u32)angle << ANGLE_BITS;
       positions->x = toFIXED(centerX);
-      angle = (u32)angle >> 16;
+      angle = (u32)angle >> ANGLE_BITS;
       positions->height = 0;
       positions->y = toFIXED(centerY);
       Vector_AddPolarOffset(toFIXED(56), (u16)angle,
@@ -482,8 +490,8 @@ void SpriteViewer_BuildProbeRing(s32 centerX, s32 centerY,
       pairedPositions[facingIndex * 2].x = toFIXED(centerX);
       pairedPositions[facingIndex * 2].height = 0;
       pairedPositions[facingIndex * 2].y = toFIXED(centerY);
-      angle = (u32)angle << 16;
-      angle = (u32)angle >> 16;
+      angle = (u32)angle << ANGLE_BITS;
+      angle = (u32)angle >> ANGLE_BITS;
       Vector_AddPolarOffset(toFIXED(40), angle,
                             SpritePlacement_Values(&positions[0]));
       pairedPositions[facingIndex * 2 + 1].x = toFIXED(centerX);
@@ -493,18 +501,20 @@ void SpriteViewer_BuildProbeRing(s32 centerX, s32 centerY,
         pairedPositions[facingIndex * 2 + 1].y = toFIXED(centerY);
         Vector_AddPolarOffset(toFIXED(40), (u16)angle, point);
       }
-      angle = ((u32)angle + DEGtoANG(180)) << 16;
+      angle = ((u32)angle + DEGtoANG(180)) << ANGLE_BITS;
       facingIndex++;
       positions += 2;
-      angle >>= 16;
+      angle >>= ANGLE_BITS;
     }
     break;
   // Any other kind: four places, starting an eighth of a turn round.
   default:
-    angle = (s32)(((u32)angle << 16) + 0x20000000) >> 16;
+    angle =
+        (s32)(((u32)angle << ANGLE_BITS) + ((u32)DEGtoANG(45) << ANGLE_BITS)) >>
+        ANGLE_BITS;
     for (facingIndex = 0; facingIndex < 4; facingIndex++) {
-      angle = (u32)angle << 16;
-      angle = (u32)angle >> 16;
+      angle = (u32)angle << ANGLE_BITS;
+      angle = (u32)angle >> ANGLE_BITS;
       positions->x = toFIXED(centerX);
       positions->height = 0;
       positions->y = toFIXED(centerY);
@@ -630,7 +640,7 @@ void SpriteViewer_PlaceRing(void) {
   case ANIM_FACING_SIX_PICTURES:
     angle = 0;
     step = DEGtoANG(36);
-    count = 10;
+    count = UI_SPRITE_VIEWER_COPY_COUNT;
     break;
   // The two parts at each place face the same way; the second place faces
   // half a turn from the first.
@@ -660,3 +670,5 @@ void SpriteViewer_PlaceRing(void) {
 }
 
 #undef UI_DEFINE_SET_GRID_COLUMN
+#undef SPRITE_PICTURE_TAG
+#undef ANGLE_BITS

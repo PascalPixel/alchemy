@@ -60,7 +60,7 @@ void Leader_StepAwayFromNearbyActor(void) {
   s32 i;
 
   leader = Actor_Lookup(Party_GetLeaderActor());
-  for (i = 0; i <= FIELD_SCOOP_ACTOR - FIELD_TREASURE_ACTOR; i++) {
+  for (i = 0; i <= SCOOPED_ITEM_ACTOR - FIELD_TREASURE_ACTOR; i++) {
     other = Actor_Lookup(i + FIELD_TREASURE_ACTOR);
     dx = leader->x.fixed - other->x.fixed;
     dz = leader->z.fixed - other->z.fixed;
@@ -377,7 +377,7 @@ void FieldEffect_SpawnRevealMarkers(void) {
       if ((u16)(type - CONTAINER_CHEST) <= CONTAINER_MIMIC - CONTAINER_CHEST)
         continue;
       if (type == CONTAINER_PSYNERGY_STONE || type == CONTAINER_STONE_TABLET ||
-          type == CONTAINER_POND || type == CONTAINER_BURIED)
+          type == CONTAINER_POND || type == CONTAINER_GROUND)
         continue;
       x = actor->x.fixed;
       y = actor->y.fixed;

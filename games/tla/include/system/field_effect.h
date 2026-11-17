@@ -1,6 +1,10 @@
 #ifndef ALCHEMY_FIELD_EFFECT_H
 #define ALCHEMY_FIELD_EFFECT_H
 
+/// @file
+/// Field effects, the small objects on the field that move, grow and spin by
+/// their scripts, and the flags of a scene's effect spawner.
+
 #include "edition.h"
 #include "field/field_event.h"
 #include "fixed_math.h"
@@ -88,11 +92,6 @@ union FieldObject {
   struct FieldEffect effect;
 };
 
-#define SCRIPT_WAIT(frames) 0, (frames)
-#define SCRIPT_SET_POSITION(x, y, z) 2, (x), (y), (z)
-#define SCRIPT_REPEAT(count, label) 12, (count), (label)
-#define SCRIPT_DELETE 27
-
 /// The flags of a scene's effect spawner (FieldEffect_Spawn): a script number
 /// in the low bits and which of the spawn options' fields to use.
 enum EffectSpawnFlags {
@@ -110,6 +109,14 @@ enum EffectSpawnFlags {
   EFFECT_USE_ROTATION = 0x400000,   ///< options.rotation, as the sprite's
   EFFECT_USE_SPIN = 0x800000,       ///< options.spin
   EFFECT_USE_UPDATE = 0x1000000     ///< options.update
+};
+
+/// The scripts EFFECT_SCRIPT_MASK picks from gFieldEffect_DurationScripts: each
+/// holds the effect for a while, then releases it.
+enum EffectDuration {
+  EFFECT_SCRIPT_SHORT = 0,  ///< held 24 frames
+  EFFECT_SCRIPT_MEDIUM = 1, ///< held 46 frames
+  EFFECT_SCRIPT_LONG = 2    ///< held 128 frames
 };
 
 /// The options of a spawned field effect, each used when its EFFECT_USE_ flag

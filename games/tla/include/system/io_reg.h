@@ -2,7 +2,7 @@
 #define ALCHEMY_IO_REG_H
 
 /// @file
-/// The hardware's I/O registers and their bits, as pret names them.
+/// The hardware's I/O registers and their bits.
 
 #include "types.h"
 
@@ -133,6 +133,7 @@ enum DisplayControl {
 #define BLDCNT_EFFECT_BLEND 0x0040   ///< weighted by REG_BLDALPHA
 #define BLDCNT_EFFECT_LIGHTEN 0x0080 ///< towards white by REG_BLDY
 #define BLDCNT_EFFECT_DARKEN 0x00c0  ///< towards black by REG_BLDY
+#define BLDCNT_EFFECT_MASK 0x00c0    ///< the effect's two bits
 #define BLDCNT_TGT2_BG0 0x0100       ///< second target: BG0
 #define BLDCNT_TGT2_BG1 0x0200       ///< second target: BG1
 #define BLDCNT_TGT2_BG2 0x0400       ///< second target: BG2
@@ -171,12 +172,16 @@ enum DisplayControl {
 #define BG_PLTT_SIZE 512 ///< bytes of background colours, 256 of them
 #define BG_PLTT_COLORS (BG_PLTT_SIZE / 2) ///< the background's 256 colours
 #define OBJ_PLTT_SIZE 512 ///< bytes of sprite colours, 256 of them
+#define OBJ_PLTT_COLORS (OBJ_PLTT_SIZE / 2) ///< the sprites' 256 colours
 /// Colours in palette RAM: the background's, then the sprites'.
 #define PLTT_COLORS (2 * BG_PLTT_COLORS)
 
 #define BG_PLTT ((volatile u16 *)0x05000000) ///< 16 palettes of 16 colours
 /// Colours in one 16-colour palette.
 #define PALETTE_COLORS 16
+/// Bytes in one 16-colour palette, as a 16-colour picture's resource begins
+/// with one.
+#define PALETTE_BYTES (PALETTE_COLORS * 2)
 /// Colour `color` of 16-colour background palette `palette`.
 #define BG_PLTT_COLOR(palette, color)                                          \
   (BG_PLTT[(palette) * PALETTE_COLORS + (color)])
@@ -185,24 +190,28 @@ enum DisplayControl {
 #define OBJ_PLTT_COLOR(palette, color)                                         \
   (OBJ_PLTT[(palette) * PALETTE_COLORS + (color)])
 
+/// Where a 15-bit colour keeps its green and blue levels, above red's five
+/// bits.
+#define RGB_GREEN_SHIFT 5
+#define RGB_BLUE_SHIFT 10
 /// A 15-bit colour from its red, green and blue levels (0 to 31 each), as
 /// the palette stores it: blue in the high bits.
-#define RGB(r, g, b) (((b) << 10) | ((g) << 5) | (r))
+#define RGB(r, g, b) (((b) << RGB_BLUE_SHIFT) | ((g) << RGB_GREEN_SHIFT) | (r))
 
 /// Stores an RGB colour, built in a local of its own, as the palette routines
 /// several scenes copy store each colour (scene/shared/palette_cycle_fade.h and
 /// its kin).
 #define SET_RGB(lvalue, r, g, b)                                               \
   do {                                                                         \
-    int rgb = ((b) << 10) | ((g) << 5) | (r);                                  \
+    int rgb = RGB(r, g, b);                                                    \
     (lvalue) = rgb;                                                            \
   } while (0)
 
-/// The start of the 32 KB of IWRAM, the CPU's fast internal work memory, as
-/// pret names it.
+/// The start of the 32 KB of IWRAM, the CPU's fast internal work memory.
 #define IWRAM_START 0x03000000
-/// The end of the 256 KB of EWRAM from 0x02000000, as pret names it: the limit
-/// the EWRAM heap's allocators test.
+/// The start of the 256 KB of EWRAM, the slower external work memory.
+#define EWRAM_START 0x02000000
+/// The end of EWRAM: the limit the EWRAM heap's allocators test.
 #define EWRAM_END 0x02040000
 
 /// Background tile memory's 16 KB character block `n`, 0 to 3.
@@ -211,7 +220,12 @@ enum DisplayControl {
 #define BG_SCREEN_BLOCK(n) ((u8 *)VRAM + (n) * BG_SCREEN_SIZE)
 #define TILE_SIZE_4BPP 32 ///< bytes in an 8x8 tile of 16 colours
 #define TILE_SIZE_8BPP 64 ///< bytes in an 8x8 tile of 256 colours
-/// Sprite tile memory, as pret names it: the 32 KB from 0x06010000.
+/// The tiles a sprite of `width` by `height` pixels takes in sprite tile
+/// memory, counted in its 32-byte steps, of 16 colours and of 256 (two steps a
+/// tile): a picture's sprites follow one another so.
+#define SPRITE_TILES(width, height) ((width) / 8 * ((height) / 8))
+#define SPRITE_TILES_8BPP(width, height) (2 * SPRITE_TILES(width, height))
+/// Sprite tile memory: the 32 KB from 0x06010000.
 #define OBJ_VRAM0 0x06010000
 
 /// Timer 3's reload value and control as one word; it paces the serial
@@ -219,7 +233,7 @@ enum DisplayControl {
 #define REG_TM3CNT (*(volatile u32 *)0x0400010c)
 #define REG_TM3CNT_H (*(volatile u16 *)0x0400010e) ///< timer 3's control
 
-/// TMxCNT_H flags, as pret names them.
+/// TMxCNT_H flags.
 #define TIMER_INTR_ENABLE 0x0040
 #define TIMER_ENABLE 0x0080 ///< starts the timer counting
 #define TIMER_256CLK 0x0002 ///< counts every 256 cycles, 65536 times a second
@@ -236,7 +250,7 @@ enum DisplayControl {
 #define REG_KEYCNT (*(volatile u16 *)0x04000132)   ///< keys for the keypad IRQ
 #define REG_RCNT (*(volatile u16 *)0x04000134)     ///< the serial port's mode
 
-/// SIOCNT flags, as pret names them.
+/// SIOCNT flags.
 #define SIO_115200_BPS 0x0003  ///< multiplayer's fastest baud rate
 #define SIO_START 0x0080       ///< starts a transfer; set while one runs
 #define SIO_32BIT_MODE 0x1000  ///< normal mode, 32 bits a transfer
@@ -248,7 +262,7 @@ enum DisplayControl {
 #define RCNT_SIO_MODE 0x0000
 #define RCNT_GPIO_MODE 0x8000 ///< the port as general-purpose pins
 
-/// DMAxCNT_H flags, as pret names them. A 32-bit control word takes them
+/// DMAxCNT_H flags. A 32-bit control word takes them
 /// shifted above its count: (DMA_ENABLE | DMA_32BIT) << 16 | words.
 #define DMA_DEST_INC 0x0000    ///< destination steps up
 #define DMA_DEST_DEC 0x0020    ///< destination steps down
@@ -323,7 +337,7 @@ enum KeyMask {
 #define REG_BG0VOFS (*(volatile u16 *)0x04000012) ///< BG0's vertical scroll
 /// Direct sound's mixing: volumes, speakers, timers and FIFO resets.
 #define REG_SOUNDCNT_H (*(volatile u16 *)0x04000082)
-/// SOUNDCNT_H flags, as pret names them: the mixing volumes, then each direct
+/// SOUNDCNT_H flags: the mixing volumes, then each direct
 /// sound channel's speakers, timer and FIFO reset.
 #define SOUND_CGB_MIX_FULL 0x0002 ///< the four tone channels at full volume
 #define SOUND_A_MIX_FULL 0x0004   ///< direct sound A at full, not half
@@ -376,7 +390,7 @@ enum KeyMask {
 /// WAITCNT_SRAM_8: the wait the flash routines read the chip with;
 /// programming and erasing use the chip's wait[0], then restore it.
 #define WAITCNT_SRAM_SLOWEST 0x0003
-/// WAITCNT's SRAM wait bits, as pret names them.
+/// WAITCNT's SRAM wait bits.
 #define WAITCNT_SRAM_MASK 0x0003
 #define REG_IME (*(volatile u16 *)0x04000208) ///< all interrupts' master switch
 
@@ -404,18 +418,22 @@ enum KeyMask {
 #define DISPLAY_TILE_HEIGHT (DISPLAY_HEIGHT / 8)
 /// A 15-bit colour's red, green and blue levels, 0 to 31 each.
 #define RGB_RED(color) ((color) & 0x1f)
-#define RGB_GREEN(color) (((color) >> 5) & 0x1f)
-#define RGB_BLUE(color) (((color) >> 10) & 0x1f)
+#define RGB_GREEN(color) (((color) >> RGB_GREEN_SHIFT) & 0x1f)
+#define RGB_BLUE(color) (((color) >> RGB_BLUE_SHIFT) & 0x1f)
 /// A colour channel's brightest level.
 #define RGB_LEVEL_MAX 31
 /// The brightest colour, every channel at its highest level.
 #define RGB_WHITE RGB(RGB_LEVEL_MAX, RGB_LEVEL_MAX, RGB_LEVEL_MAX)
-/// Video RAM, as pret names it: background tiles and maps, then sprite tiles.
+/// Video RAM: background tiles and maps, then sprite tiles.
 #define VRAM 0x06000000
 #define BG_CHAR_SIZE 16384  ///< bytes in a character block, 16 KB
 #define BG_SCREEN_SIZE 2048 ///< bytes in a screen block, 2 KB
 /// Tiles in a row of a screen block, whose map is 32 tiles square.
 #define BG_SCREEN_WIDTH 32
+/// Two screen entries in a word, tiles n and n + 1 side by side, for numbering
+/// a map's tiles two at a time; adding TILE_PAIR_STEP moves both on by two.
+#define TILE_PAIR(n) ((u32)((n) + 1) << 16 | (n))
+#define TILE_PAIR_STEP ((u32)2 << 16 | 2)
 /// A screen block entry's 16-colour palette, in its top four bits.
 #define BG_TILE_PALETTE(n) ((n) << 12)
 /// A word of eight 4-bit pixels, all colour `color`: one row of a 16-colour

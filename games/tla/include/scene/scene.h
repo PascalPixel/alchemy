@@ -435,16 +435,6 @@ struct BobbingMarker {
   s16 stopped; ///< nonzero holds it still, in userValue
 };
 
-/// The map work as the World Map's sinking of Idejima reads it: two
-/// halfwords of map layer 0's scale, stepped against each other.
-/// XXX: what the two halfwords are on the World Map; the World Map's own
-/// reading of layer 0's scale would settle it.
-struct RescueMap {
-  u8 unk000[284];
-  u16 unk11c;
-  u16 unk11e;
-};
-
 /// A field sprite (struct FieldSprite) read a byte at a time, as Yampi Desert's
 /// scorpion sets its colour mode and priority and loads its tiles.
 struct YampiDesertVisual {

@@ -12,6 +12,12 @@
 #include "field/speaker.h"
 #include "macros.h"
 
+/// Message_OpenWindow's option bit 2, which the speech windows of Mind Read set
+/// as they open without zooming; Message_OpenWindow never reads it.
+#define MESSAGE_WINDOW_NO_ZOOM 2
+/// Message_SetVoiceFromActor's key for no voice: it clears the voice.
+#define MESSAGE_VOICE_NONE 0x80000000
+
 /// The event command "open message": opens the event's current message in a
 /// speech window next to the speaking actor, with the speaker's portrait beside
 /// it when it has one, and moves on to the next message.
@@ -134,7 +140,7 @@ s32 FieldMessage_ShowAtActor(s32 localId, s32 unused) {
         portraitTop = top + height;
       if (portraitTop < 0)
         portraitTop = top + height;
-      else if (portraitTop + 5 > 19)
+      else if (portraitTop + 5 > DISPLAY_TILE_HEIGHT - 1)
         portraitTop = top - 5;
       if (top < portraitTop) {
         s32 lines = height;
@@ -158,18 +164,24 @@ s32 FieldMessage_ShowAtActor(s32 localId, s32 unused) {
     if (win->mindRead != 0) {
       wait(8);
       if (extra != 0)
-        handle = Message_OpenWindowFar(message, left, top + extra - 1, 18);
+        handle = Message_OpenWindowFar(message, left, top + extra - 1,
+                                       MESSAGE_WINDOW_ANCHOR_BOTTOM |
+                                           MESSAGE_WINDOW_NO_ZOOM);
       else
-        handle = Message_OpenWindowFar(message, left, top, 2);
+        handle =
+            Message_OpenWindowFar(message, left, top, MESSAGE_WINDOW_NO_ZOOM);
     } else {
       s32 voice = Speaker_GetVoice(sprite);
 
       if (extra != 0)
         handle = Message_OpenWindowFar(message, left, top + extra - 1,
-                                       MESSAGE_WINDOW_VOICE(voice) | 17);
+                                       MESSAGE_WINDOW_VOICE(voice) |
+                                           MESSAGE_WINDOW_ANCHOR_BOTTOM |
+                                           MESSAGE_WINDOW_ZOOM);
       else
         handle = Message_OpenWindowFar(message, left, top,
-                                       MESSAGE_WINDOW_VOICE(voice) | 1);
+                                       MESSAGE_WINDOW_VOICE(voice) |
+                                           MESSAGE_WINDOW_ZOOM);
     }
     if (win->mindRead != 0)
       portrait = (s32)Portrait_OpenWindowFar(sprite, 0, column, portraitTop);
@@ -214,7 +226,7 @@ void FieldMessage_ShowAtActorAndWait(s32 object, s32 message) {
     }
   }
 
-  Message_SetVoiceFromActor(0x80000000);
+  Message_SetVoiceFromActor(MESSAGE_VOICE_NONE);
   wait(1);
 }
 
@@ -280,7 +292,8 @@ void Event_ShowSpeakerMessage(s32 speaker) {
     py = py < 20 ? 20 : py;
     if (py > 220)
       py = 220;
-    window = Message_OpenWindowFar((s16)work->message, px, py, 1);
+    window =
+        Message_OpenWindowFar((s16)work->message, px, py, MESSAGE_WINDOW_ZOOM);
     work->messageWindow = window;
     while (Window_IsClosedFar(window) == 0)
       wait(1);
@@ -315,7 +328,8 @@ void Event_ShowMessageAtPosition(s32 unusedA, s32 unusedB, s32 x, s32 y) {
     windowX = 312;
   CLAMP(windowY, minY, 220);
 
-  window = (s32)Message_OpenWindowFar(state->message, windowX, windowY, 1);
+  window = (s32)Message_OpenWindowFar(state->message, windowX, windowY,
+                                      MESSAGE_WINDOW_ZOOM);
   while (Window_IsClosedFar((struct Window *)window) == 0)
     wait(1);
   state->message++;
@@ -386,20 +400,17 @@ void Event_ShowTwoMessagesAndWait(s32 first, s32 firstX, s32 firstY,
   wait(1);
 }
 
-// Sets the message voice from the object `key` names (The Broken Seal's
-// Message_SetVoiceFromActor): the voice sound from its value and the
-// countdown from the event mode's table; 0x80000000 clears both.
-
 extern const u8 gMessageSpeed_VoiceRates[];
 
-/// Sets the voice of the messages that follow to that of actorId's sprite, at
-/// the rate the message speed option picks (gMessageSpeed_VoiceRates).
+/// Sets the voice of the messages that follow to that of actor key's sprite, at
+/// the rate the message speed option picks (gMessageSpeed_VoiceRates);
+/// MESSAGE_VOICE_NONE clears it.
 void Message_SetVoiceFromActor(s32 key) {
   struct WindowWork *work = (struct WindowWork *)Ram_HeapSlots->windowWork;
   u8 value;
   s32 id;
 
-  if (key == 0x80000000) {
+  if (key == MESSAGE_VOICE_NONE) {
     *(s16 *)&work->speakerVoiceSound = (value = 0);
     *(s16 *)&work->speakerVoiceCountdown = value;
   } else {
@@ -443,3 +454,5 @@ void Camera_SetSpeedParameters(FIXED first, FIXED second) {
   work->camera->speedLimit = first;
   work->camera->acceleration = second;
 }
+#undef MESSAGE_WINDOW_NO_ZOOM
+#undef MESSAGE_VOICE_NONE

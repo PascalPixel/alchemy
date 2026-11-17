@@ -16,6 +16,15 @@
 #include "field/object.h"
 #include "system/ram_buffer.h"
 
+/// The sixteenth of a turn a facing lies in, what is past it dropped, as The
+/// Broken Seal's.
+#define FACING_SIXTEENTH(facing) ((facing) & 0xf000)
+/// A squared distance, in 1/256 pixels, beyond any rope node.
+#define NODE_DISTANCE_MAX (1 << 28)
+/// The leader going hand over hand along a rope (felix.tsv's pictures 32 to
+/// 34, the rope held over his head).
+#define ANIM_LEADER_CROSS_ROPE 29
+
 /// SCRIPT_CMD_KEYS, the leader's control on a climbable wall: moves it 8 pixels
 /// at a time by the direction pad, up and down changing its height rather than
 /// its depth, reaching east or west as it goes and clinging while the pad is
@@ -46,15 +55,16 @@ s32 Actor_MoveByKeys(struct Actor *actor) {
   {
     const u16 *table = gWorldMap_KeyHeadings;
 
-    angle = *(const u16 *)((const u8 *)table + (((keys >> 4) & 15) << 1));
+    angle = *(const u16 *)((const u8 *)table + (DPAD_INDEX(keys) << 1));
   }
   if (angle == WORLD_MAP_KEY_HEADING_NONE) {
     collisionFlags = PLAYER_STEP_STOPPED;
   } else {
     animation = ANIM_LEADER_CLIMB_EAST;
-    if ((angle & 0xf000) != 0) {
+    if (FACING_SIXTEENTH(angle) != FACING_EAST) {
       animation = ANIM_LEADER_CLIMB_WEST;
-      if ((angle & 0xf000) != half)
+      // half, toFIXED(1) / 2, is also FACING_WEST.
+      if (FACING_SIXTEENTH(angle) != half)
         animation = ANIM_LEADER_CLIMB;
     }
     collisionFlags = 0;
@@ -148,7 +158,7 @@ s32 Actor_CrossRope(struct Actor *actor) {
     best = (struct RopeNode *)actor->watchedActor;
     value = 0;
   } else {
-    value = 16;
+    value = ANIMATION_STEP_NORMAL;
     SET_POSITION(&position, 0, 0, 0);
     Vector_AddPolarOffset(toFIXED(8), angle, &position);
     position.x += actor->x.fixed;
@@ -157,7 +167,7 @@ s32 Actor_CrossRope(struct Actor *actor) {
     rope = *(struct RopeWork **)&Ram_HeapSlots->rope;
     node = rope->nodes;
     best = NULL;
-    bestDistance = 0x10000000;
+    bestDistance = NODE_DISTANCE_MAX;
     if (rope == NULL) {
       collisionFlags = PLAYER_STEP_BLOCKED_BY_MAP;
       /* FAKEMATCH(dead): the event work slot copied onto itself. */
@@ -220,7 +230,7 @@ done:
       work->blockedSteps = 0;
     work->heldKeys = gInput.held;
   }
-  Actor_SelectAnimation(actor, 29);
+  Actor_SelectAnimation(actor, ANIM_LEADER_CROSS_ROPE);
   Actor_SetAnimationSpeed(actor, value);
   if (collisionFlags != 0) {
     actor->targetX = TARGET_UNSET;
@@ -279,13 +289,13 @@ s32 Actor_CrossTightrope(struct Actor *actor) {
     tightrope = *(struct TightropeWork **)&Ram_HeapSlots->tightrope;
     point = tightrope->nodes;
     best = NULL;
-    bestDistance = 0x10000000;
+    bestDistance = NODE_DISTANCE_MAX;
     if (tightrope == NULL) {
       collisionFlags = PLAYER_STEP_BLOCKED_BY_MAP;
       /* FAKEMATCH(dead): the event work slot copied onto itself. */
       Ram_HeapSlots->fieldWork = Ram_HeapSlots->fieldWork;
     } else {
-      for (count = 0; count < 128; count++, point++) {
+      for (count = 0; count < ROPE_NODE_COUNT; count++, point++) {
         if (point->kind == 1) {
           s32 dx = (position.x - point->x) >> 8;
           s32 dy = (position.y - point->y) >> 8;
@@ -371,7 +381,7 @@ void Sand_JitterGrain(struct Actor *actor) {
 
 /// Whether the player ends Sand: when the Select, A or Start keys are pressed,
 /// plays SE_MENU_CANCEL where the leader is blocked (Actor_CheckBlockedFar),
-/// and otherwise, while flag 0x146 is clear, asks for Sand again
+/// and otherwise, while FLAG_SAND_CANNOT_END is clear, asks for Sand again
 /// (ABILITY_SAND, packed) and returns 1.
 s32 Sand_CheckEndKeys(s32 arg) {
   struct FieldWork *work = Ram_HeapSlots->fieldWork;
@@ -396,8 +406,6 @@ s32 Sand_CheckEndKeys(s32 arg) {
   return 0;
 }
 #undef CHAIN_WORK
-
-// The heading of each direction-pad combination, -1 for none.
 
 /// Script command 0x1e (control mode 5): the leader turned to sand by the Sand
 /// Psynergy, moved by the direction pad on a field map.
@@ -766,8 +774,8 @@ done:
 /// (the Sand Psynergy). Moves the object on the world map by the direction pad
 /// at a fixed pace (faster while L repeats), trying six turned headings when
 /// the way is blocked, as Actor_MoveOnWorldMap does; records the held keys in
-/// the event work and leaves an object of kind 0x164 behind it every fifth
-/// step.
+/// the event work and leaves a puff of sand (WORLD_MAP_SPRITE_WAKE, as the
+/// ship's wake) behind it every fifth frame it moves.
 s32 Actor_MoveAsSandOnWorldMap(struct Actor *actor) {
   struct FieldPosition position;
   struct FieldPosition leftPosition;
@@ -881,7 +889,7 @@ update_object:
         difference = -FIELD_BLOCKED_TURN_MAX;
       actor->facing += difference;
     }
-    timer = (u8 *)actor + 98;
+    timer = &actor->wakeTimer;
     *timer = 0;
     actor->userValue = 2;
   } else {
@@ -892,7 +900,7 @@ update_object:
     actor->velocityZ = collision;
     Vector_AddPolarOffset(speed, (u16)angle,
                           (struct FieldPosition *)&actor->velocityX);
-    timer = (u8 *)actor + 98;
+    timer = &actor->wakeTimer;
     if (*timer != 0)
       (*timer)--;
   }
@@ -904,15 +912,15 @@ update_object:
     yawStep = WORLD_MAP_YAW_STEP_MAX;
   if (yawStep < -WORLD_MAP_YAW_STEP_MAX)
     yawStep = -WORLD_MAP_YAW_STEP_MAX;
-  if (yawStep > -16 && yawStep < 16)
+  if (yawStep > -WORLD_MAP_YAW_SNAP && yawStep < WORLD_MAP_YAW_SNAP)
     yawStep = targetCameraYaw - camera->yaw;
   camera->yaw += yawStep;
 
-  if (actor->spriteStorageKind == 1) {
+  if (actor->spriteStorageKind == ACTOR_SPRITE_ONE) {
     playerSprite = actor->sprite;
     terrainCollision =
         WorldMap_GetCollision((struct WorldPosition *)&actor->x.fixed);
-    if (terrainCollision == 9)
+    if (terrainCollision == WORLD_MAP_COLLISION_FOREST)
       playerSprite->secondLayer->priority = 1;
     else
       playerSprite->secondLayer->priority = 9;
@@ -940,3 +948,7 @@ update_object:
   actor->scriptCursor++;
   return 1;
 }
+
+#undef FACING_SIXTEENTH
+#undef NODE_DISTANCE_MAX
+#undef ANIM_LEADER_CROSS_ROPE

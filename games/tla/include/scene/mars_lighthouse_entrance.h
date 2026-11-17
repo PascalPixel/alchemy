@@ -102,15 +102,15 @@ void MarsLighthouseEntrance_TeleportFromHiddenCircle(void);
 
 void MarsLighthouseEntrance_HideTeleportCircle(void);
 
-void MarsLighthouseEntrance_TeleportFromValkyrieWest(void);
+void MarsLighthouseEntrance_TeleportFromValkyrieNorth(void);
 
-void MarsLighthouseEntrance_TeleportFromValkyrieEast(void);
+void MarsLighthouseEntrance_TeleportFromValkyrieSouth(void);
 
 void MarsLighthouseEntrance_WakeDragonFace(void);
 
 void MarsLighthouseEntrance_SlideFromEdge(void);
 
-int MarsLighthouseEntrance_SlideOnIce(void);
+int MarsLighthouseEntrance_RideFireball(void);
 void Leader_SlideOnIce(void);
 
 void Leader_StopIfPending(void);

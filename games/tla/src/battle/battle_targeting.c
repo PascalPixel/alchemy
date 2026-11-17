@@ -878,7 +878,7 @@ s32 BattleAbility_ApplyToTarget(struct BattlePlan *plan, s32 slot) {
     break;
   case ENEMY_POSEIDON:
   case ENEMY_POSEIDON_SECOND_ACTION:
-  case ENEMY_UNUSED_POSEIDON:
+  case ENEMY_POSEIDON_3:
     if (abilityId != ABILITY_TRIDENT && battle->forceField != 0 &&
         ARE_OPPONENTS(unitId, targetId)) {
       BattlePlayback_Push(PLAYBACK_REFRESH_UNIT, targetId);
@@ -1001,10 +1001,10 @@ s32 BattleAbility_ApplyToTarget(struct BattlePlan *plan, s32 slot) {
       // already there takes a letter too.
       if (suffix == -1) {
         suffix = BattleEnemy_ClaimNameLetter(classId, 1);
-        if (suffix & ENEMY_LETTER_FIRST_TOO)
+        if (suffix & NAME_LETTER_FIRST_TOO)
           BattleEnemy_LetterFirstOfKind(classId);
       }
-      BattleUnit_SetFar(newUnitId, classId, suffix & ENEMY_LETTER_MASK);
+      BattleUnit_SetFar(newUnitId, classId, suffix & NAME_LETTER_MASK);
       if (ability->effect == ABILITY_EFFECT_CALL_QUEUED) {
         battle->spoils.queueCount--;
         battle->spoils.queueHead = (battle->spoils.queueHead + 1) % 2;

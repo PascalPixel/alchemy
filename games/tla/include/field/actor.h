@@ -1,6 +1,9 @@
 #ifndef ALCHEMY_ACTOR_H
 #define ALCHEMY_ACTOR_H
 
+/// @file
+/// Actors, their flags and the screen transition styles.
+
 #include "field/field_coordinate.h"
 #include "fixed_math.h"
 #include "types.h"
@@ -198,6 +201,20 @@ struct Actor {
       /// then sets 0), 7 once it reaches the cell (24, 14).
       u8 chargeState;
     };
+    /// A magical charge circling its orb statue in the Gabomba Statue
+    /// (GabombaStatue_SendCharge): its place on the circle, in 256ths of a
+    /// turn, and its own actor id.
+    struct {
+      u8 unusedBeforeCirclePhase[2]; ///< refused and frozen
+      u8 circlePhase;
+      u8 circleActorId;
+    };
+    /// A tooth of a cog in the Gabomba Statue (GabombaStatue_TurnTooth): its
+    /// place in its turn.
+    struct {
+      u8 unusedBeforeToothPhase[2]; ///< refused and frozen
+      u8 toothPhase;
+    };
     /// A magma rock rolling between a pair of statues at Magma Rock
     /// (MagmaRock_RollMagmaRock).
     struct {
@@ -324,11 +341,9 @@ extern const u8 gActor_FaceWatchedScript[];
 extern const u8 gActor_OffsetScript[];
 extern const u8 gActor_VariantScripts[];
 
-/// Sets bits in one of an actor's flag bytes, the bits first. The name is ours:
-/// Caverns_LayerLeaderByStack, LemurianShip_StepOnLift,
-/// MarsLighthouseRoomF_MeltPuddle and MagmaRockInside_DrainLava all compile as
-/// this.
+/// Sets bits in one of an actor's flag bytes.
 static inline void ActorFlags_Set(u8 *flags, s32 bits) {
+  /* FAKEMATCH(temporary): the bits held in a local; as *flags |= bits. */
   s32 value = bits;
 
   value |= *flags;

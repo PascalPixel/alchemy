@@ -2,16 +2,16 @@
 /// Mars Lighthouse's lower floors, inside its gates, in the rooms of this
 /// overlay: ice cones Pound flattens (MarsLighthouseEntrance_PoundIceCone),
 /// ice sheets that burst and ice to Grind (MarsLighthouseEntrance_GrindIce),
-/// floors of ice the leader slides across (MarsLighthouseEntrance_SlideOnIce),
-/// flame throwers whose flames knock the leader back (FlameThrowers_Start,
-/// Flame_UpdateForward), a statue pushed into the flames
-/// (MarsLighthouseEntrance_PushStatueIntoFlames) and the teleporters on
-/// (MarsLighthouseEntrance_Teleport). The Mars Djinni Fugue and the Mercury
+/// floors of ice the leader slides across
+/// (MarsLighthouseEntrance_RideFireball), flame throwers whose flames knock the
+/// leader back (FlameThrowers_Start, Flame_UpdateForward), a statue pushed into
+/// the flames (MarsLighthouseEntrance_PushStatueIntoFlames) and the teleporters
+/// on (MarsLighthouseEntrance_Teleport). The Mars Djinni Fugue and the Mercury
 /// Djinni Balm fight here (MarsLighthouseEntrance_FightFugue,
 /// MarsLighthouseEntrance_FightBalm).
 ///
 /// Outside the gates (room 1) the storm rains. In the first hall (room 2) Grind
-/// on the dead end cracks the ice sheet a floor below (room 3), which Burst
+/// on a shaft of ice cracks the ice sheet a floor below (room 3), which Burst
 /// then breaks; there the flames are blocked with a statue, a dragon statue
 /// Blazed shoots a fireball that cracks another sheet, and the first
 /// teleport circle waits. Past the black ice (room 4) a second dragon statue
@@ -69,10 +69,11 @@
 #include "field/actor_script.h"
 #include "system/frame.h"
 #include "text/msg_ids.h"
+#include "window/window.h"
 
 #define FLAG_TELEPORTED_ONCE 0xa36
-/// Grind on the dead end cracked the ice sheet a floor below.
-#define FLAG_ICE_GROUND 0xa3e
+/// Grind on the shaft of ice cracked the ice sheet a floor below.
+#define FLAG_ICE_SHAFT_GROUND 0xa3e
 #define FLAG_LAPIS_SHEET_BURST 0xa3f
 #define FLAG_LAPIS_SECOND_SHEET_BURST 0xa47
 #define FLAG_LAPIS_SECOND_SHEET_CRACKED 0xa48 ///< a fireball cracked it
@@ -91,12 +92,87 @@
 #define FLAG_BYTE_FALL_COLUMN FLAG_AREA_TEMP_40
 #define FLAG_BYTE_FALL_ROW FLAG_AREA_TEMP_48
 
-/// The first hall (Fugue's room): two ice cones, the dead end Grind cracks
-/// (unseen, sprite 489) and Fugue.
+/// The teleport circles that lead within one room, each the collision code of
+/// its circle's cells, its exit and the entrance on it: the Teleport Lapis
+/// room's south and north circles, and the Valkyrie Mail room's north and
+/// south ones. Each circle sends the leader to the other of its room.
+enum MarsLighthouseEntranceTeleportCircle {
+  LAPIS_SOUTH_CIRCLE = 17,
+  LAPIS_NORTH_CIRCLE = 18,
+  VALKYRIE_NORTH_CIRCLE = 12,
+  VALKYRIE_SOUTH_CIRCLE = 13
+};
+
+/// Entrances within a room that the set-up reads: Balm's room's at the north
+/// end of its east hall, where the flame thrower is; the Valkyrie Mail room's
+/// onto its southwest floor from the southeast and the middle east floors, and
+/// onto its north floor from the middle west one.
+enum {
+  BALM_EAST_HALL_NORTH_ENTRANCE = 10,
+  VALKYRIE_SOUTHWEST_FROM_SOUTHEAST = 2,
+  VALKYRIE_SOUTHWEST_FROM_MIDDLE_EAST = 4,
+  VALKYRIE_NORTH_FROM_MIDDLE_WEST = 11
+};
+
+/// MapCell_Get's halfword: the collision code over the second attribute byte
+/// (MapCell.attributeB), as airs_rock_inside.c reads it.
+#define CELL_CODE_BITS 0xff00
+#define CELL_ATTRIBUTE_BITS 0xff
+#define CELL_ATTRIBUTES(code, bits) (((code) << 8) | (bits))
+/// A 16.16 height in the 8-pixel steps a map cell's height is set in
+/// (MapGrid_SetCellHeight).
+#define CELL_HEIGHT_STEPS(height) ((height) >> 19)
+/// The attribute bit that makes a floor cell here a hole the leader drops
+/// through to the room below; the field reads it elsewhere as
+/// MAP_CELL_CLIMBABLE.
+#define MAP_CELL_FLOOR_HOLE MAP_CELL_CLIMBABLE
+
+/// The sprite that hides the leader as he sinks through a hole: 16 by 32
+/// pixels, eight tiles of colour 1.
+#define HOLE_MASK_BYTES (8 * TILE_SIZE_4BPP)
+/// The depth a sprite the scene draws itself takes past its screen row, just
+/// behind an actor's image (+62) and shadow (+60) at the same spot.
+#define SCENE_SPRITE_DEPTH 58
+/// The frames the leader takes to shrink and sink out of sight through a hole.
+#define SINK_FRAMES 40
+
+/// The leader's animation sitting on the floor, legs out, arms flung up and
+/// then lowered.
+#define ANIM_LEADER_SIT 49
+
+/// The cell columns where Move sets the dragon statue in the flames' way:
+/// under the Teleport Lapis room's eastern flame thrower, and under the
+/// Valkyrie Mail room's.
+enum { LAPIS_STATUE_BLOCKING_COLUMN = 20, VALKYRIE_STATUE_BLOCKING_COLUMN = 5 };
+
+/// The cell columns Balm's room's dragon statue stops in on the black ice:
+/// pushed west from its place, from where it slides on to the ice's west end,
+/// and pushed east from there, from where it slides back.
+enum { ICE_STATUE_PUSHED_WEST_COLUMN = 11, ICE_STATUE_PUSHED_EAST_COLUMN = 10 };
+
+/// A flame thrower's packed state (Ride_SetEntryState): the flame's reach in
+/// the low four bits, enum FlameThrowerFlags in the next four.
+#define FLAME_THROWER_REACH_BITS 0xf
+#define FLAME_THROWER_FLAG_BITS 0xf0
+
+/// The spawner's flags that ask for one of the options' fields
+/// (EFFECT_USE_PALETTE and up).
+#define EFFECT_OPTION_MASK 0xffff0000
+
+/// The actor script's work value of Actor.watchedActor: a fireball's path sets
+/// it to the routine the fireball calls when it crashes (Actor_RollAndCrumble).
+#define SW_WATCHED_ACTOR 37
+
+/// Sixteen puffs of dust in a ring round the leader as he lands, the first
+/// thrown twice.
+#define DUST_RING_PUFFS 16
+
+/// The first hall (Fugue's room): two ice cones, the shaft of ice Grind cracks
+/// (an unseen marker on it) and Fugue.
 enum MarsLighthouseEntranceFugueActorId {
   ACTOR_FUGUE_ICE_CONE_A = ACTOR_FIRST_PLACED,
   ACTOR_FUGUE_ICE_CONE_B,
-  ACTOR_DEAD_END,
+  ACTOR_ICE_SHAFT,
   ACTOR_FUGUE
 };
 
@@ -118,11 +194,11 @@ enum MarsLighthouseEntranceTeleportLapisActorId {
   ACTOR_ICE_SHEET,
   ACTOR_UNLIT_TORCH,
   ACTOR_SECOND_ICE_SHEET,
-  ACTOR_LAPIS_FIREBALL,     ///< the sparkle that flies from the torch
-  ACTOR_LAPIS_FIREBALL_ROLL ///< the fireball the sparkle sends rolling
+  ACTOR_LAPIS_SPARKLE, ///< the sparkle that leaves the lit torch
+  ACTOR_LAPIS_FIREBALL ///< the fireball the sparkle sets rolling
 };
 
-/// Balm's room: a flame thrower and the torch its fireball stops at, two dragon
+/// Balm's room: a flame thrower and the torch its flames light, two dragon
 /// statues, five ice cones and Balm.
 enum MarsLighthouseEntranceBalmActorId {
   ACTOR_BALM_FLAME_THROWER = ACTOR_FIRST_PLACED,
@@ -135,9 +211,9 @@ enum MarsLighthouseEntranceBalmActorId {
   ACTOR_BALM_ICE_CONE_D,
   ACTOR_BALM_ICE_CONE_E,
   ACTOR_BALM,
-  ACTOR_BALM_FIREBALL,       ///< the sparkle that flies from the torch
+  ACTOR_BALM_SPARKLE,        ///< the sparkle that leaves the lit torch
   ACTOR_BALM_SECOND_SPARKLE, ///< placed, and sent nowhere
-  ACTOR_BALM_FIREBALL_ROLL   ///< the fireball the sparkle sends rolling
+  ACTOR_BALM_FIREBALL        ///< the fireball the sparkle sets rolling
 };
 
 /// The hidden circle's room: a lit torch and a torch Blaze sends a fireball
@@ -148,8 +224,8 @@ enum MarsLighthouseEntranceHiddenCircleActorId {
   ACTOR_EAST_LIT_TORCH,
   ACTOR_EAST_TORCH,
   ACTOR_HIDDEN_CIRCLE_ICE_SHEET,
-  ACTOR_HIDDEN_CIRCLE_FIREBALL,     ///< the sparkle that flies from the torch
-  ACTOR_HIDDEN_CIRCLE_FIREBALL_ROLL ///< the fireball the sparkle sends rolling
+  ACTOR_HIDDEN_CIRCLE_SPARKLE, ///< the sparkle that leaves the lit torch
+  ACTOR_HIDDEN_CIRCLE_FIREBALL ///< the fireball the sparkle sets rolling
 };
 
 /// The Valkyrie Mail room: the dragon statue pushed into the flames, the upper
@@ -166,12 +242,9 @@ enum MarsLighthouseEntranceValkyrieMailChestActorId {
   ACTOR_VALKYRIE_ICE_CONE_D,
   ACTOR_VALKYRIE_ICE_CONE_E,
   ACTOR_VALKYRIE_ICE_CONE_F,
-  ACTOR_VALKYRIE_FIREBALL,     ///< the sparkle that flies from the torch
-  ACTOR_VALKYRIE_FIREBALL_ROLL ///< the fireball the sparkle sends rolling
+  ACTOR_VALKYRIE_SPARKLE, ///< the sparkle that leaves the lit torch
+  ACTOR_VALKYRIE_FIREBALL ///< the fireball the sparkle sets rolling
 };
-#ifndef TLA_MARS_LIGHTHOUSE_ENTRANCE_RIDE_H
-#define TLA_MARS_LIGHTHOUSE_ENTRANCE_RIDE_H
-
 /// The ride work seen from one flame thrower's entry: the work's header, then
 /// the entry, as the getters below index it.
 struct RideRow {
@@ -182,8 +255,6 @@ struct RideRow {
 extern u8 gInventorySnapshot[];
 
 void Actor_SetSpriteColorMode(struct Actor *actor, s32 value);
-
-#endif
 
 /// A torch or statue starts with its sprite flags clear.
 s32 MarsLighthouseEntrance_SetUpStatue(struct Actor *actor) {
@@ -241,10 +312,9 @@ const struct ActorPlacement *Scene_GetActorPlacements(void) {
   return gMarsLighthouseEntrance_Placements;
 }
 
-// XXX: what Blaze does otherwise once the field work's blazeLongSpray is set
-// (its mode 3 for 2 when it finds no torch); the rest of blaze.c's reading of
-// the mode would settle it.
-/// Unused: as the dragon hall's, readies Blaze for a dragon statue.
+/// Unused: as the dragon hall's, makes the next cast of Blaze a long spray
+/// (FieldWork.blazeLongSpray): cast at a target, Blaze then takes
+/// BLAZE_LONG_SPRAY over BLAZE_SPRAY, and each cast clears it as it starts.
 UNUSED void MarsLighthouseEntrance_StartBlazeOnStatue(void) {
   struct FieldWork *event = Ram_HeapSlots->fieldWork;
 
@@ -280,7 +350,10 @@ s32 MapCell_Swap(u32 layer, s32 x, s32 y, s32 value) {
 void MapGrid_SetCellHeight();
 void Teleport_PlayWhirl(void);
 void Teleport_PlaySparks(void);
-s32 Data_02006878 BSS_DATA;
+/// Set while a whirlwind carries the leader, as in the Jupiter Lighthouse rooms
+/// that keep it here and clear it in their set-up; nothing in this overlay
+/// rides one.
+s32 gWhirlwindRiding BSS_DATA;
 u16 gPaletteCycleBright BSS_DATA;
 u16 *gPaletteCycleSlots BSS_DATA;
 u16 gPaletteCycleTimer BSS_DATA;
@@ -317,27 +390,29 @@ void MarsLighthouseEntrance_SetIceConeCells(struct Actor *actor) {
   groundCell = MapCell_Get(0, x, z);
   upperCell = MapCell_Get(2, x, z);
   layer = &cone->layer;
-  height =
-      Map_GetTerrainHeight(cone->layer, cone->x.fixed, cone->z.fixed) >> 19;
+  height = CELL_HEIGHT_STEPS(
+      Map_GetTerrainHeight(cone->layer, cone->x.fixed, cone->z.fixed));
   if (Event_GetFlag(cone->timer)) {
-    upperCell &= ~0xff00;
-    groundCell &= ~0x80;
-    if ((cone->groundHeight >> 19) != height)
+    upperCell &= ~CELL_CODE_BITS;
+    groundCell &= ~MAP_CELL_JUMP;
+    if (CELL_HEIGHT_STEPS(cone->groundHeight) != height)
       height -= 4;
   } else {
-    upperCell &= 0xff;
-    upperCell |= 0xff00;
-    groundCell |= 0x80;
+    upperCell &= CELL_ATTRIBUTE_BITS;
+    upperCell |= CELL_ATTRIBUTES(CELL_BEHAVIOR_WALL, 0);
+    groundCell |= MAP_CELL_JUMP;
     height += 4;
     Scene_SetActorSpritePriority(cone, 2);
   }
   MapCell_Swap(0, x, z, groundCell);
   MapCell_Swap(2, x, z, upperCell);
-  MapGrid_SetCellHeight(x << 20, z << 20, *layer, height);
+  MapGrid_SetCellHeight(FIELD_CELL_ORIGIN(x), FIELD_CELL_ORIGIN(z), *layer,
+                        height);
 }
 
-/// Each row: an ice cone's actor, its first animation and the flag set once
-/// Pound has flattened it.
+/// Places the ice cones of a list ended by ACTOR_LIST_END, each row three
+/// halfwords: the cone, its first pose and the flag set once Pound has
+/// flattened it, which picks between the poses.
 void MarsLighthouseEntrance_PlaceIceCones(u16 *table) {
   u16 *row;
   struct FieldActor *object;
@@ -362,10 +437,10 @@ void MarsLighthouseEntrance_PlaceIceCones(u16 *table) {
   } while (row[0] != ACTOR_LIST_END);
 }
 
-/// While index is at most 7, spawns effect type 0x117 index steps below the
-/// object the effect work names and shrinks the object a little; mode 1
-/// restores its size, sets its flag, hands it to
-/// MarsLighthouseEntrance_SetIceConeCells and clears its position.
+/// One step of Pound on an ice cone: through step 7 the cone shrinks and a
+/// chip of ice (SPRITE_BLUE_CRYSTAL) flies off it, lower each step; in mode 1
+/// it is flattened, its flag set, its cells cleared
+/// (MarsLighthouseEntrance_SetIceConeCells) and the cone taken away.
 void MarsLighthouseEntrance_PoundIceCone(s32 mode, s32 index) {
   struct FieldEffectWork *holder = Ram_HeapSlots->fieldEffectWork;
   struct Actor *actor = Actor_Get(holder->secondActorId);
@@ -409,8 +484,7 @@ void MarsLighthouseEntrance_ScatterIceChips(s32 id) {
   for (i = 0; i < 6; i++) {
     FIXED x = source->x.fixed + (Random16() << 4) - (Random16() << 4);
     struct Actor *actor = Import_ActorCreate_(
-        SPRITE_TURNING_ROCK, x,
-        (Random16() << 3) + source->y.fixed + toFIXED(4),
+        SPRITE_WIND_STONE, x, (Random16() << 3) + source->y.fixed + toFIXED(4),
         source->z.fixed + (Random16() << 4) - (Random16() << 4));
 
     if (actor != NULL) {
@@ -436,8 +510,7 @@ void MarsLighthouseEntrance_ScatterIceChips(s32 id) {
   }
 }
 
-/// Grind on the ice at the dead end: the crack runs to the ice sheet
-/// a floor below.
+/// Grind on the shaft of ice: the crack runs to the ice sheet a floor below.
 void MarsLighthouseEntrance_GrindIce(void) {
   s32 x;
   s32 count;
@@ -447,21 +520,24 @@ void MarsLighthouseEntrance_GrindIce(void) {
   count = 6;
   do {
     MapGrid_CopyCellPictureCellsRect_(x, 125, 3, 3, 39, 85);
-    MarsLighthouseEntrance_ScatterIceChips(ACTOR_DEAD_END);
+    MarsLighthouseEntrance_ScatterIceChips(ACTOR_ICE_SHAFT);
     count--;
     System_Wait(10);
     x += 3;
   } while (count >= 0);
   ObjectTable_Snapshot();
-  FieldEvent_SetExitRequest(20);
+  FieldEvent_SetExitRequest(
+      MARS_LIGHTHOUSE_ENTRANCE_FUGUE_TO_MARS_LIGHTHOUSE_ENTRANCE_TELEPORT_LAPIS_EAST_B);
 }
 
-/// Examining the ice shaft.
+/// Examining the shaft of ice.
 void MarsLighthouseEntrance_CheckIce(void) {
   // "Felix checked the ice."
-  FieldMessage_Show((s32)MsgMarsLighthouseEntranceCheckedIce, 1);
+  FieldMessage_Show((s32)MsgMarsLighthouseEntranceCheckedIce,
+                    FIELD_MESSAGE_ZOOM);
   // "A shaft of ice is poking up through the floor."
-  FieldMessage_Show((s32)MsgMarsLighthouseEntranceCheckedIce + 1, 1);
+  FieldMessage_Show((s32)MsgMarsLighthouseEntranceCheckedIce + 1,
+                    FIELD_MESSAGE_ZOOM);
   gFieldWork->fieldMenu = 1;
 }
 
@@ -491,7 +567,7 @@ void MarsLighthouseEntrance_Teleport(void) {
     Teleport_StartShimmer();
     Teleport_PlaySparks();
     gMainRoutineWork.teleportState = 2;
-    FieldEvent_SetExitRequest(18);
+    FieldEvent_SetExitRequest(LAPIS_NORTH_CIRCLE);
     FieldEvent_Wait(40);
     Teleport_StopShimmer();
   }
@@ -502,7 +578,7 @@ void MarsLighthouseEntrance_TeleportFromLapis(void) {
   Teleport_StartShimmer();
   Teleport_PlaySparks();
   gMainRoutineWork.teleportState = 2;
-  FieldEvent_SetExitRequest(17);
+  FieldEvent_SetExitRequest(LAPIS_SOUTH_CIRCLE);
   FieldEvent_Wait(40);
   Teleport_StopShimmer();
 }
@@ -596,13 +672,13 @@ DEFINE_BURST_ICE_SHEET(MarsLighthouseEntrance_BurstLapisIceSheet, 28, 92, 8,
                        100, 92, 38, 8, ACTOR_SECOND_ICE_SHEET,
                        FLAG_LAPIS_SECOND_SHEET_BURST)
 
-/// Move on the dragon statue to cell x 20: it blocks the last flame thrower
-/// (FLAG_LAPIS_STATUE_BLOCKS_FLAMES).
+/// Move on the dragon statue: pushed under the eastern flame thrower it blocks
+/// the flames (FLAG_LAPIS_STATUE_BLOCKS_FLAMES).
 void MarsLighthouseEntrance_PushStatueIntoFlames(s32 unused, s32 id) {
   if (id == ACTOR_PUSHED_STATUE) {
     struct Actor *actor = Actor_Get(ACTOR_PUSHED_STATUE);
 
-    if (FIELD_CELL(actor->x.fixed) == 20) {
+    if (FIELD_CELL(actor->x.fixed) == LAPIS_STATUE_BLOCKING_COLUMN) {
       FieldEvent_Wait(5);
       actor->z.fixed += toFIXED(1);
       *(u8 *)&actor->riseCounter = 1;
@@ -621,23 +697,25 @@ void MarsLighthouseEntrance_TeleportFromBalm(void) {
   Teleport_StartShimmer();
   Teleport_PlaySparks();
   gMainRoutineWork.teleportState = 2;
-  FieldEvent_SetExitRequest(14);
+  FieldEvent_SetExitRequest(
+      MARS_LIGHTHOUSE_ENTRANCE_BALM_TO_MARS_LIGHTHOUSE_ENTRANCE_HIDDEN_CIRCLE_NORTH_B);
   FieldEvent_Wait(40);
   Teleport_StopShimmer();
 }
 
-/// Move sends the statue sliding over the ice to its next stop: from cell
-/// column 11 to x 152, and from column 10 to x 200, both at z 792.
+/// Move sends the statue sliding over the black ice to its far end: west to
+/// x 152 once pushed west off its place, and east back to it, x 200, once
+/// pushed east from there.
 void MarsLighthouseEntrance_SlideStatueOnIce(s32 unused, s32 id) {
   struct Actor *actor = Actor_Get(id);
 
-  if (FIELD_CELL(actor->x.fixed) == 11) {
+  if (FIELD_CELL(actor->x.fixed) == ICE_STATUE_PUSHED_WEST_COLUMN) {
     actor->speedLimit = toFIXED(1) / 4;
     actor->acceleration = toFIXED(1) / 8;
     FieldActor_SetMoveTargetFX(actor, toFIXED(152), actor->y.fixed,
                                toFIXED(792));
   }
-  if (FIELD_CELL(actor->x.fixed) == 10) {
+  if (FIELD_CELL(actor->x.fixed) == ICE_STATUE_PUSHED_EAST_COLUMN) {
     actor->speedLimit = toFIXED(1) / 4;
     actor->acceleration = toFIXED(1) / 8;
     FieldActor_SetMoveTargetFX(actor, toFIXED(200), actor->y.fixed,
@@ -708,7 +786,8 @@ void MarsLighthouseEntrance_TeleportFromHiddenCircle(void) {
   Teleport_StartShimmer();
   Teleport_PlaySparks();
   gMainRoutineWork.teleportState = 2;
-  FieldEvent_SetExitRequest(14);
+  FieldEvent_SetExitRequest(
+      MARS_LIGHTHOUSE_ENTRANCE_HIDDEN_CIRCLE_TO_MARS_LIGHTHOUSE_ENTRANCE_BALM_NORTH_B);
   FieldEvent_Wait(40);
   Teleport_StopShimmer();
 }
@@ -743,31 +822,32 @@ void MarsLighthouseEntrance_ClearFireballRow(void) {
 }
 
 /// Teleport on the west circle of the Valkyrie Mail room.
-void MarsLighthouseEntrance_TeleportFromValkyrieWest(void) {
+void MarsLighthouseEntrance_TeleportFromValkyrieNorth(void) {
   Teleport_StartShimmer();
   Teleport_PlaySparks();
   gMainRoutineWork.teleportState = 2;
-  FieldEvent_SetExitRequest(12);
+  FieldEvent_SetExitRequest(VALKYRIE_NORTH_CIRCLE);
   FieldEvent_Wait(40);
   Teleport_StopShimmer();
 }
 
 /// Teleport on the east circle of the Valkyrie Mail room.
-void MarsLighthouseEntrance_TeleportFromValkyrieEast(void) {
+void MarsLighthouseEntrance_TeleportFromValkyrieSouth(void) {
   Teleport_StartShimmer();
   Teleport_PlaySparks();
   gMainRoutineWork.teleportState = 2;
-  FieldEvent_SetExitRequest(13);
+  FieldEvent_SetExitRequest(VALKYRIE_SOUTH_CIRCLE);
   FieldEvent_Wait(40);
   Teleport_StopShimmer();
 }
 
-/// Move on the statue to column 5 sets it in the flames' way.
+/// Move on the dragon statue: pushed under the flame thrower it blocks the
+/// flames (FLAG_VALKYRIE_STATUE_BLOCKS_FLAMES).
 void MarsLighthouseEntrance_PushStatueIntoValkyrieFlames(s32 unused, s32 id) {
   if (id == ACTOR_PUSHED_STATUE) {
     struct Actor *actor = Actor_Get(ACTOR_PUSHED_STATUE);
 
-    if (FIELD_CELL(actor->x.fixed) == 5) {
+    if (FIELD_CELL(actor->x.fixed) == VALKYRIE_STATUE_BLOCKING_COLUMN) {
       FieldEvent_Wait(5);
       actor->z.fixed += toFIXED(1);
       Flag_Set(FLAG_VALKYRIE_STATUE_BLOCKS_FLAMES);
@@ -779,47 +859,48 @@ void MarsLighthouseEntrance_PushStatueIntoValkyrieFlames(s32 unused, s32 id) {
 /// leader's cell, so that he sinks out of sight through the hole.
 void MarsLighthouseEntrance_DrawHoleMask(void) {
   struct MapWork *map = Ram_HeapSlots->mapGrid;
-  s32 *camera = (s32 *)((u8 *)map + 228);
-  s32 x = camera[0] & FIELD_PIXEL_MASK;
-  s32 cameraZ = camera[1] & FIELD_PIXEL_MASK;
+  s32 *view = &map->viewX;
+  s32 x = view[0] & FIELD_PIXEL_MASK;
+  s32 cameraZ = view[1] & FIELD_PIXEL_MASK;
   s32 originY = map->origin[1];
   s32 tile =
       gVramCacheEntries[gMarsLighthouseEntrance_HoleMaskVram].offset >> 5;
   struct Actor *leader = Actor_Get(gMainRoutineWork.leaderActorId);
-  s32 y, z, depth, sx, sy;
+  s32 y, z, depth, screenX, screenY;
   u32 *word;
 
-  x = (FIELD_CELL(leader->x.fixed) << 20) - x;
+  x = FIELD_CELL_ORIGIN(FIELD_CELL(leader->x.fixed)) - x;
   y = Map_GetTerrainHeight(0, leader->x.fixed, leader->z.fixed) - originY;
-  z = (FIELD_CELL(leader->z.fixed) << 20) - cameraZ - originY;
-  sy = z - y;
-  sx = x >> 16;
-  sy = (sy >> 16) + 16;
-  depth = ((y + z) >> 16) + 58;
-  if ((u32)(sx + 15) > 334 || sy < -15 || sy > 239)
+  z = FIELD_CELL_ORIGIN(FIELD_CELL(leader->z.fixed)) - cameraZ - originY;
+  screenY = z - y;
+  screenX = FIXEDtoINT(x);
+  screenY = FIXEDtoINT(screenY) + 16;
+  depth = FIXEDtoINT(y + z) + SCENE_SPRITE_DEPTH;
+  if ((u32)(screenX + 15) > 334 || screenY < -15 || screenY > 239)
     return;
-  sx &= 0x1ff;
-  sy &= 0xff;
+  screenX &= 0x1ff;
+  screenY &= 0xff;
   word = gMarsLighthouseEntrance_HoleMaskSprite;
   *word++ = 0;
-  *word++ = sy | (sx << 16) | OBJ_SIZE_16X32 | OBJ_MODE(OBJ_MODE_WINDOW);
-  *word = tile | 0x400;
+  *word++ =
+      screenY | OBJ_X(screenX) | OBJ_SIZE_16X32 | OBJ_MODE(OBJ_MODE_WINDOW);
+  *word = tile | OBJ_PRIORITY(1);
   Oam_AddSpriteAtDepthClamped(gMarsLighthouseEntrance_HoleMaskSprite, depth);
 }
 
-/// Fills 256 bytes with colour 1, loads them into a VRAM block of their own
-/// and starts MarsLighthouseEntrance_DrawHoleMask.
-/// Masks the leader's sprite as he drops through the floor.
+/// Masks the leader's sprite as he drops through the floor: a sprite of colour
+/// 1 in a VRAM block of its own, drawn each frame in the OBJ window over his
+/// cell (MarsLighthouseEntrance_DrawHoleMask).
 void MarsLighthouseEntrance_StartHoleMask(void) {
-  u32 *buffer = Heap_Alloc(256);
+  u32 *buffer = Heap_Alloc(HOLE_MASK_BYTES);
   u32 *word = buffer;
   s32 count;
 
-  for (count = 0; count < 64; count++) {
-    *word++ = 0x11111111;
+  for (count = 0; count < HOLE_MASK_BYTES / 4; count++) {
+    *word++ = PIXELS_4BPP(1);
   }
   gMarsLighthouseEntrance_HoleMaskVram = VramCache_FindFreeEntry();
-  Vram_Load(gMarsLighthouseEntrance_HoleMaskVram, 256, buffer);
+  Vram_Load(gMarsLighthouseEntrance_HoleMaskVram, HOLE_MASK_BYTES, buffer);
   Heap_Release(buffer);
   Task_AddFrame(MarsLighthouseEntrance_DrawHoleMask, TASK_PASS_FRAME);
 }
@@ -833,9 +914,9 @@ void MarsLighthouseEntrance_StartHoleMask(void) {
     REG_WINOUT = winout;                                                       \
   } while (0)
 
-/// The leader shrinks and sinks over 40 frames, then the screen transition
-/// ends.
-/// The leader drops through a hole in the floor to the room below.
+/// The leader drops through a hole in the floor to the room below: startled,
+/// he raises his arms and shrinks and sinks out of sight (SINK_FRAMES) before
+/// the screen goes.
 void MarsLighthouseEntrance_FallIntoHole(s32 arg) {
   struct Actor *actor;
   struct MapWork *map;
@@ -867,15 +948,15 @@ void MarsLighthouseEntrance_FallIntoHole(s32 arg) {
     cells = map->layers[actor->layer & 3].cells;
   else
     cells = buffer;
-  cells += x + (z << 7) + 128;
-  if (!(cells->attributeB & 0x40)) {
+  cells += x + (z << 7) + MAPGRID_SIZE;
+  if (!(cells->attributeB & MAP_CELL_FLOOR_HOLE)) {
     SET_SPRITE_WINDOW_LAYERS();
     REG_DISPCNT |= DISPCNT_OBJWIN_ON;
     MarsLighthouseEntrance_StartHoleMask();
   }
   Actor_SetAnimation(gMainRoutineWork.leaderActorId, ANIM_LEADER_ARMS_RAISED);
   FieldEvent_Wait(16);
-  for (i = 0; i <= 39; i++) {
+  for (i = 0; i < SINK_FRAMES; i++) {
     if (i == 5)
       Event_PlaySound(SE_DUST_PUFF);
     actor->scaleX -= FIXED_ONE / 64;
@@ -938,7 +1019,7 @@ void MarsLighthouseEntrance_FallThroughCrack(const struct MapCell *cell) {
   System_Wait(30);
   leader->facing = FACING_SOUTH;
   leader->motionFlags = 0;
-  if ((cell->attributeB & 64) == 0) {
+  if ((cell->attributeB & MAP_CELL_FLOOR_HOLE) == 0) {
     {
       u16 winout = WINOUT_WIN01_BG0 | WINOUT_WIN01_BG1 | WINOUT_WIN01_BG2 |
                    WINOUT_WIN01_BG3 | WINOUT_WIN01_OBJ | WINOUT_WINOBJ_BG0 |
@@ -951,7 +1032,7 @@ void MarsLighthouseEntrance_FallThroughCrack(const struct MapCell *cell) {
   }
   Actor_SetAnimation(gMainRoutineWork.leaderActorId, ANIM_LEADER_ARMS_RAISED);
   FieldEvent_Wait(16);
-  for (i = 0; i <= 39; i++) {
+  for (i = 0; i < SINK_FRAMES; i++) {
     if (i == 5)
       Event_PlaySound(SE_DUST_PUFF);
     leader->scaleX -= FIXED_ONE / 64;
@@ -963,7 +1044,8 @@ void MarsLighthouseEntrance_FallThroughCrack(const struct MapCell *cell) {
   gFieldWork->transition = SCENE_TRANSITION(TRANSITION_WINDOW, 9);
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();
-  FieldEvent_SetExitRequest(11);
+  FieldEvent_SetExitRequest(
+      MARS_LIGHTHOUSE_ENTRANCE_SOL_BLADE_CHEST_TO_MARS_LIGHTHOUSE_STAR_ROOM_NORTHWEST_B);
 }
 
 /// At the ice's edge: the leader jumps forward if he can, or slides on.
@@ -988,8 +1070,8 @@ void MarsLighthouseEntrance_CheckCrackedFloor(void) {
   if (map != NULL)
     cell = map->layers[actor->layer & 3].cells;
   cell += x + (z << 7);
-  if (cell->attributeB & 64)
-    MarsLighthouseEntrance_FallThroughCrack(cell + 128);
+  if (cell->attributeB & MAP_CELL_FLOOR_HOLE)
+    MarsLighthouseEntrance_FallThroughCrack(cell + MAPGRID_SIZE);
 }
 
 const struct Trigger *Scene_GetTriggers(void) {
@@ -1066,15 +1148,6 @@ void MarsLighthouseEntrance_FlingIceCone(struct Actor *actor) {
   }
 }
 
-extern struct Trigger gMarsLighthouseEntrance_Triggers[];
-extern struct Trigger gMarsLighthouseEntrance_OutsideTriggers[];
-extern struct Trigger gMarsLighthouseEntrance_FugueTriggers[];
-extern struct Trigger gMarsLighthouseEntrance_LapisTriggers[];
-extern struct Trigger gMarsLighthouseEntrance_BalmTriggers[];
-extern struct Trigger gMarsLighthouseEntrance_HiddenCircleTriggers[];
-extern struct Trigger gMarsLighthouseEntrance_ValkyrieTriggers[];
-extern struct Trigger gMarsLighthouseEntrance_SolBladeTriggers[];
-
 /// An ice cone waits until the dragon face's fireball comes within 32 pixels
 /// across, then is flung away.
 void MarsLighthouseEntrance_WaitForDragonFace(struct Actor *actor) {
@@ -1120,9 +1193,7 @@ s32 Scene_Initialize(void) {
   struct Actor *actor;
   s32 i;
 
-  // XXX: Data_02006878 is cleared here and read nowhere in this overlay; a
-  // watch on the word in the running game would say what else reads it.
-  Data_02006878 = 0;
+  gWhirlwindRiding = 0;
   gFieldWork->transition = SCENE_TRANSITION(TRANSITION_WINDOW, 4);
   Event_SetFlag(FLAG_IN_MARS_LIGHTHOUSE);
   Ride_Create();
@@ -1133,14 +1204,14 @@ s32 Scene_Initialize(void) {
 #if !TLA_PATCH_1
     FieldActor_SetSpritePriority(ACTOR_FUGUE, 3);
 #endif
-    Actor_Freeze(ACTOR_DEAD_END);
+    Actor_Freeze(ACTOR_ICE_SHAFT);
     if (Event_GetFlag(FLAG_MARS_LIGHTHOUSE_THAWED)) {
       MapGrid_CopyCellsLayered(35, 41, 24, 10, 3, 53);
       MapGrid_CopyCellsLayered(35, 105, 24, 10, 3, 117);
     }
     MarsLighthouseEntrance_PlaceIceCones(
         (s32)gMarsLighthouseEntrance_FugueIceCones);
-    if (Event_GetFlag(FLAG_ICE_GROUND))
+    if (Event_GetFlag(FLAG_ICE_SHAFT_GROUND))
       MapGrid_CopyCellsLayered(50, 125, 3, 3, 39, 85);
   } else if (scene == SCENE_MARS_LIGHTHOUSE_ENTRANCE_TELEPORT_LAPIS) {
     FieldEffect_StartBlankOverlay(0);
@@ -1153,7 +1224,7 @@ s32 Scene_Initialize(void) {
       MapGrid_CopyCellsLayered(47, 94, 10, 6, 47, 100);
       MapGrid_CopyCellAttributes(110, 40, 12, 4, 46, 40);
       Actor_SetPosition(ACTOR_ICE_SHEET, 0, 0);
-    } else if (Event_GetFlag(FLAG_ICE_GROUND)) {
+    } else if (Event_GetFlag(FLAG_ICE_SHAFT_GROUND)) {
       Event_SetFlag(FLAG_LAPIS_SHEET_CRACKED);
       Actor_Get(ACTOR_ICE_SHEET)->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
     } else {
@@ -1181,7 +1252,8 @@ s32 Scene_Initialize(void) {
       Actor_SetPosition(ACTOR_UNLIT_TORCH, 0, 0);
     else
       Actor_SetPosition(ACTOR_LIT_TORCH, 0, 0);
-    if (entrance == 20) {
+    if (entrance ==
+        MARS_LIGHTHOUSE_ENTRANCE_TELEPORT_LAPIS_FROM_MARS_LIGHTHOUSE_ENTRANCE_FUGUE_EAST) {
       Event_Start();
       FieldEvent_ResolvePendingActions(0);
       FieldCamera_MoveTo(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0);
@@ -1198,15 +1270,18 @@ s32 Scene_Initialize(void) {
         MarsLighthouseEntrance_ScatterIceChips(ACTOR_ICE_SHEET);
         System_Wait(1);
       }
-      Event_SetFlag(FLAG_ICE_GROUND);
+      Event_SetFlag(FLAG_ICE_SHAFT_GROUND);
       MapGrid_SetShake(SHAKE_KEEP, SHAKE_KEEP, 0.9);
       FieldEvent_Wait(120);
-      FieldEvent_SetExitRequest(20);
+      FieldEvent_SetExitRequest(
+          MARS_LIGHTHOUSE_ENTRANCE_TELEPORT_LAPIS_TO_MARS_LIGHTHOUSE_ENTRANCE_FUGUE_EAST);
       Event_SetFlag(FLAG_KEEP_PARTY_POSITION);
     }
   } else if (scene == SCENE_MARS_LIGHTHOUSE_ENTRANCE_BALM) {
     FieldEffect_StartBlankOverlay(0);
-    if (entrance == 10 || entrance == 1) {
+    if (entrance == BALM_EAST_HALL_NORTH_ENTRANCE ||
+        entrance ==
+            MARS_LIGHTHOUSE_ENTRANCE_BALM_FROM_MARS_LIGHTHOUSE_ENTRANCE_HIDDEN_CIRCLE_SOUTH) {
       FlameThrowers_Start((s32)gMarsLighthouseEntrance_BalmBeamTargets,
                           (s32)gMarsLighthouseEntrance_BalmBeamStops,
                           (s32)MarsLighthouseEntrance_ShootBalmFireball,
@@ -1232,7 +1307,11 @@ s32 Scene_Initialize(void) {
       MarsLighthouseEntrance_MeltIceInPath();
   } else if (scene == SCENE_MARS_LIGHTHOUSE_ENTRANCE_VALKYRIE_MAIL_CHEST) {
     FieldEffect_StartBlankOverlay(0);
-    if (entrance == 2 || entrance == 4 || entrance == 6 || entrance == 13) {
+    if (entrance == VALKYRIE_SOUTHWEST_FROM_SOUTHEAST ||
+        entrance == VALKYRIE_SOUTHWEST_FROM_MIDDLE_EAST ||
+        entrance ==
+            MARS_LIGHTHOUSE_ENTRANCE_VALKYRIE_MAIL_CHEST_FROM_MARS_LIGHTHOUSE_STAR_ROOM_SOUTHEAST ||
+        entrance == VALKYRIE_SOUTH_CIRCLE) {
       FlameThrowers_Start(
           (s32)gMarsLighthouseEntrance_ValkyrieUpperBeamTargets,
           (s32)gMarsLighthouseEntrance_ValkyrieUpperBeamStops,
@@ -1240,7 +1319,11 @@ s32 Scene_Initialize(void) {
           STEP_TRIGGER_FLAME_HIT);
       Ride_SetEntryCount(0, 1);
     }
-    if ((u32)(entrance - 7) <= 1 || entrance == 11) {
+    if (entrance ==
+            MARS_LIGHTHOUSE_ENTRANCE_VALKYRIE_MAIL_CHEST_FROM_MARS_LIGHTHOUSE_ENTRANCE_BALM ||
+        entrance ==
+            MARS_LIGHTHOUSE_ENTRANCE_VALKYRIE_MAIL_CHEST_FROM_MARS_LIGHTHOUSE_STAR_ROOM_NORTHWEST ||
+        entrance == VALKYRIE_NORTH_FROM_MIDDLE_WEST) {
       struct Actor *target;
 
       FlameThrowers_Start(
@@ -1249,7 +1332,7 @@ s32 Scene_Initialize(void) {
           (s32)MarsLighthouseEntrance_ShootValkyrieLowerFireball,
           STEP_TRIGGER_FLAME_HIT);
       Ride_SetEntryCount(0, 1);
-      if (entrance == 11) {
+      if (entrance == VALKYRIE_NORTH_FROM_MIDDLE_WEST) {
         Actor_SetScript(ACTOR_DRAGON_FACE,
                         gMarsLighthouseEntrance_DragonFaceAtLeft);
         Ride_SetEntryState(0, FLAME_FORWARD | 3);
@@ -1263,7 +1346,7 @@ s32 Scene_Initialize(void) {
       Ride_SetMode(1);
       MarsLighthouseEntrance_PlaceIceCones(
           (s32)gMarsLighthouseEntrance_ValkyrieIceCones);
-      target = Actor_Get(ACTOR_VALKYRIE_FIREBALL_ROLL);
+      target = Actor_Get(ACTOR_VALKYRIE_FIREBALL);
       Actor_Get(ACTOR_VALKYRIE_ICE_CONE_A)->update =
           (void (*)(void))MarsLighthouseEntrance_WaitForDragonFace;
       Actor_Get(ACTOR_VALKYRIE_ICE_CONE_B)->update =
@@ -1291,7 +1374,7 @@ s32 Scene_Initialize(void) {
     FieldEffect_StartBlankOverlay(0);
   }
   if (scene == SCENE_MARS_LIGHTHOUSE_ENTRANCE_VALKYRIE_MAIL_CHEST &&
-      entrance == 13)
+      entrance == VALKYRIE_SOUTH_CIRCLE)
     Event_ClearFlag(FLAG_FIELD_HANDLING_REQUESTS);
   Palette_SetColorsFade((s32)gMarsLighthouseEntrance_FadeSlots,
                         (s32)gMarsLighthouseEntrance_FadeColorsFrom,
@@ -1306,14 +1389,6 @@ extern s32 gMarsLighthouseEntrance_BalmFireballPath[];
 extern s32 gMarsLighthouseEntrance_FireballToHiddenCircleIceSheet[];
 extern s32 gMarsLighthouseEntrance_FireballThroughIce[];
 extern s32 gMarsLighthouseEntrance_FireballToLapisIceSheet[];
-extern struct Trigger gMarsLighthouseEntrance_Triggers[];
-extern struct Trigger gMarsLighthouseEntrance_OutsideTriggers[];
-extern struct Trigger gMarsLighthouseEntrance_FugueTriggers[];
-extern struct Trigger gMarsLighthouseEntrance_LapisTriggers[];
-extern struct Trigger gMarsLighthouseEntrance_BalmTriggers[];
-extern struct Trigger gMarsLighthouseEntrance_HiddenCircleTriggers[];
-extern struct Trigger gMarsLighthouseEntrance_ValkyrieTriggers[];
-extern struct Trigger gMarsLighthouseEntrance_SolBladeTriggers[];
 
 s32 Scene_PrepareMap(void) {
   if (Flag_IsSet(FLAG_MARS_LIGHTHOUSE_THAWED))
@@ -1325,43 +1400,42 @@ s32 Scene_PrepareMap(void) {
 
 /// The flames reach their stop: the upper torch's fireball sets off.
 void MarsLighthouseEntrance_ShootValkyrieUpperFireball(void) {
-  Actor_Attach(ACTOR_UPPER_TORCH, ACTOR_VALKYRIE_FIREBALL,
-               ACTOR_VALKYRIE_FIREBALL_ROLL, FACING_EAST,
+  Actor_Attach(ACTOR_UPPER_TORCH, ACTOR_VALKYRIE_SPARKLE,
+               ACTOR_VALKYRIE_FIREBALL, FACING_EAST,
                gMarsLighthouseEntrance_ValkyrieUpperFireballPath);
 }
 
 /// The flames reach their stop: the lower torch's fireball sets off.
 void MarsLighthouseEntrance_ShootValkyrieLowerFireball(void) {
-  Actor_Attach(ACTOR_LOWER_TORCH, ACTOR_VALKYRIE_FIREBALL,
-               ACTOR_VALKYRIE_FIREBALL_ROLL, FACING_EAST,
+  Actor_Attach(ACTOR_LOWER_TORCH, ACTOR_VALKYRIE_SPARKLE,
+               ACTOR_VALKYRIE_FIREBALL, FACING_EAST,
                gMarsLighthouseEntrance_ValkyrieLowerFireballPath);
 }
 
 /// The flames reach the torch in Balm's room: its fireball sets off south.
 void MarsLighthouseEntrance_ShootBalmFireball(void) {
-  Actor_Attach(ACTOR_BALM_TORCH, ACTOR_BALM_FIREBALL, ACTOR_BALM_FIREBALL_ROLL,
+  Actor_Attach(ACTOR_BALM_TORCH, ACTOR_BALM_SPARKLE, ACTOR_BALM_FIREBALL,
                FACING_SOUTH, gMarsLighthouseEntrance_BalmFireballPath);
 }
 
 /// The west torch's fireball sets off for the hidden circle's ice sheet.
 void MarsLighthouseEntrance_ShootFireballAtHiddenCircleIceSheet(void) {
-  Actor_Attach(ACTOR_WEST_TORCH, ACTOR_HIDDEN_CIRCLE_FIREBALL,
-               ACTOR_HIDDEN_CIRCLE_FIREBALL_ROLL, FACING_EAST,
+  Actor_Attach(ACTOR_WEST_TORCH, ACTOR_HIDDEN_CIRCLE_SPARKLE,
+               ACTOR_HIDDEN_CIRCLE_FIREBALL, FACING_EAST,
                gMarsLighthouseEntrance_FireballToHiddenCircleIceSheet);
 }
 
 /// The east torch's fireball sets off south through the ice.
 void MarsLighthouseEntrance_ShootFireballThroughIce(void) {
-  Actor_Attach(ACTOR_EAST_TORCH, ACTOR_HIDDEN_CIRCLE_FIREBALL,
-               ACTOR_HIDDEN_CIRCLE_FIREBALL_ROLL, FACING_SOUTH,
+  Actor_Attach(ACTOR_EAST_TORCH, ACTOR_HIDDEN_CIRCLE_SPARKLE,
+               ACTOR_HIDDEN_CIRCLE_FIREBALL, FACING_SOUTH,
                gMarsLighthouseEntrance_FireballThroughIce);
 }
 
 /// The torch's fireball sets off for the Teleport Lapis room's ice sheet.
 void MarsLighthouseEntrance_ShootFireballAtLapisIceSheet(void) {
-  Actor_Attach(ACTOR_LAPIS_TORCH_A, ACTOR_LAPIS_FIREBALL,
-               ACTOR_LAPIS_FIREBALL_ROLL, FACING_EAST,
-               gMarsLighthouseEntrance_FireballToLapisIceSheet);
+  Actor_Attach(ACTOR_LAPIS_TORCH_A, ACTOR_LAPIS_SPARKLE, ACTOR_LAPIS_FIREBALL,
+               FACING_EAST, gMarsLighthouseEntrance_FireballToLapisIceSheet);
 }
 
 void Ride_UpdateDrift(struct Actor *actor);
@@ -1386,8 +1460,6 @@ extern s32 gScriptedPart_Script[];
 
 void Ride_UpdateDrift(struct Actor *actor);
 
-/// Stops the actor and sets its sprite part, then restarts its script at
-/// gScriptedPart_Script. Overlays 6ab, 6ac and 6ad have the same function.
 #include "shared/actor_setup_scripted_part.h"
 
 #include "shared/ride_spawn_backward.c"
@@ -1449,15 +1521,17 @@ void Ride_SetEntryState(s32 index, s32 value) {
   struct FlameHitWork *work = RIDE_WORK;
   struct RideEntry *entry = &work->entries[index];
 
-  entry->reach = (value & 15) << 16;
-  entry->flags = value & 0xf0;
+  entry->reach = INTtoFIXED(value & FLAME_THROWER_REACH_BITS);
+  entry->flags = value & FLAME_THROWER_FLAG_BITS;
 }
 
 #include "shared/ride_set_entry_count.c"
 
 /// Flame thrower `index`'s flags: which flame it sends and how far.
 UNUSED s32 Ride_GetEntryFlags(s32 index) {
-  return ((struct RideRow *)((u8 *)RIDE_WORK + index * 16))->entry.flags;
+  return ((struct RideRow *)((u8 *)RIDE_WORK +
+                             index * sizeof(struct RideEntry)))
+      ->entry.flags;
 }
 
 /// Sets the actor the flames check against in slot `index`.
@@ -1498,9 +1572,11 @@ void MarsLighthouseEntrance_KnockBackIfHit(void) {
     Leader_KnockBack();
 }
 
-/// Stepping onto ice (cell behavior 90, as Imil's ice slide is in The Broken
-/// Seal): the leader slides until the ice stops.
-int MarsLighthouseEntrance_SlideOnIce(void) {
+/// A rolling fireball has hit the leader (STEP_TRIGGER_FIREBALL_HIT): he takes
+/// fall damage, sits blinking on the floor and is carried along with the
+/// fireball (FlameHitWork.car) until it stops, held at a cell's centre over
+/// rounded ground.
+int MarsLighthouseEntrance_RideFireball(void) {
   struct FieldWork *event = Ram_HeapSlots->fieldWork;
   struct FlameHitWork *ride;
   struct Actor *leader;
@@ -1533,10 +1609,10 @@ int MarsLighthouseEntrance_SlideOnIce(void) {
   Flag_Clear(FLAG_MENU_OPEN);
   leader->update = (void (*)(void))Actor_Blink;
   leader->facing = FACING_SOUTH;
-  Actor_SelectAnimation(leader, 49);
+  Actor_SelectAnimation(leader, ANIM_LEADER_SIT);
   while (ride->car->timer == 0) {
-    if (MapGrid_GetCellAttributeLowNibbleOrBump(0, leader->x.fixed,
-                                                leader->z.fixed) != 7) {
+    if (MapGrid_GetCellAttributeLowNibbleOrBump(
+            0, leader->x.fixed, leader->z.fixed) != TERRAIN_ROUNDED_SQUARE) {
       leader->x.fixed += ride->car->stepX;
       leader->z.fixed += ride->car->stepZ;
     } else {
@@ -1557,10 +1633,11 @@ int MarsLighthouseEntrance_SlideOnIce(void) {
 #endif
 }
 
-/// While a fireball carries the leader, he slides on; returns whether he did.
+/// While a flame or fireball has hit the leader, he is carried along
+/// (MarsLighthouseEntrance_RideFireball); returns whether he was.
 s32 MarsLighthouseEntrance_SlideIfRiding(void) {
   if (RIDE_WORK->active) {
-    MarsLighthouseEntrance_SlideOnIce();
+    MarsLighthouseEntrance_RideFireball();
     return 1;
   }
   return 0;
@@ -1575,8 +1652,6 @@ extern u32 gCrumbs_Script[];
 
 extern u32 gEmbers_Script[];
 
-/// Throws two sparks (object kind 325) from (x, y, z), each upward at about
-/// speed plus 0x14000 with a random spread, at a random angle and size.
 #include "shared/embers_spawn.h"
 
 #include "shared/actor_hold_during_event.c"
@@ -1587,32 +1662,26 @@ extern u32 gEmbers_Script[];
 #undef WORK
 #undef ABS
 
-extern struct Trigger gMarsLighthouseEntrance_OutsideTriggers[];
-extern struct Trigger gMarsLighthouseEntrance_FugueTriggers[];
-extern struct Trigger gMarsLighthouseEntrance_LapisTriggers[];
-extern struct Trigger gMarsLighthouseEntrance_BalmTriggers[];
-extern struct Trigger gMarsLighthouseEntrance_HiddenCircleTriggers[];
-extern struct Trigger gMarsLighthouseEntrance_ValkyrieTriggers[];
-extern struct Trigger gMarsLighthouseEntrance_SolBladeTriggers[];
-
 void Map_CopyPalette(s32 scene, s32 a1);
 
-/// Attaches an actor to another with a script and an update. Its callers take
-/// it as returning a word; it returns none.
-s32 Actor_Attach(s32 id, s32 target, s32 kind, s32 a3, const void *script) {
-  struct Actor *source = Actor_Get(id);
-  struct Actor *actor = Actor_Get(target);
+/// Sends a sparkle from a torch along its path, at whose end it sets a
+/// fireball rolling toward `facing` (Actor_Park). Its callers take it as
+/// returning a word; it returns none.
+s32 Actor_Attach(s32 torchId, s32 sparkleId, s32 fireballId, s32 facing,
+                 const void *path) {
+  struct Actor *source = Actor_Get(torchId);
+  struct Actor *actor = Actor_Get(sparkleId);
 
   FieldActor_SetPositionAndResetMotion(actor, source->x.fixed, source->y.fixed,
                                        source->z.fixed);
-  Actor_StartScript(actor, script);
+  Actor_StartScript(actor, path);
   Actor_SetSpriteFlags(actor, 0);
   actor->motionFlags = 0;
   Actor_SelectAnimation(actor, 1);
   actor->watchedActor = source;
   actor->timer = 0;
-  actor->userValue = a3;
-  *(u8 *)&actor->riseCounter = kind;
+  actor->userValue = facing;
+  actor->launchedActorId = fireballId;
   actor->update = (void (*)(void))Actor_HoldDuringEvent;
   // UB: no value is returned, though the callers take one.
 #ifdef UBFIX
@@ -1654,7 +1723,6 @@ void Leader_SetSlideStopped(s32 value) { gSlideOnIce_Stopped = value; }
 
 #include "../field/field_effect_move.c"
 
-#undef TLA_MARS_LIGHTHOUSE_ENTRANCE_RIDE_H
 #undef RIDE_WORK
 #undef DEFINE_BURST_ICE_SHEET
 #undef SET_SPRITE_WINDOW_LAYERS
@@ -1704,7 +1772,7 @@ void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
   effect->scaleRateY = 0;
   effect->spin = 0;
 
-  if ((flags & 0xffff0000) == 0 || options == 0)
+  if ((flags & EFFECT_OPTION_MASK) == 0 || options == 0)
     return;
   if ((flags & EFFECT_USE_PALETTE) != 0)
     FieldActor_SetSpriteColor(effect, options->palette);
@@ -1750,12 +1818,6 @@ void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
 
 #include "shared/leader_center_in_cell.h"
 
-// Map_CopyCellsRect through this overlay's import.
-
-// Centers the leader on its cell, plays sound 161 and copies the cell below
-// the table's source cell over the leader's, keeping the source column's and
-// row's 64 bit; CrackedTile_Step calls it the first time the leader steps on
-// one of the table's cells.
 #include "shared/cracked_tile_crack.h"
 
 /// A cracked tile gives way under the leader, who drops through it.
@@ -1765,7 +1827,7 @@ void CrackedTile_Fall(struct CellTarget *table, struct CellTargetEntry *entry) {
   s32 z;
   s32 mask;
 
-  mask = 64;
+  mask = MAPGRID_SIZE / 2;
   x = FIELD_CELL(actor->x.fixed);
   x |= (s16)(table->x & mask);
   z = FIELD_CELL(actor->z.fixed);
@@ -1791,7 +1853,7 @@ void CrackedTile_Fall(struct CellTarget *table, struct CellTargetEntry *entry) {
   table->shown = 1;
   Actor_SetAnimation(gMainRoutineWork.leaderActorId, ANIM_LEADER_ARMS_RAISED);
   FieldEvent_Wait(16);
-  for (x = 0; x < 40; x++) {
+  for (x = 0; x < SINK_FRAMES; x++) {
     if (x == 5)
       Event_PlaySound(SE_DUST_PUFF);
     actor->scaleX -= FIXED_ONE / 64;
@@ -1837,8 +1899,8 @@ void MarsLighthouseEntrance_LandFromCrack(void) {
   options.update = FieldEffect_AdvanceMotion;
   options.startScaleX = FIXED_ONE * 16 / 25;
   options.startScaleY = FIXED_ONE * 16 / 25;
-  for (i = 0; i <= 16; i++) {
-    s32 angle = i << 12;
+  for (i = 0; i <= DUST_RING_PUFFS; i++) {
+    s32 angle = i * (TRIG_TURN / DUST_RING_PUFFS);
 
     velocity.x = Trig_Cos(angle);
     velocity.y = 0;
@@ -1855,7 +1917,7 @@ void MarsLighthouseEntrance_LandFromCrack(void) {
   Event_PlaySound(SE_THUMP);
   Actor_SetAttachedEffect(gMainRoutineWork.leaderActorId,
                           ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ATTACH);
-  Actor_SetAnimation(gMainRoutineWork.leaderActorId, 49);
+  Actor_SetAnimation(gMainRoutineWork.leaderActorId, ANIM_LEADER_SIT);
   MapGrid_SetShake(5, 5, 1);
   MapGrid_SetShake(SHAKE_KEEP, SHAKE_KEEP, 0.9);
   FieldMapGrid_WaitForShakeToSettle();
@@ -2096,10 +2158,16 @@ s32 gMarsLighthouseEntrance_DragonFaceAtLeft[] = {
     SC_END,
 };
 
+/// A chip of ice flies for 40 frames, blinks ten times and is gone.
 u32 gMarsLighthouseEntrance_IceChipScript[] = {
-    0, 40, 0x80010000, 22, 25, 0,
-    0, 1, 22, 25, 1, 0,
-    1, 13, 10, 0xc0010000, 38,
+    SC_WAIT(40),
+    SC_LABEL(1),
+    SC_SET(SW_SPRITE_KIND, ACTOR_SPRITE_NONE),
+    SC_WAIT(1),
+    SC_SET(SW_SPRITE_KIND, ACTOR_SPRITE_ONE),
+    SC_WAIT(1),
+    SC_LOOP(10, SC_TO(1)),
+    SC_RELEASE,
 };
 
 s16 gMarsLighthouseEntrance_FugueIceCones[] = {
@@ -2183,7 +2251,7 @@ s32 gMarsLighthouseEntrance_ValkyrieLowerFireballPath[] = {
     SC_SYNC,
     SC_MOVE(96, 22, 168),
     SC_SYNC,
-    SC_SET(37, (s32)MarsLighthouseEntrance_ClearFireballRow),
+    SC_SET(SW_WATCHED_ACTOR, (s32)MarsLighthouseEntrance_ClearFireballRow),
     SC_CALL(Actor_Park),
     SC_END,
 };
@@ -2204,7 +2272,7 @@ s32 gMarsLighthouseEntrance_FireballToHiddenCircleIceSheet[] = {
     SC_SYNC,
     SC_MOVE(112, 22, 680),
     SC_SYNC,
-    SC_SET(37, (s32)MarsLighthouseEntrance_CrackHiddenCircleIceSheet),
+    SC_SET(SW_WATCHED_ACTOR, (s32)MarsLighthouseEntrance_CrackHiddenCircleIceSheet),
     SC_CALL(Actor_Park),
     SC_END,
 };
@@ -2219,7 +2287,7 @@ s32 gMarsLighthouseEntrance_FireballThroughIce[] = {
     SC_SYNC,
     SC_MOVE(872, 22, 152),
     SC_SYNC,
-    SC_SET(37, (s32)MarsLighthouseEntrance_MeltIceInPath),
+    SC_SET(SW_WATCHED_ACTOR, (s32)MarsLighthouseEntrance_MeltIceInPath),
     SC_CALL(Actor_Park),
     SC_END,
 };
@@ -2232,7 +2300,7 @@ s32 gMarsLighthouseEntrance_FireballToLapisIceSheet[] = {
     SC_SYNC,
     SC_MOVE(128, 22, 680),
     SC_SYNC,
-    SC_SET(37, (s32)MarsLighthouseEntrance_CrackLapisIceSheet),
+    SC_SET(SW_WATCHED_ACTOR, (s32)MarsLighthouseEntrance_CrackLapisIceSheet),
     SC_CALL(Actor_Park),
     SC_END,
 };
@@ -2435,11 +2503,11 @@ struct ActorPlacement gMarsLighthouseEntrance_LapisPlacements[] = {
     ACTOR_PLACEMENT(SPRITE_MARS_TORCH_LIT, CONDITION_ALWAYS, (s32)gMarsLighthouseEntrance_StatueScript, 88, 0, 728, FACING_SOUTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(SPRITE_STAKE, CONDITION_ALWAYS, gMarsLighthouseEntrance_IceConeScript, 0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(SPRITE_STAKE, CONDITION_ALWAYS, gMarsLighthouseEntrance_IceConeScript, 552, 0, 776, FACING_SOUTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(SPRITE_ICE_CRACK, CONDITION_ALWAYS, 7, 840, 0, 672, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_ICE_CRACK, CONDITION_ALWAYS, MOVEMENT_TYPE_CLEAR_COLLISION, 840, 0, 672, FACING_SOUTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(SPRITE_MARS_TORCH, CONDITION_ALWAYS, (s32)gMarsLighthouseEntrance_StatueScript, 88, 0, 728, FACING_SOUTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(SPRITE_ICE_CRACK, CONDITION_ALWAYS, 7, 480, 0, 704, FACING_SOUTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(SPRITE_SPARKLE, CONDITION_ALWAYS, 7, 0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(SPRITE_FIREBALL, CONDITION_ALWAYS, 7, 0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_ICE_CRACK, CONDITION_ALWAYS, MOVEMENT_TYPE_CLEAR_COLLISION, 480, 0, 704, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_SPARKLE, CONDITION_ALWAYS, MOVEMENT_TYPE_CLEAR_COLLISION, 0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_FIREBALL, CONDITION_ALWAYS, MOVEMENT_TYPE_CLEAR_COLLISION, 0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, 0),
     {SCENE_TABLE_END},
 };
 // clang-format on
@@ -2456,10 +2524,10 @@ struct ActorPlacement gMarsLighthouseEntrance_BalmPlacements[] = {
     ACTOR_PLACEMENT(SPRITE_STAKE, CONDITION_ALWAYS, gMarsLighthouseEntrance_IceConeScript, 936, 0, 824, FACING_SOUTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE),
     ACTOR_PLACEMENT(SPRITE_STAKE, CONDITION_ALWAYS, gMarsLighthouseEntrance_IceConeScript, 904, 0, 872, FACING_SOUTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE),
     ACTOR_PLACEMENT(SPRITE_MERCURY_DJINNI, FLAG_DJINNI(DJINNI_BALM), MOVEMENT_TYPE_STAND, 88, 0, 904, FACING_SOUTH, TALK_FACING_PARTY, 0),
-    ACTOR_PLACEMENT(SPRITE_SPARKLE, CONDITION_ALWAYS, 7, 0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(SPRITE_SPARKLE, CONDITION_ALWAYS, 7, 0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(SPRITE_FIREBALL, CONDITION_ALWAYS, 7, 0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(SPRITE_FIREBALL, CONDITION_ALWAYS, 7, 0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_SPARKLE, CONDITION_ALWAYS, MOVEMENT_TYPE_CLEAR_COLLISION, 0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_SPARKLE, CONDITION_ALWAYS, MOVEMENT_TYPE_CLEAR_COLLISION, 0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_FIREBALL, CONDITION_ALWAYS, MOVEMENT_TYPE_CLEAR_COLLISION, 0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_FIREBALL, CONDITION_ALWAYS, MOVEMENT_TYPE_CLEAR_COLLISION, 0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, 0),
     {SCENE_TABLE_END},
 };
 // clang-format on
@@ -2470,9 +2538,9 @@ struct ActorPlacement gMarsLighthouseEntrance_HiddenCirclePlacements[] = {
     ACTOR_PLACEMENT(SPRITE_MARS_TORCH, CONDITION_ALWAYS, (s32)gMarsLighthouseEntrance_StatueScript, 72, 0, 680, FACING_SOUTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(SPRITE_MARS_TORCH_LIT, CONDITION_ALWAYS, (s32)gMarsLighthouseEntrance_StatueScript, 904, 0, 120, FACING_SOUTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(SPRITE_MARS_TORCH, CONDITION_ALWAYS, (s32)gMarsLighthouseEntrance_StatueScript, 856, 0, 120, FACING_SOUTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(SPRITE_ICE_CRACK, CONDITION_ALWAYS, 7, 240, 0, 688, FACING_SOUTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(SPRITE_SPARKLE, CONDITION_ALWAYS, 7, 0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(SPRITE_FIREBALL, CONDITION_ALWAYS, 7, 0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_ICE_CRACK, CONDITION_ALWAYS, MOVEMENT_TYPE_CLEAR_COLLISION, 240, 0, 688, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_SPARKLE, CONDITION_ALWAYS, MOVEMENT_TYPE_CLEAR_COLLISION, 0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_FIREBALL, CONDITION_ALWAYS, MOVEMENT_TYPE_CLEAR_COLLISION, 0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, 0),
     {SCENE_TABLE_END},
 };
 // clang-format on
@@ -2490,8 +2558,8 @@ struct ActorPlacement gMarsLighthouseEntrance_ValkyriePlacements[] = {
     ACTOR_PLACEMENT(SPRITE_STAKE, CONDITION_ALWAYS, gMarsLighthouseEntrance_IceConeScript, 424, 0, 152, FACING_SOUTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(SPRITE_STAKE, CONDITION_ALWAYS, gMarsLighthouseEntrance_IceConeScript, 664, 0, 152, FACING_SOUTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(SPRITE_STAKE, CONDITION_ALWAYS, gMarsLighthouseEntrance_IceConeScript, 760, 0, 152, FACING_SOUTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(SPRITE_SPARKLE, CONDITION_ALWAYS, 7, 0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(SPRITE_FIREBALL, CONDITION_ALWAYS, 7, 0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_SPARKLE, CONDITION_ALWAYS, MOVEMENT_TYPE_CLEAR_COLLISION, 0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_FIREBALL, CONDITION_ALWAYS, MOVEMENT_TYPE_CLEAR_COLLISION, 0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, 0),
     {SCENE_TABLE_END},
 };
 // clang-format on
@@ -2541,9 +2609,9 @@ struct Trigger gMarsLighthouseEntrance_FugueTriggers[] = {
     {PSYNERGY_PHASE_ON_ACTOR(ABILITY_POUND, PSYNERGY_PHASE_ACTS),
      ACTOR_FUGUE_ICE_CONE_B, FLAG_SCENE_TEMP_01,
      EVENT(MarsLighthouseEntrance_StartPoundIceCone)},
-    {PSYNERGY_ON_ACTOR(ABILITY_GRIND), ACTOR_DEAD_END, FLAG_ICE_GROUND,
+    {PSYNERGY_ON_ACTOR(ABILITY_GRIND), ACTOR_ICE_SHAFT, FLAG_ICE_SHAFT_GROUND,
      EVENT(MarsLighthouseEntrance_GrindIce)},
-    {TRIGGER_TALK, ACTOR_DEAD_END, FLAG_ICE_GROUND,
+    {TRIGGER_TALK, ACTOR_ICE_SHAFT, FLAG_ICE_SHAFT_GROUND,
      EVENT(MarsLighthouseEntrance_CheckIce)},
     {TRIGGER_TABLE_END},
 };
@@ -2619,7 +2687,7 @@ struct Trigger gMarsLighthouseEntrance_BalmTriggers[] = {
     {TRIGGER_EXIT | EXIT_STYLE_STAIRS_UP, 16, CONDITION_ALWAYS, 16},
     {TRIGGER_STEP, 30, CONDITION_ALWAYS, EVENT(Leader_SlideOnIce)},
     {TRIGGER_STEP, STEP_TRIGGER_FIREBALL_HIT, CONDITION_ALWAYS,
-     EVENT(MarsLighthouseEntrance_SlideOnIce)},
+     EVENT(MarsLighthouseEntrance_RideFireball)},
     {TRIGGER_TALK, ACTOR_BALM, CONDITION_ALWAYS,
      EVENT(MarsLighthouseEntrance_FightBalm)},
     {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_ACTS),
@@ -2712,7 +2780,7 @@ struct Trigger gMarsLighthouseEntrance_ValkyrieTriggers[] = {
     {TRIGGER_STEP, 30, CONDITION_ALWAYS,
      EVENT(MarsLighthouseEntrance_SlideFromEdge)},
     {TRIGGER_STEP, STEP_TRIGGER_FIREBALL_HIT, CONDITION_ALWAYS,
-     EVENT(MarsLighthouseEntrance_SlideOnIce)},
+     EVENT(MarsLighthouseEntrance_RideFireball)},
     {TRIGGER_STEP, 13, CONDITION_ALWAYS,
      EVENT(MarsLighthouseEntrance_SlideIfRiding)},
     {PSYNERGY_PHASE_ON_ACTOR(ABILITY_POUND, PSYNERGY_PHASE_ACTS),
@@ -2734,9 +2802,9 @@ struct Trigger gMarsLighthouseEntrance_ValkyrieTriggers[] = {
      ACTOR_VALKYRIE_ICE_CONE_F, FLAG_SCENE_TEMP_15,
      EVENT(MarsLighthouseEntrance_StartPoundIceCone)},
     {PSYNERGY_PHASE_ON_CELL(ABILITY_TELEPORT, PSYNERGY_PHASE_AFTER_CAST), 12,
-     CONDITION_ALWAYS, EVENT(MarsLighthouseEntrance_TeleportFromValkyrieWest)},
+     CONDITION_ALWAYS, EVENT(MarsLighthouseEntrance_TeleportFromValkyrieNorth)},
     {PSYNERGY_PHASE_ON_CELL(ABILITY_TELEPORT, PSYNERGY_PHASE_AFTER_CAST), 13,
-     CONDITION_ALWAYS, EVENT(MarsLighthouseEntrance_TeleportFromValkyrieEast)},
+     CONDITION_ALWAYS, EVENT(MarsLighthouseEntrance_TeleportFromValkyrieSouth)},
     {PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_PUSHED_STATUE,
      FLAG_VALKYRIE_STATUE_BLOCKS_FLAMES,
      EVENT(MarsLighthouseEntrance_PushStatueIntoValkyrieFlames)},

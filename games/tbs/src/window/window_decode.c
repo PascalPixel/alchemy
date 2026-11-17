@@ -4,6 +4,26 @@
 
 #include "window_internal.h"
 
+/// The most letters of an article Message_AppendArticleName writes, and of a
+/// possessive or pronoun before an item's name.
+#define ARTICLE_MAX_LETTERS 8
+#define POSSESSIVE_MAX_LETTERS 16
+/// The highest character code outside Japanese: those fonts hold a byte's
+/// worth.
+#define CHARACTER_CODE_MAX 255
+/// The Japanese font's kana are codes 128 to 255 (charmap_ja.tsv), its kanji
+/// from 256 on.
+#define KANA_FIRST_CODE 128
+#define KANJI_FIRST_CODE 256
+/// Halting speech breaks off with an ellipsis at its first space, or after
+/// this many codes.
+#define HALTING_SPEECH_MAX_CODES 10
+/// MESSAGE_BUTTON_ICON's first character code.
+#define BUTTON_ICON_FIRST_CODE 128
+/// The value of an operand the message stores one above it, taken one down as
+/// a halfword.
+#define OPERAND_VALUE(stored) ((stored) + (u32)(u16)-1)
+
 #if LANGUAGE != LANGUAGE_JAPANESE
 #if LANGUAGE == LANGUAGE_ITALIAN
 #define ARTICLE_KINDS 11
@@ -74,8 +94,8 @@ enum {
   MESSAGE_END_NOW = 30,
 };
 
-// Message_AppendArticleName copies a name into the decoded text at pos and
-// returns the position after it.
+// Message_AppendArticleName copies a name into the decoded text at
+// writePosition and returns the position after it.
 
 #if LANGUAGE == LANGUAGE_GERMAN || LANGUAGE == LANGUAGE_SPANISH ||             \
     LANGUAGE == LANGUAGE_FRENCH || LANGUAGE == LANGUAGE_ITALIAN
@@ -105,7 +125,7 @@ u32 Message_AppendArticleName(s32 mode, u16 *name, u32 writePosition,
   if (mode != 0) {
     TEXT_APPEND(entries, writePosition, ' ');
     TEXT_APPEND(entries, writePosition, TEXT_LINE_SPACING);
-    TEXT_APPEND(entries, writePosition, 10);
+    TEXT_APPEND(entries, writePosition, TEXT_DEFAULT_LINE_SPACING);
   }
   // A name's leading article class (MESSAGE_ARTICLE_CLASS and its
   // operand) is never copied.
@@ -135,9 +155,8 @@ u32 Message_AppendArticleName(s32 mode, u16 *name, u32 writePosition,
 #else
     p = table.text[kind & ARTICLE_KIND_MASK];
 #endif
-    // At most 8 letters, the first capitalised at the start of a
-    // sentence.
-    for (cnt = 0; cnt < 8; cnt++) {
+    // The first letter is capitalised at the start of a sentence.
+    for (cnt = 0; cnt < ARTICLE_MAX_LETTERS; cnt++) {
       if ((letter = *p++) == 0)
         break;
       if (cnt == 0 && *suffix == 2)
@@ -187,7 +206,7 @@ u32 Message_AppendArticleName(s32 mode, u16 *name, u32 writePosition,
   if (mode != 0) {
     TEXT_APPEND(entries, writePosition, ' ');
     TEXT_APPEND(entries, writePosition, TEXT_LINE_SPACING);
-    TEXT_APPEND(entries, writePosition, 10);
+    TEXT_APPEND(entries, writePosition, TEXT_DEFAULT_LINE_SPACING);
   }
   if (articleForm == 1 || (articleForm == 3 && plural == 0)) {
     kind = 0;
@@ -206,7 +225,7 @@ u32 Message_AppendArticleName(s32 mode, u16 *name, u32 writePosition,
         kind = 1;
     }
     p = table.text[kind & 7];
-    for (cnt = 0; cnt < 8; cnt++) {
+    for (cnt = 0; cnt < ARTICLE_MAX_LETTERS; cnt++) {
       if ((letter = *p++) == 0)
         break;
       TEXT_APPEND(entries, writePosition, letter);
@@ -241,9 +260,10 @@ u32 Message_AppendArticleName(s32 mode, u16 *name, u32 writePosition,
 
 /// What the decode flags of Message_SetDecodeFlags put between characters.
 #define ENTRY_NARROW_GAP TEXT_PAUSE_SHORT
-/// With spacingAfter (English and Japanese): TEXT_MARK_VOICED after a character
-/// of codes 128 to 256, other than the kana marks and the Japanese full stop,
-/// comma and middle dot, unless the code after it is a kana mark.
+/// With spacingAfter (English and Japanese): TEXT_MARK_VOICED after a kana or
+/// the first kanji (KANA_FIRST_CODE to KANJI_FIRST_CODE), other than the kana
+/// marks and the Japanese full stop, comma and middle dot, unless the code
+/// after it is a kana mark.
 #define ENTRY_WIDE_GAP TEXT_MARK_VOICED
 
 #if LANGUAGE == LANGUAGE_ENGLISH || LANGUAGE == LANGUAGE_GERMAN ||             \
@@ -346,9 +366,8 @@ s32 Message_Decode(s32 script, s32 clear) {
       previousCode = code;
 #endif
       code = (u32)decode(messageReader);
-      // These editions have no characters above 255: such a symbol becomes
-      // '@'.
-      if (code > 255)
+      // A symbol past the font's characters becomes '@'.
+      if (code > CHARACTER_CODE_MAX)
         code = '@';
 
       // Once halting speech has broken off, the rest of the message is
@@ -418,7 +437,8 @@ s32 Message_Decode(s32 script, s32 clear) {
 #if LANGUAGE == LANGUAGE_ENGLISH
         if (work->spacingAfter != 0 && lineStart == 0 &&
             code != TEXT_MARK_VOICED && code != TEXT_MARK_SEMIVOICED &&
-            previousCode <= 256 && previousCode > 127 &&
+            previousCode <= KANJI_FIRST_CODE &&
+            previousCode >= KANA_FIRST_CODE &&
             previousCode != TEXT_MARK_VOICED &&
             previousCode != TEXT_MARK_SEMIVOICED &&
             previousCode != TEXT_SPACE &&
@@ -432,12 +452,12 @@ s32 Message_Decode(s32 script, s32 clear) {
         // A character.
         if (code >= TEXT_SPACE) {
           if (work->haltingSpeech != 0 &&
-              (code == TEXT_SPACE || decodedCount > 10)) {
+              (code == TEXT_SPACE || decodedCount > HALTING_SPEECH_MAX_CODES)) {
             TEXT_APPEND(entry, writePosition, '.');
             TEXT_APPEND(entry, writePosition, '.');
             TEXT_APPEND(entry, writePosition, '.');
             overflow = 1;
-            if (decodedCount > 10)
+            if (decodedCount > HALTING_SPEECH_MAX_CODES)
               code = TEXT_SPACE;
           }
           // Every other double quote, the opening one, becomes
@@ -481,7 +501,8 @@ s32 Message_Decode(s32 script, s32 clear) {
           case MESSAGE_TEXT_EFFECT:
           case MESSAGE_ARTICLE_CLASS:
             TEXT_APPEND(entry, writePosition, (u16)code);
-            TEXT_APPEND(entry, writePosition, decode(messageReader) + 65535U);
+            TEXT_APPEND(entry, writePosition,
+                        OPERAND_VALUE(decode(messageReader)));
             break;
           case MESSAGE_ARGUMENT_SIGNED_NUMBER:
             value = (s32)MessageArgument_Lookup(MESSAGE_ARGUMENT_NUMBER, clear);
@@ -499,7 +520,7 @@ s32 Message_Decode(s32 script, s32 clear) {
               plural = 0;
             numberText = String_FormatNumber(numberBuffer, value, 0);
             i = numberText - numberBuffer;
-            while (i != 16 && numberBuffer[i] != 0) {
+            while (i != TEXT_NUMBER_BUFFER_SIZE && numberBuffer[i] != 0) {
               TEXT_APPEND(entry, writePosition, numberBuffer[i]);
               i++;
             }
@@ -534,7 +555,7 @@ s32 Message_Decode(s32 script, s32 clear) {
                                 MESSAGE_NAME_HALFWORDS);
 #else
             Message_DecodeRaw((argument & INVENTORY_ITEM_ID_MASK) + MsgItemName,
-                              name, 24);
+                              name, MESSAGE_NAME_HALFWORDS);
 #endif
             writePosition = Message_AppendArticleName(
                 0, name, writePosition, entry, no, plural, &suffix);
@@ -569,7 +590,7 @@ s32 Message_Decode(s32 script, s32 clear) {
             writePosition = nextPosition;
             break;
           case MESSAGE_PROTAGONIST_NAME:
-            // A unit's name is 15 bytes, widened here to codes.
+            // A unit's name, widened here to codes.
             nameBytes = Unit_GetFar(gMainRoutineWork.leaderActorId)->name;
             nameOutput = name;
             i = 0;
@@ -578,7 +599,7 @@ s32 Message_Decode(s32 script, s32 clear) {
               i++;
               nameBytes++;
               nameOutput++;
-            } while (i <= 14);
+            } while (i < UNIT_NAME_SIZE);
             writePosition = Message_AppendArticleName(0, name, writePosition,
                                                       entry, 0, 0, &suffix);
             break;
@@ -594,7 +615,7 @@ s32 Message_Decode(s32 script, s32 clear) {
               j++;
               nameBytes++;
               nameOutput++;
-            } while (j <= 14);
+            } while (j < UNIT_NAME_SIZE);
             writePosition = Message_AppendArticleName(
                 0, name, writePosition, entry, no, plural, &suffix);
             break;
@@ -608,12 +629,13 @@ s32 Message_Decode(s32 script, s32 clear) {
               j++;
               nameBytes++;
               nameOutput++;
-            } while (j <= 14);
+            } while (j < UNIT_NAME_SIZE);
             writePosition = Message_AppendArticleName(0, name, writePosition,
                                                       entry, 0, 0, &suffix);
             break;
           case MESSAGE_BUTTON_ICON:
-            argument = ((decode(messageReader) - 1) << 1) + 128;
+            argument =
+                ((decode(messageReader) - 1) << 1) + BUTTON_ICON_FIRST_CODE;
             TEXT_APPEND(entry, writePosition, argument);
             TEXT_APPEND(entry, writePosition, argument + 1);
             break;
@@ -677,7 +699,7 @@ s32 Message_Decode(s32 script, s32 clear) {
             kind = gLocalizedWord_ItemGenders[argument];
             word = possessives.text[kind & 3];
 #endif
-            for (value = 0; (u32)value < 16; value++) {
+            for (value = 0; (u32)value < POSSESSIVE_MAX_LETTERS; value++) {
               if ((letter = *word++) == 0)
                 break;
               if (value == 0 && suffix == 2)
@@ -698,7 +720,7 @@ s32 Message_Decode(s32 script, s32 clear) {
             MessageArgument_Lookup(MESSAGE_ARGUMENT_ITEM, 0);
             word = gLocalizedWord_ItemPronoun;
 #endif
-            for (i = 0; i < 16; i++) {
+            for (i = 0; i < POSSESSIVE_MAX_LETTERS; i++) {
               if ((letter = *word++) == 0)
                 break;
               if (i == 0 && suffix == 2)
@@ -767,6 +789,10 @@ s32 Message_Decode(s32 script, s32 clear) {
 
 #if LANGUAGE == LANGUAGE_JAPANESE
 
+/// The most codes the Japanese decoder takes of the name it gives the Mystery
+/// Man or the Mystery Woman in battle.
+#define MYSTERY_PERSON_NAME_CODES 10
+
 /// The Japanese form: Japanese has no articles, so the name is copied as it is.
 extern __inline__ u32 Message_AppendArticleName(s32 mode, u16 *name,
                                                 u32 writePosition, u16 *entries,
@@ -777,7 +803,7 @@ extern __inline__ u32 Message_AppendArticleName(s32 mode, u16 *name,
   if (mode != 0) {
     TEXT_APPEND(entries, writePosition, ' ');
     TEXT_APPEND(entries, writePosition, TEXT_LINE_SPACING);
-    TEXT_APPEND(entries, writePosition, 10);
+    TEXT_APPEND(entries, writePosition, TEXT_DEFAULT_LINE_SPACING);
   }
   while (*name != 0) {
     code = *name++;
@@ -888,7 +914,8 @@ s32 Message_Decode(s32 script, s32 clear) {
         }
         if (work->spacingAfter != 0 && lineStart == 0 &&
             code != TEXT_MARK_VOICED && code != TEXT_MARK_SEMIVOICED &&
-            previousCode <= 256 && previousCode > 127 &&
+            previousCode <= KANJI_FIRST_CODE &&
+            previousCode >= KANA_FIRST_CODE &&
             previousCode != TEXT_MARK_VOICED &&
             previousCode != TEXT_MARK_SEMIVOICED &&
             previousCode != TEXT_SPACE &&
@@ -905,13 +932,13 @@ s32 Message_Decode(s32 script, s32 clear) {
             TEXT_APPEND(entry, writePosition, code);
           }
           if (work->haltingSpeech != 0 &&
-              (code == TEXT_SPACE || decodedCount > 10)) {
+              (code == TEXT_SPACE || decodedCount > HALTING_SPEECH_MAX_CODES)) {
             TEXT_APPEND(entry, writePosition, TEXT_JAPANESE_MIDDLE_DOT);
             TEXT_APPEND(entry, writePosition, TEXT_JAPANESE_MIDDLE_DOT);
             TEXT_APPEND(entry, writePosition, TEXT_JAPANESE_MIDDLE_DOT);
             TEXT_APPEND(entry, writePosition, TEXT_JAPANESE_FULL_STOP);
             overflow = 1;
-            if (decodedCount > 10)
+            if (decodedCount > HALTING_SPEECH_MAX_CODES)
               code = TEXT_SPACE;
           }
           TEXT_APPEND(entry, writePosition, (u16)code);
@@ -928,13 +955,14 @@ s32 Message_Decode(s32 script, s32 clear) {
           case MESSAGE_TEXT_COLOR:
           case MESSAGE_TEXT_EFFECT:
             TEXT_APPEND(entry, writePosition, (u16)code);
-            TEXT_APPEND(entry, writePosition, decode(messageReader) + 65535U);
+            TEXT_APPEND(entry, writePosition,
+                        OPERAND_VALUE(decode(messageReader)));
             break;
           case MESSAGE_ARGUMENT_SIGNED_NUMBER:
             value = MessageArgument_Lookup(MESSAGE_ARGUMENT_NUMBER, clear);
             numberText = String_FormatNumber(numberBuffer, value, 0);
             i = numberText - numberBuffer;
-            while (i != 16 && numberBuffer[i] != 0) {
+            while (i != TEXT_NUMBER_BUFFER_SIZE && numberBuffer[i] != 0) {
               TEXT_APPEND(entry, writePosition, numberBuffer[i]);
               i++;
             }
@@ -948,8 +976,8 @@ s32 Message_Decode(s32 script, s32 clear) {
             break;
           case MESSAGE_ARGUMENT_ITEM_NAME:
             argument = MessageArgument_Lookup(MESSAGE_ARGUMENT_ITEM, clear);
-            Message_DecodeRaw((argument & 511) + MsgItemName, name,
-                              MESSAGE_NAME_HALFWORDS);
+            Message_DecodeRaw((argument & INVENTORY_ITEM_ID_MASK) + MsgItemName,
+                              name, MESSAGE_NAME_HALFWORDS);
             writePosition = Message_AppendArticleName(mode, name, writePosition,
                                                       entry, 0, 0, 0);
             break;
@@ -979,7 +1007,7 @@ s32 Message_Decode(s32 script, s32 clear) {
               i++;
               nameBytes++;
               nameOutput++;
-            } while (i <= 14);
+            } while (i < UNIT_NAME_SIZE);
             writePosition = Message_AppendArticleName(mode, name, writePosition,
                                                       entry, 0, 0, 0);
             break;
@@ -995,7 +1023,7 @@ s32 Message_Decode(s32 script, s32 clear) {
               message = MsgMysteryPersonName;
               if (unit->id == ENEMY_MYSTERY_WOMAN)
                 message++;
-              Message_DecodeRaw(message, name, 10);
+              Message_DecodeRaw(message, name, MYSTERY_PERSON_NAME_CODES);
               writePosition = Message_AppendArticleName(
                   mode, name, writePosition, entry, 0, 0, 0);
             } else {
@@ -1007,7 +1035,7 @@ s32 Message_Decode(s32 script, s32 clear) {
                 j++;
                 nameBytes++;
                 nameOutput++;
-              } while (j <= 14);
+              } while (j < UNIT_NAME_SIZE);
               writePosition = Message_AppendArticleName(
                   mode, name, writePosition, entry, 0, 0, 0);
             }
@@ -1022,7 +1050,7 @@ s32 Message_Decode(s32 script, s32 clear) {
               j++;
               nameBytes++;
               nameOutput++;
-            } while (j <= 14);
+            } while (j < UNIT_NAME_SIZE);
             writePosition = Message_AppendArticleName(mode, name, writePosition,
                                                       entry, 0, 0, 0);
             break;
@@ -1053,4 +1081,14 @@ s32 Message_Decode(s32 script, s32 clear) {
   return start;
 }
 
+#undef MYSTERY_PERSON_NAME_CODES
 #endif
+
+#undef ARTICLE_MAX_LETTERS
+#undef POSSESSIVE_MAX_LETTERS
+#undef CHARACTER_CODE_MAX
+#undef KANA_FIRST_CODE
+#undef KANJI_FIRST_CODE
+#undef HALTING_SPEECH_MAX_CODES
+#undef BUTTON_ICON_FIRST_CODE
+#undef OPERAND_VALUE

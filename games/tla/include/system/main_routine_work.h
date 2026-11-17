@@ -5,8 +5,7 @@
 #include "types.h"
 #include "static_assert.h"
 
-/// A scene's type (Scene.sceneType, copied to MainRoutineWork.sceneVariant),
-/// as The Broken Seal's.
+/// A scene's type (Scene.sceneType, copied to MainRoutineWork.sceneVariant).
 enum SceneType {
   SCENE_TYPE_OTHER = 1, ///< every other scene: dungeons, the world map
   /// Towns and their rooms, and the prologue's Venus Lighthouse scenes:
@@ -32,7 +31,7 @@ enum BattleType {
 #define COINS_MAX 999999
 
 /// gMainRoutineWork.hazardMode: what advances the hazard count
-/// (Field_UpdateWalking), as The Broken Seal's.
+/// (Field_UpdateWalking).
 enum HazardMode {
   /// The distance the leader walks on MAP_CELL_HAZARD ground.
   HAZARD_COUNT_ON_CELLS = 0,
@@ -152,8 +151,8 @@ struct MainRoutineWork {
   u8 idleSleepEnabled;
   u8 battleType; ///< an enum BattleType, set back to BATTLE_TYPE_NORMAL at the
                  ///< end
-  /// Hazardous ground, as The Broken Seal's: when hazardSteps reaches
-  /// hazardLimit the party takes hazardDamage and the count starts again.
+  /// Hazardous ground: when hazardSteps reaches hazardLimit the party takes
+  /// hazardDamage and the count starts again.
   ///@{
   s16 hazardLimit;
   s16 hazardMode;
@@ -182,13 +181,13 @@ struct MainRoutineWork {
   s8 cloaked; ///< Cloak: the leader is hidden
   u8 unusedAfterCloaked[2];
   u32 pausedUpdate; ///< the paused object's update, restored on resuming
-  /// The answers events count: telling Kraden on Idejima that the Western
-  /// Sea is not where they go, agreeing with Alhafra's mayor that the party
-  /// owes him, and others; Ancient Lemuria asks its question only while this
-  /// is 4 or less. 0 on a new game, counted up by Event_CountAnswer.
-  // XXX: what the counted answers share; reading every site's question and
-  // the Ancient Lemuria event that tests the count would settle it.
-  u8 countedAnswers;
+  /// The weird answers Felix gives, counted up by Event_CountAnswer from 0 on a
+  /// new game: telling Kraden on Idejima that the Western Sea is not where
+  /// they go, agreeing with Alhafra's mayor that the party owes him, and
+  /// others. Past four, as Felix answers Ancient Lemuria's guards' "Do we have
+  /// your word?", Kraden says "Sometimes, you can say the weirdest things..."
+  /// to a yes and "Are you INSANE!?" to a no.
+  u8 weirdAnswers;
   /// Nonzero makes actor 8, not leaderActorId, the one events control.
   s16 ownerOverride;
   s32 shipX;      ///< the ship's x on the world map, where it is moored

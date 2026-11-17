@@ -288,13 +288,6 @@ s32 LinkLobby_ReportDisconnection(void) {
   Event_End();
 }
 
-#if (LANGUAGE == LANGUAGE_GERMAN) || (LANGUAGE == LANGUAGE_SPANISH) ||         \
-    (LANGUAGE == LANGUAGE_FRENCH) || (LANGUAGE == LANGUAGE_ITALIAN)
-#define LOBBY_PREFIX_LIMIT 7
-#else
-#define LOBBY_PREFIX_LIMIT 4
-#endif
-
 // Both sizes are whole 20-byte blocks, since the serial runtime sends 20 bytes
 // a block and ends a send only when its count reaches exactly 0.
 /// The bytes sent for each party member: a Unit (332 bytes) and the eight
@@ -1017,7 +1010,6 @@ s32 LinkLobby_PartyContains(s32 owner) {
 
 /// Unused: does nothing; nothing calls it.
 UNUSED void LinkLobby_DoNothing(void) {}
-#undef LOBBY_PREFIX_LIMIT
 
 extern u8 MsgLobbyYouHaveSongRequest[];
 extern u8 MsgLobbyComeBackWhenYoureReady[];

@@ -113,7 +113,7 @@ enum { ACTOR_SEATED_IDOL = ACTOR_FIRST_PLACED, ACTOR_KRADEN };
 #define FLAG_STREAM_PUDDLE_FROZEN FLAG_SCENE_TEMP_00
 
 /// Set once the Mint hidden under the bushes by the statue is taken.
-#define FLAG_HIDDEN_WALL_MINT_TAKEN 0xf53
+#define FLAG_GABOMBA_CATACOMBS_MINT_TAKEN 0xf53
 /// Set once the Tomegathericon is taken from the seated idol.
 #define FLAG_TOMEGATHERICON_TAKEN 0xf93
 
@@ -158,7 +158,7 @@ void GabombaCatacombs_ClearBushesByTheStatue(void) {
   struct Actor *leader = Actor_GetById(gMainRoutineWork.leaderActorId);
 
   GabombaCatacombs_ClearBushes(22, 15, 0, 5, 5, 63, 52);
-  if (GameFlag_Get(FLAG_HIDDEN_WALL_MINT_TAKEN) == 0) {
+  if (GameFlag_Get(FLAG_GABOMBA_CATACOMBS_MINT_TAKEN) == 0) {
     Actor_SetPosition(FIELD_TREASURE_ACTOR, 392, 344);
     if (FIELD_CELL(leader->x.fixed) == 24 &&
         FIELD_CELL(leader->z.fixed) == 21) {

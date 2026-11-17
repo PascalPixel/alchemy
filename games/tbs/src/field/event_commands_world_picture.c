@@ -1,14 +1,37 @@
 /// @file
-/// The World Map screen: area markers, the cursor and the area's
-/// name.
+/// The world picture R shows on the World Map: its area markers, the cursor
+/// and the name of the area nearest it.
 // Part of event_commands.c.
 
 #include "event_commands_internal.h"
 
 /// The generated marker pictures: four 16-colour 8 by 8 tiles, 32 bytes each.
-#define WORLD_MAP_MARKER_TILE_BYTES 128
-#define WORLD_MAP_SCREEN_WIDTH 240  ///< the picture's width, the screen's
-#define WORLD_MAP_SCREEN_HEIGHT 160 ///< the picture's height, the screen's
+#define WORLD_PICTURE_MARKER_TILES 4
+#define WORLD_PICTURE_MARKER_TILE_BYTES                                        \
+  (WORLD_PICTURE_MARKER_TILES * TILE_SIZE_4BPP)
+/// The marker tiles: the party's dot, the two kinds of area an AREA_MARKER
+/// row asks for (a town or a place on the way; a lighthouse or Sol Sanctum),
+/// and the larger dot that blinks over the marker nearest the cursor.
+enum WorldPictureMarkerTile {
+  WORLD_PICTURE_MARKER_PARTY,
+  WORLD_PICTURE_MARKER_AREA,
+  WORLD_PICTURE_MARKER_LIGHTHOUSE,
+  WORLD_PICTURE_MARKER_NEAREST
+};
+/// The first five of a marker tile row's eight 4-bit pixels, the leftmost in
+/// the low bits; the rest are 0.
+#define WORLD_PICTURE_MARKER_ROW(p0, p1, p2, p3, p4)                           \
+  ((p0) | (p1) << 4 | (p2) << 8 | (p3) << 12 | (p4) << 16)
+/// The marker tile an AREA_MARKER row's first word holds above its flag.
+#define WORLD_PICTURE_AREA_MARKER_TILE(row) ((row) >> 16)
+#define WORLD_PICTURE_WIDTH 240  ///< the picture's width, the screen's
+#define WORLD_PICTURE_HEIGHT 160 ///< the picture's height, the screen's
+/// The picture resource: its 14 palettes of BG colours, then its pixels.
+#define WORLD_PICTURE_PALETTE_BYTES (14 * PALETTE_COLORS * 2)
+/// The first tile, in BG1's character base, of the 30 by 20 tile picture that
+/// WorldMap_LoadGraphics numbers screen block 6 for: the still picture's, and
+/// the world picture's here.
+#define WORLD_MAP_STILL_FIRST_TILE 424
 /// The World Map's size in field pixels each way, which the picture shows at
 /// 240 by 160.
 #define WORLD_MAP_WORLD_SIZE 4096
@@ -16,27 +39,33 @@
 /// The first ordinary area actor, the first slot with a row of
 /// gWorldPicture_AreaMarkers whatever the leader is.
 #define WORLD_MAP_FIRST_AREA_ACTOR 11
-#define WORLD_MAP_MARKER_CAPACITY 66 ///< one marker per actor slot
+#define WORLD_PICTURE_MARKER_CAPACITY 66 ///< one marker per actor slot
 /// The cursor's sprite entry, after the markers'.
-#define WORLD_MAP_CURSOR_PART WORLD_MAP_MARKER_CAPACITY
-#define WORLD_MAP_CURSOR_MIN_SPEED toFIXED(1) ///< screen pixels a frame
-#define WORLD_MAP_CURSOR_MAX_SPEED toFIXED(6) ///< screen pixels a frame
+#define WORLD_PICTURE_CURSOR_PART WORLD_PICTURE_MARKER_CAPACITY
+/// The cursor's depth slot, among the windows' and in front of every marker,
+/// whose slot is its y on the picture.
+#define WORLD_PICTURE_CURSOR_DEPTH (OAM_DEPTH_WINDOW + 6)
+#define WORLD_PICTURE_CURSOR_MIN_SPEED toFIXED(1) ///< screen pixels a frame
+#define WORLD_PICTURE_CURSOR_MAX_SPEED toFIXED(6) ///< screen pixels a frame
 /// Added to the cursor's speed each frame the d-pad is held.
-#define WORLD_MAP_CURSOR_ACCELERATION (toFIXED(1) / 8)
-#define WORLD_MAP_MARKER_BLEND_STEPS 32 ///< gWorldMap_MarkerBlendCycle's rows
+#define WORLD_PICTURE_CURSOR_ACCELERATION (toFIXED(1) / 8)
+/// gWorldMap_MarkerBlendCycle's rows.
+#define WORLD_PICTURE_MARKER_BLEND_STEPS 32
 /// The cursor's limits, in screen pixels; y goes from 0.
 ///@{
-#define WORLD_MAP_CURSOR_MIN_X 16
-#define WORLD_MAP_CURSOR_MAX_X (WORLD_MAP_SCREEN_WIDTH - 1)
-#define WORLD_MAP_CURSOR_MAX_Y 141
+#define WORLD_PICTURE_CURSOR_MIN_X 16
+#define WORLD_PICTURE_CURSOR_MAX_X (WORLD_PICTURE_WIDTH - 1)
+#define WORLD_PICTURE_CURSOR_MAX_Y 141
 ///@}
 
-// BUG: the original reserves 32 bytes but writes and uploads 128. The bump
-// allocator takes bytes, not words; reserve the whole tile buffer with BUGFIX.
+// BUG: the marker tiles' size is reserved in words, though the heap counts
+// bytes, so 128 bytes are written and uploaded from 32; BUGFIX reserves the
+// whole tile buffer.
 #ifdef BUGFIX
-#define WORLD_MAP_MARKER_ALLOCATION_SIZE WORLD_MAP_MARKER_TILE_BYTES
+#define WORLD_PICTURE_MARKER_ALLOCATION_SIZE WORLD_PICTURE_MARKER_TILE_BYTES
 #else
-#define WORLD_MAP_MARKER_ALLOCATION_SIZE 32
+#define WORLD_PICTURE_MARKER_ALLOCATION_SIZE                                   \
+  (WORLD_PICTURE_MARKER_TILE_BYTES / 4)
 #endif
 
 /// Scratch work while WorldPicture_Show owns gMapGridCellBuffer.
@@ -52,21 +81,21 @@ struct WorldPictureWork {
   struct Window *nameWindow; ///< owned until this screen closes
   /// The visible areas' markers packed from the start, then the frame round
   /// the nearest; the last entry is the cursor.
-  struct AnimationSpritePart markers[WORLD_MAP_MARKER_CAPACITY + 1];
+  struct AnimationSpritePart markers[WORLD_PICTURE_MARKER_CAPACITY + 1];
 };
 
 STATIC_ASSERT(offsetof(struct WorldPictureWork, markers) == 32);
 STATIC_ASSERT(sizeof(struct WorldPictureWork) == 836);
-STATIC_ASSERT(WORLD_MAP_MARKER_CAPACITY ==
+STATIC_ASSERT(WORLD_PICTURE_MARKER_CAPACITY ==
               sizeof(((struct FieldWork *)0)->actors) /
                   sizeof(((struct FieldWork *)0)->actors[0]));
 
-/// Sets up the World Map screen: the marker tiles and their OAM entries, the
+/// Sets up the world picture: the marker tiles and their OAM entries, the
 /// cursor where the leader is on the map (or mid-screen when the area is
 /// not on it), and the name window.
 void WorldPicture_Initialize(void) {
   u32 *entryWords; // the markers' sprite entries, a word at a time
-  u32 *markerTiles;
+  u32 (*markerTiles)[TILE_SIZE_4BPP / 4];
   struct WorldPictureWork *work;
   struct Actor *actor;
   s32 tileAttributes;
@@ -74,15 +103,14 @@ void WorldPicture_Initialize(void) {
   u32 tile;
   u32 cursorAttributes;
 
-  markerTiles = Heap_AllocEwram(WORLD_MAP_MARKER_ALLOCATION_SIZE);
+  markerTiles = Heap_AllocEwram(WORLD_PICTURE_MARKER_ALLOCATION_SIZE);
   work = (struct WorldPictureWork *)gMapGridCellBuffer;
   entryWords = (u32 *)work->markers;
   actor = Actor_GetById(gMainRoutineWork.leaderActorId);
   work->markerVramBlock = VramCache_FindFreeEntry();
-  Dma_Fill32(0, markerTiles, WORLD_MAP_MARKER_TILE_BYTES);
-  // The marker tiles' pixel rows: eight 4-bit pixels a word, the leftmost
-  // in the low bits. Each tile holds one dot in its top-left corner, with a
-  // shadow in colour 1 to its right and below (# the dot, + the shadow):
+  Dma_Fill32(0, markerTiles, WORLD_PICTURE_MARKER_TILE_BYTES);
+  // Each marker tile holds one dot in its top-left corner, with a shadow in
+  // colour 1 to its right and below (# the dot, + the shadow):
   //
   //   tiles 0 to 2      tile 3
   //     ##.               .##..
@@ -91,49 +119,62 @@ void WorldPicture_Initialize(void) {
   //                       .##++
   //                       ..++.
   //
-  // Tile 0, in colour 15, marks where the party is; tiles 1 and 2, in colours
-  // 4 and 7, are the two kinds an area's row of gWorldPicture_AreaMarkers
-  // asks for; tile 3, in colour 15, is the larger dot that blinks over the
-  // marker nearest the cursor.
-  markerTiles[0] = 0xff;
-  markerTiles[1] = 0x1ff;
-  markerTiles[2] = 0x110;
-  markerTiles[8] = 0x44;
-  markerTiles[9] = 0x144;
-  markerTiles[10] = 0x110;
-  markerTiles[16] = 0x77;
-  markerTiles[17] = 0x177;
-  markerTiles[18] = 0x110;
-  markerTiles[24] = 0xff0;
-  markerTiles[25] = 0xffff;
-  markerTiles[26] = 0x1ffff;
-  markerTiles[27] = 0x11ff0;
-  markerTiles[28] = 0x1100;
-  tileAttributes = VramCache_Load(work->markerVramBlock,
-                                  WORLD_MAP_MARKER_TILE_BYTES, markerTiles) |
-                   OBJ_PRIORITY(1);
-  for (i = 0; i < WORLD_MAP_MARKER_CAPACITY; i++) {
+  // The party's dot and the nearest marker's are colour 15, an area's colour
+  // 4 and a lighthouse's colour 7.
+  markerTiles[WORLD_PICTURE_MARKER_PARTY][0] =
+      WORLD_PICTURE_MARKER_ROW(15, 15, 0, 0, 0);
+  markerTiles[WORLD_PICTURE_MARKER_PARTY][1] =
+      WORLD_PICTURE_MARKER_ROW(15, 15, 1, 0, 0);
+  markerTiles[WORLD_PICTURE_MARKER_PARTY][2] =
+      WORLD_PICTURE_MARKER_ROW(0, 1, 1, 0, 0);
+  markerTiles[WORLD_PICTURE_MARKER_AREA][0] =
+      WORLD_PICTURE_MARKER_ROW(4, 4, 0, 0, 0);
+  markerTiles[WORLD_PICTURE_MARKER_AREA][1] =
+      WORLD_PICTURE_MARKER_ROW(4, 4, 1, 0, 0);
+  markerTiles[WORLD_PICTURE_MARKER_AREA][2] =
+      WORLD_PICTURE_MARKER_ROW(0, 1, 1, 0, 0);
+  markerTiles[WORLD_PICTURE_MARKER_LIGHTHOUSE][0] =
+      WORLD_PICTURE_MARKER_ROW(7, 7, 0, 0, 0);
+  markerTiles[WORLD_PICTURE_MARKER_LIGHTHOUSE][1] =
+      WORLD_PICTURE_MARKER_ROW(7, 7, 1, 0, 0);
+  markerTiles[WORLD_PICTURE_MARKER_LIGHTHOUSE][2] =
+      WORLD_PICTURE_MARKER_ROW(0, 1, 1, 0, 0);
+  markerTiles[WORLD_PICTURE_MARKER_NEAREST][0] =
+      WORLD_PICTURE_MARKER_ROW(0, 15, 15, 0, 0);
+  markerTiles[WORLD_PICTURE_MARKER_NEAREST][1] =
+      WORLD_PICTURE_MARKER_ROW(15, 15, 15, 15, 0);
+  markerTiles[WORLD_PICTURE_MARKER_NEAREST][2] =
+      WORLD_PICTURE_MARKER_ROW(15, 15, 15, 15, 1);
+  markerTiles[WORLD_PICTURE_MARKER_NEAREST][3] =
+      WORLD_PICTURE_MARKER_ROW(0, 15, 15, 1, 1);
+  markerTiles[WORLD_PICTURE_MARKER_NEAREST][4] =
+      WORLD_PICTURE_MARKER_ROW(0, 0, 1, 1, 0);
+  tileAttributes =
+      VramCache_Load(work->markerVramBlock, WORLD_PICTURE_MARKER_TILE_BYTES,
+                     markerTiles) |
+      OBJ_PRIORITY(1);
+  for (i = 0; i < WORLD_PICTURE_MARKER_CAPACITY; i++) {
     *entryWords++ = 0;
     *entryWords++ = 0;
     *entryWords++ = tileAttributes;
   }
   Heap_Release(markerTiles);
   if (GameFlag_GetFar(FLAG_WORLD_MAP_LEFT)) {
-    work->cursorX.fixed = toFIXED(WORLD_MAP_SCREEN_WIDTH) / 2;
-    work->cursorY.fixed = toFIXED(WORLD_MAP_SCREEN_HEIGHT) / 2;
+    work->cursorX.fixed = toFIXED(WORLD_PICTURE_WIDTH) / 2;
+    work->cursorY.fixed = toFIXED(WORLD_PICTURE_HEIGHT) / 2;
   } else {
     work->cursorX.fixed =
         toFIXED(FIXEDtoINT(actor->x.fixed - WORLD_MAP_X_ORIGIN) *
-                WORLD_MAP_SCREEN_WIDTH / WORLD_MAP_WORLD_SIZE);
+                WORLD_PICTURE_WIDTH / WORLD_MAP_WORLD_SIZE);
     work->cursorY.fixed =
-        toFIXED((actor->z.part[0].integer * WORLD_MAP_SCREEN_HEIGHT) /
+        toFIXED((actor->z.part[0].integer * WORLD_PICTURE_HEIGHT) /
                 WORLD_MAP_WORLD_SIZE);
   }
   work->cursorVramBlock = Resource_LoadFixedBlockBIntoFreeSlotFar();
   tile = gVramCacheEntries[work->cursorVramBlock].offset;
   work->nameWindow = Window_CreateFar(0, 0, 0, 0, WINDOW_FLAG_INSTANT);
   work->namedMarker = -1;
-  work->cursorSpeed = WORLD_MAP_CURSOR_MIN_SPEED;
+  work->cursorSpeed = WORLD_PICTURE_CURSOR_MIN_SPEED;
   *entryWords++ = 0;
   *entryWords++ = OBJ_SIZE_16X16;
   cursorAttributes = OBJ_PRIORITY(1);
@@ -145,16 +186,16 @@ void WorldPicture_Initialize(void) {
 /// The cursor snaps to the nearest area when the d-pad is released.
 #define WORLD_PICTURE_CURSOR_SNAPS 1
 #define WORLD_PICTURE_NAME_RANGE                                               \
-  64                          ///< squared distance that shows a marker's name
-#define WORLD_MAP_NAME_LEFT 3 ///< how far left of its marker the name goes
+  64 ///< squared distance that shows a marker's name
+#define WORLD_PICTURE_NAME_LEFT 3 ///< how far left of its marker the name goes
 #else
 #define WORLD_PICTURE_CURSOR_SNAPS 0
 #define WORLD_PICTURE_NAME_RANGE 100
-#define WORLD_MAP_NAME_LEFT 1
+#define WORLD_PICTURE_NAME_LEFT 1
 #endif
 
-/// Closes the World Map screen: returns its VRAM blocks and removes the
-/// name window.
+/// Closes the world picture: returns its VRAM blocks and removes the name
+/// window.
 void WorldPicture_Release(void) {
   struct WorldPictureWork *work = (struct WorldPictureWork *)gMapGridCellBuffer;
 
@@ -163,10 +204,9 @@ void WorldPicture_Release(void) {
   Window_CloseFar(work->nameWindow, 2);
 }
 
-/// Task of the World Map screen: shows a marker at each
-/// area whose flag is set, moves the cursor with the d-pad (to the current
-/// area while L or R is held) and shows the name of the marker nearest
-/// the cursor.
+/// Task of the world picture: shows a marker at each area whose flag is set,
+/// moves the cursor with the d-pad (to the current area while L or R is held)
+/// and shows the name of the marker nearest the cursor.
 void WorldPicture_UpdateMarkers(void) {
   s32 leader;
   const s32 *place;
@@ -210,10 +250,11 @@ void WorldPicture_UpdateMarkers(void) {
   nearestMarker = -1;
   nearestDistanceSquared = WORLD_PICTURE_NAME_RANGE;
   blend = gWorldMap_MarkerBlendCycle[(gFrameCount >> 1) &
-                                     (WORLD_MAP_MARKER_BLEND_STEPS - 1)];
+                                     (WORLD_PICTURE_MARKER_BLEND_STEPS - 1)];
 
-  // FieldSequence_Run creates the selected actor before raised trigger -888
-  // opens this screen. No actor task removes it while the marker task runs.
+  // FieldSequence_Run creates the selected actor before
+  // FIELD_RAISED_TRIGGER_WORLD_PICTURE opens this screen. No actor task removes
+  // it while the marker task runs.
   if (!GameFlag_GetFar(FLAG_WORLD_MAP_LEFT) && (gKeysHeld & KEYS_SHOULDERS)) {
     // L or R: the current area.
     areaActor = Actor_Lookup(gMainRoutineWork.leaderActorId);
@@ -225,8 +266,8 @@ void WorldPicture_UpdateMarkers(void) {
 #endif
     if (areaActor != NULL) {
       cursorX = FIXEDtoINT(areaActor->x.fixed - WORLD_MAP_X_ORIGIN) *
-                WORLD_MAP_SCREEN_WIDTH / WORLD_MAP_WORLD_SIZE;
-      cursorY = areaActor->z.part[0].integer * WORLD_MAP_SCREEN_HEIGHT /
+                WORLD_PICTURE_WIDTH / WORLD_MAP_WORLD_SIZE;
+      cursorY = areaActor->z.part[0].integer * WORLD_PICTURE_HEIGHT /
                 WORLD_MAP_WORLD_SIZE;
     }
   } else {
@@ -237,34 +278,34 @@ void WorldPicture_UpdateMarkers(void) {
       position.y = 0;
       position.z = work->cursorY.fixed;
       Vector_AddPolarOffset(work->cursorSpeed, angle, &position);
-      if (position.x < toFIXED(WORLD_MAP_CURSOR_MIN_X))
-        position.x = toFIXED(WORLD_MAP_CURSOR_MIN_X);
-      if (position.x > toFIXED(WORLD_MAP_CURSOR_MAX_X))
-        position.x = toFIXED(WORLD_MAP_CURSOR_MAX_X);
+      if (position.x < toFIXED(WORLD_PICTURE_CURSOR_MIN_X))
+        position.x = toFIXED(WORLD_PICTURE_CURSOR_MIN_X);
+      if (position.x > toFIXED(WORLD_PICTURE_CURSOR_MAX_X))
+        position.x = toFIXED(WORLD_PICTURE_CURSOR_MAX_X);
       if (position.z < 0)
         position.z = 0;
-      if (position.z > toFIXED(WORLD_MAP_CURSOR_MAX_Y))
-        position.z = toFIXED(WORLD_MAP_CURSOR_MAX_Y);
+      if (position.z > toFIXED(WORLD_PICTURE_CURSOR_MAX_Y))
+        position.z = toFIXED(WORLD_PICTURE_CURSOR_MAX_Y);
       work->cursorX.fixed = position.x;
       work->cursorY.fixed = position.z;
-      if (work->cursorSpeed < WORLD_MAP_CURSOR_MAX_SPEED)
-        work->cursorSpeed += WORLD_MAP_CURSOR_ACCELERATION;
+      if (work->cursorSpeed < WORLD_PICTURE_CURSOR_MAX_SPEED)
+        work->cursorSpeed += WORLD_PICTURE_CURSOR_ACCELERATION;
     } else {
-      work->cursorSpeed = WORLD_MAP_CURSOR_MIN_SPEED;
+      work->cursorSpeed = WORLD_PICTURE_CURSOR_MIN_SPEED;
     }
     cursorX = work->cursorX.part[0].integer;
     cursorY = work->cursorY.part[0].integer;
   }
 
   // Actor id 0 consumes no marker row.
-  for (markerIndex = 0; markerIndex < WORLD_MAP_MARKER_CAPACITY;
+  for (markerIndex = 0; markerIndex < WORLD_PICTURE_MARKER_CAPACITY;
        markerIndex++) {
     if (markerIndex != leader && markerIndex < WORLD_MAP_FIRST_AREA_ACTOR)
       continue;
     if (markerIndex == 0) {
       if (GameFlag_GetFar(FLAG_WORLD_MAP_LEFT))
         continue;
-      tile = 0;
+      tile = WORLD_PICTURE_MARKER_PARTY;
       flag = leader;
       mode = 0;
     } else {
@@ -275,10 +316,10 @@ void WorldPicture_UpdateMarkers(void) {
 #if WORLD_PICTURE_CURSOR_SNAPS
       if (flag == -1)
         break;
-      tile = flag >> 16;
+      tile = WORLD_PICTURE_AREA_MARKER_TILE(flag);
       mode = 1;
 #else
-      tile = flag >> 16;
+      tile = WORLD_PICTURE_AREA_MARKER_TILE(flag);
       mode = 1;
       if (flag == -1)
         break;
@@ -292,8 +333,8 @@ void WorldPicture_UpdateMarkers(void) {
 
     // Field x starts at 4096; the picture covers 4096 square world pixels.
     x = FIXEDtoINT(areaActor->x.fixed - WORLD_MAP_X_ORIGIN) *
-        WORLD_MAP_SCREEN_WIDTH / WORLD_MAP_WORLD_SIZE;
-    y = areaActor->z.part[0].integer * WORLD_MAP_SCREEN_HEIGHT /
+        WORLD_PICTURE_WIDTH / WORLD_MAP_WORLD_SIZE;
+    y = areaActor->z.part[0].integer * WORLD_PICTURE_HEIGHT /
         WORLD_MAP_WORLD_SIZE;
     marker->objectMode = mode;
     marker->tile = tileBase + tile;
@@ -324,7 +365,7 @@ void WorldPicture_UpdateMarkers(void) {
       if (nearestDistanceSquared <= 1) {
         work->cursorX.fixed = toFIXED(nearestX);
         work->cursorY.fixed = toFIXED(nearestY);
-        work->cursorSpeed = WORLD_MAP_CURSOR_MIN_SPEED;
+        work->cursorSpeed = WORLD_PICTURE_CURSOR_MIN_SPEED;
       } else {
         if (work->cursorSpeed < toFIXED(2))
           work->cursorSpeed = toFIXED(2);
@@ -335,13 +376,13 @@ void WorldPicture_UpdateMarkers(void) {
         Vector_AddPolarOffset(work->cursorSpeed, (u16)angle, &position);
         work->cursorX.fixed = position.x;
         work->cursorY.fixed = position.z;
-        if (work->cursorSpeed < WORLD_MAP_CURSOR_MAX_SPEED)
-          work->cursorSpeed += WORLD_MAP_CURSOR_ACCELERATION;
+        if (work->cursorSpeed < WORLD_PICTURE_CURSOR_MAX_SPEED)
+          work->cursorSpeed += WORLD_PICTURE_CURSOR_ACCELERATION;
       }
       cursorX = work->cursorX.part[0].integer;
       cursorY = work->cursorY.part[0].integer;
     } else {
-      work->cursorSpeed = WORLD_MAP_CURSOR_MIN_SPEED;
+      work->cursorSpeed = WORLD_PICTURE_CURSOR_MIN_SPEED;
     }
   }
 #endif
@@ -349,23 +390,24 @@ void WorldPicture_UpdateMarkers(void) {
   // The blinking frame round the nearest marker.
   if (nearestMarker != -1 && (gFrameCount & 15) <= 7) {
     marker->objectMode = OBJ_MODE_NORMAL;
-    marker->tile = tileBase + 3;
+    marker->tile = tileBase + WORLD_PICTURE_MARKER_NEAREST;
     marker->x = nearestX - 2;
     marker->y = nearestY - 2;
     Oam_AddSpriteAtDepth(marker, nearestY);
   }
 
-  marker = &work->markers[WORLD_MAP_CURSOR_PART];
+  marker = &work->markers[WORLD_PICTURE_CURSOR_PART];
   marker->affineIndex = 0;
   marker->x = cursorX - 17;
   marker->y = cursorY + 1;
-  Oam_AddSpriteAtDepth(marker, 246);
+  Oam_AddSpriteAtDepth(marker, WORLD_PICTURE_CURSOR_DEPTH);
 
   // Redraw only when the selected marker changes, including to no marker.
   if (work->namedMarker != nearestMarker) {
     work->namedMarker = nearestMarker;
     WindowSprite_PrepareForRedrawFar(work->nameWindow);
     if (nearestMarker != -1) {
+      // The party's marker: "Present location."
       if (nearestMarker == 0)
         nearestName = MsgPresentLocation;
       else
@@ -373,11 +415,11 @@ void WorldPicture_UpdateMarkers(void) {
       Text_MeasureMessageFar(nearestName, &width, &height);
       cursorX = nearestX;
       cursorY = nearestY;
-      cursorX -= WORLD_MAP_NAME_LEFT;
+      cursorX -= WORLD_PICTURE_NAME_LEFT;
       cursorY -= 11;
-      if (cursorX + width > WORLD_MAP_SCREEN_WIDTH) {
+      if (cursorX + width > WORLD_PICTURE_WIDTH) {
         // Past the right edge, it goes up and left of the marker.
-        cursorX = WORLD_MAP_SCREEN_WIDTH - 8 - width;
+        cursorX = WORLD_PICTURE_WIDTH - 8 - width;
         cursorY = nearestY - 20;
       }
       if (cursorY < 0)
@@ -389,12 +431,14 @@ void WorldPicture_UpdateMarkers(void) {
   // Pulse the markers' transparency: they weigh blend sixteenths against the
   // picture's 16 less blend (REG_BLDALPHA's EVA and EVB).
   IO_WRITE_QUEUE_PUSH((u32)&REG_BLDCNT, BLDCNT_TGT2_ALL, IO_WRITE_HALFWORD);
-  IO_WRITE_QUEUE_PUSH((u32)&REG_BLDALPHA, ((16 - blend) << 8) | blend,
+  IO_WRITE_QUEUE_PUSH((u32)&REG_BLDALPHA,
+                      (BLEND_WEIGHT_MAX - blend) << 8 | blend,
                       IO_WRITE_HALFWORD);
 }
 
 /// Borrows the map-cell buffer for the still map until A or B closes it.
-/// FieldSequence_Run reaches this for raised trigger -888 in World Map mode.
+/// FieldSequence_Run reaches this for FIELD_RAISED_TRIGGER_WORLD_PICTURE in
+/// World Map mode.
 void WorldPicture_Show(s32 picture) {
   struct MapGridScrollWork *gridState = gMapGridWork[0];
   struct FieldWork *work =
@@ -426,25 +470,29 @@ void WorldPicture_Show(s32 picture) {
   {
     s16 blend = REG_BLDALPHA;
 
-    // The picture's 224 BG colours (448 bytes), then its 240 by 160 pixels of
-    // 256 colours, a byte each, decoded into the borrowed buffer and copied
-    // to BG1's tiles.
+    // The picture's BG colours, then its 240 by 160 pixels of 256 colours, a
+    // byte each, decoded into the borrowed buffer and copied to BG1's tiles.
     graphics = Resource_GetTableEntry(resource);
-    Dma_Set(graphics, (void *)BG_PLTT, DMA_COPY_WORDS(448 / 4), REG_DMA3);
+    Dma_Set(graphics, (void *)BG_PLTT,
+            DMA_COPY_WORDS(WORLD_PICTURE_PALETTE_BYTES / 4), REG_DMA3);
     BG_PLTT[0] = 0;
-    Decompress_TaggedLz(graphics + 448, gMapGridCellBuffer);
-    Dma_Set(
-        gMapGridCellBuffer, BG_CHAR_BLOCK(1) + 0x2a00,
-        DMA_COPY_WORDS(WORLD_MAP_SCREEN_WIDTH * WORLD_MAP_SCREEN_HEIGHT / 4),
-        REG_DMA3);
-    Io_Write16(BGCNT_256_COLORS | BGCNT_SCREEN_BASE(6) | 2, &REG_BG1CNT);
+    Decompress_TaggedLz(graphics + WORLD_PICTURE_PALETTE_BYTES,
+                        gMapGridCellBuffer);
+    Dma_Set(gMapGridCellBuffer,
+            BG_CHAR_BLOCK(0) + WORLD_MAP_STILL_FIRST_TILE * TILE_SIZE_8BPP,
+            DMA_COPY_WORDS(WORLD_PICTURE_WIDTH * WORLD_PICTURE_HEIGHT / 4),
+            REG_DMA3);
+    Io_Write16(BGCNT_256_COLORS | BGCNT_SCREEN_BASE(6) | BGCNT_PRIORITY(2),
+               &REG_BG1CNT);
     Io_Write16(DISPCNT_OBJ_ON | DISPCNT_BG1_ON | DISPCNT_BG0_ON |
                    DISPCNT_OBJ_1D_MAP,
                &REG_DISPCNT);
     WorldPicture_Initialize();
     Task_Add(WorldPicture_UpdateMarkers, TASK_PASS_FRAME);
-    if (GameFlag_GetFar(FLAG_WORLD_MAP_LEFT))
+    if (GameFlag_GetFar(FLAG_WORLD_MAP_LEFT)) {
+      // "This place doesn't seem to be on the map..."
       FieldMessage_ShowFar(MsgNotOnMap, FIELD_MESSAGE_ZOOM);
+    }
     do {
       wait(1);
     } while ((gKeysRepeat & (KEY_A | KEY_B)) == 0);
@@ -504,7 +552,7 @@ void Field_UpdateActorVisibilityBounds(void) {
       }
     }
     id++;
-  } while (id < WORLD_MAP_MARKER_CAPACITY);
+  } while (id < WORLD_PICTURE_MARKER_CAPACITY);
 }
 
 /// On the World Map, zooms the view out to FIXED_ONE * 8 / 13 while L is held,
@@ -526,22 +574,28 @@ void WorldMap_ZoomOutWhileLHeld(void) {
   }
 }
 
-#undef WORLD_MAP_MARKER_TILE_BYTES
-#undef WORLD_MAP_SCREEN_WIDTH
-#undef WORLD_MAP_SCREEN_HEIGHT
+#undef WORLD_PICTURE_MARKER_TILES
+#undef WORLD_PICTURE_MARKER_TILE_BYTES
+#undef WORLD_PICTURE_MARKER_ROW
+#undef WORLD_PICTURE_AREA_MARKER_TILE
+#undef WORLD_PICTURE_PALETTE_BYTES
+#undef WORLD_MAP_STILL_FIRST_TILE
+#undef WORLD_PICTURE_CURSOR_DEPTH
+#undef WORLD_PICTURE_WIDTH
+#undef WORLD_PICTURE_HEIGHT
 #undef WORLD_MAP_WORLD_SIZE
 #undef WORLD_MAP_X_ORIGIN
 #undef WORLD_MAP_FIRST_AREA_ACTOR
-#undef WORLD_MAP_MARKER_CAPACITY
-#undef WORLD_MAP_CURSOR_PART
-#undef WORLD_MAP_CURSOR_MIN_SPEED
-#undef WORLD_MAP_CURSOR_MAX_SPEED
-#undef WORLD_MAP_CURSOR_ACCELERATION
-#undef WORLD_MAP_MARKER_BLEND_STEPS
-#undef WORLD_MAP_CURSOR_MIN_X
-#undef WORLD_MAP_CURSOR_MAX_X
-#undef WORLD_MAP_CURSOR_MAX_Y
-#undef WORLD_MAP_MARKER_ALLOCATION_SIZE
+#undef WORLD_PICTURE_MARKER_CAPACITY
+#undef WORLD_PICTURE_CURSOR_PART
+#undef WORLD_PICTURE_CURSOR_MIN_SPEED
+#undef WORLD_PICTURE_CURSOR_MAX_SPEED
+#undef WORLD_PICTURE_CURSOR_ACCELERATION
+#undef WORLD_PICTURE_MARKER_BLEND_STEPS
+#undef WORLD_PICTURE_CURSOR_MIN_X
+#undef WORLD_PICTURE_CURSOR_MAX_X
+#undef WORLD_PICTURE_CURSOR_MAX_Y
+#undef WORLD_PICTURE_MARKER_ALLOCATION_SIZE
 #undef WORLD_PICTURE_CURSOR_SNAPS
 #undef WORLD_PICTURE_NAME_RANGE
-#undef WORLD_MAP_NAME_LEFT
+#undef WORLD_PICTURE_NAME_LEFT

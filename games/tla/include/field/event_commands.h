@@ -36,6 +36,10 @@ struct MindReadWork {
   u8 counter;
 };
 
+/// MindReadWork.counter held still: the wave sends no particles and plays no
+/// sound, as when Mind Read talks to Lonesome George.
+#define MIND_READ_QUIET 99
+
 /// A cell a Psynergy touched, in cells, as FieldWork.psynergyCells lists them
 /// (x of -1 ends the list).
 struct TouchCell {
@@ -182,8 +186,9 @@ void WorldPicture_GetLeaderPoint(s32 *screenX, s32 *screenY);
 /// Never set (EWRAM, zero from boot). Set, the world map picture would list
 /// only the places before the first end of the place table, not the second list
 /// from entry 128 on, and show each place's second marker (the high nibble of
-/// its value). XXX: what the switch was for; a write to it in an edition or a
-/// debug room would settle it.
+/// its value).
+// XXX (no evidence): what the switch was for; no edition, debug room or other
+// code writes it, so the game never shows it set.
 extern s16 gWorldPicture_FirstListOnly;
 
 void FieldPsynergy_Lash(void);
@@ -230,6 +235,8 @@ void SummonTablet_PlayRunes(s32 targetId);
 
 void FieldPsynergy_ResumeHaltedActor(s32 id);
 
+/// Actor_JumpDownLedge's mode bit that skips the wait for the landing.
+#define LEDGE_JUMP_NO_LANDING_WAIT (1 << 12)
 void Actor_JumpDownLedge(s32 id, s32 mode, s32 particle);
 
 void *Sprite_ShareVramCacheEntry(void *sprite, void *last);
@@ -300,6 +307,16 @@ void Field_RequestBattleFromEncounterTable(s32 row, s32 column);
 /// The encounter table row of the hidden Mad Plants' battles, one column
 /// each, in FLAG_MAD_PLANT's order.
 #define ENCOUNTER_TABLE_MAD_PLANTS 106
+
+/// The encounter table row of the battles below deck of the Lemurian Ship:
+/// column 0 an Aqua Jelly, column 1 the Aqua Hydra.
+#define ENCOUNTER_TABLE_AQUA_JELLIES 11
+/// The encounter table row of the Serpent's battle in Gaia Rock, one column
+/// for each stream of Dragonsbane open.
+#define ENCOUNTER_TABLE_SERPENT 12
+/// The encounter table row of Moapa and his two Knights at the Trial Road's
+/// peak, one column per stage door the party reached first.
+#define ENCOUNTER_TABLE_MOAPA 13
 
 /// The encounter table row of the battles with four guardians of hidden places,
 /// one column each (HiddenBoss).

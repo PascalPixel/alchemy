@@ -92,17 +92,13 @@ STATIC_ASSERT(offsetof(struct SaveFileSummary, secondPartPlayTime) == 56);
 /// save operations.
 #define gSaveWork (*(struct SaveWork **)&gHeapSlots[HEAP_SLOT_SAVE])
 
-/// DMA 3's enable bit in its count and control word, which the hardware
-/// clears when the transfer is done.
-#define DMA3_BUSY ((u32)DMA_ENABLE << 16)
-
 /// Starts a DMA 3 transfer; control_ is the unit count with the DMA_ flags
 /// << 16.
 #define START_DMA(source_, destination_, control_)                             \
   Dma_Set((const void *)(source_), (void *)(destination_), (control_), REG_DMA3)
 
 static __inline__ void WaitDma(struct DmaRegisters volatile *channel) {
-  while ((channel->control & DMA3_BUSY) != 0) {
+  while ((channel->control & DMA_BUSY) != 0) {
   }
 }
 

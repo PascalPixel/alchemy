@@ -27,9 +27,9 @@ s32 MidiKeyToFreq(struct WaveData *wave, u8 key, u8 pitch) {
   // A key's code: the low four bits pick the semitone's step (2^31 times
   // 2^(n / 12)), the high four bits the octaves to shift it down, 9 for key 60.
   lowerFrequency = gScaleTable[keyIndex];
-  lowerFrequency = gFreqTable[lowerFrequency & 15] >> (lowerFrequency >> 4);
+  lowerFrequency = gFreqTable[lowerFrequency & 0xf] >> (lowerFrequency >> 4);
   upperFrequency = gScaleTable[keyIndex + 1];
-  upperFrequency = gFreqTable[upperFrequency & 15] >> (upperFrequency >> 4);
+  upperFrequency = gFreqTable[upperFrequency & 0xf] >> (upperFrequency >> 4);
 
   return umul3232H32(
       wave->freq, lowerFrequency +
@@ -240,14 +240,14 @@ void MPlayExtender(struct CgbChannel *notes) {
   REG_SOUNDCNT_L = 0;
   // The square and noise channels silent with a rising envelope, restarted;
   // the wave channel off; the master volume full on both sides
-  REG_NR12 = 8;
-  REG_NR22 = 8;
-  REG_NR42 = 8;
-  REG_NR14 = 0x80;
-  REG_NR24 = 0x80;
-  REG_NR44 = 0x80;
+  REG_NR12 = NRX2_ENVELOPE_UP;
+  REG_NR22 = NRX2_ENVELOPE_UP;
+  REG_NR42 = NRX2_ENVELOPE_UP;
+  REG_NR14 = NRX4_RESTART;
+  REG_NR24 = NRX4_RESTART;
+  REG_NR44 = NRX4_RESTART;
   REG_NR30 = 0;
-  REG_NR50 = 0x77;
+  REG_NR50 = NR50_VOLUME_FULL;
 
   work = SOUND_INFO_PTR;
   ident = work->ident;
@@ -274,8 +274,7 @@ void MPlayExtender(struct CgbChannel *notes) {
   work->cgbFrequency = MidiKeyToCgbFreq;
   work->lineLimit = MAX_LINES;
 
-  // Clear note state, then assign the four hardware routing masks: channel
-  // n's NR51 bits, n - 1 for the right speaker and n + 3 for the left.
+  // Clear note state, then give each channel its NR51 bits.
   {
     u32 zero = 0;
 
@@ -284,13 +283,13 @@ void MPlayExtender(struct CgbChannel *notes) {
                     (sizeof(struct CgbChannel) * 4 / 4));
   }
   notes[0].kind = 1;
-  notes[0].channelBits = 0x11;
+  notes[0].channelBits = NR51_CHANNEL_BOTH(1);
   notes[1].kind = 2;
-  notes[1].channelBits = 0x22;
+  notes[1].channelBits = NR51_CHANNEL_BOTH(2);
   notes[2].kind = 3;
-  notes[2].channelBits = 0x44;
+  notes[2].channelBits = NR51_CHANNEL_BOTH(3);
   notes[3].kind = 4;
-  notes[3].channelBits = 0x88;
+  notes[3].channelBits = NR51_CHANNEL_BOTH(4);
 
   work->ident = ident;
 }

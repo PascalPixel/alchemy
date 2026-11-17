@@ -228,7 +228,7 @@ void BattleObject_Make(struct BattleObject *actor, s32 unitId, s32 x, s32 y) {
   case ENEMY_ORC_LORD:
     actor->scale = FIXED_ONE * 5 / 4;
     break;
-  case ENEMY_UNUSED_KOBOLD:
+  case ENEMY_KOBOLD_UNUSED:
     actor->scale = FIXED_ONE * 9 / 10;
     break;
   case ENEMY_HOBGOBLIN:
@@ -287,21 +287,21 @@ void BattleObject_Make(struct BattleObject *actor, s32 unitId, s32 x, s32 y) {
     actor->scale = FIXED_ONE * 9 / 10;
     break;
   case ENEMY_RUFFIAN:
-  case ENEMY_UNUSED_RUFFIAN_A:
-  case ENEMY_UNUSED_RUFFIAN_B:
+  case ENEMY_RUFFIAN_2:
+  case ENEMY_RUFFIAN_3:
     actor->scale = FIXED_ONE * 19 / 20;
     break;
   case ENEMY_DULLAHAN:
   case ENEMY_DULLAHAN_B:
   case ENEMY_DULLAHAN_C:
   case ENEMY_SENTINEL:
-  case ENEMY_UNUSED_SENTINEL_A:
-  case ENEMY_UNUSED_SENTINEL_B:
+  case ENEMY_SENTINEL_UNUSED_A:
+  case ENEMY_SENTINEL_UNUSED_B:
     actor->scale = FIXED_ONE * 13 / 10;
     break;
   case ENEMY_VALUKAR:
-  case ENEMY_UNUSED_VALUKAR_A:
-  case ENEMY_UNUSED_VALUKAR_B:
+  case ENEMY_VALUKAR_UNUSED_A:
+  case ENEMY_VALUKAR_UNUSED_B:
     actor->scale = FIXED_ONE * 29 / 20;
     break;
   case ENEMY_SERPENT:
@@ -309,13 +309,13 @@ void BattleObject_Make(struct BattleObject *actor, s32 unitId, s32 x, s32 y) {
   case ENEMY_SERPENT_TWO_BEAMS:
   case ENEMY_SERPENT_THREE_BEAMS:
   case ENEMY_SERPENT_FOUR_BEAMS:
-  case ENEMY_UNUSED_SERPENT_A:
-  case ENEMY_UNUSED_SERPENT_B:
+  case ENEMY_SERPENT_6:
+  case ENEMY_SERPENT_7:
     actor->scale = FIXED_ONE * 11 / 10;
     break;
   case ENEMY_POSEIDON:
   case ENEMY_POSEIDON_SECOND_ACTION:
-  case ENEMY_UNUSED_POSEIDON:
+  case ENEMY_POSEIDON_3:
     actor->scale = FIXED_ONE * 3 / 2;
     break;
   case ENEMY_AQUA_HYDRA:
@@ -356,15 +356,15 @@ void BattleObject_Make(struct BattleObject *actor, s32 unitId, s32 x, s32 y) {
     break;
   case ENEMY_KNIGHT:
   case ENEMY_KNIGHT_B:
-  case ENEMY_UNUSED_KNIGHT:
+  case ENEMY_KNIGHT_3:
     actor->scale = FIXED_ONE * 101 / 100;
     break;
   case ENEMY_BRIGGS:
     actor->scale = FIXED_ONE * 5 / 4;
     break;
   case ENEMY_SEA_FIGHTER:
-  case ENEMY_UNUSED_CHAMPA_A:
-  case ENEMY_UNUSED_CHAMPA_B:
+  case ENEMY_CHAMPA_2:
+  case ENEMY_CHAMPA_3:
   case ENEMY_MINOTAURUS:
   case ENEMY_MINOS_WARRIOR:
   case ENEMY_MINOS_KNIGHT:
@@ -496,9 +496,8 @@ void BattlePlacement_LayoutEnemies(u16 *actorIds, s32 count, s32 *xPositions,
             enemy == ENEMY_SERPENT || enemy == ENEMY_SERPENT_ONE_BEAM ||
             enemy == ENEMY_SERPENT_TWO_BEAMS ||
             enemy == ENEMY_SERPENT_THREE_BEAMS ||
-            enemy == ENEMY_SERPENT_FOUR_BEAMS ||
-            enemy == ENEMY_UNUSED_SERPENT_A ||
-            enemy == ENEMY_UNUSED_SERPENT_B) {
+            enemy == ENEMY_SERPENT_FOUR_BEAMS || enemy == ENEMY_SERPENT_6 ||
+            enemy == ENEMY_SERPENT_7) {
           xPositions[index] = ENEMY_COLUMN_NEAR_X;
         }
       }

@@ -17,6 +17,10 @@
 /// compare).
 #define DISPSTAT_VCOUNT_LINE(line) ((line) << 8)
 #define REG_VCOUNT (*(volatile u16 *)0x04000006) ///< line being drawn, 0..227
+/// The lines REG_VCOUNT counts through in a frame: the DISPLAY_HEIGHT drawn
+/// and those of VBlank. A line's HBlank comes before the next line is drawn,
+/// the last line's before line 0.
+#define DISPLAY_TOTAL_LINES 228
 // Each background's control: its priority, tile and map blocks, colours and
 // size, composed from the BGCNT_ values below.
 #define REG_BG1CNT (*(volatile u16 *)0x0400000a) ///< BG1
@@ -163,6 +167,8 @@ enum DisplayControl {
 /// of BLEND_WEIGHT_MAX.
 #define BLEND_ALPHA(top, bottom) ((top) | ((bottom) << 8))
 #define REG_BLDY (*(volatile u16 *)0x04000054) ///< fade level, 0 to 16
+/// REG_BLDY's whole fade: the targets drawn all white, or all black.
+#define BLEND_FADE_MAX 16
 
 /// Screen block 7: BG2's affine map of a battle effect's canvas, a byte a
 /// tile (EFFECT_WRITE_CANVAS_MAP_ROW).
@@ -203,15 +209,23 @@ enum DisplayControl {
 
 /// A 15-bit colour from its red, green and blue levels (0 to 31 each), as
 /// the palette stores it: blue in the high bits.
-#define RGB(r, g, b) (((b) << 10) | ((g) << 5) | (r))
+#define RGB(r, g, b) (((b) << BLUE_SHIFT) | ((g) << GREEN_SHIFT) | (r))
+/// Where a 15-bit colour keeps its green and blue levels, red being in the low
+/// bits.
+#define GREEN_SHIFT 5
+#define BLUE_SHIFT 10
 /// A 15-bit colour's red, green and blue levels, 0 to 31 each.
 #define RGB_RED(color) ((color) & 0x1f)
-#define RGB_GREEN(color) (((color) >> 5) & 0x1f)
-#define RGB_BLUE(color) (((color) >> 10) & 0x1f)
+#define RGB_GREEN(color) (((color) >> GREEN_SHIFT) & 0x1f)
+#define RGB_BLUE(color) (((color) >> BLUE_SHIFT) & 0x1f)
 /// A colour channel's brightest level.
 #define RGB_LEVEL_MAX 31
 /// The brightest colour, every channel at its highest level.
 #define RGB_WHITE RGB(RGB_LEVEL_MAX, RGB_LEVEL_MAX, RGB_LEVEL_MAX)
+/// A 15-bit colour's red, green and blue bits.
+#define RED_BITS RGB(RGB_LEVEL_MAX, 0, 0)
+#define GREEN_BITS RGB(0, RGB_LEVEL_MAX, 0)
+#define BLUE_BITS RGB(0, 0, RGB_LEVEL_MAX)
 
 /// The start of the 32 KB of IWRAM, the CPU's fast internal work memory, as
 /// pret names it.
@@ -235,6 +249,9 @@ enum DisplayControl {
 #define BG_SCREEN_BLOCK(n) ((u8 *)VRAM + (n) * BG_SCREEN_SIZE)
 #define TILE_SIZE_4BPP 32 ///< bytes in an 8x8 tile of 16 colours
 #define TILE_SIZE_8BPP 64 ///< bytes in an 8x8 tile of 256 colours
+/// The tiles of a picture that fills the screen in 256 colours.
+#define SCREEN_TILE_BYTES                                                      \
+  (DISPLAY_TILE_HEIGHT * DISPLAY_TILE_WIDTH * TILE_SIZE_8BPP)
 /// A word of eight 4-bit pixels, all colour `color`: one row of a 16-colour
 /// tile.
 #define PIXELS_4BPP(color) ((color) * 0x11111111u)
@@ -252,6 +269,7 @@ enum DisplayControl {
 /// TMxCNT_H flags, as pret names them.
 #define TIMER_INTR_ENABLE 0x0040
 #define TIMER_ENABLE 0x0080 ///< starts the timer counting
+#define TIMER_256CLK 0x0002 ///< counts every 256 cycles, 65536 times a second
 
 /// The serial data: the 32-bit mode's word, or multiplayer's four received
 /// halfwords.
@@ -304,6 +322,9 @@ enum DisplayControl {
 #define DMA_START_SPECIAL 0x3000 ///< channels 1 and 2: a sound FIFO's request
 #define DMA_INTR_ENABLE 0x4000   ///< an interrupt when it ends
 #define DMA_ENABLE 0x8000        ///< arms the channel
+/// DMA_ENABLE in a channel's 32-bit count and control word, which the hardware
+/// clears once the transfer is done.
+#define DMA_BUSY ((u32)DMA_ENABLE << 16)
 /// A DMA control's start timing (bits 12 and 13), cartridge request (bit 11)
 /// and repeat (bit 9): the bits cleared before a channel is stopped.
 #define DMA_START_TIMING_DRQ_REPEAT                                            \
@@ -369,6 +390,18 @@ enum ObjMode {
 /// A sprite's x in the attr01 word of an OamWords entry, whose attribute 1 is
 /// its high half.
 #define OBJ_X(x) ((x) << 16)
+/// An affine sprite's matrix number, attribute 1's bits 9 to 13, in the attr01
+/// word.
+#define OBJ_MATRIX(n) ((n) << 25)
+/// Attribute 1's nine bits of x: a sprite left of the screen is at 512 less
+/// its distance.
+#define OBJ_X_MASK 0x1ff
+/// Attribute 2's ten bits of tile number, counted in 4-bit tiles from the
+/// start of sprite VRAM.
+#define OBJ_TILE_MASK 0x3ff
+/// Attribute 0 holds eight bits of a sprite's y, so its y wraps round at 256
+/// lines.
+#define OBJ_Y_RANGE 256
 
 /// The keys' bits as REG_KEYINPUT and REG_KEYCNT lay them out; the game's
 /// key state (gKeysHeld and the rest) holds them set for a pressed key.

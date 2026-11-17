@@ -2,15 +2,15 @@
 #define ALCHEMY_SOUNDS_H
 
 /// @file
-/// Sound ids, one for each row of gSongTable (sound/song_table.s) in order, as
-/// The Broken Seal's: MUS_ ids are music and jingles, SE_ ids sound effects,
-/// as their sequences in sound/songs are named. A row of the empty song
-/// (Sound_EmptySong), which plays nothing, has no name, and the next named
-/// row's number is written after it. A sequence with no name yet keeps its
-/// number as its placeholder. Four rows are controls no sound plays from.
-/// Sound_Play tests the controls first, then the ranges: from SOUND_SE_FIRST to
-/// SOUND_SE_END on the player its gSongTable row names, from SOUND_JINGLE_FIRST
-/// jingles, music otherwise (sound_driver_symbols.h).
+/// Sound ids, one for each row of gSongTable (sound/song_table.s) in order:
+/// MUS_ ids are music and jingles, SE_ ids sound effects, as their sequences in
+/// sound/songs are named. A row of the empty song (Sound_EmptySong), which
+/// plays nothing, has no name, and the next named row's number is written after
+/// it. A sequence with no name yet keeps its number as its placeholder. Four
+/// rows are controls no sound plays from. Sound_Play tests the controls first,
+/// then the ranges: from SOUND_SE_FIRST to SOUND_SE_END on the player its
+/// gSongTable row names, from SOUND_JINGLE_FIRST jingles, music otherwise
+/// (sound_driver_symbols.h).
 
 enum SoundId {
   /// A song of no tracks: scenes play it to silence the music, and the music
@@ -104,9 +104,8 @@ enum SoundId {
   /// Plays as Alex appears: in Champa, at Jupiter Lighthouse's beacon and
   /// fight, and before the Doom Dragon.
   MUS_ALEX,
-  /// The title intro's music at power-on, when a save file exists, and before
-  /// a new game's intro (the title's Scene_Initialize), as The Broken Seal's
-  /// MUS_TITLE.
+  /// The title intro's music at power-on, when a save file exists, and before a
+  /// new game's intro (the title's Scene_Initialize).
   MUS_TITLE,
   /// The field music of the Lemurian Ship and the Northern Reaches, and of the
   /// World Map once FLAG_SAILING is set.
@@ -164,8 +163,7 @@ enum SoundId {
   MUS_SEA_OF_TIME,
   /// The Epilogue's music after its first lines.
   MUS_EPILOGUE = 67,
-  /// The staff credits' music (the title's entrance 8, Credits_Run), as The
-  /// Broken Seal's MUS_ENDING.
+  /// The staff credits' music (the title's entrance 8, Credits_Run).
   MUS_ENDING,
   /// Unused: The Broken Seal's MUS_TITLE, note for note.
   MUS_UNUSED_TITLE = 70,
@@ -180,8 +178,7 @@ enum SoundId {
   /// transferred.
   MUS_CLEAR,
   /// The title held without its prompt: after the prologue (the title's
-  /// entrance 3), as The Broken Seal's MUS_TITLE_AFTER_PROLOGUE, and as the
-  /// logo shows after the ending (entrance 10).
+  /// entrance 3), and as the logo shows after the ending (entrance 10).
   MUS_TITLE_AFTER_PROLOGUE,
   /// The Trial Road race: Moapa's challenge, the rules and the countdown in
   /// Shaman Village, and the Trial Road's music while
@@ -217,7 +214,8 @@ enum SoundId {
   MUS_JINGLE_MEDIUM,
   /// Lucky Dice's, Lucky Wheels' and Contigo's largest prize.
   MUS_JINGLE_LARGE,
-  MUS_095 = 95,
+  /// MUS_SILENCE's song of no tracks, on the jingle player; nothing plays it.
+  MUS_UNUSED_SILENCE_JINGLE = 95,
   SE_BELL = 100,
   SE_SHOP_PURCHASE,
   SE_SHOP_SELL,
@@ -266,9 +264,9 @@ enum SoundId {
   SE_KIRIN,
   SE_ITEM_BREAK,
   /// A Djinni set in the Djinn menu, and a Djinni recovering to Set as the
-  /// party walks (Field_UpdateWalking), as The Broken Seal's row 139; also the
-  /// summon tablets' runes, Champa's embers and the Serac, Eclipse, Cruel Ruin
-  /// and other battle effects.
+  /// party walks (Field_UpdateWalking); also the summon tablets' runes,
+  /// Champa's embers and the Serac, Eclipse, Cruel Ruin and other battle
+  /// effects.
   SE_DJINNI_SET,
   SE_SPIN,
   SE_RUMBLE,
@@ -292,9 +290,9 @@ enum SoundId {
   SE_DOOR_CLOSE,
   SE_160,
   SE_RATTLE,
-  /// The Mercury, Judgment and Neptune battle effects, as The Broken Seal's row
-  /// 162; also Charon and Meteor Blow, the Aquarius Stone in Aqua Rock and the
-  /// Kandorean Temple's steam vents and lifts.
+  /// The Mercury, Judgment and Neptune battle effects; also Charon and Meteor
+  /// Blow, the Aquarius Stone in Aqua Rock and the Kandorean Temple's steam
+  /// vents and lifts.
   SE_WAVE,
   /// SE_WAVE's notes thirteen semitones higher: the tidal wave that carries
   /// Idejima off on the World Map, the whirlwinds clearing Air's Rock's sand
@@ -308,12 +306,10 @@ enum SoundId {
   SE_MAP_TRANSITION,
   /// Played three times as the Ruin Key opens the Madra Catacombs.
   SE_UNLOCK,
-  /// The Broken Seal's row 169, SE_AMBIENT_WIND, beside SE_AMBIENT_WATER;
-  /// nothing plays it here.
+  /// Nothing in this game plays it.
   SE_AMBIENT_WIND,
   /// The steam vents and waterfalls: Taopo Swamp's and Aqua Rock's vents, the
-  /// settlements' waterfall, the Kandorean Temple and the Apojii Islands, as
-  /// The Broken Seal's row 170.
+  /// settlements' waterfall, the Kandorean Temple and the Apojii Islands.
   SE_AMBIENT_WATER,
   SE_THUNDER,
   SE_THUNDER_LOUD,
@@ -343,6 +339,8 @@ enum SoundId {
   SE_THUMP,
   SE_STONE_GRIND,
   SE_WARP,
+  /// Played as Gaia Rock's altar faces part, at Zagan's frame 32
+  /// (BattleEffect_RunZagan) and in Megiddo's dive (BattleEffect_RunMegiddo).
   SE_191,
   /// Shriek's and Harpy's cry as their streaks set out
   /// (BattleEffect_RunStreakVolley, mode 1): SE_SPARKS's notes on voice 25; The
@@ -372,7 +370,9 @@ enum SoundId {
   SE_FLAME_FLARE,
   SE_203,
   SE_DUST_PUFF,
-  SE_205,
+  /// SE_AMBIENT_STREAM ten semitones higher on a noise voice and not held;
+  /// nothing plays it.
+  SE_UNUSED_AMBIENT_STREAM_HIGH,
   SE_CURSE_FALL,
   SE_RUSH,
   SE_BANE_ESCAPE,
@@ -394,6 +394,7 @@ enum SoundId {
   SE_WHIRLWIND,
   SE_LIFT,
   SE_224,
+  /// Played at Moloch's frame 90 (BattleEffect_RunMoloch).
   SE_225,
   SE_LOG_PUSH,
   SE_TOPPLE,
@@ -428,14 +429,15 @@ enum SoundId {
   /// ready.
   SE_GABOMBA_STATUE_ARROW,
   SE_249,
-  SE_250,
+  /// SE_BLACK_CRYSTAL_SET seven semitones lower; nothing plays it.
+  SE_UNUSED_BLACK_CRYSTAL_SET_LOW,
   /// Played as the Black Crystal is set on the Lemurian Ship.
   SE_BLACK_CRYSTAL_SET,
   SE_COLOSSO_WARRIOR_APPEAR,
   SE_253,
-  /// The voice blips of a message: an actor's voice is SE_VOICE_FIRST plus
-  /// four times its voice, and the letters typed play it plus the letter's low
-  /// two bits, so a voice is four blips, _A to _D, as in The Broken Seal.
+  /// The voice blips of a message: an actor's voice is SE_VOICE_FIRST plus four
+  /// times its voice, and the letters typed play it plus the letter's low two
+  /// bits, so a voice is four blips, _A to _D.
   SE_VOICE_ANIMAL_A = 256,
   SE_VOICE_ANIMAL_B,
   SE_VOICE_ANIMAL_C,
@@ -469,11 +471,14 @@ enum SoundId {
   SE_VOICE_MAN_C,
   SE_VOICE_MAN_D,
   SE_STOP_ACTION_SE,
-  SE_290 = 290,
+  /// SE_TAKE_FLIGHT higher, its first track six semitones up without the
+  /// chord's low note and its second four; nothing plays it.
+  SE_UNUSED_TAKE_FLIGHT_HIGH = 290,
   /// Played as an actor takes flight.
   SE_TAKE_FLIGHT,
   SE_ERUPTION_COLUMNS,
-  SE_293,
+  /// SE_ERUPTION_COLUMNS four semitones lower; nothing plays it.
+  SE_UNUSED_ERUPTION_COLUMNS_LOW,
   SE_STOP_EXIT_SE = 298,
   SE_TOLBI_SPRING_TOSS = 300,
   SE_TOLBI_SPRING_OBSTACLE_HIT,
@@ -496,7 +501,9 @@ enum SoundId {
   SOUND_FADE_OUT_EXIT_SE = 395,
   /// The field Psynergy Lash.
   SE_LASH = 512,
-  SE_520 = 520,
+  /// SE_CAST's notes an octave lower on voice 99, against a falling line on
+  /// voice 98; nothing plays it.
+  SE_UNUSED_CAST_LOW = 520,
   SE_521,
   /// The beams of Jupiter Lighthouse's aerie flickering as its angels are
   /// energized.
@@ -510,16 +517,22 @@ enum SoundId {
   SE_526,
   SE_527,
   SE_528,
+  /// SE_528's notes at a faster tempo, their loudness rising and falling;
+  /// nothing plays either.
   SE_529,
   /// The Sea of Time opening a way (SeaOfTime_Open).
   SE_SEA_OF_TIME_OPENS,
-  SE_531,
+  /// SE_SANDSTORM's second track alone, six semitones lower and played once;
+  /// nothing plays it.
+  SE_UNUSED_SANDSTORM_LOW,
   SE_532,
   SE_533,
   SE_534,
   /// The Madra Catacombs' chest sliding with its bookshelf.
   SE_BOOKSHELF_SLIDE,
   SE_536,
+  /// SE_536's notes six semitones lower and more slowly; nothing plays
+  /// either.
   SE_538 = 538,
   /// The leader emerging as Sand ends (FieldPsynergy_EndSand).
   SE_SAND_EMERGE,
@@ -529,17 +542,24 @@ enum SoundId {
   /// The sand mound sinking away as Sand ends (FieldPsynergy_EndSand).
   SE_SAND_END,
   SE_545,
-  SE_546,
-  SE_547,
+  /// SE_SETTLE's notes played once instead of held, with voice 93 in its
+  /// first track; nothing plays it.
+  SE_UNUSED_SETTLE_SHORT,
+  /// SE_TABLET_RISE two semitones lower and softer; nothing plays it.
+  SE_UNUSED_TABLET_RISE_LOW,
   SE_548,
-  SE_549,
+  /// SE_BOOKSHELF_SLIDE with its first note three semitones higher; nothing
+  /// plays it.
+  SE_UNUSED_BOOKSHELF_SLIDE_HIGH,
   /// Played as the party drops through a hole on an islet.
   SE_DROP_THROUGH_HOLE,
   SE_551,
   SE_552,
   /// Played as Magma Rock's flames grow.
   SE_FLAME_GROW = 554,
-  SE_555,
+  /// SE_FLAME_GROW's falling run fourteen semitones lower on voice 99, its last
+  /// note two higher; nothing plays it.
+  SE_UNUSED_FLAME_GROW_LOW,
   /// SE_RISE_WITH_SPARKS two semitones higher, held until stopped: the Ankohl
   /// Ruins' sand rising, Aqua Rock's pillars rising as its stones are Doused,
   /// Jupiter Lighthouse's angels lifted, and the Sea of Time's waves stilled.
@@ -549,7 +569,10 @@ enum SoundId {
   /// Time's waves starting and the sea opening.
   SE_RISE_WITH_SPARKS_LOW,
   SE_558,
-  SE_559,
+  /// SE_UNUSED_COIN_PAYOUT_C an octave lower on SE_ICE_CRACK's voice, with four
+  /// notes more;
+  /// nothing plays it.
+  SE_UNUSED_COIN_PAYOUT_LOW,
   /// A doorway of Mars Lighthouse's dragon-statue room flashing as it is
   /// stepped toward.
   SE_MARS_LIGHTHOUSE_DOORWAY,
@@ -573,8 +596,10 @@ enum SoundId {
   /// SE_SPIN_AWAY's notes with voice 97 in its first track; nothing plays it.
   SE_UNUSED_SPIN_AWAY_B,
   /// SE_SPIN_AWAY an octave higher and faster, on voice 93; nothing plays it.
-  SE_UNUSED_SPIN_AWAY_HIGH,
-  SE_570,
+  SE_UNUSED_SPIN_AWAY_HIGH_A,
+  /// SE_CURRENT's rhythm on its voice with other notes, the last two held long;
+  /// nothing plays it.
+  SE_UNUSED_CURRENT_HELD,
   /// SE_CURRENT at volume 100 for its 40; nothing plays it, nor its copy
   /// SE_UNUSED_LOUD_CURRENT_B.
   SE_UNUSED_LOUD_CURRENT_A,
@@ -601,6 +626,8 @@ enum SoundId {
   SE_580,
   /// The leader jumping down a hole of the Gabomba Statue.
   SE_GABOMBA_STATUE_HOLE,
+  /// Played as the Anemos Inner Sanctum's statue moves once its seven tiles
+  /// glow, and as the Gabomba Statue's flashing cog stops.
   SE_582,
   SE_583,
   /// Played as the party presses a switch or button in Mars Lighthouse, the
@@ -615,8 +642,11 @@ enum SoundId {
   /// Played as Gaia Rock's statue rises under the leader.
   SE_STATUE_RISE,
   SE_591,
-  SE_592,
+  /// SE_IMPACT's rhythm and most of its notes, doubled by a second track on
+  /// voice 90; nothing plays it.
+  SE_UNUSED_IMPACT_DOUBLED,
   SE_593,
+  /// SE_545's second and third tracks alone; nothing plays either.
   SE_594,
   /// The Doom Dragon flickering into the people it was, at Mars Lighthouse's
   /// aerie.
@@ -635,9 +665,14 @@ enum SoundId {
   SE_UNUSED_COIN_PAYOUT_B,
   /// Played as the leader spins away.
   SE_SPIN_AWAY,
-  SE_613,
-  SE_614,
-  SE_615,
+  /// SE_SPIN_AWAY's first track alone, two octaves higher; nothing plays it.
+  SE_UNUSED_SPIN_AWAY_HIGH_B,
+  /// SE_UNUSED_SPIN_AWAY_HIGH_B's rhythm on its voice, six of its eleven notes
+  /// changed, at tempo 32; nothing plays it.
+  SE_UNUSED_SPIN_AWAY_HIGH_C,
+  /// SE_KOLIMA_BRIDGE_HOP's voice and rhythm with three of its five notes;
+  /// nothing plays it.
+  SE_UNUSED_KOLIMA_BRIDGE_HOP,
   /// SE_WHIRLWIND an octave lower; nothing plays it.
   SE_UNUSED_WHIRLWIND_LOW_A,
   /// SE_WHIRLWIND an octave lower, on voice 99; nothing plays it.
@@ -645,11 +680,14 @@ enum SoundId {
   /// SE_RISE_WITH_SPARKS's notes ending with the last one instead of held;
   /// nothing plays it.
   SE_UNUSED_RISE_WITH_SPARKS_SHORT,
-  /// One long note: Piers's uncle calling the bird in Lemuria, and the Gasp
-  /// battle effect's burst.
-  SE_619,
-  SE_620,
-  SE_621,
+  /// One long note: Piers's uncle calling the bird that carries his letter to
+  /// Lunpa in Lemuria, and the Gasp battle effect's burst.
+  SE_BIRD_CALL,
+  /// SE_COIN_PAYOUT's second track alone, on voice 100; nothing plays it.
+  SE_UNUSED_COIN_PAYOUT_C,
+  /// SE_UNUSED_COIN_PAYOUT_C an octave higher and slower, on voice 118; nothing
+  /// plays it.
+  SE_UNUSED_COIN_PAYOUT_HIGH,
   SE_622,
   /// Played as an actor wades through water.
   SE_WADE,

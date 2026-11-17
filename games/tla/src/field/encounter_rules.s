@@ -51,7 +51,7 @@ gScene_EncounterRules:
 	encounter_rule YampiDesertSandPass, -1, -1, 33, 0
 	encounter_rule YampiDesertTrainersWhipChest, -1, -1, 33, 0
 	encounter_rule YampiDesertMedalSpot, -1, -1, 33, 0
-	encounter_rule YampiDesertOasisCave, -1, -1, 32, 0
+	encounter_rule YampiDesertSpringCave, -1, -1, 32, 0
 	encounter_rule YampiDesertBlowMaceChest, -1, -1, 32, 0
 	encounter_rule AirsRockStormBrandChest, -1, -1, 34, 0
 	encounter_rule AirsRockEntrance, -1, -1, 35, 0
@@ -70,7 +70,7 @@ gScene_EncounterRules:
 	encounter_rule AirsRockInsideClarityCircletChest, -1, -1, 36, 0
 	encounter_rule AirsRockInsideTightropes, -1, -1, 37, 38
 	encounter_rule AirsRockInsideElixirChest, -1, -1, 37, 0
-	encounter_rule AirsRockInsidePairedStatues, -1, -1, 36, 0
+	encounter_rule AirsRockInsidePairedStakes, -1, -1, 36, 0
 	encounter_rule AirsRockInsideFaceWarp, -1, -1, 36, 0
 	encounter_rule AirsRockInsideCoinsChest, -1, -1, 38, 0
 	encounter_rule AlhafranCave, -1, -1, 39, 0

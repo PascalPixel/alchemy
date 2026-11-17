@@ -5,9 +5,13 @@
 #define ALCHEMY_WINDOW_TILE_H
 
 #include "edition.h"
+#include "system/io_reg.h"
 
-/// A window tilemap entry: the tile in palette 15, the text tiles' palette.
-#define WINDOW_TILE(tile) (0xf000 | (tile))
+/// The BG palette of the windows and their text, the UI palette.
+#define WINDOW_PALETTE 15
+
+/// A window tilemap entry: the tile in WINDOW_PALETTE.
+#define WINDOW_TILE(tile) (BG_TILE_PALETTE(WINDOW_PALETTE) | (tile))
 
 /// The HP and PP labels before a number (Text_DrawPrefixedNumberAtOffset)
 /// or a Psynergy's cost: each label's first tile, and the second tile the

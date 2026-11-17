@@ -11,8 +11,38 @@
 #define TILE_TEXT_NEWLINE_WIDTH 8
 #endif
 
-/// Draws window tile pattern over the tile of tilemap entry *entry, with its
-/// colours mapped through remap (0 leaves a pixel as it was).
+/// Tile text is drawn into a canvas of one byte a pixel, a tile tall, then
+/// packed into 4bpp tiles in place: row `row` of its tile `tile` is then a word
+/// of eight pixels.
+#define TILE_TEXT_CANVAS_WIDTH 256
+#define TILE_TEXT_CANVAS_SIZE (TILE_TEXT_CANVAS_WIDTH * 8)
+#define TILE_TEXT_PACKED_ROW(tile, row)                                        \
+  (((u32 *)canvas)[(tile) + (row) * TILE_TEXT_CANVAS_WIDTH / 4])
+
+/// In Japanese, the codes above TILE_TEXT_NARROW_LAST (the kana) are a whole
+/// tile wide; a kana's mark is drawn from a tile glyph of its own, the last
+/// two of the window tiles, three pixels wide and three pixels back over its
+/// kana.
+#define TILE_TEXT_NARROW_LAST 128
+#define TILE_TEXT_VOICED_MARK_GLYPH 254
+#define TILE_TEXT_SEMIVOICED_MARK_GLYPH 255
+#define TILE_TEXT_MARK_WIDTH 3
+
+/// A 4bpp pixel: the low four bits of a byte, the colour of its palette.
+#define PIXEL_4BPP_MASK (PALETTE_COLORS - 1)
+
+/// A text tile's bits in WindowWork.textTileState; 0 is free.
+#define TEXT_TILE_TAKEN 1 ///< allocated to some text
+#define TEXT_TILE_SHOWN                                                        \
+  2 ///< seen on the tilemap by Window_MarkVisibleTextTiles
+/// A text tile's place in WindowWork.textTileState: the TEXT_TILES tiles from
+/// TEXT_TILE_FIRST take the first places, those from TEXT_EXTRA_TILE_FIRST the
+/// next TEXT_TILES.
+#define TEXT_TILE_STATE_INDEX(tile) (((tile) & 0xFF) ^ TEXT_TILE_FIRST)
+
+/// Unused: draws window tile pattern over the tile of tilemap entry *entry,
+/// its colours mapped through remap (0 leaves a pixel as it was), first giving
+/// the entry (and the same entry in mirror) a text tile of its own.
 UNUSED void Window_OverlayTilePattern(u16 *entry, u16 *mirror, s32 pattern,
                                       u8 *remap) {
   struct WindowWork *work = WINDOW_WORK;
@@ -26,17 +56,17 @@ UNUSED void Window_OverlayTilePattern(u16 *entry, u16 *mirror, s32 pattern,
 
   dst = pixels;
   src = BG_CHAR_BLOCK(0) + TILE_SIZE_4BPP * tile;
-  for (i = 0; i < 32; i++) {
+  for (i = 0; i < TILE_SIZE_4BPP; i++) {
     n = *src++;
-    *dst++ = n & 15;
+    *dst++ = n & PIXEL_4BPP_MASK;
     *dst++ = n >> 4;
   }
 
   dst = pixels;
-  src = sheet + pattern * 32;
-  for (i = 0; i < 32; i++) {
+  src = sheet + pattern * TILE_SIZE_4BPP;
+  for (i = 0; i < TILE_SIZE_4BPP; i++) {
     u32 value = *src++;
-    u32 color = remap[value & 15];
+    u32 color = remap[value & PIXEL_4BPP_MASK];
 
     if (color != 0)
       *dst = color;
@@ -51,7 +81,7 @@ UNUSED void Window_OverlayTilePattern(u16 *entry, u16 *mirror, s32 pattern,
     u8 *p;
 
     dst = pixels;
-    for (i = 0, p = dst; i < 32; i++) {
+    for (i = 0, p = dst; i < TILE_SIZE_4BPP; i++) {
       u32 value = p[0] | p[1] << 4;
 
       p += 2;
@@ -60,22 +90,22 @@ UNUSED void Window_OverlayTilePattern(u16 *entry, u16 *mirror, s32 pattern,
   }
 
   if ((s8)tile >= 0) {
-    for (n = 0; n < 128; n++) {
+    for (n = 0; n < TEXT_TILES; n++) {
       u32 value = work->nextTextTile;
-      u32 following = (value + 1) % 128;
+      u32 following = (value + 1) % TEXT_TILES;
 
       tile = (u8)value;
       work->nextTextTile = following;
       if (work->textTileState[tile] == 0)
         break;
     }
-    work->textTileState[tile] = 1;
-    tile |= 0x80;
+    work->textTileState[tile] = TEXT_TILE_TAKEN;
+    tile |= TEXT_TILE_FIRST;
     *entry = WINDOW_TILE(tile);
     *mirror = WINDOW_TILE(tile);
   }
-  Dma_Set(pixels, BG_CHAR_BLOCK(0) + tile * TILE_SIZE_4BPP, DMA_COPY_WORDS(8),
-          REG_DMA3);
+  Dma_Set(pixels, BG_CHAR_BLOCK(0) + tile * TILE_SIZE_4BPP,
+          DMA_COPY_WORDS(TILE_SIZE_4BPP / 4), REG_DMA3);
 }
 
 /// Draws a string of 16-bit character codes with the window font into tiles of
@@ -101,7 +131,7 @@ s32 Text_DrawStringAsTiles(u16 *text, u16 *tiles, u16 *mirror, s32 x) {
   u32 bits;
 
   work = WINDOW_WORK;
-  canvas = Heap_Alloc(2048);
+  canvas = Heap_Alloc(TILE_TEXT_CANVAS_SIZE);
   glyphs = Resource_GetTableEntry(RESOURCE_WINDOW_TILES);
   paletteBits = BG_TILE_PALETTE(work->textPalette);
   Iwram_ClearWords(pens, 16);
@@ -110,11 +140,13 @@ s32 Text_DrawStringAsTiles(u16 *text, u16 *tiles, u16 *mirror, s32 x) {
   if (paletteBits == BG_TILE_PALETTE(WINDOW_PALETTE)) {
     pens[1] = gFont_ColorPens[work->colour & (PALETTE_COLORS - 1)];
     pens[3] = 3;
-    Iwram_FillWords(canvas, 2048, PIXELS_8BPP(WINDOW_BACKGROUND_COLOR));
+    Iwram_FillWords(canvas, TILE_TEXT_CANVAS_SIZE,
+                    PIXELS_8BPP(WINDOW_BACKGROUND_COLOR));
   } else {
     pens[1] = (u8)work->colour & (PALETTE_COLORS - 1);
     pens[3] = 1;
-    Iwram_FillWords(canvas, 2048, PIXELS_8BPP(TEXT_BACKGROUND_COLOR));
+    Iwram_FillWords(canvas, TILE_TEXT_CANVAS_SIZE,
+                    PIXELS_8BPP(TEXT_BACKGROUND_COLOR));
   }
   // Expand glyph pixels and control-code colour changes into a byte canvas.
   if (text != 0) {
@@ -163,29 +195,29 @@ s32 Text_DrawStringAsTiles(u16 *text, u16 *tiles, u16 *mirror, s32 x) {
 #if LANGUAGE == LANGUAGE_JAPANESE
         if (glyphCode == TEXT_MARK_VOICED ||
             glyphCode == TEXT_MARK_SEMIVOICED) {
-          x -= 3;
-          glyphCode += 32;
+          x -= TILE_TEXT_MARK_WIDTH;
+          glyphCode += TILE_TEXT_VOICED_MARK_GLYPH - TEXT_MARK_VOICED;
         }
 #endif
         // Each glyph is an 8x8 tile of the window tiles, a word a row.
-        src = (u32 *)(glyphs + glyphCode * 32);
+        src = (u32 *)(glyphs + glyphCode * TILE_SIZE_4BPP);
         dst = canvas + x;
         for (index = 0; index < 8; index++) {
           bits = *src++;
           for (column = 0; column < 4; column++) {
-            u8 pen = pens[bits & 15];
+            u8 pen = pens[bits & PIXEL_4BPP_MASK];
 
             if (pen != 0)
               *dst = pen;
             dst++;
             bits >>= 4;
-            pen = pens[bits & 15];
+            pen = pens[bits & PIXEL_4BPP_MASK];
             if (pen != 0)
               *dst = pen;
             dst++;
             bits >>= 4;
           }
-          dst += 248;
+          dst += TILE_TEXT_CANVAS_WIDTH - 8;
         }
         // The sign tiles Text_DrawPrefixedNumberAtOffset writes (the HP and PP
         // labels' tiles) advance 8 for a first tile and 3 for a second, in
@@ -202,9 +234,10 @@ s32 Text_DrawStringAsTiles(u16 *text, u16 *tiles, u16 *mirror, s32 x) {
           x += 3;
         else {
 #if LANGUAGE == LANGUAGE_JAPANESE
-          if (glyphCode > 128) {
-            if (glyphCode == 254 || glyphCode == 255)
-              glyphWidth = 3;
+          if (glyphCode > TILE_TEXT_NARROW_LAST) {
+            if (glyphCode == TILE_TEXT_VOICED_MARK_GLYPH ||
+                glyphCode == TILE_TEXT_SEMIVOICED_MARK_GLYPH)
+              glyphWidth = TILE_TEXT_MARK_WIDTH;
             else
               glyphWidth = 8;
           } else
@@ -237,8 +270,8 @@ s32 Text_DrawStringAsTiles(u16 *text, u16 *tiles, u16 *mirror, s32 x) {
       *(u32 *)dst = (glyphCode << 4) >> 16 | bits << 16;
       dst += 4;
     }
-    dst = dst - tileCount * 4 + 256;
-    src = (u32 *)((u8 *)src - tileCount * 8 + 256);
+    dst = dst - tileCount * 4 + TILE_TEXT_CANVAS_WIDTH;
+    src = (u32 *)((u8 *)src - tileCount * 8 + TILE_TEXT_CANVAS_WIDTH);
   }
 
   // Reuse private text tiles, allocate any new ones, then upload each tile.
@@ -249,8 +282,8 @@ s32 Text_DrawStringAsTiles(u16 *text, u16 *tiles, u16 *mirror, s32 x) {
 
     if (work->extraTextTiles != 0)
       mask = 2 * TEXT_TILES - 1;
-    // Attribute n is text tile 128 + n, and with alt set 128 to 255 are
-    // tiles 512 to 639.
+    // Text tile n is tile TEXT_TILE_FIRST + n, and with extraTextTiles set the
+    // next TEXT_TILES are tiles from TEXT_EXTRA_TILE_FIRST.
     tile = *tiles & TILE_NUMBER_MASK;
     if ((tile < TEXT_TILE_FIRST || tile > TEXT_TILE_FIRST + TEXT_TILES - 1) &&
         (work->extraTextTiles == 0 || tile < TEXT_EXTRA_TILE_FIRST ||
@@ -260,23 +293,23 @@ s32 Text_DrawStringAsTiles(u16 *text, u16 *tiles, u16 *mirror, s32 x) {
            column++)
         tile = (tile + 1) & mask;
       work->nextTextTile = (tile + 1) & mask;
-      work->textTileState[tile] = 1;
+      work->textTileState[tile] = TEXT_TILE_TAKEN;
       if (tile > TEXT_TILES - 1)
         tile += TEXT_EXTRA_TILE_FIRST - TEXT_TILES;
       else
-        tile |= 0x80;
+        tile |= TEXT_TILE_FIRST;
       *tiles = paletteBits | tile;
       *mirror = paletteBits | tile;
     }
     vramTile = (u32 *)(BG_CHAR_BLOCK(0) + tile * TILE_SIZE_4BPP);
-    *vramTile++ = ((u32 *)canvas)[index];
-    *vramTile++ = ((u32 *)canvas)[index + 64];
-    *vramTile++ = ((u32 *)canvas)[index + 128];
-    *vramTile++ = ((u32 *)canvas)[index + 192];
-    *vramTile++ = ((u32 *)canvas)[index + 256];
-    *vramTile++ = ((u32 *)canvas)[index + 320];
-    *vramTile++ = ((u32 *)canvas)[index + 384];
-    *vramTile++ = ((u32 *)canvas)[index + 448];
+    *vramTile++ = TILE_TEXT_PACKED_ROW(index, 0);
+    *vramTile++ = TILE_TEXT_PACKED_ROW(index, 1);
+    *vramTile++ = TILE_TEXT_PACKED_ROW(index, 2);
+    *vramTile++ = TILE_TEXT_PACKED_ROW(index, 3);
+    *vramTile++ = TILE_TEXT_PACKED_ROW(index, 4);
+    *vramTile++ = TILE_TEXT_PACKED_ROW(index, 5);
+    *vramTile++ = TILE_TEXT_PACKED_ROW(index, 6);
+    *vramTile++ = TILE_TEXT_PACKED_ROW(index, 7);
     tiles++;
     mirror++;
   }
@@ -301,8 +334,9 @@ void Window_ClearTextTilesInRect(s32 x, s32 y, u32 width, u32 height) {
       if ((tileId - TEXT_TILE_FIRST) <= TEXT_TILES - 1 ||
           (alternateTiles != 0 && tileId > TEXT_EXTRA_TILE_FIRST - 1 &&
            tileId <= TEXT_EXTRA_TILE_FIRST + TEXT_TILES - 1)) {
-        u32 attributeIndex = ((tileId & 0xFF) ^ 0x80);
-        ((struct WindowWork *)base)->textTileState[attributeIndex] &= 0xFC;
+        u32 attributeIndex = TEXT_TILE_STATE_INDEX(tileId);
+        ((struct WindowWork *)base)->textTileState[attributeIndex] &=
+            ~(TEXT_TILE_TAKEN | TEXT_TILE_SHOWN);
       }
     }
     cursor += BG_SCREEN_WIDTH - width;
@@ -310,7 +344,7 @@ void Window_ClearTextTilesInRect(s32 x, s32 y, u32 width, u32 height) {
 }
 
 /// Marks the text tiles the tilemap shows, and frees those it no longer shows:
-/// a tile taken but not marked shown (attribute exactly 1).
+/// a tile taken but not marked shown (its state exactly TEXT_TILE_TAKEN).
 void Window_MarkVisibleTextTiles(void) {
   u8 *base = gWindowWork[0];
   u16 *cursor = (u16 *)base;
@@ -329,22 +363,23 @@ void Window_MarkVisibleTextTiles(void) {
       if ((tileId - TEXT_TILE_FIRST) <= TEXT_TILES - 1 ||
           (alternateTiles != 0 && tileId > TEXT_EXTRA_TILE_FIRST - 1 &&
            tileId <= TEXT_EXTRA_TILE_FIRST + TEXT_TILES - 1)) {
-        u32 attributeIndex = ((tileId & 0xff) ^ 0x80);
+        u32 attributeIndex = TEXT_TILE_STATE_INDEX(tileId);
 
-        ((struct WindowWork *)base)->textTileState[attributeIndex] |= 2;
+        ((struct WindowWork *)base)->textTileState[attributeIndex] |=
+            TEXT_TILE_SHOWN;
       }
     }
   }
 
   for (row = 0; row < 2 * TEXT_TILES; row++, base++) {
-    if (((struct WindowWork *)base)->textTileState[0] == 1)
+    if (((struct WindowWork *)base)->textTileState[0] == TEXT_TILE_TAKEN)
       ((struct WindowWork *)base)->textTileState[0] = 0;
   }
 }
 
-/// Frees the text tiles of the second range (attributes 128 to 255, tiles 512
-/// to 639), and with allowAlternateTiles set lets text tiles take that range
-/// too; the first range's tiles keep their state.
+/// Frees the text tiles of the second range (the TEXT_TILES tiles from
+/// TEXT_EXTRA_TILE_FIRST), and with allowAlternateTiles set lets text take that
+/// range too; the first range's tiles keep their state.
 void Text_UseExtraTiles(s32 allowAlternateTiles) {
   s32 i;
   s32 j;
@@ -377,6 +412,7 @@ void Text_UseExtraTiles(s32 allowAlternateTiles) {
   } while (j >= 0);
 }
 
+/// Unused: does nothing.
 UNUSED void Window_ReservedNoOp(void) {}
 
 /// Draws a straight divider line inside a window from tile (x1, y1) to
@@ -398,8 +434,8 @@ void Window_DrawDividerLine(struct Window *win, u32 x1, u32 y1, u32 x2,
       y2 = pos;
     }
     Window_ClearTextTilesInRect(win->x + x2, win->y + y1, 1, y2 - y1);
-    cursor =
-        (u16 *)((((win->y + y1) << 5) + win->x + x2) * 2 + (u32)work->tilemap);
+    cursor = (u16 *)(((win->y + y1) * BG_SCREEN_WIDTH + win->x + x2) * 2 +
+                     (u32)work->tilemap);
     for (pos = y1; pos <= y2; pos++) {
       tile = *cursor;
       if (pos == y1) {
@@ -461,7 +497,7 @@ void Window_DrawDividerLine(struct Window *win, u32 x1, u32 y1, u32 x2,
         }
       }
       *cursor = tile;
-      cursor += 32;
+      cursor += BG_SCREEN_WIDTH;
     }
   } else if (y1 == y2) {
     if (x1 == x2)
@@ -472,8 +508,8 @@ void Window_DrawDividerLine(struct Window *win, u32 x1, u32 y1, u32 x2,
       x2 = pos;
     }
     Window_ClearTextTilesInRect(win->x + x1, win->y + y1, x2 - x1, 1);
-    cursor =
-        (u16 *)((((win->y + y1) << 5) + win->x + x1) * 2 + (u32)work->tilemap);
+    cursor = (u16 *)(((win->y + y1) * BG_SCREEN_WIDTH + win->x + x1) * 2 +
+                     (u32)work->tilemap);
     for (pos = x1; pos <= x2; pos++) {
       tile = *cursor;
       if (pos == x1) {
@@ -547,8 +583,7 @@ void Text_SetColor(s32 param) {
   work->colour = param & (PALETTE_COLORS - 1);
 }
 
-/// Sets the text style (WindowWork.outline) of drawn text: 1 outlined, 2 to
-/// 5 a motion of glyph sprites.
+/// Sets the text style (WindowWork.outline, an enum TextStyle) of drawn text.
 void Text_SetStyle(u16 value) {
   struct WindowWork *work = WINDOW_WORK;
 
@@ -739,3 +774,14 @@ void Text_DrawPrefixedNumberAtOffset(s32 value, const struct Window *window,
 }
 
 #undef TILE_TEXT_NEWLINE_WIDTH
+#undef TILE_TEXT_CANVAS_WIDTH
+#undef TILE_TEXT_CANVAS_SIZE
+#undef TILE_TEXT_PACKED_ROW
+#undef TILE_TEXT_NARROW_LAST
+#undef TILE_TEXT_VOICED_MARK_GLYPH
+#undef TILE_TEXT_SEMIVOICED_MARK_GLYPH
+#undef TILE_TEXT_MARK_WIDTH
+#undef PIXEL_4BPP_MASK
+#undef TEXT_TILE_TAKEN
+#undef TEXT_TILE_SHOWN
+#undef TEXT_TILE_STATE_INDEX

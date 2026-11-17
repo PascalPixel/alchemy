@@ -141,13 +141,23 @@ void FieldPsynergy_Carry(void);
 
 /// A 16.16 coordinate's whole cell: a map grid cell is 16 pixels square.
 #define FIELD_CELL_MASK 0xfff00000
+/// A 16.16 coordinate's shift to its map grid cell: 16 bits of fraction and 4
+/// of the cell's 16 pixels.
+#define FIELD_CELL_SHIFT 20
 /// The map grid cell a 16.16 coordinate lies in, counted from 0 along its
 /// axis.
-#define FIELD_CELL(coordinate) ((coordinate) >> 20)
+#define FIELD_CELL(coordinate) ((coordinate) >> FIELD_CELL_SHIFT)
+/// The half cell, 8 pixels, a 16.16 coordinate lies in, counted from 0 along
+/// its axis.
+#define FIELD_HALF_CELL(coordinate) ((coordinate) >> 19)
+/// The 16.16 coordinate of a half cell's first pixel, FIELD_HALF_CELL undone.
+#define FIELD_HALF_CELL_ORIGIN(halfCell) ((halfCell) << 19)
 /// A 16.16 coordinate's whole pixels, its fraction cleared.
 #define FIELD_PIXEL_MASK 0xffff0000
+/// The 16.16 coordinate of a map grid cell's first pixel, FIELD_CELL undone.
+#define FIELD_CELL_ORIGIN(cell) ((cell) << FIELD_CELL_SHIFT)
 /// The 16.16 coordinate of the middle of a map grid cell.
-#define FIELD_CELL_CENTER(cell) (((cell) << 20) + toFIXED(8))
+#define FIELD_CELL_CENTER(cell) (FIELD_CELL_ORIGIN(cell) + toFIXED(8))
 
 //--------------------------------------------------------------------------
 // The map's treasure spots (chests and Psynergy Stones)
@@ -239,19 +249,19 @@ void Reveal_EmitSparkles(struct Actor *actor);
 s32 Field_IsRevealActive(struct Actor *interpreter);
 void FieldEffect_SpawnRevealMarkers(void);
 
-void FieldEffect_StartWindowHBlankDma(void);
+void ScreenTransition_StartWindowHBlankDma(void);
 void ScreenTransition_UpdateScanlineTable(void);
-void ScreenTransition_InitializeBattleEffectState(s32 mode);
+void ScreenTransition_StartHeldWindow(s32 mode);
 void ScreenTransition_SuspendCallbacks(void);
 struct ScreenTransitionState *ScreenTransition_AllocateAndClearState(void);
 void ScreenTransition_Start(s32 mode, s32 frames);
 void ScreenTransition_Finish(s32 mode, s32 frames);
 void ScreenTransition_HideBackgrounds(s32 clearBg3, s32 clearBg2, s32 clearBg1);
 void ScreenTransition_Update(void);
-void ScreenTransition_UpdateFromCentre(void);
+void ScreenTransition_UpdateFromCenter(void);
 void ScreenTransition_UpdateScanline(void);
 void ScreenTransition_UpdateDissolve(void);
-void ScreenTransition_FillTilemapAndSolidTile(s32 color);
+void ScreenTransition_FillTilemapAndColorTile(s32 color);
 void ScreenTransition_InitializeState(s32 value);
 
 void PaletteFade_CalculateSteps(s16 *source, s16 *target, s16 *step,
@@ -268,8 +278,8 @@ void PaletteFade_SetTarget(s32 mode, s32 half);
 void PaletteFade_SetSource(s32 mode, s32 half);
 void PaletteFade_SetBackdrop(u32 color);
 void PaletteFade_StartInterpolation(s32 frames);
-s32 PaletteFade_ClampComponent(s32 value);
-s32 PaletteFade_ClampShiftedComponent(s32 value);
+s32 PaletteFade_ClampChannel(s32 value);
+s32 PaletteFade_ClampShiftedChannel(s32 value);
 void FadeOverlay_DrawMarks(void);
 void FieldEffect_StartFadeOverlay(void *object);
 void FadeOverlay_Suspend(void);

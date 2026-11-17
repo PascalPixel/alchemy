@@ -80,7 +80,7 @@ extern u8 gStaffCredit_BeamsPalette[];
 extern u8 gStaffCredit_BeamsMaps[];
 extern u8 gStaffCredit_BeamsTiles[];
 void StaffCredit_RunCredits(s32 value);
-s32 WorldMap_GetBlockPlace(s32 *position);
+s32 WorldMap_GetBlockCellBehavior(s32 *position);
 
 const struct SceneEntrance *Scene_GetEntrances(void) { return gSceneEntrances; }
 

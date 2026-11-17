@@ -395,12 +395,12 @@ struct Formation gFormations[] = {
         .maximumCounts = {1},
     },
     {
-        .memberIds = {ENEMY_ROW(ENEMY_UNUSED_RUFFIAN_A)},
+        .memberIds = {ENEMY_ROW(ENEMY_RUFFIAN_2)},
         .minimumCounts = {1},
         .maximumCounts = {1},
     },
     {
-        .memberIds = {ENEMY_ROW(ENEMY_UNUSED_RUFFIAN_B)},
+        .memberIds = {ENEMY_ROW(ENEMY_RUFFIAN_3)},
         .minimumCounts = {1},
         .maximumCounts = {1},
     },
@@ -460,12 +460,12 @@ struct Formation gFormations[] = {
         .maximumCounts = {1},
     },
     {
-        .memberIds = {ENEMY_ROW(ENEMY_UNUSED_CHAMPA_A)},
+        .memberIds = {ENEMY_ROW(ENEMY_CHAMPA_2)},
         .minimumCounts = {1},
         .maximumCounts = {1},
     },
     {
-        .memberIds = {ENEMY_ROW(ENEMY_UNUSED_CHAMPA_B)},
+        .memberIds = {ENEMY_ROW(ENEMY_CHAMPA_3)},
         .minimumCounts = {1},
         .maximumCounts = {1},
     },
@@ -530,12 +530,12 @@ struct Formation gFormations[] = {
         .maximumCounts = {1},
     },
     {
-        .memberIds = {ENEMY_ROW(ENEMY_UNUSED_SERPENT_A)},
+        .memberIds = {ENEMY_ROW(ENEMY_SERPENT_6)},
         .minimumCounts = {1},
         .maximumCounts = {1},
     },
     {
-        .memberIds = {ENEMY_ROW(ENEMY_UNUSED_SERPENT_B)},
+        .memberIds = {ENEMY_ROW(ENEMY_SERPENT_7)},
         .minimumCounts = {1},
         .maximumCounts = {1},
     },
@@ -565,7 +565,7 @@ struct Formation gFormations[] = {
         .maximumCounts = {1},
     },
     {
-        .memberIds = {ENEMY_ROW(ENEMY_UNUSED_POSEIDON)},
+        .memberIds = {ENEMY_ROW(ENEMY_POSEIDON_3)},
         .minimumCounts = {1},
         .maximumCounts = {1},
     },
@@ -595,7 +595,7 @@ struct Formation gFormations[] = {
         .maximumCounts = {1},
     },
     {
-        .memberIds = {ENEMY_ROW(ENEMY_UNUSED_KNIGHT)},
+        .memberIds = {ENEMY_ROW(ENEMY_KNIGHT_3)},
         .minimumCounts = {1},
         .maximumCounts = {1},
     },
@@ -1097,12 +1097,12 @@ struct Formation gFormations[] = {
         .maximumCounts = {1},
     },
     {
-        .memberIds = {ENEMY_ROW(ENEMY_UNUSED_VALUKAR_A)},
+        .memberIds = {ENEMY_ROW(ENEMY_VALUKAR_UNUSED_A)},
         .minimumCounts = {1},
         .maximumCounts = {1},
     },
     {
-        .memberIds = {ENEMY_ROW(ENEMY_UNUSED_VALUKAR_B)},
+        .memberIds = {ENEMY_ROW(ENEMY_VALUKAR_UNUSED_B)},
         .minimumCounts = {1},
         .maximumCounts = {1},
     },
@@ -1159,12 +1159,12 @@ struct Formation gFormations[] = {
         .maximumCounts = {1},
     },
     {
-        .memberIds = {ENEMY_ROW(ENEMY_UNUSED_SENTINEL_A)},
+        .memberIds = {ENEMY_ROW(ENEMY_SENTINEL_UNUSED_A)},
         .minimumCounts = {1},
         .maximumCounts = {1},
     },
     {
-        .memberIds = {ENEMY_ROW(ENEMY_UNUSED_SENTINEL_B)},
+        .memberIds = {ENEMY_ROW(ENEMY_SENTINEL_UNUSED_B)},
         .minimumCounts = {1},
         .maximumCounts = {1},
     },

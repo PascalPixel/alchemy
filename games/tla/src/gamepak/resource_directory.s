@@ -166,9 +166,9 @@ Resource_DirectoryTable:
 	resource SeaSerpentTiles, Summon_SeaSerpentTiles
 	resource PinkPetalsTiles, Summon_PinkPetalsTiles
 	resource CrimsonBeastTiles, Summon_CrimsonBeastTiles
-	resource RedSlashTiles, Summon_RedSlashTiles
-	resource RedCrescentTiles, Summon_RedCrescentTiles
-	resource WhiteArrowsTiles, Summon_WhiteArrowsTiles
+	resource RedDomeTiles, Summon_RedDomeTiles
+	resource RedOrbTiles, Summon_RedOrbTiles
+	resource TumblingShardTiles, Summon_TumblingShardTiles
 	resource WhiteWispsTiles, Summon_WhiteWispsTiles
 	resource ForestCanopyTiles, Summon_ForestCanopyTiles
 	resource BronzeAutomatonTiles, Summon_BronzeAutomatonTiles
@@ -177,7 +177,7 @@ Resource_DirectoryTable:
 	resource GoldenDragonTiles, Summon_GoldenDragonTiles
 	resource RobedGoddessTiles, Summon_RobedGoddessTiles
 	resource LeafWarriorTiles, Summon_LeafWarriorTiles
-	resource BellMaidenTiles, Summon_BellMaidenTiles
+	resource CoatlicueTiles, Summon_CoatlicueTiles
 	resource WingedKnightATiles, Summon_WingedKnightATiles
 	resource WingedKnightBTiles, Summon_WingedKnightBTiles
 	resource WingedKnightCTiles, Summon_WingedKnightCTiles
@@ -878,7 +878,7 @@ Resource_DirectoryTable:
 	resource , Tileset_YampiDesertGuardianRingChestTilesB
 	resource , Tileset_YampiDesertGuardianRingChestTilesC
 	resource , Tileset_YampiDesertGuardianRingChestTilesD
-	resource , Field_YampiDesertOasis
+	resource , Field_YampiDesertSpring
 	resource , Field_YampiDesertBlitz
 	resource , Field_YampiDesertPsynergyStone
 	resource , Field_YampiDesertKingScorpion
@@ -887,7 +887,7 @@ Resource_DirectoryTable:
 	resource , Field_YampiDesertTrainersWhipChest
 	resource , Field_YampiDesertMedalSpot
 	resource , Field_YampiDesertScorpionPit
-	resource , Field_YampiDesertOasisCave
+	resource , Field_YampiDesertSpringCave
 	resource , Field_YampiDesertBlowMaceChest
 	resource , Field_YampiDesertCaveWaterOfLifeChest
 	resource , Tileset_YampiDesertCaveWaterOfLifeChestPalette
@@ -917,7 +917,7 @@ Resource_DirectoryTable:
 	resource , Field_AirsRockInsideTightropes
 	resource , Field_AirsRockInsideRevealTablet
 	resource , Field_AirsRockInsideElixirChest
-	resource , Field_AirsRockInsidePairedStatues
+	resource , Field_AirsRockInsidePairedStakes
 	resource , Field_AirsRockInsideFaceWarp
 	resource , Field_AirsRockInsideCoinsChest
 	resource , Field_AirsRockInsidePsynergyStone

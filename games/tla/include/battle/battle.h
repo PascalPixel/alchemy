@@ -28,6 +28,10 @@ enum BattleElementGlow {
 
 /// BG1's vertical scroll that sets the battle background in the battle view.
 #define BATTLE_BACKGROUND_SCROLL_Y 32
+/// The screen block of BG1's map while the battle background lies flat:
+/// lines outside its plane read the padded map there, and the effects that
+/// take BG1 over lay their own maps there.
+#define BACKGROUND_PADDED_SCREEN 31
 /// BattleCamera_SetView's zoom, in percent, for the battle's usual view.
 #define BATTLE_ZOOM_NORMAL 100
 

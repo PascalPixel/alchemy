@@ -217,7 +217,7 @@ enum {
 
 // The window colour settings (MainRoutineWork.windowHue and windowBrightness),
 // which WindowColor_Apply turns into WINDOW_PALETTE's colours 4 to 10.
-#define WINDOW_HUE_COUNT 24 ///< "Window color" takes 0 to 23
+#define WINDOW_COLOR_COUNT 24 ///< "Window color" takes 0 to 23
 /// "Window brightness" takes 0 to 14.
 #define WINDOW_BRIGHTNESS_COUNT 15
 /// The brightness that adds nothing to the hue's colour.
@@ -281,6 +281,15 @@ enum TextColor {
   ((s32)BG_CHAR_BLOCK(0) + PAGE_ARROW_TILE * TILE_SIZE_4BPP)
 #define PAGE_ARROW_LEFT WINDOW_TILE(PAGE_ARROW_TILE)
 #define PAGE_ARROW_RIGHT WINDOW_TILE(PAGE_ARROW_TILE + 1)
+
+/// The page numbers between the arrows: 20 tiles from this one of character
+/// block 0, which Graphics_ExpandVramTilesByColorTable builds from the UI's
+/// digits '0' to '9', first with colour 1 drawn as 10, then in their own
+/// colours; and their tilemap entries, + n giving page n + 1's number, the
+/// page shown lit.
+#define PAGE_DIGITS_TILE 768
+#define PAGE_NUMBER_TILE WINDOW_TILE(PAGE_DIGITS_TILE + 1)
+#define PAGE_NUMBER_LIT_TILE WINDOW_TILE(PAGE_DIGITS_TILE + 10 + 1)
 
 /// The window border's tiles.
 enum {
@@ -563,6 +572,17 @@ struct Window *Message_OpenWindow(s32 message, s32 x, s32 y, u32 packed);
 /// Message_OpenWindow's packed argument: the speaker's voice in bits 16 to 27,
 /// above the window options.
 #define MESSAGE_WINDOW_VOICE(voice) ((voice) << 16)
+
+/// Message_OpenWindow's window options, in packed's low bits.
+enum MessageWindowOption {
+  MESSAGE_WINDOW_ZOOM = 0x01, ///< zoom open rather than appear at once
+  /// Set by the shopkeepers' windows and some others; Message_OpenWindow never
+  /// reads it.
+  MESSAGE_WINDOW_UNREAD = 0x02,
+  MESSAGE_WINDOW_TEXT_CANVAS = 0x08,   ///< WINDOW_FLAG_TEXT_CANVAS
+  MESSAGE_WINDOW_ANCHOR_BOTTOM = 0x10, ///< WINDOW_FLAG_ANCHOR_BOTTOM
+  MESSAGE_WINDOW_FIXED_X = 0x20        ///< WINDOW_FLAG_FIXED_X
+};
 void FieldMessage_Show(s32 no, s32 flags);
 void WindowSystem_Update(void);
 #if LANGUAGE != LANGUAGE_JAPANESE
@@ -746,9 +766,9 @@ void Menu_RunSelectionHook(void);
 
 void Menu_AllocateSelectionWorkspace(void);
 void Menu_ReleaseSelectionWorkspace(void);
-void SettingsMenu_ReservedNoOpC9BC(void);
-void SettingsMenu_ReservedNoOpC9C0(void);
-void SettingsMenu_ReservedNoOpC9C4(void);
+void SettingsMenu_ReservedNoOpA(void);
+void SettingsMenu_ReservedNoOpB(void);
+void SettingsMenu_ReservedNoOpC(void);
 void SettingsMenu_ResetEntries(struct OptionMenuWork *work);
 void WindowColor_CalculateTint(struct OptionMenuWork *work);
 void WindowColor_WritePalette(struct OptionMenuWork *work);

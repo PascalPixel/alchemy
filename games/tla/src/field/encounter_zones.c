@@ -203,7 +203,7 @@ const struct EncounterZone gEncounter_EnemyGroupTable[] = {
         .formations = {311, 312, 313, 314, 315, 316, 317, 318},
         .weights = {20, 20, 10, 10, 10, 5, 5},
     },
-    // Yampi Desert: SceneId_YampiDesertPsynergyStone, SceneId_YampiDesertTreasurePit, SceneId_YampiDesertOasisCave, SceneId_YampiDesertBlowMaceChest
+    // Yampi Desert: SceneId_YampiDesertPsynergyStone, SceneId_YampiDesertTreasurePit, SceneId_YampiDesertSpringCave, SceneId_YampiDesertBlowMaceChest
     {
         .rate = 60,
         .level = 9,
@@ -231,7 +231,7 @@ const struct EncounterZone gEncounter_EnemyGroupTable[] = {
         .formations = {321, 322, 323, 324, 325, 326, 327},
         .weights = {5, 5, 8, 14, 16, 20, 20},
     },
-    // Air's Rock: SceneId_AirsRockInsideHall, its other entrances, SceneId_AirsRockInsideVialChest, SceneId_AirsRockInsideClarityCircletChest, SceneId_AirsRockInsidePairedStatues, SceneId_AirsRockInsideFaceWarp
+    // Air's Rock: SceneId_AirsRockInsideHall, its other entrances, SceneId_AirsRockInsideVialChest, SceneId_AirsRockInsideClarityCircletChest, SceneId_AirsRockInsidePairedStakes, SceneId_AirsRockInsideFaceWarp
     {
         .rate = 65,
         .level = 11,

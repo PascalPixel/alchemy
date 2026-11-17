@@ -23,16 +23,26 @@ struct FieldCoordinate {
 STATIC_ASSERT(sizeof(struct FieldCoordinate) == 4);
 STATIC_ASSERT(offsetof(struct FieldCoordinate, part[0].integer) == 2);
 
-/// A 16.16 coordinate's whole cell: a map grid cell is 16 pixels square.
+/// A map grid cell's side: each cell is this many pixels square.
+#define MAPGRID_CELL_PIXELS 16
+/// A 16.16 coordinate's whole cell.
 #define FIELD_CELL_MASK 0xfff00000
+/// A 16.16 coordinate's shift to its map grid cell: 16 bits of fraction and 4
+/// of the cell's MAPGRID_CELL_PIXELS.
+#define FIELD_CELL_SHIFT 20
 /// The map grid cell a 16.16 coordinate lies in, counted from 0 along its
 /// axis.
-#define FIELD_CELL(coordinate) ((coordinate) >> 20)
+#define FIELD_CELL(coordinate) ((coordinate) >> FIELD_CELL_SHIFT)
 /// A 16.16 coordinate's whole pixels, its fraction cleared.
 #define FIELD_PIXEL_MASK 0xffff0000
 /// The 16.16 coordinate of a map grid cell's first pixel, FIELD_CELL undone.
-#define FIELD_CELL_ORIGIN(cell) ((cell) << 20)
+#define FIELD_CELL_ORIGIN(cell) ((cell) << FIELD_CELL_SHIFT)
 /// The 16.16 coordinate of the middle of a map grid cell.
-#define FIELD_CELL_CENTER(cell) (((cell) << 20) + toFIXED(8))
+#define FIELD_CELL_CENTER(cell)                                                \
+  (FIELD_CELL_ORIGIN(cell) + toFIXED(MAPGRID_CELL_PIXELS / 2))
+/// The 8-pixel tile a 16.16 coordinate lies in, half a map grid cell.
+#define FIELD_TILE(coordinate) ((coordinate) >> 19)
+/// The 16.16 coordinate of an 8-pixel tile's first pixel, FIELD_TILE undone.
+#define FIELD_TILE_ORIGIN(tile) ((tile) << 19)
 
 #endif

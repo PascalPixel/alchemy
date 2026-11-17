@@ -5,7 +5,8 @@
 #include "battle_effect_internal.h"
 #include "sounds.h"
 
-/// A corner of the swaying strip in the last act, as signed bytes.
+/// A corner of a strip as an effect builds it, in signed bytes: the smoke band
+/// of Catastrophe's last act, Haures's bands.
 struct MeshVertex {
   s8 x;
   s8 y;
@@ -25,10 +26,24 @@ struct MeshVertex {
 #define CATASTROPHE_RING 8192
 #define CATASTROPHE_SWEEP_PICTURES 2048
 
-/// Catastrophe's sprites, all 32x32: the chained demon (ChainedDemonTiles, its
-/// last four drawn from pictures swapped in and out at frames 339 and 450), its
-/// mirrored copy's six, the golden scales, and the eleven of the armour (the
-/// purple armour's five, then the white spikes' six).
+/// LightningTexture's two 32x48 forks, which flash in act one's sky.
+#define LIGHTNING_FORK_WIDTH 32
+#define LIGHTNING_FORK_HEIGHT 48
+/// JaggedStreakSheet's three streaks, and the four 32x128 textures act two
+/// copies LightningBoltSheet's bolts into, each bolt in the middle of its own,
+/// after TornadoSheet's glints.
+#define JAGGED_STREAK_WIDTH 32
+#define JAGGED_STREAK_HEIGHT 128
+#define BOLT_TEXTURE_WIDTH 32
+#define BOLT_TEXTURE_HEIGHT 128
+#define CATASTROPHE_BOLT_TEXTURES (CATASTROPHE_SWEEP_PICTURES + GLINT_SET_BYTES)
+#define CATASTROPHE_BOLT_TEXTURE_COUNT 4
+
+/// Catastrophe's sprites, all 32x32: the chained demon (ChainedDemonTiles),
+/// its mirrored copy's six, the golden scales, and the eleven of the armour
+/// (the purple armour's five, then the white spikes' six). The demon's lowest
+/// four are copies of its top row, sharing their tiles: those show the sheet's
+/// last four pictures, and the top row's own from frame 339 to 450.
 #define CATASTROPHE_DEMON 0
 #define CATASTROPHE_DEMON_TILED 24
 #define CATASTROPHE_DEMON_SWAPPED 24
@@ -47,12 +62,73 @@ struct MeshVertex {
 #define CATASTROPHE_SPRITES 50
 /// ChainedDemonTiles' colours, OBJ palette 0 to 191.
 #define CATASTROPHE_DEMON_COLORS 192
+/// Where the decoded ChainedDemonTiles keeps its last four pictures in the map
+/// cell buffer, and where they are kept again, after the top row's.
+#define CATASTROPHE_DEMON_LOWEST_PICTURES                                      \
+  (CATASTROPHE_DEMON_TILED * OBJ_32X32_8BPP_BYTES)
+#define CATASTROPHE_DEMON_KEPT_PICTURES                                        \
+  (CATASTROPHE_DEMON_SWAPPED_COUNT * OBJ_32X32_8BPP_BYTES)
+/// The OBJ palettes of the scales, the purple armour and the white spikes.
+#define CATASTROPHE_SCALES_PALETTE 12
+#define CATASTROPHE_PURPLE_ARMOUR_PALETTE 13
+#define CATASTROPHE_SPIKES_PALETTE 14
 /// The frames of act one, unless A or B skips it.
 #define CATASTROPHE_ACT_ONE_FRAMES 637
 /// Where the objects' first 240 colours are kept in the effect's pictures,
 /// which the objects fade from.
 #define CATASTROPHE_SAVED_OBJ_PALETTE 20480
 #define CATASTROPHE_SAVED_OBJ_COLORS 240
+/// Act one's claps of thunder, each flashing the backdrop blue, and the frames
+/// after 242 on which the canvas flashes white.
+#define CATASTROPHE_FLASHES 18
+#define CATASTROPHE_CANVAS_FLASHES 17
+/// Act one's three strikes, each of up to CATASTROPHE_STRIKE_STEPS steps (their
+/// frames' rows one longer, for the 65535 that ends them), and the sparks each
+/// step throws.
+#define CATASTROPHE_STRIKES 3
+#define CATASTROPHE_STRIKE_STEPS 12
+#define CATASTROPHE_STRIKE_SPARKS 10
+/// The orb's disc is drawn this much brighter than full, its middle held at
+/// the brightest level.
+#define CATASTROPHE_ORB_BRIGHTNESS 95536
+/// Act two's orb is centred at this x on the canvas, and at this y as it
+/// starts, before it rises and swells; its sparks fly out from (x, y).
+#define CATASTROPHE_ORB_CENTER 60
+/// The seal: the pentagon laid back by CATASTROPHE_SEAL_TILT, its three
+/// triangles turned up from its edges by as much as CATASTROPHE_SEAL_SIDE_TILT,
+/// and its largest scale.
+#define CATASTROPHE_SEAL_TILT 18768
+#define CATASTROPHE_SEAL_SIDE_TILT 19712
+#define CATASTROPHE_SEAL_SCALE_MAX 140600
+/// How fast the rings of fire grow, a frame.
+#define CATASTROPHE_RING_GROWTH 12192
+/// Act two's bolts, and the sparks after them in work->particles.
+#define CATASTROPHE_BOLTS 16
+#define CATASTROPHE_SPARKS 48
+/// Act three's buffers in the map cell buffer: the smoke band's corners at its
+/// start, their transformed vertices, its strip mesh, LightningBoltSheet's four
+/// bolts, and the particles: the flash bursts thrown off the band, then the
+/// debris; and the frames each lives.
+#define CATASTROPHE_SWEEP_VERTICES 4096
+#define CATASTROPHE_SWEEP_STRIP 8192
+#define CATASTROPHE_BOLT_PICTURES 16384
+#define CATASTROPHE_PARTICLES                                                  \
+  ((struct Particle *)(Ram_MapCellBuffer + CATASTROPHE_BOLT_PICTURES +         \
+                       4 * LIGHTNING_BOLT_PICTURE_BYTES))
+#define CATASTROPHE_BURSTS 64
+#define CATASTROPHE_DEBRIS 100
+#define CATASTROPHE_BURST_LIFE 12
+#define CATASTROPHE_DEBRIS_LIFE 16
+/// The debris each target throws when struck, and each bolt where it lands.
+#define CATASTROPHE_TARGET_DEBRIS 16
+#define CATASTROPHE_BOLT_DEBRIS 12
+/// The smoke band's rows of two corners, and its wave's phase a frame.
+#define CATASTROPHE_SWEEP_ROWS 12
+#define CATASTROPHE_SWEEP_WAVE 6096
+/// Act three opens CATASTROPHE_PAN pixels right of the battle and pans back at
+/// CATASTROPHE_PAN_SPEED pixels a frame, slowing to a stop from frame 62.
+#define CATASTROPHE_PAN 1088
+#define CATASTROPHE_PAN_SPEED 16
 
 /// Catastrophe: over a red sky the chained demon in golden armour spreads its
 /// wings and drives down a sword of light; the blade's orb falls on the land
@@ -66,15 +142,15 @@ void BattleEffect_RunCatastrophe(struct BattleEffectParams *args) {
   struct BattleEffectWork *work;
   DrawRectangle blit[2];
   s32 savedScroll;
-  s32 *transition;
+  struct BattleBackgroundWork *background;
   u8 *sprites;
   struct BattleWork *battle;
   FIXED camZ;
   s32 swapped;
   s32 drift;
   s32 sway;
-  s32 cueTimer;
-  s32 cueIndex;
+  s32 flashTimer;
+  s32 flash;
   void *verts;
   s32 shade;
   struct RenderModel *model;
@@ -90,15 +166,14 @@ void BattleEffect_RunCatastrophe(struct BattleEffectParams *args) {
   s16 list[UNIT_MAX];
   FIXED place[4];
   struct ScreenPoint pos;
-  struct Scale req;
+  struct Scale spriteScale;
   struct ModelTexture texture;
   struct ModelTexture sweepTexture;
-  struct Particle *p2;
-  struct Particle *p3;
-  struct Particle *p4;
-  struct Particle *q2;
+  struct Particle *bolt;
+  struct Particle *spark;
+  struct Particle *burst;
   u16 *backdropColor;
-  u8 *e;
+  u8 *resource;
   s32 zero;
   u8 *cellBuffer = Ram_MapCellBuffer;
   s32 span = toFIXED(8);
@@ -107,7 +182,7 @@ void BattleEffect_RunCatastrophe(struct BattleEffectParams *args) {
   canvas = Ram_HeapSlots->battleCanvas;
   work = Ram_HeapSlots->battleEffect;
   savedScroll = gBgScroll[1].x;
-  transition = (s32 *)Ram_HeapSlots->battleBackground;
+  background = Ram_HeapSlots->battleBackground;
   sprites = Ram_HeapSlots->battleSheet;
   battle = Ram_HeapSlots->battleWork;
   VramCache_FreeEntry(battle->arrowTiles);
@@ -128,32 +203,35 @@ void BattleEffect_RunCatastrophe(struct BattleEffectParams *args) {
   BattleBackground_LoadFar(BATTLE_BACKGROUND_FIXED, RESOURCE_RED_HAZE_BACKDROP,
                            0);
   Palette_BrightenSavedBattleBg(-RGB_LEVEL_MAX, -RGB_LEVEL_MAX, -RGB_LEVEL_MAX);
-  transition[4] = 1;
+  background->busy = 1;
   gBgScroll[1].x = 0;
   REG_BG2PA = Q_8_8(0.5);
   REG_BLDALPHA = EFFECT_BLEND_ADD;
   REG_BLDCNT = BLDCNT_TGT1_BG2 | BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_ALL;
+  // BG1 shows the red haze as one picture 128 wide and 240 tall, each row
+  // twice across: its upper 15 rows are the battle background's left half
+  // (from tile 512, at BG character block 2), its lower 15 the right half.
   {
     u16 *map = (u16 *)BG_SCREEN_BLOCK(31);
 
     {
-      s32 i;
+      s32 row;
 
-      for (i = 0; i != 30; i++) {
-        if (i > 14) {
+      for (row = 0; row != 30; row++) {
+        if (row > 14) {
           {
-            s32 j;
+            s32 column;
 
-            for (j = 0; j != 32; j++) {
-              *map++ = i * 32 + (j & 15) + 48;
+            for (column = 0; column != 32; column++) {
+              *map++ = row * 32 + (column & 15) + 48;
             }
           }
         } else {
           {
-            s32 j;
+            s32 column;
 
-            for (j = 0; j != 32; j++) {
-              *map++ = i * 32 + (j & 15) + 512;
+            for (column = 0; column != 32; column++) {
+              *map++ = row * 32 + (column & 15) + 512;
             }
           }
         }
@@ -163,10 +241,10 @@ void BattleEffect_RunCatastrophe(struct BattleEffectParams *args) {
   {
     u8 *cells;
 
-    e = Resource_GetTableEntry(RESOURCE_CHAINED_DEMON_TILES);
-    Iwram_CopyWords((void *)OBJ_PLTT, e, CATASTROPHE_DEMON_COLORS * 2);
-    e += CATASTROPHE_DEMON_COLORS * 2;
-    Decompress_TaggedLz(e, cellBuffer);
+    resource = Resource_GetTableEntry(RESOURCE_CHAINED_DEMON_TILES);
+    Iwram_CopyWords((void *)OBJ_PLTT, resource, CATASTROPHE_DEMON_COLORS * 2);
+    resource += CATASTROPHE_DEMON_COLORS * 2;
+    Decompress_TaggedLz(resource, cellBuffer);
     cells = Ram_MapCellBuffer;
     for (i = 0; i != CATASTROPHE_DEMON_TILED;
          cells += OBJ_32X32_8BPP_BYTES, i++) {
@@ -177,7 +255,7 @@ void BattleEffect_RunCatastrophe(struct BattleEffectParams *args) {
       Iwram_CopyWords((void *)OBJ_TILES(obj), cells, OBJ_32X32_8BPP_BYTES);
     }
     {
-      u8 *cells = Ram_MapCellBuffer + 24576;
+      u8 *cells = Ram_MapCellBuffer + CATASTROPHE_DEMON_LOWEST_PICTURES;
 
       for (i = 0; i != CATASTROPHE_DEMON_SWAPPED_COUNT; i++) {
         obj = EffectSprite_Acquire(32, 32, OBJ_SIZE_32X32 | OBJ_256_COLORS, 0);
@@ -188,7 +266,9 @@ void BattleEffect_RunCatastrophe(struct BattleEffectParams *args) {
             cells + i * OBJ_32X32_8BPP_BYTES, OBJ_32X32_8BPP_BYTES);
       }
     }
-    Iwram_CopyWords(cellBuffer + 4096, Ram_MapCellBuffer + 24576, 4096);
+    Iwram_CopyWords(cellBuffer + CATASTROPHE_DEMON_KEPT_PICTURES,
+                    Ram_MapCellBuffer + CATASTROPHE_DEMON_LOWEST_PICTURES,
+                    CATASTROPHE_DEMON_SWAPPED_COUNT * OBJ_32X32_8BPP_BYTES);
   }
   for (i = 0; i != CATASTROPHE_MIRRORED_DEMON_COUNT; i++) {
     obj = EffectSprite_Acquire(32, 32, OBJ_SIZE_32X32 | OBJ_256_COLORS, 0);
@@ -198,15 +278,16 @@ void BattleEffect_RunCatastrophe(struct BattleEffectParams *args) {
   {
     u8 *cells;
 
-    e = Resource_GetTableEntry(RESOURCE_GOLDEN_SCALES_TILES);
-    Iwram_CopyWords((void *)&OBJ_PLTT_COLOR(12, 0), e, PALETTE_BANK_BYTES);
-    e += PALETTE_BANK_BYTES;
-    Decompress_TaggedLz(e, work->sheet);
+    resource = Resource_GetTableEntry(RESOURCE_GOLDEN_SCALES_TILES);
+    Iwram_CopyWords((void *)&OBJ_PLTT_COLOR(CATASTROPHE_SCALES_PALETTE, 0),
+                    resource, PALETTE_BANK_BYTES);
+    resource += PALETTE_BANK_BYTES;
+    Decompress_TaggedLz(resource, work->sheet);
     cells = work->sheet;
     for (i = 0; i != CATASTROPHE_SCALES_COUNT;
          cells += OBJ_32X32_4BPP_BYTES, i++) {
-      obj =
-          EffectSprite_CreateWithTiles(32, 32, OBJ_SIZE_32X32, OBJ_PALETTE(12));
+      obj = EffectSprite_CreateWithTiles(
+          32, 32, OBJ_SIZE_32X32, OBJ_PALETTE(CATASTROPHE_SCALES_PALETTE));
       obj->image.priority = 1;
       work->sprites[CATASTROPHE_SCALES + i] = obj;
       Iwram_CopyWords((void *)OBJ_TILES(obj), cells, OBJ_32X32_4BPP_BYTES);
@@ -215,15 +296,18 @@ void BattleEffect_RunCatastrophe(struct BattleEffectParams *args) {
   {
     u8 *cells;
 
-    e = Resource_GetTableEntry(RESOURCE_PURPLE_ARMOUR_TILES);
-    Iwram_CopyWords((void *)&OBJ_PLTT_COLOR(13, 0), e, PALETTE_BANK_BYTES);
-    e += PALETTE_BANK_BYTES;
-    Decompress_TaggedLz(e, work->sheet);
+    resource = Resource_GetTableEntry(RESOURCE_PURPLE_ARMOUR_TILES);
+    Iwram_CopyWords(
+        (void *)&OBJ_PLTT_COLOR(CATASTROPHE_PURPLE_ARMOUR_PALETTE, 0), resource,
+        PALETTE_BANK_BYTES);
+    resource += PALETTE_BANK_BYTES;
+    Decompress_TaggedLz(resource, work->sheet);
     cells = work->sheet;
     for (i = 0; i != CATASTROPHE_PURPLE_ARMOUR_COUNT;
          cells += OBJ_32X32_4BPP_BYTES, i++) {
-      obj =
-          EffectSprite_CreateWithTiles(32, 32, OBJ_SIZE_32X32, OBJ_PALETTE(13));
+      obj = EffectSprite_CreateWithTiles(
+          32, 32, OBJ_SIZE_32X32,
+          OBJ_PALETTE(CATASTROPHE_PURPLE_ARMOUR_PALETTE));
       obj->image.priority = 1;
       work->sprites[CATASTROPHE_ARMOUR + i] = obj;
       Iwram_CopyWords((void *)OBJ_TILES(obj), cells, OBJ_32X32_4BPP_BYTES);
@@ -232,15 +316,16 @@ void BattleEffect_RunCatastrophe(struct BattleEffectParams *args) {
   {
     u8 *cells;
 
-    e = Resource_GetTableEntry(RESOURCE_WHITE_SPIKES_TILES);
-    Iwram_CopyWords((void *)&OBJ_PLTT_COLOR(14, 0), e, PALETTE_BANK_BYTES);
-    e += PALETTE_BANK_BYTES;
-    Decompress_TaggedLz(e, work->sheet);
+    resource = Resource_GetTableEntry(RESOURCE_WHITE_SPIKES_TILES);
+    Iwram_CopyWords((void *)&OBJ_PLTT_COLOR(CATASTROPHE_SPIKES_PALETTE, 0),
+                    resource, PALETTE_BANK_BYTES);
+    resource += PALETTE_BANK_BYTES;
+    Decompress_TaggedLz(resource, work->sheet);
     cells = work->sheet;
     for (i = 0; i != CATASTROPHE_SPIKES_COUNT;
          cells += OBJ_32X32_4BPP_BYTES, i++) {
-      obj =
-          EffectSprite_CreateWithTiles(32, 32, OBJ_SIZE_32X32, OBJ_PALETTE(14));
+      obj = EffectSprite_CreateWithTiles(
+          32, 32, OBJ_SIZE_32X32, OBJ_PALETTE(CATASTROPHE_SPIKES_PALETTE));
       obj->image.priority = 1;
       work->sprites[CATASTROPHE_SPIKES + i] = obj;
       Iwram_CopyWords((void *)OBJ_TILES(obj), cells, OBJ_32X32_4BPP_BYTES);
@@ -262,8 +347,8 @@ void BattleEffect_RunCatastrophe(struct BattleEffectParams *args) {
   swapped = 0;
   drift = 0;
   sway = 0;
-  cueTimer = 0;
-  cueIndex = 0;
+  flashTimer = 0;
+  flash = 0;
   EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, BLITTER_MAX);
   blit[0] = Ram_HeapSlots->ramCode;
@@ -273,7 +358,7 @@ void BattleEffect_RunCatastrophe(struct BattleEffectParams *args) {
     s32 level;
     s32 d;
 
-    // Fades the screen in over the first frames; a button skips the scene.
+    // The backdrop fades in over the first 16 frames; A or B skips the act.
     if (frame <= 15) {
       s32 v = frame * 2 - 30;
 
@@ -285,7 +370,7 @@ void BattleEffect_RunCatastrophe(struct BattleEffectParams *args) {
     if (frame == 0) {
       REG_BG2CNT = BGCNT_PRIORITY(2) | BGCNT_CHAR_BASE(1) | BGCNT_256_COLORS |
                    BGCNT_SCREEN_BASE(7);
-      for (i = 3; i != ARRAY_COUNT(work->particles); i++) {
+      for (i = CATASTROPHE_STRIKES; i != ARRAY_COUNT(work->particles); i++) {
         work->particles[i].variant = -1;
       }
     }
@@ -295,13 +380,13 @@ void BattleEffect_RunCatastrophe(struct BattleEffectParams *args) {
     if (frame <= 369) {
       camZ = INTtoFIXED(frame * 334 / 379) + -toFIXED(282);
     } else if ((u32)(d = frame - 370) <= 19) {
-      camZ = Trig_Sin(d * 1638) * 9 + toFIXED(43);
+      camZ = Trig_Sin(d * (TRIG_TURN / 40)) * 9 + toFIXED(43);
     } else if ((u32)(frame - 390) <= 95) {
       camZ += -toFIXED(1) / 2;
     } else if ((u32)(frame - 486) <= 19) {
       camZ += -toFIXED(1);
     } else if ((u32)(frame - 506) <= 47) {
-      s32 v = (frame * 57 << 7) + -0x378eb0;
+      s32 v = (frame - 506) * 7296 + 50768;
 
       if (v > 120000) {
         v = 120000;
@@ -319,34 +404,35 @@ void BattleEffect_RunCatastrophe(struct BattleEffectParams *args) {
       }
     }
     {
-      s32 e2 = frame - 370;
-      if ((u32)e2 <= 59) {
-        sway = Trig_Sin(e2 * 273 / 2) << 4;
+      s32 swayFrame = frame - 370;
+      if ((u32)swayFrame <= 59) {
+        sway = Trig_Sin(swayFrame * (TRIG_TURN / 240) / 2) << 4;
       }
     }
     if ((u32)(frame - 420) <= 51) {
-      drift = (420 - frame) << 12;
+      drift = (420 - frame) * (toFIXED(1) / 16);
       sway += -toFIXED(1) / 4;
     } else if ((u32)(frame - 472) <= 13) {
       drift = drift - ((frame - 472) << 12) + 120000;
       sway += 75536;
     } else if ((u32)(frame - 486) <= 8) {
       drift += toFIXED(0.125);
-      sway -= Trig_Sin((frame << 7) + -62208);
+      sway -= Trig_Sin((frame - 486) * (TRIG_TURN / 512));
     } else if ((u32)(frame - 554) <= 29) {
       sway += -toFIXED(1);
     } else if ((u32)(frame - 584) <= 9) {
       sway += -toFIXED(8);
     }
     if (frame == 0) {
-      cueTimer = -1;
-      cueIndex = 0;
+      flashTimer = -1;
+      flash = 0;
     }
-    if (cueIndex <= 17) {
+    // Each clap of thunder flashes the backdrop blue, fading over its length.
+    if (flash < CATASTROPHE_FLASHES) {
       level = -1;
-      if (frame == gCatastrophe_FlashFrames[cueIndex]) {
-        cueTimer = gCatastrophe_FlashLengths[cueIndex];
-        switch (cueIndex & 3) {
+      if (frame == gCatastrophe_FlashFrames[flash]) {
+        flashTimer = gCatastrophe_FlashLengths[flash];
+        switch (flash & 3) {
         case 0:
           Sound_PlayFar(SE_TOPPLE);
           break;
@@ -361,10 +447,10 @@ void BattleEffect_RunCatastrophe(struct BattleEffectParams *args) {
           break;
         }
       }
-      if (cueTimer >= 0) {
-        level = cueTimer * 31 / gCatastrophe_FlashLengths[cueIndex];
-        if (--cueTimer == -1) {
-          cueIndex++;
+      if (flashTimer >= 0) {
+        level = flashTimer * RGB_LEVEL_MAX / gCatastrophe_FlashLengths[flash];
+        if (--flashTimer == -1) {
+          flash++;
         }
       }
       if (level >= 0) {
@@ -390,73 +476,75 @@ void BattleEffect_RunCatastrophe(struct BattleEffectParams *args) {
         }
       }
     }
+    // The sprites' colours step through these levels from their saved ones,
+    // and the backdrop's too from frame 324, when both flash white.
     {
-      s32 fr;
-      s32 fg;
-      s32 fb;
+      s32 fadeRed;
+      s32 fadeGreen;
+      s32 fadeBlue;
       s32 apply[2] = {0, 0};
 
-      fr = 0;
-      fg = 0;
-      fb = 0;
+      fadeRed = 0;
+      fadeGreen = 0;
+      fadeBlue = 0;
       if (frame == 0) {
-        fg = -31;
-        fr = fg;
-        fb = fg;
+        fadeGreen = -RGB_LEVEL_MAX;
+        fadeRed = fadeGreen;
+        fadeBlue = fadeGreen;
         apply[0] = 1;
       } else if (frame == 106) {
-        fg = -31;
-        fr = fg;
-        fb = -15;
+        fadeGreen = -RGB_LEVEL_MAX;
+        fadeRed = fadeGreen;
+        fadeBlue = -15;
         apply[0] = 1;
       } else if ((u32)(frame - 154) <= 59) {
         s32 h = (frame - 154) / 2;
 
-        fg = 5 - h * 2;
-        fr = fg;
-        fb = 5 - h;
+        fadeGreen = 5 - h * 2;
+        fadeRed = fadeGreen;
+        fadeBlue = 5 - h;
         apply[0] = 1;
       } else if ((u32)(frame - 226) <= 15) {
-        fg = (frame - 226) / 2 - 31;
-        fr = fg;
-        fb = frame - 257;
+        fadeGreen = (frame - 226) / 2 - RGB_LEVEL_MAX;
+        fadeRed = fadeGreen;
+        fadeBlue = frame - 257;
         apply[0] = 1;
       } else if (frame == 242) {
-        fr = -24;
-        fg = -31;
+        fadeRed = -24;
+        fadeGreen = -RGB_LEVEL_MAX;
         apply[0] = 1;
       } else if ((u32)(frame - 256) <= 21) {
         s32 d = frame - 256;
 
-        fr = -24 - d * 2;
-        fg = -31 - d * 2;
-        fb = -d;
+        fadeRed = -24 - d * 2;
+        fadeGreen = -RGB_LEVEL_MAX - d * 2;
+        fadeBlue = -d;
         apply[0] = 1;
       } else if ((u32)(frame - 282) <= 40) {
         s32 d = frame - 282;
 
-        fg = -d;
-        fr = fg;
-        fb = 16 - d;
+        fadeGreen = -d;
+        fadeRed = fadeGreen;
+        fadeBlue = 16 - d;
         apply[0] = 1;
       } else if (frame == 324) {
-        fr = RGB_LEVEL_MAX;
-        fg = RGB_LEVEL_MAX;
-        fb = RGB_LEVEL_MAX;
+        fadeRed = RGB_LEVEL_MAX;
+        fadeGreen = RGB_LEVEL_MAX;
+        fadeBlue = RGB_LEVEL_MAX;
         apply[0] = 1;
         apply[1] = 1;
       } else if ((u32)(frame - 332) <= 59) {
-        fg = 30 - (frame - 332) / 2;
+        fadeGreen = 30 - (frame - 332) / 2;
         apply[0] = 1;
-        fr = fg;
-        fb = fg;
+        fadeRed = fadeGreen;
+        fadeBlue = fadeGreen;
         apply[1] = 1;
       } else if ((u32)(frame - 489) <= 42) {
         s32 d = frame - 489;
 
-        fr = d / 4;
-        fg = d / 6;
-        fb = d / 16;
+        fadeRed = d / 4;
+        fadeGreen = d / 6;
+        fadeBlue = d / 16;
         apply[0] = 1;
       }
       for (j = 0; j != 2; j++) {
@@ -472,12 +560,12 @@ void BattleEffect_RunCatastrophe(struct BattleEffectParams *args) {
           } else {
             dst = (u16 *)&BG_PLTT_COLOR(6, 0);
             src = battle->palette;
-            n = 128;
+            n = BATTLE_BACKGROUND_COLORS;
           }
           for (i = 1; i != n; i++) {
-            s32 r = RGB_RED(*src) + fr;
-            s32 g = RGB_GREEN(*src) + fg;
-            s32 b = RGB_BLUE(*src) + fb;
+            s32 r = RGB_RED(*src) + fadeRed;
+            s32 g = RGB_GREEN(*src) + fadeGreen;
+            s32 b = RGB_BLUE(*src) + fadeBlue;
 
             if (r > RGB_LEVEL_MAX) {
               r = RGB_LEVEL_MAX;
@@ -508,6 +596,8 @@ void BattleEffect_RunCatastrophe(struct BattleEffectParams *args) {
                            FIXED_ONE - ((frame - 554) << 10),
                            BATTLE_BACKGROUND_COLORS);
     }
+    // The top row's pictures stand in for the lowest four's from frame 339 to
+    // 450.
     if (swapped == 0) {
       if (frame == 339) {
         swapped = 1;
@@ -523,7 +613,7 @@ void BattleEffect_RunCatastrophe(struct BattleEffectParams *args) {
       u8 *cells;
 
       swapped = 0;
-      cells = Ram_MapCellBuffer + 4096;
+      cells = Ram_MapCellBuffer + CATASTROPHE_DEMON_KEPT_PICTURES;
       for (i = 0; i != CATASTROPHE_DEMON_SWAPPED_COUNT; i++) {
         Iwram_CopyWords(
             (void *)OBJ_TILES(work->sprites[CATASTROPHE_DEMON_SWAPPED + i]),
@@ -531,7 +621,7 @@ void BattleEffect_RunCatastrophe(struct BattleEffectParams *args) {
       }
     }
     if (frame <= 593) {
-      req = gCatastrophe_UnitScale;
+      spriteScale = gCatastrophe_UnitScale;
       place[3] = 0;
       place[1] = toFIXED(255);
       {
@@ -542,20 +632,21 @@ void BattleEffect_RunCatastrophe(struct BattleEffectParams *args) {
           if (place[2] > toFIXED(16) - 1) {
             if (place[2] <= toFIXED(168)) {
               Render_ApplyProjectedPlacementFar(work->sprites[i], place,
-                                                (s32 *)&req, 0);
+                                                (s32 *)&spriteScale, 0);
             }
           }
         }
       }
       for (i = 0; i != CATASTROPHE_SCALES_COUNT; i++) {
-        s32 h = i / 2;
+        s32 row = i / 2;
 
-        place[0] = INTtoFIXED((i - h * 2) * 32) + drift + toFIXED(72);
-        place[2] = INTtoFIXED(h * 32) + camZ + sway + toFIXED(60);
+        place[0] = INTtoFIXED((i - row * 2) * 32) + drift + toFIXED(72);
+        place[2] = INTtoFIXED(row * 32) + camZ + sway + toFIXED(60);
         if (place[2] > toFIXED(16) - 1) {
           if (place[2] <= toFIXED(168)) {
             Render_ApplyProjectedPlacementFar(
-                work->sprites[CATASTROPHE_SCALES + i], place, (s32 *)&req, 0);
+                work->sprites[CATASTROPHE_SCALES + i], place,
+                (s32 *)&spriteScale, 0);
           }
         }
       }
@@ -566,11 +657,12 @@ void BattleEffect_RunCatastrophe(struct BattleEffectParams *args) {
         if (place[2] > toFIXED(16) - 1) {
           if (place[2] <= toFIXED(168)) {
             Render_ApplyProjectedPlacementFar(
-                work->sprites[CATASTROPHE_ARMOUR + i], place, (s32 *)&req, 0);
+                work->sprites[CATASTROPHE_ARMOUR + i], place,
+                (s32 *)&spriteScale, 0);
           }
         }
       }
-      req.x = -0x10001;
+      spriteScale.x = -(FIXED_ONE + 1);
       for (i = 0; i != CATASTROPHE_MIRRORED_DEMON_COUNT; i++) {
         place[0] = INTtoFIXED(gCatastrophe_MirroredDemonX[i]) + toFIXED(8);
         place[2] = INTtoFIXED(gCatastrophe_MirroredDemonZ[i]) + camZ;
@@ -578,7 +670,7 @@ void BattleEffect_RunCatastrophe(struct BattleEffectParams *args) {
           if (place[2] <= toFIXED(168)) {
             Render_ApplyProjectedPlacementFar(
                 work->sprites[CATASTROPHE_MIRRORED_DEMON + i], place,
-                (s32 *)&req, 0);
+                (s32 *)&spriteScale, 0);
           }
         }
       }
@@ -588,22 +680,23 @@ void BattleEffect_RunCatastrophe(struct BattleEffectParams *args) {
     texture.logWidth = 5;
     shade = 0;
     texture.logHeight = 6;
-    model->mesh = gCatastrophe_BurstMesh;
+    model->mesh = gCatastrophe_ForkMesh;
     model->texture = &texture;
     model->kind = MODEL_SHADED_MAX;
     model->vertices = verts;
+    // Forks of lightning flash in the sky, each fading over eight frames.
     for (i = 0; i != 7; i++) {
-      s32 st = gCatastrophe_BurstStarts[i];
+      s32 st = gCatastrophe_ForkStarts[i];
 
       if (frame >= st && frame < st + 8) {
-        s32 c = gCatastrophe_BurstPictures[i];
+        s32 c = gCatastrophe_ForkPictures[i];
 
         shade = (st - frame) << 3;
         model->shade = shade;
-        texture.pixels = work->sheet + c * 1536;
+        texture.pixels = work->sheet + c * PICTURE_BYTES(LIGHTNING_FORK);
         Matrix_Initialize();
-        Matrix_Translate(INTtoFIXED(gCatastrophe_BurstX[i] - 48),
-                         INTtoFIXED(gCatastrophe_BurstY[i] - 44), 0);
+        Matrix_Translate(INTtoFIXED(gCatastrophe_ForkX[i] - 48),
+                         INTtoFIXED(gCatastrophe_ForkY[i] - 44), 0);
         Matrix_RotateZ(0);
         Matrix_Scale(FIXED_ONE / 2, FIXED_ONE, FIXED_ONE / 2);
         Render_TransformVertices(gBattleEffect_SquareCorners, verts, 4);
@@ -611,11 +704,11 @@ void BattleEffect_RunCatastrophe(struct BattleEffectParams *args) {
       }
     }
     if (frame == 489) {
-      for (i = 0; i != 3; i++) {
+      for (i = 0; i != CATASTROPHE_STRIKES; i++) {
         work->particles[i].variant = 0;
       }
     }
-    for (j = 3; j != ARRAY_COUNT(work->particles); j++) {
+    for (j = CATASTROPHE_STRIKES; j != ARRAY_COUNT(work->particles); j++) {
       p = &work->particles[j];
       if (p->variant >= 0) {
         s32 n = (p->variant >> 3) + 1;
@@ -628,7 +721,7 @@ void BattleEffect_RunCatastrophe(struct BattleEffectParams *args) {
       }
     }
     {
-      for (i = 0; i != 17; i++) {
+      for (i = 0; i != CATASTROPHE_CANVAS_FLASHES; i++) {
         u16 t = gCatastrophe_CanvasFlashFrames[i];
 
         if (frame == t + 242) {
@@ -663,6 +756,8 @@ void BattleEffect_RunCatastrophe(struct BattleEffectParams *args) {
     model->mesh = gBattleEffect_ColumnMesh;
     model->texture = &texture;
     model->vertices = verts;
+    // From frame 489 three strikes step through their tables at half speed:
+    // each step turns its jagged streak, plays its sound and throws sparks.
     if ((u32)(frame - 489) <= 130) {
       shade = 0;
       for (i = 0; i != 3; i++) {
@@ -670,11 +765,14 @@ void BattleEffect_RunCatastrophe(struct BattleEffectParams *args) {
         s32 idx;
 
         p = &work->particles[i];
-        off = i * 12;
+        off = i * CATASTROPHE_STRIKE_STEPS;
         idx = p->variant;
 
         if (frame ==
-            (gCatastrophe_StrikeFrames[i * 13 + idx] - 492) / 2 + 489) {
+            (gCatastrophe_StrikeFrames[i * (CATASTROPHE_STRIKE_STEPS + 1) +
+                                       idx] -
+             492) / 2 +
+                489) {
           s32 count = 0;
           const s16 *table = gCatastrophe_StrikeRolls;
           s32 n = off + idx;
@@ -682,8 +780,8 @@ void BattleEffect_RunCatastrophe(struct BattleEffectParams *args) {
           s32 a = *(const s16 *)((s32)table + k);
           u8 *src;
           s32 bx;
-          s32 h;
-          s32 w;
+          s32 height;
+          s32 width;
           s32 x;
           s32 x0;
           s32 y0;
@@ -700,15 +798,15 @@ void BattleEffect_RunCatastrophe(struct BattleEffectParams *args) {
           if (p->velocityX == -1) {
             continue;
           }
-          w = 10;
-          h = 20;
-          src = sprites + gBattleEffect_MotePictures[9];
+          width = 10;
+          height = 20;
+          src = sprites + gBattleEffect_MotePictures[MOTE_PICTURES - 1];
           x0 = p->x / 8 - 5;
           bx = span - drift;
           x = x0 + (FIXEDtoINT(bx / 2));
           y0 = p->y / 8 - 10;
           y = y0 + (FIXEDtoINT(camZ + sway));
-          blit[0](canvas, src, x, y, w, h);
+          blit[0](canvas, src, x, y, width, height);
           switch (i) {
           case 0:
             Sound_PlayFar(SE_SOL_SANCTUM_LIGHT_UP);
@@ -724,22 +822,22 @@ void BattleEffect_RunCatastrophe(struct BattleEffectParams *args) {
             s32 half;
             s32 j;
 
-            j = 3;
-            q = &work->particles[3];
+            j = CATASTROPHE_STRIKES;
+            q = &work->particles[CATASTROPHE_STRIKES];
             half = (bx + (s32)((u32)bx >> 31)) >> 1;
-            for (; j != 64; j++, q++) {
+            for (; j != ARRAY_COUNT(work->particles); j++, q++) {
               if (q->variant < 0) {
                 s32 angle;
                 s32 speed;
 
-                q->x = (p->x << 13) + half;
-                q->y = (p->y << 13) + camZ + sway;
+                q->x = p->x * (FIXED_ONE / 8) + half;
+                q->y = p->y * (FIXED_ONE / 8) + camZ + sway;
                 angle = Random16();
                 speed = (Random16() & 255) + 127;
                 q->velocityX = Trig_Sin(angle) * speed >> 6;
                 q->velocityY = Trig_Cos(angle) * speed >> 6;
                 q->variant = (Random16() & 7) + 16;
-                if (++count == 10) {
+                if (++count == CATASTROPHE_STRIKE_SPARKS) {
                   break;
                 }
               }
@@ -750,15 +848,16 @@ void BattleEffect_RunCatastrophe(struct BattleEffectParams *args) {
           s32 cell = p->velocityX;
 
           model->shade = shade;
-          texture.pixels =
-              work->sheet + CATASTROPHE_JAGGED_STREAKS + (cell << 12);
+          texture.pixels = work->sheet + CATASTROPHE_JAGGED_STREAKS +
+                           cell * PICTURE_BYTES(JAGGED_STREAK);
           Matrix_Initialize();
           {
             s32 t = p->x / 8;
             s32 b = span - drift;
 
-            Matrix_Translate(INTtoFIXED(t - 64) + b / 2,
-                             INTtoFIXED(p->y / 8 - 64) + camZ + sway, 0);
+            Matrix_Translate(
+                INTtoFIXED(t - CANVAS_SIZE / 2) + b / 2,
+                INTtoFIXED(p->y / 8 - CANVAS_SIZE / 2) + camZ + sway, 0);
           }
           Matrix_Scale(FIXED_ONE / 2, FIXED_ONE, FIXED_ONE);
           Matrix_RotateZ(p->z);
@@ -784,7 +883,8 @@ void BattleEffect_RunCatastrophe(struct BattleEffectParams *args) {
       p = work->particles;
       if (!(frame & 1)) {
         p->y = (Random16() & 0x3fff) + toFIXED(0.375);
-        p->z = (Random16() % 3 << 12) + 8192;
+        p->z = Random16() % 3 * PICTURE_BYTES(JAGGED_STREAK) +
+               CATASTROPHE_JAGGED_STREAKS;
       }
       texture.pixels = work->sheet + p->z;
       Matrix_Initialize();
@@ -802,9 +902,9 @@ void BattleEffect_RunCatastrophe(struct BattleEffectParams *args) {
       s32 spread = 8;
 
       if (frame > 611) {
-        sx = sx - frame * 61845 + 0x2418834;
+        sx -= (frame - 612) * 61845;
       }
-      if (sx <= 65535) {
+      if (sx < FIXED_ONE) {
         sx = FIXED_ONE;
       }
       if (frame <= 613) {
@@ -820,7 +920,9 @@ void BattleEffect_RunCatastrophe(struct BattleEffectParams *args) {
         struct Particle *p4 = &work->particles[i];
 
         SET_POSITION(p4, INTtoFIXED(Random16() % spread - spread / 2),
-                     camZ + toFIXED(200), ((base + i) % 3 << 12) + 8192);
+                     camZ + toFIXED(200),
+                     (base + i) % 3 * PICTURE_BYTES(JAGGED_STREAK) +
+                         CATASTROPHE_JAGGED_STREAKS);
         texture.pixels = work->sheet + p4->z;
         Matrix_Initialize();
         Matrix_Translate(toFIXED(1), p4->y, 0);
@@ -849,17 +951,19 @@ void BattleEffect_RunCatastrophe(struct BattleEffectParams *args) {
     if ((u32)(frame - 602) <= 6) {
       camZ += toFIXED(16);
     }
+    // From frame 552 the seal: the pentagon spins as it swells, its triangles
+    // fold up from its edges from frame 580, and the swirl spins over it.
     {
-      s32 d = frame - 552;
+      s32 sealFrame = frame - 552;
 
-      if ((u32)d <= 58) {
-        s32 s = d * 4424;
+      if ((u32)sealFrame <= 58) {
+        s32 s = sealFrame * 4424;
         s32 a;
         s32 b;
 
         shade = -16;
-        if (s > 140600) {
-          s = 140600;
+        if (s > CATASTROPHE_SEAL_SCALE_MAX) {
+          s = CATASTROPHE_SEAL_SCALE_MAX;
         }
         texture.logWidth = 6;
         texture.logHeight = 6;
@@ -873,9 +977,8 @@ void BattleEffect_RunCatastrophe(struct BattleEffectParams *args) {
         b = span - drift;
         Matrix_Translate(b / 2 + toFIXED(5), camZ + toFIXED(230), 0);
         Matrix_Scale(FIXED_ONE / 2, FIXED_ONE, FIXED_ONE / 2);
-        Matrix_RotateX(18768);
-        a = -frame;
-        a <<= 10;
+        Matrix_RotateX(CATASTROPHE_SEAL_TILT);
+        a = -frame * (TRIG_TURN / 64);
         Matrix_RotateZ(a);
         Matrix_ScaleUniform(s);
         Matrix_Translate(0, -toFIXED(15), 0);
@@ -894,8 +997,8 @@ void BattleEffect_RunCatastrophe(struct BattleEffectParams *args) {
           if (frame > 579) {
             s32 v = (frame - 580) * 1096;
 
-            if (v > 19712) {
-              v = 19712;
+            if (v > CATASTROPHE_SEAL_SIDE_TILT) {
+              v = CATASTROPHE_SEAL_SIDE_TILT;
             }
             Matrix_RotateX(-v);
           }
@@ -905,12 +1008,12 @@ void BattleEffect_RunCatastrophe(struct BattleEffectParams *args) {
           Matrix_Pop();
         }
         if (frame > 589) {
-          s = s + frame * 11060 + -6525400;
+          s += (frame - 590) * 11060;
         }
         if (s > 0 && frame <= 601) {
           shade = -16;
           if (frame > 589) {
-            shade = shade - frame * 2 + 1180;
+            shade -= (frame - 590) * 2;
           }
           if (shade > MODEL_SHADE_INVISIBLE) {
             model->shade = shade;
@@ -919,15 +1022,15 @@ void BattleEffect_RunCatastrophe(struct BattleEffectParams *args) {
             if (frame > 553) {
               s32 v = (554 - frame) * 120000;
 
-              if (v < -840000) {
-                v = -840000;
+              if (v < -7 * 120000) {
+                v = -7 * 120000;
               }
               Matrix_Translate(0, v, 0);
             }
             Matrix_Translate(((b + (s32)((u32)b >> 31)) >> 1) + toFIXED(5),
                              camZ + toFIXED(220), 0);
             Matrix_Scale(FIXED_ONE, 32000, FIXED_ONE);
-            Matrix_RotateZ(frame << 11);
+            Matrix_RotateZ(frame * (TRIG_TURN / 32));
             Matrix_ScaleUniform(s);
             Render_TransformVertices(gBattleEffect_SquareCorners, verts, 4);
             Render_DrawModelList(model);
@@ -935,12 +1038,13 @@ void BattleEffect_RunCatastrophe(struct BattleEffectParams *args) {
         }
       }
     }
+    // From frame 602 a ring of fire spreads, fading from frame 612.
     if (frame > 601) {
-      s32 s = (frame - 602) * 12192 + toFIXED(0.125);
+      s32 s = (frame - 602) * CATASTROPHE_RING_GROWTH + toFIXED(0.125);
 
       shade = 0;
       if (frame > 611) {
-        shade = shade - frame * 8 + 4896;
+        shade -= (frame - 612) * 8;
       }
       if (shade > MODEL_SHADE_INVISIBLE) {
         model->shade = shade;
@@ -952,7 +1056,7 @@ void BattleEffect_RunCatastrophe(struct BattleEffectParams *args) {
         Matrix_Initialize();
         Matrix_Translate(toFIXED(1), -toFIXED(16), 0);
         Matrix_Scale(FIXED_ONE, 32000, FIXED_ONE);
-        Matrix_RotateZ(frame << 10);
+        Matrix_RotateZ(frame * (TRIG_TURN / 64));
         Matrix_ScaleUniform(s);
         Render_TransformVertices(gBattleEffect_SquareCorners, verts, 4);
         Render_DrawModelList(model);
@@ -960,22 +1064,24 @@ void BattleEffect_RunCatastrophe(struct BattleEffectParams *args) {
     }
     Heap_Release(model);
     Heap_Release(verts);
+    // The orb swells, rising a little, and from frame 601 it falls.
     if ((u32)(frame - 554) <= 51) {
-      s32 r = frame - 553;
+      s32 radius = frame - 553;
       s32 y = 90 - (frame - 554) / 2;
 
       if (frame > 600) {
-        y = y + (frame << 4) - 9616;
+        y += (frame - 601) * 16;
       }
       if (y <= 63) {
         y = 64;
       }
-      if (r <= 38) {
-        BattleEffect_DrawShadedCircles(cellBuffer, r, 95536);
+      if (radius <= 38) {
+        BattleEffect_DrawShadedCircles(cellBuffer, radius,
+                                       CATASTROPHE_ORB_BRIGHTNESS);
       } else {
-        r = 38;
+        radius = 38;
       }
-      Canvas_BlitAtFoot(cellBuffer, 62, y, r);
+      Canvas_BlitAtFoot(cellBuffer, 62, y, radius);
     }
     EFFECT_PRESENT_CANVAS(work);
     frame++;
@@ -1006,21 +1112,26 @@ void BattleEffect_RunCatastrophe(struct BattleEffectParams *args) {
   Resource_LoadAndDecompress(RESOURCE_LIGHTNING_BOLT_SHEET, cellBuffer, 1, 1);
   Resource_LoadAndDecompress(RESOURCE_TORNADO_SHEET,
                              work->sheet + CATASTROPHE_SWEEP_PICTURES, 1, 0);
-  Iwram_ClearWordsEntry(work->sheet + 5206, 16384);
-  for (i = 0; i != 4; i++) {
+  Iwram_ClearWordsEntry(work->sheet + CATASTROPHE_BOLT_TEXTURES,
+                        CATASTROPHE_BOLT_TEXTURE_COUNT *
+                            PICTURE_BYTES(BOLT_TEXTURE));
+  for (i = 0; i != CATASTROPHE_BOLT_TEXTURE_COUNT; i++) {
     {
-      s32 j;
-      s32 row = i << 12;
+      s32 y;
+      s32 boltTexture = i * PICTURE_BYTES(BOLT_TEXTURE);
       u8 *cells = cellBuffer;
 
-      for (j = 0; j != 120; j++) {
-        u8 *line = (u8 *)work + (row + j * 32);
-        s32 offset = i * 45 * 64 + j * 24;
-        u8 *dst = line + 7002;
+      for (y = 0; y != LIGHTNING_BOLT_HEIGHT; y++) {
+        u8 *line = (u8 *)work + (boltTexture + y * BOLT_TEXTURE_WIDTH);
+        s32 offset =
+            i * LIGHTNING_BOLT_PICTURE_BYTES + y * LIGHTNING_BOLT_WIDTH;
+        u8 *dst = line + (offsetof(struct BattleEffectWork, sheet) +
+                          CATASTROPHE_BOLT_TEXTURES +
+                          (BOLT_TEXTURE_WIDTH - LIGHTNING_BOLT_WIDTH) / 2);
         u8 *src = cells + offset;
-        s32 m;
+        s32 x;
 
-        for (m = 0; m != 24; m++) {
+        for (x = 0; x != LIGHTNING_BOLT_WIDTH; x++) {
           *dst++ = *src++;
         }
       }
@@ -1037,7 +1148,7 @@ void BattleEffect_RunCatastrophe(struct BattleEffectParams *args) {
     s32 top;
     void *aerialVertices;
     s32 aerialShade;
-    s32 r;
+    s32 radius;
     s32 ry;
 
     rise = 0;
@@ -1058,10 +1169,10 @@ void BattleEffect_RunCatastrophe(struct BattleEffectParams *args) {
           rise += toFIXED(1);
         }
         {
-          s32 d = frame - 96;
+          s32 launchFrame = frame - 96;
 
-          if ((u32)d <= 23) {
-            Palette_BrightenSavedBattleBg(-d, -16, frame - 112);
+          if ((u32)launchFrame <= 23) {
+            Palette_BrightenSavedBattleBg(-launchFrame, -16, frame - 112);
             work->shakeFrames = 8;
           }
         }
@@ -1078,7 +1189,7 @@ void BattleEffect_RunCatastrophe(struct BattleEffectParams *args) {
           u16 *c = (u16 *)&BG_PLTT_COLOR(6, 0);
 
           for (i = 0; i != BATTLE_BACKGROUND_COLORS; i++, c++) {
-            *c ^= 0x7fff;
+            *c ^= RGB_WHITE;
           }
         }
         if (frame == 82) {
@@ -1096,7 +1207,7 @@ void BattleEffect_RunCatastrophe(struct BattleEffectParams *args) {
           work->shakeFrames = 16;
           c = (u16 *)&BG_PLTT_COLOR(6, 0);
           for (i = 0; i != BATTLE_BACKGROUND_COLORS; i++, c++) {
-            *c ^= 0x7fff;
+            *c ^= RGB_WHITE;
           }
         }
         if (frame > 128) {
@@ -1104,36 +1215,41 @@ void BattleEffect_RunCatastrophe(struct BattleEffectParams *args) {
 
           Palette_BrightenSavedBattleBg(d - 11, frame - 136, 3 - d);
         }
-        r = 16;
+        radius = 16;
         ry = FIXEDtoINT(rise);
         if (frame > 92) {
-          r = frame - 75;
+          radius = frame - 75;
         }
         if (frame <= 79) {
-          r += FIXEDtoINT(Trig_Sin(frame << 11) * 2);
+          radius += FIXEDtoINT(Trig_Sin(frame * (TRIG_TURN / 32)) * 2);
         }
-        if (r <= 64) {
-          BattleEffect_DrawShadedCircles(work->sheet, r, 95536);
+        if (radius <= 64) {
+          BattleEffect_DrawShadedCircles(work->sheet, radius,
+                                         CATASTROPHE_ORB_BRIGHTNESS);
         } else {
-          r = 64;
+          radius = 64;
         }
-        top = ry - r / 2 + 60;
-        Canvas_BlitAtFoot(work->sheet, 60, top, r);
+        top = ry - radius / 2 + CATASTROPHE_ORB_CENTER;
+        Canvas_BlitAtFoot(work->sheet, CATASTROPHE_ORB_CENTER, top, radius);
+        // From frame 96 glints sparkle around the orb.
         if (frame > 95) {
           {
             for (i = 0; i != 4; i++) {
               s32 n = i & 3;
               s32 angle = Random16();
-              s32 x = (Trig_Sin(angle) * r >> 17) + 60;
+              s32 x = (FIXEDtoINT(Trig_Sin(angle) * radius) >> 1) +
+                      CATASTROPHE_ORB_CENTER;
               s32 y;
               u32 flip;
 
               x -= gBattleEffect_GlintPictureWidths[n] >> 1;
-              y = top + (Trig_Cos(angle) * r >> 17) -
+              y = top + (FIXEDtoINT(Trig_Cos(angle) * radius) >> 1) -
                   (gBattleEffect_GlintPictureHeights[n] >> 1);
               flip = Random16();
               EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED,
-                                  gCatastrophe_GlintFlips[flip & 3] | 3, 0);
+                                  gCatastrophe_GlintFlips[flip & 3] |
+                                      EFFECT_CLIP_BOUNDS,
+                                  BLITTER_ADDITIVE);
               ((DrawRectangle)Ram_HeapSlots->ramCodePaired)(
                   canvas,
                   work->sheet + CATASTROPHE_SWEEP_PICTURES +
@@ -1146,19 +1262,21 @@ void BattleEffect_RunCatastrophe(struct BattleEffectParams *args) {
         }
         aerialVertices = Heap_AllocEwram(512);
         aerialModel = Render_AllocateModelList(1);
+        // Until frame 127 the seal turns under the orb, swelling from frame 72,
+        // its triangles folding down from frame 64.
         if (frame <= 127) {
           s32 s = 85536;
           s32 a;
 
           if (frame > 71) {
-            s = (frame << 11) + -0xf1e0;
+            s = (frame - 72) * (FIXED_ONE / 32) + 85536;
           }
           aerialShade = -16;
           if (frame > 119) {
             aerialShade = 944 - frame * 8;
           }
-          if (s > 140600) {
-            s = 140600;
+          if (s > CATASTROPHE_SEAL_SCALE_MAX) {
+            s = CATASTROPHE_SEAL_SCALE_MAX;
           }
           aerialTexture.logWidth = 6;
           aerialTexture.logHeight = 6;
@@ -1171,8 +1289,8 @@ void BattleEffect_RunCatastrophe(struct BattleEffectParams *args) {
           Matrix_Initialize();
           Matrix_Translate(-toFIXED(2), rise, 0);
           Matrix_Scale(FIXED_ONE / 2, FIXED_ONE, FIXED_ONE / 2);
-          Matrix_RotateX(18768);
-          a = frame << 9;
+          Matrix_RotateX(CATASTROPHE_SEAL_TILT);
+          a = frame * (TRIG_TURN / 128);
           Matrix_RotateZ(a);
           Matrix_ScaleUniform(s);
           Matrix_Translate(0, -toFIXED(15), 0);
@@ -1190,9 +1308,9 @@ void BattleEffect_RunCatastrophe(struct BattleEffectParams *args) {
             Matrix_RotateZ(i * (DEGtoANG(120)) + DEGtoANG(60));
             aerialModel->shade = tone;
             Matrix_Translate(0, -toFIXED(16), 0);
-            v = 19712;
+            v = CATASTROPHE_SEAL_SIDE_TILT;
             if (frame > 63) {
-              v = v - (frame << 10) + toFIXED(1);
+              v -= (frame - 64) * (TRIG_TURN / 64);
             }
             if (v < 0) {
               v = 0;
@@ -1204,47 +1322,44 @@ void BattleEffect_RunCatastrophe(struct BattleEffectParams *args) {
             Matrix_Pop();
           }
         }
-        {
-          s32 t = frame * 3;
+        // Two rings of fire spread from frames 80 and 88, the second at half
+        // the speed.
+        for (i = 0; i != 2; i++) {
+          s32 delay = i * 8;
+          s32 start = delay + 80;
+          s32 s;
 
-          {
-            for (i = 0; i != 2; i++) {
-              s32 d = i * 8;
-              s32 start = d + 80;
-              s32 s;
-
-              if (frame < start) {
-                continue;
-              }
-              aerialShade = 0;
-              if (i == 0) {
-                s = (t - start * 3) * 127 * 32 + toFIXED(0.125);
-                if (frame >= d + 96) {
-                  aerialShade = (start - frame) * 8 + 128;
-                }
-              } else {
-                s = (t - start * 3) * 127 * 16 + toFIXED(0.125);
-                if (frame >= d + 112) {
-                  aerialShade = (start - frame) * 8 + 256;
-                }
-              }
-              if (aerialShade > MODEL_SHADE_INVISIBLE) {
-                aerialModel->shade = aerialShade;
-                aerialModel->mesh = gBattleEffect_LargeSquareMesh;
-                aerialModel->kind = MODEL_SHADED_MAX;
-                aerialTexture.pixels = Ram_MapCellBuffer + CATASTROPHE_RING;
-                aerialTexture.logWidth = 7;
-                aerialTexture.logHeight = 7;
-                Matrix_Initialize();
-                Matrix_Translate(0, toFIXED(16), 0);
-                Matrix_Scale(FIXED_ONE, 32000, FIXED_ONE);
-                Matrix_RotateZ(frame << 10);
-                Matrix_ScaleUniform(s);
-                Render_TransformVertices(gBattleEffect_SquareCorners,
-                                         aerialVertices, 4);
-                Render_DrawModelList(aerialModel);
-              }
+          if (frame < start) {
+            continue;
+          }
+          aerialShade = 0;
+          if (i == 0) {
+            s = (frame - start) * CATASTROPHE_RING_GROWTH + toFIXED(0.125);
+            if (frame >= delay + 96) {
+              aerialShade = (start - frame) * 8 + 128;
             }
+          } else {
+            s = (frame - start) * (CATASTROPHE_RING_GROWTH / 2) +
+                toFIXED(0.125);
+            if (frame >= delay + 112) {
+              aerialShade = (start - frame) * 8 + 256;
+            }
+          }
+          if (aerialShade > MODEL_SHADE_INVISIBLE) {
+            aerialModel->shade = aerialShade;
+            aerialModel->mesh = gBattleEffect_LargeSquareMesh;
+            aerialModel->kind = MODEL_SHADED_MAX;
+            aerialTexture.pixels = Ram_MapCellBuffer + CATASTROPHE_RING;
+            aerialTexture.logWidth = 7;
+            aerialTexture.logHeight = 7;
+            Matrix_Initialize();
+            Matrix_Translate(0, toFIXED(16), 0);
+            Matrix_Scale(FIXED_ONE, 32000, FIXED_ONE);
+            Matrix_RotateZ(frame * (TRIG_TURN / 64));
+            Matrix_ScaleUniform(s);
+            Render_TransformVertices(gBattleEffect_SquareCorners,
+                                     aerialVertices, 4);
+            Render_DrawModelList(aerialModel);
           }
         }
         aerialTexture.logWidth = 5;
@@ -1254,8 +1369,8 @@ void BattleEffect_RunCatastrophe(struct BattleEffectParams *args) {
         aerialModel->shade = zero;
         if (frame == 0) {
           p = work->particles;
-          for (i = 0; i != 16; p++, i++) {
-            p->z = gCatastrophe_ShardRolls[i];
+          for (i = 0; i != CATASTROPHE_BOLTS; p++, i++) {
+            p->z = gCatastrophe_BoltRolls[i];
             p->velocityZ = (Random16() & 255) + 128;
             if (Random16() & 1) {
               p->velocityZ = -p->velocityZ;
@@ -1268,17 +1383,20 @@ void BattleEffect_RunCatastrophe(struct BattleEffectParams *args) {
             Sound_PlayFar(SE_CLATTER);
           }
         }
+        // The bolts shoot out from the middle, one a frame from frame 128, each
+        // turning as it grows.
         p = work->particles;
-        for (i = 0; i != 16; i++, p++) {
-          s32 st = i + 128;
+        for (i = 0; i != CATASTROPHE_BOLTS; i++, p++) {
+          s32 startFrame = i + 128;
 
-          if (frame >= st && frame < i + 144) {
-            s32 s = (frame - st) << 13;
+          if (frame >= startFrame && frame < i + 144) {
+            s32 s = (frame - startFrame) * (FIXED_ONE / 8);
 
             if (s > FIXED_ONE) {
               s = FIXED_ONE;
             }
-            aerialTexture.pixels = work->sheet + 5206 + (p->variant << 12);
+            aerialTexture.pixels = work->sheet + CATASTROPHE_BOLT_TEXTURES +
+                                   p->variant * PICTURE_BYTES(BOLT_TEXTURE);
             Matrix_Initialize();
             Matrix_RotateZ(p->z);
             p->z += p->velocityZ;
@@ -1290,33 +1408,39 @@ void BattleEffect_RunCatastrophe(struct BattleEffectParams *args) {
         }
         Heap_Release(aerialModel);
         Heap_Release(aerialVertices);
+        // At frame 134 sparks ring the orb and twinkle out.
         if (frame > 133) {
           if (frame == 134) {
             struct Particle *p;
 
             i = 0;
-            p = &work->particles[16];
-            for (; i != 48; i++, p++) {
-              s32 a = Random16();
-              s32 angle = i * 1365;
-              s32 rr = (a & 31) + 32;
+            p = &work->particles[CATASTROPHE_BOLTS];
+            for (; i != CATASTROPHE_SPARKS; i++, p++) {
+              s32 random = Random16();
+              s32 angle = i * (TRIG_TURN / CATASTROPHE_SPARKS);
+              s32 distance = (random & 31) + 32;
 
-              SET_POSITION(p, (FIXEDtoINT(Trig_Sin(angle) * rr)) + 60,
-                           (FIXEDtoINT(Trig_Cos(angle) * rr)) + 60,
+              SET_POSITION(p,
+                           (FIXEDtoINT(Trig_Sin(angle) * distance)) +
+                               CATASTROPHE_ORB_CENTER,
+                           (FIXEDtoINT(Trig_Cos(angle) * distance)) +
+                               CATASTROPHE_ORB_CENTER,
                            (Random16() & 3) + 5);
               p->variant = -(Random16() & 15);
             }
           }
           i = 0;
-          p3 = &work->particles[16];
-          for (; i != 48; i++, p3++) {
-            if ((u32)p3->variant <= 7) {
-              s32 n = (FIXEDtoINT(Trig_Sin(p3->variant << 12) * p3->z)) + 1;
+          spark = &work->particles[CATASTROPHE_BOLTS];
+          for (; i != CATASTROPHE_SPARKS; i++, spark++) {
+            if ((u32)spark->variant <= 7) {
+              s32 n = (FIXEDtoINT(Trig_Sin(spark->variant * (TRIG_TURN / 16)) *
+                                  spark->z)) +
+                      1;
 
               blit[0](canvas, sprites + gBattleEffect_MotePictures[n - 1],
-                      p3->x - n / 2, p3->y - n, n, n * 2);
+                      spark->x - n / 2, spark->y - n, n, n * 2);
             }
-            p3->variant++;
+            spark->variant++;
           }
         }
         if (work->shakeFrames > 0) {
@@ -1327,7 +1451,7 @@ void BattleEffect_RunCatastrophe(struct BattleEffectParams *args) {
           a &= m;
           b &= m;
           a -= 4;
-          b += 28;
+          b += BATTLE_BACKGROUND_SCROLL_Y - 4;
           gBgScroll[1].x = a;
           gBgScroll[1].y = b;
           work->shakeFrames--;
@@ -1344,14 +1468,13 @@ void BattleEffect_RunCatastrophe(struct BattleEffectParams *args) {
     FIXED slide;
     s32 slideStep;
     u8 *bolts;
-    void *quads = Ram_MapCellBuffer + 4096;
-    void *strip = Ram_MapCellBuffer + 8192;
-    struct Particle *steps = ((struct Particle *)(Ram_MapCellBuffer + 27904));
-    struct Particle *debris =
-        &((struct Particle *)(Ram_MapCellBuffer + 27904))[64];
+    void *quads = Ram_MapCellBuffer + CATASTROPHE_SWEEP_VERTICES;
+    void *strip = Ram_MapCellBuffer + CATASTROPHE_SWEEP_STRIP;
+    struct Particle *bursts = CATASTROPHE_PARTICLES;
+    struct Particle *debris = &CATASTROPHE_PARTICLES[CATASTROPHE_BURSTS];
 
     // Act three: back on the battlefield, lightning and smoke sweep the foes.
-    bolts = Ram_MapCellBuffer + 16384;
+    bolts = Ram_MapCellBuffer + CATASTROPHE_BOLT_PICTURES;
     slide = 0;
     slideStep = 0;
     Iwram_FillWords(canvas, CANVAS_BYTES,
@@ -1368,7 +1491,7 @@ void BattleEffect_RunCatastrophe(struct BattleEffectParams *args) {
                                work->sheet + CATASTROPHE_FLASH_BURST_PICTURES,
                                1, 0);
     Resource_LoadAndDecompress(RESOURCE_LIGHTNING_BOLT_SHEET, bolts, 1, 0);
-    Render_BuildQuadStrip(Ram_MapCellBuffer + 8192, 4, 32, 11);
+    Render_BuildQuadStrip(strip, 4, 32, 11);
     REG_BG2CNT = BGCNT_CHAR_BASE(1) | BGCNT_256_COLORS | BGCNT_SCREEN_BASE(7);
     frame = 0;
     do {
@@ -1387,14 +1510,14 @@ void BattleEffect_RunCatastrophe(struct BattleEffectParams *args) {
       if (frame == 0) {
         IWRAM_FILL_WORDS(canvas, CANVAS_BYTES,
                          CANVAS_FILL_WORD(CANVAS_LEVEL_BRIGHTEST));
-        work->scrollStepX = -16;
-        gProjection.centerX = -968;
+        work->scrollStepX = -CATASTROPHE_PAN_SPEED;
+        gProjection.centerX = BATTLE_PROJECTION_CENTER_X - CATASTROPHE_PAN;
         gProjection.centerY = BATTLE_PROJECTION_CENTER_Y;
-        gBgScroll[1].x = savedScroll + 1088;
+        gBgScroll[1].x = savedScroll + CATASTROPHE_PAN;
         Graphics_LoadGreyRamp();
         EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_DARKEN, CANVAS_FILL_WORD(2));
-        for (i = 0; i != 164; i++) {
-          ((struct Particle *)(Ram_MapCellBuffer + 27904))[i].variant = -1;
+        for (i = 0; i != CATASTROPHE_BURSTS + CATASTROPHE_DEBRIS; i++) {
+          CATASTROPHE_PARTICLES[i].variant = -1;
         }
         slide = toFIXED(128);
         slideStep = 0;
@@ -1406,6 +1529,8 @@ void BattleEffect_RunCatastrophe(struct BattleEffectParams *args) {
       if ((u32)(frame - 16) <= 47) {
         BattleEffect_StepPaletteToResource(RESOURCE_VIOLET_PALETTE_F);
       }
+      // At frame 66 the targets are struck: thrown back, flashing white, debris
+      // flying from each.
       if (frame == 66) {
         for (i = 0; i != args->targetCount; i++) {
           BattleEffect_StartActorMotion(args->targets[i], 1, toFIXED(4),
@@ -1414,12 +1539,12 @@ void BattleEffect_RunCatastrophe(struct BattleEffectParams *args) {
                                    POSE_DAMAGE, i, 16);
           {
             s32 a = args->targets[i];
-            s32 k = 448;
+            s32 k = CATASTROPHE_TARGET_DEBRIS * sizeof(struct Particle);
             EffectPosition_ProjectBattler(a, &pos);
             j = 0;
             q = (struct Particle *)(i * k + (s32)debris);
           }
-          for (; j != 16; j++, q++) {
+          for (; j != CATASTROPHE_TARGET_DEBRIS; j++, q++) {
             s32 angle;
             s32 speed;
 
@@ -1429,7 +1554,7 @@ void BattleEffect_RunCatastrophe(struct BattleEffectParams *args) {
             speed = (Random16() & 127) + 128;
             q->velocityX = Trig_Sin(angle) * speed >> 5;
             q->velocityY = Trig_Cos(angle) * speed >> 4;
-            q->variant = 16;
+            q->variant = CATASTROPHE_DEBRIS_LIFE;
           }
         }
         work->shakeFrames = 16;
@@ -1444,12 +1569,13 @@ void BattleEffect_RunCatastrophe(struct BattleEffectParams *args) {
         s32 x = 0;
 
         if (frame > 71) {
-          x = x - frame * 8 + 576;
+          x -= (frame - 72) * 8;
         }
         for (i = 0; i != 2; i++) {
           s32 sum = x + 116;
           struct Particle *base =
-              (struct Particle *)((frame & 31) * 56 + (s32)steps);
+              (struct Particle *)((frame & 31) * (2 * sizeof(struct Particle)) +
+                                  (s32)bursts);
           struct Particle *q = &base[i];
           s32 angle;
           s32 speed;
@@ -1462,17 +1588,17 @@ void BattleEffect_RunCatastrophe(struct BattleEffectParams *args) {
           q->velocityY = Trig_Cos(angle) * speed >> 6;
           q->variant = 0;
         }
-        q2 = ((struct Particle *)(Ram_MapCellBuffer + 27904));
-        for (i = 0; i != 64; i++, q2++) {
-          if ((u32)q2->variant <= 11) {
+        burst = CATASTROPHE_PARTICLES;
+        for (i = 0; i != CATASTROPHE_BURSTS; i++, burst++) {
+          if ((u32)burst->variant < CATASTROPHE_BURST_LIFE) {
             blit[0](canvas,
                     work->sheet + CATASTROPHE_FLASH_BURST_PICTURES +
-                        (q2->variant / 2 << 11),
-                    FIXED_INTEGER_PART(q2->x) - 16,
-                    FIXED_INTEGER_PART(q2->y) - 32, FLASH_BURST_WIDTH,
-                    FLASH_BURST_HEIGHT);
-            Particle_AdvanceWithGravity2D(q2, 63, 0);
-            q2->variant++;
+                        burst->variant / 2 * PICTURE_BYTES(FLASH_BURST),
+                    FIXED_INTEGER_PART(burst->x) - FLASH_BURST_WIDTH / 2,
+                    FIXED_INTEGER_PART(burst->y) - FLASH_BURST_HEIGHT / 2,
+                    FLASH_BURST_WIDTH, FLASH_BURST_HEIGHT);
+            Particle_AdvanceWithGravity2D(burst, 63, 0);
+            burst->variant++;
           }
         }
       }
@@ -1488,7 +1614,7 @@ void BattleEffect_RunCatastrophe(struct BattleEffectParams *args) {
         j = 0;
         z = 0;
         y = 0;
-        for (; j != 12; j++) {
+        for (; j != CATASTROPHE_SWEEP_ROWS; j++) {
           struct MeshVertex *v;
           s32 x;
 
@@ -1496,10 +1622,13 @@ void BattleEffect_RunCatastrophe(struct BattleEffectParams *args) {
 
           for (i = 0, x = 0, v = (struct MeshVertex *)(off + (s32)cellBuffer);
                i != 2; i++, x += 10, v++) {
-            SET_POSITION(v,
-                         x + (FIXEDtoINT(Trig_Sin((frame + j * 2) << 10) * 2)) +
-                             jitter - 5,
-                         y, z);
+            SET_POSITION(
+                v,
+                x +
+                    (FIXEDtoINT(Trig_Sin((frame + j * 2) * (TRIG_TURN / 64)) *
+                                2)) +
+                    jitter - 5,
+                y, z);
           }
           jitter = jitter + (Random16() & 7) - 4;
           y -= 6;
@@ -1530,8 +1659,8 @@ void BattleEffect_RunCatastrophe(struct BattleEffectParams *args) {
         sweepModel->scrollU = (frame << 3) & 127;
         Matrix_Initialize();
         Matrix_Scale(FIXED_ONE / 2, FIXED_ONE, FIXED_ONE / 2);
-        a = frame * 3 * 127 * 16;
-        b = frame << 13;
+        a = frame * CATASTROPHE_SWEEP_WAVE;
+        b = frame * (TRIG_TURN / 8);
         c = Trig_Sin(a);
         Matrix_Translate(slide, (c << 5) + Trig_Cos(b) * 24, 0);
         Matrix_ScaleUniform(55536);
@@ -1546,7 +1675,8 @@ void BattleEffect_RunCatastrophe(struct BattleEffectParams *args) {
         sweepTexture.logHeight = 6;
         sweepModel->scrollU = 0;
         sweepTexture.pixels = work->sheet + CATASTROPHE_SWEEP_PICTURES;
-        Matrix_Translate(-toFIXED(2), (Trig_Sin(frame << 10) << 2) - toFIXED(6),
+        Matrix_Translate(-toFIXED(2),
+                         (Trig_Sin(frame * (TRIG_TURN / 64)) << 2) - toFIXED(6),
                          0);
         Matrix_RotateZ(-TRIG_TURN / 32);
         {
@@ -1555,7 +1685,7 @@ void BattleEffect_RunCatastrophe(struct BattleEffectParams *args) {
           FIXED s1;
           FIXED y1;
 
-          a += 6096;
+          a += CATASTROPHE_SWEEP_WAVE;
           s1 = Trig_Sin(a);
           b += DEGtoANG(45);
           y1 = (s1 << 5) + Trig_Cos(b) * 24;
@@ -1567,16 +1697,18 @@ void BattleEffect_RunCatastrophe(struct BattleEffectParams *args) {
         Heap_Release(sweepModel);
         if (frame <= 87) {
 
+          // Six bolts strike, one every eight frames from frame 16, each with
+          // a clap, a shake and debris thrown up where it lands.
           i = 0;
-          p2 = work->particles;
+          bolt = work->particles;
           {
 
-            for (; i != 6; p2++, i++) {
-              s32 lim = i * 8 + 16;
+            for (; i != 6; bolt++, i++) {
+              s32 strikeFrame = i * 8 + 16;
 
-              if (frame == lim) {
-                p2->x = (Random16() & 31) + 64;
-                p2->variant = Random16();
+              if (frame == strikeFrame) {
+                bolt->x = (Random16() & 31) + 64;
+                bolt->variant = Random16();
                 work->shakeFrames = 4;
                 switch (i & 3) {
                 case 0:
@@ -1593,36 +1725,39 @@ void BattleEffect_RunCatastrophe(struct BattleEffectParams *args) {
                   break;
                 }
                 j = 0;
-                q = (struct Particle *)((i & 7) * 336 + (s32)debris);
-                for (; j != 12; j++, q++) {
+                q = (struct Particle *)((i & 7) * (CATASTROPHE_BOLT_DEBRIS *
+                                                   sizeof(struct Particle)) +
+                                        (s32)debris);
+                for (; j != CATASTROPHE_BOLT_DEBRIS; j++, q++) {
                   s32 angle;
                   s32 speed;
 
-                  q->x = INTtoFIXED(p2->x);
+                  q->x = INTtoFIXED(bolt->x);
                   q->y = toFIXED(104);
                   angle = (Random16() & 0x7fff) + DEGtoANG(90);
                   speed = (Random16() & 127) + 128;
                   q->velocityX = Trig_Sin(angle) * speed >> 5;
                   q->velocityY = Trig_Cos(angle) * speed >> 4;
-                  q->variant = 16;
+                  q->variant = CATASTROPHE_DEBRIS_LIFE;
                 }
               }
-              if (frame >= lim && frame < lim + 8) {
-                u8 *src = Ram_MapCellBuffer + 16384;
+              if (frame >= strikeFrame && frame < strikeFrame + 8) {
+                u8 *src = Ram_MapCellBuffer + CATASTROPHE_BOLT_PICTURES;
 
-                blit[0](
-                    canvas,
-                    ((p2->variant / 2) & 3) * PICTURE_BYTES(LIGHTNING_BOLT) +
-                        src,
-                    p2->x - 12, 0, LIGHTNING_BOLT_WIDTH, LIGHTNING_BOLT_HEIGHT);
-                p2->variant++;
+                blit[0](canvas,
+                        ((bolt->variant / 2) & 3) *
+                                PICTURE_BYTES(LIGHTNING_BOLT) +
+                            src,
+                        bolt->x - LIGHTNING_BOLT_WIDTH / 2, 0,
+                        LIGHTNING_BOLT_WIDTH, LIGHTNING_BOLT_HEIGHT);
+                bolt->variant++;
               }
             }
           }
           {
             struct Particle *d = debris;
 
-            for (i = 0; i != 100; i++, d++) {
+            for (i = 0; i != CATASTROPHE_DEBRIS; i++, d++) {
               if (d->variant >= 0) {
                 s32 n = (d->variant >> 2) + 2;
 
@@ -1632,7 +1767,7 @@ void BattleEffect_RunCatastrophe(struct BattleEffectParams *args) {
                         FIXED_INTEGER_PART(d->x) - n / 2,
                         FIXED_INTEGER_PART(d->y) - n, n, h);
                 Particle_AdvanceWithGravity2D(d, 56, toFIXED(1) / 8);
-                d->velocityX -= work->scrollStepX << 12;
+                d->velocityX -= work->scrollStepX * (FIXED_ONE / 16);
                 d->variant--;
               }
             }
@@ -1641,7 +1776,7 @@ void BattleEffect_RunCatastrophe(struct BattleEffectParams *args) {
       }
       gProjection.centerX -= work->scrollStepX;
       gBgScroll[1].x += work->scrollStepX;
-      for (i = 0; i != 16; i++) {
+      for (i = 0; i != CATASTROPHE_PAN_SPEED; i++) {
         if (frame == i + 62) {
           work->scrollStepX++;
         }
@@ -1656,7 +1791,7 @@ void BattleEffect_RunCatastrophe(struct BattleEffectParams *args) {
       }
       wait(1);
     } while (frame != 104);
-    transition[4] = 0;
+    background->busy = 0;
     EFFECT_FINISH_CANVAS_ONE_BLITTER();
   }
 }

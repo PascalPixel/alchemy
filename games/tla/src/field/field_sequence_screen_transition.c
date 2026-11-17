@@ -8,6 +8,20 @@
 /// opening half and the closing half mirrored.
 #define TRANSITION_OPEN 32
 #define TRANSITION_CLOSED 64
+/// The widest a line's window reaches from the left edge in
+/// WINDOW_TRANSITION_NOISE: WIN0H's right edge is a byte.
+#define TRANSITION_NOISE_EDGE_MAX 255
+/// WINDOW_TRANSITION_RIPPLE measures a line further than this from its centre
+/// as this far.
+#define TRANSITION_RIPPLE_LINES_MAX 120
+/// gScreenTransition_EdgeOffsets' entries, the ripple's period in lines.
+#define TRANSITION_EDGE_OFFSETS 32
+/// Where the centre-line transition puts its two lines once they meet: below
+/// the screen, so no switch happens.
+#define CENTRE_LINE_HIDDEN_FIRST 200
+#define CENTRE_LINE_HIDDEN_SECOND 250
+/// The colour the dissolve covers the screen in, the window palette's last.
+#define DISSOLVE_COVER_COLOR 15
 
 /// Each VBlank, before drawing: turns windows 0 and 1 on, writes the first four
 /// values of the shown page into WININ, WINOUT, WIN0H and WIN1H, and has DMA 0
@@ -160,11 +174,13 @@ void ScreenTransition_UpdateScanlineTable(void) {
       *scanlineData++ = TRANSITION_SHOW_ALL;
       *scanlineData++ = 1;
     }
+    // Each line's window runs from the left edge to 16 pixels per step of
+    // progress plus up to 15 at random.
     value &= TRANSITION_OPEN - 1;
     for (i = 0; i < DISPLAY_HEIGHT; i++) {
       horizontalExtent = (value << 4) + ((16 * Random16()) >> 16);
-      if (horizontalExtent > 255)
-        horizontalExtent = 255;
+      if (horizontalExtent > TRANSITION_NOISE_EDGE_MAX)
+        horizontalExtent = TRANSITION_NOISE_EDGE_MAX;
       scanlineData[0] = horizontalExtent;
       scanlineData += 2;
     }
@@ -179,12 +195,14 @@ void ScreenTransition_UpdateScanlineTable(void) {
       *scanlineData++ = TRANSITION_SHOW_ALL;
       value = TRANSITION_CLOSED - value;
     }
+    // A circle about the screen's centre whose radius grows 5 pixels a step,
+    // to 160 at TRANSITION_OPEN; each line's edges are clamped to the screen.
     value *= 5;
-    radiusSquaredFixed = (value * value) << 16;
+    radiusSquaredFixed = INTtoFIXED(value * value);
     for (i = 0; i < DISPLAY_HEIGHT; i++) {
       value = i - DISPLAY_HEIGHT / 2;
       horizontalExtent =
-          Iwram_Sqrt(radiusSquaredFixed - ((value * value) << 16)) >> 8;
+          Iwram_Sqrt(radiusSquaredFixed - INTtoFIXED(value * value)) >> 8;
       left = DISPLAY_WIDTH / 2 - horizontalExtent;
       right = horizontalExtent + DISPLAY_WIDTH / 2;
       if (left < 0)
@@ -209,6 +227,8 @@ void ScreenTransition_UpdateScanlineTable(void) {
       *scanlineData++ = TRANSITION_SHOW_ALL;
       *scanlineData++ = 1;
     }
+    // Even lines' windows grow from the left edge and odd lines' from the
+    // right, across the screen over TRANSITION_OPEN steps.
     value = (u32)(DISPLAY_WIDTH * (value & (TRANSITION_OPEN - 1))) >> 5;
     for (i = 0; i < DISPLAY_HEIGHT; i += 2) {
       oppositeEdges = ((DISPLAY_WIDTH - value) << 8) + DISPLAY_WIDTH;
@@ -225,9 +245,12 @@ void ScreenTransition_UpdateScanlineTable(void) {
 
     ax = view[0] & FIELD_PIXEL_MASK;
     cameraY = view[1] & FIELD_PIXEL_MASK;
+    // Centred on the leader's place on screen, 16 pixels above its feet.
     actor = Actor_Lookup(Party_GetLeaderActor());
     centerX = (actor->x.fixed - ax) / FIXED_ONE;
     centerY = ((actor->z.fixed - actor->y.fixed) - cameraY) / FIXED_ONE - 16;
+    // This mode writes the two masks and folds the progress the other way
+    // round from WINDOW_TRANSITION_LEADER.
     *scanlineData++ = state->active;
     *scanlineData++ = state->mask;
     value = state->value;
@@ -235,14 +258,18 @@ void ScreenTransition_UpdateScanlineTable(void) {
       value = TRANSITION_OPEN - (value & (TRANSITION_OPEN - 1));
     else
       value &= TRANSITION_OPEN - 1;
+    // On odd frames the ellipse has no size: the flicker.
     if (gFrameCount & 1)
       value = 0;
+    // Half-widths of sqrt(r * r - 1.5 * dy * dy) with r 5 pixels a step: an
+    // ellipse 1.22 times as wide as it is tall.
     value *= 5;
-    radiusSquaredFixed = (value * value) << 16;
+    radiusSquaredFixed = INTtoFIXED(value * value);
     for (i = 0; i < DISPLAY_HEIGHT; i++) {
       value = i - centerY;
-      horizontalExtent =
-          Iwram_Sqrt(radiusSquaredFixed - ((value * value * 3) << 15)) >> 8;
+      horizontalExtent = Iwram_Sqrt(radiusSquaredFixed -
+                                    value * value * 3 * (FIXED_ONE / 2)) >>
+                         8;
       left = centerX - horizontalExtent;
       right = centerX + horizontalExtent;
       if (left < 0)
@@ -265,6 +292,9 @@ void ScreenTransition_UpdateScanlineTable(void) {
     cameraX = view[0] & FIELD_PIXEL_MASK;
     cameraY8 = view[1] & FIELD_PIXEL_MASK;
   }
+    // Centred on state->centreX and centreY; each line's edges move out by
+    // gScreenTransition_EdgeOffsets, indexed two entries a line and one a
+    // frame, so the outline ripples.
     centerX = (state->centreX - cameraX) / FIXED_ONE;
     centerY = (state->centreY - cameraY8) / FIXED_ONE - 16;
     k = -centerY * 2 + gFrameCount;
@@ -276,23 +306,24 @@ void ScreenTransition_UpdateScanlineTable(void) {
     else
       value &= TRANSITION_OPEN - 1;
     value *= 5;
-    radiusSquaredFixed = (value * value) << 16;
+    radiusSquaredFixed = INTtoFIXED(value * value);
     for (i = 0; i < DISPLAY_HEIGHT; i++) {
       delta = i - centerY;
-      if (delta < -120)
-        delta = -120;
-      if (delta > 120)
-        delta = 120;
+      if (delta < -TRANSITION_RIPPLE_LINES_MAX)
+        delta = -TRANSITION_RIPPLE_LINES_MAX;
+      if (delta > TRANSITION_RIPPLE_LINES_MAX)
+        delta = TRANSITION_RIPPLE_LINES_MAX;
       delta *= delta;
       horizontalExtent =
-          Iwram_Sqrt(radiusSquaredFixed - ((delta * 3) << 15)) >> 8;
+          Iwram_Sqrt(radiusSquaredFixed - delta * 3 * (FIXED_ONE / 2)) >> 8;
       left = centerX - horizontalExtent;
       right = centerX + horizontalExtent;
       if (left < right) {
-        value = k & 31;
+        value = k & (TRANSITION_EDGE_OFFSETS - 1);
         delta = gScreenTransition_EdgeOffsets[value];
         left -= delta;
         right += delta;
+        // An offset that closes the line leaves it with no window.
         if (left >= right) {
           left = DISPLAY_WIDTH;
           right = DISPLAY_WIDTH;
@@ -330,11 +361,12 @@ void ScreenTransition_UpdateScanlineTable(void) {
     else
       value &= TRANSITION_OPEN - 1;
     value *= 5;
-    radiusSquaredFixed = (value * value) << 16;
+    radiusSquaredFixed = INTtoFIXED(value * value);
     for (i = 0; i < DISPLAY_HEIGHT; i++) {
       value = i - centerY;
-      horizontalExtent =
-          Iwram_Sqrt(radiusSquaredFixed - ((value * value * 3) << 15)) >> 8;
+      horizontalExtent = Iwram_Sqrt(radiusSquaredFixed -
+                                    value * value * 3 * (FIXED_ONE / 2)) >>
+                         8;
       left = centerX - horizontalExtent;
       right = centerX + horizontalExtent;
       if (left < 0)
@@ -360,6 +392,8 @@ void ScreenTransition_UpdateScanlineTable(void) {
     cameraY = view[1] & FIELD_PIXEL_MASK;
     actor = Actor_Lookup(Party_GetLeaderActor());
     centerX = (actor->x.fixed - ax) / FIXED_ONE;
+    // Centred 8 pixels above the leader's feet, not 16 as in
+    // WINDOW_TRANSITION_LEADER.
     centerY = ((actor->z.fixed - actor->y.fixed) - cameraY) / FIXED_ONE - 8;
     *scanlineData++ = state->mask;
     *scanlineData++ = state->active;
@@ -368,12 +402,14 @@ void ScreenTransition_UpdateScanlineTable(void) {
       value = TRANSITION_OPEN - (value & (TRANSITION_OPEN - 1));
     else
       value &= TRANSITION_OPEN - 1;
+    // sqrt(r * r - 0.75 * dy * dy): 1.15 times as tall as it is wide.
     value *= 5;
-    radiusSquaredFixed = (value * value) << 16;
+    radiusSquaredFixed = INTtoFIXED(value * value);
     for (i = 0; i < DISPLAY_HEIGHT; i++) {
       value = i - centerY;
-      horizontalExtent =
-          Iwram_Sqrt(radiusSquaredFixed - ((value * value * 3) << 14)) >> 8;
+      horizontalExtent = Iwram_Sqrt(radiusSquaredFixed -
+                                    value * value * 3 * (FIXED_ONE / 4)) >>
+                         8;
       left = centerX - horizontalExtent;
       right = centerX + horizontalExtent;
       if (left < 0)
@@ -391,6 +427,7 @@ void ScreenTransition_UpdateScanlineTable(void) {
   }
   }
 
+  // Shows the next page only once every line of it is ready.
   state->page ^= 1;
 }
 
@@ -475,7 +512,7 @@ void ScreenTransition_Start(s32 mode, s32 frames) {
         ScreenTransition_AllocateAndClearState();
     state->mode = variant;
     state->value = TRANSITION_OPEN;
-    ScreenTransition_FillTilemapAndSolidTile(15);
+    ScreenTransition_FillTilemapAndSolidTile(DISSOLVE_COVER_COLOR);
     wait(1);
     Task_Add(ScreenTransition_UpdateDissolve, TASK_PASS_FRAME);
     IO_WRITE_QUEUE_PUSH((u32)&REG_DISPCNT, REG_DISPCNT | display->dispcnt,
@@ -650,12 +687,11 @@ void ScreenTransition_Update(void) {
     }
   }
 
-  // At 80 or more the lines are put below the screen's 160, so no switch
-  // happens.
+  // Once the lines meet at the centre they are put below the screen.
   edgeDistance = state->value;
   if (edgeDistance >= DISPLAY_HEIGHT / 2) {
-    window->windowTop = 200;
-    window->windowBottom = 250;
+    window->windowTop = CENTRE_LINE_HIDDEN_FIRST;
+    window->windowBottom = CENTRE_LINE_HIDDEN_SECOND;
   } else {
     window->windowTop = edgeDistance;
     window->windowBottom = DISPLAY_HEIGHT - 1 - edgeDistance;
@@ -692,8 +728,8 @@ void ScreenTransition_UpdateFromCentre(void) {
 
   edgeDistance = state->value;
   if (edgeDistance >= DISPLAY_HEIGHT / 2) {
-    window->windowTop = 200;
-    window->windowBottom = 250;
+    window->windowTop = CENTRE_LINE_HIDDEN_FIRST;
+    window->windowBottom = CENTRE_LINE_HIDDEN_SECOND;
   } else if (edgeDistance != 0 && (gFrameCount & 1)) {
     window->windowTop = edgeDistance + DISPLAY_HEIGHT / 2;
     window->windowBottom = DISPLAY_HEIGHT / 2 - edgeDistance;
@@ -751,7 +787,7 @@ again:
     }
     break;
   case DISPLAY_TRANSITION_IRQ_WAIT_SCREEN:
-    if (scanline <= 158) {
+    if (scanline <= DISPLAY_HEIGHT - 2) {
       state->irqPhase = DISPLAY_TRANSITION_IRQ_WAIT_EITHER;
       goto again;
     }
@@ -761,10 +797,10 @@ again:
 
 /// Each frame of the dissolve: moves the value toward its end and sets two more
 /// of the solid tile's 64 pixels, in the order of
-/// gScreenTransition_DitherTable: to colour 0 while the screen opens (values 1
-/// to 32 clear the cover ScreenTransition_Start filled with colour 15), and to
-/// colour 15 while it closes (values 33 to 64 fill the clear tile
-/// ScreenTransition_Finish starts from).
+/// gScreenTransition_DitherTable: to colour 0 while the screen opens (values up
+/// to TRANSITION_OPEN clear the cover ScreenTransition_Start filled with
+/// DISSOLVE_COVER_COLOR), and to DISSOLVE_COVER_COLOR while it closes (values
+/// after it fill the clear tile ScreenTransition_Finish starts from).
 void ScreenTransition_UpdateDissolve(void) {
   struct ScreenTransitionDissolveState *state =
       (struct ScreenTransitionDissolveState *)Ram_HeapSlots->screenTransition;
@@ -796,10 +832,10 @@ void ScreenTransition_UpdateDissolve(void) {
   state->ditherToggle ^= 1;
   colorIndex = 0;
   if (ditherIndex & TRANSITION_OPEN)
-    colorIndex = 15;
+    colorIndex = DISSOLVE_COVER_COLOR;
   ditherIndex = (ditherIndex & (TRANSITION_OPEN - 1)) * 2;
   for (i = 0; i <= 1; i++) {
-    u8 pixelIndex = gScreenTransition_DitherTable[ditherIndex & 63];
+    u8 pixelIndex = gScreenTransition_DitherTable[ditherIndex & (8 * 8 - 1)];
     u8 *tileByte = &state->paletteNibbles[pixelIndex >> 1];
 
     if (pixelIndex & 1)
@@ -817,7 +853,9 @@ void ScreenTransition_UpdateDissolve(void) {
 /// color is -1, makes tile 0 solid color.
 void ScreenTransition_FillTilemapAndSolidTile(s32 color) {
   struct ScreenTransitionState *work = Ram_HeapSlots->screenTransition;
-  Dma_Fill32(0xf000f000, BG_SCREEN_BLOCK(4), 1280);
+  Dma_Fill32(WINDOW_TILE_PAIR(BG_TILE_PALETTE(WINDOW_PALETTE)),
+             BG_SCREEN_BLOCK(4),
+             DISPLAY_TILE_HEIGHT * BG_SCREEN_WIDTH * sizeof(u16));
   if (color != -1) {
     u32 pattern = 0;
     s32 remainingWords;
@@ -848,3 +886,9 @@ void ScreenTransition_InitializeState(s32 value) {
 #undef TRANSITION_OPEN
 #undef TRANSITION_CLOSED
 #undef TRANSITION_SHOW_ALL
+#undef TRANSITION_NOISE_EDGE_MAX
+#undef TRANSITION_RIPPLE_LINES_MAX
+#undef TRANSITION_EDGE_OFFSETS
+#undef CENTRE_LINE_HIDDEN_FIRST
+#undef CENTRE_LINE_HIDDEN_SECOND
+#undef DISSOLVE_COVER_COLOR

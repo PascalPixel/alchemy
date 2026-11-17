@@ -63,17 +63,17 @@ gScene_CueRuleTable:
 	area_music AREA_KIBOMBO_CEREMONY, -1, FLAG_GABOMBA_MUSIC_SILENCED, MUS_SILENCE
 	area_music AREA_KIBOMBO_CEREMONY, -1, FLAG_GABOMBA_CEREMONY_UNDER_WAY, MUS_KIBOMBO
 	area_music AREA_KIBOMBO_CEREMONY, -1, -1, MUS_KIBOMBO
-	scene_music KibomboStatueFace, -1, -1, MUS_GABOMBA_STATUE
+	scene_music GabombaStatueFace, -1, -1, MUS_GABOMBA_STATUE
 	area_music AREA_GABOMBA_STATUE, -1, FLAG_GABOMBA_MUSIC_SILENCED, MUS_SILENCE
 	area_music AREA_GABOMBA_STATUE, -1, -1, MUS_GABOMBA_STATUE
 	area_music AREA_GABOMBA_CATACOMBS, -1, -1, MUS_GABOMBA_CATACOMBS
 	scene_music LemurianShipMainDeck, -1, -1, MUS_LEMURIAN_SHIP
 	scene_music LemurianShipTiller, -1, -1, MUS_LEMURIAN_SHIP
 	area_music AREA_LEMURIAN_SHIP, -1, -1, MUS_LEMURIAN_SHIP
-	scene_music IsletsTurtle, -1, -1, MUS_CHAMPA
-	scene_music IsletsPier, -1, -1, MUS_KALT_ISLAND
-	scene_music IsletsCow, -1, -1, MUS_MADRA
-	scene_music IsletsPrettyStone, -1, -1, MUS_SUHALLA
+	scene_music SeaOfTimeIslet, -1, -1, MUS_CHAMPA
+	scene_music SoutheastAngaraIslet, -1, -1, MUS_KALT_ISLAND
+	scene_music NorthOseniaIslet, -1, -1, MUS_MADRA
+	scene_music EastTundariaIslet, -1, -1, MUS_SUHALLA
 	area_music AREA_WEST_INDRA_ISLET, -1, -1, MUS_DAILA
 	area_music AREA_ISLET_CAVE, -1, -1, MUS_MADRA_CATACOMBS
 	area_music AREA_YALLAM, -1, -1, MUS_YALLAM

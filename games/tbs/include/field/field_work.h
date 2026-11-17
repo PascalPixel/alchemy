@@ -46,14 +46,20 @@ enum FieldRaisedTrigger {
   FIELD_RAISED_TRIGGER_WORLD_MAP_ZOOM = -889
 };
 
+/// How long a map's screen transition takes, in frames, unless an event or
+/// scene sets another length.
+#define MAP_TRANSITION_FRAMES 16
+/// The frames Reveal lasts once cast, ten seconds (FieldWork.revealFrames).
+#define REVEAL_FRAMES 600
+
+/// A field Psynergy for FieldWork.psynergy: the unit who uses it, in bits 10
+/// to 13, and the Psynergy, in bits 0 to 9 (Field_UsePsynergy).
+#define FIELD_PSYNERGY(unit, abilityId) ((unit) << 10 | (abilityId))
+
 /// A field scene's work: FieldSequence_Run allocates it in heap slot
 /// HEAP_SLOT_FIELD, zeroes it and frees it on the way out, and the field
 /// sequence, the event commands and the scene overlays all reach it through
 /// gFieldWork.
-/// How long a map's screen transition takes, in frames, unless an event or
-/// scene sets another length.
-#define MAP_TRANSITION_FRAMES 16
-
 struct FieldWork {
   /// The actor placement tables placed so far, recorded by
   /// Event_SpawnActorPlacements.
@@ -77,7 +83,7 @@ struct FieldWork {
   u16 talk;        ///< an actor's talk trigger, as actor id | 0x1000
   s16 examineCell; ///< a cell's cell behavior, for Field_ExamineCell
   s16 encounter;   ///< the formation of a random encounter
-  s16 psynergy;    ///< a field Psynergy to use, as unit << 10 | Psynergy
+  s16 psynergy;    ///< a field Psynergy to use, as FIELD_PSYNERGY makes it
   s16 item;        ///< an item to use, packed as Field_UseItem reads it
   /// A raised trigger's number for Scene_RunRaisedTrigger, or an enum
   /// FieldRaisedTrigger.
@@ -131,7 +137,7 @@ struct FieldWork {
   /// effect counter.
   u16 busy;
   s16 revealActive;  ///< nonzero while Reveal is active
-  s16 revealFrames;  ///< the frames Reveal has left
+  s16 revealFrames;  ///< the frames Reveal has left, REVEAL_FRAMES as cast
   s16 revealCenterX; ///< where Reveal was cast, in pixels
   s16 revealCenterY;
   /// Nonzero lets the Reveal countdown advance; menus and other effects pause

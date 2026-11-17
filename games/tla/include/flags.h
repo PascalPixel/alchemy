@@ -2,13 +2,16 @@
 #define ALCHEMY_FLAGS_H
 
 /// @file
-/// Game flags, named where their meaning is shown, as The Broken Seal's
-/// flags.h names its own.
+/// Game flags, named where their meaning is shown.
 
 /// Set while the party member whose actor id is `actor` (ACTOR_FELIX to
-/// ACTOR_PIERS, 0 to 3 for Isaac's party) is in the party, as ☀️'s
-/// FLAG_IN_PARTY.
+/// ACTOR_PIERS, 0 to 3 for Isaac's party) is in the party, as The Broken
+/// Seal's FLAG_IN_PARTY.
 #define FLAG_IN_PARTY(actor) (actor)
+
+/// Set once the summon tablet of `summon` (enum SummonId) has taught it: a
+/// tablet's flag is its summon's number (gSceneItems).
+#define FLAG_SUMMON_TABLET(summon) (summon)
 
 /// The first of the 80 Djinn flags, DJINNI_FLINT's.
 #define FLAG_DJINN_FIRST 48
@@ -22,13 +25,12 @@
 /// fled Djinni battle.
 #define FLAG_DJINNI_HIDING(djinni) (FLAG_DJINN_HIDING_FIRST + (djinni))
 /// The last of the 96 flags from FLAG_DJINN_HIDING_FIRST that Scene_Arrive
-/// clears on every arrival: the 80 hiding flags and the 16 after them, the
-/// range The Broken Seal clears.
+/// clears on every arrival: the 80 hiding flags and the 16 after them.
 #define FLAG_ARRIVAL_CLEARED_LAST 0xdf
 
-/// The Broken Seal's FLAG_ISAAC_WEARS_TUNIC, which The Lost Age tests only
-/// where its twin does: World Map actor placements keep their full size while
-/// it is set (Event_SpawnObjectTable). No code of this game sets it.
+/// Unused: The Broken Seal's flag for the tunic young Isaac wears. Nothing in
+/// this game sets it; were it set, World Map actor placements would keep their
+/// full size (Event_SpawnObjectTable).
 #define FLAG_ISAAC_WEARS_TUNIC 0x21
 
 /// Set as Isaac's party joins Felix's (Party_AddIsaacsParty); a file saved
@@ -59,13 +61,20 @@
 #define FLAG_TRANSFERRED_DODONPA_LOCKED_UP 0x820
 #define FLAG_TRANSFERRED_WON_COLOSSO 0x821
 /// The opposite of The Broken Seal's FLAG_HSU_RESCUED_WITHOUT_PARTY: set when
-/// that was clear, so the party freed Hsu itself.
-#define FLAG_TRANSFERRED_HSU_RESCUED_BY_PARTY 0x822
+/// that was clear, so Isaac saved Hsu himself, whom this game's text calls
+/// Ulmuch ("He helped Ulmuch. Ulmuch was trapped, but Isaac saved him."); only
+/// then does Feizhi come to Champa looking for Isaac.
+#define FLAG_TRANSFERRED_ISAAC_SAVED_ULMUCH 0x822
 #define FLAG_TRANSFERRED_VISITED_SICK_DORA 0x824
 #define FLAG_TRANSFERRED_VAULT_WARNED_OF_ESCAPED_THIEVES 0x825
 /// How many flags gDataTransfer_Flags lists.
 #define TRANSFERRED_FLAG_COUNT 6
 
+/// The system flags: what the field, battles and menus keep about their own
+/// working, shared with the scenes that set or test them, rather than the
+/// story's progress.
+#define FLAG_SYSTEM_FIRST 0x100
+#define FLAG_SYSTEM_LAST 0x1ff ///< the last of the 256 system flags
 /// The next scene change is silent: the scene loader clears it in place of
 /// playing its sound, once.
 #define FLAG_SKIP_SCENE_CHANGE_SOUND 0x101
@@ -85,14 +94,10 @@
 #define FLAG_PSYNERGY_TINTED 0x108
 /// Set, the highest of these picks the tint a field Psynergy fades
 /// toward, gFieldEffect_TargetColors[n], in place of the frame counter's pick
-/// (FieldPsynergy_FadeToCastColor), as The Broken Seal's.
+/// (FieldPsynergy_FadeToCastColor).
 #define FLAG_PSYNERGY_TINT(n) (0x148 + (n))
-/// The next field scene starts where the party was, as after a battle: the
-/// scene's flags are not reset, the actors come back from their snapshot,
-/// and the music saved in gMainRoutineWork.returnMusic resumes if there is
-/// one. The scenes skip their arrival events while it is set.
 /// Set while the field sequence handles its requests, and cleared while the
-/// party walks (FieldSequence_Run), as ☀️'s.
+/// party walks (FieldSequence_Run).
 #define FLAG_FIELD_HANDLING_REQUESTS 0x104
 /// The next field scene starts where the party was, as after a battle: the
 /// scene's flags are not reset, the actors come back from their snapshot,
@@ -119,9 +124,9 @@
 #define FLAG_ARRIVE_FALLING 0x122
 /// The party is in a town; the scene loader sets and clears it.
 #define FLAG_IN_TOWN 0x123
-/// The file was loaded to restart at its last Sanctum, as ☀️'s.
+/// The file was loaded to restart at its last Sanctum.
 #define FLAG_SAVE_RESTARTED_AT_SANCTUM 0x13e
-/// The file was recovered at its last Sanctum, as ☀️'s.
+/// The file was recovered at its last Sanctum.
 #define FLAG_SAVE_RECOVERED_AT_SANCTUM 0x13f
 /// Play the kind's usual cast: the caster's glow, animation and sound
 /// (FieldPsynergy_StartCast). Field_UsePsynergy sets it for each use and
@@ -154,8 +159,7 @@
 /// raft.
 #define FLAG_NO_PLACE_TO_SAVE 0x17d
 /// Set when the cleared game's link lobby goes to the Battle Arena: there the
-/// Pause menu offers only Change settings, as The Broken Seal's; Scene_Arrive
-/// clears it.
+/// Pause menu offers only Change settings; Scene_Arrive clears it.
 #define FLAG_IN_BATTLE_ARENA 0x17e
 /// Set while Start is pressed in the Psynergy menu, which ends its waits.
 #define FLAG_MENU_START_PRESSED 0x150
@@ -193,13 +197,12 @@
 /// In debug mode, steps on the field are not processed.
 #define FLAG_DEBUG_STEPS_OFF 0x163
 /// Holds the field's weather still, its particles and its next burst, while a
-/// menu is open, as The Broken Seal's.
+/// menu is open.
 #define FLAG_WEATHER_HELD 0x166
 /// Set while the Lure Cap is worn: random encounters come twice as fast.
 #define FLAG_LURE_CAP 0x167
 /// Auto battle: every living unit, party and enemies, makes a plain attack
-/// each turn with no command menu, as The Broken Seal's; the debug battle menu
-/// sets it.
+/// each turn with no command menu; the debug battle menu sets it.
 #define FLAG_AUTO_BATTLE 0x16a
 #define FLAG_CHOOSING_COMMANDS 0x16b ///< set while the commands are chosen
 /// The next battle is a link battle.
@@ -227,7 +230,7 @@
 /// no spoils.
 #define FLAG_MONSTER_BATTLE 0x173
 /// Lets the monster battles choose enemies above level 3 the party has never
-/// defeated, as The Broken Seal's.
+/// defeated.
 #define FLAG_MONSTER_BATTLE_ANY_ENEMY 0x174
 /// A linked battle has been arranged in the Battle Arena, with
 /// FLAG_LINK_BATTLE: only the first three party members take part.
@@ -245,7 +248,7 @@
 /// so the scenes name them.
 #define FLAG_AREA_TEMP_FIRST 0x300
 #define FLAG_AREA_TEMP_LAST 0x3ff ///< the last of the area's 256 flags
-// Byte flags, read and written eight at a time, as The Broken Seal names them.
+// Byte flags, read and written eight at a time.
 /// The party members the linked opponent sent (the link lobby).
 #define FLAG_LINK_PARTY_COUNT 0x3f0
 /// Monster Battles won in a row, added to the monsters' level; -1 after the
@@ -264,16 +267,29 @@
 /// permission to these four travelers!"); the drawbridge guards let the party
 /// by once it is set.
 #define FLAG_OSENIA_PASSAGE_GRANTED 0x913
+/// Set as Madra's mayor gives Felix the Cyclone Chip, the reward he promised
+/// for the help with the boat.
+#define FLAG_MADRA_CYCLONE_CHIP_GIVEN 0x918
 /// Set while the Trial Road holds the party's equipment, from the race's start
-/// (InventorySnapshot_Save) to its end (InventorySnapshot_Restore), as The
-/// Broken Seal's FLAG_COLOSSO_HOLDS_EQUIPMENT; the Trial Road's music rule and
-/// its triggers test it.
+/// (InventorySnapshot_Save) to its end (InventorySnapshot_Restore), as the
+/// chests take the items the party puts in them ("place items in these
+/// chests"); the Trial Road's music rule and its triggers test it.
 #define FLAG_TRIAL_ROAD_HOLDS_EQUIPMENT 0x9ff
 /// The ten items of the Trial Road's stages (SCENE_TRIAL_ROAD_STAGES in
 /// scene_items.c), set as each is taken; InventorySnapshot_Save clears them as
 /// a race starts, so that every race finds them again.
 #define FLAG_TRIAL_ROAD_STAGE_ITEM_FIRST 0xe50
 #define FLAG_TRIAL_ROAD_STAGE_ITEM_LAST 0xe59
+/// Set once Sheba's Whirlwind has made the sand vanish from the purple rock
+/// in Shaman Village, Moapa's first test ("The sand vanished!").
+#define FLAG_SHAMAN_VILLAGE_SAND_CLEARED 0x94c
+/// Set as Moapa comes out of his cabin in Shaman Village to meet the party.
+#define FLAG_SHAMAN_VILLAGE_MOAPA_MET 0x94f
+/// Set once the party has shown Moapa the Shaman's Rod.
+#define FLAG_SHAMAN_VILLAGE_SHAMANS_ROD_SHOWN 0x9e1
+/// Set as the party comes back from beating Moapa on the Trial Road; Shaman
+/// Village's inn and sanctum serve the party from then on.
+#define FLAG_MOAPA_BEATEN 0x9fe
 
 /// Set once the old werewolf of Garoh's inn has asked the party whether they
 /// learned Reveal; he then only sighs about his wasted years.
@@ -300,11 +316,11 @@
 #define FLAG_APOJII_CAVE_FOLIAGE_BLOWN(actor)                                  \
   (FLAG_APOJII_CAVE_FOLIAGE_FIRST - ACTOR_FIRST_PLACED + (actor))
 
-/// Set as Briggs is caught on the boat he bought at Alhafra; the town then
-/// thanks the party and talks of pirates.
 /// Set as the mayor of Madra arrives on the ship at Alhafra's eastern
 /// harbour, or once the party has fought Briggs there.
 #define FLAG_MAYOR_ARRIVED_AT_THE_SHIP 0x8aa
+/// Set as Briggs is caught on the boat he bought at Alhafra; the town then
+/// thanks the party and talks of pirates.
 #define FLAG_BRIGGS_CAUGHT 0x8ab
 /// Set as Chaucha and Eoleo leave the jail after visiting Briggs.
 #define FLAG_FAMILY_VISITED_BRIGGS 0x8bd
@@ -369,10 +385,10 @@
 #define FLAG_GONDOWAN_CLIFFS_FOLIAGE_BLOWN 0x885
 /// Set as Scoop digs up the geyser in the yellow sand.
 #define FLAG_GONDOWAN_CLIFFS_GEYSER_DUG 0x886
-/// Set as Grind breaks up the rock that blocks the way south.
 /// Set once the leader takes the Lemurian Ship's tiller: the ship can sail, the
 /// world map marks its mooring and the party comes back to it there.
 #define FLAG_SHIP_SAILABLE 0x8de
+/// Set as Grind breaks up the rock that blocks the way south.
 #define FLAG_GONDOWAN_CLIFFS_ROCK_GROUND 0x8e6
 
 /// Set once the pillar inside Jupiter Lighthouse's main gates stands on the
@@ -458,6 +474,17 @@
 /// lighthouse turns to fire and its ice is gone, and battles there take the
 /// dragon hall's backdrop A in place of B.
 #define FLAG_MARS_LIGHTHOUSE_THAWED 0xa30
+/// Set as the party, back in Prox, overhears the two warriors who could not
+/// find Felix's parents to set them free, as Puelle ordered.
+#define FLAG_HEARD_OF_PARENTS 0x9c0
+/// Set once Puelle has told the clan he is going to the lighthouse and they
+/// have begged him to let them go in his stead.
+#define FLAG_CLAN_SPOKE_OF_LIGHTHOUSE 0x9c1
+/// Set once the party has met Puelle, the chieftain of Prox.
+#define FLAG_MET_PUELLE 0x9c2
+/// Set after the ending, once the clan in Prox's houses has thanked the party
+/// for lighting the fires of the lighthouse beacon.
+#define FLAG_THANKED_FOR_BEACON 0x9c5
 /// Set at the end of the reunion in Contigo, where the two parties hear what
 /// happened on Mt. Aleph; the shipwrights at Atteka Inlet then wait with the
 /// wings.
@@ -485,15 +512,35 @@
 #define FLAG_SEA_GODS_TEAR_TAKEN 0xa20
 /// Set once the party has taken what Cyclone uncovers in Izumo's bushes: an
 /// Antidote at each of the first two spots, a Lucky Medal at the third.
-#define FLAG_IZUMO_FIRST_ANTIDOTE_TAKEN 0xf9f
-#define FLAG_IZUMO_SECOND_ANTIDOTE_TAKEN 0xfa0
-#define FLAG_IZUMO_LUCKY_MEDAL_TAKEN 0xfa1
+#define FLAG_IZUMO_FIRST_ANTIDOTE 0xf9f
+#define FLAG_IZUMO_SECOND_ANTIDOTE 0xfa0
+#define FLAG_IZUMO_LUCKY_MEDAL 0xfa1
 /// Set once the party has taken the Mint Cyclone uncovers in the grass before
 /// Jupiter Lighthouse.
-#define FLAG_JUPITER_LIGHTHOUSE_MINT_TAKEN 0xfe2
+#define FLAG_JUPITER_LIGHTHOUSE_MINT 0xfe2
 /// Set once the party has taken the Burst Brooch in Tundaria Tower; after
 /// that, searching the crystal round the Center Prong opens the field menu.
-#define FLAG_BURST_BROOCH_TAKEN 0x949
+#define FLAG_TUNDARIA_TOWER_BURST_BROOCH 0x949
+/// Set once the party has taken the Center Prong from Tundaria Tower.
+#define FLAG_CENTER_PRONG_TAKEN 0x945
+/// Set once the party has found the Cloud Brand in Gaia Rock.
+#define FLAG_CLOUD_BRAND_FOUND 0xe41
+/// Set once the party has taken the Dancing Idol from Gaia Rock's altar.
+#define FLAG_DANCING_IDOL_TAKEN 0xf74
+/// Set once the party has taken the Mint Cyclone uncovers in the bushes by the
+/// Gabomba Catacombs' statue.
+#define FLAG_GABOMBA_CATACOMBS_MINT_TAKEN 0xf53
+/// Set once the party has taken the Tomegathericon from the seated idol of the
+/// Gabomba Catacombs.
+#define FLAG_TOMEGATHERICON_TAKEN 0xf93
+/// Set once the party has taken the Bramble Seed in Contigo's bushes.
+#define FLAG_CONTIGO_BRAMBLE_SEED_TAKEN 0xfc7
+/// Set once the party has caught Kalt Island's Apple.
+#define FLAG_KALT_ISLAND_APPLE_TAKEN 0xf5d
+/// Set once the party has dug up the Hard Nut at Lemuria's fifth soft spot.
+#define FLAG_LEMURIA_HARD_NUT_DUG 0xfbb
+/// Set once the party has dug up the Golem Core under Loho's rock.
+#define FLAG_LOHO_GOLEM_CORE_DUG 0xff7
 
 // Scene flags, FLAG_SCENE_TEMP_00 to FLAG_SCENE_TEMP_FF: a scene says beside
 // its uses what each one holds there.
@@ -1085,14 +1132,14 @@
 #define FLAG_YAMPI_DESERT_ENTERED_BY_GUARDIAN_RING_CHEST 0xa29
 #define FLAG_YAMPI_DESERT_ENTERED_BY_TRAINERS_WHIP_CHEST 0xa2a
 #define FLAG_YAMPI_DESERT_ENTERED_BY_MEDAL_SPOT 0xa2b
-/// Yallam's hidden Nut, uncovered with Cyclone, as The Broken Seal names its
-/// treasure flags.
+/// Yallam's hidden Nut, uncovered with Cyclone.
 #define FLAG_YALLAM_NUT 0xf60
 /// Yallam's hidden Antidote, uncovered with Cyclone.
 #define FLAG_YALLAM_ANTIDOTE 0xf62
-/// Set in Madra as Karst comes in (Madra_MeetKarst) once flag 0x825 or 0x826
-/// is; the bandit and his two thieves then wait on the World Map, and their
-/// battle clears it.
+/// Set in Madra as Karst comes in (Madra_MeetKarst) once
+/// FLAG_TRANSFERRED_VAULT_WARNED_OF_ESCAPED_THIEVES (or the flag after it,
+/// which nothing sets) is; the bandit and his two thieves from Vault then wait
+/// on the World Map, and their battle clears it.
 #define FLAG_BANDIT_ON_WORLD_MAP 0xa76
 /// Set while the Golden Boots are shown on the World Map
 /// (WorldMap_ShowGoldenBoots), cleared as they are picked up.

@@ -38,9 +38,11 @@ enum MercurySheetPicture {
 #define MERCURY_FLAMES 5 ///< flames thrown
 #define MERCURY_MOTE_SLOTS 256
 // In each summon what bursts throws its motes into its own slots of PARTICLES;
-// a mote falls, slows and shrinks as its life runs out.
+// a mote falls, slows and shrinks a size for each
+// DJINN_ATTACKS_MOTE_SHRINK_FRAMES of its life it loses.
 #define DJINN_ATTACKS_MOTES_PER_FLAME 32 ///< slots for each flame's motes
 #define DJINN_ATTACKS_MOTE_SLOTS 512
+#define DJINN_ATTACKS_MOTE_SHRINK_FRAMES 16
 
 /// The Mercury Djinni rises from below on the caster's side and whirls there,
 /// washed white, firing five blue flames to the left; trailing like comets,
@@ -116,8 +118,13 @@ void BattleEffect_RunMercury(struct BattleEffectParams *args) {
     }
 
     if (frame <= 95) {
-      s32 x = ((Trig_Sin(frame << 11) * (64 - frame * 2)) >> 17) + 96;
-      s32 y = FIXEDtoINT(Trig_Cos(frame << 11) * (64 - frame * 2)) + 60;
+      s32 x =
+          (FIXEDtoINT(Trig_Sin(frame * (TRIG_TURN / 32)) * (64 - frame * 2)) >>
+           1) +
+          96;
+      s32 y =
+          FIXEDtoINT(Trig_Cos(frame * (TRIG_TURN / 32)) * (64 - frame * 2)) +
+          60;
 
       blit[1](canvas, work->sheet, x - SMALL_DJINNI_WIDTH / 2,
               y - MERCURY_SMALL_DJINNI_HEIGHT / 2, SMALL_DJINNI_WIDTH,
@@ -147,7 +154,7 @@ void BattleEffect_RunMercury(struct BattleEffectParams *args) {
     for (i = 0; i != MERCURY_MOTE_SLOTS; i++) {
       mote = &PARTICLES[i];
       if (mote->variant != -1) {
-        s32 size = mote->variant / 16 + 2;
+        s32 size = mote->variant / DJINN_ATTACKS_MOTE_SHRINK_FRAMES + 2;
 
         EFFECT_DRAW_MOTE(blit[1], canvas, sheet, FIXEDtoINT(mote->x),
                          FIXEDtoINT(mote->y), size);
@@ -163,7 +170,10 @@ void BattleEffect_RunMercury(struct BattleEffectParams *args) {
 
 #define JUPITER_FRAMES 96
 #define JUPITER_FLAMEBALLS 8 ///< flameballs that fall
-#define JUPITER_BURST_Y 95   ///< a flameball bursts once below this line
+/// The flameballs given a place to start from, of which only
+/// JUPITER_FLAMEBALLS fall.
+#define JUPITER_FLAMEBALL_SLOTS 32
+#define JUPITER_BURST_Y 95 ///< a flameball bursts once below this line
 #define JUPITER_FLAMEBALL PICTURE_BYTES(SMALL_DJINNI) ///< after the Djinni
 
 /// The Jupiter Djinni whirls by the caster, trailing pink, while eight pink
@@ -196,7 +206,7 @@ void BattleEffect_RunJupiter(struct BattleEffectParams *args) {
                              work->sheet + JUPITER_FLAMEBALL, 1, 0);
   EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_THREE_QUARTERS);
 
-  for (i = 0; i != 32; i++) {
+  for (i = 0; i != JUPITER_FLAMEBALL_SLOTS; i++) {
     ball = &work->particles[i];
     ball->x = (Random16() & 63) + 64;
     ball->y = (Random16() & 63) - 80;
@@ -212,7 +222,7 @@ void BattleEffect_RunJupiter(struct BattleEffectParams *args) {
         EFFECT_SHOW_DAMAGE(SE_IMPACT);
 
       if (frame <= 95) {
-        s32 x = (Trig_Sin(angle) * (64 - frame * 2)) >> 17;
+        s32 x = FIXEDtoINT(Trig_Sin(angle) * (64 - frame * 2)) >> 1;
         s32 y = FIXEDtoINT(Trig_Cos(angle) * (64 - frame * 2));
 
         blit[0](canvas, work->sheet, x + 86, y + 28, SMALL_DJINNI_WIDTH,
@@ -254,7 +264,7 @@ void BattleEffect_RunJupiter(struct BattleEffectParams *args) {
       for (i = 0; i != DJINN_ATTACKS_MOTE_SLOTS; i++) {
         mote = &PARTICLES[i];
         if (mote->variant != -1) {
-          s32 size = mote->variant / 16 + 1;
+          s32 size = mote->variant / DJINN_ATTACKS_MOTE_SHRINK_FRAMES + 1;
 
           EFFECT_DRAW_MOTE(blit[1], canvas, sheet, FIXEDtoINT(mote->x),
                            FIXEDtoINT(mote->y), size);
@@ -285,10 +295,15 @@ void Resource_LoadAndDecompress(s32 id, void *dst, s32 skipPalette,
 
 #define VENUS_FRAMES 96
 #define VENUS_COLUMNS 10 ///< columns of flame that rise
+/// The columns given a place to rise from, of which only VENUS_COLUMNS rise.
+#define VENUS_COLUMN_SLOTS 32
+#define VENUS_MOTES_PER_COLUMN 16
+/// How far the Djinni sways to either side as it drops.
+#define VENUS_DJINNI_SWAY 24
 
 /// Venus's sheet: its Djinni, then the blue flame sheet.
 enum VenusSheetPicture {
-  VENUS_BLUE_FLAME_SHEET = 20 * 38,
+  VENUS_BLUE_FLAME_SHEET = SMALL_DJINNI_WIDTH * VENUS_SMALL_DJINNI_HEIGHT,
   /// 34x65, the flame, drawn upside down as a rising column.
   VENUS_COLUMN = VENUS_BLUE_FLAME_SHEET + BLUE_FLAME_SHEET_FLAME
 };
@@ -328,7 +343,7 @@ void BattleEffect_RunVenus(struct BattleEffectParams *args) {
   Resource_LoadAndDecompress(RESOURCE_BLUE_FLAME_SHEET,
                              work->sheet + VENUS_BLUE_FLAME_SHEET, 1, 0);
   EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_THREE_QUARTERS);
-  for (i = 0; i != 32; i++) {
+  for (i = 0; i != VENUS_COLUMN_SLOTS; i++) {
     column = &work->particles[i];
     column->x = Random16() & 63;
     column->y = 104;
@@ -340,7 +355,7 @@ void BattleEffect_RunVenus(struct BattleEffectParams *args) {
   do {
     // The Djinni sways from side to side as it drops.
     if (frame <= 79) {
-      s32 x = FIXEDtoINT(Trig_Sin(angle) * 24);
+      s32 x = FIXEDtoINT(Trig_Sin(angle) * VENUS_DJINNI_SWAY);
       s32 y = FIXEDtoINT(Trig_Cos(angle) * (64 - frame * 2));
 
       draw[1](canvas, work->sheet, x + 22, y + 29, SMALL_DJINNI_WIDTH,
@@ -357,7 +372,7 @@ void BattleEffect_RunVenus(struct BattleEffectParams *args) {
                 column->y - BLUE_FLAME_SPLASH_HEIGHT / 2,
                 BLUE_FLAME_SPLASH_WIDTH, BLUE_FLAME_SPLASH_HEIGHT);
         if (frame == i * 4 + 16) {
-          for (j = 0; j != 16; j++) {
+          for (j = 0; j != VENUS_MOTES_PER_COLUMN; j++) {
             s32 direction;
             s32 speed;
 
@@ -383,7 +398,7 @@ void BattleEffect_RunVenus(struct BattleEffectParams *args) {
     for (i = 0; i != DJINN_ATTACKS_MOTE_SLOTS; i++) {
       mote = &PARTICLES[i];
       if (mote->variant != -1) {
-        s32 size = mote->variant / 16 + 2;
+        s32 size = mote->variant / DJINN_ATTACKS_MOTE_SHRINK_FRAMES + 2;
 
         EFFECT_DRAW_MOTE(draw[1], canvas, sheet, FIXEDtoINT(mote->x),
                          FIXEDtoINT(mote->y), size);
@@ -402,6 +417,13 @@ void BattleEffect_RunVenus(struct BattleEffectParams *args) {
 #define MARS_FRAMES 112
 #define MARS_FLAMES 9 ///< flames along the arc
 #define MARS_EMBERS_PER_FLAME 16
+/// The row of flames: from the canvas's x MARS_ROW_X out to MARS_ROW_REACH to
+/// either side, along line MARS_ROW_Y bowed four pixels.
+#define MARS_ROW_X 32
+#define MARS_ROW_Y 52
+#define MARS_ROW_REACH 24
+/// The frames a flame burns: eight to each of its six pictures.
+#define MARS_FLAME_LIFE 48
 #define MARS_GLOW_ORB                                                          \
   PICTURE_BYTES(SMALL_DJINNI) ///< six pictures, after the Djinni
 
@@ -438,14 +460,14 @@ void BattleEffect_RunMars(struct BattleEffectParams *args) {
   index = 0;
   step = work->particles;
   do {
-    s32 angle = index << 11;
+    s32 angle = index * (TRIG_TURN / 32);
 
-    step->x = FIXEDtoINT(Trig_Sin(angle) * 24);
-    step->y = FIXEDtoINT(Trig_Cos(angle) * 4) + 52;
+    step->x = FIXEDtoINT(Trig_Sin(angle) * MARS_ROW_REACH);
+    step->y = FIXEDtoINT(Trig_Cos(angle) * 4) + MARS_ROW_Y;
     if (index & 1)
-      step->x = 32 - step->x;
+      step->x = MARS_ROW_X - step->x;
     else
-      step->x += 32;
+      step->x += MARS_ROW_X;
     step->variant = -(index * 2);
     for (i = 0; i != MARS_EMBERS_PER_FLAME; i++) {
       mote = &PARTICLES[index * MARS_EMBERS_PER_FLAME + i];
@@ -494,7 +516,7 @@ void BattleEffect_RunMars(struct BattleEffectParams *args) {
     if (frame > 31) {
       for (index = 0; index != MARS_FLAMES; index++) {
         step = &work->particles[index];
-        if (step->variant >= 0 && step->variant <= 47) {
+        if (step->variant >= 0 && step->variant < MARS_FLAME_LIFE) {
           s32 picture = step->variant / 8;
           u32 width;
 
@@ -552,6 +574,15 @@ void BattleEffect_RunMars(struct BattleEffectParams *args) {
 #undef MERCURY_FLAMES
 #undef DJINN_ATTACKS_MOTES_PER_FLAME
 #undef DJINN_ATTACKS_MOTE_SLOTS
+#undef DJINN_ATTACKS_MOTE_SHRINK_FRAMES
+#undef JUPITER_FLAMEBALL_SLOTS
+#undef VENUS_COLUMN_SLOTS
+#undef VENUS_MOTES_PER_COLUMN
+#undef VENUS_DJINNI_SWAY
+#undef MARS_ROW_X
+#undef MARS_ROW_Y
+#undef MARS_ROW_REACH
+#undef MARS_FLAME_LIFE
 #undef JUPITER_FRAMES
 #undef JUPITER_FLAMEBALLS
 #undef JUPITER_BURST_Y

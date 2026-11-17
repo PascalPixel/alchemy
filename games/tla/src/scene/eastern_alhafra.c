@@ -1,16 +1,16 @@
 /// @file
-/// Eastern Alhafra, the dock where the mayor's ship lies with its mast fallen.
-/// On the first visit the party overhears the workers
-/// (EasternAlhafra_OverhearWorkers) and, in the cabin, Briggs, who is fought
-/// and caught. The mast is then cleared as a puzzle: blocks and crates pushed
-/// or Moved into the water (EasternAlhafra_FinishPushingBlock), the log rolled
-/// in (EasternAlhafra_RollLog), the cone Pounded to free the rope
-/// (EasternAlhafra_PoundCone), and the stone block on the mast Burst
-/// (EasternAlhafra_BurstMastBlock). The workers tell the mayor
-/// (EasternAlhafra_WorkersTellMayor), Briggs escapes and sails off in the ship
-/// (EasternAlhafra_BriggsStealsShip), and the mayor finds it gone
-/// (EasternAlhafra_MayorFindsShipGone). The water ripples by an HBlank wave on
-/// BG1 (EasternAlhafra_StartWave).
+/// Eastern Alhafra, the dock where the ship Briggs bought lies with its mast
+/// pinned under a huge rock. On the first visit the party overhears his
+/// sailors (EasternAlhafra_OverhearWorkers); Briggs himself is fought and
+/// caught aboard (eastern_alhafra_ship.c). The mast is then cleared as a
+/// puzzle: crates and rocks pushed or Moved into the water
+/// (EasternAlhafra_FinishPushing), the log rolled in (EasternAlhafra_RollLog),
+/// the stake holding the ropes Pounded (EasternAlhafra_PoundStake), and the
+/// stone block on the mast Burst (EasternAlhafra_BurstMastBlock). The workers
+/// tell the mayor (EasternAlhafra_WorkersTellMayor), Briggs escapes and sails
+/// off in the ship (EasternAlhafra_BriggsStealsShip), and the mayor finds it
+/// gone (EasternAlhafra_MayorFindsShipGone). The water ripples by an HBlank
+/// wave on BG1 (EasternAlhafra_StartWave).
 #include "battle/battle.h"
 #include "field/field.h"
 #include "game/game.h"
@@ -46,22 +46,20 @@
 #include "field/actor_script.h"
 #include "fixed_math.h"
 #include "scene/falling_rocks.h"
+#include "shared/tables.h"
 #include "graphics/palette_buffers.h"
 #include "macros.h"
+
+/// A facing rounded to the nearest of the four directions, as The Broken
+/// Seal's scene_tables.h has it.
+#define FACING_NEAREST_CARDINAL(facing) (((facing) + DEGtoANG(45)) & 0xc000)
 
 /// Story flags of the mast puzzle and its events.
 #define FLAG_FIRST_CRATE_SUNK 0x8a0  ///< ACTOR_FIRST_CRATE
 #define FLAG_SECOND_CRATE_SUNK 0x8a1 ///< ACTOR_SECOND_CRATE
-#define FLAG_CONE_POUNDED 0x8a2
+#define FLAG_STAKE_POUNDED 0x8a2
 #define FLAG_ROPE_LASHED 0x8a3
-#define FLAG_LAST_ROCK_SUNK 0x8a4 ///< ACTOR_LAST_ROCK
-
-/// Where the party is brought back to the docks once Briggs has taken the
-/// ship (EasternAlhafra_BriggsStealsShip), the workers knocked down.
-enum { ENTRANCE_AFTER_SHIP_STOLEN = 99 };
-/// Alhafra Manor's entrance where the party arrives as Briggs escapes, as
-/// alhafra_manor.c names it.
-enum { ENTRANCE_MANOR_BRIGGS_ESCAPES = 81 };
+#define FLAG_LAST_ROCK_SUNK 0x8a4  ///< ACTOR_LAST_ROCK
 #define FLAG_FIRST_ROCK_SUNK 0x8a5 ///< ACTOR_FIRST_ROCK
 #define FLAG_LOG_ROLLED 0x8a6
 #define FLAG_TALKED_TO_SAILOR 0x8a8
@@ -71,42 +69,53 @@ enum { ENTRANCE_MANOR_BRIGGS_ESCAPES = 81 };
 #define FLAG_REACHED_ROCK 0x8be
 #define FLAG_GAVE_UP_ON_ROCK 0x8bf
 #define FLAG_WORKERS_SAW_BLOCK_GONE 0x904
-#define FLAG_WORKERS_TOLD_MAYOR 0x905
+
+/// Where the party is brought back to the docks once Briggs has taken the
+/// ship (EasternAlhafra_BriggsStealsShip), the workers knocked down.
+enum { ENTRANCE_AFTER_SHIP_STOLEN = 99 };
+/// Alhafra Manor's entrance where the party arrives as Briggs escapes, as
+/// alhafra_manor.c names it.
+enum { ENTRANCE_MANOR_BRIGGS_ESCAPES = 81 };
 
 /// The dock's things and people before Briggs is caught, numbering the rows of
 /// gEasternAlhafra_Placements whose sprites are not the party's; the things
 /// keep their rows in gEasternAlhafra_PlacementsAfterBriggsCaught.
 enum EasternAlhafraActorId {
-  /// The posts the rope Lash ties is strung between (Rope_Place).
+  /// The posts Lash ties a rope between (Rope_Place).
   ///@{
   ACTOR_ROPE_POST = ACTOR_FIRST_PLACED,
   ACTOR_SECOND_ROPE_POST,
   ///@}
-  /// The two crates on the mast, pushed or Moved into the water.
+  /// The two crates pushed or Moved into the water, where they sink.
   ///@{
   ACTOR_FIRST_CRATE,
   ACTOR_SECOND_CRATE,
   ///@}
-  /// The ends of the tightrope from the dock to the mast (Tightrope_Place).
+  /// The ends of the tightrope from the top of the sail's west pole down to
+  /// the mast (Tightrope_Place).
   ///@{
   ACTOR_TIGHTROPE_START,
   ACTOR_TIGHTROPE_END,
   ///@}
-  /// The cone Pound drives down to free the mast's ropes.
-  ACTOR_CONE,
-  /// The log rolled into the water (EasternAlhafra_RollLog).
+  /// The stake Pound drives down, freeing the two ropes it holds taut.
+  ACTOR_STAKE,
+  /// The log lying across the sail's west pole, rolled into the water
+  /// (EasternAlhafra_RollLog).
   ACTOR_LOG,
-  /// The rocks on the mast; the last is pushed by its own events.
+  /// The two rocks among the junk: the last on the sail's west pole just south
+  /// of the log, which rolls only once this rock has sunk, and the first on
+  /// the mast.
   ///@{
   ACTOR_LAST_ROCK,
   ACTOR_FIRST_ROCK,
   ///@}
-  /// The ends of the two ropes the cone holds taut until it is Pounded.
+  /// The two ropes from the mast to the stake, each from its start on the
+  /// mast to its end at the stake, until the stake is Pounded.
   ///@{
-  ACTOR_FIRST_CONE_ROPE_START,
-  ACTOR_FIRST_CONE_ROPE_END,
-  ACTOR_SECOND_CONE_ROPE_START,
-  ACTOR_SECOND_CONE_ROPE_END,
+  ACTOR_FIRST_STAKE_ROPE_START,
+  ACTOR_FIRST_STAKE_ROPE_END,
+  ACTOR_SECOND_STAKE_ROPE_START,
+  ACTOR_SECOND_STAKE_ROPE_END,
   ///@}
   /// The Champa sailors working on the mast: "It's... It's no use!"
   ACTOR_SAILOR_GIVING_UP,
@@ -126,7 +135,8 @@ enum EasternAlhafraAfterBriggsActorId {
   ACTOR_BRIGGS = ACTOR_SAILOR_GIVING_UP,
   ACTOR_CHAUCHA,
   ACTOR_EOLEO,
-  /// Alhafra's mayor, whose ship this is.
+  /// The Alhafran Mayor: "My prize ship, stolen by a bunch of filthy pirate
+  /// scum!"
   ACTOR_ALHAFRAS_MAYOR,
   /// Jiya, the mayor's aide (AlhafraManor's): "Excellent news, Mayor!"
   ACTOR_JIYA = ACTOR_KRADEN + 1,
@@ -186,8 +196,6 @@ void EasternAlhafra_AskToHelpWithMast(void);
 void EasternAlhafra_WorkersTellMayor(void);
 void EasternAlhafra_BriggsStealsShip(void);
 
-extern s16 gEasternAlhafra_CabinDoorFrames[];
-
 /// Sets up a falling rock's width by height sprite of the given shape at its
 /// first tile.
 void EasternAlhafra_InitializeRockSprite(struct EffectSprite *sprite, s32 width,
@@ -212,15 +220,16 @@ s32 Actor_GetCellIndex(struct Actor *actor);
 s32 Tightrope_Place();
 s32 Tightrope_Release();
 s32 Leader_CanPushObjectAhead();
-/// Pushes the actor ahead of the leader as far as it slides.
+/// Leader_PushObjectAhead through this overlay's own veneer: pushes the object
+/// ahead of the leader on by a cell.
 s32 EasternAlhafra_PushObjectAhead();
-u16 gEasternAlhafra_WaveLines[2][160] BSS_DATA ALIGNED(16);
+u16 gEasternAlhafra_WaveLines[2][DISPLAY_HEIGHT] BSS_DATA ALIGNED(16);
 void Actor_FallOverWithAnimationById();
 void Rope_Initialize(void);
 void Tightrope_Initialize(void);
 void MapGrid_SetAttributeBAt();
 
-extern s16 gEasternAlhafra_PoundCone[];
+extern u16 gEasternAlhafra_PoundStakes[];
 extern struct ActorPlacement gEasternAlhafra_Placements[];
 extern struct ActorPlacement gEasternAlhafra_PlacementsAfterBriggsCaught[];
 
@@ -238,10 +247,11 @@ void *Scene_GetActorPlacements(void) {
   return gEasternAlhafra_Placements;
 }
 
-/// Burst on the stone block pinning the mast: the rocks fly at its first
-/// phases, and as it breaks the mast is cleared.
-void EasternAlhafra_BurstMastBlock(s32 mode, s32 id) {
-  if (id == 0)
+/// Burst on the stone block pinning the mast: each small blast (mode 2)
+/// throws two rocks from it and the great one (mode 3) thirty, and as the
+/// blasts die down (mode 1) the mast is cleared.
+void EasternAlhafra_BurstMastBlock(s32 mode, s32 frame) {
+  if (frame == 0)
     EasternAlhafra_StartFallingRocks();
   if (mode == 1) {
     Event_SetFlag(FLAG_ALHAFRA_MAST_CLEARED);
@@ -251,52 +261,55 @@ void EasternAlhafra_BurstMastBlock(s32 mode, s32 id) {
     Rock_Spawn(toFIXED(498), toFIXED(16), toFIXED(412), 2);
   if (mode == 3)
     Rock_Spawn(toFIXED(498), toFIXED(16), toFIXED(412), 30);
-  if (id == 999)
+  if (frame == PSYNERGY_EVENT_LAST_FRAME)
     EasternAlhafra_EndFallingRocks();
 }
 
-/// Pound on the cone: it sinks, and the two ropes it held taut fall slack
-/// toward the mast.
-void EasternAlhafra_PoundCone(s32 mode, s32 arg) {
-  struct Actor *a;
-  struct Actor *b;
-  s32 i;
+/// Pound on the stake: it sinks, and the two ropes it held taut fall slack
+/// toward the mast, redrawn each frame for up to a second until both their
+/// ends have arrived.
+void EasternAlhafra_PoundStake(s32 mode, s32 frame) {
+  struct Actor *firstEnd;
+  struct Actor *secondEnd;
+  s32 frames;
 
-  Pound_SinkTarget(gEasternAlhafra_PoundCone, mode, arg);
+  Pound_SinkTarget(gEasternAlhafra_PoundStakes, mode, frame);
   if (mode == 1) {
-    a = Actor_Get(ACTOR_FIRST_CONE_ROPE_END);
-    b = Actor_Get(ACTOR_SECOND_CONE_ROPE_END);
-    a->speedLimit = toFIXED(4);
-    a->acceleration = toFIXED(1) / 2;
-    b->acceleration = toFIXED(1) / 2;
-    b->speedLimit = toFIXED(4);
-    FieldActor_SetPositionAndResetMotion(a, toFIXED(488), a->y.fixed,
-                                         toFIXED(312));
-    FieldActor_SetMoveTarget(a, 440, 0, 312);
-    FieldActor_SetPositionAndResetMotion(b, toFIXED(488), b->y.fixed,
-                                         toFIXED(312));
-    FieldActor_SetMoveTarget(b, 440, 0, 376);
+    firstEnd = Actor_Get(ACTOR_FIRST_STAKE_ROPE_END);
+    secondEnd = Actor_Get(ACTOR_SECOND_STAKE_ROPE_END);
+    firstEnd->speedLimit = toFIXED(4);
+    firstEnd->acceleration = toFIXED(1) / 2;
+    secondEnd->acceleration = toFIXED(1) / 2;
+    secondEnd->speedLimit = toFIXED(4);
+    FieldActor_SetPositionAndResetMotion(firstEnd, toFIXED(488),
+                                         firstEnd->y.fixed, toFIXED(312));
+    FieldActor_SetMoveTarget(firstEnd, 440, 0, 312);
+    FieldActor_SetPositionAndResetMotion(secondEnd, toFIXED(488),
+                                         secondEnd->y.fixed, toFIXED(312));
+    FieldActor_SetMoveTarget(secondEnd, 440, 0, 376);
     Tightrope_Release(1);
     Tightrope_Release(2);
-    i = 0;
+    frames = 0;
     do {
-      Tightrope_Place(1, ACTOR_FIRST_CONE_ROPE_START,
-                      ACTOR_FIRST_CONE_ROPE_END);
-      Tightrope_Place(2, ACTOR_SECOND_CONE_ROPE_START,
-                      ACTOR_SECOND_CONE_ROPE_END);
+      Tightrope_Place(1, ACTOR_FIRST_STAKE_ROPE_START,
+                      ACTOR_FIRST_STAKE_ROPE_END);
+      Tightrope_Place(2, ACTOR_SECOND_STAKE_ROPE_START,
+                      ACTOR_SECOND_STAKE_ROPE_END);
       System_Wait(1);
       Tightrope_Release(1);
       Tightrope_Release(2);
-      if (Actor_HasArrived(a) != 0 && Actor_HasArrived(b) != 0)
+      if (Actor_HasArrived(firstEnd) != 0 && Actor_HasArrived(secondEnd) != 0)
         break;
-      i++;
-    } while (i < 60);
+      frames++;
+    } while (frames < 60);
   }
 }
 
-/// As crate or rock id is pushed or Moved: the first crate on the mast's edge
-/// walls the cell ahead of it, so that it is not pushed off the mast's end.
-void EasternAlhafra_StartPushingBlock(s32 unused, s32 id) {
+/// As crate or rock id is pushed or Moved: it stops following the terrain,
+/// and the first crate, at either of its first two cells with the leader in the
+/// cell west of it, walls that cell on layer 2 until
+/// EasternAlhafra_FinishPushing opens it again.
+void EasternAlhafra_StartPushing(s32 unused, s32 id) {
   struct Actor *leader;
   struct Actor *actor;
   s32 leaderX;
@@ -321,26 +334,26 @@ void EasternAlhafra_StartPushingBlock(s32 unused, s32 id) {
 
 #include "text/msg_ids.h"
 
-extern s32 gEasternAlhafra_CabinDoor[];
+extern struct MapGridCellAnimation gEasternAlhafra_ShipDoor;
 
 s32 Party_FindOwnerWithAction();
 void Event_Start();
 void Event_End();
 
-/// Once crate or rock id stops: in the water at its spot it sinks with three
-/// splashes and its flag is set.
-void EasternAlhafra_FinishPushingBlock(s32 mode, s32 id) {
+/// Once crate or rock id stops: at its own spot in the water it sinks with
+/// three splashes and its flag is set.
+void EasternAlhafra_FinishPushing(s32 mode, s32 id) {
   struct Actor *actor;
-  struct Actor *sparks[4];
-  struct Actor *spark;
+  struct Actor *splashes[4];
+  struct Actor *splash;
   s32 x;
   s32 z;
-  s32 hit;
+  s32 sinks;
   s32 i;
 
   actor = Actor_Get(id);
   x = FIELD_CELL(actor->x.fixed);
-  hit = 0;
+  sinks = 0;
   z = FIELD_CELL(actor->z.fixed);
   if (id == ACTOR_FIRST_CRATE) {
     FieldMapGrid_SetCellBehavior(toFIXED(528), toFIXED(512), 2, 0);
@@ -348,26 +361,26 @@ void EasternAlhafra_FinishPushingBlock(s32 mode, s32 id) {
   }
   if (x == 31 && z == 32) {
     Event_SetFlag(FLAG_FIRST_CRATE_SUNK);
-    hit = 1;
+    sinks = 1;
   }
   if (x == 25 && z == 33) {
     Event_SetFlag(FLAG_SECOND_CRATE_SUNK);
-    hit = 1;
+    sinks = 1;
   }
   if (x == 21 && z == 33) {
     Event_SetFlag(FLAG_LAST_ROCK_SUNK);
-    hit = 1;
+    sinks = 1;
   }
   if (x == 27 && z == 33) {
     Event_SetFlag(FLAG_FIRST_ROCK_SUNK);
-    hit = 1;
+    sinks = 1;
   }
-  if (hit) {
+  if (sinks) {
     if (id != ACTOR_FIRST_CRATE)
       Event_PlaySound(SE_FALL);
     actor->gravity = toFIXED(9) / 100;
     actor->motionFlags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
-    Actor_SetSpriteFlags(Actor_Get(id), 1);
+    Actor_SetSpriteFlags(Actor_Get(id), SPRITE_FLAG_SHADOW);
     System_Wait(5);
     for (i = 0; i < 60 && actor->y.fixed > 0; i++)
       System_Wait(1);
@@ -379,12 +392,12 @@ void EasternAlhafra_FinishPushingBlock(s32 mode, s32 id) {
     Actor_SelectAnimation(actor, 4);
     i = 0;
     do {
-      spark = (FieldActor_Create(SPRITE_SPLASH, actor->x.fixed, actor->y.fixed,
-                                 actor->z.fixed));
-      sparks[i] = spark;
-      spark->scaleX = FIXED_ONE * 13 / 20;
-      Actor_SelectAnimation(spark, 1);
-      Actor_SetSpriteFlags(spark, 0);
+      splash = (FieldActor_Create(SPRITE_SPLASH, actor->x.fixed, actor->y.fixed,
+                                  actor->z.fixed));
+      splashes[i] = splash;
+      splash->scaleX = FIXED_ONE * 13 / 20;
+      Actor_SelectAnimation(splash, 1);
+      Actor_SetSpriteFlags(splash, 0);
       Event_PlaySound(SE_CAST);
       System_Wait(5);
       i++;
@@ -393,14 +406,14 @@ void EasternAlhafra_FinishPushingBlock(s32 mode, s32 id) {
     FieldActor_Stop(gMainRoutineWork.leaderActorId);
     System_Wait(30);
     for (i = 0; i <= 2; i++)
-      Actor_Release(sparks[i]);
+      Actor_Release(splashes[i]);
   }
 }
 
 /// As the last rock is pushed: walls the cells beside its way down the mast
 /// and opens the one where it falls.
 void EasternAlhafra_StartPushingLastRock(s32 unused, s32 id) {
-  EasternAlhafra_StartPushingBlock(unused, id);
+  EasternAlhafra_StartPushing(unused, id);
   FieldMapGrid_SetCellBehavior(toFIXED(320), toFIXED(464), 2,
                                CELL_BEHAVIOR_WALL);
   FieldMapGrid_SetCellBehavior(toFIXED(320), toFIXED(480), 2,
@@ -446,7 +459,7 @@ void EasternAlhafra_FinishPushingLastRock(s32 mode, s32 id) {
                                CELL_BEHAVIOR_WALL);
   if (open)
     FieldCamera_MoveTo(336, CAMERA_KEEP, 560, 1);
-  EasternAlhafra_FinishPushingBlock(mode, id);
+  EasternAlhafra_FinishPushing(mode, id);
   if (open)
     EventCamera_FollowActor(gMainRoutineWork.leaderActorId, 1);
 }
@@ -461,13 +474,12 @@ void EasternAlhafra_RollLog(void) {
   struct Actor *lastRock;
   struct PushTarget slide;
   s32 facing;
-  s32 i;
+  s32 frames;
 
   log = Actor_GetById(ACTOR_LOG);
   lastRock = Actor_GetById(ACTOR_LAST_ROCK);
-  facing =
-      (Actor_GetById(gMainRoutineWork.leaderActorId)->facing + DEGtoANG(45)) &
-      0xc000;
+  facing = FACING_NEAREST_CARDINAL(
+      Actor_GetById(gMainRoutineWork.leaderActorId)->facing);
   if (lastRock != NULL && Event_GetFlag(FLAG_LAST_ROCK_SUNK) == 0)
     MapGrid_SetCellBehavior(lastRock->x.fixed, lastRock->z.fixed, 2,
                             CELL_BEHAVIOR_WALL);
@@ -491,12 +503,12 @@ void EasternAlhafra_RollLog(void) {
       FieldEvent_Wait(20);
       log->gravity = toFIXED(1) / 20;
       log->motionFlags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
-      i = 0;
+      frames = 0;
       if (log->y.fixed > 0) {
         do {
           System_Wait(1);
-          i++;
-        } while (i <= 59 && log->y.fixed > 0);
+          frames++;
+        } while (frames < 60 && log->y.fixed > 0);
       }
       EasternAlhafra_PlaceClearedDebris();
       Event_PlaySound(SE_LOG_FALL);
@@ -512,15 +524,15 @@ void EasternAlhafra_RollLog(void) {
 
 /// The leader pushes what is ahead of him: the last rock or the log.
 void EasternAlhafra_PushAhead(s32 mode) {
-  s32 tile;
+  s32 target;
 
-  tile = Field_FindNearbyTalkTarget(gMainRoutineWork.leaderActorId);
-  if (tile == ACTOR_LAST_ROCK) {
+  target = Field_FindNearbyTalkTarget(gMainRoutineWork.leaderActorId);
+  if (target == ACTOR_LAST_ROCK) {
     EasternAlhafra_StartPushingLastRock(mode, ACTOR_LAST_ROCK);
     if (Leader_CanPushObjectAhead() != 0)
       EasternAlhafra_PushObjectAhead();
     EasternAlhafra_FinishPushingLastRock(mode, ACTOR_LAST_ROCK);
-  } else if (tile == ACTOR_LOG) {
+  } else if (target == ACTOR_LOG) {
     EasternAlhafra_RollLog();
   }
 }
@@ -580,9 +592,10 @@ void EasternAlhafra_TalkToSailor(void) {
   Event_End();
 }
 
-/// Stepping onto the mast: the workers overhear the party before Briggs is
-/// caught, the party asks itself whether it is finished while it cannot Burst,
-/// and once the mast is clear the workers see the block gone.
+/// Stepping onto the mast: before Briggs is caught the party overhears his
+/// sailors; after, once the first crate has sunk while no one can Burst, Kraden
+/// asks whether the party is finished here; and once the mast is clear the
+/// workers see the block gone.
 void EasternAlhafra_StepOntoMast(void) {
   if (Event_GetFlag(FLAG_ALHAFRA_MAST_CLEARED)) {
     if (Event_GetFlag(FLAG_WORKERS_SAW_BLOCK_GONE) == 0) {
@@ -621,12 +634,14 @@ void EasternAlhafra_OpenDoorAndEnter(struct MapGridCellAnimation *step,
   Event_End();
 }
 
-/// Stepping into the cabin door: it opens and the leader walks in.
-void EasternAlhafra_EnterCabin(s32 countdown) {
-  EasternAlhafra_OpenDoorAndEnter(gEasternAlhafra_CabinDoor, countdown, 0);
+/// Stepping into the ship's door: it opens and the leader walks aboard.
+void EasternAlhafra_EnterShip(s32 countdown) {
+  EasternAlhafra_OpenDoorAndEnter(&gEasternAlhafra_ShipDoor, countdown, 0);
 }
 
-/// A step trigger that does nothing.
+/// Walking into the log's or the last rock's cells toward the northwest or the
+/// southeast, or between those and north or south: nothing happens, where a
+/// walk straight north or south pushes.
 void EasternAlhafra_IgnoreDiagonalStep(void) {}
 
 /// Stepping beside the rock on the mast.
@@ -671,8 +686,8 @@ extern u8 gEasternAlhafra_WaveTableIndex[];
 // BG1's wave: each frame the finished table of scanline offsets is handed to
 // an HBlank DMA, while the other table is filled for the next frame.
 
-/// Starts DMA 0 copying the finished table into BG1's horizontal offset at
-/// each HBlank.
+/// Starts DMA 0 copying the finished table into BG1's vertical offset at each
+/// HBlank.
 void EasternAlhafra_StartWaveDma(void) {
   u16 *line = gEasternAlhafra_WaveLines[gEasternAlhafra_WaveTableIndex[0] ^ 1];
   volatile u16 *channel;
@@ -687,40 +702,43 @@ void EasternAlhafra_StartWaveDma(void) {
           (volatile u32 *)channel);
 }
 
-/// Fills the other table: each of the 160 lines takes layer 2's scroll plus a
-/// sine of the frame count less the line.
+/// Fills the other table: each line of the screen takes layer 2's vertical
+/// scroll plus a sine of up to 2 pixels that moves up the screen a line each
+/// frame.
 void EasternAlhafra_FillWaveLines(void) {
   struct MapLayer *layer = &Ram_HeapSlots->mapGrid->layers[2];
   u16 *line;
   s32 i = 0;
 
   line = gEasternAlhafra_WaveLines[gEasternAlhafra_WaveTableIndex[0] ^ 1];
-  for (i = 0; i != 160; i++) {
+  for (i = 0; i != DISPLAY_HEIGHT; i++) {
     *line++ =
         FIXEDtoINT(layer->y) +
-        (Math_Sin(((u8)gFrameCount - i - FIXEDtoINT(layer->y) + 160) << 9) >>
+        (Math_Sin(((u8)gFrameCount - i - FIXEDtoINT(layer->y) + DISPLAY_HEIGHT)
+                  << 9) >>
          15);
   }
   gEasternAlhafra_WaveTableIndex[0] ^= 1;
 }
 
-/// Starts BG1's HBlank wave: the line table filled in the VBlank pass, its
-/// DMA started each frame.
+/// Starts BG1's HBlank wave: a line table filled each frame, its DMA started
+/// in the VBlank pass.
 void EasternAlhafra_StartWave(void) {
   Task_AddFrame(EasternAlhafra_FillWaveLines, TASK_PASS_FRAME);
   Task_AddFrame(EasternAlhafra_StartWaveDma, TASK_PASS_VBLANK);
 }
 
-#define EVENT_WORK ((u8 *)Ram_HeapSlots->fieldWork)
+void Pillar_Place(const u16 *list);
 
-void Pillar_Place();
-
+/// Sets up the docks: the wave; once the workers have told the mayor, the
+/// people the pirates knocked down and the cleared mast; the mayor's arrival
+/// after the ship is stolen; the junk the party has sunk, the ropes and the
+/// stake.
 s32 Scene_Initialize(void) {
   struct Actor *actor;
   s32 flag;
 
-  ((struct FieldWork *)EVENT_WORK)->transition =
-      SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
+  gFieldWork->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
   EasternAlhafra_StartWave();
   Actor_Get(gMainRoutineWork.leaderActorId)->priorityFlags |=
       ACTOR_PRIORITY_IGNORES_RISES;
@@ -740,11 +758,11 @@ s32 Scene_Initialize(void) {
       Actor_SetPosition(ACTOR_SECOND_WORKER, 152, 376);
       Actor_FaceDirection(ACTOR_SECOND_WORKER, FACING_SOUTH, 0);
       FieldActor_SetSpriteRotationById(ACTOR_ALHAFRAS_MAYOR, DEGtoANG(90));
-      Actor_SetSpriteFlags((s32)Actor_Get(ACTOR_ALHAFRAS_MAYOR), 0);
+      Actor_SetSpriteFlags(Actor_Get(ACTOR_ALHAFRAS_MAYOR), 0);
       FieldActor_SetSpriteRotationById(ACTOR_JIYA, TRIG_TURN * 3 / 4);
-      Actor_SetSpriteFlags((s32)Actor_Get(ACTOR_JIYA), 0);
+      Actor_SetSpriteFlags(Actor_Get(ACTOR_JIYA), 0);
       FieldActor_SetSpriteRotationById(ACTOR_SECOND_WORKER, DEGtoANG(90));
-      Actor_SetSpriteFlags((s32)Actor_Get(ACTOR_SECOND_WORKER), 0);
+      Actor_SetSpriteFlags(Actor_Get(ACTOR_SECOND_WORKER), 0);
       Actor_SetAnimation(ACTOR_ALHAFRAS_MAYOR, 13);
       Actor_SetAnimation(ACTOR_JIYA, 13);
       Actor_SetAnimation(ACTOR_SECOND_WORKER, 13);
@@ -806,27 +824,28 @@ s32 Scene_Initialize(void) {
   Tightrope_Place(0, ACTOR_TIGHTROPE_START, ACTOR_TIGHTROPE_END);
   Actor_SetSpriteFlags(Actor_Get(ACTOR_TIGHTROPE_START), 0);
   Actor_SetSpriteFlags(Actor_Get(ACTOR_TIGHTROPE_END), 0);
-  Pillar_Place(gEasternAlhafra_PoundCone);
-  Actor_SetSpriteFlags(Actor_Get(ACTOR_CONE), 0);
-  flag = Event_GetFlag(FLAG_CONE_POUNDED);
+  Pillar_Place(gEasternAlhafra_PoundStakes);
+  Actor_SetSpriteFlags(Actor_Get(ACTOR_STAKE), 0);
+  flag = Event_GetFlag(FLAG_STAKE_POUNDED);
   if (flag == 0) {
-    actor = Actor_Get(ACTOR_FIRST_CONE_ROPE_START);
-    /* FAKEMATCH(dead): the solid bit set in a once-only block. */
+    actor = Actor_Get(ACTOR_FIRST_STAKE_ROPE_START);
+    /* FAKEMATCH(dead): the not-targeted bit set in a once-only block. */
     do {
       actor->collisionFlags |= ACTOR_NOT_TARGETED;
     } while (0);
-    actor = Actor_Get(ACTOR_FIRST_CONE_ROPE_END);
+    actor = Actor_Get(ACTOR_FIRST_STAKE_ROPE_END);
     actor->motionFlags = flag;
     actor->y.fixed = toFIXED(16);
-    Tightrope_Place(1, ACTOR_FIRST_CONE_ROPE_START, ACTOR_FIRST_CONE_ROPE_END);
+    Tightrope_Place(1, ACTOR_FIRST_STAKE_ROPE_START,
+                    ACTOR_FIRST_STAKE_ROPE_END);
     Tightrope_Settle(1);
-    actor = Actor_Get(ACTOR_SECOND_CONE_ROPE_START);
+    actor = Actor_Get(ACTOR_SECOND_STAKE_ROPE_START);
     actor->collisionFlags |= ACTOR_NOT_TARGETED;
-    actor = Actor_Get(ACTOR_SECOND_CONE_ROPE_END);
+    actor = Actor_Get(ACTOR_SECOND_STAKE_ROPE_END);
     actor->motionFlags = flag;
     actor->y.fixed = toFIXED(16);
-    Tightrope_Place(2, ACTOR_SECOND_CONE_ROPE_START,
-                    ACTOR_SECOND_CONE_ROPE_END);
+    Tightrope_Place(2, ACTOR_SECOND_STAKE_ROPE_START,
+                    ACTOR_SECOND_STAKE_ROPE_END);
   }
   Actor_SetSpriteFlags(Actor_Get(ACTOR_LAST_ROCK), 0);
   Actor_SetSpriteFlags(Actor_Get(ACTOR_FIRST_ROCK), 0);
@@ -875,7 +894,7 @@ void EasternAlhafra_PlaceClearedDebris(void) {
     actor->collisionFlags = 0;
     actor->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
     FieldMapGrid_SetCellBehavior(actor->x.fixed, actor->z.fixed, 0, 0);
-    MapGrid_SetAttributeBAt(actor->x.fixed, actor->z.fixed, 0, 128);
+    MapGrid_SetAttributeBAt(actor->x.fixed, actor->z.fixed, 0, MAP_CELL_JUMP);
   }
   if (Event_GetFlag(FLAG_SECOND_CRATE_SUNK)) {
     actor = Actor_Get(ACTOR_SECOND_CRATE);
@@ -884,7 +903,7 @@ void EasternAlhafra_PlaceClearedDebris(void) {
     actor->collisionFlags = 0;
     actor->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
     FieldMapGrid_SetCellBehavior(actor->x.fixed, actor->z.fixed, 0, 0);
-    MapGrid_SetAttributeBAt(actor->x.fixed, actor->z.fixed, 0, 128);
+    MapGrid_SetAttributeBAt(actor->x.fixed, actor->z.fixed, 0, MAP_CELL_JUMP);
   }
   if (Event_GetFlag(FLAG_ALHAFRA_MAST_CLEARED)) {
     MapGrid_CopyCells(32, 24, 2, 2, 30, 24);
@@ -953,7 +972,7 @@ void EasternAlhafra_OverhearWorkers(void) {
   Actor_FaceDirection(ACTOR_SAILOR_WHO_PAID_FOR_THE_SHIP,
                       FACING_NORTH_NORTHEAST, 0);
   FieldEvent_Wait(20);
-  EventCamera_MoveToActor(ACTOR_CONE, 1);
+  EventCamera_MoveToActor(ACTOR_STAKE, 1);
   FieldCamera_WaitForArrival();
   FieldEvent_Wait(10);
   // "Untangling that'll be a piece of cake, once we get a boat we can use..."
@@ -1137,8 +1156,9 @@ void EasternAlhafra_AskToHelpWithMast(void) {
   Event_End();
 }
 
-/// With the first crate sunk and no one able to Burst, the party asks whether
-/// it is finished here.
+/// With the first crate sunk and no one able to Burst, Kraden asks whether the
+/// party is finished here; Sheba and Jenna differ, and without Piers Kraden
+/// muses on the Madrans' ship, before the party moves on.
 void EasternAlhafra_AskIfFinished(void) {
   struct Actor *leader;
 
@@ -1162,11 +1182,14 @@ void EasternAlhafra_AskIfFinished(void) {
   if (FieldEvent_AskYesNoWithActorAnimation(4, 0) == 0) {
     FieldEvent_Wait(20);
     Actor_ShowEmote(ACTOR_SHEBA, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 30);
+    // "Wait, you wanted to do this, and now you're telling me we should just
+    // give up?"
     FieldEvent_ShowMessageThenWait(ACTOR_SHEBA, 0, 10);
     Actor_FaceDirection(ACTOR_FELIX, FACING_NORTHEAST, 0);
     Actor_FaceDirection(ACTOR_JENNA, FACING_NORTH, 0);
     FieldEvent_Wait(10);
     Actor_SetAnimationAndWait(ACTOR_JENNA, ANIM_SHAKE_HEAD);
+    // "I just don't see how much more help we can be here, Sheba."
     FieldEvent_ShowMessageThenWait(ACTOR_JENNA, 0, 10);
     gFieldWork->message += 2;
   } else {
@@ -1175,18 +1198,20 @@ void EasternAlhafra_AskIfFinished(void) {
     Actor_SetAnimationAndWait(ACTOR_SHEBA, ANIM_NOD);
     Actor_FaceDirection(ACTOR_FELIX, FACING_NORTHEAST, 0);
     FieldEvent_Wait(20);
+    // "Oh, don't be ridiculous! We've already done so much."
     FieldEvent_ShowMessageThenWait(ACTOR_SHEBA, 0, 10);
     Actor_SetAnimationAndWait(ACTOR_JENNA, ANIM_SHAKE_HEAD);
+    // "I know how you feel, but there's nothing else we can do right now."
     FieldEvent_ShowMessageThenWait(ACTOR_JENNA, 0, 10);
   }
-  if (((s32 (*)())GameFlag_Get)(FLAG_IN_PARTY(ACTOR_PIERS)) != 0) {
+  if (Event_GetFlag(FLAG_IN_PARTY(ACTOR_PIERS)) != 0) {
     Actor_FaceDirection(ACTOR_FELIX, FACING_NORTH, 0);
     Actor_FaceDirection(ACTOR_JENNA, FACING_NORTHWEST, 0);
     Actor_FaceDirectionAndWait(ACTOR_SHEBA, FACING_WEST);
     FieldEvent_Wait(10);
   } else {
-    ((s32 (*)())Actor_ShowEmoteById)(ACTOR_KRADEN, EMOTE_IN_FRONT | EMOTE_WINCE,
-                                     30);
+    FieldActor_ShowEmote(ACTOR_KRADEN, EMOTE_IN_FRONT | EMOTE_WINCE, 30);
+    // "So... Maybe we should start searching for another ship then..."
     FieldEvent_ShowMessageThenWait(ACTOR_KRADEN, 0, 10);
     Actor_FaceDirection(ACTOR_FELIX, FACING_NORTH, 0);
     Actor_FaceDirection(ACTOR_JENNA, FACING_NORTHWEST, 0);
@@ -1194,9 +1219,11 @@ void EasternAlhafra_AskIfFinished(void) {
     FieldEvent_Wait(30);
     Actor_ShowEmote(ACTOR_KRADEN, EMOTE_IN_FRONT | EMOTE_QUESTION, 30);
     Actor_SetAnimationAndWait(ACTOR_KRADEN, ANIM_SHAKE_HEAD);
+    // "...Not that I was planning on "borrowing" the Madran's ship!"
     FieldEvent_ShowMessageThenWait(ACTOR_KRADEN, 0, 10);
-    ((s32 (*)())Actor_ShowEmoteById)(ACTOR_KRADEN,
-                                     EMOTE_IN_FRONT | EMOTE_SWEAT_DROP, 30);
+    FieldActor_ShowEmote(ACTOR_KRADEN, EMOTE_IN_FRONT | EMOTE_SWEAT_DROP, 30);
+    // "Although...I did plan on asking them if we could use it once we got
+    // back to Madra..."
     FieldEvent_ShowMessageThenWait(ACTOR_KRADEN, 0, 10);
     Actor_FaceDirection(ACTOR_JENNA, FACING_NORTH, 0);
     Actor_FaceDirection(ACTOR_SHEBA, FACING_SOUTH, 0);
@@ -1205,6 +1232,7 @@ void EasternAlhafra_AskIfFinished(void) {
     Actor_FaceDirection(ACTOR_SHEBA, FACING_WEST, 0);
     FieldEvent_Wait(10);
     Actor_SetAnimationAndWait(ACTOR_KRADEN, ANIM_SHAKE_HEAD);
+    // "But it doesn't look like the ship will be leaving anytime soon."
     FieldEvent_ShowMessageThenWait(ACTOR_KRADEN, 0, 10);
   }
   FieldEvent_SetMessageId((s32)MsgSoIThink);
@@ -1259,66 +1287,60 @@ void EasternAlhafra_AskIfFinished(void) {
   return;
 }
 
-extern u32 gEasternAlhafra_PuffScript[];
+extern u32 gEasternAlhafra_QuestionMarkScript[];
 
-/// Spawns a puff (actor type 0x1e8) at x, y, z, turned to value, for timer
-/// frames.
-void EasternAlhafra_SpawnPuff(x, y, z, value, timer) s32 x, y, z;
-s16 value;
-s32 timer;
+/// Pops up a question mark bubble at (x, y, z), tilted by `angle`, for
+/// `frames` frames.
+void EasternAlhafra_SpawnQuestionMark(x, y, z, angle, frames) s32 x, y, z;
+s16 angle;
+s32 frames;
 {
-  struct Actor *object;
+  struct Actor *mark;
   struct Sprite *sprite;
 
-  object = FieldActor_Create(SPRITE_EMOTE, x, y, z);
-  if (object != NULL) {
-    sprite = object->sprite;
-    Actor_SelectAnimation(object, 1);
-    Actor_StartScript(object, gEasternAlhafra_PuffScript);
-    Actor_SetSpritePriorityDirect(object, 1);
-    object->motionFlags = 0;
-    object->wait = timer;
+  mark = FieldActor_Create(SPRITE_EMOTE, x, y, z);
+  if (mark != NULL) {
+    sprite = mark->sprite;
+    Actor_SelectAnimation(mark, EMOTE_QUESTION);
+    Actor_StartScript(mark, gEasternAlhafra_QuestionMarkScript);
+    Actor_SetSpritePriorityDirect(mark, 1);
+    mark->motionFlags = 0;
+    mark->wait = frames;
     sprite->flags = 0;
-    sprite->rotation = value;
+    sprite->rotation = angle;
   }
 }
-#undef EVENT_WORK
-#undef OBJECT
 
-void EasternAlhafra_PuffFrom(s32 id) {
+/// Four question marks pop up over the actor's head in turn, right and left,
+/// as Briggs tries to remember what he swore to do.
+void EasternAlhafra_ShowQuestionMarks(s32 id) {
   struct Actor *actor = Actor_Get(id);
 
-  EasternAlhafra_SpawnPuff(actor->x.fixed + toFIXED(8),
-                           actor->y.fixed + toFIXED(28), actor->z.fixed,
-                           TRIG_TURN / 16, 15);
+  EasternAlhafra_SpawnQuestionMark(actor->x.fixed + toFIXED(8),
+                                   actor->y.fixed + toFIXED(28), actor->z.fixed,
+                                   TRIG_TURN / 16, 15);
   Event_PlaySound(SE_LIGHT_APPEAR);
   FieldEvent_Wait(15);
-  EasternAlhafra_SpawnPuff(actor->x.fixed - toFIXED(8),
-                           actor->y.fixed + toFIXED(28), actor->z.fixed,
-                           TRIG_TURN * 15 / 16, 15);
+  EasternAlhafra_SpawnQuestionMark(actor->x.fixed - toFIXED(8),
+                                   actor->y.fixed + toFIXED(28), actor->z.fixed,
+                                   TRIG_TURN * 15 / 16, 15);
   Event_PlaySound(SE_LIGHT_APPEAR);
   FieldEvent_Wait(15);
-  EasternAlhafra_SpawnPuff(actor->x.fixed + toFIXED(8),
-                           actor->y.fixed + toFIXED(28), actor->z.fixed,
-                           TRIG_TURN / 16, 15);
+  EasternAlhafra_SpawnQuestionMark(actor->x.fixed + toFIXED(8),
+                                   actor->y.fixed + toFIXED(28), actor->z.fixed,
+                                   TRIG_TURN / 16, 15);
   Event_PlaySound(SE_LIGHT_APPEAR);
   FieldEvent_Wait(15);
-  EasternAlhafra_SpawnPuff(actor->x.fixed - toFIXED(8),
-                           actor->y.fixed + toFIXED(28), actor->z.fixed,
-                           TRIG_TURN * 15 / 16, 15);
+  EasternAlhafra_SpawnQuestionMark(actor->x.fixed - toFIXED(8),
+                                   actor->y.fixed + toFIXED(28), actor->z.fixed,
+                                   TRIG_TURN * 15 / 16, 15);
   Event_PlaySound(SE_LIGHT_APPEAR);
   FieldEvent_Wait(15);
 }
 
-/// FieldMessage_ShowAtActor, through a local copy of its flags.
-static __inline__ void FieldMessage_ShowAtActor_(s32 actor, s32 flags) {
-  s32 f = flags;
-
-  FieldMessage_ShowAtActor(actor, f);
-}
-
-/// The scene that opens with MsgHeyThatBlock: either answer to the prompt
-/// steps the event to its next message.
+/// Once the mast is clear, two workers find the block gone and run to tell the
+/// mayor, and Chaucha, brought by Eoleo, guesses the party did it and goes to
+/// tell Briggs.
 void EasternAlhafra_WorkersSeeBlockGone(void) {
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
@@ -1382,11 +1404,13 @@ void EasternAlhafra_WorkersSeeBlockGone(void) {
   FieldEvent_Wait(20);
   Actor_WalkByAndWait(ACTOR_CHAUCHA, -16, 0);
   FieldEvent_Wait(20);
-  FieldMessage_ShowAtActor_(ACTOR_CHAUCHA, 0);
+  // "You were the ones who did it, weren't you?"
+  Event_OpenMessage(ACTOR_CHAUCHA, 0);
   if (FieldEvent_AskYesNoWithActorAnimation(4, 0) == 0) {
     FieldEvent_Wait(20);
     Actor_SetAnimationAndWait(ACTOR_CHAUCHA, ANIM_NOD);
     FieldEvent_Wait(10);
+    // "I knew you would do it someday."
     FieldEvent_ShowMessageThenWait(ACTOR_CHAUCHA, 0, 10);
     gFieldWork->message += 1;
   } else {
@@ -1394,12 +1418,14 @@ void EasternAlhafra_WorkersSeeBlockGone(void) {
     Actor_SetAnimationAndWait(ACTOR_CHAUCHA, ANIM_SHAKE_HEAD);
     FieldEvent_Wait(10);
     gFieldWork->message += 1;
+    // "But, of course, I also know that you didn't do it for our benefit."
     FieldEvent_ShowMessageThenWait(ACTOR_CHAUCHA, 0, 10);
   }
   Actor_FaceDirection(ACTOR_CHAUCHA, FACING_EAST, 0);
   FieldEvent_Wait(20);
   Actor_FaceDirection(ACTOR_EOLEO, FACING_WEST, 0);
   FieldEvent_Wait(30);
+  // "Still, Briggs will be pleased when he hears about this."
   FieldEvent_ShowMessageThenWait(ACTOR_CHAUCHA, 0, 10);
   FieldActor_ShowEmote(ACTOR_EOLEO, EMOTE_IN_FRONT | EMOTE_SMILE, 45);
   FieldActor_Jump(ACTOR_EOLEO, 6, 15);
@@ -1407,10 +1433,11 @@ void EasternAlhafra_WorkersSeeBlockGone(void) {
   FieldEvent_Wait(10);
   Actor_SetAnimationAndWait(ACTOR_CHAUCHA, ANIM_NOD);
   FieldEvent_Wait(10);
+  // "Well then, let's go tell him!"
   FieldEvent_ShowMessageThenWait(ACTOR_CHAUCHA, 0, 10);
-  Actor_SetAnimationAndWait(ACTOR_EOLEO, 3);
+  Actor_SetAnimationAndWait(ACTOR_EOLEO, ANIM_NOD);
   FieldEvent_Wait(10);
-  Actor_SetAnimationAndWait(ACTOR_EOLEO, 3);
+  Actor_SetAnimationAndWait(ACTOR_EOLEO, ANIM_NOD);
   FieldEvent_Wait(20);
   Actor_WalkByAndWait(ACTOR_CHAUCHA, 0, 8);
   FieldActor_WatchAndSetScript(ACTOR_FELIX, ACTOR_CHAUCHA);
@@ -1427,9 +1454,10 @@ void EasternAlhafra_WorkersSeeBlockGone(void) {
   Event_End();
 }
 
-/// Once the mast is clear, the workers can't believe the stone block has
-/// vanished and take the party to the mayor (SceneId_AlhafraManor, entrance
-/// 81).
+/// Once the mast is clear, the workers bring the mayor and Jiya to see the
+/// block gone; the mayor sends them to gather the townspeople and asks the
+/// party back to his manor, where Briggs escapes
+/// (ENTRANCE_MANOR_BRIGGS_ESCAPES).
 void EasternAlhafra_WorkersTellMayor(void) {
   if (Event_GetFlag(FLAG_ALHAFRA_MAST_CLEARED) == 0)
     return;
@@ -1675,12 +1703,14 @@ void EasternAlhafra_WorkersTellMayor(void) {
   FieldEvent_ShowMessageThenWait(ACTOR_ALHAFRAS_MAYOR, 0, 10);
   Actor_SetAnimationAndWait(ACTOR_ALHAFRAS_MAYOR, ANIM_NOD);
   FieldEvent_Wait(10);
-  FieldMessage_ShowAtActor_(ACTOR_ALHAFRAS_MAYOR, 0);
+  // "Why don't you come back to my manor to get some rest?"
+  Event_OpenMessage(ACTOR_ALHAFRAS_MAYOR, 0);
   if (FieldEvent_AskYesNoWithActorAnimation(4, 0) != 0) {
     FieldEvent_Wait(40);
     Actor_FaceDirection(ACTOR_KRADEN, FACING_WEST, 0);
     FieldEvent_Wait(20);
     Actor_SetAnimationAndWait(ACTOR_KRADEN, ANIM_SHAKE_HEAD);
+    // "We could use the rest, Felix. We should accept the mayor's offer."
     FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | ACTOR_KRADEN, 0,
                                    10);
     gFieldWork->message += 1;
@@ -1691,6 +1721,7 @@ void EasternAlhafra_WorkersTellMayor(void) {
     Actor_SetAnimationAndWait(ACTOR_KRADEN, ANIM_NOD);
     FieldEvent_Wait(10);
     gFieldWork->message += 1;
+    // "You're too kind, Mayor. We'd be happy to..."
     FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | ACTOR_KRADEN, 0,
                                    10);
   }
@@ -1730,12 +1761,12 @@ void EasternAlhafra_WorkersTellMayor(void) {
   Event_End();
 }
 
-/// Once the mast is clear and Briggs has escaped, he sails off in the mayor's
-/// ship, taunting the party, and the scene starts over at entrance 99 for the
-/// mayor (EasternAlhafra_MayorFindsShipGone).
+/// Once the mast is clear and Briggs has escaped, he sails off in the ship,
+/// taunting the party, and the scene starts over at ENTRANCE_AFTER_SHIP_STOLEN
+/// for the mayor (EasternAlhafra_MayorFindsShipGone).
 void EasternAlhafra_BriggsStealsShip(void) {
   struct MapWork *map;
-  s32 i;
+  s32 frames;
   FIXED step = toFIXED(1);
 
   if (Event_GetFlag(FLAG_ALHAFRA_MAST_CLEARED) == 0)
@@ -1744,7 +1775,7 @@ void EasternAlhafra_BriggsStealsShip(void) {
   Event_SetFlag(FLAG_BRIGGS_SAILED_FROM_ALHAFRA);
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
-  FieldEvent_SetMessageId((s32)MsgBriggs2);
+  FieldEvent_SetMessageId((s32)MsgEasternAlhafraBriggs);
   // "Briggs!!!"
   FieldEvent_ShowMessageThenWait(ACTOR_SECOND_WORKER, 0, 10);
   Actor_WalkToAndWait(ACTOR_FELIX, 136, 552);
@@ -1888,7 +1919,7 @@ void EasternAlhafra_BriggsStealsShip(void) {
   FieldEvent_ShowMessageThenWait(ACTOR_CHAUCHA, 0, 10);
   Actor_FaceDirection(ACTOR_BRIGGS, FACING_SOUTH_SOUTHWEST, 0);
   FieldEvent_Wait(30);
-  EasternAlhafra_PuffFrom(ACTOR_BRIGGS);
+  EasternAlhafra_ShowQuestionMarks(ACTOR_BRIGGS);
   Event_PlaySound(SE_CURSE);
   FieldActor_ShowEmote(ACTOR_BRIGGS, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 50);
   Actor_FaceDirectionById(ACTOR_BRIGGS, FACING_EAST, 0);
@@ -1898,7 +1929,7 @@ void EasternAlhafra_BriggsStealsShip(void) {
   FieldEvent_ShowMessageThenWait(ACTOR_CHAUCHA, 0, 10);
   Actor_FaceDirection(ACTOR_BRIGGS, FACING_SOUTH_SOUTHWEST, 0);
   FieldEvent_Wait(30);
-  EasternAlhafra_PuffFrom(ACTOR_BRIGGS);
+  EasternAlhafra_ShowQuestionMarks(ACTOR_BRIGGS);
   FieldActor_ShowEmote(ACTOR_BRIGGS, EMOTE_IN_FRONT | EMOTE_LIGHT_BULB, 50);
   Actor_FaceDirectionById(ACTOR_BRIGGS, FACING_EAST, 0);
   FieldEvent_Wait(20);
@@ -1958,14 +1989,15 @@ void EasternAlhafra_BriggsStealsShip(void) {
   // "Neener neener neener! Neener neener neener!"
   FieldEvent_ShowMessageThenWait(ACTOR_BRIGGS, 0, 10);
   FieldActor_Jump(ACTOR_BRIGGS, 7, 0);
-  i = 15;
+  frames = 15;
   do {
     *(s16 *)&Actor_GetById(ACTOR_BRIGGS)->facing -= TRIG_TURN / 16;
-    i--;
+    frames--;
     System_Wait(1);
-  } while (i >= 0);
+  } while (frames >= 0);
   Actor_SetAnimation(ACTOR_BRIGGS, 5);
   FieldEvent_Wait(7);
+  // "Neener neener bleah!"
   FieldEvent_ShowMessageThenWait(ACTOR_BRIGGS, 0, 20);
   FieldActor_ShowEmote(ACTOR_CHAUCHA, EMOTE_IN_FRONT | EMOTE_SMILE, 50);
   Actor_WalkByAndWait(ACTOR_CHAUCHA, 0, 36);
@@ -1974,6 +2006,8 @@ void EasternAlhafra_BriggsStealsShip(void) {
   FieldEvent_Wait(20);
   FieldActor_Jump(ACTOR_CHAUCHA, 6, 15);
   FieldActor_Jump(ACTOR_CHAUCHA, 6, 23);
+  // "That may have been a bit much. If you make him mad, he might chase us
+  // right back to Champa."
   FieldEvent_ShowMessageThenWait(SPEAKER_WINDOW_ABOVE | ACTOR_CHAUCHA, 0, 15);
   Actor_SetAnimationAndWait(ACTOR_BRIGGS, ANIM_NOD);
   FieldEvent_Wait(10);
@@ -1988,15 +2022,15 @@ void EasternAlhafra_BriggsStealsShip(void) {
   MapGrid_CopyCellsLayered(42, 60, 17, 4, 42, 68);
   MapGrid_CopyCellsLayered(106, 60, 17, 4, 106, 64);
   MapGrid_CopyCellsLayered(106, 60, 17, 4, 106, 68);
-  i = 239;
+  frames = 239;
   do {
     map->layers[0].offsetY += step;
     map->layers[1].offsetY += toFIXED(1);
     Actor_GetById(ACTOR_BRIGGS)->z.fixed -= step;
-    i--;
+    frames--;
     Actor_GetById(ACTOR_CHAUCHA)->z.fixed -= step;
     System_Wait(1);
-  } while (i >= 0);
+  } while (frames >= 0);
   Event_PlaySound(SOUND_FADE_OUT_BGM);
   FieldEvent_Wait(30);
   Event_End();
@@ -2004,8 +2038,9 @@ void EasternAlhafra_BriggsStealsShip(void) {
   Event_SetDestination(SCENE_EASTERN_ALHAFRA, ENTRANCE_AFTER_SHIP_STOLEN);
 }
 
-/// The scene that opens with MsgWhatYouLet; either answer to each of its two
-/// prompts steps the event's message number, by 1 and then by 2.
+/// Back at the docks after Briggs has sailed: the mayor blames everyone, rouses
+/// the knocked-down workers and storms off to his manor, and Kraden talks it
+/// over with Felix.
 void EasternAlhafra_MayorFindsShipGone(void) {
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
@@ -2098,7 +2133,7 @@ void EasternAlhafra_MayorFindsShipGone(void) {
                                  0, 10);
   Actor_SetPosition(ACTOR_SECOND_WORKER, 168, 368);
   FieldActor_SetSpriteRotationById(ACTOR_SECOND_WORKER, 0);
-  Actor_SetSpriteFlags(Actor_GetById(ACTOR_SECOND_WORKER), 1);
+  Actor_SetSpriteFlags(Actor_GetById(ACTOR_SECOND_WORKER), SPRITE_FLAG_SHADOW);
   Actor_FaceDirection(ACTOR_SECOND_WORKER, FACING_SOUTH_SOUTHWEST, 0);
   FieldActor_Jump(ACTOR_SECOND_WORKER, 6, 40);
   FieldActor_ShowEmote(ACTOR_SECOND_WORKER, EMOTE_IN_FRONT | EMOTE_WINCE, 40);
@@ -2148,7 +2183,7 @@ void EasternAlhafra_MayorFindsShipGone(void) {
                                  0, 10);
   Actor_SetPosition(ACTOR_JIYA, 168, 424);
   FieldActor_SetSpriteRotationById(ACTOR_JIYA, 0);
-  Actor_SetSpriteFlags(Actor_GetById(ACTOR_JIYA), 1);
+  Actor_SetSpriteFlags(Actor_GetById(ACTOR_JIYA), SPRITE_FLAG_SHADOW);
   Actor_GetById(ACTOR_JIYA)->facing = FACING_NORTH_NORTHWEST;
   FieldActor_Jump(ACTOR_JIYA, 6, 40);
   FieldActor_ShowEmote(ACTOR_JIYA, EMOTE_IN_FRONT | EMOTE_WINCE, 40);
@@ -2221,8 +2256,9 @@ void EasternAlhafra_MayorFindsShipGone(void) {
   FieldEvent_Wait(30);
   Actor_SetAnimationAndWait(ACTOR_ALHAFRAS_MAYOR, ANIM_SHAKE_HEAD);
   // "And you, Felix. I am extremely disappointed in you."
-  FieldEvent_ShowMessageThenWait(
-      SPEAKER_PORTRAIT_RIGHT | SPEAKER_WINDOW_ABOVE | 25, 0, 10);
+  FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | SPEAKER_WINDOW_ABOVE |
+                                     ACTOR_ALHAFRAS_MAYOR,
+                                 0, 10);
   FieldActor_StartRepeatedMotion(ACTOR_FELIX, 3);
   Actor_SetAttachedEffect(ACTOR_FELIX,
                           ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
@@ -2258,17 +2294,19 @@ void EasternAlhafra_MayorFindsShipGone(void) {
   FieldEvent_Wait(20);
   Actor_SetPosition(ACTOR_FIRST_WORKER, 176, 592);
   FieldActor_SetSpriteRotationById(ACTOR_FIRST_WORKER, 0);
-  Actor_SetSpriteFlags(Actor_GetById(ACTOR_FIRST_WORKER), 1);
+  Actor_SetSpriteFlags(Actor_GetById(ACTOR_FIRST_WORKER), SPRITE_FLAG_SHADOW);
   FieldActor_Jump(ACTOR_FIRST_WORKER, 6, 20);
   Actor_FaceDirectionById(ACTOR_FIRST_WORKER, FACING_WEST, 0);
   Actor_SetPosition(ACTOR_MAN_KNOCKED_DOWN, 128, 608);
   FieldActor_SetSpriteRotationById(ACTOR_MAN_KNOCKED_DOWN, 0);
-  Actor_SetSpriteFlags(Actor_GetById(ACTOR_MAN_KNOCKED_DOWN), 1);
+  Actor_SetSpriteFlags(Actor_GetById(ACTOR_MAN_KNOCKED_DOWN),
+                       SPRITE_FLAG_SHADOW);
   FieldActor_Jump(ACTOR_MAN_KNOCKED_DOWN, 6, 20);
   Actor_FaceDirectionById(ACTOR_MAN_KNOCKED_DOWN, FACING_NORTH_NORTHEAST, 0);
   Actor_SetPosition(ACTOR_YOUNG_MAN_KNOCKED_DOWN, 192, 616);
   FieldActor_SetSpriteRotationById(ACTOR_YOUNG_MAN_KNOCKED_DOWN, 0);
-  Actor_SetSpriteFlags(Actor_GetById(ACTOR_YOUNG_MAN_KNOCKED_DOWN), 1);
+  Actor_SetSpriteFlags(Actor_GetById(ACTOR_YOUNG_MAN_KNOCKED_DOWN),
+                       SPRITE_FLAG_SHADOW);
   FieldActor_Jump(ACTOR_YOUNG_MAN_KNOCKED_DOWN, 6, 20);
   Actor_FaceDirectionById(ACTOR_YOUNG_MAN_KNOCKED_DOWN, FACING_NORTH_NORTHWEST,
                           0);
@@ -2286,19 +2324,18 @@ void EasternAlhafra_MayorFindsShipGone(void) {
                                ACTOR_ALHAFRAS_MAYOR);
   FieldActor_WatchAndSetScript(ACTOR_MAN_KNOCKED_DOWN, ACTOR_ALHAFRAS_MAYOR);
   FieldActor_WatchAndSetScript(ACTOR_FIRST_WORKER, ACTOR_ALHAFRAS_MAYOR);
-  Actor_SetScript(ACTOR_ALHAFRAS_MAYOR, (s32)gEasternAlhafra_RunOffScript);
-  Actor_SetScript(ACTOR_JIYA, (s32)gEasternAlhafra_RunOffScript);
+  Actor_SetScript(ACTOR_ALHAFRAS_MAYOR, gEasternAlhafra_RunOffScript);
+  Actor_SetScript(ACTOR_JIYA, gEasternAlhafra_RunOffScript);
   FieldEvent_Wait(10);
-  Actor_SetScript(ACTOR_SECOND_WORKER, (s32)gEasternAlhafra_RunOffScript);
+  Actor_SetScript(ACTOR_SECOND_WORKER, gEasternAlhafra_RunOffScript);
   FieldEvent_Wait(70);
   Actor_WalkByAndWait(ACTOR_FIRST_WORKER, -16, 0);
-  Actor_SetScript(ACTOR_FIRST_WORKER, (s32)gEasternAlhafra_RunOffScript);
+  Actor_SetScript(ACTOR_FIRST_WORKER, gEasternAlhafra_RunOffScript);
   FieldEvent_Wait(33);
   Actor_WalkByAndWait(ACTOR_MAN_KNOCKED_DOWN, 16, 0);
-  Actor_SetScript(ACTOR_MAN_KNOCKED_DOWN, (s32)gEasternAlhafra_RunOffScript);
+  Actor_SetScript(ACTOR_MAN_KNOCKED_DOWN, gEasternAlhafra_RunOffScript);
   FieldEvent_Wait(15);
-  Actor_SetScript(ACTOR_YOUNG_MAN_KNOCKED_DOWN,
-                  (s32)gEasternAlhafra_RunOffScript);
+  Actor_SetScript(ACTOR_YOUNG_MAN_KNOCKED_DOWN, gEasternAlhafra_RunOffScript);
   FieldActor_WaitForScriptEndById(ACTOR_ALHAFRAS_MAYOR);
   Actor_FaceDirectionById(ACTOR_KRADEN, FACING_SOUTH_SOUTHWEST, 0);
   FieldActor_WaitForScriptEndById(ACTOR_YOUNG_MAN_KNOCKED_DOWN);
@@ -2310,14 +2347,18 @@ void EasternAlhafra_MayorFindsShipGone(void) {
   Actor_FaceDirectionById(ACTOR_KRADEN, FACING_EAST, 0);
   Actor_FaceDirectionById(ACTOR_FELIX, FACING_WEST, 0);
   FieldEvent_Wait(20);
-  FieldMessage_ShowAtActor_(ACTOR_KRADEN, 0);
+  // "What an awful person. Do you suppose he's always this self-centered?"
+  Event_OpenMessage(ACTOR_KRADEN, 0);
   if (FieldEvent_AskYesNoWithActorAnimation(4, 0) == 0) {
     FieldEvent_Wait(20);
+    // "Yes, he's terribly irritating. You're quite right, Felix."
     FieldEvent_ShowMessageThenWait(ACTOR_KRADEN, 0, 10);
     gFieldWork->message += 1;
   } else {
     FieldEvent_Wait(40);
     gFieldWork->message += 1;
+    // "You can stay calm after listening to that windbag? That's quite mature
+    // of you."
     FieldEvent_ShowMessageThenWait(ACTOR_KRADEN, 0, 10);
   }
   Actor_SetSpeed(ACTOR_KRADEN, 0.8);
@@ -2327,22 +2368,28 @@ void EasternAlhafra_MayorFindsShipGone(void) {
   FieldEvent_Wait(20);
   Actor_RunRepeatedMotion(ACTOR_KRADEN, 2);
   FieldEvent_Wait(20);
+  // "I'll wager Briggs is returning to Champa, personally."
   FieldEvent_ShowMessageThenWait(ACTOR_KRADEN, 0, 10);
   Actor_WalkByAndWait(ACTOR_KRADEN, 0, 16);
   Actor_FaceDirection(ACTOR_FELIX, FACING_WEST, 0);
   Actor_FaceDirectionById(ACTOR_KRADEN, FACING_EAST, 0);
   FieldEvent_Wait(20);
-  FieldMessage_ShowAtActor_(ACTOR_KRADEN, 0);
+  // "Well, it doesn't matter. I think I've had enough of this town. Shall we
+  // be leaving?"
+  Event_OpenMessage(ACTOR_KRADEN, 0);
   if (FieldEvent_AskYesNoWithActorAnimation(4, 0) != 0) {
     FieldEvent_Wait(40);
+    // "Ah, yes, well... If you still have business to attend to here."
     FieldEvent_ShowMessageThenWait(ACTOR_KRADEN, 0, 10);
     Actor_SetAnimationAndWait(ACTOR_KRADEN, ANIM_NOD);
     FieldEvent_Wait(10);
+    // "All right. But the sooner we leave, the better. Lead on, Felix!"
     FieldEvent_ShowMessageThenWait(ACTOR_KRADEN, 0, 10);
     gFieldWork->message += 2;
   } else {
     FieldEvent_Wait(20);
     gFieldWork->message += 2;
+    // "Great! Let's leave as soon as possible, shall we?"
     FieldEvent_ShowMessageThenWait(ACTOR_KRADEN, 0, 10);
   }
   Actor_SetAnimationAndWait(ACTOR_FELIX, ANIM_NOD);
@@ -2366,12 +2413,15 @@ void BattleEffect_StepVector3(struct Particle *particle, s32 damping, s32 step);
 
 #include "shared/particle_update_falling.h"
 
-/// The falling rocks' work: their tiles, 64 rocks and their sprites, in a
+/// The falling rocks thrown up at once at most.
+#define ROCK_COUNT 64
+
+/// The falling rocks' work: their tiles, the rocks and their sprites, in a
 /// ring that next walks round.
 struct RockWork {
   u8 tiles[1280];
-  struct Rock rocks[64];
-  struct EffectSprite sprites[64];
+  struct Rock rocks[ROCK_COUNT];
+  struct EffectSprite sprites[ROCK_COUNT];
   s16 next;
   u16 tileBase;
   s16 resource;
@@ -2399,7 +2449,7 @@ void EasternAlhafra_StartFallingRocks(void) {
   work->resource = entry;
   rock = work->rocks;
   sprite = work->sprites;
-  for (i = 63; i >= 0; i--, sprite++, rock++) {
+  for (i = 0; i < ROCK_COUNT; i++, sprite++, rock++) {
     EasternAlhafra_InitializeRockSprite(sprite, 8, 8, OBJ_SIZE_16X16, tile);
     sprite->oam.fullColor = 1;
     sprite->oam.palette = 0;
@@ -2424,23 +2474,15 @@ void EasternAlhafra_EndFallingRocks(void) {
   HeapSlot_Release(HEAP_SLOT_MENU);
 }
 
-// Rewrites the map cells under a pushable actor. The actor's sprite
-// shape picks one of the six footprints in gPushFootprints (four signed bytes
-// each, in sixteenths of a cell); the cells under it are copied from the
-// map's spare area (Map_CopyCellAttributeRect) and byte 2 of both collision
-// layers there is filled with 255. Returns 1, or 0 for a shape with no
-// footprint.
+/// The sprites that can be pushed, each with its footprint.
+enum { PUSH_KINDS = 6 };
 
 extern s8 gPushFootprints[][4];
 
-/// The absolute value of value.
-static __inline__ s32 Abs(s32 value) { return value < 0 ? -value : value; }
-
-/// Rewrites the map cells under a pushable actor. The actor's sprite shape
-/// picks one of the six footprints in gPushFootprints (four signed bytes each,
-/// in sixteenths of a cell); the cells under it are copied from the map's spare
-/// area (Map_CopyCellAttributeRect) and byte 2 of both collision layers there
-/// is filled with 255. Returns 1, or 0 for a shape with no footprint.
+/// Makes the cells under a pushable actor solid, by its footprint: the sprite
+/// it wears picks one of gPushFootprints (its corners from the actor, in
+/// pixels), and the cells under it are copied to the map's spare area and
+/// walled on layers 0 and 2. Returns 1, or 0 for a sprite that is not pushed.
 s32 PushTarget_FillFootprint(s32 id) {
   struct MapWork *map = Ram_HeapSlots->mapGrid;
   struct Actor *actor = Actor_GetById(id);
@@ -2454,25 +2496,26 @@ s32 PushTarget_FillFootprint(s32 id) {
 
   if ((u16)kind != gPushKinds[(u16)i]) {
     do {
+      /* FAKEMATCH(temporary): the step taken in the high halfword, as the push
+       * footprints' copies of this search have it. */
       next = (i + 1) * 65536;
       index = (u32)next >> 16;
       i = next >> 16;
-    } while (index <= 5 && (u16)kind != gPushKinds[index]);
+    } while (index <= PUSH_KINDS - 1 && (u16)kind != gPushKinds[index]);
   }
-  // fromX and b are reused for the next values they hold.
   fromX = (u16)i;
-  if (fromX == 6)
+  if (fromX == PUSH_KINDS)
     return 0;
   a = gPushFootprints[fromX][0];
-  width = (Abs(a) + Abs(gPushFootprints[fromX][2])) >> 4;
+  width = (ABS(a) + ABS(gPushFootprints[fromX][2])) >> 4;
   b = gPushFootprints[fromX][1];
-  height = (Abs(b) + Abs(gPushFootprints[fromX][3])) >> 4;
+  height = (ABS(b) + ABS(gPushFootprints[fromX][3])) >> 4;
   x = actor->x.fixed + toFIXED(a);
   z = actor->z.fixed + toFIXED(b);
-  b = map->layers[1].offsetX >> 20;
-  x >>= 20;
-  z >>= 20;
-  fromZ = map->layers[1].offsetY >> 20;
+  b = FIELD_CELL(map->layers[1].offsetX);
+  x = FIELD_CELL(x);
+  z = FIELD_CELL(z);
+  fromZ = FIELD_CELL(map->layers[1].offsetY);
   fromX = (u16)b;
   Map_CopyCellAttributeRect(x, z, width, height, x + fromX, z + (u16)fromZ);
   PushedActor_FillGridAttributeRectangle(0, x, z, width, height,
@@ -2486,83 +2529,18 @@ s32 PushTarget_FillFootprint(s32 id) {
 
 extern s32 gPushLeaderSteps[];
 
-/// Whether an actor at `position` would collide there, 2 for a wall: The Broken
-/// Seal's system_call.h layer over MapGrid_CheckCollision.
-static inline s32
-FieldActor_CheckMovementCollision(struct Actor *actor,
-                                  struct FieldPosition *position) {
-  return MapGrid_CheckCollision(actor, position);
-}
-
-/// Measures a push: finds the pushable actor ahead of the leader
-/// (PushTarget_FindAhead, recording its number and kind in the push state),
-/// then steps the actor's box one cell at a time along the leader's direction
-/// until a cell of it is blocked (MapGrid_CheckCollision returns 2); with at
-/// least one free step it records the end position in the push state and
-/// returns 1, else 0. The actor stays on layer 2 while it is measured.
-s32 PushTarget_FindSlide(struct PushTarget *target) {
-  struct Actor *actor;
-  struct FieldPosition cell;
-  s32 direction, kind, width, height, dx;
-  FIXED dz;
-  s32 steps, i, j, offset;
-
-  actor = PushTarget_FindAhead(&direction, &target->id, &target->footprint);
-  if (actor != 0) {
-    kind = target->footprint;
-    width =
-        (Abs(gPushFootprints[kind][0]) + Abs(gPushFootprints[kind][2])) >> 4;
-    height =
-        (Abs(gPushFootprints[kind][1]) + Abs(gPushFootprints[kind][3])) >> 4;
-    offset = gPushLeaderSteps[direction];
-    dx = offset & FIELD_PIXEL_MASK;
-    dz = toFIXED(offset);
-    target->callback = 0;
-    steps = 0;
-    actor->layer = 2;
-    target->x = actor->x.fixed + dx;
-    target->z = actor->z.fixed + dz;
-    cell.y = actor->y.fixed;
-    for (;;) {
-      cell.z = target->z + toFIXED(gPushFootprints[kind][1]);
-      for (j = 0; j < height; j++) {
-        cell.x = target->x + toFIXED(gPushFootprints[kind][0]);
-        for (i = 0; i < width; i++) {
-          if (FieldActor_CheckMovementCollision(actor, &cell) == 2)
-            goto blocked;
-          cell.x += toFIXED(16);
-        }
-        cell.z += toFIXED(16);
-      }
-      target->x += dx;
-      steps++;
-      target->z += dz;
-    }
-  blocked:
-    actor->layer = 0;
-    if (steps == 0)
-      return 0;
-    {
-      s32 move = dx * steps;
-
-      target->x = actor->x.fixed + move;
-    }
-    target->y = actor->y.fixed;
-    target->z = actor->z.fixed + dz * steps;
-    return 1;
-  }
-  return 0;
-}
+#include "shared/push_target_find_slide.h"
 
 /// The whole-pixel half of a 16.16 coordinate.
 #define PIXEL_PART(v) (((s16 *)&(v))[1])
 
 #include "shared/push_target_find_ahead.h"
 
-#define ABS(x) ((x) < 0 ? -(x) : (x))
-
+/// The leader pushes the object to its resting place: the cells it leaves are
+/// floor again and the cells it comes to are walls.
 void PushTarget_Push(struct PushTarget target) {
-  u8 *map = (u8 *)((struct HeapSlotWords *)Ram_HeapSlots)->mapWork;
+  struct MapWork *map =
+      (struct MapWork *)((struct HeapSlotWords *)Ram_HeapSlots)->mapWork;
   struct Actor *leader = Actor_Get(gMainRoutineWork.leaderActorId);
   struct Actor *actor = Actor_Get(target.id);
   s32 cell[3];
@@ -2592,11 +2570,12 @@ void PushTarget_Push(struct PushTarget target) {
            4;
   PushedActor_FillGridAttributeRectangle(0, cell[0], cell[2], width, height, 0);
   Actor_SetSpeedAndAcceleration(gMainRoutineWork.leaderActorId, 0.5, 0.1);
-  Actor_SetAnimation(gMainRoutineWork.leaderActorId, 8);
+  Actor_SetAnimation(gMainRoutineWork.leaderActorId, ANIM_PUSH);
   System_Wait(15);
+  // The leader follows the object half its way.
   {
-    s32 deltaX = (target.x - from[0]) >> 17;
-    s32 deltaZ = (target.z - from[2]) >> 17;
+    s32 deltaX = FIXEDtoINT(target.x - from[0]) >> 1;
+    s32 deltaZ = FIXEDtoINT(target.z - from[2]) >> 1;
 
     Actor_SetDestinationOffset(gMainRoutineWork.leaderActorId, deltaX, deltaZ);
   }
@@ -2619,7 +2598,7 @@ void PushTarget_Push(struct PushTarget target) {
     target.callback();
   FieldActor_WaitForMoveById(gMainRoutineWork.leaderActorId);
   Actor_SetAnimation(gMainRoutineWork.leaderActorId, ANIM_STAND);
-  leader->update = 0;
+  leader->update = NULL;
   leader->speedLimit = speed;
   leader->acceleration = acceleration;
   FieldActor_WaitForMove(actor);
@@ -2632,14 +2611,14 @@ void PushTarget_Push(struct PushTarget target) {
   target.z = target.z + toFIXED(gPushFootprints[footprint][1]);
   target.x >>= 20;
   target.z >>= 20;
-  originX = *(s32 *)(map + 328) >> 20;
-  originZ = *(s32 *)(map + 332) >> 20;
+  originX = FIELD_CELL(map->layers[1].offsetX);
+  originZ = FIELD_CELL(map->layers[1].offsetY);
   MapGrid_CopyCellAttributes(target.x, target.z, width, height,
                              originX + target.x, originZ + target.z);
   PushedActor_FillGridAttributeRectangle(0, target.x, target.z, width, height,
-                                         255);
+                                         CELL_BEHAVIOR_WALL);
   PushedActor_FillGridAttributeRectangle(2, target.x, target.z, width, height,
-                                         255);
+                                         CELL_BEHAVIOR_WALL);
   cell[0] = FIELD_CELL(from[0] + toFIXED(gPushFootprints[footprint][0]));
   cell[2] = FIELD_CELL(from[2] + toFIXED(gPushFootprints[footprint][1]));
   originX += cell[0];
@@ -2651,50 +2630,22 @@ void PushTarget_Push(struct PushTarget target) {
 
 #include "shared/actor_stop_at_push_target.h"
 
-void Pillar_Place(const u16 *list) {
-  const u16 *spec;
-  u16 id;
-  struct Actor *actor;
-  s16 mode;
-  s16 flag;
-  s32 limit;
-  s32 first;
-  limit = 0xff;
-  first = list[0];
-  if (first == ((limit << 8) + 0xff)) {
-    return;
-  }
-  spec = list;
-  do {
-    id = spec[0];
-    actor = Actor_Get(id);
-    mode = spec[1];
-    flag = spec[2];
-    actor->collisionFlags &= ~ACTOR_SOLID;
-    Actor_SetSpriteFlags(actor, 0);
-    Actor_SetCellOpen(id, (u16)mode, (u16)flag, actor->layer);
-    limit = 0xff;
-    spec += 3;
-    first = spec[0];
-  } while (first != ((limit << 8) + 0xff));
-}
+#include "shared/pillar_place.h"
 
-// Finds the current target's table row and shrinks it.
 #include "shared/pound_sink_target.h"
 
 #include "shared/actor_set_cell_open.h"
 
-#undef ABS
-#undef EVENT_WORK
-#undef OBJECT
 #undef PIXEL_PART
 #include "text/msg_ids.h"
 
 void EasternAlhafra_ReachRock(void);
 
 // clang-format off
-u16 gPushKinds[] = {
-    258, 259, 293, 294, 332, 331,
+u16 gPushKinds[PUSH_KINDS] = {
+    SPRITE_LOG_WEST_EAST, SPRITE_LOG_NORTH_SOUTH,
+    SPRITE_PIPE_WEST_EAST, SPRITE_PIPE_NORTH_SOUTH,
+    SPRITE_FALLEN_COLUMN_WEST_EAST, SPRITE_FALLEN_COLUMN_NORTH_SOUTH,
 };
 
 s8 gPushFootprints[][4] = {
@@ -2702,14 +2653,17 @@ s8 gPushFootprints[][4] = {
     {-8, -32, 8, 32},  {-32, -8, 32, 8},  {-8, -32, 8, 32},
 };
 
-s32 gPushLeaderSteps[] = {
-    0x100000, 0x100000, 0x100000, 0x10, 0x10, 0x10,
-    0x10, 0xfff00000, 0xfff00000, 0xfff00000, 0xfff00000, 0xfff0,
-    0xfff0, 0xfff0, 0xfff0, 0x100000, 0xffff000a,
+#include "shared/push_leader_steps.c"
+
+/// Unused: a list of one actor, the first crate, ended by ACTOR_LIST_END.
+u16 gEasternAlhafra_UnusedActorList[] = {
+    ACTOR_FIRST_CRATE, ACTOR_LIST_END,
 };
 
-s16 gEasternAlhafra_PoundCone[] = {
-    14, 1, FLAG_CONE_POUNDED, -1,
+/// The stake Pound sinks: actor, how its cell opens (Actor_SetCellOpen) and its
+/// flag.
+u16 gEasternAlhafra_PoundStakes[] = {
+    ACTOR_STAKE, 1, FLAG_STAKE_POUNDED, ACTOR_LIST_END,
 };
 
 struct SceneEntrance gSceneEntrances[] = {
@@ -2731,22 +2685,22 @@ u32 gSceneExits[] = {
 struct ActorPlacement gEasternAlhafra_Placements[] = {
     ACTOR_PLACEMENT(SPRITE_TIGHTROPE_POST, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 280, 0, 232, FACING_SOUTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(SPRITE_TIGHTROPE_POST, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 376, 0, 232, FACING_SOUTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE),
-    ACTOR_PLACEMENT(287, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 552, 0, 520, FACING_SOUTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(287, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 408, 0, 520, FACING_SOUTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(489, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 344, 0, 312, FACING_SOUTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(489, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 440, 0, 312, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_TALL_CRATE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 552, 0, 520, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_TALL_CRATE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 408, 0, 520, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_UNSEEN_MARKER, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 344, 0, 312, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_UNSEEN_MARKER, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 440, 0, 312, FACING_SOUTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(SPRITE_STAKE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 488, 0, 312, FACING_SOUTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(SPRITE_LOG_WEST_EAST, CONDITION_ALWAYS, 7, 336, 0, 456, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_LOG_WEST_EAST, CONDITION_ALWAYS, MOVEMENT_TYPE_CLEAR_COLLISION, 336, 0, 456, FACING_SOUTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(467, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 344, 0, 472, FACING_SOUTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(467, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 440, 0, 456, FACING_SOUTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(489, CONDITION_ALWAYS, 7, 444, 0, 312, FACING_SOUTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(489, CONDITION_ALWAYS, 7, 482, 0, 312, FACING_SOUTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(489, CONDITION_ALWAYS, 7, 444, 0, 376, FACING_SOUTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(489, CONDITION_ALWAYS, 7, 492, 0, 312, FACING_SOUTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(SPRITE_CHAMPA_CREWMAN, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 312, 0, 440, FACING_EAST, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(SPRITE_CHAMPA_CREWMAN, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 440, 0, 424, FACING_SOUTH_SOUTHWEST, TALK_FACING_PARTY_AND_BACK, 0),
-    ACTOR_PLACEMENT(SPRITE_CHAMPA_CREWMAN, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 344, 0, 488, FACING_NORTH, TALK_FACING_PARTY_AND_BACK, 0),
-    ACTOR_PLACEMENT(SPRITE_CHAMPA_CREWMAN, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 440, 0, 376, FACING_NORTHEAST, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(SPRITE_UNSEEN_MARKER, CONDITION_ALWAYS, MOVEMENT_TYPE_CLEAR_COLLISION, 444, 0, 312, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_UNSEEN_MARKER, CONDITION_ALWAYS, MOVEMENT_TYPE_CLEAR_COLLISION, 482, 0, 312, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_UNSEEN_MARKER, CONDITION_ALWAYS, MOVEMENT_TYPE_CLEAR_COLLISION, 444, 0, 376, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_UNSEEN_MARKER, CONDITION_ALWAYS, MOVEMENT_TYPE_CLEAR_COLLISION, 492, 0, 312, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_CHAMPA_SAILOR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 312, 0, 440, FACING_EAST, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_CHAMPA_SAILOR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 440, 0, 424, FACING_SOUTH_SOUTHWEST, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(SPRITE_CHAMPA_SAILOR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 344, 0, 488, FACING_NORTH, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(SPRITE_CHAMPA_SAILOR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 440, 0, 376, FACING_NORTHEAST, TALK_FACING_PARTY_AND_BACK, 0),
     ACTOR_PLACEMENT(SPRITE_JENNA, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 8, 0, 8, FACING_NORTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(SPRITE_SHEBA, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 8, 0, 8, FACING_NORTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(SPRITE_PIERS, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 8, 0, 8, FACING_NORTH, TALK_FACING_KEEP, 0),
@@ -2757,46 +2711,47 @@ struct ActorPlacement gEasternAlhafra_Placements[] = {
 struct ActorPlacement gEasternAlhafra_PlacementsAfterBriggsCaught[] = {
     ACTOR_PLACEMENT(SPRITE_TIGHTROPE_POST, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 280, 0, 232, FACING_SOUTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(SPRITE_TIGHTROPE_POST, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 376, 0, 232, FACING_SOUTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE),
-    ACTOR_PLACEMENT(287, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 552, 0, 520, FACING_SOUTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(287, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 408, 0, 520, FACING_SOUTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(489, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 344, 0, 312, FACING_SOUTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(489, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 440, 0, 312, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_TALL_CRATE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 552, 0, 520, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_TALL_CRATE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 408, 0, 520, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_UNSEEN_MARKER, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 344, 0, 312, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_UNSEEN_MARKER, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 440, 0, 312, FACING_SOUTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(SPRITE_STAKE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 488, 0, 312, FACING_SOUTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(SPRITE_LOG_WEST_EAST, CONDITION_ALWAYS, 7, 336, 0, 456, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_LOG_WEST_EAST, CONDITION_ALWAYS, MOVEMENT_TYPE_CLEAR_COLLISION, 336, 0, 456, FACING_SOUTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(467, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 344, 0, 472, FACING_SOUTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(467, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 440, 0, 456, FACING_SOUTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(489, CONDITION_ALWAYS, 7, 444, 0, 312, FACING_SOUTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(489, CONDITION_ALWAYS, 7, 482, 0, 312, FACING_SOUTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(489, CONDITION_ALWAYS, 7, 444, 0, 376, FACING_SOUTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(489, CONDITION_ALWAYS, 7, 492, 0, 312, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_UNSEEN_MARKER, CONDITION_ALWAYS, MOVEMENT_TYPE_CLEAR_COLLISION, 444, 0, 312, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_UNSEEN_MARKER, CONDITION_ALWAYS, MOVEMENT_TYPE_CLEAR_COLLISION, 482, 0, 312, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_UNSEEN_MARKER, CONDITION_ALWAYS, MOVEMENT_TYPE_CLEAR_COLLISION, 444, 0, 376, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_UNSEEN_MARKER, CONDITION_ALWAYS, MOVEMENT_TYPE_CLEAR_COLLISION, 492, 0, 312, FACING_SOUTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(SPRITE_BRIGGS, CONDITION_ALWAYS, MOVEMENT_TYPE_RESET_ACTION, -56, 0, -56, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
     ACTOR_PLACEMENT(SPRITE_CHAUCHA, CONDITION_ALWAYS, MOVEMENT_TYPE_RESET_ACTION, -56, 0, -56, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
     ACTOR_PLACEMENT(SPRITE_EOLEO, CONDITION_ALWAYS, MOVEMENT_TYPE_RESET_ACTION, -56, 0, -56, FACING_WEST, TALK_FACING_PARTY_AND_BACK, 0),
-    ACTOR_PLACEMENT(24, CONDITION_ALWAYS, MOVEMENT_TYPE_RESET_ACTION, -56, 0, -56, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_ALHAFRAS_MAYOR, CONDITION_ALWAYS, MOVEMENT_TYPE_RESET_ACTION, -56, 0, -56, FACING_SOUTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(SPRITE_JENNA, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 8, 0, 8, FACING_NORTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(SPRITE_SHEBA, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 8, 0, 8, FACING_NORTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(SPRITE_PIERS, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 8, 0, 8, FACING_NORTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(SPRITE_KRADEN, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 8, 0, 8, FACING_NORTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(112, CONDITION_ALWAYS, MOVEMENT_TYPE_RESET_ACTION, -56, 0, -56, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_OLD_MAN_IN_GREY_ROBE, CONDITION_ALWAYS, MOVEMENT_TYPE_RESET_ACTION, -56, 0, -56, FACING_SOUTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(SPRITE_BALD_MUSCULAR_MAN, CONDITION_ALWAYS, MOVEMENT_TYPE_RESET_ACTION, -56, 0, -56, FACING_SOUTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(SPRITE_STRONGMAN, CONDITION_ALWAYS, MOVEMENT_TYPE_RESET_ACTION, -56, 0, -56, FACING_EAST, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(SPRITE_SUNSHINES_CHILD, CONDITION_ALWAYS, MOVEMENT_TYPE_RESET_ACTION, -56, 0, -56, FACING_SOUTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(114, CONDITION_ALWAYS, MOVEMENT_TYPE_RESET_ACTION, -56, 0, -56, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_MAN_WITH_CURLY_HAIR, CONDITION_ALWAYS, MOVEMENT_TYPE_RESET_ACTION, -56, 0, -56, FACING_SOUTH, TALK_FACING_KEEP, 0),
     {SCENE_TABLE_END},
 };
 
-s16 gEasternAlhafra_CabinDoorFrames[] = {
-    0, 0, 1, 2, 6, -1,
+/// How the ship's door opens: one frame of cells copied over it.
+u16 gEasternAlhafra_ShipDoorOpening[] = {
+    MAPGRID_ANIMATION_STEP(0, 0, 1, 2, 6),
+    MAPGRID_ANIMATION_STEPS_END,
 };
 
-s32 gEasternAlhafra_CabinDoor[] = {
-    (s32)gEasternAlhafra_CabinDoorFrames,
-    0x110010,
+struct MapGridCellAnimation gEasternAlhafra_ShipDoor = {
+    .steps = gEasternAlhafra_ShipDoorOpening, .x = 16, .y = 17,
 };
 
 struct Trigger gSceneEvents[] = {
     {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
-    {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 2, CONDITION_ALWAYS, EVENT(EasternAlhafra_EnterCabin)},
+    {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 2, CONDITION_ALWAYS, EVENT(EasternAlhafra_EnterShip)},
     {TRIGGER_TALK, ACTOR_SAILOR_GIVING_UP, CONDITION_ALWAYS, EVENT(EasternAlhafra_TalkToSailor)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_SAILOR_GIVING_UP | TRIGGER_SUBJECT_OWN_EFFECT, FLAG_TALKED_TO_SAILOR, EVENT(EasternAlhafra_TalkToSailor)},
     {TRIGGER_TALK, ACTOR_SAILOR_WHO_PAID_FOR_THE_SHIP, CONDITION_ALWAYS, MSGNO(MsgWePaidBig)},
@@ -2806,25 +2761,25 @@ struct Trigger gSceneEvents[] = {
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_SAILOR_WHO_PAID_FOR_THE_SHIP, CONDITION_ALWAYS, MSGNO(MsgIThoughtIt)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_SAILOR_WAITING_FOR_HIS_PAL, CONDITION_ALWAYS, MSGNO(MsgThatLousyRat)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_SAILOR_LONGING_FOR_CHAMPA, CONDITION_ALWAYS, MSGNO(MsgWhenIThink)},
-    {TRIGGER_TALK, ACTOR_YOUNG_MAN_KNOCKED_DOWN, CONDITION_ALWAYS, MSGNO(MsgOooogOw2)},
+    {TRIGGER_TALK, ACTOR_YOUNG_MAN_KNOCKED_DOWN, CONDITION_ALWAYS, MSGNO(MsgOooogOw)},
     {TRIGGER_TALK, ACTOR_MAN_KNOCKED_DOWN, CONDITION_ALWAYS, MSGNO(MsgWhyDoThese)},
-    {TRIGGER_TALK, ACTOR_FIRST_WORKER, CONDITION_ALWAYS, MSGNO(MsgStupidBriggs2)},
+    {TRIGGER_TALK, ACTOR_FIRST_WORKER, CONDITION_ALWAYS, MSGNO(MsgStupidBriggs)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_YOUNG_MAN_KNOCKED_DOWN, CONDITION_ALWAYS, MSGNO(MsgBriggsSPirates)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_MAN_KNOCKED_DOWN, CONDITION_ALWAYS, MSGNO(MsgIJustCame)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_FIRST_WORKER, CONDITION_ALWAYS, MSGNO(MsgBriggsSaidTheBoat)},
     {PSYNERGY_PHASE_ON_CELL(ABILITY_BURST, PSYNERGY_PHASE_ACTS), 10, FLAG_ALHAFRA_MAST_CLEARED, EVENT(EasternAlhafra_BurstMastBlock)},
     {PSYNERGY_ON_ACTOR(ABILITY_LASH), ACTOR_ROPE_POST, FLAG_ROPE_LASHED, 0},
-    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_POUND, PSYNERGY_PHASE_ACTS), ACTOR_CONE, FLAG_CONE_POUNDED, EVENT(EasternAlhafra_PoundCone)},
-    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), ACTOR_FIRST_CRATE, FLAG_FIRST_CRATE_SUNK, EVENT(EasternAlhafra_StartPushingBlock)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_FIRST_CRATE, FLAG_FIRST_CRATE_SUNK, EVENT(EasternAlhafra_FinishPushingBlock)},
-    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), ACTOR_SECOND_CRATE, FLAG_SECOND_CRATE_SUNK, EVENT(EasternAlhafra_StartPushingBlock)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_SECOND_CRATE, FLAG_SECOND_CRATE_SUNK, EVENT(EasternAlhafra_FinishPushingBlock)},
+    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_POUND, PSYNERGY_PHASE_ACTS), ACTOR_STAKE, FLAG_STAKE_POUNDED, EVENT(EasternAlhafra_PoundStake)},
+    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), ACTOR_FIRST_CRATE, FLAG_FIRST_CRATE_SUNK, EVENT(EasternAlhafra_StartPushing)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_FIRST_CRATE, FLAG_FIRST_CRATE_SUNK, EVENT(EasternAlhafra_FinishPushing)},
+    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), ACTOR_SECOND_CRATE, FLAG_SECOND_CRATE_SUNK, EVENT(EasternAlhafra_StartPushing)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_SECOND_CRATE, FLAG_SECOND_CRATE_SUNK, EVENT(EasternAlhafra_FinishPushing)},
     {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), ACTOR_LAST_ROCK, FLAG_LAST_ROCK_SUNK, EVENT(EasternAlhafra_StartPushingLastRock)},
     {PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_LAST_ROCK, FLAG_LAST_ROCK_SUNK, EVENT(EasternAlhafra_FinishPushingLastRock)},
-    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), ACTOR_FIRST_ROCK, FLAG_FIRST_ROCK_SUNK, EVENT(EasternAlhafra_StartPushingBlock)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_FIRST_ROCK, FLAG_FIRST_ROCK_SUNK, EVENT(EasternAlhafra_FinishPushingBlock)},
-    {TRIGGER_PUSH, 0, CONDITION_ALWAYS, EVENT(EasternAlhafra_StartPushingBlock)},
-    {TRIGGER_PUSHED, 0, CONDITION_ALWAYS, EVENT(EasternAlhafra_FinishPushingBlock)},
+    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), ACTOR_FIRST_ROCK, FLAG_FIRST_ROCK_SUNK, EVENT(EasternAlhafra_StartPushing)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_FIRST_ROCK, FLAG_FIRST_ROCK_SUNK, EVENT(EasternAlhafra_FinishPushing)},
+    {TRIGGER_PUSH, 0, CONDITION_ALWAYS, EVENT(EasternAlhafra_StartPushing)},
+    {TRIGGER_PUSHED, 0, CONDITION_ALWAYS, EVENT(EasternAlhafra_FinishPushing)},
     {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 12, CONDITION_ALWAYS, EVENT(EasternAlhafra_PushAhead)},
     {STEP_TRIGGER_WALKING_INTO(FACING_SOUTH), 12, CONDITION_ALWAYS, EVENT(EasternAlhafra_PushAhead)},
     {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 13, CONDITION_ALWAYS, EVENT(EasternAlhafra_PushAhead)},
@@ -2920,6 +2875,6 @@ s32 gEasternAlhafra_RunOffScript[] = {
 };
 // clang-format on
 
-u32 gEasternAlhafra_PuffScript[] = {
+u32 gEasternAlhafra_QuestionMarkScript[] = {
     SC_RELEASE,
 };

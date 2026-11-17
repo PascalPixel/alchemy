@@ -375,7 +375,6 @@ s32 Message_Decode(s32 script, s32 clear) {
 #if TLA_PATCH_2 && LANGUAGE != LANGUAGE_FRENCH
   struct PossessiveTable possessives;
 #endif
-  struct TextReader *messageReader;
   struct HeapSlots *slots;
 
 #if TLA_PATCH_2 && !TLA_PATCH_3
@@ -390,17 +389,16 @@ s32 Message_Decode(s32 script, s32 clear) {
                      Text_DecodeSymbolCodeSize);
     slots = Ram_HeapSlots;
     decode = (s32 (*)(struct TextReader *))slots->messageDecoder;
-    messageReader = &reader;
-    Message_Find(messageReader, script);
+    Message_Find(&reader, script);
 
     do {
       previousCode = code;
-      code = (u32)decode(messageReader);
+      code = (u32)decode(&reader);
 #if TLA_PATCH_2
       // A full stop right after an item name that ends in one is skipped.
       if (previousCode == MESSAGE_ARGUMENT_ITEM_NAME && afterItem == 1) {
         if (code == '.')
-          code = (u32)decode(messageReader);
+          code = (u32)decode(&reader);
         afterItem = 0;
       } else {
         afterItem = 0;
@@ -413,7 +411,7 @@ s32 Message_Decode(s32 script, s32 clear) {
         if (code < TEXT_SPACE || code == MESSAGE_EM_DASH) {
           switch (code) {
           case MESSAGE_ARGUMENT_CLASS_NAME:
-            decode(messageReader);
+            decode(&reader);
             MessageArgument_Lookup(MESSAGE_ARGUMENT_CLASS, clear);
             break;
           case MESSAGE_END:
@@ -425,7 +423,7 @@ s32 Message_Decode(s32 script, s32 clear) {
             MessageArgument_Lookup(MESSAGE_ARGUMENT_NUMBER, clear);
             break;
           case MESSAGE_ARGUMENT_ITEM_NAME:
-            decode(messageReader);
+            decode(&reader);
             MessageArgument_Lookup(MESSAGE_ARGUMENT_ITEM, clear);
             break;
           case MESSAGE_ARGUMENT_ABILITY_NAME:
@@ -436,16 +434,16 @@ s32 Message_Decode(s32 script, s32 clear) {
             break;
           case MESSAGE_TEXT_COLOR:
           case MESSAGE_TEXT_EFFECT:
-            decode(messageReader);
+            decode(&reader);
             break;
           case MESSAGE_ACTOR_NAME:
-            decode(messageReader);
+            decode(&reader);
             break;
           case MESSAGE_ARGUMENT_ACTOR_NAME:
-            decode(messageReader);
+            decode(&reader);
             break;
           case MESSAGE_ARTICLE_CLASS:
-            decode(messageReader);
+            decode(&reader);
             break;
           case MESSAGE_PAGE_BREAK:
             running = 0;
@@ -527,7 +525,7 @@ s32 Message_Decode(s32 script, s32 clear) {
           case MESSAGE_TEXT_EFFECT:
           case MESSAGE_ARTICLE_CLASS:
             TEXT_APPEND(entry, writePosition, (u16)code);
-            TEXT_APPEND(entry, writePosition, decode(messageReader) + 0xFFFFU);
+            TEXT_APPEND(entry, writePosition, decode(&reader) + 0xFFFFU);
             break;
           case MESSAGE_ARGUMENT_SIGNED_NUMBER:
             value = MessageArgument_Lookup(MESSAGE_ARGUMENT_NUMBER, clear);
@@ -545,7 +543,7 @@ s32 Message_Decode(s32 script, s32 clear) {
             }
             break;
           case MESSAGE_ARGUMENT_CLASS_NAME:
-            no = decode(messageReader) - 1;
+            no = decode(&reader) - 1;
             argument = MessageArgument_Lookup(MESSAGE_ARGUMENT_CLASS, clear);
             Message_DecodeRaw(argument + (s32)MsgClassName, name,
                               MESSAGE_NAME_HALFWORDS);
@@ -553,7 +551,7 @@ s32 Message_Decode(s32 script, s32 clear) {
                 0, name, writePosition, entry, no, plural, &suffix);
             break;
           case MESSAGE_ARGUMENT_ITEM_NAME:
-            no = decode(messageReader) - 1;
+            no = decode(&reader) - 1;
 #if TLA_PATCH_2
             {
               s32 lastChar;
@@ -634,7 +632,7 @@ s32 Message_Decode(s32 script, s32 clear) {
                                                       entry, 0, 0, &suffix);
             break;
           case MESSAGE_ARGUMENT_ACTOR_NAME:
-            no = decode(messageReader) - 1;
+            no = decode(&reader) - 1;
             nameBytes = (Unit_Get(MessageArgument_Lookup(MESSAGE_ARGUMENT_ACTOR,
                                                          clear)))
                             ->name;
@@ -650,7 +648,7 @@ s32 Message_Decode(s32 script, s32 clear) {
                 0, name, writePosition, entry, no, plural, &suffix);
             break;
           case MESSAGE_ACTOR_NAME:
-            argument = decode(messageReader) - 1;
+            argument = decode(&reader) - 1;
             nameBytes = Unit_Get(argument)->name;
             nameOutput = name;
             j = 0;
@@ -664,9 +662,9 @@ s32 Message_Decode(s32 script, s32 clear) {
                                                       entry, 0, 0, &suffix);
             break;
           case MESSAGE_ACTOR_NAME_START:
-            argument = decode(messageReader) - 1;
+            argument = decode(&reader) - 1;
             unit = Unit_Get(argument);
-            length = decode(messageReader);
+            length = decode(&reader);
             nameBytes = unit->name;
             nameOutput = name;
 #if TLA_PATCH_2
@@ -691,7 +689,7 @@ s32 Message_Decode(s32 script, s32 clear) {
             writePosition = nextPosition;
             break;
           case MESSAGE_BUTTON_ICON:
-            argument = ((decode(messageReader) - 1) << 1) + 128;
+            argument = ((decode(&reader) - 1) << 1) + 128;
             TEXT_APPEND(entry, writePosition, argument);
             TEXT_APPEND(entry, writePosition, argument + 1);
             break;
@@ -704,7 +702,7 @@ s32 Message_Decode(s32 script, s32 clear) {
 #if LANGUAGE == LANGUAGE_GERMAN
           case MESSAGE_LOCALIZED_WORD:
             // A counted noun, singular or plural, by its kind.
-            no = decode(messageReader) - 1;
+            no = decode(&reader) - 1;
             for (nameBytes =
                      (u8 *)gLocalizedWord_CountedNouns[(no & 7) * 2 + plural];
                  *nameBytes != 0; nameBytes++) {
@@ -716,7 +714,7 @@ s32 Message_Decode(s32 script, s32 clear) {
           case MESSAGE_LOCALIZED_WORD:
             // A gender ending, singular or plural: o or i after operand 1, else
             // a or e.
-            if (decode(messageReader) == 1) {
+            if (decode(&reader) == 1) {
               if (plural == 0)
                 entry[writePosition] = 'o';
               else
@@ -913,7 +911,6 @@ s32 Message_Decode(s32 script, s32 clear) {
   u16 name[MESSAGE_NAME_HALFWORDS];
   u8 numberBuffer[TEXT_NUMBER_BUFFER_SIZE];
   struct TextReader reader;
-  struct TextReader *messageReader;
   struct HeapSlots *slots;
 
   if (script == -1) {
@@ -923,12 +920,11 @@ s32 Message_Decode(s32 script, s32 clear) {
                      Text_DecodeSymbolCodeSize);
     slots = Ram_HeapSlots;
     decode = (s32 (*)(struct TextReader *))slots->messageDecoder;
-    messageReader = &reader;
-    Message_Find(messageReader, script);
+    Message_Find(&reader, script);
 
     do {
       previousCode = code;
-      code = (u32)decode(messageReader);
+      code = (u32)decode(&reader);
 
       if (overflow != 0) {
         if (code < TEXT_SPACE) {
@@ -943,7 +939,7 @@ s32 Message_Decode(s32 script, s32 clear) {
             break;
           case MESSAGE_TEXT_COLOR:
           case MESSAGE_TEXT_EFFECT:
-            decode(messageReader);
+            decode(&reader);
             break;
           case MESSAGE_ARGUMENT_SIGNED_NUMBER:
             MessageArgument_Lookup(MESSAGE_ARGUMENT_NUMBER, clear);
@@ -958,7 +954,7 @@ s32 Message_Decode(s32 script, s32 clear) {
             MessageArgument_Lookup(MESSAGE_ARGUMENT_LOCATION, clear);
             break;
           case MESSAGE_ACTOR_NAME:
-            decode(messageReader);
+            decode(&reader);
             break;
           case MESSAGE_ARGUMENT_ACTOR_NAME:
             break;
@@ -1019,7 +1015,7 @@ s32 Message_Decode(s32 script, s32 clear) {
           case MESSAGE_TEXT_COLOR:
           case MESSAGE_TEXT_EFFECT:
             TEXT_APPEND(entry, writePosition, (u16)code);
-            TEXT_APPEND(entry, writePosition, decode(messageReader) + 0xFFFFU);
+            TEXT_APPEND(entry, writePosition, decode(&reader) + 0xFFFFU);
             break;
           case MESSAGE_ARGUMENT_SIGNED_NUMBER:
             value = MessageArgument_Lookup(MESSAGE_ARGUMENT_NUMBER, clear);
@@ -1102,7 +1098,7 @@ s32 Message_Decode(s32 script, s32 clear) {
             }
             break;
           case MESSAGE_ACTOR_NAME:
-            argument = decode(messageReader) - 1;
+            argument = decode(&reader) - 1;
             nameBytes = Unit_Get(argument)->name;
             nameOutput = name;
             j = 0;
@@ -1116,9 +1112,9 @@ s32 Message_Decode(s32 script, s32 clear) {
                                                       entry, 0, 0, 0);
             break;
           case MESSAGE_ACTOR_NAME_START:
-            argument = decode(messageReader) - 1;
+            argument = decode(&reader) - 1;
             unit = Unit_Get(argument);
-            length = decode(messageReader);
+            length = decode(&reader);
             nameBytes = unit->name;
             nameOutput = name;
             for (j = 0; j < length; j++) {

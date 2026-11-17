@@ -1194,8 +1194,6 @@ void MagmaRock_AmplifyBurst(void) {
   struct Actor *leader = Actor_GetById(gMainRoutineWork.leaderActorId);
   struct EffectOptions options;
   s32 position[3];
-  struct EffectOptions *opt;
-  s32 *offset;
   s32 i;
   u32 phase;
 
@@ -1207,23 +1205,21 @@ void MagmaRock_AmplifyBurst(void) {
                             SPRITE_COLOR_GREY);
   Actor_SetAnimation(gMainRoutineWork.leaderActorId, 10);
   Actor_SetAnimationSpeedById(gMainRoutineWork.leaderActorId, 32);
-  opt = &options;
-  opt->priority = 1;
-  opt->palette = SPRITE_COLOR_BLACK;
-  opt->startScaleX = FIXED_ONE * 4 / 5;
-  opt->startScaleY = FIXED_ONE * 4 / 5;
+  options.priority = 1;
+  options.palette = SPRITE_COLOR_BLACK;
+  options.startScaleX = FIXED_ONE * 4 / 5;
+  options.startScaleY = FIXED_ONE * 4 / 5;
   for (i = 0; i != 8; i++) {
     {
       s32 r = Random16();
-
-      offset = position;
-      offset[0] = toFIXED(r & 15) - toFIXED(8);
+      position[0] = toFIXED(r & 15) - toFIXED(8);
     }
-    offset[1] = (Random16() & 15) << 16;
+    position[1] = (Random16() & 15) << 16;
     FieldEffect_Spawn(
-        leader->x.fixed + offset[0], leader->y.fixed + offset[1],
+        leader->x.fixed + position[0], leader->y.fixed + position[1],
         leader->z.fixed, 0, toFIXED(6) / 5, 0,
-        EFFECT_USE_START_SCALE | EFFECT_USE_PRIORITY | EFFECT_USE_PALETTE, opt);
+        EFFECT_USE_START_SCALE | EFFECT_USE_PRIORITY | EFFECT_USE_PALETTE,
+        &options);
     wait(5);
   }
   FieldCamera_MoveTo(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0);
@@ -1237,13 +1233,13 @@ void MagmaRock_AmplifyBurst(void) {
   do {
     phase = gFrameCount & 1;
     if (phase == 0) {
-      offset[0] = toFIXED(Random16() & 15) - toFIXED(8);
-      offset[1] = (Random16() & 15) << 16;
+      position[0] = toFIXED(Random16() & 15) - toFIXED(8);
+      position[1] = (Random16() & 15) << 16;
       FieldEffect_Spawn(
-          leader->x.fixed + offset[0], leader->y.fixed + offset[1],
+          leader->x.fixed + position[0], leader->y.fixed + position[1],
           leader->z.fixed, 0, toFIXED(6) / 5, phase,
           EFFECT_USE_START_SCALE | EFFECT_USE_PRIORITY | EFFECT_USE_PALETTE,
-          opt);
+          &options);
     }
     wait(1);
     if (leader->velocityY == 0)

@@ -1603,13 +1603,12 @@ s32 ItemMenu_CommandCursorY(s32 column, s32 row) {
 /// them).
 s32 ItemMenu_ChooseCommand(void) {
   struct ItemMenuWork *menu;
-  s8 commandStorage[6];
+  s8 commandStates[6];
   s32 column;
   s32 lastCommand;
   s32 row;
   s32 commandIndex;
   s32 redraw;
-  s8 *commandStates;
 #if LANGUAGE != LANGUAGE_JAPANESE
   s32 cursorX;
   s32 cursorY;
@@ -1620,7 +1619,6 @@ s32 ItemMenu_ChooseCommand(void) {
   row = 0;
   menu = gMenuWork;
   redraw = 1;
-  commandStates = commandStorage;
   ItemMenu_BuildCommands(commandStates);
   // Draw the item's name and the command grid, unless they are up already.
   if (menu->flags != 1) {

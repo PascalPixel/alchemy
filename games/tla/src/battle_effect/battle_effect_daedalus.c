@@ -1145,7 +1145,6 @@ void BattleEffect_RunDaedalus(struct BattleEffectParams *args) {
                                           &shipPlace, &shipScale, 0);
       }
       {
-        struct SpritePlacement *wave;
         s32 row;
         struct DaedalusSprite **slot;
 
@@ -1153,12 +1152,11 @@ void BattleEffect_RunDaedalus(struct BattleEffectParams *args) {
           for (i = 0; i != 9; i++) {
             struct DaedalusSprite *obj;
             s32 v;
-
-            wave = &shipPlace;
-            wave->x = INTtoFIXED(i * 32) + waveX;
-            wave->y = INTtoFIXED((j << 5) -
-                                 gDaedalus_ShakeOffsets[work->shakeFrames]) +
-                      shipY + toFIXED(132);
+            shipPlace.x = INTtoFIXED(i * 32) + waveX;
+            shipPlace.y =
+                INTtoFIXED((j << 5) -
+                           gDaedalus_ShakeOffsets[work->shakeFrames]) +
+                shipY + toFIXED(132);
             if (i == 8) {
               DAEDALUS_SPRITE(j * DAEDALUS_CANOPY_ROW + i)->tile =
                   work->particles[j * 9 + (wavePhase + 71) % 8].variant & 0x3ff;

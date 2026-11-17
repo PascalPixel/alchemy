@@ -571,7 +571,6 @@ s32 BattleEnemy_List(s16 *unit_ids) {
 /// unitIds when it is not null, and returns how many.
 s32 BattleUnit_ListLiving(s32 sideMask, u16 *unitIds) {
   u16 activeMembers[8];
-  u16 *base;
   s32 remaining;
   s32 enemyLimit;
   u16 *output;
@@ -590,10 +589,9 @@ s32 BattleUnit_ListLiving(s32 sideMask, u16 *unitIds) {
     enemyCapacity = LINK_PARTY_SIZE;
   }
   if (sideMask & BATTLE_SIDE_MASK_PARTY) {
-    base = activeMembers;
-    activeCount = BattleParty_PrepareMembers(base);
+    activeCount = BattleParty_PrepareMembers(activeMembers);
     if (livingCount < activeCount) {
-      member = base;
+      member = activeMembers;
       remaining = activeCount;
       do {
         unitId = *member;
@@ -637,7 +635,6 @@ s32 BattleUnit_ListLiving(s32 sideMask, u16 *unitIds) {
 /// active ones.
 s32 BattleUnit_ListLivingWithReserve(s32 sideMask, u16 *unitIds) {
   u16 members[10];
-  u16 *base;
   s32 remaining;
   s32 enemyLimit;
   u16 *output;
@@ -656,11 +653,10 @@ s32 BattleUnit_ListLivingWithReserve(s32 sideMask, u16 *unitIds) {
     enemyCapacity = LINK_PARTY_SIZE;
   }
   if (sideMask & BATTLE_SIDE_MASK_PARTY) {
-    base = members;
-    count = BattleParty_PrepareMembers(base);
-    count += BattleParty_PrepareReserveOwners(base + count);
+    count = BattleParty_PrepareMembers(members);
+    count += BattleParty_PrepareReserveOwners(members + count);
     if (livingCount < count) {
-      member = base;
+      member = members;
       remaining = count;
       do {
         unitId = *member;

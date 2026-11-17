@@ -19,7 +19,6 @@ void Leader_SlideOnIceFromEdge(void) {
   struct Actor *entry;
   u8 *flags;
   s32 *q;
-  s32 *p;
 
   // gSlideOnIce_Stopped is volatile: a task of the VBlank pass sets it while
   // the slide waits (Leader_SetSlideStopped), and each test reads it again.
@@ -33,10 +32,9 @@ retry:
   actor->targetZ = TARGET_UNSET;
   actor->velocityX = 0;
   actor->velocityZ = 0;
-  p = position;
-  p[0] = x = (actor->x.fixed & FIELD_CELL_MASK) + toFIXED(8);
-  p[1] = actor->y.fixed;
-  p[2] = z = (actor->z.fixed & FIELD_CELL_MASK) + toFIXED(8);
+  position[0] = x = (actor->x.fixed & FIELD_CELL_MASK) + toFIXED(8);
+  position[1] = actor->y.fixed;
+  position[2] = z = (actor->z.fixed & FIELD_CELL_MASK) + toFIXED(8);
   targetZ = z;
   targetX = x;
   layer = &actor->layer;
@@ -57,9 +55,10 @@ retry:
     angle = (angle + DEGtoANG(45)) & 0xc000;
   }
   FieldVector_AddPolarOffset(16, angle, position);
-  cell = MapGrid_GetCellBehaviorAt(*layer, p[0], p[2]);
+  cell = MapGrid_GetCellBehaviorAt(*layer, position[0], position[2]);
   if (cell == 255 ||
-      Map_GetTerrainHeight(*layer, p[0], p[2]) - actor->y.fixed > toFIXED(8)) {
+      Map_GetTerrainHeight(*layer, position[0], position[2]) - actor->y.fixed >
+          toFIXED(8)) {
     actor->facing = angle;
     actor->velocityX = 0;
     actor->velocityZ = 0;
@@ -67,8 +66,8 @@ retry:
     actor->z.fixed = z;
     goto end;
   }
-  p[0] = x;
-  p[2] = z;
+  position[0] = x;
+  position[2] = z;
   actor->speedLimit = toFIXED(2);
   actor->acceleration = toFIXED(1) / 10;
   actor->timer = 0;

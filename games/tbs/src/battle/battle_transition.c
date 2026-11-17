@@ -201,7 +201,6 @@ void BattleTransition_Run(s32 enemyCount, s32 encounterId) {
   s32 id;
   struct BattleObject *battleObject;
   struct BattleWork *battle;
-  u16 *visibleUnits;
   s32 visibleCount;
 
   view = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_BACKGROUND);
@@ -324,22 +323,21 @@ void BattleTransition_Run(s32 enemyCount, s32 encounterId) {
     IoWriteQueue_SetBits16((u32)&REG_BG0CNT, 0);
     // Everyone appears, the party fading in.
     REG_BLDCNT = BLEND_SPRITES_OVER_ALL;
-    visibleUnits = visibleUnitIds;
     visibleCount =
-        BattleUnit_ListIds(BATTLE_SIDE_MASK_BOTH, (u16 *)visibleUnits);
+        BattleUnit_ListIds(BATTLE_SIDE_MASK_BOTH, (u16 *)visibleUnitIds);
     visibleUnitIds[visibleCount] = BATTLE_UNIT_LIST_END;
-    BattleObject_SpawnObjectsForList(visibleUnits, 0);
+    BattleObject_SpawnObjectsForList(visibleUnitIds, 0);
     visibleCount =
-        BattleUnit_ListIds(BATTLE_SIDE_MASK_PARTY, (u16 *)visibleUnits);
+        BattleUnit_ListIds(BATTLE_SIDE_MASK_PARTY, (u16 *)visibleUnitIds);
     for (index = 0; index != visibleCount; index++)
-      BattleHighlight_SetSpriteMode(visibleUnits[index],
+      BattleHighlight_SetSpriteMode(visibleUnitIds[index],
                                     SPRITE_SEMI_TRANSPARENT);
     for (index = 0; index != BLEND_WEIGHT_MAX; index++) {
       REG_BLDALPHA = BLEND_ALPHA(index, BLEND_WEIGHT_MAX);
       wait(1);
     }
     for (index = 0; index != visibleCount; index++)
-      BattleHighlight_SetSpriteMode(visibleUnits[index], SPRITE_OPAQUE);
+      BattleHighlight_SetSpriteMode(visibleUnitIds[index], SPRITE_OPAQUE);
     BattleIntro_AnnounceEncounter(enemyCount);
     gBgScroll[0].y = 0;
     wait(1);

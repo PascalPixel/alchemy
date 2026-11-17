@@ -446,7 +446,6 @@ static void GomaCavePillar_JumpGapWest(void) {
 #else
   struct Actor *leader;
   struct FieldPosition target;
-  struct FieldPosition *destination;
   u8 *motionFlags;
   u8 savedMotionFlags;
 
@@ -456,10 +455,9 @@ static void GomaCavePillar_JumpGapWest(void) {
   target.x = Actor_Get(ACTOR_PARTY_LEADER)->x.fixed - toFIXED(32);
   /* LEFTOVER(template): destination holds &target, the landing reached through
    * a pointer. */
-  destination = &target;
-  destination->y = Actor_Get(ACTOR_PARTY_LEADER)->y.fixed;
-  destination->z = Actor_Get(ACTOR_PARTY_LEADER)->z.fixed;
-  if (FieldActor_CheckMovementCollision(leader, destination) == 0) {
+  target.y = Actor_Get(ACTOR_PARTY_LEADER)->y.fixed;
+  target.z = Actor_Get(ACTOR_PARTY_LEADER)->z.fixed;
+  if (FieldActor_CheckMovementCollision(leader, &target) == 0) {
     Event_Start();
     Actor_SelectAnimation(leader, ANIM_LEADER_SPRING);
     wait(6);
@@ -470,9 +468,8 @@ static void GomaCavePillar_JumpGapWest(void) {
     leader->velocityY = toFIXED(4);
     *motionFlags &= ACTOR_JUMP_KEEPS_MOTION;
     Actor_SetSpriteFlags(leader, 0);
-    Actor_MoveToAndWait(ACTOR_PARTY_LEADER,
-                        (s16)(FIXEDtoINT((u32)destination->x)),
-                        (s16)(FIXEDtoINT((u32)destination->z)));
+    Actor_MoveToAndWait(ACTOR_PARTY_LEADER, (s16)(FIXEDtoINT((u32)target.x)),
+                        (s16)(FIXEDtoINT((u32)target.z)));
     Actor_SelectAnimation(leader, ANIM_LEADER_SPRING);
     Actor_SetSpriteFlags(leader, SPRITE_FLAG_SHADOW);
     *motionFlags = savedMotionFlags;

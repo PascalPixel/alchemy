@@ -78,7 +78,6 @@ void WorldMap_BuildScanlineTable(FIXED pitchSlope, s32 *position,
   s32 cameraPoint[3];
   FIXED horizon;
   FIXED focus;
-  s32 *cameraCoordinates;
   s32 line;
   FIXED distance;
   FIXED difference;
@@ -94,9 +93,7 @@ void WorldMap_BuildScanlineTable(FIXED pitchSlope, s32 *position,
   // its height less its depth times the pitch slope.
   SET_VECTOR(groundPoint, position[0], groundHeight, position[2]);
   Iwram_TransformVector(groundPoint, cameraPoint);
-  cameraCoordinates = cameraPoint;
-  horizon =
-      cameraCoordinates[1] - Iwram_MulFX(cameraCoordinates[2], pitchSlope);
+  horizon = cameraPoint[1] - Iwram_MulFX(cameraPoint[2], pitchSlope);
   focus = -gProjection.focal;
   for (line = 0; line < FIELD_VIEW_HEIGHT / FIXED_ONE; line++) {
     // The line's ray slope: its offset from the projection's centre line over
@@ -116,8 +113,8 @@ void WorldMap_BuildScanlineTable(FIXED pitchSlope, s32 *position,
       scanline->scale = Iwram_RatioMulQ14(gProjection.focal, diagonal);
       diagonal = Iwram_MulFX(scale, distance);
       // The distance is the root of the two squared terms.
-      horizontal = (cameraCoordinates[2] - scale) >> 4;
-      vertical = (diagonal - cameraCoordinates[1]) >> 4;
+      horizontal = (cameraPoint[2] - scale) >> 4;
+      vertical = (diagonal - cameraPoint[1]) >> 4;
       horizontalSquared = Iwram_MulFX(horizontal, horizontal);
       verticalSquared = Iwram_MulFX(vertical, vertical);
       verticalSquared = Iwram_Sqrt(horizontalSquared + verticalSquared) << 12;

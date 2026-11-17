@@ -882,7 +882,6 @@ void BattleEffect_RunProjectileVolley(struct BattleEffectParams *args,
 
         for (j = 0; j != shots; j++, index++) {
           struct Particle *shot;
-          struct ScreenPoint *pos;
           s32 targetDelay = i * delay;
 
           if (j * stagger + targetDelay >= frame)
@@ -893,9 +892,8 @@ void BattleEffect_RunProjectileVolley(struct BattleEffectParams *args,
             continue;
 
           // The screen position (the canvas is half as wide).
-          pos = &position;
-          EffectPosition_ProjectPoint((s32 *)shot, pos);
-          pos->x >>= 1;
+          EffectPosition_ProjectPoint((s32 *)shot, &position);
+          position.x >>= 1;
           shot->x += shot->velocityX;
           shot->y += shot->velocityY;
           shot->z += shot->velocityZ;
@@ -970,7 +968,7 @@ void BattleEffect_RunProjectileVolley(struct BattleEffectParams *args,
                 shot->velocityX = -shot->velocityX;
               }
               flash->variant = 1;
-              SET_POSITION(flash, pos->x, pos->y, 0);
+              SET_POSITION(flash, position.x, position.y, 0);
               if (mode != PROJECTILE_VOLLEY_SLEET)
                 work->shakeFrames = 2;
               BattleEffect_TintBattler(args->targets[i], SPRITE_COLOR_WHITE,
@@ -1037,10 +1035,11 @@ void BattleEffect_RunProjectileVolley(struct BattleEffectParams *args,
             else
               EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED, EFFECT_CLIP_BOUNDS,
                                   BLITTER_MAX);
-            DRAW_ALTERNATE(
-                canvas, work->sheet + PROJECTILE_VOLLEY_COMET_PICTURES,
-                pos->x - 16, pos->y - gProjectileVolley_CometHeights[kind], 32,
-                gProjectileVolley_CometHeights[kind]);
+            DRAW_ALTERNATE(canvas,
+                           work->sheet + PROJECTILE_VOLLEY_COMET_PICTURES,
+                           position.x - 16,
+                           position.y - gProjectileVolley_CometHeights[kind],
+                           32, gProjectileVolley_CometHeights[kind]);
             HeapSlot_Release(HEAP_SLOT_RAM_CODE_PAIRED);
             if (args->side == EFFECT_SIDE_PARTY)
               EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED,
@@ -1050,39 +1049,40 @@ void BattleEffect_RunProjectileVolley(struct BattleEffectParams *args,
               EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED,
                                   EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_Y,
                                   BLITTER_MAX);
-            DRAW_ALTERNATE(canvas,
-                           work->sheet + PROJECTILE_VOLLEY_COMET_PICTURES,
-                           pos->x - 16, pos->y, PROJECTILE_VOLLEY_COMET_WIDTH,
-                           gProjectileVolley_CometHeights[kind]);
+            DRAW_ALTERNATE(
+                canvas, work->sheet + PROJECTILE_VOLLEY_COMET_PICTURES,
+                position.x - 16, position.y, PROJECTILE_VOLLEY_COMET_WIDTH,
+                gProjectileVolley_CometHeights[kind]);
             HeapSlot_Release(HEAP_SLOT_RAM_CODE_PAIRED);
           } else if (mode == PROJECTILE_VOLLEY_SHURIKEN) {
             if (ABS(shot->x) <= ABS(target->x))
-              draw[0](canvas, work->sheet + frame % 6 * 768, pos->x - 16,
-                      pos->y - 12, SHURIKEN_WIDTH, SHURIKEN_HEIGHT);
+              draw[0](canvas, work->sheet + frame % 6 * 768, position.x - 16,
+                      position.y - 12, SHURIKEN_WIDTH, SHURIKEN_HEIGHT);
           } else if (mode == PROJECTILE_VOLLEY_SLEET ||
                      mode == PROJECTILE_VOLLEY_BLIZZARD ||
                      mode == PROJECTILE_VOLLEY_ICE_BLESSING ||
                      mode == PROJECTILE_VOLLEY_CHILL_BREATH) {
             draw[0](canvas,
                     work->sheet + gProjectileVolley_PelletPictures[j & 3],
-                    pos->x - 4, pos->y - 4, 8, 8);
+                    position.x - 4, position.y - 4, 8, 8);
           } else if (mode == PROJECTILE_VOLLEY_CRAZY_VOICE) {
-            draw[0](canvas, work->sheet + j % 6 * (8 * 16), pos->x - 4,
-                    pos->y - 8, 8, 16);
+            draw[0](canvas, work->sheet + j % 6 * (8 * 16), position.x - 4,
+                    position.y - 8, 8, 16);
           } else if (mode == PROJECTILE_VOLLEY_WING_FLUTTER) {
             EFFECT_DRAW_PICTURE(draw[0], canvas, work->sheet,
                                 PROJECTILE_VOLLEY_MEDIUM_SPARK_PICTURE,
-                                pos->x - 9, pos->y - 7);
+                                position.x - 9, position.y - 7);
           } else if (mode == PROJECTILE_VOLLEY_WING_BEAT) {
             EFFECT_DRAW_PICTURE(draw[0], canvas, work->sheet,
                                 PROJECTILE_VOLLEY_SMALL_SPARK_PICTURE,
-                                pos->x - 6, pos->y - 4);
+                                position.x - 6, position.y - 4);
           } else if (mode >= PROJECTILE_VOLLEY_BEAST_NEEDLE &&
                      mode <= PROJECTILE_VOLLEY_STUN_STING) {
-            draw[0](canvas, work->sheet, pos->x - 8, pos->y - 1,
+            draw[0](canvas, work->sheet, position.x - 8, position.y - 1,
                     SHORT_STREAK_WIDTH, SHORT_STREAK_HEIGHT);
           } else if (mode == PROJECTILE_VOLLEY_HYDRO_SLASH) {
-            draw[0](canvas, work->sheet, pos->x - 12, pos->y - 12, 24, 24);
+            draw[0](canvas, work->sheet, position.x - 12, position.y - 12, 24,
+                    24);
           } else if (mode == PROJECTILE_VOLLEY_DIAMOND_DUST) {
             // Five crystals, each turning through three cels.
             s32 cel = (i * shots + j) % 5 * 3 + frame / 4 % 3;
@@ -1094,16 +1094,16 @@ void BattleEffect_RunProjectileVolley(struct BattleEffectParams *args,
             s32 top;
 
             width = gPrism_ShardWidths[cel];
-            left = pos->x - (width >> 1);
+            left = position.x - (width >> 1);
             height = gPrism_ShardHeights[cel];
-            top = pos->y - (height >> 1);
+            top = position.y - (height >> 1);
             draw[0](canvas, picture, left, top, width, height);
           } else if (mode == PROJECTILE_VOLLEY_WING_STROKE) {
             EFFECT_DRAW_PICTURE(draw[0], canvas, work->sheet,
                                 PROJECTILE_VOLLEY_LARGE_SPARK_PICTURE,
-                                pos->x - 15, pos->y - 12);
+                                position.x - 15, position.y - 12);
           } else {
-            draw[0](canvas, work->sheet, pos->x - 20, pos->y - 32,
+            draw[0](canvas, work->sheet, position.x - 20, position.y - 32,
                     FLAMEBALL_WIDTH, FLAMEBALL_HEIGHT);
           }
         }

@@ -607,7 +607,6 @@ static s32 BattleArena_CopyPartyOwnerIds(u16 *memberIds) {
 /// through an EWRAM pool buffer freed before returning.
 static s32 BattleArena_SendPartyRecords(void) {
   s32 result;
-  u8 *slotMap;
   u16 memberIds[8];
   u8 peerSlots[8];
   s32 started;
@@ -626,9 +625,8 @@ static s32 BattleArena_SendPartyRecords(void) {
   result = 0;
   timeout = LOBBY_SEND_TIMEOUT_FRAMES;
   memberCount = BattleArena_CopyPartyOwnerIds(memberIds);
-  slotMap = peerSlots;
   for (i = 7; i >= 0; i--) {
-    slotMap[i] = 0;
+    peerSlots[i] = 0;
   }
   // Each send waits a frame at a time to finish. Once the timeout has run out,
   // or while the link is not ready, every frame is a try, and past
@@ -642,7 +640,7 @@ static s32 BattleArena_SendPartyRecords(void) {
       ((struct Unit *)buffer)->side = BATTLE_SIDE_PARTY;
       // As a u8, i - 128 is 128 + i: this party member's unit on the partner's
       // side.
-      slotMap[memberIds[i]] = i - 128;
+      peerSlots[memberIds[i]] = i - 128;
       started = Serial_StartSend(buffer, size);
       tries = 0;
       if (started == -1) {

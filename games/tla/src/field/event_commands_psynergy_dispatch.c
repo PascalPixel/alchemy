@@ -319,15 +319,13 @@ s32 BattleEffect_GetObjectDepth(struct Actor *actor) {
   FIXED point[3];
   s32 screen[3];
   s32 depth;
-  s32 *out;
 
   if (gFieldWork->mode == ACTOR_SYSTEM_WORLD_MAP) {
     point[0] = actor->x.fixed;
-    out = screen;
     point[1] = actor->y.fixed;
     point[2] = actor->z.fixed;
-    Render_ProjectPoint(point, out);
-    depth = (512 - out[2]) / 2 + 128;
+    Render_ProjectPoint(point, screen);
+    depth = (512 - screen[2]) / 2 + 128;
     if (depth <= 0)
       depth = 1;
   } else {

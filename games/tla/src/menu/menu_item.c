@@ -1593,21 +1593,19 @@ void ItemMenu_DrawCommands(const s8 *commandStates, s32 window);
 /// them).
 s32 ItemMenu_ChooseCommand(void) {
   struct ItemMenuWork *menu;
-  s8 commandStorage[6];
+  s8 commandStates[6];
   u16 *redrawFlag;
   s32 column;
   s32 lastCommand;
   s32 row;
   s32 commandIndex;
   s32 redraw;
-  s8 *commandStates;
 
   menu = Ram_HeapSlots->menuWork;
   commandIndex = 0;
   column = 0;
   row = 0;
   redraw = 1;
-  commandStates = commandStorage;
   ItemMenu_BuildCommands(commandStates);
   redrawFlag = &menu->flags;
   if (*redrawFlag != 1) {

@@ -122,7 +122,6 @@ void FieldPsynergy_Douse(void) {
   struct Actor *orb;
   s32 raised;
   struct Vector3 *from;
-  struct Vector3 *to;
   s32 i;
   s32 steps = 11;
   s32 y;
@@ -143,15 +142,14 @@ void FieldPsynergy_Douse(void) {
   from = &start;
   SET_POSITION(from, target->x.fixed, target->y.fixed + toFIXED(16),
                target->z.fixed);
-  to = &end;
-  to->x = work->x;
+  end.x = work->x;
   y = work->y;
-  to->y = y + toFIXED(32);
-  to->z = work->z;
+  end.y = y + toFIXED(32);
+  end.z = work->z;
   if ((s8)work->childOption != 0)
-    to->y = y + toFIXED(80);
+    end.y = y + toFIXED(80);
   if (Actor_GetSpriteIdFar(anchor) == SPRITE_MOAI) {
-    to->y += toFIXED(32);
+    end.y += toFIXED(32);
     raised = 1;
   }
 

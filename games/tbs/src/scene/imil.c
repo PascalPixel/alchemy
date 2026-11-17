@@ -1056,7 +1056,6 @@ UNUSED static void Imil_UpdateCountdownArc(struct Actor *actor) {
   // XXX (no evidence): what this and Imil_SwayAndSpark were for; no
   // actor is given either, so nothing in the game shows them in use.
   s32 buf[3];
-  s32 *b;
   s32 n;
   s32 t;
 
@@ -1065,14 +1064,13 @@ UNUSED static void Imil_UpdateCountdownArc(struct Actor *actor) {
     actor->timer = n;
     t = (s16)n;
     if (t != 0) {
-      b = buf;
-      b[0] = gImil_ArcOrigin[0];
-      b[1] = gImil_ArcOrigin[1] + toFIXED(8);
-      b[2] = gImil_ArcOrigin[2];
-      Vector_AddPolarOffset(toFIXED(t), (t << 11) + (s16)actor->userValue, b);
-      actor->x.fixed = b[0];
-      actor->y.fixed = b[1];
-      actor->z.fixed = b[2];
+      buf[0] = gImil_ArcOrigin[0];
+      buf[1] = gImil_ArcOrigin[1] + toFIXED(8);
+      buf[2] = gImil_ArcOrigin[2];
+      Vector_AddPolarOffset(toFIXED(t), (t << 11) + (s16)actor->userValue, buf);
+      actor->x.fixed = buf[0];
+      actor->y.fixed = buf[1];
+      actor->z.fixed = buf[2];
     } else {
       Actor_Release(actor);
     }

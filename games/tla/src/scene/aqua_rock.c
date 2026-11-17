@@ -282,7 +282,6 @@ s32 AquaRock_PickRandomSpot(struct Actor *actor) {
   /* LEFTOVER(frame): an unused local the ROM's frame reserves and never
    * touches. */
   struct Vector3 unused;
-  struct Vector3 *p;
   s32 x;
   FIXED coordinate;
   s32 tries, maxDistanceSquared;
@@ -295,19 +294,18 @@ s32 AquaRock_PickRandomSpot(struct Actor *actor) {
 again:
   tries++;
   if (tries <= 3) {
-    p = &spot;
-    p->x = actor->x.fixed;
-    p->y = actor->y.fixed;
-    p->z = actor->z.fixed;
+    spot.x = actor->x.fixed;
+    spot.y = actor->y.fixed;
+    spot.z = actor->z.fixed;
     distance = Iwram_MulFX(Random16(), toFIXED(8)) + toFIXED(4);
     a = Random16();
     b = Random16();
-    Vector_AddPolarOffset(distance, actor->facing + (a >> 2) - (b >> 2), p);
-    x = p->x;
+    Vector_AddPolarOffset(distance, actor->facing + (a >> 2) - (b >> 2), &spot);
+    x = spot.x;
     if (x < 0)
       x += FIXED_ONE - 1;
     dx = (x >> 16) - actor->timer;
-    coordinate = p->z;
+    coordinate = spot.z;
     if (coordinate < 0)
       coordinate += FIXED_ONE - 1;
     dz = (coordinate >> 16) - (s16)actor->userValue;
@@ -319,8 +317,8 @@ again:
   actor->wait = 1;
   goto end;
 found:
-  coordinate = p->y;
-  Actor_SetMoveTarget(actor, p->x, coordinate, p->z);
+  coordinate = spot.y;
+  Actor_SetMoveTarget(actor, spot.x, coordinate, spot.z);
 end:
   /* FAKEMATCH(temporary): the form kept. */
   x = 0;

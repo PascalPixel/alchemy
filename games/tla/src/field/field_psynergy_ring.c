@@ -296,7 +296,6 @@ void FieldPsynergy_Ring(void) {
       s32 heading;
       s32 moteEntry = VramCache_FindFreeEntry();
       s32 moteTile = VramCache_Load(moteEntry, 512, work);
-      s32 *place;
 
       work->entry = moteEntry;
       work->tile = moteTile;
@@ -311,14 +310,13 @@ void FieldPsynergy_Ring(void) {
         sprite->oam.fullColor = 0;
         sprite->oam.palette = RING_PALETTE;
         sprite->angle = heading + DEGtoANG(90);
-        place = position;
-        place[0] = scene->mainActor->x.fixed;
-        place[1] = scene->mainActor->y.fixed + toFIXED(16);
-        place[2] = scene->mainActor->z.fixed;
-        Camera_WorldToScreen(place);
-        Vector_AddPolarOffset(toFIXED(64), heading, place);
-        mote->x = place[0];
-        mote->y = place[2];
+        position[0] = scene->mainActor->x.fixed;
+        position[1] = scene->mainActor->y.fixed + toFIXED(16);
+        position[2] = scene->mainActor->z.fixed;
+        Camera_WorldToScreen(position);
+        Vector_AddPolarOffset(toFIXED(64), heading, position);
+        mote->x = position[0];
+        mote->y = position[2];
         mote->timer = -i;
         mote++;
       }

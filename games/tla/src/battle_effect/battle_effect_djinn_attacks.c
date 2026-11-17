@@ -78,7 +78,6 @@ void BattleEffect_RunMercury(struct BattleEffectParams *args) {
   s32 frame;
   u8 *sheet;
   DrawRectangle blit[2];
-  DrawRectangle *draw;
   struct Particle *flame;
   struct Particle *dot;
   u8 *cells;
@@ -91,8 +90,7 @@ void BattleEffect_RunMercury(struct BattleEffectParams *args) {
   canvas = heap->battleCanvas;
   sheet = heap->battleSheet;
   BattleEffect_StartCanvasLayer(0);
-  draw = blit;
-  BattleEffect_FetchRectangleBlitters(0, draw);
+  BattleEffect_FetchRectangleBlitters(0, blit);
 
   // The flame picture is the blue flame sheet turned on its side.
   cells = Ram_MapCellBuffer;
@@ -155,7 +153,7 @@ void BattleEffect_RunMercury(struct BattleEffectParams *args) {
       s32 x = ((Trig_Sin(frame << 11) * (64 - frame * 2)) >> 17) + 96;
       s32 y = (FIXEDtoINT(Trig_Cos(frame << 11) * (64 - frame * 2))) + 60;
 
-      draw[1](canvas, work->sheet, x - 10, y - 17, SMALL_DJINNI_WIDTH, 34);
+      blit[1](canvas, work->sheet, x - 10, y - 17, SMALL_DJINNI_WIDTH, 34);
       for (i = 0; i != FLAME_COUNT; i++) {
         // On its launch frame a free flame leaves the Djinn's hand.
         if (frame == gDjinnAttacks_LaunchFrames[i]) {
@@ -184,7 +182,7 @@ void BattleEffect_RunMercury(struct BattleEffectParams *args) {
       if (dot->variant != -1) {
         s32 size = dot->variant / 16 + 2;
 
-        draw[1](canvas, sheet + gBattleEffect_MotePictures[size - 1],
+        blit[1](canvas, sheet + gBattleEffect_MotePictures[size - 1],
                 FIXED_INTEGER_PART(dot->x) - size / 2,
                 FIXED_INTEGER_PART(dot->y) - size, size, size * 2);
         Particle_AdvanceWithGravity2D(dot, 62, toFIXED(1) / 8);
@@ -497,7 +495,6 @@ void BattleEffect_RunMars(struct BattleEffectParams *args) {
   void *canvas;
   u8 *sheet;
   DrawRectangle blit[2];
-  DrawRectangle *draw;
   struct Particle *puff;
   struct Particle *spark;
   s32 member;
@@ -510,8 +507,7 @@ void BattleEffect_RunMars(struct BattleEffectParams *args) {
   canvas = Ram_HeapSlots->battleCanvas;
   sheet = Ram_HeapSlots->battleSheet;
   BattleEffect_StartCanvasLayer(0);
-  draw = blit;
-  BattleEffect_FetchRectangleBlitters(0, draw);
+  BattleEffect_FetchRectangleBlitters(0, blit);
   Resource_LoadAndDecompress(RESOURCE_PARTICLE_SPRITES_A, sheet, 0, 0);
   Resource_LoadAndDecompress(RESOURCE_MARS_DJINN_SMALL_SHEET, work->sheet, 1,
                              0);
@@ -568,7 +564,7 @@ void BattleEffect_RunMars(struct BattleEffectParams *args) {
           SHEET_PALETTE_BYTES);
     if (frame >= 20 && frame <= 31) {
       if (frame > 23)
-        draw[1](canvas, work->sheet, 146 - frame * 4, diveY, SMALL_DJINNI_WIDTH,
+        blit[1](canvas, work->sheet, 146 - frame * 4, diveY, SMALL_DJINNI_WIDTH,
                 SMALL_DJINNI_HEIGHT);
       else
         blit[0](canvas, work->sheet, 50, 20, SMALL_DJINNI_WIDTH,
@@ -614,7 +610,7 @@ void BattleEffect_RunMars(struct BattleEffectParams *args) {
 
         size = (member & 1) + 3;
         x = FIXED_INTEGER_PART(spark->x) + (FIXEDtoINT(Trig_Sin(spark->z) * 4));
-        draw[1](canvas, sheet + gBattleEffect_MotePictures[size - 1],
+        blit[1](canvas, sheet + gBattleEffect_MotePictures[size - 1],
                 x - ((u32)size >> 1), FIXED_INTEGER_PART(spark->y) - size, size,
                 size * 2);
         Particle_AdvanceWithGravity2D(spark, PARTICLE_DAMPING_NONE,

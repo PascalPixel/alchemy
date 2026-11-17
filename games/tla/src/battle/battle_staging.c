@@ -438,7 +438,6 @@ s32 BattleStaging_HideField(struct BattlePlan *plan, s32 mode) {
   u32 i;
   u32 kept;
   struct MotionObject *object;
-  u16 *list;
 
   BattleStaging_BuildTargetList(plan, &work);
   actor = plan->unitId;
@@ -467,9 +466,8 @@ s32 BattleStaging_HideField(struct BattlePlan *plan, s32 mode) {
                       ~PARTY_STATUS_SHOW_PP);
   object = BattleObject_Get(actor)->object;
   REG_BLDCNT = BLEND_SPRITES_OVER_ALL;
-  list = units;
   i = 0;
-  count = BattleUnit_ListIds(BATTLE_SIDE_MASK_BOTH, list);
+  count = BattleUnit_ListIds(BATTLE_SIDE_MASK_BOTH, units);
   for (; i != count; i++) {
     if (units[i] == BATTLE_UNIT_REMOVED)
       continue;

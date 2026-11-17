@@ -67,6 +67,11 @@
 #define NR30_PLAY 0x80      ///< NR30: channel 3 plays
 #define NR51_RIGHT_ALL 0x0F ///< NR51: the four channels to the right speaker
 #define NR51_LEFT_ALL 0xF0  ///< NR51: the four channels to the left speaker
+/// NR51: CGB channel n, 1 to 4, to both speakers (bit n - 1 for the right,
+/// n + 3 for the left).
+#define NR51_CHANNEL_BOTH(n) (0x11 << ((n) - 1))
+/// NR50: the master volume at its loudest, 7, on both speakers.
+#define NR50_VOLUME_FULL 0x77
 
 #define REG_NR50 (*(volatile u8 *)0x04000080)
 #define REG_SOUNDCNT_L (*(volatile u16 *)0x04000080)
@@ -293,7 +298,7 @@ struct CgbChannel {
   u8 sustainLevel; ///< (peak * sustain + 15) / 16.
   u8 trigger;      ///< Value for NRx4: 7 restart, 6 length on, 2..0 frequency.
   u8 panBits;      ///< NR51 bits this note sets: one side or both.
-  u8 channelBits;  ///< This channel's NR51 bits: 0x11, 0x22, 0x44, 0x88.
+  u8 channelBits;  ///< This channel's NR51 bits, NR51_CHANNEL_BOTH(n).
   u8 modified;     ///< CgbChannelModify: what to write to the channel.
   u8 length;       ///< The voice's length.
   u8 sweep;        ///< CGB_CHANNEL_SWEEP_SQUARE's NR10 sweep; 8 when none.

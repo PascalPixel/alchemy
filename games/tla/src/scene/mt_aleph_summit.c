@@ -173,6 +173,7 @@ void MtAlephSummit_ShiftColors(u16 *colors, s32 count, s32 delta) {
 void MtAlephSummit_PulseColors(void) {
   u16 *src = (u16 *)&BG_PLTT_COLOR(6, 1);
   u16 *dst = (u16 *)&BG_PLTT_COLOR(4, 1);
+  // A 64th of a turn a frame, as the ROM computes it: a 32nd, then halved.
   s32 delta = FIXEDtoINT(Math_Sin(gFrameCount * (TRIG_TURN / 32) / 2) * 2);
   s32 i;
 

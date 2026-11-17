@@ -39,7 +39,8 @@ enum NaribweActorId {
   /// The burning braziers either side of the fortune teller's hut.
   ACTOR_WEST_BRAZIER,
   ACTOR_EAST_BRAZIER,
-  /// Unseen actors raised 24 pixels over the braziers (gNaribwe_FlameRises):
+  /// Unseen actors raised 24 pixels over the braziers
+  /// (gNaribwe_HoldOverBrazier):
   /// the exclamation bubble's sheet, whose animation 0 draws nothing.
   ACTOR_OVER_WEST_BRAZIER,
   ACTOR_OVER_EAST_BRAZIER,
@@ -396,7 +397,7 @@ void Naribwe_ScatterWeeds(void);
 void Naribwe_RevealChest(void);
 
 extern s32 gNaribwe_BrazierBurns[];
-extern s32 gNaribwe_FlameRises[];
+extern s32 gNaribwe_HoldOverBrazier[];
 
 extern s32 gNaribwe_WeedsAnimation[];
 extern s16 gNaribwe_DoorOpening[];
@@ -416,11 +417,11 @@ void Naribwe_HideChest(void);
                       (s32)gNaribwe_BrazierBurns, 372, 0, 132, FACING_SOUTH,   \
                       TALK_FACING_PARTY, 0),                                   \
       ACTOR_PLACEMENT(SPRITE_EXCLAMATION_BUBBLE, CONDITION_ALWAYS,             \
-                      (s32)gNaribwe_FlameRises, 316, 0, 132, FACING_SOUTH,     \
-                      TALK_FACING_PARTY, 0),                                   \
+                      (s32)gNaribwe_HoldOverBrazier, 316, 0, 132,              \
+                      FACING_SOUTH, TALK_FACING_PARTY, 0),                     \
       ACTOR_PLACEMENT(SPRITE_EXCLAMATION_BUBBLE, CONDITION_ALWAYS,             \
-                      (s32)gNaribwe_FlameRises, 372, 0, 132, FACING_SOUTH,     \
-                      TALK_FACING_PARTY, 0),                                   \
+                      (s32)gNaribwe_HoldOverBrazier, 372, 0, 132,              \
+                      FACING_SOUTH, TALK_FACING_PARTY, 0),                     \
       ACTOR_PLACEMENT(SPRITE_SUNSHINES_CHILD, CONDITION_ALWAYS,                \
                       MOVEMENT_TYPE_STAND, 248, 0, 344, FACING_SOUTH,          \
                       TALK_FACING_PARTY_AND_BACK, 0),                          \
@@ -483,7 +484,7 @@ s32 gNaribwe_BrazierBurns[] = {
 };
 
 /// The unseen actors over the braziers: nothing drawn, held 24 pixels up.
-s32 gNaribwe_FlameRises[] = {
+s32 gNaribwe_HoldOverBrazier[] = {
     SC_ANIMATION(0),
     SC_SET(SW_MOTION, 0),
     SC_ADD(SW_Y, toFIXED(24)),

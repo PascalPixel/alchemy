@@ -248,7 +248,7 @@ void Caverns_StartMovingAngaraBlock(void) {
       Caverns_ShiftAngaraCellHeights(1);
   } else {
     leader = Actor_GetById(gMainRoutineWork.leaderActorId);
-    angle = (leader->facing + DEGtoANG(45)) & (TRIG_TURN - DEGtoANG(90));
+    angle = (leader->facing + DEGtoANG(45)) & 0xc000;
     position[0] = leader->x.fixed;
     position[1] = leader->y.fixed;
     position[2] = leader->z.fixed;
@@ -360,7 +360,7 @@ void Caverns_FinishMovingAngaraBlock(void) {
       OverlayObject_WaitUntilIdle(actor);
       OverlayObject_WaitUntilIdle(actor);
       Sound_Play(SE_THUMP);
-      options.palette = 7;
+      options.palette = SPRITE_COLOR_WHITE;
       options.priority = 2;
       options.update = Caverns_DriftDust;
       options.startScaleX = FIXED_ONE * 4 / 5;
@@ -473,6 +473,7 @@ void Caverns_InitializeIndra(void) {
   actor = Actor_GetById(ACTOR_PILLAR);
   actor->motionFlags = 0;
 
+  /* FAKEMATCH(temporary): the row held in a local; as INDRA_PILLAR_ROW. */
   row = INDRA_PILLAR_ROW;
   Map_CopyCellAttributeRect(INDRA_GAP_COLUMN, row, 1, 1,
                             FIELD_CELL(actor->x.fixed), row);
@@ -664,23 +665,23 @@ enum CavernsAngaraActorId {
   /// the ledge, carried until one stands on top of the other.
   ACTOR_FIRST_BLOCK = ACTOR_FIRST_PLACED,
   ACTOR_SECOND_BLOCK,
-  /// The torches burning on either side of Haurus's tablet, which the searches
+  /// The lit candlesticks on either side of Haurus's tablet, which the searches
   /// for a block skip.
-  ACTOR_WEST_TORCH,
-  ACTOR_EAST_TORCH
+  ACTOR_WEST_CANDLESTICK,
+  ACTOR_EAST_CANDLESTICK
 };
 
 /// Angara Cavern on entry: sets the two grey blocks on their cells, lets them
 /// stand over rises, and keeps the searches for a block off the tablet's
-/// torches.
+/// candlesticks.
 void Caverns_InitializeAngara(void) {
   Caverns_PlaceAngaraBlocks(gCaverns_AngaraBlocks);
   Actor_GetById(ACTOR_FIRST_BLOCK)->priorityFlags |=
       ACTOR_PRIORITY_IGNORES_RISES;
   Actor_GetById(ACTOR_SECOND_BLOCK)->priorityFlags |=
       ACTOR_PRIORITY_IGNORES_RISES;
-  Actor_GetById(ACTOR_WEST_TORCH)->collisionFlags |= ACTOR_NOT_TARGETED;
-  Actor_GetById(ACTOR_EAST_TORCH)->collisionFlags |= ACTOR_NOT_TARGETED;
+  Actor_GetById(ACTOR_WEST_CANDLESTICK)->collisionFlags |= ACTOR_NOT_TARGETED;
+  Actor_GetById(ACTOR_EAST_CANDLESTICK)->collisionFlags |= ACTOR_NOT_TARGETED;
 }
 
 /// Walking into Angara Cavern's door opens it and leaves by exit 8.

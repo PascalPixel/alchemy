@@ -101,8 +101,8 @@ enum {
 /// The chests' and the Jester's Armlet rooms' tightrope posts and the stone
 /// pillar Move pushes; the chests' room has a second pillar.
 enum {
-  ACTOR_ROPE_POST_A = ACTOR_FIRST_PLACED,
-  ACTOR_ROPE_POST_B,
+  ACTOR_TIGHTROPE_POST_A = ACTOR_FIRST_PLACED,
+  ACTOR_TIGHTROPE_POST_B,
   ACTOR_STONE_PILLAR,
   ACTOR_SECOND_STONE_PILLAR
 };
@@ -113,12 +113,12 @@ enum TreasureIsleGaleRoomActorId {
   ACTOR_GALE_ROOM_PILLAR = ACTOR_FIRST_PLACED,
   ACTOR_FIRST_BOULDER,
   ACTOR_LAST_BOULDER = ACTOR_FIRST_BOULDER + 7,
-  ACTOR_GALE_ROOM_POST_A,
-  ACTOR_GALE_ROOM_POST_B,
-  ACTOR_GALE_ROOM_POST_C,
-  ACTOR_GALE_ROOM_POST_D,
-  ACTOR_GALE_ROOM_POST_E,
-  ACTOR_GALE_ROOM_POST_F,
+  ACTOR_GALE_ROOM_TIGHTROPE_POST_A,
+  ACTOR_GALE_ROOM_TIGHTROPE_POST_B,
+  ACTOR_GALE_ROOM_TIGHTROPE_POST_C,
+  ACTOR_GALE_ROOM_TIGHTROPE_POST_D,
+  ACTOR_GALE_ROOM_TIGHTROPE_POST_E,
+  ACTOR_GALE_ROOM_TIGHTROPE_POST_F,
   ACTOR_GALE
 };
 
@@ -132,11 +132,17 @@ enum { ACTOR_STAR_MAGICIAN = ACTOR_FIRST_PLACED, ACTOR_VENUS_DJINNI };
 /// Where Move leaves each stone pillar, in pixels: Scene_Initialize puts a
 /// pillar whose flag is set back there.
 #define ENTRANCE_PILLAR_A_MOVED_X 264
+#define ENTRANCE_PILLAR_A_MOVED_Z 440
 #define ENTRANCE_PILLAR_B_MOVED_X 328
+#define ENTRANCE_PILLAR_B_MOVED_Z 440
 #define ENTRANCE_PILLAR_C_MOVED_X 440
+#define ENTRANCE_PILLAR_C_MOVED_Z 344
 #define CHESTS_PILLAR_MOVED_X 264
+#define CHESTS_PILLAR_MOVED_Z 184
 #define ARMLET_PILLAR_MOVED_X 664
+#define ARMLET_PILLAR_MOVED_Z 248
 #define GALE_ROOM_PILLAR_MOVED_X 696
+#define GALE_ROOM_PILLAR_MOVED_Z 600
 /// The place of the chests' room's second pillar that raises the last spiky
 /// rock.
 #define CHESTS_SECOND_PILLAR_MOVED_X 680
@@ -405,32 +411,40 @@ void TreasureIsle_SettleMovedPillar(s32 unused, s32 id) {
 
   if (gMainRoutineWork.next == SCENE_TREASURE_ISLE_ENTRANCE) {
     if (id == ACTOR_ENTRANCE_PILLAR_A &&
-        FIELD_CELL(actor->x.fixed) == ENTRANCE_PILLAR_A_MOVED_X / 16)
+        FIELD_CELL(actor->x.fixed) ==
+            FIELD_CELL(toFIXED(ENTRANCE_PILLAR_A_MOVED_X)))
       Event_SetFlag(FLAG_TREASURE_ISLE_ENTRANCE_PILLAR_MOVED(0));
     if (id == ACTOR_ENTRANCE_PILLAR_B &&
-        FIELD_CELL(actor->x.fixed) == ENTRANCE_PILLAR_B_MOVED_X / 16)
+        FIELD_CELL(actor->x.fixed) ==
+            FIELD_CELL(toFIXED(ENTRANCE_PILLAR_B_MOVED_X)))
       Event_SetFlag(FLAG_TREASURE_ISLE_ENTRANCE_PILLAR_MOVED(1));
     if (id == ACTOR_ENTRANCE_PILLAR_C &&
-        FIELD_CELL(actor->x.fixed) == ENTRANCE_PILLAR_C_MOVED_X / 16)
+        FIELD_CELL(actor->x.fixed) ==
+            FIELD_CELL(toFIXED(ENTRANCE_PILLAR_C_MOVED_X)))
       Event_SetFlag(FLAG_TREASURE_ISLE_ENTRANCE_PILLAR_MOVED(2));
   }
   if (gMainRoutineWork.next == SCENE_TREASURE_ISLE_CHESTS) {
     if (id == ACTOR_STONE_PILLAR &&
-        FIELD_HALF_CELL(actor->x.fixed) == CHESTS_PILLAR_MOVED_X / 8)
+        FIELD_HALF_CELL(actor->x.fixed) ==
+            FIELD_HALF_CELL(toFIXED(CHESTS_PILLAR_MOVED_X)))
       Event_SetFlag(FLAG_TREASURE_ISLE_CHESTS_PILLAR_MOVED);
     if (id == ACTOR_SECOND_STONE_PILLAR &&
-        FIELD_HALF_CELL(actor->x.fixed) == CHESTS_SECOND_PILLAR_MOVED_X / 8 &&
-        FIELD_HALF_CELL(actor->z.fixed) == CHESTS_SECOND_PILLAR_MOVED_Z / 8)
+        FIELD_HALF_CELL(actor->x.fixed) ==
+            FIELD_HALF_CELL(toFIXED(CHESTS_SECOND_PILLAR_MOVED_X)) &&
+        FIELD_HALF_CELL(actor->z.fixed) ==
+            FIELD_HALF_CELL(toFIXED(CHESTS_SECOND_PILLAR_MOVED_Z)))
       TreasureIsle_RaiseLastSpikyRock();
   }
   if (gMainRoutineWork.next == SCENE_TREASURE_ISLE_JESTERS_ARMLET_CHEST) {
     if (id == ACTOR_STONE_PILLAR &&
-        FIELD_HALF_CELL(actor->x.fixed) == ARMLET_PILLAR_MOVED_X / 8)
+        FIELD_HALF_CELL(actor->x.fixed) ==
+            FIELD_HALF_CELL(toFIXED(ARMLET_PILLAR_MOVED_X)))
       Event_SetFlag(FLAG_TREASURE_ISLE_ARMLET_PILLAR_MOVED);
   }
   if (gMainRoutineWork.next == SCENE_TREASURE_ISLE_GALE) {
     if (id == ACTOR_GALE_ROOM_PILLAR &&
-        FIELD_HALF_CELL(actor->x.fixed) == GALE_ROOM_PILLAR_MOVED_X / 8)
+        FIELD_HALF_CELL(actor->x.fixed) ==
+            FIELD_HALF_CELL(toFIXED(GALE_ROOM_PILLAR_MOVED_X)))
       Event_SetFlag(FLAG_TREASURE_ISLE_GALE_ROOM_PILLAR_MOVED);
   }
 }
@@ -609,19 +623,20 @@ s32 Scene_Initialize(void) {
     Event_SetFlag(FLAG_TREASURE_ISLE_ENTRANCE_PILLAR_MOVED(2));
     if (Event_GetFlag(FLAG_TREASURE_ISLE_ENTRANCE_PILLAR_MOVED(0)))
       Actor_SetPosition(ACTOR_ENTRANCE_PILLAR_A, ENTRANCE_PILLAR_A_MOVED_X,
-                        440);
+                        ENTRANCE_PILLAR_A_MOVED_Z);
     if (Event_GetFlag(FLAG_TREASURE_ISLE_ENTRANCE_PILLAR_MOVED(1)))
       Actor_SetPosition(ACTOR_ENTRANCE_PILLAR_B, ENTRANCE_PILLAR_B_MOVED_X,
-                        440);
+                        ENTRANCE_PILLAR_B_MOVED_Z);
     if (Event_GetFlag(FLAG_TREASURE_ISLE_ENTRANCE_PILLAR_MOVED(2)))
       Actor_SetPosition(ACTOR_ENTRANCE_PILLAR_C, ENTRANCE_PILLAR_C_MOVED_X,
-                        344);
+                        ENTRANCE_PILLAR_C_MOVED_Z);
   }
   if (gMainRoutineWork.next == SCENE_TREASURE_ISLE_CHESTS) {
     Task_AddFrame(TreasureIsle_CycleWaterColors, TASK_PASS_FRAME);
-    Tightrope_Place(0, ACTOR_ROPE_POST_A, ACTOR_ROPE_POST_B);
+    Tightrope_Place(0, ACTOR_TIGHTROPE_POST_A, ACTOR_TIGHTROPE_POST_B);
     if (Event_GetFlag(FLAG_TREASURE_ISLE_CHESTS_PILLAR_MOVED))
-      Actor_SetPosition(ACTOR_STONE_PILLAR, CHESTS_PILLAR_MOVED_X, 184);
+      Actor_SetPosition(ACTOR_STONE_PILLAR, CHESTS_PILLAR_MOVED_X,
+                        CHESTS_PILLAR_MOVED_Z);
     if (Event_GetFlag(FLAG_TREASURE_ISLE_CHESTS_ROCK_RISEN(0)))
       TreasureIsle_SetSpikyRock(gTreasureIsle_Room2SpikyRocks, 0);
     if (Event_GetFlag(FLAG_TREASURE_ISLE_CHESTS_ROCK_RISEN(1)))
@@ -635,9 +650,10 @@ s32 Scene_Initialize(void) {
   }
   if (gMainRoutineWork.next == SCENE_TREASURE_ISLE_JESTERS_ARMLET_CHEST) {
     Task_AddFrame(TreasureIsle_CycleWaterColors, TASK_PASS_FRAME);
-    Tightrope_Place(0, ACTOR_ROPE_POST_A, ACTOR_ROPE_POST_B);
+    Tightrope_Place(0, ACTOR_TIGHTROPE_POST_A, ACTOR_TIGHTROPE_POST_B);
     if (Event_GetFlag(FLAG_TREASURE_ISLE_ARMLET_PILLAR_MOVED))
-      Actor_SetPosition(ACTOR_STONE_PILLAR, ARMLET_PILLAR_MOVED_X, 248);
+      Actor_SetPosition(ACTOR_STONE_PILLAR, ARMLET_PILLAR_MOVED_X,
+                        ARMLET_PILLAR_MOVED_Z);
     if (Event_GetFlag(FLAG_TREASURE_ISLE_ARMLET_ROCK_RISEN(0)))
       TreasureIsle_SetSpikyRock(gTreasureIsle_Room3SpikyRocks, 0);
     if (Event_GetFlag(FLAG_TREASURE_ISLE_ARMLET_ROCK_RISEN(1)))
@@ -647,10 +663,14 @@ s32 Scene_Initialize(void) {
   }
   if (gMainRoutineWork.next == SCENE_TREASURE_ISLE_GALE) {
     if (Event_GetFlag(FLAG_TREASURE_ISLE_GALE_ROOM_PILLAR_MOVED))
-      Actor_SetPosition(ACTOR_GALE_ROOM_PILLAR, GALE_ROOM_PILLAR_MOVED_X, 600);
-    Tightrope_Place(0, ACTOR_GALE_ROOM_POST_A, ACTOR_GALE_ROOM_POST_B);
-    Tightrope_Place(1, ACTOR_GALE_ROOM_POST_C, ACTOR_GALE_ROOM_POST_D);
-    Tightrope_Place(2, ACTOR_GALE_ROOM_POST_E, ACTOR_GALE_ROOM_POST_F);
+      Actor_SetPosition(ACTOR_GALE_ROOM_PILLAR, GALE_ROOM_PILLAR_MOVED_X,
+                        GALE_ROOM_PILLAR_MOVED_Z);
+    Tightrope_Place(0, ACTOR_GALE_ROOM_TIGHTROPE_POST_A,
+                    ACTOR_GALE_ROOM_TIGHTROPE_POST_B);
+    Tightrope_Place(1, ACTOR_GALE_ROOM_TIGHTROPE_POST_C,
+                    ACTOR_GALE_ROOM_TIGHTROPE_POST_D);
+    Tightrope_Place(2, ACTOR_GALE_ROOM_TIGHTROPE_POST_E,
+                    ACTOR_GALE_ROOM_TIGHTROPE_POST_F);
     for (i = 0; i <= 7; i++)
       ((struct FieldSprite *)Actor_Get(i + ACTOR_FIRST_BOULDER)->sprite)
           ->partPriority = 3;

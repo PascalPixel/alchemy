@@ -1,7 +1,7 @@
 /// @file
 /// Garoh's houses, in three scenes that share this overlay: the inn, where
-/// the weapon and armor merchants keep their counters
-/// (SceneId_GarohRoomsHouses), the house of the item merchant
+/// the Weapons Vendor and the Armor Vendor keep their counters
+/// (SceneId_GarohRoomsHouses), the house of the Item Shopkeeper
 /// (SceneId_GarohRoomsShop) and the sanctum
 /// (SceneId_GarohRoomsSanctum).
 ///
@@ -48,8 +48,8 @@ enum GarohInnActorId {
   /// them. His event is GarohRooms_AskAboutReveal.
   ACTOR_REVEAL_SEEKER,
   ACTOR_REVEAL_SEEKERS_MATE,
-  ACTOR_WEAPON_MERCHANT,
-  ACTOR_ARMOR_MERCHANT,
+  ACTOR_WEAPONS_VENDOR,
+  ACTOR_ARMOR_VENDOR,
   ACTOR_INNKEEPER, ///< GarohRooms_TalkToInnkeeper checks the party in
   /// The one who greets the party the morning after.
   ACTOR_INN_WORKER,
@@ -64,13 +64,13 @@ enum GarohInnActorId {
   ACTOR_STUBBORN_TRAVELERS_BED
 };
 
-/// The item merchant's house's actors, numbering the rows of
+/// The Item Shopkeeper's house's actors, numbering the rows of
 /// gGarohRooms_HouseActorPlacements.
 enum GarohHouseActorId {
   ACTOR_AIRS_ROCK_GUARDIAN = ACTOR_FIRST_PLACED,
   ACTOR_VILLAGER_ON_WHIRLWIND,
   ACTOR_VILLAGER_ON_THE_WIND_STONE,
-  ACTOR_ITEM_MERCHANT
+  ACTOR_ITEM_SHOPKEEPER
 };
 
 /// The Sanctum's priest, its one actor.
@@ -127,9 +127,9 @@ enum { SHOP_GAROH_WEAPONS = 10, SHOP_GAROH_ARMOR = 11, SHOP_GAROH_ITEMS = 12 };
 /// Garoh's inn, as Inn_CheckIn numbers the inns.
 enum { GAROH_INN = 3 };
 
-/// The weapon merchant: across the counter, once the secret is shared, his
+/// The Weapons Vendor: across the counter, once the secret is shared, his
 /// shop; else what he says.
-void GarohRooms_TalkToWeaponMerchant(s32 actor) {
+void GarohRooms_TalkToWeaponsVendor(s32 actor) {
   struct Actor *leader = Actor_GetById(gMainRoutineWork.leaderActorId);
 
   u16 facing = FACING_NEAREST_CARDINAL(leader->facing);
@@ -150,9 +150,9 @@ void GarohRooms_TalkToWeaponMerchant(s32 actor) {
   }
 }
 
-/// The armor merchant: across the counter, once the secret is shared, his
+/// The Armor Vendor: across the counter, once the secret is shared, his
 /// shop; else what he says.
-void GarohRooms_TalkToArmorMerchant(s32 actor) {
+void GarohRooms_TalkToArmorVendor(s32 actor) {
   struct Actor *leader = Actor_GetById(gMainRoutineWork.leaderActorId);
 
   u16 facing = FACING_NEAREST_CARDINAL(leader->facing);
@@ -171,9 +171,9 @@ void GarohRooms_TalkToArmorMerchant(s32 actor) {
   }
 }
 
-/// The item merchant: across the counter, his shop, night or day; else his
+/// The Item Shopkeeper: across the counter, his shop, night or day; else his
 /// talk, at night a question about the way the party came.
-void GarohRooms_TalkToItemMerchant(s32 actor) {
+void GarohRooms_TalkToItemShopkeeper(s32 actor) {
   struct Actor *leader = Actor_GetById(gMainRoutineWork.leaderActorId);
 
   u16 facing = FACING_NEAREST_CARDINAL(leader->facing);
@@ -571,14 +571,14 @@ struct Trigger gGarohRooms_InnNightTriggers[] = {
      CONDITION_ALWAYS, MSGNO(MsgGarohInteriorsICastWhirlwindOnThe)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_REVEAL_SEEKERS_MATE,
      CONDITION_ALWAYS, MSGNO(MsgGarohInteriors16)},
-    {TRIGGER_TALK, ACTOR_WEAPON_MERCHANT, CONDITION_ALWAYS,
-     EVENT(GarohRooms_TalkToWeaponMerchant)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_WEAPON_MERCHANT,
+    {TRIGGER_TALK, ACTOR_WEAPONS_VENDOR, CONDITION_ALWAYS,
+     EVENT(GarohRooms_TalkToWeaponsVendor)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_WEAPONS_VENDOR,
      CONDITION_ALWAYS, MSGNO(MsgGarohInteriorsIShouldBeOutsideHowling)},
-    {TRIGGER_TALK, ACTOR_ARMOR_MERCHANT, CONDITION_ALWAYS,
-     EVENT(GarohRooms_TalkToArmorMerchant)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_ARMOR_MERCHANT,
-     CONDITION_ALWAYS, MSGNO(MsgGarohInteriorsTheseStrangersSeemNormalEnough)},
+    {TRIGGER_TALK, ACTOR_ARMOR_VENDOR, CONDITION_ALWAYS,
+     EVENT(GarohRooms_TalkToArmorVendor)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_ARMOR_VENDOR, CONDITION_ALWAYS,
+     MSGNO(MsgGarohInteriorsTheseStrangersSeemNormalEnough)},
     {TRIGGER_TALK, ACTOR_INNKEEPER, CONDITION_ALWAYS,
      EVENT(GarohRooms_TalkToInnkeeper)},
     {TRIGGER_TALK, ACTOR_INN_WORKER, CONDITION_ALWAYS,
@@ -626,9 +626,9 @@ struct Trigger gGarohRooms_HouseNightTriggers[] = {
      CONDITION_ALWAYS, MSGNO(MsgGarohInteriorsAndDifferentPeopleUseWhirlwind)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_VILLAGER_ON_THE_WIND_STONE,
      CONDITION_ALWAYS, MSGNO(MsgGarohInteriorsIWishIKnewWhat)},
-    {TRIGGER_TALK, ACTOR_ITEM_MERCHANT, CONDITION_ALWAYS,
-     EVENT(GarohRooms_TalkToItemMerchant)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_ITEM_MERCHANT,
+    {TRIGGER_TALK, ACTOR_ITEM_SHOPKEEPER, CONDITION_ALWAYS,
+     EVENT(GarohRooms_TalkToItemShopkeeper)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_ITEM_SHOPKEEPER,
      CONDITION_ALWAYS, MSGNO(MsgGarohInteriorsINeverChangeMyStock)},
     {EXAMINE_TRIGGER(EXAMINE_OVEN), 211, CONDITION_ALWAYS,
      FIND_MESSAGE(MSGNO(MsgGarohInteriorsHuhWhatIsThatLobster))},
@@ -681,14 +681,14 @@ struct Trigger gGarohRooms_InnMorningTriggers[] = {
      CONDITION_ALWAYS, MSGNO(MsgGarohInteriorsIThoughtICouldBecome)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_REVEAL_SEEKERS_MATE,
      CONDITION_ALWAYS, MSGNO(MsgGarohInteriorsSoNowEvenOutsidersAre)},
-    {TRIGGER_TALK, ACTOR_WEAPON_MERCHANT, CONDITION_ALWAYS,
-     EVENT(GarohRooms_TalkToWeaponMerchant)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_WEAPON_MERCHANT,
+    {TRIGGER_TALK, ACTOR_WEAPONS_VENDOR, CONDITION_ALWAYS,
+     EVENT(GarohRooms_TalkToWeaponsVendor)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_WEAPONS_VENDOR,
      CONDITION_ALWAYS, MSGNO(MsgGarohInteriorsIPreferTheToothAnd)},
-    {TRIGGER_TALK, ACTOR_ARMOR_MERCHANT, CONDITION_ALWAYS,
-     EVENT(GarohRooms_TalkToArmorMerchant)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_ARMOR_MERCHANT,
-     CONDITION_ALWAYS, MSGNO(MsgGarohInteriorsMahaSaysThatWhenWere)},
+    {TRIGGER_TALK, ACTOR_ARMOR_VENDOR, CONDITION_ALWAYS,
+     EVENT(GarohRooms_TalkToArmorVendor)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_ARMOR_VENDOR, CONDITION_ALWAYS,
+     MSGNO(MsgGarohInteriorsMahaSaysThatWhenWere)},
     {TRIGGER_TALK, ACTOR_INNKEEPER, CONDITION_ALWAYS,
      EVENT(GarohRooms_TalkToInnkeeper)},
     {TRIGGER_TALK, ACTOR_INN_WORKER, CONDITION_ALWAYS,
@@ -736,9 +736,9 @@ struct Trigger gGarohRooms_HouseMorningTriggers[] = {
      CONDITION_ALWAYS, MSGNO(MsgGarohInteriorsSoThesePeopleCanUse)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_VILLAGER_ON_THE_WIND_STONE,
      CONDITION_ALWAYS, MSGNO(MsgGarohInteriorsNormallyOutsidersNeverGetIn)},
-    {TRIGGER_TALK, ACTOR_ITEM_MERCHANT, CONDITION_ALWAYS,
-     EVENT(GarohRooms_TalkToItemMerchant)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_ITEM_MERCHANT,
+    {TRIGGER_TALK, ACTOR_ITEM_SHOPKEEPER, CONDITION_ALWAYS,
+     EVENT(GarohRooms_TalkToItemShopkeeper)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_ITEM_SHOPKEEPER,
      CONDITION_ALWAYS, MSGNO(MsgGarohInteriorsIHeardThatOneThats)},
     {EXAMINE_TRIGGER(EXAMINE_OVEN), 211, CONDITION_ALWAYS,
      FIND_MESSAGE(MSGNO(MsgGarohInteriorsHuhWhatIsThatLobster))},

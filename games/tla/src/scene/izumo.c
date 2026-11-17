@@ -3,8 +3,8 @@
 /// Serpent until the party slays it. Move sets the misaligned stone of its
 /// stone circle back in place (Izumo_FinishMovingStone), and Reveal then shows
 /// the way down to the Izumo Ruins (Izumo_RevealTheStoneCircle,
-/// Izumo_DescendIntoTheRuins). Cyclone clears its bushes
-/// (Izumo_CycloneFirstPatch to Izumo_CycloneNinthPatch). Once the Serpent is
+/// Izumo_DescendIntoTheRuins). Cyclone scatters its weeds
+/// (Izumo_CycloneFirstWeeds to Izumo_CycloneNinthWeeds). Once the Serpent is
 /// slain the village holds a festival, its dancers turning on the spot
 /// (gIzumo_FirstDanceScript), and as the party leaves it is stopped to be
 /// thanked and told the legend of the Cloud Brand
@@ -81,7 +81,7 @@ enum {
 #define CIRCLE_CENTER_CELL_X 23
 #define CIRCLE_CENTER_CELL_Z 9
 
-/// Where Cyclone uncovers each treasure spot under the bushes, in pixels.
+/// Where Cyclone uncovers each treasure spot under the weeds, in pixels.
 #define FIRST_ANTIDOTE_SPOT_X 456
 #define FIRST_ANTIDOTE_SPOT_Z 584
 #define SECOND_ANTIDOTE_SPOT_X 472
@@ -218,14 +218,14 @@ const struct ActorPlacement *Scene_GetActorPlacements(void) {
   return gIzumo_ActorPlacements;
 }
 
-/// Cyclone clears a patch of the village's bushes, the first of nine.
-void Izumo_CycloneFirstPatch(void) {
+/// Cyclone scatters the first of the village's nine weeds.
+void Izumo_CycloneFirstWeeds(void) {
   FieldTileCopies_CopyTouchedCells(53, 5, 8, 9, 23, 30, 0);
 }
 
 /// Cyclone clears the second patch and, unless its flag is set, uncovers a
 /// treasure spot there, pushing off a leader standing on it.
-void Izumo_CycloneSecondPatch(void) {
+void Izumo_CycloneSecondWeeds(void) {
   struct Actor *actor = Actor_GetById(gMainRoutineWork.leaderActorId);
 
   FieldTileCopies_CopyTouchedCells(53, 5, 8, 9, 23, 30, 0);
@@ -233,8 +233,10 @@ void Izumo_CycloneSecondPatch(void) {
     Call3((void (*)())Actor_SetHorizontalPositionWithTerrain,
           FIELD_TREASURE_ACTOR, toFIXED(FIRST_ANTIDOTE_SPOT_X),
           toFIXED(FIRST_ANTIDOTE_SPOT_Z));
-    if (FIELD_CELL(actor->x.fixed) == FIRST_ANTIDOTE_SPOT_X / 16 &&
-        FIELD_CELL(actor->z.fixed) == FIRST_ANTIDOTE_SPOT_Z / 16) {
+    if (FIELD_CELL(actor->x.fixed) ==
+            FIELD_CELL(toFIXED(FIRST_ANTIDOTE_SPOT_X)) &&
+        FIELD_CELL(actor->z.fixed) ==
+            FIELD_CELL(toFIXED(FIRST_ANTIDOTE_SPOT_Z))) {
       Event_Start();
       Event_ResolvePendingActions(0);
       FieldEffect_SetAttached(gMainRoutineWork.leaderActorId,
@@ -248,7 +250,7 @@ void Izumo_CycloneSecondPatch(void) {
 }
 
 /// Cyclone clears the third patch, as the second does with its own cell.
-void Izumo_CycloneThirdPatch(void) {
+void Izumo_CycloneThirdWeeds(void) {
   struct Actor *actor = Actor_GetById(gMainRoutineWork.leaderActorId);
 
   FieldTileCopies_CopyTouchedCells(53, 5, 8, 9, 23, 30, 0);
@@ -256,8 +258,10 @@ void Izumo_CycloneThirdPatch(void) {
     Call3((void (*)())Actor_SetHorizontalPositionWithTerrain,
           FIELD_TREASURE_ACTOR + 1, toFIXED(SECOND_ANTIDOTE_SPOT_X),
           toFIXED(SECOND_ANTIDOTE_SPOT_Z));
-    if (FIELD_CELL(actor->x.fixed) == SECOND_ANTIDOTE_SPOT_X / 16 &&
-        FIELD_CELL(actor->z.fixed) == SECOND_ANTIDOTE_SPOT_Z / 16) {
+    if (FIELD_CELL(actor->x.fixed) ==
+            FIELD_CELL(toFIXED(SECOND_ANTIDOTE_SPOT_X)) &&
+        FIELD_CELL(actor->z.fixed) ==
+            FIELD_CELL(toFIXED(SECOND_ANTIDOTE_SPOT_Z))) {
       Event_Start();
       Event_ResolvePendingActions(0);
       FieldEffect_SetAttached(gMainRoutineWork.leaderActorId,
@@ -271,23 +275,23 @@ void Izumo_CycloneThirdPatch(void) {
   }
 }
 
-/// Cyclone clears the fourth patch of bushes.
-void Izumo_CycloneFourthPatch(void) {
+/// Cyclone scatters the fourth weeds.
+void Izumo_CycloneFourthWeeds(void) {
   FieldTileCopies_CopyTouchedCells(44, 5, 8, 5, 7, 32, 0);
 }
 
-/// Cyclone clears the fifth patch of bushes.
-void Izumo_CycloneFifthPatch(void) {
+/// Cyclone scatters the fifth weeds.
+void Izumo_CycloneFifthWeeds(void) {
   FieldTileCopies_CopyTouchedCells(55, 0, 4, 2, 16, 23, 0);
 }
 
-/// Cyclone clears the sixth patch of bushes.
-void Izumo_CycloneSixthPatch(void) {
+/// Cyclone scatters the sixth weeds.
+void Izumo_CycloneSixthWeeds(void) {
   FieldTileCopies_CopyTouchedCells(42, 0, 6, 2, 9, 18, 0);
 }
 
 /// Cyclone clears the seventh patch, as the second does with its own cell.
-void Izumo_CycloneSeventhPatch(void) {
+void Izumo_CycloneSeventhWeeds(void) {
   struct Actor *actor = Actor_GetById(gMainRoutineWork.leaderActorId);
 
   FieldTileCopies_CopyTouchedCells(42, 0, 6, 2, 9, 18, 0);
@@ -295,8 +299,8 @@ void Izumo_CycloneSeventhPatch(void) {
     Call3((void (*)())Actor_SetHorizontalPositionWithTerrain,
           FIELD_TREASURE_ACTOR + 2, toFIXED(LUCKY_MEDAL_SPOT_X),
           toFIXED(LUCKY_MEDAL_SPOT_Z));
-    if (FIELD_CELL(actor->x.fixed) == LUCKY_MEDAL_SPOT_X / 16 &&
-        FIELD_CELL(actor->z.fixed) == LUCKY_MEDAL_SPOT_Z / 16) {
+    if (FIELD_CELL(actor->x.fixed) == FIELD_CELL(toFIXED(LUCKY_MEDAL_SPOT_X)) &&
+        FIELD_CELL(actor->z.fixed) == FIELD_CELL(toFIXED(LUCKY_MEDAL_SPOT_Z))) {
       Event_Start();
       Event_ResolvePendingActions(0);
       FieldEffect_SetAttached(gMainRoutineWork.leaderActorId,
@@ -309,13 +313,13 @@ void Izumo_CycloneSeventhPatch(void) {
   }
 }
 
-/// Cyclone clears the eighth patch of bushes.
-void Izumo_CycloneEighthPatch(void) {
+/// Cyclone scatters the eighth weeds.
+void Izumo_CycloneEighthWeeds(void) {
   FieldTileCopies_CopyTouchedCells(49, 0, 5, 4, 24, 16, 0);
 }
 
-/// Cyclone clears the ninth patch of bushes.
-void Izumo_CycloneNinthPatch(void) {
+/// Cyclone scatters the ninth weeds.
+void Izumo_CycloneNinthWeeds(void) {
   FieldTileCopies_CopyTouchedCells(36, 0, 5, 3, 16, 9, 0);
 }
 
@@ -996,23 +1000,23 @@ struct Trigger gIzumo_Triggers[] = {
     {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 12, CONDITION_ALWAYS,
      EVENT(Izumo_FinishMovingStone)},
     {PSYNERGY_PHASE_ON_CELL(ABILITY_CYCLONE, PSYNERGY_PHASE_ACTS), 21,
-     CONDITION_ALWAYS, EVENT(Izumo_CycloneFirstPatch)},
+     CONDITION_ALWAYS, EVENT(Izumo_CycloneFirstWeeds)},
     {PSYNERGY_PHASE_ON_CELL(ABILITY_CYCLONE, PSYNERGY_PHASE_ACTS), 22,
-     CONDITION_ALWAYS, EVENT(Izumo_CycloneSecondPatch)},
+     CONDITION_ALWAYS, EVENT(Izumo_CycloneSecondWeeds)},
     {PSYNERGY_PHASE_ON_CELL(ABILITY_CYCLONE, PSYNERGY_PHASE_ACTS), 23,
-     CONDITION_ALWAYS, EVENT(Izumo_CycloneThirdPatch)},
+     CONDITION_ALWAYS, EVENT(Izumo_CycloneThirdWeeds)},
     {PSYNERGY_PHASE_ON_CELL(ABILITY_CYCLONE, PSYNERGY_PHASE_ACTS), 24,
-     CONDITION_ALWAYS, EVENT(Izumo_CycloneFourthPatch)},
+     CONDITION_ALWAYS, EVENT(Izumo_CycloneFourthWeeds)},
     {PSYNERGY_PHASE_ON_CELL(ABILITY_CYCLONE, PSYNERGY_PHASE_ACTS), 25,
-     CONDITION_ALWAYS, EVENT(Izumo_CycloneFifthPatch)},
+     CONDITION_ALWAYS, EVENT(Izumo_CycloneFifthWeeds)},
     {PSYNERGY_PHASE_ON_CELL(ABILITY_CYCLONE, PSYNERGY_PHASE_ACTS), 26,
-     CONDITION_ALWAYS, EVENT(Izumo_CycloneSixthPatch)},
+     CONDITION_ALWAYS, EVENT(Izumo_CycloneSixthWeeds)},
     {PSYNERGY_PHASE_ON_CELL(ABILITY_CYCLONE, PSYNERGY_PHASE_ACTS), 27,
-     CONDITION_ALWAYS, EVENT(Izumo_CycloneSeventhPatch)},
+     CONDITION_ALWAYS, EVENT(Izumo_CycloneSeventhWeeds)},
     {PSYNERGY_PHASE_ON_CELL(ABILITY_CYCLONE, PSYNERGY_PHASE_ACTS), 28,
-     CONDITION_ALWAYS, EVENT(Izumo_CycloneEighthPatch)},
+     CONDITION_ALWAYS, EVENT(Izumo_CycloneEighthWeeds)},
     {PSYNERGY_PHASE_ON_CELL(ABILITY_CYCLONE, PSYNERGY_PHASE_ACTS), 29,
-     CONDITION_ALWAYS, EVENT(Izumo_CycloneNinthPatch)},
+     CONDITION_ALWAYS, EVENT(Izumo_CycloneNinthWeeds)},
     {PSYNERGY_ANYWHERE(ABILITY_REVEAL, PSYNERGY_PHASE_ACTS), 0,
      CONDITION_ALWAYS, EVENT(Izumo_RevealTheStoneCircle)},
     {PSYNERGY_ANYWHERE(ABILITY_REVEAL, PSYNERGY_PHASE_FADES), 0,
@@ -1112,23 +1116,23 @@ struct Trigger gIzumo_TriggersOnceTheSerpentIsSlain[] = {
      CONDITION_ALWAYS, EVENT(Izumo_HideTheStoneCircle)},
 #if TLA_PATCH_1 /* From patch 1. */
     {PSYNERGY_PHASE_ON_CELL(ABILITY_CYCLONE, PSYNERGY_PHASE_ACTS), 21,
-     CONDITION_ALWAYS, EVENT(Izumo_CycloneFirstPatch)},
+     CONDITION_ALWAYS, EVENT(Izumo_CycloneFirstWeeds)},
     {PSYNERGY_PHASE_ON_CELL(ABILITY_CYCLONE, PSYNERGY_PHASE_ACTS), 22,
-     CONDITION_ALWAYS, EVENT(Izumo_CycloneSecondPatch)},
+     CONDITION_ALWAYS, EVENT(Izumo_CycloneSecondWeeds)},
     {PSYNERGY_PHASE_ON_CELL(ABILITY_CYCLONE, PSYNERGY_PHASE_ACTS), 23,
-     CONDITION_ALWAYS, EVENT(Izumo_CycloneThirdPatch)},
+     CONDITION_ALWAYS, EVENT(Izumo_CycloneThirdWeeds)},
     {PSYNERGY_PHASE_ON_CELL(ABILITY_CYCLONE, PSYNERGY_PHASE_ACTS), 24,
-     CONDITION_ALWAYS, EVENT(Izumo_CycloneFourthPatch)},
+     CONDITION_ALWAYS, EVENT(Izumo_CycloneFourthWeeds)},
     {PSYNERGY_PHASE_ON_CELL(ABILITY_CYCLONE, PSYNERGY_PHASE_ACTS), 25,
-     CONDITION_ALWAYS, EVENT(Izumo_CycloneFifthPatch)},
+     CONDITION_ALWAYS, EVENT(Izumo_CycloneFifthWeeds)},
     {PSYNERGY_PHASE_ON_CELL(ABILITY_CYCLONE, PSYNERGY_PHASE_ACTS), 26,
-     CONDITION_ALWAYS, EVENT(Izumo_CycloneSixthPatch)},
+     CONDITION_ALWAYS, EVENT(Izumo_CycloneSixthWeeds)},
     {PSYNERGY_PHASE_ON_CELL(ABILITY_CYCLONE, PSYNERGY_PHASE_ACTS), 27,
-     CONDITION_ALWAYS, EVENT(Izumo_CycloneSeventhPatch)},
+     CONDITION_ALWAYS, EVENT(Izumo_CycloneSeventhWeeds)},
     {PSYNERGY_PHASE_ON_CELL(ABILITY_CYCLONE, PSYNERGY_PHASE_ACTS), 28,
-     CONDITION_ALWAYS, EVENT(Izumo_CycloneEighthPatch)},
+     CONDITION_ALWAYS, EVENT(Izumo_CycloneEighthWeeds)},
     {PSYNERGY_PHASE_ON_CELL(ABILITY_CYCLONE, PSYNERGY_PHASE_ACTS), 29,
-     CONDITION_ALWAYS, EVENT(Izumo_CycloneNinthPatch)},
+     CONDITION_ALWAYS, EVENT(Izumo_CycloneNinthWeeds)},
 #endif
     {TRIGGER_TABLE_END},
 };

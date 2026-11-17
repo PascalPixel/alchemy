@@ -1,8 +1,8 @@
 /// @file
 /// Aqua Rock's outside, the island south of the Apojii Islands, in two rooms
-/// of this overlay. On the slopes, red Moai pour streams that stop now and
-/// then, a pillar Moved before one stops it for good, Douse fills a dry Moai
-/// and turns a Water Stone's streams back uphill, and the guardian Moai step
+/// of this overlay. On the slopes, red moai pour streams that stop now and
+/// then, a pillar Moved before one stops it for good, Douse fills a dry moai
+/// and turns a Water Stone's streams back uphill, and the guardian moai step
 /// aside once the Apojii's Aqua Stone is Doused. In the Mist Sabre chest's
 /// room, Frost freezes puddles into steps, Move drops two rocks into the
 /// stream, and Douse on its Water Stone opens the way inside
@@ -84,9 +84,9 @@ extern struct ActorPlacement gAquaRock_MistSabreChestPlacements[];
 
 /// Aqua Rock's lasting flags outside: the slopes' second pillar Moved into
 /// the hole in its ledge, the two rocks Moved into the Mist Sabre chest's
-/// room's stream, the guardian Moai stepped aside, the streams the slopes'
+/// room's stream, the guardian moai stepped aside, the streams the slopes'
 /// Water Stone has turned back (each Douse turns them again), the Mist Sabre
-/// chest's room's Water Stone Doused, and the dry Moai filled.
+/// chest's room's Water Stone Doused, and the dry moai filled.
 #define FLAG_AQUA_ROCK_PILLAR_IN_HOLE 0x950
 #define FLAG_AQUA_ROCK_FIRST_ROCK_DROPPED 0x951
 #define FLAG_AQUA_ROCK_SECOND_ROCK_DROPPED 0x952
@@ -95,13 +95,13 @@ extern struct ActorPlacement gAquaRock_MistSabreChestPlacements[];
 #define FLAG_AQUA_ROCK_MIST_SABRE_CHEST_WATER_STONE_DOUSED 0xa69
 #define FLAG_AQUA_ROCK_DRY_MOAI_FILLED 0xa6b
 /// While the party is on the island: the cell of the pillar Move sets before
-/// the top's red Moai, kept as two bytes, and whether it stands before the
-/// west or the east one, which stops that Moai's stream.
+/// the top's red moai, kept as two bytes, and whether it stands before the
+/// west or the east one, which stops that moai's stream.
 #define FLAG_PILLAR_COLUMN FLAG_AREA_TEMP_10
 #define FLAG_PILLAR_ROW FLAG_AREA_TEMP_18
 #define FLAG_PILLAR_BEFORE_WEST_MOAI FLAG_AREA_TEMP_20
 #define FLAG_PILLAR_BEFORE_EAST_MOAI FLAG_AREA_TEMP_21
-/// This visit's flags. Each of the four red Moai's streams, stopped
+/// This visit's flags. Each of the four red moai's streams, stopped
 /// (AquaRock_TimeStreams).
 #define FLAG_WEST_MOAI_STREAM_STOPPED FLAG_SCENE_TEMP_00
 #define FLAG_EAST_MOAI_STREAM_STOPPED FLAG_SCENE_TEMP_01
@@ -112,7 +112,7 @@ extern struct ActorPlacement gAquaRock_MistSabreChestPlacements[];
 #define FLAG_PUDDLE_B_FROZEN FLAG_SCENE_TEMP_22
 #define FLAG_PUDDLE_C_FROZEN FLAG_SCENE_TEMP_23
 
-/// The cells before the top's west and east red Moai, where the pillar stops a
+/// The cells before the top's west and east red moai, where the pillar stops a
 /// stream; the column of the hole in the ledge; and the column of the Mist
 /// Sabre chest's room's stream, where a rock Moved drops in.
 #define WEST_MOAI_COLUMN 7
@@ -132,26 +132,26 @@ extern struct ActorPlacement gAquaRock_MistSabreChestPlacements[];
 #define ANIM_LEADER_TUMBLE_IN_WATER 18
 #define ANIM_LEADER_SIT 49
 
-/// A Moai's water, a sprite added to its own: the pool in the top of its head
+/// A moai's water, a sprite added to its own: the pool in the top of its head
 /// and the water pouring from its mouth. And the fish of the slopes' pools.
 #define SPRITE_MOAI_WATER 381
 #define SPRITE_FISH 401
 
 /// The slopes (gAquaRock_SlopesPlacements).
 enum AquaRockSlopesActorId {
-  /// The slopes' sixteen Moai: four red ones, the first two at the top, then
+  /// The slopes' sixteen moai: four red ones, the first two at the top, then
   /// the dry one, two green ones and nine green ones lower down that share
   /// one sprite.
   ACTOR_FIRST_MOAI = ACTOR_FIRST_PLACED,
-  /// The grey Moai Douse fills, so that it pours a stream
+  /// The grey moai Douse fills, so that it pours a stream
   /// (AquaRock_DouseDryMoai).
   ACTOR_DRY_MOAI = ACTOR_FIRST_MOAI + 4,
-  ACTOR_FIRST_LOWER_MOAI = ACTOR_FIRST_MOAI + 7,
-  /// The five guardian Moai that stand in the way in, until they step aside
+  ACTOR_FIRST_BOTTOM_MOAI = ACTOR_FIRST_MOAI + 7,
+  /// The five guardian moai that stand in the way in, until they step aside
   /// together (AquaRock_MoaiStepAside).
   ACTOR_FIRST_GUARDIAN_MOAI = ACTOR_FIRST_MOAI + 9,
   ACTOR_LAST_MOAI = ACTOR_FIRST_MOAI + 15,
-  /// The pillar Move sets before the top's red Moai, and the pillar on the
+  /// The pillar Move sets before the top's red moai, and the pillar on the
   /// ledge Move pushes into its hole.
   ACTOR_MOAI_PILLAR,
   ACTOR_LEDGE_PILLAR,
@@ -295,7 +295,7 @@ void AquaRock_DouseDryMoai(void);
 
 void AquaRock_DropDownFalls(void);
 
-/// One of the streams the Moai pour, which stops and starts with its flag: each
+/// One of the streams the moai pour, which stops and starts with its flag: each
 /// change runs down it as a wave, copying three cells a row from the flowing
 /// or stopped pictures beside it, a row every four frames.
 struct AquaRockStream {
@@ -315,8 +315,8 @@ struct AquaRockStream {
 /// AquaRockStream.waveRow for no wave.
 #define STREAM_NO_WAVE 9999
 
-/// The five Moai streams AquaRock_UpdateStreams stops and starts: the four red
-/// Moai's and the dry Moai's.
+/// The five moai streams AquaRock_UpdateStreams stops and starts: the four red
+/// moai's and the dry moai's.
 struct AquaRockStream gAquaRock_Streams[5] BSS_DATA ALIGNED(16);
 struct AquaRockBubbles gAquaRock_Bubbles BSS_DATA;
 
@@ -499,12 +499,12 @@ extern s32 gAquaRock_SecondStreamTimer;
 extern s32 gAquaRock_ThirdStreamTimer;
 extern s32 gAquaRock_FourthStreamTimer;
 
-/// The frames of a red Moai's stream's cycle, and the last of them it stops
+/// The frames of a red moai's stream's cycle, and the last of them it stops
 /// for.
 #define STREAM_CYCLE_FRAMES 240
 #define STREAM_STOP_FRAMES 90
 
-/// Each frame, while no event runs: each red Moai's stream flows and then
+/// Each frame, while no event runs: each red moai's stream flows and then
 /// stops for the end of its cycle; the top two stay stopped while the pillar
 /// stands before them.
 void AquaRock_TimeStreams(void) {
@@ -619,7 +619,7 @@ void AquaRock_SetUpStreams(void) {
 
 #include "shared/actor_flicker_child.h"
 
-/// Unused: a Moai's update while it flashes, grey every other two frames.
+/// Unused: a moai's update while it flashes, grey every other two frames.
 UNUSED void AquaRock_FlashMoai(struct Actor *actor) {
   if (gFrameCount & 2)
     Actor_SetSpriteColorMode(actor, SPRITE_COLOR_GREY);
@@ -691,8 +691,8 @@ void AquaRock_DouseWaterStone(s32 unused, s32 id) {
 
 void GameFlag_SetByte(s32 flag, s32 value);
 
-/// Move on a pillar. The pillar by the top's red Moai keeps its cell in the
-/// area's flags, and stopped before one of them stops that Moai's stream; the
+/// Move on a pillar. The pillar by the top's red moai keeps its cell in the
+/// area's flags, and stopped before one of them stops that moai's stream; the
 /// ledge's pillar, pushed onto its hole, drops into it.
 void AquaRock_MovePillar(s32 unused, s32 id) {
 
@@ -706,6 +706,8 @@ void AquaRock_MovePillar(s32 unused, s32 id) {
     row = FIELD_CELL(first->z.fixed);
     GameFlag_SetByte(FLAG_PILLAR_COLUMN, column);
     GameFlag_SetByte(FLAG_PILLAR_ROW, row);
+    /* FAKEMATCH(wrapper): the west flag cleared through a call layer; as
+     * GameFlag_Clear. */
     GameFlag_ClearBit_(FLAG_PILLAR_BEFORE_WEST_MOAI);
     GameFlag_Clear(FLAG_PILLAR_BEFORE_EAST_MOAI);
     if (column == WEST_MOAI_COLUMN && row == MOAI_FRONT_ROW)
@@ -848,7 +850,7 @@ void AquaRock_StepIntoCurrent(void) {
   }
 }
 
-/// Douse on the dry Moai: it fills, turns blue and pours, and its stream down
+/// Douse on the dry moai: it fills, turns blue and pours, and its stream down
 /// the slopes starts to flow.
 void AquaRock_DouseDryMoai(void) {
   MapGrid_CopyCellAttributes(62, 41, 1, 2, 33, 41);
@@ -1084,10 +1086,10 @@ void AquaRock_ArriveUpStream(void) {
   Event_End();
 }
 
-/// The farthest a guardian Moai rocks either way as it shakes.
+/// The farthest a guardian moai rocks either way as it shakes.
 #define MOAI_SHAKE (TRIG_TURN / 128)
 
-/// A guardian Moai's update as it moves aside: it shakes, the swing growing
+/// A guardian moai's update as it moves aside: it shakes, the swing growing
 /// over 16 frames to MOAI_SHAKE.
 void AquaRock_ShakeMoai(struct Actor *actor) {
   struct FieldSprite *sprite = actor->sprite;
@@ -1101,7 +1103,7 @@ void AquaRock_ShakeMoai(struct Actor *actor) {
   sprite->rotation = Iwram_MulFX(Trig_Sin(actor->timer), *amplitude);
 }
 
-/// A guardian Moai's update once it has moved: the swing dies away over 32
+/// A guardian moai's update once it has moved: the swing dies away over 32
 /// frames.
 void AquaRock_StopShakingMoai(struct Actor *actor) {
   struct FieldSprite *sprite = actor->sprite;
@@ -1116,7 +1118,7 @@ void AquaRock_StopShakingMoai(struct Actor *actor) {
   sprite->rotation = Iwram_MulFX(Trig_Sin(actor->timer), *amplitude);
 }
 
-/// The last guardian Moai's update: it keeps rocking gently, leaning a little,
+/// The last guardian moai's update: it keeps rocking gently, leaning a little,
 /// a sixty-fourth of a turn either way.
 void AquaRock_RockMoai(struct Actor *actor) {
   struct FieldSprite *sprite = actor->sprite;
@@ -1126,7 +1128,7 @@ void AquaRock_RockMoai(struct Actor *actor) {
 }
 
 /// Arriving by the north way, as Douse wakes the Apojii Islands' Aqua Stone:
-/// the five guardian Moai shake and move aside into a row clear of the way
+/// the five guardian moai shake and move aside into a row clear of the way
 /// in, the last left rocking, and the party goes back to the Apojii Islands
 /// where it stood.
 void AquaRock_MoaiStepAside(void) {
@@ -1208,15 +1210,15 @@ s32 Scene_Initialize(void) {
     AquaRock_AddMoaiWater(ACTOR_FIRST_MOAI + 3);
     AquaRock_AddMoaiWater(ACTOR_FIRST_MOAI + 5);
     AquaRock_AddMoaiWater(ACTOR_FIRST_MOAI + 6);
-    for (id = ACTOR_FIRST_LOWER_MOAI; id <= ACTOR_LAST_MOAI; id++)
+    for (id = ACTOR_FIRST_BOTTOM_MOAI; id <= ACTOR_LAST_MOAI; id++)
       AquaRock_AddMoaiWater(id);
-    for (id = ACTOR_FIRST_MOAI; id < ACTOR_FIRST_LOWER_MOAI; id++)
+    for (id = ACTOR_FIRST_MOAI; id < ACTOR_FIRST_BOTTOM_MOAI; id++)
       Actor_SetSpritePriority(id, 3);
-    for (id = ACTOR_FIRST_LOWER_MOAI; id <= ACTOR_LAST_MOAI; id++)
+    for (id = ACTOR_FIRST_BOTTOM_MOAI; id <= ACTOR_LAST_MOAI; id++)
       Actor_SetSpritePriority(id, 1);
-    Actor_GetById(ACTOR_FIRST_LOWER_MOAI)->retainSpriteCache = 2;
-    Actor_SetAnimationById(ACTOR_FIRST_LOWER_MOAI, 3);
-    for (id = ACTOR_FIRST_LOWER_MOAI + 1; id <= ACTOR_LAST_MOAI; id++) {
+    Actor_GetById(ACTOR_FIRST_BOTTOM_MOAI)->retainSpriteCache = 2;
+    Actor_SetAnimationById(ACTOR_FIRST_BOTTOM_MOAI, 3);
+    for (id = ACTOR_FIRST_BOTTOM_MOAI + 1; id <= ACTOR_LAST_MOAI; id++) {
       Actor_SetAnimationById(id, 1);
       Actor_SetAnimationById(id, 0);
     }
@@ -1418,7 +1420,7 @@ void AquaRock_FlowWithStream(void) {
   leader->facing = FACING_SOUTH;
 }
 
-/// Gives a Moai its water: the pool in the top of its head, pouring from its
+/// Gives a moai its water: the pool in the top of its head, pouring from its
 /// mouth.
 void AquaRock_AddMoaiWater(s32 id) {
   struct Actor *actor = Actor_GetById(id);
@@ -1931,7 +1933,7 @@ LATE_DATA struct ActorPlacement gAquaRock_MistSabreChestPlacements[] = {
     {SCENE_TABLE_END},
 };
 
-/// The frame counts of the four red Moai's streams' cycles
+/// The frame counts of the four red moai's streams' cycles
 /// (AquaRock_TimeStreams).
 LATE_DATA s32 gAquaRock_FirstStreamTimer = 0;
 
@@ -1947,7 +1949,7 @@ LATE_DATA struct Trigger gAquaRock_Triggers[] = {
 };
 
 /// The slopes' exits, currents and streams, Move on the pillars and Douse on
-/// the dry Moai and the Water Stone.
+/// the dry moai and the Water Stone.
 LATE_DATA struct Trigger gAquaRock_SlopesTriggers[] = {
     {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
     {STEP_TRIGGER_FACING(FACING_NORTH), 4, CONDITION_ALWAYS, EVENT(AquaRock_EnterSparklingPassage)},

@@ -84,7 +84,7 @@ void Sanctum_Run(s32 actor);
 const struct ActorPlacement *Scene_GetActorPlacements(void) {
   if (GameFlag_Get(FLAG_SERPENT_SLAIN))
     return gIzumoRooms_ActorPlacementsOnceTheSerpentIsSlain;
-  if (gMainRoutineWork.entrance == 7)
+  if (gMainRoutineWork.entrance == IZUMO_ROOMS_FROM_IZUMO_NORTH)
     return gIzumoRooms_SusasHouseActorPlacements;
   return gIzumoRooms_ActorPlacements;
 }
@@ -92,7 +92,7 @@ const struct ActorPlacement *Scene_GetActorPlacements(void) {
 const struct Trigger *Scene_GetTriggers(void) {
   if (GameFlag_Get(FLAG_SERPENT_SLAIN))
     return gIzumoRooms_TriggersOnceTheSerpentIsSlain;
-  if (gMainRoutineWork.entrance == 7)
+  if (gMainRoutineWork.entrance == IZUMO_ROOMS_FROM_IZUMO_NORTH)
     return gIzumoRooms_SusasHouseTriggers;
   return gIzumoRooms_Triggers;
 }
@@ -102,7 +102,7 @@ const struct Trigger *Scene_GetTriggers(void) {
 /// a sacrifice?"), who keeps his trade once it is slain.
 enum { ACTOR_KUSHINADA = 17, ACTOR_PRIEST = 22, ACTOR_PRIEST_ONCE_SLAIN = 12 };
 
-/// Susa's house (entrance 7) before the Serpent is slain: Lady Uzume, Susa's
+/// Susa's house before the Serpent is slain: Lady Uzume, Susa's
 /// sister ("If the serpent defeats Susa, I'll...be alone."), with two women
 /// dancing ("There's no point dancing if Okuni's not here...") and two old men
 /// by the drums.
@@ -1317,7 +1317,7 @@ s32 Scene_Initialize(void) {
     Event_ClearFlag(FLAG_AREA_TEMP_50);
   if (GameFlag_Get(FLAG_SERPENT_SLAIN) &&
       !GameFlag_Get(FLAG_IZUMO_RECOGNIZED_THE_HEROES) &&
-      gMainRoutineWork.entrance == 7) {
+      gMainRoutineWork.entrance == IZUMO_ROOMS_FROM_IZUMO_NORTH) {
     Event_PlaySound(MUS_IZUMO);
     Actor_SetPosition(ACTOR_WITNESS, 144, 568);
     Actor_SetPosition(ACTOR_SUSA, 0, 0);
@@ -1328,7 +1328,8 @@ s32 Scene_Initialize(void) {
   }
   if (GameFlag_Get(FLAG_SERPENT_SLAIN) &&
       GameFlag_Get(FLAG_IZUMO_RECOGNIZED_THE_HEROES) &&
-      gMainRoutineWork.entrance == 7 && GameFlag_Get(FLAG_AREA_TEMP_50)) {
+      gMainRoutineWork.entrance == IZUMO_ROOMS_FROM_IZUMO_NORTH &&
+      GameFlag_Get(FLAG_AREA_TEMP_50)) {
     Event_PlaySound(MUS_IZUMO);
     Actor_SetPosition(ACTOR_FIRST_DANCER, 0, 0);
     Actor_SetPosition(ACTOR_SECOND_DANCER, 0, 0);
@@ -1340,7 +1341,8 @@ s32 Scene_Initialize(void) {
     Actor_SetAttachedEffect(ACTOR_KUSHINADA,
                             ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ATTACH);
   }
-  if (gMainRoutineWork.entrance == 7 && !GameFlag_Get(FLAG_SERPENT_SLAIN)) {
+  if (gMainRoutineWork.entrance == IZUMO_ROOMS_FROM_IZUMO_NORTH &&
+      !GameFlag_Get(FLAG_SERPENT_SLAIN)) {
     struct Actor *actor;
 
     Actor_SetAnimation(ACTOR_SUSAS_HOUSE_FIRST_DANCER, 5);
@@ -1356,7 +1358,7 @@ s32 Scene_Initialize(void) {
 /// Nothing to prepare before the map is built. Returns 0.
 s32 Scene_PrepareMap(void) { return 0; }
 
-extern s32 gIzumoRooms_KushinadaCryingScript[];
+extern s32 gIzumoRooms_KushinadaHeavingScript[];
 
 /// The dancers in Susa's house step to the doorway and back with a hop, each
 /// waiting until the other is clear of the spot.
@@ -1520,7 +1522,7 @@ s32 gIzumoRooms_CryingScript[] = {
 
 /// Kushinada on her seat of stones heaves as the crying girl does, with longer
 /// rests.
-s32 gIzumoRooms_KushinadaCryingScript[] = {
+s32 gIzumoRooms_KushinadaHeavingScript[] = {
     SC_SET(SW_COLLISION, ACTOR_BLOCKED_BY_SOLID | ACTOR_PUSHABLE | ACTOR_SOLID),
     SC_LABEL(1),
     SC_ADD(SW_SCALE_X, -FIXED_ONE / 4),
@@ -1598,7 +1600,7 @@ struct ActorPlacement gIzumoRooms_ActorPlacements[] = {
     ACTOR_PLACEMENT(SPRITE_IZUMO_OLD_MAN, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 280, 0, 84, FACING_SOUTHEAST, TALK_FACING_PARTY_AND_BACK, 0),
     ACTOR_PLACEMENT(SPRITE_IZUMO_OLD_WOMAN, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 328, 0, 136, FACING_NORTHWEST, TALK_FACING_PARTY_AND_BACK, 0),
     ACTOR_PLACEMENT(SPRITE_IZUMO_OLD_WOMAN, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 312, 0, 120, FACING_SOUTHEAST, TALK_FACING_PARTY_AND_BACK, 0),
-    ACTOR_PLACEMENT(SPRITE_KUSHINADA, CONDITION_ALWAYS, (s32)gIzumoRooms_KushinadaCryingScript, 352, 0, 328, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(SPRITE_KUSHINADA, CONDITION_ALWAYS, (s32)gIzumoRooms_KushinadaHeavingScript, 352, 0, 328, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
     ACTOR_PLACEMENT(SPRITE_IZUMO_WOMAN_IN_CREAM, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 136, 0, 362, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
     ACTOR_PLACEMENT(SPRITE_IZUMO_MAN_WITH_TOPKNOT, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 108, 0, 320, FACING_SOUTHEAST, TALK_FACING_PARTY_AND_BACK, 0),
     ACTOR_PLACEMENT(SPRITE_IZUMO_MAN_IN_RED, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 536, 0, 104, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),

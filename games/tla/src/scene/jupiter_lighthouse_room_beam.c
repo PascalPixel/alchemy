@@ -7,8 +7,8 @@
 /// ledge into the gap below lights the path to the Hover pad
 /// (JupiterLighthouse_DropEnergyBlock). In the north half, once the lighthouse
 /// is activated, four of the five grey blocks hover over their sockets, and
-/// the fifth, Moved onto the empty one, rises to complete the bridge
-/// (JupiterLighthouse_RaiseBridgeBlock).
+/// the fifth, Moved onto the empty one, rises to hover with them
+/// (JupiterLighthouse_RaiseSocketBlock).
 #include "flags.h"
 #include "battle/battle.h"
 #include "field/field_sequence.h"
@@ -54,9 +54,9 @@
 
 /// The energy block lies in its gap, lighting the path.
 #define FLAG_ENERGY_BLOCK_IN_GAP 0xa02
-/// The fifth grey block, Moved onto the empty socket, has risen into the
-/// bridge.
-#define FLAG_BRIDGE_BLOCK_RAISED 0xa03
+/// The fifth grey block, Moved onto the empty socket, has risen to hover over
+/// it.
+#define FLAG_BEAM_ROOM_SOCKET_BLOCK_RAISED 0xa03
 
 /// The room's actors, numbering the rows of gActorPlacements.
 enum JupiterLighthouseRoomBeamActorId {
@@ -65,7 +65,7 @@ enum JupiterLighthouseRoomBeamActorId {
   ACTOR_FIRST_HOVERING_BLOCK = ACTOR_FIRST_PLACED,
   ACTOR_LAST_HOVERING_BLOCK = ACTOR_FIRST_HOVERING_BLOCK + 3,
   /// The fifth, east of the row's empty socket.
-  ACTOR_BRIDGE_BLOCK,
+  ACTOR_SOCKET_BLOCK,
   /// The four winged statues round the beam.
   ACTOR_NORTHWEST_STATUE,
   ACTOR_NORTHEAST_STATUE,
@@ -81,9 +81,12 @@ enum JupiterLighthouseRoomBeamActorId {
 /// The empty socket at the east end of the grey blocks' row.
 #define EMPTY_SOCKET_CELL_X 18
 #define EMPTY_SOCKET_CELL_Z 6
-/// The beam floor's east doorway, whose cell answers exit 4 (to the north
-/// half's east end).
-#define CELL_BEHAVIOR_EAST_DOORWAY 4
+/// The room's own cell behaviors.
+enum JupiterLighthouseRoomBeamCellBehavior {
+  /// The beam floor's east doorway, whose cell answers exit 4 (to the north
+  /// half's east end).
+  CELL_BEHAVIOR_JUPITER_LIGHTHOUSE_EAST_DOORWAY = 4
+};
 /// The north half's west end, where the beam floor's west doorway leads.
 #define ENTRANCE_NORTH_HALF_WEST 3
 /// The particles that circle the beam.
@@ -453,13 +456,13 @@ void JupiterLighthouse_DropEnergyBlock(s32 unused, s32 id) {
 }
 
 /// Move takes hold of the fifth grey block: it is drawn at priority 2.
-void JupiterLighthouse_MoveBridgeBlock(s32 unused, s32 id) {
+void JupiterLighthouse_MoveSocketBlock(s32 unused, s32 id) {
   Actor_SetSpritePriority(id, 2);
 }
 
 /// The fifth grey block, Moved onto the empty socket once the lighthouse is
 /// activated, rises to hover with the others.
-void JupiterLighthouse_RaiseBridgeBlock(s32 unused, s32 id) {
+void JupiterLighthouse_RaiseSocketBlock(s32 unused, s32 id) {
   struct Actor *actor = Actor_Get(id);
   s32 frame;
 
@@ -472,7 +475,7 @@ void JupiterLighthouse_RaiseBridgeBlock(s32 unused, s32 id) {
       System_Wait(1);
     }
     Actor_RaiseFromCell(id);
-    Event_SetFlag(FLAG_BRIDGE_BLOCK_RAISED);
+    Event_SetFlag(FLAG_BEAM_ROOM_SOCKET_BLOCK_RAISED);
   }
 }
 
@@ -489,7 +492,7 @@ void JupiterLighthouse_StartHover(void) {
 /// Hover ends: the east doorway leads out again.
 void JupiterLighthouse_EndHover(void) {
   MapGrid_SetCellBehavior(toFIXED(336), toFIXED(592), MAPGRID_LAYER_GROUND,
-                          CELL_BEHAVIOR_EAST_DOORWAY);
+                          CELL_BEHAVIOR_JUPITER_LIGHTHOUSE_EAST_DOORWAY);
 }
 
 const struct Trigger *Scene_GetTriggers(void) { return gSceneEvents; }
@@ -583,9 +586,9 @@ s32 Scene_Initialize(void) {
     Actor_RaiseFromCell(ACTOR_FIRST_HOVERING_BLOCK + 2);
     Actor_RaiseFromCell(ACTOR_LAST_HOVERING_BLOCK);
   }
-  if (Event_GetFlag(FLAG_BRIDGE_BLOCK_RAISED)) {
-    Actor_SetPosition(ACTOR_BRIDGE_BLOCK, 296, 104);
-    Actor_RaiseFromCell(ACTOR_BRIDGE_BLOCK);
+  if (Event_GetFlag(FLAG_BEAM_ROOM_SOCKET_BLOCK_RAISED)) {
+    Actor_SetPosition(ACTOR_SOCKET_BLOCK, 296, 104);
+    Actor_RaiseFromCell(ACTOR_SOCKET_BLOCK);
   }
   return 0;
 }
@@ -756,8 +759,8 @@ struct Trigger gSceneEvents[] = {
     {PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_ENERGY_BLOCK, CONDITION_ALWAYS, EVENT(JupiterLighthouse_DropEnergyBlock)},
     {TRIGGER_PUSH, 35, CONDITION_ALWAYS, EVENT(JupiterLighthouse_PushEnergyBlock)},
     {TRIGGER_PUSHED, 35, CONDITION_ALWAYS, EVENT(JupiterLighthouse_DropEnergyBlock)},
-    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), ACTOR_BRIDGE_BLOCK, CONDITION_ALWAYS, EVENT(JupiterLighthouse_MoveBridgeBlock)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_BRIDGE_BLOCK, CONDITION_ALWAYS, EVENT(JupiterLighthouse_RaiseBridgeBlock)},
+    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), ACTOR_SOCKET_BLOCK, CONDITION_ALWAYS, EVENT(JupiterLighthouse_MoveSocketBlock)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_SOCKET_BLOCK, CONDITION_ALWAYS, EVENT(JupiterLighthouse_RaiseSocketBlock)},
     {PSYNERGY_ANYWHERE(ABILITY_HOVER, PSYNERGY_PHASE_AFTER_CAST), 0, CONDITION_ALWAYS, EVENT(JupiterLighthouse_StartHover)},
     {PSYNERGY_ANYWHERE(ABILITY_HOVER, PSYNERGY_PHASE_AFTER_END), 0, CONDITION_ALWAYS, EVENT(JupiterLighthouse_EndHover)},
     {TRIGGER_TABLE_END},

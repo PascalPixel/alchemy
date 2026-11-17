@@ -140,7 +140,7 @@ UNUSED s32 Yallam_TurnSpriteAround(struct Actor *actor) {
   return 0;
 }
 
-/// Hides an actor's sprite, as an actor script's call: the pillar's parts once
+/// Hides an actor's sprite, as an actor script's call: the log's parts once
 /// they have moved.
 s32 Yallam_HideSprite(struct Actor *actor) {
   Actor_SetSpriteFlags(actor, 0);
@@ -342,8 +342,8 @@ void Yallam_ClearThirdSpot(void) {
   FieldTileCopies_CopyTouchedCells(26, 95, 2, 1, 26, 76, 2);
   if (Event_GetFlag(FLAG_YALLAM_ANTIDOTE) == 0) {
     Actor_SetPosition(ACTOR_HIDDEN_ANTIDOTE, ANTIDOTE_SPOT_X, ANTIDOTE_SPOT_Z);
-    if (FIELD_CELL(leader->x.fixed) == ANTIDOTE_SPOT_X / 16 &&
-        FIELD_CELL(leader->z.fixed) == ANTIDOTE_SPOT_Z / 16) {
+    if (FIELD_CELL(leader->x.fixed) == FIELD_CELL(toFIXED(ANTIDOTE_SPOT_X)) &&
+        FIELD_CELL(leader->z.fixed) == FIELD_CELL(toFIXED(ANTIDOTE_SPOT_Z))) {
       Event_Start();
       FieldEvent_ResolvePendingActions(0);
       Actor_SetAttachedEffect(gMainRoutineWork.leaderActorId,
@@ -367,8 +367,8 @@ void Yallam_ClearFifthSpot(void) {
   FieldTileCopies_CopyTouchedCells(67, 25, 3, 3, 106, 20, 1);
   if (Event_GetFlag(FLAG_YALLAM_NUT) == 0) {
     Actor_SetPosition(ACTOR_HIDDEN_NUT, NUT_SPOT_X, NUT_SPOT_Z);
-    if (FIELD_CELL(leader->x.fixed) == NUT_SPOT_X / 16 &&
-        FIELD_CELL(leader->z.fixed) == NUT_SPOT_Z / 16) {
+    if (FIELD_CELL(leader->x.fixed) == FIELD_CELL(toFIXED(NUT_SPOT_X)) &&
+        FIELD_CELL(leader->z.fixed) == FIELD_CELL(toFIXED(NUT_SPOT_Z))) {
       Event_Start();
       FieldEvent_ResolvePendingActions(0);
       Actor_SetAttachedEffect(gMainRoutineWork.leaderActorId,
@@ -1781,7 +1781,7 @@ void Yallam_DoNothing(void) {}
 /// Force pushes the log off its ledge; it tumbles down and lands as a step.
 void Yallam_ForceLogDown(void) {
   s32 step;
-  s32 frame;
+  s32 i;
   struct Actor *actor = Actor_Get(ACTOR_FALLING_LOG);
   struct FieldSprite *sprite = actor->sprite;
 
@@ -1791,14 +1791,14 @@ void Yallam_ForceLogDown(void) {
   Event_PlaySound(SE_TOPPLE);
   FieldActor_SetMoveTarget(actor, 176, 40, 184);
   step = 0;
-  for (frame = 0; frame < 16; frame++) {
+  for (i = 0; i < 16; i++) {
     sprite->rotation -= step;
     System_Wait(1);
     step += TOPPLE_SPIN_GAIN;
   }
   FieldActor_SetMoveTarget(actor, 168, 16, 184);
   step = TOPPLE_ROLL_SPIN;
-  for (frame = 0; frame < 26; frame++) {
+  for (i = 0; i < 26; i++) {
     sprite->rotation -= step;
     System_Wait(1);
     step += TOPPLE_SPIN_GAIN;
@@ -1807,13 +1807,13 @@ void Yallam_ForceLogDown(void) {
   FieldEvent_Wait(2);
   Event_PlaySound(SE_LOG_FALL);
   // The log lies flat and still where it fell.
-  frame = 0;
-  sprite->rotation = frame;
+  i = 0;
+  sprite->rotation = i;
   actor->x.fixed = toFIXED(168);
   actor->z.fixed = toFIXED(192);
-  actor->y.fixed = frame;
-  actor->velocityY = frame;
-  actor->velocityX = frame;
+  actor->y.fixed = i;
+  actor->velocityY = i;
+  actor->velocityX = i;
   MapGrid_CopyCellAttributes(8, 12, 1, 1, 10, 12);
 }
 

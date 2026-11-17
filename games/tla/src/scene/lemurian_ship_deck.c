@@ -119,10 +119,13 @@ void LemurianShipDeck_TryHeldDoor(void) {
   Event_End();
 }
 
-/// The background palette the deck's two colour cycles turn: its colours 12 to
-/// 15 (LemurianShipDeck_RotateHighColors) and 4 to 9 (..._RotateLowColors),
-/// every eighth frame.
+/// The background palette the deck's two colour cycles turn every eighth
+/// frame: the blues of the band along the hull and the surf.
 #define DECK_PALETTE ((volatile u16 *)&BG_PLTT_COLOR(11, 0))
+#define HULL_BAND_FIRST_COLOR 4
+#define HULL_BAND_LAST_COLOR 9
+#define SURF_FIRST_COLOR 12
+#define SURF_LAST_COLOR 15
 
 /// Defines a task that moves colours last-1 .. first of DECK_PALETTE one place
 /// up and the last round to first, every eighth frame.
@@ -138,32 +141,34 @@ void LemurianShipDeck_TryHeldDoor(void) {
     }                                                                          \
   }
 
-/// A task: turns colours 12 to 15 of DECK_PALETTE round by one.
-DEFINE_ROTATE_PALETTE_COLORS(LemurianShipDeck_RotateHighColors, 15, 12)
+/// A task: turns the surf's colours round by one.
+DEFINE_ROTATE_PALETTE_COLORS(LemurianShipDeck_RotateSurfColors, SURF_LAST_COLOR,
+                             SURF_FIRST_COLOR)
 
-/// A task: turns colours 4 to 9 of DECK_PALETTE round by one.
-DEFINE_ROTATE_PALETTE_COLORS(LemurianShipDeck_RotateLowColors, 9, 4)
+/// A task: turns the blues of the band along the hull round by one.
+DEFINE_ROTATE_PALETTE_COLORS(LemurianShipDeck_RotateHullBandColors,
+                             HULL_BAND_LAST_COLOR, HULL_BAND_FIRST_COLOR)
 
 void TilesetAnim_Resume(s32 channelIndex);
 
-/// The entrance whose arrival opens the hull's row of windows, and the map's
-/// two tile animations, held until then, that open them one after the other.
+/// The entrance whose arrival lights the band along the hull, and the map's two
+/// tile animations, held until then, that light it one after the other.
 #define MAIN_DECK_ARRIVAL_ENTRANCE 99
-enum { HULL_WINDOWS_FIRST_ANIMATION = 13, HULL_WINDOWS_SECOND_ANIMATION };
+enum { HULL_BAND_FIRST_ANIMATION = 13, HULL_BAND_SECOND_ANIMATION };
 
-/// Arriving by MAIN_DECK_ARRIVAL_ENTRANCE: the screen opens and the hull's
-/// windows open in two steps.
+/// Arriving by MAIN_DECK_ARRIVAL_ENTRANCE: the screen opens and the band along
+/// the hull lights in two steps.
 void LemurianShipDeck_ShowArrival(void) {
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
   Event_StartScreenTransition();
-  FieldTask_AddFrame(LemurianShipDeck_RotateLowColors, TASK_PASS_FRAME);
+  FieldTask_AddFrame(LemurianShipDeck_RotateHullBandColors, TASK_PASS_FRAME);
   Event_WaitTransitionFrames();
   FieldEvent_Wait(60);
-  TilesetAnim_Resume(HULL_WINDOWS_FIRST_ANIMATION);
+  TilesetAnim_Resume(HULL_BAND_FIRST_ANIMATION);
   FieldEvent_Wait(60);
   FieldEvent_Wait(60);
-  TilesetAnim_Resume(HULL_WINDOWS_SECOND_ANIMATION);
+  TilesetAnim_Resume(HULL_BAND_SECOND_ANIMATION);
   Event_End();
 }
 
@@ -199,7 +204,7 @@ extern s32 gLemurianShipDeck_SecondCrewLooksAround[];
 
 extern s32 gLemurianShipDeck_ThirdCrewLooksAround[];
 
-void LemurianShipDeck_RotateHighColors(void);
+void LemurianShipDeck_RotateSurfColors(void);
 
 void LemurianShipDeck_ScrollWaves(void);
 
@@ -229,7 +234,7 @@ void LemurianShipDeck_EnterCabin(void);
 
 void LemurianShipDeck_TryHeldDoor(void);
 
-void LemurianShipDeck_RotateLowColors(void);
+void LemurianShipDeck_RotateHullBandColors(void);
 void LemurianShipDeck_HoldOnToTiller(void);
 
 /// Places an actor facing an angle, the angle taken as the u16 an actor's
@@ -527,8 +532,8 @@ void LemurianShipDeck_HoldOnToTiller(void) {
 void LemurianShipDeck_SetUpTillerDeck(void) {
   Actor_Get(gMainRoutineWork.leaderActorId)->priorityFlags |=
       ACTOR_PRIORITY_IGNORES_RISES;
-  FieldTask_AddFrame(LemurianShipDeck_RotateHighColors, TASK_PASS_FRAME);
-  FieldTask_AddFrame(LemurianShipDeck_RotateLowColors, TASK_PASS_FRAME);
+  FieldTask_AddFrame(LemurianShipDeck_RotateSurfColors, TASK_PASS_FRAME);
+  FieldTask_AddFrame(LemurianShipDeck_RotateHullBandColors, TASK_PASS_FRAME);
   if (gMainRoutineWork.entrance == LEMURIAN_SHIP_TILLER_FROM_WORLD_MAP_C)
     LemurianShipDeck_TakeTheTiller();
   if (gMainRoutineWork.entrance ==
@@ -548,11 +553,12 @@ s32 Scene_Initialize(void) {
         ACTOR_PRIORITY_IGNORES_RISES;
     Actor_SetAnimation(ACTOR_PUDDLE, 1);
     FlagBlock_PlaceAll(gLemurianShipDeck_Puddles);
-    FieldTask_AddFrame(LemurianShipDeck_RotateHighColors, TASK_PASS_FRAME);
+    FieldTask_AddFrame(LemurianShipDeck_RotateSurfColors, TASK_PASS_FRAME);
     if (gMainRoutineWork.entrance == MAIN_DECK_ARRIVAL_ENTRANCE)
       LemurianShipDeck_ShowArrival();
     else
-      FieldTask_AddFrame(LemurianShipDeck_RotateLowColors, TASK_PASS_FRAME);
+      FieldTask_AddFrame(LemurianShipDeck_RotateHullBandColors,
+                         TASK_PASS_FRAME);
   }
   return 0;
 }
@@ -1134,8 +1140,7 @@ void LemurianShipDeck_ReachPiersShip(void) {
   Event_End();
 }
 
-/// A splash rises at an actor's feet every eighth frame, as it walks the wet
-/// deck.
+/// A wading splash rises at an actor's feet every eighth frame while it walks.
 void LemurianShipDeck_EmitSplash(struct Actor *actor) {
   struct Actor *spawned;
 

@@ -128,14 +128,14 @@ void VenusLighthouseEntrance_RuffianWaitsForBackup(void);
 
 void VenusLighthouseEntrance_PointToMeetingSpot(void);
 
-/// The dust puffs' work, kept in Ram_HeapSlots' menu runtime while they play:
-/// their pictures, ninety-six puffs each with its place and sprite, and the
-/// next to emit.
 /// The dust puffs kept at once, each emitted in turn over the oldest, and the
 /// frames a puff lasts.
 #define DUST_PUFFS 96
 #define DUST_PUFF_FRAMES 16
 
+/// The dust puffs' work, kept in Ram_HeapSlots' menu runtime while they play:
+/// their pictures, the puffs each with its place and sprite, and the next to
+/// emit.
 struct DustPuffWork {
   u8 pictures[2048]; ///< decompressed, then loaded into the VRAM cache
   struct SparkState particles[DUST_PUFFS];
@@ -1223,16 +1223,15 @@ void VenusLighthouseEntrance_WakeUp(void) {
 /// The blast column's stage once it has burnt out.
 #define BLAST_FINISHED 999
 
-/// The rising column's work, kept in Ram_HeapSlots' menu runtime while it
-/// plays: its pictures, sixteen pieces of earth, the actor it lifts and the
-/// blast's effect actor.
 /// The blast column: its pieces, 16 pixels each, and its 16x16 pictures in 256
-/// colours, four for the column and four for its top, a picture taking eight
-/// sprite tiles.
+/// colours, four for the column and four for its top.
 #define BLAST_COLUMN_PIECES 16
 #define BLAST_COLUMN_FRAMES 4
-#define BLAST_PICTURE_TILES 8
+#define BLAST_PICTURE_TILES SPRITE_TILES_8BPP(16, 16)
 
+/// The rising column's work, kept in Ram_HeapSlots' menu runtime while it
+/// plays: its pictures, its pieces of earth, the actor it lifts and the
+/// blast's effect actor.
 struct BlastColumnWork {
   u8 pictures[1024]; ///< decompressed, then loaded into the VRAM cache
   struct EffectSprite sprites[BLAST_COLUMN_PIECES];
@@ -1388,8 +1387,6 @@ void VenusLighthouseEntrance_UpdateBlastColumn(void) {
   work->timer++;
 }
 
-// object the overlay links.
-
 s32 BattleEffect_GetObjectDepth(struct Actor *actor);
 
 /// A column of rising earth lifts an actor, holds it, then hurls it off the
@@ -1402,7 +1399,8 @@ void VenusLighthouseEntrance_BlastActorSkyward(s32 id) {
   struct EffectSprite *sprite;
   struct SparkState *state;
   s32 resource, tile, i;
-  u8 zero = 0; // Holds 0 for its whole life.
+  /* FAKEMATCH(temporary): the 0 held in a local; as actor->paused = 0. */
+  u8 zero = 0;
 
   actor->paused = zero;
   work->object = actor;
@@ -1464,7 +1462,8 @@ void VenusLighthouseEntrance_UpdateDust(void) {
   for (i = 0; i < DUST_PUFFS; i++, sprite++, state++) {
     value = state->frame;
     if ((u32)value < DUST_PUFF_FRAMES) {
-      sprite->oam.index = work->tileBase + ((value >> 1) & 7) * 8;
+      sprite->oam.index =
+          work->tileBase + ((value >> 1) & 7) * SPRITE_TILES_8BPP(16, 16);
       EffectSprite_DrawAtWorldPosition(sprite, &state->x);
       BattleEffect_StepVector3(state, 64, 0);
       state->frame++;
@@ -1522,6 +1521,7 @@ void VenusLighthouseEntrance_StartDust(void) {
     sprite++;
   }
   {
+    /* FAKEMATCH(temporary): the 0 held in a local; as work->next = 0. */
     s32 zero = 0;
     work->next = zero;
   }

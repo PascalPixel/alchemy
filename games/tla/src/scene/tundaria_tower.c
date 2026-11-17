@@ -3,14 +3,14 @@
 /// that share this overlay (SceneId_TundariaTowerEntrance to
 /// SceneId_TundariaTowerBurstBrooch).
 ///
-/// In the first hall (room 2) Parch dries the water left and right of the
+/// In the Center Prong's hall Parch dries the water left and right of the
 /// doors, and the Center Prong lies frozen in a crystal that only Burst
 /// breaks. The floors above are crossed by sliding on black ice; Pound
 /// flattens the ice columns and Move slides the pillars, and the Mars Djinni
-/// Reflux waits at the end of one sliding puzzle (room 4). In the room of
-/// pillars (room 6) Reveal shows a way through an icy wall, and Burst breaks
-/// the wall of ice that mirrors the leader; outside, by the Burst Brooch
-/// (room 7), Burst on the wall's brown part brings its rocks down.
+/// Reflux waits in a room of his own at the end of one sliding puzzle. In the
+/// room of pillars Reveal shows a way through an icy wall, and Burst breaks
+/// the wall of ice that mirrors the leader; outside, in the Burst Brooch's
+/// room, Burst on the wall's brown part brings its rocks down.
 #include "djinn_ids.h"
 #include "fixed_math.h"
 #include "flags.h"
@@ -124,13 +124,16 @@ enum {
 #define FLAG_CENTER_PRONG_TAKEN 0x945
 #define FLAG_SECOND_LEDGE_PILLAR_SET 0x946
 #define FLAG_FIRST_LEDGE_PILLAR_SET 0x947
-#define FLAG_BROWN_WALL_BURST 0x948 ///< Burst opened the dead end by the chests
-#define FLAG_ICE_WALL_BURST 0x94b   ///< Burst opened the outside wall
+/// Burst opened the brown wall outside, in the Burst Brooch's room.
+#define FLAG_BROWN_WALL_BURST 0x948
+/// Burst broke the wall of ice that mirrors the leader in the room of pillars.
+#define FLAG_MIRROR_WALL_BURST 0x94b
 #define FLAG_REFLUX_APPEARED FLAG_SCENE_TEMP_00
 #define FLAG_FIGHTING_REFLUX FLAG_SCENE_TEMP_01
 /// The first of four: Pound flattened ice column n.
 #define FLAG_ICE_COLUMN_POUNDED FLAG_SCENE_TEMP_00
-#define FLAG_ICY_WALL_REVEALED FLAG_SCENE_TEMP_12
+/// Reveal shows the hidden way through the icy wall in the room of pillars.
+#define FLAG_HIDDEN_WAY_REVEALED FLAG_SCENE_TEMP_12
 
 /// The tower's own cell behaviors, the cells its step and Psynergy triggers
 /// name; a cell's attributes hold its behavior in their high byte
@@ -141,8 +144,8 @@ enum TundariaTowerCellBehavior {
   CELL_BEHAVIOR_TUNDARIA_TOWER_SLIDE_END = 31,
   /// Black ice, slid across (TundariaTower_SlideOnIce).
   CELL_BEHAVIOR_TUNDARIA_TOWER_ICE = 50,
-  /// In the Burst Brooch's room, the cell where Burst opens the icy
-  /// wall (TundariaTower_BurstBrownWall).
+  /// In the Burst Brooch's room, the cell where Burst opens the brown wall
+  /// (TundariaTower_BurstBrownWall).
   CELL_BEHAVIOR_TUNDARIA_TOWER_BROWN_WALL = 50,
   /// The step on which Reflux appears (TundariaTower_RefluxAppears).
   CELL_BEHAVIOR_TUNDARIA_TOWER_REFLUX_APPEARS = 51
@@ -665,11 +668,11 @@ void TundariaTower_SetDownPillar(void) {
   Event_End();
 }
 
-/// Reveal fades: the icy wall closes again, and a leader standing in its gap is
-/// put out of it on the side he faces.
-void TundariaTower_EndRevealIcyWall(void) {
+/// Reveal fades: the hidden way through the icy wall closes again, and a leader
+/// standing in its gap is put out of it on the side he faces.
+void TundariaTower_EndRevealHiddenWay(void) {
   BlendScript_Resume();
-  GameFlag_Clear(FLAG_ICY_WALL_REVEALED);
+  GameFlag_Clear(FLAG_HIDDEN_WAY_REVEALED);
   if ((u16)(gMainRoutineWork.entrance - 6) <= 1) {
     MapGrid_CopyCellPictureIndicesRect(39, 100, 53, 100, 3, 3);
     MapGrid_CopyCellAttributes(43, 41, 3, 3, 53, 37);
@@ -686,10 +689,10 @@ void TundariaTower_EndRevealIcyWall(void) {
   }
 }
 
-/// Reveal shows the way through the icy wall at the dead end.
-void TundariaTower_RevealIcyWall(void) {
+/// Reveal shows the hidden way through the icy wall at the dead end.
+void TundariaTower_RevealHiddenWay(void) {
   BlendScript_Suspend();
-  GameFlag_Set(FLAG_ICY_WALL_REVEALED);
+  GameFlag_Set(FLAG_HIDDEN_WAY_REVEALED);
   if ((u16)(gMainRoutineWork.entrance - 6) <= 1) {
     MapGrid_CopyCellPictureIndicesRect(43, 100, 53, 100, 3, 3);
     MapGrid_CopyCellAttributes(43, 37, 3, 3, 53, 37);
@@ -707,7 +710,7 @@ void TundariaTower_StopSliding(void) { Event_ResolvePendingActions(0); }
 
 /// Burst on the wall of ice that mirrors the leader in the room of pillars:
 /// chips of ice fly and it breaks open.
-void TundariaTower_BurstIceWall(s32 step) {
+void TundariaTower_BurstMirrorWall(s32 step) {
   struct Vector3 position;
 
   switch (step) {
@@ -715,7 +718,7 @@ void TundariaTower_BurstIceWall(s32 step) {
     MapGrid_CopyCellPictureIndicesRect(18, 97, 6, 97, 3, 4);
     MapGrid_CopyCellPictureIndicesRect(82, 34, 70, 34, 3, 2);
     MapGrid_CopyCellAttributes(7, 36, 1, 1, 7, 35);
-    GameFlag_Set(FLAG_ICE_WALL_BURST);
+    GameFlag_Set(FLAG_MIRROR_WALL_BURST);
     break;
   case 2:
     position.x = toFIXED(120);
@@ -789,7 +792,7 @@ void TundariaTower_ReflectLeader(struct Actor *actor) {
   } else {
     REG_BG2CNT &= (u16)~BGCNT_PRIORITY(3);
     REG_BG2CNT |= BGCNT_PRIORITY(2);
-    if (GameFlag_Get(FLAG_ICY_WALL_REVEALED)) {
+    if (GameFlag_Get(FLAG_HIDDEN_WAY_REVEALED)) {
       actor->z.fixed = 0;
       actor->x.fixed = 0;
     } else {
@@ -851,8 +854,8 @@ void TundariaTower_SlideOnIce(void);
 void TundariaTower_RefluxAppears(void);
 void TundariaTower_PoundIceColumn(s32 phase, s32 step);
 void TundariaTower_SetDownPillar(void);
-void TundariaTower_EndRevealIcyWall(void);
-void TundariaTower_RevealIcyWall(void);
+void TundariaTower_EndRevealHiddenWay(void);
+void TundariaTower_RevealHiddenWay(void);
 void TundariaTower_StopSliding(void);
 void TundariaTower_ResolveBeforePsynergy(void);
 
@@ -1025,7 +1028,7 @@ s32 Scene_Initialize(void) {
       break;
     case 4:
     case 5:
-      if (GameFlag_Get(FLAG_ICE_WALL_BURST)) {
+      if (GameFlag_Get(FLAG_MIRROR_WALL_BURST)) {
         MapGrid_CopyCellsTo(18, 97, 6, 97, 3, 4);
         MapGrid_CopyCellsTo(82, 34, 70, 34, 3, 2);
         MapGrid_CopyCellAttributes(7, 36, 1, 1, 7, 35);
@@ -1949,13 +1952,13 @@ struct Trigger gTundariaTowerLiftPillarsTriggers[] = {
     {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_ACTS), 14,
      CONDITION_ALWAYS, EVENT(TundariaTower_SlidePillar)},
     {PSYNERGY_ANYWHERE(ABILITY_REVEAL, PSYNERGY_PHASE_ACTS), 0,
-     CONDITION_ALWAYS, EVENT(TundariaTower_RevealIcyWall)},
+     CONDITION_ALWAYS, EVENT(TundariaTower_RevealHiddenWay)},
     {PSYNERGY_ANYWHERE(ABILITY_REVEAL, PSYNERGY_PHASE_FADES), 0,
-     CONDITION_ALWAYS, EVENT(TundariaTower_EndRevealIcyWall)},
+     CONDITION_ALWAYS, EVENT(TundariaTower_EndRevealHiddenWay)},
     {PSYNERGY_PHASE_ON_CELL(ABILITY_BURST, PSYNERGY_PHASE_FIRST), 52,
      CONDITION_ALWAYS, EVENT(TundariaTower_ResolveBeforePsynergy)},
     {PSYNERGY_PHASE_ON_CELL(ABILITY_BURST, PSYNERGY_PHASE_ACTS), 52,
-     FLAG_ICE_WALL_BURST, EVENT(TundariaTower_BurstIceWall)},
+     FLAG_MIRROR_WALL_BURST, EVENT(TundariaTower_BurstMirrorWall)},
     {TRIGGER_TABLE_END},
 };
 

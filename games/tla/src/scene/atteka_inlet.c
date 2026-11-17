@@ -42,6 +42,9 @@
   0x9b0 ///< "We worked really hard on that ship"
 #define FLAG_HAMMA_SHOWED_THE_WINGS 0x9b1 ///< Hamma showed the ship's wings
 #define FLAG_HAMMETS_GIFT_DELIVERED 0x9ad ///< Master Hammet's messenger came
+#define FLAG_GEODE_UNCOVERED FLAG_AREA_TEMP_00 ///< Cyclone uncovered Geode
+/// The party told Kraden not to set out yet: "Please don't rush on my account."
+#define FLAG_TOLD_KRADEN_NOT_YET FLAG_SCENE_TEMP_01
 
 extern struct ActorPlacement gAttekaInlet_ActorPlacements[];
 extern struct ActorPlacement gAttekaInlet_HarborActorPlacements[];
@@ -75,18 +78,21 @@ enum AttekaInletHarborActorId {
   ACTOR_WOMAN_GUARDING_THE_WINGS,
   /// "I wonder if these giant wings will really make it fly..."
   ACTOR_BOY_ON_THE_WINGS,
-  /// The cannon on the dock.
+  /// The cannon on the ship's deck, once the ship carries it.
   ACTOR_CANNON,
   /// Kraden, who asks whether to set sail.
   ACTOR_KRADEN,
-  /// Once the ship has wings: Contigo's scholars come to see it fly, and
-  /// Hamma.
-  ///@{
-  ACTOR_SCHOLAR_A,
-  ACTOR_SCHOLAR_B,
-  ACTOR_SCHOLAR_C,
-  ACTOR_SCHOLAR_D,
-  ///@}
+  /// Once the ship has wings, four robed men come to see it fly, and Hamma.
+  /// "It's almost time... Time to watch a legend become reality!"
+  ACTOR_MAN_AWAITING_THE_LEGEND,
+  /// "If everyone will just obey Hamma's request, the ship will surely fly."
+  ACTOR_MAN_ON_HAMMAS_REQUEST,
+  /// "When the winged ship of Anemos flies once again, the whole land shall be
+  /// made free..."
+  ACTOR_MAN_ON_THE_WINGED_SHIP,
+  /// "Once you remove the stone anchors weighing the ship down, it should
+  /// fly..."
+  ACTOR_MAN_ON_THE_STONE_ANCHORS,
   ACTOR_HAMMA,
   /// Master Hammet's messenger, in a game linked with The Broken Seal.
   ACTOR_HAMMETS_MESSENGER
@@ -95,16 +101,18 @@ enum AttekaInletHarborActorId {
 /// The shore beside the harbor (gAttekaInlet_ShoreActorPlacements).
 enum AttekaInletShoreActorId {
   /// "All of our myths and legends have taught us that the sea is a
-  /// dangerous, fearsome power."
-  ACTOR_WOMAN_FEARING_THE_SEA = ACTOR_FIRST_PLACED,
+  /// dangerous, fearsome power. But on the day the ship left, the sea was so
+  /// calm and romantic looking..."
+  ACTOR_WOMAN_ON_THE_CALM_SEA = ACTOR_FIRST_PLACED,
   /// The shipwrights who stop the party at the pier: "Where do you think
   /// you're going?"
   ///@{
   ACTOR_SHIPWRIGHT,
   ACTOR_SECOND_SHIPWRIGHT,
   ///@}
-  /// A scholar from Contigo on the shore.
-  ACTOR_SHORE_SCHOLAR,
+  /// "We sent everyone back to the village so that their hopes would not impair
+  /// your flight."
+  ACTOR_MAN_WHO_SENT_EVERYONE_BACK,
   /// The round boulder Lift cannot lift.
   ACTOR_ROUND_BOULDER = ACTOR_FIRST_PLACED + 5,
   /// Geode, the Venus Djinni Cyclone uncovers.
@@ -115,11 +123,11 @@ enum AttekaInletShoreActorId {
 /// he comes.
 #define ACTOR_HAMMETS_GIFT_CHEST 65
 
-/// The harbor's water, BG palette 11: its colours 4 to 9 are the sea's blues
-/// and 12 to 15 the surf's, each run turned a step at a time.
-#define WATER_PALETTE 11
-#define SEA_FIRST_COLOR 4
-#define SEA_LAST_COLOR 9
+/// BG palette 11, whose two runs of colours turn a step at a time: 4 to 9 are
+/// the blues of the band along the ship's hull, 12 to 15 the surf on the shore.
+#define CYCLE_PALETTE 11
+#define HULL_BAND_FIRST_COLOR 4
+#define HULL_BAND_LAST_COLOR 9
 #define SURF_FIRST_COLOR 12
 #define SURF_LAST_COLOR 15
 
@@ -127,7 +135,7 @@ enum AttekaInletShoreActorId {
 void AttekaInlet_GeodeJoins(void) {
   Djinn_JoinParty(ACTOR_GEODE, DJINNI_GEODE / DJINN_PER_ELEMENT,
                   DJINNI_INDEX(DJINNI_GEODE));
-  GameFlag_Clear(FLAG_AREA_TEMP_00);
+  GameFlag_Clear(FLAG_GEODE_UNCOVERED);
 }
 
 const struct SceneEntrance *Scene_GetEntrances(void) { return gSceneEntrances; }
@@ -201,7 +209,7 @@ void AttekaInlet_AskKradenToSetSail(void) {
                                actor->z.part[0].integer);
     Actor_WaitForMoveById(ACTOR_KRADEN);
     Actor_SetPosition(ACTOR_KRADEN, 0, 0);
-    GameFlag_Set(FLAG_SCENE_TEMP_01);
+    GameFlag_Set(FLAG_TOLD_KRADEN_NOT_YET);
     Event_End();
   }
 }
@@ -417,7 +425,7 @@ void AttekaInlet_CycloneUncoversGeode(void) {
     Actor_SetPosition(ACTOR_GEODE, 120, 376);
     wait(1);
     Actor_Jump(ACTOR_GEODE, 4, 10);
-    GameFlag_Set(FLAG_AREA_TEMP_00);
+    GameFlag_Set(FLAG_GEODE_UNCOVERED);
     if (moved)
       Actor_FaceDirectionAndRefreshById(gMainRoutineWork.leaderActorId,
                                         FACING_EAST);
@@ -426,47 +434,47 @@ void AttekaInlet_CycloneUncoversGeode(void) {
 }
 
 /// Cyclone on one of the shore's nine weeds scatters it.
-void AttekaInlet_CycloneFirstWeed(void) {
+void AttekaInlet_CycloneFirstWeeds(void) {
   FieldTileCopies_CopyTouchedCells(9, 23, 1, 1, 4, 10, 0);
 }
 
 /// Cyclone on one of the shore's nine weeds scatters it.
-void AttekaInlet_CycloneSecondWeed(void) {
+void AttekaInlet_CycloneSecondWeeds(void) {
   FieldTileCopies_CopyTouchedCells(9, 23, 1, 1, 6, 9, 0);
 }
 
 /// Cyclone on one of the shore's nine weeds scatters it.
-void AttekaInlet_CycloneThirdWeed(void) {
+void AttekaInlet_CycloneThirdWeeds(void) {
   FieldTileCopies_CopyTouchedCells(9, 23, 1, 1, 6, 6, 0);
 }
 
 /// Cyclone on one of the shore's nine weeds scatters it.
-void AttekaInlet_CycloneFourthWeed(void) {
+void AttekaInlet_CycloneFourthWeeds(void) {
   FieldTileCopies_CopyTouchedCells(12, 5, 1, 1, 12, 6, 0);
 }
 
 /// Cyclone on one of the shore's nine weeds scatters it.
-void AttekaInlet_CycloneFifthWeed(void) {
+void AttekaInlet_CycloneFifthWeeds(void) {
   FieldTileCopies_CopyTouchedCells(9, 23, 1, 1, 13, 7, 0);
 }
 
 /// Cyclone on one of the shore's nine weeds scatters it.
-void AttekaInlet_CycloneSixthWeed(void) {
+void AttekaInlet_CycloneSixthWeeds(void) {
   FieldTileCopies_CopyTouchedCells(9, 23, 1, 1, 14, 6, 0);
 }
 
 /// Cyclone on one of the shore's nine weeds scatters it.
-void AttekaInlet_CycloneSeventhWeed(void) {
+void AttekaInlet_CycloneSeventhWeeds(void) {
   FieldTileCopies_CopyTouchedCells(9, 23, 1, 1, 21, 6, 0);
 }
 
 /// Cyclone on one of the shore's nine weeds scatters it.
-void AttekaInlet_CycloneEighthWeed(void) {
+void AttekaInlet_CycloneEighthWeeds(void) {
   FieldTileCopies_CopyTouchedCells(9, 23, 1, 1, 22, 6, 0);
 }
 
 /// Cyclone on one of the shore's nine weeds scatters it.
-void AttekaInlet_CycloneNinthWeed(void) {
+void AttekaInlet_CycloneNinthWeeds(void) {
   FieldTileCopies_CopyTouchedCells(9, 23, 1, 1, 23, 7, 0);
 }
 
@@ -563,28 +571,28 @@ void AttekaInlet_ShareLeadersPriorityWithRock(void) {
           ->priority);
 }
 
-/// Turns the sea's blues and the surf's colours on one step every eight
-/// frames.
-void AttekaInlet_RotateWaterColors(void) {
+/// Turns the blues of the band along the ship's hull and the surf's colours on
+/// one step every eight frames.
+void AttekaInlet_RotateHullBandAndSurfColors(void) {
   if ((*Ram_FrameCount & 7) == 0) {
     s16 saved;
     s32 index;
 
-    saved = BG_PLTT_COLOR(WATER_PALETTE, SEA_LAST_COLOR);
-    for (index = SEA_LAST_COLOR; index != SEA_FIRST_COLOR; index--)
-      BG_PLTT_COLOR(WATER_PALETTE, index) =
-          BG_PLTT_COLOR(WATER_PALETTE, index - 1);
-    BG_PLTT_COLOR(WATER_PALETTE, SEA_FIRST_COLOR) = saved;
+    saved = BG_PLTT_COLOR(CYCLE_PALETTE, HULL_BAND_LAST_COLOR);
+    for (index = HULL_BAND_LAST_COLOR; index != HULL_BAND_FIRST_COLOR; index--)
+      BG_PLTT_COLOR(CYCLE_PALETTE, index) =
+          BG_PLTT_COLOR(CYCLE_PALETTE, index - 1);
+    BG_PLTT_COLOR(CYCLE_PALETTE, HULL_BAND_FIRST_COLOR) = saved;
   }
   if ((*Ram_FrameCount & 7) == 0) {
     s16 saved;
     s32 index;
 
-    saved = BG_PLTT_COLOR(WATER_PALETTE, SURF_LAST_COLOR);
+    saved = BG_PLTT_COLOR(CYCLE_PALETTE, SURF_LAST_COLOR);
     for (index = SURF_LAST_COLOR; index != SURF_FIRST_COLOR; index--)
-      BG_PLTT_COLOR(WATER_PALETTE, index) =
-          BG_PLTT_COLOR(WATER_PALETTE, index - 1);
-    BG_PLTT_COLOR(WATER_PALETTE, SURF_FIRST_COLOR) = saved;
+      BG_PLTT_COLOR(CYCLE_PALETTE, index) =
+          BG_PLTT_COLOR(CYCLE_PALETTE, index - 1);
+    BG_PLTT_COLOR(CYCLE_PALETTE, SURF_FIRST_COLOR) = saved;
   }
 }
 
@@ -629,9 +637,9 @@ s32 Scene_PrepareMap(void) {
   return 0;
 }
 
-/// The harbor on entry: the ship is here, the water's colours turn, Hammet's
-/// chest hides until his gift comes, and the scholars and Hamma stand by the
-/// wings until the ship has set out with them.
+/// The harbor on entry: the ship is here, the hull's band and the surf turn
+/// their colours, Hammet's chest hides until his gift comes, and the robed men
+/// and Hamma stand by the wings until the ship has set out with them.
 void AttekaInlet_SetUpTheHarbor(void) {
   struct MapWorkGroundEffects *map =
       (struct MapWorkGroundEffects *)Ram_HeapSlots->mapGrid;
@@ -644,37 +652,39 @@ void AttekaInlet_SetUpTheHarbor(void) {
   party = &gMainRoutineWork;
   Actor_GetById(party->leaderActorId)->priorityFlags |=
       ACTOR_PRIORITY_IGNORES_RISES;
-  FieldTask_AddFrame(AttekaInlet_RotateWaterColors, TASK_PASS_FRAME);
+  FieldTask_AddFrame(AttekaInlet_RotateHullBandAndSurfColors, TASK_PASS_FRAME);
   FieldTask_AddFrame(AttekaInlet_ShareLeadersPriority, TASK_PASS_FRAME);
   Actor_SetSpriteFlags(Actor_GetById(ACTOR_CANNON), 0);
   Actor_GetById(ACTOR_CANNON)->motionFlags = 0;
   if (GameFlag_Get(FLAG_SET_OUT_WITH_WINGS)) {
-    Actor_SetPosition(ACTOR_SCHOLAR_A, 0, 0);
-    Actor_SetPosition(ACTOR_SCHOLAR_B, 0, 0);
-    Actor_SetPosition(ACTOR_SCHOLAR_C, 0, 0);
-    Actor_SetPosition(ACTOR_SCHOLAR_D, 0, 0);
+    Actor_SetPosition(ACTOR_MAN_AWAITING_THE_LEGEND, 0, 0);
+    Actor_SetPosition(ACTOR_MAN_ON_HAMMAS_REQUEST, 0, 0);
+    Actor_SetPosition(ACTOR_MAN_ON_THE_WINGED_SHIP, 0, 0);
+    Actor_SetPosition(ACTOR_MAN_ON_THE_STONE_ANCHORS, 0, 0);
     Actor_SetPosition(ACTOR_HAMMA, 0, 0);
   } else {
     if (GameFlag_Get(FLAG_HAMMA_SHOWED_THE_WINGS))
       Actor_SetPositionAndFacing(ACTOR_HAMMA, toFIXED(504), toFIXED(360),
                                  FACING_SOUTH_SOUTHEAST);
-    Actor_WatchAndSetScript(ACTOR_SCHOLAR_A, party->leaderActorId);
-    Actor_WatchAndSetScript(ACTOR_SCHOLAR_B, party->leaderActorId);
-    Actor_WatchAndSetScript(ACTOR_SCHOLAR_C, party->leaderActorId);
-    Actor_WatchAndSetScript(ACTOR_SCHOLAR_D, party->leaderActorId);
+    Actor_WatchAndSetScript(ACTOR_MAN_AWAITING_THE_LEGEND,
+                            party->leaderActorId);
+    Actor_WatchAndSetScript(ACTOR_MAN_ON_HAMMAS_REQUEST, party->leaderActorId);
+    Actor_WatchAndSetScript(ACTOR_MAN_ON_THE_WINGED_SHIP, party->leaderActorId);
+    Actor_WatchAndSetScript(ACTOR_MAN_ON_THE_STONE_ANCHORS,
+                            party->leaderActorId);
   }
 }
 
-/// The shore on entry: the shipwrights and the scholar leave once the ship has
-/// set out with its wings, or block the pier once they have stopped the party;
-/// Geode stands out once uncovered.
+/// The shore on entry: the shipwrights and the robed man leave once the ship
+/// has set out with its wings, or block the pier once they have stopped the
+/// party; Geode stands out once uncovered.
 void AttekaInlet_SetUpTheShore(void) {
   if (gMainRoutineWork.entrance == ATTEKA_INLET_GEODE_FROM_CONTIGO_SHOPS)
     GameFlag_Clear(FLAG_SHOW_AREA_NAME);
   if (GameFlag_Get(FLAG_SET_OUT_WITH_WINGS)) {
     Actor_SetPosition(ACTOR_SHIPWRIGHT, 0, 0);
     Actor_SetPosition(ACTOR_SECOND_SHIPWRIGHT, 0, 0);
-    Actor_SetPosition(ACTOR_SHORE_SCHOLAR, 0, 0);
+    Actor_SetPosition(ACTOR_MAN_WHO_SENT_EVERYONE_BACK, 0, 0);
   } else if (GameFlag_Get(FLAG_SHIPWRIGHTS_STOPPED_PARTY)) {
     Actor_SetPositionAndFacing(ACTOR_SHIPWRIGHT, toFIXED(70), toFIXED(308),
                                FACING_EAST);
@@ -686,7 +696,7 @@ void AttekaInlet_SetUpTheShore(void) {
     Map_CopyCellAttributeRect(1, 16, 1, 1, 4, 21);
     wait(1);
   }
-  if (GameFlag_Get(FLAG_AREA_TEMP_00))
+  if (GameFlag_Get(FLAG_GEODE_UNCOVERED))
     Actor_SetPosition(ACTOR_GEODE, 120, 376);
   Task_Add(AttekaInlet_ShareLeadersPriorityWithRock, TASK_PASS_FRAME);
 }
@@ -952,18 +962,22 @@ struct Trigger gAttekaInlet_HarborTriggers[] = {
      FLAG_SET_OUT_WITH_WINGS, MSGNO(MsgIfThatBoat)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_BOY_ON_THE_WINGS,
      CONDITION_ALWAYS, MSGNO(MsgIVeDecided)},
-    {TRIGGER_TALK, ACTOR_SCHOLAR_A, CONDITION_ALWAYS, MSGNO(MsgItSAlmost)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_SCHOLAR_A, CONDITION_ALWAYS,
-     MSGNO(MsgTheDayHas)},
-    {TRIGGER_TALK, ACTOR_SCHOLAR_B, CONDITION_ALWAYS, MSGNO(MsgIfEveryoneWill)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_SCHOLAR_B, CONDITION_ALWAYS,
-     MSGNO(MsgTheAnemosWere)},
-    {TRIGGER_TALK, ACTOR_SCHOLAR_C, CONDITION_ALWAYS, MSGNO(MsgWhenTheWinged)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_SCHOLAR_C, CONDITION_ALWAYS,
-     MSGNO(MsgTheseWarriorsWill)},
-    {TRIGGER_TALK, ACTOR_SCHOLAR_D, CONDITION_ALWAYS, MSGNO(MsgOnceYouRemove)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_SCHOLAR_D, CONDITION_ALWAYS,
-     MSGNO(MsgIHearThatThe)},
+    {TRIGGER_TALK, ACTOR_MAN_AWAITING_THE_LEGEND, CONDITION_ALWAYS,
+     MSGNO(MsgItSAlmost)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_MAN_AWAITING_THE_LEGEND,
+     CONDITION_ALWAYS, MSGNO(MsgTheDayHas)},
+    {TRIGGER_TALK, ACTOR_MAN_ON_HAMMAS_REQUEST, CONDITION_ALWAYS,
+     MSGNO(MsgIfEveryoneWill)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_MAN_ON_HAMMAS_REQUEST,
+     CONDITION_ALWAYS, MSGNO(MsgTheAnemosWere)},
+    {TRIGGER_TALK, ACTOR_MAN_ON_THE_WINGED_SHIP, CONDITION_ALWAYS,
+     MSGNO(MsgWhenTheWinged)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_MAN_ON_THE_WINGED_SHIP,
+     CONDITION_ALWAYS, MSGNO(MsgTheseWarriorsWill)},
+    {TRIGGER_TALK, ACTOR_MAN_ON_THE_STONE_ANCHORS, CONDITION_ALWAYS,
+     MSGNO(MsgOnceYouRemove)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_MAN_ON_THE_STONE_ANCHORS,
+     CONDITION_ALWAYS, MSGNO(MsgIHearThatThe)},
     {TRIGGER_TALK, ACTOR_HAMMA, CONDITION_ALWAYS, MSGNO(MsgUseYourPsynergy)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_HAMMA, CONDITION_ALWAYS,
      MSGNO(MsgTravelSafelyThe)},
@@ -982,13 +996,13 @@ struct Trigger gAttekaInlet_ShoreTriggers[] = {
      EVENT(AttekaInlet_ShipwrightsStopTheParty)},
     {TALK_TRIGGER_FACING(FACING_EAST), ACTOR_GEODE, CONDITION_ALWAYS,
      EVENT(AttekaInlet_GeodeJoins)},
-    {TRIGGER_TALK, ACTOR_WOMAN_FEARING_THE_SEA, FLAG_SET_OUT_WITH_WINGS,
+    {TRIGGER_TALK, ACTOR_WOMAN_ON_THE_CALM_SEA, FLAG_SET_OUT_WITH_WINGS,
      MSGNO(MsgEveryoneSWaiting)},
-    {TRIGGER_TALK, ACTOR_WOMAN_FEARING_THE_SEA, CONDITION_ALWAYS,
+    {TRIGGER_TALK, ACTOR_WOMAN_ON_THE_CALM_SEA, CONDITION_ALWAYS,
      MSGNO(MsgAllOfOur)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_WOMAN_FEARING_THE_SEA,
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_WOMAN_ON_THE_CALM_SEA,
      FLAG_SET_OUT_WITH_WINGS, MSGNO(MsgHammaIsThe)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_WOMAN_FEARING_THE_SEA,
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_WOMAN_ON_THE_CALM_SEA,
      CONDITION_ALWAYS, MSGNO(MsgEveryoneInContigo)},
     {TRIGGER_TALK, ACTOR_SHIPWRIGHT, CONDITION_ALWAYS,
      MSGNO(MsgTheVillagersAre)},
@@ -998,30 +1012,30 @@ struct Trigger gAttekaInlet_ShoreTriggers[] = {
      MSGNO(MsgHammaWouldnT)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_SECOND_SHIPWRIGHT,
      CONDITION_ALWAYS, MSGNO(MsgHammaSaysThat)},
-    {TRIGGER_TALK, ACTOR_SHORE_SCHOLAR, CONDITION_ALWAYS,
+    {TRIGGER_TALK, ACTOR_MAN_WHO_SENT_EVERYONE_BACK, CONDITION_ALWAYS,
      MSGNO(MsgWhenPeopleWork)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_SHORE_SCHOLAR,
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_MAN_WHO_SENT_EVERYONE_BACK,
      CONDITION_ALWAYS, MSGNO(MsgWeCanT)},
     {PSYNERGY_ON_ACTOR(ABILITY_LIFT), ACTOR_ROUND_BOULDER, CONDITION_ALWAYS, 0},
     {PSYNERGY_PHASE_ON_CELL(ABILITY_CYCLONE, PSYNERGY_PHASE_ACTS), 20,
      CONDITION_ALWAYS, EVENT(AttekaInlet_CycloneUncoversGeode)},
     {PSYNERGY_PHASE_ON_CELL(ABILITY_CYCLONE, PSYNERGY_PHASE_ACTS), 21,
-     CONDITION_ALWAYS, EVENT(AttekaInlet_CycloneFirstWeed)},
+     CONDITION_ALWAYS, EVENT(AttekaInlet_CycloneFirstWeeds)},
     {PSYNERGY_PHASE_ON_CELL(ABILITY_CYCLONE, PSYNERGY_PHASE_ACTS), 22,
-     CONDITION_ALWAYS, EVENT(AttekaInlet_CycloneSecondWeed)},
+     CONDITION_ALWAYS, EVENT(AttekaInlet_CycloneSecondWeeds)},
     {PSYNERGY_PHASE_ON_CELL(ABILITY_CYCLONE, PSYNERGY_PHASE_ACTS), 23,
-     CONDITION_ALWAYS, EVENT(AttekaInlet_CycloneThirdWeed)},
+     CONDITION_ALWAYS, EVENT(AttekaInlet_CycloneThirdWeeds)},
     {PSYNERGY_PHASE_ON_CELL(ABILITY_CYCLONE, PSYNERGY_PHASE_ACTS), 24,
-     CONDITION_ALWAYS, EVENT(AttekaInlet_CycloneFourthWeed)},
+     CONDITION_ALWAYS, EVENT(AttekaInlet_CycloneFourthWeeds)},
     {PSYNERGY_PHASE_ON_CELL(ABILITY_CYCLONE, PSYNERGY_PHASE_ACTS), 25,
-     CONDITION_ALWAYS, EVENT(AttekaInlet_CycloneFifthWeed)},
+     CONDITION_ALWAYS, EVENT(AttekaInlet_CycloneFifthWeeds)},
     {PSYNERGY_PHASE_ON_CELL(ABILITY_CYCLONE, PSYNERGY_PHASE_ACTS), 26,
-     CONDITION_ALWAYS, EVENT(AttekaInlet_CycloneSixthWeed)},
+     CONDITION_ALWAYS, EVENT(AttekaInlet_CycloneSixthWeeds)},
     {PSYNERGY_PHASE_ON_CELL(ABILITY_CYCLONE, PSYNERGY_PHASE_ACTS), 27,
-     CONDITION_ALWAYS, EVENT(AttekaInlet_CycloneSeventhWeed)},
+     CONDITION_ALWAYS, EVENT(AttekaInlet_CycloneSeventhWeeds)},
     {PSYNERGY_PHASE_ON_CELL(ABILITY_CYCLONE, PSYNERGY_PHASE_ACTS), 28,
-     CONDITION_ALWAYS, EVENT(AttekaInlet_CycloneEighthWeed)},
+     CONDITION_ALWAYS, EVENT(AttekaInlet_CycloneEighthWeeds)},
     {PSYNERGY_PHASE_ON_CELL(ABILITY_CYCLONE, PSYNERGY_PHASE_ACTS), 29,
-     CONDITION_ALWAYS, EVENT(AttekaInlet_CycloneNinthWeed)},
+     CONDITION_ALWAYS, EVENT(AttekaInlet_CycloneNinthWeeds)},
     {TRIGGER_TABLE_END},
 };

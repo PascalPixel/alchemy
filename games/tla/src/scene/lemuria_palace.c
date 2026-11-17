@@ -68,9 +68,8 @@ enum LemuriaPalaceDoorExit {
   EXIT_INNER_DOOR = 16,
 };
 
-/// Background palette 12 glows: every sixth frame its rotating colours move
-/// along by one, and every frame its glow colour takes the next of the glow's
-/// steps.
+/// The glow palette: every sixth frame its rotating colours move along by one,
+/// and every four frames its glow colour takes the next of GLOW_STEPS steps.
 #define GLOW_PALETTE 12
 #define ROTATING_FIRST_COLOR 1
 #define ROTATING_LAST_COLOR 14

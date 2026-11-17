@@ -58,8 +58,8 @@
 /// Set while the leader stands in the center of the hall, so the voice speaks
 /// once each time he steps in.
 #define FLAG_VOICE_HEARD 0xa0e
-/// The grey block Moved onto the empty socket has risen into the bridge.
-#define FLAG_BRIDGE_BLOCK_RAISED 0xa09
+/// The grey block Moved onto the empty socket has risen to hover over it.
+#define FLAG_RED_KEY_HALL_SOCKET_BLOCK_RAISED 0xa09
 /// Set as Alex stops the party here; he stays in the hall until Isaac and Ivan
 /// have fallen.
 #define FLAG_ALEX_WAITING 0xa22
@@ -70,7 +70,7 @@ enum JupiterLighthouseRoomRedKeyActorId {
   /// the lighthouse is activated; the middle one is Moved onto the empty socket
   /// between the others to rise with them.
   ACTOR_WEST_HOVERING_BLOCK = ACTOR_FIRST_PLACED + 2,
-  ACTOR_BRIDGE_BLOCK,
+  ACTOR_SOCKET_BLOCK,
   ACTOR_EAST_HOVERING_BLOCK,
   /// The four grey blocks the activation raises before the party's eyes.
   ACTOR_FIRST_RISING_BLOCK,
@@ -87,10 +87,10 @@ enum JupiterLighthouseRoomRedKeyActorId {
 /// The empty socket between the west grey blocks.
 #define EMPTY_SOCKET_CELL_X 13
 #define EMPTY_SOCKET_CELL_Z 34
-/// The foot of the ladder up to the platform in the hall's center, just north
-/// of where the voice speaks: Hover cast there wakes the lighthouse.
-#define LADDER_FOOT_CELL_X 42
-#define LADDER_FOOT_CELL_Z 41
+/// The cell, just north of where the voice speaks, where Hover wakes the
+/// lighthouse.
+#define ACTIVATION_CELL_X 42
+#define ACTIVATION_CELL_Z 41
 /// The times the ring of sparks pulses, each pause shorter than the last.
 #define RING_PULSES 20
 /// The spark ring's sparks.
@@ -184,7 +184,7 @@ void JupiterLighthouse_PlacePushedBlock(s32 unused, s32 id) {
   s32 frame;
 
   actor = Actor_Get(id);
-  if (id == ACTOR_BRIDGE_BLOCK) {
+  if (id == ACTOR_SOCKET_BLOCK) {
     if (!Event_GetFlag(FLAG_JUPITER_LIGHTHOUSE_ACTIVATED) ||
         FIELD_CELL(actor->x.fixed) != EMPTY_SOCKET_CELL_X ||
         FIELD_CELL(actor->z.fixed) != EMPTY_SOCKET_CELL_Z)
@@ -195,7 +195,7 @@ void JupiterLighthouse_PlacePushedBlock(s32 unused, s32 id) {
       System_Wait(1);
     }
     Actor_RaiseFromCell(id);
-    Event_SetFlag(FLAG_BRIDGE_BLOCK_RAISED);
+    Event_SetFlag(FLAG_RED_KEY_HALL_SOCKET_BLOCK_RAISED);
   } else {
     Actor_PlaceMovedBlock();
   }
@@ -328,8 +328,8 @@ void JupiterLighthouse_ActivateTheLighthouse(void) {
   FIXED to[3];
   s32 i;
 
-  if (FIELD_CELL(leader->x.fixed) != LADDER_FOOT_CELL_X ||
-      FIELD_CELL(leader->z.fixed) != LADDER_FOOT_CELL_Z)
+  if (FIELD_CELL(leader->x.fixed) != ACTIVATION_CELL_X ||
+      FIELD_CELL(leader->z.fixed) != ACTIVATION_CELL_Z)
     return;
   Event_SetFlag(FLAG_JUPITER_LIGHTHOUSE_ACTIVATED);
   FieldEvent_ResolvePendingActions(0);
@@ -473,13 +473,12 @@ void JupiterLighthouse_AlexAppears(void) {
   s32 y;
   u32 random;
   u32 randomY;
-  u32 scaled;
 
   actor = Actor_Get(ACTOR_ALEX);
   Event_PlaySound(SE_WARP);
   Actor_SetSpriteFlags(Actor_Get(ACTOR_ALEX), 0);
   params.priority = 1;
-  params.palette = 5;
+  params.palette = SPRITE_COLOR_BRG;
   params.type = SPRITE_PARTICLE;
   params.startScaleX = FIXED_ONE * 2 / 5;
   params.startScaleY = FIXED_ONE * 3;
@@ -489,11 +488,7 @@ void JupiterLighthouse_AlexAppears(void) {
       // A whole pixel from 12 west of Alex to 11 east, and up to 31 over the
       // 32 above his feet.
       random = Random16();
-      scaled = random << 1;
-      scaled += random;
-      x = actor->x.fixed;
-      x += INTtoFIXED(FIXEDtoINT(scaled << 3));
-      x += -toFIXED(12);
+      x = actor->x.fixed + INTtoFIXED(FIXEDtoINT(random * 24)) - toFIXED(12);
       randomY = Random16();
       y = actor->y.fixed;
       FieldEffect_Spawn(x,
@@ -527,7 +522,9 @@ void JupiterLighthouse_HealTarget(s32 actorId, s32 target) {
 
       actor->facing = facing + FACING_STEP;
     }
-    FieldActor_SetSpriteColor(Actor_Get(target), (frame & 4) ? 7 : 0);
+    FieldActor_SetSpriteColor(Actor_Get(target), (frame & 4)
+                                                     ? SPRITE_COLOR_WHITE
+                                                     : SPRITE_COLOR_NORMAL);
     System_Wait(1);
   }
   Actor_Get(target)->facing = FACING_NORTH;
@@ -676,9 +673,9 @@ s32 Scene_PrepareMap(void) {
     Actor_RaiseFromCell(ACTOR_FIRST_RISING_BLOCK + 2);
     Actor_RaiseFromCell(ACTOR_LAST_RISING_BLOCK);
   }
-  if (Event_GetFlag(FLAG_BRIDGE_BLOCK_RAISED)) {
-    Actor_SetPosition(ACTOR_BRIDGE_BLOCK, 216, 552);
-    Actor_RaiseFromCell(ACTOR_BRIDGE_BLOCK);
+  if (Event_GetFlag(FLAG_RED_KEY_HALL_SOCKET_BLOCK_RAISED)) {
+    Actor_SetPosition(ACTOR_SOCKET_BLOCK, 216, 552);
+    Actor_RaiseFromCell(ACTOR_SOCKET_BLOCK);
   }
   return 0;
 }
@@ -715,6 +712,7 @@ s32 MapGrid_GetCellBehavior(s32 x, s32 z, s32 layer);
 
 #include "shared/whirlwind_spawn.h"
 
+// Unused here: nothing in the hall sets it as an actor's update.
 #include "shared/actor_emit_rising_sparks.h"
 
 #include "shared/jupiter_lighthouse_place_raised_actors.h"
@@ -1030,8 +1028,8 @@ struct Trigger gSceneEvents[] = {
     {PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_FIRST_PUSHED_BLOCK + 1, CONDITION_ALWAYS, EVENT(JupiterLighthouse_PlacePushedBlock)},
     {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), ACTOR_LAST_PUSHED_BLOCK, CONDITION_ALWAYS, EVENT(JupiterLighthouse_LiftPushedBlock)},
     {PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_LAST_PUSHED_BLOCK, CONDITION_ALWAYS, EVENT(JupiterLighthouse_PlacePushedBlock)},
-    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), ACTOR_BRIDGE_BLOCK, CONDITION_ALWAYS, EVENT(JupiterLighthouse_LiftPushedBlock)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_BRIDGE_BLOCK, CONDITION_ALWAYS, EVENT(JupiterLighthouse_PlacePushedBlock)},
+    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), ACTOR_SOCKET_BLOCK, CONDITION_ALWAYS, EVENT(JupiterLighthouse_LiftPushedBlock)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_SOCKET_BLOCK, CONDITION_ALWAYS, EVENT(JupiterLighthouse_PlacePushedBlock)},
     {PSYNERGY_ANYWHERE(ABILITY_HOVER, PSYNERGY_PHASE_ACTS), 0, FLAG_JUPITER_LIGHTHOUSE_ACTIVATED, EVENT(JupiterLighthouse_ActivateTheLighthouse)},
     {TRIGGER_TABLE_END},
 };

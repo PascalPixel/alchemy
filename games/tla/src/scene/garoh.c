@@ -602,7 +602,7 @@ const void *Scene_GetTriggers(void) {
 void Garoh_HowlAtNight(void) {
   if (!Flag_IsSet(FLAG_GAROH_SECRET_SHARED) && Flag_IsSet(FLAG_GAROH_NIGHT)) {
     gGaroh_HowlFrames++;
-    if ((gGaroh_HowlFrames & 1023) == 0)
+    if ((gGaroh_HowlFrames & 0x3ff) == 0)
       Event_PlaySound(SE_HOWL);
   }
 }

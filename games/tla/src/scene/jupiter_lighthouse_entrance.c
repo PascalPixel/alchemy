@@ -1,7 +1,7 @@
 /// @file
 /// The grounds before Jupiter Lighthouse's main gates, reached from the world
-/// map. Cyclone blows away five patches of bushes
-/// (JupiterLighthouse_CycloneFirstPatch to JupiterLighthouse_CycloneFifthPatch,
+/// map. Cyclone scatters five weeds
+/// (JupiterLighthouse_CycloneFirstWeeds to JupiterLighthouse_CycloneFifthWeeds,
 /// JupiterLighthouse_CycloneUncoversTheSpot), and at the dead end Cyclone on
 /// the teleporter carries the party down to the basement
 /// (JupiterLighthouse_LeaveByCyclone). The gates lead into the ground floor,
@@ -71,9 +71,9 @@ struct CellTarget gCrackedTiles BSS_DATA;
 void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
                        s32 velocityZ, u32 flags,
                        const struct EffectOptions *options);
-void JupiterLighthouse_CycloneSecondPatch(void);
-void JupiterLighthouse_CycloneFourthPatch(void);
-void JupiterLighthouse_CycloneFifthPatch(void);
+void JupiterLighthouse_CycloneSecondWeeds(void);
+void JupiterLighthouse_CycloneFourthWeeds(void);
+void JupiterLighthouse_CycloneFifthWeeds(void);
 void JupiterLighthouse_CycloneUncoversTheSpot(void);
 void JupiterLighthouse_LeaveByCyclone(void);
 
@@ -89,32 +89,32 @@ const struct ActorPlacement *Scene_GetActorPlacements(void) {
   return gActorPlacements;
 }
 
-/// Cyclone clears the first patch of the entrance's grass.
-void JupiterLighthouse_CycloneFirstPatch(void) {
+/// Cyclone scatters the entrance's first weeds.
+void JupiterLighthouse_CycloneFirstWeeds(void) {
   FieldTileCopies_CopyTouchedCells(56, 0, 4, 2, 70, 19, 1);
 }
 
-/// Cyclone clears the second patch of grass.
-void JupiterLighthouse_CycloneSecondPatch(void) {
+/// Cyclone scatters the second weeds.
+void JupiterLighthouse_CycloneSecondWeeds(void) {
   FieldTileCopies_CopyTouchedCells(56, 0, 4, 2, 69, 22, 1);
 }
 
-/// Cyclone clears the third patch of grass.
-void JupiterLighthouse_CycloneThirdPatch(void) {
+/// Cyclone scatters the third weeds.
+void JupiterLighthouse_CycloneThirdWeeds(void) {
   FieldTileCopies_CopyTouchedCells(56, 0, 3, 3, 79, 25, 1);
 }
 
-/// Cyclone clears the fourth patch of grass.
-void JupiterLighthouse_CycloneFourthPatch(void) {
+/// Cyclone scatters the fourth weeds.
+void JupiterLighthouse_CycloneFourthWeeds(void) {
   FieldTileCopies_CopyTouchedCells(56, 0, 5, 3, 85, 26, 1);
 }
 
-/// Cyclone clears the fifth patch of grass.
-void JupiterLighthouse_CycloneFifthPatch(void) {
+/// Cyclone scatters the fifth weeds.
+void JupiterLighthouse_CycloneFifthWeeds(void) {
   FieldTileCopies_CopyTouchedCells(56, 0, 5, 3, 94, 26, 1);
 }
 
-/// Where the Mint lies buried under the third patch of grass.
+/// Where the Mint lies buried under the third weeds.
 #define MINT_SPOT_X 280
 #define MINT_SPOT_Z 440
 
@@ -206,29 +206,8 @@ void Actor_StartScript(struct Actor *actor, const s32 *script);
 
 #include "shared/whirlwind_spawn_upper.h"
 
-/// Unused: an actor's update that every eighth frame sends a black mote rising
-/// from a random point of it; nothing sets it.
-UNUSED s32 JupiterLighthouse_EmitRisingMotes(struct Actor *actor) {
-  struct EffectOptions params;
-  s32 phase;
-  FIXED x, y, speed;
-
-  phase = gFrameCount & 7;
-  if (phase == 0) {
-    params.priority = 3;
-    params.startScaleX = FIXED_ONE * 7 / 10;
-    params.startScaleY = FIXED_ONE * 7 / 10;
-    params.palette = SPRITE_COLOR_BLACK;
-    x = actor->x.fixed + INTtoFIXED((s32)(Random_Below(9)) - 4);
-    y = actor->y.fixed + INTtoFIXED(32 - (s32)(Random_Below(20)));
-    speed = (INTtoFIXED((s32)(Random_Below(5))) + toFIXED(5)) / 10;
-    FieldEffect_Spawn(x, y, actor->z.fixed, 0, speed, phase,
-                      EFFECT_USE_START_SCALE | EFFECT_USE_PRIORITY |
-                          EFFECT_USE_PALETTE,
-                      &params);
-  }
-  return 0;
-}
+// Unused here: nothing in the entrance sets it as an actor's update.
+#include "shared/actor_emit_rising_sparks.h"
 
 #include "shared/jupiter_lighthouse_place_raised_actors.h"
 
@@ -249,8 +228,11 @@ static inline void *BumpAlloc(s32 size) { return Heap_Alloc(size); }
 
 #include "shared/light_sprites_add.h"
 
-/// Sets the priority the lit actors' sprites are drawn at.
-void LightSprites_SetPriority(s32 value) { gLightSpritePriority = value; }
+/// Unused: sets the priority the lit actors' sprites are drawn at; nothing in
+/// the entrance calls it.
+UNUSED void LightSprites_SetPriority(s32 value) {
+  gLightSpritePriority = value;
+}
 
 #include "../field/actor_set_sprite_priority.c"
 
@@ -279,11 +261,11 @@ struct Trigger gSceneEvents[] = {
     {TRIGGER_EXIT, 2, CONDITION_ALWAYS, 2},
     {TRIGGER_EXIT, 3, CONDITION_ALWAYS, 3},
     {TRIGGER_EXIT, 4, CONDITION_ALWAYS, 4},
-    {PSYNERGY_PHASE_ON_CELL(ABILITY_CYCLONE, PSYNERGY_PHASE_ACTS), 30, CONDITION_ALWAYS, EVENT(JupiterLighthouse_CycloneFirstPatch)},
-    {PSYNERGY_PHASE_ON_CELL(ABILITY_CYCLONE, PSYNERGY_PHASE_ACTS), 31, CONDITION_ALWAYS, EVENT(JupiterLighthouse_CycloneSecondPatch)},
-    {PSYNERGY_PHASE_ON_CELL(ABILITY_CYCLONE, PSYNERGY_PHASE_ACTS), 32, CONDITION_ALWAYS, EVENT(JupiterLighthouse_CycloneThirdPatch)},
-    {PSYNERGY_PHASE_ON_CELL(ABILITY_CYCLONE, PSYNERGY_PHASE_ACTS), 33, CONDITION_ALWAYS, EVENT(JupiterLighthouse_CycloneFourthPatch)},
-    {PSYNERGY_PHASE_ON_CELL(ABILITY_CYCLONE, PSYNERGY_PHASE_ACTS), 34, CONDITION_ALWAYS, EVENT(JupiterLighthouse_CycloneFifthPatch)},
+    {PSYNERGY_PHASE_ON_CELL(ABILITY_CYCLONE, PSYNERGY_PHASE_ACTS), 30, CONDITION_ALWAYS, EVENT(JupiterLighthouse_CycloneFirstWeeds)},
+    {PSYNERGY_PHASE_ON_CELL(ABILITY_CYCLONE, PSYNERGY_PHASE_ACTS), 31, CONDITION_ALWAYS, EVENT(JupiterLighthouse_CycloneSecondWeeds)},
+    {PSYNERGY_PHASE_ON_CELL(ABILITY_CYCLONE, PSYNERGY_PHASE_ACTS), 32, CONDITION_ALWAYS, EVENT(JupiterLighthouse_CycloneThirdWeeds)},
+    {PSYNERGY_PHASE_ON_CELL(ABILITY_CYCLONE, PSYNERGY_PHASE_ACTS), 33, CONDITION_ALWAYS, EVENT(JupiterLighthouse_CycloneFourthWeeds)},
+    {PSYNERGY_PHASE_ON_CELL(ABILITY_CYCLONE, PSYNERGY_PHASE_ACTS), 34, CONDITION_ALWAYS, EVENT(JupiterLighthouse_CycloneFifthWeeds)},
     {PSYNERGY_PHASE_ON_CELL(ABILITY_CYCLONE, PSYNERGY_PHASE_ACTS), 35, CONDITION_ALWAYS, EVENT(JupiterLighthouse_LeaveByCyclone)},
     {PSYNERGY_PHASE_ON_CELL(ABILITY_CYCLONE, PSYNERGY_PHASE_ACTS), 36, CONDITION_ALWAYS, EVENT(JupiterLighthouse_CycloneUncoversTheSpot)},
     {TRIGGER_TABLE_END},
@@ -351,9 +333,9 @@ void MapGrid_CenterOnFollowedPoint(void);
 void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
                        s32 velocityZ, u32 flags,
                        const struct EffectOptions *options);
-void JupiterLighthouse_CycloneSecondPatch(void);
-void JupiterLighthouse_CycloneFourthPatch(void);
-void JupiterLighthouse_CycloneFifthPatch(void);
+void JupiterLighthouse_CycloneSecondWeeds(void);
+void JupiterLighthouse_CycloneFourthWeeds(void);
+void JupiterLighthouse_CycloneFifthWeeds(void);
 void JupiterLighthouse_CycloneUncoversTheSpot(void);
 void JupiterLighthouse_LeaveByCyclone(void);
 extern u32 gFieldEffect_ShortScript[];

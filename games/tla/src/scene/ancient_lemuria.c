@@ -1,7 +1,7 @@
 /// @file
 /// Ancient Lemuria, the shore before the hidden city, where the Lemurians meet
 /// the party that defeated Poseidon (AncientLemuria_MeetTheLemurians). Cyclone
-/// on the first bush brings out Rime, the Mercury Djinni, which hides in the
+/// on the first weeds brings out Rime, the Mercury Djinni, which hides in the
 /// blue statue until Tremor shakes it out (AncientLemuria_CycloneRevealsRime,
 /// AncientLemuria_TremorShakesOutRime).
 
@@ -85,7 +85,7 @@ void AncientLemuria_RimeJoins(void) {
 
 /// The update of the statue Rime hides in: it rocks from side to side,
 /// clicking as each rock starts.
-void AncientLemuria_ShakeTheStatue(struct Actor *actor) {
+void AncientLemuria_RockTheStatue(struct Actor *actor) {
   struct FieldSprite *sprite = actor->sprite;
   s16 time = actor->timer++;
 
@@ -202,7 +202,7 @@ void AncientLemuria_CycloneRevealsRime(void) {
   Hop(16, 0);
   Hop(16, 0);
   Actor_SetPosition(ACTOR_RIME, 0, 0);
-  Actor_GetById(ACTOR_RIMES_STATUE)->update = AncientLemuria_ShakeTheStatue;
+  Actor_GetById(ACTOR_RIMES_STATUE)->update = AncientLemuria_RockTheStatue;
   Actor_GetById(ACTOR_RIMES_STATUE)->timer = 0;
 }
 
@@ -356,7 +356,7 @@ s32 Scene_Initialize(void) {
   if (gMainRoutineWork.entrance == 1 &&
       !GameFlag_Get(FLAG_RIME_OUT_OF_THE_STATUE) &&
       GameFlag_Get(FLAG_RIME_REVEALED)) {
-    Actor_GetById(ACTOR_RIMES_STATUE)->update = AncientLemuria_ShakeTheStatue;
+    Actor_GetById(ACTOR_RIMES_STATUE)->update = AncientLemuria_RockTheStatue;
     Actor_GetById(ACTOR_RIMES_STATUE)->timer = 0;
   }
   Actor_SetSpriteFlags(Actor_GetById(ACTOR_RIMES_STATUE), 0);

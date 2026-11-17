@@ -46,6 +46,9 @@ enum { FACING_STEP = TRIG_TURN / 16 };
 #define FACING_NEAREST_CARDINAL(facing) (((facing) + DEGtoANG(45)) & 0xc000)
 /// A facing rounded to the nearest eighth of a turn.
 #define FACING_NEAREST_EIGHTH(facing) (((facing) + TRIG_TURN / 16) & 0xe000)
+/// The quarter of a turn a facing lies in, what is past it dropped: east,
+/// south, west or north.
+#define FACING_QUARTER(facing) ((facing) & 0xc000)
 /// The sixteenth of a turn a facing lies in, what is past it dropped.
 #define FACING_SIXTEENTH(facing) ((facing) & 0xf000)
 /// The sixteenth of a turn a facing lies in, as a number from 0 (east) to 15,

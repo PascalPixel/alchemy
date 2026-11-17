@@ -574,10 +574,10 @@ void GabombaStatue_HopOffCog(struct Actor *actor, s32 dx, s32 dz,
 
   Import_LeaderStopMoving(actor);
   saved = *flags;
-  Actor_SelectAnimation(actor, 6);
+  Actor_SelectAnimation(actor, ANIM_LEADER_SPRING);
   System_Wait(6);
   Event_PlaySound(SE_JUMP);
-  Actor_SelectAnimation(actor, 7);
+  Actor_SelectAnimation(actor, ANIM_LEADER_LEAP);
   actor->speedLimit = toFIXED(3);
   actor->acceleration = toFIXED(2);
   actor->velocityY = velocity;
@@ -587,8 +587,8 @@ void GabombaStatue_HopOffCog(struct Actor *actor, s32 dx, s32 dz,
                              actor->z.fixed + dz);
   FieldActor_WaitForMove(actor);
   *flags = saved;
-  Actor_SelectAnimation(actor, 6);
-  Actor_SetSpriteFlags(actor, 1);
+  Actor_SelectAnimation(actor, ANIM_LEADER_SPRING);
+  Actor_SetSpriteFlags(actor, SPRITE_FLAG_SHADOW);
   System_Wait(3);
 }
 
@@ -1512,6 +1512,12 @@ enum {
 #define COG_CELL(behavior, attributes, pictureFlags)                           \
   ((u32)(attributes) << 24 | (behavior) << 16 | (pictureFlags))
 
+/// A cell picture's flags for an actor standing on the cell: the sprite
+/// priority it is drawn at and the map layer it takes (ActorSystem_PlaceSprites
+/// reads them).
+#define CELL_DRAWS_ACTOR(priority, layer)                                      \
+  ((priority) << 14 | ((layer) + 1) << 12)
+
 #define MARK(at, shape, bits)                                                  \
   (cell = (at), layerA[cell] = (shape), layerB[cell] = (shape),                \
    word = &shapesA[cell], *word |= (bits), word = &shapesB[cell],              \
@@ -1584,11 +1590,12 @@ void GabombaStatue_DrawCogCells(void) {
       MARK(x + (z << 7) - 2, COG_SHAPE_END,
            COG_CELL(CELL_BEHAVIOR_COG_EDGE, 0, 0));
       MARK(x + (z << 7) - 1, COG_SHAPE_WEST,
-           COG_CELL(CELL_BEHAVIOR_RED_COG, 0, 0x9000));
+           COG_CELL(CELL_BEHAVIOR_RED_COG, 0, CELL_DRAWS_ACTOR(2, 0)));
       MARK(x + (z << 7), COG_SHAPE_TOP,
-           COG_CELL(CELL_BEHAVIOR_RED_COG, MAP_CELL_JUMP, 0x6000));
+           COG_CELL(CELL_BEHAVIOR_RED_COG, MAP_CELL_JUMP,
+                    CELL_DRAWS_ACTOR(1, 1)));
       MARK(x + (z << 7) + 1, COG_SHAPE_EAST,
-           COG_CELL(CELL_BEHAVIOR_RED_COG, 0, 0x9000));
+           COG_CELL(CELL_BEHAVIOR_RED_COG, 0, CELL_DRAWS_ACTOR(2, 0)));
       MARK(x + (z << 7) + 2, COG_SHAPE_END,
            COG_CELL(CELL_BEHAVIOR_COG_EDGE, 0, 0));
       found = 1;
@@ -1597,11 +1604,11 @@ void GabombaStatue_DrawCogCells(void) {
       MARK(x + (z << 7) - 256, COG_SHAPE_END,
            COG_CELL(CELL_BEHAVIOR_COG_EDGE, 0, 0));
       MARK(x + (z << 7) - 128, COG_SHAPE_NORTH,
-           COG_CELL(CELL_BEHAVIOR_ROLLER, 0, 0x9000));
+           COG_CELL(CELL_BEHAVIOR_ROLLER, 0, CELL_DRAWS_ACTOR(2, 0)));
       MARK(x + (z << 7), COG_SHAPE_TOP,
-           COG_CELL(CELL_BEHAVIOR_ROLLER, 0, 0x9000));
+           COG_CELL(CELL_BEHAVIOR_ROLLER, 0, CELL_DRAWS_ACTOR(2, 0)));
       MARK(x + (z << 7) + 128, COG_SHAPE_SOUTH,
-           COG_CELL(CELL_BEHAVIOR_ROLLER, 0, 0x9000));
+           COG_CELL(CELL_BEHAVIOR_ROLLER, 0, CELL_DRAWS_ACTOR(2, 0)));
       MARK(x + (z << 7) + 256, COG_SHAPE_PINK_DRUM_SOUTH_END,
            COG_CELL(CELL_BEHAVIOR_PINK_DRUM_SOUTH_END, MAP_CELL_JUMP, 0));
       found = 1;
@@ -1610,11 +1617,11 @@ void GabombaStatue_DrawCogCells(void) {
       MARK(x + (z << 7) - 256, COG_SHAPE_END,
            COG_CELL(CELL_BEHAVIOR_COG_EDGE, 0, 0));
       MARK(x + (z << 7) - 128, COG_SHAPE_NORTH,
-           COG_CELL(CELL_BEHAVIOR_ROLLER, 0, 0x9000));
+           COG_CELL(CELL_BEHAVIOR_ROLLER, 0, CELL_DRAWS_ACTOR(2, 0)));
       MARK(x + (z << 7), COG_SHAPE_TOP,
-           COG_CELL(CELL_BEHAVIOR_ROLLER, 0, 0x9000));
+           COG_CELL(CELL_BEHAVIOR_ROLLER, 0, CELL_DRAWS_ACTOR(2, 0)));
       MARK(x + (z << 7) + 128, COG_SHAPE_SOUTH,
-           COG_CELL(CELL_BEHAVIOR_ROLLER, 0, 0x9000));
+           COG_CELL(CELL_BEHAVIOR_ROLLER, 0, CELL_DRAWS_ACTOR(2, 0)));
       MARK(x + (z << 7) + 256, COG_SHAPE_END,
            COG_CELL(CELL_BEHAVIOR_COG_EDGE, 0, 0));
       found = 1;
@@ -1731,6 +1738,7 @@ void GabombaStatue_SendCharge(s32 id, s32 colorMode, s32 statueId, s32 angle) {
 #undef DIFF_WITHIN
 #undef MARK
 #undef COG_CELL
+#undef CELL_DRAWS_ACTOR
 #undef DEFINE_GABOMBA_STATUE_STEP_WHEN_HELD
 #undef DEFINE_GABOMBA_STATUE_STEP_WHEN_HELD_FOUR
 #undef DEFINE_GABOMBA_STATUE_WALK_LEADER_TO
@@ -1757,9 +1765,9 @@ void GabombaStatue_LandFromFall(void) {
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
   Event_PlaySound(SE_DUST_PUFF);
-  actor->motionFlags = 3;
+  actor->motionFlags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
   FieldEvent_Wait(24);
-  options.palette = 7;
+  options.palette = SPRITE_COLOR_WHITE;
   options.update = FieldEffect_AdvanceMotion;
   options.startScaleX = FIXED_ONE * 4 / 5;
   options.startScaleY = FIXED_ONE * 4 / 5;
@@ -1768,7 +1776,7 @@ void GabombaStatue_LandFromFall(void) {
     s32 angle;
     FIXED velocity[3];
 
-    angle = i * (TRIG_TURN / 16);
+    angle = i * FACING_STEP;
     velocity[0] = Trig_Cos(angle);
     velocity[1] = 0;
     velocity[2] = Math_Sin(angle);
@@ -2801,7 +2809,7 @@ s32 GabombaStatue_LayPath(s32 x0, s32 z0, s32 endX, s32 endZ, s32 length,
       if (++tries <= PATH_TRIES_PER_STEP) {
         value = Random16();
         dir = direction;
-        if (value > 32767)
+        if (value >= 32768)
           dir = Random_Below(4);
         tried = gGabombaStatue_PathTried[step];
         if ((tried >> dir) & one)
@@ -3128,7 +3136,7 @@ void GabombaStatue_DrawFloatingTiles(void) {
       s32 kind = state->cells[cellZ][cellX].kind;
       u32 *p;
       x = (FIXEDtoINT(x) - 8) & 0x1ff;
-      sy = (FIXEDtoINT(sy) - 8) & 255;
+      sy = (FIXEDtoINT(sy) - 8) & 0xff;
       p = (u32 *)oam;
       *p++ = 0;
       *p++ = sy | OBJ_X(x) | OBJ_SIZE_16X16 | OBJ_256_COLORS;
@@ -3491,6 +3499,9 @@ enum {
   CLOCK_SHOWN_PICTURES = 5
 };
 
+/// The depth the clock is drawn at, in front of the room's actors.
+#define CLOCK_DEPTH 236
+
 struct ClockWork {
   u8 *tiles;  ///< the digit sheet
   u8 *digits; ///< the five digit pictures, as loaded
@@ -3603,7 +3614,7 @@ void GabombaStatue_DrawClock(void) {
       oam->matrix = scaled;
     else
       oam->matrix = plain;
-    Oam_AddSpriteAtDepthClamped(oam, 236);
+    Oam_AddSpriteAtDepthClamped(oam, CLOCK_DEPTH);
   }
 }
 

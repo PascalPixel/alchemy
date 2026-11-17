@@ -4,10 +4,11 @@
 /// hungry boy's father lets the party into, and the town's jail
 /// (SceneId_AlhafraJail). Once Briggs and his crew are jailed, his wife Chaucha
 /// and their son Eoleo visit him, and the boy shows Psynergy of his own
-/// (AlhafranCave_ChauchaAndEoleoVisit). Pound sinks a pillar
-/// (AlhafranCave_PoundPillar), Frost freezes a puddle
-/// (AlhafranCave_FreezePuddle), and the way down to the jail opens as the
-/// leader stands on the ledge above it (AlhafranCave_OpenWayToJail).
+/// (AlhafranCave_ChauchaAndEoleoVisit). Pound sinks a stake
+/// (AlhafranCave_PoundStake), Frost freezes a puddle
+/// (AlhafranCave_FreezePuddle), and the cells under the cave's bridges rise to
+/// their decks while the leader walks the ledges above the channel
+/// (AlhafranCave_RaiseBridgeCells).
 
 #include "flags.h"
 #include "battle/battle.h"
@@ -47,16 +48,16 @@ void Pillar_Place(const u16 *table);
 void AlhafranCave_TakeLeadersLayer(void);
 extern s32 gAlhafranCave_GuardStepsAsideScript[];
 extern u32 gAlhafranCave_VisitorsLeaveScript[];
-void AlhafranCave_OpenWayToJail(void);
-void AlhafranCave_CloseWayToJail(void);
+void AlhafranCave_RaiseBridgeCells(void);
+void AlhafranCave_LowerBridgeCells(void);
 void AlhafranCave_CastSand(void);
 void AlhafranCave_StartMovingCrate(void);
 void AlhafranCave_FinishMovingCrate(void);
 void FlagBlock_PlaceAllMarkingEdges(const void *data);
 
-/// Set while the way down to the jail is open, as the leader stands on the
-/// ledge above it.
-#define FLAG_WAY_TO_JAIL_OPEN 0x204
+/// Set while the cells under the bridges stand at the bridges' height, so the
+/// leader on the ledges crosses them rather than the channel below.
+#define FLAG_BRIDGE_CELLS_RAISED FLAG_SCENE_TEMP_04
 /// Set once Lash has tied the jail's rope.
 #define FLAG_JAIL_ROPE_TIED FLAG_SCENE_TEMP_00
 /// Set once Pound has sunk the jail's stake.
@@ -66,18 +67,20 @@ void FlagBlock_PlaceAllMarkingEdges(const void *data);
 /// The cave's actors (SceneId_AlhafranCave), numbering the rows of
 /// gAlhafranCave_CaveActorPlacements.
 enum AlhafranCaveActorId {
-  /// Three pillars standing twelve pixels up.
-  ACTOR_CAVE_FIRST_PILLAR = ACTOR_FIRST_PLACED,
-  ACTOR_CAVE_SECOND_PILLAR,
-  ACTOR_CAVE_THIRD_PILLAR,
-  /// A pillar's two pieces (SPRITE_WOODEN_SIGN, in its animations 2 and 3)
-  /// and the pillar leaning across them, turned a sixteenth of a turn.
-  ACTOR_CAVE_FIRST_PILLAR_PIECE,
-  ACTOR_CAVE_SECOND_PILLAR_PIECE,
-  ACTOR_CAVE_LEANING_PILLAR,
-  /// The two pillars Move can push.
-  ACTOR_CAVE_FIRST_PUSHED_PILLAR,
-  ACTOR_CAVE_SECOND_PUSHED_PILLAR,
+  /// Three stone bridges, raised twelve pixels over the channel and the chasm.
+  ACTOR_CAVE_FIRST_BRIDGE = ACTOR_FIRST_PLACED,
+  ACTOR_CAVE_SECOND_BRIDGE,
+  ACTOR_CAVE_THIRD_BRIDGE,
+  /// A broken bridge: its two ends on their legs (SPRITE_WOODEN_SIGN, in its
+  /// animations 2 and 3) and its middle fallen below them, turned a sixteenth
+  /// of a turn.
+  ACTOR_CAVE_BROKEN_BRIDGE_WEST_END,
+  ACTOR_CAVE_BROKEN_BRIDGE_EAST_END,
+  ACTOR_CAVE_BROKEN_BRIDGE_MIDDLE,
+  /// Two stone pillars, one in front of a ladder and one across a passage,
+  /// that stand 16 pixels west once the mast is cleared and the jail is empty.
+  ACTOR_CAVE_PILLAR_AT_LADDER,
+  ACTOR_CAVE_PILLAR_IN_PASSAGE,
   /// The puddle Frost freezes into a pillar of ice.
   ACTOR_CAVE_PUDDLE
 };
@@ -89,15 +92,15 @@ enum AlhafraJailActorId {
   ACTOR_CRATE = ACTOR_FIRST_PLACED,
   /// The stake Pound sinks.
   ACTOR_JAIL_STAKE,
-  /// The poles of the rope Lash ties.
-  ACTOR_JAIL_ROPE_POLE,
-  ACTOR_JAIL_ROPE_OTHER_POLE,
-  /// A pillar's two pieces and the pillar leaning across them, as the cave's.
-  ACTOR_JAIL_FIRST_PILLAR_PIECE,
-  ACTOR_JAIL_SECOND_PILLAR_PIECE,
-  ACTOR_JAIL_LEANING_PILLAR,
-  /// The jailer.s key on the floor outside the cell, which Eoleo lifts with
-  /// Move.
+  /// The posts of the rope Lash ties, on the floor and on the ledge.
+  ACTOR_JAIL_ROPE_LOW_POST,
+  ACTOR_JAIL_ROPE_HIGH_POST,
+  /// A broken bridge's two ends and its fallen middle, as the cave's.
+  ACTOR_JAIL_BROKEN_BRIDGE_WEST_END,
+  ACTOR_JAIL_BROKEN_BRIDGE_EAST_END,
+  ACTOR_JAIL_BROKEN_BRIDGE_MIDDLE,
+  /// The key on the guard's table outside the cell, which Eoleo lifts with
+  /// a Move hand of his own.
   ACTOR_JAIL_KEY,
   /// Briggs and his crew in their cell, once Briggs is caught.
   /// "I hate prison. The food is terrible..."
@@ -117,9 +120,9 @@ enum AlhafraJailActorId {
   ACTOR_JAILER
 };
 
-/// The jail.s ways in that its set-up tests: down the steps from the town, and
-/// up through the hole the crate hides, from the tunnel behind the cell.
-enum AlhafraJailEntrance { ENTRANCE_FROM_TOWN = 8, ENTRANCE_UNDER_CRATE = 9 };
+/// The jail's way up through the hole the crate hides, from the tunnel behind
+/// the cell.
+enum AlhafraJailEntrance { ENTRANCE_UNDER_CRATE = 9 };
 
 const struct SceneEntrance *Scene_GetEntrances(void) { return gSceneEntrances; }
 
@@ -137,7 +140,7 @@ void AlhafranCave_SetUpCave(void);
 void AlhafranCave_SetUpJail(void);
 
 extern s16 gAlhafranCave_Puddles[];
-extern s16 gAlhafranCave_Pillars[];
+extern u16 gAlhafranCave_PoundStakes[];
 extern struct ActorPlacement gAlhafranCave_CaveActorPlacements[];
 extern struct ActorPlacement gAlhafranCave_JailActorPlacements[];
 extern struct Trigger gAlhafranCave_CaveTriggers[];
@@ -163,8 +166,8 @@ const struct ActorPlacement *Scene_GetActorPlacements(void) {
 }
 
 /// Pound sinks the jail's stake.
-void AlhafranCave_PoundPillar(s32 mode, s32 frame) {
-  Pound_SinkTarget(gAlhafranCave_Pillars, mode, frame);
+void AlhafranCave_PoundStake(s32 mode, s32 frame) {
+  Pound_SinkTarget(gAlhafranCave_PoundStakes, mode, frame);
 }
 
 /// Move lifts the crate; nothing else happens.
@@ -195,10 +198,11 @@ void AlhafranCave_FreezePuddle(void) {
   FlagBlock_ApplyFlags(gAlhafranCave_Puddles);
 }
 
-/// Opens the way down to the jail: the cells by the ledge drop to the lower
-/// level.
-void AlhafranCave_OpenWayToJail(void) {
-  Event_SetFlag(FLAG_WAY_TO_JAIL_OPEN);
+/// Raises the cells under the southern bridge over the channel and under the
+/// broken bridge's ends to the ledges' height of 32 pixels (4 steps), and makes
+/// a wall of the cell north-west of that bridge.
+void AlhafranCave_RaiseBridgeCells(void) {
+  Event_SetFlag(FLAG_BRIDGE_CELLS_RAISED);
   FieldMapGrid_SetCellHeight(toFIXED(400), toFIXED(304), 0, 4);
   FieldMapGrid_SetCellHeight(toFIXED(416), toFIXED(304), 0, 4);
   MapGrid_SetCellHeight(toFIXED(432), toFIXED(304), 0, 4);
@@ -207,9 +211,9 @@ void AlhafranCave_OpenWayToJail(void) {
   MapGrid_SetCellHeight(toFIXED(336), toFIXED(384), 0, 4);
 }
 
-/// Closes the way down to the jail as the leader steps off the ledge.
-void AlhafranCave_CloseWayToJail(void) {
-  Event_ClearFlag(FLAG_WAY_TO_JAIL_OPEN);
+/// Lowers the cells under the bridges to the floor below them.
+void AlhafranCave_LowerBridgeCells(void) {
+  Event_ClearFlag(FLAG_BRIDGE_CELLS_RAISED);
   FieldMapGrid_SetCellHeight(toFIXED(400), toFIXED(304), 0, 0);
   FieldMapGrid_SetCellHeight(toFIXED(416), toFIXED(304), 0, 0);
   MapGrid_SetCellHeight(toFIXED(432), toFIXED(304), 0, 0);
@@ -237,7 +241,7 @@ const struct Trigger *Scene_GetTriggers(void) {
 }
 
 /// Notes whether the leader stands on the cave's upper level.
-void AlhafranCave_TrackLeadersLevel(void) {
+void AlhafranCave_CheckUpperLevel(void) {
   FIXED y = Actor_Get(gMainRoutineWork.leaderActorId)->y.fixed;
 
   if (y < toFIXED(8))
@@ -272,7 +276,7 @@ s32 Scene_Initialize(void) {
     gFieldWork->transition = SCENE_TRANSITION(TRANSITION_WINDOW, 1);
     AlhafranCave_SetUpCave();
   } else if (scene == SCENE_ALHAFRA_JAIL) {
-    if (gMainRoutineWork.entrance == ENTRANCE_FROM_TOWN ||
+    if (gMainRoutineWork.entrance == ALHAFRA_JAIL_FROM_ALHAFRA ||
         gMainRoutineWork.entrance == ENTRANCE_UNDER_CRATE)
       gFieldWork->transition = SCENE_TRANSITION(TRANSITION_WINDOW, 9);
     else
@@ -285,8 +289,8 @@ s32 Scene_Initialize(void) {
 
 void Actor_SetSpriteColorMode(struct Actor *actor, s32 value);
 
-/// Sets up the cave: its pillars, the pushed pillars, the puddle, and the way
-/// to the jail if it is open.
+/// Sets up the cave: its bridges, the broken bridge, the pillars, the puddle,
+/// and the cells under the bridges if the leader was on the ledges.
 void AlhafranCave_SetUpCave(void) {
   struct MapWorkGroundEffects *map =
       (struct MapWorkGroundEffects *)Ram_HeapSlots->mapGrid;
@@ -295,53 +299,60 @@ void AlhafranCave_SetUpCave(void) {
   Actor_Get(gMainRoutineWork.leaderActorId)->priorityFlags |=
       ACTOR_PRIORITY_IGNORES_RISES;
   map->wading = MAP_WADING_UPPER_LEVEL;
-  Task_AddFrame(AlhafranCave_TrackLeadersLevel, TASK_PASS_FRAME);
-  if (Event_GetFlag(FLAG_WAY_TO_JAIL_OPEN))
-    AlhafranCave_OpenWayToJail();
-  actor = Actor_Get(ACTOR_CAVE_FIRST_PILLAR);
+  Task_AddFrame(AlhafranCave_CheckUpperLevel, TASK_PASS_FRAME);
+  if (Event_GetFlag(FLAG_BRIDGE_CELLS_RAISED))
+    AlhafranCave_RaiseBridgeCells();
+  actor = Actor_Get(ACTOR_CAVE_FIRST_BRIDGE);
   actor->motionFlags = 0;
   actor->y.fixed = toFIXED(12);
-  actor = Actor_Get(ACTOR_CAVE_SECOND_PILLAR);
+  actor = Actor_Get(ACTOR_CAVE_SECOND_BRIDGE);
   actor->motionFlags = 0;
   actor->y.fixed = toFIXED(12);
-  actor = Actor_Get(ACTOR_CAVE_THIRD_PILLAR);
+  actor = Actor_Get(ACTOR_CAVE_THIRD_BRIDGE);
   actor->motionFlags = 0;
   actor->y.fixed = toFIXED(12);
-  Actor_SetSpriteColorMode(Actor_Get(ACTOR_CAVE_FIRST_PILLAR), 6);
-  Actor_SetSpriteColorMode(Actor_Get(ACTOR_CAVE_SECOND_PILLAR), 6);
-  Actor_SetSpriteColorMode(Actor_Get(ACTOR_CAVE_THIRD_PILLAR), 6);
-  actor = Actor_Get(ACTOR_CAVE_SECOND_PILLAR_PIECE);
+  Actor_SetSpriteColorMode(Actor_Get(ACTOR_CAVE_FIRST_BRIDGE),
+                           SPRITE_COLOR_GREY);
+  Actor_SetSpriteColorMode(Actor_Get(ACTOR_CAVE_SECOND_BRIDGE),
+                           SPRITE_COLOR_GREY);
+  Actor_SetSpriteColorMode(Actor_Get(ACTOR_CAVE_THIRD_BRIDGE),
+                           SPRITE_COLOR_GREY);
+  actor = Actor_Get(ACTOR_CAVE_BROKEN_BRIDGE_EAST_END);
   actor->motionFlags = 0;
   actor->y.fixed = toFIXED(16);
-  actor = Actor_Get(ACTOR_CAVE_FIRST_PILLAR_PIECE);
+  actor = Actor_Get(ACTOR_CAVE_BROKEN_BRIDGE_WEST_END);
   actor->motionFlags = 0;
   actor->y.fixed = toFIXED(16);
-  FieldActor_SetSpriteRotationById(ACTOR_CAVE_LEANING_PILLAR, TRIG_TURN / 16);
-  Actor_SetAnimation(ACTOR_CAVE_FIRST_PILLAR_PIECE, 2);
-  Actor_SetAnimation(ACTOR_CAVE_SECOND_PILLAR_PIECE, 3);
-  Actor_SetAnimation(ACTOR_CAVE_LEANING_PILLAR, 2);
-  FieldActor_SetSpritePriority(ACTOR_CAVE_FIRST_PILLAR_PIECE, 2);
-  FieldActor_SetSpritePriority(ACTOR_CAVE_SECOND_PILLAR_PIECE, 2);
-  FieldActor_SetSpritePriority(ACTOR_CAVE_LEANING_PILLAR, 3);
-  Actor_Get(ACTOR_CAVE_FIRST_PILLAR_PIECE)->priorityFlags |=
+  FieldActor_SetSpriteRotationById(ACTOR_CAVE_BROKEN_BRIDGE_MIDDLE,
+                                   TRIG_TURN / 16);
+  Actor_SetAnimation(ACTOR_CAVE_BROKEN_BRIDGE_WEST_END, 2);
+  Actor_SetAnimation(ACTOR_CAVE_BROKEN_BRIDGE_EAST_END, 3);
+  Actor_SetAnimation(ACTOR_CAVE_BROKEN_BRIDGE_MIDDLE, 2);
+  FieldActor_SetSpritePriority(ACTOR_CAVE_BROKEN_BRIDGE_WEST_END, 2);
+  FieldActor_SetSpritePriority(ACTOR_CAVE_BROKEN_BRIDGE_EAST_END, 2);
+  FieldActor_SetSpritePriority(ACTOR_CAVE_BROKEN_BRIDGE_MIDDLE, 3);
+  Actor_Get(ACTOR_CAVE_BROKEN_BRIDGE_WEST_END)->priorityFlags |=
       ACTOR_PRIORITY_UNDERFOOT;
-  Actor_Get(ACTOR_CAVE_SECOND_PILLAR_PIECE)->priorityFlags |=
+  Actor_Get(ACTOR_CAVE_BROKEN_BRIDGE_EAST_END)->priorityFlags |=
       ACTOR_PRIORITY_UNDERFOOT;
-  Actor_Get(ACTOR_CAVE_LEANING_PILLAR)->priorityFlags |=
+  Actor_Get(ACTOR_CAVE_BROKEN_BRIDGE_MIDDLE)->priorityFlags |=
       ACTOR_PRIORITY_UNDERFOOT;
-  Actor_SetSpriteColorMode(Actor_Get(ACTOR_CAVE_FIRST_PILLAR_PIECE), 6);
-  Actor_SetSpriteColorMode(Actor_Get(ACTOR_CAVE_SECOND_PILLAR_PIECE), 6);
-  Actor_SetSpriteColorMode(Actor_Get(ACTOR_CAVE_LEANING_PILLAR), 6);
+  Actor_SetSpriteColorMode(Actor_Get(ACTOR_CAVE_BROKEN_BRIDGE_WEST_END),
+                           SPRITE_COLOR_GREY);
+  Actor_SetSpriteColorMode(Actor_Get(ACTOR_CAVE_BROKEN_BRIDGE_EAST_END),
+                           SPRITE_COLOR_GREY);
+  Actor_SetSpriteColorMode(Actor_Get(ACTOR_CAVE_BROKEN_BRIDGE_MIDDLE),
+                           SPRITE_COLOR_GREY);
   if (Event_GetFlag(FLAG_ALHAFRA_MAST_CLEARED)) {
-    Actor_SetPosition(ACTOR_CAVE_FIRST_PUSHED_PILLAR, 200, 136);
-    Actor_SetPosition(ACTOR_CAVE_SECOND_PUSHED_PILLAR, 392, 360);
+    Actor_SetPosition(ACTOR_CAVE_PILLAR_AT_LADDER, 200, 136);
+    Actor_SetPosition(ACTOR_CAVE_PILLAR_IN_PASSAGE, 392, 360);
   }
-  actor = Actor_Get(ACTOR_CAVE_FIRST_PUSHED_PILLAR);
+  actor = Actor_Get(ACTOR_CAVE_PILLAR_AT_LADDER);
   actor->motionFlags = 0;
   actor->groundHeight = 0;
   actor->y.fixed = 0;
   MapGrid_SetCellHeight(actor->x.fixed, actor->z.fixed, 0, 4);
-  actor = Actor_Get(ACTOR_CAVE_SECOND_PUSHED_PILLAR);
+  actor = Actor_Get(ACTOR_CAVE_PILLAR_IN_PASSAGE);
   actor->motionFlags = 0;
   actor->groundHeight = 0;
   actor->y.fixed = 0;
@@ -349,6 +360,8 @@ void AlhafranCave_SetUpCave(void) {
   FlagBlock_PlaceAllMarkingEdges(gAlhafranCave_Puddles);
   Actor_SetMovementType(Actor_Get(ACTOR_CAVE_PUDDLE),
                         MOVEMENT_TYPE_TAKE_LEADER_LAYER);
+  // Until the mast is cleared, the ladder behind the first pillar is drawn as
+  // rock, with two more stretches of the cave.
   if (!Event_GetFlag(FLAG_ALHAFRA_MAST_CLEARED)) {
     MapGrid_CopyCellsLayered(0, 58, 12, 7, 13, 58);
     MapGrid_CopyCellsLayered(0, 58, 2, 9, 25, 66);
@@ -376,36 +389,40 @@ void AlhafranCave_SetUpJail(void) {
   Call4((void (*)())EffectSprite_InitWithFadeOverlay, (s32)crate, 8, 15,
         OBJ_SIZE_16X16);
   FieldTask_AddFrame(AlhafranCave_DrawCrateSprite, TASK_PASS_FRAME);
-  if (gMainRoutineWork.entrance == ENTRANCE_FROM_TOWN ||
+  if (gMainRoutineWork.entrance == ALHAFRA_JAIL_FROM_ALHAFRA ||
       gMainRoutineWork.entrance == ENTRANCE_UNDER_CRATE) {
     work = Ram_HeapSlots->fieldWork;
 
     work->psynergyDrawFlags = 3;
   }
   Rope_Initialize();
-  Rope_Place(0, FLAG_JAIL_ROPE_TIED, ACTOR_JAIL_ROPE_POLE,
-             ACTOR_JAIL_ROPE_OTHER_POLE);
-  Actor_Get(ACTOR_JAIL_ROPE_POLE)->priorityFlags |=
+  Rope_Place(0, FLAG_JAIL_ROPE_TIED, ACTOR_JAIL_ROPE_LOW_POST,
+             ACTOR_JAIL_ROPE_HIGH_POST);
+  Actor_Get(ACTOR_JAIL_ROPE_LOW_POST)->priorityFlags |=
       ACTOR_PRIORITY_IGNORES_RISES;
-  Actor_Get(ACTOR_JAIL_ROPE_OTHER_POLE)->priorityFlags |=
+  Actor_Get(ACTOR_JAIL_ROPE_HIGH_POST)->priorityFlags |=
       ACTOR_PRIORITY_IGNORES_RISES;
-  Pillar_Place(gAlhafranCave_Pillars);
+  Pillar_Place(gAlhafranCave_PoundStakes);
   Actor_SetSpriteFlags(Actor_Get(ACTOR_JAIL_STAKE), 0);
-  FieldActor_SetSpriteRotationById(ACTOR_JAIL_LEANING_PILLAR, TRIG_TURN / 16);
-  Actor_SetAnimation(ACTOR_JAIL_FIRST_PILLAR_PIECE, 0);
-  Actor_SetAnimation(ACTOR_JAIL_SECOND_PILLAR_PIECE, 1);
-  Actor_SetAnimation(ACTOR_JAIL_LEANING_PILLAR, 2);
-  FieldActor_SetSpritePriority(ACTOR_JAIL_FIRST_PILLAR_PIECE, 1);
-  FieldActor_SetSpritePriority(ACTOR_JAIL_SECOND_PILLAR_PIECE, 1);
-  Actor_Get(ACTOR_JAIL_FIRST_PILLAR_PIECE)->priorityFlags |=
+  FieldActor_SetSpriteRotationById(ACTOR_JAIL_BROKEN_BRIDGE_MIDDLE,
+                                   TRIG_TURN / 16);
+  Actor_SetAnimation(ACTOR_JAIL_BROKEN_BRIDGE_WEST_END, 0);
+  Actor_SetAnimation(ACTOR_JAIL_BROKEN_BRIDGE_EAST_END, 1);
+  Actor_SetAnimation(ACTOR_JAIL_BROKEN_BRIDGE_MIDDLE, 2);
+  FieldActor_SetSpritePriority(ACTOR_JAIL_BROKEN_BRIDGE_WEST_END, 1);
+  FieldActor_SetSpritePriority(ACTOR_JAIL_BROKEN_BRIDGE_EAST_END, 1);
+  Actor_Get(ACTOR_JAIL_BROKEN_BRIDGE_WEST_END)->priorityFlags |=
       ACTOR_PRIORITY_UNDERFOOT;
-  Actor_Get(ACTOR_JAIL_SECOND_PILLAR_PIECE)->priorityFlags |=
+  Actor_Get(ACTOR_JAIL_BROKEN_BRIDGE_EAST_END)->priorityFlags |=
       ACTOR_PRIORITY_UNDERFOOT;
-  Actor_Get(ACTOR_JAIL_LEANING_PILLAR)->priorityFlags |=
+  Actor_Get(ACTOR_JAIL_BROKEN_BRIDGE_MIDDLE)->priorityFlags |=
       ACTOR_PRIORITY_UNDERFOOT;
-  Actor_SetSpriteColorMode(Actor_Get(ACTOR_JAIL_FIRST_PILLAR_PIECE), 6);
-  Actor_SetSpriteColorMode(Actor_Get(ACTOR_JAIL_SECOND_PILLAR_PIECE), 6);
-  Actor_SetSpriteColorMode(Actor_Get(ACTOR_JAIL_LEANING_PILLAR), 6);
+  Actor_SetSpriteColorMode(Actor_Get(ACTOR_JAIL_BROKEN_BRIDGE_WEST_END),
+                           SPRITE_COLOR_GREY);
+  Actor_SetSpriteColorMode(Actor_Get(ACTOR_JAIL_BROKEN_BRIDGE_EAST_END),
+                           SPRITE_COLOR_GREY);
+  Actor_SetSpriteColorMode(Actor_Get(ACTOR_JAIL_BROKEN_BRIDGE_MIDDLE),
+                           SPRITE_COLOR_GREY);
   if (Event_GetFlag(FLAG_ALHAFRA_MAST_CLEARED)) {
     Actor_SetPosition(ACTOR_JAIL_KEY, 0, 0);
     Actor_SetPosition(ACTOR_BRIGGS, 0, 0);
@@ -452,7 +469,9 @@ void AlhafranCave_SetUpJail(void) {
   }
 }
 
-/// Once the mast is cleared, the jail's cells stand open and empty.
+/// Once the mast is cleared and the jail stands empty, the passage where the
+/// tunnel from under the crate comes out (entrance 10) is drawn into the
+/// rope's cave.
 s32 Scene_PrepareMap(void) {
   if (gMainRoutineWork.next == SCENE_ALHAFRA_JAIL &&
       Event_GetFlag(FLAG_ALHAFRA_MAST_CLEARED)) {
@@ -469,7 +488,7 @@ void AlhafranCave_IdleTask(void) {}
 
 extern u8 MsgYouHereTo[];
 
-void AlhafranCave_ShakeUnderEoleosPower(void);
+void AlhafranCave_CycleKeyColors(void);
 
 /// Briggs's wife Chaucha and their son Eoleo visit him in the jail, and Eoleo
 /// shows Psynergy of his own.
@@ -575,16 +594,16 @@ void AlhafranCave_ChauchaAndEoleoVisit(void) {
   FieldActor_SetMoveTargetFX(effect, position[0], position[1], position[2]);
   FieldEffect_SnapScaleToFull(effect);
   Actor_SelectAnimation(effect, 4);
-  key->update = AlhafranCave_ShakeUnderEoleosPower;
+  key->update = AlhafranCave_CycleKeyColors;
   Actor_FaceDirection(ACTOR_FELIX, FACING_SOUTHWEST, 0);
   FieldEvent_Wait(20);
   Actor_FaceDirection(ACTOR_CREWMAN_ON_THE_BOAT, FACING_EAST, 0);
   Actor_FaceDirection(ACTOR_CREWMAN_BLAMING_THE_PARTY, FACING_WEST, 0);
   Actor_ShowEmote(ACTOR_FELIX, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
   FieldEvent_Wait(10);
-  Actor_SetAnimationAndWait(ACTOR_CREWMAN_ON_THE_BOAT, 3);
+  Actor_SetAnimationAndWait(ACTOR_CREWMAN_ON_THE_BOAT, ANIM_NOD);
   FieldEvent_Wait(10);
-  Actor_SetAnimationAndWait(ACTOR_CREWMAN_BLAMING_THE_PARTY, 3);
+  Actor_SetAnimationAndWait(ACTOR_CREWMAN_BLAMING_THE_PARTY, ANIM_NOD);
   Actor_FaceDirection(ACTOR_CREWMAN_GUARDING_EOLEOS_SECRET,
                       FACING_SOUTH_SOUTHEAST, 0);
   FieldEvent_Wait(30);
@@ -807,8 +826,8 @@ void AlhafranCave_ChauchaAndEoleoVisit(void) {
 /// An actor's update: it takes the party leader's display layer.
 void AlhafranCave_TakeLeadersLayer(void) { Actor_TakeLeaderLayer(); }
 
-/// While Eoleo's Psynergy runs, the actors shake.
-void AlhafranCave_ShakeUnderEoleosPower(void) { Actor_CycleSpriteColors(); }
+/// The key's update while Eoleo's Psynergy holds it: its colours cycle.
+void AlhafranCave_CycleKeyColors(void) { Actor_CycleSpriteColors(); }
 
 #include "shared/pillar_place.h"
 
@@ -822,21 +841,21 @@ s16 gAlhafranCave_Puddles[] = {
 };
 
 s32 gAlhafranCave_GuardStepsAsideScript[] = {
-    SC_ANIMATION(2),
+    SC_ANIMATION(ANIM_WALK),
     SC_MOVE_BY(16, 0, 0),
     SC_SYNC,
     SC_MOVE_BY(0, 0, -60),
     SC_SYNC,
     SC_MOVE_BY(-4, 0, 0),
     SC_SYNC,
-    SC_ANIMATION(1),
+    SC_ANIMATION(ANIM_STAND),
     SC_SET(SW_FACING, FACING_WEST),
     SC_WAIT(1),
     SC_END,
 };
 
 u32 gAlhafranCave_VisitorsLeaveScript[] = {
-    SC_ANIMATION(2),
+    SC_ANIMATION(ANIM_WALK),
     SC_MOVE(780, 0, 288),
     SC_SYNC,
     SC_MOVE_BY(0, 0, 12),
@@ -850,23 +869,23 @@ u32 gAlhafranCave_VisitorsLeaveScript[] = {
     SC_END,
 };
 
-s16 gAlhafranCave_Pillars[] = {
-    ACTOR_JAIL_STAKE, 1, FLAG_JAIL_STAKE_POUNDED, -1,
+u16 gAlhafranCave_PoundStakes[] = {
+    ACTOR_JAIL_STAKE, 1, FLAG_JAIL_STAKE_POUNDED, ACTOR_LIST_END,
 };
 
 #include "shared/scene_entrances_default.c"
 
 u32 gSceneExits[] = {
     SCENE_EXITS(AlhafranCave),
-    SCENE_EXIT_UNLESS(1, Alhafra, 12, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(ALHAFRAN_CAVE_TO_ALHAFRA, Alhafra, ALHAFRA_FROM_ALHAFRAN_CAVE, EXIT_FLAG_NONE),
     SCENE_EXIT_UNLESS(2, AlhafranCave, 3, EXIT_FLAG_NONE),
     SCENE_EXIT_UNLESS(3, AlhafranCave, 2, EXIT_FLAG_NONE),
-    SCENE_EXIT_UNLESS(4, AlhafraJail, 6, EXIT_FLAG_NONE),
-    SCENE_EXIT_UNLESS(5, AlhafraJail, 7, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(ALHAFRAN_CAVE_TO_ALHAFRA_JAIL_WEST, AlhafraJail, ALHAFRA_JAIL_FROM_ALHAFRAN_CAVE_WEST, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(ALHAFRAN_CAVE_TO_ALHAFRA_JAIL_EAST, AlhafraJail, ALHAFRA_JAIL_FROM_ALHAFRAN_CAVE_EAST, EXIT_FLAG_NONE),
     SCENE_EXITS(AlhafraJail),
-    SCENE_EXIT_UNLESS(6, AlhafranCave, 4, EXIT_FLAG_NONE),
-    SCENE_EXIT_UNLESS(7, AlhafranCave, 5, EXIT_FLAG_NONE),
-    SCENE_EXIT_UNLESS(8, Alhafra, 8, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(ALHAFRA_JAIL_TO_ALHAFRAN_CAVE_WEST, AlhafranCave, ALHAFRAN_CAVE_FROM_ALHAFRA_JAIL_WEST, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(ALHAFRA_JAIL_TO_ALHAFRAN_CAVE_EAST, AlhafranCave, ALHAFRAN_CAVE_FROM_ALHAFRA_JAIL_EAST, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(ALHAFRA_JAIL_TO_ALHAFRA, Alhafra, ALHAFRA_FROM_ALHAFRA_JAIL, EXIT_FLAG_NONE),
     SCENE_EXIT_UNLESS(9, AlhafraJail, 10, EXIT_FLAG_NONE),
     SCENE_EXIT_UNLESS(10, AlhafraJail, 9, EXIT_FLAG_NONE),
     SCENE_EXITS_END,
@@ -912,8 +931,8 @@ struct Trigger gAlhafranCave_CaveTriggers[] = {
     {TRIGGER_EXIT | EXIT_STYLE_STAIRS_UP, 3, CONDITION_ALWAYS, 3},
     {TRIGGER_EXIT, 4, CONDITION_ALWAYS, 4},
     {TRIGGER_EXIT, 5, CONDITION_ALWAYS, 5},
-    {TRIGGER_STEP, 20, CONDITION_ALWAYS, EVENT(AlhafranCave_CloseWayToJail)},
-    {TRIGGER_STEP, 21, CONDITION_ALWAYS, EVENT(AlhafranCave_OpenWayToJail)},
+    {TRIGGER_STEP, 20, CONDITION_ALWAYS, EVENT(AlhafranCave_LowerBridgeCells)},
+    {TRIGGER_STEP, 21, CONDITION_ALWAYS, EVENT(AlhafranCave_RaiseBridgeCells)},
     {PSYNERGY_ON_ACTOR(ABILITY_FROST), ACTOR_CAVE_PUDDLE, FLAG_PUDDLE_FROZEN, EVENT(AlhafranCave_FreezePuddle)},
     {PSYNERGY_ANYWHERE(ABILITY_SAND, PSYNERGY_PHASE_AFTER_CAST), 0, CONDITION_ALWAYS, EVENT(AlhafranCave_CastSand)},
     {TRIGGER_TABLE_END},
@@ -942,8 +961,8 @@ struct Trigger gAlhafranCave_JailTriggers[] = {
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_CREWMAN_ON_THE_BOAT, CONDITION_ALWAYS, MSGNO(MsgIfTheyDon)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_CREWMAN_BLAMING_THE_PARTY, CONDITION_ALWAYS, MSGNO(MsgOhWhatS)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_CREWMAN_GUARDING_EOLEOS_SECRET, CONDITION_ALWAYS, MSGNO(MsgIHearSome)},
-    {PSYNERGY_ON_ACTOR(ABILITY_LASH), ACTOR_JAIL_ROPE_POLE, FLAG_JAIL_ROPE_TIED, 0},
-    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_POUND, PSYNERGY_PHASE_ACTS), ACTOR_JAIL_STAKE, FLAG_JAIL_STAKE_POUNDED, EVENT(AlhafranCave_PoundPillar)},
+    {PSYNERGY_ON_ACTOR(ABILITY_LASH), ACTOR_JAIL_ROPE_LOW_POST, FLAG_JAIL_ROPE_TIED, 0},
+    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_POUND, PSYNERGY_PHASE_ACTS), ACTOR_JAIL_STAKE, FLAG_JAIL_STAKE_POUNDED, EVENT(AlhafranCave_PoundStake)},
     // The cave's Frost row, repeated in the jail's table.
     {PSYNERGY_ON_ACTOR(ABILITY_FROST), ACTOR_CAVE_PUDDLE, FLAG_PUDDLE_FROZEN, EVENT(AlhafranCave_FreezePuddle)},
     {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), ACTOR_CRATE, CONDITION_ALWAYS, EVENT(AlhafranCave_StartMovingCrate)},

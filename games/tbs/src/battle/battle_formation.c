@@ -11,6 +11,10 @@
 #else
 #define ENEMY_NAME_SUFFIX_COUNT 26
 #endif
+/// The letters a class's mask holds, one bit each.
+#define NAME_LETTER_MASK_BITS 32
+/// The random swaps that shuffle a FORMATION_LAYOUT_SHUFFLED formation.
+#define FORMATION_SHUFFLE_SWAPS 10
 
 /// Returns a formation's average enemy level for the monster battles, or a
 /// negative reason it may not be chosen.
@@ -70,6 +74,9 @@ struct FormationCandidate {
 #define FORMATION_POOL_SIZE 32
 /// How far above the party's level a monster battle's formation may be.
 #define FORMATION_LEVEL_MARGIN 3
+/// Above any formation's average level: where the search for the pool's
+/// lowest entry starts.
+#define FORMATION_SCORE_ABOVE_ALL 999
 
 /// A unit's base stats as they were before its level changed.
 struct BattleBaseStats {
@@ -137,7 +144,7 @@ s32 BattleFormation_SelectLevelMatchedCandidate(s32 *outMargin) {
 
     if (score >= 0 && score <= targetLevel + FORMATION_LEVEL_MARGIN) {
       s32 lowestIndex = -1;
-      s32 lowestLevel = 999;
+      s32 lowestLevel = FORMATION_SCORE_ABOVE_ALL;
 
       for (entry = 0; entry < FORMATION_POOL_SIZE; entry++) {
         if (pool[entry].score < lowestLevel) {
@@ -171,6 +178,10 @@ s32 BattleFormation_SelectLevelMatchedCandidate(s32 *outMargin) {
   return result;
 }
 
+/// The element power an enemy gains a level (BattleEnemy_AdjustLevel); its
+/// other stats gain tenths of a point.
+#define ELEMENT_POWER_GAIN 15
+
 /// Raises an enemy by levels, or lowers it for a negative count, each stat by a
 /// fixed amount a level and no lower than 70 percent of what it was.
 UNREAD_RESULT BattleEnemy_AdjustLevel(s32 unitId, s32 levels) {
@@ -202,7 +213,7 @@ UNREAD_RESULT BattleEnemy_AdjustLevel(s32 unitId, s32 levels) {
   unit->baseAgility = value;
 
   for (element = 0; element < ELEMENT_COUNT; element++) {
-    value = unit->baseElement[element].power + levels * 15;
+    value = unit->baseElement[element].power + levels * ELEMENT_POWER_GAIN;
     CLAMP(value, base->element[element].power * 7 / 10, UNIT_ELEMENT_MAX);
     unit->baseElement[element].power = value;
   }
@@ -236,9 +247,9 @@ s32 BattleEnemy_ClaimNameLetter(s32 classId, s32 unused) {
       battle->nameLetterMasks[classIndex] = 3;
       return ENEMY_LETTER_FIRST_TOO | 1;
     }
-    // The next letter after the last given that is free; after 32 tries the
-    // last one tried is reused.
-    for (; attempt <= 31; attempt++) {
+    // The next letter after the last given that is free; after
+    // NAME_LETTER_MASK_BITS tries the last one tried is reused.
+    for (; attempt < NAME_LETTER_MASK_BITS; attempt++) {
       suffix =
           (battle->lastNameLetter[classIndex] + 1) % ENEMY_NAME_SUFFIX_COUNT;
       battle->lastNameLetter[classIndex] = suffix;
@@ -286,9 +297,10 @@ UNREAD_RESULT BattleEnemy_ReleaseNameLetter(s32 unitId) {
       break;
   }
 
-  // An empty name uses a shift of 32, which emits zero on ARM. A name with
+  // An empty name uses a shift of NAME_LETTER_MASK_BITS, which emits zero on
+  // ARM. A name with
   // no suffix instead uses its last character as a suffix.
-  suffixIndex = 32;
+  suffixIndex = NAME_LETTER_MASK_BITS;
   if (nameLength > 0)
     suffixIndex = unit->name[nameLength - 1] - LIST_MARKER_CHAR;
   battle->nameLetterMasks[index] &= ~(1 << suffixIndex);
@@ -308,7 +320,7 @@ UNREAD_RESULT BattleEnemy_LetterFirstOfKind(s32 classId) {
     if (unit->id != classId)
       continue;
     // The name's end, then the letter and a new terminator after it.
-    for (nameIndex = 0; nameIndex <= 13; nameIndex++) {
+    for (nameIndex = 0; nameIndex <= UNIT_NAME_SIZE - 2; nameIndex++) {
       if (unit->name[nameIndex] == 0) {
         unit->name[nameIndex] = LIST_MARKER_CHAR;
         unit->name[nameIndex + 1] = 0;
@@ -438,7 +450,7 @@ s32 BattleFormation_BuildEnemyList(s32 recordId) {
     // The members' order shuffled by ten random swaps.
     for (i = 0; i < FORMATION_MEMBERS; i++)
       memberOrder[i] = i;
-    for (i = 0; i < 10; i++) {
+    for (i = 0; i < FORMATION_SHUFFLE_SWAPS; i++) {
       s32 first = Random16_Below(FORMATION_MEMBERS);
       s32 second = Random16_Below(FORMATION_MEMBERS);
       s32 swap = memberOrder[first];
@@ -507,3 +519,8 @@ s32 BattleFormation_BuildEnemyList(s32 recordId) {
   }
   return i;
 }
+
+#undef NAME_LETTER_MASK_BITS
+#undef FORMATION_SHUFFLE_SWAPS
+#undef ELEMENT_POWER_GAIN
+#undef FORMATION_SCORE_ABOVE_ALL

@@ -281,8 +281,8 @@ void AirsRock_MoveFirstPillar(void) {
 }
 
 /// Move on the second pillar: on column 32 it sets FLAG_AREA_TEMP_11 and two
-/// cells take the low attribute byte of cell (70, 67) with a high byte of 0;
-/// elsewhere the flag clears and their high byte is 0xff. With the leader 208
+/// cells take the low attribute byte of cell (70, 67) with no mark; elsewhere
+/// the flag clears and they are marked CELL_MARK_BLOCKED. With the leader 208
 /// to 215 pixels up the cell's attributes are copied over as well.
 void AirsRock_MoveSecondPillar(void) {
   struct Actor *actor;
@@ -300,7 +300,7 @@ void AirsRock_MoveSecondPillar(void) {
     MapCell_SetAttributes(2, 33, 54, value);
   } else {
     Event_ClearFlag(FLAG_AREA_TEMP_11);
-    value = (value & 0xff) | 0xff00;
+    value = (value & 0xff) | (CELL_MARK_BLOCKED << 8);
     MapCell_SetAttributes(4, 70, 67, value);
     MapCell_SetAttributes(2, 33, 54, value);
   }
@@ -1444,8 +1444,7 @@ void AirsRock_WhirlwindClearsFog(void) {
 
     REG_BG0CNT = control;
   }
-  // A once-only loop: its loop notes order the fill's address ahead of its
-  // value.
+  /* FAKEMATCH(dead): a once-only loop around the fill. */
   do {
     Dma_Fill16(16, BG_SCREEN_BLOCK(4), 1280);
   } while (0);

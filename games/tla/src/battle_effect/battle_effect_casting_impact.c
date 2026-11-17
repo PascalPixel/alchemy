@@ -378,7 +378,6 @@ void BattleEffect_RunCastingImpact(struct BattleEffectParams *action,
              kind == CASTING_IMPACT_IMPACT_UNUSED_SKULLS) {
     Resource_LoadAndDecompress(RESOURCE_SKULL_SHEET, pictures, 1, 0);
   } else if (kind == CASTING_IMPACT_IMPACT_WHEEZE) {
-
     s32 j;
     s32 v;
     u8 *src;
@@ -509,7 +508,7 @@ void BattleEffect_RunCastingImpact(struct BattleEffectParams *action,
                                pictures + CASTING_IMPACT_BOULDER_PICTURES, 1,
                                1);
   } else if (kind == CASTING_IMPACT_IMPACT_VEIN_TAP) {
-    REG_BLDALPHA = BLEND_ALPHA(16, 12);
+    REG_BLDALPHA = BLEND_ALPHA(BLEND_WEIGHT_MAX, 12);
   } else if (kind == CASTING_IMPACT_IMPACT_ICE_CRUSH) {
     Resource_LoadAndDecompress(RESOURCE_CRYSTAL_SHEET, pictures, 1, 0);
   } else if (kind == CASTING_IMPACT_IMPACT_POWER_DRIVE) {
@@ -938,8 +937,8 @@ void BattleEffect_RunCastingImpact(struct BattleEffectParams *action,
       REG_BLDALPHA = BLEND_ALPHA(BLEND_WEIGHT_MAX, 14);
     }
 
-    // The impact's own particles fly out from the target; the draining kinds
-    // set theirs later, and Power Drive's fly to the sides.
+    // The impact's own particles fly out from the target, Power Drive's to the
+    // sides; the kinds listed first set theirs later or have none.
     if (kind == CASTING_IMPACT_IMPACT_SAP ||
         kind == CASTING_IMPACT_IMPACT_LIFE_NOURISH ||
         kind == CASTING_IMPACT_IMPACT_LIFE_LEECH ||
@@ -2215,7 +2214,7 @@ void BattleEffect_RunCastingImpact(struct BattleEffectParams *action,
           Resource_LoadAndDecompress(RESOURCE_BOULDER_PICTURE,
                                      pictures + CASTING_IMPACT_BOULDER_PICTURES,
                                      1, 1);
-          REG_BLDALPHA = BLEND_ALPHA(16, 4);
+          REG_BLDALPHA = BLEND_ALPHA(BLEND_WEIGHT_MAX, 4);
           EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_CLEAR, 0);
           REG_BG2PA = Q_8_8(1);
           p = work->particles;

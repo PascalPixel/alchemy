@@ -1,8 +1,22 @@
 /// @file
-/// Projectile volleys (Slash, Shuriken, Wing Flutter, Blizzard ...).
+/// The Djinni entrance that opens the Djinn's effects, and the projectile
+/// volleys (Slash, Shuriken, Wing Flutter, Blizzard ...).
 // Part of battle_effect.c.
 
 #include "battle_effect_internal.h"
+
+/// The sparks the Djinni entrance sets out round the user, of which the first
+/// ENTRANCE_SPARKS spin and gather.
+#define ENTRANCE_SPARK_SLOTS 64
+#define ENTRANCE_SPARKS 32
+/// A spinning spark is drawn at size ENTRANCE_SPARK_SIZE_MAX at depth
+/// ENTRANCE_SPARK_DEPTH_NEAR or nearer, one size smaller every
+/// ENTRANCE_SPARK_DEPTH_STEP farther, its depth held below
+/// ENTRANCE_SPARK_DEPTH_FAR.
+#define ENTRANCE_SPARK_SIZE_MAX 8
+#define ENTRANCE_SPARK_DEPTH_NEAR 250
+#define ENTRANCE_SPARK_DEPTH_STEP 64
+#define ENTRANCE_SPARK_DEPTH_FAR 634
 
 /// Sparks swirl around a point that travels from the user to the goal and
 /// gather into a Djinni, which sways for 16 frames and bursts into motes.
@@ -74,7 +88,7 @@ void BattleEffect_RunDjinniEntrance(struct BattleEffectParams *args,
   draw[1] = EFFECT_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED);
   user = GetBattleObjectSlotFar(work->args->user)->actor;
   target = GetBattleObjectSlotFar(work->args->targets[0])->actor;
-  for (i = 0; i != 64; i++) {
+  for (i = 0; i != ENTRANCE_SPARK_SLOTS; i++) {
     struct Particle *spark = &PARTICLES[i];
     s32 angle = Random16() & TRIG_ANGLE_MASK;
     s32 speed = (Random16() & 255) + 128;
@@ -125,7 +139,7 @@ void BattleEffect_RunDjinniEntrance(struct BattleEffectParams *args,
     if (frame == 24)
       BattleEffect_TintBattler(work->args->user, SPRITE_COLOR_NORMAL, TINT_KEEP,
                                TINT_KEEP, 0);
-    for (i = 0; i != 32; i++) {
+    for (i = 0; i != ENTRANCE_SPARKS; i++) {
       struct Particle *spark = &PARTICLES[i];
 
       if (frame >= i / 8 && spark->variant == 0) {
@@ -150,8 +164,11 @@ void BattleEffect_RunDjinniEntrance(struct BattleEffectParams *args,
         Projection_Point(&spark->x, &position);
         position.x >>= 1;
         Matrix_Pop();
-        CLAMP(position.depth, 250, 634);
-        size = 8 - (position.depth - 250) / 64;
+        CLAMP(position.depth, ENTRANCE_SPARK_DEPTH_NEAR,
+              ENTRANCE_SPARK_DEPTH_FAR);
+        size = ENTRANCE_SPARK_SIZE_MAX -
+               (position.depth - ENTRANCE_SPARK_DEPTH_NEAR) /
+                   ENTRANCE_SPARK_DEPTH_STEP;
         EFFECT_DRAW_MOTE(draw[1], canvas, sheet, position.x, position.y, size);
         Particle_AdvanceWithGravity3D(spark, 60, 0);
         if (frame >= i / 8 + 24) {
@@ -165,8 +182,8 @@ void BattleEffect_RunDjinniEntrance(struct BattleEffectParams *args,
           SET_VELOCITY(spark, spark->velocityX * 62 / DAMPING_SCALE,
                        spark->velocityY * 62 / DAMPING_SCALE,
                        spark->velocityZ * 62 / DAMPING_SCALE);
-          if ((pullX > -2048 && pullX < 2048) &&
-              (pullZ > -2048 && pullZ < 2048))
+          if ((pullX > -(toFIXED(1) / 32) && pullX < toFIXED(1) / 32) &&
+              (pullZ > -(toFIXED(1) / 32) && pullZ < toFIXED(1) / 32))
             spark->variant = -1;
         }
       }
@@ -184,7 +201,7 @@ void BattleEffect_RunDjinniEntrance(struct BattleEffectParams *args,
     }
     // The long version's Djinni bursts into motes.
     if (frame == 64) {
-      for (i = 0; i != 64; i++) {
+      for (i = 0; i != ARRAY_COUNT(work->particles); i++) {
         struct Particle *mote = &work->particles[i];
         s32 angle = Random16() & TRIG_ANGLE_MASK;
         s32 speed = (Random16() & 255) + 128;
@@ -197,7 +214,7 @@ void BattleEffect_RunDjinniEntrance(struct BattleEffectParams *args,
       }
     }
     if (frame > 63) {
-      for (i = 0; i != 64; i++) {
+      for (i = 0; i != ARRAY_COUNT(work->particles); i++) {
         struct Particle *mote = &work->particles[i];
 
         if (mote->variant >= 0) {
@@ -347,6 +364,13 @@ enum VolleyField {
 #define PROJECTILE_VOLLEY_DJINNI_PICTURE 26048 ///< the small Mercury Djinni
 #define PROJECTILE_VOLLEY_FIRST_SPARK 100      ///< the first spark in PARTICLES
 #define PROJECTILE_VOLLEY_FIRST_TRAIL 512      ///< the first trail in PARTICLES
+/// The most shots a volley fires at all its targets together, one fewer than
+/// the effect's particles; past it, the volley fires at the first target alone.
+#define PROJECTILE_VOLLEY_SHOTS_MAX 63
+/// A hit's sparks fly at up to 4 pixels a frame each way, as a random -128 to
+/// 127 shifted up; Cutting Edge's at up to 8.
+#define PROJECTILE_VOLLEY_SPARK_SPEED_SHIFT 11
+#define CUTTING_EDGE_SPARK_SPEED_SHIFT 12
 
 /// Shots fly from the user to each target and burst into a flash and sparks
 /// when they pass it. The hit sound plays at most once every 8 frames.
@@ -475,7 +499,7 @@ void BattleEffect_RunProjectileVolley(struct BattleEffectParams *args,
     s32 delay = (gProjectileVolley_Modes[mode][PROJECTILE_VOLLEY_DELAY]);
     s32 height = BattleUnit_GetEffectHeightFar(work->args->user);
 
-    if (work->args->targetCount * shots > 63)
+    if (work->args->targetCount * shots > PROJECTILE_VOLLEY_SHOTS_MAX)
       work->args->targetCount = 1;
 
     // Each shot starts at the user and is aimed at its target.
@@ -694,8 +718,9 @@ void BattleEffect_RunProjectileVolley(struct BattleEffectParams *args,
                                                    KNOCKBACK_SKID);
                 }
                 // Sparks fly from the hit.
-                trailsOrShift =
-                    mode == PROJECTILE_VOLLEY_CUTTING_EDGE ? 12 : 11;
+                trailsOrShift = mode == PROJECTILE_VOLLEY_CUTTING_EDGE
+                                    ? CUTTING_EDGE_SPARK_SPEED_SHIFT
+                                    : PROJECTILE_VOLLEY_SPARK_SPEED_SHIFT;
                 for (k = PROJECTILE_VOLLEY_FIRST_SPARK;
                      k != PROJECTILE_VOLLEY_FIRST_TRAIL; k++) {
                   struct Particle *particle = &PARTICLES[k];
@@ -905,13 +930,17 @@ UNUSED void BattleEffect_InitializeRisingObject(s32 id) {
   Actor_SelectAnimationFar(actor, POSE_STANDING);
 }
 
-/// Moves a unit 80% of the way to another one, in its leap pose.
+/// How far BattleEffect_SetApproachMotion takes a unit toward the other.
+#define APPROACH_PERCENT 80
+
+/// Moves a unit APPROACH_PERCENT of the way to another one over frames, in
+/// its leap pose.
 void BattleEffect_SetApproachMotion(s32 id, s32 targetId, s32 frames) {
   struct BattleObject *slot = GetBattleObjectSlotFar(id);
   struct BattleObject *targetSlot = GetBattleObjectSlotFar(targetId);
   struct Actor *actor = slot->actor;
   struct Actor *target = targetSlot->actor;
-  s32 rate = 80;
+  s32 rate = APPROACH_PERCENT;
   FIXED diffX = target->x.fixed - actor->x.fixed;
   FIXED startX = actor->x.fixed;
   FIXED dx = rate * diffX / 100;
@@ -948,3 +977,13 @@ void BattleEffect_SetApproachMotion(s32 id, s32 targetId, s32 frames) {
 #undef PROJECTILE_VOLLEY_DJINNI_PICTURE
 #undef PROJECTILE_VOLLEY_FIRST_SPARK
 #undef PROJECTILE_VOLLEY_FIRST_TRAIL
+#undef PROJECTILE_VOLLEY_SHOTS_MAX
+#undef PROJECTILE_VOLLEY_SPARK_SPEED_SHIFT
+#undef CUTTING_EDGE_SPARK_SPEED_SHIFT
+#undef APPROACH_PERCENT
+#undef ENTRANCE_SPARK_SLOTS
+#undef ENTRANCE_SPARKS
+#undef ENTRANCE_SPARK_SIZE_MAX
+#undef ENTRANCE_SPARK_DEPTH_NEAR
+#undef ENTRANCE_SPARK_DEPTH_STEP
+#undef ENTRANCE_SPARK_DEPTH_FAR

@@ -3,7 +3,7 @@
 
 #include "types.h"
 
-extern const u8 gTitle_IntroSpriteColumns[];
+extern const u8 gTitle_FlareColumns[];
 extern const u8 gTitle_PromptBlendLevels[60];
 void Title_UpdateIntroSprites(void);
 void Title_LoadIntroBackgrounds(void);

@@ -25,8 +25,8 @@
 /// starts a battle with it.
 ///
 /// The setup opens the map with a backdrop fade and blends BG1 over the rest of
-/// the screen. It also splits BG3's scroll at a scanline, 192 less the ground
-/// layer's vertical scroll (TretTreeBranch_UpdateBg3ScrollSplit).
+/// the screen. It also splits BG3's scroll at a scanline, BG3_SPLIT_Y less the
+/// ground layer's vertical scroll (TretTreeBranch_UpdateBg3ScrollSplit).
 ///
 /// BG3 follows the map's horizontal scroll on both sides of the split. Above
 /// the split its offset also falls by one every four frames. So the clouds
@@ -75,6 +75,10 @@ static void TretTreeBranch_StartBg3Split(void);
 
 static u16 sTransferHeader[16] ALIGNED(16);
 static u8 sTransferData[96];
+/// The map height at which BG3's scroll splits, the clouds above and the band
+/// below.
+#define BG3_SPLIT_Y 192
+
 static s32 sSplitLine;
 static u16 sHofsAtOrAfterSplit;
 static u16 sHofsBeforeSplit;
@@ -177,12 +181,19 @@ static void TretTreeBranch_EnterTretTreeRooms(void) {
   Import_EventSetExitRequest(work->stepTrigger);
 }
 
-/// Selects the same mask and window parameters for Reveal and scene entry.
+/// Reveal's window round the leader (WINDOW_TRANSITION_LEADER): inside it
+/// every layer shows without the colour effect, and outside it everything shows
+/// with BG1's blend. REVEAL_WINDOW_STEPS is how far it is open.
+#define REVEAL_WININ (WININ_WIN0_ALL & ~WININ_WIN0_CLR)
+#define REVEAL_WINOUT (WINOUT_WIN01_ALL | WINOUT_WINOBJ_ALL)
+#define REVEAL_WINDOW_STEPS 10
+
+/// Selects the same window for Reveal and scene entry.
 static inline void
 TretTreeBranch_SetRevealWindow(struct ScreenTransitionState *state) {
-  state->mask = 0x3f3f;
-  state->active = 31;
-  state->value = 10;
+  state->mask = REVEAL_WINOUT;
+  state->active = REVEAL_WININ;
+  state->value = REVEAL_WINDOW_STEPS;
 }
 
 /// Casting Reveal in Tret Tree sets the window transition and BG1's blend over
@@ -263,7 +274,7 @@ static void TretTreeBranch_UpdateBg3ScrollSplit(void) {
            ->layers[MAPGRID_LAYER_GROUND];
   s32 horizontalOffset;
 
-  sSplitLine = 192 - (s16)(FIXEDtoINT(layer->y));
+  sSplitLine = BG3_SPLIT_Y - (s16)(FIXEDtoINT(layer->y));
   sHofsAtOrAfterSplit = horizontalOffset = (s16)(FIXEDtoINT(layer->x));
   sHofsBeforeSplit = horizontalOffset - (gFrameCount >> 2);
 }

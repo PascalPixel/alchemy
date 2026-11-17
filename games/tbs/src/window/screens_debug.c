@@ -5,6 +5,32 @@
 
 #include "screens_internal.h"
 
+/// The last scene the debug scene selector offers, the last of the game's 201,
+/// and its last entrance.
+#define DEBUG_SCENE_LAST 200
+#define DEBUG_ENTRANCE_LAST 99
+/// How far L and R move in the debug menus, where Left and Right move by one.
+#define DEBUG_MENU_JUMP 10
+/// The flag editor shows a flag number's three hex digits as its page, row and
+/// column, so it has sixteen of each.
+#define DEBUG_FLAG_DIGIT_VALUES 16
+/// The icon browser's pages, each of ICON_BROWSER_PAGE_ICONS 16 by 16 icons in
+/// rows of ICON_BROWSER_COLUMNS.
+#define ICON_BROWSER_PAGES 8
+#define ICON_BROWSER_PAGE_ICONS 32
+#define ICON_BROWSER_COLUMNS 8
+/// The portrait number of gPortrait_SpriteMap's first speaker: the speakers
+/// that are no playable character are numbered from it.
+#define PORTRAIT_SPRITE_MAP_FIRST 128
+
+/// What the icon browser shows, which L and R change.
+enum IconBrowserMode {
+  ICON_BROWSER_ITEMS,
+  ICON_BROWSER_PSYNERGY,
+  ICON_BROWSER_STATUS,
+  ICON_BROWSER_MODES
+};
+
 /// Schedules the debug scene and entrance selector;
 /// TASK_PASS_FRAME is a task priority, not a number of frames to wait.
 /// Nothing in the game calls it.
@@ -77,7 +103,9 @@ s16 DebugSceneSelect_Run(void) {
 }
 
 /// Edits the debug scene or entrance, returning -1 to exit and -2 to cancel.
-/// Shoulder buttons step by ten; it keeps the original 99-step entrance wrap.
+/// L and R move a scene by DEBUG_MENU_JUMP and set its entrance to 0; an
+/// entrance moved past either end wraps by DEBUG_ENTRANCE_LAST (95 + 10 gives
+/// 6).
 s32 DebugSceneSelect_HandleRowInput(struct Window *window, s16 sceneId,
                                     s16 *entrance, s16 *selectedField) {
   if (gKeysRepeat & KEY_A)
@@ -93,10 +121,10 @@ s32 DebugSceneSelect_HandleRowInput(struct Window *window, s16 sceneId,
       sceneId++;
     } else {
       (*entrance)++;
-      if (*entrance > 99)
+      if (*entrance > DEBUG_ENTRANCE_LAST)
         *entrance = 0;
     }
-    if (sceneId > 200)
+    if (sceneId > DEBUG_SCENE_LAST)
       sceneId = 0;
     DebugSceneSelect_DrawRow(window, sceneId, entrance);
   } else if (gKeysRepeat & KEY_LEFT) {
@@ -105,34 +133,34 @@ s32 DebugSceneSelect_HandleRowInput(struct Window *window, s16 sceneId,
     } else {
       (*entrance)--;
       if (*entrance < 0)
-        *entrance = 99;
+        *entrance = DEBUG_ENTRANCE_LAST;
     }
     if (sceneId < 0)
-      sceneId = 200;
+      sceneId = DEBUG_SCENE_LAST;
     DebugSceneSelect_DrawRow(window, sceneId, entrance);
   } else if (gKeysRepeat & KEY_R) {
     if (*selectedField == 0) {
       *entrance = 0;
-      sceneId += 10;
+      sceneId += DEBUG_MENU_JUMP;
     } else {
-      *entrance += 10;
-      if (*entrance > 99)
-        *entrance -= 99;
+      *entrance += DEBUG_MENU_JUMP;
+      if (*entrance > DEBUG_ENTRANCE_LAST)
+        *entrance -= DEBUG_ENTRANCE_LAST;
     }
-    if (sceneId > 200)
+    if (sceneId > DEBUG_SCENE_LAST)
       sceneId = 0;
     DebugSceneSelect_DrawRow(window, sceneId, entrance);
   } else if (gKeysRepeat & KEY_L) {
     if (*selectedField == 0) {
       *entrance = 0;
-      sceneId -= 10;
+      sceneId -= DEBUG_MENU_JUMP;
     } else {
-      *entrance -= 10;
+      *entrance -= DEBUG_MENU_JUMP;
       if (*entrance < 0)
-        *entrance += 99;
+        *entrance += DEBUG_ENTRANCE_LAST;
     }
     if (sceneId < 0)
-      sceneId = 200;
+      sceneId = DEBUG_SCENE_LAST;
     DebugSceneSelect_DrawRow(window, sceneId, entrance);
   }
   return sceneId;
@@ -181,7 +209,7 @@ void String_FormatHexDigits(u32 value, u32 count, u8 *out) {
     count = 5;
 
   for (i = 0; i != count; i++) {
-    u32 digit = value & 15;
+    u32 digit = value & 0xf;
     if (digit <= 9)
       digits[i] = digit + '0';
     else
@@ -205,7 +233,7 @@ void DebugFlagEditor_DrawTable(struct Window *window, s32 page) {
   Text_DrawStringInWindow((u8 *)gMenu_HexDigitsString, window, 48, 0);
 
   flag = page << 8;
-  for (row = 0; row != 16; row++) {
+  for (row = 0; row != DEBUG_FLAG_DIGIT_VALUES; row++) {
     s32 i;
 
     y = row * 8 + 16;
@@ -217,7 +245,7 @@ void DebugFlagEditor_DrawTable(struct Window *window, s32 page) {
     Text_DrawStringInWindow((u8 *)label, window, 0, y);
     Text_DrawStringInWindow((u8 *)gMenu_ColonString, window, 32, y);
 
-    for (i = 0; i < 16; i++) {
+    for (i = 0; i < DEBUG_FLAG_DIGIT_VALUES; i++) {
       s32 set = GameFlag_GetFar(flag);
       bits[i] = (set != 0) + '0';
       flag++;
@@ -245,32 +273,32 @@ s32 DebugFlagEditor_HandleInput(struct Window *window, s32 *page, s32 *cursor) {
     return -1;
   if (gKeysRepeat & KEY_UP) {
     if (--*row < 0)
-      *row = 15;
+      *row = DEBUG_FLAG_DIGIT_VALUES - 1;
   } else if (gKeysRepeat & KEY_DOWN) {
-    if (++*row > 15)
+    if (++*row > DEBUG_FLAG_DIGIT_VALUES - 1)
       *row = 0;
   } else if (gKeysRepeat & KEY_LEFT) {
     if (--cursor[0] < 0)
-      cursor[0] = 15;
+      cursor[0] = DEBUG_FLAG_DIGIT_VALUES - 1;
   } else if (gKeysRepeat & KEY_RIGHT) {
-    if (++cursor[0] > 15)
+    if (++cursor[0] > DEBUG_FLAG_DIGIT_VALUES - 1)
       cursor[0] = 0;
   } else if ((gKeysRepeat & KEY_L) && (gKeysRepeat & KEY_START)) {
-    *page -= 10;
+    *page -= DEBUG_MENU_JUMP;
     if (*page < 0)
-      *page = 15;
+      *page = DEBUG_FLAG_DIGIT_VALUES - 1;
     return 1;
   } else if ((gKeysRepeat & KEY_R) && (gKeysRepeat & KEY_START)) {
-    *page += 10;
-    if (*page > 15)
+    *page += DEBUG_MENU_JUMP;
+    if (*page > DEBUG_FLAG_DIGIT_VALUES - 1)
       *page = 0;
     return 1;
   } else if (gKeysRepeat & KEY_L) {
     if (--*page < 0)
-      *page = 15;
+      *page = DEBUG_FLAG_DIGIT_VALUES - 1;
     return 1;
   } else if (gKeysRepeat & KEY_R) {
-    if (++*page > 15)
+    if (++*page > DEBUG_FLAG_DIGIT_VALUES - 1)
       *page = 0;
     return 1;
   }
@@ -358,31 +386,32 @@ s32 DebugBrowser_Icons(void) {
       break;
     if (redraw != 0) {
       redraw = 0;
-      page = (page + 8) % 8;
-      mode = (mode + 3) % 3;
+      page = (page + ICON_BROWSER_PAGES) % ICON_BROWSER_PAGES;
+      mode = (mode + ICON_BROWSER_MODES) % ICON_BROWSER_MODES;
       Window_Close(window, 2);
       window = Window_Create(10, 0, 18, 12, WINDOW_FLAG_INSTANT);
-      if (mode == 0)
+      if (mode == ICON_BROWSER_ITEMS)
         Text_DrawStringInWindow(gDebugMenu_ItemTitle, window, 0, 0);
-      else if (mode == 1)
+      else if (mode == ICON_BROWSER_PSYNERGY)
         Text_DrawStringInWindow(gDebugMenu_EnergyTitle, window, 0, 0);
       else
         Text_DrawStringInWindow(gDebugMenu_StatusTitle, window, 0, 0);
       Text_DrawStringInWindow(gDebugMenu_PageLabel, window, 0, 8);
       Text_DrawNumberInWindow(page, 0, window, 40, 8);
-      base = page << 5;
+      base = page * ICON_BROWSER_PAGE_ICONS;
       Text_DrawNumberInWindow(base, 3, window, 64, 8);
       Text_DrawStringInWindow(gDebugMenu_RangeDash, window, 88, 8);
-      Text_DrawNumberInWindow(base + 31, 3, window, 96, 8);
-      for (i = 0; i <= 31; i++) {
+      Text_DrawNumberInWindow(base + ICON_BROWSER_PAGE_ICONS - 1, 3, window, 96,
+                              8);
+      for (i = 0; i < ICON_BROWSER_PAGE_ICONS; i++) {
         slot = -1;
-        row = i / 8;
-        x = (i - row * 8) * 16;
+        row = i / ICON_BROWSER_COLUMNS;
+        x = (i - row * ICON_BROWSER_COLUMNS) * 16;
         y = row * 16 + 16;
-        if (mode == 0) {
+        if (mode == ICON_BROWSER_ITEMS) {
           Icon_BuildItemIconTiles(base + i, 1, &slot, &tile, mode);
           WindowSprite_Create(slot, OUTPUT_SIZE_16X16, window, x, y);
-        } else if (mode == 1) {
+        } else if (mode == ICON_BROWSER_PSYNERGY) {
           Icon_BuildAbilityIconTiles(base + i, 1, &slot, &tile, 0);
           WindowSprite_Create(slot, OUTPUT_SIZE_16X16, window, x, y);
         } else {
@@ -422,7 +451,7 @@ s32 DebugBrowser_Portraits(void) {
   s32 tile;
   s32 slot;
   s32 cancelKey;
-  s32 palette = 15;
+  s32 palette = PORTRAIT_PALETTE + 1; // portrait slot 1's, as slotOffset
   u32 slotOffset = offsetof(struct WindowWork, portraitSprites[1]);
 
   work = WINDOW_WORK;
@@ -450,11 +479,11 @@ s32 DebugBrowser_Portraits(void) {
     }
     if (gKeysRepeat & KEY_L) {
       redraw = 1;
-      index -= 10;
+      index -= DEBUG_MENU_JUMP;
     }
     if (gKeysRepeat & KEY_R) {
       redraw = 1;
-      index += 10;
+      index += DEBUG_MENU_JUMP;
     }
     if (gKeysRepeat & KEY_A)
       break;
@@ -467,7 +496,8 @@ s32 DebugBrowser_Portraits(void) {
       if (index < characterCount)
         glyph = gPortrait_CharacterMap[index * 2 + 1];
       else
-        glyph = gPortrait_SpriteMap[(index - characterCount) * 2 + 1] + 128;
+        glyph = gPortrait_SpriteMap[(index - characterCount) * 2 + 1] +
+                PORTRAIT_SPRITE_MAP_FIRST;
       slot = *(u16 *)((u8 *)work + slotOffset);
       Icon_LoadWithPalette(glyph, 0, &slot, &tile, palette, 1);
       Text_DrawNumberInWindow(index, 2, window, 0, 0);

@@ -1,4 +1,8 @@
-/// The leader slides cell by cell over ice until something stops it.
+/// Ram_HeapSlots->actors, as field_internal.h counts them.
+#define ACTOR_COUNT 64
+
+/// The leader slides cell by cell over ice until something stops it: a wall,
+/// ground more than 8 pixels up, a solid actor, or the end of the ice.
 void Leader_SlideOnIce(void) {
   struct Vector3 probe;
   s32 startBehavior;
@@ -41,13 +45,14 @@ top:
   dx = x - actor->x.fixed;
   distance = Iwram_MulFX(dx, dx) + Iwram_MulFX(dz, dz);
   if (distance < toFIXED(4)) {
-    heading = gSlideOnIce_AnglesByKey[(gInput.held >> 4) & 15];
-    if ((heading << 16) == -65536) {
+    heading = gSlideOnIce_AnglesByKey[DPAD_INDEX(gInput.held)];
+    // -1 for no direction, tested as its halfword.
+    if ((u16)heading == DPAD_ANGLE_NONE) {
       return;
     }
   } else {
     heading = (s16)Trig_Atan(z - actor->z.fixed, x - actor->x.fixed);
-    heading = (s16)((heading + DEGtoANG(45)) & -0x4000);
+    heading = (s16)FACING_NEAREST_CARDINAL(heading);
   }
   FieldVector_AddPolarOffset(16, heading, &probe);
   nextBehavior =
@@ -69,7 +74,7 @@ top:
   actor->timer = 0;
   FieldActor_SetMoveTargetFX(actor, startX, actor->y.fixed, startZ);
   Actor_SelectAnimation(actor, 2);
-  Actor_SetAnimationSpeed(actor, 48);
+  Actor_SetAnimationSpeed(actor, ANIMATION_STEP_NORMAL * 3);
   FieldActor_WaitForMove(actor);
   actor->update = Actor_SteerByPad;
   for (;;) {
@@ -88,8 +93,9 @@ top:
 
       other = Ram_HeapSlots->actors;
       flags = &other->collisionFlags;
-      for (i = 0; i < 64; i++, flags += 128, other++) {
-        if (other->script != NULL && (*flags & 1) && other != actor) {
+      for (i = 0; i < ACTOR_COUNT;
+           i++, flags += sizeof(struct Actor), other++) {
+        if (other->script != NULL && (*flags & ACTOR_SOLID) && other != actor) {
           if (Event_CheckSpheresOverlap(&other->x.fixed, radius, &probe.x,
                                         other->radius - 2) >= 0) {
             goto stop;
@@ -126,3 +132,5 @@ done:
   actor->acceleration = toFIXED(1) / 4;
   Actor_SelectAnimation(actor, 1);
 }
+
+#undef ACTOR_COUNT

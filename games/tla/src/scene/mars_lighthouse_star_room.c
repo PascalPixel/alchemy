@@ -2,12 +2,13 @@
 /// The Mars Lighthouse's dragon hall, high in the frozen lighthouse, where two
 /// Flame Dragons sleep in a block of ice before a statue with a face.
 ///
-/// Blaze on the torches sends two fireballs round the hall to the ice,
-/// which cracks; Burst on the crack frees the dragons, which wake and fight.
-/// Beaten, they are Agatio and Karst, too weak and cold to go on: they ask
-/// Felix to light the beacon and leave him the Mars Star. Taken up into the
-/// Mythril Bag and set in the statue's face, the star turns the lighthouse
-/// back to fire and its ice is gone, here and in every room below.
+/// Blaze on the torches sends two sparkles round the hall, each launching a
+/// fireball into the ice, which cracks; Burst on the crack frees the dragons,
+/// which wake and fight. Beaten, they are Agatio and Karst, too weak and cold
+/// to go on: they ask Felix to light the beacon and leave him the Mars Star.
+/// Taken up into the Mythril Bag and set in the statue's face, the star turns
+/// the lighthouse back to fire and its ice is gone, here and in every room
+/// below.
 
 #include "graphics/output.h"
 #include "system/task.h"
@@ -120,7 +121,7 @@ enum {
 enum {
   /// The two torches on stands before the frozen dragons: the east one burns,
   /// the west one is unlit. Blaze's cast starts at the east one and hits the
-  /// west one, which sends out the fireballs.
+  /// west one, which sends out the sparkles.
   ACTOR_EAST_TORCH = 8,
   ACTOR_WEST_TORCH = 9,
   /// The crack the fireballs leave in the ice the dragons sleep in.
@@ -132,12 +133,18 @@ enum {
   /// The lights that rise from the dragons as they turn back into Adepts.
   ACTOR_AGATIO_LIGHT = 15,
   ACTOR_KARST_LIGHT = 16,
-  ACTOR_EAST_FIREBALL = 17,
-  ACTOR_WEST_FIREBALL = 18,
-  /// What a fireball would launch ahead of it; this room launches nothing.
-  ACTOR_EAST_FIREBALL_ROLL = 19,
-  ACTOR_WEST_FIREBALL_ROLL = 20
+  /// The sparkles Blaze sends from the west torch round each side of the
+  /// hall; at the end of its way each launches its fireball, which rolls into
+  /// the ice and cracks it.
+  ACTOR_EAST_SPARKLE = 17,
+  ACTOR_WEST_SPARKLE = 18,
+  ACTOR_EAST_FIREBALL = 19,
+  ACTOR_WEST_FIREBALL = 20
 };
+
+/// The actor script's operand for Actor.watchedActor: a sparkle's way sets it
+/// to the routine its fireball calls when it crashes.
+#define SW_WATCHED_ACTOR 37
 
 /// The ride work seen from one flame thrower's entry: the work's header, then
 /// the entry, as the getters below index it.
@@ -1200,15 +1207,17 @@ void MarsLighthouseStarRoom_SpawnRisingSparks(void) {
   }
 }
 
-extern s32 gMarsLighthouseStarRoom_WestFireballRoute[];
-extern s32 gMarsLighthouseStarRoom_EastFireballRoute[];
+extern s32 gMarsLighthouseStarRoom_WestSparkleRoute[];
+extern s32 gMarsLighthouseStarRoom_EastSparkleRoute[];
 
-/// The west torch's two fireballs set off round the hall, west and east.
+/// The west torch sends its two sparkles round the hall, west and east; each
+/// launches its fireball at the ice, the west one rolling east and the east
+/// one west.
 void MarsLighthouseStarRoom_ShootFireballs(void) {
-  Actor_Attach(ACTOR_WEST_TORCH, ACTOR_WEST_FIREBALL, ACTOR_WEST_FIREBALL_ROLL,
-               0, gMarsLighthouseStarRoom_WestFireballRoute);
-  Actor_Attach(ACTOR_WEST_TORCH, ACTOR_EAST_FIREBALL, ACTOR_EAST_FIREBALL_ROLL,
-               DEGtoANG(180), gMarsLighthouseStarRoom_EastFireballRoute);
+  Actor_Attach(ACTOR_WEST_TORCH, ACTOR_WEST_SPARKLE, ACTOR_WEST_FIREBALL,
+               FACING_EAST, gMarsLighthouseStarRoom_WestSparkleRoute);
+  Actor_Attach(ACTOR_WEST_TORCH, ACTOR_EAST_SPARKLE, ACTOR_EAST_FIREBALL,
+               FACING_WEST, gMarsLighthouseStarRoom_EastSparkleRoute);
 }
 
 #include "shared/actor_is_touching.h"
@@ -1447,8 +1456,9 @@ extern u32 gEmbers_Script[];
 
 #include "shared/actor_roll_and_crumble.c"
 
-/// Sends an actor along a scripted path from another, with what it launches.
-void Actor_Attach(s32 sourceId, s32 id, s32 kind, s32 value,
+/// Sends an actor along a scripted path from another; at its end the path
+/// launches launchedId ahead of it, facing launchFacing (Actor_Park).
+void Actor_Attach(s32 sourceId, s32 id, s32 launchedId, s32 launchFacing,
                   const void *script) {
   struct Actor *source = Actor_Get(sourceId);
   struct Actor *actor = Actor_Get(id);
@@ -1461,8 +1471,8 @@ void Actor_Attach(s32 sourceId, s32 id, s32 kind, s32 value,
   Actor_SelectAnimation(actor, 1);
   actor->watchedActor = source;
   actor->timer = 0;
-  actor->userValue = value;
-  actor->riseCounter = kind;
+  actor->userValue = launchFacing;
+  actor->launchedActorId = launchedId;
   actor->update = Actor_HoldDuringEvent;
 }
 
@@ -1590,7 +1600,7 @@ u32 gMarsLighthouseStarRoom_ScatterIceChipsScript[] = {
     1, 13, 10, 0xc0010000, 38,
 };
 
-s32 gMarsLighthouseStarRoom_WestFireballRoute[] = {
+s32 gMarsLighthouseStarRoom_WestSparkleRoute[] = {
     SC_CALL(Actor_PopUp),
     SC_MOVE(616, 0, 264),
     SC_SYNC,
@@ -1616,12 +1626,12 @@ s32 gMarsLighthouseStarRoom_WestFireballRoute[] = {
     SC_MOVE(592, 22, 216),
     SC_SYNC,
     SC_WAIT(2),
-    SC_SET(37, (s32)MarsLighthouseStarRoom_WestFireballCracksIce),
+    SC_SET(SW_WATCHED_ACTOR, (s32)MarsLighthouseStarRoom_WestFireballCracksIce),
     SC_CALL(Actor_Park),
     SC_END,
 };
 
-s32 gMarsLighthouseStarRoom_EastFireballRoute[] = {
+s32 gMarsLighthouseStarRoom_EastSparkleRoute[] = {
     SC_CALL(Actor_PopUp),
     SC_MOVE(680, 0, 264),
     SC_SYNC,
@@ -1662,7 +1672,7 @@ s32 gMarsLighthouseStarRoom_EastFireballRoute[] = {
     SC_MOVE(768, 22, 216),
     SC_SYNC,
     SC_WAIT(2),
-    SC_SET(37, (s32)MarsLighthouseStarRoom_EastFireballCracksIce),
+    SC_SET(SW_WATCHED_ACTOR, (s32)MarsLighthouseStarRoom_EastFireballCracksIce),
     SC_CALL(Actor_Park),
     SC_END,
 };

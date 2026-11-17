@@ -11,7 +11,16 @@
 #define GAIA_WALL_SINK_FRAME 160
 
 #define GAIA_ROCKS 11 ///< rock sprites tumbling up through the wall
+/// The rocks that fly from the start; the rest join them from frame 72.
+#define GAIA_EARLY_ROCKS 6
+/// The rocks' motion is work->particles[GAIA_FIRST_ROCK] on.
+#define GAIA_FIRST_ROCK 10
+/// A rock waits this many frames longer than the rock after it before it first
+/// flies.
+#define GAIA_ROCK_STAGGER 4
 #define GAIA_DUST 256 ///< dust in PARTICLES
+/// The dust drawn: the rest is set out and never shown.
+#define GAIA_DUST_SHOWN 64
 
 /// The pictures Gaia rebuilds from the earth wall sheet: the rising wall's
 /// rows, the standing wall's top and foot, then the flames.
@@ -79,7 +88,7 @@ void BattleEffect_RunGaia(struct BattleEffectParams *args) {
   Iwram_CopyWords(BG_PLTT, Resource_GetTableEntry(RESOURCE_ORANGE_PALETTE_A),
                   SHEET_PALETTE_BYTES);
   color = &BG_PLTT[1];
-  for (i = 0; i != 63; i++) {
+  for (i = 0; i != SHEET_PALETTE_COLORS - 1; i++) {
     s32 entry = *color;
     s32 blue = RGB_BLUE((u16)entry);
     s32 green = RGB_GREEN((u16)entry);
@@ -101,20 +110,20 @@ void BattleEffect_RunGaia(struct BattleEffectParams *args) {
   src = Ram_MapGridCellBuffer;
   sheetIndex = 0;
   for (j = 0; j != 9; j++) {
-    for (i = 0; i != 32; i++) {
+    for (i = 0; i != GAIA_ROW_HEIGHT; i++) {
       for (k = 0; k != gGaia_RowWidths[j]; k++, sheetIndex++)
         work->sheet[sheetIndex] = src[k];
     }
     src += gGaia_RowWidths[j];
   }
-  for (j = 0; j != 32; j++) {
-    for (i = 0; i != 3; i++) {
-      for (k = 0; k != 48; k++, sheetIndex++)
+  for (j = 0; j != GAIA_ROW_HEIGHT; j++) {
+    for (i = 0; i != GAIA_WALL_TOP_HEIGHT / GAIA_ROW_HEIGHT; i++) {
+      for (k = 0; k != GAIA_WALL_TOP_WIDTH; k++, sheetIndex++)
         work->sheet[sheetIndex] = src[k];
     }
-    src += 48;
+    src += GAIA_WALL_TOP_WIDTH;
   }
-  for (i = 0; i != 48 * 21; i++)
+  for (i = 0; i != GAIA_WALL_FOOT_WIDTH * GAIA_WALL_FOOT_HEIGHT; i++)
     work->sheet[sheetIndex++] = *src++;
   for (i = 0; i != 3; i++) {
     for (k = 0; k != gGaia_FlameWidths[i] * gGaia_FlameHeights[i]; k++)
@@ -143,16 +152,18 @@ void BattleEffect_RunGaia(struct BattleEffectParams *args) {
   REG_BLDALPHA = EFFECT_BLEND_ADD;
   EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_THREE_QUARTERS);
 
-  // Rocks wait their turn and tumble up through the wall.
+  // Rocks wait their turn (variant counts the frames) and tumble up through the
+  // wall, y counting down from 128 by z a frame.
   for (i = 0; i != GAIA_ROCKS; i++) {
-    struct Particle *rock = &work->particles[10 + i];
+    struct Particle *rock = &work->particles[GAIA_FIRST_ROCK + i];
 
     SET_POSITION(rock, (Random16() & 15) + 88, 128, (Random16() & 15) + 2);
-    SET_VELOCITY(rock, i, 1, 32768);
-    rock->variant = 44 - i * 4;
+    SET_VELOCITY(rock, i, 1, toFIXED(1) / 2);
+    rock->variant = GAIA_ROCKS * GAIA_ROCK_STAGGER - i * GAIA_ROCK_STAGGER;
   }
   for (i = 0; i != 6; i++)
-    work->particles[16 + i].x = gGaia_LateRockColumns[i];
+    work->particles[GAIA_FIRST_ROCK + GAIA_EARLY_ROCKS + i].x =
+        gGaia_LateRockColumns[i];
 
   // Dust rises from the foot of the wall.
   for (i = 0; i != GAIA_DUST; i++) {
@@ -238,7 +249,7 @@ void BattleEffect_RunGaia(struct BattleEffectParams *args) {
 
     // Dust keeps rising up the wall.
     if (frame >= GAIA_WALL_STAND_FRAME) {
-      for (i = 0; i != 64; i++) {
+      for (i = 0; i != GAIA_DUST_SHOWN; i++) {
         struct Particle *dust = &PARTICLES[i];
 
         if (dust->variant == 0) {
@@ -257,12 +268,12 @@ void BattleEffect_RunGaia(struct BattleEffectParams *args) {
 
     // Rocks tumble up through the wall, larger with the variant.
     if (frame > 4) {
-      s32 rocks = 6;
+      s32 rocks = GAIA_EARLY_ROCKS;
 
       if (frame > 71)
-        rocks = 11;
+        rocks = GAIA_ROCKS;
       for (k = 0; k != rocks; k++) {
-        struct Particle *rock = &work->particles[10 + k];
+        struct Particle *rock = &work->particles[GAIA_FIRST_ROCK + k];
         s32 slot;
 
         if (rock->variant == 0) {
@@ -270,8 +281,8 @@ void BattleEffect_RunGaia(struct BattleEffectParams *args) {
           // the ROM keeps the copy.
           scale = unitScale;
           if (frame > 71) {
-            scale.x = (k << 12) + FIXED_ONE / 2;
-            scale.x += work->args->variant << 14;
+            scale.x = k * (FIXED_ONE / 16) + FIXED_ONE / 2;
+            scale.x += work->args->variant * (FIXED_ONE / 4);
           } else {
             scale.x = FIXED_ONE / 2;
           }
@@ -280,13 +291,15 @@ void BattleEffect_RunGaia(struct BattleEffectParams *args) {
           position.x = INTtoFIXED(rock->x + rockX * 2);
           position.height = toFIXED(512) - INTtoFIXED(rock->y);
           position.y = toFIXED(512);
-          slot = (frame / 2 + k) % 11;
+          slot = (frame / 2 + k) % GAIA_ROCKS;
           // DEAD: slot != -1 always holds, slot being a remainder of a
           // positive count; the ROM keeps the test.
           if (slot != -1)
             Actor_ApplyProjectedPlacementFar(work->sprites[slot], &position,
                                              &scale, 0);
           rock->y -= rock->z;
+          // DEAD: velocityX steps from 1 to 12 by velocityY and nothing reads
+          // it; the ROM keeps the count.
           rock->velocityX += rock->velocityY;
           if (rock->velocityX > 12)
             rock->velocityX -= 12;

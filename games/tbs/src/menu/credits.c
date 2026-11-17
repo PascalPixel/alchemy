@@ -35,31 +35,64 @@
 #define CREDITS_BORDER_SPRITES 24
 /// The whole OAM: the borders, 96 text sprites and 8 parked off screen.
 #define CREDITS_OAM_ENTRIES 128
+/// The border sprites' one 32x16 picture, solid in colour 1, after the ring.
+#define CREDITS_BORDER_TILE_BYTES (8 * TILE_SIZE_4BPP)
+/// The ring line a scroll line is drawn into, sixteen rows below the top.
+#define CREDITS_RING_LINE(line)                                                \
+  ((((line) + CREDITS_VISIBLE_ROWS) & (CREDITS_RING_ROWS - 1)) *               \
+   CREDITS_LINE_TILES)
+/// The text sprites' rows start below the top strip, and their 192 pixels
+/// stand in the middle of the screen.
+#define CREDITS_TEXT_TOP 16
+#define CREDITS_TEXT_LEFT ((DISPLAY_WIDTH - CREDITS_LINE_PIXELS) / 2)
+/// The x and the y at which the eight spare sprites wait, below the screen.
+#define CREDITS_PARKED 192
+/// The colour a line's letters are drawn in, and the colour of the shadow a
+/// pixel below and to the right of each, the strips' black.
+#define CREDITS_TEXT_COLOR 15
+#define CREDITS_SHADOW_COLOR 1
 
-/// Fills 30 KB of 256-color tiles with color 1 and clears 128 palette colors.
-/// Called by the credits before loading a battle background into a half. The
-/// 30 KB are a battle background's 480 tiles, 256 by 120 pixels.
-/// @param alternate 0 selects the first half (VRAM 0x06000000, palette 0-127).
-///      1 selects the second half (VRAM 0x06008000, palette 128-255, fill 129).
+/// A backdrop resource begins with its colours, the palette half it takes; its
+/// packed tiles follow.
+#define BACKDROP_COLORS 128
+#define BACKDROP_PALETTE_BYTES (BACKDROP_COLORS * 2)
+/// A battle backdrop's tiles of 256 colours, 256 by 120 pixels.
+#define BACKDROP_TILES 480
+#define BACKDROP_TILE_BYTES (BACKDROP_TILES * TILE_SIZE_8BPP)
+
+/// The two pictures' screen blocks, each holding the same tilemap: BG3's, over
+/// character block 0, and BG2's, over character block 2.
+#define CREDITS_BG3_SCREEN_BLOCK 15
+#define CREDITS_BG2_SCREEN_BLOCK 31
+/// A tilemap word: two map entries side by side, `left` in its low half.
+#define TILEMAP_PAIR(left, right) (((right) << 16) | (left))
+/// A tilemap row's words.
+#define TILEMAP_ROW_WORDS (BG_SCREEN_WIDTH / 2)
+/// The tile the margins show: the character block's last, which lies in the
+/// screen block's own zeroed tail and so is clear.
+#define CREDITS_BLANK_TILE 511
+
+/// Fills a backdrop's 256-colour tiles with its half's first colour, an opaque
+/// black for the next crossfade, and clears the half's palette colours.
+/// @param alternate 0 for the first half (character block 0, the low palette
+/// half), 1 for the second (character block 2, the high palette half).
 void Credits_ClearBuffer(s32 alternate) {
   u32 fillColor;
   void *tileDestination;
   void *paletteDestination;
   volatile u32 dmaFill;
 
-  // Use a solid pixel in the palette being cleared, producing an opaque
-  // black layer for the next crossfade.
   if (alternate == 0) {
-    fillColor = 0x01010101;
+    fillColor = PIXELS_8BPP(1);
     tileDestination = BG_CHAR_BLOCK(0);
     paletteDestination = (void *)BG_PLTT;
   } else {
-    fillColor = 0x81818181;
+    fillColor = PIXELS_8BPP(BACKDROP_COLORS + 1);
     tileDestination = BG_CHAR_BLOCK(2);
     paletteDestination = (void *)&BG_PLTT_COLOR(8, 0);
   }
-  Dma_Fill32Cell(dmaFill, fillColor, tileDestination, 30720);
-  Dma_Fill32Cell(dmaFill, 0, paletteDestination, 256);
+  Dma_Fill32Cell(dmaFill, fillColor, tileDestination, BACKDROP_TILE_BYTES);
+  Dma_Fill32Cell(dmaFill, 0, paletteDestination, BACKDROP_PALETTE_BYTES);
 }
 
 typedef s32 (*PackedDecoder)(const u8 *source, void *destination, u32 fill);
@@ -120,7 +153,7 @@ void Credits_LoadBackground(u32 resourceId, s32 alternate) {
     tileDestination = BG_CHAR_BLOCK(0);
     paletteDestination = (u32)BG_PLTT;
   } else {
-    paletteOffset = 0x80808080;
+    paletteOffset = PIXELS_8BPP(BACKDROP_COLORS);
     tileDestination = BG_CHAR_BLOCK(2);
     paletteDestination = (u32)&BG_PLTT_COLOR(8, 0);
   }
@@ -129,33 +162,33 @@ void Credits_LoadBackground(u32 resourceId, s32 alternate) {
   RamCode_LoadSlot(HEAP_SLOT_RAM_CODE_TEMP, Credits_DecodeBackground,
                    Credits_DecodeBackgroundCodeSize);
   ((PackedDecoder)gHeapSlots[HEAP_SLOT_RAM_CODE_TEMP])(
-      resourceData + 256, tileDestination, paletteOffset);
+      resourceData + BACKDROP_PALETTE_BYTES, tileDestination, paletteOffset);
   HeapSlot_Release(HEAP_SLOT_RAM_CODE_TEMP);
 
   // Queue palette RAM writes for VBlank rather than transferring colours
   // during the active display.
   IO_WRITE_QUEUE_PUSH(paletteDestination, (u32)resourceData,
-                      DMA_COPY_WORDS(64));
+                      DMA_COPY_WORDS(BACKDROP_PALETTE_BYTES / 4));
 }
 
-/// Builds the 512 tilemap words surrounding a sliding credits picture: blank
-/// margins, 240 consecutive tile pairs, then a zero-filled tail.
+/// Builds a backdrop's tilemap: two blank rows, the backdrop's tiles in order
+/// over fifteen rows, three blank rows, then a zeroed tail.
 void Credits_BuildBackgroundTilemap(u32 *destination) {
   s32 i;
-  u32 blankTiles = 0x01FF01FF;
-  u32 tilePair = 0x10000;
+  u32 blankTiles = TILEMAP_PAIR(CREDITS_BLANK_TILE, CREDITS_BLANK_TILE);
+  u32 tilePair = TILEMAP_PAIR(0, 1);
 
   // Pad above and below the picture so vertical wrapping stays blank.
-  for (i = 0; i < 32; i++)
+  for (i = 0; i < 2 * TILEMAP_ROW_WORDS; i++)
     *destination++ = blankTiles;
-  for (i = 0; i < 240; i++) {
+  for (i = 0; i < BACKDROP_TILES / 2; i++) {
     *destination++ = tilePair;
-    tilePair += 0x20002;
+    tilePair += TILEMAP_PAIR(2, 2);
   }
-  for (i = 0; i < 48; i++)
+  for (i = 0; i < 3 * TILEMAP_ROW_WORDS; i++)
     *destination++ = blankTiles;
   tilePair = 0;
-  for (i = 0; i < 192; i++)
+  for (i = 0; i < 12 * TILEMAP_ROW_WORDS; i++)
     *destination++ = tilePair;
 }
 
@@ -185,14 +218,17 @@ s32 Credits_Run(void) {
   Task_Add(Credits_ScrollBackgrounds, TASK_PASS_VBLANK);
   // Each layer owns its map, tiles and palette half.
   Io_Write16(DISPCNT_OBJ_1D_MAP, &REG_DISPCNT);
-  Credits_BuildBackgroundTilemap((u32 *)BG_SCREEN_BLOCK(15));
-  Credits_BuildBackgroundTilemap((u32 *)BG_SCREEN_BLOCK(31));
+  Credits_BuildBackgroundTilemap(
+      (u32 *)BG_SCREEN_BLOCK(CREDITS_BG3_SCREEN_BLOCK));
+  Credits_BuildBackgroundTilemap(
+      (u32 *)BG_SCREEN_BLOCK(CREDITS_BG2_SCREEN_BLOCK));
   Credits_ClearBuffer(0);
   Credits_ClearBuffer(1);
   Io_Write16(BGCNT_PRIORITY(2) | BGCNT_CHAR_BASE(2) | BGCNT_256_COLORS |
-                 BGCNT_SCREEN_BASE(31),
+                 BGCNT_SCREEN_BASE(CREDITS_BG2_SCREEN_BLOCK),
              &REG_BG2CNT);
-  Io_Write16(BGCNT_PRIORITY(3) | BGCNT_256_COLORS | BGCNT_SCREEN_BASE(15),
+  Io_Write16(BGCNT_PRIORITY(3) | BGCNT_256_COLORS |
+                 BGCNT_SCREEN_BASE(CREDITS_BG3_SCREEN_BLOCK),
              &REG_BG3CNT);
   Io_Write16(DISPCNT_OBJ_1D_MAP | DISPCNT_BG2_ON | DISPCNT_BG3_ON |
                  DISPCNT_OBJ_ON,
@@ -927,14 +963,15 @@ void Credits_UpdateTextSprites(void) {
   u32 *oamWords = (u32 *)(SCROLL_OBJECTS + CREDITS_BORDER_SPRITES);
   s32 row;
 
-  // Sixteen rows of six 32x8 sprites from y 16 and x 24, raised by the
-  // scroll within a line, showing the ring from the line at the top.
+  // Sixteen rows of six 32x8 sprites from CREDITS_TEXT_TOP and
+  // CREDITS_TEXT_LEFT, raised by the scroll within a line, showing the ring
+  // from the line at the top.
   for (row = 0; row < CREDITS_VISIBLE_ROWS; row++) {
     s32 column;
 
     for (column = 0; column < CREDITS_COLUMNS; column++) {
-      *oamWords++ = (row * 8 + 16 - scrollWithinTile) |
-                    OBJ_X(column * 32 + 24) | OBJ_SIZE_32X8;
+      *oamWords++ = (row * 8 + CREDITS_TEXT_TOP - scrollWithinTile) |
+                    OBJ_X(column * 32 + CREDITS_TEXT_LEFT) | OBJ_SIZE_32X8;
       *oamWords++ = tileIndex;
       tileIndex += 4;
       if (tileIndex == CREDITS_RING_TILES)
@@ -960,11 +997,8 @@ void Credits_DrawEnteringLine(void) {
     if ((s16)gCreditsScrollPosition / 8 != CREDITS_LAST_LINE_POSITION / 8) {
       lineIndex = (s16)gCreditsScrollPosition / 8;
       CREDITS_LAST_LINE_POSITION = scrollPosition;
-      CREDITS_END_OF_TEXT = Credits_DrawLine(
-          gCredits_Lines[lineIndex],
-          ((lineIndex + CREDITS_VISIBLE_ROWS) & (CREDITS_RING_ROWS - 1)) *
-              CREDITS_LINE_TILES,
-          1);
+      CREDITS_END_OF_TEXT = Credits_DrawLine(gCredits_Lines[lineIndex],
+                                             CREDITS_RING_LINE(lineIndex), 1);
     }
   }
 }
@@ -983,23 +1017,24 @@ void Credits_InitTextSprites(void) {
   // rows at the top and bottom of the window.
   Dma_Fill32Cell(dmaFill, 0, (void *)OBJ_VRAM0, CREDITS_RING_BYTES);
   Dma_Fill32Cell(dmaFill, PIXELS_4BPP(1),
-                 (void *)(OBJ_VRAM0 + CREDITS_RING_BYTES), 256);
+                 (void *)(OBJ_VRAM0 + CREDITS_RING_BYTES),
+                 CREDITS_BORDER_TILE_BYTES);
 
   // OAM attributes 0 and 1 share the first word; attribute 2 is the second.
   oamWords = (u32 *)SCROLL_OBJECTS;
+  // Here row counts the sprites across, 32 pixels apart.
   for (row = 0; row < 8; row++) {
-    *oamWords++ = (row << 21) | OBJ_SIZE_32X16;
-    // Here row counts the sprites across, 32 pixels apart (row << 21 is x).
+    *oamWords++ = OBJ_X(row * 32) | OBJ_SIZE_32X16;
     *oamWords++ = CREDITS_RING_TILES;
   }
   // The bottom strip: eight 32x16 sprites at y 136 and eight 32x8 at y 152,
   // over y 136 to 159.
   for (row = 0; row < 8; row++) {
-    *oamWords++ = (row << 21) | 136 | OBJ_SIZE_32X16;
+    *oamWords++ = OBJ_X(row * 32) | 136 | OBJ_SIZE_32X16;
     *oamWords++ = CREDITS_RING_TILES;
   }
   for (row = 0; row < 8; row++) {
-    *oamWords++ = (row << 21) | 152 | OBJ_SIZE_32X8;
+    *oamWords++ = OBJ_X(row * 32) | 152 | OBJ_SIZE_32X8;
     *oamWords++ = CREDITS_RING_TILES;
   }
   // The text sprites, as Credits_UpdateTextSprites rebuilds them each
@@ -1007,13 +1042,14 @@ void Credits_InitTextSprites(void) {
   for (row = 0; row < CREDITS_VISIBLE_ROWS; row++) {
     for (column = 0; column < CREDITS_COLUMNS; column++) {
       u32 tileIndex = (row * 3) * 8 + column * 4;
-      *oamWords++ = (row * 8 + 16) | OBJ_X(column * 32 + 24) | OBJ_SIZE_32X8;
+      *oamWords++ = (row * 8 + CREDITS_TEXT_TOP) |
+                    OBJ_X(column * 32 + CREDITS_TEXT_LEFT) | OBJ_SIZE_32X8;
       *oamWords++ = tileIndex;
     }
   }
   // The last eight entries are parked off screen.
   for (row = 0; row < 8; row++) {
-    *oamWords++ = OBJ_X(192) | 192;
+    *oamWords++ = OBJ_X(CREDITS_PARKED) | CREDITS_PARKED;
     *oamWords++ = CREDITS_RING_TILES;
   }
   gCreditsScrollPosition = 0;
@@ -1099,8 +1135,8 @@ s32 Credits_DrawLine(const u8 *text, s32 firstTile, s32 alignment) {
         glyphMask = 0x80;
         for (columnIndex = 0; columnIndex < 8; columnIndex++) {
           if (glyphBits & glyphMask) {
-            destination[CREDITS_RASTER_STRIDE + 1] = 1;
-            destination[0] = 15;
+            destination[CREDITS_RASTER_STRIDE + 1] = CREDITS_SHADOW_COLOR;
+            destination[0] = CREDITS_TEXT_COLOR;
           }
           destination++;
           glyphMask >>= 1;

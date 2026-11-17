@@ -121,7 +121,6 @@ void FieldPsynergy_Douse(void) {
   s32 count;
   struct Actor *orb;
   s32 raised;
-  struct Vector3 *from;
   s32 i;
   s32 steps = 11;
   s32 y;
@@ -139,8 +138,7 @@ void FieldPsynergy_Douse(void) {
     work->z = target->z.fixed;
     Vector_AddPolarOffset(toFIXED(16), work->angle, (struct Vector3 *)&work->x);
   }
-  from = &start;
-  SET_POSITION(from, target->x.fixed, target->y.fixed + toFIXED(16),
+  SET_POSITION(&start, target->x.fixed, target->y.fixed + toFIXED(16),
                target->z.fixed);
   end.x = work->x;
   y = work->y;

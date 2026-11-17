@@ -815,27 +815,25 @@ void FieldPsynergy_GrowthOnTarget(s32 unused) {
     wait(40);
   } else if (kind == 1) {
     struct BurstParticleVector position;
-    struct BurstParticleVector *p = &position;
-    s32 n = 4;
+    s32 n;
 
-    do {
+    for (n = 0; n < 5; n++) {
       struct Actor *piece;
       FIXED distance;
 
-      p->values[0] = scene->x;
-      p->values[2] = scene->z;
+      position.values[0] = scene->x;
+      position.values[2] = scene->z;
       distance = Random16() * 6 + toFIXED(4);
-      Vector_AddPolarOffset(distance, Random16(), p->values);
-      p->values[1] = scene->y;
-      piece = Actor_Spawn(BURST_FALL_OBJECT, p->values[0], p->values[1],
-                          p->values[2]);
+      Vector_AddPolarOffset(distance, Random16(), position.values);
+      position.values[1] = scene->y;
+      piece = Actor_Spawn(BURST_FALL_OBJECT, position.values[0],
+                          position.values[1], position.values[2]);
       if (piece != 0) {
         Actor_StartScriptFar(piece, gFieldEffect_HeavyImpactScript);
         piece->motionFlags = ACTOR_FALLS;
       }
       wait((Random_Below(2)) + 2);
-      n--;
-    } while (n >= 0);
+    }
     HangingVine_Hang(scene->secondActorId, 1);
   } else {
     wait(10);
@@ -850,30 +848,27 @@ void FieldPsynergy_GrowthOnTarget(s32 unused) {
 void FieldPsynergy_Growth(void) {
   struct FieldEffectWork *state = Ram_HeapSlots->fieldEffectWork;
   struct BurstParticleVector position;
-  struct BurstParticleVector *p;
   s32 entryCount;
 
   FieldEffect_SpawnBurstParticleField();
   Sound_PlayFar(SE_HEAVY_IMPACT);
-  p = &position;
-  entryCount = 4;
-  do {
+  for (entryCount = 0; entryCount < 5; entryCount++) {
     void *object;
     s32 randomValue;
 
-    p->values[0] = state->x;
-    p->values[2] = state->z;
+    position.values[0] = state->x;
+    position.values[2] = state->z;
     randomValue = (Random16() * 6) + toFIXED(4);
-    Vector_AddPolarOffset(randomValue, Random16(), p->values);
-    p->values[1] = state->y;
-    object = Actor_Spawn(SPRITE_VINE, p->values[0], p->values[1], p->values[2]);
+    Vector_AddPolarOffset(randomValue, Random16(), position.values);
+    position.values[1] = state->y;
+    object = Actor_Spawn(SPRITE_VINE, position.values[0], position.values[1],
+                         position.values[2]);
     if (object != 0) {
       Actor_StartScriptFar(object, gFieldEffect_HeavyImpactScript);
       ((struct Actor *)object)->motionFlags = ACTOR_FALLS;
     }
     wait((Random_Below(2)) + 2);
-    entryCount--;
-  } while (entryCount >= 0);
+  }
   wait(30);
   FieldPsynergy_FadeFromCastColor();
 }
@@ -1408,7 +1403,6 @@ void FieldPsynergy_FrostOnTarget(s32 unused) {
 /// orbiting particles' main update and runs its pending event.
 void FieldPsynergy_Frost(void) {
   struct Vector3 pos;
-  struct Vector3 *p;
   struct FieldEffectWork *scene;
   struct Actor *target;
   struct Actor *particle;
@@ -1419,10 +1413,7 @@ void FieldPsynergy_Frost(void) {
   target = scene->child;
   FieldPsynergy_FadeToCastColor();
   Sound_PlayFar(SE_ICE);
-
-  p = &pos;
-  cnt = 15;
-  do {
+  for (cnt = 0; cnt < 16; cnt++) {
     particle = Actor_Spawn(SPRITE_SNOWFLAKE, 0, 0, 0);
     if (particle != NULL) {
       u32 scale;
@@ -1444,17 +1435,16 @@ void FieldPsynergy_Frost(void) {
       Actor_SetSpriteColorModeFar((struct Actor *)particle,
                                   SPRITE_COLOR_BLUE_TINT);
 
-      SET_POSITION(p, scene->x, scene->y, scene->z);
+      SET_POSITION(&pos, scene->x, scene->y, scene->z);
       dist = (Random16() << 2) + toFIXED(2);
-      Vector_AddPolarOffset(dist, Random16(), p);
-      particle->targetX = p->x;
-      particle->targetY = p->y;
-      particle->targetZ = p->z;
+      Vector_AddPolarOffset(dist, Random16(), &pos);
+      particle->targetX = pos.x;
+      particle->targetY = pos.y;
+      particle->targetZ = pos.z;
     }
 
     wait(3);
-    cnt--;
-  } while (cnt >= 0);
+  }
 
   wait(10);
   Sound_PlayFar(SE_ICE);
@@ -1463,14 +1453,12 @@ void FieldPsynergy_Frost(void) {
   if (target != NULL && scene->enabled == 0) {
     Sound_PlayFar(SE_POWER_UP);
 
-    cnt = 7;
-    do {
+    for (cnt = 0; cnt < 8; cnt++) {
       Actor_SetSpriteColorModeFar((struct Actor *)target, SPRITE_COLOR_WHITE);
       wait(1);
       Actor_SetSpriteColorModeFar((struct Actor *)target, SPRITE_COLOR_NORMAL);
       wait(4);
-      cnt--;
-    } while (cnt >= 0);
+    }
 
     if (scene->childOption == 0) {
       Sound_PlayFar(SE_SHIMMER);

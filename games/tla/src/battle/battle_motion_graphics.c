@@ -765,30 +765,25 @@ s32 BattleStaging_RunPsynergyCast(struct BattlePlan *plan, s32 mode) {
 /// Flashes a unit as it is hit, white and back twice in its damage pose.
 void BattleMotion_FlashHit(s32 id, s32 unusedA, s32 unusedB) {
   u16 selection[2];
-  u16 *selected;
   s32 target;
   s32 remaining;
 
   Unit_Get(id);
   Actor_SelectAnimationFar(BattleObject_Get(id)->object, POSE_DAMAGE);
-
-  selected = selection;
-  remaining = 1;
-  do {
+  for (remaining = 0; remaining < 2; remaining++) {
     target = BATTLE_UNIT_LIST_END;
-    selected[1] = target;
-    selected[0] = id;
-    PartyStatus_HighlightMembersFar(selected);
+    selection[1] = target;
+    selection[0] = id;
+    PartyStatus_HighlightMembersFar(selection);
     BattleObject_SetColorMode(BattleObject_Get(id)->object, SPRITE_COLOR_WHITE);
     wait(2);
 
-    selected[0] = id;
-    PartyStatus_HighlightMembersFar(selected);
+    selection[0] = id;
+    PartyStatus_HighlightMembersFar(selection);
     BattleObject_SetColorMode(BattleObject_Get(id)->object,
                               BattleMotion_GetSlotPalette(id));
     wait(2);
-    remaining--;
-  } while (remaining >= 0);
+  }
 
   PartyStatus_DrawFar(Ram_HeapSlots->battleWork->partyStatus);
 }

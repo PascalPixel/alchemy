@@ -93,12 +93,15 @@ struct SelectionScreen {
   /// The entry under the hand, from top; SELECTION_CURSOR_RESET asks the next
   /// list to start again from its first entry.
   u16 cursorIndex;
-  u16 verticalScroll; ///< pixels added to the icons' y
-  u16 status;         ///< 1 shown, 33 while scrolling
-  u16 pathTop[5];     ///< top, kept for each icon chosen on the path
-  u16 pathCursor[5];  ///< cursorIndex, kept for each icon chosen on the path
-  /// 1 from Menu_RunSelectionForValue, 999 once the window opens. While 0,
-  /// a mode 6 window opens at the top of the screen.
+  u16 verticalScroll; ///< pixels added to the icons' y; 32 at setup
+  /// NODE_STATUS_SCROLLING while the cursor steps, NODE_STATUS_SHOWN after
+  /// (window_selection.c); each frame drawn adds 1.
+  u16 status;
+  u16 pathTop[5];    ///< top, kept for each icon chosen on the path
+  u16 pathCursor[5]; ///< cursorIndex, kept for each icon chosen on the path
+  /// 999 from setup and once a yes or no window opens, 1 from
+  /// Menu_RunSelectionForValue. Nothing sets 0, which would open a yes or no
+  /// row and its window at the top of the screen.
   u16 locked;
   u8 unused[42]; ///< no code names it
 };
@@ -117,7 +120,7 @@ STATIC_ASSERT(offsetof(struct SelectionScreen, cursorIndex) == 926);
 STATIC_ASSERT(offsetof(struct SelectionScreen, locked) == 952);
 STATIC_ASSERT(sizeof(struct SelectionScreen) == 996);
 
-/// The bit of SelectionMenuWork.cursorIndex set as an entry is chosen, on
+/// The bit of SelectionScreen.cursorIndex set as an entry is chosen, on
 /// which SelectionMenu_Clear puts the next list's top and cursor back to its
 /// first entry.
 #define SELECTION_CURSOR_RESET 0x80

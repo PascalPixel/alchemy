@@ -361,14 +361,14 @@
 #define FLAG_LAMA_TEMPLE_WATER_OF_LIFE 0xf7a
 
 // Altin
-/// The water beast spitting at Altin's houses has stopped as the party came
+/// The water beast spewing at Altin's houses has stopped as the party came
 /// near and hopped away into the flood for good; Altin's setup then removes
 /// it.
 #define FLAG_ALTIN_WATER_BEAST_LEFT 0x8ff
-/// Altin's stone pillar stands in column 22, where Move pushes it. Checked
-/// after every Move (Altin_CheckPillarMoved), which clears it if the pillar
-/// is anywhere else; the setup puts the pillar back there while it is set.
-#define FLAG_ALTIN_PILLAR_MOVED 0x906
+/// Altin's stone statue stands in column 22, where Move pushes it. Checked
+/// after every Move (Altin_CheckStatueMoved), which clears it if the statue
+/// is anywhere else; the setup puts the statue back there while it is set.
+#define FLAG_ALTIN_STATUE_MOVED 0x906
 /// A barrel in the houses.
 #define FLAG_ALTIN_NUT 0xf73
 /// A barrel in the houses.

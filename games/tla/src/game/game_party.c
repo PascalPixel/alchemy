@@ -19,6 +19,10 @@
 #define NAME_LETTER_COUNT 9
 #endif
 
+/// The highest enemy id a battle unit takes; an id past the table's rows takes
+/// its first row.
+#define ENEMY_ID_MAX 1000
+
 /// Fills a battle unit with an enemy: its stats, its name with its letter, its
 /// items, rewards and elements. A Djinni fought is put on the party's side
 /// (README.md, "The unit"). Returns 0 for an id out of range.
@@ -38,7 +42,7 @@ s32 BattleUnit_Set(s32 unitId, s32 enemyId, s32 letter) {
   // seventh enemy unit and gives NULL. No caller passes it.
   if (unitId > FIRST_ENEMY_UNIT + 6)
     return 0;
-  if (index > 992)
+  if (index > ENEMY_ID_MAX - ENEMY_ID_FIRST)
     return 0;
   unit = Unit_Get(unitId);
   {
@@ -75,7 +79,7 @@ s32 BattleUnit_Set(s32 unitId, s32 enemyId, s32 letter) {
   unit->name[i] = 0;
   unit->name[UNIT_NAME_SIZE - 1] = 0;
   count = 0;
-  for (i = 0; i < 4; i++) {
+  for (i = 0; i < (s32)ARRAY_COUNT(enemy->items); i++) {
     if (enemy->items[i] != 0) {
       for (copy = 0; copy < enemy->counts[i]; copy++) {
         if (count < INVENTORY_SLOTS)

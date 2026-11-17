@@ -22,7 +22,13 @@ struct TrialRoadState {
 
 extern u8 gInventorySnapshot[];
 
-#define gTrialRoadState ((struct TrialRoadState *)(gInventorySnapshot + 0x88))
+/// gTrialRoadState's place in gInventorySnapshot, past what
+/// InventorySnapshot_Save keeps of Felix's party: the sentinel, the four
+/// inventories, the shortcuts and the party order.
+#define INVENTORY_SNAPSHOT_TRIAL_ROAD 136
+#define gTrialRoadState                                                        \
+  ((struct TrialRoadState *)(gInventorySnapshot +                              \
+                             INVENTORY_SNAPSHOT_TRIAL_ROAD))
 
 s32 Map_GetTerrainHeight(s32 layer, s32 x, s32 z);
 

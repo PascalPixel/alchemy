@@ -185,30 +185,26 @@ extern u16 gSerialExchangeActive;
 /// The data a block send reads from, 0 when none is under way
 /// (Serial_StartSend).
 extern s32 gSerialSendSource;
-// volatile: Serial_StartSend sets it while Serial_StepBlockTransfer, which the
-// VBlank handler runs, counts it down, so it is no device.
-/// Bytes of the block send still to go.
+/// Bytes of the block send still to go: Serial_StartSend sets it and
+/// Serial_StepBlockTransfer, which the VBlank handler runs, counts it down.
 extern volatile u16 gSerialSendSize;
 /// Where a block receive writes, 0 when none is under way
 /// (Serial_StartReceive).
 extern s32 gSerialReceiveDestination;
-// volatile: Serial_StepBlockTransfer, which the VBlank handler runs, counts it
-// up while the link code outside the interrupt polls it, so it is no device.
-/// Bytes of the block receive taken so far.
+/// Bytes of the block receive taken so far: Serial_StepBlockTransfer, which the
+/// VBlank handler runs, counts it up while the link code polls it.
 extern volatile u16 gSerialReceivedSize;
 /// Each console's SerialTransferState as last received, 24 bytes each.
 extern u8 gSerialPeerPayloads[4][24];
-// volatile: Serial_StartSend and Serial_StartReceive reset it while
-// Serial_StepBlockTransfer, which the VBlank handler runs, steps it, so it is
-// no device.
-/// The block this console sends or expects next (SERIAL_BLOCK_NUMBER_MASK).
+/// The block this console sends or expects next (SERIAL_BLOCK_NUMBER_MASK):
+/// Serial_StartSend and Serial_StartReceive reset it and
+/// Serial_StepBlockTransfer, which the VBlank handler runs, steps it.
 extern volatile u8 gSerialBlockNumber;
 /// Cleared by Serial_Initialize and by LinkLobby_ExchangePartyRecords;
 /// nothing reads it.
 extern u8 gLinkExchangeState;
-// volatile: the VBlank handler writes it while Serial_WaitForStatusMask and the
-// link screens poll it, so it is no device.
-/// Link status, updated by the VBlank exchange handler.
+/// Link status, written by the VBlank exchange handler while
+/// Serial_WaitForStatusMask and the link screens poll it.
 extern volatile u16 gLinkStatus;
 
 static inline s32 Serial_AddErrorFlag(s32 status) {

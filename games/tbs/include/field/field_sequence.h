@@ -159,6 +159,11 @@ void FieldPsynergy_Carry(void);
 /// The 16.16 coordinate of the middle of a map grid cell.
 #define FIELD_CELL_CENTER(cell) (FIELD_CELL_ORIGIN(cell) + toFIXED(8))
 
+/// Where a field Psynergy or item use (FieldWork.psynergy and FieldWork.item)
+/// keeps the party member who uses it: bits 13 to 10, above the Psynergy or
+/// item.
+#define ACT_UNIT_SHIFT 10
+
 //--------------------------------------------------------------------------
 // The map's treasure spots (chests and Psynergy Stones)
 //--------------------------------------------------------------------------

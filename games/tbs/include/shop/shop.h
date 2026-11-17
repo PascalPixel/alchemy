@@ -119,6 +119,16 @@ s32 Shop_AskYesNo(s32 choice);
 s32 Sanctum_AskYesNo(s32 choice);
 struct SelectionNodeLinkView *
 NodeChain_GetNodeAtIndex(struct SelectionMenuCursorView *state);
+/// The quantity bar's colours (QuantityBar_Fill), painted over each other
+/// longest first: past what can be chosen, what can be chosen, the number
+/// chosen and what is held already. Each segment is a black pixel and a pixel
+/// of its colour, in the window sprites' palette.
+enum QuantityBarColor {
+  QUANTITY_BAR_CHOOSABLE = 0,     ///< clear, the window showing through
+  QUANTITY_BAR_HELD = 2,          ///< red
+  QUANTITY_BAR_CHOSEN = 10,       ///< orange
+  QUANTITY_BAR_OUT_OF_REACH = 14, ///< grey
+};
 void QuantityBar_Fill(s32 itemCount, s32 paletteSelector, u8 *tileBuffer);
 void Shop_CopyGlyphs(s32 digit, u8 *tileBuffer, u32 digitPosition);
 struct WindowSprite *Shop_CreatePriceSprite(s32 value, struct Window *window,

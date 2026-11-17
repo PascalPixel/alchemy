@@ -217,6 +217,7 @@ enum SoundId {
   MUS_JINGLE_MEDIUM,
   /// Lucky Dice's, Lucky Wheels' and Contigo's largest prize.
   MUS_JINGLE_LARGE,
+  /// MUS_SILENCE's song of no tracks, on the jingle player; nothing plays it.
   MUS_095 = 95,
   SE_BELL = 100,
   SE_SHOP_PURCHASE,
@@ -566,6 +567,8 @@ enum SoundId {
   /// Time's waves starting and the sea opening.
   SE_RISE_WITH_SPARKS_LOW,
   SE_558,
+  /// SE_620 an octave lower on SE_ICE_CRACK's voice, with four notes more;
+  /// nothing plays it.
   SE_559,
   /// A doorway of Mars Lighthouse's dragon-statue room flashing as it is
   /// stepped toward.
@@ -657,6 +660,8 @@ enum SoundId {
   SE_SPIN_AWAY,
   /// SE_SPIN_AWAY's first track alone, two octaves higher; nothing plays it.
   SE_613,
+  /// SE_613's rhythm on its voice, six of its eleven notes changed, at tempo
+  /// 32; nothing plays it.
   SE_614,
   SE_615,
   /// SE_WHIRLWIND an octave lower; nothing plays it.

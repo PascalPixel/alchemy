@@ -1378,8 +1378,9 @@ struct MeshVertex;
 #define COATLICUE_CLOUD_BUBBLES 80
 #define COATLICUE_STREAM_BUBBLES 24
 /// A bubble of the cloud is drawn at its kind's own picture at this depth,
-/// six pictures smaller for every 50 deeper.
+/// six pictures smaller for every COATLICUE_CLOUD_DEPTH_STEP deeper.
 #define COATLICUE_CLOUD_NEAR_DEPTH 228
+#define COATLICUE_CLOUD_DEPTH_STEP 50
 /// The bursts, columns of bubbles rising from the floor, each frame in
 /// gCoatlicue_BurstFrames, in the work's particles.
 #define COATLICUE_BURSTS 9
@@ -1851,6 +1852,7 @@ void BattleEffect_RunCoatlicue(struct BattleEffectParams *args) {
         Matrix_RotateY(TRIG_TURN);
         Matrix_RotateX(DEGtoANG(180));
       } else if (frame > 453) {
+        // A 64th of a turn a frame, rocking as it turns.
         s32 a = (frame - 454) << 10;
 
         Matrix_RotateY(a);
@@ -1871,6 +1873,8 @@ void BattleEffect_RunCoatlicue(struct BattleEffectParams *args) {
                        INTtoFIXED(Random16() % 160 + 48),
                        INTtoFIXED(Random16() % 160 - 80));
           p->velocityX = zero;
+          // Each rises half a pixel to a pixel and a half a frame, and a
+          // pixel more for the first kind, half as much for each after.
           p->velocityY =
               (-((Random16() & 63) + 32) << 10) - (1 << (16 - p->variant));
           p->velocityZ = Random16();
@@ -1898,7 +1902,8 @@ void BattleEffect_RunCoatlicue(struct BattleEffectParams *args) {
           q = &pos;
           EffectPosition_ProjectPoint(p, q);
           q->depth = FIXED_INTEGER_PART(q->depth) - COATLICUE_CLOUD_NEAR_DEPTH;
-          n = q->depth * 6 / 50 + gCoatlicue_PictureBias[p->variant];
+          n = q->depth * 6 / COATLICUE_CLOUD_DEPTH_STEP +
+              gCoatlicue_PictureBias[p->variant];
           if (n < 0) {
             n = 0;
           }
@@ -2091,6 +2096,7 @@ void BattleEffect_RunCoatlicue(struct BattleEffectParams *args) {
             if (i > 1) {
               s32 ty = -toFIXED(44);
 
+              // From frame 540 they move off with her, 16 pixels a frame.
               if (frame > 539) {
                 ty += (frame - 539) << 20;
               }
@@ -2161,6 +2167,7 @@ void BattleEffect_RunCoatlicue(struct BattleEffectParams *args) {
             model->kind = MODEL_SHADED_MAX;
             model->shade = sh;
             Matrix_Initialize();
+            // From frame 540 it moves off with her, 16 pixels a frame.
             if (frame > 539) {
               ty = ((frame - 539) << 20) - toFIXED(44);
             }

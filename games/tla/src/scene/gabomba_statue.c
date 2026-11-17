@@ -163,7 +163,7 @@ enum GabombaStatueArrowCellBehavior {
 /// Pounded, and the offering's clock run out.
 enum {
   RAISED_COGS_TURN_BACK = 200,
-  RAISED_PILLAR_CHIMES = 200,
+  RAISED_PILLAR_STANDS_UP = 200,
   RAISED_OFFERING_HEARD = 201
 };
 #include "graphics/palette_buffers.h"
@@ -1384,11 +1384,12 @@ void Actor_SetAnimationSpeed(struct Actor *actor, s32 value);
 void GabombaStatue_PoundGreyPillar(s32 value) {
   GabombaStatue_RaiseTiles(value);
   if (value == 1)
-    gFieldWork->raisedTrigger = RAISED_PILLAR_CHIMES;
+    gFieldWork->raisedTrigger = RAISED_PILLAR_STANDS_UP;
 }
 
-/// The grey pillar chimes as the blocks rise.
-void GabombaStatue_PillarChimes(void) {
+/// Once the blocks have risen, the Pounded grey pillar stands up again to a
+/// rising chime.
+void GabombaStatue_PillarStandsUp(void) {
   struct Actor *actor = Actor_Get(ACTOR_GREY_PILLAR);
 
   Event_Start();
@@ -2503,7 +2504,7 @@ s32 GabombaStatue_IsCellTaken(u32 x, u32 z) {
   }
 }
 /// Whether a cell beside channel cell (x, z) is taken.
-s32 GabombaStatue_HasTakenNeighbour(s32 x, s32 z) {
+s32 GabombaStatue_HasTakenNeighbor(s32 x, s32 z) {
   s32 found;
 
   if (GabombaStatue_IsCellTaken(x, z - 1) ||
@@ -2634,7 +2635,7 @@ retry:
   for (tries = 1; tries <= CHANNEL_CELLS; tries++) {
     col = Random_Below(CHANNEL_COLUMNS);
     row = (Random_Below(3)) + 5;
-    if (GabombaStatue_HasTakenNeighbour(col, row) == 0) {
+    if (GabombaStatue_HasTakenNeighbor(col, row) == 0) {
       piece = state->cells[row][col].kind;
       if ((u32)(piece - PIECE_NORTH_SOUTH) <= 1) {
         paths = state->cells[row][col].state;
@@ -2653,7 +2654,7 @@ retry:
     for (tries = 1; tries <= CHANNEL_CELLS; tries++) {
       col = Random_Below(CHANNEL_COLUMNS);
       row = Random_Below(CHANNEL_ROWS);
-      if (GabombaStatue_HasTakenNeighbour(col, row) == 0) {
+      if (GabombaStatue_HasTakenNeighbor(col, row) == 0) {
         piece = state->cells[row][col].kind;
         if (piece == PIECE_CROSSING ||
             piece == PIECE_EAST_SOUTH_AND_WEST_NORTH ||
@@ -2684,7 +2685,7 @@ retry:
   for (tries = 1; tries <= CHANNEL_CELLS; tries++) {
     col = Random_Below(CHANNEL_COLUMNS);
     row = Random_Below(CHANNEL_ROWS);
-    if (GabombaStatue_HasTakenNeighbour(col, row) == 0) {
+    if (GabombaStatue_HasTakenNeighbor(col, row) == 0) {
       piece = state->cells[row][col].kind;
       if (piece == PIECE_EAST_SOUTH || piece == PIECE_WEST_NORTH ||
           piece == PIECE_SOUTH_WEST || piece == PIECE_NORTH_EAST) {
@@ -2698,7 +2699,7 @@ retry:
     for (tries = 1; tries <= CHANNEL_CELLS; tries++) {
       col = Random_Below(CHANNEL_COLUMNS);
       row = Random_Below(CHANNEL_ROWS);
-      if (GabombaStatue_HasTakenNeighbour(col, row) == 0) {
+      if (GabombaStatue_HasTakenNeighbor(col, row) == 0) {
         piece = state->cells[row][col].kind;
         if ((u32)(piece - PIECE_NORTH_SOUTH) <= 1) {
           state->cells[row][col].occupied = BLOCK_IN_PLACE;
@@ -3764,7 +3765,7 @@ void GabombaStatue_LashRope(void);
 void GabombaStatue_RideTurntable(void);
 void GabombaStatue_StepIntoSecondSteelHole(void);
 void GabombaStatue_StepIntoThirdTurntableHole(void);
-void GabombaStatue_PillarChimes(void);
+void GabombaStatue_PillarStandsUp(void);
 
 // clang-format off
 /// Unused: gGabombaStatue_TurnedPieces from its second byte.
@@ -4244,7 +4245,7 @@ LATE_DATA struct Trigger gGabombaStatue_ArrowsTriggers[] = {
     {TRIGGER_STEP, CELL_BEHAVIOR_RIGHT_ARROW, CONDITION_ALWAYS, EVENT(GabombaStatue_RaiseArrowB)},
     {TRIGGER_RAISED, RAISED_OFFERING_HEARD, FLAG_OFFERING_HEARD, EVENT(GabombaStatue_HearTheOffering)},
     {PSYNERGY_PHASE_ON_ACTOR(ABILITY_POUND, PSYNERGY_PHASE_ACTS), ACTOR_GREY_PILLAR, FLAG_GABOMBA_RESPONDED, EVENT(GabombaStatue_PoundGreyPillar)},
-    {TRIGGER_RAISED, RAISED_PILLAR_CHIMES, CONDITION_ALWAYS, EVENT(GabombaStatue_PillarChimes)},
+    {TRIGGER_RAISED, RAISED_PILLAR_STANDS_UP, CONDITION_ALWAYS, EVENT(GabombaStatue_PillarStandsUp)},
     {PSYNERGY_PHASE_ON_ACTOR(ABILITY_POUND, PSYNERGY_PHASE_ACTS), ACTOR_BLOCK_A, CONDITION_ALWAYS, EVENT(GabombaStatue_PoundTile)},
     {PSYNERGY_PHASE_ON_ACTOR(ABILITY_POUND, PSYNERGY_PHASE_ACTS), ACTOR_BLOCK_B, CONDITION_ALWAYS, EVENT(GabombaStatue_PoundTile)},
     {PSYNERGY_PHASE_ON_ACTOR(ABILITY_POUND, PSYNERGY_PHASE_ACTS), ACTOR_BLOCK_C, CONDITION_ALWAYS, EVENT(GabombaStatue_PoundTile)},

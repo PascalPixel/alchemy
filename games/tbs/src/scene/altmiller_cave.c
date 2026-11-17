@@ -236,6 +236,19 @@ enum {
   WHEEL_STOPPED = 99
 };
 
+/// The ring's speeds, in angle a frame. It speeds up by WHEEL_SPEED_STEP a
+/// frame to WHEEL_TOP_SPEED and slows by half a step a frame to
+/// WHEEL_LOW_SPEED, then stops on the chosen light once it is within a frame's
+/// turn of the top.
+enum {
+  WHEEL_SPEED_STEP = TRIG_TURN / 4096,
+  WHEEL_TOP_SPEED = TRIG_TURN * 3 / 64,
+  WHEEL_LOW_SPEED = TRIG_TURN * 3 / 256
+};
+
+/// The pieces the wall bursts into (AltmillerCave_ReleaseWallBurst).
+enum { WALL_BURST_PIECES = 24 };
+
 /// The cave's own state, bytes of gSceneLocalState: AltmillerCaveDraught's
 /// rock puzzle and AltmillerCaveEntrance's darkness.
 enum {
@@ -605,8 +618,8 @@ static void AltmillerCave_SpinLights(void) {
   s32 phase = wheel->phase;
 
   if (phase == WHEEL_SPEEDING_UP) {
-    wheel->speed += 16;
-    if (wheel->speed > TRIG_TURN * 3 / 64 - 1) {
+    wheel->speed += WHEEL_SPEED_STEP;
+    if (wheel->speed > WHEEL_TOP_SPEED - 1) {
       wheel->phase++;
       wheel->frames = 0;
     }
@@ -615,16 +628,19 @@ static void AltmillerCave_SpinLights(void) {
       wheel->phase++;
     }
   } else if (phase == WHEEL_SLOWING) {
-    wheel->speed -= 8;
-    if (wheel->speed <= TRIG_TURN * 3 / 256 - 1) {
+    wheel->speed -= WHEEL_SPEED_STEP / 2;
+    if (wheel->speed <= WHEEL_LOW_SPEED - 1) {
       wheel->phase++;
     }
   } else if (phase == WHEEL_STOPPING) {
     s32 chosenLight = CAVE_SIGNED_STATE(CAVE_CHOSEN_LIGHT);
     s32 chosenAngle = Math_Divide(chosenLight * FIXED_ONE, 5);
 
+    // The angle from the chosen light to the top, as a halfword, within
+    // WHEEL_LOW_SPEED - 1 either way.
     if ((u32)(((wheel->angle - chosenAngle) << 16) +
-              ((767 - DEGtoANG(90)) << 16)) <= (2 * 767) << 16) {
+              ((WHEEL_LOW_SPEED - 1 - DEGtoANG(90)) << 16)) <=
+        (2 * (WHEEL_LOW_SPEED - 1)) << 16) {
       wheel->angle = chosenAngle + DEGtoANG(90);
       wheel->phase = WHEEL_STOPPED;
       wheel->speed = 0;
@@ -778,13 +794,13 @@ static void AltmillerCave_TurnRock(s32 rock) {
       do {
         for (i = 0; i < LIGHT_COUNT; i++) {
           actor = Actor_Get(ACTOR_FIRST_LIGHT + i);
-          actor->scaleX -= 16;
-          actor->scaleY -= 16;
+          actor->scaleX -= FIXED_ONE / 4096;
+          actor->scaleY -= FIXED_ONE / 4096;
           AltmillerCave_PlaceLight(ACTOR_FIRST_LIGHT + i, radius, angle);
           angle -= DEGtoANG(72);
         }
         radius -= toFIXED(1) / 5;
-        angle += TRIG_TURN * 3 / 64;
+        angle += WHEEL_TOP_SPEED;
         wait(1);
       } while (radius > 0);
       for (i = 0; i < LIGHT_COUNT; i++) {
@@ -1126,7 +1142,7 @@ static void AltmillerCave_RestoreBabiAndInviteParty(void) {
   // widens to fill the screen and BG1 fades out.
   state = gScreenTransitionWork;
   state->value = ALTMILLER_CAVE_LIGHT_FULL;
-  for (eva = 0, evb = 16; eva <= 16; eva++, evb--) {
+  for (eva = 0, evb = BLEND_WEIGHT_MAX; eva <= BLEND_WEIGHT_MAX; eva++, evb--) {
     Io_Write16(ALTMILLER_CAVE_DARKNESS_BLEND, &REG_BLDCNT);
     REG_BLDALPHA = BLEND_ALPHA(evb, eva);
     wait(7);
@@ -1433,7 +1449,7 @@ static void AltmillerCave_RestoreBabiAndInviteParty(void) {
   Event_Wait(20);
   // With Babi gone the darkness returns: BG1 fades back in, then the light
   // shrinks around the party again.
-  for (eva = 0, evb = 16; eva <= 16; eva++, evb--) {
+  for (eva = 0, evb = BLEND_WEIGHT_MAX; eva <= BLEND_WEIGHT_MAX; eva++, evb--) {
     Io_Write16(ALTMILLER_CAVE_DARKNESS_BLEND, &REG_BLDCNT);
     REG_BLDALPHA = BLEND_ALPHA(eva, evb);
     wait(7);
@@ -2146,8 +2162,8 @@ static void AltmillerCave_UpdateWallFragment(struct FieldParticle *fragment) {
   }
 }
 
-/// The wall bursts. Its 24 pieces fly out from the ring's center, the wall's
-/// cells open to the passage, and the shaking calms.
+/// The wall bursts. Its WALL_BURST_PIECES pieces fly out from the ring's
+/// center, the wall's cells open to the passage, and the shaking calms.
 static void AltmillerCave_ReleaseWallBurst(void) {
   struct FieldEffectWork *effectWork;
   struct Vector3 position;
@@ -2162,7 +2178,7 @@ static void AltmillerCave_ReleaseWallBurst(void) {
   position.z = toFIXED(144);
   Camera_WorldToScreen(&position);
   fragment = effectWork->particles;
-  for (fragmentIndex = 0; fragmentIndex < 24; fragmentIndex++) {
+  for (fragmentIndex = 0; fragmentIndex < WALL_BURST_PIECES; fragmentIndex++) {
     FIXED scale;
 
     FieldParticle_Initialize(fragment, SPRITE_PARTICLE, position.x, position.z);

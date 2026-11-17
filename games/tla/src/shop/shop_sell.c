@@ -72,7 +72,7 @@ s32 Shop_ChooseMember(void) {
       wait(1);
     }
   }
-  /* FAKEMATCH(barrier): an empty asm clobbering r8 at the loop exit. */
+  /* FAKEMATCH(barrier): an empty asm at the loop exit. */
   __asm__("" : : : "r8");
   ItemIconGrid_SetVisible(0);
   Menu_ReleaseEntryObjectsFar();

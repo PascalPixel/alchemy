@@ -444,7 +444,7 @@ s32 Battle_CollectPartyCommands(struct BattleAction *commands, u16 *actors,
         iconSprite->oam.word.attr23 = 0;
         iconSprite->oam.f.x = (s16)commandWindow->x * 8 + 8;
         iconSprite->oam.f.y = (s16)commandWindow->y * 8 + 4;
-        /* FAKEMATCH(barrier): counted as 4 bytes. */
+        /* FAKEMATCH(barrier): an empty asm. */
         __asm__ volatile("");
         iconSprite->oam.f.tile =
             Resource_LoadIndexedEntryToBuffer(parameter, handle);
@@ -515,7 +515,7 @@ s32 Battle_CollectPartyCommands(struct BattleAction *commands, u16 *actors,
         ((u32 *)&iconSprite->oam)[0] =
             OBJ_SIZE_16X16 | OBJ_MODE(OBJ_MODE_SEMI_TRANSPARENT);
         ((u32 *)&iconSprite->oam)[1] = 0;
-        /* FAKEMATCH(barrier): counted as 4 bytes. */
+        /* FAKEMATCH(barrier): an empty asm. */
         __asm__ volatile("");
         iconSprite->oam.f.x = (s16)commandWindow->x * 8 + 8;
         iconSprite->oam.f.y = (s16)commandWindow->y * 8 + 4;
@@ -698,7 +698,7 @@ s32 Battle_CollectPartyCommands(struct BattleAction *commands, u16 *actors,
         COMMAND_ICON_X(state) = 48;
         iconSprite->oam.word.attr01 =
             OBJ_SIZE_16X16 | OBJ_MODE(OBJ_MODE_SEMI_TRANSPARENT);
-        /* FAKEMATCH(barrier): counted as 4 bytes. */
+        /* FAKEMATCH(barrier): an empty asm. */
         __asm__ volatile("");
         iconSprite->oam.word.attr23 = 0;
         iconSprite->oam.f.x = (s16)commandWindow->x * 8 + 8;

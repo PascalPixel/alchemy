@@ -181,8 +181,7 @@ s32 BattleTarget_RunSelection(s32 selection, s32 mode, u32 spread, u32 kind) {
     cursorTracks[0].y = 128;
   }
 #if !TBS_PATCH_4
-  /* FAKEMATCH(barrier): an empty asm clobbering r8 and r10 once selection and
-   * mode are dead. */
+  /* FAKEMATCH(barrier): an empty asm once selection and mode are dead. */
   __asm__("" : : : "r8", "r10");
 #endif
   window = Window_Create(0, 12, 30, 4,
@@ -249,9 +248,8 @@ s32 BattleTarget_RunSelection(s32 selection, s32 mode, u32 spread, u32 kind) {
     }
     effect.angle = 0;
 #if !TBS_PATCH_4
-    /* FAKEMATCH(dead): eighteen dead stores restore the native stack frame's
-     * spill slots from sp+16 to sp+36, the eighteenth only for the test above.
-     */
+    /* FAKEMATCH(dead): eighteen stores nothing reads, the eighteenth only for
+     * the test above. */
     effect.angle = 0;
     effect.angle = 0;
     effect.angle = 0;

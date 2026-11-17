@@ -329,7 +329,7 @@ s32 Battle_Run(s32 enemyGroup) {
           Battle_PlayFormChange(FORMATION_DOOM_DRAGON_C);
         if (actingUnit <= ALLY_MAX && battle->spoils.defeated == 1) {
           /* FAKEMATCH(barrier): an empty asm before the defeatState store; as
-           * the store alone, 2 of 885 instructions differ in tla-en. */
+           * the store alone. */
           asm("");
           battle->defeatState = DEFEAT_BY_PARTY_MEMBER;
         }

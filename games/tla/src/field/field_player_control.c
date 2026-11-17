@@ -171,8 +171,7 @@ s32 Actor_UpdateWalkingControl(struct Actor *actor) {
     angleOffsets[headingCount++] = angle - DEGtoANG(45);
     angleOffsets[headingCount++] = angle + FIELD_PROBE_ANGLE * 3;
     /* FAKEMATCH(dead): the count through its own address at the last heading,
-     * which keeps the loop's test of an empty list until the list is known.
-     */
+     * which keeps the loop's test of an empty list until the list is known. */
     angleOffsets[(*&headingCount)++] = angle - FIELD_PROBE_ANGLE * 3;
     for (angleIndex = 0; angleIndex < headingCount; angleIndex++) {
       heading = angleOffsets[angleIndex];

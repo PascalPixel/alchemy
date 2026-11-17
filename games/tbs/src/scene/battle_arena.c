@@ -633,7 +633,7 @@ static s32 BattleArena_SendPartyRecords(void) {
   // LOBBY_TRANSFER_RETRY_LIMIT tries the exchange fails. A send that does not
   // start breaks out to the release; the waits inside leave by done.
   /* FAKEMATCH(dead): the sends in a once-only block; as a goto to done from
-   * each break, 78 of 256 instructions differ in tbs-en. */
+   * each break. */
   do {
     for (i = 0; i < memberCount; i++) {
       Iwram_CopyWords(buffer, Unit_Get(memberIds[i]), size);

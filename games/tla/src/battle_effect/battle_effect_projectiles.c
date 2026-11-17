@@ -925,7 +925,7 @@ void BattleEffect_RunProjectileVolley(struct BattleEffectParams *args,
             if (target->x < 0) {
               hit = x < 0;
               /* FAKEMATCH(dead): the twin's cancelling updates under a test
-               * that emits nothing. */
+               * that does nothing. */
               if (target) {
                 hit ^= x;
                 hit ^= x;

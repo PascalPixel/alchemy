@@ -632,8 +632,8 @@ s32 FieldCamera_FollowLeaderInBounds(struct Actor *interpreter) {
       /* LEFTOVER(template): this whole-pixel dy, overwritten below and not used
        * for the distance; Camelot's template: the sibling routine
        * Actor_SetMoveTarget (field_actor_motion.c) computes the same three
-       * whole-pixel deltas and uses y's in its distance; as the line removed,
-       * 129 of 345 instructions differ in tla-en. */
+       * whole-pixel deltas and uses y's in its distance; as the line removed.
+       */
       dy = (y - camera->y.fixed) / FIXED_ONE;
       dz = (z - camera->z.fixed) / FIXED_ONE;
       distance = toFIXED(Iwram_Sqrt(dx * dx + dz * dz));
@@ -713,8 +713,8 @@ s32 FieldCamera_FollowWatchedInBounds(struct Actor *camera) {
       /* LEFTOVER(template): this whole-pixel dy, overwritten below and not used
        * for the distance; Camelot's template: the sibling routine
        * Actor_SetMoveTarget (field_actor_motion.c) computes the same three
-       * whole-pixel deltas and uses y's in its distance; as the line removed,
-       * 54 of 228 instructions differ in tla-en. */
+       * whole-pixel deltas and uses y's in its distance; as the line removed.
+       */
       dy = (y - camera->y.fixed) / FIXED_ONE;
       dz = (z - camera->z.fixed) / FIXED_ONE;
       distance = toFIXED(Iwram_Sqrt(dx * dx + dz * dz));
@@ -841,7 +841,7 @@ s32 Actor_Wander(struct Actor *actor) {
       if (MapGrid_CheckCollision(actor, &probePosition) != 0)
         continue;
       /* FAKEMATCH(dead): the offsets in both arms of a test of actor; as the
-       * two lines alone, 16 of 188 instructions differ in tla-en. */
+       * two lines alone. */
       if (actor != 0) {
         dx = candidatePosition.x / FIXED_ONE - actor->homeX;
         dz = candidatePosition.z / FIXED_ONE - actor->homeZ;

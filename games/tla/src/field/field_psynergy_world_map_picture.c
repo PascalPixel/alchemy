@@ -767,8 +767,8 @@ s32 WorldPicture_Show(s32 mode) {
     wait(1);
     ((struct WorldMapView *)map)->viewHeld = 1;
     do {
-      /* FAKEMATCH(dead): the read in a once-only block; as the plain statement,
-       * 12 of 548 instructions differ in tla-en. */
+      /* FAKEMATCH(dead): the read in a once-only block; as the plain statement.
+       */
       blend = REG_BLDALPHA;
     } while (0);
   } else {

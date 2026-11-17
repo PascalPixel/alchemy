@@ -1716,7 +1716,7 @@ extern u16 gDehkanPlateau_FallLandingCells[];
                                             columnSourceX, columnSourceZ,      \
                                             belowOffsetZ, belowSourceZ)        \
   void name(void) {                                                            \
-    /* FAKEMATCH(pin): flag in r5, which leaves r6 to the entry. */            \
+    /* FAKEMATCH(pin): flag fixed to a register. */                            \
     register s32 flag asm("r5") = FLAG_FELL_THROUGH_FIRST;                     \
     s32 offset = 0;                                                            \
                                                                                \

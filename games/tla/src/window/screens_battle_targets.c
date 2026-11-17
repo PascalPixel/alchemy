@@ -228,8 +228,7 @@ s32 BattleTarget_RunSelection(s32 selection, s32 mode, u32 spread, u32 kind) {
     cursorTracks[0].y = 128;
   }
 #if !TLA_PATCH_2
-  /* FAKEMATCH(barrier): an empty asm clobbering r8 and r10 once selection and
-   * mode are dead. */
+  /* FAKEMATCH(barrier): an empty asm once selection and mode are dead. */
   __asm__("" : : : "r8", "r10");
 #endif
   window = Window_Create(0, 12, 30, 4,
@@ -237,8 +236,7 @@ s32 BattleTarget_RunSelection(s32 selection, s32 mode, u32 spread, u32 kind) {
                              WINDOW_FLAG_OUTLINED_TEXT);
 
   for (;;) {
-    /* FAKEMATCH(dead): a once-only block; as its body alone, 6 of 1647
-     * instructions differ in tla-en. */
+    /* FAKEMATCH(dead): a once-only block; as its body alone. */
     do {
       /* FAKEMATCH(temporary): firstSprite holds &cursorSprites[0]. */
       firstSprite = cursorSprites;

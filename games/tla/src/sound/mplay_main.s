@@ -9,7 +9,7 @@
 @ slot's offset, its two loads reaching 8 bytes further than its twin's.
 @ Why assembly: copies of routines the ROM also links, their calls keeping
 @ those routines' offsets, their pool words never filled in and the last cut
-@ short (S1); the multiply switches to ARM inside its Thumb entry.
+@ short; the multiply switches to ARM inside its Thumb entry.
 @ Why assembly: bx pc switches to ARM for umlalne and umull, a mode switch
 @ inside a function; the nop after bx pc is never run.
 @ Why SoundChannel_Unlink is assembly:

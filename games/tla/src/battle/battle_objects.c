@@ -388,7 +388,7 @@ void BattleObject_UpdateSpritePriorities(void) {
   unitIndex = 0;
   if (unitIds[unitIndex] != BATTLE_UNIT_LIST_END) {
     for (;;) {
-      /* FAKEMATCH(pin): slot held in r5. */
+      /* FAKEMATCH(pin): slot fixed to a register. */
       register struct BattleObject *slot asm("r5");
 
       object = 0;

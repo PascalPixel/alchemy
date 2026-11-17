@@ -351,7 +351,7 @@ void Matrix_RotateTranslateScale(s32 *angles, FIXED *position, FIXED *scale) {
 /// Builds in `out` the camera matrix of an eye at `eye` looking at `target`.
 /// The camera's sideways axis is kept level (no Y component).
 void Matrix_BuildLookAt(FIXED *eye, FIXED *target, FIXED *out) {
-  /* FAKEMATCH(pin): dot held in r10. */
+  /* FAKEMATCH(pin): dot fixed to a register. */
   register Dot3Fn dot asm("r10");
   u32 code[8];
   s32 dx, dy, dz;
@@ -366,9 +366,9 @@ void Matrix_BuildLookAt(FIXED *eye, FIXED *target, FIXED *out) {
   s32 length;
   FIXED levelSquared;
   u32 num = 0x80000000; // Dividend 2^31 for calculating the reciprocal.
-  /* FAKEMATCH(pin): divide held in r9. */
+  /* FAKEMATCH(pin): divide fixed to a register. */
   register u32 (*divide)(u32 dividend, u32 divisor) asm("r9");
-  /* FAKEMATCH(pin): mul held in r11. */
+  /* FAKEMATCH(pin): mul fixed to a register. */
   register s32 (*mul)(s32 a, s32 b) asm("r11");
 
   // Copy the dot-product routine to the stack and call it there.

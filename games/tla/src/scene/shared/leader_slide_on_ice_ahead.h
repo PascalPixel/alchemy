@@ -81,7 +81,7 @@ void Leader_SlideOnIceAhead(void) {
         }
       }
       /* FAKEMATCH(dead): the form kept; as next set once, at the head of the
-       * loop, 16 of 246 instructions differ in tla-en. */
+       * loop. */
       next = &probe;
       x = next->x;
       z = next->z;

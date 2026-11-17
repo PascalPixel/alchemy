@@ -738,7 +738,7 @@ void BattleEffect_RunFlora(struct BattleEffectParams *args) {
   REG_BLDALPHA = EFFECT_BLEND_ADD;
   REG_BG2PA = Q_8_8(0.5);
   {
-    /* FAKEMATCH(pin): e kept in r6. */
+    /* FAKEMATCH(pin): e fixed to a register. */
     register u8 *e asm("r6") =
         Resource_GetTableEntry(RESOURCE_PINK_PETALS_TILES);
     s32 row;

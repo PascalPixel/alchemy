@@ -38,9 +38,8 @@ struct Corner {
 void BattleEffect_RunFume(struct BattleEffectParams *args) {
   struct BattleEffectWork *work;
   void *canvas;
-  /* LEFTOVER(frame): blit[1], the pair's idle second blitter: the frame (sub
-   * sp, #116) reserves it at sp + 68 and no instruction addresses it; as one
-   * DrawRectangle, 74 of 627 instructions differ in tla-en. */
+  /* LEFTOVER(frame): blit[1], the pair's idle second blitter, which the ROM's
+   * frame reserves and never touches; as one DrawRectangle. */
   DrawRectangle blit[2];
   s32 j;
   s32 frame;

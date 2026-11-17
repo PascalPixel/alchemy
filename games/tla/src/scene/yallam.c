@@ -456,7 +456,7 @@ s32 Yallam_HasArrived(struct Actor *actor) {
 /// One step of a runner's path round the village in the song game, by its
 /// step counter, stopping or going on by the game's mode.
 void Yallam_RunSongPath(s32 actorId) {
-  /* FAKEMATCH(pin): the actor in r5. */
+  /* FAKEMATCH(pin): the actor fixed to a register. */
   register struct Actor *actor asm("r5") = Actor_GetById(actorId);
   u8 s = actor->riseCounter;
   s16 *timer;
@@ -965,7 +965,7 @@ void Yallam_RunSongPath(s32 actorId) {
   case 240:
     Actor_SetDestination(actorId, 248, 872);
     {
-      /* FAKEMATCH(pin): the timer's address rebuilt in r2 from the actor. */
+      /* FAKEMATCH(pin): the timer's address fixed to a register. */
       register u8 *step asm("r2") = (u8 *)actor;
 
       step += 100;

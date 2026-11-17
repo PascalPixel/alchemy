@@ -1307,7 +1307,7 @@ s32 Clear_EnterPassword(void) {
     asm volatile("" : "+r"(action));
     if (length > PASSWORD_SYMBOLS_PER_PAGE - 1) {
       if (pages - 1 == page) {
-        /* FAKEMATCH(barrier): r2 no longer holds the length. */
+        /* FAKEMATCH(barrier): an empty asm once the length is read. */
         asm volatile("" : : : "r2");
         action = length % PASSWORD_SYMBOLS_PER_PAGE;
       } else
@@ -1698,8 +1698,7 @@ UNUSED s32 Clear_PackPasswordData(s32 unused, s32 mode, u8 *out) {
       for (m = 0; m != 23; m++) {
         s32 count = 0;
         u16 quantity;
-        /* FAKEMATCH(dead): the form kept; as no quantity copy, 133 of 479
-         * instructions differ in tla-en. */
+        /* FAKEMATCH(dead): the form kept; as no quantity copy. */
 
         for (n = 0; n != 15; n++) {
           if ((unit->inventory[n] & INVENTORY_ITEM_ID_MASK) ==

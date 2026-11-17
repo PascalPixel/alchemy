@@ -392,9 +392,7 @@ static inline void RunToFelix(s32 id) {
 /// emotes the four actors run to actor 4.
 void LemurianShipDeck_HoldOnToTiller(void) {
 #if !TLA_PATCH_2
-  /* FAKEMATCH(dead): a call that never runs, kept for its routine address, the
-   * first constant the function puts in its pool: the message id's pool label
-   * is then numbered one later, and reload's hard-register CSE. */
+  /* FAKEMATCH(dead): a call that never runs. */
   if (0)
     Task_AddFrame(LemurianShipDeck_BobDeck, TASK_PASS_FRAME);
 #endif

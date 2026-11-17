@@ -405,7 +405,7 @@ s32 BattleStaging_RunAttack(struct BattleActionRun *plan, s32 mode) {
   {
     struct BattleActionRun *savedPlan = plan;
 
-    /* FAKEMATCH(dead): plan cleared and restored under tests that emit nothing.
+    /* FAKEMATCH(dead): plan cleared and restored under tests that do nothing.
      */
     if (view)
       plan = NULL;

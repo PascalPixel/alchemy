@@ -398,7 +398,7 @@ void BattleEffect_RunDaedalus(struct BattleEffectParams *args) {
       obj = EffectSprite_CreateWithTiles(32, 64,
                                          OBJ_SIZE_32X64 | OBJ_256_COLORS, 0);
       /* FAKEMATCH(dead): the slot's store alone in a once-only block; as the
-       * plain store, 83 of 3921 instructions differ in tla-en. */
+       * plain store. */
       do {
         work->sprites[DAEDALUS_MACHINE + i] = obj;
       } while (0);
@@ -1275,8 +1275,7 @@ void BattleEffect_RunDaedalus(struct BattleEffectParams *args) {
         radius = 0;
         for (; i != 16; i++) {
           /* FAKEMATCH(dead): k = 0 under a test that is never true, a store
-           * nothing reads; without it, 90 of 3921 instructions differ in
-           * tla-en. */
+           * nothing reads. */
           if (work == NULL)
             k = 0;
           p = &work->particles[i];
@@ -1285,7 +1284,7 @@ void BattleEffect_RunDaedalus(struct BattleEffectParams *args) {
           Random16();
           p->velocityZ = radius;
           /* FAKEMATCH(volatile): velocityZ read back through a volatile view;
-           * as p->velocityZ, 167 of 3921 instructions differ in tla-en. */
+           * as p->velocityZ. */
           p->z = z - (*(volatile s32 *)&p->velocityZ * 40) - TRIG_TURN / 32;
           p->velocityX = -Trig_Cos(p->z) * 8;
           p->velocityY = -Trig_Sin(p->z) * 8;

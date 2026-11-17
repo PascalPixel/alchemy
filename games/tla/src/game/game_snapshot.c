@@ -120,8 +120,8 @@ void InventorySnapshot_Restore(void) {
       u16 *owners = (u16 *)gMainRoutineWork.party;
 
       /* FAKEMATCH(temporary): both party-order halfwords stored through one
-       * cursor; as stores through ((u16 *)gMainRoutineWork.party)[0] and [1], 4
-       * of 58 instructions differ in tla-en. */
+       * cursor; as stores through ((u16 *)gMainRoutineWork.party)[0] and [1].
+       */
       *owners++ = *src++;
       *owners = *src;
     }

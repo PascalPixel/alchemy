@@ -317,7 +317,7 @@ void BattleEffect_RunLightSurge(struct BattleEffectParams *args) {
     }
     Heap_Release(model);
     Heap_Release(vertices);
-    /* FAKEMATCH(dead): a read of shade the compiler folds to nothing. */
+    /* FAKEMATCH(dead): a read of shade that does nothing. */
     BattleCamera_Shake(4 + ((shade & 255) >> 8), 4);
     EFFECT_END_FRAME(work);
   }

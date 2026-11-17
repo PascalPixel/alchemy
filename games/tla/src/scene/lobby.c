@@ -493,7 +493,7 @@ s32 LinkLobby_SendPartyRecords(void) {
   // LOBBY_TRANSFER_RETRY_LIMIT tries the exchange fails. A send that cannot
   // start leaves the block.
   /* FAKEMATCH(dead): the sends in a once-only block; as a goto to done from
-   * each break, 79 of 264 instructions differ in tla-en. */
+   * each break. */
   do {
     for (i = 0; i < memberCount; i++) {
       s32 tries = 0;

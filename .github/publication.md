@@ -17,11 +17,11 @@ at <https://alchemy.pascalpixel.com/>. A push to `alchemy-docs` builds the same
 way. There is no schedule and no generated Git branch; Vercel keeps the last
 successful deployment on failure.
 
-Both games are at 100%, so nothing is measured or published from CI any more.
-The measurements of the matching years stay as history: the `decomp-reports`
-release and its numbered successors hold every landing's receipt, report and
-accepted figures, and the old `progress` branch is a frozen archive. Do not
-remove them. The final chart is in alchemy-devtools' README.
+Both games are complete, so CI measures and publishes nothing. The record of
+how the source was written stays as history: the `decomp-reports` release and
+its numbered successors hold every landing's receipt, report and accepted
+figures, and the old `progress` branch is a frozen archive. Do not remove
+them.
 
 ## Setup and recovery
 

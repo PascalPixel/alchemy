@@ -585,7 +585,7 @@ static void LamakanDesert_BatheInOasis(void) {
       oasis = (const s32 *)((const u8 *)oases + offset);
     } while (--count != 0);
     /* FAKEMATCH(dead): two self-tests of offset, each with updates that cancel
-     * out, rank it above count in allocation. */
+     * out. */
     if (offset) {
       offset++;
       offset--;

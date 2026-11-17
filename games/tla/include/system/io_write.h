@@ -3,10 +3,8 @@
 
 #include "types.h"
 
-// A statement macro (S2: a layer the whole game uses, 43 sites): the value is
-// built in a word before the address and the store stays where it is written.
-// An inline function with a u32 parameter builds the same value but lets the
-// store move.
+// A statement macro the whole game writes its registers through. An inline
+// function does the same; the macro is what gives the original's code.
 /// Writes a value to a 16-bit register or memory location.
 #define Io_Write16(v, reg)                                                     \
   do {                                                                         \
@@ -22,10 +20,9 @@
 /// shape.
 #define Io_Write8(v, reg) Io_Write16(v, reg)
 
-// An expression macro (S2: six sites, the saved background controls of the
-// battle's mosaic fade and the blend level of Gaia Rock's slate; the name is
-// ours): the variable is reached through its address, so a halfword one lives
-// in the frame and is read back from there after each call.
+// An expression macro (the name is ours) at six sites, the saved background
+// controls of the battle's mosaic fade and the blend level of Gaia Rock's
+// slate: the variable is reached through its address.
 /// Reads a 16-bit register or memory location into a variable.
 #define Io_Read16(reg, variable) (*(variable) = *(reg))
 

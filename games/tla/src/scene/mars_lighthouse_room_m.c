@@ -741,8 +741,7 @@ s32 Scene_Initialize(void) {
 void Weather_StartRain(s32 a);
 
 /// The line scroll's wave across and down that the rain ledges start with the
-/// rain. Called plainly, LineScroll_InitWave takes its arguments in another
-/// order (16 of 237 instructions of Scene_PrepareMap differ in tla-en).
+/// rain.
 static __inline__ void MarsLighthouseRoomM_StartRainWave(s32 mode, FIXED freqX,
                                                          s32 stepX, FIXED ampX,
                                                          FIXED freqY, s32 stepY,

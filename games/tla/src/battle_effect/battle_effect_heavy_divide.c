@@ -648,10 +648,8 @@ void BattleEffect_RunWyrdCurse(struct BattleEffectParams *args) {
     model->mesh = gBattleEffect_SmallSquareMeshReversed;
     for (i = 0; i != 6; i++) {
       drop = &work->particles[i];
-      /* FAKEMATCH(dead): splash set through its own address in every turn, so
-       * the first CSE cannot fold splash >> 1 and the loop pass lifts the
-       * constant out; as splash = 25000 before the loop, 137 of 568
-       * instructions differ in tla-en. */
+      /* FAKEMATCH(dead): splash set through its own address in every turn; as
+       * splash = 25000 before the loop. */
       *&splash = 25000;
       if (frame > i * 4 + 64) {
         model->shade = zero;

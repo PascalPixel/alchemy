@@ -68,5 +68,5 @@ Thank you to:
 - [Coaltergeist](https://github.com/Coaltergeist), [Karathan](https://github.com/SBird1337) and [Tarpman](https://github.com/tarpman), whose earlier public work identified the compiler and flags behind The Broken Seal.
 - [SGL](https://www.infochunk.com/saturn/segahtml_en/sgl/sglr/), Sega’s library for the Saturn, the console Camelot made Shining Force III for, whose 1997 reference gives Alchemy its fixed-point, angle and matrix names: `toFIXED`, `DEGtoANG`, `Matrix_RotateX` and the `FX` suffix.
 - Telago, whose GameFAQs walkthroughs of [The Broken Seal](https://gamefaqs.gamespot.com/gba/468548-golden-sun/faqs/39216) and [The Lost Age](https://gamefaqs.gamespot.com/gba/561356-golden-sun-the-lost-age/faqs/44287) say what the player sees in every place, which is where many of Alchemy’s names come from.
-- [simonlindholm](https://github.com/simonlindholm), for [decomp-permuter](https://github.com/simonlindholm/decomp-permuter), which Alchemy Devtools reimplements in Rust.
+- [simonlindholm](https://github.com/simonlindholm), for [decomp-permuter](https://github.com/simonlindholm/decomp-permuter), which [Alchemy Devtools](https://github.com/PascalPixel/alchemy-devtools), the tools this source was written with, reimplements in Rust.
 - Everyone at [r/GoldenSun](https://www.reddit.com/r/GoldenSun/) who cheered Alchemy on and builds with it.

@@ -439,8 +439,7 @@ void BattleEffect_RunGatheringLights(struct BattleEffectParams *args,
                                                 toFIXED(2), toFIXED(2),
                                                 i * 8 + 100);
                   /* FAKEMATCH(temporary): i tested through its copy in
-                   * moteDistance; as (i & 1), 4 of 511 instructions differ in
-                   * tla-en. */
+                   * moteDistance; as (i & 1). */
                   moteDistance = i;
                   if ((moteDistance & 1) && frame != 80)
                     Sound_PlayFar(SE_HEAVY_IMPACT);

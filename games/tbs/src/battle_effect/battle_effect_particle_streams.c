@@ -288,8 +288,7 @@ void BattleEffect_RunParticleStreams(struct BattleEffectParams *args,
 
       /* FAKEMATCH(temporary): the division written out on a copy of count. */
       dividend = count;
-      /* FAKEMATCH(dead): updates that cancel out end CSE's knowledge of count.
-       */
+      /* FAKEMATCH(dead): updates of count that cancel out. */
       if (sheet) {
         count++;
         count--;
@@ -297,8 +296,7 @@ void BattleEffect_RunParticleStreams(struct BattleEffectParams *args,
       if (dividend < 0)
         dividend += 3;
       glow = dividend >> 2;
-      /* FAKEMATCH(barrier): count and sheet through an empty asm clobbering r1
-       * and r3. */
+      /* FAKEMATCH(barrier): count and sheet through an empty asm. */
       __asm__("" : "=r"(sheet) : "0"(sheet), "r"(count) : "r1", "r3");
       line = (u16 *)(sheet + PARTICLE_STREAMS_BACKDROP_LINES);
       if (mode == PARTICLE_STREAMS_OUTER_SPACE) {
@@ -311,10 +309,9 @@ void BattleEffect_RunParticleStreams(struct BattleEffectParams *args,
       {
         s32 hold;
 
-        /* FAKEMATCH(barrier): hold set by an empty asm takes r7 across the
-         * call. */
+        /* FAKEMATCH(barrier): hold set by an empty asm. */
         __asm__("" : "=r"(hold));
-        /* FAKEMATCH(barrier): an empty asm that clobbers r6 before the call. */
+        /* FAKEMATCH(barrier): an empty asm before the call. */
         __asm__("" : : : "r6");
         if (frame == 0)
           Sound_PlayFar(SE_RUMBLE);

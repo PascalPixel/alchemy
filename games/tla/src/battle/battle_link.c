@@ -209,9 +209,8 @@ s32 LinkBattle_SyncTurn(void) {
   u16 *peer;
   u16 *signature;
   s32 missed = 0;
-  /* LEFTOVER(frame): an unused local: the ROM's frame reserves 20 bytes
-   * (sub sp, #20) and no instruction touches them; without it, 16 of 231
-   * instructions differ in tla-en. */
+  /* LEFTOVER(frame): an unused local the ROM's frame reserves and never
+   * touches. */
   UNUSED u16 spare[10];
 
   if (battle->isLink != 0) {

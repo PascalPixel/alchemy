@@ -1366,7 +1366,7 @@ void MagmaRock_ScatterEmbers(s32 x, s32 z) {
   config.startScaleX = FIXED_ONE * 2;
   config.startScaleY = FIXED_ONE * 2;
   config.type = SPRITE_FLAME_PUFF;
-  kind = 1; // Holds one constant: the native loads 1 before the data address.
+  kind = 1;
   config.script = gMagmaRock_EmberScript;
   config.priority = kind;
   for (i = 0; i != 4; i++) {

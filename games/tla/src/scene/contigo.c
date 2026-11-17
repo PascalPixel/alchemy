@@ -1456,7 +1456,7 @@ void Contigo_SendToLuckyDice(void) {
   FieldMessage_ShowAtActor(ACTOR_LUCKY_DICE_HOST, 0);
   if (Event_AskYesNoWithActorAnimation(gMainRoutineWork.leaderActorId, 0) ==
       0) {
-    /* FAKEMATCH(pin): the scene state's address pinned to r3. */
+    /* FAKEMATCH(pin): the scene state's address fixed to a register. */
     register u32 *state __asm__("r3") = (u32 *)gSceneState;
 
     *state = gMainRoutineWork.coins;
@@ -1495,7 +1495,7 @@ void Contigo_SendToSuperLuckyDice(void) {
   FieldMessage_ShowAtActor(ACTOR_SUPER_LUCKY_DICE_HOST, 0);
   if (Event_AskYesNoWithActorAnimation(gMainRoutineWork.leaderActorId, 0) ==
       0) {
-    /* FAKEMATCH(pin): the scene state's address pinned to r3. */
+    /* FAKEMATCH(pin): the scene state's address fixed to a register. */
     register u32 *state __asm__("r3") = (u32 *)gSceneState;
 
     *state = gMainRoutineWork.coins;

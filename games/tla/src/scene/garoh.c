@@ -199,8 +199,7 @@ void Garoh_WaveHypnosSwordChestLayer(void) {
   // after its first instruction.
   s32 (*sine)(s32) = *(s32 (**)(s32))(((u32)Trig_Sin & ~3) + 4);
   struct MapLayer *layer = &Ram_HeapSlots->mapGrid->layers[1];
-  /* FAKEMATCH(pin): the form kept; as a plain local, 60 of 124 instructions
-   * differ in tla-en. */
+  /* FAKEMATCH(pin): the form kept; as a plain local. */
   register u16 *line asm("r5") = gGaroh_WaveLines;
 
   if (gFieldWork->revealActive == 0) {
@@ -213,8 +212,7 @@ void Garoh_WaveHypnosSwordChestLayer(void) {
     layer->speedY = 0;
     frame = (u8)gFrameCount;
     i = 0;
-    /* FAKEMATCH(barrier): the form kept; as no asm, 48 of 124 instructions
-     * differ in tla-en. */
+    /* FAKEMATCH(barrier): the form kept; as no asm. */
     asm("" : "+r"(i));
     z = FIXEDtoINT(layer->y);
     x = FIXEDtoINT(layer->x);
@@ -225,8 +223,7 @@ void Garoh_WaveHypnosSwordChestLayer(void) {
     a = z * stepA + (frame << 10);
     b = z * stepB - (frame << 10);
     for (; i != 160; i++) {
-      /* FAKEMATCH(pin): the form kept; as a plain local, 43 of 124
-       * instructions differ in tla-en. */
+      /* FAKEMATCH(pin): the form kept; as a plain local. */
       register s32 s1 asm("r8") = sine(a);
       s32 s2 = sine(b);
       *line++ = ((s1 * 3 + s2 * 7) >> 19) + x;

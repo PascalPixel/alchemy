@@ -203,8 +203,7 @@ void BattleEffect_RunMegiddo(struct BattleEffectParams *args) {
       } else if ((u32)(frame - 64) <= 7) {
         s32 twice = frame * 2;
 
-        /* FAKEMATCH(barrier): an empty asm on twice that claims to clobber r3.
-         */
+        /* FAKEMATCH(barrier): an empty asm on twice. */
         asm("" : "+l"(twice) : : "r3");
         d = twice - 144;
       } else if ((u32)(frame - 72) <= 11) {
@@ -322,9 +321,7 @@ void BattleEffect_RunMegiddo(struct BattleEffectParams *args) {
       }
     }
     /* FAKEMATCH(dead): a product nothing reads, between the two blocks that
-     * test frame > 1: it is there when jump threading first runs and gone
-     * when it runs again, so the tests are joined only then; without it, 131
-     * of 1361 instructions differ in tla-en. */
+     * test frame > 1. */
     doubled = frame * 2;
     if (frame > 1) {
       u8 textureBytes[8];
@@ -348,7 +345,7 @@ void BattleEffect_RunMegiddo(struct BattleEffectParams *args) {
       /* FAKEMATCH(barrier): the third asm on *t. */
       asm("" : "+m"(*t));
       /* FAKEMATCH(dead): the pixels' store alone in a once-only block; as the
-       * plain store, 733 of 1361 instructions differ in tla-en. */
+       * plain store. */
       do {
         t->pixels =
             work->sheet + MEGIDDO_FIRE_STRIPES + ((frame / 2) % 5) * 1024;

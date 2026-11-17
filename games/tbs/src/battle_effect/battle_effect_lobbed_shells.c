@@ -201,7 +201,7 @@ void BattleEffect_RunLobbedShells(struct BattleEffectParams *args, s32 mode) {
           if (shot->variant >= 0) {
             s32 step;
 
-            /* FAKEMATCH(dead): an empty once-only loop ends CSE's block. */
+            /* FAKEMATCH(dead): an empty once-only loop. */
             do {
             } while (0);
             // The shell tumbles as it flies.

@@ -118,8 +118,8 @@ void wait(s32 frames) {
   s16 display;
   s16 backdrop;
   /* FAKEMATCH(barrier): the restart address in this local and System_Reset's
-   * jump naming the registers a call may change; as the address given to the
-   * jump with no clobbers, 6 of 326 instructions differ in tla-en. */
+   * jump listing changes it does not make; as the address given to the jump
+   * with no clobbers. */
   u32 entry;
 
   for (i = 0; i < (u32)frames; i++) {

@@ -1085,11 +1085,8 @@ s32 Credits_DrawLine(const u8 *text, s32 firstTile, s32 alignment) {
     startX = (lineWidth - textAdvance) / 2;
 
   // Rasterize each glyph and its one-pixel shadow at the aligned start.
-  /* LEFTOVER(template): sourceBytes rewound to text; Camelot's template, from a
-   * sibling loop: Credits_DrawLine's measuring pass above opens with the same
-   * sourceBytes = text; textAdvance = 0 and walks sourceBytes, while this pass
-   * walks text itself (The Lost Age's Credits_DrawLine keeps the same store);
-   * as no store, 20 of 277 instructions differ in tbs-en. */
+  /* LEFTOVER(template): sourceBytes rewound to text, as Credits_DrawLine's
+   * measuring pass above opens; this pass walks text itself; as no store. */
   sourceBytes = text;
   textAdvance = 0;
   while ((sourceValue = *text++) != 0) {

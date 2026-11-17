@@ -88,7 +88,7 @@ void Matrix_UpdateVertices(struct Vector3 *eye, struct Vector3 *target,
     depth = targetZ - eyeZ;
     targetDeltaX -= eyeX;
     {
-      /* FAKEMATCH(pin): x held in r0 from its shift. */
+      /* FAKEMATCH(pin): x fixed to a register. */
       register s32 x __asm__("r0") = targetDeltaX >> 4;
       s32 y = depth >> 4;
       CAMELOT_ASM("ip holds the target Matrix_CallInThumb jumps to, a "

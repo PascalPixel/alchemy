@@ -426,7 +426,7 @@ s32 AutoBattle_RunAttackOrItem(struct BattleActionRecord *action) {
   /* LEFTOVER(template): the choice of runner BattleStaging_RunAttack, RunItem
    * and RunPsynergyCast make under their test of the kind, which is 0 here, as
    * The Broken Seal's twin keeps it; as BattleEffect_RunFromTableFar(&work)
-   * alone, 103 of 180 instructions differ in tla-en. */
+   * alone. */
   if (work.kind)
     BattleEffect_RunByIdRangeFar(&work);
   else

@@ -177,7 +177,7 @@ s32 FieldSequence_Run(void) {
         Teleport_PlaySparksAndFade();
         if (gMainRoutineWork.teleportScene != (s16)SCENE_WORLD_MAP)
           goto clearOwner;
-        /* FAKEMATCH(barrier): an empty asm clobbering r0. */
+        /* FAKEMATCH(barrier): an empty asm. */
         asm("" : : : "r0");
         if ((value = FlagEntries_GetValue(gMainRoutineWork.teleportEntrance)) &
             16)

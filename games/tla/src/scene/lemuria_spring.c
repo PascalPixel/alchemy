@@ -183,8 +183,7 @@ s32 Scene_Initialize(void) {
   leader->priorityFlags = ACTOR_PRIORITY_IGNORES_RISES | leader->priorityFlags;
   blend = BLDCNT_TGT1_BG1 | BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_ALL;
   REG_BLDCNT = blend;
-  /* FAKEMATCH(dead): the form kept; as no block, 5 of 80 instructions differ in
-   * tla-en. */
+  /* FAKEMATCH(dead): the form kept; as no block. */
   do {
   } while (0);
   alpha = BLEND_ALPHA(12, 8);

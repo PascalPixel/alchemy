@@ -475,7 +475,7 @@ void BattleEffect_RunSoulShatter(struct BattleEffectParams *args) {
             if (moteX < 0)
               moteX = -moteX;
             /* FAKEMATCH(dead): the read of user->x in a once-only block; as the
-             * plain read, 43 of 589 instructions differ in tla-en. */
+             * plain read. */
             do {
               userX = user->x;
             } while (0);
@@ -483,8 +483,7 @@ void BattleEffect_RunSoulShatter(struct BattleEffectParams *args) {
               userX = -userX;
             // Gone once it has passed the user on the user's side of x = 0.
             /* FAKEMATCH(dead): each arm stores its test in sameSide, never
-             * read; as the bare tests, 37 of 589 instructions differ in
-             * tla-en. */
+             * read; as the bare tests. */
             if (moteX >= userX && (user->x < 0 ? (sameSide = mote->x < 0)
                                                : (sameSide = mote->x >= 0)))
               mote->variant = -1;
@@ -569,8 +568,6 @@ void BattleEffect_RunSerac(struct BattleEffectParams *args) {
   Resource_LoadAndDecompress(RESOURCE_MERCURY_DJINN_SHEET,
                              work->sheet + SERAC_MERCURY_DJINN_PICTURES, 1, 0);
   LOAD_BG_PALETTE(RESOURCE_BLUE_FLAME_SHEET);
-  // A block of its own: camera, savedYaw and target take their stack slots
-  // after the blitter pair's address.
   {
     struct BattleCamera *camera;
     s16 savedYaw;

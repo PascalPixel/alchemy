@@ -714,7 +714,7 @@ void AncientLemuria_MeetTheLemurians(void) {
     }
     gFieldWork->message += 2;
   } else {
-    /* FAKEMATCH(pin): the count pinned to r2. */
+    /* FAKEMATCH(pin): the count fixed to a register. */
     register u32 n asm("r2");
 
     n = (u16)gFieldWork->message;

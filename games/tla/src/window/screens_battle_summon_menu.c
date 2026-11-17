@@ -93,8 +93,7 @@ s32 BattleSummonMenu_Run(s32 unusedA, s32 unusedB, const u8 *standby) {
   }
 
   count = Summon_ListLearnedFar(learnedSummons);
-  /* FAKEMATCH(dead): the first scan in a once-only block; as a plain block,
-   * 226 of 984 instructions differ in tla-en. */
+  /* FAKEMATCH(dead): the first scan in a once-only block; as a plain block. */
   do {
     s32 i;
 
@@ -131,8 +130,7 @@ s32 BattleSummonMenu_Run(s32 unusedA, s32 unusedB, const u8 *standby) {
 
   for (;;) {
     /* LEFTOVER(template): cur holds &cursorStorage, as BattlePsynergyMenu_Run's
-     * iconSprite holds its cursor; as &cursorStorage at each use, 281 of 984
-     * instructions differ in tla-en. */
+     * iconSprite holds its cursor; as &cursorStorage at each use. */
     cur = &cursorStorage;
 
     if (firstEntry != drawnFirstEntry || selectedRow != drawnRow) {

@@ -172,8 +172,8 @@ s32 YampiDesertCave_SetLogCells(s32 id) {
   i = 0;
   if ((u16)sprite != gYampiDesertCave_LogSprites[i]) {
     do {
-      /* FAKEMATCH(temporary): the step taken in the high halfword, as the
-       * push footprints' copies of this search have it. */
+      /* FAKEMATCH(temporary): the step taken in the high halfword, as the push
+       * footprints' copies of this search have it. */
       next = (i + 1) * 65536;
       kind = (u32)next >> 16;
       i = next >> 16;

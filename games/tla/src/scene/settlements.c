@@ -1103,7 +1103,7 @@ extern s32 gSettlements_SmokeScript[];
 /// Water sprays up where an actor goes into the water.
 void Settlements_SplashCrate(s32 id) {
   /* LEFTOVER(frame): an unused local the ROM's frame reserves and never
-   * touches: of the 68 bytes it reserves. */
+   * touches. */
   UNUSED struct SettlementsVector velocity;
   struct EffectOptions spawn;
   struct Actor *actor = Actor_Get(id);

@@ -2452,10 +2452,9 @@ void Render_DrawTexturedMesh(s32 vertexCount, s32 faceCount, s32 (*uvs)[3][2],
           xB += dxB;
           uA += duA;
           vA += dvA;
-          /* LEFTOVER(template): edge B's steps, as Render_FillMesh's lower
-           * half steps both its edges and this routine's upper half steps
-           * all six values, idle here; as the loop without them, 4 of 966
-           * instructions differ in tla-en. */
+          /* LEFTOVER(template): edge B's steps, as Render_FillMesh's lower half
+           * steps both its edges and this routine's upper half steps all six
+           * values, idle here; as the loop without them. */
           uB += duB;
           vB += dvB;
         }
@@ -2863,7 +2862,7 @@ s32 BattleEffect_BuildBlitter(s32 slot, s32 widthShift, s32 heightShift,
 
   {
     u32 words = (u32)runSize / 4;
-    /* FAKEMATCH(pin): count fixed in r2, where the rounded size is built. */
+    /* FAKEMATCH(pin): count fixed to a register. */
     register s32 count __asm__("r2") = words * 4;
     s32 size = count;
 

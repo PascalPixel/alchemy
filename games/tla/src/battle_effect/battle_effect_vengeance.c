@@ -957,7 +957,6 @@ void BattleEffect_RunStarSwarm(struct BattleEffectParams *args, s32 mode) {
       s32 start = member;
       s32 starCount;
 
-      // Set in two steps: as one giv the loop pass would turn it into a walker.
       start *= 8;
       starCount = 16;
       if (mode != STAR_SWARM_DJINN_STUN)

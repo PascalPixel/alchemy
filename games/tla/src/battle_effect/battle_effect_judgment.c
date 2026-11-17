@@ -718,8 +718,8 @@ void BattleEffect_RunJudgment(struct BattleEffectParams *args) {
             if (dx > 1000)
               top = 0;
             right = cx + dx;
-            /* FAKEMATCH(dead): a branch whose store the next line overwrites
-             * restores the label CSE and reload saw between the edges. */
+            /* FAKEMATCH(dead): a branch whose store the next line overwrites.
+             */
             if (dx > cx)
               left = 0;
             left = cx - dx;
@@ -763,8 +763,8 @@ void BattleEffect_RunJudgment(struct BattleEffectParams *args) {
             if (dx > 1000)
               top = 0;
             right = cx + dx;
-            /* FAKEMATCH(dead): a branch whose store the next line overwrites;
-             * without it, 204 of 2680 instructions differ in tla-en. */
+            /* FAKEMATCH(dead): a branch whose store the next line overwrites.
+             */
             if (dx > cx)
               left = 0;
             left = cx - dx;

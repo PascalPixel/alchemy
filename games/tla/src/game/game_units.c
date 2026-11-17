@@ -533,8 +533,7 @@ void MainRoutineWork_InitializeDefaults(void) {
 #else
   zero = 0;
   {
-    /* FAKEMATCH(pin): the channel kept in r3 through the transfer and copied
-     * from there for the wait. */
+    /* FAKEMATCH(pin): the channel fixed to a register. */
     register u32 held asm("r3") = (u32)DMA3;
     struct DmaRegisters volatile *channel;
 

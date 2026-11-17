@@ -1450,8 +1450,8 @@ void AquaRock_DrawRisingCellMarkers(void) {
 #ifndef UBFIX
   s32 *view = &map->viewX;
 #endif
-  // UB: viewZ is a separate member, not a second element of viewX (as the
-  // members, 69 of 169 instructions differ in tla-en).
+  // UB: viewZ is read as view[1], though it is a separate member, not a second
+  // element of viewX.
 #ifdef UBFIX
   s32 viewX = map->viewX & FIELD_PIXEL_MASK;
   s32 viewZ = map->viewZ & FIELD_PIXEL_MASK;

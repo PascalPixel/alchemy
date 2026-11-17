@@ -1691,7 +1691,7 @@ s32 Scene_Initialize(void) {
     Prox_InitializeCaveHomes();
   } else if (scene == SCENE_PROX_CAVES) {
     s32 *effect = &gFieldWork->transition;
-    /* FAKEMATCH(pin): the call's argument pinned to the r0 it is passed in. */
+    /* FAKEMATCH(pin): the call's argument fixed to a register. */
     register s32 skip __asm__("r0");
     s32 value = SCENE_TRANSITION(TRANSITION_WINDOW, 9);
 

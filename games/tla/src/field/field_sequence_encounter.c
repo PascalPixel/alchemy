@@ -217,7 +217,7 @@ u16 Encounter_GetDjinnFormation(s32 djinni) {
 #ifdef UBFIX
   return Encounter_GetFormationAtSlot(zoneAndSlot[0], zoneAndSlot[1]);
 #else
-  // UB: no return statement; the native leaves the called getter's result in
+  // UB: no return statement; the original leaves the called getter's result in
   // r0.
   Encounter_GetFormationAtSlot(zoneAndSlot[0], zoneAndSlot[1]);
 #endif

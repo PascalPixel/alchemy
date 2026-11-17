@@ -98,7 +98,7 @@ top:
       }
     }
     /* FAKEMATCH(dead): the form kept; as next set once, at the head of the
-     * loop, 69 of 302 instructions differ in tla-en. */
+     * loop. */
     next = &probe;
     x = next->x;
     z = next->z;

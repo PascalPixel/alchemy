@@ -563,8 +563,7 @@ void Serial_StepBlockTransfer(void) {
   u32 id;
   struct SerialTransferState *own;
   u32 gap;
-  /* FAKEMATCH(temporary): the 1 kept in a halfword record, loaded from the pool
-   * into r8 at entry. */
+  /* FAKEMATCH(temporary): the 1 kept in a halfword record. */
   struct SerialHalfword one;
 
   // The partner's payload: of multiplayer ids 0 and 1, the one not ours

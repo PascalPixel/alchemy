@@ -1264,7 +1264,7 @@ void TrialRoad_PushLog(s32 id, s32 dx, s32 dz, s32 axis) {
     Actor_SelectAnimation(actor, 8);
     Actor_WaitForMove(actor);
     {
-      /* FAKEMATCH(pin): the 2 held in r2 while the address takes r3. */
+      /* FAKEMATCH(pin): the 2 fixed to a register. */
       u8 *flags = &actor->priorityFlags;
       register s32 value asm("r2") = 2;
 
@@ -3599,11 +3599,11 @@ static inline void *TrialRoadLink_AllocPicture(void) {
 #define MARKER(left, right, which, tileAdd)                                    \
   do {                                                                         \
     s32 lift;                                                                  \
-    /* FAKEMATCH(pin): originZ in r6. */                                       \
+    /* FAKEMATCH(pin): originZ fixed to a register. */                         \
     register s32 *originZ asm("r6");                                           \
-    /* FAKEMATCH(pin): x in r9. */                                             \
+    /* FAKEMATCH(pin): x fixed to a register. */                               \
     register s32 x asm("r9");                                                  \
-    /* FAKEMATCH(pin): arg in r0. */                                           \
+    /* FAKEMATCH(pin): arg fixed to a register. */                             \
     register s32 arg asm("r0");                                                \
     s32 side = gMainRoutineWork.entrance & 1;                                  \
     if (side) {                                                                \
@@ -3711,8 +3711,8 @@ void TrialRoad_DrawProgress(void) {
     return;
   {
     // XXX: this side's offset adds scrollX where the first marker's subtracts
-    // it; the native does so, and a render of the course's far side would show
-    // whether it is a slip.
+    // it; the original does so, and a render of the course's far side would
+    // show whether it is a slip.
     MARKER(+work->fade * 6 + work->scrollX + 189,
            -work->fade * 6 + work->scrollX + 23, 1, 14);
   }

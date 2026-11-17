@@ -40,7 +40,7 @@ void ScriptedBattle_SaveUnits(void) {
         snap->vitals[i].hp = unit->hp > 0 ? unit->hp : 1;
         {
           struct SnapshotVitals *pv;
-          /* FAKEMATCH(pin): the PP base held in r0. */
+          /* FAKEMATCH(pin): the PP base fixed to a register. */
           register struct SnapshotVitals *base asm("r0");
           u32 pp;
 

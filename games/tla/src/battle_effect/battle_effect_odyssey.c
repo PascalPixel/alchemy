@@ -110,10 +110,9 @@ void BattleEffect_RunOdyssey(struct BattleEffectParams *args) {
 
         red &= entry;
         /* LEFTOVER(template): green, taken and clamped as
-         * BattleEffect_RunCoatlicue and BattleEffect_RunJudgment take all
-         * three channels in their palette loops, and left out of the colour
-         * here; as no green at all, 61 of 1075 instructions differ in tla-en.
-         */
+         * BattleEffect_RunCoatlicue and BattleEffect_RunJudgment take all three
+         * channels in their palette loops, and left out of the colour here; as
+         * no green at all. */
         green = RGB_GREEN((u16)entry);
         blue = RGB_BLUE((u16)entry);
         red = red > RGB_LEVEL_MAX ? RGB_LEVEL_MAX : red;

@@ -15,9 +15,7 @@ s32 GameFlag_Get(s32 flag);
 void GameFlag_Set(s32 flag);
 void GameFlag_Clear(s32 flag);
 
-/// Whether the flag is clear. Its result is a temporary of its own, so the 1
-/// the test builds stays apart from a caller's own 1, which CSE would share
-/// with a plain !GameFlag_Get.
+/// Whether the flag is clear.
 static inline s32 Flag_IsClear(s32 flag) { return !GameFlag_Get(flag); }
 
 static inline s32 Flag_IsSet(s32 flag) { return GameFlag_Get(flag); }

@@ -32,7 +32,7 @@
 @ twin's offsets, so they land 0x1a70 bytes before the twin's umul3232H32, in
 @ the zero fill before the sound bank.
 @ Why assembly: a copy of a routine the ROM also links, its calls keeping that
-@ routine's offsets and its pool words never filled in (S1).
+@ routine's offsets and its pool words never filled in.
 	.section .text,"ax",%progbits
 	.balign 2
 

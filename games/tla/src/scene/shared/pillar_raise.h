@@ -5,7 +5,7 @@ void Pillar_Raise(u16 *list) {
   s32 height;
 
   /* FAKEMATCH(signature): the form kept; as *list != ACTOR_LIST_END and *shapes
-   * = newShape, 6 of 123 instructions differ in tla-en. */
+   * = newShape. */
   while (((struct ListedActor *)list)->id != ACTOR_LIST_END) {
     struct Actor *actor = Actor_GetById(*list);
     u8 *layer = &actor->layer;

@@ -575,7 +575,7 @@ s32 BattleStatusScreen_Run(u16 *list, s32 listCount, s32 member) {
     cursorSprite.oam.word.attr01 =
         OBJ_SIZE_16X16 | OBJ_MODE(OBJ_MODE_SEMI_TRANSPARENT);
     cursorSprite.oam.word.attr23 = 0;
-    /* FAKEMATCH(barrier): counted as 4 bytes. */
+    /* FAKEMATCH(barrier): an empty asm. */
     asm("");
     cursorSprite.oam.f.tile = VramCache_Reload(cursorSlot, gPointingHandTiles);
     {
@@ -664,8 +664,7 @@ s32 BattleStatusScreen_Run(u16 *list, s32 listCount, s32 member) {
                 ItemIcon_LoadIntoSlot(item, iconSlots[j]);
           }
           /* FAKEMATCH(dead): a store nothing reads, which keeps the list loop's
-           * exit on the fill loop's test; without it, 1 of 3111 instructions
-           * differ in tla-en. */
+           * exit on the fill loop's test. */
           item = 0;
           for (; j <= 3; j++)
             iconSprites[j].oam.f.tile =
@@ -753,8 +752,7 @@ s32 BattleStatusScreen_Run(u16 *list, s32 listCount, s32 member) {
               Window_DrawThreeTileColumn(statusWindow, 16, j * 2 + 8, range, 0);
             }
             /* FAKEMATCH(dead): a store nothing reads, which keeps the list
-             * loop's exit on the fill loop's test; without it, 1 of 3111
-             * instructions differ in tla-en. */
+             * loop's exit on the fill loop's test. */
             id = 0;
             for (; j <= 3; j++)
               iconSprites[j].oam.f.tile =
@@ -873,8 +871,7 @@ s32 BattleStatusScreen_Run(u16 *list, s32 listCount, s32 member) {
         }
         /* LEFTOVER(template): the scroll marks under a count past four, as
          * BattleStatusScreen_Run's item and Psynergy pages draw theirs with
-         * SUMMARY_DRAW_PAGE_MARKS; this page's count stays 0; as no arm, 62 of
-         * 3111 instructions differ in tla-en. */
+         * SUMMARY_DRAW_PAGE_MARKS; this page's count stays 0; as no arm. */
         if (released > 4)
           SUMMARY_DRAW_PAGE_MARKS(statusWindow, released, rowBase);
         work->dirty = 1;

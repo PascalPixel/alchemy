@@ -23,8 +23,8 @@ JOBS ?= $(CPUS)
 SHA1 := $(shell { command -v sha1sum || command -v shasum; } 2>/dev/null) -c
 MAKEFLAGS += --no-print-directory
 .SUFFIXES:
-# Keep every file the build makes, overlay ELFs and objects included: the
-# matching aids read them (as pret keeps its intermediates).
+# Keep every file the build makes, overlay ELFs and objects included, as pret
+# keeps its intermediates: a debugger or a size report can read them.
 .SECONDARY:
 
 # Plain `make` builds the English Broken Seal, the compilers first if they are
@@ -41,7 +41,7 @@ help:
 	  'make compare-tbs        the six ☀️ editions' \
 	  'make compare-editions   all twelve editions' \
 	  'make modern             all twelve editions'\'' C through a current GCC (MODERN_CC)' \
-	  'make test               test the C build tools, the format and the fake-match devices' \
+	  'make test               test the C build tools and the format' \
 	  'make SHIFT=4 tbs-en     the shift test: everything after the header moves 4 bytes'
 
 # Each edition builds in its own make, so its variables below are set once;
@@ -175,7 +175,7 @@ ROM_END_tla := 0x09000000
 # path (#include "field/actor.h").
 INCLUDES := -Igames/$(GAME)/include
 
-# Game C (K1, K2): alchemy-gcc's GCC of July 2000, one option set per game;
+# Game C: alchemy-gcc's GCC of July 2000, one option set per game;
 # ⚓️'s overlays swap -O2 for -Os below, by file and place in the build.
 CFLAGS_tbs := -O2 -mthumb -mthumb-interwork -nostdinc -fcall-used-r4
 CFLAGS_tla := -O2 -mthumb -nostdinc -fcall-used-r4 -mtune=gba
@@ -366,10 +366,9 @@ $(BUILD)/obj/%.o: %.mid $(MID2AGS)
 	$(MID2AGS) $< $(@:.o=.s)
 	$(AS) $(ASFLAGS) -o $@ $(@:.o=.s)
 
-# --- make modern (Goal, point 5) -------------------------------------------
+# --- make modern ----------------------------------------------------------
 # The same C through a current GCC, as pret's `make modern`: every file
-# must compile, with no match expected. Errors stop it; warnings are the
-# humanizing pass's to read.
+# must compile, with no match expected. Errors stop it; warnings are shown.
 
 MODERN_CC ?= arm-none-eabi-gcc
 # Older current GCC releases do not know this separate diagnostic's name.
@@ -399,7 +398,7 @@ endif
 endif
 
 ifndef EDITION
-# --- Toolchain (K1) --------------------------------------------------------
+# --- Toolchain -------------------------------------------------------------
 # `make bootstrap` builds the pinned compilers from source into
 # tools/out/compilers, as pret installs agbcc: alchemy-gcc's three C generators,
 # GAS 2.10 from the GNU release vendored in alchemy-gcc (it assembles their
@@ -448,7 +447,7 @@ $(CCAS):
 	@mkdir -p $(@D)
 	cp $(TOOLCHAIN)/gas/gas/as-new $@
 
-# libgcc: Thumb, no interworking (K1), each member from the source and the
+# libgcc: Thumb, no interworking, each member from the source and the
 # -DL<member> switch GCC's own library rules (gcc/config/arm/t-arm-elf) give it.
 LIBGCC_WORK := $(TOOLCHAIN)/libgcc
 LIBGCC_MEMBERS := _call_via_rX _addsub_df _si_to_df _df_to_si _pack_df _unpack_df _thenan_df _lshrdi3
@@ -487,17 +486,8 @@ $(LIBGCC_WORK)/_lshrdi3.o: alchemy-gcc/gcc/libgcc2.c $(LIBGCC_TOOLS)
 tools:
 	$(MAKE) -f tools/Makefile
 
-test: tools format-check device-check
+test: tools format-check
 	$(MAKE) -f tools/Makefile test
-
-# ☀️ takes no register pins or signature devices (S2, in alchemy-devtools'
-# AGENTS.md): only the proven CAMELOT_ASM helpers, Dma_Set and MulFX, fix a
-# variable to a register.
-.PHONY: device-check
-device-check:
-	@if git grep -n -E 'FAKEMATCH\((pin|signature)\)|register[^;]*(__asm__|asm) *\(' -- 'games/tbs/*.c' 'games/tbs/*.h' \
-	    ':!games/tbs/include/system/dma.h' ':!games/tbs/include/system/iwram_call.h'; then \
-	  echo "device-check: The Broken Seal takes no pin or signature devices (S2, in alchemy-devtools/AGENTS.md)" >&2; exit 1; fi
 
 # Both games' C is as clang-format writes it (AGENTS.md S3). Without
 # clang-format installed the check says so

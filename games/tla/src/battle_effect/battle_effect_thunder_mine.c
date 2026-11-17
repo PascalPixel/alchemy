@@ -92,10 +92,8 @@ void BattleEffect_RunBoltTrail(struct BattleEffectParams *args, s32 mode) {
   Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_VBLANK);
   if (mode == BOLT_TRAIL_THUNDER_MINE) {
     frames = 24;
-    /* FAKEMATCH(temporary): the row Thunder Mine's sparks bounce at, set in
-     * its arm: the local gets no register and leaves no instruction here, but
-     * keeps the two arms from being joined into one conditional store; as 111
-     * at its use, 27 of 747 instructions differ in tla-en. */
+    /* FAKEMATCH(temporary): the row Thunder Mine's sparks bounce at, set in its
+     * arm; as 111 at its use. */
     sparkFloor = 111;
   } else {
     frames = 40;

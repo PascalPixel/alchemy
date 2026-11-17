@@ -107,9 +107,8 @@ restart:
     {
       s32 a;
 
-      /* FAKEMATCH(dead): the index read in a once-only block, before i moves
-       * into r0; as the plain call with layers[i].animationIndex, 2 of 665
-       * instructions differ in tla-en. */
+      /* FAKEMATCH(dead): the index read in a once-only block; as the plain call
+       * with layers[i].animationIndex. */
       do {
         a = layers[i].animationIndex;
       } while (0);
@@ -342,7 +341,7 @@ s32 SpriteViewer_FindNextSpriteWithPictures(s32 value, s32 delta) {
 #ifdef UBFIX
   return value;
 #else
-  // UB: no return statement for a delta of 0; the native leaves value in r0.
+  // UB: no return statement for a delta of 0; the original leaves value in r0.
 #endif
 }
 

@@ -134,9 +134,7 @@ struct Actor {
   /// drifting speed, a 0x31415927 marker), and scene code a resting height.
   s32 riseBaseY;
   /// Its sprite (a struct FieldSprite) when spriteStorageKind is 1, or its list
-  /// of sprites when it is 2. Code that reads one kind converts it: typed, or
-  /// as a union of the two, this pointer compiles differently where a store
-  /// comes between two of its reads.
+  /// of sprites when it is 2. Code that reads one kind converts it.
   void *sprite;
   /// 1 one sprite, 2 a group of sprites, in the low four bits, which is all
   /// the field and the scenes test.

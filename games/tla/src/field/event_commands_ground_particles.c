@@ -115,8 +115,7 @@ void RisingParticles_Start(void) {
       HeapSlot_AllocEwram(HEAP_SLOT_WEATHER, 2068);
   struct RisingParticle *particle = work->particles;
   volatile u32 fill;
-  /* FAKEMATCH(pin): the fill's zero held in r2, built after the copy of work.
-   */
+  /* FAKEMATCH(pin): the fill's zero fixed to a register. */
   register u32 zero asm("r2");
   s32 priority;
   u8 *tiles;

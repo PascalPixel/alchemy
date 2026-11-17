@@ -284,10 +284,7 @@ void Rope_SwingBetween(s32 index, s32 from, s32 to, s32 mode) {
 }
 
 /* VIEW(ropes): routine Trig_Atan as s16 Trig_Atan(s32 y, s32 x);
- * system/system.h has s32 Trig_Atan(s32 x, s32 y); tried as the definition's
- * s32 Trig_Atan(s32 x, s32 y), which the object already declares, Rope_LayBowed
- * moves: 1 of 120 instructions in every edition (the result leaves r0 as a
- * halfword, which only a 16-bit return type copies so). */
+ * system/system.h has s32 Trig_Atan(s32 x, s32 y). */
 extern s16 Trig_AtanHalfword(s32 y, s32 x) __asm__("Trig_Atan");
 
 /// Lays a slot's chain of nodes along the line between two points, bowed
@@ -592,8 +589,7 @@ s32 Rope_Recoil(s32 index, s32 x, s32 y, s32 z) {
     i = segments + 1;
     do {
       i += -1;
-      /* FAKEMATCH(barrier): an empty asm reading the counter in a low register.
-       */
+      /* FAKEMATCH(barrier): an empty asm reading the counter. */
       asm("" : : "l"(i));
       *cursor++ = node;
       node = node->next;
@@ -1115,8 +1111,7 @@ s32 Tightrope_Throw(s32 index, s32 x, s32 y, s32 z, s32 toX, s32 toY, s32 toZ) {
     i = segments + 1;
     do {
       i += -1;
-      /* FAKEMATCH(barrier): an empty asm reading the counter in a low register.
-       */
+      /* FAKEMATCH(barrier): an empty asm reading the counter. */
       asm("" : : "l"(i));
       *cursor++ = node;
       node = node->next;
@@ -1215,8 +1210,7 @@ s32 Tightrope_Recoil(s32 slot, s32 x1, s32 y1, s32 z1, s32 x2, s32 y2, s32 z2,
     i = count + 1;
     do {
       i += -1;
-      /* FAKEMATCH(barrier): an empty asm reading the counter in a low register.
-       */
+      /* FAKEMATCH(barrier): an empty asm reading the counter. */
       asm("" : : "l"(i));
       *entry++ = node;
       node = node->next;

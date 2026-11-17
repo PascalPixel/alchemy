@@ -63,8 +63,7 @@ s32 BattleParty_ChooseReserve(s32 slot) {
     slot &= 0xff;
     current = battle->partyUnits[slot];
     Sound_PlayFar(SE_MENU_CONFIRM);
-    /* FAKEMATCH(dead): a once-only block; as its body alone, 13 of 231
-     * instructions differ in tla-en. */
+    /* FAKEMATCH(dead): a once-only block; as its body alone. */
     do {
       goto test;
       for (;;) {

@@ -105,10 +105,8 @@ void BattleEffect_RunStreakVolley(struct BattleEffectParams *args, s32 mode) {
   s32 streaks = STREAKS_MAX;
   s32 lift = toFIXED(20);
 
-  /* FAKEMATCH(dead): heap set through its own address, so it is in memory
-   * while the reads are expanded and the paired blitter's slot is reached
-   * from its register; as heap = Ram_HeapSlots, 16 of 580 instructions differ
-   * in tla-en. */
+  /* FAKEMATCH(dead): heap set through its own address; as heap = Ram_HeapSlots.
+   */
   *&heap = Ram_HeapSlots;
   work = (struct BattleEffectWork *)heap->battleEffect;
   canvas = heap->battleCanvas;

@@ -357,7 +357,7 @@ s32 BattleStatusScreen_Run(u16 *list, s32 listCount, s32 member) {
     cursorSprite.oam.word.attr01 =
         OBJ_SIZE_16X16 | OBJ_MODE(OBJ_MODE_SEMI_TRANSPARENT);
     cursorSprite.oam.word.attr23 = 0;
-    /* FAKEMATCH(barrier): counted as 4 bytes, the empty asm. */
+    /* FAKEMATCH(barrier): an empty asm. */
     __asm__("");
     cursorSprite.oam.f.tile =
         VramCache_Reload(cursorSlot, (s32)gPointingHandTiles);

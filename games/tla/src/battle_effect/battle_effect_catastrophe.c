@@ -43,8 +43,7 @@ struct MeshVertex {
 /// its mirrored copy's six, the golden scales, and the eleven of the armour
 /// (the purple armour's five, then the white spikes' six). The demon's lowest
 /// four are copies of its top row, sharing their tiles: those show the sheet's
-/// last four pictures, and the top row's own from frame 339 to 450, while the
-/// top row is in view.
+/// last four pictures, and the top row's own from frame 339 to 450.
 #define CATASTROPHE_DEMON 0
 #define CATASTROPHE_DEMON_TILED 24
 #define CATASTROPHE_DEMON_SWAPPED 24
@@ -359,7 +358,7 @@ void BattleEffect_RunCatastrophe(struct BattleEffectParams *args) {
     s32 level;
     s32 d;
 
-    // Fades the screen in over the first frames; a button skips the scene.
+    // The backdrop fades in over the first 16 frames; A or B skips the act.
     if (frame <= 15) {
       s32 v = frame * 2 - 30;
 
@@ -428,6 +427,7 @@ void BattleEffect_RunCatastrophe(struct BattleEffectParams *args) {
       flashTimer = -1;
       flash = 0;
     }
+    // Each clap of thunder flashes the backdrop blue, fading over its length.
     if (flash < CATASTROPHE_FLASHES) {
       level = -1;
       if (frame == gCatastrophe_FlashFrames[flash]) {
@@ -476,6 +476,8 @@ void BattleEffect_RunCatastrophe(struct BattleEffectParams *args) {
         }
       }
     }
+    // The sprites' colours step through these levels from their saved ones,
+    // and the backdrop's too from frame 324, when both flash white.
     {
       s32 fadeRed;
       s32 fadeGreen;
@@ -594,6 +596,8 @@ void BattleEffect_RunCatastrophe(struct BattleEffectParams *args) {
                            FIXED_ONE - ((frame - 554) << 10),
                            BATTLE_BACKGROUND_COLORS);
     }
+    // The top row's pictures stand in for the lowest four's from frame 339 to
+    // 450.
     if (swapped == 0) {
       if (frame == 339) {
         swapped = 1;
@@ -678,6 +682,7 @@ void BattleEffect_RunCatastrophe(struct BattleEffectParams *args) {
     model->texture = &texture;
     model->kind = MODEL_SHADED_MAX;
     model->vertices = verts;
+    // Forks of lightning flash in the sky, each fading over eight frames.
     for (i = 0; i != 7; i++) {
       s32 st = gCatastrophe_BurstStarts[i];
 
@@ -749,6 +754,8 @@ void BattleEffect_RunCatastrophe(struct BattleEffectParams *args) {
     model->mesh = gBattleEffect_ColumnMesh;
     model->texture = &texture;
     model->vertices = verts;
+    // From frame 489 three strikes step through their tables at half speed:
+    // each step turns its jagged streak, plays its sound and throws sparks.
     if ((u32)(frame - 489) <= 130) {
       shade = 0;
       for (i = 0; i != 3; i++) {
@@ -942,6 +949,8 @@ void BattleEffect_RunCatastrophe(struct BattleEffectParams *args) {
     if ((u32)(frame - 602) <= 6) {
       camZ += toFIXED(16);
     }
+    // From frame 552 the seal: the pentagon spins as it swells, its triangles
+    // fold up from its edges from frame 580, and the swirl spins over it.
     {
       s32 sealFrame = frame - 552;
 
@@ -1027,6 +1036,7 @@ void BattleEffect_RunCatastrophe(struct BattleEffectParams *args) {
         }
       }
     }
+    // From frame 602 a ring of fire spreads, fading from frame 612.
     if (frame > 601) {
       s32 s = (frame - 602) * CATASTROPHE_RING_GROWTH + toFIXED(0.125);
 
@@ -1052,6 +1062,7 @@ void BattleEffect_RunCatastrophe(struct BattleEffectParams *args) {
     }
     Heap_Release(model);
     Heap_Release(verts);
+    // The orb swells, rising a little, and from frame 601 it falls.
     if ((u32)(frame - 554) <= 51) {
       s32 radius = frame - 553;
       s32 y = 90 - (frame - 554) / 2;
@@ -1218,6 +1229,7 @@ void BattleEffect_RunCatastrophe(struct BattleEffectParams *args) {
         }
         top = ry - radius / 2 + CATASTROPHE_ORB_CENTER;
         Canvas_BlitAtFoot(work->sheet, CATASTROPHE_ORB_CENTER, top, radius);
+        // From frame 96 glints sparkle around the orb.
         if (frame > 95) {
           {
             for (i = 0; i != 4; i++) {
@@ -1248,6 +1260,8 @@ void BattleEffect_RunCatastrophe(struct BattleEffectParams *args) {
         }
         aerialVertices = Heap_AllocEwram(512);
         aerialModel = Render_AllocateModelList(1);
+        // Until frame 127 the seal turns under the orb, swelling from frame 72,
+        // its triangles folding down from frame 64.
         if (frame <= 127) {
           s32 s = 85536;
           s32 a;
@@ -1306,6 +1320,8 @@ void BattleEffect_RunCatastrophe(struct BattleEffectParams *args) {
             Matrix_Pop();
           }
         }
+        // Two rings of fire spread from frames 80 and 88, the second at half
+        // the speed.
         for (i = 0; i != 2; i++) {
           s32 delay = i * 8;
           s32 start = delay + 80;
@@ -1365,6 +1381,8 @@ void BattleEffect_RunCatastrophe(struct BattleEffectParams *args) {
             Sound_PlayFar(SE_CLATTER);
           }
         }
+        // The bolts shoot out from the middle, one a frame from frame 128, each
+        // turning as it grows.
         p = work->particles;
         for (i = 0; i != CATASTROPHE_BOLTS; i++, p++) {
           s32 startFrame = i + 128;
@@ -1388,6 +1406,7 @@ void BattleEffect_RunCatastrophe(struct BattleEffectParams *args) {
         }
         Heap_Release(aerialModel);
         Heap_Release(aerialVertices);
+        // At frame 134 sparks ring the orb and twinkle out.
         if (frame > 133) {
           if (frame == 134) {
             struct Particle *p;
@@ -1508,6 +1527,8 @@ void BattleEffect_RunCatastrophe(struct BattleEffectParams *args) {
       if ((u32)(frame - 16) <= 47) {
         BattleEffect_StepPaletteToResource(RESOURCE_VIOLET_PALETTE_F);
       }
+      // At frame 66 the targets are struck: thrown back, flashing white, debris
+      // flying from each.
       if (frame == 66) {
         for (i = 0; i != args->targetCount; i++) {
           BattleEffect_StartActorMotion(args->targets[i], 1, toFIXED(4),
@@ -1674,6 +1695,8 @@ void BattleEffect_RunCatastrophe(struct BattleEffectParams *args) {
         Heap_Release(sweepModel);
         if (frame <= 87) {
 
+          // Six bolts strike, one every eight frames from frame 16, each with
+          // a clap, a shake and debris thrown up where it lands.
           i = 0;
           p2 = work->particles;
           {

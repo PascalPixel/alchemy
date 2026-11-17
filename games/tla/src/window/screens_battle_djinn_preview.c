@@ -7,28 +7,41 @@
 #include "gamepak/far_call/game.h"
 #include "window/screens.h"
 #include "window/window.h"
+#include "battle/battle.h"
+#include "debug/debug.h"
+#include "field/field.h"
+#include "game/game.h"
+#include "graphics/graphics.h"
+#include "system/math_table.h"
+#include "menu/menu.h"
+#include "sound/sound.h"
+#include "system/system.h"
+#include "graphics/render_input.h"
+#include "types.h"
+#include "graphics/resource.h"
+#include "graphics/vram_tab.h"
 
-/// Where a stat's digits start in its formatted text: the last seven of its
-/// fourteen characters.
+/// How many bytes of gNumberTextBuffer are widened: the eleven characters
+/// String_FormatDecimal writes, its terminator and the two bytes after.
+#define NUMBER_TEXT_WIDE_LENGTH 14
+/// Where a stat's last four characters start in its widened text.
 #define DJINN_PREVIEW_STAT_DIGIT_OFFSET 7
 
-/// Formats value as decimal text and copies its 14 characters, one a halfword,
-/// into out.
+/// Writes `value` into `out` as String_FormatDecimal's eleven-character,
+/// right-aligned decimal text, widened to halfwords for
+/// Text_DrawWideStringInWindow. `out` needs room for NUMBER_TEXT_WIDE_LENGTH
+/// halfwords.
 s32 String_FormatNumberToHalfwords(s16 *out, s32 value) {
   s16 *destination;
-  s32 remaining;
+  s32 i;
   u8 *source;
 
   destination = out;
   String_FormatDecimal(value);
   source = gNumberTextBuffer;
-  remaining = 13;
-  do {
-    remaining -= 1;
-    *destination = *source;
-    source += 1;
-    destination += 1;
-  } while (remaining >= 0);
+  for (i = 0; i < NUMBER_TEXT_WIDE_LENGTH; i++) {
+    *destination++ = *source++;
+  }
 }
 
 /// A changed stat's arrow, right of its value on window tile row `row` (HP
@@ -98,28 +111,9 @@ s32 BattleDjinnMenu_ListChangedDjinn(const struct PsynergyEntry *oldGrid,
   return count;
 }
 
-/// @file
-/// Display: place an ability icon in a window as a sprite.
-
-#include "battle/battle.h"
-#include "debug/debug.h"
-#include "field/field.h"
-#include "game/game.h"
-#include "graphics/graphics.h"
-#include "system/math_table.h"
-#include "menu/menu.h"
-#include "sound/sound.h"
-#include "system/system.h"
-#include "graphics/render_input.h"
-#include "types.h"
-#include "graphics/resource.h"
-#include "graphics/vram_tab.h"
-
-/// Loads the icon into a free VRAM cache slot and draws a 16x16 sprite;
-/// does nothing if no slot is free.
-/// input: destination window.
-/// x, y: position within the window, in pixels.
-/// ability: ability index.
+/// Loads ability `abilityId`'s icon into a free VRAM cache slot and draws it
+/// as a 16x16 sprite at (x, y) of `window`, in pixels; does nothing when no
+/// slot is free.
 s32 WindowSprite_CreateAbilityIcon(struct Window *window, s32 x, s32 y,
                                    s32 abilityId) {
   s32 iconSlot;
@@ -157,8 +151,6 @@ s32 WindowSprite_CreateAbilityIcon(struct Window *window, s32 x, s32 y,
 #define OLD_DEFENSE_AGILITY_X 6
 #define PSYNERGY_PROMPT_X 24
 #endif
-
-// Text colours (Text_SetColor).
 
 /// Shows what setting or removing Djinni `encodedDjinn` (element << 8 |
 /// index) would change for `member`: closes the preview window `win`, opens a

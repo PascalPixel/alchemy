@@ -193,8 +193,15 @@ enum ImilFuchinFallsActorId {
 };
 
 enum {
-  IMIL_SLIDE_ANIMATION_STEP = 3 * 16 ///< three times normal animation speed
+  /// Three times normal animation speed.
+  IMIL_SLIDE_ANIMATION_STEP = ANIMATION_STEP_NORMAL * 3
 };
+
+/// The cells ImilFuchinFalls_HopOnTrigger tells apart: the Zephyr room's cell
+/// of the first log the leader hops north from (walking west from the second
+/// log's hops west), and the Dragon's Eye room's cell he hops south from once
+/// the first log lies in the middle.
+enum { ZEPHYR_ROOM_HOP_NORTH_CELL = 17, DRAGONS_EYE_ROOM_HOP_SOUTH_CELL = 25 };
 
 static void FuchinFallsCave_RebuildEntranceLogs(void);
 static void FuchinFallsCave_RebuildZephyrRoomLogs(void);
@@ -1425,19 +1432,20 @@ static void ImilFuchinFalls_RebuildLogRoom(void) {
   }
 }
 
-/// Hops across a gap in Fuchin Falls Cave.
+/// Hops the leader across a gap in Fuchin Falls Cave: north or west in the
+/// Zephyr room, south in the Dragon's Eye room.
 static void ImilFuchinFalls_HopOnTrigger(void) {
   s32 trigger = gFieldWork->stepTrigger;
 
   if (gMainRoutineWork.next == SCENE_FUCHIN_FALLS_CAVE_ZEPHYR) {
-    if (trigger == 17) {
+    if (trigger == ZEPHYR_ROOM_HOP_NORTH_CELL) {
       ImilFuchinFalls_HopBy(0, -32);
     } else {
       ImilFuchinFalls_HopBy(-32, 0);
     }
   }
   if (gMainRoutineWork.next == SCENE_FUCHIN_FALLS_CAVE_DRAGONS_EYE &&
-      trigger == 25 &&
+      trigger == DRAGONS_EYE_ROOM_HOP_SOUTH_CELL &&
       GameFlag_Get(FLAG_FUCHIN_FALLS_DRAGONS_EYE_ROOM_FIRST_LOG_MIDDLE)) {
     ImilFuchinFalls_HopBy(0, 32);
   }
@@ -2066,12 +2074,12 @@ struct Trigger gImilFuchinFalls_EntranceTriggers[] = {
 struct Trigger gImilFuchinFalls_ZephyrRoomTriggers[] = {
     { STEP_TRIGGER_WALKING_INTO(FACING_EAST), 11, FLAG_FUCHIN_FALLS_ZEPHYR_ROOM_SECOND_LOG_SOUTH, EVENT(FuchinFallsCave_ZephyrRoom_MoveFirstLogToEastEnd) },
     { STEP_TRIGGER_WALKING_INTO(FACING_WEST), 11, CONDITION_ALWAYS, EVENT(FuchinFallsCave_ZephyrRoom_NudgeFirstLogWest) },
-    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 17, CONDITION_ALWAYS, EVENT(ImilFuchinFalls_HopOnTrigger) },
-    { STEP_TRIGGER_WALKING_INTO(FACING_EAST), 17, CONDITION_ALWAYS, EVENT(FuchinFallsCave_ZephyrRoom_MoveFirstLogEast) },
+    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), ZEPHYR_ROOM_HOP_NORTH_CELL, CONDITION_ALWAYS, EVENT(ImilFuchinFalls_HopOnTrigger) },
+    { STEP_TRIGGER_WALKING_INTO(FACING_EAST), ZEPHYR_ROOM_HOP_NORTH_CELL, CONDITION_ALWAYS, EVENT(FuchinFallsCave_ZephyrRoom_MoveFirstLogEast) },
     { STEP_TRIGGER_WALKING_INTO(FACING_WEST), 12, CONDITION_ALWAYS, EVENT(FuchinFallsCave_ZephyrRoom_MoveFirstLogToWestEnd) },
     { TRIGGER_STEP, 11, CONDITION_ALWAYS, EVENT(FuchinFallsCave_AnimateFirstLog) },
     { TRIGGER_STEP, 12, CONDITION_ALWAYS, EVENT(FuchinFallsCave_AnimateFirstLog) },
-    { TRIGGER_STEP, 17, CONDITION_ALWAYS, EVENT(FuchinFallsCave_AnimateFirstLog) },
+    { TRIGGER_STEP, ZEPHYR_ROOM_HOP_NORTH_CELL, CONDITION_ALWAYS, EVENT(FuchinFallsCave_AnimateFirstLog) },
     { STEP_TRIGGER_WALKING_INTO(FACING_WEST), 13, CONDITION_ALWAYS, EVENT(ImilFuchinFalls_HopOnTrigger) },
     { STEP_TRIGGER_WALKING_INTO(FACING_WEST), 14, FLAG_FUCHIN_FALLS_ZEPHYR_ROOM_FIRST_LOG_EAST_END, EVENT(ImilFuchinFalls_HopOnTrigger) },
     { STEP_TRIGGER_WALKING_INTO(FACING_SOUTH), 13, CONDITION_ALWAYS, EVENT(FuchinFallsCave_ZephyrRoom_MoveSecondLogSouth) },
@@ -2128,7 +2136,7 @@ struct Trigger gImilFuchinFalls_DragonsEyeRoomTriggers[] = {
     { TRIGGER_STEP, 22, CONDITION_ALWAYS, EVENT(FuchinFallsCave_AnimateFourthLog) },
     { TRIGGER_STEP, 23, CONDITION_ALWAYS, EVENT(FuchinFallsCave_AnimateFourthLog) },
     { TRIGGER_STEP, 24, CONDITION_ALWAYS, EVENT(FuchinFallsCave_AnimateFourthLog) },
-    { STEP_TRIGGER_WALKING_INTO(FACING_SOUTH), 25, CONDITION_ALWAYS, EVENT(ImilFuchinFalls_HopOnTrigger) },
+    { STEP_TRIGGER_WALKING_INTO(FACING_SOUTH), DRAGONS_EYE_ROOM_HOP_SOUTH_CELL, CONDITION_ALWAYS, EVENT(ImilFuchinFalls_HopOnTrigger) },
     { TRIGGER_EXIT | EXIT_STYLE_STAIRS_UP, 1, CONDITION_ALWAYS, FUCHIN_FALLS_CAVE_DRAGONS_EYE_CHAMBER_TO_LOGS },
     { TRIGGER_EXIT | EXIT_STYLE_STAIRS_UP, 2, CONDITION_ALWAYS, FUCHIN_FALLS_CAVE_DRAGONS_EYE_TO_FUCHIN_FALLS_CAVE_DRAGON_STATUE },
     { TRIGGER_EXIT | EXIT_STYLE_STAIRS_DOWN, 3, CONDITION_ALWAYS, FUCHIN_FALLS_CAVE_DRAGONS_EYE_LOGS_TO_CHAMBER },

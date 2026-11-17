@@ -152,11 +152,11 @@ extern s32 gKibombo_EyesPopScript[];
 extern s16 gKibombo_FrozenPuddle[];
 u8 gKibombo_UnusedBeforeFireColors[4] BSS_DATA;
 s16 gKibombo_FireColors[4] BSS_DATA;
+struct Actor *gKibombo_BlackCrystal BSS_DATA;
 
 /// A background colour's place in BG_PLTT: colour `color` of 16-colour palette
 /// `palette`, as the fires' flicker indexes the colours it sets.
 #define BG_PLTT_INDEX(palette, color) ((palette) * PALETTE_COLORS + (color))
-struct Actor *gKibombo_BlackCrystal BSS_DATA;
 
 /// Set once the party has found the dead end by the statue and turned back
 /// (Kibombo_DeadEndByTheStatue).

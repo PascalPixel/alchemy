@@ -10,6 +10,10 @@
 /// Seal's FLAG_IN_PARTY.
 #define FLAG_IN_PARTY(actor) (actor)
 
+/// Set once the summon tablet of `summon` (enum SummonId) has taught it: a
+/// tablet's flag is its summon's number (gSceneItems).
+#define FLAG_SUMMON_TABLET(summon) (summon)
+
 /// The first of the 80 Djinn flags, DJINNI_FLINT's.
 #define FLAG_DJINN_FIRST 48
 /// Set once the party has `djinni` (djinn_ids.h), whose DjinniId counts from
@@ -266,6 +270,9 @@
 /// permission to these four travelers!"); the drawbridge guards let the party
 /// by once it is set.
 #define FLAG_OSENIA_PASSAGE_GRANTED 0x913
+/// Set as Madra's mayor gives Felix the Cyclone Chip, the reward he promised
+/// for the help with the boat.
+#define FLAG_MADRA_CYCLONE_CHIP_GIVEN 0x918
 /// Set while the Trial Road holds the party's equipment, from the race's start
 /// (InventorySnapshot_Save) to its end (InventorySnapshot_Restore), as The
 /// Broken Seal's FLAG_COLOSSO_HOLDS_EQUIPMENT; the Trial Road's music rule and
@@ -276,6 +283,16 @@
 /// a race starts, so that every race finds them again.
 #define FLAG_TRIAL_ROAD_STAGE_ITEM_FIRST 0xe50
 #define FLAG_TRIAL_ROAD_STAGE_ITEM_LAST 0xe59
+/// Set once Sheba's Whirlwind has made the sand vanish from the purple rock
+/// in Shaman Village, Moapa's first test ("The sand vanished!").
+#define FLAG_SHAMAN_VILLAGE_SAND_CLEARED 0x94c
+/// Set as Moapa comes out of his cabin in Shaman Village to meet the party.
+#define FLAG_SHAMAN_VILLAGE_MOAPA_MET 0x94f
+/// Set once the party has shown Moapa the Shaman's Rod.
+#define FLAG_SHAMAN_VILLAGE_SHAMANS_ROD_SHOWN 0x9e1
+/// Set as the party comes back from beating Moapa on the Trial Road; Shaman
+/// Village's inn and sanctum serve the party from then on.
+#define FLAG_MOAPA_BEATEN 0x9fe
 
 /// Set once the old werewolf of Garoh's inn has asked the party whether they
 /// learned Reveal; he then only sighs about his wasted years.
@@ -460,6 +477,17 @@
 /// lighthouse turns to fire and its ice is gone, and battles there take the
 /// dragon hall's backdrop A in place of B.
 #define FLAG_MARS_LIGHTHOUSE_THAWED 0xa30
+/// Set as the party, back in Prox, overhears the two warriors who could not
+/// find Felix's parents to set them free, as Puelle ordered.
+#define FLAG_HEARD_OF_PARENTS 0x9c0
+/// Set once Puelle has told the clan he is going to the lighthouse and they
+/// have begged him to let them go in his stead.
+#define FLAG_CLAN_SPOKE_OF_LIGHTHOUSE 0x9c1
+/// Set once the party has met Puelle, the chieftain of Prox.
+#define FLAG_MET_PUELLE 0x9c2
+/// Set after the ending, once the clan in Prox's houses has thanked the party
+/// for lighting the fires of the lighthouse beacon.
+#define FLAG_THANKED_FOR_BEACON 0x9c5
 /// Set at the end of the reunion in Contigo, where the two parties hear what
 /// happened on Mt. Aleph; the shipwrights at Atteka Inlet then wait with the
 /// wings.
@@ -496,6 +524,26 @@
 /// Set once the party has taken the Burst Brooch in Tundaria Tower; after
 /// that, searching the crystal round the Center Prong opens the field menu.
 #define FLAG_TUNDARIA_TOWER_BURST_BROOCH 0x949
+/// Set once the party has taken the Center Prong from Tundaria Tower.
+#define FLAG_CENTER_PRONG_TAKEN 0x945
+/// Set once the party has found the Cloud Brand in Gaia Rock.
+#define FLAG_CLOUD_BRAND_FOUND 0xe41
+/// Set once the party has taken the Dancing Idol from Gaia Rock's altar.
+#define FLAG_DANCING_IDOL_TAKEN 0xf74
+/// Set once the party has taken the Mint Cyclone uncovers in the bushes by the
+/// Gabomba Catacombs' statue.
+#define FLAG_HIDDEN_WALL_MINT_TAKEN 0xf53
+/// Set once the party has taken the Tomegathericon from the seated idol of the
+/// Gabomba Catacombs.
+#define FLAG_TOMEGATHERICON_TAKEN 0xf93
+/// Set once the party has taken the Bramble Seed in Contigo's bushes.
+#define FLAG_CONTIGO_BRAMBLE_SEED_TAKEN 0xfc7
+/// Set once the party has caught Kalt Island's Apple.
+#define FLAG_APPLE_TAKEN 0xf5d
+/// Set once the party has dug up the Hard Nut at Lemuria's fifth soft spot.
+#define FLAG_FIFTH_SPOT_DUG 0xfbb
+/// Set once the party has dug up the Golem Core under Loho's rock.
+#define FLAG_GOLEM_CORE_DUG 0xff7
 
 // Scene flags, FLAG_SCENE_TEMP_00 to FLAG_SCENE_TEMP_FF: a scene says beside
 // its uses what each one holds there.

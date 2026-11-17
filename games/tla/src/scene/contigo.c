@@ -758,9 +758,8 @@ void Contigo_BabyThinks(void) {
   PaletteFade_SetTarget(PALETTE_TINT_CUSTOM | RGB(4, 4, 16), 1);
   PaletteFade_StartInterpolation(16);
   BattleEffect_StartArcEffect();
-  BattleEffect_SetObjectUpdateMode(((struct Actor *)Actor_GetById(ACTOR_BABY)),
-                                   2);
-  effect = ((struct Actor *)Import_ActorCreate(SPRITE_WHIRLWIND, x, 0, z));
+  BattleEffect_SetObjectUpdateMode(Actor_GetById(ACTOR_BABY), 2);
+  effect = Import_ActorCreate(SPRITE_WHIRLWIND, x, 0, z);
   if (effect != 0) {
     Actor_SetSpriteFlags(effect, 0);
     Actor_SelectAnimation(effect, 2);
@@ -789,8 +788,7 @@ void Contigo_BabyThinks(void) {
     } while (i < 28);
     Actor_Release(effect);
   }
-  BattleEffect_SetObjectUpdateMode(((struct Actor *)Actor_GetById(ACTOR_BABY)),
-                                   0);
+  BattleEffect_SetObjectUpdateMode(Actor_GetById(ACTOR_BABY), 0);
   BattleEffect_WaitForArcGroups();
   BattleEffect_EndArcEffect();
   PaletteFade_SetTarget(PALETTE_TINT_NONE, PALETTES_BG);
@@ -1048,7 +1046,7 @@ void Contigo_AskAboutGeoglyph(void) {
 /// unless Mind Read is cast on him, and back after.
 void Contigo_TalkToWanderer(void) {
   struct FieldWork *work = Ram_HeapSlots->fieldWork;
-  struct Actor *actor = ((struct Actor *)Actor_GetById(ACTOR_WANDERER));
+  struct Actor *actor = Actor_GetById(ACTOR_WANDERER);
   s16 angle = actor->facing;
 
   Event_Start();
@@ -1081,7 +1079,7 @@ void Contigo_TalkToWanderer(void) {
 /// Read is cast on her, and back after.
 void Contigo_TalkAboutTheShip(void) {
   struct FieldWork *event = Ram_HeapSlots->fieldWork;
-  struct Actor *actor = ((struct Actor *)Actor_GetById(ACTOR_GIRL_ON_THE_SHIP));
+  struct Actor *actor = Actor_GetById(ACTOR_GIRL_ON_THE_SHIP);
   s16 angle = actor->facing;
 
   Event_Start();
@@ -1609,7 +1607,7 @@ void Contigo_TheReunion(void) {
   s32 answer;
   s32 angle;
 
-  actor = ((struct Actor *)Actor_GetById(ACTOR_HAMMA));
+  actor = Actor_GetById(ACTOR_HAMMA);
   Event_Start();
   Event_ResolvePendingActions(0);
   Sound_Play(SOUND_FADE_OUT_BGM);
@@ -1855,8 +1853,7 @@ void Contigo_TheReunion(void) {
   FieldActor_ShowEmote(ACTOR_ISAAC, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 0);
   FieldActor_ShowEmote(ACTOR_GARET, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 20);
   Sound_Play(MUS_SILENCE);
-  Actor_SetSpriteColor(((struct Actor *)Actor_GetById(ACTOR_HAMMA)),
-                       SPRITE_COLOR_HIDDEN);
+  Actor_SetSpriteColor(Actor_GetById(ACTOR_HAMMA), SPRITE_COLOR_HIDDEN);
   angle = FACING_NORTH_NORTHWEST;
   Actor_SetHorizontalPositionAndAngleWithTerrain(ACTOR_HAMMA, toFIXED(160),
                                                  toFIXED(466), angle);
@@ -1870,8 +1867,7 @@ void Contigo_TheReunion(void) {
   Actor_WatchAndSetScript(ACTOR_GARET, ACTOR_HAMMA);
   Actor_WatchAndSetScript(ACTOR_MIA, ACTOR_HAMMA);
   Actor_WatchAndSetScript(ACTOR_IVAN, ACTOR_HAMMA);
-  Actor_SetSpriteColor(((struct Actor *)Actor_GetById(ACTOR_HAMMA)),
-                       SPRITE_COLOR_NORMAL);
+  Actor_SetSpriteColor(Actor_GetById(ACTOR_HAMMA), SPRITE_COLOR_NORMAL);
   FieldCamera_SetSpeed(2.4);
   FieldCamera_MoveTo(180, CAMERA_KEEP, 410, 1);
   FieldCamera_WaitForArrival();
@@ -2554,16 +2550,12 @@ void Contigo_InitializeLuckyDice(void) {
   Contigo_ShrinkActor(ACTOR_SECOND_LUCKY_DICE_SIGN);
   Contigo_ShrinkActor(ACTOR_LUCKY_WHEELS_SIGN);
   Contigo_ShrinkActor(ACTOR_LUCKY_WHEELS_PRIZE_SIGN);
-  Actor_SetSpriteColor(((struct Actor *)Actor_GetById(ACTOR_LUCKY_DICE_HOST)),
-                       SPRITE_COLOR_GRB);
-  Actor_SetSpriteColor(((struct Actor *)Actor_GetById(ACTOR_LUCKY_DICE_GUIDE)),
-                       SPRITE_COLOR_RBG);
-  Actor_SetSpriteColor(
-      ((struct Actor *)Actor_GetById(ACTOR_SUPER_LUCKY_DICE_HOST)),
-      SPRITE_COLOR_NORMAL);
-  Actor_SetSpriteColor(
-      ((struct Actor *)Actor_GetById(ACTOR_SUPER_LUCKY_DICE_GUIDE)),
-      SPRITE_COLOR_BGR);
+  Actor_SetSpriteColor(Actor_GetById(ACTOR_LUCKY_DICE_HOST), SPRITE_COLOR_GRB);
+  Actor_SetSpriteColor(Actor_GetById(ACTOR_LUCKY_DICE_GUIDE), SPRITE_COLOR_RBG);
+  Actor_SetSpriteColor(Actor_GetById(ACTOR_SUPER_LUCKY_DICE_HOST),
+                       SPRITE_COLOR_NORMAL);
+  Actor_SetSpriteColor(Actor_GetById(ACTOR_SUPER_LUCKY_DICE_GUIDE),
+                       SPRITE_COLOR_BGR);
   if (!Event_GetFlag(FLAG_LEFT_FOR_A_GAME))
     return;
   GameFlag_Clear(FLAG_LEFT_FOR_A_GAME);

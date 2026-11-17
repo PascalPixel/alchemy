@@ -2276,13 +2276,13 @@ struct SolidFace {
     }                                                                          \
   }
 
-/// An unused solid renderer, the filled twin of Render_DrawMeshWireframe.
-/// Transforms the vertexCount points in the sheet block by the current matrix,
-/// then fills every face of the effect work's list that faces the camera into
-/// the canvas, centred at (64, 64), keeping the brighter colour where faces
-/// overlap. Each triangle is sorted by y and filled in two halves, top to
-/// middle and middle to bottom, along 16.16 edge slopes.
-void Render_FillMesh(s32 vertexCount, s32 faceCount) {
+/// Unused: nothing calls it. A solid renderer, the filled twin of
+/// Render_DrawMeshWireframe. Transforms the vertexCount points in the sheet
+/// block by the current matrix, then fills every face of the effect work's list
+/// that faces the camera into the canvas, centred at (64, 64), keeping the
+/// brighter colour where faces overlap. Each triangle is sorted by y and filled
+/// in two halves, top to middle and middle to bottom, along 16.16 edge slopes.
+UNUSED void Render_FillMesh(s32 vertexCount, s32 faceCount) {
   u8 *canvas = Ram_HeapSlots->battleCanvas;
   s32 *vertices = Ram_HeapSlots->battleSheet;
   struct SolidFace *faces = (struct SolidFace *)Ram_HeapSlots->battleEffect;
@@ -2431,14 +2431,14 @@ struct MeshFace {
                                         (uv[1][1] - uv[0][1]));                \
   }
 
-/// Transforms vertexCount vertices (16.16 x, y, z in the heap's vertex
-/// buffer) in place, then draws each front-facing face of the mesh at the
-/// start of the effect work as an affine-textured triangle: uvs gives each
-/// face's three texture corners (16.16), the texture is the effect sheet,
-/// textureShift its row length as a power of two. Coordinates are offset by
-/// 64 pixels into the canvas.
-void Render_DrawTexturedMesh(s32 vertexCount, s32 faceCount, s32 (*uvs)[3][2],
-                             s32 textureShift) {
+/// Unused: nothing calls it. Transforms vertexCount vertices (16.16 x, y, z in
+/// the heap's vertex buffer) in place, then draws each front-facing face of the
+/// mesh at the start of the effect work as an affine-textured triangle: uvs
+/// gives each face's three texture corners (16.16), the texture is the effect
+/// sheet, textureShift its row length as a power of two. Coordinates are offset
+/// by 64 pixels into the canvas.
+UNUSED void Render_DrawTexturedMesh(s32 vertexCount, s32 faceCount,
+                                    s32 (*uvs)[3][2], s32 textureShift) {
   s32 i;
   s32 *vertices;
   u8 *canvas;
@@ -2598,12 +2598,12 @@ struct WireFace {
   u8 padding[3];
 };
 
-/// An unused wireframe renderer. Transforms the vertexCount points in the
-/// sheet block by the current matrix, then draws the three edges of every
-/// face of the effect work's list that faces the camera (its corners run
-/// counter-clockwise on screen) as clipped lines into the canvas, centred at
-/// (64, 64).
-void Render_DrawMeshWireframe(s32 vertexCount, s32 faceCount) {
+/// Unused: nothing calls it. A wireframe renderer. Transforms the vertexCount
+/// points in the sheet block by the current matrix, then draws the three edges
+/// of every face of the effect work's list that faces the camera (its corners
+/// run counter-clockwise on screen) as clipped lines into the canvas, centred
+/// at (64, 64).
+UNUSED void Render_DrawMeshWireframe(s32 vertexCount, s32 faceCount) {
   s32 *vertices = Ram_HeapSlots->battleSheet;
   struct WireFace *faces = (struct WireFace *)Ram_HeapSlots->battleEffect;
   s32 i;
@@ -3023,14 +3023,12 @@ s32 BattleEffect_BuildBlitter(s32 slot, s32 widthShift, s32 heightShift,
   }
 }
 
-// The same wrapper as Render_TransformVertices (below) and Message_Find, with
-// two arguments. Nothing in the image calls it.
-
-/// Copies Render_FillMeshKernel (render_fill_mesh_kernels.s), an ARM build of
-/// Render_FillMesh: the same transform of vertexCount points centred at
-/// (64, 64), back faces dropped and each triangle sorted by y with XOR swaps,
-/// into a heap block (DMA 3, words), runs it there and frees the block.
-void Render_RunFillMeshKernel(s32 vertexCount, s32 faceCount) {
+/// Unused: nothing calls it. Copies Render_FillMeshKernel
+/// (render_fill_mesh_kernels.s), an ARM build of Render_FillMesh: the same
+/// transform of vertexCount points centred at (64, 64), back faces dropped and
+/// each triangle sorted by y with XOR swaps, into a heap block (DMA 3, words),
+/// runs it there and frees the block.
+UNUSED void Render_RunFillMeshKernel(s32 vertexCount, s32 faceCount) {
   void (*routine)(s32, s32);
 
   RamCode_Load(routine, Render_FillMeshKernel, Render_FillMeshKernelCodeSize);

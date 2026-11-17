@@ -449,6 +449,8 @@ void BattleEffect_RunCharon(struct BattleEffectParams *arg) {
       pulsePlace[3] = 0;
       pulsePlace[1] = toFIXED(255);
       pulsePlace[0] = toFIXED(114);
+      // DEAD: sealFrame is never negative here; the ROM keeps the test and its
+      // other height.
       pulsePlace[2] = INTtoFIXED(sealFrame >= 0 ? 78 : 100);
       Render_ApplyProjectedPlacementFar(OBJECTS[0], pulsePlace, &pulseScale.x,
                                         0);
@@ -1868,6 +1870,7 @@ void Render_BuildQuadStrip(struct StripQuad *quad, s32 width, s32 height,
 #undef SPRITE_BUFFER
 #undef OAM_BUFFER
 #undef REVEAL_BUFFER
+#undef ORB_BUFFER
 #undef OBJ_VRAM
 #undef CHARON_SEAL_TILES
 #undef DROPS

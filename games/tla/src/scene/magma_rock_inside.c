@@ -126,14 +126,15 @@ enum MagmaRockInsideEntranceActorId {
   ACTOR_COLUMN_E,
   ACTOR_COLUMN_F,
   ACTOR_ENTRANCE_PILLAR,
-  ACTOR_ENTRANCE_MARKER, ///< unseen (sprite 489), raised over the lava
+  ACTOR_ENTRANCE_MARKER, ///< unseen (SPRITE_UNSEEN_MARKER), raised over the
+                         ///< lava
   ACTOR_LOST_DJINNI      ///< the spare Mars Djinni "Fire19"
 };
 
 /// Fury's room: the statue, two lava platforms, the pillar pushed into the
 /// lava, the tightrope's posts and Fury.
 enum MagmaRockInsideFuryActorId {
-  ACTOR_FURY_MARKER = ACTOR_FIRST_PLACED + 1, ///< unseen (sprite 489)
+  ACTOR_FURY_MARKER = ACTOR_FIRST_PLACED + 1, ///< unseen (SPRITE_UNSEEN_MARKER)
   ACTOR_WEST_PLATFORM,
   ACTOR_FURY_PILLAR,
   ACTOR_EAST_PLATFORM,
@@ -164,12 +165,12 @@ enum MagmaRockInsideCrackedPillarsActorId {
 };
 
 /// The Golem Core's room: two unseen markers raised over the lava and the two
-/// hanging vines.
+/// chains hanging from its ceiling, which Whirlwind swings.
 enum MagmaRockInsideGolemCoreChestActorId {
   ACTOR_MARKER_A = ACTOR_FIRST_PLACED,
   ACTOR_MARKER_B,
-  ACTOR_HANGING_VINE_A,
-  ACTOR_HANGING_VINE_B
+  ACTOR_HANGING_CHAIN_A,
+  ACTOR_HANGING_CHAIN_B
 };
 
 /// The Salamander Tail's room: three lava platforms and two pillars to push.
@@ -202,6 +203,11 @@ enum MagmaRockInsideEmberStoneActorId {
   ACTOR_EAST_TORCH_FLAME,
   ACTOR_LEDGE_PILLAR
 };
+
+/// The flag that keeps a torch of the ember stone's room lit, by its flame's
+/// actor: FLAG_WEST_TORCH_LIT or FLAG_EAST_TORCH_LIT.
+#define FLAG_TORCH_LIT(flame)                                                  \
+  ((flame) - ACTOR_WEST_TORCH_FLAME + FLAG_WEST_TORCH_LIT)
 
 /// The Blaze tablet's room: the tablet, the pillar its torch lowers, the flame
 /// Blaze moves and the torch's flame.
@@ -446,9 +452,10 @@ s32 MagmaRockInside_SwapCells(u32 layer, s32 x, s32 y, s32 value) {
   return old;
 }
 
-/// For each id of a list ended by ACTOR_LIST_END: clears the object's mark and,
-/// on a cell with attribute bit 6, blocks the cells ahead of and behind it and
-/// sets the mark.
+/// For each id of a list ended by ACTOR_LIST_END: clears the pillar's mark and,
+/// where it stands on a climbable cell (MAP_CELL_CLIMBABLE, as draining the
+/// lava leaves its cell), blocks the cells ahead of and behind it and sets the
+/// mark.
 void MagmaRockInside_MarkBlockCells(u16 *ids) {
   struct Actor *actor;
   u8 *blocked;
@@ -462,7 +469,7 @@ void MagmaRockInside_MarkBlockCells(u16 *ids) {
     blocked = &actor->riseEnabled;
     *blocked = 0;
     if (MapCell_Get(0, FIELD_CELL(actor->x.fixed), FIELD_CELL(actor->z.fixed)) &
-        0x40) {
+        MAP_CELL_CLIMBABLE) {
       map = Ram_HeapSlots->mapGrid;
       if (map == NULL)
         return;
@@ -549,6 +556,7 @@ extern struct ActorPlacement gMagmaRockInside_BlazeTabletPlacements[];
 
 extern s16 gMagmaRockInside_SalamanderTailChestPillars[];
 
+/// The placed actors of the current room.
 const struct ActorPlacement *Scene_GetActorPlacements(void) {
   s16 scene = gMainRoutineWork.next;
 
@@ -1253,7 +1261,7 @@ void MagmaRockInside_DrainLava(void) {
       open = 212;
     Event_ClearFlag(FLAG_ENTRANCE_FLOODED);
     facing = FACING_EAST;
-    ((s32 (*)())MagmaRockInside_SwapCells)(0, 15, 13, 64);
+    MagmaRockInside_SwapCells(0, 15, 13, MAP_CELL_CLIMBABLE);
     FieldActor_SetSpritePriority(ACTOR_ENTRANCE_PILLAR, 3);
     for (j = 0; j != 7; j++)
       Actor_SetAnimation(j + ACTOR_COLUMN_A, 1);
@@ -1268,8 +1276,8 @@ void MagmaRockInside_DrainLava(void) {
     if (Event_GetFlag(FLAG_FURY_FLOODED))
       open = 212;
     Event_ClearFlag(FLAG_FURY_FLOODED);
-    ((s32 (*)())MagmaRockInside_SwapCells)(0, 24, 15, 64);
-    ((s32 (*)())MagmaRockInside_SwapCells)(0, 9, 16, 64);
+    MagmaRockInside_SwapCells(0, 24, 15, MAP_CELL_CLIMBABLE);
+    MagmaRockInside_SwapCells(0, 9, 16, MAP_CELL_CLIMBABLE);
     Actor_SetAnimation(ACTOR_FURY_PILLAR, 4);
   } else if (gMainRoutineWork.next ==
              SCENE_MAGMA_ROCK_INSIDE_GOLEM_CORE_CHEST) {
@@ -1379,6 +1387,8 @@ DEFINE_MAGMA_ROCK_INSIDE_BURST_PILLAR(MagmaRockInside_BurstCrackedPillarB,
                                       ACTOR_CRACKED_PILLAR_B,
                                       FLAG_CRACKED_PILLAR_B_BURST)
 
+/// A thrown rock's or flame's update: it trails smoking embers every other
+/// frame for 64 frames.
 void MagmaRockInside_SmokeEmber(struct Actor *actor) {
   if (++actor->timer > 64)
     actor->update = NULL;
@@ -1531,7 +1541,7 @@ void MagmaRockInside_GrowFlame(void) {
     wait(5);
     i++;
   } while (i != 16);
-  Event_SetFlag(work->psynergyHitObject + 0x2ee);
+  Event_SetFlag(FLAG_TORCH_LIT(work->psynergyHitObject));
   if (Event_GetFlag(FLAG_WEST_TORCH_LIT) &&
       Event_GetFlag(FLAG_EAST_TORCH_LIT)) {
     other = Actor_GetById(ACTOR_BLOCKING_PILLAR);
@@ -1732,7 +1742,7 @@ void MagmaRockInside_OpenFlamePassage(s32 x, s32 z) {
   s32 cellZ;
 
   actor = FieldActor_Create(SPRITE_STACKED_CRATES, toFIXED(x), 0, toFIXED(z));
-  REG_BLDALPHA = 16;
+  REG_BLDALPHA = BLEND_ALPHA(BLEND_WEIGHT_MAX, 0);
   REG_BLDCNT = BLDCNT_TGT1_BG2 | BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_ALL;
   Scene_SetActorSpritePriority(actor, 0);
   Actor_SetSpriteFlags(actor, 0);
@@ -1777,8 +1787,7 @@ void MagmaRockInside_StepOnMarker(void) {
   cell =
       MapCell_Get(2, FIELD_CELL(leader->x.fixed), FIELD_CELL(leader->z.fixed));
   trigger = &work->raisedTrigger;
-  // From 54 in two steps: as one expression the constants fold into
-  // 858 - 4 * counter.
+  // The marker's row: 54 for the first, four rows up for each after it.
   row -= (*trigger - (STEP_CELL_TRIGGER_BASE + 1)) << 2;
   cell >>= 8;
   if (cell != 1 && cell != 7) {
@@ -1796,6 +1805,8 @@ DEFINE_MAGMA_ROCK_INSIDE_LIGHT_TORCH(MagmaRockInside_LightTabletTorch,
                                      FLAG_TABLET_TORCH_LIT, ACTOR_TORCH_FLAME,
                                      136, 360)
 
+/// Blaze on the Blaze tablet room's torch: its flame swells over 80 frames, the
+/// torch's flag is set and the pillar beside it sinks.
 void MagmaRockInside_GrowTabletFlame(void) {
   struct Actor *object;
   struct Actor *actor;
@@ -1843,7 +1854,7 @@ void MagmaRockInside_GrowTabletFlame(void) {
   Actor_Release(actor);
   FieldEvent_Wait(1);
   REG_BLDCNT = 0;
-  MagmaRockInside_SwapCells(0, 7, 21, 128);
+  MagmaRockInside_SwapCells(0, 7, 21, MAP_CELL_JUMP);
   Event_End();
 }
 
@@ -2525,8 +2536,8 @@ s32 Scene_Initialize(void) {
     FieldEffect_StartBlankOverlay(0);
     Actor_GetById(gMainRoutineWork.leaderActorId)->priorityFlags |=
         ACTOR_PRIORITY_WALKS_ON_PLATFORMS;
-    HangingVine_Place(ACTOR_HANGING_VINE_A, 1);
-    HangingVine_Place(ACTOR_HANGING_VINE_B, 1);
+    HangingVine_Place(ACTOR_HANGING_CHAIN_A, 1);
+    HangingVine_Place(ACTOR_HANGING_CHAIN_B, 1);
     Raise(ACTOR_MARKER_A);
     Raise(ACTOR_MARKER_B);
     if (Event_GetFlag(FLAG_LOWER_ROOMS_FLOODED)) {
@@ -2643,9 +2654,9 @@ s32 Scene_PrepareMap(void) {
   if (!Event_GetFlag(FLAG_KEEP_PARTY_POSITION)) {
     if ((scene == SCENE_MAGMA_ROCK_INSIDE_ENTRANCE && entrance == 8) ||
         (scene == SCENE_MAGMA_ROCK_INSIDE_EMBER_STONE && entrance == 11)) {
-      Event_ClearFlag(FLAG_AREA_TEMP_00);
-      Event_ClearFlag(FLAG_AREA_TEMP_01);
-      Event_ClearFlag(FLAG_AREA_TEMP_02);
+      Event_ClearFlag(FLAG_ENTRANCE_FLOODED);
+      Event_ClearFlag(FLAG_FURY_FLOODED);
+      Event_ClearFlag(FLAG_LOWER_ROOMS_FLOODED);
     }
   }
   return 0;
@@ -2874,18 +2885,21 @@ void BattleEffect_StepVector3(struct Particle *particle, s32 damping,
 
 #include "shared/particle_update_falling.h"
 
-/// The falling rocks' work: their tiles, 64 rocks and their sprites, in a
-/// ring that next walks round.
+/// The falling rocks in flight at once.
+#define ROCK_COUNT 64
+
+/// The falling rocks' work: their tiles, the rocks and their sprites, in a ring
+/// that next walks round.
 struct RockWork {
   u8 tiles[1280];
-  struct Rock rocks[64];
-  struct EffectSprite sprites[64];
+  struct Rock rocks[ROCK_COUNT];
+  struct EffectSprite sprites[ROCK_COUNT];
   s16 next;
   u16 tileBase;
   s16 resource;
 };
 
-STATIC_ASSERT(offsetof(struct RockWork, resource) == 0x1604);
+STATIC_ASSERT(offsetof(struct RockWork, resource) == 5636);
 
 /// Spawns count rocks around (x, y, z), each pushed out at a random angle and
 /// thrown up and out along it.
@@ -2910,7 +2924,7 @@ void MagmaRockInside_DropRocks(s32 x, s32 y, s32 z, s32 count) {
     FieldVector_AddPolarOffsetFX((Random16() << 1) + toFIXED(2), angle,
                                  rock->velocity);
     work->next++;
-    work->next &= 63;
+    work->next &= ROCK_COUNT - 1;
   }
 }
 
@@ -2933,7 +2947,7 @@ void MagmaRockInside_StartFallingRocks(void) {
   work->resource = entry;
   rock = work->rocks;
   sprite = work->sprites;
-  for (i = 0; i < 64; i++, sprite++, rock++) {
+  for (i = 0; i < ROCK_COUNT; i++, sprite++, rock++) {
     MagmaRockInside_InitRockSprite(sprite, 8, 8, OBJ_SIZE_16X16, tile);
     sprite->oam.fullColor = 1;
     sprite->oam.palette = SPRITE_COLOR_NORMAL;
@@ -3348,7 +3362,7 @@ struct ActorPlacement gMagmaRockInside_EntrancePlacements[] = {
     {SPRITE_ORANGE_PILLAR, CONDITION_ALWAYS, MOVEMENT_TYPE_CLEAR_COLLISION, 6, 0, 0, FACING_NORTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_AT_SCENE_POINT | ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE},
     {SPRITE_ORANGE_PILLAR, CONDITION_ALWAYS, MOVEMENT_TYPE_CLEAR_COLLISION, 7, 0, 0, FACING_NORTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_AT_SCENE_POINT | ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE},
     {SPRITE_YELLOW_BLOCK, CONDITION_ALWAYS, MOVEMENT_TYPE_CLEAR_COLLISION, 8, 0, 0, FACING_NORTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_AT_SCENE_POINT},
-    {489, CONDITION_ALWAYS, MOVEMENT_TYPE_CLEAR_COLLISION, 9, 0, 0, FACING_NORTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_AT_SCENE_POINT},
+    {SPRITE_UNSEEN_MARKER, CONDITION_ALWAYS, MOVEMENT_TYPE_CLEAR_COLLISION, 9, 0, 0, FACING_NORTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_AT_SCENE_POINT},
     ACTOR_PLACEMENT(SPRITE_MARS_DJINNI, FLAG_DJINNI(DJINNI_FIRE19), MOVEMENT_TYPE_STAND, 296, 0, 504, FACING_SOUTH, TALK_FACING_PARTY, 0),
     {SCENE_TABLE_END},
 };
@@ -3356,7 +3370,7 @@ struct ActorPlacement gMagmaRockInside_EntrancePlacements[] = {
 /// The actors placed in Fury's room.
 struct ActorPlacement gMagmaRockInside_FuryPlacements[] = {
     {SPRITE_WIND_STATUE, CONDITION_ALWAYS, MOVEMENT_TYPE_CLEAR_COLLISION, 1, 0, 0, FACING_WEST, TALK_FACING_KEEP, ACTOR_PLACEMENT_AT_SCENE_POINT},
-    {489, CONDITION_ALWAYS, MOVEMENT_TYPE_CLEAR_COLLISION, 2, 0, 0, FACING_NORTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_AT_SCENE_POINT},
+    {SPRITE_UNSEEN_MARKER, CONDITION_ALWAYS, MOVEMENT_TYPE_CLEAR_COLLISION, 2, 0, 0, FACING_NORTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_AT_SCENE_POINT},
     {SPRITE_WHITE_PLATFORM, CONDITION_ALWAYS, MOVEMENT_TYPE_CLEAR_COLLISION, 3, 0, 0, FACING_NORTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_AT_SCENE_POINT},
     {SPRITE_YELLOW_BLOCK, CONDITION_ALWAYS, MOVEMENT_TYPE_CLEAR_COLLISION, 4, 0, 0, FACING_NORTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_AT_SCENE_POINT},
     {SPRITE_WHITE_PLATFORM, CONDITION_ALWAYS, MOVEMENT_TYPE_CLEAR_COLLISION, 5, 0, 0, FACING_NORTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_AT_SCENE_POINT},
@@ -3392,8 +3406,8 @@ struct ActorPlacement gMagmaRockInside_CrackedPillarsPlacements[] = {
 
 /// The actors placed in the Golem Core's chest room.
 struct ActorPlacement gMagmaRockInside_GolemCoreChestPlacements[] = {
-    {489, CONDITION_ALWAYS, MOVEMENT_TYPE_CLEAR_COLLISION, 1, 0, 0, FACING_NORTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_AT_SCENE_POINT},
-    {489, CONDITION_ALWAYS, MOVEMENT_TYPE_CLEAR_COLLISION, 2, 0, 0, FACING_NORTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_AT_SCENE_POINT},
+    {SPRITE_UNSEEN_MARKER, CONDITION_ALWAYS, MOVEMENT_TYPE_CLEAR_COLLISION, 1, 0, 0, FACING_NORTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_AT_SCENE_POINT},
+    {SPRITE_UNSEEN_MARKER, CONDITION_ALWAYS, MOVEMENT_TYPE_CLEAR_COLLISION, 2, 0, 0, FACING_NORTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_AT_SCENE_POINT},
     ACTOR_PLACEMENT(SPRITE_SEEDLING, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 232, 0, 392, FACING_SOUTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(SPRITE_SEEDLING, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 328, 0, 392, FACING_SOUTH, TALK_FACING_KEEP, 0),
     {SCENE_TABLE_END},
@@ -3415,7 +3429,7 @@ struct ActorPlacement gMagmaRockInside_EmberStonePlacements[] = {
     {SPRITE_YELLOW_BLOCK, CONDITION_ALWAYS, MOVEMENT_TYPE_CLEAR_COLLISION, 2, 0, 0, FACING_NORTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_AT_SCENE_POINT | ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE},
     {SPRITE_YELLOW_BLOCK, CONDITION_ALWAYS, MOVEMENT_TYPE_CLEAR_COLLISION, 3, 0, 0, FACING_NORTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_AT_SCENE_POINT | ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE},
     {SPRITE_YELLOW_BLOCK, CONDITION_ALWAYS, MOVEMENT_TYPE_CLEAR_COLLISION, 4, 0, 0, FACING_NORTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_AT_SCENE_POINT},
-    {292, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 5, 0, 0, FACING_NORTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_AT_SCENE_POINT},
+    {SPRITE_EMBER_STONE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 5, 0, 0, FACING_NORTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_AT_SCENE_POINT},
     {SPRITE_TURNING_ROCK, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 6, 0, 0, FACING_NORTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_AT_SCENE_POINT},
     {SPRITE_TURNING_ROCK, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 7, 0, 0, FACING_NORTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_AT_SCENE_POINT | ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE},
     {SPRITE_TURNING_ROCK, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 8, 0, 0, FACING_NORTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_AT_SCENE_POINT | ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE},
@@ -3610,9 +3624,9 @@ struct Trigger gMagmaRockInside_GolemCoreChestTriggers[] = {
     {TRIGGER_EXIT, 10, CONDITION_ALWAYS, 10},
     {TRIGGER_STEP, 30, CONDITION_ALWAYS, EVENT(MagmaRockInside_DrainLava)},
     {TRIGGER_STEP, 31, CONDITION_ALWAYS, EVENT(MagmaRockInside_DrainLava)},
-    {PSYNERGY_ON_ACTOR(ABILITY_WHIRLWIND), ACTOR_HANGING_VINE_A,
+    {PSYNERGY_ON_ACTOR(ABILITY_WHIRLWIND), ACTOR_HANGING_CHAIN_A,
      CONDITION_ALWAYS, 0},
-    {PSYNERGY_ON_ACTOR(ABILITY_WHIRLWIND), ACTOR_HANGING_VINE_B,
+    {PSYNERGY_ON_ACTOR(ABILITY_WHIRLWIND), ACTOR_HANGING_CHAIN_B,
      CONDITION_ALWAYS, 0},
     {TRIGGER_TABLE_END},
 };

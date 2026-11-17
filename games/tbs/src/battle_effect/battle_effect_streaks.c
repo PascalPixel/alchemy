@@ -75,6 +75,10 @@ UNUSED void BattleEffect_RunLimeStreaks(struct BattleEffectParams *args) {
 #define STREAKS_FLIGHT 24       ///< frames from user to target
 #define STREAKS_TARGET_DELAY 32 ///< frames between targets
 
+/// A line's 16.16 sideways sway as the BG2X value of the effect's bg2xLines,
+/// which the wave HBlank DMA writes line by line.
+#define CANVAS_WAVE_BG2X(sway) ((sway) >> 10)
+
 /// Fires the streaks at each target in turn from above the user; each leaves a
 /// fading trail.
 void BattleEffect_RunStreakVolley(struct BattleEffectParams *args, s32 mode) {
@@ -167,7 +171,8 @@ void BattleEffect_RunStreakVolley(struct BattleEffectParams *args, s32 mode) {
       // A sine wave of BG2X offsets for the wave HBlank DMA, which nothing arms
       // here, so the canvas does not ripple.
       for (k = 0; k != DISPLAY_HEIGHT; k++)
-        *row++ = (toFIXED(8) - Trig_Sin((frame + k) << 12) * 2) >> 10;
+        *row++ = CANVAS_WAVE_BG2X(toFIXED(8) -
+                                  Trig_Sin((frame + k) * (TRIG_TURN / 16)) * 2);
       if (frame > totalFrames - 16)
         REG_BLDALPHA = EFFECT_BLEND_CANVAS(totalFrames - frame);
       EFFECT_VIEW_FROM_CAMERA(camera);
@@ -279,6 +284,15 @@ void BattleEffect_RunSoothingStar(struct BattleEffectParams *args) {
 }
 #define MOTE_FOUNTAIN_FOUNTAIN_FRAMES 128
 
+/// The projected depths over which a mote is sized, nearest to farthest: it is
+/// drawn MOTE_FOUNTAIN_LARGEST pixels wide (and twice as tall) at
+/// FLARE_DEPTH_NEAR or nearer, a pixel narrower for every
+/// MOTE_FOUNTAIN_DEPTH_STEP farther.
+#define FLARE_DEPTH_NEAR 314
+#define FLARE_DEPTH_FAR 634
+#define MOTE_FOUNTAIN_LARGEST 6
+#define MOTE_FOUNTAIN_DEPTH_STEP 64
+
 /// Motes burst out of the user and float upwards, wobbling, and each target
 /// reacts in turn.
 void BattleEffect_RunMoteFountain(struct BattleEffectParams *args, s32 mode) {
@@ -348,16 +362,18 @@ void BattleEffect_RunMoteFountain(struct BattleEffectParams *args, s32 mode) {
         s32 size;
 
         // Motes wobble and grow as they near the camera.
-        SET_VECTOR(worldPoint,
-                   mote->x + Trig_Sin((i * 4 + mote->variant) << 10) * 16,
-                   mote->y, mote->z);
+        SET_VECTOR(
+            worldPoint,
+            mote->x + Trig_Sin((i * 4 + mote->variant) * (TRIG_TURN / 64)) * 16,
+            mote->y, mote->z);
         Projection_Point(worldPoint, &position);
         position.x >>= 1;
-        if (position.depth <= 313)
-          position.depth = 314;
-        if (position.depth > 634)
-          position.depth = 634;
-        size = 6 - (position.depth - 314) / 64;
+        if (position.depth < FLARE_DEPTH_NEAR)
+          position.depth = FLARE_DEPTH_NEAR;
+        if (position.depth > FLARE_DEPTH_FAR)
+          position.depth = FLARE_DEPTH_FAR;
+        size = MOTE_FOUNTAIN_LARGEST -
+               (position.depth - FLARE_DEPTH_NEAR) / MOTE_FOUNTAIN_DEPTH_STEP;
         EFFECT_DRAW_MOTE(draw[0], canvas, sheet, position.x, position.y, size);
         Particle_AdvanceWithGravity3D(mote, 62, toFIXED(1) / 64);
         // The drifting mode pushes the motes across the field.
@@ -404,3 +420,8 @@ void BattleEffect_RunMoteFountain(struct BattleEffectParams *args, s32 mode) {
 #undef STREAKS_FLIGHT
 #undef STREAKS_TARGET_DELAY
 #undef MOTE_FOUNTAIN_FOUNTAIN_FRAMES
+#undef CANVAS_WAVE_BG2X
+#undef FLARE_DEPTH_NEAR
+#undef FLARE_DEPTH_FAR
+#undef MOTE_FOUNTAIN_LARGEST
+#undef MOTE_FOUNTAIN_DEPTH_STEP

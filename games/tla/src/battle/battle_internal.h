@@ -125,7 +125,7 @@
 
 /// BattleWork.placement of a unit with no place on the battlefield:
 /// BattleUnit_RefreshPlacement fills the list with it.
-#define BATTLE_OBJECT_NONE 0xff
+#define BATTLE_OBJECT_NONE 255
 
 // BattleWork.defeatState: whether the last enemy fell alone, or with others
 // before it, or a party member's action ended the battle with a single
@@ -349,9 +349,9 @@ s32 BattleMessage_WaitForAdvanceAt(s32 x, s32 y);
 #define BATTLE_BG_PALETTE_COLORS (8 * 16)
 
 /// The battle background's darkening step (BattleBackground_SetPaletteLevel,
-/// BattleBackground_Load, the element glow): each level takes 1092 from the
-/// 16.16 brightness, so level 60 is almost black.
-#define BACKGROUND_LEVEL_STEP 1092
+/// BattleBackground_Load, the element glow): each level takes a sixtieth from
+/// the 16.16 brightness, so level 60 is black.
+#define BACKGROUND_LEVEL_STEP (FIXED_ONE / 60)
 
 /// BG1 during a battle: 256 colours, priority 3, its map in screen block 31.
 #define BATTLE_BG1CNT                                                          \

@@ -1,6 +1,10 @@
 #ifndef ALCHEMY_ACTOR_H
 #define ALCHEMY_ACTOR_H
 
+/// @file
+/// Actors, their flags and the screen transition styles, as The Broken
+/// Seal's actor.h.
+
 #include "field/field_coordinate.h"
 #include "fixed_math.h"
 #include "types.h"
@@ -326,8 +330,8 @@ extern const u8 gActor_VariantScripts[];
 
 /// Sets bits in one of an actor's flag bytes, the bits first. The name is ours:
 /// Caverns_LayerLeaderByStack, LemurianShip_StepOnLift,
-/// MarsLighthouseRoomF_MeltPuddle and MagmaRockInside_DrainLava all compile as
-/// this.
+/// MarsLighthouseRoomF_MeltPuddle and MagmaRockInside_DrainLava all set their
+/// flags this way.
 static inline void ActorFlags_Set(u8 *flags, s32 bits) {
   s32 value = bits;
 

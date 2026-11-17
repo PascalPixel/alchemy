@@ -377,7 +377,7 @@ void FieldEffect_SpawnRevealMarkers(void) {
       if ((u16)(type - CONTAINER_CHEST) <= CONTAINER_MIMIC - CONTAINER_CHEST)
         continue;
       if (type == CONTAINER_PSYNERGY_STONE || type == CONTAINER_STONE_TABLET ||
-          type == CONTAINER_POND || type == CONTAINER_BURIED)
+          type == CONTAINER_POND || type == CONTAINER_GROUND)
         continue;
       x = actor->x.fixed;
       y = actor->y.fixed;

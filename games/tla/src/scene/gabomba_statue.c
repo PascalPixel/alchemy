@@ -1046,7 +1046,7 @@ void GabombaStatue_HearTheOffering(void) {
     break;
   case CHARGES_TOGETHER:
     FieldEvent_SetExitRequest(
-        GABOMBA_STATUE_ARROWS_TO_KIBOMBO_STATUE_FACE_EAST_A_B);
+        GABOMBA_STATUE_ARROWS_TO_GABOMBA_STATUE_FACE_EAST_A_B);
     break;
   }
 }
@@ -1322,9 +1322,9 @@ DEFINE_GABOMBA_STATUE_WALK_LEADER_TO(GabombaStatue_CogsPinionsCarryLeaderNorth,
 /// Draws the room's hole covers, or hides them.
 void GabombaStatue_SetHoleCoversDrawn(s32 show) {
   if (gMainRoutineWork.next == SCENE_GABOMBA_STATUE_BONE_ARMLET_CHEST)
-    Actors_SetHidden(show, ACTOR_BONE_ARMLET_HOLE_COVER, 1);
+    Actors_SetDrawn(show, ACTOR_BONE_ARMLET_HOLE_COVER, 1);
   else if (gMainRoutineWork.next == SCENE_GABOMBA_STATUE_ELIXIR_CHEST)
-    Actors_SetHidden(show, ACTOR_ELIXIR_HOLE_COVER_A, 2);
+    Actors_SetDrawn(show, ACTOR_ELIXIR_HOLE_COVER_A, 2);
 }
 
 extern s16 gGabombaStatue_Stakes[];
@@ -1342,7 +1342,7 @@ void GabombaStatue_HideHoleCovers(void) {
 }
 
 /// Draws count actors from first, or hides them.
-void Actors_SetHidden(s32 show, s32 first, u32 count) {
+void Actors_SetDrawn(s32 show, s32 first, u32 count) {
   u32 i;
 
   for (i = 0; i < count; i++) {
@@ -1377,7 +1377,7 @@ void GabombaStatue_CogsTurnBack(void) {
   Event_PlaySound(SE_GABOMBA_STATUE_COGS);
   GabombaStatue_TurnCogs(0);
   FieldEvent_Wait(40);
-  Event_PlaySound(SE_582);
+  Event_PlaySound(SE_PUZZLE_MECHANISM);
   actor->motionFlags = 0;
   actor->y.fixed = toFIXED(8);
   FieldEvent_Wait(10);
@@ -1452,11 +1452,12 @@ void GabombaStatue_RestoreHoleCovers(void) {
     GabombaStatue_RestoreHoleCovers();                                         \
   }
 
-DEFINE_GABOMBA_STATUE_RAISE_HOLE_COVERS(GabombaStatue_DimBoneArmletChestActors,
-                                        ACTOR_BONE_ARMLET_HOLE_COVER, 1)
+DEFINE_GABOMBA_STATUE_RAISE_HOLE_COVERS(
+    GabombaStatue_HideBoneArmletChestHoleShadow, ACTOR_BONE_ARMLET_HOLE_COVER,
+    1)
 
-DEFINE_GABOMBA_STATUE_RAISE_HOLE_COVERS(GabombaStatue_DimElixirChestActors,
-                                        ACTOR_ELIXIR_HOLE_COVER_A, 2)
+DEFINE_GABOMBA_STATUE_RAISE_HOLE_COVERS(
+    GabombaStatue_HideElixirChestHoleShadows, ACTOR_ELIXIR_HOLE_COVER_A, 2)
 /// Each frame: while a menu or Psynergy is up, the cogs and the rope posts
 /// stand still.
 void GabombaStatue_PauseCogsInMenus(void) {
@@ -1500,7 +1501,7 @@ void GabombaStatue_PauseCogsInMenus(void) {
 }
 
 /// The map shapes of the cogs' cells, from COG_SHAPE_FIRST: the scene writes
-/// gGabombaStatue_CogCellPictures over the map's own entries there.
+/// gGabombaStatue_CogShapes over the map's own entries there.
 enum {
   COG_SHAPE_GREEN_COG = 116, ///< the green cog's own cell
   COG_SHAPE_TOP,             ///< the flat top every other cog stands on
@@ -1538,7 +1539,7 @@ enum {
 /// behaviors that carry the leader with it, and fixes the cogs in place.
 void GabombaStatue_DrawCogCells(void) {
   u32 *dest = (u32 *)gMapGridShapes + COG_SHAPE_FIRST;
-  u32 *src = gGabombaStatue_CogCellPictures;
+  u32 *src = gGabombaStatue_CogShapes;
   struct MapWork *map = Ram_HeapSlots->mapGrid;
   u8 *layerA = map->layers[0].terrainIds;
   u8 *layerB = map->layers[1].terrainIds;
@@ -1894,7 +1895,7 @@ void GabombaStatue_FocusEnergies(void) {
   PaletteFade_Interpolate(80);
   System_Wait(80);
   FieldEvent_SetExitRequest(
-      GABOMBA_STATUE_ARROWS_TO_KIBOMBO_STATUE_FACE_EAST_B);
+      GABOMBA_STATUE_ARROWS_TO_GABOMBA_STATUE_FACE_EAST_B);
 }
 
 /// The party watches the orb statues' charges run along the broken channel,
@@ -2329,7 +2330,7 @@ s32 Scene_PrepareMap(void) {
 
 /// Sets up the Bone Armlet chest's room.
 void GabombaStatue_InitializeBoneArmletChest(void) {
-  GabombaStatue_DimBoneArmletChestActors();
+  GabombaStatue_HideBoneArmletChestHoleShadow();
 }
 
 /// Places rope index between two posts, tied when its flag is set, else coiled:
@@ -2359,7 +2360,7 @@ void GabombaStatue_InitializeElixirChest(void) {
                   ACTOR_FIRST_ROPE_POST_B);
   FieldRope_Place(1, FLAG_SECOND_ROPE_TIED, ACTOR_SECOND_ROPE_POST_A,
                   ACTOR_SECOND_ROPE_POST_B);
-  GabombaStatue_DimElixirChestActors();
+  GabombaStatue_HideElixirChestHoleShadows();
 }
 
 /// Sets up Steel's room: its rope, and the fall in from the turntable room.
@@ -3078,7 +3079,7 @@ enum { BLOCK_TURN_FRAMES = 20 };
 
 /// Stepping onto the left arrow panel presses it, and with the blocks raised
 /// turns them a quarter turn counterclockwise.
-void GabombaStatue_LowerArrowA(void) {
+void GabombaStatue_PressLeftArrowPanel(void) {
   struct SceneState *state = &gSceneState;
   s32 i;
 
@@ -3105,7 +3106,7 @@ void GabombaStatue_LowerArrowA(void) {
 }
 
 /// Stepping off the left arrow panel raises it again.
-void GabombaStatue_RedrawArrowA(void) {
+void GabombaStatue_ReleaseLeftArrowPanel(void) {
   if (gSceneState.leftArrowDown != 0) {
     MapGrid_CopyCellsLayered(1, 12, 1, 1, gSceneState.originX + 3,
                              gSceneState.originZ - 2);
@@ -3114,7 +3115,7 @@ void GabombaStatue_RedrawArrowA(void) {
 }
 
 /// The right arrow panel: as the left, turning the blocks clockwise.
-void GabombaStatue_RaiseArrowB(void) {
+void GabombaStatue_PressRightArrowPanel(void) {
   struct SceneState *state = &gSceneState;
   s32 i;
 
@@ -3141,7 +3142,7 @@ void GabombaStatue_RaiseArrowB(void) {
 }
 
 /// Stepping off the right arrow panel raises it again.
-void GabombaStatue_RedrawArrowB(void) {
+void GabombaStatue_ReleaseRightArrowPanel(void) {
   if (gSceneState.rightArrowDown != 0) {
     MapGrid_CopyCellsLayered(0, 12, 1, 1, gSceneState.originX + 7,
                              gSceneState.originZ - 2);
@@ -3787,7 +3788,7 @@ void GabombaStatue_PlaceSwitchActors(const u16 *entry) {
 
 /// The shapes GabombaStatue_DrawCogCells writes over the map's from
 /// COG_SHAPE_FIRST.
-u32 gGabombaStatue_CogCellPictures[] = {
+u32 gGabombaStatue_CogShapes[] = {
     [COG_SHAPE_GREEN_COG - COG_SHAPE_FIRST] = MAP_SHAPE(7, 0, 2, 0),
     [COG_SHAPE_TOP - COG_SHAPE_FIRST] = MAP_SHAPE(0, 2, 0, 0),
     [COG_SHAPE_NORTHWEST - COG_SHAPE_FIRST] = MAP_SHAPE(3, 0, 2, 0),
@@ -4048,14 +4049,14 @@ LATE_DATA u32 gSceneExits[] = {
     SCENE_EXIT(GABOMBA_STATUE_COGS_TO_GABOMBA_STATUE_CHAMBER_IDOL, GabombaStatueChamberIdol, GABOMBA_STATUE_CHAMBER_IDOL_FROM_GABOMBA_STATUE_COGS),
     SCENE_EXITS(GabombaStatueArrows),
     SCENE_EXIT(GABOMBA_STATUE_ARROWS_TO_GABOMBA_STATUE_CHAMBER_IDOL_EAST, GabombaStatueChamberIdol, GABOMBA_STATUE_CHAMBER_IDOL_FROM_GABOMBA_STATUE_ARROWS_EAST),
-    SCENE_EXIT(GABOMBA_STATUE_ARROWS_TO_KIBOMBO_STATUE_FACE_EAST_A_A, KibomboStatueFace, KIBOMBO_STATUE_FACE_FROM_KIBOMBO_STATUE_GROUNDS_CEREMONY_EAST_A),
-    SCENE_EXIT(GABOMBA_STATUE_ARROWS_TO_KIBOMBO_STATUE_FACE_EAST_B, KibomboStatueFace, KIBOMBO_STATUE_FACE_FROM_KIBOMBO_STATUE_GROUNDS_CEREMONY_EAST_B),
+    SCENE_EXIT(GABOMBA_STATUE_ARROWS_TO_GABOMBA_STATUE_FACE_EAST_A_A, GabombaStatueFace, GABOMBA_STATUE_FACE_FROM_KIBOMBO_STATUE_GROUNDS_CEREMONY_EAST_A),
+    SCENE_EXIT(GABOMBA_STATUE_ARROWS_TO_GABOMBA_STATUE_FACE_EAST_B, GabombaStatueFace, GABOMBA_STATUE_FACE_FROM_KIBOMBO_STATUE_GROUNDS_CEREMONY_EAST_B),
     SCENE_EXIT(GABOMBA_STATUE_ARROWS_TO_KIBOMBO_STATUE_GROUNDS_CEREMONY_NORTH_B_B, KibomboStatueGroundsCeremony, KIBOMBO_STATUE_GROUNDS_CEREMONY_FROM_GABOMBA_STATUE_ARROWS_NORTH_B),
     SCENE_EXIT(GABOMBA_STATUE_ARROWS_TO_KIBOMBO_STATUE_GROUNDS_CEREMONY_SOUTH, KibomboStatueGroundsCeremony, KIBOMBO_STATUE_GROUNDS_CEREMONY_FROM_GABOMBA_STATUE_ARROWS_SOUTH),
     SCENE_EXIT(GABOMBA_STATUE_ARROWS_TO_KIBOMBO_STATUE_GROUNDS_CEREMONY_NORTH_C, KibomboStatueGroundsCeremony, KIBOMBO_STATUE_GROUNDS_CEREMONY_FROM_GABOMBA_STATUE_CHAMBER_IDOL_NORTH),
     SCENE_EXIT(GABOMBA_STATUE_ARROWS_TO_KIBOMBO_STATUE_GROUNDS_CEREMONY_NORTH_D, KibomboStatueGroundsCeremony, KIBOMBO_STATUE_GROUNDS_CEREMONY_FROM_GABOMBA_STATUE_ARROWS_NORTH_D),
     SCENE_EXIT(GABOMBA_STATUE_ARROWS_TO_KIBOMBO_STATUE_GROUNDS_CEREMONY_NORTH_E, KibomboStatueGroundsCeremony, KIBOMBO_STATUE_GROUNDS_CEREMONY_FROM_GABOMBA_STATUE_ARROWS_NORTH_E),
-    SCENE_EXIT(GABOMBA_STATUE_ARROWS_TO_KIBOMBO_STATUE_FACE_EAST_A_B, KibomboStatueFace, KIBOMBO_STATUE_FACE_FROM_KIBOMBO_STATUE_GROUNDS_CEREMONY_EAST_A),
+    SCENE_EXIT(GABOMBA_STATUE_ARROWS_TO_GABOMBA_STATUE_FACE_EAST_A_B, GabombaStatueFace, GABOMBA_STATUE_FACE_FROM_KIBOMBO_STATUE_GROUNDS_CEREMONY_EAST_A),
     SCENE_EXIT(GABOMBA_STATUE_ARROWS_TO_GABOMBA_STATUE_CHAMBER_IDOL_WEST, GabombaStatueChamberIdol, GABOMBA_STATUE_CHAMBER_IDOL_FROM_GABOMBA_STATUE_ARROWS_WEST),
     SCENE_EXITS_END,
 };
@@ -4297,10 +4298,10 @@ LATE_DATA struct Trigger gGabombaStatue_CogsTriggers[] = {
 
 LATE_DATA struct Trigger gGabombaStatue_ArrowsTriggers[] = {
     {STEP_TRIGGER_WALKING, CELL_BEHAVIOR_FIRST_HOLE, CONDITION_ALWAYS, EVENT(GabombaStatue_JumpDownHole)},
-    {TRIGGER_STEP, CELL_BEHAVIOR_AROUND_LEFT_ARROW, CONDITION_ALWAYS, EVENT(GabombaStatue_RedrawArrowA)},
-    {TRIGGER_STEP, CELL_BEHAVIOR_LEFT_ARROW, CONDITION_ALWAYS, EVENT(GabombaStatue_LowerArrowA)},
-    {TRIGGER_STEP, CELL_BEHAVIOR_AROUND_RIGHT_ARROW, CONDITION_ALWAYS, EVENT(GabombaStatue_RedrawArrowB)},
-    {TRIGGER_STEP, CELL_BEHAVIOR_RIGHT_ARROW, CONDITION_ALWAYS, EVENT(GabombaStatue_RaiseArrowB)},
+    {TRIGGER_STEP, CELL_BEHAVIOR_AROUND_LEFT_ARROW, CONDITION_ALWAYS, EVENT(GabombaStatue_ReleaseLeftArrowPanel)},
+    {TRIGGER_STEP, CELL_BEHAVIOR_LEFT_ARROW, CONDITION_ALWAYS, EVENT(GabombaStatue_PressLeftArrowPanel)},
+    {TRIGGER_STEP, CELL_BEHAVIOR_AROUND_RIGHT_ARROW, CONDITION_ALWAYS, EVENT(GabombaStatue_ReleaseRightArrowPanel)},
+    {TRIGGER_STEP, CELL_BEHAVIOR_RIGHT_ARROW, CONDITION_ALWAYS, EVENT(GabombaStatue_PressRightArrowPanel)},
     {TRIGGER_RAISED, RAISED_OFFERING_HEARD, FLAG_OFFERING_HEARD, EVENT(GabombaStatue_HearTheOffering)},
     {PSYNERGY_PHASE_ON_ACTOR(ABILITY_POUND, PSYNERGY_PHASE_ACTS), ACTOR_ARROWS_STAKE, FLAG_GABOMBA_RESPONDED, EVENT(GabombaStatue_PoundArrowsStake)},
     {TRIGGER_RAISED, RAISED_STAKE_STANDS_UP, CONDITION_ALWAYS, EVENT(GabombaStatue_StakeStandsUp)},

@@ -94,10 +94,12 @@ struct SceneEntrance {
 /// bits: 27..20 exit kind | 19..12 entrance | 11..0 scene
 #define SCENE_EXIT(exit, scene, entrance)                                      \
   (((u32)(exit) << 20) + ((u32)(entrance) << 12) + (u32)&SceneId_##scene)
-/// An exit with a flag word after it (bit 28): the exit is taken unless `flag`
-/// is set, and when it is set the search goes on to the next exit.
+/// An exit word's bit 28: a flag word follows it.
+#define EXIT_HAS_FLAG 0x10000000
+/// An exit with a flag word after it: the exit is taken unless `flag` is set,
+/// and when it is set the search goes on to the next exit.
 #define SCENE_EXIT_UNLESS(exit, scene, entrance, flag)                         \
-  (SCENE_EXIT(exit, scene, entrance) + 0x10000000), (u32)(flag)
+  (SCENE_EXIT(exit, scene, entrance) + EXIT_HAS_FLAG), (u32)(flag)
 /// An exit's flag word of -1 stands for no flag: Scene_TakeExit takes the
 /// exit whatever the flags hold, so a chain of exits always ends somewhere.
 #define EXIT_FLAG_NONE 0xffffffff

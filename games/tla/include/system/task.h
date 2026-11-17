@@ -8,6 +8,7 @@
 #include "edition.h"
 #include "types.h"
 #include "static_assert.h"
+#include "system/io_reg.h"
 
 enum TaskLimits { TASK_COUNT = 24 };
 
@@ -47,9 +48,8 @@ STATIC_ASSERT(offsetof(struct Task, flags) == 6);
 /// The bit of a task's flags that keeps it running while
 /// Task_SuspendOverlayTasks suspends the others.
 #define TASK_FLAG_KEEP_RUNNING 1
-/// Whether the task's routine is in EWRAM (0x02xxxxxx), where a scene's overlay
-/// runs.
-#define TASK_IN_OVERLAY(task) (((task)->func >> 24) == 2)
+/// Whether the task's routine is in EWRAM, where a scene's overlay runs.
+#define TASK_IN_OVERLAY(task) (((task)->func >> 24) == EWRAM_START >> 24)
 
 /// 1 while wait() runs the frame pass's tasks (TASK_PASS_FRAME).
 extern volatile u8 gTasksRunning;

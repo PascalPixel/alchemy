@@ -53,7 +53,7 @@
 /// column up to six rows away, or within a row of his up to six columns away,
 /// whatever stands between them. But neither ever sees one in rows 5 to 7 from
 /// column 10 west, at the passage's top, or in columns 8 and 9 below row 22
-/// (LunpaFortress_IsLeaderInPatrolSafeZone).
+/// (LunpaFortress_IsLeaderHiddenFromPatrolPair).
 ///
 /// The guards who fight instead pick one of four challenges, by
 /// gLunpaFortressRandomPick, drawn on every arrival.
@@ -317,10 +317,10 @@ static s32 LunpaFortress_CanGuardSeeLeader(s32 actorId);
 static s32 LunpaFortress_IsLeaderNearGuard(s32 actorId);
 static s32 LunpaFortress_IsGuardNearViewCenter(s32 actorId);
 static void LunpaFortress_GuardThrowsPartyOut(s32 actorId);
-static void LunpaFortress_ActOutIntruderDialogue(s32 actorId);
-static void LunpaFortress_ActOutWhosThereDialogue(s32 actorId);
-static void LunpaFortress_ActOutGuardShiftDialogue(s32 actorId);
-static void LunpaFortress_ActOutScoundrelDialogue(s32 actorId);
+static void LunpaFortress_CryIntruder(s32 actorId);
+static void LunpaFortress_AskWhosThat(s32 actorId);
+static void LunpaFortress_AskIfShiftIsUp(s32 actorId);
+static void LunpaFortress_CallPartyScoundrel(s32 actorId);
 static void LunpaFortress_InitializeGroundFloor(void);
 static void LunpaFortress_InitializeUpperFloor(void);
 static void LunpaFortress_InitializeCave(void);
@@ -716,7 +716,7 @@ static void LunpaFortress_TakeCellKey(void) {
 
 /// Where the patrolling pair cannot see the leader: the west end of their
 /// corridor and the cells below its gap.
-static s32 LunpaFortress_IsLeaderInPatrolSafeZone(void) {
+static s32 LunpaFortress_IsLeaderHiddenFromPatrolPair(void) {
   struct Actor *leader = Actor_Get(ACTOR_PARTY_LEADER);
   s32 leaderTileZ = leader->z.fixed / toFIXED(16);
   s32 leaderTileX = leader->x.fixed / toFIXED(16);
@@ -732,7 +732,7 @@ static s32 LunpaFortress_IsLeaderInPatrolSafeZone(void) {
 
 /// Every frame in LunpaFortressUpperFloor: the pair patrolling the west
 /// corridor.
-static void LunpaFortress_UpdatePairedGuardDetection(void) {
+static void LunpaFortress_CheckPatrolPair(void) {
   struct Actor *firstGuard = Actor_Get(ACTOR_UPPER_FLOOR_FIRST_PATROL);
   struct Actor *secondGuard = Actor_Get(ACTOR_UPPER_FLOOR_SECOND_PATROL);
   struct MapGridLayerScroll *patrolLayer =
@@ -757,7 +757,7 @@ static void LunpaFortress_UpdatePairedGuardDetection(void) {
         firstGuard->paused == 0) {
       patrolLayer->phaseX = PAIRED_PATROL_LAYER_ORIGIN_X - firstGuard->x.fixed;
     }
-    if (!LunpaFortress_IsLeaderInPatrolSafeZone()) {
+    if (!LunpaFortress_IsLeaderHiddenFromPatrolPair()) {
       if (gMainRoutineWork.cloaked != 0) {
         if (LunpaFortress_IsLeaderNearGuard(ACTOR_UPPER_FLOOR_FIRST_PATROL) &&
             gMainRoutineWork.cloaked != 0) {
@@ -803,7 +803,7 @@ static void LunpaFortress_PatrolPairThrowsPartyOut(void) {
 
 /// Whether the leader and the hall patrol are in the two parallel corridors,
 /// where the guard passes without seeing the leader.
-static s32 LunpaFortress_IsLeaderPassingPatrollingGuard(void) {
+static s32 LunpaFortress_IsLeaderPassingHallPatrol(void) {
   struct Actor *leader = Actor_Get(ACTOR_PARTY_LEADER);
   struct Actor *guard = Actor_Get(ACTOR_UPPER_FLOOR_HALL_PATROL);
   s32 leaderTileX = leader->x.fixed / toFIXED(16);
@@ -822,8 +822,8 @@ static s32 LunpaFortress_IsLeaderPassingPatrollingGuard(void) {
 }
 
 /// Every frame in LunpaFortressUpperFloor: the patrol in the east hall, as
-/// LunpaFortress_UpdatePairedGuardDetection.
-static void LunpaFortress_UpdateHallGuardDetection(void) {
+/// LunpaFortress_CheckPatrolPair.
+static void LunpaFortress_CheckHallPatrol(void) {
   struct Actor *guard = Actor_Get(ACTOR_UPPER_FLOOR_HALL_PATROL);
   struct MapGridLayerScroll *patrolLayer =
       &((struct MapGridScrollWork *)gMapGridWork[0])
@@ -847,7 +847,7 @@ static void LunpaFortress_UpdateHallGuardDetection(void) {
       patrolLayer->phaseX = toFIXED(832) - guard->x.fixed;
       patrolLayer->phaseY = toFIXED(576) - guard->z.fixed;
     }
-    if (!LunpaFortress_IsLeaderPassingPatrollingGuard()) {
+    if (!LunpaFortress_IsLeaderPassingHallPatrol()) {
       LunpaFortress_IsGuardNearViewCenter(ACTOR_UPPER_FLOOR_HALL_PATROL);
       if (LunpaFortress_IsLeaderNearGuard(ACTOR_UPPER_FLOOR_HALL_PATROL) &&
           gMainRoutineWork.cloaked != 0) {
@@ -876,7 +876,7 @@ static void LunpaFortress_HallPatrolThrowsPartyOut(void) {
 
 /// Where LunpaFortressGroundFloor's patrol cannot see the leader: three
 /// stretches of its rounds.
-static s32 LunpaFortress_IsLeaderInGroundFloorPatrolSafeZone(void) {
+static s32 LunpaFortress_IsLeaderHiddenFromGroundFloorPatrol(void) {
   struct Actor *leader = Actor_Get(ACTOR_PARTY_LEADER);
   s32 leaderTileZ = leader->z.fixed / toFIXED(16);
   s32 leaderTileX = leader->x.fixed / toFIXED(16);
@@ -896,8 +896,8 @@ static s32 LunpaFortress_IsLeaderInGroundFloorPatrolSafeZone(void) {
 }
 
 /// Every frame in LunpaFortressGroundFloor: the patrolling guard, as
-/// LunpaFortress_UpdatePairedGuardDetection.
-static void LunpaFortress_UpdateGroundFloorPatrolDetection(void) {
+/// LunpaFortress_CheckPatrolPair.
+static void LunpaFortress_CheckGroundFloorPatrol(void) {
   struct Actor *guard = Actor_Get(ACTOR_GROUND_FLOOR_PATROL_GUARD);
   struct MapGridLayerScroll *patrolLayer =
       &((struct MapGridScrollWork *)gMapGridWork[0])
@@ -920,7 +920,7 @@ static void LunpaFortress_UpdateGroundFloorPatrolDetection(void) {
       patrolLayer->phaseX = toFIXED(752) - guard->x.fixed;
       patrolLayer->phaseY = toFIXED(496) - guard->z.fixed;
     }
-    if (!LunpaFortress_IsLeaderInGroundFloorPatrolSafeZone()) {
+    if (!LunpaFortress_IsLeaderHiddenFromGroundFloorPatrol()) {
       if (LunpaFortress_IsLeaderNearGuard(ACTOR_GROUND_FLOOR_PATROL_GUARD) &&
           gMainRoutineWork.cloaked != 0) {
         work->psynergy = CLOAK_NEAR_GUARD;
@@ -1042,7 +1042,7 @@ static void LunpaFortress_CheckSecondEntranceSentry(void) {
 }
 
 /// Whether the leader is in the guard's column, up to six cells away.
-static s32 LunpaFortress_IsLeaderInGuardVerticalSight(s32 actorId) {
+static s32 LunpaFortress_IsLeaderAlongGuardsColumn(s32 actorId) {
   struct Actor *guard = Actor_Get(actorId);
   struct Actor *leader = Actor_Get(ACTOR_PARTY_LEADER);
   s32 guardTileZ = guard->z.fixed / toFIXED(16);
@@ -1059,7 +1059,7 @@ static s32 LunpaFortress_IsLeaderInGuardVerticalSight(s32 actorId) {
 }
 
 /// Whether the leader is within a row of the guard, up to six cells away.
-static s32 LunpaFortress_IsLeaderInGuardHorizontalSight(s32 actorId) {
+static s32 LunpaFortress_IsLeaderAlongGuardsRow(s32 actorId) {
   struct Actor *guard = Actor_Get(actorId);
   struct Actor *leader = Actor_Get(ACTOR_PARTY_LEADER);
   s32 guardTileZ = guard->z.fixed / toFIXED(16);
@@ -1082,14 +1082,13 @@ static s32 LunpaFortress_CanGuardSeeLeader(s32 actorId) {
   if (LunpaFortress_IsGuardNearViewCenter(actorId) == 0) {
     return 0;
   }
-  if (LunpaFortress_IsLeaderInGuardVerticalSight(actorId) != 0) {
+  if (LunpaFortress_IsLeaderAlongGuardsColumn(actorId) != 0) {
     return 1;
   }
   {
-    s32 inHorizontalSight =
-        LunpaFortress_IsLeaderInGuardHorizontalSight(actorId);
+    s32 alongRow = LunpaFortress_IsLeaderAlongGuardsRow(actorId);
 
-    return (u32)(inHorizontalSight | -inHorizontalSight) >> 31;
+    return NONZERO(alongRow);
   }
 }
 
@@ -1183,14 +1182,9 @@ static void LunpaFortress_CheckUpperFloorDoorApproach(void) {
   }
 }
 
-/// Unused: nothing calls it.
-///
-/// LunpaFortressUpperFloor's patrolling pair throws the party out through
-/// LunpaFortress_PatrolPairThrowsPartyOut instead. The first patrol would
-/// stop, ask who the party is and send it out.
-///
-/// That actor is inferred: row +1 of a scene's placements is a guard only on
-/// the upper floor.
+/// Unused: nothing calls it. The first of LunpaFortressUpperFloor's patrolling
+/// pair would stop, ask who the party is and send it out; the pair throws the
+/// party out through LunpaFortress_PatrolPairThrowsPartyOut instead.
 static void UNUSED LunpaFortress_UnusedFirstPatrolThrowsPartyOut(void) {
   Event_Start();
   Actor_SetDestinationOffset(ACTOR_UPPER_FLOOR_FIRST_PATROL, 0, 0);
@@ -1254,25 +1248,25 @@ static void LunpaFortress_GuardChallengesParty(s32 actorId) {
   Actor_FaceActor(ACTOR_PARTY_LEADER, actorId, 0);
   switch (gLunpaFortressRandomPick & 3) {
   case 0:
-    LunpaFortress_ActOutIntruderDialogue(actorId);
+    LunpaFortress_CryIntruder(actorId);
     break;
   case 1:
-    LunpaFortress_ActOutWhosThereDialogue(actorId);
+    LunpaFortress_AskWhosThat(actorId);
     break;
   case 2:
-    LunpaFortress_ActOutGuardShiftDialogue(actorId);
+    LunpaFortress_AskIfShiftIsUp(actorId);
     break;
   case 3:
-    LunpaFortress_ActOutScoundrelDialogue(actorId);
+    LunpaFortress_CallPartyScoundrel(actorId);
     break;
   default:
-    LunpaFortress_ActOutWhosThereDialogue(actorId);
+    LunpaFortress_AskWhosThat(actorId);
     break;
   }
 }
 
 /// A guard spots an intruder. "Hey! Intruder!"
-static void LunpaFortress_ActOutIntruderDialogue(s32 actorId) {
+static void LunpaFortress_CryIntruder(s32 actorId) {
   s32 messageBase;
 
   Actor_RunRepeatedMotion(actorId, 1);
@@ -1292,7 +1286,7 @@ static void LunpaFortress_ActOutIntruderDialogue(s32 actorId) {
 }
 
 /// A guard asks who is there. "Huh? Who's that?"
-static void LunpaFortress_ActOutWhosThereDialogue(s32 actorId) {
+static void LunpaFortress_AskWhosThat(s32 actorId) {
   s32 messageBase = MsgLunpaGuardWhosThat;
 
   Event_SetMessageId(messageBase);
@@ -1309,7 +1303,7 @@ static void LunpaFortress_ActOutWhosThereDialogue(s32 actorId) {
 }
 
 /// A guard expects his relief, then sees who it is. "Is my shift up already?"
-static void LunpaFortress_ActOutGuardShiftDialogue(s32 actorId) {
+static void LunpaFortress_AskIfShiftIsUp(s32 actorId) {
   s32 messageBase;
 
   messageBase = MsgLunpaShiftAlready;
@@ -1332,7 +1326,7 @@ static void LunpaFortress_ActOutGuardShiftDialogue(s32 actorId) {
 }
 
 /// A guard calls the party a scoundrel. "You scoundrel!"
-static void LunpaFortress_ActOutScoundrelDialogue(s32 actorId) {
+static void LunpaFortress_CallPartyScoundrel(s32 actorId) {
   s32 messageBase = MsgLunpaScoundrel;
 
   Event_SetMessageId(messageBase);
@@ -2771,8 +2765,8 @@ static void LunpaFortress_DonpaJudgesDodonpa(void) {
   Event_End();
 }
 
-/// LunpaFortressGroundFloor: Mind Read on the second sentry reads his thoughts.
-static void LunpaFortress_ReadSentrysThoughts(void) {
+/// LunpaFortressGroundFloor: Mind Read on the second sentry.
+static void LunpaFortress_ReadSentryMind(void) {
   switch (gLunpaFortressRandomPick) {
   case 0:
     Event_SetMessageId(MsgLunpaHammetGreatMerchant);
@@ -2944,7 +2938,7 @@ static void LunpaFortress_TalkToAttendant(void) {
 }
 
 /// LunpaFortressUpperFloor: Mind Read on Donpa's attendant.
-static void LunpaFortress_ReadAttendantsThoughts(void) {
+static void LunpaFortress_ReadAttendantMind(void) {
   if (GameFlag_Get(FLAG_DODONPA_LOCKED_UP)) {
     Event_SetMessageId(MsgLunpaDifficultDonpaRight);
     // "It must be difficult for Donpa right now. It's so hard to..."
@@ -2957,7 +2951,7 @@ static void LunpaFortress_ReadAttendantsThoughts(void) {
 }
 
 /// LunpaFortressUpperFloor: Mind Read on Donpa.
-static void LunpaFortress_ReadDonpasThoughts(void) {
+static void LunpaFortress_ReadDonpaMind(void) {
   if (GameFlag_Get(FLAG_DODONPA_LOCKED_UP)) {
     Event_SetMessageId(MsgLunpaFatherStayAngry);
     // "What father can stay angry at his children for long?..."
@@ -3137,8 +3131,8 @@ static void LunpaFortress_TalkToStartledOldMan(void) {
   }
 }
 
-/// LunpaFortressGroundFloor: Mind Read on the startled resident.
-static void LunpaFortress_ReadStartledResidentsThoughts(void) {
+/// LunpaFortressGroundFloor: Mind Read on the startled old man.
+static void LunpaFortress_ReadStartledOldManMind(void) {
   if (GameFlag_Get(FLAG_LUNPA_FORTRESS_OLD_MAN_PROMISED_SILENCE)) {
     Event_SetMessageId(MsgLunpaMaybeMerchantReason);
     // "Maybe that merchant is the reason they've closed off the..."
@@ -3167,7 +3161,7 @@ static void LunpaFortress_TalkToJailedDodonpa(void) {
 }
 
 /// LunpaFortressToadonpa: Mind Read on the jailed Dodonpa.
-static void LunpaFortress_ReadJailedDodonpasThoughts(void) {
+static void LunpaFortress_ReadJailedDodonpaMind(void) {
   Event_SetMessageId(MsgLunpaCantBelieveWhen);
   // "I can't believe what you did to me! When I get out of here,..."
   Event_ShowMessage(ACTOR_TOADONPA_DODONPA, 0);
@@ -3262,8 +3256,7 @@ static void LunpaFortress_InitializeGroundFloor(void) {
   case LUNPA_FORTRESS_GROUND_FLOOR_EAST_PASSAGE_FROM_TREASURE_ROOM:
     gFieldWork->transition =
         SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_BARS);
-    Task_AddFrame(LunpaFortress_UpdateGroundFloorPatrolDetection,
-                  TASK_PASS_FRAME);
+    Task_AddFrame(LunpaFortress_CheckGroundFloorPatrol, TASK_PASS_FRAME);
     Task_AddFrame(LunpaFortress_CheckGroundFloorDoorApproach, TASK_PASS_FRAME);
     wait(1);
     MapGrid_CenterOnFollowedPoint();
@@ -3320,7 +3313,7 @@ static void LunpaFortress_InitializeUpperFloor(void) {
     gFieldWork->transition =
         SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_BARS);
     MapGrid_SetShownLayers(LUNPA_FORTRESS_PASSAGE_LAYERS);
-    Task_AddFrame(LunpaFortress_UpdatePairedGuardDetection, TASK_PASS_FRAME);
+    Task_AddFrame(LunpaFortress_CheckPatrolPair, TASK_PASS_FRAME);
     wait(1);
     MapGrid_CenterOnFollowedPoint();
     wait(1);
@@ -3343,7 +3336,7 @@ static void LunpaFortress_InitializeUpperFloor(void) {
     gFieldWork->transition =
         SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_BARS);
     MapGrid_SetShownLayers(LUNPA_FORTRESS_PASSAGE_LAYERS);
-    Task_AddFrame(LunpaFortress_UpdateHallGuardDetection, TASK_PASS_FRAME);
+    Task_AddFrame(LunpaFortress_CheckHallPatrol, TASK_PASS_FRAME);
     wait(1);
     MapGrid_CenterOnFollowedPoint();
     wait(1);
@@ -3945,8 +3938,8 @@ struct Trigger gLunpaFortressGroundFloorTriggers[] = {
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_GROUND_FLOOR_WOMAN_SEEKING_DODONPA, CONDITION_ALWAYS, MSGNO(MsgLunpaWifeSeeksDodonpa) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_GROUND_FLOOR_FEASTING_MAN, CONDITION_ALWAYS, MSGNO(MsgLunpaKalayBuysDrink) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_GROUND_FLOOR_BOASTING_MAN, CONDITION_ALWAYS, MSGNO(MsgLunpaHammetKeepsEarnings) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_GROUND_FLOOR_STARTLED_OLD_MAN, CONDITION_ALWAYS, EVENT(LunpaFortress_ReadStartledResidentsThoughts) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_GROUND_FLOOR_SECOND_SENTRY, CONDITION_ALWAYS, EVENT(LunpaFortress_ReadSentrysThoughts) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_GROUND_FLOOR_STARTLED_OLD_MAN, CONDITION_ALWAYS, EVENT(LunpaFortress_ReadStartledOldManMind) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_GROUND_FLOOR_SECOND_SENTRY, CONDITION_ALWAYS, EVENT(LunpaFortress_ReadSentryMind) },
     { TRIGGER_RAISED, RAISED_GROUND_FLOOR_PATROL_SPOTTED, CONDITION_ALWAYS, EVENT(LunpaFortress_GroundFloorPatrolThrowsPartyOut) },
     { TRIGGER_RAISED, RAISED_UPPER_HALL_SPOTTED, CONDITION_ALWAYS, EVENT(LunpaFortress_UpperHallGuardThrowsPartyOut) },
     { TRIGGER_RAISED, RAISED_ENTRANCE_GUARD_SPOTTED, CONDITION_ALWAYS, EVENT(LunpaFortress_EntranceGuardThrowsPartyOut) },
@@ -4015,8 +4008,8 @@ struct Trigger gLunpaFortressUpperFloorTriggers[] = {
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_UPPER_FLOOR_THREE_GUARDS_WEST, CONDITION_ALWAYS, MSGNO(MsgLunpaShouldNotHaveFought) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_UPPER_FLOOR_THREE_GUARDS_MIDDLE, CONDITION_ALWAYS, MSGNO(MsgLunpaHammetInCave) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_UPPER_FLOOR_THREE_GUARDS_EAST, CONDITION_ALWAYS, MSGNO(MsgLunpaHiddenDoorSwitch) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_UPPER_FLOOR_DONPA, CONDITION_ALWAYS, EVENT(LunpaFortress_ReadDonpasThoughts) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_UPPER_FLOOR_ATTENDANT, CONDITION_ALWAYS, EVENT(LunpaFortress_ReadAttendantsThoughts) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_UPPER_FLOOR_DONPA, CONDITION_ALWAYS, EVENT(LunpaFortress_ReadDonpaMind) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_UPPER_FLOOR_ATTENDANT, CONDITION_ALWAYS, EVENT(LunpaFortress_ReadAttendantMind) },
     { TRIGGER_RAISED, RAISED_PATROL_PAIR_SPOTTED, CONDITION_ALWAYS, EVENT(LunpaFortress_PatrolPairThrowsPartyOut) },
     { TRIGGER_RAISED, RAISED_HALL_PATROL_SPOTTED, CONDITION_ALWAYS, EVENT(LunpaFortress_HallPatrolThrowsPartyOut) },
     { TRIGGER_TABLE_END },
@@ -4074,7 +4067,7 @@ struct Trigger gLunpaFortressTriggersOther[] = {
     { TRIGGER_TALK, ACTOR_TOADONPA_HAMMET, CONDITION_ALWAYS, MSGNO(MsgLunpaWrongTurnOver) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_TOADONPA_HAMMET, CONDITION_ALWAYS, MSGNO(MsgLunpaCantBelieveWhen) },
     { TRIGGER_TALK, ACTOR_INVISIBLE_TOADONPA_DODONPA, CONDITION_ALWAYS, EVENT(LunpaFortress_TalkToJailedDodonpa) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_INVISIBLE_TOADONPA_DODONPA, CONDITION_ALWAYS, EVENT(LunpaFortress_ReadJailedDodonpasThoughts) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_INVISIBLE_TOADONPA_DODONPA, CONDITION_ALWAYS, EVENT(LunpaFortress_ReadJailedDodonpaMind) },
     { EXAMINE_TRIGGER(EXAMINE_CHEST), 101, FLAG_LUNPA_FORTRESS_CHEST_POWER_BREAD, FIND_ITEM(ITEM_POWER_BREAD) },
     { TRIGGER_TABLE_END },
 };

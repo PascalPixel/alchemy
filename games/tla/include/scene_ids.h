@@ -66,8 +66,8 @@ extern char SceneId_KandoreanTemplePoi;
 extern char SceneId_YampiDesertGuardianRingChest;
 #define SCENE_YAMPI_DESERT_GUARDIAN_RING_CHEST                                 \
   ((s32)&SceneId_YampiDesertGuardianRingChest)
-extern char SceneId_YampiDesertOasis;
-#define SCENE_YAMPI_DESERT_OASIS ((s32)&SceneId_YampiDesertOasis)
+extern char SceneId_YampiDesertSpring;
+#define SCENE_YAMPI_DESERT_OASIS ((s32)&SceneId_YampiDesertSpring)
 /// The Yampi Desert scene where Blitz is fought.
 extern char SceneId_YampiDesertBlitz;
 #define SCENE_YAMPI_DESERT_BLITZ ((s32)&SceneId_YampiDesertBlitz)
@@ -126,9 +126,9 @@ extern char SceneId_AirsRockInsideRevealTablet;
 extern char SceneId_AirsRockInsideElixirChest;
 #define SCENE_AIRS_ROCK_INSIDE_ELIXIR_CHEST                                    \
   ((s32)&SceneId_AirsRockInsideElixirChest)
-extern char SceneId_AirsRockInsidePairedStatues;
+extern char SceneId_AirsRockInsidePairedStakes;
 #define SCENE_AIRS_ROCK_INSIDE_PAIRED_STATUES                                  \
-  ((s32)&SceneId_AirsRockInsidePairedStatues)
+  ((s32)&SceneId_AirsRockInsidePairedStakes)
 extern char SceneId_AirsRockInsideFaceWarp;
 #define SCENE_AIRS_ROCK_INSIDE_FACE_WARP ((s32)&SceneId_AirsRockInsideFaceWarp)
 extern char SceneId_AirsRockInsideCoinsChest;
@@ -566,8 +566,8 @@ extern char SceneId_KibomboCeremony;
 extern char SceneId_KibomboStatueGroundsCeremony;
 #define SCENE_KIBOMBO_STATUE_GROUNDS_CEREMONY                                  \
   ((s32)&SceneId_KibomboStatueGroundsCeremony)
-extern char SceneId_KibomboStatueFace;
-#define SCENE_KIBOMBO_STATUE_FACE ((s32)&SceneId_KibomboStatueFace)
+extern char SceneId_GabombaStatueFace;
+#define SCENE_GABOMBA_STATUE_FACE ((s32)&SceneId_GabombaStatueFace)
 extern char SceneId_GabombaCatacombsTeleporters;
 #define SCENE_GABOMBA_CATACOMBS_TELEPORTERS                                    \
   ((s32)&SceneId_GabombaCatacombsTeleporters)
@@ -691,8 +691,8 @@ extern char SceneId_Test6;
 #define SCENE_TEST_6 ((s32)&SceneId_Test6)
 extern char SceneId_Test7;
 #define SCENE_TEST_7 ((s32)&SceneId_Test7)
-extern char SceneId_Level;
-#define SCENE_LEVEL ((s32)&SceneId_Level)
+extern char SceneId_IconTest;
+#define SCENE_ICON_TEST ((s32)&SceneId_IconTest)
 extern char SceneId_PsynergyTest;
 #define SCENE_PSYNERGY_TEST ((s32)&SceneId_PsynergyTest)
 extern char SceneId_PsynergyTest2;
@@ -778,16 +778,16 @@ extern char SceneId_JupiterLighthouseRoomM;
 #define SCENE_JUPITER_LIGHTHOUSE_ROOM_M ((s32)&SceneId_JupiterLighthouseRoomM)
 extern char SceneId_GabombaCatacombsStream;
 #define SCENE_GABOMBA_CATACOMBS_STREAM ((s32)&SceneId_GabombaCatacombsStream)
-extern char SceneId_IsletsDog;
-#define SCENE_ISLETS_DOG ((s32)&SceneId_IsletsDog)
-extern char SceneId_IsletsPrettyStone;
-#define SCENE_ISLETS_PRETTY_STONE ((s32)&SceneId_IsletsPrettyStone)
-extern char SceneId_IsletsCow;
-#define SCENE_ISLETS_COW ((s32)&SceneId_IsletsCow)
-extern char SceneId_IsletsPier;
-#define SCENE_ISLETS_PIER ((s32)&SceneId_IsletsPier)
-extern char SceneId_IsletsTurtle;
-#define SCENE_ISLETS_TURTLE ((s32)&SceneId_IsletsTurtle)
+extern char SceneId_WestIndraIslet;
+#define SCENE_WEST_INDRA_ISLET ((s32)&SceneId_WestIndraIslet)
+extern char SceneId_EastTundariaIslet;
+#define SCENE_EAST_TUNDARIA_ISLET ((s32)&SceneId_EastTundariaIslet)
+extern char SceneId_NorthOseniaIslet;
+#define SCENE_NORTH_OSENIA_ISLET ((s32)&SceneId_NorthOseniaIslet)
+extern char SceneId_SoutheastAngaraIslet;
+#define SCENE_SOUTHEAST_ANGARA_ISLET ((s32)&SceneId_SoutheastAngaraIslet)
+extern char SceneId_SeaOfTimeIslet;
+#define SCENE_SEA_OF_TIME_ISLET ((s32)&SceneId_SeaOfTimeIslet)
 extern char SceneId_JupiterLighthouseAerie;
 #define SCENE_JUPITER_LIGHTHOUSE_AERIE ((s32)&SceneId_JupiterLighthouseAerie)
 extern char SceneId_JupiterLighthouseAerieBeacon;

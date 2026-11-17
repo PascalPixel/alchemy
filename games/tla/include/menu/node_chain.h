@@ -3,10 +3,10 @@
 
 #include "types.h"
 
-struct SelectionScreen;
+struct SelectionMenuWork;
 struct SelectionNode;
 
 struct SelectionNode *
-SelectionMenu_GetCursorNode(struct SelectionScreen *screen);
+SelectionMenu_GetCursorNode(struct SelectionMenuWork *screen);
 
 #endif

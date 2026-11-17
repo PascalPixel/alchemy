@@ -9,13 +9,20 @@
 #include "graphics/text_font.h"
 #include "edition.h"
 #include "graphics/graphics.h"
+#include "window/window.h"
 
 /// The pixel rows text may reach: four tiles; a glyph is cut off below it.
 #define TEXT_CANVAS_PIXEL_HEIGHT 32
 #define SCREEN_TILE_COLUMNS 30
-#define TEXT_CANVAS_VRAM ((void *)0x06002500)
-/// The window's canvas text gets an outline.
-#define WINDOW_FLAG_OUTLINED_TEXT 0x40
+/// The fonts start at the space.
+#define FONT_FIRST_CODE ' '
+/// In Japanese, the codes after the font's are kanji (gFont_KanjiGlyphs).
+#define KANJI_FIRST_CODE (TEXT_LAST_FONT_CODE + 1)
+/// The Japanese small font's rows: a byte each.
+#define SMALL_FONT_ROWS 10
+/// A halfword of four 4-bit pixels, all colour `color`: what
+/// Text_SetCanvasPixel masks one pixel out of.
+#define PIXELS_4BPP_HALFWORD(color) ((color) * 0x1111)
 
 /// Sets one pixel in the column-major text canvas. windowHeight includes the
 /// two border rows; doubledPixelRow is twice the row within a tile.
@@ -61,7 +68,8 @@ s32 Glyph_DrawArm(struct Window *window, u32 character, u32 x, u32 y,
 #endif
 
   windowHeight = window->height;
-  if (character <= 255 || (font != NULL && character - TEXT_MARK_VOICED <= 1)) {
+  if (character <= TEXT_LAST_FONT_CODE ||
+      (font != NULL && character - TEXT_MARK_VOICED <= 1)) {
     if (font != NULL) {
       const u8 *source;
       u32 color;
@@ -69,21 +77,20 @@ s32 Glyph_DrawArm(struct Window *window, u32 character, u32 x, u32 y,
 #if (LANGUAGE == LANGUAGE_JAPANESE)
       u32 fontWidth;
 
-      // The small font: 10 rows of a byte, bit 0 the leftmost pixel, in
-      // colour 1 (0x1111 is the colour in all four nibbles). A character is
-      // drawn a pixel in and advances 8; a kana mark goes 2 further left and
-      // a row up, and advances 2.
-      color = 0x1111;
+      // The small font: SMALL_FONT_ROWS rows of a byte, bit 0 the leftmost
+      // pixel, in colour 1. A character is drawn a pixel in and advances 8; a
+      // kana mark goes 2 further left and a row up, and advances 2.
+      color = PIXELS_4BPP_HALFWORD(1);
       fontWidth = 8;
       x++;
       if (character - TEXT_MARK_VOICED <= 1) {
-        character += 32;
+        character += FONT_FIRST_CODE;
         x -= 2;
         y--;
         fontWidth = 2;
       }
-      character -= 32;
-      source = font + character * 10;
+      character -= FONT_FIRST_CODE;
+      source = font + character * SMALL_FONT_ROWS;
       row = 0;
       bits = *source++;
       while (y + row < TEXT_CANVAS_PIXEL_HEIGHT) {
@@ -108,7 +115,7 @@ s32 Glyph_DrawArm(struct Window *window, u32 character, u32 x, u32 y,
           } while (bits != 0);
         }
         row = nextRow;
-        if (row > 9)
+        if (row >= SMALL_FONT_ROWS)
           break;
         bits = *source++;
       }
@@ -117,11 +124,14 @@ s32 Glyph_DrawArm(struct Window *window, u32 character, u32 x, u32 y,
       u32 secondaryColor;
       u32 fontWidth;
 
-      source = font + character * 32;
-      foregroundColor = 0x1111;
-      secondaryColor = 0x3333;
+      // The 8x8 font is window tiles of 4bpp pixels: a pixel of value 1 is
+      // drawn in colour 1, one of 3 in colour 3, any other is left (bits & 0xd
+      // is 1 only for 1 and 3).
+      source = font + character * TILE_SIZE_4BPP;
+      foregroundColor = PIXELS_4BPP_HALFWORD(1);
+      secondaryColor = PIXELS_4BPP_HALFWORD(3);
       row = 0;
-      fontWidth = gFont_GlyphWidths[character - 32];
+      fontWidth = gFont_GlyphWidths[character - FONT_FIRST_CODE];
       if (y < TEXT_CANVAS_PIXEL_HEIGHT) {
         u8 *vram;
 
@@ -139,9 +149,9 @@ s32 Glyph_DrawArm(struct Window *window, u32 character, u32 x, u32 y,
               bits >>= 4;
             else
               bits = *source++;
-            if ((bits & 13) == 1) {
+            if ((bits & 0xd) == 1) {
               color = secondaryColor;
-              if ((bits & 15) == 1)
+              if ((bits & 0xf) == 1)
                 color = foregroundColor;
               if (((x + column) >> 3) < SCREEN_TILE_COLUMNS)
                 Text_SetCanvasPixel(windowHeight, x + column, tileY, rowLine,
@@ -159,15 +169,21 @@ s32 Glyph_DrawArm(struct Window *window, u32 character, u32 x, u32 y,
 #endif
       return fontWidth;
     }
-    glyphRows = (const u16 *)((const u8 *)gFont_Glyphs + (character - 32) * 26);
+    // Main-font entries begin with their advance width: 26 bytes, the width and
+    // 12 rows of 16 pixels, the leftmost in the top bit.
+    glyphRows = (const u16 *)((const u8 *)gFont_Glyphs +
+                              (character - FONT_FIRST_CODE) * 26);
     glyphWidth = *glyphRows++;
   } else {
 #if (LANGUAGE == LANGUAGE_JAPANESE)
     glyphWidth = KANJI_WIDTH;
     glyphRows =
-        (const u16 *)(gFont_KanjiGlyphs + (character - 256) * KANJI_GLYPH_SIZE);
+        (const u16 *)(gFont_KanjiGlyphs +
+                      (character - KANJI_FIRST_CODE) * KANJI_GLYPH_SIZE);
 #else
-    glyphRows = (const u16 *)((const u8 *)gFont_Glyphs + (character - 32) * 32);
+    glyphRows =
+        (const u16 *)((const u8 *)gFont_Glyphs +
+                      (character - FONT_FIRST_CODE) * sizeof(struct FontGlyph));
     glyphWidth = *glyphRows;
     glyphRows += 4;
 #endif
@@ -179,6 +195,7 @@ s32 Glyph_DrawArm(struct Window *window, u32 character, u32 x, u32 y,
   } else
     advance = glyphWidth;
 
+  // Draw the three outline offsets first, then the foreground pixels.
   for (outlinePass = 0; outlinePass <= 3; outlinePass++) {
     u32 color;
     u32 bits;
@@ -186,9 +203,9 @@ s32 Glyph_DrawArm(struct Window *window, u32 character, u32 x, u32 y,
     const u16 *nextGlyphRow;
 
     if (outlinePass == 3)
-      color = 0x1111;
+      color = PIXELS_4BPP_HALFWORD(1);
     else
-      color = 0x5555;
+      color = PIXELS_4BPP_HALFWORD(5);
     if (window->flags & WINDOW_FLAG_OUTLINED_TEXT) {
       if (outlinePass <= 1) {
         if (outlinePass == 1)

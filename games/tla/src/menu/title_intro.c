@@ -1,10 +1,13 @@
 /// @file
-/// The Title's intro: the Nintendo and Camelot splash screens, the scroll down
-/// the intro's tall picture, the logo coming together, the title screen and its
-/// prompt, and the palette fades they share.
+/// The title intro, the Nintendo and Camelot logos, the title screen and the
+/// palette fade they use. The intro opens on drifting clouds, shows the cards
+/// `Camelot presents` and `Golden Sun` `Book Two` between them, drops through
+/// the clouds into white, and scrolls down the lighthouse in its valley while a
+/// gull flies off towards it and `The Lost Age` comes into focus.
 ///
-/// One object, as The Broken Seal's title_intro.c is. Its logo frames and
-/// palettes are the data objects logo.c and title_intro_tables.c.
+/// One object, as The Broken Seal's title_intro.c is. The gull's frames and
+/// path are logo.c; the prompt's levels and the fade's channel curves are
+/// title_intro_tables.c.
 
 #include "types.h"
 #include "sounds.h"
@@ -31,18 +34,15 @@
 #include "field/actor.h"
 #include "resource_ids.h"
 
-/// One step of the intro picture's scroll: how many frames it lasts, and for
-/// each of BG1's and BG2's y and x the pixels it moves a frame and the mask of
-/// frame counts it moves on (0 for every frame).
-/// The screen blocks of the intro pictures' maps, as The Broken Seal's: the
-/// near picture on BG2 and the far one on BG1, which the lighthouse later
-/// takes; the cards' rows on BG3 and the rows blended in over them on BG0.
+/// The screen blocks of the intro's maps, as The Broken Seal's: the near clouds
+/// on BG2 and the far ones on BG1, which the lighthouse later takes; the cards'
+/// text on BG3 and the line blended in over it on BG0.
 #define INTRO_FRONT_SCREEN 30
 #define INTRO_BACK_SCREEN 31
 #define INTRO_CARD_SCREEN 29
 #define INTRO_CARD_BLEND_SCREEN 28
 
-/// One step of the intro picture's scroll (Title_RunScrollStep, TITLE_STEP).
+/// One step of the clouds' scroll (Title_RunScrollStep, TITLE_STEP).
 struct TitleScrollStep {
   s32 frames; ///< how long the step lasts
   /// Pixels a frame: BG1's y and x, then BG2's y and x.
@@ -52,27 +52,29 @@ struct TitleScrollStep {
   u32 mask[4];
 };
 
-/// The scroll down or up the intro's tall lighthouse picture: where it is and
-/// where it stops, the pixels a step, the picture's rows streamed into VRAM
-/// behind it and the frames each step waits.
+/// The scroll down the lighthouse picture, or back up it: where it is and where
+/// it stops, the pixels a step and the frames each step waits, and the
+/// picture's rows of tiles copied into VRAM as they come into view.
 struct TitleScroll {
-  s16 position;
-  s16 limit;
-  u16 step;
-  u8 *source;
-  u8 *destination;
-  u16 *cursor;
-  u16 tile;
-  s16 scroll;
+  s16 position;    ///< pixels down the picture
+  s16 limit;       ///< the position this scroll stops at
+  u16 step;        ///< pixels a step, negative going back up
+  u8 *source;      ///< the next row of the picture to copy
+  u8 *destination; ///< where in VRAM that row goes
+  u16 *cursor;     ///< the map entry of the row's first tile
+  u16 tile;        ///< that tile's number
+  s16 scroll;      ///< pixels scrolled since the last row was copied
+  /// Going down, the VRAM row the next copy fills; going back up, the rows
+  /// left to pass before the next copy.
   u16 rows;
-  u32 frames;
+  u32 frames; ///< frames each step waits
 };
 
 /// An OAM entry's attributes 0 to 2, as the title's logo pieces are written.
 struct OamEntry {
   u32 y : 8;
-  u32 affine : 2;
-  u32 mode : 2;
+  u32 affine : 2; ///< 1 drawn through its matrix, 3 also at double size
+  u32 mode : 2;   ///< an enum ObjMode
   u32 mosaic : 1;
   u32 fullColor : 1;
   u32 shape : 2;
@@ -87,27 +89,33 @@ struct OamEntry {
 
 /// TitleLogoState.phase: what TitleIntro_UpdateLogo draws.
 enum TitleLogoPhase {
-  TITLE_LOGO_GULLS = 0, ///< the gulls fly by (gTitleIntro_GullPath)
-  TITLE_LOGO_ZOOM = 1   ///< the logo's three pieces zoom in and fade up
+  /// A gull flies off towards the lighthouse along gTitleIntro_GullPath.
+  TITLE_LOGO_GULL = 0,
+  /// `The Lost Age` closes in, its three pieces scaling down and fading up.
+  TITLE_LOGO_ZOOM = 1
 };
 
-/// The title intro's state (HEAP_SLOT_TITLE_INTRO): the logo's phase, frame,
-/// timer, step and delay, and the countdowns to the fade to white and back that
-/// the lighthouse scroll starts.
+/// The title intro's state while the lighthouse shows (HEAP_SLOT_TITLE_INTRO):
+/// the gull or the logo, and the countdowns to the fade to white and back that
+/// the scroll down starts.
 struct TitleLogoState {
   s16 phase; ///< enum TitleLogoPhase
-  s16 frame; ///< index into gTitleIntro_GullFrames (5 halfwords a frame)
+  /// Where the gull's frame starts in gTitleIntro_GullFrames; in the zoom, the
+  /// logo's blend weight.
+  s16 frame;
+  /// Frames left of the gull's frame; in the zoom, frames since it began.
   s16 timer;
-  s16 step; ///< index into gTitleIntro_GullPath (3 halfwords a step); the scale
-            ///< in phase 1
-  s16 delay;
-  s16 white;
-  s16 back;
+  /// Where the gull's step starts in gTitleIntro_GullPath; in the zoom, the
+  /// logo's scale.
+  s16 step;
+  s16 delay;     ///< frames left of the gull's step
+  s16 toWhite;   ///< scroll steps until the fade to white; 0 when none
+  s16 fromWhite; ///< scroll steps until the fade back; 0 when none
 };
 
 /// A sprite of the "Press Start" prompt, linked into a render slot each frame:
 /// OAM attributes 0 to 2 with the position split out.
-struct TitleSprite {
+struct IntroSprite {
   u32 next; ///< the render slot link
   u8 y;
   u8 attr0High; ///< shape and mode bits of attribute 0
@@ -116,22 +124,16 @@ struct TitleSprite {
   s32 tile;
 };
 
-/// The title screen's state, in heap slot 172.
+/// The title screen's work (HEAP_SLOT_TITLE_INTRO): the prompt's sprites.
 struct TitleScreenWork {
   u8 unused[16]; ///< no code names it
-  struct TitleSprite sprites[8];
+  struct IntroSprite sprites[8];
 };
 
-void TitlePaletteFade_SetCurrent(s32 index, s32 transform);
-/// The title logo's pictures, decompressed here before they are copied into
+void TitlePaletteFade_SetCurrent(s32 mode, s32 selectedPalettes);
+/// Where each of `The Lost Age`'s pictures is unpacked before it is copied into
 /// sprite tiles.
 extern u8 gTitleIntro_LogoTileBuffer[];
-/// The lighthouse picture's tiles past its first screen, which
-/// TitleIntro_ScrollLighthouse streams in as the picture scrolls down.
-extern u8 gTitleIntro_LighthouseTilesTail[];
-/// Unnamed: what the scroll back up copies its rows from. XXX: the EWRAM work
-/// at 0x02017080 (src/system/ewram.s); a name needs what else uses it.
-extern u8 Data_02017080[];
 extern const u8 gTitle_PromptBlendLevels[];
 extern u16 gTitleIntro_ChannelCurve[];
 extern u16 gTitleIntro_ChannelCurveLight[];
@@ -139,16 +141,28 @@ extern u16 gTitleIntro_ChannelCurveContrast[];
 s32 TitlePaletteFade_ClampComponent(s32 value);
 s32 TitlePaletteFade_ClampShiftedComponent(s32 value);
 
-#if (LANGUAGE == LANGUAGE_GERMAN) || (LANGUAGE == LANGUAGE_SPANISH) ||         \
-    (LANGUAGE == LANGUAGE_ITALIAN)
-#define DATA018_TILE_BYTES 40960
+// The intro's tiles, in 16 colours: the far clouds in character block 0, the
+// near clouds in block 1, each 256 by 128 pixels, and the cards' text in block
+// 2. The text is `Camelot presents`, three rows in these editions and two in
+// the others, then `Golden Sun` on three and `Book Two` on two.
+#define CLOUDS_ROWS 16
+#if LANGUAGE == LANGUAGE_GERMAN || LANGUAGE == LANGUAGE_SPANISH ||             \
+    LANGUAGE == LANGUAGE_ITALIAN
+#define PRESENTS_ROWS 3
 #else
-#define DATA018_TILE_BYTES 39936
+#define PRESENTS_ROWS 2
 #endif
+#define GOLDEN_SUN_ROWS 3
+#define BOOK_TWO_ROWS 2
+#define CARD_TEXT_ROWS (PRESENTS_ROWS + GOLDEN_SUN_ROWS + BOOK_TWO_ROWS)
+#define GOLDEN_SUN_TILE (PRESENTS_ROWS * BG_SCREEN_WIDTH)
+#define BOOK_TWO_TILE (GOLDEN_SUN_TILE + GOLDEN_SUN_ROWS * BG_SCREEN_WIDTH)
+#define INTRO_TILE_BYTES                                                       \
+  ((2 * CLOUDS_ROWS + CARD_TEXT_ROWS) * BG_SCREEN_WIDTH * TILE_SIZE_4BPP)
 
-/// Blanks the display, loads resource 0x18's palette into the BG palette with
-/// colour 0 black, and unpacks its tiles through the map cell buffer into BG
-/// character block 0.
+/// Blanks the display, loads the intro's clouds and cards: their colours into
+/// the BG palette with colour 0 black, and their tiles, unpacked through the
+/// map cell buffer, from BG character block 0.
 void TitleIntro_LoadPictureTiles(void) {
   u8 *source;
   u8 *cells;
@@ -159,8 +173,8 @@ void TitleIntro_LoadPictureTiles(void) {
   BG_PLTT[0] = 0;
   cells = Ram_MapCellBuffer;
   Decompress_ByteLz(source + BG_PLTT_SIZE, cells);
-  Dma_Set(cells, (void *)BG_CHAR_BLOCK(0),
-          DMA_COPY_WORDS(DATA018_TILE_BYTES / 4), REG_DMA3);
+  Dma_Set(cells, (void *)BG_CHAR_BLOCK(0), DMA_COPY_WORDS(INTRO_TILE_BYTES / 4),
+          REG_DMA3);
 }
 
 /// Waits frames frames, stirring the random seed each frame; returns 1 at once
@@ -177,9 +191,9 @@ s32 Title_WaitOrPress(u32 frames) {
   return 0;
 }
 
-/// Runs one step of the intro picture's scroll, moving BG1 and BG2 each frame
-/// by the step's speeds on the frames its masks allow; returns 0 when a key
-/// cuts it short, 1 when it ends.
+/// Runs one step of the clouds' scroll, moving BG1 and BG2 each frame by the
+/// step's speeds on the frames its masks allow; returns 0 when a key cuts it
+/// short, 1 when it ends.
 s32 Title_RunScrollStep(struct TitleScrollStep *step) {
   s32 i;
 
@@ -198,8 +212,8 @@ s32 Title_RunScrollStep(struct TitleScrollStep *step) {
   return 1;
 }
 
-/// One step of the intro picture's scroll: for `duration` frames, BG1 and BG2
-/// move by their dy and dx each frame whose count has none of its mask's bits.
+/// One step of the clouds' scroll: for `duration` frames, BG1 and BG2 move by
+/// their dy and dx each frame whose count has none of its mask's bits.
 #define TITLE_STEP(duration, bg1Dy, bg1Dx, bg2Dy, bg2Dx, bg1DyMask, bg1DxMask, \
                    bg2DyMask, bg2DxMask)                                       \
   (step.frames = (duration), step.speed[0] = (bg1Dy), step.speed[1] = (bg1Dx), \
@@ -208,9 +222,18 @@ s32 Title_RunScrollStep(struct TitleScrollStep *step) {
    step.mask[2] = (bg2DyMask), step.mask[3] = (bg2DxMask),                     \
    Title_RunScrollStep(&step))
 
-/// Shows the intro's picture of step mode (0 to 2) and runs its scroll steps;
+/// The intro's three passes over the clouds.
+enum CloudsPass {
+  CLOUDS_BEFORE_CARDS = 0,
+  CLOUDS_BETWEEN_CARDS = 1,
+  /// After the last card, ending in a plunge through them into white.
+  CLOUDS_AFTER_CARDS = 2
+};
+
+/// Shows the two layers of clouds and runs one pass's scroll steps over them
+/// (an enum CloudsPass), fading in from dark red, at once on the first pass;
 /// returns 0 when a key cuts it short.
-s32 TitleIntro_ScrollPicture(s32 mode) {
+s32 TitleIntro_ScrollClouds(s32 pass) {
   struct TitleScrollStep step;
   u16 *map;
   u16 tile;
@@ -220,7 +243,7 @@ s32 TitleIntro_ScrollPicture(s32 mode) {
   REG_DISPCNT = 0;
   map = (u16 *)BG_SCREEN_BLOCK(INTRO_BACK_SCREEN);
   tile = 0;
-  for (j = 0; j < BG_SCREEN_WIDTH / 2; j++) {
+  for (j = 0; j < CLOUDS_ROWS; j++) {
     for (i = 0; i < BG_SCREEN_WIDTH; i++) {
       *map++ = tile++;
     }
@@ -233,7 +256,7 @@ s32 TitleIntro_ScrollPicture(s32 mode) {
   }
   map = (u16 *)BG_SCREEN_BLOCK(INTRO_FRONT_SCREEN);
   tile = 0;
-  for (j = 0; j < BG_SCREEN_WIDTH / 2; j++) {
+  for (j = 0; j < CLOUDS_ROWS; j++) {
     for (i = 0; i < BG_SCREEN_WIDTH; i++) {
       *map++ = tile++ | BG_TILE_PALETTE(1);
     }
@@ -253,19 +276,19 @@ s32 TitleIntro_ScrollPicture(s32 mode) {
     gBgScroll[i].y = 0;
     gBgScroll[i].x = 0;
   }
-  if (mode == 0) {
+  if (pass == CLOUDS_BEFORE_CARDS) {
     TitlePaletteFade_Initialize();
   }
   TitlePaletteFade_SetCurrent(RGB(2, 0, 0), PALETTES_ALL);
   TitlePaletteFade_SetTarget(PALETTE_TINT_NONE, PALETTES_ALL);
   REG_DISPCNT = DISPCNT_BG1_ON | DISPCNT_BG2_ON;
-  if (mode == 0) {
+  if (pass == CLOUDS_BEFORE_CARDS) {
     TitlePaletteFade_Start(1);
   } else {
     TitlePaletteFade_Start(10);
   }
 
-  if (mode == 0) {
+  if (pass == CLOUDS_BEFORE_CARDS) {
     if (!TITLE_STEP(30, 2, 0, -3, 0, 0, 0, 0, 0))
       return 0;
     if (!TITLE_STEP(10, 2, 0, -2, 0, 0, 0, 0, 0))
@@ -288,7 +311,7 @@ s32 TitleIntro_ScrollPicture(s32 mode) {
     TitlePaletteFade_Start(60);
     if (!TITLE_STEP(60, -1, 0, 1, 0, 3, 0, 1, 0))
       return 0;
-  } else if (mode == 1) {
+  } else if (pass == CLOUDS_BETWEEN_CARDS) {
     if (!TITLE_STEP(40, 1, 1, -1, -1, 1, 0, 1, 0))
       return 0;
     if (!TITLE_STEP(20, 1, 1, -1, -1, 3, 0, 1, 0))
@@ -312,9 +335,10 @@ s32 TitleIntro_ScrollPicture(s32 mode) {
       return 0;
     if (!TITLE_STEP(16, 8, -8, 8, 8, 0, 0, 0, 0))
       return 0;
+    // The plunge: both layers speed up and brighten, two frames a weight.
     j = 2;
-    for (i = 11; i < 16; i++) {
-      REG_BLDALPHA = (i << 8) | i;
+    for (i = 11; i < BLEND_WEIGHT_MAX; i++) {
+      REG_BLDALPHA = BLEND_ALPHA(i, i);
       gBgScroll[1].y += j + 16;
       gBgScroll[2].y += j + 8;
       j++;
@@ -336,17 +360,18 @@ s32 TitleIntro_ScrollPicture(s32 mode) {
   return 1;
 }
 
-// The picture numbers three rows in these editions, two in the others.
-#if LANGUAGE == LANGUAGE_GERMAN || LANGUAGE == LANGUAGE_SPANISH ||             \
-    LANGUAGE == LANGUAGE_ITALIAN
-#define NUMBERED_ROWS 3
-#else
-#define NUMBERED_ROWS 2
-#endif
+/// The screen rows each card's text stands on.
+#define PRESENTS_TOP_ROW 9
+#define GOLDEN_SUN_TOP_ROW 7
+#define BOOK_TWO_TOP_ROW (GOLDEN_SUN_TOP_ROW + GOLDEN_SUN_ROWS)
+/// A tile every edition's card text leaves blank, the left end of its third
+/// row: the `Golden Sun` card fills the screen around its text with it and with
+/// the blank tile below it.
+#define CARD_BLANK_TILE (2 * BG_SCREEN_WIDTH)
 
-/// Fades in a card of the picture's numbered rows on BG3, holds it 150 frames
-/// and fades it out; returns 0 when a key cuts it short.
-s32 TitleIntro_ShowCard(void) {
+/// Fades in the card `Camelot presents` on BG3, holds it 150 frames and fades
+/// it out to dark red; returns 0 when a key cuts it short.
+s32 TitleIntro_ShowPresentsCard(void) {
   u16 *map;
   u16 tile;
   s32 i;
@@ -356,7 +381,7 @@ s32 TitleIntro_ShowCard(void) {
   map = (u16 *)BG_SCREEN_BLOCK(INTRO_CARD_SCREEN);
   tile = 0;
   for (row = 0; row < DISPLAY_TILE_HEIGHT; row++) {
-    if (row >= 9 && row < 9 + NUMBERED_ROWS) {
+    if (row >= PRESENTS_TOP_ROW && row < PRESENTS_TOP_ROW + PRESENTS_ROWS) {
       for (i = 0; i < BG_SCREEN_WIDTH; i++) {
         *map++ = tile++ | BG_TILE_PALETTE(2);
       }
@@ -385,18 +410,10 @@ s32 TitleIntro_ShowCard(void) {
   return 1;
 }
 
-// This picture's tiles follow TitleIntro_ShowCard's, 32 for each row it
-// numbers.
-#if LANGUAGE == LANGUAGE_GERMAN || LANGUAGE == LANGUAGE_SPANISH ||             \
-    LANGUAGE == LANGUAGE_ITALIAN
-#define FIRST_TILE 96
-#else
-#define FIRST_TILE 64
-#endif
-
-/// As TitleIntro_ShowCard, with a second layer of rows blended in over 16
-/// steps of 3 frames.
-s32 TitleIntro_ShowBlendedCard(void) {
+/// Fades in the card `Golden Sun` on BG3, blends `Book Two` in below it from
+/// BG0 over 16 steps of 3 frames, holds the card 150 frames and fades it out to
+/// dark red; returns 0 when a key cuts it short.
+s32 TitleIntro_ShowBookTwoCard(void) {
   u16 *map;
   u16 tile;
   s32 i;
@@ -404,30 +421,31 @@ s32 TitleIntro_ShowBlendedCard(void) {
 
   REG_DISPCNT = 0;
   map = (u16 *)BG_SCREEN_BLOCK(INTRO_CARD_SCREEN);
-  tile = FIRST_TILE;
+  tile = GOLDEN_SUN_TILE;
   for (row = 0; row < DISPLAY_TILE_HEIGHT; row++) {
-    if (row >= 7 && row <= 9) {
+    if (row >= GOLDEN_SUN_TOP_ROW && row < BOOK_TWO_TOP_ROW) {
       for (i = 0; i < BG_SCREEN_WIDTH; i++) {
         *map++ = tile++ | BG_TILE_PALETTE(3);
       }
-    } else if (row == 10 || row == 11) {
+    } else if (row >= BOOK_TWO_TOP_ROW &&
+               row < BOOK_TWO_TOP_ROW + BOOK_TWO_ROWS) {
       for (i = 0; i < BG_SCREEN_WIDTH; i++)
-        *map++ = BG_TILE_PALETTE(3) | 96;
+        *map++ = BG_TILE_PALETTE(3) | (CARD_BLANK_TILE + BG_SCREEN_WIDTH);
     } else {
       for (i = 0; i < BG_SCREEN_WIDTH; i++)
-        *map++ = BG_TILE_PALETTE(3) | 64;
+        *map++ = BG_TILE_PALETTE(3) | CARD_BLANK_TILE;
     }
   }
   map = (u16 *)BG_SCREEN_BLOCK(INTRO_CARD_BLEND_SCREEN);
-  tile = FIRST_TILE + 96;
+  tile = BOOK_TWO_TILE;
   for (row = 0; row < DISPLAY_TILE_HEIGHT; row++) {
-    if (row == 10 || row == 11) {
+    if (row >= BOOK_TWO_TOP_ROW && row < BOOK_TWO_TOP_ROW + BOOK_TWO_ROWS) {
       for (i = 0; i < BG_SCREEN_WIDTH; i++) {
         *map++ = tile++ | BG_TILE_PALETTE(3);
       }
     } else {
       for (i = 0; i < BG_SCREEN_WIDTH; i++)
-        *map++ = BG_TILE_PALETTE(3) | 64;
+        *map++ = BG_TILE_PALETTE(3) | CARD_BLANK_TILE;
     }
   }
   REG_BG3CNT = BGCNT_PRIORITY(2) | BGCNT_CHAR_BASE(2) |
@@ -435,7 +453,7 @@ s32 TitleIntro_ShowBlendedCard(void) {
   REG_BG0CNT = BGCNT_PRIORITY(1) | BGCNT_CHAR_BASE(2) |
                BGCNT_SCREEN_BASE(INTRO_CARD_BLEND_SCREEN);
   REG_BLDCNT = BLDCNT_TGT1_BG0 | BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_BG3;
-  REG_BLDALPHA = BLEND_ALPHA(0, 16);
+  REG_BLDALPHA = BLEND_ALPHA(0, BLEND_WEIGHT_MAX);
   for (i = 0; i < 4; i++)
     gBgScroll[i].x = gBgScroll[i].y = 0;
 
@@ -459,19 +477,24 @@ s32 TitleIntro_ShowBlendedCard(void) {
   return 1;
 }
 
-/// A row of the tall picture's 256-colour tiles, streamed in as it scrolls:
-/// the screen's width in tiles.
-#define LIGHTHOUSE_ROW_BYTES (DISPLAY_TILE_WIDTH * 64)
-/// The tiles of the picture's first screen, loaded before it scrolls.
-#define LIGHTHOUSE_SCREEN_BYTES (DISPLAY_TILE_HEIGHT * LIGHTHOUSE_ROW_BYTES)
-/// The map entry of the blank tile beside each streamed row.
-#define LIGHTHOUSE_BLANK_TILE 511
+/// The lighthouse picture, 240 by 384 pixels in 256 colours: its first screen
+/// is loaded before it scrolls and the rest of its rows of tiles are copied in
+/// as they come into view, wrapping round the map's 32 rows.
+#define LIGHTHOUSE_HEIGHT 384
+#define LIGHTHOUSE_ROW_BYTES (DISPLAY_TILE_WIDTH * TILE_SIZE_8BPP)
+/// The scroll that shows the picture's foot.
+#define LIGHTHOUSE_BOTTOM (LIGHTHOUSE_HEIGHT - DISPLAY_HEIGHT)
+/// A screen of tiles in 256 colours: the lighthouse picture's first screen, and
+/// the Nintendo logo and the title screen.
+#define SCREEN_TILE_BYTES (DISPLAY_TILE_HEIGHT * LIGHTHOUSE_ROW_BYTES)
+/// The map entry of the two columns past the screen's right edge, which never
+/// show.
+#define OFFSCREEN_TILE 511
 
-/// Scrolls the intro's tall picture from one position to another: each step
-/// moves it by the scroll's step and waits its frames, streams in the next map
-/// rows' tiles when scrolling down and takes them back when scrolling up, and
-/// starts the fade to white or back when its countdown reaches 1. A key press
-/// cuts the scroll short.
+/// Scrolls the lighthouse picture from one position to another: each step moves
+/// it by the scroll's step and waits its frames, copies in the next row of the
+/// picture as one comes into view, and starts the fade to white or back when
+/// its countdown reaches 1. Returns 1 when a key cuts the scroll short.
 s32 TitleIntro_ScrollLighthouse(struct TitleScroll *s) {
   struct TitleLogoState *timers = Ram_HeapSlots->titleIntro;
   s32 i;
@@ -490,8 +513,8 @@ s32 TitleIntro_ScrollLighthouse(struct TitleScroll *s) {
         s->destination += LIGHTHOUSE_ROW_BYTES;
         for (j = 0; j < DISPLAY_TILE_WIDTH; j++)
           *s->cursor++ = s->tile++;
-        *s->cursor++ = LIGHTHOUSE_BLANK_TILE;
-        *s->cursor++ = LIGHTHOUSE_BLANK_TILE;
+        *s->cursor++ = OFFSCREEN_TILE;
+        *s->cursor++ = OFFSCREEN_TILE;
         if (++s->rows == BG_SCREEN_WIDTH) {
           s->destination = (u8 *)BG_CHAR_BLOCK(0);
           s->rows = 0;
@@ -502,11 +525,11 @@ s32 TitleIntro_ScrollLighthouse(struct TitleScroll *s) {
       }
       s->scroll += s->step;
       gBgScroll[1].y += s->step;
-      if (timers->white != 0 && --timers->white == 1) {
+      if (timers->toWhite != 0 && --timers->toWhite == 1) {
         TitlePaletteFade_SetTarget(RGB_WHITE, PALETTES_ALL);
         TitlePaletteFade_Start(10);
       }
-      if (timers->back != 0 && --timers->back == 1) {
+      if (timers->fromWhite != 0 && --timers->fromWhite == 1) {
         TitlePaletteFade_SetTarget(PALETTE_TINT_NONE, PALETTES_ALL);
         TitlePaletteFade_Start(10);
       }
@@ -543,9 +566,14 @@ done:
   return 0;
 }
 
-/// Writes one 64x64 piece of the title logo straight into OAM: double-size
-/// affine, semi-transparent, 256 colours, at x - 32 and y + 224, in the OAM
-/// entry its tile picks.
+/// A piece of `The Lost Age`: 64 by 64 pixels in 256 colours, numbered in the
+/// sprites' tiles of 32 bytes.
+#define LOGO_PIECE_BYTES (64 * 64)
+#define LOGO_PIECE_TILES (LOGO_PIECE_BYTES / TILE_SIZE_4BPP)
+
+/// Writes one piece of `The Lost Age` straight into OAM, in the entry its tile
+/// picks: affine at double size, so that its top left is at (x, y) unscaled,
+/// semi-transparent and in 256 colours.
 void Title_PlaceLogoPiece(s32 tile, s32 x, u32 y) {
   struct OamEntry oam;
 
@@ -553,16 +581,17 @@ void Title_PlaceLogoPiece(s32 tile, s32 x, u32 y) {
   oam.shape = 0;
   oam.size = 3;
   oam.fullColor = 1;
-  oam.mode = 1;
+  oam.mode = OBJ_MODE_SEMI_TRANSPARENT;
   oam.affine = 3;
   oam.tile = tile;
   oam.x = x - 32;
-  oam.y = y + 224;
+  oam.y = y - 32;
   Dma_Set(&oam, (void *)((u32)OAM + ((u32)tile >> 4)), DMA_COPY_WORDS(2),
           REG_DMA3);
 }
 
-// Where the left, middle and right logo pieces come to rest.
+// Where the left, middle and right pieces of `The Lost Age` come to rest, and
+// how far down.
 #if LANGUAGE == LANGUAGE_GERMAN || LANGUAGE == LANGUAGE_SPANISH ||             \
     LANGUAGE == LANGUAGE_ITALIAN
 #define LOGO_LEFT_X 24
@@ -577,24 +606,48 @@ void Title_PlaceLogoPiece(s32 tile, s32 x, u32 y) {
 #define LOGO_MIDDLE_X 83
 #define LOGO_RIGHT_X 140
 #endif
+#define LOGO_Y 50
 
 /// The logo pieces' affine scale, in 8.8: they start drawn 1.6 times their size
 /// and shrink to it.
 #define LOGO_MATRIX_START Q_8_8(0.625)
 #define LOGO_MATRIX_REST Q_8_8(1)
 
+/// The fields of a gull frame in gTitleIntro_GullFrames: its first tile, its
+/// rows of GULL_COLUMNS 8x8 sprites, the frames it shows for and its offset.
+enum GullFrameField {
+  GULL_FRAME_TILE,
+  GULL_FRAME_ROWS,
+  GULL_FRAME_DURATION,
+  GULL_FRAME_OFFSET_X,
+  GULL_FRAME_OFFSET_Y,
+  GULL_FRAME_FIELDS
+};
+/// The fields of a step of gTitleIntro_GullPath: where the gull is and the
+/// frames it stays; an x of -1 ends the path.
+enum GullStepField {
+  GULL_STEP_X,
+  GULL_STEP_Y,
+  GULL_STEP_DURATION,
+  GULL_STEP_FIELDS
+};
+#define GULL_COLUMNS 8
+
 extern s16 gTitleIntro_GullFrames[];
 extern s16 gTitleIntro_GullPath[];
 
+/// Unpacks a picture of `The Lost Age`, its three pieces, into sprite tiles.
 #define LOAD_LOGO_TILES(id)                                                    \
   {                                                                            \
     u8 *buffer = gTitleIntro_LogoTileBuffer;                                   \
     Decompress_ByteLz(Resource_GetTableEntry(id), buffer);                     \
-    Dma_Set(buffer, (void *)OBJ_VRAM0, DMA_COPY_WORDS(3072), REG_DMA3);        \
+    Dma_Set(buffer, (void *)OBJ_VRAM0,                                         \
+            DMA_COPY_WORDS(3 * LOGO_PIECE_BYTES / 4), REG_DMA3);               \
   }
 
-/// The logo's per-frame task while the lighthouse scrolls: places its pieces
-/// and loads their next tiles as its timer runs.
+/// The task that draws over the lighthouse each frame: the gull flying off
+/// towards it along its path, then `The Lost Age` closing in, its pictures
+/// coming into focus as it fades up.
 void TitleIntro_UpdateLogo(void) {
   struct TitleLogoState *logo;
   struct OamEntry sprite;
@@ -614,25 +667,24 @@ void TitleIntro_UpdateLogo(void) {
 
   logo = Ram_HeapSlots->titleIntro;
   Dma_Fill32Cell(fill, 0, (void *)OAM, OAM_SIZE);
-  if (logo->phase == TITLE_LOGO_GULLS) {
+  if (logo->phase == TITLE_LOGO_GULL) {
     if (logo->timer == 0) {
-      if (gTitleIntro_GullFrames[logo->frame + 5] != -1)
-        logo->frame += 5;
-      logo->timer = gTitleIntro_GullFrames[logo->frame + 2];
+      if (gTitleIntro_GullFrames[logo->frame + GULL_FRAME_FIELDS] != -1)
+        logo->frame += GULL_FRAME_FIELDS;
+      logo->timer = gTitleIntro_GullFrames[logo->frame + GULL_FRAME_DURATION];
     } else {
       logo->timer--;
     }
     if (logo->delay == 0) {
-      logo->step += 3;
-      logo->delay = gTitleIntro_GullPath[logo->step + 2];
+      logo->step += GULL_STEP_FIELDS;
+      logo->delay = gTitleIntro_GullPath[logo->step + GULL_STEP_DURATION];
     } else {
       logo->delay--;
     }
-    x = gTitleIntro_GullPath[logo->step];
+    x = gTitleIntro_GullPath[logo->step + GULL_STEP_X];
     if (x == -1) {
       Dma_Set(Resource_GetTableEntry(RESOURCE_SUBTITLE_PALETTE),
-              (void *)OBJ_PLTT,
-              (DMA_ENABLE | DMA_32BIT) << 16 | (BG_PLTT_SIZE / 4), REG_DMA3);
+              (void *)OBJ_PLTT, DMA_COPY_WORDS(OBJ_PLTT_SIZE / 4), REG_DMA3);
       LOAD_LOGO_TILES(RESOURCE_SUBTITLE_A);
       logo->phase = TITLE_LOGO_ZOOM;
       logo->frame = 1;
@@ -643,29 +695,31 @@ void TitleIntro_UpdateLogo(void) {
       REG_BLDALPHA = BLEND_ALPHA(1, BLEND_WEIGHT_MAX);
       return;
     }
-    tile = gTitleIntro_GullFrames[logo->frame];
-    rows = gTitleIntro_GullFrames[logo->frame + 1];
-    offsetX = gTitleIntro_GullFrames[logo->frame + 3];
-    offsetY = gTitleIntro_GullFrames[logo->frame + 4];
+    tile = gTitleIntro_GullFrames[logo->frame + GULL_FRAME_TILE];
+    rows = gTitleIntro_GullFrames[logo->frame + GULL_FRAME_ROWS];
+    offsetX = gTitleIntro_GullFrames[logo->frame + GULL_FRAME_OFFSET_X];
+    offsetY = gTitleIntro_GullFrames[logo->frame + GULL_FRAME_OFFSET_Y];
     left = x + offsetX - 28;
-    top = gTitleIntro_GullPath[logo->step + 1] + offsetY;
+    top = gTitleIntro_GullPath[logo->step + GULL_STEP_Y] + offsetY;
     for (row = 0; row < rows; row++) {
-      for (column = 0; column < 8; column++) {
+      for (column = 0; column < GULL_COLUMNS; column++) {
         Dma_Fill32Cell(fill, 0, &sprite, sizeof(sprite));
-        sprite.tile = tile + column + row * 8;
+        sprite.tile = tile + column + row * GULL_COLUMNS;
         sprite.x = left + column * 8;
         sprite.y = top + row * 8;
-        Dma_Set(&sprite, (u8 *)OAM + (row * 8 + column) * 8, DMA_COPY_WORDS(2),
-                REG_DMA3);
+        Dma_Set(&sprite, (u8 *)OAM + (row * GULL_COLUMNS + column) * 8,
+                DMA_COPY_WORDS(2), REG_DMA3);
       }
     }
   } else if (logo->phase == TITLE_LOGO_ZOOM) {
+    // The side pieces close in from 24 pixels out as the scale reaches rest.
     pieceX = (logo->step - LOGO_MATRIX_REST) / 4 + LOGO_LEFT_X;
-    y = (logo->step - LOGO_MATRIX_REST) / 32 + 50;
+    y = (logo->step - LOGO_MATRIX_REST) / 32 + LOGO_Y;
     Title_PlaceLogoPiece(0, pieceX, y);
-    Title_PlaceLogoPiece(128, LOGO_MIDDLE_X, y);
+    Title_PlaceLogoPiece(LOGO_PIECE_TILES, LOGO_MIDDLE_X, y);
     pieceX = LOGO_RIGHT_X - (logo->step - LOGO_MATRIX_REST) / 4;
-    Title_PlaceLogoPiece(256, pieceX, y);
+    Title_PlaceLogoPiece(2 * LOGO_PIECE_TILES, pieceX, y);
+    // Affine matrix 0, in attribute 3 of the first four entries.
     matrix = (volatile u16 *)((u8 *)OAM + 6);
     *matrix = logo->step;
     matrix += 4;
@@ -694,15 +748,14 @@ void TitleIntro_UpdateLogo(void) {
   }
 }
 
-extern u8 gMapGridCellBuffer[];
-
-/// The gulls' resource begins with their 16 colours.
+/// The gull's resource begins with its 16 colours.
 #define GULL_PALETTE_BYTES (16 * 2)
 
-/// Shows the lighthouse picture with its gulls
-/// (ResourceId_IntroLighthousePicture, ResourceId_IntroGullSprites), scrolls it
-/// with TitleIntro_ScrollLighthouse while TitleIntro_UpdateLogo runs, and
-/// returns 0 when a key cuts it short.
+/// Shows the lighthouse picture from white and scrolls down it to its foot,
+/// flashing white once on the way. There a gull flies off towards the
+/// lighthouse and `The Lost Age` closes in as the picture drifts back up, and
+/// it ends back at the top under a fade to white. A key cuts it short with a
+/// fade to black. Returns 1.
 s32 TitleIntro_ShowLighthouse(void) {
   struct TitleScroll scroll;
   volatile u32 fill;
@@ -710,7 +763,7 @@ s32 TitleIntro_ShowLighthouse(void) {
   u8 *source;
   u16 *map;
   s16 tile;
-  s32 q16One = FIXED_ONE;
+  FIXED fixedOne = FIXED_ONE;
   s32 number;
   s32 row;
   s32 i;
@@ -720,20 +773,19 @@ s32 TitleIntro_ShowLighthouse(void) {
   REG_DISPCNT = 0;
   Dma_Fill32Cell(fill, 0, (void *)OAM, OAM_SIZE);
   source = Resource_GetTableEntry(RESOURCE_INTRO_GULL_SPRITES);
-  buffer = gMapGridCellBuffer;
+  buffer = Ram_MapCellBuffer;
   source += GULL_PALETTE_BYTES;
   Decompress_ByteLz(source, buffer);
   Dma_Set(buffer, (void *)OBJ_VRAM0, DMA_COPY_WORDS(6912), REG_DMA3);
   wait(1);
   source = Resource_GetTableEntry(RESOURCE_INTRO_LIGHTHOUSE_PICTURE);
-  Dma_Set(source, (void *)BG_PLTT,
-          (DMA_ENABLE | DMA_32BIT) << 16 | (BG_PLTT_SIZE / 4), REG_DMA3);
+  Dma_Set(source, (void *)BG_PLTT, DMA_COPY_WORDS(BG_PLTT_SIZE / 4), REG_DMA3);
   *(u16 *)BG_PLTT = RGB_WHITE;
   wait(1);
   source += BG_PLTT_SIZE;
   Decompress_ByteLz(source, buffer);
   Dma_Set(buffer, (void *)BG_CHAR_BLOCK(0),
-          DMA_COPY_WORDS(LIGHTHOUSE_SCREEN_BYTES / 4), REG_DMA3);
+          DMA_COPY_WORDS(SCREEN_TILE_BYTES / 4), REG_DMA3);
   wait(1);
 
   map = (u16 *)BG_SCREEN_BLOCK(INTRO_BACK_SCREEN);
@@ -743,11 +795,11 @@ s32 TitleIntro_ShowLighthouse(void) {
       /* FAKEMATCH(temporary): the old tile kept in number, the step spelt on
        * the high halfword. */
       number = tile;
-      tile = ((tile << 16) + q16One) >> 16;
+      tile = FIXEDtoINT(INTtoFIXED(tile) + fixedOne);
       *map++ = number;
     }
-    *map++ = LIGHTHOUSE_BLANK_TILE;
-    *map++ = LIGHTHOUSE_BLANK_TILE;
+    *map++ = OFFSCREEN_TILE;
+    *map++ = OFFSCREEN_TILE;
   }
   REG_BG1CNT = BGCNT_PRIORITY(3) | BGCNT_256_COLORS |
                BGCNT_SCREEN_BASE(INTRO_BACK_SCREEN);
@@ -758,24 +810,25 @@ s32 TitleIntro_ShowLighthouse(void) {
     gBgScroll[i].x = 0;
   }
   Dma_Set((void *)BG_PLTT, Ram_HeapSlots->paletteFade,
-          (DMA_ENABLE | DMA_32BIT) << 16 | (BG_PLTT_SIZE / 4), REG_DMA3);
+          DMA_COPY_WORDS(BG_PLTT_SIZE / 4), REG_DMA3);
   wait(1);
   TitlePaletteFade_SetTarget(PALETTE_TINT_NONE, PALETTES_ALL);
   REG_DISPCNT = DISPCNT_OBJ_1D_MAP | DISPCNT_BG1_ON | DISPCNT_OBJ_ON;
   TitlePaletteFade_Start(10);
 
+  // Down the picture, slowing, with a flash of white near the top.
   scroll.position = 0;
   scroll.limit = 176;
   scroll.step = 4;
-  scroll.source = gTitleIntro_LighthouseTilesTail;
-  scroll.destination = (u8 *)BG_CHAR_BLOCK(0) + LIGHTHOUSE_SCREEN_BYTES;
+  scroll.source = Ram_MapCellBuffer + SCREEN_TILE_BYTES;
+  scroll.destination = (u8 *)BG_CHAR_BLOCK(0) + SCREEN_TILE_BYTES;
   scroll.cursor = map;
   scroll.tile = tile;
   scroll.scroll = 0;
   scroll.rows = row;
   scroll.frames = 1;
-  logo->white = 10;
-  logo->back = 25;
+  logo->toWhite = 10;
+  logo->fromWhite = 25;
   if (TitleIntro_ScrollLighthouse(&scroll))
     goto stopped;
   scroll.limit = 200;
@@ -789,23 +842,30 @@ s32 TitleIntro_ShowLighthouse(void) {
     goto stopped;
   Dma_Set(Resource_GetTableEntry(RESOURCE_INTRO_GULL_SPRITES), (void *)OBJ_PLTT,
           DMA_COPY_WORDS(GULL_PALETTE_BYTES / 4), REG_DMA3);
-  logo->phase = TITLE_LOGO_GULLS;
-  logo->frame = -5;
+  logo->phase = TITLE_LOGO_GULL;
+  logo->frame = -GULL_FRAME_FIELDS;
   logo->timer = 0;
-  logo->step = -3;
+  logo->step = -GULL_STEP_FIELDS;
   logo->delay = 0;
   scroll.step = 1;
-  scroll.limit = 224;
+  scroll.limit = LIGHTHOUSE_BOTTOM;
   if (TitleIntro_ScrollLighthouse(&scroll))
     goto stopped;
   Task_Add(TitleIntro_UpdateLogo, TASK_PASS_FRAME);
+  // Back up, a pixel every eight frames, then fast under the fade to white,
+  // copying the picture's rows back from its row 15, the first the scroll down
+  // wrote over, once eleven rows have passed.
+  // BUG: each row lands one row low, from VRAM row 16, the map row the cursor
+  // rewrites is row 7, one entry in, and the last copy reads the row above the
+  // picture; unseen, as the rows are sky under the fade to white.
   scroll.limit = 160;
   scroll.step = -1;
   scroll.scroll = 0;
-  scroll.source = Data_02017080;
-  scroll.destination = (u8 *)BG_SCREEN_BLOCK(15);
-  scroll.cursor = (u16 *)0x0600f9c2;
-  scroll.tile = 450;
+  scroll.source = Ram_MapCellBuffer + 15 * LIGHTHOUSE_ROW_BYTES;
+  scroll.destination = (u8 *)BG_CHAR_BLOCK(0) + 16 * LIGHTHOUSE_ROW_BYTES;
+  scroll.cursor =
+      (u16 *)BG_SCREEN_BLOCK(INTRO_BACK_SCREEN) + 7 * BG_SCREEN_WIDTH + 1;
+  scroll.tile = 15 * DISPLAY_TILE_WIDTH;
   scroll.rows = 11;
   scroll.frames = 8;
   if (TitleIntro_ScrollLighthouse(&scroll))
@@ -827,6 +887,47 @@ done:
   Task_Remove(TitleIntro_UpdateLogo);
   HeapSlot_Release(HEAP_SLOT_TITLE_INTRO);
   wait(1);
+  return 1;
+}
+
+/// Plays the title intro: the clouds, `Camelot presents`, the clouds again,
+/// `Golden Sun` `Book Two`, the plunge through the clouds into white, then the
+/// lighthouse in its valley. A key fades it out early, skipping the lighthouse.
+/// Then it clears the screen for what follows and puts back the CPU-load
+/// display it turned off.
+s32 TitleIntro_Run(void) {
+  u8 cpuLoad;
+  s32 result;
+
+  Io_Write8(gCpuLoadDisplayEnabled, &cpuLoad);
+  DebugText_Clear();
+  VramCache_Reset();
+  wait(1);
+  Task_ResetAll();
+  gOamCopyEnabled = 0;
+  gCpuLoadDisplayEnabled = 0;
+  TitleIntro_LoadPictureTiles();
+  if ((result = TitleIntro_ScrollClouds(CLOUDS_BEFORE_CARDS)) == 0 ||
+      (result = TitleIntro_ShowPresentsCard()) == 0 ||
+      (result = TitleIntro_ScrollClouds(CLOUDS_BETWEEN_CARDS)) == 0 ||
+      (result = TitleIntro_ShowBookTwoCard()) == 0 ||
+      (result = TitleIntro_ScrollClouds(CLOUDS_AFTER_CARDS)) == 0) {
+    TitlePaletteFade_SetTarget(RGB(0, 0, 0), PALETTES_ALL);
+    TitlePaletteFade_Start(10);
+    wait(10);
+  }
+  if (result)
+    TitleIntro_ShowLighthouse();
+  gOamCopyEnabled = 1;
+  wait(1);
+  /* FAKEMATCH(temporary): result reused as the counter. */
+  for (result = 0; result < 4; result++)
+    gBgScroll[result].x = gBgScroll[result].y = 0;
+  REG_DISPCNT = 0;
+  Window_LoadGraphics();
+  DebugText_Clear();
+  TitlePaletteFade_Initialize();
+  gCpuLoadDisplayEnabled = cpuLoad;
   return 1;
 }
 
@@ -854,53 +955,6 @@ done:
 #define PROMPT_TILES 5
 #endif
 
-/// Runs the intro's pictures in turn (TitleIntro_ScrollPicture's steps
-/// 0 to 2 between the pictures of TitleIntro_ShowCard and
-/// TitleIntro_ShowBlendedCard), fading out early when a key cuts one short and
-/// running TitleIntro_ShowLighthouse when all finish, then restores the display
-/// and the CPU-load flag it saved.
-s32 TitleIntro_Run(void) {
-  u8 cpuLoad;
-  s32 result;
-
-  Io_Write8(gCpuLoadDisplayEnabled, &cpuLoad);
-  DebugText_Clear();
-  VramCache_Reset();
-  wait(1);
-  Task_ResetAll();
-  gOamCopyEnabled = 0;
-  gCpuLoadDisplayEnabled = 0;
-  TitleIntro_LoadPictureTiles();
-  if ((result = TitleIntro_ScrollPicture(0)) == 0 ||
-      (result = TitleIntro_ShowCard()) == 0 ||
-      (result = TitleIntro_ScrollPicture(1)) == 0 ||
-      (result = TitleIntro_ShowBlendedCard()) == 0 ||
-      (result = TitleIntro_ScrollPicture(2)) == 0) {
-    TitlePaletteFade_SetTarget(RGB(0, 0, 0), PALETTES_ALL);
-    TitlePaletteFade_Start(10);
-    wait(10);
-  }
-  if (result)
-    TitleIntro_ShowLighthouse();
-  gOamCopyEnabled = 1;
-  wait(1);
-  // The result's register counts the backgrounds (a separate counter takes
-  // other registers).
-  for (result = 0; result < 4; result++)
-    gBgScroll[result].x = gBgScroll[result].y = 0;
-  REG_DISPCNT = 0;
-  Window_LoadGraphics();
-  DebugText_Clear();
-  TitlePaletteFade_Initialize();
-  gCpuLoadDisplayEnabled = cpuLoad;
-  return 1;
-}
-
-// The Japanese title screen, the older revision, blinks a five-sprite prompt
-// (at the French position) from the first frame, without the 120-frame wait;
-// the German one, laid out for its longer prompt, loads eight prompt tiles and
-// draws two rows of three sprites from y 116.
-
 /// The title screen holds this long with its prompt, and this long without.
 #define TITLE_PROMPT_HOLD_FRAMES (90 * FRAMES_PER_SECOND)
 #define TITLE_HOLD_FRAMES (11 * FRAMES_PER_SECOND)
@@ -910,15 +964,16 @@ s32 TitleIntro_Run(void) {
 
 /// Each logo and title resource begins with its 224 colours.
 #define LOGO_PALETTE_BYTES (224 * 2)
+/// The title screen's tiles in character block 0, from this one.
+#define TITLE_SCREEN_TILE 416
 
-/// The title screen: fades to white, shows Title_ScreenPicture on BG2 (its
-/// map numbered from tile 0x1a0, two blank columns a row) and, with prompt
-/// set, loads the five prompt sprites. After the fade from white it holds 660
-/// frames, or 5400 with the prompt; after the first 120 the prompt's three
-/// sprites blink by gTitle_PromptBlendLevels's levels, and A or Start ends it
-/// early, returning 1 (else 0).
+/// Shows the title screen from white: the Golden Sun logo over the valley and
+/// its lighthouse, with, when `prompt` is set, the "Press Start" prompt
+/// pulsing. It holds 90 seconds with the prompt and 11 without, and A or Start
+/// ends it early, returning 1 (else 0); except in the Japanese edition, the
+/// prompt and the keys wait two seconds.
 s32 Title_ShowIntro(s32 prompt) {
-  s32 blankTile = 511;
+  s32 blankTile = OFFSCREEN_TILE;
   s32 result = 0;
   struct TitleScreenWork *work = HeapSlot_AllocEwram(
       HEAP_SLOT_TITLE_INTRO, sizeof(struct TitleScreenWork));
@@ -941,9 +996,10 @@ s32 Title_ShowIntro(s32 prompt) {
   Dma_Set(data, (void *)BG_PLTT, DMA_COPY_WORDS(LOGO_PALETTE_BYTES / 4),
           REG_DMA3);
   Decompress_TaggedLz(data + LOGO_PALETTE_BYTES, Ram_MapCellBuffer);
-  Dma_Set(Ram_MapCellBuffer, (void *)BG_SCREEN_BLOCK(13), DMA_COPY_WORDS(9600),
-          REG_DMA3);
-  tile = 416;
+  Dma_Set(Ram_MapCellBuffer,
+          (void *)(BG_CHAR_BLOCK(0) + TITLE_SCREEN_TILE * TILE_SIZE_8BPP),
+          DMA_COPY_WORDS(SCREEN_TILE_BYTES / 4), REG_DMA3);
+  tile = TITLE_SCREEN_TILE;
   tilemap = (u16 *)BG_SCREEN_BLOCK(6);
   for (i = 0; i < DISPLAY_TILE_HEIGHT; i++) {
     for (j = 0; j < DISPLAY_TILE_WIDTH; j++)
@@ -958,7 +1014,7 @@ s32 Title_ShowIntro(s32 prompt) {
   DebugText_Clear();
   if (prompt != 0) {
     u8 *buffer = HeapSlot_AllocEwram(HEAP_SLOT_TILE_SCRATCH, 1024);
-    struct TitleSprite *sprite = work->sprites;
+    struct IntroSprite *sprite = work->sprites;
 
     Decompress_ByteLz(gTitle_PromptTiles, buffer);
     for (i = 0; i < PROMPT_TILES; i++) {
@@ -982,10 +1038,9 @@ s32 Title_ShowIntro(s32 prompt) {
   else
     holdFrames = TITLE_HOLD_FRAMES;
   for (i = 0; i < holdFrames; i++) {
-    // The Japanese edition blinks the prompt from the first frame.
     if (!TLA_PATCH_1 || i > PROMPT_DELAY_FRAMES) {
       if (prompt != 0) {
-        struct TitleSprite *sprite = work->sprites;
+        struct IntroSprite *sprite = work->sprites;
         s32 x;
         u32 level;
 #ifdef PROMPT_ROWS
@@ -1011,6 +1066,7 @@ s32 Title_ShowIntro(s32 prompt) {
           sprite++;
         }
 #endif
+        // The prompt pulses once a second: its blend weight over the picture.
         level = gTitle_PromptBlendLevels[i % PROMPT_PULSE_FRAMES];
         REG_BLDCNT = BLDCNT_TGT1_OBJ | BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_BG0 |
                      BLDCNT_TGT2_BG1 | BLDCNT_TGT2_BG2 | BLDCNT_TGT2_BG3 |
@@ -1032,8 +1088,12 @@ s32 Title_ShowIntro(s32 prompt) {
   return result;
 }
 
-/// An empty entry the far-call table keeps.
+/// Unused: an empty entry the far-call table keeps.
 void Title_NoOpPalette(void) {}
+
+/// The Nintendo logo's first tile: character block 1's, as BG2 numbers its
+/// 256-colour tiles from block 0.
+#define NINTENDO_LOGO_TILE (BG_CHAR_SIZE / TILE_SIZE_8BPP)
 
 /// Shows the Nintendo logo with its jingle. With mode 0 it fades in and holds
 /// two seconds; otherwise it waits a second, fades in, holds three seconds and
@@ -1045,7 +1105,7 @@ s32 Title_ShowNintendoLogo(s32 mode) {
   u32 x;
   u32 y;
   u16 tile;
-  s32 blank = 511;
+  s32 blank = OFFSCREEN_TILE;
   s32 resource;
 
   Sound_PlayFar(SE_CHIME);
@@ -1063,10 +1123,10 @@ s32 Title_ShowNintendoLogo(s32 mode) {
   Dma_Set(data, (void *)BG_PLTT, DMA_COPY_WORDS(LOGO_PALETTE_BYTES / 4),
           REG_DMA3);
   Decompress_TaggedLz(data + LOGO_PALETTE_BYTES, Ram_MapCellBuffer);
-  Dma_Set(Ram_MapCellBuffer, (void *)BG_CHAR_BLOCK(1), DMA_COPY_WORDS(9600),
-          REG_DMA3);
+  Dma_Set(Ram_MapCellBuffer, (void *)BG_CHAR_BLOCK(1),
+          DMA_COPY_WORDS(SCREEN_TILE_BYTES / 4), REG_DMA3);
   // Pad the 30-tile picture to the hardware map's 32-tile row width.
-  tile = 256;
+  tile = NINTENDO_LOGO_TILE;
   map = (u16 *)BG_SCREEN_BLOCK(6);
   for (y = 0; y < DISPLAY_TILE_HEIGHT; y++) {
     for (x = 0; x < DISPLAY_TILE_WIDTH; x++)
@@ -1124,8 +1184,15 @@ s32 Title_ShowNintendoLogo(s32 mode) {
   return result;
 }
 
-/// As The Broken Seal's: the same resource, BG2 set-up, DMA copies, 120-frame
-/// tile cycle and A or Start exit.
+/// The Camelot logo's flag: four pictures of 16 tiles after the logo's own,
+/// each shown 8 frames, whose first 13 tiles are copied over the logo's from
+/// its fifth tile.
+#define CAMELOT_FLAG_TILE 4
+#define CAMELOT_FLAG_PICTURE_BYTES (16 * TILE_SIZE_8BPP)
+#define CAMELOT_FLAG_BYTES (13 * TILE_SIZE_8BPP)
+
+/// Shows the Camelot logo for two seconds, cycling its four frames of tiles. A
+/// or Start ends it early.
 s32 Title_ShowCamelotLogo(void) {
   s32 result;
   u32 i;
@@ -1145,6 +1212,8 @@ s32 Title_ShowCamelotLogo(void) {
   gBgScroll[2].y = result;
   buffer = Resource_GetTableEntry(resource);
   Decompress_TaggedLz(buffer, Ram_MapCellBuffer);
+  // The unpacked resource: 224 colours, the map, the still tiles, then the
+  // flag's four pictures.
   buffer = Ram_MapCellBuffer;
   Dma_Set(buffer, (void *)BG_PLTT, DMA_COPY_WORDS(LOGO_PALETTE_BYTES / 4),
           REG_DMA3);
@@ -1166,8 +1235,9 @@ s32 Title_ShowCamelotLogo(void) {
   REG_DISPCNT =
       DISPCNT_OBJ_1D_MAP | DISPCNT_BG0_ON | DISPCNT_BG2_ON | DISPCNT_OBJ_ON;
   for (i = 0; i < 2 * FRAMES_PER_SECOND; i++) {
-    Dma_Set(((gFrameCount >> 3) & 3) * 1024 + buffer, BG_CHAR_BLOCK(1) + 256,
-            DMA_COPY_WORDS(832 / 4), REG_DMA3);
+    Dma_Set(((gFrameCount >> 3) & 3) * CAMELOT_FLAG_PICTURE_BYTES + buffer,
+            BG_CHAR_BLOCK(1) + CAMELOT_FLAG_TILE * TILE_SIZE_8BPP,
+            DMA_COPY_WORDS(CAMELOT_FLAG_BYTES / 4), REG_DMA3);
     if (gInput.pressed & (KEY_A | KEY_START))
       break;
     wait(1);
@@ -1175,12 +1245,14 @@ s32 Title_ShowCamelotLogo(void) {
   return result;
 }
 
-/// Unused: an empty routine in the far-call table.
+/// Unused: an empty entry the far-call table keeps.
 void Title_NoOpColor(void) {}
 
-/// Writes to step, for each of the three components of the 512 colours, the
-/// difference between current and target divided by frames; nothing when frames
-/// is zero or less.
+// The palette fade (struct TitlePaletteFade) keeps the saved palettes, the
+// colour components shown now, the target components and each one's step.
+
+/// Computes each of the 1536 colour components' change per frame from the
+/// current components to the target (nothing when `frames` is not positive).
 void TitlePaletteFade_CalculateSteps(s16 *current, s16 *target, s16 *step,
                                      s32 frames) {
   s32 n;
@@ -1188,7 +1260,7 @@ void TitlePaletteFade_CalculateSteps(s16 *current, s16 *target, s16 *step,
   s32 to;
 
   if (frames > 0) {
-    for (n = 0; n < 3 * 512; n++) {
+    for (n = 0; n < TITLE_PALETTE_FADE_CHANNELS; n++) {
       from = *current;
       to = *target;
       *step = Iwram_SignedDivide(to - from, frames);
@@ -1199,10 +1271,10 @@ void TitlePaletteFade_CalculateSteps(s16 *current, s16 *target, s16 *step,
   }
 }
 
-/// Steps the palette fade on heap slot 0x80 by one frame: adds each channel's
-/// step until the last frame, which copies the target instead, packs the
-/// channels into the hidden page of RGB555 colours and queues that page for the
-/// BG and OBJ palettes.
+/// A task added by TitlePaletteFade_Initialize: steps the palette fade each
+/// frame, adding the step to every colour component until the fade is done,
+/// packs the components into the spare RGB555 copy of the palettes and queues
+/// both palettes for VBlank.
 void TitlePaletteFade_Update(void) {
   struct TitlePaletteFade *work = Ram_HeapSlots->paletteFade;
   u16 *delta = work->delta;
@@ -1210,7 +1282,7 @@ void TitlePaletteFade_Update(void) {
   u16 *packed;
   s32 i;
   u16 *bank;
-  s32 blue;
+  s32 blueMask;
 
   if (work->duration == 0)
     return;
@@ -1225,11 +1297,11 @@ void TitlePaletteFade_Update(void) {
   }
   // The queued DMA keeps a pointer until VBlank.
   packed = work->packed[work->page ^ 1];
-  blue = 0x7c00;
+  blueMask = 0x7c00;
   i = PLTT_COLORS;
   current = work->current;
   for (; i != 0; i--) {
-    *packed++ = (current[0] & blue) | (((s16)current[1] >> 5) & 0x3e0) |
+    *packed++ = (current[0] & blueMask) | (((s16)current[1] >> 5) & 0x3e0) |
                 (((s16)current[2] >> 10) & 0x1f);
     current += 3;
   }
@@ -1273,7 +1345,7 @@ void TitlePaletteFade_BuildColors(u32 mode, u16 *source, u16 *destination,
     *destination++ = (mode & 0x03e0) << 5;
     *destination++ = (mode & 0x001f) << 10;
     Dma_Set(destination - 3, destination,
-            DMA_ENABLE << 16 | (((colorCount - 1) * 6) >> 1), REG_DMA3);
+            DMA_COPY_HALFWORDS(((colorCount - 1) * 6) >> 1), REG_DMA3);
   } else if (mode < PALETTE_TINT_FLAGS) {
     switch (mode) {
     case PALETTE_TINT_GRAYSCALE:
@@ -1473,17 +1545,17 @@ void TitlePaletteFade_BuildColors(u32 mode, u16 *source, u16 *destination,
       blue = RGB_BLUE(colorWork);
       colorWork = Iwram_SignedDivide((red + green + blue) << 4,
                                      tintRed + tintGreen + tintBlue);
-      tintedRed = Iwram_MulFX(((colorWork * tintRed) >> 4) << 16,
-                              (s32)(tintRed << 16) >> 4);
-      scaledGreen = Iwram_MulFX(((colorWork * tintGreen) >> 4) << 16,
-                                (s32)(tintGreen << 16) >> 4);
-      scaledBlue = Iwram_MulFX(((colorWork * tintBlue) >> 4) << 16,
-                               (s32)(tintBlue << 16) >> 4);
-      tintedRed = (u32)tintedRed >> 16;
+      tintedRed = Iwram_MulFX(INTtoFIXED((colorWork * tintRed) >> 4),
+                              (s32)INTtoFIXED(tintRed) >> 4);
+      scaledGreen = Iwram_MulFX(INTtoFIXED((colorWork * tintGreen) >> 4),
+                                (s32)INTtoFIXED(tintGreen) >> 4);
+      scaledBlue = Iwram_MulFX(INTtoFIXED((colorWork * tintBlue) >> 4),
+                               (s32)INTtoFIXED(tintBlue) >> 4);
+      tintedRed = FIXEDtoINT((u32)tintedRed);
       clampedRed = TitlePaletteFade_ClampComponent(tintedRed);
-      scaledGreen = (u32)scaledGreen >> 16;
+      scaledGreen = FIXEDtoINT((u32)scaledGreen);
       clampedGreen = TitlePaletteFade_ClampComponent(scaledGreen);
-      scaledBlue = (u32)scaledBlue >> 16;
+      scaledBlue = FIXEDtoINT((u32)scaledBlue);
       clampedBlue = TitlePaletteFade_ClampComponent(scaledBlue);
       destination[colorIndex * 3 + 0] = gTitleIntro_ChannelCurve[clampedBlue];
       destination[colorIndex * 3 + 1] = gTitleIntro_ChannelCurve[clampedGreen];
@@ -1498,7 +1570,7 @@ void TitlePaletteFade_BuildColors(u32 mode, u16 *source, u16 *destination,
     }
   } else {
     if (selectedPalettes == PALETTES_OBJECTS)
-      mode += 256 * 3 * sizeof(u16); // the sprite colours' components
+      mode += 3 * BG_PLTT_SIZE; // past the background colours' components
     Dma_Set((const void *)mode, destination,
             DMA_COPY_WORDS((colorCount * 6) >> 2), REG_DMA3);
   }
@@ -1508,22 +1580,20 @@ void TitlePaletteFade_BuildColors(u32 mode, u16 *source, u16 *destination,
 /// starting colours and adds the task TitlePaletteFade_Update.
 void TitlePaletteFade_Initialize(void) {
   struct TitlePaletteFade *buffer;
-  s32 operation;
 
   buffer = HeapSlot_AllocEwram(HEAP_SLOT_PALETTE_FADE, sizeof(*buffer));
   Dma_Fill32(0, buffer, sizeof(*buffer));
-  Dma_Set((void *)BG_PLTT, buffer, DMA_COPY_WORDS(128), REG_DMA3);
-  Dma_Set((void *)OBJ_PLTT, &buffer->palette[256], DMA_COPY_WORDS(128),
-          REG_DMA3);
+  Dma_Set((void *)BG_PLTT, buffer, DMA_COPY_WORDS(BG_PLTT_SIZE / 4), REG_DMA3);
+  Dma_Set((void *)OBJ_PLTT, &buffer->palette[BG_PLTT_COLORS],
+          DMA_COPY_WORDS(BG_PLTT_SIZE / 4), REG_DMA3);
   TitlePaletteFade_BuildColors(PALETTE_TINT_NONE, buffer->palette,
                                buffer->target, PALETTES_ALL);
-  operation = TASK_PASS_FRAME;
-  Task_Add((s32)(TitlePaletteFade_Update), operation);
+  Task_Add(TitlePaletteFade_Update, TASK_PASS_FRAME);
 }
 
-/// Removes the palette fade's task and frees its buffers.
-void TitlePaletteFade_Release(void) {
-  Task_Remove((u32)((s32)&TitlePaletteFade_Update));
+/// Unused: removes the palette fade's task and frees its buffers.
+UNUSED void TitlePaletteFade_Release(void) {
+  Task_Remove(&TitlePaletteFade_Update);
   HeapSlot_Release(HEAP_SLOT_PALETTE_FADE);
 }
 
@@ -1542,12 +1612,12 @@ void TitlePaletteFade_SetCurrent(s32 mode, s32 selectedPalettes) {
   struct TitlePaletteFade *fade = Ram_HeapSlots->paletteFade;
 
   if (fade != NULL)
-    TitlePaletteFade_BuildColors(mode, (u16 *)fade, fade->current,
+    TitlePaletteFade_BuildColors(mode, fade->palette, fade->current,
                                  selectedPalettes);
 }
 
-/// Replaces the first saved colour, the backdrop.
-void TitlePaletteFade_SetBackdrop(s32 color) {
+/// Unused: replaces the first saved colour, the backdrop.
+UNUSED void TitlePaletteFade_SetBackdrop(s32 color) {
   struct TitlePaletteFade *fade = Ram_HeapSlots->paletteFade;
 
   if (fade != NULL)
@@ -1578,10 +1648,10 @@ s32 TitlePaletteFade_ClampComponent(s32 value) {
   return value;
 }
 
-/// Caps a colour component at 31 << 10, the largest a five-bit channel shifted
-/// into the high bits reaches. There is no lower bound.
+/// Caps a colour component at a channel's brightest level shifted into the high
+/// bits. There is no lower bound.
 s32 TitlePaletteFade_ClampShiftedComponent(s32 value) {
-  if (value > 31 << 10)
-    value = 31 << 10;
+  if (value > RGB(0, 0, RGB_LEVEL_MAX))
+    value = RGB(0, 0, RGB_LEVEL_MAX);
   return value;
 }

@@ -182,13 +182,13 @@ struct MainRoutineWork {
   s8 cloaked; ///< Cloak: the leader is hidden
   u8 unusedAfterCloaked[2];
   u32 pausedUpdate; ///< the paused object's update, restored on resuming
-  /// The answers events count: telling Kraden on Idejima that the Western
-  /// Sea is not where they go, agreeing with Alhafra's mayor that the party
-  /// owes him, and others; Ancient Lemuria asks its question only while this
-  /// is 4 or less. 0 on a new game, counted up by Event_CountAnswer.
-  // XXX: what the counted answers share; reading every site's question and
-  // the Ancient Lemuria event that tests the count would settle it.
-  u8 countedAnswers;
+  /// The weird answers Felix gives, counted up by Event_CountAnswer from 0 on a
+  /// new game: telling Kraden on Idejima that the Western Sea is not where
+  /// they go, agreeing with Alhafra's mayor that the party owes him, and
+  /// others. Past four, as Felix answers Ancient Lemuria's guards' "Do we have
+  /// your word?", Kraden says "Sometimes, you can say the weirdest things..."
+  /// to a yes and "Are you INSANE!?" to a no.
+  u8 weirdAnswers;
   /// Nonzero makes actor 8, not leaderActorId, the one events control.
   s16 ownerOverride;
   s32 shipX;      ///< the ship's x on the world map, where it is moored

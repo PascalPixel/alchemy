@@ -2,8 +2,8 @@
 /// The debug room Shop test, whose people each run a test when talked to: the
 /// inn, the sanctum and four shops, Sunshine's forge, the shop and sanctum
 /// messages, the party's names, items, Djinn and levels, and the icon and
-/// portrait browsers. The ROM places its code up to
-/// ShopTest_DamageAndAfflictParty before its tables, and the rest after.
+/// portrait browsers. Its tables sit among its routines, before
+/// ShopTest_DamageAndAfflictParty.
 
 #include "flags.h"
 #include "window/message_argument.h"
@@ -48,7 +48,8 @@ enum {
 /// The entrance that brings Isaac's party in (Party_AddIsaacsParty).
 #define ENTRANCE_WITH_ISAACS_PARTY 99
 
-/// The room's people, numbered in the order of gActorPlacements.
+/// The room's people, numbered in the order of gActorPlacements, each named
+/// for what talking to it opens (gSceneEvents).
 enum ShopTestActorId {
   ACTOR_INNKEEPER = ACTOR_FIRST_PLACED,
   ACTOR_SANCTUM_PRIEST,
@@ -69,14 +70,14 @@ enum ShopTestActorId {
   ACTOR_PORTRAIT_BROWSER,
   ACTOR_LEVEL_EDITOR,
   ACTOR_ITEM_SELECTOR,
-  ACTOR_EQUIPMENT,
+  ACTOR_TREASURE,
   ACTOR_DJINN,
   ACTOR_AFFLICTIONS,
-  /// Four more, who do nothing when talked to (ShopTest_NoOp).
-  ACTOR_IDLE_A,
-  ACTOR_IDLE_B,
-  ACTOR_IDLE_C,
-  ACTOR_IDLE_D
+  /// Four light bulbs, which do nothing when talked to (ShopTest_NoOp).
+  ACTOR_LIGHT_BULB_A,
+  ACTOR_LIGHT_BULB_B,
+  ACTOR_LIGHT_BULB_C,
+  ACTOR_LIGHT_BULB_D
 };
 
 const struct SceneEntrance *Scene_GetEntrances(void) { return gSceneEntrances; }
@@ -111,7 +112,7 @@ void ShopTest_BrowseMessageRange(s32 message, s32 count) {
     MessageArgument_Push(ITEM_SHAMSHIR, MESSAGE_ARGUMENT_ITEM);
     MessageArgument_Push(123456, MESSAGE_ARGUMENT_NUMBER);
     Message_CloseFinishedWindows();
-    Message_OpenWindow(message, 5, 0, 0x22);
+    Message_OpenWindow(message, 5, 0, MESSAGE_WINDOW_FIXED_X | 2);
     frames = 0;
     if (!(gInput.held & (KEY_A | KEY_B))) {
       do {
@@ -305,7 +306,7 @@ void ShopTest_TestItemSelection(void) {
 void ShopTest_EditPartyNames(void) {
   s32 i;
 
-  for (i = 0; i < 8; i++)
+  for (i = 0; i < PARTY_UNIT_COUNT; i++)
     NameEntry_EditMemberName(i);
 }
 
@@ -316,7 +317,7 @@ static inline void Event_GiveItemTo(s32 item, s32 owner) {
 
 /// Gives 777,777 coins, ten each of Game Tickets and Lucky Medals and test
 /// equipment to Felix, Jenna, Sheba and Piers; then Isaac, Garet, Ivan and Mia
-/// leave the party. Talking to ACTOR_EQUIPMENT.
+/// leave the party. Talking to ACTOR_TREASURE.
 void ShopTest_GiveEquipmentTestStock(void) {
   s32 i;
 
@@ -349,8 +350,8 @@ void ShopTest_GiveEquipmentTestStock(void) {
   Event_GiveItemTo(ITEM_MYTHRIL_SILVER, SHEBA);
   Event_GiveItemTo(ITEM_RUSTY_SWORD, SHEBA);
   Event_GiveItemTo(ITEM_RUSTY_SWORD, SHEBA);
-  Event_GiveItemTo(ITEM_RUSTY_ROBBERS_BLADE, SHEBA);
-  Event_GiveItemTo(ITEM_RUSTY_PIRATES_SABRE, SHEBA);
+  Event_GiveItemTo(ITEM_RUSTY_SWORD_ROBBERS_BLADE, SHEBA);
+  Event_GiveItemTo(ITEM_RUSTY_SWORD_PIRATES_SABRE, SHEBA);
   Event_GiveItemTo(ITEM_WATER_OF_LIFE, PIERS);
   Event_GiveItemTo(ITEM_ORB_OF_FORCE, PIERS);
   Event_GiveItemTo(ITEM_DOUSE_DROP, PIERS);
@@ -404,58 +405,68 @@ u32 gSceneExits[] = {
 };
 
 struct ActorPlacement gActorPlacements[] = {
-    {209, CONDITION_ALWAYS, 1, toFIXED(392), 0, toFIXED(280), FACING_SOUTH, 0,
-     0},
-    {202, CONDITION_ALWAYS, 1, toFIXED(440), 0, toFIXED(280), FACING_SOUTH, 0,
-     0},
-    {205, CONDITION_ALWAYS, 1, toFIXED(488), 0, toFIXED(280), FACING_SOUTH, 0,
-     0},
-    {206, CONDITION_ALWAYS, 1, toFIXED(536), 0, toFIXED(280), FACING_SOUTH, 0,
-     0},
-    {198, CONDITION_ALWAYS, 1, toFIXED(584), 0, toFIXED(280), FACING_SOUTH, 0,
-     0},
-    {70, CONDITION_ALWAYS, 1, toFIXED(632), 0, toFIXED(280), FACING_SOUTH, 0,
-     0},
-    {215, CONDITION_ALWAYS, 1, toFIXED(680), 0, toFIXED(280), FACING_SOUTH, 0,
-     0},
-    {200, CONDITION_ALWAYS, 1, toFIXED(728), 0, toFIXED(280), FACING_SOUTH, 0,
-     0},
-    {488, CONDITION_ALWAYS, 1, toFIXED(440), 0, toFIXED(248), FACING_SOUTH, 0,
-     0},
-    {488, CONDITION_ALWAYS, 1, toFIXED(488), 0, toFIXED(248), FACING_SOUTH, 0,
-     0},
-    {488, CONDITION_ALWAYS, 1, toFIXED(536), 0, toFIXED(248), FACING_SOUTH, 0,
-     0},
-    {488, CONDITION_ALWAYS, 1, toFIXED(584), 0, toFIXED(248), FACING_SOUTH, 0,
-     0},
-    {450, CONDITION_ALWAYS, 1, toFIXED(728), 0, toFIXED(360), FACING_SOUTH, 0,
-     0},
-    {450, CONDITION_ALWAYS, 1, toFIXED(712), 0, toFIXED(136), FACING_SOUTH, 0,
-     0},
-    {450, CONDITION_ALWAYS, 1, toFIXED(712), 0, toFIXED(200), FACING_SOUTH, 0,
-     0},
-    {321, CONDITION_ALWAYS, 1, toFIXED(640), 0, toFIXED(96), FACING_SOUTH, 0,
-     0},
-    {375, CONDITION_ALWAYS, 1, toFIXED(672), 0, toFIXED(96), FACING_SOUTH, 0,
-     0},
-    {296, CONDITION_ALWAYS, 1, toFIXED(328), 0, toFIXED(360), FACING_SOUTH, 0,
-     0},
-    {238, CONDITION_ALWAYS, 1, toFIXED(424), 0, toFIXED(360), FACING_SOUTH, 0,
-     0},
-    {487, CONDITION_ALWAYS, 1, toFIXED(456), 0, toFIXED(360), FACING_SOUTH, 0,
-     0},
-    {243, CONDITION_ALWAYS, 1, toFIXED(488), 0, toFIXED(360), FACING_SOUTH, 0,
-     0},
-    {25, CONDITION_ALWAYS, 1, toFIXED(520), 0, toFIXED(360), FACING_SOUTH, 0,
-     0},
-    {488, CONDITION_ALWAYS, 1, toFIXED(360), 0, toFIXED(280), FACING_SOUTH, 0,
-     0},
-    {488, CONDITION_ALWAYS, 1, toFIXED(536), 0, toFIXED(200), FACING_SOUTH, 0,
-     0},
-    {488, CONDITION_ALWAYS, 1, toFIXED(680), 0, toFIXED(360), FACING_SOUTH, 0,
-     0},
-    {488, CONDITION_ALWAYS, 1, toFIXED(712), 0, toFIXED(160), FACING_SOUTH, 0,
-     0},
+    ACTOR_PLACEMENT(SPRITE_WOMAN_IN_PINK_APRON, CONDITION_ALWAYS,
+                    MOVEMENT_TYPE_STAND, 392, 0, 280, FACING_SOUTH,
+                    TALK_FACING_PARTY, 0),
+    ACTOR_PLACEMENT(SPRITE_BEARDED_MAN_IN_LONG_ROBE, CONDITION_ALWAYS,
+                    MOVEMENT_TYPE_STAND, 440, 0, 280, FACING_SOUTH,
+                    TALK_FACING_PARTY, 0),
+    ACTOR_PLACEMENT(SPRITE_BALD_MAN_IN_RED, CONDITION_ALWAYS,
+                    MOVEMENT_TYPE_STAND, 488, 0, 280, FACING_SOUTH,
+                    TALK_FACING_PARTY, 0),
+    ACTOR_PLACEMENT(SPRITE_YOUNG_MAN_IN_GREEN, CONDITION_ALWAYS,
+                    MOVEMENT_TYPE_STAND, 536, 0, 280, FACING_SOUTH,
+                    TALK_FACING_PARTY, 0),
+    ACTOR_PLACEMENT(SPRITE_WOMAN_WITH_PONYTAIL, CONDITION_ALWAYS,
+                    MOVEMENT_TYPE_STAND, 584, 0, 280, FACING_SOUTH,
+                    TALK_FACING_PARTY, 0),
+    ACTOR_PLACEMENT(SPRITE_WOMAN_WITH_ORANGE_PONYTAIL, CONDITION_ALWAYS,
+                    MOVEMENT_TYPE_STAND, 632, 0, 280, FACING_SOUTH,
+                    TALK_FACING_PARTY, 0),
+    ACTOR_PLACEMENT(SPRITE_MAN_WITH_PICKAXE, CONDITION_ALWAYS,
+                    MOVEMENT_TYPE_STAND, 680, 0, 280, FACING_SOUTH,
+                    TALK_FACING_PARTY, 0),
+    ACTOR_PLACEMENT(SPRITE_WOMAN_IN_BLUE_DRESS, CONDITION_ALWAYS,
+                    MOVEMENT_TYPE_STAND, 728, 0, 280, FACING_SOUTH,
+                    TALK_FACING_PARTY, 0),
+    ACTOR_PLACEMENT(SPRITE_EMOTE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 440, 0,
+                    248, FACING_SOUTH, TALK_FACING_PARTY, 0),
+    ACTOR_PLACEMENT(SPRITE_EMOTE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 488, 0,
+                    248, FACING_SOUTH, TALK_FACING_PARTY, 0),
+    ACTOR_PLACEMENT(SPRITE_EMOTE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 536, 0,
+                    248, FACING_SOUTH, TALK_FACING_PARTY, 0),
+    ACTOR_PLACEMENT(SPRITE_EMOTE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 584, 0,
+                    248, FACING_SOUTH, TALK_FACING_PARTY, 0),
+    ACTOR_PLACEMENT(SPRITE_SIGNPOST, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 728,
+                    0, 360, FACING_SOUTH, TALK_FACING_PARTY, 0),
+    ACTOR_PLACEMENT(SPRITE_SIGNPOST, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 712,
+                    0, 136, FACING_SOUTH, TALK_FACING_PARTY, 0),
+    ACTOR_PLACEMENT(SPRITE_SIGNPOST, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 712,
+                    0, 200, FACING_SOUTH, TALK_FACING_PARTY, 0),
+    ACTOR_PLACEMENT(SPRITE_PISTON, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 640,
+                    0, 96, FACING_SOUTH, TALK_FACING_PARTY, 0),
+    ACTOR_PLACEMENT(SPRITE_SEATED_IDOL, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
+                    672, 0, 96, FACING_SOUTH, TALK_FACING_PARTY, 0),
+    ACTOR_PLACEMENT(SPRITE_WINGED_FIGURE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
+                    328, 0, 360, FACING_SOUTH, TALK_FACING_PARTY, 0),
+    ACTOR_PLACEMENT(SPRITE_MAN_CARRYING_A_PACK, CONDITION_ALWAYS,
+                    MOVEMENT_TYPE_STAND, 424, 0, 360, FACING_SOUTH,
+                    TALK_FACING_PARTY, 0),
+    ACTOR_PLACEMENT(SPRITE_CHEST, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 456, 0,
+                    360, FACING_SOUTH, TALK_FACING_PARTY, 0),
+    ACTOR_PLACEMENT(SPRITE_VENUS_DJINNI, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
+                    488, 0, 360, FACING_SOUTH, TALK_FACING_PARTY, 0),
+    ACTOR_PLACEMENT(SPRITE_FORTUNE_TELLER, CONDITION_ALWAYS,
+                    MOVEMENT_TYPE_STAND, 520, 0, 360, FACING_SOUTH,
+                    TALK_FACING_PARTY, 0),
+    ACTOR_PLACEMENT(SPRITE_EMOTE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 360, 0,
+                    280, FACING_SOUTH, TALK_FACING_PARTY, 0),
+    ACTOR_PLACEMENT(SPRITE_EMOTE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 536, 0,
+                    200, FACING_SOUTH, TALK_FACING_PARTY, 0),
+    ACTOR_PLACEMENT(SPRITE_EMOTE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 680, 0,
+                    360, FACING_SOUTH, TALK_FACING_PARTY, 0),
+    ACTOR_PLACEMENT(SPRITE_EMOTE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 712, 0,
+                    160, FACING_SOUTH, TALK_FACING_PARTY, 0),
     {SCENE_TABLE_END},
 };
 
@@ -499,25 +510,25 @@ struct Trigger gSceneEvents[] = {
      EVENT(ShopTest_SelectItem)},
     {TRIGGER_TALK, ACTOR_AFFLICTIONS, CONDITION_ALWAYS,
      EVENT(ShopTest_DamageAndAfflictParty)},
-    {TRIGGER_TALK, ACTOR_EQUIPMENT, CONDITION_ALWAYS,
+    {TRIGGER_TALK, ACTOR_TREASURE, CONDITION_ALWAYS,
      EVENT(ShopTest_GiveEquipmentTestStock)},
     {TRIGGER_TALK, ACTOR_DJINN, CONDITION_ALWAYS,
      EVENT(ShopTest_GivePartyDjinn)},
-    {TRIGGER_TALK, ACTOR_IDLE_A, CONDITION_ALWAYS, EVENT(ShopTest_NoOp)},
-    {TRIGGER_TALK, ACTOR_IDLE_B, CONDITION_ALWAYS, EVENT(ShopTest_NoOp)},
-    {TRIGGER_TALK, ACTOR_IDLE_C, CONDITION_ALWAYS, EVENT(ShopTest_NoOp)},
-    {TRIGGER_TALK, ACTOR_IDLE_D, CONDITION_ALWAYS, EVENT(ShopTest_NoOp)},
+    {TRIGGER_TALK, ACTOR_LIGHT_BULB_A, CONDITION_ALWAYS, EVENT(ShopTest_NoOp)},
+    {TRIGGER_TALK, ACTOR_LIGHT_BULB_B, CONDITION_ALWAYS, EVENT(ShopTest_NoOp)},
+    {TRIGGER_TALK, ACTOR_LIGHT_BULB_C, CONDITION_ALWAYS, EVENT(ShopTest_NoOp)},
+    {TRIGGER_TALK, ACTOR_LIGHT_BULB_D, CONDITION_ALWAYS, EVENT(ShopTest_NoOp)},
     {TRIGGER_TABLE_END},
 };
 
-// Overlay 0x6ba's code from ShopTest_DamageAndAfflictParty on, in ROM order.
+// The routines after the tables.
 
 void Inventory_Break(s32 owner, s32 slot);
 void GameFlag_RefreshLureCap(void);
 
 /// Takes HP and PP from Felix, Jenna and Sheba, poisons and haunts Felix,
-/// curses and envenoms Jenna, and breaks the first item of use type 2 each of
-/// Felix and Jenna holds. Talking to ACTOR_AFFLICTIONS.
+/// curses and envenoms Jenna, and breaks the first item each of Felix and
+/// Jenna holds that may break when used. Talking to ACTOR_AFFLICTIONS.
 void ShopTest_DamageAndAfflictParty(void) {
   struct Unit *unit;
   struct ItemDefinition *item;
@@ -531,17 +542,17 @@ void ShopTest_DamageAndAfflictParty(void) {
   Unit_AddPp(JENNA, -40);
   Unit_AddPp(SHEBA, -35);
   unit = Unit_Get(FELIX);
-  unit->poison = 1;
+  unit->poison = POISON_NORMAL;
   unit->haunt = 1;
   unit = Unit_Get(JENNA);
-  unit->curse = 1;
-  unit->poison = 2;
+  unit->curse = CURSE_BOUND;
+  unit->poison = POISON_VENOM;
   unit = Unit_Get(FELIX);
   for (i = 0; i < INVENTORY_SLOTS; i++) {
     item = Item_GetDirect(unit->inventory[i]);
     if (unit->inventory[i] == 0)
       break;
-    if (item->useType == 2) {
+    if (item->useType == ITEM_USE_MAY_BREAK) {
       Inventory_Break(FELIX, i);
       break;
     }
@@ -551,7 +562,7 @@ void ShopTest_DamageAndAfflictParty(void) {
     item = Item_GetDirect(unit->inventory[i]);
     if (unit->inventory[i] == 0)
       break;
-    if (item->useType == 2) {
+    if (item->useType == ITEM_USE_MAY_BREAK) {
       Inventory_Break(JENNA, i);
       break;
     }
@@ -568,19 +579,24 @@ void ShopTest_GiveDjinni(s32 owner, s32 element, s32 djinn, s32 activate) {
 }
 
 #if !TLA_PATCH_1
-/// Gives and sets Djinn from the eighth of each element: Felix Venus, Jenna
-/// Mars, Sheba Jupiter and Piers Mercury. Talking to ACTOR_DJINN.
+/// Gives and sets the first Djinn of each element that The Lost Age adds:
+/// Felix Echo to Meld, Jenna Cannon to Core, Sheba Breath to Wheeze and Piers
+/// Fog to Rime. Talking to ACTOR_DJINN.
 void ShopTest_GivePartyDjinn(void) {
   s32 djinn;
 
   FieldMessage_Show((s32)MsgYouGotA, 1);
-  for (djinn = 7; djinn < 13; djinn++)
+  for (djinn = DJINNI_INDEX(DJINNI_ECHO); djinn <= DJINNI_INDEX(DJINNI_MELD);
+       djinn++)
     ShopTest_GiveDjinni(FELIX, ELEMENT_VENUS, djinn, 1);
-  for (djinn = 7; djinn < 14; djinn++)
+  for (djinn = DJINNI_INDEX(DJINNI_CANNON); djinn <= DJINNI_INDEX(DJINNI_CORE);
+       djinn++)
     ShopTest_GiveDjinni(JENNA, ELEMENT_MARS, djinn, 1);
-  for (djinn = 7; djinn < 13; djinn++)
+  for (djinn = DJINNI_INDEX(DJINNI_BREATH);
+       djinn <= DJINNI_INDEX(DJINNI_WHEEZE); djinn++)
     ShopTest_GiveDjinni(SHEBA, ELEMENT_JUPITER, djinn, 1);
-  for (djinn = 7; djinn < 14; djinn++)
+  for (djinn = DJINNI_INDEX(DJINNI_FOG); djinn <= DJINNI_INDEX(DJINNI_RIME);
+       djinn++)
     ShopTest_GiveDjinni(PIERS, ELEMENT_MERCURY, djinn, 1);
   GameFlag_RefreshLureCap();
 }
@@ -599,7 +615,7 @@ void ShopTest_GivePartyDjinn(void) {
 }
 #endif
 
-/// The event for talking to ACTOR_IDLE_A to ACTOR_IDLE_D.
+/// The event for talking to ACTOR_LIGHT_BULB_A to ACTOR_LIGHT_BULB_D.
 void ShopTest_NoOp(void) {}
 
 /// Gives a Muramasa, then announces and unlocks Eclipse. Talking to
@@ -614,24 +630,25 @@ const struct Trigger *Scene_GetTriggers(void) { return gSceneEvents; }
 
 void Party_AddIsaacsParty(void);
 
-/// Sets screen transition 256 and event mode 2, puts the message browsers in
-/// mode 5 and actors 30 to 33 in mode 6, and brings Isaac's party in when the
-/// party came in by ENTRANCE_WITH_ISAACS_PARTY.
+/// Opens on the backdrop fade at the fast message speed, shows "..." over the
+/// message browsers and a light bulb over ACTOR_LIGHT_BULB_A to
+/// ACTOR_LIGHT_BULB_D, and brings Isaac's party in when the party came in by
+/// ENTRANCE_WITH_ISAACS_PARTY.
 s32 Scene_Initialize(void) {
   struct FieldWork *work = Ram_HeapSlots->fieldWork;
   s32 *effect = &work->transition;
   struct MainRoutineWork *party = &gMainRoutineWork;
 
   *effect = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
-  party->messageSpeed = 2;
-  Actor_SetAnimationById(ACTOR_SANCTUM_MESSAGES, 5);
-  Actor_SetAnimationById(ACTOR_WEAPON_SHOP_MESSAGES, 5);
-  Actor_SetAnimationById(ACTOR_ARMOR_SHOP_MESSAGES, 5);
-  Actor_SetAnimationById(ACTOR_ITEM_SHOP_MESSAGES, 5);
-  Actor_SetAnimationById(ACTOR_IDLE_A, 6);
-  Actor_SetAnimationById(ACTOR_IDLE_B, 6);
-  Actor_SetAnimationById(ACTOR_IDLE_C, 6);
-  Actor_SetAnimationById(ACTOR_IDLE_D, 6);
+  party->messageSpeed = MESSAGE_SPEED_FAST;
+  Actor_SetAnimationById(ACTOR_SANCTUM_MESSAGES, EMOTE_ELLIPSIS);
+  Actor_SetAnimationById(ACTOR_WEAPON_SHOP_MESSAGES, EMOTE_ELLIPSIS);
+  Actor_SetAnimationById(ACTOR_ARMOR_SHOP_MESSAGES, EMOTE_ELLIPSIS);
+  Actor_SetAnimationById(ACTOR_ITEM_SHOP_MESSAGES, EMOTE_ELLIPSIS);
+  Actor_SetAnimationById(ACTOR_LIGHT_BULB_A, EMOTE_LIGHT_BULB);
+  Actor_SetAnimationById(ACTOR_LIGHT_BULB_B, EMOTE_LIGHT_BULB);
+  Actor_SetAnimationById(ACTOR_LIGHT_BULB_C, EMOTE_LIGHT_BULB);
+  Actor_SetAnimationById(ACTOR_LIGHT_BULB_D, EMOTE_LIGHT_BULB);
   if (party->entrance == ENTRANCE_WITH_ISAACS_PARTY)
     Party_AddIsaacsParty();
   return 0;

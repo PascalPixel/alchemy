@@ -138,5 +138,5 @@ void Actor_PlaySoundInView(struct Actor *actor, s32 sound) {
   Sound_PlayFar(sound);
 }
 
-/// Counts up the main routine's countedAnswers.
-void Event_CountAnswer(void) { gMainRoutineWork.countedAnswers++; }
+/// Counts up the main routine's weirdAnswers.
+void Event_CountAnswer(void) { gMainRoutineWork.weirdAnswers++; }

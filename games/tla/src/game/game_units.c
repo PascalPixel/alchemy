@@ -83,6 +83,10 @@ void Memory_CopyBytesDirectional(u8 *first, u8 *second, s32 count,
 /// A scaling effect's number among the eight, from EQUIP_EFFECT_SCALE_HP.
 #define SCALE_EFFECT(kind) ((kind) - EQUIP_EFFECT_SCALE_HP)
 
+/// The Resistance each of a unit's battle Resistance stages adds to every
+/// element's.
+#define RESISTANCE_PER_STAGE 20
+
 /// Works out a unit's stats from its base stats, equipment, set Djinn, class
 /// and battle stat levels; its HP and PP keep their share of a new maximum.
 void Unit_Calculate(s32 unitId) {
@@ -296,7 +300,8 @@ void Unit_Calculate(s32 unitId) {
          unit->summonBoost[index]) *
         5;
   for (index = 0; index < ELEMENT_COUNT; index++)
-    stats->element[index].resistance += unit->resistanceStage * 20;
+    stats->element[index].resistance +=
+        unit->resistanceStage * RESISTANCE_PER_STAGE;
 
   if (unit->classId != CLASS_NONE) {
     lighthouse = 0;
@@ -514,11 +519,28 @@ static __inline__ void WaitDma(struct DmaRegisters volatile *channel) {
   }
 }
 
-/// Starts a new game's state: clears gMainRoutineWork, the work block, the
-/// flags and the owners by DMA, builds the characters, sets the defaults (the
-/// button layout, Felix and Jenna in the party, their first Psynergy, 200
-/// coins, the message settings and the play time clock) and fills the work
-/// block's random tables.
+/// The words a new game clears from gSceneLocalState up to gSoundFlags: the
+/// scene's state, the actor snapshot, the rare item stock, the scene state and
+/// the inventory snapshot.
+#define SCENE_STATE_WORDS 1992
+/// The coins a new game starts with.
+#define NEW_GAME_COINS 200
+/// The two tables a new game fills just after gRareItemStock's
+/// ITEM_COUNTER_COUNT counters, as places in gSceneLocalState: 32 rows of eight
+/// random numbers 0 to 4, SCENE_STATE_RANDOM_ROW_BYTES apart, then a copy of
+/// Data_080b1f2c.
+#define SCENE_STATE_RANDOM_ROWS 4536
+#define SCENE_STATE_RANDOM_ROW_COUNT 32
+#define SCENE_STATE_RANDOM_ROW_BYTES 12
+#define SCENE_STATE_TABLE_COPY                                                 \
+  (SCENE_STATE_RANDOM_ROWS +                                                   \
+   SCENE_STATE_RANDOM_ROW_COUNT * SCENE_STATE_RANDOM_ROW_BYTES)
+
+/// Starts a new game's state: clears gMainRoutineWork, the scene state and
+/// the snapshots, the flags and the characters by DMA, builds the characters,
+/// sets the defaults (the button layout, Felix and Jenna in the party, their
+/// first Psynergy, NEW_GAME_COINS, the message settings and the play time
+/// clock) and fills the two tables after the rare item stock.
 void MainRoutineWork_InitializeDefaults(void) {
   volatile s32 zero;
   s32 i;
@@ -528,7 +550,7 @@ void MainRoutineWork_InitializeDefaults(void) {
   // and the flags.
   Dma_Fill32Cell(zero, 0, &gMainRoutineWork, sizeof(gMainRoutineWork));
 #if TLA_PATCH_1
-  Dma_Fill32Cell(zero, 0, gSceneLocalState, 1992 * 4);
+  Dma_Fill32Cell(zero, 0, gSceneLocalState, SCENE_STATE_WORDS * 4);
   WaitDma(DMA3);
 #else
   zero = 0;
@@ -538,8 +560,7 @@ void MainRoutineWork_InitializeDefaults(void) {
     struct DmaRegisters volatile *channel;
 
     Dma_Set((const void *)&zero, gSceneLocalState,
-            (DMA_ENABLE | DMA_32BIT | DMA_SRC_FIXED) << 16 | 1992,
-            (volatile u32 *)held);
+            DMA_FILL_WORDS(SCENE_STATE_WORDS), (volatile u32 *)held);
     channel = (struct DmaRegisters volatile *)held;
     held = DMA3_BUSY;
     while ((channel->control & held) != 0) {
@@ -571,10 +592,10 @@ void MainRoutineWork_InitializeDefaults(void) {
   Unit_LearnPsynergy(GARET, ABILITY_MOVE);
   Unit_LearnPsynergy(IVAN, ABILITY_MIND_READ);
   Unit_LearnPsynergy(IVAN, ABILITY_REVEAL);
-  gMainRoutineWork.coins = 200;
+  gMainRoutineWork.coins = NEW_GAME_COINS;
   gMainRoutineWork.transferredCoins = 0;
   gMainRoutineWork.forgeItem = 0;
-  gMainRoutineWork.countedAnswers = 0;
+  gMainRoutineWork.weirdAnswers = 0;
   gMainRoutineWork.messageSpeed = 1;
   gMainRoutineWork.speech = 1;
   gMainRoutineWork.unusedAfterSpeech = 1;
@@ -589,6 +610,7 @@ void MainRoutineWork_InitializeDefaults(void) {
   gIdleFrames = 0;
   gSaveSlot = -1;
   gMainRoutineWork.clearedFileAtStart = gAnyFileCleared;
+  // Three prizes share each weight, and each three weigh twice the last.
   gMainRoutineWork.prizeWeights[0] = 4;
   gMainRoutineWork.prizeWeights[1] = 4;
   gMainRoutineWork.prizeWeights[2] = 4;
@@ -605,19 +627,19 @@ void MainRoutineWork_InitializeDefaults(void) {
   gMainRoutineWork.prizeWeights[13] = 64;
   gMainRoutineWork.prizeWeights[14] = 64;
 
-  // Two tables in the space after gRareItemStock's ITEM_COUNTER_COUNT
-  // counters: 32 rows of eight random numbers 0 to 4, 12 bytes apart, and a
-  // copy of Data_080b1f2c.
-  // XXX: what reads them. No object of the main image or of any overlay holds
-  // their addresses or reads gSceneLocalState or gRareItemStock that far in; a
-  // watchpoint on 0x020021b8 and 0x02002338 in a played game would settle it.
-  for (i = 0; i < 32; i++) {
+  // XXX (no evidence): what reads the two tables; no object of the main
+  // image or of any overlay holds their addresses, reads gSceneLocalState or
+  // gRareItemStock that far in, or has their places in its literal pools, and
+  // nothing in reach watches the memory of a played game.
+  for (i = 0; i < SCENE_STATE_RANDOM_ROW_COUNT; i++) {
     for (j = 0; j < 8; j++)
-      gSceneLocalState[0x11b8 + i * 12 + j] = Random_Below(5);
+      gSceneLocalState[SCENE_STATE_RANDOM_ROWS +
+                       i * SCENE_STATE_RANDOM_ROW_BYTES + j] = Random_Below(5);
   }
   for (i = 0; i < 4; i++) {
     for (j = 0; j < 5; j++)
-      gSceneLocalState[0x1338 + i * 5 + j] = Data_080b1f2c[i][j];
+      gSceneLocalState[SCENE_STATE_TABLE_COPY + i * 5 + j] =
+          Data_080b1f2c[i][j];
   }
 }
 
@@ -639,7 +661,9 @@ void Party_GivePiersDjinn(void) {
   s32 i;
   s32 count;
 
-  for (i = 10; i < 12; i++) {
+  // i counts Spring and Shade from 1.
+  for (i = DJINNI_INDEX(DJINNI_SPRING) + 1; i <= DJINNI_INDEX(DJINNI_SHADE) + 1;
+       i++) {
     GameFlag_Set(FLAG_DJINNI(ELEMENT_MERCURY * DJINN_PER_ELEMENT + i - 1));
     Djinn_Give(PIERS, ELEMENT_MERCURY, i - 1);
     Djinn_Set(PIERS, ELEMENT_MERCURY, i - 1);
@@ -990,12 +1014,17 @@ void Djinn_AddFoundToOwner(s32 owner, s32 element, s32 djinn) {
   GameFlag_Set(flag);
 }
 
+/// The Djinn of The Broken Seal handed out at random, besides Flint and Fizz,
+/// when the player transfers none.
+#define DEFAULT_TRANSFER_DJINN 16
+
 /// Stands in for transferred data when the player transfers none: unless the
 /// transferred Djinn are already set, sets the party aside, makes Isaac's
-/// party the party, gives it Flint and Fizz, then hands out 16 random Djinn of
-/// The Broken Seal's still unowned, keeping the elements' counts within one,
-/// each with its chance in gDataTransfer_DjinnChances; then moves the Djinn
-/// flags to the transferred ones and puts the party back.
+/// party the party, gives it Flint and Fizz, then hands out
+/// DEFAULT_TRANSFER_DJINN random Djinn of The Broken Seal's still unowned,
+/// keeping the elements' counts within one, each with its chance in
+/// gDataTransfer_DjinnChances; then moves the Djinn flags to the transferred
+/// ones and puts the party back.
 void DataTransfer_GiveDefaultDjinn(void) {
   s8 saved[8];
   s8 counts[4];
@@ -1025,7 +1054,7 @@ void DataTransfer_GiveDefaultDjinn(void) {
   counts[1] = 1;
   counts[2] = 0;
   counts[3] = 0;
-  remaining = 16;
+  remaining = DEFAULT_TRANSFER_DJINN;
   do {
     element = Random_Below(ELEMENT_COUNT);
     djinn = Random_Below(TRANSFERRED_DJINN_PER_ELEMENT);
@@ -1134,3 +1163,11 @@ UNIT_DEFINE_ADD(s16, Unit_AddPp, pp, ppMax)
 #undef SCALE_EFFECT
 #undef DMA3
 #undef DMA3_BUSY
+#undef RESISTANCE_PER_STAGE
+#undef SCENE_STATE_WORDS
+#undef NEW_GAME_COINS
+#undef SCENE_STATE_RANDOM_ROWS
+#undef SCENE_STATE_RANDOM_ROW_COUNT
+#undef SCENE_STATE_RANDOM_ROW_BYTES
+#undef SCENE_STATE_TABLE_COPY
+#undef DEFAULT_TRANSFER_DJINN

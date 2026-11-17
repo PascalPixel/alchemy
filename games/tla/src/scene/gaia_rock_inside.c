@@ -1613,7 +1613,7 @@ void GaiaRockInside_PlaceDollOnFirstAltar(void) {
   Actor_SetAnimation(ACTOR_FIRST_ALTAR_WEST_FACE, 3);
   Actor_SetAnimation(ACTOR_FIRST_ALTAR_EAST_FACE, 3);
   FieldEvent_Wait(40);
-  Event_PlaySound(SE_191);
+  Event_PlaySound(SE_SHUDDER);
   if (!Event_GetFlag(FLAG_FIRST_ALTAR_FACES_MOVED)) {
     for (i = 0; i < FACE_TREMBLE_FRAMES; i++) {
       westFace->velocityY = Random16();
@@ -1691,7 +1691,7 @@ void GaiaRockInside_PlaceDollOnWestAltar(void) {
   Event_Wait(30);
   Actor_SetAnimationById(ACTOR_WEST_FACE, 3);
   Event_Wait(40);
-  Sound_Play(SE_191);
+  Sound_Play(SE_SHUDDER);
   if (!GameFlag_Get(FLAG_WEST_ALTAR_STREAM_OPEN)) {
     for (i = 0; i < FACE_TREMBLE_FRAMES; i++) {
       actor->velocityY = Random16();
@@ -1785,7 +1785,7 @@ void GaiaRockInside_PlaceDollOnEastAltar(void) {
   Event_Wait(30);
   Actor_SetAnimationById(ACTOR_EAST_FACE, 3);
   Event_Wait(40);
-  Sound_Play(SE_191);
+  Sound_Play(SE_SHUDDER);
   if (!GameFlag_Get(FLAG_EAST_ALTAR_STREAM_OPEN)) {
     for (i = 0; i < FACE_TREMBLE_FRAMES; i++) {
       actor->velocityY = Random16();
@@ -1879,7 +1879,7 @@ void GaiaRockInside_PlaceDollOnAltarAltar(void) {
   Event_Wait(30);
   Actor_SetAnimationById(ACTOR_ALTAR_FACE, 3);
   Event_Wait(40);
-  Sound_Play(SE_191);
+  Sound_Play(SE_SHUDDER);
   if (!GameFlag_Get(FLAG_ALTAR_ROOM_STREAM_OPEN)) {
     for (i = 0; i < FACE_TREMBLE_FRAMES; i++) {
       actor->velocityY = Random16();

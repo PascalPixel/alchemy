@@ -325,10 +325,10 @@ s32 Actor_GetCellIndex(struct Actor *actor);
 s32 Field_TryJumpForward(void);
 struct Actor *Actor_FindAtCell(s32 *position, s32 mode);
 
-void Rubble_Scatter(s32 spread);
+void Dust_Scatter(s32 spread);
 void MagmaRockInside_SetLeaderCellShape(s32 heightOffset, s32 layer);
 void MagmaRockInside_SpawnDustRing(void);
-extern u32 gRubble_ScatterScript[];
+extern u32 gDust_ScatterScript[];
 
 extern s32 gMagmaRockInside_DustScript[];
 
@@ -2718,11 +2718,11 @@ void MagmaRockInside_CrumblePillar(const void *data, s32 id) {
     if (!Event_GetFlag(flag + 1)) {
       Event_PlaySound(SE_PUSH);
       MapGrid_SetShake(1, 4, 1);
-      Rubble_Scatter(0);
+      Dust_Scatter(0);
       System_Wait(8);
       Actor_SelectAnimation(actor, 2);
       MagmaRockInside_SetActorCellShape(-4, actor->layer, id);
-      Rubble_Scatter(1);
+      Dust_Scatter(1);
       System_Wait(16);
       MapGrid_SetShake(SHAKE_KEEP, SHAKE_KEEP, 0.9);
       System_Wait(8);
@@ -2798,7 +2798,7 @@ void MagmaRockInside_StepOnTrap(const u16 *table) {
         FieldActor_SetSpriteColor(Actor_GetById(8), SPRITE_COLOR_WHITE);
         wait(4);
         FieldActor_SetSpriteColor(Actor_GetById(8), SPRITE_COLOR_NORMAL);
-        Rubble_Scatter(0);
+        Dust_Scatter(0);
         MagmaRockInside_TakePlaceOf(trap, partner);
         wait(1);
         Event_SetFlag(flag);
@@ -2811,11 +2811,11 @@ void MagmaRockInside_StepOnTrap(const u16 *table) {
           leader->motionFlags = 0;
           Event_PlaySound(SE_PUSH);
           MapGrid_SetShake(1, 4, 1);
-          Rubble_Scatter(0);
+          Dust_Scatter(0);
           wait(8);
           Actor_SelectAnimation(partner, 2);
           MagmaRockInside_SetLeaderCellShape(-2, trap->layer);
-          Rubble_Scatter(1);
+          Dust_Scatter(1);
           wait(16);
           MagmaRockInside_SetLeaderCellShape(-2, trap->layer);
           wait(4);
@@ -3263,7 +3263,7 @@ s32 gMagmaRockInside_BlazeWatcherReturnScript[] = {
   };
 
 /// A piece of rubble's actor script: it lasts 33 frames.
-u32 gRubble_ScatterScript[] = {                                                               
+u32 gDust_ScatterScript[] = {                                                               
       SC_WAIT(33), SC_SET(SW_HOOK, 0), SC_POSITION(0, 0, 0), SC_WAIT(1),       
       SC_RELEASE,                                                                 
   };
@@ -3460,10 +3460,10 @@ struct ActorPlacement gMagmaRockInside_EmberStonePlacements[] = {
     {SPRITE_YELLOW_BLOCK, CONDITION_ALWAYS, MOVEMENT_TYPE_CLEAR_COLLISION, 3, 0, 0, FACING_NORTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_AT_SCENE_POINT | ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE},
     {SPRITE_YELLOW_BLOCK, CONDITION_ALWAYS, MOVEMENT_TYPE_CLEAR_COLLISION, 4, 0, 0, FACING_NORTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_AT_SCENE_POINT},
     {SPRITE_EMBER_STONE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 5, 0, 0, FACING_NORTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_AT_SCENE_POINT},
-    {SPRITE_TURNING_ROCK, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 6, 0, 0, FACING_NORTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_AT_SCENE_POINT},
-    {SPRITE_TURNING_ROCK, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 7, 0, 0, FACING_NORTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_AT_SCENE_POINT | ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE},
-    {SPRITE_TURNING_ROCK, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 8, 0, 0, FACING_NORTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_AT_SCENE_POINT | ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE},
-    {SPRITE_TURNING_ROCK, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 9, 0, 0, FACING_NORTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_AT_SCENE_POINT | ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE},
+    {SPRITE_WIND_STONE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 6, 0, 0, FACING_NORTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_AT_SCENE_POINT},
+    {SPRITE_WIND_STONE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 7, 0, 0, FACING_NORTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_AT_SCENE_POINT | ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE},
+    {SPRITE_WIND_STONE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 8, 0, 0, FACING_NORTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_AT_SCENE_POINT | ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE},
+    {SPRITE_WIND_STONE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 9, 0, 0, FACING_NORTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_AT_SCENE_POINT | ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE},
     {SPRITE_LARGE_FLAME, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 10, 0, 0, FACING_NORTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_AT_SCENE_POINT},
     {SPRITE_LARGE_FLAME, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 11, 0, 0, FACING_NORTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_AT_SCENE_POINT | ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE},
     {SPRITE_LARGE_FLAME, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 12, 0, 0, FACING_NORTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_AT_SCENE_POINT | ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE},

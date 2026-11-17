@@ -228,7 +228,7 @@ s32 Scene_TalkToActor(s32 id) {
         contents = *p;
       }
     } else {
-      type = CONTAINER_BURIED;
+      type = CONTAINER_GROUND;
       point = result;
       flag = result;
       contents = event->scoopedItem;
@@ -330,7 +330,7 @@ s32 Scene_TalkToActor(s32 id) {
           if (Party_FindOwnerWithActionFar(ABILITY_SCOOP) != -1)
             gFieldWork->fieldMenu = 1;
         } else if (contents & CONTAINER_COINS) {
-          if (type == CONTAINER_BURIED) {
+          if (type == CONTAINER_GROUND) {
             shown = TreasureSpot_GetActor(index);
             shown->update = ItemDisplay_EmitSparkles;
           } else {
@@ -349,7 +349,7 @@ s32 Scene_TalkToActor(s32 id) {
           Party_AdjustCoinsFar(contents);
           if (flag != -1)
             GameFlag_Set(flag);
-          if (type == CONTAINER_BURIED) {
+          if (type == CONTAINER_GROUND) {
             Actor_SetPositionAndResetMotionFar(shown, 0, 0, 0);
             shown->update = NULL;
           } else {
@@ -360,7 +360,7 @@ s32 Scene_TalkToActor(s32 id) {
             GameFlag_Set(flag);
           goto empty;
         } else {
-          if (type == CONTAINER_BURIED) {
+          if (type == CONTAINER_GROUND) {
             shown = TreasureSpot_GetActor(index);
             shown->update = ItemDisplay_EmitSparkles;
           } else {
@@ -372,7 +372,7 @@ s32 Scene_TalkToActor(s32 id) {
             MessageArgument_PushFar(contents, MESSAGE_ARGUMENT_ITEM);
             FieldMessage_ShowFar((s32)&MsgFoundItem, FIELD_MESSAGE_ZOOM);
             FieldMessage_ShowFar((s32)&MsgFoundItem + 4, FIELD_MESSAGE_ZOOM);
-            if (type != CONTAINER_BURIED)
+            if (type != CONTAINER_GROUND)
               Actor_ReleaseIfPresent(shown);
             if (type == CONTAINER_CHEST)
               TreasureSpot_CloseChest(index);
@@ -394,7 +394,7 @@ s32 Scene_TalkToActor(s32 id) {
             }
             if (flag != -1)
               GameFlag_Set(flag);
-            if (type == CONTAINER_BURIED) {
+            if (type == CONTAINER_GROUND) {
               Actor_SetPositionAndResetMotionFar(shown, 0, 0, 0);
               shown->update = NULL;
             } else {

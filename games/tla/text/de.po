@@ -55850,7 +55850,7 @@ msgstr ""
 "Schiffe die Fische fangen,\n"
 "die wir zum Leben brauchen?{end_wait}"
 
-msgctxt "MsgOooogOw2"
+msgctxt "MsgOooogOw"
 msgid "10019"
 msgstr "Uuuurgh... Oh...{end_wait}"
 
@@ -55860,7 +55860,7 @@ msgstr ""
 "Warum muss so etwas immer\n"
 "ausgerechnet mir passieren?{end_wait}"
 
-msgctxt "MsgStupidBriggs2"
+msgctxt "MsgStupidBriggs"
 msgid "10021"
 msgstr "Blöder Briggs...{end_wait}"
 

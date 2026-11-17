@@ -340,7 +340,7 @@ void BattleEffect_RunZagan(struct BattleEffectParams *args) {
       Sound_PlayFar(SE_POWER_UP);
     }
     if (frame == 32) {
-      Sound_PlayFar(SE_191);
+      Sound_PlayFar(SE_SHUDDER);
     }
     if ((u32)(frame - 78) <= 31) {
       REG_BLDALPHA = BLEND_ALPHA(16 - (frame - 78) / 2, BLEND_WEIGHT_MAX);

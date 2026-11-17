@@ -379,7 +379,7 @@ s32 YallamRooms_PartyHasForgeMaterial(void) {
     if (PartyInventory_FindMember(item) != -1)
       return 1;
   }
-  for (item = ITEM_RUSTY_SWORD; item <= ITEM_RUSTY_GOBLINS_ROD; item++) {
+  for (item = ITEM_RUSTY_SWORD; item <= ITEM_RUSTY_STAFF_GOBLINS_ROD; item++) {
     if (PartyInventory_FindMember(item) != -1)
       return 1;
   }

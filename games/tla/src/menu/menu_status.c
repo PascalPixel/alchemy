@@ -27,6 +27,10 @@ enum StatusScreenStep {
 #define EQUIPPED_ICON_X 216
 #define EQUIPPED_ICON_Y(row) (EQUIPPED_ROW_Y(row) + 32)
 
+/// The Djinn figures stand in a row 32 pixels apart, at y STATUS_FIGURE_ROW_Y.
+#define STATUS_FIGURE_X(index) (130 + (index) * 32)
+#define STATUS_FIGURE_ROW_Y 128
+
 /// The status page's four element columns, 4 tiles apart from tile 15, where
 /// each element's icon stands; its figures end left of it.
 #define STATUS_ELEMENT_X(element) (((element) * 4 + 15) * 8)
@@ -353,8 +357,8 @@ void DjinnMenu_ShowCurrentList(void) {
   WindowSprite_RedrawSavedRectFar(menu->window);
   WindowSprite_ClearListFar(menu->helpWindow);
   for (i = 0; i < 4; i++) {
-    menu->slotX[i] = 130 + i * 32;
-    menu->slotY[i] = 128;
+    menu->slotX[i] = STATUS_FIGURE_X(i);
+    menu->slotY[i] = STATUS_FIGURE_ROW_Y;
   }
   menu->cursor->motion = ICON_SHOWN;
   menu->secondCursor->motion = ICON_SHOWN;
@@ -390,8 +394,8 @@ s32 PartyMemberChooser_RunRearrange(void) {
   page = menu->page;
   Unit_Get(menu->memberIds[ownerIndex]);
   for (rowIndex = 0; rowIndex < 4; rowIndex++) {
-    menu->rowX[rowIndex] = 130 + rowIndex * 32;
-    menu->rowY[rowIndex] = 128;
+    menu->rowX[rowIndex] = STATUS_FIGURE_X(rowIndex);
+    menu->rowY[rowIndex] = STATUS_FIGURE_ROW_Y;
   }
   Palette_LightenHighlight(HIGHLIGHT_PALETTE);
   Dma_Set((void *)OBJ_PLTT, (void *)BG_PLTT, DMA_COPY_HALFWORDS(16), REG_DMA3);
@@ -554,7 +558,7 @@ s32 PartyMemberChooser_MoveEntry(s32 selectedIndex, s32 direction) {
 
   {
     u32 zero = 0;
-    u32 *clear = &reordered[13];
+    u32 *clear = &reordered[ARRAY_COUNT(reordered) - 1];
 
     do {
       *clear = zero;
@@ -841,9 +845,9 @@ void StatusScreen_DrawSelectionCursor(s32 mode, s32 selected, u8 *entries,
     width = 20;
   }
 
-  // Palette 14 (highlighted) when invert is 0, 15 when it is 1.
+  // HIGHLIGHT_PALETTE when invert is 0, WINDOW_PALETTE when it is 1.
   different = 1 ^ invert;
-  palette = 15 - (((0u - different) | different) >> 31);
+  palette = WINDOW_PALETTE - (((0u - different) | different) >> 31);
   Render_SetTilemapFlagRect(menu->statusWindow, x, y, width, 1, palette);
 }
 
@@ -1063,8 +1067,8 @@ void ItemMenu_DrawMemberStatus(s32 window, s32 owner, s32 flags) {
     wait(1);
     Window_ClearInteriorTilesFar(window, 144, 0, 224, 40);
   }
-  // The labels "Attack", "Defense", "Agility" and "Luck", 23 to 20 messages
-  // before "Exp".
+  // "Attack", "Defense", "Agility" and "Luck" (MsgStatLabel on), counted back
+  // from "Exp".
   Text_DrawMessageAsTilesFar((s32)MsgExpLabel - 23, window, 152, 0);
   Text_DrawMessageAsTilesFar((s32)MsgExpLabel - 22, window, 152, 8);
   Text_DrawMessageAsTilesFar((s32)MsgExpLabel - 21, window, 152, 16);
@@ -1132,58 +1136,67 @@ s32 PagedList_Build(struct PagedList *result, s32 index) {
 /// (menu_strings.s).
 extern u32 gMenu_PatternRowMasks[][2];
 
-/// Builds two sets of six tile pairs (24 8x8 tiles) in background tile block
-/// 1 at 0x06006000: each pair filled with colour 4, then rows 1 to 7 XORed
-/// with a pair of row masks (gMenu_PatternRowMasks), the first set's masks
-/// clamped to the row so its patterns grow row by row, the second set skipping
-/// row 1. The mask table is declared without const: as const its second load
-/// is lifted above the first store.
+#define RANGE_PATTERN_SET_COUNT 2
+#define RANGE_PATTERN_COUNT 6
+#define RANGE_PATTERN_PAIR_WORDS 16
+/// The first of the range icons' BG tiles, which PsynergyMenu_DrawRange draws
+/// as tilemap entries.
+#define RANGE_ICON_FIRST_TILE 768
+/// The last range icon, which stands for ABILITY_RANGE_ALL.
+#define RANGE_ICON_ALL (RANGE_PATTERN_SET_COUNT * RANGE_PATTERN_COUNT - 1)
+
+/// Builds the twelve range icons PsynergyMenu_DrawRange draws, as the 24 BG
+/// tiles from RANGE_ICON_FIRST_TILE: icon n is a centre tile and an end tile,
+/// filled with WINDOW_BACKGROUND_COLOR, then marked row by row by XOR with
+/// gMenu_PatternRowMasks, the first set's marks growing row by row, the second
+/// set's leaving row 1 bare.
 void Menu_BuildPatternTiles(void) {
-  s32 set;
-  s32 n;
+  s32 patternSet;
+  s32 patternIndex;
 
-  for (set = 0; set < 2; set++) {
-    for (n = 0; n < 6; n++) {
-      u32 *tile = (u32 *)BG_SCREEN_BLOCK(12) + set * 96 + n * 16;
-      s32 x;
+  for (patternSet = 0; patternSet < RANGE_PATTERN_SET_COUNT; patternSet++) {
+    for (patternIndex = 0; patternIndex < RANGE_PATTERN_COUNT; patternIndex++) {
+      u32 *tile =
+          (u32 *)(BG_CHAR_BLOCK(0) + RANGE_ICON_FIRST_TILE * TILE_SIZE_4BPP) +
+          patternSet * (RANGE_PATTERN_COUNT * RANGE_PATTERN_PAIR_WORDS) +
+          patternIndex * RANGE_PATTERN_PAIR_WORDS;
+      s32 row;
 
-      Iwram_FillWordsEntry(tile, 64, TEXT_CANVAS_BACKGROUND_WORD);
-      for (x = 1; x <= 7; x++) {
-        s32 mi = n;
+      Iwram_FillWordsEntry(tile, 2 * TILE_SIZE_4BPP,
+                           TEXT_CANVAS_BACKGROUND_WORD);
+      for (row = 1; row <= 7; row++) {
+        s32 sourcePattern = patternIndex;
 
-        if (set == 1 && x <= 1)
+        if (patternSet == 1 && row <= 1)
           continue;
-        if (set == 0 && n > x - 2) {
-          mi = x - 2;
-          if (mi < 0)
-            mi = 0;
+        if (patternSet == 0 && patternIndex > row - 2) {
+          sourcePattern = row - 2;
+          if (sourcePattern < 0)
+            sourcePattern = 0;
         }
-        tile[x] ^= gMenu_PatternRowMasks[mi][0];
-        tile[x + 8] ^= gMenu_PatternRowMasks[mi][1];
+        tile[row] ^= gMenu_PatternRowMasks[sourcePattern][0];
+        tile[row + 8] ^= gMenu_PatternRowMasks[sourcePattern][1];
       }
     }
   }
 }
 
-#define RANGE_ICON_TILE WINDOW_TILE(768)
-
 /// Draws a Psynergy range icon at tile (x, y) of window: three tiles from pair
 /// range of the range icon tiles (Menu_BuildPatternTiles), the side tile on
 /// both ends, mirrored on the left, and the centre tile between. range is the
-/// ability's range less one (0 for the aimed unit alone), or 11 for
-/// ABILITY_RANGE_ALL (PsynergyMenu_DrawListPage).
+/// ability's range less one (0 for the aimed unit alone), or RANGE_ICON_ALL
+/// for ABILITY_RANGE_ALL (PsynergyMenu_DrawListPage).
 void PsynergyMenu_DrawRange(s32 window, s32 x, s32 y, s32 range, s32 unused) {
   s32 n;
   s32 tile;
 
   n = range * 2;
-  tile = n + RANGE_ICON_TILE + 1;
+  tile = n + WINDOW_TILE(RANGE_ICON_FIRST_TILE) + 1;
   Window_SetTilemapEntryFar(window, TILE_HFLIP | tile, x, y, 0);
-  Window_SetTilemapEntryFar(window, n + RANGE_ICON_TILE, x + 1, y, 0);
+  Window_SetTilemapEntryFar(window, n + WINDOW_TILE(RANGE_ICON_FIRST_TILE),
+                            x + 1, y, 0);
   Window_SetTilemapEntryFar(window, tile, x + 2, y, 0);
 }
-
-#undef RANGE_ICON_TILE
 
 // The Japanese page lists six abilities rather than five, a row higher, and
 // says where the chosen ability can be used in short lines stacked at the
@@ -1391,10 +1404,10 @@ s32 PsynergyMenu_DrawListPage(s32 window, s32 unused,
       Text_DrawMessageAsTilesFar(messageId, window, NAME_X, y);
       Text_DrawNumberAtOffsetFar(action->ppCost, 2, window, COST_X, y);
 
-      // ABILITY_RANGE_ALL takes the last range icon, 11; range n takes n - 1.
+      // ABILITY_RANGE_ALL takes the last range icon; range n takes n - 1.
       range = action->range;
       if (range == ABILITY_RANGE_ALL) {
-        range = 11;
+        range = RANGE_ICON_ALL;
       } else {
         range--;
       }
@@ -1792,7 +1805,7 @@ s32 ItemMenu_SelectItem(void) {
         owner = Unit_Get(menu->sideMember[0]);
         menu->itemCount = ItemMenu_CollectItems(owner, menu->items, 0);
         WindowSprite_RedrawSavedRectFar(window);
-        for (i = 0; i <= 14; i++)
+        for (i = 0; i < INVENTORY_SLOTS; i++)
           savedInventory[i] = owner->inventory[i];
         ItemMenu_Sort(menu->items, 0);
         PagedList_Build(&state, 0);
@@ -1844,7 +1857,7 @@ s32 ItemMenu_SelectItem(void) {
         ownerIndex++;
       else
         ownerIndex--;
-      for (i = 0; i <= 14; i++)
+      for (i = 0; i < INVENTORY_SLOTS; i++)
         owner->inventory[i] = savedInventory[i];
       ownerIndex = (ownerIndex + menu->partyCount) % menu->partyCount;
       menu->selectedMember = (u16)menu->memberIds[ownerIndex];

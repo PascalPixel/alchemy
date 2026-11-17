@@ -1,31 +1,33 @@
-/// The leader rises out of the water, unless the party keeps its place.
+/// Unless the party returns to where it was, the leader appears 16 pixels north
+/// of the entrance, tinted blue, as the screen opens, then comes south in a
+/// trail of mist and takes his own colours and shadow back on the way.
 void Leader_RiseFromWater(void) {
   struct Actor *leader = Actor_Get(gMainRoutineWork.leaderActorId);
-  s32 flag = Event_GetFlag(FLAG_KEEP_PARTY_POSITION);
-  s32 *owner = &gMainRoutineWork.leaderActorId;
-  s32 offset;
 
-  if (flag == 0) {
+  if (!Event_GetFlag(FLAG_KEEP_PARTY_POSITION)) {
     Event_Start();
     FieldEvent_ResolvePendingActions(0);
-    Camera_MoveWithinMapBounds_(-1, -1, -1, 0);
-    leader->motionFlags = flag;
-    Actor_SetPositionFX(*owner, leader->x.part[0].integer << 16,
-                        (leader->z.part[0].integer << 16) - toFIXED(16));
-    FieldActor_SetSpriteColor(Actor_Get(*owner), 9);
-    Actor_SetSpriteFlags(Actor_Get(*owner), 0);
+    Camera_MoveWithinMapBounds_(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0);
+    leader->motionFlags = 0;
+    Actor_SetPositionFX(gMainRoutineWork.leaderActorId,
+                        INTtoFIXED(leader->x.part[0].integer),
+                        INTtoFIXED(leader->z.part[0].integer) - toFIXED(16));
+    FieldActor_SetSpriteColor(Actor_Get(gMainRoutineWork.leaderActorId),
+                              SPRITE_COLOR_BLUE_TINT);
+    Actor_SetSpriteFlags(Actor_Get(gMainRoutineWork.leaderActorId), 0);
     Event_StartScreenTransition();
     Event_PlaySound(SE_SPARKLING_PASSAGE);
     leader->update = (void (*)(void))Actor_EmitMist;
-    Actor_SetSpeed(*owner, 0.4);
-    Actor_WalkByAndWait(*owner, 0, 8);
-    FieldActor_SetSpriteColor(Actor_Get(*owner), 0);
-    Actor_SetSpriteFlags(Actor_Get(*owner), 1);
+    Actor_SetSpeed(gMainRoutineWork.leaderActorId, 0.4);
+    Actor_WalkByAndWait(gMainRoutineWork.leaderActorId, 0, 8);
+    FieldActor_SetSpriteColor(Actor_Get(gMainRoutineWork.leaderActorId),
+                              SPRITE_COLOR_NORMAL);
+    Actor_SetSpriteFlags(Actor_Get(gMainRoutineWork.leaderActorId),
+                         SPRITE_FLAG_SHADOW);
     ((struct FieldSprite *)leader->sprite)->priority = 1;
-    offset = 10;
-    Actor_WalkByAndWait(*owner, 0, offset);
+    Actor_WalkByAndWait(gMainRoutineWork.leaderActorId, 0, 10);
     leader->motionFlags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
-    leader->update = (void (*)(void))flag;
+    leader->update = NULL;
     Event_NoOp();
     Event_WaitTransitionFrames();
     Event_End();

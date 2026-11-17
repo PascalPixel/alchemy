@@ -15,8 +15,9 @@ struct StripQuad;
 #define GASP_DJINNI_PICTURE 26048
 /// The small Djinni: a 20 x 40 picture drawn over the canvas.
 #define FIGURE(work) ((work)->sheet + GASP_DJINNI_PICTURE)
-/// Sets the transform for one of modes 11 and 14's spinning particles: at its
-/// position, half as wide (the canvas holds every other column), turned by z.
+/// Sets the transform for one of Beat Dance's and Clarion Cry's spinning notes:
+/// at its position, half as wide (the canvas holds every other column), turned
+/// by z.
 #define PLACE_PARTICLE(p)                                                      \
   do {                                                                         \
     Matrix_Initialize();                                                       \
@@ -54,6 +55,74 @@ struct StripQuad;
 
 /// Where FireRingTexture is decoded in the effect's pictures.
 #define GASP_FIRE_RING 12416
+
+/// The textures the model layer turns, 32 by 32: Gasp's two burning skulls,
+/// and the three music notes of Lull, Beat Dance and Clarion Cry.
+#define GASP_TEXTURE_BYTES (32 * 32)
+/// The particles Gasp and Shine set up at their start, more than either
+/// draws: Gasp's GASP_SKULLS and Shine's GASP_SHINE_RAYS.
+#define GASP_SEEDS 16
+
+/// Gasp and Lull: the small djinni sways GASP_DJINNI_SWAY pixels either side
+/// and bobs, a 32nd of a turn a frame.
+#define GASP_DJINNI_SWAY 20
+/// Gasp: the burning skulls that rise, one every 8 frames, each for
+/// GASP_SKULL_FRAMES before it fades, at GASP_SKULL_SCALE.
+#define GASP_SKULLS 6
+#define GASP_SKULL_FRAMES 32
+#define GASP_SKULL_SCALE 30000
+
+/// Reflux: the djinni circles wider until GASP_REFLUX_RADIUS.
+#define GASP_REFLUX_RADIUS 12
+/// Reflux and Counter Rush: the motes of the swirl drawn, of GASP_MOTES set
+/// up, each for GASP_SWIRL_MOTE_FRAMES as it closes in.
+#define GASP_SWIRL_MOTES 48
+#define GASP_SWIRL_MOTE_FRAMES 32
+
+/// Shine: the djinni glides a GASP_SHINE_GLIDE-th of the way to over the user
+/// a frame, then falls onto the target with a GASP_SHINE_FALL-th of the way
+/// more each frame.
+#define GASP_SHINE_GLIDE 40
+#define GASP_SHINE_FALL 32
+/// Shine: the rays of light around the djinni, each for GASP_SHINE_RAY_FRAMES.
+#define GASP_SHINE_RAYS 8
+#define GASP_SHINE_RAY_FRAMES 32
+
+/// Lull: the ring of music notes and the angle between two of them; the ring
+/// fades after GASP_LULL_RING_FRAMES.
+#define GASP_LULL_NOTES 12
+#define GASP_LULL_RING_FRAMES 64
+#define GASP_LULL_TILT 18288
+
+/// Mold: the Djinni's picture shrinks GASP_MOLD_SHRINK a frame.
+#define GASP_MOLD_SHRINK 4592
+
+/// Emu: the puffs of smoke from the user, one each two frames for its first
+/// ten, each for its six pictures, four frames apiece.
+#define GASP_EMU_PUFFS 32
+#define GASP_EMU_PUFF_FRAMES (6 * 4)
+/// Emu: the motes the blow scatters.
+#define GASP_EMU_MOTES 256
+
+/// Beat Dance and Clarion Cry: the notes that fly from their unit, one every
+/// two frames, each for GASP_NOTE_FRAMES before it fades.
+#define GASP_NOTE_SEEDS 32
+#define GASP_NOTES 12
+#define GASP_NOTE_FRAMES 24
+
+/// Call Dullahan: the sparks his bolt scatters, and the first of them drawn.
+#define GASP_DULLAHAN_SPARKS 128
+#define GASP_DULLAHAN_SPARKS_DRAWN 64
+/// Call Dullahan: each bolt flies out GASP_DULLAHAN_REACH steps, turning
+/// GASP_DULLAHAN_SWING as it goes.
+#define GASP_DULLAHAN_REACH 80
+#define GASP_DULLAHAN_SWING 48152
+
+/// Reflux, Counter Rush and Djinn Counter's swirl grows to this scale.
+#define GASP_SWIRL_SCALE 48000
+
+/// Cage: its rings lean, each a further eighth of a turn.
+#define GASP_CAGE_TILT 4000
 
 /// The shared body of sixteen abilities' effects, named for the first (its
 /// wrappers are in rime.c): Gasp (mode 0), Reflux (2), Djinn Counter (3), Mold
@@ -301,7 +370,8 @@ void BattleEffect_RunGaspFamily(struct BattleEffectParams *args, s32 mode) {
 
       for (i = 0; i != ARRAY_COUNT(work->bg2xLines); i++)
         *lines++ =
-            (toFIXED(6) - Trig_Sin((frame << 11) + i * (TRIG_TURN / 32)) * 6) >>
+            (toFIXED(6) -
+             Trig_Sin(frame * (TRIG_TURN / 32) + i * (TRIG_TURN / 32)) * 6) >>
             10;
     } else if (mode == GASP_MODE_UNUSED && frame > 31) {
       u16 *pal = (u16 *)&BG_PLTT_COLOR(0, 1);
@@ -331,6 +401,8 @@ void BattleEffect_RunGaspFamily(struct BattleEffectParams *args, s32 mode) {
       Iwram_FillWordsEntry(canvas, CANVAS_BYTES, CANVAS_FILL_WORD(1));
     }
 
+    // Djinn Counter: the djinni streaks from the user to the target in four
+    // images, and the blow bursts into motes.
     if (mode == GASP_MODE_DJINN_COUNTER) {
       struct ScreenPoint to;
       struct ScreenPoint from;
@@ -353,8 +425,9 @@ void BattleEffect_RunGaspFamily(struct BattleEffectParams *args, s32 mode) {
         head = from.x + gGaspFamily_StreakSteps[n] * dx / 16;
         tail = from.x + gGaspFamily_StreakSteps[n - 1] * dx / 16;
         for (i = 0, step = head - tail, acc = 0; i != 4; i++, acc += step)
-          draw[0](canvas, FIGURE(work), tail + acc / 3 - 10, from.y - 20,
-                  SMALL_DJINNI_WIDTH, SMALL_DJINNI_HEIGHT);
+          draw[0](canvas, FIGURE(work), tail + acc / 3 - SMALL_DJINNI_WIDTH / 2,
+                  from.y - SMALL_DJINNI_HEIGHT / 2, SMALL_DJINNI_WIDTH,
+                  SMALL_DJINNI_HEIGHT);
       }
       if (frame > 37) {
         if (frame == 38) {
@@ -382,20 +455,21 @@ void BattleEffect_RunGaspFamily(struct BattleEffectParams *args, s32 mode) {
           if (p->variant >= 0) {
             s32 n = (p->variant >> 3) + 2;
 
-            draw[0](canvas, sprites + gBattleEffect_MotePictures[n - 1],
-                    FIXED_INTEGER_PART(p->x) - n / 2,
-                    FIXED_INTEGER_PART(p->y) - n, n, n * 2);
+            EFFECT_DRAW_MOTE(draw[0], canvas, sprites, FIXED_INTEGER_PART(p->x),
+                             FIXED_INTEGER_PART(p->y), n);
             Particle_AdvanceWithGravity2D(p, 60, toFIXED(1) / 64);
             p->variant--;
           }
         }
       }
     } else if (mode == GASP_MODE_LULL) {
-      s32 b = frame << 11;
+      // The small djinni sways over the targets and rises from frame 45.
+      s32 b = frame * (TRIG_TURN / 32);
       s32 x;
       s32 y;
 
-      x = (FIXEDtoINT(Trig_Sin(b) * 20)) + screen[0] / 2 - 10;
+      x = (FIXEDtoINT(Trig_Sin(b) * GASP_DJINNI_SWAY)) + screen[0] / 2 -
+          SMALL_DJINNI_WIDTH / 2;
       y = (FIXEDtoINT(Trig_Cos(b) * 4)) + screen[1] - 24;
       if (frame > 44) {
         twice = frame * 2;
@@ -406,16 +480,17 @@ void BattleEffect_RunGaspFamily(struct BattleEffectParams *args, s32 mode) {
       BattleEffect_UpdatePhasePalette(frame, TRIG_TURN - DEGtoANG(120),
                                       DEGtoANG(120), 0);
     } else if (mode == GASP_MODE_REFLUX || mode == GASP_MODE_COUNTER_RUSH) {
+      // Reflux's djinni circles over the target; motes swirl in on it.
       struct ScreenPoint target;
 
       if (mode == GASP_MODE_REFLUX) {
         s32 r = frame;
 
-        x = screen[0] / 2 - 10;
-        y = screen[1] - 20;
-        if (r > 12)
-          r = 12;
-        a = frame << 9;
+        x = screen[0] / 2 - SMALL_DJINNI_WIDTH / 2;
+        y = screen[1] - SMALL_DJINNI_HEIGHT / 2;
+        if (r > GASP_REFLUX_RADIUS)
+          r = GASP_REFLUX_RADIUS;
+        a = frame * (TRIG_TURN / 128);
         x -= FIXEDtoINT(Trig_Sin(a) * r * 2);
         y -= (FIXEDtoINT(Trig_Cos(a) * r)) - r;
         if (frame <= 61)
@@ -433,14 +508,14 @@ void BattleEffect_RunGaspFamily(struct BattleEffectParams *args, s32 mode) {
           p->z = Random16();
           p->velocityZ = (Random16() & 63) + 64;
           Random16();
-          p->variant = i + 32;
+          p->variant = i + GASP_SWIRL_MOTE_FRAMES;
         }
       }
       EffectPosition_ProjectScaledBattler(args->targets[0], &target);
-      for (i = 0; i != 48; i++) {
+      for (i = 0; i != GASP_SWIRL_MOTES; i++) {
         struct Particle *p = &work->particles[i];
 
-        if ((u32)p->variant <= 31) {
+        if ((u32)p->variant < GASP_SWIRL_MOTE_FRAMES) {
           s32 n = p->variant / 8 + 2;
           s32 x =
               (FIXEDtoINT(Trig_Sin(p->z) * p->velocityZ / 2)) + target.x / 2;
@@ -449,12 +524,13 @@ void BattleEffect_RunGaspFamily(struct BattleEffectParams *args, s32 mode) {
           p->z += 512;
           p->velocityZ -= 4;
           if (p->velocityZ > 0)
-            draw[0](canvas, sprites + gBattleEffect_MotePictures[n - 1],
-                    x - n / 2, y - n, n, n * 2);
+            EFFECT_DRAW_MOTE(draw[0], canvas, sprites, x, y, n);
         }
         p->variant--;
       }
     } else if (mode == GASP_MODE_SHINE) {
+      // The djinni glides up over the user, then falls on the target and
+      // strikes at frame 55; its place in the battle is in the velocity.
       struct Particle *ball = &work->particles[GASP_CENTRE];
       struct ScreenPoint pos;
       s32 x;
@@ -468,9 +544,9 @@ void BattleEffect_RunGaspFamily(struct BattleEffectParams *args, s32 mode) {
       if (frame <= 47) {
         struct MotionObject *user = BattleObject_GetFar(args->user)->object;
 
-        ball->velocityX += (user->x - other[0]) / 40;
-        ball->velocityY += (toFIXED(60) - other[1]) / 40;
-        ball->velocityZ += (user->z - other[2]) / 40;
+        ball->velocityX += (user->x - other[0]) / GASP_SHINE_GLIDE;
+        ball->velocityY += (toFIXED(60) - other[1]) / GASP_SHINE_GLIDE;
+        ball->velocityZ += (user->z - other[2]) / GASP_SHINE_GLIDE;
       } else {
         struct MotionObject *target =
             BattleObject_GetFar(args->targets[0])->object;
@@ -478,9 +554,9 @@ void BattleEffect_RunGaspFamily(struct BattleEffectParams *args, s32 mode) {
 
         if (frame == 48) {
           SET_POSITION(fall, 0, 0, 0);
-          fall->velocityX = (target->x - ball->velocityX) / 32;
-          fall->velocityY = -ball->velocityY / 32;
-          fall->velocityZ = (target->z - ball->velocityZ) / 32;
+          fall->velocityX = (target->x - ball->velocityX) / GASP_SHINE_FALL;
+          fall->velocityY = -ball->velocityY / GASP_SHINE_FALL;
+          fall->velocityZ = (target->z - ball->velocityZ) / GASP_SHINE_FALL;
         }
         ball->velocityX += fall->x;
         ball->velocityY += fall->y;
@@ -497,7 +573,8 @@ void BattleEffect_RunGaspFamily(struct BattleEffectParams *args, s32 mode) {
       ball->x = x;
       y = pos.y;
       ball->y = y;
-      draw[0](canvas, FIGURE(work), x - 10, y - 20, SMALL_DJINNI_WIDTH,
+      draw[0](canvas, FIGURE(work), x - SMALL_DJINNI_WIDTH / 2,
+              y - SMALL_DJINNI_HEIGHT / 2, SMALL_DJINNI_WIDTH,
               SMALL_DJINNI_HEIGHT);
       if (frame == 0)
         Sound_PlayFar(SE_SPIN);
@@ -514,17 +591,19 @@ void BattleEffect_RunGaspFamily(struct BattleEffectParams *args, s32 mode) {
       }
       BattleCamera_Shake(8, 8);
     } else if (mode == GASP_MODE_GASP) {
-      s32 b = frame << 11;
+      // The small djinni sways over the targets and rises from frame 49.
+      s32 b = frame * (TRIG_TURN / 32);
       s32 x;
       s32 y;
 
-      x = (FIXEDtoINT(Trig_Sin(b) * 20)) + screen[0] / 2 - 10;
+      x = (FIXEDtoINT(Trig_Sin(b) * GASP_DJINNI_SWAY)) + screen[0] / 2 -
+          SMALL_DJINNI_WIDTH / 2;
       y = (FIXEDtoINT(Trig_Cos(b) * 4)) + screen[1] - 24;
       if (frame > 48) {
         twice = frame * 2;
         y = y - twice + 96;
       }
-      if (y > -40)
+      if (y > -SMALL_DJINNI_HEIGHT)
         draw[0](canvas, FIGURE(work), x, y, SMALL_DJINNI_WIDTH,
                 SMALL_DJINNI_HEIGHT);
     }
@@ -537,11 +616,12 @@ void BattleEffect_RunGaspFamily(struct BattleEffectParams *args, s32 mode) {
     model->texture = &texture;
     model->vertices = verts;
     if (mode == GASP_MODE_GASP) {
+      // Burning skulls rise from the ground, swaying, one every 8 frames.
       if (frame == 0) {
-        for (i = 0; i != 16; i++) {
+        for (i = 0; i != GASP_SEEDS; i++) {
           struct Particle *p = &work->particles[i];
 
-          p->x = i << 15;
+          p->x = i * DEGtoANG(180);
           p->y = toFIXED(56);
           p->velocityX = (Random16() & 511) + 512;
           p->velocityY = -((Random16() & 127) + 612) << 7;
@@ -556,27 +636,27 @@ void BattleEffect_RunGaspFamily(struct BattleEffectParams *args, s32 mode) {
       texture.logHeight = 5;
       model->kind = MODEL_SHADED_ADDITIVE;
       model->mesh = gBattleEffect_SmallSquareMeshReversed;
-      for (i = 0; i != 6; i++) {
+      for (i = 0; i != GASP_SKULLS; i++) {
         struct Particle *p = &work->particles[i];
 
         if (p->variant >= 0) {
-          FIXED size = 30000;
+          FIXED size = GASP_SKULL_SCALE;
           s32 shade = -16;
 
           if (p->variant <= 6)
-            shade = p->variant * 8 - 64;
-          if (p->variant > 31) {
-            shade = (32 - p->variant) * 4;
+            shade = p->variant * 8 + MODEL_SHADE_INVISIBLE;
+          if (p->variant >= GASP_SKULL_FRAMES) {
+            shade = (GASP_SKULL_FRAMES - p->variant) * 4;
             if (shade < MODEL_SHADE_INVISIBLE)
               continue;
           }
           model->shade = shade;
-          texture.pixels = work->sheet + (i % 2 << 10);
+          texture.pixels = work->sheet + i % 2 * GASP_TEXTURE_BYTES;
           Matrix_Initialize();
           p->y += p->velocityY;
           p->x += p->velocityX;
-          Matrix_Translate(
-              (Trig_Sin(p->x) << 4) + INTtoFIXED(screen[0] / 2 - 64), p->y, 0);
+          Matrix_Translate(Trig_Sin(p->x) * 16 + INTtoFIXED(screen[0] / 2 - 64),
+                           p->y, 0);
           Matrix_Scale(size >> 1, size, size >> 1);
           Matrix_RotateX(-DEGtoANG(90));
           Render_TransformVertices(gBattleEffect_GroundSquareCorners, verts, 4);
@@ -585,6 +665,7 @@ void BattleEffect_RunGaspFamily(struct BattleEffectParams *args, s32 mode) {
         p->variant++;
       }
     } else if (mode == GASP_MODE_LULL) {
+      // A ring of music notes turns and spreads.
       s32 k;
 
       texture.logWidth = 5;
@@ -596,23 +677,23 @@ void BattleEffect_RunGaspFamily(struct BattleEffectParams *args, s32 mode) {
       for (k = 0; k != 1; k++) {
         if (frame >= k * 32) {
           s32 t = frame - k * 32;
-          s32 scale = (t << 10) + FIXED_ONE / 16;
+          s32 scale = t * (FIXED_ONE / 64) + FIXED_ONE / 16;
           s32 shade = 0;
 
-          if (t > 63) {
-            shade = (64 - t) * 4;
+          if (t >= GASP_LULL_RING_FRAMES) {
+            shade = (GASP_LULL_RING_FRAMES - t) * 4;
             if (shade < MODEL_SHADE_INVISIBLE)
               continue;
           }
           model->shade = shade;
           Matrix_Initialize();
           Matrix_Scale(scale >> 1, scale, scale);
-          Matrix_RotateZ((frame << 8) + TRIG_TURN * 3 / 4);
-          Matrix_RotateX((frame << 6) - 18288);
-          for (i = 0; i != 12; i++) {
-            texture.pixels = work->sheet + (i % 3 << 10);
+          Matrix_RotateZ(frame * (TRIG_TURN / 256) + TRIG_TURN * 3 / 4);
+          Matrix_RotateX(frame * (TRIG_TURN / 1024) - GASP_LULL_TILT);
+          for (i = 0; i != GASP_LULL_NOTES; i++) {
+            texture.pixels = work->sheet + i % 3 * GASP_TEXTURE_BYTES;
             Matrix_Push();
-            Matrix_RotateZ(frame * 356 + i * 5461);
+            Matrix_RotateZ(frame * 356 + i * (TRIG_TURN / GASP_LULL_NOTES));
             Matrix_Translate(0, toFIXED(116), 0);
             Matrix_Scale(scale >> 1, scale >> 1, scale >> 1);
             Render_TransformVertices(gBattleEffect_GroundSquareCorners, verts,
@@ -623,6 +704,7 @@ void BattleEffect_RunGaspFamily(struct BattleEffectParams *args, s32 mode) {
         }
       }
     } else if (mode == GASP_MODE_UNUSED) {
+      // A burst of light swells at each target.
       model->shade = 0;
       texture.logWidth = 6;
       texture.logHeight = 6;
@@ -642,6 +724,8 @@ void BattleEffect_RunGaspFamily(struct BattleEffectParams *args, s32 mode) {
         Render_DrawModelList(model);
       }
     } else if (mode == GASP_MODE_SHINE) {
+      // Rays of light turn about the djinni as it glides; three rings flare at
+      // the target as it strikes.
       if (frame <= 47) {
         struct Particle *ball;
         s32 twist;
@@ -655,7 +739,7 @@ void BattleEffect_RunGaspFamily(struct BattleEffectParams *args, s32 mode) {
         model->mesh = gGaspFamily_StreakMesh;
         model->vertices = verts;
         if (frame == 0) {
-          for (i = 0; i != 16; i++) {
+          for (i = 0; i != GASP_SEEDS; i++) {
             struct Particle *p = &work->particles[i];
 
             p->x = Random16() & TRIG_ANGLE_MASK;
@@ -666,19 +750,20 @@ void BattleEffect_RunGaspFamily(struct BattleEffectParams *args, s32 mode) {
           }
         }
         for (i = 0, ball = &work->particles[GASP_CENTRE], twist = frame * 2;
-             i != 8; i++) {
+             i != GASP_SHINE_RAYS; i++) {
           struct Particle *p = &work->particles[i];
 
           p->variant++;
           p->x += p->y * 2;
           model->scrollV = (twist + i * 7) & 31;
-          if ((u32)p->variant <= 31) {
+          if ((u32)p->variant < GASP_SHINE_RAY_FRAMES) {
             Matrix_Initialize();
             Matrix_Translate(INTtoFIXED(ball->x) - toFIXED(64),
                              INTtoFIXED(ball->y) - toFIXED(64), 0);
             Matrix_Scale(FIXED_ONE / 2, FIXED_ONE, FIXED_ONE);
             Matrix_RotateZ(p->x);
-            Matrix_Scale(Trig_Sin(p->variant * 682) * 3 + FIXED_ONE * 3 / 4,
+            Matrix_Scale(Trig_Sin(p->variant * (TRIG_TURN / 96)) * 3 +
+                             FIXED_ONE * 3 / 4,
                          FIXED_ONE * 2, FIXED_ONE);
             Render_TransformVertices(gBattleEffect_TaperedBeamCorners, verts,
                                      4);
@@ -701,7 +786,7 @@ void BattleEffect_RunGaspFamily(struct BattleEffectParams *args, s32 mode) {
           s32 t = frame - i * 4 - 55;
 
           if (t >= 0) {
-            s32 scale = (t * 3 << 12) + FIXED_ONE / 4;
+            s32 scale = t * 3 * (FIXED_ONE / 16) + FIXED_ONE / 4;
             s32 shade = 0;
 
             if (t > 7)
@@ -723,6 +808,7 @@ void BattleEffect_RunGaspFamily(struct BattleEffectParams *args, s32 mode) {
         }
       }
     } else if (mode == GASP_MODE_MOLD) {
+      // The Djinni's picture, twice, shrinks onto the target.
       if ((u32)(frame - 16) <= 64) {
         s32 t = frame - 16;
         s32 scale;
@@ -738,10 +824,10 @@ void BattleEffect_RunGaspFamily(struct BattleEffectParams *args, s32 mode) {
         model->kind = MODEL_SHADED_ADDITIVE;
         texture.pixels = work->sheet;
         EffectPosition_ProjectScaledBattler(args->targets[0], &pos);
-        for (i = 0, scale = t * -4592 + FIXED_ONE; i != 2;
+        for (i = 0, scale = t * -GASP_MOLD_SHRINK + FIXED_ONE; i != 2;
              scale += FIXED_ONE / 4, i++) {
           if (scale > 0) {
-            s32 shade = -(i << 4);
+            s32 shade = -(i * 16);
 
             if (shade > 0)
               shade = 0;
@@ -765,6 +851,8 @@ void BattleEffect_RunGaspFamily(struct BattleEffectParams *args, s32 mode) {
                                  TINT_KEEP, 0, 12);
       }
     } else if (mode == GASP_MODE_EMU) {
+      // The user dashes in a trail of dust; at the blow motes burst and a ring
+      // of fire swells at the target, larger for the stronger variants.
       struct ScreenPoint from;
       struct Particle *p;
 
@@ -777,8 +865,8 @@ void BattleEffect_RunGaspFamily(struct BattleEffectParams *args, s32 mode) {
         EffectPosition_ProjectScaledBattler(args->targets[0], &to);
         ball->x = to.x;
         ball->y = to.y;
-        EFFECT_FREE_PARTICLES(i, work->particles, 32);
-        for (i = 0, q = EXTRA_PARTICLES; i != 256; i++, q++) {
+        EFFECT_FREE_PARTICLES(i, work->particles, GASP_EMU_PUFFS);
+        for (i = 0, q = EXTRA_PARTICLES; i != GASP_EMU_MOTES; i++, q++) {
           s32 s = 511;
           s32 a;
 
@@ -805,8 +893,9 @@ void BattleEffect_RunGaspFamily(struct BattleEffectParams *args, s32 mode) {
 
         i = 0;
         twice = frame * 2;
-        // Index first, as a plain integer sum: the add takes the offset first.
-        p = (void *)((twice * 28) + (s32)work->particles);
+        /* FAKEMATCH(signature): the puff's address summed as an integer, its
+         * offset first; as &work->particles[twice]. */
+        p = (void *)(twice * sizeof(struct Particle) + (s32)work->particles);
         p->x = INTtoFIXED(from.x / 2);
         p->y = INTtoFIXED(from.y + 8);
         v = ((Random16() & mask) + 256) << 8;
@@ -816,13 +905,14 @@ void BattleEffect_RunGaspFamily(struct BattleEffectParams *args, s32 mode) {
         p->velocityY = -((Random16() & mask) + 256) << 4;
         p->variant = i;
       }
-      for (i = 0; i != 32; i++) {
+      for (i = 0; i != GASP_EMU_PUFFS; i++) {
         p = &work->particles[i];
 
-        if ((u32)p->variant <= 23) {
+        if ((u32)p->variant < GASP_EMU_PUFF_FRAMES) {
           draw[0](canvas,
                   work->sheet + p->variant / 4 * PICTURE_BYTES(SMOKE_PUFF),
-                  FIXED_INTEGER_PART(p->x) - 12, FIXED_INTEGER_PART(p->y) - 24,
+                  FIXED_INTEGER_PART(p->x) - SMOKE_PUFF_WIDTH / 2,
+                  FIXED_INTEGER_PART(p->y) - SMOKE_PUFF_HEIGHT / 2,
                   SMOKE_PUFF_WIDTH, SMOKE_PUFF_HEIGHT);
           Particle_AdvanceWithGravity2D(p, 60, -toFIXED(1) / 16);
           p->variant++;
@@ -835,9 +925,8 @@ void BattleEffect_RunGaspFamily(struct BattleEffectParams *args, s32 mode) {
           if (q->variant >= 0) {
             s32 n = q->variant / 4 + 3;
 
-            draw[0](canvas, sprites + gBattleEffect_MotePictures[n - 1],
-                    FIXED_INTEGER_PART(q->x) - n / 2,
-                    FIXED_INTEGER_PART(q->y) - n, n, n * 2);
+            EFFECT_DRAW_MOTE(draw[0], canvas, sprites, FIXED_INTEGER_PART(q->x),
+                             FIXED_INTEGER_PART(q->y), n);
             Particle_AdvanceWithGravity2D(q, 62, 0);
             q->variant--;
           }
@@ -878,11 +967,12 @@ void BattleEffect_RunGaspFamily(struct BattleEffectParams *args, s32 mode) {
       }
       BattleCamera_Shake(args->variant * 2 + 8, args->variant * 2 + 8);
     } else if (mode == GASP_MODE_BEAT_DANCE) {
+      // Music notes fly up from the target as it flushes red.
       if (frame == 0) {
         struct ScreenPoint pos;
 
         EffectPosition_ProjectBattler(args->targets[0], &pos);
-        for (i = 0; i != 32; i++) {
+        for (i = 0; i != GASP_NOTE_SEEDS; i++) {
           struct Particle *p = &work->particles[i];
           s32 s = 255;
           s32 a;
@@ -907,20 +997,20 @@ void BattleEffect_RunGaspFamily(struct BattleEffectParams *args, s32 mode) {
       model->texture = &texture;
       model->mesh = gBattleEffect_SmallSquareMeshReversed;
       model->vertices = verts;
-      for (i = 0; i != 12; i++) {
+      for (i = 0; i != GASP_NOTES; i++) {
         struct Particle *p = &work->particles[i];
 
         if (frame >= i * 2) {
           s32 t = frame - i * 2;
           s32 shade = 0;
 
-          if (t > 23) {
-            shade = (24 - t) * 4;
+          if (t >= GASP_NOTE_FRAMES) {
+            shade = (GASP_NOTE_FRAMES - t) * 4;
             if (shade < MODEL_SHADE_INVISIBLE)
               continue;
           }
           model->shade = shade;
-          texture.pixels = work->sheet + (i % 3 << 10);
+          texture.pixels = work->sheet + i % 3 * GASP_TEXTURE_BYTES;
           PLACE_PARTICLE(p);
           Matrix_ScaleUniform(FIXED_ONE / 2);
           Render_TransformVertices(gBattleEffect_SquareCorners, verts, 4);
@@ -930,11 +1020,12 @@ void BattleEffect_RunGaspFamily(struct BattleEffectParams *args, s32 mode) {
       }
       BattleCamera_Shake(8, 8);
     } else if (mode == GASP_MODE_CLARION_CRY) {
+      // Music notes fly up from the user.
       if (frame == 0) {
         struct ScreenPoint pos;
 
         EffectPosition_ProjectBattler(args->user, &pos);
-        for (i = 0; i != 32; i++) {
+        for (i = 0; i != GASP_NOTE_SEEDS; i++) {
           struct Particle *p = &work->particles[i];
           s32 s = 255;
           s32 a;
@@ -956,20 +1047,20 @@ void BattleEffect_RunGaspFamily(struct BattleEffectParams *args, s32 mode) {
       model->texture = &texture;
       model->mesh = gBattleEffect_SmallSquareMeshReversed;
       model->vertices = verts;
-      for (i = 0; i != 12; i++) {
+      for (i = 0; i != GASP_NOTES; i++) {
         struct Particle *p = &work->particles[i];
 
         if (frame >= i * 2) {
           s32 t = frame - i * 2;
           s32 shade = 0;
 
-          if (t > 23) {
-            shade = (24 - t) * 4;
+          if (t >= GASP_NOTE_FRAMES) {
+            shade = (GASP_NOTE_FRAMES - t) * 4;
             if (shade < MODEL_SHADE_INVISIBLE)
               continue;
           }
           model->shade = shade;
-          texture.pixels = work->sheet + (i % 3 << 10);
+          texture.pixels = work->sheet + i % 3 * GASP_TEXTURE_BYTES;
           PLACE_PARTICLE(p);
           Matrix_ScaleUniform(FIXED_ONE / 2);
           Render_TransformVertices(gBattleEffect_SquareCorners, verts, 4);
@@ -978,6 +1069,8 @@ void BattleEffect_RunGaspFamily(struct BattleEffectParams *args, s32 mode) {
         }
       }
     } else if (mode == GASP_MODE_CALL_DULLAHAN) {
+      // The user raises its arm, four bolts swing out from it onto the target,
+      // and sparks burst and bounce there.
       struct ScreenPoint pos;
 
       if (frame == 0) {
@@ -1006,7 +1099,8 @@ void BattleEffect_RunGaspFamily(struct BattleEffectParams *args, s32 mode) {
 
         if (frame == 28) {
           EffectPosition_ProjectScaledBattler(args->targets[0], &pos);
-          for (q = EXTRA_PARTICLES, i = 0; i != 128; i++, q++) {
+          for (q = EXTRA_PARTICLES, i = 0; i != GASP_DULLAHAN_SPARKS;
+               i++, q++) {
             s32 s = 511;
             s32 a;
 
@@ -1020,16 +1114,18 @@ void BattleEffect_RunGaspFamily(struct BattleEffectParams *args, s32 mode) {
             q->variant = (Random16() & 15) + 16;
           }
         }
-        for (p = EXTRA_PARTICLES, i = 0; i != 64; i++, p++) {
+        for (p = EXTRA_PARTICLES, i = 0; i != GASP_DULLAHAN_SPARKS_DRAWN;
+             i++, p++) {
           if (p->variant >= 0) {
             s32 j;
 
+            // Each spark moves four steps a frame, drawn at each.
             for (j = 0; j != 4; j++) {
               s32 n = p->variant / 8 + 1;
 
-              draw[0](canvas, sprites + gBattleEffect_MotePictures[n - 1],
-                      FIXED_INTEGER_PART(p->x) - n / 2,
-                      FIXED_INTEGER_PART(p->y) - n, n, n * 2);
+              EFFECT_DRAW_MOTE(draw[0], canvas, sprites,
+                               FIXED_INTEGER_PART(p->x),
+                               FIXED_INTEGER_PART(p->y), n);
               Particle_AdvanceWithGravity2D(p, 63, toFIXED(1) / 32);
               if (p->y > toFIXED(104)) {
                 p->y = toFIXED(104);
@@ -1057,7 +1153,7 @@ void BattleEffect_RunGaspFamily(struct BattleEffectParams *args, s32 mode) {
         s32 scale;
 
         Matrix_Push();
-        texture.pixels = work->sheet + ((Random16() & 3) << 12);
+        texture.pixels = work->sheet + (Random16() & 3) * GASP_BOLT_CEL_BYTES;
         texture.logWidth = 5;
         texture.logHeight = 7;
         if (frame > 23) {
@@ -1066,13 +1162,16 @@ void BattleEffect_RunGaspFamily(struct BattleEffectParams *args, s32 mode) {
 
           if (d < 0)
             continue;
-          if (d > 80)
-            d = 80;
+          if (d > GASP_DULLAHAN_REACH)
+            d = GASP_DULLAHAN_REACH;
           if (args->side == EFFECT_SIDE_ENEMIES)
-            Matrix_Translate(d * 3 << 13, d * 7 << 11, 0);
+            Matrix_Translate(d * 3 * (FIXED_ONE / 8), d * 7 * (FIXED_ONE / 32),
+                             0);
           else
-            Matrix_Translate(-(d * 3 << 13), d * 7 << 11, 0);
-          angle = d * 48152 / 80 + TRIG_TURN * 3 / 8;
+            Matrix_Translate(-(d * 3 * (FIXED_ONE / 8)),
+                             d * 7 * (FIXED_ONE / 32), 0);
+          angle =
+              d * GASP_DULLAHAN_SWING / GASP_DULLAHAN_REACH + TRIG_TURN * 3 / 8;
           if (args->side == EFFECT_SIDE_ENEMIES)
             angle = -angle;
           Matrix_RotateZ(angle);
@@ -1082,11 +1181,11 @@ void BattleEffect_RunGaspFamily(struct BattleEffectParams *args, s32 mode) {
           Matrix_RotateZ(args->side == EFFECT_SIDE_ENEMIES ? -TRIG_TURN * 3 / 8
                                                            : TRIG_TURN * 3 / 8);
         }
-        model->shade = -i << 3;
+        model->shade = -i * 8;
         if (frame <= 23)
-          scale = frame * 2730;
+          scale = frame * (FIXED_ONE / 24);
         else if (frame > 31)
-          scale = FIXED_ONE * 4 - (frame * 3 << 11);
+          scale = FIXED_ONE * 4 - frame * 3 * (FIXED_ONE / 32);
         else
           scale = FIXED_ONE;
         if (scale > 0) {
@@ -1098,6 +1197,7 @@ void BattleEffect_RunGaspFamily(struct BattleEffectParams *args, s32 mode) {
       }
       BattleCamera_Shake(8, 8);
     } else if (mode == GASP_MODE_DEMON_EYE) {
+      // Two eyes of light open and close at the user, and the targets flash.
       struct ScreenPoint pos;
 
       work->transferValue = CANVAS_FADE_HALF;
@@ -1110,7 +1210,7 @@ void BattleEffect_RunGaspFamily(struct BattleEffectParams *args, s32 mode) {
       EffectPosition_ProjectScaledBattler(args->user, &pos);
       if (frame <= 15) {
         for (i = 0; i != 2; i++) {
-          s32 scale = Trig_Sin(frame << 11) * 5;
+          s32 scale = Trig_Sin(frame * (TRIG_TURN / 32)) * 5;
 
           if (scale > 0) {
             model->shade = 0;
@@ -1135,13 +1235,14 @@ void BattleEffect_RunGaspFamily(struct BattleEffectParams *args, s32 mode) {
       }
       BattleCamera_Shake(8, 8);
     } else if (mode == GASP_MODE_CAGE) {
+      // Eight turning rings make a cage around the target, then close on it.
       struct ScreenPoint pos;
       s32 shade;
 
       if (frame == 0)
         Sound_PlayFar(SE_LAUNCH);
       EffectPosition_ProjectBattler(args->targets[0], &pos);
-      shade = frame * 4 - 64;
+      shade = frame * 4 + MODEL_SHADE_INVISIBLE;
       if (shade >= -16)
         shade = -16;
       model->shade = shade;
@@ -1161,21 +1262,23 @@ void BattleEffect_RunGaspFamily(struct BattleEffectParams *args, s32 mode) {
         s32 start = i * 2 + 16;
 
         if (frame >= start)
-          scale = FIXED_ONE * 2 - ((frame - start) << 13);
+          scale = FIXED_ONE * 2 - (frame - start) * (FIXED_ONE / 8);
         if (scale > FIXED_ONE / 2) {
           model->scrollU = ((frame + i * 5) & 7) << 4;
           Matrix_Initialize();
           Matrix_Translate(INTtoFIXED(pos.x / 2 - 60), toFIXED(8), 0);
           Matrix_Scale(scale >> 1, scale, FIXED_ONE);
-          Matrix_RotateX((i << 13) + 4000);
-          Matrix_RotateY(frame << 9);
-          Matrix_RotateZ((frame + i * 16) << 9);
+          Matrix_RotateX(i * DEGtoANG(45) + GASP_CAGE_TILT);
+          Matrix_RotateY(frame * (TRIG_TURN / 128));
+          Matrix_RotateZ((frame + i * 16) * (TRIG_TURN / 128));
           Matrix_Scale(FIXED_ONE, FIXED_ONE / 2, FIXED_ONE);
           Render_TransformVertices(gBattleEffect_CylinderCorners, verts, 32);
           Render_DrawModelList(model);
         }
       }
     } else if (mode == GASP_MODE_ELEMENT_SWAP) {
+      // A ring shrinks onto the user and a glow turns there while motes close
+      // in, and the colours step through Mercury's, Mars's and Jupiter's.
       struct ScreenPoint pos;
       s32 j;
 
@@ -1188,7 +1291,7 @@ void BattleEffect_RunGaspFamily(struct BattleEffectParams *args, s32 mode) {
       Matrix_Initialize();
       Matrix_Translate(INTtoFIXED(pos.x / 2 - 64), INTtoFIXED(pos.y - 48), 0);
       if (frame <= 15) {
-        s32 scale = FIXED_ONE * 3 - (frame * 3 << 12);
+        s32 scale = FIXED_ONE * 3 - frame * 3 * (FIXED_ONE / 16);
 
         model->shade = 0;
         Matrix_Scale(scale >> 1, scale, scale >> 1);
@@ -1198,7 +1301,7 @@ void BattleEffect_RunGaspFamily(struct BattleEffectParams *args, s32 mode) {
       Matrix_Initialize();
       Matrix_Translate(INTtoFIXED(pos.x / 2 - 64), INTtoFIXED(pos.y - 48), 0);
       if ((u32)(frame - 12) <= 31) {
-        s32 scale = Trig_Sin((frame << 10) - TRIG_TURN * 3 / 16) * 3;
+        s32 scale = Trig_Sin(frame * (TRIG_TURN / 64) - TRIG_TURN * 3 / 16) * 3;
 
         texture.pixels = work->sheet;
         Matrix_Scale(scale / 2, scale, scale / 2);
@@ -1206,6 +1309,9 @@ void BattleEffect_RunGaspFamily(struct BattleEffectParams *args, s32 mode) {
         Render_TransformVertices(gBattleEffect_SquareCorners, verts, 4);
         Render_DrawModelList(model);
       }
+      // A mote's x is its distance from the user in sixteenths of a pixel, 48
+      // to 142 pixels at first, closing in over 48 steps, three a frame; its
+      // y is its angle.
       if (frame == 0) {
         for (i = 0; i != ARRAY_COUNT(work->particles); i++) {
           struct Particle *p = &work->particles[i];
@@ -1226,8 +1332,7 @@ void BattleEffect_RunGaspFamily(struct BattleEffectParams *args, s32 mode) {
             s32 y = (p->x * Trig_Cos(p->y) >> 20) + 60;
             s32 n = 4;
 
-            draw[0](canvas, sprites + gBattleEffect_MotePictures[n - 1],
-                    x - n / 2, y - n, n, n * 2);
+            EFFECT_DRAW_MOTE(draw[0], canvas, sprites, x, y, n);
             p->x += p->velocityX;
           }
         }
@@ -1250,6 +1355,7 @@ void BattleEffect_RunGaspFamily(struct BattleEffectParams *args, s32 mode) {
       if (frame == 28)
         EFFECT_SHOW_DAMAGE(-1);
     } else if (mode == GASP_MODE_PSY_BOOST) {
+      // Two rings shrink onto the user and a glow turns there, in grey.
       struct ScreenPoint pos;
 
       texture.logWidth = 7;
@@ -1264,11 +1370,11 @@ void BattleEffect_RunGaspFamily(struct BattleEffectParams *args, s32 mode) {
         Matrix_Initialize();
         Matrix_Translate(INTtoFIXED(pos.x / 2 - 64), INTtoFIXED(pos.y - 48), 0);
         if ((u32)t <= 15) {
-          s32 scale = FIXED_ONE * 4 - (t << 14);
+          s32 scale = FIXED_ONE * 4 - t * (FIXED_ONE / 4);
           s32 shade = 0;
 
           if (t <= 7)
-            shade = t * 8 - 64;
+            shade = t * 8 + MODEL_SHADE_INVISIBLE;
           model->shade = shade;
           Matrix_Scale(scale / 2, scale, scale / 2);
           Matrix_RotateZ(i * (DEGtoANG(90)) + DEGtoANG(45));
@@ -1280,7 +1386,7 @@ void BattleEffect_RunGaspFamily(struct BattleEffectParams *args, s32 mode) {
       Matrix_Initialize();
       Matrix_Translate(INTtoFIXED(pos.x / 2 - 64), INTtoFIXED(pos.y - 48), 0);
       if ((u32)(frame - 12) <= 31) {
-        s32 scale = Trig_Sin((frame << 10) - TRIG_TURN * 3 / 16) * 2;
+        s32 scale = Trig_Sin(frame * (TRIG_TURN / 64) - TRIG_TURN * 3 / 16) * 2;
 
         texture.pixels = work->sheet;
         Matrix_Scale(scale / 2, scale, scale / 2);
@@ -1298,6 +1404,8 @@ void BattleEffect_RunGaspFamily(struct BattleEffectParams *args, s32 mode) {
       if (frame == 28)
         EFFECT_SHOW_DAMAGE(-1);
     } else {
+      // Reflux, Counter Rush and Djinn Counter: a swirl grows and turns, at
+      // the target or at the user.
       s32 scale;
 
       model->shade = 0;
@@ -1312,14 +1420,14 @@ void BattleEffect_RunGaspFamily(struct BattleEffectParams *args, s32 mode) {
         else if (frame > 59)
           scale = 228000 - frame * 3000;
         else
-          scale = 48000;
+          scale = GASP_SWIRL_SCALE;
       } else {
         if (frame <= 31)
           scale = frame * 1500;
         else if (frame > 39)
           scale = 168000 - frame * 3000;
         else
-          scale = 48000;
+          scale = GASP_SWIRL_SCALE;
       }
       if (scale > 0) {
         struct ScreenPoint pos;
@@ -1333,9 +1441,9 @@ void BattleEffect_RunGaspFamily(struct BattleEffectParams *args, s32 mode) {
         Matrix_RotateX(DEGtoANG(90));
         Matrix_Scale(scale / 3, scale, scale);
         if (mode == GASP_MODE_REFLUX)
-          Matrix_RotateY(-frame << 10);
+          Matrix_RotateY(-frame * (TRIG_TURN / 64));
         else
-          Matrix_RotateY(frame << 10);
+          Matrix_RotateY(frame * (TRIG_TURN / 64));
         Render_TransformVertices(gBattleEffect_GroundSquareCorners, verts, 4);
         Render_DrawModelList(model);
       }

@@ -33,11 +33,21 @@
 #include "field/object.h"
 #include "window/item_icon.h"
 
-// The parts, in ROM order.
+/// A line's offset in Mind Read's wave at a phase: a sine 4 pixels either way,
+/// a turn every 160 phase steps.
+#define MIND_READ_WAVE_OFFSET(phase) (Trig_Sin(((phase) << 16) / 160) >> 14)
+/// The wave's cycle runs to this count and starts again, 61 frames; at counts
+/// 0, 8 and 16 a particle flies from the target to the caster.
+#define MIND_READ_CYCLE_LAST 60
+#define MIND_READ_PARTICLE_GAP 8
+/// MindReadWork.counter held still: no particles and no sound, while the
+/// islets' scenes read a mind.
+#define MIND_READ_QUIET 99
 
-/// Each frame after the delay: rewrites the 160-line wave into the other
-/// page, cycles the colour every other frame, and at counts 0, 8 and 16 of
-/// its 61-frame cycle sends a particle from the target back to the user.
+/// Task of the wave effect: once its delay has run out, writes the next page
+/// of line offsets, steps the colour fade and the hue every other frame,
+/// keeps the caster's colours lit, and three times a cycle sends a particle
+/// (SPRITE_CRESCENT) from the target to the caster, with SE_PSYNERGY_START.
 void FieldPsynergy_UpdateMindReadWave(void) {
   struct MindReadWork *work = Ram_HeapSlots->mindRead;
   struct Vector3 from;
@@ -59,7 +69,7 @@ void FieldPsynergy_UpdateMindReadWave(void) {
 
   line = work->lines[work->page ^ 1];
   for (i = 0; i < DISPLAY_HEIGHT; i++)
-    *line++ = Trig_Sin(((work->phase + i * 8) << 16) / 160) >> 14;
+    *line++ = MIND_READ_WAVE_OFFSET(work->phase + i * 8);
   work->phase += 4;
   work->page ^= 1;
   if (work->page != 0) {
@@ -70,7 +80,8 @@ void FieldPsynergy_UpdateMindReadWave(void) {
   }
   Actor_SetSpritePalette(Actor_GetById(work->sourceId), 0);
 
-  if (work->counter == 0 || work->counter == 8 || work->counter == 16) {
+  if (work->counter == 0 || work->counter == MIND_READ_PARTICLE_GAP ||
+      work->counter == 2 * MIND_READ_PARTICLE_GAP) {
     source = Actor_GetById(work->sourceId);
     target = Actor_GetById(work->targetId);
     if (source != NULL && target != NULL) {
@@ -119,10 +130,10 @@ void FieldPsynergy_UpdateMindReadWave(void) {
     }
   }
 
-  if (work->counter != 99) {
+  if (work->counter != MIND_READ_QUIET) {
     if (work->counter == 0)
       Sound_PlayFar(SE_PSYNERGY_START);
-    if (++work->counter > 60)
+    if (++work->counter > MIND_READ_CYCLE_LAST)
       work->counter = 0;
   }
 }
@@ -149,12 +160,12 @@ s32 FieldEffect_HueChannelRamp(s16 hue) {
   s16 angle = hue;
 
   angle = (angle + HUE_DEGREES) % HUE_DEGREES;
-  if (angle < 60) {
-    level = angle * RGB_LEVEL_MAX / 60;
-  } else if (angle < 180) {
+  if (angle < HUE_DEGREES / 6) {
+    level = angle * RGB_LEVEL_MAX / (HUE_DEGREES / 6);
+  } else if (angle < HUE_DEGREES / 2) {
     level = RGB_LEVEL_MAX;
-  } else if (angle < 240) {
-    level = (240 - angle) * RGB_LEVEL_MAX / 60;
+  } else if (angle < HUE_DEGREES * 2 / 3) {
+    level = (HUE_DEGREES * 2 / 3 - angle) * RGB_LEVEL_MAX / (HUE_DEGREES / 6);
   }
   return level;
 }
@@ -172,11 +183,11 @@ void FieldEffect_AdvanceHueCycle(void) {
   b = FieldEffect_HueChannelRamp(work->hue + HUE_DEGREES * 2 / 3);
 
   // Scale 0-31 down to 4-11.
-  work->red = (r / 4 + 4) & 0x1f;
-  work->green = (g / 4 + 4) & 0x1f;
-  work->blue = (b / 4 + 4) & 0x1f;
+  work->red = (r / 4 + 4) & RGB_LEVEL_MAX;
+  work->green = (g / 4 + 4) & RGB_LEVEL_MAX;
+  work->blue = (b / 4 + 4) & RGB_LEVEL_MAX;
   limit = toFIXED(HUE_DEGREES - 1);
-  if ((u32)((work->hue += 4) << 16) > limit)
+  if ((u32)INTtoFIXED(work->hue += 4) > limit)
     work->hue = 0;
 }
 
@@ -223,8 +234,6 @@ u16 BattleEffect_GetEightWayHeadingWord(void) {
   return *(u16 *)((u8 *)words + (DPAD_INDEX(input->held) << 1));
 }
 
-// Effects: motion of the main object in an item-breaking effect.
-
 /// Per-frame update of Move's hand: turns it toward the actor it watches, at
 /// most 1/16 turn a frame, and sheds a particle (SPRITE_SPARKLE) round it.
 void FieldEffect_UpdateMoveHand(struct Actor *source) {
@@ -265,8 +274,6 @@ void FieldEffect_UpdateMoveHand(struct Actor *source) {
 }
 
 struct PendingEvent;
-
-#define MOVE_CELL_MASK 0xfff00000 ///< a 16-pixel cell
 
 /// When Move is cast on a target, the pushing hand appears beside it and pushes
 /// it 16 pixels the way the d-pad points, for as long as the player pushes; A,
@@ -331,18 +338,16 @@ void FieldPsynergy_SteerPushedTarget(s32 unused) {
   target->speedLimit = toFIXED(2) / 5;
   target->acceleration = toFIXED(1) / 5;
   target->steeringFlags = moved;
-  // Through target rather than layer, which keeps moved's load after the
   target->layer = 2;
   while (1) {
     wait(1);
-    // The mode read as a signed byte, which the test against 0 does not change.
     if ((s8)scene->mode == 0 &&
         (gInput.pressed & (KEY_A | KEY_B | KEYS_SHOULDERS)))
       break;
 
     direction = (u16)Input_GetDpadAngle(gInput.held);
-    // The bytes read the hook's return as the direction; the field is
-    // declared void (*)(void) in field_psynergy_work.h, which needs s32.
+    // A scene's hook gives the way to push in place of the d-pad, or
+    // DPAD_ANGLE_NONE to stop.
     callback = (s32 (*)(void))scene->finishCallback;
     if (callback != NULL) {
       direction = callback();
@@ -384,17 +389,17 @@ void FieldPsynergy_SteerPushedTarget(s32 unused) {
           Sound_PlayFar(SE_MENU_ERROR);
         continue;
       }
-      cellX = user->x.fixed & MOVE_CELL_MASK;
-      cellZ = user->z.fixed & MOVE_CELL_MASK;
-      if (cellX == (position.x & MOVE_CELL_MASK) &&
-          cellZ == (position.z & MOVE_CELL_MASK)) {
+      cellX = user->x.fixed & FIELD_CELL_MASK;
+      cellZ = user->z.fixed & FIELD_CELL_MASK;
+      if (cellX == (position.x & FIELD_CELL_MASK) &&
+          cellZ == (position.z & FIELD_CELL_MASK)) {
         Actor_SelectAnimationFar(pusher, 4);
         if ((gFrameCount & 15) == 0)
           Sound_PlayFar(SE_MENU_ERROR);
         continue;
       }
-      if (cellX == (beyond.x & MOVE_CELL_MASK) &&
-          cellZ == (beyond.z & MOVE_CELL_MASK)) {
+      if (cellX == (beyond.x & FIELD_CELL_MASK) &&
+          cellZ == (beyond.z & FIELD_CELL_MASK)) {
         if (MapGrid_GetTerrainKindFar(user->layer, beyond.x, beyond.z) != 0) {
           Actor_SelectAnimationFar(pusher, 4);
           if ((gFrameCount & 15) == 0)
@@ -410,7 +415,9 @@ void FieldPsynergy_SteerPushedTarget(s32 unused) {
     x = position.x;
     z = position.z;
     modes = gUnused_BattleEffectBytes;
-    Actor_SelectAnimationFar(pusher, modes[(u16)(angle - direction) >> 14]);
+    // The hand's pose for the quarter turn between its side and the push.
+    Actor_SelectAnimationFar(pusher,
+                             modes[(u16)(angle - direction) / (TRIG_TURN / 4)]);
     wait(15);
     target->paused = 0;
     target->speedLimit = toFIXED(1) / 5;
@@ -454,7 +461,7 @@ void FieldPsynergy_SteerPushedTarget(s32 unused) {
     /* FAKEMATCH(temporary): a byte pointer standing in for the actor's
      * actionFlags. */
     userFlags = &Actor_GetById(scene->firstActorId)->steeringFlags;
-    *userFlags |= 1;
+    *userFlags |= ACTOR_FACES_MOTION;
   }
   FieldPsynergy_FadeFromCastColor();
   UpdateRisingParticleBurst(pusher);
@@ -505,7 +512,7 @@ next_state:
       FieldParticle_HasPendingTarget(effect) == 0)
     FieldEffect_ClearOwnedSlot(effect);
 }
-#undef MOVE_CELL_MASK
+#undef FIELD_CELL_MASK
 
 /// When Move is cast with no target, the hand appears beside the caster for 30
 /// frames and then turns into particles.
@@ -600,8 +607,13 @@ void FieldEffect_SnapScaleToFull(struct Actor *actor) {
   }
 }
 
-/// The object spins as it rises for 31 frames, shrinks, and bursts into 8
-/// particles (object 673).
+/// Move's hand, as it goes: it spins as it rises for 31 frames, shrinks, and
+/// bursts into 8 sparkles.
+#define BURST_RISE_FRAMES 31
+#define BURST_SPARKLES 8
+
+/// The hand spins as it rises for BURST_RISE_FRAMES, shrinks, and bursts into
+/// BURST_SPARKLES sparkles (SPRITE_SPARKLE).
 void UpdateRisingParticleBurst(void *object) {
   struct Actor *src = object;
   struct Actor *child;
@@ -610,20 +622,18 @@ void UpdateRisingParticleBurst(void *object) {
   u32 spread;
 
   Sound_PlayFar(SE_CAST);
-  for (i = 30; i >= 0; i--) {
+  for (i = BURST_RISE_FRAMES - 1; i >= 0; i--) {
     src->y.fixed += toFIXED(1);
-    src->facing += DEGtoANG(45); // 1/8 turn
+    src->facing += DEGtoANG(45);
     src->scaleX += -FIXED_ONE / 32;
     src->scaleY += -FIXED_ONE / 32;
     wait(1);
   }
-  for (i = 7; i >= 0; i--) {
+  for (i = BURST_SPARKLES - 1; i >= 0; i--) {
     child =
         Actor_Spawn(SPRITE_SPARKLE, src->x.fixed, src->y.fixed, src->z.fixed);
     if (child != 0) {
       s32 speed;
-      // One 1.0 for both uses, set before the block's calls; a literal at
-      // each use differs.
       s32 unit = toFIXED(1);
 
       Actor_StartScriptFar(child, gFieldEffect_FragmentScript);
@@ -643,12 +653,15 @@ void UpdateRisingParticleBurst(void *object) {
   Actor_ReleaseFar(src);
 }
 
+/// The actors of Ram_HeapSlots->actors, as the field's ACTOR_COUNT.
+#define HEAP_ACTOR_COUNT 64
+
 /// Reveal's colour for the rocks it shows (sprite 200), given at its start
-/// and taken back at its end. Only the loop over the 64 actors is left; value
+/// and taken back at its end. Only the loop over the actors is left; value
 /// goes unused.
 void Actor_SetRevealSpriteColor(s32 value) {
   struct Actor *actor = Ram_HeapSlots->actors;
-  s32 remainingActors = 63;
+  s32 remainingActors = HEAP_ACTOR_COUNT - 1;
 
   // DEAD: The Broken Seal's loop over the actors with what it did to a rock's
   // sprite gone, so its tests do nothing; the ROM keeps its count and its
@@ -665,8 +678,13 @@ void Actor_SetRevealSpriteColor(s32 value) {
   } while (remainingActors >= 0);
 }
 
+/// How far the leader may walk from where Reveal was cast, in screen pixels up
+/// and down; sideways x counts at about 0.82 of itself, so the edge is an
+/// ellipse about 73 pixels to either side.
+#define REVEAL_RADIUS 60
+
 /// As The Broken Seal's, with this game's offsets: counts the timer down and,
-/// once the leader is 60 pixels from the centre or the timer has run out,
+/// once the leader is REVEAL_RADIUS from the centre or the timer has run out,
 /// requests the effect's end.
 void FieldPsynergy_WatchLeaderDistance(void) {
   struct FieldWork *work;
@@ -681,14 +699,13 @@ void FieldPsynergy_WatchLeaderDistance(void) {
       work->revealFrames--;
   }
 
-  // On screen pixels (y is z less the height). x is scaled by 0xd105 (about
-  // 0.82) for the comparison, so the edge is an ellipse 60 pixels up and
-  // down from the centre and about 73 to either side.
-  distanceX =
-      Iwram_MulFX(work->revealCenterX - actor->x.fixed / FIXED_ONE, 0xd105);
+  // In screen pixels: y is z less the height.
+  distanceX = Iwram_MulFX(work->revealCenterX - actor->x.fixed / FIXED_ONE,
+                          toFIXED(0.81649));
   distanceZ =
       work->revealCenterY - (actor->z.fixed - actor->y.fixed) / FIXED_ONE;
-  if (distanceX * distanceX + distanceZ * distanceZ >= 3600 ||
+  if (distanceX * distanceX + distanceZ * distanceZ >=
+          REVEAL_RADIUS * REVEAL_RADIUS ||
       work->revealFrames == 0) {
     // Raise Reveal as a Psynergy request that pays no PP (ACT_PACKED
     // | ABILITY_REVEAL), which runs its ending events.
@@ -782,15 +799,14 @@ void FieldPsynergy_EndReveal(void) {
   }
 }
 
-#define BURST_FALL_OBJECT 281 ///< the object that falls round the target
-
-// The two sprites of target that do not sink into the ground.
-#define TARGET_KIND_SCATTERS 372 ///< scatters five falling pieces instead
+/// A Growth target that stays as it is (sprite 394).
 #define TARGET_KIND_STAYS 394
 
-/// Animation 12 on a target: the burst of particles, then the target sinks
-/// to the underfoot priority. A target of kind 372 instead throws five pieces
-/// round the scene's position; one of kind 394 only plays the cue (sound 126).
+/// Growth cast on a target: the burst of particles, then the target takes its
+/// grown animation and the underfoot priority, with SE_RECOVERY. Sprouting
+/// leaves (SPRITE_SPROUTING_LEAVES) instead drop five vines round the
+/// Psynergy's position and hang a vine (HangingVine_Hang); sprite 394 only
+/// plays SE_RECOVERY.
 void FieldPsynergy_GrowthOnTarget(s32 unused) {
   struct FieldEffectWork *scene = Ram_HeapSlots->fieldEffectWork;
   struct Actor *target = scene->child;
@@ -800,7 +816,7 @@ void FieldPsynergy_GrowthOnTarget(s32 unused) {
     return;
 
   FieldEffect_SpawnBurstParticleField();
-  if (Actor_GetSpriteIdFar(target) == TARGET_KIND_SCATTERS)
+  if (Actor_GetSpriteIdFar(target) == SPRITE_SPROUTING_LEAVES)
     kind = 1;
   if (Actor_GetSpriteIdFar(target) == TARGET_KIND_STAYS)
     kind = 2;
@@ -826,8 +842,8 @@ void FieldPsynergy_GrowthOnTarget(s32 unused) {
       distance = Random16() * 6 + toFIXED(4);
       Vector_AddPolarOffset(distance, Random16(), position.values);
       position.values[1] = scene->y;
-      piece = Actor_Spawn(BURST_FALL_OBJECT, position.values[0],
-                          position.values[1], position.values[2]);
+      piece = Actor_Spawn(SPRITE_VINE, position.values[0], position.values[1],
+                          position.values[2]);
       if (piece != 0) {
         Actor_StartScriptFar(piece, gFieldEffect_HeavyImpactScript);
         piece->motionFlags = ACTOR_FALLS;
@@ -873,8 +889,10 @@ void FieldPsynergy_Growth(void) {
   FieldPsynergy_FadeFromCastColor();
 }
 
-/// Sends 24 particles, one every 2 frames, from in front of the caster to
-/// points round the Psynergy's position.
+#define BURST_FIELD_PARTICLES 24
+
+/// Sends BURST_FIELD_PARTICLES particles, one every 2 frames, from in front of
+/// the caster to points round the Psynergy's position.
 void FieldEffect_SpawnBurstParticleField(void) {
   struct FieldEffectWork *work;
   struct Actor *user;
@@ -887,7 +905,7 @@ void FieldEffect_SpawnBurstParticleField(void) {
   FieldPsynergy_FadeToCastColor();
 
   p = pos;
-  for (n = 23; n >= 0; n--) {
+  for (n = BURST_FIELD_PARTICLES - 1; n >= 0; n--) {
     struct Actor *obj;
     struct BurstParticleVisual *visual;
     struct BurstParticleVisual *child;
@@ -927,7 +945,7 @@ void FieldEffect_SpawnBurstParticleField(void) {
       Actor_SelectAnimationFar(obj, 7);
       Actor_StartScriptFar(obj, gBattleEffect_SharedParticleScript + 1);
 
-      Actor_SetSpriteFlagsFar(obj, 1);
+      Actor_SetSpriteFlagsFar(obj, SPRITE_FLAG_SHADOW);
 
       p[0] = work->x;
       p[1] = work->y;
@@ -1010,6 +1028,8 @@ void FieldPsynergy_LiftOnTarget(void) {
 /// Lift cast with no target: two hands appear 32 pixels to either side of the
 /// spot, close 24 pixels in and meet with a crash that scatters 24 fragments,
 /// then vanish.
+#define LIFT_SPARKLES 24 ///< scattered as the hands close on the target
+
 void FieldPsynergy_Lift(void) {
   struct FieldEffectWork *work;
   struct Actor *obj;
@@ -1036,7 +1056,7 @@ void FieldPsynergy_Lift(void) {
 
   Actor_WaitForMoveFar(pair[0]);
   Sound_PlayFar(SE_HEAVY_IMPACT);
-  for (n = 0; n < 24; n++) {
+  for (n = 0; n < LIFT_SPARKLES; n++) {
     SET_POSITION(&pos, work->x, work->y + toFIXED(16), work->z);
     obj = Actor_Spawn(SPRITE_SPARKLE, pos.x, pos.y, pos.z);
     if (obj != 0) {
@@ -1054,8 +1074,8 @@ void FieldPsynergy_Lift(void) {
   FieldPsynergy_FadeFromCastColor();
 }
 
-/// Spawns object 278 and grows it from a quarter to full size, an eighth of a
-/// turn a frame, then faces it to angle.
+/// Spawns one of Lift's hands (SPRITE_MOVE_HAND) and grows it from a quarter
+/// to full size, an eighth of a turn a frame, then faces it to angle.
 struct Actor *FieldEffect_SpawnLiftHand(s32 x, s32 y, s32 z, s32 angle) {
   struct Actor *actor;
   s32 scale;
@@ -1142,8 +1162,10 @@ again:
     FieldEffect_ClearOwnedSlot(effect);
 }
 
+#define IMPACT_SHARDS 12
+
 /// A heavy impact, as The Broken Seal's: an actor placed below the source
-/// for a moment, scattering shards from it.
+/// for a moment, scattering IMPACT_SHARDS shards from it.
 s32 SpawnHeavyImpactEffect(struct Actor *source) {
   struct Vector3 pos;
   struct Actor *impact;
@@ -1162,7 +1184,7 @@ s32 SpawnHeavyImpactEffect(struct Actor *source) {
   }
 
   // Shards: 1 to 2 pixels a frame, 8 to 32 pixels in a random direction.
-  for (fragmentIndex = 0; fragmentIndex < 12; fragmentIndex++) {
+  for (fragmentIndex = 0; fragmentIndex < IMPACT_SHARDS; fragmentIndex++) {
     fragment = Actor_Spawn(SPRITE_SPARKLE, pos.x, pos.y, pos.z);
     if (fragment != NULL) {
       Actor_StartScriptFar(fragment, gFieldEffect_FragmentScript);
@@ -1179,7 +1201,15 @@ s32 SpawnHeavyImpactEffect(struct Actor *source) {
 /// Runs Force cast on a target, through FieldPsynergy_Force.
 void FieldPsynergy_ForceOnTarget(s32 unused) { FieldPsynergy_Force(); }
 
-/// Force: restores the colours the cast changed, and does nothing more.
+/// Force's ring of particles round the caster, one every 2 frames, and the
+/// frames it waits at most for the fist to strike.
+#define FORCE_RING_PARTICLES 12
+#define FORCE_STRIKE_FRAMES 60
+
+/// Force: a ring of particles round the caster, then a fist (SPRITE_MOVE_HAND)
+/// grows in front of them and strikes 56 pixels ahead, or at the target, with
+/// three afterimages; the target is pushed 16 pixels the way the fist flew
+/// (and thrown up when its option asks), and the scene's Force event runs.
 void FieldPsynergy_Force(void) {
   struct Actor *copies[4];
   struct Vector3 pos;
@@ -1201,7 +1231,7 @@ void FieldPsynergy_Force(void) {
   Sound_PlayFar(SE_PSYNERGY_START);
   slot = scene->particles;
 
-  for (i = 0; i <= 11; i++) {
+  for (i = 0; i < FORCE_RING_PARTICLES; i++) {
     source = scene->mainActor;
     SET_POSITION(&pos, source->x.fixed, source->y.fixed + toFIXED(16),
                  source->z.fixed);
@@ -1282,7 +1312,7 @@ void FieldPsynergy_Force(void) {
     }
   }
 
-  for (i = 0; i <= 59 && actor->script != NULL; i++)
+  for (i = 0; i < FORCE_STRIKE_FRAMES && actor->script != NULL; i++)
     wait(1);
 
   if (target != NULL && scene->childMode == 0) {
@@ -1298,14 +1328,16 @@ void FieldPsynergy_Force(void) {
     }
   }
 
-  event = Scene_FindPsynergyTrigger(PSYNERGY_TRIGGER(PSYNERGY_PHASE_ACTS), 4,
-                                    Scene_SelectPsynergyTarget(4));
+  event = Scene_FindPsynergyTrigger(
+      PSYNERGY_TRIGGER(PSYNERGY_PHASE_ACTS), FIELD_PSYNERGY_FORCE,
+      Scene_SelectPsynergyTarget(FIELD_PSYNERGY_FORCE));
   if (event != NULL)
     Field_RunPsynergyEvent(event, scene->firstActorId, scene->secondActorId);
   wait(10);
   FieldPsynergy_FadeFromCastColor();
   wait(20);
-  if (marker != 96)
+  // VRAM_CACHE_ENTRY_COUNT: no afterimage took a cache entry.
+  if (marker != VRAM_CACHE_ENTRY_COUNT)
     VramCache_FreeEntry(marker);
 }
 
@@ -1401,6 +1433,8 @@ void FieldPsynergy_FrostOnTarget(s32 unused) {
 /// Sixteen particles, one every three frames, orbit points scattered 2 to 6
 /// pixels around the effect; the target then flashes eight times, takes the
 /// orbiting particles' main update and runs its pending event.
+#define FROST_SNOWFLAKES 16 ///< circling the target
+
 void FieldPsynergy_Frost(void) {
   struct Vector3 pos;
   struct FieldEffectWork *scene;
@@ -1413,7 +1447,7 @@ void FieldPsynergy_Frost(void) {
   target = scene->child;
   FieldPsynergy_FadeToCastColor();
   Sound_PlayFar(SE_ICE);
-  for (cnt = 0; cnt < 16; cnt++) {
+  for (cnt = 0; cnt < FROST_SNOWFLAKES; cnt++) {
     particle = Actor_Spawn(SPRITE_SNOWFLAKE, 0, 0, 0);
     if (particle != NULL) {
       u32 scale;
@@ -1482,7 +1516,8 @@ void FieldEffect_SwayParticle(struct Actor *actor) {
   FIXED amplitude = toFIXED(4);
 
   actor->x.fixed =
-      actor->targetX + Iwram_MulFX(amplitude, Trig_Sin(actor->timer << 9));
+      actor->targetX +
+      Iwram_MulFX(amplitude, Trig_Sin(actor->timer * (TRIG_TURN / 128)));
   actor->timer++;
   actor->timer = (actor->timer + 128) % 128;
 }
@@ -1530,7 +1565,8 @@ void FieldEffect_RunSparkEmitter(struct Actor *emitter) {
 
     SET_ACTOR_POSITION(
         emitter,
-        effectWork->x + Iwram_MulFX(amplitude, Trig_Sin(emitter->timer << 10)),
+        effectWork->x +
+            Iwram_MulFX(amplitude, Trig_Sin(emitter->timer * (TRIG_TURN / 64))),
         effectWork->y + toFIXED(16), effectWork->z);
     emitter->timer++;
     emitter->timer = (emitter->timer + 64) % 64;
@@ -1542,13 +1578,12 @@ void FieldEffect_RunSparkEmitter(struct Actor *emitter) {
     pos[2] = emitter->z.fixed;
     Vector_AddPolarOffset(Random16() * 6, Random16(), pos);
     spark = Actor_Spawn(SPRITE_SPARKLE, pos[0], pos[1], pos[2]);
-    // Each falls under a gravity of 458 (0.007 pixels a frame, each frame)
-    // and is released after 72 frames, its script's wait (lifetime).
+    // Each is released after 72 frames, its script's wait.
     if (spark != 0) {
       spark->update = (void (*)(void))FieldEffect_SwayParticle;
       spark->scaleX = spark->scaleY = FIXED_ONE * 3 / 5;
       spark->motionFlags = ACTOR_FALLS;
-      spark->gravity = 458;
+      spark->gravity = toFIXED(0.007);
       spark->timer = Random16() >> 9;
       spark->targetX = spark->x.fixed;
       Actor_SetSpriteColorModeFar(spark, SPRITE_COLOR_BLUE_TINT);
@@ -1558,14 +1593,18 @@ void FieldEffect_RunSparkEmitter(struct Actor *emitter) {
   }
 }
 
-/// Effect 3 cast on a target: runs effect 3, then stops the caster's hook.
+/// Ply cast on a target: runs Ply, then stops the caster's hook.
 void FieldPsynergy_PlyOnTarget(void) {
   FieldPsynergy_Ply();
   BattleEffect_StopMainActor();
 }
 
-/// Eight particles spiral in on the main object, one a frame; then a centre
-/// object flashes for 60 frames, emits sparks and flies off.
+/// Ply's flashing figure: 30 steps of 2 frames.
+#define PLY_FLASH_STEPS 30
+
+/// Ply: eight winged figures spiral in on the Psynergy's position, one a
+/// frame; then one in the centre flashes for 60 frames, sheds sparks and flies
+/// off.
 void FieldPsynergy_Ply(void) {
   struct FieldEffectWork *effectWork = Ram_HeapSlots->fieldEffectWork;
   struct Actor *target = effectWork->mainActor;
@@ -1586,7 +1625,7 @@ void FieldPsynergy_Ply(void) {
       actor->scaleX = FIXED_ONE * 7 / 10;
       actor->update = (void (*)(void))FieldEffect_UpdateShrinkingOrbitActor;
       actor->timer = 120;
-      actor->userValue = i << 13;
+      actor->userValue = i * (TRIG_TURN / 8);
       actor->motionFlags = ACTOR_FLOATS;
       last = Sprite_ShareVramCacheEntry(actor->sprite, last);
     }
@@ -1617,8 +1656,8 @@ void FieldPsynergy_Ply(void) {
   Sound_PlayFar(SE_PSYNERGY_SPARKLE);
   wait(12);
   if (target != 0) {
-    // Switch its sprite param every 2 frames (10 one time in 4).
-    for (i = 0; i < 30; i++) {
+    // Red one step in four, else blue, a step each 2 frames.
+    for (i = 0; i < PLY_FLASH_STEPS; i++) {
       /* FAKEMATCH(dead): target set again to actor at each step; as the loop
        * without it. */
       target = actor;

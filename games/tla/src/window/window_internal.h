@@ -282,6 +282,11 @@ enum BattleTargetHint {
   TARGET_HINT_LAST_TARGET = 8
 };
 
+/// A code carrying the kana mark drawn with its character, in the top bits
+/// (TEXT_MARK_SHIFT, the index into gFont_MarkGlyphCodes).
+#define TEXT_CODE_VOICED (1 << TEXT_MARK_SHIFT)
+#define TEXT_CODE_SEMIVOICED (2 << TEXT_MARK_SHIFT)
+
 /// The command window's top tile row: it runs along the bottom three rows.
 #define COMMAND_ROW_TOP 17
 

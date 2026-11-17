@@ -51,7 +51,7 @@
 #include "window/window.h"
 #include "text/msg_ids.h"
 
-/// Trial Road's Mad Plant, the last of the five hidden in bushes: its
+/// Trial Road's Mad Plant, the last of the five hidden in weeds: its
 /// FLAG_MAD_PLANT and its column of ENCOUNTER_TABLE_MAD_PLANTS.
 #define MAD_PLANT_TRIAL_ROAD 4
 /// Set once Move has pushed the peak's pillar into column 8, where it stays.
@@ -77,11 +77,11 @@
 #define FLAG_CAVE_ROCK_LIFTED FLAG_SCENE_TEMP_89
 /// Set once Gasp has hopped away from the leader to his own spot.
 #define FLAG_GASP_FLED FLAG_SCENE_TEMP_88
-/// Set once Whirlwind has blown away the bush on the pillar stage's pillar C,
-/// the Pound stage's pillar B, and the sand stage's vine.
-#define FLAG_PILLAR_STAGE_BUSH_BLOWN FLAG_AREA_TEMP_07
-#define FLAG_POUND_STAGE_BUSH_BLOWN FLAG_AREA_TEMP_39
-#define FLAG_SAND_STAGE_BUSH_BLOWN FLAG_AREA_TEMP_74
+/// Set once Whirlwind has blown away the ivy on the pillar stage's pillar C,
+/// on the Pound stage's pillar B, and on the sand stage's cliff.
+#define FLAG_PILLAR_STAGE_IVY_BLOWN_AWAY FLAG_AREA_TEMP_07
+#define FLAG_POUND_STAGE_IVY_BLOWN_AWAY FLAG_AREA_TEMP_39
+#define FLAG_SAND_STAGE_IVY_BLOWN_AWAY FLAG_AREA_TEMP_74
 /// Set while the Pound stage's inner west stake stands raised and the west one
 /// sunk; clear the other way round.
 #define FLAG_INNER_WEST_STAKE_RAISED FLAG_AREA_TEMP_35
@@ -156,15 +156,15 @@ enum TrialRoadTorchStageActorId {
   ACTOR_EAST_TORCH
 };
 
-/// The bushes after the pillars: on pillar C in the pillar stage, on pillars A
-/// and B in the bush stage.
-enum { ACTOR_BUSH_A = ACTOR_FIRST_STAGE_PIECE + 5, ACTOR_BUSH_B };
+/// The ivy after the pillars: on pillar C in the pillar stage, on pillars A
+/// and B in the ivy pillar stage.
+enum { ACTOR_IVY_A = ACTOR_FIRST_STAGE_PIECE + 5, ACTOR_IVY_B };
 
-/// The bush on pillar B in the Pound stage, after its four stakes.
-enum { ACTOR_POUND_STAGE_BUSH = ACTOR_EAST_STAKE + 1 };
+/// The ivy on pillar B in the Pound stage, after its four stakes.
+enum { ACTOR_POUND_STAGE_IVY = ACTOR_EAST_STAKE + 1 };
 
-/// The bush in the sand stage, after its two sand pieces.
-enum { ACTOR_SAND_STAGE_BUSH = ACTOR_FIRST_STAGE_PIECE + 2 };
+/// The ivy on the sand stage's cliff, after its two tightrope posts.
+enum { ACTOR_SAND_STAGE_IVY = ACTOR_FIRST_STAGE_PIECE + 2 };
 
 /// The pillar at the summit (gTrialRoad_SummitPlacements), after Kraden.
 #define ACTOR_PEAK_PILLAR (ACTOR_KRADEN + 1)
@@ -205,9 +205,9 @@ enum { ACTOR_WEST_POST = ACTOR_FIRST_STAGE_PIECE, ACTOR_EAST_POST };
 /// The torch stage's pillars C to F are frozen puddles; each one's flag,
 /// FLAG_SCENE_TEMP_14 to FLAG_SCENE_TEMP_17, is set once it has melted.
 #define FLAG_PUDDLE_MELTED_BASE (FLAG_SCENE_TEMP_14 - ACTOR_PILLAR_C)
-/// The bush stage's bushes; each one's flag, FLAG_AREA_TEMP_27 and
+/// The ivy pillar stage's two ivies; each one's flag, FLAG_AREA_TEMP_27 and
 /// FLAG_AREA_TEMP_28, is set once Whirlwind has blown it away.
-#define FLAG_BUSH_BLOWN_BASE (FLAG_AREA_TEMP_27 - ACTOR_BUSH_A)
+#define FLAG_IVY_BLOWN_AWAY_BASE (FLAG_AREA_TEMP_27 - ACTOR_IVY_A)
 
 /// The log stage's logs' flags, FLAG_SCENE_TEMP_53 to FLAG_SCENE_TEMP_55, set
 /// once each has been pushed.
@@ -216,7 +216,7 @@ enum { ACTOR_WEST_POST = ACTOR_FIRST_STAGE_PIECE, ACTOR_EAST_POST };
 /// set once each has been uncovered.
 #define FLAG_VENT_UNCOVERED_BASE (FLAG_AREA_TEMP_63 - ACTOR_WEST_VENT)
 
-/// A piece the party cannot push: a pillar a bush holds down, or a log.
+/// A piece the party cannot push: a pillar ivy holds down, or a log.
 /// Leader_CanPushObjectAhead refuses a target with this byte set.
 #define PUSH_BLOCKED(object) *(u8 *)&object->riseCounter
 /// The height in pixels of a pillar's top (TrialRoad_AddPillarTop) above the
@@ -458,7 +458,7 @@ void TrialRoad_CrumblePillar(const void *data, s32 a);
 
 void TrialRoad_ClearGiveUpAsked(void);
 
-void TrialRoad_BlowBushOffPillarStagePillar(void);
+void TrialRoad_BlowAwayPillarStageIvy(void);
 
 void TrialRoad_JumpAcrossGap(void);
 
@@ -494,15 +494,15 @@ void TrialRoad_StartSand(void);
 
 void TrialRoad_EndSand(void);
 
-void TrialRoad_BlowBushOffVine(void);
+void TrialRoad_BlowAwaySandStageIvy(void);
 
 void TrialRoad_DriftWithStream(void);
 
 void TrialRoad_LiftCaveRock(void);
 
-void TrialRoad_CutBushes(void);
+void TrialRoad_ScatterWeeds(void);
 
-void TrialRoad_CutMadPlantBushes(void);
+void TrialRoad_ScatterWeedsHidingMadPlant(void);
 
 /// Shows the pools' hidden tiles.
 void TrialRoad_RevealPoolTiles(void);
@@ -514,7 +514,7 @@ void TrialRoad_ChallengeMoapa(void);
 
 extern struct ActorPlacement gTrialRoad_PillarStagePlacements[];
 extern struct ActorPlacement gTrialRoad_TorchStagePlacements[];
-extern struct ActorPlacement gTrialRoad_BushPillarStagePlacements[];
+extern struct ActorPlacement gTrialRoad_IvyPillarStagePlacements[];
 extern struct ActorPlacement gTrialRoad_PoundStagePlacements[];
 extern struct ActorPlacement gTrialRoad_CrumblingStagePlacements[];
 extern struct ActorPlacement gTrialRoad_LogStagePlacements[];
@@ -522,7 +522,7 @@ extern struct ActorPlacement gTrialRoad_FountainStagePlacements[];
 extern struct ActorPlacement gTrialRoad_SandStagePlacements[];
 extern struct Trigger gTrialRoad_PillarStageTriggers[];
 extern struct Trigger gTrialRoad_TorchStageTriggers[];
-extern struct Trigger gTrialRoad_BushPillarStageTriggers[];
+extern struct Trigger gTrialRoad_IvyPillarStageTriggers[];
 extern struct Trigger gTrialRoad_PoundStageTriggers[];
 extern struct Trigger gTrialRoad_CrumblingStageTriggers[];
 extern struct Trigger gTrialRoad_LogStageTriggers[];
@@ -609,7 +609,7 @@ extern const u16 gTrialRoad_ProgressPalette[];
 void TrialRoad_MoveRival(void);
 void TrialRoad_SetUpPillarStage(void);
 void TrialRoad_SetUpTorchStage(void);
-void TrialRoad_SetUpBushPillarStage(void);
+void TrialRoad_SetUpIvyPillarStage(void);
 void TrialRoad_SetUpPoundStage(void);
 void TrialRoad_SetUpCrumblingStage(void);
 void TrialRoad_SetUpLogStage(void);
@@ -874,11 +874,11 @@ DEFINE_TRIAL_ROAD_ON_FOOT(TrialRoad_ClearJumpUnderPushedPillar,
 DEFINE_TRIAL_ROAD_ON_FOOT(TrialRoad_SetJumpUnderPushedPillar,
                           TrialRoad_SetJumpCellUnder)
 
-/// Whirlwind blows the bush off the pillar stage's pillar, which can then be
+/// Whirlwind blows the ivy off the pillar stage's pillar, which can then be
 /// pushed.
-void TrialRoad_BlowBushOffPillarStagePillar(void) {
+void TrialRoad_BlowAwayPillarStageIvy(void) {
   PUSH_BLOCKED(Actor_GetById(ACTOR_PILLAR_C)) = 0;
-  Event_SetFlag(FLAG_PILLAR_STAGE_BUSH_BLOWN);
+  Event_SetFlag(FLAG_PILLAR_STAGE_IVY_BLOWN_AWAY);
 }
 
 /// The leader jumps across, if he can.
@@ -970,10 +970,10 @@ void TrialRoad_FreezePuddle(s32 a, s32 id) {
     actor->priorityFlags &= ~ACTOR_PRIORITY_UNDERFOOT;
 }
 
-/// Whirlwind blows the bush off a pillar, which can then be pushed.
-void TrialRoad_BlowBushOffPillar(s32 a, s32 id) {
-  PUSH_BLOCKED(Actor_GetById(id - (ACTOR_BUSH_A - ACTOR_PILLAR_A))) = 0;
-  Event_SetFlag(id + FLAG_BUSH_BLOWN_BASE);
+/// Whirlwind blows the ivy off a pillar, which can then be pushed.
+void TrialRoad_BlowAwayIvy(s32 a, s32 id) {
+  PUSH_BLOCKED(Actor_GetById(id - (ACTOR_IVY_A - ACTOR_PILLAR_A))) = 0;
+  Event_SetFlag(id + FLAG_IVY_BLOWN_AWAY_BASE);
 }
 
 /// Lowers a pillar into the ground, its top with it.
@@ -1000,10 +1000,10 @@ void TrialRoad_RaisePillar(s32 id) {
   }
 }
 
-/// Whirlwind blows the bush off the pound stage's pillar.
-void TrialRoad_BlowBushOffPoundPillar(void) {
+/// Whirlwind blows the ivy off the Pound stage's pillar.
+void TrialRoad_BlowAwayPoundStageIvy(void) {
   PUSH_BLOCKED(Actor_GetById(ACTOR_PILLAR_B)) = 0;
-  Event_SetFlag(FLAG_POUND_STAGE_BUSH_BLOWN);
+  Event_SetFlag(FLAG_POUND_STAGE_IVY_BLOWN_AWAY);
 }
 
 /// The stake each of the pound stage's four stakes raises when it is pounded
@@ -1434,10 +1434,11 @@ void TrialRoad_EndSand(void) {
   Actor_GetById(gMainRoutineWork.leaderActorId)->layer = MAPGRID_LAYER_GROUND;
 }
 
-/// Whirlwind blows the bush off the vine and opens the way up it.
-void TrialRoad_BlowBushOffVine(void) {
+/// Whirlwind blows the ivy off the sand stage's cliff, and the cell it covered
+/// opens.
+void TrialRoad_BlowAwaySandStageIvy(void) {
   MapGrid_CopyCellAttributes(12, 21, 1, 1, 19, 21);
-  Event_SetFlag(FLAG_SAND_STAGE_BUSH_BLOWN);
+  Event_SetFlag(FLAG_SAND_STAGE_IVY_BLOWN_AWAY);
 }
 
 #include "../field/actor_set_sprite_priority.c"
@@ -1491,14 +1492,14 @@ void TrialRoad_DriftWithStream(void) {
 /// Lift raises the rock at the cave's mouth.
 void TrialRoad_LiftCaveRock(void) { GameFlag_Set(FLAG_CAVE_ROCK_LIFTED); }
 
-/// Cyclone cuts the bushes it touches.
-void TrialRoad_CutBushes(void) {
-  Cyclone_CopyTouchedCells_(68, 6, 1, 21, 13, 64, 64);
+/// Cyclone ("Conjure wind to scatter weeds.") scatters the weeds it touches.
+void TrialRoad_ScatterWeeds(void) {
+  Cyclone_CopyTouchedCells_(68, 6, MAPGRID_LAYER_MIDDLE, 21, 13, 64, 64);
 }
 
-/// Cyclone cuts the bushes, and the Mad Plant hiding in them attacks.
-void TrialRoad_CutMadPlantBushes(void) {
-  Cyclone_CopyTouchedCells_(68, 6, 1, 21, 13, 64, 64);
+/// Cyclone scatters the weeds, and the Mad Plant hiding in them attacks.
+void TrialRoad_ScatterWeedsHidingMadPlant(void) {
+  Cyclone_CopyTouchedCells_(68, 6, MAPGRID_LAYER_MIDDLE, 21, 13, 64, 64);
   if (!Event_GetFlag(FLAG_MAD_PLANT(MAD_PLANT_TRIAL_ROAD))) {
     Import_MadPlantLeapAtLeader(SPRITE_MAD_PLANT, 72, 152);
     gMainRoutineWork.pendingDjinni =
@@ -1599,13 +1600,13 @@ const struct Trigger *Scene_GetTriggers(void) {
   return gTrialRoad_Triggers;
 }
 
-/// Readies the pillar stage: the pillar under the bush cannot be pushed until
-/// Whirlwind blows the bush off; each pillar gets its top.
+/// Readies the pillar stage: the pillar under the ivy cannot be pushed until
+/// Whirlwind blows the ivy off; each pillar gets its top.
 void TrialRoad_SetUpPillarStage(void) {
-  if (!Event_GetFlag(FLAG_PILLAR_STAGE_BUSH_BLOWN))
+  if (!Event_GetFlag(FLAG_PILLAR_STAGE_IVY_BLOWN_AWAY))
     PUSH_BLOCKED(Actor_GetById(ACTOR_PILLAR_C)) = 1;
   else
-    Actor_SetPosition(ACTOR_BUSH_A, 0, 0);
+    Actor_SetPosition(ACTOR_IVY_A, 0, 0);
   TrialRoad_AddPillarTop(ACTOR_PILLAR_A);
   TrialRoad_AddPillarTop(ACTOR_PILLAR_B);
   TrialRoad_AddPillarTop(ACTOR_PILLAR_C);
@@ -1654,17 +1655,17 @@ void TrialRoad_SetUpTorchStage(void) {
     TrialRoad_SetPillarTopLift(ACTOR_PILLAR_F, -PILLAR_HEIGHT);
 }
 
-/// Readies the stage of pillars in bushes: each stays blocked until Whirlwind
-/// blows its bush off.
-void TrialRoad_SetUpBushPillarStage(void) {
+/// Readies the stage of pillars in ivy: each stays blocked until Whirlwind
+/// blows its ivy off.
+void TrialRoad_SetUpIvyPillarStage(void) {
   if (!Event_GetFlag(FLAG_AREA_TEMP_27))
     PUSH_BLOCKED(Actor_GetById(ACTOR_PILLAR_A)) = 1;
   else
-    Actor_SetPosition(ACTOR_BUSH_A, 0, 0);
+    Actor_SetPosition(ACTOR_IVY_A, 0, 0);
   if (!Event_GetFlag(FLAG_AREA_TEMP_28))
     PUSH_BLOCKED(Actor_GetById(ACTOR_PILLAR_B)) = 1;
   else
-    Actor_SetPosition(ACTOR_BUSH_B, 0, 0);
+    Actor_SetPosition(ACTOR_IVY_B, 0, 0);
   TrialRoad_AddPillarTop(ACTOR_PILLAR_A);
   TrialRoad_AddPillarTop(ACTOR_PILLAR_B);
   TrialRoad_AddPillarTop(ACTOR_PILLAR_C);
@@ -1683,10 +1684,10 @@ void TrialRoad_SetUpPoundStage(void) {
   PUSH_BLOCKED(Actor_GetById(ACTOR_INNER_WEST_STAKE)) = 1;
   PUSH_BLOCKED(Actor_GetById(ACTOR_INNER_EAST_STAKE)) = 1;
   PUSH_BLOCKED(Actor_GetById(ACTOR_EAST_STAKE)) = 1;
-  if (!Event_GetFlag(FLAG_POUND_STAGE_BUSH_BLOWN))
+  if (!Event_GetFlag(FLAG_POUND_STAGE_IVY_BLOWN_AWAY))
     PUSH_BLOCKED(Actor_GetById(ACTOR_PILLAR_B)) = 1;
   else
-    Actor_SetPosition(ACTOR_POUND_STAGE_BUSH, 0, 0);
+    Actor_SetPosition(ACTOR_POUND_STAGE_IVY, 0, 0);
   TrialRoad_AddPillarTop(ACTOR_PILLAR_A);
   TrialRoad_AddPillarTop(ACTOR_PILLAR_B);
   TrialRoad_AddPillarTop(ACTOR_PILLAR_C);
@@ -1740,12 +1741,12 @@ void TrialRoad_SetUpLogStage(void) {
 /// One of the fountain stage's fountains: the vent its water rises from, and
 /// the platform the leader rides on top of it.
 struct TrialRoadFountain {
-  s16 id;     ///< its vent; 0 for an empty slot
-  s16 phase;  ///< frames into its period
-  s16 height; ///< how far it has risen, in pixels
-  s16 period; ///< frames in one rise and fall
-  s16 riseAt; ///< the phase it starts to rise at
-  s16 fallAt; ///< the phase it starts to fall at
+  s16 id;           ///< its vent; 0 for an empty slot
+  s16 phase;        ///< frames into its period
+  s16 height;       ///< how far it has risen, in pixels
+  s16 periodFrames; ///< frames in one rise and fall
+  s16 riseFrame;    ///< the phase it starts to rise at
+  s16 fallFrame;    ///< the phase it starts to fall at
   s16 high;
   s16 low;
   s16 unusedAfterLow;   ///< set to 1 as the fountain is added; nothing reads it
@@ -1759,6 +1760,10 @@ struct TrialRoadFountain {
 #define FOUNTAIN_COUNT 16
 /// The sprites the fountains' columns may queue in a frame.
 #define FOUNTAIN_SPRITE_COUNT 80
+/// A fountain's sprites sort at their screen row plus this many depth slots,
+/// four behind an actor's sprite at the same place (field_sprite_draw.c adds
+/// 62), so the leader riding a fountain is drawn in front of its water.
+#define FOUNTAIN_DEPTH_OFFSET 58
 
 /// The fountain stage's work, kept in the inventory snapshot's spare room.
 struct TrialRoadFountains {
@@ -1789,29 +1794,29 @@ void TrialRoad_SetUpFountainStage(void) {
   TrialRoad_StartFountains(0, FOUNTAIN_PERIOD);
   fountain =
       TrialRoad_AddFountain(0, ACTOR_WEST_VENT, 0, 0, NORTH_FOUNTAIN_HEIGHT);
-  fountain->period = FOUNTAIN_PERIOD;
-  fountain->riseAt = FOUNTAIN_RISE_AT;
-  fountain->fallAt = FOUNTAIN_FALL_AT;
+  fountain->periodFrames = FOUNTAIN_PERIOD;
+  fountain->riseFrame = FOUNTAIN_RISE_AT;
+  fountain->fallFrame = FOUNTAIN_FALL_AT;
   fountain =
       TrialRoad_AddFountain(1, ACTOR_MIDDLE_VENT, 0, 0, NORTH_FOUNTAIN_HEIGHT);
-  fountain->period = FOUNTAIN_PERIOD;
-  fountain->riseAt = FOUNTAIN_RISE_AT;
-  fountain->fallAt = FOUNTAIN_FALL_AT;
+  fountain->periodFrames = FOUNTAIN_PERIOD;
+  fountain->riseFrame = FOUNTAIN_RISE_AT;
+  fountain->fallFrame = FOUNTAIN_FALL_AT;
   fountain =
       TrialRoad_AddFountain(2, ACTOR_EAST_VENT, 0, 0, NORTH_FOUNTAIN_HEIGHT);
-  fountain->period = FOUNTAIN_PERIOD;
-  fountain->riseAt = FOUNTAIN_RISE_AT;
-  fountain->fallAt = FOUNTAIN_FALL_AT;
+  fountain->periodFrames = FOUNTAIN_PERIOD;
+  fountain->riseFrame = FOUNTAIN_RISE_AT;
+  fountain->fallFrame = FOUNTAIN_FALL_AT;
   fountain = TrialRoad_AddFountain(3, ACTOR_SOUTHWEST_VENT, 0, 0,
                                    SOUTH_FOUNTAIN_HEIGHT);
-  fountain->period = FOUNTAIN_PERIOD;
-  fountain->riseAt = FOUNTAIN_RISE_AT;
-  fountain->fallAt = FOUNTAIN_FALL_AT;
+  fountain->periodFrames = FOUNTAIN_PERIOD;
+  fountain->riseFrame = FOUNTAIN_RISE_AT;
+  fountain->fallFrame = FOUNTAIN_FALL_AT;
   fountain = TrialRoad_AddFountain(4, ACTOR_SOUTHEAST_VENT, 0, 0,
                                    SOUTH_FOUNTAIN_HEIGHT);
-  fountain->period = FOUNTAIN_PERIOD;
-  fountain->riseAt = FOUNTAIN_RISE_AT;
-  fountain->fallAt = FOUNTAIN_FALL_AT;
+  fountain->periodFrames = FOUNTAIN_PERIOD;
+  fountain->riseFrame = FOUNTAIN_RISE_AT;
+  fountain->fallFrame = FOUNTAIN_FALL_AT;
   if (!Event_GetFlag(FLAG_AREA_TEMP_63))
     Actor_SetPosition(ACTOR_WEST_VENT, 0, 0);
   else
@@ -1829,15 +1834,15 @@ void TrialRoad_SetUpFountainStage(void) {
   TrialRoad_SetJumpCellUnder(ACTOR_PILLAR_A);
 }
 
-/// Readies the sand stage: its tightrope, and the vine once Whirlwind has
-/// blown its bush away.
+/// Readies the sand stage: its tightrope, and the cell under the cliff's ivy
+/// open once Whirlwind has blown the ivy away.
 void TrialRoad_SetUpSandStage(void) {
   Tightrope_Initialize();
   Tightrope_Place(0, ACTOR_WEST_POST, ACTOR_EAST_POST);
-  if (!Event_GetFlag(FLAG_SAND_STAGE_BUSH_BLOWN))
+  if (!Event_GetFlag(FLAG_SAND_STAGE_IVY_BLOWN_AWAY))
     MapGrid_CopyCellAttributes(18, 21, 1, 1, 19, 21);
   else
-    Actor_SetPosition(ACTOR_SAND_STAGE_BUSH, 0, 0);
+    Actor_SetPosition(ACTOR_SAND_STAGE_IVY, 0, 0);
 }
 
 /// Does nothing: the summit's cave needs no setting up.
@@ -1851,22 +1856,22 @@ void TrialRoad_GaspFlees(void) {
   struct Actor *leader = Actor_GetById(gMainRoutineWork.leaderActorId);
   s32 dx;
   s32 dz;
-  s32 toGasp;
-  s32 toSpot;
+  s32 gaspDistanceSquared;
+  s32 spotDistanceSquared;
   FIXED y;
 
   if (Event_GetFlag(FLAG_GASP_FLED))
     return;
   dx = FIXEDtoINT(leader->x.fixed - gasp->x.fixed);
   dz = FIXEDtoINT(leader->z.fixed - gasp->z.fixed);
-  toGasp = dx * dx + dz * dz;
+  gaspDistanceSquared = dx * dx + dz * dz;
   dx = (FIXEDtoINT(leader->x.fixed)) - 296;
   dz = (FIXEDtoINT(leader->z.fixed)) - 248;
-  toSpot = dx * dx + dz * dz;
-  if (toSpot <= 80 * 80 || toGasp <= 48 * 48)
+  spotDistanceSquared = dx * dx + dz * dz;
+  if (spotDistanceSquared <= 80 * 80 || gaspDistanceSquared <= 48 * 48)
     Actor_SetMoveTarget(gasp, toFIXED(296 - dx), gasp->y.fixed,
                         toFIXED(248 - dz));
-  if (toSpot >= 4 * 4)
+  if (spotDistanceSquared >= 4 * 4)
     return;
   Event_PlaySound(SE_ENEMY_CRY);
   Event_PlaySound(SE_DJINNI_FLEES);
@@ -2925,7 +2930,7 @@ void TrialRoad_ShowTraps(void) {
 /// the water.
 void TrialRoad_UpdateFountains(void) {
   struct TrialRoadFountains *work = TRIAL_ROAD_FOUNTAINS;
-  struct TrialRoadFountain *mover = work->fountains;
+  struct TrialRoadFountain *fountain = work->fountains;
   struct MapWork *map = Ram_HeapSlots->mapGrid;
   s32 shape = work->shape;
   u8 *shapes = map->layers[0].terrainIds;
@@ -2939,63 +2944,63 @@ void TrialRoad_UpdateFountains(void) {
 
   i = 0;
   collision = (s32 *)Ram_MapCollision + shape;
-  for (; i < FOUNTAIN_COUNT; collision++, i++, mover++) {
-    if (mover->id == 0)
+  for (; i < FOUNTAIN_COUNT; collision++, i++, fountain++) {
+    if (fountain->id == 0)
       continue;
-    actor = Actor_GetById(mover->id);
+    actor = Actor_GetById(fountain->id);
     if (actor->x.fixed == 0 && actor->z.fixed == 0)
       continue;
-    if (mover->phase == mover->riseAt) {
+    if (fountain->phase == fountain->riseFrame) {
       Sound_Play(SE_CURSE_FALL);
-      mover->speed = 4;
+      fountain->speed = 4;
     }
-    if (mover->phase == mover->fallAt) {
+    if (fountain->phase == fountain->fallFrame) {
       Sound_Play(SOUND_FADE_OUT_EXIT_SE);
-      mover->speed = -8;
+      fountain->speed = -8;
     }
-    if (mover->speed != 0) {
-      mover->height += mover->speed;
-      if (mover->height >= mover->high) {
-        mover->height = mover->high;
-        mover->speed = 0;
-        mover->bob = 0;
+    if (fountain->speed != 0) {
+      fountain->height += fountain->speed;
+      if (fountain->height >= fountain->high) {
+        fountain->height = fountain->high;
+        fountain->speed = 0;
+        fountain->bob = 0;
       }
-      if (mover->height <= mover->low) {
-        mover->height = mover->low;
-        mover->speed = 0;
-        mover->bob = 0;
+      if (fountain->height <= fountain->low) {
+        fountain->height = fountain->low;
+        fountain->speed = 0;
+        fountain->bob = 0;
       }
     }
     if (!GameFlag_Get(FLAG_FIELD_HANDLING_REQUESTS)) {
-      if (++mover->phase >= mover->period)
-        mover->phase = 0;
+      if (++fountain->phase >= fountain->periodFrames)
+        fountain->phase = 0;
     }
     cell = (FIELD_CELL(actor->x.fixed)) + ((FIELD_CELL(actor->z.fixed)) << 7);
     shapes[cell] = (u8)work->shape + i;
-    *collision = ((actor->y.part[0].integer + mover->height) / 8) << 8;
+    *collision = ((actor->y.part[0].integer + fountain->height) / 8) << 8;
     attributes = cells + cell * 4;
-    if (mover->speed != 0)
+    if (fountain->speed != 0)
       attributes[3] = 0;
     else {
       s32 bits = MAP_CELL_JUMP;
       bits |= attributes[3];
       attributes[3] = bits;
     }
-    if (mover->height != 0) {
+    if (fountain->height != 0) {
       s32 bits = MAP_CELL_WATER;
       bits |= attributes[3];
       attributes[3] = bits;
     } else
       attributes[3] = 0;
-    marker = mover->top;
+    marker = fountain->top;
     if (marker != 0) {
-      if (mover->height == 0) {
+      if (fountain->height == 0) {
         marker->y.fixed = actor->y.fixed - toFIXED(16);
       } else {
         FIXED wave;
-        mover->bob += TRIG_TURN / 16;
-        wave = Iwram_MulFX(toFIXED(2), Trig_Sin(mover->bob)) - toFIXED(14);
-        marker->y.fixed = actor->y.fixed + toFIXED(mover->height) + wave;
+        fountain->bob += TRIG_TURN / 16;
+        wave = Iwram_MulFX(toFIXED(2), Trig_Sin(fountain->bob)) - toFIXED(14);
+        marker->y.fixed = actor->y.fixed + toFIXED(fountain->height) + wave;
       }
       marker->x.fixed = actor->x.fixed;
       marker->z.fixed = actor->z.fixed;
@@ -3003,10 +3008,11 @@ void TrialRoad_UpdateFountains(void) {
   }
 }
 #undef SET_LAYER
-/// Queues the Trial Road movers' sprites.
+/// Queues the fountains' sprites each frame: each risen fountain's column of
+/// water, in 16-pixel segments up from its vent, and its spout bobbing on top.
 void TrialRoad_DrawFountains(void) {
   struct TrialRoadFountains *base = TRIAL_ROAD_FOUNTAINS;
-  struct TrialRoadFountain *mover = base->fountains;
+  struct TrialRoadFountain *fountain = base->fountains;
   s32 i;
   s32 tile;
   s32 frame;
@@ -3020,11 +3026,11 @@ void TrialRoad_DrawFountains(void) {
   struct Actor *actor;
   u32 *entry;
   u32 *cursor;
-  s32 lift;
+  s32 segmentHeight;
   s32 x;
   s32 height;
   FIXED z;
-  s32 sy;
+  s32 screenY;
   s32 depth;
   FIXED bob;
 
@@ -3038,53 +3044,53 @@ void TrialRoad_DrawFountains(void) {
   viewZ = view[1] & FIELD_PIXEL_MASK;
   viewY = map->origin[1];
 
-  for (i = 0; i < FOUNTAIN_COUNT; i++, mover++) {
-    if (mover->id == 0 || mover->height == 0)
+  for (i = 0; i < FOUNTAIN_COUNT; i++, fountain++) {
+    if (fountain->id == 0 || fountain->height == 0)
       continue;
-    actor = Actor_GetById(mover->id);
+    actor = Actor_GetById(fountain->id);
     frame = ((gFrameCount % 12) / 3) * 8 + 32;
-    lift = 0;
-    if (lift < mover->height) {
+    segmentHeight = 0;
+    if (segmentHeight < fountain->height) {
       do {
         if (count >= FOUNTAIN_SPRITE_COUNT)
           continue;
         x = actor->x.fixed - viewX;
-        height = actor->y.fixed + toFIXED(lift) - viewY;
+        height = actor->y.fixed + toFIXED(segmentHeight) - viewY;
         z = actor->z.fixed - viewZ - viewY;
         x = FIXEDtoINT(x) - 8;
-        sy = z - height;
-        sy = (sy >> 16) - 16;
-        depth = ((height + z) >> 16) + 58;
-        if ((u32)(x + 15) > 334 || sy <= -16 || sy > 239)
+        screenY = z - height;
+        screenY = FIXEDtoINT(screenY) - 16;
+        depth = FIXEDtoINT(height + z) + FOUNTAIN_DEPTH_OFFSET;
+        if ((u32)(x + 15) > 334 || screenY <= -16 || screenY > 239)
           continue;
         x &= 0x1ff;
-        sy &= 0xff;
+        screenY &= 0xff;
         cursor = entry;
         *cursor++ = 0;
-        *cursor++ = sy | OBJ_X(x) | OBJ_SIZE_16X16 | OBJ_256_COLORS;
+        *cursor++ = screenY | OBJ_X(x) | OBJ_SIZE_16X16 | OBJ_256_COLORS;
         *cursor = (tile + frame) | OBJ_PRIORITY(2);
         Oam_AddSpriteAtDepth(entry, depth);
         entry += 3;
         count++;
-      } while ((lift += 16) < mover->height);
+      } while ((segmentHeight += 16) < fountain->height);
     }
     if (count >= FOUNTAIN_SPRITE_COUNT)
       continue;
     x = actor->x.fixed - viewX;
-    height = actor->y.fixed + toFIXED(mover->height) - viewY;
+    height = actor->y.fixed + toFIXED(fountain->height) - viewY;
     z = actor->z.fixed - viewZ - viewY;
     x = FIXEDtoINT(x) - 8;
-    sy = z - height;
-    bob = Iwram_MulFX(rise, Trig_Sin(mover->bob));
-    sy = ((sy + bob + rise) >> 16) - 4;
-    depth = ((height + z) >> 16) + 58;
-    if ((u32)(x + 15) > 334 || sy <= -16 || sy > 239)
+    screenY = z - height;
+    bob = Iwram_MulFX(rise, Trig_Sin(fountain->bob));
+    screenY = FIXEDtoINT(screenY + bob + rise) - 4;
+    depth = FIXEDtoINT(height + z) + FOUNTAIN_DEPTH_OFFSET;
+    if ((u32)(x + 15) > 334 || screenY <= -16 || screenY > 239)
       continue;
     x &= 0x1ff;
-    sy &= 0xff;
+    screenY &= 0xff;
     cursor = entry;
     *cursor++ = 0;
-    *cursor++ = sy | OBJ_X(x) | OBJ_SIZE_16X16 | OBJ_256_COLORS;
+    *cursor++ = screenY | OBJ_X(x) | OBJ_SIZE_16X16 | OBJ_256_COLORS;
     *cursor = (tile + frame - 32) | OBJ_PRIORITY(2);
     Oam_AddSpriteAtDepth(entry, depth);
     entry += 3;
@@ -3136,10 +3142,10 @@ struct TrialRoadFountain *TrialRoad_AddFountain(s32 slot, s32 id, s32 timer,
     fountain->id = id;
     fountain->height = 0;
     fountain->phase = timer;
-    fountain->period = 360;
+    fountain->periodFrames = 360;
     fountain->high = high;
-    fountain->riseAt = 60;
-    fountain->fallAt = 240;
+    fountain->riseFrame = 60;
+    fountain->fallFrame = 240;
     fountain->low = low;
     fountain->unusedAfterLow = 1;
     actor->motionFlags = 0;
@@ -3298,8 +3304,8 @@ void TrialRoad_StepOnTrap(const u16 *table) {
   }
 }
 
-/// A second copy of Effect_AdvanceMotionAtLeaderPriority in this overlay:
-/// FieldEffect_AdvanceMotion, then the leader's sprite priority for the effect.
+/// The dust's motion each frame, as Effect_AdvanceMotionAtLeaderPriority's: it
+/// drifts, slows, grows and spins, drawn at the leader's sprite priority.
 void TrialRoad_DriftDust(union FieldObject *object) {
   struct FieldEffect *effect = &object->effect;
   s32 velocityX = effect->velocity.x;
@@ -3692,8 +3698,6 @@ void TrialRoad_DrawRaceMap(void) {
   s32 tile = gVramCacheEntries[*vramEntry].offset >> 5;
   u32 flip, word;
   s32 y;
-  // One constant for its whole life: the markers' OAM size bits (attribute 1
-  // size 1, 16 by 16), held in a register across both markers.
   u32 markerSize = OBJ_SIZE_16X16;
   struct FieldWork *event = Ram_HeapSlots->fieldWork;
   struct Actor *actor;
@@ -3871,7 +3875,7 @@ u32 gTrialRoad_GaspHopScript[] = {
 void (*gTrialRoad_StageSetUps[])(void) = {
     TrialRoad_SetUpPillarStage,
     TrialRoad_SetUpTorchStage,
-    TrialRoad_SetUpBushPillarStage,
+    TrialRoad_SetUpIvyPillarStage,
     TrialRoad_SetUpPoundStage,
     TrialRoad_SetUpCrumblingStage,
     TrialRoad_SetUpLogStage,
@@ -4038,7 +4042,7 @@ LATE_DATA s32 gTrialRoad_DustScript[] = {
 void TrialRoad_FightGasp(void);
 void TrialRoad_OpenChests(void);
 void TrialRoad_JumpForward(void);
-void TrialRoad_BlowBushOffPoundPillar(void);
+void TrialRoad_BlowAwayPoundStageIvy(void);
 void TrialRoad_StandOnBlock(void);
 void TrialRoad_OpenSummitGate(s32 sound);
 void TrialRoad_StepPastChests(void);
@@ -4122,7 +4126,7 @@ LAST_DATA struct ActorPlacement gTrialRoad_TorchStagePlacements[] = {
     {SCENE_TABLE_END},
 };
 
-LAST_DATA struct ActorPlacement gTrialRoad_BushPillarStagePlacements[] = {
+LAST_DATA struct ActorPlacement gTrialRoad_IvyPillarStagePlacements[] = {
     ACTOR_PLACEMENT(SPRITE_MOAPA, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_EAST, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(SPRITE_CHEST, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 344, 0, 152, FACING_EAST, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(SPRITE_CHEST, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 328, 0, 152, FACING_EAST, TALK_FACING_KEEP, 0),
@@ -4246,7 +4250,7 @@ LAST_DATA struct ActorPlacement gTrialRoad_SummitPlacements[] = {
 LAST_DATA s32 gTrialRoad_StagesPlacements[] = {
     (s32)gTrialRoad_PillarStagePlacements,
     (s32)gTrialRoad_TorchStagePlacements,
-    (s32)gTrialRoad_BushPillarStagePlacements,
+    (s32)gTrialRoad_IvyPillarStagePlacements,
     (s32)gTrialRoad_PoundStagePlacements,
     (s32)gTrialRoad_CrumblingStagePlacements,
     (s32)gTrialRoad_LogStagePlacements,
@@ -4284,16 +4288,16 @@ LAST_DATA struct Trigger gTrialRoad_PillarStageTriggers[] = {
     {TRIGGER_PUSH, 0, CONDITION_ALWAYS, EVENT(TrialRoad_ClearJumpUnderPushedPillar)},
     {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), ACTOR_PILLAR_A, CONDITION_ALWAYS, EVENT(TrialRoad_ClearJumpUnderPushedPillar)},
     {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), ACTOR_PILLAR_B, CONDITION_ALWAYS, EVENT(TrialRoad_ClearJumpUnderPushedPillar)},
-    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), ACTOR_PILLAR_C, IF_FLAG_SET(FLAG_PILLAR_STAGE_BUSH_BLOWN), EVENT(TrialRoad_ClearJumpUnderPushedPillar)},
+    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), ACTOR_PILLAR_C, IF_FLAG_SET(FLAG_PILLAR_STAGE_IVY_BLOWN_AWAY), EVENT(TrialRoad_ClearJumpUnderPushedPillar)},
     {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), ACTOR_PILLAR_D, CONDITION_ALWAYS, EVENT(TrialRoad_ClearJumpUnderPushedPillar)},
     {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), ACTOR_PILLAR_E, CONDITION_ALWAYS, EVENT(TrialRoad_ClearJumpUnderPushedPillar)},
     {TRIGGER_PUSHED, 0, CONDITION_ALWAYS, EVENT(TrialRoad_SetJumpUnderPushedPillar)},
     {PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_PILLAR_A, CONDITION_ALWAYS, EVENT(TrialRoad_SetJumpUnderPushedPillar)},
     {PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_PILLAR_B, CONDITION_ALWAYS, EVENT(TrialRoad_SetJumpUnderPushedPillar)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_PILLAR_C, IF_FLAG_SET(FLAG_PILLAR_STAGE_BUSH_BLOWN), EVENT(TrialRoad_SetJumpUnderPushedPillar)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_PILLAR_C, IF_FLAG_SET(FLAG_PILLAR_STAGE_IVY_BLOWN_AWAY), EVENT(TrialRoad_SetJumpUnderPushedPillar)},
     {PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_PILLAR_D, CONDITION_ALWAYS, EVENT(TrialRoad_SetJumpUnderPushedPillar)},
     {PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_PILLAR_E, CONDITION_ALWAYS, EVENT(TrialRoad_SetJumpUnderPushedPillar)},
-    {PSYNERGY_ON_ACTOR(ABILITY_WHIRLWIND), ACTOR_BUSH_A, FLAG_PILLAR_STAGE_BUSH_BLOWN, EVENT(TrialRoad_BlowBushOffPillarStagePillar)},
+    {PSYNERGY_ON_ACTOR(ABILITY_WHIRLWIND), ACTOR_IVY_A, FLAG_PILLAR_STAGE_IVY_BLOWN_AWAY, EVENT(TrialRoad_BlowAwayPillarStageIvy)},
     {TRIGGER_TABLE_END},
 };
 
@@ -4337,7 +4341,7 @@ LAST_DATA struct Trigger gTrialRoad_TorchStageTriggers[] = {
     {TRIGGER_TABLE_END},
 };
 
-LAST_DATA struct Trigger gTrialRoad_BushPillarStageTriggers[] = {
+LAST_DATA struct Trigger gTrialRoad_IvyPillarStageTriggers[] = {
     {TRIGGER_STEP, 1, CONDITION_ALWAYS, EVENT(TrialRoad_TakeStairs)},
     {TRIGGER_STEP, 2, CONDITION_ALWAYS, EVENT(TrialRoad_TakeStairs)},
     {TRIGGER_STEP, 3, CONDITION_ALWAYS, EVENT(TrialRoad_TakeStairs)},
@@ -4371,8 +4375,8 @@ LAST_DATA struct Trigger gTrialRoad_BushPillarStageTriggers[] = {
     {PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_PILLAR_C, CONDITION_ALWAYS, EVENT(TrialRoad_SetJumpUnderPushedPillar)},
     {PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_PILLAR_D, CONDITION_ALWAYS, EVENT(TrialRoad_SetJumpUnderPushedPillar)},
     {PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_PILLAR_E, CONDITION_ALWAYS, EVENT(TrialRoad_SetJumpUnderPushedPillar)},
-    {PSYNERGY_ON_ACTOR(ABILITY_WHIRLWIND), ACTOR_BUSH_A, FLAG_AREA_TEMP_27, EVENT(TrialRoad_BlowBushOffPillar)},
-    {PSYNERGY_ON_ACTOR(ABILITY_WHIRLWIND), ACTOR_BUSH_B, FLAG_AREA_TEMP_28, EVENT(TrialRoad_BlowBushOffPillar)},
+    {PSYNERGY_ON_ACTOR(ABILITY_WHIRLWIND), ACTOR_IVY_A, FLAG_AREA_TEMP_27, EVENT(TrialRoad_BlowAwayIvy)},
+    {PSYNERGY_ON_ACTOR(ABILITY_WHIRLWIND), ACTOR_IVY_B, FLAG_AREA_TEMP_28, EVENT(TrialRoad_BlowAwayIvy)},
     {TRIGGER_TABLE_END},
 };
 
@@ -4407,9 +4411,9 @@ LAST_DATA struct Trigger gTrialRoad_PoundStageTriggers[] = {
     {TRIGGER_STEP, 53, IF_FLAG_SET(FLAG_EAST_STAKE_RAISED), EVENT(TrialRoad_StepOntoEastStake)},
     {STEP_TRIGGER_WALKING, 60, CONDITION_ALWAYS, EVENT(TrialRoad_LandOnPillar)},
     {PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_PILLAR_A, CONDITION_ALWAYS, EVENT(TrialRoad_CheckStakesCovered)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_PILLAR_B, IF_FLAG_SET(FLAG_POUND_STAGE_BUSH_BLOWN), EVENT(TrialRoad_CheckStakesCovered)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_PILLAR_B, IF_FLAG_SET(FLAG_POUND_STAGE_IVY_BLOWN_AWAY), EVENT(TrialRoad_CheckStakesCovered)},
     {PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_PILLAR_C, CONDITION_ALWAYS, EVENT(TrialRoad_CheckStakesCovered)},
-    {PSYNERGY_ON_ACTOR(ABILITY_WHIRLWIND), ACTOR_POUND_STAGE_BUSH, FLAG_POUND_STAGE_BUSH_BLOWN, EVENT(TrialRoad_BlowBushOffPoundPillar)},
+    {PSYNERGY_ON_ACTOR(ABILITY_WHIRLWIND), ACTOR_POUND_STAGE_IVY, FLAG_POUND_STAGE_IVY_BLOWN_AWAY, EVENT(TrialRoad_BlowAwayPoundStageIvy)},
     {PSYNERGY_PHASE_ON_ACTOR(ABILITY_POUND, PSYNERGY_PHASE_ACTS), ACTOR_WEST_STAKE, FLAG_INNER_WEST_STAKE_RAISED, EVENT(TrialRoad_PoundWestStake)},
     {PSYNERGY_PHASE_ON_ACTOR(ABILITY_POUND, PSYNERGY_PHASE_ACTS), ACTOR_INNER_WEST_STAKE, IF_FLAG_SET(FLAG_INNER_WEST_STAKE_RAISED), EVENT(TrialRoad_PoundInnerWestStake)},
     {PSYNERGY_PHASE_ON_ACTOR(ABILITY_POUND, PSYNERGY_PHASE_ACTS), ACTOR_INNER_EAST_STAKE, FLAG_EAST_STAKE_RAISED, EVENT(TrialRoad_PoundInnerEastStake)},
@@ -4657,8 +4661,8 @@ LAST_DATA struct Trigger gTrialRoad_SandStageTriggers[] = {
      CONDITION_ALWAYS, EVENT(TrialRoad_StartSand)},
     {PSYNERGY_ANYWHERE(ABILITY_SAND, PSYNERGY_PHASE_FADES), 0, CONDITION_ALWAYS,
      EVENT(TrialRoad_EndSand)},
-    {PSYNERGY_ON_ACTOR(ABILITY_WHIRLWIND), ACTOR_SAND_STAGE_BUSH,
-     FLAG_SAND_STAGE_BUSH_BLOWN, EVENT(TrialRoad_BlowBushOffVine)},
+    {PSYNERGY_ON_ACTOR(ABILITY_WHIRLWIND), ACTOR_SAND_STAGE_IVY,
+     FLAG_SAND_STAGE_IVY_BLOWN_AWAY, EVENT(TrialRoad_BlowAwaySandStageIvy)},
     {TRIGGER_TABLE_END},
 };
 
@@ -4675,9 +4679,9 @@ LAST_DATA struct Trigger gTrialRoad_CaveRockTriggers[] = {
 LAST_DATA struct Trigger gTrialRoad_GaspTriggers[] = {
     {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
     {PSYNERGY_PHASE_ON_CELL(ABILITY_CYCLONE, PSYNERGY_PHASE_ACTS), 33,
-     CONDITION_ALWAYS, EVENT(TrialRoad_CutBushes)},
+     CONDITION_ALWAYS, EVENT(TrialRoad_ScatterWeeds)},
     {PSYNERGY_PHASE_ON_CELL(ABILITY_CYCLONE, PSYNERGY_PHASE_ACTS), 34,
-     CONDITION_ALWAYS, EVENT(TrialRoad_CutMadPlantBushes)},
+     CONDITION_ALWAYS, EVENT(TrialRoad_ScatterWeedsHidingMadPlant)},
     {TRIGGER_TALK, ACTOR_GASP, CONDITION_ALWAYS, EVENT(TrialRoad_FightGasp)},
     {PSYNERGY_ANYWHERE(ABILITY_REVEAL, PSYNERGY_PHASE_ACTS), 0,
      CONDITION_ALWAYS, EVENT(TrialRoad_RevealPoolTiles)},
@@ -4703,10 +4707,10 @@ LAST_DATA struct Trigger gTrialRoad_SummitTriggers[] = {
 };
 
 LAST_DATA s32 gTrialRoad_StagesTriggers[] = {
-    (s32)gTrialRoad_PillarStageTriggers,     (s32)gTrialRoad_TorchStageTriggers,
-    (s32)gTrialRoad_BushPillarStageTriggers, (s32)gTrialRoad_PoundStageTriggers,
-    (s32)gTrialRoad_CrumblingStageTriggers,  (s32)gTrialRoad_LogStageTriggers,
-    (s32)gTrialRoad_FountainStageTriggers,   (s32)gTrialRoad_SandStageTriggers,
+    (s32)gTrialRoad_PillarStageTriggers,    (s32)gTrialRoad_TorchStageTriggers,
+    (s32)gTrialRoad_IvyPillarStageTriggers, (s32)gTrialRoad_PoundStageTriggers,
+    (s32)gTrialRoad_CrumblingStageTriggers, (s32)gTrialRoad_LogStageTriggers,
+    (s32)gTrialRoad_FountainStageTriggers,  (s32)gTrialRoad_SandStageTriggers,
 };
 
 LAST_DATA s32 gTrialRoad_PaletteCycleFrame = -1;

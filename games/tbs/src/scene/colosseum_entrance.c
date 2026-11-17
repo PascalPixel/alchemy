@@ -483,13 +483,9 @@ static void ColosseumEntrance_TalkToAzart(void) {
   ColosseumEntrance_ShowMessageAndPause(ACTOR_AZART);
   Actor_RunRepeatedMotion(ACTOR_AZART, 1);
   Event_ShowMessage(ACTOR_AZART, 0);
-  {
-    u16 *timer = (u16 *)&contestant->timer;
-    u16 duration = 720;
-
-    *timer = duration;
-  }
-  contestant->userValue = 112;
+  // He wanders about his place again, the home SC_WANDER_HOME keeps.
+  contestant->homeX = 720;
+  contestant->homeZ = 112;
   Actor_SetMovementTypeById(ACTOR_AZART, MOVEMENT_TYPE_WANDER);
   Event_End();
 }
@@ -1127,6 +1123,10 @@ static void ColosseumEntrance_ExplainTrial(void) {
   Event_End();
 }
 
+/// The heaves that lift the trial pillar as a warrior clears his trial, each
+/// three tenths of a pixel up.
+#define TRIAL_PILLAR_HEAVES 20
+
 /// In the Colosseum's trial grounds, a warrior clears his trial.
 static void ColosseumEntrance_ShowClearedTrial(void) {
   u32 counter;
@@ -1204,7 +1204,7 @@ static void ColosseumEntrance_ShowClearedTrial(void) {
   // The object rises a little with every heave.
   trialEffect = Actor_Get(ACTOR_TRIAL_PILLAR);
   trialEffect->motionFlags = 0;
-  for (counter = 0; counter < 20; counter++) {
+  for (counter = 0; counter < TRIAL_PILLAR_HEAVES; counter++) {
     trialEffect->y.fixed += toFIXED(3) / 5;
     wait(4);
     trialEffect->y.fixed -= toFIXED(3) / 10;
@@ -1623,14 +1623,9 @@ static void ColosseumEntrance_AnnounceFinals(void) {
   Event_SetMessageId(MsgColosseumPrepareYourselvesContestantsFinalsWill);
   ColosseumEntrance_ShowMessageAndPause(ACTOR_FINALS_SOLDIER);
   Actor_SetAnimationAndWait(ACTOR_PARTY_LEADER, ANIM_NOD);
-  // Azart's wander home, as in ColosseumEntrance_TalkToAzart.
-  {
-    u16 *timer = (u16 *)&contestant->timer;
-    u16 duration = 720;
-
-    *timer = duration;
-  }
-  contestant->userValue = 112;
+  // Azart wanders about his place again, as in ColosseumEntrance_TalkToAzart.
+  contestant->homeX = 720;
+  contestant->homeZ = 112;
   Actor_SetMovementTypeById(ACTOR_AZART, MOVEMENT_TYPE_WANDER);
   Actor_FaceDirection(ACTOR_MORGAN, FACING_SOUTH_SOUTHEAST, 0);
   Actor_FaceDirection(ACTOR_GALAHAD, FACING_NORTH_NORTHWEST, 0);
@@ -1814,12 +1809,12 @@ static void ColosseumEntrance_InitializeContestants(void) {
   Actor_SetSpriteColorById(ACTOR_DEKKA, SPRITE_COLOR_BRG);
   Actor_SetSpriteColorById(ACTOR_NAVAMPA, SPRITE_COLOR_RBG);
   Actor_SetSpriteColorById(ACTOR_BUFORD, SPRITE_COLOR_GREY);
-  Actor_SetAnimationSpeedById(ACTOR_AZART, 10);
-  Actor_SetAnimationSpeedById(ACTOR_GALAHAD, 20);
+  Actor_SetAnimationSpeedById(ACTOR_AZART, ANIMATION_STEP_NORMAL * 5 / 8);
+  Actor_SetAnimationSpeedById(ACTOR_GALAHAD, ANIMATION_STEP_NORMAL * 5 / 4);
   Actor_SetAnimation(ACTOR_SATRAGE, ANIM_STILL);
-  Actor_SetAnimationSpeedById(ACTOR_DEKKA, 40);
-  Actor_SetAnimationSpeedById(ACTOR_NAVAMPA, 50);
-  Actor_SetAnimationSpeedById(ACTOR_BUFORD, 60);
+  Actor_SetAnimationSpeedById(ACTOR_DEKKA, ANIMATION_STEP_NORMAL * 5 / 2);
+  Actor_SetAnimationSpeedById(ACTOR_NAVAMPA, ANIMATION_STEP_NORMAL * 25 / 8);
+  Actor_SetAnimationSpeedById(ACTOR_BUFORD, ANIMATION_STEP_NORMAL * 15 / 4);
 }
 
 s32 gColosseumEntrance_GatherIntoIsaacScript[] = {

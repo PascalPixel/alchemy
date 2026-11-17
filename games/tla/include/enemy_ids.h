@@ -170,6 +170,12 @@ enum EnemyId {
   ENEMY_AQUA_HYDRA,
   ENEMY_HYDRA,
   ENEMY_PYRODRA,
+  /// Gaia Rock's Serpent: a row for each number of the four openings into its
+  /// lair that are open as it is fought, counted by
+  /// GaiaRockInside_ChallengeSerpent, this one for none.
+  /// XXX: beams of sunlight or streams of Dragonsbane? gaia_rock_inside.c
+  /// names the openings streams of Dragonsbane, these rows beams; a recording
+  /// of the lair's entrance 20 as an opening is shown would settle it.
   ENEMY_SERPENT,
   ENEMY_SERPENT_ONE_BEAM,
   ENEMY_SERPENT_TWO_BEAMS,
@@ -465,6 +471,10 @@ enum EnemyId {
   ENEMY_MIMIC_MARS_LIGHTHOUSE,
   /// The Broken Seal's ENEMY_ZOMBIE_DJINN_LESSON, the same stats.
   ENEMY_ZOMBIE_DJINN_LESSON,
+  /// The Doom Dragon's three forms are rows A, E and H, and each acts again in
+  /// a turn as the rows after it (BattleAI_ChooseAction): A's second, third
+  /// and fourth actions are C, B and D, E's G and F, and H's second I.
+  /// Battle_ChangeEnemyForm brings on E, then H.
   ENEMY_DOOM_DRAGON_A,
   ENEMY_DOOM_DRAGON_B,
   ENEMY_DOOM_DRAGON_C,

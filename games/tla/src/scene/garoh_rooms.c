@@ -52,15 +52,14 @@ enum GarohInnActorId {
   ACTOR_ARMOR_MERCHANT,
   ACTOR_INNKEEPER, ///< GarohRooms_TalkToInnkeeper checks the party in
   /// The one who greets the party the morning after.
-  ACTOR_INN_ATTENDANT,
+  ACTOR_INN_WORKER,
   /// A traveler who climbed Air's Rock and found nothing, asleep at night.
   ACTOR_DISAPPOINTED_TRAVELER,
   /// His companion, still puzzling over the rock that would not spin.
   ACTOR_STUBBORN_TRAVELER,
-  /// Placed beside the two travelers at night and taken away in the morning;
-  /// talking to them wakes the travelers.
-  /// XXX: what sprite 489 shows over the sleeping travelers; a render of the
-  /// inn at night would settle it.
+  /// Unseen markers (SPRITE_UNSEEN_MARKER, which draws nothing) on the beds the
+  /// two travelers sleep in at night, taken away in the morning; talking to
+  /// them wakes the travelers.
   ACTOR_DISAPPOINTED_TRAVELERS_BED,
   ACTOR_STUBBORN_TRAVELERS_BED
 };
@@ -69,13 +68,13 @@ enum GarohInnActorId {
 /// gGarohRooms_HouseActorPlacements.
 enum GarohHouseActorId {
   ACTOR_AIRS_ROCK_GUARDIAN = ACTOR_FIRST_PLACED,
-  ACTOR_WHIRLWIND_TALKER,
-  ACTOR_WIND_STONE_TALKER,
+  ACTOR_VILLAGER_ON_WHIRLWIND,
+  ACTOR_VILLAGER_ON_THE_WIND_STONE,
   ACTOR_ITEM_MERCHANT
 };
 
-/// The sanctum's healer, its one actor.
-enum GarohSanctumActorId { ACTOR_HEALER = ACTOR_FIRST_PLACED };
+/// The Sanctum's priest, its one actor.
+enum GarohSanctumActorId { ACTOR_PRIEST = ACTOR_FIRST_PLACED };
 
 extern struct ActorPlacement gGarohRooms_NoActorPlacements[];
 extern struct ActorPlacement gGarohRooms_InnActorPlacements[];
@@ -225,16 +224,16 @@ void GarohRooms_TalkToInnkeeper(s32 actor) {
   }
 }
 
-/// The healer turns to the leader: across the counter, the sanctum; else what
+/// The priest turns to the leader: across the counter, the Sanctum; else what
 /// he says. He then faces south again.
-void GarohRooms_TalkToHealer(void) {
+void GarohRooms_TalkToPriest(void) {
   s16 facing;
 
   facing = FACING_NEAREST_CARDINAL(
       Actor_GetById(gMainRoutineWork.leaderActorId)->facing);
-  Actor_FaceActorById(ACTOR_HEALER, gMainRoutineWork.leaderActorId, 0);
+  Actor_FaceActorById(ACTOR_PRIEST, gMainRoutineWork.leaderActorId, 0);
   if ((u16)facing == FACING_NORTH) {
-    Sanctum_Run(ACTOR_HEALER);
+    Sanctum_Run(ACTOR_PRIEST);
   } else {
     if (GameFlag_Get(FLAG_GAROH_SECRET_SHARED))
       // "I've heard about you. They say you're special, like the people in this
@@ -244,9 +243,9 @@ void GarohRooms_TalkToHealer(void) {
       // "The people here may be different, but they certainly are nice..."
       Event_SetMessageId((s32)MsgGarohInteriorsThePeopleHereMayBe);
     // "The people here may be different, but they certainly are nice... And..."
-    Event_ShowMessageAndWait(ACTOR_HEALER, 0);
+    Event_ShowMessageAndWait(ACTOR_PRIEST, 0);
   }
-  Actor_FaceDirection(ACTOR_HEALER, FACING_SOUTH, 0);
+  Actor_FaceDirection(ACTOR_PRIEST, FACING_SOUTH, 0);
 }
 
 /// The young werewolf's father asks the party, at night, what they are
@@ -470,7 +469,7 @@ void GarohRooms_WakeAtInn(void) {
   // "You folks didn't sleep much last night..."
   Event_SetMessageId((s32)MsgGarohInteriorsYouFolksDidntSleepMuch);
   // "You folks didn't sleep much last night... You don't look like you..."
-  Event_ShowMessageThenWait(ACTOR_INN_ATTENDANT, 0, 10);
+  Event_ShowMessageThenWait(ACTOR_INN_WORKER, 0, 10);
   Actor_RunRepeatedMotion(ACTOR_INNKEEPER, 2);
   Event_Wait(20);
   // "Master Maha told us all about you. Don't you worry about the bill. It's
@@ -514,13 +513,13 @@ struct ActorPlacement gGarohRooms_InnActorPlacements[] = {
     ACTOR_PLACEMENT(SPRITE_OLD_MAN_WITH_CANE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 568, 0, 136, FACING_SOUTHEAST, TALK_FACING_PARTY, 0),
     ACTOR_PLACEMENT(SPRITE_OLD_WOMAN, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 592, 0, 96, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
     ACTOR_PLACEMENT(SPRITE_BALD_MAN_IN_RED, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 134, 0, 120, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
-    ACTOR_PLACEMENT(105, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 112, 0, 120, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(SPRITE_MAN_WITH_ORANGE_BEARD, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 112, 0, 120, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
     ACTOR_PLACEMENT(SPRITE_MAN_WITH_DARK_HAIR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 248, 0, 424, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
     ACTOR_PLACEMENT(SPRITE_WOMAN_IN_PINK_APRON, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 264, 0, 420, FACING_WEST, TALK_FACING_PARTY, 0),
     ACTOR_PLACEMENT(SPRITE_WARRIOR_IN_GOLDEN_HELMET, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 280, 0, 344, FACING_NORTHEAST, TALK_FACING_PARTY_AND_BACK, 0),
     ACTOR_PLACEMENT(SPRITE_WARRIOR_IN_GOLDEN_HELMET, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 330, 0, 376, FACING_SOUTHWEST, TALK_FACING_PARTY_AND_BACK, 0),
-    ACTOR_PLACEMENT(489, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 296, 0, 336, FACING_SOUTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(489, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 352, 0, 344, FACING_SOUTHWEST, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_UNSEEN_MARKER, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 296, 0, 336, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_UNSEEN_MARKER, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 352, 0, 344, FACING_SOUTHWEST, TALK_FACING_KEEP, 0),
     {SCENE_TABLE_END},
 };
 
@@ -582,12 +581,12 @@ struct Trigger gGarohRooms_InnNightTriggers[] = {
      CONDITION_ALWAYS, MSGNO(MsgGarohInteriorsTheseStrangersSeemNormalEnough)},
     {TRIGGER_TALK, ACTOR_INNKEEPER, CONDITION_ALWAYS,
      EVENT(GarohRooms_TalkToInnkeeper)},
-    {TRIGGER_TALK, ACTOR_INN_ATTENDANT, CONDITION_ALWAYS,
+    {TRIGGER_TALK, ACTOR_INN_WORKER, CONDITION_ALWAYS,
      MSGNO(MsgGarohInteriorsAirsRockCanGetQuite)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_INNKEEPER, CONDITION_ALWAYS,
      MSGNO(MsgGarohInteriorsItOnlyRainsAFew)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_INN_ATTENDANT,
-     CONDITION_ALWAYS, MSGNO(MsgGarohInteriorsMostPeopleSeeNothingOf)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_INN_WORKER, CONDITION_ALWAYS,
+     MSGNO(MsgGarohInteriorsMostPeopleSeeNothingOf)},
     {TRIGGER_TALK, ACTOR_DISAPPOINTED_TRAVELERS_BED, CONDITION_ALWAYS,
      EVENT(GarohRooms_TalkToDisappointedTraveler)},
     {TRIGGER_TALK, ACTOR_STUBBORN_TRAVELERS_BED, CONDITION_ALWAYS,
@@ -617,15 +616,15 @@ struct Trigger gGarohRooms_HouseNightTriggers[] = {
     {TRIGGER_EXIT | EXIT_STYLE_STAIRS_DOWN, 7, CONDITION_ALWAYS, 7},
     {TRIGGER_TALK, ACTOR_AIRS_ROCK_GUARDIAN, CONDITION_ALWAYS,
      MSGNO(MsgGarohInteriorsGarohExistsToProtectAirs)},
-    {TRIGGER_TALK, ACTOR_WHIRLWIND_TALKER, CONDITION_ALWAYS,
+    {TRIGGER_TALK, ACTOR_VILLAGER_ON_WHIRLWIND, CONDITION_ALWAYS,
      MSGNO(MsgGarohInteriorsSoYouveHeardOfWhirlwind)},
-    {TRIGGER_TALK, ACTOR_WIND_STONE_TALKER, CONDITION_ALWAYS,
+    {TRIGGER_TALK, ACTOR_VILLAGER_ON_THE_WIND_STONE, CONDITION_ALWAYS,
      MSGNO(MsgGarohInteriorsIveHeardAboutTheWind)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_AIRS_ROCK_GUARDIAN,
      CONDITION_ALWAYS, MSGNO(MsgGarohInteriorsWeHaveOtherPowersThan)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_WHIRLWIND_TALKER,
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_VILLAGER_ON_WHIRLWIND,
      CONDITION_ALWAYS, MSGNO(MsgGarohInteriorsAndDifferentPeopleUseWhirlwind)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_WIND_STONE_TALKER,
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_VILLAGER_ON_THE_WIND_STONE,
      CONDITION_ALWAYS, MSGNO(MsgGarohInteriorsIWishIKnewWhat)},
     {TRIGGER_TALK, ACTOR_ITEM_MERCHANT, CONDITION_ALWAYS,
      EVENT(GarohRooms_TalkToItemMerchant)},
@@ -638,13 +637,13 @@ struct Trigger gGarohRooms_HouseNightTriggers[] = {
 
 struct Trigger gGarohRooms_SanctumTriggers[] = {
     {TRIGGER_EXIT, 2, CONDITION_ALWAYS, 2},
-    {TRIGGER_TALK, ACTOR_HEALER, CONDITION_ALWAYS,
-     EVENT(GarohRooms_TalkToHealer)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_HEALER,
+    {TRIGGER_TALK, ACTOR_PRIEST, CONDITION_ALWAYS,
+     EVENT(GarohRooms_TalkToPriest)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_PRIEST,
      FLAG_GAROH_SECRET_SHARED, MSGNO(MsgGarohInteriors32)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_HEALER, CONDITION_ALWAYS,
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_PRIEST, CONDITION_ALWAYS,
      MSGNO(MsgGarohInteriorsAmITheOnlyOne)},
-    {TRIGGER_TALK, 9, CONDITION_ALWAYS, EVENT(GarohRooms_TalkToHealer)},
+    {TRIGGER_TALK, 9, CONDITION_ALWAYS, EVENT(GarohRooms_TalkToPriest)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9, FLAG_GAROH_SECRET_SHARED,
      MSGNO(MsgGarohInteriors32)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9, CONDITION_ALWAYS,
@@ -692,12 +691,12 @@ struct Trigger gGarohRooms_InnMorningTriggers[] = {
      CONDITION_ALWAYS, MSGNO(MsgGarohInteriorsMahaSaysThatWhenWere)},
     {TRIGGER_TALK, ACTOR_INNKEEPER, CONDITION_ALWAYS,
      EVENT(GarohRooms_TalkToInnkeeper)},
-    {TRIGGER_TALK, ACTOR_INN_ATTENDANT, CONDITION_ALWAYS,
+    {TRIGGER_TALK, ACTOR_INN_WORKER, CONDITION_ALWAYS,
      MSGNO(MsgGarohInteriorsMahaCameAlongAndSaid)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_INNKEEPER, CONDITION_ALWAYS,
      MSGNO(MsgGarohInteriorsIveHeardStoriesAboutOtherPlaces)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_INN_ATTENDANT,
-     CONDITION_ALWAYS, MSGNO(MsgGarohInteriorsHeSaidIfTheyWere)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_INN_WORKER, CONDITION_ALWAYS,
+     MSGNO(MsgGarohInteriorsHeSaidIfTheyWere)},
     {TRIGGER_TALK, ACTOR_DISAPPOINTED_TRAVELER, CONDITION_ALWAYS,
      EVENT(GarohRooms_TalkToDisappointedTraveler)},
     {TRIGGER_TALK, ACTOR_STUBBORN_TRAVELER, CONDITION_ALWAYS,
@@ -727,15 +726,15 @@ struct Trigger gGarohRooms_HouseMorningTriggers[] = {
     {TRIGGER_EXIT | EXIT_STYLE_STAIRS_DOWN, 7, CONDITION_ALWAYS, 7},
     {TRIGGER_TALK, ACTOR_AIRS_ROCK_GUARDIAN, CONDITION_ALWAYS,
      MSGNO(MsgGarohInteriorsSoYoureSomethingSpecialAn)},
-    {TRIGGER_TALK, ACTOR_WHIRLWIND_TALKER, CONDITION_ALWAYS,
+    {TRIGGER_TALK, ACTOR_VILLAGER_ON_WHIRLWIND, CONDITION_ALWAYS,
      MSGNO(MsgGarohInteriorsYouLearnedRevealAtAirs)},
-    {TRIGGER_TALK, ACTOR_WIND_STONE_TALKER, CONDITION_ALWAYS,
+    {TRIGGER_TALK, ACTOR_VILLAGER_ON_THE_WIND_STONE, CONDITION_ALWAYS,
      MSGNO(MsgGarohInteriorsIJustCantBelieveThat)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_AIRS_ROCK_GUARDIAN,
      CONDITION_ALWAYS, MSGNO(MsgGarohInteriorsDidMahaMeanThatThey)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_WHIRLWIND_TALKER,
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_VILLAGER_ON_WHIRLWIND,
      CONDITION_ALWAYS, MSGNO(MsgGarohInteriorsSoThesePeopleCanUse)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_WIND_STONE_TALKER,
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_VILLAGER_ON_THE_WIND_STONE,
      CONDITION_ALWAYS, MSGNO(MsgGarohInteriorsNormallyOutsidersNeverGetIn)},
     {TRIGGER_TALK, ACTOR_ITEM_MERCHANT, CONDITION_ALWAYS,
      EVENT(GarohRooms_TalkToItemMerchant)},

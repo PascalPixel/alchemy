@@ -6,6 +6,14 @@
 
 #define TORCH_FRAMES 96
 
+/// The ring level drawn brightest: the levels either side of it dim toward 0
+/// and toward the disc's edge.
+#define TORCH_BRIGHTEST_LEVEL 32
+/// The disc's colours are worked in eight-bit channels, each capped, then cut
+/// to the five bits a colour holds; blue's lower cap cuts to the same level.
+#define TORCH_CHANNEL_MAX 255
+#define TORCH_BLUE_MAX 250
+
 /// A fiery disc fades in, its rings running outward while every line of
 /// the display ripples, then fades out.
 ///
@@ -48,46 +56,52 @@ void BattleEffect_RunTorch(struct BattleEffectParams *args) {
   BattleEffect_FetchRectangleBlitters(work->args->side, draw);
   EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_THREE_QUARTERS);
 
-  // The disc: each pixel's colour is its distance from the middle.
-  for (y = 0; y != 64; y++) {
-    for (x = 0; x != 64; x++) {
-      cy = y / 8 + 64;
+  // The disc: each pixel's level is half its distance from the middle, its
+  // rows drawn a little taller; one quarter is worked out and mirrored into
+  // the other three.
+  for (y = 0; y != CANVAS_SIZE / 2; y++) {
+    for (x = 0; x != CANVAS_SIZE / 2; x++) {
+      cy = y / 8 + CANVAS_SIZE / 2;
       dy = y - cy;
-      dx = x - 64;
+      dx = x - CANVAS_SIZE / 2;
       d = Iwram_Sqrt(dx * dx + dy * dy);
       d /= 2;
       if (d == 0)
         d = 1;
-      if (d > 63)
-        d = 63;
-      work->sheet[y * 128 + x] = d;
-      work->sheet[y * 128 + 127 - x] = d;
-      work->sheet[(127 - y) * 128 + x] = d;
-      work->sheet[(127 - y) * 128 + 127 - x] = d;
+      if (d > CANVAS_LEVEL_BRIGHTEST)
+        d = CANVAS_LEVEL_BRIGHTEST;
+      work->sheet[y * CANVAS_SIZE + x] = d;
+      work->sheet[y * CANVAS_SIZE + CANVAS_SIZE - 1 - x] = d;
+      work->sheet[(CANVAS_SIZE - 1 - y) * CANVAS_SIZE + x] = d;
+      work->sheet[(CANVAS_SIZE - 1 - y) * CANVAS_SIZE + CANVAS_SIZE - 1 - x] =
+          d;
     }
   }
 
+  // Its colours: red rises from the first level, green from the sixth and blue
+  // from the eighth, so the rings run from dark red to pale orange at
+  // TORCH_BRIGHTEST_LEVEL.
   pal = (u16 *)Ram_MapGridCellBuffer;
-  for (i = 1; i != 64; i++) {
-    if (i > 31)
-      t = 64 - i;
+  for (i = 1; i != CANVAS_LEVEL_BRIGHTEST + 1; i++) {
+    if (i >= TORCH_BRIGHTEST_LEVEL)
+      t = 2 * TORCH_BRIGHTEST_LEVEL - i;
     else
       t = i;
     r = t * 9;
-    g = t * 7 - 42;
-    b = t * 7 - 56;
+    g = (t - 6) * 7;
+    b = (t - 8) * 7;
     if (r < 0)
       r = 0;
     if (g < 0)
       g = 0;
     if (b < 0)
       b = 0;
-    if (r > 255)
-      r = 255;
-    if (g > 255)
-      g = 255;
-    if (b > 250)
-      b = 250;
+    if (r > TORCH_CHANNEL_MAX)
+      r = TORCH_CHANNEL_MAX;
+    if (g > TORCH_CHANNEL_MAX)
+      g = TORCH_CHANNEL_MAX;
+    if (b > TORCH_BLUE_MAX)
+      b = TORCH_BLUE_MAX;
     r >>= 3;
     g >>= 3;
     b >>= 3;
@@ -110,6 +124,8 @@ void BattleEffect_RunTorch(struct BattleEffectParams *args) {
     if (frame > 88)
       REG_BLDALPHA = EFFECT_BLEND_CANVAS(192 - frame * 2);
 
+    // Each line starts one canvas pixel further along than the one above,
+    // swayed by up to 32 either way.
     line = work->bg2xLines;
     for (i = 0, angle = -(wave << 9); i != DISPLAY_HEIGHT; i++) {
       *line++ = ((i << 18) - ((Trig_Sin(angle) * 128)) + toFIXED(4)) >> 10;
@@ -117,14 +133,18 @@ void BattleEffect_RunTorch(struct BattleEffectParams *args) {
     }
 
     // Rotate the colours so the rings run outward.
+    // DEAD: never true, as frame stays below TORCH_FRAMES; the ROM keeps the
+    // compare and the store.
     if (frame > 127) {
       work->transferPending = 1;
     } else {
-      pal[1] = pal[63];
-      Dma_Set(pal + 62, pal + 63,
-              (DMA_ENABLE | DMA_SRC_DEC | DMA_DEST_DEC) << 16 | 62, REG_DMA3);
+      pal[1] = pal[CANVAS_LEVEL_BRIGHTEST];
+      Dma_Set(pal + CANVAS_LEVEL_BRIGHTEST - 1, pal + CANVAS_LEVEL_BRIGHTEST,
+              DMA_COPY_HALFWORDS(CANVAS_LEVEL_BRIGHTEST - 1) |
+                  (DMA_SRC_DEC | DMA_DEST_DEC) << 16,
+              REG_DMA3);
       IO_WRITE_QUEUE_PUSH((u32)&BG_PLTT[1], (u32)(pal + 1),
-                          DMA_COPY_HALFWORDS(63));
+                          DMA_COPY_HALFWORDS(CANVAS_LEVEL_BRIGHTEST));
     }
     wait(1);
   }
@@ -151,3 +171,6 @@ void BattleEffect_RunKite(struct BattleEffectParams *args) {
 }
 
 #undef TORCH_FRAMES
+#undef TORCH_BRIGHTEST_LEVEL
+#undef TORCH_CHANNEL_MAX
+#undef TORCH_BLUE_MAX

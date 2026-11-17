@@ -7,7 +7,7 @@
 /// One of the star field's sparks, drawn inward to the centre. Sixteen live
 /// in SparkWork.sparks; a spent one starts again while the field is young.
 struct Spark {
-  s32 motion[6]; ///< x, y, z, then their velocities, in 1/1024 canvas pixels
+  s32 motion[6]; ///< x, y, z, then their velocities, in STAR_FIELD_PIXEL units
   s32 life;      ///< frames left
 };
 
@@ -20,6 +20,13 @@ struct Spark {
 #define STAR_FIELD_CENTER (STAR_FIELD_SIZE / 2)
 #define STAR_FIELD_RING_SIZE 32
 #define STAR_FIELD_FRAMES 45 ///< the frames a cast's glow lasts
+/// The blue ring sheet's colours, before its pictures; an element's palette
+/// replaces them.
+#define STAR_FIELD_COLORS 64
+/// The sparks and rings move in 1/1024 canvas pixels: STAR_FIELD_PIXEL to a
+/// pixel.
+#define STAR_FIELD_PIXEL_SHIFT 10
+#define STAR_FIELD_PIXEL (1 << STAR_FIELD_PIXEL_SHIFT)
 
 /// The star field's work, for the 45 frames of a cast's glow.
 struct SparkWork {
@@ -112,13 +119,13 @@ UNREAD_RESULT ElementGlow_UpdateStarField(void) {
       spark->motion[3] = (-spark->motion[0] >> 7) + (spark->motion[1] >> 8);
       spark->motion[4] = (-spark->motion[1] >> 7) + (-spark->motion[0] >> 8);
       spark->motion[5] = 0;
-      life = spark->life = (radius >> 13) + 1;
+      life = spark->life = radius / (8 * STAR_FIELD_PIXEL) + 1;
     }
     // Drawn about the canvas's centre, 1 to 4 pixels square by its
     // life left, 4 from three frames left.
     if (life != 0) {
-      x = (spark->motion[0] >> 10) + STAR_FIELD_CENTER;
-      y = (spark->motion[1] >> 10) + STAR_FIELD_CENTER;
+      x = (spark->motion[0] >> STAR_FIELD_PIXEL_SHIFT) + STAR_FIELD_CENTER;
+      y = (spark->motion[1] >> STAR_FIELD_PIXEL_SHIFT) + STAR_FIELD_CENTER;
       picture = life;
       if (picture < 0)
         picture = 0;
@@ -129,15 +136,15 @@ UNREAD_RESULT ElementGlow_UpdateStarField(void) {
            x - (size >> 1), y - (size >> 1), size, size);
     }
   }
-  // The rings, 32 by 32, with the other blitter: each shows its four pictures
-  // eight frames apiece, then is no longer drawn.
+  // The rings, through the blitter that keeps the brighter colour: each shows
+  // its four pictures eight frames apiece, then is no longer drawn.
   draw = (DrawRectangle)gHeapSlots[HEAP_SLOT_RAM_CODE_PAIRED];
   for (ring = work->rings, ringIndex = STAR_FIELD_RINGS - 1; ringIndex >= 0;
        ringIndex--, ring++) {
     ring->x += ring->velocityX;
     ring->y += ring->velocityY;
-    ringX = ring->x >> 10;
-    ringY = ring->y >> 10;
+    ringX = ring->x >> STAR_FIELD_PIXEL_SHIFT;
+    ringY = ring->y >> STAR_FIELD_PIXEL_SHIFT;
     phase = 3 - ring->age / 8;
     if (phase >= 0) {
       ring->age++;
@@ -198,8 +205,8 @@ s32 ElementGlow_InitializeStarField(s32 element) {
   /* FAKEMATCH(dead): an empty once-only loop. */
   do {
   } while (0);
-  // Each spark at a random angle and height, swirling inward; the further out,
-  // the longer it lives.
+  // Each spark at a random angle and height, swirling inward; it lives a frame
+  // for every four pixels it starts out from the centre, and one more.
   for (effectIndex = 0; effectIndex < STAR_FIELD_SPARKS; effectIndex++) {
     s32 angle = Random16();
     u32 radius = Random16() + FIXED_ONE;
@@ -216,18 +223,18 @@ s32 ElementGlow_InitializeStarField(s32 element) {
     spark->motion[3] = (-spark->motion[0] >> 7) + (spark->motion[1] >> 8);
     spark->motion[4] = (-spark->motion[1] >> 7) + (-spark->motion[0] >> 8);
     spark->motion[5] = 0;
-    spark->life = (radius >> 13) + 1;
+    spark->life = radius / (8 * STAR_FIELD_PIXEL) + 1;
   }
   for (effectIndex = 0; effectIndex < STAR_FIELD_RINGS; effectIndex++) {
-    FIXED radius = 4096;
+    s32 radius = 4 * STAR_FIELD_PIXEL;
     s32 angle;
 
     ring = &work->rings[effectIndex];
     angle = effectIndex * (DEGtoANG(120));
     ring->x = Iwram_MulFX(Trig_Cos(angle), radius);
     ring->y = Iwram_MulFX(Trig_Sin(angle), radius);
-    ring->velocityX = Iwram_MulFX(Trig_Cos(angle), 512);
-    ring->velocityY = Iwram_MulFX(Trig_Sin(angle), 512);
+    ring->velocityX = Iwram_MulFX(Trig_Cos(angle), STAR_FIELD_PIXEL / 2);
+    ring->velocityY = Iwram_MulFX(Trig_Sin(angle), STAR_FIELD_PIXEL / 2);
     ring->age = 0;
   }
   work->frames = 0;
@@ -235,11 +242,11 @@ s32 ElementGlow_InitializeStarField(s32 element) {
   work->canvasOrigin.queued = 0;
   Iwram_ClearWords(gHeapSlots[HEAP_SLOT_BATTLE_CANVAS],
                    STAR_FIELD_SIZE * STAR_FIELD_SIZE);
-  // The sheet's 128 bytes of colours, then its pictures; then the
-  // element's own colours over them.
+  // The sheet's colours, then its pictures; then the element's own colours
+  // over them.
   graphics = Resource_GetTableEntry(RESOURCE_BLUE_RING_SHEET);
-  Iwram_CopyWords(BG_PLTT, graphics, 128);
-  graphics += 128;
+  Iwram_CopyWords(BG_PLTT, graphics, STAR_FIELD_COLORS * 2);
+  graphics += STAR_FIELD_COLORS * 2;
   Decompress_TaggedLz(graphics, work);
   switch (element) {
   case ELEMENT_VENUS:
@@ -255,15 +262,19 @@ s32 ElementGlow_InitializeStarField(s32 element) {
     graphics = Resource_GetTableEntry(RESOURCE_VIOLET_PALETTE_D);
     break;
   }
-  Dma_Set(graphics, BG_PLTT, DMA_COPY_WORDS(32), REG_DMA3);
+  Dma_Set(graphics, BG_PLTT, DMA_COPY_WORDS(STAR_FIELD_COLORS / 2), REG_DMA3);
   Io_Write32(0, &REG_BG2X);
   Io_Write32(0, &REG_BG2Y);
   Io_Write16(Q_8_8(1), &REG_BG2PA);
   Io_Write16(0, &REG_BG2PB);
   Io_Write16(0, &REG_BG2PC);
   Io_Write16(Q_8_8(1), &REG_BG2PD);
-  BattleEffect_BuildBlitterFar(HEAP_SLOT_RAM_CODE, 7, 7, 3, 3);
-  BattleEffect_BuildBlitterFar(HEAP_SLOT_RAM_CODE_PAIRED, 7, 7, 3, 2);
+  BattleEffect_BuildBlitterFar(HEAP_SLOT_RAM_CODE, 7, 7,
+                               BLITTER_CLIP_X | BLITTER_CLIP_Y,
+                               COMPOSITE_ADDITIVE);
+  BattleEffect_BuildBlitterFar(HEAP_SLOT_RAM_CODE_PAIRED, 7, 7,
+                               BLITTER_CLIP_X | BLITTER_CLIP_Y,
+                               COMPOSITE_LIGHTEN);
   Task_Add(STAR_FIELD_UPDATE_FUNC, TASK_PASS_FRAME);
   return Task_Add(STAR_FIELD_UPLOAD_FUNC, TASK_PASS_FRAME);
 }
@@ -292,9 +303,9 @@ s32 Graphics_ScaleRgb555Clamped(u16 *source, u16 *destination, FIXED scale,
   // Each channel scaled in place: a 16.16 scale of at most 1 keeps it inside
   // its own five bits.
   for (i = 0; i < count; i++) {
-    u32 redMask = 0x1f;
-    u32 greenMask = 0x3e0;
-    u32 blueMask = 0x7c00;
+    u32 redMask = RGB(RGB_LEVEL_MAX, 0, 0);
+    u32 greenMask = RGB(0, RGB_LEVEL_MAX, 0);
+    u32 blueMask = RGB(0, 0, RGB_LEVEL_MAX);
     u32 color = *source;
     u32 red = color & redMask;
     u32 green = color & greenMask;
@@ -303,8 +314,8 @@ s32 Graphics_ScaleRgb555Clamped(u16 *source, u16 *destination, FIXED scale,
     red *= scale;
     green *= scale;
     blue *= scale;
-    color = ((red >> 16) & redMask) | ((green >> 16) & greenMask);
-    color |= (blue >> 16) & blueMask;
+    color = (FIXEDtoINT(red) & redMask) | (FIXEDtoINT(green) & greenMask);
+    color |= FIXEDtoINT(blue) & blueMask;
     *destination = color;
     source++;
     destination++;

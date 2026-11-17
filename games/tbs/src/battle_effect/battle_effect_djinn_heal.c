@@ -9,6 +9,21 @@
 
 #define DJINN_HEAL_SWIRL_FRAMES 98
 #define DJINN_HEAL_SWIRL_MOTES 32 ///< motes swirled in
+/// The motes set out to swirl, of which DJINN_HEAL_SWIRL_MOTES are drawn.
+#define DJINN_HEAL_SWIRL_SLOTS 64
+/// A swirling mote is drawn at size DJINN_HEAL_MOTE_SIZE_MAX at depth
+/// DJINN_HEAL_MOTE_DEPTH_NEAR or nearer, one size smaller every
+/// DJINN_HEAL_MOTE_DEPTH_STEP farther, its depth held below
+/// DJINN_HEAL_MOTE_DEPTH_FAR.
+#define DJINN_HEAL_MOTE_SIZE_MAX 9
+#define DJINN_HEAL_MOTE_DEPTH_NEAR 250
+#define DJINN_HEAL_MOTE_DEPTH_STEP 64
+#define DJINN_HEAL_MOTE_DEPTH_FAR 634
+/// The depths the sparkles' idle size by depth is worked out over, as the
+/// healing sparkles' are: three sizes, DJINN_HEAL_SPARKLE_DEPTH_STEP apart.
+#define DJINN_HEAL_SPARKLE_DEPTH_NEAR 314
+#define DJINN_HEAL_SPARKLE_DEPTH_STEP 128
+#define DJINN_HEAL_SPARKLE_DEPTH_FAR 634
 /// The angle mote `i` turns each frame about its axis: each later mote faster.
 #define DJINN_HEAL_MOTE_SPIN(i) ((i) * 32 + 256)
 
@@ -44,7 +59,7 @@ UNUSED void BattleEffect_RunDjinnHeal(struct BattleEffectParams *args) {
     struct Actor *actor = GetBattleObjectSlotFar(work->args->user)->actor;
     struct Actor *goal = GetBattleObjectSlotFar(work->args->targets[0])->actor;
 
-    for (i = 0; i != 64; i++) {
+    for (i = 0; i != DJINN_HEAL_SWIRL_SLOTS; i++) {
       struct Particle *spark = &PARTICLES[i];
       s32 heading = Random16() & TRIG_ANGLE_MASK;
       s32 speed = (Random16() & 0xff) + 128;
@@ -105,8 +120,11 @@ UNUSED void BattleEffect_RunDjinnHeal(struct BattleEffectParams *args) {
         Projection_Point(spark, &screen);
         screen.x >>= 1;
         Matrix_Pop();
-        CLAMP(screen.depth, 250, 634);
-        size = 9 - (screen.depth - 250) / 64;
+        CLAMP(screen.depth, DJINN_HEAL_MOTE_DEPTH_NEAR,
+              DJINN_HEAL_MOTE_DEPTH_FAR);
+        size = DJINN_HEAL_MOTE_SIZE_MAX -
+               (screen.depth - DJINN_HEAL_MOTE_DEPTH_NEAR) /
+                   DJINN_HEAL_MOTE_DEPTH_STEP;
         EFFECT_DRAW_MOTE(callbacks[0], canvas, sheet, screen.x, screen.y, size);
         Particle_AdvanceWithGravity3D(spark, 60, 0);
         if (frame > i + 30) {
@@ -122,7 +140,7 @@ UNUSED void BattleEffect_RunDjinnHeal(struct BattleEffectParams *args) {
     }
     // The Djinni appears and bobs.
     if (frame > 82) {
-      SET_VECTOR(djinniPoint, 0, (Trig_Sin(frame << 10) * 4), 0);
+      SET_VECTOR(djinniPoint, 0, (Trig_Sin(frame * (TRIG_TURN / 64)) * 4), 0);
       Projection_Point(djinniPoint, &screen);
       screen.x >>= 1;
       callbacks[1](canvas, work->sheet, screen.x - SMALL_DJINNI_WIDTH / 2,
@@ -147,7 +165,7 @@ UNUSED void BattleEffect_RunDjinnHeal(struct BattleEffectParams *args) {
     if (frame >= work->args->targetCount * 8 + 40)
       target[1] += toFIXED(4);
     SET_VECTOR(point, target[0], target[1],
-               target[2] + Trig_Sin(frame << 11) * 40);
+               target[2] + Trig_Sin(frame * (TRIG_TURN / 32)) * 40);
     Projection_Point(point, &view);
     view.x >>= 1;
     callbacks[0](canvas, work->sheet, view.x - SMALL_DJINNI_WIDTH / 2,
@@ -186,8 +204,10 @@ UNUSED void BattleEffect_RunDjinnHeal(struct BattleEffectParams *args) {
               Projection_Point(spark, &view);
               view.x >>= 1;
               /* LEFTOVER(template): the clamp and size by depth, idle here. */
-              CLAMP(view.depth, 314, 634);
-              pictureIndex = 3 - (view.depth - 314) / 128;
+              CLAMP(view.depth, DJINN_HEAL_SPARKLE_DEPTH_NEAR,
+                    DJINN_HEAL_SPARKLE_DEPTH_FAR);
+              pictureIndex = 3 - (view.depth - DJINN_HEAL_SPARKLE_DEPTH_NEAR) /
+                                     DJINN_HEAL_SPARKLE_DEPTH_STEP;
               pictureIndex = (i * 4 + frame) % 9;
               {
                 u8 *picture =
@@ -235,3 +255,11 @@ void BattleCamera_ApplyPhasedDelta(void) {
 
 #undef DJINN_HEAL_SWIRL_FRAMES
 #undef DJINN_HEAL_SWIRL_MOTES
+#undef DJINN_HEAL_SWIRL_SLOTS
+#undef DJINN_HEAL_MOTE_SIZE_MAX
+#undef DJINN_HEAL_MOTE_DEPTH_NEAR
+#undef DJINN_HEAL_MOTE_DEPTH_STEP
+#undef DJINN_HEAL_MOTE_DEPTH_FAR
+#undef DJINN_HEAL_SPARKLE_DEPTH_NEAR
+#undef DJINN_HEAL_SPARKLE_DEPTH_STEP
+#undef DJINN_HEAL_SPARKLE_DEPTH_FAR

@@ -140,9 +140,9 @@ s32 BattlePsynergyMenu_Run(s32 unitId, u16 *actions, s32 count) {
 
       if (count > BATTLE_LIST_ROWS) {
         for (i = 0; i < (count + 4) / BATTLE_LIST_ROWS; i++) {
-          iconTile = i + LIST_TILE_PAGE_NUMBER;
+          iconTile = i + PAGE_NUMBER_TILE;
           if (i == firstEntry / BATTLE_LIST_ROWS) {
-            iconTile = i + LIST_TILE_PAGE_NUMBER_LIT;
+            iconTile = i + PAGE_NUMBER_LIT_TILE;
           }
           Window_SetTilemapEntry(
               window, iconTile,
@@ -160,10 +160,10 @@ s32 BattlePsynergyMenu_Run(s32 unitId, u16 *actions, s32 count) {
     // page arrows on the window's top edge (y -1).
     if (count > BATTLE_LIST_ROWS) {
       for (i = 0; i < (count + 4) / BATTLE_LIST_ROWS; i++) {
-        iconTile = i + LIST_TILE_PAGE_NUMBER;
+        iconTile = i + PAGE_NUMBER_TILE;
         if ((gFrameCount & 15) <= 11) {
           if (i == firstEntry / BATTLE_LIST_ROWS) {
-            iconTile = i + LIST_TILE_PAGE_NUMBER_LIT;
+            iconTile = i + PAGE_NUMBER_LIT_TILE;
           }
         }
         Window_SetTilemapEntry(

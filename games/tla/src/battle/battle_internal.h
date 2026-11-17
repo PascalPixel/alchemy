@@ -268,6 +268,9 @@ enum BattleActionFailure {
 /// BattleStaging_HideField's mode bit that hides the acting unit too, as the
 /// summons do.
 #define STAGING_HIDE_ACTOR 1
+/// BattleStaging_HideField's mode bit for Daedalus's strike at the turn's
+/// end: the acting unit plays no cast, with no pose, sound or star field.
+#define STAGING_NO_CAST 2
 
 /// BattleStaging_RunAttack's mode bit for Meld: BattlePlan.partnerId runs in
 /// beside the attacker.

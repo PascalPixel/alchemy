@@ -11,6 +11,3 @@ void Ride_SetEntry(s32 index, s32 value) {
   entry->reach = INTtoFIXED(value & FLAME_THROWER_REACH_BITS);
   entry->flags = value & FLAME_THROWER_FLAG_BITS;
 }
-
-#undef FLAME_THROWER_REACH_BITS
-#undef FLAME_THROWER_FLAG_BITS

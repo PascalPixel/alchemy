@@ -1,6 +1,10 @@
 #ifndef ALCHEMY_ACTOR_H
 #define ALCHEMY_ACTOR_H
 
+/// @file
+/// Actors, their flags and the screen transition styles, as The Broken
+/// Seal's actor.h.
+
 #include "field/field_coordinate.h"
 #include "fixed_math.h"
 #include "types.h"

@@ -1,6 +1,10 @@
 #ifndef ALCHEMY_FIXED_MATH_H
 #define ALCHEMY_FIXED_MATH_H
 
+/// @file
+/// 16.16 fixed-point constants and pixels, sine and cosine, and the library
+/// division, as The Broken Seal's fixed_math.h.
+
 #include "types.h"
 
 /// A signed 16.16 fixed-point number, as SGL types one: FIXED_ONE is 1.0.

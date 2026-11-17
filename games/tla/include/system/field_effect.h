@@ -1,6 +1,10 @@
 #ifndef ALCHEMY_FIELD_EFFECT_H
 #define ALCHEMY_FIELD_EFFECT_H
 
+/// @file
+/// Field effects, the small objects on the field that move, grow and spin by
+/// their scripts, and the flags of a scene's effect spawner.
+
 #include "edition.h"
 #include "field/field_event.h"
 #include "fixed_math.h"

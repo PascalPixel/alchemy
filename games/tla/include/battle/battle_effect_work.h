@@ -69,9 +69,7 @@ struct BattleEffectWork {
   volatile s32 bg2y;
   ///@}
   /// BG2's scale, written to BG2PA and BG2PD by Display_ApplyBg2Affine.
-  /// Volatile: the task that copies them out runs behind the effect's back,
-  /// and the ROM shows it (each store reads the halfword first, as the old
-  /// compiler stores to a volatile halfword).
+  /// Volatile: the task that copies them out runs behind the effect's back.
   ///@{
   volatile u16 bg2pa;
   volatile u16 bg2pd;

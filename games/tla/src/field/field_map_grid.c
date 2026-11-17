@@ -24,6 +24,9 @@
 // attributes.
 #define MAPGRID_CELL_PICTURE_ID_MASK 0x00000fff ///< the cell picture number
 #define MAPGRID_ATTRIBUTE_MASK 0xfffff000       ///< the cell's attributes
+/// The cell picture number the renderer draws, the low 11 bits: the copies
+/// that use MAPGRID_CELL_PICTURE_ID_MASK carry the bit above it as well.
+#define MAPGRID_DRAWN_PICTURE_MASK 0x7ff
 /// The map's 128 by 128 cell words.
 #define MAPGRID_CELLS ((u32 *)Ram_MapGridCellBuffer)
 /// A layer's visible area in cells: the screen's 15 by 10, and the row and
@@ -34,9 +37,14 @@
 /// row of its tiles.
 #define MAPGRID_SCREEN_CELLS 16
 #define MAPGRID_SCREEN_ROW_BYTES 64
+/// A cell's top tile row or left tile column in a layer's BG map, even,
+/// wrapping at the map's 32; its row as tile entries from the map's start.
+#define MAPGRID_SCREEN_TILE_MASK (BG_SCREEN_WIDTH - 2)
+#define MAPGRID_SCREEN_ROW_MASK (MAPGRID_SCREEN_TILE_MASK * BG_SCREEN_WIDTH)
 /// The 8-pixel tile a 16.16 layer coordinate lies in, as FIELD_CELL the
-/// 16-pixel cell.
+/// 16-pixel cell, and a map's width and height in those tiles.
 #define MAPGRID_TILE(coordinate) ((u32)(coordinate) >> 19)
+#define MAPGRID_TILES (MAPGRID_SIZE * MAPGRID_CELL_PIXELS / 8)
 /// A map's palette: the first 14 of the 16 BG palettes, 224 colours.
 #define MAP_PALETTE_BYTES (14 * 16 * sizeof(u16))
 /// The cell shapes' buffer, four bytes a shape, cleared to -1 before a map's
@@ -45,6 +53,17 @@
 /// A world map tile's 16 by 16 blocks, as WorldMap_WriteLayerCellTile decodes
 /// one.
 #define WORLD_MAP_TILE_CELLS 16
+
+/// The world map's two tile maps, of 64 by 64 one-byte tiles: BG3's, the lower
+/// layer, and BG2's, the upper, right after it (WorldMap_ShowBg1FromBuffer).
+#define WORLD_MAP_LOWER_TILE_MAP BG_SCREEN_BLOCK(8)
+#define WORLD_MAP_UPPER_TILE_MAP BG_SCREEN_BLOCK(10)
+#define WORLD_MAP_TILE_MAP_WIDTH 64
+/// The world map cells in view (Ram_MapBlocks): 32 by 32 for the lower layer,
+/// then as many for the upper, each cell 2 by 2 tiles of its tile map.
+#define WORLD_MAP_VIEW_CELLS 32
+#define WORLD_MAP_VIEW_LAYER_BYTES                                             \
+  (WORLD_MAP_VIEW_CELLS * WORLD_MAP_VIEW_CELLS * sizeof(struct WorldMapCell))
 
 /// Remaps byteCount bytes in place through gSpriteColorRemapTables.
 void SpriteColor_RemapPixels(u8 *bytes, s32 byteCount) {
@@ -56,13 +75,12 @@ void SpriteColor_RemapPixels(u8 *bytes, s32 byteCount) {
   }
 }
 
-// Map: unpack decoded block data into gCellPictures.
-
-/// Decoded buffer [1] selects the method; halfword data starts at [2].
-/// size: length including the method byte (even means no data).
-/// Method 0: copy unchanged.
-/// Method 1: high bytes followed by low bytes; reconstruct by XOR with prior
-/// values. Method 2: reconstruct by XOR with prior values.
+/// Unpacks a map's cell pictures, decoded into the map cell buffer from its
+/// second byte, into gCellPictures. The buffer's second byte picks the method
+/// and the halfwords follow it; size counts from that byte, and an even size
+/// leaves nothing to unpack. Method 0 copies the halfwords; method 1 rebuilds
+/// each from a plane of high bytes and one of low bytes, XORed with the one
+/// before; method 2 XORs each halfword with the one before.
 void TileMap_DecodeStagedBuffer(s32 size) {
   u16 *dst;
   u16 *src;
@@ -104,18 +122,24 @@ void TileMap_DecodeStagedBuffer(s32 size) {
   }
 }
 
-/// Converts the map cell buffer's 32 KB in place with the ARM routine copied
-/// to RAM, keeping a copy of the buffer for it to read.
+/// A map's cells as they are decoded: two planes of a byte a cell, the cells'
+/// attribute bytes, then a plane of their cell picture numbers, a halfword a
+/// cell.
+#define MAPGRID_BYTE_PLANES_BYTES (2 * MAPGRID_SIZE * MAPGRID_SIZE)
+
+/// Joins a decoded map's planes in place into its cell words, with the ARM
+/// routine copied to RAM, which reads the byte planes from a copy.
 void TileMap_ConvertBuffer(void) {
   u8 *saved;
   ConvertFn routine;
   u32 size;
 
-  size = 32 * 1024;
+  size = MAPGRID_BYTE_PLANES_BYTES;
   saved = Heap_AllocEwram(size);
   Iwram_CopyWords(saved, Ram_MapCellBuffer, size);
   RamCode_Load(routine, Render_ConvertMapCode, Render_ConvertMapCodeSize);
-  routine(((u8 *)gMapGridCellBuffer + 32 * 1024), Ram_MapCellBuffer, saved);
+  routine(((u8 *)gMapGridCellBuffer + MAPGRID_BYTE_PLANES_BYTES),
+          Ram_MapCellBuffer, saved);
   Heap_Release(routine);
   Heap_Release(saved);
 }
@@ -359,7 +383,7 @@ void MapGrid_RenderCellPictureRow(u32 layer, s32 tileX, s32 tileY) {
   u8 *screenMap = (u8 *)BG_SCREEN_BLOCK(5) + layer * MAPGRID_LAYER_SCREEN_BYTES;
   u32 maskY = window->maskY;
   u32 sourceRow = ((tileY / 2) & (MAPGRID_SIZE - 1)) * MAPGRID_SIZE;
-  u32 screenRowOffset = (tileY & 30) << 5;
+  u32 screenRowOffset = (tileY & MAPGRID_SCREEN_TILE_MASK) * BG_SCREEN_WIDTH;
   u32 sourceColumn;
   u32 screenColumnOffset;
   u32 maskX;
@@ -374,7 +398,7 @@ void MapGrid_RenderCellPictureRow(u32 layer, s32 tileX, s32 tileY) {
   maskX = window->maskX;
   sourceColumn = (tileX / 2) & (MAPGRID_SIZE - 1);
   originX = window->originX;
-  screenColumnOffset = tileX & 30;
+  screenColumnOffset = tileX & MAPGRID_SCREEN_TILE_MASK;
   sourceColumn &= maskX;
   if (maskX != MAPGRID_SIZE - 1) {
     sourceColumn = (sourceColumn - originX) & maskX;
@@ -398,7 +422,7 @@ void MapGrid_RenderCellPictureRow(u32 layer, s32 tileX, s32 tileY) {
     sourceColumn++;
     *(u32 *)(screenTile + MAPGRID_SCREEN_ROW_BYTES) = *cellPictureRows;
     sourceColumn &= maskX;
-    screenColumnOffset = (screenColumnOffset + 2) & 30;
+    screenColumnOffset = (screenColumnOffset + 2) & MAPGRID_SCREEN_TILE_MASK;
   }
 }
 
@@ -433,7 +457,7 @@ void MapGrid_RenderCellPictureColumn(u32 layer, s32 tileX, s32 tileY) {
   u32 maskY = window->maskY;
   u32 originY = window->originY;
   u32 sourceRow = ((tileY / 2) & (MAPGRID_SIZE - 1)) * MAPGRID_SIZE;
-  u32 screenRowOffset = (tileY & 30) << 5;
+  u32 screenRowOffset = (tileY & MAPGRID_SCREEN_TILE_MASK) * BG_SCREEN_WIDTH;
   u32 sourceColumn;
   u32 screenColumnOffset;
   u32 maskX;
@@ -448,7 +472,7 @@ void MapGrid_RenderCellPictureColumn(u32 layer, s32 tileX, s32 tileY) {
   maskX = window->maskX;
   originX = window->originX;
   sourceColumn = (tileX / 2) & (MAPGRID_SIZE - 1);
-  screenColumnOffset = tileX & 30;
+  screenColumnOffset = tileX & MAPGRID_SCREEN_TILE_MASK;
   sourceColumn &= maskX;
   if (maskX != MAPGRID_SIZE - 1) {
     sourceColumn = (sourceColumn - originX) & maskX;
@@ -461,7 +485,8 @@ void MapGrid_RenderCellPictureColumn(u32 layer, s32 tileX, s32 tileY) {
     CopyCellPictureHalfColumn(cells + sourceRow + sourceColumn, screenMap,
                               screenRowOffset, screenColumnOffset, tileHalf);
     sourceRow = (sourceRow + MAPGRID_SIZE) & maskY;
-    screenRowOffset = (screenRowOffset + 64) & (30 << 5);
+    screenRowOffset =
+        (screenRowOffset + 2 * BG_SCREEN_WIDTH) & MAPGRID_SCREEN_ROW_MASK;
   }
 }
 
@@ -638,12 +663,12 @@ void MapGrid_SetCameraCenter(FIXED x, FIXED y) {
       if (maskY != MAPGRID_ROW_MASK)
         cells += originY;
       sourceRow = ((y / 2) & (MAPGRID_SIZE - 1)) * MAPGRID_SIZE;
-      screenRowOffset = (y & 30) << 5;
+      screenRowOffset = (y & MAPGRID_SCREEN_TILE_MASK) * BG_SCREEN_WIDTH;
       if (maskY != MAPGRID_ROW_MASK)
         sourceRow = (sourceRow - originY) & maskY;
       for (cellPictureRow = 0; cellPictureRow <= 10; cellPictureRow++) {
         sourceColumn = (x / 2) & (MAPGRID_SIZE - 1);
-        screenColumnOffset = x & 30;
+        screenColumnOffset = x & MAPGRID_SCREEN_TILE_MASK;
         if (maskX != MAPGRID_SIZE - 1)
           sourceColumn = (sourceColumn - originX) & maskX;
         for (cellPictureColumn = 0; cellPictureColumn < MAPGRID_SCREEN_CELLS;
@@ -651,10 +676,12 @@ void MapGrid_SetCameraCenter(FIXED x, FIXED y) {
           CopyCellPictureToScreen(cells + sourceRow + sourceColumn, screenMap,
                                   screenRowOffset, screenColumnOffset);
           sourceColumn = (sourceColumn + 1) & maskX;
-          screenColumnOffset = (screenColumnOffset + 2) & 30;
+          screenColumnOffset =
+              (screenColumnOffset + 2) & MAPGRID_SCREEN_TILE_MASK;
         }
         sourceRow = (sourceRow + MAPGRID_SIZE) & maskY;
-        screenRowOffset = (screenRowOffset + 64) & (30 << 5);
+        screenRowOffset =
+            (screenRowOffset + 2 * BG_SCREEN_WIDTH) & MAPGRID_SCREEN_ROW_MASK;
       }
       layer++;
     }
@@ -867,9 +894,10 @@ void MapGrid_CopyCellPictureCellsRect(s32 srcX, s32 srcY, s32 width, s32 height,
         u32 merged;
 
         cellPictureId = cell & MAPGRID_CELL_PICTURE_ID_MASK;
-        // The cell takes the low 11 bits of the source and keeps its own above.
-        merged = cell & 0x7ff;
-        merged |= *dst & 0xfffff800;
+        // The cell takes the source's cell picture and keeps its own bits
+        // above.
+        merged = cell & MAPGRID_DRAWN_PICTURE_MASK;
+        merged |= *dst & ~MAPGRID_DRAWN_PICTURE_MASK;
         *dst = merged;
         dst++;
         view = views;
@@ -1018,7 +1046,7 @@ void Map_SetFlagAndApplyAttributeEdits(s32 flag) {
 /// pictures, or with attributes their attributes and shapes) from one place
 /// of the map to another. The map's extra data lists the edits, each a flag
 /// then source x and y, destination x and y, width and height in bytes, ended
-/// by 0xffff.
+/// by a flag halfword of all ones.
 void Map_ApplyFlagEdits(s32 flag, s32 attributes) {
   u8 *cursor = gMapSceneEditsOffset;
   u32 entry;
@@ -1047,31 +1075,32 @@ void Map_ApplyFlagEdits(s32 flag, s32 attributes) {
   }
 }
 
-/// Reads map's four header extents: size[0] and size[2] from its first two
-/// bytes, size[1] and size[3] from the next two, where 0 means 256.
+/// Reads map's camera bounds from its header, in 8-pixel tiles: size[0] its
+/// left, size[1] its right, size[2] its top and size[3] its bottom, a right or
+/// bottom of 0 standing for the map's whole MAPGRID_TILES.
 void Map_GetHeaderSize(s32 map, s32 *size) {
-  u8 *header;
+  struct MapHeader *header;
 
-  // Indexed as gMaps[map].header, the load reads [table, offset].
+  // gMaps[map].header, its address worked out by hand.
   header = MAPGRID_RESOURCE(
       *(const u16 *)(map * sizeof(struct MapResources) + (u32)gMaps));
-  size[0] = header[0];
-  if (header[2] == 0)
-    size[1] = 256;
+  size[0] = header->cameraBounds[0];
+  if (header->cameraBounds[2] == 0)
+    size[1] = MAPGRID_TILES;
   else
-    size[1] = header[2];
-  size[2] = header[1];
-  if (header[3] == 0)
-    size[3] = 256;
+    size[1] = header->cameraBounds[2];
+  size[2] = header->cameraBounds[1];
+  if (header->cameraBounds[3] == 0)
+    size[3] = MAPGRID_TILES;
   else
-    size[3] = header[3];
+    size[3] = header->cameraBounds[3];
 }
 
 /// Decodes the current map's cells into the map cell buffer and converts them,
 /// then decodes its cell shapes into gMapShapeGrid.
 void Map_LoadCellsAndShapes(void) {
   u8 *source;
-  // Through a pointer: indexed as the array, the table's address loads first.
+  // gMaps through a pointer to its rows.
   struct MapHeader *header = MAPGRID_RESOURCE(
       ((const struct MapResources *)gMaps)[gMainRoutineWork.mapId].header);
 
@@ -1119,13 +1148,13 @@ s32 WorldMap_WriteLayerCellTile(s32 layer, s32 x, s32 y, s32 tile, s32 update) {
   for (rowIndex = 0; rowIndex < WORLD_MAP_TILE_CELLS; rowIndex++) {
     Dma_Set(sourceTiles, quarterCells, DMA_COPY_WORDS(WORLD_MAP_TILE_CELLS),
             REG_DMA3);
-    sourceTiles += 32;
-    quarterCells += 128;
+    sourceTiles += WORLD_MAP_TILE_CELLS * sizeof(struct WorldMapCell) / 2;
+    quarterCells += WORLD_MAP_VIEW_CELLS * sizeof(struct WorldMapCell);
   }
 
   if (update != 0) {
-    screenTiles =
-        (u16 *)((u32)BG_SCREEN_BLOCK(8) + ((((layer * 2 + y) << 6) + x) << 5));
+    screenTiles = (u16 *)((u32)WORLD_MAP_LOWER_TILE_MAP +
+                          ((((layer * 2 + y) << 6) + x) << 5));
     sourceTiles = decodedTile;
     for (rowIndex = 0; rowIndex < WORLD_MAP_TILE_CELLS; rowIndex++) {
       for (columnIndex = 0; columnIndex < WORLD_MAP_TILE_CELLS; columnIndex++) {
@@ -1135,11 +1164,12 @@ s32 WorldMap_WriteLayerCellTile(s32 layer, s32 x, s32 y, s32 tile, s32 update) {
         screenTiles[0] = *(u16 *)(Ram_MapCellBuffer + cellPictureId * 4);
         bottomTiles = (u16 *)(Ram_MapCellBuffer + 2);
         bottomTiles = (u16 *)((u8 *)bottomTiles + cellPictureId * 4);
-        screenTiles[32] = *bottomTiles;
+        screenTiles[WORLD_MAP_TILE_MAP_WIDTH / 2] = *bottomTiles;
         screenTiles++;
-        sourceTiles += 2;
+        sourceTiles += sizeof(struct WorldMapCell) / 2;
       }
-      screenTiles += 48;
+      // On to the next cell's two tile rows, two tiles a halfword.
+      screenTiles += WORLD_MAP_TILE_MAP_WIDTH - WORLD_MAP_TILE_CELLS;
     }
   }
   HeapSlot_Release(HEAP_SLOT_TILE_SCRATCH);

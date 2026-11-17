@@ -27,17 +27,6 @@
 #define WORLD_MAP_TILES_ACROSS 32
 #define WORLD_MAP_LAYER_TILES 1024
 
-/// The world map's two tile maps, of 64 by 64 one-byte tiles: BG3's, the lower
-/// layer, and BG2's, the upper, right after it (WorldMap_ShowBg1FromBuffer).
-#define WORLD_MAP_LOWER_TILE_MAP BG_SCREEN_BLOCK(8)
-#define WORLD_MAP_UPPER_TILE_MAP BG_SCREEN_BLOCK(10)
-#define WORLD_MAP_TILE_MAP_WIDTH 64
-/// The world map cells in view (Ram_MapBlocks): 32 by 32 for the lower layer,
-/// then as many for the upper, each cell 2 by 2 tiles of its tile map.
-#define WORLD_MAP_VIEW_CELLS 32
-#define WORLD_MAP_VIEW_LAYER_BYTES                                             \
-  (WORLD_MAP_VIEW_CELLS * WORLD_MAP_VIEW_CELLS * sizeof(struct WorldMapCell))
-
 /// MapWork.wideTiles for the world map (WorldMapView.fadeStep): its tileset
 /// animations copy 64-byte tiles of 256 colours, into char block 2.
 #define WORLD_MAP_WIDE_TILES 128

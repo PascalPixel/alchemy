@@ -17,6 +17,10 @@
 /// compare).
 #define DISPSTAT_VCOUNT_LINE(line) ((line) << 8)
 #define REG_VCOUNT (*(volatile u16 *)0x04000006) ///< line being drawn, 0..227
+/// The lines REG_VCOUNT counts through in a frame: the DISPLAY_HEIGHT drawn
+/// and those of VBlank. A line's HBlank comes before the next line is drawn,
+/// the last line's before line 0.
+#define DISPLAY_TOTAL_LINES 228
 // Each background's control: its priority, tile and map blocks, colours and
 // size, composed from the BGCNT_ values below.
 #define REG_BG1CNT (*(volatile u16 *)0x0400000a) ///< BG1

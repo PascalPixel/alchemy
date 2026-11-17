@@ -119,9 +119,9 @@ enum ContigoShopsActorId {
   ACTOR_HEALER
 };
 
-/// Hama and Kraden at the reunion and after it (gContigo_ShopsPlacements,
+/// Hamma and Kraden at the reunion and after it (gContigo_ShopsPlacements,
 /// gContigo_ShopsPlacementsReunion).
-enum ContigoReunionActorId { ACTOR_HAMA = ACTOR_FIRST_PLACED, ACTOR_KRADEN };
+enum ContigoReunionActorId { ACTOR_HAMMA = ACTOR_FIRST_PLACED, ACTOR_KRADEN };
 
 /// The dice and wheels hall (gContigo_LuckyDicePlacements).
 enum ContigoLuckyDiceActorId {
@@ -130,16 +130,18 @@ enum ContigoLuckyDiceActorId {
   ACTOR_SUPER_LUCKY_DICE_HOST = ACTOR_FIRST_PLACED,
   ACTOR_SUPER_LUCKY_DICE_GUIDE,
   ///@}
-  /// Who runs Lucky Dice, and who points to its sign.
-  ///@{
   /// The players: "This kid's got unlucky written all over his face" (his
   /// thought); "If you lose the hi-lo game, you don't win anything...";
   /// "I almost always get at least one pair..."
+  ///@{
   ACTOR_MAN_WARY_OF_UNLUCKY_PLAYERS,
   ACTOR_OLD_MAN_ON_THE_HI_LO_GAME,
   ACTOR_WOMAN_WHO_LOSES_AT_HI_LO,
+  ///@}
   /// The sign of Super Lucky Dice's rules.
   ACTOR_SUPER_LUCKY_DICE_SIGN,
+  /// Who runs Lucky Dice, and who points to its sign.
+  ///@{
   ACTOR_LUCKY_DICE_HOST,
   ACTOR_LUCKY_DICE_GUIDE,
   ///@}
@@ -1607,7 +1609,7 @@ void Contigo_TheReunion(void) {
   s32 answer;
   s32 angle;
 
-  actor = ((struct Actor *)Actor_GetById(ACTOR_HAMA));
+  actor = ((struct Actor *)Actor_GetById(ACTOR_HAMMA));
   Event_Start();
   Event_ResolvePendingActions(0);
   Sound_Play(SOUND_FADE_OUT_BGM);
@@ -1617,7 +1619,7 @@ void Contigo_TheReunion(void) {
   Actor_WatchAndSetScript(ACTOR_GARET, gMainRoutineWork.leaderActorId);
   Actor_WatchAndSetScript(ACTOR_MIA, gMainRoutineWork.leaderActorId);
   Actor_WatchAndSetScript(ACTOR_IVAN, gMainRoutineWork.leaderActorId);
-  Actor_WatchAndSetScript(ACTOR_HAMA, gMainRoutineWork.leaderActorId);
+  Actor_WatchAndSetScript(ACTOR_HAMMA, gMainRoutineWork.leaderActorId);
   Event_Wait(10);
   Actor_SetSpeed(gMainRoutineWork.leaderActorId, 0.8);
   Actor_WalkToAndWait(gMainRoutineWork.leaderActorId, 160, 382);
@@ -1639,7 +1641,7 @@ void Contigo_TheReunion(void) {
   Actor_Stop(ACTOR_GARET);
   Actor_Stop(ACTOR_MIA);
   Actor_Stop(ACTOR_IVAN);
-  Actor_Stop(ACTOR_HAMA);
+  Actor_Stop(ACTOR_HAMMA);
   FieldCamera_MoveTo(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0);
   Sound_Play(MUS_WORLD_MAP_REUNITED);
   Event_Wait(20);
@@ -1853,30 +1855,30 @@ void Contigo_TheReunion(void) {
   FieldActor_ShowEmote(ACTOR_ISAAC, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 0);
   FieldActor_ShowEmote(ACTOR_GARET, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 20);
   Sound_Play(MUS_SILENCE);
-  Actor_SetSpriteColor(((struct Actor *)Actor_GetById(ACTOR_HAMA)),
+  Actor_SetSpriteColor(((struct Actor *)Actor_GetById(ACTOR_HAMMA)),
                        SPRITE_COLOR_HIDDEN);
   angle = FACING_NORTH_NORTHWEST;
-  Actor_SetHorizontalPositionAndAngleWithTerrain(ACTOR_HAMA, toFIXED(160),
+  Actor_SetHorizontalPositionAndAngleWithTerrain(ACTOR_HAMMA, toFIXED(160),
                                                  toFIXED(466), angle);
   wait(1);
-  Event_ShowMessageAndWait(ACTOR_HAMA, 0);
-  Actor_WatchAndSetScript(gMainRoutineWork.leaderActorId, ACTOR_HAMA);
-  Actor_WatchAndSetScript(ACTOR_JENNA, ACTOR_HAMA);
-  Actor_WatchAndSetScript(ACTOR_PIERS, ACTOR_HAMA);
-  Actor_WatchAndSetScript(ACTOR_SHEBA, ACTOR_HAMA);
-  Actor_WatchAndSetScript(ACTOR_ISAAC, ACTOR_HAMA);
-  Actor_WatchAndSetScript(ACTOR_GARET, ACTOR_HAMA);
-  Actor_WatchAndSetScript(ACTOR_MIA, ACTOR_HAMA);
-  Actor_WatchAndSetScript(ACTOR_IVAN, ACTOR_HAMA);
-  Actor_SetSpriteColor(((struct Actor *)Actor_GetById(ACTOR_HAMA)),
+  Event_ShowMessageAndWait(ACTOR_HAMMA, 0);
+  Actor_WatchAndSetScript(gMainRoutineWork.leaderActorId, ACTOR_HAMMA);
+  Actor_WatchAndSetScript(ACTOR_JENNA, ACTOR_HAMMA);
+  Actor_WatchAndSetScript(ACTOR_PIERS, ACTOR_HAMMA);
+  Actor_WatchAndSetScript(ACTOR_SHEBA, ACTOR_HAMMA);
+  Actor_WatchAndSetScript(ACTOR_ISAAC, ACTOR_HAMMA);
+  Actor_WatchAndSetScript(ACTOR_GARET, ACTOR_HAMMA);
+  Actor_WatchAndSetScript(ACTOR_MIA, ACTOR_HAMMA);
+  Actor_WatchAndSetScript(ACTOR_IVAN, ACTOR_HAMMA);
+  Actor_SetSpriteColor(((struct Actor *)Actor_GetById(ACTOR_HAMMA)),
                        SPRITE_COLOR_NORMAL);
   FieldCamera_SetSpeed(2.4);
   FieldCamera_MoveTo(180, CAMERA_KEEP, 410, 1);
   FieldCamera_WaitForArrival();
   FieldCamera_SetSpeed(0.8);
   FieldCamera_MoveTo(148, CAMERA_KEEP, 368, 1);
-  Actor_SetSpeed(ACTOR_HAMA, 0.8);
-  Actor_WalkToAndWait(ACTOR_HAMA, 146, 406);
+  Actor_SetSpeed(ACTOR_HAMMA, 0.8);
+  Actor_WalkToAndWait(ACTOR_HAMMA, 146, 406);
   FieldActor_ShowEmote(ACTOR_MIA, EMOTE_IN_FRONT | EMOTE_SMILE, 20);
   Event_ShowMessageAndWait(ACTOR_MIA, 0);
   Actor_Stop(gMainRoutineWork.leaderActorId);
@@ -1888,8 +1890,8 @@ void Contigo_TheReunion(void) {
   Actor_Stop(ACTOR_MIA);
   Actor_Stop(ACTOR_IVAN);
   Sound_Play(MUS_REUNION);
-  Actor_SetAnimationAndWait(ACTOR_HAMA, ANIM_NOD);
-  Event_ShowMessageAndWait(ACTOR_HAMA, 0);
+  Actor_SetAnimationAndWait(ACTOR_HAMMA, ANIM_NOD);
+  Event_ShowMessageAndWait(ACTOR_HAMMA, 0);
   Actor_SetAnimationById(gMainRoutineWork.leaderActorId, ANIM_NOD);
   Actor_SetAnimationById(ACTOR_JENNA, ANIM_NOD);
   Actor_SetAnimationById(ACTOR_PIERS, ANIM_NOD);
@@ -1922,8 +1924,8 @@ void Contigo_TheReunion(void) {
   FieldActor_ShowEmote(ACTOR_MIA, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
   FieldActor_ShowEmote(ACTOR_IVAN, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
   FieldActor_ShowEmote(ACTOR_KRADEN, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 40);
-  Actor_SetAnimationById(ACTOR_HAMA, ANIM_NOD);
-  Event_ShowMessageAndWait(ACTOR_HAMA, 0);
+  Actor_SetAnimationById(ACTOR_HAMMA, ANIM_NOD);
+  Event_ShowMessageAndWait(ACTOR_HAMMA, 0);
   Actor_SetAttachedEffect(ACTOR_GARET,
                           ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   Event_Wait(20);
@@ -1931,17 +1933,17 @@ void Contigo_TheReunion(void) {
   Event_ShowMessageAndWait(ACTOR_MIA, 0);
   Actor_FaceDirectionAndWait(ACTOR_SHEBA, FACING_WEST);
   Event_ShowMessageAndWait(ACTOR_SHEBA, 0);
-  FieldActor_ShowEmote(ACTOR_HAMA, EMOTE_IN_FRONT | EMOTE_SWEAT_DROP, 0);
-  Actor_FaceDirectionAndRefreshById(ACTOR_HAMA, FACING_EAST);
-  Event_ShowMessageAndWait(SPEAKER_PORTRAIT_LEFT | ACTOR_HAMA, 0);
+  FieldActor_ShowEmote(ACTOR_HAMMA, EMOTE_IN_FRONT | EMOTE_SWEAT_DROP, 0);
+  Actor_FaceDirectionAndRefreshById(ACTOR_HAMMA, FACING_EAST);
+  Event_ShowMessageAndWait(SPEAKER_PORTRAIT_LEFT | ACTOR_HAMMA, 0);
   Actor_SetSpeed(ACTOR_IVAN, 0.8);
   Actor_WalkToAndWait(ACTOR_IVAN, 130, 400);
   Actor_FaceDirectionById(ACTOR_IVAN, FACING_EAST, 0);
-  Actor_FaceDirectionAndWait(ACTOR_HAMA, FACING_WEST);
-  Event_ShowMessage(SPEAKER_WINDOW_ABOVE | ACTOR_HAMA, 0);
+  Actor_FaceDirectionAndWait(ACTOR_HAMMA, FACING_WEST);
+  Event_ShowMessage(SPEAKER_WINDOW_ABOVE | ACTOR_HAMMA, 0);
   FieldActor_ShowEmote(ACTOR_IVAN, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 20);
-  Actor_SetAnimationById(ACTOR_HAMA, ANIM_SHAKE_HEAD);
-  Event_ShowMessageAndWait(SPEAKER_WINDOW_ABOVE | ACTOR_HAMA, 0);
+  Actor_SetAnimationById(ACTOR_HAMMA, ANIM_SHAKE_HEAD);
+  Event_ShowMessageAndWait(SPEAKER_WINDOW_ABOVE | ACTOR_HAMMA, 0);
   Actor_FaceDirection(ACTOR_ISAAC, FACING_NORTHEAST, 0);
   Actor_FaceDirection(ACTOR_GARET, FACING_NORTHWEST, 0);
   Actor_FaceDirectionById(ACTOR_MIA, FACING_EAST, 0);
@@ -1949,8 +1951,8 @@ void Contigo_TheReunion(void) {
   Actor_FaceDirection(ACTOR_JENNA, FACING_SOUTH, 0);
   Actor_FaceDirection(ACTOR_PIERS, FACING_SOUTH, 0);
   Actor_FaceDirection(ACTOR_SHEBA, FACING_NORTH, 40);
-  Actor_FaceDirectionAndWait(ACTOR_HAMA, FACING_NORTH_NORTHEAST);
-  Event_ShowMessageAndWait(ACTOR_HAMA, 0);
+  Actor_FaceDirectionAndWait(ACTOR_HAMMA, FACING_NORTH_NORTHEAST);
+  Event_ShowMessageAndWait(ACTOR_HAMMA, 0);
   Actor_FaceDirection(ACTOR_ISAAC, FACING_SOUTHEAST, 0);
   Actor_FaceDirection(ACTOR_GARET, FACING_SOUTHEAST, 0);
   Actor_FaceDirection(ACTOR_MIA, FACING_SOUTHEAST, 0);
@@ -1958,23 +1960,23 @@ void Contigo_TheReunion(void) {
   Actor_FaceDirection(ACTOR_JENNA, FACING_SOUTH, 0);
   Actor_FaceDirection(ACTOR_PIERS, FACING_SOUTHWEST, 0);
   Actor_FaceDirection(ACTOR_SHEBA, FACING_SOUTHWEST, 0);
-  Actor_SetAnimationById(ACTOR_HAMA, ANIM_SHAKE_HEAD);
-  Event_ShowMessageAndWait(ACTOR_HAMA, 0);
+  Actor_SetAnimationById(ACTOR_HAMMA, ANIM_SHAKE_HEAD);
+  Event_ShowMessageAndWait(ACTOR_HAMMA, 0);
   Event_ShowMessageThenWait(ACTOR_JENNA, 0, 10);
   Contigo_StartSparkle(actor, &gContigo_SparkleWork);
   Event_Wait(80);
   Contigo_StopSparkle(actor);
-  Actor_SetAnimationAndWait(ACTOR_HAMA, ANIM_SHAKE_HEAD);
-  Event_ShowMessageAndWait(ACTOR_HAMA, 0);
+  Actor_SetAnimationAndWait(ACTOR_HAMMA, ANIM_SHAKE_HEAD);
+  Event_ShowMessageAndWait(ACTOR_HAMMA, 0);
   Actor_SetAttachedEffect(ACTOR_PIERS,
                           ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   Event_ShowMessageThenWait(ACTOR_PIERS, 0, 10);
   Contigo_StartSparkle(actor, &gContigo_SparkleWork);
   Event_Wait(80);
   Contigo_StopSparkle(actor);
-  Actor_FaceDirectionAndWait(ACTOR_HAMA, FACING_NORTH_NORTHEAST);
-  Actor_SetAnimationById(ACTOR_HAMA, ANIM_SHAKE_HEAD);
-  Event_ShowMessageAndWait(ACTOR_HAMA, 0);
+  Actor_FaceDirectionAndWait(ACTOR_HAMMA, FACING_NORTH_NORTHEAST);
+  Actor_SetAnimationById(ACTOR_HAMMA, ANIM_SHAKE_HEAD);
+  Event_ShowMessageAndWait(ACTOR_HAMMA, 0);
   Actor_SetAttachedEffect(ACTOR_ISAAC,
                           ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   Actor_SetAttachedEffect(ACTOR_GARET,
@@ -1992,9 +1994,9 @@ void Contigo_TheReunion(void) {
   Actor_SetAttachedEffect(ACTOR_IVAN,
                           ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   Event_Wait(20);
-  Actor_FaceDirectionAndRefreshById(ACTOR_HAMA, angle);
-  Actor_SetAnimationById(ACTOR_HAMA, ANIM_SHAKE_HEAD);
-  Event_ShowMessageAndWait(ACTOR_HAMA, 0);
+  Actor_FaceDirectionAndRefreshById(ACTOR_HAMMA, angle);
+  Actor_SetAnimationById(ACTOR_HAMMA, ANIM_SHAKE_HEAD);
+  Event_ShowMessageAndWait(ACTOR_HAMMA, 0);
   Actor_FaceDirectionById(ACTOR_ISAAC, FACING_EAST, 0);
   Actor_FaceDirectionById(ACTOR_GARET, FACING_EAST, 0);
   Actor_FaceDirectionById(ACTOR_MIA, FACING_EAST, 0);
@@ -2013,15 +2015,15 @@ void Contigo_TheReunion(void) {
   Actor_SetAnimationById(ACTOR_JENNA, ANIM_NOD);
   Actor_SetAnimationById(ACTOR_SHEBA, ANIM_NOD);
   Actor_SetAnimationById(ACTOR_PIERS, ANIM_NOD);
-  FieldActor_ShowEmote(ACTOR_HAMA, EMOTE_IN_FRONT | EMOTE_SMILE, 20);
-  Event_ShowMessageAndWait(ACTOR_HAMA, 0);
-  Event_ShowMessageAndWait(ACTOR_HAMA, 0);
-  Actor_SetAnimationById(ACTOR_HAMA, ANIM_NOD);
-  Event_ShowMessageAndWait(ACTOR_HAMA, 0);
+  FieldActor_ShowEmote(ACTOR_HAMMA, EMOTE_IN_FRONT | EMOTE_SMILE, 20);
+  Event_ShowMessageAndWait(ACTOR_HAMMA, 0);
+  Event_ShowMessageAndWait(ACTOR_HAMMA, 0);
+  Actor_SetAnimationById(ACTOR_HAMMA, ANIM_NOD);
+  Event_ShowMessageAndWait(ACTOR_HAMMA, 0);
   Sound_Play(SOUND_FADE_OUT_BGM);
   FieldCamera_MoveTo(180, CAMERA_KEEP, 410, 1);
-  Actor_WalkToAndWait(ACTOR_HAMA, 160, 466);
-  Actor_SetPosition(ACTOR_HAMA, 0, 0);
+  Actor_WalkToAndWait(ACTOR_HAMMA, 160, 466);
+  Actor_SetPosition(ACTOR_HAMMA, 0, 0);
   FieldCamera_SetSpeed(2.4);
   FieldCamera_MoveTo(148, CAMERA_KEEP, 368, 1);
   FieldCamera_WaitForArrival();
@@ -2108,25 +2110,25 @@ void Contigo_ReturnToNewHome(void) {
     FieldCamera_MoveTo(160, CAMERA_KEEP, 368, 1);
     Actor_SetSpeed(gMainRoutineWork.leaderActorId, 0.8);
     Actor_WalkToAndWait(gMainRoutineWork.leaderActorId, 158, 394);
-    Actor_FaceDirection(ACTOR_HAMA, FACING_SOUTH_SOUTHWEST, 0);
+    Actor_FaceDirection(ACTOR_HAMMA, FACING_SOUTH_SOUTHWEST, 0);
     Actor_MoveToObject(ACTOR_IVAN, gMainRoutineWork.leaderActorId);
     wait(1);
     Actor_SetSpeed(ACTOR_IVAN, 0.8);
     Actor_WalkToAndWaitById(ACTOR_IVAN, 144, 374);
     Actor_FaceDirectionAndWait(ACTOR_IVAN, FACING_NORTHEAST);
-    FieldActor_ShowEmote(ACTOR_HAMA, EMOTE_IN_FRONT | EMOTE_SWEAT_DROP, 20);
+    FieldActor_ShowEmote(ACTOR_HAMMA, EMOTE_IN_FRONT | EMOTE_SWEAT_DROP, 20);
     Event_SetMessageId((s32)MsgReturnedToMyNewHome);
     // "Ah, you've returned! What brings you to my new home?"
-    Event_ShowMessageAndWait(ACTOR_HAMA, 0);
+    Event_ShowMessageAndWait(ACTOR_HAMMA, 0);
     Actor_SetAnimationAndWait(ACTOR_IVAN, ANIM_NOD);
     // "Hamma..."
     Event_ShowMessage(SPEAKER_PORTRAIT_LEFT | ACTOR_IVAN, 0);
     Actor_SetAnimationById(ACTOR_IVAN, ANIM_SHAKE_HEAD);
     // "You're my sister... Why didn't you tell me sooner? Why didn't you..."
     Event_ShowMessage(SPEAKER_PORTRAIT_LEFT | ACTOR_IVAN, 0);
-    Actor_SetAnimationById(ACTOR_HAMA, ANIM_SHAKE_HEAD);
+    Actor_SetAnimationById(ACTOR_HAMMA, ANIM_SHAKE_HEAD);
     // "You play an important role in all this. If I'd told you, you would..."
-    Event_ShowMessageAndWait(ACTOR_HAMA, 0);
+    Event_ShowMessageAndWait(ACTOR_HAMMA, 0);
     Actor_FaceDirection(ACTOR_IVAN, FACING_NORTHWEST, 40);
     Actor_WalkToAndWait(ACTOR_IVAN, 180, 364);
     Event_Wait(20);
@@ -2136,26 +2138,26 @@ void Contigo_ReturnToNewHome(void) {
     FieldActor_ShowEmote(ACTOR_IVAN, EMOTE_IN_FRONT | EMOTE_SWEAT_DROP, 20);
     // "This place is so familiar... I feel like I've lived here my whole life."
     Event_ShowMessageAndWait(ACTOR_IVAN, 0);
-    FieldActor_ShowEmote(ACTOR_HAMA, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 20);
+    FieldActor_ShowEmote(ACTOR_HAMMA, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 20);
     // "Look at me, Ivan."
-    Event_ShowMessageAndWait(ACTOR_HAMA, 0);
+    Event_ShowMessageAndWait(ACTOR_HAMMA, 0);
     FieldActor_ShowEmote(ACTOR_IVAN, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
     Actor_FaceDirection(ACTOR_IVAN, FACING_NORTHEAST, 40);
     // "You're too sentimental. You would have given up your quest to find..."
-    Event_ShowMessageAndWait(ACTOR_HAMA, 0);
+    Event_ShowMessageAndWait(ACTOR_HAMMA, 0);
     FieldActor_ShowEmote(ACTOR_IVAN, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
     // "What are you saying, sister?"
     Event_ShowMessage(SPEAKER_PORTRAIT_LEFT | ACTOR_IVAN, 0);
-    Actor_SetAnimationById(ACTOR_HAMA, ANIM_SHAKE_HEAD);
+    Actor_SetAnimationById(ACTOR_HAMMA, ANIM_SHAKE_HEAD);
     // "No, not sister... Do not think of me as your sister until you have..."
-    Event_ShowMessageAndWait(ACTOR_HAMA, 0);
+    Event_ShowMessageAndWait(ACTOR_HAMMA, 0);
     Actor_SetAttachedEffect(ACTOR_IVAN,
                             ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
     // "W-Why?"
     Event_ShowMessage(SPEAKER_PORTRAIT_LEFT | ACTOR_IVAN, 0);
-    FieldActor_ShowEmote(ACTOR_HAMA, EMOTE_IN_FRONT | EMOTE_SWEAT_DROP, 20);
+    FieldActor_ShowEmote(ACTOR_HAMMA, EMOTE_IN_FRONT | EMOTE_SWEAT_DROP, 20);
     // "Our world is falling into ruin..."
-    Event_ShowMessageAndWait(ACTOR_HAMA, 0);
+    Event_ShowMessageAndWait(ACTOR_HAMMA, 0);
     Actor_MoveToObject(ACTOR_ISAAC, gMainRoutineWork.leaderActorId);
     wait(1);
     FieldActor_ShowEmote(ACTOR_ISAAC, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
@@ -2164,8 +2166,8 @@ void Contigo_ReturnToNewHome(void) {
     Actor_FaceDirectionAndWait(ACTOR_ISAAC, FACING_NORTHWEST);
     // "What? Hamma, what do you mean? What's happening?"
     Event_ShowMessageAndWait(ACTOR_ISAAC, 0);
-    FieldActor_ShowEmote(ACTOR_HAMA, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
-    Actor_FaceDirection(ACTOR_HAMA, FACING_SOUTH_SOUTHEAST, 0);
+    FieldActor_ShowEmote(ACTOR_HAMMA, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
+    Actor_FaceDirection(ACTOR_HAMMA, FACING_SOUTH_SOUTHEAST, 0);
     Actor_MoveToObject(ACTOR_KRADEN, gMainRoutineWork.leaderActorId);
     wait(1);
     Actor_SetSpeed(gMainRoutineWork.leaderActorId, 0.8);
@@ -2178,56 +2180,56 @@ void Contigo_ReturnToNewHome(void) {
     FieldActor_ShowEmote(ACTOR_KRADEN, EMOTE_IN_FRONT | EMOTE_SWEAT_DROP, 20);
     // "Look, I don't want to interrupt your reunion or anything, but..."
     Event_ShowMessage(SPEAKER_WINDOW_BELOW | ACTOR_KRADEN, 0);
-    Actor_FaceDirectionById(ACTOR_HAMA, FACING_EAST, 0);
+    Actor_FaceDirectionById(ACTOR_HAMMA, FACING_EAST, 0);
     Actor_SetAttachedEffect(ACTOR_KRADEN,
                             ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
     // "I couldn't help overhearing you say something about the world..."
     Event_ShowMessage(SPEAKER_WINDOW_BELOW | ACTOR_KRADEN, 0);
-    Actor_SetAnimationAndWait(ACTOR_HAMA, ANIM_NOD);
+    Actor_SetAnimationAndWait(ACTOR_HAMMA, ANIM_NOD);
     // "Our world requires a delicate balance of elemental forces. That..."
-    Event_ShowMessage(SPEAKER_PORTRAIT_LEFT | ACTOR_HAMA, 0);
+    Event_ShowMessage(SPEAKER_PORTRAIT_LEFT | ACTOR_HAMMA, 0);
     FieldActor_ShowEmote(ACTOR_KRADEN, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
     FieldActor_ShowEmote(gMainRoutineWork.leaderActorId,
                          EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
     FieldActor_ShowEmote(ACTOR_ISAAC, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
     FieldActor_ShowEmote(ACTOR_IVAN, EMOTE_IN_FRONT | EMOTE_QUESTION, 40);
-    Actor_FaceDirectionAndWait(ACTOR_HAMA, FACING_SOUTH_SOUTHWEST);
+    Actor_FaceDirectionAndWait(ACTOR_HAMMA, FACING_SOUTH_SOUTHWEST);
     // "Without that balance, one element might be lost beneath the others..."
-    Event_ShowMessageAndWait(ACTOR_HAMA, 0);
+    Event_ShowMessageAndWait(ACTOR_HAMMA, 0);
     // "You're talking about Mars Lighthouse, right?"
     Event_ShowMessage(SPEAKER_WINDOW_BELOW | ACTOR_KRADEN, 0);
-    Actor_FaceDirectionAndRefreshById(ACTOR_HAMA, FACING_EAST);
-    Actor_SetAnimationAndWait(ACTOR_HAMA, ANIM_NOD);
+    Actor_FaceDirectionAndRefreshById(ACTOR_HAMMA, FACING_EAST);
+    Actor_SetAnimationAndWait(ACTOR_HAMMA, ANIM_NOD);
     Actor_FaceDirection(ACTOR_IVAN, FACING_NORTHWEST, 0);
     Actor_FaceDirection(gMainRoutineWork.leaderActorId, FACING_SOUTHEAST, 40);
     Actor_FaceDirectionById(gMainRoutineWork.leaderActorId, FACING_EAST, 0);
     Actor_FaceDirectionAndWait(ACTOR_IVAN, FACING_NORTHEAST);
     // "Isn't Agatio taking care of Mars Lighthouse? Everything should be..."
     Event_ShowMessage(SPEAKER_PORTRAIT_LEFT | ACTOR_IVAN, 0);
-    FieldActor_ShowEmote(ACTOR_HAMA, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 0);
-    Actor_FaceDirection(ACTOR_HAMA, FACING_SOUTH_SOUTHWEST, 20);
+    FieldActor_ShowEmote(ACTOR_HAMMA, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 0);
+    Actor_FaceDirection(ACTOR_HAMMA, FACING_SOUTH_SOUTHWEST, 20);
     // "Agatio will not light Mars Lighthouse."
-    Event_ShowMessageAndWait(ACTOR_HAMA, 0);
+    Event_ShowMessageAndWait(ACTOR_HAMMA, 0);
     Actor_FaceDirection(ACTOR_ISAAC, FACING_NORTHEAST, 0);
     Actor_FaceDirection(ACTOR_KRADEN, FACING_SOUTH_SOUTHWEST, 40);
     Actor_FaceDirection(ACTOR_KRADEN, FACING_WEST, 0);
     Actor_FaceDirectionAndWait(ACTOR_ISAAC, FACING_NORTHWEST);
     // "You don't think he can do it?"
     Event_ShowMessageAndWait(ACTOR_ISAAC, 0);
-    Actor_SetAttachedEffect(ACTOR_HAMA,
+    Actor_SetAttachedEffect(ACTOR_HAMMA,
                             ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
-    Actor_FaceDirectionAndWait(ACTOR_HAMA, FACING_SOUTH_SOUTHEAST);
+    Actor_FaceDirectionAndWait(ACTOR_HAMMA, FACING_SOUTH_SOUTHEAST);
     // "No. A great power stands ready to oppose them."
-    Event_ShowMessage(SPEAKER_PORTRAIT_LEFT | ACTOR_HAMA, 0);
+    Event_ShowMessage(SPEAKER_PORTRAIT_LEFT | ACTOR_HAMMA, 0);
     FieldActor_ShowEmote(gMainRoutineWork.leaderActorId,
                          EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
     FieldActor_ShowEmote(ACTOR_ISAAC, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
     FieldActor_ShowEmote(ACTOR_IVAN, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
     FieldActor_ShowEmote(ACTOR_KRADEN, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 40);
-    Actor_FaceDirectionAndWait(ACTOR_HAMA, FACING_SOUTH_SOUTHWEST);
-    Actor_SetAnimationById(ACTOR_HAMA, ANIM_SHAKE_HEAD);
+    Actor_FaceDirectionAndWait(ACTOR_HAMMA, FACING_SOUTH_SOUTHWEST);
+    Actor_SetAnimationById(ACTOR_HAMMA, ANIM_SHAKE_HEAD);
     // "They lack the power to resist that force, and they will fall before it."
-    Event_ShowMessageAndWait(ACTOR_HAMA, 0);
+    Event_ShowMessageAndWait(ACTOR_HAMMA, 0);
     Actor_FaceDirection(ACTOR_ISAAC, FACING_NORTHEAST, 0);
     Actor_FaceDirection(ACTOR_KRADEN, FACING_SOUTH_SOUTHWEST, 0);
     Actor_FaceDirection(ACTOR_IVAN, FACING_NORTHWEST, 0);
@@ -2241,19 +2243,19 @@ void Contigo_ReturnToNewHome(void) {
     Actor_FaceDirectionById(gMainRoutineWork.leaderActorId, FACING_EAST, 0);
     Actor_FaceDirection(ACTOR_KRADEN, FACING_WEST, 0);
     Actor_FaceDirection(ACTOR_IVAN, FACING_NORTHEAST, 0);
-    FieldActor_ShowEmote(ACTOR_HAMA, EMOTE_IN_FRONT | EMOTE_SWEAT_DROP, 0);
-    Actor_FaceDirection(ACTOR_HAMA, FACING_SOUTH_SOUTHEAST, 0);
+    FieldActor_ShowEmote(ACTOR_HAMMA, EMOTE_IN_FRONT | EMOTE_SWEAT_DROP, 0);
+    Actor_FaceDirection(ACTOR_HAMMA, FACING_SOUTH_SOUTHEAST, 0);
     // "Our world will be plunged into ice."
-    Event_ShowMessageAndWait(SPEAKER_PORTRAIT_LEFT | ACTOR_HAMA, 0);
+    Event_ShowMessageAndWait(SPEAKER_PORTRAIT_LEFT | ACTOR_HAMMA, 0);
     Actor_RunRepeatedMotion(ACTOR_IVAN, 1);
     // "But what would make that happen?"
     Event_ShowMessage(SPEAKER_PORTRAIT_LEFT | ACTOR_IVAN, 0);
-    Actor_FaceDirectionAndWait(ACTOR_HAMA, FACING_SOUTH_SOUTHWEST);
+    Actor_FaceDirectionAndWait(ACTOR_HAMMA, FACING_SOUTH_SOUTHWEST);
     // "Even I do not know the answer to that question."
-    Event_ShowMessageAndWait(ACTOR_HAMA, 0);
+    Event_ShowMessageAndWait(ACTOR_HAMMA, 0);
     FieldActor_ShowEmote(ACTOR_KRADEN, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 20);
     Actor_FaceDirection(ACTOR_ISAAC, FACING_NORTHEAST, 0);
-    Actor_FaceDirectionById(ACTOR_HAMA, FACING_EAST, 80);
+    Actor_FaceDirectionById(ACTOR_HAMMA, FACING_EAST, 80);
     FieldActor_ShowEmote(ACTOR_KRADEN, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 40);
     FieldActor_ShowEmote(ACTOR_ISAAC, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
     FieldActor_ShowEmote(gMainRoutineWork.leaderActorId,
@@ -2329,9 +2331,9 @@ void Contigo_ReturnToNewHome(void) {
     Actor_SetAnimationById(ACTOR_ISAAC, ANIM_NOD);
     // "Right, yeah... I've always done that without thinking about it, but..."
     Event_ShowMessageAndWait(SPEAKER_PORTRAIT_LEFT | ACTOR_ISAAC, 0);
-    FieldActor_ShowEmote(ACTOR_HAMA, EMOTE_IN_FRONT | EMOTE_QUESTION, 20);
+    FieldActor_ShowEmote(ACTOR_HAMMA, EMOTE_IN_FRONT | EMOTE_QUESTION, 20);
     // "When Mercury Lighthouse was lit, this didn't happen, though. I..."
-    Event_ShowMessageAndWait(SPEAKER_PORTRAIT_LEFT | ACTOR_HAMA, 0);
+    Event_ShowMessageAndWait(SPEAKER_PORTRAIT_LEFT | ACTOR_HAMMA, 0);
     Actor_FaceDirectionAndWait(ACTOR_KRADEN, FACING_WEST);
     Actor_SetAnimationById(ACTOR_KRADEN, ANIM_NOD);
     // "Water cannot cool things as swiftly as wind, perhaps."
@@ -2348,10 +2350,10 @@ void Contigo_ReturnToNewHome(void) {
     Actor_FaceDirectionAndWait(ACTOR_IVAN, FACING_NORTHWEST);
     // "I got too worked up about seeing my sister... Sorry."
     Event_ShowMessageAndWait(ACTOR_IVAN, 0);
-    Actor_FaceDirectionAndWait(ACTOR_HAMA, FACING_SOUTH_SOUTHWEST);
-    Actor_SetAnimationAndWait(ACTOR_HAMA, ANIM_NOD);
+    Actor_FaceDirectionAndWait(ACTOR_HAMMA, FACING_SOUTH_SOUTHWEST);
+    Actor_SetAnimationAndWait(ACTOR_HAMMA, ANIM_NOD);
     // "It's all right. I'm happy that you cared so much..."
-    Event_ShowMessageAndWait(ACTOR_HAMA, 0);
+    Event_ShowMessageAndWait(ACTOR_HAMMA, 0);
     Actor_FaceDirectionAndWait(ACTOR_KRADEN, FACING_WEST);
     Actor_SetAnimationById(ACTOR_KRADEN, ANIM_NOD);
     // "All right, Felix! Let's head to Mars Lighthouse!"
@@ -3061,11 +3063,11 @@ struct ActorPlacement gContigo_Placements[] = {
 
 struct ActorPlacement gContigo_VillagePlacements[] = {
     ACTOR_PLACEMENT(SPRITE_SUNSHINES_CHILD, CONDITION_ALWAYS, MOVEMENT_TYPE_WANDER_NEAR, 340, 0, 936, FACING_SOUTH, TALK_FACING_PARTY, 0),
-    ACTOR_PLACEMENT(116, CONDITION_ALWAYS, MOVEMENT_TYPE_WANDER_NEAR, 88, 0, 942, FACING_NORTH, TALK_FACING_PARTY, 0),
-    ACTOR_PLACEMENT(114, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 184, 0, 808, FACING_EAST, TALK_FACING_PARTY, 0),
+    ACTOR_PLACEMENT(SPRITE_WOMAN_IN_PURPLE_SKIRT, CONDITION_ALWAYS, MOVEMENT_TYPE_WANDER_NEAR, 88, 0, 942, FACING_NORTH, TALK_FACING_PARTY, 0),
+    ACTOR_PLACEMENT(SPRITE_MAN_WITH_CURLY_HAIR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 184, 0, 808, FACING_EAST, TALK_FACING_PARTY, 0),
     ACTOR_PLACEMENT(SPRITE_SUNSHINES_WIFE, CONDITION_ALWAYS, MOVEMENT_TYPE_WANDER_NEAR, 116, 0, 680, FACING_NORTH, TALK_FACING_PARTY, 0),
-    ACTOR_PLACEMENT(112, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 336, 0, 792, FACING_SOUTH_SOUTHEAST, TALK_FACING_PARTY_AND_BACK, 0),
-    ACTOR_PLACEMENT(113, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 348, 0, 804, FACING_NORTH_NORTHWEST, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(SPRITE_OLD_MAN_IN_GREY_ROBE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 336, 0, 792, FACING_SOUTH_SOUTHEAST, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(SPRITE_OLD_WOMAN_WITH_HEADBAND, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 348, 0, 804, FACING_NORTH_NORTHWEST, TALK_FACING_PARTY_AND_BACK, 0),
     ACTOR_PLACEMENT(SPRITE_BOY_WITH_BLACK_HAIR, CONDITION_ALWAYS, (s32)gContigo_WandererScript, 352, 0, 872, FACING_NORTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(SPRITE_GIRL_WITH_TOPKNOT, CONDITION_ALWAYS, (s32)gContigo_PacerScript, 304, 0, 872, FACING_SOUTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(SPRITE_VENUS_DJINNI, FLAG_DJINNI(DJINNI_SALT), MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_SOUTH, TALK_FACING_PARTY, 0),
@@ -3075,11 +3077,11 @@ struct ActorPlacement gContigo_VillagePlacements[] = {
 
 struct ActorPlacement gContigo_GeoglyphPlacements[] = {
     ACTOR_PLACEMENT(SPRITE_SUNSHINES_CHILD, CONDITION_ALWAYS, MOVEMENT_TYPE_WANDER_NEAR, 846, 0, 660, FACING_SOUTH, TALK_FACING_PARTY, 0),
-    ACTOR_PLACEMENT(116, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 744, 0, 616, FACING_NORTH_NORTHEAST, TALK_FACING_PARTY_AND_BACK, 0),
-    ACTOR_PLACEMENT(79, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 686, 0, 756, FACING_SOUTH_SOUTHWEST, TALK_FACING_PARTY_AND_BACK, 0),
-    ACTOR_PLACEMENT(79, CONDITION_ALWAYS, (s32)gContigo_StatueScript, 774, 0, 664, FACING_WEST, TALK_FACING_PARTY_AND_BACK, 0),
-    ACTOR_PLACEMENT(79, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 696, 0, 588, FACING_EAST, TALK_FACING_PARTY_AND_BACK, 0),
-    ACTOR_PLACEMENT(79, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 806, 0, 596, FACING_SOUTH_SOUTHWEST, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(SPRITE_WOMAN_IN_PURPLE_SKIRT, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 744, 0, 616, FACING_NORTH_NORTHEAST, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(SPRITE_MUSCULAR_MAN_WITH_BLOND_HAIR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 686, 0, 756, FACING_SOUTH_SOUTHWEST, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(SPRITE_MUSCULAR_MAN_WITH_BLOND_HAIR, CONDITION_ALWAYS, (s32)gContigo_StatueScript, 774, 0, 664, FACING_WEST, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(SPRITE_MUSCULAR_MAN_WITH_BLOND_HAIR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 696, 0, 588, FACING_EAST, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(SPRITE_MUSCULAR_MAN_WITH_BLOND_HAIR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 806, 0, 596, FACING_SOUTH_SOUTHWEST, TALK_FACING_PARTY_AND_BACK, 0),
     ACTOR_PLACEMENT(SPRITE_BEARDED_MAN_IN_LONG_ROBE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 832, 0, 310, FACING_SOUTH_SOUTHWEST, TALK_FACING_PARTY, 0),
     ACTOR_PLACEMENT(SPRITE_BEARDED_MAN_IN_LONG_ROBE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 728, 0, 312, FACING_NORTH_NORTHEAST, TALK_FACING_PARTY_AND_BACK, 0),
     ACTOR_PLACEMENT(SPRITE_BEARDED_MAN_IN_LONG_ROBE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 760, 0, 346, FACING_NORTH_NORTHEAST, TALK_FACING_PARTY_AND_BACK, 0),
@@ -3104,26 +3106,26 @@ struct ActorPlacement gContigo_GeoglyphPlacements[] = {
 };
 
 struct ActorPlacement gContigo_ShopsPlacementsBeforeReunion[] = {
-    ACTOR_PLACEMENT(114, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 104, 0, 84, FACING_SOUTH_SOUTHWEST, TALK_FACING_PARTY, 0),
+    ACTOR_PLACEMENT(SPRITE_MAN_WITH_CURLY_HAIR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 104, 0, 84, FACING_SOUTH_SOUTHWEST, TALK_FACING_PARTY, 0),
     ACTOR_PLACEMENT(SPRITE_SUNSHINES_WIFE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 72, 0, 88, FACING_SOUTH_SOUTHEAST, TALK_FACING_PARTY, 0),
     ACTOR_PLACEMENT(SPRITE_BOY_WITH_BLACK_HAIR, CONDITION_ALWAYS, MOVEMENT_TYPE_WANDER, 112, 0, 130, FACING_SOUTH, TALK_FACING_PARTY, 0),
-    ACTOR_PLACEMENT(112, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 352, 0, 94, FACING_NORTH_NORTHWEST, TALK_FACING_PARTY, 0),
-    ACTOR_PLACEMENT(113, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 312, 0, 184, FACING_EAST, TALK_FACING_PARTY, 0),
+    ACTOR_PLACEMENT(SPRITE_OLD_MAN_IN_GREY_ROBE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 352, 0, 94, FACING_NORTH_NORTHWEST, TALK_FACING_PARTY, 0),
+    ACTOR_PLACEMENT(SPRITE_OLD_WOMAN_WITH_HEADBAND, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 312, 0, 184, FACING_EAST, TALK_FACING_PARTY, 0),
     ACTOR_PLACEMENT(SPRITE_WOMAN_WITH_TEAL_HEADBAND, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 448, 0, 112, FACING_SOUTH_SOUTHWEST, TALK_FACING_PARTY, 0),
     ACTOR_PLACEMENT(SPRITE_SUNSHINES_CHILD, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 733, 0, 91, FACING_SOUTH_SOUTHEAST, TALK_FACING_PARTY, 0),
-    ACTOR_PLACEMENT(116, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 686, 0, 108, FACING_NORTH_NORTHEAST, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(SPRITE_WOMAN_IN_PURPLE_SKIRT, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 686, 0, 108, FACING_NORTH_NORTHEAST, TALK_FACING_PARTY_AND_BACK, 0),
     ACTOR_PLACEMENT(SPRITE_BOY_WITH_BLACK_HAIR, CONDITION_ALWAYS, MOVEMENT_TYPE_WANDER_NEAR, 708, 0, 154, FACING_SOUTH, TALK_FACING_PARTY, 0),
-    ACTOR_PLACEMENT(161, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 756, 0, 108, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_GIRL_WITH_RED_BOW, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 756, 0, 108, FACING_SOUTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(SPRITE_WEAPON_MERCHANT, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 392, 0, 352, FACING_SOUTH_SOUTHEAST, TALK_FACING_PARTY, 0),
     ACTOR_PLACEMENT(SPRITE_ARMOR_MERCHANT, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 424, 0, 352, FACING_SOUTH_SOUTHWEST, TALK_FACING_PARTY, 0),
     ACTOR_PLACEMENT(SPRITE_INNKEEPER, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 200, 0, 584, FACING_SOUTH_SOUTHWEST, TALK_FACING_PARTY, 0),
     ACTOR_PLACEMENT(SPRITE_INN_WORKER, CONDITION_ALWAYS, MOVEMENT_TYPE_WANDER_NEAR, 186, 0, 636, FACING_EAST, TALK_FACING_PARTY, 0),
-    ACTOR_PLACEMENT(116, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 72, 0, 616, FACING_SOUTH_SOUTHEAST, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(SPRITE_WOMAN_IN_PURPLE_SKIRT, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 72, 0, 616, FACING_SOUTH_SOUTHEAST, TALK_FACING_PARTY_AND_BACK, 0),
     ACTOR_PLACEMENT(SPRITE_COOK, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 232, 0, 592, FACING_NORTH_NORTHEAST, TALK_FACING_PARTY_AND_BACK, 0),
-    ACTOR_PLACEMENT(79, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 94, 0, 574, FACING_SOUTH_SOUTHWEST, TALK_FACING_PARTY_AND_BACK, 0),
-    ACTOR_PLACEMENT(79, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 80, 0, 586, FACING_NORTH_NORTHEAST, TALK_FACING_PARTY_AND_BACK, 0),
-    ACTOR_PLACEMENT(112, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 280, 0, 664, FACING_EAST, TALK_FACING_PARTY, 0),
-    ACTOR_PLACEMENT(113, CONDITION_ALWAYS, MOVEMENT_TYPE_WANDER_NEAR, 310, 0, 614, FACING_WEST, TALK_FACING_PARTY, 0),
+    ACTOR_PLACEMENT(SPRITE_MUSCULAR_MAN_WITH_BLOND_HAIR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 94, 0, 574, FACING_SOUTH_SOUTHWEST, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(SPRITE_MUSCULAR_MAN_WITH_BLOND_HAIR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 80, 0, 586, FACING_NORTH_NORTHEAST, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(SPRITE_OLD_MAN_IN_GREY_ROBE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 280, 0, 664, FACING_EAST, TALK_FACING_PARTY, 0),
+    ACTOR_PLACEMENT(SPRITE_OLD_WOMAN_WITH_HEADBAND, CONDITION_ALWAYS, MOVEMENT_TYPE_WANDER_NEAR, 310, 0, 614, FACING_WEST, TALK_FACING_PARTY, 0),
     ACTOR_PLACEMENT(SPRITE_HEALER, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 688, 0, 344, FACING_SOUTH_SOUTHWEST, TALK_FACING_PARTY, 0),
     {SCENE_TABLE_END},
 };
@@ -3157,8 +3159,8 @@ struct ActorPlacement gContigo_ShopsPlacements[] = {
 struct ActorPlacement gContigo_LuckyDicePlacements[] = {
     ACTOR_PLACEMENT(SPRITE_YOUNG_MAN_WITH_FAIR_HAIR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 120, 0, 840, FACING_SOUTH_SOUTHEAST, TALK_FACING_PARTY, 0),
     ACTOR_PLACEMENT(SPRITE_YOUNG_MAN_WITH_FAIR_HAIR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 136, 0, 840, FACING_SOUTH_SOUTHWEST, TALK_FACING_PARTY, 0),
-    ACTOR_PLACEMENT(114, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 92, 0, 902, FACING_NORTH_NORTHEAST, TALK_FACING_PARTY_AND_BACK, 0),
-    ACTOR_PLACEMENT(112, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 104, 0, 872, FACING_NORTH_NORTHWEST, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(SPRITE_MAN_WITH_CURLY_HAIR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 92, 0, 902, FACING_NORTH_NORTHEAST, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(SPRITE_OLD_MAN_IN_GREY_ROBE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 104, 0, 872, FACING_NORTH_NORTHWEST, TALK_FACING_PARTY_AND_BACK, 0),
     ACTOR_PLACEMENT(SPRITE_SUNSHINES_WIFE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 90, 0, 872, FACING_NORTH_NORTHEAST, TALK_FACING_PARTY_AND_BACK, 0),
     ACTOR_PLACEMENT(SPRITE_SIGNPOST, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 132, 0, 906, FACING_SOUTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(SPRITE_YOUNG_MAN_WITH_FAIR_HAIR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 328, 0, 840, FACING_SOUTH_SOUTHEAST, TALK_FACING_PARTY, 0),
@@ -3389,8 +3391,8 @@ struct Trigger gContigo_ShopsTriggers[] = {
 
 struct Trigger gContigo_ShopsReunionTriggers[] = {
     {TRIGGER_EXIT, 4, CONDITION_ALWAYS, 4},
-    {TRIGGER_TALK, ACTOR_HAMA, CONDITION_ALWAYS, MSGNO(MsgContigoNoMatterWhatHappensYou)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_HAMA, CONDITION_ALWAYS, MSGNO(MsgContigoMyHeartIsWithYou)},
+    {TRIGGER_TALK, ACTOR_HAMMA, CONDITION_ALWAYS, MSGNO(MsgContigoNoMatterWhatHappensYou)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_HAMMA, CONDITION_ALWAYS, MSGNO(MsgContigoMyHeartIsWithYou)},
     {TRIGGER_STEP, 20, FLAG_CONTIGO_KRADEN_GREETED_PARTY, EVENT(Contigo_ReturnToNewHome)},
     {EXAMINE_TRIGGER(EXAMINE_OVEN), 200, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgContigoTheresABrightRedSoup))},
     {EXAMINE_TRIGGER(EXAMINE_OVEN), 201, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgContigoAhTheSmellOfFresh))},

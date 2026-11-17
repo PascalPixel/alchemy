@@ -77,16 +77,16 @@ s32 Field_GetCollisionAheadOfLeader(void) {
     u32 tileX;
     u32 tileY;
 
-    // Rounding toward zero, as a signed division by 32 pixels (32 << 16) would.
+    // Rounding toward zero, as a signed division by toFIXED(32) would.
     fixedX = position.vector.x;
     if (fixedX < 0)
       fixedX += toFIXED(32) - 1;
-    tileX = (fixedX >> 21) & 31;
+    tileX = (FIXEDtoINT(fixedX) >> 5) & 31;
 
     fixedZ = position.vector.z;
     if (fixedZ < 0)
       fixedZ += toFIXED(32) - 1;
-    tileY = (fixedZ >> 21) & 31;
+    tileY = (FIXEDtoINT(fixedZ) >> 5) & 31;
 
     tile = (u8 *)gCellPictures + ((tileX + (tileY << 5)) << 2);
   } else {
@@ -293,10 +293,12 @@ void Field_UpdateWalking(s32 layer, FIXED x, FIXED y, FIXED z) {
                                             ATTACHED_EFFECT_REMOVE);
   }
   if (gMainRoutineWork.hazardSteps >= gMainRoutineWork.hazardLimit) {
-    // hazardDamage: bits 7 to 0 the amount, bit 8 a percentage of maximum HP.
+    // hazardDamage: the amount below HAZARD_DAMAGE_PERCENT, which makes it a
+    // percentage of maximum HP.
     amount = gMainRoutineWork.hazardDamage;
     gMainRoutineWork.hazardSteps = 0;
-    Party_AddHp(-(amount & 255), amount & 0x100);
+    Party_AddHp(-(amount & (HAZARD_DAMAGE_PERCENT - 1)),
+                amount & HAZARD_DAMAGE_PERCENT);
     partyHurt++;
   }
 
@@ -333,8 +335,9 @@ void Party_AddPp(s32 amount, s32 unused) {
     Unit_AddPpFar(gMainRoutineWork.party[partyIndex], amount);
 }
 
-// The fallback drops the damage's sign, so a damaging percentage that truncates
-// to zero would heal instead.
+/// Damage past this plays SE_HEAVY_IMPACT rather than SE_IMPACT.
+#define HEAVY_DAMAGE 10
+
 /// Changes each party member's HP by amount, or by that percentage of maximum
 /// HP when percent is set.
 void Party_AddHp(s32 amount, s32 percent) {
@@ -343,11 +346,10 @@ void Party_AddHp(s32 amount, s32 percent) {
   s32 hpDelta;
   struct Unit *unit;
 
-  // Damage of more than 10 plays the heavier impact sound.
   if (amount < 0) {
     PaletteFade_SetSource(RGB(31, 15, 0), 0);
     PaletteFade_StartInterpolation(4);
-    if (amount < -10)
+    if (amount < -HEAVY_DAMAGE)
       Sound_PlayFar(SE_HEAVY_IMPACT);
     else
       Sound_PlayFar(SE_IMPACT);
@@ -362,6 +364,8 @@ void Party_AddHp(s32 amount, s32 percent) {
       hpDelta = amount;
     } else {
       hpDelta = unit->hpMax * amount / 100;
+      // The fallback drops the damage's sign, so a damaging percentage that
+      // truncates to zero heals instead.
       if (hpDelta == 0) {
         hpDelta = amount;
         if (hpDelta < 0)
@@ -371,6 +375,11 @@ void Party_AddHp(s32 amount, s32 percent) {
     Unit_AddHpFar(gMainRoutineWork.party[partyIndex], hpDelta);
   }
 }
+
+/// The share of maximum HP poison and deadly poison take each time, as one part
+/// in this many.
+#define POISON_HP_PARTS 20
+#define VENOM_HP_PARTS 10
 
 /// Hurts each poisoned character in the party: poison takes a twentieth of
 /// their maximum HP and deadly poison a tenth, rounded to the nearest and at
@@ -386,14 +395,14 @@ s32 Party_ApplyPoisonDamage(void) {
 
     switch (unit->poison) {
     case POISON_NORMAL:
-      hpDelta = -((unit->hpMax + 10) / 20);
+      hpDelta = -((unit->hpMax + POISON_HP_PARTS / 2) / POISON_HP_PARTS);
       if (hpDelta == 0)
         hpDelta = -1;
       if (worstPoison <= 0)
         worstPoison = POISON_NORMAL;
       break;
     case POISON_VENOM:
-      hpDelta = -((unit->hpMax + 5) / 10);
+      hpDelta = -((unit->hpMax + VENOM_HP_PARTS / 2) / VENOM_HP_PARTS);
       if (hpDelta == 0)
         hpDelta = -1;
       if (worstPoison <= POISON_NORMAL)
@@ -448,3 +457,7 @@ void WorldMap_Unfreeze(void) {
     work->camera->paused = 0;
   }
 }
+
+#undef HEAVY_DAMAGE
+#undef POISON_HP_PARTS
+#undef VENOM_HP_PARTS

@@ -3,7 +3,7 @@
 
 /// @file
 /// Scene numbers, named after their places, in the order of gScenes
-/// (field/scenes.s), as The Broken Seal's scene_ids.h.
+/// (field/scenes.s).
 ///
 /// Each SceneId_ is an absolute symbol whose value is the scene's row in the
 /// table; C names the number by its macro, SCENE_DAILA_FLOODED for

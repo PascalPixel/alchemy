@@ -2,15 +2,16 @@
 #define ALCHEMY_SCENE_EXITS_H
 
 /// @file
-/// The ways between scenes: each scene's entrances, named by where the
-/// party arrives from, and its exits, named by where they lead, in the exit
-/// tables' numbers (SCENE_EXIT), as The Broken Seal's scene_exits.h. A door
-/// is named the same from both sides: an exit and the entrance it leads to
-/// face each other, and a door's two sides usually share its number in each
-/// scene. Where two scenes share several doors, each is named by the compass
-/// point it lies at on the map of the place the other opens off. Exits
-/// between rooms of one map, and entrances no exit leads to, keep their
-/// numbers.
+/// The ways between scenes: each scene's entrances, named by where the party
+/// arrives from, and its exits, named by where they lead, in the exit tables'
+/// numbers (SCENE_EXIT). A door is named the same from both sides: an exit and
+/// the entrance it leads to face each other, and a door's two sides usually
+/// share its number in each scene. Where two scenes share several doors, each
+/// is named by the compass point it lies at on the map of the place the other
+/// opens off. Exits between rooms of one map keep their numbers, as do most
+/// entrances no exit leads to; one another scene's event sends the party to is
+/// named for that scene or for the moment it is reached (CLEAR_FROM_EPILOGUE,
+/// YAMPI_DESERT_SCORPION_PIT_AFTER_KING_SCORPION_BATTLE).
 
 /// The entrance a scene's table lists first: Scene_TakeExit sends the
 /// party there when an exit has no row of its own, and the debug scene
@@ -20,6 +21,12 @@ enum DefaultEntrance { ENTRANCE_DEFAULT = 0 };
 /// SceneId_Title's entrances.
 enum {
   TITLE_FROM_IDEJIMA = 3,
+};
+
+/// SceneId_Clear's entrances.
+enum {
+  /// From the end of the epilogue, which offers to save the cleared game.
+  CLEAR_FROM_EPILOGUE = 2,
 };
 
 /// SceneId_WorldMap's entrances.
@@ -1384,6 +1391,8 @@ enum {
 /// SceneId_YampiDesertScorpionPit's entrances.
 enum {
   YAMPI_DESERT_SCORPION_PIT_FROM_YAMPI_DESERT_KING_SCORPION = 1,
+  /// Where the party lands after the King Scorpion's battle.
+  YAMPI_DESERT_SCORPION_PIT_AFTER_KING_SCORPION_BATTLE = 2,
 };
 /// SceneId_YampiDesertScorpionPit's exits.
 enum {
@@ -5108,6 +5117,8 @@ enum {
 enum {
   ANEMOS_INNER_SANCTUM_DRAGON_SKIN_CHEST_FROM_ANEMOS_INNER_SANCTUM_ENTRANCE = 1,
   ANEMOS_INNER_SANCTUM_DRAGON_SKIN_CHEST_FROM_ANEMOS_INNER_SANCTUM_GUARDIAN = 2,
+  /// Where Teleport from Contigo's circle lands (Contigo_TeleportOut).
+  ANEMOS_INNER_SANCTUM_DRAGON_SKIN_CHEST_FROM_CONTIGO = 99,
 };
 /// SceneId_AnemosInnerSanctumDragonSkinChest's exits.
 enum {

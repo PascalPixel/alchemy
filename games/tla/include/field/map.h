@@ -50,6 +50,10 @@ extern u8 gMapGridShapes[];
 /// The shape a scene gives the one cell under a pillar it raises alone, its
 /// entry rewritten as MAP_SHAPE_MARKED's: Aqua Rock's water pillar.
 #define MAP_SHAPE_RAISED_ALONE 121
+/// A map shape entry as gMapGridShapes holds it: the shape's kind and its
+/// three heights, a byte each (the rows of a map's shapes.tsv).
+#define MAP_SHAPE(shape, height0, height1, height2)                            \
+  ((shape) | (height0) << 8 | (height1) << 16 | (height2) << 24)
 
 void WorldMap_UpdateRegionTint(s32 region, s32 gradual);
 

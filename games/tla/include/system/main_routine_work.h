@@ -5,8 +5,7 @@
 #include "types.h"
 #include "static_assert.h"
 
-/// A scene's type (Scene.sceneType, copied to MainRoutineWork.sceneVariant),
-/// as The Broken Seal's.
+/// A scene's type (Scene.sceneType, copied to MainRoutineWork.sceneVariant).
 enum SceneType {
   SCENE_TYPE_OTHER = 1, ///< every other scene: dungeons, the world map
   /// Towns and their rooms, and the prologue's Venus Lighthouse scenes:
@@ -32,7 +31,7 @@ enum BattleType {
 #define COINS_MAX 999999
 
 /// gMainRoutineWork.hazardMode: what advances the hazard count
-/// (Field_UpdateWalking), as The Broken Seal's.
+/// (Field_UpdateWalking).
 enum HazardMode {
   /// The distance the leader walks on MAP_CELL_HAZARD ground.
   HAZARD_COUNT_ON_CELLS = 0,
@@ -152,8 +151,8 @@ struct MainRoutineWork {
   u8 idleSleepEnabled;
   u8 battleType; ///< an enum BattleType, set back to BATTLE_TYPE_NORMAL at the
                  ///< end
-  /// Hazardous ground, as The Broken Seal's: when hazardSteps reaches
-  /// hazardLimit the party takes hazardDamage and the count starts again.
+  /// Hazardous ground: when hazardSteps reaches hazardLimit the party takes
+  /// hazardDamage and the count starts again.
   ///@{
   s16 hazardLimit;
   s16 hazardMode;

@@ -10,6 +10,14 @@ struct Window;
 struct MenuCursor;
 struct WindowSprite;
 
+/// The colours QuantityBar_Fill paints a quantity bar's segments in, the
+/// right pixel of each, each call painting the first so many: those past what
+/// can be chosen, those still open, those chosen, and those already held.
+#define QUANTITY_BAR_OUT_OF_REACH 14
+#define QUANTITY_BAR_OPEN 0
+#define QUANTITY_BAR_CHOSEN 10
+#define QUANTITY_BAR_HELD 2
+
 void Shop_InitializeWork(void);
 void Shop_ReleaseWork(void);
 s32 Shop_SelectBuy(void);

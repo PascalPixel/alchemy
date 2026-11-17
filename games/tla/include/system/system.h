@@ -4,7 +4,7 @@
 /// @file
 /// The system's routines and globals: interrupts, BIOS sound bias, random
 /// numbers and sleep, the save slot, the debug text, and the system bank's
-/// other routines, as The Broken Seal's system.h.
+/// other routines.
 
 #include "edition.h"
 #include "fixed_math.h"
@@ -17,8 +17,7 @@ void Oam_ResetFrame(void);
 void Bios_SoundBiasOff(void);
 void Bios_SoundBiasOn(void);
 u32 Random16(void);
-/// A random number from 0 to n - 1: n times a 16-bit random draw, over 65536,
-/// as The Broken Seal's event.h writes it.
+/// A random number from 0 to n - 1: n times a 16-bit random draw, over 65536.
 #define Random_Below(n) (Random16() * (n) >> 16)
 /// Random16's seed; Lucky Wheels seeds it with the play time, and a link
 /// battle's parent sends it as the turn's gBattleRandomSeed.

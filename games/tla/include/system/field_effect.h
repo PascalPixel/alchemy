@@ -111,6 +111,14 @@ enum EffectSpawnFlags {
   EFFECT_USE_UPDATE = 0x1000000     ///< options.update
 };
 
+/// The scripts EFFECT_SCRIPT_MASK picks from gFieldEffect_DurationScripts: each
+/// holds the effect for a while, then releases it.
+enum EffectDuration {
+  EFFECT_SCRIPT_SHORT = 0,  ///< held 24 frames
+  EFFECT_SCRIPT_MEDIUM = 1, ///< held 46 frames
+  EFFECT_SCRIPT_LONG = 2    ///< held 128 frames
+};
+
 /// The options of a spawned field effect, each used when its EFFECT_USE_ flag
 /// (or EFFECT_SCALE_TO_TARGET) is set.
 struct EffectOptions {

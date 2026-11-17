@@ -19,9 +19,6 @@ struct MeshVertex;
 struct PoolEntry;
 struct StripQuad;
 
-/// The large effects BattleEffect_RunSummon runs, by kind: The Broken
-/// Seal's twelve summons, The Lost Age's twelve, and the scenes of Daedalus's
-/// second strike, Trident, Cruel Ruin and Meteor Blow.
 /// The summons' sprite formations (BattleEffect_PlaceFormationObjects and
 /// BattleEffect_RunImpactBurst), each named for the summon that keeps it.
 enum SummonFormation {
@@ -35,6 +32,9 @@ enum SummonFormation {
   SUMMON_FORMATION_TIAMAT_ALTERNATE
 };
 
+/// The large effects BattleEffect_RunSummon runs, by kind: the summons, Ramses
+/// to Iris, and the scenes of Daedalus's second strike, Trident, Cruel Ruin and
+/// Meteor Blow.
 enum SummonEffectId {
   SUMMON_EFFECT_NONE,         ///< runs Meteor's effect
   SUMMON_EFFECT_RAMSES,       ///< BattleEffect_RunRamses (ramses.c)
@@ -471,21 +471,13 @@ union BattleBackgroundId {
   u8 bytes[6];
 };
 
-// The Lost Age numbers its blitter modes in the reverse of The Broken Seal's
-// order: BattleEffect_BuildBlitter builds additive for 0, max for 1,
-// transparent for 2.
-enum { BLITTER_ADDITIVE, BLITTER_MAX, BLITTER_TRANSPARENT, BLITTER_COPY };
-
-void BattleEffect_UpdatePhasePalette(
-    s32 frame, s32 redPhase, s32 greenPhase,
-    s32 bluePhase); // Graphics_UpdatePhasePalette
-/// The canvas layer and its helpers; the comments give The Broken Seal's
-/// names where the twin is known.
+void BattleEffect_UpdatePhasePalette(s32 frame, s32 redPhase, s32 greenPhase,
+                                     s32 bluePhase);
+/// The canvas layer and its helpers.
 void BattleEffect_StartCanvasLayer(s32 bgControl);
 void BattleEffect_EndCanvasLayer(void);
 void BattleEffect_CountDownBattlerTints(void);
-s32 BattleEffect_LoadBlitter(s32 slot,
-                             s32 modeAndFlags); // BattleEffect_BuildBlitter
+s32 BattleEffect_LoadBlitter(s32 slot, s32 modeAndFlags);
 void BattleEffect_TintBattler(s32 actor, s32 palette, s32 pose, s32 timerSlot,
                               s32 timerFrames);
 void BattleEffect_DrawShadedCircles(u8 *map, s32 size, FIXED scale);
@@ -497,8 +489,7 @@ struct PoolEntry *Render_AllocateModelList(s32 count);
 void Render_TransformVertices(const void *corners, void *vertices, s32 count);
 void EffectPosition_ProjectBattler(s32 id, struct ScreenPoint *position);
 void BattleEffect_SpawnObjects(s32 entryCount, s32 kind, u32 variant);
-void BattleEffect_SelectLivingTargets(
-    struct BattleEffectParams *party); // SelectLivingTargets
+void BattleEffect_SelectLivingTargets(struct BattleEffectParams *party);
 void BattleEffect_StartActorMotion(s32 id, s32 force, s32 acceleration,
                                    s32 speedLimit, s32 velocityY, s32 percent);
 void BattleEffect_FetchRectangleBlitters(s32 flip, void **out);
@@ -592,12 +583,15 @@ typedef struct {
   s32 reservedB[3];
   s16 values[1];
 } BattleEffectIndexWindow;
-/// BattleEffect_RunDjinniEntrance's longer entrance, added to the Djinni's
-/// element: 84 frames in place of 55.
-enum { DJINNI_ENTRANCE_LONG = ELEMENT_COUNT };
+/// What BattleEffect_RunDjinniEntrance takes added to its element; the element
+/// alone plays the 55-frame entrance.
+enum DjinniEntranceLength {
+  /// The long entrance: 84 frames instead of 55.
+  DJINNI_ENTRANCE_LONG = ELEMENT_COUNT
+};
 
-/// Where BattleEffect_RunDjinniEntrance's Djinni appears: the first five as The
-/// Broken Seal's, 60 pixels up, and this game's own after them.
+/// Where BattleEffect_RunDjinniEntrance's Djinni appears: the first five 60
+/// pixels up.
 enum DjinniEntranceAnchor {
   DJINNI_ANCHOR_OVER_TARGET, ///< over the first target
   DJINNI_ANCHOR_TARGET_X,    ///< at the first target's x, at depth 0

@@ -14,7 +14,29 @@ enum {
   UI_SPRITE_VIEWER_COPY_COUNT = 10,
   UI_SPRITE_VIEWER_SPRITE_LIMIT = 716,    ///< sprite ids 0 to 715 are offered
   UI_SPRITE_VIEWER_ANIMATION_LIMIT = 100, ///< animations 0 to 99
+  /// A sprite animation priority above 3, which Sprite_ComposePicture skips.
+  UI_SPRITE_VIEWER_HIDDEN_PRIORITY = 8,
+  /// The sprite ids L and R step by while Start is held: any step past one
+  /// goes to the next stop of gSpriteViewer_SkipStops.
+  UI_SPRITE_VIEWER_FAST_STEP = 10
 };
+
+/// Facing kinds the viewer rings as The Broken Seal's viewer does, though
+/// this game's Sprite_ComposePicture has no table for them: that game's four
+/// and six pictures, ten round, and its eight with no table and eight
+/// mirrored, eight round.
+enum {
+  UI_SPRITE_VIEWER_KIND_FOUR_PICTURES = 4,
+  UI_SPRITE_VIEWER_KIND_SIX_PICTURES = 6,
+  UI_SPRITE_VIEWER_KIND_EIGHT_NO_TABLE = 44,
+  UI_SPRITE_VIEWER_KIND_EIGHT_MIRRORED = 88
+};
+
+/// A sprite id with the sprite picture cache its pictures load into, as a
+/// SpritePictureCache's tag holds them.
+#define SPRITE_PICTURE_TAG(slot, id) ((id) + ((slot) << 12))
+/// An angle's bits: shifted up and back down, a value keeps only them.
+#define ANGLE_BITS 16
 
 /// What left and right choose for L and R to change on the selected sprite
 /// animation.
@@ -92,7 +114,7 @@ restart:
             ANIM_FACING_TWO_PART &&
         (i & 1))
       part = 1;
-    sprite = Sprite_Create(layers[0].spriteId + part + (part << 12));
+    sprite = Sprite_Create(SPRITE_PICTURE_TAG(part, layers[0].spriteId + part));
     Sprite_AddAnimation(sprite, layers[1].spriteId);
     Sprite_AddAnimation(sprite, layers[2].spriteId);
     Sprite_AddAnimation(sprite, layers[3].spriteId);
@@ -102,7 +124,7 @@ restart:
     if (layers[i].enabled != 0)
       SpriteViewer_SetGridColumnPriority(i, layers[i].priority);
     else
-      SpriteViewer_SetGridColumnPriority(i, 8);
+      SpriteViewer_SetGridColumnPriority(i, UI_SPRITE_VIEWER_HIDDEN_PRIORITY);
     SpriteViewer_SetGridColumnColorMode(i, layers[i].colorMode);
     {
       s32 a;
@@ -183,7 +205,7 @@ next:
       changed = 0;
       steps = 1;
       if (gInput.held & KEY_START)
-        steps = 10;
+        steps = UI_SPRITE_VIEWER_FAST_STEP;
       if (gInput.repeat & KEY_L) {
         layers[selectedLayer].spriteId =
             SpriteViewer_FindNextSpriteWithPictures(
@@ -270,10 +292,10 @@ next:
         }
       } else if (selectedLayer != 0) {
         layers[selectedLayer].enabled ^= 1;
-        SpriteViewer_SetGridColumnPriority(selectedLayer,
-                                           layers[selectedLayer].enabled != 0
-                                               ? layers[selectedLayer].priority
-                                               : 8);
+        SpriteViewer_SetGridColumnPriority(
+            selectedLayer, layers[selectedLayer].enabled != 0
+                               ? layers[selectedLayer].priority
+                               : UI_SPRITE_VIEWER_HIDDEN_PRIORITY);
         goto next;
       }
     }
@@ -287,7 +309,7 @@ next:
       const u16 *colors = gSpriteViewer_BackdropColors;
       backdrop++;
       backdrop &= 7;
-      // Spelled as an address sum: colors[backdrop] swaps the load's registers.
+      // The next of the eight backdrop colours.
       *palette = *(const u16 *)((u32)colors + (backdrop << 1));
     }
     wait(1);
@@ -341,7 +363,7 @@ s32 SpriteViewer_FindNextSpriteWithPictures(s32 value, s32 delta) {
 #ifdef UBFIX
   return value;
 #else
-  // UB: no return statement for a delta of 0; the original leaves value in r0.
+  // UB: no return statement for a delta of 0; UBFIX returns value unchanged.
 #endif
 }
 
@@ -365,9 +387,9 @@ void SpriteViewer_BuildProbeRing(s32 centerX, s32 centerY,
   switch ((u32)kind) {
   case ANIM_FACING_THREE_PICTURES:
     for (i = 0; i < 6; i++) {
-      angle <<= 16;
+      angle <<= ANGLE_BITS;
       positions->x = toFIXED(centerX);
-      angle = (u32)angle >> 16;
+      angle = (u32)angle >> ANGLE_BITS;
       positions->height = 0;
       positions->y = toFIXED(centerY);
       Vector_AddPolarOffset(toFIXED(56), (u16)angle, &positions->x);
@@ -379,12 +401,12 @@ void SpriteViewer_BuildProbeRing(s32 centerX, s32 centerY,
     break;
   case ANIM_FACING_SIX_PICTURES:
   case ANIM_FACING_EIGHT_PICTURES:
-  case 44:
-  case 88:
+  case UI_SPRITE_VIEWER_KIND_EIGHT_NO_TABLE:
+  case UI_SPRITE_VIEWER_KIND_EIGHT_MIRRORED:
     for (i = 0; i < 8; i++) {
-      angle = (u32)angle << 16;
+      angle = (u32)angle << ANGLE_BITS;
       positions->x = toFIXED(centerX);
-      angle = (u32)angle >> 16;
+      angle = (u32)angle >> ANGLE_BITS;
       positions->height = 0;
       positions->y = toFIXED(centerY);
       Vector_AddPolarOffset(toFIXED(56), (u16)angle, &positions->x);
@@ -394,12 +416,12 @@ void SpriteViewer_BuildProbeRing(s32 centerX, s32 centerY,
     for (; i < UI_SPRITE_VIEWER_COPY_COUNT; i++)
       positions++;
     break;
-  case 4:
-  case 6:
+  case UI_SPRITE_VIEWER_KIND_FOUR_PICTURES:
+  case UI_SPRITE_VIEWER_KIND_SIX_PICTURES:
     for (i = 0; i < UI_SPRITE_VIEWER_COPY_COUNT; i++) {
-      angle <<= 16;
+      angle <<= ANGLE_BITS;
       positions->x = toFIXED(centerX);
-      angle = (u32)angle >> 16;
+      angle = (u32)angle >> ANGLE_BITS;
       positions->height = 0;
       positions->y = toFIXED(centerY);
       Vector_AddPolarOffset(toFIXED(56), (u16)angle, &positions->x);
@@ -416,8 +438,8 @@ void SpriteViewer_BuildProbeRing(s32 centerX, s32 centerY,
       pair[i * 2].x = toFIXED(centerX);
       pair[i * 2].height = 0;
       pair[i * 2].y = toFIXED(centerY);
-      angle <<= 16;
-      angle = (u32)angle >> 16;
+      angle <<= ANGLE_BITS;
+      angle = (u32)angle >> ANGLE_BITS;
       Vector_AddPolarOffset(toFIXED(40), angle, &positions[0].x);
       pair[i * 2 + 1].x = toFIXED(centerX);
       {
@@ -426,17 +448,19 @@ void SpriteViewer_BuildProbeRing(s32 centerX, s32 centerY,
         pair[i * 2 + 1].y = toFIXED(centerY);
         Vector_AddPolarOffset(toFIXED(40), (u16)angle, point);
       }
-      angle = ((u32)angle + DEGtoANG(180)) << 16;
+      angle = ((u32)angle + DEGtoANG(180)) << ANGLE_BITS;
       i++;
       positions += 2;
-      angle >>= 16;
+      angle >>= ANGLE_BITS;
     }
     break;
   default:
-    angle = (s32)(((u32)angle << 16) + 0x20000000) >> 16;
+    angle =
+        (s32)(((u32)angle << ANGLE_BITS) + ((u32)DEGtoANG(45) << ANGLE_BITS)) >>
+        ANGLE_BITS;
     for (i = 0; i < 4; i++) {
-      angle = (u32)angle << 16;
-      angle = (u32)angle >> 16;
+      angle = (u32)angle << ANGLE_BITS;
+      angle = (u32)angle >> ANGLE_BITS;
       positions->x = toFIXED(centerX);
       positions->height = 0;
       positions->y = toFIXED(centerY);
@@ -506,7 +530,7 @@ void SpriteViewer_StartStaggeredAnimations(s32 slot, s32 value) {
       if (value < metadata->animationCount) {
         entry->kind = metadata->drawKind;
         entry->script = entry->scripts[value];
-        entry->timer = count * 16;
+        entry->timer = count * SPRITE_ANIMATION_NORMAL_STEP;
         entry->step = SPRITE_ANIMATION_NORMAL_STEP;
         entry->scriptOffset = index;
         entry->pictureBase = index;
@@ -559,8 +583,6 @@ void SpriteViewer_PlaceRing(void) {
   scale = gSpriteViewer_Scale;
   table = (u8 *)Ram_HeapSlots->battleWork;
 
-  // Kinds 4, 6, 44 and 88 are The Broken Seal's: this game's
-  // Sprite_ComposePicture has no facing table for them.
   switch (kind) {
   case ANIM_FACING_THREE_PICTURES:
     angle = 0;
@@ -569,17 +591,17 @@ void SpriteViewer_PlaceRing(void) {
     break;
   case ANIM_FACING_SIX_PICTURES:
   case ANIM_FACING_EIGHT_PICTURES:
-  case 44:
-  case 88:
+  case UI_SPRITE_VIEWER_KIND_EIGHT_NO_TABLE:
+  case UI_SPRITE_VIEWER_KIND_EIGHT_MIRRORED:
     angle = 0;
     step = DEGtoANG(45);
     cnt = 8;
     break;
-  case 4:
-  case 6:
+  case UI_SPRITE_VIEWER_KIND_FOUR_PICTURES:
+  case UI_SPRITE_VIEWER_KIND_SIX_PICTURES:
     angle = 0;
     step = DEGtoANG(36);
-    cnt = 10;
+    cnt = UI_SPRITE_VIEWER_COPY_COUNT;
     break;
   case ANIM_FACING_TWO_PART:
     angle = 0;
@@ -595,8 +617,9 @@ void SpriteViewer_PlaceRing(void) {
   }
 
   for (i = 0; i < cnt; i++) {
-    Render_ApplyProjectedPlacement(sprites, (s32 *)(table + i * 16),
-                                   (s32 *)&scale, angle);
+    Render_ApplyProjectedPlacement(
+        sprites, (s32 *)(table + i * sizeof(struct SpritePlacement)),
+        (s32 *)&scale, angle);
     sprites++;
     angle += step;
     if (i & 1)

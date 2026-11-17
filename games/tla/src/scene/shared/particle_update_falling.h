@@ -5,9 +5,9 @@
 /// Attribute 2's ten bits of tile number.
 #define OBJ_TILE_MASK 0x3ff
 
-/// Each frame, the falling rocks in flight: each shows one of its eight
-/// pictures, a picture every four frames as it ages, and falls, damped and
-/// pulled down, for FALLING_ROCK_FRAMES frames.
+/// Each frame, the falling rocks in flight: each falls, damped and pulled down,
+/// for FALLING_ROCK_FRAMES frames, and shows the five pictures of
+/// falling_rock.png in turn, four frames apiece, shrinking as it goes.
 void Particle_UpdateFalling(void) {
   struct ParticleWork *work = Ram_HeapSlots->menuWork;
   struct Particle *particle = work->particles;

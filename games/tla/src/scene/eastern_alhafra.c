@@ -2479,8 +2479,6 @@ enum { PUSH_KINDS = 6 };
 
 extern s8 gPushFootprints[][4];
 
-#define ABS(x) ((x) < 0 ? -(x) : (x))
-
 /// Makes the cells under a pushable actor solid, by its footprint: the sprite
 /// it wears picks one of gPushFootprints (its corners from the actor, in
 /// pixels), and the cells under it are copied to the map's spare area and
@@ -2638,7 +2636,6 @@ void PushTarget_Push(struct PushTarget target) {
 
 #include "shared/actor_set_cell_open.h"
 
-#undef ABS
 #undef PIXEL_PART
 #include "text/msg_ids.h"
 

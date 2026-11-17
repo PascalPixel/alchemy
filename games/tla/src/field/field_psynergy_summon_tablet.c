@@ -51,6 +51,10 @@ struct Chase {
   FIXED targetZ;
 };
 
+/// The sign bit of a 32-bit number: two numbers' signs differ where their
+/// exclusive or has it.
+#define SIGN_BIT 0x80000000
+
 /// Moves toward the target by speed, stopping on it on overshoot.
 void Motion_StepTowardTarget(struct Chase *chase, FIXED speed) {
   s32 dx = chase->targetX - chase->x;
@@ -63,52 +67,57 @@ void Motion_StepTowardTarget(struct Chase *chase, FIXED speed) {
     s32 nextDx = chase->targetX - chase->x;
     s32 nextDz = chase->targetZ - chase->z;
 
-    if ((nextDx ^ dx) & 0x80000000)
+    if ((nextDx ^ dx) & SIGN_BIT)
       chase->x = chase->targetX;
-    if ((dz ^ nextDz) & 0x80000000)
+    if ((dz ^ nextDz) & SIGN_BIT)
       chase->z = chase->targetZ;
   }
 }
 
-/// One mote or spark and a frame count, negative before it starts.
+/// One rune or pebble and a frame count, negative before it starts.
 struct ChasingMote {
   union {
-    /// A mote: a point on the screen chasing its target
-    /// (Motion_StepTowardTarget's struct Chase).
-    struct {
-      FIXED x;
-      FIXED z;
-      FIXED unusedAfterZ; ///< no code names it
-      FIXED targetX;
-      FIXED targetZ;
-      FIXED unusedAfterTargetZ; ///< no code names it
-    };
-    /// A spark: a position in the world and its velocity
+    /// A rune: a point on the screen chasing its target.
+    struct Chase rune;
+    /// A pebble: a position in the world and its velocity
     /// (Field_AdvanceWithGravity3D's vector).
     struct {
       FIXED position[3];
       FIXED velocity[3];
-    } spark;
+    } pebble;
   };
   s32 timer;
 };
 
-/// The sparks that fly off the tablet, a power of two: the next wraps by a
+/// The pebbles that fly off the tablet, a power of two: the next wraps by a
 /// mask.
-#define TABLET_SPARK_COUNT 32
-/// The tablet's runes, flown as motes in three rows of 16.
-#define TABLET_MOTE_COUNT 48
-#define TABLET_MOTE_ROW 16
+#define TABLET_PEBBLE_COUNT 32
+/// The pebbles thrown off at once by the last, heavy blow (SE_HEAVY_IMPACT).
+#define TABLET_PEBBLES_ON_IMPACT 25
+/// A pebble's four pictures (RESOURCE_PEBBLES, 16 by 16 and shrinking), five
+/// frames each; a picture of 256 colours is 8 tile numbers.
+#define PEBBLE_PICTURES 4
+#define PEBBLE_PICTURE_FRAMES 5
+#define PEBBLE_PICTURE_TILES 8
+/// The tablet's runes, in three rows of 16.
+#define TABLET_RUNE_COUNT 48
+#define TABLET_RUNE_ROW 16
+/// RESOURCE_RUNES' 16 grey runes, 8 by 8, and after them the same runes lit
+/// in blue and green; an 8 by 8 tile of 256 colours is two tile numbers.
+#define TABLET_RUNE_PICTURES 16
+#define RUNE_LIT (TABLET_RUNE_PICTURES * 2)
 
-/// The summon tablet's work (heap slot battleEffect): the decoded mote
-/// pictures, the sparks and motes that fly between the tablet and the leader,
-/// and the circle they gather on.
-struct MoteWork {
-  u8 unused[2048]; ///< no code names it
-  struct ChasingMote sparks[TABLET_SPARK_COUNT];
-  struct EffectSprite sparkSprites[TABLET_SPARK_COUNT];
-  struct ChasingMote motes[TABLET_MOTE_COUNT];
-  struct EffectSprite moteSprites[TABLET_MOTE_COUNT];
+/// The summon tablet's work (heap slot battleEffect): the decoded pictures, the
+/// pebbles and runes that fly between the tablet and the leader, and the
+/// circle the runes gather on.
+struct SummonTabletWork {
+  /// The runes' pictures, and then the pebbles', decoded to be loaded into
+  /// VRAM.
+  u8 pictures[2048];
+  struct ChasingMote pebbles[TABLET_PEBBLE_COUNT];
+  struct EffectSprite pebbleSprites[TABLET_PEBBLE_COUNT];
+  struct ChasingMote runes[TABLET_RUNE_COUNT];
+  struct EffectSprite runeSprites[TABLET_RUNE_COUNT];
   s32 originX;
   s32 originZ;
   s32 angle;
@@ -116,14 +125,14 @@ struct MoteWork {
   s32 spacing;
   s8 state;
   s8 moving;
-  u16 sparkTile;
+  u16 pebbleTile;
   s32 targetX;
   s32 targetZ;
 };
 
-/// Task of SummonTablet_PlayRunes: moves and draws the motes.
-void SummonTablet_UpdateMotes(void) {
-  struct MoteWork *work = Ram_HeapSlots->battleEffect;
+/// Task of SummonTablet_PlayRunes: moves and draws the runes and pebbles.
+void SummonTablet_UpdateRunes(void) {
+  struct SummonTabletWork *work = Ram_HeapSlots->battleEffect;
   s32 position[3];
   struct ChasingMote *mote;
   struct EffectSprite *sprite;
@@ -134,58 +143,59 @@ void SummonTablet_UpdateMotes(void) {
     position[0] = work->originX;
     position[2] = work->originZ;
     Vector_AddPolarOffset(work->radius, work->angle, position);
-    mote = work->motes;
-    mote->targetX = position[0];
-    mote->targetZ = position[2];
+    mote = work->runes;
+    mote->rune.targetX = position[0];
+    mote->rune.targetZ = position[2];
     work->angle += TRIG_TURN * 3 / 128;
-    for (i = 0; i < TABLET_MOTE_COUNT; i++, mote++) {
+    for (i = 0; i < TABLET_RUNE_COUNT; i++, mote++) {
       if (mote->timer >= 0) {
         if (i != 0) {
-          mote->targetX = position[0];
-          mote->targetZ = position[2];
+          mote->rune.targetX = position[0];
+          mote->rune.targetZ = position[2];
         }
-        position[0] = mote->x;
-        position[2] = mote->z;
+        position[0] = mote->rune.x;
+        position[2] = mote->rune.z;
         Vector_AddPolarOffset(work->spacing, 0, position);
       }
       mote->timer++;
     }
   }
 
-  mote = work->motes;
-  sprite = work->moteSprites;
-  for (i = TABLET_MOTE_COUNT - 1; i >= 0; i--, sprite++, mote++) {
+  mote = work->runes;
+  sprite = work->runeSprites;
+  for (i = TABLET_RUNE_COUNT - 1; i >= 0; i--, sprite++, mote++) {
     if (work->state == 0) {
       if (mote->timer >= 0) {
-        Motion_StepTowardTarget(mote, toFIXED(4));
-        sprite->x = mote->x;
-        sprite->y = mote->z;
+        Motion_StepTowardTarget(&mote->rune, toFIXED(4));
+        sprite->x = mote->rune.x;
+        sprite->y = mote->rune.z;
         EffectSprite_Draw(sprite);
       }
       mote->timer++;
     } else if (work->state == 2) {
-      Motion_StepTowardTarget(mote, toFIXED(6));
-      sprite->x = mote->x;
-      sprite->y = mote->z;
+      Motion_StepTowardTarget(&mote->rune, toFIXED(6));
+      sprite->x = mote->rune.x;
+      sprite->y = mote->rune.z;
       EffectSprite_Draw(sprite);
     } else if (work->state == 3) {
-      if (mote->x != work->targetX || mote->z != work->targetZ) {
-        Motion_StepTowardTarget(mote, toFIXED(6));
-        sprite->x = mote->x;
-        sprite->y = mote->z;
+      if (mote->rune.x != work->targetX || mote->rune.z != work->targetZ) {
+        Motion_StepTowardTarget(&mote->rune, toFIXED(6));
+        sprite->x = mote->rune.x;
+        sprite->y = mote->rune.z;
         EffectSprite_Draw(sprite);
       }
     }
   }
 
-  mote = work->sparks;
-  tile = &work->sparkTile;
-  sprite = work->sparkSprites;
-  for (i = TABLET_SPARK_COUNT - 1; i >= 0; i--, sprite++, mote++) {
-    if ((u32)mote->timer < 20) {
-      sprite->oam.index = *tile + (mote->timer / 5 & 7) * 8;
-      EffectSprite_DrawAtWorldPosition(sprite, mote->spark.position);
-      Field_AdvanceWithGravity3D(mote->spark.position, 63, -(toFIXED(1) / 2));
+  mote = work->pebbles;
+  tile = &work->pebbleTile;
+  sprite = work->pebbleSprites;
+  for (i = TABLET_PEBBLE_COUNT - 1; i >= 0; i--, sprite++, mote++) {
+    if ((u32)mote->timer < PEBBLE_PICTURES * PEBBLE_PICTURE_FRAMES) {
+      sprite->oam.index = *tile + (mote->timer / PEBBLE_PICTURE_FRAMES & 7) *
+                                      PEBBLE_PICTURE_TILES;
+      EffectSprite_DrawAtWorldPosition(sprite, mote->pebble.position);
+      Field_AdvanceWithGravity3D(mote->pebble.position, 63, -(toFIXED(1) / 2));
       mote->timer++;
     }
   }
@@ -195,29 +205,30 @@ extern const s32 gFieldEffect_TargetColors[];
 extern const s32 gSummonTablet_SquashScript[];
 extern const u8 gMovementType_SquashScript[];
 
-/// Plays a summon tablet's reading (a treasure of type 132, "examined the
-/// stone tablet"): the tablet's runes and pebbles fly as motes between it
-/// and the leader, with their sounds, before Summon_ShowLearnedMessage.
+/// Plays a summon tablet's reading (a CONTAINER_STONE_TABLET treasure,
+/// "examined the stone tablet"): pebbles fly off the tablet as it is struck,
+/// and its runes light up and fly round the leader, with their sounds, before
+/// Summon_ShowLearnedMessage.
 void SummonTablet_PlayRunes(s32 targetId) {
-  struct MoteWork *work =
-      HeapSlot_Alloc(HEAP_SLOT_BATTLE_EFFECT, sizeof(struct MoteWork));
+  struct SummonTabletWork *work =
+      HeapSlot_Alloc(HEAP_SLOT_BATTLE_EFFECT, sizeof(struct SummonTabletWork));
   s32 ownerId = Party_GetLeaderActor();
   struct Actor *owner = Actor_Lookup(ownerId);
   struct Actor *target = Actor_Lookup(targetId);
   s32 state;
-  s32 moteEntry;
-  s32 sparkEntry;
+  s32 runeEntry;
+  s32 pebbleEntry;
   FIXED ownerX;
   FIXED ownerZ;
   FIXED targetX;
   FIXED targetZ;
-  s32 sparks = 0;
-  s32 nextSpark = 0;
+  s32 newPebbles = 0;
+  s32 nextPebble = 0;
   FIXED pos[3];
   struct EffectSprite *sprite;
   struct ChasingMote *mote;
-  s32 moteTile;
-  s32 sparkTile;
+  s32 runeTile;
+  s32 pebbleTile;
   s32 timer;
   s32 wave;
   s32 delay;
@@ -241,35 +252,38 @@ void SummonTablet_PlayRunes(s32 targetId) {
   Camera_WorldToScreen(pos);
   targetX = pos[0];
   targetZ = pos[2];
-  Decompress_TaggedLz(Resource_GetTableEntry(RESOURCE_RUNES), work);
-  moteEntry = VramCache_FindFreeEntry();
-  moteTile = VramCache_Load(moteEntry, 2048, work);
-  mote = work->motes;
+  Decompress_TaggedLz(Resource_GetTableEntry(RESOURCE_RUNES), work->pictures);
+  runeEntry = VramCache_FindFreeEntry();
+  runeTile = VramCache_Load(runeEntry, sizeof(work->pictures), work->pictures);
+  mote = work->runes;
   i = 0;
-  sprite = work->moteSprites;
-  for (; i < TABLET_MOTE_COUNT; i++) {
+  sprite = work->runeSprites;
+  for (; i < TABLET_RUNE_COUNT; i++) {
     EffectSprite_Init(sprite, 4, 4, 0,
-                      moteTile + ((Random16() << 4) >> 16) * 2);
+                      runeTile + (Random16() * TABLET_RUNE_PICTURES >> 16) * 2);
     sprite->oam.fullColor = 1;
     sprite->oam.palette = 0;
     sprite->oam.priority = 1;
     sprite->depth = OAM_DEPTH_WINDOW;
-    mote->x = targetX;
-    mote->z = targetZ;
-    mote->targetX = ((i % TABLET_MOTE_ROW) * 3 << 18) + toFIXED(30);
-    mote->targetZ = ((i / TABLET_MOTE_ROW) * 3 << 19) + toFIXED(30);
+    mote->rune.x = targetX;
+    mote->rune.z = targetZ;
+    // The runes line up on the screen in rows 12 pixels apart, the rows 24
+    // pixels apart, from (30, 30).
+    mote->rune.targetX = (i % TABLET_RUNE_ROW) * toFIXED(12) + toFIXED(30);
+    mote->rune.targetZ = (i / TABLET_RUNE_ROW) * toFIXED(24) + toFIXED(30);
     mote->timer = -i;
     sprite++;
     mote++;
   }
-  Decompress_TaggedLz(Resource_GetTableEntry(RESOURCE_PEBBLES), work);
-  sparkEntry = VramCache_FindFreeEntry();
-  sparkTile = VramCache_Load(sparkEntry, 2048, work);
-  work->sparkTile = sparkTile;
-  mote = work->sparks;
-  sprite = work->sparkSprites;
-  for (i = 0; i < TABLET_SPARK_COUNT; i++) {
-    EffectSprite_Init(sprite, 8, 8, OBJ_SIZE_16X16, sparkTile);
+  Decompress_TaggedLz(Resource_GetTableEntry(RESOURCE_PEBBLES), work->pictures);
+  pebbleEntry = VramCache_FindFreeEntry();
+  pebbleTile =
+      VramCache_Load(pebbleEntry, sizeof(work->pictures), work->pictures);
+  work->pebbleTile = pebbleTile;
+  mote = work->pebbles;
+  sprite = work->pebbleSprites;
+  for (i = 0; i < TABLET_PEBBLE_COUNT; i++) {
+    EffectSprite_Init(sprite, 8, 8, OBJ_SIZE_16X16, pebbleTile);
     sprite->oam.fullColor = 1;
     sprite->oam.palette = 0;
     sprite->oam.priority = 0;
@@ -288,7 +302,7 @@ void SummonTablet_PlayRunes(s32 targetId) {
   Event_Wait(80);
   Actor_StartScriptFar(target, gSummonTablet_SquashScript);
   work->moving = 0;
-  Task_Add(SummonTablet_UpdateMotes, TASK_PASS_FRAME);
+  Task_Add(SummonTablet_UpdateRunes, TASK_PASS_FRAME);
   state = 0;
   timer = 0;
   do {
@@ -298,11 +312,11 @@ void SummonTablet_PlayRunes(s32 targetId) {
       if (timer <= 39) {
         if ((timer & 7) == 0)
           Sound_PlayFar(SE_IMPACT);
-        sparks = 1;
+        newPebbles = 1;
       }
       if (timer == 40) {
         Sound_PlayFar(SE_HEAVY_IMPACT);
-        sparks = 25;
+        newPebbles = TABLET_PEBBLES_ON_IMPACT;
         Actor_StartIdleFar(target);
         target->scaleX = 0;
       }
@@ -312,23 +326,24 @@ void SummonTablet_PlayRunes(s32 targetId) {
       }
       break;
     case 1:
-      for (i = 0; i < TABLET_MOTE_COUNT; i++) {
+      // Each rune lights up three times, in a wave across and down the rows.
+      for (i = 0; i < TABLET_RUNE_COUNT; i++) {
         struct EffectSprite *rune;
-        wave = i % TABLET_MOTE_ROW + i / TABLET_MOTE_ROW;
+        wave = i % TABLET_RUNE_ROW + i / TABLET_RUNE_ROW;
         wave = timer - wave;
-        rune = &work->moteSprites[i];
+        rune = &work->runeSprites[i];
         if (wave == 0)
-          rune->oam.index += 32;
+          rune->oam.index += RUNE_LIT;
         if (wave == 3)
-          rune->oam.index += -32;
+          rune->oam.index += -RUNE_LIT;
         if (wave == 8)
-          rune->oam.index += 32;
+          rune->oam.index += RUNE_LIT;
         if (wave == 10)
-          rune->oam.index += -32;
+          rune->oam.index += -RUNE_LIT;
         if (wave == 16)
-          rune->oam.index += 32;
+          rune->oam.index += RUNE_LIT;
         if (wave == 18)
-          rune->oam.index += -32;
+          rune->oam.index += -RUNE_LIT;
       }
       if (timer == 0)
         Sound_PlayFar(SE_GLITTER);
@@ -361,9 +376,9 @@ void SummonTablet_PlayRunes(s32 targetId) {
       break;
     case 4:
       if (timer == 0) {
-        mote = work->motes;
+        mote = work->runes;
         delay = 0;
-        for (i = 0; i < TABLET_MOTE_COUNT; i++) {
+        for (i = 0; i < TABLET_RUNE_COUNT; i++) {
           mote->timer = delay;
           delay -= 3;
           mote++;
@@ -415,23 +430,23 @@ void SummonTablet_PlayRunes(s32 targetId) {
         state = FIELD_PSYNERGY_FINISHED;
       break;
     }
-    for (i = 0; i < sparks; i++) {
+    for (i = 0; i < newPebbles; i++) {
       angle = Random16();
-      mote = &work->sparks[nextSpark];
+      mote = &work->pebbles[nextPebble];
       mote->timer = 0;
-      mote->spark.position[0] = target->x.fixed;
-      mote->spark.position[1] = target->y.fixed + toFIXED(12);
-      mote->spark.position[2] = target->z.fixed;
+      mote->pebble.position[0] = target->x.fixed;
+      mote->pebble.position[1] = target->y.fixed + toFIXED(12);
+      mote->pebble.position[2] = target->z.fixed;
       Vector_AddPolarOffset(Random16() * 4 + toFIXED(2), angle,
-                            mote->spark.position);
-      mote->spark.velocity[0] = 0;
-      mote->spark.velocity[1] = toFIXED(9) / 2;
-      mote->spark.velocity[2] = 0;
+                            mote->pebble.position);
+      mote->pebble.velocity[0] = 0;
+      mote->pebble.velocity[1] = toFIXED(9) / 2;
+      mote->pebble.velocity[2] = 0;
       Vector_AddPolarOffset(Random16() * 2 + toFIXED(2), angle,
-                            work->sparks[nextSpark].spark.velocity);
-      nextSpark = (nextSpark + 1) & (TABLET_SPARK_COUNT - 1);
+                            work->pebbles[nextPebble].pebble.velocity);
+      nextPebble = (nextPebble + 1) & (TABLET_PEBBLE_COUNT - 1);
     }
-    sparks = 0;
+    newPebbles = 0;
     wait(1);
     timer++;
   } while (state != FIELD_PSYNERGY_FINISHED);
@@ -439,10 +454,10 @@ void SummonTablet_PlayRunes(s32 targetId) {
   owner->scaleX = FIXED_ONE;
   owner->scaleY = FIXED_ONE;
   Event_Wait(10);
-  Task_Remove(SummonTablet_UpdateMotes);
+  Task_Remove(SummonTablet_UpdateRunes);
   FieldPsynergy_FadeFromCastColor();
-  VramCache_FreeEntry(moteEntry);
-  VramCache_FreeEntry(sparkEntry);
+  VramCache_FreeEntry(runeEntry);
+  VramCache_FreeEntry(pebbleEntry);
   HeapSlot_Release(HEAP_SLOT_BATTLE_EFFECT);
 }
 
@@ -501,10 +516,10 @@ void Shop_InitializeWork(void);
 s32 Inn_RoomPrice(s32 innId);
 void Shop_ReleaseWork(void);
 
-/// Sets attribute bit 0x80 (raised) on the cell at (x, z) where no ground lies
-/// above height base.
+/// Marks the cell at (x, z) MAP_CELL_JUMP, a gap the leader jumps across, where
+/// no ground lies above height base.
 void MapGrid_MarkRaisedIfOpen(FIXED x, FIXED z, s32 layer, FIXED base) {
   if (MapGrid_GetTerrainHeightAboveFar(x, z, layer, base) == 0)
-    MapGrid_SetAttributeBAt(x, z, layer,
-                            MapGrid_GetAttributeBAt(x, z, layer) | 0x80);
+    MapGrid_SetAttributeBAt(
+        x, z, layer, MapGrid_GetAttributeBAt(x, z, layer) | MAP_CELL_JUMP);
 }

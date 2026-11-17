@@ -206,9 +206,9 @@ extern const struct Scale gUlysses_ShipScale;
 #define ULYSSES_SILHOUETTE_HEIGHT 112
 /// FlutteringFlakeSheet's eighteen pictures of the white flake turning.
 #define ULYSSES_FLAKE_CELS 18
-/// Where RuneCircleSheet is decoded in the effect's pictures.
+/// Where RuneCircleSheet and YellowOrbSheet are decoded in the effect's
+/// pictures.
 #define ULYSSES_RUNE_CIRCLE_PICTURES 10113
-/// Where YellowOrbSheet is decoded in the effect's pictures.
 #define ULYSSES_YELLOW_ORB_PICTURES 7831
 /// FadingCrescentSheet, in the map cell buffer: a crescent of light closing to
 /// a disc and shrinking, seven pictures.
@@ -237,14 +237,15 @@ extern const struct Scale gUlysses_ShipScale;
 #define CANVAS_BLEND_LEVEL 14
 
 #define ULYSSES_FRAMES 326 ///< frames of the runes, the summoning and the fire
-/// The flame bursts and the rune circles open, the second 16 frames after the
-/// first; the mage's silhouette glows in them, and the mage appears.
-#define ULYSSES_RUNES_FRAME 76
-#define ULYSSES_RING_INTERVAL 16
+/// The flame bursts and the rune circles open, the second
+/// ULYSSES_RUNE_CIRCLE_INTERVAL frames after the first; the mage's silhouette
+/// glows in them, and the mage appears.
+#define ULYSSES_RUNE_CIRCLES_FRAME 76
+#define ULYSSES_RUNE_CIRCLE_INTERVAL 16
 #define ULYSSES_SILHOUETTE_FRAME 92
 #define ULYSSES_APPEAR_FRAME 108
 /// The rune circles' colours fade, then the strikes begin.
-#define ULYSSES_RUNES_FADE_FRAME 124
+#define ULYSSES_RUNE_CIRCLES_FADE_FRAME 124
 #define ULYSSES_STRIKES_FRAME 132
 /// The fire flares over the mage, and the flake flutters away.
 #define ULYSSES_FLARE_FRAME 266
@@ -256,8 +257,9 @@ extern const struct Scale gUlysses_ShipScale;
 /// The silhouette swells and shrinks back as it zooms in, in 1/65536 turns a
 /// frame.
 #define ULYSSES_SILHOUETTE_SWELL 800
-/// The silhouette is drawn in BG palettes 8 and 9, which glow violet: brighter
-/// over its first 16 frames, and gone ULYSSES_GLOW_END frames after it shows.
+/// The silhouette is drawn in the two BG palettes from ULYSSES_GLOW_PALETTE,
+/// which glow violet: brighter over its first ULYSSES_GLOW_FRAMES, and gone
+/// ULYSSES_GLOW_END frames after it shows.
 #define ULYSSES_GLOW_PALETTE 8
 #define ULYSSES_GLOW_COLORS 32
 #define ULYSSES_GLOW_FRAMES 16
@@ -268,12 +270,14 @@ extern const struct Scale gUlysses_ShipScale;
 #define ULYSSES_GLOW_BLUE(i, level) (((i) * (level) * 3) / 64)
 
 /// The rune circles: the first grows to three quarters of its size, holds and
-/// spreads out from ULYSSES_RING_HOLD_FRAMES; the second rises from lying flat
-/// over ULYSSES_RING_TILT_FRAMES, then shrinks.
-#define ULYSSES_RING_HOLD_FRAMES 40
-#define ULYSSES_RING_TILT_FRAMES 24
-#define ULYSSES_RING_TILT_X(t) (16368 - (t) * 682)
-#define ULYSSES_RING_TILT_Z(t) ((t) * 169 + 61480)
+/// spreads out from ULYSSES_RUNE_CIRCLE_HOLD_FRAMES; the second rises from
+/// lying flat over ULYSSES_RUNE_CIRCLE_TILT_FRAMES, then shrinks.
+#define ULYSSES_RUNE_CIRCLE_HOLD_FRAMES 40
+#define ULYSSES_RUNE_CIRCLE_TILT_FRAMES 24
+#define ULYSSES_RUNE_CIRCLE_TILT_X(t)                                          \
+  (ULYSSES_RUNE_CIRCLE_TILT_FRAMES * 682 - (t) * 682)
+#define ULYSSES_RUNE_CIRCLE_TILT_Z(t)                                          \
+  ((t) * 169 + TRIG_TURN - ULYSSES_RUNE_CIRCLE_TILT_FRAMES * 169)
 
 /// A flame of the opening burst and of the flare: six pictures, three or four
 /// frames each.
@@ -415,7 +419,7 @@ void BattleEffect_RunUlysses(struct BattleEffectParams *args) {
   Resource_LoadAndDecompress(RESOURCE_ULYSSES_SILHOUETTE, cells, 0, 0);
   for (i = 0; i != PICTURE_BYTES(ULYSSES_SILHOUETTE); i++, cells++) {
     if (*cells) {
-      *cells += BG_PLTT_COLORS / 2;
+      *cells += ULYSSES_GLOW_PALETTE * PALETTE_COLORS;
     }
   }
   picture = work->sheet + ULYSSES_PICTURES;
@@ -475,7 +479,7 @@ void BattleEffect_RunUlysses(struct BattleEffectParams *args) {
       }
     }
     // The white flake drifts down.
-    if (frame < ULYSSES_RUNES_FRAME) {
+    if (frame < ULYSSES_RUNE_CIRCLES_FRAME) {
       s32 k = (frame / 4) % ULYSSES_FLAKE_CELS;
       s32 x = 60 - (FIXEDtoINT(Trig_Sin(frame * ULYSSES_FLAKE_SWAY) << 3));
       s32 y = frame - 8;
@@ -487,7 +491,7 @@ void BattleEffect_RunUlysses(struct BattleEffectParams *args) {
       blit[1](canvas, source, left, y - (h >> 1), w, h);
     }
     // A flame bursts where it lands.
-    if (frame >= ULYSSES_RUNES_FRAME && frame < ULYSSES_APPEAR_FRAME) {
+    if (frame >= ULYSSES_RUNE_CIRCLES_FRAME && frame < ULYSSES_APPEAR_FRAME) {
       struct Particle *p;
 
       for (i = 0, p = work->particles; i != 4; i++, p++) {
@@ -527,7 +531,7 @@ void BattleEffect_RunUlysses(struct BattleEffectParams *args) {
       work->bg2y = (64 - toFIXED(76) / z) << 8;
       if (t < ULYSSES_GLOW_FRAMES) {
         level = t;
-      } else if (frame >= 116 && frame <= ULYSSES_RUNES_FADE_FRAME) {
+      } else if (frame >= 116 && frame <= ULYSSES_RUNE_CIRCLES_FADE_FRAME) {
         level = ULYSSES_GLOW_END * 2 - t * 2;
       }
       if (level != -1) {
@@ -546,7 +550,8 @@ void BattleEffect_RunUlysses(struct BattleEffectParams *args) {
       }
     }
     // The rune circles' colours fade by 3 a frame.
-    if (frame >= ULYSSES_RUNES_FADE_FRAME && frame < ULYSSES_STRIKES_FRAME) {
+    if (frame >= ULYSSES_RUNE_CIRCLES_FADE_FRAME &&
+        frame < ULYSSES_STRIKES_FRAME) {
       volatile u16 *c = (volatile u16 *)BG_PLTT;
 
       for (i = 0; i != SHEET_PALETTE_COLORS; i++, c++) {
@@ -619,14 +624,13 @@ void BattleEffect_RunUlysses(struct BattleEffectParams *args) {
       Resource_LoadAndDecompress(RESOURCE_FADING_CRESCENT_SHEET,
                                  gMapGridCellBuffer, 0, 0);
     }
-    if (frame == ULYSSES_RUNES_FRAME) {
+    if (frame == ULYSSES_RUNE_CIRCLES_FRAME) {
       Sound_PlayFar(SE_ITEM_BREAK);
     }
     if (frame == ULYSSES_FLARE_FRAME) {
       Sound_PlayFar(SE_ITEM_BREAK);
     }
 
-    // The six strikes.
     if (frame > ULYSSES_STRIKES_FRAME && frame < ULYSSES_FLARE_FRAME) {
       void *verts;
       struct RenderModel *model;
@@ -726,6 +730,9 @@ void BattleEffect_RunUlysses(struct BattleEffectParams *args) {
           }
           step->velocityZ += TRIG_TURN / 64;
           if (draw) {
+            /* FAKEMATCH(signature): the address summed as an integer, its
+             * offset first; as crescents + u * PICTURE_BYTES(ULYSSES_CRESCENT).
+             */
             texture.pixels =
                 (u8 *)(u * PICTURE_BYTES(ULYSSES_CRESCENT) + (s32)crescents);
             Matrix_Initialize();
@@ -748,6 +755,8 @@ void BattleEffect_RunUlysses(struct BattleEffectParams *args) {
           {
             s32 first = i * ULYSSES_STRIKE_SPARKS;
 
+            /* FAKEMATCH(signature): the address summed as an integer, its
+             * offset first; as &sparks[first]. */
             q = (struct Particle *)(first * (s32)sizeof(*q) + (s32)sparks);
           }
           for (; j != ULYSSES_STRIKE_SPARKS; j++, q++) {
@@ -800,7 +809,6 @@ void BattleEffect_RunUlysses(struct BattleEffectParams *args) {
       Heap_Release(verts);
     }
 
-    // The two rune circles.
     if (draw && frame < ULYSSES_STRIKES_FRAME) {
       void *verts;
       struct RenderModel *model;
@@ -822,7 +830,8 @@ void BattleEffect_RunUlysses(struct BattleEffectParams *args) {
       model->vertices = verts;
       j = 0;
       for (; j != 2; j++) {
-        s32 t = frame - ULYSSES_RUNES_FRAME - j * ULYSSES_RING_INTERVAL;
+        s32 t = frame - ULYSSES_RUNE_CIRCLES_FRAME -
+                j * ULYSSES_RUNE_CIRCLE_INTERVAL;
 
         if (t >= 0) {
           s32 sc;
@@ -832,7 +841,7 @@ void BattleEffect_RunUlysses(struct BattleEffectParams *args) {
           Matrix_RotateX(DEGtoANG(90));
           if (j == 0) {
             sc = t * (FIXED_ONE * 3 / 64) - FIXED_ONE * 9 / 8;
-            if (t < ULYSSES_RING_HOLD_FRAMES) {
+            if (t < ULYSSES_RUNE_CIRCLE_HOLD_FRAMES) {
               sc = t * (FIXED_ONE / 32);
               if (sc > FIXED_ONE * 3 / 4) {
                 sc = FIXED_ONE * 3 / 4;
@@ -841,12 +850,12 @@ void BattleEffect_RunUlysses(struct BattleEffectParams *args) {
             Matrix_ScaleUniform(sc);
             Matrix_RotateY(-t * (TRIG_TURN / 128));
           } else {
-            if (t >= ULYSSES_RING_TILT_FRAMES) {
+            if (t >= ULYSSES_RUNE_CIRCLE_TILT_FRAMES) {
               sc = FIXED_ONE * 7 / 4 - t * (FIXED_ONE / 32);
               Matrix_ScaleUniform(sc);
             } else {
-              Matrix_RotateX(ULYSSES_RING_TILT_X(t));
-              Matrix_RotateZ(ULYSSES_RING_TILT_Z(t));
+              Matrix_RotateX(ULYSSES_RUNE_CIRCLE_TILT_X(t));
+              Matrix_RotateZ(ULYSSES_RUNE_CIRCLE_TILT_Z(t));
             }
             Matrix_RotateY(t * (TRIG_TURN / 128));
           }
@@ -1033,11 +1042,11 @@ void BattleEffect_RunUlysses(struct BattleEffectParams *args) {
 #undef BG1_BLOCK2_FIRST_TILE
 #undef CANVAS_BLEND_LEVEL
 #undef ULYSSES_FRAMES
-#undef ULYSSES_RUNES_FRAME
-#undef ULYSSES_RING_INTERVAL
+#undef ULYSSES_RUNE_CIRCLES_FRAME
+#undef ULYSSES_RUNE_CIRCLE_INTERVAL
 #undef ULYSSES_SILHOUETTE_FRAME
 #undef ULYSSES_APPEAR_FRAME
-#undef ULYSSES_RUNES_FADE_FRAME
+#undef ULYSSES_RUNE_CIRCLES_FADE_FRAME
 #undef ULYSSES_STRIKES_FRAME
 #undef ULYSSES_FLARE_FRAME
 #undef ULYSSES_FLAKE_FRAME
@@ -1049,10 +1058,10 @@ void BattleEffect_RunUlysses(struct BattleEffectParams *args) {
 #undef ULYSSES_GLOW_END
 #undef ULYSSES_GLOW_RED
 #undef ULYSSES_GLOW_BLUE
-#undef ULYSSES_RING_HOLD_FRAMES
-#undef ULYSSES_RING_TILT_FRAMES
-#undef ULYSSES_RING_TILT_X
-#undef ULYSSES_RING_TILT_Z
+#undef ULYSSES_RUNE_CIRCLE_HOLD_FRAMES
+#undef ULYSSES_RUNE_CIRCLE_TILT_FRAMES
+#undef ULYSSES_RUNE_CIRCLE_TILT_X
+#undef ULYSSES_RUNE_CIRCLE_TILT_Z
 #undef ULYSSES_BURST_FLAME_FRAMES
 #undef ULYSSES_FLARE_FLAME_FRAMES
 #undef ULYSSES_FLARE_FLAMES
@@ -1099,7 +1108,9 @@ void BattleEffect_RunSwirlSwipe(struct BattleEffectParams *args, s32 mode) {
   void *canvas;
   struct MotionObject *target;
   struct ScreenPoint position;
-  BlitterPair draw; // only draw[0] draws
+  /* LEFTOVER(frame): draw[1], the pair's idle second blitter, which the ROM's
+   * frame reserves and never touches; as one DrawRectangle. */
+  DrawRectangle draw[2];
   s32 frames;
   s32 frame;
   s32 picture;
@@ -1227,7 +1238,7 @@ void BattleEffect_RunSpiderWeb(struct BattleEffectParams *args) {
   frame = 0;
   size = SPIDER_WEB_QUARTER_SIZE;
   do {
-    // It fades in over nine frames and out over the last ten.
+    // It fades in over its first nine frames and out over its last nine.
     if (frame <= 8)
       *blend = EFFECT_BLEND_CANVAS(frame << 1);
     if (frame > 53)

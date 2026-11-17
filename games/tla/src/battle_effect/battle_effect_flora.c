@@ -15,7 +15,7 @@
 #define FLORA_FIGURE_PIECES 12
 #define FLORA_FIGURE_COLUMNS 3
 #define FLORA_PETAL_SPRITES FLORA_FIGURE_PIECES
-#define FLORA_PETAL_PICTURES 15
+#define FLORA_PETAL_PICTURE_COUNT 15
 #define FLORA_PETAL_COUNT 32
 #define FLORA_PETAL_SIZE 16
 #define FLORA_PETAL_PALETTE 15
@@ -45,7 +45,7 @@
 /// pictures, each petal's phase, position and velocity, and the object
 /// palette as it fades.
 struct FloraWork {
-  u16 tiles[FLORA_PETAL_PICTURES];
+  u16 tiles[FLORA_PETAL_PICTURE_COUNT];
   u16 phase[FLORA_PETAL_COUNT];
   u16 padding;
   s32 x[FLORA_PETAL_COUNT];
@@ -58,7 +58,8 @@ struct FloraWork {
 #define FLORA_WORK ((struct FloraWork *)petals)
 /// Petal i's phase, read at gFlora_PetalTiles, FloraWork's tile numbers from
 /// the second on.
-#define FLORA_PETAL_PHASE(i) gFlora_PetalTiles[FLORA_PETAL_PICTURES - 1 + (i)]
+#define FLORA_PETAL_PHASE(i)                                                   \
+  gFlora_PetalTiles[FLORA_PETAL_PICTURE_COUNT - 1 + (i)]
 
 /// After the battle flashes away (SUMMON_OPENING_FRAMES), the sky scene plays
 /// for FLORA_FRAMES; A or B cuts it short after its first sixteen.
@@ -74,8 +75,6 @@ struct FloraWork {
 /// glows flare there; at FLORA_LEAVE_FRAME she flies away.
 #define FLORA_LAUNCH_FRAME 223
 #define FLORA_LEAVE_FRAME 252
-/// The canvas's weight over the sky, in sixteenths.
-#define FLORA_BLEND_LEVEL 14
 /// The glows' pictures (gFlora_PetalPictures): shaded discs `height` pixels
 /// tall and half as wide, one after another.
 #define FLORA_GLOW_BYTES(height) ((height) / 2 * (height))
@@ -201,7 +200,7 @@ void BattleEffect_RunFlora(struct BattleEffectParams *args) {
       e += PALETTE_BANK_BYTES;
       Decompress_TaggedLz(e, source);
       cells = Ram_MapCellBuffer;
-      for (i = 0; i != FLORA_PETAL_PICTURES; i++) {
+      for (i = 0; i != FLORA_PETAL_PICTURE_COUNT; i++) {
         struct Sprite *obj = EffectSprite_CreateWithTiles(
             16, 16, OBJ_SIZE_16X16, OBJ_PALETTE(FLORA_PETAL_PALETTE));
         work->sprites[FLORA_PETAL_SPRITES + i] = obj;
@@ -213,10 +212,11 @@ void BattleEffect_RunFlora(struct BattleEffectParams *args) {
             ((struct Sprite *)work->sprites[FLORA_PETAL_SPRITES + i])
                 ->image.tile;
       }
-      for (i = 0; i != FLORA_PETAL_COUNT - FLORA_PETAL_PICTURES; i++) {
+      for (i = 0; i != FLORA_PETAL_COUNT - FLORA_PETAL_PICTURE_COUNT; i++) {
         struct Sprite *obj = EffectSprite_Acquire(
             16, 16, OBJ_SIZE_16X16, OBJ_PALETTE(FLORA_PETAL_PALETTE));
-        work->sprites[FLORA_PETAL_SPRITES + FLORA_PETAL_PICTURES + i] = obj;
+        work->sprites[FLORA_PETAL_SPRITES + FLORA_PETAL_PICTURE_COUNT + i] =
+            obj;
         Iwram_CopyWordsEntry(obj, work->sprites[FLORA_PETAL_SPRITES],
                              offsetof(struct Sprite, lastNo));
       }
@@ -224,7 +224,7 @@ void BattleEffect_RunFlora(struct BattleEffectParams *args) {
       i = 0;
       phase = &FLORA_PETAL_PHASE(0);
       for (; i != FLORA_PETAL_COUNT; i++, phase++) {
-        *phase = (Random16() % FLORA_PETAL_PICTURES) << 8;
+        *phase = (Random16() % FLORA_PETAL_PICTURE_COUNT) << 8;
         ((struct Sprite *)work->sprites[FLORA_PETAL_SPRITES + i])->image.tile =
             FLORA_WORK->tiles[*phase / FLORA_PHASE_ONE];
       }
@@ -267,7 +267,7 @@ void BattleEffect_RunFlora(struct BattleEffectParams *args) {
   }
   REG_DISPCNT = EFFECT_DISPCNT;
   REG_BG2PA = Q_8_8(1);
-  REG_BLDALPHA = EFFECT_BLEND_CANVAS(FLORA_BLEND_LEVEL);
+  REG_BLDALPHA = EFFECT_BLEND_CANVAS(14);
   REG_BLDCNT = BLDCNT_TGT1_BG2 | BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_ALL;
   REG_BG2X = 0;
   // DEAD: Flora's place, and the ring's spin, spread and twist, are each set
@@ -619,10 +619,10 @@ void BattleEffect_RunFlora(struct BattleEffectParams *args) {
       // the rest half a picture.
       if (i < FLORA_PATH_PETALS) {
         FLORA_PETAL_PHASE(i) = (FLORA_PETAL_PHASE(i) + FLORA_PHASE_ONE / 8) %
-                               (FLORA_PETAL_PICTURES << 8);
+                               (FLORA_PETAL_PICTURE_COUNT << 8);
       } else {
         FLORA_PETAL_PHASE(i) = (FLORA_PETAL_PHASE(i) + FLORA_PHASE_ONE / 2) %
-                               (FLORA_PETAL_PICTURES << 8);
+                               (FLORA_PETAL_PICTURE_COUNT << 8);
       }
       ((struct Sprite *)work->sprites[FLORA_PETAL_SPRITES + i])->image.tile =
           FLORA_WORK->tiles[FLORA_PETAL_PHASE(i) >> 8];
@@ -878,7 +878,7 @@ void BattleEffect_RunFlora(struct BattleEffectParams *args) {
     // Each 8x8 tile of the petal's pictures, two pixels a byte, is unpacked
     // to a byte a pixel at its place in its 16x16 picture.
     i = 0;
-    for (picture = 0; picture != FLORA_PETAL_PICTURES; picture++) {
+    for (picture = 0; picture != FLORA_PETAL_PICTURE_COUNT; picture++) {
       for (tileRow = 0; tileRow != 2; tileRow++) {
         for (tileColumn = 0; tileColumn != 2; tileColumn++) {
           s32 offset;
@@ -890,6 +890,8 @@ void BattleEffect_RunFlora(struct BattleEffectParams *args) {
           k = 0;
           offset = t << 3;
           for (; k != 8; k++, offset += FLORA_PETAL_SIZE) {
+            /* FAKEMATCH(signature): the address summed as an integer, its
+             * offset first; as sheet + offset. */
             u8 *d = (u8 *)(offset + (s32)sheet);
 
             for (m = 0; m != 4; m++) {
@@ -924,7 +926,7 @@ void BattleEffect_RunFlora(struct BattleEffectParams *args) {
       if (frame > i) {
         draw[0](canvas,
                 work->sheet + FLORA_STORM_PICTURES +
-                    (p->variant / 4 % FLORA_PETAL_PICTURES << 8),
+                    (p->variant / 4 % FLORA_PETAL_PICTURE_COUNT << 8),
                 FIXED_INTEGER_PART(p->x) - 4, FIXED_INTEGER_PART(p->y),
                 FLORA_PETAL_SIZE, FLORA_PETAL_SIZE);
         Particle_AdvanceWithGravity2D(p, PARTICLE_DAMPING_NONE, 0);
@@ -1049,7 +1051,6 @@ void BattleEffect_RunSabreDance(struct BattleEffectParams *args) {
     Matrix_Initialize();
     gProjection.centerY = 104;
 
-    // The eight strikes.
     for (i = 0, strikeFrame = 20; i != 8; i++, strikeFrame += 6) {
       if (frame == strikeFrame) {
         work->shakeFrames = 4;
@@ -1135,9 +1136,11 @@ void BattleObject_SetRecordPriority(s32 objectId, s32 priority) {
   }
 }
 
-#define STAR_FRAMES 60
-#define STAR_LEAP_FRAME 16  ///< the caster leaps at the target
-#define STAR_BURST_FRAME 32 ///< and strikes it
+/// Backstab's length; the caster leaps at the foe at BACKSTAB_LEAP_FRAME and
+/// strikes at BACKSTAB_STRIKE_FRAME.
+#define BACKSTAB_FRAMES 60
+#define BACKSTAB_LEAP_FRAME 16
+#define BACKSTAB_STRIKE_FRAME 32
 /// Of the puffs of smoke set up, the first SMOKE_DRAWN rise, each through
 /// SmokeSheet's six pictures, four frames each.
 #define SMOKE_COUNT 32
@@ -1160,7 +1163,8 @@ void BattleEffect_RunBackstab(struct BattleEffectParams *args) {
   struct ScreenPoint caster;
   struct ScreenPoint target;
   s32 frame;
-  // Unused: draw[1] gives the stack frame its 4 bytes.
+  /* LEFTOVER(frame): draw[1], the pair's idle second blitter, which the ROM's
+   * frame reserves and never touches; as one DrawRectangle. */
   DrawRectangle draw[2];
   struct MotionObject *targetObject;
   struct MotionObject *casterObject;
@@ -1184,7 +1188,7 @@ void BattleEffect_RunBackstab(struct BattleEffectParams *args) {
   battle = Ram_HeapSlots->battleWork;
   battle->keepObjectPriorities = 1;
 
-  for (frame = 0; frame != STAR_FRAMES; frame++) {
+  for (frame = 0; frame != BACKSTAB_FRAMES; frame++) {
     BattleObject_SetRecordPriority(args->user, 3);
 
     // The first frame sends the smoke out from the caster's feet.
@@ -1230,14 +1234,14 @@ void BattleEffect_RunBackstab(struct BattleEffectParams *args) {
       }
     }
 
-    if (frame == STAR_LEAP_FRAME) {
+    if (frame == BACKSTAB_LEAP_FRAME) {
       BattleEffect_SetApproachMotion(args->user, args->targets[0], 16, 120);
       casterObject->velocityY = toFIXED(7);
     }
 
     // The strike: pink palette, the caster lands at 120 percent and the
     // target is pushed to 80, and the stars burst upward from it.
-    if (frame == STAR_BURST_FRAME) {
+    if (frame == BACKSTAB_STRIKE_FRAME) {
       Iwram_CopyWordsEntry((void *)BG_PLTT,
                            Resource_GetTableEntry(RESOURCE_PINK_STAR_SHEET),
                            SHEET_PALETTE_BYTES);
@@ -1268,7 +1272,7 @@ void BattleEffect_RunBackstab(struct BattleEffectParams *args) {
     }
 
     // The stars twinkle through their six cels as they fly.
-    if (frame >= STAR_BURST_FRAME && frame < STAR_BURST_FRAME + 24) {
+    if (frame >= BACKSTAB_STRIKE_FRAME && frame < BACKSTAB_STRIKE_FRAME + 24) {
       struct Particle *star;
 
       for (i = 0, star = &work->particles[SMOKE_COUNT]; i != STAR_COUNT;
@@ -1302,7 +1306,7 @@ void BattleEffect_RunBackstab(struct BattleEffectParams *args) {
 #undef FLORA_FIGURE_PIECES
 #undef FLORA_FIGURE_COLUMNS
 #undef FLORA_PETAL_SPRITES
-#undef FLORA_PETAL_PICTURES
+#undef FLORA_PETAL_PICTURE_COUNT
 #undef FLORA_PETAL_COUNT
 #undef FLORA_PETAL_SIZE
 #undef FLORA_PETAL_PALETTE
@@ -1323,7 +1327,6 @@ void BattleEffect_RunBackstab(struct BattleEffectParams *args) {
 #undef FLORA_FADE_IN_FRAMES
 #undef FLORA_LAUNCH_FRAME
 #undef FLORA_LEAVE_FRAME
-#undef FLORA_BLEND_LEVEL
 #undef FLORA_GLOW_BYTES
 #undef FLORA_GLOW_X
 #undef FLORA_GLOW_Y
@@ -1350,9 +1353,9 @@ void BattleEffect_RunBackstab(struct BattleEffectParams *args) {
 #undef SABRE_DANCE_BLADES
 #undef SABRE_DANCE_FALL_FRAME
 #undef SABRE_DANCE_LAST_HIT
-#undef STAR_FRAMES
-#undef STAR_LEAP_FRAME
-#undef STAR_BURST_FRAME
+#undef BACKSTAB_FRAMES
+#undef BACKSTAB_LEAP_FRAME
+#undef BACKSTAB_STRIKE_FRAME
 #undef SMOKE_COUNT
 #undef SMOKE_DRAWN
 #undef SMOKE_PUFF_FRAMES

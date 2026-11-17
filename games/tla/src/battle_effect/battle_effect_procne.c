@@ -31,7 +31,8 @@ enum DragonFireMode {
 /// Procne appears in the violet sky, and the targets it lifted drop.
 #define PROCNE_ARRIVAL_FRAME 160
 #define PROCNE_DROP_FRAME 395
-/// The first comet leaves Procne, and the next each 12 frames after.
+/// The first comet leaves Procne, and the next each PROCNE_COMET_INTERVAL
+/// frames after.
 #define PROCNE_COMET_FRAME 330
 #define PROCNE_COMET_INTERVAL 12
 
@@ -46,7 +47,7 @@ enum DragonFireMode {
 /// whole cel above it.
 #define PROCNE_WHIRLWIND_FOOT_HEIGHT 48
 #define PROCNE_DUST (3 * PROCNE_WHIRLWIND_CEL)
-#define PROCNE_COMETS 13824
+#define PROCNE_COMET_PICTURES 13824
 
 #define PROCNE_DUST_MOTES 24 ///< dust motes that swirl up the whirlwind
 /// How much faster a dust mote circles the whirlwind each frame, up to
@@ -317,7 +318,7 @@ void BattleEffect_RunProcne(struct BattleEffectParams *args) {
         BattleEffect_SelectLivingTargets(work->args);
         BattleEffect_SpawnObjects(PROCNE_SPRITES, SPRITE_PROCNE, 2);
         Resource_LoadAndDecompress(RESOURCE_VIOLET_COMET_SHEET,
-                                   work->sheet + PROCNE_COMETS, 1, 1);
+                                   work->sheet + PROCNE_COMET_PICTURES, 1, 1);
 
         for (index = 0; index != PROCNE_STRIKES * PROCNE_STRIKE_SPARK_ROWS;
              index++) {
@@ -555,7 +556,6 @@ void BattleEffect_RunProcne(struct BattleEffectParams *args) {
 
     EFFECT_SHOW_DAMAGE(SE_HEAVY_IMPACT);
 
-    // Put the targets back.
     EFFECT_FOR_EACH_TARGET(index, args) {
       struct MotionObject *battler;
 
@@ -589,7 +589,7 @@ void BattleEffect_RunProcne(struct BattleEffectParams *args) {
 #undef PROCNE_WHIRLWIND_CEL
 #undef PROCNE_WHIRLWIND_FOOT_HEIGHT
 #undef PROCNE_DUST
-#undef PROCNE_COMETS
+#undef PROCNE_COMET_PICTURES
 #undef PROCNE_DUST_MOTES
 #undef PROCNE_DUST_SPIN_GAIN
 #undef PROCNE_DUST_SPIN_MAX
@@ -630,9 +630,6 @@ void BattleEffect_RunTiamat(struct BattleEffectParams *args) {
 #define DRAGON_FIRE_BREATH_FRAME 128
 #define DRAGON_FIRE_FLASH_FRAME 160
 #define DRAGON_FIRE_FLASH_END_FRAME 176
-/// The canvas level the flash fills the canvas with each frame, before its
-/// last two frames at the brightest.
-#define DRAGON_FIRE_FLASH_LEVEL 16
 #define DRAGON_FIRE_FIREBALLS 16      ///< falling fireballs
 #define DRAGON_FIRE_FIRST_FIREBALL 24 ///< the first in work->particles
 #define DRAGON_FIRE_FIRST_SPARK 40    ///< the first spark in work->particles
@@ -768,8 +765,7 @@ void BattleEffect_RunDragonFire(struct BattleEffectParams *args, s32 mode) {
             SHEET_PALETTE_BYTES);
       } else if (frame >= DRAGON_FIRE_FLASH_FRAME &&
                  frame < DRAGON_FIRE_FLASH_END_FRAME) {
-        EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_CLEAR,
-                            CANVAS_FILL_WORD(DRAGON_FIRE_FLASH_LEVEL));
+        EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_CLEAR, CANVAS_FILL_WORD(16));
         if (frame > 173)
           work->transferValue = CANVAS_FILL_WORD(CANVAS_LEVEL_BRIGHTEST);
         Palette_BrightenBgEntries(2, 2, 2);
@@ -1036,7 +1032,6 @@ void BattleEffect_RunDragonFire(struct BattleEffectParams *args, s32 mode) {
 #undef DRAGON_FIRE_BREATH_FRAME
 #undef DRAGON_FIRE_FLASH_FRAME
 #undef DRAGON_FIRE_FLASH_END_FRAME
-#undef DRAGON_FIRE_FLASH_LEVEL
 #undef DRAGON_FIRE_FIREBALLS
 #undef DRAGON_FIRE_FIRST_FIREBALL
 #undef DRAGON_FIRE_FIRST_SPARK

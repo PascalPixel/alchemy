@@ -23,10 +23,9 @@ extern const struct Scale gMeteorBlow_DoubleScale;
 
 #define METEOR_BLOW_FRAMES 50
 
-/// Where BillowTexture is decoded in the effect's pictures.
+/// Where BillowTexture and FlameBandTexture are decoded in the effect's
+/// pictures.
 #define METEOR_BLOW_BILLOW 16384
-
-/// Where FlameBandTexture is decoded in the effect's pictures.
 #define METEOR_BLOW_FLAME_BAND 20480
 
 /// Meteor Blow.
@@ -34,7 +33,8 @@ void BattleEffect_RunMeteorBlow(struct BattleEffectParams *args) {
   u8 *canvas;
   struct BattleEffectWork *work;
   u8 *map;
-  // Unused: blit[1] gives the stack frame its 4 bytes.
+  /* LEFTOVER(frame): blit[1], the pair's idle second blitter, which the ROM's
+   * frame reserves and never touches; as one DrawRectangle. */
   DrawRectangle blit[2];
   u8 *sprites;
   u8 *projected;

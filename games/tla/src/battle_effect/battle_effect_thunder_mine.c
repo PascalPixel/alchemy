@@ -10,7 +10,7 @@
 /// Thunder Mine's sparks, in the map cell buffer from its second 16 KB on.
 #define BALL_LIGHTNING_SPARKS ((struct Particle *)(Ram_MapCellBuffer + 16384))
 /// The sparks cleared, and of them those that burst out as the ball arrives.
-#define BALL_LIGHTNING_SPARK_POOL 512
+#define BALL_LIGHTNING_SPARKS_CLEARED 512
 #define BALL_LIGHTNING_SPARK_COUNT 128
 /// The canvas row Thunder Mine's sparks bounce at.
 #define BALL_LIGHTNING_SPARK_FLOOR 111
@@ -18,15 +18,15 @@
 /// Where TornadoSheet is decoded in the effect's pictures, for its glints.
 #define BALL_LIGHTNING_TORNADO_PICTURES 2048
 /// The bolts' four pictures (LightningBoltSheet), each copied into the middle
-/// of a 32x128 cell, after the glints: a bolt is drawn as a column textured
-/// with a cell.
-#define BALL_LIGHTNING_BOLT_CELLS                                              \
+/// of a 32x128 cel, after the glints: a bolt is drawn as a column textured
+/// with a cel.
+#define BALL_LIGHTNING_BOLT_CELS                                               \
   (BALL_LIGHTNING_TORNADO_PICTURES + GLINT_SET_BYTES)
-#define BALL_LIGHTNING_BOLT_PICTURES 4
-#define BALL_LIGHTNING_BOLT_CELL_WIDTH 32
-#define BALL_LIGHTNING_BOLT_CELL_HEIGHT 128
-#define BALL_LIGHTNING_BOLT_INSET                                              \
-  ((BALL_LIGHTNING_BOLT_CELL_WIDTH - LIGHTNING_BOLT_WIDTH) / 2)
+#define BALL_LIGHTNING_BOLT_PICTURE_COUNT 4
+#define BALL_LIGHTNING_BOLT_CEL_WIDTH 32
+#define BALL_LIGHTNING_BOLT_CEL_HEIGHT 128
+#define BALL_LIGHTNING_BOLT_CEL_INSET                                          \
+  ((BALL_LIGHTNING_BOLT_CEL_WIDTH - LIGHTNING_BOLT_WIDTH) / 2)
 /// The bolts of lightning set up, and of them those drawn, each for eight
 /// frames from the frame of its number.
 #define BALL_LIGHTNING_BOLTS_SET_UP 63
@@ -48,7 +48,8 @@ void BattleEffect_RunBoltTrail(struct BattleEffectParams *args, s32 mode) {
   struct BattleEffectWork *work;
   void *canvas;
   s32 frame;
-  // Unused: draw[1] gives the stack frame its 4 bytes.
+  /* LEFTOVER(frame): draw[1], the pair's idle second blitter, which the ROM's
+   * frame reserves and never touches; as one DrawRectangle. */
   DrawRectangle draw[2];
   u8 *sprites;
   s32 ballSize;
@@ -93,18 +94,17 @@ void BattleEffect_RunBoltTrail(struct BattleEffectParams *args, s32 mode) {
                     SHEET_PALETTE_BYTES);
   }
 
-  // The bolts' cells.
-  Iwram_ClearWordsEntry(work->sheet + BALL_LIGHTNING_BOLT_CELLS,
-                        BALL_LIGHTNING_BOLT_PICTURES *
-                            PICTURE_BYTES(BALL_LIGHTNING_BOLT_CELL));
-  for (i = 0; i != BALL_LIGHTNING_BOLT_PICTURES; i++) {
+  Iwram_ClearWordsEntry(work->sheet + BALL_LIGHTNING_BOLT_CELS,
+                        BALL_LIGHTNING_BOLT_PICTURE_COUNT *
+                            PICTURE_BYTES(BALL_LIGHTNING_BOLT_CEL));
+  for (i = 0; i != BALL_LIGHTNING_BOLT_PICTURE_COUNT; i++) {
     for (k = 0; k != LIGHTNING_BOLT_HEIGHT; k++) {
       s32 j;
 
       for (j = 0; j != LIGHTNING_BOLT_WIDTH; j++) {
-        work->sheet[BALL_LIGHTNING_BOLT_CELLS + BALL_LIGHTNING_BOLT_INSET +
-                    i * PICTURE_BYTES(BALL_LIGHTNING_BOLT_CELL) +
-                    k * BALL_LIGHTNING_BOLT_CELL_WIDTH + j] =
+        work->sheet[BALL_LIGHTNING_BOLT_CELS + BALL_LIGHTNING_BOLT_CEL_INSET +
+                    i * PICTURE_BYTES(BALL_LIGHTNING_BOLT_CEL) +
+                    k * BALL_LIGHTNING_BOLT_CEL_WIDTH + j] =
             buffer[i * LIGHTNING_BOLT_PICTURE_BYTES + k * LIGHTNING_BOLT_WIDTH +
                    j];
       }
@@ -158,13 +158,13 @@ void BattleEffect_RunBoltTrail(struct BattleEffectParams *args, s32 mode) {
       // UB: the variants are cleared through one s32 pointer stepped a whole
       // step at a time, past the step's scalar members.
 #ifdef UBFIX
-      for (i = 0; i != BALL_LIGHTNING_SPARK_POOL; i++)
+      for (i = 0; i != BALL_LIGHTNING_SPARKS_CLEARED; i++)
         BALL_LIGHTNING_SPARKS[i].variant = -1;
 #else
       {
         s32 *variant = &BALL_LIGHTNING_SPARKS[0].variant;
 
-        for (i = 0; i != BALL_LIGHTNING_SPARK_POOL; i++) {
+        for (i = 0; i != BALL_LIGHTNING_SPARKS_CLEARED; i++) {
           *variant = -1;
           variant += sizeof(struct Particle) / sizeof(s32);
         }
@@ -172,7 +172,6 @@ void BattleEffect_RunBoltTrail(struct BattleEffectParams *args, s32 mode) {
 #endif
     }
 
-    // Arrival.
     if (frame == frames) {
       s32 n;
 
@@ -235,21 +234,21 @@ void BattleEffect_RunBoltTrail(struct BattleEffectParams *args, s32 mode) {
       for (i = 0; i != 4; i++) {
         // DEAD: i runs 0 to 3, so the mask changes nothing; the ROM keeps the
         // and.
-        s32 cell = i & 3;
+        s32 picture = i & 3;
         s32 half = ballSize / 2;
         s32 angle = Random16();
         s32 glintX = x + (FIXEDtoINT(Trig_Sin(angle) * half)) -
-                     (gBattleEffect_GlintPictureWidths[cell] >> 1);
+                     (gBattleEffect_GlintPictureWidths[picture] >> 1);
         s32 glintY = y + (FIXEDtoINT(Trig_Cos(angle) * half)) -
-                     (gBattleEffect_GlintPictureHeights[cell] >> 1);
+                     (gBattleEffect_GlintPictureHeights[picture] >> 1);
         s32 flags = EFFECT_CLIP_BOUNDS | gBoltTrail_GlintFlips[Random16() & 3];
         EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED, flags, BLITTER_MAX);
         ((DrawRectangle)Ram_HeapSlots->ramCodePaired)(
             canvas,
             work->sheet + BALL_LIGHTNING_TORNADO_PICTURES +
-                gBattleEffect_GlintPictures[cell],
-            glintX, glintY, gBattleEffect_GlintPictureWidths[cell],
-            gBattleEffect_GlintPictureHeights[cell]);
+                gBattleEffect_GlintPictures[picture],
+            glintX, glintY, gBattleEffect_GlintPictureWidths[picture],
+            gBattleEffect_GlintPictureHeights[picture]);
         HeapSlot_Release(HEAP_SLOT_RAM_CODE_PAIRED);
       }
       Particle_AdvanceWithGravity2D(ball, PARTICLE_DAMPING_NONE, 0);
@@ -258,8 +257,8 @@ void BattleEffect_RunBoltTrail(struct BattleEffectParams *args, s32 mode) {
     // Thunder Mine's sparks bounce, each drawn at eight steps of its flight a
     // frame, so that it streaks.
     if (mode == BOLT_TRAIL_THUNDER_MINE && frame >= frames) {
-      for (i = 0, dot = BALL_LIGHTNING_SPARKS; i != BALL_LIGHTNING_SPARK_POOL;
-           i++, dot++) {
+      for (i = 0, dot = BALL_LIGHTNING_SPARKS;
+           i != BALL_LIGHTNING_SPARKS_CLEARED; i++, dot++) {
         if (dot->variant >= 0) {
           s32 size = (dot->variant >> 3) + 2;
           s32 step;
@@ -311,9 +310,8 @@ void BattleEffect_RunBoltTrail(struct BattleEffectParams *args, s32 mode) {
 
           shade = -fade;
         }
-        texture.pixels =
-            work->sheet + BALL_LIGHTNING_BOLT_CELLS +
-            bolt->variant * PICTURE_BYTES(BALL_LIGHTNING_BOLT_CELL);
+        texture.pixels = work->sheet + BALL_LIGHTNING_BOLT_CELS +
+                         bolt->variant * PICTURE_BYTES(BALL_LIGHTNING_BOLT_CEL);
         model->shade = shade;
         Matrix_Initialize();
         Matrix_Translate(ball->x / 2 - toFIXED(64), ball->y - toFIXED(64), 0);
@@ -346,11 +344,10 @@ void BattleEffect_RunBoltTrail(struct BattleEffectParams *args, s32 mode) {
 #define PICTURES (Ram_MapCellBuffer + 16384)
 extern const struct Scale gMegaera_UnitScale;
 
-/// Where FlashBurstSheet is decoded in the effect's pictures.
+/// Where FlashBurstSheet, LightningBoltSheet and SparkleDots are decoded in the
+/// effect's pictures.
 #define MEGAERA_FLASH_BURST_PICTURES 14336
-/// Where LightningBoltSheet is decoded in the effect's pictures.
 #define MEGAERA_LIGHTNING_BOLT_PICTURES GLINT_SET_BYTES
-/// Where SparkleDots is decoded in the effect's pictures.
 #define MEGAERA_SPARKLE_DOTS_PICTURES 11798
 
 #define MEGAERA_FRAMES 170
@@ -386,9 +383,9 @@ extern const struct Scale gMegaera_UnitScale;
 #define MEGAERA_SPARKLE_FRAMES 36
 
 /// Megaera: two swords fall point down among the foes, each with a flash, a
-/// bolt of lightning and a burst of sparks; from frame 64 the field bursts
-/// into flame; and at 108 Megaera swoops in across the foes in a trail of
-/// sparkles, and bursts on them. Holding A or B after frame 10 skips to the
+/// bolt of lightning and a burst of sparks; then the field bursts into flame,
+/// and Megaera swoops in across the foes in a trail of sparkles, and bursts on
+/// them. Holding A or B after frame 10 skips to the
 /// swoop.
 void BattleEffect_RunMegaera(struct BattleEffectParams *args) {
   void *canvas;
@@ -498,19 +495,19 @@ void BattleEffect_RunMegaera(struct BattleEffectParams *args) {
             s32 half;
 
             for (i = 0, half = position.x / 2; i != count / 5; i++) {
-              struct Particle *cell;
+              struct Particle *sparkle;
               s32 angle;
               s32 radius;
 
-              cell =
+              sparkle =
                   &SPARKS[((trailFrame << 5) + i) & (MEGAERA_SPARK_COUNT - 1)];
               angle = Random16();
               radius = (Random16() & 31) + 16;
-              cell->x = Trig_Sin(angle) * radius + half + toFIXED(16);
-              cell->y = Trig_Cos(angle) * radius + position.y - toFIXED(8);
-              cell->velocityX = 0;
-              cell->velocityY = 0;
-              cell->variant = Random16() & 15;
+              sparkle->x = Trig_Sin(angle) * radius + half + toFIXED(16);
+              sparkle->y = Trig_Cos(angle) * radius + position.y - toFIXED(8);
+              sparkle->velocityX = 0;
+              sparkle->velocityY = 0;
+              sparkle->variant = Random16() & 15;
             }
           }
         }
@@ -603,10 +600,9 @@ void BattleEffect_RunMegaera(struct BattleEffectParams *args) {
         }
       }
     }
-    // As the first sword lands the foes flash white; i is 8 here, from the
-    // crackles' loop.
+    // As the first sword lands the foes flash white.
     if (frame == 10) {
-      work->shakeFrames = i;
+      work->shakeFrames = 8;
       for (i = 0; i != args->targetCount; i++) {
         BattleEffect_TintBattler(args->targets[i], SPRITE_COLOR_WHITE,
                                  POSE_DAMAGE, i, 16);
@@ -773,9 +769,8 @@ void BattleEffect_RunMegaera(struct BattleEffectParams *args) {
 #define VOID_BEAM_FIRE_FRAME 72
 #define VOID_BEAM_FADE_FRAME 80
 
-/// Where CometSheetB is decoded in the effect's pictures.
+/// Where CometSheetB and RuneSheet are decoded in the effect's pictures.
 #define VOID_BEAM_COMET_B_PICTURES 4096
-/// Where RuneSheet is decoded in the effect's pictures.
 #define VOID_BEAM_RUNE_PICTURES 4096
 /// The beam's body, a 32x32 gradient built after EmberStreakSheet, and
 /// CometSheetB's comet, its head.
@@ -916,7 +911,6 @@ void BattleEffect_RunVoidBeam(struct BattleEffectParams *args) {
         point[0] = caster->x + toFIXED(8);
       }
 
-      // The hexagon.
       traced = frame * 8 - 336;
       if (traced >= 0) {
         for (i = 0; i != 6; i++) {
@@ -970,7 +964,6 @@ void BattleEffect_RunVoidBeam(struct BattleEffectParams *args) {
                 ring.x - size / 2, ring.y - size, size, size * 2);
       }
 
-      // The beam.
       if (frame >= VOID_BEAM_FIRE_FRAME) {
         s32 fade;
 

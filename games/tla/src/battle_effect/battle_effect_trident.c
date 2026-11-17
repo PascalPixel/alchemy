@@ -21,7 +21,7 @@ extern const struct Scale gTrident_UnitScale;
 /// lands at TRIDENT_STRIKE_FRAME.
 #define TRIDENT_STRIKE_FRAME 64
 /// The Trident is four sprites of SPRITE_TRIDENT, stacked a sprite's height
-/// apart, shown in window 0, between screen lines 16 and 124.
+/// apart, shown in window 0.
 #define TRIDENT_SPRITES 4
 #define TRIDENT_SPRITE_HEIGHT 32
 #define TRIDENT_HEIGHT (TRIDENT_SPRITES * TRIDENT_SPRITE_HEIGHT)
@@ -32,28 +32,27 @@ extern const struct Scale gTrident_UnitScale;
 /// The sparks the strike throws, in the map cell buffer.
 #define TRIDENT_SPARKS ((struct Particle *)(Ram_MapCellBuffer + 10596))
 #define TRIDENT_SPARK_COUNT 128
-/// The work's particles: the spray's drops, the first a pool, then the
-/// strike's flashes, which live six pictures of four frames.
+/// The work's particles: the discs thrown up, the first one growing on the
+/// ground, then the strike's flashes, which live six pictures of four frames.
 #define TRIDENT_PARTICLES 32
-#define TRIDENT_DROPS 14
-#define TRIDENT_DROP_FRAMES 32
+#define TRIDENT_DISCS 14
+#define TRIDENT_DISC_FRAMES 32
 #define TRIDENT_FLASH_FRAMES 24
 
-/// The drops' pictures: twelve shaded discs, 2 to 24 wide, drawn into the map
-/// cell buffer from TRIDENT_DROP_PICTURES; where each starts is kept in the
-/// effect's pictures at TRIDENT_DROP_TABLE, and the pool is drawn at
-/// TRIDENT_POOL.
-#define TRIDENT_DROP_SIZES 12
-#define TRIDENT_DROP_PICTURES 9216
-#define TRIDENT_DROP_TABLE 19542
-#define TRIDENT_POOL 19590
+/// Twelve shaded discs, 2 to 24 wide, drawn into the map cell buffer from
+/// TRIDENT_DISC_PICTURES; where each starts is kept in the effect's pictures
+/// at TRIDENT_DISC_TABLE, and the growing disc is drawn at
+/// TRIDENT_GROUND_DISC.
+#define TRIDENT_DISC_SIZES 12
+#define TRIDENT_DISC_PICTURES 9216
+#define TRIDENT_DISC_TABLE 19542
+#define TRIDENT_GROUND_DISC 19590
 
 /// Where JaggedStreakSheet is decoded in the effect's pictures: three
-/// pictures of a jagged bolt (battle_effect_catastrophe.c's JAGGED_STREAK_WIDTH
-/// and _HEIGHT).
+/// pictures of a jagged bolt, JAGGED_STREAK_WIDTH by JAGGED_STREAK_HEIGHT.
 #define TRIDENT_JAGGED_STREAKS 3158
-/// Seven bolts spin in, one every 4 frames from frame 18, each turning for
-/// 24 frames, dimmed by TRIDENT_BOLT_SHADE.
+/// Seven bolts spin in, one every 4 frames from TRIDENT_FIRST_BOLT_FRAME,
+/// each turning for 24 frames, dimmed by TRIDENT_BOLT_SHADE.
 #define TRIDENT_BOLTS 7
 #define TRIDENT_BOLT_SPINS 8 ///< rows of gTrident_Spins
 #define TRIDENT_FIRST_BOLT_FRAME 18
@@ -61,31 +60,30 @@ extern const struct Scale gTrident_UnitScale;
 
 /// A ring of gBattleEffect_CylinderMesh starts at about a quarter of its
 /// size and grows by its row's growth times CYLINDER_RING_GROWTH a frame.
-#define CYLINDER_RING_START_SCALE 16768
+#define CYLINDER_RING_START_SCALE (FIXED_ONE * 131 / 512)
 #define CYLINDER_RING_GROWTH 1500
 /// The rings spreading from the targets lean back by this angle.
 #define TRIDENT_RING_TILT 3000
 #define TRIDENT_RINGS 8
 
-/// Where FlameZigzagTexture is decoded in the map cell buffer.
+/// Where FlameZigzagTexture, BillowTexture and FlashBurstSheet are decoded in
+/// the map cell buffer.
 #define TRIDENT_FLAME_ZIGZAG 4096
-
-/// Where BillowTexture is decoded in the map cell buffer.
 #define TRIDENT_BILLOW 5120
-
-/// Where FlashBurstSheet is decoded in the map cell buffer.
 #define TRIDENT_FLASH_BURST 20480
 
 /// The Trident drops into place over the targets as rings spread out from
-/// them; seven jagged bolts spin in from frame 18, drops are thrown up from a
-/// spreading pool, and at frame 64 the strike lands on every target with
-/// flashes and a fountain of sparks, and more rings spread.
+/// them; seven jagged bolts spin in, shaded discs are thrown up from a disc
+/// growing on the ground, and then the strike lands on every target with
+/// flashes and a burst of sparks, and more rings spread.
 ///
 /// Abilities: Trident.
 void BattleEffect_RunTrident(struct BattleEffectParams *args) {
   struct BattleEffectWork *work;
   void *canvas;
-  BlitterPair blit; // only blit[0] draws
+  /* LEFTOVER(frame): blit[1], the pair's idle second blitter, which the ROM's
+   * frame reserves and never touches; as one DrawRectangle. */
+  DrawRectangle blit[2];
   u8 *sprites;
   s32 centerX;
   s16 *circles;
@@ -103,7 +101,7 @@ void BattleEffect_RunTrident(struct BattleEffectParams *args) {
   s32 x;
   s32 grow; // also each bolt's first frame
   s32 palette;
-  s32 cells; // The cell buffer's address, held for the whole function.
+  u8 *cells;
   s32 orange;
   s32 orangeBase;
   s32 paletteBase;
@@ -128,9 +126,10 @@ void BattleEffect_RunTrident(struct BattleEffectParams *args) {
   /* FAKEMATCH(temporary): the orange palette's id in a local. */
   orangeBase = RESOURCE_ORANGE_PALETTE_B - 4;
   Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_VBLANK);
-  circles = (s16 *)(work->sheet + TRIDENT_DROP_TABLE);
+  circles = (s16 *)(work->sheet + TRIDENT_DISC_TABLE);
   Resource_LoadAndDecompress(RESOURCE_TORNADO_SHEET, work->sheet, 1, 0);
-  // offset first holds the cell buffer's address, for the FlashBurst load.
+  /* FAKEMATCH(temporary): offset holds the cell buffer's address for the
+   * FlashBurstSheet load; as gMapGridCellBuffer + TRIDENT_FLASH_BURST there. */
   offset = (s32)gMapGridCellBuffer;
   Resource_LoadAndDecompress(RESOURCE_JAGGED_STREAK_SHEET,
                              work->sheet + TRIDENT_JAGGED_STREAKS, 0, 0);
@@ -140,19 +139,22 @@ void BattleEffect_RunTrident(struct BattleEffectParams *args) {
   if (draw) {
     /* FAKEMATCH(temporary): the effect palette's id in a local. */
     paletteBase = RESOURCE_VIOLET_PALETTE_F - 4;
-    cells = (s32)gMapGridCellBuffer;
+    cells = gMapGridCellBuffer;
     palette = paletteBase + 4;
   }
   Resource_LoadAndDecompress(RESOURCE_FLASH_BURST_SHEET,
                              (u8 *)offset + TRIDENT_FLASH_BURST, 1, 0);
-  offset = TRIDENT_DROP_PICTURES;
-  for (i = 0; i != TRIDENT_DROP_SIZES; i++) {
-    BattleEffect_DrawShadedCircles((u8 *)(offset + cells), size, FIXED_ONE);
+  offset = TRIDENT_DISC_PICTURES;
+  for (i = 0; i != TRIDENT_DISC_SIZES; i++) {
+    /* FAKEMATCH(signature): the address summed as an integer, its offset
+     * first; as cells + offset. */
+    BattleEffect_DrawShadedCircles((u8 *)(offset + (s32)cells), size,
+                                   FIXED_ONE);
     circles[i] = offset;
     offset += (i * 2 + 3) * size / 2;
     size += 2;
   }
-  Resource_LoadAndDecompress(RESOURCE_FLAME_BAND_TEXTURE, (u8 *)cells, 0, 0);
+  Resource_LoadAndDecompress(RESOURCE_FLAME_BAND_TEXTURE, cells, 0, 0);
   Resource_LoadAndDecompress(RESOURCE_FLAME_ZIGZAG_TEXTURE,
                              Ram_MapCellBuffer + TRIDENT_FLAME_ZIGZAG, 0, 0);
   Resource_LoadAndDecompress(RESOURCE_BILLOW_TEXTURE,
@@ -165,7 +167,7 @@ void BattleEffect_RunTrident(struct BattleEffectParams *args) {
     s32 radius = i * 2;
     s32 angle = Random16() & TRIG_ANGLE_MASK;
 
-    // DEAD: each place and life is set again, at frame 12 and as its drop is
+    // DEAD: each place and life is set again, at frame 12 and as its disc is
     // thrown or its flash starts, before anything reads it; the ROM keeps the
     // stores, and the random draws move the random sequence.
     p->x = Trig_Sin(angle) * radius;
@@ -249,7 +251,7 @@ void BattleEffect_RunTrident(struct BattleEffectParams *args) {
       }
     }
 
-    // The spray: a pool spreads from frame 40, and drops are thrown up, one
+    // A disc grows on the ground from frame 40, and discs are thrown up, one
     // every other frame from frame 12.
     if ((u32)(frame - 12) <= 52) {
       if (frame == 12) {
@@ -258,14 +260,14 @@ void BattleEffect_RunTrident(struct BattleEffectParams *args) {
         }
       }
       for (i = 0, p = work->particles, grow = frame * 4 - 156;
-           i != TRIDENT_DROPS; i++, p++) {
+           i != TRIDENT_DISCS; i++, p++) {
         p->variant++;
         if (i == 0) {
           if (frame > 39) {
-            u8 *pool = work->sheet + TRIDENT_POOL;
+            u8 *disc = work->sheet + TRIDENT_GROUND_DISC;
 
-            BattleEffect_DrawShadedCircles(pool, grow, FIXED_ONE);
-            Canvas_BlitAtFoot(pool, centerX, 100, grow);
+            BattleEffect_DrawShadedCircles(disc, grow, FIXED_ONE);
+            Canvas_BlitAtFoot(disc, centerX, 100, grow);
           }
           continue;
         }
@@ -284,21 +286,23 @@ void BattleEffect_RunTrident(struct BattleEffectParams *args) {
           p->velocityY = (Trig_Cos(angle) * speed) >> 8;
           p->velocityZ = (Random16() & 7) + 4;
         }
-        // A drop swells and shrinks over its life, half a turn of a sine.
-        if ((u32)p->variant < TRIDENT_DROP_FRAMES) {
-          s32 drop = (FIXEDtoINT(Trig_Sin(p->variant * (TRIG_TURN / 64)) *
-                                 p->velocityZ)) *
-                     2;
-          s32 index = drop - 2;
+        // A disc swells and shrinks over its life, half a turn of a sine.
+        if ((u32)p->variant < TRIDENT_DISC_FRAMES) {
+          s32 diameter = (FIXEDtoINT(Trig_Sin(p->variant * (TRIG_TURN / 64)) *
+                                     p->velocityZ)) *
+                         2;
+          s32 index = diameter - 2;
 
           if ((u32)index <= 61) {
-            s32 dropX = FIXED_INTEGER_PART(p->x);
-            s32 dropY = FIXED_INTEGER_PART(p->y);
+            s32 discX = FIXED_INTEGER_PART(p->x);
+            s32 discY = FIXED_INTEGER_PART(p->y);
             s32 tier = index >> 1;
 
             Particle_AdvanceWithGravity2D(p, PARTICLE_DAMPING_NONE, 0);
-            Canvas_BlitAtFoot((u8 *)(circles[tier] + cells), dropX, dropY,
-                              drop);
+            /* FAKEMATCH(signature): the address summed as an integer, its
+             * offset first; as cells + circles[tier]. */
+            Canvas_BlitAtFoot((u8 *)(circles[tier] + (s32)cells), discX, discY,
+                              diameter);
           }
         }
       }
@@ -311,7 +315,7 @@ void BattleEffect_RunTrident(struct BattleEffectParams *args) {
       model = Render_AllocateModelList(1);
       texture.logWidth = 7;
       texture.logHeight = 7;
-      texture.pixels = (void *)cells;
+      texture.pixels = cells;
       model->kind = MODEL_SHADED_ADDITIVE;
       model->texture = &texture;
       model->flags = 0;
@@ -350,7 +354,6 @@ void BattleEffect_RunTrident(struct BattleEffectParams *args) {
         Render_DrawModelList(model);
       }
 
-      // The bolts.
       if (frame <= 71) {
         const s32 *spin;
         struct Particle *t;
@@ -407,7 +410,7 @@ void BattleEffect_RunTrident(struct BattleEffectParams *args) {
     }
 
     // The strike: flashes, half along the Trident's length and half thrown out
-    // from its foot, and a fountain of sparks.
+    // from its foot, and a burst of sparks.
     if (frame >= TRIDENT_STRIKE_FRAME) {
       struct Particle *drawn;
       const u8 *cellTable;
@@ -517,13 +520,13 @@ void BattleEffect_RunTrident(struct BattleEffectParams *args) {
 #undef TRIDENT_SPARKS
 #undef TRIDENT_SPARK_COUNT
 #undef TRIDENT_PARTICLES
-#undef TRIDENT_DROPS
-#undef TRIDENT_DROP_FRAMES
+#undef TRIDENT_DISCS
+#undef TRIDENT_DISC_FRAMES
 #undef TRIDENT_FLASH_FRAMES
-#undef TRIDENT_DROP_SIZES
-#undef TRIDENT_DROP_PICTURES
-#undef TRIDENT_DROP_TABLE
-#undef TRIDENT_POOL
+#undef TRIDENT_DISC_SIZES
+#undef TRIDENT_DISC_PICTURES
+#undef TRIDENT_DISC_TABLE
+#undef TRIDENT_GROUND_DISC
 #undef TRIDENT_JAGGED_STREAKS
 #undef TRIDENT_BOLTS
 #undef TRIDENT_BOLT_SPINS
@@ -559,7 +562,7 @@ void BattleEffect_RunPlanetary(struct BattleEffectParams *args) {
 #define LEAPING_STRIKE_SPARK_MIN_SPEED 32
 /// Planetary's claw: tilted, and drawn about two and a half times its size.
 #define LEAPING_STRIKE_CLAW_TILT 13192
-#define LEAPING_STRIKE_CLAW_SCALE 165536
+#define LEAPING_STRIKE_CLAW_SCALE (FIXED_ONE * 5173 / 2048)
 /// Planetary's rings of billows spread from frame 40, each from its own frame
 /// after, and its pillars of flame from frame 34; both lean back.
 #define LEAPING_STRIKE_WAVE_FRAME 40
@@ -572,10 +575,9 @@ void BattleEffect_RunPlanetary(struct BattleEffectParams *args) {
 /// in the effect's pictures.
 #define LEAPING_STRIKE_PICTURES 12288
 
-/// Where BillowTexture is decoded in the effect's pictures.
+/// Where BillowTexture and FlameBandTexture are decoded in the effect's
+/// pictures.
 #define LEAPING_STRIKE_BILLOW 16384
-
-/// Where FlameBandTexture is decoded in the effect's pictures.
 #define LEAPING_STRIKE_FLAME_BAND 20480
 
 /// The caster flashes and sixteen flames ring it (frames 2-15), leaps up at
@@ -589,6 +591,8 @@ void BattleEffect_RunLeapingStrike(struct BattleEffectParams *args, s32 mode) {
   struct ModelTexture texture;
   struct BattleEffectWork *work;
   void *canvas;
+  /* LEFTOVER(frame): draw[1], the pair's idle second blitter, which the ROM's
+   * frame reserves and never touches; as one DrawRectangle. */
   DrawRectangle draw[2];
   u8 *graphics;
   struct MotionObject *caster;
@@ -779,6 +783,8 @@ void BattleEffect_RunLeapingStrike(struct BattleEffectParams *args, s32 mode) {
           work->shakeFrames = 14;
 
         // The claw, slashing until frame 45.
+        /* FAKEMATCH(temporary): the kind in a local; as MODEL_SHADED_MAX at its
+         * use. */
         kind = MODEL_SHADED_MAX;
         texture.logWidth = 6;
         texture.logHeight = 6;

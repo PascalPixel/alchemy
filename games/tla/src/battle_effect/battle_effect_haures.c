@@ -13,8 +13,8 @@ struct MoundVertex {
   struct ModelVertex lower;
 };
 
-/// The map cell buffer from 16384: the rune's picture in the coming, then the
-/// charge's sparks.
+/// The map cell buffer past its first 16 KB: the rune's picture in the coming,
+/// then the charge's sparks.
 #define SCRATCH (Ram_MapCellBuffer + 16384)
 /// The mound strip's corners, rebuilt each frame from the morphing shapes.
 extern struct MoundVertex gHaures_WingCorners[];
@@ -26,16 +26,16 @@ extern const u16 gHaures_BodyPiecePoints[][2];
 
 #define HAURES_COMING_FRAMES 440 ///< frames of Haures's coming, unless skipped
 #define HAURES_FRAMES 92         ///< frames of the charge that follows
-/// Haures's sprites: the demon's eleven pieces (SPRITE_HAURES), four violet
+/// Haures's sprites: the beast's eleven pieces (SPRITE_HAURES), four violet
 /// flames (SPRITE_HAURES_FLAME) and two drops (SPRITE_HAURES_DOT), then the
 /// 64x64 stamp. The coming shows only the first two pieces, its raised claw,
 /// until the frame he rears.
 #define HAURES_BODY_PIECES 11
 #define HAURES_CLAW_PIECES 2
-#define HAURES_FLAMES 12
+#define HAURES_FIRST_FLAME 12
 #define HAURES_FLAME_COUNT 4
-#define HAURES_DOTS 16
-#define HAURES_DOT_COUNT 2
+#define HAURES_FIRST_DROP_SPRITE 16
+#define HAURES_DROP_SPRITE_COUNT 2
 #define HAURES_STAMP 18
 /// The drops: four fall one after another, drawn by the two drop sprites in
 /// turn, and land at HAURES_DROP_LAND_Y, each then bursting into a flame that
@@ -52,9 +52,10 @@ extern const u16 gHaures_BodyPiecePoints[][2];
 /// frames each.
 #define HAURES_PUFFS 8
 #define HAURES_PUFF_BYTES 6017
-#define HAURES_PUFF_PICTURES 6
+#define HAURES_PUFF_PICTURE_COUNT 6
 #define HAURES_PUFF_PICTURE_FRAMES 4
-#define HAURES_PUFF_FRAMES (HAURES_PUFF_PICTURES * HAURES_PUFF_PICTURE_FRAMES)
+#define HAURES_PUFF_FRAMES                                                     \
+  (HAURES_PUFF_PICTURE_COUNT * HAURES_PUFF_PICTURE_FRAMES)
 /// The mound: a strip of 32 points, upper and lower edge each, so 31 quads,
 /// first an ellipse HAURES_POOL_WIDTH across and twice HAURES_POOL_DEPTH tall
 /// whose points step HAURES_POOL_STEP round it.
@@ -90,8 +91,11 @@ extern const u16 gHaures_BodyPiecePoints[][2];
 /// The rune's scale on a frame: it holds its size at HAURES_RUNE_GROW_FRAME
 /// until then, and from then grows a sixteenth a frame (its height; it is half
 /// as wide).
-#define HAURES_RUNE_SCALE(frame) ((frame) * (FIXED_ONE / 16) - 980752)
+#define HAURES_RUNE_SCALE(frame)                                               \
+  (((frame) - HAURES_RUNE_GROW_FRAME) * (FIXED_ONE / 16) +                     \
+   HAURES_RUNE_HELD_SCALE)
 #define HAURES_RUNE_GROW_FRAME 269
+#define HAURES_RUNE_HELD_SCALE (FIXED_ONE * 7567 / 4096)
 /// BlueArcSheetB's six arcs (BLUE_ARC_WIDTH by BLUE_ARC_HEIGHT), each laid in
 /// a texture HAURES_ARC_TEXTURE_WIDTH wide.
 #define HAURES_ARCS 6
@@ -109,13 +113,14 @@ extern const u16 gHaures_BodyPiecePoints[][2];
 #define HAURES_SHARD_MESHES 2048
 #define HAURES_SHARD_MESH_BYTES 12
 /// Face `face` of shard j's mesh: its three corners, then a byte no face sets.
-#define SHARD_FACE(j, face) (mesh + (j) * HAURES_SHARD_MESH_BYTES + (face) * 4)
+#define SHARD_FACE(mesh, j, face)                                              \
+  ((mesh) + (j) * HAURES_SHARD_MESH_BYTES + (face) * 4)
 /// The shards fly out from the middle of the view.
 #define HAURES_SHATTER_X 120
 #define HAURES_SHATTER_Y 60
 /// The charge's sparks: HAURES_SPARKS_PER_FRAME start each frame of the first
 /// two passes, each living HAURES_SPARK_LIFE frames.
-#define HAURES_SPARKS 512
+#define HAURES_SPARK_COUNT 512
 #define HAURES_SPARKS_PER_FRAME 12
 #define HAURES_SPARK_LIFE 16
 /// Haures charges through the foes three times, a pass every
@@ -133,7 +138,7 @@ extern const u16 gHaures_BodyPiecePoints[][2];
 
 /// Haures: in a blue cavern four drops fall and burst into violet flames, a red
 /// swirl opens on the ground and a dark pool on it heaves up into a mound; the
-/// demon's claw rises from it in violet flame, a rune flashes as the claw
+/// beast's claw rises from it in violet flame, a rune flashes as the claw
 /// slashes, and the dark breaks into shards to show him circling in a reddened
 /// cave; then he charges through the foes three times in streaks of fire that
 /// end in a flash of light.
@@ -196,26 +201,26 @@ void BattleEffect_RunHaures(struct BattleEffectParams *args) {
   BattleEffect_SpawnObjects(HAURES_CLAW_PIECES, SPRITE_HAURES, 2);
   for (i = 0; i != HAURES_FLAME_COUNT; i++) {
     sprite = Sprite_CreateFar(SPRITE_HAURES_FLAME);
-    work->sprites[HAURES_FLAMES + i] = sprite;
+    work->sprites[HAURES_FIRST_FLAME + i] = sprite;
     if (sprite != NULL) {
       sprite->flags = 0;
       Sprite_StartAnimationFar(sprite, 0);
       {
-        struct FieldSprite *added = work->sprites[HAURES_FLAMES + i];
+        struct FieldSprite *added = work->sprites[HAURES_FIRST_FLAME + i];
 
         added->priority = 1;
         added->blendMode = 1;
       }
     }
   }
-  for (i = 0; i != HAURES_DOT_COUNT; i++) {
+  for (i = 0; i != HAURES_DROP_SPRITE_COUNT; i++) {
     sprite = Sprite_CreateFar(SPRITE_HAURES_DOT);
-    work->sprites[HAURES_DOTS + i] = sprite;
+    work->sprites[HAURES_FIRST_DROP_SPRITE + i] = sprite;
     if (sprite != NULL) {
       sprite->flags = 0;
       Sprite_StartAnimationFar(sprite, 0);
       {
-        struct FieldSprite *added = work->sprites[HAURES_DOTS + i];
+        struct FieldSprite *added = work->sprites[HAURES_FIRST_DROP_SPRITE + i];
 
         added->priority = 1;
       }
@@ -435,8 +440,8 @@ void BattleEffect_RunHaures(struct BattleEffectParams *args) {
                   dropPlace[0] = p->x;
                   dropPlace[2] = p->y;
                   Render_ApplyProjectedPlacementFar(
-                      work->sprites[HAURES_DOTS + (i & 1)], dropPlace,
-                      gHaures_UnitScale, 0);
+                      work->sprites[HAURES_FIRST_DROP_SPRITE + (i & 1)],
+                      dropPlace, gHaures_UnitScale, 0);
                   Particle_AdvanceWithGravity2D(p, 63, toFIXED(1) / 8);
                   if (FIXED_INTEGER_PART(p->y) >= HAURES_DROP_LAND_Y) {
                     p->variant = 1;
@@ -445,10 +450,10 @@ void BattleEffect_RunHaures(struct BattleEffectParams *args) {
                   dropPlace[0] = p->x;
                   dropPlace[2] = p->y;
                   Sprite_StartAnimationFar(
-                      work->sprites[HAURES_FLAMES + (i & 1)],
+                      work->sprites[HAURES_FIRST_FLAME + (i & 1)],
                       (p->variant / 6) & 3);
                   Render_ApplyProjectedPlacementFar(
-                      work->sprites[HAURES_FLAMES + (i & 1)], dropPlace,
+                      work->sprites[HAURES_FIRST_FLAME + (i & 1)], dropPlace,
                       gHaures_UnitScale, 0);
                   p->variant++;
                 }
@@ -596,7 +601,7 @@ void BattleEffect_RunHaures(struct BattleEffectParams *args) {
               for (i = 0; i != HAURES_PUFFS; i++) {
                 struct Particle *p = &work->particles[i + HAURES_DROPS];
                 s32 n = (p->variant / HAURES_PUFF_PICTURE_FRAMES) %
-                        HAURES_PUFF_PICTURES;
+                        HAURES_PUFF_PICTURE_COUNT;
                 u8 *src = work->sheet + gBattleEffect_PuffArcPictures[n];
                 u32 w = gBattleEffect_PuffArcPictureWidths[n];
 
@@ -676,7 +681,7 @@ void BattleEffect_RunHaures(struct BattleEffectParams *args) {
         model->vertices = verts;
         Matrix_Initialize();
         Matrix_Translate(0, -toFIXED(4), 0);
-        s = HAURES_RUNE_SCALE(HAURES_RUNE_GROW_FRAME);
+        s = HAURES_RUNE_HELD_SCALE;
         if (frame >= HAURES_RUNE_GROW_FRAME) {
           s = HAURES_RUNE_SCALE(frame);
         }
@@ -727,10 +732,10 @@ void BattleEffect_RunHaures(struct BattleEffectParams *args) {
           Sprite_DestroyFar(work->sprites[0]);
           Sprite_DestroyFar(work->sprites[1]);
           for (i = 0; i != HAURES_FLAME_COUNT; i++) {
-            Sprite_DestroyFar(work->sprites[HAURES_FLAMES + i]);
+            Sprite_DestroyFar(work->sprites[HAURES_FIRST_FLAME + i]);
           }
-          for (i = 0; i != HAURES_DOT_COUNT; i++) {
-            Sprite_DestroyFar(work->sprites[HAURES_DOTS + i]);
+          for (i = 0; i != HAURES_DROP_SPRITE_COUNT; i++) {
+            Sprite_DestroyFar(work->sprites[HAURES_FIRST_DROP_SPRITE + i]);
           }
           Sprite_DestroyFar(work->sprites[HAURES_STAMP]);
           BattleEffect_SpawnObjects(HAURES_BODY_PIECES, SPRITE_HAURES, 2);
@@ -805,15 +810,15 @@ void BattleEffect_RunHaures(struct BattleEffectParams *args) {
               corner->y = gHaures_PartPoints[j * HAURES_SHARD_ROW + i * 2 + 3] -
                           gHaures_PartPoints[j * HAURES_SHARD_ROW + 1];
             }
-            SHARD_FACE(j, 0)[1] = 1;
-            SHARD_FACE(j, 0)[2] = 2;
-            SHARD_FACE(j, 1)[1] = 2;
-            SHARD_FACE(j, 1)[2] = 3;
-            SHARD_FACE(j, 0)[0] = none;
-            SHARD_FACE(j, 1)[0] = none;
-            SHARD_FACE(j, 2)[0] = none;
-            SHARD_FACE(j, 2)[1] = none;
-            SHARD_FACE(j, 2)[2] = none;
+            SHARD_FACE(mesh, j, 0)[1] = 1;
+            SHARD_FACE(mesh, j, 0)[2] = 2;
+            SHARD_FACE(mesh, j, 1)[1] = 2;
+            SHARD_FACE(mesh, j, 1)[2] = 3;
+            SHARD_FACE(mesh, j, 0)[0] = none;
+            SHARD_FACE(mesh, j, 1)[0] = none;
+            SHARD_FACE(mesh, j, 2)[0] = none;
+            SHARD_FACE(mesh, j, 2)[1] = none;
+            SHARD_FACE(mesh, j, 2)[2] = none;
           }
         }
         // DEAD: the shards are solid and draw no texture; the ROM keeps the
@@ -888,10 +893,10 @@ void BattleEffect_RunHaures(struct BattleEffectParams *args) {
     Sprite_DestroyFar(work->sprites[0]);
     Sprite_DestroyFar(work->sprites[1]);
     for (i = 0; i != HAURES_FLAME_COUNT; i++) {
-      Sprite_DestroyFar(work->sprites[HAURES_FLAMES + i]);
+      Sprite_DestroyFar(work->sprites[HAURES_FIRST_FLAME + i]);
     }
-    for (i = 0; i != HAURES_DOT_COUNT; i++) {
-      Sprite_DestroyFar(work->sprites[HAURES_DOTS + i]);
+    for (i = 0; i != HAURES_DROP_SPRITE_COUNT; i++) {
+      Sprite_DestroyFar(work->sprites[HAURES_FIRST_DROP_SPRITE + i]);
     }
     Sprite_DestroyFar(work->sprites[HAURES_STAMP]);
   } else {
@@ -945,7 +950,7 @@ void BattleEffect_RunHaures(struct BattleEffectParams *args) {
       {
         s32 *variant = &SPARKS->variant;
 
-        for (i = 0; i != HAURES_SPARKS; i++, variant += 7) {
+        for (i = 0; i != HAURES_SPARK_COUNT; i++, variant += 7) {
           *variant = -1;
         }
       }
@@ -963,7 +968,7 @@ void BattleEffect_RunHaures(struct BattleEffectParams *args) {
       velocity.y = 0;
     }
     {
-      for (i = 0; i != HAURES_SPARKS; i++) {
+      for (i = 0; i != HAURES_SPARK_COUNT; i++) {
         struct Particle *p = &((struct Particle *)SCRATCH)[i];
         if (p->variant >= 0) {
           s32 n = (p->variant >> 3) + 1;

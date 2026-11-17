@@ -402,10 +402,9 @@ struct WaterTriangle {
 /// Where SwirlTexture is decoded in the effect's pictures.
 #define WATER_SHEET_SWIRL 8192
 
-/// Where SmokeSheet is decoded in the effect's pictures: its six puffs, which
-/// Watery Grave brightens into bubbles.
-#define WATER_SHEET_SMOKE_PUFFS 12288
-#define WATER_SHEET_SMOKE_PICTURES 6
+/// Where SmokeSheet is decoded in the effect's pictures, and its six puffs.
+#define WATER_SHEET_SMOKE 12288
+#define WATER_SHEET_SMOKE_PICTURE_COUNT 6
 
 /// Where the 32x32 picture at the sheet's start is mirrored into a 64x64 one.
 #define WATER_SHEET_MIRRORED 1024
@@ -420,10 +419,10 @@ struct WaterTriangle {
 /// and the one each row's phase is the sine of a multiple of.
 #define WATER_WAVE_COLUMN_PHASE 5000
 #define WATER_WAVE_ROW_PHASE 3553
-/// Watery Grave's bubbles, in work->particles; one is drawn only beyond
-/// WATERY_GRAVE_BUBBLE_DEPTH.
-#define WATERY_GRAVE_BUBBLES 20
-#define WATERY_GRAVE_BUBBLE_DEPTH 10
+/// Watery Grave's puffs of smoke, in work->particles; one is drawn only
+/// beyond WATERY_GRAVE_PUFF_DEPTH.
+#define WATERY_GRAVE_PUFFS 20
+#define WATERY_GRAVE_PUFF_DEPTH 10
 /// Watery Grave tilts its water towards the camera.
 #define WATERY_GRAVE_TILT 4000
 /// The water slides in from WATER_SHEET_START_X to WATER_SHEET_END_X, 8
@@ -435,7 +434,7 @@ struct WaterTriangle {
 /// water (a 16 by 8 grid of vertices, its mesh built here) rolls in under
 /// the targets in waves while the camera turns; Dreamtide strikes the first
 /// target with two splashes at frame 17, Watery Grave strikes every target
-/// at frames 17 and 46 while bubbles rise from the deep.
+/// at frames 17 and 46 while puffs of smoke bob on the water.
 void BattleEffect_RunWaterSheet(struct BattleEffectParams *args, s32 mode) {
   struct BattleEffectWork *work;
   s32 frame;
@@ -450,7 +449,7 @@ void BattleEffect_RunWaterSheet(struct BattleEffectParams *args, s32 mode) {
   struct ScreenPoint target;
   struct ModelTexture texture;
   struct RenderModel *model;
-  struct Particle *bubble;
+  struct Particle *puff;
   s32 height;
   s32 phase;
   s32 row;
@@ -482,9 +481,9 @@ void BattleEffect_RunWaterSheet(struct BattleEffectParams *args, s32 mode) {
     u8 *pixel;
 
     Resource_LoadAndDecompress(RESOURCE_SMOKE_SHEET,
-                               work->sheet + WATER_SHEET_SMOKE_PUFFS, 1, 0);
-    for (i = 0, pixel = work->sheet + WATER_SHEET_SMOKE_PUFFS;
-         i != WATER_SHEET_SMOKE_PICTURES * PICTURE_BYTES(SMOKE_PUFF);
+                               work->sheet + WATER_SHEET_SMOKE, 1, 0);
+    for (i = 0, pixel = work->sheet + WATER_SHEET_SMOKE;
+         i != WATER_SHEET_SMOKE_PICTURE_COUNT * PICTURE_BYTES(SMOKE_PUFF);
          i++, pixel++) {
       if (*pixel != 0) {
         *pixel += 8;
@@ -653,13 +652,13 @@ void BattleEffect_RunWaterSheet(struct BattleEffectParams *args, s32 mode) {
         WATER_VERTICES[row * 16 + column].y = y + 64;
       }
     }
-    // A bubble bobs at half the waves' height, with the row it rises in: the
-    // bubbles lie a quarter of a row apart from row 1.
+    // A puff bobs at half the waves' height, with the row it rises in: the
+    // puffs lie a quarter of a row apart from row 1.
     i = 0;
     height /= 2;
-    for (bubble = work->particles; i != WATERY_GRAVE_BUBBLES; i++, bubble++) {
-      if (bubble->variant == 0) {
-        bubble->y = INTtoFIXED(
+    for (puff = work->particles; i != WATERY_GRAVE_PUFFS; i++, puff++) {
+      if (puff->variant == 0) {
+        puff->y = INTtoFIXED(
             (FIXEDtoINT(Trig_Sin(angle + Trig_Sin((i + 4) *
                                                   (WATER_WAVE_ROW_PHASE / 4))) *
                         height)) -
@@ -698,21 +697,21 @@ void BattleEffect_RunWaterSheet(struct BattleEffectParams *args, s32 mode) {
     Render_DrawModelList(model);
 
     if (frame == 0) {
-      FIXED bubbleZ = -toFIXED(60);
+      FIXED puffZ = -toFIXED(60);
 
-      for (i = 0, bubble = work->particles; i != WATERY_GRAVE_BUBBLES;
-           i++, bubble++) {
-        bubble->variant = Random16() % WATER_SHEET_SMOKE_PICTURES;
-        bubble->z = bubbleZ;
-        bubble->x = -toFIXED(60);
-        bubble->velocityX = 0;
-        bubble->velocityY = 0;
-        bubble->velocityZ = 0;
-        bubbleZ += toFIXED(6);
+      for (i = 0, puff = work->particles; i != WATERY_GRAVE_PUFFS;
+           i++, puff++) {
+        puff->variant = Random16() % WATER_SHEET_SMOKE_PICTURE_COUNT;
+        puff->z = puffZ;
+        puff->x = -toFIXED(60);
+        puff->velocityX = 0;
+        puff->velocityY = 0;
+        puff->velocityZ = 0;
+        puffZ += toFIXED(6);
       }
     }
     if (mode == WATER_SHEET_WATERY_GRAVE) {
-      for (i = 0; i != WATERY_GRAVE_BUBBLES; i++) {
+      for (i = 0; i != WATERY_GRAVE_PUFFS; i++) {
         struct Particle *step = &work->particles[i];
         s32 picture = step->variant;
         struct ScreenPoint *position;
@@ -723,7 +722,7 @@ void BattleEffect_RunWaterSheet(struct BattleEffectParams *args, s32 mode) {
         /* FAKEMATCH(temporary): position holds &screen. */
         position = &screen;
         if (EffectPosition_ProjectPoint(step, position) == 0 &&
-            FIXED_INTEGER_PART(position->depth) > WATERY_GRAVE_BUBBLE_DEPTH) {
+            FIXED_INTEGER_PART(position->depth) > WATERY_GRAVE_PUFF_DEPTH) {
           s32 x = FIXED_INTEGER_PART(position->x);
           s32 y;
 
@@ -731,12 +730,12 @@ void BattleEffect_RunWaterSheet(struct BattleEffectParams *args, s32 mode) {
           y = FIXED_INTEGER_PART(position->y);
           position->y = y + 64;
           blit[0](canvas,
-                  work->sheet + WATER_SHEET_SMOKE_PUFFS +
+                  work->sheet + WATER_SHEET_SMOKE +
                       picture * PICTURE_BYTES(SMOKE_PUFF),
                   x + 52, y + 40, SMOKE_PUFF_WIDTH, SMOKE_PUFF_HEIGHT);
           Particle_AdvanceWithGravity3D(step, 62, -toFIXED(1) / 8);
         }
-        if (++step->variant == WATER_SHEET_SMOKE_PICTURES) {
+        if (++step->variant == WATER_SHEET_SMOKE_PICTURE_COUNT) {
           step->variant = 0;
         }
       }
@@ -824,14 +823,14 @@ void BattleEffect_RunAroma(struct BattleEffectParams *args) {
 #define WIND_FUNNEL_SPREAD 21000
 /// Waft's funnels swell and shrink about WAFT_FUNNEL_SCALE, an angle of
 /// WAFT_FUNNEL_PULSE_SPEED a frame; Aroma's about full size.
-#define WAFT_FUNNEL_SCALE toFIXED(1.30518)
+#define WAFT_FUNNEL_SCALE (FIXED_ONE * 2673 / 2048)
 #define WAFT_FUNNEL_PULSE_SPEED 964
 #define AROMA_FUNNEL_PULSE_SPEED 682
 /// Aroma's three funnels stand one above another, this far apart.
 #define AROMA_FUNNEL_SPACING 16
 
 /// The body of Waft (mode 0) and Aroma (mode 1): after the Jupiter Djinni's
-/// entrance a small djinni bobs and rises, while three funnels of wind, each a
+/// entrance a small Djinni bobs and rises, while three funnels of wind, each a
 /// band whose head moves and whose tail follows where the head has been, twist
 /// over the targets and take on Waft's cyan or Aroma's tan; Waft strikes the
 /// first target at frame 28, Aroma touches each target in turn, four frames
@@ -906,17 +905,15 @@ void BattleEffect_RunWindFunnel(struct BattleEffectParams *args, s32 mode) {
     s32 y;
     s32 angle;
     struct ModelVertex *corner;
-    s32 x; // The djinni's x; at frame 0, the funnel's height.
+    s32 x; // The Djinni's x; at frame 0, the funnel's height.
 
     if (frame == 0) {
       struct ModelVertex *head;
       s32 row;
 
       yaw = 0;
-      /* FAKEMATCH(signature): vertices, a pointer, holds the radius 32 through
-       * casts; as an s32 radius of its own. */
-      // Each mode sets its funnel: its height, and a radius that is 32 for
-      // both.
+      /* FAKEMATCH(signature): vertices, a pointer, holds WIND_FUNNEL_RADIUS
+       * through casts; as an s32 radius of its own. */
       if (mode == WIND_FUNNEL_WAFT) {
         x = WAFT_FUNNEL_HEIGHT;
         vertices = (u8 *)WIND_FUNNEL_RADIUS;
@@ -943,7 +940,7 @@ void BattleEffect_RunWindFunnel(struct BattleEffectParams *args, s32 mode) {
       }
     }
 
-    // The djinni, bobbing over the caster and rising from frame 8.
+    // The Djinni, bobbing over the caster and rising from frame 8.
     if (frame <= 79) {
       s32 y;
 
@@ -995,7 +992,7 @@ void BattleEffect_RunWindFunnel(struct BattleEffectParams *args, s32 mode) {
     corner = (struct ModelVertex *)funnel;
     y = -height;
     for (; k != 2; k++) {
-      // The (u32) casts change nothing, the byte stored being the same.
+      // The (u32) casts make each division round down, as a shift.
       corner->x = (u32)Trig_Sin(angle) / (FIXED_ONE / WIND_FUNNEL_RADIUS);
       corner->y = y;
       corner->z = (u32)Trig_Cos(angle) / (FIXED_ONE / WIND_FUNNEL_RADIUS);
@@ -1419,8 +1416,8 @@ void BattleEffect_RunDiamondBerg(struct BattleEffectParams *args) {
 #undef WATER_MESH_OFFSET
 #undef WATER_MESH
 #undef WATER_SHEET_SWIRL
-#undef WATER_SHEET_SMOKE_PUFFS
-#undef WATER_SHEET_SMOKE_PICTURES
+#undef WATER_SHEET_SMOKE
+#undef WATER_SHEET_SMOKE_PICTURE_COUNT
 #undef WATER_SHEET_MIRRORED
 #undef DREAMTIDE_FRAMES
 #undef WATERY_GRAVE_FRAMES
@@ -1428,8 +1425,8 @@ void BattleEffect_RunDiamondBerg(struct BattleEffectParams *args) {
 #undef WATER_SHEET_CAMERA_LIMIT
 #undef WATER_WAVE_COLUMN_PHASE
 #undef WATER_WAVE_ROW_PHASE
-#undef WATERY_GRAVE_BUBBLES
-#undef WATERY_GRAVE_BUBBLE_DEPTH
+#undef WATERY_GRAVE_PUFFS
+#undef WATERY_GRAVE_PUFF_DEPTH
 #undef WATERY_GRAVE_TILT
 #undef WATER_SHEET_START_X
 #undef WATER_SHEET_END_X

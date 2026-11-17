@@ -36,24 +36,24 @@ struct StripQuad;
 #define GASP_CENTRE 63
 #define GASP_FALL 62
 #define GASP_FLASH 61
-/// The motes of Djinn Counter's blow and of Reflux's and Counter Rush's swirl:
+/// The motes of Djinn Counter's blow and of Reflux's and Counter-rush's swirl:
 /// every particle but the last.
 #define GASP_MOTES 63
 /// Mold's 40x40 Djinni is copied to the middle of a 64x64 cel.
 #define GASP_DJINNI_CEL 64
 #define GASP_DJINNI_CEL_MARGIN ((GASP_DJINNI_CEL - DJINNI_WIDTH) / 2)
-/// Call Dullahan's four bolts each take a 32x128 cel, 4 pixels in from its
-/// left.
+/// Call Dullahan's four bolts, LightningBoltSheet's pictures, each copied into
+/// a 32x128 cel GASP_BOLT_CEL_INSET pixels in from its left.
+#define GASP_BOLT_PICTURE_COUNT 4
 #define GASP_BOLT_CEL_WIDTH 32
 #define GASP_BOLT_CEL_HEIGHT 128
+#define GASP_BOLT_CEL_INSET ((GASP_BOLT_CEL_WIDTH - LIGHTNING_BOLT_WIDTH) / 2)
 #define GASP_BOLT_CEL_BYTES (GASP_BOLT_CEL_WIDTH * GASP_BOLT_CEL_HEIGHT)
 
-/// Where VenusDjinnSheet is decoded in the effect's pictures.
+/// Where VenusDjinnSheet, CornerGlowSheet and FireRingTexture are decoded in
+/// the effect's pictures.
 #define GASP_FAMILY_VENUS_DJINN_PICTURES 4096
-/// Where CornerGlowSheet is decoded in the effect's pictures.
 #define GASP_FAMILY_CORNER_GLOW_PICTURES 16384
-
-/// Where FireRingTexture is decoded in the effect's pictures.
 #define GASP_FIRE_RING 12416
 
 /// The textures the model layer turns, 32 by 32: Gasp's two burning skulls,
@@ -63,33 +63,32 @@ struct StripQuad;
 /// draws: Gasp's GASP_SKULLS and Shine's GASP_SHINE_RAYS.
 #define GASP_SEEDS 16
 
-/// Gasp and Lull: the small djinni sways GASP_DJINNI_SWAY pixels either side
-/// and bobs, a 32nd of a turn a frame.
+/// Gasp and Lull: the small Djinni sways GASP_DJINNI_SWAY pixels either side
+/// and bobs, a 32nd of a turn a frame. Gasp's burning skulls rise one every 8
+/// frames, each for GASP_SKULL_FRAMES before it fades.
 #define GASP_DJINNI_SWAY 20
-/// Gasp: the burning skulls that rise, one every 8 frames, each for
-/// GASP_SKULL_FRAMES before it fades, at GASP_SKULL_SCALE.
 #define GASP_SKULLS 6
 #define GASP_SKULL_FRAMES 32
-#define GASP_SKULL_SCALE 30000
+#define GASP_SKULL_SCALE (FIXED_ONE * 1875 / 4096)
 
-/// Reflux: the djinni circles wider until GASP_REFLUX_RADIUS.
+/// Reflux: the Djinni circles wider until GASP_REFLUX_RADIUS. Reflux and
+/// Counter-rush: of GASP_MOTES set up, GASP_SWIRL_MOTES close in on the swirl,
+/// each for GASP_SWIRL_MOTE_FRAMES, as the swirl grows to GASP_SWIRL_SCALE.
 #define GASP_REFLUX_RADIUS 12
-/// Reflux and Counter Rush: the motes of the swirl drawn, of GASP_MOTES set
-/// up, each for GASP_SWIRL_MOTE_FRAMES as it closes in.
 #define GASP_SWIRL_MOTES 48
 #define GASP_SWIRL_MOTE_FRAMES 32
+#define GASP_SWIRL_SCALE (FIXED_ONE * 375 / 512)
 
-/// Shine: the djinni glides a GASP_SHINE_GLIDE-th of the way to over the user
-/// a frame, then falls onto the target with a GASP_SHINE_FALL-th of the way
-/// more each frame.
+/// Shine: the Djinni glides a GASP_SHINE_GLIDE-th of the way to over the user
+/// a frame, then falls onto the target a GASP_SHINE_FALL-th of the way more
+/// each frame, turning rays of light about it.
 #define GASP_SHINE_GLIDE 40
 #define GASP_SHINE_FALL 32
-/// Shine: the rays of light around the djinni, each for GASP_SHINE_RAY_FRAMES.
 #define GASP_SHINE_RAYS 8
 #define GASP_SHINE_RAY_FRAMES 32
 
-/// Lull: the ring of music notes and the angle between two of them; the ring
-/// fades after GASP_LULL_RING_FRAMES.
+/// Lull: a ring of music notes, leaning back GASP_LULL_TILT and righting itself
+/// a 1024th of a turn a frame, fades after GASP_LULL_RING_FRAMES.
 #define GASP_LULL_NOTES 12
 #define GASP_LULL_RING_FRAMES 64
 #define GASP_LULL_TILT 18288
@@ -97,11 +96,11 @@ struct StripQuad;
 /// Mold: the Djinni's picture shrinks GASP_MOLD_SHRINK a frame.
 #define GASP_MOLD_SHRINK 4592
 
-/// Emu: the puffs of smoke from the user, one each two frames for its first
-/// ten, each for its six pictures, four frames apiece.
+/// Emu: puffs of dust trail the bird, one each two frames for its first ten,
+/// each through its six pictures, four frames apiece; the blow scatters
+/// motes.
 #define GASP_EMU_PUFFS 32
 #define GASP_EMU_PUFF_FRAMES (6 * 4)
-/// Emu: the motes the blow scatters.
 #define GASP_EMU_MOTES 256
 
 /// Beat Dance and Clarion Cry: the notes that fly from their unit, one every
@@ -110,16 +109,13 @@ struct StripQuad;
 #define GASP_NOTES 12
 #define GASP_NOTE_FRAMES 24
 
-/// Call Dullahan: the sparks his bolt scatters, and the first of them drawn.
+/// Call Dullahan: the sparks his bolt scatters, and the first of them drawn;
+/// each bolt flies out GASP_DULLAHAN_REACH steps, turning GASP_DULLAHAN_SWING
+/// as it goes.
 #define GASP_DULLAHAN_SPARKS 128
 #define GASP_DULLAHAN_SPARKS_DRAWN 64
-/// Call Dullahan: each bolt flies out GASP_DULLAHAN_REACH steps, turning
-/// GASP_DULLAHAN_SWING as it goes.
 #define GASP_DULLAHAN_REACH 80
 #define GASP_DULLAHAN_SWING 48152
-
-/// Reflux, Counter Rush and Djinn Counter's swirl grows to this scale.
-#define GASP_SWIRL_SCALE 48000
 
 /// Cage: its rings lean, each a further eighth of a turn.
 #define GASP_CAGE_TILT 4000
@@ -134,6 +130,8 @@ struct StripQuad;
 void BattleEffect_RunGaspFamily(struct BattleEffectParams *args, s32 mode) {
   struct BattleEffectWork *work = Ram_HeapSlots->battleEffect;
   u8 *canvas = Ram_HeapSlots->battleCanvas;
+  /* LEFTOVER(frame): draw[1], the pair's idle second blitter, which the ROM's
+   * frame reserves and never touches; as one DrawRectangle. */
   DrawRectangle draw[2];
   s32 frames;
   u8 *sprites = Ram_HeapSlots->battleSheet;
@@ -262,13 +260,15 @@ void BattleEffect_RunGaspFamily(struct BattleEffectParams *args, s32 mode) {
     s32 k;
 
     Resource_LoadAndDecompress(RESOURCE_LIGHTNING_BOLT_SHEET, cells, 1, 1);
-    Iwram_ClearWordsEntry(work->sheet, 4 * GASP_BOLT_CEL_BYTES);
-    for (i = 0; i != 4; i++)
+    Iwram_ClearWordsEntry(work->sheet,
+                          GASP_BOLT_PICTURE_COUNT * GASP_BOLT_CEL_BYTES);
+    for (i = 0; i != GASP_BOLT_PICTURE_COUNT; i++)
       for (k = 0; k != LIGHTNING_BOLT_HEIGHT; k++)
         for (j = 0; j != LIGHTNING_BOLT_WIDTH; j++)
-          work->sheet[4 + i * GASP_BOLT_CEL_BYTES + k * GASP_BOLT_CEL_WIDTH +
-                      j] = cells[i * LIGHTNING_BOLT_PICTURE_BYTES +
-                                 k * LIGHTNING_BOLT_WIDTH + j];
+          work->sheet[GASP_BOLT_CEL_INSET + i * GASP_BOLT_CEL_BYTES +
+                      k * GASP_BOLT_CEL_WIDTH + j] =
+              cells[i * LIGHTNING_BOLT_PICTURE_BYTES +
+                    k * LIGHTNING_BOLT_WIDTH + j];
     LOAD_BG_PALETTE(RESOURCE_VIOLET_PALETTE_F);
     frames = 60;
   } else if (mode == GASP_MODE_COUNTER_RUSH) {
@@ -401,7 +401,7 @@ void BattleEffect_RunGaspFamily(struct BattleEffectParams *args, s32 mode) {
       Iwram_FillWordsEntry(canvas, CANVAS_BYTES, CANVAS_FILL_WORD(1));
     }
 
-    // Djinn Counter: the djinni streaks from the user to the target in four
+    // Djinn Counter: the Djinni streaks from the user to the target in four
     // images, and the blow bursts into motes.
     if (mode == GASP_MODE_DJINN_COUNTER) {
       struct ScreenPoint to;
@@ -463,7 +463,7 @@ void BattleEffect_RunGaspFamily(struct BattleEffectParams *args, s32 mode) {
         }
       }
     } else if (mode == GASP_MODE_LULL) {
-      // The small djinni sways over the targets and rises from frame 45.
+      // The small Djinni sways over the targets and rises from frame 45.
       s32 b = frame * (TRIG_TURN / 32);
       s32 x;
       s32 y;
@@ -480,7 +480,7 @@ void BattleEffect_RunGaspFamily(struct BattleEffectParams *args, s32 mode) {
       BattleEffect_UpdatePhasePalette(frame, TRIG_TURN - DEGtoANG(120),
                                       DEGtoANG(120), 0);
     } else if (mode == GASP_MODE_REFLUX || mode == GASP_MODE_COUNTER_RUSH) {
-      // Reflux's djinni circles over the target; motes swirl in on it.
+      // Reflux's Djinni circles over the target; motes swirl in on it.
       struct ScreenPoint target;
 
       if (mode == GASP_MODE_REFLUX) {
@@ -529,7 +529,7 @@ void BattleEffect_RunGaspFamily(struct BattleEffectParams *args, s32 mode) {
         p->variant--;
       }
     } else if (mode == GASP_MODE_SHINE) {
-      // The djinni glides up over the user, then falls on the target and
+      // The Djinni glides up over the user, then falls on the target and
       // strikes at frame 55; its place in the battle is in the velocity.
       struct Particle *ball = &work->particles[GASP_CENTRE];
       struct ScreenPoint pos;
@@ -591,7 +591,7 @@ void BattleEffect_RunGaspFamily(struct BattleEffectParams *args, s32 mode) {
       }
       BattleCamera_Shake(8, 8);
     } else if (mode == GASP_MODE_GASP) {
-      // The small djinni sways over the targets and rises from frame 49.
+      // The small Djinni sways over the targets and rises from frame 49.
       s32 b = frame * (TRIG_TURN / 32);
       s32 x;
       s32 y;
@@ -724,7 +724,7 @@ void BattleEffect_RunGaspFamily(struct BattleEffectParams *args, s32 mode) {
         Render_DrawModelList(model);
       }
     } else if (mode == GASP_MODE_SHINE) {
-      // Rays of light turn about the djinni as it glides; three rings flare at
+      // Rays of light turn about the Djinni as it glides; three rings flare at
       // the target as it strikes.
       if (frame <= 47) {
         struct Particle *ball;
@@ -1165,11 +1165,11 @@ void BattleEffect_RunGaspFamily(struct BattleEffectParams *args, s32 mode) {
           if (d > GASP_DULLAHAN_REACH)
             d = GASP_DULLAHAN_REACH;
           if (args->side == EFFECT_SIDE_ENEMIES)
-            Matrix_Translate(d * 3 * (FIXED_ONE / 8), d * 7 * (FIXED_ONE / 32),
-                             0);
+            Matrix_Translate(d * 3 * (toFIXED(1) / 8),
+                             d * 7 * (toFIXED(1) / 32), 0);
           else
-            Matrix_Translate(-(d * 3 * (FIXED_ONE / 8)),
-                             d * 7 * (FIXED_ONE / 32), 0);
+            Matrix_Translate(-(d * 3 * (toFIXED(1) / 8)),
+                             d * 7 * (toFIXED(1) / 32), 0);
           angle =
               d * GASP_DULLAHAN_SWING / GASP_DULLAHAN_REACH + TRIG_TURN * 3 / 8;
           if (args->side == EFFECT_SIDE_ENEMIES)
@@ -1404,7 +1404,7 @@ void BattleEffect_RunGaspFamily(struct BattleEffectParams *args, s32 mode) {
       if (frame == 28)
         EFFECT_SHOW_DAMAGE(-1);
     } else {
-      // Reflux, Counter Rush and Djinn Counter: a swirl grows and turns, at
+      // Reflux, Counter-rush and Djinn Counter: a swirl grows and turns, at
       // the target or at the user.
       s32 scale;
 

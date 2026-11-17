@@ -31,6 +31,10 @@
 /// with the wings (Contigo_ReturnToNewHome).
 #define FLAG_CONTIGO_KRADEN_GREETED_PARTY 0x9d1
 
+/// The village's temp flag: the camera follows the leader across the whole
+/// village, rather than its western part alone (Contigo_WidenCameraBounds).
+#define FLAG_WHOLE_VILLAGE_IN_VIEW FLAG_SCENE_TEMP_00
+
 /// Set as the party leaves the dice hall for one of its games, so that the
 /// hall greets it on its way back by the game's entrance.
 #define FLAG_LEFT_FOR_A_GAME 0x9e5
@@ -206,7 +210,7 @@ void Actor_MoveToObject(s32 actor, s32 target);
 void FieldCamera_WaitForArrival(void);
 void Party_AddIsaacsParty(void);
 void Contigo_SendToLuckyWheels(s32 mode);
-void Contigo_OpenGameDoor(s32 a, s32 b, s32 c, s32 d);
+void Contigo_OpenGameDoor(s32 sourceX, s32 sourceY, s32 doorX, s32 doorY);
 
 #include "system/task.h"
 #include "field/actor.h"
@@ -234,6 +238,14 @@ void Contigo_OpenGameDoor(s32 a, s32 b, s32 c, s32 d);
 #include "edition.h"
 #include "version.h"
 #include "system/vector3.h"
+#include "field/field_psynergy_work.h"
+
+/// The village's treasure actors after the Power Bread's (gSceneItems): the
+/// Corn, and the Bramble Seed in the bushes over Salt.
+enum {
+  ACTOR_CORN = FIELD_TREASURE_ACTOR + 1,
+  ACTOR_BRAMBLE_SEED = FIELD_TREASURE_ACTOR + 2
+};
 
 extern const s32 *gFieldEffect_DurationScripts[];
 extern struct ActorPlacement gContigo_VillagePlacements[];
@@ -270,7 +282,7 @@ extern s16 gContigo_PaletteColors[];
 extern s16 gContigo_DimColors[];
 extern u16 gContigo_CycleSlots[];
 extern s32 gContigo_ShopsWatcherScript[];
-extern s32 gContigo_SparkleTiles[];
+extern u32 gContigo_SparkleTiles[];
 void Contigo_FreedDjinniJoinsParty(void);
 void Contigo_ExamineWall(void);
 void Contigo_ReadSign(void);
@@ -348,15 +360,16 @@ s32 List_CountEntries(u16 *list);
 void PaletteCycle_Fade(void);
 
 /// Records the four palette lists, writes each listed palette entry from its
-/// red, green and blue, then copies two palettes from block32 and starts the
-/// blend.
-void Palette_SetColors(u16 *slots, u16 *colours, u16 *a, u16 *b) {
-  u8 *saved = Ram_HeapSlots->paletteFade;
+/// red, green and blue, then copies the BG and OBJ palettes into the palette
+/// fade's source and starts the blend.
+void Palette_SetColors(u16 *slots, u16 *colours, u16 *cycleColours,
+                       u16 *cycleSlots) {
+  struct PaletteFade *fade = Ram_HeapSlots->paletteFade;
 
   gPaletteSlots = slots;
   gPaletteColors = colours;
-  gPaletteCycleColors = a;
-  gPaletteCycleSlots = b;
+  gPaletteCycleColors = cycleColours;
+  gPaletteCycleSlots = cycleSlots;
   while (*slots != PALETTE_LIST_END && *colours != PALETTE_LIST_END) {
     int index = *slots++;
     int red = *colours++;
@@ -364,8 +377,9 @@ void Palette_SetColors(u16 *slots, u16 *colours, u16 *a, u16 *b) {
     int blue = *colours++;
     SET_RGB(BG_PLTT[index], red, green, blue);
   }
-  Dma_Set((const void *)BG_PLTT, saved, DMA_COPY_WORDS(112), REG_DMA3);
-  Dma_Set((const void *)OBJ_PLTT, saved + 448, DMA_COPY_WORDS(112), REG_DMA3);
+  Dma_Set((const void *)BG_PLTT, fade->palette, DMA_COPY_WORDS(112), REG_DMA3);
+  Dma_Set((const void *)OBJ_PLTT, &fade->palette[224], DMA_COPY_WORDS(112),
+          REG_DMA3);
   PaletteFade_SetTarget(PALETTE_TINT_NONE, PALETTES_ALL);
   if (gMainRoutineWork.teleportState == 2)
     Contigo_TeleportIn();
@@ -477,9 +491,9 @@ void Contigo_FreedDjinniJoinsParty(void) {
 /// The distance in whole pixels between two positions of three 16.16
 /// coordinates, as Lemuria's copy of it.
 s32 Lemuria_Distance(s32 *a, s32 *b) {
-  s32 dx = (*a++ - *b++) >> 16;
-  s32 dy = (*a++ - *b++) >> 16;
-  s32 dz = (*a - *b) >> 16;
+  s32 dx = FIXEDtoINT(*a++ - *b++);
+  s32 dy = FIXEDtoINT(*a++ - *b++);
+  s32 dz = FIXEDtoINT(*a - *b);
   s32 dxsq = dx * dx;
   s32 dysq = dy * dy;
   s32 dzsq = dz * dz;
@@ -520,17 +534,17 @@ s32 Contigo_PauseWhenFaced(struct Actor *self) {
   struct FieldWork *event = Ram_HeapSlots->fieldWork;
   u8 *state;
   u32 mode;
-  s8 *effect;
+  struct FieldEffectWork *effect;
   struct Actor *other;
 
   Actor_SetSpritePriorityDirect(
       self, BattleEffect_GetObjectPriority(
                 Actor_GetById(gMainRoutineWork.leaderActorId)));
-  mode = 0x3ff & event->psynergy;
+  mode = ABILITY_ID(event->psynergy);
   state = &self->paused;
   if (mode == ABILITY_MIND_READ) {
     effect = Ram_HeapSlots->fieldEffectWork;
-    if (effect[0x713] != 0)
+    if ((s8)effect->messageShown != 0)
       goto stand;
   }
   if (self->riseEnabled == 1)
@@ -580,7 +594,7 @@ const struct ActorPlacement *Scene_GetActorPlacements(void) {
   if (scene == SCENE_CONTIGO_GEOGLYPH)
     return gContigo_GeoglyphPlacements;
   if (scene == SCENE_CONTIGO_SHOPS) {
-    if (gMainRoutineWork.entrance == 4) {
+    if (gMainRoutineWork.entrance == CONTIGO_SHOPS_FROM_CONTIGO_NORTH) {
       if (GameFlag_Get(FLAG_SET_OUT_WITH_WINGS) != 0)
         return gContigo_ShopsPlacements;
       if (GameFlag_Get(FLAG_JUPITER_BEACON_LIT) != 0 &&
@@ -606,7 +620,7 @@ const struct Trigger *Scene_GetTriggers(void) {
   if (scene == SCENE_CONTIGO_GEOGLYPH)
     return gContigo_GeoglyphTriggers;
   if (scene == SCENE_CONTIGO_SHOPS) {
-    if (gMainRoutineWork.entrance == 4)
+    if (gMainRoutineWork.entrance == CONTIGO_SHOPS_FROM_CONTIGO_NORTH)
       return gContigo_ShopsReunionTriggers;
     return gContigo_ShopsTriggers;
   }
@@ -681,18 +695,20 @@ void Contigo_WhirlLeaf(struct Actor *effect) {
   FIXED dx;
   FIXED dz;
 
+  // Random16 is 0 to 1 in 16.16, so 2 to 3 pixels.
   radius = Random16() + toFIXED(2);
   angle = effect->facing;
   dx = Iwram_MulFX(radius, Trig_Cos(angle));
   dz = Iwram_MulFX(radius, Trig_Sin(angle));
   effect->x.fixed += dx;
   effect->z.fixed += dz;
+  // The u16 angle wraps: -16 gives a small backwards drift.
   effect->facing -= 16;
   if (effect->userValue != 0) {
     effect->userValue--;
     effect->facing += TRIG_TURN / 32;
-  } else if ((Random16() << 5) >> 16 == 0) {
-    effect->userValue = ((Random16() << 4) >> 16) + 8;
+  } else if ((Random16() << 5) >> 16 == 0) {           // one chance in 32
+    effect->userValue = ((Random16() << 4) >> 16) + 8; // 8 to 23 frames
   }
   if (++effect->timer == 101)
     Actor_Release(effect);
@@ -703,7 +719,7 @@ void Contigo_WhirlLeaf(struct Actor *effect) {
 void Contigo_RaiseLeaves(void) {
   if ((gFrameCount & 7) == 0) {
     struct Actor *actor =
-        Actor_Spawn(SPRITE_LEAF, toFIXED(706), 52428, toFIXED(116));
+        Actor_Spawn(SPRITE_LEAF, toFIXED(706), toFIXED(0.8), toFIXED(116));
 
     if (actor != NULL) {
       Actor_SetSpriteFlags(actor, 0);
@@ -1115,9 +1131,12 @@ void Contigo_ClearSecondBushes(void) {
 }
 
 /// The scene's own name for TileCopies_CopyTouchedCells.
-static __inline__ void Contigo_CopyTouchedCells(s32 a, s32 b, s32 c, s32 d,
-                                                s32 e, s32 f, s32 g) {
-  TileCopies_CopyTouchedCells(a, b, c, d, e, f, g);
+static __inline__ void Contigo_CopyTouchedCells(s32 sourceX, s32 sourceZ,
+                                                s32 width, s32 height,
+                                                s32 windowX, s32 windowZ,
+                                                s32 layer) {
+  TileCopies_CopyTouchedCells(sourceX, sourceZ, width, height, windowX, windowZ,
+                              layer);
 }
 
 /// Clears the bushes over Salt; unless the Bramble Seed there was taken it is
@@ -1127,7 +1146,7 @@ void Contigo_ClearBushesBySalt(void) {
 
   Contigo_CopyTouchedCells(16, 37, 1, 1, 17, 37, 0);
   if (GameFlag_Get(FLAG_CONTIGO_BRAMBLE_SEED_TAKEN) == 0) {
-    Actor_SetPosition(66, 280, 664);
+    Actor_SetPosition(ACTOR_BRAMBLE_SEED, 280, 664);
     if (FIELD_CELL(leader->x.fixed) == 17 &&
         FIELD_CELL(leader->z.fixed) == 41) {
       Event_Start();
@@ -1195,14 +1214,17 @@ void Contigo_ClearFifthHedgeRow(void) {
 /// flag.
 void Contigo_WidenCameraBounds(void) {
   Field_SetCameraBounds(0, toFIXED(512), toFIXED(880), toFIXED(1024));
-  GameFlag_Set(FLAG_SCENE_TEMP_00);
+  GameFlag_Set(FLAG_WHOLE_VILLAGE_IN_VIEW);
 }
 
 /// Holds the camera to the village's western part again.
 void Contigo_NarrowCameraBounds(void) {
   Field_SetCameraBounds(0, toFIXED(512), toFIXED(512), toFIXED(1024));
-  GameFlag_Clear(FLAG_SCENE_TEMP_00);
+  GameFlag_Clear(FLAG_WHOLE_VILLAGE_IN_VIEW);
 }
+
+/// The trigger Scoop raises once Salt has appeared: it joins the party.
+enum { RAISED_SALT_FOUND = 200 };
 
 /// Scoop by the bushes: until the party has Salt, Salt appears beside the
 /// leader and turns to him.
@@ -1215,7 +1237,7 @@ void Contigo_ScoopForSalt(void) {
     Actor_SetPosition(ACTOR_SALT, 664, 952);
     wait(1);
     Actor_FaceActorById(ACTOR_SALT, gMainRoutineWork.leaderActorId, 0);
-    work->raisedTrigger = 200;
+    work->raisedTrigger = RAISED_SALT_FOUND;
     Event_End();
   }
 }
@@ -1253,7 +1275,7 @@ void Contigo_ForceFreesDjinni(void) {
   Sound_Play(SE_THUMP);
   MapGrid_SetShake(1, 2, 1);
   for (i = 0; i <= 16; i++) {
-    angle = i << 12;
+    angle = i * FACING_STEP;
     velocity[0] = Trig_Cos(angle);
     velocity[1] = 0;
     velocity[2] = Trig_Sin(angle);
@@ -1437,9 +1459,12 @@ s32 Contigo_PickPrize(s32 icon) {
 
 extern u8 gSceneState[];
 
+/// The dice games' fee: ten coins for each level of the party's average.
+enum { DICE_COINS_PER_LEVEL = 10 };
+
 /// The dice game attendant: the fee is ten coins a level.
 void Contigo_SendToLuckyDice(void) {
-  u32 price = Party_GetAverageLevel() * 10;
+  u32 price = Party_GetAverageLevel() * DICE_COINS_PER_LEVEL;
 
   Event_Start();
   Event_ResolvePendingActions(0);
@@ -1479,7 +1504,7 @@ void Contigo_SendToLuckyDice(void) {
 
 /// The Super Lucky Dice attendant: the same check without the fee shown.
 void Contigo_SendToSuperLuckyDice(void) {
-  u32 price = Party_GetAverageLevel() * 10;
+  u32 price = Party_GetAverageLevel() * DICE_COINS_PER_LEVEL;
 
   Event_Start();
   Event_ResolvePendingActions(0);
@@ -1528,7 +1553,7 @@ void Contigo_ShrinkActor(s32 id) {
 
 /// Opens a game's door in the dice hall, two cells of map edits, and walks the
 /// leader in.
-void Contigo_OpenGameDoor(s32 a, s32 b, s32 c, s32 d) {
+void Contigo_OpenGameDoor(s32 sourceX, s32 sourceY, s32 doorX, s32 doorY) {
   Event_Start();
   Event_ResolvePendingActions(0);
   Sound_Play(SE_THUMP);
@@ -1536,8 +1561,10 @@ void Contigo_OpenGameDoor(s32 a, s32 b, s32 c, s32 d) {
     s32 width = 1;
     s32 height = 2;
 
-    MapGrid_CopyCellPictureIndicesRect(a, b, c, d, width, height);
-    MapGrid_CopyCellPictureIndicesRect(a, b + 2, c + 1, d, width, height);
+    MapGrid_CopyCellPictureIndicesRect(sourceX, sourceY, doorX, doorY, width,
+                                       height);
+    MapGrid_CopyCellPictureIndicesRect(sourceX, sourceY + 2, doorX + 1, doorY,
+                                       width, height);
   }
   Event_Wait(20);
   Actor_SetSpeed(gMainRoutineWork.leaderActorId, 0.5);
@@ -2357,12 +2384,12 @@ s32 Scene_Initialize(void) {
 
 s32 Scene_PrepareMap(void) { return 0; }
 
-/// A task that draws actor 65 at the leader's sprite priority.
+/// A task that draws the Corn at the leader's sprite priority.
 void Contigo_KeepPriorityWithLeader(void) {
-  if (Actor_GetById(65) != 0) {
+  if (Actor_GetById(ACTOR_CORN) != 0) {
     struct Actor *owner = Actor_GetById(gMainRoutineWork.leaderActorId);
 
-    Actor_SetSpritePriority(65,
+    Actor_SetSpritePriority(ACTOR_CORN,
                             ((struct FieldSprite *)owner->sprite)->priority);
   }
 }
@@ -2400,18 +2427,18 @@ void Contigo_InitializeVillage(void) {
   }
   if (GameFlag_Get(FLAG_KEEP_PARTY_POSITION) == 0) {
     switch (gMainRoutineWork.entrance) {
-    case 1:
-    case 2:
-    case 3:
-    case 4:
-      GameFlag_Set(FLAG_SCENE_TEMP_00);
+    case CONTIGO_FROM_WORLD_MAP:
+    case CONTIGO_FROM_CONTIGO_SHOPS_SOUTH:
+    case CONTIGO_FROM_CONTIGO_SHOPS_SOUTHWEST:
+    case CONTIGO_FROM_CONTIGO_LUCKY_DICE_SOUTHWEST:
+      GameFlag_Set(FLAG_WHOLE_VILLAGE_IN_VIEW);
       break;
     default:
       Field_SetCameraBounds(0, toFIXED(512), toFIXED(512), toFIXED(1024));
       break;
     }
   }
-  if (GameFlag_Get(FLAG_SCENE_TEMP_00) != 0) {
+  if (GameFlag_Get(FLAG_WHOLE_VILLAGE_IN_VIEW) != 0) {
     Field_SetCameraBounds(0, toFIXED(512), toFIXED(880), toFIXED(1024));
     FieldCamera_FollowActor(gMainRoutineWork.leaderActorId, 0);
     MapGrid_CenterOnFollowedPoint();
@@ -2467,11 +2494,12 @@ void Contigo_InitializeGeoglyph(void) {
 /// the baby and the villagers by the progress of the story.
 void Contigo_InitializeShops(void) {
   gFieldWork->transition = SCENE_TRANSITION(TRANSITION_WINDOW, 9);
-  if (gMainRoutineWork.entrance == 4) {
+  if (gMainRoutineWork.entrance == CONTIGO_SHOPS_FROM_CONTIGO_NORTH) {
     if (GameFlag_Get(FLAG_JUPITER_BEACON_LIT) != 0 &&
         GameFlag_Get(FLAG_REUNITED_AT_CONTIGO) == 0)
       Contigo_TheReunion();
-  } else if (gMainRoutineWork.entrance == 21) {
+  } else if (gMainRoutineWork.entrance ==
+             CONTIGO_SHOPS_FROM_ATTEKA_INLET_GEODE) {
     GameFlag_Clear(FLAG_SHOW_AREA_NAME);
   } else {
     Actor_SetAnimationById(ACTOR_BABY, 2);
@@ -2624,14 +2652,15 @@ void Contigo_InitializeLuckyDice(void) {
   }
 }
 
-// The sparkle's update: raises two pairs of sprites over the object, each pair
-// starting when its counter is cleared, until both counters pass 31.
-
 void Actor_SetSpriteColorMode(struct Actor *, u32);
 s32 BattleEffect_GetObjectDepth(struct Actor *actor);
 
-/// The sparkle's update: raises two pairs of sprites over the actor, each pair
-/// starting when its counter is cleared, until both counters pass 31.
+/// How far a ring climbs, in pixels, and the height of one not yet started.
+#define RING_CLIMB 32
+#define RING_NOT_STARTED 999
+
+/// The sparkle's update: raises two pairs of sprites over the actor, a pair
+/// starting every 16 frames, until both have climbed RING_CLIMB pixels.
 void Contigo_RaiseSparkle(struct Actor *actor) {
   struct Vector3 position;
   s32 x, z;
@@ -2651,7 +2680,7 @@ void Contigo_RaiseSparkle(struct Actor *actor) {
       work->nextPair ^= 1;
     }
   } else if (actor->riseCounter == 1) {
-    if (work->heights[0] > 31 && work->heights[1] > 31) {
+    if (work->heights[0] >= RING_CLIMB && work->heights[1] >= RING_CLIMB) {
       Actor_SetSpriteColorMode(actor, SPRITE_COLOR_NORMAL);
       VramCache_FreeEntry(work->vramEntry);
       actor->update = 0;
@@ -2662,7 +2691,7 @@ void Contigo_RaiseSparkle(struct Actor *actor) {
   for (i = 0; i < 2; i++) {
     sine = Trig_Sin(work->heights[i] << 10);
     if (work->heights[i] >= 0) {
-      if (work->heights[i] <= 31) {
+      if (work->heights[i] < RING_CLIMB) {
         position.x = actor->x.fixed;
         position.y = actor->y.fixed + toFIXED(work->heights[i]);
         position.z = actor->z.fixed;
@@ -2709,8 +2738,8 @@ void Contigo_StartSparkle(struct Actor *actor, struct SparkleWork *work) {
   work->vramEntry = VramCache_FindFreeEntry();
   VramCache_Load(work->vramEntry, 256, gContigo_SparkleTiles);
   work->nextPair = 0;
-  work->heights[0] = 999;
-  work->heights[1] = 999;
+  work->heights[0] = RING_NOT_STARTED;
+  work->heights[1] = RING_NOT_STARTED;
   work->actor = actor;
   actor->riseCounter = 0;
   actor->riseEnabled = 0;
@@ -2732,37 +2761,57 @@ void Contigo_StartSparkle(struct Actor *actor, struct SparkleWork *work) {
 void Contigo_StopSparkle(struct Actor *actor) { actor->riseCounter = 1; }
 
 // clang-format off
-s32 gContigo_SparkleTiles[] = {
-    0, 0, 0, 0, 0, 0,
-    0x70000000, (s32)0xf7700000, 0, 0, 0, 0,
-    0x77770000, (s32)0xffff7770, -9, 0x7777ffff, 0, 0,
-    0, 0, 0x7777, 0x777ffff, 0x7fffffff, (s32)0xffff7777,
-    0, 0, 0, 0, 0, 0,
-    7, 0x77f, -0x90000, -0x9000, 0x7ffff700, 0x7ffff70,
-    0x7fff70, 0x7ffff7, 0x7fff7, 0x7fff7, 0x77ff, 119,
-    0, 0, 0, 0, 0, 0,
-    -0x890000, 0x77000000, 0, 0, 0, 0,
-    0, 0, 0x7fff, 0x7ffff, 0x7ffff7, 0x7ffff70,
-    0x7fff700, 0x7ffff700, 0x7fff7000, 0x7fff7000, 0, 0,
-    0, 0, 0, 0, 0x40000000, (s32)0xf4400000,
-    0, 0, 0, 0, 0x44440000, (s32)0xffff4440,
-    -12, 0x4444ffff, 0, 0, 0, 0,
-    0x4444, 0x444ffff, 0x4fffffff, (s32)0xffff4444, 0, 0,
-    0, 0, 0, 0, 4, 0x44f,
-    -0xc0000, -0xc000, 0x4ffff400, 0x4ffff40, 0x4fff40, 0x4ffff4,
-    0x4fff4, 0x4fff4, 0x44ff, 68, 0, 0,
-    0, 0, 0, 0, -0xbc0000, 0x44000000,
-    0, 0, 0, 0, 0, 0,
-    0x4fff, 0x4ffff, 0x4ffff4, 0x4ffff40, 0x4fff400, 0x4ffff400,
-    0x4fff4000, 0x4fff4000, (s32)0xe9000000, 233, (s32)0xeb000000, 235,
-    (s32)0xedeb0000, 0xebed, (s32)0xeeedebe9, (s32)0xe9ebedee, (s32)0xeeedebe9, (s32)0xe9ebedee,
-    (s32)0xedeb0000, 0xebed, (s32)0xeb000000, 235, (s32)0xe9000000, 233,
-    0xe900, 0xe90000, 0xebe9e9, (s32)0xe9e9eb00, (s32)0xedebeb00, 0xebebed,
-    (s32)0xefed0000, 0xedef, (s32)0xefed0000, 0xedef, (s32)0xedebeb00, 0xebebed,
-    0xebe9e9, (s32)0xe9e9eb00, 0xe900, 0xe90000, (s32)0xe9000000, 233,
-    (s32)0xebe90000, 0xe9eb, (s32)0xedebe900, 0xe9ebed, (s32)0xeeedebe9, (s32)0xe9ebedee,
-    (s32)0xeeedebe9, (s32)0xe9ebedee, (s32)0xedebe900, 0xe9ebed, (s32)0xebe90000, 0xe9eb,
-    (s32)0xe9000000, 233,
+/// The sparkle's picture at 4 bits a pixel, eight rows of a tile to every two
+/// lines: a white arc, half a ring 32 by 16, which Contigo_StartSparkle loads
+/// for its four sprites. Unused: the arc again in colour 4, and three 8 by 8
+/// sparkles at 8 bits a pixel (a four-pointed star, a cross and a diamond).
+u32 gContigo_SparkleTiles[] = {
+    0, 0, 0, 0,
+    0, 0, 0x70000000, 0xf7700000,
+    0, 0, 0, 0,
+    0x77770000, 0xffff7770, 0xfffffff7, 0x7777ffff,
+    0, 0, 0, 0,
+    0x00007777, 0x0777ffff, 0x7fffffff, 0xffff7777,
+    0, 0, 0, 0,
+    0, 0, 0x00000007, 0x0000077f,
+    0xfff70000, 0xffff7000, 0x7ffff700, 0x07ffff70,
+    0x007fff70, 0x007ffff7, 0x0007fff7, 0x0007fff7,
+    0x000077ff, 0x00000077, 0, 0,
+    0, 0, 0, 0,
+    0xff770000, 0x77000000, 0, 0,
+    0, 0, 0, 0,
+    0x00007fff, 0x0007ffff, 0x007ffff7, 0x07ffff70,
+    0x07fff700, 0x7ffff700, 0x7fff7000, 0x7fff7000,
+    // Unused: the arc in colour 4.
+    0, 0, 0, 0,
+    0, 0, 0x40000000, 0xf4400000,
+    0, 0, 0, 0,
+    0x44440000, 0xffff4440, 0xfffffff4, 0x4444ffff,
+    0, 0, 0, 0,
+    0x00004444, 0x0444ffff, 0x4fffffff, 0xffff4444,
+    0, 0, 0, 0,
+    0, 0, 0x00000004, 0x0000044f,
+    0xfff40000, 0xffff4000, 0x4ffff400, 0x04ffff40,
+    0x004fff40, 0x004ffff4, 0x0004fff4, 0x0004fff4,
+    0x000044ff, 0x00000044, 0, 0,
+    0, 0, 0, 0,
+    0xff440000, 0x44000000, 0, 0,
+    0, 0, 0, 0,
+    0x00004fff, 0x0004ffff, 0x004ffff4, 0x04ffff40,
+    0x04fff400, 0x4ffff400, 0x4fff4000, 0x4fff4000,
+    // Unused: the three sparkles, two words a row.
+    0xe9000000, 0x000000e9, 0xeb000000, 0x000000eb,
+    0xedeb0000, 0x0000ebed, 0xeeedebe9, 0xe9ebedee,
+    0xeeedebe9, 0xe9ebedee, 0xedeb0000, 0x0000ebed,
+    0xeb000000, 0x000000eb, 0xe9000000, 0x000000e9,
+    0x0000e900, 0x00e90000, 0x00ebe9e9, 0xe9e9eb00,
+    0xedebeb00, 0x00ebebed, 0xefed0000, 0x0000edef,
+    0xefed0000, 0x0000edef, 0xedebeb00, 0x00ebebed,
+    0x00ebe9e9, 0xe9e9eb00, 0x0000e900, 0x00e90000,
+    0xe9000000, 0x000000e9, 0xebe90000, 0x0000e9eb,
+    0xedebe900, 0x00e9ebed, 0xeeedebe9, 0xe9ebedee,
+    0xeeedebe9, 0xe9ebedee, 0xedebe900, 0x00e9ebed,
+    0xebe90000, 0x0000e9eb, 0xe9000000, 0x000000e9,
 };
 
 #include "shared/field_effect_duration_scripts.c"
@@ -3196,7 +3245,7 @@ struct Trigger gContigo_VillageTriggers[] = {
     {TRIGGER_TALK, ACTOR_GIRL_ON_THE_SHIP, CONDITION_ALWAYS, EVENT(Contigo_TalkAboutTheShip)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_GIRL_ON_THE_SHIP, CONDITION_ALWAYS, EVENT(Contigo_TalkAboutTheShip)},
     {PSYNERGY_PHASE_ON_CELL(ABILITY_SCOOP, PSYNERGY_PHASE_ACTS), 32, CONDITION_ALWAYS, EVENT(Contigo_ScoopForSalt)},
-    {TRIGGER_RAISED, 200, CONDITION_ALWAYS, EVENT(Contigo_SaltJoinsParty)},
+    {TRIGGER_RAISED, RAISED_SALT_FOUND, CONDITION_ALWAYS, EVENT(Contigo_SaltJoinsParty)},
     {TRIGGER_EXAMINE, 24, CONDITION_ALWAYS, EVENT(Contigo_ReadLuckyWheelsSign)},
     {TRIGGER_EXAMINE, 25, CONDITION_ALWAYS, EVENT(Contigo_ReadLuckyDiceSign)},
     {TRIGGER_EXAMINE, 26, CONDITION_ALWAYS, EVENT(Contigo_ReadSuperDiceSign)},

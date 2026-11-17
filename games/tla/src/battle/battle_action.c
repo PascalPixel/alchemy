@@ -1,6 +1,7 @@
 /// @file
-/// Whether a unit stands in its side's formation and how many Djinn a side has
-/// on standby, and one routine not yet understood.
+/// An action announced and built for its targets, BattleActionRun_Build, with
+/// whether a unit is in its side's list and how many Djinn a side has on
+/// standby.
 // Part of battle.c.
 
 #include "battle_internal.h"
@@ -11,8 +12,6 @@
 #include "gamepak/far_call/game.h"
 #include "battle/battle.h"
 #include "battle/presentation.h"
-
-// Battle: test whether a unit is in a battle formation.
 
 /// Returns 1 when the unit is in its side's list of units in the battle
 /// (BattleUnit_ListIds), 0 otherwise.
@@ -74,9 +73,26 @@ s32 BattleDjinn_CountStandby(u32 unitId, u8 *counts) {
   return standbyCount;
 }
 
-/// The most targets an action holds, 14. BattlePlan's declaration counts 13 and
-/// names each list's fourteenth entry apart.
+/// The most targets an action holds (BATTLE_TARGET_CAPACITY).
 #define TARGET_MAX 14
+
+/// A list place code's side bit, set for the enemies' list, and its place in
+/// the list (Battle_GetUnitAtPlace).
+#define PLACE_ENEMY_SIDE 0x80
+#define PLACE_INDEX_MASK 0xf
+
+/// A range that reaches every place of a side from any of them: Dazzle's.
+#define RANGE_WHOLE_SIDE 11
+
+/// The chances, out of 256, an action rolls against the battle's random byte.
+enum ActionChance {
+  CHANCE_DELUDED_MISS = 153,    ///< a deluded attacker misses
+  CHANCE_BLOW_LIKELY = 153,     ///< a likely double or triple blow lands
+  CHANCE_BLOW_RARE = 32,        ///< a rare one
+  CHANCE_BLOW = 64,             ///< any other
+  CHANCE_VENGEANCE_EXTRA = 179, ///< Vengeance strikes one more time or two
+  CHANCE_VENGEANCE_TWICE = 128  ///< of those, two more
+};
 
 /// Announces the action and builds it for its targets, paying its PP or Djinn.
 /// Returns 0 to stage it, ACTION_REPORTED when it failed with its message
@@ -88,6 +104,8 @@ s32 BattleActionRun_Build(struct BattleActionRecord *request,
   s32 selectedTargetId;
   s32 abilityId;
 
+  /// Fills the action's targets: the aimed unit, or the places within its
+  /// range, every place for Dazzle; with none, the unit defends.
   s32 BattleActionRun_SetTargets(s32 abilityId) {
     struct AbilityDefinition *ability = Ability_Get(abilityId);
     s32 mode = ability->targetMode;
@@ -128,7 +146,7 @@ s32 BattleActionRun_Build(struct BattleActionRecord *request,
              place++)
           ;
         enemyCount = place;
-        aimedPlace = request->target & 15;
+        aimedPlace = request->target & PLACE_INDEX_MASK;
         {
           s32 first = aimedPlace - range + 1;
           s32 last = aimedPlace + range - 1;
@@ -136,7 +154,7 @@ s32 BattleActionRun_Build(struct BattleActionRecord *request,
           for (place = first; place <= last; place++) {
             if (place < 0)
               continue;
-            if (request->target & 128) {
+            if (request->target & PLACE_ENEMY_SIDE) {
               if (place >= enemyCount)
                 continue;
               targetId = battle->enemyIds[place];
@@ -173,7 +191,7 @@ s32 BattleActionRun_Build(struct BattleActionRecord *request,
         }
         if (ability->effect != ABILITY_EFFECT_DAZZLE)
           break;
-        range = 11;
+        range = RANGE_WHOLE_SIDE;
       }
       break;
     }
@@ -182,7 +200,8 @@ s32 BattleActionRun_Build(struct BattleActionRecord *request,
 
   selectedTargetId = Battle_GetUnitAtPlace(request->target);
   BattlePlayback_Reset();
-  ((s32 *)plan)[25] = 0;
+  // The word after the plan in BattleWork is skipPlayback.
+  *(s32 *)(plan + 1) = 0;
   plan->hauntDamage = 0;
   plan->unitId = request->unitId;
   plan->targetCount = 0;
@@ -366,7 +385,7 @@ s32 BattleActionRun_Build(struct BattleActionRecord *request,
       case ITEM_TYPE_WEAPON:
       case ITEM_TYPE_SHIELD:
       case ITEM_TYPE_PSYNERGY:
-      case 7:
+      case ITEM_TYPE_TRIDENT:
       case ITEM_TYPE_RING:
         BattleMessage_ShowAndWaitFar((s32)&MsgActorRaisesItem);
         break;
@@ -587,24 +606,27 @@ s32 BattleActionRun_Build(struct BattleActionRecord *request,
     }
     MessageArgument_PushFar(request->unitId, MESSAGE_ARGUMENT_ACTOR);
     BattleMessage_ShowAndWaitFar((s32)&MsgActorAttacks);
-    // A deluded attacker misses 153 times in 256, and any attack 1 in 32; a
-    // target that cannot move is never missed, and in the Djinn tutorial the
-    // attack always misses.
+    // A deluded attacker misses CHANCE_DELUDED_MISS times in 256, and any
+    // attack 1 in 32; a target that cannot move is never missed, and in the
+    // Djinn tutorial the attack always misses.
     do {
       if (target->hp == 0 || target->sleep != 0 || target->stun != 0 ||
           target->immobile != 0 || target->charm != 0)
         break;
-      if (actor->delusion != 0 && (Battle_RandomFar() & 255) <= 152)
+      if (actor->delusion != 0 &&
+          (Battle_RandomFar() & 255) < CHANCE_DELUDED_MISS)
         plan->targetMultiplier[0] = 0;
       if ((Battle_RandomFar() & 31) == 0)
         plan->targetMultiplier[0] = 0;
     } while (0);
     if (GameFlag_Get(FLAG_DJINN_LESSON))
       plan->targetMultiplier[0] = 0;
+    // Critical hit: one chance in 32, or else the equipment's unleash bonus
+    // in 200ths, against a 16-bit roll.
     if (target->hp != 0) {
       if ((Battle_RandomFar() & 31) == 0)
         plan->targetCritical[0] = CRITICAL_HIT;
-      else if ((Equipment_GetUnleashRateBonusFar(actor) << 16) / 200 >
+      else if (toFIXED(Equipment_GetUnleashRateBonusFar(actor)) / 200 >
                (Battle_RandomFar() & 0xffff))
         plan->targetCritical[0] = CRITICAL_HIT;
     }
@@ -625,12 +647,14 @@ s32 BattleActionRun_Build(struct BattleActionRecord *request,
         ability->effect == ABILITY_EFFECT_VENGEANCE) {
       s32 index;
 
+      // Vengeance strikes one or two more times, a double or triple blow one
+      // or two, each at its chance: the multiplier on every target rises.
       if (ability->effect == ABILITY_EFFECT_VENGEANCE) {
         s32 roll = Battle_RandomFar() & 255;
 
-        if (roll <= 178) {
+        if (roll < CHANCE_VENGEANCE_EXTRA) {
           amount = 1;
-          if (roll <= 127)
+          if (roll < CHANCE_VENGEANCE_TWICE)
             amount = 2;
           for (index = 0; index < plan->targetCount; index++)
             plan->targetMultiplier[index] += amount;
@@ -638,12 +662,12 @@ s32 BattleActionRun_Build(struct BattleActionRecord *request,
       } else {
         if (ability->effect == ABILITY_EFFECT_DOUBLE_BLOW_LIKELY ||
             ability->effect == ABILITY_EFFECT_TRIPLE_BLOW_LIKELY)
-          chance = 153;
+          chance = CHANCE_BLOW_LIKELY;
         else if (ability->effect == ABILITY_EFFECT_DOUBLE_BLOW_RARE ||
                  ability->effect == ABILITY_EFFECT_TRIPLE_BLOW_RARE)
-          chance = 32;
+          chance = CHANCE_BLOW_RARE;
         else
-          chance = 64;
+          chance = CHANCE_BLOW;
         if (ability->effect == ABILITY_EFFECT_DOUBLE_BLOW_LIKELY ||
             ability->effect == ABILITY_EFFECT_DOUBLE_BLOW_RARE ||
             ability->effect == ABILITY_EFFECT_DOUBLE_BLOW)
@@ -657,24 +681,25 @@ s32 BattleActionRun_Build(struct BattleActionRecord *request,
       }
     } else if (ability->effect >= ABILITY_EFFECT_CRITICAL_A &&
                ability->effect <= ABILITY_EFFECT_CRITICAL_E) {
+      // An ability's critical hit on every target, 1 in 64 to 1 in 4.
       s32 mask;
 
       switch (ability->effect) {
       case ABILITY_EFFECT_CRITICAL_A:
-        mask = 63;
+        mask = 64 - 1;
         break;
       case ABILITY_EFFECT_CRITICAL_B:
-        mask = 31;
+        mask = 32 - 1;
         break;
       case ABILITY_EFFECT_CRITICAL_C:
-        mask = 15;
+        mask = 16 - 1;
         break;
       case ABILITY_EFFECT_CRITICAL_D:
-        mask = 7;
+        mask = 8 - 1;
         break;
       case ABILITY_EFFECT_CRITICAL_E:
       default:
-        mask = 3;
+        mask = 4 - 1;
         break;
       }
       if ((Battle_RandomFar() & mask) == 0) {

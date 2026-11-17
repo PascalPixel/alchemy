@@ -69,9 +69,6 @@
 /// statue's warm glow.
 #define CENTERED_TEXT_COLOR OBJ_PLTT_COLOR(0, 15)
 
-/// The party sheets' animation of the leader sitting on the floor, legs out.
-#define ANIM_LEADER_SIT 49
-
 #define FLAG_MARS_STAR_TAKEN 0xa3a ///< Felix took it from where Agatio left it
 #define FLAG_ADEPTS_WOKE 0xa3b     ///< Agatio and Karst woke after the battle
 #define FLAG_DRAGON_ICE_CRACKED 0xa4a
@@ -1553,14 +1550,6 @@ void Actor_SetSpriteFlags(struct Actor *actor, u32 value);
 #include "../field/field_effect_advance_motion.c"
 
 #undef CELL_PUSH_SLOT_ENTRY
-static __inline__ void CamBounds(FIXED x, FIXED y, FIXED z, s32 mode) {
-  FieldCamera_MoveToFX(x, y, z, mode);
-}
-
-static __inline__ void SetWorkTriple(FIXED a, FIXED b, FIXED c) {
-  MapGrid_SetShakeFX(a, b, c);
-}
-
 #include "shared/cracked_tile_drop_in.h"
 
 void GameFlag_SetByte(s32 flag, s32 value);

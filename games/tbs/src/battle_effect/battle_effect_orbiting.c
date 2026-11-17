@@ -4,8 +4,8 @@
 
 #include "battle_effect_internal.h"
 
-// None of the three effects here is called or named by any table: they are in
-// the ROM but unreachable.
+// None of the three effects here is called or named by any table: nothing in
+// the game reaches them.
 
 #define SWIRLING_STARS_FRAMES 160
 #define SWIRLING_STARS_COUNT 64   ///< stars that swirl

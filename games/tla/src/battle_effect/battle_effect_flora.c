@@ -8,25 +8,44 @@
 
 // Flora's summon.
 
-struct StripQuad;
-
-/// Flora is twelve 32x32 sprites in 256 colours, the first sprites of the
-/// effect work; then come the thirty-two 16x16 petals, the first fifteen
-/// carrying the bloom's tiles.
+/// Flora is twelve 32x32 sprites in 256 colours, three across and four down,
+/// the first sprites of the effect work; then come her thirty-two 16x16
+/// petals, the first fifteen each holding one of the tumbling petal's pictures
+/// (PinkPetalsTiles).
 #define FLORA_FIGURE_PIECES 12
+#define FLORA_FIGURE_COLUMNS 3
 #define FLORA_PETAL_SPRITES FLORA_FIGURE_PIECES
-#define FLORA_BLOOM_TILES 15
+#define FLORA_PETAL_PICTURES 15
 #define FLORA_PETAL_COUNT 32
+#define FLORA_PETAL_SIZE 16
+#define FLORA_PETAL_PALETTE 15
 #define FLORA_COLORS 240
-/// Where the storm's fifteen 16x16 petal pictures are unpacked to a byte a
-/// pixel in the effect's pictures.
-#define FLORA_STORM_PETALS 4096
+/// A petal's phase counts its tumbling pictures in 256ths: its high byte is
+/// the picture it shows.
+#define FLORA_PHASE_ONE 256
+/// Petals 0 to 5 blow across the sky on paths of their own before Flora
+/// comes; 6 to 15 stream from her hand towards the foes from
+/// FLORA_LAUNCH_FRAME; 16 to 31 burst out around her as she comes and again
+/// as she leaves.
+#define FLORA_PATH_PETALS 6
+#define FLORA_BURST_PETAL 16
+/// The storm: petals set out above the foes, of which one more falls each
+/// frame, sweeping down over them, until FLORA_STORM_DRAWN have fallen. Each
+/// foe is struck every FLORA_HIT_INTERVAL frames, the first time at a random
+/// moment.
+#define FLORA_STORM_FRAMES 128
+#define FLORA_STORM_PETALS 128
+#define FLORA_STORM_DRAWN 64
+#define FLORA_HIT_INTERVAL 15
+/// Where the storm's fifteen petal pictures are unpacked to a byte a pixel in
+/// the effect's pictures.
+#define FLORA_STORM_PICTURES 4096
 
-/// Flora's petals in gEffectScratch: the bloom's fifteen
-/// tile numbers, each petal's animation phase, position and velocity, and
-/// the object palette as it fades.
+/// Flora's petals in gEffectScratch: the tile number of each of the petal's
+/// pictures, each petal's phase, position and velocity, and the object
+/// palette as it fades.
 struct FloraWork {
-  u16 tiles[FLORA_BLOOM_TILES];
+  u16 tiles[FLORA_PETAL_PICTURES];
   u16 phase[FLORA_PETAL_COUNT];
   u16 padding;
   s32 x[FLORA_PETAL_COUNT];
@@ -37,6 +56,62 @@ struct FloraWork {
 };
 
 #define FLORA_WORK ((struct FloraWork *)petals)
+/// Petal i's phase, read at gFlora_PetalTiles, FloraWork's tile numbers from
+/// the second on.
+#define FLORA_PETAL_PHASE(i) gFlora_PetalTiles[FLORA_PETAL_PICTURES - 1 + (i)]
+
+/// After the battle flashes away (SUMMON_OPENING_FRAMES), the sky scene plays
+/// for FLORA_FRAMES; A or B cuts it short after its first sixteen.
+#define FLORA_FRAMES 300
+/// The canvas, shown at its own width until then, widens to twice it.
+#define FLORA_WIDE_FRAME 108
+/// Flora appears in a flash of FLORA_FLASH_FRAMES and fades in from white over
+/// FLORA_FADE_IN_FRAMES.
+#define FLORA_APPEAR_FRAME 112
+#define FLORA_FLASH_FRAMES 8
+#define FLORA_FADE_IN_FRAMES 32
+/// Petals stream from her hand from FLORA_LAUNCH_FRAME, two frames apart, as
+/// glows flare there; at FLORA_LEAVE_FRAME she flies away.
+#define FLORA_LAUNCH_FRAME 223
+#define FLORA_LEAVE_FRAME 252
+/// The canvas's weight over the sky, in sixteenths.
+#define FLORA_BLEND_LEVEL 14
+/// The glows' pictures (gFlora_PetalPictures): shaded discs `height` pixels
+/// tall and half as wide, one after another.
+#define FLORA_GLOW_BYTES(height) ((height) / 2 * (height))
+/// Where the glows flare on the canvas, by Flora's hand.
+#define FLORA_GLOW_X 44
+#define FLORA_GLOW_Y 78
+/// Ten copies of mote picture 3, each 7 levels dimmer than the one before,
+/// laid over the tenth mote picture from its 21st byte. Flora never draws
+/// either.
+#define FLORA_DIMMED_MOTE 3
+#define FLORA_DIMMED_MOTE_BYTES (FLORA_DIMMED_MOTE * FLORA_DIMMED_MOTE * 2)
+#define FLORA_DIMMED_MOTE_COPIES 10
+#define FLORA_DIMMED_MOTES 590
+/// The ring of motes: eight arms of four motes, spinning faster and faster
+/// from FLORA_RING_FRAME, its spin at the start a 128th of a turn a frame.
+#define FLORA_RING_MOTES 32
+#define FLORA_RING_ARMS 8
+#define FLORA_ARM_MOTES (FLORA_RING_MOTES / FLORA_RING_ARMS)
+#define FLORA_RING_SPIN (TRIG_TURN / 128)
+#define FLORA_RING_FRAME 156
+#define FLORA_RING_FRAMES 75
+/// The four rings of light (FireRingTexture): three as Flora appears and one
+/// as she leaves.
+#define FLORA_LIGHT_RINGS 4
+/// The centre of the ring of motes and of the wheel, on the canvas.
+#define FLORA_RING_X 48
+#define FLORA_RING_Y 92
+/// The wheel: a ring of dots and one three quarters its size, joined by four
+/// spokes, which from FLORA_WHEEL_FRAME turns, tilts flat and slides to the
+/// rings' centre, narrowing as it brightens to FLORA_WHEEL_GLOW; as Flora
+/// leaves it widens and fades.
+#define FLORA_WHEEL_DOTS 128
+#define FLORA_WHEEL_SPOKES 4
+#define FLORA_WHEEL_GLOW 36
+#define FLORA_WHEEL_FRAME 186
+#define FLORA_WHEEL_FRAMES 80
 
 /// The effect work's sheet.
 static inline u8 *SheetOf(struct BattleEffectWork *owner) {
@@ -44,8 +119,11 @@ static inline u8 *SheetOf(struct BattleEffectWork *owner) {
   return owner->sheet;
 }
 
-/// Flora: after a flash, petals blow across a violet sky and Flora drifts in
-/// among them while rings of light spin about her; then a storm of petals
+/// Flora: the battle flashes away to a violet sky where petals blow by. Flora
+/// appears in a flash amid rings of light and a burst of petals and circles;
+/// she drifts left as a ring of motes spins and a wheel of light turns by her
+/// hand, where glows flare and petals stream out, and flies away as a last
+/// ring of light flies out. A or B skips the sky scene. Then a storm of petals
 /// sweeps over the foes.
 ///
 /// Abilities: Flora.
@@ -57,22 +135,22 @@ void BattleEffect_RunFlora(struct BattleEffectParams *args) {
   s32 savedScroll;
   struct BattleBackgroundWork *backdrop;
   u8 *sprites;
-  s32 scroll;
+  s32 bgX;
   FIXED posX;
   FIXED posY;
   s32 angle;
   s32 spin;
   s32 spread;
-  s32 grow;
-  s32 petals; // the block's address as a number, see the header
+  s32 twist;
+  s32 petals; // gEffectScratch, as FLORA_WORK reads it
   s32 i;
   s32 j;
-  s32 quarter;
+  s32 order;
   s32 size;
   s32 dx;
   s32 dy;
-  u32 u;
-  FIXED place[4];
+  u32 shown;
+  struct SpritePlacement place;
   struct Scale req;
   struct ModelTexture texture;
   struct RenderModel *model;
@@ -101,7 +179,8 @@ void BattleEffect_RunFlora(struct BattleEffectParams *args) {
   RagingHeat_FillGradientCanvas();
   work->transferMode = CANVAS_COPY;
   Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_VBLANK);
-  scroll = -80;
+  // The battle flashes away; then the sky, the petals and Flora load.
+  bgX = -80;
   for (frame = 0; frame != SUMMON_OPENING_FRAMES; frame++) {
     if (frame == SUMMON_OPENING_LOAD_FRAME) {
       u8 *e;
@@ -117,14 +196,14 @@ void BattleEffect_RunFlora(struct BattleEffectParams *args) {
       Task_Add(BattleEffect_AdvanceScrollOnInterval, TASK_PASS_VBLANK);
       backdrop->busy = 1;
       e = Resource_GetTableEntry(RESOURCE_PINK_PETALS_TILES);
-      Iwram_CopyWordsEntry((void *)&OBJ_PLTT_COLOR(15, 0), e,
+      Iwram_CopyWordsEntry((void *)&OBJ_PLTT_COLOR(FLORA_PETAL_PALETTE, 0), e,
                            PALETTE_BANK_BYTES);
       e += PALETTE_BANK_BYTES;
       Decompress_TaggedLz(e, source);
       cells = Ram_MapCellBuffer;
-      for (i = 0; i != FLORA_BLOOM_TILES; i++) {
+      for (i = 0; i != FLORA_PETAL_PICTURES; i++) {
         struct Sprite *obj = EffectSprite_CreateWithTiles(
-            16, 16, OBJ_SIZE_16X16, OBJ_PALETTE(15));
+            16, 16, OBJ_SIZE_16X16, OBJ_PALETTE(FLORA_PETAL_PALETTE));
         work->sprites[FLORA_PETAL_SPRITES + i] = obj;
         obj->image.priority = 2;
         Iwram_CopyWordsEntry((void *)OBJ_TILES(obj),
@@ -134,18 +213,20 @@ void BattleEffect_RunFlora(struct BattleEffectParams *args) {
             ((struct Sprite *)work->sprites[FLORA_PETAL_SPRITES + i])
                 ->image.tile;
       }
-      for (i = 0; i != FLORA_PETAL_COUNT - FLORA_BLOOM_TILES; i++) {
-        struct Sprite *obj =
-            EffectSprite_Acquire(16, 16, OBJ_SIZE_16X16, OBJ_PALETTE(15));
-        work->sprites[FLORA_PETAL_SPRITES + FLORA_BLOOM_TILES + i] = obj;
-        Iwram_CopyWordsEntry(obj, work->sprites[FLORA_PETAL_SPRITES], 24);
+      for (i = 0; i != FLORA_PETAL_COUNT - FLORA_PETAL_PICTURES; i++) {
+        struct Sprite *obj = EffectSprite_Acquire(
+            16, 16, OBJ_SIZE_16X16, OBJ_PALETTE(FLORA_PETAL_PALETTE));
+        work->sprites[FLORA_PETAL_SPRITES + FLORA_PETAL_PICTURES + i] = obj;
+        Iwram_CopyWordsEntry(obj, work->sprites[FLORA_PETAL_SPRITES],
+                             offsetof(struct Sprite, lastNo));
       }
+      // Each petal starts at a picture of its own.
       i = 0;
-      phase = (u16 *)(Ram_MapCellBuffer + 16414);
+      phase = &FLORA_PETAL_PHASE(0);
       for (; i != FLORA_PETAL_COUNT; i++, phase++) {
-        *phase = (Random16() % FLORA_BLOOM_TILES) << 8;
+        *phase = (Random16() % FLORA_PETAL_PICTURES) << 8;
         ((struct Sprite *)work->sprites[FLORA_PETAL_SPRITES + i])->image.tile =
-            FLORA_WORK->tiles[*phase / 256];
+            FLORA_WORK->tiles[*phase / FLORA_PHASE_ONE];
       }
       e = Resource_GetTableEntry(RESOURCE_GREEN_HAIRED_MAIDEN_TILES);
       e += FLORA_COLORS * 2;
@@ -162,53 +243,59 @@ void BattleEffect_RunFlora(struct BattleEffectParams *args) {
       }
       Resource_LoadAndDecompress(RESOURCE_FIRE_RING_TEXTURE, work->sheet, 0, 0);
     }
-    scroll += 4;
-    REG_BG2X = scroll << 8;
+    bgX += 4;
+    REG_BG2X = bgX << 8;
     EFFECT_PRESENT_CANVAS(work);
   }
   Resource_LoadAndDecompress(RESOURCE_PARTICLE_SPRITES_A, source, 0, 0);
   Resource_LoadAndDecompress(RESOURCE_PARTICLE_SPRITES_A, sprites, 0, 0);
-  size = 3;
-  for (i = 0; i != 10; i++) {
-    for (j = 0; j != 18; j++) {
+  // DEAD: the dimmed mote copies, which nothing reads; the ROM keeps the
+  // loop.
+  size = FLORA_DIMMED_MOTE;
+  for (i = 0; i != FLORA_DIMMED_MOTE_COPIES; i++) {
+    for (j = 0; j != FLORA_DIMMED_MOTE_BYTES; j++) {
       s32 v = source[gBattleEffect_MotePictures[size - 1] + j];
 
       if (v > 0) {
-        v = 63 - i * 7;
+        v = CANVAS_LEVEL_BRIGHTEST - i * 7;
         if (v <= 0) {
           v = 1;
         }
       }
-      sprites[i * 18 + 590 + j] = v;
+      sprites[i * FLORA_DIMMED_MOTE_BYTES + FLORA_DIMMED_MOTES + j] = v;
     }
   }
   REG_DISPCNT = EFFECT_DISPCNT;
   REG_BG2PA = Q_8_8(1);
-  REG_BLDALPHA = EFFECT_BLEND_CANVAS(14);
+  REG_BLDALPHA = EFFECT_BLEND_CANVAS(FLORA_BLEND_LEVEL);
   REG_BLDCNT = BLDCNT_TGT1_BG2 | BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_ALL;
   REG_BG2X = 0;
+  // DEAD: Flora's place, and the ring's spin, spread and twist, are each set
+  // again before they are read; the ROM keeps the stores.
   posX = 128;
   posY = 44;
   angle = 0;
-  spin = 512;
+  spin = FLORA_RING_SPIN;
   spread = 0;
-  grow = 0;
+  twist = 0;
+  // DEAD: the petals laid out in rows of eight, in 65536ths of a pixel; the
+  // first frame places every petal again; the ROM keeps the loop.
   for (i = 0; i != FLORA_PETAL_COUNT; i++) {
     s32 row = i / 8;
-    s32 left = 256;
+    s32 leftX = 256;
     s32 columnX;
     s32 rowY;
 
     columnX = (i - row * 8) << 5;
     rowY = row * 22;
-    FLORA_WORK->x[i] = columnX + left;
+    FLORA_WORK->x[i] = columnX + leftX;
     FLORA_WORK->y[i] = rowY + 128;
   }
   EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, BLITTER_MAX);
   draw[0] = Ram_HeapSlots->ramCode;
-  for (frame = 0;
-       frame != 300 && (!(gInput.repeat & (KEY_A | KEY_B)) || frame <= 16);
+  for (frame = 0; frame != FLORA_FRAMES &&
+                  (!(gInput.repeat & (KEY_A | KEY_B)) || frame <= 16);
        frame++) {
     if (frame == 0) {
       Iwram_ClearWords((void *)BG_CHAR_BLOCK(1), CANVAS_BYTES);
@@ -222,6 +309,8 @@ void BattleEffect_RunFlora(struct BattleEffectParams *args) {
       Graphics_LoadGreyRamp();
       REG_BG2X = -(60 << 8);
     }
+    // The canvas's colours turn a level a frame towards Mars Djinn's, then
+    // tan, then cyan.
     if (frame > 285) {
       BattleEffect_StepPaletteToResource(RESOURCE_CYAN_PALETTE);
     } else if (frame > 199) {
@@ -229,28 +318,33 @@ void BattleEffect_RunFlora(struct BattleEffectParams *args) {
     } else if (frame > 180) {
       BattleEffect_StepPaletteToResource(RESOURCE_MARS_DJINN_SHEET);
     }
-    if (frame == 108) {
+    if (frame == FLORA_WIDE_FRAME) {
       REG_BG2PA = Q_8_8(0.5);
       REG_BG2X = 0;
-      // The four petals (gFlora_PetalPictures), each a shaded circle half as
-      // wide as it is tall, packed one after another.
+      // A quarter of each of the four glows: 8, 16, 32 and 48 pixels tall.
       BattleEffect_DrawShadedCircles(source, 8, FIXED_ONE);
-      BattleEffect_DrawShadedCircles(Ram_MapCellBuffer + 8 / 2 * 8, 16,
-                                     FIXED_ONE * 3 / 4);
-      BattleEffect_DrawShadedCircles(
-          Ram_MapCellBuffer + 8 / 2 * 8 + 16 / 2 * 16, 32, FIXED_ONE * 3 / 4);
-      BattleEffect_DrawShadedCircles(Ram_MapCellBuffer + 8 / 2 * 8 +
-                                         16 / 2 * 16 + 32 / 2 * 32,
+      BattleEffect_DrawShadedCircles(Ram_MapCellBuffer + FLORA_GLOW_BYTES(8),
+                                     16, FIXED_ONE * 3 / 4);
+      BattleEffect_DrawShadedCircles(Ram_MapCellBuffer + FLORA_GLOW_BYTES(8) +
+                                         FLORA_GLOW_BYTES(16),
+                                     32, FIXED_ONE * 3 / 4);
+      BattleEffect_DrawShadedCircles(Ram_MapCellBuffer + FLORA_GLOW_BYTES(8) +
+                                         FLORA_GLOW_BYTES(16) +
+                                         FLORA_GLOW_BYTES(32),
                                      48, FIXED_ONE * 3 / 4);
     }
-    if ((u32)(frame - 223) <= 29) {
+    // A glow of a random size flares by her hand each frame until she leaves.
+    if ((u32)(frame - FLORA_LAUNCH_FRAME) <=
+        FLORA_LEAVE_FRAME - FLORA_LAUNCH_FRAME) {
       s32 k = Random16() & 3;
       s32 n = gFlora_PetalSizes[k] * 2;
 
-      Canvas_BlitAtFoot(source + gFlora_PetalPictures[k], 44, 78, n);
+      Canvas_BlitAtFoot(source + gFlora_PetalPictures[k], FLORA_GLOW_X,
+                        FLORA_GLOW_Y, n);
     }
-    u = frame - 112;
-    if (u <= 31) {
+    // Flora fades in from white, a level a frame.
+    shown = frame - FLORA_APPEAR_FRAME;
+    if (shown < FLORA_FADE_IN_FRAMES) {
       u16 *e = Resource_GetTableEntry(RESOURCE_GREEN_HAIRED_MAIDEN_TILES);
 
       for (i = 0; i != FLORA_COLORS; i++, e++) {
@@ -277,16 +371,19 @@ void BattleEffect_RunFlora(struct BattleEffectParams *args) {
       Iwram_CopyWordsEntry((void *)OBJ_PLTT, gFlora_SpritePalettes,
                            FLORA_COLORS * 2);
     }
-    if (u <= 7) {
+    if (shown < FLORA_FLASH_FRAMES) {
       Iwram_FillWordsEntry(canvas, CANVAS_BYTES,
                            CANVAS_FILL_WORD(CANVAS_LEVEL_BRIGHTEST) -
-                               u * CANVAS_FILL_WORD(1) * 8);
+                               shown * CANVAS_FILL_WORD(1) * 8);
     }
     req = gFlora_UnitScale;
     dy = 0;
-    place[3] = 0;
+    place.groundHeight = 0;
     dx = 0;
-    place[1] = toFIXED(255);
+    place.height = toFIXED(255);
+    // Flora circles about (152, 44), 24 pixels out across and 20 up and down,
+    // then drifts left and down; from frame 222 she trembles and the sky
+    // shakes, and as she leaves she flies up and away to the right.
     if (frame <= 119) {
       posX = Trig_Sin(TRIG_TURN * 205 / 256) * 24 + toFIXED(152);
       posY = Trig_Cos(TRIG_TURN * 205 / 256) * 20 + toFIXED(44);
@@ -298,7 +395,7 @@ void BattleEffect_RunFlora(struct BattleEffectParams *args) {
     } else if (frame <= 221) {
       posX += -toFIXED(9) / 8;
       posY += toFIXED(1) / 2;
-    } else if (frame <= 251) {
+    } else if (frame < FLORA_LEAVE_FRAME) {
       s32 m = frame % 6;
       s32 m4;
 
@@ -325,33 +422,35 @@ void BattleEffect_RunFlora(struct BattleEffectParams *args) {
         dy = 0;
       }
       if ((frame & 3) == 0) {
-        gBgScroll[1].y = 30;
+        gBgScroll[1].y = BATTLE_BACKGROUND_SCROLL_Y - 2;
       }
       m4 = frame - frame / 4 * 4;
       if (m4 == 1) {
-        gBgScroll[1].y = 30;
+        gBgScroll[1].y = BATTLE_BACKGROUND_SCROLL_Y - 2;
       }
       if (m4 == 2) {
-        gBgScroll[1].y = 34;
+        gBgScroll[1].y = BATTLE_BACKGROUND_SCROLL_Y + 2;
       }
       if (m4 == 3) {
-        gBgScroll[1].y = 34;
+        gBgScroll[1].y = BATTLE_BACKGROUND_SCROLL_Y + 2;
       }
     } else {
       gBgScroll[1].y = BATTLE_BACKGROUND_SCROLL_Y;
       posX += toFIXED(8);
       posY += -toFIXED(6);
     }
-    if (frame > 111) {
+    if (frame >= FLORA_APPEAR_FRAME) {
       for (i = 0; i != FLORA_FIGURE_PIECES; i++) {
-        place[0] = posX + INTtoFIXED(i % 3 * 32 + dx);
-        place[2] = posY + INTtoFIXED(i / 3 * 32 + dy);
-        Render_ApplyProjectedPlacementFar(work->sprites[i], place, (s32 *)&req,
-                                          0);
+        place.x = posX + INTtoFIXED(i % FLORA_FIGURE_COLUMNS * 32 + dx);
+        place.y = posY + INTtoFIXED(i / FLORA_FIGURE_COLUMNS * 32 + dy);
+        Render_ApplyProjectedPlacementFar(
+            work->sprites[i], SpritePlacement_Values(&place), (s32 *)&req, 0);
       }
     }
+    // Petals 0 to 5 blow along paths of their own and are put away off the
+    // screen as Flora appears.
     for (i = 0; i != FLORA_PETAL_COUNT; i++) {
-      s32 start = 211 + i * 2;
+      s32 launchFrame = FLORA_LAUNCH_FRAME - FLORA_PATH_PETALS * 2 + i * 2;
 
       if (i == 0) {
         if (frame == 0) {
@@ -363,12 +462,12 @@ void BattleEffect_RunFlora(struct BattleEffectParams *args) {
         } else if (frame <= 79) {
           FLORA_WORK->x[i] += -toFIXED(1);
           FLORA_WORK->y[i] += -toFIXED(1);
-        } else if (frame <= 111) {
+        } else if (frame < FLORA_APPEAR_FRAME) {
           FLORA_WORK->x[i] += toFIXED(3);
           // DEAD: y moves by 0; the ROM keeps its load and store.
           FLORA_WORK->y[i] += 0;
         }
-        if (frame == 112) {
+        if (frame == FLORA_APPEAR_FRAME) {
           FLORA_WORK->x[i] = toFIXED(256);
         }
       } else if (i == 1) {
@@ -379,17 +478,17 @@ void BattleEffect_RunFlora(struct BattleEffectParams *args) {
           FLORA_WORK->x[i] = toFIXED(16);
           FLORA_WORK->y[i] = toFIXED(32);
         } else if (frame <= 62) {
-          FLORA_WORK->x[i] += 120536;
-          FLORA_WORK->y[i] += 130536;
+          FLORA_WORK->x[i] += toFIXED(1.83924);
+          FLORA_WORK->y[i] += toFIXED(1.99183);
         } else if (frame <= 79) {
-          FLORA_WORK->x[i] += 105536;
-          FLORA_WORK->y[i] += 0x6710;
+          FLORA_WORK->x[i] += toFIXED(1.61036);
+          FLORA_WORK->y[i] += toFIXED(0.4026);
         } else if (frame <= 141) {
           FLORA_WORK->x[i] += toFIXED(3);
           // DEAD: y moves by 0; the ROM keeps its load and store.
           FLORA_WORK->y[i] += 0;
         }
-        if (frame == 112) {
+        if (frame == FLORA_APPEAR_FRAME) {
           FLORA_WORK->x[i] = toFIXED(256);
         }
       } else if (i == 2) {
@@ -409,7 +508,7 @@ void BattleEffect_RunFlora(struct BattleEffectParams *args) {
           FLORA_WORK->x[i] += toFIXED(3);
           FLORA_WORK->y[i] += -toFIXED(1);
         }
-        if (frame == 112) {
+        if (frame == FLORA_APPEAR_FRAME) {
           FLORA_WORK->x[i] = toFIXED(256);
         }
       } else if (i == 3) {
@@ -426,7 +525,7 @@ void BattleEffect_RunFlora(struct BattleEffectParams *args) {
           FLORA_WORK->x[i] += toFIXED(1);
           FLORA_WORK->y[i] += toFIXED(1);
         }
-        if (frame == 112) {
+        if (frame == FLORA_APPEAR_FRAME) {
           FLORA_WORK->x[i] = toFIXED(256);
         }
       } else if (i == 4) {
@@ -442,7 +541,7 @@ void BattleEffect_RunFlora(struct BattleEffectParams *args) {
         } else if (frame <= 135) {
           FLORA_WORK->x[i] += toFIXED(4);
         }
-        if (frame == 112) {
+        if (frame == FLORA_APPEAR_FRAME) {
           FLORA_WORK->x[i] = toFIXED(256);
         }
       } else if (i == 5) {
@@ -456,49 +555,55 @@ void BattleEffect_RunFlora(struct BattleEffectParams *args) {
           FLORA_WORK->x[i] += toFIXED(1);
           FLORA_WORK->y[i] += toFIXED(3);
         }
-        if (frame == 112) {
+        if (frame == FLORA_APPEAR_FRAME) {
           FLORA_WORK->x[i] = toFIXED(256);
         }
-      } else if (i <= 15) {
+      } else if (i < FLORA_BURST_PETAL) {
+        // Petals 6 to 15 wait off the screen; then each streams down and to
+        // the left from Flora's hand, and starts again from there each time
+        // it leaves the screen, until she leaves.
         if (frame == 0) {
           FLORA_WORK->x[i] = toFIXED(248);
           FLORA_WORK->y[i] = frame;
-        } else if (frame == start) {
+        } else if (frame == launchFrame) {
           FLORA_WORK->x[i] = INTtoFIXED(Random16() & 7) + toFIXED(92);
           FLORA_WORK->y[i] = INTtoFIXED(Random16() & 7) + toFIXED(104);
           FLORA_WORK->vx[i] = (Random16() & TRIG_ANGLE_MASK) * 12 - toFIXED(12);
           FLORA_WORK->vy[i] = toFIXED(4);
-        } else if (frame >= start) {
+        } else if (frame >= launchFrame) {
           if (FLORA_WORK->x[i] >= -toFIXED(16) &&
               FLORA_WORK->y[i] <= toFIXED(168)) {
             FLORA_WORK->x[i] += FLORA_WORK->vx[i];
             FLORA_WORK->y[i] += FLORA_WORK->vy[i];
-          } else if (frame <= 251) {
+          } else if (frame < FLORA_LEAVE_FRAME) {
             FLORA_WORK->x[i] = INTtoFIXED(Random16() & 7) + toFIXED(92);
             FLORA_WORK->y[i] = INTtoFIXED(Random16() & 7) + toFIXED(104);
           }
         }
-      } else if (i <= 31) {
+      } else if (i < FLORA_PETAL_COUNT) {
+        // Petals 16 to 31 burst out in every direction as Flora appears and
+        // again from her hand as she leaves, at 1 to 3 pixels a frame (in 8.8),
+        // slowing until they are put away off the screen.
         if (frame == 0) {
           FLORA_WORK->x[i] = toFIXED(248);
           FLORA_WORK->y[i] = frame;
-        } else if (frame == 112) {
+        } else if (frame == FLORA_APPEAR_FRAME) {
           u32 a = Random16() & TRIG_ANGLE_MASK;
-          s32 s = ((Random16() & 255) << 1) + 256;
+          s32 speed = ((Random16() & 255) << 1) + Q_8_8(1);
 
           FLORA_WORK->x[i] = INTtoFIXED(Random16() & 7) + toFIXED(168);
           FLORA_WORK->y[i] = INTtoFIXED(Random16() & 7) + toFIXED(92);
-          FLORA_WORK->vx[i] = Trig_Sin(a) * s / 256;
-          FLORA_WORK->vy[i] = Trig_Cos(a) * s / 256;
-        } else if (frame == 252) {
+          FLORA_WORK->vx[i] = Trig_Sin(a) * speed / Q_8_8(1);
+          FLORA_WORK->vy[i] = Trig_Cos(a) * speed / Q_8_8(1);
+        } else if (frame == FLORA_LEAVE_FRAME) {
           u32 a = Random16() & TRIG_ANGLE_MASK;
-          s32 s = ((Random16() & 255) << 1) + 256;
+          s32 speed = ((Random16() & 255) << 1) + Q_8_8(1);
 
           FLORA_WORK->x[i] = INTtoFIXED(Random16() & 7) + toFIXED(92);
           FLORA_WORK->y[i] = INTtoFIXED(Random16() & 7) + toFIXED(104);
-          FLORA_WORK->vx[i] = Trig_Sin(a) * s / 256;
-          FLORA_WORK->vy[i] = Trig_Cos(a) * s / 256;
-        } else if (frame > 111) {
+          FLORA_WORK->vx[i] = Trig_Sin(a) * speed / Q_8_8(1);
+          FLORA_WORK->vy[i] = Trig_Cos(a) * speed / Q_8_8(1);
+        } else if (frame >= FLORA_APPEAR_FRAME) {
           FLORA_WORK->x[i] += FLORA_WORK->vx[i];
           FLORA_WORK->y[i] += FLORA_WORK->vy[i];
           FLORA_WORK->vx[i] = FLORA_WORK->vx[i] * 63 / DAMPING_SCALE;
@@ -510,21 +615,24 @@ void BattleEffect_RunFlora(struct BattleEffectParams *args) {
           }
         }
       }
-      if (i <= 5) {
-        gFlora_PetalTiles[14 + i] =
-            (gFlora_PetalTiles[14 + i] + 32) % (FLORA_BLOOM_TILES << 8);
+      // Each petal tumbles, those on paths an eighth of a picture a frame and
+      // the rest half a picture.
+      if (i < FLORA_PATH_PETALS) {
+        FLORA_PETAL_PHASE(i) = (FLORA_PETAL_PHASE(i) + FLORA_PHASE_ONE / 8) %
+                               (FLORA_PETAL_PICTURES << 8);
       } else {
-        gFlora_PetalTiles[14 + i] =
-            (gFlora_PetalTiles[14 + i] + 128) % (FLORA_BLOOM_TILES << 8);
+        FLORA_PETAL_PHASE(i) = (FLORA_PETAL_PHASE(i) + FLORA_PHASE_ONE / 2) %
+                               (FLORA_PETAL_PICTURES << 8);
       }
       ((struct Sprite *)work->sprites[FLORA_PETAL_SPRITES + i])->image.tile =
-          FLORA_WORK->tiles[gFlora_PetalTiles[14 + i] >> 8];
+          FLORA_WORK->tiles[FLORA_PETAL_PHASE(i) >> 8];
     }
     for (i = 0; i != FLORA_PETAL_COUNT; i++) {
-      place[0] = FLORA_WORK->x[i] - toFIXED(8);
-      place[2] = FLORA_WORK->y[i] - toFIXED(8);
+      place.x = FLORA_WORK->x[i] - toFIXED(FLORA_PETAL_SIZE / 2);
+      place.y = FLORA_WORK->y[i] - toFIXED(FLORA_PETAL_SIZE / 2);
       Render_ApplyProjectedPlacementFar(work->sprites[FLORA_PETAL_SPRITES + i],
-                                        place, (s32 *)&req, 0);
+                                        SpritePlacement_Values(&place),
+                                        (s32 *)&req, 0);
     }
     if (frame == 114) {
       Sound_PlayFar(SE_POWER_UP);
@@ -538,18 +646,20 @@ void BattleEffect_RunFlora(struct BattleEffectParams *args) {
     model->texture = &texture;
     model->mesh = gBattleEffect_LargeSquareMesh;
     model->vertices = verts;
-    for (i = 0; i != 4; i++) {
-      s32 d = frame - gFlora_BloomFrames[i];
+    // Each ring of light grows an eighth of its size a frame as it turns, and
+    // fades from its eighth frame.
+    for (i = 0; i != FLORA_LIGHT_RINGS; i++) {
+      s32 age = frame - gFlora_BloomFrames[i];
 
-      if (d >= 0) {
-        s32 scale = d << 13;
-        s32 sh = 0;
+      if (age >= 0) {
+        s32 scale = age * (FIXED_ONE / 8);
+        s32 shade = 0;
 
-        if (d > 7) {
-          sh = (8 - d) * 6;
+        if (age > 7) {
+          shade = (8 - age) * 6;
         }
-        model->shade = sh;
-        if (sh > -64) {
+        model->shade = shade;
+        if (shade > MODEL_SHADE_INVISIBLE) {
           Matrix_Initialize();
           Matrix_Translate(INTtoFIXED(gFlora_BloomX[i]),
                            INTtoFIXED(gFlora_BloomY[i]), 0);
@@ -557,7 +667,7 @@ void BattleEffect_RunFlora(struct BattleEffectParams *args) {
           Matrix_RotateZ(gFlora_BloomRolls[i]);
           Matrix_RotateX(gFlora_BloomPitches[i]);
           Matrix_ScaleUniform(scale);
-          Matrix_RotateY(frame << 11);
+          Matrix_RotateY(frame * (TRIG_TURN / 32));
           Render_TransformVertices(gBattleEffect_GroundSquareCorners, verts, 4);
           Render_DrawModelList(model);
         }
@@ -568,52 +678,56 @@ void BattleEffect_RunFlora(struct BattleEffectParams *args) {
     Matrix_Initialize();
     Matrix_RotateX(TRIG_TURN * 37 / 64);
     Matrix_RotateY(TRIG_TURN * 13 / 32);
-    if (frame == 156) {
-      spin = 512;
+    if (frame == FLORA_RING_FRAME) {
+      spin = FLORA_RING_SPIN;
       angle = 0;
     }
     Matrix_RotateZ(angle);
-    if (frame == 156) {
+    if (frame == FLORA_RING_FRAME) {
       Sound_PlayFar(SE_SWIRL);
     }
-    if (frame == 223) {
+    if (frame == FLORA_LAUNCH_FRAME) {
       Sound_PlayFar(SE_LAUNCH);
     }
-    if (frame == 252) {
+    if (frame == FLORA_LEAVE_FRAME) {
       Sound_PlayFar(SE_POWER_UP);
     }
-    if ((u32)(frame - 156) <= 74) {
-      s32 r = 80 - (frame - 156) / 2;
+    // The ring of motes closes on its centre as it spins; until frame 194 its
+    // arms twist and spread, and from frame 208 the motes of each arm shrink
+    // into the centre one by one, the outermost first.
+    if ((u32)(frame - FLORA_RING_FRAME) < FLORA_RING_FRAMES) {
+      s32 ringRadius = 80 - (frame - FLORA_RING_FRAME) / 2;
 
-      if (frame == 156) {
+      if (frame == FLORA_RING_FRAME) {
         spread = 0;
-        grow = 0;
+        twist = 0;
       }
       if (frame <= 194) {
-        grow += 32;
+        twist += TRIG_TURN / 2048;
         spread += 3;
       }
-      spin += 16;
+      spin += TRIG_TURN / 4096;
       angle += spin;
       EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED, EFFECT_CLIP_BOUNDS,
                           BLITTER_ADDITIVE);
       draw[1] = Ram_HeapSlots->ramCodePaired;
-      for (i = 0; i != 32; i++) {
-        s32 a = (i / 4) << 13;
-        s32 m = i % 4;
-        s32 b = m * grow;
-        s32 rr = r + m * spread / 30;
+      for (i = 0; i != FLORA_RING_MOTES; i++) {
+        s32 a = (i / FLORA_ARM_MOTES) * (TRIG_TURN / FLORA_RING_ARMS);
+        s32 m = i % FLORA_ARM_MOTES;
+        s32 b = m * twist;
+        s32 radius = ringRadius + m * spread / 30;
         s32 x;
         s32 y;
 
         size = 7;
-        for (quarter = 0; quarter != 4; quarter++) {
-          if (frame >= 208 + quarter * 4 && i % 4 == 3 - quarter) {
-            s32 late = frame - quarter * 4 - 208;
+        for (order = 0; order != FLORA_ARM_MOTES; order++) {
+          if (frame >= 208 + order * 4 &&
+              i % FLORA_ARM_MOTES == FLORA_ARM_MOTES - 1 - order) {
+            s32 late = frame - order * 4 - 208;
 
-            rr = r - late * 4;
-            if (rr < 0) {
-              rr = 0;
+            radius = ringRadius - late * 4;
+            if (radius < 0) {
+              radius = 0;
             }
             size = 7 - late;
             if (size <= 2) {
@@ -621,104 +735,111 @@ void BattleEffect_RunFlora(struct BattleEffectParams *args) {
             }
           }
         }
-        pos.x = FIXEDtoINT(Trig_Sin(a + b) * rr);
-        pos.y = FIXEDtoINT(Trig_Cos(a + b) * rr);
+        pos.x = FIXEDtoINT(Trig_Sin(a + b) * radius);
+        pos.y = FIXEDtoINT(Trig_Cos(a + b) * radius);
         pos.depth = 0;
         EffectPosition_ProjectPoint(&pos, &out);
         out.x >>= 1;
-        x = out.x + 48;
-        y = out.y + 92;
+        x = out.x + FLORA_RING_X;
+        y = out.y + FLORA_RING_Y;
         draw[1](canvas, sprites + gBattleEffect_MotePictures[size - 1],
                 x - size / 2, y - size, size, size * 2);
       }
       HeapSlot_Release(HEAP_SLOT_RAM_CODE_PAIRED);
     }
-    if ((u32)(frame - 186) <= 79) {
-      s32 v = frame - 186;
-      s32 inner;
-      s32 c;
-      s32 ox;
+    if ((u32)(frame - FLORA_WHEEL_FRAME) < FLORA_WHEEL_FRAMES) {
+      s32 glow = frame - FLORA_WHEEL_FRAME;
+      s32 radius;
+      s32 level;
+      s32 centerX;
       s32 outerY;
       s32 innerY;
-      s32 sx;
-      s32 sy;
+      s32 driftX;
+      s32 driftY;
       s32 x1;
       s32 y1;
       s32 x2;
       s32 y2;
 
       if (frame > 247) {
-        v = 532 - frame * 2;
-      } else if (v > 36) {
-        v = 36;
+        glow = 532 - frame * 2;
+      } else if (glow > FLORA_WHEEL_GLOW) {
+        glow = FLORA_WHEEL_GLOW;
       }
-      inner = 64 - v;
-      c = v;
-      sx = 18 - c / 2;
-      sy = 36 - c;
-      dot[0] = c;
-      dot[1] = c;
-      Matrix_RotateZ(frame << 10);
+      radius = 64 - glow;
+      level = glow;
+      driftX = FLORA_WHEEL_GLOW / 2 - level / 2;
+      driftY = FLORA_WHEEL_GLOW - level;
+      dot[0] = level;
+      dot[1] = level;
+      Matrix_RotateZ(frame * (TRIG_TURN / 64));
       if (frame <= 221) {
-        Matrix_RotateX(sy << 10);
+        Matrix_RotateX(driftY * (TRIG_TURN / 64));
       }
-      if (sx < 0) {
-        sx = 0;
+      if (driftX < 0) {
+        driftX = 0;
       }
-      if (sy < 0) {
-        sy = 0;
+      if (driftY < 0) {
+        driftY = 0;
       }
-      ox = sx + 48;
-      outerY = 92 - sy;
-      innerY = 88 - sy;
-      for (i = 0; i != 128; i++) {
-        ringPoint.x = FIXEDtoINT(Trig_Sin(i << 9) * inner);
-        ringPoint.y = FIXEDtoINT(Trig_Cos(i << 9) * inner);
+      centerX = driftX + FLORA_RING_X;
+      outerY = FLORA_RING_Y - driftY;
+      innerY = FLORA_RING_Y - 4 - driftY;
+      for (i = 0; i != FLORA_WHEEL_DOTS; i++) {
+        ringPoint.x =
+            FIXEDtoINT(Trig_Sin(i * (TRIG_TURN / FLORA_WHEEL_DOTS)) * radius);
+        ringPoint.y =
+            FIXEDtoINT(Trig_Cos(i * (TRIG_TURN / FLORA_WHEEL_DOTS)) * radius);
         ringPoint.depth = 0;
         EffectPosition_ProjectPoint(&ringPoint, &ringScreen);
         ringScreen.x >>= 1;
-        x1 = ringScreen.x + ox;
+        x1 = ringScreen.x + centerX;
         y1 = ringScreen.y + outerY;
-        x2 = ringScreen.x * 3 / 4 + ox;
+        x2 = ringScreen.x * 3 / 4 + centerX;
         y2 = ringScreen.y * 3 / 4 + innerY;
         draw[0](canvas, dot, x1 - 1, y1 - 1, 1, 2);
         draw[0](canvas, dot, x2 - 1, y2 - 1, 1, 2);
-        if ((i & 31) == 0) {
-          BattleEffect_DrawClippedCanvasLine(x1, y1, x2, y2, v);
-          BattleEffect_DrawClippedCanvasLine(x1, y1 + 1, x2, y2 + 1, v);
+        if ((i & (FLORA_WHEEL_DOTS / FLORA_WHEEL_SPOKES - 1)) == 0) {
+          BattleEffect_DrawClippedCanvasLine(x1, y1, x2, y2, glow);
+          BattleEffect_DrawClippedCanvasLine(x1, y1 + 1, x2, y2 + 1, glow);
         }
       }
-      if ((u32)(frame - 228) <= 24) {
+      // An echo of the wheel spreads from it and fades until Flora leaves.
+      if ((u32)(frame - 228) <= FLORA_LEAVE_FRAME - 228) {
         s32 x1b;
         s32 y1b;
         s32 x2b;
         s32 y2b;
 
-        c = 256 - frame;
-        inner = frame - 204;
-        dot[0] = c;
-        dot[1] = c;
-        for (i = 0; i != 128; i++) {
-          fadeRingPoint.x = FIXEDtoINT(Trig_Sin(i << 9) * inner);
-          fadeRingPoint.y = FIXEDtoINT(Trig_Cos(i << 9) * inner);
+        level = 256 - frame;
+        radius = frame - 204;
+        dot[0] = level;
+        dot[1] = level;
+        for (i = 0; i != FLORA_WHEEL_DOTS; i++) {
+          fadeRingPoint.x =
+              FIXEDtoINT(Trig_Sin(i * (TRIG_TURN / FLORA_WHEEL_DOTS)) * radius);
+          fadeRingPoint.y =
+              FIXEDtoINT(Trig_Cos(i * (TRIG_TURN / FLORA_WHEEL_DOTS)) * radius);
           fadeRingPoint.depth = 0;
           EffectPosition_ProjectPoint(&fadeRingPoint, &fadeRingScreen);
           fadeRingScreen.x >>= 1;
-          x1b = ox + fadeRingScreen.x;
+          x1b = centerX + fadeRingScreen.x;
           y1b = fadeRingScreen.y + outerY;
-          x2b = fadeRingScreen.x * 3 / 4 + ox;
+          x2b = fadeRingScreen.x * 3 / 4 + centerX;
           y2b = fadeRingScreen.y * 3 / 4 + innerY;
           draw[0](canvas, dot, x1b - 1, y1b - 1, 1, 2);
           draw[0](canvas, dot, x2b - 1, y2b - 1, 1, 2);
-          if ((i & 31) == 0) {
-            BattleEffect_DrawClippedCanvasLine(x1b, y1b, x2b, y2b, c);
-            BattleEffect_DrawClippedCanvasLine(x1b, y1b + 1, x2b, y2b + 1, c);
+          if ((i & (FLORA_WHEEL_DOTS / FLORA_WHEEL_SPOKES - 1)) == 0) {
+            BattleEffect_DrawClippedCanvasLine(x1b, y1b, x2b, y2b, level);
+            BattleEffect_DrawClippedCanvasLine(x1b, y1b + 1, x2b, y2b + 1,
+                                               level);
           }
         }
       }
     }
     EFFECT_PRESENT_CANVAS(work);
   }
+  // The battle comes back for the storm.
   Task_Remove(BattleEffect_AdvanceScrollOnInterval);
   gBgScroll[1].x = savedScroll;
   backdrop->busy = 0;
@@ -741,9 +862,9 @@ void BattleEffect_RunFlora(struct BattleEffectParams *args) {
     /* FAKEMATCH(pin): e fixed to a register. */
     register u8 *e asm("r6") =
         Resource_GetTableEntry(RESOURCE_PINK_PETALS_TILES);
-    s32 row;
-    s32 a;
-    s32 b;
+    s32 picture;
+    s32 tileRow;
+    s32 tileColumn;
     s32 k;
     s32 m;
     s32 t;
@@ -753,25 +874,27 @@ void BattleEffect_RunFlora(struct BattleEffectParams *args) {
     Iwram_CopyWordsEntry((void *)BG_PLTT, e, PALETTE_BANK_BYTES);
     e += PALETTE_BANK_BYTES;
     Decompress_TaggedLz(e, SheetOf(work));
-    sheet = work->sheet + FLORA_STORM_PETALS;
+    sheet = work->sheet + FLORA_STORM_PICTURES;
+    // Each 8x8 tile of the petal's pictures, two pixels a byte, is unpacked
+    // to a byte a pixel at its place in its 16x16 picture.
     i = 0;
-    for (row = 0; row != FLORA_BLOOM_TILES; row++) {
-      for (a = 0; a != 2; a++) {
-        for (b = 0; b != 2; b++) {
+    for (picture = 0; picture != FLORA_PETAL_PICTURES; picture++) {
+      for (tileRow = 0; tileRow != 2; tileRow++) {
+        for (tileColumn = 0; tileColumn != 2; tileColumn++) {
           s32 offset;
 
-          t = row * 2;
-          t += a;
+          t = picture * 2;
+          t += tileRow;
           t <<= 4;
-          t += b;
+          t += tileColumn;
           k = 0;
           offset = t << 3;
-          for (; k != 8; k++, offset += 16) {
+          for (; k != 8; k++, offset += FLORA_PETAL_SIZE) {
             u8 *d = (u8 *)(offset + (s32)sheet);
 
             for (m = 0; m != 4; m++) {
-              hi = work->sheet[i] >> 4 & 15;
-              d[0] = work->sheet[i] & 15;
+              hi = work->sheet[i] >> 4 & 0xf;
+              d[0] = work->sheet[i] & 0xf;
               d[1] = hi;
               i++;
               d += 2;
@@ -781,10 +904,10 @@ void BattleEffect_RunFlora(struct BattleEffectParams *args) {
       }
     }
   }
-  for (frame = 0; frame != 128; frame++) {
+  for (frame = 0; frame != FLORA_STORM_FRAMES; frame++) {
     if (frame == 0) {
       p = (struct Particle *)source;
-      for (i = 0; i != 128; i++, p++) {
+      for (i = 0; i != FLORA_STORM_PETALS; i++, p++) {
         p->x = INTtoFIXED((Random16() & 63) + 96);
         p->y = INTtoFIXED(-(Random16() & 63));
         p->velocityX = -((Random16() & 255) + 128) << 7;
@@ -795,13 +918,15 @@ void BattleEffect_RunFlora(struct BattleEffectParams *args) {
         work->particles[i].variant = (Random16() & 15) + 1;
       }
     }
+    // Each petal tumbles a picture every four frames as it falls.
     p = (struct Particle *)source;
-    for (i = 0; i != 64; i++, p++) {
+    for (i = 0; i != FLORA_STORM_DRAWN; i++, p++) {
       if (frame > i) {
         draw[0](canvas,
-                work->sheet + FLORA_STORM_PETALS +
-                    (p->variant / 4 % FLORA_BLOOM_TILES << 8),
-                FIXED_INTEGER_PART(p->x) - 4, FIXED_INTEGER_PART(p->y), 16, 16);
+                work->sheet + FLORA_STORM_PICTURES +
+                    (p->variant / 4 % FLORA_PETAL_PICTURES << 8),
+                FIXED_INTEGER_PART(p->x) - 4, FIXED_INTEGER_PART(p->y),
+                FLORA_PETAL_SIZE, FLORA_PETAL_SIZE);
         Particle_AdvanceWithGravity2D(p, PARTICLE_DAMPING_NONE, 0);
         p->velocityX += -toFIXED(1) / 16;
         p->variant++;
@@ -815,7 +940,7 @@ void BattleEffect_RunFlora(struct BattleEffectParams *args) {
         struct Particle *s = &work->particles[i];
 
         if (--s->variant == 0) {
-          s->variant = 15;
+          s->variant = FLORA_HIT_INTERVAL;
           work->shakeFrames = 4;
           Sound_PlayFar(SE_IMPACT);
           BattleMotion_ApplyKnockbackFar(args->targets[i], KNOCKBACK_NUDGE);
@@ -830,11 +955,12 @@ void BattleEffect_RunFlora(struct BattleEffectParams *args) {
   EFFECT_FINISH_CANVAS_ONE_BLITTER();
 }
 
-/// BattleEffect_StartActorMotion with fixed values: unless the unit is the
-/// Fusion Dragon or one of three of the Doom Dragon's forms, the actor steps
-/// 15 pixels further from x = 0 on its anchor's side, its y velocity growing
-/// by toFIXED(2.5) while y is under 10.
-void BattleEffect_StartActorMotionOutward(s32 id) {
+/// Unused: nothing calls it. Sends a unit outward: unless it is the Fusion
+/// Dragon or one of three of the Doom Dragon's forms, it moves 15 pixels
+/// further out on its own side, hopping if it stands under 10 pixels up; every
+/// unit then falls under a gravity of 0.6 pixels a frame without bouncing, and
+/// takes its animation 5.
+UNUSED void BattleEffect_StartActorMotionOutward(s32 id) {
   struct BattleObject *slot;
   struct MotionObject *object;
   u32 enemy;
@@ -862,24 +988,27 @@ void BattleEffect_StartActorMotionOutward(s32 id) {
   Actor_SelectAnimationFar(object, 5);
 }
 
-#define DAGGER_FRAMES 96
-#define DAGGER_COUNT 8       ///< of the 32 steps set up, the first 8 are drawn
-#define DAGGER_FALL_FRAME 80 ///< the daggers turn and fall on the target
-#define DAGGER_LAST_HIT 90
+#define SABRE_DANCE_FRAMES 96
+/// Of the particles set up, the first SABRE_DANCE_BLADES are drawn.
+#define SABRE_DANCE_PARTICLES 32
+#define SABRE_DANCE_BLADES 8
+/// The blades turn and fall on the target.
+#define SABRE_DANCE_FALL_FRAME 80
+#define SABRE_DANCE_LAST_HIT 90
 
-/// Crossed daggers. The canvas is moved over the target. Eight daggers rise
-/// spinning from below it, and the target is struck eight times, six frames
-/// apart from frame 20: each strike shakes the screen, flashes the target and
-/// knocks it up. At frame 80 the daggers turn point down in a fan above the
-/// target and plunge into it; the last strike, at frame 90, starts the
-/// result phase.
+/// Dancing blades. The canvas is moved over the target. Eight pairs of crossed
+/// blades rise spinning from below it, and the target is struck eight times,
+/// six frames apart from frame 20: each strike shakes the screen, flashes the
+/// target and knocks it up. At frame 80 the blades turn point down in a fan
+/// above the target and plunge into it; the last strike, at frame 90, lets the
+/// battle show the damage.
 ///
 /// Abilities: Sabre Dance.
 void BattleEffect_RunSabreDance(struct BattleEffectParams *args) {
   struct BattleEffectWork *work = Ram_HeapSlots->battleEffect;
   struct ModelTexture texture;
   struct ScreenPoint target;
-  struct Particle *dagger;
+  struct Particle *blade;
   struct RenderModel *quad;
   void *vertices;
   s32 frame;
@@ -898,22 +1027,22 @@ void BattleEffect_RunSabreDance(struct BattleEffectParams *args) {
   REG_BG2PA = Q_8_8(1);
   REG_BG2X = (64 - target.x) << 8;
 
-  for (frame = 0; frame != DAGGER_FRAMES; frame++) {
-    // The first frame lines the daggers up below the canvas, each spinning
+  for (frame = 0; frame != SABRE_DANCE_FRAMES; frame++) {
+    // The first frame lines the blades up below the canvas, each spinning
     // the other way from its neighbour.
     if (frame == 0) {
       FIXED y;
       s32 zero;
 
-      for (i = 0, zero = 0, y = toFIXED(128), dagger = work->particles; i != 32;
-           i++, dagger++) {
-        SET_POSITION(dagger, INTtoFIXED((Random16() & 63) + 32), y, Random16());
-        dagger->velocityX = zero;
-        dagger->velocityY = -((Random16() & 31) + 32) << 10;
-        dagger->velocityZ = (Random16() & 0x3ff) + toFIXED(1) / 64;
+      for (i = 0, zero = 0, y = toFIXED(128), blade = work->particles;
+           i != SABRE_DANCE_PARTICLES; i++, blade++) {
+        SET_POSITION(blade, INTtoFIXED((Random16() & 63) + 32), y, Random16());
+        blade->velocityX = zero;
+        blade->velocityY = -((Random16() & 31) + 32) << 10;
+        blade->velocityZ = (Random16() & 0x3ff) + toFIXED(1) / 64;
         if (i & 1)
-          dagger->velocityZ = -dagger->velocityZ;
-        dagger->variant = zero;
+          blade->velocityZ = -blade->velocityZ;
+        blade->variant = zero;
         y += toFIXED(8);
       }
     }
@@ -931,7 +1060,7 @@ void BattleEffect_RunSabreDance(struct BattleEffectParams *args) {
                                       100);
       }
     }
-    if (frame == DAGGER_LAST_HIT) {
+    if (frame == SABRE_DANCE_LAST_HIT) {
       work->shakeFrames = 4;
       EFFECT_SHOW_DAMAGE(SE_HEAVY_IMPACT);
       BattleEffect_TintBattler(args->targets[0], SPRITE_COLOR_WHITE,
@@ -939,7 +1068,7 @@ void BattleEffect_RunSabreDance(struct BattleEffectParams *args) {
       BattleEffect_StartActorMotion(args->targets[0], 1, 0, 0, toFIXED(3), 100);
     }
 
-    // One textured quad, drawn once for each dagger.
+    // One textured quad, drawn once for each pair of blades.
     vertices = Heap_AllocEwram(32);
     quad = Render_AllocateModelList(1);
     quad->shade = 0;
@@ -950,32 +1079,34 @@ void BattleEffect_RunSabreDance(struct BattleEffectParams *args) {
     quad->kind = MODEL_SHADED;
     quad->mesh = gSabreDance_DaggerMesh;
     quad->vertices = vertices;
-    for (i = 0, dagger = work->particles; i != DAGGER_COUNT; i++, dagger++) {
+    for (i = 0, blade = work->particles; i != SABRE_DANCE_BLADES;
+         i++, blade++) {
       // The fall: from 48 pixels above the canvas, fanned out by angle and
       // closing on the middle.
-      if (frame == DAGGER_FALL_FRAME) {
+      if (frame == SABRE_DANCE_FALL_FRAME) {
         s32 angle;
         s32 drift;
 
-        dagger->y = -toFIXED(48);
-        angle = (i << 10) + (Random16() & 0x3ff) - 4608;
-        dagger->x = (angle << 10) + toFIXED(64);
-        dagger->z = angle;
+        blade->y = -toFIXED(48);
+        angle =
+            i * (TRIG_TURN / 64) + (Random16() & 0x3ff) - TRIG_TURN * 9 / 128;
+        blade->x = angle * (toFIXED(1) / 64) + toFIXED(64);
+        blade->z = angle;
         drift = -angle << 5;
-        dagger->velocityY = toFIXED(12);
-        dagger->velocityX = drift;
-        dagger->velocityZ = 0;
+        blade->velocityY = toFIXED(12);
+        blade->velocityX = drift;
+        blade->velocityZ = 0;
       }
       Matrix_Initialize();
-      Matrix_Translate(dagger->x - toFIXED(64), dagger->y - toFIXED(64), 0);
+      Matrix_Translate(blade->x - toFIXED(64), blade->y - toFIXED(64), 0);
       Matrix_ScaleUniform(FIXED_ONE / 2);
-      Matrix_RotateZ(dagger->z);
+      Matrix_RotateZ(blade->z);
       Render_TransformVertices(gSabreDance_DaggerCorners, vertices, 4);
       Render_DrawModelList(quad);
-      if (frame >= DAGGER_FALL_FRAME)
-        Particle_AdvanceWithGravity3D(dagger, PARTICLE_DAMPING_NONE, 0);
+      if (frame >= SABRE_DANCE_FALL_FRAME)
+        Particle_AdvanceWithGravity3D(blade, PARTICLE_DAMPING_NONE, 0);
       else
-        Particle_AdvanceWithGravity3D(dagger, PARTICLE_DAMPING_NONE,
+        Particle_AdvanceWithGravity3D(blade, PARTICLE_DAMPING_NONE,
                                       -toFIXED(1) / 16);
     }
     Heap_Release(quad);
@@ -1007,7 +1138,11 @@ void BattleObject_SetRecordPriority(s32 objectId, s32 priority) {
 #define STAR_FRAMES 60
 #define STAR_LEAP_FRAME 16  ///< the caster leaps at the target
 #define STAR_BURST_FRAME 32 ///< and strikes it
+/// Of the puffs of smoke set up, the first SMOKE_DRAWN rise, each through
+/// SmokeSheet's six pictures, four frames each.
 #define SMOKE_COUNT 32
+#define SMOKE_DRAWN 24
+#define SMOKE_PUFF_FRAMES 24
 #define STAR_COUNT 16
 #define STAR_CELS 16000 ///< the pink star's six 16x16 cels, after the smoke's
 
@@ -1077,8 +1212,8 @@ void BattleEffect_RunBackstab(struct BattleEffectParams *args) {
     if (frame >= 0) {
       struct Particle *puff;
 
-      for (i = 0, puff = work->particles; i != 24; i++, puff++) {
-        if (frame >= i / 8 && puff->variant <= 23) {
+      for (i = 0, puff = work->particles; i != SMOKE_DRAWN; i++, puff++) {
+        if (frame >= i / 8 && puff->variant < SMOKE_PUFF_FRAMES) {
           draw[0](canvas,
                   work->sheet + (puff->variant / 4) * PICTURE_BYTES(SMOKE_PUFF),
                   FIXED_INTEGER_PART(puff->x) - 12,
@@ -1164,13 +1299,62 @@ void BattleEffect_RunBackstab(struct BattleEffectParams *args) {
 }
 #undef BLITTER
 #undef FLORA_WORK
-#undef DAGGER_FRAMES
-#undef DAGGER_COUNT
-#undef DAGGER_FALL_FRAME
-#undef DAGGER_LAST_HIT
+#undef FLORA_FIGURE_PIECES
+#undef FLORA_FIGURE_COLUMNS
+#undef FLORA_PETAL_SPRITES
+#undef FLORA_PETAL_PICTURES
+#undef FLORA_PETAL_COUNT
+#undef FLORA_PETAL_SIZE
+#undef FLORA_PETAL_PALETTE
+#undef FLORA_COLORS
+#undef FLORA_PHASE_ONE
+#undef FLORA_PATH_PETALS
+#undef FLORA_BURST_PETAL
+#undef FLORA_STORM_FRAMES
+#undef FLORA_STORM_PETALS
+#undef FLORA_STORM_DRAWN
+#undef FLORA_HIT_INTERVAL
+#undef FLORA_STORM_PICTURES
+#undef FLORA_PETAL_PHASE
+#undef FLORA_FRAMES
+#undef FLORA_WIDE_FRAME
+#undef FLORA_APPEAR_FRAME
+#undef FLORA_FLASH_FRAMES
+#undef FLORA_FADE_IN_FRAMES
+#undef FLORA_LAUNCH_FRAME
+#undef FLORA_LEAVE_FRAME
+#undef FLORA_BLEND_LEVEL
+#undef FLORA_GLOW_BYTES
+#undef FLORA_GLOW_X
+#undef FLORA_GLOW_Y
+#undef FLORA_DIMMED_MOTE
+#undef FLORA_DIMMED_MOTE_BYTES
+#undef FLORA_DIMMED_MOTE_COPIES
+#undef FLORA_DIMMED_MOTES
+#undef FLORA_RING_MOTES
+#undef FLORA_RING_ARMS
+#undef FLORA_ARM_MOTES
+#undef FLORA_RING_SPIN
+#undef FLORA_RING_FRAME
+#undef FLORA_RING_FRAMES
+#undef FLORA_LIGHT_RINGS
+#undef FLORA_RING_X
+#undef FLORA_RING_Y
+#undef FLORA_WHEEL_DOTS
+#undef FLORA_WHEEL_SPOKES
+#undef FLORA_WHEEL_GLOW
+#undef FLORA_WHEEL_FRAME
+#undef FLORA_WHEEL_FRAMES
+#undef SABRE_DANCE_FRAMES
+#undef SABRE_DANCE_PARTICLES
+#undef SABRE_DANCE_BLADES
+#undef SABRE_DANCE_FALL_FRAME
+#undef SABRE_DANCE_LAST_HIT
 #undef STAR_FRAMES
 #undef STAR_LEAP_FRAME
 #undef STAR_BURST_FRAME
 #undef SMOKE_COUNT
+#undef SMOKE_DRAWN
+#undef SMOKE_PUFF_FRAMES
 #undef STAR_COUNT
 #undef STAR_CELS

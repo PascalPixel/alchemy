@@ -17,6 +17,11 @@
 /// The frames the hand cursor takes to glide into a newly opened list.
 #define SHOP_CURSOR_ENTER_FRAMES 12
 
+/// The particles a sanctum service's sparkles use (ShopWork.effects), and how
+/// many of them fly in at the party member's icon in its burst.
+#define SANCTUM_PARTICLE_COUNT 24
+#define SANCTUM_BURST_SPARKLES 18
+
 /// A shop's work: its windows, the party members' icons, the stock, the cursor
 /// and its icons, and the field effect sprites.
 ///
@@ -67,7 +72,8 @@ struct ShopWork {
                   ///< none
   u8 warriorShop; ///< 1 for stock rows 16 to 18, which greet as warriors'
   u8 padding[3];  ///< up to the word effects starts on
-  struct FieldParticle effects[24]; ///< the sanctum service's particles
+  /// the sanctum service's particles
+  struct FieldParticle effects[SANCTUM_PARTICLE_COUNT];
 };
 
 STATIC_ASSERT(sizeof(struct ShopWork) == 2672);

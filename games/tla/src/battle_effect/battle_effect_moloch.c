@@ -438,6 +438,9 @@ void Iris_ChangeBackdrop(void) {
 /// of a dot and the spray's column.
 #define IRIS_RING_FADES 3
 #define IRIS_DOT_FADES 8
+/// How much dimmer each fade of a ring mote and of a dot is than the last.
+#define IRIS_RING_FADE_STEP 16
+#define IRIS_DOT_FADE_STEP 8
 #define IRIS_LARGE_RING_WIDTH 7
 #define IRIS_LARGE_RING_HEIGHT 14
 #define IRIS_SMALL_RING_WIDTH 5
@@ -583,7 +586,29 @@ struct StripQuad;
 /// head and the points that trail it.
 #define IRIS_PETALS 36
 #define IRIS_PETAL_FRAMES 15
+#define IRIS_PETAL_SIZE                                                        \
+  16 ///< a petal's 16-colour sprite, in IRIS_PETAL_PALETTE
+#define IRIS_PETAL_BYTES (IRIS_PETAL_SIZE * IRIS_PETAL_SIZE / 2)
+#define IRIS_PETAL_PALETTE 15
+/// One frame of a petal's life, which counts down in its high byte; the petal
+/// is drawn at twice its life's scale.
+#define IRIS_PETAL_FRAME (1 << 8)
 #define IRIS_MOTES 32
+/// A mote's variant: its size in pixels in the low bits; IRIS_MOTE_FADING to
+/// fade through the faded mote sets once it is IRIS_MOTE_FADE_AGE frames old;
+/// IRIS_MOTE_GLOWING to be drawn instead as a glow, a textured quad that grows
+/// and fades through the IRIS_GLOW_TEXTURES once it is IRIS_GLOW_FADE_AGE
+/// frames old.
+#define IRIS_MOTE_SIZE 0xf
+#define IRIS_MOTE_FADING 0x10
+#define IRIS_MOTE_GLOWING 0x100
+#define IRIS_MOTE_FADE_AGE 32
+#define IRIS_GLOW_FADE_AGE 24
+#define IRIS_GLOW_TEXTURES 8
+/// The motes that burst from her as she appears, half each way, and the
+/// random part of their speed, in sixteenths of a pixel a frame.
+#define IRIS_FIRST_MOTES 12
+#define IRIS_MOTE_DRIFT_MASK 0x1f
 #define IRIS_STREAKS 15
 #define IRIS_STREAK_LENGTH 10
 /// Iris herself, RobedGoddessTiles as a 4 x 4 grid of 32x32 sprites.
@@ -591,6 +616,23 @@ struct StripQuad;
 #define IRIS_GODDESS_ROWS 4
 #define IRIS_GODDESS_SPRITES (IRIS_GODDESS_COLUMNS * IRIS_GODDESS_ROWS)
 #define IRIS_GODDESS_TILE 32
+/// A sprite of her 256-colour figure, a byte a pixel.
+#define IRIS_GODDESS_SPRITE_BYTES (IRIS_GODDESS_TILE * IRIS_GODDESS_TILE)
+/// The frame she appears; A or B skips the opening to it.
+#define IRIS_APPEAR_FRAME 176
+/// From her appearance to frame 229 she drops into place on a sine, a 1024th
+/// of a turn a frame and 64 pixels high; this is how far it has carried her
+/// by frame 229, taken off so that she comes to rest there.
+#define IRIS_ARRIVAL_DROP toFIXED(20.4453125)
+/// The opening's streaks rise until their heads reach this row.
+#define IRIS_STREAK_TOP 59
+/// The sounds at the frames of gIris_PsynergySoundFrames,
+/// gIris_DoorSoundFrames and gIris_PowerUpSoundFrames.
+#define IRIS_PSYNERGY_SOUNDS 11
+#define IRIS_DOOR_SOUNDS 5
+#define IRIS_POWER_UP_SOUNDS 6
+/// The enable bit of DMA 3's control, read with its count as one word.
+#define DMA3_BUSY (DMA_ENABLE << 16)
 /// The 128 background colours the scene fades (entries 96 to 223).
 #define IRIS_FADE_COLORS 128
 
@@ -884,7 +926,7 @@ void BattleEffect_RunIris(struct BattleEffectParams *args) {
         if (petals->frames[i] >= IRIS_PETAL_FRAMES)
           petals->frames[i] = 0;
         objects[i]->image.tile = petals->tiles[petals->frames[i]];
-        petals->life[i] -= 0x100;
+        petals->life[i] -= IRIS_PETAL_FRAME;
       }
     }
   }
@@ -914,7 +956,7 @@ void BattleEffect_RunIris(struct BattleEffectParams *args) {
 
     for (i = 0; i != IRIS_MOTES; i++) {
       if (work->particles[i].variant != 0) {
-        s32 n = work->particles[i].variant & 15;
+        s32 n = work->particles[i].variant & IRIS_MOTE_SIZE;
         s32 px = FIXEDtoINT(work->particles[i].x);
         s32 py = FIXEDtoINT(work->particles[i].y);
         s32 offset = 0;
@@ -924,25 +966,25 @@ void BattleEffect_RunIris(struct BattleEffectParams *args) {
           work->particles[i].variant = 0;
           continue;
         }
-        if (work->particles[i].variant & 16) {
+        if (work->particles[i].variant & IRIS_MOTE_FADING) {
           s32 age = frame - work->particles[i].z;
 
-          if (age > 32)
-            offset = (age - 32) * MOTE_SET_BYTES;
+          if (age > IRIS_MOTE_FADE_AGE)
+            offset = (age - IRIS_MOTE_FADE_AGE) * MOTE_SET_BYTES;
           if (offset == IRIS_MOTE_FADES * MOTE_SET_BYTES) {
             work->particles[i].variant = 0;
             continue;
           }
         }
-        if (work->particles[i].variant & 256) {
+        if (work->particles[i].variant & IRIS_MOTE_GLOWING) {
           void *verts = Heap_AllocEwram(32);
           struct RenderModel *model = Render_AllocateModelList(1);
           s32 age;
 
           offset = 0;
           age = frame - work->particles[i].z;
-          if (age > 24)
-            offset = (age - 24) * IRIS_TEXTURE_BYTES;
+          if (age > IRIS_GLOW_FADE_AGE)
+            offset = (age - IRIS_GLOW_FADE_AGE) * IRIS_TEXTURE_BYTES;
           texture.logWidth = 5;
           texture.logHeight = 6;
           texture.pixels = work->sheet + IRIS_TEXTURES + offset;
@@ -963,7 +1005,7 @@ void BattleEffect_RunIris(struct BattleEffectParams *args) {
           Render_DrawModelList(model);
           Heap_Release(model);
           Heap_Release(verts);
-          if (offset == 7 * IRIS_TEXTURE_BYTES)
+          if (offset == (IRIS_GLOW_TEXTURES - 1) * IRIS_TEXTURE_BYTES)
             work->particles[i].variant = 0;
         } else {
           ((DrawRectangle)draw[0])(
@@ -1023,7 +1065,7 @@ void BattleEffect_RunIris(struct BattleEffectParams *args) {
   BattleEffect_ConfigureEffectDisplay();
   PLTT_BACKDROP = 0;
   BG_PLTT_COLOR(0, 1) = 0;
-  EFFECT_START_TRANSFER(work, CANVAS_COPY, 75);
+  EFFECT_START_TRANSFER(work, CANVAS_COPY, CANVAS_FADE_THREE_QUARTERS);
   REG_DISPCNT = EFFECT_DISPCNT;
   REG_BG2CNT = BGCNT_CHAR_BASE(1) | BGCNT_256_COLORS | BGCNT_SCREEN_BASE(7);
   REG_BG2PA = Q_8_8(0.5);
@@ -1031,8 +1073,7 @@ void BattleEffect_RunIris(struct BattleEffectParams *args) {
   REG_BLDCNT = BLDCNT_TGT1_BG2 | BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_ALL;
   Iris_WipeScreen(0, 4, Iris_ChangeBackdrop);
   IWRAM_FILL_WORDS(canvas, CANVAS_BYTES, 0);
-  while (((volatile struct DmaRegisters *)REG_DMA3)->control &
-         (DMA_ENABLE << 16)) {
+  while (((volatile struct DmaRegisters *)REG_DMA3)->control & DMA3_BUSY) {
   }
   EFFECT_PRESENT_CANVAS(work);
   REG_BG2PA = Q_8_8(0.5);
@@ -1067,11 +1108,11 @@ void BattleEffect_RunIris(struct BattleEffectParams *args) {
   Matrix_Initialize();
 
   for (;;) {
-    motesMask = 31;
+    motesMask = IRIS_MOTE_DRIFT_MASK;
     // A or B: skips the opening, or the rest of the scene.
     if (gInput.repeat & (KEY_A | KEY_B)) {
-      if (frame <= 175) {
-        frame = 176;
+      if (frame < IRIS_APPEAR_FRAME) {
+        frame = IRIS_APPEAR_FRAME;
       } else if ((u32)(frame - 177) <= 268) {
         REG_BLDALPHA = EFFECT_BLEND_ADD;
         IWRAM_FILL_WORDS(canvas, CANVAS_BYTES,
@@ -1099,15 +1140,15 @@ void BattleEffect_RunIris(struct BattleEffectParams *args) {
 
     if (frame == 0)
       Sound_PlayFar(SE_CURSE_FALL);
-    for (i = 0; i != 11; i++)
+    for (i = 0; i != IRIS_PSYNERGY_SOUNDS; i++)
       if (frame == gIris_PsynergySoundFrames[i])
         Sound_PlayFar(SE_PSYNERGY_START);
     if (frame == 175)
       Sound_PlayFar(SE_POWER_UP);
-    for (i = 0; i != 5; i++)
+    for (i = 0; i != IRIS_DOOR_SOUNDS; i++)
       if (frame == gIris_DoorSoundFrames[i])
         Sound_PlayFar(SE_MERCURY_LIGHTHOUSE_DOOR_OPEN);
-    for (i = 0; i != 6; i++)
+    for (i = 0; i != IRIS_POWER_UP_SOUNDS; i++)
       if (frame == gIris_PowerUpSoundFrames[i])
         Sound_PlayFar(SE_POWER_UP);
     if (frame == 369)
@@ -1149,14 +1190,14 @@ void BattleEffect_RunIris(struct BattleEffectParams *args) {
       draw[1] = Ram_HeapSlots->ramCodePaired;
       for (i = 0; i != IRIS_STREAKS; i++) {
         if (!(frame & 1)) {
-          for (j = 9; j != 0; j--) {
+          for (j = IRIS_STREAK_LENGTH - 1; j != 0; j--) {
             STREAK(i, j).x = STREAK(i, j - 1).x;
             STREAK(i, j).y = STREAK(i, j - 1).y;
           }
         }
         if (frame >= i * 8 + 24) {
           struct IrisPoint *s = streaks[i];
-          if (HALF(s, 3) > 59) {
+          if (HALF(s, 3) > IRIS_STREAK_TOP) {
             s32 size;
 
             s->x += Trig_Sin(s->angle) * 3 / 2;
@@ -1188,7 +1229,7 @@ void BattleEffect_RunIris(struct BattleEffectParams *args) {
               s32 r = RGB_RED(c);
 
               r += 1;
-              *fade++ = (b + 1) << 10 | (g + 1) << 5 | r;
+              *fade++ = RGB(r, g + 1, b + 1);
             }
           }
         }
@@ -1236,7 +1277,7 @@ void BattleEffect_RunIris(struct BattleEffectParams *args) {
     }
 
     // Iris appears: her sixteen sprites, the petals and the first motes.
-    if (frame == 176) {
+    if (frame == IRIS_APPEAR_FRAME) {
       u8 *colors;
       struct VramCacheEntry *table;
 
@@ -1247,39 +1288,45 @@ void BattleEffect_RunIris(struct BattleEffectParams *args) {
       BattleBackground_LoadFar(BATTLE_BACKGROUND_FIXED,
                                RESOURCE_SUNSET_BACKDROP, 0);
       colors = Resource_GetTableEntry(RESOURCE_ROBED_GODDESS_TILES);
-      Dma_Set(colors, (void *)OBJ_PLTT, DMA_COPY_WORDS(128), REG_DMA3);
-      colors += 512;
+      Dma_Set(colors, (void *)OBJ_PLTT, DMA_COPY_WORDS(OBJ_PLTT_SIZE / 4),
+              REG_DMA3);
+      colors += OBJ_PLTT_SIZE;
       Decompress_TaggedLz(colors, tileBuffer);
       tiles = gIris_TileBuffer;
       for (i = 0; i != IRIS_GODDESS_SPRITES; i++) {
-        struct Sprite *obj = EffectSprite_CreateWithTiles(
-            32, 32, OBJ_SIZE_32X32 | OBJ_256_COLORS, 0);
+        struct Sprite *obj =
+            EffectSprite_CreateWithTiles(IRIS_GODDESS_TILE, IRIS_GODDESS_TILE,
+                                         OBJ_SIZE_32X32 | OBJ_256_COLORS, 0);
 
         work->sprites[i] = obj;
         obj->image.priority = 1;
-        Dma_Set(tiles + i * 1024, (void *)OBJ_TILES(obj), DMA_COPY_WORDS(256),
-                REG_DMA3);
+        Dma_Set(tiles + i * IRIS_GODDESS_SPRITE_BYTES, (void *)OBJ_TILES(obj),
+                DMA_COPY_WORDS(IRIS_GODDESS_SPRITE_BYTES / 4), REG_DMA3);
       }
       colors = Resource_GetTableEntry(RESOURCE_PINK_PETALS_TILES);
-      IWRAM_FILL_WORDS((void *)&OBJ_PLTT_COLOR(15, 0), 32, -1);
-      colors += 32;
+      // The petals are white: their palette is filled, not loaded.
+      IWRAM_FILL_WORDS((void *)&OBJ_PLTT_COLOR(IRIS_PETAL_PALETTE, 0),
+                       PALETTE_BANK_BYTES, -1);
+      colors += PALETTE_BANK_BYTES;
       Decompress_TaggedLz(colors, work->sheet);
       table = gVramCacheEntries;
       for (i = 0; i != IRIS_PETAL_FRAMES; i++) {
         struct Sprite *obj = EffectSprite_CreateWithTiles(
-            16, 16, OBJ_SIZE_16X16, OBJ_PALETTE(15));
+            IRIS_PETAL_SIZE, IRIS_PETAL_SIZE, OBJ_SIZE_16X16,
+            OBJ_PALETTE(IRIS_PETAL_PALETTE));
 
         objects[i] = obj;
         obj->image.priority = 1;
         petals->tiles[i] = obj->image.tile;
         petals->frames[i] = i;
-        Dma_Set(work->sheet + i * 128,
+        Dma_Set(work->sheet + i * IRIS_PETAL_BYTES,
                 (void *)(OBJ_VRAM0 + table[obj->slot].offset),
-                DMA_COPY_WORDS(32), REG_DMA3);
+                DMA_COPY_WORDS(IRIS_PETAL_BYTES / 4), REG_DMA3);
       }
       for (; i != IRIS_PETALS; i++) {
-        struct Sprite *obj =
-            EffectSprite_Acquire(16, 16, OBJ_SIZE_16X16, OBJ_PALETTE(15));
+        struct Sprite *obj = EffectSprite_Acquire(
+            IRIS_PETAL_SIZE, IRIS_PETAL_SIZE, OBJ_SIZE_16X16,
+            OBJ_PALETTE(IRIS_PETAL_PALETTE));
 
         objects[i] = obj;
         Dma_Set(objects[0], obj, DMA_COPY_WORDS(6), REG_DMA3);
@@ -1300,12 +1347,12 @@ void BattleEffect_RunIris(struct BattleEffectParams *args) {
       }
       Resource_LoadAndDecompress(RESOURCE_PARTICLE_SPRITES_A, work->sheet, 0,
                                  0);
-      for (i = 0; i != 6; i++) {
+      for (i = 0; i != IRIS_FIRST_MOTES / 2; i++) {
         work->particles[i].x = INTtoFIXED(Random16() % 15) + toFIXED(33);
         work->particles[i].y = INTtoFIXED(Random16() % 15) + toFIXED(57);
         work->particles[i].velocityX = -(Random16() & motesMask) << 12;
       }
-      for (; i != 12; i++) {
+      for (; i != IRIS_FIRST_MOTES; i++) {
         work->particles[i].x = INTtoFIXED(Random16() % 15) + toFIXED(81);
         work->particles[i].y = INTtoFIXED(Random16() % 15) + toFIXED(57);
         work->particles[i].velocityX = (Random16() & motesMask) << 12;
@@ -1320,7 +1367,8 @@ void BattleEffect_RunIris(struct BattleEffectParams *args) {
       if (frame > 350) {
         u16 *pal = (u16 *)OBJ_PLTT;
 
-        for (i = 0; i != 255; i++) {
+        // Every sprite colour but the last steps toward white.
+        for (i = 0; i != OBJ_PLTT_SIZE / 2 - 1; i++) {
           s32 c = *pal;
           s32 r = RGB_LEVEL_MAX;
           s32 g;
@@ -1345,7 +1393,8 @@ void BattleEffect_RunIris(struct BattleEffectParams *args) {
         else if (frame > 365)
           lift = ((366 - frame) * 5 << 17) + toFIXED(64);
         if (frame <= 229)
-          lift = (Trig_Sin((frame << 6) - 11264) << 6) - 0x147200;
+          lift = (Trig_Sin((frame << 6) - (IRIS_APPEAR_FRAME << 6)) << 6) -
+                 IRIS_ARRIVAL_DROP;
         for (j = 0; j != IRIS_GODDESS_ROWS; j++) {
           for (column = 0; column != IRIS_GODDESS_COLUMNS; column++) {
             pos[0] = toFIXED(72) + column * toFIXED(IRIS_GODDESS_TILE);
@@ -1414,7 +1463,7 @@ void BattleEffect_RunIris(struct BattleEffectParams *args) {
             canvas, work->sheet + gBattleEffect_MotePictures[3],
             (FIXEDtoINT(px)) + 58, (FIXEDtoINT(py * 2)) + 48, 4, 8);
       }
-      for (i = 0; i != 12; i++) {
+      for (i = 0; i != IRIS_FIRST_MOTES; i++) {
         ((DrawRectangle)draw[0])(canvas,
                                  work->sheet + gBattleEffect_MotePictures[1],
                                  (FIXEDtoINT(work->particles[i].x)) - 2,
@@ -1423,7 +1472,7 @@ void BattleEffect_RunIris(struct BattleEffectParams *args) {
       }
     }
     if ((u32)(frame - 179) <= 31)
-      REG_BLDALPHA = (210 - frame) >> 1 | 0x1000;
+      REG_BLDALPHA = EFFECT_BLEND_CANVAS((210 - frame) >> 1);
 
     // The drops: the motes' fading sets, the drops' pictures and the spray's
     // column.
@@ -1452,7 +1501,7 @@ void BattleEffect_RunIris(struct BattleEffectParams *args) {
           }
         }
       }
-      for (i = 0; i != 8; i++) {
+      for (i = 0; i != IRIS_DROP_PICTURES; i++) {
         BattleEffect_DrawShadedCirclesMirrored(
             work->sheet + IRIS_DROPS + i * PICTURE_BYTES(IRIS_DROP),
             IRIS_DROP_WIDTH, FIXED_ONE - i * (FIXED_ONE / IRIS_DROP_PICTURES));
@@ -1464,18 +1513,18 @@ void BattleEffect_RunIris(struct BattleEffectParams *args) {
       for (i = 0; i != IRIS_PETALS; i++)
         petals->life[i] = 0;
       Resource_LoadAndDecompress(RESOURCE_PARTICLE_SPRITES_A, sprites, 0, 0);
-      for (i = 0; i != 32; i++)
-        for (j = 0; j != 8; j++)
+      for (i = 0; i != IRIS_SPRAY_HEIGHT; i++)
+        for (j = 0; j != IRIS_SPRAY_WIDTH; j++)
           sprites[IRIS_SPRAY + i * IRIS_SPRAY_WIDTH + j] = gIris_LineShades[j];
       dst = sprites;
       for (i = 0; i != 2; i++) {
-        for (j = 0; j != 3; j++) {
+        for (j = 0; j != IRIS_RING_FADES; j++) {
           u8 *src =
               work->sheet + gBattleEffect_MotePictures[gIris_MoteSizes[i] - 1];
 
           for (m = 0; m != *(gIris_MoteSizes + i) * *(gIris_MoteSizes + i) * 2;
                m++) {
-            s32 v = *src - j * 16;
+            s32 v = *src - j * IRIS_RING_FADE_STEP;
 
             if (v < 0)
               v = 0;
@@ -1485,11 +1534,11 @@ void BattleEffect_RunIris(struct BattleEffectParams *args) {
           }
         }
       }
-      for (j = 0; j != 8; j++) {
-        u8 *src = work->sheet + gBattleEffect_MotePictures[1];
+      for (j = 0; j != IRIS_DOT_FADES; j++) {
+        u8 *src = work->sheet + gBattleEffect_MotePictures[IRIS_DOT_WIDTH - 1];
 
-        for (m = 0; m != 8; m++) {
-          s32 v = *src - j * 8;
+        for (m = 0; m != PICTURE_BYTES(IRIS_DOT); m++) {
+          s32 v = *src - j * IRIS_DOT_FADE_STEP;
 
           if (v < 0)
             v = 0;
@@ -1515,7 +1564,7 @@ void BattleEffect_RunIris(struct BattleEffectParams *args) {
             for (i = 0; i != 6; i++) {
               s32 s = FindFreePetal();
 
-              petals->life[s] = 0x7900;
+              petals->life[s] = 121 * IRIS_PETAL_FRAME;
               petals->x[s] = gIris_SplashX[j] << 17;
               petals->y[s] = INTtoFIXED(gIris_SplashY[j]) + toFIXED(32);
               petals->vx[s] = ((Random16() & 31) - 16) << 12;
@@ -1801,7 +1850,7 @@ void BattleEffect_RunIris(struct BattleEffectParams *args) {
           if (s != -1) {
             s32 r = Random16() & 127;
 
-            petals->life[s] = -0x7c00;
+            petals->life[s] = -124 * IRIS_PETAL_FRAME;
             petals->x[s] = (leftSpans.spans[(r + 1) >> 5].left +
                             Random16() % leftSpans.spans[(r + 1) >> 5].width)
                            << 16;
@@ -1831,7 +1880,7 @@ void BattleEffect_RunIris(struct BattleEffectParams *args) {
           if (s != -1) {
             s32 r = Random16() & 127;
 
-            petals->life[s] = -0x7c00;
+            petals->life[s] = -124 * IRIS_PETAL_FRAME;
             petals->x[s] = (rightSpans.spans[(r + 1) >> 5].left +
                             Random16() % rightSpans.spans[(r + 1) >> 5].width)
                            << 16;
@@ -2070,7 +2119,7 @@ void BattleEffect_RunIris(struct BattleEffectParams *args) {
               Iwram_MulFX((spin + 2) << 15, Trig_Sin(TRIG_TURN * 19 / 32));
           work->particles[n].velocityY =
               -Iwram_MulFX((spin + 2) << 15, Trig_Cos(TRIG_TURN * 19 / 32));
-          work->particles[n].variant = (Random16() & 3) | 16;
+          work->particles[n].variant = (Random16() & 3) | IRIS_MOTE_FADING;
         }
         n = FindFreeParticle();
         if (n != -1) {
@@ -2080,7 +2129,8 @@ void BattleEffect_RunIris(struct BattleEffectParams *args) {
           work->particles[n].velocityX = -((Random16() & 15) << 13);
           work->particles[n].velocityY = (Random16() & 15) << 14;
           work->particles[n].velocityZ = toFIXED(1) / 2;
-          work->particles[n].variant = ((Random16() & 3) + 1) | 0x110;
+          work->particles[n].variant =
+              ((Random16() & 3) + 1) | IRIS_MOTE_GLOWING | IRIS_MOTE_FADING;
         }
       }
     }
@@ -2122,8 +2172,7 @@ void BattleEffect_RunIris(struct BattleEffectParams *args) {
   HeapSlot_Release(HEAP_SLOT_RAM_CODE);
   Iris_RestoreBattle();
   IWRAM_FILL_WORDS(canvas, CANVAS_BYTES, 0);
-  while (((volatile struct DmaRegisters *)REG_DMA3)->control &
-         (DMA_ENABLE << 16)) {
+  while (((volatile struct DmaRegisters *)REG_DMA3)->control & DMA3_BUSY) {
   }
   EFFECT_PRESENT_CANVAS(work);
   REG_BG2PA = Q_8_8(0.5);

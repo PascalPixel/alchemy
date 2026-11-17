@@ -53,8 +53,6 @@ void Colosso_PlaceFriendsAtCheeringSpots(void) {
 /// camera follows, with full HP and PP and no poison.
 void Colosso_ControlCharacterAlone(s32 id) {
   struct Unit *unit;
-  s32 v;
-  s32 t;
 
   Party_RemoveMember(ISAAC);
   Party_RemoveMember(GARET);
@@ -68,48 +66,30 @@ void Colosso_ControlCharacterAlone(s32 id) {
   unit->hp = unit->hpMax;
   unit->pp = unit->ppMax;
   unit->poison = 0;
-  v = (unit->hp << 14) / unit->hpMax;
-  t = 1 << 14;
-  if (v <= 1 << 14) {
-    t = 0;
-    if (v >= 0)
-      t = v;
-  }
-  unit->hpGauge = t;
-  if ((u16)t == 0 && unit->hp != 0) {
-    unit->hpGauge = 1;
-  }
-  v = (unit->pp << 14) / unit->ppMax;
-  t = 1 << 14;
-  if (v <= 1 << 14) {
-    t = 0;
-    if (v >= 0)
-      t = v;
-  }
-  unit->ppGauge = t;
-  if ((u16)t == 0 && unit->pp != 0) {
-    unit->ppGauge = 1;
-  }
+  Unit_UpdateGauges(unit);
   Party_ClearUnusableShortcuts();
 }
 
+/// The trigger each match scene raises for Colosso_TakePlaceForMatch.
+#define COLOSSO_TAKE_PLACE_TRIGGER 99
+
 /// A task while a friend looks around the stages alone (the visit to
 /// lend a hand): when the Psynergy request names that friend and
-/// FLAG_PSYNERGY_TARGET is set, raise trigger 99, Colosso_TakePlaceForMatch.
+/// FLAG_PSYNERGY_TARGET is set, raise COLOSSO_TAKE_PLACE_TRIGGER.
 void Colosso_RaiseTakePlaceOnPsynergy(void) {
   struct FieldWork *work = gFieldWork;
   s32 selection = gMainRoutineWork.leaderActorId;
 
-  if (selection != 0 && (work->psynergy >> 10) == selection &&
+  if (selection != 0 && (work->psynergy >> ACT_UNIT_SHIFT) == selection &&
       GameFlag_Get(FLAG_PSYNERGY_TARGET) != 0) {
     u16 *raised = (u16 *)&work->raisedTrigger;
-    s32 trigger = 99;
+    s32 trigger = COLOSSO_TAKE_PLACE_TRIGGER;
 
     *raised = trigger;
   }
 }
 
-/// Raised trigger 99: the nearest actor with animation 165 level with
+/// COLOSSO_TAKE_PLACE_TRIGGER: the nearest actor with animation 165 level with
 /// or below the friend on the map calls the warriors to their places, and the
 /// friend's cell becomes their place to cheer from. "The match is about to
 /// begin. Please take your places." The next friend then looks around, or,

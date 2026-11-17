@@ -167,6 +167,8 @@ enum DisplayControl {
 /// of BLEND_WEIGHT_MAX.
 #define BLEND_ALPHA(top, bottom) ((top) | ((bottom) << 8))
 #define REG_BLDY (*(volatile u16 *)0x04000054) ///< fade level, 0 to 16
+/// REG_BLDY's whole fade: the targets drawn all white, or all black.
+#define BLEND_FADE_MAX 16
 
 /// Screen block 7: BG2's affine map of a battle effect's canvas, a byte a
 /// tile (EFFECT_WRITE_CANVAS_MAP_ROW).

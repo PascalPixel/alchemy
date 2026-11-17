@@ -35,5 +35,10 @@ STATIC_ASSERT(offsetof(struct LineScrollWork, freqX) == 3848);
   (*(struct LineScrollWork **)&gHeapSlots[HEAP_SLOT_LINE_SCROLL])
 /// One cycle of sine in 256 entries, 4.12 fixed point (4096 at the peak).
 extern const s16 gLineScroll_WaveSine[];
+/// The entries of a wave's sine, one cycle.
+#define LINE_SCROLL_WAVE_ENTRIES 256
+/// A wave's offset is its sine entry times its 16.16 amplitude, over this: an
+/// amplitude of FIXED_ONE swings 16 pixels each way.
+#define LINE_SCROLL_WAVE_SCALE 256
 
 #endif

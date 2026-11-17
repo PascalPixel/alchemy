@@ -57,10 +57,6 @@
 /// then the upper layer's.
 #define WORLD_MAP_COLLISION_TILE_BYTES 8
 #define WORLD_MAP_COLLISION_TILES 256
-/// The world map's two tile maps, of 64 by 64 one-byte tiles: BG3's, the lower
-/// layer, and BG2's, the upper (WorldMap_ShowBg1FromBuffer).
-#define WORLD_MAP_LOWER_TILE_MAP BG_SCREEN_BLOCK(8)
-#define WORLD_MAP_UPPER_TILE_MAP BG_SCREEN_BLOCK(10)
 
 /// A map cell shape's terrain kind, the low four bits of its first byte, as The
 /// Broken Seal names it.
@@ -1297,8 +1293,10 @@ s32 WorldMap_GetCollision(struct WorldPosition *position) {
   u8 packedCollisions;
   u32 result;
 
-  // Coordinates in 2-pixel units.
-  collisionCell = (((halfPixelY / 8) & 63) << 6) + ((halfPixelX / 8) & 63);
+  // Coordinates in 2-pixel units, a tile map's tile 8 of them across.
+  collisionCell = ((halfPixelY / 8) & (WORLD_MAP_TILE_MAP_WIDTH - 1)) *
+                      WORLD_MAP_TILE_MAP_WIDTH +
+                  ((halfPixelX / 8) & (WORLD_MAP_TILE_MAP_WIDTH - 1));
   pixelOffset = (((halfPixelY / 2) & 3) << 1) + ((halfPixelX / 4) & 1);
 
   // The upper layer's collision tiles follow the lower layer's.

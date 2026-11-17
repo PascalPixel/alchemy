@@ -5,11 +5,8 @@
 
 #include "battle_internal.h"
 
-/// Actor.targetX and targetZ while the actor has no move target.
-#define NO_MOVE_TARGET 0x80000000
-
-// The motion values below are per frame; verticalMotionStrength is the gravity
-// taken from a hop's speed.
+// The motion values below are per frame; gravity is taken from a hop's speed
+// each frame.
 
 /// Sends unitId back to its spot, landing exactly there (snapToTarget), and
 /// turns it to face the centre at once.
@@ -193,8 +190,8 @@ void BattleMotion_ApproachTarget(s32 unitId, s32 targetId, s32 travelDivisor,
   actor->speedLimit = speed;
   actor->snapToTarget = 1;
 
-  // The test is for a floating unit (ACTOR_FLOATS); both paths store the same
-  // hop.
+  // DEAD: the store under ACTOR_FLOATS is overwritten at once; the ROM keeps
+  // the test and its store.
   if (actor->motionFlags & ACTOR_FLOATS)
     actor->velocityY = initialVelocityY;
   actor->velocityY = initialVelocityY;
@@ -235,19 +232,19 @@ void BattleMotion_ApplyPairMidpoint(s32 firstId, s32 secondId) {
   second = secondSlot->actor;
 
   firstX = first->targetX;
-  if (firstX == NO_MOVE_TARGET) {
+  if (firstX == ACTOR_NO_TARGET) {
     firstX = first->x.fixed;
   }
   firstZ = first->targetZ;
-  if (firstZ == NO_MOVE_TARGET) {
+  if (firstZ == ACTOR_NO_TARGET) {
     firstZ = first->z.fixed;
   }
   secondX = second->targetX;
-  if (secondX == NO_MOVE_TARGET) {
+  if (secondX == ACTOR_NO_TARGET) {
     secondX = second->x.fixed;
   }
   secondZ = second->targetZ;
-  if (secondZ == NO_MOVE_TARGET) {
+  if (secondZ == ACTOR_NO_TARGET) {
     secondZ = second->z.fixed;
   }
 
@@ -255,7 +252,7 @@ void BattleMotion_ApplyPairMidpoint(s32 firstId, s32 secondId) {
   position.y = 0;
   position.z = (firstZ + secondZ) / 2;
 
-  BattleMotion_MidpointNoOp(&position, 4096);
+  BattleMotion_MidpointNoOp(&position, toFIXED(1) / 16);
 }
 
 /// Plays the hit flash on unit id's sprite and waits ten frames. Only a
@@ -292,14 +289,20 @@ s32 BattleMotion_ProjectScaledPosition(s32 unitId, s32 *projected) {
   BattleCamera_ApplyTransform();
   projectionScale = Matrix_ProjectPoint(&actor->x.fixed, projected);
   spriteScale = Iwram_MulFX(projectionScale, record->scale);
-  projectionScale =
-      Iwram_MulFX(spriteScale, (s32)BattleUnit_GetEffectHeight(unitId) >> 16);
+  projectionScale = Iwram_MulFX(
+      spriteScale, FIXEDtoINT((s32)BattleUnit_GetEffectHeight(unitId)));
   projected[1] -= projectionScale;
   return 0;
 }
 
-/// Projects the point above a unit onto the screen, 24 pixels up for a small
-/// enemy and 48 for others. Returns 0.
+/// The pixels above a unit where its battle effects play when its class gives
+/// none: a small enemy's, and everyone else's.
+#define EFFECT_HEIGHT_SMALL 24
+#define EFFECT_HEIGHT_LARGE 48
+
+/// Projects the point above a unit onto the screen: the target cursor's place,
+/// EFFECT_HEIGHT_SMALL up for a small enemy and EFFECT_HEIGHT_LARGE for others,
+/// scaled as the sprite is. Returns 0.
 s32 BattleMotion_ProjectConditionalPosition(s32 unitId, s32 *projected) {
   struct Actor *actor = BattleObject_Get(unitId)->actor;
   struct Sprite *record = GetMotionRecord(actor, 0);
@@ -310,15 +313,16 @@ s32 BattleMotion_ProjectConditionalPosition(s32 unitId, s32 *projected) {
   projectedHeight = Matrix_ProjectPoint(&actor->x.fixed, projected);
   spriteScale = Iwram_MulFX(projectedHeight, record->scale);
   if (BattleSprite_IsSmall(Unit_GetFar(unitId)->id) != 0)
-    projectedHeight = Iwram_MulFX(spriteScale, 24);
+    projectedHeight = Iwram_MulFX(spriteScale, EFFECT_HEIGHT_SMALL);
   else
-    projectedHeight = Iwram_MulFX(spriteScale, 48);
+    projectedHeight = Iwram_MulFX(spriteScale, EFFECT_HEIGHT_LARGE);
   projected[1] -= projectedHeight;
   return 0;
 }
 
-/// Returns the height above a unit where its battle effects play: its class's
-/// own, else 24 pixels for a small enemy and 48 for others.
+/// Returns the height above a unit where its battle effects play, in 16.16
+/// pixels: its class's own, else EFFECT_HEIGHT_SMALL for a small enemy and
+/// EFFECT_HEIGHT_LARGE for others.
 s32 BattleUnit_GetEffectHeight(s32 unitId) {
   u32 height;
   u8 classId;
@@ -328,10 +332,13 @@ s32 BattleUnit_GetEffectHeight(s32 unitId) {
   if (height == 0) {
     classId = Unit_GetFar(unitId)->id;
     if (BattleSprite_IsSmall(classId) != 0) {
-      height = toFIXED(24);
+      height = toFIXED(EFFECT_HEIGHT_SMALL);
     } else {
-      height = toFIXED(48);
+      height = toFIXED(EFFECT_HEIGHT_LARGE);
     }
   }
   return height;
 }
+
+#undef EFFECT_HEIGHT_SMALL
+#undef EFFECT_HEIGHT_LARGE

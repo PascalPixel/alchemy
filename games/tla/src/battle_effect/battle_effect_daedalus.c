@@ -1,27 +1,44 @@
 /// @file
-/// A symmetrical burst over the target, and the Daedalus summon.
+/// The mirrored wall of Berserk, Spasm, Recovery and Sack, and the summon
+/// Daedalus with its second strike.
 // Part of battle_effect.c.
 
 #include "battle_effect_internal.h"
 #include "sounds.h"
 
-#define BURST_FRAMES 48
-#define BURST_DRAW_FRAMES 28
+#define MIRRORED_WALL_FRAMES 48 ///< frames of the wall
+#define MIRRORED_WALL_DRAW_FRAMES 28
 
-/// The three 64x64 cels of the burst, built in the sheet's first 0x3000
-/// bytes; the picture loads behind them.
+/// The wall's three 64x64 cels, each a half wall and its mirror image, built
+/// at the start of the sheet; EarthWallSheet decodes behind them, at
+/// PICTURE_OFFSET.
 #define CEL_SIZE 4096
 #define PICTURE_OFFSET 16384
 
-/// Copies a half-picture of width by height pixels into the bottom middle of
-/// a 64x64 cel, once as it is and once mirrored, so the cel is symmetrical.
-#define MIRROR_HALF(cel, half, width, height)                                  \
-  for (y = 0; y != (height); y++) {                                            \
-    for (x = 0; x != (width); x++) {                                           \
-      work->sheet[(cel) * CEL_SIZE + (y + 64 - (height)) * 64 + 32 - (width) + \
-                  x] = work->sheet[(half) + y * (width) + x];                  \
-      work->sheet[(cel) * CEL_SIZE + (y + 64 - (height)) * 64 + 31 + (width) - \
-                  x] = work->sheet[(half) + y * (width) + x];                  \
+/// EarthWallSheet's three half walls of flame, each taller than the last
+/// (earth_wall_11.png to _13.png): where each begins in the decoded sheet, and
+/// its size. The Broken Seal's mirrored wall draws the same three pictures.
+#define EARTH_WALL_LOW 2702
+#define EARTH_WALL_LOW_WIDTH 17
+#define EARTH_WALL_LOW_HEIGHT 49
+#define EARTH_WALL_MIDDLE 3535
+#define EARTH_WALL_MIDDLE_WIDTH 19
+#define EARTH_WALL_MIDDLE_HEIGHT 55
+#define EARTH_WALL_HIGH 4580
+#define EARTH_WALL_HIGH_WIDTH 20
+#define EARTH_WALL_HIGH_HEIGHT 64
+
+/// Copies half wall `half` into the bottom middle of a 64x64 cel, once as it
+/// is and once mirrored, so the cel is a whole wall.
+#define MIRROR_HALF(cel, half)                                                 \
+  for (y = 0; y != half##_HEIGHT; y++) {                                       \
+    for (x = 0; x != half##_WIDTH; x++) {                                      \
+      work->sheet[(cel) * CEL_SIZE + (y + 64 - half##_HEIGHT) * 64 + 32 -      \
+                  half##_WIDTH + x] =                                          \
+          work->sheet[PICTURE_OFFSET + half + y * half##_WIDTH + x];           \
+      work->sheet[(cel) * CEL_SIZE + (y + 64 - half##_HEIGHT) * 64 + 31 +      \
+                  half##_WIDTH - x] =                                          \
+          work->sheet[PICTURE_OFFSET + half + y * half##_WIDTH + x];           \
     }                                                                          \
   }
 
@@ -41,10 +58,10 @@ void BattleEffect_RunMirroredWall(struct BattleEffectParams *args, s32 mode) {
   BattleEffect_StartCanvasLayer(0);
   Resource_LoadAndDecompress(RESOURCE_EARTH_WALL_SHEET,
                              work->sheet + PICTURE_OFFSET, 1, 1);
-  Iwram_ClearWords(work->sheet, 16384);
-  MIRROR_HALF(0, PICTURE_OFFSET + 2702, 17, 49)
-  MIRROR_HALF(1, PICTURE_OFFSET + 3535, 19, 55)
-  MIRROR_HALF(2, PICTURE_OFFSET + 4580, 20, 64)
+  Iwram_ClearWords(work->sheet, PICTURE_OFFSET);
+  MIRROR_HALF(0, EARTH_WALL_LOW)
+  MIRROR_HALF(1, EARTH_WALL_MIDDLE)
+  MIRROR_HALF(2, EARTH_WALL_HIGH)
   if (mode == MIRRORED_WALL_SACK)
     Iwram_CopyWords((void *)BG_PLTT,
                     Resource_GetTableEntry(RESOURCE_ORANGE_PALETTE_B),
@@ -75,7 +92,7 @@ void BattleEffect_RunMirroredWall(struct BattleEffectParams *args, s32 mode) {
     work->shakeFrames = 32;
   }
 
-  for (frame = 0; frame != BURST_FRAMES; frame++) {
+  for (frame = 0; frame != MIRRORED_WALL_FRAMES; frame++) {
     if (frame == 0) {
       if (mode == MIRRORED_WALL_RECOVERY)
         BattleEffect_TintBattler(args->targets[0], SPRITE_COLOR_WHITE,
@@ -94,7 +111,7 @@ void BattleEffect_RunMirroredWall(struct BattleEffectParams *args, s32 mode) {
       cel = frame / 4;
       if (cel > 2)
         cel = (cel & 1) + 1;
-      if (frame < BURST_DRAW_FRAMES) {
+      if (frame < MIRRORED_WALL_DRAW_FRAMES) {
         vertices = Heap_AllocEwram(32);
         quad = Render_AllocateModelList(1);
         texture.logWidth = 6;
@@ -128,12 +145,12 @@ void BattleEffect_RunMirroredWall(struct BattleEffectParams *args, s32 mode) {
   BattleEffect_EndCanvasLayer();
 }
 
-/// Copies 288 rows of 40 bytes, reducing each horizontal pair to one byte.
-/// The second byte, from the odd column, survives.
-/// stride: source bytes per row; destination uses half as many.
+/// Packs YellowOrbSheet's six pictures to half width, keeping every second
+/// byte, the odd column's. stride: the source's bytes a row; the packed rows
+/// are half as long.
 void BattleEffect_PackTileRows(u8 *src, u8 *dst, s32 stride) {
-  s32 y = 0;
-  s32 h = 288;
+  s32 row = 0;
+  s32 rows = YELLOW_ORB_PICTURES * YELLOW_ORB_HEIGHT;
   s32 offset = 0;
 
   do {
@@ -143,8 +160,8 @@ void BattleEffect_PackTileRows(u8 *src, u8 *dst, s32 stride) {
       dst[offset / 2 + x / 2] = src[offset + x];
     }
     offset += stride;
-    y++;
-  } while (y != h);
+    row++;
+  } while (row != rows);
 }
 
 /// A sprite (struct Sprite) as Daedalus reads it: its attribute 2 fields,
@@ -187,7 +204,42 @@ typedef void (*BlitFunc)(void *, const void *, s32, s32, s32, s32);
   ((CopyFunc)(IwramIrqMain + Iwram_CopyWordsOffset))
 
 #define DECODE_BUFFER Ram_MapCellBuffer
+/// The particles the sky scene and the fall keep in the map cell buffer, after
+/// its first 16384 bytes.
 #define DAEDALUS_PARTICLES ((struct Particle *)(Ram_MapCellBuffer + 16384))
+#define DAEDALUS_PARTICLE_COUNT (DAEDALUS_MISSILE_COUNT * DAEDALUS_TRAIL_LENGTH)
+
+/// The opening's mote copies: DAEDALUS_MOTE_COPIES copies of
+/// ParticleSpritesA's mote DAEDALUS_MOTE, 4 pixels wide and 8 tall, in the
+/// battle sheet's heap slot, the first DAEDALUS_MOTE_DIM_FIRST levels dimmer
+/// than the mote and each next DAEDALUS_MOTE_DIM_STEP more. Nothing in
+/// Daedalus draws them.
+#define DAEDALUS_MOTE 3
+#define DAEDALUS_MOTE_BYTES ((DAEDALUS_MOTE + 1) * (DAEDALUS_MOTE + 1) * 2)
+#define DAEDALUS_MOTE_COPIES 10
+#define DAEDALUS_MOTE_DIM_FIRST 40
+#define DAEDALUS_MOTE_DIM_STEP 4
+
+/// ForestCanopyTiles: two rows of eight 32x32 pictures of treetops, in OBJ
+/// palette CANOPY_PALETTE. Each row is drawn by DAEDALUS_CANOPY_ROW sprites,
+/// the last showing the picture before the first, so the row wraps as it
+/// scrolls.
+#define CANOPY_PALETTE 15
+#define CANOPY_ROWS 2
+#define CANOPY_PICTURES 8
+#define CANOPY_PICTURE_SIZE 32
+#define CANOPY_ROW_BYTES (CANOPY_PICTURES * OBJ_32X32_4BPP_BYTES)
+/// A whole number of rows of pictures, added to a picture's place before the
+/// remainder by CANOPY_PICTURES takes it away again.
+#define CANOPY_WRAP (CANOPY_PICTURES * 8)
+/// The canopy's top in the sky scene. The opening shows it DAEDALUS_CLIMB
+/// pixels higher; as the camera climbs, the sky scene lowers the canopy by
+/// that much and raises the machine twice as far.
+#define CANOPY_Y 132
+#define DAEDALUS_CLIMB 29
+
+/// A sprite's tile number, attribute 2's low ten bits.
+#define OBJ_TILE_MASK 0x3ff
 
 /// Where FlashBurstSheet is decoded in the effect's pictures.
 #define DAEDALUS_FLASH_BURST_PICTURES 1728
@@ -200,21 +252,31 @@ typedef void (*BlitFunc)(void *, const void *, s32, s32, s32, s32);
 #define ROCKET_FLAME_WIDTH 12
 #define ROCKET_FLAME_HEIGHT 24
 
-/// Runs of DAEDALUS_PARTICLES in the first scene: each missile's trail of 32,
-/// the rocket's exhaust flames, the bursts where its shots land, and the
-/// birds that drift across.
-/// The first scene's sprites: two rows of the forest canopy, eight pictures
-/// and a copy of the first in each; the twenty-one 32x32 pieces of the flying
-/// machine (BronzeAutomatonTiles), among them its spinning blade, then the
-/// 32x64 rocket it launches; and the missile with fifteen copies.
-#define DAEDALUS_CANOPY_ROW 9
+/// The sky scene's sprites: the canopy's two rows; the twenty-one 32x32 pieces
+/// of the machine (BronzeAutomatonTiles), among them its launcher, its four
+/// hull plates and its spinning blade; the 32x64 rocket it launches; and the
+/// missile with fifteen copies. The work's first particles keep the canopy
+/// pictures' tile numbers in their variants, row by row as the sprites.
+#define DAEDALUS_CANOPY_ROW (CANOPY_PICTURES + 1)
 #define DAEDALUS_MACHINE 18
 #define DAEDALUS_MACHINE_PIECES 21
+/// BronzeAutomatonTiles' colours, OBJ palette 0 to 223. The first of them all
+/// green is the machine's core, which the sky scene recolours as it glows.
+#define DAEDALUS_MACHINE_COLORS 224
 #define DAEDALUS_BLADE 38
 #define DAEDALUS_ROCKET 39
 #define DAEDALUS_MISSILE 41
 #define DAEDALUS_MISSILE_COPIES 15
+#define DAEDALUS_MISSILE_COUNT (DAEDALUS_MISSILE_COPIES + 1)
+#define DAEDALUS_MISSILE_PALETTE 14
+
+/// Runs of DAEDALUS_PARTICLES in the sky scene: each missile's trail of
+/// DAEDALUS_TRAIL_LENGTH, the flames of the rocket's launch, its exhaust, the
+/// bursts where its shots land, and the birds that drift across. The later
+/// runs share the last missiles' trails.
 #define DAEDALUS_TRAIL_LENGTH 32
+#define DAEDALUS_LAUNCH_FLAMES 312
+#define DAEDALUS_LAUNCH_FLAME_COUNT 16
 #define DAEDALUS_EXHAUST 400
 #define DAEDALUS_EXHAUST_FLAMES 32
 #define DAEDALUS_BURSTS 432
@@ -222,10 +284,10 @@ typedef void (*BlitFunc)(void *, const void *, s32, s32, s32, s32);
 #define DAEDALUS_BIRDS 502
 #define DAEDALUS_BIRD_COUNT 10
 
-/// In the second scene the machine comes apart: the piece that drifts back
-/// and times the missiles, the four lower pieces, the rocket and the blade
-/// each move by a particle of their own, as do the spreading ring and the
-/// sixteen missiles.
+/// In the sky scene the machine comes apart: the launcher on its shoulder,
+/// which flies off and times the missiles, the four hull plates, the rocket and
+/// the blade each move by a particle of their own, as do the spreading ring of
+/// flames and the sixteen missiles.
 #define DAEDALUS_LAUNCHER (DAEDALUS_MACHINE + 13)
 #define DAEDALUS_HULL (DAEDALUS_MACHINE + 16)
 #define DAEDALUS_LAUNCHER_MOTION 20
@@ -235,9 +297,13 @@ typedef void (*BlitFunc)(void *, const void *, s32, s32, s32, s32);
 #define DAEDALUS_RING_MOTION 30
 #define DAEDALUS_MISSILE_MOTIONS 32
 
-/// Daedalus: over a forest the great machine rises into the sky among birds,
-/// turns and fires its rockets, and they fall on the foes in bursts of fire;
-/// then the second scene (BattleEffect_RunDaedalusAlt) plays.
+/// Daedalus: the battle flashes away to a violet sky over a forest. In the sky
+/// scene the bronze machine climbs into view among birds, throws off its
+/// launcher and blade as its sixteen missiles fly, sheds its hull plates, and
+/// its core glows until it sends out a ring of fire and launches its rocket;
+/// A or B skips the scene. Then the battle comes back and the missiles dive
+/// onto the foes in bursts of fire. Its second strike
+/// (BattleEffect_RunDaedalusAlt) comes at the end of the next turn.
 ///
 /// Abilities: Daedalus.
 void BattleEffect_RunDaedalus(struct BattleEffectParams *args) {
@@ -252,29 +318,30 @@ void BattleEffect_RunDaedalus(struct BattleEffectParams *args) {
   struct Scale particleScale;
   u8 *dest;
   s32 frame;
-  u8 *map;
+  u8 *dimMotes;
   struct BattleBackgroundWork *view;
   struct BattleWork *battle;
   FIXED camera;
   FIXED prevCamera;
-  FIXED waveX;
-  s32 waveScroll;
-  FIXED shipY;
-  s32 wavePhase;
+  FIXED canopyX;
+  s32 canopyScroll;
+  // The camera's climb still to come, from -DAEDALUS_CLIMB pixels up to 0.
+  FIXED climb;
+  s32 canopyPhase;
   s32 savedY;
   s32 bgX;
   struct BattleEffectWork *work;
   s32 k;
   s32 i;
   s32 j;
-  // The map rows are 16 words apart; held in a local for its whole life.
-  s32 step = 16;
+  // The mote copies' spacing, in halfwords.
+  s32 step = DAEDALUS_MOTE_BYTES / 2;
   // Reused: the second phase's ring radius, and the 0 the third phase stores.
   s32 radius;
 
   dest = Ram_HeapSlots->battleCanvas;
   work = Ram_HeapSlots->battleEffect;
-  map = Ram_HeapSlots->battleSheet;
+  dimMotes = Ram_HeapSlots->battleSheet;
   view = Ram_HeapSlots->battleBackground;
   battle = Ram_HeapSlots->battleWork;
   BattleEffect_StartCanvasLayer(0);
@@ -285,9 +352,9 @@ void BattleEffect_RunDaedalus(struct BattleEffectParams *args) {
   work->transferMode = CANVAS_COPY;
   Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_VBLANK);
   camera = 0;
-  waveScroll = 0;
-  shipY = -toFIXED(29);
-  wavePhase = 0;
+  canopyScroll = 0;
+  climb = -toFIXED(DAEDALUS_CLIMB);
+  canopyPhase = 0;
   savedY = gBgScroll[1].x;
   bgX = -80;
 
@@ -296,7 +363,7 @@ void BattleEffect_RunDaedalus(struct BattleEffectParams *args) {
       u16 *col;
       s32 n;
       s32 off;
-      u8 *mp;
+      u8 *out;
       s32 k;
       s32 r, g, b;
       s32 v;
@@ -311,14 +378,15 @@ void BattleEffect_RunDaedalus(struct BattleEffectParams *args) {
                                RESOURCE_VIOLET_SKY_BACKDROP, 0);
       for (col = (u16 *)&BG_PLTT_COLOR(6, 0), i = 0;
            i != BATTLE_BACKGROUND_COLORS; i++, col++) {
-        s32 mid;
-        s32 s;
+        s32 green;
+        s32 red;
 
-        s = RGB_RED(*col);
-        mid = RGB_GREEN(*col);
+        // Each colour 4 levels darker, its red and green traded.
+        red = RGB_RED(*col);
+        green = RGB_GREEN(*col);
         b = RGB_BLUE(*col) - 4;
-        g = mid - 4;
-        r = s - 4;
+        g = green - 4;
+        r = red - 4;
         if (g < 0)
           g = 0;
         if (r < 0)
@@ -341,50 +409,54 @@ void BattleEffect_RunDaedalus(struct BattleEffectParams *args) {
       view->busy = 1;
       Resource_LoadAndDecompress(RESOURCE_PARTICLE_SPRITES_A, work->sheet, 0,
                                  0);
-      off = 1792;
-      n = 3;
-      for (j = 0; j != 10; j++) {
+      // The dimmed mote copies, from the work's sheet.
+      off = offsetof(struct BattleEffectWork, sheet);
+      n = DAEDALUS_MOTE;
+      for (j = 0; j != DAEDALUS_MOTE_COPIES; j++) {
         k = j * step;
         i = 0;
-        // v, the loop's value local, first holds the row's byte offset.
+        // v, the loop's value local, first holds the copy's byte offset.
         v = k * 2;
-        mp = (u8 *)(v + (s32)map);
+        out = (u8 *)(v + (s32)dimMotes);
         do {
           v = ((u8 *)work)[gBattleEffect_MotePictures[n] + i + off];
           if (v != 0) {
-            v = v - j * 4 - 40;
+            v = v - j * DAEDALUS_MOTE_DIM_STEP - DAEDALUS_MOTE_DIM_FIRST;
             if (v <= 0)
               v = 1;
           }
-          *mp++ = v;
+          *out++ = v;
           // Mote picture n is n + 1 pixels wide and twice as tall.
         } while (++i != (n + 1) * (n + 1) * 2);
       }
       src = (const u8 *)Resource_GetTableEntry(RESOURCE_FOREST_CANOPY_TILES);
-      Iwram_CopyWords((void *)&OBJ_PLTT_COLOR(15, 0), src, PALETTE_BANK_BYTES);
+      Iwram_CopyWords((void *)&OBJ_PLTT_COLOR(CANOPY_PALETTE, 0), src,
+                      PALETTE_BANK_BYTES);
       src += PALETTE_BANK_BYTES;
       Decompress_TaggedLz(src, work->sheet);
-      for (j = 0; j != 2; j++) {
-        for (i = 0; i != 8; i++) {
+      for (j = 0; j != CANOPY_ROWS; j++) {
+        for (i = 0; i != CANOPY_PICTURES; i++) {
           obj = EffectSprite_CreateWithTiles(32, 32, OBJ_SIZE_32X32,
-                                             OBJ_PALETTE(15));
+                                             OBJ_PALETTE(CANOPY_PALETTE));
           work->sprites[j * DAEDALUS_CANOPY_ROW + i] = obj;
           obj->priority = 1;
           Iwram_CopyWords(
               (void *)(gVramCacheEntries[obj->slot].offset + OBJ_VRAM0),
-              &work->sheet[(j << 12) + i * OBJ_32X32_4BPP_BYTES],
+              &work->sheet[j * CANOPY_ROW_BYTES + i * OBJ_32X32_4BPP_BYTES],
               OBJ_32X32_4BPP_BYTES);
         }
-        obj = EffectSprite_Acquire(32, 32, OBJ_SIZE_32X32, OBJ_PALETTE(15));
-        work->sprites[j * DAEDALUS_CANOPY_ROW + 8] = obj;
-        Iwram_CopyWords(obj, work->sprites[j * DAEDALUS_CANOPY_ROW], 24);
-        for (i = 0; i != 8; i++)
+        obj = EffectSprite_Acquire(32, 32, OBJ_SIZE_32X32,
+                                   OBJ_PALETTE(CANOPY_PALETTE));
+        work->sprites[j * DAEDALUS_CANOPY_ROW + CANOPY_PICTURES] = obj;
+        Iwram_CopyWords(obj, work->sprites[j * DAEDALUS_CANOPY_ROW],
+                        offsetof(struct Sprite, lastNo));
+        for (i = 0; i != CANOPY_PICTURES; i++)
           work->particles[j * DAEDALUS_CANOPY_ROW + i].variant =
               DAEDALUS_SPRITE(j * DAEDALUS_CANOPY_ROW + i)->tile;
       }
       src = (const u8 *)Resource_GetTableEntry(RESOURCE_BRONZE_AUTOMATON_TILES);
-      Iwram_CopyWords((void *)OBJ_PLTT, src, 224 * 2);
-      src += 224 * 2;
+      Iwram_CopyWords((void *)OBJ_PLTT, src, DAEDALUS_MACHINE_COLORS * 2);
+      src += DAEDALUS_MACHINE_COLORS * 2;
       Decompress_TaggedLz(src, DECODE_BUFFER);
       for (i = 0; i != DAEDALUS_MACHINE_PIECES; i++) {
         obj = EffectSprite_CreateWithTiles(32, 32,
@@ -409,10 +481,12 @@ void BattleEffect_RunDaedalus(struct BattleEffectParams *args) {
       Iwram_CopyWords((void *)(gVramCacheEntries[obj->slot].offset + OBJ_VRAM0),
                       DECODE_BUFFER + i * OBJ_32X32_8BPP_BYTES, 32 * 64);
       src = (const u8 *)Resource_GetTableEntry(RESOURCE_MISSILE_TILES);
-      Iwram_CopyWords((void *)&OBJ_PLTT_COLOR(14, 0), src, PALETTE_BANK_BYTES);
+      Iwram_CopyWords((void *)&OBJ_PLTT_COLOR(DAEDALUS_MISSILE_PALETTE, 0), src,
+                      PALETTE_BANK_BYTES);
       src += PALETTE_BANK_BYTES;
       Decompress_TaggedLz(src, DECODE_BUFFER);
-      obj = EffectSprite_CreateWithTiles(16, 8, OBJ_SIZE_16X8, OBJ_PALETTE(14));
+      obj = EffectSprite_CreateWithTiles(16, 8, OBJ_SIZE_16X8,
+                                         OBJ_PALETTE(DAEDALUS_MISSILE_PALETTE));
       obj->priority = 1;
       work->sprites[DAEDALUS_MISSILE] = obj;
       Iwram_CopyWords((void *)(gVramCacheEntries[obj->slot].offset + OBJ_VRAM0),
@@ -423,14 +497,17 @@ void BattleEffect_RunDaedalus(struct BattleEffectParams *args) {
         work->sprites[DAEDALUS_MISSILE + 1 + i] =
             EffectSprite_Acquire(16, 8, OBJ_SIZE_16X8, OBJ_PALETTE(15));
         Iwram_CopyWords(work->sprites[DAEDALUS_MISSILE + 1 + i],
-                        work->sprites[DAEDALUS_MISSILE], 24);
+                        work->sprites[DAEDALUS_MISSILE],
+                        offsetof(struct Sprite, lastNo));
         DAEDALUS_SPRITE(DAEDALUS_MISSILE + 1 + i)->tile =
             DAEDALUS_SPRITE(DAEDALUS_MISSILE)->tile;
         if (i > 6)
           DAEDALUS_SPRITE(DAEDALUS_MISSILE + 1 + i)->priority = 2;
       }
     }
-    if (frame > 27) {
+    // The canopy scrolls by half a pixel a frame; each time it has moved a
+    // whole picture, every sprite takes the picture before its own.
+    if (frame > SUMMON_OPENING_LOAD_FRAME) {
       struct SpritePlacement *posp;
       s32 row;
       struct DaedalusSprite **slot;
@@ -438,15 +515,15 @@ void BattleEffect_RunDaedalus(struct BattleEffectParams *args) {
       scale = gDaedalus_WaveScale;
       pos.groundHeight = 0;
       pos.height = toFIXED(255);
-      waveScroll += toFIXED(1) / 2;
-      waveX = waveScroll + camera;
-      if (waveX > toFIXED(32) - 1) {
-        wavePhase = (wavePhase + 7) % 8;
-        waveX -= toFIXED(32);
-        waveScroll -= toFIXED(32);
+      canopyScroll += toFIXED(1) / 2;
+      canopyX = canopyScroll + camera;
+      if (canopyX > toFIXED(CANOPY_PICTURE_SIZE) - 1) {
+        canopyPhase = (canopyPhase + CANOPY_PICTURES - 1) % CANOPY_PICTURES;
+        canopyX -= toFIXED(CANOPY_PICTURE_SIZE);
+        canopyScroll -= toFIXED(CANOPY_PICTURE_SIZE);
       }
-      for (j = 0; j != 2; j++) {
-        for (i = 0; i != 9; i++) {
+      for (j = 0; j != CANOPY_ROWS; j++) {
+        for (i = 0; i != DAEDALUS_CANOPY_ROW; i++) {
           struct SpriteAttributes *obj;
           s32 v;
 
@@ -454,24 +531,31 @@ void BattleEffect_RunDaedalus(struct BattleEffectParams *args) {
           {
             s32 h;
 
-            k = INTtoFIXED(i * 32) + waveX;
-            h = (j << 5) + 103;
+            k = INTtoFIXED(i * CANOPY_PICTURE_SIZE) + canopyX;
+            h = j * CANOPY_PICTURE_SIZE + CANOPY_Y - DAEDALUS_CLIMB;
             posp->x = k;
             posp->y = INTtoFIXED(h);
           }
-          if (i == 8) {
-            obj = work->sprites[j * DAEDALUS_CANOPY_ROW + 8];
-            v = work->particles[j * 9 + (wavePhase + 71) % 8].variant;
+          if (i == CANOPY_PICTURES) {
+            obj = work->sprites[j * DAEDALUS_CANOPY_ROW + CANOPY_PICTURES];
+            v = work->particles[j * DAEDALUS_CANOPY_ROW +
+                                (canopyPhase + CANOPY_WRAP + CANOPY_PICTURES -
+                                 1) %
+                                    CANOPY_PICTURES]
+                    .variant;
           } else {
-            row = j * 9;
+            row = j * DAEDALUS_CANOPY_ROW;
             k = row;
             k += i;
             obj = work->sprites[k];
-            v = work->particles[row + (wavePhase + 64 + i) % 8].variant;
+            v = work->particles[row + (canopyPhase + CANOPY_WRAP + i) %
+                                          CANOPY_PICTURES]
+                    .variant;
           }
-          obj->tile = v & 0x3ff;
-          if (pos.x > toFIXED(256) - 1)
-            pos.x -= toFIXED(288);
+          obj->tile = v & OBJ_TILE_MASK;
+          // The ninth sprite wraps round to the left of the first.
+          if (pos.x > toFIXED(CANOPY_PICTURES * CANOPY_PICTURE_SIZE) - 1)
+            pos.x -= toFIXED(DAEDALUS_CANOPY_ROW * CANOPY_PICTURE_SIZE);
           Render_ApplyProjectedPlacementFar(
               work->sprites[j * DAEDALUS_CANOPY_ROW + i], &pos, &scale, 0);
         }
@@ -534,7 +618,7 @@ void BattleEffect_RunDaedalus(struct BattleEffectParams *args) {
       if (frame == 0) {
         REG_BG2PA = Q_8_8(1);
         *pal = RGB(11, 8, 6);
-        shipY = -toFIXED(29);
+        climb = -toFIXED(DAEDALUS_CLIMB);
         camera = 0;
         DAEDALUS_SPRITE(DAEDALUS_ROCKET)->rotation = TRIG_TURN * 3 / 4;
         DAEDALUS_SPRITE(DAEDALUS_BLADE)->rotation = 0;
@@ -668,15 +752,15 @@ void BattleEffect_RunDaedalus(struct BattleEffectParams *args) {
         }
       }
       if (frame <= 473)
-        waveScroll += toFIXED(1) / 2;
-      waveX = waveScroll + camera;
-      if (waveX >= toFIXED(32)) {
-        wavePhase = (wavePhase + 7) % 8;
-        waveX -= toFIXED(32);
-        waveScroll -= toFIXED(32);
+        canopyScroll += toFIXED(1) / 2;
+      canopyX = canopyScroll + camera;
+      if (canopyX >= toFIXED(32)) {
+        canopyPhase = (canopyPhase + 7) % 8;
+        canopyX -= toFIXED(32);
+        canopyScroll -= toFIXED(32);
       }
-      if (shipY < 0)
-        shipY += toFIXED(1) / 8;
+      if (climb < 0)
+        climb += toFIXED(1) / 8;
       shipScale = gDaedalus_ShipScale;
       bobX = 0;
       bobY = 0;
@@ -703,7 +787,7 @@ void BattleEffect_RunDaedalus(struct BattleEffectParams *args) {
       }
       if (swayY > 0)
         swayY = -swayY;
-      swayY -= shipY * 2;
+      swayY -= climb * 2;
       shipPlace.groundHeight = 0;
       shipPlace.height = toFIXED(255);
       for (i = 0; i != 5; i++) {
@@ -1152,20 +1236,21 @@ void BattleEffect_RunDaedalus(struct BattleEffectParams *args) {
           for (i = 0; i != 9; i++) {
             struct DaedalusSprite *obj;
             s32 v;
-            shipPlace.x = INTtoFIXED(i * 32) + waveX;
+            shipPlace.x = INTtoFIXED(i * 32) + canopyX;
             shipPlace.y =
                 INTtoFIXED((j << 5) -
                            gDaedalus_ShakeOffsets[work->shakeFrames]) +
-                shipY + toFIXED(132);
+                climb + toFIXED(132);
             if (i == 8) {
               DAEDALUS_SPRITE(j * DAEDALUS_CANOPY_ROW + i)->tile =
-                  work->particles[j * 9 + (wavePhase + 71) % 8].variant & 0x3ff;
+                  work->particles[j * 9 + (canopyPhase + 71) % 8].variant &
+                  0x3ff;
             } else {
               row = j * 9;
               k = row;
               k += i;
               DAEDALUS_SPRITE(k)->tile =
-                  work->particles[row + (wavePhase + 64 + i) % 8].variant &
+                  work->particles[row + (canopyPhase + 64 + i) % 8].variant &
                   0x3ff;
             }
             if (shipPlace.x > toFIXED(256) - 1)
@@ -1656,10 +1741,19 @@ void BattleEffect_RunDaedalusAlt(struct BattleEffectParams *args) {
   BattleEffect_EndCanvasLayer();
 }
 #undef BLITTER
-#undef BURST_FRAMES
-#undef BURST_DRAW_FRAMES
+#undef MIRRORED_WALL_FRAMES
+#undef MIRRORED_WALL_DRAW_FRAMES
 #undef CEL_SIZE
 #undef PICTURE_OFFSET
+#undef EARTH_WALL_LOW
+#undef EARTH_WALL_LOW_WIDTH
+#undef EARTH_WALL_LOW_HEIGHT
+#undef EARTH_WALL_MIDDLE
+#undef EARTH_WALL_MIDDLE_WIDTH
+#undef EARTH_WALL_MIDDLE_HEIGHT
+#undef EARTH_WALL_HIGH
+#undef EARTH_WALL_HIGH_WIDTH
+#undef EARTH_WALL_HIGH_HEIGHT
 #undef MIRROR_HALF
 #undef SYSTEM
 #undef IWRAM_COPY_WORDS_LINKED

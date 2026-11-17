@@ -11,6 +11,7 @@
 #include "djinn_ids.h"
 #include "enemy_ids.h"
 #include "flags.h"
+#include "macros.h"
 #include "resource_ids.h"
 #include "battle/battle.h"
 #include "battle/battle_side.h"

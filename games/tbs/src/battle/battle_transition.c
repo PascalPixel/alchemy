@@ -30,20 +30,22 @@
 /// starts scrolled up by as many, and the VCount interrupt at the band's
 /// bottom clears the scroll for the lines below.
 #define TRANSITION_BG0_BAND 32
-/// The camera turns 360 a frame as the curtain opens, to end at 45 degrees as
-/// the zoom ends.
+/// The camera turns 360 of TRIG_TURN's 65,536 a frame (about 2 degrees) as
+/// the curtain opens, ending at DEGtoANG(45) as the zoom ends.
 #define TRANSITION_TURN_SPEED 360
 #define TRANSITION_START_YAW                                                   \
   (TRIG_TURN + DEGtoANG(45) - TRANSITION_OPEN_FRAMES * TRANSITION_TURN_SPEED)
 
 /// REG_MOSAIC's largest block size, 16 pixels: each of its sizes is a four-bit
 /// field holding the size less one.
-#define MOSAIC_SIZE_MAX 15
+#define MOSAIC_SIZE_MAX 0xf
 
 /// The bytes of a row of a background map, and the words that hold its 32
 /// entries two at a time.
 #define MAP_ROW_BYTES (BG_SCREEN_WIDTH * 2)
 #define MAP_ROW_WORDS (MAP_ROW_BYTES / 4)
+/// Two background map entries side by side, written a word at a time.
+#define MAP_ENTRY_PAIR(left, right) ((right) << 16 | (left))
 /// The battle background's picture: 32 by 15 tiles of 256 colours, 256 by 120
 /// pixels. The first 256 tiles fill character block 2 and the rest block 3.
 #define BACKGROUND_TILE_ROWS 15
@@ -135,14 +137,17 @@ void BattleTransition_BuildTilemap(void *tilemap) {
 
   Iwram_FillWords(pairs, 4 * MAP_ROW_BYTES, -1);
   pairs += 4 * MAP_ROW_WORDS;
-  Iwram_FillWords(pairs, 2 * MAP_ROW_BYTES, WINDOW_TILE_PAIR(BG1_EDGE_TILE));
+  Iwram_FillWords(pairs, 2 * MAP_ROW_BYTES,
+                  MAP_ENTRY_PAIR(BG1_EDGE_TILE, BG1_EDGE_TILE));
   pairs += 2 * MAP_ROW_WORDS;
-  pair = (BACKGROUND_BG1_FIRST_TILE + 1) << 16 | BACKGROUND_BG1_FIRST_TILE;
+  pair =
+      MAP_ENTRY_PAIR(BACKGROUND_BG1_FIRST_TILE, BACKGROUND_BG1_FIRST_TILE + 1);
   for (i = 0; i < BACKGROUND_TILE_ROWS * MAP_ROW_WORDS; i++) {
     *pairs++ = pair;
-    pair += WINDOW_TILE_PAIR(2);
+    pair += MAP_ENTRY_PAIR(2, 2);
   }
-  Iwram_FillWords(pairs, 10 * MAP_ROW_BYTES, WINDOW_TILE_PAIR(BG1_EDGE_TILE));
+  Iwram_FillWords(pairs, 10 * MAP_ROW_BYTES,
+                  MAP_ENTRY_PAIR(BG1_EDGE_TILE, BG1_EDGE_TILE));
 }
 
 /// Shows the zoomed background's finished page each VBlank.
@@ -420,6 +425,7 @@ void BattleTransition_Run(s32 enemyCount, s32 encounterId) {
 #undef MOSAIC_SIZE_MAX
 #undef MAP_ROW_BYTES
 #undef MAP_ROW_WORDS
+#undef MAP_ENTRY_PAIR
 #undef BACKGROUND_TILE_ROWS
 #undef BACKGROUND_TILES
 #undef BACKGROUND_UPPER_TILES

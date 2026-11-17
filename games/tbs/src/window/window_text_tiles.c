@@ -35,8 +35,9 @@
 #define TEXT_TILE_TAKEN 1 ///< allocated to some text
 #define TEXT_TILE_SHOWN                                                        \
   2 ///< seen on the tilemap by Window_MarkVisibleTextTiles
-/// A text tile's place in WindowWork.textTileState: tiles from TEXT_TILE_FIRST
-/// are places 0 to 127, tiles from TEXT_EXTRA_TILE_FIRST places 128 to 255.
+/// A text tile's place in WindowWork.textTileState: the TEXT_TILES tiles from
+/// TEXT_TILE_FIRST take the first places, those from TEXT_EXTRA_TILE_FIRST the
+/// next TEXT_TILES.
 #define TEXT_TILE_STATE_INDEX(tile) (((tile) & 0xFF) ^ TEXT_TILE_FIRST)
 
 /// Unused: draws window tile pattern over the tile of tilemap entry *entry,
@@ -376,9 +377,9 @@ void Window_MarkVisibleTextTiles(void) {
   }
 }
 
-/// Frees the text tiles of the second range (text tiles 128 to 255, tiles 512
-/// to 639), and with allowAlternateTiles set lets text take that range too;
-/// the first range's tiles keep their state.
+/// Frees the text tiles of the second range (the TEXT_TILES tiles from
+/// TEXT_EXTRA_TILE_FIRST), and with allowAlternateTiles set lets text take that
+/// range too; the first range's tiles keep their state.
 void Text_UseExtraTiles(s32 allowAlternateTiles) {
   s32 i;
   s32 j;

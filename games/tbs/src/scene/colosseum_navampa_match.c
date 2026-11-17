@@ -90,8 +90,8 @@
 #include "window/window.h"
 #include "text/msg_ids.h"
 
-s32 gColossoParticleCount BSS_DATA ALIGNED(16);
-u8 gColosseumNavampaMatch_UnusedAfterParticleCount[12] BSS_DATA;
+s32 gColosseumNavampaMatch_SleepFrame BSS_DATA ALIGNED(16);
+u8 gColosseumNavampaMatch_UnusedAfterSleepFrame[12] BSS_DATA;
 s16 gColosso_MarkerStep BSS_DATA;
 s16 gColosso_ModeScaleDuration BSS_DATA ALIGNED(4);
 s16 gColosso_MarkerFlip BSS_DATA ALIGNED(4);
@@ -153,7 +153,7 @@ extern s32 gColosseumNavampaMatch_LeaderActionA[];
 extern s32 gColosseumNavampaMatch_LeaderActionB[];
 extern s32 gColosseumNavampaMatch_LeaderActionC[];
 extern s32 gColosseumNavampaMatch_LeaderScaleScript[];
-extern s32 gColossoParticleKinds[];
+extern s32 gColosseumNavampaMatch_SleepZScript[];
 extern s16 gColosso_LetteringTitle[];
 extern s16 gColosso_LetteringGo[];
 extern s16 gColosso_LetteringWin[];
@@ -243,9 +243,9 @@ enum {
   /// (Colosso_ShowItemIcon).
   ACTOR_PRIZE_A = 39,
   ACTOR_PRIZE_B = 40,
-  /// The first of the three particles that rise from the sleeping Isaac after
-  /// the last match (ColosseumNavampaMatch_SpawnPeriodicParticle).
-  ACTOR_FIRST_SLEEP_PARTICLE = 41
+  /// The first of the three letters Z that rise from the sleeping Isaac after
+  /// the last match (ColosseumNavampaMatch_SpawnSleepZ).
+  ACTOR_FIRST_SLEEP_Z = 41
 };
 
 /// The temporary flags that keep what the friends changed on the stages, for
@@ -276,7 +276,27 @@ enum {
   FLAG_FIRST_LOG_AREA_STONE_SETTLED = FLAG_SCENE_TEMP_14
 };
 
-enum { PISTON_COUNT = 5 };
+/// The Wall Wedge's pistons stand in every other column, 32 pixels apart.
+enum { PISTON_COUNT = 5, PISTON_SPACING = 32 };
+
+/// The Wall Wedge pistons' animations (piston.png). Each piston is two actors:
+/// its body, and PISTON_COUNT actors on, its tip, which shows below the body
+/// when it is all the way out and plays the body's animation +
+/// PISTON_TIP_ANIMATIONS.
+enum PistonAnimation {
+  PISTON_ANIMATION_IN = 1,
+  PISTON_ANIMATION_HALF_OUT = 2,
+  PISTON_ANIMATION_OUT = 3,
+  PISTON_ANIMATION_PUSH_HALF_OUT = 4, ///< from in to half out
+  PISTON_ANIMATION_PUSH_OUT = 5,      ///< from half out to all the way out
+  PISTON_ANIMATION_PULL_HALF_IN = 6,  ///< from out to half out
+  PISTON_ANIMATION_PULL_IN = 7,       ///< from half out to in
+  PISTON_TIP_ANIMATIONS = 8
+};
+
+/// The cells where the long log's ride starts
+/// (ColosseumNavampaMatch_RollLongLog).
+enum { CELL_BEHAVIOR_LONG_LOG = 23 };
 
 const struct SceneEntrance *Scene_GetEntrances(void) {
   return gColosseumNavampaMatchEntrances;
@@ -306,10 +326,10 @@ static void ColosseumNavampaMatch_UpdateWallWedge(void) {
           [gColosseumNavampaMatch_WallWedgePatternIndex]
           [i - ACTOR_FIRST_PISTON];
       Actor_SetAnimation(i, kind);
-      Actor_SetAnimation(i + PISTON_COUNT, kind + 8);
+      Actor_SetAnimation(i + PISTON_COUNT, kind + PISTON_TIP_ANIMATIONS);
       MapGrid_CopyCellAttributeRect(32, 11, 1, 2,
                                     (i - ACTOR_FIRST_PISTON) * 2 + 33, 11);
-      if (kind != 7) {
+      if (kind != PISTON_ANIMATION_PULL_IN) {
         MapGrid_CopyCellAttributeRect(74, 12, 1, 1,
                                       (i - ACTOR_FIRST_PISTON) * 2 + 33, 11);
       }
@@ -323,11 +343,13 @@ static void ColosseumNavampaMatch_UpdateWallWedge(void) {
       kind = gColosseumNavampaMatch_WallWedgePattern
           [gColosseumNavampaMatch_WallWedgePatternIndex]
           [i - ACTOR_FIRST_PISTON];
-      if ((actor->x.fixed - toFIXED(i * 32) > -toFIXED(50) &&
-           actor->x.fixed - toFIXED(i * 32) <= -toFIXED(30) - 1)) {
-        if (row == 11 && kind == 4)
+      // The leader stands in the piston's column, which starts 48 pixels
+      // west of i * PISTON_SPACING.
+      if ((actor->x.fixed - toFIXED(i * PISTON_SPACING) > -toFIXED(50) &&
+           actor->x.fixed - toFIXED(i * PISTON_SPACING) <= -toFIXED(30) - 1)) {
+        if (row == 11 && kind == PISTON_ANIMATION_PUSH_HALF_OUT)
           work->raisedTrigger = kind;
-        if (row == 12 && kind == 5)
+        if (row == 12 && kind == PISTON_ANIMATION_PUSH_OUT)
           work->raisedTrigger = kind;
       }
     }
@@ -356,16 +378,16 @@ static void ColosseumNavampaMatch_StartWallWedge(void) {
 /// Waits, at most two seconds, for the Wall Wedge pattern its attendant's
 /// demonstration passes through.
 static void ColosseumNavampaMatch_WaitForWallWedgeOpening(void) {
-  s32 polls;
+  s32 frames;
 
   wait(10);
 
-  polls = 0;
+  frames = 0;
   while (gColosseumNavampaMatch_WallWedgePatternIndex != 3 ||
          gColosseumNavampaMatch_WallWedgeTimer != 1) {
     wait(1);
-    polls++;
-    if (polls > 119) {
+    frames++;
+    if (frames > 119) {
       return;
     }
   }
@@ -567,13 +589,14 @@ static void ColosseumNavampaMatch_UpdateEastEndCollision(void) {
 
   actor = Actor_Get(gMainRoutineWork.leaderActorId);
   x = FIELD_CELL(actor->x.fixed);
-  behavior = 23;
+  behavior = CELL_BEHAVIOR_LONG_LOG;
   z = FIELD_CELL(actor->z.fixed);
   if (x == 81 && z == 12) {
-    if ((actor->facing & 0xE000) == FACING_SOUTH) {
+    if (FACING_EIGHTH(actor->facing) == FACING_SOUTH) {
       behavior = CELL_BEHAVIOR_CLIMB;
     }
-    MapGrid_SetCellBehaviorAt(0, x << 20, z << 20, behavior);
+    MapGrid_SetCellBehaviorAt(0, FIELD_CELL_ORIGIN(x), FIELD_CELL_ORIGIN(z),
+                              behavior);
   }
 }
 
@@ -633,7 +656,8 @@ static void ColosseumNavampaMatch_RollLongLog(void) {
   rider = Actor_Get(gMainRoutineWork.leaderActorId);
   log = Actor_Get(ACTOR_LONG_LOG);
   steps = 0;
-  angle = gColosseumNavampaMatch_FacingAngles[rider->facing >> 13];
+  angle =
+      gColosseumNavampaMatch_FacingAngles[FACING_EIGHTH_INDEX(rider->facing)];
   actorId = gMainRoutineWork.leaderActorId;
   SET_VECTOR(ahead, (rider->x.fixed & FIELD_CELL_MASK) + toFIXED(8),
              rider->y.fixed, (rider->z.fixed & FIELD_CELL_MASK) + toFIXED(8));
@@ -1008,12 +1032,13 @@ s32 Scene_Initialize(void) {
     for (i = ACTOR_FIRST_PISTON; i <= ACTOR_LAST_PISTON; i++) {
       actor = Actor_Get(i);
       actor->priorityFlags = ACTOR_PRIORITY_UNDERFOOT;
-      Actor_SelectAnimation(actor, 2);
+      Actor_SelectAnimation(actor, PISTON_ANIMATION_HALF_OUT);
       actor = Actor_Get(i + PISTON_COUNT);
       actor->priorityFlags = ACTOR_PRIORITY_UNDERFOOT;
       actor->motionFlags = 0;
       actor->y.fixed = toFIXED(32);
-      Actor_SelectAnimation(actor, 10);
+      Actor_SelectAnimation(actor,
+                            PISTON_ANIMATION_HALF_OUT + PISTON_TIP_ANIMATIONS);
       MapGrid_CopyCellAttributes(74, 12, 1, 1, i * 2 - 3, 11);
     }
     Actor_SetAnimation(ACTOR_WALL_OPERATOR, 10);
@@ -1140,7 +1165,7 @@ s32 Scene_Initialize(void) {
 
 /// Advances one of the particles that rise from the sleeping Isaac after the
 /// last match.
-static s32 ColosseumNavampaMatch_AdvanceParticleMotion(struct Actor *particle) {
+static s32 ColosseumNavampaMatch_AdvanceSleepZ(struct Actor *particle) {
   particle->x.fixed += particle->timer * 256;
   particle->y.fixed += (s16)particle->userValue * 256;
   particle->scaleX += FIXED_ONE / 40;
@@ -1152,41 +1177,41 @@ static s32 ColosseumNavampaMatch_AdvanceParticleMotion(struct Actor *particle) {
 
 /// Shows one of the three particles that rise from the sleeping Isaac, each at
 /// its point in a three-second cycle.
-static void ColosseumNavampaMatch_SpawnPeriodicParticle(void) {
+static void ColosseumNavampaMatch_SpawnSleepZ(void) {
   struct Actor *particle;
   struct Actor *source;
   FIXED x;
   FIXED y;
-  s32 kind;
-  s32 count;
+  s32 actorId;
+  s32 frame;
 
   particle = Actor_Get(ACTOR_PARTY_LEADER);
-  count = gColossoParticleCount + 1;
-  kind = ACTOR_FIRST_SLEEP_PARTICLE;
+  frame = gColosseumNavampaMatch_SleepFrame + 1;
+  actorId = ACTOR_FIRST_SLEEP_Z;
   x = particle->x.fixed;
   y = particle->y.fixed;
-  gColossoParticleCount = count;
-  switch (count % 180) {
+  gColosseumNavampaMatch_SleepFrame = frame;
+  switch (frame % 180) {
   case 10:
     break;
   case 20:
-    kind = ACTOR_FIRST_SLEEP_PARTICLE + 1;
+    actorId = ACTOR_FIRST_SLEEP_Z + 1;
     break;
   case 30:
-    kind = ACTOR_FIRST_SLEEP_PARTICLE + 2;
+    actorId = ACTOR_FIRST_SLEEP_Z + 2;
     break;
   default:
     return;
   }
-  particle = Actor_Get(kind);
+  particle = Actor_Get(actorId);
   if (particle == NULL) {
     return;
   }
   source = Actor_Get(ACTOR_PARTY_LEADER);
   if (source != NULL) {
-    Actor_SetPositionFX(kind, source->x.fixed, source->z.fixed);
+    Actor_SetPositionFX(actorId, source->x.fixed, source->z.fixed);
   }
-  Actor_SetSpriteFlags(Actor_Get(kind), 0);
+  Actor_SetSpriteFlags(Actor_Get(actorId), 0);
   particle->motionFlags = 0;
   particle->scaleX = 2 * FIXED_ONE / 5;
   particle->scaleY = 2 * FIXED_ONE / 5;
@@ -1197,16 +1222,19 @@ static void ColosseumNavampaMatch_SpawnPeriodicParticle(void) {
     particle->y.fixed = height;
     particle->targetY = height;
   }
+  // Its drift east and rise in 1/256 pixels a frame (as 8.8 steps,
+  // ColosseumNavampaMatch_AdvanceSleepZ): it drifts ever faster and rises
+  // ever slower.
   particle->timer = 25;
   particle->userValue = 128;
-  Actor_SetScript(kind, gColossoParticleKinds);
+  Actor_SetScript(actorId, gColosseumNavampaMatch_SleepZScript);
 }
 
 /// After the last match, Garet, Ivan and Mia run to Isaac in the arena, but he
 /// falls asleep.
 static void ColosseumNavampaMatch_PlayPostBattleReunion(s32 battleResult) {
   const s32 *leaderScaleScript;
-  TaskFunc particleFunc;
+  TaskFunc sleepZTask;
 
   Actor_ReleaseById(ACTOR_PRIZE_A);
   Actor_ReleaseById(ACTOR_PRIZE_B);
@@ -1310,29 +1338,29 @@ static void ColosseumNavampaMatch_PlayPostBattleReunion(s32 battleResult) {
   Event_ShowMessage(ACTOR_MIA, 0);
   Actor_SetScript(ACTOR_PARTY_LEADER, leaderScaleScript);
   Event_Wait(60);
-  particleFunc = ColosseumNavampaMatch_SpawnPeriodicParticle;
-  // Time the small reunion effects to the companions' reactions.
-  gColossoParticleCount = 9;
-  Task_AddFrame(particleFunc, TASK_PASS_FRAME);
+  sleepZTask = ColosseumNavampaMatch_SpawnSleepZ;
+  // A Z rises from Isaac on the task's first frame (frame 10 of the cycle).
+  gColosseumNavampaMatch_SleepFrame = 9;
+  Task_AddFrame(sleepZTask, TASK_PASS_FRAME);
   Event_Wait(5);
-  Task_Remove(particleFunc);
+  Task_Remove(sleepZTask);
   Event_Wait(55);
   Actor_ShowEmote(ACTOR_GARET, EMOTE_IN_FRONT | EMOTE_QUESTION, 60);
-  Task_AddFrame(particleFunc, TASK_PASS_FRAME);
+  Task_AddFrame(sleepZTask, TASK_PASS_FRAME);
   Event_Wait(20);
-  Task_Remove(particleFunc);
+  Task_Remove(sleepZTask);
   Event_Wait(40);
   Actor_ShowEmote(ACTOR_IVAN, EMOTE_IN_FRONT | EMOTE_QUESTION, 60);
-  gColossoParticleCount = 9;
-  Task_AddFrame(particleFunc, TASK_PASS_FRAME);
+  gColosseumNavampaMatch_SleepFrame = 9;
+  Task_AddFrame(sleepZTask, TASK_PASS_FRAME);
   Event_Wait(35);
-  Task_Remove(particleFunc);
+  Task_Remove(sleepZTask);
   Event_Wait(25);
   Actor_ShowEmote(ACTOR_MIA, EMOTE_IN_FRONT | EMOTE_WINCE, 60);
-  gColossoParticleCount = 9;
-  Task_AddFrame(particleFunc, TASK_PASS_FRAME);
+  gColosseumNavampaMatch_SleepFrame = 9;
+  Task_AddFrame(sleepZTask, TASK_PASS_FRAME);
   Event_Wait(35);
-  Task_Remove(particleFunc);
+  Task_Remove(sleepZTask);
   Event_Wait(25);
   Actor_ShowEmote(ACTOR_IVAN, EMOTE_IN_FRONT | EMOTE_WINCE, 60);
   Actor_WatchAndSetScript(ACTOR_MIA, ACTOR_IVAN);
@@ -1340,10 +1368,10 @@ static void ColosseumNavampaMatch_PlayPostBattleReunion(s32 battleResult) {
   Event_Wait(60);
   Actor_WatchAndSetScript(ACTOR_MIA, ACTOR_PARTY_LEADER);
   Actor_WatchAndSetScript(ACTOR_IVAN, ACTOR_PARTY_LEADER);
-  gColossoParticleCount = 9;
-  Task_AddFrame(particleFunc, TASK_PASS_FRAME);
+  gColosseumNavampaMatch_SleepFrame = 9;
+  Task_AddFrame(sleepZTask, TASK_PASS_FRAME);
   Event_Wait(35);
-  Task_Remove(particleFunc);
+  Task_Remove(sleepZTask);
   Event_Wait(25);
   Actor_ShowEmote(ACTOR_MIA, EMOTE_IN_FRONT | EMOTE_SMILE, 60);
   Actor_StartRepeatedMotion(ACTOR_GARET, 3);
@@ -1351,8 +1379,8 @@ static void ColosseumNavampaMatch_PlayPostBattleReunion(s32 battleResult) {
   Actor_RunRepeatedMotion(ACTOR_MIA, 3);
   Actor_WatchAndSetScript(ACTOR_MIA, ACTOR_IVAN);
   Actor_WatchAndSetScript(ACTOR_GARET, ACTOR_IVAN);
-  gColossoParticleCount = 9;
-  Task_AddFrame(particleFunc, TASK_PASS_FRAME);
+  gColosseumNavampaMatch_SleepFrame = 9;
+  Task_AddFrame(sleepZTask, TASK_PASS_FRAME);
   Actor_SetAnimation(ACTOR_GARET, ANIM_NOD);
   Actor_SetAnimation(ACTOR_IVAN, ANIM_NOD);
   Actor_SetAnimation(ACTOR_MIA, ANIM_NOD);
@@ -1616,7 +1644,8 @@ static void ColosseumNavampaMatch_TalkToWallWedgeAttendant(s32 guideId) {
       ColosseumNavampaMatch_WaitForWallWedgeOpening();
       Actor_SetSpeed(ACTOR_PARTY_LEADER, 1.5);
       Colosso_WalkActorTo(ACTOR_PARTY_LEADER, 680, 200);
-      for (promptResult = 0; promptResult < 240 && work->raisedTrigger != 5;
+      for (promptResult = 0; promptResult < 240 &&
+                             work->raisedTrigger != PISTON_ANIMATION_PUSH_OUT;
            promptResult++)
         wait(1);
       ColosseumNavampaMatch_PassSouthWallOpening();
@@ -1885,10 +1914,18 @@ const s32 gColosseumNavampaMatch_SidewalkLogOffBelt[] = {
 ///
 /// Each holds each piston's animation, west to east, then the operator's.
 const s8 gColosseumNavampaMatch_WallWedgePattern[][6] = {
-    {7, 5, 7, 5, 7, 11},
-    {4, 6, 4, 6, 4, 10},
-    {5, 7, 5, 7, 5, 12},
-    {6, 4, 6, 4, 6, 10},
+    {PISTON_ANIMATION_PULL_IN, PISTON_ANIMATION_PUSH_OUT,
+     PISTON_ANIMATION_PULL_IN, PISTON_ANIMATION_PUSH_OUT,
+     PISTON_ANIMATION_PULL_IN, 11},
+    {PISTON_ANIMATION_PUSH_HALF_OUT, PISTON_ANIMATION_PULL_HALF_IN,
+     PISTON_ANIMATION_PUSH_HALF_OUT, PISTON_ANIMATION_PULL_HALF_IN,
+     PISTON_ANIMATION_PUSH_HALF_OUT, 10},
+    {PISTON_ANIMATION_PUSH_OUT, PISTON_ANIMATION_PULL_IN,
+     PISTON_ANIMATION_PUSH_OUT, PISTON_ANIMATION_PULL_IN,
+     PISTON_ANIMATION_PUSH_OUT, 12},
+    {PISTON_ANIMATION_PULL_HALF_IN, PISTON_ANIMATION_PUSH_HALF_OUT,
+     PISTON_ANIMATION_PULL_HALF_IN, PISTON_ANIMATION_PUSH_HALF_OUT,
+     PISTON_ANIMATION_PULL_HALF_IN, 10},
 };
 
 // clang-format off
@@ -2050,7 +2087,7 @@ struct Trigger gColosseumNavampaMatchTriggers[] = {
     { PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_STONE, CONDITION_ALWAYS, EVENT(ColosseumNavampaMatch_MoveStone) },
     { STEP_TRIGGER_WALKING, 22, CONDITION_ALWAYS, EVENT(ColosseumNavampaMatch_PushRock) },
     { PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_ROCK, CONDITION_ALWAYS, EVENT(ColosseumNavampaMatch_IgnoreMove) },
-    { STEP_TRIGGER_WALKING, 23, CONDITION_ALWAYS, EVENT(ColosseumNavampaMatch_RollLongLog) },
+    { STEP_TRIGGER_WALKING, CELL_BEHAVIOR_LONG_LOG, CONDITION_ALWAYS, EVENT(ColosseumNavampaMatch_RollLongLog) },
     { PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_LOG_AREA_STONE_A, FLAG_FIRST_LOG_AREA_STONE_SETTLED, EVENT(ColosseumNavampaMatch_SettleStones) },
     { PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_LOG_AREA_STONE_B, FLAG_FIRST_LOG_AREA_STONE_SETTLED + 1, EVENT(ColosseumNavampaMatch_SettleStones) },
     { PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_LOG_AREA_STONE_C, FLAG_FIRST_LOG_AREA_STONE_SETTLED + 2, EVENT(ColosseumNavampaMatch_SettleStones) },
@@ -2180,8 +2217,8 @@ s32 gColosseumNavampaMatch_LeaderScaleScript[] = {
     SC_END,
 };
 
-s32 gColossoParticleKinds[] = {
-    SC_CALL(ColosseumNavampaMatch_AdvanceParticleMotion),
+s32 gColosseumNavampaMatch_SleepZScript[] = {
+    SC_CALL(ColosseumNavampaMatch_AdvanceSleepZ),
     SC_WAIT(1),
     SC_LOOP(60, SC_TOP),
     SC_POSITION(0, 0, 0),

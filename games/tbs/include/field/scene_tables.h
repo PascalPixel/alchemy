@@ -49,6 +49,10 @@ enum { FACING_STEP = TRIG_TURN / 16 };
 /// The quarter of a turn a facing lies in, what is past it dropped: east,
 /// south, west or north.
 #define FACING_QUARTER(facing) ((facing) & 0xc000)
+/// The eighth of a turn a facing lies in, what is past it dropped.
+#define FACING_EIGHTH(facing) ((facing) & 0xe000)
+/// The eighth of a turn a facing lies in, as a number from 0 (east) to 7.
+#define FACING_EIGHTH_INDEX(facing) ((facing) >> 13)
 /// The sixteenth of a turn a facing lies in, what is past it dropped.
 #define FACING_SIXTEENTH(facing) ((facing) & 0xf000)
 /// The sixteenth of a turn a facing lies in, as a number from 0 (east) to 15,

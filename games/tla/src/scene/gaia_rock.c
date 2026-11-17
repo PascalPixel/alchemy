@@ -21,9 +21,6 @@
 /// Set once Susa has said he only needs rest ("I'm not dying... I'm just so
 /// tired...").
 #define FLAG_SUSA_RESTED 0xa61
-/// Set once Susa has asked whether the party will tell Kushinada that they
-/// defeated the serpent (GaiaRock_SusaAsksAboutTheSerpent).
-#define FLAG_SUSA_ASKED_ABOUT_THE_SERPENT 0x9ab
 #include "field/scene_tables.h"
 #include "system/main_routine_work.h"
 #include "scene_ids.h"
@@ -318,14 +315,14 @@ void GaiaRock_SusaAsksAboutTheSerpent(void) {
     FieldActor_StartRepeatedMotion(ACTOR_SUSA, 1);
     FieldEvent_Wait(15);
     Event_AskYesNo(ACTOR_SUSA, 0);
-    Event_SetFlag(FLAG_SUSA_ASKED_ABOUT_THE_SERPENT);
+    Event_SetFlag(FLAG_SUSA_REJOICES);
     Event_End();
   }
 }
 
 /// Talking to Susa, before and after he has asked about the serpent.
 void GaiaRock_TalkToSusa(void) {
-  if (Event_GetFlag(FLAG_SUSA_ASKED_ABOUT_THE_SERPENT)) {
+  if (Event_GetFlag(FLAG_SUSA_REJOICES)) {
     FieldEvent_SetMessageId(MsgYouReGoing);
     Event_AskYesNo(ACTOR_SUSA, 0);
   } else {
@@ -337,7 +334,7 @@ void GaiaRock_TalkToSusa(void) {
 
 /// Mind Read on Susa, before and after he has asked about the serpent.
 void GaiaRock_MindReadSusa(void) {
-  if (Event_GetFlag(FLAG_SUSA_ASKED_ABOUT_THE_SERPENT)) {
+  if (Event_GetFlag(FLAG_SUSA_REJOICES)) {
     FieldEvent_SetMessageId(MsgKushinadaSSafe);
     // "Kushinada's safe... She's safe! Nothing else matters."
     Event_ShowMessage(ACTOR_SUSA, 0);
@@ -559,8 +556,7 @@ s32 Scene_Initialize(void) {
         MapGrid_CopyCellAttributes(38, 46, 1, 1, 39, 46);
       }
     }
-    if (GameFlag_Get(FLAG_SERPENT_SLAIN) &&
-        !GameFlag_Get(FLAG_SUSA_ASKED_ABOUT_THE_SERPENT)) {
+    if (GameFlag_Get(FLAG_SERPENT_SLAIN) && !GameFlag_Get(FLAG_SUSA_REJOICES)) {
       Actor_SetPosition(ACTOR_SUSA, 798, 800);
       Map_CopyCellAttributeRect(53, 52, 1, 1, 49, 49);
       Map_CopyCellAttributeRect(53, 52, 1, 1, 50, 49);
@@ -829,7 +825,7 @@ struct Trigger gGaiaRock_SusaTriggers[] = {
     {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
     {TRIGGER_EXIT, 4, CONDITION_ALWAYS, 4},
     {TRIGGER_EXIT, 5, CONDITION_ALWAYS, 5},
-    {TRIGGER_STEP, 42, FLAG_SUSA_ASKED_ABOUT_THE_SERPENT, EVENT(GaiaRock_SusaAsksAboutTheSerpent)},
+    {TRIGGER_STEP, 42, FLAG_SUSA_REJOICES, EVENT(GaiaRock_SusaAsksAboutTheSerpent)},
     {TRIGGER_TALK, ACTOR_SUSA, CONDITION_ALWAYS, EVENT(GaiaRock_TalkToSusa)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_SUSA, CONDITION_ALWAYS, EVENT(GaiaRock_MindReadSusa)},
     {PSYNERGY_ON_ACTOR(ABILITY_WHIRLWIND), ACTOR_FIRST_VINE, CONDITION_ALWAYS, 0},

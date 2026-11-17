@@ -2,8 +2,7 @@
 #define ALCHEMY_FLAGS_H
 
 /// @file
-/// Game flags, named where their meaning is shown, as The Broken Seal's
-/// flags.h names its own.
+/// Game flags, named where their meaning is shown.
 
 /// Set while the party member whose actor id is `actor` (ACTOR_FELIX to
 /// ACTOR_PIERS, 0 to 3 for Isaac's party) is in the party, as The Broken
@@ -26,13 +25,12 @@
 /// fled Djinni battle.
 #define FLAG_DJINNI_HIDING(djinni) (FLAG_DJINN_HIDING_FIRST + (djinni))
 /// The last of the 96 flags from FLAG_DJINN_HIDING_FIRST that Scene_Arrive
-/// clears on every arrival: the 80 hiding flags and the 16 after them, the
-/// range The Broken Seal clears.
+/// clears on every arrival: the 80 hiding flags and the 16 after them.
 #define FLAG_ARRIVAL_CLEARED_LAST 0xdf
 
-/// The Broken Seal's FLAG_ISAAC_WEARS_TUNIC, which The Lost Age tests only
-/// where its twin does: World Map actor placements keep their full size while
-/// it is set (Event_SpawnObjectTable). No code of this game sets it.
+/// Unused: The Broken Seal's flag for the tunic young Isaac wears. Nothing in
+/// this game sets it; were it set, World Map actor placements would keep their
+/// full size (Event_SpawnObjectTable).
 #define FLAG_ISAAC_WEARS_TUNIC 0x21
 
 /// Set as Isaac's party joins Felix's (Party_AddIsaacsParty); a file saved
@@ -63,8 +61,9 @@
 #define FLAG_TRANSFERRED_DODONPA_LOCKED_UP 0x820
 #define FLAG_TRANSFERRED_WON_COLOSSO 0x821
 /// The opposite of The Broken Seal's FLAG_HSU_RESCUED_WITHOUT_PARTY: set when
-/// that was clear, so the party freed Hsu itself. This game's text calls him
-/// Ulmuch.
+/// that was clear, so Isaac saved Hsu himself, whom this game's text calls
+/// Ulmuch ("He helped Ulmuch. Ulmuch was trapped, but Isaac saved him."); only
+/// then does Feizhi come to Champa looking for Isaac.
 #define FLAG_TRANSFERRED_HSU_RESCUED_BY_PARTY 0x822
 #define FLAG_TRANSFERRED_VISITED_SICK_DORA 0x824
 #define FLAG_TRANSFERRED_VAULT_WARNED_OF_ESCAPED_THIEVES 0x825
@@ -73,7 +72,7 @@
 
 /// The system flags: what the field, battles and menus keep about their own
 /// working, shared with the scenes that set or test them, rather than the
-/// story's progress, as The Broken Seal's.
+/// story's progress.
 #define FLAG_SYSTEM_FIRST 0x100
 #define FLAG_SYSTEM_LAST 0x1ff ///< the last of the 256 system flags
 /// The next scene change is silent: the scene loader clears it in place of
@@ -95,10 +94,10 @@
 #define FLAG_PSYNERGY_TINTED 0x108
 /// Set, the highest of these picks the tint a field Psynergy fades
 /// toward, gFieldEffect_TargetColors[n], in place of the frame counter's pick
-/// (FieldPsynergy_FadeToCastColor), as The Broken Seal's.
+/// (FieldPsynergy_FadeToCastColor).
 #define FLAG_PSYNERGY_TINT(n) (0x148 + (n))
 /// Set while the field sequence handles its requests, and cleared while the
-/// party walks (FieldSequence_Run), as The Broken Seal's.
+/// party walks (FieldSequence_Run).
 #define FLAG_FIELD_HANDLING_REQUESTS 0x104
 /// The next field scene starts where the party was, as after a battle: the
 /// scene's flags are not reset, the actors come back from their snapshot,
@@ -125,9 +124,9 @@
 #define FLAG_ARRIVE_FALLING 0x122
 /// The party is in a town; the scene loader sets and clears it.
 #define FLAG_IN_TOWN 0x123
-/// The file was loaded to restart at its last Sanctum, as The Broken Seal's.
+/// The file was loaded to restart at its last Sanctum.
 #define FLAG_SAVE_RESTARTED_AT_SANCTUM 0x13e
-/// The file was recovered at its last Sanctum, as The Broken Seal's.
+/// The file was recovered at its last Sanctum.
 #define FLAG_SAVE_RECOVERED_AT_SANCTUM 0x13f
 /// Play the kind's usual cast: the caster's glow, animation and sound
 /// (FieldPsynergy_StartCast). Field_UsePsynergy sets it for each use and
@@ -160,8 +159,7 @@
 /// raft.
 #define FLAG_NO_PLACE_TO_SAVE 0x17d
 /// Set when the cleared game's link lobby goes to the Battle Arena: there the
-/// Pause menu offers only Change settings, as The Broken Seal's; Scene_Arrive
-/// clears it.
+/// Pause menu offers only Change settings; Scene_Arrive clears it.
 #define FLAG_IN_BATTLE_ARENA 0x17e
 /// Set while Start is pressed in the Psynergy menu, which ends its waits.
 #define FLAG_MENU_START_PRESSED 0x150
@@ -199,13 +197,12 @@
 /// In debug mode, steps on the field are not processed.
 #define FLAG_DEBUG_STEPS_OFF 0x163
 /// Holds the field's weather still, its particles and its next burst, while a
-/// menu is open, as The Broken Seal's.
+/// menu is open.
 #define FLAG_WEATHER_HELD 0x166
 /// Set while the Lure Cap is worn: random encounters come twice as fast.
 #define FLAG_LURE_CAP 0x167
 /// Auto battle: every living unit, party and enemies, makes a plain attack
-/// each turn with no command menu, as The Broken Seal's; the debug battle menu
-/// sets it.
+/// each turn with no command menu; the debug battle menu sets it.
 #define FLAG_AUTO_BATTLE 0x16a
 #define FLAG_CHOOSING_COMMANDS 0x16b ///< set while the commands are chosen
 /// The next battle is a link battle.
@@ -233,7 +230,7 @@
 /// no spoils.
 #define FLAG_MONSTER_BATTLE 0x173
 /// Lets the monster battles choose enemies above level 3 the party has never
-/// defeated, as The Broken Seal's.
+/// defeated.
 #define FLAG_MONSTER_BATTLE_ANY_ENEMY 0x174
 /// A linked battle has been arranged in the Battle Arena, with
 /// FLAG_LINK_BATTLE: only the first three party members take part.
@@ -251,7 +248,7 @@
 /// so the scenes name them.
 #define FLAG_AREA_TEMP_FIRST 0x300
 #define FLAG_AREA_TEMP_LAST 0x3ff ///< the last of the area's 256 flags
-// Byte flags, read and written eight at a time, as The Broken Seal names them.
+// Byte flags, read and written eight at a time.
 /// The party members the linked opponent sent (the link lobby).
 #define FLAG_LINK_PARTY_COUNT 0x3f0
 /// Monster Battles won in a row, added to the monsters' level; -1 after the
@@ -274,9 +271,9 @@
 /// for the help with the boat.
 #define FLAG_MADRA_CYCLONE_CHIP_GIVEN 0x918
 /// Set while the Trial Road holds the party's equipment, from the race's start
-/// (InventorySnapshot_Save) to its end (InventorySnapshot_Restore), as The
-/// Broken Seal's FLAG_COLOSSO_HOLDS_EQUIPMENT; the Trial Road's music rule and
-/// its triggers test it.
+/// (InventorySnapshot_Save) to its end (InventorySnapshot_Restore), as the
+/// chests take the items the party puts in them ("place items in these
+/// chests"); the Trial Road's music rule and its triggers test it.
 #define FLAG_TRIAL_ROAD_HOLDS_EQUIPMENT 0x9ff
 /// The ten items of the Trial Road's stages (SCENE_TRIAL_ROAD_STAGES in
 /// scene_items.c), set as each is taken; InventorySnapshot_Save clears them as
@@ -1135,8 +1132,7 @@
 #define FLAG_YAMPI_DESERT_ENTERED_BY_GUARDIAN_RING_CHEST 0xa29
 #define FLAG_YAMPI_DESERT_ENTERED_BY_TRAINERS_WHIP_CHEST 0xa2a
 #define FLAG_YAMPI_DESERT_ENTERED_BY_MEDAL_SPOT 0xa2b
-/// Yallam's hidden Nut, uncovered with Cyclone, as The Broken Seal names its
-/// treasure flags.
+/// Yallam's hidden Nut, uncovered with Cyclone.
 #define FLAG_YALLAM_NUT 0xf60
 /// Yallam's hidden Antidote, uncovered with Cyclone.
 #define FLAG_YALLAM_ANTIDOTE 0xf62

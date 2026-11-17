@@ -51,17 +51,17 @@ struct MapAnimation {
 #define BLEND_SCRIPT_LOOP 0xffff
 #define BLEND_SCRIPT_JUMP 0xfe00
 
-/// A layout's three layers, by what they hold, as The Broken Seal's. Most
-/// layouts give them priorities 3, 2 and 1.
+/// A layout's three layers, by what they hold. Most layouts give them
+/// priorities 3, 2 and 1.
 enum MapGridLayerIndex {
   MAPGRID_LAYER_GROUND = 0,   ///< `BG3`: the ground, at the back
   MAPGRID_LAYER_MIDDLE = 1,   ///< `BG2`: walls and edges, under the actors
   MAPGRID_LAYER_OVERHEAD = 2, ///< `BG1`: roofs and tree tops, over the actors
 };
 
-/// A cell's collision code, as The Broken Seal's enum CellBehavior: the codes
-/// The Lost Age's field code reads by name. Cloak, Sand, the Cyclone and Hover
-/// read theirs on the overhead layer (event_commands_field_psynergy.c).
+/// A cell's collision code: the codes the field code reads by name. Cloak,
+/// Sand, the Cyclone and Hover read theirs on the overhead layer
+/// (event_commands_field_psynergy.c).
 enum CellBehavior {
   CELL_BEHAVIOR_NORMAL = 0,  ///< open ground, where nothing happens
   CELL_BEHAVIOR_CLOAK = 231, ///< Cloak hides the leader there
@@ -236,8 +236,8 @@ struct WorldPosition {
   FIXED y;
 };
 
-/// The world map's collision values (WorldMap_GetCollision), 1 to 15, as The
-/// Broken Seal's, with the sea this game sails.
+/// The world map's collision values (WorldMap_GetCollision), 1 to 15, the sea
+/// the ship sails among them.
 enum WorldMapCollision {
   /// The ship sails on WORLD_MAP_COLLISION_SEA_FIRST to
   /// WORLD_MAP_COLLISION_SEA_LAST and on shallow water (WorldMap_IsSailable).
@@ -258,8 +258,7 @@ enum WorldMapCollision {
 
 /// A world map battle environment (gWorldMap_TerrainBehaviorTable,
 /// WorldMap_GetBattleEnvironment): what its ground means for battles, named by
-/// the battle background BattleBackground_SelectForEnvironment gives it, as The
-/// Broken Seal's, with the sea and the blizzard this game adds.
+/// the battle background BattleBackground_SelectForEnvironment gives it.
 enum BattleEnvironment {
   BATTLE_ENVIRONMENT_NONE = 0,
   BATTLE_ENVIRONMENT_GRASSLAND = 1, ///< ResourceId_GrasslandBBackdrop
@@ -279,8 +278,11 @@ enum BattleEnvironment {
   BATTLE_ENVIRONMENT_SEA = 8,
   /// All the sea of the snowfield regions, where no rule gives encounters.
   BATTLE_ENVIRONMENT_SNOWFIELD_SEA = 9,
-  /// XXX: what WORLD_MAP_COLLISION_SEA_LAST is outside the snowfields, where no
-  /// rule gives encounters; seeing where the ship meets it would settle it.
+  /// WORLD_MAP_COLLISION_SEA_LAST outside the snowfields, where no rule gives
+  /// encounters; a battle there would take the ship deck's backdrop.
+  // XXX (no evidence): what sea WORLD_MAP_COLLISION_SEA_LAST marks; the render
+  // probe cannot sail the ship, and the collision is read from the tile maps
+  // the World Map streams into RAM as it scrolls (WorldMap_GetCollision).
   BATTLE_ENVIRONMENT_SEA_LAST = 10,
   BATTLE_ENVIRONMENT_BLIZZARD = 11, ///< ResourceId_BlizzardBackdrop
   /// ResourceId_BlizzardBackdrop, for the blizzard's forest.

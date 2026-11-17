@@ -76,9 +76,13 @@ struct SpriteAnimation {
 /// A sprite picture cache: the tag of the animation loaded into it (slot number
 /// and animation id) and the buffer holding its pictures.
 struct SpritePictureCache {
-  s32 tag;        ///< (slot << 12) | animation id
+  s32 tag;        ///< SPRITE_PICTURE_TAG(slot, animation id)
   void *pictures; ///< the decoded pictures, their offsets made pointers
 };
+
+/// A sprite id with the sprite picture cache its pictures load into, as a
+/// SpritePictureCache's tag holds them.
+#define SPRITE_PICTURE_TAG(slot, id) ((id) + ((slot) << 12))
 
 /// The actor system's work: the flag that suspends sprite projection, the
 /// outline's edge and fill colours, and the sprite picture caches. Heap slot 6.

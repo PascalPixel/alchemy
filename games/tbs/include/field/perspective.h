@@ -72,4 +72,9 @@ STATIC_ASSERT(offsetof(struct WorldMapView, previousZoom) == 848);
 STATIC_ASSERT(offsetof(struct WorldMapView, zoomTransitionFrames) == 856);
 STATIC_ASSERT(offsetof(struct WorldMapView, zoomTransitionStep) == 858);
 
+/// The first tile, in BG1's character base, of the 30 by 20 tile picture of
+/// 256 colours that screen block 6 numbers: the still picture's
+/// (WorldMap_StartStillPicture), and the world picture's (WorldPicture_Show).
+#define WORLD_MAP_STILL_FIRST_TILE 424
+
 #endif

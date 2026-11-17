@@ -175,11 +175,18 @@
 #define LUCKY_WHEELS_JACKPOT_TILES                                             \
   (OBJ_VRAM0 + LUCKY_WHEELS_TITLE_TILES * TILE_SIZE_4BPP)
 
-// Lucky Wheels' prompt windows (stop, all held, start, hold, release),
-// placed and sized for each language's words.
+// Lucky Wheels' prompt windows (stop, all held, start, hold, release, choose
+// the reels to hold), placed and sized for each language's words. Japanese
+// shows hold and release in one window.
 #if LANGUAGE == LANGUAGE_JAPANESE
 #define LUCKY_WHEELS_STOP_X 23
 #define LUCKY_WHEELS_STOP_WIDTH 7
+#define LUCKY_WHEELS_ALL_HELD_X 12
+#define LUCKY_WHEELS_ALL_HELD_WIDTH 18
+#define LUCKY_WHEELS_START_X 18
+#define LUCKY_WHEELS_START_WIDTH 12
+#define LUCKY_WHEELS_HOLD_X 18
+#define LUCKY_WHEELS_HOLD_WIDTH 12
 #elif LANGUAGE == LANGUAGE_SPANISH
 #define LUCKY_WHEELS_STOP_X 21
 #define LUCKY_WHEELS_STOP_WIDTH 9
@@ -224,6 +231,13 @@
 #define LUCKY_WHEELS_HOLD_WIDTH 7
 #define LUCKY_WHEELS_RELEASE_X 23
 #define LUCKY_WHEELS_RELEASE_WIDTH 7
+#endif
+#if LANGUAGE == LANGUAGE_JAPANESE
+#define LUCKY_WHEELS_CHOOSE_HELD_X 7
+#define LUCKY_WHEELS_CHOOSE_HELD_WIDTH 16
+#else
+#define LUCKY_WHEELS_CHOOSE_HELD_X 3
+#define LUCKY_WHEELS_CHOOSE_HELD_WIDTH 24
 #endif
 // Lucky Wheels' count of Game Tickets left after the bet takes three digits
 // from the French release on, one tile further left so that it ends where the

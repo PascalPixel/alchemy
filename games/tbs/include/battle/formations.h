@@ -41,6 +41,12 @@ struct Formation {
 
 /// The rows of gFormations.
 #define FORMATION_COUNT 380
+
+/// The Fusion Dragon's battle on the Venus Lighthouse Aerie, the one formation
+/// the battle code itself tests for: it opens with the storm instead of the
+/// curtain (BattleTransition_Run).
+#define FORMATION_FUSION_DRAGON 347
+
 /// The formations, by formation id (battle/formations.c).
 extern struct Formation gFormations[FORMATION_COUNT];
 

@@ -191,14 +191,8 @@ struct OamWords {
   volatile u32 attr2;  ///< attr2 | affine value << 16
 };
 
-/// A sprite's place in its attr01 word: x in attribute 1's nine bits and y in
-/// attribute 0's eight, each wrapped as the screen wraps them.
-#define OBJ_POSITION(x, y) (OBJ_X((x) & 0x1ff) | ((y) & 0xff))
 /// An affine sprite's matrix, of the 32, in its attr01 word.
 #define OBJ_AFFINE_MATRIX(n) ((n) << 25)
-/// An affine parameter in an OamWords entry's attr2 word, its high half: the
-/// entries 4n to 4n + 3 hold affine matrix n's four.
-#define OBJ_AFFINE_PARAMETER(value) ((value) << 16)
 
 // The casino's four-dice game, built
 // like LuckyDice_Run (four dice in a round dome, Slots_DomePicture): A throws

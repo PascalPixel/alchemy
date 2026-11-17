@@ -21,6 +21,10 @@ enum ScreenTransitionStyle {
 
 /// A scene transition as FieldWork.transition holds it.
 #define SCENE_TRANSITION(style, variant) ((style) << 8 | (variant))
+/// The two bytes of a SCENE_TRANSITION: its enum ScreenTransitionStyle, and
+/// the variant that style reads.
+#define SCENE_TRANSITION_STYLE(transition) (((transition) >> 8) & 0xff)
+#define SCENE_TRANSITION_VARIANT(transition) ((transition) & 0xff)
 
 /// Actor.targetX, targetY and targetZ when it has no movement target.
 #define TARGET_UNSET ((s32)0x80000000)

@@ -298,6 +298,9 @@ struct BattleAIState {
 #define UNIT_GAUGE_SHIFT 14
 #define UNIT_GAUGE_FULL (1 << UNIT_GAUGE_SHIFT)
 
+/// The bits of Unit.baseActionCount that count the unit's actions a turn.
+#define UNIT_ACTION_COUNT_MASK 0xf
+
 /// A unit's name buffer: 14 characters and the 0 that ends them.
 #define UNIT_NAME_SIZE 15
 /// The Resistance each of a unit's battle Resistance stages

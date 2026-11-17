@@ -70,8 +70,8 @@ void ScreenTransition_UpdateScanlineTable(void) {
   s32 centerY;
 
   s32 cameraY;
-  s32 cameraX;
-  s32 cameraY8;
+  s32 rippleCameraX;
+  s32 rippleCameraY;
   u32 leftEdge;
   s32 oppositeEdges;
 
@@ -282,17 +282,17 @@ void ScreenTransition_UpdateScanlineTable(void) {
     break;
 
   case WINDOW_TRANSITION_LEADER_INVERSE: {
-    s32 ax;
+    s32 cameraX;
 
     {
       s32 *view = grid->view;
 
-      ax = view[0] & FIELD_PIXEL_MASK;
+      cameraX = view[0] & FIELD_PIXEL_MASK;
       cameraY = view[1] & FIELD_PIXEL_MASK;
     }
     // Centred on the leader's place on screen, above its feet.
     actor = Actor_Lookup(gMainRoutineWork.leaderActorId);
-    centerX = (actor->x.fixed - ax) / FIXED_ONE;
+    centerX = (actor->x.fixed - cameraX) / FIXED_ONE;
     centerY = ((actor->z.fixed - actor->y.fixed) - cameraY) / FIXED_ONE -
               TRANSITION_ELLIPSE_RISE;
     // DEAD: the frame counter is read here, where WINDOW_TRANSITION_RIPPLE
@@ -343,14 +343,15 @@ void ScreenTransition_UpdateScanlineTable(void) {
   case WINDOW_TRANSITION_RIPPLE: {
     s32 *view = grid->view;
 
-    cameraX = view[0] & FIELD_PIXEL_MASK;
-    cameraY8 = view[1] & FIELD_PIXEL_MASK;
+    rippleCameraX = view[0] & FIELD_PIXEL_MASK;
+    rippleCameraY = view[1] & FIELD_PIXEL_MASK;
   }
     // Centred on state->centreX and centreY; each line's edges move out by
     // gScreenTransition_EdgeOffsets, indexed two entries a line and one a
     // frame, so the outline ripples.
-    centerX = (state->centreX - cameraX) / FIXED_ONE;
-    centerY = (state->centreY - cameraY8) / FIXED_ONE - TRANSITION_ELLIPSE_RISE;
+    centerX = (state->centreX - rippleCameraX) / FIXED_ONE;
+    centerY =
+        (state->centreY - rippleCameraY) / FIXED_ONE - TRANSITION_ELLIPSE_RISE;
     k = -centerY * 2 + gFrameCount;
     *scanlineData++ = state->mask;
     *scanlineData++ = state->active;
@@ -399,16 +400,16 @@ void ScreenTransition_UpdateScanlineTable(void) {
     break;
 
   case WINDOW_TRANSITION_LEADER: {
-    s32 ax;
+    s32 cameraX;
 
     {
       s32 *view = grid->view;
 
-      ax = view[0] & FIELD_PIXEL_MASK;
+      cameraX = view[0] & FIELD_PIXEL_MASK;
       cameraY = view[1] & FIELD_PIXEL_MASK;
     }
     actor = Actor_Lookup(gMainRoutineWork.leaderActorId);
-    centerX = (actor->x.fixed - ax) / FIXED_ONE;
+    centerX = (actor->x.fixed - cameraX) / FIXED_ONE;
     centerY = ((actor->z.fixed - actor->y.fixed) - cameraY) / FIXED_ONE -
               TRANSITION_ELLIPSE_RISE;
     // DEAD: as in WINDOW_TRANSITION_LEADER_INVERSE, the frame counter is read
@@ -449,16 +450,16 @@ void ScreenTransition_UpdateScanlineTable(void) {
     break;
   }
   case WINDOW_TRANSITION_LEADER_LOW: {
-    s32 ax;
+    s32 cameraX;
 
     {
       s32 *view = grid->view;
 
-      ax = view[0] & FIELD_PIXEL_MASK;
+      cameraX = view[0] & FIELD_PIXEL_MASK;
       cameraY = view[1] & FIELD_PIXEL_MASK;
     }
     actor = Actor_Lookup(gMainRoutineWork.leaderActorId);
-    centerX = (actor->x.fixed - ax) / FIXED_ONE;
+    centerX = (actor->x.fixed - cameraX) / FIXED_ONE;
     // Centred 8 pixels above the leader's feet, lower than
     // WINDOW_TRANSITION_LEADER's.
     centerY = ((actor->z.fixed - actor->y.fixed) - cameraY) / FIXED_ONE - 8;
@@ -538,19 +539,20 @@ struct ScreenTransitionState *ScreenTransition_AllocateAndClearState(void) {
   return state;
 }
 
-/// Fades the screen in over frames frames. mode's high byte is its enum
-/// ScreenTransitionStyle: from black, from the backdrop colour, a window
-/// transition (its low byte an enum WindowTransitionMode), a dissolve (3) or
-/// opening from the centre line (4, which a non-zero low byte makes flicker).
+/// Fades the screen in over frames frames. mode is a SCENE_TRANSITION: its
+/// high byte an enum ScreenTransitionStyle (from black, from the backdrop
+/// colour, a window transition whose low byte is an enum WindowTransitionMode,
+/// a dissolve, or opening from the centre line, which a non-zero low byte makes
+/// flicker).
 void ScreenTransition_Start(s32 mode, s32 frames) {
   struct ScreenTransitionWin *display;
   s32 variant;
-  s32 transitionKind;
+  s32 style;
 
-  transitionKind = (mode >> 8) & 0xff;
+  style = (mode >> 8) & 0xff;
   display = gMapGridWork[0];
   variant = mode & 0xff;
-  switch (transitionKind) {
+  switch (style) {
   case TRANSITION_FADE:
     ScreenFade_ToBlack(0);
     ScreenFade_FromBlack(frames);
@@ -564,8 +566,8 @@ void ScreenTransition_Start(s32 mode, s32 frames) {
                         IO_WRITE_HALFWORD);
     PaletteFade_SetBackdrop(0);
     return;
-  // The window, dissolve and centre-line kinds open from value 0 (closed) to
-  // 32 (open), or for the centre line from 80 to 0, over frames frames.
+  // A window or dissolve opens from value 0 (closed) to TRANSITION_OPEN, and
+  // the centre line from half the screen's height to 0, over frames frames.
   case TRANSITION_WINDOW: {
     struct ScreenTransitionState *state =
         ScreenTransition_AllocateAndClearState();
@@ -634,11 +636,11 @@ void ScreenTransition_Start(s32 mode, s32 frames) {
 /// in.
 void ScreenTransition_Finish(s32 mode, s32 frames) {
   s32 variant;
-  s32 transitionKind;
+  s32 style;
 
-  transitionKind = (mode >> 8) & 0xff;
+  style = (mode >> 8) & 0xff;
   variant = mode & 0xff;
-  switch (transitionKind) {
+  switch (style) {
   case TRANSITION_FADE:
     ScreenFade_FromBlack(0);
     ScreenFade_ToBlack(frames);
@@ -792,9 +794,7 @@ void ScreenTransition_UpdateFromCentre(void) {
   }
 }
 
-/// The HBlank interrupt of the centre-line transition: switches the display to
-/// DISPCNT_MODE_2 (nothing shown) at the first line and back to DISPCNT_MODE_0
-/// at the second.
+/// Where the centre-line transition's HBlank interrupt is in the frame.
 enum ScreenTransitionIrqPhase {
   DISPLAY_TRANSITION_IRQ_WAIT_SCREEN = 0, ///< waits for a line on screen
   /// Waits for whichever edge line comes first.
@@ -806,6 +806,9 @@ enum ScreenTransitionIrqPhase {
   DISPLAY_TRANSITION_IRQ_DONE = 9
 };
 
+/// The HBlank interrupt of the centre-line transition: switches the display to
+/// DISPCNT_MODE_2 (nothing shown) at the first line and back to DISPCNT_MODE_0
+/// at the second.
 void ScreenTransition_UpdateScanline(void) {
   u32 scanline = REG_VCOUNT;
   struct ScreenTransitionWin *state;
@@ -919,13 +922,13 @@ void ScreenTransition_FillTilemapAndSolidTile(s32 color) {
 }
 
 /// Starts a dissolve of the given mode and waits 120 frames.
-void ScreenTransition_InitializeState(s32 value) {
+void ScreenTransition_InitializeState(s32 mode) {
   struct ScreenTransitionState *state;
 
   state = HeapSlot_AllocEwram(HEAP_SLOT_SCREEN_TRANSITION, sizeof(*state));
   Dma_Fill32(0, state, sizeof(*state));
   ScreenTransition_FillTilemapAndSolidTile(0);
-  state->mode = value;
+  state->mode = mode;
   state->value = 0;
   Task_Add(ScreenTransition_UpdateDissolve, TASK_PASS_FRAME);
   wait(120);

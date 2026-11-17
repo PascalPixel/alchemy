@@ -5,6 +5,11 @@
 #include "window_internal.h"
 #include "window/screens.h"
 
+/// The bits of a sprite's OAM x (nine) and y (eight), which wrap round the
+/// screen.
+#define OAM_X_MASK 0x1ff
+#define OAM_Y_MASK 0xff
+
 /// Creates a window sprite for the VRAM cache slot `slot` and attaches it to
 /// `window`, placed at (offsetX, offsetY) pixels from the window's inner corner
 /// (one tile in from its top-left border). `oamFlags` holds the OAM shape and
@@ -24,9 +29,9 @@ struct WindowSprite *WindowSprite_Create(s32 slot, s32 oamFlags,
   // Window tiles to screen pixels, wrapped to OAM's 9-bit X and 8-bit Y.
   x = offsetX + (s16)window->x * 8 + 8;
   y = offsetY + (s16)window->y * 8 + 8;
-  x &= 0x1ff;
-  y &= 0xff;
-  *(u32 *)&sprite->sprite.oam = (x << 16) | y | oamFlags;
+  x &= OAM_X_MASK;
+  y &= OAM_Y_MASK;
+  *(u32 *)&sprite->sprite.oam = OBJ_X(x) | y | oamFlags;
   // Attribute 2: the first tile of the slot's VRAM block (32 bytes a tile).
   ((u32 *)&sprite->sprite.oam)[1] = gVramCacheEntries[slot].offset >> 5;
   sprite->depth = OAM_DEPTH_FRONT - 1;
@@ -36,7 +41,7 @@ struct WindowSprite *WindowSprite_Create(s32 slot, s32 oamFlags,
   sprite->index = (s8)slot;
   // An icon owns its VRAM cache slot, which is freed with it.
   sprite->kind = WINDOW_SPRITE_ICON;
-  sprite->motion = 1;
+  sprite->motion = WINDOW_SPRITE_MOTION_STILL;
   WindowSprite_AppendToList((struct WindowSpriteList *)window, sprite);
   return sprite;
 }
@@ -73,7 +78,7 @@ struct WindowSprite *WindowSprite_CreateLoaded(s32 icon, s32 layers,
 }
 
 /// Builds a 16x16 icon from frame pattern 1 with overlay pattern `icon` drawn
-/// over it, and shows it at (x, y) in `window` on draw layer 251.
+/// over it, and shows it at (x, y) in `window` at depth OAM_DEPTH_FRONT - 4.
 struct WindowSprite *WindowSprite_CreateWithTransform(s32 icon,
                                                       struct Window *window,
                                                       s32 x, s32 y) {
@@ -161,8 +166,8 @@ void Portrait_Reload(u32 slot, s32 key, s32 unused) {
   Icon_LoadWithPalette(id, unused, &entry, &tile, PORTRAIT_PALETTE + slot, 1);
 }
 
-/// Sets active to mode and resets the animation step (animationStep) to zero.
-/// out: sprite output; nothing happens if NULL.
+/// Sets a window sprite's motion and starts it from its first step; does
+/// nothing for NULL.
 void WindowSprite_SetMotion(struct WindowSprite *out, s32 mode) {
   if (out != NULL) {
     out->motion = mode;
@@ -170,12 +175,16 @@ void WindowSprite_SetMotion(struct WindowSprite *out, s32 mode) {
   }
 }
 
-/// Sets the draw layer of the window sprite `sprite` to 255 - `priority`, so a
-/// higher priority draws on a lower layer. Does nothing when `sprite` is NULL.
+/// Sets the depth of the window sprite `sprite` to OAM_DEPTH_FRONT -
+/// `priority`, so a higher priority draws further back. Does nothing when
+/// `sprite` is NULL.
 void WindowSprite_SetInvertedSentinel(void *sprite, s32 priority) {
   if (sprite != NULL)
     ((struct WindowSprite *)sprite)->depth = ~priority;
 }
+
+/// A line's window span with no window: left and right both at 224.
+#define WINDOW_SPAN_EMPTY WIN_RANGE(224, 224)
 
 /// The ARM routine ScanlineWindow_FillSpans copies to RAM and runs; it returns
 /// the end of the spans it wrote.
@@ -194,9 +203,9 @@ void ScanlineWindow_FillSpans(void *spans) {
     // each line takes two, so the lower 80 lines keep the window 1 edges
     // this page held when it was last built.
 #ifdef BUGFIX
-    Dma_Fill16(0xe0e0, spans, DISPLAY_HEIGHT * 4);
+    Dma_Fill16(WINDOW_SPAN_EMPTY, spans, DISPLAY_HEIGHT * 4);
 #else
-    Dma_Fill16(0xe0e0, spans, DISPLAY_HEIGHT * 2);
+    Dma_Fill16(WINDOW_SPAN_EMPTY, spans, DISPLAY_HEIGHT * 2);
 #endif
   } else {
     WindowSpanRoutine routine;
@@ -208,8 +217,8 @@ void ScanlineWindow_FillSpans(void *spans) {
   }
 }
 
-/// Fills the top-left `width` x `height` tiles of WINDOW_TILEMAP_VRAM, 32 tiles
-/// wide, with the tilemap entry `value`.
+/// Fills the top-left `width` x `height` tiles of WINDOW_TILEMAP_VRAM, a
+/// BG_SCREEN_WIDTH-tile map, with the tilemap entry `value`.
 void BgScreen_FillRect(s32 unusedA, s32 unusedB, u32 width, u32 height,
                        s32 value) {
   u32 row = 0;
@@ -226,7 +235,7 @@ void BgScreen_FillRect(s32 unusedA, s32 unusedB, u32 width, u32 height,
         } while (column < width);
       }
       row++;
-      dst += 32 - width;
+      dst += BG_SCREEN_WIDTH - width;
     } while (row < height);
   }
 }

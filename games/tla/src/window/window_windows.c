@@ -7,23 +7,36 @@
 void Window_DrawOpened(struct Window *window);
 void Window_WaitZoom(void *work);
 
-/// Removes and returns the first entry of the free list, or NULL if it is
-/// empty.
+/// The bytes of one pixel row of a 16-colour tile.
+#define TILE_ROW_SIZE_4BPP (TILE_SIZE_4BPP / 8)
+
+/// A text tile battle keeps for the bottom border's lower rows: neither taken
+/// nor shown, it is never free (WindowWork.textTileState).
+#define TEXT_TILE_RESERVED 4
+
+/// The tilemap uploads in five bands of four tile rows, each a bit of
+/// WindowWork.dirty above bit 0, which asks for them all.
+#define TILEMAP_BANDS 5
+#define TILEMAP_BAND_SIZE (4 * BG_SCREEN_WIDTH * sizeof(u16))
+#define TILEMAP_DIRTY_ALL ((1 << (TILEMAP_BANDS + 1)) - 1)
+
+/// Takes the first window sprite from the free list, or returns NULL when every
+/// sprite is in use.
 struct WindowSprite *WindowSprite_AcquireFree(void) {
   struct WindowWork *work = WINDOW_WORK;
   struct WindowSprite *out = work->freeSprites.head;
 
   if (out != NULL) {
     if (out->next == NULL)
-      work->freeSprites.tailLink = &work->freeSprites.head; // Now empty.
+      work->freeSprites.tailLink = &work->freeSprites.head;
     work->freeSprites.head = out->next;
     out->next = NULL;
   }
   return out;
 }
 
-/// Puts an entry back at the free list's tail; entries outside sprites[] are
-/// ignored.
+/// Returns a window sprite to the end of the free list. A sprite from outside
+/// the work block's pool is ignored.
 void WindowSprite_ReleaseFree(struct WindowSprite *out) {
   struct WindowWork *work = WINDOW_WORK;
 
@@ -37,7 +50,7 @@ void WindowSprite_ReleaseFree(struct WindowSprite *out) {
   }
 }
 
-/// Link all 64 sprites[] entries into the free list.
+/// Links all 64 window sprites of the pool into the free list.
 void WindowSprite_InitializeFreeList(void) {
   s32 n;
   struct WindowWork *work;
@@ -89,11 +102,14 @@ void WindowSystem_InitBattle(s32 kind) {
   s32 WindowSystem_CopyTileLowerRows(u32 sourceTile, u32 destinationTile) {
     sourceTile &= TILE_NUMBER_MASK;
     destinationTile &= TILE_NUMBER_MASK;
-    Dma_Set(BG_CHAR_BLOCK(0) + sourceTile * TILE_SIZE_4BPP + 16,
+    Dma_Set(BG_CHAR_BLOCK(0) + sourceTile * TILE_SIZE_4BPP +
+                4 * TILE_ROW_SIZE_4BPP,
             BG_CHAR_BLOCK(0) + destinationTile * TILE_SIZE_4BPP,
-            DMA_COPY_HALFWORDS(8), REG_DMA3);
-    return Iwram_ClearWordsEntry(
-        BG_CHAR_BLOCK(0) + destinationTile * TILE_SIZE_4BPP + 12, 20);
+            DMA_COPY_HALFWORDS(4 * TILE_ROW_SIZE_4BPP / 2), REG_DMA3);
+    return Iwram_ClearWordsEntry(BG_CHAR_BLOCK(0) +
+                                     destinationTile * TILE_SIZE_4BPP +
+                                     3 * TILE_ROW_SIZE_4BPP,
+                                 5 * TILE_ROW_SIZE_4BPP);
   }
 
   work = (struct WindowWork *)HeapSlot_AllocEwram(HEAP_SLOT_WINDOW,
@@ -108,21 +124,24 @@ void WindowSystem_InitBattle(s32 kind) {
   WindowSprite_InitializeFreeList();
   Task_Add((s32)WindowSystem_UploadTilemap, TASK_PASS_VBLANK);
   WindowSystem_StartBattleUpdate(kind);
-  // Tiles 128 to 130 take the lower rows of the bottom border tiles.
-  WindowSystem_CopyTileLowerRows(WINDOW_TILE_BORDER_BOTTOM_LEFT, 128);
-  WindowSystem_CopyTileLowerRows(WINDOW_TILE_BORDER_BOTTOM, 129);
-  WindowSystem_CopyTileLowerRows(WINDOW_TILE_BORDER_BOTTOM_RIGHT, 130);
-  // Tiles 128 to 130 are also the first three text tiles.
+  // The first three text tiles take the lower rows of the bottom border
+  // tiles, and are kept from text.
+  WindowSystem_CopyTileLowerRows(WINDOW_TILE_BORDER_BOTTOM_LEFT,
+                                 TEXT_TILE_FIRST);
+  WindowSystem_CopyTileLowerRows(WINDOW_TILE_BORDER_BOTTOM,
+                                 TEXT_TILE_FIRST + 1);
+  WindowSystem_CopyTileLowerRows(WINDOW_TILE_BORDER_BOTTOM_RIGHT,
+                                 TEXT_TILE_FIRST + 2);
   {
-    u8 mode = 4;
+    u8 mode = TEXT_TILE_RESERVED;
 
     for (i = 2; i >= 0; i--)
       work->textTileState[i] = mode;
   }
 }
 
-/// The tilemap upload, a VBlank-pass task: copies each 256-byte band of the
-/// tilemap (four tile rows) marked in the dirty bits to VRAM.
+/// The tilemap upload, a VBlank-pass task: copies each band of the tilemap
+/// marked in the dirty bits to VRAM.
 void WindowSystem_UploadTilemap(void) {
   struct WindowWork *work = WINDOW_WORK;
   u32 bands;
@@ -136,15 +155,15 @@ void WindowSystem_UploadTilemap(void) {
       dst = (u8 *)BG_SCREEN_BLOCK(4);
       // Bit 0 asks for all five bands; after the shift bit n is band n.
       if (bands & 1)
-        bands = 63;
-      bands &= 63;
+        bands = TILEMAP_DIRTY_ALL;
+      bands &= TILEMAP_DIRTY_ALL;
       bands >>= 1;
       do {
         if (bands & 1)
-          Dma_Set(src, dst, DMA_COPY_WORDS(64), REG_DMA3);
+          Dma_Set(src, dst, DMA_COPY_WORDS(TILEMAP_BAND_SIZE / 4), REG_DMA3);
         bands >>= 1;
-        src += 256;
-        dst += 256;
+        src += TILEMAP_BAND_SIZE;
+        dst += TILEMAP_BAND_SIZE;
       } while (bands);
       work->dirty = bands;
     }
@@ -160,9 +179,8 @@ void Window_EraseBorderRect(s32 x, s32 y, u32 width, u32 height) {
   u32 bottom;
   u32 row;
 
-  tile = 240;
+  tile = WINDOW_TILE_BLANK;
   bottom = y + height;
-  tile <<= 8;
   if (bottom > DISPLAY_TILE_HEIGHT)
     height = DISPLAY_TILE_HEIGHT - y;
   if (width <= 1)
@@ -449,10 +467,8 @@ void WindowSprite_AppendToList(struct WindowSpriteList *list,
   if (list != NULL) {
     *list->tailLink = node;
     // UB: the new tail is stored as node (next is its first member) through
-    // a WindowSprite * view of tailLink, which keeps both stores in one alias
-    // set and in this order.
+    // a WindowSprite * view of tailLink.
 #ifdef UBFIX
-    // Store the address of next through the tail link's actual pointer type.
     list->tailLink = &node->next;
 #else
     *(struct WindowSprite **)&list->tailLink = node;
@@ -621,8 +637,6 @@ void Message_ResetIdle(void) {
   }
 }
 
-// Copies the channel's text colour, outline and line spacing into the shared
-// glyph renderer before that channel draws its next character.
 /// Copies the message's text colour, outline and line spacing into the shared
 /// glyph renderer before that message draws its next character.
 void Message_ApplyStyle(struct UiChannelSlot *channel) {

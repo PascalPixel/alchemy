@@ -139,6 +139,8 @@
 /// BattleEnemy_RecordDefeat outside the monster battles; the monster battles
 /// choose only formations of defeated enemies (BattleFormation_AverageLevel).
 #define ENEMY_DEFEATED_FLAG(classId) ((classId) + 0x600)
+/// The enemies that have a defeated flag, the flags 0x600 to 0x7ff.
+#define ENEMY_DEFEATED_FLAG_COUNT 512
 
 // Far calls the parts make, each passing its own view of the record:
 // Sprite_AddAnimation and SpriteAnimation_Start (field.c, resource_slot/)
@@ -268,6 +270,9 @@ enum BattleActionFailure {
 /// BattleStaging_HideField's mode bit that hides the acting unit too, as the
 /// summons do.
 #define STAGING_HIDE_ACTOR 1
+/// BattleStaging_HideField's mode bit for Daedalus's strike at the turn's
+/// end: the acting unit plays no cast, with no pose, sound or star field.
+#define STAGING_NO_CAST 2
 
 /// BattleStaging_RunAttack's mode bit for Meld: BattlePlan.partnerId runs in
 /// beside the attacker.

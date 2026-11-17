@@ -28,8 +28,9 @@ s32 Shop_ListAvailableArtifacts(void) {
     s32 shopType = shop->shopType;
 
     if (shopType != SHOP_TYPE_GENERAL_STORE) {
-      // XXX: no stock row has type 4; a row of the stock table or an event
-      // passing it would settle what it was for.
+      // Unused: a type 4 would list every group's artifacts, as a general
+      // store does, but no stock row has it (shop_tables.c) and nothing else
+      // sets one.
       if (shopType != 4) {
         if (shopType != Item_GetEquipmentGroupFar(itemId))
           continue;
@@ -176,11 +177,18 @@ s32 Shop_Run(s32 stockRow, s32 keeperId) {
   return 0;
 }
 
-/// Opens the debug shop with 200000 coins, the ticket counter at its cap,
-/// broken equipment for repairs and poisoned or haunted party members for the
-/// sanctum. It opens the empty stock row 0.
+/// The coins the debug shop gives.
+#define DEBUG_SHOP_COINS 200000
+/// The actor whose sprite picks the debug shop keeper's portrait, in whatever
+/// room it opens.
+#define DEBUG_SHOP_KEEPER 30
+
+/// Unused: opens the debug shop with DEBUG_SHOP_COINS, the ticket counter at
+/// its cap, broken equipment for repairs and poisoned or haunted party members
+/// for the sanctum, on the empty stock row. Nothing calls it or its far-call
+/// export; The Broken Seal's debug menu opened its own.
 s32 Shop_OpenDebugShop(void) {
-  gMainRoutineWork.coins = 200000;
+  gMainRoutineWork.coins = DEBUG_SHOP_COINS;
   gMainRoutineWork.shopGifts = SHOP_GIFTS_MAX;
   Inventory_EquipFar(
       GARET,
@@ -188,10 +196,10 @@ s32 Shop_OpenDebugShop(void) {
   Inventory_EquipFar(
       ISAAC, Inventory_AddItemFar(ISAAC, INVENTORY_BROKEN | ITEM_MURAMASA));
   Inventory_AddItemFar(IVAN, ITEM_BONE);
-  Unit_Get(MIA)->poison = 1;
-  Unit_Get(JENNA)->poison = 1;
+  Unit_Get(MIA)->poison = POISON_NORMAL;
+  Unit_Get(JENNA)->poison = POISON_NORMAL;
   Unit_Get(IVAN)->haunt = 1;
-  Shop_Run(0, 30);
+  Shop_Run(SHOP_STOCK_ROW_EMPTY, DEBUG_SHOP_KEEPER);
   return 0;
 }
 
@@ -223,7 +231,8 @@ void Shop_ShowKeeperMessage(s32 messageId) {
   if (shopType == SHOP_TYPE_ITEMS)
     resolvedMessage += MsgItemShopWelcome - MsgWeaponShopWelcome;
   Message_OpenWindowFar(resolvedMessage, 5, 0,
-                        MESSAGE_WINDOW_VOICE(voice) | 0x22);
+                        MESSAGE_WINDOW_VOICE(voice) | MESSAGE_WINDOW_FIXED_X |
+                            2);
   while (Message_AllTypedFar() == 0)
     wait(1);
   wait(1);
@@ -254,7 +263,8 @@ void Shop_ShowKeeperMessageHidingCursor(s32 messageId) {
   (*cursorSlot)->motion = WINDOW_SPRITE_MOTION_HIDDEN;
   Message_CloseFinishedWindowsFar();
   Message_OpenWindowFar(resolvedMessage, 5, 0,
-                        MESSAGE_WINDOW_VOICE(voice) | 0x22);
+                        MESSAGE_WINDOW_VOICE(voice) | MESSAGE_WINDOW_FIXED_X |
+                            2);
   while (Message_AllTypedFar() == 0)
     wait(1);
   wait(1);

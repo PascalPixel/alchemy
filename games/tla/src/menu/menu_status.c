@@ -1067,8 +1067,8 @@ void ItemMenu_DrawMemberStatus(s32 window, s32 owner, s32 flags) {
     wait(1);
     Window_ClearInteriorTilesFar(window, 144, 0, 224, 40);
   }
-  // "Attack", "Defense", "Agility" and "Luck" (MsgStatLabel on), counted back
-  // from "Exp".
+  /* FAKEMATCH(temporary): "Attack", "Defense", "Agility" and "Luck",
+     MsgStatLabel and the three after it, counted back from MsgExpLabel. */
   Text_DrawMessageAsTilesFar((s32)MsgExpLabel - 23, window, 152, 0);
   Text_DrawMessageAsTilesFar((s32)MsgExpLabel - 22, window, 152, 8);
   Text_DrawMessageAsTilesFar((s32)MsgExpLabel - 21, window, 152, 16);
@@ -1134,7 +1134,7 @@ s32 PagedList_Build(struct PagedList *result, s32 index) {
 /// Pairs of 4-bit rows of dots in colour 5, each reaching further right than
 /// the last, that Menu_BuildPatternTiles XORs into its tile pairs
 /// (menu_strings.s).
-extern u32 gMenu_PatternRowMasks[][2];
+extern const u32 gMenu_PatternRowMasks[][2];
 
 #define RANGE_PATTERN_SET_COUNT 2
 #define RANGE_PATTERN_COUNT 6
@@ -1144,6 +1144,8 @@ extern u32 gMenu_PatternRowMasks[][2];
 #define RANGE_ICON_FIRST_TILE 768
 /// The last range icon, which stands for ABILITY_RANGE_ALL.
 #define RANGE_ICON_ALL (RANGE_PATTERN_SET_COUNT * RANGE_PATTERN_COUNT - 1)
+
+static __inline__ u32 XorWord(u32 word, u32 mask) { return word ^ mask; }
 
 /// Builds the twelve range icons PsynergyMenu_DrawRange draws, as the 24 BG
 /// tiles from RANGE_ICON_FIRST_TILE: icon n is a centre tile and an end tile,
@@ -1174,8 +1176,11 @@ void Menu_BuildPatternTiles(void) {
           if (sourcePattern < 0)
             sourcePattern = 0;
         }
-        tile[row] ^= gMenu_PatternRowMasks[sourcePattern][0];
-        tile[row + 8] ^= gMenu_PatternRowMasks[sourcePattern][1];
+        /* FAKEMATCH(wrapper): the XOR made through XorWord, as The Broken
+           Seal's twin writes it. */
+        tile[row] = XorWord(tile[row], gMenu_PatternRowMasks[sourcePattern][0]);
+        tile[row + 8] =
+            XorWord(tile[row + 8], gMenu_PatternRowMasks[sourcePattern][1]);
       }
     }
   }

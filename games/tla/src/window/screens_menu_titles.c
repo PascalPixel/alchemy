@@ -72,7 +72,7 @@ void MenuTitle_Bob(struct WindowSprite *obj) {
 /// into VRAM slot `slot`, remapping its first 768 bytes' colours by table
 /// when `remap` is nonzero.
 void CommandIcon_Load(s32 icon, s32 slot, s32 remap) {
-  s32 size = 1024;
+  s32 size = 32 * 32;
   void *buffer = HeapSlot_AllocEwram(HEAP_SLOT_TILE_SCRATCH, size);
   u16 *offsetTable = Resource_GetTableEntry(RESOURCE_COMMAND_ICONS);
 
@@ -91,18 +91,18 @@ void CommandIcon_Load(s32 icon, s32 slot, s32 remap) {
 /// (window/settings_menu.c).
 struct WindowSprite *CommandIcon_Create(s32 icon, s32 remap,
                                         struct Window *window, s32 x, s32 y) {
-  s32 index;
-  struct WindowSprite *entity;
+  s32 slot;
+  struct WindowSprite *windowSprite;
 
-  index = VramCache_FindFreeEntry();
-  entity = NULL;
-  if (index != VRAM_CACHE_ENTRY_COUNT) {
-    CommandIcon_Load(icon, index, remap);
-    entity = WindowSprite_Create(index, OUTPUT_SIZE_32X32, window, x, y);
-    entity->sprite.oam.fullColor = 1;
-    entity->depth = OAM_DEPTH_FRONT - 4;
+  slot = VramCache_FindFreeEntry();
+  windowSprite = NULL;
+  if (slot != VRAM_CACHE_ENTRY_COUNT) {
+    CommandIcon_Load(icon, slot, remap);
+    windowSprite = WindowSprite_Create(slot, OUTPUT_SIZE_32X32, window, x, y);
+    windowSprite->sprite.oam.fullColor = 1;
+    windowSprite->depth = OAM_DEPTH_FRONT - 4;
   }
-  return entity;
+  return windowSprite;
 }
 
 /// Makes the sprite `obj` pulse: scales it about its centre by
@@ -118,10 +118,10 @@ void WindowSprite_Pulse(struct WindowSprite *obj) {
     effect.angle = 0;
     obj->sprite.oam.matrix = OamMatrix_AllocFromTransform(&effect);
     // Affine mode 3 doubles the sprite's box, so it moves up and left by 16
-    // pixels (0xfff0 and 0xf0 wrap to -16) to keep its centre.
+    // pixels (-16 in the 16-bit x and 8-bit y) to keep its centre.
     obj->sprite.oam.affineMode = 3;
-    obj->sprite.oam.x = obj->x + 0xfff0;
-    obj->sprite.oam.y = (u8)obj->y + 0xf0;
+    obj->sprite.oam.x = obj->x + (u16)-16;
+    obj->sprite.oam.y = (u8)obj->y + (u8)-16;
     obj->depth = OAM_DEPTH_FRONT - 3;
   }
 }
@@ -271,7 +271,8 @@ void Link_DrawPageArrows(s32 offset) {
       (u32 *)(BG_CHAR_BLOCK(0) +
               (WINDOW_TILE_BORDER_TOP_RIGHT & TILE_NUMBER_MASK) *
                   TILE_SIZE_4BPP),
-      (u32 *)(gRomShiftedTilePair + 32), (u32 *)(offset + 32), phase);
+      (u32 *)(gRomShiftedTilePair + TILE_SIZE_4BPP),
+      (u32 *)(offset + TILE_SIZE_4BPP), phase);
 }
 
 /// Link_DrawPageArrows for the Status screen's own arrows: both slide over the
@@ -294,7 +295,8 @@ void BattleStatus_DrawPageArrows(s32 offset) {
   Graphics_MergeShiftedTileRows(
       (u32 *)(BG_CHAR_BLOCK(0) +
               (WINDOW_TILE_WINDOW_FILL & TILE_NUMBER_MASK) * TILE_SIZE_4BPP),
-      (u32 *)(gRomShiftedTilePair + 32), (u32 *)(offset + 32), phase);
+      (u32 *)(gRomShiftedTilePair + TILE_SIZE_4BPP),
+      (u32 *)(offset + TILE_SIZE_4BPP), phase);
 }
 
 /// Copies the UI's ten digit tiles ('0' to '9', tiles 48 to 57) twice into
@@ -323,8 +325,9 @@ void Graphics_ExpandVramTilesByColorTable(u16 *dst) {
         s32 nibble = 0;
 
         do {
-          u32 color = gGraphics_ExpandNibbleTable[(packed & 15) + paletteOffset]
-                      << (nibble * 4);
+          u32 color =
+              gGraphics_ExpandNibbleTable[(packed & 0xf) + paletteOffset]
+              << (nibble * 4);
           nibble++;
           packed >>= 4;
           expanded |= color;
@@ -332,13 +335,13 @@ void Graphics_ExpandVramTilesByColorTable(u16 *dst) {
 
         column++;
         *output++ = expanded;
-      } while (column <= 15);
+      } while (column < TILE_SIZE_4BPP / 2);
 
       row++;
-      destinationOffset += 32;
+      destinationOffset += TILE_SIZE_4BPP;
     } while (row <= 9);
 
-    paletteOffset += 16;
+    paletteOffset += PALETTE_COLORS;
     destinationBank += 4;
     bank++;
   } while (bank <= 1);
@@ -461,8 +464,15 @@ s32 Resource_LoadIndexedIntoBuffer(s32 slotIndex, s32 icon) {
   return tile;
 }
 
+/// The command icons on BG1 share at most 64 BG colours, given out in the order
+/// their pixels first use them; a colour met after that takes colour 64.
+#define COMMAND_ICON_COLORS 64
+/// A command icon as BG1 tiles: 32 by 32 pixels, 16 tiles of 256 colours.
+#define COMMAND_ICON_BG_TILES (32 * 32 / TILE_SIZE_8BPP)
+
 /// Loads command icon `glyph` as 8bpp BG tiles into character block 1 from
-/// 64-byte tile `tile` on (16 tiles, 32x32), for the command row's BG1.
+/// 64-byte tile `tile` on (COMMAND_ICON_BG_TILES, 32x32), for the command row's
+/// BG1.
 void BattleCommandRow_LoadIconTiles(struct GlyphPalette *palette, s32 glyph,
                                     s32 tile) {
   GlyphTransfer *decoded;
@@ -485,38 +495,43 @@ void BattleCommandRow_LoadIconTiles(struct GlyphPalette *palette, s32 glyph,
     index = *source++;
     if (palette->slot[index] == 255) {
       palette->slot[index] = palette->count;
-      if (palette->count < 64) {
+      if (palette->count < COMMAND_ICON_COLORS) {
         BG_PLTT[palette->count] = OBJ_PLTT[index];
         palette->count++;
       }
     }
     *destination++ = palette->slot[index];
   }
-  Dma_Set(remapped, BG_CHAR_BLOCK(1) + tile * 64, DMA_COPY_WORDS(256),
-          REG_DMA3);
+  Dma_Set(remapped, BG_CHAR_BLOCK(1) + tile * TILE_SIZE_8BPP,
+          DMA_COPY_WORDS(32 * 32 / 4), REG_DMA3);
   Heap_Release(remapped);
   HeapSlot_Release(HEAP_SLOT_GLYPH_TRANSFER);
 }
 
 /// Loads the command row's icon `index` as command icon `icon`: as BG1 tiles
-/// from tile index * 16 (BattleCommandRow_LoadIconTiles), and into the row's
-/// shared VRAM cache entry for its 32x32 sprite, which BattleCommandRow_Run
-/// shows only for the selected icon.
+/// from tile index * COMMAND_ICON_BG_TILES (BattleCommandRow_LoadIconTiles),
+/// and into the row's shared VRAM cache entry for its 32x32 sprite, which
+/// BattleCommandRow_Run shows only for the selected icon.
 void BattleCommandRow_LoadIcon(struct BattleCommandRowWork *work, s32 index,
                                u32 icon) {
   struct BattleCommandRowIcon *entry = &work->entries[index];
 
-  BattleCommandRow_LoadIconTiles(&work->palette, icon, index * 16);
+  BattleCommandRow_LoadIconTiles(&work->palette, icon,
+                                 index * COMMAND_ICON_BG_TILES);
   work->entries[index].kind = icon;
   MenuSprite_Initialize(entry->sprite, OBJ_SIZE_32X32 | OBJ_256_COLORS);
   entry->sprite.oam.f.tile =
       Resource_LoadIndexedIntoBuffer(work->entries[index].resource, icon);
 }
 
+/// The command window's top tile row: it runs along the bottom three rows (as
+/// screens_battle_command_row.c also defines it).
+#define COMMAND_ROW_TOP 17
+
 /// Puts BG1 behind the other layers (priority 3). The command row runs it as
 /// a task each VBlank, in the VBlank pass, with CommandRow_PutBg1InFront at
-/// line 136 (tile row 17, the top of the row's icons), so that BG1 is behind
-/// above the strip and in front from it down.
+/// line COMMAND_ROW_TOP * 8, so that BG1 is behind above the strip and in front
+/// from it down.
 void CommandRow_PutBg1Behind(void) {
   u32 value = REG_BG1CNT;
 
@@ -526,7 +541,7 @@ void CommandRow_PutBg1Behind(void) {
 }
 
 /// Brings BG1 to the front (priority 0): the command row's VCount handler,
-/// run at line 136, the top of its icon strip (tile row 17).
+/// run at line COMMAND_ROW_TOP * 8, the top of its icon strip.
 void CommandRow_PutBg1InFront(void) {
   u32 value = REG_BG1CNT;
 
@@ -536,10 +551,10 @@ void CommandRow_PutBg1InFront(void) {
 
 /// Clears BG0's vertical scroll (REG_BG0VOFS) and installs
 /// CommandRow_PutBg1InFront, which clears BG1's priority bits, as the VCount
-/// handler at line 136. Nothing calls it.
+/// handler at line COMMAND_ROW_TOP * 8. Nothing calls it.
 UNUSED void Graphics_InstallBg1VCountHandler(void) {
   Io_Write16(0, &REG_BG0VOFS);
-  Irq_SetHandler(IRQ_VCOUNT, 136, CommandRow_PutBg1InFront);
+  Irq_SetHandler(IRQ_VCOUNT, COMMAND_ROW_TOP * 8, CommandRow_PutBg1InFront);
 }
 
 #undef Decompress_ByteLz

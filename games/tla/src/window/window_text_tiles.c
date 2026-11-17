@@ -9,6 +9,11 @@
 /// the tilemap at the last look.
 #define TEXT_TILE_TAKEN 1
 #define TEXT_TILE_SHOWN 2
+/// The bit that sets the TEXT_TILES from TEXT_TILE_FIRST apart: ORed into a
+/// free state's index it gives the tile's number, and flipped in a tile
+/// number's low byte it gives the tile's index in textTileState, the first
+/// text tiles' states before the extra ones'.
+#define TEXT_TILE_FIRST_BIT 0x80
 
 /// Tile text is drawn into a canvas of one byte a pixel, eight rows of 256.
 #define TILE_TEXT_CANVAS_STRIDE 256
@@ -75,7 +80,7 @@ void Window_OverlayTilePattern(u16 *entry, u16 *mirror, s32 pattern,
       n++;
     } while (n < TEXT_TILES);
     work->textTileState[slot] = TEXT_TILE_TAKEN;
-    slot |= TEXT_TILE_FIRST;
+    slot |= TEXT_TILE_FIRST_BIT;
     *entry = WINDOW_TILE(slot);
     *mirror = WINDOW_TILE(slot);
   }
@@ -291,7 +296,7 @@ s32 Text_DrawStringAsTiles(u16 *text, u16 *tiles, u16 *mirror, s32 x) {
       if (tile > (TEXT_TILES - 1))
         tile += TEXT_EXTRA_TILE_FIRST - TEXT_TILES;
       else
-        tile |= TEXT_TILE_FIRST;
+        tile |= TEXT_TILE_FIRST_BIT;
       *tiles = paletteBits | tile;
       *mirror = paletteBits | tile;
     }
@@ -329,7 +334,7 @@ void Window_ClearTextTilesInRect(s32 x, s32 y, u32 width, u32 height) {
       if ((tile - TEXT_TILE_FIRST) <= TEXT_TILES - 1 ||
           (alternate != 0 && tile > (TEXT_EXTRA_TILE_FIRST - 1) &&
            tile <= TEXT_EXTRA_TILE_FIRST + TEXT_TILES - 1)) {
-        u32 index = ((tile & 0xFF) ^ TEXT_TILE_FIRST);
+        u32 index = (tile & 0xff) ^ TEXT_TILE_FIRST_BIT;
 
         ((struct WindowWork *)base)->textTileState[index] &=
             ~(TEXT_TILE_TAKEN | TEXT_TILE_SHOWN);
@@ -359,7 +364,7 @@ void Window_MarkVisibleTextTiles(void) {
       if ((tile - TEXT_TILE_FIRST) <= TEXT_TILES - 1 ||
           (alternate != 0 && tile > (TEXT_EXTRA_TILE_FIRST - 1) &&
            tile <= TEXT_EXTRA_TILE_FIRST + TEXT_TILES - 1)) {
-        u32 index = ((tile & 0xff) ^ TEXT_TILE_FIRST);
+        u32 index = (tile & 0xff) ^ TEXT_TILE_FIRST_BIT;
 
         ((struct WindowWork *)base)->textTileState[index] |= TEXT_TILE_SHOWN;
       }

@@ -12,21 +12,29 @@
 #include "system/system.h"
 #include "window/cursor.h"
 
+/// The donations the sanctum asks, in coins: reviving and removing a curse
+/// ask so many for each of the party member's levels.
+enum SanctumDonation {
+  DONATION_REVIVE_PER_LEVEL = 20,
+  DONATION_CURE_POISON = 10,
+  DONATION_REPEL_EVIL = 50,
+  DONATION_REMOVE_CURSE_PER_LEVEL = 10
+};
+
 /// Returns the sanctum's fee, in coins, for `serviceKind` on party member
-/// `unitId`: 20 a level to revive, 10 to cure poison, 50 to exorcise and 10 a
-/// level to remove a curse.
+/// `unitId`.
 s32 Sanctum_ServicePrice(s32 unitId, s32 serviceKind) {
   u8 level = Unit_Get(unitId)->level;
   s32 donation = 0;
 
   if (serviceKind == SANCTUM_SERVICE_REVIVE) {
-    donation = level * 20;
+    donation = level * DONATION_REVIVE_PER_LEVEL;
   } else if (serviceKind == SANCTUM_SERVICE_CURE_POISON) {
-    donation = 10;
+    donation = DONATION_CURE_POISON;
   } else if (serviceKind == SANCTUM_SERVICE_REPEL_EVIL) {
-    donation = 50;
+    donation = DONATION_REPEL_EVIL;
   } else if (serviceKind == SANCTUM_SERVICE_REMOVE_CURSE) {
-    donation = level * 10;
+    donation = level * DONATION_REMOVE_CURSE_PER_LEVEL;
   }
   return donation;
 }
@@ -89,7 +97,9 @@ void Sanctum_ShowKeeperMessage(s32 messageId) {
   voice = Speaker_GetVoiceFar(shop->keeperGraphics);
   Message_CloseFinishedWindowsFar();
   messageId = Sanctum_GetServiceMessage(messageId);
-  Message_OpenWindowFar(messageId, 5, 0, MESSAGE_WINDOW_VOICE(voice) | 0x22);
+  Message_OpenWindowFar(messageId, 5, 0,
+                        MESSAGE_WINDOW_VOICE(voice) | MESSAGE_WINDOW_FIXED_X |
+                            2);
   while (Message_AllTypedFar() == 0)
     wait(1);
   wait(1);
@@ -109,7 +119,9 @@ void Sanctum_ShowKeeperMessageHidingCursor(s32 messageId) {
   messageId = Sanctum_GetServiceMessage(messageId);
   (*cursorSlot)->motion = WINDOW_SPRITE_MOTION_HIDDEN;
   Message_CloseFinishedWindowsFar();
-  Message_OpenWindowFar(messageId, 5, 0, MESSAGE_WINDOW_VOICE(voice) | 0x22);
+  Message_OpenWindowFar(messageId, 5, 0,
+                        MESSAGE_WINDOW_VOICE(voice) | MESSAGE_WINDOW_FIXED_X |
+                            2);
   while (Message_AllTypedFar() == 0)
     wait(1);
   wait(1);
@@ -183,9 +195,9 @@ s32 Sanctum_Run(s32 actorId) {
 }
 
 // Italian creates no fee window and passes 0 where the others pass it, a
-// layout difference of that language's edition.
-// XXX: what Italian shows in its place; the Italian render of the sanctum
-// would settle it.
+// layout difference of that language's edition: Sanctum_DrawFee draws nothing
+// without a window, so Italian shows no fee while a party member is chosen,
+// and the fee is first seen in the keeper's line (MsgReviving).
 #define SANCTUM_HAS_PRICE_WINDOW (LANGUAGE != LANGUAGE_ITALIAN)
 
 // The fee window's left column and width in tiles, sized to each language's
@@ -559,7 +571,8 @@ void Sanctum_RunMemberIconBurst(s32 member) {
   }
 
   Task_Remove(Sanctum_UpdateBurst);
-  Sprite_SetAnimationSpeedFar(shop->partyMemberIcons[member], 16);
+  Sprite_SetAnimationSpeedFar(shop->partyMemberIcons[member],
+                              ANIMATION_STEP_NORMAL);
   Shop_RestoreFieldPalette();
   wait(30);
   shop->cursor.anchor->motion = savedCursorMode;

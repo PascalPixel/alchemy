@@ -5,6 +5,7 @@
 #include "window_internal.h"
 #include "resource_ids.h"
 #include "field/field_work.h"
+#include "field/map_grid.h"
 #include "flags.h"
 #include "sounds.h"
 #include "field/particle.h"
@@ -12,6 +13,21 @@
 
 /// The selection row's icons stand 16 pixels apart.
 #define SELECTION_ICON_SPACING 16
+
+/// SelectionScreen.verticalScroll as the screen is made: the row's icons drawn
+/// 32 pixels lower, below the bottom of the screen, and the cursor held still,
+/// until SelectionMenu_Clear readies the list.
+#define SELECTION_ROW_HIDDEN 32
+
+/// SelectionScreen.locked as the screen is made and once a yes or no window has
+/// opened: nonzero keeps a yes or no row and its window at the bottom of the
+/// screen, as Menu_RunSelectionForValue's 1 does.
+#define SELECTION_YES_NO_AT_BOTTOM 999
+
+/// One frame of an end arrow's animation: an 8x16 sprite of 256 colours.
+#define ARROW_FRAME_BYTES (2 * TILE_SIZE_8BPP)
+/// One frame of the pointing hand's animation: a 16x16 sprite of 256 colours.
+#define HAND_FRAME_BYTES (4 * TILE_SIZE_8BPP)
 
 // The part's functions its code calls before their definitions, declared
 // once as they are defined.
@@ -49,11 +65,11 @@ void SelectionMenu_Create(void) {
   screen->window = (struct Window *)(u32)clear;
   screen->unread = clear;
   screen->top = clear;
-  // Bit 7: the first list starts from its first entry.
-  screen->cursorIndex = 128;
-  screen->verticalScroll = 32;
+  // The first list starts from its first entry.
+  screen->cursorIndex = SELECTION_CURSOR_RESET;
+  screen->verticalScroll = SELECTION_ROW_HIDDEN;
   screen->count = clear;
-  screen->locked = 999;
+  screen->locked = SELECTION_YES_NO_AT_BOTTOM;
   i = 0;
   do {
     screen->records[i + SELECTION_RECORD_ROW].kind = ICON_KIND_NONE;
@@ -67,11 +83,10 @@ void SelectionMenu_Create(void) {
   screen->records[1].kind = FALSE;
   screen->records[0].y = 0;
   screen->records[1].y = 0;
-  // The hand: a 16x16 sprite of 256 colours, 256 bytes a frame.
   table = gMenu_AnimatedCursorTiles;
   screen->records[SELECTION_RECORD_HAND].slot = VramCache_FindFreeEntry();
-  screen->records[SELECTION_RECORD_HAND].tile =
-      VramCache_Load(screen->records[SELECTION_RECORD_HAND].slot, 256, table);
+  screen->records[SELECTION_RECORD_HAND].tile = VramCache_Load(
+      screen->records[SELECTION_RECORD_HAND].slot, HAND_FRAME_BYTES, table);
   screen->records[SELECTION_RECORD_HAND].kind = 0;
   screen->records[SELECTION_RECORD_HAND].scale = 0;
   screen->records[SELECTION_RECORD_LARGE_ICON].kind = ICON_KIND_NONE;
@@ -246,7 +261,7 @@ void SelectionMenu_Draw(void) {
   struct SelectionSprite *e;
   struct SelectionSprite *te;
   s32 cnt = 0;
-  s32 slot;
+  s32 depth;
   s32 tmp;
   struct ScreenPoint pos;
 
@@ -257,7 +272,7 @@ void SelectionMenu_Draw(void) {
     e->matrix = 0;
     e->x = node->x;
     e->y = node->y;
-    slot = 240;
+    depth = OAM_DEPTH_WINDOW;
     if (state->verticalScroll != 0) {
       e->y += state->verticalScroll;
     } else if (node->x != node->targetX) {
@@ -276,7 +291,7 @@ void SelectionMenu_Draw(void) {
       }
       e->x = node->x;
     } else if (cnt == state->cursorIndex) {
-      slot = 241;
+      depth = OAM_DEPTH_WINDOW + 1;
       if (cursor->kind != ICON_KIND_NONE) {
         if (BattleMotion_ProjectScaledPositionFar(node->base, (s32 *)&pos) !=
             -1) {
@@ -301,7 +316,7 @@ void SelectionMenu_Draw(void) {
           e->mode = 1;
         }
       }
-      Oam_AddSpriteAtDepth((s32 *)e, slot);
+      Oam_AddSpriteAtDepth((s32 *)e, depth);
     }
     node = node->next;
     cnt++;
@@ -318,6 +333,8 @@ void SelectionMenu_Draw(void) {
     te->shape = 0;
     te->priority = 0;
     te->tile = transfer->tile;
+    // A 32x32 sprite over the icon, bobbing by half the hand's bob; while it
+    // zooms in, its double-size area moves it 16 pixels up and left.
     te->x = node->x - 4;
     te->y =
         node->y + (gMenu_CursorBobOffsets[(gVBlankCount >> 1) & 15] >> 1) - 4;
@@ -327,8 +344,8 @@ void SelectionMenu_Draw(void) {
       state->transform.angle = 0;
       te->matrix = OamMatrix_AllocFromTransform(&state->transform);
       te->affine = 3;
-      te->x = te->x + 0xfff0;
-      te->y = te->y + 0xf0;
+      te->x += (u16)-16;
+      te->y += (u8)-16;
       transfer->scale = transfer->scale + transfer->scaleStep;
     }
     if (GameFlag_Get(FLAG_IN_BATTLE) != 0) {
@@ -356,8 +373,8 @@ void SelectionMenu_Draw(void) {
       state->transform.angle = 0;
       e->matrix = OamMatrix_AllocFromTransform(&state->transform);
       e->affine = 3;
-      e->x = e->x + 0xfff8;
-      e->y = e->y + 0xf8;
+      e->x += (u16)-8;
+      e->y += (u8)-8;
     } else {
       e->affine = 0;
       e->matrix = 0;
@@ -378,9 +395,9 @@ void SelectionMenu_Draw(void) {
   if (cursor->kind != ICON_KIND_NONE) {
     cnt = (s32)gMenu_AnimatedCursorTiles;
     {
-      void *src = (void *)(cnt + (((gVBlankCount >> 2) & 15) << 8));
+      void *src = (void *)(cnt + ((gVBlankCount >> 2) & 15) * HAND_FRAME_BYTES);
 
-      cursorEntry->tile = VramCache_Load(cursor->slot, 256, src);
+      cursorEntry->tile = VramCache_Load(cursor->slot, HAND_FRAME_BYTES, src);
     }
     if (cursor->targetX != cursor->x) {
       tmp = (cursor->targetX - cursor->x) >> 1;
@@ -437,8 +454,9 @@ void SelectionMenu_DrawArrow(struct SelectionMenuWork *state, s32 side) {
     if (state->records[0].base != 0)
       arrow->x = arrow->x - state->records[0].base;
   }
-  tmp = arrowTiles + animationStep * 128;
-  arrow->tile = VramCache_Load(state->records[side].slot, 128, tmp);
+  tmp = arrowTiles + animationStep * ARROW_FRAME_BYTES;
+  arrow->tile =
+      VramCache_Load(state->records[side].slot, ARROW_FRAME_BYTES, tmp);
   if (GameFlag_Get(FLAG_IN_BATTLE)) {
     if (state->records[SELECTION_RECORD_HAND].kind == ICON_KIND_COMMAND)
       arrow->mode = 1;
@@ -478,7 +496,7 @@ void SelectionMenu_OpenNameWindow(s32 mode, u32 count) {
         *slot = Window_Create(17, 0, 5, 3, mode);
       }
       screen->verticalScroll = 0;
-      screen->locked = 999;
+      screen->locked = SELECTION_YES_NO_AT_BOTTOM;
     } else {
       *slot = Window_Create(19 + ((9 - count) >> 1), 17, count + 2, 3, 6);
     }
@@ -605,8 +623,8 @@ void SelectionMenu_SetupArrow(struct SelectionMenuWork *state, s32 side) {
   }
   if (state->records[side].y == 0) {
     state->records[side].slot = VramCache_FindFreeEntry();
-    state->records[side].tile =
-        VramCache_Load(state->records[side].slot, 128, arrowTiles);
+    state->records[side].tile = VramCache_Load(state->records[side].slot,
+                                               ARROW_FRAME_BYTES, arrowTiles);
     state->records[side].y = state->baseY;
     state->records[side].base = 0;
     arrow->mode = 0;
@@ -1060,7 +1078,7 @@ void SelectionMenu_Scroll(struct SelectionMenuWork *screen, s32 forward) {
     p = screen->head;
     do {
       wait(1);
-    } while (p->scale != 256);
+    } while (p->scale != Q_8_8(1));
     while (p->next != NULL)
       p = p->next;
     VramCache_FreeEntry(p->slot);
@@ -1290,7 +1308,7 @@ u32 Menu_ConfirmSelection(struct SelectionMenuWork *screen) {
 
 /// Six empty functions; nothing calls the first, the fourth or the fifth. The
 /// others are reached only through bare entries of the window far-call table.
-/// With no body or caller to give them a role, they are numbered in ROM order.
+/// With no body or caller to give them a role, they are lettered in order.
 void MenuArrow_NoOpCallback(void) {}
 
 /// Does nothing.
@@ -1317,7 +1335,7 @@ void MenuArrow_Create(struct MenuSprite *sprite, s32 *slot) {
   s32 cacheSlot = VramCache_FindFreeEntry();
 
   *slot = cacheSlot;
-  sprite->oam.f.tile = VramCache_Load(cacheSlot, 128, data);
+  sprite->oam.f.tile = VramCache_Load(cacheSlot, ARROW_FRAME_BYTES, data);
   sprite->oam.f.mode = 0;
   sprite->oam.f.mosaic = 0;
   sprite->oam.f.colors = 1;
@@ -1329,7 +1347,8 @@ void MenuArrow_Create(struct MenuSprite *sprite, s32 *slot) {
 }
 
 /// Places an arrow sprite at screen pixel (x, y) and queues it for drawing
-/// this frame, at depth slot 252; the caller calls it every frame it shows.
+/// this frame, at depth OAM_DEPTH_FRONT - 3; the caller calls it every frame it
+/// shows.
 void MenuArrow_SetPosition(struct MenuSprite *sprite, s32 x, s32 y) {
   sprite->oam.f.x = x;
   sprite->oam.f.y = y;
@@ -1341,9 +1360,14 @@ void MenuArrow_Release(s32 value) { VramCache_FreeEntry(value); }
 
 #define Decompress_ByteLz ((void (*)(void *, void *))Decompress_ByteLz)
 
+/// The large icon's zoom: it opens at this scale (in 8.8) and grows by as much
+/// each frame until six steps, when SelectionMenu_Draw shows it at its own
+/// size.
+#define LARGE_ICON_ZOOM_STEP 40
+
 /// Loads the large icon of the command under the cursor, zooming in: 32x32 in
-/// 256 colours (32 * 32 bytes, record 15), its scale stepping from 40 to 240 by
-/// 40 a frame, after which SelectionMenu_Draw shows it at its own size.
+/// 256 colours (32 * 32 bytes, SELECTION_RECORD_LARGE_ICON), its scale growing
+/// by LARGE_ICON_ZOOM_STEP a frame.
 /// Other kinds of entry show none. The icon keeps its VRAM cache entry until
 /// Resource_ResetPendingTransfer.
 void SelectionMenu_LoadLargeIcon(void) {
@@ -1372,12 +1396,12 @@ void SelectionMenu_LoadLargeIcon(void) {
 
   if (transfer->kind == ICON_KIND_NONE)
     transfer->slot = VramCache_FindFreeEntry();
-  transfer->tile = VramCache_Load(transfer->slot, 1024, buffer);
+  transfer->tile = VramCache_Load(transfer->slot, 32 * 32, buffer);
   transfer->kind = ICON_KIND_COMMAND;
   transfer->base = no;
-  transfer->scale = 40;
-  transfer->scaleStep = 40;
-  transfer->scaleEnd = 240;
+  transfer->scale = LARGE_ICON_ZOOM_STEP;
+  transfer->scaleStep = LARGE_ICON_ZOOM_STEP;
+  transfer->scaleEnd = 6 * LARGE_ICON_ZOOM_STEP;
   HeapSlot_Release(HEAP_SLOT_GLYPH_TRANSFER);
 }
 
@@ -1430,7 +1454,7 @@ s32 FieldMenu_Run(void) {
     case 0:
       ret = Actor_GetTriggerCellAheadOfCurrentFar();
       if (ret == 0)
-        ret = 0xff;
+        ret = CELL_BEHAVIOR_WALL;
       state->examineCell = ret;
       break;
     case FIELD_MENU_PSYNERGY:

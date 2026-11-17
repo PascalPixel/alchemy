@@ -12,6 +12,17 @@
 #define DJINN_COLUMN_TILES 7
 #define DJINN_COLUMN_WIDTH (DJINN_COLUMN_TILES * 8)
 #define DJINN_FIGURE_X(column) ((column) * DJINN_COLUMN_WIDTH + 48)
+/// The y of the chosen Djinni's figure over its column, and its y while the
+/// Djinni is being chosen.
+#define DJINN_FIGURE_Y 54
+#define DJINN_FIGURE_CHOOSING_Y 62
+
+/// DjinnMenuWork.pairEntries before a Djinni is chosen: every element and
+/// number bit set, which no list entry has.
+#define DJINN_ENTRY_NONE (DJINN_ENTRY_ELEMENT | DJINN_ENTRY_INDEX)
+
+/// The tile of BG character block 1 the backdrop's digits are copied to.
+#define DJINN_BACKDROP_DIGIT_TILE 128
 
 /// The cursor packed in DjinnMenuWork.selection: column + row * 10.
 #define DJINN_CURSOR_ROW_STRIDE 10
@@ -100,7 +111,7 @@ s32 DjinnMenu_Run(void) {
   Menu_SetFirstActorRowCoordinates(0);
   Palette_LightenHighlight(HIGHLIGHT_PALETTE);
   menu->helpWindow = Window_CreateFar(13, 0, 17, 5, WINDOW_FLAG_INSTANT);
-  menu->pairEntries[0] = 255;
+  menu->pairEntries[0] = DJINN_ENTRY_NONE;
   zero = 0;
   menu->selectedColumn[0] = zero;
   menu->selectedColumn[1] = zero;
@@ -260,7 +271,7 @@ s32 DjinnMenu_RunScreen(void) {
       menu->member = menu->members[menu->selectedColumn[0]];
       menu->shownMember[0] = menu->members[menu->selectedColumn[0]];
       DjinnFigures_SetSlotPosition(0, DJINN_FIGURE_X(menu->selectedColumn[0]),
-                                   54);
+                                   DJINN_FIGURE_Y);
       result = DjinnMenu_SelectDjinn(DJINN_SELECT_ACTION);
       for (listIndex = 0; listIndex < menu->memberCount; listIndex++)
         menu->memberY[listIndex] += 8;
@@ -485,10 +496,10 @@ void Menu_OpenBackdropScreen(void) {
   Iwram_FillWords(BG_CHAR_BLOCK(1), sizeof(backdrop->tiles), PIXELS_4BPP(3));
   Iwram_FillWords((void *)&BG_PLTT_COLOR(4, 0), sizeof(backdrop->palette),
                   PIXELS_4BPP(5));
-  Graphics_ExpandVramTilesByColorTableFar(BG_CHAR_BLOCK(1) +
-                                          128 * TILE_SIZE_4BPP);
-  Iwram_CopyWords(BG_CHAR_BLOCK(1) + 150 * TILE_SIZE_4BPP,
-                  gMenu_BackdropBorderTile, TILE_SIZE_4BPP);
+  Graphics_ExpandVramTilesByColorTableFar(
+      BG_CHAR_BLOCK(1) + DJINN_BACKDROP_DIGIT_TILE * TILE_SIZE_4BPP);
+  Iwram_CopyWords(DJINN_BACKDROP_BORDER_VRAM, gMenu_BackdropBorderTile,
+                  TILE_SIZE_4BPP);
   Dma_Set(Palette_GetBasicSpriteColors(),
           (void *)&BG_PLTT_COLOR(BASIC_COLORS_PALETTE, 0),
           DMA_COPY_HALFWORDS(16), REG_DMA3);
@@ -509,7 +520,7 @@ void Menu_OpenBackdropScreen(void) {
   icon->motion = ICON_HIDDEN;
   menu->cursor = icon;
   entry = VramCache_FindFreeEntry();
-  if (entry < 96) {
+  if (entry < VRAM_CACHE_ENTRY_COUNT) {
     VramBlock_LoadResourceFar(entry, ICON_TILE_BYTES, RESOURCE_SHOP_GEM_TILES);
     icon = WindowSprite_CreateFar(entry, OUTPUT_SIZE_16X16, window, 0, 0);
     icon->motion = ICON_HIDDEN;
@@ -635,7 +646,7 @@ s32 DjinnMenu_GetEntryState(u32 entry) {
 /// and its element's icon tile at the tile under (x, y), then resets the text
 /// colour. The names run 20 to an element.
 void DjinnMenu_DrawEntry(s32 window, s32 x, s32 y, s32 entry) {
-  s32 element = (entry & DJINN_ENTRY_ELEMENT) / 32;
+  s32 element = (entry & DJINN_ENTRY_ELEMENT) / (DJINN_ENTRY_INDEX + 1);
 
   Text_DrawMessageAsTilesFar((s32)MsgDjinnName + element * DJINN_PER_ELEMENT +
                                  DJINN_NUMBER(entry),
@@ -783,8 +794,8 @@ void Window_SetRectPalette(s32 x, s32 y, s32 width, s32 height, s32 palette) {
         do {
           u32 tile = *entry;
 
-          if (((tile >> 12) & 15) == WINDOW_PALETTE) {
-            tile &= ~0xf000;
+          if ((tile / BG_TILE_PALETTE(1) & 0xf) == WINDOW_PALETTE) {
+            tile &= ~BG_TILE_PALETTE(0xf);
             tile |= palette;
             *entry = tile;
           }
@@ -1070,7 +1081,7 @@ s32 DjinnMenu_SelectDjinn(s32 mode) {
             Window_SetInteriorRectPalette(
                 listWindow, (fromX - page) * DJINN_COLUMN_TILES + 1, 2,
                 GRID_CELL_WIDTH, height, 6);
-            menu->slotY[0] = 54;
+            menu->slotY[0] = DJINN_FIGURE_Y;
           } else {
             menu->slotY[0] = MENU_FIGURE_HIDDEN_Y;
           }
@@ -1125,7 +1136,9 @@ s32 DjinnMenu_SelectDjinn(s32 mode) {
           break;
         }
         DjinnFigures_SetSlotPosition(mode, memberColumn % 4 * 56 + 48,
-                                     mode == DJINN_SELECT_DJINNI ? 62 : 54);
+                                     mode == DJINN_SELECT_DJINNI
+                                         ? DJINN_FIGURE_CHOOSING_Y
+                                         : DJINN_FIGURE_Y);
         DjinnFigures_SetSlotFacing(mode, facing);
         if (redraw & 2)
           DjinnFigures_SetSlotPhase(mode, 0);
@@ -1600,7 +1613,7 @@ s32 DjinnMenu_SelectDjinn(s32 mode) {
 
     menu->pairEntries[mode] = id = backdrop->ids[memberColumn][selectedRow];
     entry = (u16)id;
-    menu->pairIndex[mode] = entry % 32;
+    menu->pairIndex[mode] = entry % (DJINN_ENTRY_INDEX + 1);
     menu->pairElement[mode] = DJINN_ELEMENT(entry);
     menu->pairMember[mode] = DJINN_MEMBER(entry);
   }
@@ -1611,7 +1624,8 @@ s32 DjinnMenu_SelectDjinn(s32 mode) {
 
 #undef DJINN_TUTORIAL_MESSAGE
 
-#define DJINN_ENTRY_SET (-0x8000)
+/// DJINN_ENTRY_IS_SET as a negative int, for entries built in s32.
+#define DJINN_ENTRY_SET (-DJINN_ENTRY_IS_SET)
 
 /// Lists owned Djinn by element and index, marking those that are set.
 /// For element -1, entries also encode their party member.

@@ -55,8 +55,8 @@ struct Window *Window_CreateFar(s32 x, s32 y, s32 width, s32 height, s32 style);
 void WindowSprite_RedrawSavedRectFar(struct Window *window);
 
 /// Creates *handle's window if absent and returns 1. Otherwise returns 0,
-/// redrawing its saved rectangle unless flags has 0x100 set.
-/// flags: the low 8 bits select the window type.
+/// redrawing its saved rectangle unless flags has WINDOW_KEEP_EXISTING set.
+/// flags: the low 8 bits select the window style.
 s32 Window_UpdateOrCreate(s32 *handle, s32 x, s32 y, s32 w, s32 h, s32 flags) {
   struct Window *window;
   s32 style;
@@ -74,9 +74,8 @@ s32 Window_UpdateOrCreate(s32 *handle, s32 x, s32 y, s32 w, s32 h, s32 flags) {
   return 1;
 }
 
-/// Closes *handle's window if present, then sets the handle to NULL.
-/// Although declared with one argument, the caller's second argument stays in
-/// r1 and reaches Window_CloseFar.
+/// Closes *handle's window if present, with style, then sets the handle to
+/// NULL.
 void Window_CloseIfOpen(void **handle, s32 style) {
   if (*handle != NULL) {
     Window_CloseFar(*handle, style);
@@ -102,6 +101,10 @@ void Window_CloseIfOpen(void **handle, s32 style) {
 #define STATUS_PANEL_LEARN_NAME_Y 48
 #define STATUS_PANEL_LEARN_NOTE_Y 56
 #endif
+
+/// The tile of BG character block 0 that holds the class change's down arrow,
+/// which Menu_WatchStart blinks.
+#define CLASS_CHANGE_ARROW_TILE 298
 
 #define STATUS_PANEL_LOWER_ONLY 0x100
 #define STATUS_PANEL_KIND_MASK 0xff
@@ -246,10 +249,10 @@ void StatusPanel_Draw(struct Window *unused, s32 owner, s32 slot, s32 mode) {
       Inventory_EquipFar(owner, slot);
     }
     Unit_CalculateFar(owner);
-    // XXX: tile 298, between the class line and the class the equipment would
-    // give, is in the text canvas (TEXT_CANVAS_FIRST_TILE + 2); what it holds
-    // while the panel is open would name it.
-    Window_SetTilemapEntryFar((s32)window, WINDOW_TILE(298), 3, 5, 0);
+    // The blinking arrow down from the class now to the class the equipment
+    // would give.
+    Window_SetTilemapEntryFar((s32)window, WINDOW_TILE(CLASS_CHANGE_ARROW_TILE),
+                              3, 5, 0);
     value = unit->classId + MESSAGE_CLASS_NAME;
     Text_DrawMessageAsTilesFar(value, window, 0, 48);
     Iwram_CopyWords(unit, backup, sizeof(struct Unit));
@@ -381,8 +384,7 @@ void Text_DrawNumberRightAligned(s32 number, s32 window, s32 x, s32 y) {
   s32 width = CountDigitsAtLeastTwo(number);
 
   // Step x back to the field's left edge; the number writer right-aligns the
-  // number in a field of width characters. x changes in place: a separate
-  // left-edge local changes the registers.
+  // number in a field of width characters.
   x -= width * FIELD_PIXELS_PER_DIGIT;
   Text_DrawNumberAtOffsetFar(number, width, window, x, y);
 }
@@ -398,9 +400,7 @@ void Text_DrawNumberRightAligned(s32 number, s32 window, s32 x, s32 y) {
 /// window: the window to draw in, its struct Window pointer held as an
 ///         s32
 void StatusPanel_DrawHpPp(struct Unit *unit, s32 window) {
-  // Each figure in turn, as an s16. Read straight from unit, the figures
-  // compile differently.
-  s16 value;
+  s16 value; // each figure in turn
 
 #if (LANGUAGE != LANGUAGE_JAPANESE)
   // The label at the left and a slash at 48. A current figure ends before
@@ -525,9 +525,8 @@ void Icon_PrepareActor(struct WindowSprite *object) {
   }
 }
 
-/// Loads the character's graphics into slot 0.
-/// menu: calling menu (unused).
-/// unit: character ID.
+/// Loads the graphics of party member unit into menu entry slot 0. The calling
+/// menu argument is not used.
 void PsynergyMenu_CallIconRoutineWithValue(s32 menu, s32 unit) {
   Portrait_ReloadFar(0, unit, 0);
 }
@@ -539,8 +538,6 @@ struct Window *MenuCursor_Create(void *source) {
   struct PsynergyMenuWork *menu = source;
   struct Window *window;
   struct WindowSprite *icon;
-  s32 zero = 0;
-  s32 sentinel;
   s32 slot;
 
   menu->auxiliaryWindow = NULL;
@@ -549,13 +546,11 @@ struct Window *MenuCursor_Create(void *source) {
   Window_DrawDividerLineFar((s32)window, 0, 3, 12, 3);
   icon = (struct WindowSprite *)Icon_CreateWithResource(window, -8, 11);
   icon->motion = ICON_HIDDEN;
-  menu->tabIndex[0] = 255;
+  menu->tabIndex[0] = -1;
   menu->sideIcon[0] = icon;
-  sentinel = OAM_DEPTH_FRONT - 1;
-  icon->depth = sentinel;
-  sentinel -= 255;
-  menu->tabIndex[1] = zero;
-  menu->sideIcon[1]->depth = sentinel;
+  icon->depth = OAM_DEPTH_FRONT - 1;
+  menu->tabIndex[1] = 0;
+  menu->sideIcon[1]->depth = OAM_DEPTH_FRONT;
   slot = VramCache_FindFreeEntry();
   if (slot < VRAM_CACHE_ENTRY_COUNT) {
     VramBlock_LoadResourceFar(slot, ICON_TILE_BYTES,
@@ -725,9 +720,8 @@ void PsynergyMenu_PositionMemberEntry(struct WindowSprite **slot, s32 index,
   Icon_PrepareActor(icon);
 }
 
-/// Places item i (or 0 if above 15) in a grid with cols columns of
-/// 24x16-pixel cells.
-/// x0, y0: top left of the grid.
+/// Places the icon in *slot at slotIndex (0 above 15) in a columns-wide grid of
+/// 24x16 cells from (originX, originY), and shows it.
 void ItemMenu_PlaceIcon(struct WindowSprite **slot, s32 slotIndex, s32 originX,
                         s32 originY, s32 columns) {
   struct WindowSprite *icon;
@@ -740,8 +734,8 @@ void ItemMenu_PlaceIcon(struct WindowSprite **slot, s32 slotIndex, s32 originX,
   Icon_PrepareActor(icon);
 }
 
-/// Lays the inventory's 15 item icons out five to a row from (116, y): y is
-/// 56 for layout 1 and 40 otherwise.
+/// Lays the inventory's INVENTORY_SLOTS item icons out five to a row from (116,
+/// y): y is 56 for layout 1 and 40 otherwise.
 void ItemMenu_RefreshEntry(s32 layout) {
   struct WindowSprite **slot;
   struct WindowSprite **scan;
@@ -775,8 +769,8 @@ void Text_GetMessageSizeFar(s32 message, s32 *left, s32 *top, s32 *width,
 ///
 /// With y == -1 the message goes into the info window; otherwise a modal
 /// window sized to the message opens at (x, y). With x == -1 the message stays
-/// up and flag 337 records that the info window holds it; otherwise it waits
-/// for A, B or Start and clears it again.
+/// up and FLAG_INFO_WINDOW_HOLDS_MESSAGE records that the info window holds it;
+/// otherwise it waits for A, B or Start and clears it again.
 void ItemMenu_ShowMessage(s32 message, s32 x, s32 y) {
   struct ItemMenuWork *menu = (struct ItemMenuWork *)Ram_HeapSlots->menuWork;
   struct Window *window;
@@ -819,20 +813,22 @@ void ItemMenu_ShowMessage(s32 message, s32 x, s32 y) {
   menu->sideIcons[0]->motion = ICON_SHOWN;
 #if TLA_PATCH_1
   if (y != -1)
-    ((void (*)(void **, s32))Window_CloseIfOpen)((void **)&menu->modalWindow,
-                                                 1);
+    Window_CloseIfOpen((void **)&menu->modalWindow, 1);
 #endif
 }
 
+/// The most bytes a list order copies, its LIST_ORDER_END included.
+#define LIST_ORDER_MAX_LENGTH 32
+
 void Menu_CopyListOrder(s32 mode, u8 *order);
 
-/// Sorts a party member's 15 inventory slots by the list order of mode: items
-/// are grouped by the order's item types and, within a type, run from the
-/// highest item id down.
+/// Sorts a party member's INVENTORY_SLOTS inventory slots by the list order of
+/// mode: items are grouped by the order's item types and, within a type, run
+/// from the highest item id down.
 s32 ItemMenu_Sort(u16 *inventory, s32 mode) {
   u16 sorted[16];
   u16 items[16];
-  u8 order[32];
+  u8 order[LIST_ORDER_MAX_LENGTH];
   struct ItemDefinition *item;
   s32 pass;
   s32 i;
@@ -895,7 +891,7 @@ s32 ItemMenu_Sort(u16 *inventory, s32 mode) {
 
 /// Copies the list order of mode (enum ListSort; any other mode takes
 /// LIST_SORT_ITEMS_FIRST's) into order, up to and including its LIST_ORDER_END
-/// and at most 32 bytes.
+/// and at most LIST_ORDER_MAX_LENGTH bytes.
 void Menu_CopyListOrder(s32 mode, u8 *order) {
   u8 *src;
   s32 n;
@@ -916,7 +912,7 @@ void Menu_CopyListOrder(s32 mode, u8 *order) {
   n = 0;
   if (*order != LIST_ORDER_END) {
     do {
-      if (++n > 31)
+      if (++n >= LIST_ORDER_MAX_LENGTH)
         break;
       src++;
       order++;
@@ -1111,7 +1107,7 @@ void Render_SetTilemapFlagRect(const struct Window *window, s32 x, s32 y,
       s32 remaining = width;
       while (remaining != 0) {
         u32 value = *entry;
-        value &= 0xFFFFEFFF;
+        value &= ~BG_TILE_PALETTE(WINDOW_PALETTE ^ HIGHLIGHT_PALETTE);
         value |= palette;
         remaining--;
         *entry = value;
@@ -1187,11 +1183,8 @@ s32 Sound_PlayReturnOne(s32 cue) {
   return 1;
 }
 
-/// The tile of BG character block 0 the Start prompt blinks.
-#define MENU_START_PROMPT_TILE 298
-
-/// A VBlank task while the menus watch for Start: blinks the Start prompt's
-/// tile every four frames, and on Start plays the cancel sound, sets
+/// A VBlank task while the menus watch for Start: blinks the class change's
+/// arrow every four frames, and on Start plays the cancel sound, sets
 /// FLAG_MENU_START_PRESSED and removes itself.
 void Menu_WatchStart(void) {
   u32 frame;
@@ -1203,11 +1196,11 @@ void Menu_WatchStart(void) {
   if ((frame & 3) == 0) {
     if (frame & 4)
       Iwram_CopyWords(BG_CHAR_BLOCK(0) +
-                          MENU_START_PROMPT_TILE * TILE_SIZE_4BPP,
+                          CLASS_CHANGE_ARROW_TILE * TILE_SIZE_4BPP,
                       gMenu_StartPromptTile, TILE_SIZE_4BPP);
     else
       Iwram_FillWords(BG_CHAR_BLOCK(0) +
-                          MENU_START_PROMPT_TILE * TILE_SIZE_4BPP,
+                          CLASS_CHANGE_ARROW_TILE * TILE_SIZE_4BPP,
                       TILE_SIZE_4BPP, TEXT_CANVAS_BACKGROUND_WORD);
   }
   input = &gInput;

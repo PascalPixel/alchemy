@@ -847,8 +847,8 @@ s32 BattleAbility_ApplyToTarget(struct BattlePlan *plan, s32 slot) {
   savedTarget = Heap_Alloc(unitSize);
 
   // Meld and Mold strike with the stats of the unit that joins the user.
-  // BUG: abilityId is tested before it is read from the plan, so this sees
-  // whatever the register held.
+  // BUG: abilityId is tested before it is read from the plan, so this reads a
+  // local not yet set.
   if (abilityId == ABILITY_MELD || abilityId == ABILITY_MOLD)
     unitId = plan->partnerId;
   else
@@ -930,7 +930,8 @@ s32 BattleAbility_ApplyToTarget(struct BattlePlan *plan, s32 slot) {
   else
     elementPower = ITEM_ELEMENT_POWER;
 
-  // 2. The Djinn bonus, and whether the effect lands.
+  // 2. The Djinn bonus, and whether the effect lands: a chance of the user's
+  // power less the target's resistance, plus 30, in percent.
   if (plan->command == COMMAND_DJINN &&
       (plan->element >= ELEMENT_VENUS && plan->element <= ELEMENT_JUPITER) &&
       affinity > 0) {
@@ -2325,6 +2326,13 @@ u32 Ability_IsPsynergy(s32 abilityId) {
 
 #define AI_BATTLE ((struct BattleWork *)Ram_HeapSlots->battleWork)
 
+/// The priority an enemy's Counter or Guard Aura stance gains as the turn is
+/// built: more than any agility, so it is taken before every other action.
+#define PRIORITY_FIRST_IN_TURN 10000
+
+/// The choices an enemy may fail to carry out before it defends instead.
+#define AI_MAX_FAILED_CHOICES 16
+
 /// Chooses an enemy's action: one of the eight in its definition, picked by its
 /// action strategy, with an item instead where its item mask says so, and a
 /// target worth the ability. Called with retry 0 for each enemy as the turn is
@@ -2534,7 +2542,7 @@ select_again:
     case ABILITY_EFFECT_COUNTER:
     case ABILITY_EFFECT_GUARD_AURA:
       if (retry == 0)
-        request->priority += 10000;
+        request->priority += PRIORITY_FIRST_IN_TURN;
       break;
     }
 
@@ -2647,7 +2655,7 @@ select_again:
   if (retry == 0)
     needsChoice = 0;
 next_candidate:
-  if (needsChoice != 0 && failedChoices > 16) {
+  if (needsChoice != 0 && failedChoices > AI_MAX_FAILED_CHOICES) {
     request->command = COMMAND_DEFEND;
     needsChoice = 0;
   }

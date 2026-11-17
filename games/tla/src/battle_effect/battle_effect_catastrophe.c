@@ -166,14 +166,14 @@ void BattleEffect_RunCatastrophe(struct BattleEffectParams *args) {
   s16 list[UNIT_MAX];
   FIXED place[4];
   struct ScreenPoint pos;
-  struct Scale req;
+  struct Scale spriteScale;
   struct ModelTexture texture;
   struct ModelTexture sweepTexture;
-  struct Particle *p2;
-  struct Particle *p3;
-  struct Particle *q2;
+  struct Particle *bolt;
+  struct Particle *spark;
+  struct Particle *burst;
   u16 *backdropColor;
-  u8 *e;
+  u8 *resource;
   s32 zero;
   u8 *cellBuffer = Ram_MapCellBuffer;
   s32 span = toFIXED(8);
@@ -241,10 +241,10 @@ void BattleEffect_RunCatastrophe(struct BattleEffectParams *args) {
   {
     u8 *cells;
 
-    e = Resource_GetTableEntry(RESOURCE_CHAINED_DEMON_TILES);
-    Iwram_CopyWords((void *)OBJ_PLTT, e, CATASTROPHE_DEMON_COLORS * 2);
-    e += CATASTROPHE_DEMON_COLORS * 2;
-    Decompress_TaggedLz(e, cellBuffer);
+    resource = Resource_GetTableEntry(RESOURCE_CHAINED_DEMON_TILES);
+    Iwram_CopyWords((void *)OBJ_PLTT, resource, CATASTROPHE_DEMON_COLORS * 2);
+    resource += CATASTROPHE_DEMON_COLORS * 2;
+    Decompress_TaggedLz(resource, cellBuffer);
     cells = Ram_MapCellBuffer;
     for (i = 0; i != CATASTROPHE_DEMON_TILED;
          cells += OBJ_32X32_8BPP_BYTES, i++) {
@@ -278,11 +278,11 @@ void BattleEffect_RunCatastrophe(struct BattleEffectParams *args) {
   {
     u8 *cells;
 
-    e = Resource_GetTableEntry(RESOURCE_GOLDEN_SCALES_TILES);
-    Iwram_CopyWords((void *)&OBJ_PLTT_COLOR(CATASTROPHE_SCALES_PALETTE, 0), e,
-                    PALETTE_BANK_BYTES);
-    e += PALETTE_BANK_BYTES;
-    Decompress_TaggedLz(e, work->sheet);
+    resource = Resource_GetTableEntry(RESOURCE_GOLDEN_SCALES_TILES);
+    Iwram_CopyWords((void *)&OBJ_PLTT_COLOR(CATASTROPHE_SCALES_PALETTE, 0),
+                    resource, PALETTE_BANK_BYTES);
+    resource += PALETTE_BANK_BYTES;
+    Decompress_TaggedLz(resource, work->sheet);
     cells = work->sheet;
     for (i = 0; i != CATASTROPHE_SCALES_COUNT;
          cells += OBJ_32X32_4BPP_BYTES, i++) {
@@ -296,12 +296,12 @@ void BattleEffect_RunCatastrophe(struct BattleEffectParams *args) {
   {
     u8 *cells;
 
-    e = Resource_GetTableEntry(RESOURCE_PURPLE_ARMOUR_TILES);
+    resource = Resource_GetTableEntry(RESOURCE_PURPLE_ARMOUR_TILES);
     Iwram_CopyWords(
-        (void *)&OBJ_PLTT_COLOR(CATASTROPHE_PURPLE_ARMOUR_PALETTE, 0), e,
+        (void *)&OBJ_PLTT_COLOR(CATASTROPHE_PURPLE_ARMOUR_PALETTE, 0), resource,
         PALETTE_BANK_BYTES);
-    e += PALETTE_BANK_BYTES;
-    Decompress_TaggedLz(e, work->sheet);
+    resource += PALETTE_BANK_BYTES;
+    Decompress_TaggedLz(resource, work->sheet);
     cells = work->sheet;
     for (i = 0; i != CATASTROPHE_PURPLE_ARMOUR_COUNT;
          cells += OBJ_32X32_4BPP_BYTES, i++) {
@@ -316,11 +316,11 @@ void BattleEffect_RunCatastrophe(struct BattleEffectParams *args) {
   {
     u8 *cells;
 
-    e = Resource_GetTableEntry(RESOURCE_WHITE_SPIKES_TILES);
-    Iwram_CopyWords((void *)&OBJ_PLTT_COLOR(CATASTROPHE_SPIKES_PALETTE, 0), e,
-                    PALETTE_BANK_BYTES);
-    e += PALETTE_BANK_BYTES;
-    Decompress_TaggedLz(e, work->sheet);
+    resource = Resource_GetTableEntry(RESOURCE_WHITE_SPIKES_TILES);
+    Iwram_CopyWords((void *)&OBJ_PLTT_COLOR(CATASTROPHE_SPIKES_PALETTE, 0),
+                    resource, PALETTE_BANK_BYTES);
+    resource += PALETTE_BANK_BYTES;
+    Decompress_TaggedLz(resource, work->sheet);
     cells = work->sheet;
     for (i = 0; i != CATASTROPHE_SPIKES_COUNT;
          cells += OBJ_32X32_4BPP_BYTES, i++) {
@@ -621,7 +621,7 @@ void BattleEffect_RunCatastrophe(struct BattleEffectParams *args) {
       }
     }
     if (frame <= 593) {
-      req = gCatastrophe_UnitScale;
+      spriteScale = gCatastrophe_UnitScale;
       place[3] = 0;
       place[1] = toFIXED(255);
       {
@@ -632,7 +632,7 @@ void BattleEffect_RunCatastrophe(struct BattleEffectParams *args) {
           if (place[2] > toFIXED(16) - 1) {
             if (place[2] <= toFIXED(168)) {
               Render_ApplyProjectedPlacementFar(work->sprites[i], place,
-                                                (s32 *)&req, 0);
+                                                (s32 *)&spriteScale, 0);
             }
           }
         }
@@ -645,7 +645,8 @@ void BattleEffect_RunCatastrophe(struct BattleEffectParams *args) {
         if (place[2] > toFIXED(16) - 1) {
           if (place[2] <= toFIXED(168)) {
             Render_ApplyProjectedPlacementFar(
-                work->sprites[CATASTROPHE_SCALES + i], place, (s32 *)&req, 0);
+                work->sprites[CATASTROPHE_SCALES + i], place,
+                (s32 *)&spriteScale, 0);
           }
         }
       }
@@ -656,11 +657,12 @@ void BattleEffect_RunCatastrophe(struct BattleEffectParams *args) {
         if (place[2] > toFIXED(16) - 1) {
           if (place[2] <= toFIXED(168)) {
             Render_ApplyProjectedPlacementFar(
-                work->sprites[CATASTROPHE_ARMOUR + i], place, (s32 *)&req, 0);
+                work->sprites[CATASTROPHE_ARMOUR + i], place,
+                (s32 *)&spriteScale, 0);
           }
         }
       }
-      req.x = -(FIXED_ONE + 1);
+      spriteScale.x = -(FIXED_ONE + 1);
       for (i = 0; i != CATASTROPHE_MIRRORED_DEMON_COUNT; i++) {
         place[0] = INTtoFIXED(gCatastrophe_MirroredDemonX[i]) + toFIXED(8);
         place[2] = INTtoFIXED(gCatastrophe_MirroredDemonZ[i]) + camZ;
@@ -668,7 +670,7 @@ void BattleEffect_RunCatastrophe(struct BattleEffectParams *args) {
           if (place[2] <= toFIXED(168)) {
             Render_ApplyProjectedPlacementFar(
                 work->sprites[CATASTROPHE_MIRRORED_DEMON + i], place,
-                (s32 *)&req, 0);
+                (s32 *)&spriteScale, 0);
           }
         }
       }
@@ -1116,11 +1118,11 @@ void BattleEffect_RunCatastrophe(struct BattleEffectParams *args) {
   for (i = 0; i != CATASTROPHE_BOLT_TEXTURE_COUNT; i++) {
     {
       s32 y;
-      s32 bolt = i * PICTURE_BYTES(BOLT_TEXTURE);
+      s32 boltTexture = i * PICTURE_BYTES(BOLT_TEXTURE);
       u8 *cells = cellBuffer;
 
       for (y = 0; y != LIGHTNING_BOLT_HEIGHT; y++) {
-        u8 *line = (u8 *)work + (bolt + y * BOLT_TEXTURE_WIDTH);
+        u8 *line = (u8 *)work + (boltTexture + y * BOLT_TEXTURE_WIDTH);
         s32 offset =
             i * LIGHTNING_BOLT_PICTURE_BYTES + y * LIGHTNING_BOLT_WIDTH;
         u8 *dst = line + (offsetof(struct BattleEffectWork, sheet) +
@@ -1428,17 +1430,17 @@ void BattleEffect_RunCatastrophe(struct BattleEffectParams *args) {
             }
           }
           i = 0;
-          p3 = &work->particles[CATASTROPHE_BOLTS];
-          for (; i != CATASTROPHE_SPARKS; i++, p3++) {
-            if ((u32)p3->variant <= 7) {
-              s32 n = (FIXEDtoINT(Trig_Sin(p3->variant * (TRIG_TURN / 16)) *
-                                  p3->z)) +
+          spark = &work->particles[CATASTROPHE_BOLTS];
+          for (; i != CATASTROPHE_SPARKS; i++, spark++) {
+            if ((u32)spark->variant <= 7) {
+              s32 n = (FIXEDtoINT(Trig_Sin(spark->variant * (TRIG_TURN / 16)) *
+                                  spark->z)) +
                       1;
 
               blit[0](canvas, sprites + gBattleEffect_MotePictures[n - 1],
-                      p3->x - n / 2, p3->y - n, n, n * 2);
+                      spark->x - n / 2, spark->y - n, n, n * 2);
             }
-            p3->variant++;
+            spark->variant++;
           }
         }
         if (work->shakeFrames > 0) {
@@ -1586,17 +1588,17 @@ void BattleEffect_RunCatastrophe(struct BattleEffectParams *args) {
           q->velocityY = Trig_Cos(angle) * speed >> 6;
           q->variant = 0;
         }
-        q2 = CATASTROPHE_PARTICLES;
-        for (i = 0; i != CATASTROPHE_BURSTS; i++, q2++) {
-          if ((u32)q2->variant < CATASTROPHE_BURST_LIFE) {
+        burst = CATASTROPHE_PARTICLES;
+        for (i = 0; i != CATASTROPHE_BURSTS; i++, burst++) {
+          if ((u32)burst->variant < CATASTROPHE_BURST_LIFE) {
             blit[0](canvas,
                     work->sheet + CATASTROPHE_FLASH_BURST_PICTURES +
-                        q2->variant / 2 * PICTURE_BYTES(FLASH_BURST),
-                    FIXED_INTEGER_PART(q2->x) - FLASH_BURST_WIDTH / 2,
-                    FIXED_INTEGER_PART(q2->y) - FLASH_BURST_HEIGHT / 2,
+                        burst->variant / 2 * PICTURE_BYTES(FLASH_BURST),
+                    FIXED_INTEGER_PART(burst->x) - FLASH_BURST_WIDTH / 2,
+                    FIXED_INTEGER_PART(burst->y) - FLASH_BURST_HEIGHT / 2,
                     FLASH_BURST_WIDTH, FLASH_BURST_HEIGHT);
-            Particle_AdvanceWithGravity2D(q2, 63, 0);
-            q2->variant++;
+            Particle_AdvanceWithGravity2D(burst, 63, 0);
+            burst->variant++;
           }
         }
       }
@@ -1698,15 +1700,15 @@ void BattleEffect_RunCatastrophe(struct BattleEffectParams *args) {
           // Six bolts strike, one every eight frames from frame 16, each with
           // a clap, a shake and debris thrown up where it lands.
           i = 0;
-          p2 = work->particles;
+          bolt = work->particles;
           {
 
-            for (; i != 6; p2++, i++) {
+            for (; i != 6; bolt++, i++) {
               s32 strikeFrame = i * 8 + 16;
 
               if (frame == strikeFrame) {
-                p2->x = (Random16() & 31) + 64;
-                p2->variant = Random16();
+                bolt->x = (Random16() & 31) + 64;
+                bolt->variant = Random16();
                 work->shakeFrames = 4;
                 switch (i & 3) {
                 case 0:
@@ -1730,7 +1732,7 @@ void BattleEffect_RunCatastrophe(struct BattleEffectParams *args) {
                   s32 angle;
                   s32 speed;
 
-                  q->x = INTtoFIXED(p2->x);
+                  q->x = INTtoFIXED(bolt->x);
                   q->y = toFIXED(104);
                   angle = (Random16() & 0x7fff) + DEGtoANG(90);
                   speed = (Random16() & 127) + 128;
@@ -1743,12 +1745,12 @@ void BattleEffect_RunCatastrophe(struct BattleEffectParams *args) {
                 u8 *src = Ram_MapCellBuffer + CATASTROPHE_BOLT_PICTURES;
 
                 blit[0](canvas,
-                        ((p2->variant / 2) & 3) *
+                        ((bolt->variant / 2) & 3) *
                                 PICTURE_BYTES(LIGHTNING_BOLT) +
                             src,
-                        p2->x - LIGHTNING_BOLT_WIDTH / 2, 0,
+                        bolt->x - LIGHTNING_BOLT_WIDTH / 2, 0,
                         LIGHTNING_BOLT_WIDTH, LIGHTNING_BOLT_HEIGHT);
-                p2->variant++;
+                bolt->variant++;
               }
             }
           }

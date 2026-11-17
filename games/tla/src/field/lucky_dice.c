@@ -21,7 +21,7 @@
 #include "macros.h"
 #include "system/scene.h"
 #include "edition.h"
-#include "field/call.h"
+#include "system/system_call.h"
 #include "system/dma.h"
 #include "system/input.h"
 #include "system/main_routine_work.h"
@@ -419,15 +419,7 @@ void LuckyDice_Run(void) {
           DMA_COPY_WORDS(DICE_BOARD_PALETTE_COLORS / 2), REG_DMA3);
   Dma_Set((void *)BG_PLTT, bgPalette, DMA_COPY_WORDS(128), REG_DMA3);
   resourceAddress += DICE_BOARD_PALETTE_COLORS * 2;
-  // UB: Call2 passes integers to the decoder's two pointer parameters, as
-  // The Broken Seal's LuckyDice_Run does; typed calls keep the cell buffer
-  // in a register for the transfer after each decode (137 against 108).
-#ifdef UBFIX
-  Decompress_TaggedLz((const void *)resourceAddress, Ram_MapCellBuffer);
-#else
-  Call2((void (*)())Decompress_TaggedLz, resourceAddress,
-        (s32)Ram_MapCellBuffer);
-#endif
+  FieldDecompress_TaggedLz((const void *)resourceAddress, Ram_MapCellBuffer);
   Dma_Set(Ram_MapCellBuffer, (void *)BG_CHAR_BLOCK(1), DMA_COPY_WORDS(9600),
           REG_DMA3);
   resourceAddress = (s32)Resource_GetTableEntry(RESOURCE_LUCKY_DICE_SPRITES);
@@ -436,12 +428,7 @@ void LuckyDice_Run(void) {
   Dma_Set((void *)resourceAddress, (void *)OBJ_PLTT, DMA_COPY_WORDS(128),
           REG_DMA3);
   resourceAddress += DICE_SPRITES_PALETTE_COLORS * 2;
-#ifdef UBFIX
-  Decompress_TaggedLz((const void *)resourceAddress, Ram_MapCellBuffer);
-#else
-  Call2((void (*)())Decompress_TaggedLz, resourceAddress,
-        (s32)Ram_MapCellBuffer);
-#endif
+  FieldDecompress_TaggedLz((const void *)resourceAddress, Ram_MapCellBuffer);
   Dma_Set(Ram_MapCellBuffer, (void *)OBJ_VRAM0, DMA_COPY_WORDS(7936), REG_DMA3);
   LuckyDice_ScaleRgb555Buffer(spritePalette, (u16 *)OBJ_PLTT, 0, 256);
   LuckyDice_ScaleRgb555Buffer(bgPalette, (u16 *)BG_PLTT, 0, 256);
@@ -1002,14 +989,15 @@ void LuckyDice_Run(void) {
     }
 
     for (index = 0; index != DICE_RESULT_COUNT; index++) {
-      // The sprite's matrix: its scale on the diagonal and none across, each
-      // element written through its address.
+      // The sprite's matrix: its scale on the diagonal and none across.
       u16 affineA;
       u16 affineB;
       u16 affineC;
       u16 affineD;
 
       affineScale = spriteDepth[index] / 2 + DICE_NEAREST_SCALE;
+      /* FAKEMATCH(dead): each element stored through its own address; as
+       * affineA = affineScale and so on. */
       *&affineA = affineScale;
       *&affineB = 0;
       *&affineC = 0;

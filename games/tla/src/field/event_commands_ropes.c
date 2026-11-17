@@ -1335,10 +1335,11 @@ enum HangingVineLinkKind {
   VINE_LINK_BOTTOM
 };
 
-/// A vine's swing, the angle its top link sways through either way, each link
-/// below swaying half as far again as the one above (HangingVine_Update): as it
-/// hangs, and as it eases to while the leader stands beside it.
-#define VINE_SWING_STILL (TRIG_TURN / 256)
+/// A vine's swing: its top link stays put, the first link below it sways one
+/// and a half times the swing either way, and each link below that half a
+/// swing more (HangingVine_Update). A vine left alone eases to the first,
+/// and while the leader stands beside it to the second.
+#define VINE_SWING_ALONE (TRIG_TURN / 256)
 #define VINE_SWING_BESIDE (TRIG_TURN / 2048)
 /// Each link sways this far behind the one above it, a turn being TRIG_TURN.
 #define VINE_LINK_LAG 800
@@ -1469,7 +1470,7 @@ void HangingVine_Draw(void) {
 
 /// The vines' task: sways each active vine's links below its anchor, the swing
 /// easing towards VINE_SWING_BESIDE while the leader stands beside the vine,
-/// else towards VINE_SWING_STILL.
+/// else towards VINE_SWING_ALONE.
 void HangingVine_Update(void) {
   struct HangingVineWork *work = HANGING_VINE_WORK;
   struct HangingVineSlot *slot;
@@ -1485,7 +1486,7 @@ void HangingVine_Update(void) {
 
   i = 0;
   leader = Actor_GetById(Party_GetLeaderActor());
-  target = VINE_SWING_STILL;
+  target = VINE_SWING_ALONE;
   for (slot = work->slots; i < ROPE_SLOT_COUNT; i++, slot++) {
     if (slot->root == 0 || slot->active == 0)
       continue;
@@ -1672,7 +1673,7 @@ void HangingVine_Hang(s32 objectId, s32 grow) {
   }
   slot->active = 1;
   slot->phase = 0;
-  slot->swing = VINE_SWING_STILL;
+  slot->swing = VINE_SWING_ALONE;
   slot->id = objectId;
   slot->spacing = toFIXED(14);
 }
@@ -1685,7 +1686,7 @@ void HangingVine_Hang(s32 objectId, s32 grow) {
 /// TRIG_TURN / 128 a frame and never wraps.
 #define VINE_PHASE_MASK (TRIG_ANGLE_MASK & ~0xff)
 
-/// A vine's swing, as VINE_SWING_STILL: wound up a step a frame as Whirlwind
+/// A vine's swing, as VINE_SWING_ALONE: wound up a step a frame as Whirlwind
 /// blows on it, while the leader hangs on, and while it carries the leader
 /// across.
 #define VINE_SWING_STEP (TRIG_TURN / 1024)

@@ -946,19 +946,15 @@ void SuperLuckyDice_Run(void) {
               separation = Iwram_Sqrt(separationX * separationX +
                                       separationY * separationY +
                                       separationZ * separationZ);
-// UB: a negative separation is shifted, and two dice at one place divide by
-// zero, as in Lucky Dice.
+              // UB: coincident dice divide by zero.
 #ifdef UBFIX
-              if (separation != 0) {
+              if (separation != 0)
+#endif
+              {
                 die->velocityX += separationX * (FIXED_ONE / 2) / separation;
                 die->velocityY += separationY * (FIXED_ONE / 2) / separation;
                 die->velocityZ += separationZ * (FIXED_ONE / 2) / separation;
               }
-#else
-              die->velocityX += (separationX << 15) / separation;
-              die->velocityY += (separationY << 15) / separation;
-              die->velocityZ += (separationZ << 15) / separation;
-#endif
             }
           }
         }
@@ -1717,17 +1713,19 @@ void SuperLuckyDice_Run(void) {
       sprites->oam[spriteCount].attr2 = 0;
     }
     for (index = 0; index != DICE_COUNT * 2; index++) {
-      // The sprite's matrix, each element stored through its address: the four
-      // stay in the frame and are read back from it.
+      // The sprite's matrix: its scale on the diagonal and none across.
       u16 affineA;
       u16 affineB;
       u16 affineC;
       u16 affineD;
       s16 scaleX;
       s16 scaleY;
+      /* FAKEMATCH(temporary): zero held in a local; as 0. */
       s32 zero = 0;
 
       scaleX = spriteDepth[index] / 4 + DICE_NEAREST_SCALE;
+      /* FAKEMATCH(dead): each element stored through its own address; as
+       * affineA = scaleX and so on. */
       *&affineA = scaleX;
       *&affineB = zero;
       *&affineC = zero;

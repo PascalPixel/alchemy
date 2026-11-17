@@ -37,7 +37,7 @@ enum SpriteColorMode {
 
 /// A sprite animation's picture or pictureBase when it shows none:
 /// Sprite_ComposePicture skips it until an animation is selected.
-#define SPRITE_PICTURE_NONE 0xff
+#define SPRITE_PICTURE_NONE 255
 
 /// An animation number's bit 7: keep the place and timer of the script already
 /// running.
@@ -213,10 +213,11 @@ enum ActorAnimation {
   ANIM_LEADER_LEAVE_ALTERNATE = 25,
   ANIM_LEADER_LEAVE = 26,
   ///@}
-  /// ANIM_WALK's six pictures in reverse order, three frames each.
-  // XXX: what the player sees as Actor_PlacePairAtOffset or Crossbone Isle's
-  // logs move the leader, or a torn cocoon drops him; a recording of
-  // TreeRooms_StepOnCocoon's fall or of a log push would settle it.
+  /// ANIM_WALK's six pictures in reverse order, three frames each, played as a
+  /// log carries the leader across water or a torn cocoon drops him.
+  // XXX (no evidence): what the player sees of it; render event reaches
+  // neither a torn cocoon's fall (the second touch of one cocoon) nor a ride
+  // on Crossbone Isle's floating logs.
   ANIM_LEADER_WALK_BACKWARDS = 27,
   ANIM_LEADER_ARMS_RAISED = 28, ///< both arms raised over his head
   /// Swinging an arm out to throw, as he tosses a coin or medal at Tolbi's

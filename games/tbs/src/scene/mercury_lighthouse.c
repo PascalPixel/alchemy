@@ -55,7 +55,7 @@
 ///   one of three stone doors by its column. At column 48 it sends a statue
 ///   sliding over the floor to a square opening, and the statue falls to the
 ///   floor below (FLAG_MERCURY_LIGHTHOUSE_STATUE_FELL). There Move sets it on
-///   the stair gate's switch (FLAG_MERCURY_LIGHTHOUSE_UPPER_GATE_HELD_OPEN).
+///   the gate's switch (FLAG_MERCURY_LIGHTHOUSE_UPPER_GATE_HELD_OPEN).
 ///   Five stone statues stand in a row. Moved to a set column, the last of
 ///   them and one more statue each change a cell's behavior.
 /// - MercuryLighthouseExterior again, higher up, reached from
@@ -162,9 +162,11 @@ extern s32 gPaletteCycleGreen;
 extern s32 gPaletteCycleBlue;
 
 #if TBS_PATCH_1
-#define MERCURY_LIGHTHOUSE_MOVE_LEADER_TO_ENTRY Actor_MoveToAndWait
+#define MERCURY_LIGHTHOUSE_MOVE_LEADER_TO_ENTRY(actorId, x, z)                 \
+  Actor_MoveToAndWait(actorId, x, z)
 #else
-#define MERCURY_LIGHTHOUSE_MOVE_LEADER_TO_ENTRY Actor_SetDestination
+#define MERCURY_LIGHTHOUSE_MOVE_LEADER_TO_ENTRY(actorId, x, z)                 \
+  Actor_SetDestination(actorId, x, z)
 #endif
 
 // UB: this calls a void function through an s32 function type, the call the
@@ -177,15 +179,14 @@ extern s32 gPaletteCycleBlue;
 #endif
 
 static void MercuryLighthouse_OpenGateWithMovedStatue(void);
-static void MercuryLighthouse_OpenStairGateWithMovedStatue(void);
+static void MercuryLighthouse_OpenUpperGateWithMovedStatue(void);
 static void MercuryLighthouse_SyncRowStatueFlags(void);
 static void MercuryLighthouse_RaiseStairsWithSparkles(void);
 static void MercuryLighthouse_LowerStairsWithSparkles(void);
 static void MercuryLighthouse_SparkleAroundLeader(void);
 static void MercuryLighthouse_SparkleAt(s32 x, s32 y, s32 z);
 static void MercuryLighthouse_SparkleNear(s32 x, s32 y, s32 z);
-static void MercuryLighthouse_SpawnRandomizedBurst(s32 x, s32 y, s32 z,
-                                                   s32 angle);
+static void MercuryLighthouse_SparkleBurst(s32 x, s32 y, s32 z, s32 angle);
 static void MercuryLighthouse_RideLift(void);
 static void MercuryLighthouse_MiaCastsPlyOnEntrance(void);
 static void MercuryLighthouse_ReplaceInventoryItem(s32 oldItem, s32 newItem);
@@ -332,15 +333,21 @@ static void MercuryLighthouse_StartDjinnBattle(void) {
 }
 
 #if TBS_PATCH_3
-/// Task: the fade overlay stops following the leader while he
-/// crosses the patched floor region (MAPGRID_LAYER_GROUND, 16-pixel rows 13 to
-/// 18).
+/// The rows of MercuryLighthouseMiddle's gate room where the fade overlay lets
+/// go of the leader walking on the ground layer.
+#define OVERLAY_FREE_FIRST_ROW 13
+#define OVERLAY_FREE_LAST_ROW 18
+
+/// Task: the fade overlay stops following the leader while he crosses the
+/// rows from OVERLAY_FREE_FIRST_ROW to OVERLAY_FREE_LAST_ROW on
+/// MAPGRID_LAYER_GROUND.
 static void MercuryLighthouse_UpdateLeaderEffectTarget(void) {
   struct Actor *leader = Actor_Get(ACTOR_PARTY_LEADER);
   struct FadeOverlayWork *effectWork = gFadeOverlayWork;
 
-  if (leader->layer == 0 && FIELD_CELL(leader->z.fixed) > 12 &&
-      FIELD_CELL(leader->z.fixed) <= 18)
+  if (leader->layer == 0 &&
+      FIELD_CELL(leader->z.fixed) >= OVERLAY_FREE_FIRST_ROW &&
+      FIELD_CELL(leader->z.fixed) <= OVERLAY_FREE_LAST_ROW)
     effectWork->actor = NULL;
   else
     effectWork->actor = leader;
@@ -444,25 +451,32 @@ const struct Trigger *Scene_GetTriggers(void) {
 
 #include "shared/mercury_lighthouse_passage.c"
 
+/// The lighthouse's exit cells: each one's cell behavior is its exit's number
+/// plus this, for the exit triggers and the sparkling passages alike.
+#define EXIT_CELL_BEHAVIOR_OFFSET 50
+
 /// MercuryLighthouseUpper, walking north into cell behavior 53: the leader
 /// rises through
 /// MERCURY_LIGHTHOUSE_UPPER_TO_MERCURY_LIGHTHOUSE_MIDDLE_NORTHWEST (the
-/// cell behavior less 50), a sparkling passage as in
+/// cell behavior less EXIT_CELL_BEHAVIOR_OFFSET), a sparkling passage as in
 /// MercuryLighthouseEntrance.
 static void MercuryLighthouse_LeaveUpperByPassage(void) {
-  MercuryLighthouse_LeaveThroughPassage(gFieldWork->stepTrigger - 50);
+  MercuryLighthouse_LeaveThroughPassage(gFieldWork->stepTrigger -
+                                        EXIT_CELL_BEHAVIOR_OFFSET);
 }
 
 /// MercuryLighthouseUpper, walking north into cell behavior 63: the same,
 /// through MERCURY_LIGHTHOUSE_UPPER_WATERFALLS_TO_GAP.
 static void MercuryLighthouse_LeaveUpperWaterfallsByPassage(void) {
-  MercuryLighthouse_LeaveThroughPassage(gFieldWork->stepTrigger - 50);
+  MercuryLighthouse_LeaveThroughPassage(gFieldWork->stepTrigger -
+                                        EXIT_CELL_BEHAVIOR_OFFSET);
 }
 
 /// MercuryLighthouseExterior, walking north into cell behavior 55: the
 /// same, through MERCURY_LIGHTHOUSE_EXTERIOR_WATERFALL_TO_UPPER_PATH.
 static void MercuryLighthouse_LeaveWaterfallByPassage(void) {
-  MercuryLighthouse_LeaveThroughPassage(gFieldWork->stepTrigger - 50);
+  MercuryLighthouse_LeaveThroughPassage(gFieldWork->stepTrigger -
+                                        EXIT_CELL_BEHAVIOR_OFFSET);
 }
 
 /// MercuryLighthouseLower: with all three channel pipes in place the floor
@@ -491,6 +505,12 @@ static void MercuryLighthouse_ExitWhenChannelsOpen(void) {
   }
 }
 
+/// Where each channel pipe joins its channel: the first two along their rows,
+/// the third along its column.
+#define FIRST_PIPE_JOINED_ROW 8
+#define SECOND_PIPE_JOINED_ROW 12
+#define THIRD_PIPE_JOINED_COLUMN 40
+
 /// MercuryLighthouseLower, pushing a channel pipe (walking into cell
 /// behavior 25): each pipe opens one channel when it reaches its place, and the
 /// water runs on through the ones before it.
@@ -503,12 +523,12 @@ static void MercuryLighthouse_PushChannelPipes(void) {
     // Each pipe controls one channel; restore the connected water tiles too.
     switch ((u32)probe.actorSlot) {
     case ACTOR_FIRST_PIPE:
-      if (FIELD_CELL(probe.position.z) == 8) {
+      if (FIELD_CELL(probe.position.z) == FIRST_PIPE_JOINED_ROW) {
         Actor_MoveAndRedraw(probe);
         Event_Wait(20);
         MapGrid_CopyCellsTo(119, 9, 109, 11, 1, 1);
-        MercuryLighthouse_SpawnRandomizedBurst(toFIXED(726), 0, toFIXED(180),
-                                               FACING_WEST);
+        MercuryLighthouse_SparkleBurst(toFIXED(726), 0, toFIXED(180),
+                                       FACING_WEST);
         GameFlag_Set(FLAG_PIPE_1_JOINED);
       } else {
         MapGrid_CopyCellsTo(117, 9, 104, 7, 1, 1);
@@ -519,13 +539,13 @@ static void MercuryLighthouse_PushChannelPipes(void) {
       }
       break;
     case ACTOR_SECOND_PIPE:
-      if (FIELD_CELL(probe.position.z) == 12) {
+      if (FIELD_CELL(probe.position.z) == SECOND_PIPE_JOINED_ROW) {
         Actor_MoveAndRedraw(probe);
         Event_Wait(10);
         if (Event_GetFlag(FLAG_PIPE_1_JOINED)) {
           MapGrid_CopyCellsTo(118, 9, 104, 13, 1, 1);
-          MercuryLighthouse_SpawnRandomizedBurst(toFIXED(644), 0, toFIXED(210),
-                                                 FACING_SOUTH);
+          MercuryLighthouse_SparkleBurst(toFIXED(644), 0, toFIXED(210),
+                                         FACING_SOUTH);
         }
         GameFlag_Set(FLAG_PIPE_2_JOINED);
       } else {
@@ -540,7 +560,7 @@ static void MercuryLighthouse_PushChannelPipes(void) {
       break;
     case ACTOR_THIRD_PIPE:
       column = probe.position.x;
-      if (FIELD_CELL(column) == 40) {
+      if (FIELD_CELL(column) == THIRD_PIPE_JOINED_COLUMN) {
         Actor_MoveAndRedraw(probe);
         Event_SetFlag(FLAG_PIPE_3_JOINED);
       } else {
@@ -732,13 +752,14 @@ static void MercuryLighthouse_RestoreFountainTiles(s32 delayFrames) {
   MapGrid_WaitForShakeToSettle();
 }
 
-/// Task: a spray at the fountain's fixed position.
-static void MercuryLighthouse_SprayAtFountain(void) {
+/// Task: sparkles at the fountain while it runs.
+static void MercuryLighthouse_SparkleAtFountain(void) {
   MercuryLighthouse_SparkleAt(toFIXED(690), 0, toFIXED(584));
 }
 
-/// Opens the fountain row by row and starts its continuous spray.
-static void MercuryLighthouse_OpenFountainWithSpray(s32 delayFrames) {
+/// Opens the fountain row by row, each row's edge throwing up spray and
+/// sparkles, and keeps it sparkling.
+static void MercuryLighthouse_OpenFountain(s32 delayFrames) {
   u32 row;
   s32 rowOffset;
   FIXED particleX;
@@ -760,7 +781,7 @@ static void MercuryLighthouse_OpenFountainWithSpray(s32 delayFrames) {
   do {
     rowOffset = row << 4;
     particleIndex = 0;
-    rowShift = -(row << 20);
+    rowShift = -(row * toFIXED(16));
     particleX = toFIXED(728) + rowShift;
     do {
       if ((particleIndex & 1) != 0) {
@@ -789,12 +810,13 @@ static void MercuryLighthouse_OpenFountainWithSpray(s32 delayFrames) {
   Event_Wait(delayFrames);
   MercuryLighthouse_AnimateFountainTiles(0, nextRow, nextRow + 1);
   Sound_Play(SE_MERCURY_LIGHTHOUSE_MECHANISM);
-  Task_AddFrame(MercuryLighthouse_SprayAtFountain, TASK_PASS_FRAME);
+  Task_AddFrame(MercuryLighthouse_SparkleAtFountain, TASK_PASS_FRAME);
   MapGrid_WaitForShakeToSettle();
 }
 
-/// Restores the fountain tiles and stops its continuous spray.
-static void MercuryLighthouse_StopFountainSpray(void) {
+/// As the fountain pipe moves away (the push's callback): spray drifts from the
+/// fountain's rows and its sparkles stop.
+static void MercuryLighthouse_StopFountain(void) {
   u32 row;
   u32 particleIndex;
   FIXED offsetX;
@@ -811,7 +833,7 @@ static void MercuryLighthouse_StopFountainSpray(void) {
     for (particleIndex = 1; particleIndex <= 7; particleIndex++) {
       if ((particleIndex & 1) != 0) {
         particleZ = ((584 - Random_Below(5)) & 0xffff) << 16;
-        particleX = (offsetX - (row << 19)) + toFIXED(728);
+        particleX = (offsetX - row * toFIXED(8)) + toFIXED(728);
         FieldEffect_Spawn(particleX, 0, particleZ, -toFIXED(1) / 4, 0, 0,
                           EFFECT_USE_START_SCALE | EFFECT_USE_PALETTE,
                           &options);
@@ -821,12 +843,20 @@ static void MercuryLighthouse_StopFountainSpray(void) {
     }
     MapGrid_CopyCellsTo(111, 35, (109 - row), 36, 1, 1);
   }
-  Task_Remove(MercuryLighthouse_SprayAtFountain);
+  Task_Remove(MercuryLighthouse_SparkleAtFountain);
 }
 
-/// MercuryLighthouseMiddle, pushing a pipe (walking into cell behavior 1 or
-/// 45): the stair pipe raises the stairs at column 11 and lowers them anywhere
+/// The stair pipe raises the stairs at this column and lowers them anywhere
 /// else.
+#define STAIR_PIPE_RAISED_COLUMN 11
+/// The fountain pipe starts the fountain at the first row and stops it at the
+/// second.
+#define FOUNTAIN_PIPE_RUNNING_ROW 40
+#define FOUNTAIN_PIPE_STOPPED_ROW 42
+
+/// MercuryLighthouseMiddle, pushing a pipe (walking into cell behavior 1 or
+/// 45): the stair pipe raises or lowers the stairs, and the fountain pipe
+/// starts or stops the fountain.
 static void MercuryLighthouse_PushStairAndFountainPipes(void) {
   struct PushedActorProbe probe;
   s32 pillarId;
@@ -839,7 +869,7 @@ static void MercuryLighthouse_PushStairAndFountainPipes(void) {
     // fountain.
     if (pillarId == ACTOR_STAIR_PIPE) {
       column = probe.position.x;
-      if (FIELD_CELL(column) == 11) {
+      if (FIELD_CELL(column) == STAIR_PIPE_RAISED_COLUMN) {
         Actor_MoveAndRedraw(probe);
         Event_Wait(30);
         Sound_Play(SE_MERCURY_LIGHTHOUSE_MECHANISM);
@@ -865,21 +895,21 @@ static void MercuryLighthouse_PushStairAndFountainPipes(void) {
         GameFlag_Clear(FLAG_STAIRS_RAISED);
       }
     } else if (pillarId == ACTOR_FOUNTAIN_PIPE) {
-      if (FIELD_CELL(probe.position.z) == 40) {
+      if (FIELD_CELL(probe.position.z) == FOUNTAIN_PIPE_RUNNING_ROW) {
         Actor_MoveAndRedraw(probe);
         if (Event_GetFlag(FLAG_FOUNTAIN_SHOWN) == 0) {
           FieldCamera_SetSpeed(1.5);
           FieldCamera_MoveTo(714, CAMERA_KEEP, 592, 1);
           FieldCamera_WaitForArrival();
           GameFlag_Set(FLAG_FOUNTAIN_SHOWN);
-          MercuryLighthouse_OpenFountainWithSpray(5);
+          MercuryLighthouse_OpenFountain(5);
           Event_Wait(50);
         } else {
-          MercuryLighthouse_OpenFountainWithSpray(5);
+          MercuryLighthouse_OpenFountain(5);
         }
         GameFlag_Set(FLAG_FOUNTAIN_RUNNING);
-      } else if (FIELD_CELL(probe.position.z) == 42) {
-        probe.callback = MercuryLighthouse_StopFountainSpray;
+      } else if (FIELD_CELL(probe.position.z) == FOUNTAIN_PIPE_STOPPED_ROW) {
+        probe.callback = MercuryLighthouse_StopFountain;
         Actor_MoveAndRedraw(probe);
         MercuryLighthouse_RestoreFountainTiles(5);
         GameFlag_Clear(FLAG_FOUNTAIN_RUNNING);
@@ -890,19 +920,19 @@ static void MercuryLighthouse_PushStairAndFountainPipes(void) {
 }
 
 /// MercuryLighthouseUpper, pushing the fallen statue (walking into cell
-/// behavior 10 or 12) while the stair gate is shut: it moves a step and may
+/// behavior 10 or 12) while the gate is shut: it moves a step and may
 /// come to rest on the floor switch.
-static void MercuryLighthouse_PushStairSwitchStatue(void) {
+static void MercuryLighthouse_PushUpperGateSwitchStatue(void) {
   Event_Start();
   PushedActor_AdvancePair();
   Event_End();
-  MercuryLighthouse_OpenStairGateWithMovedStatue();
+  MercuryLighthouse_OpenUpperGateWithMovedStatue();
 }
 
 /// MercuryLighthouseUpper, Move on the fallen statue, or after a push: resting
-/// on the switch at (10, 23), it sinks two pixels and the stair gate opens for
+/// on the switch at (10, 23), it sinks two pixels and the gate opens for
 /// good.
-static void MercuryLighthouse_OpenStairGateWithMovedStatue(void) {
+static void MercuryLighthouse_OpenUpperGateWithMovedStatue(void) {
   s32 column = Actor_Get(ACTOR_FALLEN_STATUE)->x.fixed / toFIXED(16);
   s32 row = Actor_Get(ACTOR_FALLEN_STATUE)->z.fixed / toFIXED(16);
 
@@ -920,9 +950,9 @@ static void MercuryLighthouse_OpenStairGateWithMovedStatue(void) {
   Event_End();
 }
 
-/// MercuryLighthouseUpper, touching cell behavior 12 while the stair gate
+/// MercuryLighthouseUpper, touching cell behavior 12 while the gate
 /// is shut: standing on its switch opens it.
-static void MercuryLighthouse_PressStairFloorSwitch(void) {
+static void MercuryLighthouse_PressUpperGateFloorSwitch(void) {
   s32 x;
   s32 z;
 
@@ -949,8 +979,8 @@ static void MercuryLighthouse_PressStairFloorSwitch(void) {
 }
 
 /// MercuryLighthouseUpper, touching cell behavior 10: stepping off the
-/// switch closes the stair gate.
-static void MercuryLighthouse_ReleaseStairFloorSwitch(void) {
+/// switch closes the gate.
+static void MercuryLighthouse_ReleaseUpperGateFloorSwitch(void) {
   if (Event_GetFlag(FLAG_LEADER_ON_FLOOR_SWITCH) != 0) {
     Event_Start();
     GameFlag_Clear(FLAG_LEADER_ON_FLOOR_SWITCH);
@@ -1063,19 +1093,19 @@ static void MercuryLighthouse_CloseStoneDoor(s32 side) {
     for (particleIndex = 1; particleIndex <= 7; particleIndex++) {
       if ((particleIndex & 1) != 0) {
         if (side == STONE_DOOR_WEST) {
-          FieldEffect_Spawn(INTtoFIXED(793 - Random_Below(5)), 0,
-                            ((row * 4 + particleIndex) << 17) + toFIXED(695), 0,
-                            side, toFIXED(1) / 4,
-                            EFFECT_USE_START_SCALE | EFFECT_USE_PALETTE,
-                            &options);
+          FieldEffect_Spawn(
+              INTtoFIXED(793 - Random_Below(5)), 0,
+              (row * 4 + particleIndex) * toFIXED(2) + toFIXED(695), 0, side,
+              toFIXED(1) / 4, EFFECT_USE_START_SCALE | EFFECT_USE_PALETTE,
+              &options);
         } else if (side == STONE_DOOR_SOUTH) {
           FieldEffect_Spawn(
-              ((row * 4 + particleIndex) << 17) + toFIXED(786), 0,
+              (row * 4 + particleIndex) * toFIXED(2) + toFIXED(786), 0,
               INTtoFIXED(Random_Below(5)) + toFIXED(744), toFIXED(1) / 4, 0, 0,
               EFFECT_USE_START_SCALE | EFFECT_USE_PALETTE, &options);
         } else {
           FieldEffect_Spawn(
-              toFIXED(824) - (particleIndex << 17) - (row << 19), 0,
+              toFIXED(824) - particleIndex * toFIXED(2) - row * toFIXED(8), 0,
               INTtoFIXED(Random_Below(5)) + toFIXED(712), toFIXED(1) / 4, 0, 0,
               EFFECT_USE_START_SCALE | EFFECT_USE_PALETTE, &options);
         }
@@ -1090,6 +1120,10 @@ static void MercuryLighthouse_CloseStoneDoor(s32 side) {
       MapGrid_CopyCellsTo(112, 58, 115 - row, 44, 1, 1);
   }
 }
+
+/// The sliding statue's row under the jet of water, where its first slide takes
+/// it.
+#define SLIDING_STATUE_UNDER_JET_ROW 44
 
 /// The camera turns to the sliding statue, which moves on only for the door
 /// switch pipe positions recorded.
@@ -1108,12 +1142,12 @@ static s32 MercuryLighthouse_StartStatueSlide(void) {
     if (cellX == 50 && GameFlag_Get(FLAG_DOOR_SWITCH_PIPE_OPENS_NORTH_DOOR)) {
       Actor_SetScript(ACTOR_SLIDING_STATUE, gMercuryLighthouse_PushScriptA);
     } else if (cellX == 49) {
-      if (cellZ == 44 &&
+      if (cellZ == SLIDING_STATUE_UNDER_JET_ROW &&
           !GameFlag_Get(FLAG_DOOR_SWITCH_PIPE_OPENS_NORTH_DOOR) &&
           !GameFlag_Get(FLAG_DOOR_SWITCH_PIPE_OPENS_SOUTH_DOOR) &&
           !GameFlag_Get(FLAG_DOOR_SWITCH_PIPE_SHUTS_DOORS)) {
         Actor_SetScript(ACTOR_SLIDING_STATUE, gMercuryLighthouse_PushScriptB);
-      } else if (cellZ == 44 &&
+      } else if (cellZ == SLIDING_STATUE_UNDER_JET_ROW &&
                  GameFlag_Get(FLAG_DOOR_SWITCH_PIPE_OPENS_NORTH_DOOR)) {
         Actor_SetScript(ACTOR_SLIDING_STATUE, gMercuryLighthouse_PushScriptC);
       } else if (cellZ == 46 &&
@@ -1129,7 +1163,7 @@ static s32 MercuryLighthouse_StartStatueSlide(void) {
 }
 
 /// Sparkles rise from the sliding statue as it moves.
-static void MercuryLighthouse_SprayAboveStatue(void) {
+static void MercuryLighthouse_SparkleAboveStatue(void) {
   struct Actor *statue = Actor_Get(ACTOR_SLIDING_STATUE);
   FIXED particleY = statue->y.fixed + INTtoFIXED(Random_Below(4));
   FIXED particleZ = statue->z.fixed;
@@ -1138,19 +1172,19 @@ static void MercuryLighthouse_SprayAboveStatue(void) {
 }
 
 /// The slide scripts start the sparkles as the statue sets off.
-static s32 MercuryLighthouse_StartStatueSpray(struct Actor *actor) {
-  Task_AddFrame(MercuryLighthouse_SprayAboveStatue, TASK_PASS_FRAME);
+static s32 MercuryLighthouse_StartStatueSparkles(struct Actor *actor) {
+  Task_AddFrame(MercuryLighthouse_SparkleAboveStatue, TASK_PASS_FRAME);
   return 0;
 }
 
 // The sparkles stop when the statue halts; slide scripts and code call it.
 // An actor script passes its actor, which this one does not read.
 #ifdef UBFIX
-static s32 MercuryLighthouse_StopStatueSpray(struct Actor *actor) {
+static s32 MercuryLighthouse_StopStatueSparkles(struct Actor *actor) {
 #else
-static s32 MercuryLighthouse_StopStatueSpray(void) {
+static s32 MercuryLighthouse_StopStatueSparkles(void) {
 #endif
-  Task_Remove(MercuryLighthouse_SprayAboveStatue);
+  Task_Remove(MercuryLighthouse_SparkleAboveStatue);
   return 0;
 }
 
@@ -1197,9 +1231,9 @@ static void MercuryLighthouse_PushStoneDoorPipes(void) {
           MercuryLighthouse_CloseStoneDoor(STONE_DOOR_NORTH);
           x = toFIXED(840);
 #ifdef UBFIX
-          MercuryLighthouse_StopStatueSpray(NULL);
+          MercuryLighthouse_StopStatueSparkles(NULL);
 #else
-          MercuryLighthouse_StopStatueSpray();
+          MercuryLighthouse_StopStatueSparkles();
 #endif
           MercuryLighthouse_OpenStoneDoor(STONE_DOOR_SOUTH);
           Actor_WaitForScriptEndById(ACTOR_SLIDING_STATUE);
@@ -1221,9 +1255,9 @@ static void MercuryLighthouse_PushStoneDoorPipes(void) {
         } else {
           MercuryLighthouse_CloseStoneDoor(STONE_DOOR_NORTH);
 #ifdef UBFIX
-          MercuryLighthouse_StopStatueSpray(NULL);
+          MercuryLighthouse_StopStatueSparkles(NULL);
 #else
-          MercuryLighthouse_StopStatueSpray();
+          MercuryLighthouse_StopStatueSparkles();
 #endif
           MercuryLighthouse_OpenStoneDoor(STONE_DOOR_SOUTH);
           Event_Wait(60);
@@ -1691,6 +1725,11 @@ static void MercuryLighthouse_RaiseActorWithSparks(s32 actorId) {
   }
 }
 
+/// The sparks of each of the two bursts over the waterfall, and the spray
+/// thrown up from each row of it as it parts.
+#define WATERFALL_BURST_SPARKS 16
+#define WATERFALL_ROW_SPRAY 32
+
 /// MercuryLighthouseExterior, Ply on the waterfall statue: the waterfall
 /// darkens and stops, sparkles rise and the way behind it opens.
 static void MercuryLighthouse_PlyOpensWaterfallPassage(void) {
@@ -1712,7 +1751,7 @@ static void MercuryLighthouse_PlyOpensWaterfallPassage(void) {
   options.type = SPRITE_GLINT;
   options.script = gGlint_TwinkleScript;
   // Two bursts spread sparks across the water before it begins to part.
-  for (wave = 0; wave <= 15; wave++) {
+  for (wave = 0; wave < WATERFALL_BURST_SPARKS; wave++) {
     u32 particleX, z;
 
     if ((1 & wave) != 0) {
@@ -1728,7 +1767,7 @@ static void MercuryLighthouse_PlyOpensWaterfallPassage(void) {
     Event_Wait(2);
   }
   Event_Wait(40);
-  for (wave = 0; wave <= 15; wave++) {
+  for (wave = 0; wave < WATERFALL_BURST_SPARKS; wave++) {
     u32 particleX, z;
     s32 particleSpeed;
 
@@ -1774,7 +1813,7 @@ static void MercuryLighthouse_PlyOpensWaterfallPassage(void) {
                         &options);
       particleIndex++;
       Event_Wait(2);
-    } while (particleIndex <= 31);
+    } while (particleIndex < WATERFALL_ROW_SPRAY);
   }
   Sound_Play(SOUND_FADE_OUT_ACTION_SE);
   MapGrid_SetShake(SHAKE_KEEP, SHAKE_KEEP, 0.9);
@@ -1892,9 +1931,11 @@ static void MercuryLighthouse_PlyOpensWaterfallPassage(void) {
 
 /// MercuryLighthouseExterior, searching cell behavior 42 shows the fountain's
 /// sign.
-static void MercuryLighthouse_ReadHermesFountainInscription(void) {
+static void MercuryLighthouse_ReadHermesFountainSign(void) {
   Event_Start();
   Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_STAND);
+  // "Fountain of Healing" "Water of Hermes: It brings rejuvenation to all that
+  // lives."
   FieldMessage_Show(MSGNO(MsgImilHermesHealingWaterFountain), 1);
   Event_End();
 }
@@ -2020,13 +2061,13 @@ static void MercuryLighthouse_LowerStairsWithSparkles(void) {
         if (particleIndex & 2) {
           FieldEffect_Spawn(
               INTtoFIXED(105 - Random_Below(5)), 0,
-              offsetZ - (row << 19) + toFIXED(558), 0, 0, -toFIXED(1) / 4,
+              offsetZ - row * toFIXED(8) + toFIXED(558), 0, 0, -toFIXED(1) / 4,
               EFFECT_USE_START_SCALE | EFFECT_USE_PALETTE, &options);
         } else {
-          FieldEffect_Spawn(((row * 4 + particleIndex) << 17) + toFIXED(183), 0,
-                            INTtoFIXED(620 - Random_Below(5)), toFIXED(1) / 4,
-                            0, 0, EFFECT_USE_START_SCALE | EFFECT_USE_PALETTE,
-                            &options);
+          FieldEffect_Spawn(
+              (row * 4 + particleIndex) * toFIXED(2) + toFIXED(183), 0,
+              INTtoFIXED(620 - Random_Below(5)), toFIXED(1) / 4, 0, 0,
+              EFFECT_USE_START_SCALE | EFFECT_USE_PALETTE, &options);
         }
         Event_Wait(1);
       }
@@ -2103,16 +2144,18 @@ static void MercuryLighthouse_SparkleNear(s32 x, s32 y, s32 z) {
                     &options);
 }
 
-/// Six sparkles over 24 frames, spraying the way angle points, as the water
-/// runs through a joined pipe.
-static void MercuryLighthouse_SpawnRandomizedBurst(s32 x, s32 y, s32 z,
-                                                   s32 angle) {
+/// The sparkles of a burst, one every four frames.
+#define BURST_SPARKLES 6
+
+/// BURST_SPARKLES sparkles, spraying the way angle points and slowing one by
+/// one, as the water runs through a joined pipe.
+static void MercuryLighthouse_SparkleBurst(s32 x, s32 y, s32 z, s32 angle) {
   struct EffectOptions options;
   s32 velocity[3];
   u32 particleIndex;
 
   Sound_Play(SE_BURST);
-  for (particleIndex = 0; particleIndex <= 11; particleIndex++) {
+  for (particleIndex = 0; particleIndex < BURST_SPARKLES * 2; particleIndex++) {
     if ((particleIndex & 1) != 0) {
       options.palette = SPRITE_COLOR_WHITE;
       if ((particleIndex & 2) != 0)
@@ -2278,7 +2321,7 @@ s32 Scene_Initialize(void) {
       // The fountain pipe joined across the head of its pool, with a jet of
       // water crossing it.
       if (GameFlag_Get(FLAG_FOUNTAIN_RUNNING)) {
-        MercuryLighthouse_OpenFountainWithSpray(0);
+        MercuryLighthouse_OpenFountain(0);
         MapGrid_CopyCellAttributes(42, 41, 4, 1, 42, 39);
         MapGrid_CopyCellAttributes(42, 40, 4, 1, 42, 41);
         Actor_SetPosition(ACTOR_FOUNTAIN_PIPE, 704, 640);
@@ -2382,8 +2425,9 @@ s32 Scene_Initialize(void) {
 #if TBS_PATCH_2
       if (GameFlag_Get(FLAG_DOOR_SWITCH_PIPE_OPENS_NORTH_DOOR)) {
         MercuryLighthouse_OpenStoneDoor(STONE_DOOR_NORTH);
-        if (FIELD_CELL(Actor_Get(ACTOR_SLIDING_STATUE)->z.fixed) == 44)
-          Task_AddFrame(MercuryLighthouse_SprayAboveStatue, TASK_PASS_FRAME);
+        if (FIELD_CELL(Actor_Get(ACTOR_SLIDING_STATUE)->z.fixed) ==
+            SLIDING_STATUE_UNDER_JET_ROW)
+          Task_AddFrame(MercuryLighthouse_SparkleAboveStatue, TASK_PASS_FRAME);
       } else if (GameFlag_Get(FLAG_DOOR_SWITCH_PIPE_OPENS_SOUTH_DOOR)) {
         MercuryLighthouse_OpenStoneDoor(STONE_DOOR_SOUTH);
       } else if (!GameFlag_Get(FLAG_DOOR_SWITCH_PIPE_SHUTS_DOORS)) {
@@ -2419,8 +2463,9 @@ s32 Scene_Initialize(void) {
       MercuryLighthouse_CloseStoneDoor(STONE_DOOR_WEST);
       if (GameFlag_Get(FLAG_DOOR_SWITCH_PIPE_OPENS_NORTH_DOOR)) {
         MercuryLighthouse_OpenStoneDoor(STONE_DOOR_NORTH);
-        if (FIELD_CELL(Actor_Get(ACTOR_SLIDING_STATUE)->z.fixed) == 44)
-          Task_AddFrame(MercuryLighthouse_SprayAboveStatue, TASK_PASS_FRAME);
+        if (FIELD_CELL(Actor_Get(ACTOR_SLIDING_STATUE)->z.fixed) ==
+            SLIDING_STATUE_UNDER_JET_ROW)
+          Task_AddFrame(MercuryLighthouse_SparkleAboveStatue, TASK_PASS_FRAME);
       } else if (GameFlag_Get(FLAG_DOOR_SWITCH_PIPE_OPENS_SOUTH_DOOR)) {
         MercuryLighthouse_OpenStoneDoor(STONE_DOOR_SOUTH);
       } else if (!GameFlag_Get(FLAG_DOOR_SWITCH_PIPE_SHUTS_DOORS)) {
@@ -2548,7 +2593,7 @@ s32 Scene_Initialize(void) {
         Actor_SetPosition(ACTOR_MIA, 0, 0);
         Actor_SetPosition(ACTOR_DOOR_STATUE, 824, 600);
         MapGrid_CopyCellAttributes(116, 36, 3, 4, 52, 36);
-        Actor_Get(ACTOR_DOOR_STATUE)->collisionFlags = 0xff & ~ACTOR_SOLID;
+        Actor_Get(ACTOR_DOOR_STATUE)->collisionFlags = (u8)~ACTOR_SOLID;
         Event_Wait(1);
       }
       Actor_Get(ACTOR_DOOR_STATUE)->motionFlags = 0;
@@ -2662,7 +2707,7 @@ static void MercuryLighthouse_RideLift(void) {
 
   liftLayer = &((struct MapGridScrollWork *)gMapGridWork[0])
                    ->layers[MAPGRID_LAYER_OVERHEAD];
-  liftSpeed = 39976;
+  liftSpeed = toFIXED(0.61);
   liftLayer->offsetY = toFIXED(1161);
   liftLayer->speedY = 0;
   Actor_Get(ACTOR_PARTY_LEADER)->motionFlags = 0;
@@ -2691,8 +2736,8 @@ static void MercuryLighthouse_RideLift(void) {
     Actor_Get(ACTOR_LIFT_STATUE)->targetZ =
         Actor_Get(ACTOR_LIFT_STATUE)->z.fixed;
     if (liftLayer->offsetY > toFIXED(1024)) {
-      if ((gFrameCount & 15) == 0 && liftSpeed > 3275)
-        liftSpeed -= 1376;
+      if ((gFrameCount & 15) == 0 && liftSpeed >= toFIXED(0.05))
+        liftSpeed -= toFIXED(0.021);
       wait(1);
       continue;
     }
@@ -2852,7 +2897,7 @@ s32 gMercuryLighthouse_PushScriptA[] = {
     SC_WAIT(45),
     SC_SPEED(0.8),
     SC_ACCELERATION(0.2),
-    SC_CALL(MercuryLighthouse_StartStatueSpray),
+    SC_CALL(MercuryLighthouse_StartStatueSparkles),
     SC_MOVE(792, 0, 712),
     SC_SYNC,
     SC_END,
@@ -2862,10 +2907,10 @@ s32 gMercuryLighthouse_PushScriptB[] = {
     SC_WAIT(60),
     SC_SPEED(0.8),
     SC_ACCELERATION(0.2),
-    SC_CALL(MercuryLighthouse_StartStatueSpray),
+    SC_CALL(MercuryLighthouse_StartStatueSparkles),
     SC_MOVE(792, 0, 744),
     SC_SYNC,
-    SC_CALL(MercuryLighthouse_StopStatueSpray),
+    SC_CALL(MercuryLighthouse_StopStatueSparkles),
     SC_END,
 };
 
@@ -2873,16 +2918,16 @@ s32 gMercuryLighthouse_PushScriptD[] = {
     SC_WAIT(60),
     SC_SPEED(0.8),
     SC_ACCELERATION(0.2),
-    SC_CALL(MercuryLighthouse_StartStatueSpray),
+    SC_CALL(MercuryLighthouse_StartStatueSparkles),
     SC_MOVE(824, 0, 744),
     SC_SYNC,
-    SC_CALL(MercuryLighthouse_StopStatueSpray),
+    SC_CALL(MercuryLighthouse_StopStatueSparkles),
     SC_END,
 };
 
 s32 gMercuryLighthouse_PushScriptC[] = {
     SC_WAIT(45),
-    SC_CALL(MercuryLighthouse_StartStatueSpray),
+    SC_CALL(MercuryLighthouse_StartStatueSparkles),
     SC_END,
 };
 
@@ -3204,15 +3249,15 @@ struct Trigger gMercuryLighthouseUpperTriggers[] = {
     { TRIGGER_EXIT, 55, CONDITION_ALWAYS, MERCURY_LIGHTHOUSE_UPPER_TO_MERCURY_LIGHTHOUSE_MIDDLE_NORTHEAST },
     { TRIGGER_EXIT, 56, CONDITION_ALWAYS, MERCURY_LIGHTHOUSE_UPPER_TO_MERCURY_LIGHTHOUSE_MIDDLE_EAST_NORTHEAST },
     { TRIGGER_EXIT | EXIT_STYLE_STAIRS_DOWN, 64, CONDITION_ALWAYS, MERCURY_LIGHTHOUSE_UPPER_STONE_DOORS_TO_GATE },
-    { STEP_TRIGGER_WALKING, 10, FLAG_MERCURY_LIGHTHOUSE_UPPER_GATE_HELD_OPEN, EVENT(MercuryLighthouse_PushStairSwitchStatue) },
-    { STEP_TRIGGER_WALKING, 12, FLAG_MERCURY_LIGHTHOUSE_UPPER_GATE_HELD_OPEN, EVENT(MercuryLighthouse_PushStairSwitchStatue) },
-    { TRIGGER_STEP, 12, FLAG_MERCURY_LIGHTHOUSE_UPPER_GATE_HELD_OPEN, EVENT(MercuryLighthouse_PressStairFloorSwitch) },
-    { TRIGGER_STEP, 10, FLAG_MERCURY_LIGHTHOUSE_UPPER_GATE_HELD_OPEN, EVENT(MercuryLighthouse_ReleaseStairFloorSwitch) },
+    { STEP_TRIGGER_WALKING, 10, FLAG_MERCURY_LIGHTHOUSE_UPPER_GATE_HELD_OPEN, EVENT(MercuryLighthouse_PushUpperGateSwitchStatue) },
+    { STEP_TRIGGER_WALKING, 12, FLAG_MERCURY_LIGHTHOUSE_UPPER_GATE_HELD_OPEN, EVENT(MercuryLighthouse_PushUpperGateSwitchStatue) },
+    { TRIGGER_STEP, 12, FLAG_MERCURY_LIGHTHOUSE_UPPER_GATE_HELD_OPEN, EVENT(MercuryLighthouse_PressUpperGateFloorSwitch) },
+    { TRIGGER_STEP, 10, FLAG_MERCURY_LIGHTHOUSE_UPPER_GATE_HELD_OPEN, EVENT(MercuryLighthouse_ReleaseUpperGateFloorSwitch) },
     { STEP_TRIGGER_WALKING, 40, CONDITION_ALWAYS, EVENT(MercuryLighthouse_PushStoneDoorPipes) },
     { STEP_TRIGGER_WALKING, 47, CONDITION_ALWAYS, EVENT(MercuryLighthouse_PushAndSaveRowStatuePositions) },
     { EXAMINE_TRIGGER(EXAMINE_SILENT), 20, CONDITION_ALWAYS, EVENT(MercuryLighthouse_InspectLockedDoor) },
     { PSYNERGY_ANYWHERE(ABILITY_RETREAT, PSYNERGY_PHASE_BEFORE_CAST), 0, CONDITION_ALWAYS, EVENT(MercuryLighthouse_RemoveColumnOnRetreat) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_FALLEN_STATUE, FLAG_MERCURY_LIGHTHOUSE_UPPER_GATE_HELD_OPEN, EVENT(MercuryLighthouse_OpenStairGateWithMovedStatue) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_FALLEN_STATUE, FLAG_MERCURY_LIGHTHOUSE_UPPER_GATE_HELD_OPEN, EVENT(MercuryLighthouse_OpenUpperGateWithMovedStatue) },
     { PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_FIRST_ROW_STATUE, CONDITION_ALWAYS, EVENT(MercuryLighthouse_SyncRowStatueFlags) },
     { PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_FIRST_ROW_STATUE + 1, CONDITION_ALWAYS, EVENT(MercuryLighthouse_SyncRowStatueFlags) },
     { PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_FIRST_ROW_STATUE + 2, CONDITION_ALWAYS, EVENT(MercuryLighthouse_SyncRowStatueFlags) },
@@ -3243,7 +3288,7 @@ struct Trigger gMercuryLighthouseTriggersOther[] = {
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_FIRST_VISITOR + 2, IF_FLAG_SET(FLAG_SATUROS_BEATEN_AT_MERCURY), MSGNO(MsgMercuryLighthouseIKnewItWouldWorkBut) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_FIRST_VISITOR + 3, IF_FLAG_SET(FLAG_SATUROS_BEATEN_AT_MERCURY), MSGNO(MsgMercuryLighthouseINeverBelievedThoseStoriesBut) },
     { EXAMINE_TRIGGER(EXAMINE_SILENT), 10, CONDITION_ALWAYS, EVENT(MercuryLighthouse_InspectBlockedPassage) },
-    { EXAMINE_TRIGGER(EXAMINE_SILENT), 42, CONDITION_ALWAYS, EVENT(MercuryLighthouse_ReadHermesFountainInscription) },
+    { EXAMINE_TRIGGER(EXAMINE_SILENT), 42, CONDITION_ALWAYS, EVENT(MercuryLighthouse_ReadHermesFountainSign) },
     { EXAMINE_TRIGGER(EXAMINE_SILENT), 5, FLAG_HERMES_WATER_TAKEN, EVENT(MercuryLighthouse_InspectHealingFountain) },
     { PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_DOOR_STATUE, FLAG_IMIL_MET_MIA, 0 },
     { PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_DOOR_STATUE, FLAG_MERCURY_LIGHTHOUSE_OPENED_BY_MIA, EVENT(MercuryLighthouse_MiaOpensEntranceWithPly) },

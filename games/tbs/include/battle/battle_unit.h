@@ -261,6 +261,13 @@ enum AbilityUse {
 #define UNIT_GAUGE_SHIFT 14
 #define UNIT_GAUGE_FULL (1 << UNIT_GAUGE_SHIFT)
 
+/// The bits of Unit.baseActionCount that count the unit's actions a turn.
+#define UNIT_ACTION_COUNT_MASK 0xf
+
+/// A Resistance stage adds 20 to the resistance to every element
+/// (Unit_Calculate).
+#define RESISTANCE_PER_STAGE 20
+
 /// Unit.poison: the poison takes a tenth of the maximum HP at the end of
 /// each of the unit's actions, deadly poison a fifth.
 #define POISON_NORMAL 1

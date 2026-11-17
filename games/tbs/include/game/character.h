@@ -188,7 +188,8 @@ struct EnemyDefinition {
   /// How the action is chosen from `actions` (BattleAI_ChooseAction):
   /// an enum EnemyActionStrategy.
   s8 actionStrategy;
-  u8 itemActions; ///< one bit per place in `actions`: use an item held instead
+  /// One bit per place in `abilities` (ITEM_ACTION): use an item held instead.
+  u8 itemActions;
   u16 abilities[8]; ///< the abilities the enemy chooses from
   /// [0] to [2]: the ability effects the enemy is weak to
   /// (BattleAbility_IsWeakToEffect); [3] is 0 in every row.
@@ -232,6 +233,9 @@ STATIC_ASSERT(sizeof(struct DjinnDefinition) == 12);
 STATIC_ASSERT(offsetof(struct DjinnDefinition, abilityId) == 0);
 STATIC_ASSERT(offsetof(struct DjinnDefinition, reservedAfterAbility) == 2);
 STATIC_ASSERT(offsetof(struct DjinnDefinition, hp) == 4);
+/// EnemyDefinition.itemActions' bit for `place` in its abilities.
+#define ITEM_ACTION(place) (1 << (place))
+
 STATIC_ASSERT(sizeof(struct EnemyDefinition) == 84);
 STATIC_ASSERT(offsetof(struct EnemyDefinition, aiState) == 32);
 STATIC_ASSERT(offsetof(struct EnemyDefinition, actionStrategy) == 54);

@@ -772,7 +772,9 @@ static void VenusLighthouse_LandWithRadialDust(void) {
   options.update = (void (*)(struct Actor *))FieldEffect_AdvanceMotion;
   options.startScaleX = 4 * FIXED_ONE / 5;
   options.startScaleY = 4 * FIXED_ONE / 5;
-  for (particleIndex = 0; particleIndex <= 16; particleIndex++) {
+  // A puff each sixteenth of a turn, the last over the first.
+  for (particleIndex = 0; particleIndex <= TRIG_TURN / FACING_STEP;
+       particleIndex++) {
     s32 angle;
     s32 velocity[3];
 
@@ -825,8 +827,8 @@ static UNREAD_RESULT VenusLighthouse_TrailLight(struct Actor *actor) {
   options.type = SPRITE_GLINT;
   options.startScaleX = FIXED_ONE;
   options.startScaleY = FIXED_ONE;
-  options.targetScaleX = -327;
-  options.targetScaleY = -327;
+  options.targetScaleX = -FIXED_ONE / 200;
+  options.targetScaleY = -FIXED_ONE / 200;
   velocityX = Math_Divide(toFIXED(Random_Below(9) - 4), 10);
   velocityZ = Math_Divide(toFIXED(Random_Below(9) - 4), 10);
   FieldEffect_Spawn(actor->x.fixed, actor->y.fixed, actor->z.fixed - toFIXED(1),
@@ -899,9 +901,10 @@ static s32 VenusLighthouse_JumpAcrossGap(void) {
                           &landing);
 #else
     step = gPushedActor_DirectionSteps[direction];
-    landing.x = leader->x.fixed + ((step & 0xffff0000) << 1);
+    // Two steps on: the step's halves read as 16.16 pixels and doubled.
+    landing.x = leader->x.fixed + (step & 0xffff0000) * 2;
     landing.y = leader->y.fixed;
-    step <<= 17;
+    step = INTtoFIXED(step) * 2;
     landing.z = leader->z.fixed + step;
 #endif
     if (Actor_FindAtPosition(&landing, leader) == 0 &&
@@ -1467,7 +1470,8 @@ static void VenusLighthouse_LiftCarryPillar(void) {
 
   for (pillarIndex = 0; pillarIndex <= 1; pillarIndex++) {
     pillar = Actor_Get(pillarIndex + ACTOR_FIRST_CARRY_PILLAR);
-    MapGrid_SetCellBehaviorAt(0, pillar->x.fixed, pillar->z.fixed, 45);
+    MapGrid_SetCellBehaviorAt(0, pillar->x.fixed, pillar->z.fixed,
+                              CELL_BEHAVIOR_VENUS_LIGHTHOUSE_CARRY_PILLARS);
   }
 }
 
@@ -2009,8 +2013,8 @@ static void VenusLighthouse_CarryFloatingPillar(void) {
       // follower.
       VenusLighthouse_StackFloatingPillar(settledIndex +
                                           ACTOR_FIRST_FLOATING_PILLAR);
-      if (Actor_Get(settledIndex + ACTOR_FIRST_FLOATING_PILLAR)->x.fixed >>
-              20 ==
+      if (FIELD_CELL(
+              Actor_Get(settledIndex + ACTOR_FIRST_FLOATING_PILLAR)->x.fixed) ==
           6) {
         Actor_Get(ACTOR_BALANCE_WEST)->timer++;
         Actor_Get(ACTOR_BALANCE_EAST)->timer--;
@@ -3087,13 +3091,22 @@ static void VenusLighthouse_SpawnRandomParticles(s32 x, s32 z) {
   options.spin = FIELD_EFFECT_RANDOM_SPIN();
   if ((gFrameCount & 3) == 0) {
     if ((Random_Below(2)) != 0) {
-      FieldEffect_Spawn(toFIXED(x + (Random_Below(2) << 4)), 0, z << 19, 0, 0,
+      FieldEffect_Spawn(toFIXED(x + (Random_Below(2) << 4)), 0,
+                        FIELD_HALF_CELL_ORIGIN(z), 0, 0,
                         (s32)(toFIXED(Random_Below(5)) + toFIXED(7)) / 10,
                         EFFECT_USE_START_SCALE | EFFECT_USE_SPIN, &options);
     } else {
+#ifdef BUGFIX
       FieldEffect_Spawn(toFIXED(x + Random_Below(17)), 0,
-                        (x << 19) - toFIXED(4), 0, 0, 0,
+                        FIELD_HALF_CELL_ORIGIN(z) - toFIXED(4), 0, 0, 0,
                         EFFECT_USE_START_SCALE | EFFECT_USE_SPIN, &options);
+#else
+      // BUG: takes x for the half-cell row, so these particles start far to
+      // the south of the passage instead of just north of the others.
+      FieldEffect_Spawn(toFIXED(x + Random_Below(17)), 0,
+                        FIELD_HALF_CELL_ORIGIN(x) - toFIXED(4), 0, 0, 0,
+                        EFFECT_USE_START_SCALE | EFFECT_USE_SPIN, &options);
+#endif
     }
   }
 }

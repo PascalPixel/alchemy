@@ -76,9 +76,11 @@ extern u8 gItemMenu_ArrangeKeysString[];
 extern s32 gItemMenu_CommandColumnXTable[];
 /// The Japanese item menu's help: `R:`.
 extern u8 gItemMenu_EquipmentKeyString[];
-/// One 4-bit tile (backdrop.4bpp) the Djinn menus copy into the backdrop's
-/// frame; the Djinn preview blinks it, drawing it and a fill of the window
-/// background (TEXT_CANVAS_BACKGROUND_WORD) in turn every four frames.
+/// One 4-bit tile (backdrop.4bpp), a down arrow: the Djinn screens draw it
+/// between a thing and what a change makes of it (a Djinni set and on
+/// standby, a class and the next), and the Djinn preview blinks it, drawing it
+/// and a fill of the window background (TEXT_CANVAS_BACKGROUND_WORD) in turn
+/// every four frames.
 extern const u8 gMenu_BackdropBorderTile[];
 /// The colon the debug menus' scene and flag rows draw
 /// (window/screens_debug.c): `:`.

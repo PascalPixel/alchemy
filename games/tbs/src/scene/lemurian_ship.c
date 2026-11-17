@@ -64,7 +64,7 @@
 s32 Scene_Initialize(void);
 extern u16 gShipGlowPalettes[];
 extern s32 gSprayFallScript[];
-extern s16 gRippleSine[256];
+extern s16 gRippleSine[LINE_SCROLL_WAVE_ENTRIES];
 extern struct SceneEntrance gLemurianShipEntrances[];
 extern u32 gLemurianShipExits[];
 extern struct ActorPlacement gLemurianShipActorPlacements[];
@@ -87,6 +87,22 @@ extern s32 gLeaderBoardsShip[];
 extern s32 gGaretBoardsShip[];
 extern s32 gIvanBoardsShip[];
 extern s32 gMiaBoardsShip[];
+
+/// The ship's glow (ShipGlow_CyclePalette): SHIP_GLOW_COLORS of
+/// gShipGlowPalettes at a time, from a start that moves one colour every
+/// SHIP_GLOW_STEP_FRAMES frames, through as many starts as colours shown.
+#define SHIP_GLOW_COLORS 6
+#define SHIP_GLOW_STEP_FRAMES 6
+
+/// The curtains (Curtain_Close): three rows of CURTAIN_ROW_PARTS sprites, 32
+/// by 16, one row sliding down from above the screen and two up from below,
+/// CURTAIN_START_GAP pixels in all, until they rest at the top and at
+/// CURTAIN_BOTTOM_Y.
+#define CURTAIN_PART_WIDTH 32
+#define CURTAIN_PART_HEIGHT 16
+#define CURTAIN_ROW_PARTS 8
+#define CURTAIN_BOTTOM_Y 136
+#define CURTAIN_START_GAP 48
 
 #if TBS_PATCH_3
 #define LEMURIAN_SHIP_DEPARTURE_DELAY_FRAMES 30
@@ -152,11 +168,11 @@ const struct Trigger *Scene_GetTriggers(void) { return gLemurianShipTriggers; }
 static void ShipGlow_CyclePalette(void) {
   u16 paletteIndex;
 
-  paletteIndex = Math_DivideUnsigned(gShipGlowStep, 6);
+  paletteIndex = Math_DivideUnsigned(gShipGlowStep, SHIP_GLOW_STEP_FRAMES);
   Dma_Set(&gShipGlowPalettes[paletteIndex], (void *)&BG_PLTT_COLOR(7, 4),
-          DMA_COPY_HALFWORDS(6), REG_DMA3);
+          DMA_COPY_HALFWORDS(SHIP_GLOW_COLORS), REG_DMA3);
   gShipGlowStep++;
-  if (gShipGlowStep > 35)
+  if (gShipGlowStep > SHIP_GLOW_COLORS * SHIP_GLOW_STEP_FRAMES - 1)
     gShipGlowStep = 0;
 }
 
@@ -526,12 +542,12 @@ static void LemurianShip_SetSail(void) {
   // faster while the gangway's north piece moves off with the ship, and the
   // camera follows.
   Sound_Play(MUS_ENDING);
-  Sound_SetBgmTempo(240);
+  Sound_SetBgmTempo(SOUND_TEMPO_SCALE_NORMAL * 15 / 16);
   Curtain_Start();
   Event_Wait(LEMURIAN_SHIP_DEPARTURE_DELAY_FRAMES);
   grid = gMapGridWork[0];
   ship = Actor_Get(ACTOR_GANGWAY_NORTH);
-  ship->acceleration = 131;
+  ship->acceleration = toFIXED(0.002);
   ship->speedLimit = toFIXED(2);
   grid->layers[MAPGRID_LAYER_GROUND].speedX = -toFIXED(3) / 16;
   Actor_WalkByAndWait(ACTOR_GANGWAY_NORTH, 60, 0);
@@ -573,8 +589,10 @@ struct RippleScrollWork {
 /// One line's ripple offset.
 static inline s32 LemurianShip_WaveOffset(s32 angle, FIXED amplitude,
                                           u16 base) {
-  return (u16)(Iwram_MulFX(gRippleSine[(angle >> 16) & 0xff], amplitude) /
-               256) +
+  return (u16)(Iwram_MulFX(gRippleSine[FIXEDtoINT(angle) &
+                                       (LINE_SCROLL_WAVE_ENTRIES - 1)],
+                           amplitude) /
+               LINE_SCROLL_WAVE_SCALE) +
          base;
 }
 
@@ -599,7 +617,7 @@ static void LemurianShip_RaiseTheShip(void) {
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 0);
   Event_Wait(40);
   Sound_Play(SE_SPIN);
-  for (i = 0; i <= 15; i++) {
+  for (i = 0; i <= RGB_LEVEL_MAX / 2; i++) {
     Io_Write16(RGB(0, i, i * 2), &PLTT_BACKDROP);
     Event_Wait(10);
   }
@@ -653,7 +671,7 @@ static void LemurianShip_RaiseTheShip(void) {
   // A flash of white; the swell starts as it clears.
   Sound_Play(SE_CRASH);
   Io_Write16(BLDCNT_TGT1_ALL | BLDCNT_EFFECT_LIGHTEN, &REG_BLDCNT);
-  for (white = 0; white <= 16; white++) {
+  for (white = 0; white <= BLEND_FADE_MAX; white++) {
     REG_BLDY = white;
     Event_Wait(1);
   }
@@ -662,7 +680,7 @@ static void LemurianShip_RaiseTheShip(void) {
   gShipHullY = grid->layers[MAPGRID_LAYER_MIDDLE].offsetY;
   gShipDeckY = grid->layers[MAPGRID_LAYER_OVERHEAD].offsetY;
   gSwellActive = 1;
-  for (dark = 16; dark >= 0; dark--) {
+  for (dark = BLEND_FADE_MAX; dark >= 0; dark--) {
     REG_BLDY = dark;
     Event_Wait(8);
   }
@@ -817,9 +835,9 @@ static void Ripple_Stop(void) {
   reg[5];
 }
 
-/// The curtains: three columns of eight 32 by 8 sprites that close in from
-/// the sides as the ship sails.
-static struct MenuSprite sCurtainSprites[24];
+/// The curtains' sprites, which close in from above and below as the ship
+/// sails.
+static struct MenuSprite sCurtainSprites[3 * CURTAIN_ROW_PARTS];
 static s16 sCurtainGap;
 static s16 sCurtainVramSlot;
 
@@ -856,36 +874,42 @@ static void Curtain_Close(void) {
 #endif
   if (sCurtainGap != 0)
     sCurtainGap--;
-  // Three columns of eight.
-  for (i = 0; i < 8; i++) {
-    s32 leftEdge;
+  // The top row, then the bottom two.
+  for (i = 0; i < CURTAIN_ROW_PARTS; i++) {
+    s32 topEdge;
 
     gap = sCurtainGap;
-    leftEdge = -gap / 2;
-    CURTAIN_PART((leftEdge & 0xff) | (i << 21) | OBJ_SIZE_32X16, tile);
+    topEdge = -gap / 2;
+    CURTAIN_PART((topEdge & (OBJ_Y_RANGE - 1)) | OBJ_X(i * CURTAIN_PART_WIDTH) |
+                     OBJ_SIZE_32X16,
+                 tile);
   }
-  edge = (gap / 2 + 136) & 0xff;
-  for (i = 0; i < 8; i++)
-    CURTAIN_PART((i << 21) | edge | OBJ_SIZE_32X16, tile);
+  edge = (gap / 2 + CURTAIN_BOTTOM_Y) & (OBJ_Y_RANGE - 1);
+  for (i = 0; i < CURTAIN_ROW_PARTS; i++)
+    CURTAIN_PART(OBJ_X(i * CURTAIN_PART_WIDTH) | edge | OBJ_SIZE_32X16, tile);
   i = 0;
-  edge = (sCurtainGap / 2 + 152) & 0xff;
-  for (; i < 8; i++)
-    CURTAIN_PART((i << 21) | edge | OBJ_SIZE_32X16, tile);
-  for (i = 0; i < 24; i++)
+  edge = (sCurtainGap / 2 + CURTAIN_BOTTOM_Y + CURTAIN_PART_HEIGHT) &
+         (OBJ_Y_RANGE - 1);
+  for (; i < CURTAIN_ROW_PARTS; i++)
+    CURTAIN_PART(OBJ_X(i * CURTAIN_PART_WIDTH) | edge | OBJ_SIZE_32X16, tile);
+  for (i = 0; i < 3 * CURTAIN_ROW_PARTS; i++)
     Oam_AddSpriteAtDepth(&sCurtainSprites[i], OAM_DEPTH_FRONT);
 }
 
-/// Fills a 256-byte tile with colour 1 and starts the curtains 48 pixels
-/// open.
+/// Fills a curtain sprite's tiles with colour 1 and starts the curtains
+/// CURTAIN_START_GAP pixels apart from where they rest.
 static void Curtain_Start(void) {
   u8 *tiles;
 
-  tiles = Heap_CallAlternatePool(Heap_AllocEwram, 256);
+  tiles = Heap_CallAlternatePool(Heap_AllocEwram,
+                                 CURTAIN_PART_WIDTH * CURTAIN_PART_HEIGHT / 2);
   sCurtainVramSlot = VramCache_FindFreeEntry();
-  Dma_Fill32(0x11111111, tiles, 256);
-  VramCache_Load(sCurtainVramSlot, 256, tiles);
+  Dma_Fill32(PIXELS_4BPP(1), tiles,
+             CURTAIN_PART_WIDTH * CURTAIN_PART_HEIGHT / 2);
+  VramCache_Load(sCurtainVramSlot, CURTAIN_PART_WIDTH * CURTAIN_PART_HEIGHT / 2,
+                 tiles);
 
-  sCurtainGap = 48;
+  sCurtainGap = CURTAIN_START_GAP;
   Task_AddFrame(Curtain_Close, TASK_PASS_FRAME);
 }
 
@@ -907,7 +931,7 @@ s32 gSprayFallScript[] = {
 /// The ripple's sine: the same 256 values as the line scroll's
 /// gLineScroll_WaveSine, kept again in this overlay.
 // clang-format off
-s16 gRippleSine[256] = {
+s16 gRippleSine[LINE_SCROLL_WAVE_ENTRIES] = {
     0, 100, 200, 301, 401, 501, 601, 700,
     799, 897, 995, 1092, 1189, 1284, 1379, 1474,
     1567, 1659, 1751, 1841, 1930, 2018, 2105, 2191,

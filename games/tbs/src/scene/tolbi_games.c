@@ -119,10 +119,8 @@ enum TolbiSpringGameRoomActorId {
   /// A young man with fair hair (SPRITE_YOUNG_MAN_WITH_FAIR_HAIR), who runs
   /// Lucky Dice (TolbiSpring_OfferLuckyDice).
   ACTOR_TOLBI_SPRING_DICE_ATTENDANT,
-  /// Beside the Lucky Dice attendant, in his sprite.
-  ///
-  /// He is likely a second attendant, because the Colosso's attendants wear
-  /// the same sprite.
+  /// Beside the Lucky Dice attendant, in his sprite, pointing the party to
+  /// the rules: `Read the sign if ya don't know the rules.`
   ACTOR_TOLBI_SPRING_DICE_RULES_ATTENDANT,
   /// A Lucky Dice player, a burly grey-haired man
   /// (SPRITE_BURLY_MAN_WITH_GREY_HAIR).
@@ -209,7 +207,33 @@ enum TolbiSpringCellBehavior {
   CELL_BEHAVIOR_TOLBI_SPRING_WATER = 80, ///< searched to toss a coin or medal
 };
 
-// FLAG_TOLBI_SPRING_RISEN is set once the spring has risen and faded in.
+/// Lucky Dice costs this many coins for each level of the party's average
+/// level; a win of LUCKY_DICE_MEDIUM_WIN coins or more, or of
+/// LUCKY_DICE_LARGE_WIN, is greeted with a bigger jingle.
+enum {
+  LUCKY_DICE_COINS_PER_LEVEL = 10,
+  LUCKY_DICE_MEDIUM_WIN = 5000,
+  LUCKY_DICE_LARGE_WIN = 20000
+};
+
+/// The pixels the spring's layer moves as it rises, one every fourth frame.
+enum { SPRING_RISE_PIXELS = 16 };
+
+/// A medal's prizes (MainRoutineWork's prizeWeights): its ring allows three
+/// more for each ring out from the centre.
+enum { SPRING_MEDAL_PRIZES = 15, SPRING_MEDAL_PRIZES_PER_RING = 3 };
+
+/// The second crab rests this many frames at each end of its run.
+enum { SPRING_CRAB_REST_FRAMES = 30 };
+
+/// The token's velocity keeps SPRING_TOKEN_PULLED_DAMPING / 256 of itself each
+/// frame while the rings pull it, and SPRING_TOKEN_SETTLING_DAMPING / 256 once
+/// they let go.
+enum {
+  SPRING_TOKEN_PULLED_DAMPING = 253,
+  SPRING_TOKEN_SETTLING_DAMPING = 220,
+  SPRING_TOKEN_DAMPING_SCALE = 256
+};
 
 /// The spring's centre, which the prize rings pull the tossed token toward.
 #define TOLBI_SPRING_CENTER_X toFIXED(120)
@@ -412,9 +436,9 @@ s32 Scene_Initialize(void) {
       Event_Wait(20);
       coinChange = gMainRoutineWork.holdings.coins - sLuckyDiceCoinsBefore;
       if (coinChange > 0) {
-        if (coinChange > 19999) {
+        if (coinChange >= LUCKY_DICE_LARGE_WIN) {
           Sound_Play(MUS_JINGLE_LARGE);
-        } else if (coinChange > 4999) {
+        } else if (coinChange >= LUCKY_DICE_MEDIUM_WIN) {
           Sound_Play(MUS_JINGLE_MEDIUM);
         } else {
           Sound_Play(MUS_JINGLE_SMALL);
@@ -543,7 +567,7 @@ static void TolbiSpring_RiseAndFadeIn(void) {
 
   Sound_Play(SE_BURST);
   spring = &map->layers[MAPGRID_LAYER_OVERHEAD];
-  for (stepIndex = 0; stepIndex < 16; stepIndex++) {
+  for (stepIndex = 0; stepIndex < SPRING_RISE_PIXELS; stepIndex++) {
     spring->offsetY -= toFIXED(1);
     wait(4);
   }
@@ -630,7 +654,7 @@ static void TolbiSpring_OfferLuckyDice(void) {
   u32 cost;
   u32 coins;
 
-  cost = Party_GetAverageLevel() * 10;
+  cost = Party_GetAverageLevel() * LUCKY_DICE_COINS_PER_LEVEL;
   Event_Start();
   coins = gMainRoutineWork.holdings.coins;
   if (coins < cost) {
@@ -848,23 +872,25 @@ prompt:
       // The prize ring limits the weighted pool of medal rewards.
       totalWeight = 0;
       prizeIndex = 0;
-      if (prizeIndex < result * 3 + 3) {
+      if (prizeIndex < result * SPRING_MEDAL_PRIZES_PER_RING +
+                           SPRING_MEDAL_PRIZES_PER_RING) {
         do {
           s8 weight = *(routine->holdings.prizeWeights + prizeIndex);
 
           totalWeight += weight;
           prizeIndex++;
-        } while (prizeIndex < result * 3 + 3);
+        } while (prizeIndex < result * SPRING_MEDAL_PRIZES_PER_RING +
+                                  SPRING_MEDAL_PRIZES_PER_RING);
       }
       prizeRoll = Random_Below(totalWeight);
-      for (prizeIndex = 0; prizeIndex < 15; prizeIndex++) {
+      for (prizeIndex = 0; prizeIndex < SPRING_MEDAL_PRIZES; prizeIndex++) {
         prizeRoll -= routine->holdings.prizeWeights[prizeIndex];
         if (prizeRoll < 0) {
           break;
         }
       }
-      if (prizeIndex == 15) {
-        prizeIndex = 14;
+      if (prizeIndex == SPRING_MEDAL_PRIZES) {
+        prizeIndex = SPRING_MEDAL_PRIZES - 1;
       }
       TolbiSpring_RevealPrize(gTolbiSpring_PrizeItems[prizeIndex]);
       /* FAKEMATCH(dead): stepping routine away and back. */
@@ -1036,12 +1062,16 @@ static void TolbiSpring_UpdateTossSimulation(void) {
         distance = Iwram_Sqrt(deltaX * deltaX + deltaZ * deltaZ);
         toss->velocity.x += ((toFIXED(1) / 10) * deltaX) / distance;
         toss->velocity.z += ((toFIXED(1) / 10) * deltaZ) / distance;
-        toss->velocity.x = toss->velocity.x * 253 / 256;
-        toss->velocity.z = toss->velocity.z * 253 / 256;
+        toss->velocity.x = toss->velocity.x * SPRING_TOKEN_PULLED_DAMPING /
+                           SPRING_TOKEN_DAMPING_SCALE;
+        toss->velocity.z = toss->velocity.z * SPRING_TOKEN_PULLED_DAMPING /
+                           SPRING_TOKEN_DAMPING_SCALE;
         toss->attractionFrames = toss->attractionFrames - 1;
       } else {
-        toss->velocity.x = toss->velocity.x * 220 / 256;
-        toss->velocity.z = toss->velocity.z * 220 / 256;
+        toss->velocity.x = toss->velocity.x * SPRING_TOKEN_SETTLING_DAMPING /
+                           SPRING_TOKEN_DAMPING_SCALE;
+        toss->velocity.z = toss->velocity.z * SPRING_TOKEN_SETTLING_DAMPING /
+                           SPRING_TOKEN_DAMPING_SCALE;
         if (toss->velocity.x > -toFIXED(1) / 64 &&
             toss->velocity.x < toFIXED(1) / 64) {
           toss->velocity.x = 0;
@@ -1166,7 +1196,8 @@ static void TolbiSpring_UpdateTossSimulation(void) {
     }
   }
 
-  // Two obstacles slide across X; two follow timed elliptical paths.
+  // The two crabs scuttle east and west; the two turtles swim round ellipses,
+  // the second hiding in its shell for the last quarter of every 512 frames.
   for (index = 0; index != 4; index++) {
     obstacle = &sObstacles[index];
 
@@ -1213,13 +1244,13 @@ static void TolbiSpring_UpdateTossSimulation(void) {
           if (obstacle->position.x <= toFIXED(64)) {
             obstacle->heading = 0;
             if (index == 1) {
-              obstacle->pauseOrPhase = 30;
+              obstacle->pauseOrPhase = SPRING_CRAB_REST_FRAMES;
             }
           }
           if (obstacle->position.x > (toFIXED(176) - 1)) {
             obstacle->heading = 1;
             if (index == 1) {
-              obstacle->pauseOrPhase = 30;
+              obstacle->pauseOrPhase = SPRING_CRAB_REST_FRAMES;
             }
           }
         } else {
@@ -1228,7 +1259,7 @@ static void TolbiSpring_UpdateTossSimulation(void) {
       }
     } else if (index == 2) {
       speedMode = obstacle->speedMode;
-      motionStep = -64;
+      motionStep = -(TRIG_TURN / 1024);
       if (speedMode == 1) {
         motionStep = motionStep * 2;
       }
@@ -1250,7 +1281,7 @@ static void TolbiSpring_UpdateTossSimulation(void) {
     } else {
       cycleFrame = obstacle->pauseOrPhase & 511;
       speedMode = obstacle->speedMode;
-      motionStep = 64;
+      motionStep = TRIG_TURN / 1024;
       if (speedMode == 1) {
         motionStep = motionStep * 2;
       }
@@ -1322,14 +1353,14 @@ static void TolbiSpring_UpdateTossSimulation(void) {
           ACTOR_TOLBI_SPRING_FIRST_OBSTACLE,
           Vector3_Coordinates(&obstacle->position), 0,
           gTolbiSpring_SliderFrames[obstacle->speedMode],
-          (obstacle->speedMode << 4) + 16);
+          obstacle->speedMode * ANIMATION_STEP_NORMAL + ANIMATION_STEP_NORMAL);
       break;
     case 1:
       TolbiSpring_SetActorAppearance(
           ACTOR_TOLBI_SPRING_FIRST_OBSTACLE + 1,
           Vector3_Coordinates(&obstacle->position), 0,
           gTolbiSpring_SliderFrames[obstacle->speedMode],
-          (obstacle->speedMode << 4) + 16);
+          obstacle->speedMode * ANIMATION_STEP_NORMAL + ANIMATION_STEP_NORMAL);
       break;
     case 2:
       TolbiSpring_SetActorAppearance(
@@ -1337,7 +1368,7 @@ static void TolbiSpring_UpdateTossSimulation(void) {
           Vector3_Coordinates(&obstacle->position),
           DEGtoANG(180) - obstacle->heading,
           gTolbiSpring_CircleFrames[obstacle->speedMode],
-          (obstacle->speedMode << 4) + 16);
+          obstacle->speedMode * ANIMATION_STEP_NORMAL + ANIMATION_STEP_NORMAL);
       break;
     case 3:
       TolbiSpring_SetActorAppearance(
@@ -1345,7 +1376,7 @@ static void TolbiSpring_UpdateTossSimulation(void) {
           Vector3_Coordinates(&obstacle->position),
           TRIG_TURN - 1 - obstacle->heading,
           gTolbiSpring_CircleFrames[obstacle->speedMode],
-          (obstacle->speedMode << 4) + 16);
+          obstacle->speedMode * ANIMATION_STEP_NORMAL + ANIMATION_STEP_NORMAL);
       break;
     }
   }
@@ -1357,19 +1388,19 @@ static void TolbiSpring_UpdateTossSimulation(void) {
   if (sTossKind == SPRING_TOSS_MEDAL) {
     TolbiSpring_SetActorAppearance(ACTOR_TOLBI_SPRING_MEDAL,
                                    Vector3_Coordinates(&toss->trail[0]), 0, 0,
-                                   16);
+                                   ANIMATION_STEP_NORMAL);
     TolbiSpring_SetActorAppearance(ACTOR_TOLBI_SPRING_MEDAL_SHADOW,
                                    Vector3_Coordinates(&toss->shadow), 0, 0,
-                                   16);
+                                   ANIMATION_STEP_NORMAL);
     TolbiSpring_SetActorAppearance(TOLBI_SPRING_MEDAL_TRAIL(1),
                                    Vector3_Coordinates(&toss->trail[1]), 0, 0,
-                                   16);
+                                   ANIMATION_STEP_NORMAL);
     TolbiSpring_SetActorAppearance(TOLBI_SPRING_MEDAL_TRAIL(2),
                                    Vector3_Coordinates(&toss->trail[2]), 0, 0,
-                                   16);
+                                   ANIMATION_STEP_NORMAL);
     TolbiSpring_SetActorAppearance(TOLBI_SPRING_MEDAL_TRAIL(3),
                                    Vector3_Coordinates(&toss->trail[3]), 0, 0,
-                                   16);
+                                   ANIMATION_STEP_NORMAL);
     Actor_SelectAnimation(Actor_Get(TOLBI_SPRING_MEDAL_TRAIL(1)),
                           ANIM_TOKEN_GLINT);
     Actor_SelectAnimation(Actor_Get(TOLBI_SPRING_MEDAL_TRAIL(2)),
@@ -1379,19 +1410,19 @@ static void TolbiSpring_UpdateTossSimulation(void) {
   } else {
     TolbiSpring_SetActorAppearance(ACTOR_TOLBI_SPRING_COIN,
                                    Vector3_Coordinates(&toss->trail[0]), 0, 0,
-                                   16);
+                                   ANIMATION_STEP_NORMAL);
     TolbiSpring_SetActorAppearance(ACTOR_TOLBI_SPRING_COIN_SHADOW,
                                    Vector3_Coordinates(&toss->shadow), 0, 0,
-                                   16);
+                                   ANIMATION_STEP_NORMAL);
     TolbiSpring_SetActorAppearance(TOLBI_SPRING_COIN_TRAIL(1),
                                    Vector3_Coordinates(&toss->trail[1]), 0, 0,
-                                   16);
+                                   ANIMATION_STEP_NORMAL);
     TolbiSpring_SetActorAppearance(TOLBI_SPRING_COIN_TRAIL(2),
                                    Vector3_Coordinates(&toss->trail[2]), 0, 0,
-                                   16);
+                                   ANIMATION_STEP_NORMAL);
     TolbiSpring_SetActorAppearance(TOLBI_SPRING_COIN_TRAIL(3),
                                    Vector3_Coordinates(&toss->trail[3]), 0, 0,
-                                   16);
+                                   ANIMATION_STEP_NORMAL);
     Actor_SelectAnimation(Actor_Get(TOLBI_SPRING_COIN_TRAIL(1)),
                           ANIM_TOKEN_GLINT);
     Actor_SelectAnimation(Actor_Get(TOLBI_SPRING_COIN_TRAIL(2)),

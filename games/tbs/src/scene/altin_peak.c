@@ -125,6 +125,8 @@
 #include "system/system.h"
 #include "text/msg_ids.h"
 
+// The water's flicker timer, and the spray's direction (FACING_EAST or
+// FACING_WEST) and origin.
 u16 gAltinPeak_FlickerTimer BSS_DATA;
 s32 gAltinPeak_SprayDirection BSS_DATA;
 s32 gAltinPeak_SprayOrigin[3] BSS_DATA;
@@ -184,9 +186,7 @@ extern struct Trigger gAltinPeak_FallingRocksTriggers[];
 extern struct Trigger gAltinPeak_HydrosStatueTriggers[];
 extern struct Trigger gAltinPeak_WestExitTriggers[];
 extern s32 gAltinPeak_RumbleFrames;
-extern u32 gAltinPeak_RollRadii[];
-// The spray's direction (FACING_EAST or FACING_WEST) and origin, and the
-// water's flicker timer.
+extern FIXED gAltinPeak_CartSpeeds[];
 
 // The rooms' floor switches, each set once flipped from its first position;
 // they are area temp flags, kept until the party leaves the mine.
@@ -222,8 +222,12 @@ static void AltinPeak_MarkActorTerrainCell(s32 actorId);
 static void AltinPeak_RollCart(s32 id, s32 heading);
 static void AltinPeak_StartPaletteAnimation(void);
 
-/// Each room's water beast fight returns the party to this entrance.
-enum { ENTRANCE_AFTER_BATTLE = 99 };
+/// Each room's water beast fight returns the party to ENTRANCE_AFTER_BATTLE.
+///
+/// Unused: no exit or event leads to ENTRANCE_UNUSED. It stands at the way in
+/// of each water beast's room and the Hydros statue's, and the statue room's
+/// setup lands the party there as it does from AltinPeakFallingRocks.
+enum { ENTRANCE_UNUSED = 98, ENTRANCE_AFTER_BATTLE = 99 };
 
 /// The rooms' actors, from their actor placements.
 ///
@@ -436,13 +440,16 @@ const struct ActorPlacement *Scene_GetActorPlacements(void) {
   return gAltinPeak_ActorPlacementsOther;
 }
 
+/// A 16.16 height shifted down to whole quarter pixels.
+enum { QUARTER_PIXEL_SHIFT = 14 };
+
 /// Talking to a mine cart makes the party leader jump into it.
-static void AltinPeak_RideCart(s32 log) {
-  struct Actor *logActor;
+static void AltinPeak_RideCart(s32 cartId) {
+  struct Actor *cart;
   struct Actor *leader;
 
   leader = Actor_Get(ACTOR_PARTY_LEADER);
-  logActor = Actor_Get(ACTOR_CART);
+  cart = Actor_Get(ACTOR_CART);
   Field_EndBusyAndReveal();
   Event_Start();
   Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_LEADER_LEAN_BACK);
@@ -451,22 +458,25 @@ static void AltinPeak_RideCart(s32 log) {
   Actor_SetSpeed(ACTOR_PARTY_LEADER, 3.2);
   // Leap by the height between leader and cart, in quarter pixels, plus 4.
   leader->velocityY =
-      ((ABS(logActor->y.fixed - leader->y.fixed) >> 14) << 14) + toFIXED(4);
+      ((ABS(cart->y.fixed - leader->y.fixed) >> QUARTER_PIXEL_SHIFT)
+       << QUARTER_PIXEL_SHIFT) +
+      toFIXED(4);
   Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_LEADER_LEAP);
-  FieldActor_SetMoveTargetFX(leader, logActor->x.fixed, logActor->y.fixed,
-                             logActor->z.fixed);
+  FieldActor_SetMoveTargetFX(leader, cart->x.fixed, cart->y.fixed,
+                             cart->z.fixed);
   wait(10);
   leader->sprite->image.priority = 3;
   Actor_WaitForMoveById(ACTOR_PARTY_LEADER);
 
   for (;;) {
-    if (!((logActor->y.fixed >> 14) < (leader->y.fixed >> 14)))
+    if (!((cart->y.fixed >> QUARTER_PIXEL_SHIFT) <
+          (leader->y.fixed >> QUARTER_PIXEL_SHIFT)))
       break;
     wait(1);
   }
   Event_End();
   Sound_Play(SE_DOOR_CLOSE);
-  AltinPeak_RollCart(log, 0);
+  AltinPeak_RollCart(cartId, 0);
   wait(20);
   Scene_PlayQueuedMusic();
 }
@@ -619,7 +629,8 @@ static void AltinPeak_FreezeSpritzRoomThirdPuddle(void) {
   GameFlag_Set(FLAG_ALTIN_PEAK_THIRD_PUDDLE_FROZEN);
 }
 
-/// Interrupt handler while the water layer vanishes.
+/// HBlank handler while the water layer vanishes: a line shows the water while
+/// a random number below 100 reaches the timer, so ever fewer lines show it.
 static void AltinPeak_FlickerWaterOut(void) {
   u16 control = REG_DISPCNT & ~DISPCNT_BG1_ON;
 
@@ -632,17 +643,20 @@ static void AltinPeak_FlickerWaterOut(void) {
 /// Flickers the water away while the timer counts to 100, then lets the
 /// screen settle; every drain ends this way.
 static inline void AltinPeak_FlickerWaterAway(void) {
-  Irq_SetHandler(1, 0, AltinPeak_FlickerWaterOut);
+  Irq_SetHandler(IRQ_HBLANK, 0, AltinPeak_FlickerWaterOut);
   gAltinPeak_FlickerTimer = 0;
   do {
     wait(1);
   } while (++gAltinPeak_FlickerTimer <= 100);
   wait(1);
-  Irq_SetHandler(1, 0, 0);
+  Irq_SetHandler(IRQ_HBLANK, 0, 0);
   Sound_Play(SOUND_FADE_OUT_ACTION_SE);
   MapGrid_SetShake(SHAKE_KEEP, SHAKE_KEEP, 0.9);
   Event_Wait(30);
 }
+
+/// The pixels the water layer sinks in a drain, one every fourth frame.
+enum { DRAIN_SINK_PIXELS = 24 };
 
 /// The first drain, after the Frost Jewel is found.
 static void AltinPeak_DrainFirstWater(void) {
@@ -654,7 +668,7 @@ static void AltinPeak_DrainFirstWater(void) {
   MapGrid_SetShake(2, 2, 1);
   Event_Wait(10);
   water = &map->layers[MAPGRID_LAYER_OVERHEAD];
-  for (step = 0; step < 24; step++) {
+  for (step = 0; step < DRAIN_SINK_PIXELS; step++) {
     water->offsetY -= toFIXED(1);
     wait(4);
     if (step == 8) {
@@ -682,7 +696,7 @@ static void AltinPeak_DrainSecondWater(void) {
   MapGrid_SetShake(2, 2, 1);
   Event_Wait(10);
   water = &map->layers[MAPGRID_LAYER_OVERHEAD];
-  for (step = 0; step < 24; step++) {
+  for (step = 0; step < DRAIN_SINK_PIXELS; step++) {
     water->offsetY -= toFIXED(1);
     wait(4);
   }
@@ -704,7 +718,7 @@ static void AltinPeak_DrainThirdWater(void) {
   MapGrid_SetShake(2, 2, 1);
   Event_Wait(10);
   water = &map->layers[MAPGRID_LAYER_OVERHEAD];
-  for (step = 0; step < 24; step++) {
+  for (step = 0; step < DRAIN_SINK_PIXELS; step++) {
     water->offsetY -= toFIXED(1);
     wait(4);
   }
@@ -852,7 +866,7 @@ static void AltinPeak_ForceLogOver(void) {
   MapGrid_SetShake(SHAKE_KEEP, SHAKE_KEEP, 0.9);
   Event_Wait(20);
 
-  // Rock the obstacle to each side before the accelerating fall.
+  // Rock the log to each side before the accelerating fall.
   rotationStep = 0;
   while (1) {
     rotationStep += 8;
@@ -1107,7 +1121,7 @@ static void AltinPeak_ReadFallingRockSign(void) {
     Actor_StartRepeatedMotion(ACTOR_GARET, 2);
     Event_ShowMessageThenWait(ACTOR_GARET, 0, 10);
     Actor_SetSpeed(ACTOR_GARET, 2.5);
-    Actor_SetAnimation(ACTOR_GARET, 5);
+    Actor_SetAnimation(ACTOR_GARET, ANIM_LEADER_RUN);
     Actor_MoveToAndWait(ACTOR_GARET, 796, 138);
     Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_EAST, 0);
     Actor_MoveToAndWait(ACTOR_GARET, 804, 140);
@@ -1169,7 +1183,7 @@ static void AltinPeak_UpdateBeastHops(struct Actor *updated) {
   struct Actor *beast = updated;
   s16 *shakeDelay = (s16 *)&beast->userValue;
 
-  // The route owns timer (hop phase), work (shake delay) and the effect's
+  // The route owns timer (hop phase), userValue (shake delay) and the effect's
   // countdown (landing-sound latch) until it removes this update routine.
   if (*shakeDelay != 0) {
     if (--*shakeDelay == 1)
@@ -1489,7 +1503,7 @@ static void AltinPeak_RestoreFirstWaterBeastRoom(void) {
         toFIXED(32);
     MapGrid_CopyCellAttributes(2, 0, 1, 1, 18, 13);
     Actor_SetPosition(ACTOR_FIRST_WATER_BEAST, 260, 215);
-    FieldActor_WatchAndStartScript(10,
+    FieldActor_WatchAndStartScript(ACTOR_FIRST_WATER_BEAST,
                                    ACTOR_WATCH_KEEP_MOTION | ACTOR_PARTY_LEADER,
                                    gAltinPeak_FaceLeaderScript);
   } else {
@@ -1739,7 +1753,7 @@ static void AltinPeak_RestoreHydrosStatueRoom(void) {
   }
   entrance = gMainRoutineWork.entrance;
   if (entrance == ALTIN_PEAK_HYDROS_STATUE_FROM_ALTIN_PEAK_FALLING_ROCKS ||
-      entrance == 98) {
+      entrance == ENTRANCE_UNUSED) {
     if (GameFlag_Get(FLAG_KEEP_PARTY_POSITION) == 0) {
       leader = Actor_Get(ACTOR_PARTY_LEADER);
       Event_Start();
@@ -1777,12 +1791,12 @@ static void AltinPeak_InitializeSpray(struct Actor *spray) {
 static void AltinPeak_DriftSpray(struct Actor *spray) {
   switch (gAltinPeak_SprayDirection) {
   case FACING_EAST:
-    spray->x.fixed +=
-        (spray->timer << 12) + ((s32)toFIXED(Random_Below(2) - 1) >> 1);
+    spray->x.fixed += spray->timer * (toFIXED(1) / 16) +
+                      ((s32)toFIXED(Random_Below(2) - 1) >> 1);
     break;
   case FACING_WEST:
-    spray->x.fixed -=
-        (spray->timer << 12) + ((s32)toFIXED(Random_Below(2) - 1) >> 1);
+    spray->x.fixed -= spray->timer * (toFIXED(1) / 16) +
+                      ((s32)toFIXED(Random_Below(2) - 1) >> 1);
     break;
   }
   if (spray->timer <= 3) {
@@ -1832,8 +1846,8 @@ static void AltinPeak_SpawnSpray(void) {
 }
 
 /// A water beast starts spitting water from (x, y, z), in 16.16 fixed point,
-/// toward facing
-/// (FACING_EAST or FACING_WEST), with its sound (SE_AMBIENT_WATER).
+/// toward facing (FACING_EAST or FACING_WEST), with its sound
+/// (SE_AMBIENT_WATER).
 static void AltinPeak_StartSpittingFX(FIXED x, FIXED y, FIXED z, s32 facing) {
   SET_VECTOR(gAltinPeak_SprayOrigin, x, y, z);
   gAltinPeak_SprayDirection = facing;
@@ -2143,7 +2157,7 @@ static void AltinPeak_CelebrateHydrosVictory(void) {
 UNUSED static void AltinPeak_RequestPsynergy(void) {
   // XXX (no evidence): why the user is Felix, who never joins the party in
   // this game; nothing calls this, so no caller shows what it was for.
-  gFieldWork->psynergy = (FELIX << 10) | ABILITY_FROST;
+  gFieldWork->psynergy = FIELD_PSYNERGY(FELIX, ABILITY_FROST);
 }
 
 /// Task in AltinPeakSpritz. While the leader stands higher than 48 pixels the
@@ -2217,6 +2231,7 @@ static void AltinPeak_StopCartAndJumpOff(struct Actor *actor) {
   Sound_Play(SE_DOOR_CLOSE);
 }
 
+/// Unused: does nothing, and nothing calls it.
 UNUSED static void AltinPeak_ReservedNoOp(void) {}
 
 /// The cart turns a quarter turn right around the corner it reaches.
@@ -2227,7 +2242,7 @@ static void AltinPeak_TurnCartRight(struct Actor *actor) {
   s32 z;
   s32 turnFrame;
 
-  angle = (actor->facing + DEGtoANG(90)) & 0xc000;
+  angle = FACING_QUARTER(actor->facing + DEGtoANG(90));
   SET_POSITION(&position, actor->x.fixed, actor->y.fixed, actor->z.fixed);
   FieldVector_AddPolarOffset(24, angle, &position);
   x = (position.x + toFIXED(8)) & FIELD_CELL_MASK;
@@ -2258,7 +2273,7 @@ static void AltinPeak_TurnCartLeft(struct Actor *actor) {
   s32 z;
   s32 turnFrame;
 
-  angle = (actor->facing - DEGtoANG(90)) & 0xc000;
+  angle = FACING_QUARTER(actor->facing - DEGtoANG(90));
   SET_POSITION(&position, actor->x.fixed, actor->y.fixed, actor->z.fixed);
   FieldVector_AddPolarOffset(24, angle, &position);
   x = (position.x + toFIXED(8)) & FIELD_CELL_MASK;
@@ -2281,10 +2296,15 @@ static void AltinPeak_TurnCartLeft(struct Actor *actor) {
   Sound_Play(SE_CART_ROLL);
 }
 
-/// The cart rolls over a marked cell. SE_STOP_ACTION_SE plays, and SE_CART_TURN
-/// and SE_CART_ROLL follow as its countdown runs out.
+/// A countdown cell's frames: SE_CART_TURN plays with CART_COUNTDOWN_TURN
+/// frames left, from when the cart's slope animation is picked again, and
+/// SE_CART_ROLL at the end.
+enum { CART_COUNTDOWN_FRAMES = 33, CART_COUNTDOWN_TURN = 20 };
+
+/// The cart rolls over a countdown cell. SE_STOP_ACTION_SE plays, and
+/// SE_CART_TURN and SE_CART_ROLL follow as its countdown runs out.
 static void AltinPeak_StartCartCountdown(struct Actor *actor) {
-  actor->userValue = 33;
+  actor->userValue = CART_COUNTDOWN_FRAMES;
   Sound_Play(SE_STOP_ACTION_SE);
 }
 
@@ -2292,18 +2312,18 @@ static void AltinPeak_StartCartCountdown(struct Actor *actor) {
 /// of and behind it: flat, uphill or downhill.
 static void AltinPeak_AdvanceCart(struct Actor *actor) {
   s32 angle = TRIG_TURN * 3 / 4;
-  s32 radius;
+  FIXED speed;
   s16 *timer;
   struct FieldPosition position;
   FIXED ahead;
   FIXED behind;
 
   angle &= actor->facing;
-  radius = actor->y.fixed / FIXED_ONE;
-  radius = gAltinPeak_RollRadii[actor->timer - radius + 16];
+  speed = actor->y.fixed / FIXED_ONE;
+  speed = gAltinPeak_CartSpeeds[actor->timer - speed + 16];
   timer = (s16 *)&actor->userValue;
   if (*timer != 0) {
-    if (--*timer == 20) {
+    if (--*timer == CART_COUNTDOWN_TURN) {
       Sound_Play(SE_CART_TURN);
     }
     if (*timer == 0) {
@@ -2311,15 +2331,15 @@ static void AltinPeak_AdvanceCart(struct Actor *actor) {
     }
   }
   SET_POSITION(&position, actor->x.fixed, actor->y.fixed, actor->z.fixed);
-  FieldVector_AddPolarOffsetFX(Iwram_MulFX(radius, 3 * FIXED_ONE / 4), angle,
+  FieldVector_AddPolarOffsetFX(Iwram_MulFX(speed, 3 * FIXED_ONE / 4), angle,
                                &position);
   actor->x.fixed = position.x;
   actor->z.fixed = position.z;
   ahead = MapGrid_GetTerrainHeight(2, position.x, position.z);
-  FieldVector_AddPolarOffsetFX(-Iwram_MulFX(radius, 3 * FIXED_ONE / 2), angle,
+  FieldVector_AddPolarOffsetFX(-Iwram_MulFX(speed, 3 * FIXED_ONE / 2), angle,
                                &position);
   behind = MapGrid_GetTerrainHeight(2, position.x, position.z);
-  if (*timer <= 20) {
+  if (*timer <= CART_COUNTDOWN_TURN) {
     if (ahead == behind) {
       Actor_SelectAnimation(actor, 2);
     } else if (ahead > behind) {
@@ -2484,7 +2504,7 @@ s32 gAltinPeak_BoulderPath[] = {
 /// The party leader flees down the winding path ahead of the boulder, marks
 /// the arrival, steps aside and turns round.
 s32 gAltinPeak_LeaderFleePath[] = {
-    SC_ANIMATION(5),
+    SC_ANIMATION(ANIM_LEADER_RUN),
     SC_MOVE(804, 0, 140),
     SC_SYNC,
     SC_MOVE(804, 0, 166),
@@ -2610,7 +2630,7 @@ struct SceneEntrance gAltinPeak_EntrancesOther[] = {
 struct SceneEntrance gAltinPeak_FirstWaterBeastEntrances[] = {
     {0, CONDITION_ALWAYS, 160, 0, 160, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
     {ALTIN_PEAK_FIRST_WATER_BEAST_FROM_ALTIN, CONDITION_ALWAYS, 456, 0, 520, FACING_NORTH, 0, 0, 56, 506, 530, 0},
-    {98, CONDITION_ALWAYS, 456, 0, 488, FACING_NORTH, 0, 0, 56, 506, 530, 0},
+    {ENTRANCE_UNUSED, CONDITION_ALWAYS, 456, 0, 488, FACING_NORTH, 0, 0, 56, 506, 530, 0},
     {ENTRANCE_AFTER_BATTLE, CONDITION_ALWAYS, 104, 0, 232, FACING_SOUTH, 0, 0, 56, 506, 530, 0},
     {SCENE_TABLE_END},
 };
@@ -2627,7 +2647,7 @@ struct SceneEntrance gAltinPeak_SecondWaterBeastEntrances[] = {
     {ALTIN_PEAK_SECOND_WATER_BEAST_FROM_ALTIN_PEAK_RAIL_TUNNEL, CONDITION_ALWAYS, 488, 0, 560, FACING_NORTH, 0, -1, -1, -1, -1, 0},
     {ALTIN_PEAK_SECOND_WATER_BEAST_LAKE_FROM_CHEST_ROOM, CONDITION_ALWAYS, 664, 0, 380, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
     {ALTIN_PEAK_SECOND_WATER_BEAST_CHEST_ROOM_FROM_LAKE, CONDITION_ALWAYS, 904, 0, 214, FACING_NORTH, 0, 842, 40, 1016, 248, 0},
-    {98, CONDITION_ALWAYS, 488, 0, 560, FACING_NORTH, 0, -1, -1, -1, -1, 0},
+    {ENTRANCE_UNUSED, CONDITION_ALWAYS, 488, 0, 560, FACING_NORTH, 0, -1, -1, -1, -1, 0},
     {ENTRANCE_AFTER_BATTLE, CONDITION_ALWAYS, 320, 0, 472, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
     {SCENE_TABLE_END},
 };
@@ -2647,7 +2667,7 @@ struct SceneEntrance gAltinPeak_SouthEntranceEntrances[] = {
 struct SceneEntrance gAltinPeak_ThirdWaterBeastEntrances[] = {
     {0, CONDITION_ALWAYS, 160, 0, 160, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
     {ALTIN_PEAK_THIRD_WATER_BEAST_FROM_ALTIN_PEAK_POOL, CONDITION_ALWAYS, 585, 0, 501, FACING_NORTH, 0, 0, 0, 798, 530, 0},
-    {98, CONDITION_ALWAYS, 585, 0, 501, FACING_NORTH, 0, 0, 0, 798, 530, 0},
+    {ENTRANCE_UNUSED, CONDITION_ALWAYS, 585, 0, 501, FACING_NORTH, 0, 0, 0, 798, 530, 0},
     {ENTRANCE_AFTER_BATTLE, CONDITION_ALWAYS, 747, 0, 258, FACING_SOUTH, 0, 0, 0, 798, 530, 0},
     {SCENE_TABLE_END},
 };
@@ -2695,7 +2715,7 @@ struct SceneEntrance gAltinPeak_FallingRocksEntrances[] = {
 struct SceneEntrance gAltinPeak_HydrosStatueEntrances[] = {
     {0, CONDITION_ALWAYS, 160, 0, 160, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
     {ALTIN_PEAK_HYDROS_STATUE_FROM_ALTIN_PEAK_FALLING_ROCKS, CONDITION_ALWAYS, 88, 4, 424, FACING_SOUTH, 0, 0, 0, 448, 524, 0},
-    {98, CONDITION_ALWAYS, 88, 4, 424, FACING_SOUTH, 0, 0, 0, 448, 524, 0},
+    {ENTRANCE_UNUSED, CONDITION_ALWAYS, 88, 4, 424, FACING_SOUTH, 0, 0, 0, 448, 524, 0},
     {ENTRANCE_AFTER_BATTLE, CONDITION_ALWAYS, 328, 0, 118, FACING_NORTH, 0, 0, 0, 448, 524, 0},
     {SCENE_TABLE_END},
 };
@@ -3049,12 +3069,17 @@ struct Trigger gAltinPeak_WestExitTriggers[] = {
 /// Frames since the statue's last rumble.
 s32 gAltinPeak_RumbleFrames = 0;
 
-/// The cart's speed factor by its height against where it set off. It is 2 to
-/// the power i / 16 for i from 0 to 32, in 16.16.
-u32 gAltinPeak_RollRadii[] = {
-    0x10000, 0x10b55, 0x1172b, 0x12387, 0x1306f, 0x13dea, 0x14bfd,
-    0x15ab0, 0x16a09, 0x17a11, 0x18ace, 0x19c49, 0x1ae89, 0x1c199,
-    0x1d581, 0x1ea4b, 0x20000, 0x216ab, 0x22e56, 0x2470f, 0x260df,
-    0x27bd4, 0x297fb, 0x2b560, 0x2d413, 0x2f422, 0x3159c, 0x33892,
-    0x35d13, 0x38333, 0x3ab03, 0x3d495, 0x40000,
+/// The cart's speed by its height against where it set off, of which it rolls
+/// three quarters a frame: 2 at that height, doubling for each 16 pixels lower
+/// and halving for each 16 higher. Entry i is about 2 to the power i / 16.
+FIXED gAltinPeak_CartSpeeds[] = {
+    toFIXED(1),       toFIXED(1.04427), toFIXED(1.0905),  toFIXED(1.13878),
+    toFIXED(1.1892),  toFIXED(1.24186), toFIXED(1.29683), toFIXED(1.35425),
+    toFIXED(1.4142),  toFIXED(1.47683), toFIXED(1.54221), toFIXED(1.6105),
+    toFIXED(1.68178), toFIXED(1.75625), toFIXED(1.834),   toFIXED(1.91521),
+    toFIXED(2),       toFIXED(2.08855), toFIXED(2.181),   toFIXED(2.27758),
+    toFIXED(2.37841), toFIXED(2.48371), toFIXED(2.59368), toFIXED(2.7085),
+    toFIXED(2.82842), toFIXED(2.95365), toFIXED(3.08442), toFIXED(3.22098),
+    toFIXED(3.36358), toFIXED(3.5125),  toFIXED(3.66802), toFIXED(3.8304),
+    toFIXED(4),
 };

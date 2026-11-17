@@ -29,6 +29,13 @@
 #define BACKGROUND_PLANE_LINES 136
 /// The plane's top lines, left off except while commands are chosen.
 #define BACKGROUND_PLANE_HIDDEN_LINES 16
+/// The picture's lines that BACKGROUND_PLANE_UPPER reads: its first 256
+/// tiles, 32 to a row.
+#define BACKGROUND_UPPER_HALF_LINES 64
+
+/// A battle background resource: its BATTLE_BG_PALETTE_COLORS colours, then
+/// its packed picture.
+#define BACKGROUND_PALETTE_BYTES (BATTLE_BG_PALETTE_COLORS * 2)
 
 /// Sets the palette brightness. Level 0 transfers the original colours
 /// unchanged.
@@ -51,9 +58,8 @@ void BattleBackground_SetPaletteLevel(s32 unused, s32 level) {
   Irq_Unlock(&ime);
 }
 
-/// As The Broken Seal's, with this game's heap slots, its callback
-/// BattleBackground_ShowZoomedPage at 0xcff and its IO write of 0x1f83 to
-/// BG1CNT.
+/// Switches the background's display mode, optionally fades its palette by
+/// fade, and rebuilds both its maps.
 void BattleBackground_SetMode(s32 mode, s32 value, s32 fade) {
   struct BattleBackgroundWork *transition = Ram_HeapSlots->battleBackground;
 
@@ -64,6 +70,8 @@ void BattleBackground_SetMode(s32 mode, s32 value, s32 fade) {
   if (mode == BATTLE_BACKGROUND_FIXED)
     IO_WRITE_QUEUE_PUSH((u32)&REG_BG1CNT, BATTLE_BG1CNT, IO_WRITE_HALFWORD);
 
+  // The battle windows' second text palette takes the first sprite palette's
+  // colours, over the window's background colour.
   Dma_Set((void *)OBJ_PLTT, (void *)&BG_PLTT_COLOR(BASIC_COLORS_PALETTE, 0),
           DMA_COPY_HALFWORDS(16), REG_DMA3);
   BG_PLTT_COLOR(BASIC_COLORS_PALETTE, TEXT_BACKGROUND_COLOR) =
@@ -87,7 +95,7 @@ void BattleBackground_SetMode(s32 mode, s32 value, s32 fade) {
     source = battle->palette;
     destination = BATTLE_BG_PALETTE;
 
-    for (i = 0; i != BG_PLTT_COLORS / 2; i++) {
+    for (i = 0; i != BATTLE_BG_PALETTE_COLORS; i++) {
       s32 red = RGB_RED(source[i]);
       s32 green = RGB_GREEN(source[i]);
       s32 blue = RGB_BLUE(source[i]);
@@ -104,7 +112,7 @@ void BattleBackground_SetMode(s32 mode, s32 value, s32 fade) {
         blue -= fade;
       else
         blue = 0;
-      destination[i] = (blue << 10) | (green << 5) | red;
+      destination[i] = RGB(red, green, blue);
     }
   }
   Graphics_BuildSequentialTileTable((void *)BG_SCREEN_BLOCK(7));
@@ -114,11 +122,12 @@ void BattleBackground_SetMode(s32 mode, s32 value, s32 fade) {
 
 /// Allocates the zoomed background's scanline work.
 void BattleBackground_Init(void) {
-  void *block = HeapSlot_AllocEwram(HEAP_SLOT_BATTLE_SCANLINES, 672);
+  void *block = HeapSlot_AllocEwram(HEAP_SLOT_BATTLE_SCANLINES,
+                                    sizeof(struct BattleAffineHdma));
   struct BattleBackgroundWork *work = Ram_HeapSlots->battleBackground;
 
-  IWRAM_FILL_WORDS(block, 672, 0);
-  work->mode = 0;
+  IWRAM_FILL_WORDS(block, sizeof(struct BattleAffineHdma), 0);
+  work->mode = BATTLE_BACKGROUND_NONE;
 }
 
 /// Frees the zoomed background's scanline work.
@@ -137,10 +146,11 @@ void BattleBackground_Load(s32 mode, s32 resource, s32 level) {
   u16 *palette;
 
   RamCode_Load(decode, Model_DecodeCode, Model_DecodeCodeSize);
-  decode(data + 256, (void *)BG_CHAR_BLOCK(2));
+  decode(data + BACKGROUND_PALETTE_BYTES, (void *)BG_CHAR_BLOCK(2));
   Heap_Release(decode);
   palette = session->palette;
-  Dma_Set(data, palette, DMA_COPY_WORDS(64), REG_DMA3);
+  Dma_Set(data, palette, DMA_COPY_WORDS(BACKGROUND_PALETTE_BYTES / 4),
+          REG_DMA3);
   if (level >= 0)
     ColorBuffer_Scale(palette, BATTLE_BG_PALETTE,
                       session->brightness =
@@ -156,9 +166,9 @@ void BattleBackground_Load(s32 mode, s32 resource, s32 level) {
   BattleTransition_BuildTilemap(
       (void *)BG_SCREEN_BLOCK(BACKGROUND_PADDED_SCREEN));
   // BG1's last row is left clear.
-  Iwram_ClearWordsEntry(
-      (void *)(BG_SCREEN_BLOCK(BACKGROUND_PADDED_SCREEN) + BG_SCREEN_SIZE - 64),
-      64);
+  Iwram_ClearWordsEntry((void *)(BG_SCREEN_BLOCK(BACKGROUND_PADDED_SCREEN) +
+                                 BG_SCREEN_SIZE - BG_SCREEN_WIDTH * 2),
+                        BG_SCREEN_WIDTH * 2);
   if (view->mode == BATTLE_BACKGROUND_NONE)
     Task_Add(BattleBackground_ShowZoomedPage, TASK_PASS_VBLANK + 127);
   view->mode = mode;
@@ -202,6 +212,9 @@ void BattleCamera_SetRange(FIXED centerX, FIXED centerY, s32 offsetX,
     gBgScroll[1].x = panX >> 8;
   if (view->mode != BATTLE_BACKGROUND_ZOOMED)
     return;
+
+  // The affine parameters: a plain zoom, the reference point moved so the
+  // centre stays put, 16 pixels up.
   line = scanlines->lines[scanlines->page ^ 1];
   ratio = Iwram_RatioMulQ14(scale, ratio);
   step = ratio >> 8;
@@ -214,8 +227,11 @@ void BattleCamera_SetRange(FIXED centerX, FIXED centerY, s32 offsetX,
   y = Iwram_MulFX(ratio, Iwram_MulFX(centerY, scale - FIXED_ONE));
   affine->x = ((x + toFIXED(0.5) - 1) >> 8) + offsetX + panX;
   affine->y = ((y + toFIXED(0.5) - 1) >> 8) + offsetY - (16 << 8);
+  // The first line that reaches the picture's lower half at this zoom.
   lowerHalfLine =
-      (Iwram_RatioMulQ14((s16)affine->pd, (64 << 8) - affine->y) >> 16) + 1;
+      FIXEDtoINT(Iwram_RatioMulQ14(
+          (s16)affine->pd, (BACKGROUND_UPPER_HALF_LINES << 8) - affine->y)) +
+      1;
   scanline = 0;
   if (!GameFlag_Get(FLAG_CHOOSING_COMMANDS)) {
     for (; scanline < BACKGROUND_PLANE_HIDDEN_LINES; scanline++)
@@ -239,13 +255,14 @@ UNUSED void BattleCamera_SetViewAtDepth(s32 x, s32 depth, s32 y, s32 zoom) {
 UNUSED void BattleCamera_SetViewAtDepth(s32 x, s32 depth, s32 y) {
 #endif
   FIXED span = BATTLE_CAMERA_DISTANCE;
-  // UB: zoom is uninitialized; reads entry r4 directly (lsls r0, r4, #16).
+  // UB: zoom is never set, so the scale is whatever its register held; UBFIX
+  // takes it as a parameter.
 #ifndef UBFIX
   s32 zoom;
 #endif
   struct BattleCamera *scene = Ram_HeapSlots->cameraWork;
   s32 *pos = scene->focus;
-  FIXED scale = (zoom << 16) / 100;
+  FIXED scale = INTtoFIXED(zoom) / 100;
   s32 renderBounds[3];
   s32 measuredBounds[3];
   s32 sourceBounds[3];
@@ -282,20 +299,20 @@ UNUSED void BattleCamera_SetViewAtDepth(s32 x, s32 depth, s32 y) {
       toFIXED(BATTLE_PROJECTION_CENTER_X), toFIXED(BATTLE_PROJECTION_CENTER_Y),
       (BATTLE_PROJECTION_CENTER_X - measuredBounds[0]) << 8,
       (BATTLE_PROJECTION_CENTER_Y - measuredBounds[1]) << 8, scale);
-  half = scale * 255;
+  half = scale * (FIXEDtoINT(BATTLE_CAMERA_DISTANCE) / 2);
   width = half * 2;
   result = Iwram_RatioMulQ14(width, alpha);
   Projection_Set(width, result, half * 4);
 }
 
-/// Places the battle camera at a position and zoom for a transition: sets the
-/// projection, turns the scene to the camera's yaw and pitch, projects the
-/// origin and gives the camera its range from where the origin lands on the
-/// screen.
+/// Points the battle camera at (x, depth, y) with a zoom in percent, and lines
+/// the zoomed background up with it: where the battlefield's origin falls on
+/// the screen moves the plane as much, and the zoom scales the focal length
+/// and the far depth.
 void BattleCamera_SetView(s32 x, s32 depth, s32 y, s32 zoom) {
   struct BattleCamera *scene = Ram_HeapSlots->cameraWork;
   s32 *pos = scene->focus;
-  FIXED scale = (zoom << 16) / 100;
+  FIXED scale = INTtoFIXED(zoom) / 100;
   FIXED renderBounds[3];
   s32 measuredBounds[3];
   s32 sourceBounds[3];
@@ -333,17 +350,14 @@ void BattleCamera_SetView(s32 x, s32 depth, s32 y, s32 zoom) {
       toFIXED(BATTLE_PROJECTION_CENTER_X), toFIXED(BATTLE_PROJECTION_CENTER_Y),
       (BATTLE_PROJECTION_CENTER_X - measuredBounds[0]) << 8,
       (BATTLE_PROJECTION_CENTER_Y - measuredBounds[1]) << 8, scale);
-  half = scale * 255;
+  half = scale * (FIXEDtoINT(BATTLE_CAMERA_DISTANCE) / 2);
   width = half * 2;
   result = Iwram_RatioMulQ14(width, alpha);
   Projection_Set(width, result, half * 4);
 }
 
-// Battle presentation: center the camera between two objects.
-
-/// Centres the camera on two objects' midpoint in x and z.
-/// a, b: object IDs.
-/// zoom: scale in percent.
+/// Points the battle camera at the ground between two units, with a zoom in
+/// percent.
 void BattleCamera_SetViewAtPairMidpoint(s32 a, s32 b, s32 zoom) {
   struct MotionObject *obj_a = BattleObject_Get(a)->object;
   struct MotionObject *obj_b = BattleObject_Get(b)->object;
@@ -365,8 +379,6 @@ void BattleBackground_FadeAlphaOut(void) {
 
   REG_BLDCNT = BLDCNT_TGT1_BG2 | BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_BD;
   for (step = 1; step <= BLEND_WEIGHT_MAX; step += 2) {
-    // Arithmetic on BLEND_ALPHA, not the macro's | form, which changes the
-    // code.
     REG_BLDALPHA = BLEND_ALPHA(BLEND_WEIGHT_MAX, BLEND_WEIGHT_MAX) - step;
     wait(1);
   }
@@ -379,8 +391,6 @@ void BattleBackground_FadeAlphaIn(void) {
   s32 step;
 
   REG_BLDCNT = BLDCNT_TGT1_BG2 | BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_BD;
-  // Arithmetic on BLEND_ALPHA, not the macro's | form, which changes the
-  // code.
   for (step = 1; step <= BLEND_WEIGHT_MAX; step += 2) {
     REG_BLDALPHA = step + BLEND_ALPHA(0, BLEND_WEIGHT_MAX);
     wait(1);
@@ -395,12 +405,12 @@ UNUSED void Battle_BrightenAllLayers(void) {
 /// Returns the 16.16 product of a and b.
 FIXED Battle_MulFX(FIXED a, FIXED b) { return Iwram_MulFX(a, b); }
 
-/// A transform as BattleTransition_InitializeEntries reads its first two words.
+/// What BattleTransition_InitializeEntries treats as an array of these;
+/// Matrix_SetUnit writes over it as a matrix.
 struct BattleTransitionEntry {
-  u32 value;
-  u32 sum;
-  u32 field8;
-  u32 fieldc;
+  u32 value;   ///< the first word, read before and after the identity is set
+  u32 sum;     ///< set to the first word's old value plus its new one
+  u32 rest[2]; ///< never read
 };
 
 /// Unused: sets entries to the identity transform, then stores the first word's
@@ -469,8 +479,6 @@ s32 Battle_AdjustDebugValue(s32 value) {
   return value;
 }
 
-// Battle presentation: toggle translucency on unit graphics.
-
 /// Sets the sprite mode of a unit's picture and its shadow.
 void BattleHighlight_SetSpriteMode(s32 actorId, s32 mode) {
   struct BattleObject *slot = BattleObject_Get(actorId);
@@ -507,8 +515,7 @@ void BattleHighlight_SetSpriteMode(s32 actorId, s32 mode) {
   }
 }
 
-/// Makes every unit's graphics but except's translucent (OBJ mode 1).
-/// except: unit ID to leave unchanged.
+/// Unused: makes every unit's sprites semi-transparent but selectedUnitId's.
 void BattleHighlight_SetOtherSpriteModes(s32 selectedUnitId) {
   s16 unitIds[UNIT_MAX];
   s32 unitCount = BattleUnit_ListIds(BATTLE_SIDE_MASK_BOTH, unitIds);
@@ -521,7 +528,7 @@ void BattleHighlight_SetOtherSpriteModes(s32 selectedUnitId) {
   }
 }
 
-/// Restores normal rendering (OBJ mode 0) for all units.
+/// Returns every unit's sprites to SPRITE_OPAQUE.
 void BattleHighlight_ClearAllSpriteModes(void) {
   s16 unitIds[UNIT_MAX];
   s32 unitCount = BattleUnit_ListIds(BATTLE_SIDE_MASK_BOTH, unitIds);
@@ -531,9 +538,11 @@ void BattleHighlight_ClearAllSpriteModes(void) {
     BattleHighlight_SetSpriteMode(unitIds[unitIndex], SPRITE_OPAQUE);
 }
 
-// Steps the battle highlight's blend.
-
 extern s8 gBattleHighlight_BlendRamp[];
+
+/// The steps of each half of gBattleHighlight_BlendRamp: the first half plays
+/// once, then the second over and over.
+#define HIGHLIGHT_RAMP_HALF 16
 
 /// Steps the highlight's blend: HIGHLIGHT_FADE_IN and HIGHLIGHT_FADE_OUT fade
 /// the units listed in or out over 32 frames, HIGHLIGHT_PULSE blends them by
@@ -565,22 +574,26 @@ void BattleBackground_StepHighlightBlend(void) {
                      (BLEND_WEIGHT_MAX -
                       gBattleHighlight_BlendRamp[battle->highlightStep]);
       battle->highlightStep =
-          ((battle->highlightStep + 1) & 0xf) |
-          (battle->highlightStep > 14 ? BLEND_WEIGHT_MAX : 0);
+          ((battle->highlightStep + 1) & (HIGHLIGHT_RAMP_HALF - 1)) |
+          (battle->highlightStep >= HIGHLIGHT_RAMP_HALF - 1
+               ? HIGHLIGHT_RAMP_HALF
+               : 0);
     } else if (battle->highlightMode != HIGHLIGHT_OFF) {
       REG_BLDCNT = BLDCNT_TGT1_OBJ | BLDCNT_EFFECT_LIGHTEN | BLDCNT_TGT2_ALL;
       REG_BLDALPHA = BLEND_ALPHA(BLEND_WEIGHT_MAX, 0);
       REG_BLDY = gBattleHighlight_BlendRamp[battle->highlightStep];
       battle->highlightStep =
-          ((battle->highlightStep + 1) & 0xf) |
-          (battle->highlightStep > 14 ? BLEND_WEIGHT_MAX : 0);
+          ((battle->highlightStep + 1) & (HIGHLIGHT_RAMP_HALF - 1)) |
+          (battle->highlightStep >= HIGHLIGHT_RAMP_HALF - 1
+               ? HIGHLIGHT_RAMP_HALF
+               : 0);
     }
   }
 }
 
-/// Highlights the units in actors (up to 14, ended by BATTLE_UNIT_LIST_END),
-/// the others taking the other blend, or with HIGHLIGHT_OFF stops the
-/// highlight.
+/// Highlights the units in actors (up to UNIT_MAX, ended by
+/// BATTLE_UNIT_LIST_END), the others taking the other blend, or with
+/// HIGHLIGHT_OFF stops the highlight.
 void BattleHighlight_SetModes(u16 *actors, s32 mode) {
   s16 activeActors[UNIT_MAX];
   struct BattleWork *battle = Ram_HeapSlots->battleWork;
@@ -613,7 +626,7 @@ void BattleHighlight_SetModes(u16 *actors, s32 mode) {
         do {
           BattleHighlight_SetSpriteMode(actor, (mode & 1) ^ 1);
           i++;
-          if (i > 13)
+          if (i >= UNIT_MAX)
             break;
           actor = *actors++;
         } while (actor != BATTLE_UNIT_LIST_END);
@@ -625,11 +638,11 @@ void BattleHighlight_SetModes(u16 *actors, s32 mode) {
   }
 }
 
-/// A spark of the star field behind a summon: its position and velocity, 16.16,
-/// and the frames it has left.
+/// One of the star field's sparks, drawn inward to the centre. Sixteen live
+/// in SparkWork.sparks; a spent one starts again while the field is young.
 struct Spark {
-  FIXED pos[6]; // x, y, z and their velocities, 16.16
-  s32 life;
+  s32 motion[6]; ///< x, y, z, then their velocities, in 1/1024 canvas pixels
+  s32 life;      ///< frames left
 };
 
 /// A ring of the star field leaving its centre: its place, its speed and its
@@ -650,6 +663,10 @@ struct Ring {
 #define STAR_FIELD_SIZE 128 ///< the canvas's width and height in pixels
 #define STAR_FIELD_CENTER (STAR_FIELD_SIZE / 2)
 #define STAR_FIELD_RING_SIZE 32
+#define STAR_FIELD_FRAMES 45 ///< the frames a cast's glow lasts
+/// The blue ring sheet's colours, before its pictures; an element's palette
+/// replaces them.
+#define STAR_FIELD_COLORS 64
 
 /// The star field's work: the canvas sheet, sixteen sparks, three rings, the
 /// frames counted, whether the canvas is ready, and its centre.
@@ -712,16 +729,16 @@ void ElementGlow_UpdateStarField(void) {
     spark = &work->sparks[i];
     life = spark->life;
     if (life != 0) {
-      dist = Math_SqrtFX((spark->pos[0] >> 8) * (spark->pos[0] >> 8) +
-                         (spark->pos[1] >> 8) * (spark->pos[1] >> 8) +
-                         (spark->pos[2] >> 8) * (spark->pos[2] >> 8));
-      if (dist <= 4095) {
+      dist = Math_SqrtFX((spark->motion[0] >> 8) * (spark->motion[0] >> 8) +
+                         (spark->motion[1] >> 8) * (spark->motion[1] >> 8) +
+                         (spark->motion[2] >> 8) * (spark->motion[2] >> 8));
+      if (dist <= toFIXED(1) / 16 - 1) {
         spark->life = 0;
       } else {
         scale = Iwram_RatioMulQ14(dist, FIXED_ONE);
         spark->life--;
         mul = Iwram_MulFX;
-        pos = spark->pos;
+        pos = spark->motion;
         for (k = 0; k < 3; k++) {
           step = mul(mul(-*pos >> 8, scale), FIXED_ONE * 19 / 16);
           pos[3] = pos[3] - (pos[3] >> 7) + step;
@@ -735,21 +752,21 @@ void ElementGlow_UpdateStarField(void) {
       angle = Random16();
       radius = Random16() + FIXED_ONE;
       half = radius >> 1;
-      spark->pos[0] = Iwram_MulFX(Trig_Cos(angle), half);
-      spark->pos[1] = Iwram_MulFX(Trig_Sin(angle), half);
-      if (spark->pos[0] & 1)
-        spark->pos[0] = -spark->pos[0];
-      if (spark->pos[1] & 1)
-        spark->pos[1] = -spark->pos[1];
-      spark->pos[2] = (u32)(Random16() + 32768) >> 2;
-      spark->pos[3] = (-spark->pos[0] >> 7) + (spark->pos[1] >> 8);
-      spark->pos[4] = (-spark->pos[1] >> 7) + (-spark->pos[0] >> 8);
-      spark->pos[5] = 0;
+      spark->motion[0] = Iwram_MulFX(Trig_Cos(angle), half);
+      spark->motion[1] = Iwram_MulFX(Trig_Sin(angle), half);
+      if (spark->motion[0] & 1)
+        spark->motion[0] = -spark->motion[0];
+      if (spark->motion[1] & 1)
+        spark->motion[1] = -spark->motion[1];
+      spark->motion[2] = (u32)(Random16() + toFIXED(0.5)) >> 2;
+      spark->motion[3] = (-spark->motion[0] >> 7) + (spark->motion[1] >> 8);
+      spark->motion[4] = (-spark->motion[1] >> 7) + (-spark->motion[0] >> 8);
+      spark->motion[5] = 0;
       life = spark->life = (radius >> 13) + 1;
     }
     if (life != 0) {
-      x = (spark->pos[0] >> 10) + STAR_FIELD_CENTER;
-      y = (spark->pos[1] >> 10) + STAR_FIELD_CENTER;
+      x = (spark->motion[0] >> 10) + STAR_FIELD_CENTER;
+      y = (spark->motion[1] >> 10) + STAR_FIELD_CENTER;
       frame = life;
       if (frame < 0)
         frame = 0;
@@ -795,7 +812,7 @@ s32 ElementGlow_UploadStarField(void) {
     if (work->ready != 0) {
       work->ready = 0;
       return ColorBuffer_ScaleThreeQuarters(source, (void *)BG_CHAR_BLOCK(1),
-                                            FIXED_ONE / 4);
+                                            BG_CHAR_SIZE);
     }
   }
   return (s32)source;
@@ -813,18 +830,17 @@ static __inline__ s32 PolarY(s32 angle, FIXED radius) {
 
 /// Sets up the star field behind a summon: sixteen sparks on random rings
 /// around the centre, three rings leaving it at thirds of a turn, the blue ring
-/// sheet and its palette with the mode's colour (0 yellow, 1 blue, 2 red, else
-/// violet) over the first 32 colours, BG2 unscaled at the origin, the additive
-/// and max blitters (BattleEffect_LoadBlitterFar, the veneer of
-/// BattleEffect_LoadBlitter), and the two frame callbacks.
-s32 ElementGlow_InitializeStarField(s32 mode) {
+/// sheet with the element's colours (Venus yellow, Mercury blue, Mars red,
+/// Jupiter violet), BG2 unscaled at the origin, the additive and max blitters,
+/// and the two frame callbacks.
+s32 ElementGlow_InitializeStarField(s32 element) {
   struct SparkWork *work;
   struct Spark *spark;
   struct Ring *ring;
   s32 i;
   u8 *data;
 
-  ((s32 *)Ram_HeapSlots->battleBackground)[2] = BATTLE_BACKGROUND_FIXED;
+  Ram_HeapSlots->battleBackground->mode = BATTLE_BACKGROUND_FIXED;
   work = HeapSlot_AllocEwram(HEAP_SLOT_BATTLE_EFFECT, sizeof *work);
   HeapSlot_Alloc(HEAP_SLOT_BATTLE_CANVAS, CANVAS_BYTES);
   for (i = 0; i < STAR_FIELD_SPARKS; i++) {
@@ -833,16 +849,16 @@ s32 ElementGlow_InitializeStarField(s32 mode) {
     u32 half = radius >> 1;
 
     spark = &work->sparks[i];
-    spark->pos[0] = Iwram_MulFX(Trig_Cos(angle), half);
-    spark->pos[1] = Iwram_MulFX(Trig_Sin(angle), half);
-    if (spark->pos[0] & 1)
-      spark->pos[0] = -spark->pos[0];
-    if (spark->pos[1] & 1)
-      spark->pos[1] = -spark->pos[1];
-    spark->pos[2] = (u32)(Random16() + 32768) >> 2;
-    spark->pos[3] = (-spark->pos[0] >> 7) + (spark->pos[1] >> 8);
-    spark->pos[4] = (-spark->pos[1] >> 7) + (-spark->pos[0] >> 8);
-    spark->pos[5] = 0;
+    spark->motion[0] = Iwram_MulFX(Trig_Cos(angle), half);
+    spark->motion[1] = Iwram_MulFX(Trig_Sin(angle), half);
+    if (spark->motion[0] & 1)
+      spark->motion[0] = -spark->motion[0];
+    if (spark->motion[1] & 1)
+      spark->motion[1] = -spark->motion[1];
+    spark->motion[2] = (u32)(Random16() + toFIXED(0.5)) >> 2;
+    spark->motion[3] = (-spark->motion[0] >> 7) + (spark->motion[1] >> 8);
+    spark->motion[4] = (-spark->motion[1] >> 7) + (-spark->motion[0] >> 8);
+    spark->motion[5] = 0;
     spark->life = (radius >> 13) + 1;
   }
   for (i = 0; i < STAR_FIELD_RINGS; i++) {
@@ -863,10 +879,10 @@ s32 ElementGlow_InitializeStarField(s32 mode) {
   Iwram_ClearWordsEntry(Ram_HeapSlots->battleCanvas,
                         STAR_FIELD_SIZE * STAR_FIELD_SIZE);
   data = Resource_GetTableEntry(RESOURCE_BLUE_RING_SHEET);
-  Iwram_CopyWordsEntry((void *)BG_PLTT, data, 128);
-  data += 128;
+  Iwram_CopyWordsEntry((void *)BG_PLTT, data, STAR_FIELD_COLORS * 2);
+  data += STAR_FIELD_COLORS * 2;
   Decompress_TaggedLz(data, work);
-  switch (mode) {
+  switch (element) {
   case ELEMENT_VENUS:
     data = Resource_GetTableEntry(RESOURCE_YELLOW_PALETTE_B);
     break;
@@ -880,7 +896,8 @@ s32 ElementGlow_InitializeStarField(s32 mode) {
     data = Resource_GetTableEntry(RESOURCE_VIOLET_PALETTE_D);
     break;
   }
-  Dma_Set(data, (void *)BG_PLTT, DMA_COPY_WORDS(32), REG_DMA3);
+  Dma_Set(data, (void *)BG_PLTT, DMA_COPY_WORDS(STAR_FIELD_COLORS / 2),
+          REG_DMA3);
   Io_Write32(0, &REG_BG2X);
   Io_Write32(0, &REG_BG2Y);
   Io_Write16(Q_8_8(1), &REG_BG2PA);
@@ -892,6 +909,9 @@ s32 ElementGlow_InitializeStarField(s32 mode) {
    * never touches it; as the call left out. */
   if (0)
     BattleEffect_BuildBlitterFar(HEAP_SLOT_RAM_CODE, 7, 7, 3, 3);
+  // Clipped to the canvas, the additive blitter and then the max one: the
+  // clip flags in the low four bits and the blend mode above them, packed as
+  // BattleEffect_LoadBlitter takes them.
   BattleEffect_LoadBlitterFar(HEAP_SLOT_RAM_CODE, 0x03);
   BattleEffect_LoadBlitterFar(HEAP_SLOT_RAM_CODE_PAIRED, 0x13);
   Task_Add(ElementGlow_UpdateStarField, TASK_PASS_FRAME);
@@ -951,9 +971,10 @@ void ElementGlow_Play(s32 unit, s32 kind, s32 mode, s32 variant) {
   Io_Write16(WININ_WIN0_ALL, &REG_WININ);
   Io_Write16(WINOUT_WIN01_BG0 | WINOUT_WIN01_OBJ, &REG_WINOUT);
   if (mode == GLOW_STAR_FIELD) {
+    // The star field for 45 frames, the background darkening for the first 25.
     IoWriteQueue_Store16((u32)&REG_BLDALPHA, BLEND_ALPHA(14, BLEND_WEIGHT_MAX));
     ElementGlow_InitializeStarField(kind);
-    for (frame = 0, pos = &starPosition; frame <= 44; frame++) {
+    for (frame = 0, pos = &starPosition; frame < STAR_FIELD_FRAMES; frame++) {
       brightness = &session->brightness;
       ime = &REG_IME;
       work = (struct SparkWork *)Ram_HeapSlots->battleEffect;
@@ -1013,10 +1034,10 @@ void BattleBackground_RestorePalette(void) {
 /// Removes the VCount interrupt's handler; nothing calls it.
 void Irq_RemoveVCountHandler(void) { Irq_SetHandler(IRQ_VCOUNT, 0, 0); }
 
-/// The Broken Seal's routine without its level check:
-/// the average level of a formation's enemy kinds, counting only kinds the
-/// player has met (flag 0x608 + id, or all with flag 0x174); -1 for an empty
-/// formation, -2 when one present kind is unmet, -3 when none counts.
+/// The average level of a formation's enemy kinds, counting only kinds the
+/// player has defeated (ENEMY_DEFEATED_FLAG, or all with
+/// FLAG_MONSTER_BATTLE_ANY_ENEMY); -1 for an empty formation, -2 when one
+/// present kind is undefeated, -3 when none counts.
 s32 BattleFormation_AverageLevel(s32 recordId) {
   struct Formation *record;
   const struct EnemyDefinition *enemy;

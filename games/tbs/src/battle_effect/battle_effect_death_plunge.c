@@ -5,6 +5,11 @@
 
 #include "battle_effect_internal.h"
 
+/// The battle background's colours, BG palettes 6 to 13.
+#define BATTLE_BACKGROUND_COLORS (8 * PALETTE_COLORS)
+/// A word of two palette entries, both `color`.
+#define COLOR_PAIR(color) ((color) << 16 | (color))
+
 #define ELEMENT_BURST_FRAMES 56 ///< frames of the element burst
 
 // The element runners, the streaks and the shattering opening are reached from
@@ -15,6 +20,10 @@
 /// The plunge strikes: the target flashes, the user flashes and the damage
 /// shows.
 #define DEATH_PLUNGE_STRIKE_FRAME 54
+/// How far toward the target the user runs, in hundredths of the way.
+#define DEATH_PLUNGE_RUN_PERCENT 90
+/// The flashes thrown in a ring after the strike.
+#define DEATH_PLUNGE_RING_FLASHES 16
 
 /// The user runs at the first target, both leap and turn upside down, and on
 /// the hit they bounce apart while a ball of fire swells over them.
@@ -48,13 +57,13 @@ void BattleEffect_RunDeathPlunge(struct BattleEffectParams *args) {
   work->transferValue = CANVAS_FADE_THREE_QUARTERS;
   draw[0] = EFFECT_BLITTER(HEAP_SLOT_RAM_CODE);
   Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_VBLANK);
-  // The run to 9/10 of the way to the target.
+  // The run, most of the way to the target.
   first = GetBattleObjectSlotFar(work->args->user);
   second = GetBattleObjectSlotFar(work->args->targets[0]);
   user = first->actor;
   target = second->actor;
   {
-    s32 percent = 90;
+    s32 percent = DEATH_PLUNGE_RUN_PERCENT;
 
     x = user->x.fixed + percent * (target->x.fixed - user->x.fixed) / 100;
     z = user->z.fixed + percent * (target->z.fixed - user->z.fixed) / 100;
@@ -116,12 +125,12 @@ void BattleEffect_RunDeathPlunge(struct BattleEffectParams *args) {
     if (frame >= 56 && frame <= 67) {
       s32 i;
 
-      for (i = 0; i != 16; i++) {
+      for (i = 0; i != DEATH_PLUNGE_RING_FLASHES; i++) {
         s32 angle;
         s32 rx;
         s32 ry;
 
-        angle = i << 12; // 22.5 degrees apart
+        angle = i * (TRIG_TURN / DEATH_PLUNGE_RING_FLASHES);
         rx = screen.x + FIXEDtoINT(Trig_Sin(angle) * (frame - 46));
         ry = FIXEDtoINT(Trig_Cos(angle) * (frame - 46)) - frame + 100;
         draw[0](canvas,
@@ -154,9 +163,13 @@ void BattleEffect_RunDeathPlunge(struct BattleEffectParams *args) {
 }
 
 #define BLADE_RAIN_FRAMES 120
+#define BLADE_RAIN_SWORDS 16
+/// A sword drifts sideways 0 to 3 steps of two pixels a frame, and its picture
+/// is its step's: velocityX is the step << BLADE_RAIN_STEP_SHIFT.
+#define BLADE_RAIN_STEP_SHIFT 17
 
-/// Sixteen swords fall slanting in on the first target, one every 4 frames, and
-/// stick in the ground.
+/// Swords fall slanting in on the first target, one every 4 frames, and stick
+/// in the ground.
 UNUSED void BattleEffect_RunBladeRain(struct BattleEffectParams *args) {
   struct ScreenPoint screenPosition;
   BlitterPair draw;
@@ -192,7 +205,7 @@ UNUSED void BattleEffect_RunBladeRain(struct BattleEffectParams *args) {
 
   // Each sword waits near the top of the canvas until its turn, then falls,
   // drifting towards the middle.
-  for (i = 0; i != 64; i++) {
+  for (i = 0; i != ARRAY_COUNT(work->particles); i++) {
     s32 column;
 
     blade = &work->particles[i];
@@ -213,7 +226,7 @@ UNUSED void BattleEffect_RunBladeRain(struct BattleEffectParams *args) {
       blade->velocityX = -2;
     else
       blade->velocityX = -3;
-    blade->velocityX <<= 17;
+    blade->velocityX <<= BLADE_RAIN_STEP_SHIFT;
     blade->velocityY = toFIXED(8);
     blade->x <<= 16;
   }
@@ -232,7 +245,7 @@ UNUSED void BattleEffect_RunBladeRain(struct BattleEffectParams *args) {
 
     // The picture follows how steeply the sword falls; one drifting left is
     // mirrored.
-    for (i = 15; i != -1; i--) {
+    for (i = BLADE_RAIN_SWORDS - 1; i != -1; i--) {
       s32 drift;
       s32 speed;
       s32 picture;
@@ -242,7 +255,7 @@ UNUSED void BattleEffect_RunBladeRain(struct BattleEffectParams *args) {
       speed = drift;
       if (drift < 0)
         speed = -drift;
-      picture = speed >> 17;
+      picture = speed >> BLADE_RAIN_STEP_SHIFT;
       if (frame < i * 4 + 25) {
         u32 width;
         u32 height;
@@ -312,6 +325,15 @@ UNUSED void BattleEffect_RunBladeRain(struct BattleEffectParams *args) {
 #define ELEMENT_PILLAR_GLOW_WIDTH 24
 #define ELEMENT_PILLAR_GLOW_HEIGHT 43
 #define ELEMENT_PILLAR_GLOW (4 * PICTURE_BYTES(ELEMENT_PILLAR_HALF))
+/// The element pillar's and burst's canvas weight over the battle, in
+/// sixteenths.
+#define ELEMENT_BLEND_LEVEL 12
+/// The motes both set up in PARTICLES; the pillar spirals the first
+/// ELEMENT_PILLAR_MOTES up around it, each circling once in
+/// ELEMENT_PILLAR_TURN_FRAMES.
+#define ELEMENT_SPIRAL_MOTES 128
+#define ELEMENT_PILLAR_MOTES 32
+#define ELEMENT_PILLAR_TURN_FRAMES 64
 
 /// A pillar of light in an element's colours stands at a unit's feet while
 /// motes spiral up around it.
@@ -336,7 +358,7 @@ void BattleEffect_RunElementPillar(struct BattleEffectParams *args) {
   BattleEffect_StartCanvasLayer(0);
   work->fadeFrames = BACKGROUND_DARKEN_FRAMES;
   work->fadeStep = 0;
-  REG_BLDALPHA = EFFECT_BLEND_CANVAS(12);
+  REG_BLDALPHA = EFFECT_BLEND_CANVAS(ELEMENT_BLEND_LEVEL);
   REG_BG2PA = Q_8_8(1);
   Resource_LoadAndDecompress(RESOURCE_ICE_TILE_SHEET, work->sheet, 1, 0);
   Resource_LoadAndDecompress(RESOURCE_PARTICLE_SPRITES_D, sheet, 0, 0);
@@ -356,7 +378,7 @@ void BattleEffect_RunElementPillar(struct BattleEffectParams *args) {
   }
   Iwram_CopyWords(BG_PLTT, palette, SHEET_PALETTE_BYTES);
 
-  for (i = 0; i != 128; i++) {
+  for (i = 0; i != ELEMENT_SPIRAL_MOTES; i++) {
     PARTICLES[i].y = 0;
     PARTICLES[i].x = Random16() & TRIG_ANGLE_MASK;
     PARTICLES[i].z = (Random16() & 0x1ff) + i * 2;
@@ -416,12 +438,12 @@ void BattleEffect_RunElementPillar(struct BattleEffectParams *args) {
     GetBattleObjectSlotFar(work->args->user);
     EFFECT_VIEW_FROM_CAMERA(camera);
 
-    for (i = 0; i != 32; i++) {
+    for (i = 0; i != ELEMENT_PILLAR_MOTES; i++) {
       struct Particle *fleck = &PARTICLES[i];
 
       if (fleck->variant >= 0) {
         s32 size;
-        s32 turnSteps = 64; // frames a mote takes to circle once
+        s32 turnSteps = ELEMENT_PILLAR_TURN_FRAMES;
 
         point[0] = fleck->z * Trig_Sin(fleck->x) >> 4;
         point[2] = -(fleck->z * Trig_Cos(fleck->x) >> 4);
@@ -462,12 +484,15 @@ void BattleEffect_RunElementPillar(struct BattleEffectParams *args) {
 
 #define SHATTERING_OPENING_FRAMES 128
 #define SHATTERING_OPENING_FLASHES 32 ///< flashes thrown as the picture breaks
-#define SHATTERING_OPENING_PIECES 33  ///< pieces the picture breaks into
-#define SHATTERING_OPENING_DISC_X 96  ///< the centre of the opening disc
-#define SHATTERING_OPENING_DISC_Y 60  ///< the centre of the opening disc
+/// How long a flash floats up, its six pictures four frames each and the last
+/// held.
+#define SHATTERING_OPENING_FLASH_FRAMES 40
+#define SHATTERING_OPENING_PIECES 33 ///< pieces the picture breaks into
+#define SHATTERING_OPENING_DISC_X 96 ///< the centre of the opening disc
+#define SHATTERING_OPENING_DISC_Y 60 ///< the centre of the opening disc
 
 /// As a battle opens on the storm at Venus Lighthouse's aerie, the screen turns
-/// white and the picture breaks into 33 pieces that fly apart and fall, while a
+/// white and the picture breaks into pieces that fly apart and fall, while a
 /// grey disc grows over it and the battle background's colours return.
 void BattleEffect_RunShatteringOpening(struct BattleEffectParams *args) {
   /* LEFTOVER(frame): an unused local the ROM's frame reserves and never
@@ -521,11 +546,11 @@ void BattleEffect_RunShatteringOpening(struct BattleEffectParams *args) {
   REG_WINOUT = EFFECT_WINOUT;
 
   i = 0;
-  for (k = 0; k != 16; k++) {
+  for (k = 0; k != CANVAS_TILES; k++) {
     for (j = 0; j != 8; j++, i += 2) {
       s16 entry;
 
-      entry = ((k * 16 + j * 2 + 1) << 8) | ((k * 8 + j) * 2);
+      entry = ((k * CANVAS_TILES + j * 2 + 1) << 8) | ((k * 8 + j) * 2);
       *(volatile s16 *)((u8 *)BG_CANVAS_MAP + i) = entry;
     }
   }
@@ -577,8 +602,7 @@ void BattleEffect_RunShatteringOpening(struct BattleEffectParams *args) {
                       BGCNT_PRIORITY(1) | BGCNT_CHAR_BASE(0) |
                           BGCNT_256_COLORS | BGCNT_SCREEN_BASE(31),
                       IO_WRITE_HALFWORD);
-  Iwram_FillWords((void *)&BG_PLTT_COLOR(6, 0), 256,
-                  RGB_WHITE << 16 | RGB_WHITE);
+  Iwram_FillWords((void *)&BG_PLTT_COLOR(6, 0), 256, COLOR_PAIR(RGB_WHITE));
   Sound_PlayFar(SE_POWER_UP);
   BattleEffect_TintBattler(work->args->targets[0], SPRITE_COLOR_WHITE,
                            POSE_CAST, 0, 30);
@@ -606,7 +630,7 @@ void BattleEffect_RunShatteringOpening(struct BattleEffectParams *args) {
       u16 *color;
 
       color = (u16 *)&BG_PLTT_COLOR(6, 0);
-      for (i = 0; i != 128; i++) {
+      for (i = 0; i != BATTLE_BACKGROUND_COLORS; i++) {
         s32 red = RGB_RED(*color);
         s32 green = RGB_GREEN(*color);
         s32 blue = RGB_BLUE(*color);
@@ -727,7 +751,7 @@ void BattleEffect_RunShatteringOpening(struct BattleEffectParams *args) {
 
     if (frame == 51) {
       Resource_LoadAndDecompress(RESOURCE_FLASH_BURST_SHEET, work->sheet, 1, 0);
-      for (i = 1; i != 64; i++) {
+      for (i = 1; i != SHEET_PALETTE_COLORS; i++) {
         s32 v;
 
         v = i / 2;
@@ -753,7 +777,8 @@ void BattleEffect_RunShatteringOpening(struct BattleEffectParams *args) {
     if (frame > 52) {
       for (i = 0; i != SHATTERING_OPENING_FLASHES; i++) {
         piece = &work->particles[i];
-        if (frame >= i / 4 + 52 && piece->variant <= 39) {
+        if (frame >= i / 4 + 52 &&
+            piece->variant < SHATTERING_OPENING_FLASH_FRAMES) {
           s32 picture;
 
           picture = piece->variant / 4;
@@ -790,10 +815,18 @@ void BattleEffect_RunShatteringOpening(struct BattleEffectParams *args) {
   HeapSlot_Release(HEAP_SLOT_BATTLE_EFFECT);
 }
 
+/// The element streaks seeded at the start, and those drawn.
+#define STREAK_SEEDS 256
+#define STREAKS 64
+/// A streak's head starts 48 to 63 from the centre, its tail STREAK_LENGTH
+/// behind it.
+#define STREAK_START_DISTANCE 48
+#define STREAK_LENGTH 8
+
 /// One streak of light of the element streak burst, over a particle's entry.
 struct Streak {
-  s32 head;          ///< the head's distance from the centre, 48 to 63 at first
-  s32 tail;          ///< the tail's distance, 8 less; both close in 4 a frame
+  s32 head;          ///< the head's distance from the centre
+  s32 tail;          ///< the tail's distance; both close in 4 a frame
   s32 unusedZ;       ///< the Particle's z, which the streaks leave alone
   s32 pitch;         ///< the axis's turn, a random 16-bit angle
   s32 yaw;           ///< the axis's turn, a random 16-bit angle
@@ -828,7 +861,7 @@ void BattleEffect_RunElementBurst(struct BattleEffectParams *args) {
   // Setup, as for the element pillar.
   work->fadeFrames = BACKGROUND_DARKEN_FRAMES;
   work->fadeStep = 0;
-  REG_BLDALPHA = EFFECT_BLEND_CANVAS(12);
+  REG_BLDALPHA = EFFECT_BLEND_CANVAS(ELEMENT_BLEND_LEVEL);
   REG_BG2PA = Q_8_8(1);
   Resource_LoadAndDecompress(RESOURCE_CYAN_SPARK_SHEET, work->sheet, 1, 0);
   Resource_LoadAndDecompress(RESOURCE_PARTICLE_SPRITES_D, sheet, 0, 0);
@@ -848,13 +881,13 @@ void BattleEffect_RunElementBurst(struct BattleEffectParams *args) {
   }
   Iwram_CopyWords(BG_PLTT, palette, SHEET_PALETTE_BYTES);
 
-  for (i = 0; i != 128; i++) {
+  for (i = 0; i != ELEMENT_SPIRAL_MOTES; i++) {
     PARTICLES[i].y = toFIXED(128);
     PARTICLES[i].x = Random16() & TRIG_ANGLE_MASK;
     PARTICLES[i].z = (Random16() & 0x1ff) + 1024;
     PARTICLES[i].variant = -i;
   }
-  for (i = 0; i != 64; i++) {
+  for (i = 0; i != ARRAY_COUNT(work->particles); i++) {
     work->particles[i].x = Random16() & TRIG_ANGLE_MASK;
     work->particles[i].y = (Random16() & 31) + 16;
     work->particles[i].variant = (i & 15) + 16;
@@ -884,8 +917,6 @@ void BattleEffect_RunElementBurst(struct BattleEffectParams *args) {
               ELEMENT_BURST_BURST_HEIGHT);
     if (frame >= 0 && frame <= 14) {
       s32 picture = frame / 3 % 5;
-      DrawRectangle *slot =
-          &((DrawRectangle *)gHeapSlots)[HEAP_SLOT_RAM_CODE_PAIRED];
 
       for (i = 0; i != 4; i++) {
         EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED,
@@ -900,7 +931,7 @@ void BattleEffect_RunElementBurst(struct BattleEffectParams *args) {
       }
     }
     if (frame >= 0) {
-      for (i = 0; i != 64; i++) {
+      for (i = 0; i != ARRAY_COUNT(work->particles); i++) {
         struct Particle *mote = &work->particles[i];
 
         if (mote->variant >= 0 && mote->y > 0) {
@@ -943,12 +974,12 @@ void BattleEffect_DrawStreaks(void) {
 
   frame = (work->frame)++;
   if (frame == 0) {
-    for (i = 0; i != 256; i++) {
+    for (i = 0; i != STREAK_SEEDS; i++) {
       struct Streak *seed = &((struct Streak *)Ram_MapGridCellBuffer)[i];
       s32 r = Random16() & 15;
 
-      seed->head = r + 48;
-      seed->tail = r + 40;
+      seed->head = r + STREAK_START_DISTANCE;
+      seed->tail = r + STREAK_START_DISTANCE - STREAK_LENGTH;
       seed->pitch = Random16() & TRIG_ANGLE_MASK;
       seed->yaw = Random16() & TRIG_ANGLE_MASK;
       seed->roll = Random16() & TRIG_ANGLE_MASK;
@@ -956,7 +987,7 @@ void BattleEffect_DrawStreaks(void) {
   }
   point.y = 0;
   point.z = 0;
-  for (i = 0; i != 64; i++) {
+  for (i = 0; i != STREAKS; i++) {
     streak = &((struct Streak *)Ram_MapGridCellBuffer)[i];
     if (frame > i / 4 && streak->head > 0) {
       s32 fade;
@@ -1040,13 +1071,28 @@ void BattleEffect_EndElementStreaks(void) {
   HeapSlot_Release(HEAP_SLOT_BATTLE_EFFECT);
 }
 
+#undef BATTLE_BACKGROUND_COLORS
+#undef COLOR_PAIR
 #undef DEATH_PLUNGE_FRAMES
+#undef DEATH_PLUNGE_RUN_PERCENT
+#undef DEATH_PLUNGE_RING_FLASHES
 #undef BLADE_RAIN_FRAMES
+#undef BLADE_RAIN_SWORDS
+#undef BLADE_RAIN_STEP_SHIFT
 #undef ELEMENT_PILLAR_FRAMES
+#undef ELEMENT_BLEND_LEVEL
+#undef ELEMENT_SPIRAL_MOTES
+#undef ELEMENT_PILLAR_MOTES
+#undef ELEMENT_PILLAR_TURN_FRAMES
 #undef SHATTERING_OPENING_PLOT_PIXEL
 #undef SHATTERING_OPENING_PLOT_CORNERS
 #undef SHATTERING_OPENING_FRAMES
 #undef SHATTERING_OPENING_FLASHES
+#undef SHATTERING_OPENING_FLASH_FRAMES
 #undef SHATTERING_OPENING_PIECES
 #undef SHATTERING_OPENING_DISC_X
 #undef SHATTERING_OPENING_DISC_Y
+#undef STREAK_SEEDS
+#undef STREAKS
+#undef STREAK_START_DISTANCE
+#undef STREAK_LENGTH

@@ -8,17 +8,58 @@
 /// it opens with the storm instead of the curtain.
 #define TRANSITION_STORM_FORMATION 347
 
-/// The curtain's map entries: tile 128 + n of CURTAIN_TILE, WINDOW_PALETTE.
-#define TRANSITION_CURTAIN_ENTRY(n) (0xf080 + (n))
+/// The curtain's first tile, CURTAIN_TILE(0), as BG1 numbers it from
+/// character block 1.
+#define TRANSITION_CURTAIN_FIRST_TILE 128
+/// The curtain's map entries: its tile n, in WINDOW_PALETTE.
+#define TRANSITION_CURTAIN_ENTRY(n)                                            \
+  WINDOW_TILE(TRANSITION_CURTAIN_FIRST_TILE + (n))
+/// The closed curtain's colour, which fills its first tile.
+#define TRANSITION_CURTAIN_COLOR 3
 /// The screen block of the curtain's map, and its middle row, from which it
 /// opens a row up and a row down every eight frames for TRANSITION_OPEN_FRAMES.
 #define TRANSITION_CURTAIN_SCREEN 12
 #define TRANSITION_CURTAIN_MIDDLE_ROW 13
 #define TRANSITION_CURTAIN_LAST_ROW 20
 #define TRANSITION_OPEN_FRAMES 80
+/// Eight variants of the curtain's first tile, a new one every four frames
+/// (BattleTransition_UploadTileVariant).
+#define TRANSITION_CURTAIN_VARIANTS 8
+#define TRANSITION_VARIANT_FRAMES 4
+/// BG0's top 32 lines, which roll down into place as the curtain opens: BG0
+/// starts scrolled up by as many, and the VCount interrupt at the band's
+/// bottom clears the scroll for the lines below.
+#define TRANSITION_BG0_BAND 32
+/// The camera turns 360 a frame as the curtain opens, to end at 45 degrees as
+/// the zoom ends.
+#define TRANSITION_TURN_SPEED 360
+#define TRANSITION_START_YAW                                                   \
+  (TRIG_TURN + DEGtoANG(45) - TRANSITION_OPEN_FRAMES * TRANSITION_TURN_SPEED)
+
+/// REG_MOSAIC's largest block size, 16 pixels: each of its sizes is a four-bit
+/// field holding the size less one.
+#define MOSAIC_SIZE_MAX 15
+
+/// The bytes of a row of a background map, and the words that hold its 32
+/// entries two at a time.
+#define MAP_ROW_BYTES (BG_SCREEN_WIDTH * 2)
+#define MAP_ROW_WORDS (MAP_ROW_BYTES / 4)
+/// The battle background's picture: 32 by 15 tiles of 256 colours, 256 by 120
+/// pixels. The first 256 tiles fill character block 2 and the rest block 3.
+#define BACKGROUND_TILE_ROWS 15
+#define BACKGROUND_TILES (BG_SCREEN_WIDTH * BACKGROUND_TILE_ROWS)
+#define BACKGROUND_UPPER_TILES (BG_CHAR_SIZE / TILE_SIZE_8BPP)
+#define BACKGROUND_LOWER_TILES (BACKGROUND_TILES - BACKGROUND_UPPER_TILES)
+/// The zoomed background's affine map: 32 by 32 tiles, a byte each.
+#define BACKGROUND_AFFINE_MAP_BYTES (32 * 32)
+/// The picture's first tile on BG1, numbered from BG1's character base 0:
+/// character block 2.
+#define BACKGROUND_BG1_FIRST_TILE (2 * BG_CHAR_SIZE / TILE_SIZE_8BPP)
+/// The last tile, which BG1's flat map shows in the rows around the picture.
+#define BG1_EDGE_TILE TILE_NUMBER_MASK
 
 /// Fades the screen to black over sixteen frames as every background's mosaic
-/// grows, then shows no layer.
+/// blocks grow wider, then shows no layer.
 s32 BattleTransition_RunMosaicFadeOut(void) {
   u16 bg0cnt;
   u16 bg1cnt;
@@ -36,19 +77,20 @@ s32 BattleTransition_RunMosaicFadeOut(void) {
   *registerCursor = bg2cnt | BGCNT_MOSAIC;
   Io_Read16(++registerCursor, &bg3cnt);
   *registerCursor = bg3cnt | BGCNT_MOSAIC;
-  // 33 halfwords on from REG_BG3CNT is REG_BLDCNT.
-  registerCursor += 33;
+  registerCursor += &REG_BLDCNT - &REG_BG3CNT;
   *registerCursor = BLDCNT_TGT1_BG1 | BLDCNT_TGT1_BG2 | BLDCNT_TGT1_BG3 |
                     BLDCNT_TGT1_BD | BLDCNT_EFFECT_DARKEN | BLDCNT_TGT2_BG1 |
                     BLDCNT_TGT2_BG2 | BLDCNT_TGT2_BG3 | BLDCNT_TGT2_OBJ |
                     BLDCNT_TGT2_BD;
 
   ScreenFade_ToBlack(16);
-  for (mosaicSize = 0; mosaicSize <= 15; mosaicSize++) {
+  for (mosaicSize = 0; mosaicSize <= MOSAIC_SIZE_MAX; mosaicSize++) {
+    // Four random numbers a frame, drawn only to move the generator on.
     Random16();
     Random16();
     Random16();
     Random16();
+    // The backgrounds' and sprites' blocks grow wider, staying a line tall.
     REG_MOSAIC = (mosaicSize << 8) | mosaicSize;
     wait(1);
   }
@@ -69,35 +111,38 @@ void Graphics_BuildSequentialTileTable(void *tilemap) {
   u32 tiles;
   u32 i;
 
+  // Each word is four consecutive tile numbers, a byte each.
   tiles = 0x03020100;
-  for (i = 0; i < 64; i++) {
+  for (i = 0; i < BACKGROUND_UPPER_TILES / 4; i++) {
     *words++ = tiles;
     tiles += 0x04040404;
   }
   tiles = 0x03020100;
-  for (i = 0; i < 56; i++) {
+  for (i = 0; i < BACKGROUND_LOWER_TILES / 4; i++) {
     *words++ = tiles;
     tiles += 0x04040404;
   }
-  Iwram_FillWords(words, 544, -1);
+  Iwram_FillWords(words, BACKGROUND_AFFINE_MAP_BYTES - BACKGROUND_TILES, -1);
 }
 
-/// Builds BG1's flat map of the same picture, rows 6 to 20 of the screen.
+/// Builds BG1's flat map of the same picture: its tiles in rows 6 to 20, from
+/// screen line 16 at BATTLE_BACKGROUND_SCROLL_Y, and the last tile in the rows
+/// around them.
 void BattleTransition_BuildTilemap(void *tilemap) {
   u32 *pairs = tilemap;
   u32 pair;
   u32 i;
 
-  Iwram_FillWords(pairs, 4 * 64, -1);
-  pairs += 4 * 16;
-  Iwram_FillWords(pairs, 2 * 64, 0x03ff03ff);
-  pairs += 2 * 16;
-  pair = 513 << 16 | 512;
-  for (i = 0; i < 15 * 16; i++) {
+  Iwram_FillWords(pairs, 4 * MAP_ROW_BYTES, -1);
+  pairs += 4 * MAP_ROW_WORDS;
+  Iwram_FillWords(pairs, 2 * MAP_ROW_BYTES, WINDOW_TILE_PAIR(BG1_EDGE_TILE));
+  pairs += 2 * MAP_ROW_WORDS;
+  pair = (BACKGROUND_BG1_FIRST_TILE + 1) << 16 | BACKGROUND_BG1_FIRST_TILE;
+  for (i = 0; i < BACKGROUND_TILE_ROWS * MAP_ROW_WORDS; i++) {
     *pairs++ = pair;
-    pair += 1 << 17 | 2;
+    pair += WINDOW_TILE_PAIR(2);
   }
-  Iwram_FillWords(pairs, 640, 0x03ff03ff);
+  Iwram_FillWords(pairs, 10 * MAP_ROW_BYTES, WINDOW_TILE_PAIR(BG1_EDGE_TILE));
 }
 
 /// Shows the zoomed background's finished page each VBlank.
@@ -120,9 +165,10 @@ void BattleBackground_ShowZoomedPage(void) {
 /// every four frames.
 // XXX (no evidence): which transition used it; nothing refers to it.
 void BattleTransition_UploadTileVariant(void) {
-  u32 variant = *gBattleEntryTimer - 1;
-  if (variant <= 31)
-    Dma_Set(gBattleTransition_CurtainVariants + (variant >> 2) * 32,
+  u32 frame = *gBattleEntryTimer - 1;
+  if (frame < TRANSITION_CURTAIN_VARIANTS * TRANSITION_VARIANT_FRAMES)
+    Dma_Set(gBattleTransition_CurtainVariants +
+                frame / TRANSITION_VARIANT_FRAMES * TILE_SIZE_4BPP,
             CURTAIN_TILE(0), DMA_COPY_WORDS(8), REG_DMA3);
 }
 
@@ -134,15 +180,16 @@ void BattleTransition_AdvanceTimer(void) {
   u32 frame = *timer;
   struct BattleCamera *camera =
       HEAP_SLOT_FROM(slots, HEAP_SLOT_BATTLE_ENTRY_TIMER, HEAP_SLOT_CAMERA);
+  // BG0's top band rolls down from frame 20 to frame 52.
   s32 scroll = 52 - frame;
 
-  if (scroll > 32)
-    scroll = 32;
+  if (scroll > TRANSITION_BG0_BAND)
+    scroll = TRANSITION_BG0_BAND;
   if (scroll < 0)
     scroll = 0;
   gBgScroll[0].y = scroll;
   if (frame <= TRANSITION_OPEN_FRAMES)
-    camera->yaw = frame * 360 + 44928;
+    camera->yaw = frame * TRANSITION_TURN_SPEED + TRANSITION_START_YAW;
   frame = ++*timer;
   if (frame <= TRANSITION_OPEN_FRAMES)
     BattleCamera_SetView(0, 0, 0,
@@ -226,7 +273,8 @@ void BattleTransition_Run(s32 enemyCount, s32 encounterId) {
     view->busy = 0;
     // The curtain on BG1, behind BG0.
     REG_DISPCNT = DISPCNT_MODE_1;
-    Dma_Fill32Cell(fill, 0x33333333, CURTAIN_TILE(0), TILE_SIZE_4BPP);
+    Dma_Fill32Cell(fill, PIXELS_4BPP(TRANSITION_CURTAIN_COLOR), CURTAIN_TILE(0),
+                   TILE_SIZE_4BPP);
     Dma_Fill32Cell(fill, 0, CURTAIN_TILE(8), TILE_SIZE_4BPP);
     REG_BG1CNT =
         BGCNT_CHAR_BASE(1) | BGCNT_SCREEN_BASE(TRANSITION_CURTAIN_SCREEN);
@@ -246,7 +294,7 @@ void BattleTransition_Run(s32 enemyCount, s32 encounterId) {
     {
       s32 start = 0;
 
-      gBgScroll[0].y = 32;
+      gBgScroll[0].y = TRANSITION_BG0_BAND;
       gBgScroll[1].y = BATTLE_BACKGROUND_SCROLL_Y;
       gBgScroll[1].x = 8;
       wait(1);
@@ -268,13 +316,14 @@ void BattleTransition_Run(s32 enemyCount, s32 encounterId) {
       *timer = start;
       Task_Add(BattleTransition_AdvanceTimer, TASK_PASS_FRAME);
       Task_Add(BattleTransition_DrawRows, TASK_PASS_VBLANK);
-      Irq_SetHandler(IRQ_VCOUNT, 32, BattleTransition_ClearBg0Vofs);
-      gBgScroll[0].y = 32;
+      Irq_SetHandler(IRQ_VCOUNT, TRANSITION_BG0_BAND,
+                     BattleTransition_ClearBg0Vofs);
+      gBgScroll[0].y = TRANSITION_BG0_BAND;
       wait(1);
       PartyStatus_CreateWindowFar(gBattleWork->partyStatus);
       wait(20);
-      IoWriteQueue_ClearBits16((u32)&REG_BG0CNT, 2);
-      IoWriteQueue_SetBits16((u32)&REG_BG0CNT, 0);
+      IoWriteQueue_ClearBits16((u32)&REG_BG0CNT, BGCNT_PRIORITY(2));
+      IoWriteQueue_SetBits16((u32)&REG_BG0CNT, BGCNT_PRIORITY(0));
       BattleIntro_AnnounceEncounter(enemyCount);
       Task_Remove(BattleTransition_AdvanceTimer);
       Task_Remove(BattleTransition_DrawRows);
@@ -290,7 +339,7 @@ void BattleTransition_Run(s32 enemyCount, s32 encounterId) {
     for (index = 0; index != count; index++) {
       // BUG: unitIds is never read; the index is taken as a unit id, and a gap
       // among the party's ids makes the scale store go near address 0.
-      id = index + 120;
+      id = index + FIRST_ENEMY_UNIT - PARTY_UNIT_COUNT;
       if ((s32)index <= ALLY_MAX)
         id = index;
       battleObject = BattleObject_Get(id);
@@ -315,12 +364,13 @@ void BattleTransition_Run(s32 enemyCount, s32 encounterId) {
       BattleCamera_SetView(0, 0, 0, BATTLE_ZOOM_NORMAL);
       *timer = start;
     }
-    Irq_SetHandler(IRQ_VCOUNT, 32, BattleTransition_ClearBg0Vofs);
+    Irq_SetHandler(IRQ_VCOUNT, TRANSITION_BG0_BAND,
+                   BattleTransition_ClearBg0Vofs);
     wait(1);
     wait(20);
     PartyStatus_CreateWindowFar(gBattleWork->partyStatus);
-    IoWriteQueue_ClearBits16((u32)&REG_BG0CNT, 2);
-    IoWriteQueue_SetBits16((u32)&REG_BG0CNT, 0);
+    IoWriteQueue_ClearBits16((u32)&REG_BG0CNT, BGCNT_PRIORITY(2));
+    IoWriteQueue_SetBits16((u32)&REG_BG0CNT, BGCNT_PRIORITY(0));
     // Everyone appears, the party fading in.
     REG_BLDCNT = BLEND_SPRITES_OVER_ALL;
     visibleCount =
@@ -354,5 +404,26 @@ void BattleTransition_Run(s32 enemyCount, s32 encounterId) {
   HeapSlot_Release(HEAP_SLOT_BATTLE_ENTRY_TIMER);
 }
 
-#undef TRANSITION_CURTAIN_ENTRY
 #undef TRANSITION_STORM_FORMATION
+#undef TRANSITION_CURTAIN_FIRST_TILE
+#undef TRANSITION_CURTAIN_ENTRY
+#undef TRANSITION_CURTAIN_COLOR
+#undef TRANSITION_CURTAIN_SCREEN
+#undef TRANSITION_CURTAIN_MIDDLE_ROW
+#undef TRANSITION_CURTAIN_LAST_ROW
+#undef TRANSITION_OPEN_FRAMES
+#undef TRANSITION_CURTAIN_VARIANTS
+#undef TRANSITION_VARIANT_FRAMES
+#undef TRANSITION_BG0_BAND
+#undef TRANSITION_TURN_SPEED
+#undef TRANSITION_START_YAW
+#undef MOSAIC_SIZE_MAX
+#undef MAP_ROW_BYTES
+#undef MAP_ROW_WORDS
+#undef BACKGROUND_TILE_ROWS
+#undef BACKGROUND_TILES
+#undef BACKGROUND_UPPER_TILES
+#undef BACKGROUND_LOWER_TILES
+#undef BACKGROUND_AFFINE_MAP_BYTES
+#undef BACKGROUND_BG1_FIRST_TILE
+#undef BG1_EDGE_TILE

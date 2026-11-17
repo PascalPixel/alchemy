@@ -467,7 +467,7 @@ spriteAnimations(void)
 	textFile("bank.tsv", "sprite\twidth\theight\tscale\tdraw\tadjust_x\t"
 						 "adjust_y\tbox_x\tbox_y\tcodec\tpictures\tanimations\n"
 						 "Walker\t8\t8\t0x100\t0\t0\t0\t0\t0\t0\t-\tWalker\n");
-	textFile("Walker.tsv",
+	textFile("walker.tsv",
 			 "anim\tpicture 3 6, wait 2, kind 17, jump 1\n"
 			 "anim\tblank 4, command 242 10, play 0, hold 1, end\n"
 			 "anim\tpicture 0 1, loop\n");
@@ -489,7 +489,7 @@ spriteAnimations(void)
 							  "anim\tpicture 0\n", "anim\tplay\n"};
 	for (size_t i = 0; i < sizeof(rejected) / sizeof(*rejected); i++)
 	{
-		textFile("Walker.tsv", rejected[i]);
+		textFile("walker.tsv", rejected[i]);
 		RUN("graphics", false, "bank.tsv", "bank.sprites");
 	}
 }

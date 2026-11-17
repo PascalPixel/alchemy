@@ -82,21 +82,22 @@ extern u16 gTitleIntro_ChannelCurveContrast[32];
 enum PaletteTint {
   /// The backdrop colour (palette RAM's first colour) for all.
   PALETTE_TINT_FROM_SOURCE = 0x8000,
-  PALETTE_TINT_NONE = 0x10000,      ///< each colour unchanged
-  PALETTE_TINT_GRAYSCALE = 0x10001, ///< grey of brightness (2R + 4G + B) / 7
+  /// Each colour unchanged; the tints after it are numbered on from it.
+  PALETTE_TINT_NONE = 0x10000,
+  PALETTE_TINT_GRAYSCALE, ///< grey of brightness (2R + 4G + B) / 7
   /// Brownish grey: the brightness (R + G + B) / 10, red at 4 times it plus
   /// 5, green and blue 3 times plus 5, each held to SEPIA_LEVEL_MIN to
   /// SEPIA_LEVEL_MAX.
-  PALETTE_TINT_SEPIA = 0x10002,
+  PALETTE_TINT_SEPIA,
   /// Half R + 10, two thirds G + 8, B - 7; black stays black.
-  PALETTE_TINT_WARM = 0x10003,
+  PALETTE_TINT_WARM,
   /// Each channel held to a narrow range (MUTED_RED_MIN to MUTED_RED_MAX and
   /// so on), then G and B + 2.
-  PALETTE_TINT_MUTED = 0x10004,
-  PALETTE_TINT_PALE = 0x10005, ///< half of each channel, plus their mean
+  PALETTE_TINT_MUTED,
+  PALETTE_TINT_PALE, ///< half of each channel, plus their mean
   /// R plus an eighth of G and of B; G and B two thirds.
-  PALETTE_TINT_RED = 0x10006,
-  PALETTE_TINT_WARM_DARK = 0x10007, ///< half R + 6, two thirds G + 4, B - 6
+  PALETTE_TINT_RED,
+  PALETTE_TINT_WARM_DARK, ///< half R + 6, two thirds G + 4, B - 6
   /// From here the TINT, BLEND and SPLIT bits are tested, TINT and BLEND
   /// carrying an RGB555 colour in the low 15 bits; any other value is the
   /// address of a ready buffer to copy.

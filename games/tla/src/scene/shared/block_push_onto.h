@@ -9,11 +9,12 @@ void MagmaRockInside_PushBlockOnto(void) {
   s32 rate;
 
   lead = Actor_GetById(gMainRoutineWork.leaderActorId);
-  dir = lead->facing >> 12;
+  dir = lead->facing / FACING_STEP;
+  // A push step holds x pixels in its high half and z in its low (PUSH_STEP).
   step = gPushLeaderSteps[dir];
   dst.x = lead->x.fixed + (step & FIELD_PIXEL_MASK);
   dst.y = lead->y.fixed;
-  step <<= 16;
+  step = INTtoFIXED(step);
   dst.z = lead->z.fixed + step;
   next = Actor_FindInCell(&dst, lead);
   if (next == 0)
@@ -22,7 +23,7 @@ void MagmaRockInside_PushBlockOnto(void) {
   step = gPushLeaderSteps[dir];
   dst.x = next->x.fixed + (step & FIELD_PIXEL_MASK);
   dst.y = next->y.fixed;
-  step <<= 16;
+  step = INTtoFIXED(step);
   dst.z = next->z.fixed + step;
   blocker = Actor_FindInCell(&dst, next);
   if (blocker != 0 && (blocker->collisionFlags & ACTOR_SOLID) != 0)
@@ -35,11 +36,11 @@ void MagmaRockInside_PushBlockOnto(void) {
   if (blocker != 0 && (blocker->collisionFlags & ACTOR_SOLID) != 0)
     return;
 
-  next->layer = 2;
+  next->layer = MAPGRID_LAYER_OVERHEAD;
   step = gPushLeaderSteps[dir];
   dst.x = next->x.fixed + (step & FIELD_PIXEL_MASK);
   dst.y = next->y.fixed;
-  step <<= 16;
+  step = INTtoFIXED(step);
   dst.z = next->z.fixed + step;
   if (MapGrid_CheckCollision(next, &dst) > 0)
     return;
@@ -47,7 +48,7 @@ void MagmaRockInside_PushBlockOnto(void) {
   if (next->riseCounter != 0)
     return;
 
-  Actor_SelectAnimation(lead, 8);
+  Actor_SelectAnimation(lead, ANIM_PUSH);
   rate = toFIXED(0.2);
   System_Wait(15);
   Event_PlaySound(SE_PUSH);
@@ -67,7 +68,7 @@ void MagmaRockInside_PushBlockOnto(void) {
   lead->targetZ = TARGET_UNSET;
   lead->velocityX = 0;
   lead->velocityZ = 0;
-  lead->x.fixed = lead->x.part[0].integer << 16;
-  lead->z.fixed = lead->z.part[0].integer << 16;
-  Actor_SelectAnimation(lead, 1);
+  lead->x.fixed = INTtoFIXED(lead->x.part[0].integer);
+  lead->z.fixed = INTtoFIXED(lead->z.part[0].integer);
+  Actor_SelectAnimation(lead, ANIM_STAND);
 }

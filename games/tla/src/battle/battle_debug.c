@@ -144,6 +144,14 @@ void ScriptedBattle_RestoreUnits(void) {
 /// Works out a character's class, Psynergy and base elements again.
 void Unit_UpdateClassFar(s32 owner);
 
+/// From this parameter set on, an even set is loaded together with the odd one
+/// after it.
+#define DEBUG_PAIRED_SETS_FIRST 70
+/// Each element's Djinn, the first seven of them, to Bane, The Broken Seal's:
+/// a set's Djinn are given from this game's own first.
+#define DJINN_FOUND_PER_ELEMENT 18
+#define DJINN_OWN_FIRST 7
+
 /// Debug: replaces the party with parameter set number preset, each member at
 /// its level with its Djinn, abilities and equipped items. Returns 1 when the
 /// table ends before that set.
@@ -179,7 +187,7 @@ s32 DebugParameterSet_Load(s32 preset) {
       break;
     }
     if (owner == -1) {
-      if (set <= 69) {
+      if (set < DEBUG_PAIRED_SETS_FIRST) {
         if (set == preset)
           break;
       } else if (set == (preset | 1)) {
@@ -208,8 +216,12 @@ s32 DebugParameterSet_Load(s32 preset) {
     }
     for (i = 0; i < ELEMENT_COUNT; i++) {
       for (j = 0; j < gDebug_ParameterSets[row].djinnCounts[i]; j++) {
-        Djinn_GiveFar(owner, i, (nextDjinn[i] + 7) % 18);
-        Djinn_SetFar(owner, i, (nextDjinn[i] + 7) % 18);
+        Djinn_GiveFar(owner, i,
+                      (nextDjinn[i] + DJINN_OWN_FIRST) %
+                          DJINN_FOUND_PER_ELEMENT);
+        Djinn_SetFar(owner, i,
+                     (nextDjinn[i] + DJINN_OWN_FIRST) %
+                         DJINN_FOUND_PER_ELEMENT);
         nextDjinn[i]++;
       }
     }
@@ -236,6 +248,8 @@ extern u8 gDebugTextEnabled;
 /// Broken Seal's Djinn tutorial encounter, here an unused Mars Djinni's
 /// battle: rows of formations.c.
 #define DEBUG_FIRST_ENCOUNTER 69
+/// Up and Down step the chooser's encounter by ten, Left and Right by one.
+#define DEBUG_ENCOUNTER_STEP 10
 #define DJINN_TUTORIAL_ENCOUNTER 28
 
 /// Debug: the battle test menu, which never returns. It fights encounter 69
@@ -269,7 +283,9 @@ restart:
     // address.
     backdropId = (u16 *)&gMainRoutineWork.battleBackground;
     for (;;) {
-      GameFlag_Clear(32);
+      // The Broken Seal's FLAG_CHILDHOOD, under which the characters show as
+      // children (ISAAC_CHILD).
+      GameFlag_Clear(0x20);
       wait(1);
       for (;;) {
         if (input->repeat & KEY_RIGHT)
@@ -277,9 +293,9 @@ restart:
         if (input->repeat & KEY_LEFT)
           encounter--;
         if (input->repeat & KEY_UP)
-          encounter -= 10;
+          encounter -= DEBUG_ENCOUNTER_STEP;
         if (input->repeat & KEY_DOWN)
-          encounter += 10;
+          encounter += DEBUG_ENCOUNTER_STEP;
         if (input->repeat & KEY_R)
           preset++;
         if (input->repeat & KEY_L)

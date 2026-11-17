@@ -286,8 +286,6 @@ void ShrineOfTheSeaGod_FightBreath(void) {
   }
 }
 
-struct Actor;
-
 extern struct SceneRegion gShrineOfTheSeaGodStatueExitRegions[];
 extern struct SceneRegion gShrineOfTheSeaGodLaddersExitRegions[];
 extern struct SceneRegion gShrineOfTheSeaGodRightProngExitRegions[];
@@ -1005,7 +1003,7 @@ void ShrineOfTheSeaGod_DrawLeaderBehind(void) {
 #undef EFFECT_SET_SCRIPT
 #undef EFFECT_SCRIPTS
 
-u32 gShrineOfTheSeaGod_BridgeOffset[3] BSS_DATA;
+FIXED gShrineOfTheSeaGod_BridgeOffset[3] BSS_DATA;
 
 /// On a broken bridge's middle the leader sways twice, the middle dipping under
 /// him, and loses his shadow; the middle's place against him is kept for the
@@ -1049,7 +1047,7 @@ void ShrineOfTheSeaGod_RockOnBridge(struct Actor *leader,
 /// falls.
 void ShrineOfTheSeaGod_KeepWithLeader(struct Actor *actor) {
   struct Actor *leader = Actor_GetById(gMainRoutineWork.leaderActorId);
-  s32 *offset = gShrineOfTheSeaGod_BridgeOffset;
+  FIXED *offset = gShrineOfTheSeaGod_BridgeOffset;
 
   SET_ACTOR_POSITION(actor, leader->x.fixed + offset[0],
                      leader->y.fixed + offset[1], leader->z.fixed + offset[2]);
@@ -1356,7 +1354,7 @@ extern u32 gShrineOfTheSeaGod_BoysGoHome[];
 
 /// Lash ties the boys' rope, Tavi climbs down and both meet the party.
 void ShrineOfTheSeaGod_LashRope(void) {
-  struct Actor *actor;
+  struct Actor *tavi;
   struct Actor *leader;
   struct FieldSprite *sprite;
   const void *callback;
@@ -1393,26 +1391,26 @@ void ShrineOfTheSeaGod_LashRope(void) {
   Event_ShowMessage(ACTOR_TAVI, 0);
   FieldCamera_SetSpeed(1.2);
   FieldCamera_MoveTo(348, CAMERA_KEEP, 216, 1);
-  actor = Actor_GetById(ACTOR_TAVI);
-  sprite = actor->sprite;
+  tavi = Actor_GetById(ACTOR_TAVI);
+  sprite = tavi->sprite;
   Actor_SetSpritePriority(ACTOR_TAVI, 1);
   Actor_SetSpeed(ACTOR_TAVI, 1.6);
   Actor_Jump(ACTOR_TAVI, 4, 0);
   Actor_MoveToAndWait(ACTOR_TAVI, 248, 168);
   Actor_SetAnimationById(ACTOR_TAVI, 6);
-  actor->scaleX = -FIXED_ONE;
+  tavi->scaleX = -FIXED_ONE;
   sprite->rotation = TRIG_TURN * 13 / 16;
-  actor->motionFlags = 0;
-  actor->y.fixed += toFIXED(6);
+  tavi->motionFlags = 0;
+  tavi->y.fixed += toFIXED(6);
   Actor_SetSpriteFlags(Actor_GetById(ACTOR_TAVI), 0);
   Actor_SetSpeed(ACTOR_TAVI, 0.4);
-  FieldActor_SetMoveTarget(actor, 328, 38, 168);
+  FieldActor_SetMoveTarget(tavi, 328, 38, 168);
   do {
     Actor_WaitForMoveById(ACTOR_TAVI);
   } while (0);
-  actor->motionFlags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
-  actor->groundHeight = toFIXED(32);
-  actor->scaleX = FIXED_ONE;
+  tavi->motionFlags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
+  tavi->groundHeight = toFIXED(32);
+  tavi->scaleX = FIXED_ONE;
   sprite->rotation = 0;
   Actor_SetAnimationById(ACTOR_TAVI, 1);
   Actor_SetSpriteFlags(Actor_GetById(ACTOR_TAVI), SPRITE_FLAG_SHADOW);
@@ -1916,12 +1914,9 @@ void ShrineOfTheSeaGod_ChaseDjinni(void) {
 }
 
 extern struct ShrineOfTheSeaGodSpot gShrineOfTheSeaGod_Footprints[];
-extern s16 gShrineOfTheSeaGod_PushedActors[];
-extern u32 gShrineOfTheSeaGod_RikiLooksAround[];
 
 void Rope_Place(s32 rope, s32 flag, s32 post, s32 farPost);
 void Actor_PlaceBlocks(const void *script);
-void ShrineOfTheSeaGod_LayerPuddles(void);
 
 /// Lights the torch: the pedestal in its burning animation, and the marker on
 /// its flame in its empty picture, disabled.
@@ -2364,12 +2359,6 @@ s32 Scene_PrepareMap(void) {
 #undef DEFINE_DJINNI_WALK_AND_JUMP
 #undef DEFINE_DJINNI_DASH_AROUND
 #undef DEFINE_DJINNI_JUMP
-
-void ShrineOfTheSeaGod_FightBreath(void);
-void ShrineOfTheSeaGod_ExamineStatue(void);
-void ShrineOfTheSeaGod_PushPillarIntoHole(void);
-void ShrineOfTheSeaGod_BreakSecondBridge(void);
-void ShrineOfTheSeaGod_RevealStone(void);
 
 extern u32 gFieldEffect_ShortScript[];
 extern u32 gFieldEffect_LongScript[];

@@ -21,7 +21,6 @@ struct SummonDefinition;
 /// A field Psynergy, as the field kind: an ability's fieldPsynergy, named for
 /// the abilities that have it (the English release's names in
 /// gAbilityDefinitions). The field effect keeps it as its animation.
-/// The Broken Seal has 1 to 16; The Lost Age adds 17 to 30.
 enum FieldPsynergy {
   FIELD_PSYNERGY_MOVE = 1,
   FIELD_PSYNERGY_MIND_READ = 2,
@@ -158,8 +157,8 @@ extern const u8 gSummon_OrderList[SUMMON_COUNT];
 extern const u32 gCharacter_LevelExpTable[];
 
 extern const s16 gElement_PowerResistCurve[5][2];
-/// The power and resistance by element level (element_table.c): a table
-/// nothing writes, defined writable in .rodata as The Broken Seal's is.
+/// The power and resistance by element level (element_table.c); nothing writes
+/// it.
 extern struct ElementLevelBonus gElement_PowerResistByLevel[16];
 extern const struct EnemyElementPreset gEnemy_ElementPresetTable[];
 extern const struct CharacterDefinition gCharacter_DefinitionTable[];

@@ -9,16 +9,38 @@
 #include "battle/presentation.h"
 #include "system/system.h"
 
-/// The curtain's map entries: tile 128 + n, WINDOW_PALETTE.
-#define TRANSITION_CURTAIN_ENTRY(n) (WINDOW_TILE(128) + (n))
+/// The curtain's first tile in BG character block 1.
+#define TRANSITION_CURTAIN_FIRST_TILE 128
+/// The curtain's map entries: its tile n, WINDOW_PALETTE.
+#define TRANSITION_CURTAIN_ENTRY(n)                                            \
+  (WINDOW_TILE(TRANSITION_CURTAIN_FIRST_TILE) + (n))
 /// The screen block of the curtain's map, and its middle row, from which it
 /// opens a row up and a row down every eight frames for TRANSITION_OPEN_FRAMES.
 #define TRANSITION_CURTAIN_SCREEN 12
 #define TRANSITION_CURTAIN_MIDDLE_ROW 13
 #define TRANSITION_CURTAIN_LAST_ROW 20
 #define TRANSITION_OPEN_FRAMES 80
-/// Tile 128 + n of BG character block 1, the curtain's tiles.
-#define CURTAIN_TILE(n) (BG_CHAR_BLOCK(1) + (128 + (n)) * TILE_SIZE_4BPP)
+/// The curtain's tile n in BG character block 1.
+#define CURTAIN_TILE(n)                                                        \
+  (BG_CHAR_BLOCK(1) + (TRANSITION_CURTAIN_FIRST_TILE + (n)) * TILE_SIZE_4BPP)
+/// The curtain's solid tile takes one of eight variants, a new one every four
+/// frames (BattleTransition_UploadTileVariant).
+#define CURTAIN_VARIANTS 8
+#define CURTAIN_VARIANT_FRAMES 4
+
+/// The battle background's picture: 32 tiles to a row and 15 rows, its first
+/// 256 tiles in character block 2 and the rest in block 3.
+#define BACKGROUND_PICTURE_ROWS 15
+#define BACKGROUND_PICTURE_TILES (BACKGROUND_PICTURE_ROWS * BG_SCREEN_WIDTH)
+#define BACKGROUND_UPPER_TILES 256
+/// BG1's flat map of the picture (BATTLE_BG1CNT): the picture's first tile in
+/// its numbering, character block 2, and the blank tile it reads from the last
+/// row of its own screen block, which BattleBackground_Load leaves clear.
+#define BACKGROUND_FIRST_TILE 512
+#define BACKGROUND_CLEAR_TILE 1023
+/// A row of BG1's flat map: 32 entries, in bytes and in words.
+#define TILEMAP_ROW_BYTES (BG_SCREEN_WIDTH * 2)
+#define TILEMAP_ROW_WORDS (BG_SCREEN_WIDTH / 2)
 
 /// Fades the screen to black over sixteen frames as every background's
 /// mosaic grows, then shows no layer. Sets REG_BLDCNT to darken the
@@ -43,8 +65,7 @@ s32 BattleTransition_RunMosaicFadeOut(void) {
   *registerCursor = bg2cnt | BGCNT_MOSAIC;
   Io_Read16(++registerCursor, &bg3cnt);
   *registerCursor = bg3cnt | BGCNT_MOSAIC;
-  // 33 halfwords on from REG_BG3CNT is REG_BLDCNT.
-  registerCursor += 33;
+  registerCursor += &REG_BLDCNT - &REG_BG3CNT;
   *registerCursor = BLDCNT_TGT1_BG1 | BLDCNT_TGT1_BG2 | BLDCNT_TGT1_BG3 |
                     BLDCNT_TGT1_BD | BLDCNT_EFFECT_DARKEN | BLDCNT_TGT2_BG1 |
                     BLDCNT_TGT2_BG2 | BLDCNT_TGT2_BG3 | BLDCNT_TGT2_OBJ |
@@ -69,10 +90,10 @@ s32 BattleTransition_RunMosaicFadeOut(void) {
   return 0;
 }
 
-// Tiles: build a map of consecutive byte values.
-
-/// Writes consecutive bytes 0-255 followed by 0-223, then fills the remaining
-/// 544 bytes with 0xff (1024 bytes in all).
+/// Builds the zoomed background's 32 by 32 affine map, in which the background
+/// picture's two halves come from character blocks 2 and 3: the upper half's
+/// tiles numbered from 0, the lower half's from 0 again, then tile 255 for the
+/// rest.
 void Graphics_BuildSequentialTileTable(void *tilemap) {
   u32 *words = tilemap;
   u32 tiles;
@@ -80,37 +101,42 @@ void Graphics_BuildSequentialTileTable(void *tilemap) {
 
   // Each word is four consecutive tile numbers, one a byte.
   tiles = 0x03020100;
-  for (i = 0; i < 64; i++) {
+  for (i = 0; i < BACKGROUND_UPPER_TILES / 4; i++) {
     *words++ = tiles;
     tiles += 0x04040404;
   }
   tiles = 0x03020100;
-  for (i = 0; i < 56; i++) {
+  for (i = 0; i < (BACKGROUND_PICTURE_TILES - BACKGROUND_UPPER_TILES) / 4;
+       i++) {
     *words++ = tiles;
     tiles += 0x04040404;
   }
-  Iwram_FillWords(words, 544, -1);
+  Iwram_FillWords(
+      words, BG_SCREEN_WIDTH * BG_SCREEN_WIDTH - BACKGROUND_PICTURE_TILES, -1);
 }
 
-/// Builds a flat tilemap: rows 0 to 3 0xffff, rows 4 and 5 tile 1023, rows 6
-/// to 20 tiles 512 to 991 in order, then tile 1023. Called with screen block
-/// 31 by BattleBackground_SetMode and BattleBackground_Load.
+/// Builds BG1's flat map of the same picture, in screen block 31: four rows of
+/// blank entries, two of BACKGROUND_CLEAR_TILE, the picture's tiles in order on
+/// rows 6 to 20, then BACKGROUND_CLEAR_TILE down to the last row, which
+/// BattleBackground_Load clears.
 void BattleTransition_BuildTilemap(s32 *destination) {
   s32 entry;
   u32 index;
 
-  Iwram_FillWords(destination, 256, -1);
-  destination += 64;
-  Iwram_FillWords(destination, 128, 0x03ff03ff);
-  entry = (0x0201 << 16) | 0x0200;
-  destination += 32;
+  Iwram_FillWords(destination, 4 * TILEMAP_ROW_BYTES, -1);
+  destination += 4 * TILEMAP_ROW_WORDS;
+  Iwram_FillWords(destination, 2 * TILEMAP_ROW_BYTES,
+                  WINDOW_TILE_PAIR(BACKGROUND_CLEAR_TILE));
+  entry = (BACKGROUND_FIRST_TILE + 1) << 16 | BACKGROUND_FIRST_TILE;
+  destination += 2 * TILEMAP_ROW_WORDS;
   index = 0;
   do {
     index++;
     *destination++ = entry;
-    entry += 0x00020002;
-  } while (index <= 239);
-  Iwram_FillWords(destination, 640, 0x03ff03ff);
+    entry += WINDOW_TILE_PAIR(2);
+  } while (index < BACKGROUND_PICTURE_ROWS * TILEMAP_ROW_WORDS);
+  Iwram_FillWords(destination, 10 * TILEMAP_ROW_BYTES,
+                  WINDOW_TILE_PAIR(BACKGROUND_CLEAR_TILE));
 }
 
 /// Copies this frame's BG2CNT word and starts the HBlank DMA of the BG2 lines
@@ -129,15 +155,15 @@ void BattleBackground_ShowZoomedPage(void) {
   }
 }
 
-/// Copies one of eight tiles from gBattleTransition_CurtainVariants into
-/// CURTAIN_TILE(0), a new one every four frames while the transition timer
-/// (unk84[9], as BattleTransition_AdvanceTimer counts it) runs from 1 to 32.
+/// Unused: steps the curtain's solid tile through its variants
+/// (gBattleTransition_CurtainVariants) while the transition timer runs from 1.
 void BattleTransition_UploadTileVariant(void) {
   u32 variant = *(s32 *)Ram_HeapSlots->battleEntryTimer - 1;
 
-  if (variant <= 31)
-    Dma_Set(gBattleTransition_CurtainVariants + (variant >> 2) * 32,
-            CURTAIN_TILE(0), DMA_COPY_WORDS(8), REG_DMA3);
+  if (variant < CURTAIN_VARIANTS * CURTAIN_VARIANT_FRAMES)
+    Dma_Set(gBattleTransition_CurtainVariants +
+                variant / CURTAIN_VARIANT_FRAMES * TILE_SIZE_4BPP,
+            CURTAIN_TILE(0), DMA_COPY_WORDS(TILE_SIZE_4BPP / 4), REG_DMA3);
 }
 
 /// Advances the curtain opening by a frame: BG0 slides into place as the camera
@@ -199,14 +225,12 @@ void BattleTransition_DrawRows(void) {
   }
 }
 
-/// An HBlank handler: clears BG0's vertical scroll from the line it fires on.
+/// Clears BG0's scroll from the line the VCount interrupt fires on.
 void BattleTransition_ResetBg0Scroll(void) {
   u32 zero = 0;
 
   REG_BG0VOFS = zero;
 }
-
-#define DMA3 ((volatile u32 *)0x040000d4)
 
 /// Opens the battle against formation kind with enemyCount enemies: the curtain
 /// opening, then each enemy announced (formations 74 to 76 and 638 wait a
@@ -233,24 +257,24 @@ void BattleTransition_Run(s32 enemyCount, s32 kind) {
     s32 zero;
 
     Dma_Set(gBattleTransition_CurtainTiles, CURTAIN_TILE(1), DMA_COPY_WORDS(8),
-            DMA3);
+            REG_DMA3);
     Dma_Set(gBattleTransition_CurtainTiles + 1 * TILE_SIZE_4BPP,
-            CURTAIN_TILE(2), DMA_COPY_WORDS(8), DMA3);
+            CURTAIN_TILE(2), DMA_COPY_WORDS(8), REG_DMA3);
     Dma_Set(gBattleTransition_CurtainTiles + 2 * TILE_SIZE_4BPP,
-            CURTAIN_TILE(3), DMA_COPY_WORDS(8), DMA3);
+            CURTAIN_TILE(3), DMA_COPY_WORDS(8), REG_DMA3);
     Dma_Set(gBattleTransition_CurtainTiles + 3 * TILE_SIZE_4BPP,
-            CURTAIN_TILE(4), DMA_COPY_WORDS(8), DMA3);
+            CURTAIN_TILE(4), DMA_COPY_WORDS(8), REG_DMA3);
     Dma_Set(gBattleTransition_CurtainTiles + 4 * TILE_SIZE_4BPP,
-            CURTAIN_TILE(5), DMA_COPY_WORDS(8), DMA3);
+            CURTAIN_TILE(5), DMA_COPY_WORDS(8), REG_DMA3);
     Dma_Set(gBattleTransition_CurtainTiles + 5 * TILE_SIZE_4BPP,
-            CURTAIN_TILE(6), DMA_COPY_WORDS(8), DMA3);
+            CURTAIN_TILE(6), DMA_COPY_WORDS(8), REG_DMA3);
     Dma_Set(gBattleTransition_CurtainTiles + 6 * TILE_SIZE_4BPP,
-            CURTAIN_TILE(7), DMA_COPY_WORDS(8), DMA3);
+            CURTAIN_TILE(7), DMA_COPY_WORDS(8), REG_DMA3);
     view->secondMode = BATTLE_BACKGROUND_FIXED;
     view->busy = 0;
     view->mode = BATTLE_BACKGROUND_FIXED;
     REG_DISPCNT = DISPCNT_MODE_1;
-    IWRAM_FILL_WORDS(CURTAIN_TILE(0), TILE_SIZE_4BPP, 0x33333333);
+    IWRAM_FILL_WORDS(CURTAIN_TILE(0), TILE_SIZE_4BPP, PIXELS_4BPP(3));
     IWRAM_FILL_WORDS(CURTAIN_TILE(8), TILE_SIZE_4BPP, 0);
     REG_BG1CNT =
         BGCNT_CHAR_BASE(1) | BGCNT_SCREEN_BASE(TRANSITION_CURTAIN_SCREEN);

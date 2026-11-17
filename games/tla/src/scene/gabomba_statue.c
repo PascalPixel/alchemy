@@ -2776,14 +2776,12 @@ void GabombaStatue_LowerArrowA(void) {
       Event_Start();
       FieldEvent_ResolvePendingActions(0);
       GabombaStatue_SetTileMode(3);
-      i = 19;
-      do {
+      for (i = 0; i < 20; i++) {
         s32 *offset = &state->statueOffset;
 
         *offset -= TRIG_TURN / 80;
         System_Wait(1);
-        i--;
-      } while (i >= 0);
+      }
       GabombaStatue_TurnTiles(0);
       Event_End();
       state->statueOffset = 0;
@@ -2814,14 +2812,12 @@ void GabombaStatue_RaiseArrowB(void) {
       Event_Start();
       FieldEvent_ResolvePendingActions(0);
       GabombaStatue_SetTileMode(2);
-      i = 19;
-      do {
+      for (i = 0; i < 20; i++) {
         s32 *offset = &state->statueOffset;
 
         *offset += TRIG_TURN / 80;
         System_Wait(1);
-        i--;
-      } while (i >= 0);
+      }
       GabombaStatue_TurnTiles(1);
       Event_End();
       state->statueOffset = 0;

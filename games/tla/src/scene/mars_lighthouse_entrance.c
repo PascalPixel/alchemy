@@ -406,8 +406,7 @@ void MarsLighthouseEntrance_ScatterIceChips(s32 id) {
   struct Actor *source = Actor_Get(id);
   s32 i;
 
-  i = 5;
-  do {
+  for (i = 0; i < 6; i++) {
     FIXED x = source->x.fixed + (Random16() << 4) - (Random16() << 4);
     struct Actor *actor = Import_ActorCreate_(
         SPRITE_TURNING_ROCK, x,
@@ -434,7 +433,7 @@ void MarsLighthouseEntrance_ScatterIceChips(s32 id) {
       actor->bounce = FIXED_ONE / 2;
       Actor_SetSpriteColorMode(actor, 1);
     }
-  } while (--i >= 0);
+  }
 }
 
 /// Grind on the ice at the dead end: the crack runs to the ice sheet
@@ -814,11 +813,11 @@ void MarsLighthouseEntrance_DrawHoleMask(void) {
 void MarsLighthouseEntrance_StartHoleMask(void) {
   u32 *buffer = Heap_Alloc(256);
   u32 *word = buffer;
-  s32 count = 63;
+  s32 count;
 
-  do {
+  for (count = 0; count < 64; count++) {
     *word++ = 0x11111111;
-  } while (--count >= 0);
+  }
   gMarsLighthouseEntrance_HoleMaskVram = VramCache_FindFreeEntry();
   Vram_Load(gMarsLighthouseEntrance_HoleMaskVram, 256, buffer);
   Heap_Release(buffer);
@@ -1195,12 +1194,10 @@ s32 Scene_Initialize(void) {
       actor = Actor_Get(ACTOR_ICE_SHEET);
       Actor_SetPosition(ACTOR_ICE_SHEET, actor->timer, actor->userValue);
       Event_PlaySound(SE_ICE_CRACK);
-      i = 2;
-      do {
+      for (i = 0; i < 3; i++) {
         MarsLighthouseEntrance_ScatterIceChips(ACTOR_ICE_SHEET);
         System_Wait(1);
-        i--;
-      } while (i >= 0);
+      }
       Event_SetFlag(FLAG_ICE_GROUND);
       MapGrid_SetShake(SHAKE_KEEP, SHAKE_KEEP, 0.9);
       FieldEvent_Wait(120);

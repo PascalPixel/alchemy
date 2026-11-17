@@ -438,12 +438,12 @@ s32 FieldSequence_Run(void) {
             struct ActorSystemWork *system = Ram_HeapSlots->actorSystem;
             u8 *owner = gVramCacheBlockOwners;
             s32 freeBlocks = 0;
-            s32 n = 512;
+            s32 n;
 
-            do {
+            for (n = 0; n < 512; n++) {
               if (*owner++ == VRAM_BLOCK_OWNER_FREE)
                 freeBlocks++;
-            } while (--n != 0);
+            }
             if (freeBlocks - 136 < 0) {
               system->suspended = 1;
               wait(1);

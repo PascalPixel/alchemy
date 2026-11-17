@@ -311,12 +311,12 @@ s32 FieldSequence_Run(s32 entrance) {
               struct ActorSystemWork *actorSystem = gActorSystemWork;
               u8 *owner = gVramCacheBlockOwners;
               s32 free = 0;
-              s32 n = 512;
+              s32 n;
 
-              do {
+              for (n = 0; n < 512; n++) {
                 if (*owner++ == VRAM_BLOCK_OWNER_FREE)
                   free++;
-              } while (--n != 0);
+              }
               if (free - 136 < 0) {
                 actorSystem->suspended = 1;
                 wait(1);

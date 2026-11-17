@@ -616,10 +616,9 @@ void Sprite_Destroy(struct Sprite *sprite) {
     if (!sprite->retainCacheEntry)
       VramCache_FreeEntry(sprite->slot);
     layer = sprite->entries;
-    n = 3;
-    do {
+    for (n = 0; n < 4; n++) {
       SpriteAnimation_Clear(*layer++);
-    } while (--n >= 0);
+    }
     zero = 0;
     Dma_Set(&zero, sprite,
             ((DMA_ENABLE | DMA_32BIT | DMA_SRC_FIXED) << 16) |

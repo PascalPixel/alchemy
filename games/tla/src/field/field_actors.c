@@ -239,12 +239,11 @@ void Actor_Release(struct Actor *actor) {
       break;
     case ACTOR_SPRITE_GROUP:
       sprites = (void **)actor->sprite;
-      spritesRemaining = 3;
-      do {
+      for (spritesRemaining = 0; spritesRemaining < 4; spritesRemaining++) {
         struct Sprite *sprite = *sprites++;
         if (sprite)
           Sprite_Destroy(sprite);
-      } while (--spritesRemaining >= 0);
+      }
       break;
     }
     Dma_Fill32(0, actor, sizeof(struct Actor));
@@ -348,13 +347,11 @@ void Actor_SelectAnimation(struct Actor *actor, s32 argument) {
       break;
     case ACTOR_SPRITE_GROUP:
       items = ((struct Sprite **)actor->sprite);
-      count = 3;
-      do {
+      for (count = 0; count < 4; count++) {
         item = *items++;
         if (item != 0)
           Sprite_StartAnimation(item, argument);
-        count--;
-      } while (count >= 0);
+      }
       break;
     }
   }
@@ -374,13 +371,11 @@ void Actor_SetAnimationSpeed(struct Actor *actor, s32 value) {
       return;
     case ACTOR_SPRITE_GROUP:
       children = ((struct Sprite **)actor->sprite);
-      count = 3;
-      do {
+      for (count = 0; count < 4; count++) {
         child = *children++;
         if (child != 0)
           Sprite_SetAnimationSpeed(child, value);
-        count--;
-      } while (count >= 0);
+      }
       break;
     }
   }

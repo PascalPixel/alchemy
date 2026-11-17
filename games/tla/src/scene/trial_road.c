@@ -3398,13 +3398,11 @@ UNUSED void String_WriteU32AsHex(u8 *buf, u32 value) {
   buf += 8;
   *buf = 0;
   buf--;
-  i = 7;
-  do {
+  for (i = 0; i < 8; i++) {
     *buf = digits[value & 15];
     value >>= 4;
     buf--;
-    i--;
-  } while (i >= 0);
+  }
 }
 
 extern u8 gSceneState[];

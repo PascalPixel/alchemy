@@ -871,11 +871,9 @@ void AnkohlRuins_InitSand(s32 unused) {
 
   if (Event_GetFlag(FLAG_KEEP_PARTY_POSITION) == 0)
     Iwram_ClearWordsEntry(work, 240);
-  i = 31;
-  do {
+  for (i = 0; i < 32; i++) {
     *pixel++ = 0x11111111;
-    i--;
-  } while (i >= 0);
+  }
   // Spelled through a pointer: a member store shares its zero mask.
   *(s16 *)&work->tile = VramCache_FindFreeEntry();
   Vram_Load(work->tile, 128, tiles);

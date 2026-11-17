@@ -138,9 +138,9 @@ u8 *Text_CopyFiveCharsPaddingUnderscore(u32 unusedA, u32 unusedB, u16 *source) {
   u32 fill = '_';
   u8 *current = base;
   u8 *dst = current;
-  s32 count = 3;
+  s32 count;
 
-  do {
+  for (count = 0; count < 4; count++) {
     u32 value = *source;
 
     *dst = value;
@@ -149,8 +149,7 @@ u8 *Text_CopyFiveCharsPaddingUnderscore(u32 unusedA, u32 unusedB, u16 *source) {
     if ((u8)value == 0)
       *current = fill;
     current++;
-    count--;
-  } while (count >= 0);
+  }
   base[4] = 0;
   // BUG: the original buffer is on the stack, gone once this returns.
   // UBFIX keeps the result until the next call in private scratch storage.

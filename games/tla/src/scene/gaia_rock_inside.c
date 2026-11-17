@@ -553,8 +553,7 @@ s32 GaiaRockInside_CaskBursts(void) {
   s32 i;
 
   Event_PlaySound(SE_FLAME_FLARE);
-  i = 3;
-  do {
+  for (i = 0; i < 4; i++) {
     {
       struct Actor *dust =
           (FieldActor_Create(SPRITE_DUST_CLOUD, source->x.fixed,
@@ -576,7 +575,7 @@ s32 GaiaRockInside_CaskBursts(void) {
         dust->update = Effect_AdvanceMotionAtLeaderPriority;
       }
     }
-  } while (--i >= 0);
+  }
   return 0;
 }
 
@@ -3303,8 +3302,7 @@ void GaiaRockInside_StatueRisesUnderLeader(s32 id, s32 flag) {
   GaiaRockInside_PlaceStatue(id, leader->x.fixed, leader->y.fixed,
                              leader->z.fixed);
   Actor_StartScript(pillar, gGaiaRockInside_StatueRiseScript);
-  i = 15;
-  do {
+  for (i = 0; i < 16; i++) {
     struct Actor *dust =
         FieldActor_Create(SPRITE_ROCK, leader->x.fixed,
                           leader->y.fixed + toFIXED(16), leader->z.fixed);
@@ -3328,7 +3326,7 @@ void GaiaRockInside_StatueRisesUnderLeader(s32 id, s32 flag) {
       dust->gravity = toFIXED(33) / 100;
       dust->bounce = FIXED_ONE / 2;
     }
-  } while (--i >= 0);
+  }
   Event_PlaySound(SE_STATUE_RISE);
   Event_PlaySound(SE_FLOOR_SWITCH);
   MapGrid_SetShake(2, 2, 0.9);

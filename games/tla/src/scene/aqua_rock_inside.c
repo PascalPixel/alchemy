@@ -1175,8 +1175,7 @@ void AquaRockInside_WaterSinks(void) {
   layer->offsetY -= toFIXED(32);
   MapGrid_CenterOnFollowedPoint();
   MapGrid_SetShake(1, 1, 1);
-  i = 14;
-  do {
+  for (i = 0; i < 15; i++) {
     {
       s32 column = 77;
       s32 row = 8;
@@ -1186,8 +1185,7 @@ void AquaRockInside_WaterSinks(void) {
       MapGrid_CopyCellsLayered(50, 8, 7, 6, column, row);
       System_Wait(1);
     }
-    i--;
-  } while (i >= 0);
+  }
   System_Wait(10);
   for (i = 0; i < 128; i++) {
     layer->offsetY += toFIXED(1) / 4;
@@ -1617,15 +1615,13 @@ void AquaRockInside_FallThroughWater(void) {
   *flags = 0;
   actor->y.fixed = toFIXED(80);
   speed = toFIXED(3);
-  i = 31;
-  do {
+  for (i = 0; i < 32; i++) {
     actor->y.fixed -= speed;
     actor->facing += DEGtoANG(45);
     speed += -(toFIXED(1) / 20);
     Actor_SetSpriteFlags(actor, 0);
     System_Wait(1);
-    i--;
-  } while (i >= 0);
+  }
   AquaRockInside_SpawnSplash(actor);
   Actor_SetSpriteColorMode(actor, 0);
   Actor_SetSpeed(gMainRoutineWork.leaderActorId, 2);

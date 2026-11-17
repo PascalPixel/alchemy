@@ -593,15 +593,14 @@ void TaopoSwamp_BlowFlowerOffLedge(void) {
   Actor_SetAttachedEffect(ACTOR_FLOWER,
                           ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ATTACH);
   speed = toFIXED(1) / 2;
-  i = 2;
-  do {
+  for (i = 0; i < 3; i++) {
     actor->velocityY = toFIXED(2);
     Event_PlaySound(SE_JUMP);
     actor->speedLimit = speed;
     actor->acceleration = speed / 2;
     Actor_WalkByAndWait(ACTOR_FLOWER, 0, 8);
     speed += toFIXED(0.25);
-  } while (--i >= 0);
+  }
   Event_PlaySound(SE_FALL);
   actor->velocityY = toFIXED(4);
   Actor_WalkByAndWait(ACTOR_FLOWER, 0, 8);
@@ -879,8 +878,7 @@ void TaopoSwamp_TremorPillar(void) {
   Actor_SetDestination(ACTOR_TREMOR_PILLAR_ROCK, 440, 232);
   Actor_Get(ACTOR_TREMOR_PILLAR_ROCK)->velocityY = toFIXED(10);
   rock->update = 0;
-  i = 15;
-  do {
+  for (i = 0; i < 16; i++) {
     clod = (FieldActor_Create(SPRITE_ROCK, rock->x.fixed,
                               rock->y.fixed + toFIXED(16), rock->z.fixed));
     if (clod != 0) {
@@ -902,7 +900,7 @@ void TaopoSwamp_TremorPillar(void) {
       clod->scaleY = scale;
       clod->bounce = FIXED_ONE / 2;
     }
-  } while (--i >= 0);
+  }
   FieldMapGrid_WaitForShakeToSettle();
   Task_AddFrame(TaopoSwamp_OpenPassage, TASK_PASS_FRAME);
   System_Wait(40);

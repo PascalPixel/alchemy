@@ -213,12 +213,10 @@ void JupiterLighthouse_CycloneDropsLeader(s32 kind) {
     System_Wait(1);
   }
   Actor_SelectAnimation(effect, 6);
-  i = 14;
-  do {
+  for (i = 0; i < 15; i++) {
     leader->facing += DEGtoANG(45);
     System_Wait(1);
-    i--;
-  } while (i >= 0);
+  }
   Actor_Release(effect);
   Actor_SetSpriteFlags(Actor_Get(owner), 1);
   leader->facing = FACING_SOUTH;
@@ -291,14 +289,12 @@ void JupiterLighthouse_CycloneLiftsLeader(s32 kind) {
   Actor_SelectAnimation(effect, 6);
   leader->scaleX = FIXED_ONE * 3 / 8;
   leader->scaleY = FIXED_ONE * 3 / 8;
-  i = 19;
-  do {
+  for (i = 0; i < 20; i++) {
     leader->facing += DEGtoANG(45);
     leader->scaleX += FIXED_ONE / 32;
     leader->scaleY = leader->scaleX;
     System_Wait(1);
-    i--;
-  } while (i >= 0);
+  }
   Actor_Release(effect);
   Actor_SetSpriteFlags(Actor_Get(owner), 1);
   leader->facing = FACING_SOUTH;

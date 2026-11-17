@@ -759,13 +759,11 @@ void Party_BalanceDjinn(void) {
 
       sum = 0;
       counts = unit->djinnHeldCounts;
-      j = 3;
-      do {
+      for (j = 0; j < 4; j++) {
         u8 value = *counts;
         counts++;
         sum += value;
-        j--;
-      } while (j >= 0);
+      }
       if (sum > high) {
         high = sum;
         highNo = owner;

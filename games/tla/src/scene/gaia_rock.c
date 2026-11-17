@@ -648,8 +648,7 @@ void GaiaRock_StatueRisesUnderLeader(s32 id, s32 flag) {
   pillar = Actor_Get(id);
   GaiaRock_PlaceStatue(id, leader->x.fixed, leader->y.fixed, leader->z.fixed);
   Actor_StartScript(pillar, gGaiaRock_StatueRiseScript);
-  i = 15;
-  do {
+  for (i = 0; i < 16; i++) {
     struct Actor *dust =
         FieldActor_Create(SPRITE_ROCK, leader->x.fixed,
                           leader->y.fixed + toFIXED(16), leader->z.fixed);
@@ -673,7 +672,7 @@ void GaiaRock_StatueRisesUnderLeader(s32 id, s32 flag) {
       dust->gravity = toFIXED(33) / 100;
       dust->bounce = FIXED_ONE / 2;
     }
-  } while (--i >= 0);
+  }
   Event_PlaySound(SE_STATUE_RISE);
   Event_PlaySound(SE_FLOOR_SWITCH);
   MapGrid_SetShake(2, 2, 0.9);

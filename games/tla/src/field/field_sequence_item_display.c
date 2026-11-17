@@ -40,14 +40,15 @@
 #include "macros.h"
 #include "field/field_sequence_event.h"
 #include "system/input.h"
-
-// The parts, in ROM order.
 #include "field/screen_transition.h"
 #include "field/object.h"
 #include "field/event.h"
 #include "gamepak/far_call/window.h"
 #include "field/ground_mask.h"
 #include "resource_ids.h"
+
+/// The actors of Ram_HeapSlots->actors, as field_internal.h's ACTOR_COUNT.
+#define ACTOR_COUNT 64
 
 /// Unused: only the far-call table refers to it. Finds the first treasure spot
 /// actor within 16 pixels of the leader on both axes and puts the leader 20
@@ -98,7 +99,8 @@ void ItemDisplay_EmitSparkles(struct Actor *emitter) {
   // Once the picture's rise has all but stopped (under 1/256 pixel a frame),
   // clearing its motion flags (ACTOR_FALLS and ACTOR_FOLLOWS_TERRAIN)
   // ends gravity, so it hangs at the top of its rise.
-  if (emitter->velocityY >= -255 && emitter->velocityY <= 255)
+  if (emitter->velocityY > -(toFIXED(1) / 256) &&
+      emitter->velocityY < toFIXED(1) / 256)
     emitter->motionFlags = 0;
 
   // Test the chance before drawing the radius and angle from the RNG.
@@ -117,6 +119,8 @@ void ItemDisplay_EmitSparkles(struct Actor *emitter) {
 
 /// Returns 1 while Reveal is active, else 0.
 s32 Field_IsRevealActive(struct Actor *interpreter) {
+  /* FAKEMATCH(temporary): the state tested for nonzero by the sign bit of
+   * (0 - x) | x, held in a local; as work->revealActive != 0. */
   s16 revealState;
   u32 isActive = 0;
   struct FieldWork *work = gFieldWork;
@@ -155,7 +159,7 @@ struct Actor *ItemDisplay_ShowItemInFront(s32 actorId, s32 item) {
   }
   if (work->revealActive != 0) {
     actor = Ram_HeapSlots->actors;
-    i = 63;
+    i = ACTOR_COUNT - 1;
     do {
       if (actor->script != NULL) {
         if (actor->update == Reveal_EmitSparkles)
@@ -193,7 +197,7 @@ struct Actor *ItemDisplay_ShowItemInFront(s32 actorId, s32 item) {
     struct Actor *marker = Ram_HeapSlots->actors;
     s32 j;
 
-    for (j = 0; j <= 63; j++, marker++) {
+    for (j = 0; j < ACTOR_COUNT; j++, marker++) {
       if (marker->script != NULL &&
           marker->script == (s32 *)gBattleEffect_MarkerParticleScript &&
           FIELD_CELL(marker->x.fixed) == FIELD_CELL(picture->x.fixed) &&
@@ -320,22 +324,18 @@ void Reveal_EmitSparkles(struct Actor *actor) {
   Actor_InitializeSparkle(object);
 }
 
-// Places the scene's markers from its scene item rows (a type, an event id, a
-// flag and a pad): for each of the first 16 rows whose flag is clear and whose
-// event has not run, a marker object goes at its event object, or at the map
-// cell of a tile event, when that point is on screen.
-
-/// Places a marker at each waiting scene item event that is on screen.
+/// Places Reveal's markers from the scene's item rows (a type, an event id, a
+/// flag and a pad): for each of the treasure spots' rows whose flag is clear
+/// and whose event has not run, a sparkle marker goes at its actor, or at the
+/// map cell of a tile event, when that point is on screen.
 void FieldEffect_SpawnRevealMarkers(void) {
-  // The row type is s16, as the rows are: with it the copied head test stays
-  // apart from the bottom one.
   s16 *entry = SceneItem_GetRows();
   u8 *map = (u8 *)Ram_HeapSlots->mapGrid;
   s32 *origin = &((struct MapWork *)map)->viewX;
   s32 originX = origin[0] & FIELD_PIXEL_MASK;
   s32 originZ = origin[1] & FIELD_PIXEL_MASK;
-  // One actor in the frame: a word of the map header, then the point
-  // SceneItem_FindPosition fills for each row.
+  // A word of the map header, then the point SceneItem_FindPosition fills for
+  // each row.
   struct {
     s32 headerWord;
     s32 position[3];
@@ -356,7 +356,8 @@ void FieldEffect_SpawnRevealMarkers(void) {
   found.headerWord = (*(s32 **)map)[1];
   if (entry == NULL)
     return;
-  for (i = 0; i <= 15 && (type = *entry++) != 0 && !(type & SCENE_ITEMS_HEADER);
+  for (i = 0; i <= SCOOPED_ITEM_ACTOR - FIELD_TREASURE_ACTOR &&
+              (type = *entry++) != 0 && !(type & SCENE_ITEMS_HEADER);
        i++) {
     id = entry[0];
     flag = entry[1];
@@ -402,3 +403,5 @@ void FieldEffect_SpawnRevealMarkers(void) {
     }
   }
 }
+
+#undef ACTOR_COUNT

@@ -6,6 +6,7 @@
 #include "menu_internal.h"
 #include "resource_ids.h"
 #include "sounds.h"
+#include "field/field_sequence.h"
 
 /// Each item command's state in the grid.
 #define ITEM_COMMAND_STATE_DISABLED (-1)
@@ -125,7 +126,7 @@ s32 ItemMenu_Run(void) {
     struct FieldWork *field = Ram_HeapSlots->fieldWork;
 
     // The item goes to the field to be used, as Field_UseItem reads it.
-    field->item = (owner << 10) | (item & INVENTORY_ITEM_ID_MASK);
+    field->item = (owner << ACT_UNIT_SHIFT) | (item & INVENTORY_ITEM_ID_MASK);
     field->itemSlot = screen->selectedSlots[0];
   }
 

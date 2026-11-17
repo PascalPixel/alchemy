@@ -48,8 +48,8 @@
 
 #define THOR_SPRITES 9 ///< Thor's sprites, in SUMMON_FORMATION_THOR
 
-/// Where the projection's centre falls on the canvas, which is shown at twice
-/// its width.
+/// The canvas point a projected (0, 0) is drawn at; the canvas is shown at
+/// twice its width, so a projected x is halved first.
 #define THOR_CANVAS_CENTER_X (CANVAS_SIZE / 2)
 #define THOR_CANVAS_CENTER_Y 60
 

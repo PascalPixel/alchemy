@@ -13,6 +13,8 @@
 #include "field/field.h"
 #include "field/object.h"
 #include "window/window.h"
+#include "window/message_speed.h"
+#include "game/item.h"
 #include "field/field_sequence.h"
 
 /// Debug only: while debug mode is on, R makes every event wait (Event_Wait)
@@ -74,6 +76,9 @@ void Event_Start(void) {
   state->unusedBeforeCamera[0] = -1;
   state->unusedBeforeCamera[1] = -1;
   Task_Add((s32)Event_UpdateDebugSkip, TASK_PASS_FRAME);
+  // XXX (no evidence): what flag 0x132 means; every event start in both games
+  // clears it, and nothing in either game's source sets or reads it by its
+  // number.
   GameFlag_Clear(0x132);
   {
     struct MainRoutineWork *party = &gMainRoutineWork;
@@ -98,25 +103,25 @@ void Event_End(void) {
   }
 }
 
-/// An empty event callback.
-void Event_EmptyCallback(void) {}
+/// An empty function nothing calls.
+UNUSED void Event_EmptyCallback(void) {}
 
 /// An empty hook; it does nothing in the released game. Only
 /// Event_RunObjectHookAndWait calls it.
-void Event_EmptyObjectHook(void) {}
+void Event_EmptyHook(void) {}
 
 /// Rebuilds the leader's actor from its placement row (Actor_ResetForLeader),
 /// waits a frame and returns the leader's actor.
-struct Actor *Event_RunObjectHookAndWait(s32 object) {
-  Event_EmptyObjectHook();
-  Actor_ResetForLeader(object);
+struct Actor *Event_RunObjectHookAndWait(s32 table) {
+  Event_EmptyHook();
+  Actor_ResetForLeader(table);
   wait(1);
   return Actor_Lookup(Party_GetLeaderActor());
 }
 
 /// Spawns the actors of an actor placement table after the last actor in use.
-void Event_CallWithLastActiveObjectId(s32 event_id) {
-  Event_SpawnObjectTable((struct ActorPlacement *)event_id,
+void Event_CallWithLastActiveObjectId(s32 table) {
+  Event_SpawnObjectTable((struct ActorPlacement *)table,
                          Actor_FindLastActiveId());
 }
 
@@ -125,11 +130,11 @@ void Event_SetSceneEvents(s32 events) { gFieldWork->triggers = events; }
 
 /// Adds unit to the party. With announce nonzero it also shows `<name> joined
 /// your party.` (Party_ShowJoinedMessage, which receives announce too).
-void Event_AddPartyMember(s32 event_id, s32 value) {
-  Unit_Get(event_id);
-  Party_AddMemberFar(event_id);
-  if (value != 0) {
-    Party_ShowJoinedMessageFar(event_id, value);
+void Event_AddPartyMember(s32 unit, s32 announce) {
+  Unit_Get(unit);
+  Party_AddMemberFar(unit);
+  if (announce != 0) {
+    Party_ShowJoinedMessageFar(unit, announce);
   }
 }
 
@@ -200,20 +205,24 @@ s32 Party_CheckItemLimit(s32 item) {
   Party_CountMembersFar();
   if (PartyInventory_FindRoomFar(item) < 0) {
     MessageArgument_PushFar(item, MESSAGE_ARGUMENT_ITEM);
+    // "Felix's party cannot carry any more <item>s..."
     FieldMessage_ShowFar((s32)MsgPartyCannotCarry, FIELD_MESSAGE_ZOOM);
     MessageArgument_PushFar(item, MESSAGE_ARGUMENT_ITEM);
+    // "Felix threw the <item> as far away as possible."
     FieldMessage_ShowFar((s32)MsgPartyCannotCarry + 1, FIELD_MESSAGE_ZOOM);
     return -1;
   }
   return 0;
 }
 
-// The mode of the message that an item went to another member: patch 2 (German
-// alone) changes it, and patch 3 drops the message.
+// After a drop, "Felix gave <item> to <member>." shows zooming open alone in
+// German (patch 2), waiting for the jingle as well before it, and patch 3
+// drops the message.
 #if TLA_PATCH_2 && !TLA_PATCH_3
-#define ITEM_GIVEN_MODE 1
+#define GIFT_RECEIVED_MESSAGE_MODE FIELD_MESSAGE_ZOOM
 #else
-#define ITEM_GIVEN_MODE 3
+#define GIFT_RECEIVED_MESSAGE_MODE                                             \
+  (FIELD_MESSAGE_ZOOM | FIELD_MESSAGE_WAITING_FOR_SOUND)
 #endif
 
 /// The event command "give item": gives item to the first party member with
@@ -231,19 +240,24 @@ s32 PartyInventory_GiveItem(s32 item, s32 unused) {
   owner = PartyInventory_AddFar(item);
   if (owner == -1) {
     MessageArgument_PushFar(item, MESSAGE_ARGUMENT_ITEM);
+    // "Felix got <item>."
     FieldMessage_ShowFar((s32)&MsgItemReceived, FIELD_MESSAGE_ZOOM);
+    // "But you can't carry any more items."
     FieldMessage_ShowFar((s32)&MsgItemCannotCarry, FIELD_MESSAGE_ZOOM);
   retry:
     {
+      // "What will you drop?"
       FieldMessage_ShowFar((s32)&MsgItemDropPrompt, FIELD_MESSAGE_ZOOM);
       result = ItemPicker_RunToDropFar(&member, &slot);
       if (result == -1) {
         if (Item_GetDirectFar(item)->flags & ITEM_INDISPENSABLE) {
           MessageArgument_PushFar(item, MESSAGE_ARGUMENT_ITEM);
+          // "That <item>'s valuable! You must get it!"
           FieldMessage_ShowFar((s32)&MsgItemDropPrompt + 4, FIELD_MESSAGE_ZOOM);
           goto retry;
         }
         MessageArgument_PushFar(item, MESSAGE_ARGUMENT_ITEM);
+        // "Drop the <item>?"
         FieldMessage_ShowFar((s32)&MsgItemDropPrompt + 1,
                              FIELD_MESSAGE_ZOOM | FIELD_MESSAGE_KEEP_OPEN);
         result = FieldYesNo_Ask(1);
@@ -252,12 +266,13 @@ s32 PartyInventory_GiveItem(s32 item, s32 unused) {
           goto retry;
         Item_AdjustCounterFar(item, 1);
         MessageArgument_PushFar(item, MESSAGE_ARGUMENT_ITEM);
+        // "Felix drops the <item>."
         FieldMessage_ShowFar((s32)&MsgItemDropPrompt + 2, FIELD_MESSAGE_ZOOM);
         goto done;
       }
       Unit_Get(member);
       count = Inventory_GetQuantityFar(member, slot);
-      if (Inventory_CountItemFar(member, item) > 29) {
+      if (Inventory_CountItemFar(member, item) >= INVENTORY_STACK_MAX) {
         MessageArgument_PushFar(member, MESSAGE_ARGUMENT_ACTOR);
         MessageArgument_PushFar(item, MESSAGE_ARGUMENT_ITEM);
         FieldMessage_ShowFar((s32)&MsgItemDropPrompt + 7, FIELD_MESSAGE_ZOOM);
@@ -278,7 +293,7 @@ s32 PartyInventory_GiveItem(s32 item, s32 unused) {
         MessageArgument_PushFar(item, MESSAGE_ARGUMENT_ITEM);
         MessageArgument_PushFar(owner, MESSAGE_ARGUMENT_ACTOR);
 #if !TLA_PATCH_3
-        FieldMessage_ShowFar((s32)&MsgItemGiven, ITEM_GIVEN_MODE);
+        FieldMessage_ShowFar((s32)&MsgItemGiven, GIFT_RECEIVED_MESSAGE_MODE);
 #endif
       }
     }
@@ -286,6 +301,8 @@ s32 PartyInventory_GiveItem(s32 item, s32 unused) {
     work->message = saved;
     return owner;
   }
+  // There was room: "Felix got <item>.", and "Felix gave <item> to
+  // <member>." when someone other than the leader carries it.
   Sound_PlayFar(MUS_TREASURE_FOUND);
   MessageArgument_PushFar(item, MESSAGE_ARGUMENT_ITEM);
   FieldMessage_ShowFar((s32)&MsgItemReceived,
@@ -299,23 +316,18 @@ s32 PartyInventory_GiveItem(s32 item, s32 unused) {
   return owner;
 }
 
-// Inventory: give an item and return its owner.
-
-/// Gives the item. Returns the character ID on success, or -1 if the
-/// inventory is full.
-/// item: item ID.
-/// owner: recipient character ID.
+/// Gives item to one party member. Returns unit, or -1 if its bag is full.
 s32 Inventory_TryAddAndReturnMember(s32 item, s32 unused, s32 unit) {
   if (Inventory_AddItemFar(unit, item) >= 0)
     return unit;
   return -1;
 }
 
-/// An empty callback.
-void Inventory_NoOpCallback(void) {}
+/// An empty function nothing calls.
+UNUSED void Inventory_NoOpCallback(void) {}
 
-/// An empty callback.
-void Inventory_ReservedNoOp(void) {}
+/// An empty function nothing calls.
+UNUSED void Inventory_ReservedNoOp(void) {}
 
 /// Waits, at most 90 frames, for an actor's animation to stop being animation:
 /// the actor has finished a one-off animation such as a nod.
@@ -336,11 +348,15 @@ void Actor_WaitForAnimationEnd(s32 actorId, s32 animation) {
   }
 }
 
+/// The last tile row the message windows may reach with a yes-or-no question
+/// still asked below them.
+#define YES_NO_BELOW_LAST_ROW 15
+
 /// The event command "choose yes or no": once the message on screen has been
 /// read, asks yes or no below it, or above it when the message windows reach
-/// past row 15 (unless forceBottom is set). The speaker nods (ANIM_NOD) at yes
-/// and shakes its head (ANIM_SHAKE_HEAD) at no; at the fastest message speed
-/// neither is waited for.
+/// past YES_NO_BELOW_LAST_ROW (unless forceBottom is set). The speaker nods
+/// (ANIM_NOD) at yes and shakes its head (ANIM_SHAKE_HEAD) at no; at the
+/// fastest message speed neither is waited for.
 s32 Event_AskYesNoWithActorAnimation(s32 actor, s32 forceBottom) {
   struct FieldWork *work = Ram_HeapSlots->fieldWork;
   s32 sprite = *(s16 *)Scene_FindActorPlacement(work->speaker);
@@ -352,7 +368,7 @@ s32 Event_AskYesNoWithActorAnimation(s32 actor, s32 forceBottom) {
   while (Message_AllTypedFar() == 0)
     wait(1);
 
-  wait((2 - gMainRoutineWork.messageSpeed) * 3);
+  wait((MESSAGE_SPEED_FAST - gMainRoutineWork.messageSpeed) * 3);
 
   if (forceBottom == 0) {
     s32 bottom = (s16)window->y + window->height;
@@ -363,7 +379,7 @@ s32 Event_AskYesNoWithActorAnimation(s32 actor, s32 forceBottom) {
         bottom = sideBottom;
     }
 
-    if (bottom > 15)
+    if (bottom > YES_NO_BELOW_LAST_ROW)
       useBottom = 0;
   }
 
@@ -373,13 +389,13 @@ s32 Event_AskYesNoWithActorAnimation(s32 actor, s32 forceBottom) {
     Actor_SetAnimationById(actor, ANIM_SHAKE_HEAD);
     Portrait_CloseWindowFar(sprite);
     Message_CloseFinishedWindowsFar();
-    if (gMainRoutineWork.messageSpeed != 2)
+    if (gMainRoutineWork.messageSpeed != MESSAGE_SPEED_FAST)
       Actor_WaitForAnimationEnd(actor, ANIM_SHAKE_HEAD);
   } else {
     Actor_SetAnimationById(actor, ANIM_NOD);
     Portrait_CloseWindowFar(sprite);
     Message_CloseFinishedWindowsFar();
-    if (gMainRoutineWork.messageSpeed != 2)
+    if (gMainRoutineWork.messageSpeed != MESSAGE_SPEED_FAST)
       Actor_WaitForAnimationEnd(actor, ANIM_NOD);
   }
 
@@ -398,8 +414,9 @@ s32 Event_PickUpItem(s32 actor, s32 item, s32 flag) {
     Actor_GetById(actor)->scaleX = 0;
     ItemDisplay_ShowItem(item, 3);
     MessageArgument_PushFar(item, MESSAGE_ARGUMENT_ITEM);
+    // "Felix found <item>."
     FieldMessage_ShowFar((s32)&MsgFoundItem, FIELD_MESSAGE_ZOOM);
-    // Four messages on: "But <protagonist>'s party can't carry any more".
+    // "But Felix's party can't carry any more, so they left it behind."
     FieldMessage_ShowFar((s32)&MsgFoundItem + 4, FIELD_MESSAGE_ZOOM);
     Actor_GetById(actor)->scaleX = FIXED_ONE;
     Actor_FaceActorById(gMainRoutineWork.leaderActorId, actor, 0);
@@ -414,17 +431,14 @@ s32 Event_PickUpItem(s32 actor, s32 item, s32 flag) {
   return 0;
 }
 
-// Messages: teach an ability and display the learning message.
-
-/// Teaches the ability, plays a sound, shows a message and waits for it to
-/// advance.
-/// unit: character ID (message name 1).
-/// ability: ability ID (message ability 4).
+/// Teaches unit the Psynergy ability and says so with its jingle, waiting for
+/// the player to read it.
 void Party_LearnAbility(s32 unit, s32 ability) {
   Unit_LearnPsynergyFar(unit, ability);
   Sound_PlayFar(MUS_TREASURE_FOUND);
   MessageArgument_PushFar(unit, MESSAGE_ARGUMENT_ACTOR);
   MessageArgument_PushFar(ability, MESSAGE_ARGUMENT_ABILITY);
+  // "<member> learned <ability>."
   FieldMessage_ShowFar(MsgAbilityLearned,
                        FIELD_MESSAGE_ZOOM | FIELD_MESSAGE_WAITING_FOR_SOUND);
 }
@@ -476,3 +490,6 @@ void Event_SetExitRequest(u16 request) {
   struct FieldWork *state = gFieldWork;
   state->exit = request;
 }
+
+#undef GIFT_RECEIVED_MESSAGE_MODE
+#undef YES_NO_BELOW_LAST_ROW

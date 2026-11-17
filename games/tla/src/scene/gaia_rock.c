@@ -294,7 +294,7 @@ void GaiaRock_CheckAltar(void) {
 
   Message_ShowCentered(MsgCheckedTheAltar, 1);
   if (actor != NULL && actor->x.fixed != 0) {
-    Scene_TalkToActor(TALK_WITHOUT_CHECK_MESSAGE | FIELD_TREASURE_ACTOR);
+    Scene_TalkToActor(FIELD_TALK_SILENT | FIELD_TREASURE_ACTOR);
   } else if (Event_GetFlag(FLAG_DANCING_IDOL_TAKEN) == 0) {
     struct FieldWork *work = Ram_HeapSlots->fieldWork;
 

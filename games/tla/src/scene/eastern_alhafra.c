@@ -1,12 +1,12 @@
 /// @file
 /// Eastern Alhafra, the dock where the ship Briggs bought lies with its mast
-/// pinned under a huge rock. On the first visit the party overhears his
+/// pinned under a huge block. On the first visit the party overhears his
 /// sailors (EasternAlhafra_OverhearWorkers); Briggs himself is fought and
 /// caught aboard (eastern_alhafra_ship.c). The mast is then cleared as a
 /// puzzle: crates and rocks pushed or Moved into the water
 /// (EasternAlhafra_FinishPushing), the log rolled in (EasternAlhafra_RollLog),
 /// the stake holding the ropes Pounded (EasternAlhafra_PoundStake), and the
-/// stone block on the mast Burst (EasternAlhafra_BurstMastBlock). The workers
+/// block on the mast Burst (EasternAlhafra_BurstMastBlock). The workers
 /// tell the mayor (EasternAlhafra_WorkersTellMayor), Briggs escapes and sails
 /// off in the ship (EasternAlhafra_BriggsStealsShip), and the mayor finds it
 /// gone (EasternAlhafra_MayorFindsShipGone). The water ripples by an HBlank
@@ -66,8 +66,8 @@
 #define FLAG_OVERHEARD_WORKERS 0x8a9
 #define FLAG_ASKED_TO_HELP 0x8ac
 #define FLAG_ASKED_IF_FINISHED 0x8ad
-#define FLAG_REACHED_ROCK 0x8be
-#define FLAG_GAVE_UP_ON_ROCK 0x8bf
+#define FLAG_REACHED_MAST_BLOCK 0x8be
+#define FLAG_GAVE_UP_ON_MAST_BLOCK 0x8bf
 #define FLAG_WORKERS_SAW_BLOCK_GONE 0x904
 
 /// Where the party is brought back to the docks once Briggs has taken the
@@ -191,7 +191,7 @@ void EasternAlhafra_TalkToSailor(void);
 void EasternAlhafra_StepOntoMast(void);
 
 void EasternAlhafra_IgnoreDiagonalStep(void);
-void EasternAlhafra_GiveUpOnRock(void);
+void EasternAlhafra_GiveUpOnMastBlock(void);
 void EasternAlhafra_AskToHelpWithMast(void);
 void EasternAlhafra_WorkersTellMayor(void);
 void EasternAlhafra_BriggsStealsShip(void);
@@ -247,7 +247,7 @@ void *Scene_GetActorPlacements(void) {
   return gEasternAlhafra_Placements;
 }
 
-/// Burst on the stone block pinning the mast: each small blast (mode 2)
+/// Burst on the block pinning the mast: each small blast (mode 2)
 /// throws two rocks from it and the great one (mode 3) thirty, and as the
 /// blasts die down (mode 1) the mast is cleared.
 void EasternAlhafra_BurstMastBlock(s32 mode, s32 frame) {
@@ -644,20 +644,22 @@ void EasternAlhafra_EnterShip(s32 countdown) {
 /// walk straight north or south pushes.
 void EasternAlhafra_IgnoreDiagonalStep(void) {}
 
-/// Stepping beside the rock on the mast.
-void EasternAlhafra_ReachRock(void) { GameFlag_Set(FLAG_REACHED_ROCK); }
+/// Stepping beside the block on the mast.
+void EasternAlhafra_ReachMastBlock(void) {
+  GameFlag_Set(FLAG_REACHED_MAST_BLOCK);
+}
 
-/// Walking away from the rock before the party can Burst it: Jenna says it
+/// Walking away from the block before the party can Burst it: Jenna says it
 /// will have to wait.
-void EasternAlhafra_GiveUpOnRock(void) {
+void EasternAlhafra_GiveUpOnMastBlock(void) {
   struct Actor *leader;
 
   while (Event_GetFlag(FLAG_BRIGGS_CAUGHT) &&
          Event_GetFlag(FLAG_ALHAFRA_MAST_CLEARED) == 0 &&
-         Event_GetFlag(FLAG_REACHED_ROCK)) {
+         Event_GetFlag(FLAG_REACHED_MAST_BLOCK)) {
     if (Party_FindOwnerWithAction(ABILITY_BURST) != -1)
       return;
-    Event_SetFlag(FLAG_GAVE_UP_ON_ROCK);
+    Event_SetFlag(FLAG_GAVE_UP_ON_MAST_BLOCK);
     Event_Start();
     FieldEvent_ResolvePendingActions(0);
     Actor_WalkToAndWait(ACTOR_FELIX, 488, 440);
@@ -2639,7 +2641,7 @@ void PushTarget_Push(struct PushTarget target) {
 #undef PIXEL_PART
 #include "text/msg_ids.h"
 
-void EasternAlhafra_ReachRock(void);
+void EasternAlhafra_ReachMastBlock(void);
 
 // clang-format off
 u16 gPushKinds[PUSH_KINDS] = {
@@ -2797,8 +2799,8 @@ struct Trigger gSceneEvents[] = {
     {TRIGGER_STEP, 21, FLAG_WORKERS_TOLD_MAYOR, EVENT(EasternAlhafra_WorkersTellMayor)},
     {TRIGGER_STEP, 22, FLAG_ALHAFRA_SHIP_GONE, EVENT(EasternAlhafra_BriggsStealsShip)},
     {TRIGGER_STEP, 23, FLAG_ASKED_TO_HELP, EVENT(EasternAlhafra_AskToHelpWithMast)},
-    {TRIGGER_STEP, 24, FLAG_GAVE_UP_ON_ROCK, EVENT(EasternAlhafra_GiveUpOnRock)},
-    {TRIGGER_STEP, 25, FLAG_REACHED_ROCK, EVENT(EasternAlhafra_ReachRock)},
+    {TRIGGER_STEP, 24, FLAG_GAVE_UP_ON_MAST_BLOCK, EVENT(EasternAlhafra_GiveUpOnMastBlock)},
+    {TRIGGER_STEP, 25, FLAG_REACHED_MAST_BLOCK, EVENT(EasternAlhafra_ReachMastBlock)},
     {TRIGGER_TABLE_END},
 };
 

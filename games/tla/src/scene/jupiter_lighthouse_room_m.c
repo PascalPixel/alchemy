@@ -167,13 +167,15 @@ enum { ENTRANCE_AFTER_THE_FIGHT = 77, ENTRANCE_ISAAC_AND_IVAN_FALL = 99 };
 /// The energy block's gap: the cell it drops into and lights the path from.
 enum { ENERGY_BLOCK_GAP_CELL_X = 63, ENERGY_BLOCK_GAP_CELL_Z = 15 };
 
-/// The lightning's picture: its map, four tiles by sixteen, drawn on screen
-/// block 4, which BG0 shows for the strike.
-enum {
-  LIGHTNING_SCREEN_BLOCK = 4,
-  LIGHTNING_MAP_WIDTH = 4,
-  LIGHTNING_MAP_HEIGHT = 16
-};
+/// The lightning bolt's picture (RESOURCE_LIGHTNING_TILES and
+/// RESOURCE_LIGHTNING_MAP), shown on BG0 for the strike: its tiles at the start
+/// of character block 0, and its map, LIGHTNING_MAP_ROWS rows of
+/// LIGHTNING_MAP_COLUMNS numbered from tile 512, on screen block
+/// LIGHTNING_SCREEN_BLOCK.
+#define LIGHTNING_TILES 64
+#define LIGHTNING_MAP_ROWS 16
+#define LIGHTNING_MAP_COLUMNS 4
+#define LIGHTNING_SCREEN_BLOCK 4
 
 /// More HP or PP than anyone has, so that taking it away leaves none; and the
 /// HP Isaac is left with for the fight that cannot be won.
@@ -255,23 +257,24 @@ void JupiterLighthouse_FlashSky(void) {
   }
   REG_DISPCNT &= ~DISPCNT_BG0_ON;
   Io_Write16(BGCNT_SCREEN_BASE(LIGHTNING_SCREEN_BLOCK), &REG_BG0CNT);
-  buffer = Heap_Alloc(2048);
+  buffer = Heap_Alloc(LIGHTNING_TILES * TILE_SIZE_4BPP);
   Decompress_TaggedLz(Resource_GetTableEntry(RESOURCE_LIGHTNING_TILES), buffer);
-  Dma_Set(buffer, (void *)VRAM, DMA_COPY_WORDS(512), REG_DMA3);
+  Dma_Set(buffer, (void *)BG_CHAR_BLOCK(0),
+          DMA_COPY_WORDS(LIGHTNING_TILES * TILE_SIZE_4BPP / 4), REG_DMA3);
   Heap_Release(buffer);
   Dma_Fill16(0, BG_SCREEN_BLOCK(LIGHTNING_SCREEN_BLOCK), BG_SCREEN_SIZE);
-  buffer = Heap_Alloc(128);
+  buffer = Heap_Alloc(LIGHTNING_MAP_ROWS * LIGHTNING_MAP_COLUMNS * sizeof(u16));
   Decompress_TaggedLz(Resource_GetTableEntry(RESOURCE_LIGHTNING_MAP), buffer);
   p = buffer;
-  for (i = 0; i != LIGHTNING_MAP_WIDTH * LIGHTNING_MAP_HEIGHT; i++)
+  for (i = 0; i != LIGHTNING_MAP_COLUMNS * LIGHTNING_MAP_ROWS; i++)
     *p++ &= 0xfcff;
   p = buffer;
-  for (i = 0; i != LIGHTNING_MAP_HEIGHT; i++) {
+  for (i = 0; i != LIGHTNING_MAP_ROWS; i++) {
     Dma_Set(p,
             BG_SCREEN_BLOCK(LIGHTNING_SCREEN_BLOCK) +
                 i * BG_SCREEN_WIDTH * sizeof(u16),
-            DMA_COPY_WORDS(LIGHTNING_MAP_WIDTH * sizeof(u16) / 4), REG_DMA3);
-    p += LIGHTNING_MAP_WIDTH;
+            DMA_COPY_WORDS(LIGHTNING_MAP_COLUMNS * sizeof(u16) / 4), REG_DMA3);
+    p += LIGHTNING_MAP_COLUMNS;
   }
   Heap_Release(buffer);
   REG_BLDALPHA = BLEND_ALPHA(16, 16);
@@ -349,7 +352,7 @@ void JupiterLighthouse_FinishMovingBlock(s32 unused, s32 id) {
   if (FIELD_CELL(actor->x.fixed) == ENERGY_BLOCK_GAP_CELL_X &&
       FIELD_CELL(actor->z.fixed) == ENERGY_BLOCK_GAP_CELL_Z) {
     Event_SetFlag(FLAG_ENERGY_BLOCK_IN_GAP);
-    actor->motionFlags = 3;
+    actor->motionFlags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
     System_Wait(2);
     i = 0;
     if (actor->y.fixed > actor->groundHeight || actor->velocityY != 0) {
@@ -470,7 +473,7 @@ void JupiterLighthouse_OpenFloor(void) {
     FieldCamera_WaitForArrival();
     Sound_Play(SE_FALL);
     actor->gravity = toFIXED(1) / 2;
-    actor->motionFlags = 2;
+    actor->motionFlags = ACTOR_FALLS;
     actor->groundHeight = toFIXED(-80);
     i = 0;
     if (actor->y.fixed > actor->groundHeight) {
@@ -508,7 +511,7 @@ void JupiterLighthouse_OpenFloor(void) {
     FieldCamera_WaitForArrival();
     Sound_Play(SE_FALL);
     actor->gravity = toFIXED(1) / 2;
-    actor->motionFlags = 2;
+    actor->motionFlags = ACTOR_FALLS;
     actor->groundHeight = toFIXED(-240);
     Event_Wait(20);
     FieldCamera_MoveTo(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0);
@@ -2083,11 +2086,11 @@ LATE_DATA struct Trigger gSceneEvents[] = {
     {TRIGGER_STEP, 31, CONDITION_ALWAYS, EVENT(JupiterLighthouse_RideWhirlwind)},
     {TRIGGER_STEP, 32, FLAG_SCENE_TEMP_02, EVENT(JupiterLighthouse_OpenFloor)},
     {TRIGGER_STEP, 33, IF_FLAG_SET(FLAG_SCENE_TEMP_02), EVENT(JupiterLighthouse_CloseFloor)},
-    {TRIGGER_TALK, 0, IF_FLAG_SET(FLAG_ISAAC_AND_IVAN_FELL), EVENT(JupiterLighthouse_TalkAfterTheFight)},
-    {TRIGGER_TALK, 2, IF_FLAG_SET(FLAG_ISAAC_AND_IVAN_FELL), EVENT(JupiterLighthouse_TalkAfterTheFight)},
-    {TRIGGER_TALK, 6, IF_FLAG_SET(FLAG_ISAAC_AND_IVAN_FELL), EVENT(JupiterLighthouse_TalkAfterTheFight)},
-    {TRIGGER_TALK, 5, IF_FLAG_SET(FLAG_ISAAC_AND_IVAN_FELL), EVENT(JupiterLighthouse_TalkAfterTheFight)},
-    {TRIGGER_TALK, 28, IF_FLAG_SET(FLAG_ISAAC_AND_IVAN_FELL), EVENT(JupiterLighthouse_TalkAfterTheFight)},
+    {TRIGGER_TALK, ACTOR_ISAAC, IF_FLAG_SET(FLAG_ISAAC_AND_IVAN_FELL), EVENT(JupiterLighthouse_TalkAfterTheFight)},
+    {TRIGGER_TALK, ACTOR_IVAN, IF_FLAG_SET(FLAG_ISAAC_AND_IVAN_FELL), EVENT(JupiterLighthouse_TalkAfterTheFight)},
+    {TRIGGER_TALK, ACTOR_SHEBA, IF_FLAG_SET(FLAG_ISAAC_AND_IVAN_FELL), EVENT(JupiterLighthouse_TalkAfterTheFight)},
+    {TRIGGER_TALK, ACTOR_JENNA, IF_FLAG_SET(FLAG_ISAAC_AND_IVAN_FELL), EVENT(JupiterLighthouse_TalkAfterTheFight)},
+    {TRIGGER_TALK, ACTOR_KRADEN, IF_FLAG_SET(FLAG_ISAAC_AND_IVAN_FELL), EVENT(JupiterLighthouse_TalkAfterTheFight)},
     {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), 20, CONDITION_ALWAYS, EVENT(JupiterLighthouse_StartMovingBlock)},
     {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 20, CONDITION_ALWAYS, EVENT(JupiterLighthouse_FinishMovingBlock)},
     {TRIGGER_PUSH, -1, CONDITION_ALWAYS, EVENT(JupiterLighthouse_StartMovingBlock)},

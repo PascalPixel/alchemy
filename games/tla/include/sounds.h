@@ -557,6 +557,8 @@ enum SoundId {
   SE_552,
   /// Played as Magma Rock's flames grow.
   SE_FLAME_GROW = 554,
+  /// SE_FLAME_GROW's falling run fourteen semitones lower on voice 99, its last
+  /// note two higher; nothing plays it.
   SE_555,
   /// SE_RISE_WITH_SPARKS two semitones higher, held until stopped: the Ankohl
   /// Ruins' sand rising, Aqua Rock's pillars rising as its stones are Doused,
@@ -594,6 +596,8 @@ enum SoundId {
   SE_UNUSED_SPIN_AWAY_B,
   /// SE_SPIN_AWAY an octave higher and faster, on voice 93; nothing plays it.
   SE_UNUSED_SPIN_AWAY_HIGH,
+  /// SE_CURRENT's rhythm on its voice with other notes, the last two held long;
+  /// nothing plays it.
   SE_570,
   /// SE_CURRENT at volume 100 for its 40; nothing plays it, nor its copy
   /// SE_UNUSED_LOUD_CURRENT_B.
@@ -638,6 +642,8 @@ enum SoundId {
   /// Played as Gaia Rock's statue rises under the leader.
   SE_STATUE_RISE,
   SE_591,
+  /// SE_IMPACT's rhythm and most of its notes, doubled by a second track on
+  /// voice 90; nothing plays it.
   SE_592,
   SE_593,
   SE_594,

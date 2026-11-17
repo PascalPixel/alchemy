@@ -28,11 +28,11 @@
 #include "text/msg_ids.h"
 
 /// Story flags: Uzume has told the party where Susa went; her prayer for him
-/// has been read with Mind Read; Kushinada has said her farewell to Susa; and
-/// Uzume has caught the party reading her mind ("Trying again, Felix?").
+/// has been read with Mind Read; Kushinada has asked Susa not to come for her;
+/// and Uzume has caught the party reading her mind ("Trying again, Felix?").
 #define FLAG_UZUME_SPOKE_OF_SUSA 0x922
 #define FLAG_UZUMES_PRAYER_READ 0x923
-#define FLAG_KUSHINADA_PLEADED 0x925
+#define FLAG_KUSHINADA_ASKED_SUSA_NOT_TO_COME 0x925
 #define FLAG_UZUME_MIND_READ 0x92b
 
 extern struct ActorPlacement gIzumoRooms_ActorPlacements[];
@@ -47,12 +47,12 @@ void Inn_CheckIn(s32 slot, s32 actor);
 void IzumoRooms_RecognizeTheHeroes(s32 mode);
 
 void IzumoRooms_ShowMove(void);
-extern s32 gIzumoRooms_FirstPacerScript[];
-extern s32 gIzumoRooms_SecondPacerScript[];
-extern s32 gIzumoRooms_RockingScript[];
+extern s32 gIzumoRooms_FirstDancerScript[];
+extern s32 gIzumoRooms_SecondDancerScript[];
+extern s32 gIzumoRooms_CryingScript[];
 
-/// Whether the other of the two men pacing in Susa's house is clear of the
-/// spot by the doorway this one walks to; their scripts wait on it.
+/// Whether the other of the two women dancing in Susa's house is clear of the
+/// spot by the doorway this one steps to; their scripts wait on it.
 #define DEFINE_IZUMO_ROOMS_IS_CLEAR(name, n1, n2)                              \
   s32 name(void) {                                                             \
     struct Actor *actor = Actor_GetById(n1);                                   \
@@ -68,9 +68,9 @@ extern s32 gIzumoRooms_RockingScript[];
     return 1;                                                                  \
   }
 
-DEFINE_IZUMO_ROOMS_IS_CLEAR(IzumoRooms_IsFirstPacerClear, 10, toFIXED(148))
+DEFINE_IZUMO_ROOMS_IS_CLEAR(IzumoRooms_IsFirstDancerClear, 10, toFIXED(148))
 
-DEFINE_IZUMO_ROOMS_IS_CLEAR(IzumoRooms_IsSecondPacerClear, 9, toFIXED(132))
+DEFINE_IZUMO_ROOMS_IS_CLEAR(IzumoRooms_IsSecondDancerClear, 9, toFIXED(132))
 
 const struct SceneEntrance *Scene_GetEntrances(void) { return gSceneEntrances; }
 
@@ -79,6 +79,7 @@ const struct SceneRegion *Scene_GetExitRegions(void) { return 0; }
 const u32 *Scene_GetExits(void) { return gSceneExits; }
 
 void Shop_Run(s32 slot, s32 actor);
+void Sanctum_Run(s32 actor);
 
 const struct ActorPlacement *Scene_GetActorPlacements(void) {
   if (GameFlag_Get(FLAG_SERPENT_SLAIN))
@@ -97,29 +98,30 @@ const struct Trigger *Scene_GetTriggers(void) {
 }
 
 /// Before the Serpent is slain: Kushinada, whose turn it is to be offered to
-/// the Serpent, and the healer ("Why would our guardian spirit demand a
-/// sacrifice?"), who keeps his trade once it is slain.
-enum { ACTOR_KUSHINADA = 17, ACTOR_HEALER = 22, ACTOR_HEALER_ONCE_SLAIN = 12 };
+/// the Serpent, and the Sanctum's priest ("Why would our guardian spirit demand
+/// a sacrifice?"), who keeps his trade once it is slain.
+enum { ACTOR_KUSHINADA = 17, ACTOR_PRIEST = 22, ACTOR_PRIEST_ONCE_SLAIN = 12 };
 
 /// Susa's house (entrance 7) before the Serpent is slain: Lady Uzume, Susa's
-/// sister ("If the serpent defeats Susa, I'll...be alone."), with two men
-/// pacing and two more by the walls.
+/// sister ("If the serpent defeats Susa, I'll...be alone."), with two women
+/// dancing ("There's no point dancing if Okuni's not here...") and two old men
+/// by the drums.
 enum {
   ACTOR_SUSAS_HOUSE_UZUME = 8,
-  ACTOR_SUSAS_HOUSE_FIRST_PACER,
-  ACTOR_SUSAS_HOUSE_SECOND_PACER,
+  ACTOR_SUSAS_HOUSE_FIRST_DANCER,
+  ACTOR_SUSAS_HOUSE_SECOND_DANCER,
   ACTOR_SUSAS_HOUSE_WEST_VILLAGER,
   ACTOR_SUSAS_HOUSE_EAST_VILLAGER
 };
 
 /// Once the Serpent is slain, Susa's house holds Lady Uzume ("This is my home,
-/// and I am having a private conversation."), the same four men, Kushinada,
+/// and I am having a private conversation."), the same four, Kushinada,
 /// Susa, the man who saw the heroes come down Mt. Mikage ("Yes... After the
 /// serpent's roar, these warriors appeared.") and Kraden.
 enum {
   ACTOR_UZUME = 15,
-  ACTOR_FIRST_PACER,
-  ACTOR_SECOND_PACER,
+  ACTOR_FIRST_DANCER,
+  ACTOR_SECOND_DANCER,
   ACTOR_WEST_VILLAGER,
   ACTOR_EAST_VILLAGER,
   ACTOR_SAVED_KUSHINADA,
@@ -129,10 +131,10 @@ enum {
   ACTOR_COAL ///< the Mars Djinni Uzume gives the party
 };
 
-/// The healer: across the counter, the sanctum's healing; from elsewhere, why
+/// The priest: across the counter, the Sanctum's healing; from elsewhere, why
 /// the guardian spirit would want a sacrifice, or once the Serpent is slain how
 /// the island flourishes.
-void IzumoRooms_TalkToHealer(s32 actor) {
+void IzumoRooms_TalkToPriest(s32 actor) {
   u16 facing = Actor_GetById(gMainRoutineWork.leaderActorId)->facing;
 
   if (FACING_NEAREST_CARDINAL(facing) == FACING_NORTH) {
@@ -143,11 +145,11 @@ void IzumoRooms_TalkToHealer(s32 actor) {
     if (GameFlag_Get(FLAG_SERPENT_SLAIN)) {
       Event_SetMessageId((s32)MsgNowThatPeace);
       // "Now that peace has been restored, our island is flourishing once..."
-      Event_ShowMessageAndWait(ACTOR_HEALER_ONCE_SLAIN, 0);
+      Event_ShowMessageAndWait(ACTOR_PRIEST_ONCE_SLAIN, 0);
     } else {
       Event_SetMessageId((s32)MsgWhyWouldOur);
       // "Why would our guardian spirit demand a sacrifice? It's..."
-      Event_ShowMessageAndWait(ACTOR_HEALER, 0);
+      Event_ShowMessageAndWait(ACTOR_PRIEST, 0);
     }
     Event_End();
   }
@@ -268,8 +270,8 @@ void IzumoRooms_TalkToUzume(void) {
   Event_End();
 }
 
-/// One of the men in Susa's house asks whether the party went into Mt. Mikage
-/// too, and answers by the reply.
+/// One of the dancers in Susa's house asks whether the party went into Mt.
+/// Mikage too, and answers by the reply.
 void IzumoRooms_AskAboutMtMikage(void) {
   s32 msg;
 
@@ -278,7 +280,7 @@ void IzumoRooms_AskAboutMtMikage(void) {
   msg = (s32)MsgTheyVeBeen;
   Event_SetMessageId(msg);
   // "They've been saying that you went into Mt. Mikage, too... Is that true?"
-  FieldMessage_ShowAtActor(ACTOR_FIRST_PACER, 0);
+  FieldMessage_ShowAtActor(ACTOR_FIRST_DANCER, 0);
   if (Event_AskYesNoWithActorAnimation(Party_GetLeaderActor(), 0) == 0) {
     Event_Wait(10);
     Event_SetMessageId(msg + 1);
@@ -286,7 +288,7 @@ void IzumoRooms_AskAboutMtMikage(void) {
     Event_Wait(20);
     Event_SetMessageId(msg + 2);
   }
-  Event_ShowMessageAndWait(ACTOR_FIRST_PACER, 0);
+  Event_ShowMessageAndWait(ACTOR_FIRST_DANCER, 0);
   Event_End();
 }
 
@@ -322,12 +324,13 @@ void IzumoRooms_ReadUzumesMind(void) {
   Event_End();
 }
 
-/// Kushinada, the first time, explains why she will be offered to the Serpent;
-/// then she asks Susa not to save her, and the leader steps back.
-s32 IzumoRooms_KushinadaPleads(void) {
+/// Kushinada, the first time, asks Susa not to come for her and explains why
+/// she will be offered to the Serpent; then she asks him not to save her, and
+/// the leader steps back.
+s32 IzumoRooms_KushinadaAsksSusaNotToCome(void) {
   Event_Start();
   Event_ResolvePendingActions(0);
-  if (!Event_GetFlag(FLAG_KUSHINADA_PLEADED)) {
+  if (!Event_GetFlag(FLAG_KUSHINADA_ASKED_SUSA_NOT_TO_COME)) {
     Event_SetMessageId((s32)MsgSusaDonT);
     // "Susa, don't come for me..."
     Event_ShowMessageAndWait(ACTOR_KUSHINADA, 0);
@@ -348,7 +351,7 @@ s32 IzumoRooms_KushinadaPleads(void) {
     // "And so I shall remain here, until the coming of the next full..."
     Event_ShowMessageAndWait(ACTOR_KUSHINADA, 0);
     Event_Wait(60);
-    Event_SetFlag(FLAG_KUSHINADA_PLEADED);
+    Event_SetFlag(FLAG_KUSHINADA_ASKED_SUSA_NOT_TO_COME);
   } else {
     Event_SetMessageId((s32)MsgSusaPleaseDon);
     // "Susa, please... Don't try to save me."
@@ -373,6 +376,16 @@ void IzumoRooms_HeroesComeFromTheEast(void) {
 void IzumoRooms_HeroesComeFromTheWest(void) {
   IzumoRooms_RecognizeTheHeroes(1);
 }
+
+/// Susa's answers to Sheba's "Don't forget, Susa dealt the finishing blow,
+/// didn't he?", from MsgYouReNotImplying on.
+enum FinishingBlowMessage {
+  /// "Finishing blow? All I did was stab it with the Cloud Brand."
+  SUSA_ALL_I_DID_WAS_STAB_IT = 10,
+  /// "That's right. Piercing it with the Cloud Brand was hardly a finishing
+  /// blow."
+  SUSA_HARDLY_A_FINISHING_BLOW = 11
+};
 
 /// Izumo hears that warriors appeared from within Mt. Mikage and recognizes
 /// the party as the heroes, through three answers; the party gathers again
@@ -987,13 +1000,13 @@ void IzumoRooms_RecognizeTheHeroes(s32 mode) {
   Event_Wait(30);
   answer = Event_AskYesNoWithActorAnimation(*(s32 *)owner, 0);
   if (answer == 0) {
-    Event_SetMessageId(message + 10);
+    Event_SetMessageId(message + SUSA_ALL_I_DID_WAS_STAB_IT);
     Actor_SetAnimationById(ACTOR_SUSA, ANIM_SHAKE_HEAD);
     Event_Wait(30);
     // "Finishing blow? All I did was stab it with the Cloud Brand."
     Event_ShowMessageAndWait(ACTOR_SUSA, 0);
   } else {
-    Event_SetMessageId(message + 11);
+    Event_SetMessageId(message + SUSA_HARDLY_A_FINISHING_BLOW);
     Actor_SetAnimationById(ACTOR_SUSA, ANIM_NOD);
     Event_Wait(30);
     // "That's right. Piercing it with the Cloud Brand was hardly a..."
@@ -1308,8 +1321,8 @@ s32 Scene_Initialize(void) {
     Event_PlaySound(MUS_IZUMO);
     Actor_SetPosition(ACTOR_WITNESS, 144, 568);
     Actor_SetPosition(ACTOR_SUSA, 0, 0);
-    Actor_SetPosition(ACTOR_FIRST_PACER, 0, 0);
-    Actor_SetPosition(ACTOR_SECOND_PACER, 0, 0);
+    Actor_SetPosition(ACTOR_FIRST_DANCER, 0, 0);
+    Actor_SetPosition(ACTOR_SECOND_DANCER, 0, 0);
     Actor_SetPosition(ACTOR_WEST_VILLAGER, 0, 0);
     Actor_SetPosition(ACTOR_EAST_VILLAGER, 0, 0);
   }
@@ -1317,8 +1330,8 @@ s32 Scene_Initialize(void) {
       GameFlag_Get(FLAG_IZUMO_RECOGNIZED_THE_HEROES) &&
       gMainRoutineWork.entrance == 7 && GameFlag_Get(FLAG_AREA_TEMP_50)) {
     Event_PlaySound(MUS_IZUMO);
-    Actor_SetPosition(ACTOR_FIRST_PACER, 0, 0);
-    Actor_SetPosition(ACTOR_SECOND_PACER, 0, 0);
+    Actor_SetPosition(ACTOR_FIRST_DANCER, 0, 0);
+    Actor_SetPosition(ACTOR_SECOND_DANCER, 0, 0);
     Actor_SetPosition(ACTOR_WEST_VILLAGER, 0, 0);
     Actor_SetPosition(ACTOR_EAST_VILLAGER, 0, 0);
   }
@@ -1330,8 +1343,8 @@ s32 Scene_Initialize(void) {
   if (gMainRoutineWork.entrance == 7 && !GameFlag_Get(FLAG_SERPENT_SLAIN)) {
     struct Actor *actor;
 
-    Actor_SetAnimation(ACTOR_SUSAS_HOUSE_FIRST_PACER, 5);
-    Actor_SetAnimation(ACTOR_SUSAS_HOUSE_SECOND_PACER, 5);
+    Actor_SetAnimation(ACTOR_SUSAS_HOUSE_FIRST_DANCER, 5);
+    Actor_SetAnimation(ACTOR_SUSAS_HOUSE_SECOND_DANCER, 5);
     Actor_SetAnimation(ACTOR_SUSAS_HOUSE_WEST_VILLAGER, 5);
     Actor_SetAnimation(ACTOR_SUSAS_HOUSE_EAST_VILLAGER, 5);
     actor = Actor_GetById(ACTOR_SUSAS_HOUSE_WEST_VILLAGER);
@@ -1343,17 +1356,19 @@ s32 Scene_Initialize(void) {
 /// Nothing to prepare before the map is built. Returns 0.
 s32 Scene_PrepareMap(void) { return 0; }
 
-extern s32 gIzumoRooms_BounceScript[];
+extern s32 gIzumoRooms_KushinadaCryingScript[];
 
-s32 gIzumoRooms_FirstPacerScript[] = {
-    SC_SET(SW_COLLISION, 129),
+/// The dancers in Susa's house step to the doorway and back with a hop, each
+/// waiting until the other is clear of the spot.
+s32 gIzumoRooms_FirstDancerScript[] = {
+    SC_SET(SW_COLLISION, ACTOR_BLOCKED_BY_SOLID | ACTOR_SOLID),
     SC_ACCELERATION(0.2),
     SC_SET(SW_GRAVITY, toFIXED(0.4)),
     SC_SPEED(0.6),
     SC_SET(SW_STEERING, 2),
     SC_SET(SW_FACING, FACING_SOUTH),
     SC_LABEL(1),
-    SC_CALL(IzumoRooms_IsFirstPacerClear),
+    SC_CALL(IzumoRooms_IsFirstDancerClear),
     SC_MOVE(112, 0, 624),
     SC_SYNC,
     SC_MOVE(112, 0, 600),
@@ -1394,15 +1409,15 @@ s32 gIzumoRooms_FirstPacerScript[] = {
     -1,
 };
 
-s32 gIzumoRooms_SecondPacerScript[] = {
-    SC_SET(SW_COLLISION, 129),
+s32 gIzumoRooms_SecondDancerScript[] = {
+    SC_SET(SW_COLLISION, ACTOR_BLOCKED_BY_SOLID | ACTOR_SOLID),
     SC_ACCELERATION(0.2),
     SC_SET(SW_GRAVITY, toFIXED(0.4)),
     SC_SPEED(0.6),
     SC_SET(SW_STEERING, 2),
     SC_SET(SW_FACING, FACING_SOUTH),
     SC_LABEL(1),
-    SC_CALL(IzumoRooms_IsSecondPacerClear),
+    SC_CALL(IzumoRooms_IsSecondDancerClear),
     SC_MOVE(176, 0, 624),
     SC_SYNC,
     SC_MOVE(176, 0, 600),
@@ -1444,8 +1459,10 @@ s32 gIzumoRooms_SecondPacerScript[] = {
 };
 
 // clang-format off
-s32 gIzumoRooms_RockingScript[] = {
-    SC_SET(SW_COLLISION, 129),
+/// A girl crying ("*Sniff* How could we sacrifice our beloved Kushinada?"):
+/// her sprite heaves, squashed and stretched three times, then rests.
+s32 gIzumoRooms_CryingScript[] = {
+    SC_SET(SW_COLLISION, ACTOR_BLOCKED_BY_SOLID | ACTOR_SOLID),
     SC_ANIMATION(0),
     SC_LABEL(1),
     SC_ADD(SW_SCALE_X, -FIXED_ONE / 4),
@@ -1486,7 +1503,7 @@ s32 gIzumoRooms_RockingScript[] = {
     SC_WAIT(30),
     SC_LOOP(SC_FOREVER, SC_TO(1)),
     SC_END,
-    SC_SET(SW_COLLISION, 131),
+    SC_SET(SW_COLLISION, ACTOR_BLOCKED_BY_SOLID | ACTOR_PUSHABLE | ACTOR_SOLID),
     SC_ACCELERATION(0.1),
     SC_SPEED(0.3),
     SC_ANIMATION(2),
@@ -1501,8 +1518,10 @@ s32 gIzumoRooms_RockingScript[] = {
     -1,
 };
 
-s32 gIzumoRooms_BounceScript[] = {
-    SC_SET(SW_COLLISION, 131),
+/// Kushinada on her seat of stones heaves as the crying girl does, with longer
+/// rests.
+s32 gIzumoRooms_KushinadaCryingScript[] = {
+    SC_SET(SW_COLLISION, ACTOR_BLOCKED_BY_SOLID | ACTOR_PUSHABLE | ACTOR_SOLID),
     SC_LABEL(1),
     SC_ADD(SW_SCALE_X, -FIXED_ONE / 4),
     SC_ADD(SW_SCALE_Y, FIXED_ONE / 8),
@@ -1542,7 +1561,7 @@ s32 gIzumoRooms_BounceScript[] = {
     SC_WAIT(90),
     SC_LOOP(SC_FOREVER, SC_TO(1)),
     SC_END,
-    SC_SET(SW_COLLISION, 129),
+    SC_SET(SW_COLLISION, ACTOR_BLOCKED_BY_SOLID | ACTOR_SOLID),
     SC_ACCELERATION(0.2),
     SC_SET(SW_GRAVITY, toFIXED(0.1)),
     SC_SPEED(0.4),
@@ -1579,13 +1598,13 @@ struct ActorPlacement gIzumoRooms_ActorPlacements[] = {
     ACTOR_PLACEMENT(SPRITE_IZUMO_OLD_MAN, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 280, 0, 84, FACING_SOUTHEAST, TALK_FACING_PARTY_AND_BACK, 0),
     ACTOR_PLACEMENT(SPRITE_IZUMO_OLD_WOMAN, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 328, 0, 136, FACING_NORTHWEST, TALK_FACING_PARTY_AND_BACK, 0),
     ACTOR_PLACEMENT(SPRITE_IZUMO_OLD_WOMAN, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 312, 0, 120, FACING_SOUTHEAST, TALK_FACING_PARTY_AND_BACK, 0),
-    ACTOR_PLACEMENT(SPRITE_KUSHINADA, CONDITION_ALWAYS, (s32)gIzumoRooms_BounceScript, 352, 0, 328, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(SPRITE_KUSHINADA, CONDITION_ALWAYS, (s32)gIzumoRooms_KushinadaCryingScript, 352, 0, 328, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
     ACTOR_PLACEMENT(SPRITE_IZUMO_WOMAN_IN_CREAM, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 136, 0, 362, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
     ACTOR_PLACEMENT(SPRITE_IZUMO_MAN_WITH_TOPKNOT, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 108, 0, 320, FACING_SOUTHEAST, TALK_FACING_PARTY_AND_BACK, 0),
     ACTOR_PLACEMENT(SPRITE_IZUMO_MAN_IN_RED, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 536, 0, 104, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
     ACTOR_PLACEMENT(SPRITE_IZUMO_WOMAN_IN_ORANGE, CONDITION_ALWAYS, MOVEMENT_TYPE_WANDER, 632, 0, 88, FACING_EAST, TALK_FACING_PARTY_AND_BACK, 0),
     ACTOR_PLACEMENT(SPRITE_HEALER, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 560, 0, 328, FACING_SOUTH, TALK_FACING_PARTY, 0),
-    ACTOR_PLACEMENT(SPRITE_IZUMO_GIRL, CONDITION_ALWAYS, (s32)gIzumoRooms_RockingScript, 504, 0, 360, FACING_SOUTHWEST, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_IZUMO_GIRL, CONDITION_ALWAYS, (s32)gIzumoRooms_CryingScript, 504, 0, 360, FACING_SOUTHWEST, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(SPRITE_IZUMO_GIRL, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 536, 0, 392, FACING_NORTHWEST, TALK_FACING_PARTY_AND_BACK, 0),
     {SCENE_TABLE_END},
 };
@@ -1594,8 +1613,8 @@ struct ActorPlacement gIzumoRooms_ActorPlacements[] = {
 // clang-format off
 struct ActorPlacement gIzumoRooms_SusasHouseActorPlacements[] = {
     ACTOR_PLACEMENT(SPRITE_LADY_UZUME, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 144, 0, 520, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
-    ACTOR_PLACEMENT(SPRITE_IZUMO_WOMAN_IN_RED, CONDITION_ALWAYS, (s32)gIzumoRooms_FirstPacerScript, 136, 0, 624, FACING_EAST, TALK_FACING_PARTY_AND_BACK, 0),
-    ACTOR_PLACEMENT(SPRITE_IZUMO_WOMAN_IN_RED, CONDITION_ALWAYS, (s32)gIzumoRooms_SecondPacerScript, 152, 0, 624, FACING_WEST, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(SPRITE_IZUMO_WOMAN_IN_RED, CONDITION_ALWAYS, (s32)gIzumoRooms_FirstDancerScript, 136, 0, 624, FACING_EAST, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(SPRITE_IZUMO_WOMAN_IN_RED, CONDITION_ALWAYS, (s32)gIzumoRooms_SecondDancerScript, 152, 0, 624, FACING_WEST, TALK_FACING_PARTY_AND_BACK, 0),
     ACTOR_PLACEMENT(SPRITE_IZUMO_OLD_MAN, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 90, 0, 622, FACING_WEST, TALK_FACING_PARTY_AND_BACK, 0),
     ACTOR_PLACEMENT(SPRITE_IZUMO_OLD_MAN, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 198, 0, 622, FACING_EAST, TALK_FACING_PARTY_AND_BACK, 0),
     {SCENE_TABLE_END},
@@ -1609,7 +1628,7 @@ struct ActorPlacement gIzumoRooms_ActorPlacementsOnceTheSerpentIsSlain[] = {
     ACTOR_PLACEMENT(SPRITE_IZUMO_MAN_IN_RED, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 536, 0, 104, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
     ACTOR_PLACEMENT(SPRITE_IZUMO_WOMAN_IN_ORANGE, CONDITION_ALWAYS, MOVEMENT_TYPE_WANDER, 632, 0, 88, FACING_EAST, TALK_FACING_PARTY_AND_BACK, 0),
     ACTOR_PLACEMENT(SPRITE_HEALER, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 560, 0, 328, FACING_SOUTH, TALK_FACING_PARTY, 0),
-    ACTOR_PLACEMENT(SPRITE_IZUMO_GIRL, CONDITION_ALWAYS, (s32)gIzumoRooms_RockingScript, 600, 0, 360, FACING_WEST, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_IZUMO_GIRL, CONDITION_ALWAYS, (s32)gIzumoRooms_CryingScript, 600, 0, 360, FACING_WEST, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(SPRITE_IZUMO_GIRL, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 536, 0, 376, FACING_NORTHEAST, TALK_FACING_PARTY_AND_BACK, 0),
     ACTOR_PLACEMENT(SPRITE_LADY_UZUME, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 144, 0, 520, FACING_SOUTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(SPRITE_IZUMO_WOMAN_IN_RED, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 136, 0, 624, FACING_EAST, TALK_FACING_PARTY_AND_BACK, 0),
@@ -1636,7 +1655,8 @@ struct Trigger gIzumoRooms_Triggers[] = {
     {TRIGGER_EXIT, 5, CONDITION_ALWAYS, 5},
     {TRIGGER_EXIT, 6, CONDITION_ALWAYS, 6},
     {TRIGGER_EXIT, 7, CONDITION_ALWAYS, 7},
-    {TRIGGER_STEP, 21, CONDITION_ALWAYS, EVENT(IzumoRooms_KushinadaPleads)},
+    {TRIGGER_STEP, 21, CONDITION_ALWAYS,
+     EVENT(IzumoRooms_KushinadaAsksSusaNotToCome)},
     {TRIGGER_TALK, 8, CONDITION_ALWAYS, MSGNO(MsgOkuniKushinadaAnd)},
     {TRIGGER_TALK, 9, CONDITION_ALWAYS, MSGNO(MsgIfLadyUzume)},
     {TRIGGER_TALK, 10, CONDITION_ALWAYS, MSGNO(MsgIMSoRelieved)},
@@ -1650,7 +1670,7 @@ struct Trigger gIzumoRooms_Triggers[] = {
     {TRIGGER_TALK, 19, CONDITION_ALWAYS, MSGNO(MsgOneDayKushinada)},
     {TRIGGER_TALK, 20, CONDITION_ALWAYS, EVENT(IzumoRooms_TalkToInnkeeper)},
     {TRIGGER_TALK, 21, CONDITION_ALWAYS, MSGNO(MsgIfIWere)},
-    {TRIGGER_TALK, 22, CONDITION_ALWAYS, EVENT(IzumoRooms_TalkToHealer)},
+    {TRIGGER_TALK, 22, CONDITION_ALWAYS, EVENT(IzumoRooms_TalkToPriest)},
     {TRIGGER_TALK, 23, CONDITION_ALWAYS, MSGNO(MsgSniffHowCould)},
     {TRIGGER_TALK, 24, CONDITION_ALWAYS, MSGNO(MsgWhenIGet)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, CONDITION_ALWAYS,
@@ -1696,21 +1716,26 @@ struct Trigger gIzumoRooms_SusasHouseTriggers[] = {
     {TRIGGER_EXIT, 5, CONDITION_ALWAYS, 5},
     {TRIGGER_EXIT, 6, CONDITION_ALWAYS, 6},
     {TRIGGER_EXIT, 7, CONDITION_ALWAYS, 7},
-    {TRIGGER_TALK, 8, CONDITION_ALWAYS, EVENT(IzumoRooms_AskAfterSusa)},
-    {TRIGGER_TALK, 9, CONDITION_ALWAYS, MSGNO(MsgThereSNoPoint)},
-    {TRIGGER_TALK, 10, CONDITION_ALWAYS, MSGNO(MsgTheSerpentAttacked)},
-    {TRIGGER_TALK, 11, CONDITION_ALWAYS, MSGNO(MsgTheSerpentAte)},
-    {TRIGGER_TALK, 12, CONDITION_ALWAYS, MSGNO(MsgTheSerpentLives)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, CONDITION_ALWAYS,
-     EVENT(IzumoRooms_ReadPrayerForSusa)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9, CONDITION_ALWAYS,
-     MSGNO(MsgOkuniSSuch)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 10, CONDITION_ALWAYS,
-     MSGNO(MsgTheSerpentWould)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 11, CONDITION_ALWAYS,
-     MSGNO(MsgBeforeTheSerpent)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 12, CONDITION_ALWAYS,
-     MSGNO(MsgLegendHasIt)},
+    {TRIGGER_TALK, ACTOR_SUSAS_HOUSE_UZUME, CONDITION_ALWAYS,
+     EVENT(IzumoRooms_AskAfterSusa)},
+    {TRIGGER_TALK, ACTOR_SUSAS_HOUSE_FIRST_DANCER, CONDITION_ALWAYS,
+     MSGNO(MsgThereSNoPoint)},
+    {TRIGGER_TALK, ACTOR_SUSAS_HOUSE_SECOND_DANCER, CONDITION_ALWAYS,
+     MSGNO(MsgTheSerpentAttacked)},
+    {TRIGGER_TALK, ACTOR_SUSAS_HOUSE_WEST_VILLAGER, CONDITION_ALWAYS,
+     MSGNO(MsgTheSerpentAte)},
+    {TRIGGER_TALK, ACTOR_SUSAS_HOUSE_EAST_VILLAGER, CONDITION_ALWAYS,
+     MSGNO(MsgTheSerpentLives)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_SUSAS_HOUSE_UZUME,
+     CONDITION_ALWAYS, EVENT(IzumoRooms_ReadPrayerForSusa)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_SUSAS_HOUSE_FIRST_DANCER,
+     CONDITION_ALWAYS, MSGNO(MsgOkuniSSuch)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_SUSAS_HOUSE_SECOND_DANCER,
+     CONDITION_ALWAYS, MSGNO(MsgTheSerpentWould)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_SUSAS_HOUSE_WEST_VILLAGER,
+     CONDITION_ALWAYS, MSGNO(MsgBeforeTheSerpent)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_SUSAS_HOUSE_EAST_VILLAGER,
+     CONDITION_ALWAYS, MSGNO(MsgLegendHasIt)},
     {TRIGGER_TABLE_END},
 };
 
@@ -1730,16 +1755,22 @@ struct Trigger gIzumoRooms_TriggersOnceTheSerpentIsSlain[] = {
     {TRIGGER_TALK, 9, CONDITION_ALWAYS, MSGNO(MsgMyGoodsAre)},
     {TRIGGER_TALK, 10, CONDITION_ALWAYS, EVENT(IzumoRooms_TalkToInnkeeper)},
     {TRIGGER_TALK, 11, CONDITION_ALWAYS, MSGNO(MsgAsLadyUzume)},
-    {TRIGGER_TALK, 12, CONDITION_ALWAYS, EVENT(IzumoRooms_TalkToHealer)},
+    {TRIGGER_TALK, 12, CONDITION_ALWAYS, EVENT(IzumoRooms_TalkToPriest)},
     {TRIGGER_TALK, 13, CONDITION_ALWAYS, MSGNO(MsgNowThatTheSerpent)},
     {TRIGGER_TALK, 14, CONDITION_ALWAYS, MSGNO(MsgIfYouReA)},
-    {TRIGGER_TALK, 15, CONDITION_ALWAYS, EVENT(IzumoRooms_TalkToUzume)},
-    {TRIGGER_TALK, 16, CONDITION_ALWAYS, EVENT(IzumoRooms_AskAboutMtMikage)},
-    {TRIGGER_TALK, 17, CONDITION_ALWAYS, MSGNO(MsgSupposedlyTheDoll)},
-    {TRIGGER_TALK, 18, CONDITION_ALWAYS, MSGNO(MsgLadyUzumeHas)},
-    {TRIGGER_TALK, 19, CONDITION_ALWAYS, MSGNO(MsgLadyUzumeSNew)},
-    {TRIGGER_TALK, 20, CONDITION_ALWAYS, MSGNO(MsgSomedaySusaAnd)},
-    {TRIGGER_TALK, 21, CONDITION_ALWAYS, MSGNO(MsgIMSureYou)},
+    {TRIGGER_TALK, ACTOR_UZUME, CONDITION_ALWAYS,
+     EVENT(IzumoRooms_TalkToUzume)},
+    {TRIGGER_TALK, ACTOR_FIRST_DANCER, CONDITION_ALWAYS,
+     EVENT(IzumoRooms_AskAboutMtMikage)},
+    {TRIGGER_TALK, ACTOR_SECOND_DANCER, CONDITION_ALWAYS,
+     MSGNO(MsgSupposedlyTheDoll)},
+    {TRIGGER_TALK, ACTOR_WEST_VILLAGER, CONDITION_ALWAYS,
+     MSGNO(MsgLadyUzumeHas)},
+    {TRIGGER_TALK, ACTOR_EAST_VILLAGER, CONDITION_ALWAYS,
+     MSGNO(MsgLadyUzumeSNew)},
+    {TRIGGER_TALK, ACTOR_SAVED_KUSHINADA, CONDITION_ALWAYS,
+     MSGNO(MsgSomedaySusaAnd)},
+    {TRIGGER_TALK, ACTOR_SUSA, CONDITION_ALWAYS, MSGNO(MsgIMSureYou)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, CONDITION_ALWAYS,
      MSGNO(MsgIDLoveTo)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9, CONDITION_ALWAYS,
@@ -1754,21 +1785,22 @@ struct Trigger gIzumoRooms_TriggersOnceTheSerpentIsSlain[] = {
      MSGNO(MsgMaybeNowKushinada)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 14, CONDITION_ALWAYS,
      MSGNO(MsgThatDragonWanted)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 15 | TRIGGER_SUBJECT_OWN_EFFECT,
-     CONDITION_ALWAYS, EVENT(IzumoRooms_ReadUzumesMind)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 16, CONDITION_ALWAYS,
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ),
+     ACTOR_UZUME | TRIGGER_SUBJECT_OWN_EFFECT, CONDITION_ALWAYS,
+     EVENT(IzumoRooms_ReadUzumesMind)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_FIRST_DANCER, CONDITION_ALWAYS,
      MSGNO(MsgWhyDoesLadyUzume)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 17, CONDITION_ALWAYS,
-     MSGNO(MsgIWonderWhatSort)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 18, CONDITION_ALWAYS,
-     MSGNO(MsgIHeardThat)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 19, CONDITION_ALWAYS,
-     MSGNO(MsgIDonTKnowWhatIt)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 20, CONDITION_ALWAYS,
-     MSGNO(MsgIfSDescendants)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 21, CONDITION_ALWAYS,
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_SECOND_DANCER,
+     CONDITION_ALWAYS, MSGNO(MsgIWonderWhatSort)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_WEST_VILLAGER,
+     CONDITION_ALWAYS, MSGNO(MsgIHeardThat)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_EAST_VILLAGER,
+     CONDITION_ALWAYS, MSGNO(MsgIDonTKnowWhatIt)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_SAVED_KUSHINADA,
+     CONDITION_ALWAYS, MSGNO(MsgIfSDescendants)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_SUSA, CONDITION_ALWAYS,
      MSGNO(MsgIMNo)},
-    {USE_ITEM_ON_ACTOR(ITEM_DANCING_IDOL), 15, FLAG_UZUME_HAS_THE_DOLL,
+    {USE_ITEM_ON_ACTOR(ITEM_DANCING_IDOL), ACTOR_UZUME, FLAG_UZUME_HAS_THE_DOLL,
      EVENT(IzumoRooms_GiveUzumeTheDoll)},
     {TRIGGER_TABLE_END},
 };

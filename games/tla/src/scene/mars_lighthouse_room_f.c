@@ -2,18 +2,18 @@
 /// The Mars Lighthouse's four towers, one room each in this overlay, each
 /// reached from the central hall by its ledge in the rain and each coming out
 /// on the beacon ledge where its element's flame is lit. Every tower has its
-/// flame throwers, which knock the leader back, and the fireballs its dragon
-/// statues shoot.
+/// flame throwers, the white dragon heads whose flames knock the leader back,
+/// and the fireballs its torches shoot.
 ///
 /// The Mars tower (SceneId_MarsLighthouseMarsTower): Burst breaks the cracked
 /// walls; a button sets a flame thrower moving until its flame lights a torch,
-/// and Blaze on the torch sends a fireball that cracks the center wall for
-/// Burst. In its pipe room, pushed pipes turn the fire from one flame thrower
-/// to another until the way is clear.
+/// and Blaze from the torch reaches the one below, whose fireball cracks the
+/// center wall for Burst. In its pipe room, pushed pipes turn the fire from
+/// one pipe's end to another until the way is clear.
 ///
 /// The Mercury tower (F2): frozen puddles and pushed pipes mend the pipeline
-/// until no flame thrower burns; then Blaze lights one whose flame reaches a
-/// dragon statue, and its fireball melts the icebergs.
+/// until no fire burns at the pipes' ends; then Blaze lights a flame thrower
+/// whose flame reaches a torch, and its fireball melts the icebergs.
 ///
 /// The Jupiter tower (F3): Cyclone's circles carry the party from ledge to
 /// ledge, Move drops a block to bridge a gap and pushes a statue into the
@@ -92,30 +92,33 @@
 #define FLAG_BLOCK_DROPPED FLAG_AREA_TEMP_58
 
 /// The Mars tower (F1). Its first rooms: the flame thrower the button sets
-/// moving, the dragon statue that becomes a torch once its flame is lit, the
-/// statue that shoots at the center wall and the wall itself. Its pipe room:
-/// two pipes that can be pushed.
+/// moving, the torch its flame lights (two actors, lit and unlit), the torch
+/// below it that shoots at the center wall, its fireball, and the unseen point
+/// at the wall's foot. Its pipe room: two pipes that can be pushed, the four
+/// places its fire comes from, and a dragon statue.
 enum {
   ACTOR_BUTTON_FLAME_THROWER = 8,
   ACTOR_MARS_TORCH = 9,
-  ACTOR_MARS_TORCH_STATUE = 10,
-  ACTOR_WALL_STATUE = 11,
+  ACTOR_UNLIT_MARS_TORCH = 10,
+  ACTOR_WALL_TORCH = 11,
   ACTOR_WALL_FIREBALL = 12,
   ACTOR_WALL_FIREBALL_ROLL = 13,
   ACTOR_CENTER_WALL = 14,
   ACTOR_MARS_PIPE_A = 15,
   ACTOR_MARS_PIPE_B = 16,
-  ACTOR_PIPE_FLAME_A = 18, ///< unseen, at a pipe's end
+  /// Where the fire bursts out: A and B are unseen points at the pipes' open
+  /// ends.
+  ACTOR_PIPE_FLAME_A = 18,
   ACTOR_PIPE_FLAME_B,
   ACTOR_PIPE_FLAME_C,
-  ACTOR_PIPE_FLAME_D,
+  ACTOR_PIPE_FLAME_D, ///< a white dragon head on the wall
   ACTOR_PIPE_STATUE
 };
 
 /// The Mercury tower (F2): three pushable pipes, two puddles for Frost, the
-/// flame thrower Blaze lights, the torch the mended pipeline lights (and the
-/// dragon statue in its place before), and the statue that shoots at the
-/// icebergs.
+/// unseen points at the pipes' ends where the fire bursts out, the flame
+/// thrower Blaze lights, the torch the mended pipeline lights (lit and unlit),
+/// and the torch that shoots at the icebergs.
 enum {
   ACTOR_MERCURY_PIPE_A = 8,
   ACTOR_MERCURY_PIPE_B = 9,
@@ -127,14 +130,15 @@ enum {
   ACTOR_MERCURY_PIPE_FLAME_C,
   ACTOR_MERCURY_FLAME_THROWER = 16,
   ACTOR_MERCURY_TORCH = 17,
-  ACTOR_MERCURY_TORCH_STATUE = 18,
-  ACTOR_ICEBERG_STATUE = 19,
+  ACTOR_UNLIT_MERCURY_TORCH = 18,
+  ACTOR_ICEBERG_TORCH = 19,
   ACTOR_ICEBERG_FIREBALL = 21,
   ACTOR_ICEBERG_FIREBALL_ROLL = 22
 };
 
-/// The Jupiter tower (F3): the block Move drops into the gap, the statue Move
-/// pushes into the flames, and the statue whose fireball drops.
+/// The Jupiter tower (F3): its flame throwers, the purple block Move drops into
+/// the gap, the white dragon statue Move pushes into the flames, and the torch
+/// whose fireball drops.
 enum {
   ACTOR_JUPITER_FLAME_THROWER_A = 8,
   ACTOR_JUPITER_FLAME_THROWER_B,
@@ -142,15 +146,15 @@ enum {
   ACTOR_DROPPING_BLOCK = 11,
   ACTOR_JUPITER_STATUE = 12,
   ACTOR_UPPER_FLAME_THROWER = 13,
-  ACTOR_DROP_STATUE = 14,
+  ACTOR_DROP_TORCH = 14,
   ACTOR_DROP_FIREBALL = 15,
   ACTOR_DROP_FIREBALL_ROLL = 16
 };
 
 /// The Venus tower (F4): the tightrope's posts, the three stones Carry lifts,
-/// the statue pushed into the flames, the statues (17 and 23 stand before
-/// doorways and stand aside once they are moved, 18 to 22 hide flame throwers)
-/// and the three hidden flame throwers.
+/// its flame throwers, the robed stone statue pushed into the flames, the
+/// statues before the two doorways, which stand aside once moved, the five that
+/// hide flame throwers, and those three hidden flame throwers.
 enum {
   ACTOR_TIGHTROPE_NEAR_POST = 8,
   ACTOR_TIGHTROPE_FAR_POST = 9,
@@ -373,33 +377,32 @@ const struct SceneRegion *Scene_GetExitRegions(void) { return 0; }
 const u32 *Scene_GetExits(void) { return gSceneExits; }
 
 extern struct ActorPlacement gMarsLighthouseRoomF_Placements[];
-extern struct ActorPlacement gMarsLighthouseRoomF_Room4Placements[];
-extern struct ActorPlacement gMarsLighthouseRoomF_Room1Placements[];
-extern struct ActorPlacement gMarsLighthouseRoomF_Room3Placements[];
-extern struct ActorPlacement gMarsLighthouseRoomF_Room2Placements[];
+extern struct ActorPlacement gMarsLighthouseRoomF_VenusTowerPlacements[];
+extern struct ActorPlacement gMarsLighthouseRoomF_MarsTowerPlacements[];
+extern struct ActorPlacement gMarsLighthouseRoomF_JupiterTowerPlacements[];
+extern struct ActorPlacement gMarsLighthouseRoomF_MercuryTowerPlacements[];
 
-/// The towers' statues and torches start with their sprite flags clear.
-s32 MarsLighthouseRoomF_SetUpStatue(struct Actor *actor) {
+/// The towers' torches start with their sprite flags clear.
+s32 MarsLighthouseRoomF_SetUpTorch(struct Actor *actor) {
   Actor_SetSpriteFlags(actor, 0);
   return 0;
 }
 
 const struct ActorPlacement *Scene_GetActorPlacements(void) {
   if (gMainRoutineWork.next == SCENE_MARS_LIGHTHOUSE_VENUS_TOWER)
-    return gMarsLighthouseRoomF_Room4Placements;
+    return gMarsLighthouseRoomF_VenusTowerPlacements;
   if (gMainRoutineWork.next == SCENE_MARS_LIGHTHOUSE_MERCURY_TOWER)
-    return gMarsLighthouseRoomF_Room2Placements;
+    return gMarsLighthouseRoomF_MercuryTowerPlacements;
   if (gMainRoutineWork.next == SCENE_MARS_LIGHTHOUSE_MARS_TOWER)
-    return gMarsLighthouseRoomF_Room1Placements;
+    return gMarsLighthouseRoomF_MarsTowerPlacements;
   if (gMainRoutineWork.next == SCENE_MARS_LIGHTHOUSE_JUPITER_TOWER)
-    return gMarsLighthouseRoomF_Room3Placements;
+    return gMarsLighthouseRoomF_JupiterTowerPlacements;
   return gMarsLighthouseRoomF_Placements;
 }
 
-// XXX: what Blaze does otherwise once the field work's blazeLongSpray is set
-// (its mode 3 for 2 when it finds no torch); the rest of blaze.c's reading of
-// the mode would settle it.
-/// Blaze is cast at a torch.
+/// Blaze is about to be cast at a torch: its jet is the faster, longer one
+/// (BLAZE_LONG_SPRAY), which carries on to what stands beyond. Each cast starts
+/// with the field work's blazeLongSpray clear.
 void MarsLighthouseRoomF_StartBlazeOnTorch(void) {
   struct FieldWork *event = Ram_HeapSlots->fieldWork;
 
@@ -453,7 +456,7 @@ void MarsLighthouseRoomF_PushStoneAlongLedge(void) {
 
   angle = ((angle + 2) & 12) << 12;
   position[0] = actor->x.fixed;
-  position[1] = (actor->y.fixed + toFIXED(4)) & 0xfff80000;
+  position[1] = (actor->y.fixed + toFIXED(4)) & ~(toFIXED(8) - 1);
   position[2] = actor->z.fixed;
   FieldVector_AddPolarOffset(16, angle, position);
   actor = Actor_FindAtCell(position, 1);
@@ -633,18 +636,19 @@ void MarsLighthouseRoomF_PressButton(void) {
   Event_SetFlag(FLAG_BUTTON_PRESSED);
 }
 
-/// The moving flame thrower's flame reaches the dragon statue, which is a
-/// torch from now on.
+/// The moving flame thrower's flame reaches the unlit torch, which is lit from
+/// now on.
 void MarsLighthouseRoomF_LightTorch(void) {
   struct Actor *actor = Actor_Get(ACTOR_MARS_TORCH);
 
-  Actor_SetPosition(ACTOR_MARS_TORCH_STATUE, 0, 0);
+  Actor_SetPosition(ACTOR_UNLIT_MARS_TORCH, 0, 0);
   Actor_SetPosition(ACTOR_MARS_TORCH, actor->homeX, actor->homeZ);
   Event_SetFlag(FLAG_MARS_TORCH_LIT);
   Event_PlaySound(SE_WHOOSH);
 }
 
-/// Blaze on the torch: the statue below shoots at the center wall.
+/// Blaze from the lit torch reaches the one below, which shoots at the center
+/// wall.
 void MarsLighthouseRoomF_BlazeTorch(void) {
   MarsLighthouseRoomF_ShootFireballAtWall();
 }
@@ -652,12 +656,15 @@ void MarsLighthouseRoomF_BlazeTorch(void) {
 extern u32 gMarsLighthouseRoomF_RubbleScriptA[];
 extern u32 gMarsLighthouseRoomF_RubbleScriptB[];
 
-/// Twelve pieces of wall burst from an actor and bounce away.
+/// The pieces of wall MarsLighthouseRoomF_ScatterRubble throws.
+#define RUBBLE_PIECES 12
+
+/// Pieces of wall burst from an actor and bounce away.
 void MarsLighthouseRoomF_ScatterRubble(s32 id) {
   struct Actor *origin = Actor_Get(id);
   s32 i;
 
-  for (i = 0; i < 12; i++) {
+  for (i = 0; i < RUBBLE_PIECES; i++) {
     s32 a = Random16();
     FIXED x = origin->x.fixed + (a << 4) - (Random16() << 4);
     s32 b = Random16();
@@ -841,7 +848,8 @@ void MarsLighthouseRoomF_FallIntoHole(void) {
     System_Wait(1);
   }
   Actor_Get(gMainRoutineWork.leaderActorId)->spriteStorageKind = 0;
-  gFieldWork->transition = SCENE_TRANSITION(TRANSITION_WINDOW, 9);
+  gFieldWork->transition =
+      SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER);
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();
   FieldEvent_SetExitRequest(16);
@@ -939,7 +947,7 @@ void MarsLighthouseRoomF_PushPipeOrJump(void) {
     Actor_Get(gMainRoutineWork.leaderActorId);
     keys = &gInput.held;
     table = gMarsLighthouseRoomF_JumpAnglesByKey;
-    angle = *(s16 *)((u8 *)table + (((*keys >> 4) & 15) << 1));
+    angle = *(s16 *)((u8 *)table + (((*keys >> 4) & 0xf) << 1));
     if (angle != -1) {
       struct MapWork *map = Ram_HeapSlots->mapGrid;
       struct Actor *leader = Actor_Get(gMainRoutineWork.leaderActorId);
@@ -958,17 +966,17 @@ void MarsLighthouseRoomF_PushPipeOrJump(void) {
       if (map != NULL)
         cells = (u8 *)map->layers[2].cells;
       cells += (x + (z << 7)) << 2;
-      if (cells[2] != 255)
+      if (cells[2] != CELL_BEHAVIOR_WALL)
         Field_TryJumpForward();
     }
   }
 }
 
 extern struct Trigger gMarsLighthouseRoomF_Triggers[];
-extern struct Trigger gMarsLighthouseRoomF_Room4Triggers[];
-extern struct Trigger gMarsLighthouseRoomF_Room1Triggers[];
-extern struct Trigger gMarsLighthouseRoomF_Room3Triggers[];
-extern struct Trigger gMarsLighthouseRoomF_Room2Triggers[];
+extern struct Trigger gMarsLighthouseRoomF_VenusTowerTriggers[];
+extern struct Trigger gMarsLighthouseRoomF_MarsTowerTriggers[];
+extern struct Trigger gMarsLighthouseRoomF_JupiterTowerTriggers[];
+extern struct Trigger gMarsLighthouseRoomF_MercuryTowerTriggers[];
 void Leader_SlideOnIceFromEdge(void);
 
 /// A frozen puddle is solid ground.
@@ -981,7 +989,7 @@ void MarsLighthouseRoomF_FreezePuddle(s32 id) {
   s32 offset = FIELD_CELL(x) + row;
 
   cell += offset << 2;
-  cell[2] = 255;
+  cell[2] = CELL_BEHAVIOR_WALL;
   Actor_Get(id)->priorityFlags = 0;
 }
 
@@ -1044,13 +1052,13 @@ UNUSED void MarsLighthouseRoomF_SlideFromEdge(void) {
 
 const struct Trigger *Scene_GetTriggers(void) {
   if (gMainRoutineWork.next == SCENE_MARS_LIGHTHOUSE_VENUS_TOWER)
-    return gMarsLighthouseRoomF_Room4Triggers;
+    return gMarsLighthouseRoomF_VenusTowerTriggers;
   if (gMainRoutineWork.next == SCENE_MARS_LIGHTHOUSE_MERCURY_TOWER)
-    return gMarsLighthouseRoomF_Room2Triggers;
+    return gMarsLighthouseRoomF_MercuryTowerTriggers;
   if (gMainRoutineWork.next == SCENE_MARS_LIGHTHOUSE_MARS_TOWER)
-    return gMarsLighthouseRoomF_Room1Triggers;
+    return gMarsLighthouseRoomF_MarsTowerTriggers;
   if (gMainRoutineWork.next == SCENE_MARS_LIGHTHOUSE_JUPITER_TOWER)
-    return gMarsLighthouseRoomF_Room3Triggers;
+    return gMarsLighthouseRoomF_JupiterTowerTriggers;
   return gMarsLighthouseRoomF_Triggers;
 }
 
@@ -1061,7 +1069,7 @@ void MarsLighthouseRoomF_StopSlideWhileHit(void) {
     Leader_SetSlideStopped(1);
 }
 
-void JupiterLighthouse_LoadPalettesZero(s32 mode);
+void JupiterLighthouse_LoadPalettes(s32 mode);
 extern u16 gMarsLighthouseRoomF_MarsButtonFlameThrowers[];
 extern u16 gMarsLighthouseRoomF_MarsButtonFlameStops[];
 extern u16 gMarsLighthouseRoomF_MarsPipeFlameThrowers[];
@@ -1085,8 +1093,9 @@ s32 Scene_Initialize(void) {
   s32 value;
 
   ((struct FieldWork *)heap->fieldWork)->transition =
-      SCENE_TRANSITION(TRANSITION_WINDOW, 4);
-  value = SCENE_TRANSITION(TRANSITION_WINDOW, 4);
+      SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE);
+  value =
+      SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE);
   Flag_Set(FLAG_IN_MARS_LIGHTHOUSE);
   Ride_Create();
   if (scene == SCENE_MARS_LIGHTHOUSE_MARS_TOWER) {
@@ -1098,7 +1107,7 @@ s32 Scene_Initialize(void) {
                           MarsLighthouseRoomF_LightTorch,
                           STEP_TRIGGER_FLAME_HIT);
       if (Flag_IsSet(FLAG_MARS_TORCH_LIT))
-        Actor_SetPosition(ACTOR_MARS_TORCH_STATUE, 0, 0);
+        Actor_SetPosition(ACTOR_UNLIT_MARS_TORCH, 0, 0);
       else
         Actor_SetPosition(ACTOR_MARS_TORCH, 0, 0);
       if (Flag_IsSet(FLAG_CENTER_WALL_CRACKED))
@@ -1139,7 +1148,7 @@ s32 Scene_Initialize(void) {
       Event_StartScreenTransition();
       Event_WaitTransitionFrames();
       Event_Wait(30);
-      Actor_SetPosition(ACTOR_MERCURY_TORCH_STATUE, 0, 0);
+      Actor_SetPosition(ACTOR_UNLIT_MERCURY_TORCH, 0, 0);
       Actor_SetPosition(ACTOR_MERCURY_TORCH, 264, 520);
       Event_PlaySound(SE_WHOOSH);
       Event_Wait(60);
@@ -1169,7 +1178,7 @@ s32 Scene_Initialize(void) {
       MarsLighthouseRoomF_FreezePuddle(ACTOR_CENTER_PUDDLE);
     MarsLighthouseRoomF_RouteFireThroughPipeline();
     if (Flag_IsSet(FLAG_PIPELINE_MENDED))
-      Actor_SetPosition(ACTOR_MERCURY_TORCH_STATUE, 0, 0);
+      Actor_SetPosition(ACTOR_UNLIT_MERCURY_TORCH, 0, 0);
     else
       Actor_SetPosition(ACTOR_MERCURY_TORCH, 0, 0);
     if (Flag_IsSet(FLAG_ICEBERGS_MELTED))
@@ -1178,7 +1187,7 @@ s32 Scene_Initialize(void) {
   } else if (scene == SCENE_MARS_LIGHTHOUSE_JUPITER_TOWER) {
     FieldEffect_StartBlankOverlay(0);
     ((struct FieldWork *)heap->fieldWork)->transition = value;
-    JupiterLighthouse_LoadPalettesZero(1);
+    JupiterLighthouse_LoadPalettes(1);
     LightSprites_InitB();
     LightSprites_SetPriority(2);
     LightSprites_Add(ACTOR_DROPPING_BLOCK, 6);
@@ -1243,10 +1252,12 @@ s32 Scene_Initialize(void) {
       Actor_GetById(ACTOR_PUSHED_STATUE)->y.fixed = 0;
       Actor_GetById(ACTOR_PUSHED_STATUE)->groundHeight = 0;
     }
-    Actor_GetById(gMainRoutineWork.leaderActorId)->priorityFlags |= 64;
-    Actor_GetById(ACTOR_FIRST_STONE)->priorityFlags |= 192;
-    Actor_GetById(ACTOR_SECOND_STONE)->priorityFlags |= 128;
-    Actor_GetById(ACTOR_THIRD_STONE)->priorityFlags |= 128;
+    Actor_GetById(gMainRoutineWork.leaderActorId)->priorityFlags |=
+        ACTOR_PRIORITY_WALKS_ON_PLATFORMS;
+    Actor_GetById(ACTOR_FIRST_STONE)->priorityFlags |=
+        ACTOR_PRIORITY_WALKS_ON_PLATFORMS | ACTOR_PRIORITY_PLATFORM;
+    Actor_GetById(ACTOR_SECOND_STONE)->priorityFlags |= ACTOR_PRIORITY_PLATFORM;
+    Actor_GetById(ACTOR_THIRD_STONE)->priorityFlags |= ACTOR_PRIORITY_PLATFORM;
   }
   return 0;
 }
@@ -1267,23 +1278,23 @@ s32 Scene_PrepareMap(void) {
   return 0;
 }
 
-/// The statue below the torch shoots its fireball at the center wall.
+/// The torch below the lit one shoots its fireball at the center wall.
 void MarsLighthouseRoomF_ShootFireballAtWall(void) {
-  Actor_Attach(ACTOR_WALL_STATUE, ACTOR_WALL_FIREBALL, ACTOR_WALL_FIREBALL_ROLL,
+  Actor_Attach(ACTOR_WALL_TORCH, ACTOR_WALL_FIREBALL, ACTOR_WALL_FIREBALL_ROLL,
                FACING_SOUTH, gMarsLighthouseRoomF_FireballToWall);
 }
 
-/// The flame reaches the statue, which shoots its fireball at the icebergs.
+/// The flame reaches the torch, which shoots its fireball at the icebergs.
 void MarsLighthouseRoomF_ShootFireballAtIcebergs(void) {
-  Actor_Attach(ACTOR_ICEBERG_STATUE, ACTOR_ICEBERG_FIREBALL,
+  Actor_Attach(ACTOR_ICEBERG_TORCH, ACTOR_ICEBERG_FIREBALL,
                ACTOR_ICEBERG_FIREBALL_ROLL, FACING_SOUTH,
                gMarsLighthouseRoomF_FireballToIcebergs);
   Ride_SetEntry(3, FLAME_SPARK | 3);
 }
 
-/// The flame reaches the statue, whose fireball drops to the floor below.
+/// The flame reaches the torch, whose fireball drops to the floor below.
 void MarsLighthouseRoomF_DropFireball(void) {
-  Actor_Attach(ACTOR_DROP_STATUE, ACTOR_DROP_FIREBALL, ACTOR_DROP_FIREBALL_ROLL,
+  Actor_Attach(ACTOR_DROP_TORCH, ACTOR_DROP_FIREBALL, ACTOR_DROP_FIREBALL_ROLL,
                FACING_SOUTH, gMarsLighthouseRoomF_FireballDrop);
 }
 
@@ -1291,10 +1302,7 @@ void MarsLighthouseRoomF_DropFireball(void) {
 
 extern s32 gPaletteCyclePausesInEvents;
 
-/// Unused: whether the palette cycle stops while an event holds the field.
-UNUSED void PaletteCycle_SetPausesInEvents(s32 value) {
-  gPaletteCyclePausesInEvents = value;
-}
+#include "shared/palette_cycle_set_pauses_in_events.h"
 
 extern s32 gPaletteCycleFrame;
 
@@ -1305,97 +1313,11 @@ static inline void PaletteCycle_SetFrame(s32 value) {
 
 #include "shared/palette_cycle_step.h"
 
-void JupiterLighthouse_LoadPalettesZero(s32 mode) {
-  gPaletteCyclePausesInEvents = 1;
-  if (mode != 2) {
-    Iwram_CopyWordsEntry(gPaletteCycleColors, (void *)&BG_PLTT_COLOR(12, 0),
-                         PALETTE_COLORS * 2);
-    Iwram_CopyWordsEntry(gPaletteCycleUnlitPalette,
-                         (void *)&BG_PLTT_COLOR(13, 0), PALETTE_COLORS * 2);
-  }
-  if (Event_GetFlag(FLAG_JUPITER_LIGHTHOUSE_ACTIVATED) || mode == 1) {
-    PaletteCycle_SetFrame(0);
-    Task_Add(PaletteCycle_Step, TASK_PASS_FRAME);
-  } else {
-    Dma_Set(gPaletteCycleUnlitColors, (void *)&BG_PLTT_COLOR(12, 2),
-            DMA_COPY_WORDS(2), REG_DMA3);
-  }
-}
+#include "shared/jupiter_lighthouse_load_palettes.h"
 
 #include "shared/actor_raise_from_cell.h"
 
-/// Unused here: the Jupiter Lighthouse's whirlwind carries the leader up.
-UNUSED void Whirlwind_CarryLeader(void) {
-  struct FieldWork *work = Ram_HeapSlots->fieldWork;
-  struct Actor *actor = Actor_Get(gMainRoutineWork.leaderActorId);
-  struct Actor *linked = actor->watchedActor;
-  struct Actor *shadow;
-  u8 *motion;
-  u8 *flag;
-  s32 x;
-  s32 facing;
-  s32 i;
-
-  Event_Start();
-  FieldEvent_ResolvePendingActions(0);
-  i = 0;
-  work->glowHeld = 0;
-  motion = &actor->motionFlags;
-  *motion = 4;
-  Actor_SetSpriteFlags(actor, 0);
-  flag = &linked->riseEnabled;
-  while (*flag != 0) {
-    actor->x.fixed = linked->x.fixed;
-    actor->y.fixed = linked->y.fixed + i;
-    actor->z.fixed = linked->z.fixed;
-    if (i <= toFIXED(4) - 1)
-      i += toFIXED(0.1);
-    actor->facing = (u8)gFrameCount << 12;
-    actor->priorityFlags ^= 2 << (gFrameCount & 1);
-    System_Wait(1);
-  }
-  work->glow = 1;
-  work->glowHeld = 1;
-  x = (linked->x.fixed >> 19) & ~1;
-  facing = linked->facing;
-  facing >>= 13;
-  actor->x.fixed = (x + facing - 1) << 19;
-  actor->z.fixed = (((linked->z.fixed >> 19) & ~1) - (facing & 2) + 1) << 19;
-  actor->velocityY = toFIXED(6);
-  *(u8 *)&actor->priorityFlags = ACTOR_PRIORITY_AUTOMATIC;
-  *motion = 3;
-  Actor_SetSpriteFlags(actor, 1);
-  FieldCamera_MoveTo(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0);
-  shadow = FieldCamera_GetActor();
-  shadow->speedLimit = toFIXED(8);
-  shadow->acceleration = toFIXED(1);
-  *(u8 *)&shadow->motionFlags = 0;
-  FieldActor_SetMoveTargetFX(
-      shadow, actor->x.fixed,
-      Map_GetTerrainHeight(0, actor->x.fixed, actor->z.fixed), actor->z.fixed);
-  i = 0;
-  if (actor->y.fixed > actor->groundHeight + toFIXED(16)) {
-    do {
-      System_Wait(1);
-      i++;
-    } while (i <= 59 && actor->y.fixed > actor->groundHeight + toFIXED(16));
-  }
-  Event_PlaySound(SE_LANDING_THUD);
-  i = 0;
-  if (actor->velocityY != 0) {
-    do {
-      System_Wait(1);
-      i++;
-    } while (i <= 59 && actor->velocityY != 0);
-  }
-  FieldActor_WaitForMove(shadow);
-  Actor_Get(gMainRoutineWork.leaderActorId)->priorityFlags |=
-      ACTOR_PRIORITY_AUTOMATIC;
-  EventCamera_FollowActor(gMainRoutineWork.leaderActorId, 1);
-  work->glowHeld = 1;
-  work->stepTrigger = 0;
-  Event_End();
-}
+#include "shared/whirlwind_carry_leader.h"
 
 #include "shared/position_flat_distance.h"
 
@@ -1429,78 +1351,13 @@ UNUSED struct Actor *Whirlwind_Spawn(struct Actor *source) {
   options.priority = 1;
   options.palette = 7;
   FieldEffect_Spawn(position.x, source->y.fixed, position.z - toFIXED(6), 0, 0,
-                    0, toFIXED(3), &options);
+                    0, EFFECT_USE_PALETTE | EFFECT_USE_PRIORITY, &options);
   return actor;
 }
 
 #include "shared/actor_emit_rising_sparks_b.h"
 
-/// The Jupiter Lighthouse aerie's actors the copy below moves, as
-/// jupiter_lighthouse_aerie.c names them.
-enum {
-  ACTOR_LEFT_ANGEL = ACTOR_FIRST_PLACED + 1,
-  ACTOR_RIGHT_ANGEL,
-  ACTOR_LEFT_ARCHER,
-  ACTOR_RIGHT_ARCHER,
-  ACTOR_LID = ACTOR_FIRST_PLACED + 15
-};
-
-/// Unused here: the Jupiter Lighthouse's angels where their flags leave them.
-UNUSED void JupiterLighthouse_PlaceRaisedActors(void) {
-  struct Actor *leftAngel = Actor_GetById(ACTOR_LEFT_ANGEL);
-  struct Actor *rightAngel = Actor_GetById(ACTOR_RIGHT_ANGEL);
-  struct Actor *lid = Actor_GetById(ACTOR_LID);
-  struct FieldSprite *sprite = lid->sprite;
-
-  Actor_SetPosition(24, 512, 248);
-  Actor_SetPosition(ACTOR_LID, 512, 248);
-  Actor_SetPosition(ACTOR_LEFT_ANGEL, 472, 256);
-  Actor_SetPosition(ACTOR_RIGHT_ANGEL, 552, 256);
-  Actor_GetById(24)->scaleX = 0;
-  lid->motionFlags = 0;
-  lid->y.fixed = lid->groundHeight;
-  leftAngel->motionFlags = 0;
-  leftAngel->y.fixed = leftAngel->groundHeight;
-  rightAngel->motionFlags = 0;
-  rightAngel->y.fixed = rightAngel->groundHeight;
-  if (Event_GetFlag(FLAG_JUPITER_LIGHTHOUSE_LEFT_ANGEL_ENERGIZED)) {
-    leftAngel->y.fixed += 0x66640;
-    {
-      s32 step = 0x1eb80;
-
-      lid->y.fixed += step;
-    }
-    lid->x.fixed -= 0x28f40;
-    sprite->rotation += TRIG_TURN / 32;
-    Actor_SetSpriteColorMode(Actor_GetById(ACTOR_LEFT_ANGEL), 4);
-    Actor_SetSpriteColorMode(Actor_GetById(ACTOR_LEFT_ARCHER), 4);
-  }
-  if (Event_GetFlag(FLAG_JUPITER_LIGHTHOUSE_RIGHT_ANGEL_ENERGIZED)) {
-    rightAngel->y.fixed += 0x66640;
-    {
-      s32 step = 0x1eb80;
-
-      lid->y.fixed += step;
-    }
-    lid->x.fixed += 0x28f40;
-    sprite->rotation -= TRIG_TURN / 32;
-    Actor_SetSpriteColorMode(Actor_GetById(ACTOR_RIGHT_ANGEL), 4);
-    Actor_SetSpriteColorMode(Actor_GetById(ACTOR_RIGHT_ARCHER), 4);
-  }
-  if (Event_GetFlag(FLAG_JUPITER_LIGHTHOUSE_LEFT_ANGEL_ENERGIZED) &&
-      Event_GetFlag(FLAG_JUPITER_LIGHTHOUSE_RIGHT_ANGEL_ENERGIZED)) {
-    leftAngel->y.fixed += 0x199900;
-    rightAngel->y.fixed += 0x199900;
-    {
-      FIXED step = 0x1b8480;
-
-      lid->y.fixed += step;
-    }
-    leftAngel->motionFlags = ACTOR_FLOATS;
-    rightAngel->motionFlags = ACTOR_FLOATS;
-    lid->motionFlags = ACTOR_FLOATS;
-  }
-}
+#include "shared/jupiter_lighthouse_place_raised_actors.h"
 
 #define ABS(value) ((value) < 0 ? -(value) : (value))
 
@@ -1618,13 +1475,13 @@ s32 MarsLighthouseRoomF_KnockBack(void) {
                                                   actor->z.fixed) == 7) {
         s32 i;
 
-        actor->velocityX = (s16)work->direction.x << 17;
-        actor->velocityZ = (s16)work->direction.z << 17;
+        actor->velocityX = (s16)work->direction.x * toFIXED(2);
+        actor->velocityZ = (s16)work->direction.z * toFIXED(2);
         actor->acceleration = FIXED_ONE / 16;
         for (i = 0; i <= 9; i++) {
-          position.x = actor->x.fixed + ((s16)work->direction.x << 19);
+          position.x = actor->x.fixed + (s16)work->direction.x * toFIXED(8);
           position.y = actor->y.fixed;
-          position.z = actor->z.fixed + ((s16)work->direction.z << 19);
+          position.z = actor->z.fixed + (s16)work->direction.z * toFIXED(8);
           if (MapGrid_CheckCollision(actor, (s32 *)&position) != 0) {
             actor->velocityX = 0;
             actor->velocityZ = 0;
@@ -1646,9 +1503,9 @@ s32 MarsLighthouseRoomF_KnockBack(void) {
         s32 off;
 #endif
 
-        position.x = actor->x.fixed + ((s16)work->direction.x << 19);
+        position.x = actor->x.fixed + (s16)work->direction.x * toFIXED(8);
         position.y = actor->y.fixed;
-        position.z = actor->z.fixed + ((s16)work->direction.z << 19);
+        position.z = actor->z.fixed + (s16)work->direction.z * toFIXED(8);
         result = MapGrid_CheckCollision(actor, (s32 *)&position);
         if (result > 0)
           break;
@@ -1661,7 +1518,7 @@ s32 MarsLighthouseRoomF_KnockBack(void) {
         radius = actor->radius - 2;
         other = Ram_HeapSlots->actors;
         flags = &other->collisionFlags;
-        for (i = 0; i <= 63; i++, flags += 128, other++) {
+        for (i = 0; i <= 63; i++, flags += sizeof(struct Actor), other++) {
           if (other->script != 0 && (*flags & ACTOR_SOLID) && other != actor &&
               Event_CheckSpheresOverlap(&other->x.fixed, radius,
                                         (s32 *)&position,
@@ -1671,8 +1528,8 @@ s32 MarsLighthouseRoomF_KnockBack(void) {
           }
         }
 #endif
-        x = actor->x.fixed += (s16)work->direction.x << 17;
-        z = actor->z.fixed + ((s16)work->direction.z << 17);
+        x = actor->x.fixed += (s16)work->direction.x * toFIXED(2);
+        z = actor->z.fixed + (s16)work->direction.z * toFIXED(2);
         actor->z.fixed = z;
         off = (x & ~FIELD_CELL_MASK) - toFIXED(8);
         if (off > FIXED_ONE)
@@ -1891,59 +1748,9 @@ extern const s32 *gFieldEffect_DurationScripts[];
 
 void GameFlag_SetByte(s32 flag, s32 value);
 
-/// The leader on a cracked tile: the first time it cracks, the next it gives
-/// way and he falls through.
-s32 CrackedTile_Step(void) {
-  struct Actor *actor = Actor_Get(gMainRoutineWork.leaderActorId);
-  s32 x = FIELD_CELL(actor->x.fixed);
-  s32 z = FIELD_CELL(actor->z.fixed);
-  struct CellTarget *work = &gCrackedTiles;
-  struct CellTargetEntry *entry = work->entries;
-  s32 index;
+#include "shared/cracked_tile_step.h"
 
-  for (index = 0; index < work->count; index++, entry++) {
-    if (entry->x == x && entry->z == z) {
-      if (!Event_GetFlag(entry->flag)) {
-        CrackedTile_Crack(work, entry);
-        Event_SetFlag(entry->flag);
-        work->current = index;
-        break;
-      }
-      if (index == work->current)
-        break;
-      work->current = index;
-      CrackedTile_Fall(work, entry);
-      GameFlag_SetByte(work->flagByte, x);
-      GameFlag_SetByte(work->flagByte + 8, z);
-      return 1;
-    }
-  }
-  return 0;
-}
-
-/// Unused here: places the leader below the tile he fell through.
-UNUSED void CrackedTile_PlaceLanding(s32 dx, s32 dz, s32 value) {
-  struct Actor *actor = Actor_Get(gMainRoutineWork.leaderActorId);
-  struct FieldWork *event = Ram_HeapSlots->fieldWork;
-  struct CellTarget *work = &gCrackedTiles;
-  s32 x = FieldGameFlag_GetByte(work->flagByte);
-  s32 z = FieldGameFlag_GetByte(work->flagByte + 8);
-
-  if (x != 0 || z != 0) {
-    struct Actor *other;
-
-    GameFlag_SetByte(work->flagByte, 0);
-    GameFlag_SetByte(work->flagByte + 8, 0);
-    actor->x.fixed = FIELD_CELL_CENTER(x + dx);
-    actor->z.fixed = FIELD_CELL_CENTER(z + dz);
-    other = event->camera;
-    other->x.fixed = actor->x.fixed;
-    other->z.fixed = actor->z.fixed;
-    MapGrid_CenterOnFollowedPoint();
-    CrackedTile_DropIn();
-    gFieldWork->transition = value;
-  }
-}
+#include "shared/cracked_tile_place_landing.h"
 
 extern s16 gSlideOnIce_SteerAngles[];
 
@@ -1997,16 +1804,18 @@ s32 PushTarget_FillFootprint(s32 id) {
     return 0;
   width = (ABS(gPushFootprints[j][0]) + ABS(gPushFootprints[j][2])) >> 4;
   height = (ABS(gPushFootprints[j][1]) + ABS(gPushFootprints[j][3])) >> 4;
-  x = FIELD_CELL(actor->x.fixed + (gPushFootprints[j][0] << 16));
-  z = FIELD_CELL(actor->z.fixed + (gPushFootprints[j][1] << 16));
-  mapX = map->layers[1].offsetX >> 20;
+  x = FIELD_CELL(actor->x.fixed + toFIXED(gPushFootprints[j][0]));
+  z = FIELD_CELL(actor->z.fixed + toFIXED(gPushFootprints[j][1]));
+  mapX = FIELD_CELL(map->layers[1].offsetX);
   i = mapX;
-  mapZ = map->layers[1].offsetY >> 20;
+  mapZ = FIELD_CELL(map->layers[1].offsetY);
   toX = x + (u16)i;
   toZ = z + (u16)mapZ;
   MapGrid_CopyCellAttributes(x, z, width, height, toX, toZ);
-  PushedActor_FillGridAttributeRectangle(0, x, z, width, height, 255);
-  PushedActor_FillGridAttributeRectangle(2, x, z, width, height, 255);
+  PushedActor_FillGridAttributeRectangle(0, x, z, width, height,
+                                         CELL_BEHAVIOR_WALL);
+  PushedActor_FillGridAttributeRectangle(2, x, z, width, height,
+                                         CELL_BEHAVIOR_WALL);
   return 1;
 }
 
@@ -2070,8 +1879,8 @@ void PushTarget_Push(struct PushTarget target) {
   acceleration = leader->acceleration;
   from[0] = actor->x.fixed;
   from[2] = actor->z.fixed;
-  cell[0] = FIELD_CELL(actor->x.fixed + (gPushFootprints[footprint][0] << 16));
-  cell[2] = FIELD_CELL(actor->z.fixed + (gPushFootprints[footprint][1] << 16));
+  cell[0] = FIELD_CELL(actor->x.fixed + toFIXED(gPushFootprints[footprint][0]));
+  cell[2] = FIELD_CELL(actor->z.fixed + toFIXED(gPushFootprints[footprint][1]));
   width = (ABS(gPushFootprints[footprint][0]) +
            ABS(gPushFootprints[footprint][2])) >>
           4;
@@ -2101,8 +1910,8 @@ void PushTarget_Push(struct PushTarget target) {
   Actor_SetAnimation(gMainRoutineWork.leaderActorId, ANIM_WALK);
   Actor_SetSpeedAndAcceleration(gMainRoutineWork.leaderActorId, 0.3, 0.1);
   Actor_SetDestinationOffset(gMainRoutineWork.leaderActorId,
-                             (gPushLeaderSteps[direction] << 16) >> 31,
-                             (gPushLeaderSteps[direction] << 16) >> 17);
+                             toFIXED(gPushLeaderSteps[direction]) >> 31,
+                             toFIXED(gPushLeaderSteps[direction]) >> 17);
   if (target.callback != 0)
     target.callback();
   FieldActor_WaitForMoveById(gMainRoutineWork.leaderActorId);
@@ -2116,20 +1925,20 @@ void PushTarget_Push(struct PushTarget target) {
   FieldActor_SetPositionAndResetMotion(actor, target.x, actor->y.fixed,
                                        target.z);
   Actor_SelectAnimation(actor, 1);
-  target.x = target.x + (gPushFootprints[footprint][0] << 16);
-  target.z = target.z + (gPushFootprints[footprint][1] << 16);
+  target.x = target.x + toFIXED(gPushFootprints[footprint][0]);
+  target.z = target.z + toFIXED(gPushFootprints[footprint][1]);
   target.x >>= 20;
   target.z >>= 20;
-  originX = map->layers[1].offsetX >> 20;
-  originZ = map->layers[1].offsetY >> 20;
+  originX = FIELD_CELL(map->layers[1].offsetX);
+  originZ = FIELD_CELL(map->layers[1].offsetY);
   MapGrid_CopyCellAttributes(target.x, target.z, width, height,
                              originX + target.x, originZ + target.z);
   PushedActor_FillGridAttributeRectangle(0, target.x, target.z, width, height,
-                                         255);
+                                         CELL_BEHAVIOR_WALL);
   PushedActor_FillGridAttributeRectangle(2, target.x, target.z, width, height,
-                                         255);
-  cell[0] = FIELD_CELL(from[0] + (gPushFootprints[footprint][0] << 16));
-  cell[2] = FIELD_CELL(from[2] + (gPushFootprints[footprint][1] << 16));
+                                         CELL_BEHAVIOR_WALL);
+  cell[0] = FIELD_CELL(from[0] + toFIXED(gPushFootprints[footprint][0]));
+  cell[2] = FIELD_CELL(from[2] + toFIXED(gPushFootprints[footprint][1]));
   originX += cell[0];
   originZ += cell[2];
   MapGrid_CopyCellAttributes(originX, originZ, width, height, cell[0], cell[2]);
@@ -2142,87 +1951,52 @@ void PushTarget_Push(struct PushTarget target) {
 
 #include "shared/light_sprites_draw.h"
 
+/// Takes `size` bytes from the heap for a picture's decompression.
 static inline void *BumpAlloc(s32 size) { return Heap_Alloc(size); }
 
-void LightSprites_InitA(void) {
-  u8 *buffer = BumpAlloc(3072);
+#include "shared/light_sprites_init_a.h"
 
-  Iwram_ClearWordsEntry(gLightSpriteActors, sizeof(gLightSpriteActors));
-  Decompress_TaggedLz(gField_CachedTilesA, buffer);
-  gLightSpriteTile = VramCache_FindFreeEntry();
-  VramCache_Load(gLightSpriteTile, 3072, buffer);
-  Heap_Release(buffer);
-  Task_Add(LightSprites_Draw, TASK_PASS_FRAME);
-  gLightSpriteCount = 0;
-  gLightSpritesLarge = 0;
-  gLightSpritePriority = -1;
-}
+#include "shared/light_sprites_init_b.h"
 
-void LightSprites_InitB(void) {
-  u8 *buffer = Heap_Alloc(3072);
-
-  Iwram_ClearWordsEntry(gLightSpriteActors, sizeof(gLightSpriteActors));
-  Decompress_TaggedLz(gField_CachedTilesB, buffer);
-  gLightSpriteTile = VramCache_FindFreeEntry();
-  Vram_Load(gLightSpriteTile, 2048, buffer);
-  Heap_Release(buffer);
-  Task_AddFrame(LightSprites_Draw, TASK_PASS_FRAME);
-  gLightSpriteCount = 0;
-  gLightSpritesLarge = 0;
-  gLightSpritePriority = -1;
-}
-
-void LightSprites_InitC(void) {
-  u8 *buffer = BumpAlloc(2048);
-
-  Iwram_ClearWordsEntry(gLightSpriteActors, sizeof(gLightSpriteActors));
-  Decompress_TaggedLz(gField_CachedTilesC, buffer);
-  gLightSpriteTile = VramCache_FindFreeEntry();
-  Vram_Load(gLightSpriteTile, 2048, buffer);
-  Heap_Release(buffer);
-  Task_AddFrame(LightSprites_Draw, TASK_PASS_FRAME);
-  gLightSpriteCount = 0;
-  gLightSpritesLarge = 1;
-  gLightSpritePriority = -1;
-}
+#include "shared/light_sprites_init_c.h"
 
 #include "shared/light_sprites_add.h"
 
 void LightSprites_SetPriority(s32 value) { gLightSpritePriority = value; }
 
-s32 gMarsLighthouseRoomF_StatueScript[] = {
-    SC_CALL(MarsLighthouseRoomF_SetUpStatue),
+s32 gMarsLighthouseRoomF_TorchScript[] = {
+    SC_CALL(MarsLighthouseRoomF_SetUpTorch),
     SC_END,
 };
 
 // clang-format off
-s32 gMarsLighthouseRoomF_VenusEastFlameThrowerRoute[] = {                                                               
-      SC_SET(SW_STEERING, 0),                                                  
-      SC_SET(SW_MOTION, 2),                                                    
-      SC_SPEED(0.5),                                                
-      SC_ACCELERATION(0.03125),                                                 
-      SC_MOVE(680, 0, 304),                                     
-      SC_SYNC,                                                                 
-      SC_WAIT(20),                                                             
-      SC_MOVE(760, 0, 304),                                     
-      SC_SYNC,                                                                 
-      SC_WAIT(20),                                                             
-      SC_LOOP(SC_FOREVER, SC_TOP),                                             
-  };
+s32 gMarsLighthouseRoomF_VenusEastFlameThrowerRoute[] = {
+    SC_SET(SW_STEERING, 0),
+    SC_SET(SW_MOTION, 2),
+    SC_SPEED(0.5),
+    SC_ACCELERATION(0.03125),
+    SC_MOVE(680, 0, 304),
+    SC_SYNC,
+    SC_WAIT(20),
+    SC_MOVE(760, 0, 304),
+    SC_SYNC,
+    SC_WAIT(20),
+    SC_LOOP(SC_FOREVER, SC_TOP),
+};
 
-s32 gMarsLighthouseRoomF_VenusWestFlameThrowerRoute[] = {                                                               
-      SC_SET(SW_STEERING, 0),                                                  
-      SC_SET(SW_MOTION, 2),                                                    
-      SC_SPEED(0.5),                                                
-      SC_ACCELERATION(0.03125),                                                 
-      SC_MOVE(584, 0, 304),                                     
-      SC_SYNC,                                                                 
-      SC_WAIT(20),                                                             
-      SC_MOVE(664, 0, 304),                                     
-      SC_SYNC,                                                                 
-      SC_WAIT(20),                                                             
-      SC_LOOP(SC_FOREVER, SC_TOP),                                             
-  };
+s32 gMarsLighthouseRoomF_VenusWestFlameThrowerRoute[] = {
+    SC_SET(SW_STEERING, 0),
+    SC_SET(SW_MOTION, 2),
+    SC_SPEED(0.5),
+    SC_ACCELERATION(0.03125),
+    SC_MOVE(584, 0, 304),
+    SC_SYNC,
+    SC_WAIT(20),
+    SC_MOVE(664, 0, 304),
+    SC_SYNC,
+    SC_WAIT(20),
+    SC_LOOP(SC_FOREVER, SC_TOP),
+};
 
 s32 gMarsLighthouseRoomF_ButtonFlameThrowerRoute[] = {
     SC_SET(SW_STEERING, 0),
@@ -2298,15 +2072,15 @@ s32 gMarsLighthouseRoomF_JupiterEastFlameThrowerRoute[] = {
     SC_LOOP(SC_FOREVER, SC_TO(1)),
 };
 
-s32 gMarsLighthouseRoomF_JupiterLowerFlameThrowerSetUp[] = {                                                               
-      SC_SET(SW_STEERING, 0),                                                  
-      SC_SET(SW_MOTION, 2),                                                   
-      SC_SET(SW_Y, toFIXED(32)),                                                
-      SC_SET(SW_GROUND, toFIXED(32)),                                           
-      SC_SPEED(0.5),                                                
-      SC_ACCELERATION(0.03125),                                                 
-      SC_END,                                                                  
-  };
+s32 gMarsLighthouseRoomF_JupiterLowerFlameThrowerSetUp[] = {
+    SC_SET(SW_STEERING, 0),
+    SC_SET(SW_MOTION, 2),
+    SC_SET(SW_Y, toFIXED(32)),
+    SC_SET(SW_GROUND, toFIXED(32)),
+    SC_SPEED(0.5),
+    SC_ACCELERATION(0.03125),
+    SC_END,
+};
 
 s32 gMarsLighthouseRoomF_JupiterFarFlameThrowerRoute[] = {
     SC_SET(SW_STEERING, 0),
@@ -2355,7 +2129,7 @@ u16 gMarsLighthouseRoomF_MarsButtonFlameThrowers[] = {
 };
 
 u16 gMarsLighthouseRoomF_MarsButtonFlameStops[] = {
-    ACTOR_MARS_TORCH_STATUE, 1, 0,
+    ACTOR_UNLIT_MARS_TORCH, 1, 0,
 };
 
 u16 gMarsLighthouseRoomF_MarsPipeFlameThrowers[] = {
@@ -2379,7 +2153,7 @@ u16 gMarsLighthouseRoomF_MercuryFlameThrowers[] = {
 };
 
 u16 gMarsLighthouseRoomF_MercuryFlameStops[] = {
-    ACTOR_ICEBERG_STATUE, 1, 0,
+    ACTOR_ICEBERG_TORCH, 1, 0,
 };
 
 u16 gMarsLighthouseRoomF_JupiterUpperFlameThrowers[] = {
@@ -2387,7 +2161,7 @@ u16 gMarsLighthouseRoomF_JupiterUpperFlameThrowers[] = {
 };
 
 u16 gMarsLighthouseRoomF_JupiterUpperFlameStops[] = {
-    ACTOR_DROP_STATUE, 1, 0,
+    ACTOR_DROP_TORCH, 1, 0,
 };
 
 u16 gMarsLighthouseRoomF_JupiterFlameThrowers[] = {
@@ -2450,13 +2224,17 @@ s32 gMarsLighthouseRoomF_FireballToIcebergs[] = {
     SC_END,
 };
 
-s32 gMarsLighthouseRoomF_FireballDrop[] = {                                                               
-      SC_CALL(Actor_PopUp), SC_MOVE(872, 32, 128),             
-      SC_SYNC,        SC_MOVE(872, 22, 128),             
-      SC_SYNC,        SC_MOVE(872, 22, 144),             
-      SC_SYNC,        SC_CALL(Actor_Park),                                          
-      SC_END,                                                                  
-  };
+s32 gMarsLighthouseRoomF_FireballDrop[] = {
+    SC_CALL(Actor_PopUp),
+    SC_MOVE(872, 32, 128),
+    SC_SYNC,
+    SC_MOVE(872, 22, 128),
+    SC_SYNC,
+    SC_MOVE(872, 22, 144),
+    SC_SYNC,
+    SC_CALL(Actor_Park),
+    SC_END,
+};
 
 #include "shared/mars_lighthouse_part_scripts.c"
 
@@ -2589,7 +2367,7 @@ LATE_DATA struct ActorPlacement gMarsLighthouseRoomF_Placements[] = {
     {SCENE_TABLE_END},
 };
 
-LATE_DATA struct ActorPlacement gMarsLighthouseRoomF_Room4Placements[] = {
+LATE_DATA struct ActorPlacement gMarsLighthouseRoomF_VenusTowerPlacements[] = {
     ACTOR_PLACEMENT(SPRITE_TIGHTROPE_POST, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 776, 0, 296, FACING_SOUTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(SPRITE_TIGHTROPE_POST, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 776, 0, 136, FACING_SOUTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(SPRITE_SPIRAL_PILLAR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 600, 0, 136, FACING_SOUTH, TALK_FACING_KEEP, 0),
@@ -2612,17 +2390,17 @@ LATE_DATA struct ActorPlacement gMarsLighthouseRoomF_Room4Placements[] = {
     {SCENE_TABLE_END},
 };
 
-LATE_DATA struct ActorPlacement gMarsLighthouseRoomF_Room1Placements[] = {
+LATE_DATA struct ActorPlacement gMarsLighthouseRoomF_MarsTowerPlacements[] = {
     ACTOR_PLACEMENT(SPRITE_DRAGON_HEAD, CONDITION_ALWAYS, gMarsLighthouseRoomF_ButtonFlameThrowerRoute, 104, 0, 576, FACING_SOUTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(SPRITE_MARS_TORCH_LIT, CONDITION_ALWAYS, (s32)gMarsLighthouseRoomF_StatueScript, 248, 0, 616, FACING_SOUTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(SPRITE_MARS_TORCH, CONDITION_ALWAYS, (s32)gMarsLighthouseRoomF_StatueScript, 248, 0, 616, FACING_SOUTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(SPRITE_MARS_TORCH, CONDITION_ALWAYS, (s32)gMarsLighthouseRoomF_StatueScript, 248, 0, 664, FACING_SOUTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(SPRITE_SPARKLE, CONDITION_ALWAYS, 7, 0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(SPRITE_FIREBALL, CONDITION_ALWAYS, 7, 0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(SPRITE_UNSEEN_MARKER, CONDITION_ALWAYS, 7, 248, 0, 848, FACING_SOUTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(SPRITE_PIPE_WEST_EAST, CONDITION_ALWAYS, 7, 144, 0, 256, FACING_SOUTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(SPRITE_PIPE_NORTH_SOUTH, CONDITION_ALWAYS, 7, 104, 0, 352, FACING_SOUTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(SPRITE_PIPE_END, CONDITION_ALWAYS, 7, 104, 0, 408, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_MARS_TORCH_LIT, CONDITION_ALWAYS, (s32)gMarsLighthouseRoomF_TorchScript, 248, 0, 616, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_MARS_TORCH, CONDITION_ALWAYS, (s32)gMarsLighthouseRoomF_TorchScript, 248, 0, 616, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_MARS_TORCH, CONDITION_ALWAYS, (s32)gMarsLighthouseRoomF_TorchScript, 248, 0, 664, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_SPARKLE, CONDITION_ALWAYS, MOVEMENT_TYPE_CLEAR_COLLISION, 0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_FIREBALL, CONDITION_ALWAYS, MOVEMENT_TYPE_CLEAR_COLLISION, 0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_UNSEEN_MARKER, CONDITION_ALWAYS, MOVEMENT_TYPE_CLEAR_COLLISION, 248, 0, 848, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_PIPE_WEST_EAST, CONDITION_ALWAYS, MOVEMENT_TYPE_CLEAR_COLLISION, 144, 0, 256, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_PIPE_NORTH_SOUTH, CONDITION_ALWAYS, MOVEMENT_TYPE_CLEAR_COLLISION, 104, 0, 352, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_PIPE_END, CONDITION_ALWAYS, MOVEMENT_TYPE_CLEAR_COLLISION, 104, 0, 408, FACING_SOUTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(SPRITE_UNSEEN_MARKER, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 112, 0, 216, FACING_SOUTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(SPRITE_UNSEEN_MARKER, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 104, 0, 376, FACING_SOUTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(415, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 368, 0, 168, FACING_SOUTH, TALK_FACING_KEEP, 0),
@@ -2631,51 +2409,51 @@ LATE_DATA struct ActorPlacement gMarsLighthouseRoomF_Room1Placements[] = {
     {SCENE_TABLE_END},
 };
 
-LATE_DATA struct ActorPlacement gMarsLighthouseRoomF_Room3Placements[] = {
+LATE_DATA struct ActorPlacement gMarsLighthouseRoomF_JupiterTowerPlacements[] = {
     ACTOR_PLACEMENT(SPRITE_DRAGON_HEAD, CONDITION_ALWAYS, gMarsLighthouseRoomF_JupiterWestFlameThrowerRoute, 88, 0, 112, FACING_SOUTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(SPRITE_DRAGON_HEAD, CONDITION_ALWAYS, gMarsLighthouseRoomF_JupiterEastFlameThrowerRoute, 360, 0, 112, FACING_SOUTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(SPRITE_DRAGON_HEAD, CONDITION_ALWAYS, gMarsLighthouseRoomF_JupiterLowerFlameThrowerSetUp, 120, 0, 288, FACING_SOUTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(SPRITE_STONE_BLOCK, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 232, 0, 120, FACING_SOUTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(SPRITE_DRAGON_STATUE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 104, 0, 296, FACING_EAST, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(SPRITE_DRAGON_HEAD, CONDITION_ALWAYS, gMarsLighthouseRoomF_JupiterFarFlameThrowerRoute, 968, 0, 80, FACING_SOUTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(SPRITE_MARS_TORCH, CONDITION_ALWAYS, (s32)gMarsLighthouseRoomF_StatueScript, 872, 0, 120, FACING_SOUTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(SPRITE_SPARKLE, CONDITION_ALWAYS, 7, 0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(SPRITE_FIREBALL, CONDITION_ALWAYS, 7, 0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_MARS_TORCH, CONDITION_ALWAYS, (s32)gMarsLighthouseRoomF_TorchScript, 872, 0, 120, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_SPARKLE, CONDITION_ALWAYS, MOVEMENT_TYPE_CLEAR_COLLISION, 0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_FIREBALL, CONDITION_ALWAYS, MOVEMENT_TYPE_CLEAR_COLLISION, 0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, 0),
     {SCENE_TABLE_END},
 };
 
-LATE_DATA u32 gMarsLighthouseRoomF_MercuryFlameThrowerRoute[] = {                                                               
-      SC_SET(SW_STEERING, 0),                                                  
-      SC_SET(SW_MOTION, 2),                                                    
-      SC_SET(SW_Y, toFIXED(80)),                                                
-      SC_SET(SW_GROUND, toFIXED(80)),                                           
-      SC_SPEED(0.5),                                                
-      SC_ACCELERATION(0.03125),                                                 
-      SC_MOVE(216, 0, 512),                                      
-      SC_SYNC,                                                                 
-      SC_WAIT(20),                                                             
-      SC_MOVE(152, 0, 512),                                      
-      SC_SYNC,                                                                 
-      SC_WAIT(20),                                                             
-      SC_LOOP(SC_FOREVER, SC_TOP),                                             
-  };
+LATE_DATA u32 gMarsLighthouseRoomF_MercuryFlameThrowerRoute[] = {
+    SC_SET(SW_STEERING, 0),
+    SC_SET(SW_MOTION, 2),
+    SC_SET(SW_Y, toFIXED(80)),
+    SC_SET(SW_GROUND, toFIXED(80)),
+    SC_SPEED(0.5),
+    SC_ACCELERATION(0.03125),
+    SC_MOVE(216, 0, 512),
+    SC_SYNC,
+    SC_WAIT(20),
+    SC_MOVE(152, 0, 512),
+    SC_SYNC,
+    SC_WAIT(20),
+    SC_LOOP(SC_FOREVER, SC_TOP),
+};
 
-LATE_DATA struct ActorPlacement gMarsLighthouseRoomF_Room2Placements[] = {
-    ACTOR_PLACEMENT(SPRITE_PIPE_NORTH_SOUTH, CONDITION_ALWAYS, 7, 568, 0, 144, FACING_SOUTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(SPRITE_PIPE_WEST_EAST, CONDITION_ALWAYS, 7, 544, 0, 240, FACING_SOUTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(SPRITE_PIPE_WEST_EAST, CONDITION_ALWAYS, 7, 544, 0, 272, FACING_SOUTH, TALK_FACING_KEEP, 0),
+LATE_DATA struct ActorPlacement gMarsLighthouseRoomF_MercuryTowerPlacements[] = {
+    ACTOR_PLACEMENT(SPRITE_PIPE_NORTH_SOUTH, CONDITION_ALWAYS, MOVEMENT_TYPE_CLEAR_COLLISION, 568, 0, 144, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_PIPE_WEST_EAST, CONDITION_ALWAYS, MOVEMENT_TYPE_CLEAR_COLLISION, 544, 0, 240, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_PIPE_WEST_EAST, CONDITION_ALWAYS, MOVEMENT_TYPE_CLEAR_COLLISION, 544, 0, 272, FACING_SOUTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(SPRITE_PUDDLE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 616, 0, 168, FACING_SOUTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(SPRITE_PUDDLE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 520, 0, 216, FACING_SOUTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(SPRITE_UNSEEN_MARKER, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 512, 0, 200, FACING_EAST, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(SPRITE_UNSEEN_MARKER, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 576, 0, 232, FACING_WEST, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(SPRITE_UNSEEN_MARKER, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 600, 0, 176, FACING_WEST, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(SPRITE_DRAGON_HEAD, CONDITION_ALWAYS, (s32)gMarsLighthouseRoomF_MercuryFlameThrowerRoute, 152, 0, 512, FACING_SOUTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(SPRITE_MARS_TORCH_LIT, CONDITION_ALWAYS, (s32)gMarsLighthouseRoomF_StatueScript, 264, 0, 520, FACING_SOUTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(SPRITE_MARS_TORCH, CONDITION_ALWAYS, (s32)gMarsLighthouseRoomF_StatueScript, 264, 0, 520, FACING_SOUTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(SPRITE_MARS_TORCH, CONDITION_ALWAYS, (s32)gMarsLighthouseRoomF_StatueScript, 184, 0, 552, FACING_SOUTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(SPRITE_PIPE_END, CONDITION_ALWAYS, 7, 600, 0, 204, FACING_SOUTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(SPRITE_SPARKLE, CONDITION_ALWAYS, 7, 0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(SPRITE_FIREBALL, CONDITION_ALWAYS, 7, 0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_MARS_TORCH_LIT, CONDITION_ALWAYS, (s32)gMarsLighthouseRoomF_TorchScript, 264, 0, 520, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_MARS_TORCH, CONDITION_ALWAYS, (s32)gMarsLighthouseRoomF_TorchScript, 264, 0, 520, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_MARS_TORCH, CONDITION_ALWAYS, (s32)gMarsLighthouseRoomF_TorchScript, 184, 0, 552, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_PIPE_END, CONDITION_ALWAYS, MOVEMENT_TYPE_CLEAR_COLLISION, 600, 0, 204, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_SPARKLE, CONDITION_ALWAYS, MOVEMENT_TYPE_CLEAR_COLLISION, 0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_FIREBALL, CONDITION_ALWAYS, MOVEMENT_TYPE_CLEAR_COLLISION, 0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, 0),
     {SCENE_TABLE_END},
 };
 
@@ -2683,7 +2461,7 @@ LATE_DATA struct Trigger gMarsLighthouseRoomF_Triggers[] = {
     {TRIGGER_TABLE_END},
 };
 
-LATE_DATA struct Trigger gMarsLighthouseRoomF_Room4Triggers[] = {
+LATE_DATA struct Trigger gMarsLighthouseRoomF_VenusTowerTriggers[] = {
     {STEP_TRIGGER_WALKING, 30, CONDITION_ALWAYS, EVENT(MarsLighthouseRoomF_JumpGapOrPushStone)},
     {STEP_TRIGGER_WALKING_INTO(FACING_WEST), 31, CONDITION_ALWAYS, EVENT(MarsLighthouseRoomF_JumpGap)},
     {STEP_TRIGGER_WALKING, 31, CONDITION_ALWAYS, EVENT(MarsLighthouseRoomF_PushStoneAlongLedge)},
@@ -2701,32 +2479,32 @@ LATE_DATA struct Trigger gMarsLighthouseRoomF_Room4Triggers[] = {
     {TRIGGER_EXIT | EXIT_STYLE_HIDDEN_LAYER, 15, CONDITION_ALWAYS, 15},
     {TRIGGER_PUSH, 0, CONDITION_ALWAYS, EVENT(MarsLighthouseRoomF_StartMovingStone)},
     {TRIGGER_PUSHED, 0, CONDITION_ALWAYS, EVENT(MarsLighthouseRoomF_StopMovingStone)},
-    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), 10, CONDITION_ALWAYS, EVENT(MarsLighthouseRoomF_StartMovingStone)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 10, CONDITION_ALWAYS, EVENT(MarsLighthouseRoomF_StopMovingStone)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 11, CONDITION_ALWAYS, MARS_LIGHTHOUSE_ROOM_F_FILL_GAPS_WITH_STONES},
-    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 12, CONDITION_ALWAYS, MARS_LIGHTHOUSE_ROOM_F_FILL_GAPS_WITH_STONES},
-    {PSYNERGY_ON_ACTOR(ABILITY_CARRY), 10, CONDITION_ALWAYS, MARS_LIGHTHOUSE_ROOM_F_FILL_GAPS_WITH_STONES},
-    {PSYNERGY_ON_ACTOR(ABILITY_CARRY), 11, CONDITION_ALWAYS, MARS_LIGHTHOUSE_ROOM_F_FILL_GAPS_WITH_STONES},
-    {PSYNERGY_ON_ACTOR(ABILITY_CARRY), 12, CONDITION_ALWAYS, MARS_LIGHTHOUSE_ROOM_F_FILL_GAPS_WITH_STONES},
+    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), ACTOR_FIRST_STONE, CONDITION_ALWAYS, EVENT(MarsLighthouseRoomF_StartMovingStone)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_FIRST_STONE, CONDITION_ALWAYS, EVENT(MarsLighthouseRoomF_StopMovingStone)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_SECOND_STONE, CONDITION_ALWAYS, MARS_LIGHTHOUSE_ROOM_F_FILL_GAPS_WITH_STONES},
+    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_THIRD_STONE, CONDITION_ALWAYS, MARS_LIGHTHOUSE_ROOM_F_FILL_GAPS_WITH_STONES},
+    {PSYNERGY_ON_ACTOR(ABILITY_CARRY), ACTOR_FIRST_STONE, CONDITION_ALWAYS, MARS_LIGHTHOUSE_ROOM_F_FILL_GAPS_WITH_STONES},
+    {PSYNERGY_ON_ACTOR(ABILITY_CARRY), ACTOR_SECOND_STONE, CONDITION_ALWAYS, MARS_LIGHTHOUSE_ROOM_F_FILL_GAPS_WITH_STONES},
+    {PSYNERGY_ON_ACTOR(ABILITY_CARRY), ACTOR_THIRD_STONE, CONDITION_ALWAYS, MARS_LIGHTHOUSE_ROOM_F_FILL_GAPS_WITH_STONES},
     {STEP_TRIGGER_WALKING_INTO(FACING_EAST), 33, FLAG_VENUS_STATUE_BLOCKS_FLAMES, EVENT(MarsLighthouseRoomF_PushVenusStatueIntoFlames)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 16, FLAG_VENUS_STATUE_BLOCKS_FLAMES, EVENT(MarsLighthouseRoomF_MoveVenusStatueIntoFlames)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 17, CONDITION_ALWAYS, 0},
-    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), 18, CONDITION_ALWAYS, EVENT(MarsLighthouseRoomF_UncoverFlameThrower)},
-    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), 19, CONDITION_ALWAYS, EVENT(MarsLighthouseRoomF_UncoverFlameThrower)},
-    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), 20, CONDITION_ALWAYS, EVENT(MarsLighthouseRoomF_UncoverFlameThrower)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 18, CONDITION_ALWAYS, EVENT(MarsLighthouseRoomF_CoverFlameThrower)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 19, CONDITION_ALWAYS, EVENT(MarsLighthouseRoomF_CoverFlameThrower)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 20, CONDITION_ALWAYS, EVENT(MarsLighthouseRoomF_CoverFlameThrower)},
-    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), 21, CONDITION_ALWAYS, EVENT(MarsLighthouseRoomF_UncoverFlameThrower)},
-    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), 22, CONDITION_ALWAYS, EVENT(MarsLighthouseRoomF_UncoverFlameThrower)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 21, CONDITION_ALWAYS, EVENT(MarsLighthouseRoomF_CoverFlameThrower)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 22, CONDITION_ALWAYS, EVENT(MarsLighthouseRoomF_CoverFlameThrower)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 23, CONDITION_ALWAYS, 0},
+    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_PUSHED_STATUE, FLAG_VENUS_STATUE_BLOCKS_FLAMES, EVENT(MarsLighthouseRoomF_MoveVenusStatueIntoFlames)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_UPPER_DOORWAY_STATUE, CONDITION_ALWAYS, 0},
+    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), ACTOR_TRAP_STATUE_A, CONDITION_ALWAYS, EVENT(MarsLighthouseRoomF_UncoverFlameThrower)},
+    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), ACTOR_TRAP_STATUE_B, CONDITION_ALWAYS, EVENT(MarsLighthouseRoomF_UncoverFlameThrower)},
+    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), ACTOR_TRAP_STATUE_C, CONDITION_ALWAYS, EVENT(MarsLighthouseRoomF_UncoverFlameThrower)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_TRAP_STATUE_A, CONDITION_ALWAYS, EVENT(MarsLighthouseRoomF_CoverFlameThrower)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_TRAP_STATUE_B, CONDITION_ALWAYS, EVENT(MarsLighthouseRoomF_CoverFlameThrower)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_TRAP_STATUE_C, CONDITION_ALWAYS, EVENT(MarsLighthouseRoomF_CoverFlameThrower)},
+    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), ACTOR_TRAP_STATUE_D, CONDITION_ALWAYS, EVENT(MarsLighthouseRoomF_UncoverFlameThrower)},
+    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), ACTOR_TRAP_STATUE_E, CONDITION_ALWAYS, EVENT(MarsLighthouseRoomF_UncoverFlameThrower)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_TRAP_STATUE_D, CONDITION_ALWAYS, EVENT(MarsLighthouseRoomF_CoverFlameThrower)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_TRAP_STATUE_E, CONDITION_ALWAYS, EVENT(MarsLighthouseRoomF_CoverFlameThrower)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_LOWER_DOORWAY_STATUE, CONDITION_ALWAYS, 0},
     {TRIGGER_STEP, STEP_TRIGGER_FLAME_HIT, CONDITION_ALWAYS, EVENT(MarsLighthouseRoomF_KnockBack)},
     {TRIGGER_TABLE_END},
 };
 
-LATE_DATA struct Trigger gMarsLighthouseRoomF_Room1Triggers[] = {
+LATE_DATA struct Trigger gMarsLighthouseRoomF_MarsTowerTriggers[] = {
     {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
     {TRIGGER_EXIT | EXIT_STYLE_STAIRS_UP, 2, CONDITION_ALWAYS, 2},
     {TRIGGER_EXIT | EXIT_STYLE_STAIRS_DOWN, 3, CONDITION_ALWAYS, 3},
@@ -2735,17 +2513,17 @@ LATE_DATA struct Trigger gMarsLighthouseRoomF_Room1Triggers[] = {
     {STEP_TRIGGER_WALKING, 30, CONDITION_ALWAYS, EVENT(MarsLighthouseRoomF_PushPipe)},
     {TRIGGER_STEP, 30, CONDITION_ALWAYS, EVENT(MarsLighthouseRoomF_KnockBackIfHit)},
     {TRIGGER_STEP, STEP_TRIGGER_FLAME_HIT, CONDITION_ALWAYS, EVENT(MarsLighthouseRoomF_KnockBack)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 22, CONDITION_ALWAYS, 0},
+    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_PIPE_STATUE, CONDITION_ALWAYS, 0},
     {PSYNERGY_PHASE_ON_CELL(ABILITY_BURST, PSYNERGY_PHASE_ACTS), 20, FLAG_WEST_WALL_BURST, EVENT(MarsLighthouseRoomF_BurstWestWall)},
     {PSYNERGY_PHASE_ON_CELL(ABILITY_BURST, PSYNERGY_PHASE_ACTS), 21, FLAG_EAST_WALL_BURST, EVENT(MarsLighthouseRoomF_BurstEastWall)},
     {PSYNERGY_PHASE_ON_CELL(ABILITY_BURST, PSYNERGY_PHASE_ACTS), 22, FLAG_CENTER_WALL_BURST, EVENT(MarsLighthouseRoomF_BurstCenterWall)},
-    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_BLAZE, PSYNERGY_PHASE_BEFORE_CAST), 9, CONDITION_ALWAYS, EVENT(MarsLighthouseRoomF_StartBlazeOnTorch)},
-    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_BLAZE, PSYNERGY_PHASE_HITS), 11, CONDITION_ALWAYS, EVENT(MarsLighthouseRoomF_BlazeTorch)},
-    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_BLAZE, PSYNERGY_PHASE_AFTER_END), 11, CONDITION_ALWAYS, EVENT(MarsLighthouseRoomF_WatchFireballCrackWall)},
+    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_BLAZE, PSYNERGY_PHASE_BEFORE_CAST), ACTOR_MARS_TORCH, CONDITION_ALWAYS, EVENT(MarsLighthouseRoomF_StartBlazeOnTorch)},
+    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_BLAZE, PSYNERGY_PHASE_HITS), ACTOR_WALL_TORCH, CONDITION_ALWAYS, EVENT(MarsLighthouseRoomF_BlazeTorch)},
+    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_BLAZE, PSYNERGY_PHASE_AFTER_END), ACTOR_WALL_TORCH, CONDITION_ALWAYS, EVENT(MarsLighthouseRoomF_WatchFireballCrackWall)},
     {TRIGGER_TABLE_END},
 };
 
-LATE_DATA struct Trigger gMarsLighthouseRoomF_Room3Triggers[] = {
+LATE_DATA struct Trigger gMarsLighthouseRoomF_JupiterTowerTriggers[] = {
     {TRIGGER_STEP, 20, CONDITION_ALWAYS, EVENT(MarsLighthouseRoomF_FallIntoHole)},
     {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
     {TRIGGER_EXIT, 15, CONDITION_ALWAYS, 15},
@@ -2763,8 +2541,8 @@ LATE_DATA struct Trigger gMarsLighthouseRoomF_Room3Triggers[] = {
     {PSYNERGY_PHASE_ON_CELL(ABILITY_CYCLONE, PSYNERGY_PHASE_ACTS), 12, CONDITION_ALWAYS, EVENT(MarsLighthouseRoomF_CycloneToExit12)},
     {PSYNERGY_PHASE_ON_CELL(ABILITY_CYCLONE, PSYNERGY_PHASE_ACTS), 13, CONDITION_ALWAYS, EVENT(MarsLighthouseRoomF_CycloneToExit13)},
     {PSYNERGY_PHASE_ON_CELL(ABILITY_CYCLONE, PSYNERGY_PHASE_ACTS), 14, CONDITION_ALWAYS, EVENT(MarsLighthouseRoomF_CycloneToExit14)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 11, FLAG_BLOCK_DROPPED, EVENT(MarsLighthouseRoomF_DropBlock)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 12, FLAG_JUPITER_STATUE_BLOCKS_FLAMES, EVENT(MarsLighthouseRoomF_MoveJupiterStatueIntoFlames)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_DROPPING_BLOCK, FLAG_BLOCK_DROPPED, EVENT(MarsLighthouseRoomF_DropBlock)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_JUPITER_STATUE, FLAG_JUPITER_STATUE_BLOCKS_FLAMES, EVENT(MarsLighthouseRoomF_MoveJupiterStatueIntoFlames)},
     {PSYNERGY_ANYWHERE(ABILITY_REVEAL, PSYNERGY_PHASE_ACTS), 0, CONDITION_ALWAYS, EVENT(MarsLighthouseRoomF_RevealSteppingStones)},
     {PSYNERGY_ANYWHERE(ABILITY_REVEAL, PSYNERGY_PHASE_FADES), 0, CONDITION_ALWAYS, EVENT(MarsLighthouseRoomF_HideSteppingStones)},
     {TRIGGER_STEP, STEP_TRIGGER_FLAME_HIT, CONDITION_ALWAYS, EVENT(MarsLighthouseRoomF_KnockBack)},
@@ -2773,7 +2551,7 @@ LATE_DATA struct Trigger gMarsLighthouseRoomF_Room3Triggers[] = {
     {TRIGGER_TABLE_END},
 };
 
-LATE_DATA struct Trigger gMarsLighthouseRoomF_Room2Triggers[] = {
+LATE_DATA struct Trigger gMarsLighthouseRoomF_MercuryTowerTriggers[] = {
     {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
     {TRIGGER_EXIT | EXIT_STYLE_STAIRS_UP, 2, CONDITION_ALWAYS, 2},
     {TRIGGER_EXIT | EXIT_STYLE_STAIRS_DOWN, 3, CONDITION_ALWAYS, 3},
@@ -2786,11 +2564,11 @@ LATE_DATA struct Trigger gMarsLighthouseRoomF_Room2Triggers[] = {
     {STEP_TRIGGER_WALKING, 33, CONDITION_ALWAYS, EVENT(MarsLighthouseRoomF_PushPipeOrJump)},
     {TRIGGER_STEP, 33, CONDITION_ALWAYS, EVENT(MarsLighthouseRoomF_KnockBackIfHit)},
     {TRIGGER_STEP, STEP_TRIGGER_FLAME_HIT, CONDITION_ALWAYS, EVENT(MarsLighthouseRoomF_KnockBack)},
-    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_BLAZE, PSYNERGY_PHASE_BEFORE_CAST), 17, CONDITION_ALWAYS, EVENT(MarsLighthouseRoomF_StartBlazeOnTorch)},
-    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_BLAZE, PSYNERGY_PHASE_HITS), 16, CONDITION_ALWAYS, EVENT(MarsLighthouseRoomF_LightFlameThrower)},
-    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_BLAZE, PSYNERGY_PHASE_AFTER_END), 16, CONDITION_ALWAYS, EVENT(MarsLighthouseRoomF_WatchFlameThrower)},
-    {PSYNERGY_ON_ACTOR(ABILITY_FROST), 11, FLAG_UPPER_PUDDLE_FROZEN, EVENT(MarsLighthouseRoomF_FrostUpperPuddle)},
-    {PSYNERGY_ON_ACTOR(ABILITY_FROST), 12, FLAG_CENTER_PUDDLE_FROZEN, EVENT(MarsLighthouseRoomF_FrostCenterPuddle)},
+    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_BLAZE, PSYNERGY_PHASE_BEFORE_CAST), ACTOR_MERCURY_TORCH, CONDITION_ALWAYS, EVENT(MarsLighthouseRoomF_StartBlazeOnTorch)},
+    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_BLAZE, PSYNERGY_PHASE_HITS), ACTOR_MERCURY_FLAME_THROWER, CONDITION_ALWAYS, EVENT(MarsLighthouseRoomF_LightFlameThrower)},
+    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_BLAZE, PSYNERGY_PHASE_AFTER_END), ACTOR_MERCURY_FLAME_THROWER, CONDITION_ALWAYS, EVENT(MarsLighthouseRoomF_WatchFlameThrower)},
+    {PSYNERGY_ON_ACTOR(ABILITY_FROST), ACTOR_UPPER_PUDDLE, FLAG_UPPER_PUDDLE_FROZEN, EVENT(MarsLighthouseRoomF_FrostUpperPuddle)},
+    {PSYNERGY_ON_ACTOR(ABILITY_FROST), ACTOR_CENTER_PUDDLE, FLAG_CENTER_PUDDLE_FROZEN, EVENT(MarsLighthouseRoomF_FrostCenterPuddle)},
     {TRIGGER_TABLE_END},
 };
 

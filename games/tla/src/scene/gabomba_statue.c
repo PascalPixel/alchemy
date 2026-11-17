@@ -730,9 +730,9 @@ void GabombaStatue_EndRide(struct Actor *actor) {
   party = &gMainRoutineWork;
   Actor_SetAttachedEffect(party->leaderActorId,
                           ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
-  Actor_SetAnimation(party->leaderActorId, 27);
+  Actor_SetAnimation(party->leaderActorId, ANIM_LEADER_WALK_BACKWARDS);
   FieldEvent_Wait(30);
-  Actor_SetAnimation(party->leaderActorId, 28);
+  Actor_SetAnimation(party->leaderActorId, ANIM_LEADER_ARMS_RAISED);
   FieldEvent_Wait(10);
   for (i = 0; i < 20; i++) {
     actor->scaleX -= FIXED_ONE * 3 / 256;
@@ -1087,10 +1087,11 @@ void GabombaStatue_DropIntoHole(s32 x, s32 z) {
   Actor_FaceDirection(gMainRoutineWork.leaderActorId, FACING_NORTH, 0);
   FieldActor_WaitForScriptEndById(gMainRoutineWork.leaderActorId);
   Actor_SetSpriteFlags(Actor_Get(gMainRoutineWork.leaderActorId), 0);
-  Actor_SetAnimation(gMainRoutineWork.leaderActorId, 13);
+  Actor_SetAnimation(gMainRoutineWork.leaderActorId,
+                     ANIM_LEADER_CLIMB_DOWN_FROM_TOP);
   FieldActor_SetMoveTarget(actor, x, -12, z);
   FieldActor_WaitForMove(actor);
-  Actor_SetAnimation(gMainRoutineWork.leaderActorId, 10);
+  Actor_SetAnimation(gMainRoutineWork.leaderActorId, ANIM_LEADER_CLIMB);
   Event_PlaySound(SE_MAP_EXIT);
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();
@@ -1253,10 +1254,11 @@ void GabombaStatue_JumpDownHole(void) {
   Actor_FaceDirection(gMainRoutineWork.leaderActorId, FACING_NORTH, 0);
   FieldActor_WaitForScriptEndById(gMainRoutineWork.leaderActorId);
   Actor_SetSpriteFlags(Actor_Get(gMainRoutineWork.leaderActorId), 0);
-  Actor_SetAnimation(gMainRoutineWork.leaderActorId, 13);
+  Actor_SetAnimation(gMainRoutineWork.leaderActorId,
+                     ANIM_LEADER_CLIMB_DOWN_FROM_TOP);
   FieldActor_SetMoveTarget(leader, 472, 0, 156);
   FieldActor_WaitForMove(leader);
-  Actor_SetAnimation(gMainRoutineWork.leaderActorId, 10);
+  Actor_SetAnimation(gMainRoutineWork.leaderActorId, ANIM_LEADER_CLIMB);
   Event_PlaySound(SE_MAP_EXIT);
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();
@@ -1289,10 +1291,10 @@ void GabombaStatue_PinionThrowsLeader(void) {
   actor->motionFlags = 0;
   Actor_SetSpeedAndAcceleration(gMainRoutineWork.leaderActorId, 1.6, 1.6);
   Actor_MoveToAndWait(gMainRoutineWork.leaderActorId, 152, 488);
-  actor->motionFlags = 3;
+  actor->motionFlags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
   FieldEvent_Wait(8);
   Event_PlaySound(SE_RATTLE);
-  Actor_SetAnimation(gMainRoutineWork.leaderActorId, 22);
+  Actor_SetAnimation(gMainRoutineWork.leaderActorId, ANIM_LEADER_LEAN_BACK);
   FieldEvent_Wait(20);
   Event_End();
 }
@@ -2185,8 +2187,8 @@ void GabombaStatue_SawEnergyFlow(void) {
   GabombaStatue_FindFreeTileCell(&x, &z);
   x = FIELD_CELL_ORIGIN(x) + FIELD_CELL_CENTER(CHANNEL_ORIGIN_COLUMN);
   z = FIELD_CELL_ORIGIN(z) + FIELD_CELL_CENTER(CHANNEL_ORIGIN_ROW);
-  hand = (FieldActor_Create(434, x, 0, z));
-  hand->motionFlags |= 4;
+  hand = FieldActor_Create(434, x, 0, z);
+  hand->motionFlags |= ACTOR_FLOATS;
   Actor_SetSpriteFlags(hand, 0);
   Actor_SelectAnimation(hand, 1);
   System_Wait(1);

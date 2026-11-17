@@ -606,6 +606,7 @@ link:
   WindowColor_Apply(gMainRoutineWork.windowHue,
                     gMainRoutineWork.windowBrightness);
   for (;;) {
+    // The menu reads only its mode's lowest bit: the transfer method.
     result = IconMenu_ChooseSendOption(2);
     if (result == -1) {
       goto link;

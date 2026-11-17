@@ -4,7 +4,7 @@
 
 #include "window_internal.h"
 
-void Window_DrawZoomBorder(struct Window *window, s32 save_position);
+void Window_DrawZoomBorder(struct Window *window, s32 savePosition);
 void Window_DrawOpened(struct Window *window);
 
 /// Steps each window's open or close animation: an open window moves toward
@@ -12,52 +12,52 @@ void Window_DrawOpened(struct Window *window);
 /// by frame and cleared when its duration is reached.
 void Window_UpdateZooms(void) {
   struct WindowWork *state = WINDOW_WORK;
-  struct Window *work = state->windows;
+  struct Window *window = state->windows;
   s32 index = 0;
   u8 dirty;
 
   do {
-    if (work->flags != 0) {
-      if ((s16)work->zoomStage != 0) {
-        Window_DrawZoomBorder(work, 0);
-        work->zoomStage = (s16)work->zoomStage - 1;
-      } else if (work->duration != 0) {
-        Window_DrawOpened(work);
+    if (window->flags != 0) {
+      if ((s16)window->zoomStage != 0) {
+        Window_DrawZoomBorder(window, 0);
+        window->zoomStage = (s16)window->zoomStage - 1;
+      } else if (window->duration != 0) {
+        Window_DrawOpened(window);
       }
-    } else if (work->duration != 0) {
-      if ((s16)work->zoomStage != work->duration) {
-        Window_EraseBorderRect((s16)work->previousX, (s16)work->previousY,
-                               (s16)work->previousWidth,
-                               (s16)work->previousHeight);
-        Window_DrawZoomBorder(work, 1);
-        work->zoomStage++;
+    } else if (window->duration != 0) {
+      if ((s16)window->zoomStage != window->duration) {
+        Window_EraseBorderRect((s16)window->previousX, (s16)window->previousY,
+                               (s16)window->previousWidth,
+                               (s16)window->previousHeight);
+        Window_DrawZoomBorder(window, 1);
+        window->zoomStage++;
         dirty = 1;
         state->dirty = dirty;
       } else {
-        Window_EraseBorderRect((s16)work->previousX, (s16)work->previousY,
-                               (s16)work->previousWidth,
-                               (s16)work->previousHeight);
-        work->sprites.head = NULL;
-        work->sprites.tailLink = NULL;
-        work->width = 0;
-        work->height = 0;
-        work->x = 0;
-        work->y = 0;
-        work->opened = 0;
-        work->animation = 0;
-        work->state = 0;
-        work->flags = 0;
-        work->zoomStage = 0;
-        work->duration = 0;
-        work->previousX = 0;
-        work->previousY = 0;
-        work->previousWidth = 0;
-        work->previousHeight = 0;
+        Window_EraseBorderRect((s16)window->previousX, (s16)window->previousY,
+                               (s16)window->previousWidth,
+                               (s16)window->previousHeight);
+        window->sprites.head = NULL;
+        window->sprites.tailLink = NULL;
+        window->width = 0;
+        window->height = 0;
+        window->x = 0;
+        window->y = 0;
+        window->opened = 0;
+        window->animation = 0;
+        window->state = 0;
+        window->flags = 0;
+        window->zoomStage = 0;
+        window->duration = 0;
+        window->previousX = 0;
+        window->previousY = 0;
+        window->previousWidth = 0;
+        window->previousHeight = 0;
         state->dirty = 1;
       }
     }
     index++;
-    work++;
+    window++;
   } while (index != WINDOW_COUNT);
 }
 
@@ -72,7 +72,7 @@ struct WindowZoomScratch {
 /// Draws a zooming window at its size for this frame: the window grows from
 /// its centre as zoomStage counts down to 0. With savePosition set (when
 /// closing) the drawn rectangle is remembered, for the next frame to erase.
-void Window_DrawZoomBorder(struct Window *window, s32 save_position) {
+void Window_DrawZoomBorder(struct Window *window, s32 savePosition) {
   struct WindowZoomScratch scratch;
   s32 stage;
   s32 duration;
@@ -86,35 +86,35 @@ void Window_DrawZoomBorder(struct Window *window, s32 save_position) {
   duration = window->duration;
   remaining = duration - stage;
   // Iwram_RatioMulQ14(d, v) is v / d in 16.16 fixed point, as in The Broken
-  // Seal: the left edge moves in by stage / duration of half the width
-  // (result >> 16), and the width is (duration - stage) / duration of the
-  // whole (result >> 15); the same for the top and the height.
-  scratch.scaledPart = (stage * window->width) << 16;
-  scratch.scaledDuration = duration << 17;
+  // Seal: the left edge moves in by stage / duration of half the width, and
+  // the width is (duration - stage) / duration of the whole, twice that half;
+  // the same for the top and the height.
+  scratch.scaledPart = toFIXED(stage * window->width);
+  scratch.scaledDuration = toFIXED(2 * duration);
   scratch.result =
       Iwram_RatioMulQ14(scratch.scaledDuration, scratch.scaledPart);
-  x = (scratch.result >> 16) + (s16)window->x;
+  x = FIXEDtoINT(scratch.result) + (s16)window->x;
 
-  scratch.scaledPart = (remaining * window->width) << 16;
+  scratch.scaledPart = toFIXED(remaining * window->width);
   scratch.result =
       Iwram_RatioMulQ14(scratch.scaledDuration, scratch.scaledPart);
   {
     s32 part = stage * window->height;
     width = scratch.result >> 15;
-    scratch.scaledPart = part << 16;
+    scratch.scaledPart = toFIXED(part);
   }
-  scratch.scaledDuration = window->duration << 17;
+  scratch.scaledDuration = toFIXED(2 * window->duration);
   scratch.result =
       Iwram_RatioMulQ14(scratch.scaledDuration, scratch.scaledPart);
-  y = (scratch.result >> 16) + (s16)window->y;
+  y = FIXEDtoINT(scratch.result) + (s16)window->y;
 
-  scratch.scaledPart = (remaining * window->height) << 16;
+  scratch.scaledPart = toFIXED(remaining * window->height);
   scratch.result =
       Iwram_RatioMulQ14(scratch.scaledDuration, scratch.scaledPart);
   height = scratch.result >> 15;
 
   Window_DrawBorder(x, y, width, height);
-  if (save_position != 0) {
+  if (savePosition != 0) {
     window->previousX = x;
     window->previousY = y;
     window->previousWidth = width;
@@ -486,54 +486,59 @@ struct Window *Message_OpenWindow(s32 message, s32 x, s32 y, u32 packed) {
 
 s32 Message_AllTyped(void);
 
+/// The tile rows a field message is centred in, from the top of the screen.
+#define FIELD_MESSAGE_TOP_ROWS 12
+
 /// Shows a message in a window centred on the screen, waits until it is typed
 /// out and closes it, as its flags say.
-void FieldMessage_Show(s32 no, s32 flags) {
+void FieldMessage_Show(s32 message, s32 flags) {
   struct WindowWork *state = WINDOW_WORK;
-  s32 release;
-  s32 pos[2] = {0, 0};
+  s32 zoom;
+  s32 actorPosition[2] = {0, 0};
   s32 height;
   s32 width;
   s32 y;
   s32 x;
-  struct Window *work = NULL;
+  struct Window *window = NULL;
   s32 zero;
   s32 margin;
   s32 rows;
 
   y = x = 0;
-  release = flags & FIELD_MESSAGE_ZOOM;
+  zoom = flags & FIELD_MESSAGE_ZOOM;
 
   if (flags & FIELD_MESSAGE_WAITING_FOR_SOUND) {
     state->waitingForSound = 1;
   }
 
-  Text_GetMessageSize(no, &x, &y, (u32 *)&width, (u32 *)&height);
+  Text_GetMessageSize(message, &x, &y, (u32 *)&width, (u32 *)&height);
 
-  margin = 30 - width;
+  // Centre the window across the screen, and in the top rows.
+  margin = DISPLAY_TILE_WIDTH - width;
   rows = height;
   x = margin >> 1;
-  y = (12 - rows) >> 1;
+  y = (FIELD_MESSAGE_TOP_ROWS - rows) >> 1;
 
   if (flags & FIELD_MESSAGE_LOWER) {
     y = y + 4;
   } else if (flags & FIELD_MESSAGE_LOWEST) {
     y = y + 12;
   } else {
-    s32 dy;
+    s32 actorTileY;
 
-    Actor_GetScreenPositionFar(Party_GetLeaderActorFar(), pos);
-    dy = pos[1] >> 3;
-    if (dy > 9) {
-      y = dy - 5;
+    // The leader's screen y in pixels, as a tile row.
+    Actor_GetScreenPositionFar(Party_GetLeaderActorFar(), actorPosition);
+    actorTileY = actorPosition[1] >> 3;
+    if (actorTileY > 9) {
+      y = actorTileY - 5;
     } else {
-      y = dy + 4;
+      y = actorTileY + 4;
     }
   }
 
-  work = Message_OpenWindow(no, x, y, release);
+  window = Message_OpenWindow(message, x, y, zoom);
 
-  if (work != NULL) {
+  if (window != NULL) {
     while (Message_AllTyped() == 0) {
       wait(1);
     }
@@ -543,8 +548,8 @@ void FieldMessage_Show(s32 no, s32 flags) {
     }
 
     if (!(flags & FIELD_MESSAGE_KEEP_OPEN)) {
-      Window_Close(work, release);
-      while (Window_IsClosed(work) == 0) {
+      Window_Close(window, zoom);
+      while (Window_IsClosed(window) == 0) {
         wait(1);
       }
     }

@@ -23,6 +23,12 @@ void Vector_AddPolarOffset(FIXED radius, s32 angle, s32 *position) {
   *position += Iwram_MulFX(radius, Trig_Sin(angle));
 }
 
+/// The angle between neighbouring entries of gMath_TanTable, 1/256 of a quarter
+/// turn, and the tangent of its last searched entry (gMath_TanTable[255]), in
+/// 8.8, beyond which Trig_Atan gives a quarter turn.
+#define ATAN_ENTRY_ANGLE (DEGtoANG(90) / 256)
+#define ATAN_RATIO_MAX 64362
+
 /// Returns the angle of the vector (x, y), in 1/65536 turns from 0 to 65535,
 /// measured from the y axis: 0 along +y, a quarter turn along +x; (0, 0) gives
 /// 0. It binary-searches the tangent table to 1/256 of a quarter turn.
@@ -52,11 +58,12 @@ s32 Trig_Atan(s32 x, s32 y) {
     result = DEGtoANG(90);
     // Beyond entry 255's tangent, use the quarter-turn limit instead of
     // the largest angle the eight search bits can represent.
-    if (ratio <= 64362) {
-      // Eight comparisons choose angle bits 0x2000 down to 0x40.
+    if (ratio <= ATAN_RATIO_MAX) {
+      // Eight comparisons halve the table each time, choosing the angle's
+      // bits from an eighth of a turn down to ATAN_ENTRY_ANGLE.
       table = &gMath_TanTable[127];
       result = 0;
-      bit = 0x2000;
+      bit = DEGtoANG(45);
 
       value = *table;
       table -= 64;
@@ -102,12 +109,12 @@ s32 Trig_Atan(s32 x, s32 y) {
       value = *table;
       table--;
       if (ratio > value) {
-        result += 0x80;
+        result += 2 * ATAN_ENTRY_ANGLE;
         table += 2;
       }
       value = *table;
       if (ratio > value)
-        result += 0x40;
+        result += ATAN_ENTRY_ANGLE;
     }
   }
 

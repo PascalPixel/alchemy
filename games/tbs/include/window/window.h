@@ -572,6 +572,17 @@ struct Window *Message_OpenWindow(s32 message, s32 x, s32 y, u32 packed);
 /// Message_OpenWindow's packed argument: the speaker's voice in bits 16 to 27,
 /// above the window options.
 #define MESSAGE_WINDOW_VOICE(voice) ((voice) << 16)
+
+/// Message_OpenWindow's window options, in packed's low bits.
+enum MessageWindowOption {
+  MESSAGE_WINDOW_ZOOM = 0x01, ///< zoom open rather than appear at once
+  /// Set by the shopkeepers' windows and some others; Message_OpenWindow never
+  /// reads it.
+  MESSAGE_WINDOW_UNREAD = 0x02,
+  MESSAGE_WINDOW_TEXT_CANVAS = 0x08,   ///< WINDOW_FLAG_TEXT_CANVAS
+  MESSAGE_WINDOW_ANCHOR_BOTTOM = 0x10, ///< WINDOW_FLAG_ANCHOR_BOTTOM
+  MESSAGE_WINDOW_FIXED_X = 0x20        ///< WINDOW_FLAG_FIXED_X
+};
 void FieldMessage_Show(s32 no, s32 flags);
 void WindowSystem_Update(void);
 #if LANGUAGE != LANGUAGE_JAPANESE

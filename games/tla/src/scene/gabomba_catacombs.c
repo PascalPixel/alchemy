@@ -119,7 +119,7 @@ enum { ACTOR_SEATED_IDOL = ACTOR_FIRST_PLACED, ACTOR_KRADEN };
 #define FLAG_STREAM_PUDDLE_FROZEN FLAG_SCENE_TEMP_00
 
 /// Set once the Mint hidden under the weeds by the statue is taken.
-#define FLAG_HIDDEN_WALL_MINT_TAKEN 0xf53
+#define FLAG_GABOMBA_CATACOMBS_MINT_TAKEN 0xf53
 /// Set once the Tomegathericon is taken from the seated idol.
 #define FLAG_TOMEGATHERICON_TAKEN 0xf93
 
@@ -164,7 +164,7 @@ void GabombaCatacombs_ScatterWeedsByTheStatue(void) {
   struct Actor *leader = Actor_GetById(gMainRoutineWork.leaderActorId);
 
   GabombaCatacombs_ScatterWeeds(22, 15, 0, 5, 5, 63, 52);
-  if (GameFlag_Get(FLAG_HIDDEN_WALL_MINT_TAKEN) == 0) {
+  if (GameFlag_Get(FLAG_GABOMBA_CATACOMBS_MINT_TAKEN) == 0) {
     Actor_SetPosition(FIELD_TREASURE_ACTOR, 392, 344);
     if (LEADER_ON_CELL(leader, 24, 21)) {
       LEADER_HOP();
@@ -629,7 +629,7 @@ void GabombaCatacombs_TalkToStatue(void) {
   struct Actor *actor = Actor_GetById(FIELD_TREASURE_ACTOR);
 
   if (actor != NULL && actor->x.fixed != 0)
-    Scene_TalkToActor(TALK_WITHOUT_CHECK_MESSAGE | FIELD_TREASURE_ACTOR);
+    Scene_TalkToActor(FIELD_TALK_SILENT | FIELD_TREASURE_ACTOR);
 }
 
 const struct SceneEntrance *Scene_GetEntrances(void) { return gSceneEntrances; }

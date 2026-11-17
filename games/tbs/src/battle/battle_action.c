@@ -4,6 +4,24 @@
 
 #include "battle_internal.h"
 
+/// A battle place as an action's target names it: its index on its side in the
+/// low bits, and a bit for the enemies' side.
+#define PLACE_ENEMY_SIDE (1 << 7)
+#define PLACE_INDEX_MASK ((1 << 4) - 1)
+
+/// The chances, out of 256, an action rolls against the battle's random byte.
+enum ActionChance {
+  CHANCE_DELUDED_MISS = 153, ///< a deluded attacker misses
+  CHANCE_BLOW_LIKELY = 153,  ///< a likely double or triple blow lands
+  CHANCE_BLOW_RARE = 32,     ///< a rare one
+  CHANCE_BLOW = 64           ///< any other
+};
+
+/// An HP change that defeats any unit, as the debug defeat deals it.
+#define DEBUG_DEFEAT_HP_CHANGE 0xc0000000
+/// Battle_RollEffectSuccess's successScale at full strength, in percent.
+#define EFFECT_CHANCE_FULL 100
+
 /// Returns 1 when the unit is in its side's list of units in the battle
 /// (BattleUnit_ListIds), 0 otherwise.
 u32 BattleUnit_IsListed(u32 unitId) {
@@ -122,7 +140,7 @@ s32 BattleActionRun_Build(struct BattleAction *request,
       for (place = 0; battle->enemyIds[place] != BATTLE_UNIT_LIST_END; place++)
         ;
       enemyCount = place;
-      aimedPlace = request->target & 15;
+      aimedPlace = request->target & PLACE_INDEX_MASK;
       range = request->range;
       {
         s32 first = aimedPlace - range + 1;
@@ -132,7 +150,7 @@ s32 BattleActionRun_Build(struct BattleAction *request,
           if (place < 0)
             continue;
           // The enemies' side.
-          if (request->target & 128) {
+          if (request->target & PLACE_ENEMY_SIDE) {
             if (place >= enemyCount)
               continue;
             targetId = battle->enemyIds[place];
@@ -205,7 +223,7 @@ s32 BattleActionRun_Build(struct BattleAction *request,
         break;
       if (id == BATTLE_UNIT_REMOVED)
         continue;
-      if (Unit_AddHpFar(id, 0xc0000000) == 0) {
+      if (Unit_AddHpFar(id, DEBUG_DEFEAT_HP_CHANGE) == 0) {
         BattlePlayback_Push(PLAYBACK_HIT, id);
         BattlePlayback_Push(PLAYBACK_DEFEAT, id);
       }
@@ -588,7 +606,8 @@ s32 BattleActionRun_Build(struct BattleAction *request,
       if (target->hp == 0 || target->sleep != 0 || target->stun != 0 ||
           target->immobile != 0 || target->charm != 0)
         break;
-      if (actor->delusion != 0 && (Battle_RandomFar() & 255) <= 152)
+      if (actor->delusion != 0 &&
+          (Battle_RandomFar() & 255) < CHANCE_DELUDED_MISS)
         plan->targetMultiplier[0] = 0;
       if ((Battle_RandomFar() & 31) == 0)
         plan->targetMultiplier[0] = 0;
@@ -600,7 +619,7 @@ s32 BattleActionRun_Build(struct BattleAction *request,
     if (target->hp != 0) {
       if ((Battle_RandomFar() & 31) == 0)
         plan->targetCritical[0] = CRITICAL_HIT;
-      else if ((Equipment_GetUnleashRateBonusFar(actor) << 16) / 200 >
+      else if (toFIXED(Equipment_GetUnleashRateBonusFar(actor)) / 200 >
                (Battle_RandomFar() & 0xffff))
         plan->targetCritical[0] = CRITICAL_HIT;
     }
@@ -619,19 +638,19 @@ s32 BattleActionRun_Build(struct BattleAction *request,
         ability->effect == ABILITY_EFFECT_TRIPLE_BLOW_RARE ||
         ability->effect == ABILITY_EFFECT_TRIPLE_BLOW ||
         ability->effect == ABILITY_EFFECT_TRIPLE_BLOW_LIKELY) {
-      // A double or triple blow on every target: 153, 32 or 64 in 256, the
-      // multiplier rising by 1 or 2.
+      // A double or triple blow on every target at its chance, the multiplier
+      // rising by 1 or 2.
       s32 chance;
       s32 amount;
 
       if (ability->effect == ABILITY_EFFECT_DOUBLE_BLOW_LIKELY ||
           ability->effect == ABILITY_EFFECT_TRIPLE_BLOW_LIKELY)
-        chance = 153;
+        chance = CHANCE_BLOW_LIKELY;
       else if (ability->effect == ABILITY_EFFECT_DOUBLE_BLOW_RARE ||
                ability->effect == ABILITY_EFFECT_TRIPLE_BLOW_RARE)
-        chance = 32;
+        chance = CHANCE_BLOW_RARE;
       else
-        chance = 64;
+        chance = CHANCE_BLOW;
       if (ability->effect == ABILITY_EFFECT_DOUBLE_BLOW_LIKELY ||
           ability->effect == ABILITY_EFFECT_DOUBLE_BLOW_RARE ||
           ability->effect == ABILITY_EFFECT_DOUBLE_BLOW)
@@ -651,20 +670,20 @@ s32 BattleActionRun_Build(struct BattleAction *request,
 
       switch (ability->effect) {
       case ABILITY_EFFECT_CRITICAL_A:
-        mask = 63;
+        mask = 64 - 1;
         break;
       case ABILITY_EFFECT_CRITICAL_B:
-        mask = 31;
+        mask = 32 - 1;
         break;
       case ABILITY_EFFECT_CRITICAL_C:
-        mask = 15;
+        mask = 16 - 1;
         break;
       case ABILITY_EFFECT_CRITICAL_D:
-        mask = 7;
+        mask = 8 - 1;
         break;
       case ABILITY_EFFECT_CRITICAL_E:
       default:
-        mask = 3;
+        mask = 4 - 1;
         break;
       }
       if ((Battle_RandomFar() & mask) == 0) {
@@ -679,9 +698,9 @@ s32 BattleActionRun_Build(struct BattleAction *request,
       s32 index;
 
       for (index = 0; index < plan->targetCount; index++)
-        plan->targetHit[index] =
-            Battle_RollEffectSuccessFar(request->unitId, plan->targetIds[index],
-                                        ability->element, ability->effect, 100);
+        plan->targetHit[index] = Battle_RollEffectSuccessFar(
+            request->unitId, plan->targetIds[index], ability->element,
+            ability->effect, EFFECT_CHANCE_FULL);
     }
     // How it is staged: the ability's battle effect, stronger for a double or
     // triple blow, and its staging.

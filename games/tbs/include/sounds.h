@@ -7,7 +7,7 @@
 /// in sound/songs are named. A row of the empty song (dummy_song_header), which
 /// plays nothing, has no name, and the next named row's number is written
 /// after it. A sequence nothing plays by name yet keeps its number as its
-/// placeholder, unless The Lost Age plays the same sequence, whose name it then
+/// placeholder, unless The Lost Age names the same sequence, whose name it then
 /// takes. Unused: every such sequence is one no code or table in the game
 /// plays, by name or by number; only the sound test (SoundTest_Run), which
 /// nothing calls, can start one, so none is heard where a name could come from.
@@ -240,7 +240,7 @@ enum SoundId {
   MUS_JINGLE_LARGE,
   /// Unused: a song of no tracks, as MUS_SILENCE is, on the jingles' player;
   /// nothing plays it.
-  MUS_095 = 95,
+  MUS_UNUSED_SILENCE_JINGLE = 95,
   /// The Vault bell rung, and three times as a shop repairs an item.
   SE_BELL = 100,
   /// An item bought in a shop, artifacts included.
@@ -546,7 +546,9 @@ enum SoundId {
   /// Elemental Star room, the party rising to that room, Hydros beaten, and
   /// Altmiller Cave's rock turned.
   SE_WARP,
-  SE_191,
+  /// Unused: nothing plays it here. The Lost Age plays the same sequence as
+  /// Gaia Rock's altar faces part, as Zagan gallops in and in Megiddo's dive.
+  SE_SHUDDER,
   /// Unused: nothing plays it here. The Lost Age plays the same sequence for
   /// Shriek's and Harpy's cry.
   SE_SHRIEK,
@@ -588,7 +590,7 @@ enum SoundId {
   SE_DUST_PUFF,
   /// Unused: SE_AMBIENT_STREAM's notes ten semitones higher, louder, on another
   /// voice and not held; nothing plays it.
-  SE_205,
+  SE_UNUSED_AMBIENT_STREAM_HIGH,
   /// Kolima and Kolima Forest cursed as the party watches, and a cocoon stepped
   /// on in the Tret Tree.
   SE_CURSE_FALL,
@@ -643,7 +645,9 @@ enum SoundId {
   /// The lifts of Mercury Lighthouse and its aerie, as they carry the party.
   SE_LIFT,
   SE_224,
-  SE_225,
+  /// Unused: nothing plays it here. The Lost Age plays the same sequence as
+  /// Moloch's shower of motes starts to gather toward the middle.
+  SE_MOTES_GATHER,
   /// A pusher and its log moving together: the Colosso, Crossbone Isle and
   /// Donpa's judgment in the Lunpa Fortress.
   SE_LOG_PUSH,
@@ -717,7 +721,7 @@ enum SoundId {
   SE_GABOMBA_STATUE_ARROW,
   SE_249,
   /// Unused: SE_BLACK_CRYSTAL_SET seven semitones lower; nothing plays it.
-  SE_250,
+  SE_UNUSED_BLACK_CRYSTAL_SET_LOW,
   /// Unused: nothing plays it here. The Lost Age plays the same sequence as the
   /// Black Crystal is set on the Lemurian Ship.
   SE_BLACK_CRYSTAL_SET,
@@ -783,7 +787,7 @@ enum SoundId {
   SOUND_FADE_OUT_ACTION_SE,
   /// Unused: SE_TAKE_FLIGHT higher, its first track six semitones up with one
   /// note fewer and its second four up; nothing plays it.
-  SE_290,
+  SE_UNUSED_TAKE_FLIGHT_HIGH,
   /// Unused: nothing plays it here. The Lost Age plays the same sequence as an
   /// actor takes flight.
   SE_TAKE_FLIGHT,
@@ -791,7 +795,7 @@ enum SoundId {
   /// (SolSanctumEruption_SpawnEffectPair).
   SE_ERUPTION_COLUMNS,
   /// Unused: SE_ERUPTION_COLUMNS four semitones lower; nothing plays it.
-  SE_293,
+  SE_UNUSED_ERUPTION_COLUMNS_LOW,
   /// A sound with no tracks on player 5, which stops what plays there, as a
   /// map's exit and stairs sounds do; played before each queued scene sound
   /// (Scene_QueueMusic).

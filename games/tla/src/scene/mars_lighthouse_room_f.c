@@ -91,6 +91,10 @@
 #define FLAG_SAW_PIPELINE_MENDED FLAG_AREA_TEMP_51
 #define FLAG_BLOCK_DROPPED FLAG_AREA_TEMP_58
 
+/// The Jupiter tower's exit and entrance 16: its hole drops the party back to
+/// the tower's first room.
+#define JUPITER_TOWER_THROUGH_HOLE 16
+
 /// The Mars tower (F1). Its first rooms: the flame thrower the button sets
 /// moving, the torch its flame lights (two actors, lit and unlit), the torch
 /// below it that shoots at the center wall, its fireball, and the unseen point
@@ -855,7 +859,7 @@ void MarsLighthouseRoomF_FallIntoHole(void) {
       SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER);
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();
-  FieldEvent_SetExitRequest(16);
+  FieldEvent_SetExitRequest(JUPITER_TOWER_THROUGH_HOLE);
 }
 
 /// Where the three pipes stand decides which flame throwers burn; with all
@@ -1225,7 +1229,8 @@ s32 Scene_Initialize(void) {
       if (entrance == 3 || entrance == 5 || entrance == 9 || entrance == 12 ||
           entrance == 14)
         Actor_ArriveInRing(gMainRoutineWork.leaderActorId);
-      if (entrance == 16 && !Flag_IsSet(FLAG_KEEP_PARTY_POSITION))
+      if (entrance == JUPITER_TOWER_THROUGH_HOLE &&
+          !Flag_IsSet(FLAG_KEEP_PARTY_POSITION))
         CrackedTile_DropIn();
     }
   } else if (scene == SCENE_MARS_LIGHTHOUSE_VENUS_TOWER) {
@@ -2271,7 +2276,8 @@ LATE_DATA u32 gSceneExits[] = {
     SCENE_EXIT(MARS_LIGHTHOUSE_JUPITER_TOWER_TO_MARS_LIGHTHOUSE_ROOM_M_FLAME,
                MarsLighthouseRoomMFlame,
                MARS_LIGHTHOUSE_ROOM_M_FLAME_FROM_MARS_LIGHTHOUSE_JUPITER_TOWER),
-    SCENE_EXIT(16, MarsLighthouseJupiterTower, 16),
+    SCENE_EXIT(JUPITER_TOWER_THROUGH_HOLE, MarsLighthouseJupiterTower,
+               JUPITER_TOWER_THROUGH_HOLE),
     SCENE_EXITS(MarsLighthouseVenusTower),
     SCENE_EXIT(MARS_LIGHTHOUSE_VENUS_TOWER_TO_MARS_LIGHTHOUSE_VENUS_LEDGE,
                MarsLighthouseVenusLedge,

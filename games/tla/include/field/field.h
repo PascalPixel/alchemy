@@ -152,6 +152,8 @@ enum ActorCreateKind {
 /// The sprite id in Actor_Create's id, below its enum ActorCreateKind (id /
 /// 4096).
 #define ACTOR_CREATE_SPRITE_MASK 0xfff
+/// An Actor_Create id of enum ActorCreateKind `kind`, above its sprite.
+#define ACTOR_CREATE_KIND(kind) ((kind) << 12)
 
 /// The world map's still picture (story.s): its tiles, packed (tagged LZ).
 extern u8 gWorldMapPackedTiles[];
@@ -191,6 +193,9 @@ struct OamWords {
 #define OBJ_POSITION(x, y) (OBJ_X((x) & 0x1ff) | ((y) & 0xff))
 /// An affine sprite's matrix, of the 32, in its attr01 word.
 #define OBJ_AFFINE_MATRIX(n) ((n) << 25)
+/// An affine parameter in an OamWords entry's attr2 word, its high half: the
+/// entries 4n to 4n + 3 hold affine matrix n's four.
+#define OBJ_AFFINE_PARAMETER(value) ((value) << 16)
 
 // The casino's four-dice game, built
 // like LuckyDice_Run (four dice in a round dome, Slots_DomePicture): A throws
@@ -330,7 +335,19 @@ enum TerrainKind {
   /// Above y 8, the first sample; below, the second left of x 8 and the third
   /// right of it.
   TERRAIN_SPLIT_BOTTOM_STEP = 15,
-  TERRAIN_KIND_COUNT = 16
+  TERRAIN_KIND_COUNT = 16,
+  /// Not a shape's kind: what MapGrid_GetCellAttributeLowNibbleOrBump gives
+  /// for a TERRAIN_ROUNDED_SQUARE whose two samples differ, a bump or a hollow.
+  TERRAIN_BUMP = 99
+};
+
+/// What MapGrid_CheckCollision says of a step to a position, as The Broken
+/// Seal's.
+enum Collision {
+  COLLISION_TOO_LOW = -1,  ///< the ground there is more than 12 pixels lower
+  COLLISION_NONE = 0,      ///< the actor can step there
+  COLLISION_TOO_HIGH = 1,  ///< the ground there is more than 8 pixels higher
+  COLLISION_IMPASSABLE = 2 ///< the cell there is a wall (CELL_BEHAVIOR_WALL)
 };
 
 /// One node of a tightrope (Tightrope_Initialize's work): a point on the rope,
@@ -586,6 +603,9 @@ void BattleBackground_SelectForMap(void);
 s32 ScenePoint_GetPosition(s32 id, FIXED *position);
 void ObjectTable_Clear(void);
 
+/// Party_AddPp's amount that fills every member's PP: "Everyone's PP was
+/// replenished!"
+#define PARTY_PP_REPLENISH 999
 void Party_AddPp(s32 amount, s32 unused);
 void Party_AddHp(s32 amount, s32 scaled);
 s32 Party_ApplyPoisonDamage(void);

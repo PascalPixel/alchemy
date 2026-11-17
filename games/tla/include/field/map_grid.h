@@ -33,6 +33,23 @@ struct MapAnimation {
 #define MAPGRID_ROW_MASK ((MAPGRID_SIZE - 1) * MAPGRID_SIZE)
 /// The bytes between one layer's BG map and the next, from screen block 5.
 #define MAPGRID_LAYER_SCREEN_BYTES 2048
+/// The low four bits of a shape's first byte: its kind (enum TerrainKind),
+/// which height function reads its samples (gMapGrid_TerrainHeightFunctions).
+#define MAPGRID_SHAPE_KIND_MASK 0xf
+/// A 16.16 height in the 8-pixel steps MapGrid_SetCellHeight and the collision
+/// tags take.
+#define CELL_HEIGHT_STEPS(height) ((height) >> 19)
+/// The collision code in MapCell_GetAttributes's halfword, above its
+/// attribute byte.
+#define CELL_CODE(attributes) ((attributes) >> 8)
+
+/// Where a layout's blend script is decoded, in the map collision buffer after
+/// the collision and the tileset animations; a scene may copy its own there.
+#define MAPGRID_BLEND_SCRIPT (Ram_MapCollision + 7680)
+/// A blend script's commands besides its BLDCNT values: the end, which starts
+/// it over, and a jump, its low byte the halfword pair to go on from.
+#define BLEND_SCRIPT_LOOP 0xffff
+#define BLEND_SCRIPT_JUMP 0xfe00
 
 /// A layout's three layers, by what they hold, as The Broken Seal's. Most
 /// layouts give them priorities 3, 2 and 1.
@@ -94,6 +111,17 @@ struct MapCell {
   u8 collisionCode;
   u8 attributeB;
 };
+
+/// A struct MapCell read as one word, as code that ORs bits into a cell writes
+/// it: its collision code (the cell behavior), the attribute bits above it and
+/// the flags of its cell picture.
+#define MAP_CELL_WORD(behavior, attributes, pictureFlags)                      \
+  ((u32)(attributes) << 24 | (behavior) << 16 | (pictureFlags))
+/// A cell picture's flags for an actor standing on the cell: the sprite
+/// priority it is drawn at and the map layer it takes, which the actors'
+/// placement reads (bits 15..14 and 13..12 of cellPictureAndFlags).
+#define CELL_DRAWS_ACTOR(priority, layer)                                      \
+  ((priority) << 14 | ((layer) + 1) << 12)
 
 /// A row of gMaps: a layout's resources, each counted from ResourceId_EmptyMap.
 struct MapResources {
@@ -172,6 +200,11 @@ struct MapWork {
 /// The bytes of MapWork a field map uses: up to its third layer, the last the
 /// field scrolls.
 #define MAPGRID_FIELD_WORK_SIZE offsetof(struct MapWork, layers[3])
+
+/// MapWork.groundEffects' kind of wading, its bits 3..2; none where nothing
+/// wades.
+#define GROUND_EFFECTS_WADING_MASK (3 << 2)
+#define GROUND_EFFECTS_WADING(effects) ((u32)((effects) << 28) >> 30)
 
 /// A view of the map work as the screen transitions read it: the display
 /// control bits, the window edges and interrupt lines of a transition, and

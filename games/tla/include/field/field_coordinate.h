@@ -40,5 +40,9 @@ STATIC_ASSERT(offsetof(struct FieldCoordinate, part[0].integer) == 2);
 /// The 16.16 coordinate of the middle of a map grid cell.
 #define FIELD_CELL_CENTER(cell)                                                \
   (FIELD_CELL_ORIGIN(cell) + toFIXED(MAPGRID_CELL_PIXELS / 2))
+/// The 8-pixel tile a 16.16 coordinate lies in, half a map grid cell.
+#define FIELD_TILE(coordinate) ((coordinate) >> 19)
+/// The 16.16 coordinate of an 8-pixel tile's first pixel, FIELD_TILE undone.
+#define FIELD_TILE_ORIGIN(tile) ((tile) << 19)
 
 #endif

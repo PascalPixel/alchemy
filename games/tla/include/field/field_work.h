@@ -96,6 +96,11 @@ enum ActorSystemMode {
   ACTOR_SYSTEM_BATTLE = 4
 };
 
+/// The frames the leader pushes against a step trigger, a ledge, a gap or a
+/// wall before it runs, jumps or climbs (FieldWork.blockedSteps), as in The
+/// Broken Seal.
+#define FIELD_PUSH_FRAMES 12
+
 /// A field scene's work: FieldSequence_Run allocates it in heap slot 108,
 /// zeroes it and frees it on the way out, and the field sequence, the event
 /// commands and the scene overlays all reach it through
@@ -132,7 +137,7 @@ struct FieldWork {
   s16 fallenOwners[9]; ///< the characters who fell, from the active party
   s16 itemSlot;        ///< the inventory slot Field_UseItem receives
   /// Frames the leader has pushed against something, counted by the player
-  /// controls; step triggers and push cells need more than 12.
+  /// controls; step triggers and push cells need more than FIELD_PUSH_FRAMES.
   s16 blockedSteps;
   /// The keys held: a ledge (KEY_DOWN) and a climb (KEY_UP or KEY_DOWN) read
   /// them, and they are kept when a rope or tightrope was raised.

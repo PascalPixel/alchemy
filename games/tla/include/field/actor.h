@@ -201,6 +201,20 @@ struct Actor {
       /// then sets 0), 7 once it reaches the cell (24, 14).
       u8 chargeState;
     };
+    /// A magical charge circling its orb statue in the Gabomba Statue
+    /// (GabombaStatue_SendCharge): its place on the circle, in 256ths of a
+    /// turn, and its own actor id.
+    struct {
+      u8 unusedBeforeCirclePhase[2]; ///< refused and frozen
+      u8 circlePhase;
+      u8 circleActorId;
+    };
+    /// A tooth of a cog in the Gabomba Statue (GabombaStatue_TurnTooth): its
+    /// place in its turn.
+    struct {
+      u8 unusedBeforeToothPhase[2]; ///< refused and frozen
+      u8 toothPhase;
+    };
     /// A magma rock rolling between a pair of statues at Magma Rock
     /// (MagmaRock_RollMagmaRock).
     struct {

@@ -131,12 +131,12 @@ void FieldPsynergy_Carry(void);
 /// Bits 27..24 of a search result, set only in a routine's address: the result
 /// is then a function to call.
 #define FIND_FUNCTION_BITS 0x0f000000
-// XXX: what bits 19..16's other values mean; a chest table with another value
-// would settle it.
 /// Bits 19..16 of a chest's search result, which Field_ExamineCell compares
-/// only with FIND_CHEST_LOCKED.
+/// only with FIND_CHEST_LOCKED. No chest of the game sets them, so none is
+/// locked.
 #define FIND_CHEST_LOCK_MASK 0xf0000
-/// A chest that stays shut while a party member (up to ALLY_MAX) leads.
+/// A chest that stays shut while a party member (up to ALLY_MAX) leads: "can't
+/// open it..." (MsgCantOpenIt).
 #define FIND_CHEST_LOCKED 0x10000
 
 /// A 16.16 coordinate's whole cell: a map grid cell is 16 pixels square.

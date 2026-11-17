@@ -282,6 +282,15 @@ enum TextColor {
 #define PAGE_ARROW_LEFT WINDOW_TILE(PAGE_ARROW_TILE)
 #define PAGE_ARROW_RIGHT WINDOW_TILE(PAGE_ARROW_TILE + 1)
 
+/// The page numbers between the arrows: 20 tiles from this one of character
+/// block 0, which Graphics_ExpandVramTilesByColorTable builds from the UI's
+/// digits '0' to '9', first with colour 1 drawn as 10, then in their own
+/// colours; and their tilemap entries, + n giving page n + 1's number, the
+/// page shown lit.
+#define PAGE_DIGITS_TILE 768
+#define PAGE_NUMBER_TILE WINDOW_TILE(PAGE_DIGITS_TILE + 1)
+#define PAGE_NUMBER_LIT_TILE WINDOW_TILE(PAGE_DIGITS_TILE + 10 + 1)
+
 /// The window border's tiles.
 enum {
   WINDOW_TILE_BLANK = WINDOW_TILE(0),

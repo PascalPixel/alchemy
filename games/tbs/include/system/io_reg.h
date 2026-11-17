@@ -369,6 +369,9 @@ enum ObjMode {
 /// A sprite's x in the attr01 word of an OamWords entry, whose attribute 1 is
 /// its high half.
 #define OBJ_X(x) ((x) << 16)
+/// Attribute 1's nine bits of x: a sprite left of the screen is at 512 less
+/// its distance.
+#define OBJ_X_MASK 0x1ff
 
 /// The keys' bits as REG_KEYINPUT and REG_KEYCNT lay them out; the game's
 /// key state (gKeysHeld and the rest) holds them set for a pressed key.

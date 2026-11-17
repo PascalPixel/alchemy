@@ -1,12 +1,14 @@
 /// @file
-/// The File Screen overlay, the first thing the player sees.
+/// The File Screen overlay, the first screen after the title.
 ///
-/// It holds the Golden Sun logo, the start menu (new game, continue, copy and
-/// delete), the door to the Battle Arena and the transfer of a save's data, by
-/// link or as a password.
+/// It holds the Golden Sun logo, the start menu (New Game, Continue, Copy and
+/// Erase), the door to the Battle Arena and the sending of a cleared game's
+/// data to The Lost Age, by link cable or as a password. Two secret button
+/// codes on the screen (FileScreen_CheckButtonCodes) name more of the party.
 
 #include "flags.h"
 #include "item_ids.h"
+#include "macros.h"
 #include "resource_ids.h"
 #include "scene_ids.h"
 #include "types.h"
@@ -127,7 +129,72 @@ extern u16 gFileScreen_PasswordStackItems[];
 #endif
 
 #define PASSWORD_SYMBOLS_PER_PAGE 50 ///< five rows of ten
-#define PASSWORD_SYMBOL_MASK 0x3f    ///< six bits: 64 symbols
+#define PASSWORD_SYMBOLS_PER_ROW 10
+#define PASSWORD_SYMBOL_MASK 0x3f ///< six bits: 64 symbols
+
+/// The bytes each password level packs, its checksum's two included, as The
+/// Lost Age's password screen decodes them.
+#define PASSWORD_GOLD_BYTES 175
+#define PASSWORD_SILVER_BYTES 41
+#define PASSWORD_BRONZE_BYTES 11
+/// The checksum's two bytes at the end of each level's
+/// (FileScreen_CalculatePasswordCrc16).
+#define PASSWORD_CRC_BYTES 2
+#define PASSWORD_CRC_SEED 0xffff
+#define PASSWORD_CRC_POLYNOMIAL 0x1021
+#define PASSWORD_CRC_TOP_BIT 0x8000 ///< of its 16 bits
+
+/// Where a password's parts start among its bytes: the four levels and the
+/// Djinn from the first, the story flags, then Silver's and Bronze's
+/// Psynergy items, which Gold has not; the stats rows after those, two party
+/// members to a row; and Gold's alone, the party's items, 15 a member in nine
+/// bits each, their quantities, five bits for each of the 23 items that stack
+/// (gFileScreen_PasswordStackItems), and the coins, high byte first.
+#define PASSWORD_FLAGS_BYTE 7
+#define PASSWORD_KEY_ITEMS_BYTE 8
+#define PASSWORD_STATS_ROW_BYTES 15
+#define PASSWORD_ITEMS_BYTE 39
+#define PASSWORD_QUANTITIES_BYTE 107
+#define PASSWORD_COINS_BYTE 165
+#define PASSWORD_STACK_ITEMS 23
+
+/// A party member's base stats in the password, two words of fields: HP (11
+/// bits), PP (11) and Attack (10); then Defense (10), Agility (10) and Luck (8)
+/// over four bits of 0.
+#define PASSWORD_HP_SHIFT 21
+#define PASSWORD_PP_SHIFT 10
+#define PASSWORD_DEFENSE_SHIFT 22
+#define PASSWORD_AGILITY_SHIFT 12
+#define PASSWORD_LUCK_SHIFT 4
+
+/// The password's symbols in the font: in the Japanese edition kana in their
+/// order (charmap_ja.tsv's codes), あ to そ, た to ん and を, then with the
+/// voiced mark が to ぞ, だ, で, ど and ば to ぼ; in the others capitals
+/// without I and O, the digits 2 to 9, small letters without l and o, then ! ?
+/// # & $ % + and =.
+#if LANGUAGE == LANGUAGE_JAPANESE
+#define SYMBOL_TA 15
+#define SYMBOL_WO 45
+#define SYMBOL_GA 46
+#define SYMBOL_DA 56
+#define SYMBOL_BA 59
+#define KANA_WO 134
+#define KANA_A 145
+#define KANA_KA 150
+#define KANA_TA 224
+#define KANA_TE 227
+#define KANA_TO 228
+#define KANA_HA 234
+#else
+#define SYMBOL_DIGITS 24
+#define SYMBOL_SMALL_LETTERS 32
+#define SYMBOL_SIGNS 56
+#endif
+
+/// Sending by cable gives up after this long, almost three hours, and with a
+/// communication error once the other console goes unheard this long.
+#define LINK_SEND_FRAMES 600000
+#define LINK_SILENT_FRAMES 10
 
 // UB: the second code's held flag, a word, is read and written as its low
 // halfword.
@@ -170,16 +237,18 @@ static void FileScreen_LoadBackground(void) {
   REG_BG2CNT = LOGO_BGCNT;
   gBgScroll[2].y = 0;
   resource = Resource_GetTableEntry(resourceId);
-  Dma_Set(resource, (void *)BG_PLTT, DMA_COPY_WORDS(112), REG_DMA3);
-  resource += 224 * 2;
-  FieldDecompress_TaggedLz(resource, Ram_MapGridCellBuffer);
-  Dma_Set((void *)Ram_MapGridCellBuffer, LOGO_TILES, DMA_COPY_WORDS(9600),
+  Dma_Set(resource, (void *)BG_PLTT, DMA_COPY_WORDS(LOGO_PALETTE_COLORS / 2),
           REG_DMA3);
-  // Build the visible 30-column logo map, padding to the 32-cell screen stride.
+  resource += LOGO_PALETTE_COLORS * 2;
+  FieldDecompress_TaggedLz(resource, Ram_MapGridCellBuffer);
+  // A screen's worth of 256-colour tiles.
+  Dma_Set((void *)Ram_MapGridCellBuffer, LOGO_TILES,
+          DMA_COPY_WORDS(DISPLAY_WIDTH * DISPLAY_HEIGHT / 4), REG_DMA3);
+  // The logo's map, each row's two columns past the screen's edge blank.
   tilemap = LOGO_MAP;
   tile = LOGO_FIRST_TILE;
-  for (y = 0; y < 20; y++) {
-    for (x = 0; x < 30; x++)
+  for (y = 0; y < DISPLAY_TILE_HEIGHT; y++) {
+    for (x = 0; x < DISPLAY_TILE_WIDTH; x++)
       *tilemap++ = tile++;
     *tilemap++ = blankTile;
     *tilemap++ = blankTile;
@@ -196,22 +265,22 @@ static void FileScreen_LoadBackground(void) {
   Actor_Get(gMainRoutineWork.leaderActorId)->motionFlags = 0;
 }
 
-/// The task that fades BG0 and the sprites in over the logo.
-static void FileScreen_UpdateBlend(void) {
+/// The task that fades BG0 and the sprites in over the logo, a step of the
+/// blend every second frame.
+static void FileScreen_FadeInBlend(void) {
   u16 level;
 
   level = (u16)++gFileScreen_BlendFrame >> 1;
-  // Blend BG0 and the sprites over the other layers, level sixteenths of
-  // the way in.
   IO_WRITE_QUEUE_PUSH((u32)&REG_BLDCNT,
                       BLDCNT_TGT1_BG0 | BLDCNT_TGT1_OBJ | BLDCNT_EFFECT_BLEND |
                           BLDCNT_TGT2_BG1 | BLDCNT_TGT2_BG2 | BLDCNT_TGT2_BG3 |
                           BLDCNT_TGT2_BD,
                       IO_WRITE_HALFWORD);
-  IO_WRITE_QUEUE_PUSH((u32)&REG_BLDALPHA, BLEND_ALPHA(level, 16 - level),
+  IO_WRITE_QUEUE_PUSH((u32)&REG_BLDALPHA,
+                      BLEND_ALPHA(level, BLEND_WEIGHT_MAX - level),
                       IO_WRITE_HALFWORD);
-  if (level >= 16)
-    Task_Remove(FileScreen_UpdateBlend);
+  if (level >= BLEND_WEIGHT_MAX)
+    Task_Remove(FileScreen_FadeInBlend);
 }
 
 // clang-format off
@@ -233,7 +302,8 @@ const u16 gFileScreen_ExtraButtonCode[] = {
 // clang-format on
 
 /// The task that follows the two hidden codes each frame while the File
-/// Screen runs.
+/// Screen runs: each held key that matches the next key of a code advances it,
+/// a wrong key starts it again, and finishing a code unlocks it with a chime.
 static void FileScreen_CheckButtonCodes(void) {
   if (gFileScreen_CodeUnlocked == 0) {
     if (gFileScreen_CodeHeld != 0) {
@@ -272,67 +342,69 @@ static void FileScreen_CheckButtonCodes(void) {
   }
 }
 
-/// Converts a six-bit password symbol to the edition's one- or two-byte glyph.
-static void FileScreen_NameEntryCharacter(s32 cell, u8 *text) {
+/// The character a password symbol stands for, in the font's codes, with the
+/// voiced mark after it where it has one.
+static void FileScreen_GetPasswordCharacter(s32 cell, u8 *text) {
   text[1] = 0;
   text[2] = 0;
 #if LANGUAGE != LANGUAGE_JAPANESE
-  if (cell <= 7)
+  if (cell <= 'H' - 'A')
     text[0] = cell + 'A';
-  else if (cell <= 12)
+  else if (cell <= 'N' - 'A' - 1)
     text[0] = cell + 'A' + 1;
-  else if (cell <= 23)
+  else if (cell <= 'Z' - 'A' - 2)
     text[0] = cell + 'A' + 2;
-  else if (cell <= 31)
-    text[0] = cell + 26;
-  else if (cell <= 42)
-    text[0] = cell + 'A';
-  else if (cell <= 44)
-    text[0] = cell + 'A' + 1;
-  else if (cell <= 55)
-    text[0] = cell + 'A' + 2;
-  else if (cell == 56)
+  else if (cell < SYMBOL_SMALL_LETTERS)
+    text[0] = cell - SYMBOL_DIGITS + '2';
+  else if (cell <= SYMBOL_SMALL_LETTERS + 'k' - 'a')
+    text[0] = cell - SYMBOL_SMALL_LETTERS + 'a';
+  else if (cell <= SYMBOL_SMALL_LETTERS + 'n' - 'a' - 1)
+    text[0] = cell - SYMBOL_SMALL_LETTERS + 'a' + 1;
+  else if (cell <= SYMBOL_SMALL_LETTERS + 'z' - 'a' - 2)
+    text[0] = cell - SYMBOL_SMALL_LETTERS + 'a' + 2;
+  else if (cell == SYMBOL_SIGNS)
     text[0] = '!';
-  else if (cell == 57)
+  else if (cell == SYMBOL_SIGNS + 1)
     text[0] = '?';
-  else if (cell == 58)
+  else if (cell == SYMBOL_SIGNS + 2)
     text[0] = '#';
-  else if (cell == 59)
+  else if (cell == SYMBOL_SIGNS + 3)
     text[0] = '&';
-  else if (cell == 60)
+  else if (cell == SYMBOL_SIGNS + 4)
     text[0] = '$';
-  else if (cell == 61)
+  else if (cell == SYMBOL_SIGNS + 5)
     text[0] = '%';
-  else if (cell == 62)
+  else if (cell == SYMBOL_SIGNS + 6)
     text[0] = '+';
   else
     text[0] = '=';
 #else
-  if (cell <= 14)
-    text[0] = cell - 111;
-  else if (cell <= 44)
-    text[0] = cell - 47;
-  else if (cell == 45)
-    text[0] = 134;
+  if (cell < SYMBOL_TA)
+    text[0] = cell + KANA_A;
+  else if (cell < SYMBOL_WO)
+    text[0] = cell - SYMBOL_TA + KANA_TA;
+  else if (cell == SYMBOL_WO)
+    text[0] = KANA_WO;
   else {
-    if (cell <= 55)
-      text[0] = cell + 104;
-    else if (cell == 56)
-      text[0] = 224;
-    else if (cell == 57)
-      text[0] = 227;
-    else if (cell == 58)
-      text[0] = 228;
+    if (cell < SYMBOL_DA)
+      text[0] = cell - SYMBOL_GA + KANA_KA;
+    else if (cell == SYMBOL_DA)
+      text[0] = KANA_TA;
+    else if (cell == SYMBOL_DA + 1)
+      text[0] = KANA_TE;
+    else if (cell == SYMBOL_DA + 2)
+      text[0] = KANA_TO;
     else
-      text[0] = cell - 81;
+      text[0] = cell - SYMBOL_BA + KANA_HA;
     text[1] = TEXT_MARK_VOICED;
   }
 #endif
 }
 
-/// Returns -1 when the loaded game may not restart at its last Sanctum, 0
-/// otherwise.
-static s32 FileScreen_GetSaveRecoveryBlockMask(void) {
+/// Nonzero (-1) when the save was made where Retreat is blocked, unless in a
+/// town or on the world map: such a save cannot restart at the Sanctum, by L
+/// and Start held as it loads or as a corrupted save is recovered.
+static s32 FileScreen_IsRetreatBlocked(void) {
   s32 mapDifference;
 
   if (GameFlag_Get(FLAG_RETREAT_BLOCKED) == 0) {
@@ -342,7 +414,7 @@ static s32 FileScreen_GetSaveRecoveryBlockMask(void) {
     return 0;
   }
   mapDifference = gMainRoutineWork.next ^ SCENE_WORLD_MAP;
-  return -((u32)(-mapDifference | mapDifference) >> 31);
+  return -NONZERO(mapDifference);
 }
 
 /// A view of the scene state that names its copy of the play time, checked
@@ -403,11 +475,13 @@ s32 Scene_Initialize(void) {
   // again.
   if (gMainRoutineWork.entrance == FILE_SCREEN_FROM_TITLE) {
   ask_to_save:
+    // "Save your adventure?"
     FieldMessage_Show(MsgSaveAdventureQuestion,
                       FIELD_MESSAGE_ZOOM | FIELD_MESSAGE_KEEP_OPEN);
     index = FieldYesNo_Ask(1);
     Message_CloseFinishedWindows();
-    if (index == 0) {
+    if (index == YES) {
+      // "You cannot resume your adventure with this data."
       FieldMessage_Show(MsgSaveAdventureQuestion + 1, FIELD_MESSAGE_ZOOM);
       // Marks the file cleared (SaveFileSummary's sendFlag): its data can be
       // sent, and the message says it cannot be continued.
@@ -432,6 +506,7 @@ menu_top:;
     if (gDebugMode != 0) {
       gMainRoutineWork.idleSleepEnabled = 1;
       gIdleSleepEnabled = 1;
+      // "Unable to detect backup memory."
       FieldMessage_ShowCentered(MsgNoBackupMemory, CENTERED_MESSAGE_WINDOW, 8);
     }
   }
@@ -439,43 +514,42 @@ menu_top:;
   if (result == 0) {
     if (blendStarted == 0) {
       wait(30);
-      Task_AddFrame(FileScreen_UpdateBlend, TASK_PASS_FRAME);
+      Task_AddFrame(FileScreen_FadeInBlend, TASK_PASS_FRAME);
       wait(1);
       blendStarted = 1;
     }
   }
-  // The start menu's choices (gFileList_ActionByPosition): 0 New Game,
-  // 1 Continue, 2 Copy, 3 Erase, 4 Battle and 5 Send; any other shows the
-  // menu again.
+  // The start menu's choice (enum FileAction); any other shows the menu
+  // again.
   if (result > 0) {
     result = FileList_SelectAction();
   } else {
-    result = 0;
+    result = SAVE_ACTION_NEW_GAME;
   }
-  if (result == 0) {
+  if (result == SAVE_ACTION_NEW_GAME) {
     // Hidden button codes expand the list of names offered for a new game:
     // Isaac alone, with the first code to Mia, with the second to Sheba. B on
     // the first name goes back to the menu.
     MainRoutineWork_InitializeDefaults();
     WindowColor_Apply(gMainRoutineWork.windowHue,
                       gMainRoutineWork.windowBrightness);
-    limit = 1;
-    index = 0;
+    limit = ISAAC + 1;
+    index = ISAAC;
     for (;;) {
       wait(6);
       result = NameEntry_EditMemberName(index);
       if (result == -1) {
-        if (index == 0) {
+        if (index == ISAAC) {
           goto menu_top;
         }
         index--;
         continue;
       }
       if (gFileScreen_CodeUnlocked != 0) {
-        limit = 4;
+        limit = MIA + 1;
       }
       if (gFileScreen_ExtraCodeUnlocked != 0) {
-        limit = 7;
+        limit = SHEBA + 1;
       }
       if (++index >= limit) {
         break;
@@ -486,7 +560,7 @@ menu_top:;
     gMainRoutineWork.entrance = COTTAGE_ROOMS_B_FROM_VALE_PLAZA_SOUTHEAST;
     goto leave;
   }
-  if (result == 1) {
+  if (result == SAVE_ACTION_CONTINUE) {
     struct MainRoutineWork *state;
 
     result = Save_ChooseAndLoadFile(1);
@@ -501,7 +575,8 @@ menu_top:;
       state->entrance = state->restartEntrance;
       GameFlag_Clear(FLAG_KEEP_PARTY_POSITION);
     } else if ((gKeysHeld & (KEY_L | KEY_START)) == (KEY_L | KEY_START)) {
-      if (FileScreen_GetSaveRecoveryBlockMask() != 0) {
+      if (FileScreen_IsRetreatBlocked() != 0) {
+        // "Unfortunately, your data could not be recovered."
         FieldMessage_Show(MsgSaveRecoveryFailed,
                           FIELD_MESSAGE_ZOOM | FIELD_MESSAGE_LOWER);
         goto menu_top;
@@ -512,8 +587,10 @@ menu_top:;
       GameFlag_Set(FLAG_SAVE_RESTARTED_AT_SANCTUM);
     } else if (state->playTime !=
                ((struct SaveMenuMapLocalState *)gSceneLocalState)->playTime) {
+      // "Some data is corrupted and cannot be recovered."
       FieldMessage_Show(MsgSaveDataCorrupted,
                         FIELD_MESSAGE_ZOOM | FIELD_MESSAGE_LOWER);
+      // "Do you wish to try to recover from a Sanctum?"
       FieldMessage_Show(MsgSaveDataCorrupted + 1, FIELD_MESSAGE_ZOOM |
                                                       FIELD_MESSAGE_KEEP_OPEN |
                                                       FIELD_MESSAGE_LOWER);
@@ -522,8 +599,8 @@ menu_top:;
         goto menu_top;
       }
       Message_CloseFinishedWindows();
-      if (FileScreen_GetSaveRecoveryBlockMask() != 0) {
-        // The third of the corrupted save's messages, MsgSaveRecoveryFailed.
+      if (FileScreen_IsRetreatBlocked() != 0) {
+        // "Unfortunately, your data could not be recovered."
         FieldMessage_Show(MsgSaveDataCorrupted + 2,
                           FIELD_MESSAGE_ZOOM | FIELD_MESSAGE_LOWER);
         goto menu_top;
@@ -536,18 +613,18 @@ menu_top:;
     GameFlag_Clear(FLAG_MENU_OPEN);
     goto leave;
   }
-  if (result == 2) {
+  if (result == SAVE_ACTION_COPY) {
     Save_CopyFile();
     goto menu_top;
   }
-  if (result == 3) {
+  if (result == SAVE_ACTION_ERASE) {
     Save_EraseSelectedFile();
     goto menu_top;
   }
   // Battle: go to the Battle Arena with a file. One saved while the Colosso
   // held the party's equipment gets it back, and its party is reset to Isaac,
   // Garet, Ivan and Mia, in order.
-  if (result == 4) {
+  if (result == SAVE_ACTION_BATTLE) {
     result = Save_ChooseAndLoadFile(4);
     if (result == -1) {
       goto menu_top;
@@ -573,7 +650,7 @@ menu_top:;
     Event_SetDestination(SCENE_BATTLE_ARENA, BATTLE_ARENA_FROM_FILE_SCREEN);
     goto leave;
   } else {
-    if (result != 5) {
+    if (result != SAVE_ACTION_SEND) {
       goto menu_top;
     }
   link_load:;
@@ -596,6 +673,7 @@ menu_top:;
                         FILE_SCREEN_LINK_WINDOW_WIDTH, 8, WINDOW_FLAG_INSTANT);
       linkMessage = MsgClearSaveLabel;
 
+      // "Save", "Preparing data" and "B: Quit"
       Text_DrawMessage(linkMessage, linkWindow, 0, 4);
       Text_DrawMessage(linkMessage + 1, linkWindow, 0, 16);
       Text_DrawMessage(linkMessage + 3, linkWindow, 0, 36);
@@ -610,7 +688,7 @@ menu_top:;
         sync[3] = '0';
       }
       index = 0;
-      limit = 3;
+      limit = LINK_STATUS_HEARD_BOTH;
       for (peerIndex = 0; peerIndex != 4; peerIndex++) {
         u16 *greeting =
             ((struct SaveLinkGreeting *)gLinkPeerSignatures)[peerIndex].code;
@@ -627,7 +705,7 @@ menu_top:;
         }
         if ((limit & gLinkStatus) == limit) {
           u32 control = REG_SIOCNT;
-          u32 peer = ((control << 26) >> 30) ^ 1;
+          u32 peer = SIO_ID_OF(control) ^ 1;
           u16 *received =
               ((struct SaveLinkGreeting *)gLinkPeerSignatures)[peer].code;
 
@@ -652,21 +730,22 @@ menu_top:;
                                  FILE_SCREEN_LINK_ERROR_WINDOW_WIDTH, 4,
                                  WINDOW_FLAG_INSTANT);
 
+      // "Sending data"
       Text_DrawMessage(MsgClearSendingData, linkWindow, 0, 4);
       wait(10);
       Serial_StartSend(gSaveBuffer, 4100);
       wait(10);
       limit = 0;
       {
-        s32 requiredLinkMask = 3;
+        s32 requiredLinkMask = LINK_STATUS_HEARD_BOTH;
 
         linkConnectionOk = 1;
-        for (index = 0; index <= 599999; index++) {
+        for (index = 0; index < LINK_SEND_FRAMES; index++) {
           limit++;
           if ((requiredLinkMask & gLinkStatus) == requiredLinkMask) {
             limit = 0;
           }
-          if (limit == 10) {
+          if (limit == LINK_SILENT_FRAMES) {
             linkConnectionOk = 0;
             break;
           }
@@ -677,6 +756,7 @@ menu_top:;
         }
         if (linkConnectionOk == 0) {
           WindowSprite_PrepareForRedraw(linkWindow);
+          // "Communication Error"
           Text_DrawMessage(MsgClearCommunicationError, linkWindow, 0, 4);
           do {
             wait(1);
@@ -696,9 +776,10 @@ menu_top:;
       goto menu_top;
     }
     if (result == TRANSFER_METHOD_PASSWORD) {
-    // Password output packs save data, appends CRC bytes, then groups glyphs.
-    // The level is Gold, Silver or Bronze (enum PasswordLevel): 260, 61 or 16
-    // symbols, shown 50 to a page.
+    // The password: the party's data packed, its checksum after it, then
+    // turned into symbols. The level is Gold, Silver or Bronze (enum
+    // PasswordLevel): 260, 61 or 16 symbols, shown PASSWORD_SYMBOLS_PER_PAGE
+    // to a page.
     page_select:;
       result = IconMenu_ChooseSendOption(RESOURCE_LAYOUT_PASSWORD_LEVEL);
 
@@ -712,7 +793,7 @@ menu_top:;
         sum = FileScreen_CalculatePasswordCrc16(encodedSize, saveData);
         saveData[encodedSize] = (u16)sum >> 8;
         saveData[encodedSize + 1] = sum;
-        encodedSize += 2;
+        encodedSize += PASSWORD_CRC_BYTES;
         encodedSize =
             FileScreen_EncodePassword(saveData, encodedSize, password);
       }
@@ -724,10 +805,11 @@ menu_top:;
           Window_Create(FILE_SCREEN_HELP_WINDOW_X, 0,
                         FILE_SCREEN_HELP_WINDOW_WIDTH, 4, WINDOW_FLAG_INSTANT);
       passwordHeadingMessage = MsgClearPasswordLabel;
+      // "Password"
       Text_DrawMessage(passwordHeadingMessage, headingWindow, 6, 4);
       index = 1;
-      // The help line below: B alone for one page, with Left and Right for
-      // more (the two messages before MsgClearPasswordLabel).
+      // The help line below: "B: Return" for one page, "Left & Right: Change
+      // Page  B: Return" for more.
       if (pageCount == 1) {
         helpWindow = Window_Create(5, 16, 20, 3, WINDOW_FLAG_INSTANT);
         Text_DrawMessageAsTiles(passwordHeadingMessage - 2, helpWindow,
@@ -739,7 +821,7 @@ menu_top:;
         Text_DrawMessageAsTiles(passwordHeadingMessage - 1, helpWindow, 0, 0);
       }
       Graphics_ExpandVramTilesByColorTable(
-          (u16 *)(BG_CHAR_BLOCK(0) + 768 * TILE_SIZE_4BPP));
+          (u16 *)(BG_CHAR_BLOCK(0) + PAGE_DIGITS_TILE * TILE_SIZE_4BPP));
       WindowSprite_PrepareForRedraw(pageWindow);
       // A turns the page, and on the last returns to the menu; Left and Right
       // turn back and forth, wrapping round; B goes back to the level choice.
@@ -786,18 +868,16 @@ menu_top:;
             limit = limit + 2;
             index++;
           } while (index != 4);
-          // The page numbers beside the arrows, on WINDOW_PALETTE: tile 769 +
-          // n is the digit n + 1, and 779 + n the same digit in the second
-          // colouring, for the page shown.
+          // The page numbers between the arrows, the page shown lit.
           if (pageCount > 1) {
             index = 0;
             if (pageCount != 0) {
               u32 mode = TILEMAP_ENTRY_PLAIN;
 
               do {
-                tileValue = index + WINDOW_TILE(769);
+                tileValue = index + PAGE_NUMBER_TILE;
                 if (index == pageIndex) {
-                  tileValue = index + WINDOW_TILE(779);
+                  tileValue = index + PAGE_NUMBER_LIT_TILE;
                 }
                 Window_SetTilemapEntry(pageWindow, tileValue,
                                        index + 18 - pageCount, -1, mode);
@@ -811,9 +891,9 @@ menu_top:;
             Window_MarkTilemapRow((struct WindowWork *)gWindowWork[0],
                                   pageWindow->y);
           }
-          // Each page holds 50 symbols in five rows, split into two groups.
-          // Rows are 16 pixels apart; the second five of a row sit 10 pixels
-          // further right.
+          // The page's symbols, each row split into two groups of five: rows
+          // 16 pixels apart, the second five of a row 10 pixels further
+          // right.
           result =
               pageIndex * PASSWORD_SYMBOLS_PER_PAGE + PASSWORD_SYMBOLS_PER_PAGE;
           if (result > encodedSize) {
@@ -824,23 +904,23 @@ menu_top:;
                index != result; index++, pageGlyphIndex++) {
             /* FAKEMATCH(dead): a once-only block round the draw call. */
             do {
-              FileScreen_NameEntryCharacter(
+              FileScreen_GetPasswordCharacter(
                   password[index] & PASSWORD_SYMBOL_MASK, glyph);
             } while (0);
-            passwordColumn = index % 10;
-            if (passwordColumn > 4) {
+            passwordColumn = index % PASSWORD_SYMBOLS_PER_ROW;
+            if (passwordColumn > PASSWORD_SYMBOLS_PER_ROW / 2 - 1) {
               s32 row;
 
-              glyphColumn = pageGlyphIndex % 10;
-              row = pageGlyphIndex / 10;
+              glyphColumn = pageGlyphIndex % PASSWORD_SYMBOLS_PER_ROW;
+              row = pageGlyphIndex / PASSWORD_SYMBOLS_PER_ROW;
               Text_DrawString(glyph, pageWindow, glyphColumn * 12 + 18,
                               (row << 4) + 2);
             } else {
               s32 row;
 
-              glyphColumn = pageGlyphIndex % 10;
+              glyphColumn = pageGlyphIndex % PASSWORD_SYMBOLS_PER_ROW;
               // The same division, by the divide routine's own name.
-              row = __divsi3(pageGlyphIndex, 10);
+              row = __divsi3(pageGlyphIndex, PASSWORD_SYMBOLS_PER_ROW);
               Text_DrawString(glyph, pageWindow, glyphColumn * 12 + 8,
                               (row << 4) + 2);
             }
@@ -863,10 +943,17 @@ leave:;
   return 0;
 }
 
-/// UNUSED: decodes tiles and maps a 16-by-eight window region in VRAM and
-/// shadow.
-UNUSED static void FileList_FillTileGrid(struct Window *window,
-                                         const void *compressedTiles) {
+/// The block of the window tilemap the two unused routines below fill: 16 by
+/// 8 entries; the second's tiles start at TILE_BLOCK_FIRST_TILE.
+#define TILE_BLOCK_COLUMNS 16
+#define TILE_BLOCK_ROWS 8
+#define TILE_BLOCK_FIRST_TILE 32
+
+/// Unused: unpacks the tiles into a scratch block, then fills a block of the
+/// window tilemap, in VRAM and in its shadow, at the window's cell: each
+/// cell's tile the row times the window's width plus the column.
+UNUSED static void FileScreen_FillTileGrid(struct Window *window,
+                                           const void *compressedTiles) {
   u16 *shadow;
   u16 *vram;
   void *decodedTiles;
@@ -877,25 +964,25 @@ UNUSED static void FileList_FillTileGrid(struct Window *window,
   shadow = ((struct WindowWork *)gWindowWork[0])->tilemap;
   decodedTiles = Heap_AllocEwram(768);
   FieldDecompress_TaggedLz(compressedTiles, decodedTiles);
-  cell = window->y * 32 + window->x;
+  cell = window->y * BG_SCREEN_WIDTH + window->x;
   vram = (u16 *)WINDOW_TILEMAP_VRAM + cell;
   shadow += cell;
-  for (row = 0; row <= 7; row++) {
-    for (col = 0; col <= 15; col++) {
+  for (row = 0; row < TILE_BLOCK_ROWS; row++) {
+    for (col = 0; col < TILE_BLOCK_COLUMNS; col++) {
       s16 tile = WINDOW_TILE(window->width * row + col);
 
       *vram++ = tile;
       *shadow++ = tile;
     }
-    vram += 16;
-    shadow += 16;
+    vram += BG_SCREEN_WIDTH - TILE_BLOCK_COLUMNS;
+    shadow += BG_SCREEN_WIDTH - TILE_BLOCK_COLUMNS;
   }
   Heap_Release(decodedTiles);
 }
 
-/// UNUSED: fills a 16-by-eight region with WINDOW_PALETTE tiles beginning at
-/// tile 32.
-UNUSED static void FileList_FillTileBlock(const struct Window *window) {
+/// Unused: fills a block of the window tilemap with the tiles from
+/// TILE_BLOCK_FIRST_TILE on.
+UNUSED static void FileScreen_FillTileBlock(const struct Window *window) {
   s16 *mirror = ((struct WindowWork *)gWindowWork[0])->tilemap;
   s16 *buffer = Heap_AllocEwram(768);
   s16 *vram;
@@ -903,17 +990,17 @@ UNUSED static void FileList_FillTileBlock(const struct Window *window) {
   s32 row;
   s32 base;
 
-  cell = window->y * 32 + window->x;
+  cell = window->y * BG_SCREEN_WIDTH + window->x;
   vram = (s16 *)WINDOW_TILEMAP_VRAM + cell;
   mirror += cell;
   row = 0;
   base = 0;
   do {
-    s32 tile = base + 32;
-    s32 remaining = 15;
+    s32 tile = base + TILE_BLOCK_FIRST_TILE;
+    s32 remaining = TILE_BLOCK_COLUMNS - 1;
 
     do {
-      s16 value = tile | -0x1000;
+      s16 value = WINDOW_TILE(tile);
 
       remaining--;
       *vram = value;
@@ -923,10 +1010,10 @@ UNUSED static void FileList_FillTileBlock(const struct Window *window) {
       mirror++;
     } while (remaining >= 0);
     row++;
-    vram += 16;
-    mirror += 16;
-    base += 16;
-  } while (row <= 7);
+    vram += BG_SCREEN_WIDTH - TILE_BLOCK_COLUMNS;
+    mirror += BG_SCREEN_WIDTH - TILE_BLOCK_COLUMNS;
+    base += TILE_BLOCK_COLUMNS;
+  } while (row < TILE_BLOCK_ROWS);
   Heap_Release(buffer);
 }
 
@@ -946,30 +1033,22 @@ struct PasswordStats {
 };
 
 /// A party member as the password reads them: their level, base stats,
-/// inventory and Djinn.
-///
-/// It is a view of struct Unit at its offsets. FileScreen_PackPasswordData's
-/// opening note says why it is kept.
+/// inventory and Djinn, a view of struct Unit at its offsets.
 struct PasswordMember {
   u8 name[15]; ///< Unit's; not read here
-  u8 level;    ///< clamped to 1 to 99; 7 bits
+  u8 level;    ///< clamped to 1 to UNIT_LEVEL_MAX; 7 bits
   struct PasswordStats stats;
-  u8 regenToActions[184]; ///< Unit's baseHpRegen to psynergy
-  /// bits: 15..11 quantity | 10 broken | 9 equipped | 8..0 item
-  u16 inventory[15];
-  u8 padding[2];    ///< Unit's paddingBeforeDjinn
+  u8 regenToActions[184];         ///< Unit's baseHpRegen to psynergy
+  u16 inventory[INVENTORY_SLOTS]; ///< an enum InventoryEncoding each
+  u8 padding[2];                  ///< Unit's paddingBeforeDjinn
   u32 djinnHeld[4]; ///< the Djinn held, a bit per Djinni, by element
 };
 
 /// Packs the four heroes' data for a password of level mode (enum
-/// PasswordLevel).
-///
-/// PASSWORD_LEVEL_GOLD takes 173 bytes, _SILVER 39 or _BRONZE 9. Any other
-/// mode clears 11. It clamps each party member's base stats and level in
+/// PasswordLevel), its checksum's bytes still to come; any other mode clears
+/// PASSWORD_BRONZE_BYTES. It clamps each party member's base stats and level in
 /// place first, and returns the byte count.
 static s32 FileScreen_PackPasswordData(s32 unused, s32 mode, u8 *out) {
-  // The private view remains pending member reconciliation; its fields below
-  // follow Unit's actual base stats.
   s32 length;
   u32 levelBits;
   u32 djinnBits;
@@ -983,16 +1062,16 @@ static s32 FileScreen_PackPasswordData(s32 unused, s32 mode, u8 *out) {
   s32 k;
   s32 n;
 
-  length = 11;
+  length = PASSWORD_BRONZE_BYTES;
   switch (mode) {
   case PASSWORD_LEVEL_GOLD:
-    length = 173;
+    length = PASSWORD_GOLD_BYTES - PASSWORD_CRC_BYTES;
     break;
   case PASSWORD_LEVEL_SILVER:
-    length = 39;
+    length = PASSWORD_SILVER_BYTES - PASSWORD_CRC_BYTES;
     break;
   case PASSWORD_LEVEL_BRONZE:
-    length = 9;
+    length = PASSWORD_BRONZE_BYTES - PASSWORD_CRC_BYTES;
     break;
   }
   for (i = 0; i != length; i++) {
@@ -1044,10 +1123,11 @@ static s32 FileScreen_PackPasswordData(s32 unused, s32 mode, u8 *out) {
     }
     // Shift as unsigned: the permitted HP and Defense maxima exceed the
     // signed 32-bit range after packing, while their bit patterns are valid.
-    packedStats[i * 2] =
-        (u32)stats->baseHp << 21 | stats->basePp << 10 | stats->baseAttack;
-    packedStats[i * 2 + 1] = (u32)stats->baseDefense << 22 |
-                             stats->baseAgility << 12 | stats->baseLuck << 4;
+    packedStats[i * 2] = (u32)stats->baseHp << PASSWORD_HP_SHIFT |
+                         stats->basePp << PASSWORD_PP_SHIFT | stats->baseAttack;
+    packedStats[i * 2 + 1] = (u32)stats->baseDefense << PASSWORD_DEFENSE_SHIFT |
+                             stats->baseAgility << PASSWORD_AGILITY_SHIFT |
+                             stats->baseLuck << PASSWORD_LUCK_SHIFT;
     if (member->level > UNIT_LEVEL_MAX) {
       member->level = UNIT_LEVEL_MAX;
     }
@@ -1060,7 +1140,7 @@ static s32 FileScreen_PackPasswordData(s32 unused, s32 mode, u8 *out) {
     }
     // Which of the eight Psynergy items (gFileScreen_PasswordKeyItems) any
     // party member carries.
-    for (j = 0; j != 15; j++) {
+    for (j = 0; j != INVENTORY_SLOTS; j++) {
       u16 item = member->inventory[j] & INVENTORY_ITEM_ID_MASK;
 
       for (k = 0; k != 8; k++) {
@@ -1073,13 +1153,13 @@ static s32 FileScreen_PackPasswordData(s32 unused, s32 mode, u8 *out) {
 
   // The largest password also carries inventories, stack counts and coins.
   if (mode == PASSWORD_LEVEL_GOLD) {
-    outputIndex = 39;
+    outputIndex = PASSWORD_ITEMS_BYTE;
     bitOffset = 0;
     for (i = 0; i != 4; i++) {
       struct PasswordMember *member = (struct PasswordMember *)Unit_Get(
           ((const struct { s32 id[4]; } *)gFileScreen_PasswordMembers)->id[i]);
 
-      for (n = 0; n != 15; n++) {
+      for (n = 0; n != INVENTORY_SLOTS; n++) {
         u16 item;
 
         // Item_GetDirect only looks the definition up; its result is not used.
@@ -1096,18 +1176,18 @@ static s32 FileScreen_PackPasswordData(s32 unused, s32 mode, u8 *out) {
       }
     }
 
-    outputIndex = 107;
+    outputIndex = PASSWORD_QUANTITIES_BYTE;
     bitOffset = -1;
     for (i = 0; i != 4; i++) {
       struct PasswordMember *member = (struct PasswordMember *)Unit_Get(
           ((const struct { s32 id[4]; } *)gFileScreen_PasswordMembers)->id[i]);
       s32 m;
 
-      for (m = 0; m != 23; m++) {
+      for (m = 0; m != PASSWORD_STACK_ITEMS; m++) {
         UNUSED u16 quantity;
 
         j = 0;
-        for (n = 0; n != 15; n++) {
+        for (n = 0; n != INVENTORY_SLOTS; n++) {
           if ((member->inventory[n] & INVENTORY_ITEM_ID_MASK) ==
               gFileScreen_PasswordStackItems[m]) {
             j = (member->inventory[n] & INVENTORY_QUANTITY_MASK) >>
@@ -1129,16 +1209,16 @@ static s32 FileScreen_PackPasswordData(s32 unused, s32 mode, u8 *out) {
         }
       }
     }
-    out[165] = (u32)gMainRoutineWork.holdings.coins >> 16;
-    out[166] = (u32)gMainRoutineWork.holdings.coins >> 8;
-    out[167] = gMainRoutineWork.holdings.coins;
+    out[PASSWORD_COINS_BYTE] = (u32)gMainRoutineWork.holdings.coins >> 16;
+    out[PASSWORD_COINS_BYTE + 1] = (u32)gMainRoutineWork.holdings.coins >> 8;
+    out[PASSWORD_COINS_BYTE + 2] = gMainRoutineWork.holdings.coins;
   }
 
-  // The two larger forms include the packed base-stat rows. Each pass packs
-  // two party members in 15 bytes: each one's first word and the top 28 bits of
-  // its second, whose low four bits are always 0.
+  // Silver and Gold carry the stats rows. Each packs two party members in
+  // PASSWORD_STATS_ROW_BYTES: each one's first word and the top 28 bits of its
+  // second, whose low four bits are always 0.
   if (mode != PASSWORD_LEVEL_BRONZE) {
-    s32 statsOffset = 8 + (mode != PASSWORD_LEVEL_GOLD);
+    s32 statsOffset = PASSWORD_KEY_ITEMS_BYTE + (mode != PASSWORD_LEVEL_GOLD);
 
     for (i = 0; i != 2; i++) {
       out[statsOffset] = packedStats[i * 4] >> 24;
@@ -1158,7 +1238,7 @@ static s32 FileScreen_PackPasswordData(s32 unused, s32 mode, u8 *out) {
       out[statsOffset + 12] = packedStats[i * 4 + 3] >> 20;
       out[statsOffset + 13] = packedStats[i * 4 + 3] >> 12;
       out[statsOffset + 14] = packedStats[i * 4 + 3] >> 4;
-      statsOffset += 15;
+      statsOffset += PASSWORD_STATS_ROW_BYTES;
     }
   }
 
@@ -1169,15 +1249,16 @@ static s32 FileScreen_PackPasswordData(s32 unused, s32 mode, u8 *out) {
   out[4] = djinnBits >> 4;
   out[5] = djinnBits >> 12;
   out[6] = djinnBits >> 20;
-  out[7] = flagBits;
+  out[PASSWORD_FLAGS_BYTE] = flagBits;
   if (mode != PASSWORD_LEVEL_GOLD) {
-    out[8] = keyItemBits;
+    out[PASSWORD_KEY_ITEMS_BYTE] = keyItemBits;
   }
   return length;
 }
 
 /// Encodes size bytes of data as password symbols in out and returns how
-/// many there are.
+/// many there are: every byte but the last XORed with the last, six bits a
+/// symbol, a checksum symbol after every nine, and each symbol plus its place.
 static s32 FileScreen_EncodePassword(u8 *data, s32 size, u8 *out) {
   s32 xorKey;
   s32 symbolCount;
@@ -1190,7 +1271,6 @@ static s32 FileScreen_EncodePassword(u8 *data, s32 size, u8 *out) {
   s32 groupSymbols;
   s32 sourceBit;
 
-  // The final input byte obscures the preceding bytes.
   xorKey = data[size - 1];
   symbolCount = 0;
   for (i = 0; i != size - 1; i++)
@@ -1199,7 +1279,6 @@ static s32 FileScreen_EncodePassword(u8 *data, s32 size, u8 *out) {
   inputIndex = 0;
   groupSum = 0;
   groupSymbols = 0;
-  // Extract six-bit symbols and append a checksum after every nine symbols.
   do {
     symbol = 0;
     for (j = 0; j != 6; j++) {
@@ -1216,7 +1295,7 @@ static s32 FileScreen_EncodePassword(u8 *data, s32 size, u8 *out) {
     groupSymbols++;
     out[symbolCount++] = symbol;
     groupSum += symbol;
-    if (groupSymbols == 9) {
+    if (groupSymbols == PASSWORD_SYMBOLS_PER_ROW - 1) {
       out[symbolCount++] = groupSum & PASSWORD_SYMBOL_MASK;
       groupSum = 0;
       groupSymbols = 0;
@@ -1227,19 +1306,21 @@ static s32 FileScreen_EncodePassword(u8 *data, s32 size, u8 *out) {
   return symbolCount;
 }
 
-/// Runs the original shift/subtract checksum, initially 0xffff, and returns
-/// its complemented low 16 bits.
+/// The password's checksum: over byteCount bytes of data, shifted a bit at a
+/// time from PASSWORD_CRC_SEED, PASSWORD_CRC_POLYNOMIAL subtracted when the top
+/// bit falls out, and the result complemented. The Lost Age's password screen
+/// checks it against a decoded password's last PASSWORD_CRC_BYTES.
 static u16 FileScreen_CalculatePasswordCrc16(u32 byteCount, u8 *data) {
   u32 crc;
   u32 byteIndex;
   u32 bitIndex;
 
-  crc = 0xFFFF;
+  crc = PASSWORD_CRC_SEED;
   for (byteIndex = 0; byteIndex != byteCount; byteIndex++, data++) {
     crc ^= *data << 8;
     for (bitIndex = 0; bitIndex != 8; bitIndex++) {
-      if ((crc & 0x8000) != 0) {
-        crc = (crc << 1) - 0x1021;
+      if ((crc & PASSWORD_CRC_TOP_BIT) != 0) {
+        crc = (crc << 1) - PASSWORD_CRC_POLYNOMIAL;
       } else {
         crc <<= 1;
       }
@@ -1265,7 +1346,7 @@ struct Trigger gFileScreen_Triggers[] = {
     {TRIGGER_TABLE_END},
 };
 
-/// Frames since FileScreen_UpdateBlend began; the blend level is half of it.
+/// Frames since FileScreen_FadeInBlend began; the blend level is half of it.
 s16 gFileScreen_BlendFrame = 0;
 
 /// Set once gFileScreen_ButtonCode has been entered; nothing here clears it.
@@ -1293,18 +1374,17 @@ u32 gFileScreen_PasswordMembers[] = {
     ISAAC, GARET, IVAN, MIA,
 };
 
-/// The six story flags of the password's byte 7, as halfwords in pairs, bits
-/// 0 to 5.
-///
-/// They are FLAG_DODONPA_LOCKED_UP, FLAG_WON_COLOSSO,
-/// FLAG_HSU_RESCUED_WITHOUT_PARTY, FLAG_CROSSBONE_ISLE_DEADBEARD_DEFEATED,
-/// FLAG_VISITED_SICK_DORA and FLAG_VAULT_WARNED_OF_ESCAPED_THIEVES.
+/// The six story flags of the password's PASSWORD_FLAGS_BYTE, as halfwords in
+/// pairs, bits 0 to 5.
 u32 gFileScreen_PasswordFlags[] = {
-    0x9510941, 0x8d108b3, 0x868081e,
+    FLAG_DODONPA_LOCKED_UP | FLAG_WON_COLOSSO << 16,
+    FLAG_HSU_RESCUED_WITHOUT_PARTY | FLAG_CROSSBONE_ISLE_DEADBEARD_DEFEATED << 16,
+    FLAG_VISITED_SICK_DORA | FLAG_VAULT_WARNED_OF_ESCAPED_THIEVES << 16,
 };
 
 /// The eight Psynergy items, ITEM_ORB_OF_FORCE to ITEM_CATCH_BEADS (as
-/// halfwords in pairs), which Silver and Bronze record in byte 8.
+/// halfwords in pairs), which Silver and Bronze record in
+/// PASSWORD_KEY_ITEMS_BYTE.
 u32 gFileScreen_PasswordKeyItems[] = {
     ITEM_ORB_OF_FORCE | ITEM_DOUSE_DROP << 16,
     ITEM_FROST_JEWEL | ITEM_LIFTING_GEM << 16,
@@ -1312,13 +1392,13 @@ u32 gFileScreen_PasswordKeyItems[] = {
     ITEM_CARRY_STONE | ITEM_CATCH_BEADS << 16,
 };
 
-/// The 23 items whose quantity a Gold password keeps for each party member.
+/// The items whose quantity a Gold password keeps for each party member.
 ///
 /// They are Herb, Nut, Vial, Potion, Psy Crystal, Antidote, Elixir, Water of
 /// Life, Power Bread, Cookie, Apple, Hard Nut, Mint, Lucky Pepper, Smoke Bomb,
 /// Sleep Bomb, Game Ticket, Lucky Medal, Sacred Feather, Oil Drop, Weasel's
 /// Claw, Bramble Seed and Crystal Powder.
-u16 gFileScreen_PasswordStackItems[] = {
+u16 gFileScreen_PasswordStackItems[PASSWORD_STACK_ITEMS] = {
     ITEM_HERB, ITEM_NUT, ITEM_VIAL, ITEM_POTION, ITEM_PSY_CRYSTAL,
     ITEM_ANTIDOTE, ITEM_ELIXIR, ITEM_WATER_OF_LIFE, ITEM_POWER_BREAD,
     ITEM_COOKIE, ITEM_APPLE, ITEM_HARD_NUT, ITEM_MINT, ITEM_LUCKY_PEPPER,

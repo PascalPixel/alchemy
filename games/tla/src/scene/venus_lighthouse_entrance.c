@@ -57,7 +57,7 @@ void Actor_Release(struct Actor *actor);
 /// Set as the birds land the first time the party comes out of the lighthouse.
 #define FLAG_VENUS_LIGHTHOUSE_BIRDS_LANDED 0x891
 /// Set as the birds fly off; they are gone from then on.
-#define FLAG_VENUS_LIGHTHOUSE_BIRDS_FLOWN 0x892
+#define FLAG_VENUS_LIGHTHOUSE_BIRDS_FLEW_OFF 0x892
 /// Set as the party comes back from beating the Ruffian who waited for backup;
 /// he then lies beaten by the road.
 #define FLAG_VENUS_LIGHTHOUSE_RUFFIAN_BEATEN 0x893
@@ -131,10 +131,15 @@ void VenusLighthouseEntrance_PointToMeetingSpot(void);
 /// The dust puffs' work, kept in Ram_HeapSlots' menu runtime while they play:
 /// their pictures, ninety-six puffs each with its place and sprite, and the
 /// next to emit.
+/// The dust puffs kept at once, each emitted in turn over the oldest, and the
+/// frames a puff lasts.
+#define DUST_PUFFS 96
+#define DUST_PUFF_FRAMES 16
+
 struct DustPuffWork {
   u8 pictures[2048]; ///< decompressed, then loaded into the VRAM cache
-  struct SparkState particles[96];
-  struct EffectSprite sprites[96];
+  struct SparkState particles[DUST_PUFFS];
+  struct EffectSprite sprites[DUST_PUFFS];
   s16 next;     ///< the next puff to emit, taken in turn
   u16 tileBase; ///< the pictures' first tile
   s16 resource; ///< their VRAM cache entry
@@ -168,19 +173,19 @@ void VenusLighthouseEntrance_BlastActorWithPsynergy(void *object) {
 
 /// A running soldier's update: it kicks up dust where it is, with a scuff
 /// every eighth frame.
-void VenusLighthouseEntrance_TrailDust(struct Actor *actor) {
+void VenusLighthouseEntrance_KickUpDust(struct Actor *actor) {
   VenusLighthouseEntrance_EmitDust(actor, actor->x.fixed, actor->y.fixed,
                                    actor->z.fixed);
   if (++actor->timer % 8 == 0)
     Event_PlaySound(SE_CHEST_CLOSE);
 }
 
-/// Talked to, a soldier runs 96 pixels out and back trailing dust.
-void VenusLighthouseEntrance_RunWithDustTrail(s32 actorId) {
+/// Talked to, a soldier runs 96 pixels out and back, kicking up dust.
+void VenusLighthouseEntrance_RunAndKickUpDust(s32 actorId) {
   struct Actor *actor = Actor_Get(actorId);
 
   VenusLighthouseEntrance_StartDust();
-  actor->update = VenusLighthouseEntrance_TrailDust;
+  actor->update = VenusLighthouseEntrance_KickUpDust;
   actor->priorityFlags = 0;
   Actor_WalkByAndWait(actorId, 96, -96);
   Actor_WalkByAndWait(actorId, -96, 96);
@@ -208,7 +213,7 @@ s32 Scene_Initialize(void) {
   FieldActor_SetSpritePriority(ACTOR_EAST_BIRD, 1);
   FieldActor_SetSpritePriority(ACTOR_DOUBTING_SOLDIER, 2);
   FieldActor_SetSpritePriority(ACTOR_EAGER_WORKMAN, 2);
-  if (Event_GetFlag(FLAG_VENUS_LIGHTHOUSE_BIRDS_FLOWN)) {
+  if (Event_GetFlag(FLAG_VENUS_LIGHTHOUSE_BIRDS_FLEW_OFF)) {
     Actor_SetPosition(ACTOR_WEST_BIRD, 0, 0);
     Actor_SetPosition(ACTOR_EAST_BIRD, 0, 0);
   }
@@ -316,7 +321,7 @@ void VenusLighthouseEntrance_BirdsFlyOff(void) {
   struct Actor *westBird;
   struct Actor *eastBird;
 
-  Event_SetFlag(FLAG_VENUS_LIGHTHOUSE_BIRDS_FLOWN);
+  Event_SetFlag(FLAG_VENUS_LIGHTHOUSE_BIRDS_FLEW_OFF);
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
   Event_PlaySound(SE_BIRD_WINGS);
@@ -767,13 +772,13 @@ void VenusLighthouseEntrance_SoldiersAmbushParty(void) {
   Actor_SetSpeed(ACTOR_SCOLDING_WORKMAN, 1.8);
   workman = Actor_GetById(ACTOR_WORKMAN_BOSS);
   workman->timer = 0;
-  workman->update = VenusLighthouseEntrance_TrailDust;
+  workman->update = VenusLighthouseEntrance_KickUpDust;
   workman = Actor_GetById(ACTOR_EAGER_WORKMAN);
   workman->timer = 0;
-  workman->update = VenusLighthouseEntrance_TrailDust;
+  workman->update = VenusLighthouseEntrance_KickUpDust;
   workman = Actor_GetById(ACTOR_INDIGNANT_WORKMAN);
   workman->timer = 0;
-  workman->update = VenusLighthouseEntrance_TrailDust;
+  workman->update = VenusLighthouseEntrance_KickUpDust;
   Actor_SetAnimation(ACTOR_WORKMAN_BOSS, 10);
   Actor_SetAnimation(ACTOR_EAGER_WORKMAN, 10);
   Actor_SetAnimation(ACTOR_INDIGNANT_WORKMAN, 10);
@@ -795,7 +800,7 @@ void VenusLighthouseEntrance_SoldiersAmbushParty(void) {
   FieldActor_Jump(ACTOR_SCOLDING_WORKMAN, 6, 25);
   workman = Actor_GetById(ACTOR_SCOLDING_WORKMAN);
   workman->timer = 0;
-  workman->update = VenusLighthouseEntrance_TrailDust;
+  workman->update = VenusLighthouseEntrance_KickUpDust;
   Actor_SetAnimation(ACTOR_SCOLDING_WORKMAN, 10);
   Actor_SetDestinationOffset(ACTOR_SCOLDING_WORKMAN, -20, 20);
   FieldActor_WaitForMoveById(ACTOR_SCOLDING_WORKMAN);
@@ -826,7 +831,7 @@ void VenusLighthouseEntrance_SoldiersAmbushParty(void) {
   FieldEvent_Wait(14);
   FieldEvent_Wait(20);
   workman->timer = 0;
-  workman->update = VenusLighthouseEntrance_TrailDust;
+  workman->update = VenusLighthouseEntrance_KickUpDust;
   Actor_SetAnimation(ACTOR_SCOLDING_WORKMAN, 10);
   Actor_MoveToAndWait(ACTOR_SCOLDING_WORKMAN, 224, 472);
   FieldEvent_Wait(30);
@@ -1221,10 +1226,17 @@ void VenusLighthouseEntrance_WakeUp(void) {
 /// The rising column's work, kept in Ram_HeapSlots' menu runtime while it
 /// plays: its pictures, sixteen pieces of earth, the actor it lifts and the
 /// blast's effect actor.
+/// The blast column: its pieces, 16 pixels each, and its 16x16 pictures in 256
+/// colours, four for the column and four for its top, a picture taking eight
+/// sprite tiles.
+#define BLAST_COLUMN_PIECES 16
+#define BLAST_COLUMN_FRAMES 4
+#define BLAST_PICTURE_TILES 8
+
 struct BlastColumnWork {
   u8 pictures[1024]; ///< decompressed, then loaded into the VRAM cache
-  struct EffectSprite sprites[16];
-  struct SparkState states[16];
+  struct EffectSprite sprites[BLAST_COLUMN_PIECES];
+  struct SparkState states[BLAST_COLUMN_PIECES];
   struct Actor *object;
   struct Actor *effect;
   s32 x;
@@ -1342,7 +1354,8 @@ void VenusLighthouseEntrance_UpdateBlastColumn(void) {
   }
   actor->facing += TRIG_TURN / 16;
   if (work->height > 0) {
-    for (i = 0, y = 0; i < 16 && y < work->height - 8; i++, y += 16) {
+    for (i = 0, y = 0; i < BLAST_COLUMN_PIECES && y < work->height - 8;
+         i++, y += 16) {
       state = &work->states[i];
       state->x = work->x;
       state->y = work->y + toFIXED(y) + toFIXED(8);
@@ -1351,19 +1364,22 @@ void VenusLighthouseEntrance_UpdateBlastColumn(void) {
       state->frame++;
       frameStep = state->frame >> 2;
       mask = 3;
-      sprite->oam.index = work->tileTop + (frameStep & mask) * 8;
+      sprite->oam.index =
+          work->tileTop + (frameStep & mask) * BLAST_PICTURE_TILES;
       EffectSprite_DrawAtWorldPosition(sprite, &state->x);
     }
-    if (i <= 15) {
+    if (i < BLAST_COLUMN_PIECES) {
       state = &work->states[i];
       state->x = work->x;
       state->y = work->y + toFIXED(work->height);
       state->z = work->z;
       state->frame++;
       state->y +=
-          Math_MulFX(-toFIXED(2), Math_Sin(state->frame << 12)) - toFIXED(2);
+          Math_MulFX(-toFIXED(2), Math_Sin(state->frame * (TRIG_TURN / 16))) -
+          toFIXED(2);
       sprite = &work->sprites[i];
-      sprite->oam.index = work->tile + ((state->frame >> 2) & 3) * 8;
+      sprite->oam.index =
+          work->tile + ((state->frame >> 2) & 3) * BLAST_PICTURE_TILES;
       EffectSprite_DrawAtWorldPosition(sprite, &state->x);
       if (work->follow != 0)
         actor->y.fixed = state->y;
@@ -1397,10 +1413,10 @@ void VenusLighthouseEntrance_BlastActorSkyward(s32 id) {
   resource = VramCache_FindFreeEntry();
   tile = Vram_Load(resource, 2048, work);
   work->tile = tile;
-  work->tileTop = tile + 32;
+  work->tileTop = tile + BLAST_COLUMN_FRAMES * BLAST_PICTURE_TILES;
   state = work->states;
   sprite = work->sprites;
-  for (i = 15; i >= 0;) {
+  for (i = BLAST_COLUMN_PIECES - 1; i >= 0;) {
     EffectSprite_Init(sprite, 8, 8, OBJ_SIZE_16X16, tile);
     sprite->depth = BattleEffect_GetObjectDepth(actor) - 2;
     sprite->oam.priority = BattleEffect_GetObjectPriority(actor);
@@ -1445,9 +1461,9 @@ void VenusLighthouseEntrance_UpdateDust(void) {
   s32 value;
   s32 i;
 
-  for (i = 0; i < 96; i++, sprite++, state++) {
+  for (i = 0; i < DUST_PUFFS; i++, sprite++, state++) {
     value = state->frame;
-    if ((u32)value < 16) {
+    if ((u32)value < DUST_PUFF_FRAMES) {
       sprite->oam.index = work->tileBase + ((value >> 1) & 7) * 8;
       EffectSprite_DrawAtWorldPosition(sprite, &state->x);
       BattleEffect_StepVector3(state, 64, 0);
@@ -1476,7 +1492,7 @@ void VenusLighthouseEntrance_EmitDust(struct Actor *source, s32 x, s32 y,
   state->velocityZ = 0;
   FieldVector_AddPolarOffsetFX(Random16() >> 2, angle, &state->velocityX);
   *next = *next + 1;
-  *next = *next % 96;
+  *next = *next % DUST_PUFFS;
 }
 
 void VenusLighthouseEntrance_StartDust(void) {
@@ -1495,12 +1511,12 @@ void VenusLighthouseEntrance_StartDust(void) {
   work->resource = resource;
   state = work->particles;
   sprite = work->sprites;
-  for (i = 0; i < 96; i++) {
+  for (i = 0; i < DUST_PUFFS; i++) {
     EffectSprite_Init(sprite, 8, 8, OBJ_SIZE_16X16, tileBase);
     sprite->oam.fullColor = 1;
     sprite->oam.palette = 0;
     sprite->oam.priority = 0;
-    sprite->depth = 240;
+    sprite->depth = OAM_DEPTH_WINDOW;
     state->frame = -1;
     state++;
     sprite++;
@@ -1585,7 +1601,7 @@ struct ActorPlacement gActorPlacements[] = {
 struct Trigger gSceneEvents[] = {
     {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
     {TRIGGER_EXIT, 2, CONDITION_ALWAYS, 2},
-    {TRIGGER_STEP, 9, FLAG_VENUS_LIGHTHOUSE_BIRDS_FLOWN,
+    {TRIGGER_STEP, 9, FLAG_VENUS_LIGHTHOUSE_BIRDS_FLEW_OFF,
      EVENT(VenusLighthouseEntrance_BirdsFlyOff)},
     {TRIGGER_STEP, 10, FLAG_VENUS_LIGHTHOUSE_AMBUSH_SEEN,
      EVENT(VenusLighthouseEntrance_SoldiersAmbushParty)},
@@ -1598,7 +1614,7 @@ struct Trigger gSceneEvents[] = {
     {TRIGGER_TALK, ACTOR_DOUBTING_SOLDIER, CONDITION_ALWAYS,
      EVENT(VenusLighthouseEntrance_BlastActorWithPsynergy)},
     {TRIGGER_TALK, ACTOR_SOLDIER_CAPTAIN, CONDITION_ALWAYS,
-     EVENT(VenusLighthouseEntrance_RunWithDustTrail)},
+     EVENT(VenusLighthouseEntrance_RunAndKickUpDust)},
     {TRIGGER_TABLE_END},
 };
 

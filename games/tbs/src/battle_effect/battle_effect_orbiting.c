@@ -8,7 +8,16 @@
 // the ROM but unreachable.
 
 #define SWIRLING_STARS_FRAMES 160
-#define SWIRLING_STARS_COUNT 64 ///< stars that swirl
+#define SWIRLING_STARS_COUNT 64   ///< stars that swirl
+#define SWIRLING_STARS_PLACED 256 ///< stars given a place, the first to swirl
+/// A star is drawn SWIRLING_STAR_LARGEST pixels wide (and twice as tall) at
+/// the nearest depth, a pixel narrower for every SWIRLING_STAR_DEPTH_STEP
+/// farther, its depth clamped from SWIRLING_STAR_DEPTH_NEAR to
+/// SWIRLING_STAR_DEPTH_FAR.
+#define SWIRLING_STAR_LARGEST 9
+#define SWIRLING_STAR_DEPTH_NEAR 250
+#define SWIRLING_STAR_DEPTH_FAR 634
+#define SWIRLING_STAR_DEPTH_STEP 64
 /// The angle star `i` turns each frame about its axis: each later star faster.
 #define SWIRLING_STAR_SPIN(i) (((i) + 32) * 8)
 
@@ -30,7 +39,7 @@ UNUSED void BattleEffect_RunSwirlingStars(struct BattleEffectParams *args) {
   BattleEffect_StartCanvasLayer(0);
   Resource_LoadAndDecompress(RESOURCE_STAR_DOT_SHEET, work->sheet, 1, 1);
   BattleEffect_FetchRectangleBlitters(work->args->side ^ 1, draw);
-  for (i = 0; i != 256; i++) {
+  for (i = 0; i != SWIRLING_STARS_PLACED; i++) {
     star = &PARTICLES[i];
     SET_POSITION(star, INTtoFIXED((Random16() & 0xff) - 127),
                  INTtoFIXED((Random16() & 0xff) - 127),
@@ -69,8 +78,10 @@ UNUSED void BattleEffect_RunSwirlingStars(struct BattleEffectParams *args) {
         Projection_Point(star, &screen);
         screen.x >>= 1;
         Matrix_Pop();
-        CLAMP(screen.depth, 250, 634);
-        size = 9 - (screen.depth - 250) / 64;
+        CLAMP(screen.depth, SWIRLING_STAR_DEPTH_NEAR, SWIRLING_STAR_DEPTH_FAR);
+        size =
+            SWIRLING_STAR_LARGEST - (screen.depth - SWIRLING_STAR_DEPTH_NEAR) /
+                                        SWIRLING_STAR_DEPTH_STEP;
         draw[0](canvas,
                 work->sheet + ((i & 3) * MOTE_SET_BYTES +
                                gBattleEffect_MotePictures[size - 1]),
@@ -131,7 +142,7 @@ UNUSED void BattleEffect_RunOrbitingSkulls(void) {
   do {
     REG_BG2X = xOffset << 8;
   } while (0);
-  for (i = 0; i != 64; i++) {
+  for (i = 0; i != ARRAY_COUNT(work->particles); i++) {
     struct Particle *step = &work->particles[i];
 
     step->x = 0;
@@ -217,7 +228,7 @@ UNUSED void BattleEffect_RunTargetBursts(struct BattleEffectParams *args) {
                       COMPOSITE_LIGHTEN);
   drawSmoke = HEAP_SLOT_BLOCK(HEAP_SLOT_RAM_CODE_PAIRED);
 
-  for (i = 0; i != 64; i++) {
+  for (i = 0; i != ARRAY_COUNT(work->particles); i++) {
     s32 angle;
     s32 speed;
 
@@ -285,5 +296,10 @@ UNUSED void BattleEffect_RunTargetBursts(struct BattleEffectParams *args) {
 
 #undef SWIRLING_STARS_FRAMES
 #undef SWIRLING_STARS_COUNT
+#undef SWIRLING_STARS_PLACED
+#undef SWIRLING_STAR_LARGEST
+#undef SWIRLING_STAR_DEPTH_NEAR
+#undef SWIRLING_STAR_DEPTH_FAR
+#undef SWIRLING_STAR_DEPTH_STEP
 #undef TARGET_BURST_PICTURES
 #undef TARGET_BURSTS_FRAMES

@@ -57,10 +57,6 @@
 /// then the upper layer's.
 #define WORLD_MAP_COLLISION_TILE_BYTES 8
 #define WORLD_MAP_COLLISION_TILES 256
-/// The world map's two tile maps, of 64 by 64 one-byte tiles: BG3's, the lower
-/// layer, and BG2's, the upper (WorldMap_ShowBg1FromBuffer).
-#define WORLD_MAP_LOWER_TILE_MAP BG_SCREEN_BLOCK(8)
-#define WORLD_MAP_UPPER_TILE_MAP BG_SCREEN_BLOCK(10)
 
 /// A map cell shape's terrain kind, the low four bits of its first byte, as The
 /// Broken Seal names it.
@@ -70,10 +66,15 @@
 /// flat.
 #define TERRAIN_BUMP 99
 
+/// The frames a world map graphics set takes to reload, one step a frame,
+/// counted down from this: its palette, animations and shapes, then each tile
+/// set decoded and copied to VRAM.
+#define WORLD_MAP_RELOAD_STEPS 12
+
 /// Loads the first of the 2x2 world map tiles around the player that is not
 /// shown yet (at most one a frame), without drawing it. When the region under
-/// the party picks another graphics set, reloads that set over the next 12
-/// frames, one step a frame, unless a screen transition is running.
+/// the party picks another graphics set, reloads that set over the next
+/// WORLD_MAP_RELOAD_STEPS frames, unless a screen transition is running.
 void WorldMap_PreloadCurrentTileBlock(void) {
   struct WorldMapView *perspective =
       (struct WorldMapView *)Ram_HeapSlots->mapGrid;
@@ -133,7 +134,7 @@ void WorldMap_PreloadCurrentTileBlock(void) {
   resources = gWorldMap_GraphicsResources[graphicsSet];
   if (resources != perspective->resources) {
     perspective->resources = resources;
-    perspective->reloadSteps = 12;
+    perspective->reloadSteps = WORLD_MAP_RELOAD_STEPS;
   }
   value = ScreenTransition_IsScanlineActiveFar();
   if (perspective->reloadSteps == 0)
@@ -142,7 +143,7 @@ void WorldMap_PreloadCurrentTileBlock(void) {
     return;
   buffer = Heap_Alloc(512);
   switch (perspective->reloadSteps) {
-  case 12: {
+  case WORLD_MAP_RELOAD_STEPS: {
     s16 backdropColor = *(s16 *)BG_PLTT;
 
     Decompress_ByteLz(Resource_GetTableEntry(resources[0]), buffer);
@@ -947,12 +948,12 @@ extern TerrainHeightFn gMapGrid_TerrainHeightFunctions[16];
 // UB: the kind byte is read, and the samples after it passed, in one
 // unsequenced expression.
 #ifdef UBFIX
-#define SHAPE_HEIGHT(code, x, z)                                               \
+#define MapGrid_GetShapeHeight(code, x, z)                                     \
   gMapGrid_TerrainHeightFunctions[(code)[0] & MAPGRID_SHAPE_KIND_MASK](        \
       (code) + 1, (x) & (MAPGRID_CELL_PIXELS - 1),                             \
       (z) & (MAPGRID_CELL_PIXELS - 1))
 #else
-#define SHAPE_HEIGHT(code, x, z)                                               \
+#define MapGrid_GetShapeHeight(code, x, z)                                     \
   gMapGrid_TerrainHeightFunctions[*(code)++ & MAPGRID_SHAPE_KIND_MASK](        \
       (code), (x) & (MAPGRID_CELL_PIXELS - 1),                                 \
       (z) & (MAPGRID_CELL_PIXELS - 1))
@@ -974,7 +975,7 @@ FIXED MapGrid_GetTerrainHeight(s32 layer, FIXED x, FIXED z) {
     grid = gMapShapeGrid;
   grid += x / MAPGRID_CELL_PIXELS + (z / MAPGRID_CELL_PIXELS << 7);
   code = Ram_MapCollision + *grid * 4;
-  return SHAPE_HEIGHT(code, x, z);
+  return MapGrid_GetShapeHeight(code, x, z);
 }
 
 /// Returns the terrain kind of a layer's cell at (x, z) in 16.16 pixels, as
@@ -1127,7 +1128,7 @@ FIXED MapGrid_GetTerrainHeightAbove(FIXED px, FIXED pz, s32 layer, FIXED base) {
     shapes = gMapShapeGrid;
   code = Ram_MapCollision +
          shapes[x / MAPGRID_CELL_PIXELS + (z / MAPGRID_CELL_PIXELS << 7)] * 4;
-  return SHAPE_HEIGHT(code, x, z) - base;
+  return MapGrid_GetShapeHeight(code, x, z) - base;
 }
 
 /// How the ground at (px, pz) (16.16 pixels) on the given layer stands to
@@ -1163,7 +1164,7 @@ s32 MapGrid_CheckCollisionAt(FIXED px, FIXED pz, s32 layer, s32 height) {
   if (cells[2] == CELL_BEHAVIOR_WALL)
     return 2;
   code = Ram_MapCollision + *shapes * 4;
-  rise = SHAPE_HEIGHT(code, x, z) - height;
+  rise = MapGrid_GetShapeHeight(code, x, z) - height;
   if (rise > toFIXED(8))
     return 1;
   if (rise < -toFIXED(12))
@@ -1202,7 +1203,7 @@ s32 MapGrid_CheckCollision(struct Actor *actor,
   if (cells[2] == CELL_BEHAVIOR_WALL)
     return 2;
   code = Ram_MapCollision + *shapes * 4;
-  rise = SHAPE_HEIGHT(code, x, z) - actor->groundHeight;
+  rise = MapGrid_GetShapeHeight(code, x, z) - actor->groundHeight;
   if (rise > toFIXED(8))
     return 1;
   if (rise < -toFIXED(12))
@@ -1240,7 +1241,7 @@ s32 MapGrid_CheckCollisionAbove(struct Actor *actor,
   if (cells[2] == CELL_BEHAVIOR_WALL)
     return 2;
   code = Ram_MapCollision + *shapes * 4;
-  if (SHAPE_HEIGHT(code, x, z) - actor->y.fixed > toFIXED(8))
+  if (MapGrid_GetShapeHeight(code, x, z) - actor->y.fixed > toFIXED(8))
     return 1;
   return 0;
 }
@@ -1260,10 +1261,11 @@ s32 MapGrid_IsWallAt(s32 *position) {
   return (cell->collisionCode != CELL_BEHAVIOR_WALL) - 1;
 }
 
-/// The place of the world map block under position (blocks 32 pixels square on
-/// a 32 by 32 grid), WORLD_MAP_NO_PLACE where the map has none. A place is the
-/// block's cell behavior, which the World Map's step triggers answer (100
-/// enters Daila, 92 meets Iron), WORLD_MAP_NO_PLACE being CELL_BEHAVIOR_WALL.
+/// The cell behavior of the world map block under position (blocks 32 pixels
+/// square on a 32 by 32 grid), which the World Map's step triggers answer
+/// (world_map.c: STEP_TRIGGER_AREA(AREA_DAILA) enters Daila,
+/// CELL_BEHAVIOR_WORLD_MAP_IRON meets Iron); WORLD_MAP_NO_PLACE, which is
+/// CELL_BEHAVIOR_WALL, where the map has no block.
 s32 WorldMap_GetBlockPlace(struct WorldPosition *position) {
   s32 z = position->y;
   s32 x = position->x;
@@ -1291,8 +1293,10 @@ s32 WorldMap_GetCollision(struct WorldPosition *position) {
   u8 packedCollisions;
   u32 result;
 
-  // Coordinates in 2-pixel units.
-  collisionCell = (((halfPixelY / 8) & 63) << 6) + ((halfPixelX / 8) & 63);
+  // Coordinates in 2-pixel units, a tile map's tile 8 of them across.
+  collisionCell = ((halfPixelY / 8) & (WORLD_MAP_TILE_MAP_WIDTH - 1)) *
+                      WORLD_MAP_TILE_MAP_WIDTH +
+                  ((halfPixelX / 8) & (WORLD_MAP_TILE_MAP_WIDTH - 1));
   pixelOffset = (((halfPixelY / 2) & 3) << 1) + ((halfPixelX / 4) & 1);
 
   // The upper layer's collision tiles follow the lower layer's.
@@ -1400,6 +1404,10 @@ s32 WorldMap_IsFlyable(struct Actor *mover, struct WorldPosition *position) {
           if ((u32)(collision - 4) <= 4)
             return 0;
         }
+        // XXX (no evidence): what ground collision 10 is, which a battle
+        // counts as grassland as it does 7, 8, 11 and 12; the render probe
+        // shows a scene's actors and triggers, not the World Map's collision
+        // under a point, and no text names it.
         if (collision == 10)
           return 0;
       }

@@ -9,6 +9,13 @@
 #include "field/object.h"
 #include "field/ground_mask.h"
 
+/// WeatherWork.particles, as The Broken Seal's, which has 32.
+#define WEATHER_PARTICLE_COUNT 64
+/// The frames the first motes and sparkles are spread over as they start.
+#define FIRST_SPAWN_FRAMES 16
+/// A raindrop's frames (Weather_UpdateRain).
+#define RAIN_DROP_FRAMES 12
+
 #define Decompress_ByteLz ((void (*)(const void *, void *))Decompress_ByteLz)
 
 /// Starts the 64 floating motes (FieldMotes_Update): loads their tiles and puts
@@ -34,7 +41,7 @@ void FieldMotes_Start(void) {
   HeapSlot_Release(HEAP_SLOT_TILE_SCRATCH);
   i = 0;
   slots = Ram_HeapSlots;
-  for (; i < 64; i++) {
+  for (; i < WEATHER_PARTICLE_COUNT; i++) {
     struct MapWork *view = slots->mapGrid;
     s32 *pos;
     // p walks the sprite's attribute words, then holds the x, as size carries
@@ -46,7 +53,7 @@ void FieldMotes_Start(void) {
     *(s32 *)p = 0;
     p += sizeof(s32);
     pos = view->origin;
-    *(s32 *)p = OBJ_SIZE_16X16 | OBJ_MODE(1);
+    *(s32 *)p = OBJ_SIZE_16X16 | OBJ_MODE(OBJ_MODE_SEMI_TRANSPARENT);
     p += sizeof(s32);
     *(s32 *)p = OBJ_PRIORITY(1) | OBJ_PALETTE(13);
     p = pos[0];
@@ -54,7 +61,7 @@ void FieldMotes_Start(void) {
     mote->posX = (s32)p;
     mote->posZ = z;
     mote->posY = MapGrid_GetTerrainHeightFar(0, (s32)p, z);
-    mote->timer = (i & 15) + 1;
+    mote->timer = (i & (FIRST_SPAWN_FRAMES - 1)) + 1;
     mote++;
   }
   Io_Write16(BLDCNT_TGT2_ALL, &REG_BLDCNT);
@@ -65,10 +72,10 @@ void FieldMotes_Start(void) {
 
 #undef Decompress_ByteLz
 
-/// Starts Weather_UpdateRain's particles: allocates and clears
-/// HEAP_SLOT_WEATHER, decodes the particle tiles into VRAM, sets each of the 64
-/// particles' sprite words and places it on the ground at the map's focus with
-/// a timer of (i & 11) + 1, turns on alpha blending of all layers at 16/16,
+/// Starts Weather_UpdateRain's raindrops: allocates and clears
+/// HEAP_SLOT_WEATHER, decodes the streak tiles into VRAM, sets each of the 64
+/// drops' sprite words and places it on the ground at the map's focus with its
+/// first fall staggered, turns on alpha blending of all layers at 16/16,
 /// schedules the update and, when asked, plays SE_KIRIN (Scene_QueueMusic).
 void Weather_StartRain(s32 withCue) {
   struct WeatherWork *work;
@@ -91,7 +98,7 @@ void Weather_StartRain(s32 withCue) {
   HeapSlot_Release(HEAP_SLOT_TILE_SCRATCH);
   i = 0;
   slots = Ram_HeapSlots;
-  for (; i < 64; i++, particle++) {
+  for (; i < WEATHER_PARTICLE_COUNT; i++, particle++) {
     struct MapWork *view = slots->mapGrid;
     s32 *focus;
     // p walks the sprite's attribute words, then holds the x, as size carries
@@ -103,7 +110,7 @@ void Weather_StartRain(s32 withCue) {
     *(s32 *)p = 0;
     p += sizeof(s32);
     focus = view->origin;
-    *(s32 *)p = OBJ_SIZE_16X16 | OBJ_MODE(1);
+    *(s32 *)p = OBJ_SIZE_16X16 | OBJ_MODE(OBJ_MODE_SEMI_TRANSPARENT);
     p += sizeof(s32);
     *(s32 *)p = OBJ_PRIORITY(1) | OBJ_PALETTE(13);
     p = focus[0];
@@ -111,7 +118,8 @@ void Weather_StartRain(s32 withCue) {
     particle->posX = (s32)p;
     particle->posZ = z;
     particle->posY = MapGrid_GetTerrainHeightFar(0, (s32)p, z);
-    particle->timer = (i & 11) + 1;
+    // Staggered over a drop's frames, though as a mask 11 leaves out 4 to 7.
+    particle->timer = (i & (RAIN_DROP_FRAMES - 1)) + 1;
   }
   Io_Write16(BLDCNT_TGT2_ALL, &REG_BLDCNT);
   Io_Write16(BLEND_ALPHA(16, 16), &REG_BLDALPHA);
@@ -185,12 +193,13 @@ void FieldEffect_UpdateSparkles(void) {
 #endif
         sparkle->y = sy;
         sparkle->affineIndex = ((frames >> 1) & 1) << 3;
-        Oam_AddSpriteAtDepthClamped(sparkle, 240);
+        Oam_AddSpriteAtDepthClamped(sparkle, OAM_DEPTH_WINDOW);
       }
       sparkle->timer--;
     }
     if (spawned <= 3 && sparkle->timer == 0 && work->stopped == 0) {
       if (delay != 0) {
+        // The rest of a burst, on the first sparkle's spot.
         sparkle->posX = spawnX;
         sparkle->posZ = spawnZ;
         sparkle->posY = MapGrid_GetTerrainHeightFar(0, sx, sy);
@@ -199,6 +208,7 @@ void FieldEffect_UpdateSparkles(void) {
         spawned++;
         delay += 4;
       } else if ((Random16() & 255) == 0) {
+        // A burst starts at a random spot.
         leader = map->origin;
         spawnX = leader[0] + (Random16() << 8) - toFIXED(128);
         spawnZ = leader[2] + (Random16() << 8) - toFIXED(128);
@@ -213,7 +223,7 @@ void FieldEffect_UpdateSparkles(void) {
     }
     i++;
     sparkle++;
-  } while (i <= 63);
+  } while (i < WEATHER_PARTICLE_COUNT);
 }
 
 #define Decompress_ByteLz ((void (*)(const void *, void *))Decompress_ByteLz)
@@ -230,13 +240,9 @@ void FieldEffect_InitializeSparkles(void) {
   volatile u32 zero;
   struct HeapSlots *slots;
 
-  // size is reused for the fill's zero; a zero of its own differs.
+  // size, done with once the work is allocated, carries the fill's 0.
   size = 0;
-  zero = size;
-  Dma_Set(&zero, work,
-          (DMA_ENABLE | DMA_32BIT | DMA_SRC_FIXED) << 16 |
-              (sizeof(struct WeatherWork) / 4),
-          REG_DMA3);
+  Dma_Fill32Cell(zero, size, work, sizeof(struct WeatherWork));
   buf = HeapSlot_AllocEwram(HEAP_SLOT_TILE_SCRATCH, 1024);
   Decompress_ByteLz(gFieldEffect_SparkleTiles, buf);
   work->entry = VramCache_FindFreeEntry();
@@ -257,7 +263,7 @@ void FieldEffect_InitializeSparkles(void) {
     *(u32 *)attr = clear;
     attr += sizeof(u32);
     leader = view->origin;
-    *(u32 *)attr = OBJ_SIZE_16X16 | OBJ_MODE(1);
+    *(u32 *)attr = OBJ_SIZE_16X16 | OBJ_MODE(OBJ_MODE_SEMI_TRANSPARENT);
     attr += sizeof(u32);
     *(u32 *)attr = OBJ_PRIORITY(1) | OBJ_PALETTE(13);
     attr = leader[0];
@@ -265,10 +271,10 @@ void FieldEffect_InitializeSparkles(void) {
     p->posX = clear;
     p->posZ = clear;
     p->posY = MapGrid_GetTerrainHeightFar(0, attr, z);
-    p->timer = (i & 15) + 1;
+    p->timer = (i & (FIRST_SPAWN_FRAMES - 1)) + 1;
     i++;
     p++;
-  } while (i < 64);
+  } while (i < WEATHER_PARTICLE_COUNT);
   Task_Add(FieldEffect_UpdateSparkles, TASK_PASS_FRAME);
 }
 
@@ -283,10 +289,7 @@ void Weather_StartLightning(void) {
   work =
       HeapSlot_AllocEwram(HEAP_SLOT_FIELD_BLEND, sizeof(struct FieldBlendWork));
   buffers = Ram_HeapSlots->paletteFade;
-  zero = 0;
-  Dma_Set((const void *)&zero, work,
-          (DMA_ENABLE | DMA_32BIT | DMA_SRC_FIXED) << 16 | (sizeof(*work) / 4),
-          REG_DMA3);
+  Dma_Fill32Cell(zero, 0, work, sizeof(*work));
   PaletteFade_Build(PALETTE_TINT_WARM, (u16 *)buffers, (u16 *)work, 1);
   PaletteFade_Build(PALETTE_TINT_PALE, (u16 *)buffers, (u16 *)work->to, 1);
   PaletteFade_CalculateSteps(work->to, work->from, work->delta, 12);
@@ -334,10 +337,7 @@ void Weather_StartLightningFlash(s32 from, s32 to) {
   work =
       HeapSlot_AllocEwram(HEAP_SLOT_FIELD_BLEND, sizeof(struct FieldBlendWork));
   buffers = Ram_HeapSlots->paletteFade;
-  zero = 0;
-  Dma_Set((const void *)&zero, work,
-          (DMA_ENABLE | DMA_32BIT | DMA_SRC_FIXED) << 16 | (sizeof(*work) / 4),
-          REG_DMA3);
+  Dma_Fill32Cell(zero, 0, work, sizeof(*work));
   PaletteFade_Build(from, (u16 *)buffers, (u16 *)work, 1);
   target = work->to;
   PaletteFade_Build(to, (u16 *)buffers, (u16 *)target, 1);
@@ -347,3 +347,7 @@ void Weather_StartLightningFlash(s32 from, s32 to) {
   work->enabled = 0;
   Task_Add(Weather_UpdateLightning, TASK_PASS_FRAME);
 }
+
+#undef WEATHER_PARTICLE_COUNT
+#undef FIRST_SPAWN_FRAMES
+#undef RAIN_DROP_FRAMES

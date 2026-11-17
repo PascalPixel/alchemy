@@ -3381,6 +3381,8 @@ void Rubble_Scatter(s32 spread) {
 }
 
 extern s32 gTrialRoad_DustScript[];
+/// The clouds of dust MagmaRockInside_SpawnDustRing throws out in a ring.
+#define DUST_RING_PIECES 17
 
 void MagmaRockInside_SpawnDustRing(void) {
   struct Actor *leader = Actor_GetById(gMainRoutineWork.leaderActorId);
@@ -3416,7 +3418,7 @@ void MagmaRockInside_SpawnDustRing(void) {
           ((struct FieldSprite *)leader->sprite)->priority;
     }
     i++;
-  } while (i <= 16);
+  } while (i < DUST_RING_PIECES);
 }
 
 /// Sets the shape of the cell under an actor (Actor_SetCellShape).
@@ -3522,8 +3524,8 @@ void TrialRoad_MoveRival(void) {
   } else if (state->mode == RIVAL_LINKED) {
     s32 player;
     s16 *signature;
-    s32 angle, link, ok, partner;
-    s16 st;
+    s32 angle, link, animation, partner;
+    s16 packed;
 
     player = ((s32)GameFlag_GetByte(FLAG_SCENE_TEMP_F8)) ^ 1;
     signature = (s16 *)gLinkPeerSignatures[player];
@@ -3532,9 +3534,9 @@ void TrialRoad_MoveRival(void) {
     x = *signature++;
     z = *signature++;
     angle = *signature++;
-    st = *signature++;
-    link = st >> 8;
-    ok = st & 0xff;
+    packed = *signature++;
+    link = packed >> 8;
+    animation = packed & 0xff;
     if (GameFlag_Get(dz = FLAG_SCENE_TEMP_11) && link != 0) {
       state->mode = RIVAL_WAITING;
       Actor_SelectAnimation(rival, 1);
@@ -3559,13 +3561,13 @@ void TrialRoad_MoveRival(void) {
       rival->facing = angle;
       rival->x.fixed = x;
       rival->z.fixed = z;
-      Actor_SelectAnimation(rival, ok);
+      Actor_SelectAnimation(rival, animation);
     }
     partner = *signature++;
     x = *signature++;
     z = *signature++;
     angle = *signature++;
-    ok = *signature++;
+    animation = *signature++;
     if (partner == 0)
       return;
     rival = Actor_GetById(partner);
@@ -3574,7 +3576,7 @@ void TrialRoad_MoveRival(void) {
     rival->x.fixed = toFIXED(x);
     rival->facing = angle;
     rival->z.fixed = toFIXED(z);
-    Actor_SelectAnimation(rival, ok);
+    Actor_SelectAnimation(rival, animation);
   } else if (state->mode == RIVAL_REPLAY) {
     if (state->resource != work->resource) {
       Decompress_TaggedLz(Resource_GetTableEntry(state->resource), work->path);

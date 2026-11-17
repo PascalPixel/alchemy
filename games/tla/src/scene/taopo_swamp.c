@@ -1,8 +1,10 @@
 /// @file
-/// Taopo Swamp, north of Yallam: mud that swallows the party back to firm
-/// ground, vents whose gusts throw it about, puddles Douse fills and Frost
-/// freezes, lava rocks to cool and push, drops falling in the dark rooms, the
-/// Mad Plant in its bush and Flower, the Venus Djinni.
+/// Taopo Swamp, west around Yallam's northern mountains: mud that sinks the
+/// leader until it pulls them back to firm ground, ivy over its doorways for
+/// Whirlwind, vents whose gusts push the leader off ledges, round spots in the
+/// gusts that Douse wets and Frost freezes, glowing rocks to cool and push into
+/// the lava, the passage Tremor opens, the Mad Plant in the weeds Cyclone
+/// scatters, the Star Dust in the dark and Flower, the Venus Djinni.
 #include "djinn_ids.h"
 #include "fixed_math.h"
 #include "flags.h"
@@ -63,7 +65,7 @@ enum TaopoSwampVentsActorId {
 
 /// The pillar gap's actors (SceneId_TaopoSwampPillarGap).
 enum TaopoSwampPillarGapActorId {
-  /// The round spot over a vent that Douse fills and Frost freezes
+  /// The round spot in a vent's gust that Douse wets and Frost freezes
   /// (SPRITE_PUDDLE).
   ACTOR_GAP_PUDDLE = ACTOR_FIRST_PLACED,
   /// The pillar Move drops into the gap.
@@ -79,8 +81,8 @@ enum TaopoSwampDripsActorId {
   ACTOR_DRIP_PUDDLE
 };
 
-/// The lava rocks' room's two rocks (SceneId_TaopoSwampLavaRocks): by the chest
-/// and by the exit.
+/// The lava rocks' room's two glowing rocks (SceneId_TaopoSwampLavaRocks,
+/// SPRITE_EMBER_STONE): on the way to the chest and by the way out.
 enum TaopoSwampLavaRocksActorId {
   ACTOR_CHEST_ROCK = ACTOR_FIRST_PLACED,
   ACTOR_EXIT_ROCK
@@ -88,6 +90,8 @@ enum TaopoSwampLavaRocksActorId {
 
 /// The Tremor room's actors (SceneId_TaopoSwampTremor).
 enum TaopoSwampTremorActorId {
+  /// The glowing rock by the lava, and the one Tremor knocks out of the pillar
+  /// (SPRITE_EMBER_STONE).
   ACTOR_TREMOR_LAVA_ROCK = ACTOR_FIRST_PLACED + 1,
   ACTOR_TREMOR_PILLAR_ROCK,
   /// The pillar Tremor shakes, and the rock pile on it that rolls off.
@@ -102,7 +106,8 @@ enum TaopoSwampTremorActorId {
 /// up the map from row 114 to row 64 at x 50.
 #define POOL_COOLING_PICTURES 11
 
-/// The Star Dust's room's glowing rocks (SceneId_TaopoSwampStarDust).
+/// The glowing rocks that light the Star Dust's rooms, the first room's and the
+/// last chamber's (SceneId_TaopoSwampStarDust, SPRITE_EMBER_STONE).
 enum TaopoSwampStarDustActorId {
   ACTOR_DARK_ROCK = ACTOR_FIRST_PLACED,
   ACTOR_LAST_ROCK
@@ -125,32 +130,32 @@ enum TaopoSwampStarDustActorId {
 #define BRAMBLE_SEED_Z 664
 /// Set once Scoop has dug up the Star Dust.
 #define FLAG_TAOPO_SWAMP_STAR_DUST_DUG_UP FLAG_AREA_TEMP_48
-/// Set once the Mad Plant hiding in the bush has been beaten.
+/// Set once the Mad Plant hiding in the Flower room's weeds has been beaten.
 #define FLAG_TAOPO_SWAMP_MAD_PLANT_BEATEN 0x9b6
 /// Set once Growth has grown the mud room's sprout into a vine.
 #define FLAG_TAOPO_SWAMP_VINE_GROWN FLAG_SCENE_TEMP_20
-/// The round spot over a vent (ACTOR_GAP_PUDDLE, ACTOR_DRIP_PUDDLE): set while
-/// it holds water, a puddle or an ice pillar.
+/// The round spot in a vent's gust (ACTOR_GAP_PUDDLE, ACTOR_DRIP_PUDDLE): set
+/// while it holds water, a puddle or an ice pillar.
 #define FLAG_TAOPO_SWAMP_SPOT_WET FLAG_SCENE_TEMP_20
 /// Set while Frost has turned the spot's water into an ice pillar.
 #define FLAG_TAOPO_SWAMP_SPOT_FROZEN FLAG_SCENE_TEMP_21
 /// Set while the spot holds a puddle Frost can freeze.
 #define FLAG_TAOPO_SWAMP_SPOT_PUDDLE FLAG_SCENE_TEMP_22
-/// The drops the drip room's spot has caught, up to four: a byte of flags.
+/// The drops the drips room's spot has caught, up to four: a byte of flags.
 #define FLAG_BYTE_TAOPO_SWAMP_DROPS_CAUGHT FLAG_SCENE_TEMP_30
-/// Set once Scoop has dug up the item under treasure actor n (0 or 1) of the
-/// tear stones' room.
+/// Set once Scoop has dug up the tear stones' room's buried Tear Stone n (0 or
+/// 1), under treasure actor n.
 #define FLAG_TAOPO_SWAMP_TREASURE_DUG_UP(n) (FLAG_AREA_TEMP_00 + (n))
 /// Set once Flower has been blown off its ledge into its own room.
 #define FLAG_TAOPO_SWAMP_FLOWER_OFF_LEDGE FLAG_AREA_TEMP_10
 /// Set once Tremor has dried the lava stream north of the pillar into a
 /// passage, and cooled the pool below.
 #define FLAG_TAOPO_SWAMP_PASSAGE_OPEN FLAG_AREA_TEMP_30
-/// Set once Lash has tied the rope between the drops room's two posts.
+/// Set once Lash has tied the rope between the drips room's two posts.
 #define FLAG_TAOPO_SWAMP_ROPE_TIED FLAG_AREA_TEMP_08
-/// Each red rock's flags: _COOLED once Douse has cooled it, _UNMOVABLE while
-/// Move cannot push it (until it is cooled, and once it has sunk), _SUNK once
-/// it has sunk into the lava as a stepping stone.
+/// Each glowing rock's flags: _COOLED once Douse has cooled it, _UNMOVABLE
+/// while Move cannot push it (until it is cooled, and once it has sunk), _SUNK
+/// once it has sunk into the lava as a stepping stone.
 #define FLAG_TAOPO_SWAMP_TREMOR_LAVA_ROCK_COOLED FLAG_AREA_TEMP_31
 #define FLAG_TAOPO_SWAMP_TREMOR_LAVA_ROCK_UNMOVABLE FLAG_AREA_TEMP_32
 #define FLAG_TAOPO_SWAMP_TREMOR_LAVA_ROCK_SUNK FLAG_AREA_TEMP_33
@@ -169,10 +174,11 @@ enum TaopoSwampStarDustActorId {
 #define FLAG_TAOPO_SWAMP_LAST_ROCK_UNMOVABLE FLAG_AREA_TEMP_43
 
 void GameFlag_SetByte(s32 flag, s32 value);
-void Vent_SetGust(s32 id, s32 a);
-void Vent_SetId(s32 a, s32 b);
-void TileCopies_CopyTouchedCells(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f,
-                                 s32 g);
+void Vent_SetGust(s32 index, FIXED speed);
+void Vent_SetId(s32 slot, s32 id);
+void TileCopies_CopyTouchedCells(s32 sourceX, s32 sourceZ, s32 width,
+                                 s32 height, s32 windowX, s32 windowZ,
+                                 s32 layer);
 void Actor_StartScript(struct Actor *actor, const void *data);
 
 extern s32 gTaopoSwamp_SteamPuffs;
@@ -180,14 +186,14 @@ extern s32 gTaopoSwamp_PassageRows;
 extern s32 gTaopoSwamp_PoolFrames;
 extern u32 gTaopoSwamp_PuffSteamScript[];
 void Field_TryJumpForward(void);
-void TaopoSwamp_DarkenRoom(s32 a);
+void TaopoSwamp_DarkenRoom(s32 fade);
 void TaopoSwamp_ShowMessage(s32 message);
-void Actor_SetSpritePriorityDirect(struct Actor *actor, s32 a);
+void Actor_SetSpritePriorityDirect(struct Actor *actor, s32 priority);
 s32 Vent_GetCounter(void);
 #ifdef MODERN
 void Vent_SetBlowing(s32 index, s32 blowing);
 #endif
-s32 Vent_AdvanceCounter(s32 a);
+s32 Vent_AdvanceCounter(s32 limit);
 
 /// Where the mud room's leader stands (SceneState.footing).
 enum MudFooting {
@@ -217,15 +223,15 @@ struct IoReg16 {
 };
 
 #define REG_BLDALPHA ((struct IoReg16 *)0x04000052)
-/// One vent: whether it blows, its place in the cycle, its position and its
-/// gust's speed, 16.16 pixels.
+/// One vent: whether it blows, the frames to its next puff, its position and
+/// its gust's speed, in 16.16 pixels a frame.
 struct VentEntry {
   s16 active;
   s16 timer;
-  s32 x;
-  s32 y;
-  s32 z;
-  s32 value;
+  FIXED x;
+  FIXED y;
+  FIXED z;
+  FIXED value;
 };
 
 /// The most vents a room has, and the most actors their puffs land on.
@@ -257,7 +263,7 @@ enum { MAP_WADING_MUD = 2 };
 /// (SPRITE_COLOR_FILL reads it from gDecodeFillByte).
 #define MUD_COLOR 93
 
-/// How many rows the leader sinks into the mud before it pulls him back out,
+/// How many rows the leader sinks into the mud before it pulls them back out,
 /// and how many the stump sinks before it is gone.
 #define LEADER_SINK_ROWS 20
 #define STUMP_SINK_ROWS 24
@@ -303,7 +309,7 @@ void BlendScript_Suspend(void);
 void TaopoSwamp_SparkleStarDust(void);
 void TaopoSwamp_FocusMapOn(s32 x, s32 z);
 void TaopoSwamp_SaveFirmGround(void);
-void TaopoSwamp_FillDripSpot(s32 a, s32 id);
+void TaopoSwamp_FillDripSpot(s32 caster, s32 id);
 extern s32 gTaopoSwamp_DripFromCeilingScript[];
 extern s32 gTaopoSwamp_DropFalls[];
 void TaopoSwamp_ShatterIcePillar(s32 id);
@@ -315,15 +321,17 @@ void TaopoSwamp_PuffSteam(void);
 void TaopoSwamp_OpenPassage(void);
 void TaopoSwamp_FlickerPool(void);
 
-/// DEFINE_TAOPO_SWAMP_FREEZE_SPOT below calls it by this name.
-static __inline__ void TaopoSwamp_CopyCellAttributes(s32 a, s32 b, s32 c, s32 d,
-                                                     s32 e, s32 f) {
-  MapGrid_CopyCellAttributes(a, b, c, d, e, f);
+/// Copies cells' cell behaviors and flags, as the frozen spots do
+/// (MapGrid_CopyCellAttributes).
+static __inline__ void TaopoSwamp_CopyCellAttributes(s32 sourceX, s32 sourceZ,
+                                                     s32 width, s32 height,
+                                                     s32 x, s32 z) {
+  MapGrid_CopyCellAttributes(sourceX, sourceZ, width, height, x, z);
 }
 
-/// Actor id jumps down a ledge (Actor_JumpDownLedge).
-static __inline__ void TaopoSwamp_JumpDownLedge(s32 id, s32 a, s32 b) {
-  Actor_JumpDownLedge(id, a, b);
+/// Actor id jumps down off the ledge before it (Actor_JumpDownLedge).
+static __inline__ void TaopoSwamp_JumpDownLedge(s32 id, s32 pose, s32 param) {
+  Actor_JumpDownLedge(id, pose, param);
 }
 
 /// Copies the map cells the leader's Psynergy touches
@@ -345,8 +353,8 @@ static __inline__ struct Actor *TaopoSwamp_CreateActor(s32 type, s32 x, s32 y,
   return Import_ActorCreate(type, x, y, z);
 }
 
-/// The Mad Plant leaps out of its bush at the leader (MadPlant_LeapAtLeader).
-static __inline__ void MadPlant_LeapAtLeader_(s32 sprite, s32 x, s32 z) {
+/// The Mad Plant leaps out of the weeds at the leader (MadPlant_LeapAtLeader).
+static __inline__ void TaopoSwamp_LeapAtLeader(s32 sprite, s32 x, s32 z) {
   MadPlant_LeapAtLeader(sprite, x, z);
 }
 
@@ -371,7 +379,7 @@ void TaopoSwamp_StepOnFirmGround(void);
 
 s32 MapGrid_CheckCollision(struct Actor *actor, struct Vector3 *position);
 void FieldEffect_StartBlankOverlay(s32 a);
-void Rope_Place(s32 a, s32 flag, s32 b, s32 c);
+void Rope_Place(s32 index, s32 flag, s32 post, s32 otherPost);
 
 /// Talking to Flower, the Venus Djinni, starts its battle.
 void TaopoSwamp_FightFlower(void) {
@@ -444,7 +452,7 @@ void TaopoSwamp_SinkStump(s32 unused, s32 id) {
   struct FieldSprite *sprite, *splashSprite, *sparkSprite;
   s32 i;
   FIXED x, z;
-  s32 k, zero;
+  s32 k;
 
   if (FIELD_CELL(actor->x.fixed) != 12)
     return;
@@ -494,16 +502,11 @@ void TaopoSwamp_SinkStump(s32 unused, s32 id) {
     if (spark != 0) {
       sparkSprite = spark->sprite;
       Actor_StartScript(spark, gTaopoSwamp_SplashFades);
-      {
-        u8 *flags = &spark->motionFlags;
-
-        zero = 0;
-        *flags = zero;
-      }
+      spark->motionFlags = 0;
       spark->layer = 1;
       if (sparkSprite != 0) {
         Sprite_StartAnimation(sparkSprite, 2);
-        sparkSprite->flags = zero;
+        sparkSprite->flags = 0;
         sparkSprite->priority = 2;
       }
     }
@@ -517,14 +520,14 @@ void TaopoSwamp_SinkStump(s32 unused, s32 id) {
 }
 
 /// Scoop on the second buried Tear Stone's spot digs it up.
-void TaopoSwamp_ScoopHiddenItem(s32 a) {
-  Event_DigUpTreasure(a, FIELD_TREASURE_ACTOR + 1,
+void TaopoSwamp_ScoopSecondTearStone(s32 mode) {
+  Event_DigUpTreasure(mode, FIELD_TREASURE_ACTOR + 1,
                       FLAG_TAOPO_SWAMP_TREASURE_DUG_UP(1));
 }
 
 /// Scoop on the first buried Tear Stone's spot digs it up.
-void TaopoSwamp_ScoopOtherHiddenItem(s32 a) {
-  Event_DigUpTreasure(a, FIELD_TREASURE_ACTOR,
+void TaopoSwamp_ScoopFirstTearStone(s32 mode) {
+  Event_DigUpTreasure(mode, FIELD_TREASURE_ACTOR,
                       FLAG_TAOPO_SWAMP_TREASURE_DUG_UP(0));
 }
 
@@ -558,7 +561,7 @@ void TaopoSwamp_UncoverBrambleSeed(void) {
 void TaopoSwamp_StartMadPlantBattle(void) {
   TaopoSwamp_ScatterWeedCells();
   if (!Event_GetFlag(FLAG_TAOPO_SWAMP_MAD_PLANT_BEATEN)) {
-    MadPlant_LeapAtLeader_(SPRITE_MAD_PLANT, 344, 648);
+    TaopoSwamp_LeapAtLeader(SPRITE_MAD_PLANT, 344, 648);
     gMainRoutineWork.pendingDjinni =
         IF_FLAG_SET(FLAG_TAOPO_SWAMP_MAD_PLANT_BEATEN);
     Battle_SetType(BATTLE_TYPE_NO_ESCAPE);
@@ -566,9 +569,9 @@ void TaopoSwamp_StartMadPlantBattle(void) {
   }
 }
 
-/// The leader jumps down off the ledge at the end of a gust to the room below,
-/// leaving by the exit the gust's number names.
-void TaopoSwamp_DropToRoomBelow(s32 exit) {
+/// The leader jumps down off the ledge at the end of a gust to the floor below,
+/// leaving by the exit of the gust's number.
+void TaopoSwamp_DropToLowerFloor(s32 exit) {
   FieldActor_SetSpritePriority(gMainRoutineWork.leaderActorId, 3);
   TaopoSwamp_JumpDownLedge(gMainRoutineWork.leaderActorId, ANIM_LEADER_SPRING,
                            LEDGE_JUMP_NO_LANDING_WAIT);
@@ -602,7 +605,8 @@ extern u8 gTaopoSwampVentsGustVents[];
 extern u8 gTaopoSwampPillarGapGustVents[];
 
 /// Stepping into a vent's gust while it blows: it pushes the leader south until
-/// a wall stops them, or off the ledge to the room below.
+/// a wall stops them, or off the ledge to the floor below. An ice pillar on a
+/// round spot, or a pillar Moved before a vent, stops the gust.
 void TaopoSwamp_StepIntoGust(s32 gust) {
   struct Actor *leader;
   struct Vector3 position;
@@ -619,9 +623,8 @@ void TaopoSwamp_StepIntoGust(s32 gust) {
       return;
   }
   if (gMainRoutineWork.next == SCENE_TAOPO_SWAMP_PILLAR_GAP) {
-    u8 *table = gTaopoSwampPillarGapGustVents + 1;
-    s32 at = gust - TRIGGER_FIRST_GUST;
-    found = Vent_IsBlowing(table[at]);
+    found = Vent_IsBlowing(
+        gTaopoSwampPillarGapGustVents[gust - TRIGGER_FIRST_GUST]);
     if (gust == TRIGGER_PAST_SPOT_GUST &&
         Event_GetFlag(FLAG_TAOPO_SWAMP_SPOT_FROZEN))
       return;
@@ -642,6 +645,8 @@ void TaopoSwamp_StepIntoGust(s32 gust) {
   leader = Actor_Get(gMainRoutineWork.leaderActorId);
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
+  // The gust carries the leader south 2 pixels a frame, spinning, and draws
+  // them to the middle of their column of cells.
   for (;;) {
     position.x = leader->x.fixed;
     position.y = leader->y.fixed;
@@ -651,7 +656,7 @@ void TaopoSwamp_StepIntoGust(s32 gust) {
       break;
     if (result < 0) {
       leader->facing = FACING_SOUTH;
-      TaopoSwamp_DropToRoomBelow(gust);
+      TaopoSwamp_DropToLowerFloor(gust);
       return;
     }
     leader->z.fixed += toFIXED(2);
@@ -726,8 +731,8 @@ void TaopoSwamp_DouseVentSpot(s32 unused, s32 id) {
 
 /// Frost on a spot's puddle: an ice pillar stands there, which stops the gust
 /// and which the vent's puffs land on, and the spot's cell (spotX, z) takes
-/// the cell behavior of the cell at (pillarX, z) the leader can stand on. The
-/// two spots' copies differ only in their cells.
+/// the cell behavior and flags of the cell at (pillarX, z). The two spots'
+/// copies differ only in their cells.
 #define DEFINE_TAOPO_SWAMP_FREEZE_SPOT(name, pillarX, z, spotX)                \
   void name(s32 unused, s32 id) {                                              \
     TaopoSwamp_CopyCellAttributes(pillarX, z, 1, 1, spotX, z);                 \
@@ -785,11 +790,11 @@ void TaopoSwamp_FillDripSpot(s32 caster, s32 id) {
   FieldActor_SetSpritePriority(id, 3);
   Actor_Get(id)->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
   Actor_SetAnimation(id, 1);
-  // XXX: Douse runs this with the leader's actor id (FieldPsynergy_Douse passes
-  // FieldEffectWork.firstActorId), so caster == 5 holds only while actor 5
-  // leads, and a drop passes 0; PSYNERGY_PHASE_ACTS is also 5. Whether Douse
-  // alone lets Frost freeze the puddle with Felix leading would be settled by
-  // recording Douse and then Frost on it.
+  // XXX: Douse runs this with the leader's actor (FieldPsynergy_Douse passes
+  // FieldEffectWork.firstActorId) and a drop with 0, so caster == 5 holds only
+  // while actor 5 leads; PSYNERGY_PHASE_ACTS is also 5. Recording Douse and
+  // then Frost on the spot with Felix leading would settle whether Douse alone
+  // lets Frost freeze it.
   if (caster == 5 ||
       FieldGameFlag_GetByte(FLAG_BYTE_TAOPO_SWAMP_DROPS_CAUGHT) > 3) {
     Event_SetFlag(FLAG_TAOPO_SWAMP_SPOT_WET);
@@ -871,8 +876,8 @@ void TaopoSwamp_CoolPillarRock(s32 unused, s32 id) {
   MapGrid_CopyCellAttributes(27, 14, 1, 1, 27, 13);
 }
 
-/// Move on the cooled pillar rock at cell z 16: it slides two cells and sinks
-/// into the lava.
+/// Move on the cooled pillar rock at cell z 16: it slides two cells west and
+/// sinks into the lava.
 void TaopoSwamp_PushPillarRockIn(s32 unused, s32 id) {
   struct Actor *actor = Actor_Get(id);
 
@@ -1053,8 +1058,8 @@ void TaopoSwamp_CoolExitRock(s32 unused, s32 id) {
   Event_ClearFlag(FLAG_TAOPO_SWAMP_EXIT_ROCK_UNMOVABLE);
 }
 
-/// Move on the cooled rock at cell x 31: it slides two cells and sinks into the
-/// lava.
+/// Move on the cooled rock at cell x 31: it slides two cells north and sinks
+/// into the lava.
 void TaopoSwamp_PushExitRockIn(s32 unused, s32 id) {
   struct Actor *actor = Actor_Get(id);
 
@@ -1098,8 +1103,8 @@ void TaopoSwamp_CoolLastRock(s32 unused, s32 id) {
 
 /// Scoop on the sparkle in the dark chamber digs up the Star Dust
 /// (FLAG_TAOPO_SWAMP_STAR_DUST_DUG_UP).
-void TaopoSwamp_ScoopStarDust(s32 a) {
-  Event_DigUpTreasure(a, FIELD_TREASURE_ACTOR,
+void TaopoSwamp_ScoopStarDust(s32 mode) {
+  Event_DigUpTreasure(mode, FIELD_TREASURE_ACTOR,
                       FLAG_TAOPO_SWAMP_STAR_DUST_DUG_UP);
 }
 
@@ -1175,7 +1180,8 @@ s32 TaopoSwamp_LandDrop(struct Actor *actor) {
   return 1;
 }
 
-/// Now and then a drop falls at a random place along the swamp's edge.
+/// A task: on one in four of every eighth frame, a drop falls into the mud
+/// room's water at a random place near its east end.
 void TaopoSwamp_DripAtRandom(void) {
   if ((gFrameCount & 7) == 0 && (u32)Random16() < 16384) {
     s32 x = (Random16() << 5) + toFIXED(520);
@@ -1356,7 +1362,8 @@ s32 TaopoSwamp_LandDrip(struct Actor *actor) {
   return 1;
 }
 
-/// Every 64 frames a drop falls from the ceiling onto the vent spot.
+/// A task: every 64 frames a drop falls from the ceiling onto the drips room's
+/// spot.
 void TaopoSwamp_DripFromCeiling(void) {
   if ((gFrameCount & 63) == 0) {
     FIXED x = toFIXED(408);
@@ -1382,13 +1389,14 @@ s32 TaopoSwamp_IsDropFalling(struct Actor *actor) {
   return 1;
 }
 
-/// A task: now and then a drop falls from the ceiling near (n1, n2).
-#define DEFINE_DRIP_AT_RANDOM(name, n1, n2)                                    \
+/// A task: on one in four of every eighth frame, a drop falls from the ceiling
+/// at a random place on the 32 pixels running east and north from (x0, z0).
+#define DEFINE_DRIP_AT_RANDOM(name, x0, z0)                                    \
   void name(void) {                                                            \
     if ((gFrameCount & 7) == 0 && (u32)Random16() < 16384) {                   \
       s32 offset = Random16() << 5;                                            \
-      s32 x = offset + n1;                                                     \
-      s32 z = n2 - offset;                                                     \
+      s32 x = offset + x0;                                                     \
+      s32 z = z0 - offset;                                                     \
       s32 y = toFIXED(160);                                                    \
       struct Actor *actor = FieldActor_Create(SPRITE_DROPLET, x, y, z);        \
       s32 scale = FIXED_ONE * 33 / 100;                                        \
@@ -1410,15 +1418,18 @@ DEFINE_DRIP_AT_RANDOM(TaopoSwamp_DripInPillarGap, toFIXED(384), toFIXED(400))
 DEFINE_DRIP_AT_RANDOM(TaopoSwamp_DripInDripRoom, toFIXED(416), toFIXED(352))
 
 extern u16 gTaopoSwampVentsVents[];
-extern u16 gTaopoSwampVentsVentPair[];
+extern u16 gTaopoSwampVentsPillars[];
 extern u16 gTaopoSwampPillarGapVents[];
 extern u16 gTaopoSwampDripsVents[];
 extern u16 gTaopoSwamp_RockRoomVents[];
 void TaopoSwamp_ResetMud(void);
 void Actor_SetWideSprite(s32 id, s32 wide);
-void TaopoSwamp_StartVents(u16 *points, u16 *values, s32 arg);
+void TaopoSwamp_StartVents(u16 *points, u16 *ids, s32 cycle);
 
 #if !TLA_PATCH_1
+/// Sets up the room the party arrives in as its flags left it: the mud's
+/// bushes, vine and stump, the vents and their cycles, the spots, the rope, the
+/// glowing rocks and the passage.
 s32 Scene_Initialize(void) {
   s32 scene = gMainRoutineWork.next;
   struct MapWork *map = Ram_HeapSlots->mapGrid;
@@ -1467,7 +1478,7 @@ s32 Scene_Initialize(void) {
       Actor_SetPosition(ACTOR_WEST_VENT_PILLAR, 280, 232);
     if (Event_GetFlag(FLAG_TAOPO_SWAMP_EAST_PILLAR_OVER_VENT))
       Actor_SetPosition(ACTOR_EAST_VENT_PILLAR, 472, 248);
-    TaopoSwamp_StartVents(gTaopoSwampVentsVents, gTaopoSwampVentsVentPair,
+    TaopoSwamp_StartVents(gTaopoSwampVentsVents, gTaopoSwampVentsPillars,
                           TaopoSwamp_CycleDjinniVents);
   } else if (scene == SCENE_TAOPO_SWAMP_PILLAR_GAP) {
     FieldEffect_StartBlankOverlay(0);
@@ -1616,6 +1627,9 @@ s32 Scene_Initialize(void) {
   return 0;
 }
 #else
+/// As above; from the first patch on, the entrance and the mud room fade in
+/// from black and the other rooms open with the interlaced wipe, where the
+/// Japanese edition opens every room with a window shape.
 s32 Scene_Initialize(void) {
   s32 scene = gMainRoutineWork.next;
   struct MapWork *map = Ram_HeapSlots->mapGrid;
@@ -1623,7 +1637,7 @@ s32 Scene_Initialize(void) {
   struct Actor *actor, *stump, *piece;
   s32 id, entrance;
 
-  *effect = 0;
+  *effect = SCENE_TRANSITION(TRANSITION_FADE, 0);
   if (scene == SCENE_TAOPO_SWAMP_MUD) {
     gMainRoutineWork.retreatScene = SCENE_TAOPO_SWAMP_ENTRANCE;
     gMainRoutineWork.retreatEntrance = TAOPO_SWAMP_ENTRANCE_FROM_WORLD_MAP;
@@ -1636,7 +1650,7 @@ s32 Scene_Initialize(void) {
     }
     Actor_SetSpritePriority(ACTOR_MUD_SPROUT, 3);
     Actor_GetById(ACTOR_MUD_SPROUT)->collisionFlags = 0;
-    if (Event_GetFlag(FLAG_TAOPO_SWAMP_SPOT_WET))
+    if (Event_GetFlag(FLAG_TAOPO_SWAMP_VINE_GROWN))
       MapGrid_CopyCellAttributes(50, 16, 1, 2, 47, 16);
     stump = Actor_GetById(ACTOR_MUD_STUMP);
     if (stump != 0) {
@@ -1670,7 +1684,7 @@ s32 Scene_Initialize(void) {
       Actor_SetPosition(ACTOR_WEST_VENT_PILLAR, 280, 232);
     if (Event_GetFlag(FLAG_TAOPO_SWAMP_EAST_PILLAR_OVER_VENT))
       Actor_SetPosition(ACTOR_EAST_VENT_PILLAR, 472, 248);
-    TaopoSwamp_StartVents(gTaopoSwampVentsVents, gTaopoSwampVentsVentPair,
+    TaopoSwamp_StartVents(gTaopoSwampVentsVents, gTaopoSwampVentsPillars,
                           TaopoSwamp_CycleDjinniVents);
   } else if (scene == SCENE_TAOPO_SWAMP_POOL) {
     *effect =
@@ -1836,9 +1850,9 @@ s32 Scene_Initialize(void) {
 s32 Scene_PrepareMap(void) { return 0; }
 
 /// A task: the Star Dust's sparkle in the dark, a 3 by 3 picture of cells that
-/// grows and shrinks over 60 frames, until it is dug up and the picture of the
-/// bare ground stays (FLAG_TAOPO_SWAMP_STAR_DUST_DUG_UP). The pictures are
-/// stacked at x 45 of the map from row 50.
+/// steps through four pictures and back every 60 frames, until it is dug up
+/// and the last picture stays (FLAG_TAOPO_SWAMP_STAR_DUST_DUG_UP). The
+/// pictures are stacked at x 45 of the map from row 50.
 void TaopoSwamp_SparkleStarDust(void) {
   s32 row = -1;
 
@@ -1873,8 +1887,8 @@ extern u8 gMapGridCellBuffer[];
 /// The 16.16 coordinate of an 8-pixel tile, half a map grid cell.
 #define FIELD_TILE_ORIGIN(tile) ((tile) << 19)
 
-/// Shows the map from 8-pixel tile (x, z) on in the dark rooms' overlay layer,
-/// layer 2, and the screen follows.
+/// Shows the Star Dust rooms' light, the map's layer 2, from its 8-pixel tile
+/// (x, z) on, and the screen follows.
 void TaopoSwamp_FocusMapOn(s32 x, s32 z) {
   struct MapWork *map = Ram_HeapSlots->mapGrid;
   struct MapLayer *layer;
@@ -1901,8 +1915,8 @@ void TaopoSwamp_FocusMapOn(s32 x, s32 z) {
   System_Wait(1);
 }
 
-/// The lights go out (fading over 50 frames when asked) and the sparkle starts
-/// in the last chamber.
+/// The light goes out, over 50 frames when fade is set, from tile (100, 50) on,
+/// and in the last chamber the Star Dust's sparkle starts.
 void TaopoSwamp_DarkenRoom(s32 fade) {
   BlendScript_Suspend();
   if (fade) {
@@ -1923,7 +1937,7 @@ void TaopoSwamp_DarkenRoom(s32 fade) {
     FieldTask_AddFrame(TaopoSwamp_SparkleStarDust, TASK_PASS_FRAME);
 }
 
-/// Points the map's followed point at cell (100, 100).
+/// Shows the Star Dust rooms' light lit, from tile (100, 100).
 void TaopoSwamp_FocusMapMiddle(void) { TaopoSwamp_FocusMapOn(100, 100); }
 
 /// Entering the mud room afresh (not returning from a menu or battle), the
@@ -2081,8 +2095,10 @@ void Vent_Puff(s32 *position, s32 base) {
 #undef REG_BLDALPHA
 #define REG_BLDALPHA (*(volatile u16 *)0x04000052)
 
-/// Places a room's vents from its tables and starts their cycle.
-void TaopoSwamp_StartVents(u16 *points, u16 *values, s32 arg) {
+/// Places a room's vents from its table and the actors their puffs land on,
+/// unless the party comes back to the room as it left it, and starts the
+/// routine that times their gusts; their puffs are drawn half seen through.
+void TaopoSwamp_StartVents(u16 *points, u16 *ids, s32 cycle) {
   struct VentWork *work = VENT_WORK;
   struct VentEntry *point = work->entries;
 
@@ -2095,13 +2111,13 @@ void TaopoSwamp_StartVents(u16 *points, u16 *values, s32 arg) {
     i = 0;
     while (x > 0) {
       s32 z = points[0];
-      s32 w = points[1];
+      s32 speed = points[1];
 
       point->active = 0;
       point->x = toFIXED(x);
       point->z = toFIXED(z);
       point->y = Map_GetTerrainHeight(0, toFIXED(x), toFIXED(z) + toFIXED(16));
-      point->value = toFIXED(w);
+      point->value = toFIXED(speed);
       point->timer = i++;
       points += 2;
       point++;
@@ -2109,20 +2125,20 @@ void TaopoSwamp_StartVents(u16 *points, u16 *values, s32 arg) {
         break;
       x = *points++;
     }
-    if (values != 0) {
-      x = *values++;
+    if (ids != 0) {
+      x = *ids++;
       i = 0;
       if (x > 0) {
         do {
           work->ids[i++] = x;
           if (i > VENT_IDS_MAX - 1)
             break;
-          x = *values++;
+          x = *ids++;
         } while (x > 0);
       }
     }
   }
-  work->hook = (s32 (*)(void))arg;
+  work->hook = (s32 (*)(void))cycle;
   if (REG_BLDCNT == 0) {
     {
       s32 alpha = BLEND_ALPHA(8, 12);
@@ -2184,12 +2200,15 @@ void TaopoSwamp_ScatterWeeds(void);
 void TaopoSwamp_BlowFlowerOffLedge(void);
 void TaopoSwamp_ShowSparkleMessage(void);
 
+/// The vent whose gust each of the vents room's gust triggers is, from
+/// TRIGGER_FIRST_GUST on, as places in gTaopoSwampVentsVents.
 u8 gTaopoSwampVentsGustVents[] = {
-    0, 2, 9, 6, 4, 6, 5, 1,
+    0, 2, 9, 6, 4, 6, 5, 1, 3,
 };
 
+/// The same for the pillar gap, as places in gTaopoSwampPillarGapVents.
 u8 gTaopoSwampPillarGapGustVents[] = {
-    3, 0, 1, 0, 1, 0, 0, 0,
+    0, 1, 0, 1, 0, 0, 0,
 };
 
 // clang-format off
@@ -2250,8 +2269,8 @@ u16 gTaopoSwampVentsVents[] = {
     0,
 };
 
-/// The ids TaopoSwamp_StartVents keeps for the vents room, ended by 0.
-u16 gTaopoSwampVentsVentPair[] = {9, 10, 0};
+/// The actors the vents room's puffs land on, its two pillars, ended by 0.
+u16 gTaopoSwampVentsPillars[] = {ACTOR_WEST_VENT_PILLAR, ACTOR_EAST_VENT_PILLAR, 0};
 
 u16 gTaopoSwampPillarGapVents[] = {
     424, 104, 4,
@@ -2455,8 +2474,8 @@ struct Trigger gTaopoSwampTearStonesTriggers[] = {
     {TRIGGER_EXIT | EXIT_STYLE_STAIRS_UP, 7, CONDITION_ALWAYS, TAOPO_SWAMP_TEAR_STONES_TO_TAOPO_SWAMP_VENTS_SOUTH},
     {TRIGGER_EXIT | EXIT_STYLE_STAIRS_DOWN, 8, CONDITION_ALWAYS, 8},
     {TRIGGER_EXIT | EXIT_STYLE_STAIRS_UP, 9, CONDITION_ALWAYS, 9},
-    {PSYNERGY_PHASE_ON_CELL(ABILITY_SCOOP, PSYNERGY_PHASE_ACTS), 51, FLAG_TAOPO_SWAMP_TREASURE_DUG_UP(1), EVENT(TaopoSwamp_ScoopHiddenItem)},
-    {PSYNERGY_PHASE_ON_CELL(ABILITY_SCOOP, PSYNERGY_PHASE_ACTS), 50, FLAG_TAOPO_SWAMP_TREASURE_DUG_UP(0), EVENT(TaopoSwamp_ScoopOtherHiddenItem)},
+    {PSYNERGY_PHASE_ON_CELL(ABILITY_SCOOP, PSYNERGY_PHASE_ACTS), 51, FLAG_TAOPO_SWAMP_TREASURE_DUG_UP(1), EVENT(TaopoSwamp_ScoopSecondTearStone)},
+    {PSYNERGY_PHASE_ON_CELL(ABILITY_SCOOP, PSYNERGY_PHASE_ACTS), 50, FLAG_TAOPO_SWAMP_TREASURE_DUG_UP(0), EVENT(TaopoSwamp_ScoopFirstTearStone)},
     {TRIGGER_TABLE_END},
 };
 
@@ -2475,13 +2494,13 @@ struct Trigger gTaopoSwampVentsTriggers[] = {
     {TRIGGER_EXIT | EXIT_STYLE_STAIRS_UP, 2, CONDITION_ALWAYS, TAOPO_SWAMP_VENTS_TO_TAOPO_SWAMP_TEAR_STONES_NORTH},
     {TRIGGER_EXIT | EXIT_STYLE_STAIRS_DOWN, 3, CONDITION_ALWAYS, TAOPO_SWAMP_VENTS_TO_TAOPO_SWAMP_TEAR_STONES_SOUTH},
     {TRIGGER_EXIT | EXIT_STYLE_STAIRS_DOWN, 4, CONDITION_ALWAYS, TAOPO_SWAMP_VENTS_TO_TAOPO_SWAMP_FLOWER_EAST_A},
-    {STEP_TRIGGER_WALKING_INTO(FACING_SOUTH), 10, CONDITION_ALWAYS, EVENT(TaopoSwamp_DropToRoomBelow)},
-    {STEP_TRIGGER_WALKING_INTO(FACING_SOUTH), 11, CONDITION_ALWAYS, EVENT(TaopoSwamp_DropToRoomBelow)},
-    {STEP_TRIGGER_WALKING_INTO(FACING_SOUTH), 12, CONDITION_ALWAYS, EVENT(TaopoSwamp_DropToRoomBelow)},
-    {STEP_TRIGGER_WALKING_INTO(FACING_SOUTH), 13, CONDITION_ALWAYS, EVENT(TaopoSwamp_DropToRoomBelow)},
-    {STEP_TRIGGER_WALKING_INTO(FACING_SOUTH), 14, CONDITION_ALWAYS, EVENT(TaopoSwamp_DropToRoomBelow)},
-    {STEP_TRIGGER_WALKING_INTO(FACING_SOUTH), 15, CONDITION_ALWAYS, EVENT(TaopoSwamp_DropToRoomBelow)},
-    {STEP_TRIGGER_WALKING_INTO(FACING_SOUTH), 16, CONDITION_ALWAYS, EVENT(TaopoSwamp_DropToRoomBelow)},
+    {STEP_TRIGGER_WALKING_INTO(FACING_SOUTH), 10, CONDITION_ALWAYS, EVENT(TaopoSwamp_DropToLowerFloor)},
+    {STEP_TRIGGER_WALKING_INTO(FACING_SOUTH), 11, CONDITION_ALWAYS, EVENT(TaopoSwamp_DropToLowerFloor)},
+    {STEP_TRIGGER_WALKING_INTO(FACING_SOUTH), 12, CONDITION_ALWAYS, EVENT(TaopoSwamp_DropToLowerFloor)},
+    {STEP_TRIGGER_WALKING_INTO(FACING_SOUTH), 13, CONDITION_ALWAYS, EVENT(TaopoSwamp_DropToLowerFloor)},
+    {STEP_TRIGGER_WALKING_INTO(FACING_SOUTH), 14, CONDITION_ALWAYS, EVENT(TaopoSwamp_DropToLowerFloor)},
+    {STEP_TRIGGER_WALKING_INTO(FACING_SOUTH), 15, CONDITION_ALWAYS, EVENT(TaopoSwamp_DropToLowerFloor)},
+    {STEP_TRIGGER_WALKING_INTO(FACING_SOUTH), 16, CONDITION_ALWAYS, EVENT(TaopoSwamp_DropToLowerFloor)},
     {TRIGGER_STEP, 10, CONDITION_ALWAYS, EVENT(TaopoSwamp_StepIntoGust)},
     {TRIGGER_STEP, 11, CONDITION_ALWAYS, EVENT(TaopoSwamp_StepIntoGust)},
     {TRIGGER_STEP, 12, CONDITION_ALWAYS, EVENT(TaopoSwamp_StepIntoGust)},
@@ -2515,7 +2534,7 @@ struct Trigger gTaopoSwampPillarGapTriggers[] = {
     {TRIGGER_EXIT, 4, CONDITION_ALWAYS, 4},
     {TRIGGER_EXIT, 5, CONDITION_ALWAYS, 5},
     {STEP_TRIGGER_WALKING_INTO(FACING_SOUTH), 10, CONDITION_ALWAYS,
-     EVENT(TaopoSwamp_DropToRoomBelow)},
+     EVENT(TaopoSwamp_DropToLowerFloor)},
     {TRIGGER_STEP, 10, CONDITION_ALWAYS, EVENT(TaopoSwamp_StepIntoGust)},
     {TRIGGER_STEP, 12, CONDITION_ALWAYS, EVENT(TaopoSwamp_StepIntoGust)},
     {TRIGGER_STEP, 11, CONDITION_ALWAYS, EVENT(TaopoSwamp_StepIntoGust)},

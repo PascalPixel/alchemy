@@ -173,7 +173,8 @@ BattleMotion_CallBeast(struct BattlePlan *plan,
 #ifdef UBFIX
       BattleObject_Reset(BattleObject_Get(saved->unitId), FALSE);
 #else
-      // UB: keep is left out, so the routine reads whatever r1 holds.
+      // UB: called without keep, so the routine reads an argument it was never
+      // given.
       ((void (*)())BattleObject_Reset)(BattleObject_Get(saved->unitId));
 #endif
       BattleObject_Get(saved->unitId)->scale = FIXED_ONE * 6 / 5;

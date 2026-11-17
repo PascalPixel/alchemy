@@ -12,10 +12,12 @@ struct RenderModel;
 #define MOLOCH_FRAMES 296
 #define MOLOCH_SKIP_TO 232
 /// The motes, in the map cell buffer; the flame columns, four pixels apart
-/// from x = 44 (sixteen are set up, the first twelve drawn); the embers, from
-/// work->particles[24]; and the summoned sprites.
+/// from MOLOCH_FLAME_LEFT (MOLOCH_FLAMES_SET_UP are set up, the first
+/// MOLOCH_FLAMES drawn); the embers, from work->particles[MOLOCH_FIRST_EMBER];
+/// and the summoned sprites.
 #define MOLOCH_MOTES 256
 #define MOLOCH_FLAMES 12
+#define MOLOCH_FLAMES_SET_UP 16
 #define MOLOCH_FLAME_LEFT 44
 #define MOLOCH_FIRST_EMBER 24
 #define MOLOCH_EMBERS 16
@@ -24,6 +26,13 @@ struct RenderModel;
 /// pictures; the ring texture follows them.
 #define MOLOCH_FLAME_LIFE (6 * 4)
 #define MOLOCH_RING_TEXTURE (6 * PICTURE_BYTES(FLASH_BURST))
+/// The motes fall to the ground here; each falls a quarter pixel a frame for
+/// every pixel of its size.
+#define MOLOCH_GROUND_Y 114
+/// At this frame the flame columns part and the rings start to spread.
+#define MOLOCH_SPREAD_FRAME 136
+/// How far the rings lean back.
+#define MOLOCH_RING_TILT 3000
 
 /// Moloch. A shower of 256 motes drifts down the screen and, from frame
 /// 91, gathers toward the middle; from frame 97 flames rise in twelve columns
@@ -73,7 +82,8 @@ void BattleEffect_RunMoloch(struct BattleEffectParams *args) {
 
     frame = 0;
     do {
-      if ((gInput.repeat & (KEY_A | KEY_B)) && frame <= 231 && frame > 15) {
+      if ((gInput.repeat & (KEY_A | KEY_B)) && frame < MOLOCH_SKIP_TO &&
+          frame > 15) {
         Sound_PlayFar(SE_CLATTER);
         frame = MOLOCH_SKIP_TO;
       }
@@ -94,7 +104,7 @@ void BattleEffect_RunMoloch(struct BattleEffectParams *args) {
         }
 
         // The flame columns rise from y = 72.
-        for (i = 0; i != 16; i++) {
+        for (i = 0; i != MOLOCH_FLAMES_SET_UP; i++) {
           flame = &work->particles[i];
           flame->x = INTtoFIXED(i * 3 + i + MOLOCH_FLAME_LEFT);
           flame->y = toFIXED(72);
@@ -129,12 +139,13 @@ void BattleEffect_RunMoloch(struct BattleEffectParams *args) {
             // Frames 91-119: motes still at rest head for a random point of
             // the middle, timed to arrive as they reach the ground.
             if ((u32)(frame - 91) <= 28 && mote->velocityX == 0 &&
-                FIXED_INTEGER_PART(mote->y) <= 113) {
+                FIXED_INTEGER_PART(mote->y) < MOLOCH_GROUND_Y) {
               s32 dx;
 
               mote->velocityX = INTtoFIXED(Random16() & 63) + toFIXED(56);
               dx = mote->velocityX - mote->x;
-              mote->velocityX = dx / ((toFIXED(114) - mote->y) / (size << 14));
+              mote->velocityX = dx / ((toFIXED(MOLOCH_GROUND_Y) - mote->y) /
+                                      (size * (toFIXED(1) / 4)));
             }
 
             // Frames 142-161: they swirl about the centre line.
@@ -155,8 +166,8 @@ void BattleEffect_RunMoloch(struct BattleEffectParams *args) {
             }
 
             mote->x += mote->velocityX + Trig_Sin(mote->y >> 5) / 5;
-            mote->y += mote->velocityY + (size << 14);
-            if (mote->y > toFIXED(114)) {
+            mote->y += mote->velocityY + size * (toFIXED(1) / 4);
+            if (mote->y > toFIXED(MOLOCH_GROUND_Y)) {
               if (frame > 215) {
                 // Late motes fly back in from the right.
                 mote->variant = 0;
@@ -210,7 +221,7 @@ void BattleEffect_RunMoloch(struct BattleEffectParams *args) {
               else if (frame > 140)
                 flame->velocityZ = 2;
             }
-            if (frame == 136) {
+            if (frame == MOLOCH_SPREAD_FRAME) {
               if (flame->x < toFIXED(80))
                 flame->velocityX -= toFIXED(4);
               else
@@ -245,9 +256,9 @@ void BattleEffect_RunMoloch(struct BattleEffectParams *args) {
         }
       }
 
-      // From frame 136: four rings, each starting at its own frame, grow and
-      // fade out over eight frames.
-      if (frame > 135) {
+      // Four rings, each starting at its own frame, grow and fade out over
+      // eight frames.
+      if (frame >= MOLOCH_SPREAD_FRAME) {
         projected = Heap_AllocEwram(1024);
         model = Render_AllocateModelList(1);
         texture.logWidth = 7;
@@ -260,7 +271,7 @@ void BattleEffect_RunMoloch(struct BattleEffectParams *args) {
         model->scrollU = 0;
         model->scrollV = 0;
         for (i = 0; i != ARRAY_COUNT(gMoloch_RingStarts); i++) {
-          s32 start = gMoloch_RingStarts[i] + 136;
+          s32 start = gMoloch_RingStarts[i] + MOLOCH_SPREAD_FRAME;
           FIXED scale;
           s32 shade;
 
@@ -277,7 +288,7 @@ void BattleEffect_RunMoloch(struct BattleEffectParams *args) {
           Matrix_Initialize();
           Matrix_Translate(toFIXED(16), INTtoFIXED(gMoloch_RingHeights[i]), 0);
           Matrix_Scale(scale, scale, scale);
-          Matrix_RotateX(3000);
+          Matrix_RotateX(MOLOCH_RING_TILT);
           model->scrollU = ((frame + i * 5) & 7) << 4;
           Render_TransformVertices(gBattleEffect_CylinderCorners, projected,
                                    32);
@@ -423,8 +434,10 @@ void Iris_ChangeBackdrop(void) {
 #define IRIS_PILLAR_CIRCLE 1000
 
 /// The splashes' pictures, in the particle sheet (Ram_HeapSlots->battleSheet):
-/// three fades each of a large and a small ring mote, eight fades of a dot and
-/// the spray's column.
+/// IRIS_RING_FADES fades each of a large and a small ring mote, IRIS_DOT_FADES
+/// of a dot and the spray's column.
+#define IRIS_RING_FADES 3
+#define IRIS_DOT_FADES 8
 #define IRIS_LARGE_RING_WIDTH 7
 #define IRIS_LARGE_RING_HEIGHT 14
 #define IRIS_SMALL_RING_WIDTH 5
@@ -435,10 +448,18 @@ void Iris_ChangeBackdrop(void) {
 #define IRIS_SPRAY_HEIGHT 32
 enum IrisSplashPicture {
   IRIS_LARGE_RINGS = 0,
-  IRIS_SMALL_RINGS = IRIS_LARGE_RINGS + 3 * PICTURE_BYTES(IRIS_LARGE_RING),
-  IRIS_DOTS = IRIS_SMALL_RINGS + 3 * PICTURE_BYTES(IRIS_SMALL_RING),
-  IRIS_SPRAY = IRIS_DOTS + 8 * PICTURE_BYTES(IRIS_DOT)
+  IRIS_SMALL_RINGS = IRIS_LARGE_RINGS +
+      IRIS_RING_FADES * PICTURE_BYTES(IRIS_LARGE_RING),
+  IRIS_DOTS = IRIS_SMALL_RINGS +
+      IRIS_RING_FADES * PICTURE_BYTES(IRIS_SMALL_RING),
+  IRIS_SPRAY = IRIS_DOTS + IRIS_DOT_FADES * PICTURE_BYTES(IRIS_DOT)
 };
+/// A splash's rings of dots are drawn at this many points around; its ring
+/// motes turn about it as spokes, taking their next picture every
+/// IRIS_RING_FADE_FRAMES.
+#define IRIS_SPLASH_POINTS 64
+#define IRIS_SPLASH_SPOKES 8
+#define IRIS_RING_FADE_FRAMES 12
 
 /// Iris: draws one falling drop at (x, y), large (20x40) when small is 0
 /// and small (12x24) otherwise, its animation picture chosen by frame / 2, and
@@ -535,8 +556,10 @@ void Iris_DrawPillar(s32 halfWidth, s32 x, s32 height) {
   Heap_Release(projected);
 }
 
+#define DIAGONAL_LINE_MAX 48 ///< the most pixels a diagonal line runs
+
 /// Draws a 45-degree canvas line from (x + w/2, y - w/2) down-left toward
-/// (x, y), at most 48 pixels long, in the given colour.
+/// (x, y), at most DIAGONAL_LINE_MAX pixels long, in the given colour.
 void BattleEffect_DrawDiagonalCanvasLine(s32 x, s32 y, s32 w, u8 color) {
   s32 h = w >> 1;
   s32 x1;
@@ -544,8 +567,8 @@ void BattleEffect_DrawDiagonalCanvasLine(s32 x, s32 y, s32 w, u8 color) {
 
   x += h;
   y -= h;
-  if (h > 48)
-    h = 48;
+  if (h > DIAGONAL_LINE_MAX)
+    h = DIAGONAL_LINE_MAX;
   y1 = y + h;
   x1 = x - h;
   BattleEffect_DrawClippedCanvasLine(x, y, x1, y1, color);
@@ -658,9 +681,9 @@ static inline void Iris_DrawSplash(s32 t, s32 x, s32 y, s32 small) {
   if (t < *(gIris_SplashRadii + small) * 2) {
     r = *(gIris_SplashRadii + small) * 2 - t;
     cel = r / 6;
-    cel8 = cel * 8;
+    cel8 = cel * PICTURE_BYTES(IRIS_DOT);
     sheetOffset = cel * MOTE_SET_BYTES;
-    for (point = 0; point != 64; point++) {
+    for (point = 0; point != IRIS_SPLASH_POINTS; point++) {
       s32 px;
       s32 a;
       s32 py;
@@ -676,9 +699,9 @@ static inline void Iris_DrawSplash(s32 t, s32 x, s32 y, s32 small) {
       DrawRectangle blit;
       s32 spoke;
 
-      if (t <= 11)
+      if (t < IRIS_RING_FADE_FRAMES)
         offset = IRIS_LARGE_RINGS + 2 * PICTURE_BYTES(IRIS_LARGE_RING);
-      else if (t <= 23)
+      else if (t < 2 * IRIS_RING_FADE_FRAMES)
         offset = IRIS_LARGE_RINGS + PICTURE_BYTES(IRIS_LARGE_RING);
       /* FAKEMATCH(dead): t * 4 / 3 into dead. */
       dead = t * 4;
@@ -686,11 +709,11 @@ static inline void Iris_DrawSplash(s32 t, s32 x, s32 y, s32 small) {
       ring = sprites + offset;
       /* FAKEMATCH(temporary): draw copied into blit for the ring's draws. */
       blit = draw;
-      for (spoke = 0; spoke != 8; spoke++) {
+      for (spoke = 0; spoke != IRIS_SPLASH_SPOKES; spoke++) {
         s32 px;
         s32 a;
         s32 py;
-        a = (spoke << 13) + (t * 5 << 9);
+        a = spoke * (TRIG_TURN / IRIS_SPLASH_SPOKES) + (t * 5 << 9);
         px = (FIXEDtoINT(r * Trig_Sin(a))) + x;
         py = (FIXEDtoINT(r * Trig_Cos(a) * 2)) + y;
         blit(canvas, ring, px - 3, py - 7, IRIS_LARGE_RING_WIDTH,
@@ -710,9 +733,9 @@ static inline void Iris_DrawSplash(s32 t, s32 x, s32 y, s32 small) {
       DrawRectangle blit;
       s32 spoke;
 
-      if (t <= 11)
+      if (t < IRIS_RING_FADE_FRAMES)
         offset = IRIS_SMALL_RINGS + 2 * PICTURE_BYTES(IRIS_SMALL_RING);
-      else if (t <= 23)
+      else if (t < 2 * IRIS_RING_FADE_FRAMES)
         offset = IRIS_SMALL_RINGS + PICTURE_BYTES(IRIS_SMALL_RING);
       /* FAKEMATCH(dead): t * 4 / 3 into dead, as in the large splash's arm. */
       dead = t * 4;
@@ -720,11 +743,11 @@ static inline void Iris_DrawSplash(s32 t, s32 x, s32 y, s32 small) {
       ring = sprites + offset;
       /* FAKEMATCH(temporary): draw copied into blit for the ring's draws. */
       blit = draw;
-      for (spoke = 0; spoke != 8; spoke++) {
+      for (spoke = 0; spoke != IRIS_SPLASH_SPOKES; spoke++) {
         s32 px;
         s32 a;
         s32 py;
-        a = (spoke << 13) + (t * 5 << 9);
+        a = spoke * (TRIG_TURN / IRIS_SPLASH_SPOKES) + (t * 5 << 9);
         px = (FIXEDtoINT(r * Trig_Sin(a))) + x;
         py = (FIXEDtoINT(r * Trig_Cos(a) * 2)) + y;
         blit(canvas, ring, px - 2, py - 5, IRIS_SMALL_RING_WIDTH,
@@ -744,11 +767,11 @@ static inline void Iris_DrawSplash(s32 t, s32 x, s32 y, s32 small) {
       s32 ringCel;
 
       r = t - *(gIris_SplashRadii + small) * 2;
-      ringCel = r / 3 * 8;
-      if (ringCel == 64)
-        ringCel = 56;
+      ringCel = r / 3 * PICTURE_BYTES(IRIS_DOT);
+      if (ringCel == IRIS_DOT_FADES * PICTURE_BYTES(IRIS_DOT))
+        ringCel = (IRIS_DOT_FADES - 1) * PICTURE_BYTES(IRIS_DOT);
       ringCel += IRIS_DOTS;
-      for (point = 0; point != 64; point++) {
+      for (point = 0; point != IRIS_SPLASH_POINTS; point++) {
         s32 px;
         s32 a;
         s32 py;
@@ -758,7 +781,7 @@ static inline void Iris_DrawSplash(s32 t, s32 x, s32 y, s32 small) {
         draw(canvas, sprites + ringCel, px - 1, py - 2, IRIS_DOT_WIDTH,
              IRIS_DOT_HEIGHT);
       }
-      for (point = 0; point != 64; point++) {
+      for (point = 0; point != IRIS_SPLASH_POINTS; point++) {
         s32 px;
         s32 a;
         s32 py;
@@ -779,12 +802,12 @@ static inline void Iris_DrawSplash(s32 t, s32 x, s32 y, s32 small) {
     if (t < *(gIris_SplashRadii + small) * 2 + 8) {
       s32 shake = (*(gIris_SplashRadii + small) * 2 - t + 8) >> 1;
       typeof(gBgScroll[0]) *scroll = gBgScroll;
-      s16 base = 32;
+      s16 base = BATTLE_BACKGROUND_SCROLL_Y;
 
       // DEAD: both arms below set it again; the ROM keeps the store.
       scroll[1].y = base;
       if (t & 1)
-        scroll[1].y = shake + 32;
+        scroll[1].y = shake + BATTLE_BACKGROUND_SCROLL_Y;
       else
         scroll[1].y = base - shake;
     }

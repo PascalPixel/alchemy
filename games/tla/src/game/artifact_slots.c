@@ -12,7 +12,7 @@
 /// object of the main image or of any overlay reads gSceneLocalState or
 /// gRareItemStock that far in or holds the copy's address, and The Broken Seal
 /// has no such table.
-const u8 Data_080b1f2c[4][5] = {
+const u8 gNewGame_SceneStateTable[4][5] = {
     {15, 16, 10, 11, 12},
     {1, 8, 15, 16, 17},
     {5, 6, 7, 8, 9},

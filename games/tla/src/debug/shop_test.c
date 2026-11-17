@@ -350,8 +350,8 @@ void ShopTest_GiveEquipmentTestStock(void) {
   Event_GiveItemTo(ITEM_MYTHRIL_SILVER, SHEBA);
   Event_GiveItemTo(ITEM_RUSTY_SWORD, SHEBA);
   Event_GiveItemTo(ITEM_RUSTY_SWORD, SHEBA);
-  Event_GiveItemTo(ITEM_RUSTY_ROBBERS_BLADE, SHEBA);
-  Event_GiveItemTo(ITEM_RUSTY_PIRATES_SABRE, SHEBA);
+  Event_GiveItemTo(ITEM_RUSTY_SWORD_ROBBERS_BLADE, SHEBA);
+  Event_GiveItemTo(ITEM_RUSTY_SWORD_PIRATES_SABRE, SHEBA);
   Event_GiveItemTo(ITEM_WATER_OF_LIFE, PIERS);
   Event_GiveItemTo(ITEM_ORB_OF_FORCE, PIERS);
   Event_GiveItemTo(ITEM_DOUSE_DROP, PIERS);

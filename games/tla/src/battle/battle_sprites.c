@@ -428,14 +428,14 @@ struct BattleSpriteDefinition gBattleSprites[] = {
         .defeatSound = DEFEAT_SOUND_BEAST_CRY,
     },
     // Ruffian 2
-    [ENEMY_UNUSED_RUFFIAN_A] = {
+    [ENEMY_RUFFIAN_2] = {
         .animation = SPRITE_BATTLE_RUFFIAN,
         .attackEffect = ATTACK_EFFECT_SLASH,
         .attackHop = 4,
         .defeatSound = DEFEAT_SOUND_BEAST_CRY,
     },
     // Ruffian 3
-    [ENEMY_UNUSED_RUFFIAN_B] = {
+    [ENEMY_RUFFIAN_3] = {
         .animation = SPRITE_BATTLE_RUFFIAN,
         .attackEffect = ATTACK_EFFECT_SLASH,
         .attackHop = 4,
@@ -520,13 +520,13 @@ struct BattleSpriteDefinition gBattleSprites[] = {
         .defeatSound = DEFEAT_SOUND_BEAST_CRY,
     },
     // Champa 2
-    [ENEMY_UNUSED_CHAMPA_A] = {
+    [ENEMY_CHAMPA_2] = {
         .animation = SPRITE_BATTLE_SEA_FIGHTER,
         .attackEffect = ATTACK_EFFECT_RISING_SLASH,
         .defeatSound = DEFEAT_SOUND_BEAST_CRY,
     },
     // Champa 3
-    [ENEMY_UNUSED_CHAMPA_B] = {
+    [ENEMY_CHAMPA_3] = {
         .animation = SPRITE_BATTLE_SEA_FIGHTER,
         .attackEffect = ATTACK_EFFECT_RISING_SLASH,
         .defeatSound = DEFEAT_SOUND_BEAST_CRY,
@@ -621,7 +621,7 @@ struct BattleSpriteDefinition gBattleSprites[] = {
         .defeatSound = DEFEAT_SOUND_MONSTER_ROAR,
     },
     // Serpent 6
-    [ENEMY_UNUSED_SERPENT_A] = {
+    [ENEMY_SERPENT_6] = {
         .animation = SPRITE_BATTLE_SERPENT,
         .attackEffect = ATTACK_EFFECT_SLASH,
         .attackHop = 4,
@@ -629,7 +629,7 @@ struct BattleSpriteDefinition gBattleSprites[] = {
         .defeatSound = DEFEAT_SOUND_MONSTER_ROAR,
     },
     // Serpent 7
-    [ENEMY_UNUSED_SERPENT_B] = {
+    [ENEMY_SERPENT_7] = {
         .animation = SPRITE_BATTLE_SERPENT,
         .attackEffect = ATTACK_EFFECT_SLASH,
         .attackHop = 4,
@@ -674,7 +674,7 @@ struct BattleSpriteDefinition gBattleSprites[] = {
         .defeatSound = DEFEAT_SOUND_BOSS_ROAR,
     },
     // Poseidon 3
-    [ENEMY_UNUSED_POSEIDON] = {
+    [ENEMY_POSEIDON_3] = {
         .animation = SPRITE_BATTLE_POSEIDON,
         .attackEffect = ATTACK_EFFECT_HURL,
         .heavyImpact = 1,
@@ -721,7 +721,7 @@ struct BattleSpriteDefinition gBattleSprites[] = {
         .defeatSound = DEFEAT_SOUND_BEAST_CRY,
     },
     // Knight 3
-    [ENEMY_UNUSED_KNIGHT] = {
+    [ENEMY_KNIGHT_3] = {
         .animation = SPRITE_BATTLE_KNIGHT,
         .attackEffect = ATTACK_EFFECT_SLASH,
         .attackHop = 4,
@@ -1470,7 +1470,7 @@ struct BattleSpriteDefinition gBattleSprites[] = {
         .defeatSound = DEFEAT_SOUND_BOSS_ROAR,
     },
     // Valukar
-    [ENEMY_UNUSED_VALUKAR_A] = {
+    [ENEMY_VALUKAR_UNUSED_A] = {
         .animation = SPRITE_BATTLE_VALUKAR,
         .attackEffect = ATTACK_EFFECT_SLASH,
         .attackHop = 5,
@@ -1478,7 +1478,7 @@ struct BattleSpriteDefinition gBattleSprites[] = {
         .defeatSound = DEFEAT_SOUND_BOSS_ROAR,
     },
     // Valukar
-    [ENEMY_UNUSED_VALUKAR_B] = {
+    [ENEMY_VALUKAR_UNUSED_B] = {
         .animation = SPRITE_BATTLE_VALUKAR,
         .attackEffect = ATTACK_EFFECT_SLASH,
         .attackHop = 5,
@@ -1567,7 +1567,7 @@ struct BattleSpriteDefinition gBattleSprites[] = {
         .defeatSound = DEFEAT_SOUND_BOSS_ROAR,
     },
     // Sentinel
-    [ENEMY_UNUSED_SENTINEL_A] = {
+    [ENEMY_SENTINEL_UNUSED_A] = {
         .animation = SPRITE_BATTLE_SENTINEL,
         .attackEffect = ATTACK_EFFECT_SLASH,
         .attackHop = 7,
@@ -1575,7 +1575,7 @@ struct BattleSpriteDefinition gBattleSprites[] = {
         .defeatSound = DEFEAT_SOUND_BOSS_ROAR,
     },
     // Sentinel
-    [ENEMY_UNUSED_SENTINEL_B] = {
+    [ENEMY_SENTINEL_UNUSED_B] = {
         .animation = SPRITE_BATTLE_SENTINEL,
         .attackEffect = ATTACK_EFFECT_SLASH,
         .attackHop = 7,
@@ -1698,7 +1698,7 @@ struct BattleSpriteDefinition gBattleSprites[] = {
         .palette = 4,
     },
     // Lich
-    [ENEMY_UNUSED_LICH] = {
+    [ENEMY_LICH_UNUSED] = {
         .animation = SPRITE_BATTLE_GHOST,
         .palette = 2,
     },
@@ -2138,7 +2138,7 @@ struct BattleSpriteDefinition gBattleSprites[] = {
         .defeatSound = DEFEAT_SOUND_BEAST_CRY,
     },
     // Kobold
-    [ENEMY_UNUSED_KOBOLD] = {
+    [ENEMY_KOBOLD_UNUSED] = {
         .animation = SPRITE_BATTLE_GOBLIN,
         .defeatSound = DEFEAT_SOUND_BEAST_CRY,
     },

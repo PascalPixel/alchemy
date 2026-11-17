@@ -136,7 +136,7 @@ enum DehkanPlateauCannonActorId {
   ACTOR_CANNON = ACTOR_FIRST_PLACED + 8
 };
 
-/// The covers of each room (Actors_SetHidden, Actor_Hide).
+/// The covers of each room (Actors_SetDrawn, Actor_Hide).
 enum {
   FULL_METAL_VEST_CHEST_COVER_COUNT = 14,
   THEMIS_AXE_CHEST_COVER_COUNT = 13,
@@ -354,24 +354,24 @@ void DehkanPlateau_StepOnCannonPillar(void) {
     DehkanPlateau_LeaveConeCell();
 }
 
-/// Sets the covers of the room the party is in (Actors_SetHidden).
+/// Sets the covers of the room the party is in (Actors_SetDrawn).
 void DehkanPlateau_SetActorsHidden(s32 show) {
   s16 scene = gMainRoutineWork.next;
 
   if (scene == SCENE_DEHKAN_PLATEAU_FULL_METAL_VEST_CHEST)
-    Actors_SetHidden(show, ACTOR_FULL_METAL_VEST_CHEST_FIRST_COVER,
+    Actors_SetDrawn(show, ACTOR_FULL_METAL_VEST_CHEST_FIRST_COVER,
                      FULL_METAL_VEST_CHEST_COVER_COUNT);
   else if (scene == SCENE_DEHKAN_PLATEAU_THEMIS_AXE_CHEST)
-    Actors_SetHidden(show, ACTOR_THEMIS_AXE_CHEST_FIRST_COVER,
+    Actors_SetDrawn(show, ACTOR_THEMIS_AXE_CHEST_FIRST_COVER,
                      THEMIS_AXE_CHEST_COVER_COUNT);
   else if (scene == SCENE_DEHKAN_PLATEAU_TIGHTROPES)
-    Actors_SetHidden(show, ACTOR_TIGHTROPES_FIRST_COVER,
+    Actors_SetDrawn(show, ACTOR_TIGHTROPES_FIRST_COVER,
                      TIGHTROPES_COVER_COUNT);
   else if (scene == SCENE_DEHKAN_PLATEAU_MINT_CHEST)
-    Actors_SetHidden(show, ACTOR_MINT_CHEST_FIRST_COVER,
+    Actors_SetDrawn(show, ACTOR_MINT_CHEST_FIRST_COVER,
                      MINT_CHEST_COVER_COUNT);
   else if (scene == SCENE_DEHKAN_PLATEAU_CANNON)
-    Actors_SetHidden(show, ACTOR_CANNON_ROOM_FIRST_COVER,
+    Actors_SetDrawn(show, ACTOR_CANNON_ROOM_FIRST_COVER,
                      CANNON_ROOM_COVER_COUNT);
 }
 

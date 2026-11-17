@@ -264,7 +264,7 @@ s32 Scene_Initialize(void) {
       ACTOR_PRIORITY_IGNORES_RISES;
   if (gMainRoutineWork.next == SCENE_MIKASALLA_ROOMS_HOUSES) {
     if (gMainRoutineWork.entrance ==
-        MIKASALLA_ROOMS_HOUSES_FROM_ISLETS_PRETTY_STONE)
+        MIKASALLA_ROOMS_HOUSES_FROM_EAST_TUNDARIA_ISLET)
       Scene_FadeInAndClearFlag();
     else if (!Event_GetFlag(FLAG_TRANSFERRED_WON_COLOSSO) ||
              (Event_GetFlag(FLAG_MIKASALLA_GALAHAD_MET) &&

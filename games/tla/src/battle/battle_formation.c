@@ -535,7 +535,7 @@ s32 BattleFormation_BuildEnemyList(s32 recordId) {
       switch (enemyId) {
       case ENEMY_POSEIDON:
       case ENEMY_POSEIDON_SECOND_ACTION:
-      case ENEMY_UNUSED_POSEIDON:
+      case ENEMY_POSEIDON_3:
         if (!GameFlag_Get(FLAG_MONSTER_BATTLE))
           battle->forceField = 1;
         break;

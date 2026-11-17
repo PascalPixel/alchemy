@@ -680,23 +680,23 @@ void BattleEffect_RunCatastrophe(struct BattleEffectParams *args) {
     texture.logWidth = 5;
     shade = 0;
     texture.logHeight = 6;
-    model->mesh = gCatastrophe_BurstMesh;
+    model->mesh = gCatastrophe_ForkMesh;
     model->texture = &texture;
     model->kind = MODEL_SHADED_MAX;
     model->vertices = verts;
     // Forks of lightning flash in the sky, each fading over eight frames.
     for (i = 0; i != 7; i++) {
-      s32 st = gCatastrophe_BurstStarts[i];
+      s32 st = gCatastrophe_ForkStarts[i];
 
       if (frame >= st && frame < st + 8) {
-        s32 c = gCatastrophe_BurstPictures[i];
+        s32 c = gCatastrophe_ForkPictures[i];
 
         shade = (st - frame) << 3;
         model->shade = shade;
         texture.pixels = work->sheet + c * PICTURE_BYTES(LIGHTNING_FORK);
         Matrix_Initialize();
-        Matrix_Translate(INTtoFIXED(gCatastrophe_BurstX[i] - 48),
-                         INTtoFIXED(gCatastrophe_BurstY[i] - 44), 0);
+        Matrix_Translate(INTtoFIXED(gCatastrophe_ForkX[i] - 48),
+                         INTtoFIXED(gCatastrophe_ForkY[i] - 44), 0);
         Matrix_RotateZ(0);
         Matrix_Scale(FIXED_ONE / 2, FIXED_ONE, FIXED_ONE / 2);
         Render_TransformVertices(gBattleEffect_SquareCorners, verts, 4);
@@ -1370,7 +1370,7 @@ void BattleEffect_RunCatastrophe(struct BattleEffectParams *args) {
         if (frame == 0) {
           p = work->particles;
           for (i = 0; i != CATASTROPHE_BOLTS; p++, i++) {
-            p->z = gCatastrophe_ShardRolls[i];
+            p->z = gCatastrophe_BoltRolls[i];
             p->velocityZ = (Random16() & 255) + 128;
             if (Random16() & 1) {
               p->velocityZ = -p->velocityZ;

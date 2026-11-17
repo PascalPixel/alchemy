@@ -308,7 +308,7 @@ void BattleEffect_RunMoloch(struct BattleEffectParams *args) {
       if (frame == 32)
         Sound_PlayFar(SE_GLITTER);
       if (frame == 90)
-        Sound_PlayFar(SE_225);
+        Sound_PlayFar(SE_MOTES_GATHER);
       if (frame == 140)
         Sound_PlayFar(SE_CAST);
       if (frame == 200)

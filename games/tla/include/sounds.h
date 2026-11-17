@@ -218,7 +218,7 @@ enum SoundId {
   /// Lucky Dice's, Lucky Wheels' and Contigo's largest prize.
   MUS_JINGLE_LARGE,
   /// MUS_SILENCE's song of no tracks, on the jingle player; nothing plays it.
-  MUS_095 = 95,
+  MUS_UNUSED_SILENCE_JINGLE = 95,
   SE_BELL = 100,
   SE_SHOP_PURCHASE,
   SE_SHOP_SELL,
@@ -346,7 +346,7 @@ enum SoundId {
   SE_WARP,
   /// Something heavy shuddering: Gaia Rock's altar faces as they part, Zagan
   /// as it gallops in, and Megiddo's dive (BattleEffect_RunMegiddo).
-  SE_191,
+  SE_SHUDDER,
   /// Shriek's and Harpy's cry as their streaks set out
   /// (BattleEffect_RunStreakVolley, mode 1): SE_SPARKS's notes on voice 25; The
   /// Broken Seal's row 192 note for note.
@@ -377,7 +377,7 @@ enum SoundId {
   SE_DUST_PUFF,
   /// SE_AMBIENT_STREAM ten semitones higher on a noise voice and not held;
   /// nothing plays it.
-  SE_205,
+  SE_UNUSED_AMBIENT_STREAM_HIGH,
   SE_CURSE_FALL,
   SE_RUSH,
   SE_BANE_ESCAPE,
@@ -401,7 +401,7 @@ enum SoundId {
   SE_224,
   /// Moloch's shower of motes as it starts to gather toward the middle
   /// (BattleEffect_RunMoloch, frame 90).
-  SE_225,
+  SE_MOTES_GATHER,
   SE_LOG_PUSH,
   SE_TOPPLE,
   SE_SPARKLING_PASSAGE,
@@ -436,7 +436,7 @@ enum SoundId {
   SE_GABOMBA_STATUE_ARROW,
   SE_249,
   /// SE_BLACK_CRYSTAL_SET seven semitones lower; nothing plays it.
-  SE_250,
+  SE_UNUSED_BLACK_CRYSTAL_SET_LOW,
   /// Played as the Black Crystal is set on the Lemurian Ship.
   SE_BLACK_CRYSTAL_SET,
   SE_COLOSSO_WARRIOR_APPEAR,
@@ -479,12 +479,12 @@ enum SoundId {
   SE_STOP_ACTION_SE,
   /// SE_TAKE_FLIGHT higher, its first track six semitones up without the
   /// chord's low note and its second four; nothing plays it.
-  SE_290 = 290,
+  SE_UNUSED_TAKE_FLIGHT_HIGH = 290,
   /// Played as an actor takes flight.
   SE_TAKE_FLIGHT,
   SE_ERUPTION_COLUMNS,
   /// SE_ERUPTION_COLUMNS four semitones lower; nothing plays it.
-  SE_293,
+  SE_UNUSED_ERUPTION_COLUMNS_LOW,
   SE_STOP_EXIT_SE = 298,
   SE_TOLBI_SPRING_TOSS = 300,
   SE_TOLBI_SPRING_OBSTACLE_HIT,
@@ -509,7 +509,7 @@ enum SoundId {
   SE_LASH = 512,
   /// SE_CAST's notes an octave lower on voice 99, against a falling line on
   /// voice 98; nothing plays it.
-  SE_520 = 520,
+  SE_UNUSED_CAST_LOW = 520,
   SE_521,
   /// The beams of Jupiter Lighthouse's aerie flickering as its angels are
   /// energized.
@@ -528,7 +528,7 @@ enum SoundId {
   SE_SEA_OF_TIME_OPENS,
   /// SE_SANDSTORM's second track alone, six semitones lower and played once;
   /// nothing plays it.
-  SE_531,
+  SE_UNUSED_SANDSTORM_LOW,
   SE_532,
   SE_533,
   SE_534,
@@ -546,13 +546,13 @@ enum SoundId {
   SE_545,
   /// SE_SETTLE's notes played once instead of held, with voice 93 in its
   /// first track; nothing plays it.
-  SE_546,
+  SE_UNUSED_SETTLE_SHORT,
   /// SE_TABLET_RISE two semitones lower and softer; nothing plays it.
-  SE_547,
+  SE_UNUSED_TABLET_RISE_LOW,
   SE_548,
   /// SE_BOOKSHELF_SLIDE with its first note three semitones higher; nothing
   /// plays it.
-  SE_549,
+  SE_UNUSED_BOOKSHELF_SLIDE_HIGH,
   /// Played as the party drops through a hole on an islet.
   SE_DROP_THROUGH_HOLE,
   SE_551,
@@ -561,7 +561,7 @@ enum SoundId {
   SE_FLAME_GROW = 554,
   /// SE_FLAME_GROW's falling run fourteen semitones lower on voice 99, its last
   /// note two higher; nothing plays it.
-  SE_555,
+  SE_UNUSED_FLAME_GROW_LOW,
   /// SE_RISE_WITH_SPARKS two semitones higher, held until stopped: the Ankohl
   /// Ruins' sand rising, Aqua Rock's pillars rising as its stones are Doused,
   /// Jupiter Lighthouse's angels lifted, and the Sea of Time's waves stilled.
@@ -571,9 +571,9 @@ enum SoundId {
   /// Time's waves starting and the sea opening.
   SE_RISE_WITH_SPARKS_LOW,
   SE_558,
-  /// SE_620 an octave lower on SE_ICE_CRACK's voice, with four notes more;
+  /// SE_UNUSED_COIN_PAYOUT_C an octave lower on SE_ICE_CRACK's voice, with four notes more;
   /// nothing plays it.
-  SE_559,
+  SE_UNUSED_COIN_PAYOUT_LOW,
   /// A doorway of Mars Lighthouse's dragon-statue room flashing as it is
   /// stepped toward.
   SE_MARS_LIGHTHOUSE_DOORWAY,
@@ -600,7 +600,7 @@ enum SoundId {
   SE_UNUSED_SPIN_AWAY_HIGH,
   /// SE_CURRENT's rhythm on its voice with other notes, the last two held long;
   /// nothing plays it.
-  SE_570,
+  SE_UNUSED_CURRENT_HELD,
   /// SE_CURRENT at volume 100 for its 40; nothing plays it, nor its copy
   /// SE_UNUSED_LOUD_CURRENT_B.
   SE_UNUSED_LOUD_CURRENT_A,
@@ -630,7 +630,7 @@ enum SoundId {
   /// A mechanism set off as a puzzle is done: the Anemos Inner Sanctum's
   /// statue once its seven tiles glow, and the Gabomba Statue's flashing cog
   /// as it stops.
-  SE_582,
+  SE_PUZZLE_MECHANISM,
   SE_583,
   /// Played as the party presses a switch or button in Mars Lighthouse, the
   /// Ankohl Ruins and the Anemos Inner Sanctum.
@@ -646,7 +646,7 @@ enum SoundId {
   SE_591,
   /// SE_IMPACT's rhythm and most of its notes, doubled by a second track on
   /// voice 90; nothing plays it.
-  SE_592,
+  SE_UNUSED_IMPACT_DOUBLED,
   SE_593,
   SE_594,
   /// The Doom Dragon flickering into the people it was, at Mars Lighthouse's
@@ -667,13 +667,13 @@ enum SoundId {
   /// Played as the leader spins away.
   SE_SPIN_AWAY,
   /// SE_SPIN_AWAY's first track alone, two octaves higher; nothing plays it.
-  SE_613,
-  /// SE_613's rhythm on its voice, six of its eleven notes changed, at tempo
+  SE_UNUSED_SPIN_AWAY_A,
+  /// SE_UNUSED_SPIN_AWAY_A's rhythm on its voice, six of its eleven notes changed, at tempo
   /// 32; nothing plays it.
-  SE_614,
+  SE_UNUSED_SPIN_AWAY_C,
   /// SE_KOLIMA_BRIDGE_HOP's voice and rhythm with three of its five notes;
   /// nothing plays it.
-  SE_615,
+  SE_UNUSED_KOLIMA_BRIDGE_HOP,
   /// SE_WHIRLWIND an octave lower; nothing plays it.
   SE_UNUSED_WHIRLWIND_LOW_A,
   /// SE_WHIRLWIND an octave lower, on voice 99; nothing plays it.
@@ -683,11 +683,11 @@ enum SoundId {
   SE_UNUSED_RISE_WITH_SPARKS_SHORT,
   /// One long note: Piers's uncle calling the bird that carries his letter to
   /// Lunpa in Lemuria, and the Gasp battle effect's burst.
-  SE_619,
+  SE_BIRD_CALL,
   /// SE_COIN_PAYOUT's second track alone, on voice 100; nothing plays it.
-  SE_620,
-  /// SE_620 an octave higher and slower, on voice 118; nothing plays it.
-  SE_621,
+  SE_UNUSED_COIN_PAYOUT_C,
+  /// SE_UNUSED_COIN_PAYOUT_C an octave higher and slower, on voice 118; nothing plays it.
+  SE_UNUSED_COIN_PAYOUT_HIGH,
   SE_622,
   /// Played as an actor wades through water.
   SE_WADE,

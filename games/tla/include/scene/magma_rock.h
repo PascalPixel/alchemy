@@ -66,9 +66,9 @@ void MagmaRock_RestoreCrumblingPillars(const u16 *table);
 void MagmaRock_PlaceTightrope();
 s32 Field_TryJumpForward(void);
 
-void Rubble_Scatter(s32 spread);
+void Dust_Scatter(s32 spread);
 void MagmaRock_SetLeaderCellShape(s32 heightOffset, s32 layer);
-extern u32 gRubble_ScatterScript[];
+extern u32 gDust_ScatterScript[];
 
 extern u32 gMagmaRock_DustScript[];
 

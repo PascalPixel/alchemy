@@ -1,6 +1,6 @@
 /// @file
 /// The five islets of the Eastern Sea, one scene each in this overlay, and the
-/// trade from one to the next: West Indra Islet (SceneId_IsletsDog), whose dog
+/// trade from one to the next: West Indra Islet (SceneId_WestIndraIslet), whose dog
 /// trades the Li'l Turtle for Milk (Islets_TradeWithDog); E Tundaria Islet
 /// (IsletsPrettyStone), where the log pushed into the water brings Pengulina
 /// back to Pengus for a Pretty Stone (Islets_PengusGivesPrettyStone); N Osenia
@@ -262,15 +262,15 @@ void FieldPsynergy_StopMindReadWave(void);
 const struct ActorPlacement *Scene_GetActorPlacements(void) {
   s16 scene = gMainRoutineWork.next;
 
-  if (scene == SCENE_ISLETS_DOG)
+  if (scene == SCENE_WEST_INDRA_ISLET)
     return gIslets_DogActorPlacements;
-  if (scene == SCENE_ISLETS_PRETTY_STONE)
+  if (scene == SCENE_EAST_TUNDARIA_ISLET)
     return gIslets_PrettyStoneActorPlacements;
-  if (scene == SCENE_ISLETS_COW)
+  if (scene == SCENE_NORTH_OSENIA_ISLET)
     return gIslets_CowActorPlacements;
-  if (scene == SCENE_ISLETS_PIER)
+  if (scene == SCENE_SOUTHEAST_ANGARA_ISLET)
     return gIslets_PierActorPlacements;
-  if (scene == SCENE_ISLETS_TURTLE) {
+  if (scene == SCENE_SEA_OF_TIME_ISLET) {
     if (Event_GetFlag(FLAG_GEORGE_HAS_THE_TURTLE))
       gIslets_TurtleActorPlacements[1].talkFacing = 1;
     return gIslets_TurtleActorPlacements;
@@ -308,15 +308,15 @@ void Islets_PushLogIntoWater(void) {
 const struct Trigger *Scene_GetTriggers(void) {
   s16 scene = gMainRoutineWork.next;
 
-  if (scene == SCENE_ISLETS_DOG)
+  if (scene == SCENE_WEST_INDRA_ISLET)
     return gIslets_DogTriggers;
-  if (scene == SCENE_ISLETS_PRETTY_STONE)
+  if (scene == SCENE_EAST_TUNDARIA_ISLET)
     return gIslets_PrettyStoneTriggers;
-  if (scene == SCENE_ISLETS_COW)
+  if (scene == SCENE_NORTH_OSENIA_ISLET)
     return gIslets_CowTriggers;
-  if (scene == SCENE_ISLETS_PIER)
+  if (scene == SCENE_SOUTHEAST_ANGARA_ISLET)
     return gIslets_PierTriggers;
-  if (scene == SCENE_ISLETS_TURTLE)
+  if (scene == SCENE_SEA_OF_TIME_ISLET)
     return gIslets_TurtleTriggers;
   return gIslets_Triggers;
 }
@@ -1862,15 +1862,15 @@ s32 Scene_Initialize(void) {
 
   work->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
   scene = gMainRoutineWork.next;
-  if (scene == SCENE_ISLETS_DOG)
+  if (scene == SCENE_WEST_INDRA_ISLET)
     Islets_InitializeDog();
-  else if (scene == SCENE_ISLETS_PRETTY_STONE)
+  else if (scene == SCENE_EAST_TUNDARIA_ISLET)
     Islets_InitializePrettyStone();
-  else if (scene == SCENE_ISLETS_COW)
+  else if (scene == SCENE_NORTH_OSENIA_ISLET)
     Islets_InitializeCow();
-  else if (scene == SCENE_ISLETS_PIER)
+  else if (scene == SCENE_SOUTHEAST_ANGARA_ISLET)
     Islets_InitializePier();
-  else if (scene == SCENE_ISLETS_TURTLE)
+  else if (scene == SCENE_SEA_OF_TIME_ISLET)
     Islets_InitializeTurtle();
   return 0;
 }
@@ -2818,26 +2818,26 @@ struct SceneEntrance gSceneEntrances[] = {
 
 u32 gSceneExits[] = {
     SCENE_EXITS(IsletsDog),
-    SCENE_EXIT(ISLETS_DOG_TO_WORLD_MAP, WorldMap, WORLD_MAP_FROM_ISLETS_DOG),
-    SCENE_EXIT(ISLETS_DOG_TO_CHAMPA_ROOMS, ChampaRooms, CHAMPA_ROOMS_FROM_ISLETS_DOG),
+    SCENE_EXIT(WEST_INDRA_ISLET_TO_WORLD_MAP, WorldMap, WORLD_MAP_FROM_WEST_INDRA_ISLET),
+    SCENE_EXIT(WEST_INDRA_ISLET_TO_CHAMPA_ROOMS, ChampaRooms, CHAMPA_ROOMS_FROM_WEST_INDRA_ISLET),
     SCENE_EXITS(IsletsPrettyStone),
-    SCENE_EXIT(ISLETS_PRETTY_STONE_TO_WORLD_MAP, WorldMap, WORLD_MAP_FROM_ISLETS_PRETTY_STONE),
-    SCENE_EXIT(ISLETS_PRETTY_STONE_TO_MIKASALLA_ROOMS_HOUSES, MikasallaRoomsHouses, MIKASALLA_ROOMS_HOUSES_FROM_ISLETS_PRETTY_STONE),
-    SCENE_EXIT(3, IsletsPrettyStone, ISLETS_PRETTY_STONE_FROM_WORLD_MAP),
+    SCENE_EXIT(EAST_TUNDARIA_ISLET_TO_WORLD_MAP, WorldMap, WORLD_MAP_FROM_EAST_TUNDARIA_ISLET),
+    SCENE_EXIT(EAST_TUNDARIA_ISLET_TO_MIKASALLA_ROOMS_HOUSES, MikasallaRoomsHouses, MIKASALLA_ROOMS_HOUSES_FROM_EAST_TUNDARIA_ISLET),
+    SCENE_EXIT(3, IsletsPrettyStone, EAST_TUNDARIA_ISLET_FROM_WORLD_MAP),
     SCENE_EXITS(IsletsCow),
-    SCENE_EXIT(ISLETS_COW_TO_WORLD_MAP_A, WorldMap, WORLD_MAP_FROM_ISLETS_COW_A),
-    SCENE_EXIT(ISLETS_COW_TO_WORLD_MAP_B, WorldMap, WORLD_MAP_FROM_ISLETS_COW_B),
-    SCENE_EXIT(ISLETS_COW_TO_DAILA_ROOMS_HOUSES, DailaRoomsHouses, DAILA_ROOMS_HOUSES_FROM_ISLETS_COW),
-    SCENE_EXIT(ISLETS_COW_TO_WORLD_MAP_C, WorldMap, WORLD_MAP_FROM_ISLETS_COW_C),
+    SCENE_EXIT(NORTH_OSENIA_ISLET_TO_WORLD_MAP_A, WorldMap, WORLD_MAP_FROM_NORTH_OSENIA_ISLET_A),
+    SCENE_EXIT(NORTH_OSENIA_ISLET_TO_WORLD_MAP_B, WorldMap, WORLD_MAP_FROM_NORTH_OSENIA_ISLET_B),
+    SCENE_EXIT(NORTH_OSENIA_ISLET_TO_DAILA_ROOMS_HOUSES, DailaRoomsHouses, DAILA_ROOMS_HOUSES_FROM_NORTH_OSENIA_ISLET),
+    SCENE_EXIT(NORTH_OSENIA_ISLET_TO_WORLD_MAP_C, WorldMap, WORLD_MAP_FROM_NORTH_OSENIA_ISLET_C),
     SCENE_EXITS(IsletsPier),
-    SCENE_EXIT(ISLETS_PIER_TO_WORLD_MAP, WorldMap, WORLD_MAP_FROM_ISLETS_PIER),
-    SCENE_EXIT(ISLETS_PIER_TO_CHAMPA_ROOMS, ChampaRooms, CHAMPA_ROOMS_FROM_ISLETS_PIER),
+    SCENE_EXIT(SOUTHEAST_ANGARA_ISLET_TO_WORLD_MAP, WorldMap, WORLD_MAP_FROM_SOUTHEAST_ANGARA_ISLET),
+    SCENE_EXIT(SOUTHEAST_ANGARA_ISLET_TO_CHAMPA_ROOMS, ChampaRooms, CHAMPA_ROOMS_FROM_SOUTHEAST_ANGARA_ISLET),
     SCENE_EXITS(IsletsTurtle),
-    SCENE_EXIT(ISLETS_TURTLE_TO_WORLD_MAP, WorldMap, WORLD_MAP_FROM_ISLETS_TURTLE),
-    SCENE_EXIT(ISLETS_TURTLE_TO_APOJII_ISLANDS_SHOPS, ApojiiIslandsShops, APOJII_ISLANDS_SHOPS_FROM_ISLETS_TURTLE),
+    SCENE_EXIT(SEA_OF_TIME_ISLET_TO_WORLD_MAP, WorldMap, WORLD_MAP_FROM_SEA_OF_TIME_ISLET),
+    SCENE_EXIT(SEA_OF_TIME_ISLET_TO_APOJII_ISLANDS_SHOPS, ApojiiIslandsShops, APOJII_ISLANDS_SHOPS_FROM_SEA_OF_TIME_ISLET),
     SCENE_EXIT(3, IsletsTurtle, 4),
     SCENE_EXIT(4, IsletsTurtle, 3),
-    SCENE_EXIT(ISLETS_TURTLE_TO_ISLET_CAVE_MELD, IsletCaveMeld, ISLET_CAVE_MELD_FROM_ISLETS_TURTLE),
+    SCENE_EXIT(SEA_OF_TIME_ISLET_TO_ISLET_CAVE_MELD, IsletCaveMeld, ISLET_CAVE_MELD_FROM_SEA_OF_TIME_ISLET),
     SCENE_EXITS_END,
 };
 

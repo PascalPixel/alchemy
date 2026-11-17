@@ -187,7 +187,7 @@ static inline void YampiDesert_ReturnHome(s32 mode, s32 actorId, s32 flag) {
 /// ACTOR_LIST_END.
 #define STAKE_ROW(n) STAKE(n), 0, FLAG_STAKE_POUNDED(n)
 
-/// The travelers from Madra resting by the spring (SceneId_YampiDesertOasis),
+/// The travelers from Madra resting by the spring (SceneId_YampiDesertSpring),
 /// by the rows of gYampiDesertSpringActorPlacements and
 /// gYampiDesertSpringActorPlacementsAfterMeeting, chasing Briggs to Alhafra.
 enum YampiDesertTravelersActorId {

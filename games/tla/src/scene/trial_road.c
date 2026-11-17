@@ -404,7 +404,7 @@ struct TrialRoadSprite {
 /// The halfwords of the rival's recorded path: x, z pairs, the last pair 0, 0.
 #define RIVAL_PATH_LENGTH 7200
 
-/// The tiles of the race map's picture (gTrialRoad_ProgressPicture): a
+/// The tiles of the race map's picture (gTrialRoad_RaceMapPicture): a
 /// stage of the road in blue, 16 by 32 pixels with a 16 by 8 foot below it,
 /// and the two players' 16 by 16 markers, "1P" and "2P".
 enum TrialRoadRaceMapTile {
@@ -595,7 +595,7 @@ s32 MapGrid_GetTerrainKind(s32 layer, s32 x, s32 z);
 void Actor_DisableById(s32 id);
 struct Actor *Actor_FindAtCell(s32 *position, s32 mode);
 
-void Rubble_Scatter(s32 value);
+void Dust_Scatter(s32 value);
 void MagmaRockInside_SetLeaderCellShape(s32 offset, s32 layer);
 void MagmaRockInside_SpawnDustRing(void);
 void TrialRoad_SetActorCellShape(s32 a, s32 b, s32 c);
@@ -604,7 +604,7 @@ void TrialRoad_DriftDust(union FieldObject *object);
 
 void Actor_StartIdle(struct Actor *actor);
 
-extern const u16 gTrialRoad_ProgressPalette[];
+extern const u16 gTrialRoad_RaceMapPalette[];
 
 void TrialRoad_MoveRival(void);
 void TrialRoad_SetUpPillarStage(void);
@@ -3187,11 +3187,11 @@ void TrialRoad_CrumblePillar(const void *data, s32 id) {
       if (!Event_GetFlag(flag + 1)) {
         Event_PlaySound(SE_PUSH);
         MapGrid_SetShake(1, 4, 1);
-        Rubble_Scatter(0);
+        Dust_Scatter(0);
         wait(8);
         Actor_SelectAnimation(actor, 2);
         TrialRoad_SetActorCellShape(-4, actor->layer, id);
-        Rubble_Scatter(1);
+        Dust_Scatter(1);
         wait(16);
         MapGrid_SetShake(SHAKE_KEEP, SHAKE_KEEP, 0.9);
         wait(8);
@@ -3264,7 +3264,7 @@ void TrialRoad_StepOnTrap(const u16 *table) {
         Actor_SetSpriteColor(Actor_GetById(ACTOR_MOAPA), 7);
         wait(4);
         Actor_SetSpriteColor(Actor_GetById(ACTOR_MOAPA), 0);
-        Rubble_Scatter(0);
+        Dust_Scatter(0);
         TrialRoad_TakePlaceOf(trap, partner);
         wait(1);
         GameFlag_Set(flag);
@@ -3278,11 +3278,11 @@ void TrialRoad_StepOnTrap(const u16 *table) {
           *motion = 0;
           Sound_Play(SE_PUSH);
           MapGrid_SetShake(1, 4, 1);
-          Rubble_Scatter(0);
+          Dust_Scatter(0);
           wait(8);
           Actor_SelectAnimation(partner, 2);
           MagmaRockInside_SetLeaderCellShape(-2, trap->layer);
-          Rubble_Scatter(1);
+          Dust_Scatter(1);
           wait(16);
           MagmaRockInside_SetLeaderCellShape(-2, trap->layer);
           wait(4);
@@ -3342,9 +3342,9 @@ void TrialRoad_DriftDust(union FieldObject *object) {
   to->bits = bits;
 }
 
-extern s32 gRubble_ScatterScript[];
+extern s32 gDust_ScatterScript[];
 
-void Rubble_Scatter(s32 spread) {
+void Dust_Scatter(s32 spread) {
   struct Actor *leader = Actor_GetById(gMainRoutineWork.leaderActorId);
   struct FieldEffect *effect;
   u32 frame = 0;
@@ -3365,7 +3365,7 @@ void Rubble_Scatter(s32 spread) {
       effect->collisionFlags = 0;
       Actor_SetSpriteFlags(effect, 0);
       Actor_SelectAnimation(effect, 2);
-      Actor_StartScript((struct Actor *)effect, gRubble_ScatterScript);
+      Actor_StartScript((struct Actor *)effect, gDust_ScatterScript);
       effect->scaleY = effect->scaleX = FIXED_ONE * 7 / 10;
       effect->sprite->priority = 1;
       if (spread != 0) {
@@ -3642,7 +3642,7 @@ void TrialRoad_MoveRival(void) {
     }
   }
 }
-extern const u8 gTrialRoad_ProgressPicture[];
+extern const u8 gTrialRoad_RaceMapPicture[];
 
 /// The picture's buffer: 576 bytes of EWRAM, the size VramCache_Load copies.
 static inline void *TrialRoadLink_AllocPicture(void) {
@@ -3710,11 +3710,11 @@ void TrialRoad_DrawRaceMap(void) {
   } else if (work->fade <= 1) {
     if (++work->fade == 1) {
       void *buffer;
-      Dma_Set(gTrialRoad_ProgressPalette,
+      Dma_Set(gTrialRoad_RaceMapPalette,
               (void *)&OBJ_PLTT_COLOR(RACE_MAP_PALETTE, 0),
               DMA_COPY_HALFWORDS(16), REG_DMA3);
       buffer = TrialRoadLink_AllocPicture();
-      Decompress_TaggedLz(gTrialRoad_ProgressPicture, buffer);
+      Decompress_TaggedLz(gTrialRoad_RaceMapPicture, buffer);
       VramCache_Load(*vramEntry, RACE_MAP_PICTURE_BYTES, buffer);
       Heap_Release(buffer);
     }
@@ -3802,7 +3802,7 @@ void TrialRoad_ShowRaceMap(s32 leaderId, s32 rivalId) {
   zero = 0;
   *fade = zero;
   *holdFade = zero;
-  Decompress_TaggedLz(gTrialRoad_ProgressPicture, buffer);
+  Decompress_TaggedLz(gTrialRoad_RaceMapPicture, buffer);
   *vramEntry = VramCache_FindFreeEntry();
   VramCache_Load(*vramEntry, RACE_MAP_PICTURE_BYTES, buffer);
   Task_Add(TrialRoad_DrawRaceMap, TASK_PASS_FRAME - 10);
@@ -4028,7 +4028,7 @@ u32 gTrialRoad_RightKnightLeavesScript[] = {
 #undef MARKER
 
 // clang-format off
-LATE_DATA s32 gRubble_ScatterScript[] = {
+LATE_DATA s32 gDust_ScatterScript[] = {
     SC_WAIT(33), SC_SET(SW_HOOK, 0), SC_POSITION(0, 0, 0), SC_WAIT(1),
     SC_RELEASE,
 };

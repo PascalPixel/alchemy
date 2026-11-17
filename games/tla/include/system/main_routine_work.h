@@ -188,7 +188,7 @@ struct MainRoutineWork {
   /// others. Past four, as Felix answers Ancient Lemuria's guards' "Do we have
   /// your word?", Kraden says "Sometimes, you can say the weirdest things..."
   /// to a yes and "Are you INSANE!?" to a no.
-  u8 countedAnswers;
+  u8 weirdAnswers;
   /// Nonzero makes actor 8, not leaderActorId, the one events control.
   s16 ownerOverride;
   s32 shipX;      ///< the ship's x on the world map, where it is moored

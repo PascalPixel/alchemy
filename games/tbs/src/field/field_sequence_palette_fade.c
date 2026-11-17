@@ -189,9 +189,9 @@ void PaletteFade_Build(u32 mode, u16 *src, u16 *dst, s32 half) {
           red += 10;
           green += 8;
           blue -= 7;
-          red = PaletteFade_ClampComponent(red);
-          green = PaletteFade_ClampComponent(green);
-          blue = PaletteFade_ClampComponent(blue);
+          red = PaletteFade_ClampChannel(red);
+          green = PaletteFade_ClampChannel(green);
+          blue = PaletteFade_ClampChannel(blue);
         }
         *dst++ = gColorBuffer_ChannelCurveContrast[blue];
         *dst++ = gColorBuffer_ChannelCurveLight[green];
@@ -218,9 +218,9 @@ void PaletteFade_Build(u32 mode, u16 *src, u16 *dst, s32 half) {
           blue = 26;
         green += 2;
         blue += 2;
-        red = PaletteFade_ClampComponent(red);
-        green = PaletteFade_ClampComponent(green);
-        blue = PaletteFade_ClampComponent(blue);
+        red = PaletteFade_ClampChannel(red);
+        green = PaletteFade_ClampChannel(green);
+        blue = PaletteFade_ClampChannel(blue);
         *dst++ = gColorBuffer_ChannelCurve[blue];
         *dst++ = gColorBuffer_ChannelCurve[green];
         *dst++ = gColorBuffer_ChannelCurve[red];
@@ -234,13 +234,13 @@ void PaletteFade_Build(u32 mode, u16 *src, u16 *dst, s32 half) {
         red = RGB_RED(color);
         green = RGB_GREEN(color);
         blue = RGB_BLUE(color);
-        mean = PaletteFade_ClampComponent((red + green + blue) / 3);
+        mean = PaletteFade_ClampChannel((red + green + blue) / 3);
         red = (red >> 1) + mean;
         green = (green >> 1) + mean;
         blue = (blue >> 1) + mean;
-        red = PaletteFade_ClampComponent(red);
-        green = PaletteFade_ClampComponent(green);
-        blue = PaletteFade_ClampComponent(blue);
+        red = PaletteFade_ClampChannel(red);
+        green = PaletteFade_ClampChannel(green);
+        blue = PaletteFade_ClampChannel(blue);
         dst[0] = gColorBuffer_ChannelCurveContrast[blue];
         dst[1] = gColorBuffer_ChannelCurveContrast[green];
         dst[2] = gColorBuffer_ChannelCurveContrast[red];
@@ -255,7 +255,7 @@ void PaletteFade_Build(u32 mode, u16 *src, u16 *dst, s32 half) {
         green = RGB_GREEN(color);
         blue = RGB_BLUE(color);
         red += ((green >> 3) + (blue >> 3));
-        red = PaletteFade_ClampComponent(red);
+        red = PaletteFade_ClampChannel(red);
         green -= green / 3;
         blue -= blue / 3;
         dst[0] = gColorBuffer_ChannelCurve[blue];
@@ -275,9 +275,9 @@ void PaletteFade_Build(u32 mode, u16 *src, u16 *dst, s32 half) {
         red += 6;
         green += 4;
         blue -= 6;
-        red = PaletteFade_ClampComponent(red);
-        green = PaletteFade_ClampComponent(green);
-        blue = PaletteFade_ClampComponent(blue);
+        red = PaletteFade_ClampChannel(red);
+        green = PaletteFade_ClampChannel(green);
+        blue = PaletteFade_ClampChannel(blue);
         dst[0] = gColorBuffer_ChannelCurveContrast[blue];
         dst[1] = gColorBuffer_ChannelCurveLight[green];
         dst[2] = gColorBuffer_ChannelCurve[red];
@@ -313,9 +313,9 @@ void PaletteFade_Build(u32 mode, u16 *src, u16 *dst, s32 half) {
       red = color * tintRed;
       green = color * tintGreen;
       blue = color * tintBlue;
-      red = PaletteFade_ClampShiftedComponent(red);
-      green = PaletteFade_ClampShiftedComponent(green);
-      blue = PaletteFade_ClampShiftedComponent(blue);
+      red = PaletteFade_ClampShiftedChannel(red);
+      green = PaletteFade_ClampShiftedChannel(green);
+      blue = PaletteFade_ClampShiftedChannel(blue);
       dst[0] = blue;
       dst[1] = green;
       dst[2] = red;
@@ -345,9 +345,9 @@ void PaletteFade_Build(u32 mode, u16 *src, u16 *dst, s32 half) {
                                  (s32)INTtoFIXED(tintGreen) >> 4);
       blendedBlue = Iwram_MulFX(INTtoFIXED((color * tintBlue) >> 4),
                                 (s32)INTtoFIXED(tintBlue) >> 4);
-      blendedRed = PaletteFade_ClampComponent(FIXEDtoINT((u32)blendedRed));
-      blendedGreen = PaletteFade_ClampComponent(FIXEDtoINT((u32)blendedGreen));
-      blendedBlue = PaletteFade_ClampComponent(FIXEDtoINT((u32)blendedBlue));
+      blendedRed = PaletteFade_ClampChannel(FIXEDtoINT((u32)blendedRed));
+      blendedGreen = PaletteFade_ClampChannel(FIXEDtoINT((u32)blendedGreen));
+      blendedBlue = PaletteFade_ClampChannel(FIXEDtoINT((u32)blendedBlue));
       *dst++ = gColorBuffer_ChannelCurve[blendedBlue];
       *dst++ = gColorBuffer_ChannelCurve[blendedGreen];
       *dst++ = gColorBuffer_ChannelCurve[blendedRed];
@@ -434,7 +434,7 @@ void PaletteFade_StartInterpolation(s32 frames) {
 }
 
 /// Clamps a 5-bit colour channel to 0 to 31.
-s32 PaletteFade_ClampComponent(s32 value) {
+s32 PaletteFade_ClampChannel(s32 value) {
   if (value > RGB_LEVEL_MAX)
     return RGB_LEVEL_MAX;
   if (value < 0)
@@ -444,7 +444,7 @@ s32 PaletteFade_ClampComponent(s32 value) {
 
 /// Clamps a colour channel in its place (bits 14..10) to at most the
 /// brightest level.
-s32 PaletteFade_ClampShiftedComponent(s32 value) {
+s32 PaletteFade_ClampShiftedChannel(s32 value) {
   if (value > RGB_LEVEL_MAX << CHANNEL_SHIFT)
     value = RGB_LEVEL_MAX << CHANNEL_SHIFT;
   return value;

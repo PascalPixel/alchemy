@@ -595,7 +595,7 @@ void MainRoutineWork_InitializeDefaults(void) {
   gMainRoutineWork.coins = NEW_GAME_COINS;
   gMainRoutineWork.transferredCoins = 0;
   gMainRoutineWork.forgeItem = 0;
-  gMainRoutineWork.countedAnswers = 0;
+  gMainRoutineWork.weirdAnswers = 0;
   gMainRoutineWork.messageSpeed = 1;
   gMainRoutineWork.speech = 1;
   gMainRoutineWork.unusedAfterSpeech = 1;

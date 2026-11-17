@@ -620,7 +620,7 @@ void LemuriaRooms_LeavePiersToMourn(s32 a0, s32 a1, s32 a2) {
   Actor_ShowEmote(ACTOR_PIERS_UNCLE, EMOTE_IN_FRONT | EMOTE_SMILE, 50);
   Actor_SetAnimation(ACTOR_PIERS_UNCLE, 3);
   FieldEvent_Wait(10);
-  Event_PlaySound(SE_619);
+  Event_PlaySound(SE_BIRD_CALL);
   FieldEvent_Wait(60);
   FieldActor_StartRepeatedMotion(ACTOR_BIRD, 3);
   Actor_SetAttachedEffect(ACTOR_BIRD,

@@ -142,6 +142,15 @@ enum ValeCaveLogsActorId {
 /// (ValeCave_KiteKeepsAway), one for each of gValeCave_WalkTargets.
 enum ValeCaveCellBehavior { CELL_BEHAVIOR_VALE_CAVE_FIRST_KITE_ROUTE = 45 };
 
+/// The columns from which Move sinks the second room's western and eastern
+/// crates into the water.
+#define WEST_CRATES_SINK_COLUMN 23
+#define EAST_CRATES_SINK_COLUMN 27
+/// The third room's ledge edge, from which the western log rolls off.
+#define LEDGE_EDGE_COLUMN 17
+/// The third room's southern row, where the southern log can stop.
+#define SOUTH_LOG_SOUTH_ROW 20
+
 /// The flag of Kite, set once it is caught.
 #define FLAG_KITE (FLAG_DJINNI(DJINNI_KITE))
 
@@ -181,7 +190,7 @@ static void ValeCave_ApplyEntryState(void);
 /// northern row.
 #define FLAG_VALE_CAVE_SOUTH_LOG_ON_NORTH_ROW FLAG_SCENE_TEMP_04
 /// In the third room, the southern log has been pushed north and stopped on the
-/// southern row (row 20).
+/// southern row (SOUTH_LOG_SOUTH_ROW).
 #define FLAG_VALE_CAVE_SOUTH_LOG_ON_SOUTH_ROW FLAG_SCENE_TEMP_05
 
 /// In Vale Cave's second room, talking to Kite once Halt has stopped it has
@@ -288,14 +297,15 @@ ValeCave_SinkActorWithParticles(s32 actorId, s32 baseX, s32 baseZ,
 }
 
 /// In Vale Cave's second room, Move on the western crates sinks them into the
-/// water once they are at column 23.
+/// water once they are at WEST_CRATES_SINK_COLUMN.
 static void ValeCave_MoveWestCratesIntoWater(void) {
   struct EffectOptions options;
   struct Actor *leftEffect;
   struct Actor *rightEffect;
 
   Event_Start();
-  if (FIELD_CELL(Actor_Get(ACTOR_WEST_CRATES)->x.fixed) == 23) {
+  if (FIELD_CELL(Actor_Get(ACTOR_WEST_CRATES)->x.fixed) ==
+      WEST_CRATES_SINK_COLUMN) {
     Actor_MoveToAndWait(ACTOR_PARTY_LEADER, 360, 664);
     Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTHEAST, 10);
     Actor_Get(ACTOR_WEST_CRATES)->x.fixed += toFIXED(2);
@@ -326,14 +336,15 @@ static void ValeCave_MoveWestCratesIntoWater(void) {
 }
 
 /// In Vale Cave's second room, Move on the eastern crates sinks them into the
-/// water once they are at column 27.
+/// water once they are at EAST_CRATES_SINK_COLUMN.
 static void ValeCave_MoveEastCratesIntoWater(void) {
   struct EffectOptions options;
   struct Actor *leftEffect;
   struct Actor *rightEffect;
 
   Event_Start();
-  if (FIELD_CELL(Actor_Get(ACTOR_EAST_CRATES)->x.fixed) == 27) {
+  if (FIELD_CELL(Actor_Get(ACTOR_EAST_CRATES)->x.fixed) ==
+      EAST_CRATES_SINK_COLUMN) {
     leftEffect = Actor_PrepareFX(
         Actor_Get(ACTOR_EAST_CRATES)->x.fixed - toFIXED(8), 0,
         Actor_Get(ACTOR_EAST_CRATES)->z.fixed + toFIXED(52), SPRITE_CRATES);
@@ -401,7 +412,7 @@ static s32 ValeCave_HopDownLedge(s32 unusedArgument) {
     leader->speedLimit = toFIXED(3);
     leader->acceleration = toFIXED(2);
     leader->velocityY = toFIXED(4);
-    leader->motionFlags &= 126;
+    leader->motionFlags &= ACTOR_JUMP_KEEPS_MOTION;
     Actor_SetSpriteFlags(leader, 0);
     Actor_MoveToAndWait(ACTOR_PARTY_LEADER, landingPosition[0].part[0].integer,
                         landingPosition[2].part[0].integer);
@@ -498,8 +509,8 @@ static void ValeCave_PushLogOverEdge(void) {
   Event_Start();
   if (PushedActor_FindClearPosition(&probe) != 0) {
     Actor_MoveAndRedraw(probe);
-    // At the ledge's edge (column 17) the log slides west and drops.
-    if (FIELD_CELL(probe.position.x) == 17) {
+    // At the ledge's edge the log slides west and drops.
+    if (FIELD_CELL(probe.position.x) == LEDGE_EDGE_COLUMN) {
       Actor_SetAnimation(probe.actorSlot, 3);
       Actor_Get(probe.actorSlot)->motionFlags = 0;
       Actor_Get(probe.actorSlot)->bounce = 0;
@@ -584,7 +595,7 @@ static void ValeCave_PushLogNorth(void) {
     Actor_Get(ACTOR_SOUTH_LOG)->priorityFlags = ACTOR_PRIORITY_UNDERFOOT;
     PushedActor_FillGridAttributeRectangle(
         0, 13, (FIELD_CELL(probe.position.z)) - 1, 4, 2, 0);
-    if (FIELD_CELL(probe.position.z) == 20) {
+    if (FIELD_CELL(probe.position.z) == SOUTH_LOG_SOUTH_ROW) {
       GameFlag_Set(FLAG_VALE_CAVE_SOUTH_LOG_ON_SOUTH_ROW);
     } else {
       GameFlag_Set(FLAG_VALE_CAVE_SOUTH_LOG_ON_NORTH_ROW);

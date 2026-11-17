@@ -953,6 +953,22 @@ typedef s32 (*TerrainHeightFn)(u8 *heights, s32 x, s32 z);
 
 extern TerrainHeightFn gMapGrid_TerrainHeightFunctions[16];
 
+/// The ground height the shape at code gives at pixel (x, z) of its cell, in
+/// 16.16 pixels: its terrain kind's height function on its samples.
+// UB: the kind byte is read, and the samples after it passed, in one
+// unsequenced expression.
+#ifdef UBFIX
+#define SHAPE_HEIGHT(code, x, z)                                               \
+  gMapGrid_TerrainHeightFunctions[(code)[0] & MAPGRID_SHAPE_KIND_MASK](        \
+      (code) + 1, (x) & (MAPGRID_CELL_PIXELS - 1),                             \
+      (z) & (MAPGRID_CELL_PIXELS - 1))
+#else
+#define SHAPE_HEIGHT(code, x, z)                                               \
+  gMapGrid_TerrainHeightFunctions[*(code)++ & MAPGRID_SHAPE_KIND_MASK](        \
+      (code), (x) & (MAPGRID_CELL_PIXELS - 1),                                 \
+      (z) & (MAPGRID_CELL_PIXELS - 1))
+#endif
+
 /// Returns the ground height of a layer at (x, z) in 16.16 pixels, as The
 /// Broken Seal's: the height function of the cell's terrain kind applied to
 /// its samples.
@@ -969,8 +985,7 @@ FIXED MapGrid_GetTerrainHeight(s32 layer, FIXED x, FIXED z) {
     grid = gMapShapeGrid;
   grid += x / MAPGRID_CELL_PIXELS + (z / MAPGRID_CELL_PIXELS << 7);
   code = Ram_MapCollision + *grid * 4;
-  return gMapGrid_TerrainHeightFunctions[*code++ & MAPGRID_SHAPE_KIND_MASK](
-      code, x & (MAPGRID_CELL_PIXELS - 1), z & (MAPGRID_CELL_PIXELS - 1));
+  return SHAPE_HEIGHT(code, x, z);
 }
 
 /// Returns the terrain kind of a layer's cell at (x, z) in 16.16 pixels, as
@@ -1123,10 +1138,7 @@ FIXED MapGrid_GetTerrainHeightAbove(FIXED px, FIXED pz, s32 layer, FIXED base) {
     shapes = gMapShapeGrid;
   code = Ram_MapCollision +
          shapes[x / MAPGRID_CELL_PIXELS + (z / MAPGRID_CELL_PIXELS << 7)] * 4;
-  return gMapGrid_TerrainHeightFunctions[*code++ & MAPGRID_SHAPE_KIND_MASK](
-             code, x & (MAPGRID_CELL_PIXELS - 1),
-             z & (MAPGRID_CELL_PIXELS - 1)) -
-         base;
+  return SHAPE_HEIGHT(code, x, z) - base;
 }
 
 /// How the ground at (px, pz) (16.16 pixels) on the given layer stands to
@@ -1162,10 +1174,7 @@ s32 MapGrid_CheckCollisionAt(FIXED px, FIXED pz, s32 layer, s32 height) {
   if (cells[2] == CELL_BEHAVIOR_WALL)
     return 2;
   code = Ram_MapCollision + *shapes * 4;
-  rise =
-      gMapGrid_TerrainHeightFunctions[*code++ & MAPGRID_SHAPE_KIND_MASK](
-          code, x & (MAPGRID_CELL_PIXELS - 1), z & (MAPGRID_CELL_PIXELS - 1)) -
-      height;
+  rise = SHAPE_HEIGHT(code, x, z) - height;
   if (rise > toFIXED(8))
     return 1;
   if (rise < -toFIXED(12))
@@ -1204,10 +1213,7 @@ s32 MapGrid_CheckCollision(struct Actor *actor,
   if (cells[2] == CELL_BEHAVIOR_WALL)
     return 2;
   code = Ram_MapCollision + *shapes * 4;
-  rise =
-      gMapGrid_TerrainHeightFunctions[*code++ & MAPGRID_SHAPE_KIND_MASK](
-          code, x & (MAPGRID_CELL_PIXELS - 1), z & (MAPGRID_CELL_PIXELS - 1)) -
-      actor->groundHeight;
+  rise = SHAPE_HEIGHT(code, x, z) - actor->groundHeight;
   if (rise > toFIXED(8))
     return 1;
   if (rise < -toFIXED(12))
@@ -1245,10 +1251,7 @@ s32 MapGrid_CheckCollisionAbove(struct Actor *actor,
   if (cells[2] == CELL_BEHAVIOR_WALL)
     return 2;
   code = Ram_MapCollision + *shapes * 4;
-  if (gMapGrid_TerrainHeightFunctions[*code++ & MAPGRID_SHAPE_KIND_MASK](
-          code, x & (MAPGRID_CELL_PIXELS - 1), z & (MAPGRID_CELL_PIXELS - 1)) -
-          actor->y.fixed >
-      toFIXED(8))
+  if (SHAPE_HEIGHT(code, x, z) - actor->y.fixed > toFIXED(8))
     return 1;
   return 0;
 }

@@ -56,11 +56,11 @@ other, and that scene's exit b leads back to entrance a, so in each scene the
 entrance and the exit of one number are one door and share its name. An entrance no exit reaches, or a way between rooms of one map,
 keeps its number. An entrance can also give a box the camera must stay
 inside, which is how a room drawn beside others on one map stays out of their
-sight. The house on the pier's islet, entrance 8 of Champa's houses, is one:
+sight. The tent on an islet, entrance 8 of Champa's rooms, is one:
 
 ```c
-{ENTRANCE_PIER_ISLET_HOUSE, CONDITION_ALWAYS, 416, 0, 664, FACING_NORTH, 0,
- 288, 536, 528, 696, 0},
+{CHAMPA_ROOMS_FROM_SOUTHEAST_ANGARA_ISLET, CONDITION_ALWAYS, 416, 0, 664,
+ FACING_NORTH, 0, 288, 536, 528, 696, 0},
 ```
 
 ### Exits

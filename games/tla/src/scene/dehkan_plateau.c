@@ -360,19 +360,17 @@ void DehkanPlateau_SetActorsHidden(s32 show) {
 
   if (scene == SCENE_DEHKAN_PLATEAU_FULL_METAL_VEST_CHEST)
     Actors_SetDrawn(show, ACTOR_FULL_METAL_VEST_CHEST_FIRST_COVER,
-                     FULL_METAL_VEST_CHEST_COVER_COUNT);
+                    FULL_METAL_VEST_CHEST_COVER_COUNT);
   else if (scene == SCENE_DEHKAN_PLATEAU_THEMIS_AXE_CHEST)
     Actors_SetDrawn(show, ACTOR_THEMIS_AXE_CHEST_FIRST_COVER,
-                     THEMIS_AXE_CHEST_COVER_COUNT);
+                    THEMIS_AXE_CHEST_COVER_COUNT);
   else if (scene == SCENE_DEHKAN_PLATEAU_TIGHTROPES)
-    Actors_SetDrawn(show, ACTOR_TIGHTROPES_FIRST_COVER,
-                     TIGHTROPES_COVER_COUNT);
+    Actors_SetDrawn(show, ACTOR_TIGHTROPES_FIRST_COVER, TIGHTROPES_COVER_COUNT);
   else if (scene == SCENE_DEHKAN_PLATEAU_MINT_CHEST)
-    Actors_SetDrawn(show, ACTOR_MINT_CHEST_FIRST_COVER,
-                     MINT_CHEST_COVER_COUNT);
+    Actors_SetDrawn(show, ACTOR_MINT_CHEST_FIRST_COVER, MINT_CHEST_COVER_COUNT);
   else if (scene == SCENE_DEHKAN_PLATEAU_CANNON)
     Actors_SetDrawn(show, ACTOR_CANNON_ROOM_FIRST_COVER,
-                     CANNON_ROOM_COVER_COUNT);
+                    CANNON_ROOM_COVER_COUNT);
 }
 
 /// Stepping behind the scenery: the room's covers change, and the flag

@@ -1879,7 +1879,7 @@ const u16 gHaures_BandMesh[] = {256,  2,    0, 63, 7936, 0, 769, 2, 63,
 /// The burst's mesh: each triangle's three corners and their texture
 /// coordinates.
 const u16 gCatastrophe_ForkMesh[] = {256,   2,     0, 31, 12032, 0, 769, 2, 31,
-                                      12063, 12032, 0, 0,  0,     0, 0,   0, 0};
+                                     12063, 12032, 0, 0,  0,     0, 0,   0, 0};
 
 /// A square's mesh: each triangle's three corners and their texture
 /// coordinates.

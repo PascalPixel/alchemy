@@ -933,7 +933,8 @@ void SelectionMenu_RedrawIcon(struct SelectionMenuWork *state, u32 rowIndex) {
 /// Redraws the command icon at row place rowIndex and loads its large icon.
 /// The small icon is drawn the same as SelectionMenu_RedrawIcon draws it;
 /// the highlight is the large icon.
-void SelectionMenu_HighlightIcon(struct SelectionMenuWork *state, u32 rowIndex) {
+void SelectionMenu_HighlightIcon(struct SelectionMenuWork *state,
+                                 u32 rowIndex) {
   struct SelectionNode *node = state->head;
   u32 res;
   u32 value;

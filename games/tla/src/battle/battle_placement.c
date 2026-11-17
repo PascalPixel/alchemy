@@ -495,8 +495,7 @@ void BattlePlacement_LayoutEnemies(u16 *actorIds, s32 count, s32 *xPositions,
             enemy == ENEMY_SERPENT || enemy == ENEMY_SERPENT_ONE_BEAM ||
             enemy == ENEMY_SERPENT_TWO_BEAMS ||
             enemy == ENEMY_SERPENT_THREE_BEAMS ||
-            enemy == ENEMY_SERPENT_FOUR_BEAMS ||
-            enemy == ENEMY_SERPENT_6 ||
+            enemy == ENEMY_SERPENT_FOUR_BEAMS || enemy == ENEMY_SERPENT_6 ||
             enemy == ENEMY_SERPENT_7) {
           xPositions[index] = ENEMY_COLUMN_NEAR_X;
         }

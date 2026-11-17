@@ -1,14 +1,14 @@
 /// @file
 /// The five islets of the Eastern Sea, one scene each in this overlay, and the
-/// trade from one to the next: West Indra Islet (SceneId_WestIndraIslet), whose dog
-/// trades the Li'l Turtle for Milk (Islets_TradeWithDog); E Tundaria Islet
-/// (IsletsPrettyStone), where the log pushed into the water brings Pengulina
+/// trade from one to the next: West Indra Islet (SceneId_WestIndraIslet), whose
+/// dog trades the Li'l Turtle for Milk (Islets_TradeWithDog); E Tundaria Islet
+/// (EastTundariaIslet), where the log pushed into the water brings Pengulina
 /// back to Pengus for a Pretty Stone (Islets_PengusGivesPrettyStone); N Osenia
-/// Islet (IsletsCow), whose cow trades Milk for the Red Cloth
-/// (Islets_TradeWithCow); SE Angara Islet (IsletsPier), whose bird trades the
-/// Red Cloth for the Pretty Stone (Islets_TradeWithBird); and the Sea of Time
-/// Islet (IsletsTurtle), where Lonesome George takes the Li'l Turtle and
-/// carries the party to his secret spot (Islets_GiveTurtle,
+/// Islet (NorthOseniaIslet), whose cow trades Milk for the Red Cloth
+/// (Islets_TradeWithCow); SE Angara Islet (SoutheastAngaraIslet), whose bird
+/// trades the Red Cloth for the Pretty Stone (Islets_TradeWithBird); and the
+/// Sea of Time Islet (SeaOfTimeIslet), where Lonesome George takes the Li'l
+/// Turtle and carries the party to his secret spot (Islets_GiveTurtle,
 /// Islets_ArriveAtSecretSpot).
 #include "system/task.h"
 #include "scene/event_layer.h"
@@ -2817,26 +2817,26 @@ struct SceneEntrance gSceneEntrances[] = {
 };
 
 u32 gSceneExits[] = {
-    SCENE_EXITS(IsletsDog),
+    SCENE_EXITS(WestIndraIslet),
     SCENE_EXIT(WEST_INDRA_ISLET_TO_WORLD_MAP, WorldMap, WORLD_MAP_FROM_WEST_INDRA_ISLET),
     SCENE_EXIT(WEST_INDRA_ISLET_TO_CHAMPA_ROOMS, ChampaRooms, CHAMPA_ROOMS_FROM_WEST_INDRA_ISLET),
-    SCENE_EXITS(IsletsPrettyStone),
+    SCENE_EXITS(EastTundariaIslet),
     SCENE_EXIT(EAST_TUNDARIA_ISLET_TO_WORLD_MAP, WorldMap, WORLD_MAP_FROM_EAST_TUNDARIA_ISLET),
     SCENE_EXIT(EAST_TUNDARIA_ISLET_TO_MIKASALLA_ROOMS_HOUSES, MikasallaRoomsHouses, MIKASALLA_ROOMS_HOUSES_FROM_EAST_TUNDARIA_ISLET),
-    SCENE_EXIT(3, IsletsPrettyStone, EAST_TUNDARIA_ISLET_FROM_WORLD_MAP),
-    SCENE_EXITS(IsletsCow),
+    SCENE_EXIT(3, EastTundariaIslet, EAST_TUNDARIA_ISLET_FROM_WORLD_MAP),
+    SCENE_EXITS(NorthOseniaIslet),
     SCENE_EXIT(NORTH_OSENIA_ISLET_TO_WORLD_MAP_A, WorldMap, WORLD_MAP_FROM_NORTH_OSENIA_ISLET_A),
     SCENE_EXIT(NORTH_OSENIA_ISLET_TO_WORLD_MAP_B, WorldMap, WORLD_MAP_FROM_NORTH_OSENIA_ISLET_B),
     SCENE_EXIT(NORTH_OSENIA_ISLET_TO_DAILA_ROOMS_HOUSES, DailaRoomsHouses, DAILA_ROOMS_HOUSES_FROM_NORTH_OSENIA_ISLET),
     SCENE_EXIT(NORTH_OSENIA_ISLET_TO_WORLD_MAP_C, WorldMap, WORLD_MAP_FROM_NORTH_OSENIA_ISLET_C),
-    SCENE_EXITS(IsletsPier),
+    SCENE_EXITS(SoutheastAngaraIslet),
     SCENE_EXIT(SOUTHEAST_ANGARA_ISLET_TO_WORLD_MAP, WorldMap, WORLD_MAP_FROM_SOUTHEAST_ANGARA_ISLET),
     SCENE_EXIT(SOUTHEAST_ANGARA_ISLET_TO_CHAMPA_ROOMS, ChampaRooms, CHAMPA_ROOMS_FROM_SOUTHEAST_ANGARA_ISLET),
-    SCENE_EXITS(IsletsTurtle),
+    SCENE_EXITS(SeaOfTimeIslet),
     SCENE_EXIT(SEA_OF_TIME_ISLET_TO_WORLD_MAP, WorldMap, WORLD_MAP_FROM_SEA_OF_TIME_ISLET),
     SCENE_EXIT(SEA_OF_TIME_ISLET_TO_APOJII_ISLANDS_SHOPS, ApojiiIslandsShops, APOJII_ISLANDS_SHOPS_FROM_SEA_OF_TIME_ISLET),
-    SCENE_EXIT(3, IsletsTurtle, 4),
-    SCENE_EXIT(4, IsletsTurtle, 3),
+    SCENE_EXIT(3, SeaOfTimeIslet, 4),
+    SCENE_EXIT(4, SeaOfTimeIslet, 3),
     SCENE_EXIT(SEA_OF_TIME_ISLET_TO_ISLET_CAVE_MELD, IsletCaveMeld, ISLET_CAVE_MELD_FROM_SEA_OF_TIME_ISLET),
     SCENE_EXITS_END,
 };

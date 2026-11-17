@@ -571,7 +571,8 @@ enum SoundId {
   /// Time's waves starting and the sea opening.
   SE_RISE_WITH_SPARKS_LOW,
   SE_558,
-  /// SE_UNUSED_COIN_PAYOUT_C an octave lower on SE_ICE_CRACK's voice, with four notes more;
+  /// SE_UNUSED_COIN_PAYOUT_C an octave lower on SE_ICE_CRACK's voice, with four
+  /// notes more;
   /// nothing plays it.
   SE_UNUSED_COIN_PAYOUT_LOW,
   /// A doorway of Mars Lighthouse's dragon-statue room flashing as it is
@@ -668,7 +669,8 @@ enum SoundId {
   SE_SPIN_AWAY,
   /// SE_SPIN_AWAY's first track alone, two octaves higher; nothing plays it.
   SE_UNUSED_SPIN_AWAY_A,
-  /// SE_UNUSED_SPIN_AWAY_A's rhythm on its voice, six of its eleven notes changed, at tempo
+  /// SE_UNUSED_SPIN_AWAY_A's rhythm on its voice, six of its eleven notes
+  /// changed, at tempo
   /// 32; nothing plays it.
   SE_UNUSED_SPIN_AWAY_C,
   /// SE_KOLIMA_BRIDGE_HOP's voice and rhythm with three of its five notes;
@@ -686,7 +688,8 @@ enum SoundId {
   SE_BIRD_CALL,
   /// SE_COIN_PAYOUT's second track alone, on voice 100; nothing plays it.
   SE_UNUSED_COIN_PAYOUT_C,
-  /// SE_UNUSED_COIN_PAYOUT_C an octave higher and slower, on voice 118; nothing plays it.
+  /// SE_UNUSED_COIN_PAYOUT_C an octave higher and slower, on voice 118; nothing
+  /// plays it.
   SE_UNUSED_COIN_PAYOUT_HIGH,
   SE_622,
   /// Played as an actor wades through water.

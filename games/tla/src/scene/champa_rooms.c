@@ -55,7 +55,8 @@ enum ChampaRoomsActorId {
 };
 
 /// The ways into the islet houses this overlay also holds: from the islet with
-/// the pier (IsletsPier) and from the islet with the dog (IsletsDog).
+/// the pier (SoutheastAngaraIslet) and from the islet with the dog
+/// (WestIndraIslet).
 enum ChampaRoomsEntrance {
   ENTRANCE_PIER_ISLET_HOUSE = 8,
   ENTRANCE_DOG_ISLET_HOUSE = 9
@@ -147,9 +148,9 @@ u32 gSceneExits[] = {
                       CHAMPA_FROM_CHAMPA_ROOMS_NORTHEAST, EXIT_FLAG_NONE),
     SCENE_EXIT_UNLESS(CHAMPA_ROOMS_TO_CHAMPA_EAST, Champa,
                       CHAMPA_FROM_CHAMPA_ROOMS_EAST, EXIT_FLAG_NONE),
-    SCENE_EXIT(CHAMPA_ROOMS_TO_SOUTHEAST_ANGARA_ISLET, IsletsPier,
+    SCENE_EXIT(CHAMPA_ROOMS_TO_SOUTHEAST_ANGARA_ISLET, SoutheastAngaraIslet,
                SOUTHEAST_ANGARA_ISLET_FROM_CHAMPA_ROOMS),
-    SCENE_EXIT(CHAMPA_ROOMS_TO_WEST_INDRA_ISLET, IsletsDog,
+    SCENE_EXIT(CHAMPA_ROOMS_TO_WEST_INDRA_ISLET, WestIndraIslet,
                WEST_INDRA_ISLET_FROM_CHAMPA_ROOMS),
     SCENE_EXITS_END,
 };

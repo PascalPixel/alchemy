@@ -418,7 +418,7 @@ u32 gSceneExits[] = {
     SCENE_EXIT_UNLESS(2, Mikasalla, 2, EXIT_FLAG_NONE),
     SCENE_EXIT_UNLESS(3, Mikasalla, 3, EXIT_FLAG_NONE),
     SCENE_EXIT_UNLESS(4, Mikasalla, 4, EXIT_FLAG_NONE),
-    SCENE_EXIT_UNLESS(5, IsletsPrettyStone, 2, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(5, EastTundariaIslet, 2, EXIT_FLAG_NONE),
     SCENE_EXITS(MikasallaRoomsSanctum),
     SCENE_EXIT_UNLESS(1, Mikasalla, 5, EXIT_FLAG_NONE),
     SCENE_EXIT_UNLESS(5, ApojiiIslands, 9, EXIT_FLAG_NONE),

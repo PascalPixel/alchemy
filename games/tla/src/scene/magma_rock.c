@@ -417,8 +417,8 @@ void MagmaRock_StartPushingPillar(void) {
   } else if (gMainRoutineWork.next == SCENE_MAGMA_ROCK_SALAMANDER_TAIL_CHEST) {
     if (gMainRoutineWork.entrance <= SALAMANDER_TAIL_LOWER_LAST_ENTRANCE) {
       Actor_LiftTargetBlock(gMagmaRock_SalamanderTailLowerPillars);
-      // Unlike the rest of the scene, these tests take entrance 8 for the
-      // upper level and entrance 12 for the top.
+      // Unlike the rest of the scene, these tests take the middle and upper
+      // levels' last entrances for the level above.
     } else if (gMainRoutineWork.entrance <
                SALAMANDER_TAIL_MIDDLE_LAST_ENTRANCE) {
       Actor_LiftTargetBlock(gMagmaRock_SalamanderTailMiddlePillars);

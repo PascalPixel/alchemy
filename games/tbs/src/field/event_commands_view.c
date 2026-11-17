@@ -4,9 +4,16 @@
 
 #include "event_commands_internal.h"
 
-/// The high byte of the first sprite part's OAM attribute 2.
-/// Bits 2 and 3 are its priority.
+/// The high byte of the first sprite part's OAM attribute 2, which holds its
+/// priority and palette.
 #define SPRITE_ATTR2_HIGH(sprite) (((u8 *)(sprite))[9])
+/// The priority's bits in that byte.
+#define ATTR2_HIGH_PRIORITY_MASK (OBJ_PRIORITY(3) >> 8)
+
+/// Actor_ShowEmoteById's emote: the bubble (enum Emote) in the bits below its
+/// flags (EMOTE_IN_FRONT), of which the low four pick its animation.
+#define EMOTE_BUBBLE_MASK (EMOTE_IN_FRONT - 1)
+#define EMOTE_ANIMATION_MASK 15
 
 /// The event command "set view bounds": the camera keeps the screen inside
 /// these map coordinates (FieldCamera_MoveWithinMapBounds).
@@ -109,12 +116,12 @@ UNREAD_RESULT FieldEffect_CopyWatchedActorPosition(struct Actor *actor) {
 #endif
 }
 
-/// The event command "actor show emote": shows an emote bubble (sprite 21) over
-/// an actor, then waits the given number of frames.
+/// The event command "actor show emote": shows an emote bubble (SPRITE_EMOTE)
+/// over an actor, then waits the given number of frames.
 void Actor_ShowEmoteById(s32 actorId, s32 emote, s32 frames) {
   struct Actor *target;
 
-  if ((emote & 0xff) == EMOTE_LIGHT_BULB) {
+  if ((emote & EMOTE_BUBBLE_MASK) == EMOTE_LIGHT_BULB) {
     Sound_PlayFar(SE_CHIME);
   }
 
@@ -127,7 +134,7 @@ void Actor_ShowEmoteById(s32 actorId, s32 emote, s32 frames) {
       struct Sprite *sprite;
 
       Actor_StartScriptFar(bubble, gFieldEffect_WatchedActorScript);
-      Actor_SelectAnimationFar(bubble, emote & 15);
+      Actor_SelectAnimationFar(bubble, emote & EMOTE_ANIMATION_MASK);
       bubble->motionFlags = 0;
       bubble->timer = 0;
       bubble->userValue = actorId;
@@ -141,21 +148,21 @@ void Actor_ShowEmoteById(s32 actorId, s32 emote, s32 frames) {
       sprite->flags = 0;
       bubble->watchedActor = target;
 
-      // Replace the bubble's priority bits (2 and 3) with 1 or the
-      // actor's.
+      // The bubble takes sprite priority 1, or the actor's: -(m + 1) is ~m,
+      // the bits besides the priority.
       if ((emote & EMOTE_IN_FRONT) != 0) {
-        s32 mask = 13;
+        s32 mask = ATTR2_HIGH_PRIORITY_MASK + 1;
         u8 attr = SPRITE_ATTR2_HIGH(sprite);
 
         mask = -mask;
         mask &= attr;
-        mask |= 4;
+        mask |= OBJ_PRIORITY(1) >> 8;
         SPRITE_ATTR2_HIGH(sprite) = mask;
       } else {
-        s32 priority = 12;
+        s32 priority = ATTR2_HIGH_PRIORITY_MASK;
         u8 src = SPRITE_ATTR2_HIGH(target->sprite);
         u8 dst;
-        s32 mask = 13;
+        s32 mask = ATTR2_HIGH_PRIORITY_MASK + 1;
 
         priority &= src;
         dst = SPRITE_ATTR2_HIGH(sprite);
@@ -224,20 +231,21 @@ void FieldEffect_SetAttached(s32 actorId, s32 flags) {
   visual->flags = 0;
   effect->watchedActor = actor;
 
-  // Replace the effect's priority bits (2 and 3) with 1 or the actor's.
+  // The effect takes sprite priority 1, or the actor's, as an emote bubble
+  // does.
   if (flags & ATTACHED_EFFECT_IN_FRONT) {
-    s32 mask = 13;
+    s32 mask = ATTR2_HIGH_PRIORITY_MASK + 1;
     u8 attr = SPRITE_ATTR2_HIGH(visual);
 
     mask = -mask;
     mask &= attr;
-    mask |= 4;
+    mask |= OBJ_PRIORITY(1) >> 8;
     SPRITE_ATTR2_HIGH(visual) = mask;
   } else {
-    s32 priority = 12;
+    s32 priority = ATTR2_HIGH_PRIORITY_MASK;
     u8 src = SPRITE_ATTR2_HIGH(actor->sprite);
     u8 dst;
-    s32 mask = 13;
+    s32 mask = ATTR2_HIGH_PRIORITY_MASK + 1;
 
     priority &= src;
     dst = SPRITE_ATTR2_HIGH(visual);
@@ -249,3 +257,6 @@ void FieldEffect_SetAttached(s32 actorId, s32 flags) {
 }
 
 #undef SPRITE_ATTR2_HIGH
+#undef ATTR2_HIGH_PRIORITY_MASK
+#undef EMOTE_BUBBLE_MASK
+#undef EMOTE_ANIMATION_MASK

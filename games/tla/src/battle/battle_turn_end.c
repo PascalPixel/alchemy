@@ -9,6 +9,20 @@
 #include "gamepak/far_call/game.h"
 #include "battle/presentation.h"
 
+/// How much likelier, in percent, each lowered stat and status is to end early
+/// (BattleUnit_RollCounterEarlyEnd's bias).
+enum EarlyEndBias {
+  EARLY_END_ATTACK_DOWN = 30,
+  EARLY_END_DEFENSE_DOWN = 20,
+  EARLY_END_RESISTANCE_DOWN = 20,
+  EARLY_END_DELUSION = 30,
+  EARLY_END_CONFUSION = 60,
+  EARLY_END_CHARM = 70,
+  EARLY_END_STUN = 40,
+  EARLY_END_SLEEP = 50,
+  EARLY_END_BIND = 30 ///< Bind's seal, once Luff's is gone
+};
+
 /// Rolls whether a stat change or status with five turns or fewer left ends
 /// early, at `luck * 3 - turns * 5 + bias` percent, and returns 1 when it does.
 s32 BattleUnit_RollCounterEarlyEnd(s32 unitId, s32 turns, s32 bias) {
@@ -36,7 +50,8 @@ s32 BattleUnit_CountDownAttackStage(s32 unitId) {
       return 1;
     }
     if (unit->attackStage < 0) {
-      if (BattleUnit_RollCounterEarlyEnd(unitId, unit->attackTurns, 30) != 0) {
+      if (BattleUnit_RollCounterEarlyEnd(unitId, unit->attackTurns,
+                                         EARLY_END_ATTACK_DOWN) != 0) {
         unit->attackStage = 0;
         unit->attackTurns = 0;
         return 1;
@@ -58,7 +73,8 @@ s32 BattleUnit_CountDownDefenseStage(s32 unitId) {
       return 1;
     }
     if (state->defenseStage < 0 &&
-        BattleUnit_RollCounterEarlyEnd(unitId, state->defenseTurns, 20) != 0) {
+        BattleUnit_RollCounterEarlyEnd(unitId, state->defenseTurns,
+                                       EARLY_END_DEFENSE_DOWN) != 0) {
       state->defenseStage = 0;
       state->defenseTurns = 0;
       return 1;
@@ -79,8 +95,8 @@ s32 BattleUnit_CountDownResistanceStage(s32 unitId) {
       return 1;
     }
     if (state->resistanceStage < 0 &&
-        BattleUnit_RollCounterEarlyEnd(unitId, state->resistanceTurns, 20) !=
-            0) {
+        BattleUnit_RollCounterEarlyEnd(unitId, state->resistanceTurns,
+                                       EARLY_END_RESISTANCE_DOWN) != 0) {
       state->resistanceStage = 0;
       state->resistanceTurns = 0;
       return 1;
@@ -96,7 +112,8 @@ s32 BattleUnit_CountDownDelusion(s32 unitId) {
     state->delusion--;
     if (state->delusion == 0)
       return 1;
-    if (BattleUnit_RollCounterEarlyEnd(unitId, state->delusion, 30) != 0) {
+    if (BattleUnit_RollCounterEarlyEnd(unitId, state->delusion,
+                                       EARLY_END_DELUSION) != 0) {
       state->delusion = 0;
       return 1;
     }
@@ -111,7 +128,8 @@ s32 BattleUnit_CountDownConfusion(s32 unitId) {
     (*(u8 *)&state->confusion)--;
     if (state->confusion == 0)
       return 1;
-    if (BattleUnit_RollCounterEarlyEnd(unitId, (u8)state->confusion, 60) != 0) {
+    if (BattleUnit_RollCounterEarlyEnd(unitId, (u8)state->confusion,
+                                       EARLY_END_CONFUSION) != 0) {
       state->confusion = 0;
       return 1;
     }
@@ -126,7 +144,8 @@ s32 BattleUnit_CountDownCharm(s32 unitId) {
     state->charm--;
     if (state->charm == 0)
       return 1;
-    if (BattleUnit_RollCounterEarlyEnd(unitId, state->charm, 70) != 0) {
+    if (BattleUnit_RollCounterEarlyEnd(unitId, state->charm, EARLY_END_CHARM) !=
+        0) {
       state->charm = 0;
       return 1;
     }
@@ -141,7 +160,8 @@ s32 BattleUnit_CountDownStun(s32 unitId) {
     state->stun--;
     if (state->stun == 0)
       return 1;
-    if (BattleUnit_RollCounterEarlyEnd(unitId, state->stun, 40) != 0) {
+    if (BattleUnit_RollCounterEarlyEnd(unitId, state->stun, EARLY_END_STUN) !=
+        0) {
       state->stun = 0;
       return 1;
     }
@@ -156,7 +176,8 @@ s32 BattleUnit_CountDownSleep(s32 unitId) {
     state->sleep--;
     if (state->sleep == 0)
       return 1;
-    if (BattleUnit_RollCounterEarlyEnd(unitId, state->sleep, 50) != 0) {
+    if (BattleUnit_RollCounterEarlyEnd(unitId, state->sleep, EARLY_END_SLEEP) !=
+        0) {
       state->sleep = 0;
       return 1;
     }
@@ -175,24 +196,25 @@ s32 BattleUnit_CountDownPsynergySeal(s32 unitId) {
 
   unit = Unit_Get(unitId);
   sealCounter = unit->psySeal;
+  /* FAKEMATCH(dead): the seal byte masked again. */
   turns = sealCounter & 0xFF;
   if (turns != 0) {
-    // In the byte, adding 256 - 8 is -8 and adding 256 - 1 is -1.
+    // In the byte, adding (u8)-8 takes 8 off and adding (u8)-1 takes 1 off.
     if (turns > 7U) {
-      turns += 256 - 8;
+      turns += (u8)-8;
       unit->psySeal = turns;
       sealCounter = turns;
     }
     if (sealCounter & 7) {
-      decremented = sealCounter + (256 - 1);
+      decremented = sealCounter + (u8)-1;
       unit->psySeal = decremented;
       sealCounter = decremented;
     }
     remaining = sealCounter;
     if (remaining == 0)
       return 1;
-    if (remaining <= 7U &&
-        BattleUnit_RollCounterEarlyEnd(unitId, unit->psySeal, 30) != 0) {
+    if (remaining <= 7U && BattleUnit_RollCounterEarlyEnd(
+                               unitId, unit->psySeal, EARLY_END_BIND) != 0) {
       unit->psySeal = 0U;
       return 1;
     }
@@ -439,6 +461,9 @@ s32 DjinnRecovery_CountDownSide(s32 side) {
     BattleMessage_WaitForAdvance();                                            \
   }
 
+/// The Serpents and Dullahan regenerate ten times their hpRegen each turn.
+#define SERPENT_REGEN_MULTIPLE 10
+
 /// Ends a turn: counts down the recovering Djinn and sets those recovered, then
 /// gives each unit its regeneration and counts down its stat changes and
 /// statuses, showing each that ends.
@@ -552,7 +577,7 @@ void Battle_ProcessTurnEnd(void) {
             case ENEMY_UNUSED_SERPENT_A:
             case ENEMY_UNUSED_SERPENT_B:
             case ENEMY_DULLAHAN:
-              hpAmount *= 10;
+              hpAmount *= SERPENT_REGEN_MULTIPLE;
               break;
             }
             if (unit->hp + hpAmount > unit->hpMax) {
@@ -919,6 +944,8 @@ void BattleUnit_ProcessActionEnd(struct BattlePlan *plan) {
       BattlePlayback_Push(PLAYBACK_HIT, unitId);
       BattlePlayback_Push(PLAYBACK_DEFEAT, unitId);
       BattlePlayback_Push(PLAYBACK_UNIT_NAME, unitId);
+      /* FAKEMATCH(temporary): MsgGoesDown and MsgStrengthExhausted counted
+         from MsgReaperCalls. */
       if (unitId <= ALLY_MAX) {
         BattlePlayback_Push(PLAYBACK_MESSAGE, (u32)MsgReaperCalls - 3);
       } else {

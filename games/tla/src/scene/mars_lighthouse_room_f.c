@@ -685,14 +685,10 @@ void MarsLighthouseRoomF_ScatterRubble(s32 id) {
       s32 speed = Random16() << 3;
       s32 scale = (Random16() >> 1) + FIXED_ONE / 4;
 
-      {
-        u32 pick = Random16();
-
-        if (pick <= 32767)
-          Actor_StartScript(actor, gMarsLighthouseRoomF_RubbleScriptA);
-        else
-          Actor_StartScript(actor, gMarsLighthouseRoomF_RubbleScriptB);
-      }
+      if (Random16() <= 32767)
+        Actor_StartScript(actor, gMarsLighthouseRoomF_RubbleScriptA);
+      else
+        Actor_StartScript(actor, gMarsLighthouseRoomF_RubbleScriptB);
       Actor_SetSpriteFlags(actor, 0);
       actor->velocityY = (angle << 2) + toFIXED(2);
       actor->velocityZ = Iwram_MulFX(speed, Trig_Cos(angle));
@@ -1113,7 +1109,9 @@ s32 Scene_Initialize(void) {
   if (scene == SCENE_MARS_LIGHTHOUSE_MARS_TOWER) {
     FieldEffect_StartBlankOverlay(0);
     ((struct FieldWork *)heap->fieldWork)->transition = value;
-    if (entrance - 1 <= 1U) {
+    if (entrance ==
+            MARS_LIGHTHOUSE_MARS_TOWER_FROM_MARS_LIGHTHOUSE_ROOM_M_ALASTORS_HOOD_CHEST ||
+        entrance == 2) {
       FlameThrowers_Start(gMarsLighthouseRoomF_MarsButtonFlameThrowers,
                           gMarsLighthouseRoomF_MarsButtonFlameStops,
                           MarsLighthouseRoomF_LightTorch,
@@ -1211,7 +1209,9 @@ s32 Scene_Initialize(void) {
     }
     if (Flag_IsSet(FLAG_JUPITER_STATUE_BLOCKS_FLAMES))
       Actor_SetPosition(ACTOR_JUPITER_STATUE, 120, 296);
-    if (entrance - 14 <= 1U) {
+    if (entrance == 14 ||
+        entrance ==
+            MARS_LIGHTHOUSE_JUPITER_TOWER_FROM_MARS_LIGHTHOUSE_ROOM_M_FLAME) {
       FlameThrowers_Start(gMarsLighthouseRoomF_JupiterUpperFlameThrowers,
                           gMarsLighthouseRoomF_JupiterUpperFlameStops,
                           MarsLighthouseRoomF_DropFireball,
@@ -1240,7 +1240,9 @@ s32 Scene_Initialize(void) {
     Tightrope_Place(0, ACTOR_TIGHTROPE_NEAR_POST, ACTOR_TIGHTROPE_FAR_POST);
     Actor_GetById(ACTOR_TIGHTROPE_NEAR_POST)->riseCounter = 1;
     Actor_GetById(ACTOR_TIGHTROPE_FAR_POST)->riseCounter = 1;
-    if (entrance - 5 <= 1U || entrance == 8) {
+    if (entrance ==
+            MARS_LIGHTHOUSE_VENUS_TOWER_FROM_MARS_LIGHTHOUSE_ROOM_M_FLAME ||
+        entrance == 6 || entrance == 8) {
       FlameThrowers_Start(gMarsLighthouseRoomF_VenusFlameThrowers,
                           gMarsLighthouseRoomF_VenusFlameStops, 0,
                           STEP_TRIGGER_FLAME_HIT);
@@ -1682,7 +1684,10 @@ void Leader_SetSlideStopped(s32 value) { gSlideOnIce_Stopped = value; }
 #include "shared/leader_slide_on_ice_ahead.h"
 #undef Field_CheckSpheresOverlap
 
-extern u16 gPushKinds[];
+/// The sprites that can be pushed, each with its footprint.
+enum { PUSH_KINDS = 6 };
+
+extern u16 gPushKinds[PUSH_KINDS];
 extern s8 gPushFootprints[][4];
 
 #define ABS(x) ((x) < 0 ? -(x) : (x))
@@ -1705,12 +1710,12 @@ s32 PushTarget_FillFootprint(s32 id) {
 
   if ((u16)shape != gPushKinds[(u16)i]) {
     do {
-      j = (u16)(INTtoFIXED(i) + INTtoFIXED(1) >> 16);
+      j = (u16)FIXEDtoINT(INTtoFIXED(i) + INTtoFIXED(1));
       i = j;
-    } while (j <= 5 && (u16)shape != gPushKinds[j]);
+    } while (j <= PUSH_KINDS - 1 && (u16)shape != gPushKinds[j]);
   }
   j = (u16)i;
-  if (j == 6)
+  if (j == PUSH_KINDS)
     return 0;
   width = (ABS(gPushFootprints[j][0]) + ABS(gPushFootprints[j][2])) >> 4;
   height = (ABS(gPushFootprints[j][1]) + ABS(gPushFootprints[j][3])) >> 4;
@@ -1798,11 +1803,12 @@ void PushTarget_Push(struct PushTarget target) {
            4;
   PushedActor_FillGridAttributeRectangle(0, cell[0], cell[2], width, height, 0);
   Actor_SetSpeedAndAcceleration(gMainRoutineWork.leaderActorId, 0.5, 0.1);
-  Actor_SetAnimation(gMainRoutineWork.leaderActorId, 8);
+  Actor_SetAnimation(gMainRoutineWork.leaderActorId, ANIM_PUSH);
   System_Wait(15);
+  // The leader follows the object half its way.
   {
-    s32 deltaX = (target.x - from[0]) >> 17;
-    s32 deltaZ = (target.z - from[2]) >> 17;
+    s32 deltaX = FIXEDtoINT(target.x - from[0]) >> 1;
+    s32 deltaZ = FIXEDtoINT(target.z - from[2]) >> 1;
 
     Actor_SetDestinationOffset(gMainRoutineWork.leaderActorId, deltaX, deltaZ);
   }
@@ -2191,8 +2197,10 @@ s16 gSlideOnIce_AnglesByKey[] = {
     DEGtoANG(90), 0, -DEGtoANG(180), DEGtoANG(90), -1, 0, -DEGtoANG(180), -1,
 };
 
-u16 gPushKinds[] = {
-    258, 259, 293, 294, 332, 331,
+u16 gPushKinds[PUSH_KINDS] = {
+    SPRITE_LOG_WEST_EAST, SPRITE_LOG_NORTH_SOUTH,
+    SPRITE_PIPE_WEST_EAST, SPRITE_PIPE_NORTH_SOUTH,
+    SPRITE_FALLEN_COLUMN_WEST_EAST, SPRITE_FALLEN_COLUMN_NORTH_SOUTH,
 };
 
 s8 gPushFootprints[][4] = {

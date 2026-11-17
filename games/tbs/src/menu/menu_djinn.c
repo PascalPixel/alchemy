@@ -14,6 +14,13 @@
 #define DJINN_CURSOR_WIDTH 5
 #endif
 
+/// DjinnMenuWork.pairEntries before a Djinni is chosen: every element and
+/// number bit set, which no list entry has.
+#define DJINN_ENTRY_NONE (DJINN_ENTRY_ELEMENT | DJINN_ENTRY_INDEX)
+
+/// The tile of BG character block 1 the backdrop's digits are copied to.
+#define DJINN_BACKDROP_DIGIT_TILE 128
+
 // The mode of a trade preview's second side.
 #if TBS_PATCH_1
 #define DJINN_SWAP_PREVIEW_MODE DJINN_PREVIEW_TRADE
@@ -123,7 +130,7 @@ s32 DjinnMenu_Run(void) {
   Menu_SetFirstActorRowCoordinates(0);
   Palette_LightenHighlight(HIGHLIGHT_PALETTE);
   menu->helpWindow = Window_CreateFar(13, 0, 17, 5, WINDOW_FLAG_INSTANT);
-  menu->pairEntries[0] = 255;
+  menu->pairEntries[0] = DJINN_ENTRY_NONE;
   menu->selectedColumn[0] = 0;
   menu->selectedColumn[1] = 0;
   menu->selection[0] = 0;
@@ -228,7 +235,7 @@ s32 DjinnMenu_RunScreen(void) {
       break;
     case DJINN_STEP_SELECT_DJINN:
       Menu_SetFirstActorRowCoordinates(0);
-      DjinnFigures_SetSlotPosition(1, 0, 200, 0);
+      DjinnFigures_SetSlotPosition(1, 0, MENU_FIGURE_HIDDEN_Y, 0);
       result = DjinnMenu_SelectDjinn(DJINN_SELECT_DJINNI);
       step = DJINN_STEP_SHOW_HELP;
       if (result == DJINN_RESULT_HELP)
@@ -417,7 +424,8 @@ s32 DjinnMenu_RunScreen(void) {
 }
 
 /// Writes copies of background palettes 15, 5 and 7, each brightnessDelta
-/// lighter in every channel (clamped to 0-31), into palettes 14, 4 and 6.
+/// lighter in every channel (clamped to 0-31), into palettes 14, 4 and 6; the
+/// copy of palette 7 is 12 levels darker instead.
 void DjinnMenu_AdjustPalettes(s32 brightnessDelta) {
   s32 copyIndex;
   s32 paletteNumber;
@@ -481,10 +489,13 @@ MenuBackdropResult Menu_OpenBackdropScreen(void) {
   Window_UpdateOrCreate(&menu->listWindow, 0, 5, 30, 15, 2);
   wait(1);
   Iwram_CopyWords(backdrop->tiles, BG_CHAR_BLOCK(1), sizeof(backdrop->tiles));
-  Iwram_CopyWords(backdrop->palette, (void *)&BG_PLTT_COLOR(4, 0), 128);
+  Iwram_CopyWords(backdrop->palette, (void *)&BG_PLTT_COLOR(4, 0),
+                  sizeof(backdrop->palette));
   Iwram_FillWords(BG_CHAR_BLOCK(1), sizeof(backdrop->tiles), PIXELS_4BPP(3));
-  Iwram_FillWords((void *)&BG_PLTT_COLOR(4, 0), 128, 0x55555555);
-  Graphics_ExpandVramTilesByColorTableFar((u16 *)(BG_CHAR_BLOCK(1) + 4096));
+  Iwram_FillWords((void *)&BG_PLTT_COLOR(4, 0), sizeof(backdrop->palette),
+                  PIXELS_4BPP(5));
+  Graphics_ExpandVramTilesByColorTableFar(
+      (u16 *)(BG_CHAR_BLOCK(1) + DJINN_BACKDROP_DIGIT_TILE * TILE_SIZE_4BPP));
   Iwram_CopyWords(BG_CHAR_BLOCK(1) +
                       DJINN_BACKDROP_BORDER_TILE * TILE_SIZE_4BPP,
                   gMenu_BackdropBorderTile, TILE_SIZE_4BPP);
@@ -496,8 +507,10 @@ MenuBackdropResult Menu_OpenBackdropScreen(void) {
   Dma_Set((void *)&BG_PLTT_COLOR(WINDOW_PALETTE, 0),
           (void *)&BG_PLTT_COLOR(7, 0), DMA_COPY_HALFWORDS(16), REG_DMA3);
   DjinnMenu_AdjustPalettes(8);
-  BG_PLTT_COLOR(7, 4) = BG_PLTT_COLOR(WINDOW_PALETTE, WINDOW_BACKGROUND_COLOR);
-  BG_PLTT_COLOR(6, 4) = BG_PLTT_COLOR(WINDOW_PALETTE, WINDOW_BACKGROUND_COLOR);
+  BG_PLTT_COLOR(7, WINDOW_BACKGROUND_COLOR) =
+      BG_PLTT_COLOR(WINDOW_PALETTE, WINDOW_BACKGROUND_COLOR);
+  BG_PLTT_COLOR(6, WINDOW_BACKGROUND_COLOR) =
+      BG_PLTT_COLOR(WINDOW_PALETTE, WINDOW_BACKGROUND_COLOR);
 #ifdef UBFIX
   DjinnMenu_DrawElementList(&backdrop->list);
 #else
@@ -705,8 +718,8 @@ void Window_SetRectPalette(s32 x, s32 y, s32 width, s32 height, s32 palette) {
       tileCursor = &((u16 (*)[BG_SCREEN_WIDTH])work->tilemap)[y][x];
       for (column = width; column != 0; column--) {
         tile = *tileCursor;
-        if (((tile >> 12) & 15) == WINDOW_PALETTE) {
-          masked = tile & 0xffff0fff;
+        if ((tile / BG_TILE_PALETTE(1) & 0xf) == WINDOW_PALETTE) {
+          masked = tile & ~BG_TILE_PALETTE(0xf);
           *tileCursor = masked | palette;
         }
         tileCursor++;
@@ -843,8 +856,8 @@ s32 DjinnMenu_ShowHelp(void) {
   return result;
 }
 
-/// DJINN_ENTRY_IS_SET as a negative int, for entries built in s32.
-#define DJINN_ENTRY_SET (-0x8000)
+/// DJINN_ENTRY_IS_SET read as a signed halfword, for entries built in s32.
+#define DJINN_ENTRY_SET ((s16)DJINN_ENTRY_IS_SET)
 
 /// The flags DjinnMenu_SelectDjinn keeps for each party member's column.
 enum DjinnColumnFlag {
@@ -1003,7 +1016,7 @@ s32 DjinnMenu_SelectDjinn(s32 mode) {
       // The Djinni's figure, its element's: standing for one on standby or
       // recovering, walking for one that is set.
       if (selectedRow == -1) {
-        DjinnFigures_SetSlotPosition(mode, 0, 200, 0);
+        DjinnFigures_SetSlotPosition(mode, 0, MENU_FIGURE_HIDDEN_Y, 0);
       } else if (mode == DJINN_SELECT_DJINNI) {
         if (groupMode) {
           if (setAll == 0) {
@@ -1756,7 +1769,12 @@ s32 DjinnMenu_DrawStatPreview(struct Window *window, s32 x, s32 y, s32 memberId,
         textX = x * 8;
         Text_DrawMessageAsTilesFar(MsgClassName + unit->classId, window, textX,
                                    y * 8 + 48);
-        Window_SetTilemapEntryFar(window, WINDOW_TILE(662), x + 2, 5, 0);
+        // The down arrow from the class to the next, a tile of BG
+        // character block 1, the block after the windows' own.
+        Window_SetTilemapEntryFar(window,
+                                  WINDOW_TILE(BG_CHAR_SIZE / TILE_SIZE_4BPP +
+                                              DJINN_BACKDROP_BORDER_TILE),
+                                  x + 2, 5, 0);
       }
       column = x;
       if (originalUnit->classId != unit->classId)
@@ -1920,6 +1938,8 @@ s32 DjinnMenu_DrawStatPreview(struct Window *window, s32 x, s32 y, s32 memberId,
   return 1;
 }
 
+#undef DJINN_ENTRY_NONE
+#undef DJINN_BACKDROP_DIGIT_TILE
 #undef DJINN_CURSOR_WIDTH
 #undef DJINN_SWAP_PREVIEW_MODE
 #undef DJINN_PREVIEW_DIGITS

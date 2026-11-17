@@ -452,9 +452,10 @@ s32 MagmaRockInside_SwapCells(u32 layer, s32 x, s32 y, s32 value) {
   return old;
 }
 
-/// For each id of a list ended by ACTOR_LIST_END: clears the object's mark and,
-/// on a cell with attribute bit 6, blocks the cells ahead of and behind it and
-/// sets the mark.
+/// For each id of a list ended by ACTOR_LIST_END: clears the pillar's mark and,
+/// where it stands on a climbable cell (MAP_CELL_CLIMBABLE, as draining the
+/// lava leaves its cell), blocks the cells ahead of and behind it and sets the
+/// mark.
 void MagmaRockInside_MarkBlockCells(u16 *ids) {
   struct Actor *actor;
   u8 *blocked;
@@ -468,7 +469,7 @@ void MagmaRockInside_MarkBlockCells(u16 *ids) {
     blocked = &actor->riseEnabled;
     *blocked = 0;
     if (MapCell_Get(0, FIELD_CELL(actor->x.fixed), FIELD_CELL(actor->z.fixed)) &
-        0x40) {
+        MAP_CELL_CLIMBABLE) {
       map = Ram_HeapSlots->mapGrid;
       if (map == NULL)
         return;
@@ -555,6 +556,7 @@ extern struct ActorPlacement gMagmaRockInside_BlazeTabletPlacements[];
 
 extern s16 gMagmaRockInside_SalamanderTailChestPillars[];
 
+/// The placed actors of the current room.
 const struct ActorPlacement *Scene_GetActorPlacements(void) {
   s16 scene = gMainRoutineWork.next;
 
@@ -1259,7 +1261,7 @@ void MagmaRockInside_DrainLava(void) {
       open = 212;
     Event_ClearFlag(FLAG_ENTRANCE_FLOODED);
     facing = FACING_EAST;
-    MagmaRockInside_SwapCells(0, 15, 13, 64);
+    MagmaRockInside_SwapCells(0, 15, 13, MAP_CELL_CLIMBABLE);
     FieldActor_SetSpritePriority(ACTOR_ENTRANCE_PILLAR, 3);
     for (j = 0; j != 7; j++)
       Actor_SetAnimation(j + ACTOR_COLUMN_A, 1);
@@ -1274,8 +1276,8 @@ void MagmaRockInside_DrainLava(void) {
     if (Event_GetFlag(FLAG_FURY_FLOODED))
       open = 212;
     Event_ClearFlag(FLAG_FURY_FLOODED);
-    MagmaRockInside_SwapCells(0, 24, 15, 64);
-    MagmaRockInside_SwapCells(0, 9, 16, 64);
+    MagmaRockInside_SwapCells(0, 24, 15, MAP_CELL_CLIMBABLE);
+    MagmaRockInside_SwapCells(0, 9, 16, MAP_CELL_CLIMBABLE);
     Actor_SetAnimation(ACTOR_FURY_PILLAR, 4);
   } else if (gMainRoutineWork.next ==
              SCENE_MAGMA_ROCK_INSIDE_GOLEM_CORE_CHEST) {
@@ -1852,7 +1854,7 @@ void MagmaRockInside_GrowTabletFlame(void) {
   Actor_Release(actor);
   FieldEvent_Wait(1);
   REG_BLDCNT = 0;
-  MagmaRockInside_SwapCells(0, 7, 21, 128);
+  MagmaRockInside_SwapCells(0, 7, 21, MAP_CELL_JUMP);
   Event_End();
 }
 

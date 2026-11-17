@@ -2,8 +2,8 @@
 #define ALCHEMY_SCENE_TABLES_H
 
 /// @file
-/// The scene table formats: the scene table, entrances, exits, actor
-/// placements and triggers, as The Broken Seal's scene_tables.h has them.
+/// The scene table formats: the scene table, entrances, exits, actor placements
+/// and triggers.
 
 #include "fixed_math.h"
 #include "scene_exits.h"
@@ -12,7 +12,7 @@
 #include "system/main_routine_work.h"
 
 /// A scene's row in gScenes: its overlay's resource, its area, its scene type,
-/// its map and its attributes, as The Broken Seal's struct Scene.
+/// its map and its attributes.
 struct Scene {
   s16 resourceId; ///< the overlay Overlay_Load loads into gOverlayArea
   /// The area: entering a new one clears the FLAG_AREA_TEMP_xx flags
@@ -21,7 +21,7 @@ struct Scene {
   s8 sceneType; ///< an enum SceneType, copied to gMainRoutineWork.sceneType
   u16 mapIndex; ///< the map loaded for it, copied to gMainRoutineWork.mapId
   /// Two nibbles the field sequence reads on arrival
-  /// (Field_GetSceneAttributes); The Broken Seal leaves this halfword 0.
+  /// (Field_GetSceneAttributes).
   s16 attributes;
 };
 
@@ -29,8 +29,8 @@ struct Scene {
 extern const struct Scene gScenes[];
 
 /// The sixteen headings an actor faces, in turns from east, clockwise on the
-/// screen, as The Broken Seal's: the eight between the main ones turn an actor
-/// a little past a main heading, which picks the side its sprite leans to.
+/// screen: the eight between the main ones turn an actor a little past a main
+/// heading, which picks the side its sprite leans to.
 enum Facing {
   FACING_EAST = 0,
   FACING_EAST_SOUTHEAST = TRIG_TURN / 16,
@@ -53,15 +53,15 @@ enum Facing {
 /// A sixteenth of a turn, half the step between two headings.
 enum { FACING_STEP = TRIG_TURN / 16 };
 
-/// The cardinal heading nearest to facing, as The Broken Seal's macro: the
-/// shop counters turn a customer this way.
+/// The cardinal heading nearest to facing: the shop counters turn a customer
+/// this way.
 #define FACING_NEAREST_CARDINAL(facing)                                        \
   ((u16)(((facing) + DEGtoANG(45)) & ~0x3fff))
 
 enum { SCENE_TABLE_END = -1, CONDITION_ALWAYS = -1 };
 
-/// A table row's condition: CONDITION_ALWAYS, a flag number that must be
-/// clear, or IF_FLAG_SET of a flag that must be set, as The Broken Seal's.
+/// A table row's condition: CONDITION_ALWAYS, a flag number that must be clear,
+/// or IF_FLAG_SET of a flag that must be set.
 enum { CONDITION_FLAG_SET = 0x1000 };
 
 /// A condition that holds while flag is set.
@@ -146,9 +146,7 @@ struct ActorPlacement {
    toFIXED(z), facing,    talkFacing, flags}
 
 /// The movement types an actor placement's behavior can name, which
-/// Actor_SetMovementType turns into scripts: The Broken Seal's first six,
-/// and its reset script moved to 10. Types 7, 8, 9 and 11 are scripts of
-/// The Lost Age's own.
+/// Actor_SetMovementType turns into scripts.
 enum MovementType {
   MOVEMENT_TYPE_STAND = 1, ///< its script only ends
   MOVEMENT_TYPE_WANDER = 2,
@@ -166,9 +164,8 @@ enum MovementType {
   MOVEMENT_TYPE_CLEAR_CHILD = 11       ///< gMovementType_ClearChildScript
 };
 
-/// How a placed actor turns when the leader talks to it
-/// (Scene_TalkToActor), as The Broken Seal's. With all but TALK_FACING_KEEP
-/// the leader stops and each watches the other.
+/// How a placed actor turns when the leader talks to it (Scene_TalkToActor).
+/// With all but TALK_FACING_KEEP the leader stops and each watches the other.
 enum ActorTalkFacing {
   TALK_FACING_PARTY = 0,
   /// Faces the party, then turns back to its old heading.
@@ -191,25 +188,24 @@ struct Trigger {
   u32 value;     ///< a message (FIND_MESSAGE) or an event (EVENT)
 };
 
-/// Trigger.subject bit 10, as The Broken Seal's: a Psynergy trigger runs in
-/// place of its field Psynergy, as Mind Read on someone who notices it does;
-/// an item trigger's event shows its own message in place of the "uses"
-/// message (MsgActorUsesItem); an examine trigger shows no checking message.
+/// Trigger.subject bit 10: a Psynergy trigger runs in place of its field
+/// Psynergy, as Mind Read on someone who notices it does; an item trigger's
+/// event shows its own message in place of the "uses" message
+/// (MsgActorUsesItem); an examine trigger shows no checking message.
 #define TRIGGER_SUBJECT_OWN_EFFECT 0x400
 /// Trigger.subject bit 9 on a Psynergy trigger: the cast neither flashes the
 /// caster nor announces the ability (FieldEffectWork.visible and .active).
 #define TRIGGER_SUBJECT_QUIET 0x200
-/// An item trigger's subject, as The Broken Seal's: the heading it needs in
-/// bits 15..12, whether it needs one, and its target, an actor or a cell
-/// behavior.
+/// An item trigger's subject: the heading it needs in bits 15..12, whether it
+/// needs one, and its target, an actor or a cell behavior.
 #define TRIGGER_SUBJECT_FACING 0xf000
 #define TRIGGER_SUBJECT_NEEDS_FACING 0x0800
 #define TRIGGER_SUBJECT_TARGET 0xff
 /// A trigger's value below this is a message, from it an event.
 #define TRIGGER_RESULT_MESSAGE_END 65536
 
-/// What a search finds, an examine trigger's value, as The Broken Seal's: an
-/// item, coins or a message.
+/// What a search finds, an examine trigger's value: an item, coins or a
+/// message.
 #define FIND_ITEM(item) (0x00100000 | (item))
 #define FIND_COINS(coins) (0x00200000 | (coins))
 #define FIND_MESSAGE(message) (0x00400000 | (message))
@@ -273,10 +269,10 @@ enum ExitStyle {
   EXIT_STYLE_MASK = 0x70
 };
 
-/// What an examine trigger is on, EXAMINE_TRIGGER()'s control bits 8..4,
-/// as The Broken Seal's, with the pond added. Target n shows message
-/// MsgTileChecked + n, "<leader> checked the ...", as the leader checks it,
-/// unless the trigger has TRIGGER_SUBJECT_OWN_EFFECT; target 0 shows nothing.
+/// What an examine trigger is on, EXAMINE_TRIGGER()'s control bits 8..4. Target
+/// n shows message MsgTileChecked + n, "<leader> checked the ...", as the
+/// leader checks it, unless the trigger has TRIGGER_SUBJECT_OWN_EFFECT; target
+/// 0 shows nothing.
 enum ExamineTarget {
   EXAMINE_SILENT = 0,
   EXAMINE_CHEST = 1,
@@ -315,9 +311,8 @@ enum ExamineTarget {
 
 #include "ability_ids.h"
 
-/// Actor ids: 0 to 7 the party's characters, the placed actors from 8. A
-/// party member's actor takes its character's number as its actor id, as in
-/// The Broken Seal.
+/// Actor ids: 0 to 7 the party's characters, the placed actors from 8. A party
+/// member's actor takes its character's number as its actor id.
 enum ActorId {
   ACTOR_ISAAC,
   ACTOR_GARET,
@@ -388,8 +383,8 @@ enum PsynergyPhase {
 #define PSYNERGY_PHASE_ON_CELL(ability, phase)                                 \
   ((u32)(phase) << PSYNERGY_PHASE_SHIFT | (ability) << 8 | TRIGGER_PSYNERGY)
 
-/// Using an item on a cell behavior, or on an actor, as The Broken Seal's
-/// USE_ITEM; the item is an ItemId (item_ids.h) or an ITEM_FILTER_ value.
+/// Using an item on a cell behavior, or on an actor; the item is an ItemId
+/// (item_ids.h) or an ITEM_FILTER_ value.
 #define TRIGGER_ITEM_ON_ACTOR 0x10
 #define USE_ITEM(item) (TRIGGER_ITEM | (item) << 8)
 #define USE_ITEM_ON_ACTOR(item)                                                \
@@ -407,9 +402,9 @@ extern struct SceneEntrance gSceneEntrances[];
 extern struct ActorPlacement gActorPlacements[];
 extern struct Trigger gSceneEvents[];
 
-/// A scene's exit region, as The Broken Seal's SceneExitRegion: the box that,
-/// while its condition holds, takes the party leader out through the exit whose
-/// number is its value (Field_CheckExitRegions).
+/// A scene's exit region: the box that, while its condition holds, takes the
+/// party leader out through the exit whose number is its value
+/// (Field_CheckExitRegions).
 struct SceneRegion {
   /// Its lower corner in pixels, inclusive; a minX of SCENE_TABLE_END ends the
   /// table.

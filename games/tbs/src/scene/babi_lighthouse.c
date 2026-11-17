@@ -15,7 +15,7 @@
 /// The Road to Babi Lighthouse has four workers and a carved stone pillar. Move
 /// or Carry can set the pillar into its cell at (20, 12), where it rests 48
 /// pixels up (BabiLighthouse_UpdateMovedPillar). Carry then drops it in a ring
-/// of dust (BabiLighthouse_LandCarriedPillarInDust). A chest holds Lucky
+/// of particles (BabiLighthouse_LandCarriedPillarInRing). A chest holds Lucky
 /// Pepper.
 ///
 /// At the Babi Lighthouse Entry two pillars stand on ledges and are pushed or
@@ -223,7 +223,7 @@ static void BabiLighthouse_LandWithParticles(void) {
   options.update = (void (*)(struct Actor *))FieldEffect_AdvanceMotion;
   options.startScaleX = 4 * FIXED_ONE / 5;
   options.startScaleY = 4 * FIXED_ONE / 5;
-  for (particle = 0; particle < 17; particle++) {
+  for (particle = 0; particle <= TRIG_TURN / FACING_STEP; particle++) {
     SET_VECTOR(velocity, Trig_Cos(particle * FACING_STEP), 0,
                Trig_Sin(particle * FACING_STEP));
     velocity[0] += velocity[0] / 2;
@@ -314,6 +314,14 @@ const struct ActorPlacement *Scene_GetActorPlacements(void) {
   return gBabiLighthouse_RoadActorPlacements;
 }
 
+/// The cells at the foot of the Babi Lighthouse Entry's ledge where a pillar
+/// stands for the leader to step down onto, west and east, and the last column
+/// of the ledge's west half.
+#define LEDGE_FOOT_WEST_COLUMN 6
+#define LEDGE_FOOT_EAST_COLUMN 18
+#define LEDGE_FOOT_ROW 20
+#define LEDGE_WEST_HALF_LAST_COLUMN 12
+
 /// After Move on one of the pillars at the Babi Lighthouse Entry, or a push, a
 /// leader left standing on a pillar's ledge cell jumps off it.
 static void BabiLighthouse_JumpFromLedge(void) {
@@ -321,9 +329,9 @@ static void BabiLighthouse_JumpFromLedge(void) {
 
   leader = Actor_Get(ACTOR_PARTY_LEADER);
   Event_Start();
-  if ((FIELD_CELL(leader->x.fixed) == 6 ||
-       (FIELD_CELL(leader->x.fixed)) == 18) &&
-      (FIELD_CELL(leader->z.fixed)) == 20) {
+  if ((FIELD_CELL(leader->x.fixed) == LEDGE_FOOT_WEST_COLUMN ||
+       (FIELD_CELL(leader->x.fixed)) == LEDGE_FOOT_EAST_COLUMN) &&
+      (FIELD_CELL(leader->z.fixed)) == LEDGE_FOOT_ROW) {
     leader->targetX = ACTOR_NO_TARGET;
     leader->targetZ = ACTOR_NO_TARGET;
     Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 20);
@@ -363,17 +371,18 @@ static void BabiLighthouse_PushLedgePillar(void) {
 static void BabiLighthouse_PushLedgePillarOrClimbDown(void) {
   struct Actor *pillar = Actor_Get(ACTOR_RIGHT_PILLAR);
 
-  if (FIELD_CELL(Actor_Get(ACTOR_PARTY_LEADER)->x.fixed) <= 12) {
+  if (FIELD_CELL(Actor_Get(ACTOR_PARTY_LEADER)->x.fixed) <=
+      LEDGE_WEST_HALF_LAST_COLUMN) {
     pillar = Actor_Get(ACTOR_LEFT_PILLAR);
-    if (FIELD_CELL(pillar->x.fixed) == 6) {
-      if (FIELD_CELL(pillar->z.fixed) == 20) {
+    if (FIELD_CELL(pillar->x.fixed) == LEDGE_FOOT_WEST_COLUMN) {
+      if (FIELD_CELL(pillar->z.fixed) == LEDGE_FOOT_ROW) {
         BabiLighthouse_PushLedgePillar();
         return;
       }
     }
   } else {
-    if (FIELD_CELL(pillar->x.fixed) == 18) {
-      if (FIELD_CELL(pillar->z.fixed) == 20) {
+    if (FIELD_CELL(pillar->x.fixed) == LEDGE_FOOT_EAST_COLUMN) {
+      if (FIELD_CELL(pillar->z.fixed) == LEDGE_FOOT_ROW) {
         BabiLighthouse_PushLedgePillar();
         return;
       }
@@ -1119,7 +1128,7 @@ static inline void BabiLighthouse_FindCellAhead(struct FieldPosition *ahead,
   s32 step = gPushedActor_DirectionSteps[FACING_INDEX(actor->facing)];
 
   // A step holds its x pixels in the high halfword and its z in the low.
-  ahead->x = actor->x.fixed + (step & -0x10000);
+  ahead->x = actor->x.fixed + (step & 0xffff0000);
   ahead->z = actor->z.fixed + INTtoFIXED(step);
   ahead->y = MapGrid_GetTerrainHeight(actor->layer, ahead->x, ahead->z);
 }
@@ -1133,9 +1142,10 @@ static struct Actor *BabiLighthouse_FindActorAhead(struct Actor *actor) {
   return PushedActor_FindAtTile(&ahead, actor);
 }
 
-/// Before Carry is cast on the Road to Babi Lighthouse's pillar, sets the
-/// effect's childOption.
-static void BabiLighthouse_LandCarriedPillarInDust(void) {
+/// Before Carry is cast on the Road to Babi Lighthouse's pillar: Carry then
+/// waits for the dropped pillar to land, and throws a ring of particles round
+/// it (childOption).
+static void BabiLighthouse_LandCarriedPillarInRing(void) {
   ((struct FieldEffectWork *)gFieldEffectWork)->childOption = 1;
 }
 
@@ -1331,7 +1341,7 @@ s32 Scene_Initialize(void) {
         Actor_Get(ACTOR_RIGHT_PILLAR)->groundHeight;
     if (GameFlag_Get(FLAG_GROWTH_PASSAGE_OPEN) != 0) {
       Actor_SetAnimation(ACTOR_PLANT, 4);
-      Actor_Get(ACTOR_PLANT)->collisionFlags = 0xff & ~ACTOR_SOLID;
+      Actor_Get(ACTOR_PLANT)->collisionFlags = (u8)~ACTOR_SOLID;
       BabiLighthouse_OpenGrowthPassage();
     }
     // Their script waits stagger the first animations of the four lying on the
@@ -1851,7 +1861,7 @@ struct Trigger gBabiLighthouse_RoadTriggers[] = {
      EVENT(BabiLighthouse_UpdateMovedPillar)},
     {PSYNERGY_PHASE_ON_ACTOR(ABILITY_CARRY, PSYNERGY_PHASE_BEFORE_CAST),
      ACTOR_ROAD_PILLAR, CONDITION_ALWAYS,
-     EVENT(BabiLighthouse_LandCarriedPillarInDust)},
+     EVENT(BabiLighthouse_LandCarriedPillarInRing)},
     {PSYNERGY_ON_ACTOR(ABILITY_CARRY), ACTOR_ROAD_PILLAR, CONDITION_ALWAYS,
      EVENT(BabiLighthouse_UpdateMovedPillar)},
     {TRIGGER_EXIT, 1, CONDITION_ALWAYS, ROAD_TO_BABI_LIGHTHOUSE_TO_WORLD_MAP},

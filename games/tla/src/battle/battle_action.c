@@ -76,11 +76,6 @@ s32 BattleDjinn_CountStandby(u32 unitId, u8 *counts) {
 /// The most targets an action holds (BATTLE_TARGET_CAPACITY).
 #define TARGET_MAX 14
 
-/// A list place code's side bit, set for the enemies' list, and its place in
-/// the list (Battle_GetUnitAtPlace).
-#define PLACE_ENEMY_SIDE 0x80
-#define PLACE_INDEX_MASK 0xf
-
 /// A range that reaches every place of a side from any of them: Dazzle's.
 #define RANGE_WHOLE_SIDE 11
 

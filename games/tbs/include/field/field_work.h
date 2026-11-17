@@ -53,6 +53,8 @@ enum FieldRaisedTrigger {
 /// How long a map's screen transition takes, in frames, unless an event or
 /// scene sets another length.
 #define MAP_TRANSITION_FRAMES 16
+/// The frames Reveal lasts once cast, ten seconds (FieldWork.revealFrames).
+#define REVEAL_FRAMES 600
 
 struct FieldWork {
   /// The actor placement tables placed so far, recorded by
@@ -131,7 +133,7 @@ struct FieldWork {
   /// effect counter.
   u16 busy;
   s16 revealActive;  ///< nonzero while Reveal is active
-  s16 revealFrames;  ///< the frames Reveal has left
+  s16 revealFrames;  ///< the frames Reveal has left, REVEAL_FRAMES as cast
   s16 revealCenterX; ///< where Reveal was cast, in pixels
   s16 revealCenterY;
   /// Nonzero lets the Reveal countdown advance; menus and other effects pause

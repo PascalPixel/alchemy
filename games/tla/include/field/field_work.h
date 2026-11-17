@@ -2,8 +2,8 @@
 #define ALCHEMY_FIELD_WORK_H
 
 /// @file
-/// FieldWork, the running scene's work: The Broken Seal's, with the Psynergy
-/// state The Lost Age adds at its end.
+/// FieldWork, the running scene's work, with the field Psynergy's state at its
+/// end.
 
 #include "fixed_math.h"
 #include "types.h"
@@ -30,9 +30,9 @@ struct Window;
 #define SCOOPED_ITEM_ACTOR 79
 /// The first actor id of a treasure spot (Field_PlaceTreasureSpots).
 #define FIELD_TREASURE_ACTOR 64
-/// The actor id of the spot Scoop dug up, examined as a buried container that
-/// holds FieldWork.scoopedItem.
-#define FIELD_SCOOP_ACTOR 79
+/// SCOOPED_ITEM_ACTOR as the spot Scoop dug up, examined as a buried container
+/// that holds FieldWork.scoopedItem, and as the last treasure spot.
+#define FIELD_SCOOP_ACTOR SCOOPED_ITEM_ACTOR
 /// FieldWork.talk and Scene_TalkToActor: with this bit a container is opened
 /// without its "checked the ..." message, as Scoop opens what it digs up; the
 /// actor id is in the bits under it.
@@ -41,8 +41,7 @@ struct Window;
 #define FIELD_TALK_ACTOR_MASK 0xfff
 /// FieldWork.talk: set with the actor id under it to ask for that actor's talk.
 #define FIELD_TALK_REQUEST 0x4000
-/// The frames of a scene's default fade in, from the backdrop colour, as The
-/// Broken Seal's.
+/// The frames of a scene's default fade in, from the backdrop colour.
 #define MAP_TRANSITION_FRAMES 16
 
 /// The values of FieldWork.raisedTrigger that the field sequence handles
@@ -53,8 +52,7 @@ enum FieldRaisedTrigger {
   /// Teleport: the picture of the whole world, shown once to choose where to
   /// go (FieldPsynergy_Teleport).
   FIELD_RAISED_TRIGGER_TELEPORT = -887,
-  /// R on the world map: the picture of the whole world (WorldPicture_Show),
-  /// as The Broken Seal's.
+  /// R on the world map: the picture of the whole world (WorldPicture_Show).
   FIELD_RAISED_TRIGGER_WORLD_PICTURE = -888,
   /// L on the world map: the view zooms out while L is held.
   FIELD_RAISED_TRIGGER_WORLD_MAP_ZOOM = -889,
@@ -65,7 +63,7 @@ enum FieldRaisedTrigger {
 };
 
 /// The raised trigger the menu keys pass to the scene while
-/// FLAG_MENUS_RAISE_TRIGGER is set, as The Broken Seal's.
+/// FLAG_MENUS_RAISE_TRIGGER is set.
 #define FIELD_RAISED_TRIGGER_MENUS 250
 
 /// The raised triggers the world map's movement passes to its scene, whose
@@ -97,8 +95,7 @@ enum ActorSystemMode {
 };
 
 /// The frames the leader pushes against a step trigger, a ledge, a gap or a
-/// wall before it runs, jumps or climbs (FieldWork.blockedSteps), as in The
-/// Broken Seal.
+/// wall before it runs, jumps or climbs (FieldWork.blockedSteps).
 #define FIELD_PUSH_FRAMES 12
 
 /// A field scene's work: FieldSequence_Run allocates it in heap slot 108,

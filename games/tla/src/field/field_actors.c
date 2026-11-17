@@ -189,7 +189,8 @@ s32 MapGrid_GetScreenRelativePosition(struct Actor *actor,
   return -1;
 }
 
-/// The colour Grid_DrawOutlineArm draws an outlined sprite's edge in.
+/// The colour Grid_DrawOutlineArm draws an outlined sprite's edge in: the
+/// basic sprite palette's white, which SPRITE_COLOR_WHITE paints with too.
 #define OUTLINE_EDGE_COLOR 15
 
 /// Sets up the actor system: allocates and zeroes the 64 actors and the

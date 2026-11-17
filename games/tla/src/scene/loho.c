@@ -660,7 +660,7 @@ void Loho_TalkToInnkeeper(void) {
 void Loho_TalkAboutCommerce(void) {
   Actor_GetById(gMainRoutineWork.leaderActorId);
   if (Event_GetFlag(FLAG_AREA_TEMP_20)) {
-    Shop_Run(SHOP_LOHO, 8);
+    Shop_Run(SHOP_LOHO, ACTOR_VILLAGER_ON_COMMERCE);
   } else {
     if (Event_GetFlag(FLAG_LOHO_WALL_BREACHED))
       Event_SetMessageId((s32)MsgLohoIHearYouTookOur);

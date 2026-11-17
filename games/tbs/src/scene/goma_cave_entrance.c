@@ -4,7 +4,7 @@
 ///
 /// A stump caught in ivy (ACTOR_STUMP, held by ACTOR_STUMP_IVY) blocks the
 /// way on. Until FLAG_GOMA_CAVE_IVAN_JOINED is set, Move on it runs
-/// GomaCaveEntrance_IvanRejoins. Garet says their Psynergy can't free it.
+/// GomaCaveEntrance_IvanJoins. Garet says their Psynergy can't free it.
 /// Only once the thieves in Vault are jailed (FLAG_VAULT_THIEVES_JAILED) does
 /// Ivan walk up, blow the ivy off with Whirlwind and rejoin with the Shaman's
 /// Rod equipped.
@@ -214,13 +214,13 @@ s32 Scene_Initialize(void) {
     record->collisionFlags = ACTOR_NEAR_PSYNERGY | record->collisionFlags;
   }
   // The player never targets the stump's ivy; only Ivan's Whirlwind in
-  // GomaCaveEntrance_IvanRejoins removes it.
+  // GomaCaveEntrance_IvanJoins removes it.
   {
     struct Actor *record = Actor_Get(ACTOR_STUMP_IVY);
 
     record->collisionFlags = ACTOR_NOT_TARGETED | record->collisionFlags;
   }
-  // The cells GomaCaveEntrance_IvanRejoins copies as it sets the flag, redrawn
+  // The cells GomaCaveEntrance_IvanJoins copies as it sets the flag, redrawn
   // on arrival.
   if (GameFlag_Get(FLAG_GOMA_CAVE_IVAN_JOINED) != 0) {
     MapGrid_CopyCellAttributes(74, 11, 1, 1, 73, 11);
@@ -257,8 +257,9 @@ s32 Scene_Initialize(void) {
 }
 
 /// Move on the stump at Goma Cave Entrance while the ivy holds it: Garet says
-/// their Psynergy is not strong enough.
-static void GomaCaveEntrance_IvanRejoins(void) {
+/// their Psynergy is not strong enough, and once the thieves in Vault are
+/// jailed Ivan comes, blows the ivy off and joins the party.
+static void GomaCaveEntrance_IvanJoins(void) {
   struct Actor *leader;
 
 #if TBS_PATCH_1
@@ -692,7 +693,7 @@ struct Trigger gGomaCaveEntranceTriggers[] = {
     { TRIGGER_EXIT, 2, CONDITION_ALWAYS, GOMA_CAVE_ENTRANCE_TO_WORLD_MAP },
     { STEP_TRIGGER_WALKING_INTO(FACING_EAST), TRIGGER_PUSH_WEST_PILLAR_EAST, CONDITION_ALWAYS, EVENT(GomaCaveEntrance_PushWestPillar) },
     { STEP_TRIGGER_WALKING_INTO(FACING_WEST), TRIGGER_PUSH_WEST_PILLAR_WEST, CONDITION_ALWAYS, EVENT(GomaCaveEntrance_PushWestPillar) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_STUMP, FLAG_GOMA_CAVE_IVAN_JOINED, EVENT(GomaCaveEntrance_IvanRejoins) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_STUMP, FLAG_GOMA_CAVE_IVAN_JOINED, EVENT(GomaCaveEntrance_IvanJoins) },
     { PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_STUMP, FLAG_GOMA_CAVE_ENTRANCE_STUMP_MOVED, EVENT(GomaCaveEntrance_MoveStump) },
     { PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_WEST_PILLAR, CONDITION_ALWAYS, EVENT(GomaCaveEntrance_MoveWestPillar) },
     { PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_EAST_PILLAR, FLAG_GOMA_CAVE_ENTRANCE_EAST_PILLAR_IN_PLACE, EVENT(GomaCaveEntrance_MoveEastPillar) },

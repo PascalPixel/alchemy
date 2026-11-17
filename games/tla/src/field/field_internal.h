@@ -190,7 +190,6 @@ struct WaitingActor {
   u8 refused;
 };
 
-/// Animation script commands.
 /// SpriteAnimation.kind: the facing table a sprite animation's pictures follow
 /// (Sprite_ComposePicture), as The Broken Seal names them; this game's six
 /// pictures are kind 5.
@@ -199,16 +198,29 @@ enum AnimationFacingKind {
   ANIM_FACING_ONE_PICTURE = 1, ///< 8 sectors: one picture, mirrored to the left
   ANIM_FACING_FRONT_BACK = 2,  ///< 8 sectors: a front and a back picture
   ANIM_FACING_THREE_PICTURES = 3, ///< 16 sectors: front, side and back
-  ANIM_FACING_SIX_PICTURES = 5,   ///< 64 sectors
+  /// Unused, with no facing table: drawn as ANIM_FACING_NONE. The sprite
+  /// viewer rings it ten round, as The Broken Seal's does its four pictures.
+  ANIM_FACING_FOUR_PICTURES = 4,
+  ANIM_FACING_SIX_PICTURES = 5, ///< 64 sectors
+  /// Unused, with no facing table: The Broken Seal's number for its six
+  /// pictures, which the sprite viewer still rings ten round.
+  ANIM_FACING_SIX_PICTURES_UNDRAWN = 6,
   /// 8 sectors centred on the compass directions, a picture for each.
   ANIM_FACING_EIGHT_PICTURES = 8,
   /// ANIM_FACING_FRONT_BACK's table for a sprite drawn in two parts, the
   /// second the next sprite id (the sprite viewer).
   ANIM_FACING_TWO_PART = 20,
   /// As ANIM_FACING_FRONT_BACK, with the front picture mirrored the other way.
-  ANIM_FACING_FRONT_BACK_SWAPPED = 22
+  ANIM_FACING_FRONT_BACK_SWAPPED = 22,
+  /// Unused, with no facing table: rung as eight facings by the sprite viewer,
+  /// as The Broken Seal's is.
+  ANIM_FACING_EIGHT_NO_TABLE = 44,
+  /// Unused, with no facing table: The Broken Seal's eight pictures with three
+  /// mirrored, rung as eight facings by the sprite viewer.
+  ANIM_FACING_EIGHT_PICTURES_MIRRORED = 88
 };
 
+/// Animation script commands.
 enum AnimationCommand {
   ANIMCMD_END = 239,      ///< blank the layer and stop its script
   ANIMCMD_SET_KIND = 240, ///< use facing table `arg`

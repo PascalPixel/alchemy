@@ -1,6 +1,6 @@
 /// @file
-/// A summon tablet read: its pictures cycling, its motes and runes flying, and
-/// placing the flag blocks.
+/// A summon tablet read: its pictures cycling, its pebbles and runes flying,
+/// and placing the flag blocks.
 // Part of field_psynergy.c.
 
 #include "field_psynergy_internal.h"
@@ -75,7 +75,7 @@ void Motion_StepTowardTarget(struct Chase *chase, FIXED speed) {
 }
 
 /// One rune or pebble and a frame count, negative before it starts.
-struct ChasingMote {
+struct TabletPiece {
   union {
     /// A rune: a point on the screen chasing its target.
     struct Chase rune;
@@ -114,9 +114,9 @@ struct SummonTabletWork {
   /// The runes' pictures, and then the pebbles', decoded to be loaded into
   /// VRAM.
   u8 pictures[2048];
-  struct ChasingMote pebbles[TABLET_PEBBLE_COUNT];
+  struct TabletPiece pebbles[TABLET_PEBBLE_COUNT];
   struct EffectSprite pebbleSprites[TABLET_PEBBLE_COUNT];
-  struct ChasingMote runes[TABLET_RUNE_COUNT];
+  struct TabletPiece runes[TABLET_RUNE_COUNT];
   struct EffectSprite runeSprites[TABLET_RUNE_COUNT];
   s32 originX;
   s32 originZ;
@@ -134,7 +134,7 @@ struct SummonTabletWork {
 void SummonTablet_UpdateRunes(void) {
   struct SummonTabletWork *work = Ram_HeapSlots->battleEffect;
   s32 position[3];
-  struct ChasingMote *mote;
+  struct TabletPiece *piece;
   struct EffectSprite *sprite;
   s32 i;
   u16 *tile;
@@ -143,60 +143,60 @@ void SummonTablet_UpdateRunes(void) {
     position[0] = work->originX;
     position[2] = work->originZ;
     Vector_AddPolarOffset(work->radius, work->angle, position);
-    mote = work->runes;
-    mote->rune.targetX = position[0];
-    mote->rune.targetZ = position[2];
+    piece = work->runes;
+    piece->rune.targetX = position[0];
+    piece->rune.targetZ = position[2];
     work->angle += TRIG_TURN * 3 / 128;
-    for (i = 0; i < TABLET_RUNE_COUNT; i++, mote++) {
-      if (mote->timer >= 0) {
+    for (i = 0; i < TABLET_RUNE_COUNT; i++, piece++) {
+      if (piece->timer >= 0) {
         if (i != 0) {
-          mote->rune.targetX = position[0];
-          mote->rune.targetZ = position[2];
+          piece->rune.targetX = position[0];
+          piece->rune.targetZ = position[2];
         }
-        position[0] = mote->rune.x;
-        position[2] = mote->rune.z;
+        position[0] = piece->rune.x;
+        position[2] = piece->rune.z;
         Vector_AddPolarOffset(work->spacing, 0, position);
       }
-      mote->timer++;
+      piece->timer++;
     }
   }
 
-  mote = work->runes;
+  piece = work->runes;
   sprite = work->runeSprites;
-  for (i = TABLET_RUNE_COUNT - 1; i >= 0; i--, sprite++, mote++) {
+  for (i = TABLET_RUNE_COUNT - 1; i >= 0; i--, sprite++, piece++) {
     if (work->state == 0) {
-      if (mote->timer >= 0) {
-        Motion_StepTowardTarget(&mote->rune, toFIXED(4));
-        sprite->x = mote->rune.x;
-        sprite->y = mote->rune.z;
+      if (piece->timer >= 0) {
+        Motion_StepTowardTarget(&piece->rune, toFIXED(4));
+        sprite->x = piece->rune.x;
+        sprite->y = piece->rune.z;
         EffectSprite_Draw(sprite);
       }
-      mote->timer++;
+      piece->timer++;
     } else if (work->state == 2) {
-      Motion_StepTowardTarget(&mote->rune, toFIXED(6));
-      sprite->x = mote->rune.x;
-      sprite->y = mote->rune.z;
+      Motion_StepTowardTarget(&piece->rune, toFIXED(6));
+      sprite->x = piece->rune.x;
+      sprite->y = piece->rune.z;
       EffectSprite_Draw(sprite);
     } else if (work->state == 3) {
-      if (mote->rune.x != work->targetX || mote->rune.z != work->targetZ) {
-        Motion_StepTowardTarget(&mote->rune, toFIXED(6));
-        sprite->x = mote->rune.x;
-        sprite->y = mote->rune.z;
+      if (piece->rune.x != work->targetX || piece->rune.z != work->targetZ) {
+        Motion_StepTowardTarget(&piece->rune, toFIXED(6));
+        sprite->x = piece->rune.x;
+        sprite->y = piece->rune.z;
         EffectSprite_Draw(sprite);
       }
     }
   }
 
-  mote = work->pebbles;
+  piece = work->pebbles;
   tile = &work->pebbleTile;
   sprite = work->pebbleSprites;
-  for (i = TABLET_PEBBLE_COUNT - 1; i >= 0; i--, sprite++, mote++) {
-    if ((u32)mote->timer < PEBBLE_PICTURES * PEBBLE_PICTURE_FRAMES) {
-      sprite->oam.index = *tile + (mote->timer / PEBBLE_PICTURE_FRAMES & 7) *
+  for (i = TABLET_PEBBLE_COUNT - 1; i >= 0; i--, sprite++, piece++) {
+    if ((u32)piece->timer < PEBBLE_PICTURES * PEBBLE_PICTURE_FRAMES) {
+      sprite->oam.index = *tile + (piece->timer / PEBBLE_PICTURE_FRAMES & 7) *
                                       PEBBLE_PICTURE_TILES;
-      EffectSprite_DrawAtWorldPosition(sprite, mote->pebble.position);
-      Field_AdvanceWithGravity3D(mote->pebble.position, 63, -(toFIXED(1) / 2));
-      mote->timer++;
+      EffectSprite_DrawAtWorldPosition(sprite, piece->pebble.position);
+      Field_AdvanceWithGravity3D(piece->pebble.position, 63, -(toFIXED(1) / 2));
+      piece->timer++;
     }
   }
 }
@@ -226,7 +226,7 @@ void SummonTablet_PlayRunes(s32 targetId) {
   s32 nextPebble = 0;
   FIXED pos[3];
   struct EffectSprite *sprite;
-  struct ChasingMote *mote;
+  struct TabletPiece *piece;
   s32 runeTile;
   s32 pebbleTile;
   s32 timer;
@@ -255,7 +255,7 @@ void SummonTablet_PlayRunes(s32 targetId) {
   Decompress_TaggedLz(Resource_GetTableEntry(RESOURCE_RUNES), work->pictures);
   runeEntry = VramCache_FindFreeEntry();
   runeTile = VramCache_Load(runeEntry, sizeof(work->pictures), work->pictures);
-  mote = work->runes;
+  piece = work->runes;
   i = 0;
   sprite = work->runeSprites;
   for (; i < TABLET_RUNE_COUNT; i++) {
@@ -265,22 +265,22 @@ void SummonTablet_PlayRunes(s32 targetId) {
     sprite->oam.palette = 0;
     sprite->oam.priority = 1;
     sprite->depth = OAM_DEPTH_WINDOW;
-    mote->rune.x = targetX;
-    mote->rune.z = targetZ;
+    piece->rune.x = targetX;
+    piece->rune.z = targetZ;
     // The runes line up on the screen in rows 12 pixels apart, the rows 24
     // pixels apart, from (30, 30).
-    mote->rune.targetX = (i % TABLET_RUNE_ROW) * toFIXED(12) + toFIXED(30);
-    mote->rune.targetZ = (i / TABLET_RUNE_ROW) * toFIXED(24) + toFIXED(30);
-    mote->timer = -i;
+    piece->rune.targetX = (i % TABLET_RUNE_ROW) * toFIXED(12) + toFIXED(30);
+    piece->rune.targetZ = (i / TABLET_RUNE_ROW) * toFIXED(24) + toFIXED(30);
+    piece->timer = -i;
     sprite++;
-    mote++;
+    piece++;
   }
   Decompress_TaggedLz(Resource_GetTableEntry(RESOURCE_PEBBLES), work->pictures);
   pebbleEntry = VramCache_FindFreeEntry();
   pebbleTile =
       VramCache_Load(pebbleEntry, sizeof(work->pictures), work->pictures);
   work->pebbleTile = pebbleTile;
-  mote = work->pebbles;
+  piece = work->pebbles;
   sprite = work->pebbleSprites;
   for (i = 0; i < TABLET_PEBBLE_COUNT; i++) {
     EffectSprite_Init(sprite, 8, 8, OBJ_SIZE_16X16, pebbleTile);
@@ -288,9 +288,9 @@ void SummonTablet_PlayRunes(s32 targetId) {
     sprite->oam.palette = 0;
     sprite->oam.priority = 0;
     sprite->depth = OAM_DEPTH_WINDOW;
-    mote->timer = -1;
+    piece->timer = -1;
     sprite++;
-    mote++;
+    piece++;
   }
   wait(1);
   Sound_PlayFar(SE_DJINNI_SET);
@@ -376,12 +376,12 @@ void SummonTablet_PlayRunes(s32 targetId) {
       break;
     case 4:
       if (timer == 0) {
-        mote = work->runes;
+        piece = work->runes;
         delay = 0;
         for (i = 0; i < TABLET_RUNE_COUNT; i++) {
-          mote->timer = delay;
+          piece->timer = delay;
           delay -= 3;
-          mote++;
+          piece++;
         }
         work->radius = 60 * FIXED_ONE;
         work->angle = TRIG_TURN * 3 / 4;
@@ -432,16 +432,16 @@ void SummonTablet_PlayRunes(s32 targetId) {
     }
     for (i = 0; i < newPebbles; i++) {
       angle = Random16();
-      mote = &work->pebbles[nextPebble];
-      mote->timer = 0;
-      mote->pebble.position[0] = target->x.fixed;
-      mote->pebble.position[1] = target->y.fixed + toFIXED(12);
-      mote->pebble.position[2] = target->z.fixed;
+      piece = &work->pebbles[nextPebble];
+      piece->timer = 0;
+      piece->pebble.position[0] = target->x.fixed;
+      piece->pebble.position[1] = target->y.fixed + toFIXED(12);
+      piece->pebble.position[2] = target->z.fixed;
       Vector_AddPolarOffset(Random16() * 4 + toFIXED(2), angle,
-                            mote->pebble.position);
-      mote->pebble.velocity[0] = 0;
-      mote->pebble.velocity[1] = toFIXED(9) / 2;
-      mote->pebble.velocity[2] = 0;
+                            piece->pebble.position);
+      piece->pebble.velocity[0] = 0;
+      piece->pebble.velocity[1] = toFIXED(9) / 2;
+      piece->pebble.velocity[2] = 0;
       Vector_AddPolarOffset(Random16() * 2 + toFIXED(2), angle,
                             work->pebbles[nextPebble].pebble.velocity);
       nextPebble = (nextPebble + 1) & (TABLET_PEBBLE_COUNT - 1);

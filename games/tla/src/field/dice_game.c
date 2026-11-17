@@ -601,8 +601,8 @@ void SuperLuckyDice_Run(void) {
   Decompress_TaggedLz(resourceAddress, cellBuffer);
   Dma_Set(cellBuffer, (void *)BG_CHAR_BLOCK(1), DMA_COPY_WORDS(9600), REG_DMA3);
   resourceAddress = Resource_GetTableEntry(RESOURCE_DICE_FACES);
-  // Six palettes: the faces' 64 colours, then 32 read from the start of their
-  // tiles into palettes 4 and 5, which nothing draws with.
+  // Six palettes: the faces' DICE_FACES_PALETTE_COLORS colours, then 32 read
+  // from the start of their tiles into palettes 4 and 5.
   Dma_Set(resourceAddress, spritePalette,
           DMA_COPY_WORDS(6 * PALETTE_COLORS / 2), REG_DMA3);
   resourceAddress += DICE_FACES_PALETTE_COLORS * 2;

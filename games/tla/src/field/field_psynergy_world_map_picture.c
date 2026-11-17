@@ -63,8 +63,8 @@
 #define WORLD_MAP_CURSOR_MAX_SPEED toFIXED(6) ///< pixels a frame
 /// Added to the cursor's speed each frame the d-pad is held.
 #define WORLD_MAP_CURSOR_ACCELERATION (toFIXED(1) / 8)
-/// The squared distance in pixels within which a marker's name shows.
-#define WORLD_PICTURE_NAME_RANGE 64
+/// How near the cursor a marker's name shows, in pixels.
+#define WORLD_MAP_NAME_REACH 8
 #define WORLD_MAP_MARKER_BLEND_STEPS 32 ///< gWorldMap_MarkerBlendCycle's rows
 
 /// R (step 1) and L (step -1) on the world map screen: the cursor jumps to the
@@ -230,7 +230,7 @@ void WorldPicture_UpdateMarkers(void) {
   marker = work->markers;
   tileBase = gVramCacheEntries[work->vramBlock].offset >> 5;
   nearest = -1;
-  nearestDistance = WORLD_PICTURE_NAME_RANGE;
+  nearestDistance = WORLD_MAP_NAME_REACH * WORLD_MAP_NAME_REACH;
   nearestX = 0;
   nearestY = 0;
   places = FlagEntries_GetTable();
@@ -712,10 +712,10 @@ void WorldMapPicture_UpdateScroll(void) {
         x = 0;
       if (y < 0)
         y = 0;
-      // y is held to x's limit, which a scroll toward a target within the
-      // picture never reaches.
       if (x > limit)
         x = limit;
+      // DEAD: y held to x's limit, which a scroll toward a target within the
+      // picture never passes; the ROM keeps the compare and the store.
       if (y > limit)
         y = limit;
     }
@@ -1051,7 +1051,7 @@ const struct FlagEntry *FlagEntries_GetTable(void) { return gFlagEntries; }
 #undef WORLD_MAP_CURSOR_MIN_SPEED
 #undef WORLD_MAP_CURSOR_MAX_SPEED
 #undef WORLD_MAP_CURSOR_ACCELERATION
-#undef WORLD_PICTURE_NAME_RANGE
+#undef WORLD_MAP_NAME_REACH
 #undef WORLD_MAP_MARKER_BLEND_STEPS
 #undef SCROLL_X
 #undef SCROLL_Y

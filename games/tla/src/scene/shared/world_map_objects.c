@@ -25,8 +25,8 @@
 #include "field/field_sequence.h"
 
 /// The step trigger of place 0's actor; each next place's actor raises the
-/// next, as world_map.c's STEP_TRIGGER_AREA_BASE counts them.
-#define PLACED_ACTOR_TRIGGER_BASE 100
+/// next (world_map.c's own enum, here for staff_credit.c too).
+#define STEP_TRIGGER_AREA_BASE 100
 
 extern struct Actor *gWorldMap_PlacedActors[];
 
@@ -38,7 +38,7 @@ void WorldMap_SelectExitByX(s32 slot, s32 exitBefore, s32 exitAfter) {
   struct Actor *area;
   struct Actor *leader;
 
-  area = gWorldMap_PlacedActors[slot - PLACED_ACTOR_TRIGGER_BASE];
+  area = gWorldMap_PlacedActors[slot - STEP_TRIGGER_AREA_BASE];
   leader = Actor_Get(gMainRoutineWork.leaderActorId);
   work = Ram_HeapSlots->fieldWork;
   if (leader->x.fixed < area->x.fixed) {
@@ -55,7 +55,7 @@ void WorldMap_SelectExitByZ(s32 slot, s32 exitBefore, s32 exitAfter) {
   struct Actor *area;
   struct Actor *leader;
 
-  area = gWorldMap_PlacedActors[slot - PLACED_ACTOR_TRIGGER_BASE];
+  area = gWorldMap_PlacedActors[slot - STEP_TRIGGER_AREA_BASE];
   leader = Actor_Get(gMainRoutineWork.leaderActorId);
   work = Ram_HeapSlots->fieldWork;
   if (leader->z.fixed < area->z.fixed) {
@@ -165,7 +165,7 @@ void WorldMap_UpdatePlacedActors(void) {
               if (gMainRoutineWork.movementMode == LEADER_MOVEMENT_WORLD_SAND)
                 work->psynergy = ACT_PACKED | ABILITY_SAND;
               else
-                work->stepTrigger = i + PLACED_ACTOR_TRIGGER_BASE;
+                work->stepTrigger = i + STEP_TRIGGER_AREA_BASE;
             }
           }
         }
@@ -307,5 +307,5 @@ void WorldMap_SpawnParticle(struct Actor *actor) {
   }
 }
 
-#undef PLACED_ACTOR_TRIGGER_BASE
+#undef STEP_TRIGGER_AREA_BASE
 #undef SPARK_RISE_FRAMES

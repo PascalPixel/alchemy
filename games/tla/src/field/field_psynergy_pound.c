@@ -367,8 +367,7 @@ void FieldPsynergy_Pound(void) {
 /// Copies a 32 by 32 byte picture into a cleared one stretched down, its rows
 /// four pixels apart, each column slid down by phase (1.6 pixels a step, from
 /// 124 pixels up) less a sine wave across the columns; what falls outside is
-/// dropped. The
-/// Scoop draws its rising picture with it.
+/// dropped. The Scoop draws its rising picture with it.
 void Picture_ShiftColumnsByWave(u8 *source, u8 *destination, s32 phase) {
   s32 width = WAVE_PICTURE_SIZE;
   s32 height;
@@ -376,7 +375,8 @@ void Picture_ShiftColumnsByWave(u8 *source, u8 *destination, s32 phase) {
   s32 row;
 
   Iwram_ClearWordsEntry(destination, WAVE_PICTURE_SIZE * WAVE_PICTURE_SIZE);
-  // Set after the clear, which keeps it out of the call's registers.
+  /* FAKEMATCH(temporary): the height set after the clear; as
+   * s32 height = WAVE_PICTURE_SIZE. */
   height = WAVE_PICTURE_SIZE;
   for (column = 0; column < width; column++) {
     FIXED wave = Trig_Sin(column * (TRIG_TURN / 8)) * 8 + FIXED_ONE * 8;
@@ -389,7 +389,8 @@ void Picture_ShiftColumnsByWave(u8 *source, u8 *destination, s32 phase) {
       shift = FIXEDtoINT(shift);
 
       if (shift >= 0 && shift < height)
-        destination[(shift << 5) + column] = source[row * width + column];
+        destination[shift * WAVE_PICTURE_SIZE + column] =
+            source[row * width + column];
     }
   }
 }

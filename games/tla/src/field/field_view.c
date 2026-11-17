@@ -17,25 +17,25 @@
 #define MAPGRID_SHAKE_SETTLE_MAX_AMPLITUDE (toFIXED(1) / 256 - 1)
 /// One of the world map's two tile maps of one-byte tiles, BG3's and then
 /// BG2's, as WorldMap_StartStillPicture copies them into gDecodeBuffer.
-#define TILEMAP_MAP_BANK_BYTES                                                 \
+#define WORLD_MAP_TILE_MAP_BYTES                                               \
   (WORLD_MAP_TILE_MAP_WIDTH * WORLD_MAP_TILE_MAP_WIDTH)
 
-/// The bit of a world map block's top byte, its word's bit 31, that makes it a
+/// The bit of a world map cell's top byte, its word's bit 31, that makes it a
 /// beach.
-#define WORLD_MAP_BLOCK_BEACH (1 << 7)
+#define WORLD_MAP_CELL_BEACH (1 << 7)
 
-/// The banks of gWorldMap_TerrainBehaviorTable, 16 collision values each,
-/// which differ in the battles their walkable ground and forest give.
-enum TerrainBehaviorBank {
-  TERRAIN_BANK_PLAIN = 0,
-  TERRAIN_BANK_BEACH = 16, ///< walkable ground fights on the beach
-  TERRAIN_BANK_SNOWFIELD = 32,
-  TERRAIN_BANK_DESERT = 48, ///< walkable ground fights in the desert
-  TERRAIN_BANK_BLIZZARD = 64
+/// The sets of rows of gWorldMap_TerrainBehaviorTable, 16 collision values
+/// each, which differ in the battles their walkable ground and forest give.
+enum TerrainBehaviorRows {
+  TERRAIN_ROWS_PLAIN = 0,
+  TERRAIN_ROWS_BEACH = 16, ///< walkable ground fights on the beach
+  TERRAIN_ROWS_SNOWFIELD = 32,
+  TERRAIN_ROWS_DESERT = 48, ///< walkable ground fights in the desert
+  TERRAIN_ROWS_BLIZZARD = 64
 };
 
-/// The encounter regions (WorldMapCell.region) whose blocks take a bank of
-/// their own.
+/// The encounter regions (WorldMapCell.region) whose cells take rows of their
+/// own.
 enum {
   AIRS_ROCK_DESERT_REGION = 12,     ///< the desert round Air's Rock
   SHAMAN_VILLAGE_SANDS_REGION = 15, ///< the sandy shore north of Shaman Village
@@ -44,43 +44,43 @@ enum {
 };
 
 /// Returns the world map's battle environment at position from
-/// gWorldMap_TerrainBehaviorTable, by its collision value and its block's bank,
-/// and stores the block's encounter region in terrainKind.
+/// gWorldMap_TerrainBehaviorTable, by its collision value and its cell's rows,
+/// and stores the cell's encounter region in encounterRegion.
 u8 WorldMap_GetBattleEnvironment(struct WorldPosition *position,
-                                 s32 *terrainKind) {
+                                 s32 *encounterRegion) {
   s32 collisionKind = WorldMap_GetCollision(position);
   s32 x = position->x;
   s32 y;
-  s32 bank = TERRAIN_BANK_PLAIN;
-  u32 blockX;
+  s32 rows = TERRAIN_ROWS_PLAIN;
+  u32 cellX;
   u32 index;
-  u32 *block;
+  u32 *cell;
   u32 region;
 
   // The bias rounds a negative coordinate towards zero, as division would.
   if (x < 0)
     x += toFIXED(32) - 1;
-  blockX = WORLD_MAP_BLOCK(x) & (WORLD_MAP_VIEW_CELLS - 1);
+  cellX = WORLD_MAP_BLOCK(x) & (WORLD_MAP_VIEW_CELLS - 1);
   y = position->y;
   if (y < 0)
     y += toFIXED(32) - 1;
 
-  index = blockX + ((WORLD_MAP_BLOCK(y) & (WORLD_MAP_VIEW_CELLS - 1)) << 5);
-  block = gCellPictures + index;
-  if (((u8 *)block)[3] & WORLD_MAP_BLOCK_BEACH)
-    bank = TERRAIN_BANK_BEACH;
+  index = cellX + ((WORLD_MAP_BLOCK(y) & (WORLD_MAP_VIEW_CELLS - 1)) << 5);
+  cell = gCellPictures + index;
+  if (((u8 *)cell)[3] & WORLD_MAP_CELL_BEACH)
+    rows = TERRAIN_ROWS_BEACH;
 
-  region = ((struct WorldMapCell *)block)->region;
-  *terrainKind = region;
+  region = ((struct WorldMapCell *)cell)->region;
+  *encounterRegion = region;
   if (region >= SNOWFIELD_REGION_FIRST)
-    bank = TERRAIN_BANK_SNOWFIELD;
+    rows = TERRAIN_ROWS_SNOWFIELD;
   if (region == PROX_BLIZZARD_REGION)
-    bank = TERRAIN_BANK_BLIZZARD;
+    rows = TERRAIN_ROWS_BLIZZARD;
   if (region == AIRS_ROCK_DESERT_REGION ||
       region == SHAMAN_VILLAGE_SANDS_REGION)
-    bank = TERRAIN_BANK_DESERT;
+    rows = TERRAIN_ROWS_DESERT;
 
-  return gWorldMap_TerrainBehaviorTable[bank + collisionKind];
+  return gWorldMap_TerrainBehaviorTable[rows + collisionKind];
 }
 
 /// Changes the shake without restarting an axis whose argument is negative.
@@ -122,9 +122,9 @@ void MapGrid_WaitForShakeToSettle(void) {
   grid->shakeDecay = 0;
 }
 
-/// The copied ARM kernel reads the BG2 affine row from each 32-byte pair and
-/// writes 240 by 160 pixels as 256-colour tiles; it returns the address past
-/// the last pair, where its row cursor stops.
+/// The ARM routine copied to RAM reads the BG2 affine row from each 32-byte
+/// pair and writes 240 by 160 pixels as 256-colour tiles; it returns the
+/// address past the last pair, where its row cursor stops.
 typedef const struct WorldMapAffinePair *(*TileMapRowDrawer)(
     const struct WorldMapAffinePair *lines, u8 *pixels, const u8 *tiles,
     const u8 *map);
@@ -138,7 +138,8 @@ void TileMap_DrawRowsFromRam(const struct WorldMapAffinePair *lines,
 
   // The second tile set and tile map are BG2's.
   RamCode_Load(routine, Render_DrawMapCode, Render_DrawMapCodeSize);
-  routine(lines, pixels, WORLD_MAP_TILE_SET(2), maps + TILEMAP_MAP_BANK_BYTES);
+  routine(lines, pixels, WORLD_MAP_TILE_SET(2),
+          maps + WORLD_MAP_TILE_MAP_BYTES);
   Heap_Release(routine);
 }
 
@@ -150,17 +151,19 @@ void WorldMap_BuildScanlineTable(FIXED pitchSlope, s32 *position,
   FIXED horizon;
   FIXED focus;
   s32 line;
-  s32 distance;
+  s32 slope;
   FIXED scale;
   s32 horizontal;
   FIXED squaredSum;
-  s32 groundHeight;
+  s32 zero;
 
   // The followed point on the ground (height 0), in camera space; horizon is
   // its height less its depth times the pitch slope.
-  groundHeight = 0;
+  /* FAKEMATCH(temporary): the ground's height 0 held in a local; as
+   * groundPoint[1] = 0. */
+  zero = 0;
   groundPoint[0] = position[0];
-  groundPoint[1] = groundHeight;
+  groundPoint[1] = zero;
   groundPoint[2] = position[2];
   Iwram_TransformVector(groundPoint, cameraPoint);
   horizon = cameraPoint[1] - Iwram_MulFX(cameraPoint[2], pitchSlope);
@@ -169,36 +172,31 @@ void WorldMap_BuildScanlineTable(FIXED pitchSlope, s32 *position,
     FIXED difference;
 
     // The line's ray slope: its offset from the projection's centre line over
-    // the focal length.
-    distance =
-        Iwram_RatioMulQ14(focus, (gProjection.centerY - line) * FIXED_ONE);
-    // A ray parallel to the ground would divide by zero.
-    difference = distance - pitchSlope;
+    // the focal length; later the vertical term.
+    slope = Iwram_RatioMulQ14(focus, (gProjection.centerY - line) * FIXED_ONE);
+    difference = slope - pitchSlope;
     if (difference == 0)
       difference = 1;
     scale = Iwram_RatioMulQ14(difference, horizon);
     // A negative scale is a line below the horizon, whose ray meets the
     // ground; the lines above it are sky and get zeros.
     if (scale < 0) {
-      // MulFX by FIXED_ONE / 2 halves: the width scale is half the line's scale
-      // over the focal length, and the distance below is stored halved.
+      // The width scale is half the line's scale over the focal length, and
+      // the depth is stored halved.
       scanline->scale = Iwram_RatioMulQ14(gProjection.focal,
                                           Iwram_MulFX(-scale, FIXED_ONE / 2));
-      // The distance is the root of the two squared terms; distance becomes
-      // the vertical one.
-      distance = Iwram_MulFX(scale, distance);
+      slope = Iwram_MulFX(scale, slope);
       horizontal = (cameraPoint[2] - scale) >> 4;
-      distance -= cameraPoint[1];
+      slope -= cameraPoint[1];
       squaredSum = Iwram_MulFX(horizontal, horizontal);
-      distance >>= 4;
-      squaredSum += Iwram_MulFX(distance, distance);
+      slope >>= 4;
+      squaredSum += Iwram_MulFX(slope, slope);
       {
         // The root of a 16.16 square comes back in 8.8, and the terms were
         // taken in sixteenths.
         s32 groundDistance = Iwram_Sqrt(squaredSum) << (8 + 4);
 
-        // The ground distance takes the sign of the vertical term.
-        if (distance < 0)
+        if (slope < 0)
           groundDistance = -groundDistance;
         scanline->depth = Iwram_MulFX(groundDistance, FIXED_ONE / 2);
       }

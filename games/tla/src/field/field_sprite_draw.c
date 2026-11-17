@@ -467,7 +467,7 @@ void Render_ApplyProjectedPlacement(struct Sprite *object, s32 *pos, s32 *scale,
     halfHeight <<= 1;
   }
 
-  // The shadow: an 8 by 4 sprite on the ground below the object.
+  // The 16 by 8 shadow, centred on the ground below the object.
   y = FIXEDtoINT(pz - pw) - SHADOW_HALF_HEIGHT;
   if ((object->flags & SPRITE_FLAG_SHADOW) && y < DISPLAY_HEIGHT) {
     part = &object->shadow;

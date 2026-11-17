@@ -1372,7 +1372,7 @@ s32 WorldMap_IsSailable(void *object, struct WorldPosition *position) {
   return -1;
 }
 
-/// Returns 0 where the winged ship can go, else -1: low down, where it can
+/// Returns 0 where the flying ship can go, else -1: low down, where it can
 /// sail; higher, more of the ground by the kind it last flew over.
 s32 WorldMap_IsFlyable(struct Actor *mover, struct WorldPosition *position) {
   if (WorldMap_GetBlockCellBehavior(position) != CELL_BEHAVIOR_WALL) {
@@ -1405,9 +1405,8 @@ s32 WorldMap_IsFlyable(struct Actor *mover, struct WorldPosition *position) {
             return 0;
         }
         // XXX (no evidence): what ground collision 10 is, which a battle
-        // counts as grassland as it does 7, 8, 11 and 12; the render probe
-        // shows a scene's actors and triggers, not the World Map's collision
-        // under a point, and no text names it.
+        // counts as grassland as it does 7, 8, 11 and 12; nothing in reach
+        // shows the World Map's collision under a point, and no text names it.
         if (collision == 10)
           return 0;
       }

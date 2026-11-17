@@ -108,4 +108,13 @@ struct CycloneWork {
   s8 kind;
 };
 
+/// The cycling glow of the Parch disc and the Ring: red stays put while green
+/// and blue swing either side of their middles, each colour a step further
+/// along the swing.
+#define GLOW_RED 28
+#define GLOW_GREEN 23
+#define GLOW_GREEN_SWING 8
+#define GLOW_BLUE 12
+#define GLOW_BLUE_SWING 10
+
 #endif // ALCHEMY_FIELD_PSYNERGY_INTERNAL_H

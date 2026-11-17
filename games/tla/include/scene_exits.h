@@ -2,15 +2,14 @@
 #define ALCHEMY_SCENE_EXITS_H
 
 /// @file
-/// The ways between scenes: each scene's entrances, named by where the
-/// party arrives from, and its exits, named by where they lead, in the exit
-/// tables' numbers (SCENE_EXIT), as The Broken Seal's scene_exits.h. A door
-/// is named the same from both sides: an exit and the entrance it leads to
-/// face each other, and a door's two sides usually share its number in each
-/// scene. Where two scenes share several doors, each is named by the compass
-/// point it lies at on the map of the place the other opens off. Exits
-/// between rooms of one map, and entrances no exit leads to, keep their
-/// numbers.
+/// The ways between scenes: each scene's entrances, named by where the party
+/// arrives from, and its exits, named by where they lead, in the exit tables'
+/// numbers (SCENE_EXIT). A door is named the same from both sides: an exit and
+/// the entrance it leads to face each other, and a door's two sides usually
+/// share its number in each scene. Where two scenes share several doors, each
+/// is named by the compass point it lies at on the map of the place the other
+/// opens off. Exits between rooms of one map, and entrances no exit leads to,
+/// keep their numbers.
 
 /// The entrance a scene's table lists first: Scene_TakeExit sends the
 /// party there when an exit has no row of its own, and the debug scene

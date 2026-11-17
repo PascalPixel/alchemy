@@ -104,9 +104,8 @@ enum SoundId {
   /// Plays as Alex appears: in Champa, at Jupiter Lighthouse's beacon and
   /// fight, and before the Doom Dragon.
   MUS_ALEX,
-  /// The title intro's music at power-on, when a save file exists, and before
-  /// a new game's intro (the title's Scene_Initialize), as The Broken Seal's
-  /// MUS_TITLE.
+  /// The title intro's music at power-on, when a save file exists, and before a
+  /// new game's intro (the title's Scene_Initialize).
   MUS_TITLE,
   /// The field music of the Lemurian Ship and the Northern Reaches, and of the
   /// World Map once FLAG_SAILING is set.
@@ -164,8 +163,7 @@ enum SoundId {
   MUS_SEA_OF_TIME,
   /// The Epilogue's music after its first lines.
   MUS_EPILOGUE = 67,
-  /// The staff credits' music (the title's entrance 8, Credits_Run), as The
-  /// Broken Seal's MUS_ENDING.
+  /// The staff credits' music (the title's entrance 8, Credits_Run).
   MUS_ENDING,
   /// Unused: The Broken Seal's MUS_TITLE, note for note.
   MUS_UNUSED_TITLE = 70,
@@ -180,8 +178,7 @@ enum SoundId {
   /// transferred.
   MUS_CLEAR,
   /// The title held without its prompt: after the prologue (the title's
-  /// entrance 3), as The Broken Seal's MUS_TITLE_AFTER_PROLOGUE, and as the
-  /// logo shows after the ending (entrance 10).
+  /// entrance 3), and as the logo shows after the ending (entrance 10).
   MUS_TITLE_AFTER_PROLOGUE,
   /// The Trial Road race: Moapa's challenge, the rules and the countdown in
   /// Shaman Village, and the Trial Road's music while
@@ -267,9 +264,9 @@ enum SoundId {
   SE_KIRIN,
   SE_ITEM_BREAK,
   /// A Djinni set in the Djinn menu, and a Djinni recovering to Set as the
-  /// party walks (Field_UpdateWalking), as The Broken Seal's row 139; also the
-  /// summon tablets' runes, Champa's embers and the Serac, Eclipse, Cruel Ruin
-  /// and other battle effects.
+  /// party walks (Field_UpdateWalking); also the summon tablets' runes,
+  /// Champa's embers and the Serac, Eclipse, Cruel Ruin and other battle
+  /// effects.
   SE_DJINNI_SET,
   SE_SPIN,
   SE_RUMBLE,
@@ -293,9 +290,9 @@ enum SoundId {
   SE_DOOR_CLOSE,
   SE_160,
   SE_RATTLE,
-  /// The Mercury, Judgment and Neptune battle effects, as The Broken Seal's row
-  /// 162; also Charon and Meteor Blow, the Aquarius Stone in Aqua Rock and the
-  /// Kandorean Temple's steam vents and lifts.
+  /// The Mercury, Judgment and Neptune battle effects; also Charon and Meteor
+  /// Blow, the Aquarius Stone in Aqua Rock and the Kandorean Temple's steam
+  /// vents and lifts.
   SE_WAVE,
   /// SE_WAVE's notes thirteen semitones higher: the tidal wave that carries
   /// Idejima off on the World Map, the whirlwinds clearing Air's Rock's sand
@@ -309,12 +306,10 @@ enum SoundId {
   SE_MAP_TRANSITION,
   /// Played three times as the Ruin Key opens the Madra Catacombs.
   SE_UNLOCK,
-  /// The Broken Seal's row 169, SE_AMBIENT_WIND, beside SE_AMBIENT_WATER;
-  /// nothing plays it here.
+  /// Nothing in this game plays it.
   SE_AMBIENT_WIND,
   /// The steam vents and waterfalls: Taopo Swamp's and Aqua Rock's vents, the
-  /// settlements' waterfall, the Kandorean Temple and the Apojii Islands, as
-  /// The Broken Seal's row 170.
+  /// settlements' waterfall, the Kandorean Temple and the Apojii Islands.
   SE_AMBIENT_WATER,
   SE_THUNDER,
   SE_THUNDER_LOUD,
@@ -440,9 +435,9 @@ enum SoundId {
   SE_BLACK_CRYSTAL_SET,
   SE_COLOSSO_WARRIOR_APPEAR,
   SE_253,
-  /// The voice blips of a message: an actor's voice is SE_VOICE_FIRST plus
-  /// four times its voice, and the letters typed play it plus the letter's low
-  /// two bits, so a voice is four blips, _A to _D, as in The Broken Seal.
+  /// The voice blips of a message: an actor's voice is SE_VOICE_FIRST plus four
+  /// times its voice, and the letters typed play it plus the letter's low two
+  /// bits, so a voice is four blips, _A to _D.
   SE_VOICE_ANIMAL_A = 256,
   SE_VOICE_ANIMAL_B,
   SE_VOICE_ANIMAL_C,

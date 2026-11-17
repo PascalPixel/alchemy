@@ -95,8 +95,7 @@ enum ItemType {
   /// The items that teach Psynergy while held: Orb of Force to Teleport
   /// Lapis.
   ITEM_TYPE_PSYNERGY = 6,
-  /// The Trident alone: "A weapon with a unique purpose". The Broken Seal
-  /// gives this type to no item.
+  /// The Trident alone: "A weapon with a unique purpose".
   ITEM_TYPE_TRIDENT = 7,
   ITEM_TYPE_RING = 8,  ///< Adept Ring to War Ring
   ITEM_TYPE_SHIRT = 9, ///< Mythril Shirt to Divine Camisole

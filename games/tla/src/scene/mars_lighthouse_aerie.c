@@ -92,7 +92,7 @@ enum {
 };
 
 /// The exit that takes the party, faded to black, from the fallen dragon to
-/// the beacon (MARS_LIGHTHOUSE_AERIE_FROM_MERCURY_LIGHTHOUSE_EAST_A).
+/// the beacon (MARS_LIGHTHOUSE_AERIE_FROM_MARS_LIGHTHOUSE_AERIE).
 #define EXIT_TO_THE_BEACON 2
 
 /// After the battle (gMarsLighthouseAerie_AfterBattlePlacements): the party
@@ -116,7 +116,7 @@ enum {
 };
 
 /// At the beacon (gMarsLighthouseAerie_BeaconPlacements), entered from
-/// MARS_LIGHTHOUSE_AERIE_FROM_MERCURY_LIGHTHOUSE_EAST_A on:
+/// MARS_LIGHTHOUSE_AERIE_FROM_MARS_LIGHTHOUSE_AERIE on:
 /// the three lie dying, and an unseen actor beside each answers for them
 /// when talked to.
 enum {
@@ -369,7 +369,7 @@ s32 Scene_Initialize(void) {
     MarsLighthouseAerie_LightBeacon();
     Event_End();
   } else if (gMainRoutineWork.entrance ==
-             MARS_LIGHTHOUSE_AERIE_FROM_MERCURY_LIGHTHOUSE_EAST_A) {
+             MARS_LIGHTHOUSE_AERIE_FROM_MARS_LIGHTHOUSE_AERIE) {
     Actor_SetAnimation(ACTOR_JENNAS_MOTHER, 8);
     Actor_SetAnimation(ACTOR_JENNAS_FATHER, 8);
     Actor_SetAnimation(ACTOR_KYLE, 7);
@@ -3407,7 +3407,7 @@ struct SceneEntrance gSceneEntrances[] = {
 u32 gSceneExits[] = {
     SCENE_EXITS(MarsLighthouseAerie),
     SCENE_EXIT(MARS_LIGHTHOUSE_AERIE_TO_MARS_LIGHTHOUSE_ROOM_M_INSCRIPTIONS, MarsLighthouseRoomMInscriptions, MARS_LIGHTHOUSE_ROOM_M_INSCRIPTIONS_FROM_MARS_LIGHTHOUSE_AERIE),
-    SCENE_EXIT(EXIT_TO_THE_BEACON, MarsLighthouseAerie, MARS_LIGHTHOUSE_AERIE_FROM_MERCURY_LIGHTHOUSE_EAST_A),
+    SCENE_EXIT(EXIT_TO_THE_BEACON, MarsLighthouseAerie, MARS_LIGHTHOUSE_AERIE_FROM_MARS_LIGHTHOUSE_AERIE),
     SCENE_EXIT(MARS_LIGHTHOUSE_AERIE_TO_MERCURY_LIGHTHOUSE_EAST_A, MercuryLighthouse, MERCURY_LIGHTHOUSE_FROM_MARS_LIGHTHOUSE_AERIE_EAST_A),
     SCENE_EXIT(MARS_LIGHTHOUSE_AERIE_TO_PROX_HOUSES, ProxHouses, PROX_HOUSES_FROM_MARS_LIGHTHOUSE_AERIE),
     SCENE_EXITS_END,

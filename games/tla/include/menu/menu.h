@@ -32,6 +32,11 @@ enum ListSort {
 /// The rows a page of the item and Psynergy lists shows.
 #define LIST_PAGE_SIZE 5
 
+/// The y of the menus' row of party figures, and of the chosen member's,
+/// lowered below the rest.
+#define MENU_MEMBER_Y 26
+#define MENU_MEMBER_CHOSEN_Y 30
+
 extern u8 gStatusScreen_CursorWidths[];
 extern u8 gMenu_ListOrderItemsFirst[];
 extern u8 gMenu_ListOrderEquippedThenItems[];

@@ -8,6 +8,9 @@
 /// thrown, KNOCK_BACK_SET_ANIMATION, KNOCK_BACK_CELL_ATTRIBUTE and
 /// KNOCK_BACK_CHECK_COLLISION.
 
+/// Ram_HeapSlots->actors, as field_internal.h counts them.
+#define ACTOR_COUNT 64
+
 // Typed as an event that returns a value, though it returns none.
 s32 KNOCK_BACK(void) {
   struct MainRoutineWork *main = &gMainRoutineWork;
@@ -32,16 +35,18 @@ s32 KNOCK_BACK(void) {
     KNOCK_BACK_SET_ANIMATION(actor, 49);
     for (;;) {
       if (KNOCK_BACK_CELL_ATTRIBUTE(actor->layer, actor->x.fixed,
-                                    actor->z.fixed) == 7) {
+                                    actor->z.fixed) == TERRAIN_ROUNDED_SQUARE) {
         s32 i;
 
-        actor->velocityX = (s16)work->direction.x << 17;
-        actor->velocityZ = (s16)work->direction.z << 17;
+        // Sliding: 2 pixels a frame for up to 10 frames, until the ground
+        // 8 pixels ahead stops them.
+        actor->velocityX = (s16)work->direction.x * toFIXED(2);
+        actor->velocityZ = (s16)work->direction.z * toFIXED(2);
         actor->acceleration = FIXED_ONE / 16;
         for (i = 0; i <= 9; i++) {
-          position.x = actor->x.fixed + ((s16)work->direction.x << 19);
+          position.x = actor->x.fixed + (s16)work->direction.x * toFIXED(8);
           position.y = actor->y.fixed;
-          position.z = actor->z.fixed + ((s16)work->direction.z << 19);
+          position.z = actor->z.fixed + (s16)work->direction.z * toFIXED(8);
           if (KNOCK_BACK_CHECK_COLLISION(actor, &position) != 0) {
             actor->velocityX = 0;
             actor->velocityZ = 0;
@@ -63,9 +68,9 @@ s32 KNOCK_BACK(void) {
         s32 off;
 #endif
 
-        position.x = actor->x.fixed + ((s16)work->direction.x << 19);
+        position.x = actor->x.fixed + (s16)work->direction.x * toFIXED(8);
         position.y = actor->y.fixed;
-        position.z = actor->z.fixed + ((s16)work->direction.z << 19);
+        position.z = actor->z.fixed + (s16)work->direction.z * toFIXED(8);
         result = KNOCK_BACK_CHECK_COLLISION(actor, &position);
         if (result > 0)
           break;
@@ -78,8 +83,9 @@ s32 KNOCK_BACK(void) {
         radius = actor->radius - 2;
         other = Ram_HeapSlots->actors;
         flags = &other->collisionFlags;
-        for (i = 0; i <= 63; i++, flags += 128, other++) {
-          if (other->script != 0 && (*flags & 1) && other != actor &&
+        for (i = 0; i < ACTOR_COUNT;
+             i++, flags += sizeof(struct Actor), other++) {
+          if (other->script != 0 && (*flags & ACTOR_SOLID) && other != actor &&
               Event_CheckSpheresOverlap(&other->x.fixed, radius,
                                         (s32 *)&position,
                                         other->radius - 2) >= 0) {
@@ -88,8 +94,10 @@ s32 KNOCK_BACK(void) {
           }
         }
 #endif
-        x = actor->x.fixed += (s16)work->direction.x << 17;
-        z = actor->z.fixed + ((s16)work->direction.z << 17);
+        // A step of 2 pixels, kept within a pixel of the cell's middle
+        // across it.
+        x = actor->x.fixed += (s16)work->direction.x * toFIXED(2);
+        z = actor->z.fixed + (s16)work->direction.z * toFIXED(2);
         actor->z.fixed = z;
         off = (x & ~FIELD_CELL_MASK) - toFIXED(8);
         if (off > FIXED_ONE)
@@ -111,7 +119,7 @@ s32 KNOCK_BACK(void) {
   done:
 #endif
     actor->update = 0;
-    Actor_SetSpriteColorMode(actor, 0);
+    Actor_SetSpriteColorMode(actor, SPRITE_COLOR_NORMAL);
   }
   // UB: work is set only when renderMode is 0; otherwise the store goes
   // through whatever its register holds.
@@ -120,3 +128,5 @@ s32 KNOCK_BACK(void) {
 #endif
     work->active = 0;
 }
+
+#undef ACTOR_COUNT

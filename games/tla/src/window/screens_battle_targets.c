@@ -31,13 +31,15 @@ extern const u8 gOwnerStatus_PvString[];
 s32 System_GetLanguage(void);
 #endif
 
-// The help window's column beside the aimed member, kept on screen.
-#define TARGET_HELP_COLUMN(back, width, last)                                  \
+// The help window's column, `back` tiles left of the aimed member; a window
+// `windowWidth` tiles wide that would reach the screen's last column stands
+// against the right edge instead.
+#define TARGET_HELP_COLUMN(back, windowWidth)                                  \
   {                                                                            \
     s32 anchor = selectedPosition.x / 8;                                       \
     helpColumn = anchor - (back);                                              \
-    if (anchor + (width) > 29)                                                 \
-      helpColumn = (last);                                                     \
+    if (anchor + (windowWidth) - (back) > DISPLAY_TILE_WIDTH - 1)              \
+      helpColumn = DISPLAY_TILE_WIDTH - (windowWidth);                         \
   }
 
 #if TLA_PATCH_2
@@ -58,21 +60,25 @@ s32 System_GetLanguage(void);
 #else
 #define TARGET_CONDITION_LIST_WINDOW()                                         \
   {                                                                            \
-    TARGET_HELP_COLUMN(7, TARGET_CONDITION_LIST_WIDTH - 7,                     \
-                       30 - TARGET_CONDITION_LIST_WIDTH);                      \
+    TARGET_HELP_COLUMN(7, TARGET_CONDITION_LIST_WIDTH);                        \
     conditionWindow = Window_Create(                                           \
         helpColumn, helpRow, TARGET_CONDITION_LIST_WIDTH, count + 2, 6);       \
   }
 #endif
 
-// The cursors' bob, a sine turn every 16 frames scaled down to 2 pixels.
-// The signed rounding is spelled out: as bob / 32768, 344 of 1647 differ.
+// What the selection redraws: the spread's targets and their markers, and at
+// the start every part.
+#define TARGET_REDRAW_SPREAD 1
+#define TARGET_REDRAW_ALL 0xFFFF
+
+// The cursors' bob, a sine turn every 16 frames scaled down to 2 pixels: the
+// sine divided by FIXED_ONE / 2, rounding toward zero.
 #define TARGET_BOB(y)                                                          \
   {                                                                            \
     s32 bob = Trig_Sin(gFrameCount * (TRIG_TURN / 16));                        \
                                                                                \
     if (bob < 0)                                                               \
-      bob += 32767;                                                            \
+      bob += FIXED_ONE / 2 - 1;                                                \
     (y) += bob >> 15;                                                          \
   }
 
@@ -133,7 +139,7 @@ s32 BattleTarget_RunSelection(s32 selection, s32 mode, u32 spread, u32 kind) {
 
   battle = Ram_HeapSlots->battleWork;
   targetCount = 0;
-  redraw = 0xFFFF;
+  redraw = TARGET_REDRAW_ALL;
   cursorSlot = VramCache_AllocEntry(256);
   /* FAKEMATCH(dead): a null computed from selection. */
   conditionWindow = (struct Window *)((u32)(u16)selection >> 16);
@@ -287,7 +293,7 @@ s32 BattleTarget_RunSelection(s32 selection, s32 mode, u32 spread, u32 kind) {
     effect.angle = 0;
     matrix = OamMatrix_AllocFromTransform(&effect);
 
-    if (redraw & 1) {
+    if (redraw & TARGET_REDRAW_SPREAD) {
       targetCount = 0;
       for (i = 0; i < 6; i++)
         cursorTracks[i].flags &= ~2;
@@ -352,7 +358,14 @@ s32 BattleTarget_RunSelection(s32 selection, s32 mode, u32 spread, u32 kind) {
             }
           }
 #else
-            TARGET_HELP_COLUMN(4, 4, 22);
+#ifdef BUGFIX
+            TARGET_HELP_COLUMN(4, TARGET_SET_DJINNI_WIDTH);
+#else
+            // BUG: placed as the Japanese window, 8 tiles wide; the English one
+            // is 9, so against the right edge its last column is past the
+            // screen's.
+            TARGET_HELP_COLUMN(4, 8);
+#endif
             conditionWindow =
                 Window_Create(helpColumn, 8, TARGET_SET_DJINNI_WIDTH, 3, 6);
 #endif
@@ -361,7 +374,7 @@ s32 BattleTarget_RunSelection(s32 selection, s32 mode, u32 spread, u32 kind) {
             Text_SetColor(TEXT_COLOR_WHITE);
             break;
           case TARGET_HINT_HP:
-            TARGET_HELP_COLUMN(7, 6, 17);
+            TARGET_HELP_COLUMN(7, 13);
             conditionWindow = Window_Create(helpColumn, 8, 13, 3, 6);
 #if TLA_PATCH_2
             switch (System_GetLanguage()) {
@@ -389,7 +402,7 @@ s32 BattleTarget_RunSelection(s32 selection, s32 mode, u32 spread, u32 kind) {
             Text_DrawNumberInWindow(unit->hpMax, 4, conditionWindow, 56, 0);
             break;
           case TARGET_HINT_PP:
-            TARGET_HELP_COLUMN(7, 6, 17);
+            TARGET_HELP_COLUMN(7, 13);
             conditionWindow = Window_Create(helpColumn, 8, 13, 3, 6);
             Text_DrawStringAtOffset(gOwnerStatus_PpString, conditionWindow, 0,
                                     0);
@@ -399,7 +412,7 @@ s32 BattleTarget_RunSelection(s32 selection, s32 mode, u32 spread, u32 kind) {
             Text_DrawNumberInWindow(unit->ppMax, 4, conditionWindow, 56, 0);
             break;
           case TARGET_HINT_REVIVE:
-            TARGET_HELP_COLUMN(7, 5, 18);
+            TARGET_HELP_COLUMN(7, 12);
             conditionWindow = Window_Create(helpColumn, 8, 12, 3, 6);
             if (unit->hp != 0)
               goto no_condition;
@@ -407,7 +420,7 @@ s32 BattleTarget_RunSelection(s32 selection, s32 mode, u32 spread, u32 kind) {
                                     0);
             break;
           case TARGET_HINT_CURE_POISON:
-            TARGET_HELP_COLUMN(7, 5, 18);
+            TARGET_HELP_COLUMN(7, 12);
             conditionWindow = Window_Create(helpColumn, 8, 12, 3, 6);
             if (unit->poison == 0)
               goto no_condition;
@@ -553,7 +566,7 @@ s32 BattleTarget_RunSelection(s32 selection, s32 mode, u32 spread, u32 kind) {
           TARGET_MYSTERY_NAME_COPY(width, targetName,
                                    TARGET_MYSTERY_NAME_CAPACITY);
         } else {
-          for (i = 0; i <= 13; i++) {
+          for (i = 0; i < UNIT_NAME_SIZE - 1; i++) {
             targetName[i] = n = target->name[i];
             if (!n)
               break;
@@ -570,7 +583,7 @@ s32 BattleTarget_RunSelection(s32 selection, s32 mode, u32 spread, u32 kind) {
         Text_ClearCanvas();
         Text_DrawWideStringAtOffset(targetName, window, namePosition.x, 4);
       }
-      redraw &= ~1;
+      redraw &= ~TARGET_REDRAW_SPREAD;
     }
 
     if (drawCursors != 0) {
@@ -654,7 +667,7 @@ s32 BattleTarget_RunSelection(s32 selection, s32 mode, u32 spread, u32 kind) {
           targetIndex++;
           targetIndex %= candidateCount;
         } while (candidateIds[targetIndex] == BATTLE_UNIT_REMOVED);
-        redraw |= 1;
+        redraw |= TARGET_REDRAW_SPREAD;
       }
       if (repeated & (KEY_LEFT | KEY_UP)) {
         Sound_PlayFar(SE_MENU_CURSOR_MOVE);
@@ -662,7 +675,7 @@ s32 BattleTarget_RunSelection(s32 selection, s32 mode, u32 spread, u32 kind) {
           targetIndex = targetIndex + candidateCount - 1;
           targetIndex %= candidateCount;
         } while (candidateIds[targetIndex] == BATTLE_UNIT_REMOVED);
-        redraw |= 1;
+        redraw |= TARGET_REDRAW_SPREAD;
       }
     }
     if (BATTLE_MENU_WORK->timer == 0 || (pressed & KEY_B)) {
@@ -691,3 +704,5 @@ s32 BattleTarget_RunSelection(s32 selection, s32 mode, u32 spread, u32 kind) {
 #undef TARGET_HELP_COLUMN
 #undef TARGET_CONDITION_LIST_WINDOW
 #undef TARGET_BOB
+#undef TARGET_REDRAW_SPREAD
+#undef TARGET_REDRAW_ALL

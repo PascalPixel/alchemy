@@ -10,11 +10,14 @@
 #define TILESET_ANIM_OPCODE_MASK 0xff00 ///< the high byte: the command
 #define TILESET_ANIM_JUMP 0xfe00 ///< low byte: the halfword pair to jump to
 #define TILESET_ANIM_STOP 0xff   ///< TILESET_ANIM_JUMP's low byte to stop
+#define TILESET_ANIM_ARGUMENT_MASK                                             \
+  0xff ///< the low byte: the command's argument
 /// A layout with wide tiles animates 64-byte (256-colour) tiles in char block
 /// 2; others animate 16-colour ones in char block 1.
 #define TILESET_ANIM_WIDE_TILE_BYTES (TILE_SIZE_4BPP * 2)
 #define TILESET_ANIM_MARKER 0xfd00 ///< low four bits: the animation it starts
 #define TILESET_ANIM_MARKER_PAUSED 0x80 ///< a marker's bit: start it paused
+#define TILESET_ANIM_MARKER_CHANNEL_MASK 0xf ///< a marker's animation
 // The first source tile read from gMapGridAnimTiles rather than VRAM, for
 // 32-byte and for 64-byte (wide) tiles: both bases put it at its start.
 #define TILESET_ANIM_RAM_TILE 1536
@@ -26,15 +29,20 @@
 #define BLEND_SCRIPT_OPCODE_MASK 0xff00
 #define BLEND_SCRIPT_JUMP 0xfe00
 #define BLEND_SCRIPT_STOP 0xff
+#define BLEND_SCRIPT_ARGUMENT_MASK 0xff
 #define BLEND_SCRIPT_BLDCNT_MASK 0xf000
 #define BLEND_SCRIPT_BLDCNT (BLDCNT_TGT2_OBJ | BLDCNT_TGT2_BD)
+
+/// BLDCNT's effect, bits 7 and 6 (BLDCNT_EFFECT_NONE to BLDCNT_EFFECT_DARKEN).
+#define BLDCNT_EFFECT_MASK 0x00c0
 
 /// Each frame: runs the 16 tileset animations.
 void TilesetAnim_Update(void) {
   struct MapGridScrollWork *gridState = gMapGridWork[0];
   u32 channelIndex;
 
-  for (channelIndex = 0; channelIndex <= 15; channelIndex++) {
+  for (channelIndex = 0; channelIndex < ARRAY_COUNT(gridState->animations);
+       channelIndex++) {
     const u16 *commands;
     u32 sourceTileOrOpcode;
     u32 tileCount;
@@ -61,11 +69,12 @@ void TilesetAnim_Update(void) {
       // the halfword pair its low byte names.
       if ((sourceTileOrOpcode & TILESET_ANIM_OPCODE_MASK) ==
           TILESET_ANIM_JUMP) {
-        if ((sourceTileOrOpcode & 0xff) == TILESET_ANIM_STOP)
+        if ((sourceTileOrOpcode & TILESET_ANIM_ARGUMENT_MASK) ==
+            TILESET_ANIM_STOP)
           continue;
         (gridState->animations + channelIndex)->cursor =
             (gridState->animations + channelIndex)->start +
-            (sourceTileOrOpcode & 0xff) * 2;
+            (sourceTileOrOpcode & TILESET_ANIM_ARGUMENT_MASK) * 2;
         goto next;
       }
       tileCount = *commands++;
@@ -143,7 +152,7 @@ void TilesetAnim_StartAll(const u16 *script) {
   while (marker != TILESET_ANIM_LOOP) {
     if ((marker & TILESET_ANIM_OPCODE_MASK) == TILESET_ANIM_MARKER) {
       struct TilesetAnim *channel;
-      u32 channelIndex = marker & 15;
+      u32 channelIndex = marker & TILESET_ANIM_MARKER_CHANNEL_MASK;
       u32 paused = 0;
       if (marker & TILESET_ANIM_MARKER_PAUSED)
         paused = 1;
@@ -205,7 +214,7 @@ again:
     }
 
     if ((instruction & BLEND_SCRIPT_OPCODE_MASK) == BLEND_SCRIPT_JUMP) {
-      delayOrJumpIndex = instruction & 0xff;
+      delayOrJumpIndex = instruction & BLEND_SCRIPT_ARGUMENT_MASK;
       if (delayOrJumpIndex == BLEND_SCRIPT_STOP)
         return;
       blend->cursor = blend->script + delayOrJumpIndex * 2;
@@ -221,9 +230,9 @@ again:
       goto again;
     }
 
-    // BLDCNT's effect bits (7..6) of 1 are alpha blending; 2 and 3 fade
-    // to white or black by BLDY.
-    if ((gridState->blendControl & 0xc0) == BLDCNT_EFFECT_BLEND)
+    // An alpha blend takes the level as BLDALPHA; a fade to white or black
+    // takes it as BLDY.
+    if ((gridState->blendControl & BLDCNT_EFFECT_MASK) == BLDCNT_EFFECT_BLEND)
       REG_BLDALPHA = instruction;
     else
       REG_BLDY = instruction;
@@ -284,7 +293,8 @@ UNUSED void PaletteCycle_Initialize(void) {
     cycle->timer = 0;
     cycle->delay = 0;
     cycle->count = 0;
-    for (colorIndex = 0; colorIndex != 16; colorIndex++) {
+    for (colorIndex = 0; colorIndex != ARRAY_COUNT(cycle->colors);
+         colorIndex++) {
       cycle->colors[colorIndex] = 0;
     }
     cycle++;
@@ -382,8 +392,10 @@ void PaletteCycle_Step(void) {
 #undef TILESET_ANIM_OPCODE_MASK
 #undef TILESET_ANIM_JUMP
 #undef TILESET_ANIM_STOP
+#undef TILESET_ANIM_ARGUMENT_MASK
 #undef TILESET_ANIM_MARKER
 #undef TILESET_ANIM_MARKER_PAUSED
+#undef TILESET_ANIM_MARKER_CHANNEL_MASK
 #undef TILESET_ANIM_RAM_TILE
 #undef TILESET_ANIM_RAM_WIDE_TILE
 #undef BLEND_SCRIPT_LOOP
@@ -391,5 +403,7 @@ void PaletteCycle_Step(void) {
 #undef BLEND_SCRIPT_JUMP
 #undef TILESET_ANIM_WIDE_TILE_BYTES
 #undef BLEND_SCRIPT_STOP
+#undef BLEND_SCRIPT_ARGUMENT_MASK
 #undef BLEND_SCRIPT_BLDCNT_MASK
 #undef BLEND_SCRIPT_BLDCNT
+#undef BLDCNT_EFFECT_MASK

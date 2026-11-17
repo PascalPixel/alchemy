@@ -42,14 +42,14 @@ enum InventoryRemoveResult {
 
 /// The bits of ItemDefinition.flags.
 enum ItemFlags {
-  ITEM_CURSED = 1, ///< equipping it curses the wearer (Unit.curse)
+  ITEM_CURSED = 0x01, ///< equipping it curses the wearer (Unit.curse)
   /// Once equipped it cannot be taken off, or dropped while worn.
-  ITEM_CANNOT_UNEQUIP = 2,
+  ITEM_CANNOT_UNEQUIP = 0x02,
   /// A rare item: the rare weapons and armour, keys and the other
   /// one-of-a-kind items carry it.
-  ITEM_RARE = 4,
+  ITEM_RARE = 0x04,
   /// An important item: never dropped, and worth nothing to a shop.
-  ITEM_INDISPENSABLE = 8,
+  ITEM_INDISPENSABLE = 0x08,
   ITEM_STACKABLE = 0x10, ///< kept in one inventory entry with a quantity
   /// Left behind when The Broken Seal's data is transferred
   /// (DataTransfer_Apply): the Elemental Stars and their bags, and that
@@ -95,8 +95,7 @@ enum ItemType {
   /// The items that teach Psynergy while held: Orb of Force to Teleport
   /// Lapis.
   ITEM_TYPE_PSYNERGY = 6,
-  /// The Trident alone: "A weapon with a unique purpose". The Broken Seal
-  /// gives this type to no item.
+  /// The Trident alone: "A weapon with a unique purpose".
   ITEM_TYPE_TRIDENT = 7,
   ITEM_TYPE_RING = 8,  ///< Adept Ring to War Ring
   ITEM_TYPE_SHIRT = 9, ///< Mythril Shirt to Divine Camisole

@@ -4,17 +4,21 @@
 
 #include "battle_effect_internal.h"
 
-/// Fills window 0's per-line edges with the slanted band the shards and bolts
-/// fall down.
+/// Fills window 0's per-line edges: from line 8 to line last, slant, the band
+/// the shards and bolts fall down, which moves along as the lines go down until
+/// the line before it reaches span, the targets' side; span on the other lines
+/// to the battle view's bottom; nothing below it.
 #define FALLING_BUILD_SLANTED_WINDOW(line, i, last, slant, span)               \
   for ((i) = 0; (i) != DISPLAY_HEIGHT; (i)++) {                                \
     if ((i) >= 8 && (i) <= (last))                                             \
       (line)[i] = (slant);                                                     \
-    else if ((i) <= 135)                                                       \
+    else if ((i) < BATTLE_VIEW_BOTTOM)                                         \
       (line)[i] = (span);                                                      \
     else                                                                       \
       (line)[i] = WINDOW_SPAN_INVERTED;                                        \
   }
+/// The band from left, as wide as the canvas.
+#define FALLING_BAND(left) WIN_RANGE(left, (left) + CANVAS_SIZE)
 
 // The falling shards (Ice) and bolts (Douse) rain diagonally onto the targets'
 // side, seen only through a slanted band of window 0 whose edges an HBlank DMA
@@ -29,6 +33,16 @@ enum { FALLING_SHARD_COUNT = 32, FALLING_SHARD_PUFF_COUNT = 32 };
 /// IceShardSheet: the shard, then its shatter, each picture 32x32.
 #define ICE_SHARD_WIDTH 32
 #define ICE_SHARD_HEIGHT 32
+/// A landed shard or bolt counts its frames since landing up to one past this.
+#define FALLING_LANDED_LAST_FRAME 14
+/// A landed shard shows its shatter's pictures from its first frame to
+/// FALLING_LANDED_LAST_FRAME, ICE_SHATTER_PICTURE_FRAMES each, and kicks up a
+/// puff on frames ICE_PUFF_FIRST_FRAME to ICE_PUFF_LAST_FRAME.
+#define ICE_SHATTER_PICTURE_FRAMES 3
+#define ICE_PUFF_FIRST_FRAME 9
+#define ICE_PUFF_LAST_FRAME 11
+/// A puff's frames: the nine sparkle pictures, two frames each.
+#define ICE_PUFF_FRAMES 18
 
 /// Ice shards rain down diagonally onto the targets' side of the field and
 /// shatter into puffs of sparkle, flashing and shaking each target as they
@@ -96,12 +110,12 @@ void BattleEffect_RunIce(struct BattleEffectParams *args) {
 
   if (work->args->side == EFFECT_SIDE_ENEMIES) {
     line = (u16 *)Ram_MapGridCellBuffer;
-    FALLING_BUILD_SLANTED_WINDOW(line, i, 103, (240 - i) | ((112 - i) << 8),
-                                 WIN_RANGE(8, 136));
+    FALLING_BUILD_SLANTED_WINDOW(line, i, 103, FALLING_BAND(112 - i),
+                                 FALLING_BAND(8));
   } else {
     line = (u16 *)Ram_MapGridCellBuffer;
-    FALLING_BUILD_SLANTED_WINDOW(line, i, 95, (i - 8 + 160) | ((i + 24) << 8),
-                                 WIN_RANGE(120, 248));
+    FALLING_BUILD_SLANTED_WINDOW(line, i, 95, FALLING_BAND(i + 24),
+                                 FALLING_BAND(120));
   }
 
   Task_Add(BattleEffect_ArmWin0HBlankDma, TASK_PASS_VBLANK);
@@ -148,25 +162,28 @@ void BattleEffect_RunIce(struct BattleEffectParams *args) {
         s32 x = shard->x / 8;
         s32 y = shard->y / 8;
 
-        if (shard->variant >= 1 && shard->variant <= 14) {
+        if (shard->variant >= 1 &&
+            shard->variant <= FALLING_LANDED_LAST_FRAME) {
           draw[work->args->variant == EFFECT_VARIANT_STRONGEST ? 1 : 0](
               canvas,
               work->sheet + PICTURE_BYTES(ICE_SHARD) +
-                  ((shard->variant / 3) << 10),
+                  shard->variant / ICE_SHATTER_PICTURE_FRAMES *
+                      PICTURE_BYTES(ICE_SHARD),
               x, y, ICE_SHARD_WIDTH, ICE_SHARD_HEIGHT);
         }
-        if (shard->variant >= 9 && shard->variant <= 11) {
+        if (shard->variant >= ICE_PUFF_FIRST_FRAME &&
+            shard->variant <= ICE_PUFF_LAST_FRAME) {
           for (k = 0; k != FALLING_SHARD_PUFF_COUNT; k++) {
             puff = &work->particles[FALLING_SHARD_COUNT + k];
             if (puff->variant == -1) {
-              puff->variant = 18;
+              puff->variant = ICE_PUFF_FRAMES;
               puff->x = (((Random16() & 31) + shard->x / 8) << 3) + 8;
               puff->y = ((Random16() & 15) + shard->y / 8 - 15) << 3;
               break;
             }
           }
         }
-        if (shard->variant <= 14)
+        if (shard->variant <= FALLING_LANDED_LAST_FRAME)
           shard->variant++;
       }
     }
@@ -175,7 +192,7 @@ void BattleEffect_RunIce(struct BattleEffectParams *args) {
     for (i = 0; i != FALLING_SHARD_PUFF_COUNT; i++) {
       puff = &work->particles[FALLING_SHARD_COUNT + i];
       if (puff->variant != -1) {
-        if (puff->variant <= 17) {
+        if (puff->variant < ICE_PUFF_FRAMES) {
           s32 image = puff->variant / 2;
           s32 x = puff->x / 8 - (gBattleEffect_SparkleSizes[image] >> 1);
           s32 y = puff->y / 8 - (gBattleEffect_SparkleSizes[image] >> 1);
@@ -279,12 +296,12 @@ void BattleEffect_RunDouse(struct BattleEffectParams *args) {
 
   if (work->args->side == EFFECT_SIDE_ENEMIES) {
     line = (u16 *)Ram_MapGridCellBuffer;
-    FALLING_BUILD_SLANTED_WINDOW(
-        line, i, 103, ((52 - i / 2) << 8) | (180 - i / 2), WIN_RANGE(0, 128));
+    FALLING_BUILD_SLANTED_WINDOW(line, i, 103, FALLING_BAND(52 - i / 2),
+                                 FALLING_BAND(0));
   } else {
     line = (u16 *)Ram_MapGridCellBuffer;
-    FALLING_BUILD_SLANTED_WINDOW(
-        line, i, 103, ((i / 2 + 60) << 8) | (i / 2 + 188), WIN_RANGE(112, 240));
+    FALLING_BUILD_SLANTED_WINDOW(line, i, 103, FALLING_BAND(i / 2 + 60),
+                                 FALLING_BAND(112));
   }
 
   Task_Add(BattleEffect_ArmWin0HBlankDma, TASK_PASS_VBLANK);
@@ -356,7 +373,7 @@ void BattleEffect_RunDouse(struct BattleEffectParams *args) {
         else if (bolt->variant <= 7)
           drawBolt(canvas, work->sheet + DOUSE_BURST_PICTURE, x - 9, y - 9,
                    DOUSE_BURST_PICTURE_WIDTH, DOUSE_BURST_PICTURE_HEIGHT);
-        if (bolt->variant <= 14)
+        if (bolt->variant <= FALLING_LANDED_LAST_FRAME)
           bolt->variant++;
       }
     }
@@ -383,6 +400,12 @@ void BattleEffect_RunDouse(struct BattleEffectParams *args) {
 }
 
 #undef FALLING_BUILD_SLANTED_WINDOW
+#undef FALLING_BAND
+#undef FALLING_LANDED_LAST_FRAME
+#undef ICE_SHATTER_PICTURE_FRAMES
+#undef ICE_PUFF_FIRST_FRAME
+#undef ICE_PUFF_LAST_FRAME
+#undef ICE_PUFF_FRAMES
 #undef FALLING_LAND_Y
 #undef FALLING_BOLT_SPARKS
 #undef DOUSE_FALLING_PICTURE

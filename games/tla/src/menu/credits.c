@@ -138,7 +138,8 @@ extern u8 gDebugTextEnabled;
 /// stand in the middle of the screen.
 #define CREDITS_TEXT_TOP 16
 #define CREDITS_TEXT_LEFT ((DISPLAY_WIDTH - CREDITS_LINE_PIXELS) / 2)
-/// Where the eight spare sprites wait, below the screen.
+/// The x and the y at which the eight spare sprites wait, (192, 192), below
+/// the screen.
 #define CREDITS_PARKED 192
 /// A line's letters are drawn in colour 15, each with its shadow a pixel below
 /// and to the right in colour 1, the strips' black.
@@ -298,10 +299,8 @@ void Credits_BuildBackgroundTilemap(u32 *destination) {
 /// horizontal offsets aligned throughout the crossfade.
 void Credits_ScrollBackgrounds(void) {
   if ((gVBlankCount & 3) == 0) {
-    u32 decrement = (u16)-1;
-
-    gBgScroll[2].x += decrement;
-    gBgScroll[3].x += decrement;
+    gBgScroll[2].x--;
+    gBgScroll[3].x--;
   }
 }
 
@@ -1011,6 +1010,8 @@ void EndingPicture_Start(void) {
   Task_ResetAll();
   gEndingPicture_MapScroll = 0;
   gEndingPicture_Scroll = 0;
+  /* FAKEMATCH(temporary): the rows zeroed through the map pointer's NULL in
+     one chained assignment. */
   gEndingPicture_TargetRow = gEndingPicture_Row =
       (s32)(gEndingPicture_Map = NULL);
   gEndingPicture_Speed = 1;

@@ -422,7 +422,7 @@ s32 PartyMemberChooser_RunRearrange(void) {
       Unit_Get(menu->memberIds[ownerIndex]);
       page = (page + 3) % 3;
       StatusScreen_ShowMemberStatus(menu->memberIds[ownerIndex], page);
-      PsynergyMenu_CallIconRoutineWithValue(menu, menu->memberIds[ownerIndex]);
+      Menu_ReloadMemberPortrait(menu, menu->memberIds[ownerIndex]);
       if (redraw == 2) {
         Menu_CreateOwnerEntryObjects(ownerIndex / 4 * 4);
         wait(1);
@@ -506,7 +506,7 @@ s32 PsynergyMenu_ChooseMember(void) {
       Unit_Get(menu->memberIds[selection]);
       page = (page + 3) % 3;
       StatusScreen_ShowMemberStatus(menu->memberIds[selection], page);
-      PsynergyMenu_CallIconRoutineWithValue(menu, menu->memberIds[selection]);
+      Menu_ReloadMemberPortrait(menu, menu->memberIds[selection]);
       menu->entryCount =
           PsynergyMenu_CollectActions(Unit_Get(menu->memberIds[selection]),
                                       menu->entries, PSYNERGY_LIST_ALL);
@@ -789,7 +789,7 @@ s32 StatusScreen_SelectCommand(void) {
         menu->selectedMember = menu->memberIds[member];
         menu->selectedIds[0] = menu->memberIds[member];
         menu->memberIndex[0] = member;
-        PsynergyMenu_CallIconRoutineWithValue(menu, menu->memberIds[member]);
+        Menu_ReloadMemberPortrait(menu, menu->memberIds[member]);
         break;
       }
     }
@@ -1067,8 +1067,8 @@ void ItemMenu_DrawMemberStatus(s32 window, s32 owner, s32 flags) {
     wait(1);
     Window_ClearInteriorTilesFar(window, 144, 0, 224, 40);
   }
-  // "Attack", "Defense", "Agility" and "Luck" (MsgStatLabel on), counted back
-  // from "Exp".
+  /* FAKEMATCH(temporary): "Attack", "Defense", "Agility" and "Luck",
+     MsgStatLabel and the three after it, counted back from MsgExpLabel. */
   Text_DrawMessageAsTilesFar((s32)MsgExpLabel - 23, window, 152, 0);
   Text_DrawMessageAsTilesFar((s32)MsgExpLabel - 22, window, 152, 8);
   Text_DrawMessageAsTilesFar((s32)MsgExpLabel - 21, window, 152, 16);
@@ -1134,7 +1134,7 @@ s32 PagedList_Build(struct PagedList *result, s32 index) {
 /// Pairs of 4-bit rows of dots in colour 5, each reaching further right than
 /// the last, that Menu_BuildPatternTiles XORs into its tile pairs
 /// (menu_strings.s).
-extern u32 gMenu_PatternRowMasks[][2];
+extern const u32 gMenu_PatternRowMasks[][2];
 
 #define RANGE_PATTERN_SET_COUNT 2
 #define RANGE_PATTERN_COUNT 6
@@ -1144,6 +1144,8 @@ extern u32 gMenu_PatternRowMasks[][2];
 #define RANGE_ICON_FIRST_TILE 768
 /// The last range icon, which stands for ABILITY_RANGE_ALL.
 #define RANGE_ICON_ALL (RANGE_PATTERN_SET_COUNT * RANGE_PATTERN_COUNT - 1)
+
+static __inline__ u32 XorWord(u32 word, u32 mask) { return word ^ mask; }
 
 /// Builds the twelve range icons PsynergyMenu_DrawRange draws, as the 24 BG
 /// tiles from RANGE_ICON_FIRST_TILE: icon n is a centre tile and an end tile,
@@ -1174,8 +1176,11 @@ void Menu_BuildPatternTiles(void) {
           if (sourcePattern < 0)
             sourcePattern = 0;
         }
-        tile[row] ^= gMenu_PatternRowMasks[sourcePattern][0];
-        tile[row + 8] ^= gMenu_PatternRowMasks[sourcePattern][1];
+        /* FAKEMATCH(wrapper): the XOR made through XorWord, as The Broken
+           Seal's twin writes it. */
+        tile[row] = XorWord(tile[row], gMenu_PatternRowMasks[sourcePattern][0]);
+        tile[row + 8] =
+            XorWord(tile[row + 8], gMenu_PatternRowMasks[sourcePattern][1]);
       }
     }
   }
@@ -1540,8 +1545,7 @@ s32 PsynergyMenu_SelectAction(void) {
       menu->selectedMember = menu->memberTable[ownerIndex];
       menu->memberIds[0] = menu->memberTable[ownerIndex];
       menu->tabIndex[0] = ownerIndex;
-      PsynergyMenu_CallIconRoutineWithValue(menu,
-                                            menu->memberTable[ownerIndex]);
+      Menu_ReloadMemberPortrait(menu, menu->memberTable[ownerIndex]);
       refresh = 2;
     }
   }
@@ -1863,8 +1867,7 @@ s32 ItemMenu_SelectItem(void) {
       menu->selectedMember = (u16)menu->memberIds[ownerIndex];
       menu->sideMember[0] = (u16)menu->memberIds[ownerIndex];
       menu->sideIndex[0] = ownerIndex;
-      PsynergyMenu_CallIconRoutineWithValue(menu,
-                                            (u16)menu->memberIds[ownerIndex]);
+      Menu_ReloadMemberPortrait(menu, (u16)menu->memberIds[ownerIndex]);
       refresh = 2;
     }
   }

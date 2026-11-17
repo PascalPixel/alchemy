@@ -10,6 +10,32 @@ typedef void (*SpriteDrawFn)(const void *src, void *dst, s32 param);
 /// Uploads a finished sprite buffer to sprite VRAM (Tile_CopyStrided).
 typedef void (*SpriteUploadFn)(const void *src, u32 w, u32 h, void *vram);
 
+/// The last of the animation commands from ANIMCMD_WAIT + 1 that this game
+/// skips, and the command The Lost Age gives 252 (it plays a sound there),
+/// skipped here too. 251 is not a command: it shows as a picture.
+#define ANIMCMD_UNUSED_LAST 250
+#define ANIMCMD_SOUND 252
+
+/// A facing table entry's picture offset from the base picture; its
+/// FACING_MIRRORED_BIT mirrors the picture.
+#define ANIM_FACING_PICTURE_MASK 7
+/// The sector a facing angle lies in, a turn cut into `sectors`.
+#define FACING_SECTOR(dir, sectors) ((dir) / (TRIG_TURN / (sectors)))
+/// Facing table `table`'s entry for facing angle `dir`, the turn cut into as
+/// many sectors as the table has entries.
+#define FACING_TABLE_ENTRY(table, dir)                                         \
+  ((table)[FACING_SECTOR(dir, ARRAY_COUNT(table))])
+/// The eighth of a turn a facing angle lies nearest: its top three bits once
+/// it is turned half an eighth on, worked in the upper halfword so the sum
+/// wraps.
+#define FACING_NEAREST_EIGHTH_SECTOR(dir)                                      \
+  (((u32)((dir) << 16) + (FACING_STEP << 16)) >> 29)
+
+/// A sprite's shadow, 16 by 8 pixels: its half width and half height, both
+/// doubled when the sprite is drawn double-size.
+#define SHADOW_HALF_WIDTH 8
+#define SHADOW_HALF_HEIGHT 4
+
 /// Advances a sprite's animations by one frame, picks each sprite animation's
 /// picture for the facing dir, and when any picture changed redraws the sprite:
 /// the sprite animations composed by priority into one pixel buffer, an
@@ -44,10 +70,11 @@ s32 Sprite_ComposePicture(struct Sprite *animation, u16 dir) {
   if (decodePicture == 0) {
     code = HeapSlot_Alloc(HEAP_SLOT_FRAME_SCRATCH,
                           (s32)Render_DecodePictureCodeSize);
-    Dma_Set(Render_DecodePicture, code,
-            (((u32)gRender_DecodePictureEnd - (u32)Render_DecodePicture) >> 2) |
-                (DMA_ENABLE | DMA_32BIT) << 16,
-            REG_DMA3);
+    Dma_Set(
+        Render_DecodePicture, code,
+        DMA_COPY_WORDS(
+            ((u32)gRender_DecodePictureEnd - (u32)Render_DecodePicture) >> 2),
+        REG_DMA3);
     decodePicture = (SpriteDrawFn)HEAP_SLOT_BLOCK(HEAP_SLOT_FRAME_SCRATCH);
     decoderWasLoaded = 0;
   }
@@ -75,7 +102,7 @@ s32 Sprite_ComposePicture(struct Sprite *animation, u16 dir) {
         layer->scriptOffset = arg;
         break;
       case ANIMCMD_WAIT:
-        layer->timer += arg << 4;
+        layer->timer += arg * SPRITE_ANIMATION_NORMAL_STEP;
         break;
       case ANIMCMD_HOLD:
         layer->scriptOffset -= 2;
@@ -86,7 +113,7 @@ s32 Sprite_ComposePicture(struct Sprite *animation, u16 dir) {
       case ANIMCMD_BLANK:
         layer->pictureBase = SPRITE_PICTURE_NONE;
         picture = SPRITE_PICTURE_NONE;
-        layer->timer += arg << 4;
+        layer->timer += arg * SPRITE_ANIMATION_NORMAL_STEP;
         goto select_direction;
       case ANIMCMD_END:
         layer->pictureBase = SPRITE_PICTURE_NONE;
@@ -96,64 +123,64 @@ s32 Sprite_ComposePicture(struct Sprite *animation, u16 dir) {
         // if the last had ended.
         animation->count--;
         goto select_direction;
-      // Unused commands, skipped. 251 is not among them: it shows as a picture.
       case ANIMCMD_HOLD + 1 ... ANIMCMD_WAIT - 1:
-      case ANIMCMD_WAIT + 1 ... 250:
-      case 252:
+      case ANIMCMD_WAIT + 1 ... ANIMCMD_UNUSED_LAST:
+      case ANIMCMD_SOUND:
         break;
       default:
         layer->pictureBase = picture;
-        layer->timer += arg << 4;
+        layer->timer += arg * SPRITE_ANIMATION_NORMAL_STEP;
         goto select_direction;
       }
       goto read_command;
     }
     // Time is left on this picture: count it down by the sprite animation's
-    // step (16, the normal speed, takes a frame off each frame).
+    // step (SPRITE_ANIMATION_NORMAL_STEP takes a frame off each frame).
     layer->timer = layer->timer - layer->step;
   show_picture:
     picture = layer->pictureBase;
   select_direction:
     // The facing table of the sprite animation's kind gives an offset from the
-    // base picture (low three bits) and whether to mirror it (bit 7).
+    // base picture and whether to mirror it.
     switch (layer->kind) {
     case ANIM_FACING_ONE_PICTURE:
-      facing = gAnimationFacing_OnePicture[dir >> 13];
+      // Only the first eight of its entries are read.
+      facing = gAnimationFacing_OnePicture[FACING_SECTOR(dir, 8)];
       break;
     case ANIM_FACING_FRONT_BACK:
     case ANIM_FACING_TWO_PART:
-      facing = gAnimationFacing_FrontBack[dir >> 13];
+      facing = FACING_TABLE_ENTRY(gAnimationFacing_FrontBack, dir);
       break;
     case ANIM_FACING_FRONT_BACK_SWAPPED:
-      facing = gAnimationFacing_FrontBackSwapped[dir >> 13];
+      facing = FACING_TABLE_ENTRY(gAnimationFacing_FrontBackSwapped, dir);
       break;
     case ANIM_FACING_THREE_PICTURES:
-      facing = gAnimationFacing_ThreePictures[dir >> 12];
+      facing = FACING_TABLE_ENTRY(gAnimationFacing_ThreePictures, dir);
       break;
     case ANIM_FACING_FOUR_PICTURES:
-      facing = gAnimationFacing_FourPictures[dir >> 10];
+      facing = FACING_TABLE_ENTRY(gAnimationFacing_FourPictures, dir);
       break;
     case ANIM_FACING_FIVE_PICTURES:
-      facing = gAnimationFacing_FivePictures[dir >> 12];
+      facing = FACING_TABLE_ENTRY(gAnimationFacing_FivePictures, dir);
       break;
     case ANIM_FACING_SIX_PICTURES:
-      facing = gAnimationFacing_SixPictures[dir >> 10];
+      facing = FACING_TABLE_ENTRY(gAnimationFacing_SixPictures, dir);
       break;
     case ANIM_FACING_EIGHT_PICTURES:
       facing =
-          gAnimationFacing_EightPictures[((u32)(dir << 16) + 0x10000000) >> 29];
+          gAnimationFacing_EightPictures[FACING_NEAREST_EIGHTH_SECTOR(dir)];
       break;
     case ANIM_FACING_EIGHT_PICTURES_MIRRORED:
-      facing = gAnimationFacing_EightPicturesMirrored[((u32)(dir << 16) +
-                                                       0x10000000) >>
-                                                      29];
+      facing =
+          gAnimationFacing_EightPicturesMirrored[FACING_NEAREST_EIGHTH_SECTOR(
+              dir)];
       break;
     default:
       facing = 0;
       break;
     }
-    picture += facing & 7;
-    if (i == 0 && (facing >> 7) != 0) {
+    picture += facing & ANIM_FACING_PICTURE_MASK;
+    if (i == 0 && (facing & FACING_MIRRORED_BIT) != 0) {
       mirrored = 1;
     }
     if (layer->picture != picture) {
@@ -273,10 +300,9 @@ s32 Sprite_ComposePicture(struct Sprite *animation, u16 dir) {
     }
 
     // Upload the pixels to the sprite's tiles in VRAM.
-    // The tile number counts 32-byte tiles.
     tile = VramCache_Load(animation->slot, size, 0);
     {
-      void *vram = (void *)(OBJ_VRAM0 + (tile << 5));
+      void *vram = (void *)(OBJ_VRAM0 + tile * TILE_SIZE_4BPP);
       ((SpriteUploadFn)gHeapSlots[HEAP_SLOT_PICTURE_UPLOADER])(
           pixels, animation->width, animation->height, vram);
     }
@@ -301,8 +327,8 @@ void Render_PlaceSpritePartPair(struct Sprite *sprite, FIXED screenX,
                                 FIXED *scale) {
   u32 halfWidth = sprite->width >> 1;
   u32 halfHeight = sprite->height >> 1;
-  s32 marginX = 8;
-  s32 marginY = 4;
+  s32 marginX = SHADOW_HALF_WIDTH;
+  s32 marginY = SHADOW_HALF_HEIGHT;
   s32 affine = 1;
   s32 scaleX = *scale++;
   s32 scaleY = *scale;
@@ -310,11 +336,11 @@ void Render_PlaceSpritePartPair(struct Sprite *sprite, FIXED screenX,
   s32 y;
   struct AnimationSpritePart *shadow;
 
-  // The margins are the 16x8 shadow's half width and height.
+  // The margins are the shadow's half width and height.
   if (scaleX > FIXED_ONE || scaleY > FIXED_ONE) {
     affine = 3;
-    marginX = 16;
-    marginY = 8;
+    marginX = 2 * SHADOW_HALF_WIDTH;
+    marginY = 2 * SHADOW_HALF_HEIGHT;
     halfWidth <<= 1;
     halfHeight <<= 1;
   }
@@ -337,6 +363,12 @@ void Render_PlaceSpritePartPair(struct Sprite *sprite, FIXED screenX,
   shadow->y = y;
 }
 
+/// Render_ApplyProjectedPlacement's draw slots: a sprite one slot further in
+/// front for every two screen rows lower, on from PLACEMENT_IMAGE_DEPTH, and
+/// its shadow in PLACEMENT_SHADOW_DEPTH, behind them.
+#define PLACEMENT_IMAGE_DEPTH 10
+#define PLACEMENT_SHADOW_DEPTH 2
+
 /// Places a sprite for the scrolling camera and queues it for drawing.
 void Render_ApplyProjectedPlacement(struct Sprite *sprite,
                                     const struct SpritePlacement *position,
@@ -347,8 +379,8 @@ void Render_ApplyProjectedPlacement(struct Sprite *sprite,
   s32 matrix;
   u32 halfWidth = sprite->width >> 1;
   u32 halfHeight = sprite->height >> 1;
-  s32 shadowHalfWidth = 8;
-  s32 shadowHalfHeight = 4;
+  s32 shadowHalfWidth = SHADOW_HALF_WIDTH;
+  s32 shadowHalfHeight = SHADOW_HALF_HEIGHT;
   s32 affine;
   s32 scaleX = *scaleValues++;
   s32 screenX = *pos++;
@@ -387,16 +419,16 @@ void Render_ApplyProjectedPlacement(struct Sprite *sprite,
     affine = 3;
     halfWidth <<= 1;
     halfHeight <<= 1;
-    shadowHalfWidth = 16;
-    shadowHalfHeight = 8;
+    shadowHalfWidth = 2 * SHADOW_HALF_WIDTH;
+    shadowHalfHeight = 2 * SHADOW_HALF_HEIGHT;
   }
-  // Draw slot by screen row, one slot per two rows from slot 10.
+  // A sprite sunk 100 pixels or more draws behind the rest.
   if (height <= -toFIXED(100)) {
     slot = 1;
     depth = 0;
   } else {
-    slot = (screenY >> 17) + 10;
-    depth = 2;
+    slot = (FIXEDtoINT(screenY) >> 1) + PLACEMENT_IMAGE_DEPTH;
+    depth = PLACEMENT_SHADOW_DEPTH;
   }
   // Queue the shadow at ground height before the raised image.
   y = FIXEDtoINT(screenY - groundHeight) - shadowHalfHeight;
@@ -427,6 +459,16 @@ void Render_ApplyProjectedPlacement(struct Sprite *sprite,
   }
 }
 
+/// How far past the screen's left, right and top edges a projected sprite's
+/// point may lie and still be drawn, and past its bottom edge.
+#define PROJECTED_MARGIN 32
+#define PROJECTED_MARGIN_BELOW 48
+/// A projected sprite at depth PROJECTED_MIDDLE_DEPTH draws in the middle of
+/// the 256 depth slots, PROJECTED_MIDDLE_SLOT, and one slot further in front
+/// for every two units nearer.
+#define PROJECTED_MIDDLE_DEPTH 512
+#define PROJECTED_MIDDLE_SLOT 128
+
 /// Places a sprite at 3D point for the fixed camera and queues it for drawing:
 /// projected to the screen and scaled by its distance (unless useOwnScale keeps
 /// its own scale), with an affine matrix as needed and its shadow on the ground
@@ -453,15 +495,17 @@ void Render_PlaceProjectedSprite(struct Sprite *sprite, s32 *point, s32 *scale,
   affine = 1;
   if (gActorSystemWork->suspended == 0) {
     z = Matrix_ProjectPoint(point, screen);
-    if (screen[2] != 0 && screen[0] >= -32 && screen[0] <= 272 &&
-        screen[1] >= -32 && screen[1] <= 208) {
+    if (screen[2] != 0 && screen[0] >= -PROJECTED_MARGIN &&
+        screen[0] <= DISPLAY_WIDTH + PROJECTED_MARGIN &&
+        screen[1] >= -PROJECTED_MARGIN &&
+        screen[1] <= DISPLAY_HEIGHT + PROJECTED_MARGIN_BELOW) {
       if (sprite->useOwnScale)
         z = sprite->scale;
       else
         z = Iwram_MulFX(z, sprite->scale);
       halfWidth = sprite->width >> 1;
       halfHeight = sprite->height >> 1;
-      size = 8;
+      size = SHADOW_HALF_WIDTH;
       flip = Sprite_ComposePicture(sprite, facing);
       // Round the perspective scale to the nearest 1/32 before
       // combining it with the sprite's own scale.
@@ -481,7 +525,7 @@ void Render_PlaceProjectedSprite(struct Sprite *sprite, s32 *point, s32 *scale,
         affine = 3;
         halfWidth <<= 1;
         halfHeight <<= 1;
-        size = 16;
+        size = 2 * SHADOW_HALF_WIDTH;
       } else if (scaleX == FIXED_ONE && sprite->rotation == 0 &&
                  scaleY == scaleX) {
         affine = 0;
@@ -515,7 +559,7 @@ void Render_PlaceProjectedSprite(struct Sprite *sprite, s32 *point, s32 *scale,
       // The slot falls as the projected depth screen[2] rises, and stays at
       // 1 or above: slot 0 is the shadows'.
       if (depth == 0) {
-        slot = (512 - screen[2]) / 2 + 128;
+        slot = (PROJECTED_MIDDLE_DEPTH - screen[2]) / 2 + PROJECTED_MIDDLE_SLOT;
         if (slot <= 0)
           slot = 1;
         Oam_AddSpriteAtDepth(sprite, slot);

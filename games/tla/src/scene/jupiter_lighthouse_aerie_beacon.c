@@ -2227,9 +2227,9 @@ s32 Scene_Initialize(void) {
     Actor_Get(ACTOR_LID_B)->scaleX = 0;
   }
   if (gMainRoutineWork.entrance !=
-          JUPITER_LIGHTHOUSE_AERIE_BEACON_FROM_JUPITER_LIGHTHOUSE_ENTRANCE &&
+          JUPITER_LIGHTHOUSE_AERIE_BEACON_FROM_JUPITER_LIGHTHOUSE_ROOM_CRACKED_FLOOR_A &&
       gMainRoutineWork.entrance !=
-          JUPITER_LIGHTHOUSE_AERIE_BEACON_FROM_WORLD_MAP) {
+          JUPITER_LIGHTHOUSE_AERIE_BEACON_FROM_JUPITER_LIGHTHOUSE_ROOM_CRACKED_FLOOR_B) {
     Actor_SetPosition(ACTOR_LID_B, 0, 0);
   }
   Actor_SetSpriteFlags(Actor_Get(ACTOR_BEACON_ORB), 0);

@@ -96,7 +96,7 @@
 /// BattleWork.palette, darkened or not.
 #define BATTLE_BG_PALETTE ((u16 *)&BG_PLTT_COLOR(6, 0))
 /// The colours in BATTLE_BG_PALETTE, eight palettes of 16.
-#define BATTLE_BG_PALETTE_COLORS (8 * 16)
+#define BATTLE_BACKGROUND_COLORS (8 * 16)
 
 /// The battle background's darkening step (BattleBackground_SetPaletteLevel,
 /// BattleBackground_Load, the element glow): each level takes 1092 from the

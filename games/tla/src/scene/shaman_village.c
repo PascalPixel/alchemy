@@ -755,7 +755,7 @@ void ShamanVillage_ReadTrialRoadSign(void) {
 void ShamanVillage_TalkToEastKnight(void) {
   Event_Start();
   Event_ResolvePendingActions(0);
-  Event_SetMessageId((s32)MsgShamanGuardRepeatRulesBeforeTrial);
+  Event_SetMessageId((s32)MsgShamanKnightRepeatsRulesBeforeTrial);
   // "Do you need to hear Moapa's explanation again?" Yes: "Thick-witted
   // outsiders." No: "Then you must leave Shaman Village and forget..."
   Event_OpenMessage(ACTOR_EAST_KNIGHT, 0);
@@ -785,7 +785,7 @@ void ShamanVillage_TalkToEastKnight(void) {
 void ShamanVillage_TalkToWestKnight(void) {
   Event_Start();
   Event_ResolvePendingActions(0);
-  Event_SetMessageId((s32)MsgShamanOtherGuardRepeatRulesBeforeTrial);
+  Event_SetMessageId((s32)MsgShamanOtherKnightRepeatsRulesBeforeTrial);
   // "Do you need to hear Moapa's explanation again?" Yes: "Thick-witted
   // outsiders." No: "As long as you remain in our village, my..."
   Event_OpenMessage(ACTOR_WEST_KNIGHT, 0);
@@ -1250,7 +1250,7 @@ void ShamanVillage_TakeLeftPath(void) {
   Actor_WaitForMoveById(ACTOR_WEST_KNIGHT);
   Actor_SetPosition(ACTOR_WEST_KNIGHT, 0, 0);
   Actor_SetAnimation(ACTOR_MOAPA, 3);
-  Event_SetMessageId((s32)MsgShamanGuardsTakeOtherPath);
+  Event_SetMessageId((s32)MsgShamanKnightsTakeOtherPath);
   // "If you have chosen, then we shall take the other path."
   Event_ShowMessage(ACTOR_MOAPA, 0);
   Actor_FaceActor(gMainRoutineWork.leaderActorId, ACTOR_MOAPA, 0);
@@ -1321,7 +1321,7 @@ void ShamanVillage_TakeRightPath(void) {
   Actor_WaitForMoveById(ACTOR_EAST_KNIGHT);
   Actor_SetPosition(ACTOR_EAST_KNIGHT, 0, 0);
   Actor_SetAnimation(ACTOR_MOAPA, 3);
-  Event_SetMessageId((s32)MsgShamanGuardsTakeOtherPath);
+  Event_SetMessageId((s32)MsgShamanKnightsTakeOtherPath);
   // "If you have chosen, then we shall take the other path."
   Event_ShowMessage(ACTOR_MOAPA, 0);
   Actor_FaceActor(gMainRoutineWork.leaderActorId, ACTOR_MOAPA, 0);
@@ -3671,7 +3671,7 @@ struct Trigger gShamanVillageVillageTriggers[] = {
     {TRIGGER_TALK, ACTOR_EAST_KNIGHT, FLAG_MOAPA_BEATEN,
      EVENT(ShamanVillage_WarnOfMoapasPower)},
     {TRIGGER_TALK, ACTOR_EAST_KNIGHT, CONDITION_ALWAYS,
-     MSGNO(MsgShamanGuardPromisesRematchVictory)},
+     MSGNO(MsgShamanKnightPromisesRematchVictory)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_EAST_KNIGHT, FLAG_MOAPA_BEATEN,
      MSGNO(MsgShamanContigoTempleTreasure)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_EAST_KNIGHT, CONDITION_ALWAYS,
@@ -3679,11 +3679,11 @@ struct Trigger gShamanVillageVillageTriggers[] = {
     {TRIGGER_TALK, ACTOR_WEST_KNIGHT, FLAG_MOAPA_BEATEN,
      EVENT(ShamanVillage_SendToMoapa)},
     {TRIGGER_TALK, ACTOR_WEST_KNIGHT, CONDITION_ALWAYS,
-     MSGNO(MsgShamanVillagersBlameGuardDefeat)},
+     MSGNO(MsgShamanVillagersBlameKnightsDefeat)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_WEST_KNIGHT, FLAG_MOAPA_BEATEN,
      MSGNO(MsgShamanMoapaSparedOutsiders)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_WEST_KNIGHT, CONDITION_ALWAYS,
-     MSGNO(MsgShamanGuardBlamesMountainClimb)},
+     MSGNO(MsgShamanKnightBlamesMountainClimb)},
     {USE_ITEM_ON_ACTOR(ITEM_SHAMANS_ROD), ACTOR_MOAPA,
      FLAG_SHAMAN_VILLAGE_SHAMANS_ROD_SHOWN,
      EVENT(ShamanVillage_ShowShamansRod)},

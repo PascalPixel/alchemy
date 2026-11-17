@@ -66,9 +66,9 @@
 enum JupiterLighthouseRoomRedKeyActorId {
   /// The three grey blocks at the west end, the middle one Moved into the gap
   /// between the others to rise with them.
-  ACTOR_WEST_GREY_BLOCK = ACTOR_FIRST_PLACED + 2,
-  ACTOR_MOVED_GREY_BLOCK,
-  ACTOR_EAST_GREY_BLOCK,
+  ACTOR_WEST_GRAY_BLOCK = ACTOR_FIRST_PLACED + 2,
+  ACTOR_MOVED_GRAY_BLOCK,
+  ACTOR_EAST_GRAY_BLOCK,
   /// The row of four grey blocks the activation raises before the party's eyes.
   ACTOR_FIRST_ROW_BLOCK,
   ACTOR_LAST_ROW_BLOCK = ACTOR_FIRST_ROW_BLOCK + 3,
@@ -167,7 +167,7 @@ void JupiterLighthouse_PlacePushedBlock(s32 unused, s32 id) {
   s32 i;
 
   actor = Actor_Get(id);
-  if (id == ACTOR_MOVED_GREY_BLOCK) {
+  if (id == ACTOR_MOVED_GRAY_BLOCK) {
     if (!Event_GetFlag(FLAG_JUPITER_LIGHTHOUSE_ACTIVATED) ||
         FIELD_CELL(actor->x.fixed) != 13 || FIELD_CELL(actor->z.fixed) != 34)
       return;
@@ -645,16 +645,16 @@ s32 Scene_PrepareMap(void) {
   if (Event_GetFlag(FLAG_JUPITER_LIGHTHOUSE_ACTIVATED))
     MapGrid_SetCellBehavior(toFIXED(208), toFIXED(672), 2, CELL_BEHAVIOR_HOVER);
   if (Event_GetFlag(FLAG_JUPITER_LIGHTHOUSE_ACTIVATED)) {
-    Actor_RaiseFromCell(ACTOR_WEST_GREY_BLOCK);
-    Actor_RaiseFromCell(ACTOR_EAST_GREY_BLOCK);
+    Actor_RaiseFromCell(ACTOR_WEST_GRAY_BLOCK);
+    Actor_RaiseFromCell(ACTOR_EAST_GRAY_BLOCK);
     Actor_RaiseFromCell(ACTOR_FIRST_ROW_BLOCK);
     Actor_RaiseFromCell(ACTOR_FIRST_ROW_BLOCK + 1);
     Actor_RaiseFromCell(ACTOR_FIRST_ROW_BLOCK + 2);
     Actor_RaiseFromCell(ACTOR_LAST_ROW_BLOCK);
   }
   if (Event_GetFlag(FLAG_MOVED_BLOCK_RAISED)) {
-    Actor_SetPosition(ACTOR_MOVED_GREY_BLOCK, 216, 552);
-    Actor_RaiseFromCell(ACTOR_MOVED_GREY_BLOCK);
+    Actor_SetPosition(ACTOR_MOVED_GRAY_BLOCK, 216, 552);
+    Actor_RaiseFromCell(ACTOR_MOVED_GRAY_BLOCK);
   }
   return 0;
 }
@@ -1063,8 +1063,8 @@ struct Trigger gSceneEvents[] = {
     {PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_FIRST_PUSHED_BLOCK + 1, CONDITION_ALWAYS, EVENT(JupiterLighthouse_PlacePushedBlock)},
     {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), ACTOR_LAST_PUSHED_BLOCK, CONDITION_ALWAYS, EVENT(JupiterLighthouse_LiftPushedBlock)},
     {PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_LAST_PUSHED_BLOCK, CONDITION_ALWAYS, EVENT(JupiterLighthouse_PlacePushedBlock)},
-    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), ACTOR_MOVED_GREY_BLOCK, CONDITION_ALWAYS, EVENT(JupiterLighthouse_LiftPushedBlock)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_MOVED_GREY_BLOCK, CONDITION_ALWAYS, EVENT(JupiterLighthouse_PlacePushedBlock)},
+    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), ACTOR_MOVED_GRAY_BLOCK, CONDITION_ALWAYS, EVENT(JupiterLighthouse_LiftPushedBlock)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_MOVED_GRAY_BLOCK, CONDITION_ALWAYS, EVENT(JupiterLighthouse_PlacePushedBlock)},
     {PSYNERGY_ANYWHERE(ABILITY_HOVER, PSYNERGY_PHASE_ACTS), 0, FLAG_JUPITER_LIGHTHOUSE_ACTIVATED, EVENT(JupiterLighthouse_ActivateTheLighthouse)},
     {TRIGGER_TABLE_END},
 };

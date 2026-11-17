@@ -6,6 +6,7 @@
 #include "menu_internal.h"
 #include "resource_ids.h"
 #include "sounds.h"
+#include "field/field_sequence.h"
 
 /// Each item command's state in the grid.
 #define ITEM_COMMAND_STATE_DISABLED (-1)
@@ -45,11 +46,6 @@ s32 ItemMenu_Use(void);
 s32 Item_ClassifyUseMode(s32 owner, s32 itemId);
 void Menu_PlaceOwnerEntryObjects(struct Window *window, s32 originX,
                                  s32 originY);
-
-/// @file
-/// The item menu, as far as this object holds it: the field menu's Item
-/// screen, its command loop, Use, the first screen's setup and the item icons.
-// Part of menu.c.
 
 // Where the edition's text goes. The international editions have longer
 // words, and some languages move a message to fit its own.
@@ -130,7 +126,7 @@ s32 ItemMenu_Run(void) {
     struct FieldWork *field = Ram_HeapSlots->fieldWork;
 
     // The item goes to the field to be used, as Field_UseItem reads it.
-    field->item = (owner << 10) | (item & INVENTORY_ITEM_ID_MASK);
+    field->item = (owner << ACT_UNIT_SHIFT) | (item & INVENTORY_ITEM_ID_MASK);
     field->itemSlot = screen->selectedSlots[0];
   }
 
@@ -213,9 +209,9 @@ void ItemMenu_HideTradedIcons(void);
 s32 ItemMenu_RunCommands(s32 *ownerOut, s32 *targetOut, s32 *itemOut) {
   s32 done;
   s32 selection;
-  s32 ret;
-  struct Unit *source;
-  struct Unit *target;
+  s32 menuResult;
+  struct Unit *sourceUnit;
+  struct Unit *targetUnit;
   struct ItemMenuWork *menu;
   struct ItemDefinition *item;
   void *sourceCopy;
@@ -223,24 +219,25 @@ s32 ItemMenu_RunCommands(s32 *ownerOut, s32 *targetOut, s32 *itemOut) {
   u32 state;
   s32 command;
   s32 result;
-  s32 qty;
+  s32 heldCount;
   s32 amount;
-  s32 aborted;
-  s32 work;
-  s32 n;
-  u8 movedSource;
-  u8 movedTarget;
-  s8 stack;
+  s32 transferFailed;
+  s32 removedCount;
+  s32 giveTarget;
+  u8 sourceQuantity;
+  u8 targetQuantity;
+  s8 stackSize;
   s32 size;
 
   done = 0;
   selection = 0;
-  ret = 0;
+  menuResult = 0;
   state = ITEM_STEP_MEMBER;
   menu = Ram_HeapSlots->menuWork;
 
   while (done == 0 && GameFlag_Get(FLAG_MENU_START_PRESSED) == 0) {
     switch (state) {
+    // Choose whose items to look at.
     case ITEM_STEP_MEMBER:
       menu->selectedSlots[0] = 0;
       ItemMenu_FitMessageWindowToQuestion();
@@ -258,7 +255,7 @@ s32 ItemMenu_RunCommands(s32 *ownerOut, s32 *targetOut, s32 *itemOut) {
         // DEAD: selection and command cleared though the menu ends before
         // reading either; the ROM keeps the 0 and its store to selection.
         selection = command = 0;
-        ret = -1;
+        menuResult = -1;
         done = 1;
       }
       WindowSprite_RedrawSavedRectFar((struct Window *)menu->infoWindow);
@@ -266,6 +263,7 @@ s32 ItemMenu_RunCommands(s32 *ownerOut, s32 *targetOut, s32 *itemOut) {
       state = ITEM_STEP_ITEM;
       break;
 
+    // Choose one of their items.
     case ITEM_STEP_ITEM:
       if (ItemMenu_CountItems(menu->sideMember[0]) == 0) {
         state = ITEM_STEP_MEMBER;
@@ -285,6 +283,7 @@ s32 ItemMenu_RunCommands(s32 *ownerOut, s32 *targetOut, s32 *itemOut) {
       state = ITEM_STEP_COMMAND;
       break;
 
+    // Choose what to do with it.
     case ITEM_STEP_COMMAND:
       command = ItemMenu_ChooseCommand();
       if (command == -1) {
@@ -298,7 +297,7 @@ s32 ItemMenu_RunCommands(s32 *ownerOut, s32 *targetOut, s32 *itemOut) {
           *ownerOut = menu->sideMember[0];
           *targetOut = command;
           *itemOut = menu->selectedItems[0] & INVENTORY_ITEM_ID_MASK;
-          ret = 1;
+          menuResult = 1;
           break;
         }
         result =
@@ -320,12 +319,13 @@ s32 ItemMenu_RunCommands(s32 *ownerOut, s32 *targetOut, s32 *itemOut) {
           ItemMenu_DrawIcons(menu->items, 0);
           state = ITEM_STEP_MEMBER;
         }
-        if (result == -1 || result == ITEM_USE_MODE_FROM_FIELD) {
+        if (result == ITEM_USE_MODE_UNUSABLE ||
+            result == ITEM_USE_MODE_FROM_FIELD) {
           done = 1;
           *ownerOut = menu->sideMember[0];
           *targetOut = menu->sideMember[1];
           *itemOut = menu->selectedItems[0] & INVENTORY_ITEM_ID_MASK;
-          ret = 1;
+          menuResult = 1;
         }
       }
       if (command == ITEM_COMMAND_EQUIP) {
@@ -345,6 +345,7 @@ s32 ItemMenu_RunCommands(s32 *ownerOut, s32 *targetOut, s32 *itemOut) {
       }
       break;
 
+    // Use the item on the party member chosen.
     case ITEM_STEP_USE:
       ItemMenu_HideAllIcons();
       ItemMenu_FitMessageWindowToItemQuestion();
@@ -381,6 +382,7 @@ s32 ItemMenu_RunCommands(s32 *ownerOut, s32 *targetOut, s32 *itemOut) {
       }
       break;
 
+    // Give: choose to whom.
     case ITEM_STEP_TARGET:
       ItemMenu_FitMessageWindowToItemQuestion();
       ItemMenu_PlaceItemWindowBelowItemQuestion();
@@ -388,24 +390,25 @@ s32 ItemMenu_RunCommands(s32 *ownerOut, s32 *targetOut, s32 *itemOut) {
       ItemMenu_DrawItemHead();
       Text_DrawMessageAsTilesFar((s32)MsgGiveToWhom, menu->questionWindow, 16,
                                  16);
-      n = ItemMenu_SelectTarget(ITEM_TARGET_GIVE);
+      giveTarget = ItemMenu_SelectTarget(ITEM_TARGET_GIVE);
       state = ITEM_STEP_GIVE;
-      if (n == -1) {
+      if (giveTarget == -1) {
         ItemMenu_DrawEquipPreview(menu->sideMember[0], menu->selectedSlots[0],
                                   0, menu->sideMember[0]);
         state = ITEM_STEP_COMMAND;
       }
       break;
 
+    // Drop the item, or some of a stack, after confirming.
     case ITEM_STEP_DROP:
       ItemMenu_HideAllIcons();
       item = Item_GetDirectFar(menu->selectedItems[0] & INVENTORY_ITEM_ID_MASK);
       result = 0;
       if ((item->flags & ITEM_STACKABLE) != 0) {
-        qty = (menu->selectedItems[0] >> INVENTORY_QUANTITY_SHIFT) + 1;
-        if (qty > 1) {
+        heldCount = (menu->selectedItems[0] >> INVENTORY_QUANTITY_SHIFT) + 1;
+        if (heldCount > 1) {
           ItemMenu_DrawItemHead();
-          result = ItemMenu_SelectGiveQuantity(0, qty, 1);
+          result = ItemMenu_SelectGiveQuantity(0, heldCount, 1);
         }
       }
       if (result == -1) {
@@ -424,11 +427,12 @@ s32 ItemMenu_RunCommands(s32 *ownerOut, s32 *targetOut, s32 *itemOut) {
       Icon_PrepareActor(menu->selectedItemIcon);
       Window_ClearInteriorTilesFar(menu->listWindow, 0, 72, 120, 96);
       WindowSprite_RedrawSavedRectFar((struct Window *)menu->questionWindow);
+      // Yes: take result + 1 of the stack out, one at a time.
       if (ItemMenu_ConfirmDrop(selection) == 0) {
         command = menu->sideMember[0];
         // DEAD: Unit_Get's result is not used; the ROM keeps the call.
         Unit_Get(command);
-        for (work = 0; work < result + 1; work++) {
+        for (removedCount = 0; removedCount < result + 1; removedCount++) {
           Inventory_RemoveFar(command, menu->selectedSlots[0]);
           Item_AdjustCounterFar(menu->selectedItems[0] & INVENTORY_ITEM_ID_MASK,
                                 1);
@@ -452,32 +456,32 @@ s32 ItemMenu_RunCommands(s32 *ownerOut, s32 *targetOut, s32 *itemOut) {
       Party_ClearUnusableShortcutsFar();
       break;
 
+    // Give the item, or some of a stack, to the chosen party member.
     case ITEM_STEP_GIVE:
-      aborted = 0;
+      transferFailed = 0;
       item = Item_GetDirectFar(menu->selectedItems[0] & INVENTORY_ITEM_ID_MASK);
       if ((item->flags & ITEM_STACKABLE) != 0) {
-        qty = ItemMenu_GetItemQuantity(menu->sideMember[1],
-                                       menu->selectedItems[0] &
-                                           INVENTORY_ITEM_ID_MASK);
-        if (qty == INVENTORY_STACK_MAX) {
-          aborted = 1;
+        // A receiver with a full stack of it takes none; one with no free
+        // slot and none of it must trade.
+        heldCount = ItemMenu_GetItemQuantity(menu->sideMember[1],
+                                             menu->selectedItems[0] &
+                                                 INVENTORY_ITEM_ID_MASK);
+        if (heldCount == INVENTORY_STACK_MAX) {
+          transferFailed = 1;
         }
         if (ItemMenu_CountItems(menu->sideMember[1]) == INVENTORY_SLOTS &&
-            qty == 0) {
+            heldCount == 0) {
           state = ITEM_STEP_TRADE;
           break;
         }
-        stack = (menu->selectedItems[0] >> INVENTORY_QUANTITY_SHIFT) + 1;
-        if (aborted == 0) {
-          // A once-only block: it places a label between the count and its
-          // sign-extended use (70 of 1355 differ as a plain assignment).
-          do {
-            amount = stack;
-          } while (0);
-          if (qty + amount > INVENTORY_STACK_MAX) {
-            amount = INVENTORY_STACK_MAX - qty;
+        stackSize = (menu->selectedItems[0] >> INVENTORY_QUANTITY_SHIFT) + 1;
+        if (transferFailed == 0) {
+          if (heldCount + stackSize > INVENTORY_STACK_MAX) {
+            amount = INVENTORY_STACK_MAX - heldCount;
+          } else {
+            amount = stackSize;
           }
-          if (stack > 1) {
+          if (stackSize > 1) {
             result = ItemMenu_SelectGiveQuantity(0, amount, 0);
           } else {
             result = 0;
@@ -486,16 +490,18 @@ s32 ItemMenu_RunCommands(s32 *ownerOut, s32 *targetOut, s32 *itemOut) {
             state = ITEM_STEP_TARGET;
             break;
           }
+          // Move result + 1 one at a time; the broken bit goes with each,
+          // the equipped bit and the quantity do not.
           for (command = 0; command < result + 1; command++) {
-            qty = Inventory_AddItemFar(
+            heldCount = Inventory_AddItemFar(
                 menu->sideMember[1],
                 menu->selectedItems[0] &
                     (INVENTORY_ITEM_ID_MASK | INVENTORY_BROKEN));
-            if (qty != -1) {
+            if (heldCount != -1) {
               Inventory_RemoveFar(menu->sideMember[0], menu->selectedSlots[0]);
-              menu->selectedSlots[1] = qty;
+              menu->selectedSlots[1] = heldCount;
             } else {
-              aborted = 1;
+              transferFailed = 1;
             }
           }
         }
@@ -511,8 +517,8 @@ s32 ItemMenu_RunCommands(s32 *ownerOut, s32 *targetOut, s32 *itemOut) {
         menu->selectedSlots[1] = result;
         result =
             Inventory_RemoveFar(menu->sideMember[0], menu->selectedSlots[0]);
-        if (result == -1) {
-          aborted = 1;
+        if (result == INVENTORY_REMOVE_EMPTY_SLOT) {
+          transferFailed = 1;
         }
       }
       Unit_RefreshPsynergyFar(menu->sideMember[0]);
@@ -520,7 +526,7 @@ s32 ItemMenu_RunCommands(s32 *ownerOut, s32 *targetOut, s32 *itemOut) {
       Unit_CalculateFar(menu->sideMember[0]);
       Unit_CalculateFar(menu->sideMember[1]);
       result = 1;
-      if (aborted == 0) {
+      if (transferFailed == 0) {
         menu->sideMember[0] = menu->sideMember[1];
         menu->selectedItems[0] &= INVENTORY_ITEM_ID_MASK;
 #if TLA_PATCH_2
@@ -536,7 +542,9 @@ s32 ItemMenu_RunCommands(s32 *ownerOut, s32 *targetOut, s32 *itemOut) {
       ItemMenu_RefreshMember(menu->sideMember[1], 1);
       menu->sideIcons[0]->motion = ICON_HIDDEN;
       wait(1);
-      if (aborted == 1) {
+      // Say how it went: the receiver's stack was full, the item was given,
+      // or it was given and equipped (ItemMenu_ConfirmEquip returned 0).
+      if (transferFailed == 1) {
         WindowSprite_ClearListFar(menu->infoWindow);
         ItemMenu_ShowMessage((s32)MsgCannotHoldMore, 15, 14);
       } else {
@@ -551,8 +559,8 @@ s32 ItemMenu_RunCommands(s32 *ownerOut, s32 *targetOut, s32 *itemOut) {
           if ((item->flags & ITEM_CURSED) != 0) {
             Sound_PlayFar(SE_CURSE);
             WindowSprite_ClearListFar(menu->infoWindow);
-            ItemMenu_ShowMessage((s32)MsgEquippedIt + 7, ITEM_MODAL_SHORT_X,
-                                 14);
+            ItemMenu_ShowMessage((s32)MsgEquippedIt + 7, // "You were cursed!"
+                                 ITEM_MODAL_SHORT_X, 14);
           }
         }
       }
@@ -560,8 +568,9 @@ s32 ItemMenu_RunCommands(s32 *ownerOut, s32 *targetOut, s32 *itemOut) {
       state = ITEM_STEP_MEMBER;
       break;
 
+    // Trade: the receiver gives back one of their items.
     case ITEM_STEP_TRADE:
-      aborted = 0;
+      transferFailed = 0;
       ItemMenu_FitMessageWindowToQuestion();
       ItemMenu_PlaceItemWindowBelowQuestion();
       ItemMenu_DrawMessage(0, (s32)&MsgSwapForWhat);
@@ -569,34 +578,40 @@ s32 ItemMenu_RunCommands(s32 *ownerOut, s32 *targetOut, s32 *itemOut) {
         state = ITEM_STEP_TARGET;
         break;
       }
-      source = Unit_Get(menu->sideMember[0]);
-      target = Unit_Get(menu->sideMember[1]);
+      // Snapshot both inventories so any failed part of the trade can roll
+      // back.
+      sourceUnit = Unit_Get(menu->sideMember[0]);
+      targetUnit = Unit_Get(menu->sideMember[1]);
       size = BATTLE_UNIT_SIZE;
       sourceCopy = Heap_Alloc(size);
       targetCopy = Heap_Alloc(size);
-      ITEM_IWRAM_COPY_WORDS(sourceCopy, source, size);
-      ITEM_IWRAM_COPY_WORDS(targetCopy, target, size);
-      movedSource = 0;
-      while (movedSource <= 29) {
+      ITEM_IWRAM_COPY_WORDS(sourceCopy, sourceUnit, size);
+      ITEM_IWRAM_COPY_WORDS(targetCopy, targetUnit, size);
+      // Take both whole stacks out, one item at a time (at most
+      // INVENTORY_STACK_MAX): Inventory_RemoveFar returns INVENTORY_REMOVE_LAST
+      // for the last one and INVENTORY_REMOVE_EMPTY_SLOT for an empty slot.
+      sourceQuantity = 0;
+      while (sourceQuantity <= INVENTORY_STACK_MAX - 1) {
         result =
             Inventory_RemoveFar(menu->sideMember[0], menu->selectedSlots[0]);
         if (result == INVENTORY_REMOVE_LAST) {
           break;
         }
-        if (result == -1) {
-          aborted = 1;
+        if (result == INVENTORY_REMOVE_EMPTY_SLOT) {
+          transferFailed = 1;
           break;
         }
-        movedSource++;
+        sourceQuantity++;
       }
-      movedSource++;
-      movedTarget = 0;
-      while (movedTarget <= 29) {
+      sourceQuantity++;
+      targetQuantity = 0;
+      while (targetQuantity <= INVENTORY_STACK_MAX - 1) {
+        // The receiver cannot trade away a worn item that will not come off.
         if ((menu->selectedItems[1] & INVENTORY_EQUIPPED) != 0) {
           item = Item_GetDirectFar(menu->selectedItems[1] &
                                    INVENTORY_ITEM_ID_MASK);
           if ((item->flags & ITEM_CANNOT_UNEQUIP) != 0) {
-            aborted = 1;
+            transferFailed = 1;
           }
         }
         result =
@@ -604,41 +619,42 @@ s32 ItemMenu_RunCommands(s32 *ownerOut, s32 *targetOut, s32 *itemOut) {
         if (result == INVENTORY_REMOVE_LAST) {
           break;
         }
-        if (result == -1) {
-          aborted = 1;
+        if (result == INVENTORY_REMOVE_EMPTY_SLOT) {
+          transferFailed = 1;
           break;
         }
-        movedTarget++;
+        targetQuantity++;
       }
-      movedTarget++;
-      while (movedSource != 0) {
+      targetQuantity++;
+      // Then give each the other's items.
+      while (sourceQuantity != 0) {
         result = Inventory_AddItemFar(
             menu->sideMember[1],
             menu->selectedItems[0] &
                 (INVENTORY_ITEM_ID_MASK | INVENTORY_BROKEN));
         if (result == -1) {
-          aborted = 1;
+          transferFailed = 1;
           break;
         }
         menu->selectedSlots[1] = result;
-        movedSource--;
+        sourceQuantity--;
       }
-      while (movedTarget != 0) {
+      while (targetQuantity != 0) {
         result = Inventory_AddItemFar(
             menu->sideMember[0],
             menu->selectedItems[1] &
                 (INVENTORY_ITEM_ID_MASK | INVENTORY_BROKEN));
         if (result == -1) {
-          aborted = 1;
+          transferFailed = 1;
           break;
         }
         menu->selectedSlots[0] = result;
-        movedTarget--;
+        targetQuantity--;
       }
       wait(1);
-      if (aborted == 1) {
-        Iwram_CopyWordsEntry(source, sourceCopy, size);
-        Iwram_CopyWordsEntry(target, targetCopy, size);
+      if (transferFailed == 1) {
+        Iwram_CopyWordsEntry(sourceUnit, sourceCopy, size);
+        Iwram_CopyWordsEntry(targetUnit, targetCopy, size);
         WindowSprite_ClearListFar(menu->infoWindow);
         ItemMenu_ShowMessage((s32)MsgCannotTrade, ITEM_CANNOT_TRADE_X, 14);
 #if LANGUAGE == LANGUAGE_FRENCH
@@ -672,8 +688,8 @@ s32 ItemMenu_RunCommands(s32 *ownerOut, s32 *targetOut, s32 *itemOut) {
             if ((item->flags & ITEM_CURSED) != 0) {
               Sound_PlayFar(SE_CURSE);
               WindowSprite_ClearListFar(menu->infoWindow);
-              ItemMenu_ShowMessage((s32)MsgEquippedIt + 7, ITEM_MODAL_SHORT_X,
-                                   14);
+              ItemMenu_ShowMessage((s32)MsgEquippedIt + 7, // "You were cursed!"
+                                   ITEM_MODAL_SHORT_X, 14);
             }
           } else {
             ItemMenu_ShowMessage((s32)MsgTraded, ITEM_TRADED_X, 14);
@@ -686,6 +702,7 @@ s32 ItemMenu_RunCommands(s32 *ownerOut, s32 *targetOut, s32 *itemOut) {
       state = ITEM_STEP_MEMBER;
       break;
 
+    // Equip it.
     case ITEM_STEP_EQUIP:
       result = Inventory_EquipFar(menu->sideMember[0], menu->selectedSlots[0]);
       if (result == -1) {
@@ -716,14 +733,16 @@ s32 ItemMenu_RunCommands(s32 *ownerOut, s32 *targetOut, s32 *itemOut) {
       if ((item->flags & ITEM_CURSED) != 0) {
         Sound_PlayFar(SE_CURSE);
         WindowSprite_ClearListFar(menu->infoWindow);
-        ItemMenu_ShowMessage((s32)MsgEquippedIt + 7, ITEM_MODAL_SHORT_X, 8);
+        ItemMenu_ShowMessage((s32)MsgEquippedIt + 7, // "You were cursed!"
+                             ITEM_MODAL_SHORT_X, 8);
       }
       state = ITEM_STEP_ITEM;
       break;
 
+    // Unequip it.
     case ITEM_STEP_REMOVE:
       (Unit_Get(menu->sideMember[0]))->inventory[menu->selectedSlots[0]] &=
-          0xfdff;
+          ~INVENTORY_EQUIPPED;
       Unit_RefreshPsynergyFar(menu->sideMember[0]);
       Unit_CalculateFar(menu->sideMember[0]);
       menu->sideIcons[0]->motion = ICON_HIDDEN;
@@ -741,6 +760,7 @@ s32 ItemMenu_RunCommands(s32 *ownerOut, s32 *targetOut, s32 *itemOut) {
       state = ITEM_STEP_ITEM;
       break;
 
+    // Show its description.
     case ITEM_STEP_INSPECT:
       menu->sideIcons[0]->motion = ICON_HIDDEN;
       ItemMenu_ShowDetails(menu->selectedItems[0]);
@@ -766,9 +786,9 @@ s32 ItemMenu_RunCommands(s32 *ownerOut, s32 *targetOut, s32 *itemOut) {
   }
 
   if (GameFlag_Get(FLAG_MENU_START_PRESSED) != 0) {
-    ret = -1;
+    menuResult = -1;
   }
-  return ret;
+  return menuResult;
 }
 
 s32 Item_Use(s32 slot, s32 owner, s32 target);
@@ -1101,21 +1121,23 @@ void ItemMenu_OpenCategory(s32 ownerId) {
   ItemMenu_DrawCategory(menu->itemWindow, ownerId, 0);
 }
 
+// The Japanese release writes the item's description into the info window as
+// text, the others as tiles.
 #if (LANGUAGE == LANGUAGE_JAPANESE)
 #define TRADE_LABEL_X 16
 #define IN_STOCK_LABEL_X 24
-#define ITEM_INFO_DRAW Text_DrawMessageFar
+#define ItemMenu_DrawInfo Text_DrawMessageFar
 #else
 #define TRADE_LABEL_X 0
-#define ITEM_INFO_DRAW Text_DrawMessageAsTilesFar
+#define ItemMenu_DrawInfo Text_DrawMessageAsTilesFar
 #endif
 
 // The Japanese release clears the info window; from patch 1 it redraws the
 // window's saved rectangle.
 #if TLA_PATCH_1
-#define ITEM_INFO_CLEAR WindowSprite_RedrawSavedRectFar
+#define ItemMenu_ClearInfo WindowSprite_RedrawSavedRectFar
 #else
-#define ITEM_INFO_CLEAR WindowSprite_ClearListFar
+#define ItemMenu_ClearInfo WindowSprite_ClearListFar
 #endif
 
 #if (LANGUAGE == LANGUAGE_SPANISH)
@@ -1198,10 +1220,10 @@ s32 ItemMenu_SelectTarget(s32 mode) {
                            menu->selectedSlots[0], 0);
         if (!GameFlag_Get(FLAG_INFO_WINDOW_HOLDS_MESSAGE) &&
             !descriptionShown) {
-          ITEM_INFO_CLEAR(menu->infoWindow);
-          ITEM_INFO_DRAW((menu->selectedItems[0] & INVENTORY_ITEM_ID_MASK) +
-                             (s32)MsgItemPlainName,
-                         menu->infoWindow, 0, 0);
+          ItemMenu_ClearInfo(menu->infoWindow);
+          ItemMenu_DrawInfo((menu->selectedItems[0] & INVENTORY_ITEM_ID_MASK) +
+                                (s32)MsgItemPlainName,
+                            menu->infoWindow, 0, 0);
           descriptionShown = 1;
         } else {
           GameFlag_Clear(FLAG_INFO_WINDOW_HOLDS_MESSAGE);
@@ -1222,7 +1244,7 @@ s32 ItemMenu_SelectTarget(s32 mode) {
     }
     if (gInput.pressed & KEY_B) {
       Sound_PlayFar(SE_MENU_CANCEL);
-      result = 255;
+      result = -1;
       break;
     }
     redraw = Menu_MoveGridCursor(&selection, count, 4);
@@ -2190,12 +2212,13 @@ void ItemMenu_DrawItemDetailsWithCount(s32 window, s32 item, s32 count) {
     case EQUIP_EFFECT_SCALE_LUCK:
       Text_DrawMessageAsTilesFar(def->effects[i].kind + (s32)MsgEquipEffectName,
                                  window, 0, row * 8);
-      if (amount > 9) {
+      // The scale is in tenths: "1.2" for 12.
+      if (amount >= STAT_SCALE_ONE) {
         Text_DrawNumberInWindowFar(1, 1, window, ITEM_DETAILS_MULTIPLIER_X,
                                    row * 8);
         Text_DrawStringInWindowFar(gMenu_PointString, window,
                                    ITEM_DETAILS_MULTIPLIER_X + 8, row * 8);
-        Text_DrawNumberInWindowFar(amount - 10, 1, window,
+        Text_DrawNumberInWindowFar(amount - STAT_SCALE_ONE, 1, window,
                                    ITEM_DETAILS_MULTIPLIER_X + 16, row * 8);
       } else {
         Text_DrawNumberInWindowFar(0, 1, window, ITEM_DETAILS_MULTIPLIER_X,
@@ -2216,17 +2239,26 @@ void ItemMenu_DrawItemDetailsWithCount(s32 window, s32 item, s32 count) {
       Text_DrawMessageAsTilesFar(def->effects[i].kind + (s32)MsgEquipEffectName,
                                  window, 0, row * 8);
 #if LANGUAGE == LANGUAGE_GERMAN
-      // German continues these three names on a second line.
+      // German continues these three names on a second line, the messages
+      // after the last effect's name in the order of their effects: "steigen"
+      // and "aufgehoben werden.".
       row++;
       if (def->effects[i].kind == EQUIP_EFFECT_ADD_UNLEASH_CHANCE)
-        Text_DrawMessageAsTilesFar((s32)MsgEquipEffectName + 28, window, 0,
-                                   row * 8);
+        Text_DrawMessageAsTilesFar((s32)MsgEquipEffectName + EQUIP_EFFECT_LURE +
+                                       1,
+                                   window, 0, row * 8);
       else if (def->effects[i].kind == EQUIP_EFFECT_CURSE_REMOVABLE)
-        Text_DrawMessageAsTilesFar((s32)MsgEquipEffectName + 29, window, 0,
-                                   row * 8);
+        Text_DrawMessageAsTilesFar((s32)MsgEquipEffectName + EQUIP_EFFECT_LURE +
+                                       2,
+                                   window, 0, row * 8);
+#ifndef BUGFIX
+      // BUG: German has only those two second lines, so the Lure Cap's
+      // "Erhöht gegn." goes on with the message after them, "Items".
       else if (def->effects[i].kind == EQUIP_EFFECT_LURE)
-        Text_DrawMessageAsTilesFar((s32)MsgEquipEffectName + 30, window, 0,
-                                   row * 8);
+        Text_DrawMessageAsTilesFar((s32)MsgEquipEffectName + EQUIP_EFFECT_LURE +
+                                       3,
+                                   window, 0, row * 8);
+#endif
 #endif
       break;
     }
@@ -2842,6 +2874,9 @@ s32 ItemMenu_DrawItemDetailPage(s32 listWindow, void *memberWork,
 #define PAGE_X 116
 #define ENTRY_X 24
 #endif
+/// The page numbers end, with their right arrow, at tile 15 of the list
+/// window's top border.
+#define PAGE_NUMBERS_RIGHT 15
 
 /// Draws the names on one five-row page of the item list: The Broken Seal's
 /// ItemMenu_DrawNamePage over this game's menu offsets.
@@ -2866,7 +2901,7 @@ s32 ItemMenu_DrawNamePage(s32 window, s32 unused,
 
   Menu_SetPageIcons(LIST_PAGE_SIZE, firstEntry, window, PAGE_X, 34);
   PagedList_DrawPageNumbers(window, state->entryCount, LIST_PAGE_SIZE,
-                            state->page, 15);
+                            state->page, PAGE_NUMBERS_RIGHT);
 
   row = 0;
   if (visibleCount > row) {
@@ -2884,6 +2919,7 @@ s32 ItemMenu_DrawNamePage(s32 window, s32 unused,
 }
 
 #undef PAGE_X
+#undef PAGE_NUMBERS_RIGHT
 #undef ENTRY_X
 
 // The Japanese list puts its help line at another column.

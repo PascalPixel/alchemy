@@ -204,7 +204,7 @@ extern s32 gWorldMap_TidalWaveScript[];
 
 extern u32 gWorldMap_GlowColorModes[];
 
-s32 WorldMap_GetBlockPlace(s32 *position);
+s32 WorldMap_GetBlockCellBehavior(s32 *position);
 
 s32 gWorldMap_HiddenMembers[8] BSS_DATA;
 struct Actor *gWorldMap_PlacedActors[128] BSS_DATA;
@@ -814,7 +814,7 @@ void WorldMap_GazeIntoPond(void) {
     /* FAKEMATCH(dead): the store and the call in a once-only block. */
     do {
       work->scoopedItem = amount;
-      Scene_TalkToActor(TALK_WITHOUT_CHECK_MESSAGE | slot);
+      Scene_TalkToActor(FIELD_TALK_SILENT | slot);
     } while (0);
   } else if (roll == 1) {
     MapGrid_SetShake(3, 5, 1);

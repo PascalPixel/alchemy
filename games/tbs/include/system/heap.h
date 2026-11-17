@@ -135,7 +135,7 @@ enum HeapSlot {
   /// Battle_Run.
   HEAP_SLOT_BATTLE_BACKGROUND = 44,
   /// Lucky Dice's sprites (1,560 bytes), for as long as the game runs.
-  HEAP_SLOT_LUCKY_DICE_SPRITES = 45,
+  HEAP_SLOT_LUCKY_GAME = 45,
   /// A routine run from RAM: the canvas drawing routine
   /// BattleEffect_BuildBlitter writes, called as a DrawRectangle and released
   /// before its canvas, or the world map's copy of Matrix_UpdateVertices.

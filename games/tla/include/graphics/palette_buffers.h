@@ -7,7 +7,7 @@
 
 /// @file
 /// Palette fades, the battle effect palette buffers and the colour channel
-/// curves, as The Broken Seal's palette_buffers.h.
+/// curves.
 
 /// The colour channels a TitlePaletteFade moves: B, G and R for each of its 512
 /// colours.
@@ -100,8 +100,8 @@ enum PaletteTint {
   PALETTE_TINT_SEPIA,
   /// Half R + 10, two thirds G + 8, B - 7; black stays black.
   PALETTE_TINT_WARM,
-  /// Each channel held to a narrow range (R 10 to 28, G 16 to 24, B 16 to 26),
-  /// then G and B + 2.
+  /// Each channel held to a narrow range (R 8 to 29, G 14 to 25, B 14 to 27),
+  /// then G and B + 2; the first colour stays as it is.
   PALETTE_TINT_MUTED,
   PALETTE_TINT_PALE, ///< half of each channel, plus their mean
   /// R plus an eighth of G and of B; G and B two thirds.
@@ -111,7 +111,7 @@ enum PaletteTint {
   PALETTE_TINT_DIM_BRIGHT,
   /// A third of R + G + B, B three steps darker.
   PALETTE_TINT_DIM_GRAY,
-  /// From here the TINT, BLEND and SPLIT bits are tested, TINT and BLEND
+  /// From here the CUSTOM, BLEND and SPLIT bits are tested, CUSTOM and BLEND
   /// carrying an RGB555 colour in the low 15 bits; any other value is the
   /// address of a ready buffer to copy.
   PALETTE_TINT_FLAGS = 0x100000,

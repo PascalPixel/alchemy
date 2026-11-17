@@ -74,7 +74,6 @@ void IoWriteQueue_FlushPending(void);
 
 /// Like IO_WRITE_QUEUE_PUSH, but keeps IME's address in the caller's ime
 /// variable while disabling and restoring interrupts.
-// The count is read and written as in IO_WRITE_QUEUE_PUSH.
 #define IO_WRITE_QUEUE_PUSH_IME(ime, address, value, control)                  \
   {                                                                            \
     struct IoWriteQueue *q;                                                    \

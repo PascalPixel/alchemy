@@ -7,10 +7,6 @@
 #include "game/item.h"
 #include "field/field_sequence.h"
 #include "field/actor.h"
-
-/// @file
-/// Items: summon-selection menu and battle item-use eligibility.
-
 #include "battle/battle_system.h"
 #include "types.h"
 #include "system/scene.h"
@@ -22,12 +18,11 @@
 #include "shop/shop.h"
 #include "window/screens.h"
 
-#define BATTLE_OK 0x80 ///< flags: usable in battle.
-
-/// Determines whether an item can be used in battle.
-/// Returns: 0 usable / 1 unusable / 2 unavailable in battle.
-/// unit: character index.
-/// item: carried item value.
+/// Says whether party member `unit` can use inventory entry `itemId` in battle:
+/// 0 yes; 1 no, "Using this will have no effect." (no item, an item that only
+/// teaches Psynergy while equipped, one with no action, or equipment the party
+/// member cannot equip); 2 not in battle, "Cannot be used during battle." (its
+/// action lacks ABILITY_USABLE_IN_BATTLE).
 s32 Item_ClassifyUseAbility(s32 unit, s32 itemId) {
   struct ItemDefinition *item;
 
@@ -35,26 +30,24 @@ s32 Item_ClassifyUseAbility(s32 unit, s32 itemId) {
     return 1;
   }
   item = Item_GetDirectFar(itemId);
-  // Equipment that grants Psynergy.
-  if (item->useType == 3) {
+  if (item->useType == ITEM_USE_TEACHES) {
     return 1;
   }
   if (item->abilityId == 0) {
     return 1;
   }
-  if ((item->type != 0) && (Item_CanUnitEquip(unit, itemId) == 0)) {
+  if ((item->type != ITEM_TYPE_NONE) &&
+      (Item_CanUnitEquip(unit, itemId) == 0)) {
     return 1;
   }
-  if ((BATTLE_OK & Ability_Get(item->abilityId)->flags) == 0) {
+  if ((ABILITY_USABLE_IN_BATTLE & Ability_Get(item->abilityId)->flags) == 0) {
     return 2;
   }
   return 0;
 }
 
 /// Copies one 4bpp tile of BG character block 0 to another, each given as a
-/// tilemap entry whose palette and flip bits are ignored. The battle lists copy
-/// tiles 24 and 25 (as entries `0xf018` and `0xf019`) to tiles 512, 513, 528
-/// and 529 as they open.
+/// tilemap entry whose palette and flip bits are ignored.
 void Vram_CopyTile(u32 sourceTile, u32 destinationTile) {
   Dma_Set(BG_CHAR_BLOCK(0) + (sourceTile & TILE_NUMBER_MASK) * TILE_SIZE_4BPP,
           BG_CHAR_BLOCK(0) +
@@ -68,8 +61,6 @@ void Vram_CopyTile(u32 sourceTile, u32 destinationTile) {
 #else
 #define REFUSAL_TEXT_LENGTH 52
 #endif
-
-#define ITEM_BROKEN 0x400
 
 /// The battle item list for unit `member`: `count` inventory entries (ended by
 /// 0), five to a page, each with its icon and name: plain when usable,
@@ -134,6 +125,10 @@ s32 BattleItemMenu_Run(s32 member, u16 *entries, s32 count) {
     iconSlots[i] = VramCache_AllocEntry(128);
     sprites[i].oam.f.tile = VramCache_Reload(iconSlots[i], (const void *)-1);
   }
+  // XXX (no evidence): what shows tiles 512, 513, 528 and 529, which take the
+  // top and bottom tees here, tiles 0, 1, 16 and 17 of the second text range
+  // (TEXT_EXTRA_TILE_FIRST); no window code names an entry of them, and an
+  // open battle list is beyond the render probe.
   Vram_CopyTile(WINDOW_TILE_BORDER_TOP_TEE, 512);
   Vram_CopyTile(WINDOW_TILE_BORDER_TOP_TEE, 513);
   Vram_CopyTile(WINDOW_TILE_BORDER_BOTTOM_TEE, 528);
@@ -176,7 +171,7 @@ s32 BattleItemMenu_Run(s32 member, u16 *entries, s32 count) {
           Text_SetColor(TEXT_COLOR_WHITE);
           if (Item_ClassifyUseAbility(member, item) != 0)
             Text_SetColor(TEXT_COLOR_YELLOW);
-          else if (item & ITEM_BROKEN)
+          else if (item & INVENTORY_BROKEN)
             Text_SetColor(TEXT_COLOR_RED);
           Text_DrawMessageAsTiles((item & INVENTORY_ITEM_ID_MASK) +
                                       (s32)MsgItemName,
@@ -245,7 +240,7 @@ s32 BattleItemMenu_Run(s32 member, u16 *entries, s32 count) {
         result = firstEntry + selectedRow;
         Item_GetDirectFar(entries[result]);
         unusableReason = 0;
-        if ((entries[result] & ITEM_BROKEN) == 0) {
+        if ((entries[result] & INVENTORY_BROKEN) == 0) {
           unusableReason = Item_ClassifyUseAbility(member, entries[result]);
           if (unusableReason == 0)
             break;
@@ -254,7 +249,7 @@ s32 BattleItemMenu_Run(s32 member, u16 *entries, s32 count) {
         if (unusableReason == 2)
           BATTLE_MENU_MESSAGE_COPY((s32)MsgBattleItemUnavailable, messageText,
                                    REFUSAL_TEXT_LENGTH);
-        else if (entries[result] & ITEM_BROKEN)
+        else if (entries[result] & INVENTORY_BROKEN)
           BATTLE_MENU_MESSAGE_COPY((s32)MsgBattleItemBroken, messageText,
                                    REFUSAL_TEXT_LENGTH);
         else
@@ -337,6 +332,4 @@ s32 BattleItemMenu_Run(s32 member, u16 *entries, s32 count) {
   return result;
 }
 
-#undef BATTLE_OK
 #undef REFUSAL_TEXT_LENGTH
-#undef ITEM_BROKEN

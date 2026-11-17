@@ -1,9 +1,12 @@
 /// @file
-/// The caves in Champa's cliff, home of Briggs' grandmother Obaba, in four
-/// rooms of this overlay: Obaba waits for her grandson
-/// (ChampaCliffCaves_ObabaAsksForBriggs), the party fights Briggs' Avimander
-/// (ChampaCliffCaves_FightAvimander) and Briggs surrenders, and Obaba forges
-/// the three prongs into the Trident (ChampaCliffCaves_ObabaForgesTrident).
+/// The caves in Champa's cliff, four scenes of this overlay: the homes of
+/// Briggs's sailors and their families, Briggs's own, and the forge room of
+/// his grandmother Obaba. Obaba waits for her grandson
+/// (ChampaCliffCaves_ObabaAsksForBriggs); once he is home she sends her
+/// salamander, grown into Avimander, against the party
+/// (ChampaCliffCaves_FightAvimander), learns after its defeat what Briggs has
+/// done (ChampaCliffCaves_ObabaMournsSalamander), and forges the three prongs
+/// into the Trident (ChampaCliffCaves_ObabaForgesTrident).
 #include "field/field_sequence.h"
 #include "field/event_inline.h"
 #include "resource_ids.h"
@@ -13,10 +16,10 @@
 #include "flags.h"
 #include "field/actor_script.h"
 
-/// Set once Avimander is beaten and Briggs gives in.
+/// Set once Avimander is beaten and Obaba has heard the truth about Briggs.
 #define FLAG_CHAMPA_AVIMANDER_BEATEN 0x97e
-/// Obaba hands the party pieces of the trident one by one: set as she sees the
-/// first prong, the second, and as she forges the three into the Trident.
+/// The party hands Obaba the prongs one by one: set as she sees the first, the
+/// second, and as she forges the three into the Trident.
 #define FLAG_OBABA_SAW_FIRST_PRONG 0x975
 #define FLAG_OBABA_SAW_SECOND_PRONG 0x976
 #define FLAG_TRIDENT_FORGED 0x977
@@ -28,21 +31,48 @@
 
 /// Where the party comes back to the Avimander's room after losing to it
 /// (Event_SetDefeatDestination) or beating it, as The Broken Seal's Altin
-/// Peak names its own.
-enum { ENTRANCE_AFTER_DEFEAT = 98, ENTRANCE_AFTER_BATTLE = 99 };
+/// Peak names its own; the party then stands in the forge room by its way in
+/// from the passage west of it (ENTRANCE_FORGE_ROOM, which exit 22 leads to).
+enum {
+  ENTRANCE_FORGE_ROOM = 23,
+  ENTRANCE_AFTER_DEFEAT = 98,
+  ENTRANCE_AFTER_BATTLE = 99
+};
+
+/// A sliver of a turn off a heading: an actor turning round to face the
+/// opposite way turns by the side the nudge leans to.
+enum { FACING_NUDGE = 10 };
+
+/// The five colours of Obaba's forge pit, from colour 2 of a background
+/// palette: dark blue as the room shows them (palette 7), and the pale ones
+/// (palette 6) and the fiery yellow to orange ones (palette 13) the map keeps
+/// for the pit to fade to.
+enum {
+  FORGE_PALETTE = 7,
+  FORGE_PALE_PALETTE = 6,
+  FORGE_FIERY_PALETTE = 13,
+  FORGE_FIRST_COLOR = 2,
+  FORGE_COLORS = 5
+};
+
+/// The cell column of the path Reveal shows across Obaba's forge pit, to the
+/// Trident floating over it, and the four cells from its north rim it covers.
+enum { FORGE_PATH_CELL_X = 41, FORGE_PATH_CELL_Z = 13, FORGE_PATH_CELLS = 4 };
 
 #include "field/scene_tables.h"
 
-/// Obaba's room, numbering gChampaCliffCaves_AvimanderPlacementsBriggsHome and
-/// the room's other tables to ACTOR_HELD_ITEM.
+/// Obaba's forge room (SceneId_ChampaCliffCavesAvimander), numbering
+/// gChampaCliffCaves_AvimanderPlacementsBriggsHome; Obaba is actor 8 at her
+/// door as well (SceneId_ChampaCliffCavesObaba).
 enum ChampaCliffCavesObabasRoomActorId {
   ACTOR_OBABA = ACTOR_FIRST_PLACED,
-  /// The prong or the Trident shown as an item icon in Obaba's hands.
+  /// The prong or the Trident shown as an item icon in Obaba's hands, and the
+  /// forged Trident floating over the forge.
   ACTOR_HELD_ITEM = ACTOR_FIRST_PLACED + 2,
   ACTOR_BRIGGS,
-  /// Briggs's pet salamander, and Avimander as it grows to fight.
+  /// Obaba's salamander, which she throws into her forge.
   ACTOR_SALAMANDER,
-  ACTOR_AVIMANDER,
+  ACTOR_AVIMANDER, ///< the salamander grown into Avimander
   ACTOR_CHAUCHA,
   ACTOR_KRADEN
 };
@@ -84,15 +114,16 @@ enum ChampaCliffCavesBriggsHomeActorId {
 #include "macros.h"
 #include "text/msg_ids.h"
 
-/// A door's opening: the map edit that draws it and the cell it plays at.
+/// Obaba's door opening or closing: the map edit that draws it and the cell
+/// it plays at.
 struct DoorEdit {
   const s16 *frames;
   u16 x;
   u16 z;
 };
 
-extern LATE_DATA struct DoorEdit gChampaCliffCaves_FirstDoor;
-extern LATE_DATA struct DoorEdit gChampaCliffCaves_SecondDoor;
+extern LATE_DATA struct DoorEdit gChampaCliffCaves_OpenDoor;
+extern LATE_DATA struct DoorEdit gChampaCliffCaves_CloseDoor;
 
 void ChampaCliffCaves_OpenDoorAndEnter(const struct DoorEdit *edit, s32 door,
                                        s32 mode);
@@ -112,7 +143,7 @@ extern struct Trigger gChampaCliffCaves_ObabaTriggers[];
 extern struct Trigger gChampaCliffCaves_AvimanderTriggers[];
 
 void ChampaCliffCaves_AskIfBriggsLearned(void);
-void ChampaCliffCaves_BriggsMournsSalamander(void);
+void ChampaCliffCaves_ObabaMournsSalamander(void);
 void ChampaCliffCaves_HandPieceToObaba(s32 value);
 void ChampaCliffCaves_ObabaStepsForward(s32 mode);
 
@@ -120,48 +151,55 @@ void ChampaCliffCaves_FlareAndDieDown(void);
 void ChampaCliffCaves_ObabaSeesAWeapon(s32 item);
 void ChampaCliffCaves_ObabaAsksForSecondPiece(s32 item);
 void ChampaCliffCaves_StartFlash(s32 id, s32 mode);
-/// A scale of the Champa forge's glow, 16.16; a union, so that a store to it
-/// keeps its place after the sprite's (ChampaCliffCaves_LoadDisc).
-union ChampaCliffCavesScale {
-  FIXED value;
-  u16 half;
-};
 
-/// The work of the glow over Obaba's forge (heap slot HEAP_SLOT_MENU): the
-/// pictures of the glowing disc and the column of fire, their sprites at the
-/// forge's spot, and their scales, each one's height trailing its width.
+/// The work of the fire over Obaba's forge (heap slot HEAP_SLOT_MENU): the
+/// pictures of the glow, a glowing disc, and the column of fire, their sprites
+/// at the forge's spot, and their scales, each one's height trailing its
+/// width.
 struct ChampaCliffCavesWork {
-  u8 tiles[64 * 64]; ///< the larger picture, the disc's 64 by 64 pixels
+  u8 tiles[64 * 64]; ///< the larger picture, the glow's 64 by 64 pixels
   s32 position[3];
-  struct EffectSprite disc;
+  struct EffectSprite glow;
   struct EffectSprite column;
-  s16 discEntry;
-  u16 discVram;
+  s16 glowEntry;
+  u16 glowVram;
   s16 columnEntry;
   u16 columnVram;
-  union ChampaCliffCavesScale discScale;
-  union ChampaCliffCavesScale discTrailingScale;
-  union ChampaCliffCavesScale columnScale;
-  union ChampaCliffCavesScale columnTrailingScale;
+  FIXED glowScale;
+  FIXED glowTrailingScale;
+  FIXED columnScale;
+  FIXED columnTrailingScale;
   s16 frame;
 };
 
-/// The state the forge glow's steps end on.
+/// The state the forge fire's steps end on.
 enum { GLOW_DONE = 999 };
 
-void ChampaCliffCaves_LoadDisc(void);
-void ChampaCliffCaves_DrawGlow(void);
+/// The forge fire's pictures are shaded in colours 224 to 255. Their
+/// brightest sixteen, of sprite palette 15, are moved onto palette 6, so that
+/// with palette 14's they are the 32 colours ChampaCliffCaves_DrawForgeFire
+/// cycles, at levels about these middles: full red, green 20 and blue 3.
+enum {
+  GLOW_PICTURE_ROW = 15,
+  GLOW_CYCLED_ROW = 6,
+  GLOW_COLORS = 2 * PALETTE_COLORS,
+  GLOW_GREEN_MIDDLE = 20,
+  GLOW_BLUE_MIDDLE = 3
+};
+
+void ChampaCliffCaves_LoadGlow(void);
+void ChampaCliffCaves_DrawForgeFire(void);
 void ChampaCliffCaves_LoadColumn(void);
 
 void ChampaCliffCaves_ObabaAsksForBriggs(void);
 
-void ChampaCliffCaves_OpenWall(void);
+void ChampaCliffCaves_RevealPath(void);
 
-void ChampaCliffCaves_CloseWall(void);
+void ChampaCliffCaves_HidePath(void);
 void ChampaCliffCaves_FightAvimander(void);
 
-extern s16 gChampaCliffCaves_DoorFrames[];
-extern s16 gChampaCliffCaves_OtherDoorFrames[];
+extern s16 gChampaCliffCaves_OpenDoorFrames[];
+extern s16 gChampaCliffCaves_CloseDoorFrames[];
 
 void FieldEffect_StartBlankOverlay(s32 a);
 
@@ -252,9 +290,10 @@ void ChampaCliffCaves_OpenDoorAndEnter(const struct DoorEdit *edit, s32 door,
   Event_End();
 }
 
-/// Stepping into the cliff's first door: it opens and the leader walks through.
+/// Stepping into Obaba's door once Avimander is beaten: it opens and the
+/// leader walks through.
 void ChampaCliffCaves_EnterDoor(s32 door) {
-  ChampaCliffCaves_OpenDoorAndEnter(&gChampaCliffCaves_FirstDoor, door, 0);
+  ChampaCliffCaves_OpenDoorAndEnter(&gChampaCliffCaves_OpenDoor, door, 0);
 }
 
 /// Knocking at Obaba's door before Briggs is home: she comes out, asks whether
@@ -263,7 +302,7 @@ void ChampaCliffCaves_ObabaAsksForBriggs(void) {
   const struct DoorEdit *edit;
   s32 msg;
 
-  edit = &gChampaCliffCaves_FirstDoor;
+  edit = &gChampaCliffCaves_OpenDoor;
   Actor_WalkToAndWaitById(gMainRoutineWork.leaderActorId, 168, 424);
   Actor_FaceDirectionAndRefreshById(gMainRoutineWork.leaderActorId,
                                     FACING_EAST);
@@ -276,7 +315,9 @@ void ChampaCliffCaves_ObabaAsksForBriggs(void) {
   Actor_FaceDirectionAndRefreshById(ACTOR_OBABA, FACING_WEST);
   msg = (s32)MsgHasMyGrandson;
   Event_SetMessageId(msg);
-  // "Has my grandson returned? Has my Briggs come home?"
+  // "Has my grandson returned? Has my Briggs come home?" Yes: "You lie! If
+  // Briggs had truly returned..." No: "I asked not to be disturbed until my
+  // grandson has returned home!..."
   FieldMessage_ShowAtActor(ACTOR_OBABA, 0);
   if (Event_AskYesNoWithActorAnimation(Party_GetLeaderActor(), 0) == 0) {
     Event_Wait(10);
@@ -289,7 +330,7 @@ void ChampaCliffCaves_ObabaAsksForBriggs(void) {
   Actor_SetSpeed(ACTOR_OBABA, 0.8);
   Actor_WalkByAndWait(ACTOR_OBABA, 0, -14);
   Actor_SetPosition(ACTOR_OBABA, 0, 0);
-  edit = &gChampaCliffCaves_SecondDoor;
+  edit = &gChampaCliffCaves_CloseDoor;
   MapGrid_PlayMapEdit(edit->frames, edit->x, edit->z);
   Sound_Play(SE_DOOR_OPEN);
 }
@@ -298,6 +339,8 @@ void ChampaCliffCaves_ObabaAsksForBriggs(void) {
 /// the choice.
 void ChampaCliffCaves_AskToComeIn(s32 actor) {
   Event_SetMessageId((s32)MsgWhatYouWant);
+  // "What, you want to come in?" Yes: "As if! I'm a nice girl..." No: "Yeah?
+  // So what do you want? You're wasting my time."
   FieldMessage_ShowAtActor(actor, 0);
   if (Event_AskYesNoWithActorAnimation(Party_GetLeaderActor(), 0) == 0) {
     Event_Wait(10);
@@ -309,9 +352,9 @@ void ChampaCliffCaves_AskToComeIn(s32 actor) {
   Event_ShowMessageAndWait(actor, 0);
 }
 
-/// One of Briggs's crew gives in ("I'll go back to Alhafra...but only if Briggs
-/// is going") and keeps watching the leader.
-void ChampaCliffCaves_CrewmanSurrenders(s32 actorId) {
+/// One of Briggs's sailors gives in ("I'll go back to Alhafra...but only if
+/// Briggs is going") and keeps watching the leader.
+void ChampaCliffCaves_SailorSurrenders(s32 actorId) {
   struct Actor *actor;
 
   Event_SetMessageId((s32)MsgAllRightI);
@@ -321,9 +364,9 @@ void ChampaCliffCaves_CrewmanSurrenders(s32 actorId) {
   Actor_WatchActor(actor, Actor_GetById(gMainRoutineWork.leaderActorId));
 }
 
-/// One of Briggs's crew at Obaba's forge tells the party to leave him alone,
+/// One of Briggs's sailors at Obaba's forge tells the party to leave him alone,
 /// turns away and squashes and stretches for ever.
-void ChampaCliffCaves_CrewmanTurnsAway(s32 actor) {
+void ChampaCliffCaves_SailorTurnsAway(s32 actor) {
   Event_SetMessageId((s32)MsgAwComeOn);
   // "Aw, come on! I'm not doing anything! Leave me alone!"
   Event_ShowMessageAndWait(actor, 0);
@@ -331,14 +374,17 @@ void ChampaCliffCaves_CrewmanTurnsAway(s32 actor) {
   Actor_SetMovementType(Actor_GetById(actor), MOVEMENT_TYPE_SQUASH);
 }
 
-/// Opens the wall into Avimander's room: its pictures and its walkable cells.
-void ChampaCliffCaves_OpenWall(void) {
+/// Reveal in Obaba's forge room shows the path hidden across the pit: the
+/// revealed cells, kept further down the map, are copied there with their
+/// attributes.
+void ChampaCliffCaves_RevealPath(void) {
   MapGrid_CopyCellPictureCellsRect(41, 97, 1, 4, 41, 77);
   Map_CopyCellAttributeRect(41, 33, 1, 4, 41, 13);
 }
 
-/// Closes the wall again, moving a leader who stands in its gap out of the way.
-void ChampaCliffCaves_CloseWall(void) {
+/// When Reveal wears off, the pit's own cells cover the path again, and a
+/// leader standing on it is set down on the pit's south rim.
+void ChampaCliffCaves_HidePath(void) {
   struct Actor *actor;
   s32 x;
   s32 z;
@@ -348,14 +394,16 @@ void ChampaCliffCaves_CloseWall(void) {
   actor = Actor_GetById(gMainRoutineWork.leaderActorId);
   x = FIELD_CELL(actor->x.fixed);
   z = FIELD_CELL(actor->z.fixed);
-  if (gMainRoutineWork.next == SCENE_CHAMPA_CLIFF_CAVES_AVIMANDER && x == 41 &&
-      (u32)(z - 13) <= 4)
+  if (gMainRoutineWork.next == SCENE_CHAMPA_CLIFF_CAVES_AVIMANDER &&
+      x == FORGE_PATH_CELL_X &&
+      (u32)(z - FORGE_PATH_CELL_Z) <= FORGE_PATH_CELLS)
     Actor_SetPosition(gMainRoutineWork.leaderActorId, 664, 280);
 }
 
 extern struct Trigger gChampaCliffCaves_BriggsTriggers[];
 
-/// Picks up the forged Trident from beside Obaba's forge.
+/// Picks up the forged Trident floating over Obaba's forge pit, reached by the
+/// path Reveal shows.
 void ChampaCliffCaves_PickUpTrident(s32 a) {
   Event_PickUpItem(a, ITEM_TRIDENT, FLAG_TRIDENT_TAKEN);
 }
@@ -390,9 +438,9 @@ s32 Scene_Initialize(void) {
     if (party->entrance == ENTRANCE_AFTER_DEFEAT)
       ChampaCliffCaves_AskIfBriggsLearned();
     if (party->entrance == ENTRANCE_AFTER_BATTLE) {
-      party->returnEntrance = 23;
-      party->entrance = 23;
-      ChampaCliffCaves_BriggsMournsSalamander();
+      party->returnEntrance = ENTRANCE_FORGE_ROOM;
+      party->entrance = ENTRANCE_FORGE_ROOM;
+      ChampaCliffCaves_ObabaMournsSalamander();
     }
     if (GameFlag_Get(FLAG_TRIDENT_FORGED) &&
         !GameFlag_Get(FLAG_TRIDENT_TAKEN)) {
@@ -459,32 +507,33 @@ void ChampaCliffCaves_ObabaStepsForward(s32 value) {
   }
 }
 
-/// Fades five background colours, from palette entry 114, from one set to
-/// another over the given number of frames, one step a frame.
-void ChampaCliffCaves_FadeColours(u16 *from, u16 *to, s32 frames) {
+/// Fades the forge pit's five colours from one set to another over the given
+/// number of frames, a step a frame.
+void ChampaCliffCaves_FadeColors(u16 *from, u16 *to, s32 frames) {
   s32 step;
 
   for (step = 0; step <= frames; step++) {
     s32 offset;
     s32 left;
 
-    for (offset = 0, left = 4; left >= 0; left--) {
+    for (offset = 0, left = FORGE_COLORS - 1; left >= 0; left--) {
       s32 red, green, blue, toRed, toGreen, toBlue;
 
-      red = *(u16 *)(offset + (s32)from) & 31;
-      green = *(u16 *)(offset + (s32)from) >> 5 & 31;
-      blue = *(u16 *)(offset + (s32)from) >> 10 & 31;
-      toRed = *(u16 *)(offset + (s32)to) & 31;
-      toGreen = *(u16 *)(offset + (s32)to) >> 5 & 31;
-      toBlue = *(u16 *)(offset + (s32)to) >> 10 & 31;
+      red = RGB_RED(*(u16 *)(offset + (s32)from));
+      green = RGB_GREEN(*(u16 *)(offset + (s32)from));
+      blue = RGB_BLUE(*(u16 *)(offset + (s32)from));
+      toRed = RGB_RED(*(u16 *)(offset + (s32)to));
+      toGreen = RGB_GREEN(*(u16 *)(offset + (s32)to));
+      toBlue = RGB_BLUE(*(u16 *)(offset + (s32)to));
       red += step * (toRed - red) / frames;
       green += step * (toGreen - green) / frames;
       blue += step * (toBlue - blue) / frames;
-      // A once-only block: its end keeps the step after the colour's store.
+      /* FAKEMATCH(dead): a once-only block around the colour's store. */
       do {
-        s32 color = blue << 10 | green << 5 | red;
+        s32 color = RGB(red, green, blue);
 
-        *(u16 *)((u32)&BG_PLTT_COLOR(7, 2) + offset) = color;
+        *(u16 *)((u32)&BG_PLTT_COLOR(FORGE_PALETTE, FORGE_FIRST_COLOR) +
+                 offset) = color;
       } while (0);
       offset += 2;
     }
@@ -589,12 +638,13 @@ struct TridentProngs {
 
 extern struct TridentProngs gChampaCliffCaves_Prongs;
 
-/// Obaba is handed the last prong and throws the three into her forge, which
-/// flares, shakes the room and lifts out the Trident.
+/// Obaba is handed the last prong and throws the three into her forge, whose
+/// pit flashes pale at each, then flares, shakes the room and lifts out the
+/// Trident to float over it.
 void ChampaCliffCaves_ObabaForgesTrident(s32 value) {
   struct Actor *thrown = Actor_GetById(ACTOR_HELD_ITEM);
-  u16 bright[5];
-  u16 dim[5];
+  u16 dark[FORGE_COLORS];
+  u16 pale[FORGE_COLORS];
   s32 glow[3];
   s32 i;
   struct Actor *actor;
@@ -603,18 +653,18 @@ void ChampaCliffCaves_ObabaForgesTrident(s32 value) {
   glow[0] = toFIXED(662);
   glow[1] = 0;
   glow[2] = toFIXED(238);
-  palette = (u16 *)&BG_PLTT_COLOR(7, 2);
-  bright[0] = *palette++;
-  bright[1] = *palette++;
-  bright[2] = *palette++;
-  bright[3] = *palette++;
-  bright[4] = *palette;
-  palette = (u16 *)&BG_PLTT_COLOR(6, 2);
-  dim[0] = *palette++;
-  dim[1] = *palette++;
-  dim[2] = *palette++;
-  dim[3] = *palette++;
-  dim[4] = *palette;
+  palette = (u16 *)&BG_PLTT_COLOR(FORGE_PALETTE, FORGE_FIRST_COLOR);
+  dark[0] = *palette++;
+  dark[1] = *palette++;
+  dark[2] = *palette++;
+  dark[3] = *palette++;
+  dark[4] = *palette;
+  palette = (u16 *)&BG_PLTT_COLOR(FORGE_PALE_PALETTE, FORGE_FIRST_COLOR);
+  pale[0] = *palette++;
+  pale[1] = *palette++;
+  pale[2] = *palette++;
+  pale[3] = *palette++;
+  pale[4] = *palette;
   Event_Start();
   Event_ResolvePendingActions(0);
   Event_SetMessageId((s32)MsgWellDoneYou);
@@ -675,8 +725,8 @@ void ChampaCliffCaves_ObabaForgesTrident(s32 value) {
     Actor_SetPosition(ACTOR_HELD_ITEM, 0, 0);
     Event_Wait(20);
     Sound_Play(SE_HEAVY_IMPACT);
-    ChampaCliffCaves_FadeColours(bright, dim, 12);
-    ChampaCliffCaves_FadeColours(dim, bright, 48);
+    ChampaCliffCaves_FadeColors(dark, pale, 12);
+    ChampaCliffCaves_FadeColors(pale, dark, 48);
     Event_Wait(10);
   }
   actor = Actor_GetById(gMainRoutineWork.leaderActorId);
@@ -698,7 +748,7 @@ void ChampaCliffCaves_ObabaForgesTrident(s32 value) {
   FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | ACTOR_OBABA, 0, 5);
   Event_Wait(20);
   Sound_Play(SE_SHIMMER);
-  ChampaCliffCaves_FadeColours(bright, dim, 48);
+  ChampaCliffCaves_FadeColors(dark, pale, 48);
   Actor_StartRepeatedMotion(gMainRoutineWork.leaderActorId, 3);
   Actor_SetAttachedEffect(gMainRoutineWork.leaderActorId,
                           ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
@@ -706,7 +756,7 @@ void ChampaCliffCaves_ObabaForgesTrident(s32 value) {
   Actor_ShowEmoteById(ACTOR_OBABA, EMOTE_IN_FRONT | EMOTE_QUESTION, 60);
   Call2((void (*)())Field_StartColorTransition, 16, RGB(16, 4, 4));
   MapGrid_SetShake(2, 2, 1);
-  ChampaCliffCaves_LightDisc(glow);
+  ChampaCliffCaves_LightForge(glow);
   Actor_SetAnimationById(ACTOR_OBABA, ANIM_STAND);
   Actor_Jump(ACTOR_FELIX, 6, 0);
   Sound_Play(SE_TABLET_RISE);
@@ -768,14 +818,16 @@ void ChampaCliffCaves_ObabaForgesTrident(s32 value) {
 static __inline__ s32 GameFlag_Test_(s32 flag) { return GameFlag_Get(flag); }
 
 /// Talking to Obaba at her counter: she takes the next prong the party carries,
-/// right, left then center, or talks of the trident when it has none.
+/// right, left then center, or talks of the trident when it has none. From
+/// east of the forge path's column the field menu opens instead.
 void ChampaCliffCaves_ObabaOffersHelp(s32 actor) {
   s32 item;
   // DEAD: each owner is stored and never read; the ROM keeps the copies of
   // the first two.
   s32 owner;
 
-  if (FIELD_CELL(Actor_GetById(gMainRoutineWork.leaderActorId)->x.fixed) <= 41)
+  if (FIELD_CELL(Actor_GetById(gMainRoutineWork.leaderActorId)->x.fixed) <=
+      FORGE_PATH_CELL_X)
     goto first;
   gFieldWork->fieldMenu = 1;
   return;
@@ -818,6 +870,11 @@ chosen:
     }
   } else {
     Actor_FaceActorById(actor, gMainRoutineWork.leaderActorId, 5);
+    // "I mean it. If there's ever anything you need, just call on me.", then
+    // "The legend says that anyone who holds the whole lance has nothing to
+    // fear from the sea.", "Yes, there's no doubt about it. Those must truly
+    // be fragments of the legendary trident." and "The trident seems to have
+    // some amazing power..."
     if (!GameFlag_Test_(FLAG_OBABA_SAW_FIRST_PRONG))
       Event_SetMessageId((s32)MsgIMeanIt);
     else if (!GameFlag_Test_(FLAG_OBABA_SAW_SECOND_PRONG))
@@ -826,7 +883,6 @@ chosen:
       Event_SetMessageId((s32)MsgYesThereS);
     else
       Event_SetMessageId((s32)MsgTheTridentSeems);
-    // "The trident seems to have some amazing power... The legends must be..."
     Event_ShowMessageAndWait(actor, 0);
     Actor_FaceDirection(actor, FACING_SOUTH_SOUTHWEST, 0);
   }
@@ -837,14 +893,14 @@ DEFINE_CHAMPA_CLIFF_CAVES_GROW(ChampaCliffCaves_GrowThrownSlowly,
 
 #define PALETTE ((u16 *)&BG_PLTT_COLOR(0, 0))
 
-/// Entering Avimander's room: Briggs stops the party and Obaba asks Felix to
-/// back down; refused, she throws Briggs's salamander into her forge and it
-/// comes out as Avimander to fight.
+/// Entering Obaba's forge room: Briggs stops the party and Obaba asks Felix to
+/// back down; refused, she throws her salamander into her forge, whose pit
+/// turns fiery, and it comes out as Avimander to fight.
 void ChampaCliffCaves_FightAvimander(void) {
-  u16 current[5];
-  u16 target[5];
+  u16 dark[FORGE_COLORS];
+  u16 fiery[FORGE_COLORS];
   struct Vector3 position;
-  const u16 *colour;
+  const u16 *color;
   struct Actor *actor = Actor_GetById(ACTOR_AVIMANDER);
 
   if (Flag_IsSet(FLAG_CHAMPA_AVIMANDER_BEATEN))
@@ -924,7 +980,8 @@ void ChampaCliffCaves_FightAvimander(void) {
     Actor_FaceDirectionAndWait(ACTOR_BRIGGS, FACING_NORTH_NORTHWEST);
     Event_Wait(10);
     FieldActor_ShowEmote(ACTOR_BRIGGS, EMOTE_IN_FRONT | EMOTE_SWEAT_DROP, 45);
-    Actor_FaceDirectionAndWait(ACTOR_BRIGGS, FACING_SOUTH_SOUTHEAST + 10);
+    Actor_FaceDirectionAndWait(ACTOR_BRIGGS,
+                               FACING_SOUTH_SOUTHEAST + FACING_NUDGE);
     Event_Wait(10);
     // "If he takes me away, poor Eoleo will be so sad! What do you say..."
     FieldEvent_ShowMessageThenWait(ACTOR_BRIGGS, 0, 5);
@@ -961,6 +1018,9 @@ void ChampaCliffCaves_FightAvimander(void) {
   Actor_GetById(ACTOR_SALAMANDER)->scaleX = FIXED_ONE * 6 / 5;
   Actor_GetById(ACTOR_SALAMANDER)->scaleY = FIXED_ONE * 6 / 5;
   Actor_SetSpriteFlags(Actor_GetById(ACTOR_SALAMANDER), 0);
+  // "Oh, all right. Listen, you have no idea what you're getting into. I
+  // think you'd better leave." Yes: "Ah, you've made a good decision..." No:
+  // "Stubborn, are you? Ah, well..."
   Event_OpenMessage(SPEAKER_PORTRAIT_RIGHT | ACTOR_OBABA, 0);
   if (Event_AskYesNoWithActorAnimation(ACTOR_FELIX, 0) == 0) {
     Scene_PlayMusic();
@@ -968,6 +1028,7 @@ void ChampaCliffCaves_FightAvimander(void) {
     Actor_SetPosition(ACTOR_SALAMANDER, 0, 0);
     Actor_SetAnimationById(ACTOR_OBABA, ANIM_STAND);
     Actor_GetById(ACTOR_OBABA)->facing = FACING_WEST;
+    // "Ah, you've made a good decision. You seem like a reasonable boy."
     FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | ACTOR_OBABA, 0, 5);
     gFieldWork->message++;
     Actor_WalkByAndWaitById(ACTOR_FELIX, -16, 0);
@@ -975,8 +1036,11 @@ void ChampaCliffCaves_FightAvimander(void) {
   } else {
     Event_Wait(25);
     gFieldWork->message++;
+    // "Stubborn, are you? Ah, well. If that's the way it's going to be, get
+    // ready for your medicine!"
     FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | ACTOR_OBABA, 0, 5);
     FieldActor_ShowEmote(ACTOR_OBABA, EMOTE_IN_FRONT | EMOTE_SCOWL, 30);
+    // "Heart of the earth, fury of the forge's flames, grant me power!"
     FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | ACTOR_OBABA, 0, 5);
     Sound_Play(SOUND_FADE_OUT_BGM);
     FieldMapGrid_SetCellHeight(toFIXED(656), toFIXED(208), 0, -4);
@@ -998,19 +1062,19 @@ void ChampaCliffCaves_FightAvimander(void) {
     Event_Wait(70);
     Sound_Play(SE_BOSS_ROAR);
     Event_Wait(25);
-    colour = (const u16 *)&BG_PLTT_COLOR(7, 2);
-    current[0] = *colour++;
-    current[1] = *colour++;
-    current[2] = *colour++;
-    current[3] = *colour++;
-    current[4] = *colour++;
-    colour = (const u16 *)&BG_PLTT_COLOR(13, 2);
-    target[0] = *colour++;
-    target[1] = *colour++;
-    target[2] = *colour++;
-    target[3] = *colour++;
-    target[4] = *colour++;
-    ChampaCliffCaves_FadeColours(current, target, 48);
+    color = (const u16 *)&BG_PLTT_COLOR(FORGE_PALETTE, FORGE_FIRST_COLOR);
+    dark[0] = *color++;
+    dark[1] = *color++;
+    dark[2] = *color++;
+    dark[3] = *color++;
+    dark[4] = *color++;
+    color = (const u16 *)&BG_PLTT_COLOR(FORGE_FIERY_PALETTE, FORGE_FIRST_COLOR);
+    fiery[0] = *color++;
+    fiery[1] = *color++;
+    fiery[2] = *color++;
+    fiery[3] = *color++;
+    fiery[4] = *color++;
+    ChampaCliffCaves_FadeColors(dark, fiery, 48);
     Event_Wait(20);
     Sound_Play(SE_TABLET_RISE);
     position.x = toFIXED(662);
@@ -1079,11 +1143,11 @@ extern u32 gChampaCliffCaves_ChaseToEastScript[];
 extern u32 gChampaCliffCaves_ChaseToWestScript[];
 extern u32 gChampaCliffCaves_ChaseToSouthScript[];
 
-/// Briggs mourns his beaten salamander ("My salamander! You... beat my
-/// salamander..."), talks with the party through three answers, each counted
-/// in the event work, and the party gathers again; the Avimander stays beaten
-/// (FLAG_CHAMPA_AVIMANDER_BEATEN).
-void ChampaCliffCaves_BriggsMournsSalamander(void) {
+/// After beating Avimander: Obaba mourns her salamander ("My salamander!
+/// You... beat my salamander...") and leaves Briggs to fight for himself, the
+/// party tells her he is a pirate, Chaucha comes to tell why, Briggs and
+/// Chaucha go home, and Avimander stays beaten (FLAG_CHAMPA_AVIMANDER_BEATEN).
+void ChampaCliffCaves_ObabaMournsSalamander(void) {
   const u8 *scriptA, *scriptB, *scriptC, *scriptD;
   s32 *owner;
   u8 *party;
@@ -1092,8 +1156,12 @@ void ChampaCliffCaves_BriggsMournsSalamander(void) {
   Event_Start();
   Event_ResolvePendingActions(0);
   Event_SetMessageId((s32)MsgMySalamanderYou);
+  /* FAKEMATCH(temporary): the leader's actor id read, here and before the
+   * party walks back to the leader, through a pointer to gMainRoutineWork
+   * moved on by the field's offset. */
   owner = (s32 *)&gMainRoutineWork;
-  owner = (s32 *)((u8 *)owner + 532);
+  owner =
+      (s32 *)((u8 *)owner + offsetof(struct MainRoutineWork, leaderActorId));
   Actor_SetPosition(*owner, 568, 256);
   Actor_SetPosition(ACTOR_AVIMANDER, 592, 240);
   Actor_SetAnimationById(ACTOR_AVIMANDER, 3);
@@ -1106,7 +1174,7 @@ void ChampaCliffCaves_BriggsMournsSalamander(void) {
   Event_ShowMessageThenWait(ACTOR_OBABA, 0, 5);
   Actor_RunRepeatedMotion(ACTOR_AVIMANDER, 2);
   Event_Wait(5);
-  ChampaCliffCaves_StartFlash(13, 1);
+  ChampaCliffCaves_StartFlash(ACTOR_AVIMANDER, 1);
   Actor_SetSpeed(ACTOR_OBABA, 1);
   Actor_WalkByAndWait(ACTOR_OBABA, -12, -18);
   Actor_WalkByAndWait(ACTOR_OBABA, -10, -14);
@@ -1158,7 +1226,7 @@ void ChampaCliffCaves_BriggsMournsSalamander(void) {
   Event_Wait(37);
   // "But...Grandma... Look at him! I mean, look what he can do!"
   Event_ShowMessageThenWait(ACTOR_BRIGGS, 0, 5);
-  Actor_FaceDirectionAndWait(ACTOR_OBABA, FACING_WEST - 10);
+  Actor_FaceDirectionAndWait(ACTOR_OBABA, FACING_WEST - FACING_NUDGE);
   Event_Wait(25);
   Actor_FaceDirectionAndRefreshById(ACTOR_OBABA, FACING_EAST);
   Event_Wait(10);
@@ -1174,7 +1242,7 @@ void ChampaCliffCaves_BriggsMournsSalamander(void) {
   Event_ShowMessageThenWait(ACTOR_OBABA, 0, 0);
   // "Um. Excuse me... There seems to be a small misunderstanding."
   Event_ShowMessageThenWait(ACTOR_KRADEN, 0, 5);
-  Actor_FaceDirectionAndRefreshById(ACTOR_OBABA, FACING_WEST - 10);
+  Actor_FaceDirectionAndRefreshById(ACTOR_OBABA, FACING_WEST - FACING_NUDGE);
   Event_Wait(10);
   Actor_ShowEmoteById(ACTOR_OBABA, EMOTE_IN_FRONT | EMOTE_QUESTION, 40);
   FieldActor_LaunchFromLeader(ACTOR_PIERS, 0, -16, FACING_EAST);
@@ -1613,7 +1681,7 @@ void ChampaCliffCaves_BriggsMournsSalamander(void) {
   Actor_SetSpeed(ACTOR_JENNA, 1.2);
   Actor_SetAnimationById(ACTOR_JENNA, ANIM_WALK);
   party = (u8 *)&gMainRoutineWork;
-  owner = (s32 *)(party + 532);
+  owner = (s32 *)(party + offsetof(struct MainRoutineWork, leaderActorId));
   leader = Actor_GetById(*owner);
   if (leader != 0)
     Actor_SetDestinationById(ACTOR_JENNA, leader->x.part[0].integer,
@@ -1655,9 +1723,13 @@ struct FlashWork {
   struct EffectSprite sprite;
 };
 
-/// The explosion that hides an actor's change: the actor spins (mode 0) or not,
-/// is hidden, and the explosion's sprite plays over it, twice the size in mode
-/// 1.
+/// The explosion's sprite palette, and the tiles of each of its 16 by 16
+/// pictures.
+enum { FLASH_PALETTE = 15, FLASH_PICTURE_TILES = 16 * 16 / 64 };
+
+/// An actor vanishes in an explosion: it spins (mode 0) or not, is hidden, and
+/// the explosion plays over it, twice the size in mode 1; then the actor is
+/// taken off the map.
 void ChampaCliffCaves_StartFlash(s32 id, s32 mode) {
   struct FlashWork *work =
       HeapSlot_Alloc(HEAP_SLOT_MENU, sizeof(struct FlashWork));
@@ -1680,18 +1752,18 @@ void ChampaCliffCaves_StartFlash(s32 id, s32 mode) {
   wait(2);
   actor->scaleX = 0;
   Actor_SetSpriteFlags(actor, 0);
-  Dma_Set(Field_ExplosionPalette, (void *)&OBJ_PLTT_COLOR(15, 0),
-          DMA_COPY_HALFWORDS(16), REG_DMA3);
+  Dma_Set(Field_ExplosionPalette, (void *)&OBJ_PLTT_COLOR(FLASH_PALETTE, 0),
+          DMA_COPY_HALFWORDS(PALETTE_COLORS), REG_DMA3);
   Decompress_TaggedLz(Resource_GetTableEntry(RESOURCE_FIELD_EFFECT_EXPLOSION),
                       work);
   slot = VramCache_FindFreeEntry();
-  tile = Vram_Load(slot, 1024, work);
+  tile = Vram_Load(slot, sizeof(work->tiles), work);
   sprite = &work->sprite;
   FieldEffectSprite_Init(sprite, 8, 16, OBJ_SIZE_16X16, tile);
-  sprite->depth = 240;
+  sprite->depth = OAM_DEPTH_WINDOW;
   sprite->oam.priority = 1;
   sprite->oam.fullColor = 0;
-  sprite->oam.palette = 15;
+  sprite->oam.palette = FLASH_PALETTE;
   position[0] = actor->x.fixed;
   position[1] = actor->y.fixed;
   position[2] = actor->z.fixed;
@@ -1708,25 +1780,25 @@ void ChampaCliffCaves_StartFlash(s32 id, s32 mode) {
     sprite = &work->sprite;
     switch (i) {
     case 6:
-      sprite->oam.index = tile + 4;
+      sprite->oam.index = tile + 1 * FLASH_PICTURE_TILES;
       break;
     case 12:
-      sprite->oam.index = tile + 8;
+      sprite->oam.index = tile + 2 * FLASH_PICTURE_TILES;
       break;
     case 22:
-      sprite->oam.index = tile + 12;
+      sprite->oam.index = tile + 3 * FLASH_PICTURE_TILES;
       break;
     case 32:
-      sprite->oam.index = tile + 16;
+      sprite->oam.index = tile + 4 * FLASH_PICTURE_TILES;
       break;
     case 42:
-      sprite->oam.index = tile + 20;
+      sprite->oam.index = tile + 5 * FLASH_PICTURE_TILES;
       break;
     case 52:
-      sprite->oam.index = tile + 24;
+      sprite->oam.index = tile + 6 * FLASH_PICTURE_TILES;
       break;
     case 62:
-      sprite->oam.index = tile + 28;
+      sprite->oam.index = tile + 7 * FLASH_PICTURE_TILES;
       break;
     }
     EffectSprite_Draw(sprite);
@@ -1738,9 +1810,9 @@ void ChampaCliffCaves_StartFlash(s32 id, s32 mode) {
 }
 #undef PALETTE
 
-/// Loads the forge's glowing disc into the glow's work, its picture moved onto
-/// the palette the glow cycles, and sets its sprite at no size.
-void ChampaCliffCaves_LoadDisc(void) {
+/// Loads the forge's glow, a glowing disc, into the fire's work, its picture
+/// moved onto the colours the fire cycles, and sets its sprite at no size.
+void ChampaCliffCaves_LoadGlow(void) {
   struct ChampaCliffCavesWork *work = Ram_HeapSlots->menuWork;
   struct EffectSprite *sprite;
   s32 i;
@@ -1750,26 +1822,25 @@ void ChampaCliffCaves_LoadDisc(void) {
 
   Decompress_TaggedLz(Resource_GetTableEntry(RESOURCE_GLOW_DISC), work);
   for (i = 0, tile = work->tiles; i < (s32)sizeof(work->tiles); tile++, i++) {
-    if ((*tile & 0xf0) == 0xf0)
-      *tile = (*tile & 0xf) + 0x60;
+    if ((*tile & 0xf0) == GLOW_PICTURE_ROW * PALETTE_COLORS)
+      *tile = (*tile & 0xf) + GLOW_CYCLED_ROW * PALETTE_COLORS;
   }
   entry = VramCache_FindFreeEntry();
   vram = VramCache_Load(entry, 64 * 64, work);
-  work->discEntry = entry;
-  work->discVram = vram;
-  sprite = &work->disc;
-  FieldEffectSprite_Init((struct EffectSprite *)sprite, 31, 31, OBJ_SIZE_64X64,
-                         vram);
+  work->glowEntry = entry;
+  work->glowVram = vram;
+  sprite = &work->glow;
+  FieldEffectSprite_Init(sprite, 31, 31, OBJ_SIZE_64X64, vram);
   sprite->oam.fullColor = 1;
   sprite->oam.palette = 0;
   sprite->oam.priority = 2;
   sprite->depth = 1;
-  work->discScale.value = 0;
-  work->discTrailingScale.value = 0;
+  work->glowScale = 0;
+  work->glowTrailingScale = 0;
 }
 
-/// Loads the forge's column of fire into the glow's work as
-/// ChampaCliffCaves_LoadDisc loads the disc.
+/// Loads the forge's column of fire into the fire's work as
+/// ChampaCliffCaves_LoadGlow loads the glow.
 void ChampaCliffCaves_LoadColumn(void) {
   struct ChampaCliffCavesWork *work = Ram_HeapSlots->menuWork;
   struct EffectSprite *sprite;
@@ -1780,59 +1851,64 @@ void ChampaCliffCaves_LoadColumn(void) {
 
   Decompress_TaggedLz(Resource_GetTableEntry(RESOURCE_FIRE_COLUMN), work);
   for (i = 0, tile = work->tiles; i < (s32)sizeof(work->tiles); i++, tile++) {
-    if ((*tile & 0xf0) == 0xf0)
-      *tile = (*tile & 0xf) + 0x60;
+    if ((*tile & 0xf0) == GLOW_PICTURE_ROW * PALETTE_COLORS)
+      *tile = (*tile & 0xf) + GLOW_CYCLED_ROW * PALETTE_COLORS;
   }
   entry = VramCache_FindFreeEntry();
   vram = VramCache_Load(entry, 32 * 64, work);
   work->columnEntry = entry;
   work->columnVram = vram;
   sprite = &work->column;
-  FieldEffectSprite_Init((struct EffectSprite *)sprite, 15, 47, OBJ_SIZE_32X64,
-                         vram);
+  FieldEffectSprite_Init(sprite, 15, 47, OBJ_SIZE_32X64, vram);
   sprite->oam.fullColor = 1;
   sprite->oam.palette = 1;
   sprite->oam.priority = 1;
   sprite->depth = 1;
-  work->columnScale.value = 0;
-  work->columnTrailingScale.value = 0;
+  work->columnScale = 0;
+  work->columnTrailingScale = 0;
 }
 
-/// Cycles thirty-two colours of the object palettes through a wave of greens
-/// and blues, places the glow's two sprites at its spot with their scales, and
-/// lets each sprite's second scale trail its first at 31/40.
-void ChampaCliffCaves_DrawGlow(void) {
+/// Cycles the forge fire's 32 colours through waves of green and blue, a 32nd
+/// of a turn apart, the first sixteen to colours 111 down to 96 and the rest
+/// to 239 down to 224; places the glow's and the column's sprites at the
+/// fire's spot with their scales; and lets each sprite's height trail its
+/// width at 31/40.
+void ChampaCliffCaves_DrawForgeFire(void) {
   struct ChampaCliffCavesWork *work = Ram_HeapSlots->menuWork;
   s32 position[3];
   struct EffectSprite *sprite;
   s32 i;
 
-  for (i = 0; i <= 31; i++) {
-    s32 red = 31;
-    s32 wave = Trig_Sin((work->frame + i) << 11) * 6;
-    s32 blue = Trig_Sin(((work->frame / 2 + i) << 11) + TRIG_TURN * 9 / 32) * 3;
-    s32 colour;
-    wave >>= 16;
-    blue >>= 16;
-    wave += 20;
-    blue += 3;
-    if (i <= 15) {
-      colour = blue << 10 | wave << 5 | red;
-      ((u16 *)&OBJ_PLTT_COLOR(0, 0))[111 - i] = colour;
+  for (i = 0; i < GLOW_COLORS; i++) {
+    s32 red = RGB_LEVEL_MAX;
+    s32 green = Trig_Sin((work->frame + i) * (TRIG_TURN / 32)) * 6;
+    s32 blue = Trig_Sin((work->frame / 2 + i) * (TRIG_TURN / 32) +
+                        TRIG_TURN * 9 / 32) *
+               3;
+    s32 color;
+    green = FIXEDtoINT(green);
+    blue = FIXEDtoINT(blue);
+    green += GLOW_GREEN_MIDDLE;
+    blue += GLOW_BLUE_MIDDLE;
+    if (i < PALETTE_COLORS) {
+      color = RGB(red, green, blue);
+      ((u16 *)OBJ_PLTT)[GLOW_CYCLED_ROW * PALETTE_COLORS + PALETTE_COLORS - 1 -
+                        i] = color;
     } else {
-      colour = blue << 10 | wave << 5 | red;
-      ((u16 *)&OBJ_PLTT_COLOR(0, 0))[255 - i] = colour;
+      color = RGB(red, green, blue);
+      ((u16 *)OBJ_PLTT)[GLOW_PICTURE_ROW * PALETTE_COLORS + PALETTE_COLORS - 1 -
+                        i] = color;
     }
   }
   position[0] = work->position[0];
   position[1] = work->position[1];
   position[2] = work->position[2];
-  sprite = &work->disc;
+  sprite = &work->glow;
   Camera_WorldToScreen(position);
   sprite->x = position[0];
   sprite->y = position[2];
-  sprite->scaleX = work->discScale.value;
-  sprite->scaleY = work->discTrailingScale.value;
+  sprite->scaleX = work->glowScale;
+  sprite->scaleY = work->glowTrailingScale;
   EffectSprite_Draw(sprite);
   position[0] = work->position[0];
   position[1] = work->position[1];
@@ -1841,15 +1917,15 @@ void ChampaCliffCaves_DrawGlow(void) {
   Camera_WorldToScreen(position);
   sprite->x = position[0];
   sprite->y = position[2];
-  sprite->scaleX = work->columnScale.value;
-  sprite->scaleY = work->columnTrailingScale.value;
+  sprite->scaleX = work->columnScale;
+  sprite->scaleY = work->columnTrailingScale;
   EffectSprite_Draw(sprite);
-  work->discTrailingScale.value = work->discScale.value * 31 / 40;
-  work->columnTrailingScale.value = work->columnScale.value * 31 / 40;
+  work->glowTrailingScale = work->glowScale * 31 / 40;
+  work->columnTrailingScale = work->columnScale * 31 / 40;
   work->frame++;
 }
 
-/// The forge's fire at a spot: the disc grows, holds, and the column rises
+/// The forge's fire at a spot: the glow grows, holds, and the column rises
 /// through it, while the room shakes.
 void ChampaCliffCaves_StartForgeFire(const s32 *position) {
   struct ChampaCliffCavesWork *work =
@@ -1860,19 +1936,18 @@ void ChampaCliffCaves_StartForgeFire(const s32 *position) {
   work->position[0] = position[0];
   work->position[1] = position[1];
   work->position[2] = position[2];
-  ChampaCliffCaves_LoadDisc();
+  ChampaCliffCaves_LoadGlow();
   ChampaCliffCaves_LoadColumn();
   work->frame = 0;
   time = 0;
-  Task_Add(ChampaCliffCaves_DrawGlow, TASK_PASS_FRAME);
+  Task_Add(ChampaCliffCaves_DrawForgeFire, TASK_PASS_FRAME);
   MapGrid_SetShake(4, 4, 1);
   state = 0;
   do {
     switch (state) {
     case 0:
-      if ((work->discScale.value += FIXED_ONE * 3 / 128) >=
-          FIXED_ONE * 13 / 10) {
-        work->discScale.value = FIXED_ONE * 13 / 10;
+      if ((work->glowScale += FIXED_ONE * 3 / 128) >= FIXED_ONE * 13 / 10) {
+        work->glowScale = FIXED_ONE * 13 / 10;
         state = 1;
         time = -1;
       }
@@ -1884,16 +1959,15 @@ void ChampaCliffCaves_StartForgeFire(const s32 *position) {
       }
       break;
     case 2:
-      if ((work->columnScale.value += FIXED_ONE / 64) >= FIXED_ONE * 2 / 5) {
-        work->columnScale.value = FIXED_ONE * 2 / 5;
+      if ((work->columnScale += FIXED_ONE / 64) >= FIXED_ONE * 2 / 5) {
+        work->columnScale = FIXED_ONE * 2 / 5;
         state = 3;
         time = -1;
       }
       break;
     case 3:
-      if ((work->columnScale.value += FIXED_ONE * 3 / 16) >=
-          FIXED_ONE * 13 / 10) {
-        work->columnScale.value = FIXED_ONE * 13 / 10;
+      if ((work->columnScale += FIXED_ONE * 3 / 16) >= FIXED_ONE * 13 / 10) {
+        work->columnScale = FIXED_ONE * 13 / 10;
         state = GLOW_DONE;
       }
       break;
@@ -1903,8 +1977,8 @@ void ChampaCliffCaves_StartForgeFire(const s32 *position) {
   } while (state != GLOW_DONE);
 }
 
-/// Unused: puts out the forge's fire: the column and then the disc shrink
-/// away and the glow's work is released.
+/// Unused: puts out the forge's fire: the column and then the glow shrink
+/// away and the fire's work is released.
 UNUSED void ChampaCliffCaves_PutOutForgeFire(void) {
   struct ChampaCliffCavesWork *work = Ram_HeapSlots->menuWork;
   FIXED position[3];
@@ -1919,15 +1993,15 @@ UNUSED void ChampaCliffCaves_PutOutForgeFire(void) {
   do {
     switch (state) {
     case 0:
-      if ((work->columnScale.value -= FIXED_ONE / 16) < 0) {
-        work->columnScale.value = 0;
+      if ((work->columnScale -= FIXED_ONE / 16) < 0) {
+        work->columnScale = 0;
         time = -1;
         state = 1;
       }
       break;
     case 1:
-      if ((work->discScale.value -= FIXED_ONE / 32) < 0) {
-        work->discScale.value = 0;
+      if ((work->glowScale -= FIXED_ONE / 32) < 0) {
+        work->glowScale = 0;
         state = 2;
         time = -1;
       }
@@ -1940,15 +2014,15 @@ UNUSED void ChampaCliffCaves_PutOutForgeFire(void) {
     wait(1);
     time++;
   } while (state != GLOW_DONE);
-  Task_Remove(ChampaCliffCaves_DrawGlow);
+  Task_Remove(ChampaCliffCaves_DrawForgeFire);
   MapGrid_SetShake(0, 0, 0);
-  VramCache_FreeEntry(work->discEntry);
+  VramCache_FreeEntry(work->glowEntry);
   VramCache_FreeEntry(work->columnEntry);
   HeapSlot_Release(HEAP_SLOT_MENU);
 }
 
-/// The forge's first glow at a spot: the disc alone grows to full size.
-void ChampaCliffCaves_LightDisc(const struct Vector3 *origin) {
+/// The forge lights at a spot: the glow alone grows to full size.
+void ChampaCliffCaves_LightForge(const struct Vector3 *origin) {
   struct ChampaCliffCavesWork *work =
       HeapSlot_Alloc(HEAP_SLOT_MENU, sizeof(struct ChampaCliffCavesWork));
   s32 state;
@@ -1956,18 +2030,18 @@ void ChampaCliffCaves_LightDisc(const struct Vector3 *origin) {
   work->position[0] = origin->x;
   work->position[1] = origin->y;
   work->position[2] = origin->z;
-  ChampaCliffCaves_LoadDisc();
-  work->columnScale.value = 0;
-  work->columnTrailingScale.value = 0;
+  ChampaCliffCaves_LoadGlow();
+  work->columnScale = 0;
+  work->columnTrailingScale = 0;
   work->frame = 0;
-  Task_Add(ChampaCliffCaves_DrawGlow, TASK_PASS_FRAME);
+  Task_Add(ChampaCliffCaves_DrawForgeFire, TASK_PASS_FRAME);
   Sound_Play(SE_DJINNI_SET);
   state = 0;
   do {
     if (state == 0) {
-      work->discScale.value += FIXED_ONE / 16;
-      if (work->discScale.value >= FIXED_ONE * 13 / 10) {
-        work->discScale.value = FIXED_ONE * 13 / 10;
+      work->glowScale += FIXED_ONE / 16;
+      if (work->glowScale >= FIXED_ONE * 13 / 10) {
+        work->glowScale = FIXED_ONE * 13 / 10;
         state = GLOW_DONE;
       }
     }
@@ -1975,29 +2049,29 @@ void ChampaCliffCaves_LightDisc(const struct Vector3 *origin) {
   } while (state != GLOW_DONE);
 }
 
-/// The column of fire rises through the disc already burning.
+/// The column of fire rises through the glow already burning.
 void ChampaCliffCaves_RaiseColumn(void) {
   struct ChampaCliffCavesWork *work =
       HeapSlot_Alloc(HEAP_SLOT_MENU, sizeof(struct ChampaCliffCavesWork));
   s32 state;
 
   ChampaCliffCaves_LoadColumn();
-  Task_Add(ChampaCliffCaves_DrawGlow, TASK_PASS_FRAME);
+  Task_Add(ChampaCliffCaves_DrawForgeFire, TASK_PASS_FRAME);
   Sound_Play(SE_CLATTER);
   state = 0;
   do {
     switch (state) {
     case 0:
-      work->columnScale.value += FIXED_ONE / 16;
-      if (work->columnScale.value >= FIXED_ONE * 2 / 5) {
-        work->columnScale.value = FIXED_ONE * 2 / 5;
+      work->columnScale += FIXED_ONE / 16;
+      if (work->columnScale >= FIXED_ONE * 2 / 5) {
+        work->columnScale = FIXED_ONE * 2 / 5;
         state = 1;
       }
       break;
     case 1:
-      work->columnScale.value += FIXED_ONE * 3 / 16;
-      if (work->columnScale.value >= FIXED_ONE * 13 / 10) {
-        work->columnScale.value = FIXED_ONE * 13 / 10;
+      work->columnScale += FIXED_ONE * 3 / 16;
+      if (work->columnScale >= FIXED_ONE * 13 / 10) {
+        work->columnScale = FIXED_ONE * 13 / 10;
         state = GLOW_DONE;
       }
       break;
@@ -2007,7 +2081,7 @@ void ChampaCliffCaves_RaiseColumn(void) {
 }
 
 /// The forge's last flare: the column flares to twice its size, then it and the
-/// disc die away and the glow's work is released.
+/// glow die away and the fire's work is released.
 void ChampaCliffCaves_FlareAndDieDown(void) {
   struct ChampaCliffCavesWork *work = Ram_HeapSlots->menuWork;
   s32 state = 0;
@@ -2016,24 +2090,24 @@ void ChampaCliffCaves_FlareAndDieDown(void) {
   do {
     switch (state) {
     case 0:
-      if ((work->columnScale.value += FIXED_ONE / 16) >= FIXED_ONE * 2) {
-        work->columnScale.value = FIXED_ONE * 2;
+      if ((work->columnScale += FIXED_ONE / 16) >= FIXED_ONE * 2) {
+        work->columnScale = FIXED_ONE * 2;
         state = 1;
         time = -1;
       }
       break;
     case 1:
-      if ((work->columnScale.value -= FIXED_ONE / 16) < FIXED_ONE * 13 / 10) {
-        work->columnScale.value = FIXED_ONE * 13 / 10;
+      if ((work->columnScale -= FIXED_ONE / 16) < FIXED_ONE * 13 / 10) {
+        work->columnScale = FIXED_ONE * 13 / 10;
         state = 2;
         time = -1;
       }
       /* fall through */
     case 2:
-      if ((work->columnScale.value -= FIXED_ONE / 16) < 0)
-        work->columnScale.value = 0;
-      if ((work->discScale.value -= FIXED_ONE / 16) < 0) {
-        work->discScale.value = 0;
+      if ((work->columnScale -= FIXED_ONE / 16) < 0)
+        work->columnScale = 0;
+      if ((work->glowScale -= FIXED_ONE / 16) < 0) {
+        work->glowScale = 0;
         state++;
         time = -1;
       }
@@ -2046,8 +2120,8 @@ void ChampaCliffCaves_FlareAndDieDown(void) {
     wait(1);
     time++;
   } while (state != GLOW_DONE);
-  Task_Remove(ChampaCliffCaves_DrawGlow);
-  VramCache_FreeEntry(work->discEntry);
+  Task_Remove(ChampaCliffCaves_DrawForgeFire);
+  VramCache_FreeEntry(work->glowEntry);
   VramCache_FreeEntry(work->columnEntry);
   HeapSlot_Release(HEAP_SLOT_MENU);
 }
@@ -2061,6 +2135,14 @@ struct TridentProngs gChampaCliffCaves_Prongs = {
 #include "text/msg_ids.h"
 #include "field/effect_sprite.h"
 
+/// One row of ACTOR_PLACEMENT as halfwords, each word its low half then its
+/// high half, for the forge room's two tables that start on a halfword.
+#define ACTOR_PLACEMENT_HALVES(sprite, condition, movement, x, y, z, facing,   \
+                               talkFacing, flags)                              \
+  sprite, condition, movement, 0, 0, x, 0, y, 0, z, facing,                    \
+      (talkFacing) | (flags) << 8
+
+// clang-format off
 LATE_DATA struct SceneEntrance gSceneEntrances[] = {
     {0, CONDITION_ALWAYS, 440, 0, 520, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
     {SCENE_TABLE_END},
@@ -2068,39 +2150,39 @@ LATE_DATA struct SceneEntrance gSceneEntrances[] = {
 
 LATE_DATA u32 gSceneExits[] = {
     SCENE_EXITS(ChampaCliffCavesBriggs),
-    SCENE_EXIT_UNLESS(1, Champa, 8, EXIT_FLAG_NONE),
-    SCENE_EXIT_UNLESS(2, ChampaCliffCavesHouses, 12, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(CHAMPA_CLIFF_CAVES_BRIGGS_TO_CHAMPA, Champa, CHAMPA_FROM_CHAMPA_CLIFF_CAVES_BRIGGS, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(CHAMPA_CLIFF_CAVES_BRIGGS_TO_CHAMPA_CLIFF_CAVES_HOUSES, ChampaCliffCavesHouses, CHAMPA_CLIFF_CAVES_HOUSES_FROM_CHAMPA_CLIFF_CAVES_BRIGGS, EXIT_FLAG_NONE),
     SCENE_EXIT_UNLESS(3, ChampaCliffCavesBriggs, 4, EXIT_FLAG_NONE),
     SCENE_EXIT_UNLESS(4, ChampaCliffCavesBriggs, 3, EXIT_FLAG_NONE),
     SCENE_EXIT_UNLESS(5, ChampaCliffCavesBriggs, 6, EXIT_FLAG_NONE),
     SCENE_EXIT_UNLESS(6, ChampaCliffCavesBriggs, 5, EXIT_FLAG_NONE),
     SCENE_EXITS(ChampaCliffCavesHouses),
-    SCENE_EXIT_UNLESS(7, Champa, 10, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(CHAMPA_CLIFF_CAVES_HOUSES_TO_CHAMPA, Champa, CHAMPA_FROM_CHAMPA_CLIFF_CAVES_HOUSES, EXIT_FLAG_NONE),
     SCENE_EXIT_UNLESS(8, ChampaCliffCavesHouses, 9, EXIT_FLAG_NONE),
     SCENE_EXIT_UNLESS(9, ChampaCliffCavesHouses, 8, EXIT_FLAG_NONE),
     SCENE_EXIT_UNLESS(10, ChampaCliffCavesHouses, 11, EXIT_FLAG_NONE),
     SCENE_EXIT_UNLESS(11, ChampaCliffCavesHouses, 10, EXIT_FLAG_NONE),
-    SCENE_EXIT_UNLESS(12, ChampaCliffCavesBriggs, 2, EXIT_FLAG_NONE),
-    SCENE_EXIT_UNLESS(13, ChampaCliffCavesObaba, 14, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(CHAMPA_CLIFF_CAVES_HOUSES_TO_CHAMPA_CLIFF_CAVES_BRIGGS, ChampaCliffCavesBriggs, CHAMPA_CLIFF_CAVES_BRIGGS_FROM_CHAMPA_CLIFF_CAVES_HOUSES, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(CHAMPA_CLIFF_CAVES_HOUSES_TO_CHAMPA_CLIFF_CAVES_OBABA, ChampaCliffCavesObaba, CHAMPA_CLIFF_CAVES_OBABA_FROM_CHAMPA_CLIFF_CAVES_HOUSES, EXIT_FLAG_NONE),
     SCENE_EXITS(ChampaCliffCavesObaba),
-    SCENE_EXIT_UNLESS(14, ChampaCliffCavesHouses, 13, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(CHAMPA_CLIFF_CAVES_OBABA_TO_CHAMPA_CLIFF_CAVES_HOUSES, ChampaCliffCavesHouses, CHAMPA_CLIFF_CAVES_HOUSES_FROM_CHAMPA_CLIFF_CAVES_OBABA, EXIT_FLAG_NONE),
     SCENE_EXIT_UNLESS(15, ChampaCliffCavesObaba, 16, EXIT_FLAG_NONE),
     SCENE_EXIT_UNLESS(16, ChampaCliffCavesObaba, 15, EXIT_FLAG_NONE),
     SCENE_EXIT_UNLESS(17, ChampaCliffCavesObaba, 18, EXIT_FLAG_NONE),
     SCENE_EXIT_UNLESS(18, ChampaCliffCavesObaba, 17, EXIT_FLAG_NONE),
-    SCENE_EXIT_UNLESS(19, Champa, 11, EXIT_FLAG_NONE),
-    SCENE_EXIT_UNLESS(20, ChampaCliffCavesAvimander, 21, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(CHAMPA_CLIFF_CAVES_OBABA_TO_CHAMPA, Champa, CHAMPA_FROM_CHAMPA_CLIFF_CAVES_OBABA, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(CHAMPA_CLIFF_CAVES_OBABA_TO_CHAMPA_CLIFF_CAVES_AVIMANDER, ChampaCliffCavesAvimander, CHAMPA_CLIFF_CAVES_AVIMANDER_FROM_CHAMPA_CLIFF_CAVES_OBABA, EXIT_FLAG_NONE),
     SCENE_EXITS(ChampaCliffCavesAvimander),
-    SCENE_EXIT_UNLESS(21, ChampaCliffCavesObaba, 20, EXIT_FLAG_NONE),
-    SCENE_EXIT_UNLESS(22, ChampaCliffCavesAvimander, 23, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(CHAMPA_CLIFF_CAVES_AVIMANDER_TO_CHAMPA_CLIFF_CAVES_OBABA, ChampaCliffCavesObaba, CHAMPA_CLIFF_CAVES_OBABA_FROM_CHAMPA_CLIFF_CAVES_AVIMANDER, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(22, ChampaCliffCavesAvimander, ENTRANCE_FORGE_ROOM, EXIT_FLAG_NONE),
     SCENE_EXIT_UNLESS(23, ChampaCliffCavesAvimander, 22, EXIT_FLAG_NONE),
     SCENE_EXITS_END,
 };
 
 LATE_DATA struct ActorPlacement gChampaCliffCaves_BriggsPlacements[] = {
-    ACTOR_PLACEMENT(116, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 312, 0, 568,
+    ACTOR_PLACEMENT(SPRITE_WOMAN_IN_PURPLE_SKIRT, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 312, 0, 568,
                     FACING_SOUTH_SOUTHEAST, TALK_FACING_PARTY_AND_BACK, 0),
-    ACTOR_PLACEMENT(116, CONDITION_ALWAYS, MOVEMENT_TYPE_WANDER, 216, 0, 224,
+    ACTOR_PLACEMENT(SPRITE_WOMAN_IN_PURPLE_SKIRT, CONDITION_ALWAYS, MOVEMENT_TYPE_WANDER, 216, 0, 224,
                     FACING_SOUTH, TALK_FACING_PARTY, 0),
     {SCENE_TABLE_END},
 };
@@ -2109,7 +2191,7 @@ LATE_DATA struct ActorPlacement gChampaCliffCaves_HousesPlacements[] = {
     ACTOR_PLACEMENT(SPRITE_SUNSHINES_CHILD, CONDITION_ALWAYS,
                     MOVEMENT_TYPE_STAND, 192, 0, 184, FACING_SOUTH_SOUTHEAST,
                     TALK_FACING_PARTY_AND_BACK, 0),
-    ACTOR_PLACEMENT(116, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 520, 0, 216,
+    ACTOR_PLACEMENT(SPRITE_WOMAN_IN_PURPLE_SKIRT, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 520, 0, 216,
                     FACING_SOUTH_SOUTHEAST, TALK_FACING_PARTY_AND_BACK, 0),
     ACTOR_PLACEMENT(SPRITE_BOY_WITH_BLACK_HAIR, CONDITION_ALWAYS,
                     MOVEMENT_TYPE_STAND, 568, 0, 248, FACING_WEST,
@@ -2121,7 +2203,7 @@ LATE_DATA struct ActorPlacement gChampaCliffCaves_HousesPlacements[] = {
 };
 
 LATE_DATA struct ActorPlacement gChampaCliffCaves_ObabaPlacements[] = {
-    ACTOR_PLACEMENT(36, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, -56, 0, -56,
+    ACTOR_PLACEMENT(SPRITE_OBABA, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, -56, 0, -56,
                     FACING_SOUTH_SOUTHEAST, TALK_FACING_PARTY, 0),
     ACTOR_PLACEMENT(SPRITE_SUNSHINES_CHILD, CONDITION_ALWAYS,
                     MOVEMENT_TYPE_STAND, 200, 0, 424, FACING_SOUTH_SOUTHWEST,
@@ -2130,7 +2212,7 @@ LATE_DATA struct ActorPlacement gChampaCliffCaves_ObabaPlacements[] = {
 };
 
 LATE_DATA struct ActorPlacement gChampaCliffCaves_AvimanderPlacements[] = {
-    ACTOR_PLACEMENT(36, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, -56, 0, -56,
+    ACTOR_PLACEMENT(SPRITE_OBABA, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, -56, 0, -56,
                     FACING_SOUTH_SOUTHEAST, TALK_FACING_PARTY, 0),
     ACTOR_PLACEMENT(SPRITE_SUNSHINES_CHILD, CONDITION_ALWAYS,
                     MOVEMENT_TYPE_STAND, 616, 0, 216, FACING_SOUTH_SOUTHEAST,
@@ -2140,12 +2222,12 @@ LATE_DATA struct ActorPlacement gChampaCliffCaves_AvimanderPlacements[] = {
 
 LATE_DATA struct ActorPlacement gChampaCliffCaves_BriggsPlacementsBriggsHome[] =
     {
-        ACTOR_PLACEMENT(SPRITE_CHAMPA_CREWMAN, CONDITION_ALWAYS,
+        ACTOR_PLACEMENT(SPRITE_CHAMPA_SAILOR, CONDITION_ALWAYS,
                         MOVEMENT_TYPE_STAND, 344, 0, 552, FACING_WEST,
                         TALK_FACING_PARTY_THEN_WATCH, 0),
-        ACTOR_PLACEMENT(SPRITE_CHAMPA_CREWMAN, CONDITION_ALWAYS, 8, 344, 0, 568,
+        ACTOR_PLACEMENT(SPRITE_CHAMPA_SAILOR, CONDITION_ALWAYS, MOVEMENT_TYPE_SQUASH, 344, 0, 568,
                         FACING_WEST, TALK_FACING_PARTY, 0),
-        ACTOR_PLACEMENT(116, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 168, 0, 504,
+        ACTOR_PLACEMENT(SPRITE_WOMAN_IN_PURPLE_SKIRT, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 168, 0, 504,
                         FACING_SOUTH_SOUTHEAST, TALK_FACING_PARTY_THEN_WATCH,
                         0),
         {SCENE_TABLE_END},
@@ -2154,10 +2236,10 @@ LATE_DATA struct ActorPlacement gChampaCliffCaves_BriggsPlacementsBriggsHome[] =
 LATE_DATA struct ActorPlacement gChampaCliffCaves_HousesPlacementsBriggsHome[] =
     {
         ACTOR_PLACEMENT(
-            SPRITE_CHAMPA_CREWMAN, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 312,
+            SPRITE_CHAMPA_SAILOR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 312,
             0, 728, FACING_NORTH_NORTHEAST, TALK_FACING_PARTY_THEN_WATCH, 0),
         ACTOR_PLACEMENT(
-            SPRITE_CHAMPA_CREWMAN, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 328,
+            SPRITE_CHAMPA_SAILOR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 328,
             0, 728, FACING_NORTH_NORTHWEST, TALK_FACING_PARTY_THEN_WATCH, 0),
         ACTOR_PLACEMENT(SPRITE_BOY_WITH_BLACK_HAIR, CONDITION_ALWAYS,
                         MOVEMENT_TYPE_STAND, 568, 0, 248, FACING_WEST,
@@ -2172,178 +2254,46 @@ LATE_DATA struct ActorPlacement gChampaCliffCaves_HousesPlacementsBriggsHome[] =
 LATE_DATA struct ActorPlacement gChampaCliffCaves_ObabaPlacementsBriggsHome[] =
     {
         ACTOR_PLACEMENT(
-            SPRITE_CHAMPA_CREWMAN, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 520,
+            SPRITE_CHAMPA_SAILOR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 520,
             0, 392, FACING_SOUTH_SOUTHWEST, TALK_FACING_PARTY_THEN_WATCH, 0),
         ACTOR_PLACEMENT(
-            SPRITE_CHAMPA_CREWMAN, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 184,
+            SPRITE_CHAMPA_SAILOR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 184,
             0, 424, FACING_SOUTH_SOUTHEAST, TALK_FACING_PARTY_THEN_WATCH, 0),
         {SCENE_TABLE_END},
 };
 
 LATE_DATA s16 gChampaCliffCaves_AvimanderPlacementsBriggsHome[] = {
-    36,
-    -1,
-    1,
-    0,
-    0,
-    736,
-    0,
-    0,
-    0,
-    248,
-    FACING_WEST,
-    2,
-    115,
-    -1,
-    8,
-    0,
-    0,
-    216,
-    0,
-    0,
-    0,
-    464,
-    FACING_NORTH_NORTHEAST,
-    1,
-    489,
-    -1,
-    1,
-    0,
-    0,
-    -56,
-    0,
-    0,
-    0,
-    -56,
-    FACING_SOUTH,
-    2,
-    16,
-    -1,
-    1,
-    0,
-    0,
-    752,
-    0,
-    0,
-    0,
-    264,
-    FACING_WEST,
-    2,
-    338,
-    -1,
-    1,
-    0,
-    0,
-    -56,
-    0,
-    0,
-    0,
-    -56,
-    FACING_WEST,
-    2,
-    158,
-    -1,
-    1,
-    0,
-    0,
-    -56,
-    0,
-    0,
-    0,
-    -56,
-    FACING_WEST,
-    2,
-    37,
-    -1,
-    1,
-    0,
-    0,
-    -56,
-    0,
-    0,
-    0,
-    -56,
-    FACING_WEST,
-    1,
-    56,
-    -1,
-    1,
-    0,
-    0,
-    -56,
-    0,
-    0,
-    0,
-    -56,
-    FACING_NORTH,
-    2,
-    5,
-    -1,
-    1,
-    0,
-    0,
-    -56,
-    0,
-    0,
-    0,
-    -56,
-    FACING_SOUTH,
-    2,
-    6,
-    -1,
-    1,
-    0,
-    0,
-    -56,
-    0,
-    0,
-    0,
-    -56,
-    FACING_SOUTH,
-    2,
-    7,
-    -1,
-    1,
-    0,
-    0,
-    -56,
-    0,
-    0,
-    0,
-    -56,
-    FACING_NORTH,
-    2,
-    -1,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
+    ACTOR_PLACEMENT_HALVES(SPRITE_OBABA, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 736, 0, 248, FACING_WEST, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT_HALVES(SPRITE_SUNSHINES_CHILD, CONDITION_ALWAYS, MOVEMENT_TYPE_SQUASH, 216, 0, 464, FACING_NORTH_NORTHEAST, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT_HALVES(SPRITE_UNSEEN_MARKER, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, -56, 0, -56, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT_HALVES(SPRITE_BRIGGS, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 752, 0, 264, FACING_WEST, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT_HALVES(338, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, -56, 0, -56, FACING_WEST, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT_HALVES(158, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, -56, 0, -56, FACING_WEST, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT_HALVES(SPRITE_CHAUCHA, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, -56, 0, -56, FACING_WEST, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT_HALVES(SPRITE_KRADEN, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, -56, 0, -56, FACING_NORTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT_HALVES(SPRITE_JENNA, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, -56, 0, -56, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT_HALVES(SPRITE_SHEBA, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, -56, 0, -56, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT_HALVES(SPRITE_PIERS, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, -56, 0, -56, FACING_NORTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT_HALVES(SCENE_TABLE_END, 0, 0, 0, 0, 0, 0, 0, 0),
 };
 
 LATE_DATA struct ActorPlacement
     gChampaCliffCaves_BriggsPlacementsAfterAvimander[] = {
-        ACTOR_PLACEMENT(116, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 312, 0, 568,
+        ACTOR_PLACEMENT(SPRITE_WOMAN_IN_PURPLE_SKIRT, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 312, 0, 568,
                         FACING_SOUTH_SOUTHEAST, TALK_FACING_PARTY_THEN_WATCH,
                         0),
-        ACTOR_PLACEMENT(116, CONDITION_ALWAYS, MOVEMENT_TYPE_WANDER, 216, 0,
+        ACTOR_PLACEMENT(SPRITE_WOMAN_IN_PURPLE_SKIRT, CONDITION_ALWAYS, MOVEMENT_TYPE_WANDER, 216, 0,
                         224, FACING_SOUTH, TALK_FACING_PARTY, 0),
-        ACTOR_PLACEMENT(SPRITE_CHAMPA_CREWMAN, CONDITION_ALWAYS,
+        ACTOR_PLACEMENT(SPRITE_CHAMPA_SAILOR, CONDITION_ALWAYS,
                         MOVEMENT_TYPE_STAND, 488, 0, 208,
                         FACING_SOUTH_SOUTHEAST, TALK_FACING_PARTY, 0),
-        ACTOR_PLACEMENT(SPRITE_CHAMPA_CREWMAN, CONDITION_ALWAYS,
+        ACTOR_PLACEMENT(SPRITE_CHAMPA_SAILOR, CONDITION_ALWAYS,
                         MOVEMENT_TYPE_STAND, 600, 0, 216,
                         FACING_SOUTH_SOUTHWEST, TALK_FACING_PARTY, 0),
-        ACTOR_PLACEMENT(SPRITE_CHAMPA_CREWMAN, CONDITION_ALWAYS,
+        ACTOR_PLACEMENT(SPRITE_CHAMPA_SAILOR, CONDITION_ALWAYS,
                         MOVEMENT_TYPE_WANDER, 576, 0, 248, FACING_SOUTH,
                         TALK_FACING_PARTY, 0),
-        ACTOR_PLACEMENT(SPRITE_CHAMPA_CREWMAN, CONDITION_ALWAYS,
+        ACTOR_PLACEMENT(SPRITE_CHAMPA_SAILOR, CONDITION_ALWAYS,
                         MOVEMENT_TYPE_STAND, 504, 0, 264, FACING_EAST,
                         TALK_FACING_PARTY, 0),
         {SCENE_TABLE_END},
@@ -2354,7 +2304,7 @@ LATE_DATA struct ActorPlacement
         ACTOR_PLACEMENT(SPRITE_SUNSHINES_CHILD, CONDITION_ALWAYS,
                         MOVEMENT_TYPE_STAND, 192, 0, 184,
                         FACING_SOUTH_SOUTHEAST, TALK_FACING_PARTY_AND_BACK, 0),
-        ACTOR_PLACEMENT(116, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 520, 0, 216,
+        ACTOR_PLACEMENT(SPRITE_WOMAN_IN_PURPLE_SKIRT, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 520, 0, 216,
                         FACING_SOUTH_SOUTHEAST, TALK_FACING_PARTY, 0),
         ACTOR_PLACEMENT(SPRITE_BOY_WITH_BLACK_HAIR, CONDITION_ALWAYS,
                         MOVEMENT_TYPE_STAND, 568, 0, 248, FACING_WEST,
@@ -2369,7 +2319,7 @@ LATE_DATA struct ActorPlacement
     gChampaCliffCaves_ObabaPlacementsAfterAvimander[] = {
         ACTOR_PLACEMENT(SPRITE_BRIGGS, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
                         560, 0, 704, FACING_SOUTH, TALK_FACING_KEEP, 0),
-        ACTOR_PLACEMENT(489, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0, 0,
+        ACTOR_PLACEMENT(SPRITE_UNSEEN_MARKER, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0, 0,
                         FACING_WEST, TALK_FACING_PARTY_AND_BACK, 0),
         ACTOR_PLACEMENT(SPRITE_EOLEO, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
                         480, 0, 704, FACING_EAST, TALK_FACING_PARTY_THEN_WATCH,
@@ -2381,69 +2331,25 @@ LATE_DATA struct ActorPlacement
 };
 
 LATE_DATA s16 gChampaCliffCaves_AvimanderPlacementsAfterAvimander[] = {
-    36,
-    -1,
-    1,
-    0,
-    0,
-    648,
-    0,
-    0,
-    0,
-    188,
-    FACING_SOUTH_SOUTHWEST,
-    2,
-    115,
-    -1,
-    1,
-    0,
-    0,
-    216,
-    0,
-    0,
-    0,
-    464,
-    FACING_SOUTH_SOUTHWEST,
-    3,
-    489,
-    -1,
-    1,
-    0,
-    0,
-    -56,
-    0,
-    0,
-    0,
-    -56,
-    FACING_SOUTH,
-    2,
-    -1,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
+    ACTOR_PLACEMENT_HALVES(SPRITE_OBABA, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 648, 0, 188, FACING_SOUTH_SOUTHWEST, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT_HALVES(SPRITE_SUNSHINES_CHILD, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 216, 0, 464, FACING_SOUTH_SOUTHWEST, TALK_FACING_PARTY_THEN_WATCH, 0),
+    ACTOR_PLACEMENT_HALVES(SPRITE_UNSEEN_MARKER, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, -56, 0, -56, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT_HALVES(SCENE_TABLE_END, 0, 0, 0, 0, 0, 0, 0, 0),
 };
 
-LATE_DATA s16 gChampaCliffCaves_DoorFrames[] = {
+LATE_DATA s16 gChampaCliffCaves_OpenDoorFrames[] = {
     1, 64, 1, 2, 6, 2, 64, 1, 2, 6, -1,
 };
 
-LATE_DATA s16 gChampaCliffCaves_OtherDoorFrames[] = {
+LATE_DATA s16 gChampaCliffCaves_CloseDoorFrames[] = {
     1, 64, 1, 2, 6, 0, 64, 1, 2, 6, -1,
 };
 
-LATE_DATA struct DoorEdit gChampaCliffCaves_FirstDoor = {
-    gChampaCliffCaves_DoorFrames, 11, 88};
+LATE_DATA struct DoorEdit gChampaCliffCaves_OpenDoor = {
+    gChampaCliffCaves_OpenDoorFrames, 11, 88};
 
-LATE_DATA struct DoorEdit gChampaCliffCaves_SecondDoor = {
-    gChampaCliffCaves_OtherDoorFrames, 11, 88};
+LATE_DATA struct DoorEdit gChampaCliffCaves_CloseDoor = {
+    gChampaCliffCaves_CloseDoorFrames, 11, 88};
 
 LATE_DATA struct Trigger gChampaCliffCaves_BriggsTriggers[] = {
     {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
@@ -2479,7 +2385,7 @@ LATE_DATA struct Trigger gChampaCliffCaves_BriggsTriggers[] = {
     {TRIGGER_TALK, 8, IF_FLAG_SET(FLAG_BRIGGS_SAILED_FROM_ALHAFRA),
      MSGNO(MsgWhyDoYou)},
     {TRIGGER_TALK, 9, IF_FLAG_SET(FLAG_BRIGGS_SAILED_FROM_ALHAFRA),
-     EVENT(ChampaCliffCaves_CrewmanSurrenders)},
+     EVENT(ChampaCliffCaves_SailorSurrenders)},
     {TRIGGER_TALK, 10, IF_FLAG_SET(FLAG_BRIGGS_SAILED_FROM_ALHAFRA),
      EVENT(ChampaCliffCaves_AskToComeIn)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8,
@@ -2614,16 +2520,16 @@ LATE_DATA struct Trigger gChampaCliffCaves_AvimanderTriggers[] = {
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9,
      IF_FLAG_SET(FLAG_CHAMPA_AVIMANDER_BEATEN), MSGNO(MsgMustBeIncredibly)},
     {TRIGGER_TALK, 9, IF_FLAG_SET(FLAG_BRIGGS_SAILED_FROM_ALHAFRA),
-     EVENT(ChampaCliffCaves_CrewmanTurnsAway)},
+     EVENT(ChampaCliffCaves_SailorTurnsAway)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9,
      IF_FLAG_SET(FLAG_BRIGGS_SAILED_FROM_ALHAFRA), MSGNO(MsgBriggsIsPretty)},
     {TRIGGER_TALK, 9, CONDITION_ALWAYS, MSGNO(MsgThatPitIs)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9, CONDITION_ALWAYS,
      MSGNO(MsgIWonderHow)},
     {PSYNERGY_ANYWHERE(ABILITY_REVEAL, PSYNERGY_PHASE_ACTS), 0,
-     CONDITION_ALWAYS, EVENT(ChampaCliffCaves_OpenWall)},
+     CONDITION_ALWAYS, EVENT(ChampaCliffCaves_RevealPath)},
     {PSYNERGY_ANYWHERE(ABILITY_REVEAL, PSYNERGY_PHASE_FADES), 0,
-     CONDITION_ALWAYS, EVENT(ChampaCliffCaves_CloseWall)},
+     CONDITION_ALWAYS, EVENT(ChampaCliffCaves_HidePath)},
     {TRIGGER_TABLE_END},
 };
 

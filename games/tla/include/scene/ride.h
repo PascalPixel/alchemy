@@ -5,10 +5,9 @@
 #include "types.h"
 
 /// @file
-/// The work of the Mars Lighthouse rooms' flame throwers and the fireballs that
-/// knock the leader back or carry him along when they hit him, kept in the
-/// inventory snapshot's spare space. The Ride_ names are older than that
-/// reading; the struct and the routines that move a flame have taken it.
+/// The work of the Mars Lighthouse rooms' flame throwers and of the fireballs
+/// that knock the leader back, or carry him along on a ride, when they hit him;
+/// it is kept in the inventory snapshot's spare space.
 
 struct Actor;
 
@@ -35,8 +34,7 @@ struct RideEntry {
   FIXED reach; ///< 16.16, the low nibble of flags << 16
 };
 
-/// The way a ride last moved along x and z, 1 or -1 (0xffff); the other axis
-/// is 0.
+/// The way a ride last moved along x and z, 1 or -1; the other axis is 0.
 struct RideDirection {
   u16 x;
   u16 z;

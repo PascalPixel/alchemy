@@ -3,7 +3,7 @@
 
 /// @file
 /// Scene numbers, named after their places, in the order of gScenes
-/// (field/scenes.s), as The Broken Seal's scene_ids.h.
+/// (field/scenes.s).
 ///
 /// Each SceneId_ is an absolute symbol whose value is the scene's row in the
 /// table; C names the number by its macro, SCENE_DAILA_FLOODED for
@@ -67,7 +67,7 @@ extern char SceneId_YampiDesertGuardianRingChest;
 #define SCENE_YAMPI_DESERT_GUARDIAN_RING_CHEST                                 \
   ((s32)&SceneId_YampiDesertGuardianRingChest)
 extern char SceneId_YampiDesertSpring;
-#define SCENE_YAMPI_DESERT_OASIS ((s32)&SceneId_YampiDesertSpring)
+#define SCENE_YAMPI_DESERT_SPRING ((s32)&SceneId_YampiDesertSpring)
 /// The Yampi Desert scene where Blitz is fought.
 extern char SceneId_YampiDesertBlitz;
 #define SCENE_YAMPI_DESERT_BLITZ ((s32)&SceneId_YampiDesertBlitz)
@@ -87,8 +87,8 @@ extern char SceneId_YampiDesertMedalSpot;
 #define SCENE_YAMPI_DESERT_MEDAL_SPOT ((s32)&SceneId_YampiDesertMedalSpot)
 extern char SceneId_YampiDesertScorpionPit;
 #define SCENE_YAMPI_DESERT_SCORPION_PIT ((s32)&SceneId_YampiDesertScorpionPit)
-extern char SceneId_YampiDesertOasisCave;
-#define SCENE_YAMPI_DESERT_OASIS_CAVE ((s32)&SceneId_YampiDesertOasisCave)
+extern char SceneId_YampiDesertSpringCave;
+#define SCENE_YAMPI_DESERT_SPRING_CAVE ((s32)&SceneId_YampiDesertSpringCave)
 extern char SceneId_YampiDesertBlowMaceChest;
 #define SCENE_YAMPI_DESERT_BLOW_MACE_CHEST                                     \
   ((s32)&SceneId_YampiDesertBlowMaceChest)
@@ -127,7 +127,7 @@ extern char SceneId_AirsRockInsideElixirChest;
 #define SCENE_AIRS_ROCK_INSIDE_ELIXIR_CHEST                                    \
   ((s32)&SceneId_AirsRockInsideElixirChest)
 extern char SceneId_AirsRockInsidePairedStakes;
-#define SCENE_AIRS_ROCK_INSIDE_PAIRED_STATUES                                  \
+#define SCENE_AIRS_ROCK_INSIDE_PAIRED_STAKES                                   \
   ((s32)&SceneId_AirsRockInsidePairedStakes)
 extern char SceneId_AirsRockInsideFaceWarp;
 #define SCENE_AIRS_ROCK_INSIDE_FACE_WARP ((s32)&SceneId_AirsRockInsideFaceWarp)

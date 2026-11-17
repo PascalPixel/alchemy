@@ -268,7 +268,7 @@ same village twice, with different people about.
   routine headers above, and the larger routines a scene includes where
   its copy sits, such as the ice slide six scenes share
   ([`slide_on_ice_from_edge.c`](shared/slide_on_ice_from_edge.c)), the
-  flames' knock-back in three Mars Lighthouse rooms
+  flames' knock-back in four Mars Lighthouse rooms
   ([`leader_knock_back.c`](shared/leader_knock_back.c)) and the World
   Map's placed objects, which the staff credits keep too
   ([`world_map_objects.c`](shared/world_map_objects.c)). A few small field

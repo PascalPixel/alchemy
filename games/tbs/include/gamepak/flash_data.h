@@ -5,6 +5,7 @@
 /// The flash chips: sector size and count, and each chip type's routines.
 
 #include "types.h"
+#include "system/io_reg.h"
 
 /// A chip's wait for a program or erase to finish (WaitForFlashWrite): the
 /// index of its time limit in maxTime, the address polled and the byte
@@ -46,6 +47,11 @@ struct FlashSetupInfo {
   u16 *maxTime;
   struct FlashType type;
 };
+
+/// A wait-time row's timer: 67 counts at 65536 a second before it overflows,
+/// about a millisecond, then an interrupt (FlashTimerIntr), as pret writes it.
+#define FLASH_TIMER_RELOAD 65469
+#define FLASH_TIMER_CONTROL (TIMER_ENABLE | TIMER_INTR_ENABLE | TIMER_256CLK)
 
 /// The chip type IdentifyFlash installed.
 extern const struct FlashType *gFlash;

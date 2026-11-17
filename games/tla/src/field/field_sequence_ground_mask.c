@@ -3,9 +3,15 @@
 /// in fade and blank forms, and the effect sprites that draw them.
 // Part of field_sequence.c.
 
-/// Each frame, on the two cells beside the actor
-/// where the ground one or two cells south rises above the actor's floor,
-/// draws a 16-pixel-wide mark at the height of that ground.
+/// A pixel coordinate's mask that snaps it to its cell's 16-pixel grid, and
+/// the same for a screen row in an OAM entry's 8-bit y.
+#define CELL_GRID_MASK 0xfff0
+#define CELL_GRID_ROW_MASK 0xf0
+
+/// Each frame of the fade overlay: on each of the two cells beside the actor
+/// (left and right of it), where the ground one or two cells south rises above
+/// the actor's floor, draws a semi-transparent 16-pixel-wide sprite of colour 1
+/// at the height of that ground.
 void FadeOverlay_DrawMarks(void) {
   struct FadeOverlayWork *work = Ram_HeapSlots->fadeOverlay;
   s16 *camera = ((struct FadeView *)Ram_HeapSlots->mapGrid)->camera;
@@ -21,7 +27,9 @@ void FadeOverlay_DrawMarks(void) {
   s32 height;
   s32 secondHeight;
   s32 screenRow;
-  s16 unused[2];
+  /* LEFTOVER(frame): an unused local the ROM's frame reserves and never
+   * touches. */
+  UNUSED s16 unused[2];
 
   if (actor == 0)
     return;
@@ -30,6 +38,7 @@ void FadeOverlay_DrawMarks(void) {
   terrainFloor = actor->floor;
   terrainLayer = actor->terrainId;
   tile = gVramCacheEntries[VRAM_CACHE_ENTRY_FADE_OVERLAY].offset >> 5;
+  // The left cell, 8 pixels left of the actor.
   x -= toFIXED(8);
   height =
       FIXEDtoINT(MapGrid_GetTerrainHeightFar(terrainLayer, x, z + toFIXED(16)));
@@ -39,16 +48,21 @@ void FadeOverlay_DrawMarks(void) {
   if (secondHeight > height)
     height = secondHeight;
   if (height > 0 && height > terrainFloor) {
+    // The sprite mode and priority set next replace what the two words put
+    // there, so the left and right marks end up alike although their third
+    // words differ.
     ((u32 *)mark)[1] = OBJ_SIZE_16X16 | OBJ_MODE(OBJ_MODE_WINDOW);
     ((u32 *)mark)[2] = OBJ_PRIORITY(1);
     mark->priority = 0;
     mark->tile = tile;
     mark->objectMode = OBJ_MODE_SEMI_TRANSPARENT;
-    mark->x = ((u32)FIXEDtoINT(x) & 0xfff0) - cameraX;
-    screenRow = FIXEDtoINT(z) & 0xf0;
+    // Snapped to the cell's grid, then moved up by the ground's height.
+    mark->x = ((u32)FIXEDtoINT(x) & CELL_GRID_MASK) - cameraX;
+    screenRow = FIXEDtoINT(z) & CELL_GRID_ROW_MASK;
     mark->y = screenRow - cameraZ - height + 16;
     Oam_AddSpriteAtDepthClamped(mark, 0);
   }
+  // The right cell, 8 pixels right of the actor, read the same way.
   x += toFIXED(16);
   height =
       FIXEDtoINT(MapGrid_GetTerrainHeightFar(terrainLayer, x, z + toFIXED(16)));
@@ -64,8 +78,8 @@ void FadeOverlay_DrawMarks(void) {
     mark->priority = 0;
     mark->tile = tile;
     mark->objectMode = OBJ_MODE_SEMI_TRANSPARENT;
-    mark->x = ((u32)FIXEDtoINT(x) & 0xfff0) - cameraX;
-    screenRow = FIXEDtoINT(z) & 0xf0;
+    mark->x = ((u32)FIXEDtoINT(x) & CELL_GRID_MASK) - cameraX;
+    screenRow = FIXEDtoINT(z) & CELL_GRID_ROW_MASK;
     mark->y = screenRow - cameraZ - height + 16;
     Oam_AddSpriteAtDepthClamped(mark, 0);
   }
@@ -80,7 +94,7 @@ void FieldEffect_StartFadeOverlay(void *object) {
 
   work = HeapSlot_AllocEwram(HEAP_SLOT_FADE_OVERLAY, sizeof(*work));
   tiles = HeapSlot_Alloc(HEAP_SLOT_TILE_SCRATCH, 1024);
-  Dma_Fill32Cell(fill, 0x11111111, tiles, 512);
+  Dma_Fill32Cell(fill, PIXELS_4BPP(1), tiles, 512);
   VramCache_Load(VRAM_CACHE_ENTRY_FADE_OVERLAY, 512, tiles);
   HeapSlot_Release(HEAP_SLOT_TILE_SCRATCH);
   Task_Add(FadeOverlay_DrawMarks, TASK_PASS_FRAME);
@@ -135,7 +149,7 @@ void BlankOverlay_DrawMarks(void) {
     ((u32 *)m)[2] = OBJ_PRIORITY(1);
     m->tile = tile;
     m->x = (u16)(x - cameraX) - 8;
-    m->y = (u16)(((u16)row & 0xf0) - cameraZ) - 32;
+    m->y = (u16)(((u16)row & CELL_GRID_ROW_MASK) - cameraZ) - 32;
     mark = m + 1;
     Oam_AddSpriteAtDepthClamped(m, 1);
   }
@@ -147,7 +161,7 @@ void BlankOverlay_DrawMarks(void) {
     ((u32 *)m)[2] = OBJ_PRIORITY(1);
     m->tile = tile;
     m->x = (u16)(x - cameraX) - 8;
-    m->y = (u16)(((u16)row & 0xf0) - cameraZ) - 16;
+    m->y = (u16)(((u16)row & CELL_GRID_ROW_MASK) - cameraZ) - 16;
     Oam_AddSpriteAtDepthClamped(m, 1);
   }
 }
@@ -176,15 +190,16 @@ void BlankOverlay_Suspend(void) { Task_SuspendAll(BlankOverlay_DrawMarks); }
 void BlankOverlay_Resume(void) { Task_ResumeAll(BlankOverlay_DrawMarks); }
 
 /// Fills the overlay's 512 bytes of sprite tiles
-/// (VRAM_CACHE_ENTRY_FADE_OVERLAY) with colour 1 when solid is set, else clears
-/// them.
+/// (VRAM_CACHE_ENTRY_FADE_OVERLAY) with PIXELS_8BPP(1) when solid is set, which
+/// in these 16-colour tiles is colour 1 in every other column (no caller sets
+/// it), else clears them.
 void BattleEffect_FillOverlayTiles(s32 solid) {
   void *buffer = HeapSlot_Alloc(HEAP_SLOT_TILE_SCRATCH, 1024);
 
   if (solid == 0) {
     Dma_Fill32(0, buffer, 512);
   } else {
-    Dma_Fill32(0x01010101, buffer, 512);
+    Dma_Fill32(PIXELS_8BPP(1), buffer, 512);
   }
   VramCache_Load(VRAM_CACHE_ENTRY_FADE_OVERLAY, 512, buffer);
   HeapSlot_Release(HEAP_SLOT_TILE_SCRATCH);
@@ -229,3 +244,6 @@ void EffectSprite_InitWithFadeOverlayBlended(struct EffectSprite *sprite, s32 a,
   sprite->oam.palette = 0;
   sprite->oam.objectMode = 1;
 }
+
+#undef CELL_GRID_MASK
+#undef CELL_GRID_ROW_MASK

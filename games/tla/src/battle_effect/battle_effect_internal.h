@@ -1497,24 +1497,24 @@ extern const struct ModelVertex gSabreDance_DaggerCorners[];
 extern const u16 gFume_Levels[][FUME_COLUMNS];
 extern const s32 gOceanFist_DropGravity[4];
 extern const s32 gRushingStrike_Scales[];
-extern const s32 gMirroredWall_BurstScales[];
-extern const s32 gMirroredWall_BurstShades[];
+extern const s32 gMirroredWall_Scales[];
+extern const s32 gMirroredWall_Shades[];
 extern s8 gDaedalus_ShakeOffsets[];
-extern u8 gDaedalus_DriftPictures[];
-extern u8 gDaedalus_DriftStarts[][2];
-extern s32 gDaedalus_DriftSpeeds[][2];
-extern u8 gDaedalus_DriftFrames[];
+extern u8 gDaedalus_WingBeatPictures[];
+extern u8 gDaedalus_BirdStarts[][2];
+extern s32 gDaedalus_BirdSpeeds[][2];
+extern u8 gDaedalus_BirdFrames[];
 extern u16 gDaedalus_ClatterFrames[];
 extern u16 gDaedalus_RingStarts[];
 extern s8 gDaedalus_RingX[];
-extern u8 gDaedalus_SpritePoints[][2];
+extern u8 gDaedalus_RightLegPoints[][2];
 extern u8 gDaedalus_SplashPoints[][6][2];
-extern u16 gDaedalus_ParticleStarts[];
-extern const u8 gDaedalusAlt_StrikeFrames[];
-extern const u8 gVengeance_BladeStrikes[][7];
-extern const u16 gLifeShear_BladeMesh[];
-extern const u16 gLifeShear_HandleMesh[];
-extern const struct ModelVertex gLifeShear_ScytheCorners[];
+extern u16 gDaedalus_DiveStarts[];
+extern const u8 gDaedalusStrike_HitFrames[];
+extern const u8 gVengeance_ArrowStrikes[][7];
+extern const u16 gLifeShear_PaleBladeMesh[];
+extern const u16 gLifeShear_OrangeBladeMesh[];
+extern const struct ModelVertex gLifeShear_BladeCorners[];
 extern const s32 gGeyser_DropGravity[];
 extern const s8 gGeyser_DropMinSizes[];
 extern u8 gBubbleColumn_PictureWidths[];
@@ -1728,9 +1728,9 @@ extern u16 gFlora_SpritePalettes[];
 
 // ocean_fist.c
 
-extern const struct Scale gDaedalus_WaveScale;
-extern const struct Scale gDaedalus_ShipScale;
-extern const struct Scale gDaedalus_ParticleScale;
+extern const struct Scale gDaedalus_CanopyScale;
+extern const struct Scale gDaedalus_MachineScale;
+extern const struct Scale gDaedalus_MissileScale;
 
 extern const struct Scale gCoatlicue_UnitScale;
 

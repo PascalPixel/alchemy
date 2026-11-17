@@ -104,7 +104,8 @@ void Camera_ResetViewDefaults(void) {
   Projection_Set(toFIXED(250), nearPlane, toFIXED(32767));
 }
 
-/// One in the 8.8 fixed point of the unused helpers below.
+/// One in 8.8 fixed point: in the unused helpers below, and in a sprite's
+/// affine scale, which draws it full size at Q8_ONE (a die's half size below).
 #define Q8_ONE (1 << 8)
 
 /// Unused: multiplies two 8.8 fixed-point values, rounding toward zero.

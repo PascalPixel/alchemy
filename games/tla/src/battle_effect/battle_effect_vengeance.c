@@ -19,13 +19,20 @@ struct StripQuad;
 
 #define VENGEANCE_FRAMES 124
 #define VENGEANCE_ARROWS 7 ///< arrows shot, one every VENGEANCE_SHOT_INTERVAL
-#define VENGEANCE_FIRST_SHOT 22    ///< the frame the first arrow flies
-#define VENGEANCE_SHOT_INTERVAL 12 ///< frames from one arrow to the next
-/// Vengeance's sheet: the archer twice, her bow at rest and drawn, then the
-/// flame at an arrow's tail, the flaming arrow and a glint.
+#define VENGEANCE_FIRST_SHOT 22    ///< the first arrow's turn
+#define VENGEANCE_SHOT_INTERVAL 12 ///< frames from one arrow's turn to the next
+/// The frames from an arrow's turn to its flight, while it rests on the drawn
+/// bow (the first rests there from the start); then the string is at rest
+/// until the next arrow's turn.
+#define VENGEANCE_NOCK_FRAMES 4
+/// The frames a struck arrow stays in the target, its flame out.
+#define VENGEANCE_STUCK_FRAMES 4
+/// Vengeance's sheet: the archer twice, her bow drawn and its string at rest
+/// after a shot, then the flame around an arrow's head, the arrow, and her
+/// shoulder, drawn again over a nocked arrow so that its end passes behind it.
 #define VENGEANCE_ARCHER_WIDTH 88
 #define VENGEANCE_ARCHER_HEIGHT 96
-#define VENGEANCE_ARCHER_DRAWN PICTURE_BYTES(VENGEANCE_ARCHER)
+#define VENGEANCE_ARCHER_LOOSED PICTURE_BYTES(VENGEANCE_ARCHER)
 #define VENGEANCE_FLAME_TIP (2 * PICTURE_BYTES(VENGEANCE_ARCHER))
 #define VENGEANCE_FLAME_TIP_WIDTH 17
 #define VENGEANCE_FLAME_TIP_HEIGHT 12
@@ -33,14 +40,33 @@ struct StripQuad;
   (VENGEANCE_FLAME_TIP + PICTURE_BYTES(VENGEANCE_FLAME_TIP))
 #define VENGEANCE_ARROW_WIDTH 51
 #define VENGEANCE_ARROW_HEIGHT 12
-#define VENGEANCE_GLINT (VENGEANCE_ARROW + PICTURE_BYTES(VENGEANCE_ARROW))
-#define VENGEANCE_GLINT_WIDTH 14
-#define VENGEANCE_GLINT_HEIGHT 13
+#define VENGEANCE_SHOULDER (VENGEANCE_ARROW + PICTURE_BYTES(VENGEANCE_ARROW))
+#define VENGEANCE_SHOULDER_WIDTH 14
+#define VENGEANCE_SHOULDER_HEIGHT 13
+/// Where the archer stands on the canvas on the enemies' side, and her
+/// shoulder over her picture; on the party's side both are mirrored.
+#define VENGEANCE_ARCHER_X 32
+#define VENGEANCE_SHOULDER_X (VENGEANCE_ARCHER_X + 56)
+#define VENGEANCE_SHOULDER_Y 29
+/// The screen line the archer's picture starts on: her windows cover her
+/// height from it.
+#define VENGEANCE_TOP 40
+/// The arrows fly this far down the canvas, plus their own y, level with her
+/// bow. The canvas below her picture is a strip the far half of the map
+/// shows level with them, in its tile rows 3 to 6, and each arrow is drawn
+/// there again, to fly on across that half.
+#define VENGEANCE_ARROW_Y 24
+#define VENGEANCE_STRIP_Y VENGEANCE_ARCHER_HEIGHT
+/// The camera turns this far a frame while she slides in.
+#define VENGEANCE_CAMERA_TURN (TRIG_TURN / 512)
+/// On the enemies' side, while she slides in, her windows open this far
+/// right of the background's place.
+#define VENGEANCE_WINDOW_LEFT 120
 
-/// An archer slides in from the far side on a window of her own and from frame
-/// 22 looses a flaming arrow every twelve frames; seven fly across, and those
-/// the level picks strike the target, the last one hardest. Everything is
-/// mirrored on the right side.
+/// An archer slides in from the far side on a window of her own, her bow
+/// drawn, and from frame 26 looses a flaming arrow every twelve frames; seven
+/// fly across, and those the level picks strike the target, the last one
+/// hardest. Everything is mirrored on the party's side.
 ///
 /// Abilities: Vengeance.
 void BattleEffect_RunVengeance(struct BattleEffectParams *args) {
@@ -48,29 +74,28 @@ void BattleEffect_RunVengeance(struct BattleEffectParams *args) {
   void *canvas;
   s32 frame;
   struct BattleCamera *camera;
-  // The plain and the flipped blitter, as one pair: as two locals the
-  // arrow loop no longer hoists them from memory.
+  // The plain blitter and the flipped one.
   DrawRectangle draw[2];
   struct ScreenPoint pos;
   struct Particle *arrow;
   FIXED backgroundX;
   s32 speed;
-  s32 drawn;
+  s32 loosed;
   s32 row;
   s32 column;
   s32 i;
   s32 strikes;
-  s32 mask;
   s32 frames;
 
   work = Ram_HeapSlots->battleEffect;
   canvas = Ram_HeapSlots->battleCanvas;
-  mask = 7;
   BattleEffect_StartTiledCanvas(0);
   REG_BG2PA = Q_8_8(1);
-  REG_BLDALPHA = BLEND_ALPHA(16, 4);
+  REG_BLDALPHA = BLEND_ALPHA(BLEND_WEIGHT_MAX, 4);
 
-  // The archer's tile map: her body, and her arms in rows 3 to 6.
+  // The map, 256 pixels wide, two tiles to an entry: the half on her side
+  // shows the canvas's first twelve tile rows, where she is drawn; the far
+  // half shows in its rows 3 to 6 the strip below her picture.
   i = 0;
   for (row = 0; row != 16; row++) {
     for (column = 0; column != 16; column++, i += 2) {
@@ -79,27 +104,27 @@ void BattleEffect_RunVengeance(struct BattleEffectParams *args) {
       s32 tile;
       s16 entry;
 
-      // The arms take the left half on the enemies' side and the right half on
-      // the party's; the body takes the other half.
+      // The strip takes the left half on the enemies' side and the right half
+      // on the party's.
       if (args->side == EFFECT_SIDE_ENEMIES && column <= 7) {
-        if ((u32)(row - 3) > 3) {
+        if ((u32)(row - VENGEANCE_ARROW_Y / 8) > 3) {
           tileX = 0;
           tileY = 0;
         } else {
           tileX = column;
-          tileY = row + 9;
+          tileY = row + (VENGEANCE_STRIP_Y - VENGEANCE_ARROW_Y) / 8;
         }
       } else if (args->side == EFFECT_SIDE_ENEMIES || column <= 7) {
-        if (row > 11) {
+        if (row >= VENGEANCE_STRIP_Y / 8) {
           tileX = 0;
           tileY = 0;
         } else {
-          tileX = column & mask;
+          tileX = column & 7;
           tileY = row;
         }
-      } else if ((u32)(row - 3) <= 3) {
-        tileX = column & mask;
-        tileY = row + 9;
+      } else if ((u32)(row - VENGEANCE_ARROW_Y / 8) <= 3) {
+        tileX = column & 7;
+        tileY = row + (VENGEANCE_STRIP_Y - VENGEANCE_ARROW_Y) / 8;
       } else {
         tileX = 0;
         tileY = 0;
@@ -109,11 +134,11 @@ void BattleEffect_RunVengeance(struct BattleEffectParams *args) {
       *(volatile s16 *)((u8 *)BG_CANVAS_MAP + i) = entry;
     }
   }
-  REG_BG2Y = -(40 << 8);
+  REG_BG2Y = -(VENGEANCE_TOP << 8);
   REG_WIN0H = WIN_RANGE(0, DISPLAY_WIDTH);
-  REG_WIN0V = WIN_RANGE(40, 136);
+  REG_WIN0V = WIN_RANGE(VENGEANCE_TOP, VENGEANCE_TOP + VENGEANCE_ARCHER_HEIGHT);
   REG_WIN1H = WIN_RANGE(0, DISPLAY_WIDTH);
-  REG_WIN1V = WIN_RANGE(40, 136);
+  REG_WIN1V = WIN_RANGE(VENGEANCE_TOP, VENGEANCE_TOP + VENGEANCE_ARCHER_HEIGHT);
   REG_WININ = EFFECT_WIN0_LAYERS | WININ_WIN1_BG0 | WININ_WIN1_BG1 |
               WININ_WIN1_BG2 | WININ_WIN1_OBJ | WININ_WIN1_CLR;
   REG_WINOUT = WINOUT_WIN01_BG0 | WINOUT_WIN01_BG1 | WINOUT_WIN01_OBJ |
@@ -136,12 +161,12 @@ void BattleEffect_RunVengeance(struct BattleEffectParams *args) {
     EffectPosition_ProjectScaledBattler(args->targets[0], &pos);
     if (frame <= 31) {
       if (args->side == EFFECT_SIDE_ENEMIES) {
-        camera->yaw = (s16)camera->yaw - 128;
+        camera->yaw = (s16)camera->yaw - VENGEANCE_CAMERA_TURN;
       } else {
-        camera->yaw = (s16)camera->yaw + 128;
+        camera->yaw = (s16)camera->yaw + VENGEANCE_CAMERA_TURN;
       }
     }
-    if (frame >= frames - 16) {
+    if (frame >= frames - BLEND_WEIGHT_MAX) {
       REG_BLDALPHA = BLEND_ALPHA(frames - frame - 1, BLEND_WEIGHT_MAX);
     }
     if (frame == 0) {
@@ -177,8 +202,10 @@ void BattleEffect_RunVengeance(struct BattleEffectParams *args) {
     if (frame <= 24) {
       REG_BG2X = -(FIXEDtoINT(backgroundX)) << 8;
       if (args->side == EFFECT_SIDE_ENEMIES) {
-        REG_WIN0H = WIN_RANGE(FIXEDtoINT(backgroundX) + 120, DISPLAY_WIDTH);
-        REG_WIN1H = WIN_RANGE(FIXEDtoINT(backgroundX) + 120, DISPLAY_WIDTH);
+        REG_WIN0H = WIN_RANGE(FIXEDtoINT(backgroundX) + VENGEANCE_WINDOW_LEFT,
+                              DISPLAY_WIDTH);
+        REG_WIN1H = WIN_RANGE(FIXEDtoINT(backgroundX) + VENGEANCE_WINDOW_LEFT,
+                              DISPLAY_WIDTH);
       } else {
         REG_WIN0H = FIXEDtoINT(backgroundX) + DISPLAY_WIDTH;
         REG_WIN1H = FIXEDtoINT(backgroundX) + DISPLAY_WIDTH;
@@ -191,43 +218,50 @@ void BattleEffect_RunVengeance(struct BattleEffectParams *args) {
     backgroundX -= speed;
     speed = speed * 52 / DAMPING_SCALE;
 
-    drawn = 0;
+    // The bow is drawn until the first shot and while each arrow is nocked.
+    loosed = 0;
     if (frame >=
         VENGEANCE_FIRST_SHOT + VENGEANCE_ARROWS * VENGEANCE_SHOT_INTERVAL) {
-      drawn = 1;
+      loosed = 1;
     } else if (frame >= VENGEANCE_FIRST_SHOT &&
-               (frame - VENGEANCE_FIRST_SHOT) % VENGEANCE_SHOT_INTERVAL > 3) {
-      drawn = 1;
+               (frame - VENGEANCE_FIRST_SHOT) % VENGEANCE_SHOT_INTERVAL >=
+                   VENGEANCE_NOCK_FRAMES) {
+      loosed = 1;
     }
     if (args->side == EFFECT_SIDE_ENEMIES) {
-      if (drawn == 0) {
-        draw[0](canvas, work->sheet, 32, 0, VENGEANCE_ARCHER_WIDTH,
-                VENGEANCE_ARCHER_HEIGHT);
-      } else {
-        draw[0](canvas, work->sheet + VENGEANCE_ARCHER_DRAWN, 32, 0,
+      if (loosed == 0) {
+        draw[0](canvas, work->sheet, VENGEANCE_ARCHER_X, 0,
                 VENGEANCE_ARCHER_WIDTH, VENGEANCE_ARCHER_HEIGHT);
+      } else {
+        draw[0](canvas, work->sheet + VENGEANCE_ARCHER_LOOSED,
+                VENGEANCE_ARCHER_X, 0, VENGEANCE_ARCHER_WIDTH,
+                VENGEANCE_ARCHER_HEIGHT);
       }
-    } else if (drawn == 0) {
-      draw[1](canvas, work->sheet, 8, 0, VENGEANCE_ARCHER_WIDTH,
-              VENGEANCE_ARCHER_HEIGHT);
+    } else if (loosed == 0) {
+      draw[1](canvas, work->sheet,
+              CANVAS_SIZE - VENGEANCE_ARCHER_X - VENGEANCE_ARCHER_WIDTH, 0,
+              VENGEANCE_ARCHER_WIDTH, VENGEANCE_ARCHER_HEIGHT);
     } else {
-      draw[1](canvas, work->sheet + VENGEANCE_ARCHER_DRAWN, 8, 0,
+      draw[1](canvas, work->sheet + VENGEANCE_ARCHER_LOOSED,
+              CANVAS_SIZE - VENGEANCE_ARCHER_X - VENGEANCE_ARCHER_WIDTH, 0,
               VENGEANCE_ARCHER_WIDTH, VENGEANCE_ARCHER_HEIGHT);
     }
 
-    // The arrows.
+    // The arrows: each is nocked in its turn, flies once it has rested on the
+    // bow, and a striking one stays in the target a few frames.
     for (i = 0; i != VENGEANCE_ARROWS; i++) {
       arrow = &work->particles[i];
       if (frame < i * VENGEANCE_SHOT_INTERVAL + VENGEANCE_FIRST_SHOT &&
           (frame >= VENGEANCE_FIRST_SHOT || i != 0)) {
         continue;
       }
-      if (frame >= i * VENGEANCE_SHOT_INTERVAL + VENGEANCE_FIRST_SHOT + 4 &&
+      if (frame >= i * VENGEANCE_SHOT_INTERVAL + VENGEANCE_FIRST_SHOT +
+                       VENGEANCE_NOCK_FRAMES &&
           arrow->variant == 0) {
         arrow->x -= arrow->velocityX;
         arrow->y += arrow->velocityY;
       }
-      if (arrow->variant > 4) {
+      if (arrow->variant > VENGEANCE_STUCK_FRAMES) {
         continue;
       }
       if (arrow->variant > 0) {
@@ -249,80 +283,93 @@ void BattleEffect_RunVengeance(struct BattleEffectParams *args) {
             BattleMotion_ApplyKnockbackFar(args->targets[0], KNOCKBACK_HURL);
             EFFECT_SHOW_DAMAGE(SE_HEAVY_IMPACT);
           } else {
+            // Each arrow pushes the target further back: to 110 percent of
+            // its place, ten more for each arrow before.
             BattleEffect_StartActorMotion(args->targets[0], 1, toFIXED(2),
                                           toFIXED(8), toFIXED(2), i * 10 + 110);
             Sound_PlayFar(SE_IMPACT);
           }
           BattleEffect_TintBattler(args->targets[0], SPRITE_COLOR_WHITE,
                                    POSE_DAMAGE, 0, 4);
+          // A struck arrow keeps its place against the target, in pixels.
           arrow->variant = 1;
           if (args->side == EFFECT_SIDE_ENEMIES) {
             arrow->x = pos.x / 2 - FIXED_INTEGER_PART(arrow->x);
           } else {
-            arrow->x = pos.x / 2 - FIXED_INTEGER_PART(arrow->x) + 128;
+            arrow->x = pos.x / 2 - FIXED_INTEGER_PART(arrow->x) + CANVAS_SIZE;
           }
         }
       }
+      // Each arrow is drawn in her half and again in the strip, a canvas
+      // width along, with the flame around its head while it flies.
       if (args->side == EFFECT_SIDE_ENEMIES) {
         if (arrow->variant == 0) {
           draw[0](canvas, work->sheet + VENGEANCE_ARROW,
-                  (FIXEDtoINT(arrow->x)) - 111,
-                  FIXED_INTEGER_PART(arrow->y) + 24, VENGEANCE_ARROW_WIDTH,
-                  VENGEANCE_ARROW_HEIGHT);
-          draw[0](canvas, work->sheet + VENGEANCE_ARROW,
-                  FIXED_INTEGER_PART(arrow->x) + 17,
-                  FIXED_INTEGER_PART(arrow->y) + 96, VENGEANCE_ARROW_WIDTH,
-                  VENGEANCE_ARROW_HEIGHT);
-          draw[0](canvas, work->sheet + VENGEANCE_FLAME_TIP,
-                  FIXED_INTEGER_PART(arrow->x) - 128,
-                  FIXED_INTEGER_PART(arrow->y) + 24, VENGEANCE_FLAME_TIP_WIDTH,
-                  VENGEANCE_FLAME_TIP_HEIGHT);
-          draw[0](canvas, work->sheet + VENGEANCE_FLAME_TIP,
-                  FIXED_INTEGER_PART(arrow->x),
-                  FIXED_INTEGER_PART(arrow->y) + 96, VENGEANCE_FLAME_TIP_WIDTH,
-                  VENGEANCE_FLAME_TIP_HEIGHT);
-        } else {
-          draw[0](canvas, work->sheet + VENGEANCE_ARROW,
-                  pos.x / 2 + arrow->x - 111, FIXED_INTEGER_PART(arrow->y) + 24,
+                  (FIXEDtoINT(arrow->x)) -
+                      (CANVAS_SIZE - VENGEANCE_FLAME_TIP_WIDTH),
+                  FIXED_INTEGER_PART(arrow->y) + VENGEANCE_ARROW_Y,
                   VENGEANCE_ARROW_WIDTH, VENGEANCE_ARROW_HEIGHT);
           draw[0](canvas, work->sheet + VENGEANCE_ARROW,
-                  pos.x / 2 + arrow->x + 17, FIXED_INTEGER_PART(arrow->y) + 96,
+                  FIXED_INTEGER_PART(arrow->x) + VENGEANCE_FLAME_TIP_WIDTH,
+                  FIXED_INTEGER_PART(arrow->y) + VENGEANCE_STRIP_Y,
+                  VENGEANCE_ARROW_WIDTH, VENGEANCE_ARROW_HEIGHT);
+          draw[0](canvas, work->sheet + VENGEANCE_FLAME_TIP,
+                  FIXED_INTEGER_PART(arrow->x) - CANVAS_SIZE,
+                  FIXED_INTEGER_PART(arrow->y) + VENGEANCE_ARROW_Y,
+                  VENGEANCE_FLAME_TIP_WIDTH, VENGEANCE_FLAME_TIP_HEIGHT);
+          draw[0](canvas, work->sheet + VENGEANCE_FLAME_TIP,
+                  FIXED_INTEGER_PART(arrow->x),
+                  FIXED_INTEGER_PART(arrow->y) + VENGEANCE_STRIP_Y,
+                  VENGEANCE_FLAME_TIP_WIDTH, VENGEANCE_FLAME_TIP_HEIGHT);
+        } else {
+          draw[0](canvas, work->sheet + VENGEANCE_ARROW,
+                  pos.x / 2 + arrow->x -
+                      (CANVAS_SIZE - VENGEANCE_FLAME_TIP_WIDTH),
+                  FIXED_INTEGER_PART(arrow->y) + VENGEANCE_ARROW_Y,
+                  VENGEANCE_ARROW_WIDTH, VENGEANCE_ARROW_HEIGHT);
+          draw[0](canvas, work->sheet + VENGEANCE_ARROW,
+                  pos.x / 2 + arrow->x + VENGEANCE_FLAME_TIP_WIDTH,
+                  FIXED_INTEGER_PART(arrow->y) + VENGEANCE_STRIP_Y,
                   VENGEANCE_ARROW_WIDTH, VENGEANCE_ARROW_HEIGHT);
         }
       } else if (arrow->variant == 0) {
         draw[1](canvas, work->sheet + VENGEANCE_ARROW, FIXEDtoINT(arrow->x),
-                FIXED_INTEGER_PART(arrow->y) + 24, VENGEANCE_ARROW_WIDTH,
-                VENGEANCE_ARROW_HEIGHT);
+                FIXED_INTEGER_PART(arrow->y) + VENGEANCE_ARROW_Y,
+                VENGEANCE_ARROW_WIDTH, VENGEANCE_ARROW_HEIGHT);
         draw[1](canvas, work->sheet + VENGEANCE_ARROW,
-                FIXED_INTEGER_PART(arrow->x) - 128,
-                FIXED_INTEGER_PART(arrow->y) + 96, VENGEANCE_ARROW_WIDTH,
-                VENGEANCE_ARROW_HEIGHT);
+                FIXED_INTEGER_PART(arrow->x) - CANVAS_SIZE,
+                FIXED_INTEGER_PART(arrow->y) + VENGEANCE_STRIP_Y,
+                VENGEANCE_ARROW_WIDTH, VENGEANCE_ARROW_HEIGHT);
         draw[1](canvas, work->sheet + VENGEANCE_FLAME_TIP,
-                FIXED_INTEGER_PART(arrow->x) + 51,
-                FIXED_INTEGER_PART(arrow->y) + 24, VENGEANCE_FLAME_TIP_WIDTH,
-                VENGEANCE_FLAME_TIP_HEIGHT);
+                FIXED_INTEGER_PART(arrow->x) + VENGEANCE_ARROW_WIDTH,
+                FIXED_INTEGER_PART(arrow->y) + VENGEANCE_ARROW_Y,
+                VENGEANCE_FLAME_TIP_WIDTH, VENGEANCE_FLAME_TIP_HEIGHT);
         draw[1](canvas, work->sheet + VENGEANCE_FLAME_TIP,
-                FIXED_INTEGER_PART(arrow->x) - 77,
-                FIXED_INTEGER_PART(arrow->y) + 96, VENGEANCE_FLAME_TIP_WIDTH,
-                VENGEANCE_FLAME_TIP_HEIGHT);
+                FIXED_INTEGER_PART(arrow->x) -
+                    (CANVAS_SIZE - VENGEANCE_ARROW_WIDTH),
+                FIXED_INTEGER_PART(arrow->y) + VENGEANCE_STRIP_Y,
+                VENGEANCE_FLAME_TIP_WIDTH, VENGEANCE_FLAME_TIP_HEIGHT);
       } else {
         draw[1](canvas, work->sheet + VENGEANCE_ARROW, pos.x / 2 + arrow->x,
-                FIXED_INTEGER_PART(arrow->y) + 24, VENGEANCE_ARROW_WIDTH,
-                VENGEANCE_ARROW_HEIGHT);
+                FIXED_INTEGER_PART(arrow->y) + VENGEANCE_ARROW_Y,
+                VENGEANCE_ARROW_WIDTH, VENGEANCE_ARROW_HEIGHT);
         draw[1](canvas, work->sheet + VENGEANCE_ARROW,
-                pos.x / 2 + arrow->x - 128, FIXED_INTEGER_PART(arrow->y) + 96,
+                pos.x / 2 + arrow->x - CANVAS_SIZE,
+                FIXED_INTEGER_PART(arrow->y) + VENGEANCE_STRIP_Y,
                 VENGEANCE_ARROW_WIDTH, VENGEANCE_ARROW_HEIGHT);
       }
     }
 
-    // The glint, while the bow is at rest.
-    if (drawn == 0) {
+    // Her shoulder over the nocked arrow, while the bow is drawn.
+    if (loosed == 0) {
       if (args->side == EFFECT_SIDE_ENEMIES) {
-        EFFECT_DRAW_PICTURE(draw[0], canvas, work->sheet, VENGEANCE_GLINT, 88,
-                            29);
+        EFFECT_DRAW_PICTURE(draw[0], canvas, work->sheet, VENGEANCE_SHOULDER,
+                            VENGEANCE_SHOULDER_X, VENGEANCE_SHOULDER_Y);
       } else {
-        EFFECT_DRAW_PICTURE(draw[1], canvas, work->sheet, VENGEANCE_GLINT, 26,
-                            29);
+        EFFECT_DRAW_PICTURE(draw[1], canvas, work->sheet, VENGEANCE_SHOULDER,
+                            CANVAS_SIZE - VENGEANCE_SHOULDER_X -
+                                VENGEANCE_SHOULDER_WIDTH,
+                            VENGEANCE_SHOULDER_Y);
       }
     }
     BattleEffect_CountDownBattlerTints();
@@ -334,30 +381,55 @@ void BattleEffect_RunVengeance(struct BattleEffectParams *args) {
   EFFECT_FINISH_CANVAS();
 }
 
-/// The scythe, in the work's first particle: swing is its velocityZ and timer
-/// its variant.
-struct Scythe {
+/// The shears, in the work's first particle: roll is its z, snip its velocityZ
+/// and timer its variant.
+struct Shears {
   s32 x;
   s32 y;
-  s32 z;
+  s32 roll;
   s32 velocityX;
   s32 velocityY;
-  s32 swing;
+  s32 snip; ///< steps of the blades closing, a 32nd of a turn each
   s32 timer;
 };
 
 #define LIFE_SHEAR_FRAMES 90
-/// Life Shear's pictures in the map cell buffer: the reaper's raised pose, and
-/// the textures of the scythe's blade, its handle and its flash.
-#define LIFE_SHEAR_REAPER_RAISED (Ram_MapCellBuffer + 4840)
-#define LIFE_SHEAR_BLADE_TEXTURE (Ram_MapCellBuffer + 10091)
-#define LIFE_SHEAR_HANDLE_TEXTURE (Ram_MapCellBuffer + 18283)
-#define LIFE_SHEAR_FLASH_TEXTURE (Ram_MapCellBuffer + 22379)
+#define LIFE_SHEAR_SNIP_FRAME 50 ///< the shears snap shut through the target
+/// Life Shear's sheet, decoded into the map cell buffer: a woman leaping and
+/// the same woman striking, then the shears' two blades, each with its pivot
+/// ring and handle loop (a pale one 128 by 64 and an orange one 128 by 32),
+/// and the flame the flash is made of, 32 by 32.
+#define LIFE_SHEAR_WOMAN_WIDTH 55
+#define LIFE_SHEAR_WOMAN_HEIGHT 88
+#define LIFE_SHEAR_STRIKING                                                    \
+  (Ram_MapCellBuffer + PICTURE_BYTES(LIFE_SHEAR_WOMAN))
+#define LIFE_SHEAR_STRIKING_WIDTH 59
+#define LIFE_SHEAR_STRIKING_HEIGHT 89
+#define LIFE_SHEAR_PALE_BLADE                                                  \
+  (LIFE_SHEAR_STRIKING + PICTURE_BYTES(LIFE_SHEAR_STRIKING))
+#define LIFE_SHEAR_PALE_BLADE_WIDTH 128
+#define LIFE_SHEAR_PALE_BLADE_HEIGHT 64
+#define LIFE_SHEAR_ORANGE_BLADE                                                \
+  (LIFE_SHEAR_PALE_BLADE + PICTURE_BYTES(LIFE_SHEAR_PALE_BLADE))
+#define LIFE_SHEAR_ORANGE_BLADE_WIDTH 128
+#define LIFE_SHEAR_ORANGE_BLADE_HEIGHT 32
+#define LIFE_SHEAR_FLAME                                                       \
+  (LIFE_SHEAR_ORANGE_BLADE + PICTURE_BYTES(LIFE_SHEAR_ORANGE_BLADE))
+/// Where her striking picture stands on the canvas on the enemies' side, and
+/// how far she glides to it; on the party's side both are mirrored.
+#define LIFE_SHEAR_STRIKE_X 64
+/// The shears' scale until they tumble away, and the flash's as it starts.
+#define LIFE_SHEAR_SHEARS_SCALE 45536
+#define LIFE_SHEAR_FLASH_SCALE 85536
+/// How far the flash's four flames are turned, beyond their quarter turns.
+#define LIFE_SHEAR_FLASH_ANGLE 22096
 
-/// The reaper (a tiled background picture) glides in from the far side and
-/// swings its scythe (a two-part model) through the target at frame 50, with
-/// a four-blade flash; on the right side everything is mirrored. From frame
-/// 62 the reaper drifts off and the scythe falls away.
+/// A woman (a tiled background picture) glides in from the far side and
+/// strikes from frame 24: a pair of shears (two blade models turning about
+/// their pivot) swings back and into the target at frame 32, opens, and
+/// snaps shut through it at frame 50 in a flash of four flames. From frame 62
+/// she drifts off and the shears tumble away. Everything is mirrored on the
+/// party's side.
 ///
 /// Abilities: Life Shear.
 void BattleEffect_RunLifeShear(struct BattleEffectParams *args) {
@@ -366,15 +438,15 @@ void BattleEffect_RunLifeShear(struct BattleEffectParams *args) {
   DrawRectangle blit[2];
   struct ScreenPoint target;
   struct ModelTexture texture;
-  FIXED reaperX;
-  FIXED reaperY;
+  FIXED womanX;
+  FIXED womanY;
   s32 speed;
   struct ScreenPoint *position;
   s32 shift;
   s32 frame;
   void *vertices;
   struct RenderModel *model;
-  struct Scythe *scythe;
+  struct Shears *shears;
   s32 i;
 
   work = Ram_HeapSlots->battleEffect;
@@ -385,7 +457,7 @@ void BattleEffect_RunLifeShear(struct BattleEffectParams *args) {
     BattleEffect_StartTiledCanvasFilled(BGCNT_WRAP | BGCNT_PRIORITY(1));
   }
   REG_BG2PA = Q_8_8(1);
-  REG_BLDALPHA = BLEND_ALPHA(16, 6);
+  REG_BLDALPHA = BLEND_ALPHA(BLEND_WEIGHT_MAX, 6);
   Resource_LoadAndDecompress(RESOURCE_LIFE_SHEAR_SHEET, gMapGridCellBuffer, 1,
                              1);
   if (args->side == EFFECT_SIDE_ENEMIES) {
@@ -398,8 +470,8 @@ void BattleEffect_RunLifeShear(struct BattleEffectParams *args) {
   }
   blit[0] = (DrawRectangle)Ram_HeapSlots->ramCode;
   EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_CLEAR, 0);
-  reaperX = 0;
-  reaperY = 0;
+  womanX = 0;
+  womanY = 0;
   speed = 0;
   EffectPosition_ProjectScaledBattler(args->targets[0], position = &target);
 
@@ -426,26 +498,28 @@ void BattleEffect_RunLifeShear(struct BattleEffectParams *args) {
       }
       work->particles[0].velocityZ = 0;
       work->particles[0].variant = 0;
-      reaperY = toFIXED(24);
+      womanY = toFIXED(24);
       if (args->side == EFFECT_SIDE_ENEMIES) {
-        reaperX = INTtoFIXED(position->x + 176);
+        womanX = INTtoFIXED(position->x + 176);
         speed = toFIXED(15);
       } else {
-        reaperX = INTtoFIXED(position->x - 304);
+        womanX = INTtoFIXED(position->x - 304);
         speed = -toFIXED(15);
       }
     }
     if (frame > 61) {
       if (args->side == EFFECT_SIDE_ENEMIES) {
-        reaperX += toFIXED(2);
+        womanX += toFIXED(2);
       } else {
-        reaperX -= toFIXED(2);
+        womanX -= toFIXED(2);
       }
-      reaperY -= toFIXED(14) / 3;
+      womanY -= toFIXED(14) / 3;
     }
-    reaperX -= speed;
+    // She glides in, slowing; the background carries her up to 120 pixels
+    // across, and the canvas the rest.
+    womanX -= speed;
     speed = speed * 60 / DAMPING_SCALE;
-    x = FIXEDtoINT(reaperX);
+    x = FIXEDtoINT(womanX);
     if (x > 120) {
       shift = x - 120;
       x = 120;
@@ -455,14 +529,16 @@ void BattleEffect_RunLifeShear(struct BattleEffectParams *args) {
     }
     REG_BG2X = -x << 8;
     if ((u32)(frame - 24) <= 39) {
-      x = args->side == EFFECT_SIDE_ENEMIES ? 64 : 5;
-      blit[0](canvas, LIFE_SHEAR_REAPER_RAISED, x + shift, FIXEDtoINT(reaperY),
-              59, 89);
+      x = args->side == EFFECT_SIDE_ENEMIES
+              ? LIFE_SHEAR_STRIKE_X
+              : CANVAS_SIZE - LIFE_SHEAR_STRIKE_X - LIFE_SHEAR_STRIKING_WIDTH;
+      blit[0](canvas, LIFE_SHEAR_STRIKING, x + shift, FIXEDtoINT(womanY),
+              LIFE_SHEAR_STRIKING_WIDTH, LIFE_SHEAR_STRIKING_HEIGHT);
     } else {
       if (args->side == EFFECT_SIDE_ENEMIES) {
         x = frame * 2 + 16;
-        if (x > 64) {
-          x = 64;
+        if (x > LIFE_SHEAR_STRIKE_X) {
+          x = LIFE_SHEAR_STRIKE_X;
         }
       } else {
         x = 57 - frame * 2;
@@ -470,62 +546,64 @@ void BattleEffect_RunLifeShear(struct BattleEffectParams *args) {
           x = 9;
         }
       }
-      blit[0](canvas, gMapGridCellBuffer, x + shift, FIXEDtoINT(reaperY), 55,
-              88);
+      blit[0](canvas, gMapGridCellBuffer, x + shift, FIXEDtoINT(womanY),
+              LIFE_SHEAR_WOMAN_WIDTH, LIFE_SHEAR_WOMAN_HEIGHT);
     }
 
-    // The scythe's path: still, a backswing at 24, the strike at 33.
+    // The shears' path: still, a backswing from timer 24 and the strike at
+    // 33.
     i = 0;
     still = 0;
-    scythe = (struct Scythe *)work->particles;
-    for (; i != 1; i++, scythe++) {
-      if (++scythe->timer <= 0) {
+    shears = (struct Shears *)work->particles;
+    for (; i != 1; i++, shears++) {
+      if (++shears->timer <= 0) {
         continue;
       }
-      if (scythe->timer == 1) {
-        scythe->velocityX = still;
-        scythe->velocityY = still;
+      if (shears->timer == 1) {
+        shears->velocityX = still;
+        shears->velocityY = still;
       }
-      if (scythe->timer == 24) {
-        scythe->velocityX = -toFIXED(4);
-        scythe->velocityY = toFIXED(8);
+      if (shears->timer == 24) {
+        shears->velocityX = -toFIXED(4);
+        shears->velocityY = toFIXED(8);
       }
-      if (scythe->timer == 33) {
-        scythe->velocityX = toFIXED(4);
-        scythe->velocityY = -toFIXED(8);
+      if (shears->timer == 33) {
+        shears->velocityX = toFIXED(4);
+        shears->velocityY = -toFIXED(8);
         work->shakeFrames = 4;
         speed = 0;
         Sound_PlayFar(SE_IMPACT);
         BattleEffect_TintBattler(args->targets[0], SPRITE_COLOR_WHITE,
                                  POSE_DAMAGE, 0, 8);
       }
-      if (scythe->timer == 35) {
-        scythe->velocityX = still;
-        scythe->velocityY = still;
+      if (shears->timer == 35) {
+        shears->velocityX = still;
+        shears->velocityY = still;
       }
+      // From frame 64 they tumble away, turning faster each frame.
       if (frame > 63) {
-        s32 fall = (frame << 7) - 8192;
+        s32 tumble = (frame - 64) * (TRIG_TURN / 512);
 
-        scythe->velocityY -= toFIXED(1) / 4;
-        if (fall > 1024) {
-          fall = 1024;
+        shears->velocityY -= toFIXED(1) / 4;
+        if (tumble > TRIG_TURN / 64) {
+          tumble = TRIG_TURN / 64;
         }
-        scythe->z -= fall;
+        shears->roll -= tumble;
       }
-      if (scythe->timer > 8) {
+      if (shears->timer > 8) {
         if (args->side == EFFECT_SIDE_ENEMIES) {
-          scythe->x += scythe->velocityX;
+          shears->x += shears->velocityX;
         } else {
-          scythe->x -= scythe->velocityX;
+          shears->x -= shears->velocityX;
         }
-        scythe->y += scythe->velocityY;
+        shears->y += shears->velocityY;
       }
     }
 
     vertices = Heap_AllocEwram(32);
     model = Render_AllocateModelList(1);
     zero = 0;
-    phase = frame - 50;
+    phase = frame - LIFE_SHEAR_SNIP_FRAME;
     if (phase == -4) {
       Sound_PlayFar(SE_POWER_UP);
     }
@@ -538,14 +616,16 @@ void BattleEffect_RunLifeShear(struct BattleEffectParams *args) {
                            CANVAS_FILL_WORD(CANVAS_LEVEL_BRIGHTEST));
       BattleMotion_ApplyKnockbackFar(args->targets[0], KNOCKBACK_HURL);
     }
+    // The blades close from frame 44, shut just after the snip, and part a
+    // little again.
     timer = work->particles[0].variant;
     if ((u32)(frame - 44) <= 13) {
       work->particles[0].velocityZ++;
     }
     if (timer >= 0) {
-      scale = 45536;
+      scale = LIFE_SHEAR_SHEARS_SCALE;
       if (frame > 63) {
-        scale = scale - (frame << 9) + FIXED_ONE / 2;
+        scale = scale - (frame - 64) * (FIXED_ONE / 128);
       }
       width = 7;
       if (scale > 0) {
@@ -562,29 +642,33 @@ void BattleEffect_RunLifeShear(struct BattleEffectParams *args) {
         Matrix_RotateZ(work->particles[0].z);
         Matrix_ScaleUniform(scale);
         texture.logHeight = 5;
-        texture.pixels = LIFE_SHEAR_HANDLE_TEXTURE;
+        texture.pixels = LIFE_SHEAR_ORANGE_BLADE;
         texture.logWidth = width;
         model->mesh = gLifeShear_HandleMesh;
         Matrix_Push();
-        Matrix_RotateZ((Trig_Sin(work->particles[0].velocityZ << 11) >> 3) -
-                       DEGtoANG(45));
+        Matrix_RotateZ(
+            (Trig_Sin(work->particles[0].velocityZ * (TRIG_TURN / 32)) >> 3) -
+            DEGtoANG(45));
         Render_TransformVertices(gLifeShear_ScytheCorners, vertices, 4);
         Render_DrawModelList(model);
         Matrix_Pop();
         model->mesh = gLifeShear_BladeMesh;
         texture.logWidth = width;
         texture.logHeight = 6;
-        texture.pixels = LIFE_SHEAR_BLADE_TEXTURE;
-        Matrix_RotateZ(DEGtoANG(45) -
-                       (Trig_Sin(work->particles[0].velocityZ << 11) >> 3));
+        texture.pixels = LIFE_SHEAR_PALE_BLADE;
+        Matrix_RotateZ(
+            DEGtoANG(45) -
+            (Trig_Sin(work->particles[0].velocityZ * (TRIG_TURN / 32)) >> 3));
         Matrix_Scale(FIXED_ONE, 90000, FIXED_ONE);
         Render_TransformVertices(gLifeShear_ScytheCorners, vertices, 4);
         Render_DrawModelList(model);
       }
 
-      // The flash: four blades, shrinking over eight frames.
+      // The flash: four flames, long and short in turn, shrinking over eight
+      // frames.
       if ((u32)phase <= 7) {
-        scale = 495136 - (frame << 13);
+        scale = LIFE_SHEAR_FLASH_SCALE -
+                (frame - LIFE_SHEAR_SNIP_FRAME) * (FIXED_ONE / 8);
         Matrix_Initialize();
         if (args->side == EFFECT_SIDE_ENEMIES) {
           Matrix_Translate(-toFIXED(16), 0, 0);
@@ -599,11 +683,12 @@ void BattleEffect_RunLifeShear(struct BattleEffectParams *args) {
         model->mesh = gBattleEffect_SmallSquareMeshReversed;
         texture.logWidth = 5;
         texture.logHeight = 5;
-        texture.pixels = LIFE_SHEAR_FLASH_TEXTURE;
+        texture.pixels = LIFE_SHEAR_FLAME;
         for (i = 0; i != 4; i++) {
           Matrix_Push();
-          Matrix_RotateZ(i * (DEGtoANG(90)) + 22096);
-          Matrix_Scale(FIXED_ONE / 4, ((i & 1) << 15) + FIXED_ONE * 3 / 4,
+          Matrix_RotateZ(i * (DEGtoANG(90)) + LIFE_SHEAR_FLASH_ANGLE);
+          Matrix_Scale(FIXED_ONE / 4,
+                       (i & 1) * (FIXED_ONE / 2) + FIXED_ONE * 3 / 4,
                        FIXED_ONE / 2);
           Matrix_ScaleUniform(FIXED_ONE);
           Render_TransformVertices(gBattleEffect_StandingSquareCorners,
@@ -637,11 +722,23 @@ void BattleEffect_RunDjinnStorm(struct BattleEffectParams *args) {
 }
 
 #define GEYSER_FRAMES 54
-#define GEYSER_DRAW_FRAMES 40
-#define GEYSER_PEAK_FRAME 20 ///< the result phase starts
-#define DROP_COUNT 512       ///< drops in the map cell buffer, used in a ring
+#define GEYSER_DRAW_FRAMES 40 ///< the column is drawn
+#define GEYSER_PEAK_FRAME 20  ///< the result phase starts
+#define DROP_COUNT 512        ///< drops in the map cell buffer, used in a ring
+#define GEYSER_DROPS ((struct Particle *)Ram_MapCellBuffer)
+/// The drops that burst on the first frame, and Djinn Storm's that follow
+/// each frame to frame 23; Djinn Blast's are fewer.
+#define GEYSER_BURST 200
+#define GEYSER_STREAM 16
+#define DJINN_BLAST_BURST 100
+#define DJINN_BLAST_STREAM 2
+/// A drop's picture is a size for every eight frames of its life past these,
+/// no smaller than its mode's smallest.
+#define GEYSER_DROP_SHRUNK_LIFE 16
+/// How far the column leans back.
+#define GEYSER_TILT 2000
 
-/// Copies a palette over the background's 256 colours.
+/// Copies a sheet's 64 colours into the background palette.
 static inline void CopyPalette(const void *palette) {
   Iwram_CopyWordsEntry((void *)BG_PLTT, palette, SHEET_PALETTE_BYTES);
 }
@@ -649,13 +746,12 @@ static inline void CopyPalette(const void *palette) {
 /// A geyser between the targets. A textured column, its texture scrolling
 /// upward, stands on the floor at the targets' midpoint, and drops burst
 /// from its foot, fall back under gravity and bounce once on the floor.
-/// Mode 0: the cross texture in orange; the column rises and
-/// falls on a sine and 200 drops burst at once. Mode 1: the
-/// column keeps widening and fades from frame 32, with 200 drops and 16 more
-/// each frame to frame 23. Mode 2: a thin column with 100 drops
-/// and 2 more each frame. In modes 1 and 2 the palette also steps through
-/// the Mercury, Mars and Jupiter Djinn's. At frame 20 the target is knocked
-/// back and the result phase starts.
+/// Purgatory's is the cross texture in orange; its column rises and falls on
+/// a sine and 200 drops burst at once. Djinn Storm's column keeps widening
+/// and fades from frame 32, with 200 drops and 16 more each frame to frame
+/// 23; Djinn Blast's is thin, with 100 drops and 2 more each frame. Theirs
+/// also step the palette through the Mercury, Mars and Jupiter Djinn's. At
+/// frame 20 the target is knocked back and the result phase starts.
 void BattleEffect_RunGeyser(struct BattleEffectParams *args, s32 mode) {
   struct ModelTexture texture;
   DrawRectangle draw[2];
@@ -670,11 +766,11 @@ void BattleEffect_RunGeyser(struct BattleEffectParams *args, s32 mode) {
   s32 i;
   s32 count;
   s32 scale;
-  s32 brightness;
+  s32 shade;
 
   BattleEffect_StartCanvasLayer(BGCNT_PRIORITY(1));
   if (mode == GEYSER_PURGATORY)
-    REG_BLDALPHA = BLEND_ALPHA(16, 12);
+    REG_BLDALPHA = BLEND_ALPHA(BLEND_WEIGHT_MAX, 12);
   else
     REG_BLDALPHA = EFFECT_BLEND_ADD;
   BattleEffect_FetchRectangleBlitters(0, draw);
@@ -714,10 +810,10 @@ void BattleEffect_RunGeyser(struct BattleEffectParams *args, s32 mode) {
 
         spawned = 0;
         i = 0;
-        life = ((s32 *)(Ram_MapCellBuffer + 24));
+        life = &GEYSER_DROPS->variant;
         for (; i != DROP_COUNT; i++) {
           *life = -1;
-          life += 7;
+          life += sizeof(struct Particle) / sizeof(*life);
         }
       }
 
@@ -741,22 +837,22 @@ void BattleEffect_RunGeyser(struct BattleEffectParams *args, s32 mode) {
       count = 0;
       if (mode == GEYSER_DJINN_BLAST) {
         if (frame == 0)
-          count = 100;
+          count = DJINN_BLAST_BURST;
         if (frame >= 1 && frame < 24)
-          count = 2;
+          count = DJINN_BLAST_STREAM;
       } else {
         if (frame == 0)
-          count = 200;
+          count = GEYSER_BURST;
         if (mode == GEYSER_DJINN_STORM || mode == GEYSER_DJINN_BLAST) {
           if (frame >= 1 && frame < 24)
-            count = 16;
+            count = GEYSER_STREAM;
         }
       }
       for (i = 0; i != count; i++, spawned++) {
         s32 speed;
         s32 angle;
 
-        drop = &((struct Particle *)Ram_MapCellBuffer)[spawned & 511];
+        drop = &GEYSER_DROPS[spawned & (DROP_COUNT - 1)];
         speed = (Random16() & 1023) + 32;
         angle = (Random16() & 0x7fff) - DEGtoANG(90);
         drop->x = INTtoFIXED(midpoint.x / 2);
@@ -771,7 +867,7 @@ void BattleEffect_RunGeyser(struct BattleEffectParams *args, s32 mode) {
 
       // Each drop falls, bounces off the floor at y 120, and is drawn while
       // it is on the canvas, its cel shrinking as it burns down.
-      drop = (struct Particle *)Ram_MapCellBuffer;
+      drop = GEYSER_DROPS;
       for (i = 0; i != DROP_COUNT; i++, drop++) {
         if (drop->variant > 0) {
           s32 x;
@@ -784,7 +880,7 @@ void BattleEffect_RunGeyser(struct BattleEffectParams *args, s32 mode) {
             drop->velocityY = -drop->velocityY / 2;
           } else if (drop->x >= 0 && (x = FIXEDtoINT(drop->x)) <= 126 &&
                      drop->y >= 0) {
-            s32 size = (drop->variant - 16) / 8;
+            s32 size = (drop->variant - GEYSER_DROP_SHRUNK_LIFE) / 8;
 
             if (size < gGeyser_DropMinSizes[mode])
               size = gGeyser_DropMinSizes[mode];
@@ -805,31 +901,33 @@ void BattleEffect_RunGeyser(struct BattleEffectParams *args, s32 mode) {
         column->scrollU = (frame << 2) & 31;
         column->scrollV = (frame << 1) & 31;
         Matrix_Initialize();
-        Matrix_Translate(INTtoFIXED(midpoint.x / 2 - 64), -toFIXED(16), 0);
-        Matrix_RotateX(2000);
+        Matrix_Translate(INTtoFIXED(midpoint.x / 2 - CANVAS_SIZE / 2),
+                         -toFIXED(16), 0);
+        Matrix_RotateX(GEYSER_TILT);
+        // At half brightness, the Djinn's fading from frame 32.
         if (mode == GEYSER_PURGATORY) {
           // Up on a sine in 16 frames, held, and down again from frame 24.
           if (frame < 16)
-            scale = Trig_Sin(frame << 10);
+            scale = Trig_Sin(frame * (TRIG_TURN / 64));
           else if (frame < 24)
             scale = FIXED_ONE;
           else
-            scale = Trig_Sin((frame << 10) - DEGtoANG(45));
-          brightness = -32;
+            scale = Trig_Sin(frame * (TRIG_TURN / 64) - DEGtoANG(45));
+          shade = MODEL_SHADE_INVISIBLE / 2;
         } else if (mode == GEYSER_DJINN_STORM) {
-          // Wider every frame, fading from frame 32.
-          scale = frame << 12;
-          brightness = -32;
+          // Wider every frame.
+          scale = frame * (FIXED_ONE / 16);
+          shade = MODEL_SHADE_INVISIBLE / 2;
           if (frame > 31)
-            brightness = 224 - (frame << 3);
+            shade = 224 - (frame << 3);
         } else {
           scale = FIXED_ONE / 4;
-          brightness = -32;
+          shade = MODEL_SHADE_INVISIBLE / 2;
           if (frame > 31)
-            brightness = 224 - (frame << 3);
+            shade = 224 - (frame << 3);
         }
         column->kind = MODEL_SHADED_ADDITIVE;
-        column->shade = brightness;
+        column->shade = shade;
         column->mesh = gGeyser_Mesh;
         column->texture = &texture;
         column->vertices = vertices;
@@ -861,16 +959,26 @@ void BattleEffect_RunMysticCall(struct BattleEffectParams *args) {
 }
 
 #define STARS_PER_TARGET 64 ///< each target's slice of the star buffer
-#define STAR_TOTAL 384
+#define STAR_TOTAL (6 * STARS_PER_TARGET) ///< six targets' slices
+#define STARS ((struct Particle *)Ram_MapCellBuffer)
+/// The stars of each target's swarm.
+#define DJINN_STUN_STARS 16
+#define MYSTIC_CALL_STARS 48
+/// A star is drawn STAR_LARGEST pixels wide at STAR_NEAR_DEPTH or nearer, a
+/// pixel less for every STAR_DEPTH_STEP deeper, down to 3.
+#define STAR_LARGEST 9
+#define STAR_NEAR_DEPTH 250
+#define STAR_DEPTH_STEP 64
+#define STAR_FAR_DEPTH (STAR_NEAR_DEPTH + 6 * STAR_DEPTH_STEP)
 
 /// Swarms of stars over the targets. Each target gets a swarm, eight frames
 /// after the one before: its stars burst from a point that rises out of it,
 /// each turning about the point on one of four axes and drawn smaller the
 /// deeper it is, and from frame 24 they are pulled back into the point,
 /// each one gone once it has arrived. The palette steps through the
-/// Mercury, Mars and Jupiter Djinn's. Mode 0: 16 stars a target, the
+/// Mercury, Mars and Jupiter Djinn's. Djinn Stun: 16 stars a target, the
 /// target flashes as its swarm starts, and the effect lasts eight frames
-/// a target more than 38. Mode 1: 48 stars, a flash at the start and 55
+/// a target more than 38. Mystic Call: 48 stars, a flash at the start and 55
 /// frames later, 72 frames in all.
 void BattleEffect_RunStarSwarm(struct BattleEffectParams *args, s32 mode) {
   struct BattleEffectWork *work = Ram_HeapSlots->battleEffect;
@@ -922,12 +1030,12 @@ void BattleEffect_RunStarSwarm(struct BattleEffectParams *args, s32 mode) {
         work->particles[i].velocityZ = 0;
       }
       for (i = 0; i != STAR_TOTAL; i++) {
-        struct Particle *star = &((struct Particle *)Ram_MapCellBuffer)[i];
+        struct Particle *star = &STARS[i];
         s32 angle = Random16() & TRIG_ANGLE_MASK;
-        s32 speed = 255; // the mask starts in speed's own register
+        s32 speed = 255;
 
+        // Each star flies off at a random angle and a speed of 128 to 383.
         speed &= Random16();
-
         SET_POSITION(star, 0, INTtoFIXED((Random16() & 31) + 20), 0);
         speed += 128;
         star->velocityX = (Trig_Sin(angle) * speed) >> 5;
@@ -954,14 +1062,14 @@ void BattleEffect_RunStarSwarm(struct BattleEffectParams *args, s32 mode) {
 
     for (member = 0; member != args->targetCount; member++) {
       struct Particle *point = &work->particles[member];
-      s32 start = member;
+      s32 startFrame = member;
       s32 starCount;
 
-      start *= 8;
-      starCount = 16;
+      startFrame *= 8;
+      starCount = DJINN_STUN_STARS;
       if (mode != STAR_SWARM_DJINN_STUN)
-        starCount = 48;
-      if (frame == start) {
+        starCount = MYSTIC_CALL_STARS;
+      if (frame == startFrame) {
         if (mode == STAR_SWARM_DJINN_STUN)
           BattleEffect_TintBattler(args->targets[member], SPRITE_COLOR_WHITE,
                                    POSE_DAMAGE, member, 16);
@@ -969,45 +1077,47 @@ void BattleEffect_RunStarSwarm(struct BattleEffectParams *args, s32 mode) {
           BattleEffect_TintBattler(args->targets[member], SPRITE_COLOR_WHITE,
                                    TINT_KEEP, member, 16);
       }
-      if (frame == start + 55 && mode != STAR_SWARM_DJINN_STUN)
+      if (frame == startFrame + 55 && mode != STAR_SWARM_DJINN_STUN)
         BattleEffect_TintBattler(args->targets[member], SPRITE_COLOR_WHITE,
                                  TINT_KEEP, member, 16);
 
       // The swarm turns about its point, which rises from frame 4.
       Matrix_Initialize();
       Matrix_SetLookAt(camera->eye, camera->focus);
-      if (frame >= start + 4 && start < 44)
+      if (frame >= startFrame + 4 && startFrame < 44)
         Particle_AdvanceWithGravity3D(point, PARTICLE_DAMPING_NONE, 0);
       Matrix_TranslateVector(&point->x);
 
+      // Each star turns about the point on one of four axes, faster the
+      // later it is in the swarm.
       for (i = 0; i != starCount; i++) {
-        struct Particle *star = &((
-            struct Particle *)Ram_MapCellBuffer)[member * STARS_PER_TARGET + i];
+        struct Particle *star = &STARS[member * STARS_PER_TARGET + i];
 
-        if (frame >= i / 8 + start && star->variant == 0) {
+        if (frame >= i / 8 + startFrame && star->variant == 0) {
           s32 size;
 
           Matrix_Push();
           switch ((member + i) & 3) {
-          case STAR_SWARM_DJINN_STUN:
-            Matrix_RotateY(frame * (i + 8) * 32);
+          case 0:
+            Matrix_RotateY(frame * (i + 8) * (TRIG_TURN / 2048));
             break;
-          case STAR_SWARM_MYSTIC_CALL:
-            Matrix_RotateX(-frame * (i + 8) * 32);
+          case 1:
+            Matrix_RotateX(-frame * (i + 8) * (TRIG_TURN / 2048));
             break;
           case 2:
-            Matrix_RotateZ(-frame * (i + 8) * 32);
+            Matrix_RotateZ(-frame * (i + 8) * (TRIG_TURN / 2048));
             break;
           case 3:
-            Matrix_RotateX(-frame * (i + 8) * 32);
-            Matrix_RotateZ(-frame * (i + 8) * 32);
+            Matrix_RotateX(-frame * (i + 8) * (TRIG_TURN / 2048));
+            Matrix_RotateZ(-frame * (i + 8) * (TRIG_TURN / 2048));
             break;
           }
           EffectPosition_ProjectPoint(&star->x, &screen);
           screen.x >>= 1;
           Matrix_Pop();
-          CLAMP(screen.depth, 250, 634);
-          size = 9 - (screen.depth - 250) / 64;
+          CLAMP(screen.depth, STAR_NEAR_DEPTH, STAR_FAR_DEPTH);
+          size =
+              STAR_LARGEST - (screen.depth - STAR_NEAR_DEPTH) / STAR_DEPTH_STEP;
           draw[0](canvas, sparkCels + gBattleEffect_MotePictures[size - 1],
                   screen.x - size / 2, screen.y - size, size, size * 2);
           Particle_AdvanceWithGravity3D(star, 60, 0);
@@ -1041,38 +1151,38 @@ void BattleEffect_RunStarSwarm(struct BattleEffectParams *args, s32 mode) {
   BattleEffect_EndCanvasLayer();
 }
 
-/// Unused: nothing calls it. Opens the canvas layer, sets alpha blending and a
-/// 24-frame palette fade counter (read by Palette_StepFadeTransfer), then runs
-/// the effect body BattleEffect_RunBubbleColumn.
-void BattleEffect_StartBubbleColumn(s32 arg) {
+/// Unused: nothing calls it. Opens the canvas layer added over the battle,
+/// darkens the background behind it, and plays the column of bubbles.
+UNUSED void BattleEffect_StartBubbleColumn(struct BattleEffectParams *args) {
   struct BattleEffectWork *work = Ram_HeapSlots->battleEffect;
 
   BattleEffect_StartCanvasLayer(0);
   REG_BLDCNT = BLDCNT_TGT1_BG2 | BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_ALL;
   REG_BLDALPHA = EFFECT_BLEND_ADD;
-  work->fadeFrames = 24;
+  work->fadeFrames = BACKGROUND_DARKEN_FRAMES;
   work->fadeStep = 0;
-  BattleEffect_RunBubbleColumn(arg);
+  BattleEffect_RunBubbleColumn(args);
 }
-
-// The Lost Age numbers its blitter modes from the other end of The Broken
-// Seal's: additive 0, max 1, transparent 2, copy 3.
 
 #define BUBBLE_COUNT 256
 #define BUBBLE_FRAMES 60
-/// The bubbles past the map cells: each keeps its picture in z and its life in
-/// variant, -1 once it has left the top of the canvas.
+/// The bubbles, in the map cell buffer: each keeps its picture in z and its
+/// life in variant, -1 once it has left the top of the canvas.
 #define BUBBLES ((struct Particle *)(Ram_MapCellBuffer + 20480))
+/// A bubble's variant while it floats: any value from 0 up.
+#define BUBBLE_FLOATING 32
 
-/// A column of bubbles. On the first frame 256 glowing ovals of random size
-/// appear over the bottom left of the canvas; for 60 frames they float up
-/// and drift sideways, drawn with the max blitter in the blue beam's palette,
-/// and each one is gone once it has risen past the top. From frame 18 the
-/// targets flash one by one, eight frames apart, each with the hit sound.
+/// Unused: only BattleEffect_StartBubbleColumn plays it. A column of bubbles.
+/// On the first frame 256 glowing ovals of random size appear below the
+/// canvas; for 60 frames they float up and drift sideways, drawn with the max
+/// blitter in the blue beam's palette, and each one is gone once it has risen
+/// past the top. From frame 18 the targets flash one by one, eight frames
+/// apart, each with the recovery sound.
 void BattleEffect_RunBubbleColumn(struct BattleEffectParams *args) {
   void *canvas = Ram_HeapSlots->battleCanvas;
   struct BattleEffectWork *work = Ram_HeapSlots->battleEffect;
-  // Unused: draw[1] gives the stack frame its 4 bytes.
+  /* LEFTOVER(frame): draw[1], the pair's idle second blitter, which the ROM's
+   * frame reserves and never touches; as one DrawRectangle. */
   DrawRectangle draw[2];
   s32 frame;
   s32 i;
@@ -1102,7 +1212,7 @@ void BattleEffect_RunBubbleColumn(struct BattleEffectParams *args) {
         spawn->velocityX = ((Random16() & 31) - 16) << 13;
         spawn->velocityY = (8 - (Random16() & 31)) << 12;
         spawn->z = (Random16() & 7) + 5;
-        spawn->variant = 32;
+        spawn->variant = BUBBLE_FLOATING;
         spawn++;
       }
     }

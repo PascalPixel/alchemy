@@ -1405,6 +1405,12 @@ struct MeshVertex;
 #define COATLICUE_FLASHES 3
 #define COATLICUE_GLOWS 3
 #define COATLICUE_COILS 2
+/// Each coil leans forward by COATLICUE_COIL_TILT as it starts, the second at
+/// COATLICUE_SECOND_COIL_START, and leans back COATLICUE_COIL_TILT_SPEED a
+/// frame.
+#define COATLICUE_COIL_TILT 3000
+#define COATLICUE_COIL_TILT_SPEED 22
+#define COATLICUE_SECOND_COIL_START 82
 /// The healing's frames after the summon, and how far toward blue it lifts
 /// the battle background.
 #define COATLICUE_WASH_FRAMES 60
@@ -2254,7 +2260,9 @@ void BattleEffect_RunCoatlicue(struct BattleEffectParams *args) {
         }
         if (sh > MODEL_SHADE_INVISIBLE) {
           model->shade = sh;
-          Matrix_RotateX((frame - i * 82) * 22 - 3000);
+          Matrix_RotateX((frame - i * COATLICUE_SECOND_COIL_START) *
+                             COATLICUE_COIL_TILT_SPEED -
+                         COATLICUE_COIL_TILT);
           Matrix_RotateY(-frame * (TRIG_TURN / 64));
           Render_TransformVertices(COATLICUE_COIL_CORNERS, verts,
                                    2 * COATLICUE_COIL_SEGMENTS);

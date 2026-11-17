@@ -59,8 +59,18 @@ s32 MapGrid_CheckCollision(struct Actor *actor, struct FieldPosition *position);
 /// Set once Scoop has dug Crystal out of the sand.
 #define FLAG_YAMPI_DESERT_CAVE_CRYSTAL_DUG_UP FLAG_SCENE_TEMP_71
 /// The ripple's step count, the byte of flags from FLAG_SCENE_TEMP_78: each
-/// thirty-two steps it moves on one row of gYampiDesertCave_RipplePath.
+/// RIPPLE_STEPS_PER_POINT steps it moves on one point of
+/// gYampiDesertCave_RipplePath.
 #define FLAG_BYTE_YAMPI_DESERT_CAVE_RIPPLE_STEP FLAG_SCENE_TEMP_78
+/// The steps the ripple takes at each point of its path.
+#define RIPPLE_STEPS_PER_POINT 32
+
+/// The 16.16 coordinate of an 8-pixel half cell's corner: the ripple's path
+/// is counted in half cells.
+#define FIELD_HALF_CELL_ORIGIN(halfCell) ((halfCell) << 19)
+
+/// The lava cave's battle backdrop, Valukar's battle's.
+extern char ResourceId_LavaCaveBackdrop;
 /// Set once Valukar, the guardian of fire, has been beaten; he is gone.
 #define FLAG_VALUKAR_BEATEN 0x9cd
 
@@ -145,7 +155,7 @@ struct Actor *Actor_FindAtCell(s32 *position, s32 mode);
 u16 gYampiDesertCave_MarkBright BSS_DATA;
 u16 *gYampiDesertCave_MarkCycleSlots BSS_DATA;
 u16 gYampiDesertCave_MarkTimer BSS_DATA;
-u16 gYampiDesertCave_MarkPeriod BSS_DATA ALIGNED(4);
+u16 gYampiDesertCave_MarkDelay BSS_DATA ALIGNED(4);
 u16 *gYampiDesertCave_MarkSlots BSS_DATA;
 u16 *gYampiDesertCave_MarkColors BSS_DATA;
 u16 *gYampiDesertCave_MarkDimColors BSS_DATA;
@@ -369,7 +379,8 @@ void Pound_SinkTarget(u16 *list, s32 mode, s32 count);
 void Teleport_PlaySparks(void);
 
 void YampiDesertCave_PushLog(struct LogSlide slide) {
-  // Read as s32: the load then keeps its place after the argument stores.
+  /* FAKEMATCH(signature): the map work read through the heap slots as words;
+     as Ram_HeapSlots->mapGrid. */
   struct MapWork *map =
       (struct MapWork *)((struct HeapSlotWords *)Ram_HeapSlots)->mapWork;
   s32 w, h;
@@ -493,7 +504,7 @@ void YampiDesertCave_StopLeaderAtLog(struct Actor *actor) {
 /// Keeps the marks' palette lists, colours the marks' palette entries, saves
 /// both palettes for the fade and, arriving by Teleport, plays the arrival.
 void YampiDesertCave_SetMarkColors(u16 *slots, u16 *colours, u16 *a, u16 *b) {
-  u8 *saved = Ram_HeapSlots->paletteFade;
+  struct PaletteFade *fade = Ram_HeapSlots->paletteFade;
 
   gYampiDesertCave_MarkSlots = slots;
   gYampiDesertCave_MarkColors = colours;
@@ -506,8 +517,9 @@ void YampiDesertCave_SetMarkColors(u16 *slots, u16 *colours, u16 *a, u16 *b) {
     int blue = *colours++;
     SET_RGB(BG_PLTT[index], red, green, blue);
   }
-  Dma_Set((const void *)BG_PLTT, saved, DMA_COPY_WORDS(112), REG_DMA3);
-  Dma_Set((const void *)OBJ_PLTT, saved + 448, DMA_COPY_WORDS(112), REG_DMA3);
+  Dma_Set((const void *)BG_PLTT, fade->palette, DMA_COPY_WORDS(112), REG_DMA3);
+  Dma_Set((const void *)OBJ_PLTT, &fade->palette[224], DMA_COPY_WORDS(112),
+          REG_DMA3);
   PaletteFade_SetTarget(FIXED_ONE, 0);
   if (gMainRoutineWork.teleportState == 2)
     YampiDesertCave_ArriveByTeleport();
@@ -517,7 +529,7 @@ void YampiDesertCave_SetMarkColors(u16 *slots, u16 *colours, u16 *a, u16 *b) {
 void YampiDesertCave_StartMarkGlow(void) {
   gYampiDesertCave_MarkCycleIndex = 0;
   gYampiDesertCave_MarkCount = List_CountEntries(gYampiDesertCave_MarkSlots);
-  gYampiDesertCave_MarkPeriod = 15;
+  gYampiDesertCave_MarkDelay = 15;
   gYampiDesertCave_MarkTimer = 16;
   gYampiDesertCave_MarkBright = 1;
   Task_Add(PaletteCycle_Fade, TASK_PASS_FRAME);
@@ -532,7 +544,7 @@ void YampiDesertCave_StopMarkGlow(void) {
 void YampiDesertCave_StartMarkFlash(void) {
   gYampiDesertCave_MarkCycleIndex = 0;
   gYampiDesertCave_MarkCount = List_CountEntries(gYampiDesertCave_MarkSlots);
-  gYampiDesertCave_MarkPeriod = 2;
+  gYampiDesertCave_MarkDelay = 2;
   gYampiDesertCave_MarkTimer = 2;
   gYampiDesertCave_MarkBright = 1;
   Task_Add(PaletteCycle_Fade, TASK_PASS_FRAME);
@@ -551,9 +563,9 @@ void PaletteCycle_Fade(void) {
 
   if (gYampiDesertCave_MarkTimer != 0 && --gYampiDesertCave_MarkTimer == 0) {
     step = 1;
-    gYampiDesertCave_MarkTimer = gYampiDesertCave_MarkPeriod;
-    if (gYampiDesertCave_MarkPeriod > 2)
-      gYampiDesertCave_MarkPeriod--;
+    gYampiDesertCave_MarkTimer = gYampiDesertCave_MarkDelay;
+    if (gYampiDesertCave_MarkDelay > 2)
+      gYampiDesertCave_MarkDelay--;
   }
   if (!step)
     return;
@@ -821,12 +833,13 @@ static __inline__ s32 GameFlag_GetByte_(s32 flag) {
 /// walks.
 void YampiDesertCave_MoveSandRipple(void) {
   s32 step = GameFlag_GetByte_(FLAG_BYTE_YAMPI_DESERT_CAVE_RIPPLE_STEP);
-  s32 index = (step / 32) * 2;
+  s32 index = (step / RIPPLE_STEPS_PER_POINT) * 2;
   s32 column = gYampiDesertCave_RipplePath[index];
   s32 row = gYampiDesertCave_RipplePath[index + 1];
 
   if (Actor_GetById(ACTOR_SAND_RIPPLE)->paused == 0) {
-    Actor_SetPositionFX(ACTOR_SAND_RIPPLE, column << 19, row << 19);
+    Actor_SetPositionFX(ACTOR_SAND_RIPPLE, FIELD_HALF_CELL_ORIGIN(column),
+                        FIELD_HALF_CELL_ORIGIN(row));
     if (Event_GetFlag(FLAG_FIELD_HANDLING_REQUESTS) == 0)
       step++;
     GameFlag_SetByte(FLAG_BYTE_YAMPI_DESERT_CAVE_RIPPLE_STEP, step);
@@ -837,20 +850,23 @@ void YampiDesertCave_MoveSandRipple(void) {
 /// drops to the ground (mode 2).
 void YampiDesertCave_ScoopDjinni(s32 mode) {
   s32 index =
-      (((s32)GameFlag_GetByte(FLAG_BYTE_YAMPI_DESERT_CAVE_RIPPLE_STEP)) / 32) *
+      (((s32)GameFlag_GetByte(FLAG_BYTE_YAMPI_DESERT_CAVE_RIPPLE_STEP)) /
+       RIPPLE_STEPS_PER_POINT) *
       2;
   s16 column = gYampiDesertCave_RipplePath[index];
   s32 px = column * 8;
   s16 row = gYampiDesertCave_RipplePath[index + 1];
   s32 pz = row * 8;
   struct FieldWork *work = Ram_HeapSlots->fieldWork;
-  struct Actor *tracked =
+  // The Scoop's hand, where it digs: the ScoopWork's actor, which only
+  // field_psynergy_scoop.c declares.
+  struct Actor *scoopHand =
       *(struct Actor **)(Ram_HeapSlots->battleEffect + 0x1930);
   s32 x = 0, z = 0;
 
-  if (tracked != NULL) {
-    x = FIELD_CELL(tracked->x.fixed);
-    z = FIELD_CELL(tracked->z.fixed);
+  if (scoopHand != NULL) {
+    x = FIELD_CELL(scoopHand->x.fixed);
+    z = FIELD_CELL(scoopHand->z.fixed);
   }
   if (px / 16 != x || pz / 16 != z)
     return;
@@ -861,7 +877,8 @@ void YampiDesertCave_ScoopDjinni(s32 mode) {
   if (mode == 2) {
     struct Actor *crystal = Actor_GetById(ACTOR_CRYSTAL);
 
-    Actor_SetPositionFX(ACTOR_CRYSTAL, column << 19, row << 19);
+    Actor_SetPositionFX(ACTOR_CRYSTAL, FIELD_HALF_CELL_ORIGIN(column),
+                        FIELD_HALF_CELL_ORIGIN(row));
     crystal->y.fixed = toFIXED(32);
     crystal->motionFlags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
     crystal->gravity = toFIXED(0.09);
@@ -902,11 +919,7 @@ void YampiDesertCave_MeetGuardianOfFire(void) {
   Event_Wait(20);
   gMainRoutineWork.pendingDjinni = IF_FLAG_SET(FLAG_VALUKAR_BEATEN);
   Battle_SetType(BATTLE_TYPE_NO_ESCAPE);
-  // XXX: the battle backdrop is resource 88, the lava cave's
-  // (Battle_LavaCaveBackdrop), a link-time number;
-  // SceneId_AirsRockInsideTightropes is 88 too and stands in until
-  // resource_directory.s names the backdrop.
-  gMainRoutineWork.battleBackground = SCENE_AIRS_ROCK_INSIDE_TIGHTROPES;
+  gMainRoutineWork.battleBackground = (s32)&ResourceId_LavaCaveBackdrop;
   Field_RequestBattleFromEncounterTable(103, 1);
 }
 
@@ -1022,11 +1035,12 @@ s32 Scene_Initialize(void) {
       s32 placed = Event_GetFlag(FLAG_YAMPI_DESERT_CAVE_CRYSTAL_DUG_UP);
 
       if (placed) {
-        step = step / 32 * 2;
+        step = step / RIPPLE_STEPS_PER_POINT * 2;
         Actor_SetPosition(ACTOR_SAND_RIPPLE, 0, 0);
-        Actor_SetPositionFX(ACTOR_CRYSTAL,
-                            gYampiDesertCave_RipplePath[step] << 19,
-                            gYampiDesertCave_RipplePath[step + 1] << 19);
+        Actor_SetPositionFX(
+            ACTOR_CRYSTAL,
+            FIELD_HALF_CELL_ORIGIN(gYampiDesertCave_RipplePath[step]),
+            FIELD_HALF_CELL_ORIGIN(gYampiDesertCave_RipplePath[step + 1]));
       } else {
         if (Event_GetFlag(FLAG_KEEP_PARTY_POSITION))
           GameFlag_SetByte(FLAG_BYTE_YAMPI_DESERT_CAVE_RIPPLE_STEP, 0);

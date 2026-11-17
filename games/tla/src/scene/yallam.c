@@ -32,13 +32,14 @@
 
 #include "shared/tables.h"
 
-/// Set once Force has toppled the log off the Masamune's ledge.
-#define FLAG_YALLAM_LOG_TOPPLED FLAG_AREA_TEMP_00
+/// Set once Force has pushed the log off its ledge, where it now lies as a
+/// step.
+#define FLAG_YALLAM_LOG_FALLEN FLAG_AREA_TEMP_00
 
 /// Yallam's actors, numbering the rows of gYallam_Placements.
 enum YallamActorId {
-  /// The fallen log by the Masamune's ledge: its stump, the log Force
-  /// topples (Yallam_ForcePillarDown) and the log standing before it falls.
+  /// The tree trunk on the ledge: its stump, the log Force pushes off
+  /// (Yallam_ForceLogDown), and a standing log its script hides at once.
   ACTOR_LOG_STUMP = ACTOR_FIRST_PLACED,
   ACTOR_FALLING_LOG,
   ACTOR_STANDING_LOG,
@@ -55,9 +56,9 @@ enum YallamActorId {
   /// "When we lost Yepp, all of Yallam practically fell to pieces."
   ACTOR_VILLAGER_LOST_YEPP,
   /// "Yepp was the one who taught me how to handle a boat."
-  ACTOR_BOATMAN_TAUGHT_BY_YEPP,
+  ACTOR_BOATSMAN_TAUGHT_BY_YEPP,
   /// "Yepp told me the only thing he could teach me was how..."
-  ACTOR_BOATMAN_TAUGHT_LITTLE
+  ACTOR_BOATSMAN_TAUGHT_LITTLE
 };
 
 /// The song game's actors at entrance 15, numbering the rows of
@@ -74,17 +75,34 @@ enum YallamSongGameActorId {
   ACTOR_STORY_CHILD
 };
 
-/// Yallam's hidden treasure, the rows of its item table, numbered from 64.
+/// Yallam's hidden treasure, the rows of its item table.
 enum YallamTreasureActorId {
-  ACTOR_HIDDEN_NUT = 64,
+  ACTOR_HIDDEN_NUT = FIELD_TREASURE_ACTOR,
   ACTOR_HIDDEN_COINS,
   ACTOR_HIDDEN_ANTIDOTE
 };
 
+/// Within this many pixels of the leader a watching child walks on.
+#define WATCHER_LEADER_DISTANCE 11
+/// The pixels within which a watching child turns to whom it watches.
+#define WATCH_RANGE 24
+
+/// Where Cyclone uncovers each treasure spot, in pixels.
+#define ANTIDOTE_SPOT_X 424
+#define ANTIDOTE_SPOT_Z 232
+#define NUT_SPOT_X 680
+#define NUT_SPOT_Z 344
+
+/// The falling log's spin, in angle units a frame: it gains this much each
+/// frame, from rest as it tips off the ledge and from TOPPLE_ROLL_SPIN as it
+/// rolls down.
+#define TOPPLE_SPIN_GAIN 40
+#define TOPPLE_ROLL_SPIN 400
+
 void Yallam_SingMoonSong(void);
 
 void Yallam_SingSunSong(void);
-void Yallam_StartWatchers(void);
+void Yallam_StartWatchingSongGame(void);
 
 void Yallam_ClearFirstSpot(void);
 
@@ -101,12 +119,12 @@ void Yallam_OfferYeppSong(void);
 
 void Yallam_TalkAboutSongGame(void);
 
-void Yallam_ForcePillarDown(void);
+void Yallam_ForceLogDown(void);
 
 void Yallam_DoNothing(void);
 
-extern s32 gYallam_PillarRaised[];
-extern s32 gYallam_PillarSunk[];
+extern s32 gYallam_LogRaised[];
+extern s32 gYallam_StumpLowered[];
 extern u32 gYallam_CirclesChildRuns[];
 extern u32 gYallam_GameChildRuns[];
 extern s16 gYallam_DoorOpening[];
@@ -202,8 +220,8 @@ s32 Yallam_WatchSongGame(struct Actor *actor) {
 
   leader = Actor_Get(gMainRoutineWork.leaderActorId);
 
-  if (SceneActor_CalculateFixedPointDistance(&leader->x.fixed,
-                                             &actor->x.fixed) <= 11) {
+  if (SceneActor_CalculateFixedPointDistance(
+          &leader->x.fixed, &actor->x.fixed) <= WATCHER_LEADER_DISTANCE) {
     actor->paused = 0;
     Actor_SelectAnimation(actor, 2);
     return 0;
@@ -213,11 +231,11 @@ s32 Yallam_WatchSongGame(struct Actor *actor) {
     target = Actor_Get(ACTOR_GAME_CHILD);
   else
     target = Actor_Get(ACTOR_CIRCLES_CHILD);
-  if (Yallam_FaceIfNear(actor, target, 24, 0) == 0) {
+  if (Yallam_FaceIfNear(actor, target, WATCH_RANGE, 0) == 0) {
     leader = Actor_Get(gMainRoutineWork.leaderActorId);
     if ((event->talk != 0 || tiles[4] != 0) && (*flags & 2))
       force = 1;
-    Yallam_FaceIfNear(actor, leader, 24, force);
+    Yallam_FaceIfNear(actor, leader, WATCH_RANGE, force);
   }
   return 0;
 }
@@ -233,12 +251,12 @@ s32 Yallam_WatchSongGame(struct Actor *actor) {
     target = Actor_Get(ACTOR_GAME_CHILD);
   else
     target = Actor_Get(ACTOR_CIRCLES_CHILD);
-  if (Yallam_FaceIfNear(actor, target, 24, 0) == 0) {
+  if (Yallam_FaceIfNear(actor, target, WATCH_RANGE, 0) == 0) {
     struct Actor *leader = Actor_Get(gMainRoutineWork.leaderActorId);
 
     if ((event->talk != 0 || tiles[4] != 0) && (*flags & 2))
       force = 1;
-    Yallam_FaceIfNear(actor, leader, 24, force);
+    Yallam_FaceIfNear(actor, leader, WATCH_RANGE, force);
   }
   return 0;
 }
@@ -276,7 +294,7 @@ void Yallam_EnterDoor(void) {
 
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
-  for (i = ACTOR_FIRST_PLACED; i < 64; i++) {
+  for (i = ACTOR_FIRST_PLACED; i < FIELD_TREASURE_ACTOR; i++) {
     struct Actor *actor = Actor_Get(i);
 
     if (actor != NULL)
@@ -323,9 +341,9 @@ void Yallam_ClearThirdSpot(void) {
 
   FieldTileCopies_CopyTouchedCells(26, 95, 2, 1, 26, 76, 2);
   if (Event_GetFlag(FLAG_YALLAM_ANTIDOTE) == 0) {
-    Actor_SetPosition(ACTOR_HIDDEN_ANTIDOTE, 424, 232);
-    if (FIELD_CELL(leader->x.fixed) == 26 &&
-        FIELD_CELL(leader->z.fixed) == 14) {
+    Actor_SetPosition(ACTOR_HIDDEN_ANTIDOTE, ANTIDOTE_SPOT_X, ANTIDOTE_SPOT_Z);
+    if (FIELD_CELL(leader->x.fixed) == ANTIDOTE_SPOT_X / 16 &&
+        FIELD_CELL(leader->z.fixed) == ANTIDOTE_SPOT_Z / 16) {
       Event_Start();
       FieldEvent_ResolvePendingActions(0);
       Actor_SetAttachedEffect(gMainRoutineWork.leaderActorId,
@@ -348,9 +366,9 @@ void Yallam_ClearFifthSpot(void) {
 
   FieldTileCopies_CopyTouchedCells(67, 25, 3, 3, 106, 20, 1);
   if (Event_GetFlag(FLAG_YALLAM_NUT) == 0) {
-    Actor_SetPosition(ACTOR_HIDDEN_NUT, 680, 344);
-    if (FIELD_CELL(leader->x.fixed) == 42 &&
-        FIELD_CELL(leader->z.fixed) == 21) {
+    Actor_SetPosition(ACTOR_HIDDEN_NUT, NUT_SPOT_X, NUT_SPOT_Z);
+    if (FIELD_CELL(leader->x.fixed) == NUT_SPOT_X / 16 &&
+        FIELD_CELL(leader->z.fixed) == NUT_SPOT_Z / 16) {
       Event_Start();
       FieldEvent_ResolvePendingActions(0);
       Actor_SetAttachedEffect(gMainRoutineWork.leaderActorId,
@@ -1733,8 +1751,8 @@ void Yallam_SingSunSong(void) {
 }
 
 /// Once Force has pushed it, the log lies where it fell.
-void Yallam_PlaceFallenPillar(void) {
-  if (Event_GetFlag(FLAG_YALLAM_LOG_TOPPLED)) {
+void Yallam_PlaceFallenLog(void) {
+  if (Event_GetFlag(FLAG_YALLAM_LOG_FALLEN)) {
     SET_ACTOR_POSITION(Actor_Get(ACTOR_FALLING_LOG), toFIXED(168), 0,
                        toFIXED(192));
   }
@@ -1743,16 +1761,16 @@ void Yallam_PlaceFallenPillar(void) {
 s32 Scene_Initialize(void) {
   if (gMainRoutineWork.next == SCENE_YALLAM) {
     if (gMainRoutineWork.entrance == YALLAM_SONG_GAME)
-      Yallam_StartWatchers();
+      Yallam_StartWatchingSongGame();
     else
-      Yallam_PlaceFallenPillar();
+      Yallam_PlaceFallenLog();
   }
   return 0;
 }
 
 s32 Scene_PrepareMap(void) {
   if (gMainRoutineWork.next == SCENE_YALLAM &&
-      Event_GetFlag(FLAG_YALLAM_LOG_TOPPLED))
+      Event_GetFlag(FLAG_YALLAM_LOG_FALLEN))
     MapGrid_CopyCellAttributes(8, 12, 1, 1, 10, 12);
   return 0;
 }
@@ -1760,49 +1778,49 @@ s32 Scene_PrepareMap(void) {
 /// The Force trigger's first phase, which does nothing here.
 void Yallam_DoNothing(void) {}
 
-/// Force pushes the pillar off its ledge; it tumbles down and lands as a step.
-void Yallam_ForcePillarDown(void) {
+/// Force pushes the log off its ledge; it tumbles down and lands as a step.
+void Yallam_ForceLogDown(void) {
   s32 step;
-  s32 i;
+  s32 frame;
   struct Actor *actor = Actor_Get(ACTOR_FALLING_LOG);
   struct FieldSprite *sprite = actor->sprite;
 
-  Event_SetFlag(FLAG_YALLAM_LOG_TOPPLED);
+  Event_SetFlag(FLAG_YALLAM_LOG_FALLEN);
   actor->acceleration = toFIXED(3) / 2;
   actor->speedLimit = toFIXED(8);
   Event_PlaySound(SE_TOPPLE);
   FieldActor_SetMoveTarget(actor, 176, 40, 184);
   step = 0;
-  for (i = 0; i < 16; i++) {
+  for (frame = 0; frame < 16; frame++) {
     sprite->rotation -= step;
     System_Wait(1);
-    step += 40;
+    step += TOPPLE_SPIN_GAIN;
   }
   FieldActor_SetMoveTarget(actor, 168, 16, 184);
-  step = 400;
-  for (i = 0; i < 26; i++) {
+  step = TOPPLE_ROLL_SPIN;
+  for (frame = 0; frame < 26; frame++) {
     sprite->rotation -= step;
     System_Wait(1);
-    step += 40;
+    step += TOPPLE_SPIN_GAIN;
   }
   FieldActor_WaitForMove(actor);
   FieldEvent_Wait(2);
   Event_PlaySound(SE_LOG_FALL);
-  i = 0;
-  sprite->rotation = i;
+  // The log lies flat and still where it fell.
+  frame = 0;
+  sprite->rotation = frame;
   actor->x.fixed = toFIXED(168);
   actor->z.fixed = toFIXED(192);
-  actor->y.fixed = i;
-  actor->velocityY = i;
-  actor->velocityX = i;
+  actor->y.fixed = frame;
+  actor->velocityY = frame;
+  actor->velocityX = frame;
   MapGrid_CopyCellAttributes(8, 12, 1, 1, 10, 12);
 }
 
-/// Yallam's view of the two objects Yallam_StartWatchers restarts.
-
-/// Hands objects 9 and 10 to Yallam_WatchSongGame's update, object 9 with its
-/// timer at 1 and object 10 at 0.
-void Yallam_StartWatchers(void) {
+/// The circles child and the game child watch the song game
+/// (Yallam_WatchSongGame), the circles child watching the game child and the
+/// game child the circles child.
+void Yallam_StartWatchingSongGame(void) {
   struct Actor *actor = Actor_Get(ACTOR_CIRCLES_CHILD);
   struct Actor *other;
 
@@ -1822,10 +1840,10 @@ void Yallam_ClearThirdSpot(void);
 void Yallam_ClearFifthSpot(void);
 void Yallam_TalkAboutSongCircles(void);
 
-extern s32 gYallam_PillarShadowSunk[];
+extern s32 gYallam_StandingLogLowered[];
 
 /// The log standing on the ledge, raised above its stump.
-s32 gYallam_PillarRaised[] = {
+s32 gYallam_LogRaised[] = {
     SC_ANIMATION(3),
     SC_SET(SW_MOTION, 0),
     SC_ADD(SW_Y, toFIXED(2)),
@@ -1834,7 +1852,7 @@ s32 gYallam_PillarRaised[] = {
 };
 
 /// The fallen log, lowered to where it lies.
-s32 gYallam_PillarSunk[] = {
+s32 gYallam_StumpLowered[] = {
     SC_SET(SW_MOTION, 0),
     SC_ADD(SW_Y, -toFIXED(16)),
     SC_CALL((s32)Yallam_HideSprite),
@@ -1842,7 +1860,7 @@ s32 gYallam_PillarSunk[] = {
 };
 
 /// The standing log's shadow, shrunk and lowered under it.
-s32 gYallam_PillarShadowSunk[] = {
+s32 gYallam_StandingLogLowered[] = {
     SC_SET(SW_SCALE_X, FIXED_ONE * 3 / 5),
     SC_SET(SW_SCALE_Y, FIXED_ONE * 3 / 5),
     SC_SET(SW_MOTION, 0),
@@ -2037,13 +2055,13 @@ u32 gSceneExits[] = {
 /// The village, in YallamActorId order.
 struct ActorPlacement gYallam_Placements[] = {
     ACTOR_PLACEMENT(SPRITE_FALLING_LOG, CONDITION_ALWAYS,
-                    (s32)gYallam_PillarSunk, 184, 0, 200, FACING_WEST,
+                    (s32)gYallam_StumpLowered, 184, 0, 200, FACING_WEST,
                     TALK_FACING_PARTY, 0),
     ACTOR_PLACEMENT(SPRITE_FALLING_LOG, CONDITION_ALWAYS,
-                    (s32)gYallam_PillarRaised, 184, 0, 200, FACING_WEST,
+                    (s32)gYallam_LogRaised, 184, 0, 200, FACING_WEST,
                     TALK_FACING_PARTY, 0),
     ACTOR_PLACEMENT(SPRITE_STANDING_LOG, CONDITION_ALWAYS,
-                    (s32)gYallam_PillarShadowSunk, 8, 0, 8, FACING_WEST,
+                    (s32)gYallam_StandingLogLowered, 8, 0, 8, FACING_WEST,
                     TALK_FACING_PARTY, 0),
     ACTOR_PLACEMENT(SPRITE_SUNSHINES_CHILD, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 616, 0, 216,
                     FACING_SOUTHEAST, TALK_FACING_PARTY_THEN_WATCH, 0),
@@ -2149,18 +2167,18 @@ struct Trigger gYallam_Triggers[] = {
     {TRIGGER_TALK, ACTOR_VILLAGER_PEARL_BED, CONDITION_ALWAYS, MSGNO(MsgYeppFoundThis)},
     {TRIGGER_TALK, ACTOR_VILLAGER_PEARL_DIVERS, CONDITION_ALWAYS, MSGNO(MsgThereUsedTo)},
     {TRIGGER_TALK, ACTOR_VILLAGER_LOST_YEPP, CONDITION_ALWAYS, MSGNO(MsgWhenWeLost)},
-    {TRIGGER_TALK, ACTOR_BOATMAN_TAUGHT_BY_YEPP, CONDITION_ALWAYS, MSGNO(MsgYeppWasThe)},
-    {TRIGGER_TALK, ACTOR_BOATMAN_TAUGHT_LITTLE, CONDITION_ALWAYS, MSGNO(MsgYeppToldMe)},
+    {TRIGGER_TALK, ACTOR_BOATSMAN_TAUGHT_BY_YEPP, CONDITION_ALWAYS, MSGNO(MsgYeppWasThe)},
+    {TRIGGER_TALK, ACTOR_BOATSMAN_TAUGHT_LITTLE, CONDITION_ALWAYS, MSGNO(MsgYeppToldMe)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_VILLAGER_FEW_VISITORS, CONDITION_ALWAYS, MSGNO(MsgYeppWasTheOne)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_VILLAGER_YEPP_DIED, CONDITION_ALWAYS, MSGNO(MsgSingingWithYepp)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_VILLAGER_IF_YEPP_LIVED, CONDITION_ALWAYS, MSGNO(MsgThosePearlsYepp)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_VILLAGER_PEARL_BED, CONDITION_ALWAYS, MSGNO(MsgYeppNeverTold)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_VILLAGER_PEARL_DIVERS, CONDITION_ALWAYS, MSGNO(MsgYeppWasAmazing)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_VILLAGER_LOST_YEPP, CONDITION_ALWAYS, MSGNO(MsgSunshineIsA)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_BOATMAN_TAUGHT_BY_YEPP, CONDITION_ALWAYS, MSGNO(MsgIVeSearched)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_BOATMAN_TAUGHT_LITTLE, CONDITION_ALWAYS, MSGNO(MsgYeppAlwaysSang)},
-    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_FORCE, PSYNERGY_PHASE_BEFORE_CAST), ACTOR_LOG_STUMP, FLAG_YALLAM_LOG_TOPPLED, (s32)(Yallam_DoNothing)},
-    {PSYNERGY_ON_ACTOR(ABILITY_FORCE), ACTOR_LOG_STUMP, FLAG_YALLAM_LOG_TOPPLED, EVENT(Yallam_ForcePillarDown)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_BOATSMAN_TAUGHT_BY_YEPP, CONDITION_ALWAYS, MSGNO(MsgIVeSearched)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_BOATSMAN_TAUGHT_LITTLE, CONDITION_ALWAYS, MSGNO(MsgYeppAlwaysSang)},
+    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_FORCE, PSYNERGY_PHASE_BEFORE_CAST), ACTOR_LOG_STUMP, FLAG_YALLAM_LOG_FALLEN, (s32)(Yallam_DoNothing)},
+    {PSYNERGY_ON_ACTOR(ABILITY_FORCE), ACTOR_LOG_STUMP, FLAG_YALLAM_LOG_FALLEN, EVENT(Yallam_ForceLogDown)},
     {TRIGGER_TABLE_END},
 };
 

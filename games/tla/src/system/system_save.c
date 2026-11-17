@@ -25,6 +25,15 @@ static __inline__ void WaitDma(struct DmaRegisters volatile *channel) {
 /// the payload.
 #define SAVE_HEADER_BYTES sizeof(struct SaveSectorHeader)
 
+/// Where a file's second copy of the play time lies in its part's second
+/// sector: Save_BuildFileSummary writes it to the first word of
+/// gSceneLocalState, which opens the save image's second sector, after the
+/// part's header.
+#define SAVE_SECOND_PLAY_TIME_OFFSET SAVE_HEADER_BYTES
+/// Where The Broken Seal keeps that copy, 256 bytes further into
+/// gSceneLocalState; Save_LoadExtraSummary still reads it there.
+#define SAVE_BROKEN_SEAL_SECOND_PLAY_TIME_OFFSET (SAVE_HEADER_BYTES + 256)
+
 extern const u8 gSave_HeaderTemplate[];
 
 /// Allocates the save workspace (heap slot HEAP_SLOT_SAVE), installs the flash
@@ -42,7 +51,8 @@ s32 Save_InitializeWork(void) {
 
   work = HeapSlot_AllocEwram(HEAP_SLOT_SAVE, sizeof(*work));
   Dma_Fill32(0, work, sizeof(*work));
-  SetFlashTimerIntr(SAVE_FLASH_TIMER, &gIrqHandlers[5]);
+  SetFlashTimerIntr(SAVE_FLASH_TIMER,
+                    &gIrqHandlers[IRQ_TIMER0 + SAVE_FLASH_TIMER]);
 
   for (index = 0; index < SAVE_FLASH_IDENTIFY_ATTEMPTS; index++) {
     if ((u16)IdentifyFlash() == 0)
@@ -61,7 +71,7 @@ s32 Save_InitializeWork(void) {
     work->partId[index] = SAVE_PART_NONE;
     work->counter[index] = 0;
     status = Save_ReadSector(index);
-    SAVE_START_DMA(work->slot, &header, DMA_COPY_WORDS(4));
+    SAVE_START_DMA(work->slot, &header, DMA_COPY_WORDS(SAVE_HEADER_BYTES / 4));
     WAIT_DMA();
     slot = &header;
 
@@ -164,7 +174,7 @@ s32 Save_ReadSector(s32 index) {
   ReadFlash(index, 0, work->slot, SAVE_SECTOR_SIZE);
   ReadFlash(index + 1, 0, work->slot + SAVE_SECTOR_SIZE, SAVE_SECTOR_SIZE);
   ReadFlash(index + 2, 0, work->slot + 2 * SAVE_SECTOR_SIZE, SAVE_SECTOR_SIZE);
-  SAVE_START_DMA(work->slot, &header, DMA_COPY_WORDS(4));
+  SAVE_START_DMA(work->slot, &header, DMA_COPY_WORDS(SAVE_HEADER_BYTES / 4));
   WAIT_DMA();
   return (u16)Save_ChecksumSector() - header.checksum;
 }
@@ -195,7 +205,7 @@ s32 Save_WritePart(s32 partId, void *source) {
   header.partId = partId;
   header.checksum = Save_ChecksumSector();
   header.counter = Save_GetLatestCounter(partId) + 1;
-  SAVE_START_DMA(&header, work->slot, DMA_COPY_WORDS(4));
+  SAVE_START_DMA(&header, work->slot, DMA_COPY_WORDS(SAVE_HEADER_BYTES / 4));
   WAIT_DMA();
   work->sectorCount = 0;
   work->sectorTotal = SAVE_SECTORS_PER_PART;
@@ -207,7 +217,7 @@ s32 Save_WritePart(s32 partId, void *source) {
     return 3;
   if (header.counter > SAVE_COUNTER_LIMIT) {
     header.counter = 1;
-    SAVE_START_DMA(&header, work->slot, DMA_COPY_WORDS(4));
+    SAVE_START_DMA(&header, work->slot, DMA_COPY_WORDS(SAVE_HEADER_BYTES / 4));
     WAIT_DMA();
     if (Save_WriteSector(current) != 0)
       return 4;
@@ -249,7 +259,7 @@ u32 Save_DeletePart(s32 partId) {
   work->sectorCount = 0;
   work->sectorTotal = SAVE_SECTORS_PER_PART;
   result = Save_InvalidateSector(index);
-  return (u32)((0 - result) | result) >> 31;
+  return NONZERO(result);
 }
 
 /// Sums the 12,272 payload bytes of the workspace's three-sector buffer.
@@ -311,7 +321,7 @@ s32 Save_InvalidateSector(s32 index) {
   WAIT_DMA();
   header.partId = SAVE_PART_NONE;
   header.counter = 0;
-  SAVE_START_DMA(&header, work->slot, DMA_COPY_WORDS(4));
+  SAVE_START_DMA(&header, work->slot, DMA_COPY_WORDS(SAVE_HEADER_BYTES / 4));
   WAIT_DMA();
   if (Save_WriteSector(index) != 0)
     return 1;
@@ -369,7 +379,8 @@ s32 Save_LoadFileSummaries(void) {
     slot = Save_FindLatestSector(group);
     if (slot < SAVE_SECTOR_COUNT) {
       ReadFlash(slot, 0, (u8 *)summary, sizeof(*summary));
-      ReadFlash(slot + 1, 16, (u8 *)&summary->secondPartPlayTime,
+      ReadFlash(slot + 1, SAVE_SECOND_PLAY_TIME_OFFSET,
+                (u8 *)&summary->secondPartPlayTime,
                 sizeof(summary->secondPartPlayTime));
       count++;
     }
@@ -392,7 +403,8 @@ s32 Save_LoadExtraSummary(void) {
   index = Save_FindLatestSector(SAVE_PART_EXTRA);
   if (index < SAVE_SECTOR_COUNT) {
     ReadFlash(index, 0, (u8 *)summary, sizeof(*summary));
-    ReadFlash(index + 1, 272, (u8 *)&work->extra.secondPartPlayTime,
+    ReadFlash(index + 1, SAVE_BROKEN_SEAL_SECOND_PLAY_TIME_OFFSET,
+              (u8 *)&work->extra.secondPartPlayTime,
               sizeof(work->extra.secondPartPlayTime));
     return 1;
   }
@@ -402,7 +414,7 @@ s32 Save_LoadExtraSummary(void) {
 /// Removes the flash timer handler and frees the save workspace's heap slot,
 /// with every block allocated after it in the same pool.
 void Save_ReleaseWork(void) {
-  Irq_SetHandler(5, 0, NULL);
+  Irq_SetHandler(IRQ_TIMER0 + SAVE_FLASH_TIMER, 0, NULL);
   HeapSlot_Release(HEAP_SLOT_SAVE);
 }
 

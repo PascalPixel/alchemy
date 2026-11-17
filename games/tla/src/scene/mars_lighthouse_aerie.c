@@ -2925,15 +2925,14 @@ void MarsLighthouseAerie_UpdateRisingRings(struct Actor *actor) {
     sine = Math_Sin(work->heights[i] << 10);
     if (work->heights[i] >= 0) {
       if (work->heights[i] <= 31) {
-        struct Vector3 *p = &position;
 
-        p->x = actor->x.fixed;
-        p->y = actor->y.fixed + (work->heights[i] << 16);
-        p->z = actor->z.fixed;
-        Camera_WorldToScreen(p);
-        x = p->x;
+        position.x = actor->x.fixed;
+        position.y = actor->y.fixed + (work->heights[i] << 16);
+        position.z = actor->z.fixed;
+        Camera_WorldToScreen(&position);
+        x = position.x;
         j = 0;
-        z = p->z;
+        z = position.z;
         sprite = &work->sprites[i * 2];
         for (; j <= 1; j++) {
           sprite->x = x;

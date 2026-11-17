@@ -373,11 +373,10 @@ void Matrix_BuildLookAt(FIXED *eye, FIXED *target, FIXED *out) {
 
   // Copy the dot-product routine to the stack and call it there.
   {
-    u32 *dst = code;
-    dot = (Dot3Fn)dst;
+    dot = (Dot3Fn)code;
     mul = Iwram_MulFX;
     divide = Iwram_UnsignedDivideEntry;
-    Dma_Set(RelocatedInnerProduct, dst, DMA_COPY_WORDS(8), REG_DMA3);
+    Dma_Set(RelocatedInnerProduct, code, DMA_COPY_WORDS(8), REG_DMA3);
   }
 
   // Unit viewing direction d, from target to eye.

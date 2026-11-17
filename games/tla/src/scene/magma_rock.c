@@ -1272,17 +1272,16 @@ void MagmaRockInside_PushBlockOnto(void);
 void MagmaRock_PushPillarEast(void) {
   struct Actor *leader = Actor_Get(gMainRoutineWork.leaderActorId);
   s32 position[3];
-  s32 *cell = position;
   struct Actor *actor;
   u8 *terrainId;
   s32 x;
   s32 z;
   s32 height;
 
-  cell[0] = leader->x.fixed + toFIXED(16);
-  cell[1] = leader->y.fixed;
-  cell[2] = leader->z.fixed;
-  actor = Actor_FindInCell(cell, leader);
+  position[0] = leader->x.fixed + toFIXED(16);
+  position[1] = leader->y.fixed;
+  position[2] = leader->z.fixed;
+  actor = Actor_FindInCell(position, leader);
   MagmaRockInside_ClearBlockCells(actor);
   terrainId = &actor->layer;
   x = FIELD_CELL(actor->x.fixed);
@@ -1297,9 +1296,9 @@ void MagmaRock_PushPillarEast(void) {
                                FIELD_CELL(actor->z.fixed),
                                (actor->groundHeight >> 19) + 4);
   Blocks_MarkCells(gMagmaRock_SalamanderTailUpperPillars);
-  cell[0] = FIELD_CELL(actor->x.fixed);
-  cell[2] = FIELD_CELL(actor->z.fixed);
-  if (cell[0] == 16 && cell[2] == 36)
+  position[0] = FIELD_CELL(actor->x.fixed);
+  position[2] = FIELD_CELL(actor->z.fixed);
+  if (position[0] == 16 && position[2] == 36)
     Event_SetFlag(FLAG_UPPER_PILLAR_PUSHED);
 }
 

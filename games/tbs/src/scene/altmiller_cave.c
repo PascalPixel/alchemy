@@ -577,13 +577,12 @@ static void AltmillerCave_PlaceLight(s32 actorId, s32 radius, s32 angle) {
   FIXED depth = toFIXED(144);
   struct Actor *light = Actor_Get(actorId);
   s32 coordinates[3];
-  s32 *position = coordinates;
 
-  position[0] = centreX;
-  position[2] = centreHeight;
-  Vector_AddPolarOffset(radius, angle, position);
-  light->x.fixed = position[0];
-  light->y.fixed = position[2];
+  coordinates[0] = centreX;
+  coordinates[2] = centreHeight;
+  Vector_AddPolarOffset(radius, angle, coordinates);
+  light->x.fixed = coordinates[0];
+  light->y.fixed = coordinates[2];
   light->z.fixed = depth;
 }
 

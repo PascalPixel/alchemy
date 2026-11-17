@@ -597,14 +597,13 @@ s32 BattleMotion_ProjectPosition(s32 id, s32 *projected) {
 
   BattleCamera_ApplyTransform();
   {
-    s32 *pos = position;
     s32 *out;
 
-    pos[0] = object->x;
+    position[0] = object->x;
     out = projected;
-    pos[1] = object->y;
-    pos[2] = object->z;
-    scaled = Render_ProjectPoint(pos, out);
+    position[1] = object->y;
+    position[2] = object->z;
+    scaled = Render_ProjectPoint(position, out);
   }
   (void)Iwram_MulFX(scaled, record->scale);
   return 0;

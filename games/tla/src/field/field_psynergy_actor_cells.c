@@ -323,13 +323,12 @@ void EffectSprite_DrawAtWorldPosition(struct EffectSprite *sprite,
   s32 screen[3];
 
   if (sprite != 0) {
-    s32 *p = screen;
     s32 *arg;
 
-    p[0] = position[0];
-    arg = p;
-    p[1] = position[1];
-    p[2] = position[2];
+    screen[0] = position[0];
+    arg = screen;
+    screen[1] = position[1];
+    screen[2] = position[2];
     Camera_WorldToScreen(arg);
     sprite->x = screen[0];
     sprite->y = screen[2];

@@ -706,15 +706,15 @@ menu_top:;
         goto link_select;
       }
       {
-        u8 *data = saveData;
         s16 sum;
 
-        encodedSize = FileScreen_PackPasswordData(0, result, data);
-        sum = FileScreen_CalculatePasswordCrc16(encodedSize, data);
+        encodedSize = FileScreen_PackPasswordData(0, result, saveData);
+        sum = FileScreen_CalculatePasswordCrc16(encodedSize, saveData);
         saveData[encodedSize] = (u16)sum >> 8;
         saveData[encodedSize + 1] = sum;
         encodedSize += 2;
-        encodedSize = FileScreen_EncodePassword(data, encodedSize, password);
+        encodedSize =
+            FileScreen_EncodePassword(saveData, encodedSize, password);
       }
       Window_LoadGraphics();
       pageWindow = Window_Create(5, 4, 20, 12, WINDOW_FLAG_INSTANT);

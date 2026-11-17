@@ -430,21 +430,20 @@ void Actor_VanishInSparks(s32 objectId) {
         asm("" : "=r"(drawn) : "0"(drawn));
 
         if ((u32)spark->age < SPARK_LIFE) {
-          s32 *pos = position;
           s32 sparkAngle = spark->angle;
           FIXED radius = spark->radius;
 
-          pos[0] = spark->x;
-          pos[1] = spark->y;
-          pos[2] = spark->z;
-          Vector_AddPolarOffset(radius, sparkAngle, pos);
-          if (pos[2] > actor->z.fixed)
+          position[0] = spark->x;
+          position[1] = spark->y;
+          position[2] = spark->z;
+          Vector_AddPolarOffset(radius, sparkAngle, position);
+          if (position[2] > actor->z.fixed)
             sprite->depth = depth + 2;
           else
             sprite->depth = depth - 2;
-          Camera_WorldToScreen(pos);
-          drawn->x = pos[0];
-          drawn->y = pos[2];
+          Camera_WorldToScreen(position);
+          drawn->x = position[0];
+          drawn->y = position[2];
           drawn->oam.index = tiles + (spark->age & 3) * 2;
           EffectSprite_Draw(drawn);
           spark->angle += TRIG_TURN / 32;

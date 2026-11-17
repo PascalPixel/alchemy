@@ -570,18 +570,18 @@ void ShamanVillage_BlowAwaySand(void) {
       if ((j & 3) == 0) {
         s32 velocity[3];
         struct EffectOptions options;
-        s32 *v = velocity;
 
         options.priority = 1;
         options.update = ShamanVillage_SwirlSandGrain;
-        v[0] = 0;
-        v[2] = -toFIXED(2);
-        v[1] = 0;
+        velocity[0] = 0;
+        velocity[2] = -toFIXED(2);
+        velocity[1] = 0;
         {
           FIXED x = ((Random16() & 127) << 16) + (208 << 15);
 
-          FieldEffect_Spawn(x, 0, (472 - (Random16() & 127)) << 16, v[0], v[1],
-                            v[2], EFFECT_USE_UPDATE | EFFECT_USE_PRIORITY | 1,
+          FieldEffect_Spawn(x, 0, (472 - (Random16() & 127)) << 16, velocity[0],
+                            velocity[1], velocity[2],
+                            EFFECT_USE_UPDATE | EFFECT_USE_PRIORITY | 1,
                             &options);
         }
       }

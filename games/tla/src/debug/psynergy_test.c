@@ -682,15 +682,14 @@ void PsynergyTest_UpdateRings(struct Actor *actor) {
     sine = Math_Sin(work->heights[i] << 10);
     if (work->heights[i] >= 0) {
       if (work->heights[i] < RING_CLIMB) {
-        struct Vector3 *p = &position;
 
-        SET_POSITION(p, actor->x.fixed,
+        SET_POSITION(&position, actor->x.fixed,
                      actor->y.fixed + toFIXED(work->heights[i]),
                      actor->z.fixed);
-        Camera_WorldToScreen(p);
-        x = p->x;
+        Camera_WorldToScreen(&position);
+        x = position.x;
         j = 0;
-        z = p->z;
+        z = position.z;
         sprite = &work->sprites[i * 2];
         for (; j <= 1; j++) {
           sprite->x = x;

@@ -53,7 +53,6 @@ void FieldPsynergy_UpdateRing(void) {
   struct FieldWork *event = Ram_HeapSlots->fieldWork;
   struct Actor *actor = Actor_GetById(gMainRoutineWork.leaderActorId);
   s32 position[3];
-  s32 *pos = position;
   struct FieldPsynergyParticle *entry;
   struct EffectSprite *sprite;
   s32 x;
@@ -64,15 +63,15 @@ void FieldPsynergy_UpdateRing(void) {
   u16 *tile;
   s32 red;
 
-  pos[0] = actor->x.fixed;
-  pos[1] = actor->y.fixed + toFIXED(16);
-  pos[2] = actor->z.fixed;
+  position[0] = actor->x.fixed;
+  position[1] = actor->y.fixed + toFIXED(16);
+  position[2] = actor->z.fixed;
   if (work->orbiting != 0)
-    Vector_AddPolarOffset(toFIXED(2), -(event->ringFrames << 11), pos);
-  Camera_WorldToScreen(pos);
-  x = FIXEDtoINT(pos[0]);
+    Vector_AddPolarOffset(toFIXED(2), -(event->ringFrames << 11), position);
+  Camera_WorldToScreen(position);
+  x = FIXEDtoINT(position[0]);
   gBgScroll[0].x = 64 - x;
-  y = FIXEDtoINT(pos[2]);
+  y = FIXEDtoINT(position[2]);
   gBgScroll[0].y = 64 - y;
   BgMap_DrawClipped16x16(x - 64, y - 64);
 
@@ -110,19 +109,21 @@ void FieldPsynergy_UpdateRing(void) {
       timer = entry->timer;
       if (timer == 0) {
         sprite->angle = Random16();
-        pos[2] = timer;
-        pos[1] = timer;
-        pos[0] = timer;
-        Vector_AddPolarOffset(toFIXED(54), sprite->angle + DEGtoANG(45), pos);
-        SET_POSITION(entry, pos[0], pos[1] + toFIXED(16), pos[2]);
+        position[2] = timer;
+        position[1] = timer;
+        position[0] = timer;
+        Vector_AddPolarOffset(toFIXED(54), sprite->angle + DEGtoANG(45),
+                              position);
+        SET_POSITION(entry, position[0], position[1] + toFIXED(16),
+                     position[2]);
         timer = entry->timer;
       }
       if (timer >= 0) {
         sprite->oam.index = *tile + ((timer >> 2) & 3) * 4;
-        pos[0] = actor->x.fixed + entry->x;
-        pos[1] = actor->y.fixed + entry->y;
-        pos[2] = actor->z.fixed + entry->z;
-        EffectSprite_DrawAtWorldPosition(sprite, pos);
+        position[0] = actor->x.fixed + entry->x;
+        position[1] = actor->y.fixed + entry->y;
+        position[2] = actor->z.fixed + entry->z;
+        EffectSprite_DrawAtWorldPosition(sprite, position);
         timer = entry->timer;
       }
       if ((entry->timer = timer + 1) == 16)

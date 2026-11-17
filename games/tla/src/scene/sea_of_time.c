@@ -593,10 +593,8 @@ void SeaOfTime_CountLaps(void) {
       u32 z;
       u32 x;
 
-      struct EffectOptions *p = &params;
-
-      p->type = SPRITE_SPARKLE;
-      p->priority = 2;
+      params.type = SPRITE_SPARKLE;
+      params.priority = 2;
       x = Random16() & 31;
       z = Random16() & 31;
       Event_PlaySound(SE_GLITTER);
@@ -604,7 +602,7 @@ void SeaOfTime_CountLaps(void) {
       z <<= 16;
       FieldEffect_Spawn(spots.spot[(u16)index].x + x, 0,
                         spots.spot[(u16)index].z + z, 0, toFIXED(1.2), phase,
-                        EFFECT_USE_TYPE | EFFECT_USE_PRIORITY | 1, p);
+                        EFFECT_USE_TYPE | EFFECT_USE_PRIORITY | 1, &params);
     }
   }
   if (gSeaOfTime_LapCount == gSeaOfTime_LapsNeeded[(u16)index]) {

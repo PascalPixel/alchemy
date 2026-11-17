@@ -786,19 +786,18 @@ void JupiterLighthouse_UpdateSparkRing(void) {
       continue;
     {
       FIXED sine = Math_Sin((s32)((spark->age << 15) / duration));
-      s32 *p = position;
-      p[0] = work->from[0] +
-             (work->to[0] - work->from[0]) * spark->age / duration +
-             sine * spark->dx;
+      position[0] = work->from[0] +
+                    (work->to[0] - work->from[0]) * spark->age / duration +
+                    sine * spark->dx;
       sine = Math_Sin((s32)((spark->age << 15) / duration));
-      p[1] = work->from[1] +
-             (work->to[1] - work->from[1]) * spark->age / duration +
-             sine * spark->dy;
-      p[2] =
+      position[1] = work->from[1] +
+                    (work->to[1] - work->from[1]) * spark->age / duration +
+                    sine * spark->dy;
+      position[2] =
           work->from[2] + (work->to[2] - work->from[2]) * spark->age / duration;
-      Camera_WorldToScreen(p);
-      sprite->x = p[0];
-      sprite->y = p[2];
+      Camera_WorldToScreen(position);
+      sprite->x = position[0];
+      sprite->y = position[2];
       JupiterLighthouse_DrawSparkSprite(sprite);
       spark->age++;
     }

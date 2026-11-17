@@ -948,7 +948,7 @@ void BattleEffect_RunGaspFamily(struct BattleEffectParams *args, s32 mode) {
           SET_POSITION(p, INTtoFIXED(pos.x / 2),
                        INTtoFIXED(pos.y - (Random16() & 31) - 16), Random16());
         }
-        Sound_PlayFar(SE_619);
+        Sound_PlayFar(SE_BIRD_CALL);
       }
       texture.logWidth = 5;
       texture.logHeight = 5;

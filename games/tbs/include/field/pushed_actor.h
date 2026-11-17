@@ -12,6 +12,10 @@
 /// A pixel step packed as one word: X in the upper halfword, Z in the lower.
 /// Packed through u32, so a negative step is its two's-complement bits.
 #define DIRECTION_STEP(dx, dz) (((u32)(dx) << 16) | ((u32)(dz) & 0xffff))
+/// A DIRECTION_STEP's X, in pixels.
+#define DIRECTION_STEP_X(step) ((s32)(step) >> 16)
+/// A DIRECTION_STEP's Z, in pixels.
+#define DIRECTION_STEP_Z(step) ((s16)(step))
 
 /// Where a pushed actor ahead of the leader would roll to: its footprint, its
 /// actor, that position, and a routine run during the leader's

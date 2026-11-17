@@ -116,10 +116,10 @@ gScene_AreaNameRules:
 	area_name AREA_TEST_5, -1, 90
 	area_name AREA_TEST_6, -1, 91
 	area_name AREA_TEST_7, -1, 92
-	scene_name Level, 96, 93
-	scene_name Level, 97, 93
-	scene_name Level, 98, 93
-	scene_name Level, 99, 93
+	scene_name IconTest, 96, 93
+	scene_name IconTest, 97, 93
+	scene_name IconTest, 98, 93
+	scene_name IconTest, 99, 93
 	area_name AREA_ICON_TEST, -1, 94
 	area_name AREA_PSYNERGY_TEST, -1, 95
 	area_name AREA_PSYNERGY_TEST_2, -1, 96

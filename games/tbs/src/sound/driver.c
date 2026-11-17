@@ -23,10 +23,29 @@ void Clear64byte(void *block) {
                   *(&gMPlayJumpTable[MPLAY_JUMP_CLEAR_64BYTE]))(block);
 }
 
-/// The VBlank rate in ten-thousandths of a hertz: 59.7275 VBlanks a second.
+/// The VBlank rate in ten-thousandths of a hertz (SOUND_RATE_E4_UNIT): 59.7275
+/// VBlanks a second.
 #define SOUND_VBLANK_RATE_E4 597275
+#define SOUND_RATE_E4_UNIT 10000
 /// CPU cycles from one VBlank to the next: 228 lines of 1232 cycles.
 #define SOUND_CYCLES_PER_VBLANK (228 * 1232)
+/// 1.0 in the 24-bit fixed point SampleFreqSet takes the rate's reciprocal in.
+#define SOUND_RATE_STEP_ONE (1 << 24)
+
+/// The PCM notes and volume SoundInit starts with, until m4aSoundInit sets the
+/// game's mode: 8 notes at full volume.
+enum { SOUND_INITIAL_PCM_NOTE_COUNT = 8, SOUND_PCM_VOLUME_MAX = 15 };
+
+/// What m4aSoundVSyncOff adds to the work's ident while the FIFO transfers are
+/// stopped, so that nothing else takes the driver until m4aSoundVSyncOn.
+enum { SOUND_IDENT_VSYNC_OFF = 10 };
+
+/// A sound FIFO DMA's control word while it feeds its FIFO at each request.
+#define SOUND_DMA_REPEATING (DMA_REPEAT << 16)
+/// Rearms a sound FIFO's DMA for four words at once, not repeated, which
+/// leaves it stopped.
+#define SOUND_DMA_LAST_TRANSFER                                                \
+  ((DMA_ENABLE | DMA_32BIT | DMA_DEST_FIXED) << 16 | 4)
 
 /// Resets the sound hardware, clears the whole sound work block and installs
 /// the default PCM driver: stores `work` in SOUND_INFO_PTR, points the FIFO
@@ -35,30 +54,29 @@ void Clear64byte(void *block) {
 void SoundInit(struct SoundInfo *work) {
   u32 zero;
 
-  // Stop repeat transfers before configuring the stereo FIFO outputs.
   work->ident = 0;
-  if (REG_DMA1CNT & (DMA_REPEAT << 16))
-    REG_DMA1CNT = (DMA_ENABLE | DMA_32BIT | DMA_DEST_FIXED) << 16 | 4;
-  if (REG_DMA2CNT & (DMA_REPEAT << 16))
-    REG_DMA2CNT = (DMA_ENABLE | DMA_32BIT | DMA_DEST_FIXED) << 16 | 4;
+  if (REG_DMA1CNT & SOUND_DMA_REPEATING)
+    REG_DMA1CNT = SOUND_DMA_LAST_TRANSFER;
+  if (REG_DMA2CNT & SOUND_DMA_REPEATING)
+    REG_DMA2CNT = SOUND_DMA_LAST_TRANSFER;
   REG_DMA1CNT_H = DMA_32BIT;
   REG_DMA2CNT_H = DMA_32BIT;
   REG_SOUNDCNT_X = SOUNDCNT_X_ENABLE | SOUNDCNT_X_ALL_TONES_ON;
   REG_SOUNDCNT_H = SOUND_B_FIFO_RESET | SOUND_B_TIMER_0 | SOUND_B_LEFT_OUTPUT |
                    SOUND_A_FIFO_RESET | SOUND_A_TIMER_0 | SOUND_A_RIGHT_OUTPUT |
                    SOUND_ALL_MIX_FULL;
-  REG_SOUNDBIAS_H = (REG_SOUNDBIAS_H & 0x3F) | 0x40;
+  REG_SOUNDBIAS_H =
+      (REG_SOUNDBIAS_H & SOUNDBIAS_H_LEVEL) | SOUNDBIAS_H_RESOLUTION_8BIT;
   REG_DMA1SAD = (u32)work->buffers[0];
   REG_DMA1DAD = (u32)&REG_FIFO_A;
   REG_DMA2SAD = (u32)work->buffers[1];
   REG_DMA2DAD = (u32)&REG_FIFO_B;
-  // Clear the complete work block, then install the PCM driver entries.
   SOUND_INFO_PTR = work;
   zero = 0;
   Bios_CpuSet(&zero, work,
               CPU_SET_SRC_FIXED | CPU_SET_32BIT | sizeof(struct SoundInfo) / 4);
-  work->pcmNoteCount = 8;
-  work->volume = 15;
+  work->pcmNoteCount = SOUND_INITIAL_PCM_NOTE_COUNT;
+  work->volume = SOUND_PCM_VOLUME_MAX;
   work->noteOn = ply_note;
   work->cgbUpdate = DummyFunc;
   work->cgbMute = (void (*)(u8))DummyFunc;
@@ -74,13 +92,12 @@ void SoundInit(struct SoundInfo *work) {
 
 /// Sets the PCM rate in samples a VBlank (`mode` bits 16 to 19 pick a
 /// gPcmSamplesPerVBlankTable entry) and the rates derived from it, and Timer
-/// 0's reload, starting playback at scanline 159.
+/// 0's reload, starting it as the last line is drawn.
 void SampleFreqSet(u32 mode) {
   struct SoundInfo *work = SOUND_INFO_PTR;
   u32 pcmSamplesPerVBlank;
   volatile u16 *timer;
 
-  // Convert the selected rate into mixer and timer increments.
   mode = (mode & SOUND_MODE_FREQ) >> SOUND_MODE_FREQ_SHIFT;
   work->rate = mode;
   pcmSamplesPerVBlank = gPcmSamplesPerVBlankTable[mode - 1];
@@ -88,19 +105,20 @@ void SampleFreqSet(u32 mode) {
   // VBlanks the DMA plays before the buffer wraps, and the sample rate in hertz
   // (rounded), and half its reciprocal in 24-bit fixed point
   work->transferPeriod = __divsi3(SOUND_PCM_BUFFER_SIZE, pcmSamplesPerVBlank);
-  work->outputRate =
-      __divsi3(SOUND_VBLANK_RATE_E4 * pcmSamplesPerVBlank + 5000, 10000);
-  work->rateStep = (__divsi3(16777216, work->outputRate) + 1) >> 1;
+  work->outputRate = __divsi3(SOUND_VBLANK_RATE_E4 * pcmSamplesPerVBlank +
+                                  SOUND_RATE_E4_UNIT / 2,
+                              SOUND_RATE_E4_UNIT);
+  work->rateStep = (__divsi3(SOUND_RATE_STEP_ONE, work->outputRate) + 1) >> 1;
   // Timer 0 counts the CPU cycles of one sample: it overflows, and the FIFOs
   // take their next sample, pcmSamplesPerVBlank times a VBlank.
   REG_TM0CNT_H = 0;
   timer = &REG_TM0CNT_L;
   *timer = -__divsi3(SOUND_CYCLES_PER_VBLANK, pcmSamplesPerVBlank);
   m4aSoundVSyncOn();
-  // Wait out a line 159 already begun, then for the next one to begin.
-  while (*(volatile u8 *)&REG_VCOUNT == 159)
+  // Wait out the last line drawn if it has begun, then for it to begin anew.
+  while (*(volatile u8 *)&REG_VCOUNT == DISPLAY_HEIGHT - 1)
     ;
-  while (*(volatile u8 *)&REG_VCOUNT != 159)
+  while (*(volatile u8 *)&REG_VCOUNT != DISPLAY_HEIGHT - 1)
     ;
   REG_TM0CNT_H = TIMER_ENABLE;
 }
@@ -134,12 +152,11 @@ void m4aSoundMode(u32 mode) {
   modeField = mode & SOUND_MODE_MASVOL;
   if (modeField != 0)
     work->volume = modeField >> SOUND_MODE_MASVOL_SHIFT;
-  // Bits 21..20 are the sound bias's resolution, into REG_SOUNDBIAS_H bits
-  // 7..6 (SOUNDBIAS bits 15..14); bit 23 lets a mode ask for resolution 0.
   modeField = mode & SOUND_MODE_DA_BIT;
   if (modeField != 0) {
-    modeField = (modeField & 0x300000) >> 14;
-    REG_SOUNDBIAS_H = (REG_SOUNDBIAS_H & 0x3F) | modeField;
+    modeField = (modeField & SOUND_MODE_DA_BIT_RESOLUTION) >>
+                (SOUND_MODE_DA_BIT_SHIFT - SOUNDBIAS_H_RESOLUTION_SHIFT);
+    REG_SOUNDBIAS_H = (REG_SOUNDBIAS_H & SOUNDBIAS_H_LEVEL) | modeField;
   }
   modeField = mode & SOUND_MODE_FREQ;
   if (modeField != 0) {
@@ -183,7 +200,7 @@ UNUSED void SoundClear(void) {
 }
 
 /// Stops both FIFO transfers and clears their sample buffers, raising the
-/// work's ident by 10 until m4aSoundVSyncOn.
+/// work's ident by SOUND_IDENT_VSYNC_OFF until m4aSoundVSyncOn.
 void m4aSoundVSyncOff(void) {
   struct SoundInfo *work = SOUND_INFO_PTR;
   u32 zero;
@@ -192,11 +209,11 @@ void m4aSoundVSyncOff(void) {
   // suspended; a suspended or uninitialized driver is left as it is.
   if (work->ident - ID_NUMBER > 1)
     return;
-  work->ident += 10;
-  if (REG_DMA1CNT & (DMA_REPEAT << 16))
-    REG_DMA1CNT = (DMA_ENABLE | DMA_32BIT | DMA_DEST_FIXED) << 16 | 4;
-  if (REG_DMA2CNT & (DMA_REPEAT << 16))
-    REG_DMA2CNT = (DMA_ENABLE | DMA_32BIT | DMA_DEST_FIXED) << 16 | 4;
+  work->ident += SOUND_IDENT_VSYNC_OFF;
+  if (REG_DMA1CNT & SOUND_DMA_REPEATING)
+    REG_DMA1CNT = SOUND_DMA_LAST_TRANSFER;
+  if (REG_DMA2CNT & SOUND_DMA_REPEATING)
+    REG_DMA2CNT = SOUND_DMA_LAST_TRANSFER;
   REG_DMA1CNT_H = DMA_32BIT;
   REG_DMA2CNT_H = DMA_32BIT;
   zero = 0;
@@ -204,8 +221,8 @@ void m4aSoundVSyncOff(void) {
               CPU_SET_SRC_FIXED | CPU_SET_32BIT | sizeof(work->buffers) / 4);
 }
 
-/// Restarts both FIFO transfers and takes the 10 m4aSoundVSyncOff added off
-/// the work's ident.
+/// Restarts both FIFO transfers and takes SOUND_IDENT_VSYNC_OFF back off the
+/// work's ident.
 void m4aSoundVSyncOn(void) {
   struct SoundInfo *work = SOUND_INFO_PTR;
   u32 ident = work->ident;
@@ -215,7 +232,7 @@ void m4aSoundVSyncOn(void) {
   REG_DMA1CNT_H = DMA_ENABLE | DMA_START_SPECIAL | DMA_REPEAT | DMA_32BIT;
   REG_DMA2CNT_H = DMA_ENABLE | DMA_START_SPECIAL | DMA_REPEAT | DMA_32BIT;
   work->transferCountdown = 0;
-  work->ident = ident - 10;
+  work->ident = ident - SOUND_IDENT_VSYNC_OFF;
 }
 
 /// Deactivates up to sixteen tracks and links the music player into the
@@ -233,7 +250,6 @@ void MPlayOpen(struct MusicPlayerInfo *player, struct MusicPlayerTrack *tracks,
     return;
   work->ident++;
 
-  // Clear the music player's state and deactivate its tracks.
   Clear64byte(player);
   player->tracks = tracks;
   player->trackCount = trackCount;
@@ -275,16 +291,16 @@ void MPlayStart(struct MusicPlayerInfo *player,
     return;
 
   player->ident++;
-  // Reset song timing and fade state before assigning track streams: tempo
-  // 150 runs a tick a VBlank until the song's tempo command.
+  // Reset song timing and fade state before assigning track streams: a tick a
+  // VBlank until the song's tempo command.
   player->status = 0;
   player->header = header;
   player->voices = header->voices;
   player->priority = header->priority;
   player->clock = 0;
-  player->tempo = 150;
-  player->tempoStep = 150;
-  player->tempoScale = 256;
+  player->tempo = SOUND_TEMPO_PER_TICK;
+  player->tempoStep = SOUND_TEMPO_PER_TICK;
+  player->tempoScale = SOUND_TEMPO_SCALE_NORMAL;
   player->tempoCount = 0;
   player->fadePeriod = 0;
 
@@ -381,6 +397,19 @@ void FadeOutBody(struct MusicPlayerInfo *player) {
   }
 }
 
+/// A track's stereo pan, full left to full right.
+enum { SOUND_PAN_LEFT = -128, SOUND_PAN_RIGHT = 127 };
+/// 1.0 in the factor (SOUND_MODULATION_ONE + modAmount) / SOUND_MODULATION_ONE
+/// by which volume modulation scales a track's volume.
+enum { SOUND_MODULATION_ONE = 128 };
+/// A semitone in a track's pitch, kept in 1/256 semitone, and in its tune and
+/// bend, in 1/64, and its pitch modulation, in 1/16.
+enum {
+  SOUND_PITCH_SEMITONE = 256,
+  SOUND_TUNE_SEMITONE = 64,
+  SOUND_MODULATION_SEMITONE = 16
+};
+
 /// Recalculates dirty stereo volumes and pitch from track settings and
 /// modulation.
 void TrkVolPitSet(struct MusicPlayerInfo *player,
@@ -392,34 +421,53 @@ void TrkVolPitSet(struct MusicPlayerInfo *player,
 
   // Mix the volume modulation and clamped stereo pan: the song's volume
   // times volumeScale (0 to 64) / 32, then shared between the speakers by
-  // pan, -128 (left) to 127 (right).
+  // pan.
   if (track->flags & MPT_FLG_VOLSET) {
     volume = (u32)(track->volume * track->volumeScale) >> 5;
     if (track->modTarget == SOUND_MODULATION_VOLUME)
-      volume = ((track->modAmount + 128) * volume) >> 7;
+      volume = ((track->modAmount + SOUND_MODULATION_ONE) * volume) >> 7;
     pan = track->pan * 2 + track->panOffset;
     if (track->modTarget == SOUND_MODULATION_PAN)
       pan += track->modAmount;
-    if (pan < -128)
-      pan = -128;
-    else if (pan > 127)
-      pan = 127;
-    track->outVolumeA = ((pan + 128) * volume) >> 8;
-    track->outVolumeB = ((127 - pan) * volume) >> 8;
+    if (pan < SOUND_PAN_LEFT)
+      pan = SOUND_PAN_LEFT;
+    else if (pan > SOUND_PAN_RIGHT)
+      pan = SOUND_PAN_RIGHT;
+    track->outVolumeA = ((pan - SOUND_PAN_LEFT) * volume) >> 8;
+    track->outVolumeB = ((SOUND_PAN_RIGHT - pan) * volume) >> 8;
   }
-  // The pitch in 1/256 semitone: tune and bend * bendRange are in 1/64
-  // semitone, the key offsets in semitones and the LFO in 1/16.
+  // The key offsets are in semitones, fine already in 1/256.
   if (track->flags & MPT_FLG_PITSET) {
     bend = track->bend * track->bendRange;
-    pitch = (track->tune + bend) * 4 + (track->keyOffsetA * 256) +
-            (track->keyOffsetB * 256) + track->fine;
+    pitch =
+        (track->tune + bend) * (SOUND_PITCH_SEMITONE / SOUND_TUNE_SEMITONE) +
+        (track->keyOffsetA * SOUND_PITCH_SEMITONE) +
+        (track->keyOffsetB * SOUND_PITCH_SEMITONE) + track->fine;
     if (track->modTarget == SOUND_MODULATION_PITCH)
-      pitch += track->modAmount * 16;
+      pitch +=
+          track->modAmount * (SOUND_PITCH_SEMITONE / SOUND_MODULATION_SEMITONE);
     track->pitchHi = pitch >> 8;
     track->pitchLo = pitch;
   }
   track->flags &= ~(MPT_FLG_VOLSET | MPT_FLG_PITSET);
 }
+
+/// The keys the CGB channels play: the noise channel's from its lowest, one
+/// gNoiseTable entry each, and the tone channels' from theirs, one
+/// gCgbScaleTable entry each. A key below a channel's lowest plays it.
+enum {
+  CGB_NOISE_LOWEST_KEY = 21,
+  CGB_NOISE_KEY_COUNT = 60,
+  CGB_TONE_LOWEST_KEY = 36,
+  CGB_TONE_KEY_COUNT = 132
+};
+/// The tone channels' frequency values run below it: a value is it less the
+/// tone's period.
+#define CGB_FREQUENCY_RANGE 2048
+/// A gCgbScaleTable code: its semitone's period in gCgbFreqTable in the low
+/// four bits, and above them the octaves to halve it.
+#define CGB_SCALE_SEMITONE 0x0F
+#define CGB_SCALE_OCTAVE_SHIFT 4
 
 /// Converts a key and fractional pitch to a CGB tone or noise-register value.
 /// Installed as the work's cgbFrequency callback by MPlayExtender.
@@ -428,90 +476,103 @@ s32 MidiKeyToCgbFreq(u8 kind, u8 key, u8 fine) {
   s32 upperFrequency;
 
   if (kind == CGB_CHANNEL_NOISE) {
-    if (key <= 20)
+    if (key < CGB_NOISE_LOWEST_KEY)
       key = 0;
     else {
-      key -= 21;
-      if (key > 59)
-        key = 59;
+      key -= CGB_NOISE_LOWEST_KEY;
+      if (key > CGB_NOISE_KEY_COUNT - 1)
+        key = CGB_NOISE_KEY_COUNT - 1;
     }
     return gNoiseTable[key];
   }
 
-  if (key <= 35) {
+  // The highest key plays as the one below it at the finest pitch under the
+  // next, so that a key above it is always in the table.
+  if (key < CGB_TONE_LOWEST_KEY) {
     fine = 0;
     key = 0;
   } else {
-    key -= 36;
-    if (key > 130) {
-      key = 130;
-      fine = 255;
+    key -= CGB_TONE_LOWEST_KEY;
+    if (key > CGB_TONE_KEY_COUNT - 2) {
+      key = CGB_TONE_KEY_COUNT - 2;
+      fine = SOUND_PITCH_SEMITONE - 1;
     }
   }
-  // A key's code: the low four bits pick the semitone's negative period in
-  // gCgbFreqTable, the high four bits the octaves to halve it.
   lowerFrequency = gCgbScaleTable[key];
-  lowerFrequency = gCgbFreqTable[lowerFrequency & 15] >> (lowerFrequency >> 4);
+  lowerFrequency = gCgbFreqTable[lowerFrequency & CGB_SCALE_SEMITONE] >>
+                   (lowerFrequency >> CGB_SCALE_OCTAVE_SHIFT);
   upperFrequency = gCgbScaleTable[key + 1];
-  upperFrequency = gCgbFreqTable[upperFrequency & 15] >> (upperFrequency >> 4);
+  upperFrequency = gCgbFreqTable[upperFrequency & CGB_SCALE_SEMITONE] >>
+                   (upperFrequency >> CGB_SCALE_OCTAVE_SHIFT);
   return lowerFrequency + ((fine * (upperFrequency - lowerFrequency)) >> 8) +
-         2048;
+         CGB_FREQUENCY_RANGE;
 }
 
-/// Disables one CGB channel using its envelope or wave-control register.
+/// Silences one CGB channel: restarted at volume 0, or for CGB_CHANNEL_WAVE,
+/// stopped.
 void CgbOscOff(u8 channel) {
   switch (channel) {
   case CGB_CHANNEL_SWEEP_SQUARE:
-    REG_NR12 = 8;
-    REG_NR14 = 0x80;
+    REG_NR12 = NRX2_ENVELOPE_UP;
+    REG_NR14 = NRX4_RESTART;
     break;
   case CGB_CHANNEL_SQUARE:
-    REG_NR22 = 8;
-    REG_NR24 = 0x80;
+    REG_NR22 = NRX2_ENVELOPE_UP;
+    REG_NR24 = NRX4_RESTART;
     break;
   case CGB_CHANNEL_WAVE:
     REG_NR30 = 0;
     break;
   default:
-    REG_NR42 = 8;
-    REG_NR44 = 0x80;
+    REG_NR42 = NRX2_ENVELOPE_UP;
+    REG_NR44 = NRX4_RESTART;
     break;
   }
 }
 
-/// Routes a CGB note at least twice as loud on one side to that side only (NR51
-/// bits 0x0f right, 0xf0 left), returning whether it did.
+/// Routes a CGB note at least twice as loud on one side to that side only,
+/// returning whether it did.
 static __inline__ s32 CgbPan(struct CgbChannel *note) {
   u32 right = note->outRight;
   u32 left = note->outLeft;
 
   if ((u8)right >= (u8)left) {
     if ((u8)right / 2 >= (u8)left) {
-      note->panBits = 0x0F;
+      note->panBits = NR51_RIGHT_ALL;
       return 1;
     }
   } else if ((u8)left / 2 >= (u8)right) {
-    note->panBits = 0xF0;
+    note->panBits = NR51_LEFT_ALL;
     return 1;
   }
   return 0;
 }
 
+/// The loudest level a CGB envelope reaches.
+enum { CGB_LEVEL_MAX = 15 };
+/// 1.0 in a note's echo level, the share of its peak held after release.
+enum { SOUND_ECHO_LEVEL_ONE = 256 };
+
 /// Chooses stereo routing and derives peak and sustain levels for a CGB note,
-/// writing them into `note`: peak is the two levels' sum / 16, at most 15 on
-/// one side; sustainLevel is peak * sustain / 16, rounded up.
+/// writing them into `note`: peak is the two levels' sum / 16, at most
+/// CGB_LEVEL_MAX on one side; sustainLevel is peak * sustain / 16, rounded up.
 void CgbModVol(struct CgbChannel *note) {
   if (!CgbPan(note)) {
-    note->panBits = 0xFF;
+    note->panBits = NR51_RIGHT_ALL | NR51_LEFT_ALL;
     note->peak = (u32)(note->outRight + note->outLeft) >> 4;
   } else {
     note->peak = (u32)(note->outRight + note->outLeft) >> 4;
-    if (note->peak > 15)
-      note->peak = 15;
+    if (note->peak > CGB_LEVEL_MAX)
+      note->peak = CGB_LEVEL_MAX;
   }
-  note->sustainLevel = (note->peak * note->sustain + 15) >> 4;
+  note->sustainLevel = (note->peak * note->sustain + CGB_LEVEL_MAX) >> 4;
   note->panBits &= note->channelBits;
 }
+
+/// The VBlanks in which the CGB envelopes take one step more than VBlanks, 16
+/// in 15: 63.7 steps a second, close to the 64 a second the hardware steps its
+/// own envelopes, where one step a VBlank would give 59.7.
+enum { CGB_EXTRA_STEP_PERIOD = 15 };
 
 /// Steps CGB note envelopes and writes changed pitch, volume and trigger
 /// registers, once a VBlank.
@@ -528,13 +589,10 @@ void CgbSound(void) {
   s32 envelopeControl;
   u32 byteMask = 0xff;
 
-  // A second software envelope step once in every 15 VBlanks, 16 steps in 15
-  // VBlanks: 63.7 a second, close to the 64 a second the hardware steps its own
-  // envelopes, where one step a VBlank would give 59.7.
   if (work->c15)
     work->c15--;
   else
-    work->c15 = 14;
+    work->c15 = CGB_EXTRA_STEP_PERIOD - 1;
 
   for (channel = CGB_CHANNEL_SWEEP_SQUARE, note = work->cgbNotes;
        channel <= SOUND_CGB_CHANNEL_COUNT; channel++, note++) {
@@ -592,10 +650,10 @@ void CgbSound(void) {
           *lengthDutyRegister = ((u32)note->wave << 6) + note->length;
           goto init_envelope;
         case CGB_CHANNEL_WAVE:
-          // A new wave: NR30 bit 6 selects the bank the CPU writes, then 0
-          // plays it
+          // A new wave is written into the first bank while the second is
+          // selected, then the first selected.
           if (note->wave != note->loadedWave) {
-            *sweepOrWaveControl = 0x40;
+            *sweepOrWaveControl = NR30_SECOND_BANK;
             REG_WAVE_RAM[0] = note->wave[0];
             REG_WAVE_RAM[1] = note->wave[1];
             REG_WAVE_RAM[2] = note->wave[2];
@@ -604,21 +662,19 @@ void CgbSound(void) {
           }
           *sweepOrWaveControl = 0;
           *lengthDutyRegister = note->length;
-          // The trigger byte: 0x80 restarts the channel, 0x40 lets its length
-          // counter stop it
           if (note->length)
-            note->trigger = 0xc0;
+            note->trigger = NRX4_RESTART | NRX4_LENGTH_STOP;
           else
-            note->trigger = 0x80;
+            note->trigger = NRX4_RESTART;
           break;
         default:
           *lengthDutyRegister = note->length;
           *frequencyOrNoiseRegister = (u32)note->wave << 3;
         init_envelope:
-          // Envelope bit 3 counts the volume up, at the attack's step time
-          envelopeControl = note->attack + 8;
+          // The hardware envelope counts the volume up, at the attack's pace.
+          envelopeControl = note->attack + NRX2_ENVELOPE_UP;
           if (note->length)
-            note->trigger = 0x40;
+            note->trigger = NRX4_LENGTH_STOP;
           else
             note->trigger = 0;
           break;
@@ -663,12 +719,14 @@ void CgbSound(void) {
           note->level--;
           if ((s8)(note->level & byteMask) <= 0) {
           echo:
-            note->level = ((note->peak * note->echoLevel) + 0xff) >> 8;
+            note->level =
+                ((note->peak * note->echoLevel) + SOUND_ECHO_LEVEL_ONE - 1) >>
+                8;
             if (note->level) {
               note->state |= SOUND_CHANNEL_SF_IEC;
               note->modified |= CGB_CHANNEL_MO_VOL;
               if (channel != CGB_CHANNEL_WAVE)
-                envelopeControl = 8;
+                envelopeControl = NRX2_ENVELOPE_UP;
               goto write;
             }
             goto off;
@@ -691,7 +749,7 @@ void CgbSound(void) {
             note->state--;
             note->modified |= CGB_CHANNEL_MO_VOL;
             if (channel != CGB_CHANNEL_WAVE)
-              envelopeControl = 8;
+              envelopeControl = NRX2_ENVELOPE_UP;
             goto sustain;
           }
           note->counter = note->decay;
@@ -726,45 +784,45 @@ void CgbSound(void) {
       if (channel < CGB_CHANNEL_NOISE && (note->kind & 8)) {
         s32 bias = REG_SOUNDBIAS_H;
 
-        // The sound bias's resolution (REG_SOUNDBIAS_H bits 7..6): at 0 or 1
-        // the frequency is rounded to a multiple of 4 or 2
-
-        if (bias < 0x40)
-          note->frequency = (note->frequency + 2) & 0x7fc;
-        else if (bias < 0x80)
-          note->frequency = (note->frequency + 1) & 0x7fe;
+        // At the sound bias's two finest resolutions the frequency is rounded
+        // to a multiple of 4 or 2.
+        if (bias < SOUNDBIAS_H_RESOLUTION_8BIT)
+          note->frequency = (note->frequency + 2) & (CGB_FREQUENCY_RANGE - 4);
+        else if (bias < SOUNDBIAS_H_RESOLUTION_7BIT)
+          note->frequency = (note->frequency + 1) & (CGB_FREQUENCY_RANGE - 2);
       }
       if (channel != CGB_CHANNEL_NOISE)
         *frequencyOrNoiseRegister = note->frequency;
       else
         *frequencyOrNoiseRegister =
             (*frequencyOrNoiseRegister & 8) | note->frequency;
-      // The frequency's top three bits go in the trigger register's low bits
-      note->trigger = (note->trigger & 0xc0) + *((u8 *)&note->frequency + 1);
+      // The frequency's top three bits go in the trigger register's low bits.
+      note->trigger = (note->trigger & (NRX4_RESTART | NRX4_LENGTH_STOP)) +
+                      *((u8 *)&note->frequency + 1);
       *triggerRegister = (s8)(note->trigger & byteMask);
     }
 
     if (note->modified & CGB_CHANNEL_MO_VOL) {
-      // NR51 routes each channel to the left and right speakers
+      // NR51 routes each channel to the left and right speakers.
       REG_NR51 = (REG_NR51 & ~note->channelBits) | note->panBits;
       if (channel == CGB_CHANNEL_WAVE) {
         // CGB_CHANNEL_WAVE has no envelope: its level maps to an NR32 volume
-        // code
+        // code.
         *volumeEnvelopeRegister = gCgb3Vol[note->level];
-        if (note->trigger & 0x80) {
-          *sweepOrWaveControl = 0x80;
+        if (note->trigger & NRX4_RESTART) {
+          *sweepOrWaveControl = NR30_PLAY;
           *triggerRegister = note->trigger;
-          note->trigger &= 0x7f;
+          note->trigger &= ~NRX4_RESTART;
         }
       } else {
-        // NRx2: the starting volume in the high nibble, the envelope below
+        // NRx2: the starting volume in the high nibble, the envelope below.
         envelopeControl &= 0xf;
         *volumeEnvelopeRegister = (note->level << 4) + envelopeControl;
-        *triggerRegister = note->trigger | 0x80;
+        *triggerRegister = note->trigger | NRX4_RESTART;
         // CGB_CHANNEL_SWEEP_SQUARE is restarted a second time unless NR10 bit 3
         // is set (a falling sweep, or 8 alone, no sweep), as in pret's m4a.c.
         if (channel == CGB_CHANNEL_SWEEP_SQUARE && !(*sweepOrWaveControl & 8))
-          *triggerRegister = note->trigger | 0x80;
+          *triggerRegister = note->trigger | NRX4_RESTART;
       }
     }
 
@@ -773,8 +831,8 @@ void CgbSound(void) {
   }
 }
 
-/// Sets the tempo multiplier (256 the song's own tempo) and updates the number
-/// of ticks advanced per VBlank.
+/// Sets the tempo multiplier (SOUND_TEMPO_SCALE_NORMAL the song's own tempo)
+/// and updates the number of ticks advanced per VBlank.
 void m4aMPlayTempoControl(struct MusicPlayerInfo *player, u16 scale) {
   if (player->ident == ID_NUMBER) {
     player->ident++;

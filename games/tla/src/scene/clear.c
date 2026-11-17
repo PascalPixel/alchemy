@@ -1,8 +1,11 @@
 /// @file
-/// The clear-data screen: Golden Sun's data brought over by password or link
-/// cable (Clear_EnterPassword, Clear_ReceiveByLink) and applied to Isaac's
-/// party (Clear_ApplyImportedData), with two secret button codes on its title
-/// (Clear_CheckButtonCodes).
+/// The File Screen overlay (SceneId_Clear), the first thing the player sees
+/// after the title: the Golden Sun logo, the file menu (new game, continue,
+/// copy, erase, the Battle Arena and Update) and what a new game asks. A new
+/// game may bring Golden Sun's data over, by password or link cable
+/// (Clear_EnterPassword, Clear_ReceiveByLink), applied to Isaac's party
+/// (Clear_ApplyImportedData), and two secret button codes on the screen
+/// (Clear_CheckButtonCodes) name more of the party.
 #include "system/task.h"
 #include "flags.h"
 #include "battle/battle.h"
@@ -51,6 +54,50 @@
 #include "item_ids.h"
 #include "djinn_ids.h"
 #include "field/field_sequence.h"
+#include "graphics/text_font.h"
+#include "game/character_ids.h"
+#include "system/save.h"
+
+// The logo the screen shows, as the title's: an 8-bit background on BG2, its
+// map in screen block 6 and its tiles from tile 416 of character block 0.
+#define LOGO_BGCNT (BGCNT_PRIORITY(1) | BGCNT_256_COLORS | BGCNT_SCREEN_BASE(6))
+#define LOGO_MAP ((u16 *)BG_SCREEN_BLOCK(6))
+#define LOGO_FIRST_TILE 416
+#define LOGO_TILES (BG_CHAR_BLOCK(0) + LOGO_FIRST_TILE * TILE_SIZE_8BPP)
+/// The map entry after each row's 30 visible tiles.
+#define LOGO_BLANK_TILE 511
+/// The logo's palette, at the start of its resource before its tiles.
+#define LOGO_PALETTE_COLORS 224
+
+/// The File Screen's entrance from the epilogue, which offers to save the
+/// cleared game (epilogue.c); the title and the Battle Arena come in by 1.
+#define CLEAR_FROM_EPILOGUE 2
+
+/// SceneId_Title's entrances (title.c): the logos and the intro, then this
+/// screen; and the opening credits, then the prologue.
+enum { TITLE_START = 1, TITLE_CREDITS = 8 };
+
+/// The file menu's choices, as FileList_SelectAction returns them
+/// (gMenu_SaveSlotActionByPosition), as The Broken Seal's enum FileAction.
+enum FileAction {
+  SAVE_ACTION_NEW_GAME = 0,
+  SAVE_ACTION_CONTINUE = 1,
+  SAVE_ACTION_COPY = 2,
+  SAVE_ACTION_ERASE = 3,
+  SAVE_ACTION_BATTLE = 4,
+  SAVE_ACTION_UPDATE = 5
+};
+
+/// What the file list chooses a file for (Save_ChooseAndLoadFile), as
+/// window/screens_save.c's enum FileMenuMode: a file not yet cleared to
+/// continue, one for the Battle Arena, a cleared one to start again from, and
+/// one saved before the party reunited, to update.
+enum {
+  FILE_LIST_CONTINUE = 1,
+  FILE_LIST_EXTRA = 4,
+  FILE_LIST_CLEARED = 5,
+  FILE_LIST_UPDATE = 6
+};
 
 /// A question's window, left open for the Yes/No menu below it.
 #define QUESTION_MESSAGE                                                       \
@@ -71,6 +118,8 @@ extern u16 gClear_ButtonCode[];
 extern u16 gClear_ExtraButtonCode[];
 
 s32 Clear_ReceiveByLink(void);
+s32 NameEntry_EditMemberName(s32 member);
+s32 IconMenu_ChooseSendOption(s32 mode);
 
 s32 Clear_EnterPassword(void);
 
@@ -85,7 +134,9 @@ extern u16 gClear_ImportedFlags[];
 
 struct Window;
 
-void DataTransfer_Apply(void *data, s32 a, s32 b);
+/// The third argument, 0 for a new game and 1 for Update, is one
+/// DataTransfer_Apply (game/game_units.c) does not take.
+void DataTransfer_Apply(void *save, s32 byPassword, s32 update);
 void DataTransfer_GiveDefaultDjinn(void);
 void ClearData_Apply(void *data);
 extern u8 gClear_FirstPasswordRow[];
@@ -94,7 +145,6 @@ extern u8 gClear_ThirdPasswordRow[];
 void *Glyph_AddBlankSprite(struct Window *window, void *glyph, s32 x, s32 y);
 
 extern u8 gClear_PasswordGrid[];
-extern u8 Data_02012f94[];
 
 const struct SceneEntrance *Scene_GetEntrances(void) { return gSceneEntrances; }
 
@@ -108,37 +158,39 @@ const struct ActorPlacement *Scene_GetActorPlacements(void) {
 
 const struct Trigger *Scene_GetTriggers(void) { return gSceneEvents; }
 
-/// The logo background, as the title's Title_LoadBackground, then the party
-/// leader's motion flags cleared.
+/// Loads the Golden Sun logo onto BG2 as Title_LoadBackground (title.c) does,
+/// and stops the leader's motion.
 void Clear_LoadBackground(void) {
-  u8 *res;
-  s32 id;
-  u16 *map;
+  u8 *resource;
+  s32 resourceId;
+  u16 *tilemap;
   u32 x;
   u32 y;
   u16 tile;
   struct BgScroll *scroll;
-  s32 blank;
+  s32 blankTile;
 
-  id = RESOURCE_LOGO_ON_BLACK;
+  resourceId = RESOURCE_LOGO_ON_BLACK;
   ScreenFade_ToBlack(0);
-  REG_BG2CNT = BGCNT_PRIORITY(1) | BGCNT_256_COLORS | BGCNT_SCREEN_BASE(6);
+  REG_BG2CNT = LOGO_BGCNT;
   gBgScroll[2].y = 0;
-  blank = 511;
-  res = Resource_GetTableEntry(id);
-  Dma_Set(res, (void *)BG_PLTT, DMA_COPY_WORDS(112), REG_DMA3);
-  res += 448;
-  FieldDecompress_TaggedLz(res, Ram_MapCellBuffer);
-  Dma_Set((void *)Ram_MapCellBuffer, BG_SCREEN_BLOCK(13),
-          DMA_COPY_WORDS(240 * 160 / 4), REG_DMA3);
+  blankTile = LOGO_BLANK_TILE;
+  resource = Resource_GetTableEntry(resourceId);
+  Dma_Set(resource, (void *)BG_PLTT, DMA_COPY_WORDS(LOGO_PALETTE_COLORS / 2),
+          REG_DMA3);
+  resource += LOGO_PALETTE_COLORS * 2;
+  FieldDecompress_TaggedLz(resource, Ram_MapCellBuffer);
+  // A screen's worth of 8-bit tiles.
+  Dma_Set((void *)Ram_MapCellBuffer, LOGO_TILES,
+          DMA_COPY_WORDS(DISPLAY_WIDTH * DISPLAY_HEIGHT / 4), REG_DMA3);
 
-  map = (u16 *)BG_SCREEN_BLOCK(6);
-  tile = 416;
+  tilemap = LOGO_MAP;
+  tile = LOGO_FIRST_TILE;
   for (y = 0; y < 20; y++) {
     for (x = 0; x < 30; x++)
-      *map++ = tile++;
-    *map++ = blank;
-    *map++ = blank;
+      *tilemap++ = tile++;
+    *tilemap++ = blankTile;
+    *tilemap++ = blankTile;
   }
   scroll = gBgScroll;
   for (y = 0; y <= 3; y++) {
@@ -151,9 +203,8 @@ void Clear_LoadBackground(void) {
   Actor_Get(gMainRoutineWork.leaderActorId)->motionFlags = 0;
 }
 
-/// Queues an alpha blend of BG0 and the sprites over the rest whose first
-/// weight rises by one every second frame (the second weight 16 less), and
-/// removes the callback once the first weight passes 15.
+/// The task that fades BG0 and the sprites in over the logo, a step of the
+/// blend every second frame.
 void Clear_FadeInBlend(void) {
   s32 frame;
   u32 level;
@@ -166,9 +217,11 @@ void Clear_FadeInBlend(void) {
                           BLDCNT_TGT2_BG1 | BLDCNT_TGT2_BG2 | BLDCNT_TGT2_BG3 |
                           BLDCNT_TGT2_BD,
                       IO_WRITE_HALFWORD);
-  IO_WRITE_QUEUE_PUSH((u32)&REG_BLDALPHA, ((16 - (u16)level) << 8) | (u16)level,
+  // BLEND_ALPHA(level, BLEND_WEIGHT_MAX - level), the bottom weight first.
+  IO_WRITE_QUEUE_PUSH((u32)&REG_BLDALPHA,
+                      (BLEND_WEIGHT_MAX - (u16)level) << 8 | (u16)level,
                       IO_WRITE_HALFWORD);
-  if (level > 15)
+  if (level >= BLEND_WEIGHT_MAX)
     FieldTask_Remove(Clear_FadeInBlend);
 }
 
@@ -233,7 +286,7 @@ s32 Clear_IsRetreatBlocked(void) {
 
 // The play time the save kept in the scene's own state, which a sound save
 // matches.
-#define gClearSavedPlayTime (*(u32 *)gSceneLocalState)
+#define SAVED_PLAY_TIME (*(u32 *)gSceneLocalState)
 
 s32 Save_ChooseAndLoadFile(s32 mode);
 void Save_CopyFile(void);
@@ -241,7 +294,13 @@ u32 BuildStamp_GetTime(void);
 void InventorySnapshot_Restore(void);
 void StatusScreen_Run(void);
 
-#define MAP_CELL_BACKUP (Ram_MapCellBuffer + 12288)
+/// The game's state as a file holds it, from gSaveBuffer (system/save.h's
+/// save image).
+#define SAVE_IMAGE_BYTES 12288
+/// Where the data a password or link screen brings in waits for
+/// DataTransfer_Apply, as a save image: after the state set aside at the
+/// start of the map cell buffer, free on this screen.
+#define TRANSFERRED_SAVE (Ram_MapCellBuffer + SAVE_IMAGE_BYTES)
 
 #if (LANGUAGE == LANGUAGE_JAPANESE)
 #define YEAH_WIDTH 6
@@ -251,16 +310,19 @@ void StatusScreen_Run(void);
 #define YEAH_WIDTH 8
 #endif
 
-/// Swaps the map cell buffer out around a password or link screen.
-#define COPY_CELLS(to, from) Iwram_CopyWords((s32)(to), (s32)(from), 12288)
-#define SAVE_CELLS()                                                           \
-  u8 *cells = gSaveBuffer;                                                     \
+/// The password and link screens read Golden Sun's data into the game's own
+/// state: KEEP_SAVE_IMAGE sets the state aside in the map cell buffer first,
+/// and RESTORE_SAVE_IMAGE copies what the screen left to TRANSFERRED_SAVE and
+/// puts the state back.
+#define COPY_SAVE_IMAGE(to, from) Iwram_CopyWords(to, from, SAVE_IMAGE_BYTES)
+#define KEEP_SAVE_IMAGE()                                                      \
+  u8 *image = gSaveBuffer;                                                     \
                                                                                \
-  COPY_CELLS(Ram_MapCellBuffer, cells)
-#define RESTORE_CELLS()                                                        \
+  COPY_SAVE_IMAGE(Ram_MapCellBuffer, image)
+#define RESTORE_SAVE_IMAGE()                                                   \
   {                                                                            \
-    COPY_CELLS(MAP_CELL_BACKUP, cells);                                        \
-    COPY_CELLS(cells, Ram_MapCellBuffer);                                      \
+    COPY_SAVE_IMAGE(TRANSFERRED_SAVE, image);                                  \
+    COPY_SAVE_IMAGE(image, Ram_MapCellBuffer);                                 \
   }
 
 /// Goes back to the saved scene and entrance.
@@ -282,30 +344,34 @@ s32 Scene_Initialize(void) {
   gFieldWork->transition = started;
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
-  if (gMainRoutineWork.entrance == 2) {
+  // After the epilogue: the cleared game may be saved, then the title.
+  if (gMainRoutineWork.entrance == CLEAR_FROM_EPILOGUE) {
     do {
       message = (s32)MsgSaveYourAdventure;
-      FieldMessage_Show(message, 5);
+      // "Save your adventure?"
+      FieldMessage_Show(message, FIELD_MESSAGE_ZOOM | FIELD_MESSAGE_KEEP_OPEN);
       i = FieldYesNo_Ask(1);
       Message_CloseFinishedWindows();
-      if (i != 0) {
+      if (i != YES) {
         break;
       }
-      FieldMessage_Show(message + 1, 1);
+      // "You cannot resume your adventure with this data."
+      FieldMessage_Show(message + 1, FIELD_MESSAGE_ZOOM);
+      // Marks the file cleared (SaveFileSummary's sendFlag).
       gMainRoutineWork.sendFlag = 1;
-      Party_AddMember(5);
-      Party_AddMember(6);
-      Party_AddMember(7);
-      Party_AddMember(1);
-      Party_AddMember(2);
-      Party_AddMember(3);
+      Party_AddMember(JENNA);
+      Party_AddMember(SHEBA);
+      Party_AddMember(PIERS);
+      Party_AddMember(GARET);
+      Party_AddMember(IVAN);
+      Party_AddMember(MIA);
       i = Save_ToChosenFile();
     } while (i == -1);
     Event_Wait(60);
     Event_FinishScreenTransition();
     Sound_Play(SOUND_FADE_OUT_BGM);
     Event_Wait(300);
-    Event_SetDestination(SCENE_TITLE, 1);
+    Event_SetDestination(SCENE_TITLE, TITLE_START);
     return 0;
   }
   gSleepDisabled = started;
@@ -314,7 +380,8 @@ top:
   if (result < 0 && gDebugMode) {
     gMainRoutineWork.idleSleepEnabled = 1;
     gIdleSleepEnabled = 1;
-    FieldMessage_ShowCentered(SCENE_DAILA_ROOMS_HOUSES, 1, 8);
+    // "Unable to detect backup memory."
+    FieldMessage_ShowCentered((s32)MsgNoBackupMemory, 1, 8);
   }
   if (result == 0 && !started) {
     wait(30);
@@ -326,24 +393,25 @@ top:
     result = FileList_SelectAction();
   else
     result = 0;
-  if (result == 0) {
+  if (result == SAVE_ACTION_NEW_GAME) {
+    // Felix is named, and with either code Jenna, Sheba and Piers too.
     MainRoutineWork_InitializeDefaults();
     WindowColor_Apply(gMainRoutineWork.windowHue,
                       gMainRoutineWork.windowBrightness);
-    i = 4;
-    limit = 5;
+    i = FELIX;
+    limit = FELIX + 1;
     for (;;) {
       wait(6);
       result = NameEntry_EditMemberName(i);
       if (result == -1) {
-        if (i == 4) {
+        if (i == FELIX) {
           goto top;
         }
         i--;
         continue;
       }
       if (gClear_CodeUnlocked != 0 || gClear_ExtraCodeUnlocked != 0) {
-        limit = 8;
+        limit = PIERS + 1;
       }
       if (++i >= limit) {
         break;
@@ -354,57 +422,58 @@ top:
     FieldMessage_Show((s32)MsgTransferDataFromGoldenSun, QUESTION_MESSAGE);
     result = YesNoMenu_Run(1, 0, 0, 0);
     Message_CloseFinishedWindows();
-    if (result == 0) {
+    if (result == YES) {
       for (;;) {
-        result = IconMenu_ChooseSendOption(0);
+        result = IconMenu_ChooseSendOption(RESOURCE_LAYOUT_TRANSFER_METHOD);
         if (result == -1) {
           goto top;
         }
-        if (result == 1) {
-          SAVE_CELLS();
+        if (result == TRANSFER_METHOD_CABLE) {
+          KEEP_SAVE_IMAGE();
           status = Clear_ReceiveByLink();
           if (status != -1) {
             StatusScreen_Run();
           }
-          RESTORE_CELLS()
+          RESTORE_SAVE_IMAGE()
           if (status == -1) {
             continue;
           }
-          DataTransfer_Apply(MAP_CELL_BACKUP, 0, 0);
-        } else if (result == 0) {
-          SAVE_CELLS();
+          DataTransfer_Apply(TRANSFERRED_SAVE, 0, 0);
+        } else if (result == TRANSFER_METHOD_PASSWORD) {
+          KEEP_SAVE_IMAGE();
           MainRoutineWork_InitializeDefaults();
 #if !TLA_PATCH_2
           status = Clear_EnterPassword();
-          RESTORE_CELLS()
+          RESTORE_SAVE_IMAGE()
           if (status == -1) {
             continue;
           }
 #else
           Clear_EnterPassword();
-          RESTORE_CELLS()
+          RESTORE_SAVE_IMAGE()
 #endif
-          DataTransfer_Apply(MAP_CELL_BACKUP, 1, 0);
+          DataTransfer_Apply(TRANSFERRED_SAVE, 1, 0);
         }
         break;
       }
     } else {
       DataTransfer_GiveDefaultDjinn();
     }
-    i = 0;
-    limit = 1;
+    // Isaac is named, and with the second code Garet, Ivan and Mia too.
+    i = ISAAC;
+    limit = ISAAC + 1;
     for (;;) {
       wait(6);
       result = NameEntry_EditMemberName(i);
       if (result == -1) {
-        if (i == 0) {
+        if (i == ISAAC) {
           goto ask;
         }
         i--;
         continue;
       }
       if (gClear_ExtraCodeUnlocked != 0) {
-        limit = 4;
+        limit = MIA + 1;
       }
       if (++i >= limit) {
         break;
@@ -413,23 +482,25 @@ top:
     if (gAnyFileCleared != 0) {
     save:
       message = (s32)MsgPlayOnEasyLevel;
+      // "Play on EASY level? (Characters start at Lost Age Clear Data levels)"
       FieldMessage_Show(message, QUESTION_MESSAGE);
       i = YesNoMenu_Run(1, (s32)MsgYeah, YEAH_WIDTH, 0);
       Message_CloseFinishedWindows();
-      if (i == 0) {
+      if (i == YES) {
         if (gAnyFileCleared == 0) {
-          FieldMessage_Show(message + 1, 1);
+          // "...Sorry, you have no Clear Data."
+          FieldMessage_Show(message + 1, FIELD_MESSAGE_ZOOM);
         } else {
-          SAVE_CELLS();
-          result = Save_ChooseAndLoadFile(5);
+          KEEP_SAVE_IMAGE();
+          result = Save_ChooseAndLoadFile(FILE_LIST_CLEARED);
           if (result != 0)
             goto save;
           {
             struct MainRoutineWork *party = &gMainRoutineWork;
 
             WindowColor_Apply(party->windowHue, party->windowBrightness);
-            RESTORE_CELLS()
-            ClearData_Apply(MAP_CELL_BACKUP);
+            RESTORE_SAVE_IMAGE()
+            ClearData_Apply(TRANSFERRED_SAVE);
             party->difficulty = 1;
           }
           goto leave;
@@ -439,7 +510,7 @@ top:
       FieldMessage_Show((s32)MsgPlayOnHardLevel, QUESTION_MESSAGE);
       i = YesNoMenu_Run(1, (s32)MsgYeah, YEAH_WIDTH, 0);
       Message_CloseFinishedWindows();
-      if (i == 0) {
+      if (i == YES) {
         Event_SetFlag(FLAG_HARD_LEVEL);
         gMainRoutineWork.difficulty = 2;
         goto leave;
@@ -448,15 +519,15 @@ top:
       FieldMessage_Show((s32)MsgPlayOnNormalLevel, QUESTION_MESSAGE);
       i = YesNoMenu_Run(1, (s32)MsgYeah, YEAH_WIDTH, 0);
       Message_CloseFinishedWindows();
-      if (i != 0)
+      if (i != YES)
         goto save;
     }
   leave:
-    Event_SetDestination(SCENE_TITLE, 8);
+    Event_SetDestination(SCENE_TITLE, TITLE_CREDITS);
     goto finish;
   }
-  if (result == 1) {
-    result = Save_ChooseAndLoadFile(1);
+  if (result == SAVE_ACTION_CONTINUE) {
+    result = Save_ChooseAndLoadFile(FILE_LIST_CONTINUE);
     if (result == -1)
       goto top;
     Event_SetFlag(FLAG_KEEP_PARTY_POSITION);
@@ -468,22 +539,26 @@ top:
         RETURN_TO_SAVED(party)
       } else if (mask = KEY_L | KEY_START, (gInput.held & mask) == mask) {
         if (Clear_IsRetreatBlocked()) {
+          // "Unfortunately, your data could not be recovered."
           FieldMessage_Show((s32)MsgDataCouldNotBeRecovered,
                             FIELD_MESSAGE_ZOOM | FIELD_MESSAGE_LOWER);
           goto top;
         }
         RETURN_TO_SAVED(party)
         Event_SetFlag(FLAG_SAVE_RESTARTED_AT_SANCTUM);
-      } else if (party->playTime != gClearSavedPlayTime) {
+      } else if (party->playTime != SAVED_PLAY_TIME) {
         recovery = (s32)MsgSomeDataIsCorrupted;
+        // "Some data is corrupted and cannot be recovered."
         FieldMessage_Show(recovery, FIELD_MESSAGE_ZOOM | FIELD_MESSAGE_LOWER);
+        // "Do you want to try to recover from a Sanctum?"
         FieldMessage_Show(recovery + 1, QUESTION_MESSAGE);
-        if (YesNoMenu_Run(1, 0, 0, 0) != 0) {
+        if (YesNoMenu_Run(1, 0, 0, 0) != YES) {
           Message_CloseFinishedWindows();
           goto top;
         }
         Message_CloseFinishedWindows();
         if (Clear_IsRetreatBlocked()) {
+          // "Unfortunately, your data could not be recovered."
           FieldMessage_Show(recovery + 2,
                             FIELD_MESSAGE_ZOOM | FIELD_MESSAGE_LOWER);
           goto top;
@@ -495,22 +570,22 @@ top:
     Event_ClearFlag(FLAG_MENU_OPEN);
     goto finish;
   }
-  if (result == 2) {
+  if (result == SAVE_ACTION_COPY) {
     Save_CopyFile();
     goto top;
   }
-  if (result == 3) {
+  if (result == SAVE_ACTION_ERASE) {
     Save_EraseSelectedFile();
     goto top;
   }
-  if (result == 4) {
-    result = Save_ChooseAndLoadFile(4);
+  if (result == SAVE_ACTION_BATTLE) {
+    result = Save_ChooseAndLoadFile(FILE_LIST_EXTRA);
     if (result == -1)
       goto top;
     {
       struct MainRoutineWork *party = &gMainRoutineWork;
 
-      party->leaderActorId = 4;
+      party->leaderActorId = ACTOR_FELIX;
       if (Event_GetFlag(FLAG_TRIAL_ROAD_HOLDS_EQUIPMENT))
         InventorySnapshot_Restore();
       WindowColor_Apply(party->windowHue, party->windowBrightness);
@@ -522,57 +597,58 @@ top:
     }
     goto finish;
   }
-  if (result != 5)
+  if (result != SAVE_ACTION_UPDATE)
     goto top;
 link:
-  result = Save_ChooseAndLoadFile(6);
+  result = Save_ChooseAndLoadFile(FILE_LIST_UPDATE);
   if (result == -1)
     goto top;
   WindowColor_Apply(gMainRoutineWork.windowHue,
                     gMainRoutineWork.windowBrightness);
   for (;;) {
+    // The menu reads only its mode's lowest bit: the transfer method.
     result = IconMenu_ChooseSendOption(2);
     if (result == -1) {
       goto link;
     }
-    if (result == 1) {
-      SAVE_CELLS();
+    if (result == TRANSFER_METHOD_CABLE) {
+      KEEP_SAVE_IMAGE();
       status = Clear_ReceiveByLink();
       if (status != -1) {
         StatusScreen_Run();
       }
-      RESTORE_CELLS()
+      RESTORE_SAVE_IMAGE()
       if (status == -1) {
         continue;
       }
-      DataTransfer_Apply(MAP_CELL_BACKUP, 0, 1);
-    } else if (result == 0) {
-      SAVE_CELLS();
+      DataTransfer_Apply(TRANSFERRED_SAVE, 0, 1);
+    } else if (result == TRANSFER_METHOD_PASSWORD) {
+      KEEP_SAVE_IMAGE();
       MainRoutineWork_InitializeDefaults();
       status = Clear_EnterPassword();
-      RESTORE_CELLS()
+      RESTORE_SAVE_IMAGE()
       if (status == -1) {
         continue;
       }
-      DataTransfer_Apply(MAP_CELL_BACKUP, 1, 1);
+      DataTransfer_Apply(TRANSFERRED_SAVE, 1, 1);
     }
     break;
   }
   if (gClear_CodeUnlocked != 0 || gClear_ExtraCodeUnlocked != 0) {
-    i = 0;
-    limit = 1;
+    i = ISAAC;
+    limit = ISAAC + 1;
     for (;;) {
       wait(6);
       result = NameEntry_EditMemberName(i);
       if (result == -1) {
-        if (i == 0) {
+        if (i == ISAAC) {
           goto link;
         }
         i--;
         continue;
       }
       if (gClear_ExtraCodeUnlocked != 0) {
-        limit = 4;
+        limit = MIA + 1;
       }
       if (++i >= limit) {
         break;
@@ -609,6 +685,24 @@ s32 Scene_PrepareMap(void) { return 0; }
 #define PASSWORD_SYMBOL_MASK 0x3f ///< six bits: 64 symbols
 /// A place of the entered password that holds no symbol yet.
 #define PASSWORD_SYMBOL_EMPTY 99
+/// The checksum's two bytes at the end of each level's
+/// (Clear_CalculatePasswordCrc16).
+#define PASSWORD_CRC_BYTES 2
+#define PASSWORD_CRC_SEED 0xffff
+#define PASSWORD_CRC_POLYNOMIAL 0x1021
+#define PASSWORD_CRC_TOP_BIT 0x8000 ///< of its 16 bits
+/// Where a Gold password's parts start among its bytes: the party's items, 15
+/// a member in nine bits each; their quantities, five bits for each of the 23
+/// items that stack (gClear_ImportedStackItems); and the coins, high byte
+/// first.
+#define PASSWORD_ITEMS_BYTE 39
+#define PASSWORD_QUANTITIES_BYTE 107
+#define PASSWORD_COINS_BYTE 165
+#define PASSWORD_STACK_ITEMS 23
+/// A password glyph's sprite: four tiles, 16 pixels square.
+#define GLYPH_SPRITE_BYTES (4 * TILE_SIZE_4BPP)
+/// A unit's Djinn, djinnHeld to djinnSetCounts.
+#define UNIT_DJINN_BYTES 40
 
 u8 gClear_PasswordText[PASSWORD_GOLD_LENGTH] BSS_DATA;
 u8 gClear_PasswordCodes[60] BSS_DATA;
@@ -623,6 +717,9 @@ struct PasswordWork {
 };
 
 #if (LANGUAGE == LANGUAGE_JAPANESE)
+/// A kana's code with the voiced mark, gFont_MarkGlyphCodes's second.
+#define VOICED(code) ((code) | 1 << TEXT_MARK_SHIFT)
+
 /// The character a cell of the password grid stands for, in the Japanese
 /// font's codes: kana, the voiced ones with the dakuten mark in the high byte.
 void Clear_GetPasswordCharacter(s32 cell, u16 *text) {
@@ -637,15 +734,15 @@ void Clear_GetPasswordCharacter(s32 cell, u16 *text) {
   else if (cell == 44)
     text[0] = 253;
   else if (cell <= 55)
-    text[0] = (cell + 104) | 0x4000;
+    text[0] = VOICED(cell + 104);
   else if (cell == 56)
-    text[0] = 0xe0 | 0x4000;
+    text[0] = VOICED(224);
   else if (cell == 57)
-    text[0] = 0xe3 | 0x4000;
+    text[0] = VOICED(227);
   else if (cell == 58)
-    text[0] = 0xe4 | 0x4000;
+    text[0] = VOICED(228);
   else
-    text[0] = (cell + 175) | 0x4000;
+    text[0] = VOICED(cell + 175);
 }
 #else
 /// The character a cell of the password grid stands for, in the font's
@@ -687,24 +784,31 @@ void Clear_GetPasswordCharacter(s32 cell, u16 *text) {
 }
 #endif
 
-#define RECEIVED_FLAGS (Ram_MapCellBuffer + 12352)
-#define RECEIVED_UNITS (Ram_MapCellBuffer + 12864)
+/// The transferred data's game flags, and its main routine work and what
+/// follows (system/save.h's save image).
+#define TRANSFERRED_FLAGS (TRANSFERRED_SAVE + SAVE_IMAGE_GAME_FLAGS)
+#define TRANSFERRED_MAIN_ROUTINE_WORK                                          \
+  (TRANSFERRED_SAVE + SAVE_IMAGE_MAIN_ROUTINE_WORK)
+/// Where The Broken Seal's save image keeps its units (gCharacterUnits), 32
+/// bytes before this game's SAVE_IMAGE_UNITS: its image from the main routine
+/// work on is copied that much further on, its units landing on this game's.
+#define GOLDEN_SUN_SAVE_IMAGE_UNITS 1280
 
+// The first letter of the greeting this screen answers The Broken Seal with,
+// before V, T and S: the one its FILE_SCREEN_LINK_LANGUAGE_TAG waits for.
 #if (LANGUAGE == LANGUAGE_JAPANESE)
-#define REQUEST_EDITION 'C'
+#define LINK_LANGUAGE_TAG 'C'
 #elif (LANGUAGE == LANGUAGE_GERMAN)
-#define REQUEST_EDITION 'E'
+#define LINK_LANGUAGE_TAG 'E'
 #elif (LANGUAGE == LANGUAGE_SPANISH)
-#define REQUEST_EDITION 'S'
+#define LINK_LANGUAGE_TAG 'S'
 #elif (LANGUAGE == LANGUAGE_FRENCH)
-#define REQUEST_EDITION 'F'
+#define LINK_LANGUAGE_TAG 'F'
 #elif (LANGUAGE == LANGUAGE_ITALIAN)
-#define REQUEST_EDITION 'I'
+#define LINK_LANGUAGE_TAG 'I'
 #else
-#define REQUEST_EDITION 'U'
+#define LINK_LANGUAGE_TAG 'U'
 #endif
-
-#define MSGNO(name) ((s32)(name))
 
 // The windows are as wide as each language's text needs.
 #if (LANGUAGE == LANGUAGE_FRENCH)
@@ -724,9 +828,10 @@ void Clear_GetPasswordCharacter(s32 cell, u16 *text) {
 #define STATUS_WINDOW_WIDTH 20
 #endif
 
-/// Receives clear data over the link cable: waits for a peer with a matching
-/// signature, then for the transfer, and copies the received flags and units
-/// in.
+/// Receives Golden Sun's data over the link cable: waits for The Broken Seal
+/// to greet with "0000", answers with the greeting it waits for, receives its
+/// save image into TRANSFERRED_SAVE and reads the image's flags and units into
+/// the game's state. Returns 1, or -1 when B gives up or the link is lost.
 s32 Clear_ReceiveByLink(void) {
   void *window;
   s32 i, idle, ok, shown;
@@ -736,7 +841,8 @@ s32 Clear_ReceiveByLink(void) {
   u16 *request;
 
   window = Window_Create(RECEIVE_WINDOW_X, 5, RECEIVE_WINDOW_WIDTH, 8, 2);
-  message = MSGNO(MsgFieldPreparingToReceive);
+  // "Preparing to receive", "saved Clear Data" and "B Button: Quit".
+  message = (s32)MsgFieldPreparingToReceive;
   Text_DrawMessage(message, window, 0, 4);
   Text_DrawMessage(message + 1, window, 0, 16);
   Text_DrawMessage(message + 3, window, 0, 36);
@@ -747,12 +853,13 @@ restart:
   goto poll;
 scan:
   if ((gLinkStatus & mask) == mask) {
-    u16 *signature = gLinkPeerSignatures[((REG_SIOCNT << 26) >> 30) ^ 1];
+    u16 *signature = gLinkPeerSignatures[SIO_ID_OF(REG_SIOCNT) ^ 1];
 
-    if (signature[0] == 48 && signature[1] == 48 && signature[2] == 48 &&
-        signature[3] == 48) {
+    // The Broken Seal sets its greeting to "0000" as it waits to send.
+    if (signature[0] == '0' && signature[1] == '0' && signature[2] == '0' &&
+        signature[3] == '0') {
       request = (u16 *)gSerialTransfer.payload;
-      request[0] = REQUEST_EDITION;
+      request[0] = LINK_LANGUAGE_TAG;
       request[1] = 'V';
       request[2] = 'T';
       request[3] = 'S';
@@ -767,7 +874,7 @@ poll:
   goto close;
 receive:
   System_Wait(10);
-  Serial_StartReceive(MAP_CELL_BACKUP);
+  Serial_StartReceive(TRANSFERRED_SAVE);
   System_Wait(10);
   linkMask = 3;
   idle = 0;
@@ -779,7 +886,7 @@ transfer:
     shown = 1;
     Window_Close(window, 2);
     window = Window_Create(STATUS_WINDOW_X, 10, STATUS_WINDOW_WIDTH, 4, 2);
-    Text_DrawMessage(MSGNO(MsgFieldTransferringData), window, 0, 4);
+    Text_DrawMessage((s32)MsgFieldTransferringData, window, 0, 4);
   }
   if (i == 9 && gSerialReceivedSize == 0) {
     request = (u16 *)gSerialTransfer.payload;
@@ -809,7 +916,7 @@ transfer:
 done:
   if (!ok) {
     WindowSprite_PrepareForRedraw(window);
-    Text_DrawMessage(MSGNO(MsgFieldDataTransferWasInterrupted), window, 0, 4);
+    Text_DrawMessage((s32)MsgFieldDataTransferWasInterrupted, window, 0, 4);
     do {
       System_Wait(1);
     } while (!(gInput.pressed & KEY_A));
@@ -822,55 +929,65 @@ done:
   System_Wait(10);
   Window_Close(window, 2);
   flags = gGameFlagBytes;
-  Iwram_CopyWords(flags, RECEIVED_FLAGS, 532);
-  Iwram_CopyWords(flags + 544, RECEIVED_UNITS, 3360);
+  Iwram_CopyWords(flags, TRANSFERRED_FLAGS, 532);
+  Iwram_CopyWords(flags +
+                      (SAVE_IMAGE_MAIN_ROUTINE_WORK - SAVE_IMAGE_GAME_FLAGS) +
+                      (SAVE_IMAGE_UNITS - GOLDEN_SUN_SAVE_IMAGE_UNITS),
+                  TRANSFERRED_MAIN_ROUTINE_WORK, 3360);
   Unit_Calculate(0);
   Unit_Calculate(1);
   Unit_Calculate(2);
   Unit_Calculate(3);
-  Iwram_CopyWords(RECEIVED_FLAGS, flags, 3904);
+  Iwram_CopyWords(TRANSFERRED_FLAGS, flags, 3904);
   FieldWindowColor_Apply(gMainRoutineWork.windowHue,
                          gMainRoutineWork.windowBrightness);
   return 1;
 }
 
 /// This overlay's copy of Window_SetTextTileRect (window/screens_name_entry.c):
-/// sets the field in the tilemap flags of a rectangle of a window, clipped to
-/// the screen.
-void Clear_DrawGridCell(const struct Window *object, s32 x, s32 y, s32 width,
-                        s32 height, u32 field) {
+/// ORs all of `palette` into the palette number of each entry of a rectangle
+/// of a window's tilemap, clipped to the screen, after clearing only its
+/// lowest bit.
+void Clear_DrawGridCell(const struct Window *window, s32 x, s32 y, s32 width,
+                        s32 height, u32 palette) {
   struct WindowWork *work = (struct WindowWork *)Ram_HeapSlots->windowWork;
 
-  x += (s16)object->x + 1;
-  y += (s16)object->y + 1;
-  field <<= 12;
+  x += (s16)window->x + 1;
+  y += (s16)window->y + 1;
+  palette = BG_TILE_PALETTE(palette);
   if (x < 0) {
     width += x;
     x = 0;
   }
-  if (x + width > 29) {
-    width = 30 - x;
+  if (x + width > DISPLAY_TILE_WIDTH - 1) {
+    width = DISPLAY_TILE_WIDTH - x;
   }
   if (y < 0) {
     height += y;
     y = 0;
   }
-  if (y + height > 29) {
-    height = 20 - y;
+  // BUG: tests the bottom against the screen's width, as
+  // Window_SetTextTileRect does.
+#ifdef BUGFIX
+  if (y + height > DISPLAY_TILE_HEIGHT - 1) {
+#else
+  if (y + height > DISPLAY_TILE_WIDTH - 1) {
+#endif
+    height = DISPLAY_TILE_HEIGHT - y;
   }
   if (width > 0 && height > 0) {
     do {
-      u16 *pixel = &work->tilemap[y][x];
+      u16 *cell = &work->tilemap[y][x];
       s32 remaining = width;
 
       while (remaining != 0) {
-        u32 value = *pixel;
+        u32 entry = *cell;
 
-        value &= 0xFFFFEFFF;
-        value |= field;
+        entry &= ~0x1000;
+        entry |= palette;
         remaining--;
-        *pixel = value;
-        pixel++;
+        *cell = entry;
+        cell++;
       }
       height--;
       y++;
@@ -929,10 +1046,11 @@ static inline void Cursor_Show(struct MenuCursor *cursor, s32 x, s32 y) {
 #endif
 
 #if (LANGUAGE == LANGUAGE_JAPANESE)
-/// Draws the kana rows and the key help into the main window.
-#define DRAW_TITLE(window)                                                     \
+/// Draws the kana to choose from and the side column's Space, Return and
+/// Finish into the lower window.
+#define DRAW_KEYS(window)                                                      \
   {                                                                            \
-    message = MSGNO(MsgFieldPasswordKana);                                     \
+    message = (s32)MsgFieldPasswordKana;                                       \
     Text_DrawMessageAsTiles(message++, window, 0, 0);                          \
     Text_DrawMessageAsTiles(message++, window, 0, 8);                          \
     Text_DrawMessageAsTiles(message++, window, 0, 16);                         \
@@ -953,14 +1071,15 @@ static inline void Cursor_Show(struct MenuCursor *cursor, s32 x, s32 y) {
     Text_DrawMessageAsTiles(message, window, 192, 24);                         \
   }
 #else
-/// Draws the password screen's title and key help into the main window.
-#define DRAW_TITLE(window)                                                     \
+/// Draws the symbols to choose from and the side column's Space, Return and
+/// Finish into the lower window.
+#define DRAW_KEYS(window)                                                      \
   {                                                                            \
     Text_DrawStringInWindow(gClear_FirstPasswordRow, window, 0, 0);            \
     Text_DrawStringInWindow(gClear_SecondPasswordRow, window, 0, 8);           \
     Text_DrawStringInWindow(gClear_ThirdPasswordRow, window, 0, 16);           \
     Text_DrawStringInWindow(gClear_FourthPasswordRow, window, 0, 24);          \
-    message = MSGNO(MsgFieldSpace);                                            \
+    message = (s32)MsgFieldSpace;                                              \
     Window_DrawDividerLine(window, 20, 0, 20, 5);                              \
     Text_DrawMessageAsTiles(message++, window, 160, 0);                        \
     Text_DrawMessageAsTiles(message++, window, 160, 8);                        \
@@ -1005,10 +1124,11 @@ s32 Clear_EnterPassword(void) {
   Window_LoadGraphics();
   WindowColor_Apply(gMainRoutineWork.windowHue,
                     gMainRoutineWork.windowBrightness);
-  palette = (u16 *)&BG_PLTT_COLOR(14, 0);
-  Dma_Set((const void *)&BG_PLTT_COLOR(15, 0), palette, DMA_COPY_WORDS(8),
-          REG_DMA3);
-  palette[4] = RGB(24, 24, 24);
+  // The highlight is the window palette with a grey background.
+  palette = (u16 *)&BG_PLTT_COLOR(HIGHLIGHT_PALETTE, 0);
+  Dma_Set((const void *)&BG_PLTT_COLOR(WINDOW_PALETTE, 0), palette,
+          DMA_COPY_WORDS(8), REG_DMA3);
+  palette[WINDOW_BACKGROUND_COLOR] = RGB(24, 24, 24);
   mode = IconMenu_ChooseSendOption(RESOURCE_LAYOUT_PASSWORD_LEVEL);
   if (mode == -1)
     return -1;
@@ -1028,7 +1148,7 @@ s32 Clear_EnterPassword(void) {
   }
   pages = length / PASSWORD_SYMBOLS_PER_PAGE + 1;
   window = Window_Create(1, 13, 29, 6, 2);
-  DRAW_TITLE(window)
+  DRAW_KEYS(window)
   grid = Window_Create(5, 1, 20, 12, 2);
   for (i = 0; i != ARRAY_COUNT(work->unused); i++)
     work->unused[i] = 0;
@@ -1045,7 +1165,7 @@ s32 Clear_EnterPassword(void) {
       x = col * 12 + 18;
     work->cells[i] = Glyph_AddBlankSprite(grid, work->glyphs[i], x, y);
     work->shown[i] = PASSWORD_SYMBOL_EMPTY;
-    Iwram_ClearWordsEntry(work->cells[i], 128);
+    Iwram_ClearWordsEntry(work->cells[i], GLYPH_SPRITE_BYTES);
   }
   entry = VramCache_FindFreeEntry();
   if (entry < VRAM_CACHE_ENTRY_COUNT) {
@@ -1061,7 +1181,7 @@ s32 Clear_EnterPassword(void) {
     sprite = WindowSprite_Create(entry, OUTPUT_SIZE_16X16,
                                  (struct Window *)window, 0, 0);
     Cursor_Attach(&gridStore, sprite);
-    sprite->depth = 255;
+    sprite->depth = OAM_DEPTH_FRONT;
     sprite->sprite.oam.priority = 0;
     Cursor_Place(&gridStore, (s16)grid->x * 8 - 4, (s16)grid->y * 8 + 12);
   }
@@ -1076,7 +1196,8 @@ s32 Clear_EnterPassword(void) {
     action = -1;
     if (state == 2)
       state = 1;
-    Clear_DrawGridCell(window, drawColumn, drawRow, drawMode, height, 15);
+    Clear_DrawGridCell(window, drawColumn, drawRow, drawMode, height,
+                       WINDOW_PALETTE);
     if (state == 0) {
       if (gInput.repeat & KEY_RIGHT) {
         Sound_Play(SE_MENU_CURSOR_MOVE);
@@ -1123,7 +1244,8 @@ s32 Clear_EnterPassword(void) {
       drawColumn++;
     if (column > SIDE_COLUMN - 1)
       drawColumn++;
-    Clear_DrawGridCell(window, drawColumn, row, drawMode, height, 14);
+    Clear_DrawGridCell(window, drawColumn, row, drawMode, height,
+                       HIGHLIGHT_PALETTE);
     {
       s32 x = ((s16)window->x + column) * 8 - 8;
       s32 y = ((s16)window->y + row) * 8 + 11;
@@ -1174,7 +1296,7 @@ s32 Clear_EnterPassword(void) {
         raw = input->pressed;
       keys = (s16)raw;
       keys <<= 16;
-      mask = 0x10000;
+      mask = KEY_A << 16;
       mask &= keys;
       if (mask && state == 0) {
         action = 0;
@@ -1213,7 +1335,7 @@ s32 Clear_EnterPassword(void) {
 
           action = Clear_DecodePassword(gClear_PasswordText, length,
                                         DECODED_PASSWORD);
-          crcLength = action - 2;
+          crcLength = action - PASSWORD_CRC_BYTES;
           check = Clear_CalculatePasswordCrc16(crcLength, DECODED_PASSWORD);
 
           state = 0;
@@ -1221,7 +1343,7 @@ s32 Clear_EnterPassword(void) {
           crc = check;
           if (DECODED_PASSWORD[crcLength] == (u16)crc >> 8 &&
               DECODED_PASSWORD[action - 1] == (u16)crc % 256) {
-            Text_DrawMessageAsTiles(MSGNO(MsgFieldPasswordAccepted), box, 0, 0);
+            Text_DrawMessageAsTiles((s32)MsgFieldPasswordAccepted, box, 0, 0);
             Sound_Play(SE_MENU_CONFIRM);
             do {
               System_Wait(1);
@@ -1229,15 +1351,15 @@ s32 Clear_EnterPassword(void) {
             Sound_Play(SE_MENU_CONFIRM);
             MainRoutineWork_InitializeDefaults();
             party = &gMainRoutineWork;
-            party->leaderActorId = 0;
-            Party_RemoveMember(4);
-            Party_RemoveMember(5);
-            Party_RemoveMember(6);
-            Party_RemoveMember(7);
-            Party_AddMember(0);
-            Party_AddMember(1);
-            Party_AddMember(2);
-            Party_AddMember(3);
+            party->leaderActorId = ACTOR_ISAAC;
+            Party_RemoveMember(FELIX);
+            Party_RemoveMember(JENNA);
+            Party_RemoveMember(SHEBA);
+            Party_RemoveMember(PIERS);
+            Party_AddMember(ISAAC);
+            Party_AddMember(GARET);
+            Party_AddMember(IVAN);
+            Party_AddMember(MIA);
             Clear_ApplyImportedData(mode, DECODED_PASSWORD);
             Window_Close(box, 2);
             Window_Close(grid, 2);
@@ -1247,20 +1369,19 @@ s32 Clear_EnterPassword(void) {
             System_Wait(6);
             NameEntry_EditMemberName(0);
             StatusScreen_Run();
-            // XXX: what copy of the flags this restores; it lies 172 bytes into
-            // an EWRAM block nothing else names, and the routine that writes it
-            // there would settle it.
-            Iwram_CopyWords(Data_02012f94 + 172, gGameFlagBytes, 3904);
+            // The entered party where the link leaves its data; the
+            // RESTORE_SAVE_IMAGE that follows copies the whole state there.
+            Iwram_CopyWords(TRANSFERRED_FLAGS, gGameFlagBytes, 3904);
             return 0;
           }
           Sound_Play(SE_MENU_CANCEL);
-          Text_DrawMessageAsTiles(MSGNO(MsgFieldInvalidPassword), box, 0, 0);
+          Text_DrawMessageAsTiles((s32)MsgFieldInvalidPassword, box, 0, 0);
           do {
             System_Wait(1);
           } while (!(gInput.pressed & KEY_A) && !(gInput.pressed & KEY_B));
           Window_Close(box, 2);
           WindowSprite_RedrawSavedRect(window);
-          DRAW_TITLE(window)
+          DRAW_KEYS(window)
         } else if (gInput.repeat & KEY_L || action == 2) {
           if (cursor > 0) {
             Sound_Play(SE_MENU_CURSOR_MOVE);
@@ -1293,12 +1414,14 @@ s32 Clear_EnterPassword(void) {
       for (i = 0, y = 2; i != 4; i++, y += 2)
         Window_DrawDividerLine(grid, 0, y, 18, y);
     }
+    // The page numbers, on WINDOW_PALETTE: tile 769 + n is the digit n + 1,
+    // and 779 + n the same digit in the second colouring, for the page shown.
     {
       for (i = 0; i != pages; i++) {
-        s32 tile = i + 0xf301;
+        s32 tile = i + WINDOW_TILE(769);
 
         if (i == page)
-          tile = i + 0xf30b;
+          tile = i + WINDOW_TILE(779);
         Window_SetTilemapEntry(grid, tile, i - pages + 18, 10, 0);
       }
     }
@@ -1322,7 +1445,7 @@ s32 Clear_EnterPassword(void) {
       if (code != work->shown[i]) {
         work->shown[i] = raw;
         if (code == PASSWORD_SYMBOL_EMPTY) {
-          Iwram_ClearWordsEntry(work->cells[i], 128);
+          Iwram_ClearWordsEntry(work->cells[i], GLYPH_SPRITE_BYTES);
         } else {
           Clear_GetPasswordCharacter(entered[index], glyph);
           Glyph_DrawToTiles(glyph[0], work->cells[i]);
@@ -1332,7 +1455,7 @@ s32 Clear_EnterPassword(void) {
     for (; i != PASSWORD_SYMBOLS_PER_PAGE; i++) {
       if (work->shown[i] != PASSWORD_SYMBOL_EMPTY) {
         work->shown[i] = PASSWORD_SYMBOL_EMPTY;
-        Iwram_ClearWordsEntry(work->cells[i], 128);
+        Iwram_ClearWordsEntry(work->cells[i], GLYPH_SPRITE_BYTES);
       }
     }
     System_Wait(1);
@@ -1480,8 +1603,9 @@ void Clear_ApplyImportedData(s32 mode, u8 *in) {
   for (i = 0; i != 4; i++) {
     struct Unit *unit = Unit_Get(gClear_ImportedMembers[i]);
 
+    // Each member's Djinn cleared four times over.
     for (n = 0; n != 4; n++)
-      Iwram_ClearWordsEntry(unit->djinnHeld, 40);
+      Iwram_ClearWordsEntry(unit->djinnHeld, UNIT_DJINN_BYTES);
   }
 
   for (i = 0; i != ELEMENT_COUNT * TRANSFERRED_DJINN_PER_ELEMENT; i++) {
@@ -1506,12 +1630,12 @@ void Clear_ApplyImportedData(s32 mode, u8 *in) {
   }
 
   if (mode == PASSWORD_LEVEL_GOLD) {
-    position = 39;
+    position = PASSWORD_ITEMS_BYTE;
     bit = 0;
     for (i = 0; i != 4; i++) {
       struct Unit *unit = Unit_Get(gClear_ImportedMembers[i]);
 
-      for (n = 0; n != 15; n++) {
+      for (n = 0; n != INVENTORY_SLOTS; n++) {
         unit->inventory[n] =
             (in[position] << (bit + 1) | in[position + 1] >> (7 - bit)) &
             INVENTORY_ITEM_ID_MASK;
@@ -1524,12 +1648,12 @@ void Clear_ApplyImportedData(s32 mode, u8 *in) {
       }
     }
 
-    position = 107;
+    position = PASSWORD_QUANTITIES_BYTE;
     bit = -1;
     for (i = 0; i != 4; i++) {
       struct Unit *unit = Unit_Get(gClear_ImportedMembers[i]);
 
-      for (m = 0; m != 23; m++) {
+      for (m = 0; m != PASSWORD_STACK_ITEMS; m++) {
         j = 0;
         if (bit < 0) {
           j = in[position] << -bit & 0x1f;
@@ -1543,7 +1667,7 @@ void Clear_ApplyImportedData(s32 mode, u8 *in) {
           bit = 3;
         }
         j &= 0x1f;
-        for (n = 0; n != 15; n++) {
+        for (n = 0; n != INVENTORY_SLOTS; n++) {
           if ((unit->inventory[n] & INVENTORY_ITEM_ID_MASK) ==
               gClear_ImportedStackItems[m])
             unit->inventory[n] |= j << INVENTORY_QUANTITY_SHIFT;
@@ -1551,7 +1675,9 @@ void Clear_ApplyImportedData(s32 mode, u8 *in) {
       }
     }
 
-    gMainRoutineWork.coins = in[165] << 16 | in[166] << 8 | in[167];
+    gMainRoutineWork.coins = in[PASSWORD_COINS_BYTE] << 16 |
+                             in[PASSWORD_COINS_BYTE + 1] << 8 |
+                             in[PASSWORD_COINS_BYTE + 2];
   }
 
   for (i = 0; i != 4; i++) {
@@ -1583,16 +1709,16 @@ UNUSED s32 Clear_PackPasswordData(s32 unused, s32 mode, u8 *out) {
   s32 n;
   s32 m;
 
-  length = 11;
+  length = PASSWORD_BRONZE_BYTES;
   switch (mode) {
   case PASSWORD_LEVEL_GOLD:
-    length = 173;
+    length = PASSWORD_GOLD_BYTES - PASSWORD_CRC_BYTES;
     break;
   case PASSWORD_LEVEL_SILVER:
-    length = 39;
+    length = PASSWORD_SILVER_BYTES - PASSWORD_CRC_BYTES;
     break;
   case PASSWORD_LEVEL_BRONZE:
-    length = 9;
+    length = PASSWORD_BRONZE_BYTES - PASSWORD_CRC_BYTES;
     break;
   }
   for (i = 0; i != length; i++)
@@ -1661,7 +1787,7 @@ UNUSED s32 Clear_PackPasswordData(s32 unused, s32 mode, u8 *out) {
     levelBits |= unit->level << (i * 7);
     for (j = 0; j != 4; j++)
       djinnBits += unit->djinnHeld[j] << (j * 7);
-    for (j = 0; j != 15; j++) {
+    for (j = 0; j != INVENTORY_SLOTS; j++) {
       s32 item = unit->inventory[j] & INVENTORY_ITEM_ID_MASK;
 
       for (k = 0; k != 8; k++) {
@@ -1672,12 +1798,12 @@ UNUSED s32 Clear_PackPasswordData(s32 unused, s32 mode, u8 *out) {
     outputIndex += 8;
   }
   if (mode == PASSWORD_LEVEL_GOLD) {
-    outputIndex = 39;
+    outputIndex = PASSWORD_ITEMS_BYTE;
     bitOffset = 0;
     for (i = 0; i != 4; i++) {
       struct Unit *unit = Unit_Get(gClear_PasswordMembers[i]);
 
-      for (n = 0; n != 15; n++) {
+      for (n = 0; n != INVENTORY_SLOTS; n++) {
         u16 item = unit->inventory[n] & INVENTORY_ITEM_ID_MASK;
 
         out[outputIndex] += item >> (bitOffset + 1);
@@ -1690,17 +1816,17 @@ UNUSED s32 Clear_PackPasswordData(s32 unused, s32 mode, u8 *out) {
         }
       }
     }
-    outputIndex = 107;
+    outputIndex = PASSWORD_QUANTITIES_BYTE;
     bitOffset = -1;
     for (i = 0; i != 4; i++) {
       struct Unit *unit = Unit_Get(gClear_PasswordMembers[i]);
 
-      for (m = 0; m != 23; m++) {
+      for (m = 0; m != PASSWORD_STACK_ITEMS; m++) {
         s32 count = 0;
         u16 quantity;
         /* FAKEMATCH(dead): the form kept; as no quantity copy. */
 
-        for (n = 0; n != 15; n++) {
+        for (n = 0; n != INVENTORY_SLOTS; n++) {
           if ((unit->inventory[n] & INVENTORY_ITEM_ID_MASK) ==
               gClear_PasswordStackItems[m])
             count = unit->inventory[n] >> INVENTORY_QUANTITY_SHIFT;
@@ -1719,9 +1845,9 @@ UNUSED s32 Clear_PackPasswordData(s32 unused, s32 mode, u8 *out) {
         }
       }
     }
-    out[165] = (u32)gMainRoutineWork.coins >> 16;
-    out[166] = (u32)gMainRoutineWork.coins >> 8;
-    out[167] = gMainRoutineWork.coins;
+    out[PASSWORD_COINS_BYTE] = (u32)gMainRoutineWork.coins >> 16;
+    out[PASSWORD_COINS_BYTE + 1] = (u32)gMainRoutineWork.coins >> 8;
+    out[PASSWORD_COINS_BYTE + 2] = gMainRoutineWork.coins;
   }
   if (mode != PASSWORD_LEVEL_BRONZE) {
     s32 statsOffset = 8 + (mode != PASSWORD_LEVEL_GOLD);
@@ -1750,7 +1876,7 @@ UNUSED s32 Clear_PackPasswordData(s32 unused, s32 mode, u8 *out) {
   out[0] = levelBits;
   out[1] = levelBits >> 8;
   out[2] = levelBits >> 16;
-  out[3] = (levelBits >> 20 & 0xf0) | (djinnBits & 15);
+  out[3] = (levelBits >> 20 & 0xf0) | (djinnBits & 0x0f);
   out[4] = djinnBits >> 4;
   out[5] = djinnBits >> 12;
   out[6] = djinnBits >> 20;
@@ -1811,28 +1937,28 @@ s32 Clear_DecodePassword(u8 *src, s32 length, u8 *dst) {
   return n;
 }
 
-/// The CRC-16 of length bytes at p (polynomial 0x1021, seed 0xffff, the
-/// result inverted): the clear screen checks each decoded block with it,
-/// over all but the block's last two bytes.
+/// The password's checksum, as The Broken Seal's
+/// FileScreen_CalculatePasswordCrc16 makes it: over length bytes at p, shifted
+/// a bit at a time from PASSWORD_CRC_SEED, PASSWORD_CRC_POLYNOMIAL subtracted
+/// when the top bit falls out, and the result complemented. The password
+/// screen checks it against a decoded password's last PASSWORD_CRC_BYTES.
 u16 Clear_CalculatePasswordCrc16(u32 length, u8 *p) {
   u32 crc;
   u32 i;
   u32 j;
 
-  crc = 0xffff;
+  crc = PASSWORD_CRC_SEED;
   i = 0;
   if (length != 0) {
     do {
       crc ^= *p << 8;
       j = 0;
-      // One bit at a time: shift, adding the polynomial when the top bit was
-      // set.
       do {
-        u32 high = crc & 0x8000;
+        u32 high = crc & PASSWORD_CRC_TOP_BIT;
         u32 next = crc << 1;
 
         j++;
-        crc = next + 0xffffefdf;
+        crc = next - PASSWORD_CRC_POLYNOMIAL;
         if (high == 0)
           crc = next;
       } while (j != 8);
@@ -1843,20 +1969,21 @@ u16 Clear_CalculatePasswordCrc16(u32 length, u8 *p) {
   return ~crc;
 }
 
+// clang-format off
+/// The first secret code, as The Broken Seal's, ended by 0: Select three
+/// times. With it a new game names Jenna, Sheba and Piers as well as Felix
+/// (Scene_Initialize).
 u16 gClear_ButtonCode[] = {
-    4,
-    4,
-    4,
-    0,
+    KEY_SELECT, KEY_SELECT, KEY_SELECT, 0,
 };
 
-// clang-format off
+/// The second, longer code. With it a new game also names Garet, Ivan and Mia.
 u16 gClear_ExtraButtonCode[] = {
-    64, 128, 64, 128, 32, 16, 32, 16,
+    KEY_UP, KEY_DOWN, KEY_UP, KEY_DOWN, KEY_LEFT, KEY_RIGHT, KEY_LEFT, KEY_RIGHT,
 #if (LANGUAGE == LANGUAGE_JAPANESE)
-    64, 16, 128, 32, 64, 4, 0,
+    KEY_UP, KEY_RIGHT, KEY_DOWN, KEY_LEFT, KEY_UP, KEY_SELECT, 0,
 #else
-    64, 16, 128, 32, 64, 4, 0, 0,
+    KEY_UP, KEY_RIGHT, KEY_DOWN, KEY_LEFT, KEY_UP, KEY_SELECT, 0, 0,
 #endif
 };
 
@@ -1864,33 +1991,20 @@ s8 gClear_CursorWobble[] = {
     0, 1, 2, 3, 3, 2, 1, 0,
 };
 
-// Alphabet table, absent in Japanese ("ABCDE FGHJK LMNPQ R" ...).
 #if (LANGUAGE != LANGUAGE_JAPANESE)
-u8 gClear_FirstPasswordRow[] = {
-    65, 66, 67, 68, 69, 32, 70, 71,
-    72, 74, 75, 32, 76, 77, 78, 80,
-    81, 32, 82, 0,
-};
-
-u8 gClear_SecondPasswordRow[] = {
-    83, 84, 85, 86, 87, 32, 88, 89,
-    90, 50, 51, 32, 52, 53, 54, 55,
-    56, 32, 57, 0,
-};
-
-u8 gClear_ThirdPasswordRow[] = {
-    97, 98, 99, 100, 101, 32, 102, 103,
-    104, 105, 106, 32, 107, 109, 110, 112,
-    113, 32, 114, 0,
-};
-
-u8 gClear_FourthPasswordRow[] = {
-    115, 116, 117, 118, 119, 32, 120, 121,
-    122, 33, 63, 32, 35, 38, 36, 37,
-    43, 32, 61, 0,
-};
+/// The password grid's four rows of symbols as DRAW_KEYS writes them, five to
+/// a group (the Japanese grid is kana, MsgFieldPasswordKana).
+u8 gClear_FirstPasswordRow[] = "ABCDE FGHJK LMNPQ R";
+u8 gClear_SecondPasswordRow[] = "STUVW XYZ23 45678 9";
+u8 gClear_ThirdPasswordRow[] = "abcde fghij kmnpq r";
+u8 gClear_FourthPasswordRow[] = "stuvw xyz!? #&$%+ =";
 #endif
 
+/// The six story flags of a password's byte 7, by The Broken Seal's numbers,
+/// which DataTransfer_Apply reads them by: its FLAG_DODONPA_LOCKED_UP,
+/// FLAG_WON_COLOSSO, FLAG_HSU_RESCUED_WITHOUT_PARTY,
+/// FLAG_CROSSBONE_ISLE_DEADBEARD_DEFEATED, FLAG_VISITED_SICK_DORA and
+/// FLAG_VAULT_WARNED_OF_ESCAPED_THIEVES.
 u16 gClear_ImportedFlags[] = {
     0x941, 0x951, 0x8b3, 0x8d1, 0x81e, 0x868,
 };
@@ -1929,16 +2043,17 @@ s16 gClear_CodeHeld = 0;
 
 s16 gClear_ExtraCodeHeld = 0;
 
-#undef MAP_CELL_BACKUP
 #undef YEAH_WIDTH
-#undef COPY_CELLS
-#undef SAVE_CELLS
-#undef RESTORE_CELLS
+#undef COPY_SAVE_IMAGE
+#undef SAVE_IMAGE_BYTES
+#undef KEEP_SAVE_IMAGE
+#undef RESTORE_SAVE_IMAGE
 #undef RETURN_TO_SAVED
-#undef RECEIVED_FLAGS
-#undef RECEIVED_UNITS
-#undef REQUEST_EDITION
-#undef MSGNO
+#undef TRANSFERRED_FLAGS
+#undef TRANSFERRED_MAIN_ROUTINE_WORK
+#undef GOLDEN_SUN_SAVE_IMAGE_UNITS
+#undef TRANSFERRED_SAVE
+#undef LINK_LANGUAGE_TAG
 #undef QUESTION_MESSAGE
 #undef RECEIVE_WINDOW_X
 #undef RECEIVE_WINDOW_WIDTH
@@ -1950,7 +2065,7 @@ s16 gClear_ExtraCodeHeld = 0;
 #undef CHECK_WINDOW_WIDTH
 #undef DECODED_PASSWORD
 #undef CURSOR_ON_SIDE_COLUMN
-#undef DRAW_TITLE
+#undef DRAW_KEYS
 #undef WORD
 
 // clang-format off
@@ -1976,6 +2091,7 @@ LATE_DATA s32 gClear_PasswordMembers[] = {
     ISAAC, GARET, IVAN, MIA,
 };
 
+/// The same flags, as the unused Clear_PackPasswordData reads them.
 LATE_DATA u16 gClear_PasswordFlags[] = {
     0x941, 0x951, 0x8b3, 0x8d1, 0x81e, 0x868,
 };

@@ -1,6 +1,6 @@
 /// Scatters dust and rubble around the leader's feet; with spread, they fly
 /// outward.
-void Rubble_Scatter(s32 spread) {
+void Dust_Scatter(s32 spread) {
   struct Actor *leader = Actor_Get(gMainRoutineWork.leaderActorId);
   struct FieldEffect *effect;
   u32 frame = 0;
@@ -18,7 +18,7 @@ void Rubble_Scatter(s32 spread) {
       effect->collisionFlags = 0;
       Actor_SetSpriteFlags(effect, 0);
       Actor_SelectAnimation(effect, 2);
-      Actor_StartScript(effect, gRubble_ScatterScript);
+      Actor_StartScript(effect, gDust_ScatterScript);
       effect->scaleY = effect->scaleX = FIXED_ONE * 7 / 10;
       effect->sprite->priority = 1;
       if (spread != 0) {

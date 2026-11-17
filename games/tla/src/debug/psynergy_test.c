@@ -1,10 +1,11 @@
 /// @file
-/// The debug room Psynergy test: the shops, an inn and a sanctum to try, the
+/// The debug room Psynergy test: the shops, an inn and a Sanctum to try, the
 /// party's levels, items and Djinn to set, and spots for the field Psynergy
 /// The Lost Age adds, each answered by a small event: Scoop digs up a hole, a
-/// growing actor, a falling one and a monster; Cyclone clears leaves and sends
-/// the leader away and back in a ring of light; Pound and Parch change the
-/// floor; Blaze startles a practising man; Sand drops Felix to the sand layer.
+/// puddle, a Wicked Mace and a statue before a battle; Cyclone clears leaves
+/// and sends the leader away and back in a ring of light; Pound lights a torch
+/// and Parch dries the floor; Blaze startles Kraden; Sand drops Felix to the
+/// sand layer.
 
 #include "battle/battle.h"
 #include "flags.h"
@@ -46,15 +47,14 @@
 /// (imports.inc), whose place in the list shapes the room's table.
 void Import_DebugMadPlantLeap(s32 sprite, s32 x, s32 z);
 
-// The room's flags: the four Scoop spots dug, the falling actor's item taken,
-// and which of his two spots the
-// practising man stands at.
+// The room's flags: the four Scoop spots dug, the Wicked Mace picked up, and
+// whether Blaze has sent Kraden to his second spot.
 #define FLAG_HOLE_DUG FLAG_AREA_TEMP_00
-#define FLAG_GROWING_ACTOR_DUG FLAG_AREA_TEMP_01
-#define FLAG_FALLING_ACTOR_DUG FLAG_AREA_TEMP_02
-#define FLAG_MONSTER_DUG FLAG_AREA_TEMP_03
-#define FLAG_ITEM_TAKEN FLAG_AREA_TEMP_10
-#define FLAG_PRACTICE_AT_DOOR FLAG_SCENE_TEMP_00
+#define FLAG_PUDDLE_DUG FLAG_AREA_TEMP_01
+#define FLAG_WICKED_MACE_DUG FLAG_AREA_TEMP_02
+#define FLAG_STATUE_DUG FLAG_AREA_TEMP_03
+#define FLAG_WICKED_MACE_TAKEN FLAG_AREA_TEMP_10
+#define FLAG_KRADEN_MOVED FLAG_SCENE_TEMP_00
 
 /// The shops ACTOR_SHOPKEEPER opens: Daila's three and Izumo's, by their rows
 /// of the shop stock table.
@@ -68,21 +68,25 @@ enum {
 /// The room's actors that run its tests, numbered in the order of
 /// gActorPlacements after the party's four rows.
 enum PsynergyTestActorId {
-  ACTOR_SHOPKEEPER = 8,       ///< the four shops, one for each side talked from
-  ACTOR_FALLEN_MAN = 9,       ///< lies fallen; talking to him does nothing
-  ACTOR_INNKEEPER = 10,       ///< the inn from the south, the sanctum otherwise
-  ACTOR_MESSAGE_BROWSER = 11, ///< the shop and sanctum messages
-  ACTOR_MARS_DJINNI = 12,     ///< lies fallen; Mind Read hears it
-  ACTOR_ICON_BROWSER = 13,
-  ACTOR_SPROUT = 14, ///< ignores Force
-  /// Isaac's name entry from the north, the item picker from elsewhere; it
-  /// ignores Force, Whirlwind, Catch, Tremor and Grind.
-  ACTOR_MENU_TESTER = 15,
-  ACTOR_FLAME = 16,          ///< burns; Blaze at it does nothing
-  ACTOR_PRACTISING_MAN = 17, ///< startled by Blaze
-  ACTOR_GROWING = 18,        ///< grows out of the second Scoop spot
-  ACTOR_FALLING = 19,        ///< drops onto the third, holding an item
-  ACTOR_PILLAR = 21          ///< Pound lowers the floor beside it
+  /// The four shops, one for each side he is talked to from.
+  ACTOR_SHOPKEEPER = ACTOR_FIRST_PLACED,
+  ACTOR_FALLEN_MAN, ///< lies on the floor; talking to him does nothing
+  /// Lies on the floor too: the inn from the south, the Sanctum otherwise.
+  ACTOR_INNKEEPER,
+  ACTOR_MESSAGE_BROWSER, ///< the shops' and the Sanctum's lines
+  ACTOR_MARS_DJINNI,     ///< lies on its side; Mind Read hears it
+  ACTOR_IVY,             ///< the icon browser
+  ACTOR_SPROUT,          ///< ignores Force
+  /// A puddle frozen as the room starts: Isaac's name entry from the north,
+  /// the item picker from elsewhere; it ignores Force, Whirlwind, Catch,
+  /// Tremor and Grind.
+  ACTOR_ICE_PILLAR,
+  ACTOR_FLAME, ///< burns; Blaze at it does nothing
+  /// In Kraden's sprite, he answers Blaze as Daila's practising performer.
+  ACTOR_KRADEN,
+  ACTOR_PUDDLE,      ///< grows out of the second Scoop spot
+  ACTOR_WICKED_MACE, ///< the item's icon, which drops onto the third
+  ACTOR_TORCH = 21   ///< Pound or A?? lights it
 };
 
 void ItemPicker_RunToDrop(s32 *, s32 *);
@@ -90,7 +94,7 @@ void Inn_CheckIn(s32, s32);
 void PsynergyTest_DigCells(s32, s32, s32, s32, s32, s32, s32);
 void PsynergyTest_GrowActor(s32, s32, s32, s32);
 void PsynergyTest_DropActor(s32, s32, s32, s32);
-void PsynergyTest_RaiseMonster(s32, s32, s32, s32, s32);
+void PsynergyTest_RaiseStatue(s32, s32, s32, s32, s32);
 void PsynergyTest_StartRings(struct Actor *actor, struct SparkleWork *work);
 void PsynergyTest_StopRings(struct Actor *);
 void Actor_FallOverWithAnimationById(s32 actor, s32 angle, s32 frames);
@@ -108,7 +112,7 @@ void NameEntry_EditMemberName(s32);
 void Shop_Run(s32, s32);
 void Message_OpenWindow(s32, s32, s32, s32);
 
-extern s32 gPsynergyTest_RingTiles[];
+extern u32 gPsynergyTest_RingTiles[];
 struct SparkleWork gPsynergyTest_LeaderRings BSS_DATA ALIGNED(16);
 struct SparkleWork gPsynergyTest_TargetRings BSS_DATA ALIGNED(16);
 
@@ -135,10 +139,11 @@ void PsynergyTest_TestItemSelection(void) {
 /// The name entry screen for Isaac.
 void PsynergyTest_EditIsaacName(void) { NameEntry_EditMemberName(ISAAC); }
 
-/// The event for Force, Whirlwind and Catch cast at the menu tester.
+/// The event for Force, Whirlwind and Catch cast at the ice pillar.
 void PsynergyTest_IgnorePsynergy(void) {}
 
-/// Finishes pending windows, shows a message and waits until it is typed out.
+/// Finishes pending windows, shows a message in the window a shopkeeper's
+/// lines open (Shop_ShowKeeperMessage) and waits until it is typed out.
 void PsynergyTest_ShowMessageAndWait(s32 message) {
   Message_CloseFinishedWindows();
   Message_OpenWindow(message, 5, 0, 0x22);
@@ -235,7 +240,8 @@ void PsynergyTest_IgnoreTalk(void) {}
 
 /// Raises Felix, Jenna and Sheba ten levels. Examining cell 11.
 void PsynergyTest_RaisePartyLevels(void) {
-  Message_ShowCentered((s32)MsgYouWentUp, 1);
+  // "You went up a level!"
+  Message_ShowCentered((s32)MsgYouWentUp, FIELD_MESSAGE_ZOOM);
   Unit_LevelUpTo(FELIX, Unit_Get(FELIX)->level + 10);
   Unit_LevelUpTo(JENNA, Unit_Get(JENNA)->level + 10);
   Unit_LevelUpTo(SHEBA, Unit_Get(SHEBA)->level + 10);
@@ -246,7 +252,8 @@ void PsynergyTest_RaisePartyLevels(void) {
 void PsynergyTest_GiveTreasureTestStock(void) {
   s32 i;
 
-  Message_ShowCentered((s32)MsgYouGotTreasure, 1);
+  // "You got treasure!"
+  Message_ShowCentered((s32)MsgYouGotTreasure, FIELD_MESSAGE_ZOOM);
   gMainRoutineWork.coins = 777777;
   for (i = 0; i < 10; i++) {
     Inventory_AddItem(FELIX, ITEM_GAME_TICKET);
@@ -260,22 +267,23 @@ void PsynergyTest_GiveTreasureTestStock(void) {
 /// Takes HP and PP from Felix, Jenna and Sheba, then poisons and haunts Felix
 /// and curses and envenoms Jenna. Examining cell 10.
 void PsynergyTest_DamageAndAfflictParty(void) {
-  u8 *state;
+  struct Unit *felix;
+  struct Unit *jenna;
 
-  Message_ShowCentered((s32)MsgTheBodyIs, 1);
+  // "The body is being torn apart."
+  Message_ShowCentered((s32)MsgTheBodyIs, FIELD_MESSAGE_ZOOM);
   FieldUnit_AddHp(FELIX, -100);
   FieldUnit_AddHp(JENNA, -100);
   FieldUnit_AddHp(SHEBA, -33);
   Unit_AddPp(FELIX, -50);
   Unit_AddPp(JENNA, -40);
   Unit_AddPp(SHEBA, -35);
-  state = Unit_Get(FELIX);
-  state[offsetof(struct Unit, poison)] = 1;
-  state += offsetof(struct Unit, haunt);
-  *state = 1;
-  state = Unit_Get(JENNA);
-  state[offsetof(struct Unit, curse)] = 1;
-  state[offsetof(struct Unit, poison)] = 2;
+  felix = Unit_Get(FELIX);
+  felix->poison = POISON_NORMAL;
+  felix->haunt = 1;
+  jenna = Unit_Get(JENNA);
+  jenna->curse = CURSE_BOUND;
+  jenna->poison = POISON_VENOM;
   Unit_Calculate(FELIX);
   Unit_Calculate(JENNA);
   Unit_Calculate(SHEBA);
@@ -293,7 +301,8 @@ void PsynergyTest_GiveDjinni(s32 owner, s32 element, s32 djinn, s32 activate) {
 /// Gives and sets Djinn: Felix seven of Venus, Jenna seven of Mars and Sheba
 /// six of Mercury. Examining cell 13.
 void PsynergyTest_GivePartyDjinn(void) {
-  Message_ShowCentered((s32)MsgYouGotA, 1);
+  // "You got a Djinni!"
+  Message_ShowCentered((s32)MsgYouGotA, FIELD_MESSAGE_ZOOM);
   PsynergyTest_GiveDjinni(FELIX, ELEMENT_VENUS, 0, 1);
   PsynergyTest_GiveDjinni(FELIX, ELEMENT_VENUS, 1, 1);
   PsynergyTest_GiveDjinni(FELIX, ELEMENT_VENUS, 2, 1);
@@ -326,31 +335,34 @@ void PsynergyTest_SetSandLayer(void) { Actor_GetById(FELIX)->layer = 2; }
 /// Puts Felix back on layer 0 as Sand fades.
 void PsynergyTest_ClearSandLayer(void) { Actor_GetById(FELIX)->layer = 0; }
 
-/// As Blaze reaches him, the practising man shouts and jumps to the other of
-/// his two spots, as he does in Daila (DailaRooms_PracticeShout).
+/// As Blaze reaches him, Kraden shouts and jumps to the other of his two
+/// spots, as Daila's practising performer would (DailaRooms_PracticeShout,
+/// which Daila never runs).
 void PsynergyTest_PracticeShout(s32 unused, s32 actor) {
   Actor_ShowEmote(actor, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 50);
   FieldActor_Jump(actor, 6, 15);
   FieldActor_Jump(actor, 6, 15);
   FieldEvent_Wait(10);
-  if (Event_GetFlag(FLAG_PRACTICE_AT_DOOR) == 0) {
+  if (Event_GetFlag(FLAG_KRADEN_MOVED) == 0) {
     FieldEvent_SetMessageId((s32)MsgDailaInteriorsGah);
+    // "GAH!"
     Event_ShowMessage(actor, 0);
     Actor_WalkToAndWait(actor, 360, 72);
     Actor_FaceDirection(actor, FACING_SOUTH, 0);
-    Event_SetFlag(FLAG_PRACTICE_AT_DOOR);
+    Event_SetFlag(FLAG_KRADEN_MOVED);
   } else {
     FieldEvent_SetMessageId((s32)MsgDailaInteriorsYarg);
+    // "YARG!"
     Event_ShowMessage(actor, 0);
     Actor_WalkToAndWait(actor, 392, 104);
     Actor_FaceDirection(actor, FACING_WEST, 0);
-    Event_ClearFlag(FLAG_PRACTICE_AT_DOOR);
+    Event_ClearFlag(FLAG_KRADEN_MOVED);
   }
   FieldEvent_Wait(20);
 }
 
-/// Once Blaze has ended, the practising man turns to Felix, startled, as in
-/// Daila (DailaRooms_StartleAtTheLeader).
+/// Once Blaze has ended, Kraden turns to Felix, startled, as Daila's
+/// practising performer would (DailaRooms_StartleAtTheLeader).
 void PsynergyTest_StartleAfterBlaze(s32 unused, s32 actor) {
   Actor_FaceActor(actor, FELIX, 0);
   FieldEvent_Wait(10);
@@ -363,7 +375,7 @@ void PsynergyTest_StartleAfterBlaze(s32 unused, s32 actor) {
   FieldEvent_Wait(10);
 }
 
-/// The same, once ability 157 ("A??" in the game's text) has ended.
+/// The same, once A?? (ABILITY_ARROW, "A??" in the game's text) has ended.
 void PsynergyTest_StartleAgain(s32 unused, s32 actor) {
   Actor_FaceActor(actor, FELIX, 0);
   FieldEvent_Wait(10);
@@ -376,34 +388,35 @@ void PsynergyTest_StartleAgain(s32 unused, s32 actor) {
   FieldEvent_Wait(10);
 }
 
-/// Once ability 157 has ended at the pillar, it animates and the floor beside
-/// it is copied in from (57, 16).
-void PsynergyTest_LowerPillar(void) {
+/// Once A?? has ended at the torch, it lights, and the 4 by 6 block of cells
+/// at (57, 16) is copied over the one at (25, 0).
+void PsynergyTest_LightTorch(void) {
   s32 destinationX;
   s32 destinationY;
 
-  Actor_SetAnimation(ACTOR_PILLAR, 2);
+  Actor_SetAnimation(ACTOR_TORCH, 2);
   FieldEvent_Wait(10);
   destinationX = 25;
   destinationY = 0;
   MapGrid_CopyCells(57, 16, 4, 6, destinationX, destinationY);
 }
 
-/// Pound on the pillar does the same, without the wait.
-void PsynergyTest_PoundPillar(s32 mode) {
+/// Pound on the torch does the same, without the wait.
+void PsynergyTest_PoundTorch(s32 mode) {
   s32 destinationX;
   s32 destinationY;
 
   if (mode == 1) {
-    Actor_SetAnimation(ACTOR_PILLAR, 2);
+    Actor_SetAnimation(ACTOR_TORCH, 2);
     destinationX = 25;
     destinationY = 0;
     MapGrid_CopyCells(57, 16, 4, 6, destinationX, destinationY);
   }
 }
 
-/// Cyclone on cell 55 blows the leaves away: the cells it touched in the
-/// 5 by 4 block at (34, 26) are copied in from (2, 10).
+/// Cyclone on cell 55 blows the leaves away: each cell it touched in the 5 by
+/// 4 patch of leaves at (2, 10) takes its picture from the same place of the
+/// block at (34, 26).
 void PsynergyTest_BlowAwayLeaves(void) {
   s32 windowX;
   s32 windowZ;
@@ -428,43 +441,44 @@ void PsynergyTest_ArriveInRing(void) {
   Event_SetDestination(SCENE_PSYNERGY_TEST, 8);
 }
 
-/// Cyclone on cell 57: the Mad Plant leaps, and its battle starts with no
-/// escape.
+/// Cyclone on cell 57: a Mad Plant leaps at the leader, and a battle with no
+/// escape starts, encounter zone 14's first formation (a Wild Wolf and Giant
+/// Bats).
 void PsynergyTest_FightMadPlant(void) {
   Import_DebugMadPlantLeap(SPRITE_MAD_PLANT, 40, 168);
   gMainRoutineWork.battleType = BATTLE_TYPE_NO_ESCAPE;
   Field_RequestBattleFromEncounterTable(14, 0);
 }
 
-/// The four Scoop spots, cells 50 to 53, each run while their flag is clear.
-/// Each passes on the stage of the dig.
+/// The four Scoop spots, the grass patches of cells 50 to 53, each run while
+/// their flag is clear. Each passes on the stage of the dig.
 void PsynergyTest_DigUpHole(s32 mode) {
   Event_SetFlag(FLAG_HOLE_DUG);
   PsynergyTest_DigCells(mode, 36, 28, 1, 1, 10, 10);
 }
 
-/// The Scoop spot that digs up an actor that grows out of the ground.
-void PsynergyTest_DigUpGrowingActor(s32 mode) {
-  Event_SetFlag(FLAG_GROWING_ACTOR_DUG);
-  PsynergyTest_GrowActor(mode, ACTOR_GROWING, 184, 184);
+/// The Scoop spot that digs up a puddle, which grows out of the ground.
+void PsynergyTest_DigUpPuddle(s32 mode) {
+  Event_SetFlag(FLAG_PUDDLE_DUG);
+  PsynergyTest_GrowActor(mode, ACTOR_PUDDLE, 184, 184);
 }
 
-/// The Scoop spot that digs up an actor that falls holding an item.
-void PsynergyTest_DigUpFallingActor(s32 mode) {
-  Event_SetFlag(FLAG_FALLING_ACTOR_DUG);
-  PsynergyTest_DropActor(mode, ACTOR_FALLING, 200, 200);
+/// The Scoop spot that digs up a Wicked Mace, which drops onto it.
+void PsynergyTest_DigUpWickedMace(s32 mode) {
+  Event_SetFlag(FLAG_WICKED_MACE_DUG);
+  PsynergyTest_DropActor(mode, ACTOR_WICKED_MACE, 200, 200);
 }
 
-/// The Scoop spot that digs up a monster to fight.
-void PsynergyTest_DigUpMonster(s32 mode) {
-  Event_SetFlag(FLAG_MONSTER_DUG);
-  PsynergyTest_RaiseMonster(mode, 216, 216, 14, 0);
+/// The Scoop spot that raises a statue, then a battle.
+void PsynergyTest_DigUpStatue(s32 mode) {
+  Event_SetFlag(FLAG_STATUE_DUG);
+  PsynergyTest_RaiseStatue(mode, 216, 216, 14, 0);
 }
 
-/// Talking to the actor that fell takes the item it holds (its icon).
+/// Talking to the Wicked Mace picks it up.
 void PsynergyTest_PickUpItem(void) {
-  Event_PickUpItem(ACTOR_FALLING, Actor_Get(ACTOR_FALLING)->iconItem,
-                   FLAG_ITEM_TAKEN);
+  Event_PickUpItem(ACTOR_WICKED_MACE, Actor_Get(ACTOR_WICKED_MACE)->iconItem,
+                   FLAG_WICKED_MACE_TAKEN);
 }
 
 /// Parch on cell 60 dries the 2 by 4 block at (16, 10), copied in from
@@ -497,9 +511,9 @@ void PsynergyTest_ShowRings(s32 actor) {
 
 const struct Trigger *Scene_GetTriggers(void) { return gSceneEvents; }
 
-/// Sets the shops' rare stock, lays the fallen actors down, puts back what
-/// the Scoop spots and the item have already done, and sends the leader away
-/// or brings it in by ring at entrances 6 and 8.
+/// Sets the shops' rare stock, freezes the puddle, lays the fallen actors down,
+/// puts back what the Scoop spots and the Wicked Mace have already done, and
+/// sends the leader away or brings it in by ring at entrances 6 and 8.
 s32 Scene_Initialize(void) {
   struct FieldWork *work = Ram_HeapSlots->fieldWork;
 
@@ -523,7 +537,7 @@ s32 Scene_Initialize(void) {
   Item_AdjustCounter(ITEM_SPIRIT_ARMLET, 1);
   Item_AdjustCounter(ITEM_WARRIORS_HELM, 1);
   gMainRoutineWork.messageSpeed = 2;
-  Actor_SetAnimation(ACTOR_MENU_TESTER, 2);
+  Actor_SetAnimation(ACTOR_ICE_PILLAR, 2);
   Actor_SetAnimation(ACTOR_FLAME, 2);
   // Call3 and Call2 build each call's constants afresh (call.h).
   Call3((void (*)())Actor_FallOverWithAnimationById, ACTOR_FALLEN_MAN,
@@ -532,11 +546,12 @@ s32 Scene_Initialize(void) {
   Actor_FallOverById(ACTOR_MARS_DJINNI, 0);
   if (Event_GetFlag(FLAG_HOLE_DUG))
     MapGrid_CopyCells(36, 28, 1, 1, 10, 10);
-  if (Event_GetFlag(FLAG_GROWING_ACTOR_DUG))
-    Actor_SetPosition(ACTOR_GROWING, 184, 184);
-  if (Event_GetFlag(FLAG_FALLING_ACTOR_DUG) && !Event_GetFlag(FLAG_ITEM_TAKEN))
-    Actor_SetPosition(ACTOR_FALLING, 200, 200);
-  Actor_SetItemIcon(Actor_Get(ACTOR_FALLING), ITEM_WICKED_MACE);
+  if (Event_GetFlag(FLAG_PUDDLE_DUG))
+    Actor_SetPosition(ACTOR_PUDDLE, 184, 184);
+  if (Event_GetFlag(FLAG_WICKED_MACE_DUG) &&
+      !Event_GetFlag(FLAG_WICKED_MACE_TAKEN))
+    Actor_SetPosition(ACTOR_WICKED_MACE, 200, 200);
+  Actor_SetItemIcon(Actor_Get(ACTOR_WICKED_MACE), ITEM_WICKED_MACE);
   {
     struct MainRoutineWork *party = &gMainRoutineWork;
 
@@ -606,9 +621,9 @@ void PsynergyTest_DropActor(s32 mode, s32 id, s32 x, s32 z) {
 
 /// At the first stage of a dig, places a brown boulder at (x, z) in pixels; at
 /// the second, grows a winged statue there from two fifths to full size while
-/// it turns, faces it away from the leader and starts the battle of row and
-/// column of the encounter table.
-void PsynergyTest_RaiseMonster(s32 mode, s32 x, s32 z, s32 row, s32 column) {
+/// it turns, faces it away from the leader and starts a battle with the
+/// formation at column of encounter zone row.
+void PsynergyTest_RaiseStatue(s32 mode, s32 x, s32 z, s32 row, s32 column) {
   struct Actor *actor;
 
   if (mode == 1) {
@@ -644,13 +659,16 @@ void PsynergyTest_RaiseMonster(s32 mode, s32 x, s32 z, s32 row, s32 column) {
   }
 }
 
-/// How far a ring climbs, in pixels, and the height of one not yet started.
+/// How far a ring climbs, in pixels, how many frames apart the rings start,
+/// and the height of one not yet started.
 #define RING_CLIMB 32
+#define RING_INTERVAL 16
 #define RING_NOT_STARTED 999
 
-/// Each frame of an actor's rings: two rings of four sprites climb 32 pixels
-/// up the actor, a new one every 16 frames with a chime, its colour cycling;
-/// once stopped, the rings climb out and the actor's colours come back.
+/// Each frame of an actor's rings: a ring climbs RING_CLIMB pixels up the
+/// actor, swelling and shrinking as it goes, and the next starts with a chime
+/// RING_INTERVAL frames later, two at a time, while the actor's colours cycle.
+/// Once stopped, the rings climb out and the actor's colours come back.
 void PsynergyTest_UpdateRings(struct Actor *actor) {
   struct Vector3 position;
   s32 x, z;
@@ -660,11 +678,13 @@ void PsynergyTest_UpdateRings(struct Actor *actor) {
   u8 *count = &actor->riseEnabled;
   struct EffectSprite *sprite;
 
+  // Every other frame, the next of the normal colours and the five swaps.
   if (*count & 1)
-    Actor_SetSpriteColorMode(
-        actor, (u8)((u32)((struct CounterBits *)count)->rest % 6));
+    Actor_SetSpriteColorMode(actor,
+                             (u8)((u32)((struct CounterBits *)count)->rest %
+                                  (SPRITE_COLOR_BRG + 1)));
   if (actor->riseCounter == 0) {
-    if ((*count & 15) == 0) {
+    if ((*count & (RING_INTERVAL - 1)) == 0) {
       Event_PlaySound(SE_RISING_RINGS);
       work->heights[work->nextPair] = 0;
       work->nextPair ^= 1;
@@ -679,7 +699,8 @@ void PsynergyTest_UpdateRings(struct Actor *actor) {
   }
   (*count)++;
   for (i = 0; i < 2; i++) {
-    sine = Math_Sin(work->heights[i] << 10);
+    // Its size: half a turn of sine over the climb.
+    sine = Math_Sin(work->heights[i] * (DEGtoANG(180) / RING_CLIMB));
     if (work->heights[i] >= 0) {
       if (work->heights[i] < RING_CLIMB) {
 
@@ -713,38 +734,56 @@ void PsynergyTest_UpdateRings(struct Actor *actor) {
 }
 
 // clang-format off
-/// The rings' tiles (PsynergyTest_StartRings loads 256 bytes of them).
-s32 gPsynergyTest_RingTiles[] = {
-    0, 0, 0, 0, 0, 0,
-    0x70000000, (s32)0xf7700000, 0, 0, 0, 0,
-    0x77770000, (s32)0xffff7770, -9, 0x7777ffff, 0, 0,
-    0, 0, 0x7777, 0x777ffff, 0x7fffffff, (s32)0xffff7777,
-    0, 0, 0, 0, 0, 0,
-    7, 0x77f, -0x90000, -0x9000, 0x7ffff700, 0x7ffff70,
-    0x7fff70, 0x7ffff7, 0x7fff7, 0x7fff7, 0x77ff, 119,
-    0, 0, 0, 0, 0, 0,
-    -0x890000, 0x77000000, 0, 0, 0, 0,
-    0, 0, 0x7fff, 0x7ffff, 0x7ffff7, 0x7ffff70,
-    0x7fff700, 0x7ffff700, 0x7fff7000, 0x7fff7000, 0, 0,
-    0, 0, 0, 0, 0x40000000, (s32)0xf4400000,
-    0, 0, 0, 0, 0x44440000, (s32)0xffff4440,
-    -12, 0x4444ffff, 0, 0, 0, 0,
-    0x4444, 0x444ffff, 0x4fffffff, (s32)0xffff4444, 0, 0,
-    0, 0, 0, 0, 4, 0x44f,
-    -0xc0000, -0xc000, 0x4ffff400, 0x4ffff40, 0x4fff40, 0x4ffff4,
-    0x4fff4, 0x4fff4, 0x44ff, 68, 0, 0,
-    0, 0, 0, 0, -0xbc0000, 0x44000000,
-    0, 0, 0, 0, 0, 0,
-    0x4fff, 0x4ffff, 0x4ffff4, 0x4ffff40, 0x4fff400, 0x4ffff400,
-    0x4fff4000, 0x4fff4000, (s32)0xe9000000, 233, (s32)0xeb000000, 235,
-    (s32)0xedeb0000, 0xebed, (s32)0xeeedebe9, (s32)0xe9ebedee, (s32)0xeeedebe9, (s32)0xe9ebedee,
-    (s32)0xedeb0000, 0xebed, (s32)0xeb000000, 235, (s32)0xe9000000, 233,
-    0xe900, 0xe90000, 0xebe9e9, (s32)0xe9e9eb00, (s32)0xedebeb00, 0xebebed,
-    (s32)0xefed0000, 0xedef, (s32)0xefed0000, 0xedef, (s32)0xedebeb00, 0xebebed,
-    0xebe9e9, (s32)0xe9e9eb00, 0xe900, 0xe90000, (s32)0xe9000000, 233,
-    (s32)0xebe90000, 0xe9eb, (s32)0xedebe900, 0xe9ebed, (s32)0xeeedebe9, (s32)0xe9ebedee,
-    (s32)0xeeedebe9, (s32)0xe9ebedee, (s32)0xedebe900, 0xe9ebed, (s32)0xebe90000, 0xe9eb,
-    (s32)0xe9000000, 233,
+/// The rings' tiles: half a ring of light, 32 by 16 pixels of 16 colours,
+/// which PsynergyTest_UpdateRings draws twice, the second flipped, for the
+/// whole ring.
+u32 gPsynergyTest_RingTiles[] = {
+    0x00000000, 0x00000000, 0x00000000, 0x00000000,
+    0x00000000, 0x00000000, 0x70000000, 0xf7700000,
+    0x00000000, 0x00000000, 0x00000000, 0x00000000,
+    0x77770000, 0xffff7770, 0xfffffff7, 0x7777ffff,
+    0x00000000, 0x00000000, 0x00000000, 0x00000000,
+    0x00007777, 0x0777ffff, 0x7fffffff, 0xffff7777,
+    0x00000000, 0x00000000, 0x00000000, 0x00000000,
+    0x00000000, 0x00000000, 0x00000007, 0x0000077f,
+    0xfff70000, 0xffff7000, 0x7ffff700, 0x07ffff70,
+    0x007fff70, 0x007ffff7, 0x0007fff7, 0x0007fff7,
+    0x000077ff, 0x00000077, 0x00000000, 0x00000000,
+    0x00000000, 0x00000000, 0x00000000, 0x00000000,
+    0xff770000, 0x77000000, 0x00000000, 0x00000000,
+    0x00000000, 0x00000000, 0x00000000, 0x00000000,
+    0x00007fff, 0x0007ffff, 0x007ffff7, 0x07ffff70,
+    0x07fff700, 0x7ffff700, 0x7fff7000, 0x7fff7000,
+    // Unused: the same half ring outlined in colour 4.
+    0x00000000, 0x00000000, 0x00000000, 0x00000000,
+    0x00000000, 0x00000000, 0x40000000, 0xf4400000,
+    0x00000000, 0x00000000, 0x00000000, 0x00000000,
+    0x44440000, 0xffff4440, 0xfffffff4, 0x4444ffff,
+    0x00000000, 0x00000000, 0x00000000, 0x00000000,
+    0x00004444, 0x0444ffff, 0x4fffffff, 0xffff4444,
+    0x00000000, 0x00000000, 0x00000000, 0x00000000,
+    0x00000000, 0x00000000, 0x00000004, 0x0000044f,
+    0xfff40000, 0xffff4000, 0x4ffff400, 0x04ffff40,
+    0x004fff40, 0x004ffff4, 0x0004fff4, 0x0004fff4,
+    0x000044ff, 0x00000044, 0x00000000, 0x00000000,
+    0x00000000, 0x00000000, 0x00000000, 0x00000000,
+    0xff440000, 0x44000000, 0x00000000, 0x00000000,
+    0x00000000, 0x00000000, 0x00000000, 0x00000000,
+    0x00004fff, 0x0004ffff, 0x004ffff4, 0x04ffff40,
+    0x04fff400, 0x4ffff400, 0x4fff4000, 0x4fff4000,
+    // Unused: three 8 by 8 sparkles of 256 colours.
+    0xe9000000, 0x000000e9, 0xeb000000, 0x000000eb,
+    0xedeb0000, 0x0000ebed, 0xeeedebe9, 0xe9ebedee,
+    0xeeedebe9, 0xe9ebedee, 0xedeb0000, 0x0000ebed,
+    0xeb000000, 0x000000eb, 0xe9000000, 0x000000e9,
+    0x0000e900, 0x00e90000, 0x00ebe9e9, 0xe9e9eb00,
+    0xedebeb00, 0x00ebebed, 0xefed0000, 0x0000edef,
+    0xefed0000, 0x0000edef, 0xedebeb00, 0x00ebebed,
+    0x00ebe9e9, 0xe9e9eb00, 0x0000e900, 0x00e90000,
+    0xe9000000, 0x000000e9, 0xebe90000, 0x0000e9eb,
+    0xedebe900, 0x00e9ebed, 0xeeedebe9, 0xe9ebedee,
+    0xeeedebe9, 0xe9ebedee, 0xedebe900, 0x00e9ebed,
+    0xebe90000, 0x0000e9eb, 0xe9000000, 0x000000e9,
 };
 
 struct SceneEntrance gSceneEntrances[] = {
@@ -845,26 +884,27 @@ struct Trigger gSceneEvents[] = {
      EVENT(PsynergyTest_BrowseSanctumMessages)},
     {TRIGGER_TALK, ACTOR_MARS_DJINNI, CONDITION_ALWAYS,
      EVENT(PsynergyTest_NoOp)},
-    {TRIGGER_TALK, ACTOR_ICON_BROWSER, CONDITION_ALWAYS,
+    {TRIGGER_TALK, ACTOR_IVY, CONDITION_ALWAYS,
      EVENT(PsynergyTest_OpenIconBrowser)},
     {TRIGGER_TALK, ACTOR_SPROUT, CONDITION_ALWAYS, EVENT(PsynergyTest_NoOp)},
-    {TALK_TRIGGER_FACING(FACING_NORTH), ACTOR_MENU_TESTER, CONDITION_ALWAYS,
+    {TALK_TRIGGER_FACING(FACING_NORTH), ACTOR_ICE_PILLAR, CONDITION_ALWAYS,
      EVENT(PsynergyTest_EditIsaacName)},
-    {TRIGGER_TALK, ACTOR_MENU_TESTER, CONDITION_ALWAYS,
+    {TRIGGER_TALK, ACTOR_ICE_PILLAR, CONDITION_ALWAYS,
      EVENT(PsynergyTest_TestItemSelection)},
-    {TRIGGER_TALK, ACTOR_FALLING, CONDITION_ALWAYS,
+    {TRIGGER_TALK, ACTOR_WICKED_MACE, CONDITION_ALWAYS,
      EVENT(PsynergyTest_PickUpItem)},
-#if (LANGUAGE ==                                                               \
-     LANGUAGE_JAPANESE) /* Rows exclusive to the Japanese edition. */
+// Mind Read hears what Eastern Alhafra's men say after Briggs's attack;
+// the Japanese table has one more row, for the innkeeper.
+#if LANGUAGE == LANGUAGE_JAPANESE
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_INNKEEPER, CONDITION_ALWAYS,
      5618},
 #endif
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_SHOPKEEPER, CONDITION_ALWAYS,
-     MSGNO(MsgOooogOw2)},
+     MSGNO(MsgOooogOw)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_FALLEN_MAN, CONDITION_ALWAYS,
      MSGNO(MsgWhyDoThese)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_INNKEEPER, CONDITION_ALWAYS,
-     MSGNO(MsgStupidBriggs2)},
+     MSGNO(MsgStupidBriggs)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_MESSAGE_BROWSER,
      CONDITION_ALWAYS, MSGNO(MsgBriggsSPirates)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_MARS_DJINNI, CONDITION_ALWAYS,
@@ -881,41 +921,40 @@ struct Trigger gSceneEvents[] = {
     {EXAMINE_TRIGGER(EXAMINE_CHEST), 100, CONDITION_ALWAYS, FIND_COINS(333)},
     {PSYNERGY_ON_ACTOR(ABILITY_FORCE), ACTOR_SPROUT, CONDITION_ALWAYS,
      EVENT(PsynergyTest_IgnorePsynergy)},
-    {PSYNERGY_ON_ACTOR(ABILITY_FORCE), ACTOR_MENU_TESTER, CONDITION_ALWAYS,
+    {PSYNERGY_ON_ACTOR(ABILITY_FORCE), ACTOR_ICE_PILLAR, CONDITION_ALWAYS,
      EVENT(PsynergyTest_IgnorePsynergy)},
-    {PSYNERGY_ON_ACTOR(ABILITY_WHIRLWIND), ACTOR_MENU_TESTER, CONDITION_ALWAYS,
+    {PSYNERGY_ON_ACTOR(ABILITY_WHIRLWIND), ACTOR_ICE_PILLAR, CONDITION_ALWAYS,
      EVENT(PsynergyTest_IgnorePsynergy)},
-    {PSYNERGY_ON_ACTOR(ABILITY_CATCH), ACTOR_MENU_TESTER, CONDITION_ALWAYS,
+    {PSYNERGY_ON_ACTOR(ABILITY_CATCH), ACTOR_ICE_PILLAR, CONDITION_ALWAYS,
      EVENT(PsynergyTest_IgnorePsynergy)},
-    {PSYNERGY_ON_ACTOR(ABILITY_FROST), ACTOR_GROWING, CONDITION_ALWAYS,
+    {PSYNERGY_ON_ACTOR(ABILITY_FROST), ACTOR_PUDDLE, CONDITION_ALWAYS,
      EVENT(PsynergyTest_NoOp)},
-    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_POUND, PSYNERGY_PHASE_ACTS), ACTOR_PILLAR,
-     CONDITION_ALWAYS, EVENT(PsynergyTest_PoundPillar)},
+    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_POUND, PSYNERGY_PHASE_ACTS), ACTOR_TORCH,
+     CONDITION_ALWAYS, EVENT(PsynergyTest_PoundTorch)},
     {PSYNERGY_ANYWHERE(ABILITY_SAND, PSYNERGY_PHASE_AFTER_CAST), 0,
      CONDITION_ALWAYS, EVENT(PsynergyTest_SetSandLayer)},
     {PSYNERGY_ANYWHERE(ABILITY_SAND, PSYNERGY_PHASE_FADES), 0, CONDITION_ALWAYS,
      EVENT(PsynergyTest_ClearSandLayer)},
     {PSYNERGY_PHASE_ON_ACTOR(ABILITY_BLAZE, PSYNERGY_PHASE_BEFORE_CAST),
      ACTOR_FLAME, CONDITION_ALWAYS, EVENT(PsynergyTest_NoOp)},
-    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_BLAZE, PSYNERGY_PHASE_HITS),
-     ACTOR_PRACTISING_MAN, CONDITION_ALWAYS, EVENT(PsynergyTest_PracticeShout)},
+    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_BLAZE, PSYNERGY_PHASE_HITS), ACTOR_KRADEN,
+     CONDITION_ALWAYS, EVENT(PsynergyTest_PracticeShout)},
     {PSYNERGY_PHASE_ON_ACTOR(ABILITY_BLAZE, PSYNERGY_PHASE_AFTER_END),
-     ACTOR_PRACTISING_MAN, CONDITION_ALWAYS,
-     EVENT(PsynergyTest_StartleAfterBlaze)},
+     ACTOR_KRADEN, CONDITION_ALWAYS, EVENT(PsynergyTest_StartleAfterBlaze)},
     {PSYNERGY_PHASE_ON_ACTOR(ABILITY_BLAZE, PSYNERGY_PHASE_BEFORE_CAST),
-     ACTOR_PRACTISING_MAN, CONDITION_ALWAYS, EVENT(PsynergyTest_NoOp)},
+     ACTOR_KRADEN, CONDITION_ALWAYS, EVENT(PsynergyTest_NoOp)},
     {PSYNERGY_PHASE_ON_ACTOR(ABILITY_ARROW, PSYNERGY_PHASE_AFTER_END),
-     ACTOR_PRACTISING_MAN, CONDITION_ALWAYS, EVENT(PsynergyTest_StartleAgain)},
+     ACTOR_KRADEN, CONDITION_ALWAYS, EVENT(PsynergyTest_StartleAgain)},
     {PSYNERGY_PHASE_ON_ACTOR(ABILITY_ARROW, PSYNERGY_PHASE_AFTER_END),
-     ACTOR_PILLAR, CONDITION_ALWAYS, EVENT(PsynergyTest_LowerPillar)},
+     ACTOR_TORCH, CONDITION_ALWAYS, EVENT(PsynergyTest_LightTorch)},
     {PSYNERGY_PHASE_ON_CELL(ABILITY_SCOOP, PSYNERGY_PHASE_ACTS), 50,
      FLAG_HOLE_DUG, EVENT(PsynergyTest_DigUpHole)},
     {PSYNERGY_PHASE_ON_CELL(ABILITY_SCOOP, PSYNERGY_PHASE_ACTS), 51,
-     FLAG_GROWING_ACTOR_DUG, EVENT(PsynergyTest_DigUpGrowingActor)},
+     FLAG_PUDDLE_DUG, EVENT(PsynergyTest_DigUpPuddle)},
     {PSYNERGY_PHASE_ON_CELL(ABILITY_SCOOP, PSYNERGY_PHASE_ACTS), 52,
-     FLAG_FALLING_ACTOR_DUG, EVENT(PsynergyTest_DigUpFallingActor)},
+     FLAG_WICKED_MACE_DUG, EVENT(PsynergyTest_DigUpWickedMace)},
     {PSYNERGY_PHASE_ON_CELL(ABILITY_SCOOP, PSYNERGY_PHASE_ACTS), 53,
-     FLAG_MONSTER_DUG, EVENT(PsynergyTest_DigUpMonster)},
+     FLAG_STATUE_DUG, EVENT(PsynergyTest_DigUpStatue)},
     {PSYNERGY_PHASE_ON_CELL(ABILITY_PARCH, PSYNERGY_PHASE_ACTS), 60,
      CONDITION_ALWAYS, EVENT(PsynergyTest_ParchCells)},
     {PSYNERGY_PHASE_ON_CELL(ABILITY_CYCLONE, PSYNERGY_PHASE_ACTS), 55,
@@ -926,13 +965,13 @@ struct Trigger gSceneEvents[] = {
      CONDITION_ALWAYS, EVENT(PsynergyTest_ArriveInRing)},
     {PSYNERGY_PHASE_ON_CELL(ABILITY_CYCLONE, PSYNERGY_PHASE_ACTS), 57,
      CONDITION_ALWAYS, EVENT(PsynergyTest_FightMadPlant)},
-    {PSYNERGY_ON_ACTOR(ABILITY_TREMOR), ACTOR_ICON_BROWSER, CONDITION_ALWAYS,
+    {PSYNERGY_ON_ACTOR(ABILITY_TREMOR), ACTOR_IVY, CONDITION_ALWAYS,
      EVENT(PsynergyTest_IgnoreTremor)},
-    {PSYNERGY_ON_ACTOR(ABILITY_TREMOR), ACTOR_MENU_TESTER, CONDITION_ALWAYS,
+    {PSYNERGY_ON_ACTOR(ABILITY_TREMOR), ACTOR_ICE_PILLAR, CONDITION_ALWAYS,
      EVENT(PsynergyTest_IgnoreTremor)},
     {PSYNERGY_ON_ACTOR(ABILITY_GRIND), ACTOR_MESSAGE_BROWSER, CONDITION_ALWAYS,
      EVENT(PsynergyTest_IgnoreGrind)},
-    {PSYNERGY_ON_ACTOR(ABILITY_GRIND), ACTOR_MENU_TESTER, CONDITION_ALWAYS,
+    {PSYNERGY_ON_ACTOR(ABILITY_GRIND), ACTOR_ICE_PILLAR, CONDITION_ALWAYS,
      EVENT(PsynergyTest_IgnoreGrind)},
     {TRIGGER_TABLE_END},
 };
@@ -949,7 +988,7 @@ void PsynergyTest_StartRings(struct Actor *actor, struct SparkleWork *work) {
   s32 offset;
 
   work->vramEntry = VramCache_FindFreeEntry();
-  Vram_Load(work->vramEntry, 256, gPsynergyTest_RingTiles);
+  Vram_Load(work->vramEntry, 8 * TILE_SIZE_4BPP, gPsynergyTest_RingTiles);
   work->nextPair = 0;
   work->heights[0] = RING_NOT_STARTED;
   work->heights[1] = RING_NOT_STARTED;
@@ -957,7 +996,7 @@ void PsynergyTest_StartRings(struct Actor *actor, struct SparkleWork *work) {
   actor->riseCounter = 0;
   actor->riseEnabled = 0;
   actor->update = PsynergyTest_UpdateRings;
-  tile = gVramCacheEntries[work->vramEntry].offset >> 5;
+  tile = gVramCacheEntries[work->vramEntry].offset / TILE_SIZE_4BPP;
   actor->watchedActor = (struct Actor *)work;
   for (row = 0; row <= 1; row++) {
     col = 1;

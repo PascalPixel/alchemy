@@ -26,6 +26,11 @@
 /// The play time shown stops at PLAY_TIME_HOURS_MAX hours and 59 minutes.
 #define PLAY_TIME_HOURS_MAX 999
 #define MINUTES_PER_HOUR 60
+#define SECONDS_PER_MINUTE 60
+
+/// A two-digit field for String_FormatNumber: with 100 added, its last two
+/// digits keep their leading zero.
+#define WITH_LEADING_ZERO(n) ((n) + 100)
 
 /// The file list shows the chosen file's party as standing sprites in a row,
 /// and four Djinn sprites, one for each element, over the file's Djinn counts.
@@ -38,7 +43,7 @@ enum FileMenuMode {
   FILE_LIST_CONTINUE, ///< continuing: files not yet cleared
   FILE_LIST_COPY,     ///< copying: any file with data
   FILE_LIST_ERASE,    ///< erasing: any file with data
-  /// The title's Battle: files with any of game flags 48-127 set.
+  /// The title's Battle: files that have found a Djinni.
   FILE_LIST_EXTRA,
   FILE_LIST_CLEARED, ///< the title's Send: cleared files only
   /// The title's Update: files saved before FLAG_REUNITED was set.
@@ -56,6 +61,10 @@ enum FileMenuMode {
 #define PROGRESS_BAR_WIDTH 12
 #define PROGRESS_BAR_LAST_ROW 6
 #define PROGRESS_BAR_FIRST_TILE 128
+
+/// The music fades out under the progress screen and back after it by this
+/// much of BGM_UNITY_SCALE a VBlank.
+#define PROGRESS_MUSIC_FADE_STEP 30
 
 /// The progress bar's serial callback: advances the stored progress by step
 /// and draws row min(progress, 6) of gWindow_ProgressBarRows.
@@ -121,7 +130,7 @@ struct Window *SaveProgress_Open(u32 kind) {
   message = (s32)&MsgDoNotTurnThePower;
   Text_DrawMessage(message, (s32)window, 40, 88);
   Text_DrawMessage(message + 1, (s32)window, 40, 104);
-  Sound_SetBgmVolumeTargetFar(0, 30);
+  Sound_SetBgmVolumeTargetFar(0, PROGRESS_MUSIC_FADE_STEP);
   Sound_PlayFar(SE_STOP_EXIT_SE);
   wait(10);
   Heap_Release(tiles);
@@ -132,7 +141,7 @@ struct Window *SaveProgress_Open(u32 kind) {
 struct Window *SaveProgress_Close(struct Window *window) {
   wait(10);
   Scene_PlayQueuedMusicFar();
-  Sound_SetBgmVolumeTargetFar(BGM_UNITY_SCALE, 30);
+  Sound_SetBgmVolumeTargetFar(BGM_UNITY_SCALE, PROGRESS_MUSIC_FADE_STEP);
   Window_Close(window, 0);
   return window;
 }
@@ -199,18 +208,9 @@ s32 Save_DeletePartMasked(s32 partId) {
   return result;
 }
 
-// Clock texts: a frame count written as hours, minutes, seconds and
-// hundredths, and the save files' play time.
-//
-// Each field comes from String_FormatNumber; a two-digit field is formatted
-// with 100 added, which gives it a leading zero in its last two digits.
-
-// XXX: what shows this clock; the overlays that call String_FormatStopwatchFar
-// would settle it.
-
-/// Writes frames (60 a second) as "HHH:MM:SS:CC" into out and returns out.
-/// Reached only through the far call String_FormatStopwatchFar, which nothing
-/// calls.
+/// Unused: writes frames as "HHH:MM:SS:CC", hours to hundredths, into out and
+/// returns out. Its far call String_FormatStopwatchFar is exported, but no
+/// overlay imports it and nothing calls it.
 u8 *String_FormatStopwatch(u32 frames, u8 *out) {
   u8 digits[16];
   u8 *digitsCursor;
@@ -221,13 +221,13 @@ u8 *String_FormatStopwatch(u32 frames, u8 *out) {
   u32 hours;
   u32 hundredths;
 
-  fraction = frames % 60;
-  frames /= 60;
-  hundredths = fraction * 100 / 60;
-  seconds = frames % 60;
-  frames /= 60;
-  minutes = frames % 60;
-  hours = frames / 60;
+  fraction = frames % FRAMES_PER_SECOND;
+  frames /= FRAMES_PER_SECOND;
+  hundredths = fraction * 100 / FRAMES_PER_SECOND;
+  seconds = frames % SECONDS_PER_MINUTE;
+  frames /= SECONDS_PER_MINUTE;
+  minutes = frames % MINUTES_PER_HOUR;
+  hours = frames / MINUTES_PER_HOUR;
 
   digitsCursor = String_FormatNumber(digits, hours, 3);
   *out = *digitsCursor;
@@ -239,7 +239,7 @@ u8 *String_FormatStopwatch(u32 frames, u8 *out) {
   textCursor++;
   *textCursor = ':';
 
-  digitsCursor = String_FormatNumber(digits, minutes + 100, 2);
+  digitsCursor = String_FormatNumber(digits, WITH_LEADING_ZERO(minutes), 2);
   textCursor++;
   *textCursor = digitsCursor[0];
   textCursor++;
@@ -247,7 +247,7 @@ u8 *String_FormatStopwatch(u32 frames, u8 *out) {
   textCursor++;
   *textCursor = ':';
 
-  digitsCursor = String_FormatNumber(digits, seconds + 100, 2);
+  digitsCursor = String_FormatNumber(digits, WITH_LEADING_ZERO(seconds), 2);
   textCursor++;
   *textCursor = digitsCursor[0];
   textCursor++;
@@ -255,7 +255,7 @@ u8 *String_FormatStopwatch(u32 frames, u8 *out) {
   textCursor++;
   *textCursor = ':';
 
-  digitsCursor = String_FormatNumber(digits, hundredths + 100, 2);
+  digitsCursor = String_FormatNumber(digits, WITH_LEADING_ZERO(hundredths), 2);
   textCursor++;
   *textCursor = digitsCursor[0];
   textCursor++;
@@ -265,8 +265,9 @@ u8 *String_FormatStopwatch(u32 frames, u8 *out) {
   return out;
 }
 
-/// Writes a save file's play time (in frames) as "HHH:MM" into out and
-/// returns out; the clock stops at 999:59.
+/// Writes the play time `frames` into `out` as hours and minutes, "hhh:mm"
+/// with the hours right-aligned in three characters, and returns `out`. The
+/// time stops at 999:59.
 void *String_FormatPlayTime(s32 frames, u8 *out) {
   u8 digits[16];
   u32 totalMinutes;
@@ -275,7 +276,7 @@ void *String_FormatPlayTime(s32 frames, u8 *out) {
   u8 *digitsCursor;
   u8 *textCursor;
 
-  totalMinutes = (u32)frames / (60 * 60);
+  totalMinutes = (u32)frames / (FRAMES_PER_SECOND * SECONDS_PER_MINUTE);
   if (totalMinutes >
       PLAY_TIME_HOURS_MAX * MINUTES_PER_HOUR + MINUTES_PER_HOUR - 1)
     totalMinutes =
@@ -291,7 +292,7 @@ void *String_FormatPlayTime(s32 frames, u8 *out) {
   *textCursor = *digitsCursor;
   textCursor++;
   *textCursor = digitsCursor[1];
-  minutes += 100;
+  minutes = WITH_LEADING_ZERO(minutes);
   textCursor++;
   *textCursor = ':';
 
@@ -350,8 +351,8 @@ s32 Save_CountFilesExcludingSent(s32 excludeSent) {
 /// Loads the save file summaries for the File Screen and returns how many files
 /// there are: plus SAVE_SCAN_ALL_CLEARED when every file is cleared (its send
 /// flag set), or SAVE_ERROR_NO_MEMORY when the backup memory cannot be
-/// read. Sets the title's options from them: Battle when a file has any of game
-/// flags 48-127 set, Update when a file has a level and FLAG_REUNITED clear.
+/// read. Sets the title's options from them: Battle when a file has found a
+/// Djinni, Update when a file has a level and FLAG_REUNITED clear.
 s32 Save_ScanFileSummaries(void) {
   s32 error;
   s32 sentCount;
@@ -389,8 +390,8 @@ s32 Save_ScanFileSummaries(void) {
 /// Prepares the save buffer for writing: stamps the main routine's work with
 /// the time and options, then fills the file summary shown on the file menus
 /// (the leader's name, level and class, the play time, area, coins, Djinn of
-/// each element, the party, the send flag and how many of game flags 48-127 are
-/// set) and its checksum, the sum of the 968 words from gGameFlagBytes on.
+/// each element, the party, the send flag and how many Djinn it has found) and
+/// its checksum, the sum of the 968 words from gGameFlagBytes on.
 s32 Save_BuildFileSummary(void) {
   u16 members[14];
   struct SaveSummary *summary;
@@ -401,8 +402,9 @@ s32 Save_BuildFileSummary(void) {
   s32 i;
   u32 sum = 0;
 
-  // The summary's 16-byte header comes before the save buffer.
-  summary = (struct SaveSummary *)(gSaveBuffer - 16);
+  // The summary's header comes before the save buffer.
+  summary =
+      (struct SaveSummary *)(gSaveBuffer - offsetof(struct SaveSummary, name));
   gMainRoutineWork.buildStamp = BuildStamp_GetTimeFar(0);
   gMainRoutineWork.playTime = gPlayTimeFrames;
   // A second copy of the play time, at the start of gSceneLocalState.
@@ -411,7 +413,7 @@ s32 Save_BuildFileSummary(void) {
   leader = Unit_Get(gMainRoutineWork.leaderActorId);
   destination = summary->name;
   source = leader->name;
-  for (i = 0; i < 12; i++)
+  for (i = 0; i < (s32)sizeof(summary->name); i++)
     *destination++ = *source++;
   summary->level = leader->level;
   summary->playTime = gMainRoutineWork.playTime;
@@ -425,14 +427,14 @@ s32 Save_BuildFileSummary(void) {
   summary->djinn[3] = Party_SumDjinnCountsFar(3);
   // Up to four party members, ended by -1.
   Party_ListMembersFar((s16 *)members);
-  for (i = 0; i <= 3 && members[i] != 255; i++)
+  for (i = 0; i <= 3 && members[i] != BATTLE_UNIT_LIST_END; i++)
     summary->party[i] = members[i];
   summary->party[i] = -1;
   summary->windowHue = gMainRoutineWork.windowHue;
   summary->windowBrightness = gMainRoutineWork.windowBrightness;
   summary->sendFlag = gMainRoutineWork.sendFlag;
   summary->flagCount = 0;
-  for (i = 48; i <= 127; i++) {
+  for (i = FLAG_DJINN_FIRST; i <= FLAG_DJINNI(DJINNI_WIND19); i++) {
     if (GameFlag_Get(i))
       summary->flagCount++;
   }
@@ -750,7 +752,7 @@ void FileList_UpdatePulse(void) {
 #else
     sine = Trig_Sin((*vblankCount + i * 8) * (TRIG_TURN * 3 / 256));
 #endif
-    colour = sine / 16384;
+    colour = sine / (FIXED_ONE / 4);
     {
 #ifdef UBFIX
       // A negative sine must be shifted as unsigned bits.
@@ -819,7 +821,7 @@ void Window_FillTilemapRect(struct Window *window, s32 x, s32 y, s32 width,
         } while (remaining != 0);
       }
       height--;
-      offset += 64;
+      offset += BG_SCREEN_WIDTH * 2;
     } while (height != 0);
     work->dirty = 1;
   }

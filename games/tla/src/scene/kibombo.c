@@ -620,9 +620,9 @@ void Kibombo_SetBlocksShown(s32 show) {
 
   if (scene == SCENE_KIBOMBO_STATUE_GROUNDS ||
       scene == SCENE_KIBOMBO_STATUE_GROUNDS_CEREMONY)
-    Actors_SetHidden(show, ACTOR_GROUNDS_FIRST_BLOCK, 2);
+    Actors_SetDrawn(show, ACTOR_GROUNDS_FIRST_BLOCK, 2);
   else if (scene == SCENE_KIBOMBO_HOUSES)
-    Actors_SetHidden(show, ACTOR_INN_FIRST_BLOCK, 2);
+    Actors_SetDrawn(show, ACTOR_INN_FIRST_BLOCK, 2);
 }
 
 /// Unused: draws the room's two unseen blocks and notes them shown.
@@ -2350,7 +2350,7 @@ void Kibombo_StopFireFlicker(void) {
     Task_Remove(Kibombo_FlickerVillageFires);
   else if (scene == SCENE_KIBOMBO_STATUE_GROUNDS_CEREMONY)
     Task_Remove(Kibombo_FlickerCeremonyFires);
-  else if (scene == SCENE_KIBOMBO_STATUE_FACE)
+  else if (scene == SCENE_GABOMBA_STATUE_FACE)
     Task_Remove(Kibombo_FlickerStatueFires);
 }
 
@@ -2505,7 +2505,7 @@ void Kibombo_GazeAtStatue(void) {
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();
   Import_EventSetExitRequest(
-      KIBOMBO_STATUE_FACE_TO_KIBOMBO_STATUE_GROUNDS_CEREMONY_EAST_B);
+      GABOMBA_STATUE_FACE_TO_KIBOMBO_STATUE_GROUNDS_CEREMONY_EAST_B);
 }
 
 /// Three flashes of light, each with the camera at another place.
@@ -2558,7 +2558,7 @@ void Kibombo_StatueFlashes(void) {
   Event_WaitTransitionFrames();
   Event_Wait(10);
   Import_EventSetExitRequest(
-      KIBOMBO_STATUE_FACE_TO_KIBOMBO_STATUE_GROUNDS_CEREMONY_EAST_A);
+      GABOMBA_STATUE_FACE_TO_KIBOMBO_STATUE_GROUNDS_CEREMONY_EAST_A);
 }
 
 /// The sacred night begins: Akafubu calls on the village to pray for his
@@ -3216,7 +3216,7 @@ s32 Scene_Initialize(void) {
     Kibombo_InitializeStatueGroundsByDay();
   else if (scene == SCENE_KIBOMBO_STATUE_GROUNDS_CEREMONY)
     Kibombo_InitializeStatueGroundsCeremony();
-  else if (scene == SCENE_KIBOMBO_STATUE_FACE)
+  else if (scene == SCENE_GABOMBA_STATUE_FACE)
     Kibombo_InitializeStatueFace();
   else if (scene == SCENE_KIBOMBO_HOUSES)
     Kibombo_InitializeHouses();
@@ -3443,7 +3443,7 @@ void Kibombo_InitializeStatueGroundsCeremony(void) {
   case KIBOMBO_STATUE_GROUNDS_CEREMONY_FROM_GABOMBA_STATUE_ARROWS_NORTH_E:
     Kibombo_GabombaResponds();
     return;
-  case KIBOMBO_STATUE_GROUNDS_CEREMONY_FROM_KIBOMBO_STATUE_FACE_EAST_A:
+  case KIBOMBO_STATUE_GROUNDS_CEREMONY_FROM_GABOMBA_STATUE_FACE_EAST_A:
     Kibombo_GabombaRespondsToGift();
     return;
   }
@@ -3509,13 +3509,13 @@ void Kibombo_InitializeStatueFace(void) {
   gKibombo_FireColors[1] = *(u16 *)&BG_PLTT_COLOR(10, 7);
   gKibombo_FireColors[2] = *(u16 *)&BG_PLTT_COLOR(10, 6);
   if (gMainRoutineWork.entrance ==
-      KIBOMBO_STATUE_FACE_FROM_KIBOMBO_STATUE_GROUNDS_CEREMONY_EAST_A) {
+      GABOMBA_STATUE_FACE_FROM_KIBOMBO_STATUE_GROUNDS_CEREMONY_EAST_A) {
     Actor_SetSpriteFlags(Actor_GetById(gMainRoutineWork.leaderActorId), 0);
     Actor_SetSpriteColor(Actor_GetById(gMainRoutineWork.leaderActorId),
                          SPRITE_COLOR_HIDDEN);
     Kibombo_StatueFlashes();
   } else if (gMainRoutineWork.entrance ==
-             KIBOMBO_STATUE_FACE_FROM_KIBOMBO_STATUE_GROUNDS_CEREMONY_EAST_B) {
+             GABOMBA_STATUE_FACE_FROM_KIBOMBO_STATUE_GROUNDS_CEREMONY_EAST_B) {
     Actor_SetSpriteFlags(Actor_GetById(gMainRoutineWork.leaderActorId), 0);
     Actor_SetSpriteColor(Actor_GetById(gMainRoutineWork.leaderActorId),
                          SPRITE_COLOR_HIDDEN);
@@ -3885,9 +3885,9 @@ u32 gSceneExits[] = {
     SCENE_EXIT_UNLESS(14, KibomboHouses, KIBOMBO_HOUSES_FROM_GABOMBA_STATUE_CHAMBER_WITCH_DOCTOR, EXIT_FLAG_NONE),
     SCENE_EXIT_UNLESS(15, KibomboHouses, 7, EXIT_FLAG_NONE),
     SCENE_EXIT_UNLESS(16, KibomboHouses, 13, EXIT_FLAG_NONE),
-    SCENE_EXITS(KibomboStatueFace),
-    SCENE_EXIT(KIBOMBO_STATUE_FACE_TO_KIBOMBO_STATUE_GROUNDS_CEREMONY_EAST_A, KibomboStatueGroundsCeremony, KIBOMBO_STATUE_GROUNDS_CEREMONY_FROM_KIBOMBO_STATUE_FACE_EAST_A),
-    SCENE_EXIT(KIBOMBO_STATUE_FACE_TO_KIBOMBO_STATUE_GROUNDS_CEREMONY_EAST_B, KibomboStatueGroundsCeremony, KIBOMBO_STATUE_GROUNDS_CEREMONY_FROM_GABOMBA_STATUE_ARROWS_NORTH_A),
+    SCENE_EXITS(GabombaStatueFace),
+    SCENE_EXIT(GABOMBA_STATUE_FACE_TO_KIBOMBO_STATUE_GROUNDS_CEREMONY_EAST_A, KibomboStatueGroundsCeremony, KIBOMBO_STATUE_GROUNDS_CEREMONY_FROM_GABOMBA_STATUE_FACE_EAST_A),
+    SCENE_EXIT(GABOMBA_STATUE_FACE_TO_KIBOMBO_STATUE_GROUNDS_CEREMONY_EAST_B, KibomboStatueGroundsCeremony, KIBOMBO_STATUE_GROUNDS_CEREMONY_FROM_GABOMBA_STATUE_ARROWS_NORTH_A),
     SCENE_EXITS_END,
 };
 

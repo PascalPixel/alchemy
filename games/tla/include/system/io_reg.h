@@ -194,15 +194,18 @@ enum DisplayControl {
 /// its kin).
 #define SET_RGB(lvalue, r, g, b)                                               \
   do {                                                                         \
-    int rgb = ((b) << 10) | ((g) << 5) | (r);                                  \
+    int rgb = RGB(r, g, b);                                                    \
     (lvalue) = rgb;                                                            \
   } while (0)
 
 /// The start of the 32 KB of IWRAM, the CPU's fast internal work memory, as
 /// pret names it.
 #define IWRAM_START 0x03000000
-/// The end of the 256 KB of EWRAM from 0x02000000, as pret names it: the limit
-/// the EWRAM heap's allocators test.
+/// The start of the 256 KB of EWRAM, the slower external work memory, as pret
+/// names it.
+#define EWRAM_START 0x02000000
+/// The end of EWRAM, as pret names it: the limit the EWRAM heap's allocators
+/// test.
 #define EWRAM_END 0x02040000
 
 /// Background tile memory's 16 KB character block `n`, 0 to 3.

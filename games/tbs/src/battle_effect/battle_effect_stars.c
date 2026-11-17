@@ -8,8 +8,28 @@
 #define ASTRAL_BLAST_FRAMES 60  ///< frames of Astral Blast
 
 // Astral Blast flies three five-pointed stars at the target; Shining Star drops
-// eight that bounce near it. Each outline's ten corners are projected onto the
+// eight that bounce near it. Each outline's corners are projected onto the
 // canvas and each edge stamped with motes.
+
+/// A star outline's corners, its five points and the five between, and the
+/// turn from one to the next, a tenth of a turn rounded up.
+#define STAR_CORNERS 10
+#define STAR_CORNER_ANGLE ((TRIG_TURN + STAR_CORNERS - 1) / STAR_CORNERS)
+/// The largest of the ten mote pictures.
+#define MOTE_SIZE_MAX 10
+
+/// How fast the camera swings round, slowing from frame 40 to a stop.
+#define ASTRAL_BLAST_TURN_SPEED 128
+/// A new star leaves every 12 frames, spinning a 64th of a turn a frame.
+#define ASTRAL_BLAST_STAR_INTERVAL 12
+#define ASTRAL_BLAST_SPIN (TRIG_TURN / 64)
+/// A star is drawn only while its farthest corner is no deeper than this.
+#define ASTRAL_BLAST_DEPTH_MAX 399999
+/// The motes stamped along each edge of a star.
+#define ASTRAL_BLAST_EDGE_MOTES 16
+#define SHINING_STAR_EDGE_MOTES 12
+/// How far a Shining Star turns each frame, a 32nd of a turn.
+#define SHINING_STAR_SPIN (TRIG_TURN / 32)
 
 /// Three pink stars of light fly from above the user at the first target,
 /// growing and spinning, while the camera swings round; each knocks the target
@@ -84,7 +104,7 @@ void BattleEffect_RunAstralBlast(struct BattleEffectParams *args) {
       s32 speed;
 
       if (frame <= 39)
-        speed = 128;
+        speed = ASTRAL_BLAST_TURN_SPEED;
       else
         speed = 768 - frame * 16;
       if (work->args->side == EFFECT_SIDE_ENEMIES)
@@ -93,53 +113,55 @@ void BattleEffect_RunAstralBlast(struct BattleEffectParams *args) {
         view->yaw += speed;
     }
     for (i = 0; i != 3; i++) {
-      start = i * 12;
+      start = i * ASTRAL_BLAST_STAR_INTERVAL;
       if (frame >= start) {
         step = &work->particles[i];
         size = (frame - start) / 4 + 2;
-        if (size > 10)
-          size = 10;
+        if (size > MOTE_SIZE_MAX)
+          size = MOTE_SIZE_MAX;
         EFFECT_VIEW_FROM_CAMERA(camera);
         Matrix_TranslateVector(Particle_Coordinates(step));
         peak = 0;
-        for (j = 0; j != 10; j++) {
+        for (j = 0; j != STAR_CORNERS; j++) {
           s32 depth;
 
           Matrix_Push();
-          Matrix_RotateZ((frame - start) << 10);
+          Matrix_RotateZ((frame - start) * ASTRAL_BLAST_SPIN);
           Matrix_RotateY(DEGtoANG(90));
-          scale.x = ((frame - start) << 12) + FIXED_ONE / 16;
+          scale.x = (frame - start) * (FIXED_ONE / 16) + FIXED_ONE / 16;
           if (scale.x > FIXED_ONE)
             scale.x = FIXED_ONE;
           scale.y = scale.x;
           scale.z = scale.x;
           Matrix_ScaleVector(Vector3_Coordinates(&scale));
-          Matrix_RotateZ(j * 0x199a);
+          Matrix_RotateZ(j * STAR_CORNER_ANGLE);
           depth = Projection_Point(&gStar_Points[j & 1], &screenPosition);
           if (peak < depth)
             peak = depth;
           screenPosition.x >>= 1;
 #ifndef UBFIX
-          // These first stores read base, which is never set; the next two
-          // overwrite them. UBFIX leaves them out.
-          trails[i * 10 + j].velocityX = screenPosition.x + base.x;
-          trails[i * 10 + j].velocityY = screenPosition.y + base.y;
+          // UB: these first stores read base, which is never set; the next
+          // two overwrite them.
+          trails[i * STAR_CORNERS + j].velocityX = screenPosition.x + base.x;
+          trails[i * STAR_CORNERS + j].velocityY = screenPosition.y + base.y;
 #endif
-          trails[i * 10 + j].velocityX = screenPosition.x;
-          trails[i * 10 + j].velocityY = screenPosition.y;
+          trails[i * STAR_CORNERS + j].velocityX = screenPosition.x;
+          trails[i * STAR_CORNERS + j].velocityY = screenPosition.y;
           Matrix_Pop();
         }
-        if (peak <= 399999) {
-          for (j = 0; j != 10; j++) {
-            struct Particle *from = &((struct Particle *)PARTICLES)[j + i * 10];
+        if (peak <= ASTRAL_BLAST_DEPTH_MAX) {
+          for (j = 0; j != STAR_CORNERS; j++) {
+            struct Particle *from =
+                &((struct Particle *)PARTICLES)[j + i * STAR_CORNERS];
             struct Particle *to =
-                &((struct Particle *)PARTICLES)[(j + 1) % 10 + i * 10];
+                &((struct Particle *)
+                      PARTICLES)[(j + 1) % STAR_CORNERS + i * STAR_CORNERS];
 
-            for (k = 0; k != 16; k++) {
-              s32 x =
-                  from->velocityX + (to->velocityX - from->velocityX) * k / 16;
-              s32 y =
-                  from->velocityY + (to->velocityY - from->velocityY) * k / 16;
+            for (k = 0; k != ASTRAL_BLAST_EDGE_MOTES; k++) {
+              s32 x = from->velocityX + (to->velocityX - from->velocityX) * k /
+                                            ASTRAL_BLAST_EDGE_MOTES;
+              s32 y = from->velocityY + (to->velocityY - from->velocityY) * k /
+                                            ASTRAL_BLAST_EDGE_MOTES;
 
               EFFECT_DRAW_MOTE(draw[0], canvas, graphics, x, y, size);
             }
@@ -252,30 +274,32 @@ void BattleEffect_RunShiningStar(struct BattleEffectParams *args) {
         EFFECT_VIEW_FROM_CAMERA(camera);
         Projection_Point(step, &screenPosition);
         screenPosition.x >>= 1;
-        if (screenPosition.x >= -8 && screenPosition.x <= 127 &&
-            screenPosition.y <= 127 && screenPosition.y >= -8) {
-          for (j = 0; j != 10; j++) {
-            trails[i * 10 + j].velocityX =
+        if (screenPosition.x >= -8 && screenPosition.x <= CANVAS_SIZE - 1 &&
+            screenPosition.y <= CANVAS_SIZE - 1 && screenPosition.y >= -8) {
+          for (j = 0; j != STAR_CORNERS; j++) {
+            trails[i * STAR_CORNERS + j].velocityX =
                 screenPosition.x +
                 FIXEDtoINT(
-                    (Trig_Sin(j * 0x199a - ((frame - step->variant) << 11)) *
+                    (Trig_Sin(j * STAR_CORNER_ANGLE -
+                              (frame - step->variant) * SHINING_STAR_SPIN) *
                      gStar_Radii[j & 1]) /
                     2);
-            trails[i * 10 + j].velocityY =
-                screenPosition.y -
-                FIXEDtoINT(
-                    Trig_Cos(j * 0x199a - ((frame - step->variant) << 11)) *
-                    gStar_Radii[j & 1]);
+            trails[i * STAR_CORNERS + j].velocityY =
+                screenPosition.y - FIXEDtoINT(Trig_Cos(j * STAR_CORNER_ANGLE -
+                                                       (frame - step->variant) *
+                                                           SHINING_STAR_SPIN) *
+                                              gStar_Radii[j & 1]);
           }
-          for (j = 0; j != 10; j++) {
-            struct Particle *from = &trails[j + i * 10];
-            struct Particle *to = &trails[i * 10 + (j + 1) % 10];
+          for (j = 0; j != STAR_CORNERS; j++) {
+            struct Particle *from = &trails[j + i * STAR_CORNERS];
+            struct Particle *to =
+                &trails[i * STAR_CORNERS + (j + 1) % STAR_CORNERS];
 
-            for (k = 0; k != 12; k++) {
-              s32 x =
-                  from->velocityX + (to->velocityX - from->velocityX) * k / 12;
-              s32 y =
-                  from->velocityY + (to->velocityY - from->velocityY) * k / 12;
+            for (k = 0; k != SHINING_STAR_EDGE_MOTES; k++) {
+              s32 x = from->velocityX + (to->velocityX - from->velocityX) * k /
+                                            SHINING_STAR_EDGE_MOTES;
+              s32 y = from->velocityY + (to->velocityY - from->velocityY) * k /
+                                            SHINING_STAR_EDGE_MOTES;
 
               EFFECT_DRAW_MOTE(draw[0], canvas, graphics, x, y, size);
             }
@@ -302,3 +326,16 @@ void BattleEffect_RunShiningStar(struct BattleEffectParams *args) {
 
   EFFECT_FINISH_CANVAS();
 }
+
+#undef SHINING_STAR_FRAMES
+#undef ASTRAL_BLAST_FRAMES
+#undef STAR_CORNERS
+#undef STAR_CORNER_ANGLE
+#undef MOTE_SIZE_MAX
+#undef ASTRAL_BLAST_TURN_SPEED
+#undef ASTRAL_BLAST_STAR_INTERVAL
+#undef ASTRAL_BLAST_SPIN
+#undef ASTRAL_BLAST_DEPTH_MAX
+#undef ASTRAL_BLAST_EDGE_MOTES
+#undef SHINING_STAR_EDGE_MOTES
+#undef SHINING_STAR_SPIN

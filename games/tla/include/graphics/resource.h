@@ -1,6 +1,9 @@
 #ifndef ALCHEMY_RESOURCE_H
 #define ALCHEMY_RESOURCE_H
 
+/// @file
+/// Resources and the sprites and VRAM cache entries made from them.
+
 #include "types.h"
 #include "edition.h"
 

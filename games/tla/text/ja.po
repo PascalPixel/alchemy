@@ -52371,7 +52371,7 @@ msgstr ""
 "しょくじのためのサカナは\n"
 "とることができんじゃろうに。{end_wait}"
 
-msgctxt "MsgOooogOw2"
+msgctxt "MsgOooogOw"
 msgid "09826"
 msgstr "う うーん・・・。{end_wait}"
 
@@ -52381,7 +52381,7 @@ msgstr ""
 "なんで わたしが\n"
 "こんな目に・・・。{end_wait}"
 
-msgctxt "MsgStupidBriggs2"
+msgctxt "MsgStupidBriggs"
 msgid "09828"
 msgstr "パヤヤームのヤツ・・・。{end_wait}"
 

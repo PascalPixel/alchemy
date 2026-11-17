@@ -114,16 +114,20 @@ void JupiterLighthouse_CycloneFifthPatch(void) {
   FieldTileCopies_CopyTouchedCells(56, 0, 5, 3, 94, 26, 1);
 }
 
-/// Cyclone clears the third patch and, unless its flag is set, uncovers a
-/// treasure spot there, pushing off a leader standing on it.
+/// Where the Mint lies buried under the third patch of grass.
+#define MINT_SPOT_X 280
+#define MINT_SPOT_Z 440
+
+/// Cyclone clears the third patch and, unless its flag is set, uncovers the
+/// Mint's treasure spot there, pushing off a leader standing on it.
 void JupiterLighthouse_CycloneUncoversTheSpot(void) {
   struct Actor *leader = Actor_Get(gMainRoutineWork.leaderActorId);
 
   FieldTileCopies_CopyTouchedCells(56, 0, 3, 3, 79, 25, 1);
   if (!Event_GetFlag(FLAG_JUPITER_LIGHTHOUSE_MINT)) {
-    Actor_SetPosition(FIELD_TREASURE_ACTOR, 280, 440);
-    if (FIELD_CELL(leader->x.fixed) == 17 &&
-        FIELD_CELL(leader->z.fixed) == 27) {
+    Actor_SetPosition(FIELD_TREASURE_ACTOR, MINT_SPOT_X, MINT_SPOT_Z);
+    if (FIELD_CELL(leader->x.fixed) == FIELD_CELL(toFIXED(MINT_SPOT_X)) &&
+        FIELD_CELL(leader->z.fixed) == FIELD_CELL(toFIXED(MINT_SPOT_Z))) {
       Event_Start();
       FieldEvent_ResolvePendingActions(0);
       Actor_SetAttachedEffect(gMainRoutineWork.leaderActorId,
@@ -202,9 +206,9 @@ void Actor_StartScript(struct Actor *actor, const s32 *script);
 
 #include "shared/whirlwind_spawn_upper.h"
 
-/// An actor's update: every eighth frame, a mote rising from a random point of
-/// it.
-s32 JupiterLighthouse_EmitRisingMotes(struct Actor *actor) {
+/// Unused: an actor's update that every eighth frame sends a black mote rising
+/// from a random point of it; nothing sets it.
+UNUSED s32 JupiterLighthouse_EmitRisingMotes(struct Actor *actor) {
   struct EffectOptions params;
   s32 phase;
   FIXED x, y, speed;
@@ -214,7 +218,7 @@ s32 JupiterLighthouse_EmitRisingMotes(struct Actor *actor) {
     params.priority = 3;
     params.startScaleX = FIXED_ONE * 7 / 10;
     params.startScaleY = FIXED_ONE * 7 / 10;
-    params.palette = 14;
+    params.palette = SPRITE_COLOR_BLACK;
     x = actor->x.fixed + INTtoFIXED((s32)(Random_Below(9)) - 4);
     y = actor->y.fixed + INTtoFIXED(32 - (s32)(Random_Below(20)));
     speed = (INTtoFIXED((s32)(Random_Below(5))) + toFIXED(5)) / 10;

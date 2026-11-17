@@ -52,15 +52,6 @@
 /// BLDCNT's effect, bits 7 and 6 (BLDCNT_EFFECT_NONE to BLDCNT_EFFECT_DARKEN).
 #define BLDCNT_EFFECT_MASK 0x00c0
 
-/// A world map tile is 512 pixels square: WORLD_MAP_TILE gives the tile a 16.16
-/// coordinate lies in, as FIELD_CELL a map grid cell. The world map is 32 by 32
-/// tiles, wrapping, and each layer's tile numbers follow the 1024 before it.
-#define WORLD_MAP_TILE(coordinate) ((coordinate) >> 25)
-/// The world map block, 32 pixels square, a 16.16 coordinate lies in.
-#define WORLD_MAP_BLOCK(coordinate) ((coordinate) >> 21)
-#define WORLD_MAP_TILES_ACROSS 32
-#define WORLD_MAP_LAYER_TILES 1024
-
 /// A world map collision tile: 4 by 4 values of 4 bits, each for 4 by 4 pixels,
 /// in 8 bytes. The collision buffer holds the 256 tiles of the lower layer's,
 /// then the upper layer's.
@@ -125,7 +116,7 @@ void WorldMap_PreloadCurrentTileBlock(void) {
           (((x / toFIXED(32)) & 31) + (((y / toFIXED(32)) & 31) << 5));
   WorldMap_UpdateRegionTint(block->region, 1);
   value = block->region;
-  switch (value / 10) {
+  switch (value / WORLD_MAP_REGION_GROUP) {
   case 3:
     graphicsSet = 3;
     break;
@@ -227,11 +218,6 @@ void WorldMap_PresentStillPicture(void) {
                          TILE_SIZE_8BPP / 4),
           REG_DMA3);
 }
-
-/// While the still picture shows, the perspective's window lies below the
-/// screen, so no line is drawn in perspective.
-#define STILL_PICTURE_WINDOW_TOP 200
-#define STILL_PICTURE_WINDOW_BOTTOM 255
 
 /// Freezes the world map's perspective view as a still picture on BG1: decodes
 /// the area's tiles again where a field Psynergy used their buffer, saves BG1's

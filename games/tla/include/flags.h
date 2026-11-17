@@ -64,7 +64,7 @@
 /// that was clear, so Isaac saved Hsu himself, whom this game's text calls
 /// Ulmuch ("He helped Ulmuch. Ulmuch was trapped, but Isaac saved him."); only
 /// then does Feizhi come to Champa looking for Isaac.
-#define FLAG_TRANSFERRED_HSU_RESCUED_BY_PARTY 0x822
+#define FLAG_TRANSFERRED_ISAAC_SAVED_ULMUCH 0x822
 #define FLAG_TRANSFERRED_VISITED_SICK_DORA 0x824
 #define FLAG_TRANSFERRED_VAULT_WARNED_OF_ESCAPED_THIEVES 0x825
 /// How many flags gDataTransfer_Flags lists.
@@ -529,18 +529,18 @@
 #define FLAG_DANCING_IDOL_TAKEN 0xf74
 /// Set once the party has taken the Mint Cyclone uncovers in the bushes by the
 /// Gabomba Catacombs' statue.
-#define FLAG_HIDDEN_WALL_MINT_TAKEN 0xf53
+#define FLAG_GABOMBA_CATACOMBS_MINT_TAKEN 0xf53
 /// Set once the party has taken the Tomegathericon from the seated idol of the
 /// Gabomba Catacombs.
 #define FLAG_TOMEGATHERICON_TAKEN 0xf93
 /// Set once the party has taken the Bramble Seed in Contigo's bushes.
 #define FLAG_CONTIGO_BRAMBLE_SEED_TAKEN 0xfc7
 /// Set once the party has caught Kalt Island's Apple.
-#define FLAG_APPLE_TAKEN 0xf5d
+#define FLAG_KALT_ISLAND_APPLE_TAKEN 0xf5d
 /// Set once the party has dug up the Hard Nut at Lemuria's fifth soft spot.
-#define FLAG_FIFTH_SPOT_DUG 0xfbb
+#define FLAG_LEMURIA_HARD_NUT_DUG 0xfbb
 /// Set once the party has dug up the Golem Core under Loho's rock.
-#define FLAG_GOLEM_CORE_DUG 0xff7
+#define FLAG_LOHO_GOLEM_CORE_DUG 0xff7
 
 // Scene flags, FLAG_SCENE_TEMP_00 to FLAG_SCENE_TEMP_FF: a scene says beside
 // its uses what each one holds there.

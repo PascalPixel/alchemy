@@ -141,7 +141,7 @@ UNUSED s16 FixedPoint_Reciprocal(s16 value) { return FIXED_ONE / value; }
 #endif
 
 /// The used prefix of Lucky Dice's 1,560-byte work block
-/// (HEAP_SLOT_LUCKY_DICE_SPRITES): its sprites and windows. The allocation
+/// (HEAP_SLOT_LUCKY_GAME): its sprites and windows. The allocation
 /// extends beyond these members.
 struct LuckyDiceSprites {
   u8 unused[200];                ///< Lucky Dice never touches these bytes
@@ -397,7 +397,7 @@ void LuckyDice_Run(void) {
   spritePalette = HeapSlot_Alloc(HEAP_SLOT_BATTLE_CANVAS,
                                  DICE_SPRITES_PALETTE_COLORS * sizeof(u16));
   diceWork = HeapSlot_AllocEwram(HEAP_SLOT_BATTLE_EFFECT, sizeof(*diceWork));
-  sprites = HeapSlot_AllocEwram(HEAP_SLOT_LUCKY_DICE_SPRITES, 1560);
+  sprites = HeapSlot_AllocEwram(HEAP_SLOT_LUCKY_GAME, 1560);
   camera = HeapSlot_AllocEwram(HEAP_SLOT_CAMERA, sizeof(*camera));
   Stub_NoOpHook(RESOURCE_BATTLE_EFFECT_FAR_CALLS);
   Camera_ResetViewDefaults();
@@ -1082,7 +1082,7 @@ void LuckyDice_Run(void) {
     wait(1);
   }
   HeapSlot_Release(HEAP_SLOT_CAMERA);
-  HeapSlot_Release(HEAP_SLOT_LUCKY_DICE_SPRITES);
+  HeapSlot_Release(HEAP_SLOT_LUCKY_GAME);
   HeapSlot_Release(HEAP_SLOT_BATTLE_CANVAS);
   HeapSlot_Release(HEAP_SLOT_BATTLE_EFFECT);
   HeapSlot_Release(HEAP_SLOT_BATTLE_SHEET);

@@ -43,7 +43,7 @@ void Battle_TurnStartNoOp(void) {}
 /// The plan of the extra action Daedalus queues for the turn's end
 /// (COMMAND_DAEDALUS): ABILITY_DAEDALUS_STRIKE from a random unit of the
 /// queuing side against every unit of the other, staged as the summon
-/// SUMMON_EFFECT_DAEDALUS_ALT.
+/// SUMMON_EFFECT_DAEDALUS_STRIKE.
 void BattleStaging_PlanDaedalus(u16 *source, struct BattlePlan *plan) {
   u16 ids[10];
   s32 count;

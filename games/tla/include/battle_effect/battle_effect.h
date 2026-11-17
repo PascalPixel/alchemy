@@ -36,36 +36,37 @@ enum SummonFormation {
 /// to Iris, and the scenes of Daedalus's second strike, Trident, Cruel Ruin and
 /// Meteor Blow.
 enum SummonEffectId {
-  SUMMON_EFFECT_NONE,         ///< runs Meteor's effect
-  SUMMON_EFFECT_RAMSES,       ///< BattleEffect_RunRamses (ramses.c)
-  SUMMON_EFFECT_NEREID,       ///< BattleEffect_RunNereid (nereid.c)
-  SUMMON_EFFECT_KIRIN,        ///< BattleEffect_RunKirin (kirin.c)
-  SUMMON_EFFECT_ATALANTA,     ///< BattleEffect_RunAtalanta (atalanta.c)
-  SUMMON_EFFECT_CYBELE,       ///< BattleEffect_RunCybele (cybele.c)
-  SUMMON_EFFECT_NEPTUNE,      ///< BattleEffect_RunNeptune (neptune.c)
-  SUMMON_EFFECT_TIAMAT,       ///< BattleEffect_RunTiamat (procne.c)
-  SUMMON_EFFECT_PROCNE,       ///< BattleEffect_RunProcne (procne.c)
-  SUMMON_EFFECT_JUDGMENT,     ///< BattleEffect_RunJudgment (judgment.c)
-  SUMMON_EFFECT_BOREAS,       ///< BattleEffect_RunBoreas (boreas.c)
-  SUMMON_EFFECT_METEOR,       ///< BattleEffect_RunMeteor (particle_streams.c)
-  SUMMON_EFFECT_THOR,         ///< BattleEffect_RunThor (thor.c)
-  SUMMON_EFFECT_ZAGAN,        ///< BattleEffect_RunZagan (djinn_heal.c)
-  SUMMON_EFFECT_MEGAERA,      ///< BattleEffect_RunMegaera (thunder_mine.c)
-  SUMMON_EFFECT_FLORA,        ///< BattleEffect_RunFlora (flora.c)
-  SUMMON_EFFECT_MOLOCH,       ///< BattleEffect_RunMoloch (moloch.c)
-  SUMMON_EFFECT_ULYSSES,      ///< BattleEffect_RunUlysses (spider_web.c)
-  SUMMON_EFFECT_HAURES,       ///< BattleEffect_RunHaures (haures.c)
-  SUMMON_EFFECT_ECLIPSE,      ///< BattleEffect_RunEclipse (canvas.c)
-  SUMMON_EFFECT_COATLICUE,    ///< BattleEffect_RunCoatlicue (vengeance.c)
-  SUMMON_EFFECT_DAEDALUS,     ///< BattleEffect_RunDaedalus (daedalus.c)
-  SUMMON_EFFECT_AZUL,         ///< BattleEffect_RunAzul (azul.c)
-  SUMMON_EFFECT_CATASTROPHE,  ///< BattleEffect_RunCatastrophe (catastrophe.c)
-  SUMMON_EFFECT_CHARON,       ///< BattleEffect_RunCharon (charon.c)
-  SUMMON_EFFECT_IRIS,         ///< BattleEffect_RunIris (moloch.c)
-  SUMMON_EFFECT_DAEDALUS_ALT, ///< BattleEffect_RunDaedalusAlt (daedalus.c)
-  SUMMON_EFFECT_TRIDENT,      ///< BattleEffect_RunTrident (trident.c)
-  SUMMON_EFFECT_CRUEL_RUIN,   ///< BattleEffect_RunCruelRuin (cruel_ruin.c)
-  SUMMON_EFFECT_METEOR_BLOW   ///< BattleEffect_RunMeteorBlow (meteor_blow.c)
+  SUMMON_EFFECT_NONE,        ///< runs Meteor's effect
+  SUMMON_EFFECT_RAMSES,      ///< BattleEffect_RunRamses (ramses.c)
+  SUMMON_EFFECT_NEREID,      ///< BattleEffect_RunNereid (nereid.c)
+  SUMMON_EFFECT_KIRIN,       ///< BattleEffect_RunKirin (kirin.c)
+  SUMMON_EFFECT_ATALANTA,    ///< BattleEffect_RunAtalanta (atalanta.c)
+  SUMMON_EFFECT_CYBELE,      ///< BattleEffect_RunCybele (cybele.c)
+  SUMMON_EFFECT_NEPTUNE,     ///< BattleEffect_RunNeptune (neptune.c)
+  SUMMON_EFFECT_TIAMAT,      ///< BattleEffect_RunTiamat (procne.c)
+  SUMMON_EFFECT_PROCNE,      ///< BattleEffect_RunProcne (procne.c)
+  SUMMON_EFFECT_JUDGMENT,    ///< BattleEffect_RunJudgment (judgment.c)
+  SUMMON_EFFECT_BOREAS,      ///< BattleEffect_RunBoreas (boreas.c)
+  SUMMON_EFFECT_METEOR,      ///< BattleEffect_RunMeteor (particle_streams.c)
+  SUMMON_EFFECT_THOR,        ///< BattleEffect_RunThor (thor.c)
+  SUMMON_EFFECT_ZAGAN,       ///< BattleEffect_RunZagan (djinn_heal.c)
+  SUMMON_EFFECT_MEGAERA,     ///< BattleEffect_RunMegaera (thunder_mine.c)
+  SUMMON_EFFECT_FLORA,       ///< BattleEffect_RunFlora (flora.c)
+  SUMMON_EFFECT_MOLOCH,      ///< BattleEffect_RunMoloch (moloch.c)
+  SUMMON_EFFECT_ULYSSES,     ///< BattleEffect_RunUlysses (spider_web.c)
+  SUMMON_EFFECT_HAURES,      ///< BattleEffect_RunHaures (haures.c)
+  SUMMON_EFFECT_ECLIPSE,     ///< BattleEffect_RunEclipse (canvas.c)
+  SUMMON_EFFECT_COATLICUE,   ///< BattleEffect_RunCoatlicue (vengeance.c)
+  SUMMON_EFFECT_DAEDALUS,    ///< BattleEffect_RunDaedalus (daedalus.c)
+  SUMMON_EFFECT_AZUL,        ///< BattleEffect_RunAzul (azul.c)
+  SUMMON_EFFECT_CATASTROPHE, ///< BattleEffect_RunCatastrophe (catastrophe.c)
+  SUMMON_EFFECT_CHARON,      ///< BattleEffect_RunCharon (charon.c)
+  SUMMON_EFFECT_IRIS,        ///< BattleEffect_RunIris (moloch.c)
+  SUMMON_EFFECT_DAEDALUS_STRIKE, ///< BattleEffect_RunDaedalusStrike
+                                 ///< (daedalus.c)
+  SUMMON_EFFECT_TRIDENT,         ///< BattleEffect_RunTrident (trident.c)
+  SUMMON_EFFECT_CRUEL_RUIN,      ///< BattleEffect_RunCruelRuin (cruel_ruin.c)
+  SUMMON_EFFECT_METEOR_BLOW      ///< BattleEffect_RunMeteorBlow (meteor_blow.c)
 };
 
 /// Effect kinds: the kind an ability's gAbilityBattleEffects row selects for
@@ -545,7 +546,7 @@ void BattleEffect_RunAzul(struct BattleEffectParams *effect);
 void BattleEffect_RunCatastrophe(struct BattleEffectParams *effect);
 void BattleEffect_RunCharon(struct BattleEffectParams *arg);
 void BattleEffect_RunIris(struct BattleEffectParams *effect);
-void BattleEffect_RunDaedalusAlt(struct BattleEffectParams *effect);
+void BattleEffect_RunDaedalusStrike(struct BattleEffectParams *effect);
 void BattleEffect_RunTrident(struct BattleEffectParams *effect);
 void BattleEffect_RunCruelRuin(struct BattleEffectParams *effect);
 void BattleEffect_RunMeteorBlow(struct BattleEffectParams *effect);

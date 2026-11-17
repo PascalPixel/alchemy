@@ -68,16 +68,16 @@
 /// The four streams of Dragonsbane that reach the Serpent's cups: a carved face
 /// slides aside when the doll dances on its altar, and Cyclone clears the
 /// bushes in the twin altars' room (GaiaRockInside_OpenHallPassages).
-#define FLAG_ALTAR_ROOM_STREAM_OPEN 0x9bc
-#define FLAG_WEST_ALTAR_STREAM_OPEN 0x9bd
-#define FLAG_EAST_ALTAR_STREAM_OPEN 0x9be
-#define FLAG_BUSHES_STREAM_OPEN 0x9bf
+#define FLAG_ALTAR_ROOM_SUNBEAM 0x9bc
+#define FLAG_WEST_ALTAR_SUNBEAM 0x9bd
+#define FLAG_EAST_ALTAR_SUNBEAM 0x9be
+#define FLAG_BUSHES_SUNBEAM 0x9bf
 /// A stream opened before the Serpent is slain, shown pouring into the lair
 /// (Scene_Initialize, entrance 20) before its flag above is set.
-#define FLAG_ALTAR_ROOM_STREAM_TO_SHOW FLAG_AREA_TEMP_07
-#define FLAG_WEST_ALTAR_STREAM_TO_SHOW FLAG_AREA_TEMP_08
-#define FLAG_EAST_ALTAR_STREAM_TO_SHOW FLAG_AREA_TEMP_09
-#define FLAG_BUSHES_STREAM_TO_SHOW FLAG_AREA_TEMP_0A
+#define FLAG_ALTAR_ROOM_SUNBEAM_TO_SHOW FLAG_AREA_TEMP_07
+#define FLAG_WEST_ALTAR_SUNBEAM_TO_SHOW FLAG_AREA_TEMP_08
+#define FLAG_EAST_ALTAR_SUNBEAM_TO_SHOW FLAG_AREA_TEMP_09
+#define FLAG_BUSHES_SUNBEAM_TO_SHOW FLAG_AREA_TEMP_0A
 #define FLAG_SUSA_ATTACKED_SERPENT                                             \
   0x9ac ///< "At last... The serpent has finally had its fill."
 #define FLAG_MET_SUSA 0x9de     ///< "Who are you? How did you get here?"
@@ -778,13 +778,13 @@ void GaiaRockInside_CycloneClearsTwinAltarsBushes(void) {
       FieldActor_WaitForMoveById(gMainRoutineWork.leaderActorId);
     }
     if (!Event_GetFlag(FLAG_SERPENT_SLAIN)) {
-      Event_SetFlag(FLAG_BUSHES_STREAM_TO_SHOW);
+      Event_SetFlag(FLAG_BUSHES_SUNBEAM_TO_SHOW);
       FieldEvent_Wait(30);
       ObjectTable_Snapshot();
       FieldEvent_SetExitRequest(
           GAIA_ROCK_INSIDE_TWIN_ALTARS_TO_GAIA_ROCK_INSIDE_MAZE);
     } else {
-      Event_SetFlag(FLAG_BUSHES_STREAM_OPEN);
+      Event_SetFlag(FLAG_BUSHES_SUNBEAM);
       Event_End();
     }
   }
@@ -1024,10 +1024,10 @@ void GaiaRockInside_TalkToSusa(void) {
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
   if (Event_GetFlag(FLAG_SUSA_ATTACKED_SERPENT)) {
-    if (Event_GetFlag(FLAG_ALTAR_ROOM_STREAM_OPEN) ||
-        Event_GetFlag(FLAG_WEST_ALTAR_STREAM_OPEN) ||
-        Event_GetFlag(FLAG_EAST_ALTAR_STREAM_OPEN) ||
-        Event_GetFlag(FLAG_BUSHES_STREAM_OPEN))
+    if (Event_GetFlag(FLAG_ALTAR_ROOM_SUNBEAM) ||
+        Event_GetFlag(FLAG_WEST_ALTAR_SUNBEAM) ||
+        Event_GetFlag(FLAG_EAST_ALTAR_SUNBEAM) ||
+        Event_GetFlag(FLAG_BUSHES_SUNBEAM))
       FieldEvent_SetMessageId((s32)MsgGaiaRockInsideImDoneForThatDragon);
     else
       FieldEvent_SetMessageId((s32)MsgGaiaRockInsideTheSerpentIsStillToo);
@@ -1500,12 +1500,12 @@ void GaiaRockInside_ChallengeSerpent(void) {
     // "The serpent, with its eyes closed, looks almost alive."
     Message_ShowCentered((s32)MsgGaiaRockInsideTheSerpentWithItsEyes, 1);
   } else {
-    s32 a = Event_GetFlag(FLAG_ALTAR_ROOM_STREAM_OPEN);
-    s32 b = Event_GetFlag(FLAG_WEST_ALTAR_STREAM_OPEN);
-    s32 c = Event_GetFlag(FLAG_EAST_ALTAR_STREAM_OPEN);
+    s32 a = Event_GetFlag(FLAG_ALTAR_ROOM_SUNBEAM);
+    s32 b = Event_GetFlag(FLAG_WEST_ALTAR_SUNBEAM);
+    s32 c = Event_GetFlag(FLAG_EAST_ALTAR_SUNBEAM);
     s32 scene;
 
-    count = a + b + c + Event_GetFlag(FLAG_BUSHES_STREAM_OPEN);
+    count = a + b + c + Event_GetFlag(FLAG_BUSHES_SUNBEAM);
     Battle_SetType(BATTLE_TYPE_NO_ESCAPE);
     scene = SCENE_GAIA_ROCK_INSIDE_MAZE;
     FieldEvent_SetAfterBattleDestination(scene, ENTRANCE_SERPENT_BEATEN);
@@ -1542,7 +1542,7 @@ void GaiaRockInside_FindCloudBrand(void) {
   actor->y.fixed = toFIXED(-30);
   actor->groundHeight = toFIXED(-32);
   Event_ClearFlag(FLAG_NOTHING_HAPPENS);
-  Scene_TalkToActor(TALK_WITHOUT_CHECK_MESSAGE | (FIELD_TREASURE_ACTOR + 2));
+  Scene_TalkToActor(FIELD_TALK_SILENT | (FIELD_TREASURE_ACTOR + 2));
 }
 
 /// Examines the altar.
@@ -1613,7 +1613,7 @@ void GaiaRockInside_PlaceDollOnFirstAltar(void) {
   Actor_SetAnimation(ACTOR_FIRST_ALTAR_WEST_FACE, 3);
   Actor_SetAnimation(ACTOR_FIRST_ALTAR_EAST_FACE, 3);
   FieldEvent_Wait(40);
-  Event_PlaySound(SE_SHUDDER);
+  Event_PlaySound(SE_191);
   if (!Event_GetFlag(FLAG_FIRST_ALTAR_FACES_MOVED)) {
     for (i = 0; i < FACE_TREMBLE_FRAMES; i++) {
       westFace->velocityY = Random16();
@@ -1691,8 +1691,8 @@ void GaiaRockInside_PlaceDollOnWestAltar(void) {
   Event_Wait(30);
   Actor_SetAnimationById(ACTOR_WEST_FACE, 3);
   Event_Wait(40);
-  Sound_Play(SE_SHUDDER);
-  if (!GameFlag_Get(FLAG_WEST_ALTAR_STREAM_OPEN)) {
+  Sound_Play(SE_191);
+  if (!GameFlag_Get(FLAG_WEST_ALTAR_SUNBEAM)) {
     for (i = 0; i < FACE_TREMBLE_FRAMES; i++) {
       actor->velocityY = Random16();
       wait(1);
@@ -1727,13 +1727,13 @@ void GaiaRockInside_PlaceDollOnWestAltar(void) {
     Actor_WaitForMoveById(ACTOR_TWIN_ALTARS_DOLL);
     Actor_SetPosition(ACTOR_TWIN_ALTARS_DOLL, 0, 0);
     if (!GameFlag_Get(FLAG_SERPENT_SLAIN)) {
-      GameFlag_Set(FLAG_WEST_ALTAR_STREAM_TO_SHOW);
+      GameFlag_Set(FLAG_WEST_ALTAR_SUNBEAM_TO_SHOW);
       Event_Wait(30);
       ObjectTable_Snapshot();
       Import_EventSetExitRequest(
           GAIA_ROCK_INSIDE_TWIN_ALTARS_TO_GAIA_ROCK_INSIDE_MAZE);
     } else {
-      GameFlag_Set(FLAG_WEST_ALTAR_STREAM_OPEN);
+      GameFlag_Set(FLAG_WEST_ALTAR_SUNBEAM);
       Event_End();
     }
   } else {
@@ -1785,8 +1785,8 @@ void GaiaRockInside_PlaceDollOnEastAltar(void) {
   Event_Wait(30);
   Actor_SetAnimationById(ACTOR_EAST_FACE, 3);
   Event_Wait(40);
-  Sound_Play(SE_SHUDDER);
-  if (!GameFlag_Get(FLAG_EAST_ALTAR_STREAM_OPEN)) {
+  Sound_Play(SE_191);
+  if (!GameFlag_Get(FLAG_EAST_ALTAR_SUNBEAM)) {
     for (i = 0; i < FACE_TREMBLE_FRAMES; i++) {
       actor->velocityY = Random16();
       wait(1);
@@ -1821,13 +1821,13 @@ void GaiaRockInside_PlaceDollOnEastAltar(void) {
     Actor_WaitForMoveById(ACTOR_TWIN_ALTARS_DOLL);
     Actor_SetPosition(ACTOR_TWIN_ALTARS_DOLL, 0, 0);
     if (!GameFlag_Get(FLAG_SERPENT_SLAIN)) {
-      GameFlag_Set(FLAG_EAST_ALTAR_STREAM_TO_SHOW);
+      GameFlag_Set(FLAG_EAST_ALTAR_SUNBEAM_TO_SHOW);
       Event_Wait(30);
       ObjectTable_Snapshot();
       Import_EventSetExitRequest(
           GAIA_ROCK_INSIDE_TWIN_ALTARS_TO_GAIA_ROCK_INSIDE_MAZE);
     } else {
-      GameFlag_Set(FLAG_EAST_ALTAR_STREAM_OPEN);
+      GameFlag_Set(FLAG_EAST_ALTAR_SUNBEAM);
       Event_End();
     }
   } else {
@@ -1879,8 +1879,8 @@ void GaiaRockInside_PlaceDollOnAltarAltar(void) {
   Event_Wait(30);
   Actor_SetAnimationById(ACTOR_ALTAR_FACE, 3);
   Event_Wait(40);
-  Sound_Play(SE_SHUDDER);
-  if (!GameFlag_Get(FLAG_ALTAR_ROOM_STREAM_OPEN)) {
+  Sound_Play(SE_191);
+  if (!GameFlag_Get(FLAG_ALTAR_ROOM_SUNBEAM)) {
     for (i = 0; i < FACE_TREMBLE_FRAMES; i++) {
       actor->velocityY = Random16();
       wait(1);
@@ -1914,13 +1914,13 @@ void GaiaRockInside_PlaceDollOnAltarAltar(void) {
     Actor_WaitForMoveById(ACTOR_ALTAR_DOLL);
     Actor_SetPosition(ACTOR_ALTAR_DOLL, 0, 0);
     if (!GameFlag_Get(FLAG_SERPENT_SLAIN)) {
-      GameFlag_Set(FLAG_ALTAR_ROOM_STREAM_TO_SHOW);
+      GameFlag_Set(FLAG_ALTAR_ROOM_SUNBEAM_TO_SHOW);
       Event_Wait(30);
       ObjectTable_Snapshot();
       Import_EventSetExitRequest(
           GAIA_ROCK_INSIDE_ALTAR_TO_GAIA_ROCK_INSIDE_MAZE_B);
     } else {
-      GameFlag_Set(FLAG_ALTAR_ROOM_STREAM_OPEN);
+      GameFlag_Set(FLAG_ALTAR_ROOM_SUNBEAM);
       Event_End();
     }
   } else {
@@ -2136,18 +2136,18 @@ void GaiaRockInside_StartPlatforms(u8 mode) {
 }
 
 /// Opens the passages on each side of the hall by how many of its two pairs of
-/// flags (FLAG_ALTAR_ROOM_STREAM_OPEN and FLAG_WEST_ALTAR_STREAM_OPEN,
-/// FLAG_EAST_ALTAR_STREAM_OPEN and FLAG_BUSHES_STREAM_OPEN) are set: both open
+/// flags (FLAG_ALTAR_ROOM_SUNBEAM and FLAG_WEST_ALTAR_SUNBEAM,
+/// FLAG_EAST_ALTAR_SUNBEAM and FLAG_BUSHES_SUNBEAM) are set: both open
 /// the wide way, one a side way, and a single side opened alone also opens its
 /// connecting cells.
 void GaiaRockInside_OpenHallPassages(void) {
-  u8 a = GameFlag_Get(FLAG_ALTAR_ROOM_STREAM_OPEN);
-  u8 third = GameFlag_Get(FLAG_EAST_ALTAR_STREAM_OPEN);
-  s32 b = GameFlag_Get(FLAG_WEST_ALTAR_STREAM_OPEN);
+  u8 a = GameFlag_Get(FLAG_ALTAR_ROOM_SUNBEAM);
+  u8 third = GameFlag_Get(FLAG_EAST_ALTAR_SUNBEAM);
+  s32 b = GameFlag_Get(FLAG_WEST_ALTAR_SUNBEAM);
   s8 first = a;
   s8 sideThird = third;
   u8 sumLeft = b + first;
-  s32 d = GameFlag_Get(FLAG_BUSHES_STREAM_OPEN);
+  s32 d = GameFlag_Get(FLAG_BUSHES_SUNBEAM);
   u8 sumRight = sideThird + d;
   s8 left = sumLeft;
   s8 right = sumRight;
@@ -2270,24 +2270,24 @@ s32 Scene_Initialize(void) {
         // The door the party came in by, which the lair cannot be left by: one
         // stream is always waiting to be shown.
         s32 ending = GAIA_ROCK_INSIDE_MAZE_FROM_GAIA_ROCK_INSIDE_TWIN_ALTARS_A;
-        if (Test(FLAG_ALTAR_ROOM_STREAM_TO_SHOW)) {
-          GameFlag_Clear(FLAG_ALTAR_ROOM_STREAM_TO_SHOW);
-          GameFlag_Set(FLAG_ALTAR_ROOM_STREAM_OPEN);
+        if (Test(FLAG_ALTAR_ROOM_SUNBEAM_TO_SHOW)) {
+          GameFlag_Clear(FLAG_ALTAR_ROOM_SUNBEAM_TO_SHOW);
+          GameFlag_Set(FLAG_ALTAR_ROOM_SUNBEAM);
           ending = GAIA_ROCK_INSIDE_MAZE_TO_GAIA_ROCK_INSIDE_ALTAR;
         }
-        if (Test(FLAG_WEST_ALTAR_STREAM_TO_SHOW)) {
-          GameFlag_Clear(FLAG_WEST_ALTAR_STREAM_TO_SHOW);
-          GameFlag_Set(FLAG_WEST_ALTAR_STREAM_OPEN);
+        if (Test(FLAG_WEST_ALTAR_SUNBEAM_TO_SHOW)) {
+          GameFlag_Clear(FLAG_WEST_ALTAR_SUNBEAM_TO_SHOW);
+          GameFlag_Set(FLAG_WEST_ALTAR_SUNBEAM);
           ending = GAIA_ROCK_INSIDE_MAZE_TO_GAIA_ROCK_INSIDE_TWIN_ALTARS_B;
         }
-        if (Test(FLAG_EAST_ALTAR_STREAM_TO_SHOW)) {
-          GameFlag_Clear(FLAG_EAST_ALTAR_STREAM_TO_SHOW);
-          GameFlag_Set(FLAG_EAST_ALTAR_STREAM_OPEN);
+        if (Test(FLAG_EAST_ALTAR_SUNBEAM_TO_SHOW)) {
+          GameFlag_Clear(FLAG_EAST_ALTAR_SUNBEAM_TO_SHOW);
+          GameFlag_Set(FLAG_EAST_ALTAR_SUNBEAM);
           ending = GAIA_ROCK_INSIDE_MAZE_TO_GAIA_ROCK_INSIDE_TWIN_ALTARS_C;
         }
-        if (Test(FLAG_BUSHES_STREAM_TO_SHOW)) {
-          GameFlag_Clear(FLAG_BUSHES_STREAM_TO_SHOW);
-          GameFlag_Set(FLAG_BUSHES_STREAM_OPEN);
+        if (Test(FLAG_BUSHES_SUNBEAM_TO_SHOW)) {
+          GameFlag_Clear(FLAG_BUSHES_SUNBEAM_TO_SHOW);
+          GameFlag_Set(FLAG_BUSHES_SUNBEAM);
           ending = GAIA_ROCK_INSIDE_MAZE_TO_GAIA_ROCK_INSIDE_TWIN_ALTARS_D;
         }
         Sound_Play(SE_EYES_GLOW);
@@ -2791,9 +2791,9 @@ s32 Scene_Initialize(void) {
     Actor_SetSpritePriorityDirect(actor, 3);
     GaiaRockInside_TurnFaceToAltar(ACTOR_WEST_FACE, ACTOR_WEST_ALTAR);
     GaiaRockInside_TurnFaceToAltar(ACTOR_EAST_FACE, ACTOR_EAST_ALTAR);
-    if (!Test(FLAG_ALTAR_ROOM_STREAM_OPEN))
+    if (!Test(FLAG_ALTAR_ROOM_SUNBEAM))
       MapGrid_CopyCells(25, 77, 1, 15, 26, 77);
-    if (Test(FLAG_WEST_ALTAR_STREAM_OPEN)) {
+    if (Test(FLAG_WEST_ALTAR_SUNBEAM)) {
       s32 width;
       s32 height;
 
@@ -2804,7 +2804,7 @@ s32 Scene_Initialize(void) {
       Map_CopyCellAttributeRect(27, 23, 1, 1, width, height);
       Map_CopyCellAttributeRect(32, 16, 2, 1, 29, height);
     }
-    if (Test(FLAG_EAST_ALTAR_STREAM_OPEN)) {
+    if (Test(FLAG_EAST_ALTAR_SUNBEAM)) {
       s32 width;
       s32 height;
 
@@ -2815,7 +2815,7 @@ s32 Scene_Initialize(void) {
       Map_CopyCellAttributeRect(35, 23, 1, 1, width, height);
       Map_CopyCellAttributeRect(32, 16, 2, 1, 37, height);
     }
-    if (Test(FLAG_BUSHES_STREAM_OPEN)) {
+    if (Test(FLAG_BUSHES_SUNBEAM)) {
       MapGrid_CopyCellsLayered(61, 0, 3, 3, 37, 26);
       MapGrid_CopyCellAttributes(36, 23, 1, 1, 38, 25);
     }
@@ -2877,7 +2877,7 @@ s32 Scene_Initialize(void) {
     if (Test(FLAG_STATUE_C_RISEN))
       GaiaRockInside_PlaceStatue(ACTOR_STATUE_C, toFIXED(565), toFIXED(55),
                                  toFIXED(680));
-    if (Test(FLAG_ALTAR_ROOM_STREAM_OPEN)) {
+    if (Test(FLAG_ALTAR_ROOM_SUNBEAM)) {
       s32 width;
       s32 height;
 

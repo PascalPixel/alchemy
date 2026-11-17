@@ -1511,7 +1511,7 @@ void AirsRockInside_BlowGust(void) {
           Map_CopyCellAttributeRect(23, 92, 2, 1, 23, 89);
           Map_CopyCellAttributeRect(18, 33, 2, 1, 23, 25);
         } else if (gMainRoutineWork.next ==
-                   SCENE_AIRS_ROCK_INSIDE_PAIRED_STATUES) {
+                   SCENE_AIRS_ROCK_INSIDE_PAIRED_STAKES) {
           cell.x = FIELD_CELL(gust->x.fixed);
           cell.z = FIELD_CELL(gust->z.fixed - gust->y.fixed) + 64;
           if (hit == GUST_STOP_PAIRED_STAKES_NORTH_BARRIER) {
@@ -1668,7 +1668,7 @@ const struct ActorPlacement *Scene_GetActorPlacements(void) {
     return gAirsRockInside_RevealTabletPlacements;
   if (gMainRoutineWork.next == SCENE_AIRS_ROCK_INSIDE_ELIXIR_CHEST)
     return gAirsRockInside_ElixirChestPlacements;
-  if (gMainRoutineWork.next == SCENE_AIRS_ROCK_INSIDE_PAIRED_STATUES)
+  if (gMainRoutineWork.next == SCENE_AIRS_ROCK_INSIDE_PAIRED_STAKES)
     return gAirsRockInside_PairedStakesPlacements;
   if (gMainRoutineWork.next == SCENE_AIRS_ROCK_INSIDE_FACE_WARP)
     return gAirsRockInside_FaceWarpPlacements;
@@ -1742,7 +1742,7 @@ void AirsRockInside_StampCellUnderLeader(void) {
     gAirsRockInside_StampedZ = z - y + 64;
   } else if (scene == SCENE_AIRS_ROCK_INSIDE_REVEAL_TABLET ||
              scene == SCENE_AIRS_ROCK_INSIDE_ELIXIR_CHEST ||
-             scene == SCENE_AIRS_ROCK_INSIDE_PAIRED_STATUES ||
+             scene == SCENE_AIRS_ROCK_INSIDE_PAIRED_STAKES ||
              scene == SCENE_AIRS_ROCK_INSIDE_COINS_CHEST) {
     gAirsRockInside_StampedX = x + 64;
     gAirsRockInside_StampedZ = z - y;
@@ -2097,7 +2097,7 @@ void AirsRockInside_StartPushingPillar(void) {
     Actor_LiftTargetBlock(gAirsRockInside_ClarityCircletChestPillars);
   } else if (scene == SCENE_AIRS_ROCK_INSIDE_TIGHTROPES) {
     Actor_LiftTargetBlock(gAirsRockInside_TightropesPillars);
-  } else if (scene == SCENE_AIRS_ROCK_INSIDE_PAIRED_STATUES) {
+  } else if (scene == SCENE_AIRS_ROCK_INSIDE_PAIRED_STAKES) {
     FieldMapGrid_SetCellHeight(toFIXED(608), toFIXED(336), 2, 0);
     MapGrid_SetCellHeight(toFIXED(624), toFIXED(336), 2, 0);
     Actor_LiftTargetBlock(gAirsRockInside_PairedStakesPillars);
@@ -2152,7 +2152,7 @@ void AirsRockInside_FinishPushingPillar(void) {
   } else if (gMainRoutineWork.next == SCENE_AIRS_ROCK_INSIDE_TIGHTROPES) {
     if (x == 81 && z == 37)
       GameFlag_Set(FLAG_AIRS_ROCK_TIGHTROPES_PILLAR_PLACED);
-  } else if (gMainRoutineWork.next == SCENE_AIRS_ROCK_INSIDE_PAIRED_STATUES) {
+  } else if (gMainRoutineWork.next == SCENE_AIRS_ROCK_INSIDE_PAIRED_STAKES) {
     FieldMapGrid_SetCellHeight(toFIXED(608), toFIXED(336), 2, -4);
     FieldMapGrid_SetCellHeight(toFIXED(624), toFIXED(336), 2, -4);
     if (x == 43 && z == 87)
@@ -2980,7 +2980,7 @@ const struct Trigger *Scene_GetTriggers(void) {
     return gAirsRockInside_RevealTabletTriggers;
   if (scene == SCENE_AIRS_ROCK_INSIDE_ELIXIR_CHEST)
     return gAirsRockInside_ElixirChestTriggers;
-  if (scene == SCENE_AIRS_ROCK_INSIDE_PAIRED_STATUES)
+  if (scene == SCENE_AIRS_ROCK_INSIDE_PAIRED_STAKES)
     return gAirsRockInside_PairedStakesTriggers;
   if (scene == SCENE_AIRS_ROCK_INSIDE_FACE_WARP)
     return gAirsRockInside_FaceWarpTriggers;
@@ -3419,7 +3419,7 @@ s32 Scene_Initialize(void) {
       Actor_GetById(ACTOR_ELIXIR_CHEST_PILLAR)->groundHeight = -toFIXED(32);
       MapGrid_CopyCellAttributes(19, 16, 1, 1, 19, 18);
     }
-  } else if (gMainRoutineWork.next == SCENE_AIRS_ROCK_INSIDE_PAIRED_STATUES) {
+  } else if (gMainRoutineWork.next == SCENE_AIRS_ROCK_INSIDE_PAIRED_STAKES) {
     AirsRockInside_StartRestoringCells();
     Actor_GetById(ACTOR_PAIRED_STAKES_STAKE_A)->riseCounter = 1;
     Actor_GetById(ACTOR_PAIRED_STAKES_STAKE_B)->riseCounter = 1;

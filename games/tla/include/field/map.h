@@ -15,7 +15,7 @@ struct Actor;
 /// to and its terrain.
 struct WorldMapBlock {
   u8 unused[2];        ///< no code names it
-  u8 place;            ///< WORLD_MAP_NO_PLACE where the map has no block
+  u8 place;            ///< CELL_BEHAVIOR_WALL where the map has no block
   u8 unusedAfterPlace; ///< the terrain kind and flags
                        ///< (WorldMap_GetBattleEnvironment)
 };
@@ -25,9 +25,6 @@ struct WorldMapBlock {
 struct WorldMapBlocks {
   struct WorldMapBlock blocks[32 * 32];
 };
-
-/// WorldMapBlock.place where the world map has no block: nothing may go there.
-#define WORLD_MAP_NO_PLACE 255
 
 struct Actor *Actor_FindAtCell(s32 *position, s32 check_y);
 

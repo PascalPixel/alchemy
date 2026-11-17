@@ -156,7 +156,7 @@ enum ShrineOfTheSeaGodCrossroadsActorId {
   ACTOR_CROSSROADS_PILLAR = ACTOR_FIRST_PLACED,
   /// The room's bridges, the first two logs side by side, drawn in front of or
   /// behind the leader by the level it stands on
-  /// (ShrineOfTheSeaGod_LayerCrossroadsProps).
+  /// (ShrineOfTheSeaGod_LayerCrossroadsBridges).
   ACTOR_CROSSROADS_LOG_BRIDGE,
   ACTOR_CROSSROADS_FIRST_BRIDGE,
   ACTOR_CROSSROADS_SECOND_BRIDGE,
@@ -696,9 +696,9 @@ void ShrineOfTheSeaGod_LowerWater(void) {
   MapGrid_WaitForShakeToSettle();
   gFieldWork->transition =
       SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE);
-  ShrineOfTheSeaGod_SetUpFlatProp(ACTOR_ISLAND_FIRST_LOG);
-  ShrineOfTheSeaGod_SetUpFlatProp(ACTOR_ISLAND_SECOND_LOG);
-  ShrineOfTheSeaGod_SetUpFlatProp(ACTOR_ISLAND_THIRD_LOG);
+  ShrineOfTheSeaGod_SetUpFloatingLog(ACTOR_ISLAND_FIRST_LOG);
+  ShrineOfTheSeaGod_SetUpFloatingLog(ACTOR_ISLAND_SECOND_LOG);
+  ShrineOfTheSeaGod_SetUpFloatingLog(ACTOR_ISLAND_THIRD_LOG);
   Actor_GetById(gMainRoutineWork.leaderActorId)->priorityFlags |=
       ACTOR_PRIORITY_AUTOMATIC;
   leader->motionFlags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
@@ -878,7 +878,7 @@ void ShrineOfTheSeaGod_PushPillarIntoHole(void) {
 
 /// The crossroads' task: its bridges are drawn under the leader when he is up
 /// on them, in front of him below.
-void ShrineOfTheSeaGod_LayerCrossroadsProps(void) {
+void ShrineOfTheSeaGod_LayerCrossroadsBridges(void) {
   struct Actor *leader = Actor_GetById(gMainRoutineWork.leaderActorId);
   u32 id;
 
@@ -972,7 +972,7 @@ UNUSED void ShrineOfTheSeaGod_ShowBlocks(void) {
 }
 
 /// Stops drawing the hole room's unseen blocks.
-void ShrineOfTheSeaGod_HideSlideActors(void) {
+void ShrineOfTheSeaGod_HideBlocks(void) {
   ShrineOfTheSeaGod_SetBlocksShown(0);
   GameFlag_Clear(FLAG_BLOCKS_SHOWN);
 }
@@ -1070,7 +1070,7 @@ void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
 
 /// On the crossroads' broken bridge the leader sways until its middle drops
 /// with him into the water below, throwing up spray, and tips there.
-void ShrineOfTheSeaGod_TopplePillarIntoWater(void) {
+void ShrineOfTheSeaGod_BreakCrossroadsBridge(void) {
   struct Actor *leader = Actor_GetById(gMainRoutineWork.leaderActorId);
   struct Actor *middle = Actor_GetById(ACTOR_CROSSROADS_BROKEN_BRIDGE_MIDDLE);
   struct FieldSprite *sprite = middle->sprite;
@@ -1135,7 +1135,7 @@ void ShrineOfTheSeaGod_TopplePillarIntoWater(void) {
 /// Waits for the leader, falling with a broken bridge's middle, to land in the
 /// stream, then throws up the bridge's two splashes there; bridge counts the
 /// splashes from ACTOR_FIRST_BRIDGE_SPLASH.
-void ShrineOfTheSeaGod_LandPillarAsLogs(struct Actor *actor, s32 bridge) {
+void ShrineOfTheSeaGod_LandBrokenBridge(struct Actor *actor, s32 bridge) {
   do {
     wait(1);
   } while (actor->velocityY != 0);
@@ -1155,14 +1155,14 @@ void ShrineOfTheSeaGod_LandPillarAsLogs(struct Actor *actor, s32 bridge) {
 
 /// The task that carries the pillar room's first broken bridge's middle along
 /// with the leader.
-void ShrineOfTheSeaGod_KeepFirstPillarWithLeader(void) {
+void ShrineOfTheSeaGod_KeepFirstBridgeWithLeader(void) {
   ShrineOfTheSeaGod_KeepWithLeader(
       Actor_GetById(ACTOR_FIRST_BROKEN_BRIDGE_MIDDLE));
 }
 
 /// On the pillar room's first broken bridge the leader sways until its middle
 /// drops with him into the stream, which carries him south on it.
-void ShrineOfTheSeaGod_ToppleFirstPillar(void) {
+void ShrineOfTheSeaGod_BreakFirstBridge(void) {
   struct Actor *leader = Actor_GetById(gMainRoutineWork.leaderActorId);
   struct Actor *middle = Actor_GetById(ACTOR_FIRST_BROKEN_BRIDGE_MIDDLE);
 
@@ -1176,9 +1176,9 @@ void ShrineOfTheSeaGod_ToppleFirstPillar(void) {
   leader->motionFlags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
   Actor_SetSpritePriority(ACTOR_FIRST_BROKEN_BRIDGE_MIDDLE, 3);
   middle->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
-  FieldTask_AddFrame(ShrineOfTheSeaGod_KeepFirstPillarWithLeader,
+  FieldTask_AddFrame(ShrineOfTheSeaGod_KeepFirstBridgeWithLeader,
                      TASK_PASS_FRAME);
-  ShrineOfTheSeaGod_LandPillarAsLogs(leader, 0);
+  ShrineOfTheSeaGod_LandBrokenBridge(leader, 0);
   // Down in the stream, the bridges it passes under are drawn over him.
   Actor_SetSpritePriority(ACTOR_PILLAR_ROOM_SECOND_BRIDGE, 1);
   Actor_GetById(ACTOR_PILLAR_ROOM_SECOND_BRIDGE)->priorityFlags &=
@@ -1206,7 +1206,7 @@ void ShrineOfTheSeaGod_ToppleFirstPillar(void) {
   Actor_GetById(ACTOR_PILLAR_ROOM_FOURTH_BRIDGE)->priorityFlags |=
       ACTOR_PRIORITY_UNDERFOOT;
   leader->motionFlags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
-  Task_Remove(ShrineOfTheSeaGod_KeepFirstPillarWithLeader);
+  Task_Remove(ShrineOfTheSeaGod_KeepFirstBridgeWithLeader);
   wait(1);
   Event_End();
   GameFlag_Set(FLAG_FIRST_BRIDGE_BROKEN);
@@ -1214,7 +1214,7 @@ void ShrineOfTheSeaGod_ToppleFirstPillar(void) {
 
 /// The task that carries the pillar room's second broken bridge's middle along
 /// with the leader.
-void ShrineOfTheSeaGod_KeepSecondPillarWithLeader(void) {
+void ShrineOfTheSeaGod_KeepSecondBridgeWithLeader(void) {
   ShrineOfTheSeaGod_KeepWithLeader(
       Actor_GetById(ACTOR_SECOND_BROKEN_BRIDGE_MIDDLE));
 }
@@ -1235,9 +1235,9 @@ void ShrineOfTheSeaGod_BreakSecondBridge(void) {
   leader->motionFlags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
   Actor_SetSpritePriority(ACTOR_SECOND_BROKEN_BRIDGE_MIDDLE, 3);
   middle->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
-  FieldTask_AddFrame(ShrineOfTheSeaGod_KeepSecondPillarWithLeader,
+  FieldTask_AddFrame(ShrineOfTheSeaGod_KeepSecondBridgeWithLeader,
                      TASK_PASS_FRAME);
-  ShrineOfTheSeaGod_LandPillarAsLogs(leader, ACTOR_SECOND_BRIDGE_SPLASH -
+  ShrineOfTheSeaGod_LandBrokenBridge(leader, ACTOR_SECOND_BRIDGE_SPLASH -
                                                  ACTOR_FIRST_BRIDGE_SPLASH);
   Actor_SetSpriteFlags(Actor_GetById(gMainRoutineWork.leaderActorId),
                        SPRITE_FLAG_SHADOW);
@@ -1248,7 +1248,7 @@ void ShrineOfTheSeaGod_BreakSecondBridge(void) {
   Actor_SetHorizontalPositionWithTerrain(ACTOR_SECOND_BRIDGE_SPLASH, 0, 0);
   Actor_SetHorizontalPositionWithTerrain(ACTOR_SECOND_BRIDGE_OTHER_SPLASH, 0,
                                          0);
-  Task_Remove(ShrineOfTheSeaGod_KeepSecondPillarWithLeader);
+  Task_Remove(ShrineOfTheSeaGod_KeepSecondBridgeWithLeader);
   wait(1);
   Event_End();
   GameFlag_Set(FLAG_SECOND_BRIDGE_BROKEN);
@@ -1983,7 +1983,7 @@ struct Actor *ShrineOfTheSeaGod_SetUpBridge(s32 id) {
 void Scene_RunUnlessFlag(void) {
   if (GameFlag_Get(FLAG_KEEP_PARTY_POSITION)) {
     if (GameFlag_Get(FLAG_BLOCKS_SHOWN) == 0)
-      ShrineOfTheSeaGod_HideSlideActors();
+      ShrineOfTheSeaGod_HideBlocks();
   } else {
     GameFlag_Set(FLAG_BLOCKS_SHOWN);
   }
@@ -2029,8 +2029,8 @@ void ShrineOfTheSeaGod_PlaceFootprints(void) {
 void ShrineOfTheSeaGod_InitializeRope(void) {
   struct MapWork *map = Ram_HeapSlots->mapGrid;
 
-  ShrineOfTheSeaGod_SetUpFlatProp(ACTOR_ROPE_ROOM_FIRST_LOG);
-  ShrineOfTheSeaGod_SetUpFlatProp(ACTOR_ROPE_ROOM_SECOND_LOG);
+  ShrineOfTheSeaGod_SetUpFloatingLog(ACTOR_ROPE_ROOM_FIRST_LOG);
+  ShrineOfTheSeaGod_SetUpFloatingLog(ACTOR_ROPE_ROOM_SECOND_LOG);
   Map_SetUpperLevelWading(map);
   FieldTask_AddFrame(ShrineOfTheSeaGod_TrackUpperLevel, TASK_PASS_FRAME);
   Rope_Initialize();
@@ -2106,7 +2106,7 @@ void ShrineOfTheSeaGod_InitializeCrossroads(void) {
   Actor_SetSpritePriority(ACTOR_CROSSROADS_THIRD_BRIDGE, 1);
   Actor_SetSpritePriority(ACTOR_CROSSROADS_BROKEN_BRIDGE_ENDS, 1);
   Actor_SetSpritePriority(ACTOR_CROSSROADS_BROKEN_BRIDGE_MIDDLE, 1);
-  FieldTask_AddFrame(ShrineOfTheSeaGod_LayerCrossroadsProps, TASK_PASS_FRAME);
+  FieldTask_AddFrame(ShrineOfTheSeaGod_LayerCrossroadsBridges, TASK_PASS_FRAME);
   if (GameFlag_Get(FLAG_CROSSROADS_BRIDGE_BROKEN)) {
     FieldActor_SetPositionAndResetMotion(middle, toFIXED(408), -toFIXED(13),
                                          toFIXED(336));
@@ -2267,9 +2267,9 @@ void ShrineOfTheSeaGod_InitializePillars(void) {
 /// Sets up the island room: its floating logs, and the water sinking back when
 /// the party comes down from the statue room.
 void ShrineOfTheSeaGod_InitializeSeaGodsTear(void) {
-  ShrineOfTheSeaGod_SetUpFlatProp(ACTOR_ISLAND_FIRST_LOG);
-  ShrineOfTheSeaGod_SetUpFlatProp(ACTOR_ISLAND_SECOND_LOG);
-  ShrineOfTheSeaGod_SetUpFlatProp(ACTOR_ISLAND_THIRD_LOG);
+  ShrineOfTheSeaGod_SetUpFloatingLog(ACTOR_ISLAND_FIRST_LOG);
+  ShrineOfTheSeaGod_SetUpFloatingLog(ACTOR_ISLAND_SECOND_LOG);
+  ShrineOfTheSeaGod_SetUpFloatingLog(ACTOR_ISLAND_THIRD_LOG);
   if (gMainRoutineWork.entrance ==
           SHRINE_OF_THE_SEA_GOD_SEA_GODS_TEAR_FROM_SHRINE_OF_THE_SEA_GOD_STATUE &&
       GameFlag_Get(FLAG_KEEP_PARTY_POSITION) == 0)
@@ -2324,7 +2324,7 @@ void ShrineOfTheSeaGod_InitializeRightProng(void) {
 }
 
 /// Sets up a floating log: flat on the water, behind the leader, disabled.
-void ShrineOfTheSeaGod_SetUpFlatProp(s32 id) {
+void ShrineOfTheSeaGod_SetUpFloatingLog(s32 id) {
   struct Actor *actor = Actor_GetById(id);
 
   Actor_SetSpritePriority(id, 3);
@@ -2513,7 +2513,7 @@ struct ActorPlacement gShrineOfTheSeaGodRopeActorPlacements[] = {
 struct ActorPlacement gShrineOfTheSeaGodPlankBridgeActorPlacements[] = {
     ACTOR_PLACEMENT(SPRITE_FLAME_PILLAR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 328, 0, 184, FACING_SOUTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(SPRITE_EXCLAMATION_BUBBLE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(SPRITE_WOODEN_BENCH, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 216, 0, 272, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_PLANK_BRIDGE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 216, 0, 272, FACING_SOUTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(SPRITE_RIKI, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, 0),
     {SCENE_TABLE_END},
 };
@@ -2521,11 +2521,11 @@ struct ActorPlacement gShrineOfTheSeaGodPlankBridgeActorPlacements[] = {
 struct ActorPlacement gShrineOfTheSeaGodCrossroadsActorPlacements[] = {
     ACTOR_PLACEMENT(SPRITE_STONE_PILLAR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 216, 0, 296, FACING_SOUTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(SPRITE_LOG_PAIR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 248, 0, 216, FACING_SOUTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(SPRITE_WOODEN_BENCH, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 408, 0, 216, FACING_SOUTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(SPRITE_WOODEN_BENCH, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 520, 0, 232, FACING_SOUTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE),
-    ACTOR_PLACEMENT(SPRITE_WOODEN_BENCH, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 536, 0, 344, FACING_SOUTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE),
-    ACTOR_PLACEMENT(SPRITE_WOODEN_BENCH, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 408, 0, 328, FACING_SOUTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(SPRITE_WOODEN_BENCH, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 408, 0, 328, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_PLANK_BRIDGE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 408, 0, 216, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_PLANK_BRIDGE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 520, 0, 232, FACING_SOUTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE),
+    ACTOR_PLACEMENT(SPRITE_PLANK_BRIDGE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 536, 0, 344, FACING_SOUTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE),
+    ACTOR_PLACEMENT(SPRITE_PLANK_BRIDGE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 408, 0, 328, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_PLANK_BRIDGE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 408, 0, 328, FACING_SOUTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(SPRITE_JUPITER_DJINNI, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 472, 0, 328, FACING_SOUTH, TALK_FACING_KEEP, 0),
     {SCENE_TABLE_END},
 };
@@ -2556,7 +2556,7 @@ struct ActorPlacement gShrineOfTheSeaGodBreathActorPlacements[] = {
     ACTOR_PLACEMENT(SPRITE_PUDDLE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 136, 0, 296, FACING_SOUTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(SPRITE_PUDDLE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 168, 0, 296, FACING_SOUTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(SPRITE_PUDDLE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 168, 0, 280, FACING_SOUTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(SPRITE_WOODEN_BENCH, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 328, 0, 552, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_PLANK_BRIDGE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 328, 0, 552, FACING_SOUTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(SPRITE_JUPITER_DJINNI, FLAG_DJINNI(DJINNI_BREATH), MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_SOUTH, TALK_FACING_PARTY, 0),
     {SCENE_TABLE_END},
 };
@@ -2570,15 +2570,15 @@ struct ActorPlacement gShrineOfTheSeaGodPillarHoleActorPlacements[] = {
 };
 
 struct ActorPlacement gShrineOfTheSeaGodPillarsActorPlacements[] = {
-    ACTOR_PLACEMENT(SPRITE_WOODEN_BENCH, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 216, 0, 248, FACING_SOUTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(SPRITE_WOODEN_BENCH, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 312, 0, 264, FACING_SOUTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE),
-    ACTOR_PLACEMENT(SPRITE_WOODEN_BENCH, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 408, 0, 232, FACING_SOUTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE),
-    ACTOR_PLACEMENT(SPRITE_WOODEN_BENCH, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 312, 0, 376, FACING_SOUTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE),
+    ACTOR_PLACEMENT(SPRITE_PLANK_BRIDGE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 216, 0, 248, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_PLANK_BRIDGE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 312, 0, 264, FACING_SOUTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE),
+    ACTOR_PLACEMENT(SPRITE_PLANK_BRIDGE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 408, 0, 232, FACING_SOUTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE),
+    ACTOR_PLACEMENT(SPRITE_PLANK_BRIDGE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 312, 0, 376, FACING_SOUTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE),
     ACTOR_PLACEMENT(SPRITE_LOG_PAIR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 360, 0, 424, FACING_SOUTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(SPRITE_WOODEN_BENCH, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 328, 0, 216, FACING_SOUTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(SPRITE_WOODEN_BENCH, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 408, 0, 360, FACING_SOUTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE),
-    ACTOR_PLACEMENT(SPRITE_WOODEN_BENCH, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 328, 0, 216, FACING_SOUTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(SPRITE_WOODEN_BENCH, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 408, 0, 360, FACING_SOUTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE),
+    ACTOR_PLACEMENT(SPRITE_PLANK_BRIDGE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 328, 0, 216, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_PLANK_BRIDGE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 408, 0, 360, FACING_SOUTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE),
+    ACTOR_PLACEMENT(SPRITE_PLANK_BRIDGE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 328, 0, 216, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_PLANK_BRIDGE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 408, 0, 360, FACING_SOUTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE),
     ACTOR_PLACEMENT(SPRITE_TIGHTROPE_POST, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 344, 0, 616, FACING_SOUTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(SPRITE_TIGHTROPE_POST, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 296, 0, 616, FACING_SOUTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE),
     ACTOR_PLACEMENT(SPRITE_TIGHTROPE_POST, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 456, 0, 392, FACING_SOUTH, TALK_FACING_KEEP, 0),
@@ -2632,7 +2632,7 @@ struct Trigger gShrineOfTheSeaGodCrossroadsTriggers[] = {
     {PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_CROSSROADS_PILLAR, FLAG_CROSSROADS_PILLAR_MOVED, EVENT(ShrineOfTheSeaGod_MovePillar)},
     {TRIGGER_STEP, 10, FLAG_LEADER_IN_FRONT, EVENT(ShrineOfTheSeaGod_DrawLeaderInFront)},
     {TRIGGER_STEP, 11, IF_FLAG_SET(FLAG_LEADER_IN_FRONT), EVENT(ShrineOfTheSeaGod_DrawLeaderBehind)},
-    {TRIGGER_STEP, 15, FLAG_CROSSROADS_BRIDGE_BROKEN, EVENT(ShrineOfTheSeaGod_TopplePillarIntoWater)},
+    {TRIGGER_STEP, 15, FLAG_CROSSROADS_BRIDGE_BROKEN, EVENT(ShrineOfTheSeaGod_BreakCrossroadsBridge)},
     {TRIGGER_STEP, 11, FLAG_DJINNI_FLED_EAST, EVENT(ShrineOfTheSeaGod_DjinniFleesEast)},
     {TRIGGER_STEP, 12, FLAG_DJINNI_FLED_SOUTH, EVENT(ShrineOfTheSeaGod_DjinniFleesSouth)},
     {TRIGGER_TABLE_END},
@@ -2710,7 +2710,7 @@ struct Trigger gShrineOfTheSeaGodPillarsTriggers[] = {
     {PSYNERGY_ON_ACTOR(ABILITY_LASH), ACTOR_NORTH_ROPE_WEST_POST,
      FLAG_SECOND_ROPE_TIED, 0},
     {TRIGGER_STEP, 5, FLAG_FIRST_BRIDGE_BROKEN,
-     EVENT(ShrineOfTheSeaGod_ToppleFirstPillar)},
+     EVENT(ShrineOfTheSeaGod_BreakFirstBridge)},
     {TRIGGER_STEP, 6, FLAG_SECOND_BRIDGE_BROKEN,
      EVENT(ShrineOfTheSeaGod_BreakSecondBridge)},
     {TRIGGER_TALK, ACTOR_CHEST_NORTHWEST_MARKER, CONDITION_ALWAYS,

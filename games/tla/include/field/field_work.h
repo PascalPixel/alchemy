@@ -30,9 +30,6 @@ struct Window;
 #define SCOOPED_ITEM_ACTOR 79
 /// The first actor id of a treasure spot (Field_PlaceTreasureSpots).
 #define FIELD_TREASURE_ACTOR 64
-/// SCOOPED_ITEM_ACTOR as the spot Scoop dug up, examined as a buried container
-/// that holds FieldWork.scoopedItem, and as the last treasure spot.
-#define FIELD_SCOOP_ACTOR SCOOPED_ITEM_ACTOR
 /// FieldWork.talk and Scene_TalkToActor: with this bit a container is opened
 /// without its "checked the ..." message, as Scoop opens what it digs up; the
 /// actor id is in the bits under it.

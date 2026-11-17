@@ -1264,9 +1264,9 @@ s32 MapGrid_IsWallAt(s32 *position) {
 /// The cell behavior of the world map block under position (blocks 32 pixels
 /// square on a 32 by 32 grid), which the World Map's step triggers answer
 /// (world_map.c: STEP_TRIGGER_AREA(AREA_DAILA) enters Daila,
-/// CELL_BEHAVIOR_WORLD_MAP_IRON meets Iron); WORLD_MAP_NO_PLACE, which is
+/// CELL_BEHAVIOR_WORLD_MAP_IRON meets Iron); CELL_BEHAVIOR_WALL, which is
 /// CELL_BEHAVIOR_WALL, where the map has no block.
-s32 WorldMap_GetBlockPlace(struct WorldPosition *position) {
+s32 WorldMap_GetBlockCellBehavior(struct WorldPosition *position) {
   s32 z = position->y;
   s32 x = position->x;
 
@@ -1335,7 +1335,7 @@ s32 WorldMap_GetCollision(struct WorldPosition *position) {
 /// and collision WORLD_MAP_COLLISION_WALKABLE_FIRST to
 /// WORLD_MAP_COLLISION_WALKABLE_LAST), else -1.
 s32 WorldMap_IsWalkable(void *object, struct WorldPosition *position) {
-  if (WorldMap_GetBlockPlace(position) != WORLD_MAP_NO_PLACE) {
+  if (WorldMap_GetBlockCellBehavior(position) != CELL_BEHAVIOR_WALL) {
     if ((u32)(WorldMap_GetCollision(position) -
               WORLD_MAP_COLLISION_WALKABLE_FIRST) <=
         WORLD_MAP_COLLISION_WALKABLE_LAST - WORLD_MAP_COLLISION_WALKABLE_FIRST)
@@ -1346,7 +1346,7 @@ s32 WorldMap_IsWalkable(void *object, struct WorldPosition *position) {
 
 /// Returns 0 where the ship can sail (the sea or shallow water), else -1.
 s32 WorldMap_IsSailable(void *object, struct WorldPosition *position) {
-  if (WorldMap_GetBlockPlace(position) != WORLD_MAP_NO_PLACE) {
+  if (WorldMap_GetBlockCellBehavior(position) != CELL_BEHAVIOR_WALL) {
     s32 collision = WorldMap_GetCollision(position);
     struct FieldWork *work = Ram_HeapSlots->fieldWork;
     s32 mode;
@@ -1375,7 +1375,7 @@ s32 WorldMap_IsSailable(void *object, struct WorldPosition *position) {
 /// Returns 0 where the winged ship can go, else -1: low down, where it can
 /// sail; higher, more of the ground by the kind it last flew over.
 s32 WorldMap_IsFlyable(struct Actor *mover, struct WorldPosition *position) {
-  if (WorldMap_GetBlockPlace(position) != WORLD_MAP_NO_PLACE) {
+  if (WorldMap_GetBlockCellBehavior(position) != CELL_BEHAVIOR_WALL) {
     s32 collision = WorldMap_GetCollision(position);
     struct FieldWork *work = Ram_HeapSlots->fieldWork;
 

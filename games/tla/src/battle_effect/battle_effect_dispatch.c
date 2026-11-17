@@ -110,8 +110,8 @@ void BattleEffect_RunSummon(struct BattleEffectParams *args) {
     case SUMMON_EFFECT_IRIS:
       BattleEffect_RunIris(args);
       break;
-    case SUMMON_EFFECT_DAEDALUS_ALT:
-      BattleEffect_RunDaedalusAlt(args);
+    case SUMMON_EFFECT_DAEDALUS_STRIKE:
+      BattleEffect_RunDaedalusStrike(args);
       break;
     case SUMMON_EFFECT_TRIDENT:
       BattleEffect_RunTrident(args);

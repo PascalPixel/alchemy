@@ -14,14 +14,14 @@
 /// The selection row's icons stand 16 pixels apart.
 #define SELECTION_ICON_SPACING 16
 
-/// SelectionScreen.verticalScroll as the screen is made: the row's icons drawn
-/// 32 pixels lower, below the bottom of the screen, and the cursor held still,
-/// until SelectionMenu_Clear readies the list.
+/// SelectionMenuWork.verticalScroll as the screen is made: the row's icons
+/// drawn 32 pixels lower, below the bottom of the screen, and the cursor held
+/// still, until SelectionMenu_Clear readies the list.
 #define SELECTION_ROW_HIDDEN 32
 
-/// SelectionScreen.locked as the screen is made and once a yes or no window has
-/// opened: nonzero keeps a yes or no row and its window at the bottom of the
-/// screen, as Menu_RunSelectionForValue's 1 does.
+/// SelectionMenuWork.locked as the screen is made and once a yes or no window
+/// has opened: nonzero keeps a yes or no row and its window at the bottom of
+/// the screen, as Menu_RunSelectionForValue's 1 does.
 #define SELECTION_YES_NO_AT_BOTTOM 999
 
 /// One frame of an end arrow's animation: an 8x16 sprite of 256 colours.

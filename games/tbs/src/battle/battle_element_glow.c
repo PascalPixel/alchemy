@@ -371,7 +371,7 @@ void ElementGlow_Play(s32 unitId, s32 element, s32 mode, s32 variant) {
         Graphics_ScaleRgb555Clamped(battle->palette, BATTLE_BG_PALETTE,
                                     *brightness = FIXED_ONE -
                                                   frame * BACKGROUND_LEVEL_STEP,
-                                    BATTLE_BG_PALETTE_COLORS);
+                                    BATTLE_BACKGROUND_COLORS);
       BattleMotion_ProjectScaledPosition(
           unitId, ScreenPoint_Coordinates(&starFieldPosition));
       work->canvasOrigin.x = (STAR_FIELD_CENTER - (u32)starFieldPosition.x)

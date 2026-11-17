@@ -422,7 +422,7 @@ s32 PartyMemberChooser_RunRearrange(void) {
       Unit_Get(menu->memberIds[ownerIndex]);
       page = (page + 3) % 3;
       StatusScreen_ShowMemberStatus(menu->memberIds[ownerIndex], page);
-      PsynergyMenu_CallIconRoutineWithValue(menu, menu->memberIds[ownerIndex]);
+      Menu_ReloadMemberPortrait(menu, menu->memberIds[ownerIndex]);
       if (redraw == 2) {
         Menu_CreateOwnerEntryObjects(ownerIndex / 4 * 4);
         wait(1);
@@ -506,7 +506,7 @@ s32 PsynergyMenu_ChooseMember(void) {
       Unit_Get(menu->memberIds[selection]);
       page = (page + 3) % 3;
       StatusScreen_ShowMemberStatus(menu->memberIds[selection], page);
-      PsynergyMenu_CallIconRoutineWithValue(menu, menu->memberIds[selection]);
+      Menu_ReloadMemberPortrait(menu, menu->memberIds[selection]);
       menu->entryCount =
           PsynergyMenu_CollectActions(Unit_Get(menu->memberIds[selection]),
                                       menu->entries, PSYNERGY_LIST_ALL);
@@ -789,7 +789,7 @@ s32 StatusScreen_SelectCommand(void) {
         menu->selectedMember = menu->memberIds[member];
         menu->selectedIds[0] = menu->memberIds[member];
         menu->memberIndex[0] = member;
-        PsynergyMenu_CallIconRoutineWithValue(menu, menu->memberIds[member]);
+        Menu_ReloadMemberPortrait(menu, menu->memberIds[member]);
         break;
       }
     }
@@ -1545,8 +1545,7 @@ s32 PsynergyMenu_SelectAction(void) {
       menu->selectedMember = menu->memberTable[ownerIndex];
       menu->memberIds[0] = menu->memberTable[ownerIndex];
       menu->tabIndex[0] = ownerIndex;
-      PsynergyMenu_CallIconRoutineWithValue(menu,
-                                            menu->memberTable[ownerIndex]);
+      Menu_ReloadMemberPortrait(menu, menu->memberTable[ownerIndex]);
       refresh = 2;
     }
   }
@@ -1868,8 +1867,7 @@ s32 ItemMenu_SelectItem(void) {
       menu->selectedMember = (u16)menu->memberIds[ownerIndex];
       menu->sideMember[0] = (u16)menu->memberIds[ownerIndex];
       menu->sideIndex[0] = ownerIndex;
-      PsynergyMenu_CallIconRoutineWithValue(menu,
-                                            (u16)menu->memberIds[ownerIndex]);
+      Menu_ReloadMemberPortrait(menu, (u16)menu->memberIds[ownerIndex]);
       refresh = 2;
     }
   }

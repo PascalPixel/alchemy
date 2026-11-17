@@ -89,12 +89,12 @@
 #include "enemy_ids.h"
 #include "item_ids.h"
 
-/// BattleEnemy_ClaimNameLetter returns the letter in ENEMY_LETTER_MASK, with
-/// ENEMY_LETTER_FIRST_TOO set for the second enemy of a class: its callers then
+/// BattleEnemy_ClaimNameLetter returns the letter in NAME_LETTER_MASK, with
+/// NAME_LETTER_FIRST_TOO set for the second enemy of a class: its callers then
 /// give the first one its letter too (BattleEnemy_LetterFirstOfKind) before
 /// passing the letter to BattleUnit_SetFar.
-#define ENEMY_LETTER_FIRST_TOO 0x8000
-#define ENEMY_LETTER_MASK 0x7fff
+#define NAME_LETTER_FIRST_TOO 0x8000
+#define NAME_LETTER_MASK 0x7fff
 
 /// The length of a unit's name, its terminator excluded.
 #define UNIT_NAME_LENGTH 14

@@ -9,7 +9,7 @@
 /// after gRareItemStock. Every value is below 18, the Djinn of one element, and
 /// there are four rows, as there are elements.
 /// XXX: what reads the copy; see MainRoutineWork_InitializeDefaults.
-const u8 Data_080b1f2c[4][5] = {
+const u8 gNewGame_SceneStateTable[4][5] = {
     {15, 16, 10, 11, 12},
     {1, 8, 15, 16, 17},
     {5, 6, 7, 8, 9},

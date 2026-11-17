@@ -617,9 +617,6 @@ void BattleMap_ApplySceneEntranceView(void);
 void PaletteEditor_Run(void);
 
 struct TriggerView *Scene_FindTrigger(s32 kind, s32 target);
-/// Scene_TalkToActor's mark on an actor id, FIELD_TALK_SILENT: a container is
-/// opened without the message that the leader checked it.
-#define TALK_WITHOUT_CHECK_MESSAGE FIELD_TALK_SILENT
 s32 Scene_TalkToActor(s32 id);
 s32 Scene_RunRaisedTrigger(s32 id);
 s32 Scene_RunStepTriggerOrExit(s32 value);

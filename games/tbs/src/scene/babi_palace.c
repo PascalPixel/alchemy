@@ -1165,7 +1165,7 @@ static void BabiPalace_WakeAfterFinals(void) {
   work->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
   work->transitionFrames = 12;
   wait(1);
-  ScreenTransition_InitializeBattleEffectState(WINDOW_TRANSITION_LEADER);
+  ScreenTransition_StartHeldWindow(WINDOW_TRANSITION_LEADER);
   state = gScreenTransitionWork;
   state->value = 0;
   state->mask = 0x1f1f;

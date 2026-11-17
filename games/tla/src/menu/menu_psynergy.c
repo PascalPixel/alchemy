@@ -415,7 +415,7 @@ s32 PsynergyMenu_SelectMember(u16 *ownerIds, u16 *unused) {
       PsynergyMenu_RefreshMemberPsynergy(ownerIds[selection]);
       StatusPanel_Draw(window, ownerIds[selection], 0, STATUS_PANEL_EXPERIENCE);
       PsynergyMenu_DrawShortcuts(menu->shortcutWindow, ownerIds[selection]);
-      PsynergyMenu_CallIconRoutineWithValue(menu, ownerIds[selection]);
+      Menu_ReloadMemberPortrait(menu, ownerIds[selection]);
       if (redraw == 2) {
         Menu_CreateOwnerEntryObjects(selection / 4 * 4);
         wait(1);
@@ -531,8 +531,7 @@ s32 PsynergyMenu_SelectTarget(s32 browseOnly) {
       if (browseOnly == 0) {
         StatusPanel_Draw(menu->statusWindow, menu->memberTable[selection], 0,
                          0);
-        PsynergyMenu_CallIconRoutineWithValue(menu,
-                                              menu->memberTable[selection]);
+        Menu_ReloadMemberPortrait(menu, menu->memberTable[selection]);
         if (redraw == 2) {
           Menu_CreateOwnerEntryObjects(selection / 4 * 4);
           wait(1);
@@ -1209,7 +1208,7 @@ s32 PsynergyMenu_RunList(s32 paneIndex) {
         wait(1);
         StatusPanel_Draw(menu->statusWindow, menu->memberTable[member], 0,
                          STATUS_PANEL_EXPERIENCE);
-        PsynergyMenu_CallIconRoutineWithValue(menu, menu->memberTable[member]);
+        Menu_ReloadMemberPortrait(menu, menu->memberTable[member]);
         break;
       }
 

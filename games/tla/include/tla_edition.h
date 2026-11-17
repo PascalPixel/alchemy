@@ -21,10 +21,10 @@
 // and Battle and Update when they are offered).
 #if LANGUAGE != LANGUAGE_JAPANESE
 #define SELECT_MENU_WIDTH 7
-#define SAVE_SLOT_MENU_WIDTH 7
+#define TYPE_MENU_WIDTH 7
 #else
 #define SELECT_MENU_WIDTH 5
-#define SAVE_SLOT_MENU_WIDTH 4
+#define TYPE_MENU_WIDTH 4
 #endif
 
 // Where the debug destination list's cursor sits; further right in Japanese.
@@ -39,17 +39,17 @@
 // in the European editions, instead of 5.
 #if LANGUAGE == LANGUAGE_GERMAN || LANGUAGE == LANGUAGE_SPANISH ||             \
     LANGUAGE == LANGUAGE_FRENCH || LANGUAGE == LANGUAGE_ITALIAN
-#define NAME_PREFIX_LAST_INDEX 7
+#define LOBBY_PREFIX_LIMIT 7
 #else
-#define NAME_PREFIX_LAST_INDEX 4
+#define LOBBY_PREFIX_LIMIT 4
 #endif
 
 // The first of the letters that tell enemies of one kind apart in battle: the
 // alphabet from 'A' in Japanese, the digits from '1' in the others.
 #if LANGUAGE == LANGUAGE_JAPANESE
-#define SUMMON_CHANNEL_MARKER 'A'
+#define LIST_MARKER_CHAR 'A'
 #else
-#define SUMMON_CHANNEL_MARKER '1'
+#define LIST_MARKER_CHAR '1'
 #endif
 
 // The letters of Lucky Wheels' title.

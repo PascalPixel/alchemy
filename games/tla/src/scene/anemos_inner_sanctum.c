@@ -1095,7 +1095,7 @@ void AnemosInnerSanctum_PressRoundSwitch(void) {
     FieldCamera_MoveToActorById(id, 1);
     FieldCamera_WaitForArrival();
     FieldEvent_Wait(10);
-    Event_PlaySound(SE_PUZZLE_MECHANISM);
+    Event_PlaySound(SE_582);
     Actor_SetAnimation(id, ARROW_PANEL_ANIMATION_UP);
     Event_SetFlag(FLAG_SCENE_TEMP_07);
     Actor_Get(id)->motionFlags = ACTOR_FLOATS;

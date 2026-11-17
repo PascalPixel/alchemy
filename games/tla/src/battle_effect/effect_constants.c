@@ -99,18 +99,18 @@ const struct Scale gCharon_FinaleScale = UNIT_SCALE;
 const struct Scale gFlora_UnitScale = UNIT_SCALE;
 
 /// The scale of Daedalus's waves.
-const struct Scale gDaedalus_WaveScale = UNIT_SCALE;
+const struct Scale gDaedalus_CanopyScale = UNIT_SCALE;
 
 /// The scale of Daedalus's ship.
-const struct Scale gDaedalus_ShipScale = UNIT_SCALE;
+const struct Scale gDaedalus_MachineScale = UNIT_SCALE;
 
 /// The scale of Daedalus's particles, a tenth larger.
-const struct Scale gDaedalus_ParticleScale = {
+const struct Scale gDaedalus_MissileScale = {
     FIXED_ONE * 11 / 10,
     FIXED_ONE * 11 / 10,
 };
 
-const struct Scale gDaedalusAlt_SummonScale = {FIXED_ONE * 2, FIXED_ONE * 2};
+const struct Scale gDaedalusStrike_RocketScale = {FIXED_ONE * 2, FIXED_ONE * 2};
 
 /// Coatlicue's scale.
 const struct Scale gCoatlicue_UnitScale = UNIT_SCALE;

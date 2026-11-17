@@ -7,7 +7,7 @@
 /// stone columns crack under the leader and crumble at his next step
 /// (CrumblingPillar_Step), and the Mars Djinni Cannon runs ahead of the party
 /// room by room, cracking floors and columns and casting Pound
-/// (DehkanPlateau_CannonCrumblesPillars), until a fall lands the leader beside
+/// (DehkanPlateau_CannonCracksPillars), until a fall lands the leader beside
 /// it and it drops the Pound Cube (DehkanPlateau_CannonDropsPoundCube);
 /// cornered at last once the party Pounds the Pound pillar before it into the
 /// ground, it fights (DehkanPlateau_FightCannon).
@@ -72,7 +72,7 @@
 // (CrumblingPillar_Step), its Pound pillars sink when Pounded
 // (Pound_SinkTarget), and its stone pillars are Moved. Its unseen blocks draw
 // nothing, but while they are drawn the leader among them shows in front of
-// the cliff there (DehkanPlateau_SetActorsHidden). Chests number from 64.
+// the cliff there (DehkanPlateau_SetBlocksShown). Chests number from 64.
 
 /// The first room, where cracks drop the party to the caves below.
 enum DehkanPlateauFullMetalVestChestActorId {
@@ -158,7 +158,7 @@ enum {
 /// The leader stands on the crack he has just opened; set until he steps off.
 #define FLAG_STANDING_ON_OPENED_CRACK FLAG_SCENE_TEMP_01
 /// Room 6's Pound pillar's cell holds the attributes
-/// DehkanPlateau_EnterConeCell gives it while the leader is on the lower path.
+/// DehkanPlateau_EnterLowerPath gives it while the leader is on the lower path.
 #define FLAG_POUND_PILLAR_CELL_CHANGED FLAG_SCENE_TEMP_02
 /// Each room's pillar Pounded into the ground, by its list's flag.
 #define FLAG_FULL_METAL_VEST_CHEST_PILLAR_POUNDED FLAG_SCENE_TEMP_03
@@ -397,7 +397,7 @@ void DehkanPlateau_StepOnCannonPillar(void) {
 
 /// Draws (show 1) or stops drawing the unseen blocks of the room the party is
 /// in.
-void DehkanPlateau_SetActorsHidden(s32 show) {
+void DehkanPlateau_SetBlocksShown(s32 show) {
   s16 scene = gMainRoutineWork.next;
 
   if (scene == SCENE_DEHKAN_PLATEAU_FULL_METAL_VEST_CHEST)
@@ -416,14 +416,14 @@ void DehkanPlateau_SetActorsHidden(s32 show) {
 }
 
 /// Draws the room's unseen blocks again, and notes them shown.
-void DehkanPlateau_HideActors(void) {
-  DehkanPlateau_SetActorsHidden(1);
+void DehkanPlateau_ShowBlocks(void) {
+  DehkanPlateau_SetBlocksShown(1);
   GameFlag_Set(FLAG_BLOCKS_SHOWN);
 }
 
 /// Stops drawing the room's unseen blocks.
-void DehkanPlateau_ShowActors(void) {
-  DehkanPlateau_SetActorsHidden(0);
+void DehkanPlateau_HideBlocks(void) {
+  DehkanPlateau_SetBlocksShown(0);
   GameFlag_Clear(FLAG_BLOCKS_SHOWN);
 }
 
@@ -875,14 +875,14 @@ void DehkanPlateau_ForgetCrackOnLeaving(void) {
 void DehkanPlateau_RestoreBlocks(void) {
   if (GameFlag_Get(FLAG_KEEP_PARTY_POSITION) != 0) {
     if (GameFlag_Get(FLAG_BLOCKS_SHOWN) == 0)
-      DehkanPlateau_ShowActors();
+      DehkanPlateau_HideBlocks();
   } else {
     GameFlag_Set(FLAG_BLOCKS_SHOWN);
   }
 }
 
 /// Hides the first room's unseen blocks as it opens.
-void DehkanPlateau_HideFullMetalVestChestActors(void) {
+void DehkanPlateau_HideFullMetalVestChestBlocks(void) {
   u32 i;
 
   for (i = 0; i < FULL_METAL_VEST_CHEST_BLOCK_COUNT; i++)
@@ -891,7 +891,7 @@ void DehkanPlateau_HideFullMetalVestChestActors(void) {
 }
 
 /// Hides the second room's unseen blocks as it opens.
-void DehkanPlateau_HideThemisAxeChestActors(void) {
+void DehkanPlateau_HideThemisAxeChestBlocks(void) {
   u32 i;
 
   for (i = 0; i < THEMIS_AXE_CHEST_BLOCK_COUNT; i++)
@@ -900,7 +900,7 @@ void DehkanPlateau_HideThemisAxeChestActors(void) {
 }
 
 /// Hides the third room's unseen blocks as it opens.
-void DehkanPlateau_HideTightropesActors(void) {
+void DehkanPlateau_HideTightropesBlocks(void) {
   u32 i;
 
   for (i = 0; i < TIGHTROPES_BLOCK_COUNT; i++)
@@ -909,7 +909,7 @@ void DehkanPlateau_HideTightropesActors(void) {
 }
 
 /// Hides the fourth room's unseen blocks as it opens.
-void DehkanPlateau_HideMintChestActors(void) {
+void DehkanPlateau_HideMintChestBlocks(void) {
   u32 i;
 
   for (i = 0; i < MINT_CHEST_BLOCK_COUNT; i++)
@@ -918,7 +918,7 @@ void DehkanPlateau_HideMintChestActors(void) {
 }
 
 /// Hides the sixth room's unseen blocks as it opens.
-void DehkanPlateau_HideCannonActors(void) {
+void DehkanPlateau_HideCannonBlocks(void) {
   u32 i;
 
   for (i = 0; i < CANNON_ROOM_BLOCK_COUNT; i++)
@@ -961,7 +961,7 @@ void DehkanPlateau_PlaceVinePillar(struct Actor *actor) {
 extern s16 gDehkanPlateau_TightropesVinePillars[];
 
 /// Walking into one of the third room's vine pillars pushes it a cell on.
-void DehkanPlateau_PushRaisedPillar(void) {
+void DehkanPlateau_PushVinePillar(void) {
   struct Actor *actor;
 
   if (Leader_CanPushObjectAhead() != 0) {
@@ -974,12 +974,12 @@ void DehkanPlateau_PushRaisedPillar(void) {
 }
 
 /// Move takes hold of one of the third room's vine pillars.
-void DehkanPlateau_LiftTightropesRaisedPillar(void) {
+void DehkanPlateau_LiftTightropesVinePillar(void) {
   Pillar_LowerHeldCells(gDehkanPlateau_TightropesVinePillars);
 }
 
 /// Move lets go of one of the third room's vine pillars.
-void DehkanPlateau_FinishMovingRaisedPillar(void) {
+void DehkanPlateau_FinishMovingVinePillar(void) {
   struct FieldWork *work = Ram_HeapSlots->fieldWork;
   struct Actor *active;
 
@@ -991,7 +991,7 @@ void DehkanPlateau_FinishMovingRaisedPillar(void) {
 /// Stepping onto room 6's lower path before its Pound pillar is Pounded holds
 /// the pillar still and gives its cell the attributes of cell (51, 12);
 /// stepping off the path puts the cell back.
-void DehkanPlateau_EnterConeCell(void) {
+void DehkanPlateau_EnterLowerPath(void) {
   s32 set = GameFlag_Get(FLAG_CANNON_ROOM_PILLAR_POUNDED);
 
   if (set == 0) {
@@ -1186,7 +1186,7 @@ extern u32 gDehkanPlateau_DustScript[];
 
 /// Cracks a stone column as Cannon lands on it: it flashes white and takes
 /// its cracked look, and eight puffs of dust rise about the one standing on it.
-void DehkanPlateau_CrumblePillar(s32 id, s32 center, s32 flag) {
+void DehkanPlateau_CrackPillar(s32 id, s32 center, s32 flag) {
   struct Actor *leader;
   s32 frame;
   u32 i;
@@ -1236,7 +1236,7 @@ void DehkanPlateau_CrumblePillar(s32 id, s32 center, s32 flag) {
 
 /// In the third room Cannon leaps across the stone columns, cracking two of
 /// them as he lands.
-void DehkanPlateau_CannonCrumblesPillars(void) {
+void DehkanPlateau_CannonCracksPillars(void) {
   struct Actor *actor;
 
   actor = Actor_GetById(ACTOR_TIGHTROPES_CANNON);
@@ -1260,8 +1260,8 @@ void DehkanPlateau_CannonCrumblesPillars(void) {
   Actor_SetSpriteFlags(Actor_GetById(ACTOR_TIGHTROPES_CANNON), 0);
   Actor_WalkToAndWait(ACTOR_TIGHTROPES_CANNON, 664, 280);
   Actor_SetSpriteFlags(Actor_GetById(ACTOR_TIGHTROPES_CANNON), 1);
-  DehkanPlateau_CrumblePillar(ACTOR_TIGHTROPES_FIRST_CRUMBLING_PILLAR,
-                              ACTOR_TIGHTROPES_CANNON, FLAG_COLUMN_CRACKED(0));
+  DehkanPlateau_CrackPillar(ACTOR_TIGHTROPES_FIRST_CRUMBLING_PILLAR,
+                            ACTOR_TIGHTROPES_CANNON, FLAG_COLUMN_CRACKED(0));
   Sound_Play(SE_HIGH_JUMP);
   actor->velocityY = toFIXED(8);
   Actor_SetSpriteFlags(Actor_GetById(ACTOR_TIGHTROPES_CANNON), 0);
@@ -1284,8 +1284,8 @@ void DehkanPlateau_CannonCrumblesPillars(void) {
   Actor_SetSpriteFlags(Actor_GetById(ACTOR_TIGHTROPES_CANNON), 0);
   Actor_WalkToAndWait(ACTOR_TIGHTROPES_CANNON, 744, 168);
   Actor_SetSpriteFlags(Actor_GetById(ACTOR_TIGHTROPES_CANNON), 1);
-  DehkanPlateau_CrumblePillar(ACTOR_TIGHTROPES_FIRST_CRUMBLING_PILLAR + 3,
-                              ACTOR_TIGHTROPES_CANNON, FLAG_COLUMN_CRACKED(3));
+  DehkanPlateau_CrackPillar(ACTOR_TIGHTROPES_FIRST_CRUMBLING_PILLAR + 3,
+                            ACTOR_TIGHTROPES_CANNON, FLAG_COLUMN_CRACKED(3));
   Actor_FaceDirectionAndRefreshById(ACTOR_TIGHTROPES_CANNON, FACING_NORTH);
   Sound_Play(SE_HIGH_JUMP);
   actor->velocityY = toFIXED(8);
@@ -1458,8 +1458,8 @@ void DehkanPlateau_CannonCracksLastPillar(void) {
   Actor_SetSpriteFlags(Actor_GetById(ACTOR_CANNON), 0);
   Actor_WalkToAndWaitById(ACTOR_CANNON, 792, 200);
   Actor_SetSpriteFlags(Actor_GetById(ACTOR_CANNON), 1);
-  DehkanPlateau_CrumblePillar(ACTOR_CANNON_ROOM_CRUMBLING_PILLAR, ACTOR_CANNON,
-                              FLAG_COLUMN_CRACKED(0));
+  DehkanPlateau_CrackPillar(ACTOR_CANNON_ROOM_CRUMBLING_PILLAR, ACTOR_CANNON,
+                            FLAG_COLUMN_CRACKED(0));
   Sound_Play(SE_HIGH_JUMP);
   actor->velocityY = toFIXED(8);
   Actor_SetSpriteFlags(Actor_GetById(ACTOR_CANNON), 0);
@@ -1571,7 +1571,7 @@ void DehkanPlateau_InitializeFullMetalVestChest(void) {
     wait(10);
   }
   DehkanPlateau_RestoreFullMetalVestChestCracks();
-  DehkanPlateau_HideFullMetalVestChestActors();
+  DehkanPlateau_HideFullMetalVestChestBlocks();
   {
     s32 priority = TASK_PASS_FRAME;
 
@@ -1616,7 +1616,7 @@ void DehkanPlateau_InitializeThemisAxeChest(void) {
   }
   if (GameFlag_Get(FLAG_CANNON_FLED_EAST) != 0)
     Actor_SetPosition(ACTOR_THEMIS_AXE_CHEST_CANNON, 0, 0);
-  DehkanPlateau_HideThemisAxeChestActors();
+  DehkanPlateau_HideThemisAxeChestBlocks();
 }
 
 void DehkanPlateau_ForgetCrackOnLeaving(void);
@@ -1714,7 +1714,7 @@ void DehkanPlateau_InitializeTightropes(void) {
   }
   CrumblingPillar_Place(gDehkanPlateau_TightropesCrumblingPillars);
   DehkanPlateau_SetTightropesStandingPillarCells();
-  DehkanPlateau_HideTightropesActors();
+  DehkanPlateau_HideTightropesBlocks();
   {
     struct Actor *block = Actor_GetById(ACTOR_TIGHTROPES_FIRST_BLOCK + 1);
 
@@ -1782,7 +1782,7 @@ void DehkanPlateau_InitializeMintChest(void) {
       SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE);
   Actor_GetById(gMainRoutineWork.leaderActorId)->priorityFlags |=
       ACTOR_PRIORITY_IGNORES_RISES;
-  DehkanPlateau_HideMintChestActors();
+  DehkanPlateau_HideMintChestBlocks();
   if (GameFlag_Get(FLAG_CANNON_FLED_OVER_CRACKS) != 0) {
     MapGrid_CopyCellPictureIndicesRect(3, 8, 30, 33, 1, 1);
     MapGrid_CopyCellPictureIndicesRect(67, 3, 94, 28, 1, 5);
@@ -1952,10 +1952,10 @@ void DehkanPlateau_InitializeCannon(void) {
   Pillar_Place(gDehkanPlateau_CannonPoundPillars);
   CrumblingPillar_Place(gDehkanPlateau_CannonCrumblingPillar);
   if (GameFlag_Get(FLAG_CANNON_ROOM_PILLAR_POUNDED) == 0) {
-    DehkanPlateau_EnterConeCell();
+    DehkanPlateau_EnterLowerPath();
     wait(10);
   }
-  DehkanPlateau_HideCannonActors();
+  DehkanPlateau_HideCannonBlocks();
   if (GameFlag_Get(FLAG_KEEP_PARTY_POSITION) == 0) {
     if (gMainRoutineWork.entrance >= CANNON_ROOM_FIRST_LANDING_ENTRANCE) {
       if (gMainRoutineWork.entrance <= LAST_LANDING_ENTRANCE)
@@ -2452,8 +2452,8 @@ struct Trigger gDehkanPlateau_FullMetalVestChestTriggers[] = {
     {PSYNERGY_PHASE_ON_ACTOR(ABILITY_POUND, PSYNERGY_PHASE_ACTS), ACTOR_FULL_METAL_VEST_CHEST_POUND_PILLAR, FLAG_FULL_METAL_VEST_CHEST_PILLAR_POUNDED, EVENT(DehkanPlateau_PoundFullMetalVestChestPillar)},
     {TRIGGER_PUSHED, 0, FLAG_AREA_TEMP_01, EVENT(DehkanPlateau_DropFullMetalVestChestPillarIntoGap)},
     {PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_FULL_METAL_VEST_CHEST_PILLAR, FLAG_AREA_TEMP_01, EVENT(DehkanPlateau_DropFullMetalVestChestPillarIntoGap)},
-    {TRIGGER_STEP, 6, FLAG_BLOCKS_SHOWN, EVENT(DehkanPlateau_HideActors)},
-    {TRIGGER_STEP, 7, IF_FLAG_SET(FLAG_BLOCKS_SHOWN), EVENT(DehkanPlateau_ShowActors)},
+    {TRIGGER_STEP, 6, FLAG_BLOCKS_SHOWN, EVENT(DehkanPlateau_ShowBlocks)},
+    {TRIGGER_STEP, 7, IF_FLAG_SET(FLAG_BLOCKS_SHOWN), EVENT(DehkanPlateau_HideBlocks)},
     {TRIGGER_STEP, 10, CONDITION_ALWAYS, EVENT(DehkanPlateau_StepOffCrack)},
     {TRIGGER_STEP, TRIGGER_FULL_METAL_VEST_CHEST_FIRST_CRACK, FLAG_STANDING_ON_OPENED_CRACK, EVENT(DehkanPlateau_StepOnCrack)},
     {TRIGGER_STEP, TRIGGER_FULL_METAL_VEST_CHEST_FIRST_CRACK + 1, FLAG_STANDING_ON_OPENED_CRACK, EVENT(DehkanPlateau_StepOnCrack)},
@@ -2488,8 +2488,8 @@ struct Trigger gDehkanPlateau_ThemisAxeChestTriggers[] = {
     {TRIGGER_PUSHED, 0, FLAG_THEMIS_AXE_CHEST_PILLAR_PLACED, EVENT(DehkanPlateau_PlaceThemisAxeChestPillar)},
     {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), ACTOR_THEMIS_AXE_CHEST_PILLAR, FLAG_THEMIS_AXE_CHEST_PILLAR_PLACED, EVENT(DehkanPlateau_LiftThemisAxeChestPillar)},
     {PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_THEMIS_AXE_CHEST_PILLAR, FLAG_THEMIS_AXE_CHEST_PILLAR_PLACED, EVENT(DehkanPlateau_PlaceThemisAxeChestPillar)},
-    {TRIGGER_STEP, 6, FLAG_BLOCKS_SHOWN, EVENT(DehkanPlateau_HideActors)},
-    {TRIGGER_STEP, 7, IF_FLAG_SET(FLAG_BLOCKS_SHOWN), EVENT(DehkanPlateau_ShowActors)},
+    {TRIGGER_STEP, 6, FLAG_BLOCKS_SHOWN, EVENT(DehkanPlateau_ShowBlocks)},
+    {TRIGGER_STEP, 7, IF_FLAG_SET(FLAG_BLOCKS_SHOWN), EVENT(DehkanPlateau_HideBlocks)},
     {TRIGGER_STEP, 10, CONDITION_ALWAYS, EVENT(DehkanPlateau_StepOffCrack)},
     {TRIGGER_STEP, TRIGGER_THEMIS_AXE_CHEST_FIRST_CRACK, FLAG_STANDING_ON_OPENED_CRACK, EVENT(DehkanPlateau_StepOnCrack)},
     {TRIGGER_STEP, TRIGGER_THEMIS_AXE_CHEST_FIRST_CRACK + 1, FLAG_STANDING_ON_OPENED_CRACK, EVENT(DehkanPlateau_StepOnCrack)},
@@ -2513,7 +2513,7 @@ struct Trigger gDehkanPlateau_TightropesTriggers[] = {
     {TRIGGER_EXIT, 25, CONDITION_ALWAYS, 8},
     {TRIGGER_STEP, 30, FLAG_CANNON_LEAPT_AWAY, EVENT(DehkanPlateau_CannonLeapsAway)},
     {TRIGGER_STEP, 31, FLAG_CANNON_POUNDED_PILLAR, EVENT(DehkanPlateau_CannonPoundsPillar)},
-    {TRIGGER_STEP, 32, FLAG_CANNON_CRACKED_PILLARS, EVENT(DehkanPlateau_CannonCrumblesPillars)},
+    {TRIGGER_STEP, 32, FLAG_CANNON_CRACKED_PILLARS, EVENT(DehkanPlateau_CannonCracksPillars)},
     {PSYNERGY_ON_ACTOR(ABILITY_LASH), ACTOR_TIGHTROPES_ROPE_LOW_POST, FLAG_TIGHTROPES_ROPE_LASHED, 0},
     {PSYNERGY_PHASE_ON_ACTOR(ABILITY_POUND, PSYNERGY_PHASE_ACTS), ACTOR_TIGHTROPES_POUND_PILLAR, FLAG_TIGHTROPES_PILLAR_POUNDED, EVENT(DehkanPlateau_PoundTightropesPillar)},
     {TRIGGER_PUSH, 0, CONDITION_ALWAYS, EVENT(DehkanPlateau_LiftTightropesPillar)},
@@ -2522,22 +2522,22 @@ struct Trigger gDehkanPlateau_TightropesTriggers[] = {
     {PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_TIGHTROPES_PILLAR, CONDITION_ALWAYS, EVENT(DehkanPlateau_PlaceTightropesPillar)},
     {PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_TIGHTROPES_SECOND_PILLAR, FLAG_TIGHTROPES_SECOND_PILLAR_PLACED, EVENT(DehkanPlateau_MoveTightropesSecondPillar)},
     {STEP_TRIGGER_WALKING_INTO(FACING_WEST), 9, FLAG_TIGHTROPES_SECOND_PILLAR_PLACED, EVENT(DehkanPlateau_PushTightropesSecondPillar)},
-    {STEP_TRIGGER_WALKING_INTO(FACING_EAST), 20, CONDITION_ALWAYS, EVENT(DehkanPlateau_PushRaisedPillar)},
-    {STEP_TRIGGER_WALKING_INTO(FACING_WEST), 21, CONDITION_ALWAYS, EVENT(DehkanPlateau_PushRaisedPillar)},
-    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), ACTOR_TIGHTROPES_FIRST_VINE_PILLAR, CONDITION_ALWAYS, EVENT(DehkanPlateau_LiftTightropesRaisedPillar)},
-    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), ACTOR_TIGHTROPES_SECOND_VINE_PILLAR, CONDITION_ALWAYS, EVENT(DehkanPlateau_LiftTightropesRaisedPillar)},
-    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), ACTOR_TIGHTROPES_THIRD_VINE_PILLAR, CONDITION_ALWAYS, EVENT(DehkanPlateau_LiftTightropesRaisedPillar)},
-    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), ACTOR_TIGHTROPES_FOURTH_VINE_PILLAR, CONDITION_ALWAYS, EVENT(DehkanPlateau_LiftTightropesRaisedPillar)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_TIGHTROPES_FIRST_VINE_PILLAR, CONDITION_ALWAYS, EVENT(DehkanPlateau_FinishMovingRaisedPillar)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_TIGHTROPES_SECOND_VINE_PILLAR, CONDITION_ALWAYS, EVENT(DehkanPlateau_FinishMovingRaisedPillar)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_TIGHTROPES_THIRD_VINE_PILLAR, CONDITION_ALWAYS, EVENT(DehkanPlateau_FinishMovingRaisedPillar)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_TIGHTROPES_FOURTH_VINE_PILLAR, CONDITION_ALWAYS, EVENT(DehkanPlateau_FinishMovingRaisedPillar)},
+    {STEP_TRIGGER_WALKING_INTO(FACING_EAST), 20, CONDITION_ALWAYS, EVENT(DehkanPlateau_PushVinePillar)},
+    {STEP_TRIGGER_WALKING_INTO(FACING_WEST), 21, CONDITION_ALWAYS, EVENT(DehkanPlateau_PushVinePillar)},
+    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), ACTOR_TIGHTROPES_FIRST_VINE_PILLAR, CONDITION_ALWAYS, EVENT(DehkanPlateau_LiftTightropesVinePillar)},
+    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), ACTOR_TIGHTROPES_SECOND_VINE_PILLAR, CONDITION_ALWAYS, EVENT(DehkanPlateau_LiftTightropesVinePillar)},
+    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), ACTOR_TIGHTROPES_THIRD_VINE_PILLAR, CONDITION_ALWAYS, EVENT(DehkanPlateau_LiftTightropesVinePillar)},
+    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), ACTOR_TIGHTROPES_FOURTH_VINE_PILLAR, CONDITION_ALWAYS, EVENT(DehkanPlateau_LiftTightropesVinePillar)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_TIGHTROPES_FIRST_VINE_PILLAR, CONDITION_ALWAYS, EVENT(DehkanPlateau_FinishMovingVinePillar)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_TIGHTROPES_SECOND_VINE_PILLAR, CONDITION_ALWAYS, EVENT(DehkanPlateau_FinishMovingVinePillar)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_TIGHTROPES_THIRD_VINE_PILLAR, CONDITION_ALWAYS, EVENT(DehkanPlateau_FinishMovingVinePillar)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_TIGHTROPES_FOURTH_VINE_PILLAR, CONDITION_ALWAYS, EVENT(DehkanPlateau_FinishMovingVinePillar)},
     {STEP_TRIGGER_WALKING, 10, CONDITION_ALWAYS, EVENT(DehkanPlateau_StepOnTightropesPillars)},
     {STEP_TRIGGER_WALKING_INTO(FACING_WEST), TRIGGER_TIGHTROPES_COLUMNS_WEST, CONDITION_ALWAYS, EVENT(DehkanPlateau_StepOnTightropesPillars)},
     {STEP_TRIGGER_WALKING_INTO(FACING_EAST), 26, CONDITION_ALWAYS, EVENT(DehkanPlateau_StepOnTightropesPillars)},
     {STEP_TRIGGER_WALKING_INTO(FACING_SOUTH), 27, CONDITION_ALWAYS, EVENT(DehkanPlateau_StepOnTightropesPillars)},
-    {TRIGGER_STEP, 7, FLAG_BLOCKS_SHOWN, EVENT(DehkanPlateau_HideActors)},
-    {TRIGGER_STEP, 8, IF_FLAG_SET(FLAG_BLOCKS_SHOWN), EVENT(DehkanPlateau_ShowActors)},
+    {TRIGGER_STEP, 7, FLAG_BLOCKS_SHOWN, EVENT(DehkanPlateau_ShowBlocks)},
+    {TRIGGER_STEP, 8, IF_FLAG_SET(FLAG_BLOCKS_SHOWN), EVENT(DehkanPlateau_HideBlocks)},
     {TRIGGER_STEP, TRIGGER_TIGHTROPES_FIRST_CRACK, FLAG_STANDING_ON_OPENED_CRACK, EVENT(DehkanPlateau_StepOnCrack)},
     {TRIGGER_STEP, TRIGGER_TIGHTROPES_FIRST_CRACK + 1, FLAG_STANDING_ON_OPENED_CRACK, EVENT(DehkanPlateau_StepOnCrack)},
     {TRIGGER_STEP, TRIGGER_TIGHTROPES_FIRST_CRACK + 2, FLAG_STANDING_ON_OPENED_CRACK, EVENT(DehkanPlateau_StepOnCrack)},
@@ -2558,8 +2558,8 @@ struct Trigger gDehkanPlateau_MintChestTriggers[] = {
     {TRIGGER_EXIT, 41, CONDITION_ALWAYS, 41},
     {TRIGGER_EXIT, 42, CONDITION_ALWAYS, 42},
     {TRIGGER_EXIT, 43, CONDITION_ALWAYS, 43},
-    {TRIGGER_STEP, 8, FLAG_BLOCKS_SHOWN, EVENT(DehkanPlateau_HideActors)},
-    {TRIGGER_STEP, 9, IF_FLAG_SET(FLAG_BLOCKS_SHOWN), EVENT(DehkanPlateau_ShowActors)},
+    {TRIGGER_STEP, 8, FLAG_BLOCKS_SHOWN, EVENT(DehkanPlateau_ShowBlocks)},
+    {TRIGGER_STEP, 9, IF_FLAG_SET(FLAG_BLOCKS_SHOWN), EVENT(DehkanPlateau_HideBlocks)},
     {TRIGGER_TABLE_END},
 };
 
@@ -2606,10 +2606,10 @@ struct Trigger gDehkanPlateau_CannonTriggers[] = {
     {TRIGGER_EXIT, 43, CONDITION_ALWAYS, 43},
     {STEP_TRIGGER_WALKING, 8, CONDITION_ALWAYS, EVENT(DehkanPlateau_StepOnCannonPillar)},
     {PSYNERGY_PHASE_ON_ACTOR(ABILITY_POUND, PSYNERGY_PHASE_ACTS), ACTOR_CANNON_ROOM_POUND_PILLAR, FLAG_CANNON_ROOM_PILLAR_POUNDED, EVENT(DehkanPlateau_PoundCannonPillar)},
-    {TRIGGER_STEP, 9, FLAG_POUND_PILLAR_CELL_CHANGED, EVENT(DehkanPlateau_EnterConeCell)},
+    {TRIGGER_STEP, 9, FLAG_POUND_PILLAR_CELL_CHANGED, EVENT(DehkanPlateau_EnterLowerPath)},
     {TRIGGER_STEP, 10, IF_FLAG_SET(FLAG_POUND_PILLAR_CELL_CHANGED), EVENT(DehkanPlateau_LeaveLowerPath)},
-    {TRIGGER_STEP, 5, FLAG_BLOCKS_SHOWN, EVENT(DehkanPlateau_HideActors)},
-    {TRIGGER_STEP, 6, IF_FLAG_SET(FLAG_BLOCKS_SHOWN), EVENT(DehkanPlateau_ShowActors)},
+    {TRIGGER_STEP, 5, FLAG_BLOCKS_SHOWN, EVENT(DehkanPlateau_ShowBlocks)},
+    {TRIGGER_STEP, 6, IF_FLAG_SET(FLAG_BLOCKS_SHOWN), EVENT(DehkanPlateau_HideBlocks)},
     {TRIGGER_STEP, 11, FLAG_CANNON_MET, EVENT(DehkanPlateau_MeetCannon)},
     {TRIGGER_TALK, ACTOR_CANNON, CONDITION_ALWAYS, EVENT(DehkanPlateau_FightCannon)},
     {TRIGGER_TABLE_END},

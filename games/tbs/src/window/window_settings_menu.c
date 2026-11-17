@@ -72,8 +72,8 @@ UNUSED void WindowColor_CalculateTint(struct OptionMenuWork *work) {
   s32 red;
   s32 green;
 
-  phase = (gMainRoutineWork.windowHue + WINDOW_HUE_COUNT / 2) %
-          WINDOW_HUE_COUNT * 4;
+  phase = (gMainRoutineWork.windowHue + WINDOW_COLOR_COUNT / 2) %
+          WINDOW_COLOR_COUNT * 4;
   bias = gMainRoutineWork.windowBrightness - WINDOW_BRIGHTNESS_NEUTRAL;
   red = gWindowColor_WaveTable[(phase % WINDOW_COLOR_WHEEL_STEPS)];
   green = gWindowColor_WaveTable[(phase + WINDOW_COLOR_WHEEL_STEPS / 3) %
@@ -174,7 +174,7 @@ void WindowColor_Apply(s32 phase, s32 brightness) {
   s16 offset;
 
   // The 24 hues are every fourth step of the 96-step wheel, hue 0 at step 48.
-  step = ((phase + WINDOW_HUE_COUNT / 2) % WINDOW_HUE_COUNT) * 4;
+  step = ((phase + WINDOW_COLOR_COUNT / 2) % WINDOW_COLOR_COUNT) * 4;
   offset = brightness - WINDOW_BRIGHTNESS_NEUTRAL;
   red = gWindowColor_WaveTable[(step % WINDOW_COLOR_WHEEL_STEPS)] + offset;
   green = gWindowColor_WaveTable[(step + WINDOW_COLOR_WHEEL_STEPS / 3) %
@@ -260,7 +260,7 @@ UNUSED void SettingsMenu_RaiseSetting(struct OptionMenuWork *work) {
       gMainRoutineWork.messageSpeed++;
     break;
   case OPTION_ROW_WINDOW_COLOR:
-    if (gMainRoutineWork.windowHue <= WINDOW_HUE_COUNT - 1)
+    if (gMainRoutineWork.windowHue <= WINDOW_COLOR_COUNT - 1)
       gMainRoutineWork.windowHue++;
     break;
   case OPTION_ROW_WINDOW_BRIGHTNESS:
@@ -321,7 +321,7 @@ void SettingsMenu_InitializeWork(void) {
                              sizeof(struct OptionMenuWork));
   Dma_Fill32(0, work, sizeof(struct OptionMenuWork));
   work->option[SETTINGS_ROW_WINDOW_COLOR] = gMainRoutineWork.windowHue;
-  work->optionCount[SETTINGS_ROW_WINDOW_COLOR] = WINDOW_HUE_COUNT;
+  work->optionCount[SETTINGS_ROW_WINDOW_COLOR] = WINDOW_COLOR_COUNT;
   work->option[SETTINGS_ROW_WINDOW_BRIGHTNESS] =
       gMainRoutineWork.windowBrightness;
   work->optionCount[SETTINGS_ROW_WINDOW_BRIGHTNESS] = WINDOW_BRIGHTNESS_COUNT;

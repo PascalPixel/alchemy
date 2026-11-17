@@ -1106,14 +1106,14 @@ extern char ResourceId_SmokeBandSheet;
 extern char ResourceId_CrimsonBeastTiles;
 #define RESOURCE_CRIMSON_BEAST_TILES ((s32)&ResourceId_CrimsonBeastTiles)
 /// Drawn by Charon.
-extern char ResourceId_RedSlashTiles;
-#define RESOURCE_RED_SLASH_TILES ((s32)&ResourceId_RedSlashTiles)
+extern char ResourceId_RedDomeTiles;
+#define RESOURCE_RED_DOME_TILES ((s32)&ResourceId_RedDomeTiles)
 /// Drawn by Charon.
-extern char ResourceId_RedCrescentTiles;
-#define RESOURCE_RED_CRESCENT_TILES ((s32)&ResourceId_RedCrescentTiles)
+extern char ResourceId_RedOrbTiles;
+#define RESOURCE_RED_ORB_TILES ((s32)&ResourceId_RedOrbTiles)
 /// Drawn by Charon.
-extern char ResourceId_WhiteArrowsTiles;
-#define RESOURCE_WHITE_ARROWS_TILES ((s32)&ResourceId_WhiteArrowsTiles)
+extern char ResourceId_TumblingShardTiles;
+#define RESOURCE_TUMBLING_SHARD_TILES ((s32)&ResourceId_TumblingShardTiles)
 /// Drawn by Charon.
 extern char ResourceId_WhiteWispsTiles;
 #define RESOURCE_WHITE_WISPS_TILES ((s32)&ResourceId_WhiteWispsTiles)
@@ -1199,8 +1199,8 @@ extern char ResourceId_CrossTextureSheet;
 extern char ResourceId_BubbleAnimationSheet;
 #define RESOURCE_BUBBLE_ANIMATION_SHEET ((s32)&ResourceId_BubbleAnimationSheet)
 /// Drawn by Coatlicue.
-extern char ResourceId_BellMaidenTiles;
-#define RESOURCE_BELL_MAIDEN_TILES ((s32)&ResourceId_BellMaidenTiles)
+extern char ResourceId_CoatlicueTiles;
+#define RESOURCE_COATLICUE_TILES ((s32)&ResourceId_CoatlicueTiles)
 /// Drawn by Coatlicue.
 extern char ResourceId_ScaleTexture;
 #define RESOURCE_SCALE_TEXTURE ((s32)&ResourceId_ScaleTexture)

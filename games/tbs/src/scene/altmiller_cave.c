@@ -390,7 +390,7 @@ static void AltmillerCave_InitializeDarkness(void) {
   work->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
   work->transitionFrames = 24;
   wait(1);
-  ScreenTransition_InitializeBattleEffectState(WINDOW_TRANSITION_LEADER_LOW);
+  ScreenTransition_StartHeldWindow(WINDOW_TRANSITION_LEADER_LOW);
   state = gScreenTransitionWork;
   state->value = ALTMILLER_CAVE_LIGHT_STEPS;
   if (GameFlag_Get(FLAG_ALTMILLER_CAVE_DARKENS_BY_STEPS) != 0) {

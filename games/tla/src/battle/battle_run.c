@@ -260,7 +260,7 @@ s32 Battle_Run(s32 enemyGroup) {
   BattleCamera_SetRange(toFIXED(160), toFIXED(80), 0, 0, FIXED_ONE * 2);
   // The camera on the centre at 190 percent until the opening zooms.
   BattleCamera_SetView(0, 0, 0, 190);
-  Party_ReservedNoOp5B14(1);
+  Party_BattleSetupNoOp(1);
   REG_BLDCNT = 0;
   BattleSpoils_Clear();
   battle->arrowTiles = VramCache_AllocEntry(128);

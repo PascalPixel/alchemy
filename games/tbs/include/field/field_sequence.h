@@ -249,9 +249,9 @@ void Reveal_EmitSparkles(struct Actor *actor);
 s32 Field_IsRevealActive(struct Actor *interpreter);
 void FieldEffect_SpawnRevealMarkers(void);
 
-void FieldEffect_StartWindowHBlankDma(void);
+void ScreenTransition_StartWindowHBlankDma(void);
 void ScreenTransition_UpdateScanlineTable(void);
-void ScreenTransition_InitializeBattleEffectState(s32 mode);
+void ScreenTransition_StartHeldWindow(s32 mode);
 void ScreenTransition_SuspendCallbacks(void);
 struct ScreenTransitionState *ScreenTransition_AllocateAndClearState(void);
 void ScreenTransition_Start(s32 mode, s32 frames);

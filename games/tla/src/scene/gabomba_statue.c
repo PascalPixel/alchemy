@@ -764,7 +764,7 @@ void GabombaStatue_EndRide(struct Actor *actor) {
 /// pillar one way and a pink drum the other, kept on its middle; 20 pixels
 /// from its centre he hops off the end. A drum of the turntable room carries
 /// him off its south end and down to Steel's room.
-void GabombaStatue_RideRollingCog(void) {
+void GabombaStatue_RideRoller(void) {
   struct Actor *actor, *platform;
   s32 speed;
   FIXED d;
@@ -1083,7 +1083,7 @@ const u8 *Scene_GetTriggers(void) {
 
 /// The leader walks to the hole at x, z and climbs down into it to the room
 /// below, the scene leaving by the hole's exit.
-void GabombaStatue_DropIntoHole(s32 x, s32 z) {
+void GabombaStatue_ClimbDownHole(s32 x, s32 z) {
   struct FieldWork *work = Ram_HeapSlots->fieldWork;
   struct Actor *actor = Actor_Get(gMainRoutineWork.leaderActorId);
 
@@ -1125,7 +1125,7 @@ void GabombaStatue_DropIntoHole(s32 x, s32 z) {
                (gInput.held & KEY_UP) == 0) {                                  \
       return;                                                                  \
     }                                                                          \
-    GabombaStatue_DropIntoHole(holeX, holeZ);                                  \
+    GabombaStatue_ClimbDownHole(holeX, holeZ);                                 \
   }
 
 DEFINE_GABOMBA_STATUE_STEP_WHEN_HELD(GabombaStatue_StepIntoBoneArmletChestHole,
@@ -1151,7 +1151,7 @@ DEFINE_GABOMBA_STATUE_STEP_WHEN_HELD(GabombaStatue_StepIntoBoneArmletChestHole,
       if (x == eastColumn && (gInput.held & KEY_LEFT) == 0)                    \
         return;                                                                \
     }                                                                          \
-    GabombaStatue_DropIntoHole(holeX, holeZ);                                  \
+    GabombaStatue_ClimbDownHole(holeX, holeZ);                                 \
   }
 
 DEFINE_GABOMBA_STATUE_STEP_WHEN_HELD_FOUR(GabombaStatue_StepIntoElixirChestHole,
@@ -1169,7 +1169,7 @@ void GabombaStatue_StepIntoFirstSteelHole(void) {
   } else if (x == 33 && z == 8 && (gInput.held & KEY_UP) == 0) {
     return;
   }
-  GabombaStatue_DropIntoHole(536, 112);
+  GabombaStatue_ClimbDownHole(536, 112);
 }
 
 /// The Steel room's second hole, walked into from any side.
@@ -1189,7 +1189,7 @@ void GabombaStatue_StepIntoSecondSteelHole(void) {
     if (z == 14 && (gInput.held & KEY_UP) == 0)
       return;
   }
-  GabombaStatue_DropIntoHole(104, 208);
+  GabombaStatue_ClimbDownHole(104, 208);
 }
 
 /// The Steel room's third hole, walked into from the north, the west or the
@@ -1214,7 +1214,7 @@ void GabombaStatue_StepIntoThirdSteelHole(void) {
 #endif
     return;
   }
-  GabombaStatue_DropIntoHole(680, 208);
+  GabombaStatue_ClimbDownHole(680, 208);
 }
 
 DEFINE_GABOMBA_STATUE_STEP_WHEN_HELD(GabombaStatue_StepIntoFirstTurntableHole,
@@ -1233,7 +1233,7 @@ void GabombaStatue_StepIntoThirdTurntableHole(void) {
     return;
   if (x == 43 && z == 9 && (gInput.held & KEY_LEFT) == 0)
     return;
-  GabombaStatue_DropIntoHole(680, 146);
+  GabombaStatue_ClimbDownHole(680, 146);
 }
 
 DEFINE_GABOMBA_STATUE_STEP_WHEN_HELD_FOUR(GabombaStatue_StepIntoCogsHole, 27,
@@ -1241,7 +1241,7 @@ DEFINE_GABOMBA_STATUE_STEP_WHEN_HELD_FOUR(GabombaStatue_StepIntoCogsHole, 27,
 
 /// The arrows room's hole, walked into from the west or the south: the leader
 /// climbs down into it to the room below.
-void GabombaStatue_JumpDownHole(void) {
+void GabombaStatue_StepIntoArrowsHole(void) {
   struct Actor *actor = Actor_Get(gMainRoutineWork.leaderActorId);
   s32 x = FIELD_CELL(actor->x.fixed);
   s32 z = FIELD_CELL(actor->z.fixed);
@@ -1290,7 +1290,7 @@ DEFINE_GABOMBA_STATUE_WALK_LEADER_TO(GabombaStatue_PinionsCarryLeaderNorth, 152,
 
 /// With the cogs turned back, the pinions at the pinion room's gap throw the
 /// leader out to the south.
-void GabombaStatue_PinionThrowsLeader(void) {
+void GabombaStatue_PinionsThrowLeaderSouth(void) {
   struct Actor *actor = Actor_Get(gMainRoutineWork.leaderActorId);
 
   Event_Start();
@@ -1377,7 +1377,7 @@ void GabombaStatue_CogsTurnBack(void) {
   Event_PlaySound(SE_GABOMBA_STATUE_COGS);
   GabombaStatue_TurnCogs(0);
   FieldEvent_Wait(40);
-  Event_PlaySound(SE_PUZZLE_MECHANISM);
+  Event_PlaySound(SE_582);
   actor->motionFlags = 0;
   actor->y.fixed = toFIXED(8);
   FieldEvent_Wait(10);
@@ -2189,7 +2189,7 @@ void GabombaStatue_SawEnergyFlow(void) {
   Actor_SetSpeed(ACTOR_JENNA, 1);
   Actor_SetSpeed(ACTOR_AKAFUBU, 1);
   Actor_SetScript(ACTOR_JENNA, gGabombaStatue_JennaWatchesScript);
-  Actor_RunScriptAndWait(ACTOR_AKAFUBU, gGabombaStatue_ShebaWatchesScript);
+  Actor_RunScriptAndWait(ACTOR_AKAFUBU, gGabombaStatue_AkafubuComesUpScript);
   FieldEvent_SetMessageId(MsgGabombaSawEnergyFlow);
   // "Yeah, we know... We saw your magic energy flowing past us."
   Event_ShowMessage(ACTOR_JENNA, 0);
@@ -2203,7 +2203,7 @@ void GabombaStatue_SawEnergyFlow(void) {
   FieldCamera_WaitForArrival();
   // "Here, look... It runs all the way over there!"
   Event_ShowMessage(ACTOR_JENNA, 0);
-  GabombaStatue_FindFreeTileCell(&x, &z);
+  GabombaStatue_FindBrokenCell(&x, &z);
   x = FIELD_CELL_ORIGIN(x) + FIELD_CELL_CENTER(CHANNEL_ORIGIN_COLUMN);
   z = FIELD_CELL_ORIGIN(z) + FIELD_CELL_CENTER(CHANNEL_ORIGIN_ROW);
   hand = FieldActor_Create(434, x, 0, z);
@@ -2496,7 +2496,7 @@ void GabombaStatue_InitializePinion(void) {
 static __inline__ void *Mem_Alloc(s32 size) { return Heap_Alloc(size); }
 
 /// Loads the blocks' pictures into the VRAM cache.
-void GabombaStatue_LoadTileGraphics(void) {
+void GabombaStatue_LoadBlockPictures(void) {
   struct SceneState *state = &gSceneState;
   void *buffer = Mem_Alloc(3072);
   s32 handle;
@@ -2542,7 +2542,7 @@ s32 GabombaStatue_HasTakenNeighbor(s32 x, s32 z) {
 /// Redraws the channel as the party left it: a raised block's socket open, the
 /// other blocks in place, and once the Gabomba has responded every block set
 /// back in.
-void GabombaStatue_ClearGrid(void) {
+void GabombaStatue_RedrawChannel(void) {
   struct SceneState *state = &gSceneState;
   u32 row;
   u32 col;
@@ -2947,7 +2947,7 @@ void GabombaStatue_WritePiece(s32 x, s32 z, s32 kind, s32 state) {
 /// Raises the blocks over the room, their sockets open, or sets them in
 /// place: each block's actor, numbered from id, stands over its cell while it
 /// is raised.
-void GabombaStatue_ShowTiles(s32 id, s32 show) {
+void GabombaStatue_SetBlocksRaised(s32 id, s32 show) {
   struct SceneState *state = &gSceneState;
   s32 row;
   s32 column;
@@ -3008,7 +3008,7 @@ void GabombaStatue_RaiseBlocks(s32 value, s32 row) {
   if (row < CHANNEL_ROWS)
     actor->scaleY += -FIXED_ONE * 31 / 256;
   if (value == 1) {
-    GabombaStatue_ShowTiles(gSceneState.firstBlock, 1);
+    GabombaStatue_SetBlocksRaised(gSceneState.firstBlock, 1);
     Actor_SelectAnimation(actor, 6);
     actor->scaleY = FIXED_ONE;
   }
@@ -3211,17 +3211,17 @@ s32 GabombaStatue_SetUpChannelPuzzle(s32 x, s32 z, s32 value, s32 id) {
   s32 count;
 
   if (Event_GetFlag(FLAG_KEEP_PARTY_POSITION)) {
-    GabombaStatue_LoadTileGraphics();
-    GabombaStatue_ClearGrid();
+    GabombaStatue_LoadBlockPictures();
+    GabombaStatue_RedrawChannel();
     count = state->seed;
     Task_AddFrame(GabombaStatue_DrawRaisedBlocks, TASK_PASS_FRAME);
   } else {
     Iwram_ClearWordsEntry(state, sizeof(struct SceneState));
     state->originX = x;
     state->originZ = z;
-    GabombaStatue_LoadTileGraphics();
+    GabombaStatue_LoadBlockPictures();
     count = GabombaStatue_LayChannel(value);
-    GabombaStatue_ShowTiles(id, 0);
+    GabombaStatue_SetBlocksRaised(id, 0);
     Task_AddFrame(GabombaStatue_DrawRaisedBlocks, TASK_PASS_FRAME);
   }
   Actor_Get(id)->retainSpriteCache = 2;
@@ -3531,7 +3531,7 @@ s32 GabombaStatue_RunCharges(s32 first, s32 check) {
 }
 
 /// Finds the cell where the circuit is broken: a block with no piece on it.
-void GabombaStatue_FindFreeTileCell(u32 *x_out, u32 *z_out) {
+void GabombaStatue_FindBrokenCell(u32 *x_out, u32 *z_out) {
   u32 z;
   u32 x;
 
@@ -3950,7 +3950,7 @@ LATE_DATA u32 gGabombaStatue_JennaWatchesScript[] = {
     SC_END,
 };
 
-LATE_DATA u32 gGabombaStatue_ShebaWatchesScript[] = {
+LATE_DATA u32 gGabombaStatue_AkafubuComesUpScript[] = {
     SC_ANIMATION(2),
     SC_MOVE(472, 0, 308),
     SC_SYNC,
@@ -4061,7 +4061,7 @@ LATE_DATA u32 gSceneExits[] = {
     SCENE_EXITS_END,
 };
 
-LATE_DATA s32 gGabombaStatue_TurntableScript[] = {
+LATE_DATA s32 gGabombaStatue_FlashCogScript[] = {
     SC_CALL(GabombaStatue_FlashCog),
     SC_END,
 };
@@ -4095,7 +4095,7 @@ LATE_DATA struct ActorPlacement gGabombaStatue_ElixirChestActorPlacements[] = {
     ACTOR_PLACEMENT(SPRITE_BLUE_COG, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 520, 0, 216, FACING_WEST, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE),
     ACTOR_PLACEMENT(SPRITE_BLUE_COG, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 360, 0, 552, FACING_WEST, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE),
     ACTOR_PLACEMENT(SPRITE_BLUE_COG, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 456, 0, 488, FACING_WEST, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE),
-    ACTOR_PLACEMENT(SPRITE_BLUE_COG, CONDITION_ALWAYS, (s32)gGabombaStatue_TurntableScript, 360, 0, 488, FACING_EAST, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_BLUE_COG, CONDITION_ALWAYS, (s32)gGabombaStatue_FlashCogScript, 360, 0, 488, FACING_EAST, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(SPRITE_BROWN_COG, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 352, 0, 168, FACING_WEST, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(SPRITE_BROWN_COG, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 400, 0, 168, FACING_EAST, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE),
     ACTOR_PLACEMENT(SPRITE_UNSEEN_BLOCK, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 104, 0, 168, FACING_SOUTH, TALK_FACING_KEEP, 0),
@@ -4254,7 +4254,7 @@ LATE_DATA struct Trigger gGabombaStatue_SteelTriggers[] = {
     {TRIGGER_STEP, CELL_BEHAVIOR_GREEN_COG, CONDITION_ALWAYS, EVENT(GabombaStatue_TurnWithCog)},
     {TRIGGER_STEP, CELL_BEHAVIOR_BLUE_COG, CONDITION_ALWAYS, EVENT(GabombaStatue_RideBlueCog)},
     {TRIGGER_STEP, CELL_BEHAVIOR_RED_COG, CONDITION_ALWAYS, EVENT(GabombaStatue_RideSlidingCog)},
-    {TRIGGER_STEP, CELL_BEHAVIOR_ROLLER, CONDITION_ALWAYS, EVENT(GabombaStatue_RideRollingCog)},
+    {TRIGGER_STEP, CELL_BEHAVIOR_ROLLER, CONDITION_ALWAYS, EVENT(GabombaStatue_RideRoller)},
     {STEP_TRIGGER_WALKING_INTO(FACING_EAST), CELL_BEHAVIOR_COG_END, CONDITION_ALWAYS, EVENT(GabombaStatue_HopAcrossEastOrWest)},
     {STEP_TRIGGER_WALKING_INTO(FACING_WEST), CELL_BEHAVIOR_COG_END, CONDITION_ALWAYS, EVENT(GabombaStatue_HopAcrossEastOrWest)},
     {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), CELL_BEHAVIOR_COG_END, CONDITION_ALWAYS, EVENT(GabombaStatue_HopAcrossNorthOrSouth)},
@@ -4271,7 +4271,7 @@ LATE_DATA struct Trigger gGabombaStatue_TurntableTriggers[] = {
     {TRIGGER_STEP, CELL_BEHAVIOR_GREEN_COG, CONDITION_ALWAYS, EVENT(GabombaStatue_TurnWithCog)},
     {TRIGGER_STEP, CELL_BEHAVIOR_BLUE_COG, CONDITION_ALWAYS, EVENT(GabombaStatue_RideBlueCog)},
     {TRIGGER_STEP, CELL_BEHAVIOR_RED_COG, CONDITION_ALWAYS, EVENT(GabombaStatue_RideSlidingCog)},
-    {TRIGGER_STEP, CELL_BEHAVIOR_ROLLER, CONDITION_ALWAYS, EVENT(GabombaStatue_RideRollingCog)},
+    {TRIGGER_STEP, CELL_BEHAVIOR_ROLLER, CONDITION_ALWAYS, EVENT(GabombaStatue_RideRoller)},
     {STEP_TRIGGER_WALKING_INTO(FACING_EAST), CELL_BEHAVIOR_COG_END, CONDITION_ALWAYS, EVENT(GabombaStatue_HopAcrossEastOrWest)},
     {STEP_TRIGGER_WALKING_INTO(FACING_WEST), CELL_BEHAVIOR_COG_END, CONDITION_ALWAYS, EVENT(GabombaStatue_HopAcrossEastOrWest)},
     {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), CELL_BEHAVIOR_COG_END, CONDITION_ALWAYS, EVENT(GabombaStatue_HopAcrossNorthOrSouth)},
@@ -4285,7 +4285,7 @@ LATE_DATA struct Trigger gGabombaStatue_CogsTriggers[] = {
     {TRIGGER_STEP, CELL_BEHAVIOR_GREEN_COG, CONDITION_ALWAYS, EVENT(GabombaStatue_TurnWithCog)},
     {TRIGGER_STEP, CELL_BEHAVIOR_BLUE_COG, CONDITION_ALWAYS, EVENT(GabombaStatue_RideBlueCog)},
     {TRIGGER_STEP, CELL_BEHAVIOR_RED_COG, CONDITION_ALWAYS, EVENT(GabombaStatue_RideSlidingCog)},
-    {TRIGGER_STEP, CELL_BEHAVIOR_ROLLER, CONDITION_ALWAYS, EVENT(GabombaStatue_RideRollingCog)},
+    {TRIGGER_STEP, CELL_BEHAVIOR_ROLLER, CONDITION_ALWAYS, EVENT(GabombaStatue_RideRoller)},
     {STEP_TRIGGER_WALKING_INTO(FACING_EAST), CELL_BEHAVIOR_COG_END, CONDITION_ALWAYS, EVENT(GabombaStatue_HopAcrossEastOrWest)},
     {STEP_TRIGGER_WALKING_INTO(FACING_WEST), CELL_BEHAVIOR_COG_END, CONDITION_ALWAYS, EVENT(GabombaStatue_HopAcrossEastOrWest)},
     {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), CELL_BEHAVIOR_COG_END, CONDITION_ALWAYS, EVENT(GabombaStatue_HopAcrossNorthOrSouth)},
@@ -4297,7 +4297,7 @@ LATE_DATA struct Trigger gGabombaStatue_CogsTriggers[] = {
 };
 
 LATE_DATA struct Trigger gGabombaStatue_ArrowsTriggers[] = {
-    {STEP_TRIGGER_WALKING, CELL_BEHAVIOR_FIRST_HOLE, CONDITION_ALWAYS, EVENT(GabombaStatue_JumpDownHole)},
+    {STEP_TRIGGER_WALKING, CELL_BEHAVIOR_FIRST_HOLE, CONDITION_ALWAYS, EVENT(GabombaStatue_StepIntoArrowsHole)},
     {TRIGGER_STEP, CELL_BEHAVIOR_AROUND_LEFT_ARROW, CONDITION_ALWAYS, EVENT(GabombaStatue_ReleaseLeftArrowPanel)},
     {TRIGGER_STEP, CELL_BEHAVIOR_LEFT_ARROW, CONDITION_ALWAYS, EVENT(GabombaStatue_PressLeftArrowPanel)},
     {TRIGGER_STEP, CELL_BEHAVIOR_AROUND_RIGHT_ARROW, CONDITION_ALWAYS, EVENT(GabombaStatue_ReleaseRightArrowPanel)},
@@ -4317,7 +4317,7 @@ LATE_DATA struct Trigger gGabombaStatue_ArrowsTriggers[] = {
 
 LATE_DATA struct Trigger gGabombaStatue_PinionTriggers[] = {
     {TRIGGER_STEP, CELL_BEHAVIOR_PINION_GAP, CONDITION_ALWAYS, EVENT(GabombaStatue_PinionsCarryLeaderNorth)},
-    {TRIGGER_STEP, CELL_BEHAVIOR_PINION_GAP_TURNED_BACK, CONDITION_ALWAYS, EVENT(GabombaStatue_PinionThrowsLeader)},
+    {TRIGGER_STEP, CELL_BEHAVIOR_PINION_GAP_TURNED_BACK, CONDITION_ALWAYS, EVENT(GabombaStatue_PinionsThrowLeaderSouth)},
     {TRIGGER_TABLE_END},
 };
 

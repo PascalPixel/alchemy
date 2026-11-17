@@ -84,14 +84,14 @@
 // Set while a statue's fire bursts where it lands, so that Burst there does not
 // target the statue again.
 #define FLAG_FIRE_BURST_PLAYING FLAG_SCENE_TEMP_F0
-// Set once the cave door's cell has run (MagmaRock_SlideDown), so that it waits
-// until the leader steps onto it again by himself (MagmaRock_ClearSlideFlag).
+// Set once the cave door's cell has run (MagmaRock_EnterCave), so that it waits
+// until the leader steps onto it again by himself (MagmaRock_ReopenCaveDoor).
 #define FLAG_CAVE_DOOR_USED FLAG_SCENE_TEMP_F8
 // Set while the lower level's statue answers Burst, from the leader's step
-// beside it (MagmaRock_SetLedgeBehavior) to his step away.
+// beside it (MagmaRock_ReadyLowerStatue) to his step away.
 #define FLAG_LOWER_STATUE_READY FLAG_SCENE_TEMP_12
 // Set while a magma rock knocks the leader off the wall
-// (MagmaRock_AmplifyBurst); the rolling rocks keep quiet meanwhile.
+// (MagmaRock_KnockLeaderOffWall); the rolling rocks keep quiet meanwhile.
 #define FLAG_LEADER_KNOCKED_DOWN FLAG_SCENE_TEMP_60
 // The Salamander Tail room's top: each vine Growth has grown there.
 #define FLAG_VINE_A_GROWN FLAG_SCENE_TEMP_50
@@ -1252,7 +1252,7 @@ DEFINE_MAGMA_ROCK_BURST_STATUE_COLUMN(MagmaRock_BurstCrackedPillarE,
 
 /// Stepping onto the cave door's cell by himself lets it take the leader in
 /// again.
-void MagmaRock_ClearSlideFlag(void) {
+void MagmaRock_ReopenCaveDoor(void) {
   struct MainRoutineWork *party = &gMainRoutineWork;
 
   if (party->movementMode != LEADER_MOVEMENT_KEYS)
@@ -1261,7 +1261,7 @@ void MagmaRock_ClearSlideFlag(void) {
 
 /// Walking north onto the cave door's cell, unless something else moves him:
 /// the leader walks into the cave, into Magma Rock.
-void MagmaRock_SlideDown(void) {
+void MagmaRock_EnterCave(void) {
   struct MainRoutineWork *party = &gMainRoutineWork;
 
   if (party->movementMode != LEADER_MOVEMENT_KEYS) {
@@ -1289,14 +1289,14 @@ void MagmaRock_CheckCrumblingPillars(void) {
 
 /// Stepping beside the lower level's statue readies it: its cell answers Burst
 /// as a firing statue's.
-void MagmaRock_SetLedgeBehavior(void) {
+void MagmaRock_ReadyLowerStatue(void) {
   Field_SetCellBehaviorAt(0, toFIXED(264), toFIXED(552),
                           MAGMA_ROCK_CELL_FIRING_STATUE);
   Event_SetFlag(FLAG_LOWER_STATUE_READY);
 }
 
 /// Stepping away from it unreadies it again.
-void MagmaRock_ClearLedgeBehavior(void) {
+void MagmaRock_UnreadyLowerStatue(void) {
   Field_SetCellBehaviorAt(0, toFIXED(264), toFIXED(552), CELL_BEHAVIOR_NORMAL);
   Event_ClearFlag(FLAG_LOWER_STATUE_READY);
 }
@@ -1306,7 +1306,7 @@ void FieldCamera_WaitForArrival(void);
 
 /// A magma rock knocks the leader off the wall: he turns grey among dark puffs,
 /// falls to the ground with a thump that shakes it, and shakes his head.
-void MagmaRock_AmplifyBurst(void) {
+void MagmaRock_KnockLeaderOffWall(void) {
   struct Actor *leader = Actor_GetById(gMainRoutineWork.leaderActorId);
   struct EffectOptions options;
   s32 position[3];
@@ -2688,9 +2688,9 @@ struct Trigger gMagmaRock_Triggers[] = {
     {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
     {STEP_TRIGGER_WALKING | STEP_TRIGGER_FLAG_QUICK | FACING_NORTH,
      MAGMA_ROCK_CELL_CAVE_DOOR, FLAG_CAVE_DOOR_USED,
-     EVENT(MagmaRock_SlideDown)},
+     EVENT(MagmaRock_EnterCave)},
     {TRIGGER_STEP, MAGMA_ROCK_CELL_CAVE_DOOR, CONDITION_ALWAYS,
-     EVENT(MagmaRock_ClearSlideFlag)},
+     EVENT(MagmaRock_ReopenCaveDoor)},
     {PSYNERGY_ON_ACTOR(ABILITY_LIFT), ACTOR_SLIDE_BOULDER, CONDITION_ALWAYS, 0},
     {TRIGGER_PUSH, 0, CONDITION_ALWAYS, EVENT(MagmaRock_StartPushingPillar)},
     {TRIGGER_PUSHED, 0, CONDITION_ALWAYS, EVENT(MagmaRock_FinishPushingPillar)},
@@ -2764,9 +2764,9 @@ struct Trigger gMagmaRock_SalamanderTailLowerTriggers[] = {
      MAGMA_ROCK_CELL_CRACKED_PILLAR_A, FLAG_CRACKED_PILLAR_A_BURST,
      EVENT(MagmaRock_BurstCrackedPillarA)},
     {TRIGGER_STEP, MAGMA_ROCK_CELL_BESIDE_LOWER_STATUE, FLAG_LOWER_STATUE_READY,
-     EVENT(MagmaRock_SetLedgeBehavior)},
+     EVENT(MagmaRock_ReadyLowerStatue)},
     {TRIGGER_STEP, MAGMA_ROCK_CELL_PAST_LOWER_STATUE, CONDITION_ALWAYS,
-     EVENT(MagmaRock_ClearLedgeBehavior)},
+     EVENT(MagmaRock_UnreadyLowerStatue)},
     {PSYNERGY_PHASE_ON_CELL(ABILITY_BURST, PSYNERGY_PHASE_FIRST),
      MAGMA_ROCK_CELL_FIRING_STATUE, CONDITION_ALWAYS,
      EVENT(MagmaRock_ResolveBeforeBurst)},
@@ -2811,7 +2811,7 @@ struct Trigger gMagmaRock_SalamanderTailMiddleTriggers[] = {
      MAGMA_ROCK_CELL_COLUMN_STATUE_B, CONDITION_ALWAYS,
      EVENT(MagmaRock_IgniteStatue)},
     {TRIGGER_RAISED, TRIGGER_MAGMA_ROCK_HITS_LEADER, CONDITION_ALWAYS,
-     EVENT(MagmaRock_AmplifyBurst)},
+     EVENT(MagmaRock_KnockLeaderOffWall)},
     {TRIGGER_TABLE_END},
 };
 

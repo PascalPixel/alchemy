@@ -1348,7 +1348,7 @@ s32 FileList_SelectAction(void) {
     IconMenu_AddIcon(COMMAND_ICON_BATTLE);
   if (gTitleUpdateOptionEnabled != 0)
     IconMenu_AddIcon(COMMAND_ICON_UPDATE);
-  IconMenu_Center(ICON_MENU_BOTTOM_ROW, SAVE_SLOT_MENU_WIDTH, 0);
+  IconMenu_Center(ICON_MENU_BOTTOM_ROW, TYPE_MENU_WIDTH, 0);
   result = IconMenu_Run(initial);
   IconMenu_Close();
   if (result >= 0) {

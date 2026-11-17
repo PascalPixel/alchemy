@@ -184,7 +184,7 @@ extern const s32 gClass_SeriesByElements[4][4];
 s32 Unit_KnowsPsynergy(s32 owner, s32 value);
 struct LevelUpResult *Unit_TryLevelUp(s32 unitId, struct LevelUpResult *gains);
 void MainRoutineWork_InitializeDefaults(void);
-extern const u8 Data_080b1f2c[4][5];
+extern const u8 gNewGame_SceneStateTable[4][5];
 void Party_InitializeCharacters(void);
 s32 Party_AddMember(s32 owner);
 s32 Unit_LearnPsynergy(s32 owner, s32 ability);

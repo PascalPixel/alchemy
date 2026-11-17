@@ -341,7 +341,7 @@ enum SoundId {
   SE_WARP,
   /// Played as Gaia Rock's altar faces part, at Zagan's frame 32
   /// (BattleEffect_RunZagan) and in Megiddo's dive (BattleEffect_RunMegiddo).
-  SE_SHUDDER,
+  SE_191,
   /// Shriek's and Harpy's cry as their streaks set out
   /// (BattleEffect_RunStreakVolley, mode 1): SE_SPARKS's notes on voice 25; The
   /// Broken Seal's row 192 note for note.
@@ -395,7 +395,7 @@ enum SoundId {
   SE_LIFT,
   SE_224,
   /// Played at Moloch's frame 90 (BattleEffect_RunMoloch).
-  SE_MOTES_GATHER,
+  SE_225,
   SE_LOG_PUSH,
   SE_TOPPLE,
   SE_SPARKLING_PASSAGE,
@@ -596,7 +596,7 @@ enum SoundId {
   /// SE_SPIN_AWAY's notes with voice 97 in its first track; nothing plays it.
   SE_UNUSED_SPIN_AWAY_B,
   /// SE_SPIN_AWAY an octave higher and faster, on voice 93; nothing plays it.
-  SE_UNUSED_SPIN_AWAY_HIGH,
+  SE_UNUSED_SPIN_AWAY_HIGH_A,
   /// SE_CURRENT's rhythm on its voice with other notes, the last two held long;
   /// nothing plays it.
   SE_UNUSED_CURRENT_HELD,
@@ -628,7 +628,7 @@ enum SoundId {
   SE_GABOMBA_STATUE_HOLE,
   /// Played as the Anemos Inner Sanctum's statue moves once its seven tiles
   /// glow, and as the Gabomba Statue's flashing cog stops.
-  SE_PUZZLE_MECHANISM,
+  SE_582,
   SE_583,
   /// Played as the party presses a switch or button in Mars Lighthouse, the
   /// Ankohl Ruins and the Anemos Inner Sanctum.
@@ -666,10 +666,10 @@ enum SoundId {
   /// Played as the leader spins away.
   SE_SPIN_AWAY,
   /// SE_SPIN_AWAY's first track alone, two octaves higher; nothing plays it.
-  SE_UNUSED_SPIN_AWAY_A,
-  /// SE_UNUSED_SPIN_AWAY_A's rhythm on its voice, six of its eleven notes
+  SE_UNUSED_SPIN_AWAY_HIGH_B,
+  /// SE_UNUSED_SPIN_AWAY_HIGH_B's rhythm on its voice, six of its eleven notes
   /// changed, at tempo 32; nothing plays it.
-  SE_UNUSED_SPIN_AWAY_C,
+  SE_UNUSED_SPIN_AWAY_HIGH_C,
   /// SE_KOLIMA_BRIDGE_HOP's voice and rhythm with three of its five notes;
   /// nothing plays it.
   SE_UNUSED_KOLIMA_BRIDGE_HOP,

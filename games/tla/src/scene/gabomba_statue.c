@@ -30,8 +30,8 @@
 /// times.
 #define FLAG_GABOMBA_CHARGES_REACHED_APART 0x9eb
 
-/// The hole covers are drawn (GabombaStatue_RestoreHoleCovers).
-#define FLAG_HOLE_COVERS_DRAWN FLAG_SCENE_TEMP_00
+/// The ladder-top blocks are drawn (GabombaStatue_RestoreLadderTopBlocks).
+#define FLAG_LADDER_TOP_BLOCKS_DRAWN FLAG_SCENE_TEMP_00
 #define FLAG_FIRST_ROPE_TIED FLAG_SCENE_TEMP_01  ///< by Rope_Place
 #define FLAG_SECOND_ROPE_TIED FLAG_SCENE_TEMP_02 ///< by Rope_Place
 /// A tied rope has stopped the cogs (GabombaStatue_LashRope).
@@ -52,11 +52,14 @@ enum { ACTOR_KRADEN = 23, ACTOR_AKAFUBU = 24 };
 
 /// Each room's placed actors. A row of cogs that share one sprite is named by
 /// the first of them: turning its animation turns them all. A Lashed rope runs
-/// between two posts, its second post riding a cog's tooth. A hole cover is a
-/// black square (SPRITE_UNSEEN_BLOCK) over the top of the ladder up to the
+/// between two posts, its second post riding a cog's tooth. A ladder-top block
+/// is a black square (SPRITE_UNSEEN_BLOCK) at the top of a ladder up to the
 /// room above, held 36 pixels up in SPRITE_COLOR_HIDDEN, so that nothing of
 /// it shows (GabombaStatue_HideActor).
-enum { ACTOR_BONE_ARMLET_HOLE_COVER = 8 };
+enum { ACTOR_BONE_ARMLET_LADDER_TOP_BLOCK = 8 };
+// XXX (no evidence): what the ladder-top blocks are for; drawn or hidden,
+// they show nothing in a still of either room, and only watching the leader
+// climb such a ladder with them drawn and then hidden could tell.
 enum {
   ACTOR_FIRST_ROPE_POST_A = 8,
   ACTOR_FIRST_ROPE_POST_B,
@@ -70,8 +73,8 @@ enum {
   ACTOR_FLASHING_COG = 26,
   ACTOR_ELIXIR_PINION_A,
   ACTOR_ELIXIR_PINION_B,
-  ACTOR_ELIXIR_HOLE_COVER_A, ///< over the west and east ladders
-  ACTOR_ELIXIR_HOLE_COVER_B
+  ACTOR_ELIXIR_WEST_LADDER_TOP_BLOCK,
+  ACTOR_ELIXIR_EAST_LADDER_TOP_BLOCK
 };
 enum {
   ACTOR_STEEL_GREEN_COGS = 8,
@@ -175,6 +178,7 @@ enum {
 #include "system/field_effect.h"
 #include "field/event_inline.h"
 #include "field/field_sequence_event.h"
+#include "field/field_sequence.h"
 #include "window/item_icon.h"
 #include "scene/gabomba_statue.h"
 #include "scene/scene.h"
@@ -754,7 +758,8 @@ void GabombaStatue_EndRide(struct Actor *actor) {
     // DEAD: the loop ends before frame 20, so the screen is never taken out
     // here; the ROM keeps the test and the transition.
     if (i == 20) {
-      gFieldWork->transition = SCENE_TRANSITION(TRANSITION_WINDOW, 9);
+      gFieldWork->transition =
+          SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER);
       Event_FinishScreenTransition();
     }
   }
@@ -1028,7 +1033,8 @@ void GabombaStatue_HearTheOffering(void) {
   Event_PlaySound(MUS_KIBOMBO);
   result = GabombaStatue_RunCharges(ACTOR_CHARGE_A, 1);
   ObjectTable_Snapshot();
-  gFieldWork->transition = SCENE_TRANSITION(TRANSITION_WINDOW, 1);
+  gFieldWork->transition =
+      SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_SHAPE);
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();
   switch (result) {
@@ -1319,26 +1325,26 @@ DEFINE_GABOMBA_STATUE_WALK_LEADER_TO(GabombaStatue_CogsPinionsCarryLeaderSouth,
 DEFINE_GABOMBA_STATUE_WALK_LEADER_TO(GabombaStatue_CogsPinionsCarryLeaderNorth,
                                      440, 184)
 
-/// Draws the room's hole covers, or hides them.
-void GabombaStatue_SetHoleCoversDrawn(s32 show) {
+/// Draws the room's ladder-top blocks, or hides them.
+void GabombaStatue_SetLadderTopBlocksDrawn(s32 show) {
   if (gMainRoutineWork.next == SCENE_GABOMBA_STATUE_BONE_ARMLET_CHEST)
-    Actors_SetDrawn(show, ACTOR_BONE_ARMLET_HOLE_COVER, 1);
+    Actors_SetDrawn(show, ACTOR_BONE_ARMLET_LADDER_TOP_BLOCK, 1);
   else if (gMainRoutineWork.next == SCENE_GABOMBA_STATUE_ELIXIR_CHEST)
-    Actors_SetDrawn(show, ACTOR_ELIXIR_HOLE_COVER_A, 2);
+    Actors_SetDrawn(show, ACTOR_ELIXIR_WEST_LADDER_TOP_BLOCK, 2);
 }
 
 extern s16 gGabombaStatue_Stakes[];
 
-/// Unused: draws the hole covers.
-UNUSED void GabombaStatue_DrawHoleCovers(void) {
-  GabombaStatue_SetHoleCoversDrawn(1);
-  Event_SetFlag(FLAG_HOLE_COVERS_DRAWN);
+/// Unused: draws the ladder-top blocks.
+UNUSED void GabombaStatue_DrawLadderTopBlocks(void) {
+  GabombaStatue_SetLadderTopBlocksDrawn(1);
+  Event_SetFlag(FLAG_LADDER_TOP_BLOCKS_DRAWN);
 }
 
-/// Hides the hole covers.
-void GabombaStatue_HideHoleCovers(void) {
-  GabombaStatue_SetHoleCoversDrawn(0);
-  Event_ClearFlag(FLAG_HOLE_COVERS_DRAWN);
+/// Hides the ladder-top blocks.
+void GabombaStatue_HideLadderTopBlocks(void) {
+  GabombaStatue_SetLadderTopBlocksDrawn(0);
+  Event_ClearFlag(FLAG_LADDER_TOP_BLOCKS_DRAWN);
 }
 
 /// Draws count actors from first, or hides them.
@@ -1426,18 +1432,19 @@ void GabombaStatue_HideActor(s32 id) {
   Actor_Get(id)->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
 }
 
-/// Coming back to the same spot hides the hole covers again unless they were
-/// drawn when the party left; otherwise they are drawn.
-void GabombaStatue_RestoreHoleCovers(void) {
+/// Coming back to the same spot hides the ladder-top blocks again unless they
+/// were drawn when the party left; otherwise they are drawn.
+void GabombaStatue_RestoreLadderTopBlocks(void) {
   if (Event_GetFlag(FLAG_KEEP_PARTY_POSITION)) {
-    if (!Event_GetFlag(FLAG_HOLE_COVERS_DRAWN))
-      GabombaStatue_HideHoleCovers();
+    if (!Event_GetFlag(FLAG_LADDER_TOP_BLOCKS_DRAWN))
+      GabombaStatue_HideLadderTopBlocks();
   } else {
-    Event_SetFlag(FLAG_HOLE_COVERS_DRAWN);
+    Event_SetFlag(FLAG_LADDER_TOP_BLOCKS_DRAWN);
   }
 }
-/// Gives a room's hole covers SPRITE_COLOR_HIDDEN and holds them 36 pixels up.
-#define DEFINE_GABOMBA_STATUE_RAISE_HOLE_COVERS(name, first, count)            \
+/// Gives a room's ladder-top blocks SPRITE_COLOR_HIDDEN and holds them 36
+/// pixels up.
+#define DEFINE_GABOMBA_STATUE_HIDE_LADDER_TOP_BLOCKS(name, first, count)       \
   void name(void) {                                                            \
     u32 i;                                                                     \
                                                                                \
@@ -1449,15 +1456,16 @@ void GabombaStatue_RestoreHoleCovers(void) {
       actor->motionFlags = 0;                                                  \
       actor->y.fixed = toFIXED(36);                                            \
     }                                                                          \
-    GabombaStatue_RestoreHoleCovers();                                         \
+    GabombaStatue_RestoreLadderTopBlocks();                                    \
   }
 
-DEFINE_GABOMBA_STATUE_RAISE_HOLE_COVERS(
-    GabombaStatue_HideBoneArmletChestHoleShadow, ACTOR_BONE_ARMLET_HOLE_COVER,
-    1)
+DEFINE_GABOMBA_STATUE_HIDE_LADDER_TOP_BLOCKS(
+    GabombaStatue_HideBoneArmletChestHoleShadow,
+    ACTOR_BONE_ARMLET_LADDER_TOP_BLOCK, 1)
 
-DEFINE_GABOMBA_STATUE_RAISE_HOLE_COVERS(
-    GabombaStatue_HideElixirChestHoleShadows, ACTOR_ELIXIR_HOLE_COVER_A, 2)
+DEFINE_GABOMBA_STATUE_HIDE_LADDER_TOP_BLOCKS(
+    GabombaStatue_HideElixirChestHoleShadows,
+    ACTOR_ELIXIR_WEST_LADDER_TOP_BLOCK, 2)
 /// Each frame: while a menu or Psynergy is up, the cogs and the rope posts
 /// stand still.
 void GabombaStatue_PauseCogsInMenus(void) {
@@ -1523,12 +1531,6 @@ enum {
 /// bits above it and the flags of its cell picture, ORed into the map's.
 #define COG_CELL(behavior, attributes, pictureFlags)                           \
   ((u32)(attributes) << 24 | (behavior) << 16 | (pictureFlags))
-
-/// A cell picture's flags for an actor standing on the cell: the sprite
-/// priority it is drawn at and the map layer it takes (ActorSystem_PlaceSprites
-/// reads them).
-#define CELL_DRAWS_ACTOR(priority, layer)                                      \
-  ((priority) << 14 | ((layer) + 1) << 12)
 
 #define MARK(at, shape, bits)                                                  \
   (cell = (at), layerA[cell] = (shape), layerB[cell] = (shape),                \
@@ -1755,11 +1757,10 @@ void GabombaStatue_SendCharge(s32 id, s32 colorMode, s32 statueId, s32 angle) {
 #undef DIFF_WITHIN
 #undef MARK
 #undef COG_CELL
-#undef CELL_DRAWS_ACTOR
 #undef DEFINE_GABOMBA_STATUE_STEP_WHEN_HELD
 #undef DEFINE_GABOMBA_STATUE_STEP_WHEN_HELD_FOUR
 #undef DEFINE_GABOMBA_STATUE_WALK_LEADER_TO
-#undef DEFINE_GABOMBA_STATUE_RAISE_HOLE_COVERS
+#undef DEFINE_GABOMBA_STATUE_HIDE_LADDER_TOP_BLOCKS
 
 #include "../field/field_effect_advance_motion.c"
 
@@ -1820,7 +1821,8 @@ void GabombaStatue_LandFromFall(void) {
   actor->bounce = FIXED_ONE / 4;
   System_Wait(10);
   Actor_SetAnimation(gMainRoutineWork.leaderActorId, ANIM_STAND);
-  gFieldWork->transition = SCENE_TRANSITION(TRANSITION_WINDOW, 9);
+  gFieldWork->transition =
+      SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER);
   Event_End();
 }
 
@@ -1915,7 +1917,8 @@ void GabombaStatue_WatchTheChargesStick(void) {
   Actor_SetPositionAndFacing(ACTOR_SHEBA, toFIXED(448), toFIXED(312), south);
   Actor_SetPositionAndFacing(ACTOR_JENNA, toFIXED(468), toFIXED(312), south);
   System_Wait(1);
-  gFieldWork->transition = SCENE_TRANSITION(TRANSITION_WINDOW, 2);
+  gFieldWork->transition =
+      SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_NOISE);
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
   FieldEvent_Wait(40);
@@ -1987,9 +1990,8 @@ void GabombaStatue_SeeHowItWorks(void) {
   {
     s32 leader = gMainRoutineWork.leaderActorId;
 
-    /* FAKEMATCH(temporary): north holds one constant, assigned here; as
-     * FACING_NORTH at its declaration, 2 of 521 instructions differ in
-     * tla-en. */
+    /* FAKEMATCH(temporary): north assigned in the body; plainly, at its
+     * declaration. */
     north = FACING_NORTH;
     Actor_SetPositionAndFacing(leader, toFIXED(348), toFIXED(312), north);
   }
@@ -1999,7 +2001,8 @@ void GabombaStatue_SeeHowItWorks(void) {
   Actor_SetPositionAndFacing(ACTOR_SHEBA, toFIXED(448), toFIXED(312), north);
   Actor_SetPositionAndFacing(ACTOR_JENNA, toFIXED(468), toFIXED(312), north);
   System_Wait(1);
-  gFieldWork->transition = SCENE_TRANSITION(TRANSITION_WINDOW, 1);
+  gFieldWork->transition =
+      SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_SHAPE);
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
   FieldEvent_Wait(40);
@@ -2171,9 +2174,8 @@ void GabombaStatue_SawEnergyFlow(void) {
   System_Wait(1);
   FieldCamera_MoveTo(440, CAMERA_KEEP, 182, 0);
   Actor_SetPosition(gMainRoutineWork.leaderActorId, 0, 0);
-  /* FAKEMATCH(temporary): south and facing hold one constant each, assigned
-   * here; as FACING_SOUTH and FACING_SOUTH_SOUTHEAST at their declarations,
-   * 12 of 386 instructions differ in tla-en. */
+  /* FAKEMATCH(temporary): south and facing assigned in the body; plainly, at
+   * their declarations. */
   south = FACING_SOUTH;
   Actor_SetPositionAndFacing(ACTOR_JENNA, toFIXED(472), toFIXED(216), south);
   facing = FACING_SOUTH_SOUTHEAST;
@@ -2181,7 +2183,8 @@ void GabombaStatue_SawEnergyFlow(void) {
   System_Wait(1);
   MapGrid_CenterOnFollowedPoint();
   System_Wait(1);
-  gFieldWork->transition = SCENE_TRANSITION(TRANSITION_WINDOW, 2);
+  gFieldWork->transition =
+      SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_NOISE);
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
   FieldCamera_SetSpeed(1.2);
@@ -2284,7 +2287,8 @@ void GabombaStatue_KradenNoticesTiming(void) {
 s32 Scene_Initialize(void) {
   s16 scene;
 
-  gFieldWork->transition = SCENE_TRANSITION(TRANSITION_WINDOW, 9);
+  gFieldWork->transition =
+      SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER);
   if (gMainRoutineWork.next != SCENE_GABOMBA_STATUE_BONE_ARMLET_CHEST) {
     if (Event_GetFlag(FLAG_COGS_STOPPED))
       GabombaStatue_TurnCogs(0);
@@ -2469,10 +2473,12 @@ void GabombaStatue_InitializeArrows(void) {
   if (Event_GetFlag(FLAG_GABOMBA_BACK_FROM_CEREMONY)) {
     Event_Start();
     FieldEvent_ResolvePendingActions(0);
-    gFieldWork->transition = SCENE_TRANSITION(TRANSITION_WINDOW, 1);
+    gFieldWork->transition =
+        SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_SHAPE);
     Event_StartScreenTransition();
     Event_WaitTransitionFrames();
-    gFieldWork->transition = SCENE_TRANSITION(TRANSITION_WINDOW, 9);
+    gFieldWork->transition =
+        SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER);
     Event_ClearFlag(FLAG_GABOMBA_BACK_FROM_CEREMONY);
     if (Event_GetFlag(FLAG_GABOMBA_CHARGES_REACHED_APART) &&
         !Event_GetFlag(FLAG_GABOMBA_TIMING_NOTICED))
@@ -2517,9 +2523,11 @@ s32 GabombaStatue_IsCellTaken(u32 x, u32 z) {
     return 0;
   {
     struct PuzzleCell *cell =
-        (struct PuzzleCell *)(cells + (z * CHANNEL_COLUMNS + x) * 4);
+        (struct PuzzleCell *)(cells + (z * CHANNEL_COLUMNS + x) *
+                                          sizeof(struct PuzzleCell));
     s32 code;
 
+    // The same byte, read through its address.
     if (*(u8 *)&cell->occupied != BLOCK_NONE || cell->blocked != 0)
       return 1;
     code = cell->kind;
@@ -2826,7 +2834,7 @@ s32 GabombaStatue_LayPath(s32 x0, s32 z0, s32 endX, s32 endZ, s32 length,
     if (++attempts > PATH_ATTEMPTS_MAX)
       return -1;
     {
-      s32 offset = (z * CHANNEL_COLUMNS + x) * 4;
+      s32 offset = (z * CHANNEL_COLUMNS + x) * sizeof(struct PuzzleCell);
       gGabombaStatue_PathPieces[step] =
           ((struct PuzzleCell *)(cells + offset))->kind;
       gGabombaStatue_PathCellPaths[step] =
@@ -2863,8 +2871,8 @@ s32 GabombaStatue_LayPath(s32 x0, s32 z0, s32 endX, s32 endZ, s32 length,
         if (nextX < CHANNEL_COLUMNS && nextZ < CHANNEL_ROWS &&
             !(step == length - 1 && (nextX != endX || nextZ != endZ))) {
           struct PuzzleCell *cell =
-              (struct PuzzleCell *)(cells +
-                                    (nextZ * CHANNEL_COLUMNS + nextX) * 4);
+              (struct PuzzleCell *)(cells + (nextZ * CHANNEL_COLUMNS + nextX) *
+                                                sizeof(struct PuzzleCell));
           if (cell->blocked == 0 && (used = (cell->state >> bit) & one) == 0 &&
               cell->kind != PIECE_STOP) {
             tried |= one << dir;
@@ -2872,7 +2880,8 @@ s32 GabombaStatue_LayPath(s32 x0, s32 z0, s32 endX, s32 endZ, s32 length,
             kinds = gGabombaStatue_PathPieces;
             piece = GabombaStatue_PickPiece(direction, dir, kinds[step]);
             {
-              s32 offset = (z * CHANNEL_COLUMNS + x) * 4;
+              s32 offset =
+                  (z * CHANNEL_COLUMNS + x) * sizeof(struct PuzzleCell);
               GabombaStatue_WritePiece(
                   x, z, piece,
                   ((struct PuzzleCell *)(cells + offset))->state | one << bit);
@@ -2905,7 +2914,7 @@ s32 GabombaStatue_LayPath(s32 x0, s32 z0, s32 endX, s32 endZ, s32 length,
   }
 done:
   {
-    s32 offset = (nextZ * CHANNEL_COLUMNS + nextX) * 4;
+    s32 offset = (nextZ * CHANNEL_COLUMNS + nextX) * sizeof(struct PuzzleCell);
     piece = GabombaStatue_PickPiece(
         dir, last, ((struct PuzzleCell *)(cells + offset))->kind);
     GabombaStatue_WritePiece(nextX, nextZ, piece,
@@ -2977,6 +2986,7 @@ void GabombaStatue_SetBlocksRaised(s32 id, s32 show) {
           } else {
             actor->x.fixed = 0;
             actor->z.fixed = 0;
+            // The same byte, written through its address.
             *(u8 *)&cell->occupied = BLOCK_IN_PLACE;
             MapGrid_CopyCells(BLOCK_IN_PLACE, cell->kind, 1, 1,
                               state->originX + column, state->originZ + row);
@@ -3781,11 +3791,6 @@ void GabombaStatue_PlaceSwitchActors(const u16 *entry) {
 
 // clang-format on
 
-/// A map shape entry as gMapGridShapes holds it: the shape's kind and its
-/// three heights, a byte each (the rows of a map's shapes.tsv).
-#define MAP_SHAPE(shape, height0, height1, height2)                            \
-  ((shape) | (height0) << 8 | (height1) << 16 | (height2) << 24)
-
 /// The shapes GabombaStatue_DrawCogCells writes over the map's from
 /// COG_SHAPE_FIRST.
 u32 gGabombaStatue_CogShapes[] = {
@@ -3802,8 +3807,6 @@ u32 gGabombaStatue_CogShapes[] = {
     [COG_SHAPE_PINK_DRUM_SOUTH_END - COG_SHAPE_FIRST] = MAP_SHAPE(0, 248, 0, 0),
     [COG_SHAPE_END - COG_SHAPE_FIRST] = MAP_SHAPE(0, 0, 0, 0),
 };
-
-#undef MAP_SHAPE
 
 /// Each cog's animation by the cogs' direction + 1: turning back, stopped and
 /// turning.

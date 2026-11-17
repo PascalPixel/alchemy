@@ -25,6 +25,7 @@
 #include "field/event_inline.h"
 #include "field/map_grid.h"
 #include "field/field_sequence_event.h"
+#include "field/field_sequence.h"
 #include "field/field.h"
 #include "field/field_coordinate.h"
 #include "field/object.h"
@@ -222,14 +223,11 @@ enum { LAVA_ALREADY_UP = 212 };
 /// pillars' room starts at this word, the third corner, across from the first.
 enum { PLATFORM_PATH_THIRD_CORNER = 10 };
 
-/// The sparks that circle Jenna as she learns Blaze start BLAZE_SPARK_INTERVAL
-/// frames apart, 122 pixels out, and close 8 pixels a frame to 2 pixels in
-/// BLAZE_SPIRAL_FRAMES; each one's count of steps ends with the last's.
-enum {
-  BLAZE_CIRCLING_SPARKS = 16,
-  BLAZE_SPARK_INTERVAL = 8,
-  BLAZE_SPIRAL_FRAMES = 15
-};
+/// The LEARN_SPARKS that circle the one who learns a Psynergy start
+/// LEARN_SPARK_INTERVAL frames apart, 122 pixels out, and close 8 pixels a
+/// frame to 2 pixels in LEARN_SPIRAL_FRAMES; each one's count of steps ends
+/// with the last's.
+enum { LEARN_SPARKS = 16, LEARN_SPARK_INTERVAL = 8, LEARN_SPIRAL_FRAMES = 15 };
 
 /// The Blaze tablet's room: the tablet, the pillar its torch lowers, the flame
 /// Blaze moves and the torch's flame.
@@ -2070,7 +2068,7 @@ void MagmaRockInside_LearnBlaze(s32 a, s32 b) {
   } while (i != 16);
   REG_BLDALPHA = BLEND_ALPHA(8, 16);
   wait(30);
-  for (i = 0; i != BLAZE_CIRCLING_SPARKS; i++) {
+  for (i = 0; i != LEARN_SPARKS; i++) {
     spark = FieldActor_Create(SPRITE_PARTICLE, second->x.fixed, second->y.fixed,
                               second->z.fixed);
     Event_PlaySound(SE_SPARKS);
@@ -2080,8 +2078,8 @@ void MagmaRockInside_LearnBlaze(s32 a, s32 b) {
     spark->motionFlags = noMotion;
     spark->riseBaseY = toFIXED(122);
     spark->watchedActor = second;
-    spark->stepsLeft = (BLAZE_CIRCLING_SPARKS - i) * BLAZE_SPARK_INTERVAL +
-                       BLAZE_SPIRAL_FRAMES;
+    spark->stepsLeft =
+        (LEARN_SPARKS - i) * LEARN_SPARK_INTERVAL + LEARN_SPIRAL_FRAMES;
     FieldActor_SetSpriteColor(spark, SPRITE_COLOR_RED_TINT);
     Scene_SetActorSpritePriority(spark, 1);
     Actor_SelectAnimation(spark, 7);
@@ -2097,7 +2095,7 @@ void MagmaRockInside_LearnBlaze(s32 a, s32 b) {
       second->speedLimit = toFIXED(1) / 5;
       Actor_SetScript(b, script);
     }
-    wait(BLAZE_SPARK_INTERVAL);
+    wait(LEARN_SPARK_INTERVAL);
   }
   Event_PlaySound(SE_SHIMMER);
   wait(16);
@@ -2428,7 +2426,8 @@ static __inline__ void Lower(s32 id, s32 height) {
 s32 Scene_Initialize(void) {
   s32 i;
 
-  gFieldWork->transition = SCENE_TRANSITION(TRANSITION_WINDOW, 4);
+  gFieldWork->transition =
+      SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE);
   if (gMainRoutineWork.next == SCENE_MAGMA_ROCK_INSIDE_LUCKY_MEDAL_CHEST) {
     Actor_GetById(gMainRoutineWork.leaderActorId)->priorityFlags |=
         ACTOR_PRIORITY_WALKS_ON_PLATFORMS;

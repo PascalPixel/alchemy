@@ -22,6 +22,7 @@
 #include "field/field_event.h"
 #include "field/field_psynergy_work.h"
 #include "field/field_sequence_event.h"
+#include "field/field_sequence.h"
 #include "field/field_sprite.h"
 #include "field/scene_tables.h"
 #include "game/game.h"
@@ -100,11 +101,11 @@ enum {
 /// into a vine, both drawn at the leader's sprite priority.
 #define ACTOR_GIRL_BELOW_THE_CAVE (ACTOR_FIRST_PLACED + 6)
 #define ACTOR_SPROUT (ACTOR_FIRST_PLACED + 13)
-/// The poles of the village's rope, which Lash ties: one on the path, the
+/// The posts of the village's rope, which Lash ties: one on the path, the
 /// other up on the cliff to the east.
 enum {
-  ACTOR_VILLAGE_ROPE_POLE = ACTOR_FIRST_PLACED + 11,
-  ACTOR_VILLAGE_ROPE_OTHER_POLE
+  ACTOR_VILLAGE_ROPE_POST = ACTOR_FIRST_PLACED + 11,
+  ACTOR_CLIFF_ROPE_POST
 };
 /// The sanctum's two shamans after the priest, there once Moapa is beaten.
 enum {
@@ -113,40 +114,28 @@ enum {
 };
 
 /// The general store's keeper (SceneId_ShamanVillageShop).
-#define ACTOR_STOREKEEPER (ACTOR_FIRST_PLACED + 4)
+#define ACTOR_GENERAL_STOREKEEPER (ACTOR_FIRST_PLACED + 4)
 /// The sanctum's priest (SceneId_ShamanVillageSanctum).
 #define ACTOR_PRIEST ACTOR_FIRST_PLACED
 /// Aroma's room (SceneId_ShamanVillageAroma): the pillar Move drops, the
-/// fortune teller and her flame, and Aroma, the Jupiter Djinni.
+/// fortune-teller and her flame, and Aroma, the Jupiter Djinni.
 #define ACTOR_AROMA_ROOM_PILLAR (ACTOR_FIRST_PLACED + 6)
-/// The small flame before the fortune teller, which flares as she hops.
+/// The small flame before the fortune-teller, which flares as she hops.
 #define ACTOR_FORTUNE_TELLERS_FLAME (ACTOR_FIRST_PLACED + 8)
 #define ACTOR_FORTUNE_TELLER (ACTOR_FIRST_PLACED + 9)
 #define ACTOR_AROMA (ACTOR_FIRST_PLACED + 10)
 
-/// Set once Sheba has cast Whirlwind on the purple rock for Moapa's first test
-/// and blown the sand away.
-#define FLAG_SHAMAN_VILLAGE_SAND_CLEARED 0x94c
 /// Set as the party comes back from beating Moapa: the village's locked doors
 /// and its way north open.
 #define FLAG_SHAMAN_VILLAGE_DOORS_OPEN 0x94d
 /// Set once Move has dropped the pillar in Aroma's room into place as a bridge.
 #define FLAG_SHAMAN_VILLAGE_PILLAR_BRIDGE_DROPPED 0x94e
-/// Set as Moapa comes out of his cabin to meet the party
-/// (ShamanVillage_MeetMoapa).
-#define FLAG_SHAMAN_VILLAGE_MOAPA_MET 0x94f
 /// Set once Moapa has told the party the rules of the trial: the Shaman's Rod
 /// and eight pieces of equipment.
 #define FLAG_SHAMAN_VILLAGE_TRIAL_RULES_HEARD 0x9e0
-/// Set once the party has shown Moapa the Shaman's Rod.
-#define FLAG_SHAMAN_VILLAGE_SHAMANS_ROD_SHOWN 0x9e1
 /// Set once Moapa has asked the party's names after the battle; he remembers
 /// them from then on.
 #define FLAG_SHAMAN_VILLAGE_MOAPA_KNOWS_NAMES 0x9ed
-/// Set as the party comes back from beating Moapa on the Trial Road
-/// (SHAMAN_VILLAGE_INN_FROM_TRIAL_ROAD_SUMMIT_EAST_A); the inn and the sanctum
-/// serve the party from then on.
-#define FLAG_MOAPA_BEATEN 0x9fe
 /// Set once the fortune-teller has read the party's fortune, for this visit.
 #define FLAG_SHAMAN_VILLAGE_FORTUNE_TOLD FLAG_AREA_TEMP_01
 /// Set once Lash has tied the village's rope.
@@ -163,7 +152,7 @@ enum {
 /// back from the trial: the trial's step trigger then offers to give up.
 #define FLAG_SHAMAN_VILLAGE_CHALLENGE_ACCEPTED FLAG_SCENE_TEMP_01
 /// Set once the fortune-teller has called out to the leader, for this visit.
-#define FLAG_SHAMAN_VILLAGE_FORTUNE_TELLER_WELCOMED FLAG_SCENE_TEMP_03
+#define FLAG_SHAMAN_VILLAGE_FORTUNE_TELLER_CALLED_OUT FLAG_SCENE_TEMP_03
 
 #include "../field/field_effect_move.c"
 
@@ -207,15 +196,15 @@ extern s16 gShamanVillage_LetteringVramEntry[];
 enum LetteringCommand {
   /// x, speed: put the lettering at x pixels from the centre, moving at speed
   /// 256ths of a pixel a frame
-  LETTERING_PLACE = 0x4000,
+  LETTERING_PLACE = 16384,
   /// speed, frames: change the speed over that many frames
-  LETTERING_ACCELERATE = 0x3000,
+  LETTERING_ACCELERATE = 12288,
   /// scale, frames: grow or shrink to scale (256 is its own size)
-  LETTERING_SCALE = 0x1000,
+  LETTERING_SCALE = 4096,
   /// weight, frames: fade to weight sixteenths over the screen
-  LETTERING_FADE = 0x2000,
+  LETTERING_FADE = 8192,
   /// frames: run the moves for that many frames before the next command
-  LETTERING_WAIT = 0x7fff,
+  LETTERING_WAIT = 32767,
   /// remove the lettering and free its VRAM block
   LETTERING_END = -1
 };
@@ -284,7 +273,7 @@ void ShamanVillage_SendToMoapa(void);
 void ShamanVillage_TalkToPriest(void);
 void ShamanVillage_AskAboutOtherSide(void);
 void ShamanVillage_TalkToMoapa(void);
-void ShamanVillage_TalkToStorekeeper(void);
+void ShamanVillage_TalkToGeneralStorekeeper(void);
 void ShamanVillage_TellFortune(void);
 void ShamanVillage_OfferToGiveUp(void);
 void ShamanVillage_ChallengeMoapa(void);
@@ -498,10 +487,10 @@ void ShamanVillage_BlowAwaySand(void) {
   REG_DISPCNT &= ~DISPCNT_BG0_ON;
   Decompress_TaggedLz(Resource_GetTableEntry(RESOURCE_WHIRLWIND_TILES), buffer);
   Dma_Set(buffer, BG_CHAR_BLOCK(3) + WHIRLWIND_TOP_TILE * TILE_SIZE_4BPP,
-          DMA_COPY_WORDS(208), REG_DMA3);
+          DMA_COPY_WORDS(WHIRLWIND_ROW_TILES * TILE_SIZE_4BPP / 4), REG_DMA3);
   Dma_Set((u8 *)buffer + WHIRLWIND_ROW_TILES * TILE_SIZE_4BPP,
           BG_CHAR_BLOCK(3) + WHIRLWIND_BOTTOM_TILE * TILE_SIZE_4BPP,
-          DMA_COPY_WORDS(208), REG_DMA3);
+          DMA_COPY_WORDS(WHIRLWIND_ROW_TILES * TILE_SIZE_4BPP / 4), REG_DMA3);
   Heap_Release(buffer);
   Actor_SetSpritePriority(gMainRoutineWork.leaderActorId, 1);
   Actor_SetSpritePriority(ACTOR_TWISTER_ROCK, 1);
@@ -536,6 +525,9 @@ void ShamanVillage_BlowAwaySand(void) {
           SPRITE_PARTICLE, Actor_GetById(ACTOR_TWISTER_ROCK)->x.fixed,
           Actor_GetById(ACTOR_TWISTER_ROCK)->y.fixed,
           Actor_GetById(ACTOR_TWISTER_ROCK)->z.fixed);
+      /* FAKEMATCH(signature): the rock's priority read from attribute 2's
+       * high byte as a signed byte, masked and shifted; plainly, its
+       * struct SpriteAttr2High priority. */
       ((struct SpriteAttr2High *)spark->sprite)->priority =
           (((s8 *)Actor_GetById(ACTOR_TWISTER_ROCK)->sprite)[9] &
            (OBJ_PRIORITY(3) >> 8)) >>
@@ -852,7 +844,7 @@ void ShamanVillage_SendToMoapa(void) {
 }
 
 /// Whether the leader faces the counter, north: the innkeeper, priest and
-/// shopkeeper serve only across it.
+/// storekeeper serve only across it.
 s32 ShamanVillage_IsFacingCounter(void) {
   u16 turn;
   s32 facing;
@@ -980,15 +972,15 @@ void ShamanVillage_TalkToMoapa(void) {
 }
 
 /// Across the counter the general store; elsewhere a welcome for the hero.
-void ShamanVillage_TalkToStorekeeper(void) {
+void ShamanVillage_TalkToGeneralStorekeeper(void) {
   if (ShamanVillage_IsFacingCounter()) {
-    Shop_Run(SHOP_SHAMAN_VILLAGE, ACTOR_STOREKEEPER);
+    Shop_Run(SHOP_SHAMAN_VILLAGE, ACTOR_GENERAL_STOREKEEPER);
   } else {
     Event_Start();
     Event_ResolvePendingActions(0);
     Event_SetMessageId((s32)MsgShamanWelcomeContigoHero);
     // "Everyone is depressed that Moapa lost his big fight. They should be..."
-    Event_ShowMessage(ACTOR_STOREKEEPER, 0);
+    Event_ShowMessage(ACTOR_GENERAL_STOREKEEPER, 0);
     Event_End();
   }
 }
@@ -1756,7 +1748,7 @@ void ShamanVillage_ShowItemToEastKnight(void) {
 
 /// Stepping into the fortune-teller's tent once Moapa is beaten: she calls out
 /// "Hoolabaloo!" and hops, once a visit.
-void ShamanVillage_WelcomeFortuneSeeker(void) {
+void ShamanVillage_FortuneTellerCallsOut(void) {
   if (Event_GetFlag(FLAG_MOAPA_BEATEN)) {
     Event_PlaySound(MUS_SILENCE);
     Event_Start();
@@ -1768,7 +1760,7 @@ void ShamanVillage_WelcomeFortuneSeeker(void) {
     Actor_FaceDirection(gMainRoutineWork.leaderActorId, FACING_NORTH, 20);
     ShamanVillage_HopFortuneTeller();
     Actor_SetAnimation(ACTOR_FORTUNE_TELLER, 1);
-    Event_SetFlag(FLAG_SHAMAN_VILLAGE_FORTUNE_TELLER_WELCOMED);
+    Event_SetFlag(FLAG_SHAMAN_VILLAGE_FORTUNE_TELLER_CALLED_OUT);
     Event_End();
   }
 }
@@ -2872,8 +2864,8 @@ void ShamanVillage_SetUpVillage(void) {
     MapGrid_CopyCellsTo(48, 40, 81, 25, width, height);
   }
   Rope_Initialize();
-  Rope_Place(0, FLAG_SHAMAN_VILLAGE_ROPE_TIED, ACTOR_VILLAGE_ROPE_POLE,
-             ACTOR_VILLAGE_ROPE_OTHER_POLE);
+  Rope_Place(0, FLAG_SHAMAN_VILLAGE_ROPE_TIED, ACTOR_VILLAGE_ROPE_POST,
+             ACTOR_CLIFF_ROPE_POST);
   if (Event_GetFlag(FLAG_SHAMAN_VILLAGE_VINE_GROWN))
     ShamanVillage_GrowVine();
   REG_BLDALPHA = BLEND_ALPHA(8, 12);
@@ -2888,7 +2880,8 @@ void ShamanVillage_SetUpVillage(void) {
 void ShamanVillage_SetUpInn(void) {
   u32 i;
 
-  gFieldWork->transition = SCENE_TRANSITION(TRANSITION_WINDOW, 9);
+  gFieldWork->transition =
+      SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER);
   ((struct Actor *)Actor_GetById(ACTOR_INN_COUNTER))->collisionFlags =
       ACTOR_NOT_TARGETED;
   if (Event_GetFlag(FLAG_MOAPA_BEATEN)) {
@@ -2949,7 +2942,8 @@ DEFINE_LEADER_LAYER_TASK(ShamanVillage_LayerSanctumActors,
 void ShamanVillage_SetUpSanctum(void) {
   struct FieldWork *work = Ram_HeapSlots->fieldWork;
 
-  work->transition = SCENE_TRANSITION(TRANSITION_WINDOW, 9);
+  work->transition =
+      SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER);
   if (Event_GetFlag(FLAG_MOAPA_BEATEN)) {
     Task_Add(ShamanVillage_LayerSanctumActors, TASK_PASS_FRAME);
   } else {
@@ -3558,8 +3552,8 @@ struct Trigger gShamanVillageAromaRoomTriggers[] = {
      EVENT(ShamanVillage_StopAtClosedEntrance)},
     {TRIGGER_EXAMINE, 10, CONDITION_ALWAYS,
      EVENT(ShamanVillage_ReadTrialRoadSign)},
-    {TRIGGER_STEP, 11, FLAG_SHAMAN_VILLAGE_FORTUNE_TELLER_WELCOMED,
-     EVENT(ShamanVillage_WelcomeFortuneSeeker)},
+    {TRIGGER_STEP, 11, FLAG_SHAMAN_VILLAGE_FORTUNE_TELLER_CALLED_OUT,
+     EVENT(ShamanVillage_FortuneTellerCallsOut)},
     {TALK_TRIGGER_FACING(FACING_NORTH), ACTOR_FORTUNE_TELLER, CONDITION_ALWAYS,
      EVENT(ShamanVillage_TellFortune)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_FORTUNE_TELLER,
@@ -3606,7 +3600,7 @@ struct Trigger gShamanVillageVillageTriggers[] = {
     {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 13, CONDITION_ALWAYS,
      EVENT(ShamanVillage_EnterMoapasHouse)},
     {TRIGGER_EXIT, 14, CONDITION_ALWAYS, 14},
-    {PSYNERGY_ON_ACTOR(ABILITY_LASH), ACTOR_VILLAGE_ROPE_POLE,
+    {PSYNERGY_ON_ACTOR(ABILITY_LASH), ACTOR_VILLAGE_ROPE_POST,
      FLAG_SHAMAN_VILLAGE_ROPE_TIED, 0},
     {PSYNERGY_ON_ACTOR(ABILITY_GROWTH), ACTOR_SPROUT,
      FLAG_SHAMAN_VILLAGE_VINE_GROWN, EVENT(ShamanVillage_GrowVine)},
@@ -3800,10 +3794,10 @@ struct Trigger gShamanVillageShopTriggers[] = {
     {TRIGGER_TALK, 11, CONDITION_ALWAYS, MSGNO(MsgShamanYegelosBraveJourney)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 11, CONDITION_ALWAYS,
      MSGNO(MsgShamanGrandparentsTiredOfWarStories)},
-    {TRIGGER_TALK, 12, CONDITION_ALWAYS,
-     EVENT(ShamanVillage_TalkToStorekeeper)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 12, CONDITION_ALWAYS,
-     MSGNO(MsgShamanHusbandWorriesAboutWeapons)},
+    {TRIGGER_TALK, ACTOR_GENERAL_STOREKEEPER, CONDITION_ALWAYS,
+     EVENT(ShamanVillage_TalkToGeneralStorekeeper)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_GENERAL_STOREKEEPER,
+     CONDITION_ALWAYS, MSGNO(MsgShamanHusbandWorriesAboutWeapons)},
     {TRIGGER_TALK, 13, CONDITION_ALWAYS,
      MSGNO(MsgShamanWarehouseOwnerFeelsResponsible)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 13, CONDITION_ALWAYS,

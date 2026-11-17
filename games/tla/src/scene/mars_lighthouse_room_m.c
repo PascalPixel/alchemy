@@ -98,7 +98,7 @@ enum {
 /// The inscriptions' colours: BG palettes 8 and 9 hold six for each element,
 /// the hall's four inscriptions glowing in them once that element's flame is
 /// lit, and the ledge's inscription takes its tower's six into palette 13.
-#define INSCRIPTION_PALETTES 8
+#define INSCRIPTION_FIRST_PALETTE 8
 #define LEDGE_INSCRIPTION_PALETTE 13
 /// The hall's palette whose last six colours are an unlit inscription's.
 #define UNLIT_INSCRIPTION_PALETTE 2
@@ -117,9 +117,6 @@ enum {
 /// The colour bare centred messages are written in, set white again under the
 /// statue's warm glow.
 #define CENTERED_TEXT_COLOR OBJ_PLTT_COLOR(0, 15)
-
-/// The party sheets' animation of the leader sitting on the floor, legs out.
-#define ANIM_LEADER_SIT 49
 
 /// Each element's flame among the flame sprite's animations.
 enum {
@@ -341,7 +338,7 @@ void MarsLighthouseRoomM_CycleLedgeInscription(void) {
                          (void *)&BG_PLTT_COLOR(LEDGE_INSCRIPTION_PALETTE, 0),
                          sizeof(gMarsLighthouseRoomM_LedgeSavedPalette));
     Iwram_CopyWordsEntry(gMarsLighthouseRoomM_LedgeElementColors,
-                         (void *)&BG_PLTT_COLOR(INSCRIPTION_PALETTES, 0),
+                         (void *)&BG_PLTT_COLOR(INSCRIPTION_FIRST_PALETTE, 0),
                          sizeof(gMarsLighthouseRoomM_LedgeElementColors));
     Iwram_CopyWordsEntry(gMarsLighthouseRoomM_LedgePalette,
                          gMarsLighthouseRoomM_LedgeElementColors,
@@ -464,7 +461,7 @@ void MarsLighthouseRoomM_CycleHallInscriptions(void) {
                          (void *)&BG_PLTT_COLOR(UNLIT_INSCRIPTION_PALETTE, 0),
                          PALETTE_COLORS * 2);
     Iwram_CopyWordsEntry(gMarsLighthouseRoomM_HallElementColors.colors,
-                         (void *)&BG_PLTT_COLOR(INSCRIPTION_PALETTES, 0),
+                         (void *)&BG_PLTT_COLOR(INSCRIPTION_FIRST_PALETTE, 0),
                          sizeof(gMarsLighthouseRoomM_HallElementColors));
     Iwram_CopyWordsEntry(gMarsLighthouseRoomM_HallPalette.colors,
                          gMarsLighthouseRoomM_HallElementColors.colors,
@@ -502,7 +499,7 @@ void MarsLighthouseRoomM_CycleHallInscriptions(void) {
     Iwram_CopyWordsEntry(&gMarsLighthouseRoomM_HallPalette.colors[JUPITER_GLOW],
                          gMarsLighthouseRoomM_UnlitInscriptionColors,
                          sizeof(gMarsLighthouseRoomM_UnlitInscriptionColors));
-  IO_WRITE_QUEUE_PUSH((u32)&BG_PLTT_COLOR(INSCRIPTION_PALETTES, 0),
+  IO_WRITE_QUEUE_PUSH((u32)&BG_PLTT_COLOR(INSCRIPTION_FIRST_PALETTE, 0),
                       (u32)gMarsLighthouseRoomM_HallPalette.colors,
                       DMA_COPY_WORDS(16));
   gMarsLighthouseRoomM_HallCycleFrame++;
@@ -715,7 +712,8 @@ s32 Scene_Initialize(void) {
   if (scene != SCENE_MARS_LIGHTHOUSE_ROOM_M_FLAME &&
       scene == SCENE_MARS_LIGHTHOUSE_ROOM_M_INSCRIPTIONS) {
     Call1((void (*)())FieldEffect_StartBlankOverlay, 0);
-    gFieldWork->transition = SCENE_TRANSITION(TRANSITION_WINDOW, 4);
+    gFieldWork->transition =
+        SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE);
     if (entrance ==
             MARS_LIGHTHOUSE_ROOM_M_INSCRIPTIONS_FROM_MARS_LIGHTHOUSE_AERIE ||
         entrance ==
@@ -745,6 +743,8 @@ s32 Scene_Initialize(void) {
         PaletteFade_ApplyTarget(PALETTE_TINT_WARM, PALETTES_ALL);
         PaletteFade_Interpolate(20);
         System_Wait(20);
+        // entrance, read for the last time above, now holds the colour's
+        // address.
         entrance = (s32)&CENTERED_TEXT_COLOR;
         *(u16 *)entrance = RGB_WHITE;
         System_Wait(1);
@@ -1027,7 +1027,7 @@ void MarsLighthouseRoomM_BreakFloorTile(s32 x, s32 z, s32 sourceX, s32 sourceY,
 void MarsLighthouseRoomM_HearDragonStatue(void) {
   if (PartyInventory_FindMember(ITEM_MYTHRIL_BAG_MARS_STAR) == -1) {
     if (!Event_GetFlag(FLAG_TOLD_TO_BEGONE)) {
-      u16 *color = (volatile u16 *)&CENTERED_TEXT_COLOR;
+      u16 *color = (u16 *)&CENTERED_TEXT_COLOR;
 
       Event_Start();
       Event_ResolvePendingActions(0);
@@ -1196,8 +1196,6 @@ void Ride_SpawnLandingBackward(struct Vector3 *position, s32 value, s32 flag) {
     Actor_SelectAnimation(actor, 2);
   }
 }
-
-#define ABS(x) ((x) < 0 ? -(x) : (x))
 
 #include "shared/actor_is_above.h"
 

@@ -75,9 +75,6 @@ enum {
 #define FLAG_SECOND_STATUE_RISEN FLAG_AREA_TEMP_01
 #define FLAG_THIRD_STATUE_RISEN FLAG_AREA_TEMP_02
 
-/// Set once the party has taken the Dancing Idol from the altar.
-#define FLAG_DANCING_IDOL_TAKEN 0xf74
-
 /// The two pillars Moved into the gaps: the first dropped in at the west end,
 /// the second at (79, 12).
 #define FLAG_FIRST_PILLAR_DROPPED 0x920
@@ -171,7 +168,7 @@ void GaiaRock_DropPillar(s32 id) {
   s32 frames = 60;
   struct Actor *actor = Actor_Get(id);
 
-  actor->motionFlags = 3;
+  actor->motionFlags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
   while (frames != 0) {
     System_Wait(1);
     if (actor->velocityY == 0)
@@ -188,7 +185,7 @@ void GaiaRock_DropPillar(s32 id, s32 cue) {
   s32 frames = 60;
   struct Actor *actor = Actor_Get(id);
 
-  actor->motionFlags = 3;
+  actor->motionFlags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
   while (frames != 0) {
     System_Wait(1);
     frames--;
@@ -249,13 +246,13 @@ void TileCopies_CopyTouchedCells(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f,
                                  s32 g);
 
 /// As the pillar is pushed or Moved, frees the cell it stands on.
-void GaiaRock_StartPushingBlock(void) {
+void GaiaRock_StartPushingPillar(void) {
   MapGrid_CopyCellAttributes(
       13, 18, 1, 1, 13, FIELD_CELL(Actor_Get(ACTOR_PUSHED_PILLAR)->z.fixed));
 }
 
 /// Once the pillar stops, blocks the cell it now stands on.
-void GaiaRock_FinishPushingBlock(void) {
+void GaiaRock_FinishPushingPillar(void) {
   MapGrid_CopyCellAttributes(
       11, 14, 1, 1, 13, FIELD_CELL(Actor_Get(ACTOR_PUSHED_PILLAR)->z.fixed));
 }
@@ -642,7 +639,7 @@ void GaiaRock_PlaceStatue(s32 id, s32 x, s32 y, s32 z) {
   actor->z.fixed = (z & FIELD_CELL_MASK) + toFIXED(8);
   actor->y.fixed = actor->z.fixed - FIELD_CELL_ORIGIN(cellZ);
   actor->motionFlags = 0;
-  actor->priorityFlags |= 2;
+  actor->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
   Actor_SetSpriteFlags(actor, 0);
 }
 
@@ -693,7 +690,7 @@ void GaiaRock_StatueRisesUnderLeader(s32 id, s32 flag) {
   Actor_SelectAnimation(leader, ANIM_LEADER_WAVE_ARMS);
   FieldEvent_Wait(40);
   Event_PlaySound(SE_DUST_PUFF);
-  leader->motionFlags = 3;
+  leader->motionFlags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
   leader->gravity = toFIXED(33) / 100;
   for (id = 0; id < 180; id++) {
     System_Wait(1);
@@ -712,7 +709,7 @@ void GaiaRock_StatueRisesUnderLeader(s32 id, s32 flag) {
   FieldCamera_MoveToFX(leader->x.fixed, leader->y.fixed, leader->z.fixed, 1);
   FieldCamera_WaitForArrival();
   FieldEvent_Wait(20);
-  Actor_SetSpriteFlags(leader, 1);
+  Actor_SetSpriteFlags(leader, SPRITE_FLAG_SHADOW);
   Actor_SelectAnimation(leader, ANIM_STAND);
   leader->velocityY = toFIXED(4);
   System_Wait(20);
@@ -863,10 +860,10 @@ struct Trigger gGaiaRock_StatueSpotsTriggers[] = {
 struct Trigger gGaiaRock_Triggers[] = {
     {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
     {TRIGGER_TALK, ACTOR_ALTAR, CONDITION_ALWAYS, EVENT(GaiaRock_CheckAltar)},
-    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), ACTOR_PUSHED_PILLAR, CONDITION_ALWAYS, EVENT(GaiaRock_StartPushingBlock)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_PUSHED_PILLAR, CONDITION_ALWAYS, EVENT(GaiaRock_FinishPushingBlock)},
-    {TRIGGER_PUSH, 0, CONDITION_ALWAYS, EVENT(GaiaRock_StartPushingBlock)},
-    {TRIGGER_PUSHED, 0, CONDITION_ALWAYS, EVENT(GaiaRock_FinishPushingBlock)},
+    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), ACTOR_PUSHED_PILLAR, CONDITION_ALWAYS, EVENT(GaiaRock_StartPushingPillar)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_PUSHED_PILLAR, CONDITION_ALWAYS, EVENT(GaiaRock_FinishPushingPillar)},
+    {TRIGGER_PUSH, 0, CONDITION_ALWAYS, EVENT(GaiaRock_StartPushingPillar)},
+    {TRIGGER_PUSHED, 0, CONDITION_ALWAYS, EVENT(GaiaRock_FinishPushingPillar)},
     {PSYNERGY_ANYWHERE(ABILITY_REVEAL, PSYNERGY_PHASE_ACTS), 0, CONDITION_ALWAYS, EVENT(GaiaRock_RevealIdol)},
     {PSYNERGY_ANYWHERE(ABILITY_REVEAL, PSYNERGY_PHASE_FADES), 0, CONDITION_ALWAYS, EVENT(GaiaRock_HideIdol)},
     {TRIGGER_TABLE_END},

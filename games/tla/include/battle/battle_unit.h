@@ -396,7 +396,8 @@ struct Unit {
   u8 grimReaper; ///< the Grim Reaper's countdown, 7 when cursed
   /// The totals of equipment effects 23 (unleash chance) and 24 that
   /// Unit_Calculate sums.
-  // TBS never reads them back.
+  // Nothing reads them back but ScriptedBattle_SaveUnits and
+  // ScriptedBattle_RestoreUnits, which copy them out and back.
   u8 equipBonus[2];
   /// The extra action: 2 when cast, down one at each turn's end.
   u8 ready;

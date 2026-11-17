@@ -73,7 +73,7 @@ struct FieldEffect {
   /// 1/65536 turns per frame; zeroed by the spawner.
   u16 spin;
   s16 userValue; ///< Actor's; not named by this view
-  s32 countdown; ///< no TLA code names it
+  s32 countdown; ///< no code names it
   /// Called each frame while the effect is live: the spawner sets
   /// FieldEffect_UpdateMotionScaleAndSpin, or options.update.
   void (*update)(union FieldObject *object);

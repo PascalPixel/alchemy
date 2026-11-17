@@ -53,8 +53,7 @@ enum Facing {
 /// A sixteenth of a turn, half the step between two headings.
 enum { FACING_STEP = TRIG_TURN / 16 };
 /// The sixteenth of a turn a facing lies in, as a number from 0 (east) to 15,
-/// which indexes the scenes' sixteen-direction step tables, as The Broken
-/// Seal's.
+/// which indexes the scenes' sixteen-direction step tables.
 #define FACING_INDEX(facing) ((facing) >> 12)
 
 /// The cardinal heading nearest to facing: the shop counters turn a customer

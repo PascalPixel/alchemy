@@ -5,12 +5,11 @@
 /// Game flags, named where their meaning is shown.
 
 /// Set while the party member whose actor id is `actor` (ACTOR_FELIX to
-/// ACTOR_PIERS, 0 to 3 for Isaac's party) is in the party, as The Broken
-/// Seal's FLAG_IN_PARTY.
+/// ACTOR_PIERS, 0 to 3 for Isaac's party) is in the party.
 #define FLAG_IN_PARTY(actor) (actor)
 
-/// Set once the summon tablet of `summon` (enum SummonId) has taught it: a
-/// tablet's flag is its summon's number (gSceneItems).
+/// Set once the summon tablet of `summon` (SUMMON_ZAGAN to SUMMON_IRIS) has
+/// taught it: a tablet's flag is its summon's number (gSceneItems).
 #define FLAG_SUMMON_TABLET(summon) (summon)
 
 /// The first of the 80 Djinn flags, DJINNI_FLINT's.
@@ -208,8 +207,7 @@
 /// The next battle is a link battle.
 #define FLAG_LINK_BATTLE 0x16c
 /// In debug mode, with it set, holding R as an action is planned defeats every
-/// enemy, and R with Select the party (BattleActionRun_Build), as The Broken
-/// Seal's.
+/// enemy, and R with Select the party (BattleActionRun_Build).
 #define FLAG_DEBUG_BATTLE_KEYS 0x16d
 /// The Djinn lesson: its battle and the parts of it the Djinn menu plays.
 #define FLAG_DJINN_LESSON 0x16e
@@ -235,8 +233,7 @@
 /// A linked battle has been arranged in the Battle Arena, with
 /// FLAG_LINK_BATTLE: only the first three party members take part.
 #define FLAG_LINK_BATTLE_ARRANGED 0x172
-/// Holds the field's palette blend still while a menu is open, as The Broken
-/// Seal's.
+/// Holds the field's palette blend still while a menu is open.
 #define FLAG_PALETTE_BLEND_HELD 0x152
 
 /// A scene's own flags, cleared on every ordinary entry (Scene_Arrive):

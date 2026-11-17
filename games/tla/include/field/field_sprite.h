@@ -7,7 +7,7 @@
 /// An animated sprite on the field: its image's sprite attributes, VRAM
 /// cache entry, rotation, its shadow's attribute 2 and its first layer.
 struct FieldSprite {
-  u8 unused[4]; ///< not named by TLA code
+  u8 unused[4]; ///< no code names it
   /// The image's OAM attributes 0 to 2.
   ///@{
   u16 y : 8; ///< screen pixels
@@ -49,7 +49,7 @@ struct FieldSprite {
   u16 partPriority : 2;
   u16 secondPalette : 4;
   ///@}
-  u8 unusedAfterSecondPalette[2]; ///< not named by TLA code
+  u8 unusedAfterSecondPalette[2]; ///< no code names it
   void *record;                   ///< released by SpriteAnimation_ClearFar
 };
 

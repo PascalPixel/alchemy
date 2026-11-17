@@ -280,9 +280,10 @@ enum BattleEnvironment {
   BATTLE_ENVIRONMENT_SNOWFIELD_SEA = 9,
   /// WORLD_MAP_COLLISION_SEA_LAST outside the snowfields, where no rule gives
   /// encounters; a battle there would take the ship deck's backdrop.
-  // XXX (no evidence): what sea WORLD_MAP_COLLISION_SEA_LAST marks; the render
-  // probe cannot sail the ship, and the collision is read from the tile maps
-  // the World Map streams into RAM as it scrolls (WorldMap_GetCollision).
+  // XXX: which waters BATTLE_ENVIRONMENT_SEA_LAST covers; the World Map cells
+  // whose collision is WORLD_MAP_COLLISION_SEA_LAST outside the snowfield
+  // regions, read from its collision tiles (WorldMap_GetCollision), would
+  // settle it.
   BATTLE_ENVIRONMENT_SEA_LAST = 10,
   BATTLE_ENVIRONMENT_BLIZZARD = 11, ///< ResourceId_BlizzardBackdrop
   /// ResourceId_BlizzardBackdrop, for the blizzard's forest.

@@ -148,8 +148,7 @@ struct DescendingArcSprite {
   struct SpriteAnimation *firstEntry; ///< entries[0], its first layer
 };
 
-/// The arc sparks' tiles, a copy of The Broken Seal's
-/// gBattleEffect_ArcSparkTiles (field_effects.s).
+/// The arc sparks' tiles.
 extern const u8 gFieldEffect_ArcSparkTiles[];
 
 void Actor_WaitForTrackEndFar(struct Actor *actor);

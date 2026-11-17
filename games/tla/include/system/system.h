@@ -327,5 +327,9 @@ extern u8 gSaveBuffer[];
 /// everything.
 #define OAM_DEPTH_WINDOW 240
 #define OAM_DEPTH_FRONT 255
+/// The depth slot the field Psynergy's effect sprites take: in front of every
+/// actor, whose slots are clamped below OAM_DEPTH_WINDOW, and among the window
+/// sprites' slots.
+#define EFFECT_SPRITE_FRONT_DEPTH 250
 
 #endif

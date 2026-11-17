@@ -4,8 +4,7 @@
 #include "sprite_ids.h"
 
 /// @file
-/// Djinn numbers, named from the English release, as The Broken Seal's
-/// djinn_ids.h names its own.
+/// Djinn numbers, named from the English release.
 
 #define DJINN_PER_ELEMENT 20
 /// The first of each element's two spares, after its eighteen Djinn (a

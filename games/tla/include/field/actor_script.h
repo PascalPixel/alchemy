@@ -6,9 +6,6 @@
 /// gActorScript_CommandTable runs them. Each macro expands to the words of
 /// one command. The script stores positions and speeds in 16.16 fixed point;
 /// its macros take plain pixels and decimal speeds and convert them.
-// The Lost Age numbers its commands as The Broken Seal does, with
-// SC_POSITION_ORIGIN added before SC_MOVE, the field's ways of moving after
-// SC_KEYS, SC_SE_IN_VIEW after SC_SE and SC_MOVE_XZ last.
 
 #include "fixed_math.h"
 #include "types.h"

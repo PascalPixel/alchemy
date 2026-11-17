@@ -8,15 +8,8 @@
 /// and the rest), whose declarations it holds. An overlay's import stub takes
 /// the name of the routine it reaches, except the few the overlays share under
 /// another (Import_ActorCreate, Import_EventSetExitRequest).
-///
-/// It is a habit of the whole game written once, as declarations and inlines,
-/// not a compiler-steering device. An inline's parameters are its own, so where
-/// an event calls a routine again with the same constant, the constant is built
-/// again for each call rather than kept in a register, as the ROM shows: in the
-/// scene overlays 482 such calls build their constant again and none shares
-/// one (in The Broken Seal, 301 and 11). event_inline.h's inlines are written
-/// over it. An event reads `Actor_FaceDirection(4, FACING_NORTH, 0);
-/// FieldEvent_Wait(20);`.
+/// event_inline.h's inlines are written over them. An event reads
+/// `Actor_FaceDirection(4, FACING_NORTH, 0); FieldEvent_Wait(20);`.
 
 #include "field/emote.h"
 #include "field/speaker.h"

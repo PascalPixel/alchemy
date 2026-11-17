@@ -386,8 +386,8 @@ enum KeyMask {
 #define REG_IE (*(volatile u16 *)0x04000200) ///< the interrupts enabled
 #define REG_IF (*(volatile u16 *)0x04000202) ///< pending; a 1 written clears
 #define REG_WAITCNT (*(volatile u16 *)0x04000204) ///< cartridge wait states
-/// WAITCNT's slowest SRAM wait (bits 1 and 0), 8 cycles, pret's
-/// WAITCNT_SRAM_8: the wait the flash routines read the chip with;
+/// WAITCNT's slowest SRAM wait (bits 1 and 0), 8 cycles: the wait the flash
+/// routines read the chip with;
 /// programming and erasing use the chip's wait[0], then restore it.
 #define WAITCNT_SRAM_SLOWEST 0x0003
 /// WAITCNT's SRAM wait bits.
@@ -403,7 +403,7 @@ enum KeyMask {
 /// the power-on set-up.
 #define WAITCNT_GAME 0x4014
 
-// From The Broken Seal's io_reg.h: the same registers, bits and sizes.
+// Display status bits and the screen's size.
 #define DISPSTAT_VBLANK_INTR 0x0008 ///< at the start of each VBlank
 #define DISPSTAT_HBLANK_INTR 0x0010 ///< at the end of each line
 #define DISPSTAT_VCOUNT_INTR 0x0020 ///< on the DISPSTAT_VCOUNT_LINE line

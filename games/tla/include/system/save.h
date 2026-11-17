@@ -86,7 +86,7 @@ struct SaveSectorHeader {
 /// bytes before this game's SAVE_IMAGE_UNITS: the Clear scene copies an image
 /// it receives by link from the main routine work on that much further on, its
 /// units landing on this game's.
-#define GOLDEN_SUN_SAVE_IMAGE_UNITS 1280
+#define BROKEN_SEAL_SAVE_IMAGE_UNITS 1280
 
 STATIC_ASSERT(sizeof(struct SaveSummary) == 64);
 STATIC_ASSERT(offsetof(struct SaveWorkspace, counter) == 30);

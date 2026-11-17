@@ -167,13 +167,13 @@ STATIC_ASSERT(offsetof(struct Sprite, scale) == 12);
 STATIC_ASSERT(offsetof(struct Sprite, rotation) == 18);
 STATIC_ASSERT(offsetof(struct Sprite, width) == 20);
 STATIC_ASSERT(offsetof(struct Sprite, shadow) == 28);
+STATIC_ASSERT(sizeof(struct Sprite) == 56);
+STATIC_ASSERT(offsetof(struct Sprite, entries) == 40);
 
 /// A sprite's shadow, 16 by 8 pixels: its half width and half height, both
 /// doubled when the sprite is drawn double-size.
 #define SHADOW_HALF_WIDTH 8
 #define SHADOW_HALF_HEIGHT 4
-STATIC_ASSERT(sizeof(struct Sprite) == 56);
-STATIC_ASSERT(offsetof(struct Sprite, entries) == 40);
 
 /// An actor's sprite (struct Sprite) as the code that sets its image and shadow
 /// priorities reads it (the actors' freeze and placement, an actor taking the

@@ -3,6 +3,7 @@
 
 #include "fixed_math.h"
 #include "types.h"
+#include "game/game.h"
 
 /// @file
 /// The work of the Mars Lighthouse rooms' flame throwers and of the fireballs
@@ -76,9 +77,8 @@ enum {
   STEP_TRIGGER_FIREBALL_HIT = STEP_TRIGGER_FLAME_HIT + 2
 };
 
-extern u8 gInventorySnapshot[];
-
 /// The flame-hit work, in the inventory snapshot's spare space.
-#define RIDE_WORK ((struct FlameHitWork *)(gInventorySnapshot + 392))
+#define RIDE_WORK                                                              \
+  ((struct FlameHitWork *)(gInventorySnapshot + INVENTORY_SNAPSHOT_SPARE))
 
 #endif

@@ -29,16 +29,15 @@ struct WorldMapBlocks {
 struct Actor *Actor_FindAtCell(s32 *position, s32 check_y);
 
 /// 32 KB of EWRAM holding background tiles, such as the world map's char blocks
-/// 2 and 3, as The Broken Seal's.
+/// 2 and 3.
 extern u8 gBgTileBuffer[];
 /// The world map area's four tile sets, decoded one after another into
-/// gBgTileBuffer and copied to the two halves of BG char blocks 2 and 3, as
-/// The Broken Seal's.
+/// gBgTileBuffer and copied to the two halves of BG char blocks 2 and 3.
 #define WORLD_MAP_TILE_SET_BYTES 8192
 #define WORLD_MAP_TILE_SET(n)                                                  \
   (Ram_BgTileBuffer + (n) * WORLD_MAP_TILE_SET_BYTES)
 /// The map's shape table, 16 KB of EWRAM: 4-byte entries that a map cell's
-/// shape indexes, as The Broken Seal's.
+/// shape indexes.
 extern u8 gMapGridShapes[];
 /// The shape a scene gives the cells it marks, rewriting the shape's entry with
 /// their height in its second byte: Apojii's cell markers and Aqua Rock's

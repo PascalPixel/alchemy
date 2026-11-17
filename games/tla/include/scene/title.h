@@ -2,8 +2,7 @@
 #define ALCHEMY_TITLE_H
 
 /// @file
-/// The Golden Sun logo the title and the Clear scene show, as The Broken
-/// Seal's scene/title.h places it.
+/// The Golden Sun logo the title and the Clear scene show.
 
 #include "system/io_reg.h"
 

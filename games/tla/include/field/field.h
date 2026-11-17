@@ -340,8 +340,7 @@ enum TerrainKind {
   TERRAIN_BUMP = 99
 };
 
-/// What MapGrid_CheckCollision says of a step to a position, as The Broken
-/// Seal's.
+/// What MapGrid_CheckCollision says of a step to a position.
 enum Collision {
   COLLISION_TOO_LOW = -1,  ///< the ground there is more than 12 pixels lower
   COLLISION_NONE = 0,      ///< the actor can step there

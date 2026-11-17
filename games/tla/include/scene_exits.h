@@ -25,6 +25,9 @@ enum {
 
 /// SceneId_Clear's entrances.
 enum {
+  /// From the title's intro, to the file menu; the Battle Arena's way out
+  /// comes back here too.
+  CLEAR_FROM_TITLE = 1,
   /// From the end of the epilogue, which offers to save the cleared game.
   CLEAR_FROM_EPILOGUE = 2,
 };

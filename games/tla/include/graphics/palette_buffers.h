@@ -100,8 +100,9 @@ enum PaletteTint {
   PALETTE_TINT_SEPIA,
   /// Half R + 10, two thirds G + 8, B - 7; black stays black.
   PALETTE_TINT_WARM,
-  /// Each channel held to a narrow range (R 8 to 29, G 14 to 25, B 14 to 27),
-  /// then G and B + 2; the first colour stays as it is.
+  /// Each channel held to a narrow range, then G and B + 2: the field's fade
+  /// holds R 8 to 29, G 14 to 25, B 14 to 27 and leaves the first colour; the
+  /// title's (TitlePaletteFade) R 10 to 28, G 16 to 24, B 16 to 26.
   PALETTE_TINT_MUTED,
   PALETTE_TINT_PALE, ///< half of each channel, plus their mean
   /// R plus an eighth of G and of B; G and B two thirds.

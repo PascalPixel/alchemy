@@ -374,9 +374,9 @@ enum SpriteId {
   SPRITE_SMALL_FLAME,
   SPRITE_BLAZE_FLAME,
   SPRITE_BLAZE_FLICKER,
-  /// A pot of blue water boiling over red embers, steam rising, and the embers
-  /// alone: the Kandorean Temple's pot and Kibombo's signal fire.
-  SPRITE_BOILING_POT,
+  /// Kibombo's signal fire: a stone fire pit glowing blue over red embers,
+  /// puffs of smoke rising, and the embers alone.
+  SPRITE_SIGNAL_FIRE,
   SPRITE_PLANK_BRIDGE,
   SPRITE_LOG_PAIR,
   SPRITE_WOODEN_SIGN,
@@ -387,9 +387,9 @@ enum SpriteId {
   SPRITE_CARVED_FACE,
   SPRITE_WIND_STATUE,
   SPRITE_MOAI = 380,
-  /// The water a Moai shows once Douse fills it, added to its sprite
-  /// (AquaRockInside_SetMoaiFace).
-  SPRITE_MOAI_FACE,
+  /// The water a Moai pours from its mouth once Douse fills it, a pool and a
+  /// stream added to its sprite (AquaRockInside_SetMoaiFace).
+  SPRITE_MOAI_WATER,
   SPRITE_TWISTER_ROCK,
   SPRITE_WATER_DROP_LARGE,
   SPRITE_ALTAR = 385,

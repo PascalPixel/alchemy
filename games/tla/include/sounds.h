@@ -374,6 +374,8 @@ enum SoundId {
   SE_FLAME_FLARE,
   SE_203,
   SE_DUST_PUFF,
+  /// SE_AMBIENT_STREAM ten semitones higher on a noise voice and not held;
+  /// nothing plays it.
   SE_205,
   SE_CURSE_FALL,
   SE_RUSH,

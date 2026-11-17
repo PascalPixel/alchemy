@@ -4,7 +4,7 @@
 /// (Kibombo_OpenWeaponShop, Kibombo_OpenInn), and the grounds before the
 /// statue. On the sacred night Akafubu offers the Black Orb to the Great
 /// Gabomba (Kibombo_CeremonyStarts to Kibombo_CeremonyEnds), where Piers, come
-/// to take his orb back, joins the party (Kibombo_PiersThanksParty); the way to
+/// to take his orb back, joins the party (Kibombo_PiersJoinsParty); the way to
 /// the statue past the dead end is a vent Scoop uncovers
 /// (Kibombo_DeadEndByTheStatue). The villagers' talk changes once Akafubu is
 /// the witch doctor (Kibombo_TalkPathToPeace).
@@ -183,7 +183,7 @@ struct Actor *gKibombo_BlackCrystal BSS_DATA;
 /// Set as the party climbs down the ladder from Akafubu's home: he stands
 /// apart, turns to whoever talks to him and speaks, as his father does, of
 /// the days after the ceremony.
-#define FLAG_KIBOMBO_LEFT_AKAFUBUS_HOME 0x8ee
+#define FLAG_KIBOMBO_LEFT_HOME_OF_AKAFUBU 0x8ee
 /// For this visit: each of the four marks uncovered, and the one Scoop is
 /// uncovering.
 #define FLAG_FIRST_MARK_UNCOVERED FLAG_SCENE_TEMP_04
@@ -244,14 +244,14 @@ enum KibomboStatueGroundsActorId {
 };
 
 /// The village by day and on the ceremony night: after the puddle, the two
-/// candlesticks by a house's door, the flame (by day the cooking fire's, at
+/// torches by a house's door, the flame (by day the cooking fire's, at
 /// night burning on the totem pole in the square) and the rope's two posts. By
 /// day a woman remarks on the warriors, two warriors keep the gate and the
 /// signal fire burns; at night villagers crowd the square, an unseen block
-/// stands at a house's door and six candlesticks burn.
+/// stands at a house's door and six torches burn.
 enum {
-  ACTOR_CANDLESTICK_A = 9,
-  ACTOR_CANDLESTICK_B,
+  ACTOR_TORCH_A = 9,
+  ACTOR_TORCH_B,
   ACTOR_FLAME,
   ACTOR_ROPE_POST_A,
   ACTOR_ROPE_POST_B,
@@ -260,13 +260,13 @@ enum {
   ACTOR_GATE_GUARD_A = 22,
   ACTOR_GATE_GUARD_B,
   ACTOR_SIGNAL_FIRE = 25,
-  ACTOR_DOORWAY_BLOCK = 29,
-  ACTOR_LIT_CANDLESTICK_A,
-  ACTOR_LIT_CANDLESTICK_B,
-  ACTOR_LIT_CANDLESTICK_C,
-  ACTOR_LIT_CANDLESTICK_D,
-  ACTOR_LIT_CANDLESTICK_E,
-  ACTOR_LIT_CANDLESTICK_F
+  ACTOR_DOOR_BLOCK = 29,
+  ACTOR_LIT_TORCH_A,
+  ACTOR_LIT_TORCH_B,
+  ACTOR_LIT_TORCH_C,
+  ACTOR_LIT_TORCH_D,
+  ACTOR_LIT_TORCH_E,
+  ACTOR_LIT_TORCH_F
 };
 
 /// The houses, inn and shops (SceneId_KibomboHouses).
@@ -275,7 +275,7 @@ enum {
   /// Great Gabomba's magic! You'll see!"
   ACTOR_AKAFUBU_AT_HOME = 8,
   /// "My son has been so kind and compassionate since the ceremony."
-  ACTOR_AKAFUBUS_FATHER = 9,
+  ACTOR_FATHER_OF_AKAFUBU = 9,
   ACTOR_KRADEN_AT_HOME = 10,
   /// "Are you going to head to western Gondowan?"
   ACTOR_WOMAN_ASKING_ABOUT_THE_WEST = 12,
@@ -284,7 +284,7 @@ enum {
   ACTOR_ARMOR_SHOPKEEPER = 21,
   ACTOR_ITEM_SHOPKEEPER = 22,
   ACTOR_INNKEEPER = 23,
-  ACTOR_HEALER = 25,
+  ACTOR_PRIEST = 25,
   /// Two unseen blocks in the inn's back doorway, hidden as the room opens
   /// (Kibombo_HideInnBlocks).
   ACTOR_INN_FIRST_BLOCK = 26,
@@ -296,18 +296,18 @@ enum {
 enum { ACTOR_SIGNAL_FIRE_KEEPER = 24 };
 
 /// The village on the ceremony night: in the crowd, those who move or leave
-/// once Akafubu has been offered help, and the healer who talks of the foreign
+/// once Akafubu has been offered help, and the priest who talks of the foreign
 /// ceremony.
 enum {
   ACTOR_GIRL_WHO_HOPES = 21,
   ACTOR_WOMAN_NO_PUSHING = 26,
   ACTOR_AFRAID_MAN,
   ACTOR_MAN_WHO_KNEW_OEIA,
-  ACTOR_HEALER_ON_THE_CEREMONY = 36
+  ACTOR_PRIEST_ON_THE_CEREMONY = 36
 };
 
 /// The village on the ceremony night: where the party starts again, before the
-/// healer, after a defeat (gParty_PairResolveRules).
+/// priest, after a defeat (gParty_PairResolveRules).
 enum { ENTRANCE_CEREMONY_AFTER_DEFEAT = 19 };
 
 struct Actor;
@@ -403,7 +403,7 @@ const struct ActorPlacement *Scene_GetActorPlacements(void) {
   if (scene == SCENE_KIBOMBO_STATUE_GROUNDS_CEREMONY)
     return gKibombo_StatueGroundsCeremonyActorPlacements;
   if (scene == SCENE_KIBOMBO_HOUSES) {
-    if (GameFlag_Get(FLAG_KIBOMBO_LEFT_AKAFUBUS_HOME))
+    if (GameFlag_Get(FLAG_KIBOMBO_LEFT_HOME_OF_AKAFUBU))
       gKibombo_HousesActorPlacements[0].talkFacing = TALK_FACING_PARTY;
     return gKibombo_HousesActorPlacements;
   }
@@ -546,32 +546,32 @@ void Kibombo_OpenInn(void) {
   }
 }
 
-/// Talking to the healer: across the counter, the Sanctum; from elsewhere, a
+/// Talking to the priest: across the counter, the Sanctum; from elsewhere, a
 /// word about the peace the ceremony brought.
 void Kibombo_OpenSanctum(void) {
   if (Leader_IsFacingNorth()) {
-    Sanctum_Run(ACTOR_HEALER);
+    Sanctum_Run(ACTOR_PRIEST);
   } else {
     Event_Start();
     Event_ResolvePendingActions(0);
     Event_SetMessageId((s32)MsgKibomboSPeace);
     // "Kibombo's peace is restored now that the ceremony has reached its..."
-    Event_ShowMessageAndWait(ACTOR_HEALER, 0);
+    Event_ShowMessageAndWait(ACTOR_PRIEST, 0);
     Event_End();
   }
 }
 
-/// The healer on the ceremony night: the first time, she muses on foreign
+/// The priest on the ceremony night: the first time, she muses on foreign
 /// ceremonies; then she turns to the party and runs her Sanctum.
 void Kibombo_TalkForeignCeremony(void) {
   if (Event_GetFlag(FLAG_HEARD_OF_THE_FOREIGN_CEREMONY)) {
     Event_Start();
     Event_ResolvePendingActions(0);
-    Actor_FaceActorById(ACTOR_HEALER_ON_THE_CEREMONY,
+    Actor_FaceActorById(ACTOR_PRIEST_ON_THE_CEREMONY,
                         gMainRoutineWork.leaderActorId, 0);
     Event_Wait(10);
-    Sanctum_Run(ACTOR_HEALER_ON_THE_CEREMONY);
-    Actor_FaceDirection(ACTOR_HEALER_ON_THE_CEREMONY, FACING_NORTH_NORTHWEST,
+    Sanctum_Run(ACTOR_PRIEST_ON_THE_CEREMONY);
+    Actor_FaceDirection(ACTOR_PRIEST_ON_THE_CEREMONY, FACING_NORTH_NORTHWEST,
                         0);
     Event_End();
   } else {
@@ -579,14 +579,14 @@ void Kibombo_TalkForeignCeremony(void) {
     Event_ResolvePendingActions(0);
     Event_SetMessageId((s32)MsgOhOhMy);
     // "Oh... Oh my... I've heard of ceremonies like these... Foreign..."
-    Event_ShowMessageThenWait(ACTOR_HEALER_ON_THE_CEREMONY, 0, 40);
+    Event_ShowMessageThenWait(ACTOR_PRIEST_ON_THE_CEREMONY, 0, 40);
     // "Hmm?"
-    Event_ShowMessageAndWait(ACTOR_HEALER_ON_THE_CEREMONY, 0);
-    Actor_FaceActorById(ACTOR_HEALER_ON_THE_CEREMONY,
+    Event_ShowMessageAndWait(ACTOR_PRIEST_ON_THE_CEREMONY, 0);
+    Actor_FaceActorById(ACTOR_PRIEST_ON_THE_CEREMONY,
                         gMainRoutineWork.leaderActorId, 0);
     Event_Wait(10);
-    Sanctum_Run(ACTOR_HEALER_ON_THE_CEREMONY);
-    Actor_FaceDirection(ACTOR_HEALER_ON_THE_CEREMONY, FACING_NORTH_NORTHWEST,
+    Sanctum_Run(ACTOR_PRIEST_ON_THE_CEREMONY);
+    Actor_FaceDirection(ACTOR_PRIEST_ON_THE_CEREMONY, FACING_NORTH_NORTHWEST,
                         0);
     GameFlag_Set(FLAG_HEARD_OF_THE_FOREIGN_CEREMONY);
     Event_End();
@@ -1115,7 +1115,7 @@ void Kibombo_PiersJoinsParty(void) {
   // "?!?"
   Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | ACTOR_PIERS, 0);
   FieldCamera_MoveTo(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0);
-  ((struct Actor *)((s32)FieldCamera_GetActor()))->motionFlags = 0;
+  FieldCamera_GetActor()->motionFlags = 0;
   FieldCamera_SetSpeed(3.2);
   FieldCamera_MoveTo(96, CAMERA_KEEP, 340, 1);
   FieldCamera_WaitForArrival();
@@ -1472,7 +1472,7 @@ void Kibombo_DeadEndByTheStatue(void) {
   // "It's a dead end..."
   Event_ShowMessageAndWait(SPEAKER_WINDOW_BELOW | ACTOR_PIERS, 0);
   FieldCamera_SetSpeed(2.4);
-  ((struct Actor *)((s32)FieldCamera_GetActor()))->motionFlags = done;
+  FieldCamera_GetActor()->motionFlags = done;
   FieldCamera_MoveTo(200, CAMERA_KEEP, 180, 1);
   FieldCamera_WaitForArrival();
   Event_Wait(10);
@@ -1862,19 +1862,19 @@ void Kibombo_CreateBlackCrystal(void) {
   }
 }
 
-/// Unused: with the leader up high, takes the doorway's unseen block away and
-/// draws the first lit candlestick in front; lower down, puts the block back
-/// at the house's door and the candlestick behind.
-UNUSED void Kibombo_PlaceDoorwayBlockByHeight(void) {
+/// Unused: with the leader up high, takes the door's unseen block away and
+/// draws the first lit torch in front; lower down, puts the block back at the
+/// house's door and the torch behind.
+UNUSED void Kibombo_PlaceDoorBlockByHeight(void) {
   struct Actor *leader = Actor_GetById(gMainRoutineWork.leaderActorId);
 
   if (leader->y.fixed > toFIXED(16)) {
-    Actor_SetPosition(ACTOR_DOORWAY_BLOCK, 0, 0);
-    Actor_SetSpritePriority(ACTOR_LIT_CANDLESTICK_A, 2);
+    Actor_SetPosition(ACTOR_DOOR_BLOCK, 0, 0);
+    Actor_SetSpritePriority(ACTOR_LIT_TORCH_A, 2);
   } else {
-    FieldActor_SetPositionAndResetMotion(Actor_GetById(ACTOR_DOORWAY_BLOCK),
+    FieldActor_SetPositionAndResetMotion(Actor_GetById(ACTOR_DOOR_BLOCK),
                                          toFIXED(120), 0, toFIXED(168));
-    Actor_SetSpritePriority(ACTOR_LIT_CANDLESTICK_A, 3);
+    Actor_SetSpritePriority(ACTOR_LIT_TORCH_A, 3);
   }
 }
 
@@ -3127,13 +3127,13 @@ void Kibombo_CeremonyEnds(void) {
   Actor_FaceDirection(ACTOR_KRADEN_AT_HOME, FACING_NORTH_NORTHWEST, 20);
   Actor_FaceDirection(ACTOR_KRADEN_AT_HOME, FACING_NORTH_NORTHEAST, 20);
   Actor_SetAnimationAndWait(ACTOR_KRADEN_AT_HOME, ANIM_NOD);
-  Actor_SetAnimationById(ACTOR_AKAFUBUS_FATHER, ANIM_NOD);
+  Actor_SetAnimationById(ACTOR_FATHER_OF_AKAFUBU, ANIM_NOD);
   Actor_SetAnimationAndWait(ACTOR_AKAFUBU_AT_HOME, ANIM_NOD);
   Actor_FaceDirection(ACTOR_KRADEN_AT_HOME, FACING_NORTH_NORTHWEST, 20);
   Actor_FaceDirection(ACTOR_KRADEN_AT_HOME, FACING_NORTH_NORTHEAST, 20);
   Actor_GetById(ACTOR_KRADEN_AT_HOME)->velocityY = toFIXED(3);
   Event_Wait(40);
-  Actor_SetAnimationById(ACTOR_AKAFUBUS_FATHER, ANIM_NOD);
+  Actor_SetAnimationById(ACTOR_FATHER_OF_AKAFUBU, ANIM_NOD);
   Actor_SetAnimationAndWait(ACTOR_AKAFUBU_AT_HOME, ANIM_NOD);
   PaletteFade_SetTarget(PALETTE_TINT_NONE, 0);
   PaletteFade_StartInterpolation(40);
@@ -3142,9 +3142,9 @@ void Kibombo_CeremonyEnds(void) {
   Event_SetMessageId((s32)MsgRightWellI);
   // "Right... Well, I guess that's that!"
   Event_ShowMessageAndWait(ACTOR_KRADEN_AT_HOME, 0);
-  Actor_SetAnimationAndWait(ACTOR_AKAFUBUS_FATHER, ANIM_NOD);
+  Actor_SetAnimationAndWait(ACTOR_FATHER_OF_AKAFUBU, ANIM_NOD);
   // "You are virtuous men, coming here to deliver this message. My son..."
-  Event_ShowMessageAndWait(ACTOR_AKAFUBUS_FATHER, 0);
+  Event_ShowMessageAndWait(ACTOR_FATHER_OF_AKAFUBU, 0);
   Actor_FaceDirectionById(ACTOR_KRADEN_AT_HOME, FACING_EAST, 0);
   Actor_FaceDirection(gMainRoutineWork.leaderActorId, FACING_WEST, 40);
   Actor_FaceDirection(ACTOR_KRADEN_AT_HOME, FACING_NORTH_NORTHEAST, 0);
@@ -3153,13 +3153,13 @@ void Kibombo_CeremonyEnds(void) {
   Actor_SetAnimationAndWait(gMainRoutineWork.leaderActorId, ANIM_NOD);
   Actor_Jump(ACTOR_AKAFUBU_AT_HOME, 4, 10);
   Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | ACTOR_AKAFUBU_AT_HOME, 0);
-  Actor_FaceDirectionAndRefreshById(ACTOR_AKAFUBUS_FATHER, FACING_EAST);
+  Actor_FaceDirectionAndRefreshById(ACTOR_FATHER_OF_AKAFUBU, FACING_EAST);
   Actor_ShowEmoteById(ACTOR_AKAFUBU_AT_HOME, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN,
                       20);
   Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | ACTOR_AKAFUBU_AT_HOME, 0);
-  Actor_ShowEmoteById(ACTOR_AKAFUBUS_FATHER, EMOTE_IN_FRONT | EMOTE_EXCLAMATION,
-                      20);
-  Event_ShowMessageAndWait(ACTOR_AKAFUBUS_FATHER, 0);
+  Actor_ShowEmoteById(ACTOR_FATHER_OF_AKAFUBU,
+                      EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 20);
+  Event_ShowMessageAndWait(ACTOR_FATHER_OF_AKAFUBU, 0);
   Actor_FaceDirectionAndWait(ACTOR_AKAFUBU_AT_HOME, FACING_WEST);
   Actor_SetAnimationById(ACTOR_AKAFUBU_AT_HOME, ANIM_SHAKE_HEAD);
   Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | ACTOR_AKAFUBU_AT_HOME, 0);
@@ -3167,18 +3167,18 @@ void Kibombo_CeremonyEnds(void) {
   Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | ACTOR_AKAFUBU_AT_HOME, 0);
   Actor_SetAnimationById(ACTOR_AKAFUBU_AT_HOME, ANIM_SHAKE_HEAD);
   Event_ShowMessageAndWait(SPEAKER_PORTRAIT_RIGHT | ACTOR_AKAFUBU_AT_HOME, 0);
-  Actor_FaceDirection(ACTOR_AKAFUBUS_FATHER, FACING_NORTH_NORTHEAST, 0);
+  Actor_FaceDirection(ACTOR_FATHER_OF_AKAFUBU, FACING_NORTH_NORTHEAST, 0);
   Actor_SetSpeed(ACTOR_AKAFUBU_AT_HOME, 1.6);
   Actor_WalkToAndWait(ACTOR_AKAFUBU_AT_HOME, 364, 576);
   Actor_FaceDirection(ACTOR_AKAFUBU_AT_HOME, FACING_NORTH_NORTHWEST, 0);
-  Actor_ShowEmoteById(ACTOR_AKAFUBUS_FATHER, EMOTE_IN_FRONT | EMOTE_ELLIPSIS,
+  Actor_ShowEmoteById(ACTOR_FATHER_OF_AKAFUBU, EMOTE_IN_FRONT | EMOTE_ELLIPSIS,
                       80);
-  Event_ShowMessageAndWait(ACTOR_AKAFUBUS_FATHER, 0);
-  Actor_FaceDirectionAndWait(ACTOR_AKAFUBUS_FATHER, FACING_SOUTH_SOUTHEAST);
-  Event_ShowMessageAndWait(ACTOR_AKAFUBUS_FATHER, 0);
-  Actor_SetAnimationById(ACTOR_AKAFUBUS_FATHER, ANIM_SHAKE_HEAD);
-  Event_ShowMessageAndWait(ACTOR_AKAFUBUS_FATHER, 0);
-  Event_ShowMessageAndWait(ACTOR_AKAFUBUS_FATHER, 0);
+  Event_ShowMessageAndWait(ACTOR_FATHER_OF_AKAFUBU, 0);
+  Actor_FaceDirectionAndWait(ACTOR_FATHER_OF_AKAFUBU, FACING_SOUTH_SOUTHEAST);
+  Event_ShowMessageAndWait(ACTOR_FATHER_OF_AKAFUBU, 0);
+  Actor_SetAnimationById(ACTOR_FATHER_OF_AKAFUBU, ANIM_SHAKE_HEAD);
+  Event_ShowMessageAndWait(ACTOR_FATHER_OF_AKAFUBU, 0);
+  Event_ShowMessageAndWait(ACTOR_FATHER_OF_AKAFUBU, 0);
   Actor_SetAnimationAndWait(ACTOR_KRADEN_AT_HOME, ANIM_NOD);
   Event_ShowMessageAndWait(ACTOR_KRADEN_AT_HOME, 0);
   Actor_FaceDirectionAndRefreshById(ACTOR_KRADEN_AT_HOME, FACING_EAST);
@@ -3227,8 +3227,8 @@ s32 Scene_PrepareMap(void) { return 0; }
 
 /// The village: the frozen puddles, the rope and the roofs.
 void Kibombo_InitializeVillage(void) {
-  Actor_SetSpriteFlags(Actor_GetById(ACTOR_CANDLESTICK_A), 0);
-  Actor_SetSpriteFlags(Actor_GetById(ACTOR_CANDLESTICK_B), 0);
+  Actor_SetSpriteFlags(Actor_GetById(ACTOR_TORCH_A), 0);
+  Actor_SetSpriteFlags(Actor_GetById(ACTOR_TORCH_B), 0);
   FieldEffect_StartBlankOverlay(0);
   FlagBlock_PlaceAll(gKibombo_FrozenPuddle);
   Actor_SetSpritePriority(ACTOR_PUDDLE, 3);
@@ -3251,13 +3251,11 @@ void Kibombo_InitializeVillageByDay(void) {
   Kibombo_LightSignalFire();
 }
 
-// Kibombo's setup.
-
 struct Unit *Unit_Get(u32 unitId);
 
 /// The village on the ceremony night: the signal fire's flame is raised, and
 /// arriving by entrance 19 with Piers in the party, he is healed and stays
-/// behind. The fires' colours are kept for their flicker, the candlesticks lit
+/// behind. The fires' colours are kept for their flicker, the torches lit
 /// and, once Akafubu has offered his help, the ceremony's actors moved; the
 /// screen fades in with the village fires flickering.
 void Kibombo_InitializeCeremony(void) {
@@ -3293,18 +3291,18 @@ void Kibombo_InitializeCeremony(void) {
   gKibombo_FireColors[2] = *(u16 *)&BG_PLTT_COLOR(6, 7);
   gKibombo_FireColors[3] = *(u16 *)&BG_PLTT_COLOR(7, 7);
   Kibombo_InitializeVillage();
-  Actor_SetSpriteFlags(Actor_GetById(ACTOR_LIT_CANDLESTICK_A), 0);
-  Actor_SetSpriteFlags(Actor_GetById(ACTOR_LIT_CANDLESTICK_B), 0);
-  Actor_SetSpriteFlags(Actor_GetById(ACTOR_LIT_CANDLESTICK_C), 0);
-  Actor_SetSpriteFlags(Actor_GetById(ACTOR_LIT_CANDLESTICK_D), 0);
-  Actor_SetSpriteFlags(Actor_GetById(ACTOR_LIT_CANDLESTICK_E), 0);
-  Actor_SetSpriteFlags(Actor_GetById(ACTOR_LIT_CANDLESTICK_F), 0);
+  Actor_SetSpriteFlags(Actor_GetById(ACTOR_LIT_TORCH_A), 0);
+  Actor_SetSpriteFlags(Actor_GetById(ACTOR_LIT_TORCH_B), 0);
+  Actor_SetSpriteFlags(Actor_GetById(ACTOR_LIT_TORCH_C), 0);
+  Actor_SetSpriteFlags(Actor_GetById(ACTOR_LIT_TORCH_D), 0);
+  Actor_SetSpriteFlags(Actor_GetById(ACTOR_LIT_TORCH_E), 0);
+  Actor_SetSpriteFlags(Actor_GetById(ACTOR_LIT_TORCH_F), 0);
   GameFlag_Set(FLAG_KIBOMBO_DOORS_SHUT);
-  actor = Actor_GetById(ACTOR_DOORWAY_BLOCK);
+  actor = Actor_GetById(ACTOR_DOOR_BLOCK);
   actor->motionFlags = 0;
   actor->y.fixed = 0;
-  Actor_Hide(ACTOR_DOORWAY_BLOCK);
-  Actor_SetSpritePriority(ACTOR_LIT_CANDLESTICK_A, 3);
+  Actor_Hide(ACTOR_DOOR_BLOCK);
+  Actor_SetSpritePriority(ACTOR_LIT_TORCH_A, 3);
   if (GameFlag_Get(FLAG_AKAFUBU_OFFERED_HELP)) {
     Actor_SetPosition(ACTOR_WOMAN_NO_PUSHING, 0, 0);
     Actor_SetPosition(ACTOR_AFRAID_MAN, 0, 0);
@@ -3327,8 +3325,8 @@ void Kibombo_CreateBlackCrystal(void);
 /// The grounds before the statue: the Black Crystal, the marks uncovered, the
 /// vent and the block Moved for Piers.
 void Kibombo_InitializeStatueGrounds(void) {
-  Actor_SetSpriteFlags(Actor_GetById(ACTOR_CANDLESTICK_A), 0);
-  Actor_SetSpriteFlags(Actor_GetById(ACTOR_CANDLESTICK_B), 0);
+  Actor_SetSpriteFlags(Actor_GetById(ACTOR_TORCH_A), 0);
+  Actor_SetSpriteFlags(Actor_GetById(ACTOR_TORCH_B), 0);
   if (!GameFlag_Get(FLAG_GABOMBA_RESPONDED))
     Kibombo_CreateBlackCrystal();
   Kibombo_HideGroundsBlocks();
@@ -3548,7 +3546,7 @@ void Kibombo_InitializeHouses(void) {
       KIBOMBO_HOUSES_FROM_GABOMBA_STATUE_CHAMBER_WITCH_DOCTOR) {
     if (GameFlag_Get(FLAG_GABOMBA_CEREMONY_ENDED)) {
       Actor_SetPosition(ACTOR_KRADEN_AT_HOME, 0, 0);
-      if (GameFlag_Get(FLAG_KIBOMBO_LEFT_AKAFUBUS_HOME)) {
+      if (GameFlag_Get(FLAG_KIBOMBO_LEFT_HOME_OF_AKAFUBU)) {
         Actor_SetPositionAndFacing(ACTOR_AKAFUBU_AT_HOME, toFIXED(434),
                                    toFIXED(634), FACING_NORTH_NORTHWEST);
       } else {
@@ -3575,7 +3573,7 @@ void Kibombo_InitializeHouses(void) {
   actor->z.fixed += toFIXED(8);
   Actor_SetAnimationById(ACTOR_MAN_WITH_ACHING_BACK, 6);
   if (gMainRoutineWork.entrance == ENTRANCE_HOUSES_FROM_AKAFUBUS_LADDER)
-    GameFlag_Set(FLAG_KIBOMBO_LEFT_AKAFUBUS_HOME);
+    GameFlag_Set(FLAG_KIBOMBO_LEFT_HOME_OF_AKAFUBU);
 }
 
 /// A jump spot's step: the leader jumps forward.
@@ -4202,9 +4200,9 @@ struct Trigger gKibombo_CeremonyTriggers[] = {
      MSGNO(MsgIFeelSo)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 24, CONDITION_ALWAYS,
      MSGNO(MsgIReallyWonder)},
-    {TRIGGER_TALK, ACTOR_HEALER_ON_THE_CEREMONY, CONDITION_ALWAYS,
+    {TRIGGER_TALK, ACTOR_PRIEST_ON_THE_CEREMONY, CONDITION_ALWAYS,
      EVENT(Kibombo_TalkForeignCeremony)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_HEALER_ON_THE_CEREMONY,
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_PRIEST_ON_THE_CEREMONY,
      CONDITION_ALWAYS, MSGNO(MsgIWonderIfA)},
     {TRIGGER_TABLE_END},
 };
@@ -4314,16 +4312,16 @@ struct Trigger gKibombo_HousesTriggers[] = {
     {TRIGGER_EXIT, 12, CONDITION_ALWAYS, 12},
     {STEP_TRIGGER_WALKING, 13, CONDITION_ALWAYS,
      EVENT(Kibombo_StepOntoThirdLadder)},
-    {TRIGGER_TALK, ACTOR_AKAFUBU_AT_HOME, FLAG_KIBOMBO_LEFT_AKAFUBUS_HOME,
+    {TRIGGER_TALK, ACTOR_AKAFUBU_AT_HOME, FLAG_KIBOMBO_LEFT_HOME_OF_AKAFUBU,
      MSGNO(MsgIMGoing)},
     {TRIGGER_TALK, ACTOR_AKAFUBU_AT_HOME, CONDITION_ALWAYS, MSGNO(MsgIJustCan)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_AKAFUBU_AT_HOME,
      CONDITION_ALWAYS, MSGNO(MsgDangWhyDid)},
-    {TRIGGER_TALK, ACTOR_AKAFUBUS_FATHER, FLAG_KIBOMBO_LEFT_AKAFUBUS_HOME,
+    {TRIGGER_TALK, ACTOR_FATHER_OF_AKAFUBU, FLAG_KIBOMBO_LEFT_HOME_OF_AKAFUBU,
      MSGNO(MsgIThinkThat)},
-    {TRIGGER_TALK, ACTOR_AKAFUBUS_FATHER, CONDITION_ALWAYS,
+    {TRIGGER_TALK, ACTOR_FATHER_OF_AKAFUBU, CONDITION_ALWAYS,
      MSGNO(MsgMySonHasBeen)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_AKAFUBUS_FATHER,
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_FATHER_OF_AKAFUBU,
      CONDITION_ALWAYS, MSGNO(MsgAfterHeBecame)},
     {TRIGGER_TALK, 11, CONDITION_ALWAYS, MSGNO(MsgIHaveHeard)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 11, CONDITION_ALWAYS,
@@ -4383,9 +4381,9 @@ struct Trigger gKibombo_HousesTriggers[] = {
     {TRIGGER_TALK, 24, CONDITION_ALWAYS, MSGNO(MsgICanTRemember)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 24, CONDITION_ALWAYS,
      MSGNO(MsgILoveKibombo)},
-    {TRIGGER_TALK, ACTOR_HEALER, CONDITION_ALWAYS, EVENT(Kibombo_OpenSanctum)},
+    {TRIGGER_TALK, ACTOR_PRIEST, CONDITION_ALWAYS, EVENT(Kibombo_OpenSanctum)},
     {TRIGGER_EXAMINE, 24, CONDITION_ALWAYS, EVENT(Kibombo_OpenSanctum)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_HEALER, CONDITION_ALWAYS,
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_PRIEST, CONDITION_ALWAYS,
      MSGNO(MsgICanTBelieve)},
     {TRIGGER_TABLE_END},
 };

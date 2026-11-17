@@ -435,10 +435,9 @@ struct BobbingMarker {
   s16 stopped; ///< nonzero holds it still, in userValue
 };
 
-/// The map work as the World Map's sinking of Idejima reads it: two
-/// halfwords of map layer 0's scale, stepped against each other.
-/// XXX: what the two halfwords are on the World Map; the World Map's own
-/// reading of layer 0's scale would settle it.
+/// The World Map's view (struct WorldMapView) as Idejima's drift reads it:
+/// unk11c is the view's pitch and unk11e its yaw, 1/65536 turns each, which the
+/// drift turns against each other.
 struct RescueMap {
   u8 unk000[284];
   u16 unk11c;

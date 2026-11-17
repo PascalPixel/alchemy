@@ -5,6 +5,10 @@
 #include "gamepak/flash.h"
 #include "gamepak/flash_data.h"
 
+/// The ids the chips answer with: the device id above the maker id.
+#define FLASH_ID_MACRONIX (0x1c << 8 | 0xc2)
+#define FLASH_ID_PANASONIC (0x1b << 8 | 0x32)
+
 // clang-format off
 /// The Macronix chip's waits by timing: milliseconds, the timer's reload value
 /// and its control.
@@ -35,7 +39,7 @@ const struct FlashSetupInfo Flash_ChipMacronix = {
     .type = {.romSize = 65536,
              .sector = {.size = 4096, .shift = 12, .count = 16, .top = 0},
              .wait = {3, 1},
-             .id = {.joined = 0x1cc2}},
+             .id = {.joined = FLASH_ID_MACRONIX}},
 };
 
 const struct FlashSetupInfo Flash_ChipPanasonic = {
@@ -47,5 +51,5 @@ const struct FlashSetupInfo Flash_ChipPanasonic = {
     .type = {.romSize = 65536,
              .sector = {.size = 4096, .shift = 12, .count = 16, .top = 0},
              .wait = {0, 2},
-             .id = {.joined = 0x1b32}},
+             .id = {.joined = FLASH_ID_PANASONIC}},
 };

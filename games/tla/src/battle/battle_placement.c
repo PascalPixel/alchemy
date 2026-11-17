@@ -16,6 +16,7 @@ void BattleObject_Reset(struct BattleObject *actor, s32 keep) {
   s32 facingAngle;
   FIXED zero;
 
+  // Kind 15 in the id's top four bits: an actor with no sprite.
   if (actor->object == 0)
     object = (struct MotionObject *)Actor_CreateFar(0xf000, 0, 0, 0);
   else
@@ -348,8 +349,8 @@ void BattleObject_Make(struct BattleObject *actor, s32 unitId, s32 x, s32 y) {
   case ENEMY_MOAPA:
   case ENEMY_MOAPA_B:
   case ENEMY_MOAPA_C:
-    // XXX: which shadow Moapa takes; the sprite table's row 685 rendered would
-    // say.
+    // Sprite 685: a battle shadow whose three pictures lie right of centre,
+    // left of it and under the middle (spr_685.png).
     actor->shadow = 685;
     actor->scale = FIXED_ONE * 23 / 20;
     break;

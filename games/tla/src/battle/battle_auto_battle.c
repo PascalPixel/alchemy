@@ -78,10 +78,9 @@ s32 AutoBattle_BuildActions(struct BattleActionRecord *entries) {
   return count;
 }
 
-/// Turns the battle camera while L or R is held, a 128th of a turn each
-/// frame, and redraws the zoomed background unless a transition
-/// holds it.
-void BattleCamera_AdjustByShoulderKeys(void) {
+/// Unused: turns the battle camera while L or R is held, a 128th of a turn
+/// each frame, and redraws the zoomed background unless a transition holds it.
+UNUSED void BattleCamera_AdjustByShoulderKeys(void) {
   struct BattleCamera *cam = Ram_HeapSlots->cameraWork;
   struct BattleBackgroundWork *trans = Ram_HeapSlots->battleBackground;
 
@@ -111,7 +110,8 @@ s32 AutoBattle_RunAction(struct BattleActionRecord *action) {
 
   action->target = BattleAbility_ReplaceDefeated(action);
   transition = Ram_HeapSlots->battleBackground;
-  // Here any unit id above 4 counts as an enemy.
+  // Here any unit id above 4 counts as an enemy, Jenna's 5, Sheba's 6 and
+  // Piers's 7 included (character_ids.h).
   if (action->unitId > 4)
     yaw = YAW_ENEMY_ACTION;
   else
@@ -234,11 +234,14 @@ s32 AutoBattle_RunPsynergy(struct BattleActionRecord *action) {
 
   {
     struct BattleBackgroundWork *transition = Ram_HeapSlots->battleBackground;
+    // An enemy caster turns the camera to YAW_BEHIND_ENEMIES, not
+    // YAW_ENEMY_ACTION.
     transition->targetYaw =
         action->unitId > 4 ? YAW_BEHIND_ENEMIES : YAW_PARTY_ACTION;
     transition->frames = 60;
   }
   wait(10);
+  // A roll nothing uses, which still advances the random number generator.
   Random16();
   actorRecord = BattleObject_Get(actorId)->object;
 
@@ -265,7 +268,7 @@ s32 AutoBattle_RunPsynergy(struct BattleActionRecord *action) {
   }
   PartyStatus_DrawFar(PARTY_STATUS_CLOSED);
 
-  if (targetId > (FIRST_ENEMY_UNIT - 1)) {
+  if (targetId >= FIRST_ENEMY_UNIT) {
     u32 count = BattleUnit_ListLiving(BATTLE_SIDE_MASK_ENEMIES, visibleUnits);
     for (index = 0; livingCount != count; index++) {
       u32 unit = index + FIRST_ENEMY_UNIT;
@@ -309,11 +312,13 @@ s32 AutoBattle_RunPsynergy(struct BattleActionRecord *action) {
   return 0;
 }
 
-/// The actor announces its attack, walks up to its target and plays the
-/// attack's effect on it. Returns -1 when either id is not a battle object.
-s32 AutoBattle_RunApproachAttack(struct BattleActionRecord *input) {
+/// Unused: an auto battle attack. "<unit> attacks!", the attacker leaps up to
+/// its target, the blow, and both return. Returns -1 when either id is not a
+/// battle object.
+UNUSED s32 AutoBattle_RunApproachAttack(struct BattleActionRecord *input) {
   struct BattlePresentationWork work;
 
+  // A short wait when the camera already faces the party's side.
   if (Ram_HeapSlots->battleBackground->targetYaw == YAW_PARTY_ACTION) {
     Ram_HeapSlots->battleBackground->targetYaw = YAW_PARTY_ACTION;
     wait(10);
@@ -330,7 +335,8 @@ s32 AutoBattle_RunApproachAttack(struct BattleActionRecord *input) {
   if (BattleObject_IsValidId(work.actors[0]) < 0)
     return -1;
 
-  // DEAD: Unit_Get's results are not used; the ROM keeps the calls.
+  // DEAD: Unit_Get's results are not used; the ROM keeps the calls. The roll
+  // only advances the random number generator.
   Unit_Get(work.actor);
   Unit_Get(work.actors[0]);
   Random16();
@@ -366,18 +372,18 @@ s32 AutoBattle_RunAttackOrItem(struct BattleActionRecord *action) {
   struct BattlePresentationWork work;
   struct BattleBackgroundWork *transition = Ram_HeapSlots->battleBackground;
   struct MotionObject *object;
-  s32 facing;
+  s32 targetYaw;
   s32 i;
 
   if (action->unitId > 4)
-    facing = -DEGtoANG(45);
+    targetYaw = YAW_ENEMY_ACTION;
   else
-    facing = DEGtoANG(45);
-  if (transition->targetYaw == facing) {
+    targetYaw = YAW_PARTY_ACTION;
+  if (transition->targetYaw == targetYaw) {
     transition->frames = 40;
     wait(40);
   } else {
-    transition->targetYaw = facing;
+    transition->targetYaw = targetYaw;
     transition->frames = 40;
     wait(40);
   }
@@ -387,7 +393,7 @@ s32 AutoBattle_RunAttackOrItem(struct BattleActionRecord *action) {
   work.firstTarget = action->target;
   if (BattleObject_IsValidId(work.actor) < 0)
     return -1;
-  if (work.firstTarget > (FIRST_ENEMY_UNIT - 1))
+  if (work.firstTarget >= FIRST_ENEMY_UNIT)
     work.count =
         BattleUnit_ListLiving(BATTLE_SIDE_MASK_ENEMIES, (u16 *)work.actors);
   else
@@ -440,10 +446,10 @@ s32 AutoBattle_RunAttackOrItem(struct BattleActionRecord *action) {
   return 0;
 }
 
-/// Unused auto battle damage: takes damage HP from a unit and shows it, with "A
-/// bitter blow!" or "A critical hit!" first when showMessage is set.
-void AutoBattle_ApplyDamage(u32 unitId, s32 damage, s32 showMessage,
-                            u8 *context) {
+/// Unused: auto battle damage. Takes damage HP from a unit and shows it, with
+/// "A bitter blow!" or "A critical hit!" first when showMessage is set.
+UNUSED void AutoBattle_ApplyDamage(u32 unitId, s32 damage, s32 showMessage,
+                                   u8 *context) {
   u8 localContext[4];
   struct Unit *character;
   struct BattleObject *slot;
@@ -496,8 +502,9 @@ void AutoBattle_ApplyDamage(u32 unitId, s32 damage, s32 showMessage,
   Actor_SelectAnimationFar((struct Actor *)slot->object, POSE_STANDING);
 }
 
-/// For a unit whose HP has run out: plays its falling effect to the last frame
-/// and marks its battle object for release (BattleObject_MarkForRelease).
+/// Unused, as its one caller, AutoBattle_ApplyDamage, is: for a unit whose HP
+/// has run out, plays its falling effect to the last frame and marks its battle
+/// object for release (BattleObject_MarkForRelease).
 void BattleMotion_PlayFall(s32 unitId) {
   struct Sprite *animation;
   struct SpriteAnimation *entry;
@@ -519,7 +526,7 @@ void BattleMotion_PlayFall(s32 unitId) {
 #define TARGET_SIDE_DEFEATED 256
 
 /// Returns the action's target, or a random living unit of its side when the
-/// target is down; 0x100 when none is left.
+/// target is down; TARGET_SIDE_DEFEATED when none is left.
 s32 BattleAbility_ReplaceDefeated(const struct BattleActionRecord *action) {
   s16 livingUnits[UNIT_MAX];
   s32 targetId;
@@ -530,7 +537,7 @@ s32 BattleAbility_ReplaceDefeated(const struct BattleActionRecord *action) {
     return targetId;
   }
 
-  if (targetId > (FIRST_ENEMY_UNIT - 1)) {
+  if (targetId >= FIRST_ENEMY_UNIT) {
     livingCount = BattleUnit_ListLiving(BATTLE_SIDE_MASK_ENEMIES, livingUnits);
   } else {
     livingCount = BattleUnit_ListLiving(BATTLE_SIDE_MASK_PARTY, livingUnits);

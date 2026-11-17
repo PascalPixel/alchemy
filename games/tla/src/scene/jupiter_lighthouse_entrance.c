@@ -120,7 +120,7 @@ void JupiterLighthouse_CycloneUncoversTheSpot(void) {
   struct Actor *leader = Actor_Get(gMainRoutineWork.leaderActorId);
 
   FieldTileCopies_CopyTouchedCells(56, 0, 3, 3, 79, 25, 1);
-  if (!Event_GetFlag(FLAG_JUPITER_LIGHTHOUSE_MINT_TAKEN)) {
+  if (!Event_GetFlag(FLAG_JUPITER_LIGHTHOUSE_MINT)) {
     Actor_SetPosition(FIELD_TREASURE_ACTOR, 280, 440);
     if (FIELD_CELL(leader->x.fixed) == 17 &&
         FIELD_CELL(leader->z.fixed) == 27) {

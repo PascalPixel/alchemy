@@ -182,8 +182,9 @@ void WorldPicture_GetLeaderPoint(s32 *screenX, s32 *screenY);
 /// Never set (EWRAM, zero from boot). Set, the world map picture would list
 /// only the places before the first end of the place table, not the second list
 /// from entry 128 on, and show each place's second marker (the high nibble of
-/// its value). XXX: what the switch was for; a write to it in an edition or a
-/// debug room would settle it.
+/// its value).
+// XXX (no evidence): what the switch was for; no edition, debug room or other
+// code writes it, so the game never shows it set.
 extern s16 gWorldPicture_FirstListOnly;
 
 void FieldPsynergy_Lash(void);

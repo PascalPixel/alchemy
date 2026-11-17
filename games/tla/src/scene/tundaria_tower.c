@@ -448,7 +448,7 @@ void TundariaTower_ExamineCrystal(void) {
   Event_Start();
   Event_ResolvePendingActions(0);
   FieldMessage_Show(MsgThereSSomething, 1);
-  if (GameFlag_Get(FLAG_BURST_BROOCH_TAKEN)) {
+  if (GameFlag_Get(FLAG_TUNDARIA_TOWER_BURST_BROOCH)) {
     struct FieldWork *work = Ram_HeapSlots->fieldWork;
 
     work->fieldMenu = 1;

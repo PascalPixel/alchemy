@@ -148,8 +148,8 @@ enum EnemyId {
   /// Level 36, on Treasure Isle.
   ENEMY_JUPITER_DJINNI_GALE,
   ENEMY_RUFFIAN = ENEMY_ID_FIRST + 60,
-  ENEMY_UNUSED_RUFFIAN_A,
-  ENEMY_UNUSED_RUFFIAN_B,
+  ENEMY_RUFFIAN_2,
+  ENEMY_RUFFIAN_3,
   ENEMY_PUNCH_ANT,
   ENEMY_FLASH_ANT,
   ENEMY_NUMB_ANT,
@@ -161,8 +161,8 @@ enum EnemyId {
   ENEMY_SAND_SCORPION,
   ENEMY_BRIGGS,
   ENEMY_SEA_FIGHTER,
-  ENEMY_UNUSED_CHAMPA_A,
-  ENEMY_UNUSED_CHAMPA_B,
+  ENEMY_CHAMPA_2,
+  ENEMY_CHAMPA_3,
   ENEMY_CUTTLE,
   ENEMY_CALAMAR,
   ENEMY_MAN_O_WAR,
@@ -170,25 +170,33 @@ enum EnemyId {
   ENEMY_AQUA_HYDRA,
   ENEMY_HYDRA,
   ENEMY_PYRODRA,
+  /// Gaia Rock's Serpent: a row for each number of the four openings into its
+  /// lair that are open as it is fought, counted by
+  /// GaiaRockInside_ChallengeSerpent, this one for none.
+  /// XXX: beams of sunlight or streams of Dragonsbane? Izumo says "The serpent
+  /// can't stand sunlight", gaia_rock_inside.c names the openings streams of
+  /// Dragonsbane, and the lair looks the same with all four open as with none
+  /// from entrances 10 and 20; a recording of entrance 20 as an opening is
+  /// shown would settle it.
   ENEMY_SERPENT,
   ENEMY_SERPENT_ONE_BEAM,
   ENEMY_SERPENT_TWO_BEAMS,
   ENEMY_SERPENT_THREE_BEAMS,
   ENEMY_SERPENT_FOUR_BEAMS,
-  ENEMY_UNUSED_SERPENT_A,
-  ENEMY_UNUSED_SERPENT_B,
+  ENEMY_SERPENT_6,
+  ENEMY_SERPENT_7,
   ENEMY_AVIMANDER,
   ENEMY_MACETAIL,
   ENEMY_BOMBANDER,
   ENEMY_POSEIDON,
   ENEMY_POSEIDON_SECOND_ACTION,
-  ENEMY_UNUSED_POSEIDON,
+  ENEMY_POSEIDON_3,
   ENEMY_MOAPA,
   ENEMY_MOAPA_B,
   ENEMY_MOAPA_C,
   ENEMY_KNIGHT,
   ENEMY_KNIGHT_B,
-  ENEMY_UNUSED_KNIGHT,
+  ENEMY_KNIGHT_3,
   ENEMY_AGATIO,
   ENEMY_AGATIO_B,
   ENEMY_AGATIO_VS_ISAAC,
@@ -294,8 +302,8 @@ enum EnemyId {
   ENEMY_DRUJ,
   ENEMY_AESHMA,
   ENEMY_VALUKAR,
-  ENEMY_UNUSED_VALUKAR_A,
-  ENEMY_UNUSED_VALUKAR_B,
+  ENEMY_VALUKAR_UNUSED_A,
+  ENEMY_VALUKAR_UNUSED_B,
   ENEMY_LIVING_ARMOR,
   ENEMY_PUPPET_WARRIOR,
   ENEMY_ESTRE_BARON,
@@ -306,8 +314,8 @@ enum EnemyId {
   ENEMY_DULLAHAN_B,
   ENEMY_DULLAHAN_C,
   ENEMY_SENTINEL,
-  ENEMY_UNUSED_SENTINEL_A,
-  ENEMY_UNUSED_SENTINEL_B,
+  ENEMY_SENTINEL_UNUSED_A,
+  ENEMY_SENTINEL_UNUSED_B,
   ENEMY_VERMIN,
   /// The Broken Seal's ENEMY_VERMIN_WORLD_MAP, row for row the same stats; no
   /// formation here lists it.
@@ -333,7 +341,7 @@ enum EnemyId {
   ENEMY_HORNED_GHOST,
   /// Unused: The Broken Seal's ENEMY_LICH, the same stats, in no formation
   /// here; ENEMY_LICH is this game's own.
-  ENEMY_UNUSED_LICH,
+  ENEMY_LICH_UNUSED,
   ENEMY_ZOMBIE,
   ENEMY_UNDEAD,
   ENEMY_WIGHT,
@@ -397,7 +405,7 @@ enum EnemyId {
   ENEMY_MANTICORE,
   ENEMY_MAGICORE,
   ENEMY_MANTICORE_KING,
-  ENEMY_UNUSED_KOBOLD,
+  ENEMY_KOBOLD_UNUSED,
   ENEMY_GOBLIN,
   ENEMY_HOBGOBLIN,
   ENEMY_GARGOYLE,
@@ -465,6 +473,10 @@ enum EnemyId {
   ENEMY_MIMIC_MARS_LIGHTHOUSE,
   /// The Broken Seal's ENEMY_ZOMBIE_DJINN_LESSON, the same stats.
   ENEMY_ZOMBIE_DJINN_LESSON,
+  /// The Doom Dragon's three forms are rows A, E and H, and each acts again in
+  /// a turn as the rows after it (BattleAI_ChooseAction): A's second, third
+  /// and fourth actions are C, B and D, E's G and F, and H's second I.
+  /// Battle_ChangeEnemyForm brings on E, then H.
   ENEMY_DOOM_DRAGON_A,
   ENEMY_DOOM_DRAGON_B,
   ENEMY_DOOM_DRAGON_C,

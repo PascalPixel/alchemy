@@ -85,12 +85,13 @@ enum PaletteTint {
   PALETTE_TINT_NONE = 0x10000,      ///< each colour unchanged
   PALETTE_TINT_GRAYSCALE = 0x10001, ///< grey of brightness (2R + 4G + B) / 7
   /// Brownish grey: the brightness (R + G + B) / 10, red at 4 times it plus
-  /// 5, green and blue 3 times plus 5, each held to 8 to 28.
+  /// 5, green and blue 3 times plus 5, each held to SEPIA_LEVEL_MIN to
+  /// SEPIA_LEVEL_MAX.
   PALETTE_TINT_SEPIA = 0x10002,
   /// Half R + 10, two thirds G + 8, B - 7; black stays black.
   PALETTE_TINT_WARM = 0x10003,
-  /// Each channel held to a narrow range (R 10 to 28, G 16 to 24, B 16 to 26),
-  /// then G and B + 2.
+  /// Each channel held to a narrow range (MUTED_RED_MIN to MUTED_RED_MAX and
+  /// so on), then G and B + 2.
   PALETTE_TINT_MUTED = 0x10004,
   PALETTE_TINT_PALE = 0x10005, ///< half of each channel, plus their mean
   /// R plus an eighth of G and of B; G and B two thirds.
@@ -107,6 +108,18 @@ enum PaletteTint {
   PALETTE_TINT_BLEND = 0x400000,
   PALETTE_TINT_SPLIT = 0x800000 ///< each colour unchanged
 };
+
+/// PALETTE_TINT_SEPIA holds each channel to these levels.
+#define SEPIA_LEVEL_MIN 8
+#define SEPIA_LEVEL_MAX 28
+
+/// PALETTE_TINT_MUTED holds each channel to its own range.
+#define MUTED_RED_MIN 10
+#define MUTED_RED_MAX 28
+#define MUTED_GREEN_MIN 16
+#define MUTED_GREEN_MAX 24
+#define MUTED_BLUE_MIN 16
+#define MUTED_BLUE_MAX 26
 
 /// Which palettes TitlePaletteFade_BuildColors builds.
 enum PaletteSelection {

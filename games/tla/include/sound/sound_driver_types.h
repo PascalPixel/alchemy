@@ -402,9 +402,9 @@ struct MusicPlayerTrack {
   ///@{
   u8 gap[10];
   u16 timer;
-  /// pret's later ply_note copies it into a new note's samples left; this
-  /// driver's never reads it.
-  u32 unk_3C;
+  /// pret's later ply_note copies it into a new note's samples left (its
+  /// unk_3C); this driver's never reads it.
+  u32 paddingAfterTimer;
   ///@}
   /// The next command byte in the song's data, from the header's track
   /// pointer; a track's commands end at a finish command (0xB1).

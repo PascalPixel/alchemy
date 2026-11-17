@@ -692,7 +692,7 @@ void AncientLemuria_MeetTheLemurians(void) {
   Actor_RunRepeatedMotion(ACTOR_LEMURIAN, 2);
   Event_Wait(10);
   FieldMessage_ShowAtActor(ACTOR_LEMURIAN, 0);
-  if ((s8)gMainRoutineWork.countedAnswers <= 4) {
+  if ((s8)gMainRoutineWork.weirdAnswers <= 4) {
     result = FieldEvent_AskYesNoWithActorAnimation(ACTOR_FELIX, 0);
     if (result == 0) {
       Event_Wait(25);

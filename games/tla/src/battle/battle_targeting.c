@@ -878,7 +878,7 @@ s32 BattleAbility_ApplyToTarget(struct BattlePlan *plan, s32 slot) {
     break;
   case ENEMY_POSEIDON:
   case ENEMY_POSEIDON_SECOND_ACTION:
-  case ENEMY_UNUSED_POSEIDON:
+  case ENEMY_POSEIDON_3:
     if (abilityId != ABILITY_TRIDENT && battle->forceField != 0 &&
         ARE_OPPONENTS(unitId, targetId)) {
       BattlePlayback_Push(PLAYBACK_REFRESH_UNIT, targetId);

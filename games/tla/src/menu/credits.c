@@ -120,9 +120,11 @@ extern u8 gDebugTextEnabled;
 #define CREDITS_BORDER_TILE_BYTES (8 * TILE_SIZE_4BPP)
 /// One ring line's tiles: the top or bottom half of a drawn line.
 #define CREDITS_LINE_BYTES (CREDITS_LINE_TILES * TILE_SIZE_4BPP)
-/// The line table's page mark, how far Credits_InitTextSpritesAtPage counts
-/// for one, and the frames the credits run on after their end mark.
-#define CREDITS_PAGE_MARK ((const u8 *)255)
+/// The line table's page mark, which ends a stretch of the credits: the scroll
+/// stops on it, and a page's start is found by counting these marks. Then how
+/// far Credits_InitTextSpritesAtPage counts for one, and the frames the credits
+/// run on after a mark.
+#define CREDITS_PAGE_MARK ((const void *)255)
 #define CREDITS_MAX_LINES 500
 #define CREDITS_FRAMES_AFTER_END 375
 /// The ring line a scroll line is drawn into, sixteen rows below the top.
@@ -132,6 +134,18 @@ extern u8 gDebugTextEnabled;
 /// The scene flag that says a credits line was drawn before, so the next one
 /// starts from its shadow row.
 #define FLAG_CREDITS_LINE_DRAWN FLAG_SCENE_TEMP_00
+/// The text sprites' rows start below the top strip, and their 192 pixels
+/// stand in the middle of the screen.
+#define CREDITS_TEXT_TOP 16
+#define CREDITS_TEXT_LEFT ((DISPLAY_WIDTH - CREDITS_LINE_PIXELS) / 2)
+/// Where the eight spare sprites wait, below the screen.
+#define CREDITS_PARKED 192
+/// A line's letters are drawn in colour 15, each with its shadow a pixel below
+/// and to the right in colour 1, the strips' black.
+#define CREDITS_TEXT_COLOR 15
+#define CREDITS_SHADOW_COLOR 1
+/// A message of the story crawl takes two scroll lines of 8 pixels.
+#define CRAWL_MESSAGE_PIXELS (2 * 8)
 
 // The ending's scrolling pictures: a map buffer of 15 columns, each a strip of
 // 4 KB copied into its own 2 KB screen block, 31 rows of 64 bytes at a time.
@@ -147,7 +161,7 @@ extern u8 gDebugTextEnabled;
 #define ENDING_PICTURE_FADE_FRAMES (BLEND_WEIGHT_MAX * 4)
 /// The map offset of the row of eight pixels a 16.16 scroll stands at.
 #define ENDING_PICTURE_ROW_OFFSET(scroll)                                      \
-  (((scroll) >> 19) * ENDING_PICTURE_ROW_BYTES)
+  ((FIXEDtoINT(scroll) / 8) * ENDING_PICTURE_ROW_BYTES)
 /// The map buffer: every column's strip.
 #define ENDING_PICTURE_MAP_BYTES                                               \
   (ENDING_PICTURE_COLUMNS * ENDING_PICTURE_STRIP_BYTES)
@@ -161,22 +175,31 @@ extern u8 gDebugTextEnabled;
 #define BACKDROP_COLORS 128
 #define BACKDROP_PALETTE_BYTES (BACKDROP_COLORS * 2)
 /// A battle backdrop's 480 tiles of 256 colours, 256 by 120 pixels.
-#define BACKDROP_TILE_BYTES (480 * 64)
+#define BACKDROP_TILES 480
+#define BACKDROP_TILE_BYTES (BACKDROP_TILES * 64)
 
-/// Fills 30K bytes of 256-colour characters with colour 1 and clears 128
-/// palette colours.
-/// @param alternate 0 selects the first half (VRAM 0x06000000, palette colours
-/// 0-127);
-///      1 selects the second (VRAM 0x06008000, colours 128-255, fill colour
-///      129).
+/// The two pictures' screen blocks, each holding the same tilemap: BG3's, over
+/// character block 0, and BG2's, over character block 2.
+#define CREDITS_BG3_SCREEN_BLOCK 15
+#define CREDITS_BG2_SCREEN_BLOCK 31
+/// A tilemap word: two map entries side by side, `left` in its low half.
+#define TILEMAP_PAIR(left, right) (((right) << 16) | (left))
+/// A tilemap row's words.
+#define TILEMAP_ROW_WORDS (BG_SCREEN_WIDTH / 2)
+/// The tile the margins show: the character block's last, which lies in the
+/// screen block's own zeroed tail and so is clear.
+#define CREDITS_BLANK_TILE 511
+
+/// Fills a backdrop's 256-colour tiles with its half's first colour, an opaque
+/// black for the next crossfade, and clears the half's 128 palette colours.
+/// @param alternate 0 for the first half (character block 0, colours 0 to
+/// 127), 1 for the second (character block 2, colours 128 to 255).
 void Credits_ClearBuffer(s32 alternate) {
   u32 fillColor;
   u32 tileDestination;
   u32 paletteDestination;
   volatile u32 dmaFill;
 
-  // Use a solid pixel in the palette being cleared, producing an opaque
-  // black layer for the next crossfade.
   if (alternate == 0) {
     fillColor = PIXELS_8BPP(1);
     tileDestination = (u32)BG_CHAR_BLOCK(0);
@@ -199,11 +222,10 @@ extern u16 gWaitForFlashWrite[];
 
 /// Loads a backdrop resource (its 128 colours, then its packed tiles) into
 /// one half of BG VRAM and queues its palette for the next VBlank, as The
-/// Broken Seal does, but greyed: each channel
-/// becomes (2 red + 4 green + blue + 5 * channel) / 16. A zero resource
-/// clears that half instead. The tiles are unpacked by the
-/// Credits_DecodeBackground kernel, copied by DMA into a heap block for the
-/// call; the grey colours are built in the EWRAM buffer at gWaitForFlashWrite.
+/// Broken Seal does, but greyed: each channel becomes (2 red + 4 green + blue +
+/// 5 * channel) / 16. A zero resource clears that half instead. The tiles are
+/// unpacked by Credits_DecodeBackground, run from a heap block, and the grey
+/// colours are built in gWaitForFlashWrite.
 void Credits_LoadBackground(u32 resourceId, s32 alternate) {
   const u8 *resourceData;
   u32 paletteDestination;
@@ -249,26 +271,26 @@ void Credits_LoadBackground(u32 resourceId, s32 alternate) {
                       DMA_COPY_WORDS(BACKDROP_PALETTE_BYTES / 4));
 }
 
-/// Builds the 512 tilemap words surrounding a sliding credits picture, as The
-/// Broken Seal does: blank margins, 240 consecutive tile pairs, then a
-/// zero-filled tail.
+/// Builds a backdrop's tilemap, as The Broken Seal does: two blank rows, the
+/// backdrop's 480 tiles in order over fifteen rows, three blank rows, then a
+/// zeroed tail.
 void Credits_BuildBackgroundTilemap(u32 *destination) {
   s32 i;
   u32 blankTiles;
   u32 tilePair;
 
-  blankTiles = 0x01FF01FF;
-  tilePair = 0x10000;
+  blankTiles = TILEMAP_PAIR(CREDITS_BLANK_TILE, CREDITS_BLANK_TILE);
+  tilePair = TILEMAP_PAIR(0, 1);
   // Pad above and below the picture so vertical wrapping stays blank.
-  for (i = 0; i < 32; i++)
+  for (i = 0; i < 2 * TILEMAP_ROW_WORDS; i++)
     *destination++ = blankTiles;
-  for (i = 0; i < 240; i++) {
+  for (i = 0; i < BACKDROP_TILES / 2; i++) {
     *destination++ = tilePair;
-    tilePair += 0x20002;
+    tilePair += TILEMAP_PAIR(2, 2);
   }
-  for (i = 0; i < 48; i++)
+  for (i = 0; i < 3 * TILEMAP_ROW_WORDS; i++)
     *destination++ = blankTiles;
-  for (i = 0; i < 192; i++)
+  for (i = 0; i < 12 * TILEMAP_ROW_WORDS; i++)
     *destination++ = 0;
 }
 
@@ -276,7 +298,7 @@ void Credits_BuildBackgroundTilemap(u32 *destination) {
 /// horizontal offsets aligned throughout the crossfade.
 void Credits_ScrollBackgrounds(void) {
   if ((gVBlankCount & 3) == 0) {
-    u32 decrement = 0xffff;
+    u32 decrement = (u16)-1;
 
     gBgScroll[2].x += decrement;
     gBgScroll[3].x += decrement;
@@ -300,14 +322,17 @@ s32 Credits_Run(s32 mode) {
   Task_ResetAll();
   Task_Add(Credits_ScrollBackgrounds, TASK_PASS_VBLANK);
   Io_Write16(DISPCNT_OBJ_1D_MAP, &REG_DISPCNT);
-  Credits_BuildBackgroundTilemap((u32 *)BG_SCREEN_BLOCK(15));
-  Credits_BuildBackgroundTilemap((u32 *)BG_SCREEN_BLOCK(31));
+  Credits_BuildBackgroundTilemap(
+      (u32 *)BG_SCREEN_BLOCK(CREDITS_BG3_SCREEN_BLOCK));
+  Credits_BuildBackgroundTilemap(
+      (u32 *)BG_SCREEN_BLOCK(CREDITS_BG2_SCREEN_BLOCK));
   Credits_ClearBuffer(0);
   Credits_ClearBuffer(1);
   Io_Write16(BGCNT_PRIORITY(2) | BGCNT_CHAR_BASE(2) | BGCNT_256_COLORS |
-                 BGCNT_SCREEN_BASE(31),
+                 BGCNT_SCREEN_BASE(CREDITS_BG2_SCREEN_BLOCK),
              &REG_BG2CNT);
-  Io_Write16(BGCNT_PRIORITY(3) | BGCNT_256_COLORS | BGCNT_SCREEN_BASE(15),
+  Io_Write16(BGCNT_PRIORITY(3) | BGCNT_256_COLORS |
+                 BGCNT_SCREEN_BASE(CREDITS_BG3_SCREEN_BLOCK),
              &REG_BG3CNT);
   Io_Write16(DISPCNT_OBJ_1D_MAP | DISPCNT_BG2_ON | DISPCNT_BG3_ON |
                  DISPCNT_OBJ_ON,
@@ -382,8 +407,8 @@ void Credits_UpdateCrawlSprites(void) {
     s32 column;
 
     for (column = 0; column < CREDITS_COLUMNS; column++) {
-      *words++ =
-          (row * 8 + 16 - fine) | OBJ_X(column * 32 + 24) | OBJ_SIZE_32X8;
+      *words++ = (row * 8 + CREDITS_TEXT_TOP - fine) |
+                 OBJ_X(column * 32 + CREDITS_TEXT_LEFT) | OBJ_SIZE_32X8;
       *words++ = tile;
       tile += 4;
       if (tile == CREDITS_RING_TILES)
@@ -420,7 +445,8 @@ void Credits_DrawEnteringCrawlLine(void) {
 
   if (gDisplayScroll_Busy == 0) {
     current = gDisplayScroll_Position;
-    if ((s16)gDisplayScroll_Position / 16 != gDisplayScroll_LastPosition / 16) {
+    if ((s16)gDisplayScroll_Position / CRAWL_MESSAGE_PIXELS !=
+        gDisplayScroll_LastPosition / CRAWL_MESSAGE_PIXELS) {
       gDisplayScroll_LastPosition = current;
       line = (s16)((s16)gDisplayScroll_Position / 8);
       gDisplayScroll_Busy = DisplayScroll_DrawMessageLine(
@@ -444,14 +470,10 @@ void Credits_InitCrawlSprites(void) {
   *cell = objects;
   fill = 0;
   Dma_Set((void *)&fill, (void *)OBJ_VRAM0,
-          (DMA_ENABLE | DMA_32BIT | DMA_SRC_FIXED) << 16 |
-              (CREDITS_RING_BYTES / 4),
-          REG_DMA3);
+          DMA_FILL_WORDS(CREDITS_RING_BYTES / 4), REG_DMA3);
   fill = PIXELS_4BPP(1);
   Dma_Set((void *)&fill, (void *)(OBJ_VRAM0 + CREDITS_RING_BYTES),
-          (DMA_ENABLE | DMA_32BIT | DMA_SRC_FIXED) << 16 |
-              (CREDITS_BORDER_TILE_BYTES / 4),
-          REG_DMA3);
+          DMA_FILL_WORDS(CREDITS_BORDER_TILE_BYTES / 4), REG_DMA3);
 
   entry = *(u32 **)cell;
   {
@@ -459,7 +481,7 @@ void Credits_InitCrawlSprites(void) {
     for (i = 0; i < 8; i++) {
       u32 *q = entry;
 
-      *q++ = (i << 21) | attr;
+      *q++ = OBJ_X(i * 32) | attr;
       *q = CREDITS_RING_TILES;
       entry += 2;
     }
@@ -469,7 +491,7 @@ void Credits_InitCrawlSprites(void) {
     for (i = 0; i < 8; i++) {
       u32 *q = entry;
 
-      *q++ = (i << 21) | attr;
+      *q++ = OBJ_X(i * 32) | attr;
       *q = CREDITS_RING_TILES;
       entry += 2;
     }
@@ -479,7 +501,7 @@ void Credits_InitCrawlSprites(void) {
     for (i = 0; i < 8; i++) {
       u32 *q = entry;
 
-      *q++ = (i << 21) | attr;
+      *q++ = OBJ_X(i * 32) | attr;
       *q = CREDITS_RING_TILES;
       entry += 2;
     }
@@ -489,7 +511,8 @@ void Credits_InitCrawlSprites(void) {
       u32 *q = entry;
       u32 tile = (i * 3) * 8 + j * 4;
 
-      *q++ = (i * 8 + 16) | OBJ_X(j * 32 + 24) | OBJ_SIZE_32X8;
+      *q++ = (i * 8 + CREDITS_TEXT_TOP) | OBJ_X(j * 32 + CREDITS_TEXT_LEFT) |
+             OBJ_SIZE_32X8;
       *q = tile;
       entry += 2;
     }
@@ -497,7 +520,7 @@ void Credits_InitCrawlSprites(void) {
   for (i = 0; i < 8; i++) {
     u32 *q = entry;
 
-    *q++ = OBJ_X(192) | 192;
+    *q++ = OBJ_X(CREDITS_PARKED) | CREDITS_PARKED;
     *q = CREDITS_RING_TILES;
     entry += 2;
   }
@@ -574,7 +597,8 @@ void Credits_UpdateTextSprites(void) {
     for (col = 0; col < CREDITS_COLUMNS; col++) {
       u32 *q = entry;
 
-      *q++ = (row * 8 + 16 - fine) | OBJ_X(col * 32 + 24) | OBJ_SIZE_32X8;
+      *q++ = (row * 8 + CREDITS_TEXT_TOP - fine) |
+             OBJ_X(col * 32 + CREDITS_TEXT_LEFT) | OBJ_SIZE_32X8;
       entry += 2;
       *q = tile;
       tile += 4;
@@ -649,14 +673,10 @@ void Credits_InitTextSpritesAtPage(s32 page) {
     *cell = objects;
     fill = 0;
     Dma_Set((void *)&fill, (void *)OBJ_VRAM0,
-            (DMA_ENABLE | DMA_32BIT | DMA_SRC_FIXED) << 16 |
-                (CREDITS_RING_BYTES / 4),
-            REG_DMA3);
+            DMA_FILL_WORDS(CREDITS_RING_BYTES / 4), REG_DMA3);
     fill = PIXELS_4BPP(1);
     Dma_Set((void *)&fill, (void *)(OBJ_VRAM0 + CREDITS_RING_BYTES),
-            (DMA_ENABLE | DMA_32BIT | DMA_SRC_FIXED) << 16 |
-                (CREDITS_BORDER_TILE_BYTES / 4),
-            REG_DMA3);
+            DMA_FILL_WORDS(CREDITS_BORDER_TILE_BYTES / 4), REG_DMA3);
     entry = *(u32 **)cell;
   }
   {
@@ -665,7 +685,7 @@ void Credits_InitTextSpritesAtPage(s32 page) {
     for (i = 0; i < 8; i++) {
       u32 *q = entry;
 
-      *q++ = (i << 21) | attr;
+      *q++ = OBJ_X(i * 32) | attr;
       *q = CREDITS_RING_TILES;
       entry += 2;
     }
@@ -676,7 +696,7 @@ void Credits_InitTextSpritesAtPage(s32 page) {
     for (i = 0; i < 8; i++) {
       u32 *q = entry;
 
-      *q++ = (i << 21) | attr;
+      *q++ = OBJ_X(i * 32) | attr;
       *q = CREDITS_RING_TILES;
       entry += 2;
     }
@@ -687,7 +707,7 @@ void Credits_InitTextSpritesAtPage(s32 page) {
     for (i = 0; i < 8; i++) {
       u32 *q = entry;
 
-      *q++ = (i << 21) | attr;
+      *q++ = OBJ_X(i * 32) | attr;
       *q = CREDITS_RING_TILES;
       entry += 2;
     }
@@ -697,7 +717,8 @@ void Credits_InitTextSpritesAtPage(s32 page) {
       u32 *q = entry;
       u32 tile = (i * 3) * 8 + j * 4;
 
-      *q++ = (i * 8 + 16) | OBJ_X(j * 32 + 24) | OBJ_SIZE_32X8;
+      *q++ = (i * 8 + CREDITS_TEXT_TOP) | OBJ_X(j * 32 + CREDITS_TEXT_LEFT) |
+             OBJ_SIZE_32X8;
       *q = tile;
       entry += 2;
     }
@@ -705,7 +726,7 @@ void Credits_InitTextSpritesAtPage(s32 page) {
   for (i = 0; i < 8; i++) {
     u32 *q = entry;
 
-    *q++ = OBJ_X(192) | 192;
+    *q++ = OBJ_X(CREDITS_PARKED) | CREDITS_PARKED;
     *q = CREDITS_RING_TILES;
     entry += 2;
   }
@@ -800,8 +821,8 @@ s32 Credits_DrawLine(const u8 *text, s32 firstTile, s32 alignment) {
         glyphMask = 0x80;
         for (columnIndex = 0; columnIndex < 8; columnIndex++) {
           if (glyphBits & glyphMask) {
-            destination[CREDITS_RASTER_STRIDE + 1] = 1;
-            destination[0] = 15;
+            destination[CREDITS_RASTER_STRIDE + 1] = CREDITS_SHADOW_COLOR;
+            destination[0] = CREDITS_TEXT_COLOR;
           }
           destination++;
           glyphMask >>= 1;
@@ -934,7 +955,7 @@ void EndingPicture_Scroll(void) {
     scroll = *word;
     if (scroll != target) {
       d = target - scroll;
-      if (ABS(d) > gEndingPicture_Speed << 14)
+      if (ABS(d) > toFIXED(gEndingPicture_Speed) / 4)
         d /= 8;
       if (ABS(d) > toFIXED(gEndingPicture_Speed)) {
         if (d > 0)
@@ -975,7 +996,7 @@ void EndingPicture_Scroll(void) {
       }
     }
   }
-  d = gEndingPicture_MapScroll >> 16;
+  d = FIXEDtoINT(gEndingPicture_MapScroll);
   gBgScroll[2].x = d;
   gBgScroll[3].x = d;
 }
@@ -990,22 +1011,23 @@ void EndingPicture_Start(void) {
   Task_ResetAll();
   gEndingPicture_MapScroll = 0;
   gEndingPicture_Scroll = 0;
-  // One chained assignment: the three addresses are loaded nested, the map
-  // pointer's innermost.
   gEndingPicture_TargetRow = gEndingPicture_Row =
       (s32)(gEndingPicture_Map = NULL);
   gEndingPicture_Speed = 1;
   gEndingPicture_Block = 0;
   Task_Add(EndingPicture_Scroll, TASK_PASS_FRAME);
   Io_Write16(DISPCNT_OBJ_1D_MAP, &REG_DISPCNT);
-  Credits_BuildBackgroundTilemap((u32 *)BG_SCREEN_BLOCK(15));
-  Credits_BuildBackgroundTilemap((u32 *)BG_SCREEN_BLOCK(31));
+  Credits_BuildBackgroundTilemap(
+      (u32 *)BG_SCREEN_BLOCK(CREDITS_BG3_SCREEN_BLOCK));
+  Credits_BuildBackgroundTilemap(
+      (u32 *)BG_SCREEN_BLOCK(CREDITS_BG2_SCREEN_BLOCK));
   Credits_ClearBuffer(0);
   Credits_ClearBuffer(1);
   Io_Write16(BGCNT_PRIORITY(2) | BGCNT_CHAR_BASE(2) | BGCNT_256_COLORS |
-                 BGCNT_SCREEN_BASE(31),
+                 BGCNT_SCREEN_BASE(CREDITS_BG2_SCREEN_BLOCK),
              &REG_BG2CNT);
-  Io_Write16(BGCNT_PRIORITY(3) | BGCNT_256_COLORS | BGCNT_SCREEN_BASE(15),
+  Io_Write16(BGCNT_PRIORITY(3) | BGCNT_256_COLORS |
+                 BGCNT_SCREEN_BASE(CREDITS_BG3_SCREEN_BLOCK),
              &REG_BG3CNT);
   Io_Write16(DISPCNT_OBJ_1D_MAP | DISPCNT_BG2_ON | DISPCNT_BG3_ON |
                  DISPCNT_OBJ_ON,
@@ -1136,17 +1158,17 @@ void EndingPicture_InitStrips(void) {
   words = (u32 *)gEndingPicture_Strips;
   for (i = 0; i < 8; i++) {
     *words++ = 0;
-    *words++ = (i << 21) | OBJ_SIZE_32X16 | 120;
+    *words++ = OBJ_X(i * 32) | OBJ_SIZE_32X16 | 120;
     *words++ = tile;
   }
   for (i = 0; i < 8; i++) {
     *words++ = 0;
-    *words++ = (i << 21) | OBJ_SIZE_32X16 | 136;
+    *words++ = OBJ_X(i * 32) | OBJ_SIZE_32X16 | 136;
     *words++ = tile | OBJ_PRIORITY(2);
   }
   for (i = 0; i < 8; i++) {
     *words++ = 0;
-    *words++ = (i << 21) | OBJ_SIZE_32X8 | 152;
+    *words++ = OBJ_X(i * 32) | OBJ_SIZE_32X8 | 152;
     *words++ = tile | OBJ_PRIORITY(2);
   }
   Task_Add(EndingPicture_DrawStrips, TASK_PASS_FRAME);
@@ -1172,7 +1194,7 @@ void EndingPicture_LowerTopStrip(s32 enable) {
 }
 
 // clang-format off
-/// The slideshow backdrops, ending in 0. Nothing reads this list.
+/// Unused: the slideshow backdrops, ending in 0.
 const u32 gDisplayScroll_UnusedSlideResources[] = {
     RESOURCE_VALE_STORM_BACKDROP,
     RESOURCE_SOL_SANCTUM_BACKDROP,
@@ -1238,10 +1260,6 @@ const u32 gDisplayScroll_SlideResources[25] = {
 /// An empty credits line, between the names.
 static const u8 sBlankCreditLine[] = "";
 
-/// Ends a section of the credits: the scroll stops on it, and a section's
-/// start is found by counting these marks.
-#define CREDITS_SECTION_END ((const void *)255)
-
 #if (LANGUAGE == LANGUAGE_GERMAN)
 #define CREDITS_SUBTITLE "DIE VERGESSENE EPOCHE"
 #elif (LANGUAGE == LANGUAGE_SPANISH)
@@ -1303,7 +1321,7 @@ const void *gDisplayScroll_LineTable[] = {
     "Kentaro Sakou",
     "Norisumi Osawa",
     "Masato Kawamura",
-    CREDITS_SECTION_END,
+    CREDITS_PAGE_MARK,
     "Programming",
     sBlankCreditLine,
     sBlankCreditLine,
@@ -1334,7 +1352,7 @@ const void *gDisplayScroll_LineTable[] = {
     "User Interface",
     sBlankCreditLine,
     "Yutaka Yamamoto",
-    CREDITS_SECTION_END,
+    CREDITS_PAGE_MARK,
 #if (LANGUAGE != LANGUAGE_JAPANESE)
     "Graphic Art",
 #else
@@ -1378,7 +1396,7 @@ const void *gDisplayScroll_LineTable[] = {
     "Graphics Direction",
     sBlankCreditLine,
     "Fumihide Aoki",
-    CREDITS_SECTION_END,
+    CREDITS_PAGE_MARK,
     "Character Design",
     sBlankCreditLine,
     "Shin Yamanouchi",
@@ -1408,7 +1426,7 @@ const void *gDisplayScroll_LineTable[] = {
     sBlankCreditLine,
     "Akiko Sato",
     "Kenji Numaya",
-    CREDITS_SECTION_END,
+    CREDITS_PAGE_MARK,
     "Illustration",
     sBlankCreditLine,
     "Shin Yamanouchi",
@@ -1590,7 +1608,7 @@ const void *gDisplayScroll_LineTable[] = {
     "& Testing Team",
 #endif
 #endif
-    CREDITS_SECTION_END,
+    CREDITS_PAGE_MARK,
     "Produced by",
     sBlankCreditLine,
     "Shinji Hatano",
@@ -1619,7 +1637,7 @@ const void *gDisplayScroll_LineTable[] = {
     sBlankCreditLine,
     "NINTENDO",
     sBlankCreditLine,
-    CREDITS_SECTION_END,
+    CREDITS_PAGE_MARK,
     0
 };
 // clang-format on

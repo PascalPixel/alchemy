@@ -655,6 +655,20 @@ enum LogAnimation {
   LOG_ANIMATION_DROP_IN = 8
 };
 
+/// The animations of SPRITE_FLOATING_LOG_WEST_EAST and
+/// SPRITE_FLOATING_LOG_NORTH_SOUTH (floating_log_west_east.tsv,
+/// floating_log_north_south.tsv), the logs the leader rides in Crossbone Isle
+/// Cave.
+enum FloatingLogAnimation {
+  FLOATING_LOG_ANIMATION_FLOAT = 1, ///< bobbing on the water
+  /// A dip under the leader's step, then FLOATING_LOG_ANIMATION_FLOAT.
+  FLOATING_LOG_ANIMATION_SETTLE = 2,
+  /// Rolling over as it rides east or south.
+  FLOATING_LOG_ANIMATION_ROLL_EAST_OR_SOUTH = 3,
+  /// Rolling over the other way, as it rides west or north.
+  FLOATING_LOG_ANIMATION_ROLL_WEST_OR_NORTH = 4
+};
+
 /// SPRITE_SPLASH's animations (splash.tsv), as Kolima Forest's floodgate
 /// plays them
 /// (places/kolima-forest-floodgate/events/KolimaForestFloodgate_FlipFloodgateSwitch.gif).

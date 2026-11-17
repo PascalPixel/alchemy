@@ -5,7 +5,7 @@
 	.global FarCall_TitleTable
 FarCall_TitleTable:
 	export Title_ShowIntroFar, Title_ShowIntro
-	export Data_081a786cFar, Title_NoOpColor
+	export Title_NoOpColorFar, Title_NoOpColor
 	export Title_NoOpPaletteFar, Title_NoOpPalette
 	export Title_ShowNintendoLogoFar, Title_ShowNintendoLogo
 	export Title_ShowCamelotLogoFar, Title_ShowCamelotLogo

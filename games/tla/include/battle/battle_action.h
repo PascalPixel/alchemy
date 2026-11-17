@@ -1,6 +1,10 @@
 #ifndef ALCHEMY_BATTLE_ACTION_H
 #define ALCHEMY_BATTLE_ACTION_H
 
+/// @file
+/// A battle's battle objects, each unit's command and action, and the spoils,
+/// as The Broken Seal's battle_action.h.
+
 #include "fixed_math.h"
 #include "types.h"
 #include "static_assert.h"

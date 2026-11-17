@@ -76,22 +76,6 @@ STATIC_ASSERT(offsetof(struct PaletteFade, delta) == 6272);
 STATIC_ASSERT(offsetof(struct PaletteFade, packed) == 8960);
 STATIC_ASSERT(offsetof(struct PaletteFade, page) == 10752);
 
-enum PaletteTransform {
-  PALETTE_TRANSFORM_FROM_SOURCE = 0x8000,
-  PALETTE_TRANSFORM_PLAIN = 0x10000,
-  PALETTE_TRANSFORM_GREY = 0x10001,
-  PALETTE_TRANSFORM_SEPIA = 0x10002,
-  PALETTE_TRANSFORM_WARM = 0x10003,
-  PALETTE_TRANSFORM_MUTED = 0x10004,
-  PALETTE_TRANSFORM_PALE = 0x10005,
-  PALETTE_TRANSFORM_RED = 0x10006,
-  PALETTE_TRANSFORM_WARM_DARK = 0x10007,
-  PALETTE_TRANSFORM_FLAGS = 0x100000,
-  PALETTE_TRANSFORM_TINT = 0x200000,
-  PALETTE_TRANSFORM_BLEND = 0x400000,
-  PALETTE_TRANSFORM_SPLIT = 0x800000
-};
-
 void TitlePaletteFade_BuildColors(u32 mode, u16 *source, u16 *destination,
                                   s32 half);
 
@@ -109,24 +93,24 @@ void TitlePaletteFade_Release(void);
 enum PaletteTint {
   /// The backdrop colour (palette RAM's first colour) for all.
   PALETTE_TINT_FROM_SOURCE = 0x8000,
-  PALETTE_TINT_NONE = 0x10000,      ///< each colour unchanged
-  PALETTE_TINT_GRAYSCALE = 0x10001, ///< grey of brightness (2R + 4G + B) / 7
+  PALETTE_TINT_NONE = 0x10000, ///< each colour unchanged
+  PALETTE_TINT_GRAYSCALE,      ///< grey of brightness (2R + 4G + B) / 7
   /// Brownish grey: the brightness (R + G + B) / 10, red at 4 times it plus
   /// 5, green and blue 3 times plus 5, each held to 8 to 28.
-  PALETTE_TINT_SEPIA = 0x10002,
+  PALETTE_TINT_SEPIA,
   /// Half R + 10, two thirds G + 8, B - 7; black stays black.
-  PALETTE_TINT_WARM = 0x10003,
+  PALETTE_TINT_WARM,
   /// Each channel held to a narrow range (R 10 to 28, G 16 to 24, B 16 to 26),
   /// then G and B + 2.
-  PALETTE_TINT_MUTED = 0x10004,
-  PALETTE_TINT_PALE = 0x10005, ///< half of each channel, plus their mean
+  PALETTE_TINT_MUTED,
+  PALETTE_TINT_PALE, ///< half of each channel, plus their mean
   /// R plus an eighth of G and of B; G and B two thirds.
-  PALETTE_TINT_RED = 0x10006,
-  PALETTE_TINT_WARM_DARK = 0x10007, ///< half R + 6, two thirds G + 4, B - 6
+  PALETTE_TINT_RED,
+  PALETTE_TINT_WARM_DARK, ///< half R + 6, two thirds G + 4, B - 6
   /// A fifth off each channel of a bright colour.
-  PALETTE_TINT_DIM_BRIGHT = 0x10008,
+  PALETTE_TINT_DIM_BRIGHT,
   /// A third of R + G + B, B three steps darker.
-  PALETTE_TINT_DIM_GRAY = 0x10009,
+  PALETTE_TINT_DIM_GRAY,
   /// From here the TINT, BLEND and SPLIT bits are tested, TINT and BLEND
   /// carrying an RGB555 colour in the low 15 bits; any other value is the
   /// address of a ready buffer to copy.

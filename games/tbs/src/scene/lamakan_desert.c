@@ -5,14 +5,14 @@
 /// uncovers.
 ///
 /// The heat is a count of steps on hazard ground
-/// (gMainRoutineWork.hazardSteps). Scene_Initialize sets a limit of 600
+/// (gMainRoutineWork.hazardSteps). Scene_Initialize sets a limit of HEAT_LIMIT
 /// on every scene, at which the party loses a quarter of its HP. On all but
 /// LamakanDesertCave it starts the heat gauge, a thermometer down the screen's
 /// left edge (HeatGauge_Draw).
 ///
 /// Each moving frame on the sand adds a step (HeatGauge_CountStep,
-/// CELL_BEHAVIOR_LAMAKAN_DESERT_SAND and the examine triggers' cell behaviors
-/// 100 to 107).
+/// CELL_BEHAVIOR_LAMAKAN_DESERT_SAND and the treasure spots' cells,
+/// TREASURE_SPOT_VULCAN_AXE to TREASURE_SPOT_MINT).
 ///
 /// As the gauge passes a quarter, a half and three quarters, Garet, Ivan or Mia
 /// complains of the heat (LamakanDesert_ComplainAboutHeat). For that,
@@ -37,7 +37,7 @@
 /// Stepping by a pit (CELL_BEHAVIOR_LAMAKAN_DESERT_PIT) pulls the leader into
 /// it for a battle with an Ant Lion (LamakanDesert_FallIntoPit). Slopes of sand
 /// (CELL_BEHAVIOR_LAMAKAN_DESERT_SLOPE) carry the leader south
-/// (LamakanDesert_SlideDownDune).
+/// (LamakanDesert_SlipDownSand).
 ///
 /// In LamakanDesertManticore, until it is beaten
 /// (FLAG_LAMAKAN_MANTICORE_BEATEN), the Manticore rises out of the sand as the
@@ -94,6 +94,39 @@
 /// The heat gauge's levels: the party's steps scaled from 0 to
 /// HEAT_GAUGE_LEVELS by the area's hazard limit.
 #define HEAT_GAUGE_LEVELS 120
+/// The gauge's place on the screen: 16 pixels wide, from line 8 down four
+/// 16x32 sprites and a 16x16 bulb.
+#define HEAT_GAUGE_WIDTH 16
+#define HEAT_GAUGE_TOP 8
+#define HEAT_GAUGE_HEIGHT (4 * 32 + 16)
+/// The gauge's tube in its pictures, from the row below its cap to the row
+/// above its bulb; the heat fills it from below.
+#define HEAT_GAUGE_TUBE_TOP 12
+#define HEAT_GAUGE_TUBE_FOOT 128
+/// The word of the gauge's tiles that holds the left half of pixel row `row`:
+/// each band of eight rows is a left tile, then a right one, eight words each.
+#define HEAT_GAUGE_ROW_WORD(row) ((row) / 8 * 16 + (row) % 8)
+/// The sprite palette the gauge is drawn in, its colour for the tube's empty
+/// part (black), and the first of the six colours the heat reddens.
+#define HEAT_GAUGE_PALETTE 14
+#define HEAT_GAUGE_EMPTY_COLOR 14
+#define HEAT_GAUGE_TINTED_COLOR 6
+#define HEAT_GAUGE_TINTED_COLORS 6
+/// The most the gauge's green brightens, at full heat, on its flickering
+/// frames past half.
+#define HEAT_GAUGE_GREEN_FLICKER 32
+
+/// The steps of heat at which the party loses HEAT_DAMAGE_PERCENT of its HP
+/// and the count starts again (gMainRoutineWork.hazardLimit).
+#define HEAT_LIMIT 600
+#define HEAT_DAMAGE_PERCENT 25
+/// The gauge's marks, in percent of HEAT_LIMIT, past which Garet, Ivan or Mia
+/// complains of the heat.
+enum {
+  HEAT_QUARTER_PERCENT = 25,
+  HEAT_HALF_PERCENT = 50,
+  HEAT_THREE_QUARTERS_PERCENT = 75
+};
 
 /// The VRAM cache entry holding the gauge's tiles.
 s16 gHeatGauge_VramSlot BSS_DATA ALIGNED(16);
@@ -124,9 +157,9 @@ extern struct ActorPlacement gLamakanDesertEastActorPlacements[];
 extern struct ActorPlacement gLamakanDesertSmogActorPlacements[];
 extern struct ActorPlacement gLamakanDesertManticoreActorPlacements[];
 extern struct Trigger gLamakanDesertTriggers[];
-extern s16 gHeatGaugeLevel;
-extern s16 gHeatGaugeSlide;
-extern s16 gHeatGaugeFlash;
+extern s16 gHeatGauge_Level;
+extern s16 gHeatGauge_Shown;
+extern s16 gHeatGauge_Flash;
 
 static void HeatGauge_SetHeld(u16 held);
 
@@ -191,27 +224,52 @@ enum {
 
 // A secret of the east and Smog scenes is a 4-by-2 patch of the map grid. On
 // entry each is saved to a spare patch of its own on row 126, numbered from
-// the west; hidden, it is drawn over with plain sand; Reveal copies it back.
-#define SECRET_SPARE_COLUMN(number) (64 + 4 * (number))
+// the west from column 64; hidden, it is drawn over with the plain sand at
+// (70, 68); Reveal copies it back.
+#define SECRET_WIDTH 4
+#define SECRET_HEIGHT 2
+#define SECRET_SPARE_FIRST_COLUMN 64
+#define SECRET_SPARE_COLUMN(number)                                            \
+  (SECRET_SPARE_FIRST_COLUMN + SECRET_WIDTH * (number))
 #define SECRET_SPARE_ROW 126
+#define PLAIN_SAND_COLUMN 70
+#define PLAIN_SAND_ROW 68
 /// Saves the secret whose top-left cell is (column, row) to its spare patch.
 #define SAVE_SECRET(number, column, row)                                       \
-  MapGrid_CopyCells(column, row, 4, 2, SECRET_SPARE_COLUMN(number),            \
-                    SECRET_SPARE_ROW)
+  MapGrid_CopyCells(column, row, SECRET_WIDTH, SECRET_HEIGHT,                  \
+                    SECRET_SPARE_COLUMN(number), SECRET_SPARE_ROW)
 /// Draws plain sand over a secret.
-#define HIDE_SECRET(column, row) MapGrid_CopyCells(70, 68, 4, 2, column, row)
+#define HIDE_SECRET(column, row)                                               \
+  MapGrid_CopyCells(PLAIN_SAND_COLUMN, PLAIN_SAND_ROW, SECRET_WIDTH,           \
+                    SECRET_HEIGHT, column, row)
 /// Copies a secret back from its spare patch.
 #define SHOW_SECRET(number, column, row)                                       \
-  MapGrid_CopyCells(SECRET_SPARE_COLUMN(number), SECRET_SPARE_ROW, 4, 2,       \
-                    column, row)
+  MapGrid_CopyCells(SECRET_SPARE_COLUMN(number), SECRET_SPARE_ROW,             \
+                    SECRET_WIDTH, SECRET_HEIGHT, column, row)
 // Five secrets also change the ground a row further south: hidden, the row
 // two below the patch's top takes the sand's ground; shown, the two rows from
 // one below its top take the ground of the saved patch's two rows.
 #define HIDE_SECRET_SOUTH_ROW(column, row)                                     \
-  MapGrid_CopyCellAttributes(70, 68, 4, 1, column, (row) + 2)
+  MapGrid_CopyCellAttributes(PLAIN_SAND_COLUMN, PLAIN_SAND_ROW, SECRET_WIDTH,  \
+                             1, column, (row) + 2)
 #define SHOW_SECRET_SOUTH_ROWS(number, column, row)                            \
-  MapGrid_CopyCellAttributes(SECRET_SPARE_COLUMN(number), SECRET_SPARE_ROW, 4, \
-                             2, column, (row) + 1)
+  MapGrid_CopyCellAttributes(SECRET_SPARE_COLUMN(number), SECRET_SPARE_ROW,    \
+                             SECRET_WIDTH, 2, column, (row) + 1)
+
+/// The desert's treasure spots, whose cells Reveal uncovers with their
+/// secrets: the chests and Psynergy Stones their examine triggers find, and
+/// the cell under Smog, which no examine trigger answers. Each is sand
+/// underfoot as well.
+enum LamakanDesertTreasureSpot {
+  TREASURE_SPOT_VULCAN_AXE = TREASURE_SPOT_FIRST_ID, ///< LamakanDesertEast
+  TREASURE_SPOT_FIRST_PSYNERGY_STONE,                ///< LamakanDesertEast
+  TREASURE_SPOT_LUCKY_PEPPER,                        ///< LamakanDesertSmog
+  TREASURE_SPOT_SECOND_PSYNERGY_STONE,               ///< LamakanDesertSmog
+  TREASURE_SPOT_UNDER_SMOG,                          ///< LamakanDesertSmog
+  TREASURE_SPOT_777_COINS,                           ///< LamakanDesertSmog
+  TREASURE_SPOT_POTION,                              ///< LamakanDesertSmog
+  TREASURE_SPOT_MINT                                 ///< LamakanDesertManticore
+};
 
 #include "shared/field_effect_create.c"
 #include "shared/field_effect_spawn.c"
@@ -226,7 +284,7 @@ static void LamakanDesert_TalkToSmog(void) {
 
 /// The update a leader pulled into an Ant Lion's pit runs: sand sounds every 8
 /// frames and a spray of sand every 16.
-static UNREAD_RESULT LamakanDesert_LeaderSpraySand(struct Actor *actor) {
+static UNREAD_RESULT LamakanDesert_KickUpSand(struct Actor *actor) {
   struct EffectOptions params;
   s32 phase;
 
@@ -276,10 +334,12 @@ const struct ActorPlacement *Scene_GetActorPlacements(void) {
     if (gMainRoutineWork.entrance ==
         LAMAKAN_DESERT_MANTICORE_AFTER_FIGHT_MANTICORE) {
       GameFlag_Set(FLAG_LAMAKAN_MANTICORE_BEATEN);
-      // XXX: what this patch fixed; every Kalay scene sets the flag on entry
-      // (kalay.c) and Vale, the Vault and the Sanctum read it, so a save in
-      // an unpatched edition that reaches this battle with it clear would
-      // settle it.
+      // The French, Spanish and Italian editions mark Kalay reached here too.
+      // In play it is already set: every Kalay scene, the tunnel's entrance
+      // among them, sets it on entry (kalay.c), and the ship to Tolbi sails
+      // only once the tour group has left Kalay. XXX (no evidence): what the
+      // patch guards against; no route in the code reaches this battle with
+      // the flag clear, and the editions say nothing of why.
 #if TBS_PATCH_3
       GameFlag_Set(FLAG_KALAY_REACHED);
 #endif
@@ -366,7 +426,8 @@ static UNREAD_RESULT Reveal_HideSecrets(void) {
   Actor_SetPosition(ACTOR_FIRST_PIT + 2, 0, 0);
   Actor_SetPosition(ACTOR_LAST_PIT, 0, 0);
   Actor_SetPosition(ACTOR_SMOG, 0, 0);
-  for (markerId = 100; markerId <= 107; markerId++) {
+  for (markerId = TREASURE_SPOT_VULCAN_AXE; markerId <= TREASURE_SPOT_MINT;
+       markerId++) {
     TreasureSpot_SetActorPosition(markerId, 0, 0);
   }
   if (gMainRoutineWork.next != SCENE_LAMAKAN_DESERT_CAVE) {
@@ -430,7 +491,7 @@ static UNREAD_RESULT Reveal_ShowSecrets(void) {
       MapGrid_CopyCells(0, 119, 3, 1, 9, 5);
     }
   }
-  for (i = 100; i <= 107; i++) {
+  for (i = TREASURE_SPOT_VULCAN_AXE; i <= TREASURE_SPOT_MINT; i++) {
     TreasureSpot_SetPosition(i, -1, -1);
   }
   TreasureSpot_MoveLeaderAway();
@@ -488,33 +549,36 @@ static void HeatGauge_RaiseQuarterTriggers(void) {
 
   if (GameFlag_Get(FLAG_SECRETS_REVEALED) != 0)
     return;
-  if (Event_GetFlag(FLAG_HEAT_THREE_QUARTERS) != 0 && percent <= 74) {
+  if (Event_GetFlag(FLAG_HEAT_THREE_QUARTERS) != 0 &&
+      percent < HEAT_THREE_QUARTERS_PERCENT) {
     GameFlag_Clear(FLAG_HEAT_THREE_QUARTERS);
     GameFlag_Clear(FLAG_GARET_COMPLAINED);
     GameFlag_Clear(FLAG_IVAN_COMPLAINED);
     GameFlag_Clear(FLAG_MIA_COMPLAINED);
   }
-  if (Event_GetFlag(FLAG_HEAT_HALF) != 0 && percent <= 49) {
+  if (Event_GetFlag(FLAG_HEAT_HALF) != 0 && percent < HEAT_HALF_PERCENT) {
     GameFlag_Clear(FLAG_HEAT_HALF);
     GameFlag_Clear(FLAG_GARET_COMPLAINED);
     GameFlag_Clear(FLAG_IVAN_COMPLAINED);
     GameFlag_Clear(FLAG_MIA_COMPLAINED);
   }
-  if (Event_GetFlag(FLAG_HEAT_QUARTER) != 0 && percent <= 24) {
+  if (Event_GetFlag(FLAG_HEAT_QUARTER) != 0 && percent < HEAT_QUARTER_PERCENT) {
     GameFlag_Clear(FLAG_HEAT_QUARTER);
     GameFlag_Clear(FLAG_GARET_COMPLAINED);
     GameFlag_Clear(FLAG_IVAN_COMPLAINED);
     GameFlag_Clear(FLAG_MIA_COMPLAINED);
   }
-  if (Event_GetFlag(FLAG_HEAT_QUARTER) == 0 && percent > 24) {
+  if (Event_GetFlag(FLAG_HEAT_QUARTER) == 0 &&
+      percent >= HEAT_QUARTER_PERCENT) {
     GameFlag_Set(FLAG_HEAT_QUARTER);
     work->raisedTrigger = LAMAKAN_DESERT_RAISED_HEAT_QUARTER;
   }
-  if (Event_GetFlag(FLAG_HEAT_HALF) == 0 && percent > 49) {
+  if (Event_GetFlag(FLAG_HEAT_HALF) == 0 && percent >= HEAT_HALF_PERCENT) {
     GameFlag_Set(FLAG_HEAT_HALF);
     work->raisedTrigger = LAMAKAN_DESERT_RAISED_HEAT_HALF;
   }
-  if (Event_GetFlag(FLAG_HEAT_THREE_QUARTERS) == 0 && percent > 74) {
+  if (Event_GetFlag(FLAG_HEAT_THREE_QUARTERS) == 0 &&
+      percent >= HEAT_THREE_QUARTERS_PERCENT) {
     GameFlag_Set(FLAG_HEAT_THREE_QUARTERS);
     work->raisedTrigger = LAMAKAN_DESERT_RAISED_HEAT_THREE_QUARTERS;
   }
@@ -631,7 +695,7 @@ static void LamakanDesert_BatheInOasis(void) {
     s32 drained = 0;
 
     do {
-      Io_Write16(600, revealFrames);
+      Io_Write16(REVEAL_FRAMES, revealFrames);
       frames--;
       if (*heat != 0) {
         *heat -= 5;
@@ -669,8 +733,9 @@ static void LamakanDesert_BatheInOasis(void) {
   HeatGauge_SetHeld(0);
 }
 
-/// In Lamakan Desert, walking on sand (step triggers 21 and 100 to 107) adds a
-/// step of heat each moving frame and kicks up dust, faster on the run.
+/// In Lamakan Desert, walking on sand (CELL_BEHAVIOR_LAMAKAN_DESERT_SAND and
+/// the treasure spots' cells) adds a step of heat each moving frame and kicks
+/// up dust, faster on the run.
 static void HeatGauge_CountStep(void) {
   struct Actor *actor;
   struct FieldWork *work;
@@ -723,6 +788,10 @@ static void HeatGauge_CountStep(void) {
   }
 }
 
+/// The distance in pixels LamakanDesert_FallIntoPit's search for the nearest
+/// pit starts from, farther than any pit can be.
+#define PIT_SEARCH_DISTANCE (1 << 20)
+
 /// In Lamakan Desert, stepping near a hidden pit (step trigger 22), the leader
 /// looks at the nearest pit and is pulled backwards into it, and a battle with
 /// an Ant Lion begins.
@@ -739,7 +808,7 @@ static void LamakanDesert_FallIntoPit(void) {
   leader = Actor_Get(gMainRoutineWork.leaderActorId);
   best = ACTOR_FIRST_PIT;
   GameFlag_Set(FLAG_DESERT_EVENT_RUNNING);
-  min = 1 << 20;
+  min = PIT_SEARCH_DISTANCE;
   // The nearest pit still there, by the distance along x plus along z.
   for (id = ACTOR_FIRST_PIT; id <= ACTOR_LAST_PIT; id++) {
     pit = Actor_Get(id);
@@ -773,10 +842,11 @@ static void LamakanDesert_FallIntoPit(void) {
   Actor_Get(ACTOR_PARTY_LEADER)->facing =
       FACING_SIXTEENTH(Actor_Get(ACTOR_PARTY_LEADER)->facing + DEGtoANG(180));
   Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_LEADER_RUN);
-  Actor_SetAnimationSpeedById(ACTOR_PARTY_LEADER, 24);
+  Actor_SetAnimationSpeedById(ACTOR_PARTY_LEADER,
+                              ANIMATION_STEP_NORMAL * 3 / 2);
   Actor_SetSpeed(ACTOR_PARTY_LEADER, 0.1);
   Actor_Get(ACTOR_PARTY_LEADER)->update =
-      (void (*)(struct Actor *))LamakanDesert_LeaderSpraySand;
+      (void (*)(struct Actor *))LamakanDesert_KickUpSand;
   pit = Actor_Get(best);
   if (pit != NULL) {
     Actor_SetDestination(ACTOR_PARTY_LEADER, pit->x.part[0].integer,
@@ -795,7 +865,7 @@ static void LamakanDesert_FallIntoPit(void) {
 
 /// In Lamakan Desert, on a slope of sand (CELL_BEHAVIOR_LAMAKAN_DESERT_SLOPE),
 /// the sand carries the leader south 1.5 pixels a frame.
-static void LamakanDesert_SlideDownDune(void) {
+static void LamakanDesert_SlipDownSand(void) {
   struct Actor *center;
   s32 id;
   struct Actor *actor;
@@ -884,7 +954,7 @@ static void LamakanDesert_MeetManticore(void) {
   // The heat stops rising while the leader faces the Manticore, and a running
   // Reveal is kept full until it has risen.
   HeatGauge_SetHeld(1);
-  work->revealFrames = 600;
+  work->revealFrames = REVEAL_FRAMES;
   Actor_Get(ACTOR_PARTY_LEADER)->velocityX = 0;
   Actor_Get(ACTOR_PARTY_LEADER)->velocityZ = 0;
   Actor_Get(ACTOR_PARTY_LEADER)->targetX = ACTOR_NO_TARGET;
@@ -920,16 +990,16 @@ static void LamakanDesert_MeetManticore(void) {
   Actor_WalkToAndWait(ACTOR_MANTICORE, 168, 104);
   Actor_SetSpeed(ACTOR_MANTICORE, 0.5);
   Actor_WalkToAndWait(ACTOR_MANTICORE, 168, 92);
-  work->revealFrames = 600;
+  work->revealFrames = REVEAL_FRAMES;
   HeatGauge_SetHeld(0);
 }
 
-/// Entering Lamakan Desert starts the heat gauge (600 steps) on all but
-/// LamakanDesertCave.
+/// Entering Lamakan Desert sets the heat's limit, HEAT_LIMIT steps, and starts
+/// the heat gauge on all but LamakanDesertCave.
 s32 Scene_Initialize(void) {
-  gMainRoutineWork.hazardLimit = 600;
+  gMainRoutineWork.hazardLimit = HEAT_LIMIT;
   gMainRoutineWork.hazardMode = HAZARD_COUNT_ON_CELLS;
-  gMainRoutineWork.hazardDamage = HAZARD_DAMAGE_PERCENT | 25;
+  gMainRoutineWork.hazardDamage = HAZARD_DAMAGE_PERCENT | HEAT_DAMAGE_PERCENT;
   if (gMainRoutineWork.next != SCENE_LAMAKAN_DESERT_CAVE) {
     gFieldWork->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
     HeatGauge_Start();
@@ -977,8 +1047,9 @@ static UNUSED void LamakanDesert_UnusedWalkManticore(void) {
   Actor_SetAnimation(ACTOR_MANTICORE, 2);
 }
 
-/// Every frame: draws the heat gauge down the screen's left edge, 8 pixels
-/// further out while held.
+/// Every frame: draws the heat gauge down the screen's left edge. It slides off
+/// the screen, 8 pixels a frame, while the field handles a request, unless it
+/// is held, and back on afterwards.
 static void HeatGauge_Draw(void) {
   u8 *buffer;
   s32 tile;
@@ -990,7 +1061,7 @@ static void HeatGauge_Draw(void) {
   u8 *frame;
   u8 *bar;
   struct MenuSprite *sprite;
-  s32 slide;
+  s32 shown;
   u32 i;
   u32 *palette;
   u32 red;
@@ -1003,51 +1074,55 @@ static void HeatGauge_Draw(void) {
 
   tile = gVramCacheEntries[gHeatGauge_VramSlot].offset >> 5;
   if (gHeatGauge_Held != 0) {
-    gHeatGaugeSlide = 2;
+    gHeatGauge_Shown = 2;
   } else if (GameFlag_Get(FLAG_FIELD_HANDLING_REQUESTS) != 0) {
-    if (gHeatGaugeSlide > 0) {
-      gHeatGaugeSlide--;
+    if (gHeatGauge_Shown > 0) {
+      gHeatGauge_Shown--;
     }
-  } else if (gHeatGaugeSlide <= 1) {
-    if (++gHeatGaugeSlide == 1) {
-      Dma_Set(gHeatGauge_Palette, (void *)&OBJ_PLTT_COLOR(14, 0),
+  } else if (gHeatGauge_Shown <= 1) {
+    if (++gHeatGauge_Shown == 1) {
+      Dma_Set(gHeatGauge_Palette,
+              (void *)&OBJ_PLTT_COLOR(HEAT_GAUGE_PALETTE, 0),
               DMA_COPY_HALFWORDS(16), REG_DMA3);
     }
   }
-  slide = gHeatGaugeSlide;
-  if (slide == 0) {
+  shown = gHeatGauge_Shown;
+  if (shown == 0) {
     VramCache_ReleaseVram(gHeatGauge_VramSlot);
     return;
   }
 
-  // Window 1's left edge follows the gauge on lines 8 to 151.
+  // Window 1 spans the gauge, from the screen's left edge to the gauge's
+  // right, on the lines it covers: each line's WIN1H, past WININ and WINOUT.
   transition = gScreenTransitionWork;
   if (transition != NULL) {
     u16 *edge = transition->pages[transition->page];
-    s32 left = (s16)(slide << 3);
+    s32 right = (s16)(shown << 3);
 
-    edge += 3 + 2 * 8;
-    for (i = 0; i < 144; i++) {
-      *edge = left;
+    edge += 3 + 2 * HEAT_GAUGE_TOP;
+    for (i = 0; i < HEAT_GAUGE_HEIGHT; i++) {
+      *edge = right;
       edge += 2;
     }
   }
 
   buffer = Heap_Alloc(sizeof(gHeatGauge_TileBuffer));
   Dma_Set(gHeatGauge_Palette, buffer, DMA_COPY_HALFWORDS(16), REG_DMA3);
-  colors = (s16 *)buffer + 6;
+  colors = (s16 *)buffer + HEAT_GAUGE_TINTED_COLOR;
   color = colors;
-  for (i = 6; i < 12; i++) {
+  for (i = HEAT_GAUGE_TINTED_COLOR;
+       i < HEAT_GAUGE_TINTED_COLOR + HEAT_GAUGE_TINTED_COLORS; i++) {
     u16 value = *color;
 
     red = RGB_RED(value);
     green = RGB_GREEN(value);
     blue = RGB_BLUE(value) - 20;
-    level = gHeatGaugeLevel;
+    level = gHeatGauge_Level;
     red += level / 3;
     blue = blue - level / 6 + 20;
-    if (level > 60 && (gFrameCount & 1)) {
-      green += level * 64 / HEAT_GAUGE_LEVELS - 32;
+    if (level > HEAT_GAUGE_LEVELS / 2 && (gFrameCount & 1)) {
+      green += level * (2 * HEAT_GAUGE_GREEN_FLICKER) / HEAT_GAUGE_LEVELS -
+               HEAT_GAUGE_GREEN_FLICKER;
     }
     if (red > RGB_LEVEL_MAX) {
       red = RGB_LEVEL_MAX;
@@ -1060,35 +1135,37 @@ static void HeatGauge_Draw(void) {
     }
     *color++ = RGB(red, green, blue);
   }
-  palette = (u32 *)&OBJ_PLTT_COLOR(14, 6);
-  word = (u32 *)(buffer + 6 * sizeof(u16));
+  palette = (u32 *)&OBJ_PLTT_COLOR(HEAT_GAUGE_PALETTE, HEAT_GAUGE_TINTED_COLOR);
+  word = (u32 *)(buffer + HEAT_GAUGE_TINTED_COLOR * sizeof(u16));
   IoWriteQueue_Store32((u32)palette++, *word++);
   IoWriteQueue_Store32((u32)palette++, *word++);
   IoWriteQueue_Store32((u32)palette++, *word++);
 
-  gHeatGaugeLevel = gMainRoutineWork.hazardSteps * HEAT_GAUGE_LEVELS /
-                    gMainRoutineWork.hazardLimit;
-  if (gHeatGaugeLevel >= HEAT_GAUGE_LEVELS - 1) {
-    gHeatGaugeFlash = HEAT_GAUGE_LEVELS - 1;
+  gHeatGauge_Level = gMainRoutineWork.hazardSteps * HEAT_GAUGE_LEVELS /
+                     gMainRoutineWork.hazardLimit;
+  if (gHeatGauge_Level >= HEAT_GAUGE_LEVELS - 1) {
+    gHeatGauge_Flash = HEAT_GAUGE_LEVELS - 1;
   }
-  if (gHeatGaugeFlash != 0) {
-    gHeatGaugeLevel = gHeatGaugeFlash;
-    gHeatGaugeFlash -= 8;
-    if (gHeatGaugeFlash <= 0) {
-      gHeatGaugeFlash = 0;
+  if (gHeatGauge_Flash != 0) {
+    gHeatGauge_Level = gHeatGauge_Flash;
+    gHeatGauge_Flash -= 8;
+    if (gHeatGauge_Flash <= 0) {
+      gHeatGauge_Flash = 0;
     }
   }
 
-  // The gauge's tiles, two 8-pixel columns of 4-bit pixels: fill the bar from
-  // its top down to the heat level, then close it with the top's first row.
+  // The gauge's tiles, two 8-pixel columns of 4-bit pixels: paint the tube
+  // black from its top down to the heat level, then close it with the top's
+  // first row.
   Dma_Set(gHeatGauge_TileBuffer, buffer,
           DMA_COPY_WORDS(sizeof(gHeatGauge_TileBuffer) / 4), REG_DMA3);
-  if (gHeatGaugeFlash < HEAT_GAUGE_LEVELS - 1) {
-    pixels = (u32 *)buffer + 20;
+  if (gHeatGauge_Flash < HEAT_GAUGE_LEVELS - 1) {
+    pixels = (u32 *)buffer + HEAT_GAUGE_ROW_WORD(HEAT_GAUGE_TUBE_TOP);
     {
-      u32 fill = PIXELS_4BPP(14);
+      u32 fill = PIXELS_4BPP(HEAT_GAUGE_EMPTY_COLOR);
 
-      for (i = 12; i < 128 - gHeatGaugeLevel; i++) {
+      for (i = HEAT_GAUGE_TUBE_TOP; i < HEAT_GAUGE_TUBE_FOOT - gHeatGauge_Level;
+           i++) {
         pixels[8] = fill;
         *pixels++ = fill;
         if ((i & 7) == 7) {
@@ -1099,7 +1176,7 @@ static void HeatGauge_Draw(void) {
     pixels[0] = ((u32 *)buffer)[0];
     pixels[8] = ((u32 *)buffer)[8];
   }
-  // Lay the frame's opaque pixels over the bar.
+  // Lay the frame's opaque pixels over the tube.
   bar = buffer;
   frame = buffer + HEAT_GAUGE_TILE_BYTES;
   for (i = 0; i < HEAT_GAUGE_TILE_BYTES; i++) {
@@ -1116,15 +1193,16 @@ static void HeatGauge_Draw(void) {
   // gauge's foot.
   attributes = OBJ_SIZE_16X32;
   sprite = gHeatGauge_Sprites;
-  for (i = 0, offset = 0, y = 8; i < 5; i++) {
-    u32 x = (gHeatGaugeSlide * 8 - 16) & 0x1ff;
+  for (i = 0, offset = 0, y = HEAT_GAUGE_TOP; i < 5; i++) {
+    u32 x = (gHeatGauge_Shown * 8 - HEAT_GAUGE_WIDTH) & OBJ_X_MASK;
 
     if (i == 4) {
       attributes = OBJ_SIZE_16X16;
     }
     sprite->next = NULL;
-    sprite->oam.word.attr01 = (x << 16) | y | attributes;
-    sprite->oam.word.attr23 = tile | OBJ_PRIORITY(1) | OBJ_PALETTE(14);
+    sprite->oam.word.attr01 = OBJ_X(x) | y | attributes;
+    sprite->oam.word.attr23 =
+        tile | OBJ_PRIORITY(1) | OBJ_PALETTE(HEAT_GAUGE_PALETTE);
     Oam_AddSpriteAtDepth(((u8 *)gHeatGauge_Sprites + offset), OAM_DEPTH_FRONT);
     sprite++;
     tile += 8;
@@ -1139,7 +1217,7 @@ void HeatGauge_Start(void) {
   FieldDecompress_TaggedLz(gHeatGauge_Tiles, gHeatGauge_TileBuffer);
   gHeatGauge_VramSlot = VramCache_FindFreeEntry();
   VramCache_Load(gHeatGauge_VramSlot, HEAT_GAUGE_TILE_BYTES, 0);
-  gHeatGaugeSlide = 0;
+  gHeatGauge_Shown = 0;
   gHeatGauge_Held = 0;
   Task_AddFrame(HeatGauge_Draw, TASK_PASS_FRAME - 10);
 }
@@ -1289,38 +1367,39 @@ struct Trigger gLamakanDesertTriggers[] = {
     { TRIGGER_STEP, CELL_BEHAVIOR_LAMAKAN_DESERT_OASIS, FLAG_DESERT_EVENT_RUNNING, EVENT(LamakanDesert_BatheInOasis) },
     { TRIGGER_STEP, CELL_BEHAVIOR_LAMAKAN_DESERT_SAND, CONDITION_ALWAYS, EVENT(HeatGauge_CountStep) },
     { TRIGGER_STEP, CELL_BEHAVIOR_LAMAKAN_DESERT_PIT, FLAG_DESERT_EVENT_RUNNING, EVENT(LamakanDesert_FallIntoPit) },
-    { TRIGGER_STEP, CELL_BEHAVIOR_LAMAKAN_DESERT_SLOPE, CONDITION_ALWAYS, EVENT(LamakanDesert_SlideDownDune) },
+    { TRIGGER_STEP, CELL_BEHAVIOR_LAMAKAN_DESERT_SLOPE, CONDITION_ALWAYS, EVENT(LamakanDesert_SlipDownSand) },
     { TRIGGER_STEP, 40, CONDITION_ALWAYS, EVENT(LamakanDesert_MeetManticore) },
     { TRIGGER_TALK, ACTOR_MANTICORE, FLAG_LAMAKAN_MANTICORE_BEATEN, EVENT(LamakanDesert_FightManticore) },
     { TRIGGER_TALK, ACTOR_SMOG, CONDITION_ALWAYS, EVENT(LamakanDesert_TalkToSmog) },
-    { EXAMINE_TRIGGER(EXAMINE_CHEST), 100, FLAG_LAMAKAN_DESERT_VULCAN_AXE, FIND_ITEM(ITEM_VULCAN_AXE) },
-    { EXAMINE_TRIGGER(EXAMINE_SILENT), 101, FLAG_LAMAKAN_DESERT_FIRST_PSYNERGY_STONE, FIND_PSYNERGY_STONE },
-    { EXAMINE_TRIGGER(EXAMINE_CHEST), 102, FLAG_LAMAKAN_DESERT_LUCKY_PEPPER, FIND_ITEM(ITEM_LUCKY_PEPPER) },
-    { EXAMINE_TRIGGER(EXAMINE_SILENT), 103, FLAG_LAMAKAN_DESERT_SECOND_PSYNERGY_STONE, FIND_PSYNERGY_STONE },
-    { EXAMINE_TRIGGER(EXAMINE_CHEST), 105, FLAG_LAMAKAN_DESERT_777_COINS, FIND_COINS(777) },
-    { EXAMINE_TRIGGER(EXAMINE_CHEST), 106, FLAG_LAMAKAN_DESERT_POTION, FIND_ITEM(ITEM_POTION) },
-    { EXAMINE_TRIGGER(EXAMINE_CHEST), 107, FLAG_LAMAKAN_DESERT_MINT, FIND_ITEM(ITEM_MINT) },
+    { EXAMINE_TRIGGER(EXAMINE_CHEST), TREASURE_SPOT_VULCAN_AXE, FLAG_LAMAKAN_DESERT_VULCAN_AXE, FIND_ITEM(ITEM_VULCAN_AXE) },
+    { EXAMINE_TRIGGER(EXAMINE_SILENT), TREASURE_SPOT_FIRST_PSYNERGY_STONE, FLAG_LAMAKAN_DESERT_FIRST_PSYNERGY_STONE, FIND_PSYNERGY_STONE },
+    { EXAMINE_TRIGGER(EXAMINE_CHEST), TREASURE_SPOT_LUCKY_PEPPER, FLAG_LAMAKAN_DESERT_LUCKY_PEPPER, FIND_ITEM(ITEM_LUCKY_PEPPER) },
+    { EXAMINE_TRIGGER(EXAMINE_SILENT), TREASURE_SPOT_SECOND_PSYNERGY_STONE, FLAG_LAMAKAN_DESERT_SECOND_PSYNERGY_STONE, FIND_PSYNERGY_STONE },
+    { EXAMINE_TRIGGER(EXAMINE_CHEST), TREASURE_SPOT_777_COINS, FLAG_LAMAKAN_DESERT_777_COINS, FIND_COINS(777) },
+    { EXAMINE_TRIGGER(EXAMINE_CHEST), TREASURE_SPOT_POTION, FLAG_LAMAKAN_DESERT_POTION, FIND_ITEM(ITEM_POTION) },
+    { EXAMINE_TRIGGER(EXAMINE_CHEST), TREASURE_SPOT_MINT, FLAG_LAMAKAN_DESERT_MINT, FIND_ITEM(ITEM_MINT) },
     { PSYNERGY_ANYWHERE(ABILITY_REVEAL, PSYNERGY_PHASE_ACTS), 0, CONDITION_ALWAYS, EVENT(Reveal_ShowSecrets) },
     { PSYNERGY_ANYWHERE(ABILITY_REVEAL, PSYNERGY_PHASE_FADES), 0, CONDITION_ALWAYS, EVENT(Reveal_HideSecrets) },
     { TRIGGER_RAISED, LAMAKAN_DESERT_RAISED_HEAT_QUARTER, FLAG_SECRETS_REVEALED, EVENT(LamakanDesert_ComplainAboutHeat) },
     { TRIGGER_RAISED, LAMAKAN_DESERT_RAISED_HEAT_HALF, FLAG_SECRETS_REVEALED, EVENT(LamakanDesert_ComplainAboutHeat) },
     { TRIGGER_RAISED, LAMAKAN_DESERT_RAISED_HEAT_THREE_QUARTERS, FLAG_SECRETS_REVEALED, EVENT(LamakanDesert_ComplainAboutHeat) },
-    { TRIGGER_STEP, 100, CONDITION_ALWAYS, EVENT(HeatGauge_CountStep) },
-    { TRIGGER_STEP, 101, CONDITION_ALWAYS, EVENT(HeatGauge_CountStep) },
-    { TRIGGER_STEP, 102, CONDITION_ALWAYS, EVENT(HeatGauge_CountStep) },
-    { TRIGGER_STEP, 103, CONDITION_ALWAYS, EVENT(HeatGauge_CountStep) },
-    { TRIGGER_STEP, 104, CONDITION_ALWAYS, EVENT(HeatGauge_CountStep) },
-    { TRIGGER_STEP, 105, CONDITION_ALWAYS, EVENT(HeatGauge_CountStep) },
-    { TRIGGER_STEP, 106, CONDITION_ALWAYS, EVENT(HeatGauge_CountStep) },
-    { TRIGGER_STEP, 107, CONDITION_ALWAYS, EVENT(HeatGauge_CountStep) },
+    { TRIGGER_STEP, TREASURE_SPOT_VULCAN_AXE, CONDITION_ALWAYS, EVENT(HeatGauge_CountStep) },
+    { TRIGGER_STEP, TREASURE_SPOT_FIRST_PSYNERGY_STONE, CONDITION_ALWAYS, EVENT(HeatGauge_CountStep) },
+    { TRIGGER_STEP, TREASURE_SPOT_LUCKY_PEPPER, CONDITION_ALWAYS, EVENT(HeatGauge_CountStep) },
+    { TRIGGER_STEP, TREASURE_SPOT_SECOND_PSYNERGY_STONE, CONDITION_ALWAYS, EVENT(HeatGauge_CountStep) },
+    { TRIGGER_STEP, TREASURE_SPOT_UNDER_SMOG, CONDITION_ALWAYS, EVENT(HeatGauge_CountStep) },
+    { TRIGGER_STEP, TREASURE_SPOT_777_COINS, CONDITION_ALWAYS, EVENT(HeatGauge_CountStep) },
+    { TRIGGER_STEP, TREASURE_SPOT_POTION, CONDITION_ALWAYS, EVENT(HeatGauge_CountStep) },
+    { TRIGGER_STEP, TREASURE_SPOT_MINT, CONDITION_ALWAYS, EVENT(HeatGauge_CountStep) },
     { TRIGGER_TABLE_END },
 };
 // clang-format on
 
-/// The gauge: how full it is (0 to 120), how far it has slid onto the
-/// screen, and a flash as it fills.
-s16 gHeatGaugeLevel = 0;
+/// The gauge: how full it is (0 to HEAT_GAUGE_LEVELS), how much of it is on
+/// the screen (0 to 2, 8 pixels a step), and the level it drains from once the
+/// heat strikes.
+s16 gHeatGauge_Level = 0;
 
-s16 gHeatGaugeSlide = 0;
+s16 gHeatGauge_Shown = 0;
 
-s16 gHeatGaugeFlash = 0;
+s16 gHeatGauge_Flash = 0;

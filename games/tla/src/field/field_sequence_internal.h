@@ -144,7 +144,7 @@ enum ContainerKind {
   CONTAINER_MIMIC = 129,          ///< a chest that is "really a Mimic!"
   CONTAINER_PSYNERGY_STONE = 130, ///< restores the party's PP
   /// "There's something buried here!": the Scoop spot, actor 79.
-  CONTAINER_BURIED = 131,
+  CONTAINER_GROUND = 131,
   CONTAINER_STONE_TABLET = 132, ///< a summon tablet
   CONTAINER_POND = 133          ///< "There's something in the shallows!"
 };

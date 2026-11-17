@@ -19,9 +19,9 @@
 /// English release (MsgEnemyName plus the row): an enemy id is the row plus
 /// ENEMY_ID_FIRST. The rows the text names "?" are unused and have no names
 /// here. Where several rows share a name, each takes what tells its battle
-/// apart, as The Broken Seal's do: the one place it is fought, or the Djinni a
-/// Djinni battle is with; rows the game's own text numbers ("Serpent 6",
-/// "Ruffian 2") keep those numbers.
+/// apart: the one place it is fought, or the Djinni a Djinni battle is with;
+/// rows the game's own text numbers ("Serpent 6", "Ruffian 2") keep those
+/// numbers.
 enum EnemyId {
   /// Row 0: "???", in no formation; a formation's empty places list it.
   ENEMY_NONE = ENEMY_ID_FIRST,

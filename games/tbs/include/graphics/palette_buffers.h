@@ -16,6 +16,9 @@
 /// The colour channels a PaletteFade moves: B, G and R for each of its 448
 /// colours.
 #define PALETTE_FADE_CHANNELS (448 * 3)
+/// The background colours a PaletteFade moves, palettes 0 to 13; as many
+/// sprite colours follow them.
+#define PALETTE_FADE_BG_COLORS 224
 
 /// A palette fade for all 512 palette colours: the source palette, the shown
 /// and target colour channels, their steps, and two pages of packed colours.

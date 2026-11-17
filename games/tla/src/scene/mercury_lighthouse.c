@@ -24,6 +24,7 @@
 #include "system/io_reg.h"
 #include "field/actor_script.h"
 #include "system/frame.h"
+#include "field/field_sequence.h"
 #include "field/field_sequence_event.h"
 #include "scene/scene.h"
 #include "text/msg_ids.h"
@@ -270,7 +271,8 @@ void MercuryLighthouse_HearVoices(void) {
   *(u16 *)BG_PLTT = 0;
   wait(1);
   gFieldWork->transitionFrames = 16;
-  gFieldWork->transition = SCENE_TRANSITION(TRANSITION_WINDOW, 1);
+  gFieldWork->transition =
+      SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_SHAPE);
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();
   Event_SetFlag(FLAG_MARS_BEACON_BURNING);

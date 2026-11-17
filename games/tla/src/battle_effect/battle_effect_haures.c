@@ -493,8 +493,8 @@ void BattleEffect_RunHaures(struct BattleEffectParams *args) {
           Render_TransformVertices(gBattleEffect_GroundSquareCorners, verts, 4);
           Render_DrawModelList(model);
           // DEAD: a second square, textured from the sheet past where
-          // ChainTexture was decoded, is set up and never drawn: the mound's
-          // settings replace it before the draw. The ROM keeps its stores.
+          // ChainTexture was decoded, is set up and never drawn, the mound's
+          // settings replacing it before the draw; the ROM keeps its stores.
           texture.logWidth = 5;
           texture.logHeight = 5;
           texture.pixels = work->sheet + PICTURE_BYTES(HAURES_CHAIN);

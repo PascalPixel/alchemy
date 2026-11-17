@@ -1667,7 +1667,8 @@ void GabombaStatue_TurnCogs(s32 direction) {
     GabombaStatue_SetCogTurn(ACTOR_ELIXIR_GREEN_COGS, direction, 0);
     GabombaStatue_SetCogTurn(ACTOR_ELIXIR_BLUE_COGS, direction, 1);
     GabombaStatue_SetCogTurn(ACTOR_FLASHING_COG, direction, 2);
-    if ((u16)(gMainRoutineWork.entrance - 3) > 1)
+    if ((u16)(gMainRoutineWork.entrance -
+              GABOMBA_STATUE_ELIXIR_CHEST_FROM_GABOMBA_STATUE_STEEL_WEST) > 1)
       GabombaStatue_SetCogTurn(ACTOR_ELIXIR_PINION_A, direction, 3);
     if (direction == 0)
       MapGrid_CopyCellAttributes(23, 21, 1, 3, 23, 9);
@@ -2286,7 +2287,8 @@ s32 Scene_Initialize(void) {
 /// as they were.
 s32 Scene_PrepareMap(void) {
   if (gMainRoutineWork.next == SCENE_GABOMBA_STATUE_PINION &&
-      gMainRoutineWork.entrance == 1 &&
+      gMainRoutineWork.entrance ==
+          GABOMBA_STATUE_PINION_FROM_KIBOMBO_STATUE_GROUNDS &&
       !Event_GetFlag(FLAG_KEEP_PARTY_POSITION)) {
     Event_ClearFlag(FLAG_GABOMBA_COGS_TURNED_BACK);
     Event_ClearFlag(FLAG_GABOMBA_FIRST_STAKE_POUNDED);
@@ -2311,7 +2313,8 @@ static inline void FieldRope_Place(s32 index, s32 flag, s32 firstPost,
 /// in from the west or the east of Steel's room, the stakes, the flashing
 /// cog raised until both are Pounded, and the two ropes.
 void GabombaStatue_InitializeElixirChest(void) {
-  if ((u16)(gMainRoutineWork.entrance - 3) <= 1) {
+  if ((u16)(gMainRoutineWork.entrance -
+            GABOMBA_STATUE_ELIXIR_CHEST_FROM_GABOMBA_STATUE_STEEL_WEST) <= 1) {
     Actor_SetScript(ACTOR_ELIXIR_PINION_A, gGabombaStatue_PinionReleaseScript);
     Actor_SetScript(ACTOR_ELIXIR_PINION_B, gGabombaStatue_PinionReleaseScript);
     MapGrid_CopyCellAttributes(33, 24, 3, 3, 27, 29);
@@ -2336,9 +2339,12 @@ void GabombaStatue_InitializeSteel(void) {
   if (!Event_GetFlag(FLAG_KEEP_PARTY_POSITION)) {
     s32 entrance = (u16)gMainRoutineWork.entrance;
 
-    if ((u16)(entrance - 7) <= 1)
+    if ((u16)(entrance -
+              GABOMBA_STATUE_STEEL_FROM_GABOMBA_STATUE_TURNTABLE_SOUTHEAST_A) <=
+        1)
       GabombaStatue_LandFromFall();
-    if (gMainRoutineWork.entrance == 7)
+    if (gMainRoutineWork.entrance ==
+        GABOMBA_STATUE_STEEL_FROM_GABOMBA_STATUE_TURNTABLE_SOUTHEAST_A)
       Event_SetFlag(FLAG_LANDED_BESIDE_STEEL);
   }
 }
@@ -2414,14 +2420,18 @@ void GabombaStatue_InitializeArrows(void) {
                                    gGabombaStatue_ChannelSeeds[seed],
                                    ACTOR_BLOCK_A);
   Actor_SetAnimation(ACTOR_GREY_PILLAR, 5);
-  if (gMainRoutineWork.entrance == 2) {
+  if (gMainRoutineWork.entrance ==
+      GABOMBA_STATUE_ARROWS_FROM_KIBOMBO_STATUE_GROUNDS_CEREMONY_NORTH_A) {
     GabombaStatue_WatchTheChargesStick();
     return;
   }
   if (!Event_GetFlag(FLAG_GABOMBA_SAW_HOW_IT_WORKS)) {
-    if (gMainRoutineWork.entrance == 1)
+    if (gMainRoutineWork.entrance ==
+        GABOMBA_STATUE_ARROWS_FROM_GABOMBA_STATUE_CHAMBER_IDOL_EAST)
       GabombaStatue_FocusEnergies();
-    else if (gMainRoutineWork.entrance == 3)
+    else if (
+        gMainRoutineWork.entrance ==
+        GABOMBA_STATUE_ARROWS_FROM_KIBOMBO_STATUE_GROUNDS_CEREMONY_NORTH_B_A)
       GabombaStatue_SeeHowItWorks();
   }
   if (Event_GetFlag(FLAG_GABOMBA_BACK_FROM_CEREMONY)) {
@@ -2444,7 +2454,8 @@ void GabombaStatue_InitializeArrows(void) {
 void GabombaStatue_InitializePinion(void) {
   Actor_Get(gMainRoutineWork.leaderActorId)->priorityFlags |=
       ACTOR_PRIORITY_IGNORES_RISES;
-  if (gMainRoutineWork.entrance == 1) {
+  if (gMainRoutineWork.entrance ==
+      GABOMBA_STATUE_PINION_FROM_KIBOMBO_STATUE_GROUNDS) {
     Event_SetFlag(FLAG_GABOMBA_RETREAT_TO_PINION);
     Event_ClearFlag(FLAG_GABOMBA_RETREAT_TO_IDOL);
   }

@@ -127,6 +127,9 @@ struct FieldPsynergyReach {
 };
 
 extern const struct FieldPsynergyReach gFieldPsynergy_Reach[];
+/// Added to a field Psynergy's kind, the gFieldPsynergy_Reach row for the
+/// objects its shaking reaches (Tremor's, 275).
+#define REACH_SHAKEN_OBJECTS 256
 
 /// Actor.spriteStorageKind, its low four bits: what the actor's sprite
 /// pointer holds.
@@ -304,7 +307,10 @@ struct WorldMapCell {
   u32 tile : 24; ///< low halfword: the cell picture
   /// Passed to WorldMap_UpdateRegionTint; region / 10 picks the graphics set.
   u32 region : 6;
-  u32 unusedHigh : 2; ///< no code names them
+  u32 unused : 1; ///< no code names it
+  /// A beach: WorldMap_GetBattleEnvironment fights on it from
+  /// gWorldMap_TerrainBehaviorTable's beach bank.
+  u32 beach : 1;
 };
 
 /// A map cell's terrain kind: the low four bits of its shape's first byte,

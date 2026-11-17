@@ -78,11 +78,12 @@ void Actor_CenterOnColumn(u32 objectId, s32 action, s32 z_offset);
 void Actor_WalkByAndWaitById(u32 objectId, s32 x_offset, s32 z_offset);
 void Event_ShowMessageThenWait(s32 speaker, s32 flags, s32 frames);
 void Actor_ConfigureSpriteColor(s32 actorId, s32 value);
-void MapGrid_CopyCellPictureIndicesRect(s32 srcX, s32 srcY, s32 dst_x,
-                                        s32 dst_y, s32 width, s32 height);
-void MapGrid_CopyCellPictureCellsRect(s32 sourceX, s32 sourceY,
-                                      s32 destinationX, s32 destinationY,
-                                      s32 width, s32 height);
+void MapGrid_CopyCellPictureIndicesRect(s32 sourceX, s32 sourceY,
+                                        s32 destinationX, s32 destinationY,
+                                        s32 width, s32 height);
+void MapGrid_CopyCellPictureCellsRect(s32 sourceX, s32 sourceY, s32 width,
+                                      s32 height, s32 destinationX,
+                                      s32 destinationY);
 void PaletteFade_SetSource(s32 value, s32 mode);
 void PaletteFade_SetTarget(s32 value, s32 mode);
 void Actor_MoveToAndWaitById(u32 objectId, s32 x, s32 z);
@@ -416,14 +417,14 @@ static inline void MapGrid_CopyCellsTo(s32 sourceX, s32 sourceY,
                                      destinationY, width, height);
 }
 
-/// Changes the pictures of part of the room as MapGrid_CopyCellsTo does,
-/// through MapGrid_CopyCellPictureCellsRect, which keeps each cell's attribute
-/// bits.
-static inline void MapGrid_CopyCellsLayered(s32 sourceX, s32 sourceY,
-                                            s32 destinationX, s32 destinationY,
-                                            s32 width, s32 height) {
-  MapGrid_CopyCellPictureCellsRect(sourceX, sourceY, destinationX, destinationY,
-                                   width, height);
+/// Changes the pictures of part of the room as MapGrid_CopyCellsTo does, the
+/// rectangle's size before its destination, through
+/// MapGrid_CopyCellPictureCellsRect, which keeps each cell's attribute bits.
+static inline void MapGrid_CopyCellsLayered(s32 sourceX, s32 sourceY, s32 width,
+                                            s32 height, s32 destinationX,
+                                            s32 destinationY) {
+  MapGrid_CopyCellPictureCellsRect(sourceX, sourceY, width, height,
+                                   destinationX, destinationY);
 }
 
 /// Sets the colours the screen shows now, where an event's palette fade starts.

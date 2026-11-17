@@ -52,6 +52,12 @@ enum Facing {
 
 /// A sixteenth of a turn, half the step between two headings.
 enum { FACING_STEP = TRIG_TURN / 16 };
+/// The eighth of a turn a facing lies in, what is past it dropped.
+#define FACING_EIGHTH(facing) ((facing) & 0xe000)
+/// The eighth of a turn a facing lies in, as a number from 0 (east) to 7.
+#define FACING_EIGHTH_INDEX(facing) ((facing) >> 13)
+/// The sixteenth of a turn a facing lies in, what is past it dropped.
+#define FACING_SIXTEENTH(facing) ((facing) & 0xf000)
 /// The sixteenth of a turn a facing lies in, as a number from 0 (east) to 15,
 /// which indexes the scenes' sixteen-direction step tables.
 #define FACING_INDEX(facing) ((facing) >> 12)
@@ -204,6 +210,9 @@ struct Trigger {
 #define TRIGGER_SUBJECT_FACING 0xf000
 #define TRIGGER_SUBJECT_NEEDS_FACING 0x0800
 #define TRIGGER_SUBJECT_TARGET 0xff
+/// A trigger's subject that answers only while the leader faces `facing`.
+#define TRIGGER_FACING_SUBJECT(facing, target)                                 \
+  ((s16)((facing) | TRIGGER_SUBJECT_NEEDS_FACING | (target)))
 /// A trigger's value below this is a message, from it an event.
 #define TRIGGER_RESULT_MESSAGE_END 65536
 
@@ -362,6 +371,10 @@ enum PsynergyPhase {
   PSYNERGY_PHASE_FIRST = 8,
   PSYNERGY_PHASE_ANY = 15 ///< Scene_FindPsynergyTrigger matches every phase
 };
+/// The phase a field Psynergy's work is left in once it has finished, which
+/// the cast waits for; its acting events get it as their stage the last time
+/// they run.
+#define FIELD_PSYNERGY_FINISHED 999
 
 /// The control word of a Psynergy trigger (TRIGGER_PSYNERGY) in the given
 /// phase, as Scene_FindPsynergyTrigger compares it (bits 31..28 phase

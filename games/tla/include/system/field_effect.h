@@ -119,6 +119,10 @@ enum EffectDuration {
   EFFECT_SCRIPT_LONG = 2    ///< held 128 frames
 };
 
+/// Sixteen puffs of dust in a ring round the leader as he lands from above,
+/// the first thrown twice.
+#define DUST_RING_PUFFS 16
+
 /// The options of a spawned field effect, each used when its EFFECT_USE_ flag
 /// (or EFFECT_SCALE_TO_TARGET) is set.
 struct EffectOptions {

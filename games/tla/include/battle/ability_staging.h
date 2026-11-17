@@ -69,5 +69,9 @@ enum BattleStaging {
 /// own), or turns right round.
 #define EFFECT_VIEW_ACROSS 0x40000
 #define EFFECT_VIEW_REVERSED 0x80000
+/// Unused: an effect kind no row of gAbilityBattleEffects gives, which
+/// BattleStaging_RunAttack would play with the status window's PP row hidden
+/// (Severe Blow is BATTLE_EFFECT_SEVERE_BLOW).
+#define EFFECT_ID_SEVERE_BLOW 135
 
 #endif

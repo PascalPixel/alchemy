@@ -11,7 +11,7 @@
 #define SHEBA 6 ///< Sheba
 #define PIERS 7 ///< Picard
 
-/// The childhood sprites, shown while flag 32 is set; the eight party
+/// The childhood sprites, shown while FLAG_CHILDHOOD is set; the eight party
 /// members' sprites share their character numbers
 #define ISAAC_CHILD 18
 #define GARET_CHILD 19

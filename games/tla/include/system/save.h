@@ -73,7 +73,7 @@ struct SaveSectorHeader {
   u8 partId;
   u16 checksum;
   u16 counter;
-  u8 reserved[4]; ///< not named by ⚓️ code
+  u8 reserved[4]; ///< no code names it
 };
 
 /// Where a save image, EWRAM from gSaveBuffer as a part holds it, keeps the

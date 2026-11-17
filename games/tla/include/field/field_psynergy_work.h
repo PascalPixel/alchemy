@@ -30,8 +30,14 @@ struct FieldPsynergyParticle {
   s32 timer;
 };
 
+/// The effect sprites a field Psynergy has (FieldEffectWork.particles).
+#define PSYNERGY_EFFECT_SLOT_COUNT 24
+/// The frame of Scoop's dig at which the ground is dug, its stage 1
+/// (FieldPsynergy_Scoop).
+#define SCOOP_DUG_FRAME 30
+
 /// The work of a field Psynergy (heap slot HEAP_SLOT_FIELD_EFFECT): its caster
-/// and target, where it takes place, the map state it restores, its 24 field
+/// and target, where it takes place, the map state it restores, its field
 /// effect sprites and the sprite and stage a lasting Psynergy keeps.
 struct FieldEffectWork {
   /// The caster's facing, rounded to four directions, 1/65536 turns.
@@ -76,7 +82,8 @@ struct FieldEffectWork {
   s32 savedShakeY;
   s32 savedShakeDecay;
   ///@}
-  struct FieldParticle particles[24]; ///< its field effect sprites
+  /// Its field effect sprites.
+  struct FieldParticle particles[PSYNERGY_EFFECT_SLOT_COUNT];
   s16 arcTileSlot; ///< the VRAM cache entry of the falling arcs' tiles
   s8 messageMode;  ///< the announcement's box mode: 1, an event adds 8
   u8 messageShown; ///< set while the announcement's message is open

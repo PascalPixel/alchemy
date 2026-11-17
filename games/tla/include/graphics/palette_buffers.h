@@ -4,6 +4,7 @@
 #include "edition.h"
 #include "types.h"
 #include "static_assert.h"
+#include "system/io_reg.h"
 
 /// @file
 /// Palette fades, the battle effect palette buffers and the colour channel
@@ -46,6 +47,10 @@ STATIC_ASSERT(offsetof(struct TitlePaletteFade, target) == 4096);
 STATIC_ASSERT(offsetof(struct TitlePaletteFade, delta) == 7168);
 STATIC_ASSERT(offsetof(struct TitlePaletteFade, packed) == 10240);
 STATIC_ASSERT(offsetof(struct TitlePaletteFade, page) == 12288);
+
+/// The BG colours a palette fade keeps, palettes 0 to 13, before its OBJ
+/// colours.
+#define PALETTE_FADE_BG_COLORS (14 * PALETTE_COLORS)
 
 /// The palette fade (HEAP_SLOT_PALETTE_FADE) that fades the BG and OBJ
 /// palettes: the source palette, the shown and target colour channels, their

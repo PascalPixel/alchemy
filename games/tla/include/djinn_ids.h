@@ -10,6 +10,9 @@
 /// The first of each element's two spares, after its eighteen Djinn (a
 /// DJINNI_INDEX): the text names the spares after the element ("Earth18").
 #define DJINNI_SPARE_FIRST 18
+/// The place of each element's first Djinni this game adds (DJINNI_ECHO's),
+/// after The Broken Seal's seven.
+#define DJINN_OWN_FIRST 7
 
 /// A Djinni's place among its element's Djinn, from 0, as Djinn_JoinParty and
 /// the party members' Djinn lists take it.

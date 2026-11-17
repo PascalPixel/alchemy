@@ -53,4 +53,9 @@ struct FieldSprite {
   void *record;                   ///< released by SpriteAnimation_ClearFar
 };
 
+/// The depth a sprite the scene draws itself takes past its screen row, just
+/// behind an actor's image (+ 62) and shadow (+ 60) at the same spot: light
+/// sprites, a hole's mask, map cell sprites, fountains and ropes.
+#define SCENE_SPRITE_DEPTH 58
+
 #endif

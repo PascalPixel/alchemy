@@ -188,6 +188,8 @@ void Matrix_SetRotateY(s32 angle);
 void Matrix_RotateX(s32 angle);
 void Matrix_TranslateVector(const FIXED *position);
 void Projection_Set(u32 focal, u32 nearDepth, u32 farDepth);
+/// The far depth well past the battlefield: the largest whole 16.16 number.
+#define BATTLE_FAR_DEPTH toFIXED(32767)
 void Matrix_Translate(FIXED x, FIXED y, FIXED z);
 void Matrix_ScaleUniform(FIXED scale);
 void Matrix_Scale(FIXED x, FIXED y, FIXED z);

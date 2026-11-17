@@ -14,7 +14,12 @@
 enum {
   /// Bytes in a struct Unit, which the code clears and copies whole.
   BATTLE_UNIT_SIZE = 332,
-  PSYNERGY_ABILITY_MASK = 0x3fff ///< PsynergyEntry.encodedAction's action id
+  PSYNERGY_ABILITY_MASK = 0x3fff, ///< PsynergyEntry.encodedAction's action id
+  /// PsynergyEntry.encodedAction's marks: the action comes from an equipped
+  /// item, or from the class (its top bit, PSYNERGY_FROM_CLASS_SHIFT).
+  PSYNERGY_FROM_ITEM = 0x4000,
+  PSYNERGY_FROM_CLASS = 0x8000,
+  PSYNERGY_FROM_CLASS_SHIFT = 15
 };
 
 /// An entry in a unit's action list: the action's id (PSYNERGY_ABILITY_MASK)
@@ -271,6 +276,9 @@ enum CurseFlag {
 
 /// Unit ids from 128 are the enemies'.
 #define FIRST_ENEMY_UNIT 128
+/// The bit set in every enemy's unit id (FIRST_ENEMY_UNIT and up), and so the
+/// side a unit fights on.
+#define UNIT_ID_ENEMY_BIT FIRST_ENEMY_UNIT
 
 /// How many actions a unit's list holds (Unit.psynergy).
 #define PSYNERGY_SLOTS 32

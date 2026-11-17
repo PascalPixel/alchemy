@@ -15,7 +15,8 @@
 /// Modes 1 to 6 and 9 to 11 run them through a 256-byte table (the five
 /// gResourceSlot_ConversionTables, then the four gSpriteColorRemapTables
 /// ones); the solid modes paint every drawn pixel one colour of the basic
-/// sprite palette. Mode 8 is a second white and mode 12 reads past the tables.
+/// sprite palette. Mode 8 is a second white, and mode 12 (SPRITE_COLOR_DARK)
+/// reads past the tables.
 enum SpriteColorMode {
   SPRITE_COLOR_NORMAL = 0,
   SPRITE_COLOR_GRB = 1,         ///< red and green swapped
@@ -28,9 +29,13 @@ enum SpriteColorMode {
   SPRITE_COLOR_BLUE_TINT = 9,   ///< blue raised to full
   SPRITE_COLOR_RED_TINT = 10,   ///< red raised to full
   SPRITE_COLOR_GREEN_TINT = 11, ///< green raised to full
-  SPRITE_COLOR_FILL = 13,       ///< solid gDecodeFillByte
-  SPRITE_COLOR_BLACK = 14,      ///< solid colour 1, black
-  SPRITE_COLOR_HIDDEN = 15      ///< solid colour 0, transparent
+  /// Drawn dark: the light grey footprints Breath shows in the sand of the
+  /// Shrine of the Sea God, and the beacon's fire on Mars Lighthouse as it goes
+  /// out.
+  SPRITE_COLOR_DARK = 12,
+  SPRITE_COLOR_FILL = 13,  ///< solid gDecodeFillByte
+  SPRITE_COLOR_BLACK = 14, ///< solid colour 1, black
+  SPRITE_COLOR_HIDDEN = 15 ///< solid colour 0, transparent
 };
 
 /// Passed to Actor_ConfigureSpriteColor in place of a SpriteColorMode: the
@@ -259,10 +264,20 @@ enum ActorAnimation {
   /// ANIM_WALK's six pictures in reverse order.
   ANIM_LEADER_WALK_BACKWARDS = 27,
   ANIM_LEADER_ARMS_RAISED = 28, ///< both arms raised over his head
+  /// Hanging from a rope by his hands as he crosses it.
+  ANIM_LEADER_CROSS_ROPE = 29,
   /// ANIM_LEADER_RUN again, on every party member's sheet.
   ANIM_PARTY_RUN = 30,
   /// Hanging from a vine, seen from behind with an arm raised.
   ANIM_LEADER_HANG = 32,
+  /// Slumping and falling forward onto his face, then lying there: the leader
+  /// as the whole party falls.
+  ANIM_LEADER_FALL_ON_FACE = 36,
+  /// Swinging an arm out to throw something.
+  ANIM_LEADER_TOSS = 39,
+  /// Seen from behind, arms flung up and waving: the leader carried over a
+  /// waterfall.
+  ANIM_LEADER_FLAIL = 40,
   /// Sitting on the floor, legs out, arms flung up and then lowered: the leader
   /// knocked down.
   ANIM_LEADER_SIT = 49

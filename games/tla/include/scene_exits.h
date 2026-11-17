@@ -197,6 +197,10 @@ enum {
 /// SceneId_StaffCredit's entrances.
 enum {
   STAFF_CREDIT_FROM_PROX_SOUTH_GATE = 0,
+  /// Unused: from Mt. Aleph's summit straight to the credits, which open on
+  /// the World Map by Jupiter Lighthouse (mt_aleph_summit.c's
+  /// ENTRANCE_SKIP_TO_CREDITS).
+  STAFF_CREDIT_FROM_MT_ALEPH_SUMMIT = 72,
 };
 
 /// SceneId_VenusLighthouseEntrance's entrances.
@@ -1701,6 +1705,9 @@ enum {
 /// SceneId_AlhafraManor's entrances.
 enum {
   ALHAFRA_MANOR_FROM_ALHAFRA = 1,
+  /// Back from the view of Air's Rock on the World Map, beside the man who
+  /// showed it (world_map.c's WorldMap_PanToAlhafraManor).
+  ALHAFRA_MANOR_FROM_WORLD_MAP_VIEW = 80,
 };
 /// SceneId_AlhafraManor's exits.
 enum {

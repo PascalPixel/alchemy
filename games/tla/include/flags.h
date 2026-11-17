@@ -27,6 +27,10 @@
 /// clears on every arrival: the 80 hiding flags and the 16 after them.
 #define FLAG_ARRIVAL_CLEARED_LAST 0xdf
 
+/// Unused: The Broken Seal's flag for its prologue, while Isaac and Garet are
+/// children. Nothing in this game sets or reads it; the debug battle menu
+/// clears it.
+#define FLAG_CHILDHOOD 0x20
 /// Unused: The Broken Seal's flag for the tunic young Isaac wears. Nothing in
 /// this game sets it; were it set, World Map actor placements would keep their
 /// full size (Event_SpawnObjectTable).
@@ -35,6 +39,11 @@
 /// Set as Isaac's party joins Felix's (Party_AddIsaacsParty); a file saved
 /// after it is "Post-Reunion Data" (MsgSavePostReunion).
 #define FLAG_REUNITED 0x22
+
+/// The first of the flags that mark each enemy defeated, by enemy id, 0x600 to
+/// 0x7ff (battle_internal.h's ENEMY_DEFEATED_FLAG): BattleEnemy_RecordDefeat
+/// sets them, and the monster battles choose only defeated enemies.
+#define FLAG_ENEMY_DEFEATED_FIRST 0x600
 
 // The Broken Seal's clear data, as "Transfer data from Golden Sun" brings it
 // in by link or by password (DataTransfer_Apply).

@@ -11,12 +11,13 @@
 #define FORMATION_POOL_SIZE 32
 /// How far above the party's level a monster battle's formation may be.
 #define FORMATION_LEVEL_MARGIN 3
+/// Above any formation's average level: where the search for the pool's
+/// lowest entry starts.
+#define FORMATION_SCORE_ABOVE_ALL 999
 
-/// Keeps up to thirty-two eligible formations near the party's adjusted
-/// average level, chooses one randomly and returns its level adjustment
-/// through outMargin. It first sets flags from others, clears the enemy flags
-/// of gBattleFormation_LevelMatchedEnemies, sets flags 71, 230 and 117, and
-/// searches every formation.
+/// Chooses a monster battle's formation for the party's level plus its winning
+/// streak, at random among those at most 3 above it, and returns it with the
+/// levels its enemies must gain in outMargin.
 s32 BattleFormation_SelectLevelMatchedCandidate(s32 *outMargin) {
   s32 matchCount = 0;
   struct FormationCandidate *pool =
@@ -41,8 +42,9 @@ s32 BattleFormation_SelectLevelMatchedCandidate(s32 *outMargin) {
     } while (candidateOrUnitIndex != 0);
   }
 
+  // The flag byte is -1 once a series has ended, which takes a level off.
   targetLevel = targetLevel / unitCount;
-  targetLevel += (s8)GameFlag_GetByte(FLAG_AREA_TEMP_F8);
+  targetLevel += (s8)GameFlag_GetByte(FLAG_MONSTER_BATTLE_WINS);
   if (targetLevel <= 0)
     targetLevel = 1;
   if (targetLevel > UNIT_LEVEL_MAX)
@@ -73,19 +75,28 @@ s32 BattleFormation_SelectLevelMatchedCandidate(s32 *outMargin) {
   if (GameFlag_Get(ENEMY_DEFEATED_FLAG(ENEMY_DOOM_DRAGON_H)))
     GameFlag_Set(ENEMY_DEFEATED_FLAG(ENEMY_DOOM_DRAGON_A));
 
+  // Forget the defeated classes the monster battles exclude.
   for (candidateOrUnitIndex = 0;
        candidateOrUnitIndex < ARRAY_COUNT(gBattleFormation_LevelMatchedEnemies);
        candidateOrUnitIndex++)
     GameFlag_Clear(ENEMY_DEFEATED_FLAG(
         gBattleFormation_LevelMatchedEnemies[candidateOrUnitIndex]));
-  // XXX: 71, 230 and 117 are the ids of the Punch Ant, the Giant Bat and the
-  // Wild Wolf, none of them in the list above; as flag numbers they are
-  // Spritz's and Ether's Djinni flags and a flag after the hiding ones. A
-  // reader of these flags would settle which was meant.
-  GameFlag_Set(71);
-  GameFlag_Set(230);
-  GameFlag_Set(117);
+  // BUG: the three enemies formations 241 to 248 are made of are set by
+  // their enemy ids, not their defeated flags, so they stay unavailable
+  // unless beaten, and Spritz's and Ether's Djinni flags (71 and 117) and
+  // flag 230 are set instead.
+#ifdef BUGFIX
+  GameFlag_Set(ENEMY_DEFEATED_FLAG(ENEMY_PUNCH_ANT));
+  GameFlag_Set(ENEMY_DEFEATED_FLAG(ENEMY_GIANT_BAT));
+  GameFlag_Set(ENEMY_DEFEATED_FLAG(ENEMY_WILD_WOLF));
+#else
+  GameFlag_Set(ENEMY_PUNCH_ANT);
+  GameFlag_Set(ENEMY_GIANT_BAT);
+  GameFlag_Set(ENEMY_WILD_WOLF);
+#endif
 
+  // Each qualifying formation replaces the pool's lowest entry; empty
+  // entries score -1, so the pool fills first.
   for (candidateOrUnitIndex = 0; (u32)candidateOrUnitIndex < FORMATION_COUNT;
        candidateOrUnitIndex++) {
     s32 score = BattleFormation_AverageLevel(candidateOrUnitIndex);
@@ -94,8 +105,8 @@ s32 BattleFormation_SelectLevelMatchedCandidate(s32 *outMargin) {
       s32 lowestIndex = -1;
       s32 lowestLevel;
 
-      for (lowestLevel = 999, poolIndex = 0; poolIndex < FORMATION_POOL_SIZE;
-           poolIndex++) {
+      for (lowestLevel = FORMATION_SCORE_ABOVE_ALL, poolIndex = 0;
+           poolIndex < FORMATION_POOL_SIZE; poolIndex++) {
         if (pool[poolIndex].score < lowestLevel) {
           lowestLevel = pool[poolIndex].score;
           lowestIndex = poolIndex;
@@ -110,6 +121,7 @@ s32 BattleFormation_SelectLevelMatchedCandidate(s32 *outMargin) {
     }
   }
 
+  // matchCount includes formations evicted from the pool.
   if (matchCount > FORMATION_POOL_SIZE)
     matchCount = FORMATION_POOL_SIZE;
 
@@ -127,11 +139,13 @@ s32 BattleFormation_SelectLevelMatchedCandidate(s32 *outMargin) {
   return result;
 }
 
-/// Raises an enemy by levels, The Broken Seal's BattleEnemy_AdjustLevel with
-/// HP capped at 16383 instead of 9999: each base stat gains its share a level
-/// and keeps at least 7/10 of what it was. Returns nothing, though declared s32
-/// as there.
-s32 BattleEnemy_AdjustLevel(s32 unitId, s32 levels) {
+/// The element power an enemy gains a level (BattleEnemy_AdjustLevel); its
+/// other stats gain tenths of a point.
+#define ELEMENT_POWER_GAIN 15
+
+/// Raises an enemy by levels, or lowers it for a negative count, each stat by a
+/// fixed amount a level and no lower than 70 percent of what it was.
+UNREAD_RESULT BattleEnemy_AdjustLevel(s32 unitId, s32 levels) {
   struct BattleBaseStats *base = Heap_AllocEwram(sizeof *base);
   struct Unit *unit = Unit_Get(unitId);
   s32 value;
@@ -160,7 +174,7 @@ s32 BattleEnemy_AdjustLevel(s32 unitId, s32 levels) {
   unit->baseAgility = value;
 
   for (element = 0; element < ELEMENT_COUNT; element++) {
-    value = unit->baseElement[element].power + levels * 15;
+    value = unit->baseElement[element].power + levels * ELEMENT_POWER_GAIN;
     CLAMP(value, base->element[element].power * 7 / 10, UNIT_ELEMENT_MAX);
     unit->baseElement[element].power = value;
   }
@@ -170,9 +184,9 @@ s32 BattleEnemy_AdjustLevel(s32 unitId, s32 levels) {
   Heap_Release(base);
 }
 
-/// Raises a unit's base HP by half and base Attack and Defense by a quarter (at
-/// least 7/10 of the old values, at most 16383 and 999), from a copy of its
-/// base block, then recalculates its stats.
+/// Raises a unit's base HP by half and base Attack and Defense by a quarter, at
+/// least 70 percent of the old values and at most UNIT_ENEMY_HP_MAX and
+/// UNIT_STAT_MAX: an enemy on the HARD level (FLAG_HARD_LEVEL).
 void BattleUnit_Strengthen(s32 unitId) {
   struct BattleBaseStats *saved = Heap_AllocEwram(sizeof *saved);
   struct Unit *unit = Unit_Get(unitId);
@@ -199,6 +213,8 @@ void BattleUnit_Strengthen(s32 unitId) {
 #else
 #define ENEMY_NAME_SUFFIX_COUNT 9
 #endif
+/// The letters a class's mask holds, one bit each.
+#define NAME_LETTER_MASK_BITS 32
 
 /// Gives an enemy of the class its name letter, which tells it from others of
 /// its kind: digits abroad and the alphabet in Japanese. Returns -1 when five
@@ -225,7 +241,7 @@ s32 BattleEnemy_ClaimNameLetter(s32 classId, s32 unused) {
     }
     // The next letter after the last given that is free; after 32 tries the
     // last one tried is reused.
-    for (; attempt <= 31; attempt++) {
+    for (; attempt < NAME_LETTER_MASK_BITS; attempt++) {
       battle->lastNameLetter[classIndex] =
           (battle->lastNameLetter[classIndex] + 1) % ENEMY_NAME_SUFFIX_COUNT;
       if ((battle->nameLetterMasks[classIndex] &
@@ -275,9 +291,14 @@ UNREAD_RESULT BattleEnemy_ReleaseNameLetter(s32 unitId) {
       break;
   }
 
-  // An empty name uses a shift of 32, which emits zero on ARM. A name with
-  // no suffix instead uses its last character as a suffix.
-  suffixIndex = 32;
+  // UB: an empty name shifts by NAME_LETTER_MASK_BITS, which the ARM turns
+  // into 0, so no letter is freed. A name with no suffix instead uses its
+  // last character as a suffix.
+  suffixIndex = NAME_LETTER_MASK_BITS;
+#ifdef UBFIX
+  if (nameLength == 0)
+    return;
+#endif
   if (nameLength > 0)
     suffixIndex = unit->name[nameLength - 1] - LIST_MARKER_CHAR;
   battle->nameLetterMasks[index] &= ~(1 << suffixIndex);
@@ -292,7 +313,7 @@ s32 BattleEnemy_LetterFirstOfKind(s32 enemyId) {
   s32 terminatorIndex;
   u8 nameByte;
 
-  for (enemyIndex = 0; enemyIndex <= 5; enemyIndex++) {
+  for (enemyIndex = 0; enemyIndex < ENEMY_BATTLE_SIZE; enemyIndex++) {
     unit = Unit_Get(enemyIndex + FIRST_ENEMY_UNIT);
     nameByte = unit->side;
     if (nameByte != BATTLE_SIDE_ENEMY)
@@ -310,7 +331,7 @@ s32 BattleEnemy_LetterFirstOfKind(s32 enemyId) {
     // The name's end, then the letter and a new terminator after it.
   scan_slots:
     nameIndex++;
-    if (nameIndex > 13)
+    if (nameIndex > UNIT_NAME_SIZE - 2)
       return;
     nameByte = unit->name[nameIndex];
     if (nameByte != 0)
@@ -342,13 +363,13 @@ s32 BattleFormation_GetRandomMember(s32 recordId) {
   memberId = record->memberIds;
   maximumCount = record->maximumCounts;
   choiceCursor = choicesBase;
-  remaining = 4;
+  remaining = FORMATION_MEMBERS - 1;
   do {
     if (*maximumCount++ != 0) {
       s32 id = *memberId;
 
       count++;
-      *choiceCursor++ = id + 8;
+      *choiceCursor++ = id + ENEMY_ID_FIRST;
     }
     remaining--;
     memberId++;
@@ -383,8 +404,7 @@ s32 BattleFormation_BuildEnemyList(s32 recordId) {
 
   battle = (struct BattleWork *)Ram_HeapSlots->battleWork;
   levelAdjustment = 0;
-  // Through a byte pointer, which keeps the level adjustment stored first.
-  *(u8 *)&battle->enemyKindCount = 0;
+  battle->enemyKindCount = 0;
   enemyClasses = listBuffer;
   if (GameFlag_Get(FLAG_MONSTER_BATTLE))
     recordId = BattleFormation_SelectLevelMatchedCandidate(&levelAdjustment);
@@ -422,7 +442,7 @@ s32 BattleFormation_BuildEnemyList(s32 recordId) {
     if (additionalRoom > 0) {
       s32 memberSlots =
           2 - (BattleSprite_IsSmall(record->memberIds[memberOrEnemyIndex] +
-                                    8) != 0);
+                                    ENEMY_ID_FIRST) != 0);
 
       fittingCount = freeSpriteSlots / memberSlots;
       if (fittingCount < additionalRoom)

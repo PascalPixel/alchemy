@@ -5,8 +5,8 @@
 /// the way down to the Izumo Ruins (Izumo_RevealTheStoneCircle,
 /// Izumo_DescendIntoTheRuins). Cyclone clears its bushes
 /// (Izumo_CycloneFirstPatch to Izumo_CycloneNinthPatch). Once the Serpent is
-/// slain the village holds a festival, its dancers spinning on the spot
-/// (gIzumo_FirstSpinnerScript), and as the party leaves it is stopped to be
+/// slain the village holds a festival, its dancers turning on the spot
+/// (gIzumo_FirstDanceScript), and as the party leaves it is stopped to be
 /// thanked and told the legend of the Cloud Brand
 /// (Izumo_StopThePartyToThankThem).
 
@@ -47,13 +47,14 @@
 #define FLAG_REVEALING FLAG_AREA_TEMP_01
 
 /// The village's actors the events move: the stone Move sets back in the
-/// circle ("The misaligned stone! It's back in its original position!"), Okuni
-/// the dancer ("My name's Okuni. I'm a great dancer..."), the circle's guard,
-/// the seven who dance once the Serpent is slain, and Susa.
+/// circle, Okuni the dancer, the circle's guard, the woman on the porch west of
+/// the north-west house's door, the seven who dance once the Serpent is slain,
+/// and Susa.
 enum {
   ACTOR_MISALIGNED_STONE = 12,
   ACTOR_OKUNI = 15,
   ACTOR_STONE_CIRCLE_GUARD = 22,
+  ACTOR_PORCH_WOMAN = 24,
   ACTOR_DANCER_A = 25,
   ACTOR_DANCER_B,
   ACTOR_DANCER_C,
@@ -63,22 +64,46 @@ enum {
   ACTOR_DANCER_G,
   ACTOR_SUSA
 };
-/// Set while the one who stopped the party waits by the gate.
-#define FLAG_THANKFUL_ONE_WAITS FLAG_AREA_TEMP_02
+/// Set while Susa, refused, waits by the gate.
+#define FLAG_SUSA_WAITS FLAG_AREA_TEMP_02
 /// Set as the party is stopped on its way out to be thanked.
 #define FLAG_STOPPED_TO_THANK_THE_PARTY 0x929
 /// Set once the token of gratitude has been offered.
 #define FLAG_TOKEN_OFFERED 0x92a
 
-extern u32 gIzumo_FirstSpinnerScript[];
-extern u32 gIzumo_SecondSpinnerScript[];
-extern u32 gIzumo_ThirdSpinnerScript[];
-extern u32 gIzumo_FourthSpinnerScript[];
-extern u32 gIzumo_FifthSpinnerScript[];
-extern u32 gIzumo_SixthSpinnerScript[];
+/// The misaligned stone's cell, and the cell east of it where it belongs in
+/// the circle.
+#define STONE_MISALIGNED_CELL_X 19
+#define STONE_IN_PLACE_CELL_X 20
+#define STONE_CELL_Z 9
+/// The stone circle's center: a leader standing there as Reveal opens the way
+/// down is set just north of it.
+#define CIRCLE_CENTER_CELL_X 23
+#define CIRCLE_CENTER_CELL_Z 9
+
+/// Where Cyclone uncovers each treasure spot under the bushes, in pixels.
+#define FIRST_ANTIDOTE_SPOT_X 456
+#define FIRST_ANTIDOTE_SPOT_Z 584
+#define SECOND_ANTIDOTE_SPOT_X 472
+#define SECOND_ANTIDOTE_SPOT_Z 552
+#define LUCKY_MEDAL_SPOT_X 168
+#define LUCKY_MEDAL_SPOT_Z 328
+
+/// The water's three background palettes, from the first, and the colours of
+/// each that rotate.
+#define FIRST_WATER_PALETTE 3
+#define WATER_FIRST_COLOR 1
+#define WATER_LAST_COLOR 14
+
+extern u32 gIzumo_FirstDanceScript[];
+extern u32 gIzumo_SecondDanceScript[];
+extern u32 gIzumo_ThirdDanceScript[];
+extern u32 gIzumo_FourthDanceScript[];
+extern u32 gIzumo_FifthDanceScript[];
+extern u32 gIzumo_SixthDanceScript[];
 void Izumo_RevealTheStoneCircle(void);
 
-extern s16 gIzumo_MovableStones[];
+extern s16 gIzumo_StonesToMove[];
 extern struct ActorPlacement gIzumo_ActorPlacementsOnceTheSerpentIsSlain[];
 extern struct ActorPlacement gIzumo_ActorPlacements[];
 extern struct Trigger gIzumo_TriggersOnceTheSerpentIsSlain[];
@@ -127,7 +152,7 @@ void Izumo_TellTheCloudBrandLegend(void);
 
 /// Move on the stone circle: lifts the misaligned stone.
 void Izumo_StartMovingStone(void) {
-  Actor_LiftTargetBlock(gIzumo_MovableStones);
+  Actor_LiftTargetBlock(gIzumo_StonesToMove);
 }
 
 /// Move sets the misaligned stone down: back in its place in the circle, the
@@ -140,7 +165,7 @@ void Izumo_FinishMovingStone(void) {
 
   Actor_PlaceMovedBlock();
   Sound_Play(SE_WATER);
-  if (x == 20 && z == 9) {
+  if (x == STONE_IN_PLACE_CELL_X && z == STONE_CELL_Z) {
     if (Flag_IsSet(FLAG_REVEALING)) {
       MapGrid_CopyCellPictureIndicesRect(36, 12, 22, 8, 3, 3);
       Call6((void (*)())Map_CopyCellAttributeRect, 36, 12, 3, 3, 22, 8);
@@ -172,7 +197,7 @@ void Izumo_FinishMovingStone(void) {
       Flag_Set(FLAG_GUARD_SAW_STONE_MOVED);
     }
     Flag_Set(FLAG_STONE_IN_PLACE);
-  } else if (x == 19 && z == 9) {
+  } else if (x == STONE_MISALIGNED_CELL_X && z == STONE_CELL_Z) {
     Flag_Clear(FLAG_STONE_IN_PLACE);
     if (Flag_IsSet(FLAG_REVEALING)) {
       MapGrid_CopyCellPictureIndicesRect(36, 8, 22, 8, 3, 3);
@@ -206,8 +231,10 @@ void Izumo_CycloneSecondPatch(void) {
   FieldTileCopies_CopyTouchedCells(53, 5, 8, 9, 23, 30, 0);
   if (!GameFlag_Get(FLAG_IZUMO_FIRST_ANTIDOTE)) {
     Call3((void (*)())Actor_SetHorizontalPositionWithTerrain,
-          FIELD_TREASURE_ACTOR, toFIXED(456), toFIXED(584));
-    if (FIELD_CELL(actor->x.fixed) == 28 && FIELD_CELL(actor->z.fixed) == 36) {
+          FIELD_TREASURE_ACTOR, toFIXED(FIRST_ANTIDOTE_SPOT_X),
+          toFIXED(FIRST_ANTIDOTE_SPOT_Z));
+    if (FIELD_CELL(actor->x.fixed) == FIRST_ANTIDOTE_SPOT_X / 16 &&
+        FIELD_CELL(actor->z.fixed) == FIRST_ANTIDOTE_SPOT_Z / 16) {
       Event_Start();
       Event_ResolvePendingActions(0);
       FieldEffect_SetAttached(gMainRoutineWork.leaderActorId,
@@ -227,8 +254,10 @@ void Izumo_CycloneThirdPatch(void) {
   FieldTileCopies_CopyTouchedCells(53, 5, 8, 9, 23, 30, 0);
   if (!GameFlag_Get(FLAG_IZUMO_SECOND_ANTIDOTE)) {
     Call3((void (*)())Actor_SetHorizontalPositionWithTerrain,
-          FIELD_TREASURE_ACTOR + 1, toFIXED(472), toFIXED(552));
-    if (FIELD_CELL(actor->x.fixed) == 29 && FIELD_CELL(actor->z.fixed) == 34) {
+          FIELD_TREASURE_ACTOR + 1, toFIXED(SECOND_ANTIDOTE_SPOT_X),
+          toFIXED(SECOND_ANTIDOTE_SPOT_Z));
+    if (FIELD_CELL(actor->x.fixed) == SECOND_ANTIDOTE_SPOT_X / 16 &&
+        FIELD_CELL(actor->z.fixed) == SECOND_ANTIDOTE_SPOT_Z / 16) {
       Event_Start();
       Event_ResolvePendingActions(0);
       FieldEffect_SetAttached(gMainRoutineWork.leaderActorId,
@@ -264,8 +293,10 @@ void Izumo_CycloneSeventhPatch(void) {
   FieldTileCopies_CopyTouchedCells(42, 0, 6, 2, 9, 18, 0);
   if (!GameFlag_Get(FLAG_IZUMO_LUCKY_MEDAL)) {
     Call3((void (*)())Actor_SetHorizontalPositionWithTerrain,
-          FIELD_TREASURE_ACTOR + 2, toFIXED(168), toFIXED(328));
-    if (FIELD_CELL(actor->x.fixed) == 10 && FIELD_CELL(actor->z.fixed) == 20) {
+          FIELD_TREASURE_ACTOR + 2, toFIXED(LUCKY_MEDAL_SPOT_X),
+          toFIXED(LUCKY_MEDAL_SPOT_Z));
+    if (FIELD_CELL(actor->x.fixed) == LUCKY_MEDAL_SPOT_X / 16 &&
+        FIELD_CELL(actor->z.fixed) == LUCKY_MEDAL_SPOT_Z / 16) {
       Event_Start();
       Event_ResolvePendingActions(0);
       FieldEffect_SetAttached(gMainRoutineWork.leaderActorId,
@@ -384,26 +415,30 @@ void Izumo_TellOfUzumesFamily(s32 actor) {
   Event_End();
 }
 
-/// Every fourth frame, colours 1 to 14 of palettes 3, 4 and 5 rotate up by one.
+/// Every fourth frame, the rotating colours of each water palette move up by
+/// one.
 void Izumo_RotateWaterColors(void) {
   s16 saved;
   s32 index;
 
   if ((gFrameCount & 3) == 0) {
-    saved = BG_PLTT_COLOR(3, 14);
-    for (index = 14; index != 1; index--)
-      BG_PLTT_COLOR(3, index) = BG_PLTT_COLOR(3, index - 1);
-    BG_PLTT_COLOR(3, 1) = saved;
+    saved = BG_PLTT_COLOR(FIRST_WATER_PALETTE, WATER_LAST_COLOR);
+    for (index = WATER_LAST_COLOR; index != WATER_FIRST_COLOR; index--)
+      BG_PLTT_COLOR(FIRST_WATER_PALETTE, index) =
+          BG_PLTT_COLOR(FIRST_WATER_PALETTE, index - 1);
+    BG_PLTT_COLOR(FIRST_WATER_PALETTE, WATER_FIRST_COLOR) = saved;
 
-    saved = BG_PLTT_COLOR(4, 14);
-    for (index = 14; index != 1; index--)
-      BG_PLTT_COLOR(4, index) = BG_PLTT_COLOR(4, index - 1);
-    BG_PLTT_COLOR(4, 1) = saved;
+    saved = BG_PLTT_COLOR(FIRST_WATER_PALETTE + 1, WATER_LAST_COLOR);
+    for (index = WATER_LAST_COLOR; index != WATER_FIRST_COLOR; index--)
+      BG_PLTT_COLOR(FIRST_WATER_PALETTE + 1, index) =
+          BG_PLTT_COLOR(FIRST_WATER_PALETTE + 1, index - 1);
+    BG_PLTT_COLOR(FIRST_WATER_PALETTE + 1, WATER_FIRST_COLOR) = saved;
 
-    saved = BG_PLTT_COLOR(5, 14);
-    for (index = 14; index != 1; index--)
-      BG_PLTT_COLOR(5, index) = BG_PLTT_COLOR(5, index - 1);
-    BG_PLTT_COLOR(5, 1) = saved;
+    saved = BG_PLTT_COLOR(FIRST_WATER_PALETTE + 2, WATER_LAST_COLOR);
+    for (index = WATER_LAST_COLOR; index != WATER_FIRST_COLOR; index--)
+      BG_PLTT_COLOR(FIRST_WATER_PALETTE + 2, index) =
+          BG_PLTT_COLOR(FIRST_WATER_PALETTE + 2, index - 1);
+    BG_PLTT_COLOR(FIRST_WATER_PALETTE + 2, WATER_FIRST_COLOR) = saved;
   }
 }
 
@@ -458,7 +493,7 @@ void Izumo_StopThePartyToThankThem(void) {
     Event_ShowMessageAndWait(ACTOR_SUSA, 0);
     Actor_SetSpritePriority(ACTOR_SUSA, 3);
     Actor_GetById(ACTOR_SUSA)->motionFlags |= ACTOR_FALLS;
-    GameFlag_Set(FLAG_THANKFUL_ONE_WAITS);
+    GameFlag_Set(FLAG_SUSA_WAITS);
   } else {
     Izumo_TellTheCloudBrandLegend();
   }
@@ -509,7 +544,7 @@ void Izumo_TellTheCloudBrandLegend(void) {
   Actor_WaitForMoveById(ACTOR_SUSA);
   Actor_SetHorizontalPositionWithTerrain(ACTOR_SUSA, 0, 0);
   GameFlag_Set(FLAG_TOKEN_OFFERED);
-  GameFlag_Clear(FLAG_THANKFUL_ONE_WAITS);
+  GameFlag_Clear(FLAG_SUSA_WAITS);
 }
 
 /// Susa, waiting by the gate, offers his token of gratitude again; once told,
@@ -540,10 +575,10 @@ void Izumo_OfferATokenOfGratitude(void) {
 /// Sets up Izumo as the party enters: the fade in, the water's colours, the
 /// stone circle, and once the Serpent is slain the dancers and Susa.
 s32 Scene_Initialize(void) {
-  GameFlag_Clear(FLAG_THANKFUL_ONE_WAITS);
+  GameFlag_Clear(FLAG_SUSA_WAITS);
   gFieldWork->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
   Task_Add(Izumo_RotateWaterColors, TASK_PASS_VBLANK);
-  Actor_PlaceBlocks(gIzumo_MovableStones);
+  Actor_PlaceBlocks(gIzumo_StonesToMove);
   if (GameFlag_Get(FLAG_SERPENT_SLAIN)) {
     Actor_GetById(ACTOR_OKUNI)->steeringFlags = 2;
     Actor_SetAnimationById(ACTOR_DANCER_A, 5);
@@ -553,7 +588,7 @@ s32 Scene_Initialize(void) {
     Actor_SetAnimationById(ACTOR_DANCER_E, 6);
     Actor_SetAnimationById(ACTOR_DANCER_F, 6);
     Actor_SetAnimationById(ACTOR_DANCER_G, 5);
-    if (gMainRoutineWork.entrance == 8 &&
+    if (gMainRoutineWork.entrance == IZUMO_FROM_IZUMO_ROOMS_NORTH &&
         GameFlag_Get(FLAG_IZUMO_RECOGNIZED_THE_HEROES) &&
         !GameFlag_Get(FLAG_STOPPED_TO_THANK_THE_PARTY) &&
         !GameFlag_Get(FLAG_TOKEN_OFFERED)) {
@@ -566,11 +601,11 @@ s32 Scene_Initialize(void) {
             toFIXED(200), toFIXED(216));
       Actor_SetSpritePriority(ACTOR_SUSA, 3);
       Actor_GetById(ACTOR_SUSA)->motionFlags |= ACTOR_FALLS;
-      GameFlag_Set(FLAG_THANKFUL_ONE_WAITS);
+      GameFlag_Set(FLAG_SUSA_WAITS);
     }
   }
-  Actor_SetSpritePriority(24, 3);
-  Actor_GetById(24)->motionFlags |= ACTOR_FALLS;
+  Actor_SetSpritePriority(ACTOR_PORCH_WOMAN, 3);
+  Actor_GetById(ACTOR_PORCH_WOMAN)->motionFlags |= ACTOR_FALLS;
   return 0;
 }
 
@@ -587,7 +622,7 @@ void Izumo_RevealTheStoneCircle(void) {
   if (GameFlag_Get(FLAG_STONE_IN_PLACE)) {
     MapGrid_CopyCellPictureIndicesRect(36, 12, 22, 8, 3, 3);
     Call6((void (*)())Map_CopyCellAttributeRect, 36, 12, 3, 3, 22, 8);
-    if (x == 23 && z == 9)
+    if (x == CIRCLE_CENTER_CELL_X && z == CIRCLE_CENTER_CELL_Z)
       Actor_SetHorizontalPositionWithTerrain(gMainRoutineWork.leaderActorId,
                                              toFIXED(376), toFIXED(136));
   } else {
@@ -619,7 +654,7 @@ void Izumo_DescendIntoTheRuins(void) {
 #endif
   Actor_SetDestinationOffsetById(ACTOR_FELIX, 0, 16);
   Actor_WaitForMoveById(ACTOR_FELIX);
-  Actor_SetAnimationById(ACTOR_FELIX, 13);
+  Actor_SetAnimationById(ACTOR_FELIX, ANIM_LEADER_CLIMB_DOWN_FROM_TOP);
   FieldEvent_Wait(14);
   Izumo_SetExitRequest(value);
 }
@@ -650,13 +685,13 @@ void Izumo_EnterTheRuins(void) {
 #include "text/msg_ids.h"
 
 /// The stones Move can lift, ended by -1: the misaligned stone.
-s16 gIzumo_MovableStones[] = {
+s16 gIzumo_StonesToMove[] = {
     ACTOR_MISALIGNED_STONE,
     -1,
 };
 
 // clang-format off
-u32 gIzumo_FirstSpinnerScript[] = {                                                               
+u32 gIzumo_FirstDanceScript[] = {                                                               
       SC_SET(SW_COLLISION, 129),                                               
       SC_ACCELERATION(0.2),                                                
       SC_SPEED(0.6),                                                
@@ -685,7 +720,7 @@ u32 gIzumo_FirstSpinnerScript[] = {
       SC_END,                                                                  
   };
 
-u32 gIzumo_SecondSpinnerScript[] = {                                                               
+u32 gIzumo_SecondDanceScript[] = {                                                               
       SC_SET(SW_COLLISION, 129),                                               
       SC_ACCELERATION(0.2),                                                
       SC_SPEED(0.6),                                                
@@ -714,7 +749,7 @@ u32 gIzumo_SecondSpinnerScript[] = {
       SC_END,                                                                  
   };
 
-u32 gIzumo_ThirdSpinnerScript[] = {                                                               
+u32 gIzumo_ThirdDanceScript[] = {                                                               
       SC_SET(SW_COLLISION, 129),                                               
       SC_ACCELERATION(0.2),                                                    
       SC_SPEED(0.6),                                                
@@ -743,7 +778,7 @@ u32 gIzumo_ThirdSpinnerScript[] = {
       SC_END,                                                                  
   };
 
-u32 gIzumo_FourthSpinnerScript[] = {                                                               
+u32 gIzumo_FourthDanceScript[] = {                                                               
       SC_SET(SW_COLLISION, 129),                                               
       SC_ACCELERATION(0.2),                                                
       SC_SPEED(0.6),                                                
@@ -772,7 +807,7 @@ u32 gIzumo_FourthSpinnerScript[] = {
       SC_END,                                                                  
   };
 
-u32 gIzumo_FifthSpinnerScript[] = {                                                               
+u32 gIzumo_FifthDanceScript[] = {                                                               
       SC_SET(SW_COLLISION, 129),                                               
       SC_ACCELERATION(0.2),                                                
       SC_SPEED(0.6),                                                
@@ -801,7 +836,7 @@ u32 gIzumo_FifthSpinnerScript[] = {
       SC_END,                                                                  
   };
 
-u32 gIzumo_SixthSpinnerScript[] = {                                                               
+u32 gIzumo_SixthDanceScript[] = {                                                               
       SC_SET(SW_COLLISION, 129),                                               
       SC_ACCELERATION(0.3),                                                    
       SC_SPEED(0.6),                                                
@@ -887,13 +922,13 @@ struct ActorPlacement gIzumo_ActorPlacementsOnceTheSerpentIsSlain[] = {
     ACTOR_PLACEMENT(SPRITE_IZUMO_WOMAN_WITH_PONYTAIL, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 472, 0, 117, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
     ACTOR_PLACEMENT(SPRITE_IZUMO_WOMAN_WITH_PONYTAIL, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 104, 0, 155, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
     ACTOR_PLACEMENT(SPRITE_IZUMO_WOMAN_WITH_PONYTAIL, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 72, 0, 155, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
-    ACTOR_PLACEMENT(SPRITE_IZUMO_WOMAN_IN_RED, CONDITION_ALWAYS, (s32)gIzumo_FirstSpinnerScript, 256, 0, 424, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
-    ACTOR_PLACEMENT(SPRITE_IZUMO_WOMAN_IN_RED, CONDITION_ALWAYS, (s32)gIzumo_SecondSpinnerScript, 264, 0, 504, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
-    ACTOR_PLACEMENT(SPRITE_IZUMO_WOMAN_IN_RED, CONDITION_ALWAYS, (s32)gIzumo_ThirdSpinnerScript, 360, 0, 456, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(SPRITE_IZUMO_WOMAN_IN_RED, CONDITION_ALWAYS, (s32)gIzumo_FirstDanceScript, 256, 0, 424, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(SPRITE_IZUMO_WOMAN_IN_RED, CONDITION_ALWAYS, (s32)gIzumo_SecondDanceScript, 264, 0, 504, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(SPRITE_IZUMO_WOMAN_IN_RED, CONDITION_ALWAYS, (s32)gIzumo_ThirdDanceScript, 360, 0, 456, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
     ACTOR_PLACEMENT(SPRITE_IZUMO_OLD_MAN, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 280, 0, 472, FACING_NORTHEAST, TALK_FACING_PARTY_AND_BACK, 0),
-    ACTOR_PLACEMENT(SPRITE_IZUMO_OLD_MAN, CONDITION_ALWAYS, (s32)gIzumo_FourthSpinnerScript, 232, 0, 456, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
-    ACTOR_PLACEMENT(SPRITE_IZUMO_OLD_MAN, CONDITION_ALWAYS, (s32)gIzumo_FifthSpinnerScript, 328, 0, 504, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
-    ACTOR_PLACEMENT(SPRITE_IZUMO_OLD_WOMAN, CONDITION_ALWAYS, (s32)gIzumo_SixthSpinnerScript, 336, 0, 424, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(SPRITE_IZUMO_OLD_MAN, CONDITION_ALWAYS, (s32)gIzumo_FourthDanceScript, 232, 0, 456, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(SPRITE_IZUMO_OLD_MAN, CONDITION_ALWAYS, (s32)gIzumo_FifthDanceScript, 328, 0, 504, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(SPRITE_IZUMO_OLD_WOMAN, CONDITION_ALWAYS, (s32)gIzumo_SixthDanceScript, 336, 0, 424, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
     ACTOR_PLACEMENT(SPRITE_SUSA, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 8, 0, 8, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
     {SCENE_TABLE_END},
 };
@@ -999,7 +1034,7 @@ struct Trigger gIzumo_TriggersOnceTheSerpentIsSlain[] = {
      EVENT(Izumo_EnterDoor)},
     {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 7, CONDITION_ALWAYS,
      EVENT(Izumo_EnterDoor)},
-    {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 8, FLAG_THANKFUL_ONE_WAITS,
+    {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 8, FLAG_SUSA_WAITS,
      EVENT(Izumo_EnterDoor)},
     {STEP_TRIGGER_WALKING_INTO(FACING_SOUTH), 10, CONDITION_ALWAYS,
      EVENT(Izumo_EnterTheRuins)},
@@ -1099,6 +1134,6 @@ struct Trigger gIzumo_TriggersOnceTheSerpentIsSlain[] = {
 };
 
 /// Unused: a halfword nothing reads.
-u16 gIzumo_UnusedHalfword[] = {
+u16 gIzumo_Unused[] = {
     1,
 };

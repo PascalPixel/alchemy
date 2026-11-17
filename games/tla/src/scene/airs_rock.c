@@ -658,11 +658,21 @@ void AirsRock_SwirlLeaf(struct Actor *actor) {
 #define WHIRLWIND_MAP_ROWS 18
 #define WHIRLWIND_MAP_COLUMNS 16
 
+/// The whirlwind's tiles: columns of 8x16, their top halves placed from tile
+/// WHIRLWIND_TOP_TILE of character block 3 and their bottom halves from
+/// WHIRLWIND_BOTTOM_TILE. Its map numbers them from WHIRLWIND_MAP_FIRST_TILE.
+#define WHIRLWIND_TILE_COLUMNS 26
+#define WHIRLWIND_TOP_TILE 320
+#define WHIRLWIND_BOTTOM_TILE 352
+#define WHIRLWIND_MAP_FIRST_TILE 512
+/// The bytes of one row of the whirlwind's tiles.
+#define WHIRLWIND_TILE_ROW_SIZE (WHIRLWIND_TILE_COLUMNS * TILE_SIZE_4BPP)
+
 /// Whirlwind on the twister rock of the first slope: the mud is blown from the
 /// wall so it can be climbed.
 void AirsRock_WhirlwindClearsWall(void) {
   struct MainRoutineWork *work;
-  u16 *buffer = Heap_Alloc(1664);
+  u16 *buffer = Heap_Alloc(2 * WHIRLWIND_TILE_ROW_SIZE);
   u16 *cell;
   struct Actor *spark;
   u32 i;
@@ -672,10 +682,11 @@ void AirsRock_WhirlwindClearsWall(void) {
   FieldEvent_ResolvePendingActions(0);
   REG_DISPCNT &= ~DISPCNT_BG0_ON;
   Decompress_TaggedLz(Resource_GetTableEntry(RESOURCE_WHIRLWIND_TILES), buffer);
-  Dma_Set(buffer, BG_CHAR_BLOCK(3) + 320 * TILE_SIZE_4BPP, DMA_COPY_WORDS(208),
-          REG_DMA3);
-  Dma_Set((u8 *)buffer + 208 * 4, BG_CHAR_BLOCK(3) + 352 * TILE_SIZE_4BPP,
-          DMA_COPY_WORDS(208), REG_DMA3);
+  Dma_Set(buffer, BG_CHAR_BLOCK(3) + WHIRLWIND_TOP_TILE * TILE_SIZE_4BPP,
+          DMA_COPY_WORDS(WHIRLWIND_TILE_ROW_SIZE / 4), REG_DMA3);
+  Dma_Set((u8 *)buffer + WHIRLWIND_TILE_ROW_SIZE,
+          BG_CHAR_BLOCK(3) + WHIRLWIND_BOTTOM_TILE * TILE_SIZE_4BPP,
+          DMA_COPY_WORDS(WHIRLWIND_TILE_ROW_SIZE / 4), REG_DMA3);
   Heap_Release(buffer);
   FieldActor_SetSpritePriority(gMainRoutineWork.leaderActorId, 1);
   FieldActor_SetSpritePriority(ACTOR_TWISTER_ROCK_BY_THE_WALL, 1);
@@ -687,11 +698,11 @@ void AirsRock_WhirlwindClearsWall(void) {
   REG_BG1CNT &= ~BGCNT_PRIORITY(3);
   REG_BG1CNT |= BGCNT_PRIORITY(2);
   Dma_Fill16(16, BG_SCREEN_BLOCK(4), 1280);
-  buffer = Heap_Alloc(576);
+  buffer = Heap_Alloc(WHIRLWIND_MAP_ROWS * WHIRLWIND_MAP_COLUMNS * sizeof(u16));
   Decompress_TaggedLz(Resource_GetTableEntry(RESOURCE_WHIRLWIND_MAP), buffer);
   cell = buffer;
   for (i = 0; i != WHIRLWIND_MAP_ROWS * WHIRLWIND_MAP_COLUMNS; i++) {
-    *cell -= 192;
+    *cell -= WHIRLWIND_MAP_FIRST_TILE - WHIRLWIND_TOP_TILE;
     cell++;
   }
   cell = buffer;
@@ -1203,7 +1214,14 @@ void AirsRock_CrumbleRock(s32 x, s32 z) {
   MapGrid_SetShake(SHAKE_KEEP, SHAKE_KEEP, 0.9);
 }
 
-/// Whirlwind on the purple twister rock (actor 14): it glows, the rocks in the
+/// The lightning bolt's picture on the first background: its tiles at the start
+/// of character block 0, its map LIGHTNING_MAP_ROWS rows of
+/// LIGHTNING_MAP_COLUMNS, numbered from tile 512.
+#define LIGHTNING_TILES 64
+#define LIGHTNING_MAP_ROWS 16
+#define LIGHTNING_MAP_COLUMNS 4
+
+/// Whirlwind on the purple twister rock at the top: it glows, the rocks in the
 /// way crumble with a crash (AirsRock_CrumbleRock) and the way to the top
 /// opens; sets flag FLAG_AIRS_ROCK_TOP_OPENED.
 void AirsRock_WhirlwindOpensTheTop(void) {
@@ -1217,21 +1235,23 @@ void AirsRock_WhirlwindOpensTheTop(void) {
   REG_DISPCNT &= ~DISPCNT_BG0_ON;
   Io_Write16(BGCNT_SCREEN_BASE(4), &REG_BG0CNT);
   Decompress_TaggedLz(Resource_GetTableEntry(RESOURCE_LIGHTNING_TILES), buffer);
-  Dma_Set(buffer, (void *)BG_CHAR_BLOCK(0), DMA_COPY_WORDS(512), REG_DMA3);
+  Dma_Set(buffer, (void *)BG_CHAR_BLOCK(0),
+          DMA_COPY_WORDS(LIGHTNING_TILES * TILE_SIZE_4BPP / 4), REG_DMA3);
   Heap_Release(buffer);
   Dma_Fill16(0, (void *)BG_SCREEN_BLOCK(4), 2048);
-  buffer = Heap_Alloc(128);
+  buffer = Heap_Alloc(LIGHTNING_MAP_ROWS * LIGHTNING_MAP_COLUMNS * sizeof(u16));
   Decompress_TaggedLz(Resource_GetTableEntry(RESOURCE_LIGHTNING_MAP), buffer);
   cell = buffer;
-  for (i = 0; i != 64; i++) {
+  // The map's tile numbers less 512.
+  for (i = 0; i != LIGHTNING_MAP_ROWS * LIGHTNING_MAP_COLUMNS; i++) {
     *cell &= 0xfcff;
     cell++;
   }
   cell = buffer;
-  for (i = 0; i != 16; i++) {
-    Dma_Set(cell, (void *)(BG_SCREEN_BLOCK(4) + (i << 6)), DMA_COPY_WORDS(2),
-            REG_DMA3);
-    cell += 4;
+  for (i = 0; i != LIGHTNING_MAP_ROWS; i++) {
+    Dma_Set(cell, (void *)(BG_SCREEN_BLOCK(4) + (i << 6)),
+            DMA_COPY_WORDS(LIGHTNING_MAP_COLUMNS / 2), REG_DMA3);
+    cell += LIGHTNING_MAP_COLUMNS;
   }
   Heap_Release(buffer);
   Event_PlaySound(SE_GLITTER);
@@ -1423,7 +1443,7 @@ void AirsRock_LiftFog(void) {
 /// Whirlwind on the stone in the fog: the fog lifts (AirsRock_LiftFog) and
 /// stays clear.
 void AirsRock_WhirlwindClearsFog(void) {
-  u16 *buffer = Heap_Alloc(1664);
+  u16 *buffer = Heap_Alloc(2 * WHIRLWIND_TILE_ROW_SIZE);
   struct MapLayer *fog = &Ram_HeapSlots->mapGrid->layers[2];
   u16 *cell;
   struct Actor *spark;
@@ -1434,10 +1454,11 @@ void AirsRock_WhirlwindClearsFog(void) {
   FieldEvent_ResolvePendingActions(0);
   REG_DISPCNT &= ~DISPCNT_BG0_ON;
   Decompress_TaggedLz(Resource_GetTableEntry(RESOURCE_WHIRLWIND_TILES), buffer);
-  Dma_Set(buffer, BG_CHAR_BLOCK(3) + 320 * TILE_SIZE_4BPP, DMA_COPY_WORDS(208),
-          REG_DMA3);
-  Dma_Set((u8 *)buffer + 208 * 4, BG_CHAR_BLOCK(3) + 352 * TILE_SIZE_4BPP,
-          DMA_COPY_WORDS(208), REG_DMA3);
+  Dma_Set(buffer, BG_CHAR_BLOCK(3) + WHIRLWIND_TOP_TILE * TILE_SIZE_4BPP,
+          DMA_COPY_WORDS(WHIRLWIND_TILE_ROW_SIZE / 4), REG_DMA3);
+  Dma_Set((u8 *)buffer + WHIRLWIND_TILE_ROW_SIZE,
+          BG_CHAR_BLOCK(3) + WHIRLWIND_BOTTOM_TILE * TILE_SIZE_4BPP,
+          DMA_COPY_WORDS(WHIRLWIND_TILE_ROW_SIZE / 4), REG_DMA3);
   Heap_Release(buffer);
   {
     s32 control = BGCNT_PRIORITY(2) | BGCNT_CHAR_BASE(3) | BGCNT_SCREEN_BASE(4);
@@ -1448,11 +1469,11 @@ void AirsRock_WhirlwindClearsFog(void) {
   do {
     Dma_Fill16(16, BG_SCREEN_BLOCK(4), 1280);
   } while (0);
-  buffer = Heap_Alloc(576);
+  buffer = Heap_Alloc(WHIRLWIND_MAP_ROWS * WHIRLWIND_MAP_COLUMNS * sizeof(u16));
   Decompress_TaggedLz(Resource_GetTableEntry(RESOURCE_WHIRLWIND_MAP), buffer);
   cell = buffer;
   for (i = 0; i != WHIRLWIND_MAP_ROWS * WHIRLWIND_MAP_COLUMNS; i++) {
-    *cell -= 192;
+    *cell -= WHIRLWIND_MAP_FIRST_TILE - WHIRLWIND_TOP_TILE;
     cell++;
   }
   cell = buffer;
@@ -1568,6 +1589,9 @@ void AirsRock_WhirlwindClearsFog(void) {
 
 extern s32 gAirsRock_LeaderLevel;
 
+/// The climb's levels are this many pixels apart.
+#define CLIMB_LEVEL_HEIGHT 112
+
 /// Sets the ledge's cells for the height the leader climbs to, one of four
 /// levels.
 void AirsRock_SetLedgeCellsByLevel(void) {
@@ -1575,7 +1599,7 @@ void AirsRock_SetLedgeCellsByLevel(void) {
   s32 level;
 
   actor->priorityFlags |= ACTOR_PRIORITY_IGNORES_RISES;
-  level = FIXEDtoINT(actor->y.fixed + toFIXED(32)) / 112;
+  level = FIXEDtoINT(actor->y.fixed + toFIXED(32)) / CLIMB_LEVEL_HEIGHT;
   if (gAirsRock_LeaderLevel != level) {
     switch (level) {
     case 3:
@@ -1598,6 +1622,9 @@ void AirsRock_SetLedgeCellsByLevel(void) {
 #include "shared/leader_lift.h"
 
 #define LEADER() Actor_GetById(gMainRoutineWork.leaderActorId)
+
+/// The fog's picture repeats every FOG_WRAP tiles across and down.
+#define FOG_WRAP 4
 
 /// A statue that breathes whirlwinds (AirsRock_StatueBreathesWhirlwind), from
 /// the given count of frames.
@@ -1837,8 +1864,8 @@ s32 Scene_Initialize(void) {
         layer = &((struct MapWork *)layer)->layers[2];
         layer->speedX = toFIXED(0.25);
         layer->speedY = -toFIXED(0.5);
-        layer->maskX = 3;
-        layer->maskY = 0x180;
+        layer->maskX = FOG_WRAP - 1;
+        layer->maskY = (FOG_WRAP - 1) * MAPGRID_SIZE;
       } else {
         REG_BLDALPHA = BLEND_ALPHA(0, BLEND_WEIGHT_MAX);
         REG_BLDCNT = BLDCNT_TGT1_BG1 | BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_ALL;
@@ -1909,6 +1936,7 @@ s32 Scene_PrepareMap(void) {
 #undef WAVE_SCROLL
 #undef WAVE_SCROLL_LINES
 #undef LEADER
+#undef FOG_WRAP
 #undef SWAY
 #undef HANG
 #undef EFFECT_SPAWN

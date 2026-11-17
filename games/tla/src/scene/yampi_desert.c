@@ -5,7 +5,7 @@
 /// at its spring; Pound sinks its stakes and Sand slips past them; the King
 /// Scorpion moves under the sand through the Psynergy Stone's room and its own,
 /// is stirred out by Pound and cornered between stakes, and drags the leader
-/// down into its pit, where it is fought for the Scoop Gem and a geyser of sand
+/// down into its pit, where it is fought for the Scoop Gem and a geyser
 /// carries the party out. Reveal shows a hint in the rocks and a hidden spot,
 /// and two chests' rooms have streams of flowing sand.
 #include "djinn_ids.h"
@@ -30,6 +30,7 @@
 #include "field/field_sequence_event.h"
 #include "field/flag_call.h"
 #include "field/map_grid.h"
+#include "field/object.h"
 #include "field/scene_tables.h"
 #include "game/game.h"
 #include "graphics/glyph.h"
@@ -84,7 +85,7 @@
 /// Set once the party has seen the travelers from the ledge above them; they
 /// stand about the spring from then on.
 #define FLAG_YAMPI_DESERT_TRAVELERS_MET 0x8f0
-/// Set while the leader stands on the tops of the stakes Pound sank.
+/// Set while the leader walks on the tops of the stakes Pound has not sunk.
 #define FLAG_YAMPI_DESERT_ON_STAKE_TOPS FLAG_SCENE_TEMP_0B
 /// Set while the unseen blocks by the sand's flow are shown.
 #define FLAG_YAMPI_DESERT_BLOCKS_SHOWN FLAG_SCENE_TEMP_0D
@@ -129,21 +130,19 @@ void YampiDesert_StepOntoStakeTops(void);
 void YampiDesert_OpenLadderPit(void);
 void YampiDesert_SetBlocksShown(s32 show);
 void YampiDesert_HideBlocks(void);
-void YampiDesert_SetActorsHidden(s32 show, s32 first, u32 count);
+void YampiDesert_SetActorsShown(s32 show, s32 first, u32 count);
 void YampiDesert_UpdateSandFlow(void);
 void YampiDesert_CheckUpperLevel(void);
 void YampiDesert_OpenScoopHole(void);
 void Actor_Hide(s32 id);
 void YampiDesert_RestoreBlocks(void);
 void YampiDesert_SetUpBlowMaceChestBlocks(void);
-void YampiDesert_ClimbOut(struct Actor *actor, s32 x, s32 z, s32 mode);
+void YampiDesert_ClimbDownLadder(struct Actor *actor, s32 x, s32 z, s32 exit);
 void YampiDesert_LayerStakesWithLeader(void);
 void YampiDesert_PlaceStakes(const void *script);
 void Pound_SinkTarget(u16 *list, s32 mode, s32 count);
 void Actor_DisableById(s32 actor);
 void FieldEffect_StartBlankOverlay(s32 value);
-void Rope_Initialize(void);
-void Rope_Place(s32 index, s32 flag, s32 post, s32 otherPost);
 void YampiDesert_ElderRefusesToQuit(void);
 void YampiDesert_BlockPoundedStakes(u16 *list);
 void YampiDesert_OpenStakeCells(u16 *list);
@@ -229,7 +228,7 @@ enum YampiDesertTrainersWhipChestActorId {
   /// The posts of the rope Lash ties.
   ACTOR_ROPE_POST = ACTOR_FIRST_PLACED,
   ACTOR_ROPE_OTHER_POST,
-  ACTOR_SIGNPOST,
+  ACTOR_SIGN,
   /// Two unseen blocks by the sand's flow, shown and hidden by the step
   /// triggers beside it (YampiDesert_SetBlocksShown).
   ACTOR_WHIP_CHEST_ROOM_FIRST_BLOCK,
@@ -240,7 +239,7 @@ enum YampiDesertTrainersWhipChestActorId {
 /// Scorpion is fought.
 enum YampiDesertScorpionPitActorId {
   ACTOR_KING_SCORPION = ACTOR_FIRST_PLACED,
-  /// The unseen point the geyser of sand rises from, moved between the four
+  /// The unseen point the geyser rises from, moved between the four
   /// rocks once Scoop has dug the pit there.
   ACTOR_GEYSER
 };
@@ -253,8 +252,10 @@ enum { ACTOR_HIDDEN_TREASURE = 64 };
 /// (SceneId_YampiDesertBlowMaceChest): seven unseen blocks by the sand's flow,
 /// hidden as the room is set up.
 enum YampiDesertBlowMaceChestActorId {
-  ACTOR_MACE_CHEST_ROOM_FIRST_BLOCK = STAKE(1),
-  ACTOR_MACE_CHEST_ROOM_LAST_BLOCK = ACTOR_MACE_CHEST_ROOM_FIRST_BLOCK + 6
+  ACTOR_BLOW_MACE_CHEST_ROOM_FIRST_BLOCK = STAKE(1),
+  ACTOR_BLOW_MACE_CHEST_ROOM_LAST_BLOCK =
+          ACTOR_BLOW_MACE_CHEST_ROOM_FIRST_BLOCK +
+      6
 };
 
 void YampiDesert_RippleFollowsScorpion(void);
@@ -315,7 +316,7 @@ void YampiDesert_RevealMedalSpot(void);
 void YampiDesert_ShowBlocks(void);
 
 void YampiDesert_ClimbRevealedLadder(void);
-void YampiDesert_ClimbOutOfSpringCave(void);
+void YampiDesert_ClimbDownSpringCaveLadder(void);
 
 extern u32 gYampiDesert_TravelerLooksAround[];
 
@@ -505,7 +506,7 @@ void YampiDesert_TalkToElder(void) {
   Event_End();
 }
 
-/// Reads the signpost: north to Alhafra, south to Air's Rock.
+/// Reads the sign: north to Alhafra, south to Air's Rock.
 void YampiDesert_ReadSign(void) {
   Event_Start();
   Event_ResolvePendingActions(0);
@@ -544,8 +545,8 @@ void YampiDesert_PoundBlowMaceChestStake(s32 mode, s32 count) {
 DEFINE_POUND_STAKE_STOPPING_SCORPION(YampiDesert_PoundKingScorpionStake,
                                      gYampiDesertKingScorpionStakes)
 
-/// Stepping up onto the tops of the sunken stakes: the stakes' cells take the
-/// leader's height.
+/// Stepping up onto the tops of the stakes Pound has not sunk: their cells
+/// rise to the leader's height and can be walked on.
 void YampiDesert_StepOntoStakeTops(void) {
   struct MapWork *map = Ram_HeapSlots->mapGrid;
   u16 *list = NULL;
@@ -576,7 +577,7 @@ void YampiDesert_StepOntoStakeTops(void) {
       cells += index;
       shapes += index;
       actor->motionFlags = 0;
-      cells->collisionCode = 0;
+      cells->collisionCode = CELL_BEHAVIOR_NORMAL;
       cells->attributeB |= MAP_CELL_JUMP;
       *shapes = MapCollision_FindOrAddTag(layer, shape, height + 4);
     }
@@ -585,7 +586,7 @@ void YampiDesert_StepOntoStakeTops(void) {
   GameFlag_Set(FLAG_YAMPI_DESERT_ON_STAKE_TOPS);
 }
 
-/// Stepping down off the tops of the sunken stakes.
+/// Stepping down off the stakes' tops: the standing stakes block the way again.
 void YampiDesert_StepOffStakeTops(void) {
   struct MapWork *map = Ram_HeapSlots->mapGrid;
   u16 *list = NULL;
@@ -1113,11 +1114,11 @@ void YampiDesert_SetBlocksShown(s32 show) {
   s16 scene = gMainRoutineWork.next;
 
   if (scene == SCENE_YAMPI_DESERT_TRAINERS_WHIP_CHEST)
-    YampiDesert_SetActorsHidden(show, ACTOR_WHIP_CHEST_ROOM_FIRST_BLOCK, 2);
+    YampiDesert_SetActorsShown(show, ACTOR_WHIP_CHEST_ROOM_FIRST_BLOCK, 2);
   else if (scene == SCENE_YAMPI_DESERT_BLOW_MACE_CHEST)
-    YampiDesert_SetActorsHidden(show, ACTOR_MACE_CHEST_ROOM_FIRST_BLOCK,
-                                ACTOR_MACE_CHEST_ROOM_LAST_BLOCK -
-                                    ACTOR_MACE_CHEST_ROOM_FIRST_BLOCK + 1);
+    YampiDesert_SetActorsShown(show, ACTOR_BLOW_MACE_CHEST_ROOM_FIRST_BLOCK,
+                               ACTOR_BLOW_MACE_CHEST_ROOM_LAST_BLOCK -
+                                   ACTOR_BLOW_MACE_CHEST_ROOM_FIRST_BLOCK + 1);
 }
 
 /// Shows the room's unseen blocks.
@@ -1132,8 +1133,8 @@ void YampiDesert_HideBlocks(void) {
   GameFlag_Clear(FLAG_YAMPI_DESERT_BLOCKS_SHOWN);
 }
 
-/// Shows or hides `count` actors from `first`.
-void YampiDesert_SetActorsHidden(s32 show, s32 first, u32 count) {
+/// Shows `count` actors from `first`, or hides them.
+void YampiDesert_SetActorsShown(s32 show, s32 first, u32 count) {
   u32 i;
 
   for (i = 0; i < count; i++) {
@@ -1324,10 +1325,9 @@ struct Actor *YampiDesert_CreateScoopGem(void) {
     visual = actor->sprite;
     // Sixteen colours, palette 0, priority 1.
     {
-      /* FAKEMATCH(temporary): the mask kept in a local. */
-      s32 keep = ~(OBJ_256_COLORS >> 8);
+      s32 sixteenColors = ~(OBJ_256_COLORS >> 8);
 
-      visual->attr0High &= keep;
+      visual->attr0High &= sixteenColors;
     }
     mask = visual->attr2High & 0x0f;
     mask &= ~(OBJ_PRIORITY(3) >> 8);
@@ -1994,15 +1994,15 @@ void YampiDesert_SetUpTrainersWhipChestBlocks(void) {
 void YampiDesert_SetUpBlowMaceChestBlocks(void) {
   u32 i;
 
-  for (i = 0; i <= ACTOR_MACE_CHEST_ROOM_LAST_BLOCK -
-                       ACTOR_MACE_CHEST_ROOM_FIRST_BLOCK;
+  for (i = 0; i <= ACTOR_BLOW_MACE_CHEST_ROOM_LAST_BLOCK -
+                       ACTOR_BLOW_MACE_CHEST_ROOM_FIRST_BLOCK;
        i++)
-    Actor_Hide(ACTOR_MACE_CHEST_ROOM_FIRST_BLOCK + i);
+    Actor_Hide(ACTOR_BLOW_MACE_CHEST_ROOM_FIRST_BLOCK + i);
   YampiDesert_RestoreBlocks();
 }
 
-/// The leader climbs out of a pit at (x, z).
-void YampiDesert_ClimbOut(struct Actor *actor, s32 x, s32 z, s32 mode) {
+/// The leader climbs down the ladder at (x, z) and leaves by `exit`.
+void YampiDesert_ClimbDownLadder(struct Actor *actor, s32 x, s32 z, s32 exit) {
   struct MainRoutineWork *party;
   s32 zero;
   u8 *flags;
@@ -2025,10 +2025,10 @@ void YampiDesert_ClimbOut(struct Actor *actor, s32 x, s32 z, s32 mode) {
   Sound_Play(SE_MAP_EXIT);
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();
-  Import_EventSetExitRequest(mode);
+  Import_EventSetExitRequest(exit);
 }
 
-/// Climbing down the ladder Scoop has dug up.
+/// Climbing down the ladder Scoop has dug up, into the cave under the spring.
 void YampiDesert_ClimbRevealedLadder(void) {
   struct Actor *actor;
   s32 x;
@@ -2051,15 +2051,16 @@ void YampiDesert_ClimbRevealedLadder(void) {
       if (x == 9 && !(gInput.held & KEY_LEFT))
         return;
     }
-    YampiDesert_ClimbOut(actor, 136, 516,
-                         YAMPI_DESERT_OASIS_TO_YAMPI_DESERT_OASIS_CAVE_SOUTH);
+    YampiDesert_ClimbDownLadder(
+        actor, 136, 516, YAMPI_DESERT_OASIS_TO_YAMPI_DESERT_OASIS_CAVE_SOUTH);
   }
 }
 
-/// Climbs out of the cave under the spring.
-void YampiDesert_ClimbOutOfSpringCave(void) {
-  YampiDesert_ClimbOut(Actor_GetById(gMainRoutineWork.leaderActorId), 408, 432,
-                       2);
+/// Climbs down from the small chamber of the cave under the spring to the
+/// cave below.
+void YampiDesert_ClimbDownSpringCaveLadder(void) {
+  YampiDesert_ClimbDownLadder(Actor_GetById(gMainRoutineWork.leaderActorId),
+                              408, 432, 2);
 }
 
 void YampiDesert_BurstSand(s32 x, s32 y, s32 z);
@@ -2325,7 +2326,7 @@ void YampiDesert_SetUpTreasurePit(void) {
     Actor_SetWideSprite(ACTOR_HIDDEN_TREASURE, 0);
 }
 
-/// Sets up the Trainer's Whip chest's room: its rope, signpost and flowing
+/// Sets up the Trainer's Whip chest's room: its rope, sign and flowing
 /// sand, and the way in it was entered by. Entered from the Yampi Desert Cave,
 /// it sends Retreat to the World Map door the party last came in by (not in the
 /// Japanese edition).
@@ -2338,7 +2339,7 @@ void YampiDesert_SetUpTrainersWhipChest(void) {
                         ACTOR_ROPE_OTHER_POST);
   if (actor != NULL)
     Actor_SetPosition(ACTOR_HIDDEN_TREASURE, 0, 0);
-  actor = Actor_GetById(ACTOR_SIGNPOST);
+  actor = Actor_GetById(ACTOR_SIGN);
   actor->scaleX = FIXED_ONE * 7 / 10;
   actor->scaleY = FIXED_ONE * 7 / 10;
   actor->radius = 8;
@@ -2381,7 +2382,7 @@ void YampiDesert_SetUpMedalSpot(void) {
   }
 }
 
-/// The geyser of sand Scoop opens in the scorpion pit: it rises and falls on
+/// The geyser Scoop opens in the scorpion pit: it rises and falls on
 /// its timer, carrying the platform at its top, as Gondowan Cliffs' geysers do.
 struct Geyser {
   s16 id;              ///< its actor; 0 for a free entry
@@ -2561,7 +2562,7 @@ void Geyser_Update(void) {
 
       entry->phase += TRIG_TURN / 16;
       wave = Iwram_MulFX(toFIXED(2), Trig_Sin(entry->phase)) - toFIXED(14);
-      rider->y.fixed = actor->y.fixed + INTtoFIXED(entry->height) + wave;
+      rider->y.fixed = actor->y.fixed + toFIXED(entry->height) + wave;
     }
     rider->x.fixed = actor->x.fixed;
     rider->z.fixed = actor->z.fixed;
@@ -2602,7 +2603,7 @@ void Geyser_Draw(void) {
       if (count >= GEYSER_SPRITES)
         continue;
       x = actor->x.fixed - viewX;
-      y = actor->y.fixed + INTtoFIXED(h) - originY;
+      y = actor->y.fixed + toFIXED(h) - originY;
       z = actor->z.fixed - viewZ - originY;
       sy = z - y;
       x = FIXEDtoINT(x) - 8;
@@ -2623,7 +2624,7 @@ void Geyser_Draw(void) {
     if (count >= GEYSER_SPRITES)
       continue;
     x = actor->x.fixed - viewX;
-    y = actor->y.fixed + INTtoFIXED(entry->height) - originY;
+    y = actor->y.fixed + toFIXED(entry->height) - originY;
     z = actor->z.fixed - viewZ - originY;
     sy = z - y;
     x = FIXEDtoINT(x) - 8;
@@ -3208,7 +3209,7 @@ LATE_DATA struct Trigger gYampiDesertTrainersWhipChestTriggers[] = {
     {PSYNERGY_ANYWHERE(ABILITY_SAND, PSYNERGY_PHASE_FADES), 0, CONDITION_ALWAYS, EVENT(YampiDesert_EndSand)},
     {PSYNERGY_ANYWHERE(ABILITY_REVEAL, PSYNERGY_PHASE_ACTS), 0, CONDITION_ALWAYS, EVENT(YampiDesert_RevealRockHint)},
     {PSYNERGY_ANYWHERE(ABILITY_REVEAL, PSYNERGY_PHASE_FADES), 0, CONDITION_ALWAYS, EVENT(YampiDesert_HideRockHint)},
-    {TRIGGER_TALK, ACTOR_SIGNPOST, CONDITION_ALWAYS, EVENT(YampiDesert_ReadSign)},
+    {TRIGGER_TALK, ACTOR_SIGN, CONDITION_ALWAYS, EVENT(YampiDesert_ReadSign)},
     {TRIGGER_STEP, 7, IF_FLAG_SET(FLAG_YAMPI_DESERT_BLOCKS_SHOWN), EVENT(YampiDesert_HideBlocks)},
     {TRIGGER_STEP, 8, FLAG_YAMPI_DESERT_BLOCKS_SHOWN, EVENT(YampiDesert_ShowBlocks)},
     {TRIGGER_TABLE_END},
@@ -3234,7 +3235,7 @@ LATE_DATA struct Trigger gYampiDesertScorpionPitTriggers[] = {
 /// The triggers of the cave under the spring.
 LATE_DATA struct Trigger gYampiDesertSpringCaveTriggers[] = {
     {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
-    {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 2, CONDITION_ALWAYS, EVENT(YampiDesert_ClimbOutOfSpringCave)},
+    {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 2, CONDITION_ALWAYS, EVENT(YampiDesert_ClimbDownSpringCaveLadder)},
     {TRIGGER_TABLE_END},
 };
 

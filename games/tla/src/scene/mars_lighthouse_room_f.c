@@ -1453,122 +1453,20 @@ UNUSED s32 Ride_GetCounter(void) { return RIDE_WORK->counter; }
 
 #include "shared/actor_blink.h"
 
-/// Hit by the flames: the leader, hurt and blinking, is thrown back the way the
-/// flame went until he meets a wall or drops from a ledge.
-#if TLA_PATCH_1
-void MarsLighthouseRoomF_KnockBack(void) {
-#else
-s32 MarsLighthouseRoomF_KnockBack(void) {
-#endif
-  struct MainRoutineWork *main = &gMainRoutineWork;
-  struct FlameHitWork *work;
-  struct Vector3 position;
+#define KNOCK_BACK MarsLighthouseRoomF_KnockBack
+#define KNOCK_BACK_TAKE_DAMAGE Party_TakeFallDamage
+#define KNOCK_BACK_BLINK Actor_Blink
+#define KNOCK_BACK_SET_ANIMATION Actor_SelectAnimation
+#define KNOCK_BACK_CELL_ATTRIBUTE MapGrid_GetCellAttributeLowNibbleOrBump
+#define KNOCK_BACK_CHECK_COLLISION MapGrid_CheckCollision
+#include "shared/leader_knock_back.c"
+#undef KNOCK_BACK
+#undef KNOCK_BACK_TAKE_DAMAGE
+#undef KNOCK_BACK_BLINK
+#undef KNOCK_BACK_SET_ANIMATION
+#undef KNOCK_BACK_CELL_ATTRIBUTE
+#undef KNOCK_BACK_CHECK_COLLISION
 
-  if (main->movementMode == 0) {
-    struct Actor *actor;
-
-    // UB: Party_TakeFallDamage takes no arguments and returns nothing; the
-    // bytes call it with two through an int-returning type.
-#ifdef UBFIX
-    Party_TakeFallDamage();
-#else
-    ((s32 (*)(s32, s32))Party_TakeFallDamage)(-10, 0);
-#endif
-    actor = Actor_Get(main->leaderActorId);
-    work = RIDE_WORK;
-    Event_Start();
-    FieldEvent_ResolvePendingActions(0);
-    actor->update = Actor_Blink;
-    actor->facing = FACING_SOUTH;
-    Actor_SelectAnimation(actor, 49);
-    for (;;) {
-      if (MapGrid_GetCellAttributeLowNibbleOrBump(actor->layer, actor->x.fixed,
-                                                  actor->z.fixed) == 7) {
-        s32 i;
-
-        actor->velocityX = (s16)work->direction.x * toFIXED(2);
-        actor->velocityZ = (s16)work->direction.z * toFIXED(2);
-        actor->acceleration = FIXED_ONE / 16;
-        for (i = 0; i <= 9; i++) {
-          position.x = actor->x.fixed + (s16)work->direction.x * toFIXED(8);
-          position.y = actor->y.fixed;
-          position.z = actor->z.fixed + (s16)work->direction.z * toFIXED(8);
-          if (MapGrid_CheckCollision(actor, (s32 *)&position) != 0) {
-            actor->velocityX = 0;
-            actor->velocityZ = 0;
-            break;
-          }
-          System_Wait(1);
-        }
-        break;
-      } else {
-        s32 result;
-#if TLA_PATCH_1
-        s32 radius;
-        struct Actor *other;
-        u8 *flags;
-        s32 x, z, off;
-        s32 i;
-#else
-        FIXED x, z;
-        s32 off;
-#endif
-
-        position.x = actor->x.fixed + (s16)work->direction.x * toFIXED(8);
-        position.y = actor->y.fixed;
-        position.z = actor->z.fixed + (s16)work->direction.z * toFIXED(8);
-        result = MapGrid_CheckCollision(actor, (s32 *)&position);
-        if (result > 0)
-          break;
-        if (result < 0) {
-          actor->facing = FACING_SOUTH;
-          Actor_JumpDownLedge(gMainRoutineWork.leaderActorId, 6, -1);
-          break;
-        }
-#if TLA_PATCH_1
-        radius = actor->radius - 2;
-        other = Ram_HeapSlots->actors;
-        flags = &other->collisionFlags;
-        for (i = 0; i <= 63; i++, flags += sizeof(struct Actor), other++) {
-          if (other->script != 0 && (*flags & ACTOR_SOLID) && other != actor &&
-              Event_CheckSpheresOverlap(&other->x.fixed, radius,
-                                        (s32 *)&position,
-                                        other->radius - 2) >= 0) {
-            System_Wait(1);
-            goto done;
-          }
-        }
-#endif
-        x = actor->x.fixed += (s16)work->direction.x * toFIXED(2);
-        z = actor->z.fixed + (s16)work->direction.z * toFIXED(2);
-        actor->z.fixed = z;
-        off = (x & ~FIELD_CELL_MASK) - toFIXED(8);
-        if (off > FIXED_ONE)
-          off = FIXED_ONE;
-        if (off < -FIXED_ONE)
-          off = -FIXED_ONE;
-        actor->x.fixed = x - off;
-        off = (z & ~FIELD_CELL_MASK) - toFIXED(8);
-        if (off > FIXED_ONE)
-          off = FIXED_ONE;
-        if (off < -FIXED_ONE)
-          off = -FIXED_ONE;
-        actor->z.fixed = z - off;
-        work->active = 0;
-        System_Wait(1);
-      }
-    }
-#if TLA_PATCH_1
-  done:
-#endif
-    actor->update = NULL;
-    Actor_SetSpriteColorMode(actor, 0);
-  }
-  work->active = 0;
-#if !TLA_PATCH_1 && defined(UBFIX)
-  return 0;
-#endif
-}
 /// Hit by the flames, the leader is knocked back.
 void MarsLighthouseRoomF_KnockBackIfHit(void) {
   if (RIDE_WORK->active)
@@ -1583,8 +1481,8 @@ s32 Fireball_CarryLeader(void) {
   struct FieldWork *event = Ram_HeapSlots->fieldWork;
   struct FlameHitWork *ride;
   struct Actor *leader;
-  /* LEFTOVER(frame): an unused local the ROM's frame reserves and never
-   * touches. */
+  /* LEFTOVER(frame): an unused local that only sizes the frame; as no local,
+   * the frame is smaller. */
   UNUSED s32 unused[3];
 
   if (event->transitionActive == 0) {
@@ -1597,8 +1495,8 @@ s32 Fireball_CarryLeader(void) {
   event->pauseMenu = 0;
   event->aButton = 0;
   event->encounter = 0;
-  // UB: Party_TakeFallDamage takes no arguments and returns nothing; the bytes
-  // call it with two through an int-returning type.
+  // UB: Party_TakeFallDamage takes no arguments and returns nothing; it is
+  // called with two through an int-returning type.
 #ifdef UBFIX
   Party_TakeFallDamage();
 #else

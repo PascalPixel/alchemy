@@ -152,9 +152,13 @@ static void GomaCaveEntrance_MoveEastPillar(void) {
   }
 }
 
+/// The step triggers that push the west pillar east, from its west side, and
+/// west, from its east side.
+enum { TRIGGER_PUSH_WEST_PILLAR_EAST = 5, TRIGGER_PUSH_WEST_PILLAR_WEST = 6 };
+
 /// Walking into the west pillar at Goma Cave Entrance from the west
-/// (step trigger 5) or the east (step trigger 6): the leader leans on it and
-/// pushes it one step.
+/// (TRIGGER_PUSH_WEST_PILLAR_EAST) or the east (TRIGGER_PUSH_WEST_PILLAR_WEST):
+/// the leader leans on it and pushes it one step.
 static void GomaCaveEntrance_PushWestPillar(void) {
   struct FieldWork *work;
   s32 offsetX;
@@ -166,8 +170,10 @@ static void GomaCaveEntrance_PushWestPillar(void) {
   Actor_SetSpeed(ACTOR_PARTY_LEADER, 0.2);
   Actor_SetSpeed(ACTOR_WEST_PILLAR, 0.2);
   Sound_Play(SE_PUSH);
-  // 16 pixels east from step trigger 5, west from step trigger 6.
-  offsetX = (11 - (work->stepTrigger << 1)) << 4;
+  // A cell east or west, by the trigger.
+  offsetX = (TRIGGER_PUSH_WEST_PILLAR_EAST + TRIGGER_PUSH_WEST_PILLAR_WEST -
+             (work->stepTrigger << 1))
+            << 4;
   Actor_SetDestinationOffset(ACTOR_PARTY_LEADER, offsetX, 0);
   Actor_SetDestinationOffset(ACTOR_WEST_PILLAR, offsetX, 0);
   Actor_WaitForMoveById(ACTOR_PARTY_LEADER);
@@ -509,6 +515,11 @@ static void GomaCaveEntrance_SpinStump(struct Actor *actor) {
 
 #include "shared/actor_wait_below_height.c"
 
+/// The frames the stump tips before it leaps, and the puffs that burst round it
+/// as it lands.
+#define STUMP_TIP_FRAMES 18
+#define STUMP_LANDING_PUFFS 17
+
 /// The stump leaps out of the way and sinks in the pool.
 static void GomaCaveEntrance_LeapStump(s32 stumpId) {
   struct Vector3 dir;
@@ -518,7 +529,7 @@ static void GomaCaveEntrance_LeapStump(s32 stumpId) {
 
   stump = Actor_Get(stumpId);
   stump->motionFlags = 0;
-  for (i = 0; i <= 17; i++) {
+  for (i = 0; i < STUMP_TIP_FRAMES; i++) {
     wait(1);
     stump->sprite->rotation -= TRIG_TURN / 256;
     stump->x.fixed -= Trig_Cos(stump->sprite->rotation) / 2;
@@ -536,7 +547,7 @@ static void GomaCaveEntrance_LeapStump(s32 stumpId) {
   MapGrid_SetShake(5, 5, 1);
   Sound_Play(SE_RUMBLE);
   MapGrid_SetShake(SHAKE_KEEP, SHAKE_KEEP, 0.9);
-  for (i = 0; i <= 16; i++) {
+  for (i = 0; i < STUMP_LANDING_PUFFS; i++) {
     SET_POSITION(&dir, Trig_Cos(i * FACING_STEP), 0, Trig_Sin(i * FACING_STEP));
     dir.x -= dir.x / 4;
     dir.z -= dir.z / 2;
@@ -565,6 +576,10 @@ static void GomaCaveEntrance_LeapStump(s32 stumpId) {
 
 #include "shared/item_equip.c"
 
+/// The tries at making room for the Shaman's Rod before a slot is cleared by
+/// force.
+#define SHAMANS_ROD_TRIES 1000
+
 /// Gives Ivan the Shaman's Rod and equips it.
 static void GomaCaveEntrance_GiveShamansRod(void) {
   struct Unit *member;
@@ -575,7 +590,7 @@ static void GomaCaveEntrance_GiveShamansRod(void) {
   member = Unit_Get(IVAN);
   tries = 0;
 retry:
-  if (++tries > 1000) {
+  if (++tries > SHAMANS_ROD_TRIES) {
 #if TBS_PATCH_3
     for (i = 0; i <= INVENTORY_SLOTS - 1; i++) {
       item = Item_GetDirect(member->inventory[i]);
@@ -675,8 +690,8 @@ struct ActorPlacement gGomaCaveEntranceActorPlacements[] = {
 struct Trigger gGomaCaveEntranceTriggers[] = {
     { TRIGGER_EXIT, 1, CONDITION_ALWAYS, GOMA_CAVE_ENTRANCE_TO_GOMA_CAVE_STREAM },
     { TRIGGER_EXIT, 2, CONDITION_ALWAYS, GOMA_CAVE_ENTRANCE_TO_WORLD_MAP },
-    { STEP_TRIGGER_WALKING_INTO(FACING_EAST), 5, CONDITION_ALWAYS, EVENT(GomaCaveEntrance_PushWestPillar) },
-    { STEP_TRIGGER_WALKING_INTO(FACING_WEST), 6, CONDITION_ALWAYS, EVENT(GomaCaveEntrance_PushWestPillar) },
+    { STEP_TRIGGER_WALKING_INTO(FACING_EAST), TRIGGER_PUSH_WEST_PILLAR_EAST, CONDITION_ALWAYS, EVENT(GomaCaveEntrance_PushWestPillar) },
+    { STEP_TRIGGER_WALKING_INTO(FACING_WEST), TRIGGER_PUSH_WEST_PILLAR_WEST, CONDITION_ALWAYS, EVENT(GomaCaveEntrance_PushWestPillar) },
     { PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_STUMP, FLAG_GOMA_CAVE_IVAN_JOINED, EVENT(GomaCaveEntrance_IvanRejoins) },
     { PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_STUMP, FLAG_GOMA_CAVE_ENTRANCE_STUMP_MOVED, EVENT(GomaCaveEntrance_MoveStump) },
     { PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_WEST_PILLAR, CONDITION_ALWAYS, EVENT(GomaCaveEntrance_MoveWestPillar) },

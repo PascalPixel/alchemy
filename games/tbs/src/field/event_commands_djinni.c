@@ -11,6 +11,8 @@ void Actor_MoveHalfwayTowardTarget(struct Actor *actor) {
 }
 
 #define DJINNI_CLONE_MAX 8 ///< afterimages of the leaping Djinni
+/// sequenceResult after a battle the party fled (battle_run.c).
+#define BATTLE_OUTCOME_FLED 999
 
 /// A Djinni's battle start: the Djinni (actor id) bounces twice, turns to face
 /// the leader, hops back 16 pixels three times, then leaps 64 pixels at the
@@ -63,23 +65,24 @@ void Djinn_RunBattleStartHop(s32 djinniId) {
   Actor_WaitForMoveFar(djinni);
   wait(20);
 
-  // Afterimages of the same sprite at 15/16 size, each closing half the
-  // distance to the one before it every frame, tinted by the Djinni's sprite:
-  // SPRITE_VENUS_DJINNI takes param 2, SPRITE_MARS_DJINNI 10, and
-  // SPRITE_MERCURY_DJINNI and SPRITE_JUPITER_DJINNI 9.
+  // Afterimages of the same sprite at AFTERIMAGE_SCALE, each closing half the
+  // distance to the one before it every frame, tinted by the Djinni's sprite.
   sprite = djinni->sprite->entries[0]->animationId;
-  tint = 9;
+  tint = SPRITE_COLOR_BLUE_TINT;
   if (sprite == SPRITE_VENUS_DJINNI)
-    tint = 2;
+    tint = SPRITE_COLOR_RBG;
   if (sprite == SPRITE_MARS_DJINNI)
-    tint = 10;
+    tint = SPRITE_COLOR_RED_TINT;
+  // DEAD: tint is already SPRITE_COLOR_BLUE_TINT for SPRITE_MERCURY_DJINNI; the
+  // ROM keeps the test and the store.
   if (sprite == SPRITE_MERCURY_DJINNI)
-    tint = 9;
+    tint = SPRITE_COLOR_BLUE_TINT;
   sharedSprite = NULL;
   prev = djinni;
   for (i = 0; i < DJINNI_CLONE_MAX; i++) {
     copy = Actor_CreateFar(sprite, djinni->x.fixed, djinni->y.fixed,
                            djinni->z.fixed);
+    // DEAD: nothing reads copies; the ROM keeps the store and its slot.
     copies[i] = copy;
     if (copy != NULL) {
       copy->scaleY = AFTERIMAGE_SCALE;
@@ -163,10 +166,11 @@ void Djinn_JoinParty(s32 slot, s32 element, s32 djinn) {
 }
 
 /// Puts a Djinni's actor back where its battle started from: for a pending
-/// Djinni battle (pendingDjinni 300 to 380, FLAG_KEEP_PARTY_POSITION set, the
-/// battle over) the scene's actor placed for that Djinni (condition = its flag)
-/// goes back to its placement's position, or 32 pixels north of the leader when
-/// the event has DJINN_NO_HOP set, and stands (animation 1).
+/// Djinni battle (pendingDjinni DJINNI_BATTLE_EVENT_FIRST plus the Djinni's
+/// number, FLAG_KEEP_PARTY_POSITION set, the battle over) the scene's actor
+/// placed for that Djinni (condition = its flag) goes back to its placement's
+/// position, or 32 pixels north of the leader when the event has DJINN_NO_HOP
+/// set, and stands.
 void Djinn_RestoreActorAfterBattle(void) {
   s32 flags = gMainRoutineWork.pendingDjinni & DJINN_PENDING_KIND_MASK;
   u32 event = gMainRoutineWork.pendingDjinni & DJINN_PENDING_EVENT_MASK;
@@ -213,8 +217,8 @@ void Djinn_RestoreActorAfterBattle(void) {
 }
 
 /// Settles a pending Djinni battle as a scene loads, from the battle's result
-/// in sequenceResult (the enemies defeated, 999 when the party fled, -1 when it
-/// lost).
+/// in sequenceResult (the enemies defeated, BATTLE_OUTCOME_FLED when the party
+/// fled, -1 when it lost).
 void Djinn_ResolvePending(s32 shown) {
   struct MainRoutineWork *st = &gMainRoutineWork;
   s32 kind = st->pendingDjinni & DJINN_PENDING_KIND_MASK;
@@ -227,7 +231,7 @@ void Djinn_ResolvePending(s32 shown) {
           flag > DJINNI_BATTLE_EVENT_FIRST + ELEMENT_COUNT * DJINN_PER_ELEMENT)
         return;
       // Won: the event waits for the call once the scene is shown.
-      if (st->sequenceResult > 0 && st->sequenceResult != 999)
+      if (st->sequenceResult > 0 && st->sequenceResult != BATTLE_OUTCOME_FLED)
         return;
       GameFlag_SetFar(flag -
                       (DJINNI_BATTLE_EVENT_FIRST - FLAG_DJINN_HIDING_FIRST));
@@ -312,7 +316,9 @@ enum DjinniLightState {
 
 /// Field effect sprite callback of a Jupiter Djinni's light particles: each
 /// circles its centre while it widens for 60 frames, circles 40, drifts toward
-/// a point 20 pixels over the leader for 40, closes in for 60 and is freed.
+/// a point 20 pixels over the leader for 40, closes in for 60 and is freed. It
+/// turns 1/32 turn a frame throughout, and its radius grows, then shrinks, by 1
+/// pixel a frame.
 void FieldEffect_RunAngledApproachPhases(struct FieldParticle *particle) {
   struct Actor *target;
   struct Vector3 position;
@@ -354,13 +360,13 @@ void FieldEffect_RunAngledApproachPhases(struct FieldParticle *particle) {
   } else if (particle->state == DJINNI_LIGHT_DONE) {
     FieldEffect_ClearOwnedSlot(particle);
   }
-  // orbitAngle is in 1/32 turns: << 11 makes it 1/65536 turns.
   position.x = particle->originX;
   position.z = particle->originZ;
   Vector_AddPolarOffset(toFIXED(particle->orbitRadius),
-                        particle->orbitAngle << 11, &position);
+                        particle->orbitAngle * (TRIG_TURN / 32), &position);
   particle->x = position.x;
   particle->z = position.z;
 }
 
 #undef DJINNI_CLONE_MAX
+#undef BATTLE_OUTCOME_FLED

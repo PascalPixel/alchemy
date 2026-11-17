@@ -19,6 +19,25 @@
 #define TRANSFER_CABLE_HELP_FIRST_Y 4
 #define TRANSFER_CABLE_HELP_LAST_Y 28
 #endif
+#define TRANSFER_CABLE_HELP_SECOND_Y 16
+
+/// The icon menus' bottom row, in tiles, where most of them stand; a Yes or No
+/// may stand at the top, row 0, instead.
+#define ICON_MENU_BOTTOM_ROW 17
+/// The lines an icon row covers: its label window's three tiles.
+#define ICON_ROW_LINES 24
+/// The most icons a menu shows (IconMenuWork.entries).
+#define ICON_MENU_MAX_ICONS 6
+/// A command icon's pixels: 32x32 at a byte a pixel.
+#define COMMAND_ICON_BYTES (32 * 32)
+
+/// How far the selected icon overhangs its place while it pulses at the 8.8
+/// `scale`: on each side, half its 24-pixel width grown by the scale, rounded
+/// up; and past its row, half its 32-pixel height grown by the scale, rounded,
+/// and a line more.
+#define PULSE_OVERHANG_X(scale) ((((scale) - Q_8_8(1)) * 12 + 255) / 256)
+#define PULSE_OVERHANG_LINES(scale)                                            \
+  ((((scale) - Q_8_8(1)) * 32 + 255) / 512 + 1)
 
 /// One line's horizontal window edges: window 0's and window 1's, each
 /// (left << 8 | right).
@@ -34,9 +53,11 @@ struct WindowBuffer {
   struct WindowLine lines[160];
 };
 
-/// Draws the resource-menu icons, pulsing the selected icon with one affine
-/// matrix, and updates the horizontal window spans to reveal the active icon
-/// row.
+/// Draws the icon menu's icons, a task of the icon menus (IconMenu_Open). Each
+/// icon is a 32x32, 256-colour sprite, and one at x 0 is not drawn; the
+/// selected one pulses, double-size, in front of the others. While a screen
+/// transition runs, it widens window 1 over the icon row so the icons show
+/// through.
 void IconMenu_DrawIcons(void) {
   struct IconMenuWork *work;
   struct IconMenuEntry *entry;
@@ -55,7 +76,7 @@ void IconMenu_DrawIcons(void) {
   work = gIconMenuWork;
   entry = work->entries;
   pulseScale = gWindowSprite_BounceScales[(gFrameCount * 2) & 31];
-  pulseScale = (pulseScale - 256) / 4 + 304;
+  pulseScale = (pulseScale - Q_8_8(1)) / 4 + Q_8_8(1.1875);
   transform.scaleX = pulseScale;
   transform.scaleY = pulseScale;
   transform.angle = 0;
@@ -83,7 +104,7 @@ void IconMenu_DrawIcons(void) {
       *word++ = (affineIndex << 25) | spriteY | OBJ_X(left) | OBJ_SIZE_32X32 |
                 OBJ_256_COLORS | OBJ_DOUBLE_SIZE | OBJ_AFFINE;
       *word = gVramCacheEntries[entry->slot].offset >> 5;
-      drawLayer = 246;
+      drawLayer = OAM_DEPTH_WINDOW + 6;
     } else {
       u32 attributes;
       u32 tileOffset;
@@ -95,7 +116,7 @@ void IconMenu_DrawIcons(void) {
       tileOffset = gVramCacheEntries[entry->slot].offset;
       *word++ = attributes;
       *word = tileOffset >> 5;
-      drawLayer = 245;
+      drawLayer = OAM_DEPTH_WINDOW + 5;
     }
     Oam_AddSpriteAtDepth(entry, drawLayer);
   }
@@ -111,19 +132,19 @@ void IconMenu_DrawIcons(void) {
       return;
     page = (struct WindowBuffer *)state->pages[state->page];
     span = work->entries[work->selection].x;
-    halfWidth = (pulseScale * 12 - 2817) / 256;
+    halfWidth = PULSE_OVERHANG_X(pulseScale);
     span = ((span - halfWidth) << 8) + (span + halfWidth) + 23;
-    lastLine = work->entries[work->selection].y + 24;
-    lastLine += (pulseScale * 32 - 7937) / 512 + 1;
-    edge = &page->lines[24].span;
-    for (index = 24; index < lastLine; index++, edge += 2)
+    lastLine = work->entries[work->selection].y + ICON_ROW_LINES;
+    lastLine += PULSE_OVERHANG_LINES(pulseScale);
+    edge = &page->lines[ICON_ROW_LINES].span;
+    for (index = ICON_ROW_LINES; index < lastLine; index++, edge += 2)
       *edge = (*edge & 0xff) | span;
     span = work->entries[0].x;
     if (work->selection == 0)
-      span -= (pulseScale * 12 - 2817) / 256;
+      span -= PULSE_OVERHANG_X(pulseScale);
     span <<= 8;
     edge = &page->lines[0].span;
-    for (index = 0; index <= 23; index++, edge += 2)
+    for (index = 0; index < ICON_ROW_LINES; index++, edge += 2)
       *edge = (*edge & 0xff) | span;
   } else {
     struct WindowBuffer *page;
@@ -135,24 +156,28 @@ void IconMenu_DrawIcons(void) {
       return;
     page = (struct WindowBuffer *)state->pages[state->page];
     span = work->entries[work->selection].x;
-    halfWidth = (pulseScale * 12 - 2817) / 256;
+    halfWidth = PULSE_OVERHANG_X(pulseScale);
     span = ((span - halfWidth) << 8) + (span + halfWidth) + 23;
     firstLine = work->entries[work->selection].y;
-    firstLine -= (pulseScale * 32 - 7937) / 512 + 1;
+    firstLine -= PULSE_OVERHANG_LINES(pulseScale);
     edge = &page->lines[firstLine].span;
-    for (index = firstLine; index <= 135; index++, edge += 2)
+    for (index = firstLine; index < ICON_MENU_BOTTOM_ROW * 8;
+         index++, edge += 2)
       *edge = (*edge & 0xff) | span;
     span = work->entries[0].x;
     if (work->selection == 0)
-      span -= (pulseScale * 12 - 2817) / 256;
+      span -= PULSE_OVERHANG_X(pulseScale);
     span <<= 8;
-    edge = &page->lines[136].span;
-    for (index = 136; index <= 159; index++, edge += 2)
+    edge = &page->lines[ICON_MENU_BOTTOM_ROW * 8].span;
+    for (index = ICON_MENU_BOTTOM_ROW * 8; index < DISPLAY_HEIGHT;
+         index++, edge += 2)
       *edge = (*edge & 0xff) | span;
   }
 }
 
-/// Allocates and clears the resource-menu state, then schedules its icon pulse.
+/// Allocates and clears the icon menu's work, which lives in
+/// HEAP_SLOT_ICON_MENU until IconMenu_Close frees it, and starts the task that
+/// draws its icons. Every icon menu starts here.
 void *IconMenu_Open(void) {
   void *work;
   work = HeapSlot_AllocEwram(HEAP_SLOT_ICON_MENU, sizeof(struct IconMenuWork));
@@ -161,8 +186,8 @@ void *IconMenu_Open(void) {
   return work;
 }
 
-/// Stops the icon pulse, closes the label window and releases each loaded icon
-/// before freeing the resource-menu state (HEAP_SLOT_ICON_MENU), then waits a
+/// Stops drawing the icons, closes the label window and releases each loaded
+/// icon before freeing the icon menu's work (HEAP_SLOT_ICON_MENU), then waits a
 /// frame.
 void IconMenu_Close(void) {
   struct Window *labelWindow;
@@ -183,7 +208,9 @@ void IconMenu_Close(void) {
 }
 
 /// Selects an icon position with wrapped directional input. A returns the
-/// position; B or Start returns -1. Redraws the label only after a move.
+/// position; B or Start returns -1. Redraws the label only after a move: the
+/// message labelBase + position when the layout set a labelBase, else the
+/// icon's command name.
 s32 IconMenu_Run(s32 initial) {
   struct IconMenuWork *work = gIconMenuWork;
   s32 resource;
@@ -233,8 +260,11 @@ static inline s32 AbsoluteDifference(s32 diff, s32 lhs, s32 rhs) {
   return rhs - lhs;
 }
 
-/// Animates a cursor from start to goal with table-driven delays. Draws each
-/// intervening label, pauses at the destination, and returns its position.
+/// Moves the selection from start to goal one icon at a time with the cursor
+/// sound, redrawing the label each step and waiting
+/// gMenu_SelectionStepDelays[icons still to go] frames at each (12 more at the
+/// first), then 48 frames on the goal before the confirm sound: a menu choice
+/// made for the player to watch (Menu_AnimateSelectionToEntry). Returns goal.
 s32 IconMenu_AnimateTo(s32 start, s32 goal) {
   s16 resourceBase;
   s16 selection;
@@ -285,10 +315,10 @@ s32 IconMenu_AnimateTo(s32 start, s32 goal) {
   return goal;
 }
 
-/// Decodes one command-icon table entry into the requested VRAM cache slot,
-/// through a 1 KB block it allocates and frees.
+/// Decodes command icon `index` into the VRAM cache entry `slot`, through a
+/// block it allocates and frees.
 void CommandIcon_LoadIntoSlot(s32 slot, s32 index) {
-  s32 size = 1024;
+  s32 size = COMMAND_ICON_BYTES;
   void *buffer = Heap_Alloc(size);
   u16 *offsetTable = Resource_GetTableEntry(RESOURCE_COMMAND_ICONS);
 
@@ -297,18 +327,19 @@ void CommandIcon_LoadIntoSlot(s32 slot, s32 index) {
   Heap_Release(buffer);
 }
 
-/// Appends a command icon if fewer than six are present. Its initial position
-/// is on the bottom icon row; a layout routine places the final row.
+/// Appends a command icon if fewer than ICON_MENU_MAX_ICONS are present. It
+/// starts on the bottom row; IconMenu_Center or IconMenu_LayoutIcons places the
+/// row. Its VRAM cache entry is taken unchecked.
 void IconMenu_AddIcon(s32 icon) {
   struct IconMenuWork *work;
   struct IconMenuEntry *entry;
   s16 index;
   s32 slot;
-  s32 y = 136;
+  s32 y = ICON_MENU_BOTTOM_ROW * 8;
 
   work = gIconMenuWork;
   index = work->count;
-  if (index <= 5) {
+  if (index < ICON_MENU_MAX_ICONS) {
     work->count++;
     entry = &work->entries[index];
     slot = VramCache_FindFreeEntry();
@@ -320,8 +351,11 @@ void IconMenu_AddIcon(s32 icon) {
   }
 }
 
-/// Centers the icons and their label window together on the given tile row. A
-/// nonzero resourceBase supplies labels; otherwise command-name IDs do.
+/// Centres the icons and their label window together on tile row `row`. A
+/// nonzero resourceBase is the first label message; otherwise each icon is
+/// labelled by its command name. The icons stand three tiles apart and the
+/// label window, `width` + 2 tiles wide and 3 tall, follows them; the centring
+/// counts two thirds of the window's width.
 void IconMenu_Center(s32 row, s32 width, s32 resourceBase) {
   struct IconMenuWork *work = gIconMenuWork;
   s32 x;
@@ -343,8 +377,8 @@ void IconMenu_Center(s32 row, s32 width, s32 resourceBase) {
   work->window = Window_Create(x, row, work->width, 3, WINDOW_FLAG_INSTANT);
 }
 
-/// Places icons at three-tile intervals from (x, y), then creates their label
-/// window immediately to the right. Coordinates and label width are in tiles.
+/// Places the icons three tiles apart from tile (x, y), then opens their label
+/// window, `width` + 2 tiles wide, just after them.
 void IconMenu_LayoutIcons(s32 x, s32 y, s32 width, s32 resourceBase) {
   struct IconMenuWork *work;
   s32 i;
@@ -368,7 +402,10 @@ static __inline__ s32 IconMenu_ReadCommandPosition(s8 *table, s32 index) {
   return table[index];
 }
 
-/// Builds the field command menu, omitting Djinn when none are owned.
+/// The field menu's row of icons: Psynergy, Djinn, Item and Status, without
+/// Djinn when the party has none. `selection` is the command to start on and
+/// the result the command chosen (enum FieldMenuCommand), or -1 when
+/// cancelled; two tables turn commands into icon positions and back.
 s32 FieldMenu_SelectCommand(s32 selection) {
   s32 group = 0;
   s32 offset;
@@ -396,7 +433,7 @@ s32 FieldMenu_SelectCommand(s32 selection) {
   }
   IconMenu_AddIcon(COMMAND_ICON_ITEM);
   IconMenu_AddIcon(COMMAND_ICON_STATUS);
-  IconMenu_Center(17, SELECT_MENU_WIDTH, 0);
+  IconMenu_Center(ICON_MENU_BOTTOM_ROW, SELECT_MENU_WIDTH, 0);
   result = IconMenu_Run(selection);
   IconMenu_Close();
 
@@ -422,17 +459,20 @@ s32 Menu_AnimateSelectionToEntry(s32 start, s32 command) {
   IconMenu_AddIcon(COMMAND_ICON_DJINN);
   IconMenu_AddIcon(COMMAND_ICON_ITEM);
   IconMenu_AddIcon(COMMAND_ICON_STATUS);
-  IconMenu_Center(17, ANIMATE_ENTRIES_ROW, 0);
+  IconMenu_Center(ICON_MENU_BOTTOM_ROW, ANIMATE_ENTRIES_ROW, 0);
   command = IconMenu_AnimateTo(start, command - 1);
   IconMenu_Close();
   PartyStatus_CloseWithMenu();
   return command;
 }
 
-// With Send shown but not Battle, Send's place would map to SAVE_ACTION_BATTLE,
-// because gFileList_ActionByPosition lists Battle before Send in every row.
-/// Builds the File Screen's menu from the save summaries and optional send
-/// flags.
+/// The File Screen's row of icons, from the save summaries: New Game,
+/// Continue, Copy and Erase for one or two files (starting on Continue); no New
+/// Game or Copy with three; with every file cleared no Continue, and only Erase
+/// with three such files; then Battle and Send when they are enabled. Returns
+/// the action chosen (enum FileAction) by its position. With no files it
+/// returns 0 at once, and -1 when cancelled or the backup memory cannot be
+/// read.
 s32 FileList_SelectAction(void) {
   s32 fileState;
   s32 result;
@@ -448,9 +488,9 @@ s32 FileList_SelectAction(void) {
   if (fileState == 0) {
     return 0;
   }
-  if (fileState == 3) {
+  if (fileState == SAVE_FILE_COUNT) {
     group = 1;
-  } else if (fileState == SAVE_SCAN_ALL_CLEARED + 3) {
+  } else if (fileState == SAVE_SCAN_ALL_CLEARED + SAVE_FILE_COUNT) {
     group = 2;
   } else if (fileState > SAVE_SCAN_ALL_CLEARED) {
     group = 3;
@@ -474,11 +514,13 @@ s32 FileList_SelectAction(void) {
   if (gTitleSendOptionEnabled != 0) {
     IconMenu_AddIcon(COMMAND_ICON_SEND);
   }
-  IconMenu_Center(17, TYPE_MENU_WIDTH, 0);
+  IconMenu_Center(ICON_MENU_BOTTOM_ROW, TYPE_MENU_WIDTH, 0);
   result = IconMenu_Run(initial);
   IconMenu_Close();
+  // With Send shown but not Battle, Send's place maps to SAVE_ACTION_BATTLE:
+  // gFileList_ActionByPosition lists Battle before Send in every row.
   if (result >= 0) {
-    result = gFileList_ActionByPosition[result + (group * 6)];
+    result = gFileList_ActionByPosition[result + (group * ICON_MENU_MAX_ICONS)];
   }
   return result;
 }
@@ -577,6 +619,7 @@ void Menu_DrawModeIndicator(void) {
     *shown = state->selection;
     WindowSprite_PrepareForRedraw(state->lowerWindow);
     if (state->selection == TRANSFER_METHOD_PASSWORD) {
+      // "Use a password to" "pass along your saved quest."
       TRANSFER_MODE_DRAW_HELP(MsgPasswordTransferHelp, state->lowerWindow,
                               TRANSFER_PASSWORD_HELP_X,
                               TRANSFER_PASSWORD_HELP_FIRST_Y);
@@ -584,10 +627,12 @@ void Menu_DrawModeIndicator(void) {
                               TRANSFER_PASSWORD_HELP_X,
                               TRANSFER_PASSWORD_HELP_LAST_Y);
     } else {
+      // "Use a Game Link cable to connect" "two Game Boy Advance systems."
+      // "Pass along your saved quest."
       TRANSFER_MODE_DRAW_HELP(MsgCableTransferHelp, state->lowerWindow, 0,
                               TRANSFER_CABLE_HELP_FIRST_Y);
       TRANSFER_MODE_DRAW_HELP(MsgCableTransferHelp + 1, state->lowerWindow, 0,
-                              16);
+                              TRANSFER_CABLE_HELP_SECOND_Y);
       TRANSFER_MODE_DRAW_HELP(MsgCableTransferHelp + 2, state->lowerWindow, 0,
                               TRANSFER_CABLE_HELP_LAST_Y);
     }
@@ -614,17 +659,17 @@ s32 IconMenu_ChooseSendOption(s32 mode) {
     IconMenu_AddIcon(COMMAND_ICON_SILVER);
     IconMenu_AddIcon(COMMAND_ICON_BRONZE);
 #if LANGUAGE == LANGUAGE_SPANISH
-    IconMenu_Center(17, 5, 0);
+    IconMenu_Center(ICON_MENU_BOTTOM_ROW, 5, 0);
 #endif
   }
 #if LANGUAGE == LANGUAGE_ENGLISH || LANGUAGE == LANGUAGE_GERMAN ||             \
     LANGUAGE == LANGUAGE_ITALIAN
-  IconMenu_Center(17, 7, 0);
+  IconMenu_Center(ICON_MENU_BOTTOM_ROW, 7, 0);
 #elif LANGUAGE == LANGUAGE_SPANISH
 #elif LANGUAGE == LANGUAGE_FRENCH
-  IconMenu_Center(17, 9, 0);
+  IconMenu_Center(ICON_MENU_BOTTOM_ROW, 9, 0);
 #else
-  IconMenu_Center(17, 5, 0);
+  IconMenu_Center(ICON_MENU_BOTTOM_ROW, 5, 0);
 #endif
   if (mode != RESOURCE_LAYOUT_TRANSFER_METHOD) {
     Task_Add(Menu_DrawModeLabel, TASK_PASS_FRAME - 10);
@@ -634,6 +679,8 @@ s32 IconMenu_ChooseSendOption(s32 mode) {
     message = MsgPasswordSelection;
     upper = &work->upperWindow;
     *upper = window;
+    // "Password Selection", then "The data stored in your" "password depends
+    // on which" "level you select:"
     Text_DrawMessage(message, window, 0, 4);
 #if LANGUAGE != LANGUAGE_JAPANESE
     window = Window_Create(PASSWORD_HELP_WINDOW_X, 4,
@@ -658,6 +705,7 @@ s32 IconMenu_ChooseSendOption(s32 mode) {
                       4, WINDOW_FLAG_INSTANT);
     upper = &work->upperWindow;
     *upper = window;
+    // "Transfer Method"
     Text_DrawMessage(MsgTransferMethod, window, TRANSFER_METHOD_LABEL_X, 4);
     work->lowerWindow =
         Window_Create(TRANSFER_HELP_WINDOW_X, 5, TRANSFER_HELP_WINDOW_WIDTH, 7,
@@ -690,7 +738,7 @@ s32 Menu_SelectShopCommand(s32 selection) {
   IconMenu_AddIcon(COMMAND_ICON_SELL);
   IconMenu_AddIcon(COMMAND_ICON_ARTIFACTS);
   IconMenu_AddIcon(COMMAND_ICON_REPAIR);
-  IconMenu_Center(17, SHOP_COMMAND_LABEL_WIDTH, 0);
+  IconMenu_Center(ICON_MENU_BOTTOM_ROW, SHOP_COMMAND_LABEL_WIDTH, 0);
   result = IconMenu_Run(selection);
   IconMenu_Close();
   return result;
@@ -706,7 +754,7 @@ s32 Menu_SelectSanctumService(s32 selection) {
   IconMenu_AddIcon(COMMAND_ICON_CURE_POISON);
   IconMenu_AddIcon(COMMAND_ICON_REPEL_EVIL);
   IconMenu_AddIcon(COMMAND_ICON_REMOVE_CURSE);
-  IconMenu_Center(17, SANCTUM_SERVICE_LABEL_WIDTH, 0);
+  IconMenu_Center(ICON_MENU_BOTTOM_ROW, SANCTUM_SERVICE_LABEL_WIDTH, 0);
   result = IconMenu_Run(selection);
   IconMenu_Close();
   return result;
@@ -724,7 +772,7 @@ s32 YesNoMenu_Run(s32 bottom, s32 message, s32 labelWidth, s32 selection) {
     labelWidth = 3;
   }
   if (bottom != 0) {
-    row = 17;
+    row = ICON_MENU_BOTTOM_ROW;
   }
 
   IconMenu_AddIcon(COMMAND_ICON_YES);
@@ -773,8 +821,16 @@ s32 Menu_SelectCoinsOrMedals(s32 selection) {
   IconMenu_Open();
   IconMenu_AddIcon(COMMAND_ICON_COINS);
   IconMenu_AddIcon(COMMAND_ICON_LUCKY_MEDALS);
-  IconMenu_Center(17, PAIR_WIDTH, 0);
+  IconMenu_Center(ICON_MENU_BOTTOM_ROW, PAIR_WIDTH, 0);
   result = IconMenu_Run(selection);
   IconMenu_Close();
   return result;
 }
+
+#undef TRANSFER_CABLE_HELP_SECOND_Y
+#undef ICON_MENU_BOTTOM_ROW
+#undef ICON_ROW_LINES
+#undef ICON_MENU_MAX_ICONS
+#undef COMMAND_ICON_BYTES
+#undef PULSE_OVERHANG_X
+#undef PULSE_OVERHANG_LINES

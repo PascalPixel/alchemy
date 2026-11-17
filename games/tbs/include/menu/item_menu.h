@@ -24,6 +24,9 @@ struct Window;
 /// corner, until a screen places it.
 #define MENU_ICON_HIDDEN_X (DISPLAY_WIDTH + 8)
 #define MENU_ICON_HIDDEN_Y (DISPLAY_HEIGHT + 8)
+/// The y a party or Djinni figure is parked at, below the screen, while a
+/// screen has no place for it.
+#define MENU_FIGURE_HIDDEN_Y 200
 
 /// The item menu's work, in the HEAP_SLOT_MENU heap slot: its windows, the
 /// party figures, the items listed and the two choices a command makes.

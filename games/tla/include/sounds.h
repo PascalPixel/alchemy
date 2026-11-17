@@ -2,15 +2,15 @@
 #define ALCHEMY_SOUNDS_H
 
 /// @file
-/// Sound ids, one for each row of gSongTable (sound/song_table.s) in order, as
-/// The Broken Seal's: MUS_ ids are music and jingles, SE_ ids sound effects,
-/// as their sequences in sound/songs are named. A row of the empty song
-/// (Sound_EmptySong), which plays nothing, has no name, and the next named
-/// row's number is written after it. A sequence with no name yet keeps its
-/// number as its placeholder. Four rows are controls no sound plays from.
-/// Sound_Play tests the controls first, then the ranges: from SOUND_SE_FIRST to
-/// SOUND_SE_END on the player its gSongTable row names, from SOUND_JINGLE_FIRST
-/// jingles, music otherwise (sound_driver_symbols.h).
+/// Sound ids, one for each row of gSongTable (sound/song_table.s) in order:
+/// MUS_ ids are music and jingles, SE_ ids sound effects, as their sequences in
+/// sound/songs are named. A row of the empty song (Sound_EmptySong), which
+/// plays nothing, has no name, and the next named row's number is written after
+/// it. A sequence with no name yet keeps its number as its placeholder. Four
+/// rows are controls no sound plays from. Sound_Play tests the controls first,
+/// then the ranges: from SOUND_SE_FIRST to SOUND_SE_END on the player its
+/// gSongTable row names, from SOUND_JINGLE_FIRST jingles, music otherwise
+/// (sound_driver_symbols.h).
 
 enum SoundId {
   /// A song of no tracks: scenes play it to silence the music, and the music
@@ -344,8 +344,8 @@ enum SoundId {
   SE_THUMP,
   SE_STONE_GRIND,
   SE_WARP,
-  /// Something heavy shuddering: Gaia Rock's altar faces as they part, Zagan
-  /// as it gallops in, and Megiddo's dive (BattleEffect_RunMegiddo).
+  /// Played as Gaia Rock's altar faces part, at Zagan's frame 32
+  /// (BattleEffect_RunZagan) and in Megiddo's dive (BattleEffect_RunMegiddo).
   SE_SHUDDER,
   /// Shriek's and Harpy's cry as their streaks set out
   /// (BattleEffect_RunStreakVolley, mode 1): SE_SPARKS's notes on voice 25; The
@@ -399,8 +399,7 @@ enum SoundId {
   SE_WHIRLWIND,
   SE_LIFT,
   SE_224,
-  /// Moloch's shower of motes as it starts to gather toward the middle
-  /// (BattleEffect_RunMoloch, frame 90).
+  /// Played at Moloch's frame 90 (BattleEffect_RunMoloch).
   SE_MOTES_GATHER,
   SE_LOG_PUSH,
   SE_TOPPLE,
@@ -523,6 +522,8 @@ enum SoundId {
   SE_526,
   SE_527,
   SE_528,
+  /// SE_528's notes at a faster tempo, their loudness rising and falling;
+  /// nothing plays either.
   SE_529,
   /// The Sea of Time opening a way (SeaOfTime_Open).
   SE_SEA_OF_TIME_OPENS,
@@ -535,6 +536,8 @@ enum SoundId {
   /// The Madra Catacombs' chest sliding with its bookshelf.
   SE_BOOKSHELF_SLIDE,
   SE_536,
+  /// SE_536's notes six semitones lower and more slowly; nothing plays
+  /// either.
   SE_538 = 538,
   /// The leader emerging as Sand ends (FieldPsynergy_EndSand).
   SE_SAND_EMERGE,
@@ -628,9 +631,8 @@ enum SoundId {
   SE_580,
   /// The leader jumping down a hole of the Gabomba Statue.
   SE_GABOMBA_STATUE_HOLE,
-  /// A mechanism set off as a puzzle is done: the Anemos Inner Sanctum's
-  /// statue once its seven tiles glow, and the Gabomba Statue's flashing cog
-  /// as it stops.
+  /// Played as the Anemos Inner Sanctum's statue moves once its seven tiles
+  /// glow, and as the Gabomba Statue's flashing cog stops.
   SE_PUZZLE_MECHANISM,
   SE_583,
   /// Played as the party presses a switch or button in Mars Lighthouse, the
@@ -649,6 +651,7 @@ enum SoundId {
   /// voice 90; nothing plays it.
   SE_UNUSED_IMPACT_DOUBLED,
   SE_593,
+  /// SE_545's second and third tracks alone; nothing plays either.
   SE_594,
   /// The Doom Dragon flickering into the people it was, at Mars Lighthouse's
   /// aerie.
@@ -670,8 +673,7 @@ enum SoundId {
   /// SE_SPIN_AWAY's first track alone, two octaves higher; nothing plays it.
   SE_UNUSED_SPIN_AWAY_A,
   /// SE_UNUSED_SPIN_AWAY_A's rhythm on its voice, six of its eleven notes
-  /// changed, at tempo
-  /// 32; nothing plays it.
+  /// changed, at tempo 32; nothing plays it.
   SE_UNUSED_SPIN_AWAY_C,
   /// SE_KOLIMA_BRIDGE_HOP's voice and rhythm with three of its five notes;
   /// nothing plays it.

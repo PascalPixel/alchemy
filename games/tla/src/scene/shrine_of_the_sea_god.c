@@ -955,14 +955,14 @@ UNUSED void ShrineOfTheSeaGod_SetLeaderIgnoresRises(void) {
       ACTOR_PRIORITY_IGNORES_RISES;
 }
 
-void Actors_SetHidden(s32 show, s32 first, u32 count);
+void Actors_SetDrawn(s32 show, s32 first, u32 count);
 
 /// Draws (show 1) or stops drawing the hole room's three unseen blocks.
 void ShrineOfTheSeaGod_SetBlocksShown(s32 show) {
   if (gMainRoutineWork.next == SCENE_SHRINE_OF_THE_SEA_GOD_PILLAR_HOLE)
-    Actors_SetHidden(show, ACTOR_HOLE_ROOM_FIRST_BLOCK,
-                     ACTOR_HOLE_ROOM_THIRD_BLOCK - ACTOR_HOLE_ROOM_FIRST_BLOCK +
-                         1);
+    Actors_SetDrawn(show, ACTOR_HOLE_ROOM_FIRST_BLOCK,
+                    ACTOR_HOLE_ROOM_THIRD_BLOCK - ACTOR_HOLE_ROOM_FIRST_BLOCK +
+                        1);
 }
 
 /// Unused: draws the hole room's unseen blocks and notes them shown.

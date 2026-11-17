@@ -2570,6 +2570,12 @@ void GabombaStatue_ClearGrid(void) {
 
 s32 GabombaStatue_TurnBlockPiece(s32 x, s32 z, s32 direction);
 
+/// The cells of the charges' paths to the statue in the middle: the two sent
+/// east run EAST_PATH_CELLS and the two sent west WEST_PATH_CELLS, so that a
+/// blue and a red charge arrive together. The paths from the statues' inner
+/// sides meet after PATH_TO_CROSSING_CELLS on the crossing's own cell.
+enum { EAST_PATH_CELLS = 17, WEST_PATH_CELLS = 19, PATH_TO_CROSSING_CELLS = 4 };
+
 /// Lays the channel from seed, trying the seeds after it until each charge's
 /// path reaches the statue in the middle as the puzzle needs, then breaks the
 /// circuit and loosens the seven blocks, turned at random. Returns the seed it
@@ -2600,37 +2606,42 @@ retry:
       MapGrid_CopyCells(BLOCK_NONE, state->cells[row][col].kind, 1, 1,
                         state->originX + col, state->originZ + row);
   // The charges sent east from the blue statue and west from the red cross
-  // on a piece of two curves between the statues.
+  // on a piece of two curves between the statues, the crossing's cell counted
+  // in neither part of their paths.
   n = 0;
   if (Random16() < 32768) {
-    n |= GabombaStatue_LayPath(2, 7, 5, 7, 4, HEADING_EAST, HEADING_NORTH,
-                               PATH_BIT_BLUE_EAST);
-    n |= GabombaStatue_LayPath(8, 7, 6, 6, 4, HEADING_WEST, HEADING_WEST,
-                               PATH_BIT_RED_WEST);
+    n |= GabombaStatue_LayPath(2, 7, 5, 7, PATH_TO_CROSSING_CELLS, HEADING_EAST,
+                               HEADING_NORTH, PATH_BIT_BLUE_EAST);
+    n |= GabombaStatue_LayPath(8, 7, 6, 6, PATH_TO_CROSSING_CELLS, HEADING_WEST,
+                               HEADING_WEST, PATH_BIT_RED_WEST);
     GabombaStatue_WritePiece(5, 6, PIECE_SOUTH_WEST_AND_NORTH_EAST,
                              PATH_BLUE_EAST | PATH_RED_WEST);
-    n |= GabombaStatue_LayPath(4, 6, 4, 3, 12, HEADING_WEST, HEADING_EAST,
-                               PATH_BIT_BLUE_EAST);
-    n |= GabombaStatue_LayPath(5, 5, 5, 2, 14, HEADING_NORTH, HEADING_SOUTH,
-                               PATH_BIT_RED_WEST);
+    n |= GabombaStatue_LayPath(4, 6, 4, 3,
+                               EAST_PATH_CELLS - PATH_TO_CROSSING_CELLS - 1,
+                               HEADING_WEST, HEADING_EAST, PATH_BIT_BLUE_EAST);
+    n |= GabombaStatue_LayPath(5, 5, 5, 2,
+                               WEST_PATH_CELLS - PATH_TO_CROSSING_CELLS - 1,
+                               HEADING_NORTH, HEADING_SOUTH, PATH_BIT_RED_WEST);
   } else {
-    n |= GabombaStatue_LayPath(2, 7, 4, 6, 4, HEADING_EAST, HEADING_EAST,
-                               PATH_BIT_BLUE_EAST);
-    n |= GabombaStatue_LayPath(8, 7, 5, 7, 4, HEADING_WEST, HEADING_NORTH,
-                               PATH_BIT_RED_WEST);
+    n |= GabombaStatue_LayPath(2, 7, 4, 6, PATH_TO_CROSSING_CELLS, HEADING_EAST,
+                               HEADING_EAST, PATH_BIT_BLUE_EAST);
+    n |= GabombaStatue_LayPath(8, 7, 5, 7, PATH_TO_CROSSING_CELLS, HEADING_WEST,
+                               HEADING_NORTH, PATH_BIT_RED_WEST);
     GabombaStatue_WritePiece(5, 6, PIECE_EAST_SOUTH_AND_WEST_NORTH,
                              PATH_BLUE_EAST | PATH_RED_WEST);
-    n |= GabombaStatue_LayPath(5, 5, 4, 3, 12, HEADING_NORTH, HEADING_EAST,
-                               PATH_BIT_BLUE_EAST);
-    n |= GabombaStatue_LayPath(6, 6, 5, 2, 14, HEADING_EAST, HEADING_SOUTH,
-                               PATH_BIT_RED_WEST);
+    n |= GabombaStatue_LayPath(5, 5, 4, 3,
+                               EAST_PATH_CELLS - PATH_TO_CROSSING_CELLS - 1,
+                               HEADING_NORTH, HEADING_EAST, PATH_BIT_BLUE_EAST);
+    n |= GabombaStatue_LayPath(6, 6, 5, 2,
+                               WEST_PATH_CELLS - PATH_TO_CROSSING_CELLS - 1,
+                               HEADING_EAST, HEADING_SOUTH, PATH_BIT_RED_WEST);
   }
   if (n != 0)
     goto retry;
-  n = GabombaStatue_LayPath(0, 7, 5, 4, 19, HEADING_WEST, HEADING_NORTH,
-                            PATH_BIT_BLUE_WEST);
-  n |= GabombaStatue_LayPath(10, 7, 6, 3, 17, HEADING_EAST, HEADING_WEST,
-                             PATH_BIT_RED_EAST);
+  n = GabombaStatue_LayPath(0, 7, 5, 4, WEST_PATH_CELLS, HEADING_WEST,
+                            HEADING_NORTH, PATH_BIT_BLUE_WEST);
+  n |= GabombaStatue_LayPath(10, 7, 6, 3, EAST_PATH_CELLS, HEADING_EAST,
+                             HEADING_WEST, PATH_BIT_RED_EAST);
   if (n != 0)
     goto retry;
   // The two blue paths must share a cell, the two red ones too, and the
@@ -3062,8 +3073,11 @@ void GabombaStatue_TurnBlocks(s32 value) {
   }
 }
 
+/// The frames the raised blocks take to turn a quarter turn.
+enum { BLOCK_TURN_FRAMES = 20 };
+
 /// Stepping onto the left arrow panel presses it, and with the blocks raised
-/// turns them a quarter turn counterclockwise over twenty frames.
+/// turns them a quarter turn counterclockwise.
 void GabombaStatue_LowerArrowA(void) {
   struct SceneState *state = &gSceneState;
   s32 i;
@@ -3076,10 +3090,10 @@ void GabombaStatue_LowerArrowA(void) {
       Event_Start();
       FieldEvent_ResolvePendingActions(0);
       GabombaStatue_SetBlockAnimation(3);
-      for (i = 0; i < 20; i++) {
+      for (i = 0; i < BLOCK_TURN_FRAMES; i++) {
         s32 *offset = &state->blocksAngle;
 
-        *offset -= TRIG_TURN / 80;
+        *offset -= DEGtoANG(90) / BLOCK_TURN_FRAMES;
         System_Wait(1);
       }
       GabombaStatue_TurnBlocks(0);
@@ -3112,10 +3126,10 @@ void GabombaStatue_RaiseArrowB(void) {
       Event_Start();
       FieldEvent_ResolvePendingActions(0);
       GabombaStatue_SetBlockAnimation(2);
-      for (i = 0; i < 20; i++) {
+      for (i = 0; i < BLOCK_TURN_FRAMES; i++) {
         s32 *offset = &state->blocksAngle;
 
-        *offset += TRIG_TURN / 80;
+        *offset += DEGtoANG(90) / BLOCK_TURN_FRAMES;
         System_Wait(1);
       }
       GabombaStatue_TurnBlocks(1);
@@ -3134,6 +3148,11 @@ void GabombaStatue_RedrawArrowB(void) {
     gSceneState.rightArrowDown = 0;
   }
 }
+
+/// A raised block's slot in the depth list past its position's, as
+/// Render_ApplyProjectedPlacement queues an actor's sprite 62 past its own and
+/// the actor's shadow 60.
+enum { RAISED_BLOCK_DEPTH = 58 };
 
 /// Each frame: draws the raised blocks over the room, turning while an arrow
 /// panel turns them.
@@ -3163,7 +3182,7 @@ void GabombaStatue_DrawRaisedBlocks(void) {
       FIXED pz = piece->z.fixed;
       FIXED z = pz - scrollZ;
       s32 sy = z - y;
-      s32 depth = FIXEDtoINT(y + z) + 58;
+      s32 depth = FIXEDtoINT(y + z) + RAISED_BLOCK_DEPTH;
       s32 cellX = FIELD_CELL(px) - state->originX;
       s32 cellZ = FIELD_CELL(pz) - state->originZ;
       s32 kind = state->cells[cellZ][cellX].kind;

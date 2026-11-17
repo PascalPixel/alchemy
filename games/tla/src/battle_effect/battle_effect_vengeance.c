@@ -2096,9 +2096,9 @@ void BattleEffect_RunCoatlicue(struct BattleEffectParams *args) {
             if (i > 1) {
               s32 ty = -toFIXED(44);
 
-              // From frame 540 they move off with her, 16 pixels a frame.
+              // From frame 540 they move off with her.
               if (frame > 539) {
-                ty += (frame - 539) << 20;
+                ty += INTtoFIXED((frame - 539) * 16);
               }
               Matrix_Translate(-toFIXED(4), ty, 0);
               Matrix_Scale(s, s, s);
@@ -2167,9 +2167,9 @@ void BattleEffect_RunCoatlicue(struct BattleEffectParams *args) {
             model->kind = MODEL_SHADED_MAX;
             model->shade = sh;
             Matrix_Initialize();
-            // From frame 540 it moves off with her, 16 pixels a frame.
+            // From frame 540 it moves off with her.
             if (frame > 539) {
-              ty = ((frame - 539) << 20) - toFIXED(44);
+              ty = INTtoFIXED((frame - 539) * 16) - toFIXED(44);
             }
             Matrix_Translate(-toFIXED(4), ty, 0);
             Matrix_Scale(s, s / 2, s);

@@ -4,7 +4,10 @@
 
 #include "system_internal.h"
 
-// The sprite VRAM cache.
+// Sprite tile VRAM (OBJ_VRAM0) is VRAM_BLOCK_COUNT blocks of VRAM_BLOCK_BYTES,
+// and gVramCacheBlockOwners records each block's owner, its cache entry. An
+// entry whose offset is VRAM_CACHE_OFFSET_FREE is free, and one whose size is
+// VRAM_CACHE_SIZE_NO_BLOCKS or less owns no VRAM.
 
 /// Finds the first run of free blocks that holds `size` bytes and gives it to
 /// entry `id`, writing `id` into gVramCacheBlockOwners for each block.
@@ -110,8 +113,7 @@ s32 VramCache_ReleaseVram(u32 no) {
 
   if (no >= VRAM_CACHE_ENTRY_COUNT)
     return -1;
-  if (entry->size > 16) {
-
+  if (entry->size > VRAM_CACHE_SIZE_NO_BLOCKS) {
     VramCache_FreeBlocks(no);
     entry->size = 1;
   }
@@ -128,11 +130,10 @@ s32 VramCache_Load(u32 no, u32 size, const void *src) {
   entry = &gVramCacheEntries[no];
   if (no >= VRAM_CACHE_ENTRY_COUNT)
     return 0;
-  // 8 KB, 128 blocks, is a quarter of sprite VRAM and the most one entry holds
-  if (size > 8192)
+  if (size > VRAM_CACHE_LOAD_MAX)
     return 0;
   // A same-size upload keeps its existing VRAM run.
-  if (entry->size > 16) {
+  if (entry->size > VRAM_CACHE_SIZE_NO_BLOCKS) {
     if (entry->size != size) {
       VramCache_FreeEntry(no);
       offset = VramCache_AllocateBlocks(no, size);

@@ -120,17 +120,20 @@ void IncreaseItemAndLevel_ShowName(s32 actorId) {
   Event_End();
 }
 
-/// Shows a party member's name when they are talked to in a room of names:
-/// Isaac's for ISAAC, and so on, with the character as the message's actor
-/// argument.
+/// Shows a party member's name when they are talked to in a room of names, the
+/// line of the list from MsgNamesIsaac at their character number, with the
+/// character as the message's actor argument. The list runs Isaac, Garet,
+/// Ivan, Mia, Jenna, Sheba, Piers with no Felix, so from JENNA on each says
+/// the next name: Jenna "Sheba", Sheba "Piers" and Piers "Alex".
 void IncreaseItemAndLevel_ShowCharacterName(s32 character) {
   Event_Start();
   Event_ResolvePendingActions(0);
   Event_SetMessageId(character + (s32)MsgNamesIsaac);
   MessageArgument_Push(character, MESSAGE_ARGUMENT_ACTOR);
   Event_ShowMessageAndWait(character, 0);
-  // XXX: why Garet's name is followed by a message from Isaac; the room's
-  // render, talking to Garet, would settle it.
+  // Garet's name is followed by Isaac saying the list's next line, "Ivan".
+  // XXX (no evidence): why; render event cannot play a debug room's events,
+  // and no text or code of either game says.
   if (character == GARET)
     Event_ShowMessageAndWait(ISAAC, 0);
   Event_End();

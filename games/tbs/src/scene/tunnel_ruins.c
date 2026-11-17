@@ -14,11 +14,11 @@
 ///   columns, each then carrying a hidden target for Frost.
 /// - TunnelRuinsLadyStatues (SceneId_TunnelRuinsLadyStatues) has a pillar that
 ///   Douse soaks, two balance platforms weighed with carved stones by Carry,
-///   and two false statues that Reveal makes vanish. It also has two pillars
-///   that keep their places between visits, and the room of four walkways over
-///   a pit. Last come five coloured statues of a woman that open the door to
-///   Venus Lighthouse once all five stand on their marks
-///   (FLAG_TUNNEL_RUINS_STATUE_DOOR_OPEN).
+///   and two statues that Reveal makes vanish from the chests they stand on.
+///   It also has two pillars that keep their places between visits, and the
+///   room of four walkways over a pit. Last come five coloured statues of a
+///   woman that open the door to Venus Lighthouse once all five stand on their
+///   marks (FLAG_TUNNEL_RUINS_STATUE_DOOR_OPEN).
 ///
 /// The getters choose by gMainRoutineWork.next. The actor placements of
 /// TunnelRuinsLadyStatues answer any other scene number, and
@@ -178,6 +178,13 @@ enum {
   ACTOR_LADY_STATUE_SOUTH
 };
 
+/// The chests of TunnelRuinsLadyStatues, each on the cell of a vanishing
+/// statue, which hides it until Reveal makes the statue go.
+enum {
+  TREASURE_SPOT_ORACLES_ROBE = TREASURE_SPOT_FIRST_ID,
+  TREASURE_SPOT_ASURAS_ARMOR
+};
+
 static UNREAD_RESULT TunnelRuins_RideStoneBelow(struct Actor *actor);
 static void TunnelRuins_UpdateFirstPillarCells(void);
 static void TunnelRuins_UpdateSecondPillarCells(void);
@@ -189,10 +196,10 @@ static void TunnelRuins_MarkPushPillarCells(void);
 #include "shared/field_effect_create.c"
 #include "shared/field_effect_spawn.c"
 
-/// Turns off the shadow of the Venus Lighthouse model once
-/// gTunnelRuins_ShrinkScript has shrunk it
+/// Takes the shadow off the small Venus Lighthouse on the floor before the
+/// Great Statue, once gTunnelRuins_SmallLighthouseScript has made it small
 /// (https://alchemy.pascalpixel.com/places/tunnel-ruins-great-statue/map-1.png).
-static s32 TunnelRuins_RefreshActorAfterShrinking(struct Actor *actor) {
+static s32 TunnelRuins_HideLighthouseShadow(struct Actor *actor) {
   Actor_SetSpriteFlags(actor, 0);
   return 0;
 }
@@ -271,36 +278,36 @@ static void TunnelRuins_HopNorth(void) {
   TunnelRuins_HopLeaderTo(&target);
 }
 
-/// The fade overlay follows the leader only south of a depth set per room.
+/// The fade overlay follows the leader only south of a row of half cells set
+/// per room.
 static void TunnelRuins_UpdateTrackedActor(void) {
   struct Actor *leader;
   struct FadeOverlayWork *effectWork;
-  s32 depthLimit;
+  s32 boundaryRow;
 
   leader = Actor_Get(ACTOR_PARTY_LEADER);
   effectWork = gFadeOverlayWork;
-  depthLimit = 0;
-  // Each tracked entrance measures depth in eight-pixel steps.
+  boundaryRow = 0;
   if (gMainRoutineWork.next == SCENE_TUNNEL_RUINS_GREAT_STATUE) {
     switch (gMainRoutineWork.entrance) {
     case TUNNEL_RUINS_GREAT_STATUE_FIRST_PILLARS_FROM_STATUE:
     case TUNNEL_RUINS_GREAT_STATUE_FIRST_PILLARS_FROM_COLUMNS_NORTH:
-      depthLimit = 94;
+      boundaryRow = 94;
       break;
     case TUNNEL_RUINS_GREAT_STATUE_SECOND_PILLARS_FROM_COLUMNS_NORTH:
     case TUNNEL_RUINS_GREAT_STATUE_SECOND_PILLARS_FROM_WHIRLWIND_ROOM:
-      depthLimit = 74;
+      boundaryRow = 74;
       break;
     case TUNNEL_RUINS_GREAT_STATUE_WHIRLWIND_ROOM_FROM_SECOND_PILLARS:
     case TUNNEL_RUINS_GREAT_STATUE_WHIRLWIND_ROOM_FROM_LONG_PASSAGE:
-      depthLimit = 118;
+      boundaryRow = 118;
       break;
     }
   } else if (gMainRoutineWork.entrance ==
              TUNNEL_RUINS_LADY_STATUES_REVEAL_STATUE_WEST) {
-    depthLimit = 93;
+    boundaryRow = 93;
   }
-  if ((leader->z.fixed >> 19) <= depthLimit) {
+  if (FIELD_HALF_CELL(leader->z.fixed) <= boundaryRow) {
     effectWork->actor = NULL;
   } else {
     effectWork->actor = leader;
@@ -612,8 +619,14 @@ static inline void TunnelRuins_AnimateLoweringImpact(s32 sourceColumn,
   MapGrid_SetShake(SHAKE_KEEP, SHAKE_KEEP, 0.9);
 }
 
-/// Moving the north-west sinking pillar into column 46 sinks it 16 pixels into
-/// the floor in a cloud of dust.
+/// The column each sinking pillar sinks in once it is moved there.
+#define NORTHWEST_PILLAR_SINK_COLUMN 46
+#define SOUTHEAST_PILLAR_SINK_COLUMN 48
+/// How far a sinking pillar sinks into the floor, in pixels.
+#define PILLAR_SINK_DEPTH 16
+
+/// Moving the north-west sinking pillar into NORTHWEST_PILLAR_SINK_COLUMN sinks
+/// it into the floor in a cloud of dust.
 static void TunnelRuins_SinkNorthwestPillar(void) {
   u32 i;
   struct Actor *overlay;
@@ -622,7 +635,8 @@ static void TunnelRuins_SinkNorthwestPillar(void) {
   struct EffectOptions options;
 
   Event_Start();
-  if (FIELD_CELL(Actor_Get(ACTOR_NORTHWEST_SINKING_PILLAR)->x.fixed) == 46) {
+  if (FIELD_CELL(Actor_Get(ACTOR_NORTHWEST_SINKING_PILLAR)->x.fixed) ==
+      NORTHWEST_PILLAR_SINK_COLUMN) {
     Event_Wait(30);
     overlay = Actor_Prepare(744, 0, 184, SPRITE_CAPPED_PILLAR);
     // The pillar sinks a pixel every three frames, raising dust around it.
@@ -631,7 +645,7 @@ static void TunnelRuins_SinkNorthwestPillar(void) {
     options.palette = SPRITE_COLOR_WHITE;
     Actor_Get(ACTOR_NORTHWEST_SINKING_PILLAR)->motionFlags = 0;
     Sound_Play(SE_PUSH);
-    for (i = 0; i < 16; i++) {
+    for (i = 0; i < PILLAR_SINK_DEPTH; i++) {
       wait(3);
       Actor_Get(ACTOR_NORTHWEST_SINKING_PILLAR)->y.fixed -= toFIXED(1);
       effectX = INTtoFIXED(Random_Below(16)) + toFIXED(736);
@@ -658,7 +672,7 @@ static void TunnelRuins_SinkNorthwestPillar(void) {
 }
 
 /// Walking into the north-west sinking pillar pushes it, and it sinks if it
-/// reaches column 46 (until FLAG_TUNNEL_RUINS_NORTHWEST_PILLAR_IN_FLOOR).
+/// reaches its column (until FLAG_TUNNEL_RUINS_NORTHWEST_PILLAR_IN_FLOOR).
 static void TunnelRuins_PushNorthwestSinkingPillar(void) {
   Event_Start();
   PushedActor_AdvancePair();
@@ -679,8 +693,9 @@ static void TunnelRuins_FreezeNorthwestPillarFrostTarget(void) {
   GameFlag_Set(FLAG_SCENE_TEMP_00);
 }
 
-/// Moving the south-east sinking pillar into column 48 once Douse has soaked it
-/// sinks it as the north-west pillar does, and its Frost target moves onto it.
+/// Moving the south-east sinking pillar into SOUTHEAST_PILLAR_SINK_COLUMN once
+/// Douse has soaked it sinks it as the north-west pillar does, and its Frost
+/// target moves onto it.
 static void TunnelRuins_SinkSoutheastPillar(void) {
   u32 i;
   struct Actor *overlay;
@@ -689,7 +704,8 @@ static void TunnelRuins_SinkSoutheastPillar(void) {
   struct EffectOptions options;
 
   Event_Start();
-  if (FIELD_CELL(Actor_Get(ACTOR_SOUTHEAST_SINKING_PILLAR)->x.fixed) == 48) {
+  if (FIELD_CELL(Actor_Get(ACTOR_SOUTHEAST_SINKING_PILLAR)->x.fixed) ==
+      SOUTHEAST_PILLAR_SINK_COLUMN) {
     if (GameFlag_Get(FLAG_SCENE_TEMP_02) != 0) {
       Event_Wait(30);
       overlay = Actor_Prepare(770, 0, 274, SPRITE_CRATE);
@@ -698,7 +714,7 @@ static void TunnelRuins_SinkSoutheastPillar(void) {
       options.palette = SPRITE_COLOR_WHITE;
       Actor_Get(ACTOR_SOUTHEAST_SINKING_PILLAR)->motionFlags = 0;
       Sound_Play(SE_PUSH);
-      for (i = 0; i < 16; i++) {
+      for (i = 0; i < PILLAR_SINK_DEPTH; i++) {
         wait(3);
         Actor_Get(ACTOR_SOUTHEAST_SINKING_PILLAR)->y.fixed -= toFIXED(1);
         effectX = INTtoFIXED(Random_Below(16)) + toFIXED(768);
@@ -727,7 +743,7 @@ static void TunnelRuins_SinkSoutheastPillar(void) {
 }
 
 /// Walking into the south-east sinking pillar pushes it, and it sinks if it is
-/// soaked and reaches column 48.
+/// soaked and reaches its column.
 static void TunnelRuins_PushSoutheastSinkingPillar(void) {
   Event_Start();
   PushedActor_AdvancePair();
@@ -741,8 +757,8 @@ static void TunnelRuins_DouseStartsOnSoutheastPillar(void) {
                   gTunnelRuins_DouseSplashScript);
 }
 
-/// Douse soaks the south-east sinking pillar, which sinks at once if it is in
-/// column 48.
+/// Douse soaks the south-east sinking pillar, which sinks at once if it is
+/// already in its column.
 static void TunnelRuins_DouseSoutheastPillar(void) {
   GameFlag_Set(FLAG_SCENE_TEMP_02);
   TunnelRuins_SinkSoutheastPillar();
@@ -1007,18 +1023,25 @@ static void TunnelRuins_PushActor(void) {
   Event_End();
 }
 
+/// The columns the east pillars stand in once each is pushed a cell west of its
+/// place.
+#define EAST_PILLAR_A_PUSHED_COLUMN 45
+#define EAST_PILLAR_B_PUSHED_COLUMN 46
+
 /// Moving either east pillar keeps, for the next visit, whether each stands a
 /// cell west of its place.
 static void TunnelRuins_MoveEastPillar(void) {
   Event_Start();
 
-  if (FIELD_CELL(Actor_Get(ACTOR_EAST_PILLAR_A)->x.fixed) == 45) {
+  if (FIELD_CELL(Actor_Get(ACTOR_EAST_PILLAR_A)->x.fixed) ==
+      EAST_PILLAR_A_PUSHED_COLUMN) {
     GameFlag_Set(FLAG_TUNNEL_RUINS_EAST_PILLAR_A_PUSHED_WEST);
   } else {
     GameFlag_Clear(FLAG_TUNNEL_RUINS_EAST_PILLAR_A_PUSHED_WEST);
   }
 
-  if (FIELD_CELL(Actor_Get(ACTOR_EAST_PILLAR_B)->x.fixed) == 46) {
+  if (FIELD_CELL(Actor_Get(ACTOR_EAST_PILLAR_B)->x.fixed) ==
+      EAST_PILLAR_B_PUSHED_COLUMN) {
     GameFlag_Set(FLAG_TUNNEL_RUINS_EAST_PILLAR_B_PUSHED_WEST);
   } else {
     GameFlag_Clear(FLAG_TUNNEL_RUINS_EAST_PILLAR_B_PUSHED_WEST);
@@ -1036,27 +1059,40 @@ static void TunnelRuins_PushEastPillar(void) {
   Event_End();
 }
 
-/// The two vanishing statues stand, blocking their cells. They do so on
-/// entering their rooms and as Reveal's light fades.
-static void TunnelRuins_ShowFalseStatues(void) {
+/// The two vanishing statues stand, blocking their cells, and the chests on
+/// those cells are put away at the map's origin. They do so on entering their
+/// rooms and as Reveal's light fades.
+static void TunnelRuins_ShowVanishingStatues(void) {
   MapGrid_CopyCellAttributes(72, 49, 1, 1, 8, 49);
   MapGrid_CopyCellAttributes(113, 43, 1, 1, 49, 43);
-  TreasureSpot_SetPosition(100, 0, 0);
-  TreasureSpot_SetPosition(101, 0, 0);
+  TreasureSpot_SetPosition(TREASURE_SPOT_ORACLES_ROBE, 0, 0);
+  TreasureSpot_SetPosition(TREASURE_SPOT_ASURAS_ARMOR, 0, 0);
   Actor_SetPosition(ACTOR_WEST_VANISHING_STATUE, 136, 792);
   Actor_SetPosition(ACTOR_EAST_VANISHING_STATUE, 792, 696);
 }
 
-/// Reveal makes the two false statues vanish. As it shows what is hidden, the
-/// two vanishing statues go and their cells can be walked through.
-static void TunnelRuins_HideFalseStatues(void) {
+/// Reveal makes the two vanishing statues go, and shows the chest each one
+/// stood on, back in its own cell.
+static void TunnelRuins_HideVanishingStatues(void) {
   MapGrid_CopyCellAttributes(8, 113, 1, 1, 8, 49);
   MapGrid_CopyCellAttributes(49, 107, 1, 1, 49, 43);
-  TreasureSpot_SetPosition(100, -1, -1);
-  TreasureSpot_SetPosition(101, -1, -1);
+  TreasureSpot_SetPosition(TREASURE_SPOT_ORACLES_ROBE, -1, -1);
+  TreasureSpot_SetPosition(TREASURE_SPOT_ASURAS_ARMOR, -1, -1);
   Actor_SetPosition(ACTOR_WEST_VANISHING_STATUE, 0, 0);
   Actor_SetPosition(ACTOR_EAST_VANISHING_STATUE, 0, 0);
 }
+
+/// The five marks before the door, lit squares in the floor: the corners and
+/// middle of a square of cells. Each corner statue belongs on the opposite
+/// corner, and the south statue in the middle.
+enum {
+  MARKS_WEST_COLUMN = 23,
+  MARKS_MIDDLE_COLUMN,
+  MARKS_EAST_COLUMN,
+  MARKS_NORTH_ROW = 47,
+  MARKS_MIDDLE_ROW,
+  MARKS_SOUTH_ROW
+};
 
 /// Moving one of the five coloured statues in TunnelRuinsLadyStatues opens the
 /// door once all five are on their marks.
@@ -1081,28 +1117,38 @@ static void TunnelRuins_MoveLadyStatue(void) {
   MapGrid_CopyCellAttributes(
       20, 56, 1, 1, FIELD_CELL(Actor_Get(ACTOR_LADY_STATUE_SOUTH)->x.fixed),
       FIELD_CELL(Actor_Get(ACTOR_LADY_STATUE_SOUTH)->z.fixed));
-  if (FIELD_CELL(Actor_Get(ACTOR_LADY_STATUE_NORTHWEST)->x.fixed) == 25) {
-    if (FIELD_CELL(Actor_Get(ACTOR_LADY_STATUE_NORTHWEST)->z.fixed) == 49) {
+  if (FIELD_CELL(Actor_Get(ACTOR_LADY_STATUE_NORTHWEST)->x.fixed) ==
+      MARKS_EAST_COLUMN) {
+    if (FIELD_CELL(Actor_Get(ACTOR_LADY_STATUE_NORTHWEST)->z.fixed) ==
+        MARKS_SOUTH_ROW) {
       correctPositions = 1;
     }
   }
-  if (FIELD_CELL(Actor_Get(ACTOR_LADY_STATUE_NORTHEAST)->x.fixed) == 23) {
-    if (FIELD_CELL(Actor_Get(ACTOR_LADY_STATUE_NORTHEAST)->z.fixed) == 49) {
+  if (FIELD_CELL(Actor_Get(ACTOR_LADY_STATUE_NORTHEAST)->x.fixed) ==
+      MARKS_WEST_COLUMN) {
+    if (FIELD_CELL(Actor_Get(ACTOR_LADY_STATUE_NORTHEAST)->z.fixed) ==
+        MARKS_SOUTH_ROW) {
       correctPositions++;
     }
   }
-  if (FIELD_CELL(Actor_Get(ACTOR_LADY_STATUE_SOUTHWEST)->x.fixed) == 25) {
-    if (FIELD_CELL(Actor_Get(ACTOR_LADY_STATUE_SOUTHWEST)->z.fixed) == 47) {
+  if (FIELD_CELL(Actor_Get(ACTOR_LADY_STATUE_SOUTHWEST)->x.fixed) ==
+      MARKS_EAST_COLUMN) {
+    if (FIELD_CELL(Actor_Get(ACTOR_LADY_STATUE_SOUTHWEST)->z.fixed) ==
+        MARKS_NORTH_ROW) {
       correctPositions++;
     }
   }
-  if (FIELD_CELL(Actor_Get(ACTOR_LADY_STATUE_SOUTHEAST)->x.fixed) == 23) {
-    if (FIELD_CELL(Actor_Get(ACTOR_LADY_STATUE_SOUTHEAST)->z.fixed) == 47) {
+  if (FIELD_CELL(Actor_Get(ACTOR_LADY_STATUE_SOUTHEAST)->x.fixed) ==
+      MARKS_WEST_COLUMN) {
+    if (FIELD_CELL(Actor_Get(ACTOR_LADY_STATUE_SOUTHEAST)->z.fixed) ==
+        MARKS_NORTH_ROW) {
       correctPositions++;
     }
   }
-  if (FIELD_CELL(Actor_Get(ACTOR_LADY_STATUE_SOUTH)->x.fixed) == 24) {
-    if (FIELD_CELL(Actor_Get(ACTOR_LADY_STATUE_SOUTH)->z.fixed) == 48) {
+  if (FIELD_CELL(Actor_Get(ACTOR_LADY_STATUE_SOUTH)->x.fixed) ==
+      MARKS_MIDDLE_COLUMN) {
+    if (FIELD_CELL(Actor_Get(ACTOR_LADY_STATUE_SOUTH)->z.fixed) ==
+        MARKS_MIDDLE_ROW) {
       correctPositions++;
     }
   }
@@ -1495,7 +1541,7 @@ s32 Scene_Initialize(void) {
       break;
     case TUNNEL_RUINS_LADY_STATUES_REVEAL_STATUE_WEST:
       MapGrid_CopyCellAttributes(8, 49, 1, 1, 8, 113);
-      TunnelRuins_ShowFalseStatues();
+      TunnelRuins_ShowVanishingStatues();
       Task_AddFrame(TunnelRuins_UpdateTrackedActor, TASK_PASS_FRAME);
       break;
     case TUNNEL_RUINS_LADY_STATUES_FIVE_STATUES_NORTH:
@@ -1551,7 +1597,7 @@ s32 Scene_Initialize(void) {
       break;
     case TUNNEL_RUINS_LADY_STATUES_FROM_TUNNEL_RUINS_GREAT_STATUE_SOUTHEAST:
       MapGrid_CopyCellAttributes(49, 43, 1, 1, 49, 107);
-      TunnelRuins_ShowFalseStatues();
+      TunnelRuins_ShowVanishingStatues();
       break;
     }
   }
@@ -1575,11 +1621,11 @@ const s32 *gFieldEffect_DurationScripts[] = {
     gFieldEffect_LongScript,
 };
 
-s32 gTunnelRuins_ShrinkScript[] = {
+s32 gTunnelRuins_SmallLighthouseScript[] = {
     SC_SET(SW_SCALE_X, 3 * FIXED_ONE / 5),
     SC_SET(SW_SCALE_Y, 3 * FIXED_ONE / 5),
     SC_SET(SW_COLLISION, 0),
-    SC_CALL(TunnelRuins_RefreshActorAfterShrinking),
+    SC_CALL(TunnelRuins_HideLighthouseShadow),
     SC_END,
 };
 
@@ -1864,8 +1910,8 @@ struct ActorPlacement gTunnelRuinsGreatStatueActorPlacements[] = {
     // World Map's tower, at three fifths of its size, with no collision
     // and no shadow.
     ACTOR_PLACEMENT(SPRITE_WORLD_MAP_VENUS_LIGHTHOUSE, 0,
-                    (s32)gTunnelRuins_ShrinkScript, 232, 0, 248, FACING_SOUTH,
-                    TALK_FACING_KEEP, 0),
+                    (s32)gTunnelRuins_SmallLighthouseScript, 232, 0, 248,
+                    FACING_SOUTH, TALK_FACING_KEEP, 0),
     {SCENE_TABLE_END},
 };
 
@@ -2028,8 +2074,8 @@ struct Trigger gTunnelRuinsTriggersOther[] = {
     {TRIGGER_STEP | STEP_TRIGGER_FLAG_WALKING, 41, CONDITION_ALWAYS, EVENT(TunnelRuins_PushLadyStatue)},
     {EXAMINE_TRIGGER(EXAMINE_SILENT), 20, CONDITION_ALWAYS, EVENT(TunnelRuins_SearchLockedDoor)},
     {EXAMINE_TRIGGER(EXAMINE_SILENT), 42, CONDITION_ALWAYS, EVENT(TunnelRuins_ReadSecondStatue)},
-    {EXAMINE_TRIGGER(EXAMINE_CHEST), 100, FLAG_TUNNEL_RUINS_ORACLES_ROBE, FIND_ITEM(ITEM_ORACLES_ROBE)},
-    {EXAMINE_TRIGGER(EXAMINE_CHEST), 101, FLAG_TUNNEL_RUINS_ASURAS_ARMOR, FIND_ITEM(ITEM_ASURAS_ARMOR)},
+    {EXAMINE_TRIGGER(EXAMINE_CHEST), TREASURE_SPOT_ORACLES_ROBE, FLAG_TUNNEL_RUINS_ORACLES_ROBE, FIND_ITEM(ITEM_ORACLES_ROBE)},
+    {EXAMINE_TRIGGER(EXAMINE_CHEST), TREASURE_SPOT_ASURAS_ARMOR, FLAG_TUNNEL_RUINS_ASURAS_ARMOR, FIND_ITEM(ITEM_ASURAS_ARMOR)},
     {PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_DOUSE_PILLAR, FLAG_TUNNEL_RUINS_DOUSE_FROST_TARGET_FROZEN, EVENT(TunnelRuins_MoveDousePillar)},
     {PSYNERGY_ON_ACTOR(ABILITY_DOUSE) | 1 << 28, ACTOR_DOUSE_PILLAR, FLAG_TUNNEL_RUINS_DOUSE_PILLAR_SOAKED, EVENT(TunnelRuins_DouseStartsOnPillar)},
     {PSYNERGY_ON_ACTOR(ABILITY_FROST), ACTOR_DOUSE_PILLAR_FROST_TARGET, FLAG_TUNNEL_RUINS_DOUSE_FROST_TARGET_FROZEN, EVENT(TunnelRuins_FreezeDousePillarFrostTarget)},
@@ -2040,9 +2086,9 @@ struct Trigger gTunnelRuinsTriggersOther[] = {
     {PSYNERGY_ON_ACTOR(ABILITY_CARRY), ACTOR_MIDDLE_CARRY_STONE, CONDITION_ALWAYS, EVENT(TunnelRuins_SetStoneOnBalance)},
     {PSYNERGY_ON_ACTOR(ABILITY_CARRY), ACTOR_EAST_CARRY_STONE, CONDITION_ALWAYS, EVENT(TunnelRuins_SetStoneOnBalance)},
     {PSYNERGY_ANYWHERE(ABILITY_REVEAL, PSYNERGY_PHASE_ACTS), 0, CONDITION_ALWAYS,
-        EVENT(TunnelRuins_HideFalseStatues)},
+        EVENT(TunnelRuins_HideVanishingStatues)},
     {PSYNERGY_ANYWHERE(ABILITY_REVEAL, PSYNERGY_PHASE_FADES), 0, CONDITION_ALWAYS,
-        EVENT(TunnelRuins_ShowFalseStatues)},
+        EVENT(TunnelRuins_ShowVanishingStatues)},
     {PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_EAST_PILLAR_A, CONDITION_ALWAYS,
         EVENT(TunnelRuins_MoveEastPillar)},
     {PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_EAST_PILLAR_B, CONDITION_ALWAYS,

@@ -39,7 +39,7 @@ s32 LinkBattle_ReceiveParty(void) {
     if (name_text[i] != 0) {
       do {
         i += 1;
-        if (i > NAME_PREFIX_LAST_INDEX) {
+        if (i > LOBBY_PREFIX_LIMIT) {
           break;
         }
       } while (name_text[i] != 0);

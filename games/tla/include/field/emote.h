@@ -10,7 +10,7 @@
 #define EMOTE_IN_FRONT 0x100
 
 /// The bubbles Actor_ShowEmoteById can show, by the animation they pick in the
-/// bubble's sprite sheet, as The Broken Seal's.
+/// bubble's sprite sheet.
 enum Emote {
   EMOTE_EXCLAMATION = 0, ///< "!"
   EMOTE_QUESTION = 1,    ///< "?"
@@ -25,7 +25,7 @@ enum Emote {
 };
 
 /// FieldEffect_SetAttached's flags: a mode in the low two bits, and
-/// ATTACHED_EFFECT_IN_FRONT, as The Broken Seal's.
+/// ATTACHED_EFFECT_IN_FRONT.
 enum AttachedEffectFlag {
   ATTACHED_EFFECT_REMOVE = 0, ///< removes the attached actor
   ATTACHED_EFFECT_ATTACH = 1, ///< attaches one that stays until removed

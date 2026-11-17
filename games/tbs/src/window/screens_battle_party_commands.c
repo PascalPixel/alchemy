@@ -70,7 +70,7 @@ s32 Battle_CollectPartyCommands(struct BattleAction *commands, u16 *actors,
 
   // Set up the shared command UI before the optional link handshake: VRAM
   // for the chosen command's 32x32 icon (1 KB) and the party member's portrait,
-  // the lists' page numbers (LIST_PAGE_DIGITS_TILE), page arrows
+  // the lists' page numbers (PAGE_DIGITS_TILE), page arrows
   // (LIST_PAGE_ARROW_VRAM) and range icons (RANGE_ICON_FIRST_TILE), and no
   // Djinni chosen yet (BATTLE_MENU_NO_DJINNI).
   target = 256;
@@ -82,7 +82,7 @@ s32 Battle_CollectPartyCommands(struct BattleAction *commands, u16 *actors,
       HeapSlot_AllocEwram(HEAP_SLOT_BATTLE_MENU, sizeof(struct BattleMenuWork));
   Resource_LoadIndexedIntoBuffer(largeIconSlot, 0);
   Graphics_ExpandVramTilesByColorTable(
-      (u16 *)(BG_CHAR_BLOCK(0) + LIST_PAGE_DIGITS_TILE * TILE_SIZE_4BPP));
+      (u16 *)(BG_CHAR_BLOCK(0) + PAGE_DIGITS_TILE * TILE_SIZE_4BPP));
   Link_DrawPageArrows(LIST_PAGE_ARROW_VRAM);
   Menu_BuildLocalizedPatternTiles();
   battle = gBattleWork;

@@ -12,6 +12,10 @@
 
 void Matrix_SetTranslation(FIXED *position);
 
+/// Each frame of a turn the camera closes this share of the gap to its target
+/// yaw, one sixteenth, so it slows as it nears it.
+#define CAMERA_YAW_EASE 16
+
 /// Runs each frame of a battle: pauses a link battle whose connection is lost,
 /// turns the camera a sixteenth of the way toward its target yaw, places it,
 /// and refreshes the background's zoom.
@@ -23,6 +27,8 @@ void BattleCamera_Update(void) {
   s16 delta;
   u32 linkId;
 
+  // The link check: a missed frame counts only while the link is down, and
+  // any frame with it up resets the count.
   if (Ram_HeapSlots->battleWork->isLink != 0) {
     if ((gLinkStatus & LINK_BOTH_CONNECTED) != LINK_BOTH_CONNECTED) {
       Ram_HeapSlots->battleWork->linkMisses++;
@@ -30,7 +36,7 @@ void BattleCamera_Update(void) {
         Ram_HeapSlots->battleWork->linkPaused = 1;
       }
     } else {
-      linkId = (REG_SIOCNT << 26) >> 30;
+      linkId = SIO_ID_OF(REG_SIOCNT);
       if (Ram_HeapSlots->battleWork->linkSide != linkId) {
         Ram_HeapSlots->battleWork->linkPaused = 1;
       }
@@ -40,7 +46,7 @@ void BattleCamera_Update(void) {
 
   if (transition->frames != 0) {
     delta = transition->targetYaw - camera->yaw;
-    delta /= 16;
+    delta /= CAMERA_YAW_EASE;
     camera->yaw += delta;
     transition->frames--;
   }
@@ -55,9 +61,11 @@ void BattleCamera_Update(void) {
   Matrix_RotateX((s16)camera->pitch);
   Matrix_SetTranslation(focus);
 
+  // The eye sits distance behind the focus, along the turned view.
   SET_POSITION(&eyeOffset, 0, 0, camera->distance);
   Iwram_TransformVector(&eyeOffset.x, (s32 *)camera);
 
+  // The view centred at (120, 120) in 16.16 pixels, at scale 1.
   if (transition->flag == 0) {
     BattleCamera_SetRange(toFIXED(120), toFIXED(120), 0, 0, FIXED_ONE);
   }
@@ -136,23 +144,26 @@ placed:
   battle->enemyIds[count] = BATTLE_UNIT_LIST_END;
 }
 
-/// Moves the 16 bytes at VRAM 0x06000290 down to 0x06000280 and clears the
-/// 20 bytes from 0x0600028c.
+// XXX (no evidence): what the bytes moved are, tiles of character block 0 or
+// entries of screen block 0; nothing calls this in either game.
+/// Unused: moves 16 bytes of VRAM down by 16 and clears the 20 from 12 bytes
+/// past where they land.
 s32 Battle_ShiftVramTiles(void) {
   Dma_Set((const void *)0x06000290, (void *)0x06000280, DMA_COPY_HALFWORDS(8),
           REG_DMA3);
   return Iwram_ClearWordsEntry((void *)0x0600028c, 20);
 }
 
-/// An HBlank handler: clears BG0's vertical scroll from the line it fires on.
+/// Unused: clears BG0's vertical scroll, as an interrupt handler would from the
+/// line it fires on.
 void BattleTransition_ClearBg0Vofs(void) {
   u32 zero = 0;
 
   REG_BG0VOFS = zero;
 }
 
-/// Does nothing.
-void Party_ReservedNoOp5B14(s32 value) {}
+/// Does nothing; Battle_Run calls it with 1 as the battle is set up.
+void Party_BattleSetupNoOp(s32 value) {}
 
 /// Clears the party's battle-only states, and works their stats out again, as a
 /// battle ends.
@@ -219,7 +230,7 @@ void BattleParty_ClearGuards(void) {
 
   count = BattleParty_PrepareMembers(ids);
   count += BattleParty_PrepareReserveOwners(ids + count);
-  count += BattleUnit_ListIds(2, ids + count);
+  count += BattleUnit_ListIds(BATTLE_SIDE_MASK_ENEMIES, ids + count);
   if (count > 0) {
     do {
       struct Unit *unit = Unit_Get(*id++);
@@ -232,7 +243,7 @@ void BattleParty_ClearGuards(void) {
 }
 
 /// Adds to the trade offers every djinn an active owner can offer that is
-/// not offered yet; owners above 7 offer on the second side.
+/// not offered yet; owners past ALLY_MAX offer on the second side.
 void DjinnRecovery_Reconcile(void) {
   u16 owners[10];
   s32 count;
@@ -263,18 +274,18 @@ void DjinnRecovery_Reconcile(void) {
   }
 }
 
-/// Works out which summons the party can call: one whose Djinn requirement
-/// of every element is met by the Djinn the party holds of that element
-/// (djinnHeldCounts, set or not), all party members together. Whether enough of
-/// them are on standby is checked as the summon is chosen
-/// (BattleSummonMenu_Run, Battle_CollectPartyCommands) and again when it
-/// is built (BattleActionRun_Build). Stores the mask of them (bit n for
-/// summon n) and returns the state that holds it. Called by
-/// Battle_Run as the battle is set up and at the start of each
-/// turn, which asks for the party status window's standby Djinn column
-/// (PARTY_STATUS_SUMMONS) while the mask is not 0; PartyStatus_Draw shows it
-/// only while a Djinni is on standby. Writes the party recovery table's
-/// availableMask.
+/// The summon mask's bits of the summons from SUMMON_ZAGAN on, which the party
+/// learns ("can now summon") rather than earns by its Djinn:
+/// BattleSummon_UpdateAvailability keeps them as they are.
+#define SUMMON_MASK_LEARNED (~0u << SUMMON_ZAGAN)
+
+/// Works out which of the summons up to SUMMON_THOR the party can call: those
+/// whose Djinn of every element the party holds (djinnHeldCounts, set or not),
+/// all members together, and stores them in the party's summon mask beside
+/// the ones learned. Whether enough are on standby is checked as
+/// a summon is chosen (BattleSummonMenu_Run) and built
+/// (BattleActionRun_Build). Battle_Run calls it as the battle is set up and at
+/// the start of each turn.
 void BattleSummon_UpdateAvailability(void) {
   u8 totals[ELEMENT_COUNT];
   u16 partyMembers[10];
@@ -283,7 +294,8 @@ void BattleSummon_UpdateAvailability(void) {
   u32 availableMask;
 
   partySize = BattleParty_PrepareMembers(partyMembers);
-  availableMask = Djinn_GetRecoveryTableFar(0)->summonMask & 0xffff0000;
+  availableMask =
+      Djinn_GetRecoveryTableFar(0)->summonMask & SUMMON_MASK_LEARNED;
 
   element = 0;
   do {
@@ -325,10 +337,10 @@ void BattleSummon_UpdateAvailability(void) {
         availableMask |= 1u << element;
     }
     element++;
-  } while (element <= 15);
+  } while (element <= SUMMON_THOR);
 
   Djinn_GetRecoveryTableFar(DJINN_RECOVERY_PARTY)->summonMask = availableMask;
 }
 
-/// An empty function, right after BattleSummon_UpdateAvailability.
+/// Unused: does nothing.
 void BattleSummon_ReservedNoOp(void) {}

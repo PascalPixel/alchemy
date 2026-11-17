@@ -64,7 +64,7 @@ Psynergy The Lost Age adds was tried out: four Scoop spots dig up a hole, a
 puddle, a Wicked Mace and a statue before a battle; Cyclone blows leaves away
 or sends the leader off and back in a ring of light; Pound lights a torch,
 Parch changes the floor, and Blaze startles Kraden, who answers it as Daila's
-practising performer. `psynergy_test_2.c` is a small room with a rope, a wall to
+practising man. `psynergy_test_2.c` is a small room with a rope, a wall to
 Burst, an actor that scatters rocks when talked to, and a step into a
 battle.
 

@@ -33,14 +33,14 @@ s32 Text_DrawGlyphPair(s32 code, u32 *out) {
   const u8 *glyph;
   s32 firstIndex;
   s32 secondIndex;
-  s32 secondWidth;
+  u16 secondWidth;
 #endif
   s32 width;
   s32 colour;
   s32 shadowColour;
   u8 *pixel;
-  s32 tileColumn;
   s32 tileRow;
+  s32 tileColumn;
   s32 line;
   s32 pixelsLeft;
   u32 tileLine;
@@ -69,6 +69,7 @@ s32 Text_DrawGlyphPair(s32 code, u32 *out) {
   }
   Iwram_ClearWordsEntry(pixels, GLYPH_PIXELS_SIZE);
 #else
+  // A joined pair carries its second character in bits 8 to 15.
   secondIndex = (code << 8) >> 16;
   code &= TEXT_LAST_FONT_CODE;
   firstIndex = code - TEXT_SPACE;
@@ -125,7 +126,7 @@ s32 Text_DrawGlyphPair(s32 code, u32 *out) {
   }
   if ((u16)secondIndex != 0) {
     glyph = (const u8 *)&gFont_Glyphs[-TEXT_SPACE] + ((u16)secondIndex << 5);
-    secondWidth = *(const s16 *)glyph;
+    secondWidth = *(const u16 *)glyph;
     glyph += 2;
     if (work->outline == TEXT_STYLE_OUTLINED) {
       u8 *dst = pixels + width;
@@ -133,23 +134,26 @@ s32 Text_DrawGlyphPair(s32 code, u32 *out) {
       Iwram_ExpandBitRuns(glyph, dst + GLYPH_PIXEL(2, 3), shadowColour);
       Iwram_ExpandBitRuns(glyph, dst + GLYPH_PIXEL(0, 2), colour);
       Iwram_ExpandBitRuns(glyph, dst + GLYPH_PIXEL(1, 2), colour);
-      secondWidth = (s32)(((u32)secondWidth << 16) + (1 << 16)) >> 16;
+      secondWidth += 1;
     } else {
       u8 *dst = pixels + width;
       u8 *p;
-      p = dst + 49;
+      p = dst + GLYPH_PIXEL(1, 3);
       Iwram_ExpandBitRuns(glyph, p, shadowColour);
-      p = dst + 32;
+      p = dst + GLYPH_PIXEL(0, 2);
       Iwram_ExpandBitRuns(glyph, p, colour);
     }
-    width += (u16)secondWidth;
+    width += secondWidth;
   }
 #endif
 
+  // Pack the cell into its four tiles, left to right and top to bottom, each
+  // line read from its eighth pixel back so the leftmost lands in the low
+  // nibble.
   pixel = pixels + 7;
-  tileColumn = 0;
+  tileRow = 0;
   do {
-    tileRow = 0;
+    tileColumn = 0;
     do {
       line = 0;
       do {
@@ -160,20 +164,20 @@ s32 Text_DrawGlyphPair(s32 code, u32 *out) {
           pixelsLeft--;
         } while (pixelsLeft >= 0);
         line++;
-        pixel += 24;
+        pixel += GLYPH_BUFFER_WIDTH + 8; // the next line's eighth pixel
         *out++ = tileLine;
       } while (line <= 7);
-      tileRow++;
-      pixel -= 120;
-    } while (tileRow <= 1);
-    tileColumn++;
-    pixel += 112;
-  } while (tileColumn <= 1);
+      tileColumn++;
+      pixel -= 8 * GLYPH_BUFFER_WIDTH - 8; // up to the tile on the right
+    } while (tileColumn <= 1);
+    tileRow++;
+    pixel += 8 * GLYPH_BUFFER_WIDTH - 2 * 8; // down to the next row of tiles
+  } while (tileRow <= 1);
   return width;
 }
 
-// German, Spanish, French, and Italian use ten pixels for nonspace characters
-// up to 0xff and zero for characters above it.
+// German, Spanish, French, and Italian count ten pixels for every character up
+// to TEXT_LAST_FONT_CODE but the space, and nothing for those above it.
 #if (LANGUAGE == LANGUAGE_GERMAN) || (LANGUAGE == LANGUAGE_SPANISH) ||         \
     (LANGUAGE == LANGUAGE_FRENCH) || (LANGUAGE == LANGUAGE_ITALIAN)
 #define WIDE_WIDTH_FIXED 1
@@ -184,8 +188,10 @@ s32 Text_DrawGlyphPair(s32 code, u32 *out) {
   ((const struct FontGlyph *)((n) * sizeof(struct FontGlyph) +                 \
                               (const u8 *)gFont_Glyphs))
 
-/// Spaces take four pixels; characters up to 0xff use their glyph width;
-/// higher characters take ten. Voicing marks 0xde and 0xdf add no width.
+/// Measures a string of 16-bit character codes in pixels: a space takes four,
+/// a character up to TEXT_LAST_FONT_CODE its glyph's width (TEXT_MARK_VOICED
+/// and TEXT_MARK_SEMIVOICED nothing) and a code above it KANJI_WIDTH; see
+/// WIDE_WIDTH_FIXED for the four editions that count otherwise.
 s32 Text_GetWideStringWidth(u16 *text) {
   s32 width;
   u16 *cursor;
@@ -361,7 +367,8 @@ void Text_DrawGlyphTileAtWorkOffset(u16 *buffer, const struct Window *work,
 }
 
 /// Draws a string of wide (16-bit) codes into the window, one glyph per cell,
-/// skipping the control codes and their arguments; code 3 starts a new line.
+/// skipping the control codes and their arguments; TEXT_NEWLINE starts a new
+/// line.
 /// With no text, the render work's own entries are drawn, closed with a 0.
 void Text_DrawWideStringInWindow(s16 *text, struct Window *window, s32 x,
                                  s32 y) {

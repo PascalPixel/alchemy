@@ -1,8 +1,9 @@
 /// @file
-/// The casting impacts, the Djinn attacks and the enemy abilities that open
-/// the same way: sparks close in on the caster, a streak shoots at the target
-/// and a ring of light bursts over it in a spray of sparks, and then each
-/// impact plays its own effect over the target (enum CastingImpact).
+/// The casting impacts, the Djinn attacks, weapons' unleashes and enemy
+/// abilities that open the same way: sparks close in on the caster, a streak
+/// shoots at the target and a ring of light bursts over it in a spray of
+/// sparks, and then each impact plays its own effect over the target (enum
+/// CastingImpact).
 // Part of battle_effect.c.
 
 #include "battle_effect_internal.h"
@@ -106,6 +107,12 @@ enum CastingImpact {
 #define CASTING_IMPACT_DJINNI_PICTURE 15446
 #define CASTING_IMPACT_GATHER_FRAMES 32 ///< frames the sparks gather
 #define CASTING_IMPACT_SPARKS 64        ///< sparks in work->particles
+/// How far either side of the caster the gathering sparks' depth is clamped.
+#define CASTING_IMPACT_SPARK_DEPTH 60
+/// A spark scattered over the target lives this long at the least, counted
+/// down two a frame (the draw visits each spark twice); it is drawn a mote size
+/// smaller for every 16 of life lost.
+#define CASTING_IMPACT_SPARK_LIFE 32
 /// The impact pictures' particles, in Ram_MapGridCellBuffer after the Djinni.
 #define CASTING_IMPACT_IMPACT_PARTICLES                                        \
   ((struct Particle *)(Ram_MapGridCellBuffer + 16384))
@@ -113,6 +120,11 @@ enum CastingImpact {
 /// The impact particles that carry the rising pictures: flash bursts, skulls
 /// or puffs of smoke.
 #define CASTING_IMPACT_RISING_PICTURES 16
+/// The frames a rising picture lives, and a flash burst, two to each picture.
+#define CASTING_IMPACT_RISING_LIFE 24
+#define CASTING_IMPACT_BURST_LIFE 12
+/// Broil's ember streaks.
+#define BROIL_STREAKS 12
 
 /// Asura's sheet: the masked swordsman with his sword low, then swung up, then
 /// the red crescent his stroke leaves.
@@ -368,8 +380,9 @@ void BattleEffect_RunCastingImpact(struct BattleEffectParams *args, s32 mode) {
                 sparkScreen.y = sparkScreen.y + casterPos.y + 12;
               // DEAD: the depth is clamped to -60..60 and moved to 0..120 but
               // never read; the ROM keeps the clamp and the move.
-              CLAMP(sparkScreen.depth, -60, 60);
-              sparkScreen.depth += 60;
+              CLAMP(sparkScreen.depth, -CASTING_IMPACT_SPARK_DEPTH,
+                    CASTING_IMPACT_SPARK_DEPTH);
+              sparkScreen.depth += CASTING_IMPACT_SPARK_DEPTH;
               EFFECT_DRAW_MOTE(blitters[1], canvas, sprites, sparkScreen.x,
                                sparkScreen.y, size);
             }
@@ -497,7 +510,7 @@ void BattleEffect_RunCastingImpact(struct BattleEffectParams *args, s32 mode) {
                        ((Random16() & 255) - 64) << 12,
                        ((Random16() & 255) - 127) << 12);
         }
-        particle->variant = i / 2 + 32;
+        particle->variant = i / 2 + CASTING_IMPACT_SPARK_LIFE;
       }
     }
     // Mortal Danger and Asura replace the caster's overlay and the impact's
@@ -855,7 +868,7 @@ void BattleEffect_RunCastingImpact(struct BattleEffectParams *args, s32 mode) {
                 SET_VELOCITY(step, ((Random16() & 255) - 127) << 12,
                              ((Random16() & 255) - 64) << 10,
                              ((Random16() & 255) - 127) << 12);
-                step->variant = i / 2 + 32;
+                step->variant = i / 2 + CASTING_IMPACT_SPARK_LIFE;
                 emitted++;
                 if (emitted == 4)
                   break;
@@ -916,7 +929,7 @@ void BattleEffect_RunCastingImpact(struct BattleEffectParams *args, s32 mode) {
           // Flash bursts rise.
           if (frame >= i / 2 + 4) {
             s32 age = step->variant;
-            if (age <= 11) {
+            if (age < CASTING_IMPACT_BURST_LIFE) {
               s32 image = age / 2;
               Projection_Point(step, &projected);
               projected.x /= 2;
@@ -995,7 +1008,7 @@ void BattleEffect_RunCastingImpact(struct BattleEffectParams *args, s32 mode) {
         // The swordsman slides in and swings, and his red crescent fades.
         scrollPos += scrollSpeed;
         if (frame > 6) {
-          scrollSpeed = (scrollSpeed * 48) / 64;
+          scrollSpeed = scrollSpeed * 48 / DAMPING_SCALE;
         }
         REG_BG2X = FIXEDtoINT(scrollPos) << 8;
         {
@@ -1058,7 +1071,7 @@ void BattleEffect_RunCastingImpact(struct BattleEffectParams *args, s32 mode) {
         }
       } else if (mode == CASTING_IMPACT_IMPACT_BROIL) {
         // Ember streaks.
-        for (i = 0; i != 12; i++) {
+        for (i = 0; i != BROIL_STREAKS; i++) {
           if (frame >= i + 6 && frame < i + 18) {
             s32 image = (frame - i - 6) / 2;
             s32 imageX =
@@ -1184,6 +1197,8 @@ void BattleEffect_RunCastingImpact(struct BattleEffectParams *args, s32 mode) {
                             projected.x - SKULL_WIDTH / 2,
                             projected.y - SKULL_HEIGHT / 2, SKULL_WIDTH,
                             SKULL_HEIGHT);
+            // Each skull of four rises faster: toFIXED(1) / 32 to toFIXED(1)
+            // / 4.
             Particle_AdvanceWithGravity3D(step, 60, 1 << ((i & 3) + 11));
             step->variant++;
           }
@@ -1197,7 +1212,7 @@ void BattleEffect_RunCastingImpact(struct BattleEffectParams *args, s32 mode) {
           step = &CASTING_IMPACT_IMPACT_PARTICLES[i];
           if (frame >= i + 4) {
             s32 age = step->variant;
-            if (age <= 23) {
+            if (age < CASTING_IMPACT_RISING_LIFE) {
               s32 image = age / 4;
               Projection_Point(step, &projected);
               projected.x /= 2;
@@ -1303,6 +1318,8 @@ void BattleEffect_RunCastingImpact(struct BattleEffectParams *args, s32 mode) {
 #undef CASTING_IMPACT_DJINNI_PICTURE
 #undef CASTING_IMPACT_GATHER_FRAMES
 #undef CASTING_IMPACT_SPARKS
+#undef CASTING_IMPACT_SPARK_DEPTH
+#undef CASTING_IMPACT_SPARK_LIFE
 #undef CASTING_IMPACT_IMPACT_PARTICLES
 #undef CASTING_IMPACT_IMPACT_PARTICLE_COUNT
 #undef CASTING_IMPACT_PICTURE_X

@@ -56,7 +56,7 @@ void MercuryLighthouse_RestoreLights(s32 region,
       return;
     obj->groundHeight = actor->groundHeight;
     animation = obj->sprite;
-    Actor_StartScript(obj, gMercuryLighthouse_RampScript);
+    Actor_StartScript(obj, gMercuryLighthouse_GrowLightScript);
     obj->motionFlags = 0;
     obj->timer = 0;
     obj->priorityFlags = ACTOR_PRIORITY_UNDERFOOT;

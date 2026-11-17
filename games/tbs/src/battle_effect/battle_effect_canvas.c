@@ -6,8 +6,8 @@
 #include "battle_effect_internal.h"
 
 /// How far a row of BattleEffect_WipeCanvas's wipe lags behind its front, at
-/// most: each row lags a random 0 to 63 pixels.
-#define WIPE_LAG_MAX 63
+/// most: each row lags a random 0 to WIPE_LAG_MAX pixels.
+#define WIPE_LAG_MAX 0x3f
 
 /// Wipes the whole canvas to one colour with a ragged edge, a frame at a time:
 /// 23 frames across, 15 down.
@@ -155,8 +155,8 @@ void BattleEffect_FlushPendingGraphicsTransfer(void) {
 }
 
 /// One step of the battle background's darkening, a sixtieth of its full
-/// colour (the battle's BACKGROUND_LEVEL_STEP).
-#define CANVAS_FADE_STEP (FIXED_ONE / 60)
+/// colour, as the battle darkens it.
+#define BACKGROUND_LEVEL_STEP (FIXED_ONE / 60)
 /// The battle background's colours, BG palettes 6 to 13.
 #define BATTLE_BACKGROUND_COLORS (8 * PALETTE_COLORS)
 /// The canvas's usual weight over the battle, in sixteenths: every canvas
@@ -198,7 +198,7 @@ void Palette_StepFadeTransfer(void) {
 
     Graphics_ScaleRgb555ClampedFar(
         battle->palette, (void *)&BG_PLTT_COLOR(6, 0),
-        FIXED_ONE - step * CANVAS_FADE_STEP, BATTLE_BACKGROUND_COLORS);
+        FIXED_ONE - step * BACKGROUND_LEVEL_STEP, BATTLE_BACKGROUND_COLORS);
     work->fadeFrames--;
   }
 }
@@ -512,18 +512,15 @@ void BattleEffect_SetupCanvasTileMap(void) {
   wait(1);
 }
 
-/// A line follows its slower axis in fixed point with LINE_FRACTION_BITS of
-/// fraction, stepping a pixel each time the fraction carries into LINE_PIXEL.
-#define LINE_FRACTION_BITS 8
-#define LINE_PIXEL (1 << LINE_FRACTION_BITS)
-
 /// Draws a line on the canvas, keeping the brighter colour where it crosses
 /// what is drawn.
 void BattleEffect_DrawClippedCanvasLine(s32 x0, s32 y0, s32 x1, s32 y1,
                                         s32 color) {
   s32 dx = x1 - x0;
   s32 dy = y1 - y0;
-  s32 frac = LINE_PIXEL / 2;
+  // The slower axis is followed in 8.8 fixed point, a pixel each time the
+  // fraction carries into the whole part.
+  s32 frac = Q_8_8(0.5);
   u8 *canvas = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_CANVAS);
   s32 step;
   s32 i;
@@ -548,19 +545,19 @@ void BattleEffect_DrawClippedCanvasLine(s32 x0, s32 y0, s32 x1, s32 y1,
        */
       dy = y1 - y0;
     }
-    step = (ABS(x1 - x0) << LINE_FRACTION_BITS) / ABS(y1 - y0);
+    step = ABS(x1 - x0) * Q_8_8(1) / ABS(y1 - y0);
     x = x0;
     for (i = y0; i != y1; i++) {
       offset = CANVAS_PIXEL_OFFSET((u32)x, (u32)i);
       if (canvas[offset] < color)
         canvas[offset] = color;
       frac += step;
-      if (frac & LINE_PIXEL) {
+      if (frac & Q_8_8(1)) {
         if (dx > 0)
           x++;
         else
           x--;
-        frac &= ~LINE_PIXEL;
+        frac &= ~Q_8_8(1);
       }
     }
   } else {
@@ -576,26 +573,26 @@ void BattleEffect_DrawClippedCanvasLine(s32 x0, s32 y0, s32 x1, s32 y1,
       dx = x1 - x0;
       dy = y1 - y0;
     }
-    step = (ABS(y1 - y0) << LINE_FRACTION_BITS) / ABS(x1 - x0);
+    step = ABS(y1 - y0) * Q_8_8(1) / ABS(x1 - x0);
     y = y0;
     for (i = x0; i != x1; i++) {
       offset = CANVAS_PIXEL_OFFSET((u32)i, (u32)y);
       if (canvas[offset] < color)
         canvas[offset] = color;
       frac += step;
-      if (frac & LINE_PIXEL) {
+      if (frac & Q_8_8(1)) {
         if (dy > 0)
           y++;
         else
           y--;
-        frac &= ~LINE_PIXEL;
+        frac &= ~Q_8_8(1);
       }
     }
   }
 }
 
 #undef WIPE_LAG_MAX
-#undef CANVAS_FADE_STEP
+#undef BACKGROUND_LEVEL_STEP
 #undef BATTLE_BACKGROUND_COLORS
 #undef CANVAS_BLEND_LEVEL
 #undef CANVAS_BG1_SCREEN
@@ -604,5 +601,3 @@ void BattleEffect_DrawClippedCanvasLine(s32 x0, s32 y0, s32 x1, s32 y1,
 #undef CANVAS_BG1_BLANK_TILE
 #undef CANVAS_BG1_FIRST_TILE
 #undef CANVAS_BG1_TOP_ROW
-#undef LINE_FRACTION_BITS
-#undef LINE_PIXEL

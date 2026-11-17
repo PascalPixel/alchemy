@@ -28,9 +28,13 @@
 #include "field/field.h"
 #include "field/script_operands.h"
 #include "field/field_sequence.h"
+#include "graphics/glyph.h"
 
-/// Waits, at most 90 frames, for a sprite's animation to change or for its
-/// first layer's script to reach ANIMCMD_HOLD.
+/// The frames Animation_WaitForTrackEnd waits at most.
+#define TRACK_END_WAIT_FRAMES 90
+
+/// Waits, at most TRACK_END_WAIT_FRAMES, for a sprite's animation to change or
+/// for its first layer's script to reach ANIMCMD_HOLD.
 void Animation_WaitForTrackEnd(struct Sprite *sprite) {
   u8 animation = sprite->lastNo;
   struct SpriteAnimation *entry = sprite->entries[0];
@@ -42,7 +46,7 @@ void Animation_WaitForTrackEnd(struct Sprite *sprite) {
       do {
         wait(1);
         i++;
-        if (i > 89)
+        if (i > TRACK_END_WAIT_FRAMES - 1)
           break;
         if (entry->script[entry->scriptOffset] == ANIMCMD_HOLD)
           break;
@@ -50,6 +54,20 @@ void Animation_WaitForTrackEnd(struct Sprite *sprite) {
     }
   }
 }
+
+/// A dissolve clears one pixel of each 8-bit tile a step, in
+/// gSpriteDissolve_PixelOrder's order, so a tile is gone after this many.
+#define DISSOLVE_TILE_PIXELS 64
+/// The step the first tile starts to dissolve at; each tile after it starts a
+/// step sooner.
+#define DISSOLVE_FIRST_STEP 64
+/// The steps a dissolve takes, four a frame.
+#define DISSOLVE_STEPS (DISSOLVE_FIRST_STEP + DISSOLVE_TILE_PIXELS)
+/// How much further along the pixel order each tile reads than the tile
+/// before, besides the step it is ahead.
+#define DISSOLVE_ORDER_STRIDE 16
+/// Keeps a pixel pair's odd pixel, its high byte, clearing the even one.
+#define PIXEL_PAIR_ODD_MASK 0xff00
 
 /// One step of dissolving a sprite pixel by pixel.
 void SpriteDissolve_Step(u8 *obj, u32 pos) {
@@ -61,26 +79,27 @@ void SpriteDissolve_Step(u8 *obj, u32 pos) {
   struct Sprite *sprite = (struct Sprite *)obj;
 
   tile = (u16 *)(OBJ_VRAM0 + gVramCacheEntries[sprite->slot].offset);
-  tileCount = (sprite->width * sprite->height) / 64;
+  tileCount = (sprite->width * sprite->height) / DISSOLVE_TILE_PIXELS;
   i = 0;
 
   if (i < tileCount) {
     order = gSpriteDissolve_PixelOrder;
     {
-      u32 highMask = 0xff00;
-      u32 indexMask = 0x3f;
+      u32 highMask = PIXEL_PAIR_ODD_MASK;
+      u32 indexMask = DISSOLVE_TILE_PIXELS - 1;
 
-      // A tile is 64 bytes (32 halfwords) at 8 bits a pixel.
-      for (; i < tileCount; i++, tile += 32, pos++) {
-        if ((pos - 64) <= 63) {
+      for (; i < tileCount; i++, tile += TILE_SIZE_8BPP / 2, pos++) {
+        if ((pos - DISSOLVE_FIRST_STEP) <= DISSOLVE_TILE_PIXELS - 1) {
           u8 pixel;
           u16 *pixelPair;
           u32 isOdd;
 
           // Each tile reads the order 17 entries on from the tile before, so
           // neighbouring tiles lose different pixels at the same step.
-          pixel = order[(pos + i * 16) & indexMask];
-          pixelPair = (u16 *)((u8 *)tile + (pixel & 0x3e));
+          pixel = order[(pos + i * DISSOLVE_ORDER_STRIDE) & indexMask];
+          // The halfword holding the pixel: its offset rounded down to even.
+          pixelPair =
+              (u16 *)((u8 *)tile + (pixel & (DISSOLVE_TILE_PIXELS - 2)));
           isOdd = 1;
           isOdd &= pixel;
           if (isOdd != 0)
@@ -106,7 +125,7 @@ void SpriteDissolve_Run(u8 *sprite) {
     SpriteDissolve_Step(sprite, step + 3);
     step += 4;
     wait(1);
-  } while (step <= 127);
+  } while (step <= DISSOLVE_STEPS - 1);
 }
 
 /// Dissolves count sprites together, pixel by pixel, over 32 frames.
@@ -138,7 +157,7 @@ void SpriteDissolve_RunMany(u8 **sprites, s32 count) {
     }
     wait(1U);
     step += 4;
-  } while (step <= 127U);
+  } while (step <= DISSOLVE_STEPS - 1U);
 }
 
 /// Writes the actor's screen position, in pixels, to screenPosition[0..1] and
@@ -161,14 +180,18 @@ s32 MapGrid_GetScreenRelativePosition(struct Actor *actor,
   // below the view's top and above 224.
   if ((x >= -(toFIXED(32) - 1) && x <= toFIXED(272) - 1) && y > 0 &&
       y < toFIXED(224)) {
-    *screenPosition++ = x >> 16;
-    *screenPosition = y >> 16;
+    *screenPosition++ = FIXEDtoINT(x);
+    *screenPosition = FIXEDtoINT(y);
     return 0;
   }
   *screenPosition++ = 0;
   *screenPosition = 0;
   return -1;
 }
+
+/// The colour Grid_DrawOutlineArm draws an outlined sprite's edge in: the
+/// basic sprite palette's white, which SPRITE_COLOR_WHITE paints with too.
+#define OUTLINE_EDGE_COLOR 15
 
 /// Sets up the actor system: allocates and zeroes the 64 actors and the
 /// system's work, sets the outline's colours and registers the per-frame
@@ -196,7 +219,7 @@ void ActorSystem_Initialize(s32 mode) {
     Task_Add(ActorSystem_ProjectSprites, TASK_PASS_FRAME);
   else
     Task_Add(ActorSystem_PlaceSprites, TASK_PASS_FRAME);
-  system->edge = 15;
+  system->edge = OUTLINE_EDGE_COLOR;
   system->fill = 0;
 }
 
@@ -358,7 +381,7 @@ void Actor_SelectAnimation(struct Actor *actor, s32 argument) {
 }
 
 /// Sets the timer step, the animation speed, of an actor's sprite, or of each
-/// sprite of a group (16 is normal speed).
+/// sprite of a group (ANIMATION_STEP_NORMAL is normal speed).
 void Actor_SetAnimationSpeed(struct Actor *actor, s32 value) {
   s32 count;
   struct Sprite *child;
@@ -580,12 +603,11 @@ void Actor_SetSpritePriorityDirect(struct Actor *actor, s32 priority) {
   actor->priorityFlags &= ~ACTOR_PRIORITY_AUTOMATIC;
 }
 
-/// Shows icon id on its owner's 16 by 16 sprite: Icon_DrawItemFar prepares the
-/// icon in heap slot 68, whose tiles at +0x400 go to the sprite's VRAM cache
-/// slot, and the sprite is reset to scale 1.0, 16-colour palette 0.
+/// Shows item id's icon on its owner's sprite, 16 pixels square at scale
+/// 1.0 in 16-colour palette 0.
 void Actor_SetItemIcon(struct Actor *owner, s32 id) {
   struct Sprite *sprite;
-  u8 *buffer;
+  GlyphTransfer *transfer;
   s32 tile;
 
   if (owner == 0)
@@ -595,9 +617,9 @@ void Actor_SetItemIcon(struct Actor *owner, s32 id) {
   sprite = owner->sprite;
   if (sprite == 0)
     return;
-  buffer = HeapSlot_Alloc(HEAP_SLOT_GLYPH_TRANSFER, 1544);
+  transfer = HeapSlot_Alloc(HEAP_SLOT_GLYPH_TRANSFER, sizeof(GlyphTransfer));
   Icon_DrawItemFar(id);
-  tile = VramCache_Load(sprite->slot, 128, buffer + 1024);
+  tile = VramCache_Load(sprite->slot, ICON_TILE_BYTES, transfer->tiles);
   HeapSlot_Release(HEAP_SLOT_GLYPH_TRANSFER);
   sprite->count = 0;
   sprite->dirty = 0;
@@ -690,8 +712,8 @@ void ActorSystem_PlaceSprites(void) {
   FIXED probeX;
   s32 priority;
   s32 leftPriority;
-  s32 middlePriority;
   s32 rightPriority;
+  s32 middlePriority;
   s32 height;
   s32 rise;
   u32 layerPlusOne;
@@ -738,24 +760,31 @@ void ActorSystem_PlaceSprites(void) {
         terrainId = &actor->layer;
         layer = *terrainId & 3;
         cells = (u32 *)map->layers[layer].cells;
+        // The sprite takes the priority of the cells under its feet: 7 pixels
+        // left of its middle and 6 right where the ground is level with its
+        // own, and its middle. With none, it takes the map's base priority,
+        // or one further back where the ground a cell in front, or two cells
+        // in front less a cell's height, rises above its own; with
+        // ACTOR_PRIORITY_IGNORES_RISES, it keeps its own.
         if (*priorityFlags & ACTOR_PRIORITY_AUTOMATIC) {
           probeX = actor->x.fixed - toFIXED(7);
           feetZ = actor->z.fixed + toFIXED(2);
           objectHeight = FIXEDtoINT(actor->groundHeight);
           priority = 0;
           leftPriority = 0;
-          middlePriority = 0;
+          rightPriority = 0;
           if (!(*priorityFlags & ACTOR_PRIORITY_IGNORES_RISES)) {
             basePriority = &map->basePriority;
             priority = *basePriority;
             if (MapGrid_GetTerrainHeight(layer, probeX, feetZ) ==
                 actor->groundHeight) {
               leftPriority = CELL_PRIORITY(cells, probeX, feetZ);
-              height = FIXEDtoINT(
-                  MapGrid_GetTerrainHeight(layer, probeX, feetZ + toFIXED(16)));
-              rise = (FIXEDtoINT(MapGrid_GetTerrainHeight(
-                         layer, probeX, feetZ + toFIXED(32)))) -
-                     16;
+              height = FIXEDtoINT(MapGrid_GetTerrainHeight(
+                  layer, probeX, feetZ + toFIXED(MAPGRID_CELL_PIXELS)));
+              rise = FIXEDtoINT(MapGrid_GetTerrainHeight(
+                         layer, probeX,
+                         feetZ + toFIXED(2 * MAPGRID_CELL_PIXELS))) -
+                     MAPGRID_CELL_PIXELS;
               if (rise > height)
                 height = rise;
               if (height > objectHeight)
@@ -764,24 +793,26 @@ void ActorSystem_PlaceSprites(void) {
             probeX += toFIXED(13);
             if (MapGrid_GetTerrainHeight(layer, probeX, feetZ) ==
                 actor->groundHeight) {
-              middlePriority = CELL_PRIORITY(cells, probeX, feetZ);
-              height = FIXEDtoINT(
-                  MapGrid_GetTerrainHeight(layer, probeX, feetZ + toFIXED(16)));
-              rise = (FIXEDtoINT(MapGrid_GetTerrainHeight(
-                         layer, probeX, feetZ + toFIXED(32)))) -
-                     16;
+              rightPriority = CELL_PRIORITY(cells, probeX, feetZ);
+              height = FIXEDtoINT(MapGrid_GetTerrainHeight(
+                  layer, probeX, feetZ + toFIXED(MAPGRID_CELL_PIXELS)));
+              rise = FIXEDtoINT(MapGrid_GetTerrainHeight(
+                         layer, probeX,
+                         feetZ + toFIXED(2 * MAPGRID_CELL_PIXELS))) -
+                     MAPGRID_CELL_PIXELS;
               if (rise > height)
                 height = rise;
               if (height > objectHeight)
                 priority = map->basePriority + 1;
             }
             probeX -= toFIXED(6);
-            rightPriority = CELL_PRIORITY(cells, probeX, feetZ);
-            height = FIXEDtoINT(
-                MapGrid_GetTerrainHeight(layer, probeX, feetZ + toFIXED(16)));
-            rise = (FIXEDtoINT(MapGrid_GetTerrainHeight(layer, probeX,
-                                                        feetZ + toFIXED(32)))) -
-                   16;
+            middlePriority = CELL_PRIORITY(cells, probeX, feetZ);
+            height = FIXEDtoINT(MapGrid_GetTerrainHeight(
+                layer, probeX, feetZ + toFIXED(MAPGRID_CELL_PIXELS)));
+            rise =
+                FIXEDtoINT(MapGrid_GetTerrainHeight(
+                    layer, probeX, feetZ + toFIXED(2 * MAPGRID_CELL_PIXELS))) -
+                MAPGRID_CELL_PIXELS;
             if (rise > height)
               height = rise;
             if (height > objectHeight)
@@ -793,18 +824,19 @@ void ActorSystem_PlaceSprites(void) {
             probeX += toFIXED(13);
             if (actor->groundHeight ==
                 MapGrid_GetTerrainHeight(layer, probeX, feetZ))
-              middlePriority = CELL_PRIORITY(cells, probeX, feetZ);
+              rightPriority = CELL_PRIORITY(cells, probeX, feetZ);
             probeX -= toFIXED(6);
-            rightPriority = CELL_PRIORITY(cells, probeX, feetZ);
+            middlePriority = CELL_PRIORITY(cells, probeX, feetZ);
           }
-          // An odd priority is preferred, left first.
-          if (leftPriority != 0 || middlePriority != 0 || rightPriority != 0) {
+          // An odd priority is preferred: the left's, the right's, the
+          // middle's.
+          if (leftPriority != 0 || rightPriority != 0 || middlePriority != 0) {
             priority = leftPriority;
             if (!(priority & 1)) {
-              if (middlePriority != 0)
-                priority = middlePriority;
-              if (!(priority & 1) && rightPriority != 0)
+              if (rightPriority != 0)
                 priority = rightPriority;
+              if (!(priority & 1) && middlePriority != 0)
+                priority = middlePriority;
             }
           }
           if (priority != 0 && actor->spriteStorageKind == ACTOR_SPRITE_ONE) {
@@ -853,7 +885,7 @@ void ActorSystem_PlaceSprites(void) {
     } else {
       // At (0, 0): not placed; only the sprite's VRAM is given up.
       kind = actor->spriteStorageKind & ACTOR_SPRITE_KIND_MASK;
-      if (kind == 1) {
+      if (kind == ACTOR_SPRITE_ONE) {
         struct PlacedSprite *frozen = actor->sprite;
 
         if (actor->retainSpriteCache == 0 && !(frozen->retainCacheEntry & 1)) {

@@ -528,7 +528,7 @@ static __inline__ void WaitDma(struct DmaRegisters volatile *channel) {
 /// The two tables a new game fills just after gRareItemStock's
 /// ITEM_COUNTER_COUNT counters, as places in gSceneLocalState: 32 rows of eight
 /// random numbers 0 to 4, SCENE_STATE_RANDOM_ROW_BYTES apart, then a copy of
-/// Data_080b1f2c.
+/// gNewGame_SceneStateTable.
 #define SCENE_STATE_RANDOM_ROWS 4536
 #define SCENE_STATE_RANDOM_ROW_COUNT 32
 #define SCENE_STATE_RANDOM_ROW_BYTES 12
@@ -639,7 +639,7 @@ void MainRoutineWork_InitializeDefaults(void) {
   for (i = 0; i < 4; i++) {
     for (j = 0; j < 5; j++)
       gSceneLocalState[SCENE_STATE_TABLE_COPY + i * 5 + j] =
-          Data_080b1f2c[i][j];
+          gNewGame_SceneStateTable[i][j];
   }
 }
 
@@ -853,10 +853,10 @@ void DataTransfer_Apply(u8 *save, s32 byPassword) {
     else
       GameFlag_Clear(FLAG_TRANSFERRED_DODONPA_LOCKED_UP + i);
   }
-  if (GameFlag_Get(FLAG_TRANSFERRED_HSU_RESCUED_BY_PARTY))
-    GameFlag_Clear(FLAG_TRANSFERRED_HSU_RESCUED_BY_PARTY);
+  if (GameFlag_Get(FLAG_TRANSFERRED_ISAAC_SAVED_ULMUCH))
+    GameFlag_Clear(FLAG_TRANSFERRED_ISAAC_SAVED_ULMUCH);
   else
-    GameFlag_Set(FLAG_TRANSFERRED_HSU_RESCUED_BY_PARTY);
+    GameFlag_Set(FLAG_TRANSFERRED_ISAAC_SAVED_ULMUCH);
 
   state = &gMainRoutineWork;
   state->transferredCoins = party->coins;

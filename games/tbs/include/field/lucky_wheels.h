@@ -17,11 +17,11 @@ extern const u8 gLuckyWheels_MachineSpriteY[];
 void LuckyWheels_Update(void);
 void LuckyWheels_InitializeTitle(void);
 void LuckyWheels_Run(void);
-void LzPack_ResetSlotBuckets(void);
+void LzPack_ResetChains(void);
 void LzPack_InsertSlotNode(s32 index);
 void LzPack_RemoveSlotNode(s32 slot);
-void LzPack_ConsumeSlotBytes(s32 start, s32 count, const u8 *input);
+void LzPack_ReadInput(s32 start, s32 count, const u8 *input);
 void LzPack_CopyBufferedBytes(u8 *destination);
-s32 LzPack_PackStream(const u8 *input, u8 *dst, s32 size);
+s32 LzPack_PackData(const u8 *input, u8 *dst, s32 size);
 
 #endif

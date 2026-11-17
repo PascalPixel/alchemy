@@ -1162,10 +1162,9 @@ void LuckyWheels_Update(void) {
   }
 }
 
-/// The end of Lucky Wheels' frame, which The Broken Seal keeps in
-/// LuckyWheels_Update: while a win shows it bounces the first eight title
-/// letters, then restarts the HBlank DMA of the scanline offsets into BLDY and
-/// copies the frame's sprites to OAM.
+/// The end of Lucky Wheels' frame: while a win shows it bounces the first
+/// eight title letters, then restarts the HBlank DMA of the scanline offsets
+/// into BLDY and copies the frame's sprites to OAM.
 void LuckyWheels_FinishFrame(void) {
   struct LuckyWheelsWork *work;
   struct ReelEffectWork *fx;

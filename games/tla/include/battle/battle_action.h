@@ -2,8 +2,7 @@
 #define ALCHEMY_BATTLE_ACTION_H
 
 /// @file
-/// A battle's battle objects, each unit's command and action, and the spoils,
-/// as The Broken Seal's battle_action.h.
+/// A battle's battle objects, each unit's command and action, and the spoils.
 
 #include "fixed_math.h"
 #include "types.h"
@@ -64,6 +63,12 @@ enum BattleCommand {
 #define DJINN_COMMAND(element, index) (((element) << 8) | (index))
 #define DJINN_COMMAND_ELEMENT(parameter) (((parameter) >> 8) & 15)
 #define DJINN_COMMAND_INDEX(parameter) ((parameter) & 255)
+
+/// The list place codes the target pickers return (Battle_FindUnitPlace): a
+/// place in the party's list or the enemies', or'd with the side's tag;
+/// PLACE_PARTY alone is the party's first place, the default target.
+#define PLACE_PARTY 0x100
+#define PLACE_ENEMY 0x180
 
 /// A unit's chosen action for the turn: its command, the command's parameter,
 /// its target and range, and its priority in the turn order.

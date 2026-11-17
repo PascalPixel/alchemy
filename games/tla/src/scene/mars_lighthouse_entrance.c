@@ -2,11 +2,11 @@
 /// Mars Lighthouse's lower floors, inside its gates, in the rooms of this
 /// overlay: ice cones Pound flattens (MarsLighthouseEntrance_PoundIceCone),
 /// ice sheets that burst and ice to Grind (MarsLighthouseEntrance_GrindIce),
-/// floors of ice the leader slides across (MarsLighthouseEntrance_SlideOnIce),
-/// flame throwers whose flames knock the leader back (FlameThrowers_Start,
-/// Flame_UpdateForward), a statue pushed into the flames
-/// (MarsLighthouseEntrance_PushStatueIntoFlames) and the teleporters on
-/// (MarsLighthouseEntrance_Teleport). The Mars Djinni Fugue and the Mercury
+/// floors of ice the leader slides across
+/// (MarsLighthouseEntrance_RideFireball), flame throwers whose flames knock the
+/// leader back (FlameThrowers_Start, Flame_UpdateForward), a statue pushed into
+/// the flames (MarsLighthouseEntrance_PushStatueIntoFlames) and the teleporters
+/// on (MarsLighthouseEntrance_Teleport). The Mars Djinni Fugue and the Mercury
 /// Djinni Balm fight here (MarsLighthouseEntrance_FightFugue,
 /// MarsLighthouseEntrance_FightBalm).
 ///
@@ -822,7 +822,7 @@ void MarsLighthouseEntrance_ClearFireballRow(void) {
 }
 
 /// Teleport on the west circle of the Valkyrie Mail room.
-void MarsLighthouseEntrance_TeleportFromValkyrieWest(void) {
+void MarsLighthouseEntrance_TeleportFromValkyrieNorth(void) {
   Teleport_StartShimmer();
   Teleport_PlaySparks();
   gMainRoutineWork.teleportState = 2;
@@ -832,7 +832,7 @@ void MarsLighthouseEntrance_TeleportFromValkyrieWest(void) {
 }
 
 /// Teleport on the east circle of the Valkyrie Mail room.
-void MarsLighthouseEntrance_TeleportFromValkyrieEast(void) {
+void MarsLighthouseEntrance_TeleportFromValkyrieSouth(void) {
   Teleport_StartShimmer();
   Teleport_PlaySparks();
   gMainRoutineWork.teleportState = 2;
@@ -1576,7 +1576,7 @@ void MarsLighthouseEntrance_KnockBackIfHit(void) {
 /// fall damage, sits blinking on the floor and is carried along with the
 /// fireball (FlameHitWork.car) until it stops, held at a cell's centre over
 /// rounded ground.
-int MarsLighthouseEntrance_SlideOnIce(void) {
+int MarsLighthouseEntrance_RideFireball(void) {
   struct FieldWork *event = Ram_HeapSlots->fieldWork;
   struct FlameHitWork *ride;
   struct Actor *leader;
@@ -1634,10 +1634,10 @@ int MarsLighthouseEntrance_SlideOnIce(void) {
 }
 
 /// While a flame or fireball has hit the leader, he is carried along
-/// (MarsLighthouseEntrance_SlideOnIce); returns whether he was.
+/// (MarsLighthouseEntrance_RideFireball); returns whether he was.
 s32 MarsLighthouseEntrance_SlideIfRiding(void) {
   if (RIDE_WORK->active) {
-    MarsLighthouseEntrance_SlideOnIce();
+    MarsLighthouseEntrance_RideFireball();
     return 1;
   }
   return 0;
@@ -2687,7 +2687,7 @@ struct Trigger gMarsLighthouseEntrance_BalmTriggers[] = {
     {TRIGGER_EXIT | EXIT_STYLE_STAIRS_UP, 16, CONDITION_ALWAYS, 16},
     {TRIGGER_STEP, 30, CONDITION_ALWAYS, EVENT(Leader_SlideOnIce)},
     {TRIGGER_STEP, STEP_TRIGGER_FIREBALL_HIT, CONDITION_ALWAYS,
-     EVENT(MarsLighthouseEntrance_SlideOnIce)},
+     EVENT(MarsLighthouseEntrance_RideFireball)},
     {TRIGGER_TALK, ACTOR_BALM, CONDITION_ALWAYS,
      EVENT(MarsLighthouseEntrance_FightBalm)},
     {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_ACTS),
@@ -2780,7 +2780,7 @@ struct Trigger gMarsLighthouseEntrance_ValkyrieTriggers[] = {
     {TRIGGER_STEP, 30, CONDITION_ALWAYS,
      EVENT(MarsLighthouseEntrance_SlideFromEdge)},
     {TRIGGER_STEP, STEP_TRIGGER_FIREBALL_HIT, CONDITION_ALWAYS,
-     EVENT(MarsLighthouseEntrance_SlideOnIce)},
+     EVENT(MarsLighthouseEntrance_RideFireball)},
     {TRIGGER_STEP, 13, CONDITION_ALWAYS,
      EVENT(MarsLighthouseEntrance_SlideIfRiding)},
     {PSYNERGY_PHASE_ON_ACTOR(ABILITY_POUND, PSYNERGY_PHASE_ACTS),
@@ -2802,9 +2802,9 @@ struct Trigger gMarsLighthouseEntrance_ValkyrieTriggers[] = {
      ACTOR_VALKYRIE_ICE_CONE_F, FLAG_SCENE_TEMP_15,
      EVENT(MarsLighthouseEntrance_StartPoundIceCone)},
     {PSYNERGY_PHASE_ON_CELL(ABILITY_TELEPORT, PSYNERGY_PHASE_AFTER_CAST), 12,
-     CONDITION_ALWAYS, EVENT(MarsLighthouseEntrance_TeleportFromValkyrieWest)},
+     CONDITION_ALWAYS, EVENT(MarsLighthouseEntrance_TeleportFromValkyrieNorth)},
     {PSYNERGY_PHASE_ON_CELL(ABILITY_TELEPORT, PSYNERGY_PHASE_AFTER_CAST), 13,
-     CONDITION_ALWAYS, EVENT(MarsLighthouseEntrance_TeleportFromValkyrieEast)},
+     CONDITION_ALWAYS, EVENT(MarsLighthouseEntrance_TeleportFromValkyrieSouth)},
     {PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_PUSHED_STATUE,
      FLAG_VALKYRIE_STATUE_BLOCKS_FLAMES,
      EVENT(MarsLighthouseEntrance_PushStatueIntoValkyrieFlames)},

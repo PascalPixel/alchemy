@@ -42,7 +42,7 @@ enum SpriteColorMode {
 #define SPRITE_PICTURE_NONE 255
 
 /// An animation number's bit 7: keep the place and timer of the script already
-/// running, as The Broken Seal's.
+/// running.
 #define SPRITE_ANIMATION_KEEP_PLACE 0x80
 #define SPRITE_ANIMATION_INDEX_MASK 0x7f
 
@@ -124,7 +124,11 @@ enum SpriteFlag {
   SPRITE_FLAG_SHADED = 1 << 2,
   /// Drawn sunkRows rows lower, its bottom cut off, as sinking in Taopo
   /// Swamp's mud; it takes the place of SPRITE_FLAG_SHADED.
-  SPRITE_FLAG_SUNK = 1 << 3
+  SPRITE_FLAG_SUNK = 1 << 3,
+  /// Keeps the picture last drawn and only turns to mirror it: set once a
+  /// battle's motion releases the buffer its layer drew from
+  /// (BattleMotion_ReleaseBuffer).
+  SPRITE_FLAG_KEEP_PICTURE = 1 << 5
 };
 
 /// The VRAM cache entry of the actors' shared shadow (gActor_ShadowTiles),
@@ -163,6 +167,11 @@ STATIC_ASSERT(offsetof(struct Sprite, scale) == 12);
 STATIC_ASSERT(offsetof(struct Sprite, rotation) == 18);
 STATIC_ASSERT(offsetof(struct Sprite, width) == 20);
 STATIC_ASSERT(offsetof(struct Sprite, shadow) == 28);
+
+/// A sprite's shadow, 16 by 8 pixels: its half width and half height, both
+/// doubled when the sprite is drawn double-size.
+#define SHADOW_HALF_WIDTH 8
+#define SHADOW_HALF_HEIGHT 4
 STATIC_ASSERT(sizeof(struct Sprite) == 56);
 STATIC_ASSERT(offsetof(struct Sprite, entries) == 40);
 
@@ -203,8 +212,7 @@ enum ActorAnimation {
   ANIM_NOD = 3,
   ANIM_SHAKE_HEAD = 4,
   /// Running, leaning forward, four frames a step to the walk's six. This and
-  /// the leader's other poses below are as the leader's sprite draws them, as
-  /// The Broken Seal numbers them.
+  /// the leader's other poses below are as the leader's sprite draws them.
   ANIM_LEADER_RUN = 5,
   ANIM_LEADER_SPRING = 6, ///< leaning back for a moment before a jump
   ANIM_LEADER_LEAP = 7,   ///< in mid-stride, leaning forward
@@ -223,10 +231,20 @@ enum ActorAnimation {
   ANIM_LEADER_CLIMB_DOWN_FROM_TOP = 13,
   ANIM_LEADER_CLIMB_EAST = 14, ///< reaching along a wall as he climbs east
   ANIM_LEADER_CLIMB_WEST = 15, ///< reaching along a wall as he climbs west
+  /// Leaping from a hanging vine, stretched out level in the air.
+  ANIM_LEADER_SWING = 16,
   /// Holding out a glowing hand, as the party's sprites cast Psynergy.
   ANIM_CAST_PSYNERGY = 17,
+  /// Tumbling head over heels in a burst of spray, as a current sweeps the
+  /// leader along.
+  ANIM_LEADER_TUMBLE_IN_WATER = 18,
   /// Lying collapsed on the ground.
   ANIM_COLLAPSE = 19,
+  /// ANIM_CAST_PSYNERGY's first two pictures, held on the second, and its last
+  /// two, held on the last with the hand held out: the caster's start and end
+  /// of a field Psynergy.
+  ANIM_CAST_PSYNERGY_BEGIN = 20,
+  ANIM_CAST_PSYNERGY_END = 21,
   ANIM_LEADER_LEAN_BACK = 22, ///< leaning back, his head thrown back
   /// The arrivals and leavings of the animated exits, each four frames of the
   /// leader turning: an arrival grows from a small figure seen side-on to full
@@ -242,7 +260,12 @@ enum ActorAnimation {
   ANIM_LEADER_WALK_BACKWARDS = 27,
   ANIM_LEADER_ARMS_RAISED = 28, ///< both arms raised over his head
   /// ANIM_LEADER_RUN again, on every party member's sheet.
-  ANIM_PARTY_RUN = 30
+  ANIM_PARTY_RUN = 30,
+  /// Hanging from a vine, seen from behind with an arm raised.
+  ANIM_LEADER_HANG = 32,
+  /// Sitting on the floor, legs out, arms flung up and then lowered: the leader
+  /// knocked down.
+  ANIM_LEADER_SIT = 49
 };
 
 #endif

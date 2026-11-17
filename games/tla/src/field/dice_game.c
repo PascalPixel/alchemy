@@ -65,8 +65,9 @@
 /// A glowing picture's channels rise by up to twice this many levels.
 #define GLOW_LEVELS 16
 
-/// The sprite palettes SuperLuckyDice_Run gives its pictures, after the dice's
-/// six; the last four are loaded again for each part of a game.
+/// The sprite palettes SuperLuckyDice_Run gives its pictures, after the six the
+/// dice faces' copy fills; the last four are loaded again for each part of a
+/// game.
 enum SuperLuckyDicePalette {
   DICE_PALETTE_FINAL_GAME = 6,
   DICE_PALETTE_SMALL_DOUBLE_UP = 7,
@@ -98,7 +99,7 @@ enum SuperLuckyDiceResult {
 /// winnings.
 #define DICE_COUNT 4
 #define DICE_FACE_COUNT 6
-#define DICE_PAIR_PAYOUT 1
+#define DICE_ONE_PAIR_PAYOUT 1
 #define DICE_TRIPLE_PAYOUT 2
 #define DICE_TWO_PAIR_PAYOUT 3
 #define DICE_PERFECT_PAYOUT 8
@@ -600,7 +601,10 @@ void SuperLuckyDice_Run(void) {
   Decompress_TaggedLz(resourceAddress, cellBuffer);
   Dma_Set(cellBuffer, (void *)BG_CHAR_BLOCK(1), DMA_COPY_WORDS(9600), REG_DMA3);
   resourceAddress = Resource_GetTableEntry(RESOURCE_DICE_FACES);
-  Dma_Set(resourceAddress, spritePalette, DMA_COPY_WORDS(48), REG_DMA3);
+  // Six palettes: the faces' 64 colours, then 32 read from the start of their
+  // tiles into palettes 4 and 5, which nothing draws with.
+  Dma_Set(resourceAddress, spritePalette,
+          DMA_COPY_WORDS(6 * PALETTE_COLORS / 2), REG_DMA3);
   resourceAddress += DICE_FACES_PALETTE_COLORS * 2;
   Decompress_TaggedLz(resourceAddress, cellBuffer);
   Dma_Set(cellBuffer, (void *)OBJ_VRAM0, DMA_COPY_WORDS(1216), REG_DMA3);
@@ -808,8 +812,8 @@ void SuperLuckyDice_Run(void) {
       }
     } else if (state == SUPER_LUCKY_DICE_GUESS) {
       // Higher and Lower slide in; A throws once the one not chosen has slid
-      // away, and B, where CANNOT_QUIT allows it, goes back to a new throw and
-      // its bet, the winnings lost.
+      // away, and B, where CANNOT_QUIT allows it, goes back to throwing for a
+      // new bet, the winnings lost.
       if (slide <= 7) {
         slide++;
       } else if (timer > 0) {
@@ -830,6 +834,13 @@ void SuperLuckyDice_Run(void) {
                                      sprites->helpWindow, 0, 8);
           Sound_PlayFar(SE_MENU_CANCEL);
           state = SUPER_LUCKY_DICE_THROW;
+          // BUG: the hi-lo game and its total are kept, so the next throw,
+          // its bet paid anew, is judged as this hi-lo game rather than
+          // scored. Only editions before patch 1 reach here.
+#ifdef BUGFIX
+          hiLoGame = 0;
+          target = DICE_MIDDLE_TOTAL;
+#endif
         }
       } else if (gInput.repeat & KEY_A) {
         Sound_PlayFar(SE_MENU_CONFIRM);
@@ -1056,7 +1067,7 @@ void SuperLuckyDice_Run(void) {
             break;
           case DICE_RESULT_ONE_PAIR:
             jingle = MUS_JINGLE_SMALL;
-            multiplier = DICE_PAIR_PAYOUT;
+            multiplier = DICE_ONE_PAIR_PAYOUT;
             break;
           case DICE_RESULT_TWO_PAIR:
             jingle = MUS_JINGLE_MEDIUM;

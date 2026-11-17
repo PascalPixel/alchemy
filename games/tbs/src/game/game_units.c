@@ -159,7 +159,7 @@ void Unit_Calculate(s32 unitId) {
   stats->def = unit->baseDefense;
   stats->agi = unit->baseAgility;
   stats->luck = unit->baseLuck;
-  stats->actionCount = unit->baseActionCount & 15;
+  stats->actionCount = unit->baseActionCount & UNIT_ACTION_COUNT_MASK;
   stats->hpRegen = unit->baseHpRegen;
   stats->ppRegen = unit->basePpRegen;
   for (index = 0; index < ELEMENT_COUNT; index++) {
@@ -356,7 +356,8 @@ void Unit_Calculate(s32 unitId) {
          unit->summonBoost[index]) *
         5;
   for (index = 0; index < ELEMENT_COUNT; index++)
-    stats->element[index].resistance += unit->resistanceStage * 20;
+    stats->element[index].resistance +=
+        unit->resistanceStage * RESISTANCE_PER_STAGE;
 
   if (unit->classId != CLASS_NONE) {
     lighthouseLit = 0;
@@ -462,10 +463,16 @@ void GameFlag_RefreshLureCap(void) {
   }
 }
 
+/// Set in every build stamp's time; and set on top in a debug build's
+/// (gDebugMode), whose saves then list after every release's.
+#define BUILD_STAMP_MARK 0x1000
+#define BUILD_STAMP_DEBUG ((s16)0x8000)
+
 /// Encodes the build stamp's time, which a new game takes as its start stamp
 /// and the file list compares saves with.
 u32 BuildStamp_GetTime(void) {
-  // The stamp is six ASCII digits, hhmmss.
+  // The stamp is six ASCII digits, hhmmss. The hours count 1024, the minutes
+  // 64 and the seconds 1, so the minutes past 15 reach into the hours.
   const u8 *digits = Resource_GetTableEntry(RESOURCE_BUILD_STAMP);
   s32 hours;
   s32 minutes;
@@ -480,11 +487,11 @@ u32 BuildStamp_GetTime(void) {
   seconds = (digits[0] - '0') * 10;
   seconds += digits[1] - '0';
   time = (hours * 16 + minutes) * 64 + seconds;
-  time |= 0x1000;
+  time |= BUILD_STAMP_MARK;
   stamp = time;
 
   if (gDebugMode != 0)
-    stamp |= 0xFFFF8000;
+    stamp |= BUILD_STAMP_DEBUG;
   return (u16)stamp;
 }
 
@@ -529,7 +536,8 @@ void MainRoutineWork_InitializeDefaults(void) {
   gMainRoutineWork.idleSleepEnabled = gIdleSleepEnabled;
   gIdleFrames = 0;
   gSaveSlot = -1;
-  // Three prizes share each successive slot-machine weight.
+  // The spring game's medal prizes, three to a ring, each ring out from the
+  // centre twice as likely as the one inside it.
   gMainRoutineWork.holdings.prizeWeights[0] = 4;
   gMainRoutineWork.holdings.prizeWeights[1] = 4;
   gMainRoutineWork.holdings.prizeWeights[2] = 4;
@@ -559,9 +567,12 @@ void Party_StartChildhood(void) {
   Unit_Calculate(JENNA);
 }
 
+/// The coins the party sets out with after the prologue.
+#define PROLOGUE_COINS 300
+
 /// The party after the prologue: Isaac and Garet healed and given the Short
 /// Sword, Move and Retreat for Isaac, Move for Garet, Mind Read for Ivan, and
-/// 300 coins.
+/// PROLOGUE_COINS.
 void Party_EndChildhood(void) {
   s32 unitId;
 
@@ -598,7 +609,7 @@ void Party_EndChildhood(void) {
   Unit_LearnPsynergy(GARET, ABILITY_MOVE);
   Unit_LearnPsynergy(IVAN, ABILITY_MIND_READ);
 
-  gMainRoutineWork.holdings.coins += 300;
+  gMainRoutineWork.holdings.coins += PROLOGUE_COINS;
 }
 
 /// Restores every party member's HP and PP; with `cureConditions` 1 it also
@@ -727,3 +738,6 @@ UNIT_DEFINE_ADD(s16, Unit_AddPp, pp, ppMax)
 #undef UNIT_STAT_DIFF
 
 #undef SCALE_EFFECT
+#undef BUILD_STAMP_MARK
+#undef BUILD_STAMP_DEBUG
+#undef PROLOGUE_COINS

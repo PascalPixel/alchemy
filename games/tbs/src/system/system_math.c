@@ -26,6 +26,12 @@ void Vector_AddPolarOffset(FIXED radius, s32 angle, void *position) {
   *(s32 *)coordinate += Iwram_MulFX(radius, Trig_Sin(angle));
 }
 
+/// The angle between neighbouring entries of gMath_TanTable, 1/256 of a quarter
+/// turn, and the tangent of its last searched entry (gMath_TanTable[255]), in
+/// 8.8, beyond which Trig_Atan gives a quarter turn.
+#define ATAN_ENTRY_ANGLE (TRIG_TURN / 1024)
+#define ATAN_RATIO_MAX 64362
+
 /// Returns the angle of the vector (x, y), in 1/65536 turns from 0 to 65535,
 /// measured from the y axis: 0 along +y, a quarter turn along +x; (0, 0) gives
 /// 0. It binary-searches the tangent table to 1/256 of a quarter turn.
@@ -54,56 +60,58 @@ s32 Trig_Atan(s32 x, s32 y) {
     // Beyond entry 255's tangent, use the quarter-turn limit instead of
     // the largest angle the eight search bits can represent.
     result = DEGtoANG(90);
-    if (ratio <= 64362) {
-      // Eight comparisons choose angle bits 0x2000 down to 0x40.
+    if (ratio <= ATAN_RATIO_MAX) {
+      // Eight comparisons halve the 256 entries each time. Each decides one
+      // bit of the entry's index, from 128 down to 1, and so of the angle,
+      // from an eighth of a turn down to ATAN_ENTRY_ANGLE.
       table = &gMath_TanTable[127];
       result = 0;
 
       value = *table;
       table -= 64;
       if (ratio > value) {
-        result = 0x2000;
+        result = TRIG_TURN / 8;
         table += 128;
       }
       value = *table;
       table -= 32;
       if (ratio > value) {
-        result |= 0x1000;
+        result |= TRIG_TURN / 16;
         table += 64;
       }
       value = *table;
       table -= 16;
       if (ratio > value) {
-        result |= 0x800;
+        result |= TRIG_TURN / 32;
         table += 32;
       }
       value = *table;
       table -= 8;
       if (ratio > value) {
-        result |= 0x400;
+        result |= TRIG_TURN / 64;
         table += 16;
       }
       value = *table;
       table -= 4;
       if (ratio > value) {
-        result |= 0x200;
+        result |= TRIG_TURN / 128;
         table += 8;
       }
       value = *table;
       table -= 2;
       if (ratio > value) {
-        result |= 0x100;
+        result |= TRIG_TURN / 256;
         table += 4;
       }
       value = *table;
       table--;
       if (ratio > value) {
-        result |= 0x80;
+        result |= TRIG_TURN / 512;
         table += 2;
       }
       value = *table;
       if (ratio > value)
-        result |= 0x40;
+        result |= ATAN_ENTRY_ANGLE;
     }
   }
 

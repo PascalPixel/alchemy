@@ -8,6 +8,17 @@
 
 void Menu_CreatePairEntryObjects(s32 first, s32 second);
 
+/// The window tilemap's top rows the Djinn tutorial saves while its line
+/// shows over them.
+#define TUTORIAL_SAVED_ROWS 8
+
+/// The preview's figures move on a one-second cycle: after PREVIEW_STEP_DELAY
+/// frames still, a step counts PREVIEW_STEP_FRAMES frames, half a turn of a
+/// hop's sine, then holds until the cycle ends.
+#define PREVIEW_CYCLE_FRAMES 60
+#define PREVIEW_STEP_DELAY 5
+#define PREVIEW_STEP_FRAMES 30
+
 /// Shows or hides the menu's cursor around a line of the Djinn tutorial: the
 /// four stores of its two message steps, in both games. The name is ours.
 #define DjinnTutorial_SetCursor(menu, value)                                   \
@@ -208,7 +219,7 @@ s32 PsynergyList_RunCompareLoop(u32 mode) {
       u8 *saved;
       s32 size;
 
-      size = 512;
+      size = TUTORIAL_SAVED_ROWS * sizeof(work->tilemap[0]);
       saved = Heap_AllocEwram(size);
       pressed = 0;
       repeat = 0;
@@ -231,7 +242,7 @@ s32 PsynergyList_RunCompareLoop(u32 mode) {
           Iwram_CopyWordsEntry(saved, work->tilemap, size);
           window = Message_OpenWindowFar(Menu_GetDjinnGiveMessage() +
                                              DJINN_TUTORIAL_LINE_SET_CHANGES,
-                                         8, 0, 1);
+                                         8, 0, MESSAGE_WINDOW_ZOOM);
           DjinnTutorial_SetCursor(menu, ICON_SHOWN);
           MenuCursor_Slide(2, 96);
           gMainRoutineWork.messageSpeed = MESSAGE_SPEED_NORMAL;
@@ -254,7 +265,7 @@ s32 PsynergyList_RunCompareLoop(u32 mode) {
           Iwram_CopyWordsEntry(saved, work->tilemap, size);
           window = Message_OpenWindowFar(Menu_GetDjinnGiveMessage() +
                                              DJINN_TUTORIAL_LINE_CLASS_PSYNERGY,
-                                         8, 0, 1);
+                                         8, 0, MESSAGE_WINDOW_ZOOM);
           DjinnTutorial_SetCursor(menu, ICON_SHOWN);
           MenuCursor_Slide(106, 56);
           gMainRoutineWork.messageSpeed = MESSAGE_SPEED_NORMAL;
@@ -354,11 +365,11 @@ s32 PsynergyList_RunCompareLoop(u32 mode) {
     }
 
     frame++;
-    step = frame % 60 - 5;
+    step = frame % PREVIEW_CYCLE_FRAMES - PREVIEW_STEP_DELAY;
     if (step < 0)
       step = 0;
-    if (step > 29)
-      step = 29;
+    if (step > PREVIEW_STEP_FRAMES - 1)
+      step = PREVIEW_STEP_FRAMES - 1;
     // Both figures held at three quarters of their size.
     DjinnFigures_SetSlotPhase(0, -(FIXED_ONE * 3 / 4));
     DjinnFigures_SetSlotPhase(1, -(FIXED_ONE * 3 / 4));
@@ -366,7 +377,8 @@ s32 PsynergyList_RunCompareLoop(u32 mode) {
       FIXED rise;
       s32 slide;
 
-      rise = -Iwram_MulFX(16, Trig_Sin(step % 30 * DEGtoANG(6)));
+      rise = -Iwram_MulFX(16, Trig_Sin(step % PREVIEW_STEP_FRAMES *
+                                       (DEGtoANG(180) / PREVIEW_STEP_FRAMES)));
       if (rise < -6)
         rise = -6;
       if (rise > 12)
@@ -568,8 +580,8 @@ s32 DjinnMenu_ShowMemberStatus(void) {
       UiRender_MarkRow(render, window->y);
     }
     frame++;
-    blink = frame % 60 - 5;
-    CLAMP(blink, 0, 29);
+    blink = frame % PREVIEW_CYCLE_FRAMES - PREVIEW_STEP_DELAY;
+    CLAMP(blink, 0, PREVIEW_STEP_FRAMES - 1);
     DjinnFigures_SetSlotPosition(0, 32, MENU_FIGURE_HIDDEN_Y);
     // DEAD: the test cannot change the result, redraw = 0 alone does the same;
     // the ROM keeps the compare (its twin also steps a phase under it).

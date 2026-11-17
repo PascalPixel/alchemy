@@ -3,6 +3,7 @@
 /// of the two parties, the attendant and the records of wins.
 
 #include "flags.h"
+#include "stddef.h"
 #include "types.h"
 #include "battle/battle.h"
 #include "battle/battle_side.h"
@@ -65,6 +66,10 @@ extern struct Trigger gBattleArenaTriggers[];
 #define FLAG_BATTLE_ARENA_LINK_BATTLE_ENDED FLAG_AREA_TEMP_04
 /// The last linked battle was won.
 #define FLAG_BATTLE_ARENA_LINK_BATTLE_WON FLAG_AREA_TEMP_05
+
+/// The most monster battles won in a row that count: each adds a level to the
+/// next monster's over the party's average (battle_formation.c).
+enum { LEVEL_BONUS_MAX = 90 };
 
 // Link transfers use three unit records followed by one recovery-table record.
 // Both sizes are whole 20-byte blocks, since the serial runtime sends 20 bytes
@@ -277,8 +282,8 @@ static s32 BattleArena_PeerSlotMatches(s32 slot) {
   s32 serialPlayerId = -1;
 
   if ((gLinkStatus & LOBBY_LINK_READY_MASK) == LOBBY_LINK_READY_MASK) {
-    // SIOCNT bits 4 and 5: 0 for the parent, 1 for the child.
-    serialPlayerId = (REG_SIOCNT << 26) >> 30;
+    // 0 for the parent, 1 for the child.
+    serialPlayerId = SIO_ID_OF(REG_SIOCNT);
     GameFlag_Set(FLAG_BATTLE_ARENA_LINK_UP);
   } else {
     GameFlag_Clear(FLAG_BATTLE_ARENA_LINK_UP);
@@ -506,20 +511,20 @@ recordTest:
 #else
   prefixLength = i;
 #endif
-  for (i = 14; i >= prefixLength; i--) {
+  for (i = UNIT_NAME_SIZE - 1; i >= prefixLength; i--) {
     unit->name[i] = unit->name[i - prefixLength];
   }
   for (i = 0; i < prefixLength; i++) {
     unit->name[i] = namePrefix[i];
   }
-  unit->name[14] = 0;
+  unit->name[UNIT_NAME_SIZE - 1] = 0;
   slot++;
 recordNext:
   if (slot >= LOBBY_UNIT_RECORD_COUNT) {
     goto recovery;
   }
-  // The partner's party members become this battle's enemies 128 to 130.
-  unit = Unit_Get(slot + 128);
+  // The partner's party members become this battle's first three enemies.
+  unit = Unit_Get(slot + FIRST_ENEMY_UNIT);
   tries = 0;
   if ((started = Serial_StartReceive(unit)) == -1) {
     goto failed;
@@ -582,7 +587,7 @@ static s32 BattleArena_CopyPartyOwnerIds(u16 *memberIds) {
     // The original short-pointer addition traverses a struct as an array.
     source = gMainRoutineWork.party;
 #else
-    partyAddress += 252;
+    partyAddress += offsetof(struct MainRoutineWork, party) / sizeof(s16);
     source = (const u8 *)partyAddress;
 #endif
     remaining = memberCount;
@@ -638,9 +643,9 @@ static s32 BattleArena_SendPartyRecords(void) {
     for (i = 0; i < memberCount; i++) {
       Iwram_CopyWords(buffer, Unit_Get(memberIds[i]), size);
       ((struct Unit *)buffer)->side = BATTLE_SIDE_PARTY;
-      // As a u8, i - 128 is 128 + i: this party member's unit on the partner's
-      // side.
-      peerSlots[memberIds[i]] = i - 128;
+      // As a u8, i - FIRST_ENEMY_UNIT is FIRST_ENEMY_UNIT + i: this party
+      // member's unit on the partner's side.
+      peerSlots[memberIds[i]] = i - FIRST_ENEMY_UNIT;
       started = Serial_StartSend(buffer, size);
       tries = 0;
       if (started == -1) {
@@ -835,7 +840,7 @@ static s32 BattleArena_EnterBattle(void) {
     // units (ENEMY_UNITS_SIZE, battle/battle_run.c). While it is
     // allocated, the exchange below receives the partner's party members and
     // Djinn into units 128 to 131. The copy to gActorSpriteSlots
-    // (gMapGridCellBuffer + 0x8000) hands them to Battle_Run, which copies
+    // (32 KB into gMapGridCellBuffer) hands them to Battle_Run, which copies
     // them back.
     savedWork =
         HeapSlot_AllocEwram(HEAP_SLOT_ENEMY_UNITS, 6 * BATTLE_UNIT_SIZE);
@@ -912,11 +917,11 @@ static s32 BattleArena_EnterBattle(void) {
     signature[3] = 'C';
     i = 0;
     source = savedWork;
-    destination = (u8 *)gMapGridCellBuffer + 32768;
+    destination = gActorSpriteSlots;
     do {
       i++;
       *destination++ = *source++;
-    } while (i <= 1991);
+    } while (i <= 6 * BATTLE_UNIT_SIZE - 1);
     HeapSlot_Release(HEAP_SLOT_ENEMY_UNITS);
   }
   Event_End();
@@ -1437,8 +1442,8 @@ s32 Scene_Initialize(void) {
     Event_SetMessageId(MsgLobbyNotBadNextMonster + messageOffset);
     Event_OpenMessage(ACTOR_ATTENDANT, 0);
     if (Event_AskYesNoWithActorAnimation(0, 0) == YES) {
-      if (wins > 90) {
-        wins = 90;
+      if (wins > LEVEL_BONUS_MAX) {
+        wins = LEVEL_BONUS_MAX;
       }
       FieldGameFlag_SetByte(FLAG_MONSTER_BATTLE_WINS, wins);
     } else {

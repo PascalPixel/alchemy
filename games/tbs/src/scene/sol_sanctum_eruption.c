@@ -151,7 +151,27 @@ enum {
 /// The star the Wise One has the leader take out, lifted above him.
 enum { ACTOR_ELEMENTAL_STAR = 22 };
 
-#define ELEMENTAL_ARC_SCALE_X_DECREASE 7372
+/// An arc stretches for ELEMENTAL_ARC_STRETCH_FRAMES, narrowing by nine tenths
+/// of its width, then is lifted out of view until it is done with at
+/// ELEMENTAL_ARC_FRAMES.
+#define ELEMENTAL_ARC_STRETCH_FRAMES 8
+#define ELEMENTAL_ARC_FRAMES 14
+#define ELEMENTAL_ARC_SCALE_X_DECREASE                                         \
+  (FIXED_ONE * 9 / 10 / ELEMENTAL_ARC_STRETCH_FRAMES)
+
+/// gEmberState: free, in flight, then counting frames from its landing, when
+/// it bursts, until it is put away and then freed.
+enum {
+  EMBER_FREE = 0,
+  EMBER_FLYING = 1,
+  EMBER_LANDED = 2,
+  EMBER_PUT_AWAY = 19,
+  EMBER_DONE = 20
+};
+
+/// gEmberMask for an ember every `frames` frames, a power of two: one is
+/// launched when the frame count has none of the mask's bits.
+#define EMBER_EVERY(frames) ((frames) - 1)
 #define EMBER_EMISSION_DISABLED 999
 #define ARC_SCAN_STILL_ACTIVE 888
 
@@ -633,7 +653,8 @@ static void SolSanctumEruption_ThrowEruptionRing(void) {
   FIXED offsetX;
   FIXED offsetZ;
 
-  for (crystalIndex = 16; crystalIndex <= 31; crystalIndex++) {
+  for (crystalIndex = ACTOR_FIRST_CRYSTAL;
+       crystalIndex < ACTOR_FIRST_CRYSTAL + CRYSTAL_COUNT; crystalIndex++) {
     actor = Actor_Get(crystalIndex);
     Actor_Stop(crystalIndex);
     Actor_SetSpriteFlags(actor, 0);
@@ -649,8 +670,8 @@ static void SolSanctumEruption_ThrowEruptionRing(void) {
     actor->z.fixed = toFIXED(132);
   }
   Sound_Play(SE_CRASH);
-  for (crystalIndex = 0; crystalIndex <= 15; crystalIndex++) {
-    spun = Actor_Get(crystalIndex + 16);
+  for (crystalIndex = 0; crystalIndex < CRYSTAL_COUNT; crystalIndex++) {
+    spun = Actor_Get(crystalIndex + ACTOR_FIRST_CRYSTAL);
     sprite = spun->sprite;
     angle = crystalIndex * FACING_STEP;
     sprite->rotation = angle - DEGtoANG(90);
@@ -661,7 +682,8 @@ static void SolSanctumEruption_ThrowEruptionRing(void) {
   }
   Event_Wait(20);
   Actor_WaitForMoveById(ACTOR_FIRST_CRYSTAL);
-  for (crystalIndex = 16; crystalIndex <= 31; crystalIndex++) {
+  for (crystalIndex = ACTOR_FIRST_CRYSTAL;
+       crystalIndex < ACTOR_FIRST_CRYSTAL + CRYSTAL_COUNT; crystalIndex++) {
     actor = Actor_Get(crystalIndex);
     Actor_Stop(crystalIndex);
     actor->scaleX = FIXED_ONE;
@@ -680,12 +702,12 @@ static void SolSanctumEruption_ThrowEruptionRing(void) {
 static void SolSanctumEruption_ResetEmberEmission(void) {
   u32 emberIndex;
 
-  gEmberMask = 63;
+  gEmberMask = EMBER_EVERY(64);
   gEmberTimer = 0;
   gEmberLevel = 0;
   gEmberLevelTimer = 120;
-  for (emberIndex = 0; emberIndex < 16; emberIndex++) {
-    gEmberState[emberIndex] = 0;
+  for (emberIndex = 0; emberIndex < CRYSTAL_COUNT; emberIndex++) {
+    gEmberState[emberIndex] = EMBER_FREE;
   }
 }
 
@@ -712,15 +734,15 @@ static void SolSanctumEruption_StepEmbers(void) {
   if (gEmberTimer != 0)
     gEmberTimer -= 3;
 
-  for (emberIndex = 0; emberIndex < 16; emberIndex++) {
-    if (gEmberState[emberIndex] != 0) {
-      landedEmber = Actor_Get(emberIndex + 16);
+  for (emberIndex = 0; emberIndex < CRYSTAL_COUNT; emberIndex++) {
+    if (gEmberState[emberIndex] != EMBER_FREE) {
+      landedEmber = Actor_Get(emberIndex + ACTOR_FIRST_CRYSTAL);
       if (landedEmber->targetX == ACTOR_NO_TARGET &&
           landedEmber->targetZ == ACTOR_NO_TARGET) {
         gEmberState[emberIndex]++;
-        if (gEmberState[emberIndex] == 2)
+        if (gEmberState[emberIndex] == EMBER_LANDED)
           Actor_SelectAnimation(landedEmber, 3);
-        if (gEmberState[emberIndex] == 19) {
+        if (gEmberState[emberIndex] == EMBER_PUT_AWAY) {
           landedEmber->x.fixed = 0;
           landedEmber->y.fixed = 0;
           landedEmber->z.fixed = 0;
@@ -729,8 +751,8 @@ static void SolSanctumEruption_StepEmbers(void) {
           landedEmber->targetY = ACTOR_NO_TARGET;
           landedEmber->targetZ = ACTOR_NO_TARGET;
           Actor_SetSpriteColor(landedEmber, SPRITE_COLOR_HIDDEN);
-        } else if (gEmberState[emberIndex] == 20) {
-          gEmberState[emberIndex] = 0;
+        } else if (gEmberState[emberIndex] == EMBER_DONE) {
+          gEmberState[emberIndex] = EMBER_FREE;
         }
       }
     }
@@ -740,13 +762,13 @@ static void SolSanctumEruption_StepEmbers(void) {
     return;
   if (gEmberMask & gFrameCount)
     return;
-  for (emberIndex = 0; emberIndex < 16; emberIndex++) {
+  for (emberIndex = 0; emberIndex < CRYSTAL_COUNT; emberIndex++) {
     angle = Math_RemainderUnsigned(Random_Next(), TRIG_TURN - 1);
-    ember = Actor_Get(emberIndex + 16);
-    if (gEmberState[emberIndex] == 0) {
+    ember = Actor_Get(emberIndex + ACTOR_FIRST_CRYSTAL);
+    if (gEmberState[emberIndex] == EMBER_FREE) {
       if (GameFlag_Get(FLAG_SOL_SANCTUM_ERUPTION_SATUROS_LEAVING) == 0)
         Sound_Play(SE_GLITTER);
-      gEmberState[emberIndex] = 1;
+      gEmberState[emberIndex] = EMBER_FLYING;
       ember->motionFlags = 0;
       ember->speedLimit = toFIXED(8);
       ember->acceleration = toFIXED(1);
@@ -789,19 +811,19 @@ static void SolSanctumEruption_UpdateEmberFrequency(void) {
   emissionLevel = gEmberLevel;
   switch (emissionLevel) {
   case 3:
-    gEmberMask = emissionLevel;
+    gEmberMask = EMBER_EVERY(4);
     gEmberLevelTimer = (Random_Below(20)) + 40;
     break;
   case 2:
-    gEmberMask = 15;
+    gEmberMask = EMBER_EVERY(16);
     gEmberLevelTimer = (Random_Below(40)) + 80;
     break;
   case 1:
-    gEmberMask = 63;
+    gEmberMask = EMBER_EVERY(64);
     gEmberLevelTimer = (Random_Below(80)) + 160;
     break;
   default:
-    gEmberMask = 127;
+    gEmberMask = EMBER_EVERY(128);
     gEmberLevelTimer = (Random_Below(160)) + 320;
     break;
   }
@@ -1557,7 +1579,7 @@ static void SolSanctumEruption_RaiseElementalArcs(u32 corner) {
   struct Actor *actor;
   struct Sprite *sprite;
 
-  for (arcIndex = 0; arcIndex <= 15; arcIndex++)
+  for (arcIndex = 0; arcIndex < CRYSTAL_COUNT; arcIndex++)
     Actor_ReleaseById(arcIndex + ACTOR_FIRST_CRYSTAL);
   switch (corner) {
   case CHAMBER_NORTHWEST:
@@ -1654,7 +1676,8 @@ static void SolSanctumEruption_RaiseElementalArcs(u32 corner) {
   PaletteFade_StartInterpolation(40);
 }
 
-/// Stretches each active arc for eight frames, then lifts it out of view.
+/// Stretches each active arc for ELEMENTAL_ARC_STRETCH_FRAMES, then lifts it
+/// out of view.
 static void SolSanctumEruption_UpdateElementalArcs(void) {
   u32 arcIndex;
   u32 age;
@@ -1664,7 +1687,7 @@ static void SolSanctumEruption_UpdateElementalArcs(void) {
     age = gArcEffectTimers[arcIndex];
     if (age != 0) {
       actor = gArcEffects[arcIndex];
-      if (age <= 8) {
+      if (age <= ELEMENTAL_ARC_STRETCH_FRAMES) {
         actor->scaleX -= ELEMENTAL_ARC_SCALE_X_DECREASE;
         actor->scaleY += FIXED_ONE / 2;
         actor->y.fixed += toFIXED(3) / 10;
@@ -1675,7 +1698,7 @@ static void SolSanctumEruption_UpdateElementalArcs(void) {
       }
       age = gArcEffectTimers[arcIndex] + 1;
       gArcEffectTimers[arcIndex] = age;
-      if (age > 14) {
+      if (age > ELEMENTAL_ARC_FRAMES) {
         gArcEffectTimers[arcIndex] = 0;
       }
     }
@@ -1785,7 +1808,7 @@ static void SolSanctumEruption_SpawnEffectPair(struct Actor *parent) {
         sprite->slot = effectWork->tileSlot;
         sprite->retainCacheEntry = 1;
         sprite->image.tile =
-            (gVramCacheEntries[sprite->slot].offset >> 5) & 0x3ff;
+            (gVramCacheEntries[sprite->slot].offset >> 5) & OBJ_TILE_MASK;
         sprite->image.fullColor = 0;
         sprite->image.shape = 1;
         sprite->image.size = 2;

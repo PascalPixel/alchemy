@@ -26,8 +26,9 @@
 #define ICON_MENU_BOTTOM_ROW 17
 /// The lines an icon row covers: its label window's three tiles.
 #define ICON_ROW_LINES 24
-/// The most icons a menu shows (IconMenuWork.entries).
-#define ICON_MENU_MAX_ICONS 6
+/// The most icons a menu shows, and so the row length of
+/// gFileList_ActionByPosition, which has an action for each place.
+#define ICON_MENU_MAX_ICONS ((s32)ARRAY_COUNT(gIconMenuWork->entries))
 /// A command icon's pixels: 32x32 at a byte a pixel.
 #define COMMAND_ICON_BYTES (32 * 32)
 
@@ -122,7 +123,7 @@ void IconMenu_DrawIcons(void) {
   }
   // Window 1 widens around the selected icon on the lines it overhangs, below
   // it on the top row and above it on the bottom one, then covers the row's
-  // 24 lines from the first icon, keeping each line's right edge.
+  // ICON_ROW_LINES lines from the first icon, keeping each line's right edge.
   if (work->row == 0) {
     struct WindowBuffer *page;
     s32 halfWidth;

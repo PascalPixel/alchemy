@@ -187,6 +187,10 @@ enum BattleCastKind {
   CAST_ENEMY = 2     ///< the element's streaks
 };
 
+/// An HP change that defeats any unit: the Grim Reaper's call deals it, and the
+/// debug defeat.
+#define DEFEAT_HP_CHANGE 0xc0000000
+
 /// BattleAI_ChooseTarget's results when it picks no one: the side it
 /// may target lists no one, or no one there is worth the ability.
 #define TARGET_PICK_SIDE_EMPTY -2

@@ -5,6 +5,20 @@
 
 #include "battle_internal.h"
 
+/// How much likelier, in percent, each lowered stat and status is to end early
+/// (BattleUnit_RollCounterEarlyEnd's bias).
+enum EarlyEndBias {
+  EARLY_END_ATTACK_DOWN = 30,
+  EARLY_END_DEFENSE_DOWN = 20,
+  EARLY_END_RESISTANCE_DOWN = 20,
+  EARLY_END_DELUSION = 30,
+  EARLY_END_CONFUSION = 60,
+  EARLY_END_CHARM = 70,
+  EARLY_END_STUN = 40,
+  EARLY_END_SLEEP = 50,
+  EARLY_END_BIND = 30 ///< Bind's seal, once Luff's is gone
+};
+
 /// Rolls whether a stat change or status with five turns or fewer left ends
 /// early, at `luck * 3 - turns * 5 + bias` percent, and returns 1 when it does.
 s32 BattleUnit_RollCounterEarlyEnd(s32 unitId, s32 turns, s32 bias) {
@@ -32,7 +46,8 @@ s32 BattleUnit_CountDownAttackStage(s32 unitId) {
       return 1;
     }
     if (unit->attackStage < 0) {
-      if (BattleUnit_RollCounterEarlyEnd(unitId, unit->attackTurns, 30) != 0) {
+      if (BattleUnit_RollCounterEarlyEnd(unitId, unit->attackTurns,
+                                         EARLY_END_ATTACK_DOWN) != 0) {
         unit->attackStage = 0;
         unit->attackTurns = 0;
         return 1;
@@ -43,8 +58,8 @@ s32 BattleUnit_CountDownAttackStage(s32 unitId) {
 }
 
 /// Defines a stat change's turn-end countdown, as
-/// BattleUnit_CountDownAttackStage is with bias 20.
-#define DEFINE_COUNT_DOWN_MODIFIER(name, counter, level)                       \
+/// BattleUnit_CountDownAttackStage is, a lowered stat ending early at bias.
+#define DEFINE_COUNT_DOWN_MODIFIER(name, counter, level, bias)                 \
   s32 name(s32 unitId) {                                                       \
     struct Unit *state = Unit_GetFar(unitId);                                  \
                                                                                \
@@ -55,7 +70,7 @@ s32 BattleUnit_CountDownAttackStage(s32 unitId) {
         return 1;                                                              \
       }                                                                        \
       if (state->level < 0 &&                                                  \
-          BattleUnit_RollCounterEarlyEnd(unitId, state->counter, 20) != 0) {   \
+          BattleUnit_RollCounterEarlyEnd(unitId, state->counter, bias) != 0) { \
         state->level = 0;                                                      \
         state->counter = 0;                                                    \
         return 1;                                                              \
@@ -67,11 +82,11 @@ s32 BattleUnit_CountDownAttackStage(s32 unitId) {
 /// Counts down a Defense change; Battle_ProcessTurnEnd shows `MsgDefNormal`
 /// when it returns 1.
 DEFINE_COUNT_DOWN_MODIFIER(BattleUnit_CountDownDefenseStage, defenseTurns,
-                           defenseStage)
+                           defenseStage, EARLY_END_DEFENSE_DOWN)
 /// Counts down a Resistance change; Battle_ProcessTurnEnd shows
 /// `MsgResNormal` when it returns 1.
 DEFINE_COUNT_DOWN_MODIFIER(BattleUnit_CountDownResistanceStage, resistanceTurns,
-                           resistanceStage)
+                           resistanceStage, EARLY_END_RESISTANCE_DOWN)
 
 /// Defines a status's turn-end countdown: returns 1 when `counter` runs out, or
 /// clears it and returns 1 when the status ends early at `bias`.
@@ -90,23 +105,25 @@ DEFINE_COUNT_DOWN_MODIFIER(BattleUnit_CountDownResistanceStage, resistanceTurns,
     return 0;                                                                  \
   }
 
-/// Counts down delusion, which may end early at bias 30;
-/// Battle_ProcessTurnEnd shows `MsgCureDelusion` when it returns 1.
-DEFINE_COUNT_DOWN_STATUS(BattleUnit_CountDownDelusion, delusion, 30)
+/// Counts down delusion, which may end early; Battle_ProcessTurnEnd shows
+/// `MsgCureDelusion` when it returns 1.
+DEFINE_COUNT_DOWN_STATUS(BattleUnit_CountDownDelusion, delusion,
+                         EARLY_END_DELUSION)
 
-/// Counts down confusion, which may end early at bias 60;
-/// Battle_ProcessTurnEnd shows `MsgConfusionConscious` when it returns 1.
-DEFINE_COUNT_DOWN_STATUS(BattleUnit_CountDownConfusion, confusion, 60)
+/// Counts down confusion, which may end early; Battle_ProcessTurnEnd shows
+/// `MsgConfusionConscious` when it returns 1.
+DEFINE_COUNT_DOWN_STATUS(BattleUnit_CountDownConfusion, confusion,
+                         EARLY_END_CONFUSION)
 
-/// Counts down charm, which may end early at bias 70; Battle_ProcessTurnEnd
-/// shows `MsgCharmConscious` when it returns 1.
-DEFINE_COUNT_DOWN_STATUS(BattleUnit_CountDownCharm, charm, 70)
-/// Counts down stun, which may end early at bias 40; Battle_ProcessTurnEnd
-/// shows `MsgCureStun` when it returns 1.
-DEFINE_COUNT_DOWN_STATUS(BattleUnit_CountDownStun, stun, 40)
-/// Counts down sleep, which may end early at bias 50; Battle_ProcessTurnEnd
-/// shows `MsgWakes` when it returns 1.
-DEFINE_COUNT_DOWN_STATUS(BattleUnit_CountDownSleep, sleep, 50)
+/// Counts down charm, which may end early; Battle_ProcessTurnEnd shows
+/// `MsgCharmConscious` when it returns 1.
+DEFINE_COUNT_DOWN_STATUS(BattleUnit_CountDownCharm, charm, EARLY_END_CHARM)
+/// Counts down stun, which may end early; Battle_ProcessTurnEnd shows
+/// `MsgCureStun` when it returns 1.
+DEFINE_COUNT_DOWN_STATUS(BattleUnit_CountDownStun, stun, EARLY_END_STUN)
+/// Counts down sleep, which may end early; Battle_ProcessTurnEnd shows
+/// `MsgWakes` when it returns 1.
+DEFINE_COUNT_DOWN_STATUS(BattleUnit_CountDownSleep, sleep, EARLY_END_SLEEP)
 
 /// Counts down both seals in Unit.psySeal and returns 1 when the last ends;
 /// only Bind's, once Luff's is gone, may end early.
@@ -119,6 +136,7 @@ s32 BattleUnit_CountDownPsynergySeal(s32 unitId) {
 
   unit = Unit_GetFar(unitId);
   sealCounter = unit->psySeal;
+  /* FAKEMATCH(dead): the seal byte masked again. */
   turns = sealCounter & 0xFF;
   if (turns != 0) {
     // In the byte, adding (u8)-8 takes 8 off and adding (u8)-1 takes 1 off.
@@ -135,8 +153,8 @@ s32 BattleUnit_CountDownPsynergySeal(s32 unitId) {
     remaining = sealCounter;
     if (remaining == 0)
       return 1;
-    if (remaining <= 7U &&
-        BattleUnit_RollCounterEarlyEnd(unitId, unit->psySeal, 30) != 0) {
+    if (remaining <= 7U && BattleUnit_RollCounterEarlyEnd(
+                               unitId, unit->psySeal, EARLY_END_BIND) != 0) {
       unit->psySeal = 0U;
       return 1;
     }
@@ -610,9 +628,10 @@ UNREAD_RESULT BattleUnit_ProcessActionEnd(struct BattleActionRun *plan) {
     }
     BattlePlayback_RunAll();
     BattlePlayback_Reset();
-    // At 0 the Reaper takes far more HP than any unit has.
+    // At 0 the Reaper calls.
     if (unit->grimReaper != 0) {
-      if (--unit->grimReaper == 0 && Unit_AddHpFar(unitId, 0xc0000000) == 0) {
+      if (--unit->grimReaper == 0 &&
+          Unit_AddHpFar(unitId, DEFEAT_HP_CHANGE) == 0) {
         BattlePlayback_Push(PLAYBACK_UNIT_NAME, unitId);
         PUSH_MESSAGE(MsgReaperCalls);
         BattlePlayback_Push(PLAYBACK_HIT, unitId);

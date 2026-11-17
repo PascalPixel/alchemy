@@ -159,6 +159,10 @@ void FieldPsynergy_Carry(void);
 /// The 16.16 coordinate of the middle of a map grid cell.
 #define FIELD_CELL_CENTER(cell) (FIELD_CELL_ORIGIN(cell) + toFIXED(8))
 
+/// The frames the leader pushes against a step trigger, a ledge, a gap or a
+/// wall before it runs, jumps or climbs (FieldWork.blockedSteps).
+#define FIELD_PUSH_FRAMES 12
+
 /// Where a field Psynergy or item use (FieldWork.psynergy and FieldWork.item)
 /// keeps the party member who uses it: bits 13 to 10, above the Psynergy or
 /// item.

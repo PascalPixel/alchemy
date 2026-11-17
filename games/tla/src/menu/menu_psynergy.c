@@ -7,6 +7,10 @@
 #include "flags.h"
 #include "sounds.h"
 
+/// The bits of a listed Psynergy the info window's description is found by:
+/// nine, where the list's other reads take PSYNERGY_ABILITY_MASK's fourteen.
+#define ABILITY_DESCRIPTION_MASK 0x1ff
+
 /// A Psynergy shortcut, and the field's Psynergy request packed the same way:
 /// its party member above bit 10, the Psynergy's id below.
 #define PSYNERGY_SHORTCUT_MEMBER_SHIFT 10
@@ -308,9 +312,9 @@ s32 PsynergyMenu_RunSteps(s32 *outMember, s32 *unused, s32 *outAction) {
 
 /// Says how the selected Psynergy is used from the menu: 0 on the field once
 /// the menu closes (the scene has an event for its field Psynergy,
-/// fieldPsynergy, and what the leader faces), 2 on the whole party (range
-/// 0xff), 1 on one chosen party member when its target mode is 2, and 0
-/// otherwise.
+/// fieldPsynergy, and what the leader faces), 2 on the whole party
+/// (ABILITY_RANGE_ALL), 1 on one chosen party member when it targets
+/// ABILITY_TARGET_ALLIES, and 0 otherwise.
 s32 PsynergyMenu_ClassifySelectedPsynergy(void) {
   struct AbilityDefinition *psynergy;
   s32 diff;
@@ -325,7 +329,8 @@ s32 PsynergyMenu_ClassifySelectedPsynergy(void) {
   if (psynergy->range != ABILITY_RANGE_ALL) {
     u8 kind = psynergy->targetMode;
 
-    diff = kind ^ 2;
+    // 1 when it targets ABILITY_TARGET_ALLIES.
+    diff = kind ^ ABILITY_TARGET_ALLIES;
     ret = (0 - diff) | diff;
     ret = (u32)ret >> 31;
     ret = 1 - ret;
@@ -904,8 +909,8 @@ s32 PsynergyMenu_DrawDetailPage(s32 window, s32 *work,
 
     combined = state->selectedIndex;
     if (menu->psynergies[combined] != 0) {
-      s32 masked =
-          (s32)(MsgAbilityDescription + (menu->psynergies[combined] & 0x1ff));
+      s32 masked = (s32)(MsgAbilityDescription + (menu->psynergies[combined] &
+                                                  ABILITY_DESCRIPTION_MASK));
 
       // Japanese draws the description as a resource string.
 #if LANGUAGE == LANGUAGE_JAPANESE
@@ -952,6 +957,10 @@ s32 PsynergyMenu_DrawDetailPage(s32 window, s32 *work,
 #define NAME_X 16
 #endif
 
+/// The page numbers end, with their right arrow, at tile 15 of the list
+/// window's top border, as the item list's do.
+#define PAGE_NUMBERS_RIGHT 15
+
 // The psynergy menu work block, as this function reads it.
 
 /// Draws one page of the Psynergy list (name, PP cost, greyed when the PP is
@@ -987,7 +996,7 @@ s32 PsynergyMenu_DrawActionPage(s32 window, s32 unused,
 
   Menu_SetPageIcons(LIST_PAGE_SIZE, firstEntry, window, PAGE_X, 34);
   PagedList_DrawPageNumbers(window, state->entryCount, LIST_PAGE_SIZE,
-                            state->page, 15);
+                            state->page, PAGE_NUMBERS_RIGHT);
   Text_DrawMessageAsTilesFar((s32)MsgPsynergyChooseTarget + 2, window,
                              HEADING_X, 0);
 
@@ -1024,6 +1033,7 @@ s32 PsynergyMenu_DrawActionPage(s32 window, s32 unused,
 
 #undef PAGE_X
 #undef HEADING_X
+#undef PAGE_NUMBERS_RIGHT
 #undef NAME_X
 
 // The Japanese list puts its cursor and its help line at other columns.
@@ -1261,12 +1271,15 @@ s32 PsynergyMenu_RunList(s32 paneIndex) {
 #undef CURSOR_X
 #undef CHANGE_HELP_X
 
+/// A Psynergy entry's action id, its PSYNERGY_ABILITY_MASK bits, taken out by
+/// shifts.
+#define PSYNERGY_ABILITY_OF(entry) (((u32)(entry) << 18) >> 18)
+
 /// Returns 1 when actionEntry cannot be used from the menu: it has no field
 /// effect and is not usable both in the field and in battle.
 s32 PsynergyMenu_IsActionRestricted(s32 actionEntry) {
-  // Mask the unsigned entry without overflowing a signed left shift.
   struct AbilityDefinition *action =
-      Ability_Get(((u32)actionEntry << 18) >> 18);
+      Ability_Get(PSYNERGY_ABILITY_OF(actionEntry));
 
   if (action->fieldPsynergy != 0 ||
       (action->flags & (ABILITY_USABLE_IN_FIELD | ABILITY_USABLE_IN_BATTLE)) ==

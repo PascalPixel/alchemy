@@ -203,15 +203,23 @@ enum DisplayControl {
 
 /// A 15-bit colour from its red, green and blue levels (0 to 31 each), as
 /// the palette stores it: blue in the high bits.
-#define RGB(r, g, b) (((b) << 10) | ((g) << 5) | (r))
+#define RGB(r, g, b) (((b) << BLUE_SHIFT) | ((g) << GREEN_SHIFT) | (r))
+/// Where a 15-bit colour keeps its green and blue levels, red being in the low
+/// bits.
+#define GREEN_SHIFT 5
+#define BLUE_SHIFT 10
 /// A 15-bit colour's red, green and blue levels, 0 to 31 each.
 #define RGB_RED(color) ((color) & 0x1f)
-#define RGB_GREEN(color) (((color) >> 5) & 0x1f)
-#define RGB_BLUE(color) (((color) >> 10) & 0x1f)
+#define RGB_GREEN(color) (((color) >> GREEN_SHIFT) & 0x1f)
+#define RGB_BLUE(color) (((color) >> BLUE_SHIFT) & 0x1f)
 /// A colour channel's brightest level.
 #define RGB_LEVEL_MAX 31
 /// The brightest colour, every channel at its highest level.
 #define RGB_WHITE RGB(RGB_LEVEL_MAX, RGB_LEVEL_MAX, RGB_LEVEL_MAX)
+/// A 15-bit colour's red, green and blue bits.
+#define RED_BITS RGB(RGB_LEVEL_MAX, 0, 0)
+#define GREEN_BITS RGB(0, RGB_LEVEL_MAX, 0)
+#define BLUE_BITS RGB(0, 0, RGB_LEVEL_MAX)
 
 /// The start of the 32 KB of IWRAM, the CPU's fast internal work memory, as
 /// pret names it.
@@ -235,6 +243,9 @@ enum DisplayControl {
 #define BG_SCREEN_BLOCK(n) ((u8 *)VRAM + (n) * BG_SCREEN_SIZE)
 #define TILE_SIZE_4BPP 32 ///< bytes in an 8x8 tile of 16 colours
 #define TILE_SIZE_8BPP 64 ///< bytes in an 8x8 tile of 256 colours
+/// The tiles of a picture that fills the screen in 256 colours.
+#define SCREEN_TILE_BYTES                                                      \
+  (DISPLAY_TILE_HEIGHT * DISPLAY_TILE_WIDTH * TILE_SIZE_8BPP)
 /// A word of eight 4-bit pixels, all colour `color`: one row of a 16-colour
 /// tile.
 #define PIXELS_4BPP(color) ((color) * 0x11111111u)
@@ -372,6 +383,9 @@ enum ObjMode {
 /// Attribute 1's nine bits of x: a sprite left of the screen is at 512 less
 /// its distance.
 #define OBJ_X_MASK 0x1ff
+/// Attribute 0 holds eight bits of a sprite's y, so its y wraps round at 256
+/// lines.
+#define OBJ_Y_RANGE 256
 
 /// The keys' bits as REG_KEYINPUT and REG_KEYCNT lay them out; the game's
 /// key state (gKeysHeld and the rest) holds them set for a pressed key.

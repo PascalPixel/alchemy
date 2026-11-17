@@ -139,6 +139,8 @@
 /// BattleEnemy_RecordDefeat outside the monster battles; the monster battles
 /// choose only formations of defeated enemies (BattleFormation_AverageLevel).
 #define ENEMY_DEFEATED_FLAG(classId) ((classId) + 0x600)
+/// The enemies that have a defeated flag, the flags 0x600 to 0x7ff.
+#define ENEMY_DEFEATED_FLAG_COUNT 512
 
 // Far calls the parts make, each passing its own view of the record:
 // Sprite_AddAnimation and SpriteAnimation_Start (field.c, resource_slot/)

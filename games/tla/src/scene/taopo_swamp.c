@@ -482,7 +482,7 @@ void TaopoSwamp_SinkStump(s32 unused, s32 id) {
         Actor_StartScript(splash, gTaopoSwamp_SplashFades);
         splash->motionFlags = 0;
         if (splashSprite != 0) {
-          ((s32 (*)())Sprite_StartAnimation)(splashSprite, 1);
+          Sprite_StartAnimation(splashSprite, 1);
           splashSprite->flags = k;
           splashSprite->priority = sprite->priority;
           Sprite_SetAnimationColorModes(splashSprite, SPRITE_COLOR_FILL);
@@ -952,15 +952,13 @@ void TaopoSwamp_TremorPillar(void) {
   struct Actor *clod;
   s32 i, row;
   FIXED cosine;
-  s32 (*mul)(s32, s32);
   u32 angle, speed, scale;
-  s32 turn = -(TRIG_TURN / 256);
 
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
   for (i = 0; i < 10; i++) {
     System_Wait(1);
-    ((struct FieldSprite *)rock->sprite)->rotation += turn;
+    ((struct FieldSprite *)rock->sprite)->rotation -= TRIG_TURN / 256;
     rock->x.fixed -=
         Trig_Cos(((struct FieldSprite *)rock->sprite)->rotation) / 2;
     rock->targetX = TARGET_UNSET;
@@ -996,10 +994,9 @@ void TaopoSwamp_TremorPillar(void) {
       Actor_SetSpriteFlags(clod, 0);
       clod->velocityY = (angle << 2) + toFIXED(2);
       cosine = Trig_Cos(angle);
-      mul = Iwram_MulFX;
       speed <<= 3;
-      clod->velocityZ = mul(speed, cosine);
-      clod->velocityX = mul(speed, Math_Sin(angle));
+      clod->velocityZ = Iwram_MulFX(speed, cosine);
+      clod->velocityX = Iwram_MulFX(speed, Math_Sin(angle));
       clod->acceleration = 0;
       clod->gravity = toFIXED(0.33);
       clod->scaleX = scale;
@@ -1249,8 +1246,8 @@ void TaopoSwamp_CycleDjinniVents(void) {
   Vent_AdvanceCounter(480);
 }
 
-/// The cycle of the vent under the circular spot: 120 frames of gust in 480
-/// that break its ice pillar or blow its puddle away.
+/// The pillar gap's vents' cycle: they blow for 120 frames in 480, and while
+/// they blow they break the spot's ice pillar or blow its puddle away.
 void TaopoSwamp_CycleSpotVent(void) {
   s32 timer = Vent_GetCounter();
 
@@ -1300,8 +1297,7 @@ void TaopoSwamp_CycleDripVent(void) {
   Vent_AdvanceCounter(480);
 }
 
-/// The cycle of the two vents in the room of the cooled rocks: 180 frames of
-/// gust in 240.
+/// The lava rocks' room's vents' cycle: they blow for 180 frames in 240.
 void TaopoSwamp_CycleRockRoomVents(void) {
   switch (Vent_GetCounter()) {
   case 0:

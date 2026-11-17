@@ -6,10 +6,11 @@
 
 /// Where the burst, lightning or face pictures start in the sheet.
 #define BURST_SHOWER_PICTURES GLINT_SET_BYTES
-/// VioletLightningSheetA's bolts (one every 72x64 bytes, drawn 62 tall) and
+/// VioletLightningSheetA's bolts (stored 72x64, drawn 62 tall) and
 /// DemonFaceSheet's face.
 #define VIOLET_LIGHTNING_WIDTH 72
 #define VIOLET_LIGHTNING_HEIGHT 62
+#define VIOLET_LIGHTNING_PICTURE_BYTES (VIOLET_LIGHTNING_WIDTH * 64)
 #define DEMON_FACE_WIDTH 32
 #define DEMON_FACE_HEIGHT 64
 #define BURST_SHOWER_BURSTS 48     ///< one fired a frame from frame 0
@@ -136,9 +137,9 @@ void BattleEffect_RunBurstShower(struct BattleEffectParams *args, s32 mode) {
     Resource_LoadAndDecompress(RESOURCE_PARTICLE_SPRITES_A, sprites, 0, 0);
     // The grey mode: a ramp of greys, with blending off.
     if (mode == BURST_SHOWER_MODE_GREY) {
-      for (i = 0, color = (u16 *)BG_PLTT; i != 64; i++) {
+      for (i = 0, color = (u16 *)BG_PLTT; i != SHEET_PALETTE_COLORS; i++) {
         level = i / 4;
-        *color = ((level << 10) | (level << 5)) | level;
+        *color = RGB(level, level, level);
         color++;
       }
       REG_BLDCNT = 0;
@@ -173,7 +174,7 @@ void BattleEffect_RunBurstShower(struct BattleEffectParams *args, s32 mode) {
   }
   Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_VBLANK);
 
-  for (i = 0; i != 64; i++) {
+  for (i = 0; i != ARRAY_COUNT(work->particles); i++) {
     work->particles[i].variant = -1;
   }
 
@@ -225,13 +226,13 @@ void BattleEffect_RunBurstShower(struct BattleEffectParams *args, s32 mode) {
       if (work->args->side == EFFECT_SIDE_PARTY) {
         draw[0](canvas,
                 (work->sheet + BURST_SHOWER_PICTURES) +
-                    ((frame / 3 % 3 * 9) << 9),
+                    frame / 3 % 3 * VIOLET_LIGHTNING_PICTURE_BYTES,
                 origin.x - 2, origin.y - 32, VIOLET_LIGHTNING_WIDTH,
                 VIOLET_LIGHTNING_HEIGHT);
       } else {
         draw[0](canvas,
                 (work->sheet + BURST_SHOWER_PICTURES) +
-                    ((frame / 3 % 3 * 9) << 9),
+                    frame / 3 % 3 * VIOLET_LIGHTNING_PICTURE_BYTES,
                 origin.x - 70, origin.y - 32, VIOLET_LIGHTNING_WIDTH,
                 VIOLET_LIGHTNING_HEIGHT);
       }
@@ -250,7 +251,7 @@ void BattleEffect_RunBurstShower(struct BattleEffectParams *args, s32 mode) {
     }
 
     // The bursts fly.
-    for (i = 0; i != 64; i++) {
+    for (i = 0; i != ARRAY_COUNT(work->particles); i++) {
       struct Particle *spark = &work->particles[i];
       if (spark->variant >= 0) {
         if (mode == BURST_SHOWER_MODE_FACES) {
@@ -265,7 +266,7 @@ void BattleEffect_RunBurstShower(struct BattleEffectParams *args, s32 mode) {
           if (spark->variant > 5) {
             draw[0](canvas,
                     (work->sheet + BURST_SHOWER_PICTURES) +
-                        ((spark->variant / 4) << 11),
+                        (spark->variant / 4) * PICTURE_BYTES(FLASH_BURST),
                     FIXEDtoINT(spark->x) - FLASH_BURST_WIDTH / 2,
                     FIXEDtoINT(spark->y) - FLASH_BURST_HEIGHT / 2,
                     FLASH_BURST_WIDTH, FLASH_BURST_HEIGHT);
@@ -274,7 +275,7 @@ void BattleEffect_RunBurstShower(struct BattleEffectParams *args, s32 mode) {
           if (spark->variant > 1) {
             draw[0](canvas,
                     (work->sheet + BURST_SHOWER_PICTURES) +
-                        ((spark->variant / 4) << 11),
+                        (spark->variant / 4) * PICTURE_BYTES(FLASH_BURST),
                     FIXEDtoINT(spark->x) - FLASH_BURST_WIDTH / 2,
                     FIXEDtoINT(spark->y) - FLASH_BURST_HEIGHT / 2,
                     FLASH_BURST_WIDTH, FLASH_BURST_HEIGHT);
@@ -328,6 +329,7 @@ void BattleEffect_RunBurstShower(struct BattleEffectParams *args, s32 mode) {
 }
 
 #undef BURST_SHOWER_PICTURES
+#undef VIOLET_LIGHTNING_PICTURE_BYTES
 #undef BURST_SHOWER_BURSTS
 #undef BURST_SHOWER_BURST_LIFE
 #undef BURST_SHOWER_FRAMES

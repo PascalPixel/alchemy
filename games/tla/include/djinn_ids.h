@@ -8,6 +8,9 @@
 /// djinn_ids.h names its own.
 
 #define DJINN_PER_ELEMENT 20
+/// The first of each element's two spares, after its eighteen Djinn (a
+/// DJINNI_INDEX): the text names the spares after the element ("Earth18").
+#define DJINNI_SPARE_FIRST 18
 
 /// A Djinni's place among its element's Djinn, from 0, as Djinn_JoinParty and
 /// the party members' Djinn lists take it.

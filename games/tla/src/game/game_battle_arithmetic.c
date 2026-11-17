@@ -50,8 +50,8 @@ s32 Battle_GetElementMultiplier(s32 input, s32 halve) {
   return multiplier + BATTLE_MULTIPLIER_ONE;
 }
 
-/// The battle's linear congruential random number generator. Returns bits 8
-/// to 23 of the new seed.
+/// The battle's random number generator, the same as Random16 with its own
+/// seed: returns bits 8 to 23 of the new seed.
 u32 Battle_Random(void) {
   s32 seed;
 
@@ -76,9 +76,7 @@ s32 Battle_CalculateAttackDamage(s32 attack, s32 defense, s32 addedPower,
     attack = 0;
   scaledDamage =
       Battle_GetElementMultiplier(damage, 1) * (attack + (addedPower * 2));
-  if (scaledDamage < 0)
-    scaledDamage += 512 - 1;
-  damage = scaledDamage >> 9;
+  damage = scaledDamage / (2 * BATTLE_MULTIPLIER_ONE);
   if (damage < 0)
     damage = 0;
   return damage;
@@ -91,24 +89,25 @@ s32 Battle_CalculatePsynergyPower(s32 power, s32 elementDifference,
 
   scaledPower = Battle_GetElementMultiplier(elementDifference, 0) * power *
                 powerMultiplier;
-  if (scaledPower < 0)
-    scaledPower = scaledPower + 65536 - 1;
-  return scaledPower >> 16;
+  return scaledPower / (BATTLE_MULTIPLIER_ONE * BATTLE_MULTIPLIER_ONE);
 }
 
+/// The element power at which healing is neither stronger nor weaker: each
+/// point above it counts as two points of element difference.
+#define HEALING_BASE_POWER 100
+
 /// Returns the amount healed: power times powerMultiplier and the multiplier
-/// for the healer's element power above 100.
+/// for the healer's element power above HEALING_BASE_POWER.
 s32 Battle_CalculateRecovery(s32 power, s32 elementPower, s32 powerMultiplier) {
   s32 signedProduct;
   u32 scaledRecovery;
 
   scaledRecovery =
-      Battle_GetElementMultiplier(elementPower * 2 - 200, 0) * power;
+      Battle_GetElementMultiplier((elementPower - HEALING_BASE_POWER) * 2, 0) *
+      power;
   scaledRecovery = powerMultiplier * scaledRecovery;
   signedProduct = scaledRecovery;
-  if (signedProduct < 0)
-    signedProduct = signedProduct + 65536 - 1;
-  return signedProduct >> 16;
+  return signedProduct / (BATTLE_MULTIPLIER_ONE * BATTLE_MULTIPLIER_ONE);
 }
 
 /// Returns the element the unit attacks with (ELEMENT_NONE for none): an
@@ -165,17 +164,17 @@ s32 RollWeaponUnleash(struct Unit *owner) {
   if (item->unleashAbility == 0) {
     return 1;
   }
-  rate = ((Equipment_GetUnleashRateBonus(owner) + (item->unleashChance * 5))
-          << 16) /
-         100;
+  rate =
+      toFIXED(Equipment_GetUnleashRateBonus(owner) + item->unleashChance * 5) /
+      100;
   if (rate > (s32)(Battle_Random() & 0xFFFF)) {
     return item->unleashAbility;
   }
   return 1;
 }
 
-/// A rate for the effect id: 20 to 75 for the ids listed, otherwise a
-/// negative value (-60, -90 and -70 for three ids, -100 by default).
+/// Returns the base chance in percent of an effect; a negative one is fixed,
+/// and effects not listed always work.
 s32 Battle_GetEffectBaseSuccessRate(s32 effectId) {
   s32 fixedChance;
 
@@ -289,18 +288,24 @@ s32 Battle_IsReviveEffect(s32 effectId) {
   return 0;
 }
 
+/// The Luck at which a target shrugs off poison, haunting, instant death, the
+/// curse, Leave One HP, Gasp and Gale.
+#define LUCK_IMMUNITY 40
+/// The points of chance an effect gains against a target weak to it.
+#define WEAKNESS_BONUS 25
+
 /// Rolls whether effect `effectId` takes hold on `target`: it fails at once
 /// when there is nothing for it to do. The chance is the base rate, plus three
 /// times the caster's lead over the target in the element's level less half
 /// the target's luck (so every two points of luck take off three), plus
-/// 25 against a weakness, times `successScale` percent. A base rate of 0 or
-/// less counts as its magnitude, still scaled but skipping the levels, luck
-/// and weakness; 0 still succeeds when Battle_RandomPercent gives 0, about 1
-/// time in 100. Luff (ABILITY_EFFECT_SEAL_2_TURNS) and effects 80 and 85 get
-/// three tries. Raiden's Wrath (effect 90) and the Trident (91) take hold only
-/// on a dragon or a sea creature; a target with 40 Luck or more shrugs off
-/// poison, haunting, instant death, the curse, Leave One HP and effects 80 and
-/// 82, and a character effect 82 too.
+/// WEAKNESS_BONUS against a weakness, times `successScale` percent. A base rate
+/// of 0 or less counts as its magnitude, still scaled but skipping the levels,
+/// luck and weakness; 0 still succeeds when Battle_RandomPercent gives 0, about
+/// 1 time in 100. Luff, Gasp and Fire Puppet's Paralyze get three tries.
+/// Raiden's Wrath and the Trident take hold only on a dragon or a sea creature;
+/// a target with LUCK_IMMUNITY Luck or more shrugs off poison, haunting,
+/// instant death, the curse, Leave One HP, Gasp and Gale, and a character Gale
+/// too.
 s32 Battle_RollEffectSuccess(s32 caster, s32 target, s32 resistanceCategory,
                              s32 effectId, s32 successScale) {
   struct Unit *unit = Unit_Get(target);
@@ -364,7 +369,7 @@ restore_checked:
   }
 
   luck = &unit->luck;
-  if (*luck >= 40) {
+  if (*luck >= LUCK_IMMUNITY) {
     switch (effectId) {
     case ABILITY_EFFECT_POISON:
     case ABILITY_EFFECT_VENOM:
@@ -377,9 +382,11 @@ restore_checked:
       return 0;
     }
   }
-  if (unit->classId != 0 && effectId == ABILITY_EFFECT_BLOW_AWAY)
+  if (unit->classId != CLASS_NONE && effectId == ABILITY_EFFECT_BLOW_AWAY)
     return 0;
 
+  // A positive base rate is adjusted by the element levels, the target's luck
+  // and its weaknesses; 0 or a negative one is a fixed chance.
   score = Battle_GetEffectBaseSuccessRate(effectId);
   if (score > 0) {
     s32 difference = Unit_GetElementLevel(caster, resistanceCategory) -
@@ -387,7 +394,7 @@ restore_checked:
                      (*luck >> 1);
     score += difference * 3;
     if (BattleAbility_IsWeakToEffect(unit, effectId) != 0) {
-      score += 25;
+      score += WEAKNESS_BONUS;
     }
   } else {
     score = -score;

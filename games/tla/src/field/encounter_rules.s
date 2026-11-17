@@ -51,7 +51,7 @@ gScene_EncounterRules:
 	encounter_rule YampiDesertSandPass, -1, -1, 33, 0
 	encounter_rule YampiDesertTrainersWhipChest, -1, -1, 33, 0
 	encounter_rule YampiDesertMedalSpot, -1, -1, 33, 0
-	encounter_rule YampiDesertOasisCave, -1, -1, 32, 0
+	encounter_rule YampiDesertSpringCave, -1, -1, 32, 0
 	encounter_rule YampiDesertBlowMaceChest, -1, -1, 32, 0
 	encounter_rule AirsRockStormBrandChest, -1, -1, 34, 0
 	encounter_rule AirsRockEntrance, -1, -1, 35, 0

@@ -154,8 +154,9 @@ enum CastingImpact {
 #define CASTING_IMPACT_IMPACT_PARTICLES                                        \
   ((struct Particle *)(Ram_MapCellBuffer + 24576))
 #define CASTING_IMPACT_IMPACT_PARTICLE_COUNT 64
-/// The frames a spark scattered over the target lives, at the least: it is
-/// drawn a mote size smaller for each CASTING_IMPACT_SPARK_SHRINK frames less.
+/// A spark scattered over the target's life at the least, counted down two a
+/// frame (the draw visits each spark twice); it is drawn a mote size smaller
+/// for every CASTING_IMPACT_SPARK_SHRINK of life lost.
 #define CASTING_IMPACT_SPARK_LIFE 32
 #define CASTING_IMPACT_SPARK_SHRINK 20
 
@@ -256,23 +257,22 @@ enum CastingImpact {
 /// boulder, 64 pixels square.
 #define CASTING_IMPACT_BOULDER_PICTURES 8192
 #define BOULDER_PICTURE_SIZE 64
-/// BoulderSheet's shard pictures, after its 34x62 boulder.
-#define CASTING_IMPACT_BOULDER_SHARDS (34 * 62)
 /// The shards Mother Earth's boulder breaks into.
 #define MOTHER_EARTH_SHARDS 32
-/// Ice Crush's shards, after CrystalSheet's crystal.
-#define CASTING_IMPACT_CRYSTAL_SHARDS PICTURE_BYTES(CRYSTAL)
 /// The spin a shard turns through for each of its three pictures.
 #define CASTING_IMPACT_SHARD_TURN 96
 /// Stun Jip's flame band, after the 128x128 fire ring.
 #define CASTING_IMPACT_FLAME_BAND (128 * 128)
 
-/// The impact particles that carry the rising pictures: flash bursts, skulls,
-/// puffs of smoke, fireballs or shards.
+/// The impact particles that carry the rising pictures: flash bursts, skulls
+/// or puffs of smoke.
 #define CASTING_IMPACT_RISING_PICTURES 16
 /// The frames a rising picture lives, and a flash burst, two to each picture.
 #define CASTING_IMPACT_RISING_LIFE 24
 #define CASTING_IMPACT_BURST_LIFE 12
+/// Power Drive's fireballs, and the frames each flies.
+#define POWER_DRIVE_FIREBALLS 16
+#define POWER_DRIVE_FIREBALL_LIFE 24
 /// Terrible Bite's flash bursts; Dinox's are CASTING_IMPACT_RISING_PICTURES.
 #define TERRIBLE_BITE_BURSTS 24
 /// Raiden's Wrath's pictures after its first, and Apocalypse's.
@@ -781,7 +781,7 @@ void BattleEffect_RunCastingImpact(struct BattleEffectParams *action,
     if (kind == CASTING_IMPACT_IMPACT_MORTAL_DANGER) {
       REG_BG2PA = Q_8_8(1);
       if (action->side == EFFECT_SIDE_ENEMIES)
-        REG_BG2X = (CASTING_IMPACT_GATHER_FRAMES - targetPos.x) << 8;
+        REG_BG2X = (32 - targetPos.x) << 8;
       else
         REG_BG2X = (96 - targetPos.x) << 8;
     } else if (kind == CASTING_IMPACT_IMPACT_SARCOPHAGUS) {
@@ -827,9 +827,10 @@ void BattleEffect_RunCastingImpact(struct BattleEffectParams *action,
       else
         REG_BG2X = (96 - targetPos.x) << 8;
     }
-    // The four unused impacts clear the canvas and hand off to another effect
-    // without giving the caster its motion back: the ice chips to Blizzard's
-    // volley, the Mystic Flame one to Mystic Flame's orbs and the comets to
+    // These four unused impacts (ice chips, gathering, Mystic Flame, comets)
+    // clear the canvas and hand off to another effect without giving the
+    // caster its motion back: the ice chips to Blizzard's volley, the Mystic
+    // Flame one to Mystic Flame's orbs and the comets to
     // PROJECTILE_VOLLEY_IMPACT_COMETS; the gathering ends here.
     if (kind == CASTING_IMPACT_IMPACT_UNUSED_ICE_CHIPS ||
         kind == CASTING_IMPACT_IMPACT_UNUSED_GATHERING ||
@@ -1381,8 +1382,8 @@ void BattleEffect_RunCastingImpact(struct BattleEffectParams *action,
         // Fireballs fly out to either side.
         struct Particle *p;
         p = impactParticles;
-        for (i = 0; i != CASTING_IMPACT_RISING_PICTURES; i++, p++) {
-          if (frame >= i + 4 && p->variant < CASTING_IMPACT_RISING_LIFE) {
+        for (i = 0; i != POWER_DRIVE_FIREBALLS; i++, p++) {
+          if (frame >= i + 4 && p->variant < POWER_DRIVE_FIREBALL_LIFE) {
             EffectPosition_ProjectPoint(p, &projected);
             projected.x = projected.x / 2;
             blitters[0](canvas, pictures, projected.x - FLAMEBALL_WIDTH / 2,
@@ -2053,9 +2054,12 @@ void BattleEffect_RunCastingImpact(struct BattleEffectParams *action,
             p->velocityY = Random16() & TRIG_ANGLE_MASK;
             p->velocityZ = Random16() & TRIG_ANGLE_MASK;
           }
-          // The last chip's y, not its radius, is set to 159, the largest
-          // radius the others draw: it flies up to 159 pixels off its line, and
-          // the target's last flinch comes as it crosses the sky above.
+          // The last chip's y, not its radius, is set to 159: it flies 159
+          // pixels off its line, so the target's last flinch, when its radius
+          // runs out, comes with no chip on it.
+          // XXX (no evidence): whether its radius was meant, as 159 is the
+          // largest the others draw (32 + 127); only the author's intent would
+          // say.
           impactParticles[CASTING_IMPACT_IMPACT_PARTICLE_COUNT - 1].y = 159;
         }
         p = impactParticles;
@@ -2092,7 +2096,8 @@ void BattleEffect_RunCastingImpact(struct BattleEffectParams *action,
           blitters[0](canvas, pictures, 48, 104 - h, ROCK_SPIRE_WIDTH, h);
         }
       } else if (kind == CASTING_IMPACT_IMPACT_HAMMERSPHERE) {
-        // A ball falls onto the target, bounces up, hangs and drops away.
+        // A ball falls onto the target, rests there a moment, then bounces
+        // back up.
         struct Particle *p;
         p = impactParticles;
         if (frame == 0) {
@@ -2149,7 +2154,8 @@ void BattleEffect_RunCastingImpact(struct BattleEffectParams *action,
                       FALLING_FLAME_HEIGHT);
         }
       } else if (kind == CASTING_IMPACT_IMPACT_ICE_CRUSH) {
-        // A crystal falls diagonally onto the target and shatters.
+        // A crystal falls diagonally onto the target and shatters into Prism's
+        // shards.
         s32 x;
         s32 y;
         if (frame > 31)
@@ -2172,7 +2178,7 @@ void BattleEffect_RunCastingImpact(struct BattleEffectParams *action,
                                           toFIXED(8), toFIXED(3), 150);
             p = impactParticles;
             table = gPrism_ShardStarts;
-            for (i = 0; i != CASTING_IMPACT_RISING_PICTURES; i++, p++) {
+            for (i = 0; i != SHARDS_PER_CRYSTAL; i++, p++) {
               p->x = INTtoFIXED(*table++ + x - 40);
               p->y = INTtoFIXED(*table++);
               p->velocityX = ((Random16() & 127) - 64) << 11;
@@ -2182,7 +2188,7 @@ void BattleEffect_RunCastingImpact(struct BattleEffectParams *action,
             }
           }
         } else {
-          for (i = 0; i != CASTING_IMPACT_RISING_PICTURES; i++) {
+          for (i = 0; i != SHARDS_PER_CRYSTAL; i++) {
             s32 m;
             particle = &impactParticles[i];
             {
@@ -2192,8 +2198,7 @@ void BattleEffect_RunCastingImpact(struct BattleEffectParams *action,
             }
             blitters[i > 2 ? 0 : 1](
                 canvas,
-                pictures + CASTING_IMPACT_CRYSTAL_SHARDS +
-                    gPrism_ShardPictures[m],
+                pictures + PRISM_SHARD_PICTURES + gPrism_ShardPictures[m],
                 (FIXEDtoINT(particle->x)) - gPrism_ShardWidths[m] / 2,
                 (FIXEDtoINT(particle->y)) - gPrism_ShardHeights[m] / 2,
                 gPrism_ShardWidths[m], gPrism_ShardHeights[m]);
@@ -2205,7 +2210,8 @@ void BattleEffect_RunCastingImpact(struct BattleEffectParams *action,
           }
         }
       } else if (kind == CASTING_IMPACT_IMPACT_MOTHER_EARTH) {
-        // A boulder falls diagonally onto the target and breaks into shards.
+        // A boulder falls diagonally onto the target and breaks into Spire's
+        // shards.
         s32 x;
         s32 y;
         if (frame == 0) {
@@ -2262,7 +2268,7 @@ void BattleEffect_RunCastingImpact(struct BattleEffectParams *action,
             h = gSpire_ShardHeights[m];
             top -= h / 2;
             blitters[0](canvas,
-                        pictures + CASTING_IMPACT_BOULDER_SHARDS +
+                        pictures + SPIRE_SHARD_PICTURES +
                             gSpire_ShardPictures[m],
                         left, top, w, h);
             Particle_AdvanceWithGravity2D(particle, 63, toFIXED(1) / 2);
@@ -2451,10 +2457,11 @@ void BattleEffect_RunCastingImpact(struct BattleEffectParams *action,
         if (kind == CASTING_IMPACT_IMPACT_QUICK_SLASH ||
             kind == CASTING_IMPACT_IMPACT_BOSCA_HIT) {
           s32 fade;
+          s32 scale;
           for (i = 0; i != 3; i++) {
             t = frame - i * 2;
             if (t >= 0) {
-              angle = t * 3 * (FIXED_ONE / 16);
+              scale = t * 3 * (FIXED_ONE / 16);
               fade = 0;
               if (t > 7)
                 fade = (8 - t) * 8;
@@ -2466,7 +2473,7 @@ void BattleEffect_RunCastingImpact(struct BattleEffectParams *action,
                 Matrix_Scale(FIXED_ONE / 2, FIXED_ONE, FIXED_ONE / 2);
                 Matrix_RotateZ(i * (DEGtoANG(90)) + DEGtoANG(45));
                 Matrix_RotateX(-TRIG_TURN / 16);
-                Matrix_ScaleUniform(angle >> 1);
+                Matrix_ScaleUniform(scale >> 1);
                 Render_TransformVertices(gBattleEffect_GroundSquareCorners,
                                          matrix, 4);
                 Render_DrawModelList(model);
@@ -2570,7 +2577,8 @@ void BattleEffect_RunCastingImpact(struct BattleEffectParams *action,
         t = frame - 4;
         if (t >= 0) {
           s32 fade;
-          angle = t * (FIXED_ONE / 4);
+          s32 scale;
+          scale = t * (FIXED_ONE / 4);
           fade = 0;
           if (t > 7)
             fade = (8 - t) * 8;
@@ -2580,7 +2588,7 @@ void BattleEffect_RunCastingImpact(struct BattleEffectParams *action,
             Matrix_Translate(INTtoFIXED(targetPos.x / 2 - 64), toFIXED(40), 0);
             Matrix_Scale(FIXED_ONE / 2, FIXED_ONE, FIXED_ONE / 2);
             Matrix_RotateX(1000);
-            Matrix_ScaleUniform(angle);
+            Matrix_ScaleUniform(scale);
             Render_TransformVertices(gBattleEffect_GroundSquareCorners, matrix,
                                      4);
             Render_DrawModelList(model);
@@ -2683,12 +2691,15 @@ void BattleEffect_RunCastingImpact(struct BattleEffectParams *action,
             p->z = i * 2 + 80;
           }
         }
-        // Copies the first imp face into the third, a level of the second a
-        // frame, darkest first: a reveal of Wheeze's faces, though this impact
-        // loads the skulls.
-        for (i = 0; i != PICTURE_BYTES(IMP_FACE); i++) {
-          if (pictures[PICTURE_BYTES(IMP_FACE) + i] >> 1 == frame / 2)
-            pictures[2 * PICTURE_BYTES(IMP_FACE) + i] = pictures[i];
+        // Copies the sheet's first 1024 bytes over its third 1024, a level of
+        // the second 1024 every two frames, darkest first. Here they hold the
+        // skulls, which the blocks cut across.
+        // XXX: the copy works on 32x32 blocks, as Wheeze's faces are laid out,
+        // over the skull sheet; whether it is Wheeze's code left here would be
+        // settled by a sibling or an edition that runs it on the faces.
+        for (i = 0; i != 1024; i++) {
+          if (pictures[1024 + i] >> 1 == frame / 2)
+            pictures[2 * 1024 + i] = pictures[i];
         }
         EffectPosition_ProjectScaledBattler(action->targets[0], &targetPoint);
         targetPoint.x = targetPoint.x / 2;

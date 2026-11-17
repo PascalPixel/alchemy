@@ -82,6 +82,11 @@ struct SaveSectorHeader {
 #define SAVE_IMAGE_GAME_FLAGS 64
 #define SAVE_IMAGE_MAIN_ROUTINE_WORK 576
 #define SAVE_IMAGE_UNITS 1312
+/// Where The Broken Seal's save image keeps its units (gCharacterUnits), 32
+/// bytes before this game's SAVE_IMAGE_UNITS: the Clear scene copies an image
+/// it receives by link from the main routine work on that much further on, its
+/// units landing on this game's.
+#define GOLDEN_SUN_SAVE_IMAGE_UNITS 1280
 
 STATIC_ASSERT(sizeof(struct SaveSummary) == 64);
 STATIC_ASSERT(offsetof(struct SaveWorkspace, counter) == 30);

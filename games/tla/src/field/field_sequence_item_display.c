@@ -60,7 +60,7 @@ void Leader_StepAwayFromNearbyActor(void) {
   s32 i;
 
   leader = Actor_Lookup(Party_GetLeaderActor());
-  for (i = 0; i <= FIELD_SCOOP_ACTOR - FIELD_TREASURE_ACTOR; i++) {
+  for (i = 0; i <= SCOOPED_ITEM_ACTOR - FIELD_TREASURE_ACTOR; i++) {
     other = Actor_Lookup(i + FIELD_TREASURE_ACTOR);
     dx = leader->x.fixed - other->x.fixed;
     dz = leader->z.fixed - other->z.fixed;

@@ -61,7 +61,7 @@
 #undef EFFECT_SPAWN
 
 /// The apple, taken.
-#define FLAG_APPLE_TAKEN 0xf5d
+#define FLAG_KALT_ISLAND_APPLE_TAKEN 0xf5d
 /// Kalt Island's rope, tied by Lash, for this visit.
 #define FLAG_KALT_ROPE_TIED FLAG_SCENE_TEMP_03
 /// Kalt Island: the leader is on the ice, where each step slides
@@ -413,7 +413,7 @@ void Settlements_CatchApple(void) {
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
   Actor_SetPosition(ACTOR_APPLE, 0, 0);
-  Event_SetFlag(FLAG_APPLE_TAKEN);
+  Event_SetFlag(FLAG_KALT_ISLAND_APPLE_TAKEN);
   ItemDisplay_ShowItem(ITEM_APPLE, 3);
   mode = 0;
   Party_GiveItem(ITEM_APPLE, mode);
@@ -628,7 +628,7 @@ void Settlements_SetUpKaltIsland(void) {
   Rope_Initialize();
   Rope_Initialize();
   FieldRope_Place(1, FLAG_KALT_ROPE_TIED, ACTOR_ROPE_POST_A, ACTOR_ROPE_POST_B);
-  if (Event_GetFlag(FLAG_APPLE_TAKEN)) {
+  if (Event_GetFlag(FLAG_KALT_ISLAND_APPLE_TAKEN)) {
     Actor_SetPosition(ACTOR_APPLE, 0, 0);
     return;
   }
@@ -1477,8 +1477,8 @@ struct Trigger gSettlements_KaltIslandTriggers[] = {
     {PSYNERGY_ON_ACTOR(ABILITY_LASH), ACTOR_ROPE_POST_A, FLAG_KALT_ROPE_TIED,
      EVENT(Settlements_LashRope)},
     {TRIGGER_TALK, ACTOR_GEL, CONDITION_ALWAYS, EVENT(Settlements_MeetGel)},
-    {PSYNERGY_ON_ACTOR(ABILITY_CATCH), ACTOR_APPLE, FLAG_APPLE_TAKEN,
-     EVENT(Settlements_CatchApple)},
+    {PSYNERGY_ON_ACTOR(ABILITY_CATCH), ACTOR_APPLE,
+     FLAG_KALT_ISLAND_APPLE_TAKEN, EVENT(Settlements_CatchApple)},
     {TRIGGER_TABLE_END},
 };
 

@@ -109,6 +109,12 @@ enum PaletteTint {
   PALETTE_TINT_SPLIT = 0x800000 ///< each colour unchanged
 };
 
+/// The brightness 2R + 4G + B that PALETTE_TINT_GRAYSCALE and
+/// PALETTE_TINT_CUSTOM build, with each channel where a fade keeps it, in
+/// blue's place: red moved up and doubled, green moved up and doubled twice.
+#define BRIGHTNESS_RED_SHIFT (BLUE_SHIFT + 1)
+#define BRIGHTNESS_GREEN_SHIFT (BLUE_SHIFT - GREEN_SHIFT + 2)
+
 /// PALETTE_TINT_SEPIA holds each channel to these levels.
 #define SEPIA_LEVEL_MIN 8
 #define SEPIA_LEVEL_MAX 28

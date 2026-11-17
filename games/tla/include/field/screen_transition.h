@@ -9,8 +9,8 @@
 #include "resource_ids.h"
 #include "battle/battle.h"
 
-/// A row of gSpeakerDefinitions, as The Broken Seal's: a sprite's voice and
-/// the lines it says while Halted.
+/// A row of gSpeakerDefinitions: a sprite's voice and the lines it says while
+/// Halted.
 struct SpeakerDefinition {
   u16 id; ///< the sprite id
   /// The voice: a message plays SE_VOICE_FIRST + value as it types

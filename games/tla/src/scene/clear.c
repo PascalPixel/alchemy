@@ -1,8 +1,8 @@
 /// @file
 /// The File Screen overlay (SceneId_Clear), the first thing the player sees
-/// after the title: the Golden Sun logo, the file menu (new game, continue,
-/// copy, erase, the Battle Arena and Update) and what a new game asks. A new
-/// game may bring Golden Sun's data over, by password or link cable
+/// after the title: the title logo, the file menu (new game, continue, copy,
+/// erase, the Battle Arena and Update) and what a new game asks. A new game
+/// may bring The Broken Seal's data over, by password or link cable
 /// (Clear_EnterPassword, Clear_ReceiveByLink), applied to Isaac's party
 /// (Clear_ApplyImportedData), and two secret button codes on the screen
 /// (Clear_CheckButtonCodes) name more of the party.
@@ -58,8 +58,8 @@
 #include "game/character_ids.h"
 #include "system/save.h"
 
-// The logo the screen shows, as the title's: an 8-bit background on BG2, its
-// map in screen block 6 and its tiles from tile 416 of character block 0.
+/// The logo the screen shows, as the title's: an 8-bit background on BG2, its
+/// map in screen block 6 and its tiles from tile 416 of character block 0.
 #define LOGO_BGCNT (BGCNT_PRIORITY(1) | BGCNT_256_COLORS | BGCNT_SCREEN_BASE(6))
 #define LOGO_MAP ((u16 *)BG_SCREEN_BLOCK(6))
 #define LOGO_FIRST_TILE 416
@@ -70,8 +70,9 @@
 #define LOGO_PALETTE_COLORS 224
 
 /// The File Screen's entrance from the epilogue, which offers to save the
-/// cleared game (epilogue.c); the title and the Battle Arena come in by 1.
-#define CLEAR_FROM_EPILOGUE 2
+/// cleared game (epilogue.c); the title and the Battle Arena's lobby come in
+/// by the other.
+#define FILE_SCREEN_FROM_EPILOGUE 2
 
 /// SceneId_Title's entrances (title.c): the logos and the intro, then this
 /// screen; and the opening credits, then the prologue.
@@ -134,8 +135,6 @@ extern u16 gClear_ImportedFlags[];
 
 struct Window;
 
-/// The third argument, 0 for a new game and 1 for Update, is one
-/// DataTransfer_Apply (game/game_units.c) does not take.
 void DataTransfer_Apply(void *save, s32 byPassword, s32 update);
 void DataTransfer_GiveDefaultDjinn(void);
 void ClearData_Apply(void *data);
@@ -158,7 +157,7 @@ const struct ActorPlacement *Scene_GetActorPlacements(void) {
 
 const struct Trigger *Scene_GetTriggers(void) { return gSceneEvents; }
 
-/// Loads the Golden Sun logo onto BG2 as Title_LoadBackground (title.c) does,
+/// Loads the title logo onto BG2 as Title_LoadBackground (title.c) does,
 /// and stops the leader's motion.
 void Clear_LoadBackground(void) {
   u8 *resource;
@@ -217,7 +216,6 @@ void Clear_FadeInBlend(void) {
                           BLDCNT_TGT2_BG1 | BLDCNT_TGT2_BG2 | BLDCNT_TGT2_BG3 |
                           BLDCNT_TGT2_BD,
                       IO_WRITE_HALFWORD);
-  // BLEND_ALPHA(level, BLEND_WEIGHT_MAX - level), the bottom weight first.
   IO_WRITE_QUEUE_PUSH((u32)&REG_BLDALPHA,
                       (BLEND_WEIGHT_MAX - (u16)level) << 8 | (u16)level,
                       IO_WRITE_HALFWORD);
@@ -310,7 +308,7 @@ void StatusScreen_Run(void);
 #define YEAH_WIDTH 8
 #endif
 
-/// The password and link screens read Golden Sun's data into the game's own
+/// The password and link screens read The Broken Seal's data into the game's
 /// state: KEEP_SAVE_IMAGE sets the state aside in the map cell buffer first,
 /// and RESTORE_SAVE_IMAGE copies what the screen left to TRANSFERRED_SAVE and
 /// puts the state back.
@@ -339,13 +337,15 @@ s32 Scene_Initialize(void) {
   u32 mask;
   s32 result, i, limit, status, message, recovery;
 
+  /* FAKEMATCH(signature): DataTransfer_Apply called with a third argument it
+     does not take, 0 for a new game and 1 for Update. */
   Clear_LoadBackground();
   Task_Add(Clear_CheckButtonCodes, TASK_PASS_FRAME);
   gFieldWork->transition = started;
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
   // After the epilogue: the cleared game may be saved, then the title.
-  if (gMainRoutineWork.entrance == CLEAR_FROM_EPILOGUE) {
+  if (gMainRoutineWork.entrance == FILE_SCREEN_FROM_EPILOGUE) {
     do {
       message = (s32)MsgSaveYourAdventure;
       // "Save your adventure?"
@@ -792,10 +792,10 @@ void Clear_GetPasswordCharacter(s32 cell, u16 *text) {
 /// Where The Broken Seal's save image keeps its units (gCharacterUnits), 32
 /// bytes before this game's SAVE_IMAGE_UNITS: its image from the main routine
 /// work on is copied that much further on, its units landing on this game's.
-#define GOLDEN_SUN_SAVE_IMAGE_UNITS 1280
+#define BROKEN_SEAL_SAVE_IMAGE_UNITS 1280
 
-// The first letter of the greeting this screen answers The Broken Seal with,
-// before V, T and S: the one its FILE_SCREEN_LINK_LANGUAGE_TAG waits for.
+/// The first letter of the greeting this screen answers The Broken Seal with,
+/// before V, T and S: the one its FILE_SCREEN_LINK_LANGUAGE_TAG waits for.
 #if (LANGUAGE == LANGUAGE_JAPANESE)
 #define LINK_LANGUAGE_TAG 'C'
 #elif (LANGUAGE == LANGUAGE_GERMAN)
@@ -828,7 +828,7 @@ void Clear_GetPasswordCharacter(s32 cell, u16 *text) {
 #define STATUS_WINDOW_WIDTH 20
 #endif
 
-/// Receives Golden Sun's data over the link cable: waits for The Broken Seal
+/// Receives The Broken Seal's data over the link cable: waits for that game
 /// to greet with "0000", answers with the greeting it waits for, receives its
 /// save image into TRANSFERRED_SAVE and reads the image's flags and units into
 /// the game's state. Returns 1, or -1 when B gives up or the link is lost.
@@ -932,7 +932,7 @@ done:
   Iwram_CopyWords(flags, TRANSFERRED_FLAGS, 532);
   Iwram_CopyWords(flags +
                       (SAVE_IMAGE_MAIN_ROUTINE_WORK - SAVE_IMAGE_GAME_FLAGS) +
-                      (SAVE_IMAGE_UNITS - GOLDEN_SUN_SAVE_IMAGE_UNITS),
+                      (SAVE_IMAGE_UNITS - BROKEN_SEAL_SAVE_IMAGE_UNITS),
                   TRANSFERRED_MAIN_ROUTINE_WORK, 3360);
   Unit_Calculate(0);
   Unit_Calculate(1);
@@ -1369,8 +1369,8 @@ s32 Clear_EnterPassword(void) {
             System_Wait(6);
             NameEntry_EditMemberName(0);
             StatusScreen_Run();
-            // The entered party where the link leaves its data; the
-            // RESTORE_SAVE_IMAGE that follows copies the whole state there.
+            // DEAD: the flags and party copied where RESTORE_SAVE_IMAGE
+            // copies the whole state next; the ROM keeps the copy.
             Iwram_CopyWords(TRANSFERRED_FLAGS, gGameFlagBytes, 3904);
             return 0;
           }
@@ -1603,7 +1603,7 @@ void Clear_ApplyImportedData(s32 mode, u8 *in) {
   for (i = 0; i != 4; i++) {
     struct Unit *unit = Unit_Get(gClear_ImportedMembers[i]);
 
-    // Each member's Djinn cleared four times over.
+    // DEAD: the three clears after the first; the ROM keeps the loop.
     for (n = 0; n != 4; n++)
       Iwram_ClearWordsEntry(unit->djinnHeld, UNIT_DJINN_BYTES);
   }
@@ -1980,10 +1980,9 @@ u16 gClear_ButtonCode[] = {
 /// The second, longer code. With it a new game also names Garet, Ivan and Mia.
 u16 gClear_ExtraButtonCode[] = {
     KEY_UP, KEY_DOWN, KEY_UP, KEY_DOWN, KEY_LEFT, KEY_RIGHT, KEY_LEFT, KEY_RIGHT,
-#if (LANGUAGE == LANGUAGE_JAPANESE)
     KEY_UP, KEY_RIGHT, KEY_DOWN, KEY_LEFT, KEY_UP, KEY_SELECT, 0,
-#else
-    KEY_UP, KEY_RIGHT, KEY_DOWN, KEY_LEFT, KEY_UP, KEY_SELECT, 0, 0,
+#if TLA_PATCH_1
+    0,
 #endif
 };
 
@@ -2051,7 +2050,7 @@ s16 gClear_ExtraCodeHeld = 0;
 #undef RETURN_TO_SAVED
 #undef TRANSFERRED_FLAGS
 #undef TRANSFERRED_MAIN_ROUTINE_WORK
-#undef GOLDEN_SUN_SAVE_IMAGE_UNITS
+#undef BROKEN_SEAL_SAVE_IMAGE_UNITS
 #undef TRANSFERRED_SAVE
 #undef LINK_LANGUAGE_TAG
 #undef QUESTION_MESSAGE

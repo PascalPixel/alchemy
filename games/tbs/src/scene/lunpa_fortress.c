@@ -39,11 +39,11 @@
 /// EXIT_THROWN_OUT). A cloaked leader within four cells of a patrolling guard
 /// makes the watcher request CLOAK_NEAR_GUARD.
 ///
-/// The patrolling guards walk actor scripts (gFirstPatrolRoute and the
-/// others). They stop while a menu, Psynergy or an item is in use. They drag
-/// MAPGRID_LAYER_OVERHEAD along with them, shaking it by a pixel every frame.
-/// In the dark corridors that layer holds the circles of light the patrols
-/// carry, which flicker as they shake
+/// The patrolling guards walk actor scripts (gLunpaFortressFirstPatrolRoute and
+/// the others). They stop while a menu, Psynergy or an item is in use. They
+/// drag MAPGRID_LAYER_OVERHEAD along with them, shaking it by a pixel every
+/// frame. In the dark corridors that layer holds the circles of light the
+/// patrols carry, which flicker as they shake
 /// (https://alchemy.pascalpixel.com/places/lunpa-fortress-upper-floor/map-1.png
 /// shows the pair's two circles). Each has stretches of its rounds where it
 /// cannot see the leader.
@@ -3492,7 +3492,7 @@ static void LunpaFortress_RestoreToadonpaDoors(void) {
 
 s32 gLunpaFortressRandomPick = 0;
 
-s32 gSecondPatrolRoute[] = {
+s32 gLunpaFortressSecondPatrolRoute[] = {
     SC_ACCELERATION(1.1),
     SC_SPEED(1.1),
     SC_ANIMATION(2),
@@ -3505,7 +3505,7 @@ s32 gSecondPatrolRoute[] = {
     SC_LOOP(SC_FOREVER, SC_TOP),
 };
 
-s32 gFirstPatrolRoute[] = {
+s32 gLunpaFortressFirstPatrolRoute[] = {
     SC_ACCELERATION(1.1),
     SC_SPEED(1.1),
     SC_ANIMATION(2),
@@ -3523,7 +3523,7 @@ s32 gDonpaSleeps[] = {
     SC_END,
 };
 
-s32 gGroundFloorPatrolRoute[] = {
+s32 gLunpaFortressGroundFloorPatrolRoute[] = {
     SC_ACCELERATION(0.2),
     SC_SPEED(0.6),
     SC_ANIMATION(2),
@@ -3559,7 +3559,7 @@ s32 gGroundFloorPatrolRoute[] = {
     SC_LOOP(SC_FOREVER, SC_TOP),
 };
 
-s32 gHallPatrolRoute[] = {
+s32 gLunpaFortressHallPatrolRoute[] = {
     SC_ACCELERATION(0.2),
     SC_SPEED(0.6),
     SC_ANIMATION(2),
@@ -3796,7 +3796,7 @@ struct ActorPlacement gLunpaFortressGroundFloorActorPlacements[] = {
         192, 0, 432, FACING_SOUTH_SOUTHWEST, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(SPRITE_MAN_WITH_ORANGE_HAIR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         808, 0, 232, FACING_SOUTH_SOUTHEAST, TALK_FACING_PARTY, 0),
-    ACTOR_PLACEMENT(SPRITE_MAN_WITH_ORANGE_HAIR, CONDITION_ALWAYS, (s32)gGroundFloorPatrolRoute,
+    ACTOR_PLACEMENT(SPRITE_MAN_WITH_ORANGE_HAIR, CONDITION_ALWAYS, (s32)gLunpaFortressGroundFloorPatrolRoute,
         736, 0, 648, FACING_NORTH_NORTHWEST, TALK_FACING_PARTY, 0),
     ACTOR_PLACEMENT(SPRITE_YOUNG_MAN_WITH_BROWN_HAIR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         192, 0, 464, FACING_SOUTH_SOUTHWEST, TALK_FACING_PARTY, 0),
@@ -3810,9 +3810,9 @@ struct ActorPlacement gLunpaFortressGroundFloorActorPlacements[] = {
 struct ActorPlacement gLunpaFortressUpperFloorActorPlacements[] = {
     ACTOR_PLACEMENT(SPRITE_KEY, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         264, 0, 856, FACING_SOUTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(SPRITE_MAN_WITH_ORANGE_HAIR, CONDITION_ALWAYS, (s32)gFirstPatrolRoute,
+    ACTOR_PLACEMENT(SPRITE_MAN_WITH_ORANGE_HAIR, CONDITION_ALWAYS, (s32)gLunpaFortressFirstPatrolRoute,
         88, 0, 192, FACING_SOUTH, TALK_FACING_PARTY, 0),
-    ACTOR_PLACEMENT(SPRITE_MAN_WITH_ORANGE_HAIR, CONDITION_ALWAYS, (s32)gSecondPatrolRoute,
+    ACTOR_PLACEMENT(SPRITE_MAN_WITH_ORANGE_HAIR, CONDITION_ALWAYS, (s32)gLunpaFortressSecondPatrolRoute,
         88, 0, 288, FACING_SOUTH, TALK_FACING_PARTY, 0),
     ACTOR_PLACEMENT(SPRITE_MAN_WITH_ORANGE_HAIR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         456, 0, 392, FACING_SOUTH, TALK_FACING_PARTY, 0),
@@ -3826,7 +3826,7 @@ struct ActorPlacement gLunpaFortressUpperFloorActorPlacements[] = {
         312, 0, 840, FACING_SOUTH_SOUTHEAST, TALK_FACING_PARTY, 0),
     ACTOR_PLACEMENT(SPRITE_MAN_WITH_ORANGE_HAIR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         680, 0, 824, FACING_SOUTH, TALK_FACING_PARTY, 0),
-    ACTOR_PLACEMENT(SPRITE_MAN_WITH_ORANGE_HAIR, CONDITION_ALWAYS, (s32)gHallPatrolRoute,
+    ACTOR_PLACEMENT(SPRITE_MAN_WITH_ORANGE_HAIR, CONDITION_ALWAYS, (s32)gLunpaFortressHallPatrolRoute,
         920, 0, 600, FACING_SOUTH, TALK_FACING_PARTY, 0),
     ACTOR_PLACEMENT(SPRITE_WOMAN_IN_GREEN_DRESS, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         88, 0, 616, FACING_EAST, TALK_FACING_PARTY_AND_BACK, 0),

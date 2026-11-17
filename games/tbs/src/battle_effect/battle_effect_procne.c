@@ -225,6 +225,8 @@ void BattleEffect_RunProcne(struct BattleEffectParams *args) {
       size = frame * 2 - 32;
       if (size > PROCNE_WHIRLWIND_FOOT_HEIGHT)
         size = PROCNE_WHIRLWIND_FOOT_HEIGHT;
+      /* FAKEMATCH(temporary): width stands for PROCNE_WHIRLWIND_FOOT_HEIGHT,
+       * the same 48. */
       draw[0](canvas,
               &work->sheet[frame / 4 % 3 * PROCNE_WHIRLWIND_CEL +
                            (width - size) * PROCNE_WHIRLWIND_WIDTH],
@@ -419,10 +421,16 @@ void BattleEffect_RunProcne(struct BattleEffectParams *args) {
               angle = Random16() & TRIG_ANGLE_MASK;
               spark = &PARTICLES[slot * PROCNE_STRIKE_SPARK_ROWS + index];
               spark->velocityX = (Trig_Sin(angle) * speed) >> 6;
-              // DEAD: overwritten by the random speed after it, which moves
-              // the spark's depth too; the ROM keeps its store.
               spark->velocityY = -(Trig_Cos(angle) * speed) >> 6;
+              // BUG: the random depth speed is stored over velocityY, not in
+              // velocityZ as the other bursts store it, and z moves by
+              // velocityY: the up-and-down speed just set is lost, and a
+              // spark's depth moves with its height.
+#ifdef BUGFIX
+              spark->velocityZ = ((Random16() & 255) - 128) << 10;
+#else
               spark->velocityY = ((Random16() & 255) - 128) << 10;
+#endif
               SET_POSITION(spark, 0, 0, 0);
               spark->variant = (Random16() & 15) + 64;
             }
@@ -445,7 +453,11 @@ void BattleEffect_RunProcne(struct BattleEffectParams *args) {
                                  span);
                 spark[index].x += spark[index].velocityX;
                 spark[index].y += spark[index].velocityY;
+#ifdef BUGFIX
+                spark[index].z += spark[index].velocityZ;
+#else
                 spark[index].z += spark[index].velocityY;
+#endif
                 spark[index].variant--;
               }
             }

@@ -120,7 +120,7 @@ void BattleEffect_RunMegiddo(struct BattleEffectParams *args) {
       Sound_PlayFar(SE_LAUNCH);
     }
     if (frame == 143) {
-      Sound_PlayFar(SE_SHUDDER);
+      Sound_PlayFar(SE_191);
     }
     if (frame == 171) {
       Sound_PlayFar(SE_CRASH);

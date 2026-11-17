@@ -13,14 +13,14 @@
 /// palette word.
 u16 Color_ScaleComponents(s16 *rgb, FIXED redScale, FIXED greenScale,
                           FIXED blueScale) {
-  s32 red = rgb[0] * redScale >> 16;
-  s32 green = rgb[1] * greenScale >> 16;
-  s32 blue = rgb[2] * blueScale >> 16;
+  s32 red = FIXEDtoINT(rgb[0] * redScale);
+  s32 green = FIXEDtoINT(rgb[1] * greenScale);
+  s32 blue = FIXEDtoINT(rgb[2] * blueScale);
 
   CLAMP(red, 0, RGB_LEVEL_MAX);
   CLAMP(green, 0, RGB_LEVEL_MAX);
   CLAMP(blue, 0, RGB_LEVEL_MAX);
-  red |= blue << 10 | green << 5;
+  red |= RGB(0, green, blue);
   return red;
 }
 
@@ -64,20 +64,22 @@ void WindowColor_Apply(s32 phase, s32 brightness) {
   // 4 to 7 grow darker, from about 0.93, 0.8 and 1.07 to 0.63, 0.6 and 0.67,
   // and 8 to 10 lighter, up to about 1.23, 1 and 1.47.
   GLOW_COLOR_SET(4, Color_ScaleComponents(rgb, FIXED_ONE * 14 / 15,
-                                          FIXED_ONE * 4 / 5, 0x11110));
+                                          FIXED_ONE * 4 / 5, toFIXED(1.06666)));
   GLOW_COLOR_SET(5, Color_ScaleComponents(rgb, FIXED_ONE * 5 / 6,
                                           FIXED_ONE * 11 / 15,
                                           FIXED_ONE * 14 / 15));
   GLOW_COLOR_SET(6,
                  Color_ScaleComponents(rgb, FIXED_ONE * 11 / 15,
                                        FIXED_ONE * 2 / 3, FIXED_ONE * 4 / 5));
-  GLOW_COLOR_SET(7, Color_ScaleComponents(rgb, 0xa221, FIXED_ONE * 3 / 5,
-                                          FIXED_ONE * 2 / 3));
+  GLOW_COLOR_SET(7,
+                 Color_ScaleComponents(rgb, toFIXED(0.63333), FIXED_ONE * 3 / 5,
+                                       FIXED_ONE * 2 / 3));
   GLOW_COLOR_SET(8,
                  Color_ScaleComponents(rgb, FIXED_ONE * 31 / 30,
                                        FIXED_ONE * 13 / 15, FIXED_ONE * 6 / 5));
-  GLOW_COLOR_SET(9, Color_ScaleComponents(rgb, 0x12221, FIXED_ONE * 14 / 15,
-                                          FIXED_ONE * 4 / 3));
+  GLOW_COLOR_SET(9,
+                 Color_ScaleComponents(rgb, toFIXED(1.13333),
+                                       FIXED_ONE * 14 / 15, FIXED_ONE * 4 / 3));
   GLOW_COLOR_SET(10, Color_ScaleComponents(rgb, FIXED_ONE * 37 / 30, FIXED_ONE,
                                            FIXED_ONE * 22 / 15));
 }
@@ -134,9 +136,7 @@ void SettingsMenu_InitializeWork(void) {
                              sizeof(struct OptionMenuWork));
   zero = 0;
   Dma_Set((const void *)&zero, work,
-          (DMA_ENABLE | DMA_32BIT | DMA_SRC_FIXED) << 16 |
-              (sizeof(struct OptionMenuWork) / 4),
-          REG_DMA3);
+          DMA_FILL_WORDS(sizeof(struct OptionMenuWork) / 4), REG_DMA3);
   work->option[0] = gMainRoutineWork.windowHue;
   work->optionCount[0] = WINDOW_HUE_COUNT;
   work->option[1] = gMainRoutineWork.windowBrightness;
@@ -159,8 +159,9 @@ void SettingsMenu_Release(void) {
   HeapSlot_Release(HEAP_SLOT_SETTINGS_MENU);
 }
 
+/// The sprite palettes of the hue slider's ends and the brightness slider's.
 #define SLIDER_PALETTE 14
-#define RESOURCE_SLOTS 96
+#define BRIGHTNESS_SLIDER_PALETTE (SLIDER_PALETTE + 1)
 
 // The settings window's layout, sized to its labels: the window, the last
 // column of its dividers, the hue and brightness sliders and the message
@@ -243,7 +244,7 @@ struct Window *SettingsMenu_Open(void) {
   MenuCursor_SetPositionImmediateFar(&work->cursor, x, y);
 
   x = VramCache_FindFreeEntry();
-  if (x < RESOURCE_SLOTS) {
+  if (x < VRAM_CACHE_ENTRY_COUNT) {
     Dma_Set(gWorkspaceOptions_SliderPalette,
             (void *)&OBJ_PLTT_COLOR(SLIDER_PALETTE, 0), DMA_COPY_HALFWORDS(32),
             REG_DMA3);
@@ -257,15 +258,15 @@ struct Window *SettingsMenu_Open(void) {
     out->sprite.oam.palette = SLIDER_PALETTE;
     y = 16;
     out = WindowSprite_Create(x, OUTPUT_SIZE_32X8, win, OPTION_SLIDER_X - 6, y);
-    out->sprite.oam.palette = 15;
+    out->sprite.oam.palette = BRIGHTNESS_SLIDER_PALETTE;
     out =
         WindowSprite_Create(x, OUTPUT_SIZE_32X8, win, OPTION_SLIDER_X + 26, y);
     out->sprite.oam.index += 4;
-    out->sprite.oam.palette = 15;
+    out->sprite.oam.palette = BRIGHTNESS_SLIDER_PALETTE;
   }
 
   x = VramCache_FindFreeEntry();
-  if (x < RESOURCE_SLOTS) {
+  if (x < VRAM_CACHE_ENTRY_COUNT) {
     VramCache_Load(x, 256, 0);
     out = WindowSprite_Create(x, OUTPUT_SIZE_16X16, win, 0, 0);
     out->sprite.oam.fullColor = 1;
@@ -277,7 +278,7 @@ struct Window *SettingsMenu_Open(void) {
   }
 
   x = VramCache_FindFreeEntry();
-  if (x < RESOURCE_SLOTS) {
+  if (x < VRAM_CACHE_ENTRY_COUNT) {
     VramCache_Load(x, 256, 0);
     out = WindowSprite_Create(x, OUTPUT_SIZE_16X16, win, 0, 0);
     out->sprite.oam.fullColor = 1;
@@ -778,7 +779,7 @@ s32 PauseMenu_Choose(s32 initial) {
 
 #undef GLOW_COLOR_SET
 #undef SLIDER_PALETTE
-#undef RESOURCE_SLOTS
+#undef BRIGHTNESS_SLIDER_PALETTE
 #undef OPTION_WINDOW_X
 #undef OPTION_WINDOW_WIDTH
 #undef OPTION_DIVIDER_END

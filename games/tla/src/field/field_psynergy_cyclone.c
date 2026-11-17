@@ -182,6 +182,17 @@ void BattleEffect_SpinObject(struct MotionObject *object) {
 /// Cyclone cast on a target: runs FieldPsynergy_Cyclone.
 void FieldPsynergy_CycloneOnTarget(void) { FieldPsynergy_Cyclone(); }
 
+/// The frames the Cyclone's ring takes to rise to full height, and the frames
+/// its whirl of wind is drawn for, then whirls on as the Cyclone acts.
+#define CYCLONE_RING_RISE_FRAMES 20
+#define CYCLONE_WHIRL_FRAMES 60
+#define CYCLONE_SPIN_FRAMES 16
+/// A whirlwind ring widens or narrows a 32nd of its width a frame, an actor
+/// a 32nd of its size, so these are the frames for the whole ring and for
+/// half an actor.
+#define RING_RESIZE_FRAMES 32
+#define ACTOR_RESIZE_FRAMES 16
+
 /// Cyclone ("Conjure wind to scatter weeds."): the caster spins in a whirlwind
 /// of blue and white drawn on the canvas sprite, and the weeds on the cells
 /// round it (FieldPsynergy_GatherNearbyCells) are scattered.
@@ -211,11 +222,12 @@ void FieldPsynergy_Cyclone(void) {
   BattleEffect_SetObjectUpdateMode(effect->mainActor, 0);
   owner->update = BattleEffect_SpinObject;
   owner->timer = owner->facing;
+  // The whirl's colours: blue full, red and green rising from half to full.
   palette = (u16 *)&OBJ_PLTT_COLOR(CANVAS_PALETTE, 0);
-  blue = RGB_LEVEL_MAX << 10;
-  for (j = 0; j < 16; j++) {
-    c = j + 16;
-    Io_Write16((c << 5) | blue | c, palette);
+  blue = RGB(0, 0, RGB_LEVEL_MAX);
+  for (j = 0; j < PALETTE_COLORS; j++) {
+    c = j + (RGB_LEVEL_MAX + 1) / 2;
+    Io_Write16(RGB(0, c, 0) | blue | c, palette);
     palette++;
   }
   BattleEffect_StartCanvasSprite();
@@ -243,14 +255,15 @@ void FieldPsynergy_Cyclone(void) {
   ring->scaleY = 0;
   wait(1);
   Sound_PlayFar(SE_RUSH);
-  for (i = 0; i < 20; i++) {
-    ring->scaleY = FIXED_ONE * i / 20;
+  for (i = 0; i < CYCLONE_RING_RISE_FRAMES; i++) {
+    ring->scaleY = FIXED_ONE * i / CYCLONE_RING_RISE_FRAMES;
     wait(1);
   }
-  for (i = 0; i < 60; i++) {
+  for (i = 0; i < CYCLONE_WHIRL_FRAMES; i++) {
     for (j = 0; j < 4; j++)
-      Cyclone_PlotArc((s32)(spread + Random16() * 4 - (j << 16)) >> 16,
-                      Random16(), offsets, pixels);
+      Cyclone_PlotArc(
+          FIXEDtoINT((s32)(spread + Random16() * 4 - INTtoFIXED(j))),
+          Random16(), offsets, pixels);
     spread += step;
     if (spread > toFIXED(28))
       spread = toFIXED(28);
@@ -283,7 +296,7 @@ void FieldPsynergy_Cyclone(void) {
   if (mode == CYCLONE_CELL_LIFT) {
     if (work->kind)
       ParticleBurst_Start();
-    for (i = 0; i < 16; i++) {
+    for (i = 0; i < CYCLONE_SPIN_FRAMES; i++) {
       canvas->angle += TRIG_TURN / 64;
       canvas->command = CANVAS_UPLOAD_AND_DARKEN_ONE_LEVEL;
       wait(1);
@@ -315,7 +328,7 @@ void FieldPsynergy_Cyclone(void) {
   } else if (mode == CYCLONE_CELL_CARRY) {
     if (work->kind)
       ParticleBurst_Start();
-    for (i = 0; i < 16; i++) {
+    for (i = 0; i < CYCLONE_SPIN_FRAMES; i++) {
       canvas->angle += TRIG_TURN / 64;
       canvas->command = CANVAS_UPLOAD_AND_DARKEN_ONE_LEVEL;
       wait(1);
@@ -338,14 +351,14 @@ void FieldPsynergy_Cyclone(void) {
       wait(1);
     }
     Task_Remove(Cyclone_CarryLeader);
-    for (i = 0; i < 16; i++) {
-      owner->scaleX += -(FIXED_ONE / 32);
+    for (i = 0; i < ACTOR_RESIZE_FRAMES; i++) {
+      owner->scaleX += -(FIXED_ONE / RING_RESIZE_FRAMES);
       owner->scaleY = owner->scaleX;
       wait(1);
     }
     owner->scaleX = 0;
-    for (i = 0; i < 32; i++) {
-      ring->scaleX += -(FIXED_ONE / 32);
+    for (i = 0; i < RING_RESIZE_FRAMES; i++) {
+      ring->scaleX += -(FIXED_ONE / RING_RESIZE_FRAMES);
       ring->scaleY += -(FIXED_ONE / 128);
       wait(1);
     }
@@ -357,7 +370,7 @@ void FieldPsynergy_Cyclone(void) {
     Actor_SelectAnimationFar(ring, 6);
     if (work->kind)
       ParticleBurst_Start();
-    for (i = 0; i < 16; i++) {
+    for (i = 0; i < CYCLONE_SPIN_FRAMES; i++) {
       canvas->angle += TRIG_TURN / 64;
       canvas->command = CANVAS_UPLOAD_AND_DARKEN_ONE_LEVEL;
       wait(1);
@@ -376,7 +389,7 @@ void FieldPsynergy_Cyclone(void) {
   } else {
     Sound_PlayFar(SE_WHOOSH);
     Actor_SelectAnimationFar(ring, 6);
-    for (i = 0; i < 16; i++) {
+    for (i = 0; i < CYCLONE_SPIN_FRAMES; i++) {
       owner->facing += FACING_STEP;
       canvas->angle += TRIG_TURN / 64;
       canvas->command = CANVAS_UPLOAD_AND_DARKEN_ONE_LEVEL;
@@ -391,9 +404,13 @@ void FieldPsynergy_Cyclone(void) {
   HeapSlot_Release(HEAP_SLOT_BATTLE_EFFECT);
 }
 
-/// The actor leaves in a ring of light (sprite 280): for 128 frames it swings
-/// up and round inside the ring as the screen transition starts, then the
-/// ring vanishes with a whoosh and the camera follows the actor again.
+/// The frames Actor_DepartInRing's actor circles in its whirlwind.
+#define DEPART_FRAMES 128
+
+/// The actor leaves in a whirlwind (SPRITE_WHIRLWIND): as the screen
+/// transition starts it circles inside it for DEPART_FRAMES, from 96 pixels up
+/// and 32 out down to where it stood, then the whirlwind vanishes with a whoosh
+/// and the camera follows the actor again.
 void Actor_DepartInRing(s32 actorId) {
   struct Actor *actor = Actor_GetById(actorId);
   s32 angle = actor->facing;
@@ -419,11 +436,12 @@ void Actor_DepartInRing(s32 actorId) {
   Event_Start();
   Event_ResolvePendingActions(0);
   Event_StartScreenTransition();
-  for (i = 0; i < 128; i++) {
+  for (i = 0; i < DEPART_FRAMES; i++) {
     position[0] = x;
-    position[1] = y + Trig_Cos(i << 7) * 96;
+    position[1] = y + Trig_Cos(i * (TRIG_TURN / 4 / DEPART_FRAMES)) * 96;
     position[2] = z;
-    Vector_AddPolarOffset(Trig_Cos(i << 7) << 5, spin, position);
+    Vector_AddPolarOffset(Trig_Cos(i * (TRIG_TURN / 4 / DEPART_FRAMES)) * 32,
+                          spin, position);
     SET_ACTOR_POSITION(actor, position[0], position[1], position[2]);
     spin += TRIG_TURN / 64;
     SET_ACTOR_POSITION(ring, actor->x.fixed, actor->y.fixed - toFIXED(6),
@@ -442,12 +460,10 @@ void Actor_DepartInRing(s32 actorId) {
   FieldCamera_FollowActor(actorId, 1);
 }
 
-/// An event command, the arrival counterpart of Actor_DepartInRing. The actor
-/// spins (BattleEffect_SpinObject) at zero width and its sprite is hidden while
-/// object 280 grows on it for 32 frames; object 280 then snaps to 1.5 by 1
-/// (cue 136, mode 6) while the actor widens back from half size over 16 frames
-/// and shows again. Object 280 is destroyed and the actor's update and facing
-/// are restored.
+/// The actor arrives in a whirlwind, Actor_DepartInRing's counterpart: once
+/// the screen transition is done, a whirlwind (SPRITE_WHIRLWIND) widens on the
+/// unseen, spinning actor for RING_RESIZE_FRAMES, then vanishes with a whoosh
+/// as the actor grows back from half its size and shows again.
 void Actor_ArriveInRing(s32 actorId) {
   struct Actor *actor = Actor_GetById(actorId);
   s32 angle = actor->facing;
@@ -466,8 +482,8 @@ void Actor_ArriveInRing(s32 actorId) {
   Actor_SelectAnimationFar(ring, 2);
   ring->scaleX = FIXED_ONE / 2;
   ring->scaleY = FIXED_ONE * 3 / 4;
-  for (i = 0; i < 32; i++) {
-    ring->scaleX += FIXED_ONE / 32;
+  for (i = 0; i < RING_RESIZE_FRAMES; i++) {
+    ring->scaleX += FIXED_ONE / RING_RESIZE_FRAMES;
     ring->scaleY += FIXED_ONE / 128;
     wait(1);
   }
@@ -476,8 +492,9 @@ void Actor_ArriveInRing(s32 actorId) {
   Sound_PlayFar(SE_WHOOSH);
   Actor_SelectAnimationFar(ring, 6);
   actor->scaleY = actor->scaleX = FIXED_ONE / 2;
-  for (i = 0; i < 16; i++) {
-    actor->scaleY = actor->scaleX = actor->scaleX + FIXED_ONE / 32;
+  for (i = 0; i < ACTOR_RESIZE_FRAMES; i++) {
+    actor->scaleY = actor->scaleX =
+        actor->scaleX + FIXED_ONE / RING_RESIZE_FRAMES;
     wait(1);
   }
   Actor_SetSpriteFlagsFar(Actor_GetById(actorId), 1);
@@ -662,6 +679,13 @@ void Blaze_UpdateSpray(void) {
     work->angle = work->angle + turn;
   }
 }
+
+#undef CYCLONE_RING_RISE_FRAMES
+#undef CYCLONE_WHIRL_FRAMES
+#undef CYCLONE_SPIN_FRAMES
+#undef RING_RESIZE_FRAMES
+#undef ACTOR_RESIZE_FRAMES
+#undef DEPART_FRAMES
 
 void Teleport_PlaySparks(void);
 

@@ -58,24 +58,27 @@ struct WorldMapCell {
 /// An affine layer's BG map: 64 tiles a row, one byte each, two screen blocks
 /// in all.
 #define WORLD_MAP_SCREEN_WIDTH 64
+/// A map row as the halfwords that write it two tiles at a time.
+#define WORLD_MAP_SCREEN_ROW_HALFWORDS (WORLD_MAP_SCREEN_WIDTH / 2)
 #define WORLD_MAP_LAYER_SCREEN_BYTES                                           \
   (WORLD_MAP_SCREEN_WIDTH * WORLD_MAP_SCREEN_WIDTH)
 /// MapGridScrollWork's wideTiles, which the world map shares: any nonzero
 /// value has the tileset animations copy 64-byte tiles.
 #define WORLD_MAP_WIDE_TILES 128
 /// REG_DISPCNT's video mode bits.
-#define WORLD_MAP_DISPCNT_MODE 7
+#define DISPCNT_MODE_MASK 0x0007
 
 /// The window rows WorldMap_StartStillPicture sets, below the screen: the
 /// frame update then picks mode 0 and BG1 shows the still picture.
 #define WORLD_MAP_STILL_WINDOW_TOP 200
 #define WORLD_MAP_STILL_WINDOW_BOTTOM 255
-/// The still picture: 30 by 20 tiles of 256 colours, from tile 424 of BG1's
-/// character base.
+/// The first tile, in BG1's character base, of the 30 by 20 tile picture of
+/// 256 colours that screen block 6 numbers: the still picture's, and the
+/// world picture's (WorldPicture_Show).
 #define WORLD_MAP_STILL_FIRST_TILE 424
 #define WORLD_MAP_STILL_TILES (DISPLAY_TILE_WIDTH * DISPLAY_TILE_HEIGHT)
-/// Two BG map entries side by side, written a word at a time.
-#define WORLD_MAP_ENTRY_PAIR(left, right) ((right) << 16 | (left))
+/// Two background map entries side by side, written a word at a time.
+#define MAP_ENTRY_PAIR(left, right) ((right) << 16 | (left))
 
 /// Grid cell (column, row) shows its alternate tile.
 #define WORLD_MAP_USE_ALTERNATE_TILE(perspective, column, row)                 \
@@ -131,11 +134,12 @@ s32 WorldMap_WriteLayerCellTile(s32 layer, s32 x, s32 y, s32 tile, s32 update) {
         screenTiles[0] = *(u16 *)(Ram_MapGridCellBuffer + cellPictureId * 4);
         bottomTiles = (u16 *)(Ram_MapGridCellBuffer + 2);
         bottomTiles = (u16 *)((u8 *)bottomTiles + cellPictureId * 4);
-        screenTiles[WORLD_MAP_SCREEN_WIDTH / 2] = *bottomTiles;
+        screenTiles[WORLD_MAP_SCREEN_ROW_HALFWORDS] = *bottomTiles;
         screenTiles++;
         sourceTiles += 2;
       }
-      screenTiles += WORLD_MAP_SCREEN_WIDTH - WORLD_MAP_TILE_CELLS;
+      // A row of cells is two map rows.
+      screenTiles += 2 * WORLD_MAP_SCREEN_ROW_HALFWORDS - WORLD_MAP_TILE_CELLS;
     }
   }
   HeapSlot_Release(HEAP_SLOT_TILE_SCRATCH);
@@ -376,18 +380,18 @@ void WorldMap_LoadGraphics(s32 x, s32 z) {
           DMA_COPY_WORDS(WORLD_MAP_TILE_SET_BYTES / 4), REG_DMA3);
   Decompress_TaggedLz(Resource_GetTableEntry(resources[5]), gMapGridAnimTiles);
   // BG1's map (screen block 5) is filled with tile 127 of WINDOW_PALETTE, and
-  // screen block 6 numbers a 30 by 20 tile picture from tile 424, two
-  // tile numbers a word, for the still picture WorldMap_StartStillPicture
-  // shows.
+  // screen block 6 numbers a 30 by 20 tile picture from
+  // WORLD_MAP_STILL_FIRST_TILE, two tile numbers a word, for the still
+  // picture WorldMap_StartStillPicture shows.
   Dma_Fill32(WINDOW_TILE_PAIR(WINDOW_TILE(127)), BG_SCREEN_BLOCK(5), 1536);
   screenTiles = (u32 *)BG_SCREEN_BLOCK(6);
-  tilePair = WORLD_MAP_ENTRY_PAIR(WORLD_MAP_STILL_FIRST_TILE,
-                                  WORLD_MAP_STILL_FIRST_TILE + 1);
+  tilePair = MAP_ENTRY_PAIR(WORLD_MAP_STILL_FIRST_TILE,
+                            WORLD_MAP_STILL_FIRST_TILE + 1);
   for (screenRow = 0; screenRow < DISPLAY_TILE_HEIGHT; screenRow++) {
     for (screenColumn = 0; screenColumn < DISPLAY_TILE_WIDTH / 2;
          screenColumn++) {
       *screenTiles++ = tilePair;
-      tilePair += WORLD_MAP_ENTRY_PAIR(2, 2);
+      tilePair += MAP_ENTRY_PAIR(2, 2);
     }
     screenTiles++;
   }
@@ -412,7 +416,7 @@ void WorldMap_ApplyAffinePage(void) {
   struct WorldMapAffinePair(*affinePages)[DISPLAY_HEIGHT] =
       ((struct WorldMapAffineWork *)HEAP_SLOT_BLOCK(HEAP_SLOT_WORLD_MAP_AFFINE))
           ->pages;
-  s32 displayControl = (s16)(REG_DISPCNT & ~WORLD_MAP_DISPCNT_MODE);
+  s32 displayControl = (s16)(REG_DISPCNT & ~DISPCNT_MODE_MASK);
   u32 *affineRegisters = (u32 *)&REG_BG2PA;
   struct WorldMapView *perspective = gMapGridWork[0];
   volatile u16 *dma0 = REG_DMA0;
@@ -793,12 +797,13 @@ void WorldMap_LoadDefaultCellsAndUpdateBlock(void) {
 #undef WORLD_MAP_CELL_ROW_BYTES
 #undef WORLD_MAP_LAYER_CELL_BYTES
 #undef WORLD_MAP_SCREEN_WIDTH
+#undef WORLD_MAP_SCREEN_ROW_HALFWORDS
 #undef WORLD_MAP_LAYER_SCREEN_BYTES
 #undef WORLD_MAP_WIDE_TILES
-#undef WORLD_MAP_DISPCNT_MODE
+#undef DISPCNT_MODE_MASK
 #undef WORLD_MAP_STILL_WINDOW_TOP
 #undef WORLD_MAP_STILL_WINDOW_BOTTOM
 #undef WORLD_MAP_STILL_FIRST_TILE
 #undef WORLD_MAP_STILL_TILES
-#undef WORLD_MAP_ENTRY_PAIR
+#undef MAP_ENTRY_PAIR
 #undef WORLD_MAP_USE_ALTERNATE_TILE

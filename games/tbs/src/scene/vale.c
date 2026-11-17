@@ -125,7 +125,7 @@
 #include "window/window.h"
 #include "text/msg_ids.h"
 
-extern s32 gVale_AlephGuardPatrol[];
+extern s32 gVale_AlephGuardWalk[];
 extern s32 gVale_LeaderHammers[];
 extern s32 gVale_GaretWalksToTheHouse[];
 extern s32 gVale_UnusedWaterGrows[];
@@ -169,7 +169,15 @@ extern s32 gVale_JennaWalksToTheHouse[];
 #define VALE_DORA_Z 889
 #endif
 
-static void Vale_HaveJennaStopTheAlephDetour(void);
+// Where the pillar stands in each of the three columns it can be pushed to
+// below the cliff (cells 22 to 24 of row 36), two pixels east of each cell's
+// middle.
+#define PILLAR_WEST_X 362
+#define PILLAR_MIDDLE_X 378
+#define PILLAR_EAST_X 394
+#define PILLAR_Z 584
+
+static void Vale_JennaSaysKradenIsWaiting(void);
 static void Vale_AskAboutSneakingToAleph(const s32 *leaderActions,
                                          const s32 *guardActions);
 static void Vale_ClimbUpRoofLadder(s32 actorId, s32 approachAnimationId,
@@ -194,7 +202,7 @@ static void Actor_SetTargetPositionFromMagnitudeAngle(struct Actor *actor,
 static void Vale_MovePillarBelowCliff(void);
 static void Vale_PlayStepSound(void);
 static void Vale_SynchronizeAlephGuardPause(void);
-static void Vale_AdjustPillarPriorityForLeaderHeight(void);
+static void Vale_SetPillarPriorityByLeaderHeight(void);
 static void Vale_FlashActorAndSpawnEffects(struct Actor *actor);
 static void Vale_CycleActorPaletteAndSpawnEffects(struct Actor *actor);
 static void Vale_CycleActorPalette(struct Actor *actor);
@@ -286,7 +294,7 @@ enum ValeAfterKalayActorId {
   /// continent to crack!"
   ACTOR_OLD_WOMAN_ON_THE_ERUPTION = ACTOR_FIRST_WATER + 4,
   /// A woman in a green dress. "Aghh! I felt another one!"
-  /// (Vale_ReactToAnotherTremor)
+  /// (Vale_FeelAnotherTremor)
   ACTOR_WOMAN_FEELING_TREMORS,
   /// A little girl with orange pigtails. "They say the danger is gone, even
   /// though the earthquakes continue..."
@@ -484,7 +492,7 @@ static void Vale_ArgueWithGaretsSister(void) {
 
 /// Talking to Dora in Vale before the party leaves has her speak of the hole in
 /// the roof.
-static void Vale_DoraFretsAboutTheRoof(void) {
+static void Vale_DoraTalksAboutTheRoof(void) {
   Event_Start();
   if (GameFlag_Get(FLAG_VALE_ROOF_JUST_MENDED) != 0) {
     Event_SetMessageId(MsgValeIToldGaretItWas);
@@ -509,7 +517,7 @@ static void Vale_AskWhetherJennaHasReturned(void) {
 
 /// Back from Kalay, a woman in Vale (ACTOR_WOMAN_FEELING_TREMORS) feels
 /// another tremor, and the view shakes.
-static void Vale_ReactToAnotherTremor(void) {
+static void Vale_FeelAnotherTremor(void) {
   Event_Start();
   MapGrid_SetShake(3, 3, 1);
   wait(10);
@@ -566,7 +574,7 @@ static void Vale_EnterSanctum(void) {
 /// Kraden has planned the visit (FLAG_SANCTUM_VISIT_PLANNED).
 static void Vale_ApproachMtAleph(void) {
   if (GameFlag_Get(FLAG_SANCTUM_VISIT_PLANNED) == 0) {
-    Vale_HaveJennaStopTheAlephDetour();
+    Vale_JennaSaysKradenIsWaiting();
   } else {
     Sound_Play(SE_MAP_EXIT);
     Import_EventSetExitRequest(VALE_TO_SOL_ENTRANCE);
@@ -672,7 +680,7 @@ static void Vale_UnusedEnterJennasGrandparentsHouseByWestBankDoor(void) {
 
 /// On the path to Mt. Aleph in Vale, before the visit is planned, Jenna comes
 /// out to remind Isaac that Kraden is waiting, and he turns back.
-static void Vale_HaveJennaStopTheAlephDetour(void) {
+static void Vale_JennaSaysKradenIsWaiting(void) {
   struct Actor *leader;
   struct Actor *jenna;
 
@@ -842,7 +850,7 @@ static void Vale_WarnAgainstSneakingUpMtAleph(void) {
   Event_AskYesNo(ACTOR_MAN_GUARDING_MT_ALEPH, 0);
   Actor_Get(ACTOR_MAN_GUARDING_MT_ALEPH)->update =
       (void (*)(struct Actor *))Vale_HaveGuardWatchTheLeader;
-  Actor_SetScript(ACTOR_MAN_GUARDING_MT_ALEPH, gVale_AlephGuardPatrol);
+  Actor_SetScript(ACTOR_MAN_GUARDING_MT_ALEPH, gVale_AlephGuardWalk);
   GameFlag_Set(FLAG_VALE_WARNED_AGAINST_MT_ALEPH);
   Event_End();
 }
@@ -893,7 +901,7 @@ static void Vale_AskAboutSneakingToAleph(const s32 *leaderActions,
   Event_AskYesNo(ACTOR_MAN_GUARDING_MT_ALEPH, 0);
   Actor_Get(ACTOR_MAN_GUARDING_MT_ALEPH)->update =
       (void (*)(struct Actor *))Vale_HaveGuardWatchTheLeader;
-  Actor_SetScript(ACTOR_MAN_GUARDING_MT_ALEPH, gVale_AlephGuardPatrol);
+  Actor_SetScript(ACTOR_MAN_GUARDING_MT_ALEPH, gVale_AlephGuardWalk);
   Event_End();
 }
 
@@ -1497,8 +1505,8 @@ UNUSED static void Vale_UnusedRoofMended(void) {
   Event_End();
 }
 
-/// Vale's setup plays the roof mending (VALE_FROM_TITLE) or its end (entrance
-/// 17, once).
+/// Vale's setup plays the roof mending (VALE_FROM_TITLE) or its end
+/// (VALE_FROM_ROOF_MENDED, once).
 s32 Scene_Initialize(void) {
   struct Actor *actor;
   s32 set;
@@ -1520,18 +1528,18 @@ s32 Scene_Initialize(void) {
     actor = Actor_Get((GameFlag_Get(FLAG_KALAY_REACHED) != 0) + ACTOR_PILLAR);
     Actor_SetSpriteFlags(actor, 0);
     if (GameFlag_Get(FLAG_VALE_PILLAR_IN_WEST_COLUMN)) {
-      actor->x.fixed = 181 << 17;
+      actor->x.fixed = toFIXED(PILLAR_WEST_X);
     } else if (GameFlag_Get(FLAG_VALE_PILLAR_IN_EAST_COLUMN)) {
-      actor->x.fixed = 197 << 17;
+      actor->x.fixed = toFIXED(PILLAR_EAST_X);
     } else {
-      actor->x.fixed = 189 << 17;
+      actor->x.fixed = toFIXED(PILLAR_MIDDLE_X);
     }
-    actor->z.fixed = toFIXED(584);
+    actor->z.fixed = toFIXED(PILLAR_Z);
     actor->y.fixed = toFIXED(192);
     Vale_MovePillarBelowCliff();
     actor->layer = 3;
     actor->motionFlags = 0;
-    Task_AddFrame(Vale_AdjustPillarPriorityForLeaderHeight, TASK_PASS_FRAME);
+    Task_AddFrame(Vale_SetPillarPriorityByLeaderHeight, TASK_PASS_FRAME);
 #if TBS_PATCH_4
     if (GameFlag_Get(FLAG_KALAY_REACHED)) {
       if (GameFlag_Get(FLAG_KEEP_PARTY_POSITION)) {
@@ -1571,8 +1579,7 @@ s32 Scene_Initialize(void) {
             Actor_Get(ACTOR_MAN_GUARDING_MT_ALEPH)->update =
                 (void *)Vale_HaveGuardWatchTheLeader;
 #endif
-            Actor_SetScript(ACTOR_MAN_GUARDING_MT_ALEPH,
-                            gVale_AlephGuardPatrol);
+            Actor_SetScript(ACTOR_MAN_GUARDING_MT_ALEPH, gVale_AlephGuardWalk);
           }
         } else {
           Actor_Get(ACTOR_MAN_GUARDING_MT_ALEPH)->paused = set;
@@ -2107,7 +2114,7 @@ static void Vale_MendingTheRoof(void) {
   Actor_SetSpeed(ACTOR_OPENING_MOVE_HAND, 0.15);
   Actor_Get(ACTOR_OPENING_PILLAR);
   FieldActor_SetMoveTarget(moveHand, 392, 208, 584);
-  Actor_MoveToAndWait(ACTOR_OPENING_PILLAR, 378, 584);
+  Actor_MoveToAndWait(ACTOR_OPENING_PILLAR, PILLAR_MIDDLE_X, PILLAR_Z);
   Event_Wait(20);
   FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | ACTOR_JENNA, 0, 10);
   moveHand->update = NULL;
@@ -3051,7 +3058,8 @@ DEFINE_SET_TARGET_POSITION_FROM_MAGNITUDE_ANGLE(static,
 /// Pushing the pillar in Vale (cell behaviors 30 and 31) moves it a cell.
 static void Vale_PushPillar(void) {
 #if !TBS_PATCH_1
-  // Japanese edition only: look up the pillar but do not use the return value.
+  // DEAD: the Japanese edition looks the pillar up and drops it; the ROM keeps
+  // the calls.
   if (GameFlag_Get(FLAG_KALAY_REACHED))
     Actor_Get(ACTOR_PILLAR_AFTER_KALAY);
   else
@@ -3123,7 +3131,7 @@ static void Vale_SynchronizeAlephGuardPause(void) {
 }
 
 /// Keeps the raised pillar's priority in step with the leader's height.
-static void Vale_AdjustPillarPriorityForLeaderHeight(void) {
+static void Vale_SetPillarPriorityByLeaderHeight(void) {
   struct Actor *leader = Actor_Get(ACTOR_PARTY_LEADER);
   struct Actor *pillar;
   if (GameFlag_Get(FLAG_KALAY_REACHED) != 0)
@@ -3177,7 +3185,7 @@ static void Vale_CycleActorPalette(struct Actor *actor) {
 /// The man guarding Mt. Aleph walks his beat below the path once he has warned
 /// Isaac, looking about at each stop. SW_TIMER says which stretch he is on,
 /// 1 to 3, of which the warning scripts act on the two pauses, 1 and 2.
-s32 gVale_AlephGuardPatrol[] = {
+s32 gVale_AlephGuardWalk[] = {
     SC_SPEED(0.5),
     SC_ACCELERATION(0.25),
     SC_SET(SW_TIMER, 2),
@@ -3396,7 +3404,7 @@ struct ActorPlacement gVale_ActorPlacements[] = {
     ACTOR_PLACEMENT(SPRITE_BOY_WITH_ORANGE_HAIR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         398, 0, 616, FACING_NORTH, TALK_FACING_PARTY_AND_BACK, 0),
     ACTOR_PLACEMENT(SPRITE_STONE_PILLAR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        378, 0, 584, FACING_EAST, TALK_FACING_KEEP, 0),
+        PILLAR_MIDDLE_X, 0, PILLAR_Z, FACING_EAST, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(SPRITE_DORA, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         373, 0, VALE_DORA_Z, FACING_SOUTH, TALK_FACING_PARTY, 0),
     ACTOR_PLACEMENT(SPRITE_BEARDED_MAN_IN_LONG_ROBE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
@@ -3442,7 +3450,7 @@ struct ActorPlacement gVale_ActorPlacementsAfterLeaving[] = {
     ACTOR_PLACEMENT(SPRITE_BOY_WITH_ORANGE_HAIR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         398, 0, 616, FACING_NORTH, 3, 0),
     ACTOR_PLACEMENT(SPRITE_STONE_PILLAR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        378, 0, 584, FACING_EAST, TALK_FACING_KEEP, 0),
+        PILLAR_MIDDLE_X, 0, PILLAR_Z, FACING_EAST, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(SPRITE_DORA, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         335, 0, 869, FACING_SOUTH, TALK_FACING_PARTY, 0),
     ACTOR_PLACEMENT(SPRITE_BEARDED_MAN_IN_LONG_ROBE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
@@ -3488,7 +3496,7 @@ struct ActorPlacement gVale_ActorPlacementsAfterKalay[] = {
     ACTOR_PLACEMENT(SPRITE_BLANK, FLAG_VALE_NUT_CAUGHT, MOVEMENT_TYPE_STAND,
         152, 0, 1016, FACING_SOUTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(SPRITE_STONE_PILLAR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        378, 0, 584, FACING_EAST, TALK_FACING_KEEP, 0),
+        PILLAR_MIDDLE_X, 0, PILLAR_Z, FACING_EAST, TALK_FACING_KEEP, 0),
     { SCENE_TABLE_END },
 };
 
@@ -3500,7 +3508,7 @@ struct ActorPlacement gVale_RepairActorPlacements[] = {
     ACTOR_PLACEMENT(SPRITE_WOMAN_IN_GREEN_DRESS, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         204, 0, 924, FACING_EAST, TALK_FACING_PARTY, 0),
     ACTOR_PLACEMENT(SPRITE_STONE_PILLAR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        394, 0, 584, FACING_SOUTH, TALK_FACING_KEEP, 0),
+        PILLAR_EAST_X, 0, PILLAR_Z, FACING_SOUTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(SPRITE_DORA, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         373, 0, VALE_DORA_Z, FACING_NORTH, TALK_FACING_PARTY, 0),
     ACTOR_PLACEMENT(SPRITE_ROOF_BOARDS, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
@@ -3524,7 +3532,7 @@ struct Trigger gVale_Triggers[] = {
     { TRIGGER_TALK, ACTOR_WOMAN_ON_THE_WAY_TO_KRADEN, CONDITION_ALWAYS, EVENT(Vale_WarnAboutGoingBeyondKradensCottage) },
     { TRIGGER_TALK, ACTOR_GARETS_SISTER, CONDITION_ALWAYS, EVENT(Vale_ArgueWithGaretsSister) },
     { TRIGGER_TALK, ACTOR_GARETS_BROTHER, CONDITION_ALWAYS, MSGNO(MsgValeYoureInTroubleNowGaretYour) },
-    { TRIGGER_TALK, ACTOR_DORA, CONDITION_ALWAYS, EVENT(Vale_DoraFretsAboutTheRoof) },
+    { TRIGGER_TALK, ACTOR_DORA, CONDITION_ALWAYS, EVENT(Vale_DoraTalksAboutTheRoof) },
     { TRIGGER_TALK, ACTOR_MAN_GUARDING_MT_ALEPH, CONDITION_ALWAYS, MSGNO(MsgValeMtAlephIsASacredPeak) },
     { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 1, CONDITION_ALWAYS, EVENT(Vale_EnterSanctum) },
     { TRIGGER_STEP, 2, CONDITION_ALWAYS, EVENT(Vale_ApproachMtAleph) },
@@ -3614,7 +3622,7 @@ struct Trigger gVale_TriggersAfterKalay[] = {
     { TRIGGER_TALK, ACTOR_YOUNG_MAN_ASKING_FOR_JENNA, CONDITION_ALWAYS, MSGNO(MsgValePromiseMeIsaacPromiseMeYoull) },
     { TRIGGER_TALK, ACTOR_STRONGMAN_REMEMBERING_FELIX, CONDITION_ALWAYS, MSGNO(MsgValeIUsedToPlayHere) },
     { TRIGGER_TALK, ACTOR_OLD_WOMAN_ON_THE_ERUPTION, CONDITION_ALWAYS, MSGNO(MsgValeMtAlephsEruptionWasSoPowerful) },
-    { TRIGGER_TALK, ACTOR_WOMAN_FEELING_TREMORS, CONDITION_ALWAYS, EVENT(Vale_ReactToAnotherTremor) },
+    { TRIGGER_TALK, ACTOR_WOMAN_FEELING_TREMORS, CONDITION_ALWAYS, EVENT(Vale_FeelAnotherTremor) },
     { TRIGGER_TALK, ACTOR_GIRL_DOUBTING_SAFETY, CONDITION_ALWAYS, MSGNO(MsgValeTheySayTheDangerIsGone) },
     { TRIGGER_TALK, ACTOR_MAN_MISSING_TRAVELERS, CONDITION_ALWAYS, EVENT(Vale_AskAboutTheLackOfTravelers) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), TRIGGER_SUBJECT_OWN_EFFECT | ACTOR_GARETS_SISTER_AFTER_KALAY, FLAG_VALE_GARET_MET_SISTER, EVENT(Vale_GaretMeetsHisSister) },

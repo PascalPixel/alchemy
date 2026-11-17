@@ -7,7 +7,8 @@
 /// in sound/songs are named. A row of the empty song (dummy_song_header), which
 /// plays nothing, has no name, and the next named row's number is written
 /// after it. A sequence nothing plays by name yet keeps its number as its
-/// placeholder. Unused: every such sequence is one no code or table in the game
+/// placeholder, unless The Lost Age names the same sequence, whose name it then
+/// takes. Unused: every such sequence is one no code or table in the game
 /// plays, by name or by number; only the sound test (SoundTest_Run), which
 /// nothing calls, can start one, so none is heard where a name could come from.
 /// The named ones are the code's own, the field music gScene_MusicRules and
@@ -237,7 +238,9 @@ enum SoundId {
   /// win, a Tolbi Spring prize over 19,999 coins, and five levels from the
   /// debug level editor.
   MUS_JINGLE_LARGE,
-  MUS_095 = 95,
+  /// Unused: a song of no tracks, as MUS_SILENCE is, on the jingles' player;
+  /// nothing plays it.
+  MUS_UNUSED_SILENCE_JINGLE = 95,
   /// The Vault bell rung, and three times as a shop repairs an item.
   SE_BELL = 100,
   /// An item bought in a shop, artifacts included.
@@ -247,8 +250,13 @@ enum SoundId {
   /// A cursed item equipped from the menu or in a shop; it also plays as Hydros
   /// is beaten on Altin Peak, and in the lobbed-shell battle effects.
   SE_CURSE,
-  SE_104,
-  SE_105,
+  /// Unused: nothing plays it here. The Lost Age plays the same sequence as
+  /// something is launched, such as a rolling block (Actor_LaunchAhead), and in
+  /// several battle effects.
+  SE_LAUNCH,
+  /// Unused: nothing plays it here. The Lost Age plays the same sequence as
+  /// Super Lucky Dice's winnings are counted into the party's coins.
+  SE_COIN_PAYOUT,
   /// Each water drop landing in Vault Cave; also the curse's sparkles meeting
   /// Mia's Psynergy at Kolima and Kolima Forest's barrier, and the villagers
   /// trying to save Felix from the river on the stormy night. It sounds like a
@@ -291,7 +299,9 @@ enum SoundId {
   SE_120,
   /// The guards throwing the leader out of Lunpa.
   SE_SCUFFLE,
-  SE_122,
+  /// Unused: nothing plays it here. The Lost Age plays the same sequence as
+  /// Gasp flees the party on the Trial Road.
+  SE_DJINNI_FLEES,
   /// Leaving a scene through an ordinary exit.
   SE_MAP_EXIT,
   /// Played as a chest's lid lifts (TreasureSpot_OpenChest); also a Psynergy
@@ -443,14 +453,18 @@ enum SoundId {
   /// The light particles a joining Jupiter Djinni scatters, and the Neptune,
   /// Nereid, Titan Blade and Froth battle effects.
   SE_SCATTER,
-  SE_165,
+  /// Unused: nothing plays it here. The Lost Age plays the same sequence as the
+  /// birds land on Venus Lighthouse's entrance and fly off.
+  SE_BIRD_WINGS,
   SE_166,
   /// A map transition effect.
   SE_MAP_TRANSITION,
-  SE_168,
-  // XXX: likely wind, because none of the three has the water SE_AMBIENT_WATER
-  // plays beside; the sequence alone can't tell wind from water, so a recording
-  // of one of the three scenes would settle it.
+  /// Unused: nothing plays it here. The Lost Age plays the same sequence three
+  /// times as the Ruin Key opens the Madra Catacombs.
+  SE_UNLOCK,
+  // XXX (no evidence): whether this is wind, as none of the three scenes has
+  // the water SE_AMBIENT_WATER plays beside; the sequence alone can't tell wind
+  // from water, and no recording in reach carries sound.
   /// The ambient sound a scene queues in Lama Temple, Xian and the Manticore's
   /// part of Lamakan Desert (Scene_QueueMusic). It sounds like a steady quiet
   /// hiss, a little darker and softer than SE_AMBIENT_WATER on the same noise
@@ -484,9 +498,16 @@ enum SoundId {
   /// The villager at Kolima's post jumping to it, as the drawbridge is lowered
   /// (Kolima_LowerBridge).
   SE_KOLIMA_BRIDGE_HOP,
-  SE_177,
-  SE_178,
-  SE_179,
+  /// Unused: nothing plays it here. The Lost Age plays the same sequence as the
+  /// Thunder card strikes in Legend's element cards.
+  SE_THUNDER_CARD,
+  /// Unused: nothing plays it here. The Lost Age plays the same sequence as
+  /// power gathers round the leader lighting Jupiter Lighthouse, and round
+  /// Alex.
+  SE_GATHERING_POWER,
+  /// Unused: nothing plays it here. The Lost Age plays the same sequence as the
+  /// wind funnel battle effect forms.
+  SE_WIND_FUNNEL,
   /// The Tunnel Ruins' balance settling, and Venus Lighthouse's floating
   /// pillars lowering.
   SE_SETTLE,
@@ -525,18 +546,34 @@ enum SoundId {
   /// Elemental Star room, the party rising to that room, Hydros beaten, and
   /// Altmiller Cave's rock turned.
   SE_WARP,
+  /// Unused: nothing plays it here. The Lost Age plays the same sequence as
+  /// Gaia Rock's altar faces part, at Zagan's frame 32 and in Megiddo's dive.
   SE_191,
-  SE_192,
-  SE_193,
-  SE_194,
-  SE_195,
+  /// Unused: nothing plays it here. The Lost Age plays the same sequence for
+  /// Shriek's and Harpy's cry.
+  SE_SHRIEK,
+  /// Unused: nothing plays it here. The Lost Age plays the same sequence as a
+  /// doll is placed on one of Gaia Rock's altars.
+  SE_DOLL_PLACED,
+  /// Unused: nothing plays it here. The Lost Age plays the same sequence as a
+  /// Psynergy Stone's tablet rises while Reveal, Parch, Sand or Blaze is
+  /// learned.
+  SE_TABLET_RISE,
+  /// Unused: nothing plays it here. The Lost Age plays the same sequence for
+  /// the sparks that circle the leader as Reveal, Parch, Sand or Blaze is
+  /// learned.
+  SE_SPARKS,
   /// The Wise One's quest asked in the Sanctum.
   SE_WISE_ONE_QUEST,
-  SE_197,
+  /// Unused: nothing plays it here. The Lost Age plays the same sequence as the
+  /// Great Gabomba speaks to Kibombo's witch doctor.
+  SE_GABOMBA_VOICE,
   /// The villager reaching Kolima's post, after SE_KOLIMA_BRIDGE_HOP, before
   /// the drawbridge comes down.
   SE_KOLIMA_BRIDGE_POST,
-  SE_199,
+  /// Unused: nothing plays it here. The Lost Age plays the same sequence as a
+  /// water column rises in battle.
+  SE_WATER_COLUMN,
   /// The curse's sparkles at Kolima and Kolima Forest, Tret rejecting the
   /// party, and Sol Sanctum's statue opening its central hole.
   SE_SPARKLE_FALL,
@@ -551,7 +588,9 @@ enum SoundId {
   /// Venus Lighthouse; the Tret Tree's cocoons and rooms; and the water drops
   /// striking Vault Cave's pillars.
   SE_DUST_PUFF,
-  SE_205,
+  /// Unused: SE_AMBIENT_STREAM's notes ten semitones higher, louder, on another
+  /// voice and not held; nothing plays it.
+  SE_UNUSED_AMBIENT_STREAM_HIGH,
   /// Kolima and Kolima Forest cursed as the party watches, and a cocoon stepped
   /// on in the Tret Tree.
   SE_CURSE_FALL,
@@ -600,10 +639,14 @@ enum SoundId {
   /// An actor lifted into a passage of Mercury Lighthouse amid sparks
   /// (MercuryLighthouse_RaiseActorWithSparks).
   SE_RISE_WITH_SPARKS,
-  SE_222,
+  /// Unused: nothing plays it here. The Lost Age plays the same sequence as the
+  /// whirlwinds of Air's Rock appear.
+  SE_WHIRLWIND,
   /// The lifts of Mercury Lighthouse and its aerie, as they carry the party.
   SE_LIFT,
   SE_224,
+  /// Unused: nothing plays it here. The Lost Age plays the same sequence at
+  /// Moloch's frame 90.
   SE_225,
   /// A pusher and its log moving together: the Colosso, Crossbone Isle and
   /// Donpa's judgment in the Lunpa Fortress.
@@ -632,7 +675,9 @@ enum SoundId {
   /// Dora and Isaac turning to run back as Kyle heads down, on the stormy
   /// night.
   SE_RUN_BACK,
-  SE_235,
+  /// Unused: nothing plays it here. The Lost Age plays the same sequence as
+  /// Air's Rock blows its gusts.
+  SE_GUST,
   /// Each of the countdown's 3, 2 and 1 before a Colosso round, before
   /// SE_COLOSSO_GO.
   SE_COLOSSO_COUNTDOWN,
@@ -654,11 +699,16 @@ enum SoundId {
   /// a Lamakan Desert oasis.
   SE_WATER_MOVE,
   SE_242,
-  SE_243,
+  /// Unused: nothing plays it here. The Lost Age plays the same sequence as a
+  /// lift of the Lemurian Ship is stepped on.
+  SE_LEMURIAN_SHIP_LIFT,
   /// Suhalla Desert's sandstorms rising, and the sandstorm catching the party
   /// on the world map.
   SE_SANDSTORM,
-  SE_245,
+  /// Unused: nothing plays it here. The Lost Age holds the same notes, on
+  /// another voice, while a room's air or water streams, as in Air's Rock's
+  /// inner rooms.
+  SE_AMBIENT_STREAM,
   /// A spring searched, Retreat, the curse dust at Kolima, Tret restored,
   /// Mercury Lighthouse's Ply, Fuchin Temple's Reveal lesson, and the eruption
   /// in Sol Sanctum.
@@ -666,10 +716,15 @@ enum SoundId {
   /// The lettering of a Colosso match's round and result, and of a Colosseum
   /// trial failed or cleared.
   SE_COLOSSO_LETTERING,
-  SE_248,
+  /// Unused: nothing plays it here. The Lost Age plays the same sequence as an
+  /// arrow of the Gabomba Statue is raised or lowered.
+  SE_GABOMBA_STATUE_ARROW,
   SE_249,
-  SE_250,
-  SE_251,
+  /// Unused: SE_BLACK_CRYSTAL_SET seven semitones lower; nothing plays it.
+  SE_UNUSED_BLACK_CRYSTAL_SET_LOW,
+  /// Unused: nothing plays it here. The Lost Age plays the same sequence as the
+  /// Black Crystal is set on the Lemurian Ship.
+  SE_BLACK_CRYSTAL_SET,
   /// A Colosso warrior fading in (Colosso_FadeInWarrior).
   SE_COLOSSO_WARRIOR_APPEAR,
   SE_253,
@@ -730,12 +785,17 @@ enum SoundId {
   /// Not a sound: fades player 3 out over 48 VBlanks, so this row of the song
   /// table never plays.
   SOUND_FADE_OUT_ACTION_SE,
-  SE_290,
-  SE_291,
+  /// Unused: SE_TAKE_FLIGHT higher, its first track six semitones up with one
+  /// note fewer and its second four up; nothing plays it.
+  SE_UNUSED_TAKE_FLIGHT_HIGH,
+  /// Unused: nothing plays it here. The Lost Age plays the same sequence as an
+  /// actor takes flight.
+  SE_TAKE_FLIGHT,
   /// The pair of upright effects spawned in the eruption at Sol Sanctum
   /// (SolSanctumEruption_SpawnEffectPair).
   SE_ERUPTION_COLUMNS,
-  SE_293,
+  /// Unused: SE_ERUPTION_COLUMNS four semitones lower; nothing plays it.
+  SE_UNUSED_ERUPTION_COLUMNS_LOW,
   /// A sound with no tracks on player 5, which stops what plays there, as a
   /// map's exit and stairs sounds do; played before each queued scene sound
   /// (Scene_QueueMusic).
@@ -764,7 +824,9 @@ enum SoundId {
   /// The Venus Star bouncing three times as Saturos throws it into the beacon
   /// at Venus Lighthouse's aerie.
   SE_STAR_BOUNCE,
-  SE_310,
+  /// Unused: nothing plays it here. The Lost Age plays the same sequence as the
+  /// leader drops down a ledge or through a hole.
+  SE_FALL,
   SE_311
 };
 

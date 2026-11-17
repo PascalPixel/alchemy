@@ -1,4 +1,16 @@
 /// @file
+/// The World Map (SceneId_WorldMap), the perspective map that joins the areas,
+/// and the only scene of this overlay.
+///
+/// It lets the party into the areas as The Broken Seal's does. On it the party
+/// meets Echo and six more Djinn, sails and later flies the Lemurian Ship,
+/// gazes into a pond and finds the Golden Boots, and the story plays several
+/// of its scenes here: Venus Lighthouse lit and falling as Idejima breaks away
+/// and drifts north on a tidal wave, the first voyage at the tiller, Loho's
+/// men bringing the cannon aboard, the bandit and thieves from Vault after a
+/// linked game, the party carried in sparkles to Aqua Rock, and Jupiter's
+/// beacon seen lit from the sea.
+
 #include "djinn_ids.h"
 #include "fixed_math.h"
 #include "flags.h"
@@ -20,7 +32,9 @@
 #include "field/field_coordinate.h"
 #include "field/field_sequence_event.h"
 #include "field/field_sprite.h"
+#include "field/map.h"
 #include "field/map_grid.h"
+#include "field/perspective.h"
 #include "field/scene_tables.h"
 #include "field/sprite.h"
 #include "game/game.h"
@@ -118,12 +132,20 @@ enum WorldMapCellBehavior {
   CELL_BEHAVIOR_WORLD_MAP_CORE
 };
 
+/// The World Map's blocks (struct WorldMapBlocks): 32 pixels square, 32 to a
+/// row and a column.
+#define WORLD_MAP_BLOCK_SIZE toFIXED(32)
+#define WORLD_MAP_BLOCKS_ACROSS 32
+/// A block's terrain byte: the party may step ashore from the open sea here.
+#define WORLD_MAP_BLOCK_LANDING (1 << 6)
+
 /// The base of the cell behaviors an area's placed actor raises when touched
 /// (gWorldMap_PlacedActors), as The Broken Seal's; the areas with two ways in
 /// choose one by the leader's approach.
 enum { STEP_TRIGGER_AREA_BASE = 100 };
 #define STEP_TRIGGER_AREA(area) (STEP_TRIGGER_AREA_BASE + (area))
-enum { AREA_DAILA = 0, AREA_YALLAM = 25, AREA_PROX = 50 };
+/// Daila's, Yallam's and Prox's slots among gWorldMap_PlacedActors.
+enum { PLACED_DAILA = 0, PLACED_YALLAM = 25, PLACED_PROX = 50 };
 
 void Gauge_Update(void);
 
@@ -182,7 +204,7 @@ extern s32 gWorldMap_TidalWaveScript[];
 
 extern u32 gWorldMap_GlowColorModes[];
 
-s32 WorldMap_GetBlockPlace(s32 *position);
+s32 WorldMap_GetBlockCellBehavior(s32 *position);
 
 s32 gWorldMap_HiddenMembers[8] BSS_DATA;
 struct Actor *gWorldMap_PlacedActors[128] BSS_DATA;
@@ -347,10 +369,10 @@ s32 WorldMap_SetUpEcho(struct Actor *actor) {
 
 /// Turns the island's sprite with the World Map's view and shows it.
 s32 WorldMap_SetIslandTile(struct Actor *actor) {
-  u16 *tile = (u16 *)((u8 *)Ram_HeapSlots->mapGrid + 286);
+  u16 *yaw = &((struct WorldMapView *)Ram_HeapSlots->mapGrid)->yaw;
   struct FieldSprite *sprite = actor->sprite;
 
-  sprite->rotation = *tile;
+  sprite->rotation = *yaw;
   sprite->flags = 0;
   return 1;
 }
@@ -361,8 +383,8 @@ s32 WorldMap_SetUpWave(struct Actor *actor) {
   return 0;
 }
 
-/// With flag 0x200 set the object is released, takes acceleration and speed
-/// limit 0x1000 and is sent to an offset of its position.
+/// Once the scene's first temporary flag is set, the tidal wave shows and
+/// rolls slowly 30 pixels west and 8 south.
 s32 WorldMap_SendWaveIn(struct Actor *actor) {
   FIXED x, z;
 
@@ -407,6 +429,10 @@ enum WorldMapEntrance {
   WORLD_MAP_DEBUG_SAILING = 99
 };
 
+/// Alhafra Manor's entrance back from the view of Air's Rock, beside the man
+/// who showed it (alhafra_manor.c's ENTRANCE_BACK_FROM_THE_VIEW).
+#define ALHAFRA_MANOR_FROM_WORLD_MAP_VIEW 80
+
 /// The world map's exits its story scenes leave by (gSceneExits).
 enum WorldMapExit {
   WORLD_MAP_EXIT_IDEJIMA_DRIFTING = 64,
@@ -434,8 +460,8 @@ const struct ActorPlacement *Scene_GetActorPlacements(void) {
   }
 }
 
-/// The world map's render mode 8 start: with FLAG_SHIP_HOVERING a blank message
-/// is shown first, the event work's counters are cleared.
+/// The flying ship takes the map: Hover's name is shown first while the ship
+/// hovers, the PP gauge goes up, and the field's pending actions are cleared.
 void WorldMap_SetUpFlyingShip(void) {
   struct FieldWork *work = Ram_HeapSlots->fieldWork;
 
@@ -465,8 +491,8 @@ void WorldMap_SetUpFlyingShip(void) {
   work->psynergy = 0;
 }
 
-/// Sets render mode 7, clears object 8's child flags, then adds up the PP of
-/// the active party; when it is 0, the current owner gets 1 PP back.
+/// The ship sails the map again, out of flight: the PP gauge goes, and a party
+/// with no PP left at all gives the leader 1 back.
 void WorldMap_SetUpShip(void) {
   s32 count;
   s32 pp;
@@ -488,7 +514,7 @@ void WorldMap_SetUpShip(void) {
 
 void Actor_StartIdle(struct Actor *actor);
 
-/// The leader jumps aboard the ship, actor 8, when close enough.
+/// The leader jumps aboard the ship when close enough.
 void WorldMap_BoardShip(void) {
   struct FieldWork *work = Ram_HeapSlots->fieldWork;
   struct Actor *leader;
@@ -549,8 +575,8 @@ void WorldMap_LeaveShip(void) {
   FIXED position[3];
   s32 shore = 0;
   s32 blocked;
-  u8 *block;
-  u8 *blocks = gCellPictures;
+  struct WorldMapBlock *block;
+  struct WorldMapBlocks *blocks = (struct WorldMapBlocks *)gCellPictures;
   u8 flags;
 
   position[0] = ship->x.fixed;
@@ -558,15 +584,18 @@ void WorldMap_LeaveShip(void) {
   position[2] = ship->z.fixed;
   Vector_AddPolarOffset(toFIXED(24), ship->facing, position);
   blocked = 0;
-  block = blocks + ((((position[0] / toFIXED(32)) & 31) +
-                     ((position[2] / toFIXED(32)) & 31) * 32) *
-                    4);
-  if (cell > 12) {
+  block = &blocks->blocks[(position[0] / WORLD_MAP_BLOCK_SIZE &
+                           WORLD_MAP_BLOCKS_ACROSS - 1) +
+                          (position[2] / WORLD_MAP_BLOCK_SIZE &
+                           WORLD_MAP_BLOCKS_ACROSS - 1) *
+                              WORLD_MAP_BLOCKS_ACROSS];
+  if (cell > WORLD_MAP_COLLISION_WALKABLE_LAST) {
     blocked = 1;
   } else {
-    if ((u32)(cell - 1) <= 2)
+    if ((u32)(cell - WORLD_MAP_COLLISION_SEA_FIRST) <= 2)
       shore = 1;
-    if ((block[3] & 64) == 0 && shore != 0) {
+    if ((block->unusedAfterPlace & WORLD_MAP_BLOCK_LANDING) == 0 &&
+        shore != 0) {
       blocked = 1;
     } else {
       position[0] += toFIXED(6);
@@ -758,7 +787,7 @@ void WorldMap_GazeIntoPond(void) {
     s32 slot = ACTOR_POND_COINS;
     struct Actor *actor = Actor_Get(FieldParty_GetLeaderActor());
     struct Unit *unit = Unit_Get(gMainRoutineWork.leaderActorId);
-    s32 amount = (((unit->level * Random16()) << 1) >> 16) + 0x8001;
+    s32 amount = (((unit->level * Random16()) << 1) >> 16) + SCOOPED_COINS + 1;
     FIXED position[3];
     FIXED x;
 
@@ -785,7 +814,7 @@ void WorldMap_GazeIntoPond(void) {
     /* FAKEMATCH(dead): the store and the call in a once-only block. */
     do {
       work->scoopedItem = amount;
-      Scene_TalkToActor(0x1000 | slot);
+      Scene_TalkToActor(FIELD_TALK_SILENT | slot);
     } while (0);
   } else if (roll == 1) {
     MapGrid_SetShake(3, 5, 1);
@@ -950,6 +979,8 @@ s32 Scene_Initialize(void) {
     Event_SetFlag(FLAG_SHIP_SAILABLE);
     Event_SetFlag(FLAG_SHIP_FLIES);
     Event_SetFlag(FLAG_DEBUG_STEPS_OFF);
+    // XXX (no evidence): what flag 0x11d is; no code of this game reads it,
+    // and only these two debug arrivals set it.
     Event_SetFlag(0x11d);
     Event_SetDestination(SCENE_WORLD_MAP, WORLD_MAP_AT_NORTHERN_REACHES);
     break;
@@ -1664,8 +1695,8 @@ refused:
 
 extern u32 gWorldMap_CollapseDustScript[];
 
-/// Spawns object 285 at a random spot with a random scale and starts its
-/// script.
+/// A cloud of dust thrown up at a random spot as the earthquake that fells
+/// Venus Lighthouse shakes the land, at a random scale.
 void WorldMap_SpawnCollapseDust(void) {
   struct Actor *obj;
   struct FieldSprite *sprite;
@@ -1674,8 +1705,8 @@ void WorldMap_SpawnCollapseDust(void) {
   FIXED z;
   s32 scale;
 
-  x = (Random_Below(40)) << 16;
-  z = (Random_Below(30)) << 16;
+  x = toFIXED(Random_Below(40));
+  z = toFIXED(Random_Below(30));
   obj = (FieldActor_Create(SPRITE_DUST_CLOUD, x + toFIXED(1976), 0,
                            z + toFIXED(7260)));
   if (obj != NULL) {
@@ -1873,7 +1904,7 @@ void WorldMap_ShowIdejimaDrifting(void) {
 /// Idejima drifts north; a tidal wave rises behind it and carries it away.
 void WorldMap_DriftNorthOfContinent(void) {
   struct Actor *boat = Actor_Get(ACTOR_IDEJIMA);
-  struct RescueMap *map = (struct RescueMap *)Ram_HeapSlots->mapGrid;
+  struct WorldMapView *view = (struct WorldMapView *)Ram_HeapSlots->mapGrid;
   s32 i;
 
   Event_Start();
@@ -1927,8 +1958,8 @@ void WorldMap_DriftNorthOfContinent(void) {
   FieldCamera_SetSpeed(4);
   FieldCamera_MoveTo(10303, CAMERA_KEEP, 7820, 1);
   for (i = 0; i < 32; i++) {
-    map->unk11e += 0xff80;
-    map->unk11c += 128;
+    view->yaw -= TRIG_TURN / 512;
+    view->pitch += TRIG_TURN / 512;
     Actor_Get(ACTOR_IDEJIMA)->scaleY += -(FIXED_ONE * 3 / 256);
     System_Wait(1);
   }
@@ -1947,8 +1978,8 @@ void WorldMap_DriftNorthOfContinent(void) {
   MapGrid_SetShake(1, 2, 1);
   WorldMap_ReloadPendingAreaGraphics();
   FieldEffect_ScheduleRatioTransition(FIXED_ONE * 3 / 5, 1);
-  map->unk11e = 0;
-  map->unk11c = 0xe000;
+  view->yaw = 0;
+  view->pitch = -DEGtoANG(45);
   System_Wait(1);
   FieldCamera_MoveTo(3655, CAMERA_KEEP, 7632, 0);
   WorldMap_UpdateCurrentTileBlock();
@@ -2002,7 +2033,7 @@ void WorldMap_PanToAlhafraManor(void) {
   FieldCamera_MoveTo(11890, CAMERA_KEEP, 10090, 1);
   while (gInput.held == 0)
     wait(1);
-  Event_SetDestination(SCENE_ALHAFRA_MANOR, 80);
+  Event_SetDestination(SCENE_ALHAFRA_MANOR, ALHAFRA_MANOR_FROM_WORLD_MAP_VIEW);
 }
 
 /// The first voyage: the party takes the ship's tiller and learns to sail.
@@ -2318,10 +2349,10 @@ void WorldMap_CarryPartyToAquaRock(void) {
 
 /// Turns a placed actor's sprite with the World Map's view and shows it.
 s32 WorldMap_SetPlacedActorTile(struct Actor *actor) {
-  u16 *tile = (u16 *)((u8 *)Ram_HeapSlots->mapGrid + 286);
+  u16 *yaw = &((struct WorldMapView *)Ram_HeapSlots->mapGrid)->yaw;
   struct FieldSprite *sprite = actor->sprite;
 
-  sprite->rotation = *tile;
+  sprite->rotation = *yaw;
   sprite->flags = 0;
   return 1;
 }
@@ -2505,6 +2536,9 @@ void WorldMap_PlayLighthouseTransition(s32 mode) {
   Event_SetFlag(FLAG_SKIP_SCENE_CHANGE_SOUND);
 }
 
+/// The tidal wave picture's tiles, loaded after the picture layer's own.
+#define WAVE_TILES 256
+
 /// Loads the tidal wave's tiles, pictures and palette and sets its
 /// background up.
 void WorldMap_LoadTidalWave(void) {
@@ -2524,7 +2558,7 @@ void WorldMap_LoadTidalWave(void) {
   IO_WRITE_QUEUE_PUSH(VRAM, (u32)buffer,
                       DMA_COPY_WORDS(PICTURE_FIRST_TILE * TILE_SIZE_4BPP / 4));
   IO_WRITE_QUEUE_PUSH(PICTURE_TILES, (u32)frames,
-                      DMA_COPY_WORDS(256 * TILE_SIZE_4BPP / 4));
+                      DMA_COPY_WORDS(WAVE_TILES * TILE_SIZE_4BPP / 4));
   Scene_QueueIoWrite16((u32)&REG_BLDCNT,
                        BLDCNT_TGT1_BG0 | BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_ALL);
   Scene_QueueIoWrite16((u32)&REG_BLDALPHA,
@@ -3152,13 +3186,13 @@ LATE_DATA struct Trigger gSceneEvents[] = {
     {TRIGGER_STEP, CELL_BEHAVIOR_WORLD_MAP_CORE, FLAG_DJINNI(DJINNI_CORE),
      EVENT(WorldMap_MeetCore)},
     {TRIGGER_EXAMINE, 1123, CONDITION_ALWAYS, EVENT(WorldMap_GazeIntoPond)},
-    {TRIGGER_STEP, STEP_TRIGGER_AREA(AREA_DAILA), CONDITION_ALWAYS,
+    {TRIGGER_STEP, STEP_TRIGGER_AREA(PLACED_DAILA), CONDITION_ALWAYS,
      EVENT(WorldMap_EnterDaila)},
     {TRIGGER_EXIT, 101, CONDITION_ALWAYS, 4},
     {TRIGGER_EXIT, 102, CONDITION_ALWAYS, 5},
     {TRIGGER_EXIT, 103, CONDITION_ALWAYS, 6},
     {TRIGGER_EXIT, 104, CONDITION_ALWAYS, 7},
-    {TRIGGER_EXIT, 105, 0x8de, 8},
+    {TRIGGER_EXIT, 105, FLAG_SHIP_SAILABLE, 8},
     {TRIGGER_EXIT, 106, CONDITION_ALWAYS, 9},
     {TRIGGER_EXIT, 107, CONDITION_ALWAYS, 12},
     {TRIGGER_EXIT, 108, CONDITION_ALWAYS, 13},
@@ -3178,7 +3212,7 @@ LATE_DATA struct Trigger gSceneEvents[] = {
     {TRIGGER_EXIT, 122, CONDITION_ALWAYS, 30},
     {TRIGGER_EXIT, 123, CONDITION_ALWAYS, 31},
     {TRIGGER_EXIT, 124, CONDITION_ALWAYS, 32},
-    {TRIGGER_STEP, STEP_TRIGGER_AREA(AREA_YALLAM), CONDITION_ALWAYS,
+    {TRIGGER_STEP, STEP_TRIGGER_AREA(PLACED_YALLAM), CONDITION_ALWAYS,
      EVENT(WorldMap_EnterYallam)},
     {TRIGGER_EXIT, 126, CONDITION_ALWAYS, 35},
     {TRIGGER_EXIT, 127, CONDITION_ALWAYS, 36},
@@ -3202,7 +3236,7 @@ LATE_DATA struct Trigger gSceneEvents[] = {
     {TRIGGER_EXIT, 146, CONDITION_ALWAYS, 57},
     {TRIGGER_EXIT, 147, CONDITION_ALWAYS, 58},
     {TRIGGER_EXIT, 148, CONDITION_ALWAYS, 59},
-    {TRIGGER_STEP, STEP_TRIGGER_AREA(AREA_PROX), CONDITION_ALWAYS,
+    {TRIGGER_STEP, STEP_TRIGGER_AREA(PLACED_PROX), CONDITION_ALWAYS,
      EVENT(WorldMap_EnterProx)},
     {TRIGGER_EXIT, 151, CONDITION_ALWAYS, 82},
     {TRIGGER_EXIT, 152, CONDITION_ALWAYS, 83},

@@ -2,8 +2,7 @@
 #define ALCHEMY_TASK_H
 
 /// @file
-/// Tasks, their priorities and the task table, as in The Broken Seal's
-/// task.h, with room for 24 tasks.
+/// Tasks, their priorities and the task table, with room for 24 tasks.
 
 #include "edition.h"
 #include "types.h"
@@ -32,8 +31,7 @@ STATIC_ASSERT(offsetof(struct Task, flags) == 6);
 /// task is suspended, so no pass matches it.
 ///
 /// The two passes: the VBlank handler runs TASK_PASS_VBLANK's tasks, and
-/// wait() runs TASK_PASS_FRAME's once a frame. The two numbers are the other
-/// way round in The Broken Seal, where the frame's pass is the higher.
+/// wait() runs TASK_PASS_FRAME's once a frame.
 #define TASK_PASS_FRAME 0x480
 #define TASK_PASS_VBLANK 0xc80
 /// An empty slot's priority, sorted last.

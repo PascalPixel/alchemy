@@ -544,9 +544,9 @@ extern s16 gTrialRoad_CrumblingPillars[];
 void TrialRoad_ReachPeakFirst(void);
 void TrialRoad_ReachPeakSecond(void);
 
-void TrialRoad_LowerPillar(s32 id);
+void TrialRoad_LowerStake(s32 id);
 
-void TrialRoad_RaisePillar(s32 id);
+void TrialRoad_RaiseStake(s32 id);
 
 void TrialRoad_BlockLogs(void);
 
@@ -976,8 +976,8 @@ void TrialRoad_BlowAwayIvy(s32 a, s32 id) {
   Event_SetFlag(id + FLAG_IVY_BLOWN_AWAY_BASE);
 }
 
-/// Lowers a pillar into the ground, its top with it.
-void TrialRoad_LowerPillar(s32 id) {
+/// Lowers a stake into the ground, its top with it.
+void TrialRoad_LowerStake(s32 id) {
   struct Actor *actor = Actor_GetById(id);
 
   if (actor != NULL) {
@@ -988,8 +988,8 @@ void TrialRoad_LowerPillar(s32 id) {
   }
 }
 
-/// Raises a pillar out of the ground, its top with it.
-void TrialRoad_RaisePillar(s32 id) {
+/// Raises a stake out of the ground, its top with it.
+void TrialRoad_RaiseStake(s32 id) {
   struct Actor *actor = Actor_GetById(id);
 
   if (actor != NULL) {
@@ -1049,8 +1049,8 @@ void TrialRoad_PoundStake(s32 id, s32 phase, s32 frame) {
   else
     actor->scaleY = FIXED_ONE;
   if (phase == 1) {
-    TrialRoad_LowerPillar(id);
-    TrialRoad_RaisePillar(other);
+    TrialRoad_LowerStake(id);
+    TrialRoad_RaiseStake(other);
     switch (id) {
     case ACTOR_WEST_STAKE:
       Event_SetFlag(FLAG_INNER_WEST_STAKE_RAISED);
@@ -1114,7 +1114,7 @@ void TrialRoad_StepOntoStake(s32 id, s32 other, s32 flag, s32 side) {
   Event_ResolvePendingActions(0);
   partner->scaleY = FIXED_ONE / 8;
   wait(1);
-  TrialRoad_RaisePillar(other);
+  TrialRoad_RaiseStake(other);
   t = FIXED_ONE / 8;
   do {
     TrialRoad_SetPillarTopLift(id, (FIXED_ONE / 2 - t) / (FIXED_ONE / 32));
@@ -1124,7 +1124,7 @@ void TrialRoad_StepOntoStake(s32 id, s32 other, s32 flag, s32 side) {
     t += FIXED_ONE / 8;
   } while (t <= FIXED_ONE);
   actor->scaleY = FIXED_ONE;
-  TrialRoad_LowerPillar(id);
+  TrialRoad_LowerStake(id);
   Event_PlaySound(SE_ITEM_BREAK);
   if (side != 0)
     Event_SetFlag(flag);
@@ -1187,6 +1187,7 @@ void TrialRoad_CrumbleEastPillar(s32 phase) {
     TrialRoad_CrumblePillar(gTrialRoad_CrumblingPillars,
                             ACTOR_EAST_CRUMBLING_PILLAR);
 }
+
 /// Walls off the three cells through an object's cell on layers 0 and 2
 /// (CELL_BEHAVIOR_WALL): the column above and below it in mode 0, the row
 /// beside it otherwise.
@@ -1489,6 +1490,7 @@ void TrialRoad_DriftWithStream(void) {
                     velocity[0], velocity[1], velocity[2],
                     EFFECT_USE_UPDATE | 1, &options);
 }
+
 /// Lift raises the rock at the cave's mouth.
 void TrialRoad_LiftCaveRock(void) { GameFlag_Set(FLAG_CAVE_ROCK_LIFTED); }
 
@@ -1699,18 +1701,18 @@ void TrialRoad_SetUpPoundStage(void) {
   TrialRoad_SetJumpCellUnder(ACTOR_PILLAR_B);
   TrialRoad_SetJumpCellUnder(ACTOR_PILLAR_C);
   if (!Event_GetFlag(FLAG_INNER_WEST_STAKE_RAISED)) {
-    TrialRoad_RaisePillar(ACTOR_WEST_STAKE);
-    TrialRoad_LowerPillar(ACTOR_INNER_WEST_STAKE);
+    TrialRoad_RaiseStake(ACTOR_WEST_STAKE);
+    TrialRoad_LowerStake(ACTOR_INNER_WEST_STAKE);
   } else {
-    TrialRoad_RaisePillar(ACTOR_INNER_WEST_STAKE);
-    TrialRoad_LowerPillar(ACTOR_WEST_STAKE);
+    TrialRoad_RaiseStake(ACTOR_INNER_WEST_STAKE);
+    TrialRoad_LowerStake(ACTOR_WEST_STAKE);
   }
   if (!Event_GetFlag(FLAG_EAST_STAKE_RAISED)) {
-    TrialRoad_RaisePillar(ACTOR_INNER_EAST_STAKE);
-    TrialRoad_LowerPillar(ACTOR_EAST_STAKE);
+    TrialRoad_RaiseStake(ACTOR_INNER_EAST_STAKE);
+    TrialRoad_LowerStake(ACTOR_EAST_STAKE);
   } else {
-    TrialRoad_RaisePillar(ACTOR_EAST_STAKE);
-    TrialRoad_LowerPillar(ACTOR_INNER_EAST_STAKE);
+    TrialRoad_RaiseStake(ACTOR_EAST_STAKE);
+    TrialRoad_LowerStake(ACTOR_INNER_EAST_STAKE);
   }
 }
 
@@ -2347,7 +2349,7 @@ s32 Scene_PrepareMap(void) {
           }
           if (road->stage[0] < road->rivalBest)
             TrialRoad_OpenRivalDoor(road->mirrored, road->stage[0]);
-          TrialRoad_ShowRaceMap(gMainRoutineWork.leaderActorId, 8);
+          TrialRoad_ShowRaceMap(gMainRoutineWork.leaderActorId, ACTOR_MOAPA);
           TrialRoad_StartRival((s16)(state->mirrored ^ 1));
           Task_Add(TrialRoad_UpdateRival, TASK_PASS_FRAME);
         } else {
@@ -2370,6 +2372,7 @@ s32 Scene_PrepareMap(void) {
   }
   return 0;
 }
+
 extern s8 gTrialRoad_KeyStages[];
 
 /// Deals the Trial Road's stage order from a seed: shuffles 0 to 7 into the
@@ -2774,6 +2777,7 @@ void TrialRoad_LoseToMoapa(void) {
   Actor_StartRepeatedMotion(ACTOR_PIERS, 2);
   Event_Wait(15);
 }
+
 extern u32 gTrialRoad_LeftKnightLeavesScript[];
 
 /// The camera tours the road while Moapa explains its traps and its four doors.
@@ -2784,7 +2788,7 @@ void TrialRoad_ShowTraps(void) {
   Event_ResolvePendingActions(0);
   Actor_SetPosition(gMainRoutineWork.leaderActorId, 0, 1016);
   Actor_SetPosition(ACTOR_MOAPA, 1016, 1016);
-  for (i = ACTOR_LEFT_INNER_CHEST; i < FIELD_ACTOR_COUNT; i++) {
+  for (i = ACTOR_MOAPA + 1; i < FIELD_ACTOR_COUNT; i++) {
     struct Actor *actor = Actor_GetById(i);
 
     if (actor->x.fixed != 0)
@@ -2919,7 +2923,8 @@ void TrialRoad_ShowTraps(void) {
   Actor_WaitForScriptEndById(ACTOR_RIGHT_KNIGHT);
   // "This ends the battle, though. A true hero would not surrender so easily."
   Event_ShowMessageAndWait(ACTOR_MOAPA, 0);
-  Import_EventSetExitRequest(10);
+  Import_EventSetExitRequest(
+      TRIAL_ROAD_STAGES_TO_SHAMAN_VILLAGE_TRIAL_GROUNDS_D);
 }
 
 /// Moves the fountains each frame: at its rise phase a fountain starts up 4
@@ -3008,6 +3013,7 @@ void TrialRoad_UpdateFountains(void) {
   }
 }
 #undef SET_LAYER
+
 /// Queues the fountains' sprites each frame: each risen fountain's column of
 /// water, in 16-pixel segments up from its vent, and its spout bobbing on top.
 void TrialRoad_DrawFountains(void) {
@@ -3482,6 +3488,7 @@ void TrialRoad_WaitForRival(void) {
     wait(1);
   }
 }
+
 /// The most the rival turns in a frame: a sixteenth of a turn.
 #define RIVAL_MAX_TURN (TRIG_TURN / 16)
 
@@ -3642,9 +3649,10 @@ void TrialRoad_MoveRival(void) {
     }
   }
 }
+
 extern const u8 gTrialRoad_RaceMapPicture[];
 
-/// The picture's buffer: 576 bytes of EWRAM, the size VramCache_Load copies.
+/// The picture's buffer in EWRAM, the size VramCache_Load copies.
 static inline void *TrialRoadLink_AllocPicture(void) {
   return Heap_AllocEwram(RACE_MAP_PICTURE_BYTES);
 }
@@ -3670,7 +3678,7 @@ static inline void *TrialRoadLink_AllocPicture(void) {
     lift = TrialRoad_GetStage(arg);                                            \
     y = (actor->z.fixed - *originZ) / toFIXED(16) + work->scrollY -            \
         lift * RACE_MAP_STAGE_SPACING + 4;                                     \
-    /* Once-only: ends the block, so y + 4 is scheduled before x & 511. */     \
+    /* FAKEMATCH(dead): an empty once-only block. */                           \
     do {                                                                       \
     } while (0);                                                               \
     x &= 511;                                                                  \
@@ -3762,8 +3770,7 @@ void TrialRoad_DrawRaceMap(void) {
     return;
   {
     // This side's offset adds scrollX where the first marker's subtracts it;
-    // nothing writes scrollX, which stays 0 (in a render of the race's start
-    // the left column stands at the screen's edge), so the two agree.
+    // nothing writes scrollX, which stays 0, so the two agree.
     MARKER(+work->fade * 6 + work->scrollX + 189,
            -work->fade * 6 + work->scrollX + 23, 1, RACE_MAP_TILE_2P);
   }

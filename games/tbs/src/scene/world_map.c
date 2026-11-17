@@ -27,9 +27,10 @@
 ///
 /// A whirlwind spins near Crossbone Isle (ACTOR_STORM). It is put away while
 /// the Tolbi-bound Ship lies at anchor off the island. Walked into, it lifts
-/// the party for 180 frames, as the Suhalla Desert's storms do. Douse on it
-/// brings the party down into a battle. When the time runs out it drops the
-/// party outside Suhalla (WORLD_MAP_FROM_SUHALLA, FLAG_ARRIVE_FALLING).
+/// the party into the air for STORM_FRAMES_IN_AIR frames, as the Suhalla
+/// Desert's storms do. Douse on it brings the party down into a battle. When
+/// the time runs out it drops the party outside Suhalla
+/// (WORLD_MAP_FROM_SUHALLA, FLAG_ARRIVE_FALLING).
 ///
 /// The Turtle Boots are buried in the ground
 /// (CELL_BEHAVIOR_WORLD_MAP_TURTLE_BOOTS).
@@ -180,6 +181,9 @@ extern s32 gIslandWakeScript[];
 /// the air. The byte is read and written with FieldGameFlag_GetByte and
 /// FieldGameFlag_SetByte.
 #define FLAG_WORLD_MAP_STORM_FRAMES_LEFT FLAG_SCENE_TEMP_F8
+/// The frames the storm holds the party in the air before it drops them
+/// outside Suhalla.
+#define STORM_FRAMES_IN_AIR 180
 
 static s32 WorldMap_AlignToMap(struct Actor *actor);
 static void WorldMap_BoardBunzasWagon(void);
@@ -785,7 +789,7 @@ s32 Scene_Initialize(void) {
     Import_EventSetExitRequest(WORLD_MAP_TO_ROCK_ROOMS);
   } else {
     GameFlag_Set(FLAG_RETREAT_BLOCKED);
-    gFieldWork->transition = SCENE_TRANSITION(TRANSITION_CENTRE_LINE, 0);
+    gFieldWork->transition = SCENE_TRANSITION(TRANSITION_CENTER_LINE, 0);
     gFieldWork->transitionFrames = MAP_TRANSITION_FRAMES;
     wait(1);
     FieldCamera_SetSpeed(8);
@@ -1445,6 +1449,9 @@ static void WorldMap_ShowDjinnTutorial(void) {
   Field_RequestBattleFromEncounterTable(ENCOUNTER_ZONE_SCRIPTED_VALE_VAULT, 6);
 }
 
+/// The frames Flint takes to grow to full size as he comes down to the party.
+#define FLINT_GROW_FRAMES 16
+
 /// Walking up to Flint makes him join the party and show how Djinn are set
 /// and put on standby. Then comes the tutorial battle.
 static void WorldMap_MeetFlint(void) {
@@ -1490,9 +1497,10 @@ static void WorldMap_MeetFlint(void) {
     djinni->velocityY = 0;
     djinni->groundHeight = 0;
     FieldActor_SetMoveTarget(djinni, 5584, 0, 1328);
-    for (i = 0; i < 16; i++) {
-      djinni->scaleX += FIXED_ONE / 32;
-      djinni->scaleY += FIXED_ONE / 32;
+    // Flint grows from half size to full as he comes down.
+    for (i = 0; i < FLINT_GROW_FRAMES; i++) {
+      djinni->scaleX += FIXED_ONE / 2 / FLINT_GROW_FRAMES;
+      djinni->scaleY += FIXED_ONE / 2 / FLINT_GROW_FRAMES;
       wait(1);
     }
     Actor_FaceActor(ACTOR_VENUS_DJINNI, ACTOR_PARTY_LEADER, 0);
@@ -1536,7 +1544,8 @@ static void WorldMap_MeetFlint(void) {
     i = 0;
     djinni->motionFlags = 0;
     FieldActor_SetMoveTargetFX(djinni, x, toFIXED(16), z);
-    for (; i < 16; i++) {
+    // A whole turn as he rises, then half a turn as he drops.
+    for (; i < TRIG_TURN / FACING_STEP; i++) {
       djinni->facing += FACING_STEP;
       wait(1);
     }
@@ -1545,7 +1554,7 @@ static void WorldMap_MeetFlint(void) {
     djinni->motionFlags = ACTOR_FALLS;
     djinni->velocityY = 0;
     djinni->groundHeight = 0;
-    for (i = 0; i < 8; i++) {
+    for (i = 0; i < TRIG_TURN / 2 / FACING_STEP; i++) {
       djinni->facing += FACING_STEP;
       wait(1);
     }
@@ -1909,7 +1918,7 @@ static void WorldMap_UseBlackOrb(void) {
   struct Actor *actor;
   s32 message;
   struct Sprite *sprite;
-  u8 *buffer;
+  GlyphTransfer *icon;
 
   leader = Actor_Get(ACTOR_PARTY_LEADER);
   Event_Start();
@@ -1954,9 +1963,9 @@ static void WorldMap_UseBlackOrb(void) {
     /* LEFTOVER(template): the motion flags cleared again after the sprite
      * resets, as ImilFuchinFalls_PlaceDragonsEye clears them. */
     orb->motionFlags = 0;
-    buffer = HeapSlot_Alloc(HEAP_SLOT_GLYPH_TRANSFER, sizeof(GlyphTransfer));
+    icon = HeapSlot_Alloc(HEAP_SLOT_GLYPH_TRANSFER, sizeof(GlyphTransfer));
     Item_LoadIcon(ITEM_BLACK_ORB);
-    Vram_Load(sprite->slot, 128, buffer + 1024);
+    Vram_Load(sprite->slot, ICON_TILE_BYTES, icon->tiles);
     HeapSlot_Release(HEAP_SLOT_GLYPH_TRANSFER);
     Event_Wait(20);
     orb->update = WorldMap_PulseOrbAndSpawnSparks;
@@ -2061,7 +2070,16 @@ u16 gWorldMapBlend;
 /// Where picture `size` of the ball of light lies in the unpacked buffer: 0 is
 /// the ball at its largest, 6 at its smallest, and 7 the picture shown before
 /// it swells and after it shrinks.
-#define WORLD_MAP_LIGHT_BALL(size) (4096 + 128 + (size) * 1536)
+#define WORLD_MAP_LIGHT_BALL(size) (LIGHT_BALL_TILES_SIZE + 128 + (size) * 1536)
+
+/// The ball of light's tiles (lighthouse_transition.png), first in the
+/// unpacked buffer: LIGHT_BALL_TILES 4-bit tiles, loaded into BG0's character
+/// block from tile LIGHT_BALL_FIRST_TILE, which its pictures count from, and
+/// shown in BG palette LIGHT_BALL_PALETTE.
+#define LIGHT_BALL_TILES 128
+#define LIGHT_BALL_TILES_SIZE (LIGHT_BALL_TILES * TILE_SIZE_4BPP)
+#define LIGHT_BALL_FIRST_TILE 128
+#define LIGHT_BALL_PALETTE 14
 
 /// The ending, on the island Jenna and Kraden are adrift on.
 static void WorldMap_ShowEndingEvent(void) {
@@ -2462,7 +2480,8 @@ static void WorldMap_CatchInStorm(s32 targetActorId) {
     actor->motionFlags = ACTOR_FLOATS;
     gMainRoutineWork.movementMode = LEADER_MOVEMENT_AIRBORNE;
     GameFlag_Set(FLAG_WORLD_MAP_CAUGHT_IN_STORM);
-    FieldGameFlag_SetByte(FLAG_WORLD_MAP_STORM_FRAMES_LEFT, 180);
+    FieldGameFlag_SetByte(FLAG_WORLD_MAP_STORM_FRAMES_LEFT,
+                          STORM_FRAMES_IN_AIR);
     Event_End();
     gFieldWork->encounter = 0; // drop any battle this step rolled
   }
@@ -2593,12 +2612,15 @@ WorldMap_PlayLighthouseTransition(enum WorldMapLighthouse lighthouse) {
   GameFlag_Clear(FLAG_KEEP_PARTY_POSITION);
   WorldMap_StartStillPicture();
   FieldDecompress_TaggedLz(gWorldMapPackedTiles, buffer);
-  FieldDecompress_TaggedLz(gWorldMapPackedPictures, buffer + 4096);
-  IO_WRITE_QUEUE_PUSH((u32)&BG_PLTT[14 * 16],
-                      (u32)(gWorldMapPalettes + lighthouse * 32),
-                      DMA_COPY_HALFWORDS(16));
-  IO_WRITE_QUEUE_PUSH((u32)BG_CHAR_BLOCK(0) + 4096, (u32)buffer,
-                      DMA_COPY_WORDS(1024));
+  FieldDecompress_TaggedLz(gWorldMapPackedPictures,
+                           buffer + LIGHT_BALL_TILES_SIZE);
+  IO_WRITE_QUEUE_PUSH(
+      (u32)&BG_PLTT_COLOR(LIGHT_BALL_PALETTE, 0),
+      (u32)(gWorldMapPalettes + lighthouse * PALETTE_COLORS * sizeof(u16)),
+      DMA_COPY_HALFWORDS(PALETTE_COLORS));
+  IO_WRITE_QUEUE_PUSH((u32)BG_CHAR_BLOCK(0) +
+                          LIGHT_BALL_FIRST_TILE * TILE_SIZE_4BPP,
+                      (u32)buffer, DMA_COPY_WORDS(LIGHT_BALL_TILES_SIZE / 4));
   Task_AddFrame(WorldMap_UpdateTransitionBlend, TASK_PASS_FRAME);
   Event_Start();
   WORLD_MAP_QUEUE_TRANSITION_PICTURE(buffer, WORLD_MAP_LIGHT_BALL(7));

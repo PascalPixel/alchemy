@@ -28,9 +28,9 @@ enum SettingsMenuRow {
   BG_PLTT_COLOR(WINDOW_PALETTE, WINDOW_BACKGROUND_COLOR + (n))
 
 /// Unused: three that do nothing.
-UNUSED void SettingsMenu_ReservedNoOpC9BC(void) {}
-UNUSED void SettingsMenu_ReservedNoOpC9C0(void) {}
-UNUSED void SettingsMenu_ReservedNoOpC9C4(void) {}
+UNUSED void SettingsMenu_ReservedNoOpA(void) {}
+UNUSED void SettingsMenu_ReservedNoOpB(void) {}
+UNUSED void SettingsMenu_ReservedNoOpC(void) {}
 
 /// One of the seven entries of the settings menu's work
 /// (OptionMenuWork.entries); only its state is known, and only the unused

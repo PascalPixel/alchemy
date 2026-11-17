@@ -52994,7 +52994,7 @@ msgstr ""
 "vamos a capturar los peces\n"
 "que necesitamos para comer?{end_wait}"
 
-msgctxt "MsgOooogOw2"
+msgctxt "MsgOooogOw"
 msgid "09983"
 msgstr "Uuuug... Aau...{end_wait}"
 
@@ -53004,7 +53004,7 @@ msgstr ""
 "¿Por qué estas cosas me\n"
 "ocurren siempre a mí?{end_wait}"
 
-msgctxt "MsgStupidBriggs2"
+msgctxt "MsgStupidBriggs"
 msgid "09985"
 msgstr "Maldito Briggs...{end_wait}"
 

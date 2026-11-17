@@ -9,6 +9,20 @@
 #include "field/world_map.h"
 #include "version.h"
 
+/// The generated marker pictures: four 16-colour 8 by 8 tiles, 32 bytes each.
+#define WORLD_MAP_MARKER_TILE_BYTES (4 * TILE_SIZE_4BPP)
+/// The word of a marker tile's pixel row, eight 4-bit pixels a word.
+#define MARKER_ROW(tile, row) ((tile) * (TILE_SIZE_4BPP / 4) + (row))
+
+// BUG: the original reserves 32 bytes but writes and uploads 128, as The
+// Broken Seal's does. The bump allocator takes bytes, not words; reserve the
+// whole tile buffer with BUGFIX.
+#ifdef BUGFIX
+#define WORLD_MAP_MARKER_ALLOCATION_SIZE WORLD_MAP_MARKER_TILE_BYTES
+#else
+#define WORLD_MAP_MARKER_ALLOCATION_SIZE 32
+#endif
+
 /// Sets up the World Map screen: the marker tiles and their OAM entries, the
 /// cursor where the leader is on the map (or mid-screen when the area is
 /// not on it), and the name window.
@@ -26,7 +40,7 @@ void WorldPicture_Initialize(void) {
   FIXED bottom;
   s32 left;
 
-  markerTiles = Heap_AllocEwram(32);
+  markerTiles = Heap_AllocEwram(WORLD_MAP_MARKER_ALLOCATION_SIZE);
   oam = (u32 *)work->markers;
   Actor_GetById(Party_GetLeaderActor());
   screenX = 0;
@@ -34,24 +48,38 @@ void WorldPicture_Initialize(void) {
   work->vramBlock = VramCache_FindFreeEntry();
   work->searchX = 0;
   work->searchZ = 0;
-  Dma_Fill32(0, markerTiles, 128);
-  // Four 8 by 8 tiles, a pixel a nibble: three marker dots and the cursor's.
-  markerTiles[0] = 0x000000ff;
-  markerTiles[1] = 0x000001ff;
-  markerTiles[2] = 0x00000110;
-  markerTiles[8] = 0x00000044;
-  markerTiles[9] = 0x00000144;
-  markerTiles[10] = 0x00000110;
-  markerTiles[16] = 0x00000077;
-  markerTiles[17] = 0x00000177;
-  markerTiles[18] = 0x00000110;
-  markerTiles[24] = 0x00000ff0;
-  markerTiles[25] = 0x0000ffff;
-  markerTiles[26] = 0x0001ffff;
-  markerTiles[27] = 0x00011ff0;
-  markerTiles[28] = 0x00001100;
-  tileAttributes =
-      VramCache_Load(work->vramBlock, 128, markerTiles) | OBJ_PRIORITY(1);
+  Dma_Fill32(0, markerTiles, WORLD_MAP_MARKER_TILE_BYTES);
+  // The marker tiles' pixel rows: eight 4-bit pixels a word, the leftmost
+  // in the low bits. Each tile holds one dot in its top-left corner, with a
+  // shadow in colour 1 to its right and below (# the dot, + the shadow):
+  //
+  //   tiles 0 to 2      tile 3
+  //     ##.               .##..
+  //     ##+               ####.
+  //     .++               ####+
+  //                       .##++
+  //                       ..++.
+  //
+  // Tile 0, in colour 15, marks where the party is; tiles 1 and 2, in colours
+  // 4 and 7, a place by the marker its row asks for, and tile 2 the ship;
+  // tile 3, in colour 15, is a larger dot.
+  markerTiles[MARKER_ROW(0, 0)] = 0xff;
+  markerTiles[MARKER_ROW(0, 1)] = 0x1ff;
+  markerTiles[MARKER_ROW(0, 2)] = 0x110;
+  markerTiles[MARKER_ROW(1, 0)] = 0x44;
+  markerTiles[MARKER_ROW(1, 1)] = 0x144;
+  markerTiles[MARKER_ROW(1, 2)] = 0x110;
+  markerTiles[MARKER_ROW(2, 0)] = 0x77;
+  markerTiles[MARKER_ROW(2, 1)] = 0x177;
+  markerTiles[MARKER_ROW(2, 2)] = 0x110;
+  markerTiles[MARKER_ROW(3, 0)] = 0xff0;
+  markerTiles[MARKER_ROW(3, 1)] = 0xffff;
+  markerTiles[MARKER_ROW(3, 2)] = 0x1ffff;
+  markerTiles[MARKER_ROW(3, 3)] = 0x11ff0;
+  markerTiles[MARKER_ROW(3, 4)] = 0x1100;
+  tileAttributes = VramCache_Load(work->vramBlock, WORLD_MAP_MARKER_TILE_BYTES,
+                                  markerTiles) |
+                   OBJ_PRIORITY(1);
   for (i = 0; i < WORLD_PICTURE_PLACE_COUNT; i++) {
     *oam++ = 0;
     *oam++ = 0;
@@ -66,8 +94,8 @@ void WorldPicture_Initialize(void) {
     work->x = toFIXED(screenX);
     work->z = toFIXED(screenY);
   }
-  screenX = work->x - toFIXED(120);
-  screenY = work->z - toFIXED(80);
+  screenX = work->x - toFIXED(DISPLAY_WIDTH / 2);
+  screenY = work->z - toFIXED(DISPLAY_HEIGHT / 2);
   left = 0;
   right = toFIXED(272);
   bottom = toFIXED(224);
@@ -83,7 +111,7 @@ void WorldPicture_Initialize(void) {
   Ram_WorldMapCursorStart[1] = work->z;
   work->windowSlot = Resource_LoadFixedBlockBIntoFreeSlotFar();
   tile = gVramCacheEntries[work->windowSlot].offset;
-  work->window = Window_CreateFar(0, 0, 0, 0, 2);
+  work->window = Window_CreateFar(0, 0, 0, 0, WINDOW_FLAG_INSTANT);
   work->shown = -1;
   work->speed = toFIXED(1);
   cursorAttributes = OBJ_SIZE_16X16;
@@ -114,11 +142,11 @@ void WorldPicture_PlaceLeaderAt(s32 x, s32 z) {
   struct Actor *actor = Actor_Lookup(owner);
 
   if (actor != NULL) {
-    x >>= 16;
-    x = ((x << 14) + 269 * 16384) / 853;
-    z >>= 16;
+    x = FIXEDtoINT(x);
+    x = (x * 16384 + 269 * 16384) / 853;
+    z = FIXEDtoINT(z);
     actor->x.fixed = toFIXED(x);
-    actor->z.fixed = toFIXED(((z << 14) + toFIXED(28)) / 640);
+    actor->z.fixed = toFIXED((z * 16384 + 112 * 16384) / 640);
     camera[0] = actor->x.fixed;
     camera[2] = actor->z.fixed;
   }

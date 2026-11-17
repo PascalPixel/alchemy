@@ -60,11 +60,11 @@ The other three are rooms of people who each run one test.
 `psynergy_test.c` and `shop_test.c` have the shops, an inn, a Sanctum and
 naming a character, and `shop_test.c` adds Sunshine's forge and a window
 that raises the party's levels. `psynergy_test.c` is also where the field
-Psynergy The Lost Age adds was tried out: four Scoop spots dig up a hole, an
-actor that grows, one that falls holding an item and a monster to fight;
-Cyclone blows leaves away or sends the leader off and back in a ring of
-light; Pound and Parch change the floor, and Blaze startles the practising
-man of Daila. `psynergy_test_2.c` is a small room with a rope, a wall to
+Psynergy The Lost Age adds was tried out: four Scoop spots dig up a hole, a
+puddle, a Wicked Mace and a statue before a battle; Cyclone blows leaves away
+or sends the leader off and back in a ring of light; Pound lights a torch,
+Parch changes the floor, and Blaze startles Kraden, who answers it as Daila's
+practising performer. `psynergy_test_2.c` is a small room with a rope, a wall to
 Burst, an actor that scatters rocks when talked to, and a step into a
 battle.
 

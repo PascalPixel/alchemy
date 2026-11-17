@@ -1878,8 +1878,8 @@ const u16 gHaures_BandMesh[] = {256,  2,    0, 63, 7936, 0, 769, 2, 63,
 
 /// The burst's mesh: each triangle's three corners and their texture
 /// coordinates.
-const u16 gCatastrophe_BurstMesh[] = {256,   2,     0, 31, 12032, 0, 769, 2, 31,
-                                      12063, 12032, 0, 0,  0,     0, 0,   0, 0};
+const u16 gCatastrophe_ForkMesh[] = {256,   2,     0, 31, 12032, 0, 769, 2, 31,
+                                     12063, 12032, 0, 0,  0,     0, 0,   0, 0};
 
 /// A square's mesh: each triangle's three corners and their texture
 /// coordinates.
@@ -2166,16 +2166,16 @@ const u8 gCatastrophe_MirroredDemonX[] = {224, 192, 160, 128, 192, 160};
 const u8 gCatastrophe_MirroredDemonZ[] = {0, 0, 0, 0, 32, 32};
 
 /// The frame each burst starts on.
-const u16 gCatastrophe_BurstStarts[] = {26, 104, 116, 216, 278, 402, 416};
+const u16 gCatastrophe_ForkStarts[] = {26, 104, 116, 216, 278, 402, 416};
 
 /// Each burst's x, in pixels.
-const u8 gCatastrophe_BurstX[] = {16, 96, 20, 40, 50, 10, 96};
+const u8 gCatastrophe_ForkX[] = {16, 96, 20, 40, 50, 10, 96};
 
 /// Each burst's y, in pixels.
-const u8 gCatastrophe_BurstY[] = {64, 80, 30, 40, 80, 60, 20};
+const u8 gCatastrophe_ForkY[] = {64, 80, 30, 40, 80, 60, 20};
 
 /// Each burst picture's byte offset in Catastrophe's sheet.
-const u8 gCatastrophe_BurstPictures[] = {0, 1, 0, 1, 0, 0, 1, 0};
+const u8 gCatastrophe_ForkPictures[] = {0, 1, 0, 1, 0, 0, 1, 0};
 
 /// The canvas flash frames.
 const u16 gCatastrophe_CanvasFlashFrames[] = {246, 249, 254, 258, 260, 264,
@@ -2224,7 +2224,7 @@ const s16 gCatastrophe_StrikePictures[] = {
 const u8 gCatastrophe_GlintFlips[] = {0, 4, 8, 12};
 
 /// Each shard's roll.
-const s16 gCatastrophe_ShardRolls[] = {
+const s16 gCatastrophe_BoltRolls[] = {
     14797, -1097, -8198, 4962,  15494,  -5489, -9298,  3744,
     11252, -9996, 15443, -4373, -15930, 15898, -13623, 3906};
 

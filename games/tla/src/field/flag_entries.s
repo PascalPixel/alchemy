@@ -39,11 +39,11 @@ gFlagEntries:
 	place 25, 0x00, SPRITE_WORLD_MAP_MOUNTAIN_PATH, 9200, 8380, 90, -1, -1, -2, 0, -1
 	place 26, 0x00, SPRITE_WORLD_MAP_MOUNTAIN_PATH, 9077, 8258, 90, -1, -1, -2, 0, -1
 	place 27, 0x11, SPRITE_WORLD_MAP_ROUND_HUT_VILLAGE, 9256, 7908, 90, -1, SceneId_Kibombo, -1, SceneId_Kibombo, -1
-	place 28, 0x01, SPRITE_WORLD_MAP_HOUSE, 9546, 8274, 90, -1, SceneId_IsletsDog, -1, 0, -1
-	place 29, 0x01, SPRITE_WORLD_MAP_SNOWY_HOUSE, 12770, 11530, 90, -1, SceneId_IsletsPrettyStone, -1, 0, -1
-	place 30, 0x01, SPRITE_WORLD_MAP_HOUSE, 11724, 8030, 90, -1, SceneId_IsletsCow, -1, 0, -1
-	place 31, 0x01, SPRITE_WORLD_MAP_HOUSE, 11680, 6640, 90, -1, SceneId_IsletsPier, -1, 0, -1
-	place 32, 0x01, SPRITE_WORLD_MAP_HOUSE, 13488, 7519, 90, -1, SceneId_IsletsTurtle, -1, 0, -1
+	place 28, 0x01, SPRITE_WORLD_MAP_HOUSE, 9546, 8274, 90, -1, SceneId_WestIndraIslet, -1, 0, -1
+	place 29, 0x01, SPRITE_WORLD_MAP_SNOWY_HOUSE, 12770, 11530, 90, -1, SceneId_EastTundariaIslet, -1, 0, -1
+	place 30, 0x01, SPRITE_WORLD_MAP_HOUSE, 11724, 8030, 90, -1, SceneId_NorthOseniaIslet, -1, 0, -1
+	place 31, 0x01, SPRITE_WORLD_MAP_HOUSE, 11680, 6640, 90, -1, SceneId_SoutheastAngaraIslet, -1, 0, -1
+	place 32, 0x01, SPRITE_WORLD_MAP_HOUSE, 13488, 7519, 90, -1, SceneId_SeaOfTimeIslet, -1, 0, -1
 	place 33, 0x11, SPRITE_WORLD_MAP_FOREST_VILLAGE, 12923, 9713, 90, -1, SceneId_Yallam, -1, SceneId_Yallam, -1
 	place 35, 0x00, SPRITE_UNSEEN_MARKER, 12695, 10297, 90, -1, -1, -2, 0, -1
 	place 36, 0x11, SPRITE_WORLD_MAP_APOJII_ISLANDS_B, 14517, 8413, 90, -1, SceneId_ApojiiIslands, -1, SceneId_ApojiiIslands, -1

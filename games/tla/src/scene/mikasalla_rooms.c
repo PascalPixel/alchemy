@@ -264,7 +264,7 @@ s32 Scene_Initialize(void) {
       ACTOR_PRIORITY_IGNORES_RISES;
   if (gMainRoutineWork.next == SCENE_MIKASALLA_ROOMS_HOUSES) {
     if (gMainRoutineWork.entrance ==
-        MIKASALLA_ROOMS_HOUSES_FROM_ISLETS_PRETTY_STONE)
+        MIKASALLA_ROOMS_HOUSES_FROM_EAST_TUNDARIA_ISLET)
       Scene_FadeInAndClearFlag();
     else if (!Event_GetFlag(FLAG_TRANSFERRED_WON_COLOSSO) ||
              (Event_GetFlag(FLAG_MIKASALLA_GALAHAD_MET) &&
@@ -418,7 +418,7 @@ u32 gSceneExits[] = {
     SCENE_EXIT_UNLESS(2, Mikasalla, 2, EXIT_FLAG_NONE),
     SCENE_EXIT_UNLESS(3, Mikasalla, 3, EXIT_FLAG_NONE),
     SCENE_EXIT_UNLESS(4, Mikasalla, 4, EXIT_FLAG_NONE),
-    SCENE_EXIT_UNLESS(5, IsletsPrettyStone, 2, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(5, EastTundariaIslet, 2, EXIT_FLAG_NONE),
     SCENE_EXITS(MikasallaRoomsSanctum),
     SCENE_EXIT_UNLESS(1, Mikasalla, 5, EXIT_FLAG_NONE),
     SCENE_EXIT_UNLESS(5, ApojiiIslands, 9, EXIT_FLAG_NONE),

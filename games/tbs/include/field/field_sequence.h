@@ -248,10 +248,10 @@ void ScreenTransition_Start(s32 mode, s32 frames);
 void ScreenTransition_Finish(s32 mode, s32 frames);
 void ScreenTransition_HideBackgrounds(s32 clearBg3, s32 clearBg2, s32 clearBg1);
 void ScreenTransition_Update(void);
-void ScreenTransition_UpdateFromCentre(void);
+void ScreenTransition_UpdateFromCenter(void);
 void ScreenTransition_UpdateScanline(void);
 void ScreenTransition_UpdateDissolve(void);
-void ScreenTransition_FillTilemapAndSolidTile(s32 color);
+void ScreenTransition_FillTilemapAndColorTile(s32 color);
 void ScreenTransition_InitializeState(s32 value);
 
 void PaletteFade_CalculateSteps(s16 *source, s16 *target, s16 *step,
@@ -268,8 +268,8 @@ void PaletteFade_SetTarget(s32 mode, s32 half);
 void PaletteFade_SetSource(s32 mode, s32 half);
 void PaletteFade_SetBackdrop(u32 color);
 void PaletteFade_StartInterpolation(s32 frames);
-s32 PaletteFade_ClampComponent(s32 value);
-s32 PaletteFade_ClampShiftedComponent(s32 value);
+s32 PaletteFade_ClampChannel(s32 value);
+s32 PaletteFade_ClampShiftedChannel(s32 value);
 void FadeOverlay_DrawMarks(void);
 void FieldEffect_StartFadeOverlay(void *object);
 void FadeOverlay_Suspend(void);

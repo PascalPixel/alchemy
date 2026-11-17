@@ -204,7 +204,7 @@ void Izumo_CycloneSecondPatch(void) {
   struct Actor *actor = Actor_GetById(gMainRoutineWork.leaderActorId);
 
   FieldTileCopies_CopyTouchedCells(53, 5, 8, 9, 23, 30, 0);
-  if (!GameFlag_Get(FLAG_IZUMO_FIRST_ANTIDOTE_TAKEN)) {
+  if (!GameFlag_Get(FLAG_IZUMO_FIRST_ANTIDOTE)) {
     Call3((void (*)())Actor_SetHorizontalPositionWithTerrain,
           FIELD_TREASURE_ACTOR, toFIXED(456), toFIXED(584));
     if (FIELD_CELL(actor->x.fixed) == 28 && FIELD_CELL(actor->z.fixed) == 36) {
@@ -225,7 +225,7 @@ void Izumo_CycloneThirdPatch(void) {
   struct Actor *actor = Actor_GetById(gMainRoutineWork.leaderActorId);
 
   FieldTileCopies_CopyTouchedCells(53, 5, 8, 9, 23, 30, 0);
-  if (!GameFlag_Get(FLAG_IZUMO_SECOND_ANTIDOTE_TAKEN)) {
+  if (!GameFlag_Get(FLAG_IZUMO_SECOND_ANTIDOTE)) {
     Call3((void (*)())Actor_SetHorizontalPositionWithTerrain,
           FIELD_TREASURE_ACTOR + 1, toFIXED(472), toFIXED(552));
     if (FIELD_CELL(actor->x.fixed) == 29 && FIELD_CELL(actor->z.fixed) == 34) {
@@ -262,7 +262,7 @@ void Izumo_CycloneSeventhPatch(void) {
   struct Actor *actor = Actor_GetById(gMainRoutineWork.leaderActorId);
 
   FieldTileCopies_CopyTouchedCells(42, 0, 6, 2, 9, 18, 0);
-  if (!GameFlag_Get(FLAG_IZUMO_LUCKY_MEDAL_TAKEN)) {
+  if (!GameFlag_Get(FLAG_IZUMO_LUCKY_MEDAL)) {
     Call3((void (*)())Actor_SetHorizontalPositionWithTerrain,
           FIELD_TREASURE_ACTOR + 2, toFIXED(168), toFIXED(328));
     if (FIELD_CELL(actor->x.fixed) == 10 && FIELD_CELL(actor->z.fixed) == 20) {

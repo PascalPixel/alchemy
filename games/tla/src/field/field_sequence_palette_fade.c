@@ -13,9 +13,18 @@
 #define GREEN_BITS RGB(0, RGB_LEVEL_MAX, 0)
 #define BLUE_BITS RGB(0, 0, RGB_LEVEL_MAX)
 
-/// Sets each of the 1344 colour channels of step to the amount to add each
-/// frame for source to reach target in frames frames; with frames 0 or less
-/// step is left as it was.
+/// Where RGB555 keeps green and blue: the work keeps each channel where blue
+/// is, red moved up BLUE_SHIFT bits and green BLUE_SHIFT - GREEN_SHIFT.
+#define GREEN_SHIFT 5
+#define BLUE_SHIFT 10
+/// The brightness 2R + 4G + B with each channel where the work keeps it: red
+/// moved up to blue's place and doubled, green moved there and doubled twice.
+#define BRIGHTNESS_RED_SHIFT (BLUE_SHIFT + 1)
+#define BRIGHTNESS_GREEN_SHIFT (BLUE_SHIFT - GREEN_SHIFT + 2)
+
+/// Sets each colour channel of step to the amount to add each frame for source
+/// to reach target in frames frames; with frames 0 or less step is left as it
+/// was.
 void PaletteFade_CalculateSteps(s16 *source, s16 *target, s16 *step,
                                 s32 frames) {
   s32 remainingChannels;
@@ -43,7 +52,7 @@ void PaletteFade_CalculateSteps(s16 *source, s16 *target, s16 *step,
 /// and OBJ palettes.
 void PaletteFade_Update(void) {
   struct PaletteFade *work = Ram_HeapSlots->paletteFade;
-  u16 *add = work->delta;
+  u16 *channelDelta = work->delta;
   s32 i;
 
   if (GameFlag_Get(FLAG_PALETTE_BLEND_HELD) != 0) {
@@ -52,10 +61,12 @@ void PaletteFade_Update(void) {
   if (work->duration == 0) {
     return;
   }
+  // On the last frame the target itself is copied, so rounding in the steps
+  // never leaves the colours short.
   if (++work->step < work->duration) {
-    u16 *sum = work->current;
+    u16 *currentChannel = work->current;
     for (i = 0; i < COLOR_CHANNEL_COUNT; i++) {
-      *sum++ += *add++;
+      *currentChannel++ += *channelDelta++;
     }
   } else {
     s32 (*copy)(void *, const void *, s32) = Iwram_CopyWordsEntry;
@@ -64,16 +75,19 @@ void PaletteFade_Update(void) {
     work->duration = 0;
   }
 
+  // Packs the channels into the page not shown, then shows it.
   {
     u16 *packed = work->packed[1 ^ work->page];
-    s32 blue = BLUE_BITS;
+    s32 blueMask = BLUE_BITS;
     u16 *current;
 
     i = COLOR_MAX;
     current = work->current;
     for (; i != 0; i--) {
-      *packed++ = (current[0] & blue) | (((s16)current[1] >> 5) & GREEN_BITS) |
-                  (((s16)current[2] >> 10) & RED_BITS);
+      *packed++ =
+          (current[0] & blueMask) |
+          (((s16)current[1] >> (BLUE_SHIFT - GREEN_SHIFT)) & GREEN_BITS) |
+          (((s16)current[2] >> BLUE_SHIFT) & RED_BITS);
       current += 3;
     }
   }
@@ -90,12 +104,12 @@ void PaletteFade_Update(void) {
 }
 
 /// Builds colours for the palette fade from the palette src into dst, which
-/// holds each colour as B, G and R channels shifted up 10 bits. mode below
-/// 0x8000 is one colour for all; PALETTE_TINT_FROM_SOURCE the backdrop colour;
-/// the other PALETTE_TINT_* values tint each colour; any other value is the
-/// address of a ready buffer to copy. half is the palette selection:
-/// PALETTES_ALL for all 448 colours, PALETTES_BG for the BG's 224,
-/// PALETTES_OBJECTS for the OBJ's 224.
+/// holds each colour as B, G and R channels, each where RGB555 keeps blue.
+/// mode below PALETTE_TINT_FROM_SOURCE is one colour for all;
+/// PALETTE_TINT_FROM_SOURCE the backdrop colour; the other PALETTE_TINT_*
+/// values tint each colour; any other value is the address of a ready buffer
+/// to copy. half is the palette selection: PALETTES_ALL for every colour,
+/// PALETTES_BG for the BG's, PALETTES_OBJECTS for the OBJ's.
 void PaletteFade_Build(u32 mode, u16 *src, u16 *dst, s32 half) {
   u32 i;
   u32 colorCount = COLOR_MAX;
@@ -118,8 +132,8 @@ void PaletteFade_Build(u32 mode, u16 *src, u16 *dst, s32 half) {
   // reads three halfwords behind where it writes, so the colour repeats.
   if (mode < PALETTE_TINT_FROM_SOURCE) {
     *dst++ = mode & BLUE_BITS;
-    *dst++ = (mode & GREEN_BITS) << 5;
-    *dst++ = (mode & RED_BITS) << 10;
+    *dst++ = (mode & GREEN_BITS) << (BLUE_SHIFT - GREEN_SHIFT);
+    *dst++ = (mode & RED_BITS) << BLUE_SHIFT;
     Dma_Set(dst - 3, dst, DMA_COPY_HALFWORDS(((colorCount - 1) * 6) >> 1),
             REG_DMA3);
   } else if (mode < PALETTE_TINT_FLAGS) {
@@ -127,8 +141,10 @@ void PaletteFade_Build(u32 mode, u16 *src, u16 *dst, s32 half) {
     case PALETTE_TINT_GRAYSCALE: // grey of brightness (2R + 4G + B) / 7
       for (i = 0; i < colorCount; i++) {
         color = *src++;
-        red = ((color << 11) & (RED_BITS << 11));
-        green = ((color << 7) & (GREEN_BITS << 7));
+        red = ((color << BRIGHTNESS_RED_SHIFT) &
+               (RED_BITS << BRIGHTNESS_RED_SHIFT));
+        green = ((color << BRIGHTNESS_GREEN_SHIFT) &
+                 (GREEN_BITS << BRIGHTNESS_GREEN_SHIFT));
         blue = (color & BLUE_BITS);
         color = Iwram_SignedDivide(red + green + blue, 7);
         dst[i * 3 + 0] = color;
@@ -209,6 +225,7 @@ void PaletteFade_Build(u32 mode, u16 *src, u16 *dst, s32 half) {
         red = RGB_RED(color);
         green = RGB_GREEN(color);
         blue = RGB_BLUE(color);
+        // The first colour stays as it is.
         if (i != 0) {
           if (red < 8)
             red = 8;
@@ -314,8 +331,8 @@ void PaletteFade_Build(u32 mode, u16 *src, u16 *dst, s32 half) {
       for (i = 0; i < colorCount; i++) {
         color = *src++;
         dst[i * 3 + 0] = color & BLUE_BITS;
-        dst[i * 3 + 1] = (color & GREEN_BITS) << 5;
-        dst[i * 3 + 2] = (color & RED_BITS) << 10;
+        dst[i * 3 + 1] = (color & GREEN_BITS) << (BLUE_SHIFT - GREEN_SHIFT);
+        dst[i * 3 + 2] = (color & RED_BITS) << BLUE_SHIFT;
       }
       break;
     }
@@ -328,14 +345,16 @@ void PaletteFade_Build(u32 mode, u16 *src, u16 *dst, s32 half) {
     s32 green;
 
     tintRed = mode;
-    tintRed &= 31;
-    tintGreen = (mode >> 5) & 31;
-    tintBlue = mode >> 10;
-    tintBlue &= 31;
+    tintRed &= 0x1f;
+    tintGreen = (mode >> GREEN_SHIFT) & 0x1f;
+    tintBlue = mode >> BLUE_SHIFT;
+    tintBlue &= 0x1f;
     for (i = 0; i < colorCount; i++) {
       color = *src++;
-      red = ((color << 11) & (RED_BITS << 11));
-      green = ((color << 7) & (GREEN_BITS << 7));
+      red = ((color << BRIGHTNESS_RED_SHIFT) &
+             (RED_BITS << BRIGHTNESS_RED_SHIFT));
+      green = ((color << BRIGHTNESS_GREEN_SHIFT) &
+               (GREEN_BITS << BRIGHTNESS_GREEN_SHIFT));
       blue = (color & BLUE_BITS);
       color = Iwram_SignedDivide(red + green + blue, 96);
       red = color * tintRed;
@@ -361,25 +380,25 @@ void PaletteFade_Build(u32 mode, u16 *src, u16 *dst, s32 half) {
     s32 clampedBlue;
 
     tintRed = mode;
-    tintRed &= 31;
-    tintGreen = (mode >> 5) & 31;
-    tintBlue = mode >> 10;
-    tintBlue &= 31;
+    tintRed &= 0x1f;
+    tintGreen = (mode >> GREEN_SHIFT) & 0x1f;
+    tintBlue = mode >> BLUE_SHIFT;
+    tintBlue &= 0x1f;
     for (i = 0; i < colorCount; i++) {
       color = *src++;
       red = RGB_RED(color);
       color =
           Iwram_SignedDivide((red + RGB_GREEN(color) + RGB_BLUE(color)) << 4,
                              tintRed + tintGreen + tintBlue);
-      blendedRed = Iwram_MulFX(((color * tintRed) >> 4) << 16,
-                               (s32)(tintRed << 16) >> 4);
-      blendedGreen = Iwram_MulFX(((color * tintGreen) >> 4) << 16,
-                                 (s32)(tintGreen << 16) >> 4);
-      blendedBlue = Iwram_MulFX(((color * tintBlue) >> 4) << 16,
-                                (s32)(tintBlue << 16) >> 4);
-      clampedRed = PaletteFade_ClampComponent((u32)blendedRed >> 16);
-      clampedGreen = PaletteFade_ClampComponent((u32)blendedGreen >> 16);
-      clampedBlue = PaletteFade_ClampComponent((u32)blendedBlue >> 16);
+      blendedRed = Iwram_MulFX(INTtoFIXED((color * tintRed) >> 4),
+                               (s32)INTtoFIXED(tintRed) >> 4);
+      blendedGreen = Iwram_MulFX(INTtoFIXED((color * tintGreen) >> 4),
+                                 (s32)INTtoFIXED(tintGreen) >> 4);
+      blendedBlue = Iwram_MulFX(INTtoFIXED((color * tintBlue) >> 4),
+                                (s32)INTtoFIXED(tintBlue) >> 4);
+      clampedRed = PaletteFade_ClampComponent(FIXEDtoINT((u32)blendedRed));
+      clampedGreen = PaletteFade_ClampComponent(FIXEDtoINT((u32)blendedGreen));
+      clampedBlue = PaletteFade_ClampComponent(FIXEDtoINT((u32)blendedBlue));
       dst[i * 3 + 0] = gFieldEffect_ChannelCurve[clampedBlue];
       dst[i * 3 + 1] = gFieldEffect_ChannelCurve[clampedGreen];
       dst[i * 3 + 2] = gFieldEffect_ChannelCurve[clampedRed];
@@ -389,12 +408,12 @@ void PaletteFade_Build(u32 mode, u16 *src, u16 *dst, s32 half) {
     for (i = 0; i < colorCount; i++) {
       color = *src++;
       dst[i * 3 + 0] = color & BLUE_BITS;
-      dst[i * 3 + 1] = (color & GREEN_BITS) << 5;
-      dst[i * 3 + 2] = (color & RED_BITS) << 10;
+      dst[i * 3 + 1] = (color & GREEN_BITS) << (BLUE_SHIFT - GREEN_SHIFT);
+      dst[i * 3 + 2] = (color & RED_BITS) << BLUE_SHIFT;
     }
   } else {
-    // Copy a ready buffer: mode is its address, and the OBJ half starts 224
-    // colours of three halfwords in.
+    // Copy a ready buffer: mode is its address, and the OBJ half starts after
+    // the BG's colours of three halfwords.
     if (half == PALETTES_OBJECTS)
       mode += COLOR_HALF * 3 * sizeof(u16);
     Dma_Set((const void *)mode, dst, DMA_COPY_WORDS((colorCount * 6) >> 2),
@@ -413,7 +432,8 @@ void PaletteFade_Initialize(void) {
           REG_DMA3);
   Dma_Set((void *)OBJ_PLTT, &work->palette[COLOR_HALF],
           DMA_COPY_WORDS(COLOR_HALF / 2), REG_DMA3);
-  PaletteFade_Build(PALETTE_TINT_NONE, work->palette, work->target, 0);
+  PaletteFade_Build(PALETTE_TINT_NONE, work->palette, work->target,
+                    PALETTES_ALL);
   Task_Add(PaletteFade_Update, TASK_PASS_FRAME + 15);
 }
 
@@ -451,8 +471,8 @@ void PaletteFade_SetBackdrop(u32 color) {
   }
 }
 
-/// Packs the 448 target colours, three channels each, back into the palette
-/// copy as RGB555.
+/// Packs the target colours, three channels each, back into the palette copy as
+/// RGB555.
 void PaletteFade_PackTarget(void) {
   struct PaletteFade *work = Ram_HeapSlots->paletteFade;
   u16 *packed = work->palette;
@@ -463,10 +483,12 @@ void PaletteFade_PackTarget(void) {
   i = COLOR_MAX;
   current = work->target;
   for (; i != 0; i--) {
-    *packed++ = (current[0] & blueMask) | ((current[1] >> 5) & GREEN_BITS) |
-                ((current[2] >> 10) & RED_BITS);
+    *packed++ = (current[0] & blueMask) |
+                ((current[1] >> (BLUE_SHIFT - GREEN_SHIFT)) & GREEN_BITS) |
+                ((current[2] >> BLUE_SHIFT) & RED_BITS);
     current += 3;
   }
+  // FAKEMATCH(dead): a decrement of work, which nothing reads after it.
   work--;
 }
 
@@ -483,8 +505,8 @@ void PaletteFade_StartInterpolation(s32 frames) {
   }
 }
 
-/// Takes colours (all 448, BG then OBJ) as the palette copy and fades the BG
-/// colours toward them.
+/// Takes colours as the BG colours of the palette copy and makes them,
+/// unchanged, the BG colours' target.
 void PaletteFade_LoadPalette(const u16 *colours) {
   struct PaletteFade *work = Ram_HeapSlots->paletteFade;
 
@@ -492,12 +514,13 @@ void PaletteFade_LoadPalette(const u16 *colours) {
     s32 (*copy)(void *destination, const void *source, s32 size) =
         Iwram_CopyWordsEntry;
 
-    copy(work->palette, colours, COLOR_MAX);
-    PaletteFade_Build(PALETTE_TINT_NONE, work->palette, work->target, 1);
+    copy(work->palette, colours, COLOR_HALF * sizeof(u16));
+    PaletteFade_Build(PALETTE_TINT_NONE, work->palette, work->target,
+                      PALETTES_BG);
   }
 }
 
-/// Clamps a 5-bit colour channel to 0 to 31.
+/// Clamps a colour channel to 0 to RGB_LEVEL_MAX.
 s32 PaletteFade_ClampComponent(s32 value) {
   if (value > RGB_LEVEL_MAX)
     return RGB_LEVEL_MAX;
@@ -506,10 +529,10 @@ s32 PaletteFade_ClampComponent(s32 value) {
   return value;
 }
 
-/// Clamps a colour channel shifted up 10 bits to at most 31 << 10.
+/// Clamps a colour channel held where blue is to at most RGB_LEVEL_MAX there.
 s32 PaletteFade_ClampShiftedComponent(s32 value) {
-  if (value > RGB_LEVEL_MAX << 10)
-    value = RGB_LEVEL_MAX << 10;
+  if (value > RGB_LEVEL_MAX << BLUE_SHIFT)
+    value = RGB_LEVEL_MAX << BLUE_SHIFT;
   return value;
 }
 
@@ -519,3 +542,7 @@ s32 PaletteFade_ClampShiftedComponent(s32 value) {
 #undef RED_BITS
 #undef GREEN_BITS
 #undef BLUE_BITS
+#undef GREEN_SHIFT
+#undef BLUE_SHIFT
+#undef BRIGHTNESS_RED_SHIFT
+#undef BRIGHTNESS_GREEN_SHIFT

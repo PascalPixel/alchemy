@@ -93,7 +93,7 @@ void Field_PlaceTreasureSpots(void) {
         kind = SPRITE_PSYNERGY_STONE;
       else if (type == CONTAINER_STONE_TABLET)
         kind = SPRITE_STONE_TABLET;
-      else if (type == CONTAINER_BURIED)
+      else if (type == CONTAINER_GROUND)
         kind = SPRITE_UNSEEN_MARKER;
       else {
         buried = 1;
@@ -141,7 +141,7 @@ void Field_PlaceTreasureSpots(void) {
         actor->priorityFlags = ACTOR_PRIORITY_AUTOMATIC;
         actor->collisionFlags = ACTOR_SOLID;
         work->actors[FIELD_TREASURE_ACTOR + i] = actor;
-        if (type == CONTAINER_BURIED)
+        if (type == CONTAINER_GROUND)
           Actor_ShowItemIconById(FIELD_TREASURE_ACTOR + i, item);
         if (type == CONTAINER_POND)
           actor->collisionFlags = 0;

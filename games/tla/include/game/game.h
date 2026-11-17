@@ -1,8 +1,8 @@
-#ifndef GAME_H
-#define GAME_H
+#ifndef ALCHEMY_GAME_H
+#define ALCHEMY_GAME_H
 
 /// @file
-/// GAME
+/// The item and summon tables and the game bank's routines.
 
 #include "types.h"
 #include "edition.h"
@@ -104,12 +104,12 @@ void Party_ClearUnusableShortcutsFar(void);
 s32 Inventory_AddItemFar(s32, s32);
 /// Takes one item out of slot, closing up the inventory when it was the last.
 s32 Inventory_RemoveFar(s32 owner, s32 slot);
-void Unit_CalculateBaseElements(s32 owner_id,
-                                struct BattleElementStats *elements);
+void Unit_CalculateBaseElements(s32 unitId,
+                                struct BattleElementStats *destination);
 s32 Class_Determine(s32 classId, u32 *djinn, s32 item);
 s32 Unit_GetElementLevels(s32 record, const u8 *source, s32 *output);
 void Unit_RefreshPsynergy(s32);
-s32 Owner_UpdateClassActions(s32 owner_id);
+s32 Owner_UpdateClassActions(s32 owner);
 /// Expands message into buffer without an upper length bound.
 void Message_DecodeRawUnboundedFar(s32, u16 *);
 
@@ -198,7 +198,7 @@ void Party_BalanceDjinn(void);
 /// Adds delta to unit `owner`'s PP, clamped to 0 and its maximum, and returns
 /// the new PP.
 s16 Unit_AddPp(s32 owner, s32 delta);
-s32 PartyInventory_Remove(s32 item_id);
+s32 PartyInventory_Remove(s32 itemId);
 s32 PartyInventory_CountItem(s32 itemId);
 s32 PartyInventory_CountFreeSlots(void);
 u32 Party_GetAverageLevel(void);

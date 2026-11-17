@@ -987,7 +987,7 @@ void AnemosInnerSanctum_StepOnTile(void) {
     FieldCamera_MoveToActorById(id, 1);
     FieldCamera_WaitForArrival();
     FieldEvent_Wait(10);
-    Event_PlaySound(SE_582);
+    Event_PlaySound(SE_PUZZLE_MECHANISM);
     Actor_SetAnimation(id, 2);
     Event_SetFlag(FLAG_SCENE_TEMP_07);
     Actor_Get(id)->motionFlags = ACTOR_FLOATS;

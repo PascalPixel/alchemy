@@ -487,15 +487,15 @@
 #define FLAG_SEA_GODS_TEAR_TAKEN 0xa20
 /// Set once the party has taken what Cyclone uncovers in Izumo's bushes: an
 /// Antidote at each of the first two spots, a Lucky Medal at the third.
-#define FLAG_IZUMO_FIRST_ANTIDOTE_TAKEN 0xf9f
-#define FLAG_IZUMO_SECOND_ANTIDOTE_TAKEN 0xfa0
-#define FLAG_IZUMO_LUCKY_MEDAL_TAKEN 0xfa1
+#define FLAG_IZUMO_FIRST_ANTIDOTE 0xf9f
+#define FLAG_IZUMO_SECOND_ANTIDOTE 0xfa0
+#define FLAG_IZUMO_LUCKY_MEDAL 0xfa1
 /// Set once the party has taken the Mint Cyclone uncovers in the grass before
 /// Jupiter Lighthouse.
-#define FLAG_JUPITER_LIGHTHOUSE_MINT_TAKEN 0xfe2
+#define FLAG_JUPITER_LIGHTHOUSE_MINT 0xfe2
 /// Set once the party has taken the Burst Brooch in Tundaria Tower; after
 /// that, searching the crystal round the Center Prong opens the field menu.
-#define FLAG_BURST_BROOCH_TAKEN 0x949
+#define FLAG_TUNDARIA_TOWER_BURST_BROOCH 0x949
 
 // Scene flags, FLAG_SCENE_TEMP_00 to FLAG_SCENE_TEMP_FF: a scene says beside
 // its uses what each one holds there.

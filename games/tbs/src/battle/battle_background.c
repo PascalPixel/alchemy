@@ -31,6 +31,23 @@
 #define BACKGROUND_PLANE_LINES 136
 /// The plane's top lines, left off except while commands are chosen.
 #define BACKGROUND_PLANE_HIDDEN_LINES 16
+/// The picture's lines that BACKGROUND_PLANE_UPPER reads: its first 256
+/// tiles, 32 to a row.
+#define BACKGROUND_UPPER_HALF_LINES 64
+
+/// A battle background resource: its BATTLE_BACKGROUND_COLORS colours, then
+/// its packed picture.
+#define BACKGROUND_PALETTE_BYTES (BATTLE_BACKGROUND_COLORS * 2)
+
+/// The fixed background's sideways pan in 8.8 pixels while the zoom is below
+/// 1; from 1 on it moves three 8.8 pixels a step of the camera's yaw, so the
+/// picture turns with the camera, and is the same when the camera faces the
+/// party's actions (YAW_PARTY_ACTION).
+#define BACKGROUND_PAN_X Q_8_8(8)
+
+/// The steps of each half of gBattleHighlight_BlendRamp: the first half plays
+/// once, then the second over and over.
+#define HIGHLIGHT_RAMP_HALF 16
 
 /// Darkens the background by level, 0 for its own colours.
 void BattleBackground_SetPaletteLevel(s32 unused, s32 level) {
@@ -42,12 +59,12 @@ void BattleBackground_SetPaletteLevel(s32 unused, s32 level) {
 
   if (level == 0) {
     Dma_Set(palette, BATTLE_BG_PALETTE,
-            DMA_COPY_HALFWORDS(BATTLE_BG_PALETTE_COLORS), REG_DMA3);
+            DMA_COPY_HALFWORDS(BATTLE_BACKGROUND_COLORS), REG_DMA3);
   } else {
     Graphics_ScaleRgb555Clamped(palette, BATTLE_BG_PALETTE,
                                 battle->brightness =
                                     FIXED_ONE - level * BACKGROUND_LEVEL_STEP,
-                                BATTLE_BG_PALETTE_COLORS);
+                                BATTLE_BACKGROUND_COLORS);
   }
   Irq_Unlock(&ime);
 }
@@ -75,13 +92,13 @@ void BattleBackground_SetMode(s32 mode, s32 unusedResource, s32 fade) {
 
   if (fade == BATTLE_BACKGROUND_FADE_RESTORE) {
     Dma_Set(gBattleWork->palette, BATTLE_BG_PALETTE,
-            DMA_COPY_HALFWORDS(BATTLE_BG_PALETTE_COLORS), REG_DMA3);
+            DMA_COPY_HALFWORDS(BATTLE_BACKGROUND_COLORS), REG_DMA3);
   } else if (fade != 0) {
     u16 *source = gBattleWork->palette;
     u16 *destination = BATTLE_BG_PALETTE;
     s32 colorIndex;
 
-    for (colorIndex = 0; colorIndex != BATTLE_BG_PALETTE_COLORS; colorIndex++) {
+    for (colorIndex = 0; colorIndex != BATTLE_BACKGROUND_COLORS; colorIndex++) {
       s32 red = RGB_RED(source[colorIndex]);
       s32 green = RGB_GREEN(source[colorIndex]);
       s32 blue = RGB_BLUE(source[colorIndex]);
@@ -139,16 +156,17 @@ void BattleBackground_Load(s32 mode, s32 resourceId, s32 level) {
 
   RamCode_LoadSlot(HEAP_SLOT_RAM_CODE_TEMP, BitDecoder_DecodeImage,
                    BitDecoder_Size);
-  ((BitDecoder)HEAP_SLOT_BLOCK(HEAP_SLOT_RAM_CODE_TEMP))(backgroundData + 256,
-                                                         BG_CHAR_BLOCK(2));
+  ((BitDecoder)HEAP_SLOT_BLOCK(HEAP_SLOT_RAM_CODE_TEMP))(
+      backgroundData + BACKGROUND_PALETTE_BYTES, BG_CHAR_BLOCK(2));
   HeapSlot_Release(HEAP_SLOT_RAM_CODE_TEMP);
   palette = battle->palette;
-  Dma_Set(backgroundData, palette, DMA_COPY_WORDS(64), REG_DMA3);
+  Dma_Set(backgroundData, palette, DMA_COPY_WORDS(BACKGROUND_PALETTE_BYTES / 4),
+          REG_DMA3);
   if (level >= 0)
     Graphics_ScaleRgb555Clamped(palette, BATTLE_BG_PALETTE,
                                 battle->brightness =
                                     FIXED_ONE - level * BACKGROUND_LEVEL_STEP,
-                                BATTLE_BG_PALETTE_COLORS);
+                                BATTLE_BACKGROUND_COLORS);
   Dma_Set(OBJ_PLTT, &BG_PLTT_COLOR(BASIC_COLORS_PALETTE, 0),
           DMA_COPY_HALFWORDS(16), REG_DMA3);
   BG_PLTT_COLOR(BASIC_COLORS_PALETTE, TEXT_BACKGROUND_COLOR) =
@@ -156,8 +174,9 @@ void BattleBackground_Load(s32 mode, s32 resourceId, s32 level) {
   Graphics_BuildSequentialTileTable(BG_SCREEN_BLOCK(7));
   BattleTransition_BuildTilemap(BG_SCREEN_BLOCK(BACKGROUND_PADDED_SCREEN));
   // BG1's last row is left clear.
-  Iwram_ClearWords(
-      (BG_SCREEN_BLOCK(BACKGROUND_PADDED_SCREEN) + BG_SCREEN_SIZE - 64), 64);
+  Iwram_ClearWords((BG_SCREEN_BLOCK(BACKGROUND_PADDED_SCREEN) + BG_SCREEN_SIZE -
+                    BG_SCREEN_WIDTH * 2),
+                   BG_SCREEN_WIDTH * 2);
   if (view->mode == BATTLE_BACKGROUND_NONE)
     Task_Add(BattleBackground_ShowZoomedPage, TASK_PASS_VBLANK + 127);
   view->mode = mode;
@@ -186,13 +205,11 @@ void BattleCamera_SetRange(FIXED centerX, FIXED centerY, s32 offsetX,
   u32 scanline;
   u32 lowerHalfLine;
 
-  // The sideways pan, 8.8 pixels: 8 when zoomed out, else 104 less three
-  // times the yaw, so the picture turns with the camera.
-  panX = 8 << 8;
+  panX = BACKGROUND_PAN_X;
   wrap = 0;
   if (scale >= FIXED_ONE) {
     wrap = BGCNT_WRAP;
-    panX = (104 << 8) + -(s16)camera->yaw * 3;
+    panX = BACKGROUND_PAN_X + YAW_PARTY_ACTION * 3 + -(s16)camera->yaw * 3;
   }
   if (scanlines == NULL)
     return;
@@ -204,7 +221,8 @@ void BattleCamera_SetRange(FIXED centerX, FIXED centerY, s32 offsetX,
     return;
 
   // The affine parameters: a plain zoom, the reference point moved so the
-  // centre stays put, 16 pixels up.
+  // centre stays put and the picture's top row is the first line below the
+  // plane's hidden lines.
   line = scanlines->lines[scanlines->page ^ 1];
   ratio = Iwram_RatioMulQ14(scale, FIXED_ONE);
   step = ratio >> 8;
@@ -215,12 +233,15 @@ void BattleCamera_SetRange(FIXED centerX, FIXED centerY, s32 offsetX,
   affine->pd = step;
   x = Iwram_MulFX(ratio, Iwram_MulFX(centerX, scale - FIXED_ONE));
   y = Iwram_MulFX(ratio, Iwram_MulFX(centerY, scale - FIXED_ONE));
-  affine->x = ((x + 0x7fff) >> 8) + offsetX + panX;
-  y = ((y + 0x7fff) >> 8) + offsetY - (16 << 8);
+  affine->x = ((x + toFIXED(0.5) - 1) >> 8) + offsetX + panX;
+  y = ((y + toFIXED(0.5) - 1) >> 8) + offsetY -
+      Q_8_8(BACKGROUND_PLANE_HIDDEN_LINES);
   affine->y = y;
 
   // The first line that reaches the picture's lower half at this zoom.
-  lowerHalfLine = (Iwram_RatioMulQ14((s16)step, (64 << 8) - y) >> 16) + 1;
+  lowerHalfLine = FIXEDtoINT(Iwram_RatioMulQ14(
+                      (s16)step, (BACKGROUND_UPPER_HALF_LINES << 8) - y)) +
+                  1;
 
   scanline = 0;
   if (!GameFlag_GetFar(FLAG_CHOOSING_COMMANDS)) {
@@ -252,7 +273,7 @@ UNUSED void BattleCamera_SetViewAtDepth(s32 x, s32 depth, s32 y) {
 #endif
   struct BattleCamera *camera = gBattleCamera;
   s32 *focus = camera->focus;
-  FIXED scale = (zoom << 16) / 100;
+  FIXED scale = INTtoFIXED(zoom) / 100;
   s32 renderBounds[3];
   s32 measuredBounds[3];
   s32 sourceBounds[3];
@@ -287,7 +308,7 @@ UNUSED void BattleCamera_SetViewAtDepth(s32 x, s32 depth, s32 y) {
       toFIXED(BATTLE_PROJECTION_CENTER_X), toFIXED(BATTLE_PROJECTION_CENTER_Y),
       (BATTLE_PROJECTION_CENTER_X - measuredBounds[0]) << 8,
       (BATTLE_PROJECTION_CENTER_Y - measuredBounds[1]) << 8, scale);
-  half = scale * 255;
+  half = scale * (FIXEDtoINT(BATTLE_CAMERA_DISTANCE) / 2);
   width = half * 2;
   result = Iwram_RatioMulQ14(width, alpha);
   Projection_Set(width, result, half * 4);
@@ -298,7 +319,7 @@ UNUSED void BattleCamera_SetViewAtDepth(s32 x, s32 depth, s32 y) {
 void BattleCamera_SetView(s32 x, s32 depth, s32 y, s32 zoom) {
   struct BattleCamera *camera = gBattleCamera;
   s32 *focus = camera->focus;
-  FIXED scale = (zoom << 16) / 100;
+  FIXED scale = INTtoFIXED(zoom) / 100;
   FIXED renderBounds[3];
   s32 measuredBounds[3];
   s32 sourceBounds[3];
@@ -337,7 +358,7 @@ void BattleCamera_SetView(s32 x, s32 depth, s32 y, s32 zoom) {
       (BATTLE_PROJECTION_CENTER_X - measuredBounds[0]) << 8,
       (BATTLE_PROJECTION_CENTER_Y - measuredBounds[1]) << 8, scale);
   // The zoom scales the focal length and the far depth.
-  half = scale * 255;
+  half = scale * (FIXEDtoINT(BATTLE_CAMERA_DISTANCE) / 2);
   width = half * 2;
   result = Iwram_RatioMulQ14(width, alpha);
   Projection_Set(width, result, half * 4);
@@ -509,11 +530,11 @@ void BattleBackground_StepHighlightBlend(void) {
     REG_BLDALPHA = BLEND_ALPHA(BLEND_WEIGHT_MAX, 0);
     blendRamp = gBattleHighlight_BlendRamp;
     REG_BLDY = blendRamp[battle->highlightStep];
-    // From step 15 on, the next step stays in 16 to 31.
+    // From the first half's last step on, the next step stays in the second.
     rampIndex = battle->highlightStep;
-    nextIndex = (rampIndex + 1) & 0xf;
-    if (rampIndex > 14)
-      nextIndex |= 0x10;
+    nextIndex = (rampIndex + 1) & (HIGHLIGHT_RAMP_HALF - 1);
+    if (rampIndex >= HIGHLIGHT_RAMP_HALF - 1)
+      nextIndex |= HIGHLIGHT_RAMP_HALF;
     battle->highlightStep = nextIndex;
   }
 }
@@ -546,8 +567,7 @@ void BattleHighlight_SetModes(u16 *selectedUnits, s32 mode) {
     if (selectedUnits != 0) {
       u32 unitId;
 
-      // A unit list holds at most 14.
-      for (unitIndex = 0; unitIndex <= 13; unitIndex++) {
+      for (unitIndex = 0; unitIndex < UNIT_MAX; unitIndex++) {
         unitId = *selectedUnits++;
         if (unitId == BATTLE_UNIT_LIST_END)
           break;
@@ -565,3 +585,7 @@ void BattleHighlight_SetModes(u16 *selectedUnits, s32 mode) {
 #undef BACKGROUND_PLANE_UPPER
 #undef BACKGROUND_PLANE_LOWER
 #undef BACKGROUND_PLANE_OFF
+#undef BACKGROUND_UPPER_HALF_LINES
+#undef BACKGROUND_PALETTE_BYTES
+#undef BACKGROUND_PAN_X
+#undef HIGHLIGHT_RAMP_HALF

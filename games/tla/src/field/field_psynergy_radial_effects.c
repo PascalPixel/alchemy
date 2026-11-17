@@ -44,6 +44,13 @@ enum {
   WHIRLWIND_TRAVEL_FRAMES = 10
 };
 
+/// The radial ring's particles, a 16th of a turn apart; the last goes where the
+/// first went.
+#define RADIAL_RING_STEPS 16
+/// The depth slot of the field Psynergy's effect sprites: in front of every
+/// actor, whose slots stop at 239.
+#define EFFECT_SPRITE_FRONT_DEPTH 250
+
 /// Spawns 17 particles that spread from origin in a flat ring, their x velocity
 /// 1.5 times their z velocity, so the ring is wider than deep as the field is
 /// drawn.
@@ -60,15 +67,17 @@ void FieldEffect_SpawnRadialParticleRing(struct MotionObject *origin) {
   options.startScaleY = FIXED_ONE * 4 / 5;
   i = 0;
   do {
-    angle = i * (TRIG_TURN / 16);
+    angle = i * (TRIG_TURN / RADIAL_RING_STEPS);
     velocity[0] = Trig_Cos(angle) * 3 / 2;
     velocity[1] = 0;
     sine = Trig_Sin(angle);
     velocity[2] = sine;
-    FieldEffect_SpawnResident(origin->x, origin->y, origin->z, velocity[0],
-                              velocity[1], sine, 0x01090001, &options);
+    FieldEffect_SpawnResident(
+        origin->x, origin->y, origin->z, velocity[0], velocity[1], sine,
+        EFFECT_USE_UPDATE | EFFECT_USE_START_SCALE | EFFECT_USE_PALETTE | 1,
+        &options);
     i++;
-  } while (i <= 16);
+  } while (i <= RADIAL_RING_STEPS);
 }
 
 /// Per-frame update: wanders away from the anchor, 2 to 3 pixels a frame, now
@@ -86,8 +95,8 @@ void FieldEffect_WanderAroundAnchor(struct Actor *effect) {
   dz = Iwram_MulFX(radius, Trig_Sin(angle));
   effect->x.fixed += dx;
   effect->z.fixed += dz;
-  // A small backwards drift, 16 a frame.
-  effect->facing += -16;
+  // A small backwards drift, a 4096th of a turn a frame.
+  effect->facing += -(TRIG_TURN / 4096);
   if (effect->turnFrames != 0) {
     effect->turnFrames--;
     effect->facing += TRIG_TURN / 32;
@@ -353,8 +362,14 @@ void FieldPsynergy_HaltOnTarget(s32 unused) {
   FieldPsynergy_Halt();
 }
 
-/// Throws an actor from the caster to the Psynergy's position over 10 frames
-/// and scatters it into 16 particles.
+/// A thrown stopwatch's or hand's steps, a tenth of the way a frame: it
+/// arrives on the 11th frame.
+#define CAST_THROW_STEPS 10
+#define HALT_PARTICLES 16
+
+/// Halt: throws a stopwatch (SPRITE_STOPWATCH) from the caster to the
+/// Psynergy's position over CAST_THROW_STEPS frames, ticks three low tones
+/// and a high one, and scatters it into HALT_PARTICLES particles.
 void FieldPsynergy_Halt(void) {
   struct FieldEffectWork *effectWork = Ram_HeapSlots->fieldEffectWork;
   struct Actor *caster = effectWork->mainActor;
@@ -381,14 +396,14 @@ void FieldPsynergy_Halt(void) {
   to.x = effectWork->x;
   to.y = effectWork->y + toFIXED(8);
   to.z = effectWork->z;
-  // Steps 0 to 10: the orb arrives on the 11th frame, grown to full size.
+  // Grown to full size as it arrives.
   for (;;) {
-    s32 steps = 11;
+    s32 steps = CAST_THROW_STEPS + 1;
     s32 scale;
 
-    SET_ACTOR_POSITION(orb, from.x + (to.x - from.x) * step / 10,
-                       from.y + (to.y - from.y) * step / 10,
-                       from.z + (to.z - from.z) * step / 10);
+    SET_ACTOR_POSITION(orb, from.x + (to.x - from.x) * step / CAST_THROW_STEPS,
+                       from.y + (to.y - from.y) * step / CAST_THROW_STEPS,
+                       from.z + (to.z - from.z) * step / CAST_THROW_STEPS);
     scale = FieldEffect_Interpolate(FIXED_ONE, FIXED_ONE / 4,
                                     step); // from 0.25 to full
     orb->scaleX = scale;
@@ -414,7 +429,7 @@ void FieldPsynergy_Halt(void) {
   // Particles 4 pixels round it fly out, then come back to the Psynergy's
   // position.
   effect = &effectWork->particles[0];
-  for (i = 0; i < 16; i++) {
+  for (i = 0; i < HALT_PARTICLES; i++) {
     pos.x = orb->x.fixed;
     pos.y = orb->y.fixed + toFIXED(8);
     pos.z = orb->z.fixed;
@@ -499,8 +514,13 @@ void FieldPsynergy_CatchOnTarget(s32 unused) { FieldPsynergy_Catch(); }
 
 /// The value step tenths of the way from from to to.
 static __inline__ s32 Interpolate(s32 from, s32 to, s32 step) {
-  return from + (to - from) * step / 10;
+  return from + (to - from) * step / CAST_THROW_STEPS;
 }
+
+/// The frames Catch's hand presses down, 2 pixels a frame, and rises again,
+/// 1.5 pixels a frame.
+#define CATCH_PRESS_FRAMES 10
+#define CATCH_RISE_FRAMES 13
 
 /// Catch: carries the hand (SPRITE_MOVE_HAND) from 16 pixels above the caster
 /// to the goal in 10 steps, growing from a quarter to full size, presses down
@@ -515,7 +535,7 @@ void FieldPsynergy_Catch(void) {
   struct Vector3 target;
   s32 step;
   s32 index;
-  s32 steps = 11;
+  s32 steps = CAST_THROW_STEPS + 1;
 
   SET_POSITION(&origin, mainActor->x.fixed, mainActor->y.fixed + toFIXED(16),
                mainActor->z.fixed);
@@ -541,9 +561,10 @@ void FieldPsynergy_Catch(void) {
   do {
     s32 scale;
 
-    SET_ACTOR_POSITION(actor, origin.x + (target.x - origin.x) * step / 10,
-                       origin.y + (target.y - origin.y) * step / 10,
-                       origin.z + (target.z - origin.z) * step / 10);
+    SET_ACTOR_POSITION(
+        actor, origin.x + (target.x - origin.x) * step / CAST_THROW_STEPS,
+        origin.y + (target.y - origin.y) * step / CAST_THROW_STEPS,
+        origin.z + (target.z - origin.z) * step / CAST_THROW_STEPS);
     scale = Interpolate(FIXED_ONE / 4, FIXED_ONE, step);
     actor->scaleX = scale;
     actor->scaleY = scale;
@@ -553,7 +574,7 @@ void FieldPsynergy_Catch(void) {
   wait(10);
   Actor_SelectAnimationFar(actor, 6);
   wait(15);
-  for (index = 0; index < 10; index++) {
+  for (index = 0; index < CATCH_PRESS_FRAMES; index++) {
     actor->y.fixed -= toFIXED(2);
     wait(1);
   }
@@ -563,7 +584,7 @@ void FieldPsynergy_Catch(void) {
     Actor_SetPositionAndResetMotionFar(secondary, -toFIXED(9),
                                        secondary->y.fixed, -toFIXED(9));
   wait(20);
-  for (index = 0; index < 13; index++) {
+  for (index = 0; index < CATCH_RISE_FRAMES; index++) {
     actor->y.fixed += toFIXED(3) / 2;
     wait(1);
   }
@@ -573,9 +594,10 @@ void FieldPsynergy_Catch(void) {
   do {
     s32 scale;
 
-    SET_ACTOR_POSITION(actor, target.x + (origin.x - target.x) * step / 10,
-                       target.y + (origin.y - target.y) * step / 10,
-                       target.z + (origin.z - target.z) * step / 10);
+    SET_ACTOR_POSITION(
+        actor, target.x + (origin.x - target.x) * step / CAST_THROW_STEPS,
+        target.y + (origin.y - target.y) * step / CAST_THROW_STEPS,
+        target.z + (origin.z - target.z) * step / CAST_THROW_STEPS);
     scale = Interpolate(FIXED_ONE, FIXED_ONE / 4, step);
     actor->scaleX = scale;
     actor->scaleY = scale;
@@ -679,7 +701,7 @@ void FieldPsynergy_UpdateLash(void) {
   case 3:
     Actor_SelectAnimationFar(actor, 3);
     work->spawnCount = 3;
-    actor->y.fixed += work->timer << 17;
+    actor->y.fixed += work->timer * toFIXED(2);
     if (work->timer == 10) {
       work->phase++;
       work->timer = -1;
@@ -713,6 +735,11 @@ void FieldPsynergy_LashOnTarget(s32 value) {
   }
   FieldPsynergy_Lash();
 }
+
+/// The frames Lash's hand comes down, 2 pixels a frame, and the sparkles it
+/// bursts into with no target.
+#define LASH_FALL_FRAMES 16
+#define LASH_SPARKLES 16
 
 /// Lash: a hand forms over the spot and comes down on it. With no target it
 /// bursts into sparkles; cast on a rope's end it whips out and ties the rope
@@ -757,7 +784,7 @@ void FieldPsynergy_Lash(void) {
     sprite = work->sprites;
     for (i = 0; i < SCATTER_PARTICLE_COUNT; i++) {
       EffectSprite_Init(sprite, 4, 4, 0, tileA);
-      sprite->depth = 250;
+      sprite->depth = EFFECT_SPRITE_FRONT_DEPTH;
       sprite->oam.priority = 0;
       sprite->oam.fullColor = 1;
       sprite->oam.palette = 0;
@@ -772,13 +799,13 @@ void FieldPsynergy_Lash(void) {
                                  scene->z);
     Actor_SelectAnimationFar(actor, 1);
     wait(10);
-    for (i = 0; i < 16; i++) {
+    for (i = 0; i < LASH_FALL_FRAMES; i++) {
       actor->y.fixed += -toFIXED(2);
       wait(1);
     }
     Sound_PlayFar(SE_WATER);
     if (scene->enabled != 0) {
-      for (i = 0; i < 16; i++)
+      for (i = 0; i < LASH_SPARKLES; i++)
         BattleEffect_SpawnScatterParticle(actor->x.fixed, actor->y.fixed,
                                           actor->z.fixed);
       wait(1);
@@ -858,10 +885,11 @@ void FieldEffect_UpdateRadialLaunch(struct FieldParticle *effect) {
     effect->x = effect->originX = pos.x;
     effect->z = effect->originZ = pos.z + toFIXED(8);
 
+    // Up the screen, within 1/8 turn either way.
     spread = Random16();
     Vector_AddPolarOffset(toFIXED(120),
-                          ((spread << 13) >> 16) - ((Random16() << 13) >> 16) +
-                              FACING_NORTH,
+                          FIXEDtoINT(spread * (TRIG_TURN / 8)) -
+                              Random_Below(TRIG_TURN / 8) + FACING_NORTH,
                           &pos);
 
     effect->targetX = pos.x;
@@ -1098,6 +1126,12 @@ void FieldPsynergy_ShowAvoidWoreOff(void) {
   WorldMap_ReloadPendingAreaGraphics();
 }
 
+/// Avoid's flashes, 5 frames each; then the frames its outline blinks, the
+/// chime coming on the 15th.
+#define AVOID_FLASHES 20
+#define AVOID_BLINK_FRAMES 70
+#define AVOID_CHIME_FRAME 15
+
 /// Avoid: the caster spins and flashes, then blinks, and encounters are kept
 /// away until Avoid wears off.
 void FieldPsynergy_Avoid(void) {
@@ -1135,7 +1169,7 @@ void FieldPsynergy_Avoid(void) {
   actor->arcPhase = 1;
   wait(10);
   // Flash white for 2 frames in every 5.
-  for (count = 0; count < 20; count++) {
+  for (count = 0; count < AVOID_FLASHES; count++) {
     entry->colorMode = SPRITE_COLOR_WHITE;
     group->dirty = 1;
     wait(2);
@@ -1147,9 +1181,8 @@ void FieldPsynergy_Avoid(void) {
   actor->update = NULL;
   actor->facing = angle;
 
-  // For 70 frames, blink its outline beside its own flags on a five-frame
-  // cycle.
-  for (count = 0; count < 70; count++) {
+  // Blink its outline beside its own flags on a five-frame cycle.
+  for (count = 0; count < AVOID_BLINK_FRAMES; count++) {
     phase = count % 5;
     if (phase == 0) {
       group->dirty = 1;
@@ -1159,7 +1192,7 @@ void FieldPsynergy_Avoid(void) {
       group->flags = flags;
       entry->colorMode = SPRITE_COLOR_NORMAL;
     }
-    if (count == 15)
+    if (count == AVOID_CHIME_FRAME)
       Sound_PlayFar(SE_NOTE_MID);
     wait(1);
   }
@@ -1176,8 +1209,10 @@ void FieldPsynergy_Avoid(void) {
   FieldMessage_ShowFar((s32)&MsgMonstersAttackLess, FIELD_MESSAGE_ZOOM);
 }
 
-/// Waits, at most 90 frames, until both pairs of swelling arcs have run their
-/// 32 frames.
+#define ARC_GROUPS_WAIT_FRAMES 90
+
+/// Waits, at most ARC_GROUPS_WAIT_FRAMES, until both pairs of swelling arcs
+/// have run their 32 frames.
 void BattleEffect_WaitForArcGroups(void) {
   struct ArcEffectWork *work = Ram_HeapSlots->arcEffect;
   s32 i = 0;
@@ -1185,7 +1220,7 @@ void BattleEffect_WaitForArcGroups(void) {
   while (work->age[0] < ARC_GROUP_FRAMES || work->age[1] < ARC_GROUP_FRAMES) {
     wait(1);
     i++;
-    if (i >= 90)
+    if (i >= ARC_GROUPS_WAIT_FRAMES)
       return;
   }
 }
@@ -1322,6 +1357,11 @@ void BattleEffect_EndArcEffect(void) {
 }
 
 #define BOW_NEXT_PHASE(work) ((work)->phase++, (work)->timer = -1)
+/// Of the BOW_SPARK_COUNT sparks, those the bow throws off; while they repeat,
+/// each starts again every BOW_SPARKS_THROWN frames.
+#define BOW_SPARKS_THROWN 10
+/// The red and green of the canvas palette's first colour.
+#define ARROW_SHADE_FIRST 16
 
 /// Task of the Arrow, the field Psynergy of the unused ability "A??" (named
 /// here for the bow it draws and the arrow it looses): the bow and the flaming
@@ -1557,7 +1597,7 @@ again:
 
   if (work->sparking != 0) {
     motion = work->sparks;
-    for (i = 0; i < 10; i++) {
+    for (i = 0; i < BOW_SPARKS_THROWN; i++) {
       if (motion->delay == 0) {
         s32 speed;
         s32 angle;
@@ -1578,7 +1618,7 @@ again:
         Field_AdvanceWithGravity2D(&motion->x, 60, 0);
       }
       motion->delay++;
-      if (work->sparksRepeat == 1 && motion->delay == 10)
+      if (work->sparksRepeat == 1 && motion->delay == BOW_SPARKS_THROWN)
         motion->delay = 0;
       motion++;
     }
@@ -1678,15 +1718,16 @@ void FieldPsynergy_Arrow(void) {
   work->start[0] = scene->mainActor->x.fixed;
   work->start[1] = scene->mainActor->y.fixed;
   work->start[2] = scene->mainActor->z.fixed;
-  blue = RGB_LEVEL_MAX << 10;
+  blue = RGB(0, 0, RGB_LEVEL_MAX);
   work->target[0] = scene->mainActor->x.fixed;
   work->target[1] = scene->mainActor->y.fixed;
   work->target[2] = scene->mainActor->z.fixed;
   Vector_AddPolarOffset(toFIXED(80), scene->angle8, work->target);
 
+  // The canvas palette: full blue, red and green rising from 16 to 31.
   palette = (u16 *)&OBJ_PLTT_COLOR(CANVAS_PALETTE, 0);
-  for (i = 0; i < 16; i++) {
-    shade = i + 16;
+  for (i = 0; i < PALETTE_COLORS; i++) {
+    shade = i + ARROW_SHADE_FIRST;
     Io_Write16((shade << 5 | blue) | shade, palette);
     palette++;
   }

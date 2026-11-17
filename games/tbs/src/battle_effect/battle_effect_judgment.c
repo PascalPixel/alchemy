@@ -6,8 +6,13 @@
 /// The bytes of Judgment's work block before its dimmed mote copies.
 #define JUDGMENT_SHEET_BYTES 10000
 
-/// The copies of the mote sheet, each dimmer than the last.
-#define JUDGMENT_RAMP_COPIES 8
+/// The dimmed copies of the mote pictures: DIMMED_MOTE_SETS sets of
+/// MOTE_SET_BYTES, set i with every level capped at DIMMED_MOTE_CAP(i), 7
+/// levels lower than the set before, set 0 not at all.
+#define DIMMED_MOTE_SETS 8
+#define DIMMED_MOTE_CAP(set) (CANVAS_LEVEL_BRIGHTEST + 1 - (set) * 7)
+/// The battle background's colours, BG palettes 6 to 13.
+#define BATTLE_BACKGROUND_COLORS (8 * PALETTE_COLORS)
 
 /// Judgment's work block, laid over struct BattleEffectWork from its start; the
 /// sweep's wave picture later overwrites the gathering's part of it.
@@ -15,10 +20,9 @@ struct JudgmentWork {
   /// The gathering's pictures: the pink burst, the burst's quarters and the
   /// tornado sheet.
   u8 sheet[JUDGMENT_SHEET_BYTES];
-  /// Copies of the mote sheet, copy i with every level capped at
-  /// SHEET_PALETTE_COLORS - 7i, so copy 0 keeps them all; the gathering's
-  /// ring of motes steps through them.
-  u8 ramp[JUDGMENT_RAMP_COPIES][MOTE_SET_BYTES];
+  /// The dimmed motes, which the gathering's ring of motes steps through as
+  /// it fades.
+  u8 dimmedMotes[DIMMED_MOTE_SETS][MOTE_SET_BYTES];
 };
 
 /// The gathering's motes in PARTICLES, then its sparks.
@@ -141,7 +145,7 @@ void BattleEffect_RunJudgment(struct BattleEffectParams *args) {
   struct BattleBackgroundWork *view;
   DrawRectangle draw[2];
   s32 frame;
-  u8 *ramp;
+  u8 *motes;
   struct BattleCamera *camera;
   FIXED depth;
   s32 zoom;
@@ -168,7 +172,7 @@ void BattleEffect_RunJudgment(struct BattleEffectParams *args) {
   work = HEAP_SLOT_FROM(heap, HEAP_SLOT_BATTLE_CANVAS, HEAP_SLOT_BATTLE_EFFECT);
   view = HEAP_SLOT_FROM(heap, HEAP_SLOT_BATTLE_CANVAS,
                         HEAP_SLOT_BATTLE_BACKGROUND);
-  ramp = HEAP_SLOT_FROM(heap, HEAP_SLOT_BATTLE_CANVAS, HEAP_SLOT_BATTLE_SHEET);
+  motes = HEAP_SLOT_FROM(heap, HEAP_SLOT_BATTLE_CANVAS, HEAP_SLOT_BATTLE_SHEET);
   camera = HEAP_SLOT_FROM(heap, HEAP_SLOT_BATTLE_CANVAS, HEAP_SLOT_CAMERA);
   work->args = args;
   EFFECT_START_NARROW_CANVAS(BGCNT_WRAP);
@@ -203,14 +207,14 @@ void BattleEffect_RunJudgment(struct BattleEffectParams *args) {
                              work->sheet + JUDGMENT_SHEET_BURST, 0, 0);
   Resource_LoadAndDecompress(RESOURCE_TORNADO_SHEET,
                              work->sheet + JUDGMENT_SHEET_TORNADO, 1, 0);
-  Resource_LoadAndDecompress(RESOURCE_PARTICLE_SPRITES_A, ramp, 0, 0);
+  Resource_LoadAndDecompress(RESOURCE_PARTICLE_SPRITES_A, motes, 0, 0);
 
-  for (i = 0; i != JUDGMENT_RAMP_COPIES; i++) {
-    u8 *src = ramp;
+  for (i = 0; i != DIMMED_MOTE_SETS; i++) {
+    u8 *src = motes;
     for (j = 0; j != MOTE_SET_BYTES; j++) {
       s32 v = *src++;
-      EFFECT_CAP_LEVEL(v, SHEET_PALETTE_COLORS - i * 7);
-      ((struct JudgmentWork *)work)->ramp[i][j] = v;
+      EFFECT_CAP_LEVEL(v, DIMMED_MOTE_CAP(i));
+      ((struct JudgmentWork *)work)->dimmedMotes[i][j] = v;
     }
   }
 
@@ -277,7 +281,7 @@ void BattleEffect_RunJudgment(struct BattleEffectParams *args) {
         if (maximumDepth < z) {
           maximumDepth = z;
         }
-        EFFECT_DRAW_MOTE(draw[0], canvas, ramp, projectedPosition.x,
+        EFFECT_DRAW_MOTE(draw[0], canvas, motes, projectedPosition.x,
                          projectedPosition.y, size);
         if (frame == 64) {
           JUDGMENT_SPARKS[i].velocityX +=
@@ -317,7 +321,7 @@ void BattleEffect_RunJudgment(struct BattleEffectParams *args) {
         size = projectedPosition.depth / 20 + 2;
         projectedPosition.x += JUDGMENT_BURST_X;
         projectedPosition.y += JUDGMENT_BURST_Y;
-        EFFECT_DRAW_MOTE(draw[0], canvas, ramp, projectedPosition.x,
+        EFFECT_DRAW_MOTE(draw[0], canvas, motes, projectedPosition.x,
                          projectedPosition.y, size);
       }
     }
@@ -483,12 +487,12 @@ void BattleEffect_RunJudgment(struct BattleEffectParams *args) {
                              work->sheet + JUDGMENT_SHEET_FLARE_A, 1, 1);
 
   for (i = 0; i != MOTE_SET_BYTES; i++) {
-    // The sweep's motes are dimmer: a level above half the ramp drops by
-    // half of it, and any other but 0 becomes 1.
-    if (ramp[i] > SHEET_PALETTE_COLORS / 2) {
-      ramp[i] -= SHEET_PALETTE_COLORS / 2;
-    } else if (ramp[i] != 0) {
-      ramp[i] = 1;
+    // The sweep's motes are dimmer: a level in the brighter half drops by
+    // half the levels, and any other but 0 becomes 1.
+    if (motes[i] > (CANVAS_LEVEL_BRIGHTEST + 1) / 2) {
+      motes[i] -= (CANVAS_LEVEL_BRIGHTEST + 1) / 2;
+    } else if (motes[i] != 0) {
+      motes[i] = 1;
     }
   }
 
@@ -566,7 +570,7 @@ void BattleEffect_RunJudgment(struct BattleEffectParams *args) {
     if (frame == 66) {
       // Invert the battle background's colours, background palettes 6 to 13.
       u16 *pal = (u16 *)&BG_PLTT_COLOR(6, 0);
-      for (i = 0; i != 8 * PALETTE_COLORS; i++, pal++) {
+      for (i = 0; i != BATTLE_BACKGROUND_COLORS; i++, pal++) {
         *pal ^= RGB_WHITE;
       }
     }
@@ -748,7 +752,7 @@ void BattleEffect_RunJudgment(struct BattleEffectParams *args) {
         s32 angle = i * (TRIG_TURN / JUDGMENT_FLASH_RING_MOTES);
         s32 x = FIXEDtoINT(Trig_Sin(angle) * radius) - (size >> 1);
         s32 y = FIXEDtoINT(Trig_Cos(angle) * radius) >> 1;
-        draw[0](canvas, ramp + gBattleEffect_MotePictures[size - 1], x + 60,
+        draw[0](canvas, motes + gBattleEffect_MotePictures[size - 1], x + 60,
                 y + 50, size, size * 2);
       }
     }
@@ -860,8 +864,8 @@ void BattleEffect_RunJudgment(struct BattleEffectParams *args) {
       shift -= 8;
     }
 
-    // Unused: never true, as the sweep ends before JUDGMENT_SWEEP_FRAMES; the
-    // ROM keeps the test and the tint.
+    // DEAD: never true, as the sweep's last frame is JUDGMENT_SWEEP_FRAMES - 1;
+    // the ROM keeps the test and the tint.
     if (frame >= JUDGMENT_SWEEP_FRAMES) {
       EFFECT_FOR_EACH_TARGET(i, work->args) {
         BattleEffect_TintBattler(work->args->targets[i], SPRITE_COLOR_BLACK,
@@ -978,7 +982,9 @@ void BattleEffect_RunJudgment(struct BattleEffectParams *args) {
 #undef JUDGMENT_SHEET_FLASH_GLOW
 #undef JUDGMENT_EXPLOSION_PICTURE_BYTES
 #undef JUDGMENT_WAVE_SIZE
-#undef JUDGMENT_RAMP_COPIES
+#undef DIMMED_MOTE_SETS
+#undef DIMMED_MOTE_CAP
+#undef BATTLE_BACKGROUND_COLORS
 #undef JUDGMENT_FORMATION_COLUMNS
 #undef JUDGMENT_FORMATION_SPRITE_SIZE
 #undef JUDGMENT_POSE_SHIELD_SWINGING

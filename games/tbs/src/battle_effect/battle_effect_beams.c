@@ -7,6 +7,18 @@
 
 #define BEAM_FRAMES 32 ///< the slash's and the critical hit's length
 #define BEAM_SPARKS 64 ///< sparks in work->particles, drawn in pairs
+/// The frames the first spark lives, shrinking as it goes; each later one
+/// lives a frame longer.
+#define BEAM_SPARK_LIFE 16
+/// BG1's scroll that shows the canvas, 96 pixels down BG1's map
+/// (BattleEffect_SetupCanvasTileMap), from the battle view's top line.
+#define BEAM_CANVAS_SCROLL_Y (96 - BATTLE_VIEW_TOP)
+/// The critical hit's camera zoom, in percent, held while it gathers.
+#define CRITICAL_HIT_ZOOM 130
+/// The motes that close in on the attacker, and how far either side of the
+/// centre their depth is clamped.
+#define CRITICAL_HIT_MOTES 64
+#define CRITICAL_HIT_MOTE_DEPTH 60
 
 /// The plain attack's pictures, by effect kind: the attacker's attack effect.
 enum BeamKind {
@@ -132,7 +144,7 @@ void BattleEffect_RunAttackSlash(struct BattleEffectParams *args) {
     scrollX = -128;
   anchor.x += scrollX;
   gBgScroll[1].x = scrollX;
-  gBgScroll[1].y = 80;
+  gBgScroll[1].y = BEAM_CANVAS_SCROLL_Y;
   wait(1);
   // Sparks fly from the target, mostly rising.
   target = GetBattleObjectSlotFar(work->args->targets[0])->actor;
@@ -148,7 +160,7 @@ void BattleEffect_RunAttackSlash(struct BattleEffectParams *args) {
     if (spark->x > 0)
       spark->velocityX = -spark->velocityX;
     spark->velocityX = -spark->velocityX;
-    spark->variant = i + 16;
+    spark->variant = i + BEAM_SPARK_LIFE;
   }
 
   for (frame = 0; frame != BEAM_FRAMES; frame++) {
@@ -278,7 +290,8 @@ void BattleEffect_RunCriticalHit(struct BattleEffectParams *args) {
   if (args->kind < EFFECT_RANGE_RING_AND_SPARK)
     big = 0;
   work->args = args;
-  BattleCamera_SetViewAtPairMidpointFar(args->user, args->firstTarget, 130);
+  BattleCamera_SetViewAtPairMidpointFar(args->user, args->firstTarget,
+                                        CRITICAL_HIT_ZOOM);
   wait(1);
   BattleEffect_SetupCanvasTileMap();
   REG_BG1CNT = BGCNT_PRIORITY(0) | BGCNT_CHAR_BASE(0) | BGCNT_256_COLORS |
@@ -302,13 +315,13 @@ void BattleEffect_RunCriticalHit(struct BattleEffectParams *args) {
     draw[0] = blitters[HEAP_SLOT_RAM_CODE];
     draw[1] = blitters[HEAP_SLOT_RAM_CODE_PAIRED];
   }
-  BattleCamera_SetViewAtPairMidpointFar(work->args->user,
-                                        work->args->firstTarget, 130);
+  BattleCamera_SetViewAtPairMidpointFar(
+      work->args->user, work->args->firstTarget, CRITICAL_HIT_ZOOM);
   wait(1);
   Resource_LoadAndDecompress(RESOURCE_STAR_BURST_SHEET, work->imageStorage, 1,
                              0);
-  BattleCamera_SetViewAtPairMidpointFar(work->args->user,
-                                        work->args->firstTarget, 130);
+  BattleCamera_SetViewAtPairMidpointFar(
+      work->args->user, work->args->firstTarget, CRITICAL_HIT_ZOOM);
   wait(1);
   Resource_LoadAndDecompress(RESOURCE_CRESCENT_SHEET, Ram_MapGridCellBuffer, 1,
                              1);
@@ -316,19 +329,19 @@ void BattleEffect_RunCriticalHit(struct BattleEffectParams *args) {
     Iwram_CopyWords(BG_PLTT,
                     Resource_GetTableEntry(RESOURCE_MARS_DJINN_SMALL_SHEET),
                     SHEET_PALETTE_BYTES);
-  BattleCamera_SetViewAtPairMidpointFar(work->args->user,
-                                        work->args->firstTarget, 130);
+  BattleCamera_SetViewAtPairMidpointFar(
+      work->args->user, work->args->firstTarget, CRITICAL_HIT_ZOOM);
   wait(1);
   Resource_LoadAndDecompress(RESOURCE_PARTICLE_SPRITES_D, sheet, 0, 0);
-  BattleCamera_SetViewAtPairMidpointFar(work->args->user,
-                                        work->args->firstTarget, 130);
+  BattleCamera_SetViewAtPairMidpointFar(
+      work->args->user, work->args->firstTarget, CRITICAL_HIT_ZOOM);
   wait(1);
   EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_CLEAR, 0);
 
   // The gathering.
   if (big == 1) {
     actor = GetBattleObjectSlotFar(work->args->user)->actor;
-    for (i = 0; i != 64; i++) {
+    for (i = 0; i != CRITICAL_HIT_MOTES; i++) {
       struct Particle *mote = &work->particles[i];
 
       SET_POSITION(mote, (Random16() & 63) + 16, 0, 0);
@@ -347,15 +360,15 @@ void BattleEffect_RunCriticalHit(struct BattleEffectParams *args) {
     Projection_ScaledUnit(work->args->user, &screenPosition);
     scrollX = 64 - screenPosition.x;
     gBgScroll[1].x = scrollX;
-    gBgScroll[1].y = 80;
+    gBgScroll[1].y = BEAM_CANVAS_SCROLL_Y;
     work->fadeFrames = BACKGROUND_DARKEN_FRAMES;
     work->fadeStep = 0;
     Task_Add(Palette_StepFadeTransfer, TASK_PASS_FRAME);
     Sound_PlayFar(SE_POWER_UP);
     for (frame = 0; frame != BEAM_FRAMES; frame++) {
-      BattleCamera_SetViewAtPairMidpointFar(work->args->user,
-                                            work->args->firstTarget, 130);
-      for (i = 0; i != 64; i++) {
+      BattleCamera_SetViewAtPairMidpointFar(
+          work->args->user, work->args->firstTarget, CRITICAL_HIT_ZOOM);
+      for (i = 0; i != CRITICAL_HIT_MOTES; i++) {
         struct Particle *mote = &work->particles[i];
 
         if (mote->x >= 0 && frame >= i / 4) {
@@ -368,10 +381,11 @@ void BattleEffect_RunCriticalHit(struct BattleEffectParams *args) {
           Projection_Point(&mote->x, &screen);
           screen.x += 64;
           screen.y = screen.y + screenPosition.y + 24;
-          // DEAD: the depth is clamped to -60..60 and moved to 0..120 but
-          // never read; the ROM keeps the clamp and the move.
-          CLAMP(screen.depth, -60, 60);
-          screen.depth += 60;
+          // DEAD: the depth is clamped and moved to start at 0 but never read;
+          // the ROM keeps the clamp and the move.
+          CLAMP(screen.depth, -CRITICAL_HIT_MOTE_DEPTH,
+                CRITICAL_HIT_MOTE_DEPTH);
+          screen.depth += CRITICAL_HIT_MOTE_DEPTH;
           EFFECT_DRAW_FLARE(draw[0], canvas, sheet, screen.x, screen.y, size);
           mote->x -= 4;
         }
@@ -401,7 +415,7 @@ void BattleEffect_RunCriticalHit(struct BattleEffectParams *args) {
   if (scrollX < -128)
     scrollX = -128;
   anchor.x += scrollX;
-  gBgScroll[1].y = 80;
+  gBgScroll[1].y = BEAM_CANVAS_SCROLL_Y;
   gBgScroll[1].x = scrollX;
   target = GetBattleObjectSlotFar(work->args->targets[0])->actor;
   half = BattleUnit_GetEffectHeightFar(work->args->targets[0]) / 2;
@@ -414,7 +428,7 @@ void BattleEffect_RunCriticalHit(struct BattleEffectParams *args) {
                  ((Random16() & 255) - 127) << 10);
     if (spark->x > 0)
       spark->velocityX = -spark->velocityX;
-    spark->variant = i + 16;
+    spark->variant = i + BEAM_SPARK_LIFE;
   }
 
   for (frame = 0; frame != BEAM_FRAMES; frame++) {
@@ -473,3 +487,11 @@ void BattleEffect_RunCriticalHit(struct BattleEffectParams *args) {
   }
   BattleEffect_HideBg1AndRestoreBackdrop();
 }
+
+#undef BEAM_FRAMES
+#undef BEAM_SPARKS
+#undef BEAM_SPARK_LIFE
+#undef BEAM_CANVAS_SCROLL_Y
+#undef CRITICAL_HIT_ZOOM
+#undef CRITICAL_HIT_MOTES
+#undef CRITICAL_HIT_MOTE_DEPTH

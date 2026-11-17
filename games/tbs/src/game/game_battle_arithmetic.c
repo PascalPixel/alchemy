@@ -78,9 +78,7 @@ s32 Battle_CalculateAttackDamage(s32 attack, s32 defense, s32 addedPower,
     attack = 0;
   scaledDamage =
       Battle_GetElementMultiplier(damage, 1) * (attack + (addedPower * 2));
-  if (scaledDamage < 0)
-    scaledDamage += 511;
-  damage = scaledDamage >> 9;
+  damage = scaledDamage / (2 * BATTLE_MULTIPLIER_ONE);
   if (damage < 0)
     damage = 0;
   return damage;
@@ -93,24 +91,25 @@ s32 Battle_CalculatePsynergyPower(s32 power, s32 elementDifference,
 
   scaledPower = Battle_GetElementMultiplier(elementDifference, 0) * power *
                 powerMultiplier;
-  if (scaledPower < 0)
-    scaledPower = scaledPower + 65535;
-  return scaledPower >> 16;
+  return scaledPower / (BATTLE_MULTIPLIER_ONE * BATTLE_MULTIPLIER_ONE);
 }
 
+/// The element power at which healing is neither stronger nor weaker: each
+/// point above it counts as two points of element difference.
+#define HEALING_BASE_POWER 100
+
 /// Returns the amount healed: power times powerMultiplier and the multiplier
-/// for the healer's element power above 100.
+/// for the healer's element power above HEALING_BASE_POWER.
 s32 Battle_CalculateRecovery(s32 power, s32 elementPower, s32 powerMultiplier) {
   s32 signedProduct;
   u32 scaledRecovery;
 
   scaledRecovery =
-      Battle_GetElementMultiplier(elementPower * 2 - 200, 0) * power;
+      Battle_GetElementMultiplier((elementPower - HEALING_BASE_POWER) * 2, 0) *
+      power;
   scaledRecovery = powerMultiplier * scaledRecovery;
   signedProduct = scaledRecovery;
-  if (signedProduct < 0)
-    signedProduct = signedProduct + 65535;
-  return signedProduct >> 16;
+  return signedProduct / (BATTLE_MULTIPLIER_ONE * BATTLE_MULTIPLIER_ONE);
 }
 
 /// Returns the element the unit attacks with (ELEMENT_NONE for none): an
@@ -167,9 +166,9 @@ s32 RollWeaponUnleash(struct Unit *unit) {
   if (item->unleashAbility == 0) {
     return 1;
   }
-  rate = ((Equipment_GetUnleashRateBonus(unit) + (item->unleashChance * 5))
-          << 16) /
-         100;
+  rate =
+      toFIXED(Equipment_GetUnleashRateBonus(unit) + item->unleashChance * 5) /
+      100;
   if (rate > (Battle_Random() & 0xFFFF)) {
     return item->unleashAbility;
   }
@@ -262,10 +261,13 @@ s32 Battle_IsReviveEffect(s32 effectId) {
   return 0;
 }
 
+/// The points of chance an effect gains against a target weak to it.
+#define WEAKNESS_BONUS 25
+
 /// Rolls whether an effect takes hold on target: the base rate, plus three
 /// times the caster's lead in the element's level, less half the target's luck,
-/// plus 25 against a weakness, times successScale percent. Luff gets three
-/// tries.
+/// plus WEAKNESS_BONUS against a weakness, times successScale percent. Luff
+/// gets three tries.
 s32 Battle_RollEffectSuccess(s32 caster, s32 target, s32 resistanceCategory,
                              s32 effectId, s32 successScale) {
   struct Unit *unit = Unit_Get(target);
@@ -331,7 +333,7 @@ restore_checked:
 
     score += difference * 3;
     if (BattleAbility_IsWeakToEffect(unit, effectId) != 0) {
-      score += 25;
+      score += WEAKNESS_BONUS;
     }
   } else {
     score = -score;

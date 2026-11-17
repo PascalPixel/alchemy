@@ -12,6 +12,11 @@
 
 extern const u8 gActor_WaitScript[];
 
+/// The actors of Ram_HeapSlots->actors, as the field's ACTOR_COUNT.
+#define HEAP_ACTOR_COUNT 64
+/// The sprite priority bits of an OAM attribute 2's high byte.
+#define ATTR2_HIGH_PRIORITY_MASK (OBJ_PRIORITY(3) >> 8)
+
 /// The event command "actor set attached effect", by enum AttachedEffectFlag:
 /// removes the actor attached to an actor, attaches one
 /// (SPRITE_ATTACHED_EFFECT, animation 1) unless one already is, or shows a
@@ -67,20 +72,21 @@ void FieldEffect_SetAttached(s32 actorId, s32 flags) {
   visual->flags = 0;
   effect->watchedActor = actor;
 
-  // Replace the effect's priority bits (2 and 3) with 1 or the actor's.
+  // The effect takes sprite priority 1, or the actor's: -(m + 1) is ~m, the
+  // bits besides the priority.
   if (flags & ATTACHED_EFFECT_IN_FRONT) {
-    s32 mask = 13;
+    s32 mask = ATTR2_HIGH_PRIORITY_MASK + 1;
     u8 attr = SPRITE_ATTR2_HIGH(visual);
 
     mask = -mask;
     mask &= attr;
-    mask |= 4;
+    mask |= OBJ_PRIORITY(1) >> 8;
     SPRITE_ATTR2_HIGH(visual) = mask;
   } else {
-    s32 priority = 12;
+    s32 priority = ATTR2_HIGH_PRIORITY_MASK;
     u8 src = SPRITE_ATTR2_HIGH(actor->sprite);
     u8 dst;
-    s32 mask = 13;
+    s32 mask = ATTR2_HIGH_PRIORITY_MASK + 1;
 
     priority &= src;
     dst = SPRITE_ATTR2_HIGH(visual);
@@ -138,9 +144,9 @@ s32 Actor_MoveTowardTarget(struct Actor *actor) {
     distance = Iwram_Sqrt(pixelsX * pixelsX + pixelsZ * pixelsZ);
     step = actor->timer;
     if (distance >= step) {
-      // << 20 is 16 pixels in 16.16 per pixel of distance.
-      newX = actor->x.fixed + (s32)((u32)pixelsX << 20) / step;
-      newZ = actor->z.fixed + (s32)((u32)pixelsZ << 20) / step;
+      // A target 16 pixels on for each pixel of distance, over the step.
+      newX = actor->x.fixed + (s32)((u32)pixelsX * toFIXED(16)) / step;
+      newZ = actor->z.fixed + (s32)((u32)pixelsZ * toFIXED(16)) / step;
       Actor_SetMoveTargetFar(actor, newX, actor->y.fixed, newZ);
       Actor_SelectAnimationFar(actor, ANIM_WALK);
     } else {
@@ -149,8 +155,6 @@ s32 Actor_MoveTowardTarget(struct Actor *actor) {
   }
   return 1;
 }
-
-// Objects: turn toward the linked target.
 
 /// The SC_CALL routine of movement type 6: turns the actor toward its watched
 /// actor, at most 1/16 turn a frame.
@@ -235,27 +239,34 @@ void Actor_SetMovementType(struct Actor *actor, s32 kind) {
     actor->watchedActor = Actor_GetById(gMainRoutineWork.leaderActorId);
     kind = (s32)gMovementType_FaceLeaderScript;
     break;
-  case 7:
+  case MOVEMENT_TYPE_CLEAR_COLLISION:
     kind = (s32)gMovementType_ClearCollisionScript;
     break;
-  case 8:
+  case MOVEMENT_TYPE_SQUASH:
     kind = (s32)gMovementType_SquashScript;
     break;
-  case 9:
+  case MOVEMENT_TYPE_TAKE_LEADER_LAYER:
     kind = (s32)gMovementType_TakeLeaderLayerScript;
     break;
-  case 10:
+  case MOVEMENT_TYPE_RESET_ACTION:
     kind = (s32)gMovementType_ResetActionScript;
     break;
-  case 11:
+  case MOVEMENT_TYPE_CLEAR_CHILD:
     kind = (s32)gMovementType_ClearChildScript;
     break;
   }
   Actor_StartScriptFar(actor, (const void *)kind);
 }
 
-/// The Broken Seal's Actor_FindNearestFacingTarget: the nearest object
-/// within 40 pixels in the direction self faces, if its first animation is id.
+/// Actor_FindNearestFacingTarget's reach in pixels, and the distance past
+/// which an actor counts only within 3/16 turn of the facing.
+#define FACING_TARGET_REACH 40
+#define FACING_TARGET_NEAR 23
+
+/// Finds the nearest animated actor to self within FACING_TARGET_REACH and 48
+/// pixels of height, ignoring actors more than 3/16 turn to either side once
+/// they are past FACING_TARGET_NEAR; returns it if its first sprite animation
+/// is sprite id, as The Broken Seal's.
 struct Actor *Actor_FindNearestFacingTarget(struct Actor *self, s32 id) {
   struct Actor *entry;
   struct Actor *found;
@@ -269,9 +280,9 @@ struct Actor *Actor_FindNearestFacingTarget(struct Actor *self, s32 id) {
   s32 turn;
 
   found = NULL;
-  best = 40;
+  best = FACING_TARGET_REACH;
   entry = Ram_HeapSlots->actors;
-  for (cnt = 0; cnt < 64; cnt++, entry++) {
+  for (cnt = 0; cnt < HEAP_ACTOR_COUNT; cnt++, entry++) {
     if (entry->script == NULL)
       continue;
     if (entry == self)
@@ -293,7 +304,7 @@ struct Actor *Actor_FindNearestFacingTarget(struct Actor *self, s32 id) {
       continue;
     angle = (u16)Trig_Atan(entry->z.fixed - self->z.fixed,
                            entry->x.fixed - self->x.fixed);
-    if (dist > 23) {
+    if (dist > FACING_TARGET_NEAR) {
       turn = (s16)(angle - self->facing);
       if (turn < -(TRIG_TURN * 3 / 16 - 1))
         continue;
@@ -324,13 +335,21 @@ s32 MapGrid_BlocksJump(struct Actor *actor, s32 *position) {
 
 extern struct MapCell gMapGridCellBuffer[];
 
-/// The leader jumps two tiles forward, over the tile in
-/// front, when it faces a quarter turn, the map allows it (MapGrid_BlocksJump
-/// and the step check) or a platform object (flag 0x80) waits 16 pixels below
-/// the landing, and no solid object stands there. A platform underfoot (sprite
-/// 258 or 259 with flag 2) dips 2 pixels with the leader. Each jump advances
-/// walking distance, and the leader keeps jumping while it lands on a jump spot
-/// (collision 254). Returns 0 after a jump, -1 when the leader cannot jump.
+/// MapWork.groundEffects' kind of wading, its bits 3..2; none where nothing
+/// wades.
+#define GROUND_EFFECTS_WADING_MASK (3 << 2)
+#define GROUND_EFFECTS_WADING(effects) ((u32)((effects) << 28) >> 30)
+/// The middle pixel of the 16-pixel cell a whole pixel lies in.
+#define CELL_MIDDLE(pixels) (8 + ((pixels) & 0xfff0))
+
+/// The leader jumps two cells forward, over the cell in front, when it faces
+/// a quarter turn, the map allows it (MapGrid_BlocksJump and the step check)
+/// or a platform actor (ACTOR_PRIORITY_PLATFORM) waits 16 pixels below the
+/// landing, and no solid actor stands there. A log underfoot (a
+/// SPRITE_LOG_WEST_EAST or SPRITE_LOG_NORTH_SOUTH under the party) dips 2
+/// pixels with the leader. Each jump adds to the walking distance, and the
+/// leader keeps jumping while it lands on CELL_BEHAVIOR_JUMP_FORWARD. Returns
+/// 0 after a jump, -1 when the leader cannot jump.
 s32 Field_TryJumpForward(void) {
   struct Actor *leader = Actor_GetById(gMainRoutineWork.leaderActorId);
   s32 result = -1;
@@ -338,7 +357,7 @@ s32 Field_TryJumpForward(void) {
   u8 *flags = &leader->motionFlags;
   u8 saved = *flags;
   struct FieldWork *work = Ram_HeapSlots->fieldWork;
-  s16 spriteFlags = 1;
+  s16 spriteFlags = SPRITE_FLAG_SHADOW;
   FIXED position[3];
   s32 *positionWords;
   struct Actor *entry;
@@ -374,7 +393,7 @@ again:
   // A platform 16 pixels below the landing makes it a jump spot.
   if (leader->priorityFlags & ACTOR_PRIORITY_WALKS_ON_PLATFORMS) {
     entry = Ram_HeapSlots->actors;
-    for (i = 0; i < 64; i++, entry++) {
+    for (i = 0; i < HEAP_ACTOR_COUNT; i++, entry++) {
       s32 bound = toFIXED(8) - 1;
       FIXED delta;
       FIXED dy;
@@ -409,7 +428,7 @@ again:
 
   // A solid object at the landing blocks it.
   entry = Ram_HeapSlots->actors;
-  for (i = 0; i < 64; i++, entry++) {
+  for (i = 0; i < HEAP_ACTOR_COUNT; i++, entry++) {
     if (entry->script != NULL &&
         !(entry->priorityFlags & ACTOR_PRIORITY_PLATFORM) && entry != leader &&
         entry->collisionFlags != 0 &&
@@ -432,7 +451,7 @@ again:
     u8 attr;
 
     // Crouch, then jump there.
-    if (leader->spriteStorageKind == 1)
+    if (leader->spriteStorageKind == ACTOR_SPRITE_ONE)
       spriteFlags = ((struct Sprite *)leader->sprite)->flags;
     Event_Start();
     Actor_SelectAnimationFar(leader, ANIM_LEADER_SPRING);
@@ -452,7 +471,7 @@ again:
 
     map = Ram_HeapSlots->mapGrid;
     attr = map->groundEffects;
-    if (attr & 12) {
+    if (attr & GROUND_EFFECTS_WADING_MASK) {
       s32 cellX = FIELD_CELL(leader->x.fixed);
       s32 cellZ = FIELD_CELL(leader->z.fixed);
       struct MapCell *cells;
@@ -463,7 +482,7 @@ again:
         cells = map->layers[leader->layer & 3].cells;
       cells += cellX + cellZ * MAPGRID_SIZE;
       if (cells->attributeB & MAP_CELL_WATER)
-        Actor_SpawnWaterSplashFar(leader, (u32)(attr << 28) >> 30);
+        Actor_SpawnWaterSplashFar(leader, GROUND_EFFECTS_WADING(attr));
     }
 
     // A log underfoot dips 2 pixels with the leader and comes back up.
@@ -519,12 +538,12 @@ s32 Field_ClimbDown(void) {
   s32 gridZ;
   FIXED position[3];
 
-  spriteFlags = 1;
-  gridX = 8 + (FIXEDtoINT(leader->x.fixed) & 0xfff0);
-  gridY = 8 + (FIXEDtoINT(leader->y.fixed) & 0xfff0);
-  gridZ = 8 + (FIXEDtoINT(leader->z.fixed) & 0xfff0);
+  spriteFlags = SPRITE_FLAG_SHADOW;
+  gridX = CELL_MIDDLE(FIXEDtoINT(leader->x.fixed));
+  gridY = CELL_MIDDLE(FIXEDtoINT(leader->y.fixed));
+  gridZ = CELL_MIDDLE(FIXEDtoINT(leader->z.fixed));
   Event_Start();
-  if (leader->spriteStorageKind == 1)
+  if (leader->spriteStorageKind == ACTOR_SPRITE_ONE)
     spriteFlags = ((struct Sprite *)leader->sprite)->flags;
   if (gMainRoutineWork.movementMode == LEADER_MOVEMENT_WALK) {
     struct Actor *entry;
@@ -562,7 +581,7 @@ s32 Field_ClimbDown(void) {
     position[1] = leader->y.fixed - toFIXED(32);
     position[2] = leader->z.fixed + toFIXED(16);
     entry = Ram_HeapSlots->actors;
-    for (i = 0; i < 64; i++, entry++) {
+    for (i = 0; i < HEAP_ACTOR_COUNT; i++, entry++) {
       if (entry->script != NULL && (entry->collisionFlags & 1) &&
           entry != leader &&
           Field_CheckSpheresOverlapFar(&entry->x.fixed, radius, position,
@@ -614,16 +633,16 @@ failure:
 s32 Field_ClimbUp(void) {
   struct Actor *leader = Actor_GetById(gMainRoutineWork.leaderActorId);
   struct MapWork *map = Ram_HeapSlots->mapGrid;
-  s16 spriteFlags = 1;
+  s16 spriteFlags = SPRITE_FLAG_SHADOW;
   struct MapCell *ground;
-  s32 gridX = 8 + (FIXEDtoINT(leader->x.fixed) & 0xfff0);
-  s32 gridY = 8 + (FIXEDtoINT(leader->y.fixed) & ~15);
-  s32 gridZ = 8 + (FIXEDtoINT(leader->z.fixed) & 0xfff0);
+  s32 gridX = CELL_MIDDLE(FIXEDtoINT(leader->x.fixed));
+  s32 gridY = 8 + (FIXEDtoINT(leader->y.fixed) & ~(MAPGRID_CELL_PIXELS - 1));
+  s32 gridZ = CELL_MIDDLE(FIXEDtoINT(leader->z.fixed));
   FIXED position[3];
   s32 result;
 
   Event_Start();
-  if (leader->spriteStorageKind == 1)
+  if (leader->spriteStorageKind == ACTOR_SPRITE_ONE)
     spriteFlags = ((struct Sprite *)leader->sprite)->flags;
   if (gMainRoutineWork.movementMode == LEADER_MOVEMENT_WALK) {
     struct MapCell *cell;
@@ -684,7 +703,7 @@ s32 Field_ClimbUp(void) {
     position[2] = leader->z.fixed - toFIXED(16);
     i = 0;
     entry = Ram_HeapSlots->actors;
-    for (; i < 64; i++, entry++) {
+    for (; i < HEAP_ACTOR_COUNT; i++, entry++) {
       if (entry->script != NULL && (entry->collisionFlags & 1) &&
           entry != leader &&
           Field_CheckSpheresOverlapFar(&entry->x.fixed, radius, position,
@@ -717,6 +736,11 @@ failure:
   return -1;
 }
 
+/// How near a rope or tightrope node must be for the leader to hop onto it,
+/// in pixels, and a squared distance farther than any node's.
+#define ROPE_NODE_REACH 32
+#define ROPE_NODE_SEARCH_START (1 << 28)
+
 /// Returns the nearest tied rope node within reach of position, or NULL.
 struct RopeNode *Rope_FindNodeNear(s32 *position) {
   struct RopeNode *found;
@@ -732,16 +756,17 @@ struct RopeNode *Rope_FindNodeNear(s32 *position) {
     result = NULL;
   } else {
     node = work->nodes;
-    best = 0x10000000;
-    for (i = 0; i < 128; i++, node++) {
+    best = ROPE_NODE_SEARCH_START;
+    for (i = 0; i < ROPE_NODE_COUNT; i++, node++) {
       if (node->kind == 1) {
+        // In pixels, squared.
         s32 dx = (position[0] - node->x) >> 8;
         s32 dy = (position[1] - node->y) >> 8;
         s32 dz = (position[2] - node->z) >> 8;
         s32 distance =
             Iwram_MulFX(dx, dx) + Iwram_MulFX(dy, dy) + Iwram_MulFX(dz, dz);
 
-        if (distance <= 1024 && best > distance) {
+        if (distance <= ROPE_NODE_REACH * ROPE_NODE_REACH && best > distance) {
           best = distance;
           found = node;
         }
@@ -838,16 +863,17 @@ struct TightropeNode *Tightrope_FindNodeNear(s32 *position) {
     result = NULL;
   } else {
     node = work->nodes;
-    best = 0x10000000;
-    for (i = 0; i < 128; i++, node++) {
+    best = ROPE_NODE_SEARCH_START;
+    for (i = 0; i < ROPE_NODE_COUNT; i++, node++) {
       if (node->kind == 1) {
+        // In pixels, squared.
         s32 dx = (position[0] - node->x) >> 8;
         s32 dy = (position[1] - node->y) >> 8;
         s32 dz = (position[2] - node->z) >> 8;
         s32 distance =
             Iwram_MulFX(dx, dx) + Iwram_MulFX(dy, dy) + Iwram_MulFX(dz, dz);
 
-        if (distance <= 1024 && best > distance) {
+        if (distance <= ROPE_NODE_REACH * ROPE_NODE_REACH && best > distance) {
           best = distance;
           found = node;
         }

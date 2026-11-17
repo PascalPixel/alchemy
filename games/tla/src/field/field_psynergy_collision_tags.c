@@ -5,7 +5,7 @@
 #include "field_psynergy_internal.h"
 
 /// FlagBlock_PlaceAll that also marks the four cells beside each block raised
-/// where they are open (MapGrid_MarkRaisedIfOpen), as Alhafra and its cave
+/// where they are open (MapGrid_MarkJumpIfOpen), as Alhafra and its cave
 /// need.
 void FlagBlock_PlaceAllMarkingEdges(struct ActorFlag *list) {
   struct MapWork *map = Ram_HeapSlots->mapGrid;
@@ -22,14 +22,14 @@ void FlagBlock_PlaceAllMarkingEdges(struct ActorFlag *list) {
     actor->collisionFlags &= ~1;
     Actor_SetSpriteFlagsFar(actor, 0);
     cell->collisionCode = CELL_BEHAVIOR_WALL;
-    MapGrid_MarkRaisedIfOpen(actor->x.fixed + toFIXED(16), actor->z.fixed,
-                             actor->layer, actor->groundHeight);
-    MapGrid_MarkRaisedIfOpen(actor->x.fixed - toFIXED(16), actor->z.fixed,
-                             actor->layer, actor->groundHeight);
-    MapGrid_MarkRaisedIfOpen(actor->x.fixed, actor->z.fixed + toFIXED(16),
-                             actor->layer, actor->groundHeight);
-    MapGrid_MarkRaisedIfOpen(actor->x.fixed, actor->z.fixed - toFIXED(16),
-                             actor->layer, actor->groundHeight);
+    MapGrid_MarkJumpIfOpen(actor->x.fixed + toFIXED(16), actor->z.fixed,
+                           actor->layer, actor->groundHeight);
+    MapGrid_MarkJumpIfOpen(actor->x.fixed - toFIXED(16), actor->z.fixed,
+                           actor->layer, actor->groundHeight);
+    MapGrid_MarkJumpIfOpen(actor->x.fixed, actor->z.fixed + toFIXED(16),
+                           actor->layer, actor->groundHeight);
+    MapGrid_MarkJumpIfOpen(actor->x.fixed, actor->z.fixed - toFIXED(16),
+                           actor->layer, actor->groundHeight);
     if (GameFlag_Get(flag)) {
       Actor_SelectAnimationFar(actor, 0);
       GameFlag_Clear(flag);

@@ -97,7 +97,7 @@ gScenes:
 	scene YampiDesertTrainersWhipChest, 0x661, AREA_YAMPI_DESERT, SCENE_TYPE_OTHER, 70, 1
 	scene YampiDesertMedalSpot, 0x661, AREA_YAMPI_DESERT, SCENE_TYPE_OTHER, 71, 1
 	scene YampiDesertScorpionPit, 0x661, AREA_YAMPI_DESERT, SCENE_TYPE_OTHER, 72, 1
-	scene YampiDesertOasisCave, 0x661, AREA_YAMPI_DESERT, SCENE_TYPE_OTHER, 73, 1
+	scene YampiDesertSpringCave, 0x661, AREA_YAMPI_DESERT, SCENE_TYPE_OTHER, 73, 1
 	scene YampiDesertBlowMaceChest, 0x661, AREA_YAMPI_DESERT, SCENE_TYPE_OTHER, 74, 1
 	scene YampiDesertCaveWaterOfLifeChest, 0x662, AREA_YAMPI_DESERT_CAVE, SCENE_TYPE_OTHER, 75, 1
 	scene YampiDesertCaveGuardian, 0x662, AREA_YAMPI_DESERT_CAVE, SCENE_TYPE_OTHER, 76, 1

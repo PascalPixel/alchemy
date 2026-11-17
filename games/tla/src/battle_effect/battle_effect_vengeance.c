@@ -187,7 +187,7 @@ void BattleEffect_RunVengeance(struct BattleEffectParams *args) {
           arrow->velocityX = -toFIXED(12);
         }
         arrow->y = toFIXED(12);
-        strikes = gVengeance_BladeStrikes[args->variant][i];
+        strikes = gVengeance_ArrowStrikes[args->variant][i];
         if (strikes != 0) {
           strikes = 1;
         }
@@ -644,15 +644,15 @@ void BattleEffect_RunLifeShear(struct BattleEffectParams *args) {
         texture.logHeight = 5;
         texture.pixels = LIFE_SHEAR_ORANGE_BLADE;
         texture.logWidth = width;
-        model->mesh = gLifeShear_HandleMesh;
+        model->mesh = gLifeShear_OrangeBladeMesh;
         Matrix_Push();
         Matrix_RotateZ(
             (Trig_Sin(work->particles[0].velocityZ * (TRIG_TURN / 32)) >> 3) -
             DEGtoANG(45));
-        Render_TransformVertices(gLifeShear_ScytheCorners, vertices, 4);
+        Render_TransformVertices(gLifeShear_BladeCorners, vertices, 4);
         Render_DrawModelList(model);
         Matrix_Pop();
-        model->mesh = gLifeShear_BladeMesh;
+        model->mesh = gLifeShear_PaleBladeMesh;
         texture.logWidth = width;
         texture.logHeight = 6;
         texture.pixels = LIFE_SHEAR_PALE_BLADE;
@@ -660,7 +660,7 @@ void BattleEffect_RunLifeShear(struct BattleEffectParams *args) {
             DEGtoANG(45) -
             (Trig_Sin(work->particles[0].velocityZ * (TRIG_TURN / 32)) >> 3));
         Matrix_Scale(FIXED_ONE, 90000, FIXED_ONE);
-        Render_TransformVertices(gLifeShear_ScytheCorners, vertices, 4);
+        Render_TransformVertices(gLifeShear_BladeCorners, vertices, 4);
         Render_DrawModelList(model);
       }
 
@@ -1368,7 +1368,7 @@ struct MeshVertex;
 #define COATLICUE_COIL_CORNERS (Ram_MapCellBuffer + 17408)
 #define COATLICUE_COIL_MESH (Ram_MapCellBuffer + 18432)
 #define COATLICUE_COIL_SEGMENTS 32
-/// Coatlicue's figure, BellMaidenTiles: twelve 32x32 sprites, three across.
+/// Coatlicue's figure, CoatlicueTiles: twelve 32x32 sprites, three across.
 #define COATLICUE_SPRITES 12
 #define COATLICUE_COLUMNS 3
 #define COATLICUE_SPRITE_SIZE 32
@@ -1494,7 +1494,7 @@ void BattleEffect_RunCoatlicue(struct BattleEffectParams *args) {
   list[0] = BATTLE_UNIT_LIST_END;
   BattleActor_SpawnObjectsForListFar(list, 0);
   {
-    u8 *e = Resource_GetTableEntry(RESOURCE_BELL_MAIDEN_TILES);
+    u8 *e = Resource_GetTableEntry(RESOURCE_COATLICUE_TILES);
 
     Iwram_CopyWords((void *)OBJ_PLTT, e, OBJ_PLTT_SIZE);
     Decompress_TaggedLz(e + OBJ_PLTT_SIZE, cellBuffer);
@@ -1659,7 +1659,7 @@ void BattleEffect_RunCoatlicue(struct BattleEffectParams *args) {
     // Coatlicue's own, lifted by redLift, greenLift and k in blue: first to
     // white, then to a pale cyan, then to her colours.
     if (frame > 299) {
-      u16 *source = Resource_GetTableEntry(RESOURCE_BELL_MAIDEN_TILES);
+      u16 *source = Resource_GetTableEntry(RESOURCE_COATLICUE_TILES);
       u16 *dst = (u16 *)OBJ_PLTT;
       s32 redLift = RGB_LEVEL_MAX;
       s32 greenLift = RGB_LEVEL_MAX;
@@ -1723,7 +1723,7 @@ void BattleEffect_RunCoatlicue(struct BattleEffectParams *args) {
     // From frame 520 her colours brighten, red fastest and blue slowest.
     if (frame > 519) {
       s32 lift = frame - 520;
-      u16 *source = Resource_GetTableEntry(RESOURCE_BELL_MAIDEN_TILES);
+      u16 *source = Resource_GetTableEntry(RESOURCE_COATLICUE_TILES);
       u16 *dst = (u16 *)OBJ_PLTT;
       s32 half;
 

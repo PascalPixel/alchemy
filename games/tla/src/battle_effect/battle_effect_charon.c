@@ -38,7 +38,7 @@
 #define CHARON_REVEAL 13
 #define CHARON_OBJECTS 14
 #define CHARON_WISP_PALETTE 14
-/// The dark shards (WhiteArrowsTiles, in a sprite palette of their own): the
+/// The dark shards (TumblingShardTiles, in a sprite palette of their own): the
 /// pictures of an 8x8 shard tumbling, and the sprites that swarm with them. A
 /// shard's tumble counts CHARON_SHARD_TURN to a turn of its pictures.
 #define CHARON_SHARD_FRAMES 16
@@ -49,7 +49,7 @@
 /// The map cell buffer: the shards' sprites from its start, where the attack
 /// later decodes FlashBurstSheet (SPRITE_BUFFER). At 16384, a list of
 /// CHARON_HIDDEN_SPRITES sprites built at frame 0, which the summon never
-/// reads; from frame 243 the red orb's 64x64 picture (RedCrescentTiles) over it
+/// reads; from frame 243 the red orb's 64x64 picture (RedOrbTiles) over it
 /// (ORB_BUFFER, read back as REVEAL_BUFFER) and the order it is revealed
 /// in after it. Then the particles.
 #define SPRITES ((struct Sprite **)Ram_MapCellBuffer)
@@ -79,9 +79,9 @@
 #define CHARON_SPARKS (CHARON_BURSTS + CHARON_BURST_COUNT)
 #define CHARON_SPARK_COUNT 128
 #define OBJ_VRAM ((u8 *)OBJ_VRAM0)
-/// The colours of the 256-colour sprites: the red dome's (RedSlashTiles) from
+/// The colours of the 256-colour sprites: the red dome's (RedDomeTiles) from
 /// CHARON_DOME_FIRST_COLOR, Charon's from the first, and the red orb's
-/// (RedCrescentTiles) in the two palettes from CHARON_ORB_PALETTE.
+/// (RedOrbTiles) in the two palettes from CHARON_ORB_PALETTE.
 #define CHARON_DOME_FIRST_COLOR 32
 #define CHARON_DOME_COLORS 160
 #define CHARON_BEAST_COLORS 192
@@ -251,7 +251,7 @@ void BattleEffect_RunCharon(struct BattleEffectParams *arg) {
   blit = routine;
   BattleEffect_FetchRectangleBlitters(0, blit);
 
-  source = (u8 *)Resource_GetTableEntry(RESOURCE_RED_SLASH_TILES);
+  source = (u8 *)Resource_GetTableEntry(RESOURCE_RED_DOME_TILES);
   Iwram_CopyWords((u16 *)&OBJ_PLTT_COLOR(2, 0), source, CHARON_DOME_COLORS * 2);
   source += CHARON_DOME_COLORS * 2;
   Decompress_TaggedLz(source, work->sheet);
@@ -273,7 +273,7 @@ void BattleEffect_RunCharon(struct BattleEffectParams *arg) {
   OBJECTS[0]->image.objectMode = 0;
   OBJECTS[0]->offsetY = 32;
 
-  source = (u8 *)Resource_GetTableEntry(RESOURCE_WHITE_ARROWS_TILES);
+  source = (u8 *)Resource_GetTableEntry(RESOURCE_TUMBLING_SHARD_TILES);
   Iwram_CopyWords((u16 *)&OBJ_PLTT_COLOR(CHARON_SHARD_PALETTE, 0), source,
                   PALETTE_BANK_BYTES);
   source += PALETTE_BANK_BYTES;
@@ -684,7 +684,7 @@ void BattleEffect_RunCharon(struct BattleEffectParams *arg) {
         posZ = toFIXED(56);
       }
       if (frame == 243) {
-        source = (u8 *)Resource_GetTableEntry(RESOURCE_RED_CRESCENT_TILES);
+        source = (u8 *)Resource_GetTableEntry(RESOURCE_RED_ORB_TILES);
         Iwram_FillWords((u16 *)&OBJ_PLTT_COLOR(CHARON_ORB_PALETTE, 0),
                         CHARON_ORB_COLORS * 2, 0);
         source += CHARON_ORB_COLORS * 2;
@@ -881,7 +881,7 @@ void BattleEffect_RunCharon(struct BattleEffectParams *arg) {
         Render_ApplyProjectedPlacementFar(OBJECTS[CHARON_REVEAL], revealPlace,
                                           &revealScale.x, 0);
         {
-          u16 *target = Resource_GetTableEntry(RESOURCE_RED_CRESCENT_TILES);
+          u16 *target = Resource_GetTableEntry(RESOURCE_RED_ORB_TILES);
           u16 *color = (u16 *)&OBJ_PLTT_COLOR(CHARON_ORB_PALETTE, 0);
 
           for (i = 0; i != CHARON_ORB_COLORS; i++, target++, color++) {

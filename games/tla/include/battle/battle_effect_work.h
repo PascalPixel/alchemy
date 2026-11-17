@@ -63,13 +63,14 @@ struct BattleEffectWork {
   u16 padding; ///< aligns bg2x
   /// BG2's reference point, written to BG2X and BG2Y by
   /// Display_ApplyBg2Reference and Display_ApplyBg2Affine. Volatile, as the
-  /// scale below: the tasks that copy them out read each in its turn.
+  /// scale below.
   ///@{
   volatile s32 bg2x;
   volatile s32 bg2y;
   ///@}
   /// BG2's scale, written to BG2PA and BG2PD by Display_ApplyBg2Affine.
-  /// Volatile: the task that copies them out runs behind the effect's back.
+  /// Volatile: Display_ApplyBg2Affine copies them out from the VBlank handler
+  /// (TASK_PASS_VBLANK).
   ///@{
   volatile u16 bg2pa;
   volatile u16 bg2pd;

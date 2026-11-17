@@ -115,6 +115,12 @@ void BattleEffect_RunSwirlSwipe(struct BattleEffectParams *args, s32 mode) {
 /// SpiderWebSheet's quarter of the web, drawn four times mirrored.
 #define SPIDER_WEB_QUARTER_WIDTH 32
 #define SPIDER_WEB_QUARTER_HEIGHT 32
+/// The web's middle on the canvas, which the canvas puts over the targets'
+/// middle; the quarters to its left and above take its column and row too.
+#define SPIDER_WEB_CENTER_X (CANVAS_SIZE / 2)
+#define SPIDER_WEB_CENTER_Y 72
+#define SPIDER_WEB_LEFT (SPIDER_WEB_CENTER_X - SPIDER_WEB_QUARTER_WIDTH + 1)
+#define SPIDER_WEB_TOP (SPIDER_WEB_CENTER_Y - SPIDER_WEB_QUARTER_HEIGHT + 1)
 
 /// A spider web spreads over the targets in four mirrored quarters.
 ///
@@ -137,7 +143,7 @@ void BattleEffect_RunSpiderWeb(struct BattleEffectParams *args) {
   Projection_ScaledUnit(work->args->targets[work->args->targetCount - 1],
                         &last);
   first.x += (last.x - first.x) / 2;
-  REG_BG2X = (64 - first.x) << 8;
+  REG_BG2X = (SPIDER_WEB_CENTER_X - first.x) << 8;
   Resource_LoadAndDecompress(RESOURCE_SPIDER_WEB_SHEET, work->sheet, 1, 1);
   EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_CLEAR, 0);
   Sound_PlayFar(SE_CRACK);
@@ -148,29 +154,29 @@ void BattleEffect_RunSpiderWeb(struct BattleEffectParams *args) {
       REG_BLDALPHA = EFFECT_BLEND_CANVAS(124 - (frame << 1));
     EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS,
                         COMPOSITE_TRANSPARENT);
-    EFFECT_BLITTERS[HEAP_SLOT_RAM_CODE](canvas, work->sheet, 33, 41,
-                                        SPIDER_WEB_QUARTER_WIDTH,
-                                        SPIDER_WEB_QUARTER_HEIGHT);
+    EFFECT_BLITTERS[HEAP_SLOT_RAM_CODE](
+        canvas, work->sheet, SPIDER_WEB_LEFT, SPIDER_WEB_TOP,
+        SPIDER_WEB_QUARTER_WIDTH, SPIDER_WEB_QUARTER_HEIGHT);
     HeapSlot_Release(HEAP_SLOT_RAM_CODE);
     EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE,
                         EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X,
                         COMPOSITE_TRANSPARENT);
-    EFFECT_BLITTERS[HEAP_SLOT_RAM_CODE](canvas, work->sheet, 64, 41,
-                                        SPIDER_WEB_QUARTER_WIDTH,
-                                        SPIDER_WEB_QUARTER_HEIGHT);
+    EFFECT_BLITTERS[HEAP_SLOT_RAM_CODE](
+        canvas, work->sheet, SPIDER_WEB_CENTER_X, SPIDER_WEB_TOP,
+        SPIDER_WEB_QUARTER_WIDTH, SPIDER_WEB_QUARTER_HEIGHT);
     HeapSlot_Release(HEAP_SLOT_RAM_CODE);
     EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE,
                         EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_Y,
                         COMPOSITE_TRANSPARENT);
-    EFFECT_BLITTERS[HEAP_SLOT_RAM_CODE](canvas, work->sheet, 33, 72,
-                                        SPIDER_WEB_QUARTER_WIDTH,
-                                        SPIDER_WEB_QUARTER_HEIGHT);
+    EFFECT_BLITTERS[HEAP_SLOT_RAM_CODE](
+        canvas, work->sheet, SPIDER_WEB_LEFT, SPIDER_WEB_CENTER_Y,
+        SPIDER_WEB_QUARTER_WIDTH, SPIDER_WEB_QUARTER_HEIGHT);
     HeapSlot_Release(HEAP_SLOT_RAM_CODE);
     EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP,
                         COMPOSITE_TRANSPARENT);
-    EFFECT_BLITTERS[HEAP_SLOT_RAM_CODE](canvas, work->sheet, 64, 72,
-                                        SPIDER_WEB_QUARTER_WIDTH,
-                                        SPIDER_WEB_QUARTER_HEIGHT);
+    EFFECT_BLITTERS[HEAP_SLOT_RAM_CODE](
+        canvas, work->sheet, SPIDER_WEB_CENTER_X, SPIDER_WEB_CENTER_Y,
+        SPIDER_WEB_QUARTER_WIDTH, SPIDER_WEB_QUARTER_HEIGHT);
     HeapSlot_Release(HEAP_SLOT_RAM_CODE);
     if (frame == 32)
       EFFECT_SHOW_DAMAGE(SE_CRACK);
@@ -188,3 +194,7 @@ void BattleEffect_RunSpiderWeb(struct BattleEffectParams *args) {
 }
 
 #undef SPIDER_WEB_FRAMES
+#undef SPIDER_WEB_CENTER_X
+#undef SPIDER_WEB_CENTER_Y
+#undef SPIDER_WEB_LEFT
+#undef SPIDER_WEB_TOP

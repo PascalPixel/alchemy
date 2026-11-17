@@ -7,6 +7,10 @@
 #include "sound/sound_driver_symbols.h"
 #include "system/ram_buffer.h"
 
+/// DISPSTAT's low byte: its flags and interrupt enables, without the VCount
+/// line above them.
+#define DISPSTAT_FLAGS 0xff
+
 /// Installs `handler` for interrupt `irq` and enables that interrupt, or with a
 /// null handler disables it and installs the do-nothing handler.
 void Irq_SetHandler(u32 irq, s32 vcount, InterruptHandler handler) {
@@ -29,8 +33,8 @@ void Irq_SetHandler(u32 irq, s32 vcount, InterruptHandler handler) {
 
       if (irq == IRQ_VCOUNT) {
         enable |= DISPSTAT_VCOUNT_LINE(vcount);
-        // Keep only the low byte, so the old line goes too
-        keep &= 0xff;
+        // The old line goes too.
+        keep &= DISPSTAT_FLAGS;
       }
       stat = REG_DISPSTAT & keep;
       if (handler != 0)
@@ -82,7 +86,17 @@ void System_WaitForFrameInterrupt(void) {
   }
 }
 
-#define SLEEP_IDLE_FRAMES 10800 ///< three minutes with no key held
+/// Durations of the sleep: the first in frames, the others in VBlanks, since
+/// the sleep waits on System_WaitForFrameInterrupt alone.
+enum {
+  SLEEP_IDLE_FRAMES = 3 * 60 * 60, ///< three minutes with no key held
+  SLEEP_WHITE_VBLANKS = 10,        ///< the white screen shown before the Stop
+  SLEEP_WAKE_VBLANKS = 10          ///< waited after waking, before the screen
+};
+
+/// The lines REG_VCOUNT counts in VBlank, after the DISPLAY_HEIGHT drawn: it
+/// runs to 227.
+#define VBLANK_LINES 68
 
 /// Restarts the cartridge: marks gCartridgeResetMarker, stops direct sound and
 /// jumps to the cartridge's start with interrupts off. `entry` is the caller's
@@ -101,7 +115,7 @@ void System_WaitForFrameInterrupt(void) {
   }
 
 /// Stops the CPU and the screen until an enabled interrupt wakes them (the BIOS
-/// Stop call): the sleep that L and R end.
+/// Stop call): the sleep that L, R and Select end.
 static __inline__ void Bios_Stop(void) {
   CAMELOT_ASM("BIOS Stop has no C instruction.")
   __asm__ volatile("swi 3");
@@ -134,11 +148,14 @@ void wait(s32 frames) {
     }
     gFrameRenderPending = 1;
     if (gCpuLoadDisplayEnabled) {
+      // CPU load: the line the frame's work ended on, counted from the last
+      // VBlank, plus 256 for each VBlank it overran; the peak is held for
+      // CPU_LOAD_PEAK_FRAMES.
       line = *(u16 *)&REG_VCOUNT;
       if (line >= DISPLAY_HEIGHT)
         line -= DISPLAY_HEIGHT;
       else
-        line += 68;
+        line += VBLANK_LINES;
       line += (gFrameVBlanks - 1) << 8;
       if (gCpuLoadTimer == 0)
         gCpuLoadPeak = 0;
@@ -149,6 +166,7 @@ void wait(s32 frames) {
         gCpuLoadTimer = CPU_LOAD_PEAK_FRAMES;
       }
     }
+    // Idle frames and the L+R+Select combination request sleep.
     if (gSleepDisabled == 0) {
       if (gIdleSleepEnabled) {
         if (gInput.held)
@@ -162,6 +180,8 @@ void wait(s32 frames) {
       if (gInput.held == (KEYS_SHOULDERS | KEY_SELECT))
         gSleepRequested = 1;
     }
+    // Debug builds: Start+Select pauses the game; while paused, A, B, Select
+    // or the D-pad advances one frame and Start resumes.
     if (gDebugMode) {
       for (;;) {
         if (gDebugPaused) {
@@ -199,13 +219,16 @@ void wait(s32 frames) {
       if (gSerialWork.mode)
         gSerialWork.transferEnabled = 1;
     }
+    // Sleep: after a white screen and the keys' release, Stop the CPU until L,
+    // R and Select wake it, then restore the screen once they are released. A
+    // request above 1 counts down first.
     if (gSleepRequested && gSleepDisabled == 0) {
       display = REG_DISPCNT;
       backdrop = PLTT_BACKDROP;
       if (gSleepRequested == 1) {
         Io_Write16(0, &REG_DISPCNT);
         Io_Write16(RGB_WHITE, &PLTT_BACKDROP);
-        for (j = 0; j < 10; j++)
+        for (j = 0; j < SLEEP_WHITE_VBLANKS; j++)
           System_WaitForFrameInterrupt();
         while (gInput.held)
           System_WaitForFrameInterrupt();
@@ -216,7 +239,7 @@ void wait(s32 frames) {
         Bios_SoundBiasOn();
         Io_Write16(KEYCNT_SOFT_RESET, &REG_KEYCNT);
         Io_Write16(0, &gSleepActive);
-        for (j = 0; j < 10; j++)
+        for (j = 0; j < SLEEP_WAKE_VBLANKS; j++)
           System_WaitForFrameInterrupt();
         while (gInput.held)
           System_WaitForFrameInterrupt();
@@ -237,6 +260,9 @@ void wait(s32 frames) {
 /// Frames a key is held before it first repeats, and between later repeats.
 #define INPUT_KEY_REPEAT_FIRST 19
 #define INPUT_KEY_REPEAT_NEXT 6
+
+/// Every bit of a key word, as KEYINPUT's 16 bits.
+#define KEY_WORD_BITS 0xffff
 
 /// Restarts the key repeat delay, so held keys wait the full delay again.
 void Input_ResetKeyRepeat(void) { gInput.repeatTimer = INPUT_KEY_REPEAT_FIRST; }
@@ -285,7 +311,7 @@ void Input_UpdateKeyRepeatAndDirection(void) {
     switch (directionCount) {
     default:
       gInput.previousDirection = KEYS_HORIZONTAL;
-      mask = 0xffff & ~KEYS_DPAD;
+      mask = KEY_WORD_BITS & ~KEYS_DPAD;
       gInput.direction &= mask;
       break;
     case 0:
@@ -297,14 +323,14 @@ void Input_UpdateKeyRepeatAndDirection(void) {
     case 2:
       if ((gInput.previousDirection & gInput.direction) == 0)
         gInput.previousDirection = KEYS_HORIZONTAL;
-      gInput.direction &= gInput.previousDirection ^ 0xffff;
+      gInput.direction &= gInput.previousDirection ^ KEY_WORD_BITS;
       break;
     case 3:
       if (gInput.previousDirection & KEYS_HORIZONTAL)
         axis = KEYS_HORIZONTAL;
       if (gInput.previousDirection & KEYS_VERTICAL)
         axis = KEYS_VERTICAL;
-      mask = 0xffff ^ axis;
+      mask = KEY_WORD_BITS ^ axis;
       gInput.previousDirection = keys & mask;
       gInput.direction &= mask;
       break;
@@ -337,6 +363,9 @@ void System_VBlankHandler(void) {
   u32 vblankCount;
   void (*hook)(void);
 
+  // The display writes come first, while the blank lasts: OAM can be written
+  // only in a blank, and a palette or scroll changed while lines are drawn
+  // shows half changed.
   {
     volatile u16 *dma0 = REG_DMA0;
 
@@ -356,10 +385,11 @@ void System_VBlankHandler(void) {
     gFrameRenderPending = 0;
     if (gOamUsage.used != 0)
       Dma_Set(Ram_HeapSlots->frameScratch, OAM,
-              ((DMA_ENABLE | DMA_32BIT) << 16) + gOamUsage.used, REG_DMA3);
+              DMA_COPY_WORDS(0) + gOamUsage.used, REG_DMA3);
     Copy16Bytes(gBgScroll, REG_BG0HOFS);
     IoWriteQueue_FlushPending();
   }
+  // The hook runs once: it is cleared before it is called.
   hook = gVBlankCallback;
   if (hook != 0) {
     gVBlankCallback = 0;
@@ -367,6 +397,7 @@ void System_VBlankHandler(void) {
   }
   Task_RunPassBeforeFrameTasks(TASK_PASS_VBLANK);
 
+  // Read the keypad (its bits are 0 while pressed).
   keys = REG_KEYINPUT ^ KEYS_MASK;
   {
     // volatile: the code this interrupt broke into reads the same state.
@@ -379,7 +410,7 @@ void System_VBlankHandler(void) {
     if (keys == 0) {
       input->repeatTimer = INPUT_KEY_REPEAT_FIRST;
       input->repeat = keys;
-    } else if (input->held & (input->previousVblankHeld ^ 0xffff)) {
+    } else if (input->held & (input->previousVblankHeld ^ KEY_WORD_BITS)) {
       input->repeatTimer = -1;
       input->repeat = keys;
     } else if (input->repeatTimer > 0) {
@@ -439,8 +470,9 @@ void Input_HandleKeyInterrupt(void) {
   }
 }
 
-#undef SLEEP_IDLE_FRAMES
-#undef RGB_WHITE
+#undef VBLANK_LINES
+#undef DISPSTAT_FLAGS
+#undef KEY_WORD_BITS
 #undef INPUT_KEY_REPEAT_FIRST
 #undef INPUT_KEY_REPEAT_NEXT
 #undef SOUND_REVERB_CODE_COUNT

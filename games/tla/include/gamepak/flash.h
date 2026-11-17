@@ -6,13 +6,12 @@
 
 #include "types.h"
 
-/// Where the flash chip appears in the cartridge's save area, as pret names it.
+/// Where the flash chip appears in the cartridge's save area.
 #define FLASH_BASE 0x0E000000
-/// Writes `data` to the flash chip at offset `addr`, as pret writes the chip's
-/// command sequences.
+/// Writes `data` to the flash chip at offset `addr`.
 #define FLASH_WRITE(addr, data) (*(volatile u8 *)(FLASH_BASE + (addr)) = (data))
 
-// A command reaches the chip as GBATEK lists it: FLASH_UNLOCK_A written to
+// A command reaches the chip in three writes: FLASH_UNLOCK_A to
 // FLASH_COMMAND_ADDRESS, FLASH_UNLOCK_B to FLASH_UNLOCK_ADDRESS, then the
 // command to FLASH_COMMAND_ADDRESS.
 #define FLASH_COMMAND_ADDRESS 0x5555 ///< where the chip takes its commands
@@ -84,8 +83,8 @@ s32 Flash_VerifySector(u16 sector, u8 *source);
 /// the caller that holds the copy returns.
 extern u8 (*gFlashReadRoutine)(u8 *source);
 
-// The flash library's state, after pret's agb_flash: IdentifyFlash installs the
-// chip's routines and type.
+// The flash library's state: IdentifyFlash installs the chip's routines and
+// type.
 /// The chip's erase-all routine (FlashSetupInfo.eraseChip).
 extern u16 (*gEraseFlashChip)(void);
 /// The chip's erase-sector routine (FlashSetupInfo.eraseSector).

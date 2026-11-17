@@ -11,6 +11,22 @@
 // swirl is one turn of the whole group.
 
 #define HEALING_DJINNI_PICTURE 4096 ///< the Djinni picture in the sheet
+/// How far the Djinni sways to either side, in screen pixels.
+#define HEALING_DJINNI_SWAY 20
+/// Each target's motes: HEALING_MOTES for the stronger variant, half that for
+/// the basic and twice for the strongest. A target's motes start HEALING_MOTES
+/// after the last target's in PARTICLES, so the strongest variant's run on into
+/// the next target's.
+#define HEALING_MOTES 64
+/// The frames each target's ring of Cure motes lags the last target's in its
+/// turn.
+#define HEALING_CURE_RING_LAG 40
+/// A sparkle or mote is drawn at one of three sizes by its depth, from
+/// HEALING_MOTE_DEPTH_NEAR, one size smaller every HEALING_MOTE_DEPTH_STEP
+/// farther, its depth held below HEALING_MOTE_DEPTH_FAR.
+#define HEALING_MOTE_DEPTH_NEAR 314
+#define HEALING_MOTE_DEPTH_STEP 128
+#define HEALING_MOTE_DEPTH_FAR 634
 
 /// The healing motes' modes (BattleEffect_RunHealingMotes), each named for the
 /// first ability that plays it.
@@ -217,11 +233,11 @@ void BattleEffect_RunHealingMotes(struct BattleEffectParams *args, u32 mode) {
     frameCount = work->args->targetCount * 8 + 72;
   }
 
-  motesPerTarget = 64;
+  motesPerTarget = HEALING_MOTES;
   if (work->args->variant == EFFECT_VARIANT_BASIC)
-    motesPerTarget = 32;
+    motesPerTarget = HEALING_MOTES / 2;
   else if (work->args->variant == EFFECT_VARIANT_STRONGEST)
-    motesPerTarget = 128;
+    motesPerTarget = HEALING_MOTES * 2;
   work->transferMode = CANVAS_COPY_AND_FADE;
   work->transferValue = CANVAS_FADE_THREE_QUARTERS;
   Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_VBLANK);
@@ -235,9 +251,11 @@ void BattleEffect_RunHealingMotes(struct BattleEffectParams *args, u32 mode) {
     // The Djinni sways, then rises away.
     if (work->args->prelude == 1) {
       if (doubleWidth == 0) {
-        s32 x = FIXEDtoINT(Trig_Sin(frame << 11) * 20) + originX +
-                canvasShiftX - 20;
-        s32 y = FIXEDtoINT(Trig_Cos(frame << 11) * 4) + originY - 24;
+        s32 x = FIXEDtoINT(Trig_Sin(frame * (TRIG_TURN / 32)) *
+                           HEALING_DJINNI_SWAY) +
+                originX + canvasShiftX - DJINNI_WIDTH / 2;
+        s32 y =
+            FIXEDtoINT(Trig_Cos(frame * (TRIG_TURN / 32)) * 4) + originY - 24;
 
         if (frame > 32)
           y = y - frame * 2 + 64;
@@ -247,8 +265,11 @@ void BattleEffect_RunHealingMotes(struct BattleEffectParams *args, u32 mode) {
           blit[1](canvas, work->sheet + HEALING_DJINNI_PICTURE, x, y,
                   DJINNI_WIDTH, DJINNI_HEIGHT);
       } else {
-        s32 x = FIXEDtoINT(Trig_Sin(frame << 11) * 10) + originX / 2 - 10;
-        s32 y = FIXEDtoINT(Trig_Cos(frame << 11) * 4) + originY - 24;
+        s32 x = FIXEDtoINT(Trig_Sin(frame * (TRIG_TURN / 32)) *
+                           (HEALING_DJINNI_SWAY / 2)) +
+                originX / 2 - SMALL_DJINNI_WIDTH / 2;
+        s32 y =
+            FIXEDtoINT(Trig_Cos(frame * (TRIG_TURN / 32)) * 4) + originY - 24;
 
         if (frame > 32)
           y = y - frame * 2 + 64;
@@ -282,7 +303,7 @@ void BattleEffect_RunHealingMotes(struct BattleEffectParams *args, u32 mode) {
           Matrix_RotateX(frame << 9);
           Matrix_RotateZ(frame << 9);
         } else if (mode == HEALING_MODE_CURE) {
-          Matrix_RotateY((frame - member * 40) << 9);
+          Matrix_RotateY((frame - member * HEALING_CURE_RING_LAG) << 9);
         } else if (mode == HEALING_MODE_CURE_POISON) {
           Matrix_RotateY((frame - start) << 9);
         } else {
@@ -292,7 +313,7 @@ void BattleEffect_RunHealingMotes(struct BattleEffectParams *args, u32 mode) {
 
         // Four motes appear each frame.
         for (i = 0; i != motesPerTarget; i++) {
-          struct Particle *spark = &PARTICLES[member * 64 + i];
+          struct Particle *spark = &PARTICLES[member * HEALING_MOTES + i];
           s32 endFrame;
 
           if (mode == HEALING_MODE_CURE_POISON ||
@@ -316,8 +337,10 @@ void BattleEffect_RunHealingMotes(struct BattleEffectParams *args, u32 mode) {
                 screen.x >>= 1;
               screen.y += 16;
 
-              CLAMP(screen.depth, 314, 634);
-              size = 3 - (screen.depth - 314) / 128;
+              CLAMP(screen.depth, HEALING_MOTE_DEPTH_NEAR,
+                    HEALING_MOTE_DEPTH_FAR);
+              size = 3 - (screen.depth - HEALING_MOTE_DEPTH_NEAR) /
+                             HEALING_MOTE_DEPTH_STEP;
               if (mode == HEALING_MODE_PLY)
                 size = (i * 4 + frame) % 9;
               if (mode == HEALING_MODE_PLY ||
@@ -354,3 +377,9 @@ void BattleEffect_RunHealingMotes(struct BattleEffectParams *args, u32 mode) {
 }
 
 #undef HEALING_DJINNI_PICTURE
+#undef HEALING_DJINNI_SWAY
+#undef HEALING_MOTES
+#undef HEALING_CURE_RING_LAG
+#undef HEALING_MOTE_DEPTH_NEAR
+#undef HEALING_MOTE_DEPTH_STEP
+#undef HEALING_MOTE_DEPTH_FAR

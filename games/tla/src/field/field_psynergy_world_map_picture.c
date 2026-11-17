@@ -25,7 +25,47 @@
 #include "field/sprite.h"
 #include "field/flag_call.h"
 
-// The world map screen's work, laid out as field/world_map.h has it.
+/// The world picture on BG1, in 256 colours. The large picture
+/// (RESOURCE_WORLD_MAP_PICTURE_LARGE) is 64 by 48 tiles, each row of tiles
+/// packed on its own and decoded into the map-cell buffer, which holds 24 rows
+/// and wraps. BG1 holds 32 by 24 of its tiles from char block 1 on, wrapping
+/// the same way, and BG1's map (WorldMap_LoadGraphics) numbers them from the
+/// fifth row, where the still picture starts.
+#define PICTURE_WIDTH 512
+#define PICTURE_HEIGHT 384
+#define PICTURE_TILES_ACROSS (PICTURE_WIDTH / 8)
+#define PICTURE_ROW_BYTES (PICTURE_TILES_ACROSS * TILE_SIZE_8BPP)
+#define PICTURE_TILE_ROWS 24
+#define PICTURE_FIRST_TILE (BG_CHAR_SIZE / TILE_SIZE_8BPP)
+#define PICTURE_TILES (PICTURE_TILE_ROWS * BG_SCREEN_WIDTH)
+#define PICTURE_MAP_START (4 * BG_SCREEN_WIDTH)
+/// The scroll that shows the picture's bottom right corner.
+#define PICTURE_SCROLL_MAX_X toFIXED(PICTURE_WIDTH - DISPLAY_WIDTH)
+#define PICTURE_SCROLL_MAX_Y toFIXED(PICTURE_HEIGHT - DISPLAY_HEIGHT)
+/// The tiles drawn for one screen: 30 by 20, and the column and row partly
+/// scrolled in.
+#define PICTURE_DRAWN_COLUMNS (DISPLAY_WIDTH / 8 + 1)
+#define PICTURE_DRAWN_ROWS (DISPLAY_HEIGHT / 8 + 1)
+/// The 8-pixel tile a 16.16 coordinate lies in.
+#define FIELD_TILE(coordinate) ((coordinate) >> 19)
+/// Two screen entries in a word, tiles n and n + 1 side by side, for numbering
+/// a map's tiles two at a time; adding TILE_PAIR_STEP moves both on by two.
+#define TILE_PAIR(n) ((u32)((n) + 1) << 16 | (n))
+#define TILE_PAIR_STEP ((u32)2 << 16 | 2)
+
+/// The cursor's limits on the picture, in pixels; y goes from 0.
+///@{
+#define WORLD_MAP_CURSOR_MIN_X 16
+#define WORLD_MAP_CURSOR_MAX_X (PICTURE_WIDTH - 1)
+#define WORLD_MAP_CURSOR_MAX_Y 365
+///@}
+#define WORLD_MAP_CURSOR_MIN_SPEED toFIXED(1) ///< pixels a frame
+#define WORLD_MAP_CURSOR_MAX_SPEED toFIXED(6) ///< pixels a frame
+/// Added to the cursor's speed each frame the d-pad is held.
+#define WORLD_MAP_CURSOR_ACCELERATION (toFIXED(1) / 8)
+/// The squared distance in pixels within which a marker's name shows.
+#define WORLD_PICTURE_NAME_RANGE 64
+#define WORLD_MAP_MARKER_BLEND_STEPS 32 ///< gWorldMap_MarkerBlendCycle's rows
 
 /// R (step 1) and L (step -1) on the world map screen: the cursor jumps to the
 /// next or the previous marked place round from the one nearest it, and its
@@ -109,8 +149,6 @@ void WorldPicture_StepToPlace(s32 *screenX, s32 *screenY, s32 step) {
   *screenY = WORLD_PICTURE_Y(place->z);
 }
 
-// Moves a list of window sprites.
-
 /// Moves every window sprite of a list by dx, dy: the output's position and its
 /// queued sprite's OAM x and y.
 void WindowSpriteList_Move(struct WindowSpriteList *list, s32 dx, s32 dy) {
@@ -146,10 +184,11 @@ void WindowSpriteList_Move(struct WindowSpriteList *list, s32 dx, s32 dy) {
 #define WORLD_MAP_HIGH(value) (((s16 *)&(value))[1])
 #define WORLD_MAP_SCALE(value) ((value) * 300 / 640)
 
-/// Task of the World Map screen: shows a marker at each
-/// area whose flag is set, moves the cursor with the d-pad (to the current
-/// area while L or R is held) and shows the name of the marker nearest
-/// the cursor.
+/// Each frame of the world map screen: moves the cursor with the d-pad, faster
+/// the longer it is held, or glides it toward its target; draws a marker at
+/// each place visited, at the ship once it sails and at the party; with the
+/// d-pad released draws the cursor onto the nearest marker in reach, and shows
+/// that marker's name beside it.
 void WorldPicture_UpdateMarkers(void) {
   struct WorldMapWork *work;
   struct WorldMapMarker *marker;
@@ -191,13 +230,14 @@ void WorldPicture_UpdateMarkers(void) {
   marker = work->markers;
   tileBase = gVramCacheEntries[work->vramBlock].offset >> 5;
   nearest = -1;
-  nearestDistance = 64;
+  nearestDistance = WORLD_PICTURE_NAME_RANGE;
   nearestX = 0;
   nearestY = 0;
   places = FlagEntries_GetTable();
-  scrollX = work->scrollX & 0xffff0000;
-  scrollY = work->scrollZ & 0xffff0000;
-  blend = gWorldMap_MarkerBlendCycle[(gFrameCount >> 1) & 31];
+  scrollX = work->scrollX & FIELD_PIXEL_MASK;
+  scrollY = work->scrollZ & FIELD_PIXEL_MASK;
+  blend = gWorldMap_MarkerBlendCycle[(gFrameCount >> 1) &
+                                     (WORLD_MAP_MARKER_BLEND_STEPS - 1)];
 
   if (gWorldPicture_GlideTargetX != 0) {
     x = gWorldPicture_GlideTargetX;
@@ -207,12 +247,12 @@ void WorldPicture_UpdateMarkers(void) {
     distance = toFIXED(Iwram_Sqrt(dx * dx + dz * dz));
     dx = x - work->x;
     dz = y - work->z;
-    if (distance < FIXED_ONE * 64)
+    if (distance < toFIXED(64))
       distance = Math_SqrtFX(Iwram_MulFX(dx, dx) + Iwram_MulFX(dz, dz));
     step = distance / 4;
-    if (step > FIXED_ONE * 8)
-      step = FIXED_ONE * 8;
-    if (distance < FIXED_ONE / 2) {
+    if (step > toFIXED(8))
+      step = toFIXED(8);
+    if (distance < toFIXED(1) / 2) {
       work->x = x;
       work->z = y;
       gWorldPicture_GlideTargetX = 0;
@@ -232,20 +272,20 @@ void WorldPicture_UpdateMarkers(void) {
       pos[1] = 0;
       pos[2] = work->z;
       Vector_AddPolarOffset(work->speed, angle, pos);
-      if (pos[0] < FIXED_ONE * 16)
-        pos[0] = FIXED_ONE * 16;
-      if (pos[0] > FIXED_ONE * 511)
-        pos[0] = FIXED_ONE * 511;
+      if (pos[0] < toFIXED(WORLD_MAP_CURSOR_MIN_X))
+        pos[0] = toFIXED(WORLD_MAP_CURSOR_MIN_X);
+      if (pos[0] > toFIXED(WORLD_MAP_CURSOR_MAX_X))
+        pos[0] = toFIXED(WORLD_MAP_CURSOR_MAX_X);
       if (pos[2] < 0)
         pos[2] = 0;
-      if (pos[2] > FIXED_ONE * 365)
-        pos[2] = FIXED_ONE * 365;
+      if (pos[2] > toFIXED(WORLD_MAP_CURSOR_MAX_Y))
+        pos[2] = toFIXED(WORLD_MAP_CURSOR_MAX_Y);
       work->x = pos[0];
       work->z = pos[2];
       Ram_WorldMapCursorStart[0] = pos[0];
       Ram_WorldMapCursorStart[1] = pos[2];
-      if (work->speed < FIXED_ONE * 6)
-        work->speed += FIXED_ONE / 8;
+      if (work->speed < WORLD_MAP_CURSOR_MAX_SPEED)
+        work->speed += WORLD_MAP_CURSOR_ACCELERATION;
     }
   }
 
@@ -324,7 +364,7 @@ void WorldPicture_UpdateMarkers(void) {
       if (nearestDistance <= 2) {
         work->x = toFIXED(nearestX);
         work->z = toFIXED(nearestY);
-        work->speed = FIXED_ONE;
+        work->speed = WORLD_MAP_CURSOR_MIN_SPEED;
       } else {
         angle = Trig_Atan(nearestY - cursorY, nearestX - cursorX);
         pos[0] = work->x;
@@ -337,7 +377,7 @@ void WorldPicture_UpdateMarkers(void) {
       cursorX = WORLD_MAP_HIGH(work->x);
       cursorY = WORLD_MAP_HIGH(work->z);
     } else {
-      work->speed = FIXED_ONE;
+      work->speed = WORLD_MAP_CURSOR_MIN_SPEED;
     }
   }
 
@@ -445,7 +485,8 @@ void WorldPicture_UpdateMarkers(void) {
   }
 
   IO_WRITE_QUEUE_PUSH((u32)&REG_BLDCNT, BLDCNT_TGT2_ALL, IO_WRITE_HALFWORD);
-  IO_WRITE_QUEUE_PUSH((u32)&REG_BLDALPHA, ((16 - blend) << 8) | blend,
+  IO_WRITE_QUEUE_PUSH((u32)&REG_BLDALPHA,
+                      ((BLEND_WEIGHT_MAX - blend) << 8) | blend,
                       IO_WRITE_HALFWORD);
   IO_WRITE_QUEUE_PUSH((u32)&REG_BLDY, 0, IO_WRITE_HALFWORD);
 }
@@ -458,17 +499,16 @@ void WorldPicture_UpdateMarkers(void) {
 #undef WORLD_MAP_HIGH
 #undef WORLD_MAP_SCALE
 
-/// Draws the world map picture on BG1, scrolled to the cursor in gWorldMapWork
-/// (resource 36, or 35 at the origin when gWorldMapWork's origin flag is set):
-/// the palette, then 21 rows of 31 tiles from the decoded rows, wrapping the
-/// 24-row buffer and the 32-column screen.
+/// Draws the world picture on BG1 with the cursor in the middle of the screen
+/// (or the whole world, RESOURCE_WORLD_MAP_PICTURE, at the origin while
+/// gWorldMapWork.centered is set): the palette, then 21 rows of 31 tiles.
 void WorldMapPicture_Draw(void) {
   struct WorldMapWork *work = &gWorldMapWork;
   u8 *buffer;
   s32 resource = RESOURCE_WORLD_MAP_PICTURE_LARGE;
   s32 *cursor = work->cursor;
-  s32 x = *cursor++ - toFIXED(120);
-  s32 z = *cursor - toFIXED(80);
+  s32 x = *cursor++ - toFIXED(DISPLAY_WIDTH / 2);
+  s32 z = *cursor - toFIXED(DISPLAY_HEIGHT / 2);
   u32 *graphics;
   u32 column;
   u32 firstRow;
@@ -490,8 +530,8 @@ void WorldMapPicture_Draw(void) {
           REG_DMA3);
   *(u16 *)BG_PLTT = 0;
   buffer = Ram_MapCellBuffer;
-  right = toFIXED(272);
-  bottom = toFIXED(224);
+  right = PICTURE_SCROLL_MAX_X;
+  bottom = PICTURE_SCROLL_MAX_Y;
   if (x < 0)
     x = 0;
   if (x > right)
@@ -502,56 +542,50 @@ void WorldMapPicture_Draw(void) {
     z = bottom;
   gBgScroll[1].x = FIXEDtoINT(x);
   gBgScroll[1].y = FIXEDtoINT(z);
-  x = (u32)x >> 19;
+  x = FIELD_TILE((u32)x);
   column = x;
-  firstRow = (u32)z >> 19;
-  for (row = 0; row <= 20; row++) {
+  firstRow = FIELD_TILE((u32)z);
+  for (row = 0; row < PICTURE_DRAWN_ROWS; row++) {
     bufferRow = firstRow + row;
     unwrapped = bufferRow;
     /* FAKEMATCH(barrier): an empty asm reading x. */
     asm("" : : "r"(x));
-    if (bufferRow > 23)
-      bufferRow -= 24;
-    // z is reused for the map cell's index; a local of its own differs.
-    z = (column & 31) + (unwrapped << 5);
-    tile = (z + 128) % 768 + 256;
+    if (bufferRow >= PICTURE_TILE_ROWS)
+      bufferRow -= PICTURE_TILE_ROWS;
+    // z is reused for the tile's place in BG1's map, and x for the cell.
+    z = (column & (BG_SCREEN_WIDTH - 1)) + unwrapped * BG_SCREEN_WIDTH;
+    tile = (z + PICTURE_MAP_START) % PICTURE_TILES + PICTURE_FIRST_TILE;
     Decompress_TaggedLz((u8 *)graphics + graphics[unwrapped + 1],
-                        buffer + (bufferRow << 12));
-    // x is reused for the cell pointer; a local of its own differs.
-    x = bufferRow << 6;
+                        buffer + bufferRow * PICTURE_ROW_BYTES);
+    x = bufferRow * PICTURE_TILES_ACROSS;
     x += column;
     {
       s32 to;
 
       i = 0;
       to = VRAM;
-      x <<= 6;
+      x *= TILE_SIZE_8BPP;
       x += (s32)buffer;
       /* FAKEMATCH(barrier): VRAM's address through an empty asm that also reads
        * i. */
       asm("" : "=r"(to) : "0"(to), "r"(i));
-      for (; i <= 30; i++) {
-        Dma_Set((void *)x, (void *)((tile << 6) + to), DMA_COPY_WORDS(16),
-                REG_DMA3);
-        x += 64;
+      for (; i < PICTURE_DRAWN_COLUMNS; i++) {
+        Dma_Set((void *)x, (void *)(tile * TILE_SIZE_8BPP + to),
+                DMA_COPY_WORDS(TILE_SIZE_8BPP / 4), REG_DMA3);
+        x += TILE_SIZE_8BPP;
         tile++;
-        if (i + column == 31)
-          tile -= 32;
+        // BG1's map is 32 tiles wide: the next column wraps to its left edge.
+        if (i + column == BG_SCREEN_WIDTH - 1)
+          tile -= BG_SCREEN_WIDTH;
       }
     }
   }
 }
 
-/// Set while the world map shows its alternative picture, which does not
-/// scroll.
-
-#define BG_VRAM 0x06000000
-
-/// Draws one row of the world map picture on BG1, from a column to the right
-/// edge of the map (at most 31 tiles; Japanese always draws 32), for
-/// scrolling: decodes the picture's row into the cell buffer, which holds 24
-/// rows and wraps, and copies its cells into the 32-column screen from tile
-/// 256, wrapping at column 32.
+/// Draws one row of the world picture on BG1 as it scrolls in, from a column to
+/// the picture's right edge, at most 31 tiles (the Japanese release always
+/// draws 32): decodes the row into the map-cell buffer and copies its tiles to
+/// BG1's.
 void WorldMapPicture_DrawRow(u32 column, s32 row) {
   s32 resource = RESOURCE_WORLD_MAP_PICTURE_LARGE;
   u32 *graphics;
@@ -564,26 +598,28 @@ void WorldMapPicture_DrawRow(u32 column, s32 row) {
     resource = RESOURCE_WORLD_MAP_PICTURE;
   graphics = Resource_GetTableEntry(resource);
   unwrapped = row;
-  if (row > 23)
-    row -= 24;
-  cell = (row << 6) + column;
-  tile = (column & 31) + (row << 5);
-  tile = (tile + 128) % 768 + 256;
+  if (row >= PICTURE_TILE_ROWS)
+    row -= PICTURE_TILE_ROWS;
+  cell = row * PICTURE_TILES_ACROSS + column;
+  tile = (column & (BG_SCREEN_WIDTH - 1)) + row * BG_SCREEN_WIDTH;
+  tile = (tile + PICTURE_MAP_START) % PICTURE_TILES + PICTURE_FIRST_TILE;
   Decompress_TaggedLz((u8 *)graphics + graphics[unwrapped + 1],
-                      Ram_MapCellBuffer + (row << 12));
-  // From patch 1 the copy stops at the map's last column instead of running
-  // past it.
+                      Ram_MapCellBuffer + row * PICTURE_ROW_BYTES);
+  // From patch 1 the copy stops at the picture's last column instead of
+  // running past it.
 #if TLA_PATCH_1
-  for (i = 0; i <= 30 && column + i <= 63; i++) {
+  for (i = 0; i < PICTURE_DRAWN_COLUMNS && column + i < PICTURE_TILES_ACROSS;
+       i++) {
 #else
-  for (i = 0; i < 32; i++) {
+  for (i = 0; i < BG_SCREEN_WIDTH; i++) {
 #endif
-    Dma_Set(Ram_MapCellBuffer + (cell << 6), (void *)(BG_VRAM + (tile << 6)),
-            DMA_COPY_WORDS(16), REG_DMA3);
+    Dma_Set(Ram_MapCellBuffer + cell * TILE_SIZE_8BPP,
+            (void *)(VRAM + tile * TILE_SIZE_8BPP),
+            DMA_COPY_WORDS(TILE_SIZE_8BPP / 4), REG_DMA3);
     cell++;
     tile++;
-    if (i + column == 31)
-      tile -= 32;
+    if (i + column == BG_SCREEN_WIDTH - 1)
+      tile -= BG_SCREEN_WIDTH;
   }
 }
 
@@ -593,28 +629,28 @@ static inline s32 WorldMap_AddColumn(s32 column, s32 cell) {
   return column + cell;
 }
 
-/// Draws one column of the world map picture on BG1, 21 rows down from a
-/// row, for scrolling: copies the column's cells from the decoded rows in the
-/// cell buffer, which wraps after 24 rows, into the 32-column screen from
-/// tile 256; the column twin of WorldMapPicture_DrawRow.
+/// Draws one column of the world picture on BG1 as it scrolls in, 21 tiles
+/// down from a row, from the rows already decoded in the map-cell buffer.
 void WorldMapPicture_DrawColumn(s32 column, s32 row) {
   u32 i;
 
-  for (i = 0; i <= 20; i++) {
+  for (i = 0; i < PICTURE_DRAWN_ROWS; i++) {
     s32 line = row + i;
     s32 cell = line;
     s32 tile;
 
-    if (line > 23)
-      cell = line - 24;
-    tile = ((column & 31) + (line << 5) + 128) % 768;
-    cell <<= 6;
+    if (line >= PICTURE_TILE_ROWS)
+      cell = line - PICTURE_TILE_ROWS;
+    tile = ((column & (BG_SCREEN_WIDTH - 1)) + line * BG_SCREEN_WIDTH +
+            PICTURE_MAP_START) %
+           PICTURE_TILES;
+    cell *= PICTURE_TILES_ACROSS;
     cell = WorldMap_AddColumn(column, cell);
-    cell <<= 6;
-    tile <<= 6;
-    line = BG_VRAM + (256 << 6);
-    Dma_Set(Ram_MapCellBuffer + cell, (u8 *)line + tile, DMA_COPY_WORDS(16),
-            REG_DMA3);
+    cell *= TILE_SIZE_8BPP;
+    tile *= TILE_SIZE_8BPP;
+    line = VRAM + PICTURE_FIRST_TILE * TILE_SIZE_8BPP;
+    Dma_Set(Ram_MapCellBuffer + cell, (u8 *)line + tile,
+            DMA_COPY_WORDS(TILE_SIZE_8BPP / 4), REG_DMA3);
   }
 }
 
@@ -625,16 +661,16 @@ extern FIXED *gWorldPicture_Cursor;
 #define SCROLL_Y Ram_WorldMapScroll[1]
 
 /// The world map screen's scroll follows the cursor. The target puts the
-/// cursor 120 by 80 pixels in (clamped to the map); unless the map is held the
-/// scroll moves a quarter of the way there each frame, at most 8 pixels, and
-/// stops when nearer than a quarter pixel. Each time the scroll crosses an
-/// 8-pixel column or row, the new column (WorldMapPicture_DrawColumn) or row
-/// (WorldMapPicture_DrawRow) of the picture is drawn; BG1 scrolls with it. All
-/// values are 16.16 pixels.
+/// cursor in the middle of the screen (clamped to the picture); unless the
+/// whole world shows, the scroll moves a quarter of the way there each frame,
+/// at most 8 pixels, and stops when nearer than a quarter pixel. Each time the
+/// scroll crosses into a new column or row of tiles, that column
+/// (WorldMapPicture_DrawColumn) or row (WorldMapPicture_DrawRow) is drawn; BG1
+/// scrolls with it.
 void WorldMapPicture_UpdateScroll(void) {
   s32 *cursor = gWorldPicture_Cursor;
-  s32 x = *cursor++ - toFIXED(120);
-  s32 y = *cursor - toFIXED(80);
+  s32 x = *cursor++ - toFIXED(DISPLAY_WIDTH / 2);
+  s32 y = *cursor - toFIXED(DISPLAY_HEIGHT / 2);
   s32 dx;
   s32 dy;
   FIXED distance;
@@ -642,11 +678,11 @@ void WorldMapPicture_UpdateScroll(void) {
   u32 column;
   u32 row;
   s32 limit;
-  s32 bottom = toFIXED(224);
+  s32 bottom = PICTURE_SCROLL_MAX_Y;
 
   if (x < 0)
     x = 0;
-  limit = toFIXED(272);
+  limit = PICTURE_SCROLL_MAX_X;
   if (x > limit)
     x = limit;
   if (y < 0)
@@ -676,22 +712,24 @@ void WorldMapPicture_UpdateScroll(void) {
         x = 0;
       if (y < 0)
         y = 0;
+      // y is held to x's limit, which a scroll toward a target within the
+      // picture never reaches.
       if (x > limit)
         x = limit;
       if (y > limit)
         y = limit;
     }
-    column = (u32)x >> 19;
-    row = (u32)y >> 19;
+    column = FIELD_TILE((u32)x);
+    row = FIELD_TILE((u32)y);
     if ((SCROLL_X ^ x) & toFIXED(8)) {
       if (SCROLL_X < x)
-        WorldMapPicture_DrawColumn(column + 30, row);
+        WorldMapPicture_DrawColumn(column + DISPLAY_WIDTH / 8, row);
       else
         WorldMapPicture_DrawColumn(column, row);
     }
     if ((SCROLL_Y ^ y) & toFIXED(8)) {
       if (SCROLL_Y < y)
-        WorldMapPicture_DrawRow(column, row + 20);
+        WorldMapPicture_DrawRow(column, row + DISPLAY_HEIGHT / 8);
       else
         WorldMapPicture_DrawRow(column, row);
     }
@@ -712,11 +750,15 @@ extern s32 gWorldPicture_ScrollY; ///< as gWorldPicture_ScrollX
 
 void WorldMap_SetReturnForScene(s32 scene, s32 entrance);
 
-/// Borrows the map-cell buffer for the still map until A or B closes it.
-/// FieldSequence_Run reaches this for raised trigger -888 in World Map mode.
+/// The world map screen, over the map-cell buffer, until A or B closes it: in
+/// mode 0 the player looks (FIELD_RAISED_TRIGGER_WORLD_PICTURE); in mode 1, for
+/// Teleport, A chooses the place whose name shows and B cancels
+/// (FIELD_RAISED_TRIGGER_TELEPORT). While Start is held the cursor glides to
+/// the party, and back when it is let go; R and L step it between the places,
+/// and Select shows the whole world or the scrolling picture.
 s32 WorldPicture_Show(s32 mode) {
   s32 savedDelay;
-  u8 savedFlags[16];
+  u8 savedFlags[ARRAY_COUNT(((struct MapWork *)NULL)->anim)];
   s32 screenX;
   s32 screenY;
   struct MapWork *map = Ram_HeapSlots->mapGrid;
@@ -758,7 +800,7 @@ s32 WorldPicture_Show(s32 mode) {
     Event_FinishScreenTransition();
     Event_WaitTransitionFrames();
     layer = map->anim;
-    for (i = 0; i < 16; i++) {
+    for (i = 0; i < (s32)ARRAY_COUNT(savedFlags); i++) {
       savedFlags[i] = layer->paused;
       layer->paused = 1;
       layer++;
@@ -783,24 +825,26 @@ s32 WorldPicture_Show(s32 mode) {
     objects->suspended = 1;
     wait(1);
     blend = REG_BLDALPHA;
+    // BG1's map numbers the picture's tiles as WorldMap_LoadGraphics does,
+    // two a word: from the fifth row, then on round.
     tiles = (u32 *)BG_SCREEN_BLOCK(6);
-    tile = 0x01810180;
-    for (row = 0; row < 20; row++)
-      for (column = 0; column < 16; column++) {
+    tile = TILE_PAIR(PICTURE_FIRST_TILE + PICTURE_MAP_START);
+    for (row = 0; row < PICTURE_TILE_ROWS - 4; row++)
+      for (column = 0; column < BG_SCREEN_WIDTH / 2; column++) {
         *tiles++ = tile;
-        tile += 0x20002;
+        tile += TILE_PAIR_STEP;
       }
-    tile = 0x01010100;
-    for (row = 0; row < 24; row++)
-      for (column = 0; column < 16; column++) {
+    tile = TILE_PAIR(PICTURE_FIRST_TILE);
+    for (row = 0; row < PICTURE_TILE_ROWS; row++)
+      for (column = 0; column < BG_SCREEN_WIDTH / 2; column++) {
         *tiles++ = tile;
-        tile += 0x20002;
+        tile += TILE_PAIR_STEP;
       }
-    tile = 0x01010100;
+    tile = TILE_PAIR(PICTURE_FIRST_TILE);
     for (row = 0; row < 4; row++)
-      for (column = 0; column < 16; column++) {
+      for (column = 0; column < BG_SCREEN_WIDTH / 2; column++) {
         *tiles++ = tile;
-        tile += 0x20002;
+        tile += TILE_PAIR_STEP;
       }
     map->origin = 0;
     gBgScroll[1].x = 0;
@@ -945,7 +989,7 @@ done:
     WorldMap_LoadAreaGraphicsFar();
     IO_WRITE_QUEUE_PUSH((u32)&REG_BLDALPHA, (u16)blend, IO_WRITE_HALFWORD);
     layer = map->anim;
-    for (i = 0; i < 16; i++) {
+    for (i = 0; i < (s32)ARRAY_COUNT(savedFlags); i++) {
       layer->paused = savedFlags[i];
       layer++;
     }
@@ -965,7 +1009,7 @@ done:
 extern const struct FlagEntry gFlagEntries[];
 
 /// On the world map, zooms the view out to eight thirteenths while L is held,
-/// then back, six frames each way. FieldSequence_Run runs it for event -889.
+/// then back, six frames each way (FIELD_RAISED_TRIGGER_WORLD_MAP_ZOOM).
 void WorldMap_ZoomOutWhileLHeld(void) {
   struct MainRoutineWork *party;
 
@@ -976,6 +1020,7 @@ void WorldMap_ZoomOutWhileLHeld(void) {
       wait(1);
     party = &gMainRoutineWork;
 
+    // DEAD: both arms alike; the ROM keeps the test and both calls.
     if (party->ownerOverride != 0)
       WorldMap_StartZoom(FIXED_ONE, 6);
     else
@@ -985,6 +1030,28 @@ void WorldMap_ZoomOutWhileLHeld(void) {
 
 /// Returns the flag entry table, 20-byte entries ended by a zero flag.
 const struct FlagEntry *FlagEntries_GetTable(void) { return gFlagEntries; }
-#undef BG_VRAM
+#undef PICTURE_WIDTH
+#undef PICTURE_HEIGHT
+#undef PICTURE_TILES_ACROSS
+#undef PICTURE_ROW_BYTES
+#undef PICTURE_TILE_ROWS
+#undef PICTURE_FIRST_TILE
+#undef PICTURE_TILES
+#undef PICTURE_MAP_START
+#undef PICTURE_SCROLL_MAX_X
+#undef PICTURE_SCROLL_MAX_Y
+#undef PICTURE_DRAWN_COLUMNS
+#undef PICTURE_DRAWN_ROWS
+#undef FIELD_TILE
+#undef TILE_PAIR
+#undef TILE_PAIR_STEP
+#undef WORLD_MAP_CURSOR_MIN_X
+#undef WORLD_MAP_CURSOR_MAX_X
+#undef WORLD_MAP_CURSOR_MAX_Y
+#undef WORLD_MAP_CURSOR_MIN_SPEED
+#undef WORLD_MAP_CURSOR_MAX_SPEED
+#undef WORLD_MAP_CURSOR_ACCELERATION
+#undef WORLD_PICTURE_NAME_RANGE
+#undef WORLD_MAP_MARKER_BLEND_STEPS
 #undef SCROLL_X
 #undef SCROLL_Y

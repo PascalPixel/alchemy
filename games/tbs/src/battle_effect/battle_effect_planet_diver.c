@@ -21,6 +21,7 @@ struct ImpactChip {
 #define PLANET_DIVER_FRAMES 88
 #define PLANET_DIVER_CLEARED_CHIPS 1024 ///< map grid buffer slots cleared first
 #define PLANET_DIVER_CHIPS 256          ///< chips the fireball bursts into
+#define PLANET_DIVER_FLASH_BURSTS 16    ///< the ring of flashes round the user
 
 /// The user flashes and leaps into the air, turns into a ball of fire, falls
 /// onto the first target and bursts into chips that bounce on the ground.
@@ -82,10 +83,10 @@ void BattleEffect_RunPlanetDiver(struct BattleEffectParams *args) {
               screenPosition.y - FLASH_BURST_HEIGHT, FLASH_BURST_WIDTH,
               FLASH_BURST_HEIGHT);
     if (frame >= 4 && frame <= 15) {
-      for (i = 0; i != 16; i++) {
-        s32 x = screenPosition.x + FIXEDtoINT(frame * Trig_Sin(i << 12));
-        s32 y =
-            screenPosition.y + FIXEDtoINT(frame * Trig_Cos(i << 12)) - frame;
+      for (i = 0; i != PLANET_DIVER_FLASH_BURSTS; i++) {
+        s32 angle = i * (TRIG_TURN / PLANET_DIVER_FLASH_BURSTS);
+        s32 x = screenPosition.x + FIXEDtoINT(frame * Trig_Sin(angle));
+        s32 y = screenPosition.y + FIXEDtoINT(frame * Trig_Cos(angle)) - frame;
 
         draw[0](canvas,
                 work->sheet + (frame - 4) / 2 * PICTURE_BYTES(FLASH_BURST),
@@ -244,10 +245,11 @@ void BattleEffect_RunHaunt(struct BattleEffectParams *args) {
     row = work->bg2xLines;
     if (work->args->side == EFFECT_SIDE_ENEMIES) {
       for (i = 0; i != DISPLAY_HEIGHT; i++)
-        *row++ = (toFIXED(6) - Trig_Sin((frame + i) << 11) * 6) >> 10;
+        *row++ =
+            (toFIXED(6) - Trig_Sin((frame + i) * (TRIG_TURN / 32)) * 6) >> 10;
     } else {
       for (i = 0; i != DISPLAY_HEIGHT; i++)
-        *row++ = Trig_Sin((frame + i) << 11) * 6 >> 10;
+        *row++ = Trig_Sin((frame + i) * (TRIG_TURN / 32)) * 6 >> 10;
     }
 
     EFFECT_FOR_EACH_TARGET(k, work->args) {
@@ -299,18 +301,21 @@ void BattleEffect_RunHaunt(struct BattleEffectParams *args) {
   BattleEffect_EndCanvasLayer();
 }
 
+/// The spirals: ORBITING_SPIRALS a quarter turn apart, circling
+/// ORBITING_SPIRALS_RADIUS pixels out, each target's ORBITING_SPIRALS_INTERVAL
+/// frames after the one before and for ORBITING_SPIRALS_LIFE frames less one.
+#define ORBITING_SPIRALS 4
+#define ORBITING_SPIRALS_RADIUS 16
+#define ORBITING_SPIRALS_INTERVAL 16
 #define ORBITING_SPIRALS_LIFE 60
 
 /// Unused: no row of gAbilityBattleEffects in either game names its kind, and
 /// the handler table is reached with no other kind (BattleEffect_RunFromTable),
-/// so the player never sees it. Four spirals would circle 40 pixels above each
-/// target in turn, 16 frames apart, for 59 frames each, 16 pixels out from
-/// the centre; each target would take its damage pose 32 frames into its
-/// turn.
+/// so the player never sees it. Its code draws four spirals on a circle of
+/// radius 16 about the point 40 pixels above each target, one target after
+/// another, 16 frames apart and for 59 frames each, turning a 128th of a turn
+/// a frame; each target takes its damage pose 32 frames into its turn.
 void BattleEffect_RunUnusedOrbitingSpirals(struct BattleEffectParams *args) {
-  // XXX: do these spirals circle each target as the doc above says? Staging
-  // this function, which render guide --only unused has no stage for yet,
-  // would settle it.
   struct BattleEffectWork *work;
   void *canvas;
   void *palette;
@@ -342,7 +347,9 @@ void BattleEffect_RunUnusedOrbitingSpirals(struct BattleEffectParams *args) {
   } else {
     offsetX = 0;
   }
-  for (frame = 0; frame != (work->args->targetCount * 16) + 48; frame++) {
+  for (frame = 0;
+       frame != (work->args->targetCount * ORBITING_SPIRALS_INTERVAL) + 48;
+       frame++) {
     struct BattleCamera *camera = gBattleCamera;
     s32 *row;
     s32 i;
@@ -362,11 +369,12 @@ void BattleEffect_RunUnusedOrbitingSpirals(struct BattleEffectParams *args) {
       struct Actor *actor;
 
       actor = GetBattleObjectSlotFar(work->args->targets[member])->actor;
-      if (frame > member * 16 &&
-          frame < (member * 16) + ORBITING_SPIRALS_LIFE) {
+      if (frame > member * ORBITING_SPIRALS_INTERVAL &&
+          frame <
+              (member * ORBITING_SPIRALS_INTERVAL) + ORBITING_SPIRALS_LIFE) {
         s32 spin;
 
-        if (frame == (member * 16) + 32) {
+        if (frame == (member * ORBITING_SPIRALS_INTERVAL) + 32) {
           BattleEffect_TintBattler(work->args->targets[member],
                                    SPRITE_COLOR_NORMAL, POSE_DAMAGE, TINT_KEEP,
                                    0);
@@ -374,15 +382,16 @@ void BattleEffect_RunUnusedOrbitingSpirals(struct BattleEffectParams *args) {
         SET_VECTOR(point, actor->x.fixed, toFIXED(40), actor->z.fixed);
         Projection_Point(point, &screen);
 
-        // The spirals, a quarter turn apart.
-        for (i = 0; i != 4; i++) {
+        for (i = 0; i != ORBITING_SPIRALS; i++) {
           s32 x;
           s32 y;
           s32 half;
 
-          spin = (frame << 9) + (i << 14);
-          x = (screen.x + FIXEDtoINT(Trig_Sin(spin) * 16)) + offsetX;
-          y = screen.y + FIXEDtoINT(Trig_Cos(spin) * 16);
+          spin = frame * (TRIG_TURN / 128) + i * (TRIG_TURN / ORBITING_SPIRALS);
+          x = (screen.x +
+               FIXEDtoINT(Trig_Sin(spin) * ORBITING_SPIRALS_RADIUS)) +
+              offsetX;
+          y = screen.y + FIXEDtoINT(Trig_Cos(spin) * ORBITING_SPIRALS_RADIUS);
           half = frame / 16;
           draw[half & 1](canvas,
                          work->sheet +
@@ -407,4 +416,8 @@ void BattleEffect_RunUnusedOrbitingSpirals(struct BattleEffectParams *args) {
 #undef HAUNT_SCATTERED
 #undef HAUNT_SKULLS
 #undef HAUNT_SLOTS
+#undef PLANET_DIVER_FLASH_BURSTS
+#undef ORBITING_SPIRALS
+#undef ORBITING_SPIRALS_RADIUS
+#undef ORBITING_SPIRALS_INTERVAL
 #undef ORBITING_SPIRALS_LIFE

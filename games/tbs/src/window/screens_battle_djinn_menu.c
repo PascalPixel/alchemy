@@ -266,9 +266,9 @@ s32 BattleDjinnMenu_Run(s32 member, s32 unused) {
       if (djinnCount > BATTLE_LIST_ROWS) {
         for (j = 0; j < (listPages = ((djinnCount + 4) / BATTLE_LIST_ROWS));
              j++) {
-          s32 tile = j + LIST_TILE_PAGE_NUMBER;
+          s32 tile = j + PAGE_NUMBER_TILE;
           if (j == (firstEntry / BATTLE_LIST_ROWS)) {
-            tile = j + LIST_TILE_PAGE_NUMBER_LIT;
+            tile = j + PAGE_NUMBER_LIT_TILE;
           }
           Window_SetTilemapEntry(listWindow, tile,
                                  listWindow->width - listPages + j - 2, -1, 0);
@@ -286,10 +286,10 @@ s32 BattleDjinnMenu_Run(s32 member, s32 unused) {
     // while R turns the preview's pages instead.
     if (djinnCount > BATTLE_LIST_ROWS) {
       for (j = 0; j < (djinnCount + 4) / BATTLE_LIST_ROWS; j++) {
-        s32 tile = j + LIST_TILE_PAGE_NUMBER;
+        s32 tile = j + PAGE_NUMBER_TILE;
         if ((gKeysHeld & KEY_R) || (gFrameCount & 15) <= 11) {
           if (j == (firstEntry / BATTLE_LIST_ROWS)) {
-            tile = j + LIST_TILE_PAGE_NUMBER_LIT;
+            tile = j + PAGE_NUMBER_LIT_TILE;
           }
         }
         Window_SetTilemapEntry(
@@ -395,9 +395,9 @@ s32 BattleDjinnMenu_Run(s32 member, s32 unused) {
         // first frame turns to page 1, then Left and Right turn the pages.
         if (previewWindow != 0) {
           for (i = 0; i < previewPages; i++) {
-            s32 tile = i + LIST_TILE_PAGE_NUMBER;
+            s32 tile = i + PAGE_NUMBER_TILE;
             if ((gFrameCount & 15) <= 11 && i == previewPage - 1) {
-              tile = previewPage - 1 + LIST_TILE_PAGE_NUMBER_LIT;
+              tile = previewPage - 1 + PAGE_NUMBER_LIT_TILE;
             }
             Window_SetTilemapEntry(previewWindow, tile,
                                    previewWindow->width - previewPages + i - 2,

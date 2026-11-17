@@ -158,9 +158,6 @@ void Text_DrawMessage(s32 message, s32 window, s32 x, s32 y);
 /// The sprite palette of portrait slot 0; slot 1 uses the next.
 #define PORTRAIT_PALETTE 14
 
-/// The BG palette of the windows and their text, the UI palette.
-#define WINDOW_PALETTE 15
-
 /// The BG palette the menus keep for their selected row or page: a copy of
 /// WINDOW_PALETTE with its background lightened (Palette_LightenHighlight),
 /// which the item icons borrow.
@@ -174,6 +171,12 @@ void Text_DrawMessage(s32 message, s32 window, s32 x, s32 y);
 /// The colour that text drawn in a palette other than WINDOW_PALETTE stands
 /// on; the menus copy WINDOW_BACKGROUND_COLOR into it.
 #define TEXT_BACKGROUND_COLOR 14
+/// WINDOW_PALETTE's white, black and two greys, which Mind Read turns grey
+/// while it shows thoughts.
+#define WINDOW_COLOR_WHITE 1
+#define WINDOW_COLOR_BLACK 3
+#define WINDOW_COLOR_DARK_GREY 11
+#define WINDOW_COLOR_LIGHT_GREY 12
 /// The BG palette that battle and the Djinn menu fill with the first basic
 /// sprite palette, its TEXT_BACKGROUND_COLOR the window background: the element
 /// icons and the coloured numbers are drawn in it.
@@ -331,7 +334,7 @@ enum {
 };
 
 /// How a window sprite moves (WindowSprite.motion), run each frame by
-/// WindowSprite_UpdateAll, as The Broken Seal's; 0 is a free window sprite and
+/// WindowSprite_UpdateAll; 0 is a free window sprite and
 /// WINDOW_SPRITE_MOTION_PAGE_ARROW (2) is window.h's.
 enum {
   WINDOW_SPRITE_MOTION_STILL = 1,
@@ -345,8 +348,7 @@ enum {
       11, ///< shrinks from 1.5 times to its size, once
   WINDOW_SPRITE_MOTION_SHRINK_HALF = 12, ///< the same at half the scale
   WINDOW_SPRITE_MOTION_HIDDEN = 13,      ///< not drawn
-  // A hop and back, each a way of its own here where The Broken Seal's 14
-  // and 16 hop down as 15 does.
+  // A hop and back, each in a direction of its own.
   WINDOW_SPRITE_MOTION_HOP_RIGHT = 14,
   WINDOW_SPRITE_MOTION_HOP_DOWN_NEXT_PAGE = 15,
   WINDOW_SPRITE_MOTION_HOP_LEFT = 16,
@@ -516,14 +518,19 @@ enum CenteredMessageMode {
 
 /// The flags FieldMessage_Show takes.
 enum FieldMessageFlag {
-  FIELD_MESSAGE_ZOOM = 1, ///< the window zooms open and shut
-  FIELD_MESSAGE_WAITING_FOR_SOUND =
-      2,                            ///< the window work is busy while it shows
-  FIELD_MESSAGE_KEEP_OPEN = 4,      ///< the window is left open
-  FIELD_MESSAGE_LOWER = 8,          ///< 4 tiles below the top rows' centre
+  FIELD_MESSAGE_ZOOM = 0x01, ///< the window zooms open and shut
+  /// The window work is busy while it shows.
+  FIELD_MESSAGE_WAITING_FOR_SOUND = 0x02,
+  FIELD_MESSAGE_KEEP_OPEN = 0x04,   ///< the window is left open
+  FIELD_MESSAGE_LOWER = 0x08,       ///< 4 tiles below the top rows' centre
   FIELD_MESSAGE_HOLD_UPLOAD = 0x20, ///< the tilemap upload is held off
   FIELD_MESSAGE_LOWEST = 0x40       ///< 12 tiles below the top rows' centre
 };
+
+/// The flags a yes-or-no question's message takes: it zooms open, stays open
+/// for the Yes/No menu below it and sits lower.
+#define QUESTION_MESSAGE                                                       \
+  (FIELD_MESSAGE_ZOOM | FIELD_MESSAGE_KEEP_OPEN | FIELD_MESSAGE_LOWER)
 
 /// The Pause menu's entries, as PauseMenu_Choose returns them
 /// (counted from Save your quest even when only Change settings shows).
@@ -562,7 +569,10 @@ enum PauseMenuEntry {
 
 /// Message_OpenWindow's window options, in packed's low bits.
 enum MessageWindowOption {
-  MESSAGE_WINDOW_ZOOM = 1,           ///< zoom open rather than appear at once
+  MESSAGE_WINDOW_ZOOM = 1, ///< zoom open rather than appear at once
+  /// Set only by callers that open without MESSAGE_WINDOW_ZOOM; nothing reads
+  /// it.
+  MESSAGE_WINDOW_UNUSED = 2,
   MESSAGE_WINDOW_TEXT_CANVAS = 8,    ///< WINDOW_FLAG_TEXT_CANVAS
   MESSAGE_WINDOW_ANCHOR_BOTTOM = 16, ///< WINDOW_FLAG_ANCHOR_BOTTOM
   MESSAGE_WINDOW_FIXED_X = 32        ///< WINDOW_FLAG_FIXED_X

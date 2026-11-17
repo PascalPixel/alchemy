@@ -18,7 +18,7 @@ void GabombaStatue_TurnWithCog(void);
 
 void GabombaStatue_RideSlidingCog(void);
 
-void GabombaStatue_RideRollingCog(void);
+void GabombaStatue_RideRoller(void);
 
 void GabombaStatue_HopAcrossEastOrWest(void);
 
@@ -39,9 +39,9 @@ void GabombaStatue_StepIntoSecondTurntableHole(void);
 
 void GabombaStatue_StepIntoCogsHole(void);
 
-void GabombaStatue_JumpDownHole(void);
+void GabombaStatue_StepIntoArrowsHole(void);
 
-void GabombaStatue_PinionThrowsLeader(void);
+void GabombaStatue_PinionsThrowLeaderSouth(void);
 void GabombaStatue_CogsTurnBack(void);
 
 void GabombaStatue_PressLeftArrowPanel(void);
@@ -49,7 +49,7 @@ void GabombaStatue_ReleaseLeftArrowPanel(void);
 void GabombaStatue_PressRightArrowPanel(void);
 void GabombaStatue_ReleaseRightArrowPanel(void);
 
-extern s32 gGabombaStatue_TurntableScript[];
+extern s32 gGabombaStatue_FlashCogScript[];
 extern s32 gGabombaStatue_TurnToothScript[];
 extern u32 gGabombaStatue_JennaFocusScript[];
 extern u32 gGabombaStatue_PiersFocusScript[];
@@ -61,7 +61,7 @@ extern s32 gGabombaStatue_LookNorthAndWestScript[];
 extern u32 gGabombaStatue_PinionReleaseScript[];
 
 extern u32 gGabombaStatue_JennaWatchesScript[];
-extern u32 gGabombaStatue_ShebaWatchesScript[];
+extern u32 gGabombaStatue_AkafubuComesUpScript[];
 
 void GabombaStatue_RestartClock(void);
 
@@ -70,7 +70,7 @@ void GabombaStatue_HideElixirChestHoleShadows(void);
 
 s32 GabombaStatue_GetPuzzleSeed(void);
 s32 GabombaStatue_SetUpChannelPuzzle(s32 x, s32 z, s32 value, s32 id);
-void GabombaStatue_FindFreeTileCell(u32 *x_out, u32 *z_out);
+void GabombaStatue_FindBrokenCell(u32 *x_out, u32 *z_out);
 
 void Import_ActorRelease(struct Actor *actor);
 
@@ -91,10 +91,10 @@ s32 GabombaStatue_LayPath(s32 x0, s32 z0, s32 x1, s32 z1, s32 a, s32 b, s32 c,
 void GabombaStatue_WritePiece(s32 x, s32 z, s32 kind, s32 state);
 s32 abs(s32);
 s32 GabombaStatue_PickPiece(s32 row, s32 column, s32 direction);
-void GabombaStatue_ShowTiles(s32 id, s32 show);
+void GabombaStatue_SetBlocksRaised(s32 id, s32 show);
 
-void GabombaStatue_LoadTileGraphics(void);
-void GabombaStatue_ClearGrid(void);
+void GabombaStatue_LoadBlockPictures(void);
+void GabombaStatue_RedrawChannel(void);
 s32 GabombaStatue_LayChannel(s32 value);
 
 void GabombaStatue_CountDownShowingClock(void);
@@ -107,7 +107,7 @@ void Actors_SetDrawn(s32 show, s32 first, u32 count);
 
 void GabombaStatue_LandFromFall(void);
 
-void GabombaStatue_DropIntoHole(s32 x, s32 z);
+void GabombaStatue_ClimbDownHole(s32 x, s32 z);
 
 s32 GabombaStatue_GetClock(void);
 extern u32 gGabombaStatue_CogShapes[];

@@ -115,7 +115,8 @@ const struct ActorPlacement *Scene_GetActorPlacements(void) {
 /// Finishes pending UI work, displays a message, and waits one final frame.
 static void MenuTest_ShowMessageAndWait(s32 messageId) {
   Message_CloseFinishedWindows();
-  Message_OpenWindow(messageId, 5, 0, 0x22);
+  Message_OpenWindow(messageId, 5, 0,
+                     MESSAGE_WINDOW_FIXED_X | MESSAGE_WINDOW_UNREAD);
   while (Message_AllTyped() == 0) {
     wait(1);
   }
@@ -454,6 +455,13 @@ static void MenuTest_GiveConsumableTestStock(void) {
   MenuTest_RecalculateParty();
 }
 
+#if !TBS_PATCH_1
+/// The Japanese release's leftover loop fills the buffer this many times, with
+/// this many letters the first time and one more each time after.
+#define FILL_PASSES 16
+#define FILL_FIRST_LENGTH 32
+#endif
+
 /// Grants and sets test Djinn.
 static void MenuTest_GivePartyDjinn(void) {
   /* LEFTOVER(frame): the buffer tbs-ja's loop below fills sixteen times. */
@@ -462,16 +470,18 @@ static void MenuTest_GivePartyDjinn(void) {
   s32 pass;
   s32 characterIndex;
 
-  for (pass = 0; pass < 16; pass++) {
-    for (characterIndex = 0; characterIndex < 256; characterIndex++) {
+  for (pass = 0; pass < FILL_PASSES; pass++) {
+    for (characterIndex = 0; characterIndex < (s32)sizeof(fillBuffer);
+         characterIndex++) {
       fillBuffer[characterIndex] = 0;
     }
-    for (characterIndex = 0; characterIndex < pass + 32; characterIndex++) {
+    for (characterIndex = 0; characterIndex < pass + FILL_FIRST_LENGTH;
+         characterIndex++) {
       fillBuffer[characterIndex] = gMenuTest_FillLetter + 1;
     }
     gMenuTest_FillLetter++;
-    if (gMenuTest_FillLetter > 96) {
-      gMenuTest_FillLetter = 65;
+    if (gMenuTest_FillLetter >= 'a') {
+      gMenuTest_FillLetter = 'A';
     }
   }
 #endif

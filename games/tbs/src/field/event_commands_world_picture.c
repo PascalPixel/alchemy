@@ -28,9 +28,10 @@ enum WorldPictureMarkerTile {
 #define WORLD_PICTURE_HEIGHT 160 ///< the picture's height, the screen's
 /// The picture resource: its 14 palettes of BG colours, then its pixels.
 #define WORLD_PICTURE_PALETTE_BYTES (14 * PALETTE_COLORS * 2)
-/// The picture's tiles in BG1's character base, from tile 424, where
-/// WorldMap_LoadGraphics numbers screen block 6 for the still picture.
-#define WORLD_PICTURE_FIRST_TILE 424
+/// The first tile, in BG1's character base, of the 30 by 20 tile picture that
+/// WorldMap_LoadGraphics numbers screen block 6 for: the still picture's, and
+/// the world picture's here.
+#define WORLD_MAP_STILL_FIRST_TILE 424
 /// The World Map's size in field pixels each way, which the picture shows at
 /// 240 by 160.
 #define WORLD_MAP_WORLD_SIZE 4096
@@ -251,8 +252,9 @@ void WorldPicture_UpdateMarkers(void) {
   blend = gWorldMap_MarkerBlendCycle[(gFrameCount >> 1) &
                                      (WORLD_PICTURE_MARKER_BLEND_STEPS - 1)];
 
-  // FieldSequence_Run creates the selected actor before raised trigger -888
-  // opens this screen. No actor task removes it while the marker task runs.
+  // FieldSequence_Run creates the selected actor before
+  // FIELD_RAISED_TRIGGER_WORLD_PICTURE opens this screen. No actor task removes
+  // it while the marker task runs.
   if (!GameFlag_GetFar(FLAG_WORLD_MAP_LEFT) && (gKeysHeld & KEYS_SHOULDERS)) {
     // L or R: the current area.
     areaActor = Actor_Lookup(gMainRoutineWork.leaderActorId);
@@ -435,7 +437,8 @@ void WorldPicture_UpdateMarkers(void) {
 }
 
 /// Borrows the map-cell buffer for the still map until A or B closes it.
-/// FieldSequence_Run reaches this for raised trigger -888 in World Map mode.
+/// FieldSequence_Run reaches this for FIELD_RAISED_TRIGGER_WORLD_PICTURE in
+/// World Map mode.
 void WorldPicture_Show(s32 picture) {
   struct MapGridScrollWork *gridState = gMapGridWork[0];
   struct FieldWork *work =
@@ -476,7 +479,7 @@ void WorldPicture_Show(s32 picture) {
     Decompress_TaggedLz(graphics + WORLD_PICTURE_PALETTE_BYTES,
                         gMapGridCellBuffer);
     Dma_Set(gMapGridCellBuffer,
-            BG_CHAR_BLOCK(0) + WORLD_PICTURE_FIRST_TILE * TILE_SIZE_8BPP,
+            BG_CHAR_BLOCK(0) + WORLD_MAP_STILL_FIRST_TILE * TILE_SIZE_8BPP,
             DMA_COPY_WORDS(WORLD_PICTURE_WIDTH * WORLD_PICTURE_HEIGHT / 4),
             REG_DMA3);
     Io_Write16(BGCNT_256_COLORS | BGCNT_SCREEN_BASE(6) | BGCNT_PRIORITY(2),
@@ -576,7 +579,7 @@ void WorldMap_ZoomOutWhileLHeld(void) {
 #undef WORLD_PICTURE_MARKER_ROW
 #undef WORLD_PICTURE_AREA_MARKER_TILE
 #undef WORLD_PICTURE_PALETTE_BYTES
-#undef WORLD_PICTURE_FIRST_TILE
+#undef WORLD_MAP_STILL_FIRST_TILE
 #undef WORLD_PICTURE_CURSOR_DEPTH
 #undef WORLD_PICTURE_WIDTH
 #undef WORLD_PICTURE_HEIGHT

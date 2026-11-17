@@ -20,6 +20,19 @@
 /// row of its tiles.
 #define MAPGRID_SCREEN_CELLS 16
 #define MAPGRID_SCREEN_ROW_BYTES 64
+/// A cell's top tile row or left tile column in a layer's BG map, even,
+/// wrapping at the map's 32; its row as tile entries from the map's start.
+#define MAPGRID_SCREEN_TILE_MASK (BG_SCREEN_WIDTH - 2)
+#define MAPGRID_SCREEN_ROW_MASK (MAPGRID_SCREEN_TILE_MASK * BG_SCREEN_WIDTH)
+/// The cell pictures drawn down a column as the view scrolls sideways: the
+/// screen's 10 rows of cells and the one partly scrolled in.
+#define MAPGRID_COLUMN_CELLS 11
+/// A map's cells as they are decoded: two planes of a byte a cell, the cells'
+/// attribute bytes, then a plane of their cell picture numbers, a halfword a
+/// cell.
+#define MAPGRID_BYTE_PLANES_BYTES (2 * MAPGRID_SIZE * MAPGRID_SIZE)
+/// A map's palette: the first 14 of the 16 BG palettes, 224 colours.
+#define MAP_PALETTE_BYTES (14 * PALETTE_COLORS * sizeof(u16))
 
 /// Remaps byteCount bytes in place through gSpriteColorRemapTables.
 void SpriteColor_RemapPixels(u8 *bytes, s32 byteCount) {
@@ -97,16 +110,17 @@ UNUSED void TileMap_NumberPlaceholderCellPictures(void) {
   }
 }
 
-/// Converts the map's cells in place with Tile_ConvertMapGrid, run from RAM.
+/// Joins a decoded map's planes in place into its cell words, with
+/// Tile_ConvertMapGrid copied to RAM, which reads the byte planes from a copy.
 void TileMap_ConvertBuffer(void) {
   u8 *savedCells;
   TilemapConvertFn convertGrid;
 
-  savedCells = Heap_AllocEwram(32 * 1024);
-  Iwram_CopyWords(savedCells, Ram_MapGridCellBuffer, 32 * 1024);
+  savedCells = Heap_AllocEwram(MAPGRID_BYTE_PLANES_BYTES);
+  Iwram_CopyWords(savedCells, Ram_MapGridCellBuffer, MAPGRID_BYTE_PLANES_BYTES);
   RamCode_Load(convertGrid, Tile_ConvertMapGrid, Tile_ConvertMapGridCodeSize);
-  convertGrid((u8 *)gMapGridCellBuffer + 32 * 1024, Ram_MapGridCellBuffer,
-              savedCells);
+  convertGrid((u8 *)gMapGridCellBuffer + MAPGRID_BYTE_PLANES_BYTES,
+              Ram_MapGridCellBuffer, savedCells);
   Heap_Release(convertGrid);
   Heap_Release(savedCells);
 }
@@ -259,13 +273,13 @@ s32 MapGrid_LoadMap(s32 index) {
 
     layer->offsetX = offsetX = toFIXED(x * 8);
     layer->offsetY = offsetY = toFIXED(y * 8);
-    // Parallax and drift are signed sixteenths; * 4096 makes them 16.16.
-    scaleX = layerSource->scrollX * 4096;
-    scaleY = layerSource->scrollY * 4096;
+    // Parallax and drift are signed sixteenths.
+    scaleX = layerSource->scrollX * (FIXED_ONE / 16);
+    scaleY = layerSource->scrollY * (FIXED_ONE / 16);
     layer->scaleX = scaleX;
     layer->scaleY = scaleY;
-    layer->speedX = layerSource->speedX * 4096;
-    layer->speedY = layerSource->speedY * 4096;
+    layer->speedX = layerSource->speedX * (toFIXED(1) / 16);
+    layer->speedY = layerSource->speedY * (toFIXED(1) / 16);
     layer->maskX = layerSource->periodX;
     layer->maskY = layerSource->periodY;
     layer->phaseX = 0;
@@ -302,9 +316,9 @@ s32 MapGrid_LoadMap(s32 index) {
   if (GameFlag_GetFar(FLAG_KEEP_LAYER_GRAPHICS) != 0) {
     GameFlag_ClearFar(FLAG_KEEP_LAYER_GRAPHICS);
   } else {
-    // One 16 KB buffer takes each resource in turn: the palette (448 bytes, 14
-    // of the 16 BG palettes), the three 16 KB tilesets, and last the tileset
-    // animations' tiles, which decode straight to gMapGridAnimTiles.
+    // One 16 KB buffer takes each resource in turn: the palette, the three 16
+    // KB tilesets, and last the tileset animations' tiles, which decode
+    // straight to gMapGridAnimTiles.
     graphicsBuffer = Heap_Alloc(BG_CHAR_SIZE);
     if (graphicsBuffer != NULL) {
       // Colour 0 of BG palette 0 is the backdrop; it survives the new palette.
@@ -314,7 +328,7 @@ s32 MapGrid_LoadMap(s32 index) {
       *(s16 *)graphicsBuffer = backdrop;
       // These four copies call the IWRAM routine at its fixed address, not
       // through Iwram_CopyWords.
-      Iwram_CopyWordsEntry((void *)BG_PLTT, graphicsBuffer, 448);
+      Iwram_CopyWordsEntry((void *)BG_PLTT, graphicsBuffer, MAP_PALETTE_BYTES);
       Decompress_MoveToFrontLz(MAPGRID_RESOURCE(mapResources->tiles[0]),
                                graphicsBuffer);
       Iwram_CopyWordsEntry(BG_CHAR_BLOCK(1), graphicsBuffer, BG_CHAR_SIZE);
@@ -368,21 +382,22 @@ void MapGrid_CenterOnFollowedPoint(void) {
 void MapGrid_RenderCellPictureRow(u32 layer, s32 tileX, s32 tileY) {
   u8 *screenMap = BG_SCREEN_BLOCK(5) + layer * MAPGRID_LAYER_SCREEN_BYTES;
   u32 sourceRow = ((tileY / 2) & (MAPGRID_SIZE - 1)) * MAPGRID_SIZE;
-  u32 screenRowOffset = (tileY & 30) << 5;
+  u32 screenRowOffset = (tileY & MAPGRID_SCREEN_TILE_MASK) * BG_SCREEN_WIDTH;
   u32 sourceColumn = (tileX / 2) & (MAPGRID_SIZE - 1);
-  u32 screenColumnOffset = tileX & 30;
+  u32 screenColumnOffset = tileX & MAPGRID_SCREEN_TILE_MASK;
   u32 cellPictureIndex;
 
   // A cell picture is 2x2 tiles, so the BG map's tile row and column are kept
-  // even (& 30) and wrap at 32; the grid wraps at 128 cells.
-  for (cellPictureIndex = 0; cellPictureIndex < 16; cellPictureIndex++) {
+  // even and wrap at 32; the grid wraps at 128 cells.
+  for (cellPictureIndex = 0; cellPictureIndex < MAPGRID_SCREEN_CELLS;
+       cellPictureIndex++) {
     u32 *cell = MAPGRID_CELLS;
 
     cell += sourceRow + sourceColumn;
     MapGrid_CopyCellPictureToScreen(cell, screenMap, screenRowOffset,
                                     screenColumnOffset);
     sourceColumn = (sourceColumn + 1) & (MAPGRID_SIZE - 1);
-    screenColumnOffset = (screenColumnOffset + 2) & 30;
+    screenColumnOffset = (screenColumnOffset + 2) & MAPGRID_SCREEN_TILE_MASK;
   }
 }
 
@@ -391,15 +406,15 @@ void MapGrid_RenderCellPictureRow(u32 layer, s32 tileX, s32 tileY) {
 void MapGrid_RenderCellPictureColumn(u32 layer, s32 tileX, s32 tileY) {
   u8 *screenMap = BG_SCREEN_BLOCK(5) + layer * MAPGRID_LAYER_SCREEN_BYTES;
   u32 sourceRow = ((tileY / 2) & (MAPGRID_SIZE - 1)) * MAPGRID_SIZE;
-  u32 screenRowOffset = (tileY & 30) << 5;
+  u32 screenRowOffset = (tileY & MAPGRID_SCREEN_TILE_MASK) * BG_SCREEN_WIDTH;
   u32 sourceColumn = (tileX / 2) & (MAPGRID_SIZE - 1);
-  u32 screenColumnOffset = tileX & 30;
+  u32 screenColumnOffset = tileX & MAPGRID_SCREEN_TILE_MASK;
   u32 tileHalf = tileX & 1;
   u32 cellPictureIndex;
 
-  // Eleven cell pictures are 22 tiles: the screen's 20 and the rows partly
-  // scrolled in. Both the cells and the BG map wrap.
-  for (cellPictureIndex = 0; cellPictureIndex < 11; cellPictureIndex++) {
+  // Both the cells and the BG map wrap.
+  for (cellPictureIndex = 0; cellPictureIndex < MAPGRID_COLUMN_CELLS;
+       cellPictureIndex++) {
     u32 *cell = MAPGRID_CELLS;
 
     cell += sourceRow + sourceColumn;
@@ -408,7 +423,8 @@ void MapGrid_RenderCellPictureColumn(u32 layer, s32 tileX, s32 tileY) {
 
     sourceRow =
         (sourceRow + MAPGRID_SIZE) & ((MAPGRID_SIZE - 1) * MAPGRID_SIZE);
-    screenRowOffset = (screenRowOffset + 64) & (30 << 5);
+    screenRowOffset =
+        (screenRowOffset + 2 * BG_SCREEN_WIDTH) & MAPGRID_SCREEN_ROW_MASK;
   }
 }
 
@@ -477,24 +493,26 @@ void MapGrid_UpdateLayerScroll(void) {
     // tiles, and the mask keeps the pixel and fraction bits below them.
     if (layer->speedX != 0) {
       layer->phaseX += layer->speedX;
-      baseX = (baseX + layer->phaseX) & ((layer->maskX << 19) | 0x7ffff);
+      baseX = (baseX + layer->phaseX) &
+              (layer->maskX * toFIXED(8) | (toFIXED(8) - 1));
     }
     if (layer->speedY != 0) {
       layer->phaseY += layer->speedY;
-      baseY = (baseY + layer->phaseY) & ((layer->maskY << 19) | 0x7ffff);
+      baseY = (baseY + layer->phaseY) &
+              (layer->maskY * toFIXED(8) | (toFIXED(8) - 1));
     }
     baseX += layer->offsetX;
     baseY += layer->offsetY;
     // x and y are in 8-pixel tiles.
     x = baseX / toFIXED(8);
     y = baseY / toFIXED(8);
-    if ((layer->x ^ baseX) & (8 << 16)) {
+    if ((layer->x ^ baseX) & toFIXED(8)) {
       if (layer->x < baseX)
         MapGrid_RenderCellPictureColumn(layerIndex, x + DISPLAY_WIDTH / 8, y);
       else
         MapGrid_RenderCellPictureColumn(layerIndex, x, y);
     }
-    if ((layer->y ^ baseY) & (16 << 16)) {
+    if ((layer->y ^ baseY) & toFIXED(16)) {
       if (layer->y < baseY)
         MapGrid_RenderCellPictureRow(layerIndex, x, y + DISPLAY_HEIGHT / 8);
       else
@@ -525,7 +543,7 @@ void MapGrid_SetCameraCenter(FIXED x, FIXED y) {
 
   for (layerIndex = 0; layerIndex < 3; layerIndex++) {
     if (grid->enabled[layerIndex]) {
-      u32 rows = 22;
+      u32 rows = 2 * MAPGRID_COLUMN_CELLS;
       u32 sourceRow, sourceColumn, screenRowOffset, screenColumnOffset,
           cellPictureRow, cellPictureColumn;
 
@@ -533,14 +551,16 @@ void MapGrid_SetCameraCenter(FIXED x, FIXED y) {
       y = Iwram_MulFX(grid->view[1], layer->scaleY);
       if (layer->speedX) {
         layer->phaseX += layer->speedX;
-        x = (x + layer->phaseX) & ((layer->maskX << 19) | 0x7ffff);
+        x = (x + layer->phaseX) &
+            (layer->maskX * toFIXED(8) | (toFIXED(8) - 1));
       }
       if (layer->speedY) {
         layer->phaseY += layer->speedY;
-        y = (y + layer->phaseY) & ((layer->maskY << 19) | 0x7ffff);
-        // A layer drifting vertically gets its whole 32-row BG map, others
-        // the 22 rows (11 cell pictures) a 160-pixel screen can show.
-        rows = 32;
+        y = (y + layer->phaseY) &
+            (layer->maskY * toFIXED(8) | (toFIXED(8) - 1));
+        // A layer drifting vertically gets its whole BG map, others the rows
+        // a scrolling column draws.
+        rows = 2 * MAPGRID_SCREEN_CELLS;
       }
       x += layer->offsetX;
       y += layer->offsetY;
@@ -550,11 +570,11 @@ void MapGrid_SetCameraCenter(FIXED x, FIXED y) {
       y /= toFIXED(8);
       screenMap = BG_SCREEN_BLOCK(5) + layerIndex * MAPGRID_LAYER_SCREEN_BYTES;
       sourceRow = ((y / 2) & (MAPGRID_SIZE - 1)) * MAPGRID_SIZE;
-      screenRowOffset = (y & 30) << 5;
+      screenRowOffset = (y & MAPGRID_SCREEN_TILE_MASK) * BG_SCREEN_WIDTH;
       for (cellPictureRow = 0; cellPictureRow < rows / 2; cellPictureRow++) {
         sourceColumn = (x / 2) & (MAPGRID_SIZE - 1);
-        screenColumnOffset = x & 30;
-        for (cellPictureColumn = 0; cellPictureColumn < 16;
+        screenColumnOffset = x & MAPGRID_SCREEN_TILE_MASK;
+        for (cellPictureColumn = 0; cellPictureColumn < MAPGRID_SCREEN_CELLS;
              cellPictureColumn++) {
           u32 *cell = MAPGRID_CELLS;
 
@@ -562,11 +582,13 @@ void MapGrid_SetCameraCenter(FIXED x, FIXED y) {
           MapGrid_CopyCellPictureToScreen(cell, screenMap, screenRowOffset,
                                           screenColumnOffset);
           sourceColumn = (sourceColumn + 1) & (MAPGRID_SIZE - 1);
-          screenColumnOffset = (screenColumnOffset + 2) & 30;
+          screenColumnOffset =
+              (screenColumnOffset + 2) & MAPGRID_SCREEN_TILE_MASK;
         }
         sourceRow =
             (sourceRow + MAPGRID_SIZE) & ((MAPGRID_SIZE - 1) * MAPGRID_SIZE);
-        screenRowOffset = (screenRowOffset + 64) & (30 << 5);
+        screenRowOffset =
+            (screenRowOffset + 2 * BG_SCREEN_WIDTH) & MAPGRID_SCREEN_ROW_MASK;
       }
     }
   }

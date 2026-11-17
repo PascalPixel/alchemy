@@ -435,15 +435,6 @@ struct BobbingMarker {
   s16 stopped; ///< nonzero holds it still, in userValue
 };
 
-/// The World Map's view (struct WorldMapView) as Idejima's drift reads it:
-/// unk11c is the view's pitch and unk11e its yaw, 1/65536 turns each, which the
-/// drift turns against each other.
-struct RescueMap {
-  u8 unk000[284];
-  u16 unk11c;
-  u16 unk11e;
-};
-
 /// A field sprite (struct FieldSprite) read a byte at a time, as Yampi Desert's
 /// scorpion sets its colour mode and priority and loads its tiles.
 struct YampiDesertVisual {

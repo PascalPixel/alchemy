@@ -24,22 +24,23 @@ const u8 gStatusMenu_LevelLetterString[] = "L";
 #endif
 
 // clang-format off
-/// The kana that take a dakuten, as ranges of first and last, ending at 0.
+/// The kana that take a dakuten, as ranges of first and last font code
+/// (charmap_tla_ja.tsv), ending at 0.
 const u8 gNameEntry_VoicedMarkRanges[] = {
-    0xb6, 0xc4,
-    0xca, 0xce,
-    0x96, 0x9f,
-    0xe0, 0xe4,
-    0xea, 0xee,
-    0x93, 0x93,
-    0xb3, 0xb3,
+    182, 196, // カ to ト
+    202, 206, // ハ to ホ
+    150, 159, // か to そ
+    224, 228, // た to と
+    234, 238, // は to ほ
+    147, 147, // う
+    179, 179, // ウ
     0,
 };
 
 /// The kana that take a handakuten, as gNameEntry_VoicedMarkRanges.
 const u8 gNameEntry_SemivoicedMarkRanges[] = {
-    0xca, 0xce,
-    0xea, 0xee,
+    202, 206, // ハ to ホ
+    234, 238, // は to ほ
     0,
 };
 // clang-format on

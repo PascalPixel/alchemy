@@ -10,6 +10,32 @@
 #include "battle/presentation.h"
 #include "macros.h"
 
+/// A list place code's side bit, set for the enemies' list, and its place in
+/// the list (Battle_GetUnitAtPlace): PLACE_ENEMY is PLACE_PARTY with the side
+/// bit set.
+#define PLACE_ENEMY_SIDE 0x80
+#define PLACE_INDEX_MASK 0xf
+
+/// The odds of fleeing in hundredths of a percent, against a roll below
+/// FLEE_ROLL_RANGE: FLEE_BASE_CHANCE, FLEE_CHANCE_PER_FAILURE more for each
+/// failed attempt, and FLEE_CHANCE_PER_LEVEL for each level of the party's
+/// average above the enemies'.
+enum FleeChance {
+  FLEE_ROLL_RANGE = 10000,
+  FLEE_BASE_CHANCE = 5000,
+  FLEE_CHANCE_PER_FAILURE = 2000,
+  FLEE_CHANCE_PER_LEVEL = 500
+};
+
+/// The random swaps that shuffle the enemies' order each turn.
+#define TURN_ORDER_SWAPS 32
+
+/// What a Djinni that shields, guards or defends adds to its priority, to act
+/// ahead of the turn order.
+#define PRIORITY_AHEAD 10000
+/// An empty action's priority, below every other as the sort reads it (s16).
+#define PRIORITY_LOWEST 32768
+
 /// Turns the battle camera to the view the commands are chosen in: the focus 5
 /// pixels up, a quarter turn of yaw, a slight downward pitch, 750 pixels away.
 void BattleCamera_SetCommandView(s32 pos) {
@@ -87,21 +113,21 @@ s32 BattleFlee_CheckSuccess(void) {
     escaped = 1;
   } else {
     levelTotal = 0;
-    chance = 5000 + (escapeState->fleeFailures * 2000);
+    chance = FLEE_BASE_CHANCE +
+             (escapeState->fleeFailures * FLEE_CHANCE_PER_FAILURE);
     livingCount = BattleUnit_ListLiving(BATTLE_SIDE_MASK_PARTY, livingUnits);
     for (unitIndex = 0; unitIndex < livingCount; unitIndex++) {
       levelTotal += Unit_Get((s32)livingUnits[unitIndex])->level;
     }
-    chance += levelTotal * 500 / livingCount;
+    chance += levelTotal * FLEE_CHANCE_PER_LEVEL / livingCount;
     livingCount = BattleUnit_ListLiving(BATTLE_SIDE_MASK_ENEMIES, livingUnits);
     levelTotal = 0;
     for (unitIndex = 0; unitIndex < livingCount; unitIndex++) {
       levelTotal += Unit_Get((s32)livingUnits[unitIndex])->level;
     }
-    chance -= levelTotal * 500 / livingCount;
+    chance -= levelTotal * FLEE_CHANCE_PER_LEVEL / livingCount;
     if ((chance > 0) &&
-        // A roll from 0 to 9999 against the chance.
-        ((u32)((u32)(10000 * Random16()) >> 16) < (u32)chance)) {
+        ((u32)((u32)(FLEE_ROLL_RANGE * Random16()) >> 16) < (u32)chance)) {
       escaped = 1;
     }
     escapeState->fleeFailures++;
@@ -141,7 +167,8 @@ s32 Battle_BuildEnemyActions(struct BattleActionRecord *entries) {
   if (unitCount == 0)
     return 0;
 
-  for (shuffleOrUnitIndex = 0; shuffleOrUnitIndex < 32; shuffleOrUnitIndex++) {
+  for (shuffleOrUnitIndex = 0; shuffleOrUnitIndex < TURN_ORDER_SWAPS;
+       shuffleOrUnitIndex++) {
     u32 first = (unitCount * Random16()) >> 16;
     u32 second = (unitCount * Random16()) >> 16;
     s32 swap = unitIds[first];
@@ -220,8 +247,8 @@ static inline void BattleAction_Swap(struct BattleActionRecord *a,
   Iwram_CopyWordsEntry(b, &temporary, sizeof(struct BattleActionRecord));
 }
 
-/// Sorts the actions by descending priority, after raising the priority of
-/// the Djinn with effects 46, 47, 53, 72, 74, 76, 79 and 88 by 10000.
+/// Sorts the actions by descending priority, after putting the Djinn that
+/// shield, guard or defend ahead of the rest.
 void BattleActionOrder_Sort(struct BattleActionRecord *entries, s32 count) {
   s32 i;
   s32 j;
@@ -234,8 +261,9 @@ void BattleActionOrder_Sort(struct BattleActionRecord *entries, s32 count) {
       struct AbilityDefinition *action;
 
       Unit_Get(entry->unitId);
-      action = Ability_Get(Djinn_GetAbilityIdFar((entry->parameter) >> 8 & 15,
-                                                 entry->parameter & 0xff));
+      action = Ability_Get(
+          Djinn_GetAbilityIdFar(DJINN_COMMAND_ELEMENT(entry->parameter),
+                                DJINN_COMMAND_INDEX(entry->parameter)));
       // These Djinn act ahead of the turn order.
       if (action->effect == ABILITY_EFFECT_SHIELD ||
           action->effect == ABILITY_EFFECT_BREATH ||
@@ -247,7 +275,7 @@ void BattleActionOrder_Sort(struct BattleActionRecord *entries, s32 count) {
           action->effect == ABILITY_EFFECT_GROUND) {
         u32 priority = entry->priority;
 
-        entry->priority = priority + 10000;
+        entry->priority = priority + PRIORITY_AHEAD;
       }
     }
   }
@@ -412,7 +440,7 @@ s32 Battle_AppendLinkedActions(struct BattleActionRecord *actions, s32 count) {
       struct BattleActionRecord *action = &actions[count + index];
 
       action->unitId = action->slot;
-      action->target = action->target ^ 0x80;
+      action->target = action->target ^ PLACE_ENEMY_SIDE;
     }
 
     Heap_Release(state);
@@ -463,7 +491,7 @@ void Palette_CopyWithBrightnessOffset(s32 offset) {
       adjusted |= red;
       ((u16 *)BG_PLTT)[index - PALETTE_COLORS] = adjusted;
     }
-    source = 5;
+    source = BASIC_COLORS_PALETTE;
   }
 }
 
@@ -487,13 +515,12 @@ s32 Battle_GatherActions(struct BattleActionRecord *acts) {
 
     for (n = 0; n < BATTLE_ACTION_CAPACITY; n++) {
       rec[n].unitId = BATTLE_UNIT_LIST_END;
-      rec[n].priority = 32768; // Lowest priority.
+      rec[n].priority = PRIORITY_LOWEST;
     }
   }
 
   BattleUnit_ResetGuardLevels();
   Palette_CopyWithBrightnessOffset(8);
-  // Flag set while commands are being selected.
   GameFlag_Set(FLAG_CHOOSING_COMMANDS);
   mode = &work->firstStrike;
   BattleCamera_SetCommandView(0);
@@ -538,7 +565,8 @@ s32 Battle_GatherActions(struct BattleActionRecord *acts) {
       if (act->command == COMMAND_DEFEND ||
           act->command == COMMAND_TOTAL_DEFENSE) {
         unit = Unit_Get(act->unitId);
-        unit->defendLevel = act->command == COMMAND_DEFEND ? DEFEND_NORMAL : 3;
+        unit->defendLevel =
+            act->command == COMMAND_DEFEND ? DEFEND_NORMAL : DEFEND_TOTAL;
       }
       act++;
       i--;
@@ -552,18 +580,18 @@ finish:
   return cnt;
 }
 
-/// Returns the unit id at a list place, 0x80 set for the enemies' list.
+/// Returns the unit id at a list place, PLACE_ENEMY_SIDE set for the enemies'
+/// list.
 s32 Battle_GetUnitAtPlace(s32 taggedPlace) {
   struct BattleWork *battle = Ram_HeapSlots->battleWork;
 
-  if ((taggedPlace & 0x80) != 0)
-    return battle->enemyIds[taggedPlace & 0xf];
-  return battle->partyUnits[taggedPlace & 0xf];
+  if ((taggedPlace & PLACE_ENEMY_SIDE) != 0)
+    return battle->enemyIds[taggedPlace & PLACE_INDEX_MASK];
+  return battle->partyUnits[taggedPlace & PLACE_INDEX_MASK];
 }
 
-/// Returns a unit's formation position, or -1 if absent.
-/// Allies use 0x100 | position; enemies use 0x180 | position.
-/// id: unit ID (0-7 allies, all others enemies).
+/// Returns the list place of a unit, PLACE_PARTY or PLACE_ENEMY with its place,
+/// or -1 when it is in neither list.
 s32 Battle_FindUnitPlace(u32 unitId) {
   struct BattleWork *battle = Ram_HeapSlots->battleWork;
   s32 placeIndex;

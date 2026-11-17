@@ -27,6 +27,12 @@
 #define SUMMARY_DJINN_HELP_CAPACITY 32
 #define SUMMARY_PP_LABEL_SECOND_TILE WINDOW_TILE(30)
 #endif
+/// Room for a help line no edition lengthens: no items, an item that cannot
+/// be used, no Djinn, a Djinni ready to summon.
+#define SUMMARY_HELP_CAPACITY 32
+/// The last of the twelve range icons, which ABILITY_RANGE_ALL takes; range
+/// n takes icon n - 1.
+#define RANGE_ICON_ALL 11
 
 // Japanese text is shorter: its help lines and Psynergy descriptions take
 // smaller buffers, and its stat numbers sit one tile further left. It decodes
@@ -121,12 +127,12 @@ enum BattleSummaryPage {
 // The Djinn page's list entries: bits 21..17 the recovery turns left, 16 set
 // for a Djinni not set (on standby or recovering), 11..8 its element and
 // 7..0 its number; STATUS_DJINN_END ends the list.
-#define STATUS_DJINN_ELEMENT 0xf00
 #define STATUS_DJINN_ELEMENT_SHIFT 8
+#define STATUS_DJINN_ELEMENT (0xf << STATUS_DJINN_ELEMENT_SHIFT)
 #define STATUS_DJINN_NUMBER 0xff
 #define STATUS_DJINN_UNSET 0x10000
-#define STATUS_DJINN_TURNS 0x3e0000
 #define STATUS_DJINN_TURNS_SHIFT 17
+#define STATUS_DJINN_TURNS (0x1f << STATUS_DJINN_TURNS_SHIFT)
 #define STATUS_DJINN_END 0x80000000
 /// An entry's Djinni, for its name and effect messages.
 #define STATUS_DJINNI(entry)                                                   \
@@ -634,13 +640,14 @@ s32 BattleStatusScreen_Run(u16 *list, s32 listCount, s32 member) {
 
           if (Item_ClassifyUseAbility(member, *entry) == 2)
             BATTLE_MENU_MESSAGE_COPY((s32)MsgBattleItemUnavailable, itemText,
-                                     32);
+                                     SUMMARY_HELP_CAPACITY);
           else
             BATTLE_MENU_MESSAGE_COPY((*entry & INVENTORY_ITEM_ID_MASK) +
                                          (s32)MsgItemPlainName,
                                      itemText, SUMMARY_ITEM_HELP_CAPACITY);
         } else {
-          BATTLE_MENU_MESSAGE_COPY((s32)MsgBattleNoItems, itemText, 32);
+          BATTLE_MENU_MESSAGE_COPY((s32)MsgBattleNoItems, itemText,
+                                   SUMMARY_HELP_CAPACITY);
         }
         WindowSprite_RedrawSavedRect(statusWindow);
         Window_MapTextCanvasTiles((s16)helpWindow->x, (s16)helpWindow->y,
@@ -685,9 +692,9 @@ s32 BattleStatusScreen_Run(u16 *list, s32 listCount, s32 member) {
         j = -1;
         WindowSprite_RedrawSavedRect(statusWindow);
         shownRow = j;
-        for (index = 0;
-             index != 32 && (id = unit->psynergy[index].encodedAction &
-                                  PSYNERGY_ABILITY_MASK) != 0;
+        for (index = 0; index != PSYNERGY_SLOTS &&
+                        (id = unit->psynergy[index].encodedAction &
+                              PSYNERGY_ABILITY_MASK) != 0;
              index++) {
           if (Ability_Get(id)->flags & ABILITY_USABLE_IN_BATTLE)
             entries[count++] = id;
@@ -746,7 +753,7 @@ s32 BattleStatusScreen_Run(u16 *list, s32 listCount, s32 member) {
                                        j * 2 + 8, tileFlags);
               range = ability->range;
               if (range == ABILITY_RANGE_ALL)
-                range = 11;
+                range = RANGE_ICON_ALL;
               else
                 range--;
               Window_DrawThreeTileColumn(statusWindow, 16, j * 2 + 8, range, 0);
@@ -824,14 +831,16 @@ s32 BattleStatusScreen_Run(u16 *list, s32 listCount, s32 member) {
                   STATUS_DJINNI(entry) + (s32)MsgDjinnEffect, psynergyText,
                   SUMMARY_DJINN_HELP_CAPACITY);
             } else {
-              Message_CopyExpanded((s32)MsgReadyToSummon, psynergyText, 32);
+              Message_CopyExpanded((s32)MsgReadyToSummon, psynergyText,
+                                   SUMMARY_HELP_CAPACITY);
             }
           } else {
             BATTLE_MENU_MESSAGE_COPY(STATUS_DJINNI(entry) + (s32)MsgDjinnEffect,
                                      psynergyText, SUMMARY_DJINN_HELP_CAPACITY);
           }
         } else {
-          BATTLE_MENU_MESSAGE_COPY((s32)MsgNoDjinn, psynergyText, 32);
+          BATTLE_MENU_MESSAGE_COPY((s32)MsgNoDjinn, psynergyText,
+                                   SUMMARY_HELP_CAPACITY);
         }
         work->holdTilemapUpload = released;
         Text_FillCanvasBackground();
@@ -939,6 +948,7 @@ s32 BattleStatusScreen_Run(u16 *list, s32 listCount, s32 member) {
         Text_DrawNumberInWindow(unit->pp, 4, statusWindow, 56, 32);
         Text_DrawStringAtOffset(gOwnerStatus_SlashString, statusWindow, 88, 32);
         Text_DrawNumberInWindow(unit->ppMax, 4, statusWindow, 96, 32);
+        // "Attack", "Defense", "Agility" and "Luck", which come before "Exp".
         Text_DrawMessageAsTiles((s32)MsgExp - 10, statusWindow, 136, 16);
         Text_DrawNumberInWindow(unit->atk, 3, statusWindow,
                                 SUMMARY_STAT_VALUE_X, 16);
@@ -954,6 +964,7 @@ s32 BattleStatusScreen_Run(u16 *list, s32 listCount, s32 member) {
         Text_DrawMessageAsTiles((s32)MsgClassName + unit->classId, statusWindow,
                                 0, 48);
         if (page == STATUS_PAGE_STATS) {
+          // "Djinn", "Lv", "Power" and "Resist".
           if (hasDjinn != 0)
             Text_DrawMessageAsTiles((s32)MsgExp - 1, statusWindow, 0, 72);
           Text_DrawMessageAsTiles((s32)MsgExp - 5, statusWindow, 0, 80);

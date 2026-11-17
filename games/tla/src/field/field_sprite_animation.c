@@ -19,33 +19,24 @@
 #include "graphics/vram_tab.h"
 #include "system/scene.h"
 
+/// A sprite size as one number, width in the high byte and height in the low,
+/// to pick its OAM shape and size with one switch.
+#define SPRITE_SIZE_KEY(width, height) (((width) << 8) + (height))
+
 enum {
   ANIM_SHADOW_TILE_BYTES = 16 * 8, ///< 16x8 pixels, 256 colours
   /// Priority 2, the field's for its sprites: in front of a map layer at 3, or
   /// at 2 since a sprite wins a tie, and behind one at 1.
-  ANIM_OAM_FIELD_PRIORITY = OBJ_PRIORITY(2)
-};
-
-/// The sprite as Sprite_Create fills it: the image's three attribute
-/// words, its layout, then the shadow's three words.
-struct ResourceSprite {
-  u32 imageAttributes[3];
-  s32 scale;
-  u8 slot;
-  u8 retainCacheEntry : 1;
-  u8 useOwnScale : 1;
-  u8 sunkRows : 6;
-  u16 rotation;
-  u8 width;
-  u8 height;
-  s8 offsetX;
-  s8 offsetY;
-  u8 lastNo;
-  u8 dirty;
-  u8 flags;
-  u8 count;
-  u32 shadowAttributes[3];
-  struct SpriteAnimation *entries[4];
+  ANIM_OAM_FIELD_PRIORITY = OBJ_PRIORITY(2),
+  /// A picture cache's tag holds its slot above the animation id's bits.
+  PICTURE_CACHE_TAG_SLOT_SHIFT = 12,
+  /// Rows of gSpritePictureCache_Sources searched, at most.
+  PICTURE_CACHE_SOURCES_MAX = 256,
+  /// Picture offsets at the head of a decoded set, at most.
+  PICTURE_CACHE_PICTURES_MAX = 256,
+  /// The colours of palettes 0 to 13, which Palette_LoadBasicSpriteColors
+  /// loads; a variant remaps only these.
+  BASIC_SPRITE_COLORS = 14 * 16
 };
 
 #undef SpriteAnimation_Alloc
@@ -75,11 +66,11 @@ s32 SpritePictureCache_Load(u32 slot, u32 *buffer, s32 number, u32 variant) {
   system = Ram_HeapSlots->actorSystem;
   record = &system->pictureCaches[slot];
   metadata = Resource_GetMetadataRecordFar(number);
-  record->tag = (slot << 12) | number;
+  record->tag = (slot << PICTURE_CACHE_TAG_SLOT_SHIFT) | number;
   record->pictures = buffer;
 
   entry = gSpritePictureCache_Sources;
-  for (count = 0; count < 256; count++) {
+  for (count = 0; count < PICTURE_CACHE_SOURCES_MAX; count++) {
     s16 *numbers = &entry->number;
 
     resource = entry->resource;
@@ -93,7 +84,7 @@ s32 SpritePictureCache_Load(u32 slot, u32 *buffer, s32 number, u32 variant) {
   size = Decompress_TaggedLz(Resource_GetTableEntry(resource), buffer);
 
   offset = buffer;
-  for (count = 0; count < 256; count++) {
+  for (count = 0; count < PICTURE_CACHE_PICTURES_MAX; count++) {
     if (*offset == 0)
       break;
     *offset += (u32)buffer;
@@ -109,7 +100,7 @@ s32 SpritePictureCache_Load(u32 slot, u32 *buffer, s32 number, u32 variant) {
     for (; text < end; text++) {
       u32 c = *text;
 
-      if (c <= 223) {
+      if (c < BASIC_SPRITE_COLORS) {
         c = table[c];
         *text = c;
       }
@@ -167,8 +158,7 @@ s32 Sprite_ResetAnimations(struct Sprite *state) {
       object->kind = metadata->drawKind;
       animation = metadata->animation;
       // UB: the pictures are stored through a u8 ** view of the field, the
-      // scripts' type, which keeps the store after the scripts' load; stored
-      // as void **, it passes the load and the drawing kind's store.
+      // scripts' type.
 #ifdef UBFIX
       object->pictures = pictures;
 #else
@@ -187,25 +177,25 @@ s32 Sprite_ResetAnimations(struct Sprite *state) {
 
 /// Resets a sprite animation from its metadata: its pictures, scripts, codec
 /// and drawing kind, with no script running and no picture shown.
-void SpriteAnimation_Reset(struct SpriteAnimation *work) {
-  s32 value;
-  s32 animation;
-  struct AnimationMetadata *info;
+void SpriteAnimation_Reset(struct SpriteAnimation *layer) {
+  void **pictures;
+  u8 **scripts;
+  struct AnimationMetadata *metadata;
 
-  if (work != NULL) {
-    info = Resource_GetMetadataRecordFar(work->animationId);
-    if (info->width != 0) {
-      value = info->pictures;
-      if (value == 0)
-        value = SpritePictureCache_FindByTag(work->animationId);
-      work->kind = info->drawKind;
-      Io_Write32(0, (u32 *)&work->script);
-      animation = info->animation;
-      work->pictures = (void **)value;
-      work->scripts = (u8 **)animation;
-      work->scriptOffset = 0;
-      work->mode = info->pictureCodec;
-      work->picture = SPRITE_PICTURE_NONE;
+  if (layer != NULL) {
+    metadata = Resource_GetMetadataRecordFar(layer->animationId);
+    if (metadata->width != 0) {
+      pictures = metadata->pictures;
+      if (pictures == 0)
+        pictures = (void **)SpritePictureCache_FindByTag(layer->animationId);
+      layer->kind = metadata->drawKind;
+      Io_Write32(0, (u32 *)&layer->script);
+      scripts = metadata->animation;
+      layer->pictures = pictures;
+      layer->scripts = scripts;
+      layer->scriptOffset = 0;
+      layer->mode = metadata->pictureCodec;
+      layer->picture = SPRITE_PICTURE_NONE;
     }
   }
 }
@@ -278,8 +268,9 @@ void Sprite_RemoveAnimation(struct Sprite *sprite, s32 layer) {
   }
 }
 
-/// Removes and clears a sprite's animation number no (0-3), trimming the
-/// sprite's animation count when no later sprite animation remains.
+/// Removes and clears the sprite animation in a sprite's slot index (0 to 3),
+/// trimming the sprite's animation count when no later sprite animation
+/// remains.
 void Sprite_RemoveAnimationAt(struct Sprite *sprite, u32 index) {
   struct SpriteAnimation *layer;
   s32 laterLayers;
@@ -302,11 +293,10 @@ void Sprite_RemoveAnimationAt(struct Sprite *sprite, u32 index) {
   }
 }
 
-// Unlike Sprite_StartAnimation it does not mask SPRITE_ANIMATION_KEEP_PLACE
-// off, so with it set the index would pass animationCount only in a set of more
-// than 128 animations.
 /// Starts the indexed animation on a sprite animation when its metadata
-/// contains it.
+/// contains it. Unlike Sprite_StartAnimation it does not mask
+/// SPRITE_ANIMATION_KEEP_PLACE off, so with it set the index would pass
+/// animationCount only in a set of more than 128 animations.
 void SpriteAnimation_Start(struct SpriteAnimation *layer, s32 animation) {
   s32 keepPlace;
   struct AnimationMetadata *metadata;
@@ -472,8 +462,7 @@ struct SpriteAnimation *SpriteAnimation_Alloc(s32 id) {
       }
     }
     if (found != NULL) {
-      // UB: the word view aliases a pointer field. It keeps the zero load
-      // ahead of pictures as native; reading the pointer swaps those loads.
+      // UB: the word view aliases a pointer field.
 #ifdef UBFIX
       pictures = metadata->pictures;
 #else
@@ -498,30 +487,22 @@ struct SpriteAnimation *SpriteAnimation_Alloc(s32 id) {
   return object;
 }
 
-// Resources: clear an animation record.
-
-/// Zeroes one SpriteAnimation; does nothing for NULL.
-void SpriteAnimation_Clear(void *dst) {
-  if (dst != 0) {
-    volatile u32 zero;
-
-    zero = 0;
-    Dma_Set(&zero, dst,
-            ((DMA_ENABLE | DMA_32BIT | DMA_SRC_FIXED) << 16) |
-                (sizeof(struct SpriteAnimation) / 4),
-            REG_DMA3);
+/// Zeroes one sprite animation (struct SpriteAnimation); does nothing for NULL.
+/// Zeroing kind frees the sprite animation for SpriteAnimation_Alloc.
+void SpriteAnimation_Clear(void *record) {
+  if (record != 0) {
+    Dma_Fill32(0, record, sizeof(struct SpriteAnimation));
   }
 }
 
-// Resources: create/release animated sprite objects and calculate frame
-// durations.
+// Creating and releasing animated sprites, and measuring animation lengths.
 
-/// Creates an animated sprite object for animation id, using one of 64 free
-/// objects and a VRAM cache entry. Returns the object, or NULL on failure.
+/// Creates a sprite for animation id, taking one of the 64 free sprites and a
+/// VRAM cache entry for its tiles.
 struct ResourceObject *Sprite_Create(s32 id) {
   struct AnimationMetadata *metadata;
-  struct ResourceSprite *sprite;
-  struct ResourceSprite *freeSprite;
+  struct Sprite *sprite;
+  struct Sprite *freeSprite;
   u32 *attribute;
   s32 slot;
   s32 tile;
@@ -534,8 +515,9 @@ struct ResourceObject *Sprite_Create(s32 id) {
   sprite = Ram_HeapSlots->sprites;
   if (metadata->width == 0)
     return NULL;
-  for (i = 0; i < 64; i++, sprite++) {
-    if (sprite->width == 0) { // Width 0 marks a free object.
+  // A width of 0 marks a free sprite.
+  for (i = 0; i < ANIM_OBJECT_COUNT; i++, sprite++) {
+    if (sprite->width == 0) {
       freeSprite = sprite;
       break;
     }
@@ -544,43 +526,46 @@ struct ResourceObject *Sprite_Create(s32 id) {
     return NULL;
   if (slot == VRAM_CACHE_ENTRY_COUNT)
     return NULL;
+  // Claim the cache entry with no VRAM yet (size 0): the first
+  // Sprite_ComposePicture that draws the sprite gives it width * height bytes.
   tile = VramCache_Load(slot, 0, 0);
   if (tile == 0)
     return NULL;
   freeSprite->rotation = 0;
-  freeSprite->flags = 1;
+  freeSprite->flags = SPRITE_FLAG_SHADOW;
   freeSprite->slot = slot;
 
-  // Derive OBJ shape and size bits (attributes 0 and 1) from pixel dimensions.
-  switch ((u32)((metadata->width << 8) + metadata->height)) {
-  case (8 << 8) + 8:
+  // The OAM shape and size bits (attributes 0 and 1) for the image's width
+  // and height in pixels.
+  switch ((u32)SPRITE_SIZE_KEY(metadata->width, metadata->height)) {
+  case SPRITE_SIZE_KEY(8, 8):
     shape = OBJ_SIZE_8X8;
     break;
-  case (8 << 8) + 16:
+  case SPRITE_SIZE_KEY(8, 16):
     shape = OBJ_SIZE_8X16;
     break;
-  case (16 << 8) + 8:
+  case SPRITE_SIZE_KEY(16, 8):
     shape = OBJ_SIZE_16X8;
     break;
-  case (16 << 8) + 16:
+  case SPRITE_SIZE_KEY(16, 16):
     shape = OBJ_SIZE_16X16;
     break;
-  case (16 << 8) + 32:
+  case SPRITE_SIZE_KEY(16, 32):
     shape = OBJ_SIZE_16X32;
     break;
-  case (32 << 8) + 16:
+  case SPRITE_SIZE_KEY(32, 16):
     shape = OBJ_SIZE_32X16;
     break;
-  case (32 << 8) + 32:
+  case SPRITE_SIZE_KEY(32, 32):
     shape = OBJ_SIZE_32X32;
     break;
-  case (32 << 8) + 64:
+  case SPRITE_SIZE_KEY(32, 64):
     shape = OBJ_SIZE_32X64;
     break;
-  case (64 << 8) + 32:
+  case SPRITE_SIZE_KEY(64, 32):
     shape = OBJ_SIZE_64X32;
     break;
-  case (64 << 8) + 64:
+  case SPRITE_SIZE_KEY(64, 64):
     shape = OBJ_SIZE_64X64;
     break;
   default:
@@ -588,21 +573,23 @@ struct ResourceObject *Sprite_Create(s32 id) {
     break;
   }
 
-  // Part 0 is the image; its shadow is part 1, from the shared shadow tiles.
-  attribute = (u32 *)freeSprite;
+  // Part 0 is the image; part 1 is its shadow, from the shared shadow tiles.
+  attribute = (u32 *)&freeSprite->image;
   *attribute++ = 0;
   *attribute++ = shape | OBJ_256_COLORS;
   *attribute = tile | ANIM_OAM_FIELD_PRIORITY;
-  attribute = freeSprite->shadowAttributes;
+  attribute = (u32 *)&freeSprite->shadow;
   *attribute++ = 0;
   *attribute++ = OBJ_SIZE_16X8 | OBJ_256_COLORS;
   *attribute = (gVramCacheEntries[VRAM_CACHE_ENTRY_ACTOR_SHADOW].offset >> 5) |
                ANIM_OAM_FIELD_PRIORITY;
+  // DEAD: a test of the call's result for -1 that does nothing either way; the
+  // ROM keeps the -1 it builds after the call.
   if (Sprite_AddAnimation(sprite, id) == -1) {
     /* FAKEMATCH(dead): a store of the byte it reloads. */
     freeSprite->dirty = freeSprite->dirty;
   }
-  return freeSprite;
+  return (struct ResourceObject *)freeSprite;
 }
 
 /// Releases a sprite: gives back its VRAM cache entry unless it keeps it
@@ -616,14 +603,10 @@ void Sprite_Destroy(struct Sprite *sprite) {
     if (!sprite->retainCacheEntry)
       VramCache_FreeEntry(sprite->slot);
     layer = sprite->entries;
-    for (n = 0; n < 4; n++) {
+    for (n = 0; n < ANIM_LAYER_COUNT; n++) {
       SpriteAnimation_Clear(*layer++);
     }
-    zero = 0;
-    Dma_Set(&zero, sprite,
-            ((DMA_ENABLE | DMA_32BIT | DMA_SRC_FIXED) << 16) |
-                (sizeof(*sprite) / 4),
-            REG_DMA3);
+    Dma_Fill32Cell(zero, 0, sprite, sizeof(*sprite));
   }
 }
 

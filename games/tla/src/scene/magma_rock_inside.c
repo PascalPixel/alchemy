@@ -203,6 +203,11 @@ enum MagmaRockInsideEmberStoneActorId {
   ACTOR_LEDGE_PILLAR
 };
 
+/// The flag that keeps a torch of the ember stone's room lit, by its flame's
+/// actor: FLAG_WEST_TORCH_LIT or FLAG_EAST_TORCH_LIT.
+#define FLAG_TORCH_LIT(flame)                                                  \
+  ((flame) - ACTOR_WEST_TORCH_FLAME + FLAG_WEST_TORCH_LIT)
+
 /// The Blaze tablet's room: the tablet, the pillar its torch lowers, the flame
 /// Blaze moves and the torch's flame.
 enum MagmaRockInsideBlazeTabletActorId {
@@ -1253,7 +1258,7 @@ void MagmaRockInside_DrainLava(void) {
       open = 212;
     Event_ClearFlag(FLAG_ENTRANCE_FLOODED);
     facing = FACING_EAST;
-    ((s32 (*)())MagmaRockInside_SwapCells)(0, 15, 13, 64);
+    MagmaRockInside_SwapCells(0, 15, 13, 64);
     FieldActor_SetSpritePriority(ACTOR_ENTRANCE_PILLAR, 3);
     for (j = 0; j != 7; j++)
       Actor_SetAnimation(j + ACTOR_COLUMN_A, 1);
@@ -1268,8 +1273,8 @@ void MagmaRockInside_DrainLava(void) {
     if (Event_GetFlag(FLAG_FURY_FLOODED))
       open = 212;
     Event_ClearFlag(FLAG_FURY_FLOODED);
-    ((s32 (*)())MagmaRockInside_SwapCells)(0, 24, 15, 64);
-    ((s32 (*)())MagmaRockInside_SwapCells)(0, 9, 16, 64);
+    MagmaRockInside_SwapCells(0, 24, 15, 64);
+    MagmaRockInside_SwapCells(0, 9, 16, 64);
     Actor_SetAnimation(ACTOR_FURY_PILLAR, 4);
   } else if (gMainRoutineWork.next ==
              SCENE_MAGMA_ROCK_INSIDE_GOLEM_CORE_CHEST) {
@@ -1379,6 +1384,8 @@ DEFINE_MAGMA_ROCK_INSIDE_BURST_PILLAR(MagmaRockInside_BurstCrackedPillarB,
                                       ACTOR_CRACKED_PILLAR_B,
                                       FLAG_CRACKED_PILLAR_B_BURST)
 
+/// A thrown rock's or flame's update: it trails smoking embers every other
+/// frame for 64 frames.
 void MagmaRockInside_SmokeEmber(struct Actor *actor) {
   if (++actor->timer > 64)
     actor->update = NULL;
@@ -1531,7 +1538,7 @@ void MagmaRockInside_GrowFlame(void) {
     wait(5);
     i++;
   } while (i != 16);
-  Event_SetFlag(work->psynergyHitObject + 0x2ee);
+  Event_SetFlag(FLAG_TORCH_LIT(work->psynergyHitObject));
   if (Event_GetFlag(FLAG_WEST_TORCH_LIT) &&
       Event_GetFlag(FLAG_EAST_TORCH_LIT)) {
     other = Actor_GetById(ACTOR_BLOCKING_PILLAR);
@@ -1732,7 +1739,7 @@ void MagmaRockInside_OpenFlamePassage(s32 x, s32 z) {
   s32 cellZ;
 
   actor = FieldActor_Create(SPRITE_STACKED_CRATES, toFIXED(x), 0, toFIXED(z));
-  REG_BLDALPHA = 16;
+  REG_BLDALPHA = BLEND_ALPHA(BLEND_WEIGHT_MAX, 0);
   REG_BLDCNT = BLDCNT_TGT1_BG2 | BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_ALL;
   Scene_SetActorSpritePriority(actor, 0);
   Actor_SetSpriteFlags(actor, 0);
@@ -1777,8 +1784,7 @@ void MagmaRockInside_StepOnMarker(void) {
   cell =
       MapCell_Get(2, FIELD_CELL(leader->x.fixed), FIELD_CELL(leader->z.fixed));
   trigger = &work->raisedTrigger;
-  // From 54 in two steps: as one expression the constants fold into
-  // 858 - 4 * counter.
+  // The marker's row: 54 for the first, four rows up for each after it.
   row -= (*trigger - (STEP_CELL_TRIGGER_BASE + 1)) << 2;
   cell >>= 8;
   if (cell != 1 && cell != 7) {
@@ -1796,6 +1802,8 @@ DEFINE_MAGMA_ROCK_INSIDE_LIGHT_TORCH(MagmaRockInside_LightTabletTorch,
                                      FLAG_TABLET_TORCH_LIT, ACTOR_TORCH_FLAME,
                                      136, 360)
 
+/// Blaze on the Blaze tablet room's torch: its flame swells over 80 frames, the
+/// torch's flag is set and the pillar beside it sinks.
 void MagmaRockInside_GrowTabletFlame(void) {
   struct Actor *object;
   struct Actor *actor;
@@ -2643,9 +2651,9 @@ s32 Scene_PrepareMap(void) {
   if (!Event_GetFlag(FLAG_KEEP_PARTY_POSITION)) {
     if ((scene == SCENE_MAGMA_ROCK_INSIDE_ENTRANCE && entrance == 8) ||
         (scene == SCENE_MAGMA_ROCK_INSIDE_EMBER_STONE && entrance == 11)) {
-      Event_ClearFlag(FLAG_AREA_TEMP_00);
-      Event_ClearFlag(FLAG_AREA_TEMP_01);
-      Event_ClearFlag(FLAG_AREA_TEMP_02);
+      Event_ClearFlag(FLAG_ENTRANCE_FLOODED);
+      Event_ClearFlag(FLAG_FURY_FLOODED);
+      Event_ClearFlag(FLAG_LOWER_ROOMS_FLOODED);
     }
   }
   return 0;
@@ -2874,18 +2882,21 @@ void BattleEffect_StepVector3(struct Particle *particle, s32 damping,
 
 #include "shared/particle_update_falling.h"
 
-/// The falling rocks' work: their tiles, 64 rocks and their sprites, in a
-/// ring that next walks round.
+/// The falling rocks in flight at once.
+#define ROCK_COUNT 64
+
+/// The falling rocks' work: their tiles, the rocks and their sprites, in a ring
+/// that next walks round.
 struct RockWork {
   u8 tiles[1280];
-  struct Rock rocks[64];
-  struct EffectSprite sprites[64];
+  struct Rock rocks[ROCK_COUNT];
+  struct EffectSprite sprites[ROCK_COUNT];
   s16 next;
   u16 tileBase;
   s16 resource;
 };
 
-STATIC_ASSERT(offsetof(struct RockWork, resource) == 0x1604);
+STATIC_ASSERT(offsetof(struct RockWork, resource) == 5636);
 
 /// Spawns count rocks around (x, y, z), each pushed out at a random angle and
 /// thrown up and out along it.
@@ -2910,7 +2921,7 @@ void MagmaRockInside_DropRocks(s32 x, s32 y, s32 z, s32 count) {
     FieldVector_AddPolarOffsetFX((Random16() << 1) + toFIXED(2), angle,
                                  rock->velocity);
     work->next++;
-    work->next &= 63;
+    work->next &= ROCK_COUNT - 1;
   }
 }
 
@@ -2933,7 +2944,7 @@ void MagmaRockInside_StartFallingRocks(void) {
   work->resource = entry;
   rock = work->rocks;
   sprite = work->sprites;
-  for (i = 0; i < 64; i++, sprite++, rock++) {
+  for (i = 0; i < ROCK_COUNT; i++, sprite++, rock++) {
     MagmaRockInside_InitRockSprite(sprite, 8, 8, OBJ_SIZE_16X16, tile);
     sprite->oam.fullColor = 1;
     sprite->oam.palette = SPRITE_COLOR_NORMAL;

@@ -437,7 +437,7 @@ void Kibombo_AskAboutFewerWarriors(void) {
 }
 
 /// Talking to the west gate guard: the guards ask whether the party has come
-/// for revenge for the raid, the question shown at the east guard.
+/// for revenge for the raid, the east guard speaking.
 void Kibombo_AskAboutRevenge(void) {
   Event_Start();
   Event_ResolvePendingActions(0);

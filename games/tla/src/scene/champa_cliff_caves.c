@@ -402,7 +402,8 @@ void ChampaCliffCaves_HidePath(void) {
 
 extern struct Trigger gChampaCliffCaves_BriggsTriggers[];
 
-/// Picks up the forged Trident from beside Obaba's forge.
+/// Picks up the forged Trident floating over Obaba's forge pit, reached by the
+/// path Reveal shows.
 void ChampaCliffCaves_PickUpTrident(s32 a) {
   Event_PickUpItem(a, ITEM_TRIDENT, FLAG_TRIDENT_TAKEN);
 }

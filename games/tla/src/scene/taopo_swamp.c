@@ -790,11 +790,12 @@ void TaopoSwamp_FillDripSpot(s32 caster, s32 id) {
   FieldActor_SetSpritePriority(id, 3);
   Actor_Get(id)->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
   Actor_SetAnimation(id, 1);
-  // XXX: Douse runs this with the leader's actor (FieldPsynergy_Douse passes
+  // XXX (no evidence): does Douse alone let Frost freeze this puddle? Douse
+  // runs this with the leader's actor (FieldPsynergy_Douse passes
   // FieldEffectWork.firstActorId) and a drop with 0, so caster == 5 holds only
-  // while actor 5 leads; PSYNERGY_PHASE_ACTS is also 5. Recording Douse and
-  // then Frost on the spot with Felix leading would settle whether Douse alone
-  // lets Frost freeze it.
+  // while actor 5 leads, where PSYNERGY_PHASE_ACTS is also 5; render event
+  // cannot cast Frost here after Douse (no ground within reach of the spot),
+  // so no recording shows which.
   if (caster == 5 ||
       FieldGameFlag_GetByte(FLAG_BYTE_TAOPO_SWAMP_DROPS_CAUGHT) > 3) {
     Event_SetFlag(FLAG_TAOPO_SWAMP_SPOT_WET);

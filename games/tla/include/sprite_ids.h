@@ -355,6 +355,9 @@ enum SpriteId {
   SPRITE_MENARDIS_SHIP,
   SPRITE_GANGWAY,
   SPRITE_WATER_DROP,
+  /// A small blue orb of energy and the rings it bursts into: the Gabomba
+  /// Statue's charges, "the energy charge" that runs over its blocks.
+  SPRITE_ENERGY_CHARGE,
   SPRITE_STEAM_VENT = 351,
   SPRITE_POUND_FIST,
   SPRITE_SCOOP_HAND,
@@ -371,7 +374,10 @@ enum SpriteId {
   SPRITE_SMALL_FLAME,
   SPRITE_BLAZE_FLAME,
   SPRITE_BLAZE_FLICKER,
-  SPRITE_WOODEN_BENCH = 369,
+  /// A pot of blue water boiling over red embers, steam rising, and the embers
+  /// alone: the Kandorean Temple's pot and Kibombo's signal fire.
+  SPRITE_BOILING_POT,
+  SPRITE_WOODEN_BENCH,
   SPRITE_LOG_PAIR,
   SPRITE_WOODEN_SIGN,
   SPRITE_SPROUTING_LEAVES,
@@ -381,7 +387,10 @@ enum SpriteId {
   SPRITE_CARVED_FACE,
   SPRITE_WIND_STATUE,
   SPRITE_MOAI = 380,
-  SPRITE_TWISTER_ROCK = 382,
+  /// The water a Moai shows once Douse fills it, added to its sprite
+  /// (AquaRockInside_SetMoaiFace).
+  SPRITE_MOAI_FACE,
+  SPRITE_TWISTER_ROCK,
   SPRITE_WATER_DROP_LARGE,
   SPRITE_ALTAR = 385,
   SPRITE_LIT_CANDLESTICK,
@@ -392,7 +401,11 @@ enum SpriteId {
   SPRITE_STONE_FACE_PILLAR_HALF_A,
   SPRITE_STONE_FACE_PILLAR,
   SPRITE_STONE_FACE_PILLAR_HALF_B,
-  SPRITE_DOLL = 397,
+  /// The Gabomba statue's eye: ringed with light, then plain.
+  SPRITE_GABOMBA_EYE = 395,
+  /// The Gabomba statue's tongue, stretching out and drawing back.
+  SPRITE_GABOMBA_TONGUE,
+  SPRITE_DOLL,
   SPRITE_BARREL,
   SPRITE_PENGUIN,
   SPRITE_PENGUIN_WITH_BOW,
@@ -419,6 +432,8 @@ enum SpriteId {
   SPRITE_MIMIC_STONE = 431,
   SPRITE_ARROW_PANEL,
   SPRITE_WORLD_MAP_ISLAND,
+  /// A white gloved hand pointing down at something.
+  SPRITE_POINTING_HAND,
   SPRITE_WORLD_MAP_VILLAGE = 438,
   SPRITE_WORLD_MAP_TOWN,
   SPRITE_WORLD_MAP_STUMP_VILLAGE,

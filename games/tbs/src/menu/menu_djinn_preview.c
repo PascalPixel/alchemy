@@ -555,7 +555,6 @@ s32 DjinnMenu_ShowMemberStatus(void) {
   s32 tile;
   s32 pageIndex;
   s32 side;
-  s32 *counts;
   s32 blink;
 
   menu = gMenuWork;
@@ -571,21 +570,20 @@ s32 DjinnMenu_ShowMemberStatus(void) {
   wait(1);
   // Count the party member's Psynergy by diffing their list with itself; saved,
   // room for a copy of the unit, is taken and given back unused.
-  counts = pageCounts;
-  counts[1] = counts[0] = 1;
+  pageCounts[1] = pageCounts[0] = 1;
   listedActions = Heap_AllocEwram(96);
   saved = Heap_AllocEwram(sizeof(struct Unit));
   unit = Unit_GetFar(menu->shownMember[0]);
-  counts[1] = counts[0] = PsynergyList_Diff(unit->psynergy, unit->psynergy,
-                                            listedActions, &gained, &lost);
+  pageCounts[1] = pageCounts[0] = PsynergyList_Diff(
+      unit->psynergy, unit->psynergy, listedActions, &gained, &lost);
   Heap_Release(saved);
   Heap_Release(listedActions);
-  counts[0] = (counts[0] - 1) / 6 + 1;
-  if (counts[0] == 0)
-    counts[0] = 1;
-  counts[1] = (counts[1] - 1) / 6 + 1;
-  if (counts[1] == 0)
-    counts[1] = 1;
+  pageCounts[0] = (pageCounts[0] - 1) / 6 + 1;
+  if (pageCounts[0] == 0)
+    pageCounts[0] = 1;
+  pageCounts[1] = (pageCounts[1] - 1) / 6 + 1;
+  if (pageCounts[1] == 0)
+    pageCounts[1] = 1;
   leftWindowSlot = (struct Window **)&menu->window;
   Window_UpdateOrCreate(leftWindowSlot, 0, 5, 15, 15, 2);
   rightWindowSlot = &menu->secondWindow;
@@ -610,19 +608,20 @@ s32 DjinnMenu_ShowMemberStatus(void) {
                                 selectedPages[0] + 1, 1);
       work->holdTilemapUpload = 0;
     }
-    if (counts[side] > 1) {
+    if (pageCounts[side] > 1) {
       window = menu->secondWindow;
-      for (pageIndex = 0; pageIndex < counts[side]; pageIndex++) {
+      for (pageIndex = 0; pageIndex < pageCounts[side]; pageIndex++) {
         tile = WINDOW_TILE('1') + pageIndex;
         if (pageIndex > 9)
           tile = WINDOW_TILE('0');
         if (pageIndex == selectedPages[side])
           tile -= BG_TILE_PALETTE(WINDOW_PALETTE - HIGHLIGHT_PALETTE);
         Window_SetTilemapEntryFar(
-            window, tile, window->width - counts[side] + pageIndex - 2, -1, 0);
+            window, tile, window->width - pageCounts[side] + pageIndex - 2, -1,
+            0);
       }
       Window_SetTilemapEntryFar(window, PAGE_ARROW_LEFT,
-                                window->width - counts[side] - 3, -1, 0);
+                                window->width - pageCounts[side] - 3, -1, 0);
       Window_SetTilemapEntryFar(window, PAGE_ARROW_RIGHT, window->width - 2, -1,
                                 0);
       Window_MarkTilemapRow(work, window->y);
@@ -657,7 +656,8 @@ s32 DjinnMenu_ShowMemberStatus(void) {
     }
     if (repeatedKeys & KEY_LEFT) {
       selectedPages[side]--;
-      selectedPages[side] = Menu_WrapIndex(selectedPages[side], counts[side]);
+      selectedPages[side] =
+          Menu_WrapIndex(selectedPages[side], pageCounts[side]);
       Sound_PlayFar(SE_MENU_CURSOR_MOVE);
       Input_ResetKeyRepeat();
       redraw = 1;
@@ -666,7 +666,8 @@ s32 DjinnMenu_ShowMemberStatus(void) {
       Sound_PlayFar(SE_MENU_CURSOR_MOVE);
       Input_ResetKeyRepeat();
       redraw = 1;
-      selectedPages[side] = Menu_WrapIndex(selectedPages[side], counts[side]);
+      selectedPages[side] =
+          Menu_WrapIndex(selectedPages[side], pageCounts[side]);
     }
     wait(1);
   }

@@ -486,7 +486,6 @@ s32 DjinnMenu_ShowMemberStatus(void) {
   s32 side;
   u8 *pairMember;
   s32 *counts;
-  s32 *selected;
   s32 blink;
 
   menu = Ram_HeapSlots->menuWork;
@@ -494,31 +493,28 @@ s32 DjinnMenu_ShowMemberStatus(void) {
   result = 0;
   frame = 0;
   menu->cursor->motion = ICON_HIDDEN;
-  /* FAKEMATCH(temporary): selected = selectedPages, the page array read through
-   * a pointer. */
-  selected = selectedPages;
-  selected[1] = selected[0] = result;
+  selectedPages[0] = 0;
+  selectedPages[1] = 0;
   for (side = 3; side >= 0; side--)
     menu->memberY[side] = MENU_FIGURE_HIDDEN_Y;
   WindowSprite_ClearListFar(menu->listWindow);
   wait(1);
-  /* FAKEMATCH(temporary): counts = pageCounts, the count array read through a
-   * pointer. */
-  counts = pageCounts;
-  counts[1] = counts[0] = 1;
+  pageCounts[0] = 1;
+  pageCounts[1] = 1;
   listedActions = Heap_AllocEwram(96);
   saved = Heap_AllocEwram(sizeof(struct Unit));
   unit = Unit_Get(menu->shownMember[0]);
-  counts[1] = counts[0] = PsynergyList_Diff(unit->psynergy, unit->psynergy,
-                                            listedActions, &gained, &lost);
+  pageCounts[0] = PsynergyList_Diff(unit->psynergy, unit->psynergy,
+                                    listedActions, &gained, &lost);
+  pageCounts[1] = pageCounts[0];
   Heap_Release(saved);
   Heap_Release(listedActions);
-  counts[0] = (counts[0] - 1) / 6 + 1;
-  if (counts[0] == 0)
-    counts[0] = 1;
-  counts[1] = (counts[1] - 1) / 6 + 1;
-  if (counts[1] == 0)
-    counts[1] = 1;
+  pageCounts[0] = (pageCounts[0] - 1) / 6 + 1;
+  if (pageCounts[0] == 0)
+    pageCounts[0] = 1;
+  pageCounts[1] = (pageCounts[1] - 1) / 6 + 1;
+  if (pageCounts[1] == 0)
+    pageCounts[1] = 1;
   leftWindowSlot = &menu->window;
   Window_UpdateOrCreate(leftWindowSlot, 0, 5, 15, 15, 2);
   rightWindowSlot = &menu->secondWindow;
@@ -530,18 +526,17 @@ s32 DjinnMenu_ShowMemberStatus(void) {
   Text_DrawMessageAsTilesFar((s32)MsgCurrentStatus + 2, menu->statusWindow, 0,
                              16);
   side = 0;
+  /* FAKEMATCH(temporary): counts = pageCounts, the count array read through a
+   * pointer where the loop draws the page numbers. */
+  counts = pageCounts;
   while (1) {
-    s32 *pageCount;
-    s32 *selectedPage;
-    /* FAKEMATCH(temporary): selectedPage = &selected[side], taken at the top of
-     * the loop. */
-    selectedPage = &selected[side];
+    // The shown side's page and page count, which a page turn changes
+    // through these two pointers.
+    s32 *selectedPage = &selectedPages[side];
+    s32 *pageCount = &pageCounts[side];
     render = (struct WindowWork *)Ram_HeapSlots->windowWork;
     pressedKeys = gInput.pressed;
     repeatedKeys = gInput.repeat;
-    /* FAKEMATCH(temporary): pageCount = &pageCounts[side], taken at the top of
-     * the loop. */
-    pageCount = &pageCounts[side];
     pairMember = menu->pairMember;
     if (redraw) {
       render->holdTilemapUpload = 1;
@@ -560,7 +555,7 @@ s32 DjinnMenu_ShowMemberStatus(void) {
         tile = WINDOW_TILE('1') + pageIndex;
         if (pageIndex > 8)
           tile = WINDOW_TILE('?');
-        if (pageIndex == selected[side])
+        if (pageIndex == selectedPages[side])
           tile -= BG_TILE_PALETTE(WINDOW_PALETTE - HIGHLIGHT_PALETTE);
         Window_SetTilemapEntryFar((s32)window, tile,
                                   window->width - counts[side] + pageIndex - 2,

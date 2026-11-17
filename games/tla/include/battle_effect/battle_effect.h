@@ -471,11 +471,6 @@ union BattleBackgroundId {
   u8 bytes[6];
 };
 
-// The Lost Age numbers its blitter modes in the reverse of The Broken Seal's
-// order: BattleEffect_BuildBlitter builds additive for 0, max for 1,
-// transparent for 2.
-enum { BLITTER_ADDITIVE, BLITTER_MAX, BLITTER_TRANSPARENT, BLITTER_COPY };
-
 void BattleEffect_UpdatePhasePalette(
     s32 frame, s32 redPhase, s32 greenPhase,
     s32 bluePhase); // Graphics_UpdatePhasePalette

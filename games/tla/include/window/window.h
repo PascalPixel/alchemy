@@ -171,6 +171,12 @@ void Text_DrawMessage(s32 message, s32 window, s32 x, s32 y);
 /// The colour that text drawn in a palette other than WINDOW_PALETTE stands
 /// on; the menus copy WINDOW_BACKGROUND_COLOR into it.
 #define TEXT_BACKGROUND_COLOR 14
+/// WINDOW_PALETTE's white, black and two greys, which Mind Read turns grey
+/// while it shows thoughts.
+#define WINDOW_COLOR_WHITE 1
+#define WINDOW_COLOR_BLACK 3
+#define WINDOW_COLOR_DARK_GREY 11
+#define WINDOW_COLOR_LIGHT_GREY 12
 /// The BG palette that battle and the Djinn menu fill with the first basic
 /// sprite palette, its TEXT_BACKGROUND_COLOR the window background: the element
 /// icons and the coloured numbers are drawn in it.
@@ -521,6 +527,11 @@ enum FieldMessageFlag {
   FIELD_MESSAGE_LOWEST = 0x40       ///< 12 tiles below the top rows' centre
 };
 
+/// The flags a yes-or-no question's message takes: it zooms open, stays open
+/// for the Yes/No menu below it and sits lower.
+#define QUESTION_MESSAGE                                                       \
+  (FIELD_MESSAGE_ZOOM | FIELD_MESSAGE_KEEP_OPEN | FIELD_MESSAGE_LOWER)
+
 /// The Pause menu's entries, as PauseMenu_Choose returns them
 /// (counted from Save your quest even when only Change settings shows).
 enum PauseMenuEntry {
@@ -558,7 +569,10 @@ enum PauseMenuEntry {
 
 /// Message_OpenWindow's window options, in packed's low bits.
 enum MessageWindowOption {
-  MESSAGE_WINDOW_ZOOM = 1,           ///< zoom open rather than appear at once
+  MESSAGE_WINDOW_ZOOM = 1, ///< zoom open rather than appear at once
+  /// Set only by callers that open without MESSAGE_WINDOW_ZOOM; nothing reads
+  /// it.
+  MESSAGE_WINDOW_UNUSED = 2,
   MESSAGE_WINDOW_TEXT_CANVAS = 8,    ///< WINDOW_FLAG_TEXT_CANVAS
   MESSAGE_WINDOW_ANCHOR_BOTTOM = 16, ///< WINDOW_FLAG_ANCHOR_BOTTOM
   MESSAGE_WINDOW_FIXED_X = 32        ///< WINDOW_FLAG_FIXED_X

@@ -64,6 +64,12 @@ enum BattleCommand {
 #define DJINN_COMMAND_ELEMENT(parameter) (((parameter) >> 8) & 15)
 #define DJINN_COMMAND_INDEX(parameter) ((parameter) & 255)
 
+/// The list place codes the target pickers return (Battle_FindUnitPlace): a
+/// place in the party's list or the enemies', or'd with the side's tag;
+/// PLACE_PARTY alone is the party's first place, the default target.
+#define PLACE_PARTY 0x100
+#define PLACE_ENEMY 0x180
+
 /// A unit's chosen action for the turn: its command, the command's parameter,
 /// its target and range, and its priority in the turn order.
 struct BattleActionRecord {

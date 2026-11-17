@@ -292,6 +292,9 @@ struct BattleAIState {
 
 /// A unit's name buffer: 14 characters and the 0 that ends them.
 #define UNIT_NAME_SIZE 15
+/// The Resistance each of a unit's battle Resistance stages
+/// (Unit.resistanceStage) adds to every element's.
+#define RESISTANCE_PER_STAGE 20
 
 /// A unit in battle: a party member's or an enemy's stats, Psynergy, items,
 /// Djinn and statuses.

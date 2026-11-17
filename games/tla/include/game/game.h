@@ -209,5 +209,9 @@ void Party_SetLeaderJenna(void);
 void Party_SetLeaderFelix(void);
 
 extern u8 gInventorySnapshot[];
+/// Where gInventorySnapshot's spare space begins, past the party's equipment
+/// InventorySnapshot_Save keeps and the Trial Road's state: the scenes keep
+/// their own work there (scene/ride.h's RIDE_WORK).
+#define INVENTORY_SNAPSHOT_SPARE 392
 
 #endif

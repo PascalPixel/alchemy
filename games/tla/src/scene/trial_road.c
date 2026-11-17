@@ -18,6 +18,7 @@
 #include "field/event_inline.h"
 #include "field/field.h"
 #include "field/field_event.h"
+#include "field/field_sequence.h"
 #include "field/field_sequence_event.h"
 #include "field/field_sprite.h"
 #include "field/map_grid.h"
@@ -29,6 +30,7 @@
 #include "graphics/resource.h"
 #include "graphics/vram_tab.h"
 #include "menu/menu.h"
+#include "scene/ground_effects.h"
 #include "scene/scene.h"
 #include "sound/sound.h"
 #include "system/dma.h"
@@ -49,8 +51,9 @@
 #include "window/window.h"
 #include "text/msg_ids.h"
 
-/// Set once the Mad Plant hiding in the bushes Cyclone cuts has been beaten.
-#define FLAG_TRIAL_ROAD_MAD_PLANT_BEATEN 0x9b9
+/// Trial Road's Mad Plant, the last of the five hidden in bushes: its
+/// FLAG_MAD_PLANT and its column of ENCOUNTER_TABLE_MAD_PLANTS.
+#define MAD_PLANT_TRIAL_ROAD 4
 /// Set once Move has pushed the peak's pillar into column 8, where it stays.
 #define FLAG_TRIAL_ROAD_PEAK_PILLAR_PLACED 0x9fc
 
@@ -72,6 +75,8 @@
 #define FLAG_OUTER_CHEST_OPEN FLAG_SCENE_TEMP_86
 /// Set once Lift has raised the rock at the summit cave's mouth.
 #define FLAG_CAVE_ROCK_LIFTED FLAG_SCENE_TEMP_89
+/// Set once Gasp has hopped away from the leader to his own spot.
+#define FLAG_GASP_FLED FLAG_SCENE_TEMP_88
 
 #include "shared/trial_road.h"
 
@@ -191,7 +196,7 @@ enum { ACTOR_WEST_POST = ACTOR_FIRST_STAGE_PIECE, ACTOR_EAST_POST };
 /// Leader_CanPushObjectAhead refuses a target with this byte set.
 #define PUSH_BLOCKED(object) *(u8 *)&object->riseCounter
 /// The height in pixels of a pillar's top (TrialRoad_AddPillarTop) above the
-/// pillar: 16 standing, -16 lowered.
+/// pillar: PILLAR_HEIGHT standing, -PILLAR_HEIGHT lowered.
 #define PILLAR_TOP_HEIGHT(top) *(u8 *)&top->riseEnabled
 
 /// A fountain rises and falls once each FOUNTAIN_PERIOD frames, rising at
@@ -199,6 +204,31 @@ enum { ACTOR_WEST_POST = ACTOR_FIRST_STAGE_PIECE, ACTOR_EAST_POST };
 #define FOUNTAIN_PERIOD 240
 #define FOUNTAIN_RISE_AT 120
 #define FOUNTAIN_FALL_AT 150
+
+/// How far a pillar's top stands above it; once the pillar is lowered, its
+/// top is as far below it.
+#define PILLAR_HEIGHT 16
+
+/// The flags a yes-or-no question's message takes, as clear.c's: it zooms
+/// open, stays open for the choice and sits lower.
+#define QUESTION_MESSAGE                                                       \
+  (FIELD_MESSAGE_ZOOM | FIELD_MESSAGE_KEEP_OPEN | FIELD_MESSAGE_LOWER)
+
+/// The frames the leader pushes against a cell before it acts, as
+/// field_sequence_triggers.c counts them in FieldWork.blockedSteps.
+#define FIELD_PUSH_FRAMES 12
+
+/// The encounter table row of the battle with Moapa and his two knights at
+/// the peak, one column for each stage door the party reached before him.
+#define ENCOUNTER_TABLE_MOAPA 13
+
+/// A 16.16 height in the 8-pixel steps a map cell's height is set in, as
+/// airs_rock_inside.c's.
+#define CELL_HEIGHT_STEPS(height) ((height) >> 19)
+
+/// Where the inventory snapshot's spare space begins, past the party's
+/// equipment and the race's state, as scene/ride.h's RIDE_WORK takes it.
+#define INVENTORY_SNAPSHOT_SPARE 392
 
 /// Talking to Gasp starts his battle.
 void TrialRoad_FightGasp(void) {
@@ -307,23 +337,9 @@ void TrialRoad_TakeStairs(s32 direction) {
   state->pattern = state->order[state->stage[0] * 2 + state->mirrored];
 }
 
-/// Trial Road's stage puzzles: the stairs, chests and doors, and the pillars,
-/// torches, logs, spouts and sand the eight rooms are built from.
-
 struct Actor;
 struct FieldSprite;
 union FieldObject;
-
-/// The map work's ground effects byte (MapWork.groundEffects), read as its
-/// bits.
-struct MapGroundEffectsView {
-  u8 padding[23];
-  u8 lowBits : 2;
-  // XXX: what bits 2 and 3 select; the map code that reads them would settle
-  // it.
-  u8 middleBits : 2;
-  u8 highBits : 4;
-};
 
 /// The sprite's priority bits, read as the byte that holds them.
 struct EffectSpriteBits {
@@ -361,6 +377,25 @@ struct TrialRoadSprite {
   u32 words[3];
 };
 
+/// The halfwords of the rival's recorded path: x, z pairs, the last pair 0, 0.
+#define RIVAL_PATH_LENGTH 7200
+
+/// The tiles of the race's progress picture (gTrialRoad_ProgressPicture): a
+/// stage of the road in blue, 16 by 32 pixels with a 16 by 8 foot below it,
+/// and the two players' 16 by 16 markers, "1P" and "2P".
+enum TrialRoadProgressTile {
+  PROGRESS_TILE_STAGE = 0,
+  PROGRESS_TILE_STAGE_FOOT = 8,
+  PROGRESS_TILE_1P = 10,
+  PROGRESS_TILE_2P = 14,
+  PROGRESS_TILE_COUNT = 18
+};
+#define PROGRESS_PICTURE_BYTES (PROGRESS_TILE_COUNT * TILE_SIZE_4BPP)
+/// The sprite palette the progress display loads and draws with.
+#define PROGRESS_PALETTE 14
+/// The pixels between one stage's picture and the next, down the display.
+#define PROGRESS_STAGE_SPACING 36
+
 /// The heap slot TrialRoad_ShowProgress takes for the two parties' progress
 /// display and the rival's recorded path.
 struct TrialRoadLinkWork {
@@ -378,7 +413,7 @@ struct TrialRoadLinkWork {
   s16 resource; ///< the recorded path's resource, once decoded
   s32 originX;  ///< the course's corner the markers measure from
   s32 originZ;
-  s16 path[7200]; ///< x, z pairs in pixels, 0, 0 ending them
+  s16 path[RIVAL_PATH_LENGTH]; ///< x, z pairs in pixels, 0, 0 ending them
 };
 
 s32 TrialRoad_IsMirrored(void);
@@ -596,7 +631,8 @@ s32 TrialRoad_OfferToGiveUp(void) {
     Event_PlaySound(SE_SPLASH);
     Actor_FaceDirection(gMainRoutineWork.leaderActorId, FACING_SOUTH, 0);
     message = (s32)&MsgTrialRoadGiveUpPrompt;
-    FieldMessage_Show(message, 13);
+    // "Do you want to give up?"
+    FieldMessage_Show(message, QUESTION_MESSAGE);
     work->choiceMessage = message + 1;
     work->choiceWidth = 4;
     work->choiceSelection = 1;
@@ -604,13 +640,14 @@ s32 TrialRoad_OfferToGiveUp(void) {
         0) {
       Actor_FaceDirection(gMainRoutineWork.leaderActorId, FACING_SOUTH, 0);
       Event_Wait(10);
-      Actor_SetAnimation(gMainRoutineWork.leaderActorId, 22);
+      Actor_SetAnimation(gMainRoutineWork.leaderActorId, ANIM_LEADER_LEAN_BACK);
       Event_Wait(10);
       FieldActor_ShowEmote(gMainRoutineWork.leaderActorId,
                            EMOTE_IN_FRONT | EMOTE_SWEAT_DROP, 0);
       Event_Wait(30);
       InventorySnapshot_Restore();
-      Import_EventSetExitRequest(9);
+      Import_EventSetExitRequest(
+          TRIAL_ROAD_STAGES_TO_SHAMAN_VILLAGE_TRIAL_GROUNDS_C);
       return 1;
     }
   }
@@ -671,7 +708,7 @@ void TrialRoad_PutItemInChest(s32 item, s32 owner, s32 slot) {
   MessageArgument_Push(owner, MESSAGE_ARGUMENT_ACTOR);
   MessageArgument_Push(item, MESSAGE_ARGUMENT_ITEM);
   // "Felix put ...'s ... in the chest."
-  FieldMessage_Show((s32)&MsgTrialRoadStoredItem, 1);
+  FieldMessage_Show((s32)&MsgTrialRoadStoredItem, FIELD_MESSAGE_ZOOM);
   Event_PlaySound(SE_CHEST_CLOSE);
   Actor_SetAnimationAndWait(chest, 5);
   if (chest == ACTOR_LEFT_INNER_CHEST || chest == ACTOR_RIGHT_INNER_CHEST)
@@ -700,11 +737,11 @@ void TrialRoad_ExamineChest(s32 id) {
     Event_Start();
     Event_ResolvePendingActions(0);
     // "The chest won't open. There's something keeping it shut tight."
-    FieldMessage_Show((s32)MsgTrialRoadChestBlocked, 1);
+    FieldMessage_Show((s32)MsgTrialRoadChestBlocked, FIELD_MESSAGE_ZOOM);
     Event_End();
   } else {
     // "Place this item in the chest?"
-    FieldMessage_Show((s32)MsgTrialRoadPlaceItemPrompt, 13);
+    FieldMessage_Show((s32)MsgTrialRoadPlaceItemPrompt, QUESTION_MESSAGE);
     if (Event_AskYesNoWithActorAnimation(gMainRoutineWork.leaderActorId, 1) ==
         0)
       gFieldWork->fieldMenu = 1;
@@ -725,7 +762,7 @@ void TrialRoad_BlockCellUnder(s32 id) {
         cells +
         (((FIELD_CELL(actor->x.fixed)) + ((FIELD_CELL(actor->z.fixed)) << 7))
          << 2);
-    s32 bit = 128;
+    s32 bit = MAP_CELL_JUMP;
 
     cell[3] = bit | cell[3];
   }
@@ -743,7 +780,7 @@ void TrialRoad_UnblockCellUnder(s32 id) {
         (((FIELD_CELL(actor->x.fixed)) + ((FIELD_CELL(actor->z.fixed)) << 7))
          << 2);
 
-    cell[3] &= 0x7f;
+    cell[3] &= (u8)~MAP_CELL_JUMP;
   }
 }
 
@@ -772,10 +809,10 @@ void TrialRoad_AddPillarTop(s32 id) {
       Actor_SetSpriteFlags(actor, 0);
       Actor_StartScript(actor, gTrialRoad_PillarTopScript);
       actor->watchedActor = owner;
-      actor->priorityFlags |= 0x80;
+      actor->priorityFlags |= ACTOR_PRIORITY_PLATFORM;
       actor->motionFlags = 0;
       actor->collisionFlags = 0;
-      PILLAR_TOP_HEIGHT(actor) = 16;
+      PILLAR_TOP_HEIGHT(actor) = PILLAR_HEIGHT;
       owner->watchedActor = actor;
     }
   }
@@ -846,7 +883,7 @@ void TrialRoad_JumpAcrossGap(void) {
   if (FIELD_CELL(Actor_GetById(ACTOR_PILLAR_B)->z.fixed) == 23)
     Field_TryJumpForward();
   else
-    Actor_JumpDownLedge(gMainRoutineWork.leaderActorId, 6, 0);
+    Actor_JumpDownLedge(gMainRoutineWork.leaderActorId, ANIM_LEADER_SPRING, 0);
 }
 
 /// Once a pillar is moved off a torch's cell, the cell opens.
@@ -884,7 +921,7 @@ void TrialRoad_MeltIceBesideTorch(s32 a, s32 id) {
       actor->update = NULL;
       Actor_SetSpriteColorMode(actor, 0);
       Actor_SetAnimation(id, 6);
-      TrialRoad_SetPillarTopLift(id, -16);
+      TrialRoad_SetPillarTopLift(id, -PILLAR_HEIGHT);
       Event_SetFlag(flag);
     }
   }
@@ -901,7 +938,7 @@ void TrialRoad_JumpMeltedPuddle(void) {
 void TrialRoad_FreezePuddle(s32 a, s32 id) {
   struct Actor *actor = Actor_GetById(id);
 
-  TrialRoad_SetPillarTopLift(id, 16);
+  TrialRoad_SetPillarTopLift(id, PILLAR_HEIGHT);
   Event_ClearFlag(id + FLAG_PUDDLE_MELTED_BASE);
   if (actor != NULL)
     actor->priorityFlags &= ~ACTOR_PRIORITY_UNDERFOOT;
@@ -918,7 +955,7 @@ void TrialRoad_LowerPillar(s32 id) {
   struct Actor *actor = Actor_GetById(id);
 
   if (actor != NULL) {
-    TrialRoad_SetPillarTopLift(id, -16);
+    TrialRoad_SetPillarTopLift(id, -PILLAR_HEIGHT);
     actor->collisionFlags = 0;
     actor->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
     Actor_SelectAnimation(actor, 6);
@@ -930,8 +967,8 @@ void TrialRoad_RaisePillar(s32 id) {
   struct Actor *actor = Actor_GetById(id);
 
   if (actor != NULL) {
-    TrialRoad_SetPillarTopLift(id, 16);
-    actor->collisionFlags = 1;
+    TrialRoad_SetPillarTopLift(id, PILLAR_HEIGHT);
+    actor->collisionFlags = ACTOR_SOLID;
     actor->priorityFlags &= ~ACTOR_PRIORITY_UNDERFOOT;
     Actor_SelectAnimation(actor, 5);
   }
@@ -981,7 +1018,7 @@ void TrialRoad_PoundPillar(s32 id, s32 phase, s32 frame) {
   struct Actor *leader = Actor_GetById(gMainRoutineWork.leaderActorId);
 
   if (frame <= 10)
-    actor->scaleY = FIXED_ONE - (frame << 12);
+    actor->scaleY = FIXED_ONE - frame * (FIXED_ONE / 16);
   else
     actor->scaleY = FIXED_ONE;
   if (phase == 1) {
@@ -1123,14 +1160,9 @@ void TrialRoad_CrumbleEastPillar(s32 phase) {
     TrialRoad_CrumblePillar(gTrialRoad_CrumblingPillars,
                             ACTOR_EAST_CRUMBLING_PILLAR);
 }
-
-// Blocks the three cells through an object's cell on layers 0 and 2 (collision
-// code 255): the column above and below it in mode 0, the row beside it
-// otherwise.
-
-/// Blocks the three cells through an object's cell on layers 0 and 2 (collision
-/// code 255): the column above and below it in mode 0, the row beside it
-/// otherwise.
+/// Walls off the three cells through an object's cell on layers 0 and 2
+/// (CELL_BEHAVIOR_WALL): the column above and below it in mode 0, the row
+/// beside it otherwise.
 void TrialRoad_BlockLogCells(s32 id, s32 mode) {
   struct MapWork *map = Ram_HeapSlots->mapGrid;
   struct Actor *actor = Actor_GetById(id);
@@ -1186,7 +1218,7 @@ s32 TrialRoad_IsLogBlocked(s32 x, s32 z) {
   cells = (u8 *)map->layers[0].cells;
   cell = cells + ((x + (z << 7)) << 2);
   value = cell[2];
-  return IsZero(value ^ 0xff);
+  return IsZero(value ^ CELL_BEHAVIOR_WALL);
 }
 
 /// Pushes a log, which rolls on until something stops it.
@@ -1206,7 +1238,7 @@ void TrialRoad_PushLog(s32 id, s32 dx, s32 dz, s32 axis) {
   struct Vector3 unused;
 
   if ((dx != 0 && toX != x + dx) || (dz != 0 && toZ != z + dz)) {
-    gFieldWork->blockedSteps = 13;
+    gFieldWork->blockedSteps = FIELD_PUSH_FRAMES + 1;
     return;
   }
   for (n = 0; n <= 5;) {
@@ -1367,12 +1399,12 @@ void TrialRoad_StandOnBlock(void) {
 
 /// While Sand is cast, the leader moves on layer 2.
 void TrialRoad_StartSand(void) {
-  Actor_GetById(gMainRoutineWork.leaderActorId)->layer = 2;
+  Actor_GetById(gMainRoutineWork.leaderActorId)->layer = MAPGRID_LAYER_OVERHEAD;
 }
 
 /// As Sand fades, the leader moves on layer 0 again.
 void TrialRoad_EndSand(void) {
-  Actor_GetById(gMainRoutineWork.leaderActorId)->layer = 0;
+  Actor_GetById(gMainRoutineWork.leaderActorId)->layer = MAPGRID_LAYER_GROUND;
 }
 
 /// Whirlwind blows the bush off the vine and opens the way up it.
@@ -1387,7 +1419,6 @@ void TrialRoad_BlowBushOffVine(void) {
 
 #undef DEFINE_TRIAL_ROAD_OPEN_DOOR
 #undef DEFINE_TRIAL_ROAD_ON_FOOT
-// Trial Road's effect spawner and the sand stage's stream.
 
 extern const s32 *gFieldEffect_DurationScripts[];
 
@@ -1430,10 +1461,6 @@ void TrialRoad_DriftWithStream(void) {
                     velocity[0], velocity[1], velocity[2],
                     EFFECT_USE_UPDATE | 1, &options);
 }
-
-// Trial Road's rooms set up, the rival Moapa's race, the peak, the
-// fountains and crumbling pillars, the race's progress display and the tables.
-
 /// Lift raises the rock at the cave's mouth.
 void TrialRoad_LiftCaveRock(void) { GameFlag_Set(FLAG_CAVE_ROCK_LIFTED); }
 
@@ -1445,12 +1472,13 @@ void TrialRoad_CutBushes(void) {
 /// Cyclone cuts the bushes, and the Mad Plant hiding in them attacks.
 void TrialRoad_CutMadPlantBushes(void) {
   Cyclone_CopyTouchedCells_(68, 6, 1, 21, 13, 64, 64);
-  if (!Event_GetFlag(FLAG_TRIAL_ROAD_MAD_PLANT_BEATEN)) {
-    Import_MadPlantLeapAtLeader(249, 72, 152);
+  if (!Event_GetFlag(FLAG_MAD_PLANT(MAD_PLANT_TRIAL_ROAD))) {
+    Import_MadPlantLeapAtLeader(SPRITE_MAD_PLANT, 72, 152);
     gMainRoutineWork.pendingDjinni =
-        IF_FLAG_SET(FLAG_TRIAL_ROAD_MAD_PLANT_BEATEN);
+        IF_FLAG_SET(FLAG_MAD_PLANT(MAD_PLANT_TRIAL_ROAD));
     Battle_SetType(BATTLE_TYPE_NO_ESCAPE);
-    Field_RequestBattleFromEncounterTable(106, 4);
+    Field_RequestBattleFromEncounterTable(ENCOUNTER_TABLE_MAD_PLANTS,
+                                          MAD_PLANT_TRIAL_ROAD);
   }
 }
 
@@ -1509,7 +1537,7 @@ void TrialRoad_ChallengeMoapa(void) {
                                   TRIAL_ROAD_SUMMIT_AFTER_WIN);
   Event_SetDefeatDestination(SCENE_TRIAL_ROAD_SUMMIT,
                              TRIAL_ROAD_SUMMIT_AFTER_DEFEAT);
-  Field_RequestBattleFromEncounterTable(ACTOR_WEST_GUARD, 4 - count);
+  Field_RequestBattleFromEncounterTable(ENCOUNTER_TABLE_MOAPA, 4 - count);
 }
 
 /// When the object stands in column 8, sets FLAG_TRIAL_ROAD_PEAK_PILLAR_PLACED,
@@ -1584,19 +1612,19 @@ void TrialRoad_SetUpTorchStage(void) {
   if (!Event_GetFlag(FLAG_SCENE_TEMP_14))
     Actor_SetAnimation(ACTOR_PILLAR_C, 5);
   else
-    TrialRoad_SetPillarTopLift(ACTOR_PILLAR_C, -16);
+    TrialRoad_SetPillarTopLift(ACTOR_PILLAR_C, -PILLAR_HEIGHT);
   if (!Event_GetFlag(FLAG_SCENE_TEMP_15))
     Actor_SetAnimation(ACTOR_PILLAR_D, 5);
   else
-    TrialRoad_SetPillarTopLift(ACTOR_PILLAR_D, -16);
+    TrialRoad_SetPillarTopLift(ACTOR_PILLAR_D, -PILLAR_HEIGHT);
   if (!Event_GetFlag(FLAG_SCENE_TEMP_16))
     Actor_SetAnimation(ACTOR_PILLAR_E, 5);
   else
-    TrialRoad_SetPillarTopLift(ACTOR_PILLAR_E, -16);
+    TrialRoad_SetPillarTopLift(ACTOR_PILLAR_E, -PILLAR_HEIGHT);
   if (!Event_GetFlag(FLAG_SCENE_TEMP_17))
     Actor_SetAnimation(ACTOR_PILLAR_F, 5);
   else
-    TrialRoad_SetPillarTopLift(ACTOR_PILLAR_F, -16);
+    TrialRoad_SetPillarTopLift(ACTOR_PILLAR_F, -PILLAR_HEIGHT);
 }
 
 /// Readies the stage of pillars in bushes: each stays blocked until Whirlwind
@@ -1699,45 +1727,60 @@ struct TrialRoadFountain {
   struct Actor *spout;  ///< drawn over it
 };
 
+/// The fountains the fountain stage's work has room for.
+#define FOUNTAIN_COUNT 16
+/// The sprites the fountains' columns may queue in a frame.
+#define FOUNTAIN_SPRITE_COUNT 80
+
 /// The fountain stage's work, kept in the inventory snapshot's spare room.
 struct TrialRoadFountains {
   s16 vramEntry;
   s16 shape; ///< the first of the shape grid's values for the fountains
-  struct TrialRoadFountain fountains[16];
+  struct TrialRoadFountain fountains[FOUNTAIN_COUNT];
   u32 *sprites;
 };
 
 #define TRIAL_ROAD_FOUNTAINS                                                   \
-  ((struct TrialRoadFountains *)(gInventorySnapshot + 0x188))
+  ((struct TrialRoadFountains *)(gInventorySnapshot + INVENTORY_SNAPSHOT_SPARE))
 
 struct TrialRoadFountain *TrialRoad_AddFountain(s32 slot, s32 id, s32 timer,
                                                 s32 low, s32 high);
 
-/// Readies the fountain stage: its five spouts rise and fall together, the
-/// northern three 64 pixels and the southern two 32; each of the northern three
-/// stays hidden until it has been uncovered, and then opens its cell; the block
-/// on pillar A gets its top.
+/// How far the fountain stage's northern three fountains rise, and its southern
+/// two.
+#define NORTH_FOUNTAIN_HEIGHT 64
+#define SOUTH_FOUNTAIN_HEIGHT 32
+
+/// Readies the fountain stage: its five spouts rise and fall together; each of
+/// the northern three stays hidden until it has been uncovered, and then opens
+/// its cell; the leader wades in the risen water as in a room with a second
+/// level; the block on pillar A gets its top.
 void TrialRoad_SetUpFountainStage(void) {
   struct TrialRoadFountain *fountain;
 
   TrialRoad_StartFountains(0, FOUNTAIN_PERIOD);
-  fountain = TrialRoad_AddFountain(0, ACTOR_WEST_SPOUT, 0, 0, 64);
+  fountain =
+      TrialRoad_AddFountain(0, ACTOR_WEST_SPOUT, 0, 0, NORTH_FOUNTAIN_HEIGHT);
   fountain->period = FOUNTAIN_PERIOD;
   fountain->riseAt = FOUNTAIN_RISE_AT;
   fountain->fallAt = FOUNTAIN_FALL_AT;
-  fountain = TrialRoad_AddFountain(1, ACTOR_MIDDLE_SPOUT, 0, 0, 64);
+  fountain =
+      TrialRoad_AddFountain(1, ACTOR_MIDDLE_SPOUT, 0, 0, NORTH_FOUNTAIN_HEIGHT);
   fountain->period = FOUNTAIN_PERIOD;
   fountain->riseAt = FOUNTAIN_RISE_AT;
   fountain->fallAt = FOUNTAIN_FALL_AT;
-  fountain = TrialRoad_AddFountain(2, ACTOR_EAST_SPOUT, 0, 0, 64);
+  fountain =
+      TrialRoad_AddFountain(2, ACTOR_EAST_SPOUT, 0, 0, NORTH_FOUNTAIN_HEIGHT);
   fountain->period = FOUNTAIN_PERIOD;
   fountain->riseAt = FOUNTAIN_RISE_AT;
   fountain->fallAt = FOUNTAIN_FALL_AT;
-  fountain = TrialRoad_AddFountain(3, ACTOR_SOUTHWEST_SPOUT, 0, 0, 32);
+  fountain = TrialRoad_AddFountain(3, ACTOR_SOUTHWEST_SPOUT, 0, 0,
+                                   SOUTH_FOUNTAIN_HEIGHT);
   fountain->period = FOUNTAIN_PERIOD;
   fountain->riseAt = FOUNTAIN_RISE_AT;
   fountain->fallAt = FOUNTAIN_FALL_AT;
-  fountain = TrialRoad_AddFountain(4, ACTOR_SOUTHEAST_SPOUT, 0, 0, 32);
+  fountain = TrialRoad_AddFountain(4, ACTOR_SOUTHEAST_SPOUT, 0, 0,
+                                   SOUTH_FOUNTAIN_HEIGHT);
   fountain->period = FOUNTAIN_PERIOD;
   fountain->riseAt = FOUNTAIN_RISE_AT;
   fountain->fallAt = FOUNTAIN_FALL_AT;
@@ -1753,7 +1796,7 @@ void TrialRoad_SetUpFountainStage(void) {
     Actor_SetPosition(ACTOR_EAST_SPOUT, 0, 0);
   else
     TrialRoad_OpenSpoutCell(ACTOR_EAST_SPOUT);
-  ((struct MapGroundEffectsView *)Ram_HeapSlots->mapGrid)->middleBits = 1;
+  Map_SetUpperLevelWading(Ram_HeapSlots->mapGrid);
   TrialRoad_AddPillarTop(ACTOR_PILLAR_A);
   TrialRoad_BlockCellUnder(ACTOR_PILLAR_A);
 }
@@ -1772,60 +1815,62 @@ void TrialRoad_SetUpSandStage(void) {
 /// Does nothing: the summit's cave needs no setting up.
 void TrialRoad_SetUpCave(void) {}
 
-/// Gasp keeps away from the leader until he is cornered.
+/// Gasp keeps across the spot at (296, 248) from the leader; once the leader
+/// stands on it, Gasp cries and hops away to his own spot, there to be talked
+/// to.
 void TrialRoad_GaspFlees(void) {
-  struct Actor *partner = Actor_GetById(ACTOR_GASP);
+  struct Actor *gasp = Actor_GetById(ACTOR_GASP);
   struct Actor *leader = Actor_GetById(gMainRoutineWork.leaderActorId);
   s32 dx;
   s32 dz;
-  s32 near;
-  s32 far;
+  s32 toGasp;
+  s32 toSpot;
   FIXED y;
 
-  if (Event_GetFlag(FLAG_SCENE_TEMP_88))
+  if (Event_GetFlag(FLAG_GASP_FLED))
     return;
-  dx = FIXEDtoINT(leader->x.fixed - partner->x.fixed);
-  dz = FIXEDtoINT(leader->z.fixed - partner->z.fixed);
-  near = dx * dx + dz * dz;
+  dx = FIXEDtoINT(leader->x.fixed - gasp->x.fixed);
+  dz = FIXEDtoINT(leader->z.fixed - gasp->z.fixed);
+  toGasp = dx * dx + dz * dz;
   dx = (FIXEDtoINT(leader->x.fixed)) - 296;
   dz = (FIXEDtoINT(leader->z.fixed)) - 248;
-  far = dx * dx + dz * dz;
-  if (far <= 6400 || near <= 2304)
-    Actor_SetMoveTarget(partner, toFIXED(296 - dx), partner->y.fixed,
+  toSpot = dx * dx + dz * dz;
+  if (toSpot <= 80 * 80 || toGasp <= 48 * 48)
+    Actor_SetMoveTarget(gasp, toFIXED(296 - dx), gasp->y.fixed,
                         toFIXED(248 - dz));
-  if (far > 15)
+  if (toSpot >= 4 * 4)
     return;
   Event_PlaySound(SE_ENEMY_CRY);
   Event_PlaySound(SE_DJINNI_FLEES);
-  partner->speedLimit = toFIXED(2);
-  partner->acceleration = toFIXED(2);
-  partner->motionFlags = ACTOR_FALLS;
-  partner->groundHeight = 0;
-  partner->collisionFlags = 1;
-  partner->velocityY = toFIXED(10);
+  gasp->speedLimit = toFIXED(2);
+  gasp->acceleration = toFIXED(2);
+  gasp->motionFlags = ACTOR_FALLS;
+  gasp->groundHeight = 0;
+  gasp->collisionFlags = ACTOR_SOLID;
+  gasp->velocityY = toFIXED(10);
   Actor_SetScript(ACTOR_GASP, gTrialRoad_GaspHopScript);
-  y = partner->y.fixed;
-  Actor_SetMoveTarget(partner, toFIXED(344), y, toFIXED(264));
-  Event_SetFlag(FLAG_SCENE_TEMP_88);
+  y = gasp->y.fixed;
+  Actor_SetMoveTarget(gasp, toFIXED(344), y, toFIXED(264));
+  Event_SetFlag(FLAG_GASP_FLED);
 }
 
 /// Whether the palette cycle runs; the frame it has reached.
 extern s32 gTrialRoad_PaletteCycleRunning;
 
-/// Unless Gasp is caught, readies him: before FLAG_SCENE_TEMP_88 he hovers 8.5
-/// pixels up with motion 5, after it he stands with motion 3; then schedules
-/// TrialRoad_GaspFlees.
+/// Unless Gasp is caught, readies him: until he first flees he floats 8.5
+/// pixels up, after it he stands on the ground; then he keeps away from the
+/// leader each frame (TrialRoad_GaspFlees).
 void TrialRoad_SetUpPoolRoom(void) {
   if (!Event_GetFlag(FLAG_DJINNI(DJINNI_GASP))) {
     struct Actor *actor = Actor_GetById(ACTOR_GASP);
-    s32 started = Event_GetFlag(FLAG_SCENE_TEMP_88);
+    s32 started = Event_GetFlag(FLAG_GASP_FLED);
     u8 *flags = &actor->motionFlags;
 
     if (!started) {
-      *flags = 5;
+      *flags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FLOATS;
       actor->y.fixed += toFIXED(17) / 2;
     } else {
-      *flags = 3;
+      *flags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
       actor->y.fixed = 0;
     }
     Task_Add(TrialRoad_GaspFlees, TASK_PASS_FRAME);
@@ -1850,7 +1895,7 @@ void PaletteCycle_StepAt(void) {
     struct FieldWork *work = Ram_HeapSlots->fieldWork;
     s16 *state = &work->psynergy;
 
-    if (*state != 0 && (*state & 0x3ff) != ABILITY_HOVER)
+    if (*state != 0 && ABILITY_ID(*state) != ABILITY_HOVER)
       return;
     if (work->revealActive != 0)
       return;
@@ -1912,7 +1957,8 @@ void TrialRoad_SetUpPeak(void) {
     else
       TrialRoad_PlaceMoapaAtPeak();
   }
-  Actor_GetById(gMainRoutineWork.leaderActorId)->priorityFlags |= 64;
+  Actor_GetById(gMainRoutineWork.leaderActorId)->priorityFlags |=
+      ACTOR_PRIORITY_WALKS_ON_PLATFORMS;
   TrialRoad_StartPaletteCycle(1);
   TrialRoad_AddPillarTop(ACTOR_PEAK_PILLAR);
   if (Event_GetFlag(FLAG_TRIAL_ROAD_PEAK_PILLAR_PLACED))
@@ -1920,7 +1966,6 @@ void TrialRoad_SetUpPeak(void) {
 }
 
 /// Each stage pattern's set-up, by the pattern's low three bits.
-
 extern void (*gTrialRoad_StageSetUps[])(void);
 
 s32 Scene_Initialize(void) {
@@ -1933,7 +1978,8 @@ s32 Scene_Initialize(void) {
   if (scene == SCENE_TRIAL_ROAD_STAGES) {
     if (entrance <= 7) {
       Event_SetFlag(FLAG_RETREAT_BLOCKED);
-      Actor_GetById(gMainRoutineWork.leaderActorId)->priorityFlags |= 64;
+      Actor_GetById(gMainRoutineWork.leaderActorId)->priorityFlags |=
+          ACTOR_PRIORITY_WALKS_ON_PLATFORMS;
       Value0((s32 (*)())gTrialRoad_StageSetUps[pattern & 7]);
     } else if (entrance == TRIAL_ROAD_RULES_COURSE) {
       TrialRoad_ShowTraps();
@@ -2077,7 +2123,7 @@ void TrialRoad_StartRival(s32 mirrored);
 /// cells and terrain from that column on, and its position from the view.
 #define SET_LAYER(column, x)                                                   \
   words = (s32 *)layer;                                                        \
-  words[2] = (column) << 20;                                                   \
+  words[2] = FIELD_CELL_ORIGIN(column);                                        \
   words[3] = row;                                                              \
   x = (column);                                                                \
   layer->cells = (struct MapCell *)Ram_MapCellBuffer + x;                      \
@@ -2102,7 +2148,7 @@ s32 Scene_PrepareMap(void) {
     if ((u32)(entrance - TRIAL_ROAD_FROM_VILLAGE_LEFT) <= 1) {
       if (!GameFlag_Get(FLAG_AREA_TEMP_80)) {
         unit = Unit_Get(gMainRoutineWork.leaderActorId);
-        Iwram_ClearWordsEntry(state, 32);
+        Iwram_ClearWordsEntry(state, sizeof(*state));
         value = 0;
         for (n = 0; n < UNIT_NAME_SIZE - 1; n++)
           value += unit[n];
@@ -2122,7 +2168,7 @@ s32 Scene_PrepareMap(void) {
     } else if ((u32)(entrance - TRIAL_ROAD_FROM_SUMMIT_LEFT) <= 1) {
       if (!GameFlag_Get(FLAG_AREA_TEMP_80)) {
         unit = Unit_Get(gMainRoutineWork.leaderActorId);
-        Iwram_ClearWordsEntry(state, 32);
+        Iwram_ClearWordsEntry(state, sizeof(*state));
         value = 0;
         for (n = 0; n < UNIT_NAME_SIZE - 1; n++)
           value += unit[n];
@@ -2150,7 +2196,7 @@ s32 Scene_PrepareMap(void) {
       Event_SetDestination(SCENE_TRIAL_ROAD_STAGES, n);
     } else if (entrance == TRIAL_ROAD_RULES) {
       unit = Unit_Get(gMainRoutineWork.leaderActorId);
-      Iwram_ClearWordsEntry(state, 32);
+      Iwram_ClearWordsEntry(state, sizeof(*state));
       value = 0;
       for (n = 0; n < UNIT_NAME_SIZE - 1; n++)
         value += unit[n];
@@ -2196,7 +2242,7 @@ s32 Scene_PrepareMap(void) {
         Map_CopyRawCellsRect(px + 84, row, 13, 21, x2 + 1, 13);
         for (i = 0; i <= 9; i++) {
           if (gTrialRoad_DemoSceneryStages[i] != value)
-            Actor_SetPosition(i + 64, 0, 0);
+            Actor_SetPosition(i + FIELD_TREASURE_ACTOR, 0, 0);
         }
         MapGrid_CenterOnFollowedPoint();
       } else {
@@ -2248,7 +2294,7 @@ s32 Scene_PrepareMap(void) {
         Map_CopyRawCellsRect(px + 84, row, 13, 21, 78, destinationY);
         for (i = 0; i <= 9; i++) {
           if (gTrialRoad_SceneryStages[i] != value)
-            Actor_SetPosition(i + 64, 0, 0);
+            Actor_SetPosition(i + FIELD_TREASURE_ACTOR, 0, 0);
         }
         MapGrid_CenterOnFollowedPoint();
         leader = Actor_GetById(gMainRoutineWork.leaderActorId);
@@ -2291,12 +2337,6 @@ s32 Scene_PrepareMap(void) {
   }
   return 0;
 }
-
-// Deals the Trial Road's stage order from a seed: shuffles 0 to 7 into the
-// eight slots at the start of the stage state, again until both the even and
-// the odd slots hold at least one of the four values in gTrialRoad_KeyStages;
-// the random state is restored after.
-
 extern s8 gTrialRoad_KeyStages[];
 
 /// Deals the Trial Road's stage order from a seed: shuffles 0 to 7 into the
@@ -2371,8 +2411,8 @@ s32 TrialRoad_MirrorOffset(s32 x) {
 /// An angle on the mirrored road, turned round when it is.
 s32 TrialRoad_MirrorAngle(s32 angle) {
   if (TrialRoad_IsMirrored())
-    return (DEGtoANG(180) - angle) & 0xffff;
-  return angle & 0xffff;
+    return (DEGtoANG(180) - angle) & TRIG_ANGLE_MASK;
+  return angle & TRIG_ANGLE_MASK;
 }
 
 /// Places an actor at a pixel position and facing, mirrored when the leader
@@ -2414,13 +2454,13 @@ void TrialRoad_ReachPeakFirst(void) {
   Actor_WalkTo(ACTOR_JENNA, TrialRoad_MirrorCellX(27), 248);
   Actor_WalkTo(ACTOR_SHEBA, TrialRoad_MirrorCellX(27), 280);
   Actor_WaitForMoveById(ACTOR_FELIX);
-  Actor_FaceDirection(ACTOR_FELIX, TrialRoad_MirrorAngle(0), 0);
+  Actor_FaceDirection(ACTOR_FELIX, TrialRoad_MirrorAngle(FACING_EAST), 0);
   Actor_WaitForMoveById(ACTOR_PIERS);
-  Actor_FaceDirection(ACTOR_PIERS, TrialRoad_MirrorAngle(0), 0);
+  Actor_FaceDirection(ACTOR_PIERS, TrialRoad_MirrorAngle(FACING_EAST), 0);
   Actor_WaitForMoveById(ACTOR_JENNA);
-  Actor_FaceDirection(ACTOR_JENNA, TrialRoad_MirrorAngle(0), 0);
+  Actor_FaceDirection(ACTOR_JENNA, TrialRoad_MirrorAngle(FACING_EAST), 0);
   Actor_WaitForMoveById(ACTOR_SHEBA);
-  Actor_FaceDirection(ACTOR_SHEBA, TrialRoad_MirrorAngle(0), 0);
+  Actor_FaceDirection(ACTOR_SHEBA, TrialRoad_MirrorAngle(FACING_EAST), 0);
   FieldCamera_WaitForArrival();
   wait(20);
   Event_PlaySound(SE_ITEM_BREAK);
@@ -2458,8 +2498,8 @@ void TrialRoad_ReachPeakFirst(void) {
                       toFIXED(264));
   FieldActor_WaitForMove(actor);
   wait(6);
-  Actor_MoveToObject(ACTOR_WEST_GUARD, 8);
-  Actor_MoveToObject(ACTOR_EAST_GUARD, 8);
+  Actor_MoveToObject(ACTOR_WEST_GUARD, ACTOR_MOAPA);
+  Actor_MoveToObject(ACTOR_EAST_GUARD, ACTOR_MOAPA);
   Actor_SetSpeed(ACTOR_MOAPA, 1);
   Actor_SetSpeed(ACTOR_WEST_GUARD, 1);
   Actor_SetSpeed(ACTOR_EAST_GUARD, 1);
@@ -2526,13 +2566,13 @@ void TrialRoad_ReachPeakSecond(void) {
   Actor_WalkTo(ACTOR_JENNA, TrialRoad_MirrorCellX(27), 248);
   Actor_WalkTo(ACTOR_SHEBA, TrialRoad_MirrorCellX(27), 280);
   Actor_WaitForMoveById(ACTOR_FELIX);
-  Actor_FaceDirection(ACTOR_FELIX, TrialRoad_MirrorAngle(0), 0);
+  Actor_FaceDirection(ACTOR_FELIX, TrialRoad_MirrorAngle(FACING_EAST), 0);
   Actor_WaitForMoveById(ACTOR_PIERS);
-  Actor_FaceDirection(ACTOR_PIERS, TrialRoad_MirrorAngle(0), 0);
+  Actor_FaceDirection(ACTOR_PIERS, TrialRoad_MirrorAngle(FACING_EAST), 0);
   Actor_WaitForMoveById(ACTOR_JENNA);
-  Actor_FaceDirection(ACTOR_JENNA, TrialRoad_MirrorAngle(0), 0);
+  Actor_FaceDirection(ACTOR_JENNA, TrialRoad_MirrorAngle(FACING_EAST), 0);
   Actor_WaitForMoveById(ACTOR_SHEBA);
-  Actor_FaceDirection(ACTOR_SHEBA, TrialRoad_MirrorAngle(0), 0);
+  Actor_FaceDirection(ACTOR_SHEBA, TrialRoad_MirrorAngle(FACING_EAST), 0);
   FieldCamera_WaitForArrival();
   Event_SetMessageId((s32)MsgTrialRoadSlowArrival);
   FieldActor_ShowEmote(ACTOR_MOAPA, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 10);
@@ -2577,11 +2617,11 @@ void TrialRoad_BeatMoapa(void) {
   Event_Start();
   Event_ResolvePendingActions(0);
   FieldCamera_MoveTo(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0);
-  TrialRoad_PlaceActor(4, 248, 272, 0);
-  TrialRoad_PlaceActor(7, 224, 248, 0);
-  TrialRoad_PlaceActor(5, 232, 264, 0);
-  TrialRoad_PlaceActor(6, 224, 280, 0);
-  TrialRoad_PlaceActor(9, 248, 256, 0);
+  TrialRoad_PlaceActor(ACTOR_FELIX, 248, 272, FACING_EAST);
+  TrialRoad_PlaceActor(ACTOR_PIERS, 224, 248, FACING_EAST);
+  TrialRoad_PlaceActor(ACTOR_JENNA, 232, 264, FACING_EAST);
+  TrialRoad_PlaceActor(ACTOR_SHEBA, 224, 280, FACING_EAST);
+  TrialRoad_PlaceActor(ACTOR_KRADEN, 248, 256, FACING_EAST);
   TrialRoad_PlaceActor(ACTOR_MOAPA, 272, 264, FACING_SOUTH);
   TrialRoad_PlaceActor(ACTOR_WEST_GUARD, 288, 248, FACING_SOUTH);
   TrialRoad_PlaceActor(ACTOR_EAST_GUARD, 288, 280, FACING_SOUTH);
@@ -2639,19 +2679,19 @@ void TrialRoad_BeatMoapa(void) {
   FieldActor_ShowEmote(ACTOR_MOAPA, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 10);
   // "After many years, the vow that Hoabna made to Yegelos has at last..."
   Event_ShowMessage(ACTOR_MOAPA, 0);
-  Actor_FaceDirectionAndWait(ACTOR_MOAPA, TrialRoad_MirrorAngle(0));
-  Actor_FaceActor(ACTOR_WEST_GUARD, 8, 0);
-  Actor_FaceActor(ACTOR_EAST_GUARD, 8, 0);
+  Actor_FaceDirectionAndWait(ACTOR_MOAPA, TrialRoad_MirrorAngle(FACING_EAST));
+  Actor_FaceActor(ACTOR_WEST_GUARD, ACTOR_MOAPA, 0);
+  Actor_FaceActor(ACTOR_EAST_GUARD, ACTOR_MOAPA, 0);
   Actor_SetAnimationAndWait(ACTOR_MOAPA, 3);
   // "I'm tired now. I'll be back in the Shaman Village resting."
   Event_ShowMessage(ACTOR_MOAPA, 0);
   Actor_SetAnimation(ACTOR_WEST_GUARD, 3);
   wait(3);
   Actor_SetAnimationAndWait(ACTOR_EAST_GUARD, 3);
-  Actor_FaceActor(ACTOR_FELIX, 9, 0);
-  Actor_FaceActor(ACTOR_PIERS, 9, 0);
-  Actor_FaceActor(ACTOR_JENNA, 9, 0);
-  Actor_FaceActor(ACTOR_SHEBA, 9, 0);
+  Actor_FaceActor(ACTOR_FELIX, ACTOR_KRADEN, 0);
+  Actor_FaceActor(ACTOR_PIERS, ACTOR_KRADEN, 0);
+  Actor_FaceActor(ACTOR_JENNA, ACTOR_KRADEN, 0);
+  Actor_FaceActor(ACTOR_SHEBA, ACTOR_KRADEN, 0);
   // "I'm sure you must be exhausted as well. Let's go back to the village..."
   Event_ShowMessage(ACTOR_KRADEN, 0);
   Actor_SetAnimation(ACTOR_FELIX, ANIM_NOD);
@@ -2671,14 +2711,14 @@ void TrialRoad_LoseToMoapa(void) {
   TrialRoad_PlaceActor(ACTOR_MOAPA, 264, 264, FACING_WEST);
   TrialRoad_PlaceActor(ACTOR_WEST_GUARD, 280, 248, FACING_WEST);
   TrialRoad_PlaceActor(ACTOR_EAST_GUARD, 280, 280, FACING_WEST);
-  TrialRoad_PlaceActor(4, 240, 276, 0);
-  TrialRoad_PlaceActor(7, 216, 254, 0);
-  TrialRoad_PlaceActor(5, 232, 244, 0);
-  TrialRoad_PlaceActor(6, 224, 296, 0);
+  TrialRoad_PlaceActor(ACTOR_FELIX, 240, 276, FACING_EAST);
+  TrialRoad_PlaceActor(ACTOR_PIERS, 216, 254, FACING_EAST);
+  TrialRoad_PlaceActor(ACTOR_JENNA, 232, 244, FACING_EAST);
+  TrialRoad_PlaceActor(ACTOR_SHEBA, 224, 296, FACING_EAST);
   Actor_SetAnimation(ACTOR_FELIX, 38);
-  Actor_SetAnimation(ACTOR_JENNA, 19);
-  Actor_SetAnimation(ACTOR_SHEBA, 19);
-  Actor_SetAnimation(ACTOR_PIERS, 19);
+  Actor_SetAnimation(ACTOR_JENNA, ANIM_COLLAPSE);
+  Actor_SetAnimation(ACTOR_SHEBA, ANIM_COLLAPSE);
+  Actor_SetAnimation(ACTOR_PIERS, ANIM_COLLAPSE);
   FieldActor_SetSpriteRotationById(ACTOR_PIERS, DEGtoANG(90));
   Actor_SetSpriteFlags(Actor_GetById(ACTOR_FELIX), 0);
   Actor_SetSpriteFlags(Actor_GetById(ACTOR_JENNA), 0);
@@ -2699,9 +2739,6 @@ void TrialRoad_LoseToMoapa(void) {
   Actor_StartRepeatedMotion(ACTOR_PIERS, 2);
   Event_Wait(15);
 }
-
-// The byte at 0x5a of an actor, as the field its bit 0 is set through.
-
 extern u32 gTrialRoad_LeftKnightLeavesScript[];
 
 /// The camera tours the road while Moapa explains its traps and its four doors.
@@ -2712,7 +2749,7 @@ void TrialRoad_ShowTraps(void) {
   Event_ResolvePendingActions(0);
   Actor_SetPosition(gMainRoutineWork.leaderActorId, 0, 1016);
   Actor_SetPosition(ACTOR_MOAPA, 1016, 1016);
-  for (i = 9; i < 80; i++) {
+  for (i = ACTOR_LEFT_INNER_CHEST; i < FIELD_ACTOR_COUNT; i++) {
     struct Actor *actor = Actor_GetById(i);
 
     if (actor->x.fixed != 0)
@@ -2850,12 +2887,12 @@ void TrialRoad_ShowTraps(void) {
   Import_EventSetExitRequest(10);
 }
 
-/// Updates the sixteen movers at TRIAL_ROAD_FOUNTAINS each frame: at its
-/// upAt and downAt phases a mover calls Sound_Play (206 or 395) and moves by 4
-/// or -8 a frame until it reaches its high or low offset; its phase counts
-/// round its period unless flag 260 is set. Each mover's shape, collision
-/// height and cell attribute byte follow its actor and offset, and its marker
-/// actor is placed over it, bobbing on a sine while the offset is not 0.
+/// Moves the fountains each frame: at its rise phase a fountain starts up 4
+/// pixels a frame, at its fall phase down 8, until it reaches its high or low
+/// height; its phase runs round its period while the field handles no request.
+/// Its cell's collision height follows it; while it is up the cell is water to
+/// wade in, and while it also stands still a gap to jump onto; its spout bobs
+/// on top of it.
 void TrialRoad_UpdateFountains(void) {
   struct TrialRoadFountains *work = TRIAL_ROAD_FOUNTAINS;
   struct TrialRoadFountain *mover = work->fountains;
@@ -2872,7 +2909,7 @@ void TrialRoad_UpdateFountains(void) {
 
   i = 0;
   collision = (s32 *)Ram_MapCollision + shape;
-  for (; i <= 15; collision++, i++, mover++) {
+  for (; i < FOUNTAIN_COUNT; collision++, i++, mover++) {
     if (mover->id == 0)
       continue;
     actor = Actor_GetById(mover->id);
@@ -2910,12 +2947,12 @@ void TrialRoad_UpdateFountains(void) {
     if (mover->speed != 0)
       attributes[3] = 0;
     else {
-      s32 bits = 128;
+      s32 bits = MAP_CELL_JUMP;
       bits |= attributes[3];
       attributes[3] = bits;
     }
     if (mover->height != 0) {
-      s32 bits = 16;
+      s32 bits = MAP_CELL_WATER;
       bits |= attributes[3];
       attributes[3] = bits;
     } else
@@ -2936,12 +2973,6 @@ void TrialRoad_UpdateFountains(void) {
   }
 }
 #undef SET_LAYER
-
-// Trial Road's movers' sprites, the setup of its gauge, a rising platform's
-// entry, the trap table's setup, MagmaRockInside_CheckCrumblingStep, the
-// placing of actors 8, 9 and 10, TrialRoad_StepOnTrap and a second copy of
-// Effect_AdvanceMotionAtLeaderPriority, in ROM order.
-
 /// Queues the Trial Road movers' sprites.
 void TrialRoad_DrawFountains(void) {
   struct TrialRoadFountains *base = TRIAL_ROAD_FOUNTAINS;
@@ -2977,7 +3008,7 @@ void TrialRoad_DrawFountains(void) {
   viewZ = view[1] & FIELD_PIXEL_MASK;
   viewY = map->origin[1];
 
-  for (i = 0; i < 16; i++, mover++) {
+  for (i = 0; i < FOUNTAIN_COUNT; i++, mover++) {
     if (mover->id == 0 || mover->height == 0)
       continue;
     actor = Actor_GetById(mover->id);
@@ -2985,7 +3016,7 @@ void TrialRoad_DrawFountains(void) {
     lift = 0;
     if (lift < mover->height) {
       do {
-        if (count > 79)
+        if (count >= FOUNTAIN_SPRITE_COUNT)
           continue;
         x = actor->x.fixed - viewX;
         height = actor->y.fixed + toFIXED(lift) - viewY;
@@ -3007,7 +3038,7 @@ void TrialRoad_DrawFountains(void) {
         count++;
       } while ((lift += 16) < mover->height);
     }
-    if (count > 79)
+    if (count >= FOUNTAIN_SPRITE_COUNT)
       continue;
     x = actor->x.fixed - viewX;
     height = actor->y.fixed + toFIXED(mover->height) - viewY;
@@ -3046,11 +3077,13 @@ void TrialRoad_StartFountains(s32 unused, s32 shape) {
   work->vramEntry = VramCache_FindFreeEntry();
   VramCache_Load(work->vramEntry, 2048, buffer);
   Heap_Release(buffer);
-  work->sprites = Heap_AllocEwram(960);
+  work->sprites =
+      Heap_AllocEwram(FOUNTAIN_SPRITE_COUNT * sizeof(struct TrialRoadSprite));
   work->shape = shape;
   Task_Add(TrialRoad_UpdateFountains, TASK_PASS_FRAME + 13);
   Task_Add(TrialRoad_DrawFountains, TASK_PASS_FRAME);
-  Actor_GetById(Party_GetLeaderActor())->priorityFlags |= 0x40;
+  Actor_GetById(Party_GetLeaderActor())->priorityFlags |=
+      ACTOR_PRIORITY_WALKS_ON_PLATFORMS;
 }
 
 /// Sets up one fountain on its spout actor, with its timer and height.
@@ -3086,24 +3119,16 @@ struct TrialRoadFountain *TrialRoad_AddFountain(s32 slot, s32 id, s32 timer,
     fountain->unusedAfterSpeed = 0;
     actor->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
   }
-  spout = ((struct Actor *)Import_ActorCreate(0x8000, actor->x.fixed,
-                                              actor->y.fixed, actor->z.fixed));
+  spout = ((struct Actor *)Import_ActorCreate(ACTOR_CREATE_NO_SPRITE << 12,
+                                              actor->x.fixed, actor->y.fixed,
+                                              actor->z.fixed));
   spout->collisionFlags = 0;
   spout->motionFlags = 0;
-  spout->priorityFlags |= 128;
+  spout->priorityFlags |= ACTOR_PRIORITY_PLATFORM;
   fountain->spout = spout;
   return fountain;
 }
 
-// The trap table's setup: a trap whose second flag is set is put away; any
-// other marks its cell, writes a shape for its height into the shape grid, and
-// takes mode 0 when its first flag is set. Then the leader is lifted onto the
-// ground if it stands below it.
-
-// The trap table's setup: a trap whose second flag is set is put away; any
-// other marks its cell, writes a shape for its height into the shape grid, and
-// takes mode 0 when its first flag is set. Then the leader is lifted onto the
-// ground if it stands below it.
 #include "shared/pillar_restore_raised.h"
 
 #include "shared/traps_check.h"
@@ -3151,10 +3176,6 @@ void TrialRoad_CrumblePillar(const void *data, s32 id) {
 #include "shared/pillar_take_out_of_play.c"
 
 void Actor_MoveToObject(s32 id, s32 owner);
-// Places actors 8, 9 and 10, then walks an ACTOR_LIST_END-ended list of (actor,
-// flag) halfword pairs: flag + 1 set parks the actor at (0, 0); otherwise its
-// cell gets attributeB 128 and its shape-grid byte is rewritten, and flag set
-// makes it copy actor 9's visual attributes.
 #include "shared/pillar_restore.h"
 
 /// Moves the actor to the target's place and the target out of sight.
@@ -3299,7 +3320,7 @@ void Rubble_Scatter(s32 spread) {
       FIXED y = leader->y.fixed - ((Random_Below(14)) << 16);
 
       effect = (struct FieldEffect *)Import_ActorCreate(
-          SPRITE_DUST_CLOUD, (i << 17) + leader->x.fixed - toFIXED(8),
+          SPRITE_DUST_CLOUD, i * toFIXED(2) + leader->x.fixed - toFIXED(8),
           y - toFIXED(2), leader->z.fixed);
     }
     if (effect != 0) {
@@ -3313,8 +3334,8 @@ void Rubble_Scatter(s32 spread) {
       effect->sprite->priority = 1;
       if (spread != 0) {
         effect->velocity.x =
-            Iwram_MulFX(Trig_Cos(i << 13), FIXED_ONE * 12 / 10);
-        effect->velocity.z = Trig_Sin(i << 13);
+            Iwram_MulFX(Trig_Cos(i * (TRIG_TURN / 8)), FIXED_ONE * 12 / 10);
+        effect->velocity.z = Trig_Sin(i * (TRIG_TURN / 8));
       } else {
         effect->velocity.x = spread;
         effect->velocity.z = spread;
@@ -3351,9 +3372,9 @@ void MagmaRockInside_SpawnDustRing(void) {
       Actor_SetSpriteFlags(effect, 0);
       Actor_SelectAnimation(effect, 2);
       Actor_StartScript((struct Actor *)effect, gTrialRoad_DustScript);
-      effect->velocity.x = Trig_Cos(i << 12);
+      effect->velocity.x = Trig_Cos(i * (TRIG_TURN / 16));
       effect->velocity.y = 0;
-      effect->velocity.z = Trig_Sin(i << 12);
+      effect->velocity.z = Trig_Sin(i * (TRIG_TURN / 16));
       effect->velocity.x += effect->velocity.x >> 1;
       effect->velocity.x += ((Random16() * 3) << 14 >> 16) - (toFIXED(3) / 8);
       effect->velocity.z += ((Random16() * 3) << 13 >> 16) - (toFIXED(3) / 16);
@@ -3375,8 +3396,8 @@ void TrialRoad_SetActorCellShape(s32 level, s32 layer, s32 owner) {
                                   (struct MapCell *)Ram_MapCellBuffer);
   s32 value =
       MapGrid_GetTerrainKind(actor->layer, actor->x.fixed, actor->z.fixed);
-  s32 height =
-      Map_GetTerrainHeight(actor->layer, actor->x.fixed, actor->z.fixed) >> 19;
+  s32 height = CELL_HEIGHT_STEPS(
+      Map_GetTerrainHeight(actor->layer, actor->x.fixed, actor->z.fixed));
 
   height += level;
 
@@ -3399,8 +3420,8 @@ UNUSED void String_WriteU32AsHex(u8 *buf, u32 value) {
   *buf = 0;
   buf--;
   for (i = 0; i < 8; i++) {
-    *buf = digits[value & 15];
-    value >>= 4;
+    *buf = digits[value % 16];
+    value /= 16;
     buf--;
   }
 }
@@ -3423,9 +3444,6 @@ void TrialRoad_WaitForRival(void) {
     wait(1);
   }
 }
-
-// The Trial Road rival's per-frame update.
-
 /// The most the rival turns in a frame: a sixteenth of a turn.
 #define RIVAL_MAX_TURN (TRIG_TURN / 16)
 
@@ -3477,7 +3495,7 @@ void TrialRoad_MoveRival(void) {
     s32 angle, link, ok, partner;
     s16 st;
 
-    player = ((s32)GameFlag_GetByte(760)) ^ 1;
+    player = ((s32)GameFlag_GetByte(FLAG_SCENE_TEMP_F8)) ^ 1;
     signature = (s16 *)gLinkPeerSignatures[player];
     if (((gLinkStatus >> player) & 1) == 0)
       return;
@@ -3487,7 +3505,7 @@ void TrialRoad_MoveRival(void) {
     st = *signature++;
     link = st >> 8;
     ok = st & 0xff;
-    if (GameFlag_Get(dz = 529) && link != 0) {
+    if (GameFlag_Get(dz = FLAG_SCENE_TEMP_11) && link != 0) {
       state->mode = RIVAL_WAITING;
       Actor_SelectAnimation(rival, 1);
       if (work->originX < rival->x.fixed)
@@ -3575,7 +3593,7 @@ void TrialRoad_MoveRival(void) {
     work->path[state->point + 1] = z;
     if (!GameFlag_Get(FLAG_FIELD_HANDLING_REQUESTS))
       state->point += 2;
-    if (state->point == 7198) {
+    if (state->point == RIVAL_PATH_LENGTH - 2) {
       u16 next = state->point + 1;
 
       work->path[state->point] = 0;
@@ -3586,14 +3604,11 @@ void TrialRoad_MoveRival(void) {
     }
   }
 }
-
-// next object the overlay links, and the overlay's data.
-
 extern const u8 gTrialRoad_ProgressPicture[];
 
 /// The picture's buffer: 576 bytes of EWRAM, the size VramCache_Load copies.
 static inline void *TrialRoadLink_AllocPicture(void) {
-  return Heap_AllocEwram(576);
+  return Heap_AllocEwram(PROGRESS_PICTURE_BYTES);
 }
 
 #define MARKER(left, right, which, tileAdd)                                    \
@@ -3616,29 +3631,26 @@ static inline void *TrialRoadLink_AllocPicture(void) {
     originZ = &work->originZ;                                                  \
     lift = TrialRoad_GetStage(arg);                                            \
     y = (actor->z.fixed - *originZ) / toFIXED(16) + work->scrollY -            \
-        lift * 36 + 4;                                                         \
+        lift * PROGRESS_STAGE_SPACING + 4;                                     \
     /* Once-only: ends the block, so y + 4 is scheduled before x & 511. */     \
     do {                                                                       \
     } while (0);                                                               \
     x &= 511;                                                                  \
     y &= 255;                                                                  \
     *cursor++ = 0;                                                             \
-    y |= x << 16;                                                              \
+    y |= OBJ_X(x);                                                             \
     y |= markerSize;                                                           \
     *cursor++ = y;                                                             \
-    *cursor++ = (tile + (tileAdd)) | (OBJ_PALETTE(14) | OBJ_PRIORITY(1));      \
+    *cursor++ = (tile + (tileAdd)) |                                           \
+                (OBJ_PALETTE(PROGRESS_PALETTE) | OBJ_PRIORITY(1));             \
     Oam_AddSpriteAtDepth(entry++, OAM_DEPTH_FRONT);                            \
   } while (0)
 
-/// The Trial Road link display's scheduled callback, which
-/// TrialRoad_ShowProgress starts. Its fade state falls during events or while
-/// flag 262 is set and otherwise rises to 2 (unke0 holds it at 2); rising from
-/// 0 to 1 it loads the palette and picture again, and at 0 it frees its VRAM.
-/// Otherwise it queues two rows of sprites, each up to four pairs 36 pixels
-/// apart down from the scrolled offset, sliding in 6 pixels per fade step (the
-/// right row mirrored), and on frames 5 to 15 of every 16 a marker over each of
-/// the two watched actors, projected at 1/16 scale from their positions and the
-/// course side.
+/// Draws the race's progress each frame, once TrialRoad_ShowProgress starts
+/// it: the display slides in from both sides of the screen, and out while a
+/// menu or a Psynergy is open. Each side shows the road's stages one above the
+/// other, and on eleven frames of sixteen a marker shows where each party is:
+/// "1P" for the leader's, "2P" for Moapa's.
 void TrialRoad_DrawProgress(void) {
   struct TrialRoadLinkWork *work = Ram_HeapSlots->trialRoadLink;
   u32 *cursor = (u32 *)work;
@@ -3662,11 +3674,12 @@ void TrialRoad_DrawProgress(void) {
   } else if (work->fade <= 1) {
     if (++work->fade == 1) {
       void *buffer;
-      Dma_Set(gTrialRoad_ProgressPalette, (void *)&OBJ_PLTT_COLOR(14, 0),
+      Dma_Set(gTrialRoad_ProgressPalette,
+              (void *)&OBJ_PLTT_COLOR(PROGRESS_PALETTE, 0),
               DMA_COPY_HALFWORDS(16), REG_DMA3);
       buffer = TrialRoadLink_AllocPicture();
       Decompress_TaggedLz(gTrialRoad_ProgressPicture, buffer);
-      VramCache_Load(*vramEntry, 576, buffer);
+      VramCache_Load(*vramEntry, PROGRESS_PICTURE_BYTES, buffer);
       Heap_Release(buffer);
     }
   }
@@ -3689,14 +3702,16 @@ void TrialRoad_DrawProgress(void) {
     for (i = 0; i < 4 && y < 160; i++) {
       *cursor++ = 0;
       *cursor++ = y | OBJ_X(x) | flip | OBJ_SIZE_16X32;
-      *cursor++ = tile | (OBJ_PALETTE(14) | OBJ_PRIORITY(1));
+      *cursor++ = (tile + PROGRESS_TILE_STAGE) |
+                  (OBJ_PALETTE(PROGRESS_PALETTE) | OBJ_PRIORITY(1));
       Oam_AddSpriteAtDepth(entry++, OAM_DEPTH_FRONT);
       word = y + 32;
       *cursor++ = 0;
       *cursor++ = word | OBJ_X(x) | flip | OBJ_SIZE_16X8;
-      *cursor++ = (tile + 8) | (OBJ_PALETTE(14) | OBJ_PRIORITY(1));
+      *cursor++ = (tile + PROGRESS_TILE_STAGE_FOOT) |
+                  (OBJ_PALETTE(PROGRESS_PALETTE) | OBJ_PRIORITY(1));
       Oam_AddSpriteAtDepth(entry++, OAM_DEPTH_FRONT);
-      y += 36;
+      y += PROGRESS_STAGE_SPACING;
     }
   }
   if ((gFrameCount & 15) < 5)
@@ -3704,7 +3719,7 @@ void TrialRoad_DrawProgress(void) {
   actor = Actor_Lookup(work->leaderId);
   if (actor != NULL) {
     MARKER(+work->fade * 6 + work->scrollX - 19,
-           -work->fade * 6 - work->scrollX + 232, 0, 10);
+           -work->fade * 6 - work->scrollX + 232, 0, PROGRESS_TILE_1P);
   }
   actor = Actor_Lookup(work->rivalId);
   if (actor == NULL || actor->x.fixed == 0)
@@ -3714,7 +3729,7 @@ void TrialRoad_DrawProgress(void) {
     // it; the original does so, and a render of the course's far side would
     // show whether it is a slip.
     MARKER(+work->fade * 6 + work->scrollX + 189,
-           -work->fade * 6 + work->scrollX + 23, 1, 14);
+           -work->fade * 6 + work->scrollX + 23, 1, PROGRESS_TILE_2P);
   }
 }
 
@@ -3722,7 +3737,7 @@ void TrialRoad_DrawProgress(void) {
 void TrialRoad_ShowProgress(s32 leaderId, s32 rivalId) {
   struct TrialRoadLinkWork *work = HeapSlot_AllocEwram(
       HEAP_SLOT_TRIAL_ROAD_LINK, sizeof(struct TrialRoadLinkWork));
-  void *buffer = Heap_AllocEwram(576);
+  void *buffer = Heap_AllocEwram(PROGRESS_PICTURE_BYTES);
   s32 zero;
   s32 owner;
   s16 *fade;
@@ -3753,7 +3768,7 @@ void TrialRoad_ShowProgress(s32 leaderId, s32 rivalId) {
   *holdFade = zero;
   Decompress_TaggedLz(gTrialRoad_ProgressPicture, buffer);
   *vramEntry = VramCache_FindFreeEntry();
-  VramCache_Load(*vramEntry, 576, buffer);
+  VramCache_Load(*vramEntry, PROGRESS_PICTURE_BYTES, buffer);
   Task_Add(TrialRoad_DrawProgress, TASK_PASS_FRAME - 10);
   Heap_Release(buffer);
 }

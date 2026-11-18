@@ -49,8 +49,8 @@ s32 MapGrid_CheckCollision(struct Actor *actor, struct FieldPosition *position);
 #define FLAG_YAMPI_DESERT_CAVE_CHEST_ROOM_PILLAR_BURST FLAG_AREA_TEMP_00
 /// Set once Burst has broken the pillar in Crystal's room.
 #define FLAG_YAMPI_DESERT_CAVE_CRYSTAL_ROOM_PILLAR_BURST FLAG_AREA_TEMP_01
-/// Set once Scoop has dug up the treasure in Valukar's room.
-#define FLAG_YAMPI_DESERT_CAVE_TREASURE_DUG_UP FLAG_AREA_TEMP_02
+/// Set once Scoop has dug up the Mythril Silver in Valukar's room.
+#define FLAG_YAMPI_DESERT_CAVE_MYTHRIL_SILVER_DUG_UP FLAG_AREA_TEMP_02
 /// Set as Move leaves each pillar where it opens the way: Valukar's room's,
 /// and Crystal's room's west and east pillars.
 #define FLAG_YAMPI_DESERT_CAVE_GUARDIAN_PILLAR_MOVED FLAG_AREA_TEMP_03
@@ -119,9 +119,9 @@ enum YampiDesertCaveCrystalActorId {
   ACTOR_CRYSTAL
 };
 
-/// Valukar's room's hidden treasure, the first actor of its item table, as
-/// the desert's.
-enum { ACTOR_HIDDEN_TREASURE = 64 };
+/// The Mythril Silver buried in Valukar's room, its first scene item's
+/// treasure spot.
+enum { ACTOR_MYTHRIL_SILVER = FIELD_TREASURE_ACTOR };
 
 struct Actor;
 
@@ -315,7 +315,7 @@ struct Actor *YampiDesertCave_FindPushedLog(s32 *direction, s32 *slot,
   u32 i, k;
   s32 x, z, left, top, right, bottom;
 
-  *direction = leader->facing >> 12;
+  *direction = FACING_INDEX(leader->facing);
   i = ACTOR_FIRST_PLACED;
   entry = &work->actors[ACTOR_FIRST_PLACED];
   do {
@@ -324,9 +324,10 @@ struct Actor *YampiDesertCave_FindPushedLog(s32 *direction, s32 *slot,
       if (((struct Sprite *)actor->sprite)->entries[0]->animationId ==
           gYampiDesertCave_LogSprites[k]) {
         x = (leader->x.part[0].integer +
-             (gPushLeaderSteps[*direction] >> 16)) >>
+             PUSH_STEP_X(gPushLeaderSteps[*direction])) >>
             4;
-        z = (leader->z.part[0].integer + (s16)gPushLeaderSteps[*direction]) >>
+        z = (leader->z.part[0].integer +
+             PUSH_STEP_Z(gPushLeaderSteps[*direction])) >>
             4;
         left = (actor->x.part[0].integer +
                 gYampiDesertCave_LogFootprints[k * 4]) >>
@@ -358,7 +359,7 @@ struct Actor *YampiDesertCave_FindPushedLog(s32 *direction, s32 *slot,
     }
     entry++;
     i++;
-  } while (i < 64);
+  } while (i < FIELD_TREASURE_ACTOR);
   return NULL;
 }
 
@@ -390,8 +391,9 @@ void YampiDesertCave_PushLog(struct LogSlide slide) {
   s32 w, h;
   struct Actor *leader = Actor_GetById(gMainRoutineWork.leaderActorId);
   struct Actor *actor = Actor_GetById(slide.slot);
-  // Always 0: angle is a u16. Direction 0 of the table of steps.
-  s32 i = leader->facing >> 16;
+  // Always 0, a u16 facing shifted down 16: the log always takes animation 2,
+  // and the leader's step after the push, the table's first, comes to nothing.
+  s32 direction = leader->facing >> 16;
   s32 kind = slide.kind;
   s32 speed = leader->speedLimit;
   s32 acceleration = leader->acceleration;
@@ -415,15 +417,16 @@ void YampiDesertCave_PushLog(struct LogSlide slide) {
   PushedActor_FillGridAttributeRectangle(0, cell[0], cell[2], w, h,
                                          CELL_BEHAVIOR_NORMAL);
   Actor_SetSpeedAndAcceleration(gMainRoutineWork.leaderActorId, 0.5, 0.1);
-  Actor_SetAnimation(gMainRoutineWork.leaderActorId, 8);
+  Actor_SetAnimation(gMainRoutineWork.leaderActorId, ANIM_PUSH);
   wait(15);
+  // The leader follows the log half its way.
   Actor_SetDestinationOffset(gMainRoutineWork.leaderActorId,
-                             (slide.x - from[0]) >> 17,
-                             (slide.z - from[2]) >> 17);
+                             FIXEDtoINT(slide.x - from[0]) >> 1,
+                             FIXEDtoINT(slide.z - from[2]) >> 1);
   Actor_GetById(gMainRoutineWork.leaderActorId)->update =
       YampiDesertCave_StopLeaderAtLog;
   wait(4);
-  if ((u32)(i - 6) <= 7)
+  if ((u32)(direction - 6) <= 7)
     Actor_SelectAnimation(actor, 3);
   else
     Actor_SelectAnimation(actor, 2);
@@ -433,9 +436,9 @@ void YampiDesertCave_PushLog(struct LogSlide slide) {
   Actor_WaitForMoveById(gMainRoutineWork.leaderActorId);
   Actor_SetAnimation(gMainRoutineWork.leaderActorId, ANIM_WALK);
   Actor_SetSpeedAndAcceleration(gMainRoutineWork.leaderActorId, 0.3, 0.1);
-  offset = toFIXED(gPushLeaderSteps[i]);
+  offset = toFIXED(gPushLeaderSteps[direction]);
   Actor_SetDestinationOffset(gMainRoutineWork.leaderActorId, offset >> 31,
-                             offset >> 17);
+                             FIXEDtoINT(offset) >> 1);
   if (slide.onPushed != NULL)
     slide.onPushed();
   Actor_WaitForMoveById(gMainRoutineWork.leaderActorId);
@@ -480,9 +483,11 @@ void YampiDesertCave_StopLeaderAtLog(struct Actor *actor) {
   FIXED position[3];
   struct Actor *hit;
   u32 i;
-  s32 angle = actor->facing >> 12;
+  s32 angle = FACING_INDEX(actor->facing);
 
-  angle = ((angle + 2) & 12) << 12;
+  // The facing rounded to the nearest of east, south, west and north: two
+  // sixteenths on, whole quarters kept, and back from sixteenths to a facing.
+  angle = ((angle + 2) & 0xc) << 12;
   position[0] = actor->x.fixed;
   position[1] = actor->y.fixed;
   position[2] = actor->z.fixed;
@@ -834,8 +839,8 @@ static __inline__ s32 GameFlag_GetByte_(s32 flag) {
 }
 
 /// Moves the ripple along its path, a row of gYampiDesertCave_RipplePath for
-/// every thirty-two steps of its counter, which counts only while the party
-/// walks.
+/// every RIPPLE_STEPS_PER_POINT steps of its counter, which counts on while
+/// the player has control, whether the party walks or stands.
 void YampiDesertCave_MoveSandRipple(void) {
   s32 step = GameFlag_GetByte_(FLAG_BYTE_YAMPI_DESERT_CAVE_RIPPLE_STEP);
   s32 index = (step / RIPPLE_STEPS_PER_POINT) * 2;
@@ -925,13 +930,14 @@ void YampiDesertCave_MeetGuardianOfFire(void) {
   gMainRoutineWork.pendingDjinni = IF_FLAG_SET(FLAG_VALUKAR_BEATEN);
   Battle_SetType(BATTLE_TYPE_NO_ESCAPE);
   gMainRoutineWork.battleBackground = (s32)&ResourceId_LavaCaveBackdrop;
-  Field_RequestBattleFromEncounterTable(103, 1);
+  Field_RequestBattleFromEncounterTable(ENCOUNTER_TABLE_HIDDEN_BOSSES,
+                                        HIDDEN_BOSS_VALUKAR);
 }
 
-/// Scoop digs up the treasure hidden in Valukar's room.
-void YampiDesertCave_ScoopTreasure(s32 mode) {
-  Event_DigUpTreasure(mode, ACTOR_HIDDEN_TREASURE,
-                      FLAG_YAMPI_DESERT_CAVE_TREASURE_DUG_UP);
+/// Scoop on its cell digs up the Mythril Silver buried in Valukar's room.
+void YampiDesertCave_DigUpMythrilSilver(s32 mode) {
+  Event_DigUpTreasure(mode, ACTOR_MYTHRIL_SILVER,
+                      FLAG_YAMPI_DESERT_CAVE_MYTHRIL_SILVER_DUG_UP);
 }
 
 const struct Trigger *Scene_GetTriggers(void) {
@@ -990,17 +996,17 @@ s32 Scene_Initialize(void) {
     } else {
       MapGrid_CopyCellAttributes(32, 13, 1, 1, 34, 12);
     }
-    if (!Event_GetFlag(FLAG_YAMPI_DESERT_CAVE_TREASURE_DUG_UP))
-      Actor_SetWideSprite(ACTOR_HIDDEN_TREASURE, 1);
+    if (!Event_GetFlag(FLAG_YAMPI_DESERT_CAVE_MYTHRIL_SILVER_DUG_UP))
+      Actor_SetWideSprite(ACTOR_MYTHRIL_SILVER, 1);
   }
   if (gMainRoutineWork.next == SCENE_YAMPI_DESERT_CAVE_CRYSTAL) {
     if ((u16)(gMainRoutineWork.entrance - 3) <= 2) {
-      REG_BG1CNT &= ~3;
-      REG_BG1CNT |= 1;
-      REG_BG2CNT &= ~3;
-      REG_BG2CNT |= 3;
-      REG_BG3CNT &= ~3;
-      REG_BG3CNT |= 3;
+      REG_BG1CNT &= ~BGCNT_PRIORITY(3);
+      REG_BG1CNT |= BGCNT_PRIORITY(1);
+      REG_BG2CNT &= ~BGCNT_PRIORITY(3);
+      REG_BG2CNT |= BGCNT_PRIORITY(3);
+      REG_BG3CNT &= ~BGCNT_PRIORITY(3);
+      REG_BG3CNT |= BGCNT_PRIORITY(3);
     }
     Actor_DisableById(ACTOR_CRYSTAL_ROOM_FIRST_LOG);
     Actor_DisableById(ACTOR_CRYSTAL_ROOM_SECOND_LOG);
@@ -1250,8 +1256,8 @@ struct Trigger gYampiDesertCave_Triggers[] = {
     {TRIGGER_TABLE_END},
 };
 
-/// Valukar's room: its exits, Valukar's step, the pillar, Sand and the hidden
-/// treasure.
+/// Valukar's room: its exits, Valukar's step, the pillar, Sand and Scoop on
+/// the buried Mythril Silver.
 struct Trigger gYampiDesertCaveGuardianTriggers[] = {
     {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
     {TRIGGER_EXIT | EXIT_STYLE_STAIRS_DOWN, 2, CONDITION_ALWAYS, 2},
@@ -1272,8 +1278,8 @@ struct Trigger gYampiDesertCaveGuardianTriggers[] = {
     {PSYNERGY_ANYWHERE(ABILITY_SAND, PSYNERGY_PHASE_FADES), 0, CONDITION_ALWAYS,
      EVENT(YampiDesertCave_EndSand)},
     {PSYNERGY_PHASE_ON_CELL(ABILITY_SCOOP, PSYNERGY_PHASE_ACTS), 100,
-     FLAG_YAMPI_DESERT_CAVE_TREASURE_DUG_UP,
-     EVENT(YampiDesertCave_ScoopTreasure)},
+     FLAG_YAMPI_DESERT_CAVE_MYTHRIL_SILVER_DUG_UP,
+     EVENT(YampiDesertCave_DigUpMythrilSilver)},
     {TRIGGER_TABLE_END},
 };
 

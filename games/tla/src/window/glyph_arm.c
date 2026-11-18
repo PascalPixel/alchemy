@@ -21,9 +21,6 @@
 /// TEXT_LAST_FONT_CODE as MAIN_FONT_GLYPH_BYTES apart in every edition, the
 /// Japanese layout of 12 rows.
 #define MAIN_FONT_GLYPH_BYTES 26
-/// A main-font row's pixels, a bit each in its halfword, the leftmost the top
-/// bit: shifted up by this, the leftmost is the word's sign bit.
-#define GLYPH_ROW_BITS 16
 /// The Japanese small font's rows: a byte each.
 #define SMALL_FONT_ROWS 10
 /// A halfword of four 4-bit pixels, all colour `color`: what

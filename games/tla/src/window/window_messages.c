@@ -418,9 +418,6 @@ void Message_DecodeAppend(s32 message) {
 #else
 #define PLOT_GLYPH_ROWS 14
 #endif
-/// A glyph row's pixels fill a halfword from its high bit: moved up by this,
-/// the leftmost pixel is the word's sign bit.
-#define GLYPH_ROW_BITS 16
 
 /// Plots a glyph's rows of bits onto the story crawl's canvas at dst, one byte
 /// a pixel in color, leftmost pixel from the high bit; clear bits are left.
@@ -857,4 +854,3 @@ void Portrait_CloseWindow(s32 id) {
 #undef DECODE_EUROPEAN
 #undef PLOT_GLYPH_ROWS
 #undef BIT_BUFFER_MARKER
-#undef KANJI_FIRST_CODE

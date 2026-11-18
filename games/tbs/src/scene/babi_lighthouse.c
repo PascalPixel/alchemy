@@ -174,10 +174,6 @@ enum {
 /// overlap, so that he vanishes below the edge as he drops over it.
 enum { PIT_MASK = SPRITE_CRATE };
 
-/// A chest searched while facing the given way.
-#define EXAMINE_CHEST_FACING(facing)                                           \
-  (EXAMINE_TRIGGER(EXAMINE_CHEST) | TRIGGER_FLAG_FACING | (facing))
-
 static void BabiLighthouse_CloseTruthDoor(void);
 static void BabiLighthouse_RedrawLedgePillarCells(void);
 

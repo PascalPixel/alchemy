@@ -336,8 +336,7 @@ void BattleEffect_RunBoltTrail(struct BattleEffectParams *args, s32 mode) {
   EFFECT_FINISH_CANVAS_ONE_BLITTER();
 }
 
-/// Megaera's sparks and sparkles, in the map cell buffer.
-#define SPARKS ((struct Particle *)Ram_MapCellBuffer)
+/// Megaera's sparks and sparkles, in PARTICLES.
 #define MEGAERA_SPARK_COUNT 512
 /// Megaera's glints, bolts of lightning and sparkles, in the map cell buffer
 /// from its second 16 KB on.
@@ -374,10 +373,8 @@ extern const struct Scale gMegaera_UnitScale;
 #define MEGAERA_BILLOW_FRAMES 16
 #define MEGAERA_BILLOW_PICTURES                                                \
   (MEGAERA_FLASH_BURST_PICTURES + 2 * PICTURE_BYTES(FLASH_BURST))
-/// Megaera, eleven sprites, swoops in across the foes at MEGAERA_SWOOP_FRAME,
-/// trailing sparkles for MEGAERA_TRAIL_FRAMES; each sparkle twinkles for
-/// MEGAERA_SPARKLE_FRAMES.
-#define MEGAERA_OBJECTS 11
+/// Megaera swoops in across the foes at MEGAERA_SWOOP_FRAME, trailing sparkles
+/// for MEGAERA_TRAIL_FRAMES; each sparkle twinkles for MEGAERA_SPARKLE_FRAMES.
 #define MEGAERA_SWOOP_FRAME 108
 #define MEGAERA_TRAIL_FRAMES 24
 #define MEGAERA_SPARKLE_FRAMES 36
@@ -440,7 +437,7 @@ void BattleEffect_RunMegaera(struct BattleEffectParams *args) {
     p->variant = ~i;
   }
   for (i = 0; i != MEGAERA_SPARK_COUNT; i++) {
-    SPARKS[i].variant = -1;
+    PARTICLES[i].variant = -1;
   }
   Iwram_CopyWordsEntry((void *)BG_PLTT,
                        Resource_GetTableEntry(RESOURCE_MARS_DJINN_SHEET),
@@ -483,7 +480,7 @@ void BattleEffect_RunMegaera(struct BattleEffectParams *args) {
                                          position.y);
       if (frame == MEGAERA_SWOOP_FRAME) {
         for (i = 0; i != MEGAERA_SPARK_COUNT; i++) {
-          SPARKS[i].variant = -1;
+          PARTICLES[i].variant = -1;
         }
       }
       {
@@ -499,8 +496,8 @@ void BattleEffect_RunMegaera(struct BattleEffectParams *args) {
               s32 angle;
               s32 radius;
 
-              sparkle =
-                  &SPARKS[((trailFrame << 5) + i) & (MEGAERA_SPARK_COUNT - 1)];
+              sparkle = &PARTICLES[((trailFrame << 5) + i) &
+                                   (MEGAERA_SPARK_COUNT - 1)];
               angle = Random16();
               radius = (Random16() & 31) + 16;
               sparkle->x = Trig_Sin(angle) * radius + half + toFIXED(16);
@@ -611,7 +608,7 @@ void BattleEffect_RunMegaera(struct BattleEffectParams *args) {
     // The sparkles twinkle through SparkleDots' nine pictures, drifting down
     // and to the left.
     if (frame >= MEGAERA_SWOOP_FRAME) {
-      for (i = 0, p = SPARKS; i != MEGAERA_SPARK_COUNT; i++, p++) {
+      for (i = 0, p = PARTICLES; i != MEGAERA_SPARK_COUNT; i++, p++) {
         s32 k;
 
         if ((u32)p->variant >= MEGAERA_SPARKLE_FRAMES) {
@@ -681,7 +678,7 @@ void BattleEffect_RunMegaera(struct BattleEffectParams *args) {
           if (frame == fallFrame + 10) {
             for (j = 0; j != MEGAERA_SPARK_COUNT / MEGAERA_SWORDS; j++) {
               struct Particle *spark =
-                  &SPARKS[i * (MEGAERA_SPARK_COUNT / MEGAERA_SWORDS) + j];
+                  &PARTICLES[i * (MEGAERA_SPARK_COUNT / MEGAERA_SWORDS) + j];
               s32 angle = Random16() & 0x7fff;
               s32 speed = Random16() & 255;
 
@@ -725,7 +722,7 @@ void BattleEffect_RunMegaera(struct BattleEffectParams *args) {
                           BLITTER_ADDITIVE);
       rects[1] = (DrawRectangle)Ram_HeapSlots->ramCodePaired;
       if (frame <= 69) {
-        for (i = 0, p = SPARKS; i != MEGAERA_SPARK_COUNT; i++, p++) {
+        for (i = 0, p = PARTICLES; i != MEGAERA_SPARK_COUNT; i++, p++) {
           s32 size;
 
           if (p->variant < 0) {
@@ -1040,8 +1037,6 @@ void BattleEffect_RunVoidBeam(struct BattleEffectParams *args) {
   Task_Remove(BattleCamera_ApplyPhasedDelta);
   BattleEffect_EndCanvasLayer();
 }
-#undef BLITTER
-#undef SPARKS
 #undef PICTURES
 #undef VOID_BEAM_FRAMES
 #undef BEAM_SEGMENTS

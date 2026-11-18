@@ -113,6 +113,9 @@ enum { WINDOW_SPRITE_COUNT = 64 };
 /// The last code the main font draws (gFont_Glyphs, from TEXT_SPACE) and the
 /// window tiles cover; a code above it is a kanji (gFont_KanjiGlyphs).
 #define TEXT_LAST_FONT_CODE 255
+/// In Japanese, the first kanji's code: the codes after the font's are kanji
+/// (gFont_KanjiGlyphs).
+#define KANJI_FIRST_CODE (TEXT_LAST_FONT_CODE + 1)
 
 /// The window system's work: the windows' tilemap, the windows, the three text
 /// messages, the 64 window sprites, and the decoded message and its arguments.

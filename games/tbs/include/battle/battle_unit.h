@@ -48,6 +48,9 @@ enum Element {
 /// AbilityDefinition.range of an ability that reaches every unit on the side,
 /// each as if aimed at.
 #define ABILITY_RANGE_ALL 255
+/// The range icon the Psynergy lists draw for ABILITY_RANGE_ALL, the last of
+/// the twelve; range n takes icon n - 1.
+#define RANGE_ICON_ALL 11
 
 /// The low four bits of AbilityDefinition.flags: the ability kind (enum
 /// AbilityFormula).

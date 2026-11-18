@@ -13,17 +13,9 @@
 #include "system/iwram_call.h"
 #include "system/system.h"
 
-// The scene overlay's exit table: a header word holding a scene id, then that
-// scene's exits, one packed word each (and a flag word after it when
-// EXIT_HAS_FLAG is set).
-#define EXIT_SCENE_MASK 0xfff
 /// The scene of a table's first exit word, the destination when no exit
 /// matches: nine bits, where EXIT_SCENE_MASK takes twelve.
 #define EXIT_DEFAULT_SCENE_MASK 0x1ff
-#define ENTRANCE(word) (((word) & 0xff000) >> 12)
-#define EXIT_ID(word) (((word) & 0x0ff00000) >> 20)
-#define EXIT_HAS_FLAG 0x10000000
-#define EXIT_ID_ANY 255
 
 /// Chooses the scene and entrance to go to when the party leaves the current
 /// scene. exitId is the kind of exit FieldSequence_Run ended on; the scene's
@@ -352,12 +344,7 @@ void Scene_Arrive(s32 unused, s32 keep) {
 /// Starts the current scene's field music, chosen by Scene_ChooseMusic.
 void Scene_PlayMusic(void) { Sound_PlayFar(gMainRoutineWork.sceneMusic); }
 
-#undef EXIT_SCENE_MASK
 #undef EXIT_DEFAULT_SCENE_MASK
 #undef AREA_VISITED_MASK
-#undef ENTRANCE
-#undef EXIT_ID
-#undef EXIT_HAS_FLAG
-#undef EXIT_ID_ANY
 #undef MAP_HEADER
 #undef MAIN_ROUTINE_DEFINE_RUN_MINIGAME

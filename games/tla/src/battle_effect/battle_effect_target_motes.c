@@ -122,8 +122,6 @@ void BattleEffect_RunDrown(struct BattleEffectParams *args) {
 #define DROWN_DROP_WIDTH 12
 #define DROWN_DROP_HEIGHT 24
 #define DROWN_DROP_PICTURE (3 * 16 * 64)
-/// A line's 16.16 sideways sway as its BG2X value in work->bg2xLines.
-#define CANVAS_WAVE_BG2X(sway) ((sway) >> 10)
 
 /// Around each target in turn, motes (smoke, hearts, orbs) close in on it or
 /// rise, and the target flashes.
@@ -361,8 +359,6 @@ void BattleEffect_RunTargetMotes(struct BattleEffectParams *args, u32 mode) {
 /// four pictures of a tumbling sheep, drawn flipped for the next four.
 #define SHEEP_CARD_WIDTH 32
 #define SHEEP_CARD_HEIGHT 64
-#define SHEEP_WIDTH 32
-#define SHEEP_HEIGHT 32
 #define SHEEP_PICTURES 4
 /// A sheep's variant counts its tumble, z a frame: it turns to its next
 /// picture every SHEEP_TUMBLE_STEP.
@@ -871,7 +867,6 @@ void BattleEffect_RunPhoenix(struct BattleEffectParams *args) {
   BattleEffect_RunTumblingQuads(args, TUMBLING_QUADS_PHOENIX);
 }
 
-#undef BLITTER
 #undef TARGET_MOTES_START_WIDE
 #undef TARGET_MOTES_CLOSE_IN
 #undef TARGET_MOTES_RIPPLE
@@ -888,14 +883,11 @@ void BattleEffect_RunPhoenix(struct BattleEffectParams *args) {
 #undef DROWN_DROP_WIDTH
 #undef DROWN_DROP_HEIGHT
 #undef DROWN_DROP_PICTURE
-#undef CANVAS_WAVE_BG2X
 #undef SLEEP_FRAMES
 #undef SLEEP_SEEDED
 #undef SLEEP_SHEEP
 #undef SHEEP_CARD_WIDTH
 #undef SHEEP_CARD_HEIGHT
-#undef SHEEP_WIDTH
-#undef SHEEP_HEIGHT
 #undef SHEEP_PICTURES
 #undef SHEEP_TUMBLE_STEP
 #undef GROUND_Y

@@ -666,4 +666,3 @@ void BattleEffect_RunMeteorBlow(struct BattleEffectParams *args) {
   Sprite_DestroyFar(work->sprites[0]);
   BattleEffect_EndCanvasLayer();
 }
-#undef BLITTER

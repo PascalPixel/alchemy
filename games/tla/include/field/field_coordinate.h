@@ -25,6 +25,9 @@ STATIC_ASSERT(offsetof(struct FieldCoordinate, part[0].integer) == 2);
 
 /// A map grid cell's side: each cell is this many pixels square.
 #define MAPGRID_CELL_PIXELS 16
+/// A whole pixel coordinate's map cell, in pixels: the pixel coordinate of the
+/// cell's first pixel.
+#define MAPGRID_CELL_PIXEL_MASK 0xfff0
 /// A 16.16 coordinate's whole cell.
 #define FIELD_CELL_MASK 0xfff00000
 /// A 16.16 coordinate's shift to its map grid cell: 16 bits of fraction and 4

@@ -4,12 +4,6 @@
 
 #include "screens_internal.h"
 
-/// BattleAction.target's place code for place 0 of the party's list, as
-/// BattleTarget_RunSelection returns it (battle_internal.h's PLACE_PARTY).
-#define PLACE_PARTY (1 << 8)
-/// The frames a link battle tolerates without a connection before it gives
-/// up (battle_internal.h's LINK_MAX_MISSED_FRAMES).
-#define LINK_MAX_MISSED_FRAMES 24
 /// Flee's priority, above every other action's: the party flees first in the
 /// turn.
 #define FLEE_PRIORITY 32766
@@ -789,7 +783,5 @@ s32 Battle_CollectPartyCommands(struct BattleAction *commands, u16 *actors,
   return commandCount;
 }
 
-#undef PLACE_PARTY
-#undef LINK_MAX_MISSED_FRAMES
 #undef FLEE_PRIORITY
 #undef OVERFLOWED_PRIORITY

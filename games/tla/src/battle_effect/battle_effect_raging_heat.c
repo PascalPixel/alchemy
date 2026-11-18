@@ -264,25 +264,25 @@ void BattleEffect_RunRagingHeat(struct BattleEffectParams *args) {
 #undef RAGING_HEAT_TILT
 #undef RUNE_CIRCLE_RIGHTED_FRAME
 
-#define RING_FRAMES 122
+#define JUGGLE_FRAMES 122
 #define RING_CUE_FRAME 16
 #define RING_RISE_FRAME 8   ///< the ring starts to rise over the caster
 #define RING_THROW_FRAME 64 ///< it flies at the targets
 #define RING_HIT_FRAME 88
 #define JUGGLE_SPARKS_PER_TARGET 128
-#define SPARK_COUNT 768
+#define JUGGLE_SPARK_COUNT 768
 /// The ring's tilt toward the viewer, beside its turn.
 #define JUGGLE_TILT 500
 
 // gJuggle_Styles[variant]: seven bytes for each strength.
 enum {
-  RING_LIFT_STEP, ///< pixels the ring rises each frame
-  RING_LIFT_MAX,  ///< and its highest
-  RING_FLAMES,    ///< flames in the ring
-  RING_SPACING,   ///< their spacing round it
-  RING_SPARKS,    ///< sparks at each target
-  RING_SHAKE,     ///< frames the screen shakes at the hit
-  RING_BLITTER    ///< which of the pair draws the flames
+  RING_LIFT_STEP,     ///< pixels the ring rises each frame
+  RING_LIFT_MAX,      ///< and its highest
+  RING_FLAMES,        ///< flames in the ring
+  RING_FLAME_SPACING, ///< their spacing round it
+  RING_SPARKS,        ///< sparks at each target
+  RING_SHAKE,         ///< frames the screen shakes at the hit
+  RING_BLITTER        ///< which of the pair draws the flames
 };
 
 /// A ring of small flames. The flames circle the caster in a ring that rises
@@ -325,13 +325,13 @@ void BattleEffect_RunJuggle(struct BattleEffectParams *args) {
   {
     s32 *life = &((struct Particle *)Ram_MapCellBuffer)->variant;
 
-    for (i = 0; i != SPARK_COUNT; i++) {
+    for (i = 0; i != JUGGLE_SPARK_COUNT; i++) {
       *life = -1;
       life += sizeof(struct Particle) / sizeof(s32);
     }
   }
 
-  for (frame = 0; frame != RING_FRAMES; frame++) {
+  for (frame = 0; frame != JUGGLE_FRAMES; frame++) {
     if (frame == RING_CUE_FRAME)
       Sound_PlayFar(SE_LAUNCH);
     if (frame == 0)
@@ -381,7 +381,8 @@ void BattleEffect_RunJuggle(struct BattleEffectParams *args) {
       if (i > 7)
         Matrix_RotateX(DEGtoANG(90));
       Matrix_RotateY(
-          (frame * 4 + i * gJuggle_Styles[args->variant][RING_SPACING]) << 8);
+          (frame * 4 + i * gJuggle_Styles[args->variant][RING_FLAME_SPACING])
+          << 8);
       place = vector;
       place[0] = 0;
       place[1] = 0;
@@ -425,7 +426,7 @@ void BattleEffect_RunJuggle(struct BattleEffectParams *args) {
     }
 
     // The sparks fly and burn down, drawn by turns with the two blitters.
-    for (i = 0; i != SPARK_COUNT; i++) {
+    for (i = 0; i != JUGGLE_SPARK_COUNT; i++) {
       struct Particle *spark = &((struct Particle *)Ram_MapCellBuffer)[i];
 
       if (spark->variant >= 0) {
@@ -486,11 +487,11 @@ void RagingHeat_FillGradientCanvas(void) {
 #undef FIRE_RING_PIXELS
 #undef EMBERS
 #undef RAGING_HEAT_FRAMES
-#undef RING_FRAMES
+#undef JUGGLE_FRAMES
 #undef RING_CUE_FRAME
 #undef RING_RISE_FRAME
 #undef RING_THROW_FRAME
 #undef RING_HIT_FRAME
 #undef JUGGLE_SPARKS_PER_TARGET
-#undef SPARK_COUNT
+#undef JUGGLE_SPARK_COUNT
 #undef JUGGLE_TILT

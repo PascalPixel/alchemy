@@ -20,7 +20,8 @@ struct MoundVertex {
 extern struct MoundVertex gHaures_WingCorners[];
 extern const u16 gHaures_BodyPiecePoints[][2];
 
-#define SPARKS ((struct Particle *)SCRATCH)
+/// The charge's sparks, HAURES_SPARK_COUNT of them.
+#define HAURES_SPARKS ((struct Particle *)SCRATCH)
 
 #define HAURES_COMING_FRAMES 440 ///< frames of Haures's coming, unless skipped
 #define HAURES_FRAMES 92         ///< frames of the charge that follows
@@ -967,7 +968,7 @@ void BattleEffect_RunHaures(struct BattleEffectParams *args) {
       velocity.x = -toFIXED(12);
       velocity.y = toFIXED(6);
       {
-        s32 *variant = &SPARKS->variant;
+        s32 *variant = &HAURES_SPARKS->variant;
 
         for (i = 0; i != HAURES_SPARK_COUNT; i++, variant += 7) {
           *variant = -1;
@@ -988,7 +989,7 @@ void BattleEffect_RunHaures(struct BattleEffectParams *args) {
     }
     {
       for (i = 0; i != HAURES_SPARK_COUNT; i++) {
-        struct Particle *p = &((struct Particle *)SCRATCH)[i];
+        struct Particle *p = &HAURES_SPARKS[i];
         if (p->variant >= 0) {
           s32 n = (p->variant >> 3) + 1;
 
@@ -1263,7 +1264,7 @@ void Mesh_BuildCylinderBand(struct MeshVertex *vertices,
 }
 #undef BLITTER
 #undef SCRATCH
-#undef SPARKS
+#undef HAURES_SPARKS
 #undef SHARD_FACE
 #undef FIRST_RING_Y
 #undef RING_SPACING

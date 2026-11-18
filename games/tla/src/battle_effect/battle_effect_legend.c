@@ -5,10 +5,10 @@
 #include "battle_effect_internal.h"
 #include "sounds.h"
 
-/// The sparks live in the map cell buffer's second 16 KB, 128 for each sword;
-/// they bounce once on the ground at SPARK_GROUND_Y.
-#define SPARKS ((struct Particle *)(Ram_MapCellBuffer + 16384))
-#define SPARK_COUNT 512
+/// Legend's sparks live in the map cell buffer's second 16 KB, 128 for each
+/// sword; they bounce once on the ground at SPARK_GROUND_Y, as the cards' do.
+#define LEGEND_SPARKS ((struct Particle *)(Ram_MapCellBuffer + 16384))
+#define LEGEND_SPARK_COUNT 512
 #define SPARK_GROUND_Y 104
 #define LEGEND_SWORD_SPARKS 128
 
@@ -111,8 +111,8 @@ void BattleEffect_RunLegend(struct BattleEffectParams *args) {
         step->velocityY = (target.y - start.y) * (toFIXED(1) / 16);
         step->variant = 0;
       }
-      for (i = 0; i != SPARK_COUNT; i++)
-        SPARKS[i].variant = -1;
+      for (i = 0; i != LEGEND_SPARK_COUNT; i++)
+        LEGEND_SPARKS[i].variant = -1;
     }
 
     // The swords, one each LEGEND_SWORD_INTERVAL frames.
@@ -133,7 +133,7 @@ void BattleEffect_RunLegend(struct BattleEffectParams *args) {
                                  POSE_DAMAGE, 0, 8);
         work->shakeFrames = 4;
         for (j = 0; j != LEGEND_SWORD_SPARKS; j++) {
-          struct Particle *spark = &SPARKS[i * LEGEND_SWORD_SPARKS + j];
+          struct Particle *spark = &LEGEND_SPARKS[i * LEGEND_SWORD_SPARKS + j];
           s32 angle;
           s32 force;
 
@@ -168,8 +168,8 @@ void BattleEffect_RunLegend(struct BattleEffectParams *args) {
     }
 
     // The sparks bounce on the ground.
-    for (i = 0; i != SPARK_COUNT; i++) {
-      step = &SPARKS[i];
+    for (i = 0; i != LEGEND_SPARK_COUNT; i++) {
+      step = &LEGEND_SPARKS[i];
       if (step->variant >= 0) {
         s32 size = (step->variant >> 2) + 1;
 
@@ -313,10 +313,9 @@ void BattleEffect_RunThunderCard(struct BattleEffectParams *args) {
   BattleEffect_RunElementCards(args, CARD_THUNDER);
 }
 
-/// A card's picture, at its sheet's start; the Bramble Card's sheet has its
-/// three vines after it, 32 by 128 as JaggedStreakSheet's streaks are.
-#define CARD_WIDTH 32
-#define CARD_HEIGHT 64
+/// A card's picture, CARD_WIDTH by CARD_HEIGHT, at its sheet's start; the
+/// Bramble Card's sheet has its three vines after it, 32 by 128 as
+/// JaggedStreakSheet's streaks are.
 #define CARD_STREAK_WIDTH 32
 #define CARD_STREAK_HEIGHT 128
 /// Where the card's element pictures are decoded in the effect's pictures,
@@ -325,9 +324,12 @@ void BattleEffect_RunThunderCard(struct BattleEffectParams *args) {
 #define ELEMENT_CARDS_PICTURES PICTURE_BYTES(CARD)
 /// The work's particles: the shards, smoke or pictures the card throws, then
 /// one strike countdown for each target. Each target has its own run of the
-/// sparks, and a strike throws up the next free 16 of them.
+/// sparks, and a strike throws up the next free 16 of them. The sparks live
+/// where Legend's do, in the map cell buffer's second 16 KB.
 #define CARD_PIECES 56
 #define CARD_STRIKE_TIMERS CARD_PIECES
+#define CARD_SPARKS ((struct Particle *)(Ram_MapCellBuffer + 16384))
+#define CARD_SPARK_COUNT 512
 #define CARD_SPARKS_PER_TARGET 64
 #define CARD_STRIKE_SPARKS 16
 
@@ -421,8 +423,8 @@ void BattleEffect_RunElementCards(struct BattleEffectParams *args, s32 mode) {
       EFFECT_FREE_PARTICLES(i, work->particles, CARD_PIECES);
       for (i = 0; i != args->targetCount; i++)
         work->particles[CARD_STRIKE_TIMERS + i].variant = (Random16() & 3) + 2;
-      for (i = 0; i != SPARK_COUNT; i++)
-        SPARKS[i].variant = -1;
+      for (i = 0; i != CARD_SPARK_COUNT; i++)
+        CARD_SPARKS[i].variant = -1;
       EffectPosition_ProjectSprite(args->user, &card);
       for (i = 0; i != args->targetCount; i++)
         EffectPosition_ProjectScaledBattler(args->targets[i], &targets[i]);
@@ -587,7 +589,8 @@ void BattleEffect_RunElementCards(struct BattleEffectParams *args, s32 mode) {
           burst = 0;
           EffectPosition_ProjectScaledBattler(args->targets[i], &aim);
           for (j = 0; j != CARD_SPARKS_PER_TARGET; j++) {
-            struct Particle *spark = &SPARKS[i * CARD_SPARKS_PER_TARGET + j];
+            struct Particle *spark =
+                &CARD_SPARKS[i * CARD_SPARKS_PER_TARGET + j];
 
             if (spark->variant < 0) {
               s32 angle;
@@ -731,8 +734,8 @@ void BattleEffect_RunElementCards(struct BattleEffectParams *args, s32 mode) {
     Heap_Release(vertices);
 
     // The sparks bounce on the ground.
-    for (i = 0; i != SPARK_COUNT; i++) {
-      struct Particle *step = &SPARKS[i];
+    for (i = 0; i != CARD_SPARK_COUNT; i++) {
+      struct Particle *step = &CARD_SPARKS[i];
 
       if (step->variant >= 0) {
         s32 size = step->variant >> 3;
@@ -783,9 +786,8 @@ void BattleEffect_RunDeathCard(struct BattleEffectParams *args) {
 void BattleEffect_RunSwordCard(struct BattleEffectParams *args) {
   BattleEffect_RunCards(args, CARD_SWORD);
 }
-#undef BLITTER
-#undef SPARKS
-#undef SPARK_COUNT
+#undef LEGEND_SPARKS
+#undef LEGEND_SPARK_COUNT
 #undef SPARK_GROUND_Y
 #undef LEGEND_SWORD_SPARKS
 #undef LEGEND_BLADE_PICTURES
@@ -807,6 +809,8 @@ void BattleEffect_RunSwordCard(struct BattleEffectParams *args) {
 #undef ELEMENT_CARDS_PICTURES
 #undef CARD_PIECES
 #undef CARD_STRIKE_TIMERS
+#undef CARD_SPARKS
+#undef CARD_SPARK_COUNT
 #undef CARD_SPARKS_PER_TARGET
 #undef CARD_STRIKE_SPARKS
 #undef CARD_RISE_FRAMES

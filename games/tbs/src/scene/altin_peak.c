@@ -312,10 +312,6 @@ enum {
   FLAG_ALTIN_PEAK_GARET_WATCHING_ROCKS = FLAG_SCENE_TEMP_05
 };
 
-/// A chest searched while facing the given way.
-#define EXAMINE_CHEST_FACING(facing)                                           \
-  (EXAMINE_TRIGGER(EXAMINE_CHEST) | TRIGGER_FLAG_FACING | (facing))
-
 /// Talking to the Djinni in AltinPeakSpritz starts the battle with Spritz, a
 /// Mercury Djinni.
 static void AltinPeak_TalkToDjinni(void) {

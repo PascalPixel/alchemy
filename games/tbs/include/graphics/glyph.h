@@ -18,12 +18,15 @@ enum { FONT_GLYPH_ROWS = 15 };
 
 /// GlyphPalette.slot of an icon colour given no slot yet.
 #define GLYPH_PALETTE_SLOT_UNSET 255
+/// The colours an icon's 256-colour pixels hold, each with a GlyphPalette.slot
+/// entry.
+#define GLYPH_PALETTE_ICON_COLORS 256
 
 /// A compact palette shared by a selection's command icons: the slot each
 /// icon colour was given, or GLYPH_PALETTE_SLOT_UNSET for none yet, and how
 /// many slots are taken.
 struct GlyphPalette {
-  u8 slot[256];
+  u8 slot[GLYPH_PALETTE_ICON_COLORS];
   s32 count;
 };
 

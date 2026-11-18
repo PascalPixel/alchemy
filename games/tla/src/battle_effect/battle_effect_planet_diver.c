@@ -9,9 +9,6 @@
 #include "system/system.h"
 #include "resource_ids.h"
 
-/// A line's 16.16 sideways sway as its BG2X value in work->bg2xLines.
-#define CANVAS_WAVE_BG2X(sway) ((sway) >> 10)
-
 #define HAUNT_SCATTERED 512
 #define HAUNT_SPIRITS 8 ///< evil spirits drawn around each target
 #define HAUNT_SLOTS 64  ///< particles reserved for each target
@@ -455,7 +452,6 @@ void BattleEffect_RunGatheringLights(struct BattleEffectParams *args,
   BattleEffect_EndCanvasLayer();
 }
 
-#undef CANVAS_WAVE_BG2X
 #undef HAUNT_SCATTERED
 #undef HAUNT_SPIRITS
 #undef HAUNT_SLOTS

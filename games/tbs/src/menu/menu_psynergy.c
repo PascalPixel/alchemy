@@ -14,10 +14,6 @@
 /// nine, where the list's other reads take PSYNERGY_ABILITY_MASK's fourteen.
 #define ABILITY_DESCRIPTION_MASK 0x1ff
 
-/// The Psynergy grid screen places its icons a row of eight at a time, two
-/// rows, as the item menu's Menu_SpawnIconEntries does.
-#define ICON_GRID_ROW 8
-
 // The German, Spanish, French and Italian Psynergy menus save the window
 // tiles they draw over and restore them after.
 #if TBS_PATCH_2
@@ -964,10 +960,6 @@ s32 PsynergyMenu_DrawDetailPage(struct Window *window, s32 *work,
   return 1;
 }
 
-/// The tile of the list window's top border where the page numbers end, with
-/// their right arrow, as the item list's do.
-#define PAGE_NUMBERS_RIGHT 15
-
 /// Draws one page of the Psynergy list into window: up to five names with their
 /// icons and PP costs, Psynergy the party member cannot afford in the no-HP
 /// colour and one restricted here in the low-HP colour, the page numbers, and
@@ -1288,7 +1280,6 @@ s32 PsynergyMenu_IsActionRestricted(s32 actionEntry) {
   return 1;
 }
 
-#undef PAGE_NUMBERS_RIGHT
 #undef PSYNERGY_PROMPT_TILES
 #undef PSYNERGY_PROMPT_TILES_SIZE
 #undef PSYNERGY_DETAIL_ROW_X
@@ -1300,6 +1291,5 @@ s32 PsynergyMenu_IsActionRestricted(s32 actionEntry) {
 #undef PSYNERGY_SHORTCUT_MEMBER_SHIFT
 #undef PSYNERGY_SHORTCUT_ID_MASK
 #undef ABILITY_DESCRIPTION_MASK
-#undef ICON_GRID_ROW
 #undef PSYNERGY_ABILITY_OF
 #undef PSYNERGY_MENU_SHORTCUT_HELP

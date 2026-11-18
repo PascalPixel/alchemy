@@ -110,6 +110,13 @@ s32 Party_AddMemberFar(s32 event_id);
 void Party_RemoveMemberFar(s32 owner);
 void Render_ApplyProjectedPlacement(struct Sprite *sprite, s32 *position,
                                     s32 *scale, s32 facing);
+
+/// The depth slot Render_ApplyProjectedPlacement gives an actor's sprite on a
+/// scrolling map: its screen row on from this slot, so a sprite lower on the
+/// screen draws in front and those up to this many rows above it keep their
+/// order; its shadow takes two slots behind.
+#define PLACEMENT_IMAGE_DEPTH 62
+
 s32 Render_ProjectPoint(const void *point, s32 *screen);
 void Scene_SetArrivalFlags(s32 unused);
 s32 Message_OpenWindowFar(s32, s32, s32, s32);
@@ -238,6 +245,26 @@ struct DiceCamera {
   FIXED eye[3];
   FIXED focus[3];
 };
+
+/// The dice games' numbers, Lucky Dice's and Super Lucky Dice's alike: a die's
+/// faces.
+#define DICE_FACE_COUNT 6
+/// A throw costs ten coins for each level of the party's average.
+#define DICE_BET_PER_LEVEL 10
+/// The coins, and Super Lucky Dice's bet, are drawn with six digits.
+#define DICE_COIN_DIGITS 6
+/// The dice screen fades in and out over 16 frames, a sixteenth of full
+/// brightness a frame.
+#define DICE_FADE_FRAMES 16
+/// The depths from the camera a die or its shadow is drawn between: nearer or
+/// further is drawn as at the limit, and the nearer, the larger.
+#define DICE_NEAREST_DEPTH 350
+#define DICE_FARTHEST_DEPTH 650
+/// Where the dice's shadow starts in OBJ VRAM, in 16-colour tiles (32 bytes,
+/// half a 256-colour tile): after the rolling die's eighteen 256-colour views.
+#define DICE_SHADOW_TILE 144
+/// A thrown die starts spinning at this rate, its roll angle a frame.
+#define DICE_THROW_SPIN 300
 
 /// A party member's unit as the field reads it: its gauges and its HP and PP.
 struct FieldUnit {
@@ -377,6 +404,9 @@ struct TightropeSlot {
 /// each a chain of nodes from one pool of 128.
 #define ROPE_SLOT_COUNT 8
 #define ROPE_NODE_COUNT 128
+/// A squared distance in pixels beyond any rope node, to start a search for
+/// the nearest.
+#define ROPE_NODE_DISTANCE_NONE (1 << 28)
 
 /// The tightropes' work, heap slot 160.
 struct TightropeWork {

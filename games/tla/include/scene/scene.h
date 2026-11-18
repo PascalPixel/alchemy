@@ -526,4 +526,14 @@ struct Window;
 #define SURF_FIRST_COLOR 12
 #define SURF_LAST_COLOR 15
 
+/// The vents of Aqua Rock and Taopo Swamp (struct VentWork, shared/vent_*.h):
+/// the most vents a room has, and the most actors besides the leader their
+/// puffs land on.
+#define VENTS_MAX 16
+#define VENT_IDS_MAX 4
+/// How far apart a and b are, never negative, as a vent's thrown object tests
+/// whether it rests on another in x and z (field/actor_vent_bounce.c). Each is
+/// read twice.
+#define DIFF(a, b) ((a) - (b) >= 0 ? (a) - (b) : (b) - (a))
+
 #endif

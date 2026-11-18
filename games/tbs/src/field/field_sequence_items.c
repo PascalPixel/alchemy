@@ -163,9 +163,13 @@ s32 Field_UseItem(s32 packedItem, s32 slot) {
       MessageArgument_PushFar(actorId, MESSAGE_ARGUMENT_ACTOR);
       MessageArgument_PushFar(itemId, MESSAGE_ARGUMENT_ITEM);
       FieldMessage_ShowFar(MsgActorUsesItem, FIELD_MESSAGE_ZOOM);
-      /* FAKEMATCH(type): called as returning a value, as a C89 call with no
-       * prototype is. */
+      // UB: called as a function returning int, as a call with no prototype
+      // is, though it is defined void.
+#ifdef UBFIX
+      FieldPsynergy_LoadResources(abilityId, 0);
+#else
       ((s32 (*)(s32, s32))FieldPsynergy_LoadResources)(abilityId, 0);
+#endif
       work->psynergyActing = 1;
       FieldPsynergy_Run();
       work->psynergyActing = 0;

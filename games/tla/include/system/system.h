@@ -198,7 +198,7 @@ void Matrix_Pop(void);
 
 void Palette_LoadBasicSpriteColors(void);
 
-void Resource_ReservedNoOp(s32 count);
+void Resource_ReservedNoOp(s32 unused);
 
 void Vector_AddPolarOffset(FIXED radius, s32 angle, s32 *position);
 

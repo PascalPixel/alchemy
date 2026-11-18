@@ -27,7 +27,7 @@
 /// out of sight.
 ///
 /// Talking to him or walking up to him while he waits (step trigger 11) makes
-/// him come along (GondowanCave_IodemJoinsParty). Until he has reached Babi
+/// him come along (GondowanCave_IodemComesAlong). Until he has reached Babi
 /// Lighthouse (FLAG_BABI_LIGHTHOUSE_IODEM_ARRIVED), turning back
 /// (step trigger 10) brings him out to ask why
 /// (GondowanCave_IodemAsksWhyTurningBack). If he stays to wait, the saved place
@@ -277,8 +277,8 @@ static void GondowanCave_IodemAsksWhyTurningBack(void) {
   }
 }
 
-/// Iodem, waiting in Gondowan Passage, joins the party.
-static void GondowanCave_IodemJoinsParty(void) {
+/// Iodem, waiting in Gondowan Passage, comes along with the party.
+static void GondowanCave_IodemComesAlong(void) {
   Event_Start();
   Actor_FaceActor(ACTOR_IODEM, ACTOR_PARTY_LEADER, 0);
   Actor_FaceActor(ACTOR_PARTY_LEADER, ACTOR_IODEM, 0);
@@ -654,11 +654,11 @@ struct Trigger gGondowanPassageTriggersWithIodem[] = {
     { TRIGGER_EXIT, 1, CONDITION_ALWAYS, GONDOWAN_PASSAGE_TO_WORLD_MAP_NORTH },
     { TRIGGER_EXIT, 2, CONDITION_ALWAYS, GONDOWAN_PASSAGE_TO_WORLD_MAP_SOUTH },
     { TRIGGER_STEP, 10, CONDITION_ALWAYS, EVENT(GondowanCave_IodemAsksWhyTurningBack) },
-    { TRIGGER_STEP, 11, FLAG_IODEM_FOLLOWING_PARTY, EVENT(GondowanCave_IodemJoinsParty) },
+    { TRIGGER_STEP, 11, FLAG_IODEM_FOLLOWING_PARTY, EVENT(GondowanCave_IodemComesAlong) },
     { TRIGGER_TALK, ACTOR_FIRST_SOLDIER, CONDITION_ALWAYS, MSGNO(MsgGondowanCaveWhyWouldIodemChooseToWait) },
     { TRIGGER_TALK, ACTOR_SECOND_SOLDIER, CONDITION_ALWAYS, MSGNO(MsgGondowanCaveWeHaventSeenAnybodyUnusualCrossing) },
     { TRIGGER_TALK, ACTOR_THIRD_SOLDIER, CONDITION_ALWAYS, MSGNO(MsgGondowanCaveEvenIfYouGoEastFrom) },
-    { TRIGGER_TALK, ACTOR_IODEM, CONDITION_ALWAYS, EVENT(GondowanCave_IodemJoinsParty) },
+    { TRIGGER_TALK, ACTOR_IODEM, CONDITION_ALWAYS, EVENT(GondowanCave_IodemComesAlong) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_FIRST_SOLDIER, CONDITION_ALWAYS, MSGNO(MsgGondowanCaveIodemIsGoingToBabiLighthouse) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_SECOND_SOLDIER, CONDITION_ALWAYS, MSGNO(MsgGondowanCaveItsALotOfStressBut) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_THIRD_SOLDIER, CONDITION_ALWAYS, MSGNO(MsgGondowanCaveEveryoneComesDownThisWayWhen) },

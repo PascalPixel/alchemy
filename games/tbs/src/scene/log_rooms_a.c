@@ -3131,18 +3131,18 @@ static void LogRoomsA_UpdateActorStops(void) {
   }
 
   // Each suspect tries a random turn of three sixteenths, the leader to
-  // either side and the thief to either side or straight on, worked in 16.16
-  // turns. Where someone stands he turns back, and with both ways taken he
-  // shakes his head.
+  // either side and the thief to either side or straight on. The turn rides
+  // in the word's high half, so that it wraps round. Where someone stands he
+  // turns back, and with both ways taken he shakes his head.
   actor = Actor_Lookup(ACTOR_SUSPECTED_LEADER);
   entry = LogRoomsA_FindStopAtPosition(&actor->x.fixed);
   if (entry != NULL && actor->targetX == ACTOR_NO_TARGET) {
     u32 turn = Random_Below(2);
     s32 currentFacing;
 
-    turn *= INTtoFIXED(FACING_STEP * 6);
+    turn *= (FACING_STEP * 6) << 16;
     currentFacing = actor->facing;
-    facing = FIXEDtoINT(turn - INTtoFIXED(FACING_STEP * 3)) + currentFacing;
+    facing = ((turn - ((FACING_STEP * 3) << 16)) >> 16) + currentFacing;
     destination = LogRoomsA_SnapToNearestStop(entry, &facing);
     if (LogRoomsA_CheckStopOccupancy(destination) != 0) {
       facing = actor->facing + DEGtoANG(180);
@@ -3165,9 +3165,9 @@ static void LogRoomsA_UpdateActorStops(void) {
     u32 turn = Random_Below(3);
     s32 currentFacing;
 
-    turn *= INTtoFIXED(FACING_STEP * 3);
+    turn *= (FACING_STEP * 3) << 16;
     currentFacing = actor->facing;
-    facing = FIXEDtoINT(turn - INTtoFIXED(FACING_STEP * 3)) + currentFacing;
+    facing = ((turn - ((FACING_STEP * 3) << 16)) >> 16) + currentFacing;
     destination = LogRoomsA_SnapToNearestStop(entry, &facing);
     if (LogRoomsA_CheckStopOccupancy(destination) != 0) {
       facing = actor->facing + DEGtoANG(180);
@@ -3684,13 +3684,13 @@ struct ActorPlacement gLogRoomsA_ActorPlacements[] = {
     ACTOR_PLACEMENT(SPRITE_YOUNG_MAN_IN_GREEN, CONDITION_IN_VIEW, MOVEMENT_TYPE_STAND,
         88, 0, 392, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
     ACTOR_PLACEMENT(SPRITE_WOMAN_WITH_PONYTAIL, CONDITION_IN_VIEW, MOVEMENT_TYPE_STAND,
-        632, 0, 136, FACING_SOUTH, 3, 0),
+        632, 0, 136, FACING_SOUTH, TALK_FACING_PARTY_THEN_WATCH, 0),
     ACTOR_PLACEMENT(SPRITE_BURLY_MAN_WITH_GREY_HAIR, CONDITION_IN_VIEW, MOVEMENT_TYPE_STAND,
         664, 0, 632, FACING_WEST, TALK_FACING_PARTY_AND_BACK, 0),
     ACTOR_PLACEMENT(SPRITE_WOMAN_IN_PINK_APRON, CONDITION_IN_VIEW, MOVEMENT_TYPE_STAND,
         696, 0, 696, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
     ACTOR_PLACEMENT(SPRITE_MAN_WITH_LONG_DARK_HAIR, FLAG_VAULT_THIEVES_ATTACKED, MOVEMENT_TYPE_STAND,
-        104, 0, 696, FACING_EAST, 3, 0),
+        104, 0, 696, FACING_EAST, TALK_FACING_PARTY_THEN_WATCH, 0),
     ACTOR_PLACEMENT(SPRITE_PERSON_IN_PURPLE, FLAG_VAULT_THIEVES_ATTACKED, MOVEMENT_TYPE_STAND,
         200, 0, 680, FACING_SOUTH, TALK_FACING_PARTY, 0),
     ACTOR_PLACEMENT(SPRITE_CRATE, CONDITION_IN_VIEW, MOVEMENT_TYPE_STAND,
@@ -3708,7 +3708,7 @@ struct ActorPlacement gLogRoomsA_LoftActorPlacements[] = {
     ACTOR_PLACEMENT(SPRITE_OLD_MAN_WITH_WHITE_HAIR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         504, 0, 456, FACING_SOUTH, TALK_FACING_PARTY, 0),
     ACTOR_PLACEMENT(SPRITE_MAN_WITH_LONG_DARK_HAIR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        104, 0, 696, FACING_EAST, 3, 0),
+        104, 0, 696, FACING_EAST, TALK_FACING_PARTY_THEN_WATCH, 0),
     ACTOR_PLACEMENT(SPRITE_PERSON_IN_PURPLE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         200, 0, 680, FACING_SOUTH, TALK_FACING_PARTY, 0),
     ACTOR_PLACEMENT(SPRITE_PERSON_IN_PURPLE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,

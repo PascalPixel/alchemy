@@ -259,6 +259,9 @@
 /// them as the ones who resisted Tret's glamour and warning them to leave;
 /// afterwards she only repeats the warning until the curse is lifted.
 #define FLAG_MET_LAUREL 0x84c
+/// Unused: the soldier who keeps McCoy's treasure would offer the party a pick
+/// of the four treasures; nothing in the game sets it.
+#define FLAG_MCCOY_PALACE_UNUSED_PICK_OFFERED 0x84d
 /// The party has taken its reward from McCoy's treasure chests.
 #define FLAG_MCCOY_PALACE_REWARD_TAKEN 0x84e
 /// The party has beaten the three thieves in the loft of Vault's inn and the
@@ -365,7 +368,8 @@
 /// near and hopped away into the flood for good; Altin's setup then removes
 /// it.
 #define FLAG_ALTIN_WATER_BEAST_LEFT 0x8ff
-/// Altin's stone statue stands in column 22, where Move pushes it. Checked
+/// Altin's stone statue stands where Move pushes it (altin.c's
+/// STONE_STATUE_MOVED_COLUMN). Checked
 /// after every Move (Altin_CheckStatueMoved), which clears it if the statue
 /// is anywhere else; the setup puts the statue back there while it is set.
 #define FLAG_ALTIN_STATUE_MOVED 0x906

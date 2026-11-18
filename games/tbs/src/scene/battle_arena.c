@@ -643,8 +643,9 @@ static s32 BattleArena_SendPartyRecords(void) {
     for (i = 0; i < memberCount; i++) {
       Iwram_CopyWords(buffer, Unit_Get(memberIds[i]), size);
       ((struct Unit *)buffer)->side = BATTLE_SIDE_PARTY;
-      // As a u8, i - FIRST_ENEMY_UNIT is FIRST_ENEMY_UNIT + i: this party
-      // member's unit on the partner's side.
+      // As a u8, i - FIRST_ENEMY_UNIT wraps round to FIRST_ENEMY_UNIT + i,
+      // FIRST_ENEMY_UNIT being half of 256: this party member's unit on the
+      // partner's side.
       peerSlots[memberIds[i]] = i - FIRST_ENEMY_UNIT;
       started = Serial_StartSend(buffer, size);
       tries = 0;
@@ -839,9 +840,9 @@ static s32 BattleArena_EnterBattle(void) {
     // HEAP_SLOT_ENEMY_UNITS is gEnemyUnits, the battle's enemy
     // units (ENEMY_UNITS_SIZE, battle/battle_run.c). While it is
     // allocated, the exchange below receives the partner's party members and
-    // Djinn into units 128 to 131. The copy to gActorSpriteSlots
-    // (32 KB into gMapGridCellBuffer) hands them to Battle_Run, which copies
-    // them back.
+    // Djinn into units FIRST_ENEMY_UNIT to FIRST_ENEMY_UNIT + 3. The copy to
+    // gActorSpriteSlots (32 KB into gMapGridCellBuffer) hands them to
+    // Battle_Run, which copies them back.
     savedWork =
         HeapSlot_AllocEwram(HEAP_SLOT_ENEMY_UNITS, 6 * BATTLE_UNIT_SIZE);
     Task_Remove((TaskFunc)BattleArena_PollPeerReady);

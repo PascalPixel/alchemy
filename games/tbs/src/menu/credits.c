@@ -37,8 +37,9 @@
 #define CREDITS_OAM_ENTRIES 128
 /// The border sprites' one 32x16 picture, solid in colour 1, after the ring.
 #define CREDITS_BORDER_TILE_BYTES (8 * TILE_SIZE_4BPP)
-/// The ring line a scroll line is drawn into, sixteen rows below the top.
-#define CREDITS_RING_LINE(line)                                                \
+/// The first tile of the ring line a scroll line is drawn into,
+/// CREDITS_VISIBLE_ROWS below the top.
+#define CREDITS_RING_LINE_TILE(line)                                           \
   ((((line) + CREDITS_VISIBLE_ROWS) & (CREDITS_RING_ROWS - 1)) *               \
    CREDITS_LINE_TILES)
 /// The text sprites' rows start below the top strip, and their 192 pixels
@@ -52,13 +53,13 @@
 #define CREDITS_TEXT_COLOR 15
 #define CREDITS_SHADOW_COLOR 1
 
-/// A backdrop resource begins with its colours, the palette half it takes; its
-/// packed tiles follow.
-#define BACKDROP_COLORS 128
-#define BACKDROP_PALETTE_BYTES (BACKDROP_COLORS * 2)
-/// A battle backdrop's tiles of 256 colours, 256 by 120 pixels.
-#define BACKDROP_TILES 480
-#define BACKDROP_TILE_BYTES (BACKDROP_TILES * TILE_SIZE_8BPP)
+/// A battle background resource begins with its colours, the palette half it
+/// takes; its packed tiles follow.
+#define BATTLE_BACKGROUND_COLORS 128
+#define BATTLE_BACKGROUND_PALETTE_BYTES (BATTLE_BACKGROUND_COLORS * 2)
+/// A battle background's tiles of 256 colours, 256 by 120 pixels.
+#define BATTLE_BACKGROUND_TILES 480
+#define BATTLE_BACKGROUND_TILE_BYTES (BATTLE_BACKGROUND_TILES * TILE_SIZE_8BPP)
 
 /// The two pictures' screen blocks, each holding the same tilemap: BG3's, over
 /// character block 0, and BG2's, over character block 2.
@@ -72,8 +73,9 @@
 /// screen block's own zeroed tail and so is clear.
 #define CREDITS_BLANK_TILE 511
 
-/// Fills a backdrop's 256-colour tiles with its half's first colour, an opaque
-/// black for the next crossfade, and clears the half's palette colours.
+/// Fills a battle background's 256-colour tiles with colour 1 of its half,
+/// black once its palette is cleared and opaque, for the next crossfade, and
+/// clears the half's palette colours.
 /// @param alternate 0 for the first half (character block 0, the low palette
 /// half), 1 for the second (character block 2, the high palette half).
 void Credits_ClearBuffer(s32 alternate) {
@@ -87,12 +89,15 @@ void Credits_ClearBuffer(s32 alternate) {
     tileDestination = BG_CHAR_BLOCK(0);
     paletteDestination = (void *)BG_PLTT;
   } else {
-    fillColor = PIXELS_8BPP(BACKDROP_COLORS + 1);
+    fillColor = PIXELS_8BPP(BATTLE_BACKGROUND_COLORS + 1);
     tileDestination = BG_CHAR_BLOCK(2);
-    paletteDestination = (void *)&BG_PLTT_COLOR(8, 0);
+    paletteDestination =
+        (void *)&BG_PLTT_COLOR(BATTLE_BACKGROUND_COLORS / PALETTE_COLORS, 0);
   }
-  Dma_Fill32Cell(dmaFill, fillColor, tileDestination, BACKDROP_TILE_BYTES);
-  Dma_Fill32Cell(dmaFill, 0, paletteDestination, BACKDROP_PALETTE_BYTES);
+  Dma_Fill32Cell(dmaFill, fillColor, tileDestination,
+                 BATTLE_BACKGROUND_TILE_BYTES);
+  Dma_Fill32Cell(dmaFill, 0, paletteDestination,
+                 BATTLE_BACKGROUND_PALETTE_BYTES);
 }
 
 typedef s32 (*PackedDecoder)(const u8 *source, void *destination, u32 fill);
@@ -153,25 +158,27 @@ void Credits_LoadBackground(u32 resourceId, s32 alternate) {
     tileDestination = BG_CHAR_BLOCK(0);
     paletteDestination = (u32)BG_PLTT;
   } else {
-    paletteOffset = PIXELS_8BPP(BACKDROP_COLORS);
+    paletteOffset = PIXELS_8BPP(BATTLE_BACKGROUND_COLORS);
     tileDestination = BG_CHAR_BLOCK(2);
-    paletteDestination = (u32)&BG_PLTT_COLOR(8, 0);
+    paletteDestination =
+        (u32)&BG_PLTT_COLOR(BATTLE_BACKGROUND_COLORS / PALETTE_COLORS, 0);
   }
   // Offset every pixel into the selected palette half so both pictures
   // can remain visible throughout a crossfade.
   RamCode_LoadSlot(HEAP_SLOT_RAM_CODE_TEMP, Credits_DecodeBackground,
                    Credits_DecodeBackgroundCodeSize);
   ((PackedDecoder)gHeapSlots[HEAP_SLOT_RAM_CODE_TEMP])(
-      resourceData + BACKDROP_PALETTE_BYTES, tileDestination, paletteOffset);
+      resourceData + BATTLE_BACKGROUND_PALETTE_BYTES, tileDestination,
+      paletteOffset);
   HeapSlot_Release(HEAP_SLOT_RAM_CODE_TEMP);
 
   // Queue palette RAM writes for VBlank rather than transferring colours
   // during the active display.
   IO_WRITE_QUEUE_PUSH(paletteDestination, (u32)resourceData,
-                      DMA_COPY_WORDS(BACKDROP_PALETTE_BYTES / 4));
+                      DMA_COPY_WORDS(BATTLE_BACKGROUND_PALETTE_BYTES / 4));
 }
 
-/// Builds a backdrop's tilemap: two blank rows, the backdrop's tiles in order
+/// Builds a battle background's tilemap: two blank rows, its tiles in order
 /// over fifteen rows, three blank rows, then a zeroed tail.
 void Credits_BuildBackgroundTilemap(u32 *destination) {
   s32 i;
@@ -181,7 +188,7 @@ void Credits_BuildBackgroundTilemap(u32 *destination) {
   // Pad above and below the picture so vertical wrapping stays blank.
   for (i = 0; i < 2 * TILEMAP_ROW_WORDS; i++)
     *destination++ = blankTiles;
-  for (i = 0; i < BACKDROP_TILES / 2; i++) {
+  for (i = 0; i < BATTLE_BACKGROUND_TILES / 2; i++) {
     *destination++ = tilePair;
     tilePair += TILEMAP_PAIR(2, 2);
   }
@@ -997,8 +1004,8 @@ void Credits_DrawEnteringLine(void) {
     if ((s16)gCreditsScrollPosition / 8 != CREDITS_LAST_LINE_POSITION / 8) {
       lineIndex = (s16)gCreditsScrollPosition / 8;
       CREDITS_LAST_LINE_POSITION = scrollPosition;
-      CREDITS_END_OF_TEXT = Credits_DrawLine(gCredits_Lines[lineIndex],
-                                             CREDITS_RING_LINE(lineIndex), 1);
+      CREDITS_END_OF_TEXT = Credits_DrawLine(
+          gCredits_Lines[lineIndex], CREDITS_RING_LINE_TILE(lineIndex), 1);
     }
   }
 }

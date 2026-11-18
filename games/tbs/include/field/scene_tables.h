@@ -118,6 +118,9 @@ STATIC_ASSERT(offsetof(struct SceneEntrance, cameraLeft) == 14);
   (SCENE_EXIT(exit, map, entrance) + 0x10000000), (u32)(flag)
 /// The last header word: it ends the last scene's exits and the table.
 #define SCENE_EXITS_END 511
+/// Where a scene numbers its door or exit cells by their exits (Imil, Mercury
+/// Lighthouse), each one's cell behavior is its exit's number plus this.
+#define EXIT_CELL_BEHAVIOR_OFFSET 50
 
 /// Sequence ids above the scene table's rows: the sequences other than the
 /// field sequence, which MainRoutine_Run runs in its place.

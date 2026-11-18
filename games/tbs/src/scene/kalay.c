@@ -2013,11 +2013,12 @@ static void Kalay_PushTunnelStatue(void) {
 }
 
 /// A passage's opening frames, copied in turn over its doorway: each one map
-/// column five cells tall from row 58, columns 67 to 74. The passage counts as
-/// open (FLAG_TUNNEL_FIRST_PASSAGE_OPEN, FLAG_TUNNEL_SECOND_PASSAGE_OPEN) from
-/// column 70's.
+/// column five cells tall from row 58. This is the first frame's column.
 #define PASSAGE_FIRST_FRAME_COLUMN 67
+/// The frame from which the passage counts as open
+/// (FLAG_TUNNEL_FIRST_PASSAGE_OPEN, FLAG_TUNNEL_SECOND_PASSAGE_OPEN).
 #define PASSAGE_OPEN_FRAME_COLUMN 70
+/// The last frame's column.
 #define PASSAGE_LAST_FRAME_COLUMN 74
 
 /// The half-cell column each statue must be pushed west to, or past, to open

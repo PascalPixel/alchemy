@@ -66,8 +66,12 @@
 #include "system/vram_cache.h"
 #include "text/msg_ids.h"
 
+/// The embers the eruption throws, one for each of the crystal actors they
+/// reuse once the crystals are gone.
+enum { EMBER_COUNT = 16 };
+
 u8 gSolSanctumEruption_UnusedBeforeEmberState[8] BSS_DATA;
-s32 gEmberState[16] BSS_DATA;
+s32 gEmberState[EMBER_COUNT] BSS_DATA;
 s32 gEmberTimer BSS_DATA;
 u8 gSolSanctumEruption_UnusedAfterEmberTimer[12] BSS_DATA;
 struct Actor *gArcEffects[12] BSS_DATA;
@@ -145,7 +149,9 @@ enum {
   ACTOR_WISE_ONE = ACTOR_ALEX + 1,
   /// The sixteen crystals thrown out in a ring.
   ACTOR_FIRST_CRYSTAL = ACTOR_WISE_ONE + 1,
-  CRYSTAL_COUNT = 16
+  CRYSTAL_COUNT = EMBER_COUNT,
+  /// The same actors, reused as the embers once the crystals are gone.
+  ACTOR_FIRST_EMBER = ACTOR_FIRST_CRYSTAL
 };
 
 /// The star the Wise One has the leader take out, lifted above him.
@@ -706,7 +712,7 @@ static void SolSanctumEruption_ResetEmberEmission(void) {
   gEmberTimer = 0;
   gEmberLevel = 0;
   gEmberLevelTimer = 120;
-  for (emberIndex = 0; emberIndex < CRYSTAL_COUNT; emberIndex++) {
+  for (emberIndex = 0; emberIndex < EMBER_COUNT; emberIndex++) {
     gEmberState[emberIndex] = EMBER_FREE;
   }
 }
@@ -734,9 +740,9 @@ static void SolSanctumEruption_StepEmbers(void) {
   if (gEmberTimer != 0)
     gEmberTimer -= 3;
 
-  for (emberIndex = 0; emberIndex < CRYSTAL_COUNT; emberIndex++) {
+  for (emberIndex = 0; emberIndex < EMBER_COUNT; emberIndex++) {
     if (gEmberState[emberIndex] != EMBER_FREE) {
-      landedEmber = Actor_Get(emberIndex + ACTOR_FIRST_CRYSTAL);
+      landedEmber = Actor_Get(emberIndex + ACTOR_FIRST_EMBER);
       if (landedEmber->targetX == ACTOR_NO_TARGET &&
           landedEmber->targetZ == ACTOR_NO_TARGET) {
         gEmberState[emberIndex]++;
@@ -762,9 +768,9 @@ static void SolSanctumEruption_StepEmbers(void) {
     return;
   if (gEmberMask & gFrameCount)
     return;
-  for (emberIndex = 0; emberIndex < CRYSTAL_COUNT; emberIndex++) {
+  for (emberIndex = 0; emberIndex < EMBER_COUNT; emberIndex++) {
     angle = Math_RemainderUnsigned(Random_Next(), TRIG_TURN - 1);
-    ember = Actor_Get(emberIndex + ACTOR_FIRST_CRYSTAL);
+    ember = Actor_Get(emberIndex + ACTOR_FIRST_EMBER);
     if (gEmberState[emberIndex] == EMBER_FREE) {
       if (GameFlag_Get(FLAG_SOL_SANCTUM_ERUPTION_SATUROS_LEAVING) == 0)
         Sound_Play(SE_GLITTER);

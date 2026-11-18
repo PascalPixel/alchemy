@@ -21,12 +21,12 @@
 #define STATUS_SAVED_TILE_BYTES 2048
 #endif
 
-// The page modes of StatusScreen_DrawStatusAilments and
-// ItemMenu_DrawMemberStatus, in the mode's low byte: the party row's summary,
-// or the full status page, with the elemental levels, Power and Resist.
+/// The page modes of StatusScreen_DrawStatusAilments and
+/// ItemMenu_DrawMemberStatus, in the mode's low byte: the party row's summary,
+/// or the full status page, with the elemental levels, Power and Resist.
 enum { STATUS_PAGE_SUMMARY = 0, STATUS_PAGE_FULL = 1 };
-// A bit over the page mode: draw without clearing the window first, as for a
-// window just opened.
+/// A bit over the page mode: draw without clearing the window first, as for a
+/// window just opened.
 #define STATUS_PAGE_NO_CLEAR (1 << 8)
 #define STATUS_PAGE_MODE_MASK (STATUS_PAGE_NO_CLEAR - 1)
 
@@ -106,7 +106,7 @@ enum { STATUS_PAGE_SUMMARY = 0, STATUS_PAGE_FULL = 1 };
 #define STATUS_FIGURE_X(index) (130 + (index) * 32)
 #define STATUS_FIGURE_ROW_Y 128
 #define STATUS_FIGURE_FULL_PAGE_ROW_Y 104
-#define STATUS_FIGURE_HIDDEN_Y -16
+#define STATUS_FIGURE_ABOVE_SCREEN_Y -16
 
 /// The Djinn list (DjinnMenu_ShowCurrentList): a column for each element, its
 /// Djinni figure standing over it.
@@ -1015,8 +1015,8 @@ void StatusScreen_ShowMemberProgressMessage(struct Window *destination,
 
 /// Draws party member memberId's status page into window: the top rows
 /// (ItemMenu_DrawMemberStatus), the status list or "Normal", and except on the
-/// chooser page the Djinn counts by element and, in mode 1, the elemental
-/// levels, Power and Resist.
+/// chooser page the Djinn counts by element and, on STATUS_PAGE_FULL, the
+/// elemental levels, Power and Resist.
 void StatusScreen_DrawStatusAilments(struct Window *window, s32 memberId,
                                      s32 mode) {
   struct StatusScreenWork *menu = gMenuWork;
@@ -1032,7 +1032,7 @@ void StatusScreen_DrawStatusAilments(struct Window *window, s32 memberId,
   else
     hasDjinn = 0;
   unit = Unit_GetFar(memberId);
-  // The Djinn row, in tiles: higher on the full page (mode 1), which has the
+  // The Djinn row, in tiles: higher on STATUS_PAGE_FULL, which has the
   // elemental rows below it.
   if ((mode & STATUS_PAGE_MODE_MASK) == STATUS_PAGE_FULL)
     djinnRow = 7;
@@ -1077,8 +1077,8 @@ void StatusScreen_DrawStatusAilments(struct Window *window, s32 memberId,
     wait(1);
     Window_ClearInteriorTilesFar(window, 64, 56, 224, 96);
   }
-  // The four element icons, then the Djinn counts and, in mode 1, the
-  // elemental levels, Power and Resist.
+  // The four element icons, then the Djinn counts and, on STATUS_PAGE_FULL,
+  // the elemental levels, Power and Resist.
   Text_SetColorFar(TEXT_COLOR_NORMAL);
   if (mode == STATUS_PAGE_FULL || hasDjinn == 1) {
     Window_SetTilemapEntryFar(window, 1, 15, djinnRow, TILEMAP_ENTRY_ICON);
@@ -1515,10 +1515,10 @@ s32 PsynergyMenu_SelectAction(void) {
   WindowSprite_RedrawSavedRectFar(menu->messageWindow);
   Window_UpdateOrCreate(&menu->infoWindow, 0, 0, 30, 5, 2);
   // slotY is StatusScreenWork's rowY: the four Djinn figures go above the
-  // screen (y -16) while this page is up, until the party member row or the
-  // status page puts them back.
+  // screen while this page is up, until the party member row or the status
+  // page puts them back.
   for (iconIndex = 0; iconIndex < 4; iconIndex++)
-    menu->slotY[iconIndex] = STATUS_FIGURE_HIDDEN_Y;
+    menu->slotY[iconIndex] = STATUS_FIGURE_ABOVE_SCREEN_Y;
   {
     s32 depth = OAM_DEPTH_WINDOW + 5;
     struct WindowSprite **icons = menu->entryIcons;

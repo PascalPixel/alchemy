@@ -380,9 +380,9 @@ void Title_LoadIntroBackgrounds(void) {
 #define PROMPT_Y 124
 #endif
 
-/// The first tile of character block 1, as BG2 numbers its 256-colour tiles
-/// from block 0: where the title picture's and the Nintendo logo's tiles go.
-#define CHAR_BLOCK_1_TILE_8BPP (BG_CHAR_SIZE / TILE_SIZE_8BPP)
+/// The title picture's first tile: character block 1's, as BG2 numbers its
+/// 256-colour tiles from block 0.
+#define TITLE_PICTURE_TILE (BG_CHAR_SIZE / TILE_SIZE_8BPP)
 
 /// Plays the title intro: the view rises up the peak towards the sun, the
 /// clouds slower behind it, while the sun's lens flare swings up, until just
@@ -526,7 +526,7 @@ s32 Title_ShowIntro(s32 prompt) {
       Dma_Set(Ram_MapGridCellBuffer, BG_CHAR_BLOCK(1),
               DMA_COPY_HALFWORDS(SCREEN_TILE_BYTES / 2), REG_DMA3);
       tilemap = (u16 *)BG_SCREEN_BLOCK(6);
-      tile = CHAR_BLOCK_1_TILE_8BPP;
+      tile = TITLE_PICTURE_TILE;
       i = 0;
       break;
     }
@@ -622,6 +622,10 @@ UNUSED void Title_NoOpPalette(void) {}
 
 #define LOGO_PALETTE_BYTES (LOGO_PALETTE_COLORS * 2)
 
+/// The Nintendo logo's first tile: character block 1's, as BG2 numbers its
+/// 256-colour tiles from block 0.
+#define NINTENDO_LOGO_TILE (BG_CHAR_SIZE / TILE_SIZE_8BPP)
+
 /// Shows the Nintendo logo with its jingle. With mode 0 it fades in and holds
 /// two seconds; otherwise it waits a second, fades in, holds three seconds and
 /// fades out, faster once skipped. Returns -1 when A or Start skipped it.
@@ -654,7 +658,7 @@ s32 Title_ShowNintendoLogo(s32 mode) {
   Dma_Set(Ram_MapGridCellBuffer, BG_CHAR_BLOCK(1),
           DMA_COPY_WORDS(SCREEN_TILE_BYTES / 4), REG_DMA3);
   // Pad the 30-tile picture to the hardware map's 32-tile row width.
-  tileIndex = CHAR_BLOCK_1_TILE_8BPP;
+  tileIndex = NINTENDO_LOGO_TILE;
   tilemap = (u16 *)BG_SCREEN_BLOCK(6);
   for (i = 0; i < DISPLAY_TILE_HEIGHT; i++) {
     for (column = 0; column < DISPLAY_TILE_WIDTH; column++)

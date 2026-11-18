@@ -125,7 +125,7 @@
 #include "window/window.h"
 #include "text/msg_ids.h"
 
-extern s32 gVale_AlephGuardWalk[];
+extern s32 gVale_AlephGuardPatrolRoute[];
 extern s32 gVale_LeaderHammers[];
 extern s32 gVale_GaretWalksToTheHouse[];
 extern s32 gVale_UnusedWaterGrows[];
@@ -169,13 +169,13 @@ extern s32 gVale_JennaWalksToTheHouse[];
 #define VALE_DORA_Z 889
 #endif
 
-// Where the pillar stands in each of the three columns it can be pushed to
-// below the cliff (cells 22 to 24 of row 36), two pixels east of each cell's
-// middle.
+/// Where the pillar stands in the west of the three columns it can be pushed to
+/// below the cliff (cells 22 to 24 of row 36), two pixels east of each cell's
+/// middle.
 #define PILLAR_WEST_X 362
-#define PILLAR_MIDDLE_X 378
-#define PILLAR_EAST_X 394
-#define PILLAR_Z 584
+#define PILLAR_MIDDLE_X 378 ///< in the middle column
+#define PILLAR_EAST_X 394   ///< in the east column
+#define PILLAR_Z 584        ///< in row 36
 
 static void Vale_JennaSaysKradenIsWaiting(void);
 static void Vale_AskAboutSneakingToAleph(const s32 *leaderActions,
@@ -850,7 +850,7 @@ static void Vale_WarnAgainstSneakingUpMtAleph(void) {
   Event_AskYesNo(ACTOR_MAN_GUARDING_MT_ALEPH, 0);
   Actor_Get(ACTOR_MAN_GUARDING_MT_ALEPH)->update =
       (void (*)(struct Actor *))Vale_HaveGuardWatchTheLeader;
-  Actor_SetScript(ACTOR_MAN_GUARDING_MT_ALEPH, gVale_AlephGuardWalk);
+  Actor_SetScript(ACTOR_MAN_GUARDING_MT_ALEPH, gVale_AlephGuardPatrolRoute);
   GameFlag_Set(FLAG_VALE_WARNED_AGAINST_MT_ALEPH);
   Event_End();
 }
@@ -901,7 +901,7 @@ static void Vale_AskAboutSneakingToAleph(const s32 *leaderActions,
   Event_AskYesNo(ACTOR_MAN_GUARDING_MT_ALEPH, 0);
   Actor_Get(ACTOR_MAN_GUARDING_MT_ALEPH)->update =
       (void (*)(struct Actor *))Vale_HaveGuardWatchTheLeader;
-  Actor_SetScript(ACTOR_MAN_GUARDING_MT_ALEPH, gVale_AlephGuardWalk);
+  Actor_SetScript(ACTOR_MAN_GUARDING_MT_ALEPH, gVale_AlephGuardPatrolRoute);
   Event_End();
 }
 
@@ -1579,7 +1579,8 @@ s32 Scene_Initialize(void) {
             Actor_Get(ACTOR_MAN_GUARDING_MT_ALEPH)->update =
                 (void *)Vale_HaveGuardWatchTheLeader;
 #endif
-            Actor_SetScript(ACTOR_MAN_GUARDING_MT_ALEPH, gVale_AlephGuardWalk);
+            Actor_SetScript(ACTOR_MAN_GUARDING_MT_ALEPH,
+                            gVale_AlephGuardPatrolRoute);
           }
         } else {
           Actor_Get(ACTOR_MAN_GUARDING_MT_ALEPH)->paused = set;
@@ -3185,7 +3186,7 @@ static void Vale_CycleActorPalette(struct Actor *actor) {
 /// The man guarding Mt. Aleph walks his beat below the path once he has warned
 /// Isaac, looking about at each stop. SW_TIMER says which stretch he is on,
 /// 1 to 3, of which the warning scripts act on the two pauses, 1 and 2.
-s32 gVale_AlephGuardWalk[] = {
+s32 gVale_AlephGuardPatrolRoute[] = {
     SC_SPEED(0.5),
     SC_ACCELERATION(0.25),
     SC_SET(SW_TIMER, 2),
@@ -3446,9 +3447,9 @@ struct ActorPlacement gVale_ActorPlacementsAfterLeaving[] = {
     ACTOR_PLACEMENT(SPRITE_DOG, CONDITION_ALWAYS, 4,
         57, 0, 805, FACING_WEST, TALK_FACING_PARTY, 0),
     ACTOR_PLACEMENT(SPRITE_WOMAN_WITH_ORANGE_PONYTAIL, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        412, 0, 586, FACING_WEST, 3, 0),
+        412, 0, 586, FACING_WEST, TALK_FACING_PARTY_THEN_WATCH, 0),
     ACTOR_PLACEMENT(SPRITE_BOY_WITH_ORANGE_HAIR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        398, 0, 616, FACING_NORTH, 3, 0),
+        398, 0, 616, FACING_NORTH, TALK_FACING_PARTY_THEN_WATCH, 0),
     ACTOR_PLACEMENT(SPRITE_STONE_PILLAR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         PILLAR_MIDDLE_X, 0, PILLAR_Z, FACING_EAST, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(SPRITE_DORA, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
@@ -3470,7 +3471,7 @@ struct ActorPlacement gVale_ActorPlacementsAfterKalay[] = {
     ACTOR_PLACEMENT(ACTOR_GARET, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         0, 0, 0, FACING_NORTH, TALK_FACING_PARTY, 0),
     ACTOR_PLACEMENT(SPRITE_WOMAN_WITH_ORANGE_PONYTAIL, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        412, 0, 586, FACING_NORTH_NORTHEAST, 3, 0),
+        412, 0, 586, FACING_NORTH_NORTHEAST, TALK_FACING_PARTY_THEN_WATCH, 0),
     ACTOR_PLACEMENT(SPRITE_BOY_WITH_ORANGE_HAIR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         356, 0, 727, FACING_NORTH_NORTHWEST, TALK_FACING_PARTY, 0),
     ACTOR_PLACEMENT(SPRITE_YOUNG_MAN_WITH_BROWN_HAIR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,

@@ -4,21 +4,21 @@
 /// and leading on to a room with a Psynergy Stone
 /// (SceneId_SolSanctumPsynergyStone).
 ///
-/// Eight winged statues stand around a ninth, the centre statue, which bears a
+/// Eight winged statues stand around a ninth, the center statue, which bears a
 /// sun disc. Four can be pushed, or moved with Move, onto seals in the floor.
-/// Two others, pushed in front of the centre statue, shine a beam at it. The
+/// Two others, pushed in front of the center statue, shine a beam at it. The
 /// last two never move.
 ///
 /// Walking into a statue pushes it a cell (SolSanctumStatue_PushStatue), and
 /// Move ends in a check of where it stands.
 ///
 /// Each move's trigger carries the flag of what it achieves (a seal open, a
-/// beam shining, the centre statue moved), so a statue stops answering once it
+/// beam shining, the center statue moved), so a statue stops answering once it
 /// has done its part. Scene_Initialize redraws the room from those
 /// story flags on every entry.
 ///
 /// The puzzle is a trap, and the room follows the story flags in order:
-/// - Until the centre statue has moved (FLAG_SOL_SANCTUM_CENTER_STATUE_MOVED),
+/// - Until the center statue has moved (FLAG_SOL_SANCTUM_CENTER_STATUE_MOVED),
 ///   the first seal opened cuts away to the Luna and Sol rooms, where the trap
 ///   is sprung
 ///   (SOL_SANCTUM_STATUE_TO_SOL_SANCTUM_LUNA_SOL_ROOMS_TRAP_TRIGGERED,
@@ -27,8 +27,8 @@
 ///   (SolSanctumStatue_ExplainStatuePuzzle,
 ///   FLAG_SOL_SANCTUM_STATUE_PUZZLE_EXPLAINED). From then on a seal opened
 ///   too soon closes again. Its statue slides back and the leader jumps clear.
-/// - With both beams shining, the floor before the centre statue opens
-///   (SolSanctumStatue_OpenCenterHole), and the centre statue, moved south
+/// - With both beams shining, the floor before the center statue opens
+///   (SolSanctumStatue_OpenCenterHole), and the center statue, moved south
 ///   with Move, drops into it (SolSanctumStatue_CenterStatueMoved).
 /// - From then on the seals stay open. The first one opened cuts away to the
 ///   Luna and Sol rooms with the trap disarmed
@@ -87,7 +87,7 @@ extern struct ActorPlacement gSolSanctumStatue_ActorPlacements[];
 extern struct Trigger gSolSanctumStatue_Triggers[];
 extern s32 gSolSanctumStatue_ScrollOffset;
 
-/// Both beams have opened the hole in the floor before the centre statue.
+/// Both beams have opened the hole in the floor before the center statue.
 #define FLAG_SOL_SANCTUM_CENTER_HOLE_OPEN FLAG_SCENE_TEMP_07
 
 // Area flags: Scene_Arrive clears 0x300 to 0x3ff when the
@@ -111,7 +111,7 @@ extern s32 gSolSanctumStatue_ScrollOffset;
 
 /// The cell behaviors the step triggers answer.
 ///
-/// They are the jump spots, the four seal statues' and the centre statue's
+/// They are the jump spots, the four seal statues' and the center statue's
 /// cells. The beam statues' rows answer the behaviors of the cells each can
 /// stand in, 20 to 29.
 enum SolSanctumStatueCellBehavior {
@@ -128,7 +128,7 @@ enum SolSanctumStatueCellBehavior {
 
 // Scene flags, cleared on every ordinary arrival:
 // - FLAG_SOL_SANCTUM_CENTER_HOLE_OPEN: both beams have opened the hole in the
-//   floor; until then, Move on the centre statue first walks the leader clear
+//   floor; until then, Move on the center statue first walks the leader clear
 //   of it.
 
 static void SolSanctumStatue_InitializeScrollingSprites(void);
@@ -189,11 +189,11 @@ STATIC_ASSERT(offsetof(struct SealOpening, unused) == 196);
 /// gSolSanctumStatue_ActorPlacements.
 ///
 /// They are Kraden, who stays out of sight until his two visits, the eight
-/// statues, and the centre statue in its two places. Jenna and Garet, placed
+/// statues, and the center statue in its two places. Jenna and Garet, placed
 /// after them, keep their own slots.
 ///
 /// Of the statues, four are pushed onto seals and two shine beams at the
-/// centre. The other two never move.
+/// center. The other two never move.
 enum SolSanctumStatueActorId {
   ACTOR_KRADEN = ACTOR_FIRST_PLACED,
   ACTOR_NORTHWEST_STATUE,
@@ -207,7 +207,7 @@ enum SolSanctumStatueActorId {
   /// South of the right beam statue, and moved by no event.
   ACTOR_RIGHT_STILL_STATUE,
   ACTOR_CENTER_STATUE,
-  /// Stands in the hole in the floor once the centre statue has dropped in.
+  /// Stands in the hole in the floor once the center statue has dropped in.
   ACTOR_MOVED_CENTER_STATUE
 };
 
@@ -230,7 +230,7 @@ const struct SceneExitRegion *Scene_GetExitRegions(void) { return NULL; }
 
 const u32 *Scene_GetExits(void) { return gSolSanctumStatue_Exits; }
 
-/// Returns Kraden, the eight statues, the centre statue and its moved copy
+/// Returns Kraden, the eight statues, the center statue and its moved copy
 /// (ACTOR_KRADEN to ACTOR_MOVED_CENTER_STATUE), then Jenna and Garet.
 const struct ActorPlacement *Scene_GetActorPlacements(void) {
   return gSolSanctumStatue_ActorPlacements;
@@ -261,11 +261,11 @@ static s32 SolSanctumStatue_SelectStoryExit(void) {
   return -1;
 }
 
-/// The floor before the centre statue flashes this many times, eight frames
+/// The floor before the center statue flashes this many times, eight frames
 /// each, as it opens.
 #define CENTER_HOLE_FLASHES 22
 
-/// Animates the floor opening before the centre statue once both beams shine,
+/// Animates the floor opening before the center statue once both beams shine,
 /// then lets the statue drop in if Move has already brought it there.
 static void SolSanctumStatue_OpenCenterHole(void) {
   s32 flash;
@@ -313,7 +313,7 @@ static void SolSanctumStatue_ExplainTrapDisarmed(void) {
   Event_Wait(6);
   Actor_FaceDirection(ACTOR_KRADEN, FACING_WEST_NORTHWEST, 0);
   Event_Wait(10);
-  // The camera swings west to the hole at the centre and back.
+  // The camera swings west to the hole at the center and back.
   FieldCamera_SetSpeed(5.6);
   FieldCamera_MoveTo(287, CAMERA_KEEP, 176, 1);
   FieldCamera_WaitForMove();
@@ -889,10 +889,10 @@ s32 Scene_Initialize(void) {
   return 0;
 }
 
-/// Loads the three strips of graphics and fills in a row of sprites for each.
 /// Each drifting row's picture: one 32x8 sprite, repeated along the row.
 #define ROW_SPRITE_BYTES (4 * TILE_SIZE_4BPP)
 
+/// Loads the three strips of graphics and fills in a row of sprites for each.
 static void SolSanctumStatue_InitializeScrollingSprites(void) {
   u32 column;
   s32 tile;
@@ -964,7 +964,7 @@ static void SolSanctumStatue_SoutheastStatueMoved(void) {
 }
 
 /// Moving the left beam statue with Move frees its cell, and in front of the
-/// centre it shines its beam.
+/// center it shines its beam.
 static void SolSanctumStatue_LeftBeamStatueMoved(void) {
   Field_SetCellBehaviorAt(2, 208, 112, 0);
   if (SolSanctumStatue_IsActorAtCell(ACTOR_LEFT_BEAM_STATUE, 14, 7) != 0) {
@@ -980,7 +980,7 @@ static void SolSanctumStatue_RightBeamStatueMoved(void) {
   }
 }
 
-/// Starting Move beside the centre statue blocks its cells while the leader
+/// Starting Move beside the center statue blocks its cells while the leader
 /// stands in their row.
 static void SolSanctumStatue_PrepareMoveOnCenterStatue(void) {
   s32 column;
@@ -1016,7 +1016,7 @@ static void SolSanctumStatue_PrepareMoveOnRightBeamStatue(void) {
   }
 }
 
-/// Moving the centre statue with Move, or a beam completing the pair, drops
+/// Moving the center statue with Move, or a beam completing the pair, drops
 /// the statue into the floor.
 static void SolSanctumStatue_CenterStatueMoved(void) {
   struct Actor *statue;
@@ -1096,7 +1096,7 @@ static void SolSanctumStatue_CenterStatueMoved(void) {
   }
 }
 
-/// Walking into the centre statue from the south makes the leader push it
+/// Walking into the center statue from the south makes the leader push it
 /// north.
 static void SolSanctumStatue_PushCenterStatueNorth(void) {
   struct Actor *movingActor;
@@ -1146,7 +1146,7 @@ static void SolSanctumStatue_PushSoutheastStatue(void) {
 }
 
 /// Walking into the left beam statue from the west slides it east in front
-/// of the centre, where it shines its beam.
+/// of the center, where it shines its beam.
 static void SolSanctumStatue_PushLeftBeamStatueEast(void) {
   SolSanctumStatue_PushStatue(ACTOR_LEFT_BEAM_STATUE, 14, 7, 13, 7);
   SolSanctumStatue_ShineLeftBeam();

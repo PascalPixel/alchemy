@@ -212,8 +212,10 @@ s32 Battle_CalculateAttackDamage(s32 attack, s32 defense, s32 addedPower,
 s32 Battle_CalculatePsynergyPower(s32 power, s32 elementDifference,
                                   s32 powerMultiplier);
 /// The element power at which Battle_CalculateRecovery's healing is neither
-/// stronger nor weaker, and the multiplier that keeps an amount as it is.
+/// stronger nor weaker: each point above it counts as two points of element
+/// difference.
 #define HEALING_BASE_POWER 100
+/// The battle's multipliers are 256ths: this one keeps an amount as it is.
 #define BATTLE_MULTIPLIER_ONE 256
 s32 Battle_CalculateRecovery(s32 power, s32 elementPower, s32 powerMultiplier);
 s32 Item_GetEquippedElement(s32 unitId);

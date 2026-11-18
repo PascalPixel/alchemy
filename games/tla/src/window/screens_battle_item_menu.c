@@ -121,14 +121,17 @@ s32 BattleItemMenu_Run(s32 member, u16 *entries, s32 count) {
     t = (s16)window->y;
     iconSprite->oam.f.y = (y + t) * 8 + 4;
   }
+  // One icon slot a visible row; paging reloads these same slots.
   for (i = 0; i < BATTLE_LIST_ROWS; i++) {
     iconSlots[i] = VramCache_AllocEntry(128);
     sprites[i].oam.f.tile = VramCache_Reload(iconSlots[i], (const void *)-1);
   }
-  // XXX (no evidence): what shows tiles 0, 1, 16 and 17 of the second text
-  // range (TEXT_EXTRA_TILE_FIRST), which take the top and bottom tees here;
-  // no window code names an entry of them, and there is no recording of an
-  // open battle list.
+  // The border's tees go into tiles 0, 1, 16 and 17 of the second text range,
+  // which nothing shows here. In battle BG1 takes 8bpp tiles from character
+  // block 0 (BATTLE_BG1CNT), so these are its tiles COMMAND_ROW_ICON_TILE and
+  // COMMAND_ROW_ICON_TILE + 8, the first command icon's top-left and
+  // bottom-left; BattleCommandRow_Run turns BG1 off as it returns, before a
+  // list opens, and draws its icons there again when it opens next.
   Vram_CopyTile(WINDOW_TILE_BORDER_TOP_TEE, TEXT_EXTRA_TILE_FIRST);
   Vram_CopyTile(WINDOW_TILE_BORDER_TOP_TEE, TEXT_EXTRA_TILE_FIRST + 1);
   Vram_CopyTile(WINDOW_TILE_BORDER_BOTTOM_TEE, TEXT_EXTRA_TILE_FIRST + 16);
@@ -161,6 +164,7 @@ s32 BattleItemMenu_Run(s32 member, u16 *entries, s32 count) {
       }
       Text_DrawWideStringAtOffset(messageText, messageWindow, 0, 4);
       drawnRow = selectedRow;
+      // Only a page change redraws the rows and their icons.
       if (firstEntry != drawnFirstEntry) {
         WindowSprite_RedrawSavedRect(window);
         for (i = 0; i < BATTLE_LIST_ROWS; i++) {
@@ -183,13 +187,16 @@ s32 BattleItemMenu_Run(s32 member, u16 *entries, s32 count) {
         drawnFirstEntry = firstEntry;
       }
       if (count > BATTLE_LIST_ROWS) {
-        for (i = 0; i < (count + 4) / BATTLE_LIST_ROWS; i++) {
+        for (i = 0; i < (count + BATTLE_LIST_ROWS - 1) / BATTLE_LIST_ROWS;
+             i++) {
           iconTile = i + PAGE_NUMBER_TILE;
           if (i == firstEntry / BATTLE_LIST_ROWS)
             iconTile = i + PAGE_NUMBER_LIT_TILE;
           Window_SetTilemapEntry(
               window, iconTile,
-              window->width - (count + 4) / BATTLE_LIST_ROWS + i - 2, -1, 0);
+              window->width -
+                  (count + BATTLE_LIST_ROWS - 1) / BATTLE_LIST_ROWS + i - 2,
+              -1, 0);
         }
       }
       Window_HighlightRect((s16)window->x + 1,
@@ -199,8 +206,10 @@ s32 BattleItemMenu_Run(s32 member, u16 *entries, s32 count) {
       work->holdTilemapUpload = 0;
     }
 
+    // Each frame: the current page's number lit 12 frames in 16, and the page
+    // arrows on the window's top edge (y -1).
     if (count > BATTLE_LIST_ROWS) {
-      for (i = 0; i < (count + 4) / BATTLE_LIST_ROWS; i++) {
+      for (i = 0; i < (count + BATTLE_LIST_ROWS - 1) / BATTLE_LIST_ROWS; i++) {
         iconTile = i + PAGE_NUMBER_TILE;
         if ((gFrameCount & 15) <= 11) {
           if (i == firstEntry / BATTLE_LIST_ROWS)
@@ -208,12 +217,15 @@ s32 BattleItemMenu_Run(s32 member, u16 *entries, s32 count) {
         }
         Window_SetTilemapEntry(
             window, iconTile,
-            window->width - (count + 4) / BATTLE_LIST_ROWS + i - 2, -1, 0);
+            window->width - (count + BATTLE_LIST_ROWS - 1) / BATTLE_LIST_ROWS +
+                i - 2,
+            -1, 0);
       }
       pageTile = -1;
-      Window_SetTilemapEntry(window, LIST_TILE_PAGES_LEFT,
-                             window->width - (count + 4) / BATTLE_LIST_ROWS - 3,
-                             pageTile, 0);
+      Window_SetTilemapEntry(
+          window, LIST_TILE_PAGES_LEFT,
+          window->width - (count + BATTLE_LIST_ROWS - 1) / BATTLE_LIST_ROWS - 3,
+          pageTile, 0);
       Window_SetTilemapEntry(window, LIST_TILE_PAGES_RIGHT, window->width - 2,
                              pageTile, 0);
       WINDOW_MARK_TILEMAP_ROW(work, (u32)((s16)window->y - 1));
@@ -235,6 +247,8 @@ s32 BattleItemMenu_Run(s32 member, u16 *entries, s32 count) {
 
     BATTLE_MENU_SET_CURSOR(firstEntry, selectedRow, preferredRow);
     navigation = BATTLE_MENU_WORK;
+    // A takes a usable item; a broken or refused one plays the error sound and
+    // shows why.
     if (gInput.pressed & KEY_A) {
       if (count != 0) {
         result = firstEntry + selectedRow;

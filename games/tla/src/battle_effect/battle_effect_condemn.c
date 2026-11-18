@@ -230,7 +230,7 @@ void BattleEffect_RunCondemn(struct BattleEffectParams *args) {
   Task_Remove(BattleEffect_ArmBg2AffineHBlankDma);
   BattleBackground_LoadFar(BATTLE_BACKGROUND_FIXED,
                            Ram_HeapSlots->battleWork->background,
-                           BACKGROUND_DARKEN_FRAMES);
+                           BACKGROUND_DARKENED_LEVEL);
   EFFECT_RELEASE_BLITTERS();
   BattleEffect_EndCanvasLayer();
 }

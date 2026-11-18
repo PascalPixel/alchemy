@@ -125,15 +125,15 @@ void BattleEffect_RunRisingDragon(struct BattleEffectParams *args) {
         EffectPosition_ProjectBattler(args->targets[0], &hit);
         for (j = 0; j != DRAGON_SPARKS; j++) {
           s32 angle;
-          s32 speed = 255;
+          s32 speed;
 
           spark = &work->particles[i * DRAGON_SPARKS + j];
 
           spark->x = INTtoFIXED(hit.x / 2);
           spark->y = INTtoFIXED(hit.y - 16);
           angle = Random16();
-          speed &= Random16();
-          spark->velocityX = (Trig_Sin(angle) * (speed += 127)) >> 6;
+          speed = (Random16() & 255) + 127;
+          spark->velocityX = (Trig_Sin(angle) * speed) >> 6;
           spark->velocityY = (Trig_Cos(angle) * speed) >> 6;
           spark->variant = (Random16() & 15) + 16;
         }
@@ -329,8 +329,8 @@ void BattleEffect_RunRisingDragon(struct BattleEffectParams *args) {
 }
 
 #define FIGURE_FRAMES 108
-#define FIGURE_SPARK_BURST_FRAME                                               \
-  30                        ///< the burst at its hand flashes the screen
+/// The burst at its hand flashes the screen.
+#define FIGURE_SPARK_BURST_FRAME 30
 #define FIGURE_HIT_FRAME 80 ///< the blow, which starts the result phase
 
 // The parts of the figure in BattleEffect_HeartbreakSheet, unpacked into the
@@ -359,10 +359,10 @@ void BattleEffect_RunRisingDragon(struct BattleEffectParams *args) {
 /// its clawed hand reaching out. From frame 28 a burst of sparks grows at its
 /// hand and the screen flashes white; from frame 40 a heart is held up, from
 /// frame 48 the hand closes into a fist, and from frame 62 green flame burns
-/// the heart away. At frame 80 the
-/// blow lands and the result phase starts; from frame 92 the figure fades out
-/// and rises away, and the battle background is reloaded at the end. On the
-/// far side the whole figure is drawn mirrored.
+/// the heart away. At frame 80 the blow lands and the result phase starts;
+/// from frame 92 the figure fades out and rises away, and the battle
+/// background is reloaded at the end. On the far side the whole figure is
+/// drawn mirrored.
 ///
 /// Abilities: Heartbreak (the Thanatos Mace's unleash).
 void BattleEffect_RunHeartbreak(struct BattleEffectParams *args) {
@@ -541,30 +541,30 @@ void BattleEffect_RunHeartbreak(struct BattleEffectParams *args) {
 }
 #undef TARGET_ANCHOR_PERCENT
 #undef DRAGON_SEGMENTS
-#undef FIGURE_FRAMES
-#undef FIGURE_SPARK_BURST_FRAME
-#undef FIGURE_HIT_FRAME
-#undef FIGURE_BODY
-#undef FIGURE_ARM_CLENCHED
-#undef FIGURE_ARM_REACHING
-#undef FIGURE_SPARK_BURST
-#undef FIGURE_HEART
-#undef FIGURE_BODY_WIDTH
-#undef FIGURE_BODY_HEIGHT
-#undef FIGURE_ARM_CLENCHED_WIDTH
-#undef FIGURE_ARM_CLENCHED_HEIGHT
-#undef FIGURE_ARM_REACHING_WIDTH
-#undef FIGURE_ARM_REACHING_HEIGHT
-#undef FIGURE_HEART_WIDTH
-#undef FIGURE_HEART_HEIGHT
-#undef FIGURE_SWAY
 #undef DRAGON_CORNERS
 #undef DRAGON_SPARKS
 #undef DRAGON_ARC_END
-#undef RISING_DRAGON_VERTICES
-#undef RISING_DRAGON_STRIP
 #undef DRAGON_ARC_SPEED
 #undef DRAGON_SCALE
 #undef DRAGON_SECOND_TURN
 #undef DRAGON_HEAD_TURN
+#undef RISING_DRAGON_VERTICES
+#undef RISING_DRAGON_STRIP
 #undef RISING_DRAGON_FLAME_DRAGON_HEAD_PICTURES
+#undef FIGURE_FRAMES
+#undef FIGURE_SPARK_BURST_FRAME
+#undef FIGURE_HIT_FRAME
+#undef FIGURE_BODY
+#undef FIGURE_BODY_WIDTH
+#undef FIGURE_BODY_HEIGHT
+#undef FIGURE_ARM_CLENCHED
+#undef FIGURE_ARM_CLENCHED_WIDTH
+#undef FIGURE_ARM_CLENCHED_HEIGHT
+#undef FIGURE_ARM_REACHING
+#undef FIGURE_ARM_REACHING_WIDTH
+#undef FIGURE_ARM_REACHING_HEIGHT
+#undef FIGURE_SPARK_BURST
+#undef FIGURE_HEART
+#undef FIGURE_HEART_WIDTH
+#undef FIGURE_HEART_HEIGHT
+#undef FIGURE_SWAY

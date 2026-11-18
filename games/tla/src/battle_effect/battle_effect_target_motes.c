@@ -108,9 +108,9 @@ void BattleEffect_RunDrown(struct BattleEffectParams *args) {
 #define TARGET_MOTES 512      ///< motes scattered at the start
 #define TARGET_MOTES_SLOTS 64 ///< particles reserved for each target
 #define TARGET_MOTES_CYCLE 24 ///< frames of a mote's image cycle
-/// The motes about each target: TARGET_MOTES_COUNT, or Demonfire's orbs or
-/// Drown's drops.
-#define TARGET_MOTES_COUNT 16
+/// The motes about each target: TARGET_MOTES_PER_TARGET, or Demonfire's orbs
+/// or Drown's drops.
+#define TARGET_MOTES_PER_TARGET 16
 #define DEMON_FIRE_ORBS 24
 #define DROWN_DROPS 32
 /// The frames between one target's motes starting and the next's.
@@ -118,6 +118,12 @@ void BattleEffect_RunDrown(struct BattleEffectParams *args) {
 /// The frames the effect runs on after the last target's motes start.
 #define TARGET_MOTES_RUN_ON 32
 #define TARGET_MOTES_WIDE_RUN_ON 64
+/// The frames the effect runs on after the damage shows. Demonfire's user
+/// sets off DEMON_FIRE_LEAP_FRAMES before then and reaches the first target
+/// over DEMON_FIRE_APPROACH_FRAMES, striking it as the damage shows.
+#define TARGET_MOTES_DAMAGE_END_FRAMES 32
+#define DEMON_FIRE_LEAP_FRAMES 14
+#define DEMON_FIRE_APPROACH_FRAMES 16
 /// VortexSheet's water drop, after its three 16x64 swirls.
 #define DROWN_DROP_WIDTH 12
 #define DROWN_DROP_HEIGHT 24
@@ -142,7 +148,7 @@ void BattleEffect_RunTargetMotes(struct BattleEffectParams *args, u32 mode) {
 
   work = Ram_HeapSlots->battleEffect;
   canvas = Ram_HeapSlots->battleCanvas;
-  count = TARGET_MOTES_COUNT;
+  count = TARGET_MOTES_PER_TARGET;
   BattleEffect_StartCanvasLayer(0);
   Resource_LoadAndDecompress(RESOURCE_SMOKE_SHEET, work->sheet, 1, 1);
   if (mode == TARGET_MOTES_TAINT) {
@@ -201,17 +207,18 @@ void BattleEffect_RunTargetMotes(struct BattleEffectParams *args, u32 mode) {
   for (frame = 0; frame != total; frame++) {
     struct BattleCamera *camera = Ram_HeapSlots->cameraWork;
 
-    // Demonfire: the user steps up to the first target over 16 frames and
-    // strikes it.
+    // Demonfire: the user steps up to the first target and strikes it.
     if (mode == TARGET_MOTES_DEMON_FIRE) {
-      if (frame == total - 46)
-        BattleMotion_ApproachTargetFar(args->user, args->targets[0], 16, 0);
-      if (frame == total - 32) {
+      if (frame ==
+          total - TARGET_MOTES_DAMAGE_END_FRAMES - DEMON_FIRE_LEAP_FRAMES)
+        BattleMotion_ApproachTargetFar(args->user, args->targets[0],
+                                       DEMON_FIRE_APPROACH_FRAMES, 0);
+      if (frame == total - TARGET_MOTES_DAMAGE_END_FRAMES) {
         EFFECT_SHOW_DAMAGE(SE_HEAVY_IMPACT);
         BattleMotion_ApplyKnockbackFar(args->targets[0], KNOCKBACK_HURL);
         work->shakeFrames = 8;
       }
-    } else if (frame == total - 32) {
+    } else if (frame == total - TARGET_MOTES_DAMAGE_END_FRAMES) {
       EFFECT_SHOW_DAMAGE(SE_IMPACT);
     }
 
@@ -350,15 +357,11 @@ void BattleEffect_RunTargetMotes(struct BattleEffectParams *args, u32 mode) {
   BattleEffect_EndCanvasLayer();
 }
 
-#undef GROUND_Y
-
 #define SLEEP_FRAMES 98
 #define SLEEP_SEEDED 32 ///< particles cleared at the start
 #define SLEEP_SHEEP 12  ///< sheep dropped
-/// SheepCardSheet: a 32x64 card of a sheep, which Sleep does not draw, then
+/// SheepCardSheet: the Sleep Card's picture, which Sleep does not draw, then
 /// four pictures of a tumbling sheep, drawn flipped for the next four.
-#define SHEEP_CARD_WIDTH 32
-#define SHEEP_CARD_HEIGHT 64
 #define SHEEP_PICTURES 4
 /// A sheep's variant counts its tumble, z a frame: it turns to its next
 /// picture every SHEEP_TUMBLE_STEP.
@@ -457,18 +460,17 @@ void BattleEffect_RunSleep(struct BattleEffectParams *args) {
         if (picture < SHEEP_PICTURES)
           drawUpright(canvas,
                       work->sheet + picture * PICTURE_BYTES(SHEEP) +
-                          PICTURE_BYTES(SHEEP_CARD),
+                          PICTURE_BYTES(CARD),
                       scroll + FIXEDtoINT(one->x) - SHEEP_WIDTH / 2,
                       FIXEDtoINT(one->y) - SHEEP_HEIGHT / 2, SHEEP_WIDTH,
                       SHEEP_HEIGHT);
         else
-          drawFlipped(canvas,
-                      work->sheet + picture * PICTURE_BYTES(SHEEP) -
-                          SHEEP_PICTURES * PICTURE_BYTES(SHEEP) +
-                          PICTURE_BYTES(SHEEP_CARD),
-                      scroll + FIXEDtoINT(one->x) - SHEEP_WIDTH / 2,
-                      FIXEDtoINT(one->y) - SHEEP_HEIGHT / 2, SHEEP_WIDTH,
-                      SHEEP_HEIGHT);
+          drawFlipped(
+              canvas,
+              work->sheet + picture * PICTURE_BYTES(SHEEP) -
+                  SHEEP_PICTURES * PICTURE_BYTES(SHEEP) + PICTURE_BYTES(CARD),
+              scroll + FIXEDtoINT(one->x) - SHEEP_WIDTH / 2,
+              FIXEDtoINT(one->y) - SHEEP_HEIGHT / 2, SHEEP_WIDTH, SHEEP_HEIGHT);
         one->y += one->velocityY;
         one->velocityY += toFIXED(1) / 8;
         one->variant += one->z;
@@ -874,7 +876,10 @@ void BattleEffect_RunPhoenix(struct BattleEffectParams *args) {
 #undef TARGET_MOTES
 #undef TARGET_MOTES_SLOTS
 #undef TARGET_MOTES_CYCLE
-#undef TARGET_MOTES_COUNT
+#undef TARGET_MOTES_PER_TARGET
+#undef TARGET_MOTES_DAMAGE_END_FRAMES
+#undef DEMON_FIRE_LEAP_FRAMES
+#undef DEMON_FIRE_APPROACH_FRAMES
 #undef DEMON_FIRE_ORBS
 #undef DROWN_DROPS
 #undef TARGET_MOTES_STAGGER
@@ -886,8 +891,6 @@ void BattleEffect_RunPhoenix(struct BattleEffectParams *args) {
 #undef SLEEP_FRAMES
 #undef SLEEP_SEEDED
 #undef SLEEP_SHEEP
-#undef SHEEP_CARD_WIDTH
-#undef SHEEP_CARD_HEIGHT
 #undef SHEEP_PICTURES
 #undef SHEEP_TUMBLE_STEP
 #undef GROUND_Y

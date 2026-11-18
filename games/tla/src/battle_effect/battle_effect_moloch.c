@@ -467,6 +467,9 @@ enum IrisSplashPicture {
 #define IRIS_SPLASH_POINTS 64
 #define IRIS_SPLASH_SPOKES 8
 #define IRIS_RING_FADE_FRAMES 12
+/// An angle of n 64ths of a turn (TRIG_TURN / 64 each): a splash's ring has
+/// IRIS_SPLASH_POINTS points about a turn.
+#define IRIS_TURN_64THS(n) ((n) << 10)
 
 /// Iris: draws one falling drop at (x, y), large (20x40) when small is 0
 /// and small (12x24) otherwise, its animation picture chosen by frame / 2, and
@@ -597,6 +600,13 @@ struct StripQuad;
 /// One frame of a petal's life, which counts down in its high byte; the petal
 /// is drawn at twice its life's scale.
 #define IRIS_PETAL_FRAME (1 << 8)
+/// As she appears her petals fly out, shrinking a 32nd of their size
+/// (FIXED_ONE / 32) every two frames; IRIS_PETAL_SHRINK is how much after so
+/// many frames.
+#define IRIS_PETAL_SHRINK(frames) ((frames) >> 1 << 11)
+/// A canvas x as a 16.16 x on the screen, where the canvas is shown at twice
+/// its width.
+#define IRIS_SCREEN_X_FX(canvasX) ((canvasX) << 17)
 #define IRIS_MOTES 32
 /// A mote's variant: its size in pixels in the low bits; IRIS_MOTE_FADING to
 /// fade through the faded mote sets once it is IRIS_MOTE_FADE_AGE frames old;
@@ -639,8 +649,14 @@ struct StripQuad;
 /// pixel a frame.
 #define IRIS_APPEAR_RING_POINTS 256
 #define IRIS_APPEAR_RING_MOTE 4 ///< its motes' size
+/// The share of each pixel's level her canvas keeps a frame: any share but
+/// CANVAS_FADE_HALF keeps three quarters.
+#define IRIS_CANVAS_FADE_SHARE 70
 /// The bands of light that rise up the canvas, eight rows a frame.
 #define IRIS_BAND_HEIGHT 40
+/// The fountain's first frame draws three shaded circles from this size, two
+/// pixels apart, that the mote fades overwrite before they are seen.
+#define IRIS_UNSEEN_CIRCLE_SIZE 14
 /// The pillars of light: those that widen or narrow change width every so many
 /// pixels they rise.
 #define IRIS_WIDENING_STEP 19
@@ -655,10 +671,15 @@ struct StripQuad;
 #define IRIS_TALL_RING_MOTES 197
 #define IRIS_SWEEP_STEP (TRIG_TURN * 3 / 512)
 #define IRIS_SWEEP_MOTE 6
+/// A speed of n half pixels a frame, as 16.16 (toFIXED(n) / 2).
+#define IRIS_HALF_PIXELS_FX(n) ((n) << 15)
 /// The cone of light's texture, after the glow textures.
 #define IRIS_CONE_TEXTURE                                                      \
   (IRIS_TEXTURES + IRIS_GLOW_TEXTURES * IRIS_TEXTURE_BYTES)
 #define IRIS_CONE_TEXTURE_SIZE 32
+/// How far the cone stretches toward its full size (FIXED_ONE) in so many
+/// frames: a 64th a frame.
+#define IRIS_CONE_GROWTH(frames) ((frames) << 10)
 /// The battle camera's yaw (BattleCamera.yaw), read as a signed halfword of
 /// the camera work.
 #define IRIS_CAMERA_YAW (offsetof(struct BattleCamera, yaw) / sizeof(s16))
@@ -762,7 +783,7 @@ static inline void Iris_DrawSplash(s32 t, s32 x, s32 y, s32 small) {
       s32 px;
       s32 a;
       s32 py;
-      a = point << 10; // IRIS_SPLASH_POINTS points about a turn
+      a = IRIS_TURN_64THS(point);
       px = (FIXEDtoINT(r * Trig_Sin(a) / 2)) + x;
       py = (FIXEDtoINT(r * Trig_Cos(a))) + y;
       draw(canvas, sprites + cel8 + IRIS_DOTS, px, py - 2, IRIS_DOT_WIDTH,
@@ -850,7 +871,7 @@ static inline void Iris_DrawSplash(s32 t, s32 x, s32 y, s32 small) {
         s32 px;
         s32 a;
         s32 py;
-        a = point << 10;
+        a = IRIS_TURN_64THS(point);
         px = (FIXEDtoINT(r * Trig_Sin(a))) + x;
         py = (FIXEDtoINT(r * Trig_Cos(a) * 2)) + y;
         draw(canvas, sprites + ringCel, px - 1, py - 2, IRIS_DOT_WIDTH,
@@ -860,7 +881,7 @@ static inline void Iris_DrawSplash(s32 t, s32 x, s32 y, s32 small) {
         s32 px;
         s32 a;
         s32 py;
-        a = point << 10;
+        a = IRIS_TURN_64THS(point);
         px = (FIXEDtoINT(r * Trig_Sin(a) * 2)) + x;
         py =
             (FIXEDtoINT(r * Trig_Cos(a))) + y + gIris_SplashOffsetsY[small] * 2;
@@ -1395,8 +1416,7 @@ void BattleEffect_RunIris(struct BattleEffectParams *args) {
         work->particles[i].y = INTtoFIXED(Random16() % 15) + toFIXED(57);
         work->particles[i].velocityX = (Random16() & motesMask) << 12;
       }
-      // A share of 70 keeps three quarters, as any share but half does.
-      EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_FADE, 70);
+      EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_FADE, IRIS_CANVAS_FADE_SHARE);
     }
     if ((u32)(frame - 177) <= 216) {
       scale = gIris_UnitScale;
@@ -1431,7 +1451,7 @@ void BattleEffect_RunIris(struct BattleEffectParams *args) {
       // ten pixels a frame.
       if (frame <= 385) {
         if ((u32)(frame - 351) <= 14)
-          lift = Trig_Sin((frame - 350) << 10) << 6;
+          lift = Trig_Sin(IRIS_TURN_64THS(frame - 350)) << 6;
         else if (frame > 365)
           lift = (366 - frame) * toFIXED(10) + toFIXED(64);
         if (frame <= 229)
@@ -1476,10 +1496,10 @@ void BattleEffect_RunIris(struct BattleEffectParams *args) {
         }
       }
     }
-    // As she appears her petals fly out, shrinking a 32nd every two frames.
+    // As she appears her petals fly out, shrinking.
     if ((u32)(frame - 177) <= 46) {
       for (i = 0; i != IRIS_PETALS; i++) {
-        shrink.x = shrink.y = toFIXED(1) - ((frame - 177) >> 1 << 11);
+        shrink.x = shrink.y = FIXED_ONE - IRIS_PETAL_SHRINK(frame - 177);
         pos[3] = 0;
         pos[1] = toFIXED(255);
         pos[0] = petals->x[i];
@@ -1610,8 +1630,7 @@ void BattleEffect_RunIris(struct BattleEffectParams *args) {
               s32 s = FindFreePetal();
 
               petals->life[s] = 121 * IRIS_PETAL_FRAME;
-              // Twice the splash's x: the canvas is shown at twice its width.
-              petals->x[s] = gIris_SplashX[j] << 17;
+              petals->x[s] = IRIS_SCREEN_X_FX(gIris_SplashX[j]);
               petals->y[s] = INTtoFIXED(gIris_SplashY[j]) + toFIXED(32);
               petals->vx[s] = ((Random16() & 31) - 16) << 12;
               petals->vy[s] = -(Random16() & 31) << 12;
@@ -1788,7 +1807,7 @@ void BattleEffect_RunIris(struct BattleEffectParams *args) {
       // DEAD: the mote fades below overwrite these three circles before
       // anything draws them; the ROM keeps their drawing.
       for (i = 0; i != 6; i += 2) {
-        s32 n = i + 14;
+        s32 n = i + IRIS_UNSEEN_CIRCLE_SIZE;
         s32 w = n * 2;
 
         BattleEffect_DrawShadedCircles(work->sheet + off, n, FIXED_ONE);
@@ -1838,8 +1857,7 @@ void BattleEffect_RunIris(struct BattleEffectParams *args) {
           }
         }
       }
-      // A share of 70 keeps three quarters, as any share but half does.
-      EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_FADE, 70);
+      EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_FADE, IRIS_CANVAS_FADE_SHARE);
     }
     if ((u32)(frame - 447) <= 15) {
       s32 step = frame - 446;
@@ -2143,8 +2161,7 @@ void BattleEffect_RunIris(struct BattleEffectParams *args) {
       Matrix_TranslateVector(place);
       Matrix_RotateZ(TRIG_TURN * 19 / 32);
       grow[0] = FIXED_ONE;
-      // The cone stretches to its full size, a 64th a frame.
-      grow[1] = (frame - 758) << 10;
+      grow[1] = IRIS_CONE_GROWTH(frame - 758);
       if (grow[1] > FIXED_ONE)
         grow[1] = FIXED_ONE;
       grow[2] = 0;
@@ -2176,10 +2193,10 @@ void BattleEffect_RunIris(struct BattleEffectParams *args) {
           work->particles[n].x = toFIXED(96);
           work->particles[n].y = INTtoFIXED(Random16() & 7) + toFIXED(36);
           work->particles[n].z = frame;
-          work->particles[n].velocityX =
-              Iwram_MulFX((speed + 2) << 15, Trig_Sin(TRIG_TURN * 19 / 32));
-          work->particles[n].velocityY =
-              -Iwram_MulFX((speed + 2) << 15, Trig_Cos(TRIG_TURN * 19 / 32));
+          work->particles[n].velocityX = Iwram_MulFX(
+              IRIS_HALF_PIXELS_FX(speed + 2), Trig_Sin(TRIG_TURN * 19 / 32));
+          work->particles[n].velocityY = -Iwram_MulFX(
+              IRIS_HALF_PIXELS_FX(speed + 2), Trig_Cos(TRIG_TURN * 19 / 32));
           work->particles[n].variant = (Random16() & 3) | IRIS_MOTE_FADING;
         }
         n = FindFreeParticle();
@@ -2782,6 +2799,7 @@ s32 BattleEffect_BuildBlitter(s32 slot, s32 widthShift, s32 heightShift,
   dst = (u32 *)BLITTER_BYTES;
   dst = HeapSlot_Alloc(slot, (s32)dst);
 
+  // Block 1, the prologue.
   COPY(4);
   if (mode == BLITTER_ADDITIVE) {
     COPY_FROM(BattleEffect_Mask, 3);
@@ -2804,6 +2822,7 @@ s32 BattleEffect_BuildBlitter(s32 slot, s32 widthShift, s32 heightShift,
   }
   src += 1;
 
+  // Block 2, the vertical clip: the height enters the last two words.
   if ((flags & COMPOSITE_CLIP_Y) != 0) {
     COPY(2);
     if ((flags & COMPOSITE_FLIP_Y) != 0) {
@@ -2819,6 +2838,8 @@ s32 BattleEffect_BuildBlitter(s32 slot, s32 widthShift, s32 heightShift,
   }
   src += 8;
 
+  // Block 3, the columns: the empty-rows skip, the width mask or the twelve
+  // clip words, the empty-columns skip, then the rest of the set-up.
   PUT(*src++);
   noRows = dst;
   PUT(*src++);
@@ -2866,6 +2887,8 @@ s32 BattleEffect_BuildBlitter(s32 slot, s32 widthShift, s32 heightShift,
 
   COPY_LONG(5);
 
+  // Block 4, the row loop: its head, the leading partial run, the full-cell
+  // loop, the trailing partial run and the step back to the head.
   row = dst;
   PUT(src[0]);
   PUT(src[1] + (1 << (heightShift - 3)) - 1);
@@ -3021,6 +3044,7 @@ s32 BattleEffect_BuildBlitter(s32 slot, s32 widthShift, s32 heightShift,
   PATCH(noRows);
   PATCH(noColumns);
 
+  // Block 5, the exit, where both skips of block 3 land.
   COPY(2);
   {
     const u32 *end = (const u32 *)gBattleEffect_BitOperands;

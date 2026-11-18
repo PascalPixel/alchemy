@@ -105,13 +105,10 @@
     for (index = 0, spark = THOR_PARTICLES; index != THOR_SPARK_COUNT;         \
          index++, spark++) {                                                   \
       if (spark->variant == 0) {                                               \
-        s32 speed = 0x3ff;                                                     \
-        s32 angle;                                                             \
-        speed &= Random16();                                                   \
-        angle = angleExpr;                                                     \
+        s32 speed = (Random16() & 0x3ff) + 32;                                 \
+        s32 angle = angleExpr;                                                 \
         spark->x = startX;                                                     \
         spark->y = startY;                                                     \
-        speed += 32;                                                           \
         spark->velocityX = (Trig_Sin(angle) * speed) >> 7;                     \
         spark->velocityY = -((Trig_Cos(angle) * speed) << 1) >> 7;             \
         spark->variant = (Random16() & 7) + 32;                                \
@@ -257,7 +254,7 @@ void BattleEffect_RunThor(struct BattleEffectParams *args) {
     }
     Projection_Set(BATTLE_CAMERA_DISTANCE,
                    Iwram_RatioMulQ14(BATTLE_CAMERA_DISTANCE, FIXED_ONE * 3 / 4),
-                   toFIXED(32767));
+                   BATTLE_FAR_DEPTH);
     Matrix_Initialize();
     if (frame > 128) {
       s32 sinkFrame = frame - 128;
@@ -270,14 +267,16 @@ void BattleEffect_RunThor(struct BattleEffectParams *args) {
         size = 8;
       }
       Matrix_TranslateVector(position);
-      Matrix_RotateX(-TRIG_TURN / 16);
+      Matrix_RotateX(-DEGtoANG(22.5));
       Matrix_RotateZ(DEGtoANG(180));
       Matrix_RotateX(DEGtoANG(180));
       Matrix_RotateY(sinkFrame * (TRIG_TURN / 16));
       if (frame > 150) {
         // From the beam the ring spreads, from 37/64 of its size by 3/32 a
         // frame.
-        SET_VECTOR(scale, ((frame * 2 + frame) << 11) - FIXED_ONE * 869 / 64,
+        SET_VECTOR(scale,
+                   (frame * 2 + frame) * (FIXED_ONE / 32) -
+                       FIXED_ONE * 869 / 64,
                    scale[0], scale[0]);
         size = 5;
       } else {
@@ -288,7 +287,7 @@ void BattleEffect_RunThor(struct BattleEffectParams *args) {
     } else {
       SET_VECTOR(position, 0, 0, toFIXED(256));
       Matrix_TranslateVector(position);
-      Matrix_RotateX(-TRIG_TURN / 16);
+      Matrix_RotateX(-DEGtoANG(22.5));
       Matrix_RotateZ(frame * (TRIG_TURN / 256));
       Matrix_RotateX(frame * (TRIG_TURN / 256));
     }
@@ -526,12 +525,10 @@ void BattleEffect_RunThor(struct BattleEffectParams *args) {
           }
         }
         {
-          s32 radius = 7;
-          s32 angle;
-          radius &= Random16();
-          angle = Random16() & TRIG_ANGLE_MASK;
-          glowX = (FIXEDtoINT(Trig_Sin(angle) * (radius + 8))) + 72;
-          glowY = 32 - (FIXEDtoINT(Trig_Cos(angle) * (radius + 8)));
+          s32 radius = (Random16() & 7) + 8;
+          s32 angle = Random16() & TRIG_ANGLE_MASK;
+          glowX = FIXEDtoINT(Trig_Sin(angle) * radius) + 72;
+          glowY = 32 - FIXEDtoINT(Trig_Cos(angle) * radius);
         }
         Canvas_BlitAtFoot(work->sheet + THOR_HAMMER_GLOW_PICTURE, glowX, glowY,
                           THOR_HAMMER_GLOW_PICTURE_HEIGHT);
@@ -540,13 +537,10 @@ void BattleEffect_RunThor(struct BattleEffectParams *args) {
         for (i = 0, spark = THOR_PARTICLES; i != THOR_SPARK_COUNT;
              i++, spark++) {
           if (spark->variant == 0) {
-            s32 speed = 63;
-            s32 angle;
-            speed &= Random16();
-            angle = Random16() & TRIG_ANGLE_MASK;
+            s32 speed = (Random16() & 63) + 64;
+            s32 angle = Random16() & TRIG_ANGLE_MASK;
             spark->x = INTtoFIXED(glowX);
             spark->y = INTtoFIXED(glowY);
-            speed += 64;
             spark->velocityX = (Trig_Sin(angle) * speed) >> 7;
             spark->velocityY = -((Trig_Cos(angle) * speed) << 1) >> 7;
             spark->variant = (Random16() & 7) + 16;

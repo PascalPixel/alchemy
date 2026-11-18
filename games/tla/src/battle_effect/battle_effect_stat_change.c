@@ -237,7 +237,7 @@ void BattleEffect_RunStatBoost(struct BattleEffectParams *args, u32 mode) {
   }
   REG_BG2PA = Q_8_8(0.8); // 1.25 times the width
 
-  // The pictures and the colors.
+  // The pictures and the colours.
   Resource_LoadAndDecompress(RESOURCE_PARTICLE_SPRITES_D,
                              work->sheet + STAT_BOOST_FLARES, 0, 0);
   Resource_LoadAndDecompress(RESOURCE_GLOW_ORB_SHEET,
@@ -672,9 +672,10 @@ void BattleEffect_RunStatReduction(struct BattleEffectParams *args, s32 mode) {
     xOffset = 0;
   }
 
-  // The shards start in a grid where the picture was, in rows 6 pixels apart,
-  // four to a row 2 (dagger) or 8 (shield) pixels apart, and fly away from the
-  // user's side, scattering.
+  // The shards start in a grid where the picture was, in rows 6 pixels apart
+  // up from 10 below its centre, four to a row 2 pixels apart from 2 to one
+  // side (dagger) or 8 apart from 16 (shield), and fly away from the user's
+  // side, scattering and rising.
   for (i = 0; i != STAT_CHANGE_PARTICLES; i++) {
     struct Particle *shard = &PARTICLES[i];
     s32 radius = 192;

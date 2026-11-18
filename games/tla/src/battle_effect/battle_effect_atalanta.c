@@ -72,18 +72,28 @@ enum SlashSheetPicture {
 
 #define ATALANTA_SHAFTS 16      ///< shafts of light that gather over the field
 #define ATALANTA_TRAIL_MOTES 24 ///< motes in each gathering shaft's trail
-/// The shafts placed for the fall, of which the first ATALANTA_FALLING_SHAFTS
-/// rain down on the targets.
-#define ATALANTA_PLACED_SHAFTS 32
-#define ATALANTA_FALLING_SHAFTS 24
+#define ATALANTA_FALLING_SHAFTS 24 ///< shafts that rain down on the targets
+/// The particles the falling shafts are set up in, more than fall.
+#define ATALANTA_FALLING_SHAFT_SLOTS 32
+
+/// The gathering shafts' timing: the first one's trail gathers from frame
+/// ATALANTA_SHAFT_FIRST_FRAME and each next one ATALANTA_SHAFT_INTERVAL frames
+/// later; a trail gathers for ATALANTA_TRAIL_FRAMES, the shaft flashes in for
+/// ATALANTA_FLASH_FRAMES, one a picture, then flies off.
+#define ATALANTA_SHAFT_FIRST_FRAME 64
+#define ATALANTA_SHAFT_INTERVAL 8
+#define ATALANTA_TRAIL_FRAMES 16
+#define ATALANTA_FLASH_FRAMES 5
 
 /// How far below its projected point a trail mote is drawn.
 #define ATALANTA_TRAIL_DROP 16
 
 /// A landed shaft's burst: EmberStreakSheet's six flame pictures, four frames
 /// each, the shaft still showing over the first three.
+#define ATALANTA_BURST_PICTURES 6
 #define ATALANTA_BURST_PICTURE_FRAMES 4
-#define ATALANTA_BURST_FRAMES (6 * ATALANTA_BURST_PICTURE_FRAMES)
+#define ATALANTA_BURST_FRAMES                                                  \
+  (ATALANTA_BURST_PICTURES * ATALANTA_BURST_PICTURE_FRAMES)
 #define ATALANTA_BURST_SHAFT_FRAMES (3 * ATALANTA_BURST_PICTURE_FRAMES)
 
 /// Under a violet sky Atalanta flies across the screen while sixteen shafts of
@@ -235,19 +245,19 @@ void BattleEffect_RunAtalanta(struct BattleEffectParams *args) {
       work->fadeStep = 0;
     }
 
-    // From frame 64 a shaft every eight frames: its trails draw in, it
-    // flashes for five frames and flies off.
+    // The shafts appear one after another: each one's trail draws in, it
+    // flashes and flies off.
     for (i = 0; i != ATALANTA_SHAFTS; i++) {
-      s32 start = i * 8 + 64;
+      s32 start = i * ATALANTA_SHAFT_INTERVAL + ATALANTA_SHAFT_FIRST_FRAME;
 
       if (frame >= start) {
         struct Particle *shaft = &work->particles[i];
         s32 x = FIXED_INTEGER_PART(shaft->x);
         s32 y = FIXED_INTEGER_PART(shaft->y);
 
-        if (frame == i * 8 + 84)
+        if (frame == start + ATALANTA_TRAIL_FRAMES + ATALANTA_FLASH_FRAMES - 1)
           Sound_PlayFar(SE_POWER_UP);
-        if (frame >= i * 8 + 85) {
+        if (frame >= start + ATALANTA_TRAIL_FRAMES + ATALANTA_FLASH_FRAMES) {
           shaft->x += shaft->velocityX;
           shaft->y += shaft->velocityY;
           shaft->velocityX -= toFIXED(1);
@@ -258,8 +268,8 @@ void BattleEffect_RunAtalanta(struct BattleEffectParams *args) {
                               ATALANTA_SHAFT_MIDDLE, x - 16, y - 19);
           EFFECT_DRAW_PICTURE(draw[0], canvas, work->sheet,
                               ATALANTA_SHAFT_BOTTOM, x - 20, y + 16);
-        } else if (frame >= i * 8 + 80) {
-          switch (frame - start - 16) {
+        } else if (frame >= start + ATALANTA_TRAIL_FRAMES) {
+          switch (frame - start - ATALANTA_TRAIL_FRAMES) {
           case 0:
             EFFECT_DRAW_PICTURE(draw[0], canvas, work->sheet,
                                 ATALANTA_SHAFT_FLASH_A, x - 7, y - 14);
@@ -332,7 +342,7 @@ void BattleEffect_RunAtalanta(struct BattleEffectParams *args) {
 
   // The shafts start above the sky, each aimed at a target where there is
   // one.
-  for (i = 0; i != ATALANTA_PLACED_SHAFTS; i++) {
+  for (i = 0; i != ATALANTA_FALLING_SHAFT_SLOTS; i++) {
     struct Particle *shaft = &work->particles[i];
     s32 member = i % 6;
 
@@ -425,8 +435,13 @@ void BattleEffect_RunAtalanta(struct BattleEffectParams *args) {
 
 #undef ATALANTA_MATRICES
 #undef ATALANTA_PIECES
-#undef ATALANTA_PLACED_SHAFTS
+#undef ATALANTA_FALLING_SHAFT_SLOTS
 #undef ATALANTA_TRAIL_DROP
+#undef ATALANTA_SHAFT_FIRST_FRAME
+#undef ATALANTA_SHAFT_INTERVAL
+#undef ATALANTA_TRAIL_FRAMES
+#undef ATALANTA_FLASH_FRAMES
+#undef ATALANTA_BURST_PICTURES
 #undef ATALANTA_BURST_PICTURE_FRAMES
 #undef ATALANTA_BURST_FRAMES
 #undef ATALANTA_BURST_SHAFT_FRAMES

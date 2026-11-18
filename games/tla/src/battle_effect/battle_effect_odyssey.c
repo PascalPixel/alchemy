@@ -296,6 +296,8 @@ void BattleEffect_RunOdyssey(struct BattleEffectParams *args) {
                                  POSE_DAMAGE, 0, 64);
         work->shakeFrames = 4;
       }
+      // Each sword plunges 16 rows a frame, the first down to row 8 and the
+      // second up to row 40, and stays there.
       if (frame >= start && frame <= 89) {
         s32 age = frame - start;
         s32 x;
@@ -641,8 +643,8 @@ void Iris_WipeScreen(u8 side, u8 speed, void (*midpoint)(void)) {
   canvas = Ram_HeapSlots->battleCanvas;
   work = Ram_HeapSlots->battleEffect;
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, BLITTER_ADDITIVE);
-  // CANVAS_COPY does not read the 75.
-  EFFECT_SET_TRANSFER(work, CANVAS_COPY, 75);
+  // CANVAS_COPY does not read the share.
+  EFFECT_SET_TRANSFER(work, CANVAS_COPY, CANVAS_FADE_THREE_QUARTERS);
   REG_BG2PA = Q_8_8(0.28125); // about 3.6 times as wide
 
   // The band, column i: rising to the brightest level over the left edge,

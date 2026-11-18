@@ -40,8 +40,8 @@ void BattleEffect_RunThrash(struct BattleEffectParams *args) {
   BattleEffect_RunSparkGroups(args, SPARK_GROUPS_RISING);
 }
 
-/// The user leaps at the first target, waits 26 frames, and the spark groups
-/// burst below it as the strongest variant.
+/// The user leaps high at the first target, as in Thrash, then sparks burst
+/// beneath it, many more than Thrash's.
 ///
 /// Abilities: Mighty Press.
 void BattleEffect_RunMightyPress(struct BattleEffectParams *args) {

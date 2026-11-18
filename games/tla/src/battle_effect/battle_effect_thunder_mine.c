@@ -372,6 +372,9 @@ extern const struct Scale gMegaera_UnitScale;
 #define MEGAERA_BILLOW_FRAMES 16
 #define MEGAERA_BILLOW_PICTURES                                                \
   (MEGAERA_FLASH_BURST_PICTURES + 2 * PICTURE_BYTES(FLASH_BURST))
+/// Particles given a place and a delay that nothing reads, as Nereid's are.
+#define MEGAERA_UNREAD_FIRST 24
+#define MEGAERA_UNREAD_COUNT 16
 /// Megaera swoops in across the foes at MEGAERA_SWOOP_FRAME, trailing sparkles
 /// for MEGAERA_TRAIL_FRAMES; each sparkle twinkles for MEGAERA_SPARKLE_FRAMES.
 #define MEGAERA_SWOOP_FRAME 108
@@ -421,9 +424,10 @@ void BattleEffect_RunMegaera(struct BattleEffectParams *args) {
   for (i = 0; i != ARRAY_COUNT(work->particles); i++) {
     work->particles[i].variant = -1;
   }
-  // DEAD: sixteen particles laid along canvas rows 56 to 63, which nothing in
-  // Megaera reads; the ROM keeps the loop.
-  for (i = 0, p = &work->particles[MEGAERA_BILLOWS]; i != 16; i++, p++) {
+  // DEAD: particles laid along canvas rows 56 to 63, which nothing in Megaera
+  // reads; the ROM keeps the loop.
+  for (i = 0, p = &work->particles[MEGAERA_UNREAD_FIRST];
+       i != MEGAERA_UNREAD_COUNT; i++, p++) {
     p->x = Random16() & 127;
     p->y = (Random16() & 7) + 56;
     p->variant = -(Random16() & 15);

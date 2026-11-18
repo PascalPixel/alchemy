@@ -64,8 +64,10 @@ struct FloraWork {
 /// After the battle flashes away (SUMMON_OPENING_FRAMES), the sky scene plays
 /// for FLORA_FRAMES; A or B cuts it short after its first sixteen.
 #define FLORA_FRAMES 300
-/// The canvas, shown at its own width until then, widens to twice it.
+/// The canvas, shown at its own width FLORA_CANVAS_X pixels right of the
+/// screen's left edge until then, widens to twice it.
 #define FLORA_WIDE_FRAME 108
+#define FLORA_CANVAS_X 60
 /// Flora appears in a flash of FLORA_FLASH_FRAMES and fades in from white over
 /// FLORA_FADE_IN_FRAMES.
 #define FLORA_APPEAR_FRAME 112
@@ -267,7 +269,7 @@ void BattleEffect_RunFlora(struct BattleEffectParams *args) {
   }
   REG_DISPCNT = EFFECT_DISPCNT;
   REG_BG2PA = Q_8_8(1);
-  REG_BLDALPHA = EFFECT_BLEND_CANVAS(14);
+  REG_BLDALPHA = EFFECT_BLEND_CANVAS(CANVAS_BLEND_LEVEL);
   REG_BLDCNT = BLDCNT_TGT1_BG2 | BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_ALL;
   REG_BG2X = 0;
   // DEAD: Flora's place, and the ring's spin, spread and twist, are each set
@@ -307,7 +309,7 @@ void BattleEffect_RunFlora(struct BattleEffectParams *args) {
                            FLORA_COLORS * 2);
       REG_BG2PA = Q_8_8(1);
       Graphics_LoadGreyRamp();
-      REG_BG2X = -(60 << 8);
+      REG_BG2X = -(FLORA_CANVAS_X << 8);
     }
     // The canvas's colours turn a level a frame towards Mars Djinn's, then
     // tan, then cyan.
@@ -1323,6 +1325,7 @@ void BattleEffect_RunBackstab(struct BattleEffectParams *args) {
 #undef FLORA_PETAL_PHASE
 #undef FLORA_FRAMES
 #undef FLORA_WIDE_FRAME
+#undef FLORA_CANVAS_X
 #undef FLORA_APPEAR_FRAME
 #undef FLORA_FLASH_FRAMES
 #undef FLORA_FADE_IN_FRAMES

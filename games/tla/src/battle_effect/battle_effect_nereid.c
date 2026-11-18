@@ -22,6 +22,9 @@
 #define NEREID_COLUMN_PICTURE 1764       ///< the column of water in the sheet
 /// The canvas line below which a falling drop has sunk into the waves.
 #define NEREID_WAVES_Y 104
+/// Particles given a place and a delay that nothing reads.
+#define NEREID_UNREAD_FIRST 24
+#define NEREID_UNREAD_COUNT 16
 
 /// Nereid rides in on her turtle over rising waves, columns of water and spray
 /// rise over the targets, and she bursts away. A or B skips ahead to her
@@ -63,10 +66,10 @@ void BattleEffect_RunNereid(struct BattleEffectParams *args) {
     velocity.x = -toFIXED(16);
     velocity.y = -toFIXED(4);
     EFFECT_FREE_PARTICLES(k, work->particles, 64);
-    // DEAD: work->particles 24 to 39 get a place and a delay nothing reads;
-    // the ROM keeps the stores.
-    for (k = 0; k != 16; k++) {
-      point = &work->particles[24 + k];
+    // DEAD: particles NEREID_UNREAD_FIRST on get a place and delay nothing
+    // reads; the ROM keeps the stores.
+    for (k = 0; k != NEREID_UNREAD_COUNT; k++) {
+      point = &work->particles[NEREID_UNREAD_FIRST + k];
       point->x = Random16() & 127;
       point->y = (Random16() & 7) + 56;
       point->variant = -(Random16() & 15);
@@ -237,7 +240,7 @@ void BattleEffect_RunNereid(struct BattleEffectParams *args) {
   BattleEffect_EndCanvasLayer();
 }
 
-#undef NEREID_WAVES_Y
 // NEREID_FRAMES, NEREID_COLUMNS_FRAME, NEREID_COLUMNS_END_FRAME,
-// NEREID_OBJECTS, NEREID_DROPS, NEREID_COLUMN_PICTURE and NEREID_COLUMNS stay
-// defined: particle_streams.c's copy of Nereid runs by them.
+// NEREID_OBJECTS, NEREID_COLUMNS, NEREID_DROPS, NEREID_COLUMN_PICTURE,
+// NEREID_WAVES_Y, NEREID_UNREAD_FIRST and NEREID_UNREAD_COUNT stay defined:
+// particle_streams.c's copy of Nereid runs by them.

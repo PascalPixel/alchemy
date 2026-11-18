@@ -6,8 +6,10 @@
 #include "sounds.h"
 
 #define GAIA_FRAMES 192 ///< frames of Gaia
-/// The wall stands once it has risen, and sinks away a row every three
-/// frames.
+/// The shaft of light widens into the wall a row every three frames from
+/// GAIA_WALL_WIDEN_FRAME, stands once it has risen, and sinks away a row every
+/// three frames.
+#define GAIA_WALL_WIDEN_FRAME 64
 #define GAIA_WALL_STAND_FRAME 88
 #define GAIA_WALL_SINK_FRAME 160
 
@@ -210,7 +212,7 @@ void BattleEffect_RunGaia(struct BattleEffectParams *args) {
 
     // The rising wall widens a row at a time.
     if (frame >= 12 && frame < GAIA_WALL_STAND_FRAME) {
-      s32 row = (frame - 64) / 3;
+      s32 row = (frame - GAIA_WALL_WIDEN_FRAME) / 3;
 
       CLAMP(row, 0, 7);
       for (i = 0; i != 4; i++) {
@@ -366,7 +368,7 @@ struct SpriteAnimation *AnimationObject_AllocateEmpty(void) {
   s32 i = 0;
   void *none = NULL;
 
-  while (i <= 63) {
+  while (i < ANIM_OBJECT_COUNT) {
     if (entry->kind == 0) {
       found = entry;
       break;
@@ -436,7 +438,7 @@ void *EffectSprite_CreateWithTiles(s32 width, s32 height, s32 attributes,
   s32 tile;
   struct VramCacheEntry *entries;
 
-  while (i <= 63) {
+  while (i < ANIM_OBJECT_COUNT) {
     if (sprite->width == 0) {
       found = sprite;
       break;
@@ -487,9 +489,19 @@ void *EffectSprite_CreateWithTiles(s32 width, s32 height, s32 attributes,
   sprite->oam.bits.tile = entries[sprite->slot].offset >> 5;
   return found;
 }
+#undef GAIA_FRAMES
+#undef GAIA_WALL_WIDEN_FRAME
+#undef GAIA_WALL_STAND_FRAME
+#undef GAIA_WALL_SINK_FRAME
 #undef GAIA_ROCKS
-#undef GAIA_FIRST_ROCK
 #undef GAIA_EARLY_ROCKS
+#undef GAIA_FIRST_ROCK
 #undef GAIA_LATE_ROCK_COLUMNS
 #undef GAIA_ROCK_STAGGER
+#undef GAIA_DUST
 #undef GAIA_DUST_SHOWN
+#undef GAIA_ROW_HEIGHT
+#undef GAIA_WALL_TOP_WIDTH
+#undef GAIA_WALL_TOP_HEIGHT
+#undef GAIA_WALL_FOOT_WIDTH
+#undef GAIA_WALL_FOOT_HEIGHT

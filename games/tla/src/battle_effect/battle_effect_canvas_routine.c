@@ -8,6 +8,9 @@
 /// How far a row of BattleEffect_WipeCanvas's wipe lags behind its front, at
 /// most: each row lags a random 0 to WIPE_LAG_MAX pixels.
 #define WIPE_LAG_MAX 63
+/// Where the across wipe's front stops, three frames past
+/// CANVAS_SIZE + WIPE_LAG_MAX, where the wipe is finished.
+#define WIPE_ACROSS_END 256
 
 /// A direction BattleEffect_WipeCanvas leaves the canvas alone for; no caller
 /// passes it.
@@ -52,8 +55,7 @@ void BattleEffect_WipeCanvas(s32 direction, s32 fill) {
         }
       }
       EFFECT_PRESENT_CANVAS(work);
-      // The across wipe runs on to 256, further than it needs to finish.
-    } while (front <= 256);
+    } while (front <= WIPE_ACROSS_END);
   } else if (direction != CANVAS_WIPE_NONE) {
     s32 front;
     s32 speed;

@@ -15,6 +15,8 @@
 #include "field/object.h"
 #include "battle/battle_camera.h"
 #include "field/world_map.h"
+#include "window/window.h"
+#include "window/window_tile.h"
 
 #define WORLD_MAP_BG_PALETTE ((s16 *)BG_PLTT)
 
@@ -328,7 +330,7 @@ void WorldMap_LoadGraphics(s32 x, s32 z) {
   // BG1's map (screen block 5) is filled with tile 127 of WINDOW_PALETTE, and
   // screen block 6 numbers the picture's tiles in rows, two a word: the still
   // picture's, then on round the picture.
-  Dma_Fill32(0xf07ff07f, BG_SCREEN_BLOCK(5),
+  Dma_Fill32(WINDOW_TILE_PAIR(WINDOW_TILE(127)), BG_SCREEN_BLOCK(5),
              24 * BG_SCREEN_WIDTH * sizeof(u16));
   screenTiles = (u32 *)BG_SCREEN_BLOCK(6);
   tilePair = TILE_PAIR(STILL_PICTURE_FIRST_TILE);
@@ -361,7 +363,7 @@ void WorldMap_LoadGraphics(s32 x, s32 z) {
 void WorldMap_ApplyAffinePage(void) {
   struct WorldMapAffinePair(*affinePages)[DISPLAY_HEIGHT] =
       ((struct WorldMapAffineWork *)Ram_HeapSlots->worldMapAffine)->pages;
-  s32 displayControl = (s16)(REG_DISPCNT & 0xfff8);
+  s32 displayControl = (s16)(REG_DISPCNT & ~DISPCNT_MODE_MASK);
   u32 *affineRegisters = (u32 *)&REG_BG2PA;
   struct WorldMapView *perspective =
       (struct WorldMapView *)Ram_HeapSlots->mapGrid;
@@ -390,7 +392,7 @@ void WorldMap_ApplyAffinePage(void) {
     Dma_Set(affineSource, (void *)&REG_BG2PA,
             (DMA_ENABLE | DMA_START_HBLANK | DMA_REPEAT | DMA_32BIT |
              DMA_DEST_RELOAD)
-                    << 16 |
+                    << DMA_CONTROL_SHIFT |
                 sizeof(struct WorldMapAffinePair) / 4,
             (u32 *)dma0);
   }

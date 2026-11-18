@@ -175,6 +175,9 @@ extern const struct Scale gProcne_UnitScale; ///< the comets' unit scale
 /// The VRAM address of a sprite's tiles, from its VRAM cache entry.
 #define OBJ_TILES(sprite)                                                      \
   (OBJ_VRAM0 + gVramCacheEntries[((struct Sprite *)(sprite))->slot].offset)
+/// Sprite tile VRAM as bytes, for the sprites' tiles at their VRAM cache
+/// offsets.
+#define OBJ_VRAM ((u8 *)OBJ_VRAM0)
 
 /// Index of DMAxCNT_H, the control half, in a channel's 16-bit registers.
 #define DMA_CONTROL_HALF 5

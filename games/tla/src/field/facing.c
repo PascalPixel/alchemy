@@ -64,7 +64,7 @@ const u8 gSpriteDissolve_PixelOrder[64] = {
 };
 
 /// Two bytes after the dissolve order; no code names them, in either game.
-const u16 gSpriteDissolve_PixelOrderTail = 0x01ff;
+const u16 gSpriteDissolve_PixelOrderTail = 511;
 
 /// An actor sprite's scale at full size, across and down.
 const FIXED gActorSprite_FullScale[2] = {

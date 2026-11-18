@@ -6,9 +6,6 @@
 /// The bytes of Judgment's work block before its dimmed mote copies.
 #define JUDGMENT_SHEET_BYTES 10000
 
-/// The battle background's colours, BG palettes 6 to 13.
-#define BATTLE_BACKGROUND_COLORS (8 * PALETTE_COLORS)
-
 /// Judgment's work block, laid over struct BattleEffectWork from its start; the
 /// sweep's wave picture later overwrites the gathering's part of it.
 struct JudgmentWork {
@@ -1001,7 +998,6 @@ void BattleEffect_RunJudgment(struct BattleEffectParams *args) {
 #undef JUDGMENT_SHEET_FLASH_GLOW
 #undef JUDGMENT_EXPLOSION_PICTURE_BYTES
 #undef JUDGMENT_WAVE_SIZE
-#undef BATTLE_BACKGROUND_COLORS
 #undef JUDGMENT_FORMATION_COLUMNS
 #undef JUDGMENT_FORMATION_SPRITE_SIZE
 #undef JUDGMENT_POSE_SHIELD_SWINGING

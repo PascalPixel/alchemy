@@ -574,8 +574,6 @@ UNUSED void PaletteCycle_Initialize(void) {
   paletteCycles->count = 0;
 }
 
-#define gPaletteWork ((struct PaletteCycleWork *)Ram_HeapSlots->paletteCycles)
-
 #include "palqueue_add.c"
 
 /// Stops the palette cycles: removes their task and frees their work.

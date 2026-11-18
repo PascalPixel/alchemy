@@ -15,10 +15,6 @@
 #include "system/ram_buffer.h"
 #include "macros.h"
 
-/// The cell behaviors that raise a step trigger, as The Broken Seal names
-/// them.
-#define CELL_BEHAVIOR_EVENT_FIRST 1
-#define CELL_BEHAVIOR_EVENT_LAST 230
 /// MainRoutineWork.hazardDamage's amount, below HAZARD_DAMAGE_PERCENT.
 #define HAZARD_DAMAGE_AMOUNT 0xff
 /// A loss of more HP than this plays SE_HEAVY_IMPACT rather than SE_IMPACT.
@@ -501,8 +497,6 @@ struct Actor *Field_GetPartyActor(void) {
   return leader;
 }
 
-#undef CELL_BEHAVIOR_EVENT_FIRST
-#undef CELL_BEHAVIOR_EVENT_LAST
 #undef HAZARD_DAMAGE_AMOUNT
 #undef HEAVY_DAMAGE
 #undef POISON_DAMAGE_DIVISOR

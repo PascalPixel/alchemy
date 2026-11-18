@@ -344,9 +344,6 @@ void Actor_SetAnimationById(u32 actorId, s32 animation) {
     Actor_SelectAnimationFar(actor, animation);
 }
 
-#define Actor_SetAnimationSpeedFar                                             \
-  ((void (*)(struct Actor *, s32))Actor_SetAnimationSpeedFar)
-
 /// Sets the animation timer steps of each of an actor's sprites.
 void Actor_SetAnimationSpeedById(s32 actorId, s32 steps) {
   struct Actor *actor = Actor_Lookup(actorId);

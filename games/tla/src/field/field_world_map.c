@@ -181,8 +181,6 @@ UNREAD_RESULT WorldMap_InitializePerspective(void) {
     perspective->tileIds[tileIndex] = tileIndex;
 }
 
-#define ABS(v) ((v) < 0 ? -(v) : (v))
-
 /// Puts world map tile (x / 16, y / 16) at cell (cellX / 16, cellY / 16) of the
 /// tile id grid, and draws it at once when it is next to the view. cellX and
 /// cellY count 32-pixel world map blocks, so a grid cell is a 512-pixel tile;

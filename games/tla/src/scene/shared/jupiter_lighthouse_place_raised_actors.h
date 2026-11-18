@@ -1,3 +1,5 @@
+#include "jupiter_lighthouse_aerie.h"
+
 // The aerie's actors, as jupiter_lighthouse_aerie.c numbers them; the scenes
 // that keep a copy of this routine number theirs otherwise.
 #define ACTOR_LEFT_ANGEL 9
@@ -6,11 +8,6 @@
 #define ACTOR_RIGHT_ARCHER 12
 #define ACTOR_LID 23
 #define ACTOR_HIDDEN_LID 24 ///< a second lid at the first's place, kept hidden
-
-/// The frames the aerie's JupiterLighthouse_RaiseAngels takes to raise an
-/// angel, and then to lift both angels and the lid off the well.
-#define ANGEL_RISE_FRAMES 64
-#define LID_LIFT_FRAMES 256
 
 /// Puts the aerie's two angels and the well's lid where the archers' arrows
 /// left them (FLAG_JUPITER_LIGHTHOUSE_LEFT_ANGEL_ENERGIZED and its right
@@ -80,5 +77,3 @@ void JupiterLighthouse_PlaceRaisedActors(void) {
 #undef ACTOR_RIGHT_ARCHER
 #undef ACTOR_LID
 #undef ACTOR_HIDDEN_LID
-#undef ANGEL_RISE_FRAMES
-#undef LID_LIFT_FRAMES

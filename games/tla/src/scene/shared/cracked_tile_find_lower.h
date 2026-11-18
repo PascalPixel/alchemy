@@ -1,6 +1,3 @@
-/// The bytes of the hole mask's picture: 16 by 32 pixels of 16 colours.
-#define HOLE_MASK_BYTES (8 * TILE_SIZE_4BPP)
-
 /// CrackedTile_Find under the name the lower floors call it by.
 s32 CrackedTile_FindLower(u32 kind, s32 flag, s32 flagByte, s32 x, s32 z) {
   struct CellTarget *table = &gCrackedTiles;
@@ -85,5 +82,3 @@ s32 CrackedTile_FindLower(u32 kind, s32 flag, s32 flagByte, s32 x, s32 z) {
   Task_AddFrame(CrackedTile_Update, TASK_PASS_FRAME);
   return table->count;
 }
-
-#undef HOLE_MASK_BYTES

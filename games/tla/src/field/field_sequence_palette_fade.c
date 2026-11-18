@@ -3,19 +3,16 @@
 /// frames, and the palettes it builds from the shown one.
 // Part of field_sequence.c.
 
-// Palette work stores 224 BG colours and 224 OBJ colours, each as B, G, R.
+// Palette work stores 224 BG colours and 224 OBJ colours, each as B, G, R
+// with every channel moved to where blue is (BLUE_BITS, bits 14..10).
 #define COLOR_MAX 448
 #define COLOR_HALF 224
 #define COLOR_CHANNEL_COUNT (COLOR_MAX * 3)
-/// A colour's red, green and blue bits as RGB555 lays them out; palette fade
-/// work holds each channel moved to where blue is, bits 14..10.
-#define RED_BITS RGB(RGB_LEVEL_MAX, 0, 0)
-#define GREEN_BITS RGB(0, RGB_LEVEL_MAX, 0)
-#define BLUE_BITS RGB(0, 0, RGB_LEVEL_MAX)
 /// The brightness 2R + 4G + B with each channel where the work keeps it: red
 /// moved up to blue's place and doubled, green moved there and doubled twice.
-#define BRIGHTNESS_RED_SHIFT (RGB_BLUE_SHIFT + 1)
-#define BRIGHTNESS_GREEN_SHIFT (RGB_BLUE_SHIFT - RGB_GREEN_SHIFT + 2)
+#define PALETTE_FADE_BRIGHTNESS_RED_SHIFT (RGB_BLUE_SHIFT + 1)
+#define PALETTE_FADE_BRIGHTNESS_GREEN_SHIFT                                    \
+  (RGB_BLUE_SHIFT - RGB_GREEN_SHIFT + 2)
 /// PALETTE_TINT_SEPIA's shade is a colour's R + G + B over this, 0 to 9.
 #define SEPIA_SHADE_DIVISOR 10
 /// PALETTE_TINT_CUSTOM gives each channel the brightness 2R + 4G + B times the
@@ -142,10 +139,10 @@ void PaletteFade_Build(u32 mode, u16 *src, u16 *dst, s32 half) {
     case PALETTE_TINT_GRAYSCALE: // grey of brightness (2R + 4G + B) / 7
       for (i = 0; i < colorCount; i++) {
         color = *src++;
-        red = ((color << BRIGHTNESS_RED_SHIFT) &
-               (RED_BITS << BRIGHTNESS_RED_SHIFT));
-        green = ((color << BRIGHTNESS_GREEN_SHIFT) &
-                 (GREEN_BITS << BRIGHTNESS_GREEN_SHIFT));
+        red = ((color << PALETTE_FADE_BRIGHTNESS_RED_SHIFT) &
+               (RED_BITS << PALETTE_FADE_BRIGHTNESS_RED_SHIFT));
+        green = ((color << PALETTE_FADE_BRIGHTNESS_GREEN_SHIFT) &
+                 (GREEN_BITS << PALETTE_FADE_BRIGHTNESS_GREEN_SHIFT));
         blue = (color & BLUE_BITS);
         color = Iwram_SignedDivide(red + green + blue, 7);
         dst[i * 3 + 0] = color;
@@ -353,10 +350,10 @@ void PaletteFade_Build(u32 mode, u16 *src, u16 *dst, s32 half) {
     tintBlue &= RGB_LEVEL_MAX;
     for (i = 0; i < colorCount; i++) {
       color = *src++;
-      red = ((color << BRIGHTNESS_RED_SHIFT) &
-             (RED_BITS << BRIGHTNESS_RED_SHIFT));
-      green = ((color << BRIGHTNESS_GREEN_SHIFT) &
-               (GREEN_BITS << BRIGHTNESS_GREEN_SHIFT));
+      red = ((color << PALETTE_FADE_BRIGHTNESS_RED_SHIFT) &
+             (RED_BITS << PALETTE_FADE_BRIGHTNESS_RED_SHIFT));
+      green = ((color << PALETTE_FADE_BRIGHTNESS_GREEN_SHIFT) &
+               (GREEN_BITS << PALETTE_FADE_BRIGHTNESS_GREEN_SHIFT));
       blue = (color & BLUE_BITS);
       color = Iwram_SignedDivide(red + green + blue, CUSTOM_TINT_DIVISOR);
       red = color * tintRed;
@@ -543,10 +540,7 @@ s32 PaletteFade_ClampShiftedComponent(s32 value) {
 #undef COLOR_MAX
 #undef COLOR_HALF
 #undef COLOR_CHANNEL_COUNT
-#undef RED_BITS
-#undef GREEN_BITS
-#undef BLUE_BITS
 #undef SEPIA_SHADE_DIVISOR
 #undef CUSTOM_TINT_DIVISOR
-#undef BRIGHTNESS_RED_SHIFT
-#undef BRIGHTNESS_GREEN_SHIFT
+#undef PALETTE_FADE_BRIGHTNESS_RED_SHIFT
+#undef PALETTE_FADE_BRIGHTNESS_GREEN_SHIFT

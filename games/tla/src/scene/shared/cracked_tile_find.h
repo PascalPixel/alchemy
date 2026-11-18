@@ -1,6 +1,3 @@
-/// The bytes of the hole mask's picture: 16 by 32 pixels of 16 colours.
-#define HOLE_MASK_BYTES (8 * TILE_SIZE_4BPP)
-
 /// Finds the room's cracked tiles: every cell whose event is `kind` (whole) or
 /// `kind + 1` (cracked), each given the next flag from `flag`; returns how
 /// many.
@@ -87,5 +84,3 @@ s32 CrackedTile_Find(u32 kind, s32 flag, s32 flagByte, s32 x, s32 z) {
   Task_AddFrame(CrackedTile_Update, TASK_PASS_FRAME);
   return table->count;
 }
-
-#undef HOLE_MASK_BYTES

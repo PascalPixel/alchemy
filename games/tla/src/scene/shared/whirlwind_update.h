@@ -1,8 +1,5 @@
 #include "whirlwind_catch.h"
 
-/// The sprite priority bits of an OAM attribute 2's high byte.
-#define ATTR2_HIGH_PRIORITY_MASK (OBJ_PRIORITY(3) >> 8)
-
 /// A whirlwind's update: it travels forward, catches the leader it reaches and
 /// ends off screen or at a wall.
 void Whirlwind_Update(struct Actor *self) {
@@ -81,4 +78,3 @@ void Whirlwind_Update(struct Actor *self) {
 }
 
 #undef WHIRLWIND_CATCH_REACH
-#undef ATTR2_HIGH_PRIORITY_MASK

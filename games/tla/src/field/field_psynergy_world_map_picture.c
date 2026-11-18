@@ -35,7 +35,8 @@
 #define PICTURE_HEIGHT 384
 #define PICTURE_TILES_ACROSS (PICTURE_WIDTH / 8)
 #define PICTURE_ROW_BYTES (PICTURE_TILES_ACROSS * TILE_SIZE_8BPP)
-#define PICTURE_TILES (WORLD_PICTURE_TILE_ROWS * BG_SCREEN_WIDTH)
+/// The picture's tiles BG1 holds, where its map's tile numbers wrap.
+#define WORLD_PICTURE_TILES (WORLD_PICTURE_TILE_ROWS * BG_SCREEN_WIDTH)
 /// The scroll that shows the picture's bottom right corner.
 #define PICTURE_SCROLL_MAX_X toFIXED(PICTURE_WIDTH - DISPLAY_WIDTH)
 #define PICTURE_SCROLL_MAX_Y toFIXED(PICTURE_HEIGHT - DISPLAY_HEIGHT)
@@ -166,7 +167,6 @@ void WindowSpriteList_Move(struct WindowSpriteList *list, s32 dx, s32 dy) {
 #define WORLD_MAP_NAME_LEFT 1
 #endif
 
-#define WORK Ram_WorldMapWork
 #define NAME_BOX_X Ram_WorldMapNameBox[0]
 #define NAME_BOX_Y Ram_WorldMapNameBox[1]
 #define NAME_BOX_WIDTH Ram_WorldMapNameBox[2]
@@ -217,7 +217,7 @@ void WorldPicture_UpdateMarkers(void) {
   s32 i;
 
   Party_GetLeaderActor();
-  work = WORK;
+  work = Ram_WorldMapWork;
   marker = work->markers;
   tileBase = gVramCacheEntries[work->vramBlock].offset >> 5;
   nearest = -1;
@@ -482,7 +482,6 @@ void WorldPicture_UpdateMarkers(void) {
   IO_WRITE_QUEUE_PUSH((u32)&REG_BLDY, 0, IO_WRITE_HALFWORD);
 }
 #undef WORLD_MAP_NAME_LEFT
-#undef WORK
 #undef NAME_BOX_X
 #undef NAME_BOX_Y
 #undef NAME_BOX_WIDTH
@@ -545,7 +544,7 @@ void WorldMapPicture_Draw(void) {
       bufferRow -= WORLD_PICTURE_TILE_ROWS;
     // z is reused for the tile's place in BG1's map, and x for the cell.
     z = (column & (BG_SCREEN_WIDTH - 1)) + unwrapped * BG_SCREEN_WIDTH;
-    tile = (z + WORLD_PICTURE_MAP_START) % PICTURE_TILES +
+    tile = (z + WORLD_PICTURE_MAP_START) % WORLD_PICTURE_TILES +
            WORLD_PICTURE_FIRST_TILE;
     Decompress_TaggedLz((u8 *)graphics + graphics[unwrapped + 1],
                         buffer + bufferRow * PICTURE_ROW_BYTES);
@@ -594,7 +593,7 @@ void WorldMapPicture_DrawRow(u32 column, s32 row) {
     row -= WORLD_PICTURE_TILE_ROWS;
   cell = row * PICTURE_TILES_ACROSS + column;
   tile = (column & (BG_SCREEN_WIDTH - 1)) + row * BG_SCREEN_WIDTH;
-  tile = (tile + WORLD_PICTURE_MAP_START) % PICTURE_TILES +
+  tile = (tile + WORLD_PICTURE_MAP_START) % WORLD_PICTURE_TILES +
          WORLD_PICTURE_FIRST_TILE;
   Decompress_TaggedLz((u8 *)graphics + graphics[unwrapped + 1],
                       Ram_MapCellBuffer + row * PICTURE_ROW_BYTES);
@@ -636,7 +635,7 @@ void WorldMapPicture_DrawColumn(s32 column, s32 row) {
       cell = line - WORLD_PICTURE_TILE_ROWS;
     tile = ((column & (BG_SCREEN_WIDTH - 1)) + line * BG_SCREEN_WIDTH +
             WORLD_PICTURE_MAP_START) %
-           PICTURE_TILES;
+           WORLD_PICTURE_TILES;
     cell *= PICTURE_TILES_ACROSS;
     cell = WorldMap_AddColumn(column, cell);
     cell *= TILE_SIZE_8BPP;
@@ -1027,7 +1026,7 @@ const struct FlagEntry *FlagEntries_GetTable(void) { return gFlagEntries; }
 #undef PICTURE_HEIGHT
 #undef PICTURE_TILES_ACROSS
 #undef PICTURE_ROW_BYTES
-#undef PICTURE_TILES
+#undef WORLD_PICTURE_TILES
 #undef PICTURE_SCROLL_MAX_X
 #undef PICTURE_SCROLL_MAX_Y
 #undef PICTURE_DRAWN_COLUMNS

@@ -12,8 +12,6 @@
 #include "field/event_inline.h"
 #include "field/map_grid.h"
 
-#define ABS(value) ((value) < 0 ? -(value) : (value))
-
 /// The cell the leader fell through, its column and row, a byte of area flags
 /// each: MarsLighthouseEntrance_FallThroughCrack keeps them, and the star room
 /// below lands him under it.

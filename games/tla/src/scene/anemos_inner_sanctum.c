@@ -218,8 +218,6 @@ enum { TRIGGER_LIFT = 11 };
 enum { TRIGGER_SWITCH = 50, TRIGGER_EAST_OF_SWITCH };
 /// The step trigger before Charon's slate.
 enum { TRIGGER_BEFORE_CHARON_SLATE = 30 };
-/// SPRITE_ARROW_PANEL's animation with its arrow pointing up: a lift ready.
-#define ARROW_PANEL_ANIMATION_UP 2
 
 /// The Djinn of each element the game places, before its two spares.
 enum { DJINN_FOUND_PER_ELEMENT = 18 };
@@ -245,10 +243,6 @@ enum { DJINN_FOUND_PER_ELEMENT = 18 };
 /// from the Orihalcon chest room (AnemosInnerSanctum_ArriveOnGuardianLift).
 #define ACTOR_GUARDIAN_LIFT (ACTOR_FIRST_PLACED + 3)
 
-/// The BG colours a palette fade keeps, palettes 0 to 13, before its OBJ
-/// colours.
-#define PALETTE_FADE_BG_COLORS (14 * PALETTE_COLORS)
-
 /// The spawner's flags that ask for one of the options' fields
 /// (EFFECT_USE_PALETTE and up).
 #define EFFECT_OPTION_MASK 0xffff0000
@@ -266,22 +260,6 @@ enum { DJINN_FOUND_PER_ELEMENT = 18 };
 
 /// A spark ring's sixteenths of a turn; an orb starts at every second one.
 #define SPARK_RING_STEPS 16
-
-/// Sixteen puffs of dust in a ring round the leader as he lands, the first
-/// thrown twice.
-#define DUST_RING_PUFFS 16
-
-/// The leader's animation sitting on the floor, legs out, arms flung up and
-/// then lowered.
-#define ANIM_LEADER_SIT 49
-
-/// A small blue orb and the rings it bursts into (spr_349).
-#define SPRITE_ENERGY_CHARGE 349
-/// SPRITE_ENERGY_CHARGE's animation that bursts the orb into rings.
-#define ENERGY_CHARGE_ANIMATION_BURST 3
-
-/// A 16.16 coordinate's 8-pixel half cell, the unit Move sets pillars down in.
-#define FIELD_HALF_CELL(coordinate) ((coordinate) >> 19)
 
 /// The elevator room's exit up its lift, to the room above.
 #define EXIT_UP_THE_LIFT 11

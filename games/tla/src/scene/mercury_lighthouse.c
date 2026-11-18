@@ -140,7 +140,7 @@ void MercuryLighthouse_SpawnGlints(void) {
       sprite = actor->sprite;
       x = Random16() * 40 + toFIXED(812);
       /* FAKEMATCH(temporary): z is built before the motion flag and x are
-       * stored; stored straight. */
+       * stored. */
       z = toFIXED(696);
       actor->motionFlags = phase;
       actor->x.fixed = x;

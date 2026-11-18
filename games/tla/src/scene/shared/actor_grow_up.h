@@ -1,20 +1,19 @@
-/// Grows an actor upward over 32 frames.
+/// Rises beside the watched actor, expanding and shrinking over half a
+/// sine wave.
 void Actor_GrowUp(struct Actor *actor) {
-  struct Actor *parent = actor->watchedActor;
-  s32 step = ++actor->timer;
-  FIXED scale;
-  FIXED rise;
+  struct Actor *anchor = actor->watchedActor;
+  s32 frame = ++actor->timer;
+  FIXED amplitude;
 
-  if (step > 31) {
+  if (frame > 31) {
     Actor_Release(actor);
     return;
   }
-  scale = Math_Sin(step << 10);
-  actor->scaleX = scale;
-  actor->scaleY = scale;
+  amplitude = Math_Sin(frame * (DEGtoANG(180) / 32));
+  actor->scaleX = amplitude;
+  actor->scaleY = amplitude;
 
-  rise = toFIXED(1);
-  actor->x.fixed = parent->x.fixed;
-  actor->y.fixed += rise;
-  actor->z.fixed = parent->z.fixed + (rise - scale) * 5 + toFIXED(8);
+  actor->x.fixed = anchor->x.fixed;
+  actor->y.fixed += toFIXED(1);
+  actor->z.fixed = anchor->z.fixed + (FIXED_ONE - amplitude) * 5 + toFIXED(8);
 }

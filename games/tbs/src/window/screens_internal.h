@@ -87,6 +87,10 @@ void Text_DrawPrefixedNumberAtOffset(s32 value, const struct Window *window,
 #define PSYNERGY_COST_FIRST_TILE WINDOW_TILE_PP_LABEL
 #define PSYNERGY_COST_SECOND_TILE WINDOW_TILE_PP_LABEL_END
 
+/// The last of the twelve range icons Window_DrawThreeTileColumn draws, which
+/// stands for ABILITY_RANGE_ALL; range n takes icon n - 1.
+#define RANGE_ICON_ALL 11
+
 // The Status screen's level label, after the party member's name, in pixels.
 #if LANGUAGE == LANGUAGE_FRENCH
 #define OWNER_STATUS_LEVEL_X 51

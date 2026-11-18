@@ -39,9 +39,6 @@ UNREAD_RESULT String_FormatNumberToHalfwords(s16 *out, s32 value) {
 #define DJINN_PREVIEW_ABILITY_CAPACITY 48
 /// The abilities a page of the preview lists.
 #define DJINN_PREVIEW_ABILITIES_PER_PAGE 5
-/// The last of the twelve range icons Window_DrawThreeTileColumn draws, which
-/// stands for ABILITY_RANGE_ALL; range n takes icon n - 1.
-#define RANGE_ICON_ALL 11
 
 /// Lists into `out` the abilities usable in battle (ABILITY_USABLE_IN_BATTLE)
 /// of the action list `newGrid`, in its order, marking with
@@ -161,11 +158,10 @@ struct Window *BattleDjinnMenu_ShowChangePreview(struct Window *win, s32 member,
       sprite->depth = OAM_DEPTH_WINDOW;
       sprite->x = 120;
       sprite->y = 120;
-      /* FAKEMATCH(type): the two words stored through pointer types. */
-      *(struct Window **)&entry->attributes =
-          (struct Window *)(OBJ_SIZE_16X16 |
-                            OBJ_MODE(OBJ_MODE_SEMI_TRANSPARENT));
-      *(void **)&entry->tile = NULL;
+      /* FAKEMATCH(volatile): the two words stored as volatile. */
+      *(volatile u32 *)&entry->attributes =
+          OBJ_SIZE_16X16 | OBJ_MODE(OBJ_MODE_SEMI_TRANSPARENT);
+      *(volatile u32 *)&entry->tile = 0;
       entry->attributes.bits.x = win->x * 8 + x;
       entry->attributes.bits.y = win->y * 8 + y;
       /* FAKEMATCH(dead): advancing and restoring the captured pointer. */
@@ -401,5 +397,3 @@ struct Window *BattleDjinnMenu_ShowChangePreview(struct Window *win, s32 member,
   Heap_Release(numberText);
   return win;
 }
-
-#undef RANGE_ICON_ALL

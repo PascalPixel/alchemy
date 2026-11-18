@@ -14,8 +14,10 @@
 #include "field/scene_call.h"
 #include "macros.h"
 
+#define MARS_SPARK_MAX 24 ///< sparks, one a field effect sprite
+
 /// A Mars Djinni joins the party: it turns to the camera, bounces three times,
-/// spins ever faster and shrinks away in a fountain of 24 sparks
+/// spins ever faster and shrinks away in a fountain of sparks
 /// (FieldEffect_UpdateMarsSpark). The leader turns to the camera and raises
 /// its arms, the sparks swarm it while it pulses for 100 frames, and the
 /// sparks vanish.
@@ -65,9 +67,9 @@ void Djinn_RunMarsJoinEffect(s32 djinniId) {
   position.z = djinni->z.fixed;
   Camera_WorldToScreen(&position);
 
-  // One spark a frame into each of the 24 field effect sprites.
+  // One spark a frame into each field effect sprite.
   effect = effectWork->particles;
-  remaining = 23;
+  remaining = MARS_SPARK_MAX - 1;
   do {
     FieldParticle_Initialize(effect, SPRITE_PARTICLE, position.x, position.z);
     FieldParticle_SetCallback(effect, FieldEffect_UpdateMarsSpark);
@@ -114,31 +116,26 @@ void Djinn_RunMarsJoinEffect(s32 djinniId) {
   FieldEffect_ReleaseSlots();
 }
 
-/// Spins an object 1/8 turn and shrinks it by 1/64 a frame, destroying it once
-/// its scale falls below 3/16.
-void FieldEffect_ShrinkActorAndDestroyFast(void *obj) {
+#undef MARS_SPARK_MAX
+
+/// Spins an actor 1/8 turn and shrinks it by 1/64 a frame, releasing it once
+/// its scale falls below 3/16: 53 frames from full size.
+void FieldEffect_ShrinkActorAndDestroyFast(void *actor) {
   s32 step = -(FIXED_ONE / 64);
   s32 scaleY;
   s32 scale;
   s32 angle;
 
-  scaleY = ((struct MotionObject *)obj)->scaleY + step;
-  scale = ((struct MotionObject *)obj)->scaleX;
-  ((struct MotionObject *)obj)->scaleY = scaleY;
-  angle = ((struct MotionObject *)obj)->angle;
+  scaleY = ((struct MotionObject *)actor)->scaleY + step;
+  scale = ((struct MotionObject *)actor)->scaleX;
+  ((struct MotionObject *)actor)->scaleY = scaleY;
+  angle = ((struct MotionObject *)actor)->angle;
   scale += step;
-  ((struct MotionObject *)obj)->angle = angle + DEGtoANG(45);
-  ((struct MotionObject *)obj)->scaleX = scale;
+  ((struct MotionObject *)actor)->angle = angle + DEGtoANG(45);
+  ((struct MotionObject *)actor)->scaleX = scale;
   if (scale < FIXED_ONE * 3 / 16)
-    Actor_ReleaseFar(obj);
+    Actor_ReleaseFar(actor);
 }
-
-struct FieldEffectWork;
-
-#define Actor_SetChildValueUnlessFifteenFar                                    \
-  ((void (*)(s32, s32))Sprite_SetAnimationColorModesFar)
-#define Actor_ReleaseFar Actor_ReleaseFar
-#define gEffectWork Ram_HeapSlots->fieldEffectWork
 
 /// Per-frame update of a Venus Djinni's falling motes: each circles the
 /// leader on a shrinking spiral (radius timer * 0.4 pixels) while it sinks a
@@ -168,9 +165,10 @@ void FieldEffect_UpdateDescendingOrbitActor(struct Actor *mote) {
     Actor_ReleaseFar(mote);
 }
 
-/// Places a spark at random around the current owner and sends it 120 pixels
-/// along angle 0xc000. Each time FieldParticle_HasPendingTarget returns 0,
-/// state 1 starts it over and state 2 clears its slot.
+/// Field effect sprite callback of a Venus Djinni's particles: each starts on
+/// screen at a random point 10 to 20 pixels round the leader and flies 120
+/// pixels up the screen, over and over, until it is set to
+/// VENUS_PARTICLE_LAST_RISE and freed once it arrives.
 void FieldEffect_UpdateRadialSpread(struct FieldParticle *effect) {
   struct Vector3 position;
   struct Actor *source;

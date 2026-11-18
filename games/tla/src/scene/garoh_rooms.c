@@ -59,7 +59,9 @@ enum GarohInnActorId {
   ACTOR_STUBBORN_TRAVELER,
   /// Unseen markers (SPRITE_UNSEEN_MARKER, which draws nothing) on the beds the
   /// two travelers sleep in at night, taken away in the morning; talking to
-  /// them wakes the travelers.
+  /// them wakes the travelers. The inn at night (render guide moment,
+  /// MOMENT_PLACE=64,5 MOMENT_STAND=320,390 MOMENT_ACTORS=19,20) shows the two
+  /// travelers asleep in their beds, and neither marker adds a pixel to it.
   ACTOR_DISAPPOINTED_TRAVELERS_BED,
   ACTOR_STUBBORN_TRAVELERS_BED
 };

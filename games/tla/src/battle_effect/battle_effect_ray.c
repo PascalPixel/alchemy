@@ -75,7 +75,7 @@ void BattleEffect_RunRay(struct BattleEffectParams *args) {
 
   // The sparks wait at the center.
   for (i = 0; i != RAY_SPARK_COUNT; i++) {
-    struct Particle *spark = &SPARKS[i];
+    struct Particle *spark = &PARTICLES[i];
     s32 speed;
     s32 angle;
 
@@ -120,7 +120,7 @@ void BattleEffect_RunRay(struct BattleEffectParams *args) {
 
         // Throw sparks from the bolt's foot.
         for (i = 0; i != RAY_SPARK_COUNT; i++) {
-          struct Particle *spark = &SPARKS[i];
+          struct Particle *spark = &PARTICLES[i];
 
           if (spark->variant == 0) {
             s32 speed;
@@ -144,7 +144,7 @@ void BattleEffect_RunRay(struct BattleEffectParams *args) {
 
     // The sparks fall and bounce off the bottom (y 120).
     for (i = 0; i != RAY_SPARK_COUNT; i++) {
-      struct Particle *spark = &SPARKS[i];
+      struct Particle *spark = &PARTICLES[i];
 
       if (spark->variant > 0) {
         spark->variant--;

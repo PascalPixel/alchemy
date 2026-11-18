@@ -96,11 +96,9 @@ struct StripQuad;
 /// Mold: the Djinni's picture shrinks GASP_MOLD_SHRINK a frame.
 #define GASP_MOLD_SHRINK 4592
 
-/// Emu: puffs of dust trail the bird, one each two frames for its first ten,
-/// each through its six pictures, four frames apiece; the blow scatters
-/// motes.
+/// Emu: puffs of dust trail the bird, one each two frames for its first ten;
+/// the blow scatters motes.
 #define GASP_EMU_PUFFS 32
-#define GASP_EMU_PUFF_FRAMES (6 * 4)
 #define GASP_EMU_MOTES 256
 
 /// Beat Dance and Clarion Cry: the notes that fly from their unit, one every
@@ -908,7 +906,7 @@ void BattleEffect_RunGaspFamily(struct BattleEffectParams *args, s32 mode) {
       for (i = 0; i != GASP_EMU_PUFFS; i++) {
         p = &work->particles[i];
 
-        if ((u32)p->variant < GASP_EMU_PUFF_FRAMES) {
+        if ((u32)p->variant < SMOKE_PUFF_FRAMES) {
           draw[0](canvas,
                   work->sheet + p->variant / 4 * PICTURE_BYTES(SMOKE_PUFF),
                   FIXED_INTEGER_PART(p->x) - SMOKE_PUFF_WIDTH / 2,

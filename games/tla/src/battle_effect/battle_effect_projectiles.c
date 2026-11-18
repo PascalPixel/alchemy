@@ -298,7 +298,7 @@ void BattleEffect_RunDjinniEntrance(struct BattleEffectParams *args, u32 packed,
         s32 angle = Random16() & TRIG_ANGLE_MASK;
         s32 speed = (Random16() & 255) + 128;
 
-        mote->x = screen[0] << 15; // half the screen x, the canvas's, in 16.16
+        mote->x = screen[0] * (toFIXED(1) / 2);
         mote->y = INTtoFIXED(screen[1]);
         mote->velocityX = (Trig_Sin(angle) * speed) >> 6;
         mote->velocityY = (Trig_Cos(angle) * speed) >> 5;
@@ -501,16 +501,12 @@ void BattleEffect_RunChillBreath(struct BattleEffectParams *args) {
 /// Hydro Slash's bubble, BlueBeamSheet's first picture, decoded at the sheet's
 /// start; its three pictures copied at every second byte after it, which
 /// nothing draws.
-#define BLUE_BUBBLE_WIDTH 24
-#define BLUE_BUBBLE_HEIGHT 24
 #define PROJECTILE_VOLLEY_HALVED_BUBBLE_PICTURES 4096
 #define PROJECTILE_VOLLEY_HALVED_BUBBLE_BYTES                                  \
-  ((24 * 24 + 24 * 24 + 42 * 42) / 2)
+  ((2 * PICTURE_BYTES(BLUE_BUBBLE) + PICTURE_BYTES(BLUE_LARGE_SPLASH)) / 2)
 /// A hit's sparks fly at up to 4 pixels a frame each way: a roll of -128 to
 /// 127 shifted by this; Cutting Edge's twice as fast.
 #define PROJECTILE_VOLLEY_SPARK_SHIFT 11
-/// SmokeSheet's six pictures shown four frames each.
-#define SMOKE_PUFF_FRAMES (6 * 4)
 
 /// The volley's comets, its CometSheet resources: Slash, Wind Slash and Sonic
 /// Slash fire the one their variant picks.
@@ -528,10 +524,6 @@ enum VolleyField {
   PROJECTILE_VOLLEY_DELAY,   ///< frames between targets
   PROJECTILE_VOLLEY_SPARKS   ///< sparks thrown on each hit
 };
-
-/// Clipped on both axes, as EFFECT_CLIP_BOUNDS; battle_effect_gaia.c's draws
-/// use it too.
-#define CLIP (COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y)
 
 /// The second blitter, loaded again for each draw that needs its own.
 #define DRAW_ALTERNATE ((DrawRectangle)Ram_HeapSlots->ramCodePaired)
@@ -1293,7 +1285,8 @@ void BattleEffect_RunProjectileVolley(struct BattleEffectParams *args,
             u32 flip = Random16();
 
             EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED,
-                                gProjectileVolley_GlintFlips[flip & 3] | CLIP,
+                                gProjectileVolley_GlintFlips[flip & 3] |
+                                    EFFECT_CLIP_BOUNDS,
                                 BLITTER_ADDITIVE);
             DRAW_ALTERNATE(
                 canvas,
@@ -1313,8 +1306,6 @@ void BattleEffect_RunProjectileVolley(struct BattleEffectParams *args,
 
   EFFECT_FINISH_CANVAS_ONE_BLITTER();
 }
-
-#undef SMOKE_PUFF_FRAMES
 
 /// Sends a unit back to its place (its anchor) with a hop.
 void BattleEffect_InitializeRisingObject(s32 slot) {

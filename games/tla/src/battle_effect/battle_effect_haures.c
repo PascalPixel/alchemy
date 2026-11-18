@@ -21,8 +21,6 @@ extern struct MoundVertex gHaures_WingCorners[];
 extern const u16 gHaures_BodyPiecePoints[][2];
 
 #define SPARKS ((struct Particle *)SCRATCH)
-#define STAMP_TILES(work) (*(u32 *)((u8 *)(work) + 31604))
-#define STAMP_CANVAS(work) ((u8 *)(work) + 26496)
 
 #define HAURES_COMING_FRAMES 440 ///< frames of Haures's coming, unless skipped
 #define HAURES_FRAMES 92         ///< frames of the charge that follows
@@ -1243,8 +1241,6 @@ void Mesh_BuildCylinderBand(struct MeshVertex *vertices,
 #undef BLITTER
 #undef SCRATCH
 #undef SPARKS
-#undef STAMP_TILES
-#undef STAMP_CANVAS
 #undef SHARD_FACE
 #undef FIRST_RING_Y
 #undef RING_SPACING

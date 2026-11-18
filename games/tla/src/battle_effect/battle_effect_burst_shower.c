@@ -45,7 +45,6 @@ enum BurstShowerMode {
 #define MUSIC_NOTE_WIDTH 32
 #define MUSIC_NOTE_HEIGHT 32
 #define MUSIC_NOTE_COUNT 3
-#define BUBBLE_SIZE 24
 /// DemonFaceSheet's face.
 #define DEMON_FACE_WIDTH 32
 #define DEMON_FACE_HEIGHT 64
@@ -418,12 +417,13 @@ void BattleEffect_RunBurstShower(struct BattleEffectParams *args, u32 mode) {
              mode == BURST_SHOWER_MODE_TYPHOON_BLOW) {
     // The bubble, each row written twice.
     Resource_LoadAndDecompress(RESOURCE_BLUE_BEAM_SHEET, work->sheet, 1, 1);
-    for (row = 0; row != BUBBLE_SIZE; row++) {
-      for (column = 0; column != BUBBLE_SIZE; column++) {
-        work->sheet[VOLLEY_B_BEAM + row * 2 * BUBBLE_SIZE + column] =
-            work->sheet[row * BUBBLE_SIZE + column];
-        work->sheet[VOLLEY_B_BEAM + row * 2 * BUBBLE_SIZE + BUBBLE_SIZE +
-                    column] = work->sheet[row * BUBBLE_SIZE + column];
+    for (row = 0; row != BLUE_BUBBLE_HEIGHT; row++) {
+      for (column = 0; column != BLUE_BUBBLE_WIDTH; column++) {
+        work->sheet[VOLLEY_B_BEAM + row * 2 * BLUE_BUBBLE_WIDTH + column] =
+            work->sheet[row * BLUE_BUBBLE_WIDTH + column];
+        work->sheet[VOLLEY_B_BEAM + row * 2 * BLUE_BUBBLE_WIDTH +
+                    BLUE_BUBBLE_WIDTH + column] =
+            work->sheet[row * BLUE_BUBBLE_WIDTH + column];
       }
     }
     if (mode == BURST_SHOWER_MODE_TOXIC_BREATH)
@@ -758,9 +758,9 @@ void BattleEffect_RunBurstShower(struct BattleEffectParams *args, u32 mode) {
                    mode == BURST_SHOWER_MODE_TYPHOON_BLOW) {
           if (age > 1)
             pair[0](canvas, work->sheet + VOLLEY_B_BEAM,
-                    FIXED_INTEGER_PART(shot->x) - BUBBLE_SIZE / 2,
-                    FIXED_INTEGER_PART(shot->y) - BUBBLE_SIZE, BUBBLE_SIZE,
-                    BUBBLE_SIZE * 2);
+                    FIXED_INTEGER_PART(shot->x) - BLUE_BUBBLE_WIDTH / 2,
+                    FIXED_INTEGER_PART(shot->y) - BLUE_BUBBLE_HEIGHT,
+                    BLUE_BUBBLE_WIDTH, BLUE_BUBBLE_HEIGHT * 2);
         } else if (mode == BURST_SHOWER_MODE_FUGUE ||
                    mode == BURST_SHOWER_MODE_DJINNFEST) {
           cel = i / 2 % 3;
@@ -999,7 +999,6 @@ void BattleEffect_RunBurstShower(struct BattleEffectParams *args, u32 mode) {
 #undef MUSIC_NOTE_WIDTH
 #undef MUSIC_NOTE_HEIGHT
 #undef MUSIC_NOTE_COUNT
-#undef BUBBLE_SIZE
 #undef DEMON_FACE_WIDTH
 #undef DEMON_FACE_HEIGHT
 #undef MUSIC_NOTE_DIMMING

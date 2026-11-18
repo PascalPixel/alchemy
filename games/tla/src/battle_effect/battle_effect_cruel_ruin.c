@@ -9,8 +9,6 @@
 #include "system/system.h"
 #include "resource_ids.h"
 
-#define CLIP (COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y)
-
 /// Puts colour 2 at (x, y) in the 256x120 8bpp tile sheet (32 tiles wide) in
 /// the map cell buffer.
 #define PLOT(x, y)                                                             \
@@ -379,9 +377,6 @@ void BattleEffect_RunShatteringOpening(struct BattleEffectParams *args) {
 }
 
 #define ELEMENT_BURST_FRAMES 56 ///< frames of the element burst
-/// The element burst's canvas weight over the battle, in sixteenths.
-/// Motes set up in PARTICLES, which the burst leaves undrawn.
-#define ELEMENT_SPIRAL_MOTES 128
 
 /// CyanSparkSheet: five small sparks, then the burst's pictures.
 #define ELEMENT_BURST_SPARK_WIDTH 32
@@ -411,7 +406,7 @@ void BattleEffect_RunElementBurst(struct BattleEffectParams *args) {
   BattleEffect_StartCanvasLayer(0);
   work->fadeFrames = BACKGROUND_DARKEN_FRAMES;
   work->fadeStep = 0;
-  REG_BLDALPHA = EFFECT_BLEND_CANVAS(12);
+  REG_BLDALPHA = EFFECT_BLEND_CANVAS(ELEMENT_BLEND_LEVEL);
   REG_BG2PA = Q_8_8(1);
   Resource_LoadAndDecompress(RESOURCE_CYAN_SPARK_SHEET, work->sheet, 1, 0);
   Resource_LoadAndDecompress(RESOURCE_PARTICLE_SPRITES_D, sheet, 0, 0);
@@ -482,7 +477,8 @@ void BattleEffect_RunElementBurst(struct BattleEffectParams *args) {
 
       for (i = 0, mode = BLITTER_MAX; i != 4; i++) {
         EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED,
-                            gElementBurst_GlintFlips[i] | CLIP, mode);
+                            gElementBurst_GlintFlips[i] | EFFECT_CLIP_BOUNDS,
+                            mode);
         draw[1] = (DrawRectangle)Ram_HeapSlots->ramCodePaired;
         draw[1](canvas,
                 work->sheet + picture * PICTURE_BYTES(ELEMENT_BURST_SPARK),
@@ -1856,9 +1852,7 @@ void BattleEffect_RunCruelRuin(struct BattleEffectParams *args) {
   EFFECT_FINISH_CANVAS_ONE_BLITTER();
 }
 #undef BLITTER
-#undef CLIP
 #undef PLOT
-#undef ELEMENT_SPIRAL_MOTES
 #undef STREAK_SEEDS
 #undef STREAKS
 #undef STREAK_START_DISTANCE

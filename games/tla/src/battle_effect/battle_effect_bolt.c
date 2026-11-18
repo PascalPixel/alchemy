@@ -48,7 +48,7 @@ void BattleEffect_RunBolt(struct BattleEffectParams *args) {
                              work->sheet + BOLT_LIGHTNING_BOLT_PICTURES, 1, 1);
   Resource_LoadAndDecompress(RESOURCE_PARTICLE_SPRITES_A, sprites, 0, 0);
   for (j = 0; j != SPARK_COUNT; j++)
-    SPARKS[j].variant = 0;
+    PARTICLES[j].variant = 0;
   EFFECT_FREE_PARTICLES(j, work->particles, 64);
   EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_THREE_QUARTERS);
   Sound_PlayFar(CUE_THUNDER);
@@ -90,7 +90,7 @@ void BattleEffect_RunBolt(struct BattleEffectParams *args) {
         // Sparks fly up from the ground within 90 degrees of straight up.
         if (frame == start + 2) {
           for (j = 0; j != gBolt_Counts[args->variant * 4]; j++) {
-            struct Particle *spark = &SPARKS[i * SPARKS_PER_TARGET + j];
+            struct Particle *spark = &PARTICLES[i * SPARKS_PER_TARGET + j];
             s32 speed = (Random16() & 0x1ff) + 64;
             s32 angle = (Random16() & 0x7fff) - DEGtoANG(90);
 
@@ -135,7 +135,7 @@ void BattleEffect_RunBolt(struct BattleEffectParams *args) {
     // Sparks fall, bounce off the ground at half speed, and shrink as they
     // burn out.
     for (j = 0; j != SPARK_COUNT; j++) {
-      struct Particle *spark = &SPARKS[j];
+      struct Particle *spark = &PARTICLES[j];
 
       if (spark->variant > 0) {
         spark->variant--;
@@ -161,4 +161,3 @@ void BattleEffect_RunBolt(struct BattleEffectParams *args) {
   EFFECT_FINISH_CANVAS_ONE_BLITTER();
 }
 #undef SPARK_COUNT
-#undef SPARKS

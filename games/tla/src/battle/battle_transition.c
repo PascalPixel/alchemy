@@ -43,16 +43,24 @@
 /// field holding the size less one.
 #define MOSAIC_SIZE_MAX 15
 
-/// The battle background's picture: 32 tiles to a row and 15 rows, its first
-/// 256 tiles in character block 2 and the rest in block 3.
-#define BACKGROUND_PICTURE_ROWS 15
-#define BACKGROUND_PICTURE_TILES (BACKGROUND_PICTURE_ROWS * BG_SCREEN_WIDTH)
-#define BACKGROUND_UPPER_TILES 256
-/// BG1's flat map of the picture (BATTLE_BG1CNT): the picture's first tile in
-/// its numbering, character block 2, and the blank tile it reads from the last
-/// row of its own screen block, which BattleBackground_Load leaves clear.
-#define BACKGROUND_FIRST_TILE 512
-#define BACKGROUND_CLEAR_TILE 1023
+/// Four affine map entries side by side, a byte each, written a word at a time.
+#define AFFINE_MAP_ENTRIES(first, second, third, fourth)                       \
+  ((fourth) << 24 | (third) << 16 | (second) << 8 | (first))
+/// The battle background's picture: 32 by 15 tiles of 256 colours, 256 by 120
+/// pixels. The first 256 tiles fill character block 2 and the rest block 3.
+#define BACKGROUND_TILE_ROWS 15
+#define BACKGROUND_TILES (BG_SCREEN_WIDTH * BACKGROUND_TILE_ROWS)
+#define BACKGROUND_UPPER_TILES (BG_CHAR_SIZE / TILE_SIZE_8BPP)
+#define BACKGROUND_LOWER_TILES (BACKGROUND_TILES - BACKGROUND_UPPER_TILES)
+/// The zoomed background's affine map: 32 by 32 tiles, a byte each.
+#define BACKGROUND_AFFINE_MAP_BYTES (32 * 32)
+/// The picture's first tile on BG1 (BATTLE_BG1CNT), numbered from BG1's
+/// character base 0: character block 2.
+#define BACKGROUND_BG1_FIRST_TILE (2 * BG_CHAR_SIZE / TILE_SIZE_8BPP)
+/// The last tile, which BG1's flat map shows in the rows around the picture:
+/// it lies in the last row of the map's own screen block, which
+/// BattleBackground_Load leaves clear.
+#define BG1_EDGE_TILE TILE_NUMBER_MASK
 
 /// Fades the screen to black over sixteen frames as every background's
 /// mosaic grows, then shows no layer. Sets REG_BLDCNT to darken the
@@ -111,26 +119,23 @@ void Graphics_BuildSequentialTileTable(void *tilemap) {
   u32 tiles;
   u32 i;
 
-  // Each word is four consecutive tile numbers, one a byte.
-  tiles = 0x03020100;
+  tiles = AFFINE_MAP_ENTRIES(0, 1, 2, 3);
   for (i = 0; i < BACKGROUND_UPPER_TILES / 4; i++) {
     *words++ = tiles;
-    tiles += 0x04040404;
+    tiles += AFFINE_MAP_ENTRIES(4, 4, 4, 4);
   }
-  tiles = 0x03020100;
-  for (i = 0; i < (BACKGROUND_PICTURE_TILES - BACKGROUND_UPPER_TILES) / 4;
-       i++) {
+  tiles = AFFINE_MAP_ENTRIES(0, 1, 2, 3);
+  for (i = 0; i < BACKGROUND_LOWER_TILES / 4; i++) {
     *words++ = tiles;
-    tiles += 0x04040404;
+    tiles += AFFINE_MAP_ENTRIES(4, 4, 4, 4);
   }
-  Iwram_FillWords(
-      words, BG_SCREEN_WIDTH * BG_SCREEN_WIDTH - BACKGROUND_PICTURE_TILES, -1);
+  Iwram_FillWords(words, BACKGROUND_AFFINE_MAP_BYTES - BACKGROUND_TILES, -1);
 }
 
 /// Builds BG1's flat map of the same picture, in screen block 31: four rows of
-/// blank entries, two of BACKGROUND_CLEAR_TILE, the picture's tiles in order on
-/// rows 6 to 20, then BACKGROUND_CLEAR_TILE down to the last row, which
-/// BattleBackground_Load clears.
+/// blank entries, two of BG1_EDGE_TILE, the picture's tiles in order on rows 6
+/// to 20, then BG1_EDGE_TILE down to the last row, which BattleBackground_Load
+/// clears.
 void BattleTransition_BuildTilemap(s32 *destination) {
   s32 entry;
   u32 index;
@@ -138,17 +143,17 @@ void BattleTransition_BuildTilemap(s32 *destination) {
   Iwram_FillWords(destination, 4 * MAP_ROW_BYTES, -1);
   destination += 4 * MAP_ROW_WORDS;
   Iwram_FillWords(destination, 2 * MAP_ROW_BYTES,
-                  WINDOW_TILE_PAIR(BACKGROUND_CLEAR_TILE));
-  entry = TILE_PAIR(BACKGROUND_FIRST_TILE);
+                  WINDOW_TILE_PAIR(BG1_EDGE_TILE));
+  entry = TILE_PAIR(BACKGROUND_BG1_FIRST_TILE);
   destination += 2 * MAP_ROW_WORDS;
   index = 0;
   do {
     index++;
     *destination++ = entry;
     entry += TILE_PAIR_STEP;
-  } while (index < BACKGROUND_PICTURE_ROWS * MAP_ROW_WORDS);
+  } while (index < BACKGROUND_TILE_ROWS * MAP_ROW_WORDS);
   Iwram_FillWords(destination, 10 * MAP_ROW_BYTES,
-                  WINDOW_TILE_PAIR(BACKGROUND_CLEAR_TILE));
+                  WINDOW_TILE_PAIR(BG1_EDGE_TILE));
 }
 
 /// Copies this frame's BG2CNT word and starts the HBlank DMA of the BG2 lines

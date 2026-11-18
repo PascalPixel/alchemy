@@ -1,9 +1,9 @@
 /// @file
 /// The Yampi Desert Cave, the hidden dungeon behind the desert's sand slide:
-/// Teleport marks lead into its inner rooms, where the party pushes logs,
-/// sinks stakes with Pound, bursts pillars, slips under walls with Sand,
-/// Scoops up the Venus Djinni Crystal racing through the sand, and meets
-/// Valukar, the guardian of fire.
+/// a Teleport circle leads on from the room the party comes in by, and in the
+/// rooms beyond the party pushes logs, sinks a stake with Pound, bursts
+/// pillars, slips under walls with Sand, Scoops up the Venus Djinni Crystal
+/// racing through the sand, and meets Valukar, the guardian of fire.
 #include "djinn_ids.h"
 #include "fixed_math.h"
 #include "flags.h"
@@ -41,10 +41,6 @@
 s32 MapGrid_CheckCollision(struct Actor *actor, struct FieldPosition *position);
 
 #include "shared/tables.h"
-
-/// The OBJ colours a palette fade keeps after its BG colours, palettes 0 to
-/// 13.
-#define PALETTE_FADE_OBJ_COLORS (14 * PALETTE_COLORS)
 
 /// Set once Burst has broken the pillar in the Water of Life chest's room.
 #define FLAG_YAMPI_DESERT_CAVE_CHEST_ROOM_PILLAR_BURST FLAG_AREA_TEMP_00
@@ -87,6 +83,16 @@ enum YampiDesertCaveChestRoomActorId {
   ACTOR_CHEST_ROOM_BURST_PILLAR
 };
 
+/// The chest room's two Teleport circles, the north one where the party comes
+/// in from the desert and the south one: the collision code of each circle's
+/// cells, and the entrance on it. Each circle sends the party to the other.
+enum YampiDesertCaveTeleportCircle {
+  NORTH_CIRCLE_CELLS = 30,
+  SOUTH_CIRCLE_CELLS = 31,
+  NORTH_CIRCLE_ENTRANCE = 9,
+  SOUTH_CIRCLE_ENTRANCE = 10
+};
+
 /// Valukar's room's actors (SceneId_YampiDesertCaveGuardian).
 enum YampiDesertCaveGuardianActorId {
   /// The stone pillar Move pushes (SPRITE_STONE_PILLAR).
@@ -120,8 +126,6 @@ enum YampiDesertCaveCrystalActorId {
 /// treasure spot.
 enum { ACTOR_MYTHRIL_SILVER = FIELD_TREASURE_ACTOR };
 
-struct Actor;
-
 /// The kinds of log, the rows of gYampiDesertCave_LogSprites and
 /// gYampiDesertCave_LogFootprints.
 #define LOG_KIND_COUNT 6
@@ -130,9 +134,9 @@ extern u16 gYampiDesertCave_LogSprites[];
 
 void YampiDesertCave_StopLeaderAtLog(struct Actor *actor);
 
-void YampiDesertCave_ArriveByTeleport(void);
+void Teleport_ArriveWhirling(void);
 
-extern u16 gYampiDesertCave_MarkCycle[];
+extern u16 gYampiDesertCave_CircleCycleSlots[];
 
 void FieldEffect_StartBlankOverlay(s32 value);
 
@@ -143,9 +147,9 @@ void YampiDesertCave_WonderAtRipple(void);
 /// The leader pushes the log ahead, if it can slide.
 void YampiDesertCave_TryPushLog(void);
 
-void YampiDesertCave_TeleportFromFirstMark(void);
+void YampiDesertCave_TeleportFromNorthCircle(void);
 
-void YampiDesertCave_TeleportFromSecondMark(void);
+void YampiDesertCave_TeleportFromSouthCircle(void);
 
 void YampiDesertCave_CastSand(void);
 void YampiDesertCave_EndSand(void);
@@ -153,18 +157,19 @@ void YampiDesertCave_EndSand(void);
 extern u32 gYampiDesertCave_Settle[];
 
 struct Actor *Actor_FindAtCell(s32 *position, s32 mode);
-u16 gYampiDesertCave_MarkBright BSS_DATA;
-u16 *gYampiDesertCave_MarkCycleSlots BSS_DATA;
-u16 gYampiDesertCave_MarkTimer BSS_DATA;
-u16 gYampiDesertCave_MarkDelay BSS_DATA ALIGNED(4);
-u16 *gYampiDesertCave_MarkSlots BSS_DATA;
-u16 *gYampiDesertCave_MarkColors BSS_DATA;
-u16 *gYampiDesertCave_MarkDimColors BSS_DATA;
-u16 gYampiDesertCave_MarkCount BSS_DATA;
-u16 gYampiDesertCave_MarkCycleIndex BSS_DATA ALIGNED(4);
+/// The Teleport circles' shimmer (shared/teleport_shimmer.c).
+u16 gPaletteCycleBright BSS_DATA;
+u16 *gPaletteCycleSlots BSS_DATA;
+u16 gPaletteCycleTimer BSS_DATA;
+u16 gPaletteCycleDelay BSS_DATA ALIGNED(4);
+u16 *gPaletteSlots BSS_DATA;
+u16 *gPaletteColors BSS_DATA;
+u16 *gPaletteCycleColors BSS_DATA;
+u16 gPaletteCycleLength BSS_DATA;
+u16 gPaletteCycleIndex BSS_DATA ALIGNED(4);
 void Actor_DisableById(s32 id);
 
-extern s8 gYampiDesertCave_LogFootprints[];
+extern s8 gYampiDesertCave_LogFootprints[][4];
 
 /// Makes a log's cells solid where it lies: its footprint's cells take the
 /// raised layers' attributes and block the ground; returns 0 for an actor that
@@ -185,34 +190,36 @@ s32 YampiDesertCave_SetLogCells(s32 id) {
     do {
       /* FAKEMATCH(temporary): the step taken in the high halfword, as the push
        * footprints' copies of this search have it. */
-      next = (i + 1) * 65536;
-      kind = (u32)next >> 16;
-      i = next >> 16;
+      next = toFIXED(i + 1);
+      kind = FIXEDtoINT((u32)next);
+      i = FIXEDtoINT(next);
     } while (kind < LOG_KIND_COUNT &&
              (u16)sprite != gYampiDesertCave_LogSprites[kind]);
   }
   kind = (u16)i;
   if (kind == LOG_KIND_COUNT)
     return 0;
-  w = (ABS(gYampiDesertCave_LogFootprints[kind * 4]) +
-       ABS(gYampiDesertCave_LogFootprints[kind * 4 + 2])) >>
+  w = (ABS(gYampiDesertCave_LogFootprints[kind][0]) +
+       ABS(gYampiDesertCave_LogFootprints[kind][2])) >>
       4;
-  // i is reused: the footprint's second byte here, layers[1]'s x offset in
+  // i is reused: the footprint's top here, the middle layer's x offset in
   // cells below.
-  i = gYampiDesertCave_LogFootprints[kind * 4 + 1];
-  h = (ABS(i) + ABS(gYampiDesertCave_LogFootprints[kind * 4 + 3])) >> 4;
+  i = gYampiDesertCave_LogFootprints[kind][1];
+  h = (ABS(i) + ABS(gYampiDesertCave_LogFootprints[kind][3])) >> 4;
   x = FIELD_CELL(actor->x.fixed +
-                 toFIXED(gYampiDesertCave_LogFootprints[kind * 4]));
+                 toFIXED(gYampiDesertCave_LogFootprints[kind][0]));
   z = FIELD_CELL(actor->z.fixed + toFIXED(i));
-  i = FIELD_CELL(map->layers[1].offsetX);
-  az = FIELD_CELL(map->layers[1].offsetY);
-  bx = map->layers[2].offsetX;
-  bz = map->layers[2].offsetY;
+  i = FIELD_CELL(map->layers[MAPGRID_LAYER_MIDDLE].offsetX);
+  az = FIELD_CELL(map->layers[MAPGRID_LAYER_MIDDLE].offsetY);
+  bx = map->layers[MAPGRID_LAYER_OVERHEAD].offsetX;
+  bz = map->layers[MAPGRID_LAYER_OVERHEAD].offsetY;
   MapGrid_CopyCellAttributes(x, z, w, h, (u16)i + x, (u16)az + z);
   MapGrid_CopyCellAttributes((u16)FIELD_CELL(bx) + x, (u16)FIELD_CELL(bz) + z,
                              w, h, x + 64, z + 64);
-  PushedActor_FillGridAttributeRectangle(0, x, z, w, h, CELL_BEHAVIOR_WALL);
-  PushedActor_FillGridAttributeRectangle(2, x, z, w, h, CELL_BEHAVIOR_WALL);
+  PushedActor_FillGridAttributeRectangle(MAPGRID_LAYER_GROUND, x, z, w, h,
+                                         CELL_BEHAVIOR_WALL);
+  PushedActor_FillGridAttributeRectangle(MAPGRID_LAYER_OVERHEAD, x, z, w, h,
+                                         CELL_BEHAVIOR_WALL);
   return 1;
 }
 
@@ -251,47 +258,44 @@ s32 YampiDesertCave_FindLogSlide(struct LogSlide *slide) {
   s32 kind, w, h, dx;
   FIXED dz;
   s32 count, i, j;
-  u8 *state;
-  s32 offset;
+  u8 *layer;
 
   actor = YampiDesertCave_FindPushedLog(&direction, &slide->slot, &slide->kind);
   if (actor != NULL) {
     kind = slide->kind;
-    w = (ABS(gYampiDesertCave_LogFootprints[kind * 4]) +
-         ABS(gYampiDesertCave_LogFootprints[kind * 4 + 2])) >>
+    w = (ABS(gYampiDesertCave_LogFootprints[kind][0]) +
+         ABS(gYampiDesertCave_LogFootprints[kind][2])) >>
         4;
-    h = (ABS(gYampiDesertCave_LogFootprints[kind * 4 + 1]) +
-         ABS(gYampiDesertCave_LogFootprints[kind * 4 + 3])) >>
+    h = (ABS(gYampiDesertCave_LogFootprints[kind][1]) +
+         ABS(gYampiDesertCave_LogFootprints[kind][3])) >>
         4;
     dx = gPushLeaderSteps[direction] & FIELD_PIXEL_MASK;
     dz = toFIXED(gPushLeaderSteps[direction]);
     slide->onPushed = NULL;
     count = 0;
-    state = &actor->layer;
-    *state = 2;
+    layer = &actor->layer;
+    *layer = MAPGRID_LAYER_OVERHEAD;
     slide->x = actor->x.fixed + dx;
     slide->z = actor->z.fixed + dz;
     probe[1] = actor->y.fixed;
     do {
-      offset = kind;
-      probe[2] =
-          slide->z + toFIXED(gYampiDesertCave_LogFootprints[offset * 4 + 1]);
-      offset *= 4;
+      probe[2] = slide->z + toFIXED(gYampiDesertCave_LogFootprints[kind][1]);
       for (j = 0; j < h; j++) {
-        probe[0] = slide->x + toFIXED(gYampiDesertCave_LogFootprints[offset]);
+        probe[0] = slide->x + toFIXED(gYampiDesertCave_LogFootprints[kind][0]);
         for (i = 0; i < w; i++) {
-          if (FieldActor_CheckMovementCollision(actor, probe) == 2)
-            goto hit;
-          probe[0] += toFIXED(16);
+          if (FieldActor_CheckMovementCollision(actor, probe) ==
+              COLLISION_IMPASSABLE)
+            goto blocked;
+          probe[0] += toFIXED(MAPGRID_CELL_PIXELS);
         }
-        probe[2] += toFIXED(16);
+        probe[2] += toFIXED(MAPGRID_CELL_PIXELS);
       }
       slide->x += dx;
       count++;
       slide->z += dz;
     } while (1);
-  hit:
-    *state = 0;
+  blocked:
+    *layer = MAPGRID_LAYER_GROUND;
     if (count == 0)
       return 0;
     slide->x = actor->x.fixed + dx * count;
@@ -326,18 +330,18 @@ struct Actor *YampiDesertCave_FindPushedLog(s32 *direction, s32 *slot,
         z = (leader->z.part[0].integer +
              PUSH_STEP_Z(gPushLeaderSteps[*direction])) >>
             4;
-        left = (actor->x.part[0].integer +
-                gYampiDesertCave_LogFootprints[k * 4]) >>
-               4;
-        top = (actor->z.part[0].integer +
-               gYampiDesertCave_LogFootprints[k * 4 + 1]) >>
-              4;
-        right = (actor->x.part[0].integer +
-                 gYampiDesertCave_LogFootprints[k * 4 + 2]) >>
-                4;
-        bottom = (actor->z.part[0].integer +
-                  gYampiDesertCave_LogFootprints[k * 4 + 3]) >>
-                 4;
+        left =
+            (actor->x.part[0].integer + gYampiDesertCave_LogFootprints[k][0]) >>
+            4;
+        top =
+            (actor->z.part[0].integer + gYampiDesertCave_LogFootprints[k][1]) >>
+            4;
+        right =
+            (actor->x.part[0].integer + gYampiDesertCave_LogFootprints[k][2]) >>
+            4;
+        bottom =
+            (actor->z.part[0].integer + gYampiDesertCave_LogFootprints[k][3]) >>
+            4;
         if (left <= x && x < right && top <= z && z < bottom) {
           *kind = k;
           if (k & 1) {
@@ -372,9 +376,8 @@ s32 YampiDesertCave_FindLogSlide(struct LogSlide *slide);
 /// The leader pushes a log to where YampiDesertCave_FindLogSlide stopped it,
 /// and its cells move with it.
 void YampiDesertCave_PushLog(struct LogSlide slide);
-void YampiDesertCave_StartMarkGlow(void);
-/// The marks stop glowing, and the scene leaves by a backdrop fade.
-void YampiDesertCave_StopMarkGlow(void);
+void Teleport_StartShimmer(void);
+void Teleport_StopShimmer(void);
 s32 List_CountEntries(u16 *list);
 void PaletteCycle_Fade(void);
 void Pound_SinkTarget(u16 *list, s32 mode, s32 count);
@@ -388,31 +391,36 @@ void YampiDesertCave_PushLog(struct LogSlide slide) {
   s32 w, h;
   struct Actor *leader = Actor_GetById(gMainRoutineWork.leaderActorId);
   struct Actor *actor = Actor_GetById(slide.slot);
-  // Always 0, a u16 facing shifted down 16: the log always takes animation 2,
-  // and the leader's step after the push, the table's first, comes to nothing.
-  s32 direction = leader->facing >> 16;
+  // BUG: the leader's facing is taken as a 16.16 number, whose whole part is
+  // always 0 for this 16-bit angle, where its sixteenth (FACING_INDEX) was
+  // meant: every push takes direction 0 (east), so the log rolls with
+  // animation 2 whichever way it goes and the leader's step after it is none.
+#ifdef BUGFIX
+  s32 direction = FACING_INDEX(leader->facing);
+#else
+  s32 direction = FIXEDtoINT(leader->facing);
+#endif
   s32 kind = slide.kind;
   s32 speed = leader->speedLimit;
   s32 acceleration = leader->acceleration;
   s32 cell[3];
   FIXED from[3];
-  FIXED offset;
   s32 ax, az, bx, bz;
 
   from[0] = actor->x.fixed;
   from[2] = actor->z.fixed;
   cell[0] = FIELD_CELL(actor->x.fixed +
-                       toFIXED(gYampiDesertCave_LogFootprints[kind * 4]));
+                       toFIXED(gYampiDesertCave_LogFootprints[kind][0]));
   cell[2] = FIELD_CELL(actor->z.fixed +
-                       toFIXED(gYampiDesertCave_LogFootprints[kind * 4 + 1]));
-  w = (ABS(gYampiDesertCave_LogFootprints[kind * 4]) +
-       ABS(gYampiDesertCave_LogFootprints[kind * 4 + 2])) >>
+                       toFIXED(gYampiDesertCave_LogFootprints[kind][1]));
+  w = (ABS(gYampiDesertCave_LogFootprints[kind][0]) +
+       ABS(gYampiDesertCave_LogFootprints[kind][2])) >>
       4;
-  h = (ABS(gYampiDesertCave_LogFootprints[kind * 4 + 1]) +
-       ABS(gYampiDesertCave_LogFootprints[kind * 4 + 3])) >>
+  h = (ABS(gYampiDesertCave_LogFootprints[kind][1]) +
+       ABS(gYampiDesertCave_LogFootprints[kind][3])) >>
       4;
-  PushedActor_FillGridAttributeRectangle(0, cell[0], cell[2], w, h,
-                                         CELL_BEHAVIOR_NORMAL);
+  PushedActor_FillGridAttributeRectangle(MAPGRID_LAYER_GROUND, cell[0], cell[2],
+                                         w, h, CELL_BEHAVIOR_NORMAL);
   Actor_SetSpeedAndAcceleration(gMainRoutineWork.leaderActorId, 0.5, 0.1);
   Actor_SetAnimation(gMainRoutineWork.leaderActorId, ANIM_PUSH);
   wait(15);
@@ -423,7 +431,8 @@ void YampiDesertCave_PushLog(struct LogSlide slide) {
   Actor_GetById(gMainRoutineWork.leaderActorId)->update =
       YampiDesertCave_StopLeaderAtLog;
   wait(4);
-  if ((u32)(direction - 6) <= 7)
+  if (direction >= FACING_INDEX(FACING_SOUTHWEST) &&
+      direction <= FACING_INDEX(FACING_NORTH_NORTHEAST))
     Actor_SelectAnimation(actor, 3);
   else
     Actor_SelectAnimation(actor, 2);
@@ -433,9 +442,21 @@ void YampiDesertCave_PushLog(struct LogSlide slide) {
   Actor_WaitForMoveById(gMainRoutineWork.leaderActorId);
   Actor_SetAnimation(gMainRoutineWork.leaderActorId, ANIM_WALK);
   Actor_SetSpeedAndAcceleration(gMainRoutineWork.leaderActorId, 0.3, 0.1);
-  offset = toFIXED(gPushLeaderSteps[direction]);
-  Actor_SetDestinationOffset(gMainRoutineWork.leaderActorId, offset >> 31,
-                             FIXEDtoINT(offset) >> 1);
+  // BUG: the leader's step after the push reads both halves from the step's
+  // z: x is its sign and z its half (half of PUSH_STEP_X and PUSH_STEP_Z was
+  // meant). With direction 0 both are 0.
+  {
+    s32 step = gPushLeaderSteps[direction];
+
+#ifdef BUGFIX
+    Actor_SetDestinationOffset(gMainRoutineWork.leaderActorId,
+                               PUSH_STEP_X(step) / 2, PUSH_STEP_Z(step) / 2);
+#else
+    Actor_SetDestinationOffset(gMainRoutineWork.leaderActorId,
+                               toFIXED(step) >> 31,
+                               FIXEDtoINT(toFIXED(step)) >> 1);
+#endif
+  }
   if (slide.onPushed != NULL)
     slide.onPushed();
   Actor_WaitForMoveById(gMainRoutineWork.leaderActorId);
@@ -449,25 +470,25 @@ void YampiDesertCave_PushLog(struct LogSlide slide) {
   Actor_SetPositionAndResetMotion(actor, slide.x, actor->y.fixed, slide.z);
   Actor_SelectAnimation(actor, 1);
   slide.x =
-      FIELD_CELL(slide.x + toFIXED(gYampiDesertCave_LogFootprints[kind * 4]));
-  slide.z = FIELD_CELL(slide.z +
-                       toFIXED(gYampiDesertCave_LogFootprints[kind * 4 + 1]));
-  ax = FIELD_CELL(map->layers[1].offsetX);
-  az = FIELD_CELL(map->layers[1].offsetY);
-  bx = FIELD_CELL(map->layers[2].offsetX);
-  bz = FIELD_CELL(map->layers[2].offsetY);
+      FIELD_CELL(slide.x + toFIXED(gYampiDesertCave_LogFootprints[kind][0]));
+  slide.z =
+      FIELD_CELL(slide.z + toFIXED(gYampiDesertCave_LogFootprints[kind][1]));
+  ax = FIELD_CELL(map->layers[MAPGRID_LAYER_MIDDLE].offsetX);
+  az = FIELD_CELL(map->layers[MAPGRID_LAYER_MIDDLE].offsetY);
+  bx = FIELD_CELL(map->layers[MAPGRID_LAYER_OVERHEAD].offsetX);
+  bz = FIELD_CELL(map->layers[MAPGRID_LAYER_OVERHEAD].offsetY);
   MapGrid_CopyCellAttributes(slide.x, slide.z, w, h, ax + slide.x,
                              az + slide.z);
   MapGrid_CopyCellAttributes(slide.x + bx, slide.z + bz, w, h, slide.x + 64,
                              slide.z + 64);
-  PushedActor_FillGridAttributeRectangle(0, slide.x, slide.z, w, h,
-                                         CELL_BEHAVIOR_WALL);
-  PushedActor_FillGridAttributeRectangle(2, slide.x, slide.z, w, h,
-                                         CELL_BEHAVIOR_WALL);
+  PushedActor_FillGridAttributeRectangle(MAPGRID_LAYER_GROUND, slide.x, slide.z,
+                                         w, h, CELL_BEHAVIOR_WALL);
+  PushedActor_FillGridAttributeRectangle(MAPGRID_LAYER_OVERHEAD, slide.x,
+                                         slide.z, w, h, CELL_BEHAVIOR_WALL);
   cell[0] =
-      FIELD_CELL(from[0] + toFIXED(gYampiDesertCave_LogFootprints[kind * 4]));
-  cell[2] = FIELD_CELL(from[2] +
-                       toFIXED(gYampiDesertCave_LogFootprints[kind * 4 + 1]));
+      FIELD_CELL(from[0] + toFIXED(gYampiDesertCave_LogFootprints[kind][0]));
+  cell[2] =
+      FIELD_CELL(from[2] + toFIXED(gYampiDesertCave_LogFootprints[kind][1]));
   MapGrid_CopyCellAttributes(ax + cell[0], az + cell[2], w, h, cell[0],
                              cell[2]);
   MapGrid_CopyCellAttributes(cell[0] + 64, cell[2] + 64, w, h, cell[0] + bx,
@@ -488,9 +509,9 @@ void YampiDesertCave_StopLeaderAtLog(struct Actor *actor) {
   position[0] = actor->x.fixed;
   position[1] = actor->y.fixed;
   position[2] = actor->z.fixed;
-  Vector_AddPolarOffset(toFIXED(16), angle, position);
+  Vector_AddPolarOffset(toFIXED(MAPGRID_CELL_PIXELS), angle, position);
   hit = Actor_FindAtCell(position, 1);
-  if (hit != 0) {
+  if (hit != NULL) {
     for (i = 0; i < LOG_KIND_COUNT; i++) {
       if (((struct Sprite *)hit->sprite)->entries[0]->animationId ==
           gYampiDesertCave_LogSprites[i])
@@ -507,126 +528,7 @@ void YampiDesertCave_StopLeaderAtLog(struct Actor *actor) {
                                     actor->z.fixed);
 }
 
-/// Keeps the marks' palette lists, colours the marks' palette entries, saves
-/// both palettes for the fade and, arriving by Teleport, plays the arrival.
-void YampiDesertCave_SetMarkColors(u16 *slots, u16 *colours, u16 *a, u16 *b) {
-  struct PaletteFade *fade = Ram_HeapSlots->paletteFade;
-
-  gYampiDesertCave_MarkSlots = slots;
-  gYampiDesertCave_MarkColors = colours;
-  gYampiDesertCave_MarkDimColors = a;
-  gYampiDesertCave_MarkCycleSlots = b;
-  while (*slots != PALETTE_LIST_END && *colours != PALETTE_LIST_END) {
-    int red = *colours++;
-    int index = *slots++;
-    int green = *colours++;
-    int blue = *colours++;
-    SET_RGB(BG_PLTT[index], red, green, blue);
-  }
-  Dma_Set((const void *)BG_PLTT, fade->palette,
-          DMA_COPY_WORDS(PALETTE_FADE_BG_COLORS / 2), REG_DMA3);
-  Dma_Set((const void *)OBJ_PLTT, &fade->palette[PALETTE_FADE_BG_COLORS],
-          DMA_COPY_WORDS(PALETTE_FADE_OBJ_COLORS / 2), REG_DMA3);
-  PaletteFade_SetTarget(FIXED_ONE, 0);
-  if (gMainRoutineWork.teleportState == 2)
-    YampiDesertCave_ArriveByTeleport();
-}
-
-/// The Teleport marks start to glow, slowly at first and quicker each step.
-void YampiDesertCave_StartMarkGlow(void) {
-  gYampiDesertCave_MarkCycleIndex = 0;
-  gYampiDesertCave_MarkCount = List_CountEntries(gYampiDesertCave_MarkSlots);
-  gYampiDesertCave_MarkDelay = 15;
-  gYampiDesertCave_MarkTimer = 16;
-  gYampiDesertCave_MarkBright = 1;
-  Task_Add(PaletteCycle_Fade, TASK_PASS_FRAME);
-}
-
-void YampiDesertCave_StopMarkGlow(void) {
-  gFieldWork->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
-  Task_Remove(PaletteCycle_Fade);
-}
-
-/// The marks flash quickly, as the party arrives by Teleport.
-void YampiDesertCave_StartMarkFlash(void) {
-  gYampiDesertCave_MarkCycleIndex = 0;
-  gYampiDesertCave_MarkCount = List_CountEntries(gYampiDesertCave_MarkSlots);
-  gYampiDesertCave_MarkDelay = 2;
-  gYampiDesertCave_MarkTimer = 2;
-  gYampiDesertCave_MarkBright = 1;
-  Task_Add(PaletteCycle_Fade, TASK_PASS_FRAME);
-}
-
-#include "shared/list_count_entries.h"
-
-/// The marks' glow, once a frame: at each step the cycle's entries move on one
-/// place, and the mark itself turns bright and dim in turn.
-void PaletteCycle_Fade(void) {
-  s32 step = 0;
-  u16 *color;
-  volatile u16 *dst;
-  u32 i;
-  s32 r, g, b;
-
-  if (gYampiDesertCave_MarkTimer != 0 && --gYampiDesertCave_MarkTimer == 0) {
-    step = 1;
-    gYampiDesertCave_MarkTimer = gYampiDesertCave_MarkDelay;
-    if (gYampiDesertCave_MarkDelay > 2)
-      gYampiDesertCave_MarkDelay--;
-  }
-  if (!step)
-    return;
-  color = gYampiDesertCave_MarkDimColors;
-  for (i = 0; i < gYampiDesertCave_MarkCount; i++) {
-    dst = &BG_PLTT
-              [gYampiDesertCave_MarkCycleSlots[gYampiDesertCave_MarkCycleIndex *
-                                                   gYampiDesertCave_MarkCount +
-                                               i]];
-    r = *color++;
-    g = *color++;
-    b = *color++;
-    SET_RGB(*dst, r, g, b);
-  }
-  dst = &BG_PLTT[gYampiDesertCave_MarkSlots[gYampiDesertCave_MarkCount]];
-  if (gYampiDesertCave_MarkBright)
-    color = gYampiDesertCave_MarkColors + gYampiDesertCave_MarkCount * 3;
-  else
-    color = gYampiDesertCave_MarkDimColors + gYampiDesertCave_MarkCount * 3;
-  r = *color++;
-  g = *color++;
-  b = *color++;
-  SET_RGB(*dst, r, g, b);
-  gYampiDesertCave_MarkBright ^= 1;
-  if (++gYampiDesertCave_MarkCycleIndex == gYampiDesertCave_MarkCount)
-    gYampiDesertCave_MarkCycleIndex = 0;
-}
-
-/// Arriving by Teleport: the screen flashes as the marks' colours race, then
-/// fades back.
-void YampiDesertCave_ArriveByTeleport(void) {
-  struct FieldWork *work = Ram_HeapSlots->fieldWork;
-  s32 saved;
-
-  saved = work->transition;
-  PaletteFade_SetTarget(PALETTE_TINT_CUSTOM | RGB(8, 8, 8), 1);
-  PaletteFade_ApplyTarget(FIXED_ONE, 2);
-  gFieldWork->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
-  Event_StartScreenTransition();
-  Event_WaitTransitionFrames();
-  YampiDesertCave_StartMarkFlash();
-  Teleport_PlayWhirl();
-  wait(40);
-  YampiDesertCave_StopMarkGlow();
-  PaletteFade_SetTarget(FIXED_ONE, 1);
-  PaletteFade_StartInterpolation(16);
-  wait(16);
-  {
-    struct MainRoutineWork *party = &gMainRoutineWork;
-
-    party->teleportState = 0;
-  }
-  work->transition = saved;
-}
+#include "shared/teleport_shimmer.c"
 
 void Actor_SetCellOpen(s32 id, u32 kind, s32 flag, s32 layer);
 
@@ -645,7 +547,7 @@ void YampiDesertCave_PlaceStakes(const u16 *list) {
     s16 kind = entry[1];
     s16 flag = entry[2];
 
-    actor->collisionFlags &= ~1;
+    actor->collisionFlags &= ~ACTOR_SOLID;
     Actor_SetSpriteFlags(actor, 0);
     Actor_SetCellOpen(id, (u16)kind, (u16)flag, actor->layer);
     entry += 3;
@@ -676,7 +578,7 @@ void YampiDesertCave_WonderAtRipple(void) {
 
 const struct SceneEntrance *Scene_GetEntrances(void) { return gSceneEntrances; }
 
-const struct SceneRegion *Scene_GetExitRegions(void) { return 0; }
+const struct SceneRegion *Scene_GetExitRegions(void) { return NULL; }
 
 const u32 *Scene_GetExits(void) { return gSceneExits; }
 
@@ -695,21 +597,24 @@ void YampiDesertCave_TryPushLog(void) {
     YampiDesertCave_PushLog(slide);
 }
 
-/// Teleport on one of the first room's marks: the marks glow and the party
-/// arrives in the inner rooms by entrance n1.
-#define DEFINE_TELEPORT_FROM_MARK(name, n1)                                    \
+/// Teleport on one of the chest room's circles: the circle shimmers and the
+/// party arrives on the other, by its entrance.
+#define DEFINE_TELEPORT_FROM_CIRCLE(name, entrance)                            \
   void name(void) {                                                            \
-    YampiDesertCave_StartMarkGlow();                                           \
+    Teleport_StartShimmer();                                                   \
     Teleport_PlaySparks();                                                     \
     gMainRoutineWork.teleportState = 2;                                        \
-    Event_SetDestination(SCENE_YAMPI_DESERT_CAVE_WATER_OF_LIFE_CHEST, n1);     \
+    Event_SetDestination(SCENE_YAMPI_DESERT_CAVE_WATER_OF_LIFE_CHEST,          \
+                         entrance);                                            \
     Event_Wait(40);                                                            \
-    YampiDesertCave_StopMarkGlow();                                            \
+    Teleport_StopShimmer();                                                    \
   }
 
-DEFINE_TELEPORT_FROM_MARK(YampiDesertCave_TeleportFromFirstMark, 10)
+DEFINE_TELEPORT_FROM_CIRCLE(YampiDesertCave_TeleportFromNorthCircle,
+                            SOUTH_CIRCLE_ENTRANCE)
 
-DEFINE_TELEPORT_FROM_MARK(YampiDesertCave_TeleportFromSecondMark, 9)
+DEFINE_TELEPORT_FROM_CIRCLE(YampiDesertCave_TeleportFromSouthCircle,
+                            NORTH_CIRCLE_ENTRANCE)
 
 /// Burst breaks a pillar for good (flag) as it acts (phase 3).
 #define DEFINE_BURST_PILLAR(name, flag, actorId)                               \
@@ -796,7 +701,7 @@ void YampiDesertCave_FinishMovingPillar(s32 unused, s32 id) {
 
 /// Sand: the leader sinks into the sand and the rooms' sand-only cells open.
 void YampiDesertCave_CastSand(void) {
-  Actor_GetById(gMainRoutineWork.leaderActorId)->layer = 2;
+  Actor_GetById(gMainRoutineWork.leaderActorId)->layer = MAPGRID_LAYER_OVERHEAD;
   if (gMainRoutineWork.next == SCENE_YAMPI_DESERT_CAVE_WATER_OF_LIFE_CHEST) {
     MapGrid_CopyCellAttributes(55, 71, 4, 1, 43, 70);
     MapGrid_CopyCellAttributes(43, 71, 4, 1, 55, 71);
@@ -813,7 +718,7 @@ void YampiDesertCave_CastSand(void) {
 
 /// Sand fades: the leader rises and the cells close again.
 void YampiDesertCave_EndSand(void) {
-  Actor_GetById(gMainRoutineWork.leaderActorId)->layer = 0;
+  Actor_GetById(gMainRoutineWork.leaderActorId)->layer = MAPGRID_LAYER_GROUND;
   if (gMainRoutineWork.next == SCENE_YAMPI_DESERT_CAVE_WATER_OF_LIFE_CHEST)
     MapGrid_CopyCellAttributes(43, 70, 4, 1, 55, 71);
   if (gMainRoutineWork.next == SCENE_YAMPI_DESERT_CAVE_CRYSTAL) {
@@ -831,15 +736,11 @@ void YampiDesertCave_PoundStake(s32 mode, s32 count) {
 
 extern s16 gYampiDesertCave_RipplePath[];
 
-static __inline__ s32 GameFlag_GetByte_(s32 flag) {
-  return ((s32)GameFlag_GetByte(flag));
-}
-
 /// Moves the ripple along its path, a row of gYampiDesertCave_RipplePath for
 /// every RIPPLE_STEPS_PER_POINT steps of its counter, which counts on while
 /// the player has control, whether the party walks or stands.
 void YampiDesertCave_MoveSandRipple(void) {
-  s32 step = GameFlag_GetByte_(FLAG_BYTE_YAMPI_DESERT_CAVE_RIPPLE_STEP);
+  s32 step = FieldGameFlag_GetByte(FLAG_BYTE_YAMPI_DESERT_CAVE_RIPPLE_STEP);
   s32 index = (step / RIPPLE_STEPS_PER_POINT) * 2;
   s32 column = gYampiDesertCave_RipplePath[index];
   s32 row = gYampiDesertCave_RipplePath[index + 1];
@@ -861,9 +762,9 @@ void YampiDesertCave_ScoopDjinni(s32 mode) {
        RIPPLE_STEPS_PER_POINT) *
       2;
   s16 column = gYampiDesertCave_RipplePath[index];
-  s32 px = column * 8;
+  s32 px = column * (MAPGRID_CELL_PIXELS / 2);
   s16 row = gYampiDesertCave_RipplePath[index + 1];
-  s32 pz = row * 8;
+  s32 pz = row * (MAPGRID_CELL_PIXELS / 2);
   struct FieldWork *work = Ram_HeapSlots->fieldWork;
   // The Scoop's hand, where it digs: the ScoopWork's actor, which only
   // field_psynergy_scoop.c declares.
@@ -875,7 +776,7 @@ void YampiDesertCave_ScoopDjinni(s32 mode) {
     x = FIELD_CELL(scoopHand->x.fixed);
     z = FIELD_CELL(scoopHand->z.fixed);
   }
-  if (px / 16 != x || pz / 16 != z)
+  if (px / MAPGRID_CELL_PIXELS != x || pz / MAPGRID_CELL_PIXELS != z)
     return;
   if (mode == 1) {
     Task_Remove(YampiDesertCave_MoveSandRipple);
@@ -911,12 +812,14 @@ void YampiDesertCave_MeetGuardianOfFire(void) {
   Event_ResolvePendingActions(0);
   Actor_StartRepeatedMotion(ACTOR_VALUKAR, 2);
   Event_Wait(20);
-  PaletteFade_ApplySource(FIXED_ONE, 0);
+  PaletteFade_ApplySource(PALETTE_TINT_NONE, 0);
   PaletteFade_SetTarget(PALETTE_TINT_WARM, 1);
   PaletteFade_StartInterpolation(60);
   Event_Wait(60);
+  // "I am the guardian of fire. If you want my power, prove yourself in my
+  // crucible of flame."
   EventMessage_ShowCentered((s32)MsgIAmThe, 0, 6);
-  PaletteFade_SetTarget(FIXED_ONE, 0);
+  PaletteFade_SetTarget(PALETTE_TINT_NONE, 0);
   PaletteFade_StartInterpolation(60);
   Event_Wait(60);
   leader = Actor_GetById(gMainRoutineWork.leaderActorId);
@@ -945,9 +848,9 @@ const struct Trigger *Scene_GetTriggers(void) {
   return gYampiDesertCave_Triggers;
 }
 
-extern s16 gYampiDesertCave_MarkPaletteSlots[];
-extern u16 gYampiDesertCave_MarkColorsLit[];
-extern u16 gYampiDesertCave_MarkColorsDim[];
+extern s16 gYampiDesertCave_CircleSlots[];
+extern u16 gYampiDesertCave_CircleColors[];
+extern u16 gYampiDesertCave_CircleCycleColors[];
 
 void Actor_SetWideSprite(s32 id, s32 wide);
 
@@ -958,9 +861,9 @@ s32 Scene_Initialize(void) {
   gFieldWork->transition = SCENE_TRANSITION(TRANSITION_WINDOW, 4);
   FieldEffect_StartBlankOverlay(0);
   if (gMainRoutineWork.next == SCENE_YAMPI_DESERT_CAVE_WATER_OF_LIFE_CHEST) {
-    YampiDesertCave_SetMarkColors(
-        gYampiDesertCave_MarkPaletteSlots, gYampiDesertCave_MarkColorsLit,
-        gYampiDesertCave_MarkColorsDim, gYampiDesertCave_MarkCycle);
+    Palette_SetColorsFade(
+        gYampiDesertCave_CircleSlots, gYampiDesertCave_CircleColors,
+        gYampiDesertCave_CircleCycleColors, gYampiDesertCave_CircleCycleSlots);
     Actor_DisableById(ACTOR_CHEST_ROOM_FIRST_LOG);
     Actor_DisableById(ACTOR_CHEST_ROOM_SECOND_LOG);
     Actor_DisableById(ACTOR_CHEST_ROOM_THIRD_LOG);
@@ -971,17 +874,21 @@ s32 Scene_Initialize(void) {
       Actor_SetPosition(ACTOR_CHEST_ROOM_BURST_PILLAR, 0, 0);
       MapGrid_CopyCellAttributes(32, 13, 1, 1, 34, 13);
     }
-    if (gMainRoutineWork.entrance == 1) {
+    if (gMainRoutineWork.entrance ==
+        YAMPI_DESERT_CAVE_WATER_OF_LIFE_CHEST_FROM_YAMPI_DESERT_TRAINERS_WHIP_CHEST) {
       if (Event_GetFlag(FLAG_YAMPI_DESERT_ENTERED_BY_GUARDIAN_RING_CHEST)) {
         gMainRoutineWork.retreatScene = SCENE_YAMPI_DESERT_GUARDIAN_RING_CHEST;
-        gMainRoutineWork.retreatEntrance = 1;
+        gMainRoutineWork.retreatEntrance =
+            YAMPI_DESERT_GUARDIAN_RING_CHEST_FROM_WORLD_MAP;
       } else if (Event_GetFlag(
                      FLAG_YAMPI_DESERT_ENTERED_BY_TRAINERS_WHIP_CHEST)) {
         gMainRoutineWork.retreatScene = SCENE_YAMPI_DESERT_TRAINERS_WHIP_CHEST;
-        gMainRoutineWork.retreatEntrance = 2;
+        gMainRoutineWork.retreatEntrance =
+            YAMPI_DESERT_TRAINERS_WHIP_CHEST_FROM_WORLD_MAP;
       } else if (Event_GetFlag(FLAG_YAMPI_DESERT_ENTERED_BY_MEDAL_SPOT)) {
         gMainRoutineWork.retreatScene = SCENE_YAMPI_DESERT_MEDAL_SPOT;
-        gMainRoutineWork.retreatEntrance = 2;
+        gMainRoutineWork.retreatEntrance =
+            YAMPI_DESERT_MEDAL_SPOT_FROM_WORLD_MAP;
       }
     }
   }
@@ -1065,8 +972,7 @@ s32 Scene_Initialize(void) {
 
 s32 Scene_PrepareMap(void) { return 0; }
 
-#undef PIXEL_PART
-#undef DEFINE_TELEPORT_FROM_MARK
+#undef DEFINE_TELEPORT_FROM_CIRCLE
 #undef DEFINE_BURST_PILLAR
 
 void YampiDesertCave_MeetGuardianOfFire(void);
@@ -1081,10 +987,10 @@ u16 gYampiDesertCave_LogSprites[] = {
 
 /// Each log's footprint around its position, in pixels: left, top, right and
 /// bottom.
-s8 gYampiDesertCave_LogFootprints[] = {
-    -32, -8, 32, 8, -8, -32, 8, 32,
-    -32, -16, 32, 0, -8, -32, 8, 32,
-    -32, -8, 32, 8, -8, -32, 8, 32,
+s8 gYampiDesertCave_LogFootprints[][4] = {
+    {-32, -8, 32, 8},  {-8, -32, 8, 32},
+    {-32, -16, 32, 0}, {-8, -32, 8, 32},
+    {-32, -8, 32, 8},  {-8, -32, 8, 32},
 };
 
 #include "shared/push_leader_steps.c"
@@ -1097,30 +1003,34 @@ s16 gYampiDesertCave_RipplePath[] = {
     99, 37, 0, 0, 95, 33, 0, 0,
 };
 
-/// The background palette entries the Teleport marks are drawn in.
-s16 gYampiDesertCave_MarkPaletteSlots[] = {
+/// The background palette entries the Teleport circles are drawn in.
+s16 gYampiDesertCave_CircleSlots[] = {
     9, 10, 11, 12, 13, 14, 15, -1,
 };
 
-/// The marks' bright colours, as red, green and blue for each entry.
-u16 gYampiDesertCave_MarkColorsLit[] = {
+/// The circles' colours, as red, green and blue for each entry.
+u16 gYampiDesertCave_CircleColors[] = {
     23, 25, 22, 23, 25, 22, 23, 25,
     22, 23, 25, 22, 23, 25, 22, 23,
     25, 22, 23, 25, 22, -1,
 };
 
-/// The marks' dim colours, which the glow moves round the entries.
-u16 gYampiDesertCave_MarkColorsDim[] = {
+/// The shimmer's colours, which it moves round the entries.
+u16 gYampiDesertCave_CircleCycleColors[] = {
     30, 27, 31, 22, 21, 31, 20, 18,
     31, 13, 11, 27, 11, 8, 24, 8,
     5, 21, 31, 31, 31, -1,
 };
 
-/// The glow's steps: for each, the palette entries the dim colours go to.
-u16 gYampiDesertCave_MarkCycle[] = {                                                               
-      14, 9, 10, 11, 12, 13, 13, 14, 9, 10, 11, 12, 12, 13, 14, 9, 10, 11,  
-      11, 12, 13, 14, 9, 10, 10, 11, 12, 13, 14, 9, 9, 10, 11, 12, 13, 14,  
-  };
+/// The shimmer's steps: for each, the palette entries its colours go to.
+u16 gYampiDesertCave_CircleCycleSlots[] = {
+    14, 9,  10, 11, 12, 13,
+    13, 14, 9,  10, 11, 12,
+    12, 13, 14, 9,  10, 11,
+    11, 12, 13, 14, 9,  10,
+    10, 11, 12, 13, 14, 9,
+    9,  10, 11, 12, 13, 14,
+};
 
 #include "shared/scene_entrances_default.c"
 
@@ -1227,7 +1137,7 @@ u16 gYampiDesertCaveCrystalStakes[] ALIGNED(4) = {
 };
 
 /// The Water of Life chest's room: its exits, the logs, the pillar, the two
-/// Teleport marks and Sand.
+/// Teleport circles and Sand.
 struct Trigger gYampiDesertCave_Triggers[] = {
     {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
     {TRIGGER_EXIT | EXIT_STYLE_STAIRS_DOWN, 2, CONDITION_ALWAYS, 2},
@@ -1242,10 +1152,12 @@ struct Trigger gYampiDesertCave_Triggers[] = {
     {PSYNERGY_PHASE_ON_CELL(ABILITY_BURST, PSYNERGY_PHASE_ACTS), 33,
      FLAG_YAMPI_DESERT_CAVE_CHEST_ROOM_PILLAR_BURST,
      EVENT(YampiDesertCave_BurstChestRoomPillar)},
-    {PSYNERGY_PHASE_ON_CELL(ABILITY_TELEPORT, PSYNERGY_PHASE_AFTER_CAST), 30,
-     CONDITION_ALWAYS, EVENT(YampiDesertCave_TeleportFromFirstMark)},
-    {PSYNERGY_PHASE_ON_CELL(ABILITY_TELEPORT, PSYNERGY_PHASE_AFTER_CAST), 31,
-     CONDITION_ALWAYS, EVENT(YampiDesertCave_TeleportFromSecondMark)},
+    {PSYNERGY_PHASE_ON_CELL(ABILITY_TELEPORT, PSYNERGY_PHASE_AFTER_CAST),
+     NORTH_CIRCLE_CELLS, CONDITION_ALWAYS,
+     EVENT(YampiDesertCave_TeleportFromNorthCircle)},
+    {PSYNERGY_PHASE_ON_CELL(ABILITY_TELEPORT, PSYNERGY_PHASE_AFTER_CAST),
+     SOUTH_CIRCLE_CELLS, CONDITION_ALWAYS,
+     EVENT(YampiDesertCave_TeleportFromSouthCircle)},
     {PSYNERGY_ANYWHERE(ABILITY_SAND, PSYNERGY_PHASE_AFTER_CAST), 0,
      CONDITION_ALWAYS, EVENT(YampiDesertCave_CastSand)},
     {PSYNERGY_ANYWHERE(ABILITY_SAND, PSYNERGY_PHASE_FADES), 0, CONDITION_ALWAYS,

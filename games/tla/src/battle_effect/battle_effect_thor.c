@@ -267,7 +267,7 @@ void BattleEffect_RunThor(struct BattleEffectParams *args) {
         size = 8;
       }
       Matrix_TranslateVector(position);
-      Matrix_RotateX(-TRIG_TURN / 16);
+      Matrix_RotateX(-DEGtoANG(22.5));
       Matrix_RotateZ(DEGtoANG(180));
       Matrix_RotateX(DEGtoANG(180));
       Matrix_RotateY(sinkFrame * (TRIG_TURN / 16));
@@ -287,7 +287,7 @@ void BattleEffect_RunThor(struct BattleEffectParams *args) {
     } else {
       SET_VECTOR(position, 0, 0, toFIXED(256));
       Matrix_TranslateVector(position);
-      Matrix_RotateX(-TRIG_TURN / 16);
+      Matrix_RotateX(-DEGtoANG(22.5));
       Matrix_RotateZ(frame * (TRIG_TURN / 256));
       Matrix_RotateX(frame * (TRIG_TURN / 256));
     }

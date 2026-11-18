@@ -14,7 +14,7 @@
 
 #define WHIRL_COUNT 100
 /// The frames a spark flies before it vanishes.
-#define SPARK_FRAMES 20
+#define TELEPORT_SPARK_FRAMES 20
 /// Before the sparks, the leader spins for SPARKS_SPIN_FRAMES, its turn each
 /// frame SPARKS_SPIN_ACCELERATION (1/65536 turns) faster than the last.
 #define SPARKS_SPIN_FRAMES 50
@@ -98,7 +98,7 @@ void Teleport_PlayWhirl(void) {
     sprite = work->sprites;
     for (i = 0; i < WHIRL_COUNT; i++, sprite++, spark++) {
       if (spark->age >= 0) {
-        if ((u32)spark->age < SPARK_FRAMES) {
+        if ((u32)spark->age < TELEPORT_SPARK_FRAMES) {
           s32 sparkAngle = spark->angle;
           s32 sparkRadius = spark->radius;
           position[0] = spark->x;
@@ -112,7 +112,7 @@ void Teleport_PlayWhirl(void) {
           spark->angle += TRIG_TURN / 32;
           spark->radius += -toFIXED(4);
         }
-        if (++spark->age == SPARK_FRAMES)
+        if (++spark->age == TELEPORT_SPARK_FRAMES)
           spark->age = -1;
       }
     }
@@ -160,14 +160,15 @@ void Teleport_PlayWhirl(void) {
   FieldPsynergy_MarkWorldMapTilesUsed();
 }
 
-#define SPARK_COUNT 100
+/// The sparks of Teleport's leaving burst.
+#define TELEPORT_SPARK_COUNT 100
 
 /// Teleport's burst of sparks (heap slot battleEffect): the decoded picture,
 /// then the sparks and their sprites.
 struct SparkWork {
   u8 picture[1024];
-  struct FieldPsynergyParticle particles[SPARK_COUNT];
-  struct EffectSprite sprites[SPARK_COUNT];
+  struct FieldPsynergyParticle particles[TELEPORT_SPARK_COUNT];
+  struct EffectSprite sprites[TELEPORT_SPARK_COUNT];
 };
 
 /// The leaving half of a teleport, Teleport_PlayWhirl's companion in the same
@@ -197,7 +198,8 @@ void Teleport_PlaySparks(void) {
   Decompress_TaggedLz(Resource_GetTableEntry(RESOURCE_COLOURED_ORBS), work);
   entry = VramCache_FindFreeEntry();
   tiles = VramCache_Load(entry, 1024, work);
-  for (i = 0, particle = work->particles; i < SPARK_COUNT; i++, particle++) {
+  for (i = 0, particle = work->particles; i < TELEPORT_SPARK_COUNT;
+       i++, particle++) {
     sprite = &work->sprites[i];
     EffectSprite_Init(sprite, 4, 4, 0,
                       tiles +
@@ -249,14 +251,14 @@ void Teleport_PlaySparks(void) {
                               &work->particles[next].velocityX);
       }
       next++;
-      next %= SPARK_COUNT;
+      next %= TELEPORT_SPARK_COUNT;
     }
 
     for (i = 0, particle = work->particles, sprite = work->sprites;
-         i < SPARK_COUNT; i++, sprite++, particle++) {
+         i < TELEPORT_SPARK_COUNT; i++, sprite++, particle++) {
       age = particle->timer;
       if (age >= 0) {
-        if ((u32)age < SPARK_FRAMES) {
+        if ((u32)age < TELEPORT_SPARK_FRAMES) {
           EffectSprite_DrawAtWorldPosition(sprite, particle);
           /* FAKEMATCH(dead): age reread at the end of both arms; as one read
            * after the if. */
@@ -269,7 +271,7 @@ void Teleport_PlaySparks(void) {
           }
         }
         particle->timer = ++age;
-        if (age == SPARK_FRAMES)
+        if (age == TELEPORT_SPARK_FRAMES)
           particle->timer = -1;
       }
     }
@@ -332,7 +334,7 @@ void FieldPsynergy_Teleport(void) {
   gFieldWork->raisedTrigger = FIELD_RAISED_TRIGGER_TELEPORT;
 }
 #undef WHIRL_COUNT
-#undef SPARK_FRAMES
+#undef TELEPORT_SPARK_FRAMES
 #undef SPARKS_SPIN_FRAMES
 #undef SPARKS_SPIN_ACCELERATION
-#undef SPARK_COUNT
+#undef TELEPORT_SPARK_COUNT

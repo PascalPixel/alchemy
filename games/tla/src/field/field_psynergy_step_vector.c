@@ -195,7 +195,9 @@ void ColorBuffer_DarkenFourLevels(u8 *buffer, s32 count) {
 /// The depth the canvas sprite is drawn at, between OAM_DEPTH_WINDOW and
 /// OAM_DEPTH_FRONT.
 #define CANVAS_SPRITE_DEPTH 250
-#define OBJ_TILES ((u8 *)OBJ_VRAM0)
+/// Sprite tile VRAM as bytes, where the canvas sprite's tile number counts
+/// from.
+#define CANVAS_OBJ_TILES ((u8 *)OBJ_VRAM0)
 #define BG_VRAM ((void *)BG_CHAR_BLOCK(0))
 #define TILE_SIZE 32
 
@@ -208,7 +210,7 @@ void ColorBuffer_DarkenFourLevels(u8 *buffer, s32 count) {
 void BattleEffect_UploadCanvas(void) {
   struct CanvasSpriteWork *work = Ram_HeapSlots->canvasSprite;
   u8 *canvas = Ram_HeapSlots->battleCanvas;
-  u8 *tiles = OBJ_TILES + work->tile * TILE_SIZE;
+  u8 *tiles = CANVAS_OBJ_TILES + work->tile * TILE_SIZE;
 
   work->frame++;
   switch (work->command) {
@@ -317,7 +319,7 @@ void BattleEffect_StartCanvasSprite(void) {
   work->priority = 1;
   work->depth = CANVAS_SPRITE_DEPTH;
   Iwram_FillWordsEntry(canvas, CANVAS_SIZE, 0);
-  Dma_Set(canvas, OBJ_TILES + work->tile * TILE_SIZE,
+  Dma_Set(canvas, CANVAS_OBJ_TILES + work->tile * TILE_SIZE,
           DMA_COPY_WORDS(CANVAS_SIZE / 4), REG_DMA3);
 
   // Where each pixel of the canvas sits in its 8x8 tiles.

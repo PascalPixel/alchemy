@@ -969,7 +969,7 @@ void BattleEffect_RunMysticCall(struct BattleEffectParams *args) {
 
 #define STARS_PER_TARGET 64 ///< each target's slice of the star buffer
 #define STAR_TOTAL (6 * STARS_PER_TARGET) ///< six targets' slices
-#define STARS ((struct Particle *)Ram_MapCellBuffer)
+#define STAR_SWARM_STARS ((struct Particle *)Ram_MapCellBuffer)
 /// The stars of each target's swarm.
 #define DJINN_STUN_STARS 16
 #define MYSTIC_CALL_STARS 48
@@ -1043,7 +1043,7 @@ void BattleEffect_RunStarSwarm(struct BattleEffectParams *args, s32 mode) {
         work->particles[i].velocityZ = 0;
       }
       for (i = 0; i != STAR_TOTAL; i++) {
-        struct Particle *star = &STARS[i];
+        struct Particle *star = &STAR_SWARM_STARS[i];
         s32 angle = Random16() & TRIG_ANGLE_MASK;
         s32 speed = STAR_SPEED_RANDOM;
 
@@ -1104,7 +1104,8 @@ void BattleEffect_RunStarSwarm(struct BattleEffectParams *args, s32 mode) {
       // Each star turns about the point on one of four axes, faster the
       // later it is in the swarm.
       for (i = 0; i != starCount; i++) {
-        struct Particle *star = &STARS[member * STARS_PER_TARGET + i];
+        struct Particle *star =
+            &STAR_SWARM_STARS[member * STARS_PER_TARGET + i];
 
         if (frame >= i / 8 + startFrame && star->variant == 0) {
           s32 size;
@@ -1177,7 +1178,7 @@ UNUSED void BattleEffect_StartBubbleColumn(struct BattleEffectParams *args) {
   BattleEffect_RunBubbleColumn(args);
 }
 
-#define BUBBLE_COUNT 256
+#define BUBBLE_COLUMN_BUBBLES 256
 #define BUBBLE_FRAMES 60
 /// The bubbles, in the map cell buffer: each keeps its picture in z and its
 /// life in variant, -1 once it has left the top of the canvas.
@@ -1219,7 +1220,7 @@ void BattleEffect_RunBubbleColumn(struct BattleEffectParams *args) {
     if (frame == 0) {
       struct Particle *spawn = BUBBLES;
 
-      for (i = 0; i != BUBBLE_COUNT; i++) {
+      for (i = 0; i != BUBBLE_COLUMN_BUBBLES; i++) {
         spawn->x = INTtoFIXED(Random16() & 127);
         spawn->y = INTtoFIXED((Random16() & 127) + 120);
         spawn->velocityX = ((Random16() & 31) - 16) << 13;
@@ -1233,7 +1234,7 @@ void BattleEffect_RunBubbleColumn(struct BattleEffectParams *args) {
     // Draw each bubble centred on its place, let it rise, and drop it once
     // it is wholly above the canvas.
     bubble = BUBBLES;
-    for (i = 0; i != BUBBLE_COUNT; i++) {
+    for (i = 0; i != BUBBLE_COLUMN_BUBBLES; i++) {
       if (bubble->variant >= 0) {
         s32 cel = bubble->z;
         u8 *src = work->sheet + gBubbleColumn_Pictures[cel];
@@ -2332,7 +2333,7 @@ void BattleEffect_RunCoatlicue(struct BattleEffectParams *args) {
       {
         struct Particle *p = BUBBLES;
 
-        for (i = 0; i != BUBBLE_COUNT; i++, p++) {
+        for (i = 0; i != BUBBLE_COLUMN_BUBBLES; i++, p++) {
           p->x = INTtoFIXED(Random16() & 127);
           p->y = INTtoFIXED((Random16() & 255) + 120);
           p->velocityX = ((Random16() & 31) - 16) << 13;
@@ -2342,7 +2343,7 @@ void BattleEffect_RunCoatlicue(struct BattleEffectParams *args) {
         }
       }
     }
-    for (i = 0; i != BUBBLE_COUNT; i++) {
+    for (i = 0; i != BUBBLE_COLUMN_BUBBLES; i++) {
       struct Particle *p = &BUBBLES[i];
 
       if (p->variant >= 0) {
@@ -2409,7 +2410,6 @@ void BattleEffect_RunCoatlicue(struct BattleEffectParams *args) {
   Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
   BattleEffect_EndCanvasLayer();
 }
-#undef BLITTER
 #undef VENGEANCE_FRAMES
 #undef VENGEANCE_ARROWS
 #undef LIFE_SHEAR_FRAMES
@@ -2419,7 +2419,7 @@ void BattleEffect_RunCoatlicue(struct BattleEffectParams *args) {
 #undef DROP_COUNT
 #undef STARS_PER_TARGET
 #undef STAR_TOTAL
-#undef BUBBLE_COUNT
+#undef BUBBLE_COLUMN_BUBBLES
 #undef BUBBLE_FRAMES
 #undef BUBBLES
 #undef FILL_GRADIENT

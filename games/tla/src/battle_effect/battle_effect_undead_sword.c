@@ -12,8 +12,8 @@ enum WaterSheetMode { WATER_SHEET_DREAMTIDE, WATER_SHEET_WATERY_GRAVE };
 /// The wind funnel's modes (BattleEffect_RunWindFunnel).
 enum WindFunnelMode { WIND_FUNNEL_WAFT, WIND_FUNNEL_AROMA };
 
-#define SPARK_COUNT 16
-#define SPARK_LIFE 28
+#define UNDEAD_SWORD_SPARK_COUNT 16
+#define UNDEAD_SWORD_SPARK_LIFE 28
 /// LimeColumnSheet: one column of light, 14 by 80.
 #define LIME_COLUMN_WIDTH 14
 #define LIME_COLUMN_HEIGHT 80
@@ -68,7 +68,7 @@ void BattleEffect_RunUndeadSword(struct BattleEffectParams *args) {
 
   // The sparks start together at the columns' foot and fly apart, upward
   // faster than sideways.
-  for (i = 0, spark = work->particles; i != SPARK_COUNT; i++) {
+  for (i = 0, spark = work->particles; i != UNDEAD_SWORD_SPARK_COUNT; i++) {
     speed = (Random16() & 0x1ff) + 128;
     angle = Random16() & TRIG_ANGLE_MASK;
     spark->x = toFIXED(CANVAS_SIZE / 2);
@@ -122,9 +122,10 @@ void BattleEffect_RunUndeadSword(struct BattleEffectParams *args) {
     // The sparks: a new blast picture every third frame, seven in all; the
     // pairs leave one frame apart from frame 8.
     BattleEffect_FetchRectangleBlitters(args->side, draw);
-    for (i = 0, particle = work->particles; i != SPARK_COUNT; i++) {
+    for (i = 0, particle = work->particles; i != UNDEAD_SWORD_SPARK_COUNT;
+         i++) {
       if (frame >= i / 2 + COLUMN_RISE_FRAME &&
-          particle->variant <= SPARK_LIFE) {
+          particle->variant <= UNDEAD_SWORD_SPARK_LIFE) {
         s32 drawX;
         s32 drawY;
 
@@ -1383,11 +1384,8 @@ void BattleEffect_RunDiamondBerg(struct BattleEffectParams *args) {
   }
   EFFECT_FINISH_CANVAS_ONE_BLITTER();
 }
-#undef EMBERS
-#undef BLITTER
-#undef SPARKS
-#undef SPARK_COUNT
-#undef SPARK_LIFE
+#undef UNDEAD_SWORD_SPARK_COUNT
+#undef UNDEAD_SWORD_SPARK_LIFE
 #undef LIME_COLUMN_WIDTH
 #undef LIME_COLUMN_HEIGHT
 #undef UNDEAD_SWORD_SPARK_SHEET

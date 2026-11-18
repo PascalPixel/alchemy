@@ -893,7 +893,8 @@ void MagmaRockInside_FireFromStatue(struct Actor *source) {
     cell = MapCell_Get(2, FIELD_CELL(position[0]),
                        FIELD_CELL(position[2] - position[1])) >>
            8;
-    if (cell == MAGMA_ROCK_CELL_FIRE_EDGE || cell == MAGMA_ROCK_CELL_LAVA_FALL)
+    if (cell == CELL_BEHAVIOR_MAGMA_ROCK_FIRE_EDGE ||
+        cell == CELL_BEHAVIOR_MAGMA_ROCK_LAVA_FALL)
       goto end;
     for (id = ACTOR_FIRST_PLACED; id != FIELD_TREASURE_ACTOR; id++) {
       other = gFieldWork->actors[id];
@@ -942,7 +943,7 @@ end:
     System_Wait(1);
   }
   System_Wait(24);
-  if (cell == MAGMA_ROCK_CELL_LAVA_FALL) {
+  if (cell == CELL_BEHAVIOR_MAGMA_ROCK_LAVA_FALL) {
     MagmaRockInside_RaiseLava();
     Event_End();
     return;

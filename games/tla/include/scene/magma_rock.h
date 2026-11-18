@@ -15,8 +15,8 @@ struct Actor;
 /// way, and a lava fall, which it floods the room from
 /// (MagmaRockInside_RaiseLava).
 enum MagmaRockFireStopCell {
-  MAGMA_ROCK_CELL_FIRE_EDGE = 212,
-  MAGMA_ROCK_CELL_LAVA_FALL = 222
+  CELL_BEHAVIOR_MAGMA_ROCK_FIRE_EDGE = 212,
+  CELL_BEHAVIOR_MAGMA_ROCK_LAVA_FALL = 222
 };
 
 /// Set while a statue's fire bursts where it lands, so that Burst there does

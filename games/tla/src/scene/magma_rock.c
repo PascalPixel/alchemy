@@ -3,7 +3,7 @@
 /// scenes on this overlay: the slide (SceneId_MagmaRockSlide), the Salamander
 /// Tail room's four levels and the statue room (SceneId_MagmaRockStatue). Burst
 /// wakes the statues, which fire at cracked pillars or raise a column of flame
-/// that lifts the leader on their cap; magma rocks roll between pairs of
+/// that lifts the leader on their cap; fireballs fly between pairs of
 /// statues across the walls he climbs; Move pushes pillars, Growth grows vines,
 /// and pillars crumble underfoot.
 #include "resource_ids.h"
@@ -87,8 +87,8 @@
 // Set while the high west level's statue answers Burst, from the leader's step
 // beside it (MagmaRock_ReadyHighWestStatue) to his step away.
 #define FLAG_HIGH_WEST_STATUE_READY FLAG_SCENE_TEMP_12
-// Set while a magma rock knocks the leader off the wall
-// (MagmaRock_KnockLeaderOffWall); the rolling rocks keep quiet meanwhile.
+// Set while a fireball knocks the leader off the wall
+// (MagmaRock_KnockLeaderOffWall); the fireballs stop whooshing meanwhile.
 #define FLAG_LEADER_KNOCKED_DOWN FLAG_SCENE_TEMP_60
 // The Salamander Tail room's low east level: each vine Growth has grown there.
 #define FLAG_VINE_A_GROWN FLAG_SCENE_TEMP_50
@@ -129,43 +129,43 @@ enum MagmaRockSalamanderTailEntrance {
 };
 
 /// The collision codes the scene's triggers answer, each room its own.
-enum MagmaRockCell {
+enum MagmaRockCellBehavior {
   /// The slide's door into the cave, which the leader walks through.
-  MAGMA_ROCK_CELL_CAVE_DOOR = 2,
+  CELL_BEHAVIOR_MAGMA_ROCK_CAVE_DOOR = 2,
   /// The tops of the high west level's crumbling pillars.
-  MAGMA_ROCK_CELL_CRUMBLING_PILLAR = 20,
+  CELL_BEHAVIOR_MAGMA_ROCK_CRUMBLING_PILLAR = 20,
   /// A statue Burst makes fire (MagmaRock_FireStatue): the slide's, the high
   /// west level's while it is ready, and the low east level's first.
-  MAGMA_ROCK_CELL_FIRING_STATUE = 30,
+  CELL_BEHAVIOR_MAGMA_ROCK_FIRING_STATUE = 30,
   /// The low east level's second firing statue.
-  MAGMA_ROCK_CELL_FIRING_STATUE_B = 31,
+  CELL_BEHAVIOR_MAGMA_ROCK_FIRING_STATUE_B = 31,
   /// The cracked pillars Burst breaks, lettered as the events that break
   /// them: A to E on the slide, A on the high west level and B on the low east
   /// level.
-  MAGMA_ROCK_CELL_CRACKED_PILLAR_A = 31,
-  MAGMA_ROCK_CELL_CRACKED_PILLAR_B,
-  MAGMA_ROCK_CELL_CRACKED_PILLAR_C,
-  MAGMA_ROCK_CELL_CRACKED_PILLAR_D,
-  MAGMA_ROCK_CELL_CRACKED_PILLAR_E,
+  CELL_BEHAVIOR_MAGMA_ROCK_CRACKED_PILLAR_A = 31,
+  CELL_BEHAVIOR_MAGMA_ROCK_CRACKED_PILLAR_B,
+  CELL_BEHAVIOR_MAGMA_ROCK_CRACKED_PILLAR_C,
+  CELL_BEHAVIOR_MAGMA_ROCK_CRACKED_PILLAR_D,
+  CELL_BEHAVIOR_MAGMA_ROCK_CRACKED_PILLAR_E,
   /// Where walking into the low west level's or the low east level's pillar
   /// pushes it.
-  MAGMA_ROCK_CELL_PILLAR_PUSH = 40,
+  CELL_BEHAVIOR_MAGMA_ROCK_PILLAR_PUSH = 40,
   /// A statue Burst lights, whose flame column raises its cap
   /// (MagmaRock_IgniteStatue): a level's first and second.
-  MAGMA_ROCK_CELL_COLUMN_STATUE_A = 50,
-  MAGMA_ROCK_CELL_COLUMN_STATUE_B = 51,
+  CELL_BEHAVIOR_MAGMA_ROCK_COLUMN_STATUE_A = 50,
+  CELL_BEHAVIOR_MAGMA_ROCK_COLUMN_STATUE_B = 51,
   /// The high west level's cell beside its statue, which readies it, and the
   /// cell past that, which resets it.
-  MAGMA_ROCK_CELL_BESIDE_HIGH_WEST_STATUE = 50,
-  MAGMA_ROCK_CELL_PAST_HIGH_WEST_STATUE = 51,
+  CELL_BEHAVIOR_MAGMA_ROCK_BESIDE_HIGH_WEST_STATUE = 50,
+  CELL_BEHAVIOR_MAGMA_ROCK_PAST_HIGH_WEST_STATUE = 51,
   /// The statue room's statue, which Burst makes fire at the great fire.
-  MAGMA_ROCK_CELL_STATUE_ROOM_STATUE = 50
+  CELL_BEHAVIOR_MAGMA_ROCK_STATUE_ROOM_STATUE = 50
 };
 
-/// The trigger a magma rock raises as it runs into the leader
+/// The trigger a fireball raises as it runs into the leader
 /// (FieldWork.raisedTrigger), which the high east level answers by knocking him
 /// off the wall.
-enum { TRIGGER_MAGMA_ROCK_HITS_LEADER = 200 };
+enum { TRIGGER_FIREBALL_HITS_LEADER = 200 };
 
 /// A burning statue's flame column (MagmaRock_BurnStatue): from frame 35 of its
 /// burning each part rises 8 pixels a frame to its level, 16 pixels above the
@@ -182,7 +182,7 @@ enum { TRIGGER_MAGMA_ROCK_HITS_LEADER = 200 };
 #define PILLAR_CRUMBLE_FRAME 178
 
 /// The slide: its two pushed pillars, the statue whose flame column raises its
-/// cap, the statue that fires, the pair of statues a magma rock rolls between,
+/// cap, the statue that fires, the pair of statues a fireball flies between,
 /// and its cracked pillars, lettered as the events that break them.
 enum MagmaRockSlideActorId {
   ACTOR_SLIDE_PILLAR_A = ACTOR_FIRST_PLACED,
@@ -198,8 +198,7 @@ enum MagmaRockSlideActorId {
   ACTOR_CRACKED_PILLAR_D,
   ACTOR_SLIDE_BOULDER, ///< Lift raises it
   ACTOR_SLIDE_STATUE_CAP,
-  ACTOR_SLIDE_MAGMA_ROCK ///< drawn as SPRITE_FLAME_PUFF, rolling between the
-                         ///< pair
+  ACTOR_SLIDE_FIREBALL ///< drawn as SPRITE_FLAME_PUFF, flying between the pair
 };
 
 /// The Salamander Tail room's high west level: two pushed pillars, the
@@ -217,7 +216,7 @@ enum MagmaRockSalamanderTailHighWestActorId {
 };
 
 /// Its high east level: three pairs of statues raised to three heights on the
-/// wall, a magma rock rolling between each pair, two statues whose flame
+/// wall, a fireball flying between each pair, two statues whose flame
 /// columns raise their caps, and a pushed pillar.
 enum MagmaRockSalamanderTailHighEastActorId {
   ACTOR_STATUE_PAIR_A_WEST = ACTOR_FIRST_PLACED,
@@ -231,9 +230,9 @@ enum MagmaRockSalamanderTailHighEastActorId {
   ACTOR_HIGH_EAST_PILLAR,
   ACTOR_HIGH_EAST_COLUMN_STATUE_B,
   ACTOR_HIGH_EAST_STATUE_CAP_B,
-  ACTOR_MAGMA_ROCK_A,
-  ACTOR_MAGMA_ROCK_B,
-  ACTOR_MAGMA_ROCK_C
+  ACTOR_FIREBALL_A,
+  ACTOR_FIREBALL_B,
+  ACTOR_FIREBALL_C
 };
 
 /// Its low west level: a pushed pillar, two statues whose flame columns raise
@@ -347,8 +346,9 @@ void MagmaRock_SettleBlocks(u16 *ids) {
     s32 x, z;
 
     actor->riseBaseY =
-        255 & MapCell_GetAttributes(0, FIELD_CELL(actor->x.fixed),
-                                    FIELD_CELL(actor->z.fixed));
+        CELL_ATTRIBUTE_BITS & MapCell_GetAttributes(MAPGRID_LAYER_GROUND,
+                                                    FIELD_CELL(actor->x.fixed),
+                                                    FIELD_CELL(actor->z.fixed));
     actor->motionFlags = 0;
     actor->collisionFlags = 0;
     Actor_SetSpriteFlags(actor, 0);
@@ -357,13 +357,13 @@ void MagmaRock_SettleBlocks(u16 *ids) {
                                  CELL_HEIGHT_STEPS(height) + 4);
     blocked = &actor->riseEnabled;
     *blocked = 0;
-    if (MapCell_GetAttributes(0, FIELD_CELL(actor->x.fixed),
+    if (MapCell_GetAttributes(MAPGRID_LAYER_GROUND, FIELD_CELL(actor->x.fixed),
                               FIELD_CELL(actor->z.fixed)) &
         MAP_CELL_CLIMBABLE) {
       map = Ram_HeapSlots->mapGrid;
       if (map == NULL)
         return;
-      cells = &map->layers[2].cells;
+      cells = &map->layers[MAPGRID_LAYER_OVERHEAD].cells;
       z = FIELD_CELL(actor->z.fixed - actor->y.fixed);
       x = FIELD_CELL(actor->x.fixed);
       cell = *cells;
@@ -534,9 +534,9 @@ void MagmaRock_PlayBurst(u16 value) {
 
 extern s32 gMagmaRock_FlameEmberScript[];
 
-/// A statue's update when a magma rock reaches it: it throws embers and
-/// flashes red, faster and then white, and after 144 frames sends the rock
-/// rolling back.
+/// A statue's update when a fireball reaches it: it throws embers and
+/// flashes red, faster and then white, and after 144 frames sends the
+/// fireball back.
 void MagmaRock_ThrowEmbers(struct Actor *actor) {
   struct Actor *linked = actor->watchedActor;
   s16 *timer = &actor->timer;
@@ -594,7 +594,7 @@ void MagmaRock_ThrowEmbers(struct Actor *actor) {
 
 void Actor_PlaySoundInView(struct Actor *actor, s32 value);
 
-/// The update of a magma rock or a statue's fire: every fourth frame it leaves
+/// The update of a fireball or a statue's fire: every fourth frame it leaves
 /// an ember near it, drifting along z, and every sixteenth it whooshes, unless
 /// it has just knocked the leader down.
 void MagmaRock_LeaveEmbers(struct Actor *actor) {
@@ -622,8 +622,8 @@ void MagmaRock_LeaveEmbers(struct Actor *actor) {
 
 FIXED Trig_Cos(s32 angle);
 
-/// A magma rock's update: it rolls toward the other statue of its pair leaving
-/// embers; running into the leader raises TRIGGER_MAGMA_ROCK_HITS_LEADER and
+/// A fireball's update: it flies toward the other statue of its pair leaving
+/// embers; running into the leader raises TRIGGER_FIREBALL_HITS_LEADER and
 /// takes it away, and reaching the statue hands it over
 /// (MagmaRock_ThrowEmbers).
 void MagmaRock_RollMagmaRock(struct Actor *actor) {
@@ -642,7 +642,7 @@ void MagmaRock_RollMagmaRock(struct Actor *actor) {
       actor->z.fixed - toFIXED(6) < leader->z.fixed + toFIXED(8) &&
       leader->y.fixed < actor->y.fixed + toFIXED(8) &&
       actor->y.fixed - toFIXED(8) < leader->y.fixed + toFIXED(15)) {
-    gFieldWork->raisedTrigger = TRIGGER_MAGMA_ROCK_HITS_LEADER;
+    gFieldWork->raisedTrigger = TRIGGER_FIREBALL_HITS_LEADER;
     actor->update = NULL;
     actor->x.fixed = 0;
     actor->y.fixed = 0;
@@ -664,9 +664,9 @@ void MagmaRock_RollMagmaRock(struct Actor *actor) {
   }
 }
 
-/// Unless the party keeps its place: sets a magma rock on one statue of its
+/// Unless the party keeps its place: sets a fireball on one statue of its
 /// pair, given by side, facing the other, and starts it rolling.
-void MagmaRock_PlaceMagmaRock(u16 id, s16 first, s16 side) {
+void MagmaRock_PlaceFireball(u16 id, s16 first, s16 side) {
   struct Actor *actor = Actor_Get(id);
   struct Actor *a;
   struct Actor *b;
@@ -751,8 +751,9 @@ void MagmaRock_WarnStatue(struct Actor *actor) {
 s32 MagmaRock_FindStatue(u16 *table) {
   struct FieldEffectWork *work = Ram_HeapSlots->fieldEffectWork;
   s32 result = 0;
-  s32 code =
-      MapCell_GetAttributes(0, FIELD_CELL(work->x), FIELD_CELL(work->z)) >> 8;
+  s32 code = MapCell_GetAttributes(MAPGRID_LAYER_GROUND, FIELD_CELL(work->x),
+                                   FIELD_CELL(work->z)) >>
+             8;
   s32 id;
 
   for (; *table != ACTOR_LIST_END; result = *table++) {
@@ -770,7 +771,9 @@ s32 MagmaRock_FindStatue(u16 *table) {
 /// ACTOR_LIST_END and returns the value of its row.
 s32 MagmaRock_LookUpCellStatue(s32 x, s32 z, u16 *table) {
   s32 result = 0;
-  s32 code = MapCell_GetAttributes(0, FIELD_CELL(x), FIELD_CELL(z)) >> 8;
+  s32 code = MapCell_GetAttributes(MAPGRID_LAYER_GROUND, FIELD_CELL(x),
+                                   FIELD_CELL(z)) >>
+             8;
 
   while (*table != ACTOR_LIST_END) {
     table++;
@@ -870,11 +873,12 @@ s32 MagmaRock_FireFromStatue(struct Actor *source) {
   position[2] = actor->z.fixed;
   for (;;) {
     position[0] += step;
-    attributes = MapCell_GetAttributes(2, FIELD_CELL(position[0]),
-                                       FIELD_CELL(position[2] - position[1])) >>
-                 8;
-    if (attributes == MAGMA_ROCK_CELL_FIRE_EDGE ||
-        attributes == MAGMA_ROCK_CELL_LAVA_FALL)
+    attributes =
+        MapCell_GetAttributes(MAPGRID_LAYER_OVERHEAD, FIELD_CELL(position[0]),
+                              FIELD_CELL(position[2] - position[1])) >>
+        8;
+    if (attributes == CELL_BEHAVIOR_MAGMA_ROCK_FIRE_EDGE ||
+        attributes == CELL_BEHAVIOR_MAGMA_ROCK_LAVA_FALL)
       goto stop;
     for (i = ACTOR_FIRST_PLACED; i != FIELD_TREASURE_ACTOR; i++) {
       other = gFieldWork->actors[i];
@@ -1052,7 +1056,8 @@ void MagmaRock_RaiseFlameTop(union FieldObject *object) {
   s32 step;
   s32 mask;
 
-  if (watched->timer >= FLAME_RISE_FRAME && watched->timer <= 42) {
+  if (watched->timer >= FLAME_RISE_FRAME &&
+      watched->timer <= FLAME_RISE_FRAME + 7) {
     object->effect.y = watched->y.fixed + toFIXED(24);
     object->effect.y = object->effect.y + watched->timer * FLAME_SPEED -
                        (FLAME_RISE_FRAME - 1) * FLAME_SPEED;
@@ -1308,21 +1313,22 @@ void MagmaRock_CheckCrumblingPillars(void) {
 /// Stepping beside the high west level's statue readies it: its cell answers
 /// Burst as a firing statue's.
 void MagmaRock_ReadyHighWestStatue(void) {
-  Field_SetCellBehaviorAt(0, toFIXED(264), toFIXED(552),
-                          MAGMA_ROCK_CELL_FIRING_STATUE);
+  Field_SetCellBehaviorAt(MAPGRID_LAYER_GROUND, toFIXED(264), toFIXED(552),
+                          CELL_BEHAVIOR_MAGMA_ROCK_FIRING_STATUE);
   Event_SetFlag(FLAG_HIGH_WEST_STATUE_READY);
 }
 
 /// Stepping away from it resets it: its cell is plain ground again.
 void MagmaRock_ResetHighWestStatue(void) {
-  Field_SetCellBehaviorAt(0, toFIXED(264), toFIXED(552), CELL_BEHAVIOR_NORMAL);
+  Field_SetCellBehaviorAt(MAPGRID_LAYER_GROUND, toFIXED(264), toFIXED(552),
+                          CELL_BEHAVIOR_NORMAL);
   Event_ClearFlag(FLAG_HIGH_WEST_STATUE_READY);
 }
 
 void Actor_SetAnimationSpeedById(s32 id, s32 action);
 void FieldCamera_WaitForArrival(void);
 
-/// A magma rock knocks the leader off the wall: he turns grey among dark puffs,
+/// A fireball knocks the leader off the wall: he turns grey among dark puffs,
 /// falls to the ground with a thump that shakes it, and shakes his head.
 void MagmaRock_KnockLeaderOffWall(void) {
   struct Actor *leader = Actor_GetById(gMainRoutineWork.leaderActorId);
@@ -1655,7 +1661,8 @@ void MagmaRock_LaunchLeader(void) {
                           ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_REMOVE);
   leader->gravity = toFIXED(1);
   leader->bounce = FIXED_ONE / 4;
-  gFieldWork->transition = SCENE_TRANSITION(TRANSITION_WINDOW, 4);
+  gFieldWork->transition =
+      SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE);
   MagmaRock_EndEvent();
 }
 
@@ -1748,7 +1755,8 @@ s32 Scene_Initialize(void) {
   FIXED offset;
   s32 priorityBit, destinationX, destinationColumn, width;
 
-  gFieldWork->transition = SCENE_TRANSITION(TRANSITION_WINDOW, 4);
+  gFieldWork->transition =
+      SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE);
   work = &gMainRoutineWork;
   work->retreatScene = SCENE_MAGMA_ROCK_SLIDE;
   work->retreatEntrance = MAGMA_ROCK_SLIDE_FROM_WORLD_MAP;
@@ -1760,8 +1768,8 @@ s32 Scene_Initialize(void) {
     Actor_GetById(ACTOR_SLIDE_PILLAR_B)->priorityFlags |= priorityBit;
     MagmaRockInside_RaiseActorCells(gMagmaRock_SlideStatues);
     if (Event_GetFlag(FLAG_KEEP_PARTY_POSITION) == 0)
-      MagmaRock_PlaceMagmaRock(ACTOR_SLIDE_MAGMA_ROCK,
-                               ACTOR_SLIDE_PAIR_WEST_STATUE, 0);
+      MagmaRock_PlaceFireball(ACTOR_SLIDE_FIREBALL,
+                              ACTOR_SLIDE_PAIR_WEST_STATUE, 0);
     if (Event_GetFlag(FLAG_SLIDE_PILLAR_A_PUSHED))
       Actor_SetPosition(ACTOR_SLIDE_PILLAR_A, 264, 360);
     if (Event_GetFlag(FLAG_SLIDE_PILLAR_B_PUSHED))
@@ -1827,22 +1835,22 @@ s32 Scene_Initialize(void) {
           Actor_GetById(ACTOR_STATUE_PAIR_A_WEST)->y.fixed += rise;
           Actor_GetById(ACTOR_STATUE_PAIR_A_EAST)->motionFlags = 0;
           Actor_GetById(ACTOR_STATUE_PAIR_A_EAST)->y.fixed += rise;
-          MagmaRock_PlaceMagmaRock(ACTOR_MAGMA_ROCK_A, ACTOR_STATUE_PAIR_A_WEST,
-                                   0);
+          MagmaRock_PlaceFireball(ACTOR_FIREBALL_A, ACTOR_STATUE_PAIR_A_WEST,
+                                  0);
           Actor_GetById(ACTOR_STATUE_PAIR_B_WEST)->motionFlags = 0;
           rise = toFIXED(160);
           Actor_GetById(ACTOR_STATUE_PAIR_B_WEST)->y.fixed += rise;
           Actor_GetById(ACTOR_STATUE_PAIR_B_EAST)->motionFlags = 0;
           Actor_GetById(ACTOR_STATUE_PAIR_B_EAST)->y.fixed += rise;
-          MagmaRock_PlaceMagmaRock(ACTOR_MAGMA_ROCK_B, ACTOR_STATUE_PAIR_B_WEST,
-                                   1);
+          MagmaRock_PlaceFireball(ACTOR_FIREBALL_B, ACTOR_STATUE_PAIR_B_WEST,
+                                  1);
           Actor_GetById(ACTOR_STATUE_PAIR_C_WEST)->motionFlags = 0;
           rise = toFIXED(240);
           Actor_GetById(ACTOR_STATUE_PAIR_C_WEST)->y.fixed += rise;
           Actor_GetById(ACTOR_STATUE_PAIR_C_EAST)->motionFlags = 0;
           Actor_GetById(ACTOR_STATUE_PAIR_C_EAST)->y.fixed += rise;
-          MagmaRock_PlaceMagmaRock(ACTOR_MAGMA_ROCK_C, ACTOR_STATUE_PAIR_C_WEST,
-                                   0);
+          MagmaRock_PlaceFireball(ACTOR_FIREBALL_C, ACTOR_STATUE_PAIR_C_WEST,
+                                  0);
         }
         if (Event_GetFlag(FLAG_HIGH_EAST_PILLAR_PUSHED))
           Actor_SetPosition(ACTOR_HIGH_EAST_PILLAR, 888, 568);
@@ -2462,8 +2470,8 @@ s16 gMagmaRock_SlidePillars[] = {
 /// Burst finds it by and the cap its flame column raises (-1 for none), ended
 /// by -1.
 s16 gMagmaRock_SlideStatues[] = {
-    ACTOR_SLIDE_COLUMN_STATUE, MAGMA_ROCK_CELL_COLUMN_STATUE_A, ACTOR_SLIDE_STATUE_CAP,
-    ACTOR_SLIDE_FIRING_STATUE, MAGMA_ROCK_CELL_FIRING_STATUE, -1,
+    ACTOR_SLIDE_COLUMN_STATUE, CELL_BEHAVIOR_MAGMA_ROCK_COLUMN_STATUE_A, ACTOR_SLIDE_STATUE_CAP,
+    ACTOR_SLIDE_FIRING_STATUE, CELL_BEHAVIOR_MAGMA_ROCK_FIRING_STATUE, -1,
     -1,
 };
 
@@ -2475,7 +2483,7 @@ s16 gMagmaRock_SalamanderTailHighWestPillars[] = {
 
 /// The high west level's statues, as gMagmaRock_SlideStatues.
 s16 gMagmaRock_SalamanderTailHighWestStatues[] = {
-    ACTOR_HIGH_WEST_FIRING_STATUE, MAGMA_ROCK_CELL_FIRING_STATUE, -1,
+    ACTOR_HIGH_WEST_FIRING_STATUE, CELL_BEHAVIOR_MAGMA_ROCK_FIRING_STATUE, -1,
     -1,
 };
 
@@ -2489,8 +2497,8 @@ s16 gMagmaRock_CrumblingPillars[] = {
 
 /// The high east level's statues, as gMagmaRock_SlideStatues.
 s16 gMagmaRock_SalamanderTailHighEastStatues[] = {
-    ACTOR_HIGH_EAST_COLUMN_STATUE_A, MAGMA_ROCK_CELL_COLUMN_STATUE_A, ACTOR_HIGH_EAST_STATUE_CAP_A,
-    ACTOR_HIGH_EAST_COLUMN_STATUE_B, MAGMA_ROCK_CELL_COLUMN_STATUE_B, ACTOR_HIGH_EAST_STATUE_CAP_B,
+    ACTOR_HIGH_EAST_COLUMN_STATUE_A, CELL_BEHAVIOR_MAGMA_ROCK_COLUMN_STATUE_A, ACTOR_HIGH_EAST_STATUE_CAP_A,
+    ACTOR_HIGH_EAST_COLUMN_STATUE_B, CELL_BEHAVIOR_MAGMA_ROCK_COLUMN_STATUE_B, ACTOR_HIGH_EAST_STATUE_CAP_B,
     -1,
 };
 
@@ -2501,8 +2509,8 @@ s16 gMagmaRock_SalamanderTailHighEastPillars[] = {
 
 /// The low west level's statues, as gMagmaRock_SlideStatues.
 s16 gMagmaRock_SalamanderTailLowWestStatues[] = {
-    ACTOR_LOW_WEST_COLUMN_STATUE_A, MAGMA_ROCK_CELL_COLUMN_STATUE_A, ACTOR_LOW_WEST_STATUE_CAP_A,
-    ACTOR_LOW_WEST_COLUMN_STATUE_B, MAGMA_ROCK_CELL_COLUMN_STATUE_B, ACTOR_LOW_WEST_STATUE_CAP_B,
+    ACTOR_LOW_WEST_COLUMN_STATUE_A, CELL_BEHAVIOR_MAGMA_ROCK_COLUMN_STATUE_A, ACTOR_LOW_WEST_STATUE_CAP_A,
+    ACTOR_LOW_WEST_COLUMN_STATUE_B, CELL_BEHAVIOR_MAGMA_ROCK_COLUMN_STATUE_B, ACTOR_LOW_WEST_STATUE_CAP_B,
     -1,
 };
 
@@ -2518,15 +2526,15 @@ s16 gMagmaRock_SalamanderTailLowEastPillars[] = {
 
 /// The low east level's statues, as gMagmaRock_SlideStatues.
 s16 gMagmaRock_SalamanderTailLowEastStatues[] = {
-    ACTOR_LOW_EAST_FIRING_STATUE_A, MAGMA_ROCK_CELL_FIRING_STATUE, -1,
-    ACTOR_LOW_EAST_COLUMN_STATUE, MAGMA_ROCK_CELL_COLUMN_STATUE_A, ACTOR_LOW_EAST_STATUE_CAP,
-    ACTOR_LOW_EAST_FIRING_STATUE_B, MAGMA_ROCK_CELL_FIRING_STATUE_B, -1,
+    ACTOR_LOW_EAST_FIRING_STATUE_A, CELL_BEHAVIOR_MAGMA_ROCK_FIRING_STATUE, -1,
+    ACTOR_LOW_EAST_COLUMN_STATUE, CELL_BEHAVIOR_MAGMA_ROCK_COLUMN_STATUE_A, ACTOR_LOW_EAST_STATUE_CAP,
+    ACTOR_LOW_EAST_FIRING_STATUE_B, CELL_BEHAVIOR_MAGMA_ROCK_FIRING_STATUE_B, -1,
     -1,
 };
 
 /// The statue room's statue, as gMagmaRock_SlideStatues.
 s16 gMagmaRock_StatueStatues[] = {
-    ACTOR_STATUE_ROOM_STATUE, MAGMA_ROCK_CELL_STATUE_ROOM_STATUE, -1,
+    ACTOR_STATUE_ROOM_STATUE, CELL_BEHAVIOR_MAGMA_ROCK_STATUE_ROOM_STATUE, -1,
     -1, 0,
 };
 
@@ -2703,9 +2711,9 @@ struct ActorPlacement gMagmaRock_StatuePlacements[] = {
 struct Trigger gMagmaRock_Triggers[] = {
     {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
     {STEP_TRIGGER_WALKING | STEP_TRIGGER_FLAG_QUICK | FACING_NORTH,
-     MAGMA_ROCK_CELL_CAVE_DOOR, FLAG_CAVE_DOOR_USED,
+     CELL_BEHAVIOR_MAGMA_ROCK_CAVE_DOOR, FLAG_CAVE_DOOR_USED,
      EVENT(MagmaRock_EnterCave)},
-    {TRIGGER_STEP, MAGMA_ROCK_CELL_CAVE_DOOR, CONDITION_ALWAYS,
+    {TRIGGER_STEP, CELL_BEHAVIOR_MAGMA_ROCK_CAVE_DOOR, CONDITION_ALWAYS,
      EVENT(MagmaRock_ResetCaveDoor)},
     {PSYNERGY_ON_ACTOR(ABILITY_LIFT), ACTOR_SLIDE_BOULDER, CONDITION_ALWAYS, 0},
     {TRIGGER_PUSH, 0, CONDITION_ALWAYS, EVENT(MagmaRock_StartPushingPillar)},
@@ -2721,40 +2729,40 @@ struct Trigger gMagmaRock_Triggers[] = {
     {PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_SLIDE_PILLAR_B,
      FLAG_SLIDE_PILLAR_B_PUSHED, EVENT(MagmaRock_FinishPushingPillar)},
     {PSYNERGY_PHASE_ON_CELL(ABILITY_BURST, PSYNERGY_PHASE_ACTS),
-     MAGMA_ROCK_CELL_CRACKED_PILLAR_A, FLAG_CRACKED_PILLAR_A_BURST,
+     CELL_BEHAVIOR_MAGMA_ROCK_CRACKED_PILLAR_A, FLAG_CRACKED_PILLAR_A_BURST,
      EVENT(MagmaRock_BurstCrackedPillarA)},
     {PSYNERGY_PHASE_ON_CELL(ABILITY_BURST, PSYNERGY_PHASE_ACTS),
-     MAGMA_ROCK_CELL_CRACKED_PILLAR_B, FLAG_CRACKED_PILLAR_B_BURST,
+     CELL_BEHAVIOR_MAGMA_ROCK_CRACKED_PILLAR_B, FLAG_CRACKED_PILLAR_B_BURST,
      EVENT(MagmaRock_BurstCrackedPillarB)},
     {PSYNERGY_PHASE_ON_CELL(ABILITY_BURST, PSYNERGY_PHASE_ACTS),
-     MAGMA_ROCK_CELL_CRACKED_PILLAR_C, FLAG_CRACKED_PILLAR_C_BURST,
+     CELL_BEHAVIOR_MAGMA_ROCK_CRACKED_PILLAR_C, FLAG_CRACKED_PILLAR_C_BURST,
      EVENT(MagmaRock_BurstCrackedPillarC)},
     {PSYNERGY_PHASE_ON_CELL(ABILITY_BURST, PSYNERGY_PHASE_ACTS),
-     MAGMA_ROCK_CELL_CRACKED_PILLAR_D, FLAG_CRACKED_PILLAR_D_BURST,
+     CELL_BEHAVIOR_MAGMA_ROCK_CRACKED_PILLAR_D, FLAG_CRACKED_PILLAR_D_BURST,
      EVENT(MagmaRock_BurstCrackedPillarD)},
     {PSYNERGY_PHASE_ON_CELL(ABILITY_BURST, PSYNERGY_PHASE_ACTS),
-     MAGMA_ROCK_CELL_CRACKED_PILLAR_E, FLAG_CRACKED_PILLAR_E_BURST,
+     CELL_BEHAVIOR_MAGMA_ROCK_CRACKED_PILLAR_E, FLAG_CRACKED_PILLAR_E_BURST,
      EVENT(MagmaRock_BurstCrackedPillarE)},
     {PSYNERGY_PHASE_ON_CELL(ABILITY_BURST, PSYNERGY_PHASE_FIRST),
-     MAGMA_ROCK_CELL_FIRING_STATUE, CONDITION_ALWAYS,
+     CELL_BEHAVIOR_MAGMA_ROCK_FIRING_STATUE, CONDITION_ALWAYS,
      EVENT(MagmaRock_ResolveBeforeBurst)},
     {PSYNERGY_PHASE_ON_CELL(ABILITY_BURST, PSYNERGY_PHASE_ACTS),
-     MAGMA_ROCK_CELL_FIRING_STATUE, FLAG_FIRE_BURST_PLAYING,
+     CELL_BEHAVIOR_MAGMA_ROCK_FIRING_STATUE, FLAG_FIRE_BURST_PLAYING,
      EVENT(MagmaRock_TargetStatue)},
     {PSYNERGY_PHASE_ON_CELL(ABILITY_BURST, PSYNERGY_PHASE_ACTS),
-     MAGMA_ROCK_CELL_FIRING_STATUE, CONDITION_ALWAYS,
+     CELL_BEHAVIOR_MAGMA_ROCK_FIRING_STATUE, CONDITION_ALWAYS,
      EVENT(MagmaRock_BurstStatue)},
     {PSYNERGY_PHASE_ON_CELL(ABILITY_BURST, PSYNERGY_PHASE_AFTER_CAST),
-     MAGMA_ROCK_CELL_FIRING_STATUE, CONDITION_ALWAYS,
+     CELL_BEHAVIOR_MAGMA_ROCK_FIRING_STATUE, CONDITION_ALWAYS,
      EVENT(MagmaRock_FireStatue)},
     {PSYNERGY_PHASE_ON_CELL(ABILITY_BURST, PSYNERGY_PHASE_FIRST),
-     MAGMA_ROCK_CELL_COLUMN_STATUE_A, CONDITION_ALWAYS,
+     CELL_BEHAVIOR_MAGMA_ROCK_COLUMN_STATUE_A, CONDITION_ALWAYS,
      EVENT(MagmaRock_ResolveBeforeBurst)},
     {PSYNERGY_PHASE_ON_CELL(ABILITY_BURST, PSYNERGY_PHASE_ACTS),
-     MAGMA_ROCK_CELL_COLUMN_STATUE_A, CONDITION_ALWAYS,
+     CELL_BEHAVIOR_MAGMA_ROCK_COLUMN_STATUE_A, CONDITION_ALWAYS,
      EVENT(MagmaRock_TargetStatue)},
     {PSYNERGY_PHASE_ON_CELL(ABILITY_BURST, PSYNERGY_PHASE_AFTER_CAST),
-     MAGMA_ROCK_CELL_COLUMN_STATUE_A, CONDITION_ALWAYS,
+     CELL_BEHAVIOR_MAGMA_ROCK_COLUMN_STATUE_A, CONDITION_ALWAYS,
      EVENT(MagmaRock_IgniteStatue)},
     {TRIGGER_TABLE_END},
 };
@@ -2762,8 +2770,8 @@ struct Trigger gMagmaRock_Triggers[] = {
 /// The triggers of the Salamander Tail room's high west level.
 struct Trigger gMagmaRock_SalamanderTailHighWestTriggers[] = {
     {TRIGGER_EXIT, 3, CONDITION_ALWAYS, 3},
-    {STEP_TRIGGER_WALKING, MAGMA_ROCK_CELL_CRUMBLING_PILLAR, CONDITION_ALWAYS,
-     EVENT(MagmaRock_CheckCrumblingPillars)},
+    {STEP_TRIGGER_WALKING, CELL_BEHAVIOR_MAGMA_ROCK_CRUMBLING_PILLAR,
+     CONDITION_ALWAYS, EVENT(MagmaRock_CheckCrumblingPillars)},
     {TRIGGER_PUSH, 0, CONDITION_ALWAYS, EVENT(MagmaRock_StartPushingPillar)},
     {TRIGGER_PUSHED, 0, CONDITION_ALWAYS, EVENT(MagmaRock_FinishPushingPillar)},
     {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST),
@@ -2777,23 +2785,23 @@ struct Trigger gMagmaRock_SalamanderTailHighWestTriggers[] = {
     {PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_HIGH_WEST_PILLAR_B,
      FLAG_HIGH_WEST_PILLAR_B_PUSHED, EVENT(MagmaRock_FinishPushingPillar)},
     {PSYNERGY_PHASE_ON_CELL(ABILITY_BURST, PSYNERGY_PHASE_ACTS),
-     MAGMA_ROCK_CELL_CRACKED_PILLAR_A, FLAG_CRACKED_PILLAR_A_BURST,
+     CELL_BEHAVIOR_MAGMA_ROCK_CRACKED_PILLAR_A, FLAG_CRACKED_PILLAR_A_BURST,
      EVENT(MagmaRock_BurstCrackedPillarA)},
-    {TRIGGER_STEP, MAGMA_ROCK_CELL_BESIDE_HIGH_WEST_STATUE,
+    {TRIGGER_STEP, CELL_BEHAVIOR_MAGMA_ROCK_BESIDE_HIGH_WEST_STATUE,
      FLAG_HIGH_WEST_STATUE_READY, EVENT(MagmaRock_ReadyHighWestStatue)},
-    {TRIGGER_STEP, MAGMA_ROCK_CELL_PAST_HIGH_WEST_STATUE, CONDITION_ALWAYS,
-     EVENT(MagmaRock_ResetHighWestStatue)},
+    {TRIGGER_STEP, CELL_BEHAVIOR_MAGMA_ROCK_PAST_HIGH_WEST_STATUE,
+     CONDITION_ALWAYS, EVENT(MagmaRock_ResetHighWestStatue)},
     {PSYNERGY_PHASE_ON_CELL(ABILITY_BURST, PSYNERGY_PHASE_FIRST),
-     MAGMA_ROCK_CELL_FIRING_STATUE, CONDITION_ALWAYS,
+     CELL_BEHAVIOR_MAGMA_ROCK_FIRING_STATUE, CONDITION_ALWAYS,
      EVENT(MagmaRock_ResolveBeforeBurst)},
     {PSYNERGY_PHASE_ON_CELL(ABILITY_BURST, PSYNERGY_PHASE_ACTS),
-     MAGMA_ROCK_CELL_FIRING_STATUE, FLAG_FIRE_BURST_PLAYING,
+     CELL_BEHAVIOR_MAGMA_ROCK_FIRING_STATUE, FLAG_FIRE_BURST_PLAYING,
      EVENT(MagmaRock_TargetStatue)},
     {PSYNERGY_PHASE_ON_CELL(ABILITY_BURST, PSYNERGY_PHASE_ACTS),
-     MAGMA_ROCK_CELL_FIRING_STATUE, CONDITION_ALWAYS,
+     CELL_BEHAVIOR_MAGMA_ROCK_FIRING_STATUE, CONDITION_ALWAYS,
      EVENT(MagmaRock_BurstStatue)},
     {PSYNERGY_PHASE_ON_CELL(ABILITY_BURST, PSYNERGY_PHASE_AFTER_CAST),
-     MAGMA_ROCK_CELL_FIRING_STATUE, CONDITION_ALWAYS,
+     CELL_BEHAVIOR_MAGMA_ROCK_FIRING_STATUE, CONDITION_ALWAYS,
      EVENT(MagmaRock_FireStatue)},
     {TRIGGER_TABLE_END},
 };
@@ -2809,24 +2817,24 @@ struct Trigger gMagmaRock_SalamanderTailHighEastTriggers[] = {
     {PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_HIGH_EAST_PILLAR,
      FLAG_HIGH_EAST_PILLAR_PUSHED, EVENT(MagmaRock_FinishPushingPillar)},
     {PSYNERGY_PHASE_ON_CELL(ABILITY_BURST, PSYNERGY_PHASE_FIRST),
-     MAGMA_ROCK_CELL_COLUMN_STATUE_A, CONDITION_ALWAYS,
+     CELL_BEHAVIOR_MAGMA_ROCK_COLUMN_STATUE_A, CONDITION_ALWAYS,
      EVENT(MagmaRock_ResolveBeforeBurst)},
     {PSYNERGY_PHASE_ON_CELL(ABILITY_BURST, PSYNERGY_PHASE_ACTS),
-     MAGMA_ROCK_CELL_COLUMN_STATUE_A, CONDITION_ALWAYS,
+     CELL_BEHAVIOR_MAGMA_ROCK_COLUMN_STATUE_A, CONDITION_ALWAYS,
      EVENT(MagmaRock_TargetStatue)},
     {PSYNERGY_PHASE_ON_CELL(ABILITY_BURST, PSYNERGY_PHASE_AFTER_CAST),
-     MAGMA_ROCK_CELL_COLUMN_STATUE_A, CONDITION_ALWAYS,
+     CELL_BEHAVIOR_MAGMA_ROCK_COLUMN_STATUE_A, CONDITION_ALWAYS,
      EVENT(MagmaRock_IgniteStatue)},
     {PSYNERGY_PHASE_ON_CELL(ABILITY_BURST, PSYNERGY_PHASE_FIRST),
-     MAGMA_ROCK_CELL_COLUMN_STATUE_B, CONDITION_ALWAYS,
+     CELL_BEHAVIOR_MAGMA_ROCK_COLUMN_STATUE_B, CONDITION_ALWAYS,
      EVENT(MagmaRock_ResolveBeforeBurst)},
     {PSYNERGY_PHASE_ON_CELL(ABILITY_BURST, PSYNERGY_PHASE_ACTS),
-     MAGMA_ROCK_CELL_COLUMN_STATUE_B, CONDITION_ALWAYS,
+     CELL_BEHAVIOR_MAGMA_ROCK_COLUMN_STATUE_B, CONDITION_ALWAYS,
      EVENT(MagmaRock_TargetStatue)},
     {PSYNERGY_PHASE_ON_CELL(ABILITY_BURST, PSYNERGY_PHASE_AFTER_CAST),
-     MAGMA_ROCK_CELL_COLUMN_STATUE_B, CONDITION_ALWAYS,
+     CELL_BEHAVIOR_MAGMA_ROCK_COLUMN_STATUE_B, CONDITION_ALWAYS,
      EVENT(MagmaRock_IgniteStatue)},
-    {TRIGGER_RAISED, TRIGGER_MAGMA_ROCK_HITS_LEADER, CONDITION_ALWAYS,
+    {TRIGGER_RAISED, TRIGGER_FIREBALL_HITS_LEADER, CONDITION_ALWAYS,
      EVENT(MagmaRock_KnockLeaderOffWall)},
     {TRIGGER_TABLE_END},
 };
@@ -2837,7 +2845,8 @@ struct Trigger gMagmaRock_SalamanderTailLowWestTriggers[] = {
     {TRIGGER_EXIT, 12, CONDITION_ALWAYS, 12},
     // Flag 8 comes after the party members' flags and no code sets it, so the
     // push always answers, as the low east level's does.
-    {STEP_TRIGGER_WALKING_INTO(FACING_EAST), MAGMA_ROCK_CELL_PILLAR_PUSH, 0x8,
+    {STEP_TRIGGER_WALKING_INTO(FACING_EAST),
+     CELL_BEHAVIOR_MAGMA_ROCK_PILLAR_PUSH, 0x8,
      EVENT(MagmaRock_PushPillarEast)},
     {TRIGGER_PUSH, 0, CONDITION_ALWAYS, EVENT(MagmaRock_StartPushingPillar)},
     {TRIGGER_PUSHED, 0, CONDITION_ALWAYS, EVENT(MagmaRock_FinishPushingPillar)},
@@ -2849,22 +2858,22 @@ struct Trigger gMagmaRock_SalamanderTailLowWestTriggers[] = {
     {PSYNERGY_ON_ACTOR(ABILITY_LASH), ACTOR_LOW_WEST_ROPE_EAST_POST,
      FLAG_LOW_WEST_ROPE_LASHED, 0},
     {PSYNERGY_PHASE_ON_CELL(ABILITY_BURST, PSYNERGY_PHASE_FIRST),
-     MAGMA_ROCK_CELL_COLUMN_STATUE_A, CONDITION_ALWAYS,
+     CELL_BEHAVIOR_MAGMA_ROCK_COLUMN_STATUE_A, CONDITION_ALWAYS,
      EVENT(MagmaRock_ResolveBeforeBurst)},
     {PSYNERGY_PHASE_ON_CELL(ABILITY_BURST, PSYNERGY_PHASE_ACTS),
-     MAGMA_ROCK_CELL_COLUMN_STATUE_A, CONDITION_ALWAYS,
+     CELL_BEHAVIOR_MAGMA_ROCK_COLUMN_STATUE_A, CONDITION_ALWAYS,
      EVENT(MagmaRock_TargetStatue)},
     {PSYNERGY_PHASE_ON_CELL(ABILITY_BURST, PSYNERGY_PHASE_AFTER_CAST),
-     MAGMA_ROCK_CELL_COLUMN_STATUE_A, CONDITION_ALWAYS,
+     CELL_BEHAVIOR_MAGMA_ROCK_COLUMN_STATUE_A, CONDITION_ALWAYS,
      EVENT(MagmaRock_IgniteStatue)},
     {PSYNERGY_PHASE_ON_CELL(ABILITY_BURST, PSYNERGY_PHASE_FIRST),
-     MAGMA_ROCK_CELL_COLUMN_STATUE_B, CONDITION_ALWAYS,
+     CELL_BEHAVIOR_MAGMA_ROCK_COLUMN_STATUE_B, CONDITION_ALWAYS,
      EVENT(MagmaRock_ResolveBeforeBurst)},
     {PSYNERGY_PHASE_ON_CELL(ABILITY_BURST, PSYNERGY_PHASE_ACTS),
-     MAGMA_ROCK_CELL_COLUMN_STATUE_B, CONDITION_ALWAYS,
+     CELL_BEHAVIOR_MAGMA_ROCK_COLUMN_STATUE_B, CONDITION_ALWAYS,
      EVENT(MagmaRock_TargetStatue)},
     {PSYNERGY_PHASE_ON_CELL(ABILITY_BURST, PSYNERGY_PHASE_AFTER_CAST),
-     MAGMA_ROCK_CELL_COLUMN_STATUE_B, CONDITION_ALWAYS,
+     CELL_BEHAVIOR_MAGMA_ROCK_COLUMN_STATUE_B, CONDITION_ALWAYS,
      EVENT(MagmaRock_IgniteStatue)},
     {TRIGGER_TABLE_END},
 };
@@ -2873,8 +2882,9 @@ struct Trigger gMagmaRock_SalamanderTailLowWestTriggers[] = {
 struct Trigger gMagmaRock_SalamanderTailLowEastTriggers[] = {
     {TRIGGER_EXIT, 13, CONDITION_ALWAYS, 13},
     {TRIGGER_EXIT, 15, CONDITION_ALWAYS, 15},
-    {STEP_TRIGGER_WALKING_INTO(FACING_WEST), MAGMA_ROCK_CELL_PILLAR_PUSH,
-     CONDITION_ALWAYS, EVENT(MagmaRock_PushPillarWest)},
+    {STEP_TRIGGER_WALKING_INTO(FACING_WEST),
+     CELL_BEHAVIOR_MAGMA_ROCK_PILLAR_PUSH, CONDITION_ALWAYS,
+     EVENT(MagmaRock_PushPillarWest)},
     {TRIGGER_PUSH, 0, CONDITION_ALWAYS, EVENT(MagmaRock_StartPushingPillar)},
     {TRIGGER_PUSHED, 0, CONDITION_ALWAYS, EVENT(MagmaRock_FinishPushingPillar)},
     {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST),
@@ -2888,40 +2898,40 @@ struct Trigger gMagmaRock_SalamanderTailLowEastTriggers[] = {
     {PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_LOW_EAST_PILLAR_B,
      FLAG_LOW_EAST_PILLAR_B_PUSHED, EVENT(MagmaRock_FinishPushingPillar)},
     {PSYNERGY_PHASE_ON_CELL(ABILITY_BURST, PSYNERGY_PHASE_FIRST),
-     MAGMA_ROCK_CELL_FIRING_STATUE, CONDITION_ALWAYS,
+     CELL_BEHAVIOR_MAGMA_ROCK_FIRING_STATUE, CONDITION_ALWAYS,
      EVENT(MagmaRock_ResolveBeforeBurst)},
     {PSYNERGY_PHASE_ON_CELL(ABILITY_BURST, PSYNERGY_PHASE_ACTS),
-     MAGMA_ROCK_CELL_FIRING_STATUE, FLAG_FIRE_BURST_PLAYING,
+     CELL_BEHAVIOR_MAGMA_ROCK_FIRING_STATUE, FLAG_FIRE_BURST_PLAYING,
      EVENT(MagmaRock_TargetStatue)},
     {PSYNERGY_PHASE_ON_CELL(ABILITY_BURST, PSYNERGY_PHASE_ACTS),
-     MAGMA_ROCK_CELL_FIRING_STATUE, CONDITION_ALWAYS,
+     CELL_BEHAVIOR_MAGMA_ROCK_FIRING_STATUE, CONDITION_ALWAYS,
      EVENT(MagmaRock_BurstStatue)},
     {PSYNERGY_PHASE_ON_CELL(ABILITY_BURST, PSYNERGY_PHASE_AFTER_CAST),
-     MAGMA_ROCK_CELL_FIRING_STATUE, CONDITION_ALWAYS,
+     CELL_BEHAVIOR_MAGMA_ROCK_FIRING_STATUE, CONDITION_ALWAYS,
      EVENT(MagmaRock_FireStatue)},
     {PSYNERGY_PHASE_ON_CELL(ABILITY_BURST, PSYNERGY_PHASE_FIRST),
-     MAGMA_ROCK_CELL_FIRING_STATUE_B, CONDITION_ALWAYS,
+     CELL_BEHAVIOR_MAGMA_ROCK_FIRING_STATUE_B, CONDITION_ALWAYS,
      EVENT(MagmaRock_ResolveBeforeBurst)},
     {PSYNERGY_PHASE_ON_CELL(ABILITY_BURST, PSYNERGY_PHASE_ACTS),
-     MAGMA_ROCK_CELL_FIRING_STATUE_B, FLAG_FIRE_BURST_PLAYING,
+     CELL_BEHAVIOR_MAGMA_ROCK_FIRING_STATUE_B, FLAG_FIRE_BURST_PLAYING,
      EVENT(MagmaRock_TargetStatue)},
     {PSYNERGY_PHASE_ON_CELL(ABILITY_BURST, PSYNERGY_PHASE_ACTS),
-     MAGMA_ROCK_CELL_FIRING_STATUE_B, CONDITION_ALWAYS,
+     CELL_BEHAVIOR_MAGMA_ROCK_FIRING_STATUE_B, CONDITION_ALWAYS,
      EVENT(MagmaRock_BurstStatue)},
     {PSYNERGY_PHASE_ON_CELL(ABILITY_BURST, PSYNERGY_PHASE_AFTER_CAST),
-     MAGMA_ROCK_CELL_FIRING_STATUE_B, CONDITION_ALWAYS,
+     CELL_BEHAVIOR_MAGMA_ROCK_FIRING_STATUE_B, CONDITION_ALWAYS,
      EVENT(MagmaRock_FireStatue)},
     {PSYNERGY_PHASE_ON_CELL(ABILITY_BURST, PSYNERGY_PHASE_ACTS),
-     MAGMA_ROCK_CELL_CRACKED_PILLAR_B, FLAG_CRACKED_PILLAR_B_BURST,
+     CELL_BEHAVIOR_MAGMA_ROCK_CRACKED_PILLAR_B, FLAG_CRACKED_PILLAR_B_BURST,
      EVENT(MagmaRock_BurstCrackedPillarB)},
     {PSYNERGY_PHASE_ON_CELL(ABILITY_BURST, PSYNERGY_PHASE_FIRST),
-     MAGMA_ROCK_CELL_COLUMN_STATUE_A, CONDITION_ALWAYS,
+     CELL_BEHAVIOR_MAGMA_ROCK_COLUMN_STATUE_A, CONDITION_ALWAYS,
      EVENT(MagmaRock_ResolveBeforeBurst)},
     {PSYNERGY_PHASE_ON_CELL(ABILITY_BURST, PSYNERGY_PHASE_ACTS),
-     MAGMA_ROCK_CELL_COLUMN_STATUE_A, CONDITION_ALWAYS,
+     CELL_BEHAVIOR_MAGMA_ROCK_COLUMN_STATUE_A, CONDITION_ALWAYS,
      EVENT(MagmaRock_TargetStatue)},
     {PSYNERGY_PHASE_ON_CELL(ABILITY_BURST, PSYNERGY_PHASE_AFTER_CAST),
-     MAGMA_ROCK_CELL_COLUMN_STATUE_A, CONDITION_ALWAYS,
+     CELL_BEHAVIOR_MAGMA_ROCK_COLUMN_STATUE_A, CONDITION_ALWAYS,
      EVENT(MagmaRock_IgniteStatue)},
     {PSYNERGY_ON_ACTOR(ABILITY_GROWTH), ACTOR_LOW_EAST_SPROUT_A,
      FLAG_VINE_A_GROWN, EVENT(MagmaRock_GrowVineA)},
@@ -2936,16 +2946,16 @@ struct Trigger gMagmaRock_SalamanderTailLowEastTriggers[] = {
 struct Trigger gMagmaRock_StatueTriggers[] = {
     {TRIGGER_EXIT, 3, CONDITION_ALWAYS, 3},
     {PSYNERGY_PHASE_ON_CELL(ABILITY_BURST, PSYNERGY_PHASE_FIRST),
-     MAGMA_ROCK_CELL_STATUE_ROOM_STATUE, CONDITION_ALWAYS,
+     CELL_BEHAVIOR_MAGMA_ROCK_STATUE_ROOM_STATUE, CONDITION_ALWAYS,
      EVENT(MagmaRock_ResolveBeforeBurst)},
     {PSYNERGY_PHASE_ON_CELL(ABILITY_BURST, PSYNERGY_PHASE_ACTS),
-     MAGMA_ROCK_CELL_STATUE_ROOM_STATUE, FLAG_FIRE_BURST_PLAYING,
+     CELL_BEHAVIOR_MAGMA_ROCK_STATUE_ROOM_STATUE, FLAG_FIRE_BURST_PLAYING,
      EVENT(MagmaRock_TargetStatue)},
     {PSYNERGY_PHASE_ON_CELL(ABILITY_BURST, PSYNERGY_PHASE_ACTS),
-     MAGMA_ROCK_CELL_STATUE_ROOM_STATUE, CONDITION_ALWAYS,
+     CELL_BEHAVIOR_MAGMA_ROCK_STATUE_ROOM_STATUE, CONDITION_ALWAYS,
      EVENT(MagmaRock_BlastWayIn)},
     {PSYNERGY_PHASE_ON_CELL(ABILITY_BURST, PSYNERGY_PHASE_AFTER_CAST),
-     MAGMA_ROCK_CELL_STATUE_ROOM_STATUE, CONDITION_ALWAYS,
+     CELL_BEHAVIOR_MAGMA_ROCK_STATUE_ROOM_STATUE, CONDITION_ALWAYS,
      EVENT(MagmaRock_FireStatue)},
     {TRIGGER_TABLE_END},
 };

@@ -1442,8 +1442,6 @@ void Yallam_StartRunner(s32 id) {
   actor->riseEnabled = 0;
 }
 
-#define EVENT_WORK ((u8 *)Ram_HeapSlots->fieldWork)
-
 extern u32 gYallam_CirclesChildGathers[];
 extern u32 gYallam_GameChildGathers[];
 extern u32 gYallam_SongLeaderForms[];
@@ -1832,8 +1830,6 @@ void Yallam_StartWatchingSongGame(void) {
   other->riseEnabled = 0;
   other->update = Yallam_WatchSongGame;
 }
-
-#undef EVENT_WORK
 
 void Yallam_EnterDoor(void);
 void Yallam_ClearThirdSpot(void);

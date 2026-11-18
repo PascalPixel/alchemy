@@ -2429,12 +2429,6 @@ static inline void CameraMove(FIXED x, FIXED y, FIXED z, s32 mode) {
 /// Shakes the camera diagonally by one pixel every three frames.
 #include "shared/camera_jitter.h"
 
-#define PUSH_PICTURE(frame)                                                    \
-  IO_WRITE_QUEUE_PUSH(                                                         \
-      PICTURE_MAP,                                                             \
-      (u32)(buffer + PICTURES_FIRST_FRAME + (frame) * PICTURES_FRAME_STRIDE),  \
-      DMA_COPY_WORDS(PICTURE_FRAME_SIZE / 4))
-
 /// The view of a lighthouse lit, seen from the World Map: mode 1 for Venus
 /// Lighthouse, 2 for Jupiter's beacon, which also rumbles and shakes the
 /// ground.
@@ -2763,7 +2757,6 @@ u32 gWorldMap_GlowColorModes[] = {
 };
 // clang-format on
 
-#undef PUSH_PICTURE
 #undef WORLD_MAP_TRY_ENCOUNTER
 #undef TUTORIAL_SET_MESSAGE
 #undef TUTORIAL_MESSAGE

@@ -15,12 +15,14 @@
 #include "field/actor.h"
 #include "field/actor_script.h"
 #include "field/call.h"
+#include "field/event_commands.h"
 #include "field/event_inline.h"
 #include "field/field.h"
 #include "field/field_event.h"
 #include "field/field_sequence.h"
 #include "field/field_sequence_event.h"
 #include "field/field_sprite.h"
+#include "field/field_work.h"
 #include "field/map_grid.h"
 #include "field/object.h"
 #include "field/scene_tables.h"
@@ -232,27 +234,6 @@ enum { ACTOR_WEST_POST = ACTOR_FIRST_STAGE_PIECE, ACTOR_EAST_POST };
 /// How far a pillar's top stands above it; once the pillar is lowered, its
 /// top is as far below it.
 #define PILLAR_HEIGHT 16
-
-/// The flags a yes-or-no question's message takes, as clear.c's: it zooms
-/// open, stays open for the choice and sits lower.
-#define QUESTION_MESSAGE                                                       \
-  (FIELD_MESSAGE_ZOOM | FIELD_MESSAGE_KEEP_OPEN | FIELD_MESSAGE_LOWER)
-
-/// The frames the leader pushes against a cell before it acts, as
-/// field_sequence_triggers.c counts them in FieldWork.blockedSteps.
-#define FIELD_PUSH_FRAMES 12
-
-/// The encounter table row of the battle with Moapa and his two knights at
-/// the peak, one column for each stage door the party reached before him.
-#define ENCOUNTER_TABLE_MOAPA 13
-
-/// A 16.16 height in the 8-pixel steps a map cell's height is set in, as
-/// airs_rock_inside.c's.
-#define CELL_HEIGHT_STEPS(height) ((height) >> 19)
-
-/// Where the inventory snapshot's spare space begins, past the party's
-/// equipment and the race's state, as scene/ride.h's RIDE_WORK takes it.
-#define INVENTORY_SNAPSHOT_SPARE 392
 
 /// Talking to Gasp starts his battle.
 void TrialRoad_FightGasp(void) {
@@ -1451,17 +1432,11 @@ void TrialRoad_BlowAwaySandStageIvy(void) {
 
 extern const s32 *gFieldEffect_DurationScripts[];
 
-#define EFFECT_SPAWN FieldEffect_Spawn
-#define EFFECT_CREATE Import_ActorCreate
 #define EFFECT_SET_MODE Actor_SelectAnimation
 #define EFFECT_SET_SCRIPT Actor_StartScript
-#define EFFECT_SCRIPTS gFieldEffect_DurationScripts
 #include "../field/field_effect_spawn.c"
-#undef EFFECT_SPAWN
-#undef EFFECT_CREATE
 #undef EFFECT_SET_MODE
 #undef EFFECT_SET_SCRIPT
-#undef EFFECT_SCRIPTS
 
 #include "../field/field_effect_advance_motion_priority.c"
 

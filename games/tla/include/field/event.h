@@ -8,15 +8,8 @@
 /// and the rest), whose declarations it holds. An overlay's import stub takes
 /// the name of the routine it reaches, except the few the overlays share under
 /// another (Import_ActorCreate, Import_EventSetExitRequest).
-///
-/// It is a habit of the whole game written once, as declarations and inlines,
-/// not a compiler-steering device. An inline's parameters are its own, so where
-/// an event calls a routine again with the same constant, the constant is built
-/// again for each call rather than kept in a register, as the ROM shows: in the
-/// scene overlays 482 such calls build their constant again and none shares
-/// one (in The Broken Seal, 301 and 11). event_inline.h's inlines are written
-/// over it. An event reads `Actor_FaceDirection(4, FACING_NORTH, 0);
-/// FieldEvent_Wait(20);`.
+/// event_inline.h's inlines are written over them. An event reads
+/// `Actor_FaceDirection(4, FACING_NORTH, 0); FieldEvent_Wait(20);`.
 
 #include "field/emote.h"
 #include "field/speaker.h"
@@ -85,11 +78,12 @@ void Actor_CenterOnColumn(u32 objectId, s32 action, s32 z_offset);
 void Actor_WalkByAndWaitById(u32 objectId, s32 x_offset, s32 z_offset);
 void Event_ShowMessageThenWait(s32 speaker, s32 flags, s32 frames);
 void Actor_ConfigureSpriteColor(s32 actorId, s32 value);
-void MapGrid_CopyCellPictureIndicesRect(s32 srcX, s32 srcY, s32 dst_x,
-                                        s32 dst_y, s32 width, s32 height);
-void MapGrid_CopyCellPictureCellsRect(s32 sourceX, s32 sourceY,
-                                      s32 destinationX, s32 destinationY,
-                                      s32 width, s32 height);
+void MapGrid_CopyCellPictureIndicesRect(s32 sourceX, s32 sourceY,
+                                        s32 destinationX, s32 destinationY,
+                                        s32 width, s32 height);
+void MapGrid_CopyCellPictureCellsRect(s32 sourceX, s32 sourceY, s32 width,
+                                      s32 height, s32 destinationX,
+                                      s32 destinationY);
 void PaletteFade_SetSource(s32 value, s32 mode);
 void PaletteFade_SetTarget(s32 value, s32 mode);
 void Actor_MoveToAndWaitById(u32 objectId, s32 x, s32 z);
@@ -423,14 +417,14 @@ static inline void MapGrid_CopyCellsTo(s32 sourceX, s32 sourceY,
                                      destinationY, width, height);
 }
 
-/// Changes the pictures of part of the room as MapGrid_CopyCellsTo does,
-/// through MapGrid_CopyCellPictureCellsRect, which keeps each cell's attribute
-/// bits.
-static inline void MapGrid_CopyCellsLayered(s32 sourceX, s32 sourceY,
-                                            s32 destinationX, s32 destinationY,
-                                            s32 width, s32 height) {
-  MapGrid_CopyCellPictureCellsRect(sourceX, sourceY, destinationX, destinationY,
-                                   width, height);
+/// Changes the pictures of part of the room as MapGrid_CopyCellsTo does, the
+/// rectangle's size before its destination, through
+/// MapGrid_CopyCellPictureCellsRect, which keeps each cell's attribute bits.
+static inline void MapGrid_CopyCellsLayered(s32 sourceX, s32 sourceY, s32 width,
+                                            s32 height, s32 destinationX,
+                                            s32 destinationY) {
+  MapGrid_CopyCellPictureCellsRect(sourceX, sourceY, width, height,
+                                   destinationX, destinationY);
 }
 
 /// Sets the colours the screen shows now, where an event's palette fade starts.

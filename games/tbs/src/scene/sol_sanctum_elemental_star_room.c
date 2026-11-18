@@ -30,7 +30,7 @@
 /// A return after a battle finds the room as it was. On every entry
 /// Scene_Initialize redraws the crossings each bagged
 /// star opened. Once Alex holds the stars, it also lines up the captors again
-/// (SolSanctumElementalStarRoom_LineUpCaptors).
+/// (SolSanctumElementalStarRoom_StandAroundHostages).
 ///
 /// Ten lights float about the room (SolSanctum_StartFloatingLights), and
 /// Retreat does not work here.
@@ -87,9 +87,9 @@ static void SolSanctumElementalStarRoom_BagJupiterStar(void);
 static void SolSanctumElementalStarRoom_RevealSaturosAndMenardi(void);
 static void SolSanctumElementalStarRoom_DemandElementalStars(void);
 static void SolSanctumElementalStarRoom_OfferHostageGuarantee(void);
-static void SolSanctumElementalStarRoom_UnmaskFelix(void);
+static void SolSanctumElementalStarRoom_FelixRemovesMask(void);
 static void SolSanctumElementalStarRoom_AlexTakesStars(void);
-static void SolSanctumElementalStarRoom_LineUpCaptors(void);
+static void SolSanctumElementalStarRoom_StandAroundHostages(void);
 static void SolSanctumElementalStarRoom_ShowMessageAndWait(s32 speaker,
                                                            s32 frames);
 static s32 SolSanctumElementalStarRoom_PresentStarFX(s32 item, FIXED x, FIXED y,
@@ -99,7 +99,7 @@ static s32 SolSanctumElementalStarRoom_PresentStarFX(s32 item, FIXED x, FIXED y,
   SolSanctumElementalStarRoom_PresentStarFX(item, toFIXED(x), toFIXED(y),      \
                                             toFIXED(z))
 static void SolSanctumElementalStarRoom_GiveMythrilBags(void);
-static void SolSanctumElementalStarRoom_AnimateAlexReappearing(void);
+static void SolSanctumElementalStarRoom_AlexWarpsIn(void);
 
 /// The placed actors, numbered in the order of
 /// gSolSanctumElementalStarRoom_ActorPlacements.
@@ -117,7 +117,7 @@ enum StarRoomActorId {
   ACTOR_KRADEN,
   ACTOR_SATUROS,
   ACTOR_MENARDI,
-  /// Felix in his mask, until SolSanctumElementalStarRoom_UnmaskFelix.
+  /// Felix in his mask, until SolSanctumElementalStarRoom_FelixRemovesMask.
   ACTOR_FELIX_MASKED,
   ACTOR_FELIX,
   ACTOR_ALEX,
@@ -412,11 +412,11 @@ static void SolSanctumElementalStarRoom_BagJupiterStarAndMeetSaturos(void) {
   SolSanctumElementalStarRoom_RevealSaturosAndMenardi();
   SolSanctumElementalStarRoom_DemandElementalStars();
   SolSanctumElementalStarRoom_OfferHostageGuarantee();
-  SolSanctumElementalStarRoom_UnmaskFelix();
+  SolSanctumElementalStarRoom_FelixRemovesMask();
   SolSanctumElementalStarRoom_AlexTakesStars();
   GameFlag_Set(FLAG_SOL_SANCTUM_STARS_GIVEN_TO_ALEX);
   Event_End();
-  SolSanctumElementalStarRoom_LineUpCaptors();
+  SolSanctumElementalStarRoom_StandAroundHostages();
 }
 
 /// Reveals the Jupiter Star's crossings and puts the star in a Mythril Bag.
@@ -556,7 +556,7 @@ static void SolSanctumElementalStarRoom_RevealSaturosAndMenardi(void) {
 static void SolSanctumElementalStarRoom_DemandElementalStars(void) {
   struct Actor *felix;
   struct Actor *shadow;
-  s32 i;
+  s32 frame;
   struct Sprite *sprite;
 
   Sound_Play(MUS_OMINOUS);
@@ -609,7 +609,7 @@ static void SolSanctumElementalStarRoom_DemandElementalStars(void) {
   Actor_SetPosition(ACTOR_PLATFORM_SHADOW, 471, 290);
   Sound_Play(SE_WARP);
   Actor_SetSpritePriority(ACTOR_FELIX_MASKED, 2);
-  for (i = 0; i != 90; i++) {
+  for (frame = 0; frame != 90; frame++) {
     felix->y.fixed -= toFIXED(1) / 10;
     felix->scaleX += FIXED_ONE / 100;
     felix->scaleY += FIXED_ONE / 100;
@@ -619,7 +619,7 @@ static void SolSanctumElementalStarRoom_DemandElementalStars(void) {
   }
   felix->motionFlags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FLOATS;
   Event_Wait(80);
-  for (i = 0; i != 60; i++) {
+  for (frame = 0; frame != 60; frame++) {
     felix->y.fixed -= toFIXED(1) / 2;
     Event_Wait(1);
   }
@@ -808,11 +808,11 @@ static void SolSanctumElementalStarRoom_OfferHostageGuarantee(void) {
 }
 
 /// Felix unmasks and tells Jenna he survived, saved by Saturos and Menardi.
-static void SolSanctumElementalStarRoom_UnmaskFelix(void) {
+static void SolSanctumElementalStarRoom_FelixRemovesMask(void) {
   struct Actor *actor;
   struct Actor *other;
   u16 *inventoryEntry;
-  s32 remainingSlots;
+  s32 slot;
   s32 starCount;
   s32 messageA;
   s32 messageB;
@@ -909,8 +909,8 @@ static void SolSanctumElementalStarRoom_UnmaskFelix(void) {
   Event_Wait(20);
   starCount = 0;
   inventoryEntry = Unit_Get(GARET)->inventory;
-  for (remainingSlots = 0; remainingSlots < 15; remainingSlots++) {
-    u32 item = *inventoryEntry & 0x1ff;
+  for (slot = 0; slot < INVENTORY_SLOTS; slot++) {
+    u32 item = *inventoryEntry & INVENTORY_ITEM_ID_MASK;
     inventoryEntry++;
     if (item == ITEM_VENUS_STAR || item == ITEM_MERCURY_STAR ||
         item == ITEM_JUPITER_STAR)
@@ -996,7 +996,7 @@ static void SolSanctumElementalStarRoom_UnmaskFelix(void) {
 
 /// Alex appears, takes the three stars from Garet and demands the last one.
 static void SolSanctumElementalStarRoom_AlexTakesStars(void) {
-  u32 i;
+  u32 frame;
   struct Actor *actor;
 
   Actor_RunRepeatedMotion(ACTOR_GARET, 3);
@@ -1005,7 +1005,7 @@ static void SolSanctumElementalStarRoom_AlexTakesStars(void) {
   Actor_SetSpriteFlags(Actor_Get(ACTOR_ALEX), 0);
   Actor_SetSpriteColorById(ACTOR_ALEX, SPRITE_COLOR_HIDDEN);
   Actor_SetPosition(ACTOR_ALEX, 392, 454);
-  SolSanctumElementalStarRoom_AnimateAlexReappearing();
+  SolSanctumElementalStarRoom_AlexWarpsIn();
   Actor_FaceDirection(ACTOR_GARET, FACING_NORTH_NORTHEAST, 10);
   Actor_StartRepeatedMotion(ACTOR_GARET, 2);
   Actor_ShowEmote(ACTOR_GARET, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 40);
@@ -1053,7 +1053,7 @@ static void SolSanctumElementalStarRoom_AlexTakesStars(void) {
   actor = Actor_Get(ACTOR_ALEX);
   actor->motionFlags = 0;
   Sound_Play(SE_SHIMMER);
-  for (i = 0; i != 30; i++) {
+  for (frame = 0; frame != 30; frame++) {
     actor->y.fixed += toFIXED(1);
     Event_Wait(1);
   }
@@ -1165,7 +1165,7 @@ static void SolSanctumElementalStarRoom_AlexTakesStars(void) {
 
 /// Stands Saturos, Menardi, Felix and Alex round Jenna and Kraden after the
 /// exchange, all turning to face the leader.
-static void SolSanctumElementalStarRoom_LineUpCaptors(void) {
+static void SolSanctumElementalStarRoom_StandAroundHostages(void) {
   struct Actor *leader;
   struct Actor *actor;
   struct Actor *alex;
@@ -1377,11 +1377,11 @@ static void SolSanctumElementalStarRoom_JumpAhead(void) {
   Field_TryJumpForward();
 }
 
-/// Shows a pedestal while Kraden describes it, then returns to the party; the
-/// camera's point and Kraden's spot are in whole pixels.
-static inline void
-SolSanctumElementalStarRoom_ShowPedestal(s32 cameraX, s32 cameraZ, s32 actorX,
-                                         s32 actorZ, s32 speaker) {
+/// Shows one of the Elemental Stars, Kraden beside it, while he describes it,
+/// then turns the view back to the party; the camera's point and Kraden's spot
+/// are in whole pixels.
+static inline void SolSanctumElementalStarRoom_ShowElementalStar(
+    s32 cameraX, s32 cameraZ, s32 actorX, s32 actorZ, s32 speaker) {
   FieldCamera_MoveToFX(toFIXED(cameraX), CAMERA_KEEP, toFIXED(cameraZ), 1);
   FieldCamera_WaitForMove();
   Actor_SetPosition(ACTOR_KRADEN, actorX, actorZ);
@@ -1395,7 +1395,7 @@ SolSanctumElementalStarRoom_ShowPedestal(s32 cameraX, s32 cameraZ, s32 actorX,
 
 /// Elemental Star Room, the first arrival: Kraden explains the Elemental Stars.
 static void SolSanctumElementalStarRoom_EnterStarRoom(void) {
-  u16 i;
+  u16 frame;
   struct Actor *rising;
   struct Sprite *sprite;
   struct Actor *shadow;
@@ -1427,7 +1427,7 @@ static void SolSanctumElementalStarRoom_EnterStarRoom(void) {
   Actor_SetPosition(ACTOR_PLATFORM_SHADOW, 471, 290);
   Sound_Play(SE_WARP);
   Actor_SetSpritePriority(ACTOR_PARTY_LEADER, 2);
-  for (i = 0; i != 90; i++) {
+  for (frame = 0; frame != 90; frame++) {
     rising->y.fixed -= toFIXED(1) / 10;
     rising->scaleX += FIXED_ONE / 100;
     rising->scaleY += FIXED_ONE / 100;
@@ -1439,7 +1439,7 @@ static void SolSanctumElementalStarRoom_EnterStarRoom(void) {
   Event_Wait(80);
   FieldCamera_SetSpeed(0.3);
   FieldCamera_MoveTo(471, CAMERA_KEEP, 290, 1);
-  for (i = 0; i != 60; i++) {
+  for (frame = 0; frame != 60; frame++) {
     rising->y.fixed -= toFIXED(1) / 2;
     Event_Wait(1);
   }
@@ -1549,7 +1549,7 @@ static void SolSanctumElementalStarRoom_EnterStarRoom(void) {
   Actor_SetPosition(ACTOR_PLATFORM_SHADOW, 471, 290);
   Sound_Play(SE_WARP);
   Actor_SetSpritePriority(ACTOR_KRADEN, 2);
-  for (i = 0; i != 90; i++) {
+  for (frame = 0; frame != 90; frame++) {
     rising->y.fixed -= toFIXED(1) / 10;
     rising->scaleX += FIXED_ONE / 100;
     rising->scaleY += FIXED_ONE / 100;
@@ -1559,7 +1559,7 @@ static void SolSanctumElementalStarRoom_EnterStarRoom(void) {
   }
   rising->motionFlags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FLOATS;
   Event_Wait(80);
-  for (i = 0; i != 60; i++) {
+  for (frame = 0; frame != 60; frame++) {
     rising->y.fixed -= toFIXED(1) / 2;
     Event_Wait(1);
   }
@@ -1711,8 +1711,9 @@ static void SolSanctumElementalStarRoom_EnterStarRoom(void) {
   Actor_Stop(ACTOR_JENNA);
   Actor_Stop(ACTOR_GARET);
   FieldCamera_SetSpeed(8);
-  // Tour the four pedestals, returning the view to the party after each.
-  SolSanctumElementalStarRoom_ShowPedestal(
+  // Kraden tours the four Elemental Stars, the view returning to the party
+  // after each.
+  SolSanctumElementalStarRoom_ShowElementalStar(
       711, 464, 589, 353, SPEAKER_PORTRAIT_LEFT | ACTOR_KRADEN);
   Event_Wait(10);
   Actor_RunRepeatedMotion(ACTOR_KRADEN, 3);
@@ -1721,7 +1722,7 @@ static void SolSanctumElementalStarRoom_EnterStarRoom(void) {
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTHEAST, 0);
   Actor_FaceDirection(ACTOR_JENNA, FACING_NORTHEAST, 0);
   Actor_FaceDirection(ACTOR_GARET, FACING_NORTHEAST, 20);
-  SolSanctumElementalStarRoom_ShowPedestal(
+  SolSanctumElementalStarRoom_ShowElementalStar(
       711, 147, 596, 238, SPEAKER_PORTRAIT_LEFT | ACTOR_KRADEN);
   Event_Wait(10);
   Actor_RunRepeatedMotion(ACTOR_KRADEN, 2);
@@ -1734,7 +1735,7 @@ static void SolSanctumElementalStarRoom_EnterStarRoom(void) {
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTHWEST, 0);
   Actor_FaceDirection(ACTOR_JENNA, FACING_NORTHWEST, 0);
   Actor_FaceDirection(ACTOR_GARET, FACING_NORTHWEST, 20);
-  SolSanctumElementalStarRoom_ShowPedestal(
+  SolSanctumElementalStarRoom_ShowElementalStar(
       231, 147, 308, 250, SPEAKER_PORTRAIT_RIGHT | ACTOR_KRADEN);
   Event_Wait(10);
   Actor_RunRepeatedMotion(ACTOR_KRADEN, 3);
@@ -1747,7 +1748,7 @@ static void SolSanctumElementalStarRoom_EnterStarRoom(void) {
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_SOUTHWEST, 0);
   Actor_FaceDirection(ACTOR_JENNA, FACING_SOUTHWEST, 0);
   Actor_FaceDirection(ACTOR_GARET, FACING_SOUTHWEST, 20);
-  SolSanctumElementalStarRoom_ShowPedestal(
+  SolSanctumElementalStarRoom_ShowElementalStar(
       231, 464, 306, 362, SPEAKER_PORTRAIT_RIGHT | ACTOR_KRADEN);
   Event_Wait(30);
   Actor_ShowEmote(ACTOR_KRADEN, EMOTE_IN_FRONT | EMOTE_HEART, 60);
@@ -2056,7 +2057,7 @@ s32 Scene_Initialize(void) {
     DRAW_RISEN_PILLAR(10, 31);
     DRAW_RISEN_PILLAR(24, 9);
     DRAW_RISEN_PILLAR(36, 10);
-    SolSanctumElementalStarRoom_LineUpCaptors();
+    SolSanctumElementalStarRoom_StandAroundHostages();
   }
   if (GameFlag_Get(FLAG_SOL_SANCTUM_STAR_ROOM_EXPLAINED) == 0) {
     if (gMainRoutineWork.entrance ==
@@ -2122,7 +2123,7 @@ static void SolSanctumElementalStarRoom_GiveMythrilBags(void) {
   Item_ShowFound(ITEM_MYTHRIL_BAG, 3);
   FieldMessage_Show(MsgSolSanctumGotFourMythrilBags, 1);
   do {
-    freeSlots = 30 - Inventory_Count(ISAAC);
+    freeSlots = 2 * INVENTORY_SLOTS - Inventory_Count(ISAAC);
     freeSlots -= Inventory_Count(GARET);
 
     if (freeSlots <= 3) {
@@ -2138,8 +2139,14 @@ static void SolSanctumElementalStarRoom_GiveMythrilBags(void) {
   work->message = savedMessage;
 }
 
-/// Emits sparks while Alex disappears and reappears.
-static void SolSanctumElementalStarRoom_AnimateAlexReappearing(void) {
+/// Sparkles fall about Alex, one every other frame, and he blinks into sight
+/// from WARP_IN_BLINK_FRAME, as Saturos and Alex warp in on Mercury
+/// Lighthouse's aerie.
+#define WARP_FRAMES 32
+#define WARP_IN_BLINK_FRAME 20
+
+/// Alex warps in where he has been placed, hidden.
+static void SolSanctumElementalStarRoom_AlexWarpsIn(void) {
   struct EffectOptions options;
   struct Actor *alex;
   u32 frame;
@@ -2154,7 +2161,7 @@ static void SolSanctumElementalStarRoom_AnimateAlexReappearing(void) {
   options.type = SPRITE_PARTICLE;
   options.startScaleX = 2 * FIXED_ONE / 5;
   options.startScaleY = 3 * FIXED_ONE;
-  for (frame = 0; frame <= 31; frame++) {
+  for (frame = 0; frame < WARP_FRAMES; frame++) {
     Event_Wait(1);
     if (!(frame & 1)) {
       xOffset = toFIXED(Random_Below(24));
@@ -2167,7 +2174,7 @@ static void SolSanctumElementalStarRoom_AnimateAlexReappearing(void) {
                             EFFECT_USE_PRIORITY | EFFECT_USE_PALETTE,
                         &options);
     }
-    if (frame == 20)
+    if (frame == WARP_IN_BLINK_FRAME)
       Actor_SetSpriteColorById(ACTOR_ALEX, SPRITE_COLOR_BLINK);
   }
   Actor_SetSpriteColorById(ACTOR_ALEX, SPRITE_COLOR_NORMAL);

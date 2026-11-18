@@ -45,8 +45,17 @@ enum FieldShortcutKind {
   FIELD_SHORTCUT_ITEM = 1      ///< fieldWork->item
 };
 
-/// A shortcut key's request id: the assignment's low 14 bits, below its kind.
-#define FIELD_SHORTCUT_ID_MASK 0x3fff
+/// A shortcut key's assignment: its kind in the top two bits, from this one,
+/// and its request id in the bits below.
+#define FIELD_SHORTCUT_KIND_SHIFT 14
+#define FIELD_SHORTCUT_ID_MASK ((1 << FIELD_SHORTCUT_KIND_SHIFT) - 1)
+
+/// The debug beep sounds while fewer resource blocks than this are free.
+#define DEBUG_RESOURCE_BEEP_FREE_BLOCKS 136
+
+/// The world map camera's turn is finished at once when its step is smaller
+/// than this.
+#define WORLD_MAP_YAW_STEP_MIN 16
 
 /// What stopped the leader's step this frame (Actor_UpdatePlayerControl,
 /// Actor_MoveOnWorldMap).
@@ -79,7 +88,7 @@ UNUSED void Actor_SetUpdateValue(void *rawActor, s32 value) {
 /// Handles a shortcut key's assignment: its top two bits choose what it
 /// requests (enum FieldShortcutKind) and the low 14 bits which one.
 u32 Field_RequestShortcut(u32 encodedAssignment) {
-  u32 assignmentKind = encodedAssignment >> 14;
+  u32 assignmentKind = encodedAssignment >> FIELD_SHORTCUT_KIND_SHIFT;
   u32 requestId = FIELD_SHORTCUT_ID_MASK & encodedAssignment;
   struct FieldWork *work = gFieldWork;
 
@@ -177,8 +186,7 @@ s32 Actor_UpdatePlayerControl(struct Actor *actor) {
 
   collision = 0;
   pushed = 0;
-  // Debug (FLAG_DEBUG_RESOURCE_BEEP): beep when fewer than 136 of the 512
-  // resource blocks are free.
+  // Debug (FLAG_DEBUG_RESOURCE_BEEP): beep when few resource blocks are free.
   if (gDebugMode != 0 && GameFlag_GetFar(FLAG_DEBUG_RESOURCE_BEEP) != 0) {
     s32 freeBlocks;
     s32 blockIndex;
@@ -188,7 +196,7 @@ s32 Actor_UpdatePlayerControl(struct Actor *actor) {
       if (gVramCacheBlockOwners[blockIndex] == VRAM_BLOCK_OWNER_FREE)
         freeBlocks++;
     }
-    if (freeBlocks - 136 < 0)
+    if (freeBlocks - DEBUG_RESOURCE_BEEP_FREE_BLOCKS < 0)
       Sound_PlayFar(SE_CLICK);
   }
   // Debug: holding L spins through four empty loops (512, 96, 64 and 64
@@ -336,7 +344,8 @@ s32 Actor_UpdatePlayerControl(struct Actor *actor) {
       contact.z = actor->z.fixed;
       Vector_AddPolarOffset(toFIXED(4), (u16)heading, &contact);
       pushedActor = gActors;
-      for (angleIndex = 63; angleIndex >= 0; angleIndex -= 1, pushedActor++) {
+      for (angleIndex = ACTOR_COUNT - 1; angleIndex >= 0;
+           angleIndex -= 1, pushedActor++) {
         s32 radius;
 
         radius = actor->radius - 2;
@@ -757,7 +766,7 @@ update_actor:
 
   // Turn the camera towards the pad's yaw by an eighth of the difference a
   // frame, at most WORLD_MAP_YAW_STEP_MAX, finishing the turn once
-  // the step falls under 16.
+  // the step falls under WORLD_MAP_YAW_STEP_MIN.
   perspective = gMapGridWork[0];
   targetCameraYaw = gWorldMap_KeyYaws[DPAD_INDEX(gKeysHeld)];
   yawStep = (s16)(targetCameraYaw - perspective->yaw) / 8;
@@ -765,7 +774,7 @@ update_actor:
     yawStep = WORLD_MAP_YAW_STEP_MAX;
   if (yawStep < -WORLD_MAP_YAW_STEP_MAX)
     yawStep = -WORLD_MAP_YAW_STEP_MAX;
-  if (yawStep > -16 && yawStep < 16)
+  if (yawStep > -WORLD_MAP_YAW_STEP_MIN && yawStep < WORLD_MAP_YAW_STEP_MIN)
     yawStep = targetCameraYaw - perspective->yaw;
   perspective->yaw += yawStep;
 
@@ -846,9 +855,9 @@ s32 Actor_MoveByKeys(struct Actor *actor) {
     // sixteenth of a turn, west for the sixteenth from a half turn on, up or
     // down for the rest.
     animation = ANIM_LEADER_CLIMB_EAST;
-    if ((angle & 0xf000) != 0) {
+    if (FACING_SIXTEENTH(angle) != 0) {
       animation = ANIM_LEADER_CLIMB_WEST;
-      if ((angle & 0xf000) != 0x8000)
+      if (FACING_SIXTEENTH(angle) != FACING_WEST)
         animation = ANIM_LEADER_CLIMB;
     }
     collisionFlags = 0;

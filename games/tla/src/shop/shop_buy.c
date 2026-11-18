@@ -730,18 +730,20 @@ s32 Shop_SelectQuantity(s32 minimum, s32 maximum, s32 price) {
                   DMA_COPY_WORDS(8 * TILE_SIZE_4BPP / 4), REG_DMA3);
           // Paint capacity, available stock, selection and carried items in
           // that order; each shorter prefix overwrites the previous colour.
-          QuantityBar_Fill(SHOP_STACK_LIMIT, 14, tileBuffer);
-          QuantityBar_Fill(minimum + maximum, 0, tileBuffer);
-          QuantityBar_Fill(minimum + count + 1, 10, tileBuffer);
+          QuantityBar_Fill(SHOP_STACK_LIMIT, QUANTITY_BAR_OUT_OF_REACH,
+                           tileBuffer);
+          QuantityBar_Fill(minimum + maximum, QUANTITY_BAR_OPEN, tileBuffer);
+          QuantityBar_Fill(minimum + count + 1, QUANTITY_BAR_CHOSEN,
+                           tileBuffer);
           selected = count + 1;
-          QuantityBar_Fill(minimum, 2, tileBuffer);
+          QuantityBar_Fill(minimum, QUANTITY_BAR_HELD, tileBuffer);
           VramCache_Load(resourceSlot, 8 * TILE_SIZE_4BPP, tileBuffer);
           result = selected;
           Text_DrawNumberInWindowFar(result, 2, (s32)window, QUANTITY_COUNT_X,
                                      0);
 #if LANGUAGE == LANGUAGE_JAPANESE
-          // MsgPiece, the counter after the count, written as the message after
-          // MsgCoins: the coins label below then shares its literal-pool word.
+          // The counter コ after the count (MsgPiece).
+          /* FAKEMATCH(temporary): MsgPiece counted from MsgCoins. */
           Text_DrawMessageAsTilesFar((s32)MsgCoins + 1, window,
                                      QUANTITY_PIECE_X, 0);
 #endif

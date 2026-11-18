@@ -599,6 +599,10 @@ enum ItemUseMode {
 /// Inventory icons occupy five columns in the fifteen-slot list.
 #define MENU_ITEM_GRID_COLUMNS 5
 
+/// The item and Psynergy lists' page numbers end, with their right arrow, at
+/// tile 15 of the list window's top border.
+#define PAGE_NUMBERS_RIGHT 15
+
 /// The statuses the Status screens show, as StatusScreen_BuildAvailability
 /// fills them: one byte each, nonzero while the party member has it.
 enum UnitStatus {

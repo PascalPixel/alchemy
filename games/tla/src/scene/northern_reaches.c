@@ -19,6 +19,7 @@
 #include "types.h"
 #include "field/scene_tables.h"
 #include "field/actor.h"
+#include "field/actor_view.h"
 #include "system/main_routine_work.h"
 #include "system/ram_buffer.h"
 #include "field/field_sequence_event.h"
@@ -45,69 +46,90 @@
 /// The crew has talked the ice wall over.
 #define FLAG_ICE_WALL_DISCUSSED 0x90c
 
+/// Ways in that no exit reaches.
+enum {
+  /// Unused: the party below the ice wall, drawn already gone.
+  ENTRANCE_ICE_WALL_GONE = 3,
+  /// Unused: loads the cannon aboard, hands the ship to the player and enters
+  /// again by the north way in.
+  ENTRANCE_ABOARD_SHIP_WITH_CANNON = 90
+};
+
 /// The Northern Reaches, by the rows of gActorPlacements; the rows for
 /// Jenna, Sheba and Piers go to their party slots.
 enum NorthernReachesActorId {
-  ACTOR_SHIP = ACTOR_FIRST_PLACED, ///< the ship at rest, the leader at sea
-  ACTOR_MAGMA_BALL_SHOT,           ///< the Magma Ball fired at the ice wall
-  ACTOR_BLAST, ///< a dust cloud at the bow as the cannon fires
+  /// The party's ship, placed blank; it sails off north once the wall is gone.
+  ACTOR_SHIP = ACTOR_FIRST_PLACED,
+  ACTOR_MAGMA_BALL_SHOT, ///< the Magma Ball fired at the ice wall
+  ACTOR_CANNON_SMOKE,    ///< a puff of smoke at the bow as the cannon fires
   ACTOR_KRADEN
 };
 
 struct IceShard;
-struct IceShardSpark;
-struct IceShardSprite;
 
-void NorthernReaches_ShatterIceWall(s32 unused, s32 *position,
+void NorthernReaches_ShatterIceWall(s32 unused, FIXED *position,
                                     void (*callback)(void));
 
-void EffectSprite_DrawAtWorldPosition(struct IceShardSprite *sprite,
-                                      struct IceShard *particle);
+void EffectSprite_DrawAtWorldPosition(struct EffectSprite *sprite,
+                                      struct IceShard *shard);
 
 extern s32 gNorthernReaches_ShipAtRest[];
 
-/// The Magma Ball's ice shards and the explosion's sparks, as the ice wall
-/// shatters (NorthernReaches_ShatterIceWall).
+void RisingParticles_Start(void);
+
+/// One of the ice wall's shards: its place and speed in 16.16 pixels, and how
+/// many frames it has flown.
 struct IceShard {
-  s32 x;
-  s32 y;
-  s32 z;
-  s32 velocityX;
-  s32 velocityY;
-  s32 velocityZ;
+  FIXED x;
+  FIXED y;
+  FIXED z;
+  FIXED velocityX;
+  FIXED velocityY;
+  FIXED velocityZ;
   u32 age;
 };
 
-/// A spark of the explosion: an OAM entry on the sprite list and its frames,
-/// negative while it waits to appear.
-struct IceShardSpark {
-  struct IceShardSpark *next; ///< The sprite list's link.
+/// One of the sparks the Magma Ball's explosion throws over the wall: the link
+/// the sprite list threads it by, its sprite, and its age in frames, negative
+/// while it waits to appear.
+struct ExplosionSpark {
+  struct ExplosionSpark *next;
   union SparkOam oam;
-  s32 timer;
+  s32 age;
 };
 
-/// The wall breaks into 54 shards, and 96 sparks of the explosion fly about it.
+/// The wall breaks into 54 shards, nine columns of six, and 96 sparks of the
+/// explosion fly about it.
 #define ICE_SHARD_COUNT 54
 #define SPARK_COUNT 96
+/// How long a shard flies, in frames.
+#define ICE_SHARD_FRAMES 60
+/// A spark's life in frames: the explosion sheet's eight pictures, four frames
+/// each.
+#define SPARK_FRAMES 32
+/// The sprite palette the sparks' colours are loaded into
+/// (Field_ExplosionPalette).
+#define SPARK_PALETTE 15
+/// The sparks' depth slot among the field's sprites.
+#define SPARK_DEPTH 100
+/// The buffer a sheet is unpacked into.
+#define SHEET_BUFFER_SIZE 4096
 
 /// The shattering's work: the shards' sheet, and each shard's sprite and
 /// motion.
 struct IceWallWork {
-  u8 sheet[4096];
+  u8 sheet[SHEET_BUFFER_SIZE];
   struct EffectSprite sprites[ICE_SHARD_COUNT];
-  struct IceShard particles[ICE_SHARD_COUNT];
+  struct IceShard shards[ICE_SHARD_COUNT];
 };
 
-/// Starts an actor's animation from its first frame, on map layer 1.
-s32 NorthernReaches_ResetAnimationFrame(struct Actor *actor) {
+/// The ship's script call: drops its sprite's shadow (clearing its sprite
+/// flags) and puts it on the middle layer.
+s32 NorthernReaches_DropShipShadow(struct Actor *actor) {
   ((struct FieldSprite *)actor->sprite)->flags = 0;
-  actor->layer = 1;
+  actor->layer = MAPGRID_LAYER_MIDDLE;
   return 1;
 }
-
-void Event_Start();
-void Event_End();
-void FieldCamera_WaitForArrival();
 
 const struct SceneEntrance *Scene_GetEntrances(void) { return gSceneEntrances; }
 
@@ -132,14 +154,13 @@ void NorthernReaches_ClearIceWall(void) {
 /// Kraden to see it.
 /// "Kraden, come look at this... There's a huge ice wall blocking our path..."
 void NorthernReaches_SightIceWall(void) {
-
   if (Event_GetFlag(FLAG_ICE_WALL_SIGHTED) != 0)
     return;
   Event_SetFlag(FLAG_ICE_WALL_SIGHTED);
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
   FieldEvent_SetMessageId((s32)MsgShipIceWallFirstApproach);
-  FieldActor_WaitForMove((s32)Actor_Get(ACTOR_SHIP));
+  FieldActor_WaitForMove(Actor_Get(ACTOR_SHIP));
   Actor_FaceDirectionAndWait(ACTOR_SHIP, FACING_NORTH);
   FieldEvent_Wait(5);
   // "Kraden, come look at this... There's a huge ice wall blocking our..."
@@ -152,14 +173,13 @@ void NorthernReaches_SightIceWall(void) {
 /// The crew gathers at the bow to talk the ice wall over, once
 /// (FLAG_ICE_WALL_DISCUSSED).
 void NorthernReaches_DiscussIceWall(void) {
-
   if (Event_GetFlag(FLAG_ICE_WALL_DISCUSSED) != 0)
     return;
   Event_SetFlag(FLAG_ICE_WALL_DISCUSSED);
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
   FieldEvent_SetMessageId((s32)MsgShipIceWallCrewReposition);
-  FieldActor_WaitForMove((s32)Actor_Get(ACTOR_SHIP));
+  FieldActor_WaitForMove(Actor_Get(ACTOR_SHIP));
   FieldEvent_Wait(5);
   // "Kraden, come look at this... There's a huge ice wall blocking our..."
   FieldEvent_ShowMessageThenWait(ACTOR_JENNA, 0, 5);
@@ -181,8 +201,6 @@ void NorthernReaches_DiscussIceWall(void) {
   Event_End();
 }
 
-s32 Actor_SetSpriteColorMode();
-
 /// Shrinks an actor evenly by step, as the ship sails off into the distance.
 #define Actor_ShrinkBy(actor, step)                                            \
   {                                                                            \
@@ -200,13 +218,13 @@ void NorthernReaches_FireMagmaBall(void) {
   FIXED from[3];
   struct Actor *ship;
   struct Actor *ball;
-  struct Actor *blast;
+  struct Actor *smoke;
   FIXED to[3];
   s32 count, message;
   s32 told;
 
   ball = Actor_Get(ACTOR_MAGMA_BALL_SHOT);
-  blast = Actor_Get(ACTOR_BLAST);
+  smoke = Actor_Get(ACTOR_CANNON_SMOKE);
   ship = Actor_Get(ACTOR_SHIP);
   count = Event_GetFlag(FLAG_ICE_WALL_SHATTERED);
   if (count != 0)
@@ -255,11 +273,11 @@ void NorthernReaches_FireMagmaBall(void) {
     Actor_WalkBy(ACTOR_SHIP, 0, 16);
     Event_PlaySound(SE_CLATTER);
     FieldEvent_Wait(4);
-    blast->scaleX = FIXED_ONE * 3 / 2;
-    blast->scaleY = FIXED_ONE * 3 / 2;
-    Actor_SetSpriteColorMode(Actor_Get(ACTOR_BLAST), SPRITE_COLOR_GREY);
-    Actor_SetPosition(ACTOR_BLAST, 464, 200);
-    Actor_SetAnimation(ACTOR_BLAST, 1);
+    smoke->scaleX = FIXED_ONE * 3 / 2;
+    smoke->scaleY = FIXED_ONE * 3 / 2;
+    Actor_SetSpriteColorMode(Actor_Get(ACTOR_CANNON_SMOKE), SPRITE_COLOR_GREY);
+    Actor_SetPosition(ACTOR_CANNON_SMOKE, 464, 200);
+    Actor_SetAnimation(ACTOR_CANNON_SMOKE, 1);
     ball->scaleX = FIXED_ONE / 2;
     ball->scaleY = FIXED_ONE / 2;
     Actor_SetSpeed(ACTOR_MAGMA_BALL_SHOT, 2);
@@ -282,7 +300,7 @@ void NorthernReaches_FireMagmaBall(void) {
     to[2] = toFIXED(80);
     NorthernReaches_ShatterIceWall((s32)from, to, NorthernReaches_ClearIceWall);
     FieldEvent_Wait(20);
-    Actor_SetPosition(ACTOR_BLAST, 0, 0);
+    Actor_SetPosition(ACTOR_CANNON_SMOKE, 0, 0);
     Actor_SetPosition(ACTOR_MAGMA_BALL_SHOT, 0, 0);
     gFieldWork->transitionFrames = 100;
     PaletteFade_ApplyTarget(PALETTE_TINT_NONE, PALETTES_ALL);
@@ -343,7 +361,7 @@ s32 Scene_Initialize(void) {
   state = &gMainRoutineWork;
   Actor_Get(state->leaderActorId)->priorityFlags |=
       ACTOR_PRIORITY_IGNORES_RISES;
-  if (state->entrance == 90) {
+  if (state->entrance == ENTRANCE_ABOARD_SHIP_WITH_CANNON) {
     Event_SetFlag(FLAG_SHIP_CARRIES_CANNON);
     state->ownerOverride = 1;
     Event_SetDestination(SCENE_NORTHERN_REACHES,
@@ -354,28 +372,29 @@ s32 Scene_Initialize(void) {
 }
 
 s32 Scene_PrepareMap(void) {
-  if (gMainRoutineWork.entrance == 3)
+  if (gMainRoutineWork.entrance == ENTRANCE_ICE_WALL_GONE)
     NorthernReaches_ClearIceWall();
   if (Event_GetFlag(FLAG_ICE_WALL_SHATTERED))
     NorthernReaches_ClearIceWall();
   return 0;
 }
 
-void BattleEffect_StepVector3(struct IceShard *particle, s32 damping,
-                              s32 gravity);
+void BattleEffect_StepVector3(struct IceShard *shard, s32 damping, s32 gravity);
 
-/// The Magma Ball's flight and the wall's ice shards
-/// (ResourceId_FieldEffectIceShard); `callback` draws the wall gone.
-void NorthernReaches_ShatterIceWall(s32 unused, s32 *position,
+/// The Magma Ball's explosion over the ice wall: sparks fly, the screen fades
+/// to white, `callback` draws the wall gone and its shards fly apart from
+/// `position`.
+void NorthernReaches_ShatterIceWall(s32 unused, FIXED *position,
                                     void (*callback)(void)) {
   struct IceWallWork *work;
-  struct IceShard *particle;
+  struct IceShard *shard;
   struct EffectSprite *sprite;
   struct EffectSprite *flySprite;
-  struct IceShardSpark *sparks;
-  struct IceShardSpark *spark;
+  struct ExplosionSpark *sparks;
+  struct ExplosionSpark *spark;
   s32 *timer;
-  // Unused: gives the stack frame its 4 bytes.
+  /* LEFTOVER(frame): an unused local the ROM's frame reserves and never
+   * touches. */
   u8 frameSlot[4];
   void *sheet;
   s32 i, frame, column, entry, sparkEntry, tiles, flying, sparkTiles;
@@ -387,43 +406,43 @@ void NorthernReaches_ShatterIceWall(s32 unused, s32 *position,
   entry = VramCache_FindFreeEntry();
   tiles = VramCache_Load(entry, 1280, work);
   i = 0;
-  particle = work->particles;
+  shard = work->shards;
   sprite = work->sprites;
   for (; i < ICE_SHARD_COUNT; i++) {
     EffectSprite_Init(sprite, 0, 0, OBJ_SIZE_16X16, (i & 3) * 8 + tiles);
-    sprite->depth = 250;
+    sprite->depth = EFFECT_SPRITE_FRONT_DEPTH;
     sprite->oam.priority = 0;
     sprite->oam.fullColor = 1;
     sprite->oam.palette = 0;
     column = i / 6;
-    particle->x = position[0] + FIELD_CELL_ORIGIN(column);
-    particle->y = position[1] - FIELD_CELL_ORIGIN(i % 6);
+    shard->x = position[0] + FIELD_CELL_ORIGIN(column);
+    shard->y = position[1] - FIELD_CELL_ORIGIN(i % 6);
     column -= 4;
     sprite++;
-    particle->z = position[2];
-    particle->velocityX = (Random16() * 3 >> 1) * column;
-    particle->velocityY = (Random16() << 2) + toFIXED(2);
-    particle->velocityZ = 0;
-    particle->age = 0;
-    particle++;
+    shard->z = position[2];
+    shard->velocityX = (Random16() * 3 >> 1) * column;
+    shard->velocityY = (Random16() << 2) + toFIXED(2);
+    shard->velocityZ = 0;
+    shard->age = 0;
+    shard++;
   }
-  sparks = Heap_AllocEwram(SPARK_COUNT * sizeof(struct IceShardSpark));
+  sparks = Heap_AllocEwram(SPARK_COUNT * sizeof(struct ExplosionSpark));
   /* FAKEMATCH(temporary): the size held in the local that then takes the
    * buffer. */
-  sheet = (void *)4096;
+  sheet = (void *)SHEET_BUFFER_SIZE;
   sheet = Heap_Alloc((s32)sheet);
   Decompress_TaggedLz(Resource_GetTableEntry(RESOURCE_FIELD_EFFECT_EXPLOSION),
                       sheet);
   sparkEntry = VramCache_FindFreeEntry();
   sparkTiles = VramCache_Load(sparkEntry, 1024, sheet);
   Heap_Release(sheet);
-  timer = &sparks->timer;
+  timer = &sparks->age;
   for (i = SPARK_COUNT - 1; i >= 0; i--) {
     *timer = -(Random16() << 5 >> 16);
     timer += 4;
   }
-  Dma_Set(Field_ExplosionPalette, (void *)&OBJ_PLTT_COLOR(15, 0),
-          DMA_COPY_HALFWORDS(16), REG_DMA3);
+  Dma_Set(Field_ExplosionPalette, (void *)&OBJ_PLTT_COLOR(SPARK_PALETTE, 0),
+          DMA_COPY_HALFWORDS(PALETTE_COLORS), REG_DMA3);
   for (frame = 0; frame <= 149; frame++) {
     if ((frame & 31) == 0) {
       Event_PlaySound(SE_CRASH);
@@ -443,35 +462,35 @@ void NorthernReaches_ShatterIceWall(s32 unused, s32 *position,
       flying = 1;
     }
     if (flying != 0) {
-      particle = work->particles;
+      shard = work->shards;
       flySprite = work->sprites;
       for (i = ICE_SHARD_COUNT - 1; i >= 0; i--) {
-        if (particle->age < 60) {
-          EffectSprite_DrawAtWorldPosition(flySprite, particle);
-          BattleEffect_StepVector3(particle, 63, -toFIXED(3) / 16);
-          particle->age++;
+        if (shard->age < ICE_SHARD_FRAMES) {
+          EffectSprite_DrawAtWorldPosition(flySprite, shard);
+          BattleEffect_StepVector3(shard, 63, -toFIXED(3) / 16);
+          shard->age++;
         }
         flySprite++;
-        particle++;
+        shard++;
       }
     }
     spark = sparks;
     do {
-      if (spark->timer == 0) {
+      if (spark->age == 0) {
         spark->oam.words.first = OBJ_SIZE_16X16;
         spark->oam.words.second = 0;
         spark->oam.oam.x = (Random16() << 7 >> 16) + 52;
         spark->oam.oam.y = (Random16() << 6 >> 16) + 16;
-        spark->oam.oam.palette = 15;
+        spark->oam.oam.palette = SPARK_PALETTE;
         spark->oam.oam.priority = 0;
       }
-      if (spark->timer >= 0) {
-        spark->oam.oam.index = sparkTiles + (spark->timer >> 2) * 4;
-        Oam_AddSpriteAtDepthClamped(spark, 100);
+      if (spark->age >= 0) {
+        spark->oam.oam.index = sparkTiles + (spark->age >> 2) * 4;
+        Oam_AddSpriteAtDepthClamped(spark, SPARK_DEPTH);
       }
-      spark->timer++;
-      if (spark->timer > 31) {
-        spark->timer = -(Random_Below(7));
+      spark->age++;
+      if (spark->age >= SPARK_FRAMES) {
+        spark->age = -(Random_Below(7));
       }
       spark++;
     } while ((s32)spark <= (s32)&sparks[SPARK_COUNT - 1]);
@@ -486,7 +505,7 @@ void NorthernReaches_ShatterIceWall(s32 unused, s32 *position,
 }
 
 s32 gNorthernReaches_ShipAtRest[] = {
-    SC_CALL((s32)NorthernReaches_ResetAnimationFrame),
+    SC_CALL((s32)NorthernReaches_DropShipShadow),
     SC_ANIMATION(7),
     SC_END,
 };
@@ -494,14 +513,17 @@ s32 gNorthernReaches_ShipAtRest[] = {
 struct SceneEntrance gSceneEntrances[] = {
     {0, CONDITION_ALWAYS, 440, 0, 520, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
     {2, CONDITION_ALWAYS, 470, 0, 192, FACING_NORTH, 0, -1, -1, -1, -1, 0},
-    {3, CONDITION_ALWAYS, 470, 0, 192, FACING_NORTH, 0, -1, -1, -1, -1, 0},
+    {ENTRANCE_ICE_WALL_GONE, CONDITION_ALWAYS, 470, 0, 192, FACING_NORTH, 0, -1,
+     -1, -1, -1, 0},
     {SCENE_TABLE_END},
 };
 
 u32 gSceneExits[] = {
     SCENE_EXITS(NorthernReaches),
-    SCENE_EXIT_UNLESS(1, WorldMap, 60, EXIT_FLAG_NONE),
-    SCENE_EXIT_UNLESS(4, WorldMap, 61, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(NORTHERN_REACHES_TO_WORLD_MAP_SOUTH, WorldMap,
+                      WORLD_MAP_FROM_NORTHERN_REACHES_SOUTH, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(NORTHERN_REACHES_TO_WORLD_MAP_NORTH, WorldMap,
+                      WORLD_MAP_FROM_NORTHERN_REACHES_NORTH, EXIT_FLAG_NONE),
     SCENE_EXITS_END,
 };
 
@@ -525,8 +547,10 @@ struct ActorPlacement gActorPlacements[] = {
 };
 
 struct Trigger gSceneEvents[] = {
-    {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
-    {TRIGGER_EXIT, 4, CONDITION_ALWAYS, 4},
+    {TRIGGER_EXIT, NORTHERN_REACHES_TO_WORLD_MAP_SOUTH, CONDITION_ALWAYS,
+     NORTHERN_REACHES_TO_WORLD_MAP_SOUTH},
+    {TRIGGER_EXIT, NORTHERN_REACHES_TO_WORLD_MAP_NORTH, CONDITION_ALWAYS,
+     NORTHERN_REACHES_TO_WORLD_MAP_NORTH},
     {TRIGGER_STEP, 20, IF_FLAG_SET(FLAG_SHIP_CARRIES_CANNON),
      EVENT(NorthernReaches_DiscussIceWall)},
     {TRIGGER_STEP, 21, IF_FLAG_SET(FLAG_SHIP_CARRIES_CANNON),

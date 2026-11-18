@@ -1686,9 +1686,8 @@ s32 PushTarget_FillFootprint(s32 id) {
 
   if ((u16)shape != gPushKinds[(u16)i]) {
     do {
-      /* FAKEMATCH(temporary): the step taken in the high halfword, as the push
-       * footprints' copies of this search have it. */
-      j = (u16)((i + 1) * 65536 >> 16);
+      // The kind's index steps as a 16.16 number.
+      j = (u16)FIXEDtoINT(INTtoFIXED(i) + INTtoFIXED(1));
       i = j;
     } while (j <= PUSH_KINDS - 1 && (u16)shape != gPushKinds[j]);
   }

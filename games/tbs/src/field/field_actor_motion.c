@@ -65,6 +65,16 @@ s32 Actor_IsTargetUnset(struct Actor *actor) {
   return 1;
 }
 
+/// The highest script word run as a command, an index of
+/// gActorScript_CommandTable; a larger one is stepped over.
+#define SCRIPT_COMMAND_MAX 63
+/// A floating actor's bob, one cycle of gActorScript_CycleTable over this many
+/// frames; its rise and fall each frame is the table's value times its gravity
+/// over FLOAT_DIVISOR, or FLOAT_HIGH_DIVISOR with ACTOR_FLOATS_HIGH.
+#define FLOAT_CYCLE_FRAMES 64
+#define FLOAT_DIVISOR 64
+#define FLOAT_HIGH_DIVISOR 16
+
 static __inline__ s32 Actor_Square(s32 value) { return value * value; }
 
 /// Advances all 64 actors by one frame, as Actor_UpdateAll does for the eight
@@ -123,7 +133,7 @@ void Actor_UpdateAllThumb(void) {
 #else
         command = script->word[actor->scriptCursor];
 #endif
-        if (command <= 63) {
+        if (command <= SCRIPT_COMMAND_MAX) {
           if (gActorScript_CommandTable[command]((struct Actor *)actor) == 0)
             break;
         } else {
@@ -294,13 +304,13 @@ void Actor_UpdateAllThumb(void) {
         // Float: bob up and down on a triangle wave (ACTOR_FLOATS_HIGH makes it
         // bigger).
         if ((actor->motionFlags & ACTOR_FLOATS) != 0) {
-          phase = (actor->bounce & 0x3f);
+          phase = actor->bounce & (FLOAT_CYCLE_FRAMES - 1);
           if ((actor->motionFlags & ACTOR_FLOATS_HIGH) != 0)
-            actor->velocityY =
-                gActorScript_CycleTable[phase >> 1] * actor->gravity / 16;
+            actor->velocityY = gActorScript_CycleTable[phase >> 1] *
+                               actor->gravity / FLOAT_HIGH_DIVISOR;
           else
-            actor->velocityY =
-                gActorScript_CycleTable[phase >> 1] * actor->gravity / 64;
+            actor->velocityY = gActorScript_CycleTable[phase >> 1] *
+                               actor->gravity / FLOAT_DIVISOR;
           actor->bounce++;
         }
       }
@@ -361,9 +371,8 @@ void Actor_UpdateAllThumb(void) {
 
     SET_ACTOR_POSITION(actor, x, y, z);
 
-    // Turn to face the direction of travel, at most a sixteenth of a turn
-    // (TRIG_TURN / 16) a frame.
-    if ((actor->steeringFlags & 1) != 0) {
+    // Turn to face the direction of travel, at most FACING_STEP a frame.
+    if ((actor->steeringFlags & ACTOR_FACES_MOTION) != 0) {
       x = actor->velocityX;
       z = actor->velocityZ;
       if (x != 0 || z != 0) {
@@ -374,7 +383,7 @@ void Actor_UpdateAllThumb(void) {
         maximumFacingStep = FACING_STEP;
         if (facingStep > maximumFacingStep)
           facingStep = maximumFacingStep;
-        maximumFacingStep = -TRIG_TURN / 16;
+        maximumFacingStep = -FACING_STEP;
         if (facingStep < maximumFacingStep)
           facingStep = maximumFacingStep;
         actor->facing += facingStep;
@@ -476,9 +485,9 @@ UNUSED void Actor_RunUpdateAllFromHeap(void) {
   Heap_Release(updateActors);
 }
 
-/// Advances the first 14 actors' motion by one frame, without running their
-/// scripts: steering towards a target or braking, gravity and bouncing,
-/// arrival, and turning to face the direction of travel.
+/// Advances the battle's actors by one frame, without running their scripts:
+/// steering towards a target or braking, gravity and bouncing, arrival, and
+/// turning to face the direction of travel.
 void Actor_UpdateAllMotion(void) {
   struct Actor *actor;
   s32 actorsLeft;
@@ -493,10 +502,10 @@ void Actor_UpdateAllMotion(void) {
   FIXED ratio;
   s32 facingStep;
 
-  // Fourteen actors, as many as the battle has units (UNIT_MAX in
-  // battle/battle_objects.c).
+  // The first UNIT_MAX actors, as a battle makes one for each unit
+  // (BattleObject_Make).
   actor = gActors;
-  for (actorsLeft = 13; actorsLeft >= 0; actorsLeft--, actor++) {
+  for (actorsLeft = UNIT_MAX - 1; actorsLeft >= 0; actorsLeft--, actor++) {
     if (actor->script == 0)
       continue;
     x = actor->x.fixed;
@@ -615,19 +624,24 @@ void Actor_UpdateAllMotion(void) {
       actor->arrivalAxis = 0;
     }
     SET_ACTOR_POSITION(actor, x, y, z);
-    // Turn to face the direction of travel, at most a sixteenth of a turn a
-    // frame, the shorter way round.
-    if (actor->steeringFlags & 1) {
+    // Turn to face the direction of travel, at most FACING_STEP a frame, the
+    // shorter way round.
+    if (actor->steeringFlags & ACTOR_FACES_MOTION) {
       x = actor->velocityX;
       z = actor->velocityZ;
       if (x != 0 || z != 0) {
         facingStep = (s16)(Trig_Atan(z, x) - actor->facing);
-        if (facingStep > TRIG_TURN / 16)
+        if (facingStep > FACING_STEP)
           facingStep = FACING_STEP;
-        if (facingStep < -TRIG_TURN / 16)
-          facingStep = -TRIG_TURN / 16;
+        if (facingStep < -FACING_STEP)
+          facingStep = -FACING_STEP;
         actor->facing += facingStep;
       }
     }
   }
 }
+
+#undef SCRIPT_COMMAND_MAX
+#undef FLOAT_CYCLE_FRAMES
+#undef FLOAT_DIVISOR
+#undef FLOAT_HIGH_DIVISOR

@@ -9,6 +9,10 @@
 #define REG_DISPCNT (*(volatile u16 *)0x04000000)  ///< mode, layers, windows
 #define REG_DISPSTAT (*(volatile u16 *)0x04000004) ///< blank flags and IRQs
 #define REG_VCOUNT (*(volatile u16 *)0x04000006)   ///< line being drawn, 0..227
+/// The lines REG_VCOUNT counts through in a frame: the DISPLAY_HEIGHT drawn
+/// and those of VBlank. A line's HBlank comes before the next line is drawn,
+/// the last line's before line 0.
+#define DISPLAY_TOTAL_LINES 228
 // Each background's control: its priority, tile and map blocks, colours and
 // size, composed from the BGCNT_ values below.
 #define REG_BG1CNT (*(volatile u16 *)0x0400000a) ///< BG1
@@ -44,6 +48,8 @@ enum DisplayControl {
   DISPCNT_WIN1_ON = 0x4000,
   DISPCNT_OBJWIN_ON = 0x8000 ///< the sprite window
 };
+/// REG_DISPCNT's three video mode bits, which hold a DISPCNT_MODE_ value.
+#define DISPCNT_MODE_MASK 0x0007
 // The text backgrounds' scroll offsets, write-only: the map pixel, 0 to 511,
 // at the screen's left edge (HOFS) or top edge (VOFS).
 #define REG_BG1HOFS (*(volatile u16 *)0x04000014) ///< BG1, horizontal
@@ -150,6 +156,8 @@ enum DisplayControl {
 /// of BLEND_WEIGHT_MAX.
 #define BLEND_ALPHA(top, bottom) ((top) | ((bottom) << 8))
 #define REG_BLDY (*(volatile u16 *)0x04000054) ///< fade level, 0 to 16
+/// REG_BLDY's whole fade: the targets drawn all white, or all black.
+#define BLEND_FADE_MAX 16
 
 /// Screen block 7: BG2's affine map of a battle effect's canvas, a byte a
 /// tile.
@@ -281,6 +289,12 @@ enum DisplayControl {
 #define DMA_START_SPECIAL 0x3000 ///< channels 1 and 2: a sound FIFO's request
 #define DMA_INTR_ENABLE 0x4000   ///< an interrupt when it ends
 #define DMA_ENABLE 0x8000        ///< arms the channel
+/// Where a DMA channel's control halfword (the DMA_ flags) sits in its 32-bit
+/// count word.
+#define DMA_CONTROL_SHIFT 16
+/// DMA_ENABLE in a channel's 32-bit count and control word, which the hardware
+/// clears once the transfer is done.
+#define DMA_BUSY ((u32)DMA_ENABLE << 16)
 /// A DMA control's start timing (bits 12 and 13), cartridge request (bit 11)
 /// and repeat (bit 9): the bits cleared before a channel is stopped.
 #define DMA_START_TIMING_DRQ_REPEAT                                            \
@@ -295,14 +309,21 @@ enum DisplayControl {
 #define DMA_FILL_WORDS(n) ((DMA_ENABLE | DMA_32BIT | DMA_SRC_FIXED) << 16 | (n))
 #define DMA_FILL_HALFWORDS(n) ((DMA_ENABLE | DMA_SRC_FIXED) << 16 | (n))
 #define DMA_COPY_HALFWORDS(n) (DMA_ENABLE << 16 | (n))
+/// n halfwords copied from the last back to the first, source and destination
+/// stepping down, so that a run can move up over itself.
+#define DMA_COPY_HALFWORDS_DOWN(n)                                             \
+  ((DMA_ENABLE | DMA_SRC_DEC | DMA_DEST_DEC) << 16 | (n))
 /// A halfword each HBlank, as for a scroll or a window edge.
 #define DMA_HBLANK_HALFWORD_PER_LINE                                           \
   ((DMA_ENABLE | DMA_START_HBLANK | DMA_REPEAT | DMA_DEST_RELOAD) << 16 | 1)
-/// A word each HBlank, as for a pair of registers written together.
-#define DMA_HBLANK_WORD_PER_LINE                                               \
+/// n words each HBlank, as for the affine registers of a background written
+/// together.
+#define DMA_HBLANK_WORDS_PER_LINE(n)                                           \
   ((DMA_ENABLE | DMA_START_HBLANK | DMA_REPEAT | DMA_DEST_RELOAD | DMA_32BIT)  \
        << 16 |                                                                 \
-   1)
+   (n))
+/// A word each HBlank, as for a pair of registers written together.
+#define DMA_HBLANK_WORD_PER_LINE DMA_HBLANK_WORDS_PER_LINE(1)
 
 /// BIOS CpuSet control flags, above its count.
 #define CPU_SET_SRC_FIXED 0x01000000
@@ -386,8 +407,8 @@ enum KeyMask {
 #define REG_IE (*(volatile u16 *)0x04000200) ///< the interrupts enabled
 #define REG_IF (*(volatile u16 *)0x04000202) ///< pending; a 1 written clears
 #define REG_WAITCNT (*(volatile u16 *)0x04000204) ///< cartridge wait states
-/// WAITCNT's slowest SRAM wait (bits 1 and 0), 8 cycles, pret's
-/// WAITCNT_SRAM_8: the wait the flash routines read the chip with;
+/// WAITCNT's slowest SRAM wait (bits 1 and 0), 8 cycles: the wait the flash
+/// routines read the chip with;
 /// programming and erasing use the chip's wait[0], then restore it.
 #define WAITCNT_SRAM_SLOWEST 0x0003
 /// WAITCNT's SRAM wait bits.
@@ -403,7 +424,7 @@ enum KeyMask {
 /// the power-on set-up.
 #define WAITCNT_GAME 0x4014
 
-// From The Broken Seal's io_reg.h: the same registers, bits and sizes.
+// Display status bits and the screen's size.
 #define DISPSTAT_VBLANK_INTR 0x0008 ///< at the start of each VBlank
 #define DISPSTAT_HBLANK_INTR 0x0010 ///< at the end of each line
 #define DISPSTAT_VCOUNT_INTR 0x0020 ///< on the DISPSTAT_VCOUNT_LINE line
@@ -430,6 +451,8 @@ enum KeyMask {
 #define BG_SCREEN_SIZE 2048 ///< bytes in a screen block, 2 KB
 /// Tiles in a row of a screen block, whose map is 32 tiles square.
 #define BG_SCREEN_WIDTH 32
+/// The bytes of one row of a text background map, 32 entries.
+#define MAP_ROW_BYTES (BG_SCREEN_WIDTH * 2)
 /// Two screen entries in a word, tiles n and n + 1 side by side, for numbering
 /// a map's tiles two at a time; adding TILE_PAIR_STEP moves both on by two.
 #define TILE_PAIR(n) ((u32)((n) + 1) << 16 | (n))
@@ -449,6 +472,9 @@ enum KeyMask {
 /// The multiplayer id (SIO_ID) in a SIOCNT value, taken out by shifts.
 #define SIO_ID_OF(control) (((control) << 26) >> 30)
 #define SIO_ERROR 0x0040 ///< multiplayer: the last transfer failed
+/// The SIO_ERROR bit of a SIOCNT value, taken out by shifts as SIO_ID_OF takes
+/// the id.
+#define SIO_ERROR_OF(control) (((control) << 25) >> 31)
 /// OAM's size in bytes: 128 sprites of 8 bytes.
 #define OAM_SIZE 1024
 
@@ -487,6 +513,23 @@ enum ObjMode {
 /// behind, and its 16-colour palette.
 #define OBJ_PRIORITY(n) ((n) << 10)
 #define OBJ_PALETTE(n) ((n) << 12)
+/// An affine sprite's matrix number, attribute 1's bits 9 to 13, in the attr01
+/// word.
+#define OBJ_MATRIX(n) ((n) << 25)
+/// An affine parameter in the high half of an OamWords entry's attr2 word: the
+/// entries 4n to 4n + 3 hold affine matrix n's four.
+#define OBJ_AFFINE_PARAMETER(value) ((value) << 16)
+/// Attribute 1's nine bits of x: a sprite left of the screen is at 512 less
+/// its distance.
+#define OBJ_X_MASK 0x1ff
+/// Attribute 0's eight bits of y: a sprite's y wraps round at 256 lines.
+#define OBJ_Y_MASK 0xff
+/// A sprite's place in its attr01 word: x in attribute 1's nine bits and y in
+/// attribute 0's eight, each wrapped as the screen wraps them.
+#define OBJ_POSITION(x, y) (OBJ_X((x) & OBJ_X_MASK) | ((y) & OBJ_Y_MASK))
+/// Attribute 2's ten bits of tile number, counted in 4-bit tiles from the
+/// start of sprite VRAM.
+#define OBJ_TILE_MASK 0x3ff
 /// Requires all ten keys together to prevent the reset chord retriggering it.
 #define KEYCNT_DISARMED 0xc3ff
 

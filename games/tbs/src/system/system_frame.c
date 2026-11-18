@@ -4,12 +4,26 @@
 
 #include "system_internal.h"
 
+/// The word a soft reset leaves in gCartridgeResetMarker.
+#define CARTRIDGE_RESET_MARK 0x19670704
+
+/// DISPSTAT's low byte: its flags and interrupt enables, without the VCount
+/// line above them.
+#define DISPSTAT_FLAGS 0xff
+
+/// The lines REG_VCOUNT counts in VBlank, after the DISPLAY_HEIGHT drawn: it
+/// runs to 227.
+#define VBLANK_LINES (DISPLAY_TOTAL_LINES - DISPLAY_HEIGHT)
+
+/// Every bit of a key word, as KEYINPUT's 16 bits.
+#define KEY_WORD_BITS 0xffff
+
 /// Restarts the game from the cartridge entry point. The marker word it leaves
 /// in IWRAM is cleared again by System_Initialize; nothing else reads it.
 static __inline__ void System_SoftReset(void) {
   s32 (*reset)(void) = (s32 (*)(void))Cart_Start;
 
-  gCartridgeResetMarker = 0x19670704;
+  gCartridgeResetMarker = CARTRIDGE_RESET_MARK;
   Io_Write16(0, &REG_IME);
   reset();
 }
@@ -46,8 +60,8 @@ void Irq_SetHandler(u32 irq, s32 vcount, InterruptHandler handler) {
 
       if (irq == IRQ_VCOUNT) {
         enable |= DISPSTAT_VCOUNT_LINE(vcount);
-        // Keep only the low byte, so the old line goes too
-        keep &= 0xff;
+        // The old line goes too.
+        keep &= DISPSTAT_FLAGS;
       }
       stat = REG_DISPSTAT & keep;
       if (handler != 0)
@@ -114,7 +128,7 @@ void wait(s32 frames) {
       if (line >= DISPLAY_HEIGHT)
         line -= DISPLAY_HEIGHT;
       else
-        line += 68;
+        line += VBLANK_LINES;
       line += (gFrameVBlanks - 1) << 8;
       if (gCpuLoadTimer == 0)
         gCpuLoadPeak = 0;
@@ -250,7 +264,7 @@ void wait(s32 frames) {
           copySize = &gSavedStackSize;
         Dma_Set(gSavedStack, base, DMA_COPY_WORDS(*copySize >> 2), REG_DMA3);
       }
-      while (DMA3->control & (DMA_ENABLE << 16))
+      while (DMA3->control & DMA_BUSY)
         ;
       gSavedStackSize = 0;
     }
@@ -300,7 +314,7 @@ void Input_UpdateKeyRepeatAndDirection(void) {
     switch (directionCount) {
     default:
       gKeysDirection = KEYS_HORIZONTAL;
-      mask = 0xffff & ~KEYS_DPAD;
+      mask = KEY_WORD_BITS & ~KEYS_DPAD;
       gKeysRepeatDirected &= mask;
       break;
     case 0:
@@ -312,14 +326,14 @@ void Input_UpdateKeyRepeatAndDirection(void) {
     case 2:
       if ((gKeysDirection & gKeysRepeatDirected) == 0)
         gKeysDirection = KEYS_HORIZONTAL;
-      gKeysRepeatDirected &= gKeysDirection ^ 0xffff;
+      gKeysRepeatDirected &= gKeysDirection ^ KEY_WORD_BITS;
       break;
     case 3:
       if (gKeysDirection & KEYS_HORIZONTAL)
         axis = KEYS_HORIZONTAL;
       if (gKeysDirection & KEYS_VERTICAL)
         axis = KEYS_VERTICAL;
-      mask = 0xffff ^ axis;
+      mask = KEY_WORD_BITS ^ axis;
       gKeysDirection = keys & mask;
       gKeysRepeatDirected &= mask;
       break;
@@ -385,7 +399,7 @@ void System_VBlankHandler(void) {
   if (keys == 0) {
     gKeyRepeatTimer = INPUT_KEY_REPEAT_FIRST;
     gKeysRepeat = keys;
-  } else if (gKeysHeld & (gKeysHeldAtVBlank ^ 0xffff)) {
+  } else if (gKeysHeld & (gKeysHeldAtVBlank ^ KEY_WORD_BITS)) {
     gKeyRepeatTimer = -1;
     gKeysRepeat = keys;
   } else if (gKeyRepeatTimer > 0) {
@@ -427,6 +441,10 @@ void Input_HandleKeyInterrupt(void) {
 }
 
 #undef VBlankIntrWait
+#undef CARTRIDGE_RESET_MARK
+#undef DISPSTAT_FLAGS
+#undef VBLANK_LINES
+#undef KEY_WORD_BITS
 #undef INPUT_KEY_REPEAT_FIRST
 #undef INPUT_KEY_REPEAT_NEXT
 #undef SOUND_REVERB_CODE_COUNT

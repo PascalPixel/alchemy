@@ -23,7 +23,8 @@ struct StripQuad;
 void BattleEffect_RunHeavyBlow(struct BattleEffectParams *args, s32 mode) {
   struct BattleEffectWork *work;
   void *canvas;
-  // Unused: blit[1] gives the stack frame its 4 bytes.
+  /* LEFTOVER(frame): blit[1], the pair's idle second blitter, which the ROM's
+   * frame reserves and never touches; as one DrawRectangle. */
   DrawRectangle blit[2];
   s32 frame;
   void *caster;
@@ -462,7 +463,8 @@ void BattleEffect_RunWyrdCurse(struct BattleEffectParams *args) {
   struct ModelTexture texture;
   struct ScreenPoint screen;
   void *canvas;
-  // Unused: only draw[0] is read; draw[1] gives the stack frame its size.
+  /* LEFTOVER(frame): draw[1], the pair's idle second blitter, which the ROM's
+   * frame reserves and never touches; as one DrawRectangle. */
   DrawRectangle draw[2];
   s32 frame;
   s32 zero;
@@ -902,6 +904,8 @@ void BattleEffect_RunRadiantFire(struct BattleEffectParams *args) {
 void BattleEffect_RunHurricane(struct BattleEffectParams *args) {
   struct BattleEffectWork *work;
   void *canvas;
+  /* LEFTOVER(frame): blit[1], the pair's idle second blitter, which the ROM's
+   * frame reserves and never touches; as one DrawRectangle. */
   DrawRectangle blit[2];
   struct ScreenPoint position;
   struct Particle *streak;

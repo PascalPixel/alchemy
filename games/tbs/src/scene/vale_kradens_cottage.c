@@ -682,9 +682,12 @@ static void ValeKradensCottage_MeetSaturosAndMenardi(void) {
   Actor_SetAnimationAndWait(ACTOR_MENARDI, ANIM_SHAKE_HEAD);
   Event_OpenMessage(SPEAKER_PORTRAIT_LEFT | ACTOR_MENARDI, 0);
 
-  if (Event_AskYesNoWithActorAnimation(0, 0) == 0) {
+  // "Were you eavesdropping on our conversation?"
+  if (Event_AskYesNoWithActorAnimation(ACTOR_PARTY_LEADER, 0) == 0) {
+    // "Oh ho! Well... I can't permit you to continue your spying."
     Event_SetMessageId(strangersMessage + 10);
   } else {
+    // "Hmph! I guess that I should take you at your word..."
     Event_SetMessageId(strangersMessage + 11);
   }
 

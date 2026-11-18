@@ -50,9 +50,9 @@ struct SandWork {
 s32 MapGrid_IsClimbableCell(s32 x, s32 z, s32 layer);
 
 /// Task of the Sand: ends it (cue ABILITY_SAND | ACT_PACKED) when the leader,
-/// not blocked by another actor, stands off sand or on the Alhafran Cave's
-/// upper level, or while it climbs as sand it leaves a climbable cell or faces
-/// one that is not.
+/// not blocked by another actor, stands off sand or on a scene's upper level
+/// (gMainRoutineWork.onUpperLevel), or while it climbs as sand it leaves a
+/// climbable cell or faces one that is not.
 void FieldPsynergy_WatchSandGround(void) {
   struct FieldWork *event = Ram_HeapSlots->fieldWork;
   struct MainRoutineWork *party = &gMainRoutineWork;
@@ -335,6 +335,8 @@ void FieldPsynergy_EndSand(void) {
   FieldCamera_MoveWithinMapBounds(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0);
   motionFlags = &owner->motionFlags;
   *motionFlags = 0;
+  /* FAKEMATCH(temporary): the mask held in a local across the two calls; as
+   * mask = OAM_BELOW_SHAPE_OR_SIZE after them. */
   mask = OAM_BELOW_SHAPE_OR_SIZE;
   Actor_SetPositionAndResetMotionFar(
       owner, owner->x.fixed, owner->y.fixed + toFIXED(10), owner->z.fixed);

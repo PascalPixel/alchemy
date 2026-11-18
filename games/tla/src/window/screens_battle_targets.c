@@ -26,6 +26,10 @@
 #endif
 
 #if TLA_PATCH_2
+// These editions size the "Set Djinni" window by the cartridge's language as
+// it runs: wider for Italian and Spanish.
+#define TARGET_SET_DJINNI_WIDTH_ITALIAN 10
+#define TARGET_SET_DJINNI_WIDTH_SPANISH 11
 extern const u8 gOwnerStatus_KpString[];
 extern const u8 gOwnerStatus_PvString[];
 s32 System_GetLanguage(void);
@@ -201,7 +205,7 @@ s32 BattleTarget_RunSelection(s32 selection, s32 mode, u32 spread, u32 kind) {
               candidate->haunt != 0)
             found = 1;
           break;
-        case 8:
+        case TARGET_HINT_LAST_TARGET:
           if (BATTLE_MENU_WORK->lastTarget == candidateIds[j])
             found = 1;
           break;
@@ -344,17 +348,24 @@ s32 BattleTarget_RunSelection(s32 selection, s32 mode, u32 spread, u32 kind) {
 
             helpColumn = anchor - 4;
             if (System_GetLanguage() == CARTRIDGE_LANGUAGE_ITALIAN) {
-              if (anchor + 6 > (DISPLAY_TILE_WIDTH - 1))
-                helpColumn = 20;
-              conditionWindow = Window_Create(helpColumn, 8, 10, 3, 6);
+              if (anchor + TARGET_SET_DJINNI_WIDTH_ITALIAN - 4 >
+                  DISPLAY_TILE_WIDTH - 1)
+                helpColumn =
+                    DISPLAY_TILE_WIDTH - TARGET_SET_DJINNI_WIDTH_ITALIAN;
+              conditionWindow = Window_Create(
+                  helpColumn, 8, TARGET_SET_DJINNI_WIDTH_ITALIAN, 3, 6);
             } else if (System_GetLanguage() == CARTRIDGE_LANGUAGE_SPANISH) {
-              if (anchor + 7 > (DISPLAY_TILE_WIDTH - 1))
-                helpColumn = 19;
-              conditionWindow = Window_Create(helpColumn, 8, 11, 3, 6);
+              if (anchor + TARGET_SET_DJINNI_WIDTH_SPANISH - 4 >
+                  DISPLAY_TILE_WIDTH - 1)
+                helpColumn =
+                    DISPLAY_TILE_WIDTH - TARGET_SET_DJINNI_WIDTH_SPANISH;
+              conditionWindow = Window_Create(
+                  helpColumn, 8, TARGET_SET_DJINNI_WIDTH_SPANISH, 3, 6);
             } else {
-              if (anchor + 5 > (DISPLAY_TILE_WIDTH - 1))
-                helpColumn = 21;
-              conditionWindow = Window_Create(helpColumn, 8, 9, 3, 6);
+              if (anchor + TARGET_SET_DJINNI_WIDTH - 4 > DISPLAY_TILE_WIDTH - 1)
+                helpColumn = DISPLAY_TILE_WIDTH - TARGET_SET_DJINNI_WIDTH;
+              conditionWindow =
+                  Window_Create(helpColumn, 8, TARGET_SET_DJINNI_WIDTH, 3, 6);
             }
           }
 #else
@@ -698,6 +709,10 @@ s32 BattleTarget_RunSelection(s32 selection, s32 mode, u32 spread, u32 kind) {
   return targetIndex;
 }
 #undef TARGET_SET_DJINNI_WIDTH
+#if TLA_PATCH_2
+#undef TARGET_SET_DJINNI_WIDTH_ITALIAN
+#undef TARGET_SET_DJINNI_WIDTH_SPANISH
+#endif
 #undef TARGET_CONDITION_LIST_WIDTH
 #undef TARGET_MYSTERY_NAME_COPY
 #undef TARGET_MYSTERY_NAME_CAPACITY

@@ -10,6 +10,14 @@
 #define PSYNERGY_SHORTCUT_MEMBER_SHIFT 10
 #define PSYNERGY_SHORTCUT_ID_MASK 0x3ff
 
+/// The bits of a listed Psynergy the info window's description is found by:
+/// nine, where the list's other reads take PSYNERGY_ABILITY_MASK's fourteen.
+#define ABILITY_DESCRIPTION_MASK 0x1ff
+
+/// The Psynergy grid screen places its icons a row of eight at a time, two
+/// rows, as the item menu's Menu_SpawnIconEntries does.
+#define ICON_GRID_ROW 8
+
 // The German, Spanish, French and Italian Psynergy menus save the window
 // tiles they draw over and restore them after.
 #if TBS_PATCH_2
@@ -308,8 +316,8 @@ s32 PsynergyMenu_ClassifySelectedPsynergy(void) {
   classification = 2;
   if (action->range != ABILITY_RANGE_ALL) {
     u8 kind = action->targetMode;
-    // 1 when kind is 2, else 0.
-    targetModeDifference = kind ^ 2;
+    // 1 when it targets ABILITY_TARGET_ALLIES.
+    targetModeDifference = kind ^ ABILITY_TARGET_ALLIES;
     classification = (0 - targetModeDifference) | targetModeDifference;
     classification = (u32)classification >> 31;
     classification = 1 - classification;
@@ -745,7 +753,7 @@ void PsynergyMenu_CreateEntryGrid(void) {
   menu->psynergyWindow = window;
   menu->selectedColumn = 0;
   menu->selectedRow = 0;
-  menu->columnCount = 8;
+  menu->columnCount = ICON_GRID_ROW;
   menu->rowCount = 2;
 
   cursor = (struct WindowSprite *)Icon_CreateWithResourceVariant(window, 0, 4);
@@ -762,18 +770,18 @@ void PsynergyMenu_CreateEntryGrid(void) {
                                                    window, x, y);
     index++;
     x += 16;
-  } while (index <= 7);
+  } while (index < ICON_GRID_ROW);
 
-  index = 8;
+  index = ICON_GRID_ROW;
   y = 24;
-  sprite = &menu->entryIcons[8];
+  sprite = &menu->entryIcons[ICON_GRID_ROW];
   x = 96;
   do {
     *sprite++ = WindowSprite_CreateFromResourceFar(ICON_KIND_ABILITY, index,
                                                    window, x, y);
     index++;
     x += 16;
-  } while (index <= 15);
+  } while (index < 2 * ICON_GRID_ROW);
 }
 
 /// Releases the party figures and closes the Psynergy grid screen's windows.
@@ -924,7 +932,8 @@ s32 PsynergyMenu_DrawDetailPage(struct Window *window, s32 *work,
     actionIndex = state->selectedIndex;
     if (menu->psynergies[actionIndex] != 0) {
       s32 description =
-          (menu->psynergies[actionIndex] & 0x1ff) + MsgAbilityDescription;
+          (menu->psynergies[actionIndex] & ABILITY_DESCRIPTION_MASK) +
+          MsgAbilityDescription;
       MENU_DRAW_DESCRIPTION(description, menu->infoWindow, 0, 0);
     }
   } else {
@@ -960,6 +969,10 @@ s32 PsynergyMenu_DrawDetailPage(struct Window *window, s32 *work,
 /// colour and one restricted here in the low-HP colour, the page numbers, and
 /// the help line (how to set a shortcut while Select is held, else how to
 /// change party member).
+/// The page numbers end, with their right arrow, at tile 15 of the list
+/// window's top border, as the item list's do.
+#define PAGE_NUMBERS_RIGHT 15
+
 s32 PsynergyMenu_DrawActionPage(struct Window *window, s32 unused,
                                 const struct PagedList *pageState) {
   u32 firstEntry;
@@ -990,7 +1003,7 @@ s32 PsynergyMenu_DrawActionPage(struct Window *window, s32 unused,
   Menu_SetPageIcons(LIST_PAGE_SIZE, firstEntry, window, PSYNERGY_PAGE_ICONS_X,
                     34);
   PagedList_DrawPageNumbers(window, pageState->entryCount, LIST_PAGE_SIZE,
-                            pageState->page, 15);
+                            pageState->page, PAGE_NUMBERS_RIGHT);
   Text_DrawMessageAsTilesFar(MsgPsynergyPp, window, PSYNERGY_PP_LABEL_X, 0);
 
   row = 0;
@@ -1024,6 +1037,8 @@ s32 PsynergyMenu_DrawActionPage(struct Window *window, s32 unused,
 }
 
 /// The Psynergy list of the party member in sideIndex, five a page.
+#undef PAGE_NUMBERS_RIGHT
+
 s32 PsynergyMenu_RunList(s32 sideIndex) {
   struct PsynergyMenuWork *menu;
   struct AbilityDefinition *ability;
@@ -1258,12 +1273,15 @@ s32 PsynergyMenu_RunList(s32 sideIndex) {
   return result;
 }
 
+/// A Psynergy entry's action id, its PSYNERGY_ABILITY_MASK bits, taken out by
+/// shifts.
+#define PSYNERGY_ABILITY_OF(entry) (((u32)(entry) << 18) >> 18)
+
 /// Returns 1 when actionEntry cannot be used from the menu: it has no field
 /// effect and is not usable both in the field and in battle.
 s32 PsynergyMenu_IsActionRestricted(s32 actionEntry) {
-  // Mask the unsigned entry without overflowing a signed left shift.
   struct AbilityDefinition *action =
-      Ability_Get(((u32)actionEntry << 18) >> 18);
+      Ability_Get(PSYNERGY_ABILITY_OF(actionEntry));
 
   if (action->fieldPsynergy != 0 ||
       (action->flags & (ABILITY_USABLE_IN_FIELD | ABILITY_USABLE_IN_BATTLE)) ==
@@ -1282,4 +1300,7 @@ s32 PsynergyMenu_IsActionRestricted(s32 actionEntry) {
 #undef PSYNERGY_LIST_CURSOR_X
 #undef PSYNERGY_SHORTCUT_MEMBER_SHIFT
 #undef PSYNERGY_SHORTCUT_ID_MASK
+#undef ABILITY_DESCRIPTION_MASK
+#undef ICON_GRID_ROW
+#undef PSYNERGY_ABILITY_OF
 #undef PSYNERGY_MENU_SHORTCUT_HELP

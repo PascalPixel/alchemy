@@ -6,14 +6,17 @@
 // the layout, in one of the states kept elsewhere in it (such as the water
 // raised or not), straight into the background's tile map.
 
+/// Cells across and down a screen block: 32 tiles square, two tiles a cell.
+#define SCREEN_BLOCK_CELLS (BG_SCREEN_WIDTH / 2)
+
 /// Draws the width by height cells at cell (x, y) of the layout into screen
-/// block 5 from cell (destinationX, destinationY), wrapped to 16 by 16 cells,
-/// in band plane (16 cell rows each): each cell is its cell picture's tiles
-/// from Ram_CellPictures.
+/// block 5 from cell (destinationX, destinationY), wrapped to
+/// SCREEN_BLOCK_CELLS square, in band plane (SCREEN_BLOCK_CELLS cell rows
+/// each): each cell is its cell picture's tiles from Ram_CellPictures.
 static void MapGrid_DrawCellPanel(s32 x, s32 y, s32 width, s32 height,
                                   s32 plane, s32 destinationX,
                                   s32 destinationY) {
-  u32 *cell = (u32 *)Ram_MapGridCellBuffer + (y * 128 + x);
+  u32 *cell = (u32 *)Ram_MapGridCellBuffer + (y * MAPGRID_SIZE + x);
   s32 row;
   s32 col;
   s32 end;
@@ -22,10 +25,15 @@ static void MapGrid_DrawCellPanel(s32 x, s32 y, s32 width, s32 height,
     col = destinationX;
     if (col < destinationX + width)
       do {
-        // A cell picture is four tile map entries, two rows of two, 8 bytes.
-        u16 tile = *cell++ & 0xfff;
+        // A cell picture is four tile map entries, two rows of two, 8 bytes;
+        // a cell row of the screen block is two rows of BG_SCREEN_WIDTH
+        // entries, BG_SCREEN_WIDTH words.
+        u16 tile = *cell++ & MAPGRID_CELL_PICTURE_ID_MASK;
         u16 picture = tile * 8;
-        s32 index = (plane * 16 + (row & 15)) * 32 + (col & 15);
+        s32 index =
+            (plane * SCREEN_BLOCK_CELLS + (row & (SCREEN_BLOCK_CELLS - 1))) *
+                BG_SCREEN_WIDTH +
+            (col & (SCREEN_BLOCK_CELLS - 1));
         u32 *from;
         u32 *to;
 
@@ -33,11 +41,11 @@ static void MapGrid_DrawCellPanel(s32 x, s32 y, s32 width, s32 height,
         from = (u32 *)(Ram_CellPictures + picture);
         *to = *from;
         from = (u32 *)(Ram_CellPictures + 4 + picture);
-        to = (u32 *)(BG_SCREEN_BLOCK(5) + 64) + index;
+        to = (u32 *)(BG_SCREEN_BLOCK(5) + BG_SCREEN_WIDTH * 2) + index;
         *to = *from;
         /* FAKEMATCH(temporary): end takes the row's bound where the loop tests
          * it, apart from the guard's. */
       } while (end = destinationX + width, ++col < end);
-    cell += 128 - width;
+    cell += MAPGRID_SIZE - width;
   }
 }

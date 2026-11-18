@@ -16,7 +16,9 @@
 #include "graphics/vram_tab.h"
 #include "field/cell_target.h"
 
-/// The mask, 16 by 32, hangs from HOLE_MASK_TOP pixels down its cell.
+/// The mask, HOLE_MASK_WIDTH by 32, hangs from HOLE_MASK_TOP pixels down its
+/// cell.
+#define HOLE_MASK_WIDTH 16
 #define HOLE_MASK_TOP 14
 /// The bits of a sprite's x and y in its OAM attributes.
 #define OBJ_X_MASK 0x1ff
@@ -73,8 +75,7 @@ void CrackedTile_Update(void) {
   sy = FIXEDtoINT(sy);
   sy += HOLE_MASK_TOP;
   depth = height + 58;
-  if ((u32)(x + MAPGRID_CELL_PIXELS - 1) > 334 ||
-      sy < -(MAPGRID_CELL_PIXELS - 1) || sy > 239)
+  if ((u32)(x + HOLE_MASK_WIDTH - 1) > 334 || sy < -15 || sy > 239)
     return;
   x &= OBJ_X_MASK;
   sy &= OBJ_Y_MASK;
@@ -84,6 +85,7 @@ void CrackedTile_Update(void) {
   CELL_PUSH_SLOT_ENTRY(table->oam, depth);
 }
 
+#undef HOLE_MASK_WIDTH
 #undef HOLE_MASK_TOP
 #undef OBJ_X_MASK
 #undef OBJ_Y_MASK

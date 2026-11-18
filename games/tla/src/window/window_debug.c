@@ -58,14 +58,11 @@ extern const u8 SoundTest_MusicString[], SoundTest_JingleString[],
 
 s32 Sound_LoadReverbCode(s32 preset);
 
-/// The sound test's step on L and R.
-#define SOUND_TEST_LARGE_STEP 10
-
-/// Unused: nothing calls it. The debug sound test. Four values (music, jingle,
-/// sound effect, sound preset) start from gDebugSoundTest_StartValues; up and
-/// down pick one, left and right step it by 1, L and R by
-/// SOUND_TEST_LARGE_STEP; A plays it (the fourth loads its preset parameters),
-/// START fades out the sound and stops the music, and B leaves.
+/// Unused: the debug sound test. Four values (music, jingle, sound effect,
+/// sound preset) start from gDebugSoundTest_StartValues; up and down pick one,
+/// left and right step it by 1, L and R by DEBUG_LARGE_STEP; A plays it (the
+/// fourth loads its preset parameters), START fades out the sound and stops the
+/// music, and B leaves.
 UNUSED s32 DebugSoundTest_Run(void) {
   struct SoundTestValues test;
   s32 redraw = 1;
@@ -113,11 +110,11 @@ UNUSED s32 DebugSoundTest_Run(void) {
       Sound_PlayFar(MUS_SILENCE);
     }
     if (gInput.repeat & KEY_R) {
-      test.values[cursor] += SOUND_TEST_LARGE_STEP;
+      test.values[cursor] += DEBUG_LARGE_STEP;
       redraw = 1;
     }
     if (gInput.repeat & KEY_L) {
-      test.values[cursor] -= SOUND_TEST_LARGE_STEP;
+      test.values[cursor] -= DEBUG_LARGE_STEP;
       redraw = 1;
     }
     if (gInput.repeat & KEY_RIGHT) {
@@ -326,15 +323,10 @@ void DebugWarp_KaoruSpecial2(void) {
       MARS_LIGHTHOUSE_AERIE_FROM_MARS_LIGHTHOUSE_ROOM_M_INSCRIPTIONS);
 }
 
-/// The star room's entrance where the battle with the Flame Dragons returns
-/// the party (mars_lighthouse_star_room.c's ENTRANCE_AFTER_BATTLE).
-#define MARS_LIGHTHOUSE_STAR_ROOM_AFTER_FLAME_DRAGONS 20
-
 /// Preset 8, "Kaoru Special1": to the Mars Lighthouse's star room, where the
 /// battle with the Flame Dragons returns the party.
 void DebugWarp_KaoruSpecial1(void) {
-  Event_SetDestinationFar(SCENE_MARS_LIGHTHOUSE_STAR_ROOM,
-                          MARS_LIGHTHOUSE_STAR_ROOM_AFTER_FLAME_DRAGONS);
+  Event_SetDestinationFar(SCENE_MARS_LIGHTHOUSE_STAR_ROOM, 20);
 }
 
 /// The debug warp menu's per-frame task: moves the cursor.
@@ -616,7 +608,7 @@ UNUSED s32 DebugShortcut_Run(void) {
         party->secondShortcut = 0;
       }
     } else {
-      owner = (owner << ACT_UNIT_SHIFT) | (ability & 0x3fff);
+      owner = (owner << ACT_UNIT_SHIFT) | (ability & PSYNERGY_ABILITY_MASK);
       if (result == 0)
         events->psynergy = owner;
       if (result == 1)

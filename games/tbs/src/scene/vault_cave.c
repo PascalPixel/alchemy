@@ -637,6 +637,10 @@ static void VaultCave_RunRumble(void) {
   lowFadeLevel = 6;
   frame = 0;
   upperFadeBits = fadeLevel << 10;
+  // XXX: the blend is built as a colour is, lowFadeLevel in bits 0-4,
+  // fadeLevel in 5-9 and its first value in 10-14, so REG_BLDALPHA takes
+  // lowFadeLevel as EVA and 24, above full, as EVB; a recording of the
+  // rumble's fade would show whether the screen fades as the scene means.
   do {
     IoWriteQueue_Store16((u32)&REG_BLDALPHA,
                          upperFadeBits | (fadeLevel << 5) | lowFadeLevel);

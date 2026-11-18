@@ -77,10 +77,7 @@ struct HoverWork {
   s32 scale;
   s16 resource;
   u16 tile;
-  /// Set to 0 as Hover starts. Nothing reads it: only HoverGlow_Update and
-  /// FieldPsynergy_EndHover read this work, and no scene reads the battle
-  /// effect slot while the leader hovers.
-  u16 unread;
+  u16 unk_1030;
   u16 phase;
   s16 fading;
 };
@@ -203,7 +200,9 @@ void FieldPsynergy_Hover(void) {
   Actor_SelectAnimationFar(player, ANIM_LEADER_RUN);
   Sound_PlayFar(SE_PSYNERGY_START);
   wait(1);
-  work->unread = 0;
+  // DEAD: a halfword nothing reads, cleared as Hover starts; the ROM keeps the
+  // store.
+  work->unk_1030 = 0;
   work->phase = 0;
   work->fading = 0;
   Task_Add(HoverGlow_Update, TASK_PASS_FRAME);

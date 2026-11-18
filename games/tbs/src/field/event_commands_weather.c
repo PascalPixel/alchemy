@@ -4,6 +4,17 @@
 
 #include "event_commands_internal.h"
 
+/// The frames of a ground particle's splash (gFieldEffect_GroundParticleFrames,
+/// five halfwords each), played from the last down to the first.
+#define GROUND_PARTICLE_FRAMES 16
+
+/// mote.png's 16 by 16 pictures, four tiles each: two of each size, the
+/// motes shrinking as they rise and flickering between the two.
+#define MOTE_PICTURE_TILES 4
+#define MOTE_LARGE 0
+#define MOTE_MEDIUM 2
+#define MOTE_SMALL 4
+
 /// Task: animates the ground particles.
 void Weather_UpdateRain(void) {
   struct MapGridScrollWork *grid = gMapGridWork[0];
@@ -49,7 +60,7 @@ void Weather_UpdateRain(void) {
       particle->positionZ = y;
       particle->positionY =
           toFIXED(MapGrid_GetTerrainHeightFar(0, FIXEDtoINT(x), FIXEDtoINT(y)));
-      particle->timer = 16;
+      particle->timer = GROUND_PARTICLE_FRAMES;
     }
   }
 }
@@ -68,10 +79,7 @@ void Weather_UpdateLightning(void) {
   case 0:
     // The burst ends: arm the next, 150 frames plus up to 399 less up to 99.
     if (work->enabled != 0) {
-      u32 intervalDraw = Random16();
-      u32 intervalJitter = Random16();
-      work->timer =
-          ((intervalDraw * 400) >> 16) - ((intervalJitter * 100) >> 16) + 150;
+      work->timer = Random16_Below(400) - Random16_Below(100) + 150;
       if (work->loud != 0)
         Sound_PlayFar(SE_THUNDER_LOUD);
       else
@@ -134,7 +142,7 @@ void Weather_StartRain(void) {
     particle->positionZ = z;
     particle->positionY =
         toFIXED(MapGrid_GetTerrainHeightFar(0, FIXEDtoINT(x), FIXEDtoINT(z)));
-    particle->timer = (i & 15) + 1;
+    particle->timer = (i & (GROUND_PARTICLE_FRAMES - 1)) + 1;
     particle++;
   }
   Io_Write16(BLDCNT_TGT2_ALL, &REG_BLDCNT);
@@ -183,16 +191,16 @@ void FieldMotes_Update(void) {
       y = FIXEDtoINT(mote->positionZ - mote->positionY - cameraZ) - age;
       if ((u32)(x + 16) <= 255 && y >= -32 && y <= DISPLAY_HEIGHT - 1) {
         if (mote->timer < 60) {
-          mote->tile = work->tileBase + 16;
+          mote->tile = work->tileBase + MOTE_SMALL * MOTE_PICTURE_TILES;
           mote->delay += 3;
         } else if (mote->timer < 90) {
-          mote->tile = work->tileBase + 8;
+          mote->tile = work->tileBase + MOTE_MEDIUM * MOTE_PICTURE_TILES;
           mote->delay++;
         } else {
-          mote->tile = work->tileBase;
+          mote->tile = work->tileBase + MOTE_LARGE * MOTE_PICTURE_TILES;
         }
         if ((gFrameCount >> 3) & 1)
-          mote->tile += 4;
+          mote->tile += MOTE_PICTURE_TILES;
         mote->x = x;
         mote->y = y - (mote->delay >> 2);
         mote->shape = 0;
@@ -253,9 +261,10 @@ void FieldMotes_Start(void) {
     z = pos[2];
     mote->positionX = (s32)p;
     mote->positionZ = z;
-    mote->positionY =
-        toFIXED(MapGrid_GetTerrainHeightFar(0, (s32)p >> 16, z >> 16));
-    mote->timer = (i & 15) + 1;
+    mote->positionY = toFIXED(
+        MapGrid_GetTerrainHeightFar(0, FIXEDtoINT((s32)p), FIXEDtoINT(z)));
+    // Staggered as the ground particles are.
+    mote->timer = (i & (GROUND_PARTICLE_FRAMES - 1)) + 1;
     mote++;
   }
   Io_Write16(BLDCNT_TGT2_ALL, &REG_BLDCNT);
@@ -396,9 +405,10 @@ void FieldEffect_InitializeSparkles(void) {
     z = leader[2];
     sparkle->positionX = 0;
     sparkle->positionZ = 0;
-    sparkle->positionY =
-        toFIXED(MapGrid_GetTerrainHeightFar(0, (s32)attr >> 16, z >> 16));
-    sparkle->timer = (i & 15) + 1;
+    sparkle->positionY = toFIXED(
+        MapGrid_GetTerrainHeightFar(0, FIXEDtoINT((s32)attr), FIXEDtoINT(z)));
+    // Staggered as the ground particles are.
+    sparkle->timer = (i & (GROUND_PARTICLE_FRAMES - 1)) + 1;
     i++;
     sparkle++;
   } while (i < WEATHER_PARTICLE_COUNT);

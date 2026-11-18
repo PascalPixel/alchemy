@@ -19,6 +19,10 @@ enum {
   SERIAL_TIMER_RELOAD = 0xc963
 };
 
+/// The SIO_ERROR bit of a SIOCNT value, taken out by shifts as SIO_ID_OF takes
+/// the id.
+#define SIO_ERROR_OF(control) (((control) << 25) >> 31)
+
 /// Sets the routine the save calls between sector writes (0 for none) and
 /// starts its count again at 0 of SAVE_SECTORS_PER_PART; does nothing while
 /// no save workspace (heap slot HEAP_SLOT_SAVE) is allocated.
@@ -375,7 +379,7 @@ void Serial_HandleTransferInterrupt(void) {
   sioControl = &REG_SIOCNT;
   // SIOCNT's error bit (SIO_ERROR): a packet heard while it is set is refused
   // (SERIAL_CHANNEL_ERROR, below)
-  gSerialWork.transferError = (*sioControl << 25) >> 31;
+  gSerialWork.transferError = SIO_ERROR_OF(*sioControl);
 
   if (gSerialWork.sendIndex == -1) {
     u32 idleWord = SERIAL_IDLE_HALFWORD;
@@ -679,8 +683,17 @@ extern u8 gMapGridCellBuffer[];
 /// An empty routine the link test calls to waste time.
 void SerialTest_Delay(void) {}
 
-/// The serial link test: sends the cartridge's first bytes or those at 0x1000
-/// while A or B is held, and receives into the map cell buffer.
+/// The link test's block: LINK_TEST_TILES tiles' worth of bytes, received into
+/// BG_SCREEN_BLOCK(2), which is tile LINK_TEST_TILE of character block 0.
+#define LINK_TEST_BYTES 640
+#define LINK_TEST_TILES (LINK_TEST_BYTES / TILE_SIZE_4BPP)
+#define LINK_TEST_TILE (2 * BG_SCREEN_SIZE / TILE_SIZE_4BPP)
+/// What B sends: the cartridge's bytes from 4 KB in, where A sends its first.
+#define LINK_TEST_SECOND_SOURCE (Rom_Start + 4096)
+
+/// The serial link test: sends the cartridge's first bytes or
+/// LINK_TEST_SECOND_SOURCE while A or B is held, and shows what it receives
+/// as tiles on row 16.
 void SerialTest_Run(void) {
   u16 *tile;
   s32 value;
@@ -690,10 +703,11 @@ void SerialTest_Run(void) {
 
   Sound_PlayFar(MUS_CHAMPA);
   Serial_Initialize();
-  // Window-palette tiles 0x93 down to 0x80 on row 16, columns 19 down to 0.
-  remaining = 19;
-  tile = (u16 *)BG_SCREEN_BLOCK(4) + 16 * BG_SCREEN_WIDTH + 19;
-  value = (s16)(BG_TILE_PALETTE(WINDOW_PALETTE) | 0x93);
+  // Row 16, columns 0 to 19: the received tiles in WINDOW_PALETTE.
+  remaining = LINK_TEST_TILES - 1;
+  tile = (u16 *)BG_SCREEN_BLOCK(4) + 16 * BG_SCREEN_WIDTH + LINK_TEST_TILES - 1;
+  value = (s16)(BG_TILE_PALETTE(WINDOW_PALETTE) |
+                (LINK_TEST_TILE + LINK_TEST_TILES - 1));
   do {
     remaining--;
     *tile = value;
@@ -701,15 +715,15 @@ void SerialTest_Run(void) {
     value--;
   } while (remaining >= 0);
   Cpu_Fill32(0, gMapGridCellBuffer, 1024);
-  Serial_WaitForStatusMask(3);
+  Serial_WaitForStatusMask(LINK_STATUS_HEARD_BOTH);
 restart:
   Serial_StartReceive(gMapGridCellBuffer);
   held = &gInput.held;
   for (;;) {
     if (*held & KEY_A)
-      Serial_StartSend((void *)Cart_Start, 640);
+      Serial_StartSend((void *)Cart_Start, LINK_TEST_BYTES);
     if (*held & KEY_B)
-      Serial_StartSend((void *)(Rom_Start + 0x1000), 640);
+      Serial_StartSend((void *)LINK_TEST_SECOND_SOURCE, LINK_TEST_BYTES);
     if (*held & KEY_START) {
       delay = 9999;
       do {
@@ -719,7 +733,7 @@ restart:
     }
     if (gSerialReceiveDestination == 0) {
       Dma_Set(gMapGridCellBuffer, (void *)BG_SCREEN_BLOCK(2),
-              DMA_COPY_WORDS(160), REG_DMA3);
+              DMA_COPY_WORDS(LINK_TEST_BYTES / 4), REG_DMA3);
       goto restart;
     }
     wait(1);

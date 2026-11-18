@@ -4,10 +4,17 @@
 // to show how it is crossed, a blinking pointer moves over the screen, and
 // Isaac is put back where he stood.
 
+/// The sprite outline's colours: the field's own, as field_actors.c sets them
+/// up, and those of the warrior a stage's guide shows.
+#define FIELD_OUTLINE_EDGE 15
+#define FIELD_OUTLINE_FILL 0
+#define WARRIOR_OUTLINE_EDGE 1
+#define WARRIOR_OUTLINE_FILL 4
+
 /// Isaac (id) appears at pixel (x, z) on the stage, facing south: he fades in
 /// through the backgrounds while he stretches from thin and tall to his own
-/// shape, settles and nods. While he is shown his sprite is outlined, in edge
-/// colour 1 and fill colour 4. His position and facing are kept for
+/// shape, settles and nods. While he is shown his sprite is outlined in the
+/// warrior's colours. His position and facing are kept for
 /// Colosso_RestoreWarrior.
 void Colosso_FadeInWarrior(s32 id, s32 x, s32 z) {
   struct ActorSystemWork *system;
@@ -17,8 +24,8 @@ void Colosso_FadeInWarrior(s32 id, s32 x, s32 z) {
 
   system = gActorSystemWork;
   actor = Actor_GetById(id);
-  system->edge = 1;
-  system->fill = 4;
+  system->edge = WARRIOR_OUTLINE_EDGE;
+  system->fill = WARRIOR_OUTLINE_FILL;
   gColosso_WarriorStartX = actor->x.fixed;
   gColosso_WarriorStartZ = actor->z.fixed;
   sprite = (struct Sprite *)actor->sprite;
@@ -40,14 +47,15 @@ void Colosso_FadeInWarrior(s32 id, s32 x, s32 z) {
   sprite->image.objectMode = 1;
   sprite->shadow.objectMode = 1;
   Sound_Play(SE_COLOSSO_WARRIOR_APPEAR);
-  for (i = 0; i <= 15; i += 2) {
-    actor->scaleX = (i << 12) + FIXED_ONE / 16;
-    actor->scaleY = 31 * FIXED_ONE / 16 - (i << 12);
-    IO_WRITE_QUEUE_PUSH((u32)&REG_BLDALPHA, ((15 - i) << 8) | (i + 1),
+  for (i = 0; i < BLEND_WEIGHT_MAX; i += 2) {
+    actor->scaleX = i * (FIXED_ONE / 16) + FIXED_ONE / 16;
+    actor->scaleY = 31 * FIXED_ONE / 16 - i * (FIXED_ONE / 16);
+    IO_WRITE_QUEUE_PUSH((u32)&REG_BLDALPHA,
+                        ((BLEND_WEIGHT_MAX - 1 - i) << 8) | (i + 1),
                         IO_WRITE_HALFWORD);
     wait(1);
   }
-  IO_WRITE_QUEUE_PUSH((u32)&REG_BLDALPHA, BLEND_ALPHA(16, 0),
+  IO_WRITE_QUEUE_PUSH((u32)&REG_BLDALPHA, BLEND_ALPHA(BLEND_WEIGHT_MAX, 0),
                       IO_WRITE_HALFWORD);
   actor->scaleX = 17 * FIXED_ONE / 16;
   actor->scaleY = 15 * FIXED_ONE / 16;
@@ -64,7 +72,7 @@ void Colosso_FadeInWarrior(s32 id, s32 x, s32 z) {
 /// Puts Isaac (id) back where Colosso_FadeInWarrior found him: he stands
 /// (or turns south, nods and waits half a second), then returns to his kept
 /// position and facing with his motion stopped, and the outline colours are
-/// the field's again (edge 15, fill 0).
+/// the field's again.
 void Colosso_RestoreWarrior(s32 id) {
   struct ActorSystemWork *system;
   struct Actor *actor;
@@ -79,8 +87,8 @@ void Colosso_RestoreWarrior(s32 id) {
     Actor_SetAnimation(id, ANIM_NOD);
     Event_Wait(30);
   }
-  system->fill = 0;
-  system->edge = 15;
+  system->fill = FIELD_OUTLINE_FILL;
+  system->edge = FIELD_OUTLINE_EDGE;
   actor->x.fixed = gColosso_WarriorStartX;
   actor->z.fixed = gColosso_WarriorStartZ;
   actor->facing = gColosso_WarriorStartAngle;
@@ -110,7 +118,11 @@ void Actor_ResetMotionFields(s32 actorId) {
 }
 
 // The guide's pointer: one 16x16 sprite centred on a point of the screen,
-// shown for 13 frames of every 20, that can glide from point to point.
+// shown for MARKER_SHOWN_FRAMES of every MARKER_BLINK_FRAMES, that can glide
+// from point to point.
+
+#define MARKER_SHOWN_FRAMES 13
+#define MARKER_BLINK_FRAMES 20
 
 /// Loads the pointer's picture into a free VRAM block, once.
 static void Colosso_EnsureMarkerSlot(void) {
@@ -158,17 +170,17 @@ static void Colosso_UpdateMarker(void) {
       gColosso_MarkerSteps = 0;
     gColosso_MarkerBlink = 0;
   }
-  if (++gColosso_MarkerBlink <= 13) {
+  if (++gColosso_MarkerBlink <= MARKER_SHOWN_FRAMES) {
     s32 size = OBJ_SIZE_16X16;
 
     x = gColosso_MarkerX;
     y = gColosso_MarkerY;
     dst = oam;
     *dst++ = 0;
-    *dst++ = (y - 8) | ((x - 8) << 16) | size | (gColosso_MarkerFlip << 28);
+    *dst++ = (y - 8) | OBJ_X(x - 8) | size | gColosso_MarkerFlip * OBJ_HFLIP;
     *dst = tile | OBJ_PRIORITY(1);
     Oam_AddSpriteAtDepth(oam, OAM_DEPTH_FRONT);
-  } else if (gColosso_MarkerBlink > 19) {
+  } else if (gColosso_MarkerBlink >= MARKER_BLINK_FRAMES) {
     gColosso_MarkerBlink = 0;
   }
 }
@@ -219,7 +231,7 @@ void Colosso_WalkActorTo(s32 actorId, s32 x, s32 z) {
     actor->acceleration = speed >> 1;
     actor->paused = unpaused;
     Actor_StartIdle(actor);
-    Actor_SelectAnimation(actor, 5);
+    Actor_SelectAnimation(actor, ANIM_LEADER_RUN);
     Actor_SetMoveTarget(actor, toFIXED(x), actor->y.fixed, toFIXED(z));
   }
 }
@@ -237,7 +249,7 @@ void Colosso_WalkActorToAndStand(s32 actorId, s32 x, s32 z) {
     actor->acceleration = speed >> 1;
     actor->paused = unpaused;
     Actor_StartIdle(actor);
-    Actor_SelectAnimation(actor, 5);
+    Actor_SelectAnimation(actor, ANIM_LEADER_RUN);
     Actor_SetMoveTarget(actor, toFIXED(x), actor->y.fixed, toFIXED(z));
     Actor_WaitForMove(actor);
     Actor_SelectAnimation(actor, ANIM_STAND);

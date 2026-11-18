@@ -12,7 +12,7 @@
 struct Window *Message_ShowAndWait(s32 message, s32 x, s32 y) {
   struct Window *result;
 
-  result = Message_OpenWindow(message, x, y, 1);
+  result = Message_OpenWindow(message, x, y, MESSAGE_WINDOW_ZOOM);
   while (Message_AllTyped() == 0)
     wait(1);
   return result;
@@ -28,9 +28,6 @@ struct Window *Message_ShowAndWait(s32 message, s32 x, s32 y) {
 
 #define WINDOW_WORK ((struct WindowWork *)Ram_HeapSlots->windowWork)
 
-/// The command window's top tile row: it runs along the bottom three rows.
-#define COMMAND_ROW_TOP 17
-
 /// BG1's tile number of the command row's first icon tile.
 #define COMMAND_ROW_ICON_TILE (BG_CHAR_SIZE / (8 * 8))
 
@@ -40,8 +37,6 @@ struct Window *Message_ShowAndWait(s32 message, s32 x, s32 y) {
 /// background's scroll.
 #define COMMAND_ROW_BG1_ROW (COMMAND_ROW_TOP + BATTLE_BACKGROUND_SCROLL_Y / 8)
 
-/// A GlyphPalette slot no icon colour has taken yet.
-#define ICON_COLOR_UNPLACED 255
 /// The selected icon's smallest scale, 8.8 fixed point, as it pulses.
 #define PULSE_SCALE_MIN Q_8_8(1.1875)
 
@@ -88,7 +83,7 @@ s32 BattleCommandRow_Run(s32 mode, s32 fleeAllowed) {
   selectionUi = Heap_AllocEwram(sizeof(*selectionUi));
   // No icon colour placed yet; the shared palette starts at BG entry 1.
   for (i = ARRAY_COUNT(selectionUi->palette.slot) - 1; i >= 0; i--)
-    selectionUi->palette.slot[i] = ICON_COLOR_UNPLACED;
+    selectionUi->palette.slot[i] = GLYPH_PALETTE_SLOT_FREE;
   selectionUi->palette.count = 1;
   if (mode == COMMAND_ROW_PARTY)
     selectionUi->window = Window_Create(20, 17, 10, 3, 6);

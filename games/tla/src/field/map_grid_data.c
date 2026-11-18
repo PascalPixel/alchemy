@@ -58,16 +58,18 @@ const TerrainHeightFn gMapGrid_TerrainHeightFunctions[TERRAIN_KIND_COUNT] = {
     [TERRAIN_SPLIT_BOTTOM_STEP] = Terrain_GetSplitBottomStepHeight,
 };
 
-/// The world map's terrain behaviour, read at a selector plus a row: 0x10
-/// when the block word's top bit is set, 0x20 for terrain kinds above 40,
-/// 0x30 for kinds 12 and 15 and 0x40 for kind 36.
+/// The world map's battle environments, read at a collision value plus a set
+/// of rows (WorldMap_GetBattleEnvironment): the plain rows; the beach rows for
+/// a cell with its beach bit; the snowfield rows for the encounter regions from
+/// SNOWFIELD_REGION_FIRST; the desert rows for the regions round Air's Rock and
+/// north of Shaman Village; the blizzard rows for the region round Prox.
 // clang-format off
 const u8 gWorldMap_TerrainBehaviorTable[80] = {
     0, 8, 8, 8, 10, 1, 7, 1, 1, 2, 1, 1, 1, 1, 0, 0,
-    0, 8, 8, 8, 10, 4, 7, 1, 1, 2, 1, 1, 1, 1, 0, 0, // 0x10
-    0, 9, 9, 9, 9, 5, 5, 5, 5, 6, 5, 5, 5, 5, 0, 0, // 0x20
-    0, 8, 8, 8, 10, 3, 7, 1, 1, 2, 1, 1, 1, 1, 0, 0, // 0x30
-    0, 9, 9, 9, 9, 11, 11, 11, 11, 12, 11, 11, 11, 11, 0, 0, // 0x40
+    0, 8, 8, 8, 10, 4, 7, 1, 1, 2, 1, 1, 1, 1, 0, 0, // beach
+    0, 9, 9, 9, 9, 5, 5, 5, 5, 6, 5, 5, 5, 5, 0, 0, // snowfield
+    0, 8, 8, 8, 10, 3, 7, 1, 1, 2, 1, 1, 1, 1, 0, 0, // desert
+    0, 9, 9, 9, 9, 11, 11, 11, 11, 12, 11, 11, 11, 11, 0, 0, // blizzard
 };
 
 /// Eight colours (BGR555).

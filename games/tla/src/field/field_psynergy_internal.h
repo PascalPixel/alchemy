@@ -108,4 +108,18 @@ struct CycloneWork {
   s8 kind;
 };
 
+/// The cycling glow of the Parch disc and the Ring: red stays put while green
+/// and blue swing either side of their middles, each colour a step further
+/// along the swing.
+#define GLOW_RED 28
+#define GLOW_GREEN 23
+#define GLOW_GREEN_SWING 8
+#define GLOW_BLUE 12
+#define GLOW_BLUE_SWING 10
+
+/// The orbs of RESOURCE_COLOURED_ORBS, eight colours each large and small, and
+/// a 256-colour picture's size in the 16-colour tiles a sprite counts.
+#define ORB_PICTURES 16
+#define ORB_TILE (TILE_SIZE_8BPP / TILE_SIZE_4BPP)
+
 #endif // ALCHEMY_FIELD_PSYNERGY_INTERNAL_H

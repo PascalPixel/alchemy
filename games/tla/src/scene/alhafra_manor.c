@@ -26,13 +26,20 @@
 #include "field/sprite.h"
 #include "graphics/palette_buffers.h"
 
-/// Talks each person gives once, the first time spoken to.
-#define FLAG_GRUMBLED_ABOUT_THE_MAYOR 0x8ba
+/// Talks each person gives once, the first time spoken to: Madra's mayor
+/// complains of Alhafra's, Jiya defends him, and Alhafra's mayor tells of the
+/// Eastern Sea.
+#define FLAG_COMPLAINED_ABOUT_THE_MAYOR 0x8ba
 #define FLAG_DEFENDED_THE_MAYOR 0x8bb
 #define FLAG_TOLD_OF_THE_EASTERN_SEA 0x8bc
 
-/// The manor's entrances its set-up tests.
+/// The manor's entrances its set-up tests or sets.
 enum AlhafraManorEntrance {
+  /// The mayor's room, by its south door, where the party is left after
+  /// Briggs escapes.
+  ENTRANCE_MAYORS_ROOM = 8,
+  /// The watchtower, where the man gazing at Air's Rock stands.
+  ENTRANCE_WATCHTOWER = 14,
   /// Back from the world map's view of Air's Rock
   /// (AlhafraManor_PointOutAirsRock), beside the man who showed it.
   ENTRANCE_BACK_FROM_THE_VIEW = 80,
@@ -52,7 +59,7 @@ enum AlhafraManorActorId {
   /// Alhafra's mayor, who plans a sailing ship to trade across the sea.
   ACTOR_MAYOR,
   /// "You should go to the watchtower and gaze southward."
-  ACTOR_YOUNG_MAN_ON_THE_WATCHTOWER = ACTOR_FIRST_PLACED + 2,
+  ACTOR_BOY_ON_THE_WATCHTOWER = ACTOR_FIRST_PLACED + 2,
   /// Who asks what the party knows of Alhafra; her thought: "Why do they
   /// always tell me to send adventure-seekers to South Osenia?"
   ACTOR_WOMAN_ON_SOUTH_OSENIA,
@@ -87,7 +94,7 @@ enum AlhafraManorOnceTheMastIsClearedActorId {
 void AlhafraManor_BriggsEscapes(void);
 void AlhafraManor_KeepToTheLeadersLayer(void);
 
-void AlhafraManor_GrumbleAboutTheMayor(void);
+void AlhafraManor_ComplainAboutTheMayor(void);
 
 void AlhafraManor_DefendTheMayor(void);
 void AlhafraManor_TellOfTheEasternSea(void);
@@ -141,6 +148,8 @@ void AlhafraManor_PointOutAirsRock(s32 actor) {
                         0);
     Actor_FaceDirectionById(gMainRoutineWork.leaderActorId, FACING_SOUTH, 0);
     Event_Wait(10);
+    // The world map's view of Air's Rock (world_map.c's
+    // WORLD_MAP_ALHAFRA_MANOR_VIEW).
     Event_SetDestination(SCENE_WORLD_MAP, 67);
   } else {
     Event_SetMessageId(msg + 2);
@@ -166,12 +175,12 @@ void AlhafraManor_AskIfTheHeroes(s32 actor) {
   Event_ShowMessageAndWait(actor, 0);
 }
 
-/// Talking to the mayor of Madra, or reading his mind, once: he grumbles that
+/// Talking to the mayor of Madra, or reading his mind, once: he complains that
 /// Alhafra's mayor never meant to fix the mast.
-void AlhafraManor_GrumbleAboutTheMayor(void) {
+void AlhafraManor_ComplainAboutTheMayor(void) {
   struct FieldWork *work = Ram_HeapSlots->fieldWork;
 
-  GameFlag_Set(FLAG_GRUMBLED_ABOUT_THE_MAYOR);
+  GameFlag_Set(FLAG_COMPLAINED_ABOUT_THE_MAYOR);
   Event_Start();
   Event_ResolvePendingActions(0);
   Event_SetMessageId((s32)&MsgAlhafraManorDarnThatMayor);
@@ -191,7 +200,7 @@ void AlhafraManor_GrumbleAboutTheMayor(void) {
   Event_End();
 }
 
-/// Talking to Jiya, or reading her mind, once: she explains why the mayor keeps
+/// Talking to Jiya, or reading his mind, once: he explains why the mayor keeps
 /// the pirates' money for Alhafra's own repairs.
 void AlhafraManor_DefendTheMayor(void) {
   struct FieldWork *work = Ram_HeapSlots->fieldWork;
@@ -284,7 +293,7 @@ void AlhafraManor_TellOfTheEasternSea(void) {
   // here in Alhafra..." No: "Ah, such a pity that you don't see the
   // potential..."
   FieldMessage_ShowAtActor(ACTOR_MAYOR, 0);
-  if (Event_AskYesNoWithActorAnimation(4, 0) == 0) {
+  if (Event_AskYesNoWithActorAnimation(ACTOR_FELIX, 0) == 0) {
     Event_Wait(20);
     // "Great! Why don't you just stay here in Alhafra until we're ready for..."
     Event_ShowMessageThenWait(ACTOR_MAYOR, 0, 10);
@@ -311,7 +320,8 @@ s32 Scene_Initialize(void) {
   Actor_GetById(ACTOR_OLD_MAN_ON_INDRA)->update =
       AlhafraManor_KeepToTheLeadersLayer;
   if (gMainRoutineWork.entrance == ENTRANCE_BACK_FROM_THE_VIEW) {
-    gMainRoutineWork.entrance = gMainRoutineWork.returnEntrance = 14;
+    gMainRoutineWork.entrance = gMainRoutineWork.returnEntrance =
+        ENTRANCE_WATCHTOWER;
     Actor_FaceDirectionById(ACTOR_MAN_GAZING_AT_AIRS_ROCK,
                             FACING_SOUTH_SOUTHWEST, 0);
     Event_StartScreenTransition();
@@ -324,7 +334,8 @@ s32 Scene_Initialize(void) {
   }
   entrance = &gMainRoutineWork.entrance;
   if (*entrance == ENTRANCE_BRIGGS_ESCAPES) {
-    gMainRoutineWork.entrance = gMainRoutineWork.returnEntrance = 8;
+    gMainRoutineWork.entrance = gMainRoutineWork.returnEntrance =
+        ENTRANCE_MAYORS_ROOM;
     AlhafraManor_BriggsEscapes();
   }
   if (!GameFlag_Get(FLAG_ALHAFRA_MAST_CLEARED) &&
@@ -368,11 +379,12 @@ void AlhafraManor_CountAnswer(void);
 /// The night at the mayor's manor: the party thanks the mayor for his
 /// house, Jenna and Sheba doubt he will hand the boat over to Madra, the mayor
 /// asks Jiya after the repairs, and a guard runs in with news: Briggs has
-/// escaped. Felix's answer to the mayor is counted in the event work.
+/// escaped. Felix saying yes to going after Briggs for the mayor counts among
+/// his weird answers.
 void AlhafraManor_BriggsEscapes(void) {
   Event_Start();
   Event_ResolvePendingActions(0);
-  Event_SetMessageId(MsgAlhafraManorThankYouAgainMayorYou);
+  Event_SetMessageId((s32)MsgAlhafraManorThankYouAgainMayorYou);
   Actor_SetPosition(ACTOR_MAYOR, 344, 96);
   Actor_SetPosition(ACTOR_JIYA, 408, 136);
   Actor_SetPosition(ACTOR_KRADEN, 312, 104);
@@ -725,7 +737,7 @@ void AlhafraManor_BriggsEscapes(void) {
   // have to do them any favors!" No: "That's right! Why should we help the
   // mayor..."
   FieldMessage_ShowAtActor(SPEAKER_PORTRAIT_RIGHT | ACTOR_JENNA, 0);
-  if (Event_AskYesNoWithActorAnimation(4, 0) == 0) {
+  if (Event_AskYesNoWithActorAnimation(ACTOR_FELIX, 0) == 0) {
     AlhafraManor_CountAnswer();
     Event_Wait(30);
     Actor_SetAnimationAndWait(ACTOR_SHEBA, ANIM_SHAKE_HEAD);
@@ -777,16 +789,19 @@ void AlhafraManor_KeepToTheLeadersLayer(void) { Actor_TakeLeaderLayer(); }
 
 struct SceneEntrance gSceneEntrances[] = {
     {0, CONDITION_ALWAYS, 172, 0, 149, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
-    {80, CONDITION_ALWAYS, 760, 0, 320, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
-    {81, CONDITION_ALWAYS, 312, 0, 120, FACING_NORTHEAST, 0, 224, 16, 464, 192,
-     0},
-    {99, CONDITION_ALWAYS, 520, 0, 520, FACING_NORTH, 0, -1, -1, -1, -1, 0},
+    {ENTRANCE_BACK_FROM_THE_VIEW, CONDITION_ALWAYS, 760, 0, 320, FACING_SOUTH,
+     0, -1, -1, -1, -1, 0},
+    {ENTRANCE_BRIGGS_ESCAPES, CONDITION_ALWAYS, 312, 0, 120, FACING_NORTHEAST,
+     0, 224, 16, 464, 192, 0},
+    {ENTRANCE_PAN_WEST, CONDITION_ALWAYS, 520, 0, 520, FACING_NORTH, 0, -1, -1,
+     -1, -1, 0},
     {SCENE_TABLE_END},
 };
 
 u32 gSceneExits[] = {
     SCENE_EXITS(AlhafraManor),
-    SCENE_EXIT_UNLESS(1, Alhafra, 14, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(ALHAFRA_MANOR_TO_ALHAFRA, Alhafra,
+                      ALHAFRA_FROM_ALHAFRA_MANOR, EXIT_FLAG_NONE),
     SCENE_EXIT_UNLESS(2, AlhafraManor, 7, EXIT_FLAG_NONE),
     SCENE_EXIT_UNLESS(3, AlhafraManor, 8, EXIT_FLAG_NONE),
     SCENE_EXIT_UNLESS(4, AlhafraManor, 9, EXIT_FLAG_NONE),
@@ -870,10 +885,10 @@ struct ActorPlacement gAlhafraManor_ActorPlacementsOnceTheMastIsCleared[] = {
                     -56, FACING_NORTHEAST, TALK_FACING_KEEP, 0),
     {SCENE_TABLE_END},
 };
-// clang-format on
 
 struct Trigger gSceneEvents[] = {
-    {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
+    {TRIGGER_EXIT, ALHAFRA_MANOR_TO_ALHAFRA, CONDITION_ALWAYS,
+     ALHAFRA_MANOR_TO_ALHAFRA},
     {TRIGGER_EXIT, 2, CONDITION_ALWAYS, 2},
     {TRIGGER_EXIT, 3, CONDITION_ALWAYS, 3},
     {TRIGGER_EXIT, 4, CONDITION_ALWAYS, 4},
@@ -890,13 +905,13 @@ struct Trigger gSceneEvents[] = {
     {TRIGGER_EXIT, 15, CONDITION_ALWAYS, 15},
     {TRIGGER_EXIT, 16, CONDITION_ALWAYS, 16},
     {TRIGGER_EXIT, 17, CONDITION_ALWAYS, 17},
-    {TRIGGER_TALK, ACTOR_YOUNG_MAN_ON_THE_WATCHTOWER,
+    {TRIGGER_TALK, ACTOR_BOY_ON_THE_WATCHTOWER,
      IF_FLAG_SET(FLAG_ALHAFRA_MAST_CLEARED),
      MSGNO(MsgAlhafraManorEveryoneInTownIsTalking)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_YOUNG_MAN_ON_THE_WATCHTOWER,
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_BOY_ON_THE_WATCHTOWER,
      IF_FLAG_SET(FLAG_ALHAFRA_MAST_CLEARED),
      MSGNO(MsgAlhafraManorIDontKnowWhatThe)},
-    {TRIGGER_TALK, ACTOR_YOUNG_MAN_ON_THE_WATCHTOWER, CONDITION_ALWAYS,
+    {TRIGGER_TALK, ACTOR_BOY_ON_THE_WATCHTOWER, CONDITION_ALWAYS,
      MSGNO(MsgAlhafraManorYouShouldGoToThe)},
     {TRIGGER_TALK, ACTOR_WOMAN_ON_SOUTH_OSENIA, CONDITION_ALWAYS,
      EVENT(AlhafraManor_AskAboutAlhafra)},
@@ -904,7 +919,7 @@ struct Trigger gSceneEvents[] = {
      MSGNO(MsgAlhafraManorOurTownWasRifeWith)},
     {TRIGGER_TALK, ACTOR_OLD_WOMAN_ON_THE_BALLOO_RANGE, CONDITION_ALWAYS,
      MSGNO(MsgAlhafraManorTheMountainsToTheEast)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_YOUNG_MAN_ON_THE_WATCHTOWER,
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_BOY_ON_THE_WATCHTOWER,
      CONDITION_ALWAYS, MSGNO(MsgAlhafraManorThereAreNumerousTalesAbout)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_WOMAN_ON_SOUTH_OSENIA,
      CONDITION_ALWAYS, MSGNO(MsgAlhafraManorWhyDoTheyAlwaysTell)},
@@ -928,11 +943,12 @@ struct Trigger gSceneEvents[] = {
      CONDITION_ALWAYS, MSGNO(MsgAlhafraManorIWishSomeoneWouldGo)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_GIRL_ON_THE_WARRIORS,
      CONDITION_ALWAYS, MSGNO(MsgAlhafraManorIHopeTheWarriorsWho)},
-    {TRIGGER_TALK, ACTOR_MADRAS_MAYOR, FLAG_GRUMBLED_ABOUT_THE_MAYOR,
-     EVENT(AlhafraManor_GrumbleAboutTheMayor)},
+    {TRIGGER_TALK, ACTOR_MADRAS_MAYOR, FLAG_COMPLAINED_ABOUT_THE_MAYOR,
+     EVENT(AlhafraManor_ComplainAboutTheMayor)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ),
      ACTOR_MADRAS_MAYOR | TRIGGER_SUBJECT_OWN_EFFECT,
-     FLAG_GRUMBLED_ABOUT_THE_MAYOR, EVENT(AlhafraManor_GrumbleAboutTheMayor)},
+     FLAG_COMPLAINED_ABOUT_THE_MAYOR,
+     EVENT(AlhafraManor_ComplainAboutTheMayor)},
     {TRIGGER_TALK, ACTOR_MADRAS_MAYOR, CONDITION_ALWAYS,
      MSGNO(MsgAlhafraManorImStartingToThinkThe)},
     {TRIGGER_TALK, ACTOR_MADRAS_ELDER, CONDITION_ALWAYS,

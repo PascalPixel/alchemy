@@ -5,6 +5,23 @@
 
 #include "battle_internal.h"
 
+/// The odds of fleeing in hundredths of a percent, against a roll below
+/// FLEE_ROLL_RANGE: FLEE_BASE_CHANCE, FLEE_CHANCE_PER_FAILURE more for each
+/// failed attempt, and FLEE_CHANCE_PER_LEVEL for each level of the party's
+/// average above the enemies'.
+enum FleeChance {
+  FLEE_ROLL_RANGE = 10000,
+  FLEE_BASE_CHANCE = 5000,
+  FLEE_CHANCE_PER_FAILURE = 2000,
+  FLEE_CHANCE_PER_LEVEL = 500
+};
+
+/// The random swaps that shuffle the enemies' order each turn.
+#define TURN_ORDER_SWAPS 32
+
+/// An empty action's priority, below every other as the sort reads it (s16).
+#define PRIORITY_LOWEST 32768
+
 /// Unused: pulses HIGHLIGHT_PALETTE, the window colours brightening and dimming
 /// with the frame count.
 void Palette_UpdatePulseBrightness(void) {
@@ -14,7 +31,7 @@ void Palette_UpdatePulseBrightness(void) {
   for (i = 0; i < PALETTE_COLORS; i++) {
     // 3/64 of a turn a frame, a pulse about every 21 frames; 1 - cos runs
     // from 0 to 2.0 (16.16), and a sixth of 1.0 is one step.
-    u32 angle = (gFrameCount * 3U) << 10;
+    u32 angle = gFrameCount * (TRIG_TURN * 3 / 64);
     u32 color = palette[PALETTE_COLORS];
     s32 brightness = (FIXED_ONE - Trig_Cos(angle)) / (FIXED_ONE / 6);
     s32 blue = RGB_BLUE(color);
@@ -115,21 +132,21 @@ s32 BattleFlee_CheckSuccess(void) {
     escaped = 1;
   } else {
     failedAttempts = &escapeState->fleeFailures;
-    chance = 5000 + (escapeState->fleeFailures * 2000);
+    chance = FLEE_BASE_CHANCE +
+             (escapeState->fleeFailures * FLEE_CHANCE_PER_FAILURE);
     livingCount = BattleUnit_ListLiving(BATTLE_SIDE_MASK_PARTY, livingUnits);
     levelTotal = 0;
     for (unitIndex = escaped; unitIndex < livingCount; unitIndex++) {
       levelTotal += Unit_GetFar(livingUnits[unitIndex])->level;
     }
-    chance += levelTotal * 500 / livingCount;
+    chance += levelTotal * FLEE_CHANCE_PER_LEVEL / livingCount;
     livingCount = BattleUnit_ListLiving(BATTLE_SIDE_MASK_ENEMIES, livingUnits);
     levelTotal = 0;
     for (unitIndex = 0; unitIndex < livingCount; unitIndex++) {
       levelTotal += Unit_GetFar(livingUnits[unitIndex])->level;
     }
-    chance -= levelTotal * 500 / livingCount;
-    // A roll from 0 to 9999 against the chance.
-    if ((chance > 0) && (Random16_Below(10000) < chance)) {
+    chance -= levelTotal * FLEE_CHANCE_PER_LEVEL / livingCount;
+    if ((chance > 0) && (Random16_Below(FLEE_ROLL_RANGE) < chance)) {
       escaped = 1;
     }
     *failedAttempts += 1;
@@ -212,7 +229,7 @@ s32 Battle_BuildEnemyActions(struct BattleAction *entries) {
     return 0;
   }
 
-  for (i = 0; i < 32; i++) {
+  for (i = 0; i < TURN_ORDER_SWAPS; i++) {
     u32 first = Random16_Below(unitCount);
     u32 second = Random16_Below(unitCount);
     s32 swap = unitIds[first];
@@ -478,8 +495,8 @@ s32 Battle_AppendLinkedActions(struct BattleAction *actions, s32 count) {
       Battle_SetRandomSeed(state->seed);
     }
 
-    // The received actions, seen from this side: the xor with 0x80 moves a
-    // target between the party's ids and the enemies'.
+    // The received actions, seen from this side: the xor with FIRST_ENEMY_UNIT
+    // moves a target between the party's ids and the enemies'.
     for (index = 0; index < result; index++) {
       struct BattleAction *action = &actions[count + index];
 
@@ -529,9 +546,7 @@ void Palette_CopyWithBrightnessOffset(s32 offset) {
         green = 0;
       if (red < 0)
         red = 0;
-      adjusted = blue << 10;
-      adjusted |= green << 5;
-      adjusted |= red;
+      adjusted = RGB(red, green, blue);
       ((u16 *)BG_PLTT)[index - PALETTE_COLORS] = adjusted;
     }
     source = 5;
@@ -556,8 +571,7 @@ s32 Battle_GatherActions(struct BattleAction *actions) {
 
     for (actionIndex = 0; actionIndex < BATTLE_ACTION_CAPACITY; actionIndex++) {
       record[actionIndex].unitId = BATTLE_UNIT_LIST_END;
-      // The lowest priority.
-      record[actionIndex].priority = 32768;
+      record[actionIndex].priority = PRIORITY_LOWEST;
     }
   }
 
@@ -622,13 +636,14 @@ finish:
   return count;
 }
 
-/// Returns the unit id at a list place, 0x80 set for the enemies' list.
+/// Returns the unit id at a list place, PLACE_ENEMY_SIDE set for the enemies'
+/// list.
 s32 Battle_GetUnitAtPlace(s32 taggedPlace) {
   struct BattleWork *battle = gBattleWork;
 
-  if ((taggedPlace & 0x80) != 0)
-    return battle->enemyIds[taggedPlace & 0xf];
-  return battle->partyUnits[taggedPlace & 0xf];
+  if ((taggedPlace & PLACE_ENEMY_SIDE) != 0)
+    return battle->enemyIds[taggedPlace & PLACE_INDEX_MASK];
+  return battle->partyUnits[taggedPlace & PLACE_INDEX_MASK];
 }
 
 /// Returns the list place of a unit, PLACE_PARTY or PLACE_ENEMY with its place,

@@ -247,16 +247,23 @@ static s32 Tolbi_KidStopForTarget(struct Actor *kid, struct Actor *target,
   return stopped;
 }
 
+/// How near in front of it, in pixels, a child stops for the other, and for the
+/// leader: STOP_RANGE, or TALK_STOP_RANGE while a talk is pending or Mind Read
+/// is on, as Vault's villagers do (shared/vault_nearby.c).
+#define PARTNER_STOP_RANGE 32
+#define STOP_RANGE 18
+#define TALK_STOP_RANGE 26
+
 /// The update of the two children running their loop. Each stops when it runs
 /// up behind the other, and otherwise when the party leader is in its way.
 /// While the party talks to someone or Mind Read shows thoughts (the range
-/// widens to 26 pixels), the child being talked to stops whatever the
+/// widens to TALK_STOP_RANGE), the child being talked to stops whatever the
 /// direction.
 static UNREAD_RESULT Tolbi_UpdateKid(struct Actor *updated) {
   struct WindowWork *window = (struct WindowWork *)gWindowWork[0];
   struct FieldWork *field = gFieldWork;
   s32 force = 0;
-  s32 range = 18;
+  s32 range = STOP_RANGE;
   struct Actor *other;
   struct Actor *leader;
 
@@ -265,14 +272,14 @@ static UNREAD_RESULT Tolbi_UpdateKid(struct Actor *updated) {
   } else {
     other = Actor_Get(ACTOR_TOLBI_OLDER_BROTHER);
   }
-  if (Tolbi_KidStopForTarget(updated, other, 32, 0) != 0) {
+  if (Tolbi_KidStopForTarget(updated, other, PARTNER_STOP_RANGE, 0) != 0) {
     RETURN_UNREAD(0);
   }
 
   leader = Actor_Get(ACTOR_PARTY_LEADER);
 
   if ((s16)field->talk != 0 || window->mindRead != 0) {
-    range = 26;
+    range = TALK_STOP_RANGE;
     if ((updated->timer & KID_TALKING) != 0) {
       force = 1;
     }

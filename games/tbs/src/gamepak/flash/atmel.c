@@ -6,6 +6,11 @@
 #include "gamepak/flash_data.h"
 #include "system/io_reg.h"
 
+/// An error's kind, in its high byte, without the enum FlashPhase in its low.
+#define FLASH_ERROR_KIND_MASK 0xFF00
+/// The 128-byte sectors in each 4 KB standard sector.
+#define ATMEL_SMALL_SECTORS_PER_SECTOR 32
+
 /// Erases the Atmel chip and waits for completion with its configured timing.
 u16 EraseAtmelFlashChip(void) {
   u8 savedCode[64];
@@ -52,7 +57,7 @@ u16 EraseAtmelFlashSector(u16 sector) {
     REG_IME = savedIme;
     result = gWaitForFlashWrite(FLASH_PHASE_PROGRAM, cursor, FLASH_ERASED_BYTE);
     if (result != 0) {
-      result = (result & 0xFF00) | FLASH_PHASE_ERASE_SECTOR;
+      result = (result & FLASH_ERROR_KIND_MASK) | FLASH_PHASE_ERASE_SECTOR;
     }
     return result;
   }
@@ -74,26 +79,17 @@ u16 EraseAtmelFlashBlock(u16 sector) {
   REG_WAITCNT =
       (REG_WAITCNT & ~WAITCNT_SRAM_MASK) | gFlash_ChipAtmelLayout.type.wait[0];
 
-  smallSector = sector << 4;
-  smallSector = (u16)(smallSector << 1);
-  sectorsErased = 0;
-nextSector:
-  attemptsRemaining = 2;
-  goto eraseAttempt;
-retryErase:
-  attemptsRemaining -= 1;
-  if (attemptsRemaining == 0)
-    goto advanceSector;
-eraseAttempt:
-  result = EraseAtmelFlashSector(smallSector);
-  if (result != 0)
-    goto retryErase;
-advanceSector:
-  smallSector += 1;
-  if (result == 0) {
-    sectorsErased += 1;
-    if ((u32)sectorsErased <= 31)
-      goto nextSector;
+  smallSector = sector * ATMEL_SMALL_SECTORS_PER_SECTOR;
+  for (sectorsErased = 0; (u32)sectorsErased < ATMEL_SMALL_SECTORS_PER_SECTOR;
+       sectorsErased++) {
+    for (attemptsRemaining = 2; attemptsRemaining != 0; attemptsRemaining--) {
+      result = EraseAtmelFlashSector(smallSector);
+      if (result == 0)
+        break;
+    }
+    smallSector += 1;
+    if (result != 0)
+      break;
   }
   REG_WAITCNT = (REG_WAITCNT & ~WAITCNT_SRAM_MASK) | WAITCNT_SRAM_SLOWEST;
   return result;
@@ -142,19 +138,15 @@ u16 ProgramAtmelFlashBlock(u16 sector, u8 *source) {
   REG_WAITCNT =
       (REG_WAITCNT & ~WAITCNT_SRAM_MASK) | gFlash_ChipAtmelLayout.type.wait[0];
 
-  smallSector = sector << 5;
+  smallSector = sector * ATMEL_SMALL_SECTORS_PER_SECTOR;
   gFlashNumRemainingBytes = gFlash_ChipAtmel.type.sector.size;
 
   while (gFlashNumRemainingBytes != 0) {
-    attemptsRemaining = 2;
-    goto programAttempt;
-    do {
-      attemptsRemaining -= 1;
-      if (attemptsRemaining == 0)
-        break;
-    programAttempt:
+    for (attemptsRemaining = 2; attemptsRemaining != 0; attemptsRemaining--) {
       result = ProgramAtmelFlashSector(smallSector, source);
-    } while (result != 0);
+      if (result == 0)
+        break;
+    }
 
     if (result != 0)
       break;

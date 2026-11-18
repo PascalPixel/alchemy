@@ -10,8 +10,26 @@
 #define TARGET_STRIKE_SPARK_COUNT 512
 #define TARGET_STRIKE_SPARKS (PARTICLES + TARGET_STRIKE_MOTE_SLOTS)
 
-/// The smoke pictures in the sheet: six 24x48 puffs.
+/// The smoke pictures in the sheet: six 24x48 puffs, each shown for
+/// TARGET_STRIKE_SMOKE_FRAMES as a puff rises.
 #define TARGET_STRIKE_SMOKE_PICTURES 12800
+#define TARGET_STRIKE_SMOKE_PUFFS 6
+#define TARGET_STRIKE_SMOKE_FRAMES 4
+/// The sparks each hit lights, a block of them for each hit: a slash's and a
+/// bite's; of the sparks, the first TARGET_STRIKE_SPARKS_SHOWN are drawn.
+#define TARGET_STRIKE_SPARKS_PER_SLASH 32
+#define TARGET_STRIKE_SPARKS_PER_BITE 64
+#define TARGET_STRIKE_SPARKS_SHOWN 128
+/// The smoke puffs a hit raises, from a block of TARGET_STRIKE_HIT_BLOCK in
+/// the effect's particles, and the motes it sends out, the block's whole of
+/// the target's motes; of these, the first TARGET_STRIKE_DRAIN_MOTES are drawn.
+#define TARGET_STRIKE_PUFFS_PER_HIT 8
+#define TARGET_STRIKE_HIT_BLOCK 16
+#define TARGET_STRIKE_DRAIN_MOTES 64
+/// The frames a drained mote flies out before the user pulls it in.
+#define TARGET_STRIKE_MOTE_FLIGHT_FRAMES 10
+/// The canvas row the fangs' pictures start at.
+#define TARGET_STRIKE_BITE_Y 56
 /// The bite's stages after the tornado sheet: BeamImage for a slash,
 /// TwelveModeImage otherwise.
 #define TARGET_STRIKE_BITE_PICTURES 3200
@@ -182,7 +200,7 @@ void BattleEffect_RunTargetStrike(struct BattleEffectParams *args, s32 mode) {
    * only. */
   for (k = 0; k != 1; k++) {
     target = GetBattleObjectSlotFar(work->args->targets[k])->actor;
-    for (i = 0; i != 64; i++) {
+    for (i = 0; i != ARRAY_COUNT(work->particles); i++) {
       struct Particle *step = &work->particles[i];
 
       Projection_Unit(work->args->targets[k], &ground);
@@ -286,26 +304,26 @@ void BattleEffect_RunTargetStrike(struct BattleEffectParams *args, s32 mode) {
             work->shakeFrames = 4;
             BattleEffect_TintBattler(work->args->targets[0], SPRITE_COLOR_WHITE,
                                      POSE_DAMAGE, 0, 8);
-            for (i = 0; i != 32; i++) {
+            for (i = 0; i != TARGET_STRIKE_SPARKS_PER_SLASH; i++) {
               struct Particle *step =
                   &TARGET_STRIKE_SPARKS[frame /
                                             (TARGET_STRIKE_VALUE(
                                                  mode,
                                                  TARGET_STRIKE_PICTURE_FRAMES) *
                                              6) *
-                                            32 +
+                                            TARGET_STRIKE_SPARKS_PER_SLASH +
                                         i];
 
               step->variant = (Random16() & 15) + 7;
             }
           }
-          for (i = 0; i != 8; i++) {
+          for (i = 0; i != TARGET_STRIKE_PUFFS_PER_HIT; i++) {
             struct Particle *step =
                 &work->particles[frame /
                                      (TARGET_STRIKE_VALUE(
                                           mode, TARGET_STRIKE_PICTURE_FRAMES) *
                                       6) *
-                                     16 +
+                                     TARGET_STRIKE_HIT_BLOCK +
                                  i];
 
             step->variant = 0;
@@ -335,7 +353,7 @@ void BattleEffect_RunTargetStrike(struct BattleEffectParams *args, s32 mode) {
           canvas,
           work->sheet + stage * PICTURE_BYTES(TARGET_STRIKE_BITE) +
               TARGET_STRIKE_BITE_PICTURES,
-          targetPosition.x / 2 - TARGET_STRIKE_BITE_WIDTH, 56,
+          targetPosition.x / 2 - TARGET_STRIKE_BITE_WIDTH, TARGET_STRIKE_BITE_Y,
           TARGET_STRIKE_BITE_WIDTH, TARGET_STRIKE_BITE_HEIGHT);
       HeapSlot_Release(HEAP_SLOT_RAM_CODE);
       EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE,
@@ -345,7 +363,7 @@ void BattleEffect_RunTargetStrike(struct BattleEffectParams *args, s32 mode) {
           canvas,
           work->sheet + stage * PICTURE_BYTES(TARGET_STRIKE_BITE) +
               TARGET_STRIKE_BITE_PICTURES,
-          targetPosition.x / 2, 56, TARGET_STRIKE_BITE_WIDTH,
+          targetPosition.x / 2, TARGET_STRIKE_BITE_Y, TARGET_STRIKE_BITE_WIDTH,
           TARGET_STRIKE_BITE_HEIGHT);
       HeapSlot_Release(HEAP_SLOT_RAM_CODE);
       if (frame %
@@ -361,35 +379,35 @@ void BattleEffect_RunTargetStrike(struct BattleEffectParams *args, s32 mode) {
           EFFECT_SHOW_DAMAGE(SE_IMPACT);
         else
           Sound_PlayFar(SE_IMPACT);
-        for (i = 0; i != 64; i++) {
+        for (i = 0; i != TARGET_STRIKE_SPARKS_PER_BITE; i++) {
           struct Particle *step =
               &TARGET_STRIKE_SPARKS[frame /
                                         (TARGET_STRIKE_VALUE(
                                              mode,
                                              TARGET_STRIKE_PICTURE_FRAMES) *
                                          6) *
-                                        64 +
+                                        TARGET_STRIKE_SPARKS_PER_BITE +
                                     i];
 
           step->variant = (Random16() & 15) + 7;
         }
-        for (i = 0; i != 8; i++) {
+        for (i = 0; i != TARGET_STRIKE_PUFFS_PER_HIT; i++) {
           struct Particle *step =
               &work->particles[frame /
                                    (TARGET_STRIKE_VALUE(
                                         mode, TARGET_STRIKE_PICTURE_FRAMES) *
                                     6) *
-                                   16 +
+                                   TARGET_STRIKE_HIT_BLOCK +
                                i];
 
           step->variant = 0;
         }
-        for (i = 0; i != 16; i++)
+        for (i = 0; i != TARGET_STRIKE_HIT_BLOCK; i++)
           PARTICLES[frame /
                         (TARGET_STRIKE_VALUE(mode,
                                              TARGET_STRIKE_PICTURE_FRAMES) *
                          6) *
-                        16 +
+                        TARGET_STRIKE_HIT_BLOCK +
                     i]
               .variant = 0;
       }
@@ -397,7 +415,7 @@ void BattleEffect_RunTargetStrike(struct BattleEffectParams *args, s32 mode) {
         glint = 1;
     }
 
-    // Glints scatter around the target.
+    // Glints scatter around the target, up to half their radius away.
     if ((TARGET_STRIKE_VALUE(mode, TARGET_STRIKE_FLAGS) & STRIKE_GLINTS) &&
         glint) {
       for (i = 0; i != 3; i++) {
@@ -407,9 +425,9 @@ void BattleEffect_RunTargetStrike(struct BattleEffectParams *args, s32 mode) {
         s32 x;
         s32 y;
 
-        x = targetPosition.x / 2 + (Trig_Sin(angle) * radius >> 17) -
+        x = targetPosition.x / 2 + (FIXEDtoINT(Trig_Sin(angle) * radius) >> 1) -
             (gBattleEffect_GlintPictureWidths[image] / 2);
-        y = targetPosition.y - (Trig_Cos(angle) * radius >> 17) -
+        y = targetPosition.y - (FIXEDtoINT(Trig_Cos(angle) * radius) >> 1) -
             (gBattleEffect_GlintPictureHeights[image] / 2);
         EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED,
                             gTargetStrike_GlintDrawFlags[Random16() & 3] |
@@ -434,11 +452,13 @@ void BattleEffect_RunTargetStrike(struct BattleEffectParams *args, s32 mode) {
       source = GetBattleObjectSlotFar(work->args->user)->actor;
       // Smoke puffs rise and spread.
       if (TARGET_STRIKE_VALUE(mode, TARGET_STRIKE_FLAGS) & STRIKE_SMOKE) {
-        for (i = 0; i != 64; i++) {
+        for (i = 0; i != ARRAY_COUNT(work->particles); i++) {
           struct Particle *step = &work->particles[i];
 
-          if (step->variant >= 0 && step->variant <= 23) {
-            s32 picture = step->variant / 4;
+          if (step->variant >= 0 &&
+              step->variant <
+                  TARGET_STRIKE_SMOKE_PUFFS * TARGET_STRIKE_SMOKE_FRAMES) {
+            s32 picture = step->variant / TARGET_STRIKE_SMOKE_FRAMES;
 
             draw[i & 1](canvas,
                         work->sheet + picture * PICTURE_BYTES(SMOKE_PUFF) +
@@ -463,7 +483,7 @@ void BattleEffect_RunTargetStrike(struct BattleEffectParams *args, s32 mode) {
         if (frame == 90)
           BattleEffect_TintBattler(work->args->user, SPRITE_COLOR_NORMAL,
                                    TINT_KEEP, TINT_KEEP, 0);
-        for (i = 0; i != 64; i++) {
+        for (i = 0; i != TARGET_STRIKE_DRAIN_MOTES; i++) {
           struct Particle *step = &PARTICLES[i];
 
           if (step->variant >= 0) {
@@ -473,7 +493,7 @@ void BattleEffect_RunTargetStrike(struct BattleEffectParams *args, s32 mode) {
                              position.y, size);
             Particle_AdvanceWithGravity3D(step, 60, 0);
             step->variant++;
-            if (step->variant > 10) {
+            if (step->variant > TARGET_STRIKE_MOTE_FLIGHT_FRAMES) {
               s32 dx = (source->x.fixed - step->x) >> 8;
               s32 dy = (source->y.fixed - step->y + toFIXED(20)) >> 8;
               s32 dz = (source->z.fixed - step->z) >> 8;
@@ -481,14 +501,15 @@ void BattleEffect_RunTargetStrike(struct BattleEffectParams *args, s32 mode) {
               step->velocityX += dx;
               step->velocityY += dy;
               step->velocityZ += dz;
-              if ((dx >= -4095 && dx <= 4095) && (dz >= -4095 && dz <= 4095))
+              if ((dx > -(toFIXED(1) / 16) && dx < toFIXED(1) / 16) &&
+                  (dz > -(toFIXED(1) / 16) && dz < toFIXED(1) / 16))
                 step->variant = -1;
             }
           }
         }
       }
       if (TARGET_STRIKE_VALUE(mode, TARGET_STRIKE_FLAGS) & STRIKE_SPARKS) {
-        for (i = 0; i != 128; i++) {
+        for (i = 0; i != TARGET_STRIKE_SPARKS_SHOWN; i++) {
           struct Particle *step = &TARGET_STRIKE_SPARKS[i];
           s32 size = step->variant;
 
@@ -520,3 +541,13 @@ void BattleEffect_RunTargetStrike(struct BattleEffectParams *args, s32 mode) {
 #undef TARGET_STRIKE_SPARKS
 #undef TARGET_STRIKE_VALUE
 #undef TARGET_STRIKE_SMOKE_PICTURES
+#undef TARGET_STRIKE_SMOKE_PUFFS
+#undef TARGET_STRIKE_SMOKE_FRAMES
+#undef TARGET_STRIKE_SPARKS_PER_SLASH
+#undef TARGET_STRIKE_SPARKS_PER_BITE
+#undef TARGET_STRIKE_SPARKS_SHOWN
+#undef TARGET_STRIKE_PUFFS_PER_HIT
+#undef TARGET_STRIKE_HIT_BLOCK
+#undef TARGET_STRIKE_DRAIN_MOTES
+#undef TARGET_STRIKE_MOTE_FLIGHT_FRAMES
+#undef TARGET_STRIKE_BITE_Y

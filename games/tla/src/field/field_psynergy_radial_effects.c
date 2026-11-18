@@ -1357,11 +1357,10 @@ void BattleEffect_EndArcEffect(void) {
 }
 
 #define BOW_NEXT_PHASE(work) ((work)->phase++, (work)->timer = -1)
-/// Of the BOW_SPARK_COUNT sparks, those the bow throws off; while they repeat,
-/// each starts again every BOW_SPARKS_THROWN frames.
+/// Of the BOW_SPARK_COUNT sparks, those the bow throws off.
 #define BOW_SPARKS_THROWN 10
-/// The red and green of the canvas palette's first colour.
-#define ARROW_SHADE_FIRST 16
+/// While the thrown sparks repeat, each starts again after this many frames.
+#define BOW_SPARK_FRAMES 10
 
 /// Task of the Arrow, the field Psynergy of the unused ability "A??" (named
 /// here for the bow it draws and the arrow it looses): the bow and the flaming
@@ -1618,7 +1617,7 @@ again:
         Field_AdvanceWithGravity2D(&motion->x, 60, 0);
       }
       motion->delay++;
-      if (work->sparksRepeat == 1 && motion->delay == BOW_SPARKS_THROWN)
+      if (work->sparksRepeat == 1 && motion->delay == BOW_SPARK_FRAMES)
         motion->delay = 0;
       motion++;
     }
@@ -1724,11 +1723,11 @@ void FieldPsynergy_Arrow(void) {
   work->target[2] = scene->mainActor->z.fixed;
   Vector_AddPolarOffset(toFIXED(80), scene->angle8, work->target);
 
-  // The canvas palette: full blue, red and green rising from 16 to 31.
+  // The canvas palette: blue full, red and green rising from half to full.
   palette = (u16 *)&OBJ_PLTT_COLOR(CANVAS_PALETTE, 0);
   for (i = 0; i < PALETTE_COLORS; i++) {
-    shade = i + ARROW_SHADE_FIRST;
-    Io_Write16((shade << 5 | blue) | shade, palette);
+    shade = i + (RGB_LEVEL_MAX + 1) / 2;
+    Io_Write16(RGB(0, shade, 0) | blue | shade, palette);
     palette++;
   }
 

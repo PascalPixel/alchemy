@@ -4,14 +4,31 @@
 
 #include "field_internal.h"
 
+/// The sprite table's rows, one for each sprite id up to the last status
+/// sprite.
+#define SPRITE_COUNT (SPRITE_STATUS_GRIM_REAPER_7 + 1)
+
 /// Returns the animation metadata of the sprite id in id's low twelve bits;
 /// an id past the last sprite reads the first's.
 struct AnimationMetadata *Resource_GetMetadataRecordFar(u32 id) {
   id &= ACTOR_CREATE_SPRITE_MASK;
-  if (id >= 716)
+  if (id >= SPRITE_COUNT)
     id = 0;
   return &gSprite_AnimationMetadata[id];
 }
+
+/// An LZ stream's commands: a byte of eight flags, read from its low bit, each
+/// taking one literal byte (1) or one run (0). A run's token is two bytes, high
+/// first: the run's length in its top four bits, how far back it copies from in
+/// its low twelve.
+enum {
+  LZ_FLAGS_MARKER = 1 << 8, ///< set above a flag byte's eight flags
+  LZ_LENGTH_SHIFT = 12,
+  LZ_DISTANCE_MASK = (1 << LZ_LENGTH_SHIFT) - 1,
+  /// A run whose length nibble is 0 takes its length from the next byte, plus
+  /// the lengths the nibble holds.
+  LZ_LONG_LENGTH_BASE = 16
+};
 
 /// Decompresses an LZ stream from source into destination and returns
 /// destination.
@@ -36,7 +53,7 @@ u8 *Decompress_Lz(const u8 *source, u8 *destination) {
   start = destination;
   command++;
   // A marker bit, shifted down as the flags are read.
-  control |= 0x100;
+  control |= LZ_FLAGS_MARKER;
   // Consume literals or copy runs until the zero token ends the stream.
   for (;;) {
     if ((control & 1) != 0) {
@@ -48,9 +65,9 @@ u8 *Decompress_Lz(const u8 *source, u8 *destination) {
       token |= *command++;
       if (token == 0)
         break;
-      length = token >> 12;
+      length = token >> LZ_LENGTH_SHIFT;
       if (length == 0) {
-        length = *command + 16;
+        length = *command + LZ_LONG_LENGTH_BASE;
         command++;
       }
       length += 2;
@@ -58,7 +75,7 @@ u8 *Decompress_Lz(const u8 *source, u8 *destination) {
       // a sprite's codec 3 pictures are stored one after another, and each is
       // packed against the pictures stored before it, as IwramDecompress also
       // reads them. 441 sprites, Felix's among them, use codec 3.
-      copy = base - (token & 0x0fff);
+      copy = base - (token & LZ_DISTANCE_MASK);
       while (length != 0) {
         *destination++ = *copy++;
         length--;
@@ -68,8 +85,10 @@ u8 *Decompress_Lz(const u8 *source, u8 *destination) {
     if (control == 0) {
       control = *command;
       command++;
-      control |= 0x100;
+      control |= LZ_FLAGS_MARKER;
     }
   }
   return start;
 }
+
+#undef SPRITE_COUNT

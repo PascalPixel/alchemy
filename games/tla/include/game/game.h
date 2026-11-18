@@ -159,6 +159,8 @@ extern const u32 gCharacter_LevelExpTable[];
 extern const s16 gElement_PowerResistCurve[5][2];
 /// The power and resistance by element level (element_table.c); nothing writes
 /// it.
+/* FAKEMATCH(signature): declared without its const, the definition placed in
+ * .rodata by a section attribute; as const in both. */
 extern struct ElementLevelBonus gElement_PowerResistByLevel[16];
 extern const struct EnemyElementPreset gEnemy_ElementPresetTable[];
 extern const struct CharacterDefinition gCharacter_DefinitionTable[];

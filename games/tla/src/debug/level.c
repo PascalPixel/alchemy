@@ -132,8 +132,8 @@ void IncreaseItemAndLevel_ShowCharacterName(s32 character) {
   MessageArgument_Push(character, MESSAGE_ARGUMENT_ACTOR);
   Event_ShowMessageAndWait(character, 0);
   // Garet's name is followed by Isaac saying the list's next line, "Ivan".
-  // XXX (no evidence): why; render event cannot play a debug room's events,
-  // and no text or code of either game says.
+  // XXX (no evidence): why; the debug room's events cannot be recorded, and no
+  // text or code of either game says.
   if (character == GARET)
     Event_ShowMessageAndWait(ISAAC, 0);
   Event_End();

@@ -75,11 +75,11 @@
 /// The lift room's actors (SceneId_KandoreanTempleLifts), numbering the rows of
 /// gKandoreanTemple_LiftRoomPlacements.
 enum KandoreanTempleLiftRoomActorId {
-  /// The poles of the two tightropes, a pair to each rope.
-  ACTOR_WEST_ROPE_WEST_POLE = ACTOR_FIRST_PLACED,
-  ACTOR_WEST_ROPE_EAST_POLE,
-  ACTOR_EAST_ROPE_WEST_POLE,
-  ACTOR_EAST_ROPE_EAST_POLE,
+  /// The posts of the two tightropes, a pair to each rope.
+  ACTOR_WEST_ROPE_WEST_POST = ACTOR_FIRST_PLACED,
+  ACTOR_WEST_ROPE_EAST_POST,
+  ACTOR_EAST_ROPE_WEST_POST,
+  ACTOR_EAST_ROPE_EAST_POST,
   /// The pillar Move pushes along (gKandoreanTemple_BlockActors).
   ACTOR_LIFT_ROOM_PILLAR,
   ACTOR_WEST_LIFT,
@@ -136,9 +136,9 @@ enum KandoreanTempleVentRoomActorId {
 /// Fog's room's actors (SceneId_KandoreanTempleFog), numbering the rows of
 /// gKandoreanTemple_FogRoomPlacements.
 enum KandoreanTempleFogRoomActorId {
-  /// The poles of the rope Lash ties across to Fog's ledge.
-  ACTOR_FOG_ROPE_POLE = ACTOR_FIRST_PLACED,
-  ACTOR_FOG_ROPE_OTHER_POLE,
+  /// The posts of the rope Lash ties across to Fog's ledge.
+  ACTOR_FOG_ROPE_POST = ACTOR_FIRST_PLACED,
+  ACTOR_FOG_ROPE_OTHER_POST,
   /// The student who has given up on the test: "It seems I may not have been
   /// ready after all..." He sits on the floor, squashing and stretching now
   /// and then, until the party has met Poi.
@@ -169,11 +169,11 @@ enum KandoreanTempleGateActorId {
 /// Poi's room's actors (SceneId_KandoreanTemplePoi), numbering the rows of
 /// gKandoreanTemple_PoisRoomPlacements.
 enum KandoreanTemplePoisRoomActorId {
-  /// The poles of the room's two ropes: Lash ties the loose end of each.
-  ACTOR_SOUTH_ROPE_WEST_POLE = ACTOR_FIRST_PLACED,
-  ACTOR_SOUTH_ROPE_EAST_POLE,
-  ACTOR_NORTH_ROPE_EAST_POLE,
-  ACTOR_NORTH_ROPE_WEST_POLE,
+  /// The posts of the room's two ropes: Lash ties the loose end of each.
+  ACTOR_SOUTH_ROPE_WEST_POST = ACTOR_FIRST_PLACED,
+  ACTOR_SOUTH_ROPE_EAST_POST,
+  ACTOR_NORTH_ROPE_EAST_POST,
+  ACTOR_NORTH_ROPE_WEST_POST,
   ACTOR_POI,
   /// The three students Poi tests, in turn; only the third can levitate well
   /// enough to go on to the final test.
@@ -515,14 +515,15 @@ void *Scene_GetTriggers(void) {
   return gKandoreanTemple_Events;
 }
 
-/// Each frame a wader moves counts two toward the next ring on the water, or
-/// four when half its speeds across and down together pass
-/// SPLASH_RING_FAST_SPEED; past SPLASH_RING_STRIDE a ring spreads at its feet.
+/// Each call of KandoreanTemple_LeaveSplashRings on a moving wader counts two
+/// toward the next ring on the water, or four when half its speeds across and
+/// down together pass SPLASH_RING_FAST_SPEED; past SPLASH_RING_STRIDE a ring
+/// spreads at its feet.
 #define SPLASH_RING_FAST_SPEED toFIXED(0.73243)
 #define SPLASH_RING_STRIDE 40
 
-/// Unused: the leader, its shadow taken away, starts leaving rings on the water
-/// as it walks.
+/// Unused: takes the leader's shadow away and counts one step of its wading
+/// (KandoreanTemple_LeaveSplashRings).
 UNUSED void KandoreanTemple_StartSplashRings(void) {
   struct Actor *leader = Actor_GetById(gMainRoutineWork.leaderActorId);
 
@@ -530,8 +531,8 @@ UNUSED void KandoreanTemple_StartSplashRings(void) {
   KandoreanTemple_LeaveSplashRings(leader, 0);
 }
 
-/// Counts an actor's steps through the water, faster when it moves fast, and
-/// spreads a ring on the water at its feet every so often.
+/// Counts one step of an actor through the water, more when it moves fast,
+/// and spreads a ring on the water at its feet once enough are counted.
 void KandoreanTemple_LeaveSplashRings(struct Actor *actor, s32 step) {
   s32 speed = (actor->velocityX + actor->velocityZ) >> 1;
   s32 *counter = &gKandoreanTemple_SplashRingCounter;
@@ -789,10 +790,10 @@ void KandoreanTemple_PrepareColumn(s32 id) {
   Actor_DisableById(id);
 }
 
-/// Poi casts Lash on the north rope's east pole.
+/// Poi casts Lash on the north rope's east post.
 void KandoreanTemple_CastLash(void) {
   FieldPsynergy_LoadResources(ABILITY_LASH, 1);
-  FieldPsynergy_SetupActorPair(ACTOR_POI, ACTOR_NORTH_ROPE_EAST_POLE);
+  FieldPsynergy_SetupActorPair(ACTOR_POI, ACTOR_NORTH_ROPE_EAST_POST);
   FieldPsynergy_StartCast();
   FieldPsynergy_RunHandler(1);
   BattleEffect_StopMainActor();
@@ -1103,13 +1104,6 @@ void KandoreanTemple_RunWestVent(void) {
   gKandoreanTemple_WestTimer++;
 }
 
-/// Floats a vent's cover on its column, on a sine.
-#define FLOAT_ON_COLUMN(cover, phase)                                          \
-  do {                                                                         \
-    (cover)->y.fixed += Trig_Sin(*(phase)) >> 1;                               \
-    *(phase) += TRIG_TURN / 16;                                                \
-  } while (0)
-
 /// The east vent's task, as KandoreanTemple_RunWestVent with the vents
 /// swapped.
 void KandoreanTemple_RunEastVent(void) {
@@ -1154,7 +1148,8 @@ void KandoreanTemple_RunEastVent(void) {
             Task_Remove(KandoreanTemple_RunEastVent);
           }
           phase = &gKandoreanTemple_EastFloatPhase;
-          FLOAT_ON_COLUMN(cover, phase);
+          cover->y.fixed += Trig_Sin(*phase) >> 1;
+          *phase += TRIG_TURN / 16;
         } else if (t < VENT_SINK) {
           phase = &gKandoreanTemple_EastFloatPhase;
           if (*phase == 0) {
@@ -1162,7 +1157,8 @@ void KandoreanTemple_RunEastVent(void) {
             *timer = VENT_SINK - 1;
             GameFlag_Clear(FLAG_EAST_VENT_BLOWING);
           }
-          FLOAT_ON_COLUMN(cover, phase);
+          cover->y.fixed += Trig_Sin(*phase) >> 1;
+          *phase += TRIG_TURN / 16;
         } else {
           cover->y.fixed += -toFIXED(27) / 4;
           limit = FIXED_ONE * 3 / 32;
@@ -1188,7 +1184,8 @@ void KandoreanTemple_RunEastVent(void) {
           KandoreanTemple_GrowColumn(ACTOR_EAST_COLUMN_MIDDLE_PIECE, 0, limit);
         } else if (t < VENT_FLOAT_END) {
           phase = &gKandoreanTemple_EastFloatPhase;
-          FLOAT_ON_COLUMN(cover, phase);
+          cover->y.fixed += Trig_Sin(*phase) >> 1;
+          *phase += TRIG_TURN / 16;
         } else if (t < VENT_SINK) {
           phase = &gKandoreanTemple_EastFloatPhase;
           if (*phase == 0) {
@@ -1196,7 +1193,8 @@ void KandoreanTemple_RunEastVent(void) {
             *timer = VENT_SINK - 1;
             GameFlag_Clear(FLAG_EAST_VENT_BLOWING);
           }
-          FLOAT_ON_COLUMN(cover, phase);
+          cover->y.fixed += Trig_Sin(*phase) >> 1;
+          *phase += TRIG_TURN / 16;
         } else {
           cover->y.fixed += -toFIXED(3.7125);
           limit = FIXED_ONE * 3 / 32;
@@ -1896,15 +1894,15 @@ void KandoreanTemple_ReceiveLash(void) {
   Event_End();
 }
 
-/// Stepping behind a rope's pole, the leader is drawn behind it.
-void KandoreanTemple_StepBehindThePole(void) {
+/// Stepping behind a rope's post, the leader is drawn behind it.
+void KandoreanTemple_StepBehindThePost(void) {
   Actor_GetById(gMainRoutineWork.leaderActorId)->priorityFlags |=
       ACTOR_PRIORITY_IGNORES_RISES;
   Actor_SetSpritePriority(gMainRoutineWork.leaderActorId, 1);
 }
 
-/// Stepping out from behind a rope's pole, the leader is drawn in front again.
-void KandoreanTemple_StepOutFromThePole(void) {
+/// Stepping out from behind a rope's post, the leader is drawn in front again.
+void KandoreanTemple_StepOutFromThePost(void) {
   Actor_GetById(gMainRoutineWork.leaderActorId)->priorityFlags &=
       ~ACTOR_PRIORITY_IGNORES_RISES;
   Actor_GetById(gMainRoutineWork.leaderActorId)->priorityFlags |=
@@ -1999,12 +1997,12 @@ s32 Scene_PrepareMap(void) { return 0; }
 /// the lifts, and the lift the leader arrives on.
 void KandoreanTemple_StartLiftRoom(void) {
   Tightrope_Initialize();
-  Tightrope_Place(0, ACTOR_WEST_ROPE_WEST_POLE, ACTOR_WEST_ROPE_EAST_POLE);
-  Tightrope_Place(1, ACTOR_EAST_ROPE_WEST_POLE, ACTOR_EAST_ROPE_EAST_POLE);
-  Actor_SetAnimationById(ACTOR_WEST_ROPE_WEST_POLE, 4);
-  Actor_SetAnimationById(ACTOR_WEST_ROPE_EAST_POLE, 4);
-  Actor_SetAnimationById(ACTOR_EAST_ROPE_WEST_POLE, 4);
-  Actor_SetAnimationById(ACTOR_EAST_ROPE_EAST_POLE, 4);
+  Tightrope_Place(0, ACTOR_WEST_ROPE_WEST_POST, ACTOR_WEST_ROPE_EAST_POST);
+  Tightrope_Place(1, ACTOR_EAST_ROPE_WEST_POST, ACTOR_EAST_ROPE_EAST_POST);
+  Actor_SetAnimationById(ACTOR_WEST_ROPE_WEST_POST, 4);
+  Actor_SetAnimationById(ACTOR_WEST_ROPE_EAST_POST, 4);
+  Actor_SetAnimationById(ACTOR_EAST_ROPE_WEST_POST, 4);
+  Actor_SetAnimationById(ACTOR_EAST_ROPE_EAST_POST, 4);
   Actor_PlaceBlocks(gKandoreanTemple_BlockActors);
   REG_BLDALPHA = BLEND_ALPHA(8, 12);
   REG_BLDCNT = BLDCNT_TGT1_OBJ | BLDCNT_TGT2_ALL;
@@ -2161,7 +2159,8 @@ void KandoreanTemple_StartVentRoom(void) {
       KandoreanTemple_ArriveOnEastVent();
   }
   gKandoreanTemple_WestTimer = 0;
-  gKandoreanTemple_EastTimer = 4000;
+  // The east vent starts at rest, out of step with the west.
+  gKandoreanTemple_EastTimer = VENT_SHUT + 1000;
   gKandoreanTemple_WestFloatPhase = 0;
   gKandoreanTemple_EastFloatPhase = 0;
   Task_AddFrame(KandoreanTemple_RunWestVent, TASK_PASS_FRAME);
@@ -2178,7 +2177,6 @@ void KandoreanTemple_StartVentRoom(void) {
 #include "../field/field_effect_advance_motion.c"
 
 #undef DEFINE_KANDOREAN_TEMPLE_VENT
-#undef FLOAT_ON_COLUMN
 #undef EFFECT_SPAWN
 #undef EFFECT_CREATE
 #undef EFFECT_SET_MODE
@@ -2618,8 +2616,8 @@ void KandoreanTemple_StartSteamRoom(void) {
 /// student who gave up, sitting on the floor.
 void KandoreanTemple_StartFogRoom(void) {
   Rope_Initialize();
-  Rope_Place(0, FLAG_FOG_ROPE_TIED, ACTOR_FOG_ROPE_POLE,
-             ACTOR_FOG_ROPE_OTHER_POLE);
+  Rope_Place(0, FLAG_FOG_ROPE_TIED, ACTOR_FOG_ROPE_POST,
+             ACTOR_FOG_ROPE_OTHER_POST);
   if (GameFlag_Get(FLAG_MET_POI)) {
     Actor_SetPosition(ACTOR_STUDENT_WHO_GAVE_UP, 0, 0);
   } else {
@@ -2690,8 +2688,8 @@ void KandoreanTemple_StartGate(void) {
 void KandoreanTemple_PoiWaitsByTheNorthRope(void) {
   if (Event_GetFlag(FLAG_NORTH_ROPE_TIED) == 0) {
     Event_SetFlag(FLAG_NORTH_ROPE_TIED);
-    Call4(Rope_Place, 1, FLAG_NORTH_ROPE_TIED, ACTOR_NORTH_ROPE_EAST_POLE,
-          ACTOR_NORTH_ROPE_WEST_POLE);
+    Call4(Rope_Place, 1, FLAG_NORTH_ROPE_TIED, ACTOR_NORTH_ROPE_EAST_POST,
+          ACTOR_NORTH_ROPE_WEST_POST);
   }
   {
     Actor_SetPositionAndFacing(ACTOR_POI, toFIXED(392), toFIXED(360),
@@ -2699,16 +2697,16 @@ void KandoreanTemple_PoiWaitsByTheNorthRope(void) {
   }
 }
 
-/// Sets up Poi's hall: its ropes, the tested students, Poi and the trapdoor, by
-/// the entrance the party takes.
+/// Sets up Poi's hall: its ropes, the tested students, Poi and the trap door,
+/// by the entrance the party takes.
 void KandoreanTemple_StartPoisRoom(void) {
   gFieldWork->transition =
       SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER);
   Rope_Initialize();
-  Call4(Rope_Place, 0, FLAG_SOUTH_ROPE_TIED, ACTOR_SOUTH_ROPE_WEST_POLE,
-        ACTOR_SOUTH_ROPE_EAST_POLE);
-  Rope_Place(1, FLAG_NORTH_ROPE_TIED, ACTOR_NORTH_ROPE_EAST_POLE,
-             ACTOR_NORTH_ROPE_WEST_POLE);
+  Call4(Rope_Place, 0, FLAG_SOUTH_ROPE_TIED, ACTOR_SOUTH_ROPE_WEST_POST,
+        ACTOR_SOUTH_ROPE_EAST_POST);
+  Rope_Place(1, FLAG_NORTH_ROPE_TIED, ACTOR_NORTH_ROPE_EAST_POST,
+             ACTOR_NORTH_ROPE_WEST_POST);
   if (Event_GetFlag(FLAG_MET_POI) == 0) {
     Actor_SetAnimationById(ACTOR_FIRST_TESTED_STUDENT, 5);
     Actor_SetAnimationById(ACTOR_THIRD_TESTED_STUDENT, 5);
@@ -3731,14 +3729,14 @@ struct Trigger gKandoreanTemple_FogRoomEvents[] = {
     {TRIGGER_EXIT | EXIT_STYLE_STAIRS_UP, 2, CONDITION_ALWAYS, 2},
     {TRIGGER_EXIT, 3, CONDITION_ALWAYS, 3},
     {TRIGGER_EXIT | EXIT_STYLE_STAIRS_UP, 4, CONDITION_ALWAYS, 4},
-    {PSYNERGY_ON_ACTOR(ABILITY_LASH), ACTOR_FOG_ROPE_POLE, FLAG_FOG_ROPE_TIED,
+    {PSYNERGY_ON_ACTOR(ABILITY_LASH), ACTOR_FOG_ROPE_POST, FLAG_FOG_ROPE_TIED,
      0},
     {TRIGGER_TALK, ACTOR_FOG, CONDITION_ALWAYS,
      EVENT(KandoreanTemple_FightFog)},
     {TRIGGER_STEP, 10, CONDITION_ALWAYS,
-     EVENT(KandoreanTemple_StepBehindThePole)},
+     EVENT(KandoreanTemple_StepBehindThePost)},
     {TRIGGER_STEP, 11, CONDITION_ALWAYS,
-     EVENT(KandoreanTemple_StepOutFromThePole)},
+     EVENT(KandoreanTemple_StepOutFromThePost)},
     {TRIGGER_TALK, ACTOR_STUDENT_WHO_GAVE_UP, CONDITION_ALWAYS,
      MSGNO(MsgFieldItSeemsIMayNotHave)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 10, CONDITION_ALWAYS,
@@ -3820,8 +3818,8 @@ struct Trigger gKandoreanTemple_PoisRoomEvents[] = {
     {TRIGGER_EXIT, 7, CONDITION_ALWAYS, 7},
     {STEP_TRIGGER_WALKING, 8, CONDITION_ALWAYS, EVENT(KandoreanTemple_ClimbDownTheWell)},
     {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 9, CONDITION_ALWAYS, EVENT(KandoreanTemple_DropThroughTheTrapDoor)},
-    {PSYNERGY_ON_ACTOR(ABILITY_LASH), ACTOR_SOUTH_ROPE_WEST_POLE, FLAG_SOUTH_ROPE_TIED, 0},
-    {PSYNERGY_ON_ACTOR(ABILITY_LASH), ACTOR_NORTH_ROPE_EAST_POLE, FLAG_NORTH_ROPE_TIED, 0},
+    {PSYNERGY_ON_ACTOR(ABILITY_LASH), ACTOR_SOUTH_ROPE_WEST_POST, FLAG_SOUTH_ROPE_TIED, 0},
+    {PSYNERGY_ON_ACTOR(ABILITY_LASH), ACTOR_NORTH_ROPE_EAST_POST, FLAG_NORTH_ROPE_TIED, 0},
     {TRIGGER_TALK, ACTOR_FIRST_TESTED_STUDENT, FLAG_MET_POI, MSGNO(MsgFieldHeWentInBeforeMeWhat)},
     {TRIGGER_TALK, ACTOR_FIRST_TESTED_STUDENT, CONDITION_ALWAYS, EVENT(KandoreanTemple_AskWhoPassedTheTest)},
     {TRIGGER_TALK, ACTOR_SECOND_TESTED_STUDENT, FLAG_MET_POI, MSGNO(MsgFieldEmptyMindEmptyBodyByClearing)},

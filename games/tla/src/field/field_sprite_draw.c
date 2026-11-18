@@ -12,19 +12,6 @@
 #include "system/system.h"
 #include "system/task.h"
 
-/// The animation commands no script uses, skipped (ANIMCMD_WAIT lies among
-/// them); 251 is not one: it shows as a picture.
-#define ANIMCMD_UNUSED_FIRST (ANIMCMD_OFFSET_X + 1)
-#define ANIMCMD_UNUSED_LAST 250
-
-/// A facing table entry: the picture's offset from the base picture, and the
-/// bit that mirrors it.
-#define ANIM_FACING_PICTURE_MASK 7
-#define ANIM_FACING_MIRRORED (1 << 7)
-/// The sector a facing angle lies in, a turn cut into `sectors`.
-#define FACING_SECTOR(dir, sectors)                                            \
-  ((dir) / (TRIG_TURN / (sectors)) % (sectors))
-
 /// Sprite.flags: the sprite keeps the picture last drawn and only turns to
 /// mirror it, set once a battle's motion releases the buffer its layer drew
 /// from (BattleMotion_ReleaseBuffer).
@@ -467,7 +454,7 @@ void Render_ApplyProjectedPlacement(struct Sprite *object, s32 *pos, s32 *scale,
     halfHeight <<= 1;
   }
 
-  // The shadow: an 8 by 4 sprite on the ground below the object.
+  // The 16 by 8 shadow, centred on the ground below the object.
   y = FIXEDtoINT(pz - pw) - SHADOW_HALF_HEIGHT;
   if ((object->flags & SPRITE_FLAG_SHADOW) && y < DISPLAY_HEIGHT) {
     part = &object->shadow;

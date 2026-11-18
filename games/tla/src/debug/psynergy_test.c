@@ -979,7 +979,7 @@ struct Trigger gSceneEvents[] = {
     {TRIGGER_TABLE_END},
 };
 
-// The rings' start and stop, which the ROM places after the tables.
+// The rings' start and stop.
 
 /// Starts an actor's rings, kept in `work`: loads their tiles and hooks
 /// PsynergyTest_UpdateRings to the actor.

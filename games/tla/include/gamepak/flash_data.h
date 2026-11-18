@@ -34,6 +34,9 @@ struct FlashType {
     u16 joined;
   } id;
 };
+/// The id a Macronix chip answers with (Flash_ChipMacronix's): its device id
+/// 0x1c above the maker id 0xc2.
+#define FLASH_ID_MACRONIX (0x1c << 8 | 0xc2)
 
 /// Settings for each flash chip model (44 bytes); flashsst.c, flashmx.c and
 /// flashat.c hold the chips'.

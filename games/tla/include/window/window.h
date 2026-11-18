@@ -28,9 +28,9 @@ enum { WINDOW_SPRITE_COUNT = 64 };
 #define TEXT_TILES 128
 #define TEXT_EXTRA_TILE_FIRST 512
 
-/// The window system's work, as ☀️'s with its bytes before the tilemap: the
-/// windows' tilemap, the windows, the three text channels, the 64 window
-/// sprites, and the decoded message and its arguments.
+/// The window system's work: its text tile and upload state, the windows'
+/// tilemap, the windows, the three text channels, the 64 window sprites, and
+/// the decoded message and its arguments.
 struct WindowWork {
   u16 nextTextTile;  ///< the text tile the next search for a free one starts at
   u8 extraTextTiles; ///< 1 lets text use the second range of tiles
@@ -53,7 +53,7 @@ struct WindowWork {
   u16 outline;                ///< the current channel's, copied in to draw
   u16 colour;                 ///< the current channel's, copied in to draw
   u16 textBuffer[TEXT_BUFFER_MASK + 1]; ///< decoded text, a ring of codes
-  u16 glyphSpacing;      ///< 9 with the text style, as ☀️'s letterSpacing
+  u16 glyphSpacing;                     ///< 9 with the text style
   u16 textBufferEnd;     ///< where the next code goes in textBuffer
   u16 lastMessageStart;  ///< where the last decoded message began in textBuffer
   u16 glyphResource;     ///< VRAM cache slot of the page arrow; 99 when none
@@ -112,7 +112,7 @@ enum MessageDecodeFlag {
 /// WindowWork.glyphResource while the page arrow has no VRAM cache slot.
 #define NO_GLYPH_RESOURCE 99
 
-/// The last character code the window's text tiles cover, as ☀️'s.
+/// The last character code the window's text tiles cover.
 #define TEXT_LAST_FONT_CODE 255
 
 /// WindowSprite.kind: what a window sprite owns besides itself, which
@@ -128,7 +128,7 @@ enum {
   WINDOW_SPRITE_MOTION_PAGE_ARROW = 2 ///< the next-page arrow, bobbing
 };
 
-/// What Window_PutGlyph draws, as ☀️'s.
+/// What Window_PutGlyph draws.
 enum GlyphDrawMode {
   GLYPH_DRAW_CHARACTER = 0, ///< the character given, as a tile
   GLYPH_DRAW_PAGE_ARROW = 1 ///< the next-page arrow, in the window's corner
@@ -515,6 +515,10 @@ enum CenteredMessageMode {
   /// A zooming window sized to the message, waited for as it closes.
   CENTERED_MESSAGE_WINDOW = 1
 };
+/// The colour a bare centred message is written in, which a scene sets white
+/// again before each one while the screen is warm-tinted (Mars Lighthouse's
+/// inscriptions, the Gabomba Statue's chamber).
+#define CENTERED_TEXT_COLOR OBJ_PLTT_COLOR(0, 15)
 
 /// The flags FieldMessage_Show takes.
 enum FieldMessageFlag {
@@ -559,20 +563,25 @@ enum PauseMenuEntry {
 #define HIGHLIGHT_LIGHTEN_STEPS 9
 
 /// The bob of a prompt or cursor: up and down by up to 2 pixels, a sine every
-/// 16 frames, as ☀️'s.
+/// 16 frames.
 #define CURSOR_BOB_Y()                                                         \
   (Trig_Sin(gFrameCount * (TRIG_TURN / 16)) / (FIXED_ONE / 2))
 
 /// Message_OpenWindow's packed argument: the speaker's voice in bits 16 to 27,
-/// above the window options, as ☀️'s.
+/// above the window options.
 #define MESSAGE_WINDOW_VOICE(voice) ((voice) << 16)
+/// The speaker's voice in a packed argument, as Message_OpenWindow takes it
+/// out.
+#define MESSAGE_WINDOW_VOICE_OF(packed) (((u32)(packed) << 4) >> 20)
+/// The window options of a packed argument.
+#define MESSAGE_WINDOW_OPTIONS_MASK 0xffff
 
 /// Message_OpenWindow's window options, in packed's low bits.
 enum MessageWindowOption {
   MESSAGE_WINDOW_ZOOM = 1, ///< zoom open rather than appear at once
-  /// Set only by callers that open without MESSAGE_WINDOW_ZOOM; nothing reads
-  /// it.
-  MESSAGE_WINDOW_UNUSED = 2,
+  /// Set by the shopkeepers' windows and some others; Message_OpenWindow never
+  /// reads it.
+  MESSAGE_WINDOW_UNREAD = 2,
   MESSAGE_WINDOW_TEXT_CANVAS = 8,    ///< WINDOW_FLAG_TEXT_CANVAS
   MESSAGE_WINDOW_ANCHOR_BOTTOM = 16, ///< WINDOW_FLAG_ANCHOR_BOTTOM
   MESSAGE_WINDOW_FIXED_X = 32        ///< WINDOW_FLAG_FIXED_X

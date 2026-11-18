@@ -6,9 +6,9 @@
 /// (JupiterLighthouse_CheckBlockOnCell), keeps it open, a shortcut through the
 /// tower. The room's cracked tiles give way under a second step
 /// (JupiterLighthouse_StepOnCrackedTile), dropping the party into the hall of
-/// the four winged statues below, where a single cracked tile in a ring of studs
-/// (JupiterLighthouse_StepOnSingleCrackedTile) drops it into the room of the blue
-/// key.
+/// the four winged statues below, where a single cracked tile in a ring of
+/// studs (JupiterLighthouse_StepOnSingleCrackedTile) drops it into the room of
+/// the blue key.
 ///
 /// After the scene's own code come the shared field effect spawner and the
 /// cracked tiles' routines, which it links between.
@@ -69,7 +69,10 @@ enum { TRIGGER_DOOR_BUTTON = 20, TRIGGER_OFF_DOOR_BUTTON = 21 };
 
 /// The cell behaviors of the room's cracked tiles, and of the single one in the
 /// hall below; each takes the next one up as it cracks.
-enum { CELL_BEHAVIOR_CRACKED_TILE = 33, CELL_BEHAVIOR_SINGLE_CRACKED_TILE = 43 };
+enum {
+  CELL_BEHAVIOR_CRACKED_TILE = 33,
+  CELL_BEHAVIOR_SINGLE_CRACKED_TILE = 43
+};
 
 /// Through a cracked tile to the hall below, on the same map: the exit and the
 /// entrance it lands at share the number.
@@ -127,8 +130,8 @@ void JupiterLighthouse_StepOnCrackedTile(s32 value) {
     FieldEvent_SetExitRequest(THROUGH_CRACKED_TILE);
 }
 
-/// The single cracked tile of the hall below under a grounded leader: as it gives
-/// way the party falls into the room of the blue key.
+/// The single cracked tile of the hall below under a grounded leader: as it
+/// gives way the party falls into the room of the blue key.
 void JupiterLighthouse_StepOnSingleCrackedTile(s32 value) {
   if (Actor_Get(gMainRoutineWork.leaderActorId)->y.fixed == 0 &&
       CrackedTile_Step(value))

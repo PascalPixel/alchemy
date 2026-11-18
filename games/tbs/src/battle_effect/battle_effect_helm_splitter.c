@@ -147,6 +147,13 @@ void BattleEffect_RunHelmSplitter(struct BattleEffectParams *args) {
   EFFECT_FINISH_CANVAS();
 }
 
+/// The formations' sizes: Thor's 3 by 3 grid and its spacing in pixels,
+/// Nereid's twelve, and Cybele's and Tiamat's eight.
+#define FORMATION_GRID_COLUMNS 3
+#define FORMATION_GRID_SPACING 32
+#define FORMATION_TWELVE 12
+#define FORMATION_EIGHT 8
+
 /// Arranges work->effects in a formation; x and z are its origin in 16.16
 /// pixels.
 void BattleEffect_PlaceFormationObjects(s32 formation, FIXED x, FIXED z) {
@@ -165,28 +172,30 @@ void BattleEffect_PlaceFormationObjects(s32 formation, FIXED x, FIXED z) {
   // while its draw slot and shadow follow y itself.
   switch (formation) {
   case SUMMON_FORMATION_THOR:
-    for (i = 0; i != 9; i++) {
-      pos.x = INTtoFIXED(i % 3 * 32) + x;
-      pos.y = INTtoFIXED(i / 3 * 32) + z;
+    for (i = 0; i != FORMATION_GRID_COLUMNS * FORMATION_GRID_COLUMNS; i++) {
+      pos.x =
+          INTtoFIXED(i % FORMATION_GRID_COLUMNS * FORMATION_GRID_SPACING) + x;
+      pos.y =
+          INTtoFIXED(i / FORMATION_GRID_COLUMNS * FORMATION_GRID_SPACING) + z;
       Actor_ApplyProjectedPlacementFar(work->sprites[i], &pos, &normal, 0);
     }
     break;
   case SUMMON_FORMATION_NEREID:
-    for (i = 0; i != 12; i++) {
+    for (i = 0; i != FORMATION_TWELVE; i++) {
       pos.x = INTtoFIXED(gHelmSplitter_TwelveX[i]) + x - toFIXED(16);
       pos.y = INTtoFIXED(gHelmSplitter_TwelveZ[i]) + z - toFIXED(32);
       Actor_ApplyProjectedPlacementFar(work->sprites[i], &pos, &normal, 0);
     }
     break;
   case SUMMON_FORMATION_CYBELE:
-    for (i = 0; i != 8; i++) {
+    for (i = 0; i != FORMATION_EIGHT; i++) {
       pos.x = INTtoFIXED(gHelmSplitter_RightEightX[i]) + x + toFIXED(16);
       pos.y = INTtoFIXED(gHelmSplitter_RightEightZ[i]) + z;
       Actor_ApplyProjectedPlacementFar(work->sprites[i], &pos, &normal, 0);
     }
     break;
   case SUMMON_FORMATION_TIAMAT:
-    for (i = 0; i != 8; i++) {
+    for (i = 0; i != FORMATION_EIGHT; i++) {
       pos.x = INTtoFIXED(gHelmSplitter_SmallEightX[i]) + x;
       pos.y = INTtoFIXED(gHelmSplitter_SmallEightZ[i]) + z;
       Actor_ApplyProjectedPlacementFar(work->sprites[i], &pos, &big, 0);
@@ -208,6 +217,11 @@ void BattleEffect_PlaceFormationObjects(s32 formation, FIXED x, FIXED z) {
 #define IMPACT_BURST_SMALL_SPARKS 64 ///< small sparks thrown
 /// the first fragment in work->particles
 #define IMPACT_BURST_FIRST_FRAGMENT 61
+/// The fragments' speed apart.
+#define IMPACT_BURST_FRAGMENT_SPEED 32
+/// A spark's life left per size of its mote: a spark shrinks one size every
+/// IMPACT_BURST_LIFE_PER_SIZE frames.
+#define IMPACT_BURST_LIFE_PER_SIZE 16
 
 /// Opens an impact flash and scatters sparks and fragments, keeping the
 /// effect's sprites in formation for the first 36 frames.
@@ -266,9 +280,9 @@ void BattleEffect_RunImpactBurst(s32 formation, s32 x, FIXED y) {
     work->particles[IMPACT_BURST_FIRST_FRAGMENT + i].x = x;
     work->particles[IMPACT_BURST_FIRST_FRAGMENT + i].y = y;
     work->particles[IMPACT_BURST_FIRST_FRAGMENT + i].velocityX =
-        (Trig_Sin(i * (DEGtoANG(120))) * 32) >> 6;
+        (Trig_Sin(i * (DEGtoANG(120))) * IMPACT_BURST_FRAGMENT_SPEED) >> 6;
     work->particles[IMPACT_BURST_FIRST_FRAGMENT + i].velocityY =
-        -((Trig_Cos(i * (DEGtoANG(120))) * 32) >> 5);
+        -((Trig_Cos(i * (DEGtoANG(120))) * IMPACT_BURST_FRAGMENT_SPEED) >> 5);
   }
 
   // Small sparks fly.
@@ -324,7 +338,7 @@ void BattleEffect_RunImpactBurst(s32 formation, s32 x, FIXED y) {
 
         particle->variant--;
         Particle_AdvanceWithGravity2D(particle, 60, 0);
-        size = particle->variant / 16 + 3;
+        size = particle->variant / IMPACT_BURST_LIFE_PER_SIZE + 3;
         drawX = FIXED_INTEGER_PART(particle->x);
         drawY = FIXED_INTEGER_PART(particle->y);
         EFFECT_DRAW_MOTE(additive, canvas, sheet, drawX, drawY, size);
@@ -340,7 +354,7 @@ void BattleEffect_RunImpactBurst(s32 formation, s32 x, FIXED y) {
 
         particle->variant--;
         Particle_AdvanceWithGravity2D(particle, 60, 0);
-        size = particle->variant / 16 + 1;
+        size = particle->variant / IMPACT_BURST_LIFE_PER_SIZE + 1;
         drawX = FIXED_INTEGER_PART(particle->x);
         drawY = FIXED_INTEGER_PART(particle->y);
         EFFECT_DRAW_MOTE(additive, canvas, sheet, drawX, drawY, size);
@@ -361,9 +375,7 @@ void BattleEffect_RunImpactBurst(s32 formation, s32 x, FIXED y) {
         drawX = FIXED_INTEGER_PART(shard->x);
         drawY = FIXED_INTEGER_PART(shard->y);
         maxBlend(canvas,
-                 work->sheet +
-                     picture * (IMPACT_BURST_FRAGMENT_WIDTH *
-                                IMPACT_BURST_FRAGMENT_HEIGHT) +
+                 work->sheet + picture * PICTURE_BYTES(IMPACT_BURST_FRAGMENT) +
                      IMPACT_BURST_SHARD_PICTURES,
                  drawX - IMPACT_BURST_FRAGMENT_WIDTH / 2,
                  drawY - IMPACT_BURST_FRAGMENT_HEIGHT / 2,
@@ -397,3 +409,9 @@ void BattleEffect_RunImpactBurst(s32 formation, s32 x, FIXED y) {
 #undef IMPACT_BURST_LARGE_SPARKS
 #undef IMPACT_BURST_SMALL_SPARKS
 #undef IMPACT_BURST_FIRST_FRAGMENT
+#undef IMPACT_BURST_FRAGMENT_SPEED
+#undef IMPACT_BURST_LIFE_PER_SIZE
+#undef FORMATION_GRID_COLUMNS
+#undef FORMATION_GRID_SPACING
+#undef FORMATION_TWELVE
+#undef FORMATION_EIGHT

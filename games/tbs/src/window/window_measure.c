@@ -160,7 +160,7 @@ void Text_MeasureDecoded(s32 entryIndex, u32 *outWidth, u32 *outHeight,
             trailing = -6;
           else
             trailing = 0;
-          glyph = 10;
+          glyph = KANJI_WIDTH;
           if (code <= TEXT_LAST_FONT_CODE)
             glyph = gFont_Glyphs[code - TEXT_SPACE].width;
           style = work->outline;
@@ -255,13 +255,13 @@ done:
           gap = 0;
         gap = ((gap << 8) / (lineSpacingCounts[lineIndex] - 1));
 #if LANGUAGE != LANGUAGE_JAPANESE
-        if (gap < 0 || gap > (12 << 8))
-          gap = 2 << 8;
+        if (gap < 0 || gap > Q_8_8(12))
+          gap = Q_8_8(2);
 #else
-        if (gap < 0 || gap > (8 << 8))
+        if (gap < 0 || gap > Q_8_8(8))
           gap = 0;
-        if (gap < 0 || gap > (1 << 8))
-          gap = 1 << 8;
+        if (gap < 0 || gap > Q_8_8(1))
+          gap = Q_8_8(1);
 #endif
         *spacing++ = gap;
       }
@@ -346,7 +346,7 @@ void Text_MeasureAllPages(s32 entryIndex, u32 *outWidth, u32 *outHeight,
             trailing = -6;
           else
             trailing = 0;
-          glyph = 10;
+          glyph = KANJI_WIDTH;
           if (code <= TEXT_LAST_FONT_CODE)
             glyph = gFont_Glyphs[code - TEXT_SPACE].width;
           outline = work->outline;
@@ -450,10 +450,10 @@ done:
           gap = 0;
         gap = (gap << 8) / (lineSpacingCounts[lineIndex] - 1);
 #if LANGUAGE == LANGUAGE_JAPANESE
-        if (gap < 0 || gap > (8 << 8))
+        if (gap < 0 || gap > Q_8_8(8))
           gap = 0;
-        if (gap < 0 || gap > (1 << 8))
-          gap = 1 << 8;
+        if (gap < 0 || gap > Q_8_8(1))
+          gap = Q_8_8(1);
 #endif
         *spacing++ = gap;
       }

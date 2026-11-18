@@ -512,7 +512,6 @@ next_state:
       FieldParticle_HasPendingTarget(effect) == 0)
     FieldEffect_ClearOwnedSlot(effect);
 }
-#undef FIELD_CELL_MASK
 
 /// When Move is cast with no target, the hand appears beside the caster for 30
 /// frames and then turns into particles.
@@ -607,8 +606,6 @@ void FieldEffect_SnapScaleToFull(struct Actor *actor) {
   }
 }
 
-/// Move's hand, as it goes: it spins as it rises for 31 frames, shrinks, and
-/// bursts into 8 sparkles.
 #define BURST_RISE_FRAMES 31
 #define BURST_SPARKLES 8
 
@@ -658,7 +655,7 @@ void UpdateRisingParticleBurst(void *object) {
 /// goes unused.
 void Actor_SetRevealSpriteColor(s32 value) {
   struct Actor *actor = Ram_HeapSlots->actors;
-  s32 remainingActors = HEAP_ACTOR_COUNT - 1;
+  s32 remainingActors = ACTOR_COUNT - 1;
 
   // DEAD: The Broken Seal's loop over the actors with what it did to a rock's
   // sprite gone, so its tests do nothing; the ROM keeps its count and its
@@ -796,14 +793,15 @@ void FieldPsynergy_EndReveal(void) {
   }
 }
 
-/// A Growth target that stays as it is (sprite 394).
-#define TARGET_KIND_STAYS 394
+/// A sprout whose leaf swells into an arrowhead pointing one of four ways
+/// (Gaia Rock's); Growth leaves it as it is.
+#define SPRITE_POINTING_SPROUT 394
 
 /// Growth cast on a target: the burst of particles, then the target takes its
 /// grown animation and the underfoot priority, with SE_RECOVERY. Sprouting
 /// leaves (SPRITE_SPROUTING_LEAVES) instead drop five vines round the
-/// Psynergy's position and hang a vine (HangingVine_Hang); sprite 394 only
-/// plays SE_RECOVERY.
+/// Psynergy's position and hang a vine (HangingVine_Hang); the pointing sprout
+/// only plays SE_RECOVERY.
 void FieldPsynergy_GrowthOnTarget(s32 unused) {
   struct FieldEffectWork *scene = Ram_HeapSlots->fieldEffectWork;
   struct Actor *target = scene->child;
@@ -815,7 +813,7 @@ void FieldPsynergy_GrowthOnTarget(s32 unused) {
   FieldEffect_SpawnBurstParticleField();
   if (Actor_GetSpriteIdFar(target) == SPRITE_SPROUTING_LEAVES)
     kind = 1;
-  if (Actor_GetSpriteIdFar(target) == TARGET_KIND_STAYS)
+  if (Actor_GetSpriteIdFar(target) == SPRITE_POINTING_SPROUT)
     kind = 2;
 
   if (kind == 0) {
@@ -1022,11 +1020,11 @@ void FieldPsynergy_LiftOnTarget(void) {
   FieldPsynergy_FadeFromCastColor();
 }
 
-/// Lift cast with no target: two hands appear 32 pixels to either side of the
-/// spot, close 24 pixels in and meet with a crash that scatters 24 fragments,
-/// then vanish.
-#define LIFT_SPARKLES 24 ///< scattered as the hands close on the target
+#define LIFT_SPARKLES 24 ///< scattered as the hands meet
 
+/// Lift cast with no target: two hands appear 32 pixels to either side of the
+/// spot, close 24 pixels in and meet with a crash that scatters LIFT_SPARKLES
+/// fragments, then vanish.
 void FieldPsynergy_Lift(void) {
   struct FieldEffectWork *work;
   struct Actor *obj;
@@ -1427,11 +1425,11 @@ void FieldPsynergy_FrostOnTarget(s32 unused) {
   }
 }
 
-/// Sixteen particles, one every three frames, orbit points scattered 2 to 6
-/// pixels around the effect; the target then flashes eight times, takes the
-/// orbiting particles' main update and runs its pending event.
 #define FROST_SNOWFLAKES 16 ///< circling the target
 
+/// FROST_SNOWFLAKES particles, one every three frames, orbit points scattered 2
+/// to 6 pixels around the effect; the target then flashes eight times, takes
+/// the orbiting particles' main update and runs its pending event.
 void FieldPsynergy_Frost(void) {
   struct Vector3 pos;
   struct FieldEffectWork *scene;
@@ -1596,7 +1594,7 @@ void FieldPsynergy_PlyOnTarget(void) {
   BattleEffect_StopMainActor();
 }
 
-/// Ply's flashing figure: 30 steps of 2 frames.
+/// Ply's flashing figure: its steps, of 2 frames each.
 #define PLY_FLASH_STEPS 30
 
 /// Ply: eight winged figures spiral in on the Psynergy's position, one a

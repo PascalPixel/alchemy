@@ -12,8 +12,8 @@
 
 extern const u8 gActor_WaitScript[];
 
-/// The actors of Ram_HeapSlots->actors, as the field's ACTOR_COUNT.
-#define HEAP_ACTOR_COUNT 64
+/// The actors of Ram_HeapSlots->actors, as field_internal.h's ACTOR_COUNT.
+#define ACTOR_COUNT 64
 /// The sprite priority bits of an OAM attribute 2's high byte.
 #define ATTR2_HIGH_PRIORITY_MASK (OBJ_PRIORITY(3) >> 8)
 
@@ -282,7 +282,7 @@ struct Actor *Actor_FindNearestFacingTarget(struct Actor *self, s32 id) {
   found = NULL;
   best = FACING_TARGET_REACH;
   entry = Ram_HeapSlots->actors;
-  for (cnt = 0; cnt < HEAP_ACTOR_COUNT; cnt++, entry++) {
+  for (cnt = 0; cnt < ACTOR_COUNT; cnt++, entry++) {
     if (entry->script == NULL)
       continue;
     if (entry == self)
@@ -335,12 +335,11 @@ s32 MapGrid_BlocksJump(struct Actor *actor, s32 *position) {
 
 extern struct MapCell gMapGridCellBuffer[];
 
-/// MapWork.groundEffects' kind of wading, its bits 3..2; none where nothing
-/// wades.
-#define GROUND_EFFECTS_WADING_MASK (3 << 2)
-#define GROUND_EFFECTS_WADING(effects) ((u32)((effects) << 28) >> 30)
-/// The middle pixel of the 16-pixel cell a whole pixel lies in.
-#define CELL_MIDDLE(pixels) (8 + ((pixels) & 0xfff0))
+/// A whole pixel coordinate's map cell, in pixels.
+#define MAPGRID_CELL_PIXEL_MASK 0xfff0
+/// The middle pixel of the map cell a whole pixel lies in.
+#define CELL_MIDDLE(pixels)                                                    \
+  (MAPGRID_CELL_PIXELS / 2 + ((pixels) & MAPGRID_CELL_PIXEL_MASK))
 
 /// The leader jumps two cells forward, over the cell in front, when it faces
 /// a quarter turn, the map allows it (MapGrid_BlocksJump and the step check)
@@ -393,7 +392,7 @@ again:
   // A platform 16 pixels below the landing makes it a jump spot.
   if (leader->priorityFlags & ACTOR_PRIORITY_WALKS_ON_PLATFORMS) {
     entry = Ram_HeapSlots->actors;
-    for (i = 0; i < HEAP_ACTOR_COUNT; i++, entry++) {
+    for (i = 0; i < ACTOR_COUNT; i++, entry++) {
       s32 bound = toFIXED(8) - 1;
       FIXED delta;
       FIXED dy;
@@ -428,7 +427,7 @@ again:
 
   // A solid object at the landing blocks it.
   entry = Ram_HeapSlots->actors;
-  for (i = 0; i < HEAP_ACTOR_COUNT; i++, entry++) {
+  for (i = 0; i < ACTOR_COUNT; i++, entry++) {
     if (entry->script != NULL &&
         !(entry->priorityFlags & ACTOR_PRIORITY_PLATFORM) && entry != leader &&
         entry->collisionFlags != 0 &&
@@ -581,7 +580,7 @@ s32 Field_ClimbDown(void) {
     position[1] = leader->y.fixed - toFIXED(32);
     position[2] = leader->z.fixed + toFIXED(16);
     entry = Ram_HeapSlots->actors;
-    for (i = 0; i < HEAP_ACTOR_COUNT; i++, entry++) {
+    for (i = 0; i < ACTOR_COUNT; i++, entry++) {
       if (entry->script != NULL && (entry->collisionFlags & 1) &&
           entry != leader &&
           Field_CheckSpheresOverlapFar(&entry->x.fixed, radius, position,
@@ -636,7 +635,8 @@ s32 Field_ClimbUp(void) {
   s16 spriteFlags = SPRITE_FLAG_SHADOW;
   struct MapCell *ground;
   s32 gridX = CELL_MIDDLE(FIXEDtoINT(leader->x.fixed));
-  s32 gridY = 8 + (FIXEDtoINT(leader->y.fixed) & ~(MAPGRID_CELL_PIXELS - 1));
+  s32 gridY = MAPGRID_CELL_PIXELS / 2 +
+              (FIXEDtoINT(leader->y.fixed) & ~(MAPGRID_CELL_PIXELS - 1));
   s32 gridZ = CELL_MIDDLE(FIXEDtoINT(leader->z.fixed));
   FIXED position[3];
   s32 result;
@@ -703,7 +703,7 @@ s32 Field_ClimbUp(void) {
     position[2] = leader->z.fixed - toFIXED(16);
     i = 0;
     entry = Ram_HeapSlots->actors;
-    for (; i < HEAP_ACTOR_COUNT; i++, entry++) {
+    for (; i < ACTOR_COUNT; i++, entry++) {
       if (entry->script != NULL && (entry->collisionFlags & 1) &&
           entry != leader &&
           Field_CheckSpheresOverlapFar(&entry->x.fixed, radius, position,
@@ -737,9 +737,11 @@ failure:
 }
 
 /// How near a rope or tightrope node must be for the leader to hop onto it,
-/// in pixels, and a squared distance farther than any node's.
+/// in pixels.
 #define ROPE_NODE_REACH 32
-#define ROPE_NODE_SEARCH_START (1 << 28)
+/// A squared distance in pixels beyond any rope node, to start a search for
+/// the nearest.
+#define ROPE_NODE_DISTANCE_NONE (1 << 28)
 
 /// Returns the nearest tied rope node within reach of position, or NULL.
 struct RopeNode *Rope_FindNodeNear(s32 *position) {
@@ -756,7 +758,7 @@ struct RopeNode *Rope_FindNodeNear(s32 *position) {
     result = NULL;
   } else {
     node = work->nodes;
-    best = ROPE_NODE_SEARCH_START;
+    best = ROPE_NODE_DISTANCE_NONE;
     for (i = 0; i < ROPE_NODE_COUNT; i++, node++) {
       if (node->kind == 1) {
         // In pixels, squared.
@@ -863,7 +865,7 @@ struct TightropeNode *Tightrope_FindNodeNear(s32 *position) {
     result = NULL;
   } else {
     node = work->nodes;
-    best = ROPE_NODE_SEARCH_START;
+    best = ROPE_NODE_DISTANCE_NONE;
     for (i = 0; i < ROPE_NODE_COUNT; i++, node++) {
       if (node->kind == 1) {
         // In pixels, squared.

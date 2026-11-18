@@ -11,6 +11,7 @@
 #include "battle/battle_action.h"
 #include "battle/battle_action_run.h"
 #include "battle/playback_queue.h"
+#include "system/io_reg.h"
 
 /// One OAM entry in a sprite list: the arrow that waits for the player to
 /// advance a battle message. The playback pushes it each frame it waits
@@ -79,6 +80,14 @@ struct BattlePlaybackWork {
 /// The most actions a turn's queue holds.
 enum { BATTLE_ACTION_CAPACITY = 20 };
 
+/// The battle background's colours, BG palettes 6 to 13.
+#define BATTLE_BACKGROUND_COLORS (8 * PALETTE_COLORS)
+/// The battle background's darkening step (BattleBackground_SetPaletteLevel,
+/// BattleBackground_Load, the element glow and the battle effects' fades): each
+/// level takes a sixtieth of the full 16.16 brightness, so level 60 is almost
+/// black.
+#define BACKGROUND_LEVEL_STEP (FIXED_ONE / 60)
+
 /// The battle's own work: its enemies, units and their battle objects, the
 /// turn's actions, the spoils, the background palette, the action under way and
 /// the playback.
@@ -136,7 +145,8 @@ struct BattleWork {
   /// What the defeated enemies leave; spoils.defeated, their count, is also
   /// what Battle_Run returns after a win or a broken link.
   struct BattleSpoils spoils;
-  u16 palette[128]; ///< the battle background's colours, before scaling
+  /// the battle background's colours, before scaling
+  u16 palette[BATTLE_BACKGROUND_COLORS];
   /// the battle background's brightness, 16.16, FIXED_ONE full
   FIXED brightness;
   u16 background;              ///< the battle background's id

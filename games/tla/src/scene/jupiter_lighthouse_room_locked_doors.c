@@ -295,7 +295,7 @@ s32 Scene_Initialize(void) {
     }
     leader->groundHeight = leader->y.fixed = 0;
     leader->facing = FACING_SOUTH;
-    leader->motionFlags = 3;
+    leader->motionFlags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
     leader->velocityY = toFIXED(3);
     leader->gravity = toFIXED(1) / 2;
     Actor_SetAnimation(gMainRoutineWork.leaderActorId, ANIM_STAND);
@@ -406,11 +406,11 @@ UNUSED s32 Actor_EmitRisingSparks(struct Actor *actor) {
 
 void Actor_SetSpriteColorMode(struct Actor *actor, s32 value);
 
-/// The aerie beacon's actors, which the unused copy below of its
-/// JupiterLighthouse_PlaceAngelsAndLid places
-/// (jupiter_lighthouse_aerie_beacon.c), and the frames its
-/// JupiterLighthouse_EnergizeAngels raises an angel and tilts the lid, then
-/// lifts all three once both angels are energized.
+/// The aerie beacon's actors, which the unused copy below of
+/// jupiter_lighthouse_aerie_beacon.c's JupiterLighthouse_PlaceAngelsAndLid
+/// places, and the frames jupiter_lighthouse_aerie.c's
+/// JupiterLighthouse_EnergizeAngels raises an angel and tilts the lid (64),
+/// then lifts all three once both angels are energized (256).
 enum {
   ACTOR_LEFT_ANGEL = 9,
   ACTOR_RIGHT_ANGEL,
@@ -429,45 +429,45 @@ enum {
 UNUSED void JupiterLighthouse_PlaceAngelsAndLid(void) {
   struct Actor *left = Actor_Get(ACTOR_LEFT_ANGEL);
   struct Actor *right = Actor_Get(ACTOR_RIGHT_ANGEL);
-  struct Actor *rider = Actor_Get(ACTOR_LID_A);
-  struct FieldSprite *sprite = rider->sprite;
+  struct Actor *lid = Actor_Get(ACTOR_LID_A);
+  struct FieldSprite *sprite = lid->sprite;
 
   Actor_SetPosition(ACTOR_LID_B, 512, 248);
   Actor_SetPosition(ACTOR_LID_A, 512, 248);
   Actor_SetPosition(ACTOR_LEFT_ANGEL, 472, 256);
   Actor_SetPosition(ACTOR_RIGHT_ANGEL, 552, 256);
   Actor_Get(ACTOR_LID_B)->scaleX = 0;
-  rider->motionFlags = 0;
-  rider->y.fixed = rider->groundHeight;
+  lid->motionFlags = 0;
+  lid->y.fixed = lid->groundHeight;
   left->motionFlags = 0;
   left->y.fixed = left->groundHeight;
   right->motionFlags = 0;
   right->y.fixed = right->groundHeight;
   if (Event_GetFlag(FLAG_JUPITER_LIGHTHOUSE_LEFT_ANGEL_ENERGIZED)) {
     left->y.fixed += ANGEL_RISE_FRAMES * (toFIXED(1) / 10);
-    rider->y.fixed += ANGEL_RISE_FRAMES * (toFIXED(3) / 100);
-    rider->x.fixed -= ANGEL_RISE_FRAMES * (toFIXED(1) / 25);
+    lid->y.fixed += ANGEL_RISE_FRAMES * (toFIXED(3) / 100);
+    lid->x.fixed -= ANGEL_RISE_FRAMES * (toFIXED(1) / 25);
     sprite->rotation += TRIG_TURN / 32;
-    Actor_SetSpriteColorMode(Actor_Get(ACTOR_LEFT_ANGEL), 4);
-    Actor_SetSpriteColorMode(Actor_Get(ACTOR_LEFT_ARCHER), 4);
+    Actor_SetSpriteColorMode(Actor_Get(ACTOR_LEFT_ANGEL), SPRITE_COLOR_GBR);
+    Actor_SetSpriteColorMode(Actor_Get(ACTOR_LEFT_ARCHER), SPRITE_COLOR_GBR);
   }
   if (Event_GetFlag(FLAG_JUPITER_LIGHTHOUSE_RIGHT_ANGEL_ENERGIZED)) {
     right->y.fixed += ANGEL_RISE_FRAMES * (toFIXED(1) / 10);
-    rider->y.fixed += ANGEL_RISE_FRAMES * (toFIXED(3) / 100);
-    rider->x.fixed += ANGEL_RISE_FRAMES * (toFIXED(1) / 25);
+    lid->y.fixed += ANGEL_RISE_FRAMES * (toFIXED(3) / 100);
+    lid->x.fixed += ANGEL_RISE_FRAMES * (toFIXED(1) / 25);
     sprite->rotation -= TRIG_TURN / 32;
-    Actor_SetSpriteColorMode(Actor_Get(ACTOR_RIGHT_ANGEL), 4);
-    Actor_SetSpriteColorMode(Actor_Get(ACTOR_RIGHT_ARCHER), 4);
+    Actor_SetSpriteColorMode(Actor_Get(ACTOR_RIGHT_ANGEL), SPRITE_COLOR_GBR);
+    Actor_SetSpriteColorMode(Actor_Get(ACTOR_RIGHT_ARCHER), SPRITE_COLOR_GBR);
   }
   if (Event_GetFlag(FLAG_JUPITER_LIGHTHOUSE_LEFT_ANGEL_ENERGIZED) &&
       Event_GetFlag(FLAG_JUPITER_LIGHTHOUSE_RIGHT_ANGEL_ENERGIZED)) {
     left->y.fixed += LID_LIFT_FRAMES * (toFIXED(1) / 10);
     right->y.fixed += LID_LIFT_FRAMES * (toFIXED(1) / 10);
-    rider->y.fixed += LID_LIFT_FRAMES * (toFIXED(1) / 10) +
-                      ANGEL_RISE_FRAMES * (toFIXED(3) / 100);
-    left->motionFlags = 4;
-    right->motionFlags = 4;
-    rider->motionFlags = 4;
+    lid->y.fixed += LID_LIFT_FRAMES * (toFIXED(1) / 10) +
+                    ANGEL_RISE_FRAMES * (toFIXED(3) / 100);
+    left->motionFlags = ACTOR_FLOATS;
+    right->motionFlags = ACTOR_FLOATS;
+    lid->motionFlags = ACTOR_FLOATS;
   }
 }
 

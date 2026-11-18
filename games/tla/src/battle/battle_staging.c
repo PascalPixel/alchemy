@@ -11,14 +11,14 @@
 #include "battle/presentation.h"
 
 /// A party member's attack effect, staged by id range (EFFECT_BY_ID_RANGE):
-/// effect 1 for
-/// Isaac, Garet, Felix, Jenna and Piers, 4 for Ivan, Mia and Sheba, any other
-/// none. The Broken Seal writes the same choice inline in
+/// effect 1 for Isaac, Garet, Felix, Jenna and Piers, 4 for Ivan, Mia and
+/// Sheba, any other none. The Broken Seal writes the same choice inline in
 /// BattleActionRun_Build.
 s32 BattleUnit_GetPartyAttackEffect(s32 characterId) {
+  /* FAKEMATCH(temporary): the character copied to id, so that characterId
+     carries the effect. */
   s32 id = characterId;
 
-  // characterId carries the effect from here on, in the register it came in.
   characterId = 0;
   switch (id) {
   case ISAAC:

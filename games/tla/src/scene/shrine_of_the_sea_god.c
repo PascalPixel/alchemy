@@ -145,8 +145,8 @@ enum ShrineOfTheSeaGodSideRoomActorId {
   ACTOR_SIDE_ROOM_BRIDGE = ACTOR_TORCH_FLAME_MARKER + 1,
   /// Riki, who has come here looking for something to help Tavi with.
   ACTOR_SIDE_ROOM_RIKI,
-  /// No row places it, though the room sets it up.
-  ACTOR_SIDE_ROOM_MISSING
+  /// The actor after Riki, which the room disables though no row places it.
+  ACTOR_SIDE_ROOM_DISABLED
 };
 
 /// The crossroads' actors (SceneId_ShrineOfTheSeaGodCrossroads), numbering the
@@ -1707,8 +1707,8 @@ void ShrineOfTheSeaGod_EndDjinniDash(void) {
 #define DEFINE_DJINNI_DASH(name, toX, toZ, place)                              \
   void name(void) {                                                            \
     ShrineOfTheSeaGod_StartDjinniDash();                                       \
-    FieldCamera_MoveWithinMapBounds(INTtoFIXED(toX), toFIXED(16),              \
-                                    INTtoFIXED(toZ), 1);                       \
+    FieldCamera_MoveWithinMapBounds(toFIXED(toX), toFIXED(16), toFIXED(toZ),   \
+                                    1);                                        \
     Actor_WalkToAndWaitById(ACTOR_BREATH, toX, toZ);                           \
     Actor_GetById(ACTOR_BREATH)->riseCounter = place;                          \
     ShrineOfTheSeaGod_EndDjinniDash();                                         \
@@ -1729,7 +1729,7 @@ DEFINE_DJINNI_DASH(ShrineOfTheSeaGod_DjinniSouthEastToNorthEast, 392, 216,
     s32 flag;                                                                  \
                                                                                \
     ShrineOfTheSeaGod_StartDjinniDash();                                       \
-    FieldCamera_MoveToFX(INTtoFIXED(stopX), toFIXED(16), toFIXED(216), 1);     \
+    FieldCamera_MoveToFX(toFIXED(stopX), toFIXED(16), toFIXED(216), 1);        \
     Actor_WalkToAndWait(ACTOR_BREATH, stopX, 216);                             \
     flag = GameFlag_Get(FLAG_TORCH_AT_NORTH_WALL);                             \
     place = &djinni->riseCounter;                                              \
@@ -1742,7 +1742,7 @@ DEFINE_DJINNI_DASH(ShrineOfTheSeaGod_DjinniSouthEastToNorthEast, 392, 216,
       GameFlag_Set(FLAG_DJINNI_TRAPPED);                                       \
     } else {                                                                   \
       Event_Wait(5);                                                           \
-      FieldCamera_MoveWithinMapBounds(INTtoFIXED(cornerX), toFIXED(16),        \
+      FieldCamera_MoveWithinMapBounds(toFIXED(cornerX), toFIXED(16),           \
                                       toFIXED(216), 1);                        \
       Sound_Play(SE_HIGH_JUMP);                                                \
       Actor_SetSpriteFlags(Actor_GetById(ACTOR_BREATH), 0);                    \
@@ -1767,8 +1767,8 @@ DEFINE_DJINNI_WALK_AND_JUMP(ShrineOfTheSeaGod_DjinniNorthEastJumpsWest, 360,
 #define DEFINE_DJINNI_DASH_AROUND(name, toX, toZ, fromX, place)                \
   void name(void) {                                                            \
     ShrineOfTheSeaGod_StartDjinniDash();                                       \
-    FieldCamera_MoveWithinMapBounds(INTtoFIXED(toX), toFIXED(16),              \
-                                    INTtoFIXED(toZ), 1);                       \
+    FieldCamera_MoveWithinMapBounds(toFIXED(toX), toFIXED(16), toFIXED(toZ),   \
+                                    1);                                        \
     Actor_WalkToAndWait(ACTOR_BREATH, fromX, 248);                             \
     Actor_WalkToAndWait(ACTOR_BREATH, toX, 248);                               \
     Actor_WalkToAndWaitById(ACTOR_BREATH, toX, toZ);                           \
@@ -1814,7 +1814,7 @@ DEFINE_DJINNI_DASH(ShrineOfTheSeaGod_DjinniNorthEastToSouthEast, 392, 296,
       *place = stoppedPlace;                                                   \
       GameFlag_Set(FLAG_DJINNI_TRAPPED);                                       \
     } else {                                                                   \
-      FieldCamera_MoveWithinMapBounds(INTtoFIXED(cornerX), toFIXED(16),        \
+      FieldCamera_MoveWithinMapBounds(toFIXED(cornerX), toFIXED(16),           \
                                       toFIXED(216), 1);                        \
       Sound_Play(SE_HIGH_JUMP);                                                \
       Actor_SetSpriteFlags(Actor_GetById(ACTOR_BREATH), 0);                    \
@@ -2063,11 +2063,11 @@ void ShrineOfTheSeaGod_InitializePlankBridge(void) {
   ShrineOfTheSeaGod_LightTorch();
   FieldTask_AddFrame(ShrineOfTheSeaGod_KeepFlameOnTorch, TASK_PASS_FRAME);
   Actor_DisableById(ACTOR_SIDE_ROOM_RIKI);
-  // UB: the room places no ACTOR_SIDE_ROOM_MISSING, so Actor_GetById returns
+  // UB: the room places no ACTOR_SIDE_ROOM_DISABLED, so Actor_GetById returns
   // NULL and these stores go through it.
 #ifndef UBFIX
-  Actor_DisableById(ACTOR_SIDE_ROOM_MISSING);
-  Actor_GetById(ACTOR_SIDE_ROOM_MISSING)->motionFlags = 0;
+  Actor_DisableById(ACTOR_SIDE_ROOM_DISABLED);
+  Actor_GetById(ACTOR_SIDE_ROOM_DISABLED)->motionFlags = 0;
 #endif
   MapGrid_CopyCellAttributes(3, 15, 1, 1, 6, 15);
   if (GameFlag_Get(FLAG_TAVI_RESCUED)) {

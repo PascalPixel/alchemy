@@ -13,8 +13,6 @@
 #define WEATHER_PARTICLE_COUNT 64
 /// The frames the first motes and sparkles are spread over as they start.
 #define FIRST_SPAWN_FRAMES 16
-/// A raindrop's frames (Weather_UpdateRain).
-#define RAIN_DROP_FRAMES 12
 
 #define Decompress_ByteLz ((void (*)(const void *, void *))Decompress_ByteLz)
 
@@ -31,7 +29,6 @@ void FieldMotes_Start(void) {
   size = sizeof(struct WeatherWork);
   work = HeapSlot_AllocEwram(HEAP_SLOT_WEATHER, size);
   mote = work->particles;
-  // size, done with once the work is allocated, carries the fill's 0.
   size = 0;
   Dma_Fill32(size, work, sizeof(*work));
   tiles = HeapSlot_AllocEwram(HEAP_SLOT_TILE_SCRATCH, 1024);
@@ -88,7 +85,6 @@ void Weather_StartRain(s32 withCue) {
   size = sizeof(struct WeatherWork);
   work = HeapSlot_AllocEwram(HEAP_SLOT_WEATHER, size);
   particle = work->particles;
-  // size, done with once the work is allocated, carries the fill's 0.
   size = 0;
   Dma_Fill32(size, work, sizeof(*work));
   tiles = HeapSlot_AllocEwram(HEAP_SLOT_TILE_SCRATCH, 1024);
@@ -118,8 +114,8 @@ void Weather_StartRain(s32 withCue) {
     particle->posX = (s32)p;
     particle->posZ = z;
     particle->posY = MapGrid_GetTerrainHeightFar(0, (s32)p, z);
-    // Staggered over a drop's frames, though as a mask 11 leaves out 4 to 7.
-    particle->timer = (i & (RAIN_DROP_FRAMES - 1)) + 1;
+    // Timers 1 to 4 and 9 to 12, by the drop's index.
+    particle->timer = (i & 11) + 1;
   }
   Io_Write16(BLDCNT_TGT2_ALL, &REG_BLDCNT);
   Io_Write16(BLEND_ALPHA(16, 16), &REG_BLDALPHA);
@@ -240,7 +236,6 @@ void FieldEffect_InitializeSparkles(void) {
   volatile u32 zero;
   struct HeapSlots *slots;
 
-  // size, done with once the work is allocated, carries the fill's 0.
   size = 0;
   Dma_Fill32Cell(zero, size, work, sizeof(struct WeatherWork));
   buf = HeapSlot_AllocEwram(HEAP_SLOT_TILE_SCRATCH, 1024);
@@ -350,4 +345,3 @@ void Weather_StartLightningFlash(s32 from, s32 to) {
 
 #undef WEATHER_PARTICLE_COUNT
 #undef FIRST_SPAWN_FRAMES
-#undef RAIN_DROP_FRAMES

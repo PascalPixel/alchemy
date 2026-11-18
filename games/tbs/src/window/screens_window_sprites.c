@@ -4,6 +4,14 @@
 
 #include "screens_internal.h"
 
+/// Attribute 0's eight bits of y: a sprite above the screen is at 256 less its
+/// distance.
+#define OBJ_Y_MASK 0xff
+
+/// A line's window edges with nothing between them: 224 up to 224, so the
+/// window covers none of the line.
+#define WINDOW_SPAN_EMPTY WIN_RANGE(224, 224)
+
 /// Creates a window sprite for the VRAM cache slot `slot` and attaches it to
 /// `window`, placed at (offsetX, offsetY) pixels from the window's inner corner
 /// (one tile in from its top-left border). `oamFlags` holds the OAM shape and
@@ -24,22 +32,22 @@ struct WindowSprite *WindowSprite_Create(s32 slot, s32 oamFlags,
   // Window tiles to screen pixels, wrapped to OAM's 9-bit X and 8-bit Y.
   x = offsetX + (window->x * 8) + 8;
   y = offsetY + (window->y * 8) + 8;
-  x &= 0x1ff;
-  y &= 0xff;
+  x &= OBJ_X_MASK;
+  y &= OBJ_Y_MASK;
   // UB: attributes 0 and 1, then attribute 2, are written as words through
   // the bitfields; UBFIX copies the words.
 #ifdef UBFIX
   {
     u32 words[2];
 
-    words[0] = (x << 16) | y | oamFlags;
+    words[0] = OBJ_X(x) | y | oamFlags;
     // Attribute 2: the first tile of the slot's VRAM block (32 bytes a tile).
     words[1] =
         ((struct VramCacheEntry *)Ram_VramCacheEntries)[slot].offset >> 5;
     __builtin_memcpy(&sprite->oam, words, sizeof(words));
   }
 #else
-  *(u32 *)&sprite->oam = (x << 16) | y | oamFlags;
+  *(u32 *)&sprite->oam = OBJ_X(x) | y | oamFlags;
   // Attribute 2: the first tile of the slot's VRAM block (32 bytes a tile).
   ((u32 *)&sprite->oam)[1] =
       ((struct VramCacheEntry *)Ram_VramCacheEntries)[slot].offset >> 5;
@@ -49,7 +57,7 @@ struct WindowSprite *WindowSprite_Create(s32 slot, s32 oamFlags,
   sprite->x = x;
   sprite->y = y;
   sprite->index = slot;
-  // Kind 1: the sprite owns the slot, which is freed with it.
+  // The sprite owns the slot, which is freed with it.
   sprite->kind = WINDOW_SPRITE_ICON;
   sprite->motion = 1;
   WindowSprite_AppendToList(&window->sprites, sprite);
@@ -239,9 +247,9 @@ void ScanlineWindow_FillSpans(void *spans) {
     // each line takes two, so the lower 80 lines keep the window 1 edges
     // this page held when it was last built.
 #ifdef BUGFIX
-    Dma_Fill16(0xe0e0, spans, DISPLAY_HEIGHT * 4);
+    Dma_Fill16(WINDOW_SPAN_EMPTY, spans, DISPLAY_HEIGHT * 4);
 #else
-    Dma_Fill16(0xe0e0, spans, DISPLAY_HEIGHT * 2);
+    Dma_Fill16(WINDOW_SPAN_EMPTY, spans, DISPLAY_HEIGHT * 2);
 #endif
   } else {
     WindowSpanRoutine routine;
@@ -262,6 +270,6 @@ void BgScreen_FillRect(s32 x, s32 y, u32 width, u32 height, s32 value) {
   for (row = 0; row < height; row++) {
     for (column = 0; column < width; column++)
       *dst++ = value;
-    dst += 32 - width;
+    dst += BG_SCREEN_WIDTH - width;
   }
 }

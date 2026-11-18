@@ -3,20 +3,26 @@
 /// away from the left. Nothing calls these but the far-call table.
 // Part of field_sequence.c.
 
+#include "window/window_tile.h"
+
 /// A heading picture: 26 by 5 tiles of 16 colours, drawn from tile 16 of
-/// character block 0 and shown in palette 15 on BG0.
+/// character block 0 and shown in the window palette on BG0.
 #define HEADING_COLUMNS 26
 #define HEADING_ROWS 5
 #define HEADING_FIRST_TILE 16
 #define HEADING_TILES                                                          \
   ((u8 *)BG_CHAR_BLOCK(0) + HEADING_FIRST_TILE * TILE_SIZE_4BPP)
 #define HEADING_TILE_BYTES (HEADING_COLUMNS * HEADING_ROWS * TILE_SIZE_4BPP)
-/// A blank BG0 cell: tile 0 in palette 15.
-#define HEADING_BLANK_CELL 0xf000
+/// A blank BG0 cell: tile 0 in the window palette.
+#define HEADING_BLANK_CELL BG_TILE_PALETTE(WINDOW_PALETTE)
+/// The frames the heading's window takes to open from the centre, and the
+/// pixels it widens by on each side a frame.
+#define HEADING_OPEN_FRAMES 24
+#define HEADING_OPEN_STEP 5
+
 /// Unused: only the far-call table refers to it. Draws heading picture
-/// `heading` of the headings resource into a 26 by 5 cell
-/// window and opens the window from the centre, 5 pixels a side each frame
-/// for 24 frames.
+/// `heading` of the headings resource into a 26 by 5 cell window and opens
+/// the window from the centre.
 void Heading_Show(s32 heading) {
   u16 tile;
   s32 *headings = Resource_GetTableEntry(RESOURCE_HEADINGS);
@@ -35,8 +41,8 @@ void Heading_Show(s32 heading) {
           REG_DMA3);
   Heap_Release(tiles);
   REG_DISPCNT &= ~DISPCNT_BG0_ON;
-  Dma_Fill32(HEADING_BLANK_CELL, cell, 2048);
-  cell = (u16 *)BG_SCREEN_BLOCK(4) + 3 * 32;
+  Dma_Fill32(HEADING_BLANK_CELL, cell, BG_SCREEN_SIZE);
+  cell = (u16 *)BG_SCREEN_BLOCK(4) + 3 * BG_SCREEN_WIDTH;
   for (row = 0; row < HEADING_ROWS; row++) {
     cell += 2;
     for (column = 0; column < HEADING_COLUMNS; column++) {
@@ -57,20 +63,19 @@ void Heading_Show(s32 heading) {
   REG_DISPCNT ^= DISPCNT_BG0_ON;
   left = DISPLAY_WIDTH / 2;
   right = DISPLAY_WIDTH / 2;
-  // column is reused for the window's frames; a local of its own differs.
-  for (column = 0; column <= 23; column++) {
-    left -= 5;
-    right += 5;
+  for (column = 0; column < HEADING_OPEN_FRAMES; column++) {
+    left -= HEADING_OPEN_STEP;
+    right += HEADING_OPEN_STEP;
     REG_WIN0H = (left << 8) | right;
     wait(1);
   }
 }
 
-/// Waits up to 120 frames, stopping early when a button is pressed.
+/// Waits up to two seconds, stopping early when a button is pressed.
 void Event_WaitTwoSecondsOrPress(void) {
   u32 i;
 
-  for (i = 0; i < 120; i++) {
+  for (i = 0; i < 2 * FRAMES_PER_SECOND; i++) {
     wait(1);
     if (gInput.pressed != 0)
       break;
@@ -90,12 +95,7 @@ void Heading_WipeTilePixel(s32 x, s32 y, u32 pixel) {
 
   switch (pixel & 3) {
   case 0: {
-    u32 value = *cell;
-    u32 mask;
-
-    mask = 0xfff0;
-    mask &= value;
-    *cell = mask;
+    *cell &= 0xfff0;
   } break;
   case 1:
     *cell &= 0xff00;
@@ -110,13 +110,14 @@ void Heading_WipeTilePixel(s32 x, s32 y, u32 pixel) {
 }
 
 extern s16 gHeading_WipeSteps[];
+/// gHeading_WipeSteps' last entry, after its last diagonal.
+#define HEADING_WIPE_END (-9)
 
 /// Unused: only the far-call table refers to it. Closes Heading_Show's
-/// picture window: fades the palette out while wiping
-/// every one of the picture's 26 by 5 tiles from its top left corner to its
-/// bottom right, a diagonal every two frames (gHeading_WipeSteps: a tile's
-/// pixels a diagonal at a time, each ended by a negative entry and the last
-/// by -9),
+/// picture window: fades the palette out while wiping every one of the
+/// picture's 26 by 5 tiles from its top left corner to its bottom right, a
+/// diagonal every two frames (gHeading_WipeSteps: a tile's pixels a diagonal at
+/// a time, each ended by a negative entry and the last by HEADING_WIPE_END),
 /// then turns BG0 and the window off, clears the screen block, reloads the
 /// window tiles and turns BG0 back on.
 void Heading_Close(void) {
@@ -135,12 +136,13 @@ void Heading_Close(void) {
       }
     }
     wait(2);
-    if (gHeading_WipeSteps[step] == -9)
+    if (gHeading_WipeSteps[step] == HEADING_WIPE_END)
       break;
     step++;
   }
   REG_DISPCNT ^= DISPCNT_BG0_ON | DISPCNT_WIN0_ON;
-  Dma_Fill32Cell(fill, HEADING_BLANK_CELL, (void *)BG_SCREEN_BLOCK(4), 2048);
+  Dma_Fill32Cell(fill, HEADING_BLANK_CELL, (void *)BG_SCREEN_BLOCK(4),
+                 BG_SCREEN_SIZE);
   Dma_Set(Resource_GetTableEntry(RESOURCE_WINDOW_TILES),
           (void *)BG_CHAR_BLOCK(0), DMA_COPY_WORDS(2048), REG_DMA3);
   REG_DISPCNT ^= DISPCNT_BG0_ON;
@@ -152,3 +154,6 @@ void Heading_Close(void) {
 #undef HEADING_TILES
 #undef HEADING_TILE_BYTES
 #undef HEADING_BLANK_CELL
+#undef HEADING_OPEN_FRAMES
+#undef HEADING_OPEN_STEP
+#undef HEADING_WIPE_END

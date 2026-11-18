@@ -188,6 +188,8 @@ void Matrix_SetRotateY(s32 angle);
 void Matrix_RotateX(s32 angle);
 void Matrix_TranslateVector(const FIXED *position);
 void Projection_Set(u32 focal, u32 nearDepth, u32 farDepth);
+/// The far depth well past the battlefield: the largest whole 16.16 number.
+#define BATTLE_FAR_DEPTH toFIXED(32767)
 void Matrix_Translate(FIXED x, FIXED y, FIXED z);
 void Matrix_ScaleUniform(FIXED scale);
 void Matrix_Scale(FIXED x, FIXED y, FIXED z);
@@ -327,5 +329,9 @@ extern u8 gSaveBuffer[];
 /// everything.
 #define OAM_DEPTH_WINDOW 240
 #define OAM_DEPTH_FRONT 255
+/// The depth slot the field Psynergy's effect sprites take: in front of every
+/// actor, whose slots are clamped below OAM_DEPTH_WINDOW, and among the window
+/// sprites' slots.
+#define EFFECT_SPRITE_FRONT_DEPTH 250
 
 #endif

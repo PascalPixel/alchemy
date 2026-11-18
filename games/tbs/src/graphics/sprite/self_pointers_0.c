@@ -6,9 +6,9 @@
 
 /// Unused: four words, each this array's own address; no sprite record or code
 /// names it.
-const void *const gSprite_UnusedSelfPointers0[] = {
-    gSprite_UnusedSelfPointers0,
-    gSprite_UnusedSelfPointers0,
-    gSprite_UnusedSelfPointers0,
-    gSprite_UnusedSelfPointers0,
+const void *const gSprite_UnusedSelfPointersAfterFirstBlock[] = {
+    gSprite_UnusedSelfPointersAfterFirstBlock,
+    gSprite_UnusedSelfPointersAfterFirstBlock,
+    gSprite_UnusedSelfPointersAfterFirstBlock,
+    gSprite_UnusedSelfPointersAfterFirstBlock,
 };

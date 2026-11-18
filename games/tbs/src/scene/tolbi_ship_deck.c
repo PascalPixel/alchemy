@@ -618,17 +618,20 @@ static void TolbiShipDeck_ShrinkToNormalSize(struct Actor *actor) {
   }
 }
 
+/// The roll TolbiShipDeck_IdleTurn draws from, split in thirds.
+#define IDLE_TURN_ROLL 300
+
 /// Turns the actor east, northeast-by-north or southeast-by-south at
 /// random intervals of 80 to 160 frames.
 static s32 TolbiShipDeck_IdleTurn(struct Actor *actor) {
   if (actor->riseCounter != 0) {
     actor->riseCounter--;
   } else {
-    u32 roll = Random_Below(300);
+    u32 roll = Random_Below(IDLE_TURN_ROLL);
 
-    if (roll > 200) {
+    if (roll > IDLE_TURN_ROLL * 2 / 3) {
       actor->facing = FACING_NORTH_NORTHEAST;
-    } else if (roll > 100) {
+    } else if (roll > IDLE_TURN_ROLL / 3) {
       actor->facing = FACING_SOUTH_SOUTHWEST;
     } else {
       actor->facing = FACING_EAST;
@@ -1974,9 +1977,9 @@ static void TolbiShipDeck_RowersDisembark(void) {
     } else {
       Actor_SetSpeed(actorId, 1);
     }
-    Actor_WalkToAndWait(actorId, 216, 150 << 2);
+    Actor_WalkToAndWait(actorId, 216, 600);
     Actor_WalkToAndWait(actorId, 192, 618);
-    Actor_WalkToAndWait(actorId, 192, 164 << 2);
+    Actor_WalkToAndWait(actorId, 192, 656);
 
     switch (category[index]) {
     case ROWER_REPLY_FINALLY_LUCKY:
@@ -2024,15 +2027,15 @@ static void TolbiShipDeck_RowersDisembark(void) {
   Actor_SetSpriteColorById(ACTOR_PARTY_LEADER, SPRITE_COLOR_NORMAL);
   Actor_SetSpriteFlags(Actor_Get(ACTOR_PARTY_LEADER), SPRITE_FLAG_SHADOW);
   Actor_SetSpeed(ACTOR_PARTY_LEADER, 0.8);
-  Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 216, 150 << 2);
-  Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 190, 153 << 2);
+  Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 216, 600);
+  Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 190, 612);
   Event_SetMessageId(MsgTolbiShipThanksHardWork);
   TolbiShipDeck_Say(ACTOR_ARRIVED_KAJA);
-  Actor_FaceDirection(ACTOR_PARTY_LEADER, 192 << 8, 0);
+  Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 0);
 
   Actor_Get(ACTOR_INVISIBLE_ARRIVED_CAMERA_TARGET)->motionFlags = 0;
   Actor_SetSpeed(ACTOR_INVISIBLE_ARRIVED_CAMERA_TARGET, 2);
-  Actor_SetDestination(ACTOR_INVISIBLE_ARRIVED_CAMERA_TARGET, 196, 141 << 2);
+  Actor_SetDestination(ACTOR_INVISIBLE_ARRIVED_CAMERA_TARGET, 196, 564);
 
   Actor_SetSpeed(ACTOR_ARRIVED_KAJA, 0.8);
   Actor_WalkToAndWait(ACTOR_ARRIVED_KAJA, 182, 555);
@@ -2041,7 +2044,7 @@ static void TolbiShipDeck_RowersDisembark(void) {
   TolbiShipDeck_Say(ACTOR_ARRIVED_KAJA);
   Actor_SetAnimationAndWait(ACTOR_ARRIVED_KAJA, ANIM_NOD);
   TolbiShipDeck_Say(ACTOR_ARRIVED_KAJA);
-  Actor_FaceDirection(ACTOR_ARRIVED_KAJA, 128 << 8, 40);
+  Actor_FaceDirection(ACTOR_ARRIVED_KAJA, FACING_WEST, 40);
   TolbiShipDeck_Say(ACTOR_ARRIVED_KAJA);
   TolbiShipDeck_Turn(ACTOR_ARRIVED_KAJA, FACING_SOUTH_SOUTHEAST);
   TolbiShipDeck_Say(ACTOR_ARRIVED_KAJA);
@@ -2099,8 +2102,8 @@ static void TolbiShipDeck_RockDeck(void) {
   *origin += dy;
   sSwayAngleX += Random_Below(384);
   sSwayAngleY += Random_Below(512);
-  sSwayAngleX &= 0xffff;
-  sSwayAngleY &= 0xffff;
+  sSwayAngleX &= TRIG_TURN - 1;
+  sSwayAngleY &= TRIG_TURN - 1;
   layer = &grid->layers[MAPGRID_LAYER_GROUND];
   layer->offsetX = sSeaScroll[0];
   sSeaScroll[0] -= sSeaSpeed[0];
@@ -2234,11 +2237,11 @@ static void TolbiShipDeck_RowOars(void) {
   TolbiShipDeck_AdvanceStroke(ACTOR_FIRST_STROKE_OAR, 0);
   sStrokePhase[0] = 0;
   TolbiShipDeck_AdvanceStroke(ACTOR_FIRST_STROKE_OAR + 1, 1);
-  sStrokePhase[1] += 128;
+  sStrokePhase[1] += TRIG_TURN / 512;
   TolbiShipDeck_AdvanceStroke(ACTOR_FIRST_STROKE_OAR + 2, 2);
-  sStrokePhase[2] += 256;
+  sStrokePhase[2] += TRIG_TURN / 256;
   TolbiShipDeck_AdvanceStroke(ACTOR_FIRST_STROKE_OAR + 3, 3);
-  sStrokePhase[3] += 512;
+  sStrokePhase[3] += TRIG_TURN / 128;
   TolbiShipDeck_SwingOar(ACTOR_FIRST_OAR, 0, 0);
   TolbiShipDeck_SwingOar(ACTOR_FIRST_OAR + 1, 1, 0);
   TolbiShipDeck_SwingOar(ACTOR_FIRST_OAR + 2, 2, 0);
@@ -2254,18 +2257,18 @@ static void TolbiShipDeck_AdvanceStroke(s32 actorId, s32 slot) {
   u16 value = sOarAngle[slot];
 
   if (value >= TRIG_TURN * 13 / 32 + 1 && value <= TRIG_TURN * 7 / 16 - 1) {
-    sStrokePhase[slot] += 112;
+    sStrokePhase[slot] += TRIG_TURN * 7 / 4096;
     Actor_SetAnimation(actorId, 3);
   } else if (value >= TRIG_TURN * 29 / 32 + 1 &&
              value <= TRIG_TURN * 15 / 16 - 1) {
-    sStrokePhase[slot] += 224;
+    sStrokePhase[slot] += TRIG_TURN * 7 / 2048;
     Actor_SetAnimation(actorId, 3);
   } else if (value >= TRIG_TURN * 7 / 16 + 1 &&
              value <= TRIG_TURN * 15 / 16 - 1) {
-    sStrokePhase[slot] += 448;
+    sStrokePhase[slot] += TRIG_TURN * 7 / 1024;
     Actor_SetAnimation(actorId, 2);
   } else {
-    sStrokePhase[slot] += 768;
+    sStrokePhase[slot] += TRIG_TURN * 3 / 256;
     Actor_SetAnimation(actorId, 1);
   }
 }

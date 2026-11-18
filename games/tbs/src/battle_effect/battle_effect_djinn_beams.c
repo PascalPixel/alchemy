@@ -5,6 +5,15 @@
 #include "battle_effect_internal.h"
 
 #define DJINN_BEAMS_MOTES 512 ///< motes in PARTICLES
+/// Each target's own run of the motes, of which the first eight are drawn.
+#define DJINN_BEAMS_TARGET_MOTES 64
+/// Each target's motes and column start this many frames after the last's.
+#define DJINN_BEAMS_TARGET_FRAMES 16
+/// How far a mote sways either side, and the Djinni across and up and down, in
+/// pixels.
+#define DJINN_BEAMS_MOTE_SWAY 16
+#define DJINN_BEAMS_DJINNI_SWAY_X 20
+#define DJINN_BEAMS_DJINNI_SWAY_Y 4
 
 /// The motes (CrescentMoonSheet), then the Djinni.
 #define DJINN_BEAMS_MOTE_PICTURES 10000
@@ -88,7 +97,9 @@ void BattleEffect_RunDjinnBeams(struct BattleEffectParams *args, s32 element) {
   REG_BG2X = offsetX << 8;
   EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
 
-  for (frame = 0; frame != work->args->targetCount * 16 + 116; frame++) {
+  for (frame = 0;
+       frame != work->args->targetCount * DJINN_BEAMS_TARGET_FRAMES + 116;
+       frame++) {
     struct BattleCamera *camera = gBattleCamera;
 
     if (frame == 64)
@@ -99,9 +110,11 @@ void BattleEffect_RunDjinnBeams(struct BattleEffectParams *args, s32 element) {
     // The Djinni sways, then rises away.
     k = work->args->prelude;
     if (k == 1) {
-      s32 angle = frame << 11;
-      s32 x = FIXEDtoINT(-Trig_Sin(angle) * 20) + djinnX + offsetX - 20;
-      s32 y = FIXEDtoINT(Trig_Cos(angle) * 4) + djinnY - 24;
+      s32 angle = frame * (TRIG_TURN / 32);
+      s32 x = FIXEDtoINT(-Trig_Sin(angle) * DJINN_BEAMS_DJINNI_SWAY_X) +
+              djinnX + offsetX - DJINNI_WIDTH / 2;
+      s32 y =
+          FIXEDtoINT(Trig_Cos(angle) * DJINN_BEAMS_DJINNI_SWAY_Y) + djinnY - 24;
 
       BattleEffect_FetchRectangleBlitters(work->args->side ^ k, draw);
       if (frame > 32)
@@ -125,21 +138,22 @@ void BattleEffect_RunDjinnBeams(struct BattleEffectParams *args, s32 element) {
     EFFECT_FOR_EACH_TARGET(k, work->args) {
       struct Actor *target =
           GetBattleObjectSlotFar(work->args->targets[k])->actor;
-      s32 start = k * 16;
+      s32 start = k * DJINN_BEAMS_TARGET_FRAMES;
 
       EFFECT_VIEW_FROM_CAMERA(camera);
       SET_VECTOR(point, target->x.fixed, 0, target->z.fixed);
       Matrix_TranslateVector(point);
       if (frame > start) {
         for (i = 0; i != 8; i++) {
-          struct Particle *mote = &PARTICLES[k * 64 + i];
+          struct Particle *mote = &PARTICLES[k * DJINN_BEAMS_TARGET_MOTES + i];
 
           if (frame > i * 8 + start && mote->y > toFIXED(8)) {
             s32 sway;
 
             Projection_Point(mote, &screenPosition);
             screenPosition.x += offsetX;
-            sway = FIXEDtoINT(Trig_Sin(mote->variant << 10) * 16);
+            sway = FIXEDtoINT(Trig_Sin(mote->variant * (TRIG_TURN / 64)) *
+                              DJINN_BEAMS_MOTE_SWAY);
             if (i & 1)
               screenPosition.x -= sway;
             else
@@ -161,7 +175,7 @@ void BattleEffect_RunDjinnBeams(struct BattleEffectParams *args, s32 element) {
 
     // The column of light.
     EFFECT_FOR_EACH_TARGET(i, work->args) {
-      s32 start = i * 16;
+      s32 start = i * DJINN_BEAMS_TARGET_FRAMES;
 
       if (frame >= start + 72) {
         struct Actor *target =
@@ -213,3 +227,11 @@ void BattleEffect_RunDjinnBeams(struct BattleEffectParams *args, s32 element) {
 
 #undef DJINN_BEAMS_MOTE_PICTURES
 #undef DJINN_BEAMS_DJINNI_PICTURE
+#undef DJINN_BEAMS_MOTES
+#undef DJINN_BEAMS_MOTE_WIDTH
+#undef DJINN_BEAMS_MOTE_HEIGHT
+#undef DJINN_BEAMS_TARGET_MOTES
+#undef DJINN_BEAMS_TARGET_FRAMES
+#undef DJINN_BEAMS_MOTE_SWAY
+#undef DJINN_BEAMS_DJINNI_SWAY_X
+#undef DJINN_BEAMS_DJINNI_SWAY_Y

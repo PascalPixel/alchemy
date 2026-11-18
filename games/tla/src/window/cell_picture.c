@@ -1,108 +1,119 @@
+/// @file
+/// The window transition's scanline bounds, built from the UI tilemap by ARM
+/// code that ScanlineWindow_FillSpans copies into RAM for each call.
+
 #include "edition.h"
 #include "types.h"
+#include "system/io_reg.h"
 #include "window/window.h"
 
-/// Builds the hardware window's left and right edges for each scan line from
-/// the window tilemap at src, and returns the end of what it wrote at dst.
-u16 *Tile_BuildCellPictures(u16 *dst, u16 *src) {
-  u32 row;
-  u32 col;
-  s32 a;
-  s32 b;
-  s32 c;
-  s32 d;
-  s32 e;
-  s32 f;
-  s32 found;
-  s32 v;
+/// Builds the hardware window's horizontal extent for each of the screen's 160
+/// scanlines from the UI tilemap at tilemap (BG_SCREEN_WIDTH tiles a row,
+/// DISPLAY_TILE_WIDTH shown), and returns the end of what it wrote.
+u16 *Tile_BuildCellPictures(u16 *scanlineBounds, u16 *tilemap) {
+  u32 tileRow;
+  u32 tileColumn;
+  s32 left;
+  s32 right;
+  s32 topLeft;
+  s32 bottomLeft;
+  s32 topRight;
+  s32 bottomRight;
+  s32 foundLeftEdge;
+  s32 horizontalBounds;
 
-  for (row = 0; row < 20; row++) {
-    d = 0;
-    a = d;
-    c = d;
-    f = d;
-    b = f;
-    e = f;
-    found = f;
-    col = f;
-    dst++;
-    for (; col < 30; col++) {
-      u16 cmd = *src++;
+  for (tileRow = 0; tileRow < DISPLAY_TILE_HEIGHT; tileRow++) {
+    bottomLeft = 0;
+    left = bottomLeft;
+    topLeft = bottomLeft;
+    bottomRight = bottomLeft;
+    right = bottomRight;
+    topRight = bottomRight;
+    foundLeftEdge = bottomRight;
+    tileColumn = bottomRight;
+    scanlineBounds++;
+    for (; tileColumn < DISPLAY_TILE_WIDTH; tileColumn++) {
+      u16 tile = *tilemap++;
 
-      if (cmd == 0)
+      if (tile == 0)
         continue;
-      if (found == 0) {
-        switch (cmd) {
+      // The first border tile establishes the left edge and a one-tile span.
+      // A later right border tile extends that span.
+      if (foundLeftEdge == 0) {
+        switch (tile) {
         case WINDOW_TILE_BORDER_TOP_LEFT:
-          a = col * 8;
-          b = a + 8;
-          c = a + 1;
-          d = a;
-          e = d + 7;
-          f = b;
-          found++;
+          left = tileColumn * 8;
+          right = left + 8;
+          topLeft = left + 1;
+          bottomLeft = left;
+          topRight = bottomLeft + 7;
+          bottomRight = right;
+          foundLeftEdge++;
           break;
         case WINDOW_TILE_BORDER_BOTTOM_LEFT:
-          a = col * 8;
-          b = a + 8;
-          c = a;
-          d = a + 1;
-          e = b;
-          f = a + 7;
-          found++;
+          left = tileColumn * 8;
+          right = left + 8;
+          topLeft = left;
+          bottomLeft = left + 1;
+          topRight = right;
+          bottomRight = left + 7;
+          foundLeftEdge++;
           break;
+        // The left edge meeting a divider counts as a side too.
         case WINDOW_TILE(7):
         case WINDOW_TILE_BORDER_LEFT:
         case WINDOW_TILE_BORDER_LEFT_TEE:
-          a = col * 8;
-          b = a + 8;
-          d = a;
-          c = d;
-          f = b;
-          e = f;
-          found++;
+          left = tileColumn * 8;
+          right = left + 8;
+          bottomLeft = left;
+          topLeft = bottomLeft;
+          bottomRight = right;
+          topRight = bottomRight;
+          foundLeftEdge++;
         }
       } else {
-        switch (cmd) {
+        switch (tile) {
         case WINDOW_TILE_BORDER_TOP_RIGHT:
-          b = col * 8 + 8;
-          e = col * 8 + 7;
-          f = b;
+          right = tileColumn * 8 + 8;
+          topRight = tileColumn * 8 + 7;
+          bottomRight = right;
           break;
         case WINDOW_TILE_BORDER_BOTTOM_RIGHT:
-          b = col * 8 + 8;
-          e = b;
-          f = col * 8 + 7;
+          right = tileColumn * 8 + 8;
+          topRight = right;
+          bottomRight = tileColumn * 8 + 7;
           break;
         case WINDOW_TILE(7):
         case WINDOW_TILE_BORDER_RIGHT:
         case WINDOW_TILE_BORDER_RIGHT_TEE:
-          f = col * 8 + 8;
-          b = f;
-          e = f;
+          bottomRight = tileColumn * 8 + 8;
+          right = bottomRight;
+          topRight = bottomRight;
           break;
         }
       }
     }
-    v = e + (c << 8);
-    *dst++ = v;
-    v = b + (a << 8);
-    dst++;
-    *dst++ = v;
-    dst++;
-    *dst++ = v;
-    dst++;
-    *dst++ = v;
-    dst++;
-    src += 2;
-    *dst++ = v;
-    dst++;
-    *dst++ = v;
-    dst++;
-    *dst++ = v;
-    v = f + (d << 8);
-    dst++;
-    *dst++ = v;
+    // The tile row's eight scanlines: its top line, six middle lines and its
+    // bottom line.
+    horizontalBounds = topRight + (topLeft << 8);
+    *scanlineBounds++ = horizontalBounds;
+    horizontalBounds = right + (left << 8);
+    scanlineBounds++;
+    *scanlineBounds++ = horizontalBounds;
+    scanlineBounds++;
+    *scanlineBounds++ = horizontalBounds;
+    scanlineBounds++;
+    *scanlineBounds++ = horizontalBounds;
+    scanlineBounds++;
+    tilemap += BG_SCREEN_WIDTH - DISPLAY_TILE_WIDTH;
+    *scanlineBounds++ = horizontalBounds;
+    scanlineBounds++;
+    *scanlineBounds++ = horizontalBounds;
+    scanlineBounds++;
+    *scanlineBounds++ = horizontalBounds;
+    horizontalBounds = bottomRight + (bottomLeft << 8);
+    scanlineBounds++;
+    *scanlineBounds++ = horizontalBounds;
   }
-  return dst;
+  return scanlineBounds;
 }

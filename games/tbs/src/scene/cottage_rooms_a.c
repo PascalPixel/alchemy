@@ -857,9 +857,10 @@ static void CottageRoomsA_SpawnSleepZ(void) {
 
     actor->y.fixed = height;
     actor->targetY = height;
-    // The drifting script consumes these two work fields as signed 8.8 steps.
-    actor->timer = 25;      // 25/256 pixel per frame.
-    actor->userValue = 128; // 1/2 pixel per frame.
+    // The drifting script takes these two work fields as signed 8.8 steps, in
+    // 256ths of a pixel a frame.
+    actor->timer = 25;
+    actor->userValue = 256 / 2;
   }
   Actor_SetScript(actorId, gCottageRoomsA_SleepZScript);
 }

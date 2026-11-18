@@ -17,24 +17,40 @@
 struct CursorSlot {
   u8 x; ///< screen pixels
   u8 y; ///< screen pixels
-  /// bits: 7..2 frames to stay put (the byte drops by 4 a frame) | 1 in the
-  /// current spread | 0 easing halfway to its unit each frame
+  /// bits: 7..2 frames to stay put (CURSOR_HOLD_FRAME each) | 1
+  /// CURSOR_IN_SPREAD | 0 CURSOR_EASING
   u8 flags;
   s8 index; ///< the place it follows from the aimed one; 6 when unused
 };
 
+/// CursorSlot.flags: easing halfway to its unit each frame, in the current
+/// spread, and one frame of staying put.
+#define CURSOR_EASING (1 << 0)
+#define CURSOR_IN_SPREAD (1 << 1)
+#define CURSOR_HOLD_FRAME (1 << 2)
+
+/// What the selection redraws: the spread's targets and their markers, and at
+/// the start every part (as The Lost Age names them).
+#define TARGET_REDRAW_SPREAD 1
+#define TARGET_REDRAW_ALL 0xFFFF
+
+/// The place codes the selection returns, as battle_internal.h names them: a
+/// place in the party's list, or with the side bit set the enemies'.
+#define PLACE_PARTY (1 << 8)
+#define PLACE_ENEMY (PLACE_PARTY | (1 << 7))
+
 /// Lets the player choose the target of an action of unit `selection`, with a
 /// cursor over the aimed unit and smaller markers on the others its range
 /// covers. `mode` is the action's targetMode: ABILITY_TARGET_ALLIES the party,
-/// ABILITY_TARGET_SELF only `selection` itself, anything else the enemies
-/// (battle_internal.h has the names, which this folder cannot see yet).
+/// ABILITY_TARGET_SELF only `selection` itself, anything else the enemies.
 /// `spread` is its range: 1 one unit, n the aimed one and n - 1 either side,
 /// ABILITY_RANGE_ALL every one (the cursor does not move); 0 counts as 1.
 /// `kind` (enum BattleTargetHint) is Battle_ClassifyEntryKind's class, or
 /// TARGET_HINT_SET_DJINNI: on a party member it opens a window of what the
 /// action would do (its HP or PP, the statuses it cures, "Set Djinni"), and a
 /// reviving or curing action not aimed at everyone starts on the first party
-/// member who needs it.
+/// member who needs it. Returns the target chosen, PLACE_PARTY | its party slot
+/// or PLACE_ENEMY | its enemy slot, or -1 when cancelled.
 s32 BattleTarget_RunSelection(s32 selection, s32 mode, u32 spread, u32 kind) {
   u16 candidateIds[8];
   struct SelectionSprite cursorSprites[6];
@@ -79,7 +95,7 @@ s32 BattleTarget_RunSelection(s32 selection, s32 mode, u32 spread, u32 kind) {
 
   battle = gBattleWork;
   targetCount = 0;
-  redraw = 0xFFFF;
+  redraw = TARGET_REDRAW_ALL;
   cursorSlot = VramCache_AllocEntry(256);
   /* FAKEMATCH(dead): a null derived from selection, with no constant
    * equivalence. */
@@ -176,7 +192,7 @@ s32 BattleTarget_RunSelection(s32 selection, s32 mode, u32 spread, u32 kind) {
   if (mode != ABILITY_TARGET_ALLIES) {
     BattleMotion_ProjectConditionalPositionFar(
         selection, ScreenPoint_Coordinates(&actorPosition));
-    cursorTracks[0].flags = 8;
+    cursorTracks[0].flags = CURSOR_HOLD_FRAME * 2;
     cursorTracks[0].x = (u8)actorPosition.x;
     cursorTracks[0].y = 128;
   }
@@ -211,7 +227,7 @@ s32 BattleTarget_RunSelection(s32 selection, s32 mode, u32 spread, u32 kind) {
     y = selectedPosition.y;
     // Ease halfway each frame; the other markers show once the cursor is
     // within 7 pixels of its target.
-    if (cursorTracks[0].flags & 1) {
+    if (cursorTracks[0].flags & CURSOR_EASING) {
       cursorX = (selectedPosition.x + cursorTracks[0].x) / 2;
       cursorY = (y + cursorTracks[0].y) / 2;
       if ((selectedPosition.x - cursorX < 0
@@ -222,17 +238,17 @@ s32 BattleTarget_RunSelection(s32 selection, s32 mode, u32 spread, u32 kind) {
       cursorTracks[0].x = (u8)cursorX;
       cursorTracks[0].y = (u8)cursorY;
       selectedPosition.y = cursorY;
-    } else if ((u8)cursorTracks[0].flags <= 3) {
+    } else if ((u8)cursorTracks[0].flags < CURSOR_HOLD_FRAME) {
       cursorTracks[0].x = (u8)selectedPosition.x;
       selectedPosition.y = y;
       cursorTracks[0].y = (u8)y;
-      cursorTracks[0].flags = 1;
+      cursorTracks[0].flags = CURSOR_EASING;
     } else {
       selectedPosition.x = cursorTracks[0].x;
       selectedPosition.y = cursorTracks[0].y;
-      cursorTracks[0].flags = (u8)(cursorTracks[0].flags - 4);
-      if (cursorTracks[0].flags <= 3)
-        cursorTracks[0].flags = 1;
+      cursorTracks[0].flags = (u8)(cursorTracks[0].flags - CURSOR_HOLD_FRAME);
+      if (cursorTracks[0].flags < CURSOR_HOLD_FRAME)
+        cursorTracks[0].flags = CURSOR_EASING;
     }
     firstSprite->x = selectedPosition.x - 8;
     firstSprite->y = (u8)(selectedPosition.y - 16);
@@ -272,18 +288,18 @@ s32 BattleTarget_RunSelection(s32 selection, s32 mode, u32 spread, u32 kind) {
     matrix = OamMatrix_AllocFromTransform(&effect);
     // The aim moved: list the units the range covers, the aimed one first,
     // mark them, and redraw the window for the aimed one.
-    if (redraw & 1) {
+    if (redraw & TARGET_REDRAW_SPREAD) {
       targetCount = 0;
       for (i = 0; i < 6; i++)
-        cursorTracks[i].flags &= (u8)~2;
+        cursorTracks[i].flags &= (u8)~CURSOR_IN_SPREAD;
       for (i = 0; i < spread; i++) {
         {
           n = targetIndex + i;
           if (n < candidateCount && candidateIds[n] != BATTLE_UNIT_REMOVED) {
             spreadActorIds[targetCount] = candidateIds[n];
-            cursorTracks[i].flags |= 2;
+            cursorTracks[i].flags |= CURSOR_IN_SPREAD;
             if (cursorTracks[i].index != i) {
-              cursorTracks[i].flags &= (u8)~1;
+              cursorTracks[i].flags &= (u8)~CURSOR_EASING;
               cursorTracks[i].index = (s8)i;
             }
             spreadTrackIndices[targetCount] = (u8)i;
@@ -292,9 +308,9 @@ s32 BattleTarget_RunSelection(s32 selection, s32 mode, u32 spread, u32 kind) {
           if (i != 0 && (n = targetIndex - i) >= 0 &&
               candidateIds[n] != BATTLE_UNIT_REMOVED) {
             spreadActorIds[targetCount] = candidateIds[n];
-            cursorTracks[6 - i].flags |= 2;
+            cursorTracks[6 - i].flags |= CURSOR_IN_SPREAD;
             if (cursorTracks[6 - i].index != -i) {
-              cursorTracks[6 - i].flags &= (u8)~1;
+              cursorTracks[6 - i].flags &= (u8)~CURSOR_EASING;
               cursorTracks[6 - i].index = (s8)-i;
             }
             spreadTrackIndices[targetCount] = (u8)(6 - i);
@@ -303,7 +319,7 @@ s32 BattleTarget_RunSelection(s32 selection, s32 mode, u32 spread, u32 kind) {
         }
       }
       for (i = 0; i < 6; i++) {
-        if ((cursorTracks[i].flags & 2) == 0)
+        if ((cursorTracks[i].flags & CURSOR_IN_SPREAD) == 0)
           cursorTracks[i].index = 6;
       }
       spreadActorIds[targetCount] = BATTLE_UNIT_LIST_END;
@@ -640,7 +656,7 @@ s32 BattleTarget_RunSelection(s32 selection, s32 mode, u32 spread, u32 kind) {
         Text_ClearCanvas();
         Text_DrawWideStringAtOffset(targetName, window, namePosition.x, 4);
       }
-      redraw &= ~1;
+      redraw &= ~TARGET_REDRAW_SPREAD;
     }
     if (drawCursors != 0) {
       for (i = 1; i < targetCount; i++) {
@@ -650,7 +666,7 @@ s32 BattleTarget_RunSelection(s32 selection, s32 mode, u32 spread, u32 kind) {
             spreadActorIds[i], ScreenPoint_Coordinates(&markerPosition));
         markerPosition.y = markerPosition.y + CURSOR_BOB_Y();
         *marker = *firstSprite;
-        if (track->flags & 1) {
+        if (track->flags & CURSOR_EASING) {
           s32 x = (markerPosition.x + track->x) / 2;
           s32 y = (markerPosition.y + track->y) / 2;
 
@@ -662,7 +678,7 @@ s32 BattleTarget_RunSelection(s32 selection, s32 mode, u32 spread, u32 kind) {
           s32 x = marker->x;
           s32 y = marker->y + 8;
 
-          track->flags = 1;
+          track->flags = CURSOR_EASING;
           markerPosition.x = x;
           track->x = x;
           markerPosition.y = y;
@@ -703,7 +719,7 @@ s32 BattleTarget_RunSelection(s32 selection, s32 mode, u32 spread, u32 kind) {
       for (k = 0; k <= 5 && battle->partyUnits[k] != BATTLE_UNIT_LIST_END;
            k++) {
         if (battle->partyUnits[k] == id) {
-          result = 0x100 | k;
+          result = PLACE_PARTY | k;
           break;
         }
       }
@@ -711,7 +727,7 @@ s32 BattleTarget_RunSelection(s32 selection, s32 mode, u32 spread, u32 kind) {
         for (k = 0; k <= 5 && battle->enemyIds[k] != BATTLE_UNIT_LIST_END;
              k++) {
           if (battle->enemyIds[k] == id) {
-            result = 0x180 | k;
+            result = PLACE_ENEMY | k;
             break;
           }
         }
@@ -724,7 +740,7 @@ s32 BattleTarget_RunSelection(s32 selection, s32 mode, u32 spread, u32 kind) {
           targetIndex++;
           targetIndex %= candidateCount;
         } while (candidateIds[targetIndex] == BATTLE_UNIT_REMOVED);
-        redraw |= 1;
+        redraw |= TARGET_REDRAW_SPREAD;
       }
       if (repeated & (KEY_UP | KEY_LEFT)) {
         Sound_PlayFar(SE_MENU_CURSOR_MOVE);
@@ -732,7 +748,7 @@ s32 BattleTarget_RunSelection(s32 selection, s32 mode, u32 spread, u32 kind) {
           targetIndex = targetIndex + candidateCount - 1;
           targetIndex %= candidateCount;
         } while (candidateIds[targetIndex] == BATTLE_UNIT_REMOVED);
-        redraw |= 1;
+        redraw |= TARGET_REDRAW_SPREAD;
       }
     }
     if (gBattleMenuWork->timer == 0 || (pressed & KEY_B)) {
@@ -752,3 +768,11 @@ s32 BattleTarget_RunSelection(s32 selection, s32 mode, u32 spread, u32 kind) {
   wait(1);
   return targetIndex;
 }
+
+#undef CURSOR_EASING
+#undef CURSOR_IN_SPREAD
+#undef CURSOR_HOLD_FRAME
+#undef TARGET_REDRAW_SPREAD
+#undef TARGET_REDRAW_ALL
+#undef PLACE_PARTY
+#undef PLACE_ENEMY

@@ -378,8 +378,10 @@ void ChampaCliffCaves_SailorTurnsAway(s32 actor) {
 /// revealed cells, kept further down the map, are copied there with their
 /// attributes.
 void ChampaCliffCaves_RevealPath(void) {
-  MapGrid_CopyCellPictureCellsRect(41, 97, 1, 4, 41, 77);
-  Map_CopyCellAttributeRect(41, 33, 1, 4, 41, 13);
+  MapGrid_CopyCellPictureCellsRect(41, 97, 1, FORGE_PATH_CELLS,
+                                   FORGE_PATH_CELL_X, 77);
+  Map_CopyCellAttributeRect(41, 33, 1, FORGE_PATH_CELLS, FORGE_PATH_CELL_X,
+                            FORGE_PATH_CELL_Z);
 }
 
 /// When Reveal wears off, the pit's own cells cover the path again, and a
@@ -389,11 +391,15 @@ void ChampaCliffCaves_HidePath(void) {
   s32 x;
   s32 z;
 
-  MapGrid_CopyCellPictureCellsRect(50, 97, 1, 4, 41, 77);
-  Map_CopyCellAttributeRect(46, 33, 1, 4, 41, 13);
+  MapGrid_CopyCellPictureCellsRect(50, 97, 1, FORGE_PATH_CELLS,
+                                   FORGE_PATH_CELL_X, 77);
+  Map_CopyCellAttributeRect(46, 33, 1, FORGE_PATH_CELLS, FORGE_PATH_CELL_X,
+                            FORGE_PATH_CELL_Z);
   actor = Actor_GetById(gMainRoutineWork.leaderActorId);
   x = FIELD_CELL(actor->x.fixed);
   z = FIELD_CELL(actor->z.fixed);
+  // On the path, or one row past it on the south rim (row 17), where he is
+  // set down.
   if (gMainRoutineWork.next == SCENE_CHAMPA_CLIFF_CAVES_AVIMANDER &&
       x == FORGE_PATH_CELL_X &&
       (u32)(z - FORGE_PATH_CELL_Z) <= FORGE_PATH_CELLS)
@@ -2262,6 +2268,8 @@ LATE_DATA struct ActorPlacement gChampaCliffCaves_ObabaPlacementsBriggsHome[] =
         {SCENE_TABLE_END},
 };
 
+/* FAKEMATCH(signature): placement rows declared as halfwords, so the table
+   starts on a halfword as the ROM's does. */
 LATE_DATA s16 gChampaCliffCaves_AvimanderPlacementsBriggsHome[] = {
     ACTOR_PLACEMENT_HALVES(SPRITE_OBABA, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 736, 0, 248, FACING_WEST, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT_HALVES(SPRITE_SUNSHINES_CHILD, CONDITION_ALWAYS, MOVEMENT_TYPE_SQUASH, 216, 0, 464, FACING_NORTH_NORTHEAST, TALK_FACING_PARTY_AND_BACK, 0),
@@ -2330,6 +2338,8 @@ LATE_DATA struct ActorPlacement
         {SCENE_TABLE_END},
 };
 
+/* FAKEMATCH(signature): placement rows declared as halfwords, so the table
+   starts on a halfword as the ROM's does. */
 LATE_DATA s16 gChampaCliffCaves_AvimanderPlacementsAfterAvimander[] = {
     ACTOR_PLACEMENT_HALVES(SPRITE_OBABA, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 648, 0, 188, FACING_SOUTH_SOUTHWEST, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT_HALVES(SPRITE_SUNSHINES_CHILD, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 216, 0, 464, FACING_SOUTH_SOUTHWEST, TALK_FACING_PARTY_THEN_WATCH, 0),

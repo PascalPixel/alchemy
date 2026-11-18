@@ -8,7 +8,8 @@
 /// frames.
 void FieldEffect_SwayParticle(struct Actor *actor) {
   actor->x.fixed =
-      actor->targetX + Iwram_MulFX(toFIXED(4), Trig_Sin(actor->timer << 9));
+      actor->targetX +
+      Iwram_MulFX(toFIXED(4), Trig_Sin(actor->timer * (TRIG_TURN / 128)));
   actor->timer++;
   actor->timer = (actor->timer + 128) % 128;
 }
@@ -27,13 +28,12 @@ void FieldEffect_UpdateShrinkingOrbitActor(struct Actor *particle) {
     particle->timer = decrementedTimer;
     remainingFrames = decrementedTimer;
     if (remainingFrames != 0) {
-      // The angle turns 1/32 of a circle (TRIG_TURN / 32) each frame left.
       pos.x = effectWork->x;
       pos.y = effectWork->y + toFIXED(10);
       pos.z = effectWork->z;
-      Vector_AddPolarOffset(toFIXED(remainingFrames),
-                            (s16)particle->userValue + (remainingFrames << 11),
-                            &pos);
+      Vector_AddPolarOffset(
+          toFIXED(remainingFrames),
+          (s16)particle->userValue + remainingFrames * (TRIG_TURN / 32), &pos);
       particle->x.fixed = pos.x;
       particle->y.fixed = pos.y;
       particle->z.fixed = pos.z;
@@ -53,10 +53,11 @@ void FieldEffect_RunSparkEmitter(struct Actor *emitter) {
 
   effectWork = gFieldEffectWork;
   if (emitter->timer != -1) {
-    SET_ACTOR_POSITION(
-        emitter,
-        effectWork->x + Iwram_MulFX(toFIXED(6), Trig_Sin(emitter->timer << 10)),
-        effectWork->y + ABOVE, effectWork->z);
+    SET_ACTOR_POSITION(emitter,
+                       effectWork->x +
+                           Iwram_MulFX(toFIXED(6), Trig_Sin(emitter->timer *
+                                                            (TRIG_TURN / 64))),
+                       effectWork->y + ABOVE, effectWork->z);
     emitter->timer++;
     emitter->timer = (emitter->timer + 64) % 64;
   }
@@ -66,13 +67,13 @@ void FieldEffect_RunSparkEmitter(struct Actor *emitter) {
                emitter->z.fixed);
     Vector_AddPolarOffset(Random16() * 6, Random16(), pos);
     spark = Actor_Spawn(SPRITE_SPARKLE, pos[0], pos[1], pos[2]);
-    // Each falls under a gravity of 458 (0.007 pixels a frame, each frame)
-    // and is released after 72 frames, its script's wait (lifetime).
+    // Each falls, 0.007 pixels a frame faster each frame, and is released
+    // after 72 frames, its script's wait.
     if (spark != 0) {
       spark->update = FieldEffect_SwayParticle;
       spark->scaleX = spark->scaleY = FIXED_ONE * 3 / 5;
       spark->motionFlags = ACTOR_FALLS;
-      spark->gravity = 458;
+      spark->gravity = toFIXED(0.007);
       spark->timer = Random16() >> 9;
       spark->targetX = spark->x.fixed;
       Actor_SetSpriteColorModeFar(spark, SPRITE_COLOR_BLUE_TINT);
@@ -81,6 +82,9 @@ void FieldEffect_RunSparkEmitter(struct Actor *emitter) {
     }
   }
 }
+
+/// Ply's flashing figure: its steps, of 2 frames each.
+#define PLY_FLASH_STEPS 30
 
 /// Runs FieldPsynergy_Ply, then stops the caster's update routine.
 void FieldPsynergy_PlyOnTarget(s32 unused) {
@@ -110,7 +114,7 @@ void FieldPsynergy_Ply(void) {
       actor->scaleX = FIXED_ONE * 7 / 10;
       actor->update = FieldEffect_UpdateShrinkingOrbitActor;
       actor->timer = 120;
-      actor->userValue = i << 13;
+      actor->userValue = i * (TRIG_TURN / 8);
       actor->motionFlags = ACTOR_FLOATS;
       last = Sprite_ShareVramCacheEntry(actor->sprite, last);
     }
@@ -141,8 +145,8 @@ void FieldPsynergy_Ply(void) {
   Sound_PlayFar(SE_PSYNERGY_SPARKLE);
   wait(12);
   if (target != 0) {
-    // Switch its sprite param every 2 frames (10 one time in 4).
-    for (i = 0; i < 30; i++) {
+    // Blue every 2 frames, red one time in 4.
+    for (i = 0; i < PLY_FLASH_STEPS; i++) {
       /* FAKEMATCH(dead): target set again to actor. */
       target = actor;
       if (i & 3)
@@ -186,3 +190,5 @@ void FieldPsynergy_Ply(void) {
     effectWork->finishCallback();
   FieldPsynergy_FadeFromCastColor();
 }
+
+#undef PLY_FLASH_STEPS

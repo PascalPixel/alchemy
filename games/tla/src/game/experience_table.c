@@ -9,13 +9,25 @@
 /// and Mars Adepts, 1 for the Jupiter and Mercury ones.
 const u8 gCharacter_ElementGroupTable[] = {0, 0, 1, 1, 0, 0, 1, 1};
 
+/// Flags of The Broken Seal's save, by its own names and numbers, which
+/// DataTransfer_Apply reads.
+#define FLAG_BROKEN_SEAL_VISITED_SICK_DORA 0x81e
+#define FLAG_BROKEN_SEAL_VAULT_WARNED_OF_ESCAPED_THIEVES 0x868
+#define FLAG_BROKEN_SEAL_HSU_RESCUED_WITHOUT_PARTY 0x8b3
+#define FLAG_BROKEN_SEAL_CROSSBONE_ISLE_DEADBEARD_DEFEATED 0x8d1
+#define FLAG_BROKEN_SEAL_DODONPA_LOCKED_UP 0x941
+#define FLAG_BROKEN_SEAL_WON_COLOSSO 0x951
+
 /// The six flags of The Broken Seal's save DataTransfer_Apply copies into
-/// FLAG_TRANSFERRED_DODONPA_LOCKED_UP and the five after it, by The Broken
-/// Seal's names: Dodonpa locked up, the Colosso won, Hsu freed without the
-/// party, Deadbeard beaten, the sick Dora visited, and Vault warned of the
-/// escaped thieves.
-const u16 gDataTransfer_Flags[TRANSFERRED_FLAG_COUNT] = {0x941, 0x951, 0x8b3,
-                                                         0x8d1, 0x81e, 0x868};
+/// FLAG_TRANSFERRED_DODONPA_LOCKED_UP and the five after it, in that order.
+const u16 gDataTransfer_Flags[TRANSFERRED_FLAG_COUNT] = {
+    FLAG_BROKEN_SEAL_DODONPA_LOCKED_UP,
+    FLAG_BROKEN_SEAL_WON_COLOSSO,
+    FLAG_BROKEN_SEAL_HSU_RESCUED_WITHOUT_PARTY,
+    FLAG_BROKEN_SEAL_CROSSBONE_ISLE_DEADBEARD_DEFEATED,
+    FLAG_BROKEN_SEAL_VISITED_SICK_DORA,
+    FLAG_BROKEN_SEAL_VAULT_WARNED_OF_ESCAPED_THIEVES,
+};
 
 /// The percent chance that DataTransfer_GiveDefaultDjinn hands out each of The
 /// Broken Seal's seven Djinn of each element, one row per element.

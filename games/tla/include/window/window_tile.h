@@ -15,7 +15,7 @@
 
 /// The HP and PP labels before a number (Text_DrawPrefixedNumberAtOffset)
 /// or a Psynergy's cost: each label's first tile, and the second tile the
-/// HP label always takes, as ☀️'s.
+/// HP label always takes.
 enum {
   WINDOW_TILE_HP_LABEL = WINDOW_TILE(29),
   WINDOW_TILE_HP_LABEL_END = WINDOW_TILE(30),

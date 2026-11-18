@@ -4,9 +4,33 @@
 
 #include "battle_effect_internal.h"
 
+#define SHARDS_PER_CRYSTAL 16
 #define PRISM_GROUND_Y toFIXED(56) ///< y 56, where the crystals shatter
 #define PRISM_SHARD_PICTURES                                                   \
   PICTURE_BYTES(CRYSTAL) ///< the shards, after the crystal
+#define SHATTERED 1      ///< a crystal's z once it has hit the ground
+/// The x in gPrism_ShardStarts over the crystal's middle.
+#define PRISM_SHARD_START_MIDDLE 40
+/// The shard kinds a crystal breaks into, and the pictures of each as it
+/// spins: a shard turns to its next picture each PRISM_SHARD_SPIN_STEP of
+/// spin.
+#define PRISM_SHARD_KINDS 5
+#define PRISM_SHARD_SPIN_PICTURES 3
+#define PRISM_SHARD_SPIN_STEP 96
+
+/// The strongest Prism turns the camera over its first frames, at a steady
+/// speed and then slowing to a stop over the last eight.
+#define PRISM_TURN_FRAMES 104
+#define PRISM_TURN_SPEED 192
+#define PRISM_TURN_SLOWING_FRAMES 8
+/// How much the turn slows each of those frames.
+#define PRISM_TURN_SLOWDOWN (PRISM_TURN_SPEED / PRISM_TURN_SLOWING_FRAMES)
+
+/// How far each channel of the phase palette sways either way, in colour
+/// levels.
+#define PHASE_SWAY_LEVELS 16
+/// Twice a 16.16 value, as a whole number: FIXEDtoINT a shift short.
+#define FIXEDtoINT_TWICE(value) ((value) >> 15)
 
 /// Crystals drop out of the sky onto the targets' side and shatter on the
 /// ground into spinning shards, flashing the targets and shaking the screen.
@@ -36,6 +60,8 @@ void BattleEffect_RunPrism(struct BattleEffectParams *args) {
   BattleEffect_FetchRectangleBlitters(work->args->side, draw);
   EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
 
+  // The crystals wait above the screen, each eight frames behind the last,
+  // and drift sideways so that they land over the targets.
   for (j = 0; j != gPrism_Counts[work->args->variant][PRISM_CRYSTAL_COUNT];
        j++) {
     seed = &work->particles[j];
@@ -58,14 +84,16 @@ void BattleEffect_RunPrism(struct BattleEffectParams *args) {
 
   for (frame = 0; frame != gPrism_Counts[work->args->variant][PRISM_FRAMES];
        frame++) {
-    if (work->args->variant == EFFECT_VARIANT_STRONGEST && frame <= 103) {
+    if (work->args->variant == EFFECT_VARIANT_STRONGEST &&
+        frame < PRISM_TURN_FRAMES) {
       struct BattleCamera *camera = gBattleCamera;
       s32 speed;
 
-      if (frame <= 95)
-        speed = 192;
+      if (frame < PRISM_TURN_FRAMES - PRISM_TURN_SLOWING_FRAMES)
+        speed = PRISM_TURN_SPEED;
       else
-        speed = 2496 - frame * 24;
+        speed = PRISM_TURN_FRAMES * PRISM_TURN_SLOWDOWN -
+                frame * PRISM_TURN_SLOWDOWN;
       if (work->args->side == EFFECT_SIDE_ENEMIES)
         camera->yaw -= speed;
       else
@@ -80,15 +108,18 @@ void BattleEffect_RunPrism(struct BattleEffectParams *args) {
       for (i = 0; i != gPrism_Counts[work->args->variant][PRISM_CRYSTAL_COUNT];
            i++) {
         crystal = &work->particles[i];
-        if (crystal->z == 1) {
+        if (crystal->z == SHATTERED) {
           // A shattered crystal's shards fly and spin; kind 4 asks for pictures
           // past the twelve the tables hold, whose heights read as zero, so
           // those three shards of every crystal never show.
           // XXX (no evidence): whether a fifth kind of shard was meant; the
           // twelve pictures and their tables are all the ROM holds.
-          for (j = 0; j != 16; j++) {
-            picture = (j % 5) * 3 + (shards[i * 16 + j].variant / 96) % 3;
-            shard = &shards[i * 16 + j];
+          for (j = 0; j != SHARDS_PER_CRYSTAL; j++) {
+            picture = (j % PRISM_SHARD_KINDS) * PRISM_SHARD_SPIN_PICTURES +
+                      (shards[i * SHARDS_PER_CRYSTAL + j].variant /
+                       PRISM_SHARD_SPIN_STEP) %
+                          PRISM_SHARD_SPIN_PICTURES;
+            shard = &shards[i * SHARDS_PER_CRYSTAL + j];
             draw[j <= 2](
                 canvas,
                 work->sheet + gPrism_ShardPictures[picture] +
@@ -110,14 +141,14 @@ void BattleEffect_RunPrism(struct BattleEffectParams *args) {
           Particle_AdvanceWithGravity2D(crystal, PARTICLE_DAMPING_NONE,
                                         FIXED_ONE);
           if (crystal->y > PRISM_GROUND_Y) {
-            // Shatter it on reaching the ground (y 56).
-            crystal->z = 1;
+            // Shatter it on reaching the ground.
+            crystal->z = SHATTERED;
             crystal->y = PRISM_GROUND_Y;
-            for (j = 0; j != 16; j++) {
-              shard = &shards[i * 16 + j];
-              shard->x =
-                  INTtoFIXED(gPrism_ShardStarts[j][PRISM_SHARD_START_X] - 40) +
-                  crystal->x;
+            for (j = 0; j != SHARDS_PER_CRYSTAL; j++) {
+              shard = &shards[i * SHARDS_PER_CRYSTAL + j];
+              shard->x = INTtoFIXED(gPrism_ShardStarts[j][PRISM_SHARD_START_X] -
+                                    PRISM_SHARD_START_MIDDLE) +
+                         crystal->x;
               shard->y = INTtoFIXED(gPrism_ShardStarts[j][PRISM_SHARD_START_Y]);
               shard->velocityX = ((Random16() & 127) - 64) << 11;
               shard->velocityY = -(Random16() & 127) << 11;
@@ -145,15 +176,11 @@ void BattleEffect_RunPrism(struct BattleEffectParams *args) {
   EFFECT_FINISH_CANVAS();
 }
 
-// The 64 entries, black first, are copied to colours 1 to 64, so level n shows
-// entry n - 1, half a level darker.
-// XXX (no evidence): whether the shift by one was meant; on screen it is
-// within one shade, so neither the ROM nor a render tells the two apart.
 /// Rebuilds the background palette's first ramp as a grey whose channels sway
 /// with the frame, so the effect shimmers through colours.
 void BattleEffect_UpdatePhasePalette(s32 frame, s32 redPhase, s32 greenPhase,
                                      s32 bluePhase) {
-  u16 palette[64];
+  u16 palette[CANVAS_LEVEL_BRIGHTEST + 1];
   u16 *output;
   s32 phase;
   s32 redOffset;
@@ -162,9 +189,12 @@ void BattleEffect_UpdatePhasePalette(s32 frame, s32 redPhase, s32 greenPhase,
   s32 index;
 
   phase = frame * (TRIG_TURN / 64);
-  redOffset = (Trig_Sin(phase + redPhase) * 16) >> 15;
-  greenOffset = (Trig_Sin(phase + greenPhase) * 16) >> 15;
-  blueOffset = (Trig_Sin(phase + bluePhase) * 16) >> 15;
+  // Each channel's sway, in the half levels the ramp's index counts.
+  redOffset = FIXEDtoINT_TWICE(Trig_Sin(phase + redPhase) * PHASE_SWAY_LEVELS);
+  greenOffset =
+      FIXEDtoINT_TWICE(Trig_Sin(phase + greenPhase) * PHASE_SWAY_LEVELS);
+  blueOffset =
+      FIXEDtoINT_TWICE(Trig_Sin(phase + bluePhase) * PHASE_SWAY_LEVELS);
 
   palette[0] = 0;
   index = 1;
@@ -184,10 +214,26 @@ void BattleEffect_UpdatePhasePalette(s32 frame, s32 redPhase, s32 greenPhase,
 
     *output++ = RGB(red, green, blue);
     index++;
-  } while (index != 64);
+  } while (index != CANVAS_LEVEL_BRIGHTEST + 1);
 
+  // The entries, black first, are copied to colours 1 to 64, so level n shows
+  // entry n - 1, half a level darker.
+  // XXX (no evidence): whether the shift by one was meant; on screen it is
+  // within one shade, so neither the ROM nor a render tells the two apart.
   Iwram_CopyWords(&BG_PLTT[1], palette, sizeof(palette));
 }
 
+#undef SHARDS_PER_CRYSTAL
 #undef PRISM_GROUND_Y
 #undef PRISM_SHARD_PICTURES
+#undef SHATTERED
+#undef PRISM_SHARD_START_MIDDLE
+#undef PRISM_SHARD_KINDS
+#undef PRISM_SHARD_SPIN_PICTURES
+#undef PRISM_SHARD_SPIN_STEP
+#undef PRISM_TURN_FRAMES
+#undef PRISM_TURN_SPEED
+#undef PRISM_TURN_SLOWING_FRAMES
+#undef PRISM_TURN_SLOWDOWN
+#undef PHASE_SWAY_LEVELS
+#undef FIXEDtoINT_TWICE

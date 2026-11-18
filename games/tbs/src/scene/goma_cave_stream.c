@@ -153,6 +153,11 @@ static void GomaCaveStream_SpinStump(struct Actor *actor) {
 
 #include "shared/actor_wait_below_height.c"
 
+/// The frames the stump tips before it leaps, and the puffs that burst round it
+/// as it lands, as in Goma Cave's entrance.
+#define STUMP_TIP_FRAMES 18
+#define STUMP_LANDING_PUFFS 17
+
 /// The stump leaps out of the way and sinks in the water.
 static void GomaCaveStream_LeapStump(s32 stumpId) {
   struct Actor *stump;
@@ -162,7 +167,7 @@ static void GomaCaveStream_LeapStump(s32 stumpId) {
 
   stump = Actor_Get(stumpId);
   stump->motionFlags = 0;
-  for (i = 0; i < 18; i++) {
+  for (i = 0; i < STUMP_TIP_FRAMES; i++) {
     wait(1);
     stump->sprite->rotation -= TRIG_TURN / 256;
     stump->x.fixed -= Trig_Cos(stump->sprite->rotation) / 2;
@@ -180,8 +185,8 @@ static void GomaCaveStream_LeapStump(s32 stumpId) {
   MapGrid_SetShake(5, 5, 1);
   Sound_Play(SE_RUMBLE);
   MapGrid_SetShake(SHAKE_KEEP, SHAKE_KEEP, 0.9);
-  // Seventeen puffs of dust, a sixteenth of a turn apart.
-  for (i = 0; i < 17; i++) {
+  // The puffs of dust, a sixteenth of a turn apart.
+  for (i = 0; i < STUMP_LANDING_PUFFS; i++) {
     dir.x = Trig_Cos(i * (TRIG_TURN / 16));
     dir.y = 0;
     dir.z = Trig_Sin(i * (TRIG_TURN / 16));

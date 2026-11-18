@@ -127,23 +127,30 @@ void *Resource_GetTableEntry(s32 index) {
   return Resource_DirectoryTable[index];
 }
 
+/// A Thumb long branch (BL) is two halfwords: the first carries the marker
+/// THUMB_BL_HIGH and the offset's high eleven bits, from THUMB_BL_HIGH_SHIFT,
+/// the second the marker THUMB_BL_LOW and the low eleven bits of the halfword
+/// offset (THUMB_BL_OFFSET_BITS each).
+#define THUMB_BL_HIGH 0xf000
+#define THUMB_BL_LOW 0xf800
+#define THUMB_BL_OFFSET_BITS 0x7ff
+#define THUMB_BL_HIGH_SHIFT 12
+
 /// Unused: resolves the Thumb long branches (BL pairs) of a block of code whose
-/// branch offsets are stored from the start of the block. A BL is two
-/// halfwords: the first carries the marker bits 0xf000 and the high eleven bits
-/// of the offset, the second the marker 0xf800 and the low eleven bits of the
-/// halfword offset. Each pair's offset is reduced by the pair's own position in
-/// the block, which turns it into the pc-relative offset the CPU expects; the
-/// pairs are rewritten in place. `byteLength` is the code size. Nothing calls
-/// it: Overlay_Load uses the ARM routine that does the same.
+/// branch offsets are stored from the start of the block. Each pair's offset is
+/// reduced by the pair's own position in the block, which turns it into the
+/// pc-relative offset the CPU expects; the pairs are rewritten in place.
+/// `byteLength` is the code size. Nothing calls it: Overlay_Load uses the ARM
+/// routine that does the same.
 UNUSED void Code_ResolveLongBranches(u16 *pair, s32 byteLength) {
   s32 entryCount = byteLength >> 1;
   s32 i = 1;
 
   pair++;
   if (i < entryCount) {
-    u32 lowMarker = 0xf800;
-    u32 offsetBits = 0x7ff;
-    u32 highMarker = 0xf000;
+    u32 lowMarker = THUMB_BL_LOW;
+    u32 offsetBits = THUMB_BL_OFFSET_BITS;
+    u32 highMarker = THUMB_BL_HIGH;
 
 #ifndef UBFIX
     // UB: the walk starts a halfword before the block.
@@ -173,10 +180,11 @@ UNUSED void Code_ResolveLongBranches(u16 *pair, s32 byteLength) {
         firstMarker = first & secondMarker;
 
         if (firstMarker == highMarker) {
-          u32 offset =
-              (((first & offsetBits) << 12) | ((second & offsetBits) * 2)) -
-              i * 2;
-          u32 newFirst = ((offset >> 12) & offsetBits) | firstMarker;
+          u32 offset = (((first & offsetBits) << THUMB_BL_HIGH_SHIFT) |
+                        ((second & offsetBits) * 2)) -
+                       i * 2;
+          u32 newFirst =
+              ((offset >> THUMB_BL_HIGH_SHIFT) & offsetBits) | firstMarker;
           u32 newSecond = ((offset >> 1) & offsetBits) | secondMarker;
 
 #ifdef UBFIX

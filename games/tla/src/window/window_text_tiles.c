@@ -181,11 +181,11 @@ s32 Text_DrawStringAsTiles(u16 *text, u16 *tiles, u16 *mirror, s32 x) {
         case TEXT_NEWLINE:
           x += TILE_TEXT_NEWLINE_WIDTH;
           break;
-        // Codes 11, 12, 14 and 28, which nothing in this game acts on, are
-        // skipped with their operands.
+        // Codes 11, 12, 14 and TEXT_ACTOR_NAME_START, which nothing in this
+        // game acts on, are skipped with their operands.
         case 14:
         case TEXT_WINDOW_STATE:
-        case 28:
+        case TEXT_ACTOR_NAME_START:
           text++;
           // Skip the second operand too.
           // Fall through.

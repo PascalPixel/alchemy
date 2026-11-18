@@ -11,6 +11,9 @@
 
 struct EffectSprite;
 
+/// The falling rocks in flight at once, the ring a scene's rock work keeps.
+#define ROCK_COUNT 64
+
 /// One falling rock: where it is, how it moves and how long it has fallen.
 struct Rock {
   s32 position[3];

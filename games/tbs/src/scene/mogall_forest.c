@@ -305,7 +305,7 @@ static void MogallForest_HopActorToWithSpeedFX(s32 actorId, s32 targetX,
                                      toFIXED(verticalSpeed))
 
 /// Scatters a complete ring of rising puffs around an actor.
-static void MogallForest_SpawnPuffRing(s32 id) {
+static void MogallForest_SpawnParticleRing(s32 id) {
   struct Vector3 velocity;
   struct EffectOptions options;
   struct Actor *actor;
@@ -316,7 +316,7 @@ static void MogallForest_SpawnPuffRing(s32 id) {
   options.priority = 1;
   // Seventeen puffs a sixteenth of a turn apart, the first and last together,
   // spread a third wider east to west.
-  for (direction = 0; direction <= 16; direction++) {
+  for (direction = 0; direction <= TRIG_TURN / FACING_STEP; direction++) {
     velocity.x = Trig_Cos(direction * FACING_STEP);
     velocity.y = 0;
     velocity.z = Trig_Sin(direction * FACING_STEP);
@@ -333,7 +333,7 @@ static void MogallForest_ApeComesOut(s32 actorId, s32 color) {
   FieldCamera_MoveToActorById(actorId, 1);
   FieldCamera_WaitForArrival();
   Event_Wait(30);
-  MogallForest_SpawnPuffRing(actorId);
+  MogallForest_SpawnParticleRing(actorId);
   Actor_SetSpriteColorById(actorId, color);
 }
 
@@ -384,7 +384,7 @@ const struct ActorPlacement *Scene_GetActorPlacements(void) {
 }
 
 /// Mogall Forest, the first area: walking into a log (cell behavior 20) pushes
-/// it.
+/// it. The river log, pushed to row 26 at the bank, rolls into the river.
 static void MogallForest_FirstArea_PushLog(void) {
   struct PushedActorProbe probe;
 
@@ -589,7 +589,8 @@ static void MogallForest_CatchNut(void) {
 }
 
 /// Mogall Forest, the second area: walking into a log (cell behavior 20) pushes
-/// it.
+/// it. The log pushed to row 23 opens the cells behind it, and the river log,
+/// pushed to column 35 at the bank, rolls into the river.
 static void MogallForest_SecondArea_PushLog(void) {
   struct PushedActorProbe probe;
   s32 destinationColumn;
@@ -632,7 +633,7 @@ static void MogallForest_SecondArea_PushLog(void) {
 }
 
 /// Marks the rock's cell and clears the cells it could have moved from.
-static inline void MogallForest_UpdateRockFootprint(s32 column, s32 row) {
+static inline void MogallForest_UpdateRockCells(s32 column, s32 row) {
   PushedActor_FillGridAttributeRectangle(2, column, row, 1, 1,
                                          CELL_BEHAVIOR_WALL);
   PushedActor_FillGridAttributeRectangle(2, column + 1, row, 1, 1,
@@ -655,7 +656,7 @@ static void MogallForest_SecondArea_UpdateRock(void) {
   column = FIELD_CELL(Actor_Get(ACTOR_SECOND_AREA_ROCK)->x.fixed);
   row = FIELD_CELL(Actor_Get(ACTOR_SECOND_AREA_ROCK)->z.fixed);
 
-  MogallForest_UpdateRockFootprint(column, row);
+  MogallForest_UpdateRockCells(column, row);
 
   if (column == 36 && row == 24) {
     struct Actor *rock = Actor_Get(ACTOR_SECOND_AREA_ROCK);
@@ -745,7 +746,7 @@ static void MogallForest_SecondArea_SouthApeHidesAgain(void) {
   MogallForest_ApeComesOut(ACTOR_SECOND_AREA_SOUTH_APE, SPRITE_COLOR_GRB);
   MogallForest_HopActorTo(ACTOR_SECOND_AREA_SOUTH_APE, 424, 480, 7.6);
   Event_Wait(2);
-  MogallForest_SpawnPuffRing(ACTOR_SECOND_AREA_SOUTH_APE);
+  MogallForest_SpawnParticleRing(ACTOR_SECOND_AREA_SOUTH_APE);
   Actor_SetSpriteColorById(ACTOR_SECOND_AREA_SOUTH_APE, SPRITE_COLOR_HIDDEN);
   Actor_SetSpriteFlags(Actor_Get(ACTOR_SECOND_AREA_SOUTH_APE), 0);
   Event_Wait(30);
@@ -797,7 +798,8 @@ static void MogallForest_SecondArea_SouthApeShowsWay(void) {
 }
 
 /// Mogall Forest, the third area: walking into a log (cell behavior 20) pushes
-/// it.
+/// it. The north river log lands in the river at column 42, and the south one
+/// at column 40.
 static void MogallForest_ThirdArea_PushLog(void) {
   struct PushedActorProbe probe;
   s32 landed;
@@ -898,7 +900,7 @@ static void MogallForest_ThirdArea_UpdateNorthRock(void) {
   column = FIELD_CELL(Actor_Get(ACTOR_THIRD_AREA_NORTH_ROCK)->x.fixed);
   row = FIELD_CELL(Actor_Get(ACTOR_THIRD_AREA_NORTH_ROCK)->z.fixed);
 
-  MogallForest_UpdateRockFootprint(column, row);
+  MogallForest_UpdateRockCells(column, row);
 
   if (column == 45 && row == 6) {
     struct Actor *rock = Actor_Get(ACTOR_THIRD_AREA_NORTH_ROCK);
@@ -917,7 +919,7 @@ static void MogallForest_ThirdArea_UpdateSouthRock(void) {
   struct Actor *rock;
 
   Event_Start();
-  MogallForest_UpdateRockFootprint(
+  MogallForest_UpdateRockCells(
       FIELD_CELL(Actor_Get(ACTOR_THIRD_AREA_SOUTH_ROCK)->x.fixed),
       FIELD_CELL(Actor_Get(ACTOR_THIRD_AREA_SOUTH_ROCK)->z.fixed));
   if (FIELD_CELL(Actor_Get(ACTOR_THIRD_AREA_SOUTH_ROCK)->z.fixed) == 27) {
@@ -1048,7 +1050,7 @@ static void MogallForest_ThirdArea_EastApeHidesAgain(void) {
   MogallForest_ApeComesOut(ACTOR_THIRD_AREA_EAST_APE, SPRITE_COLOR_GRB);
   FieldCamera_MoveTo(744, CAMERA_KEEP, 504, 1);
   MogallForest_HopActorTo(ACTOR_THIRD_AREA_EAST_APE, 744, 504, 9);
-  MogallForest_SpawnPuffRing(ACTOR_THIRD_AREA_EAST_APE);
+  MogallForest_SpawnParticleRing(ACTOR_THIRD_AREA_EAST_APE);
   Actor_SetSpriteColorById(ACTOR_THIRD_AREA_EAST_APE, SPRITE_COLOR_HIDDEN);
   Actor_SetSpriteFlags(Actor_Get(ACTOR_THIRD_AREA_EAST_APE), 0);
   Event_Wait(30);
@@ -1150,18 +1152,18 @@ static void MogallForest_KillerApeAttacks(void) {
   FieldCamera_WaitForArrival();
   Event_Wait(60);
   MapGrid_SetShake(5, 5, 1);
-  MogallForest_SpawnPuffRing(ACTOR_THIRD_AREA_EAST_APE);
+  MogallForest_SpawnParticleRing(ACTOR_THIRD_AREA_EAST_APE);
   Actor_StartRepeatedMotion(ACTOR_PARTY_LEADER, 2);
   MapGrid_SetShake(SHAKE_KEEP, SHAKE_KEEP, 0.9);
   MapGrid_WaitForShakeToSettle();
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 20);
   Event_Wait(40);
   MapGrid_SetShake(5, 5, 1);
-  MogallForest_SpawnPuffRing(ACTOR_THIRD_AREA_EAST_APE);
+  MogallForest_SpawnParticleRing(ACTOR_THIRD_AREA_EAST_APE);
   MapGrid_SetShake(SHAKE_KEEP, SHAKE_KEEP, 0.9);
   MapGrid_WaitForShakeToSettle();
   Event_Wait(40);
-  MogallForest_SpawnPuffRing(ACTOR_THIRD_AREA_EAST_APE);
+  MogallForest_SpawnParticleRing(ACTOR_THIRD_AREA_EAST_APE);
   actor->scaleX = 6 * FIXED_ONE / 5;
   actor->scaleY = 6 * FIXED_ONE / 5;
   Actor_SetSpriteColorById(ACTOR_THIRD_AREA_EAST_APE, SPRITE_COLOR_BRG);
@@ -1169,7 +1171,8 @@ static void MogallForest_KillerApeAttacks(void) {
   Event_Wait(15);
   // The larger reveal uses a wider, level ring of puffs.
   MapGrid_SetShake(5, 5, 1);
-  for (directionIndex = 0; directionIndex <= 16; directionIndex++) {
+  for (directionIndex = 0; directionIndex <= TRIG_TURN / FACING_STEP;
+       directionIndex++) {
     velocity.x = Trig_Cos(directionIndex * FACING_STEP);
     velocity.y = 0;
     z = Trig_Sin(directionIndex * FACING_STEP);
@@ -1253,7 +1256,7 @@ s32 Scene_Initialize(void) {
         Actor_RunRepeatedMotion(ACTOR_FIRST_AREA_NORTH_APE, 2);
         Event_Wait(30);
         MogallForest_HopActorTo(ACTOR_FIRST_AREA_NORTH_APE, 136, 116, 7);
-        MogallForest_SpawnPuffRing(ACTOR_FIRST_AREA_NORTH_APE);
+        MogallForest_SpawnParticleRing(ACTOR_FIRST_AREA_NORTH_APE);
         Actor_SetSpriteColorById(ACTOR_FIRST_AREA_NORTH_APE,
                                  SPRITE_COLOR_HIDDEN);
         Actor_SetSpriteFlags(Actor_Get(ACTOR_FIRST_AREA_NORTH_APE), 0);

@@ -5,6 +5,11 @@
 #include "battle_effect_internal.h"
 
 #define GROWTH_DUST 512 ///< puffs of dust in PARTICLES
+#define THORN_DUST 64   ///< puffs of dust in PARTICLES for the thorns
+/// The frames a puff of dust lasts: its seven pictures, two frames each.
+#define DUST_PUFF_FRAMES 14
+/// The columns set out, of which gGrowth_ColumnCounts picks how many grow.
+#define GROWING_COLUMNS 16
 
 // Growing columns and thorns spring up one after another, each shaking the
 // screen and throwing up dust from its root, and the targets react a few frames
@@ -20,6 +25,9 @@
 #define THORN_SMALL_PICTURE_WIDTH 32
 #define THORN_SMALL_PICTURE_HEIGHT 64
 #define THORN_SMALL_PICTURE PICTURE_BYTES(THORN_BIG)
+/// The pixels a big and a small thorn lean sideways at most as they grow.
+#define THORN_BIG_LEAN 30
+#define THORN_SMALL_LEAN 8
 
 /// What the growing columns grow (BattleEffect_RunGrowingColumns).
 enum GrowingColumnsMode {
@@ -114,7 +122,7 @@ void BattleEffect_RunGrowingColumns(struct BattleEffectParams *args, s32 mode) {
   for (i = 0; i != PARTICLE_POOL_COUNT; i++)
     PARTICLES[i].variant = -1;
 
-  for (i = 0; i != 16; i++) {
+  for (i = 0; i != GROWING_COLUMNS; i++) {
     setup = &((struct GrowingColumn *)work->particles)[i];
     x = (gGrowth_ColumnX[i] + (7 & Random16())) - 4;
     setup->y = i / 2 + 108;
@@ -236,7 +244,7 @@ void BattleEffect_RunGrowingColumns(struct BattleEffectParams *args, s32 mode) {
                      puff->x, puff->y - (s8)gGrowth_PuffHeights[image] / 2,
                      gGrowth_PuffWidths[image], (s8)gGrowth_PuffHeights[image]);
         puff->variant++;
-        if (puff->variant == 14) {
+        if (puff->variant == DUST_PUFF_FRAMES) {
           puff->variant = -1;
         }
       }
@@ -250,6 +258,10 @@ void BattleEffect_RunGrowingColumns(struct BattleEffectParams *args, s32 mode) {
 
 #define VINE_COLUMNS 16 ///< columns that rise
 #define VINE_FRAMES 70
+/// GreenVineSheet: five 32 by 32 pictures of a vine, drawn in turn.
+#define GREEN_VINE_WIDTH 32
+#define GREEN_VINE_HEIGHT 32
+#define GREEN_VINE_PICTURES 5
 
 /// Sixteen green vines grow from the middle of the row of targets, 2 frames
 /// apart, and shrink back.
@@ -292,7 +304,7 @@ void BattleEffect_RunVine(struct BattleEffectParams *args) {
   draw[1] = EFFECT_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED);
   column = work->particles;
   for (i = 0; i != VINE_COLUMNS; i++) {
-    column[i].x = gGrowth_ColumnOffsets[i] + 64;
+    column[i].x = gGrowth_ColumnOffsets[i] + CANVAS_SIZE / 2;
   }
   EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_CLEAR, 0);
   for (frame = 0; frame != VINE_FRAMES; frame++) {
@@ -310,17 +322,18 @@ void BattleEffect_RunVine(struct BattleEffectParams *args) {
       // Each vine grows, then shrinks back.
       offset = i * 2;
       if (frame > offset + 4) {
-        picture = (frame / 4 + i) % 5;
+        picture = (frame / 4 + i) % GREEN_VINE_PICTURES;
         if (frame < offset + 32) {
           height = (frame - offset) * 4 - 16;
-          if (height > 32)
-            height = 32;
+          if (height > GREEN_VINE_HEIGHT)
+            height = GREEN_VINE_HEIGHT;
         } else {
           height = 160 - (frame - offset) * 4;
         }
         if (height > 0)
-          draw[i & 1](canvas, work->sheet + (picture << 10), column->x - 16,
-                      (i & 7) - height + 104, 32, height);
+          draw[i & 1](canvas, work->sheet + picture * PICTURE_BYTES(GREEN_VINE),
+                      column->x - GREEN_VINE_WIDTH / 2, (i & 7) - height + 104,
+                      GREEN_VINE_WIDTH, height);
       }
     }
     BattleCamera_Shake(4, 4);
@@ -396,8 +409,8 @@ void BattleEffect_RunThorn(struct BattleEffectParams *args) {
           if (height > THORN_BIG_HEIGHT) {
             height = THORN_BIG_HEIGHT;
           }
-          if (lean > 30) {
-            lean = 30;
+          if (lean > THORN_BIG_LEAN) {
+            lean = THORN_BIG_LEAN;
           }
           if (gGrowth_Kinds[i] & THORN_MIRRORED) {
             drawFlip(canvas, work->sheet, gGrowth_X[i] - lean, 108 - height,
@@ -412,8 +425,8 @@ void BattleEffect_RunThorn(struct BattleEffectParams *args) {
           if (height > THORN_SMALL_PICTURE_HEIGHT) {
             height = THORN_SMALL_PICTURE_HEIGHT;
           }
-          if (age > 8) {
-            lean = 8;
+          if (age > THORN_SMALL_LEAN) {
+            lean = THORN_SMALL_LEAN;
           }
           if (gGrowth_Kinds[i] & THORN_MIRRORED) {
             drawFlip(canvas, work->sheet + THORN_SMALL_PICTURE,
@@ -432,7 +445,7 @@ void BattleEffect_RunThorn(struct BattleEffectParams *args) {
         if (frame < start + 3) {
           s32 y = (Random16() & 31) + 72;
           struct Particle *puff;
-          for (j = 0; j != 64; j++) {
+          for (j = 0; j != THORN_DUST; j++) {
             puff = &PARTICLES[j];
             if (puff->variant == -1) {
               puff->x = gGrowth_X[i] + (Random16() & 31) + 32;
@@ -456,7 +469,7 @@ void BattleEffect_RunThorn(struct BattleEffectParams *args) {
     }
 
     // Dust, over the thorns.
-    for (i = 0; i != 64; i++) {
+    for (i = 0; i != THORN_DUST; i++) {
       if (PARTICLES[i].variant >= 0) {
         s32 picture = PARTICLES[i].variant / 2;
         draw(canvas, work->sheet + gGrowth_ThornPuffPictures[picture],
@@ -469,7 +482,7 @@ void BattleEffect_RunThorn(struct BattleEffectParams *args) {
                  PARTICLES[i].y - (s8)gGrowth_ThornPuffHeights[picture] / 2,
                  gGrowth_ThornPuffWidths[picture],
                  (s8)gGrowth_ThornPuffHeights[picture]);
-        if (++PARTICLES[i].variant == 14) {
+        if (++PARTICLES[i].variant == DUST_PUFF_FRAMES) {
           PARTICLES[i].variant = -1;
         }
       }
@@ -486,3 +499,16 @@ void BattleEffect_RunThorn(struct BattleEffectParams *args) {
 #undef THORN_SMALL_PICTURE
 #undef VINE_COLUMNS
 #undef VINE_FRAMES
+#undef GREEN_VINE_WIDTH
+#undef GREEN_VINE_HEIGHT
+#undef GREEN_VINE_PICTURES
+#undef GROWTH_DUST
+#undef THORN_DUST
+#undef DUST_PUFF_FRAMES
+#undef GROWING_COLUMNS
+#undef THORN_BIG_LEAN
+#undef THORN_SMALL_LEAN
+#undef THORN_BIG_WIDTH
+#undef THORN_BIG_HEIGHT
+#undef THORN_SMALL_PICTURE_WIDTH
+#undef THORN_SMALL_PICTURE_HEIGHT

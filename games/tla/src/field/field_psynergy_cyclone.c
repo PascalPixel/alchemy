@@ -1,7 +1,7 @@
 /// @file
 /// Field effects that event commands start, in ROM order: the 96-particle
 /// burst, an actor carried from one point to another as it circles, a whirl of
-/// rings, an actor spinning away and back (Actor_DepartInRing,
+/// rings, an actor spinning away and back in a whirlwind (Actor_DepartInRing,
 /// Actor_ArriveInRing) and a spray of drops and smoke puffs.
 // Part of field_psynergy.c.
 
@@ -182,15 +182,16 @@ void BattleEffect_SpinObject(struct MotionObject *object) {
 /// Cyclone cast on a target: runs FieldPsynergy_Cyclone.
 void FieldPsynergy_CycloneOnTarget(void) { FieldPsynergy_Cyclone(); }
 
-/// The frames the Cyclone's ring takes to rise to full height, and the frames
-/// its whirl of wind is drawn for, then whirls on as the Cyclone acts.
-#define CYCLONE_RING_RISE_FRAMES 20
+/// The frames the Cyclone's whirlwind takes to rise to full height, and the
+/// frames its whirl of wind is drawn for, then whirls on as the Cyclone acts.
+#define CYCLONE_WHIRLWIND_RISE_FRAMES 20
 #define CYCLONE_WHIRL_FRAMES 60
 #define CYCLONE_SPIN_FRAMES 16
-/// A whirlwind ring widens or narrows a 32nd of its width a frame, an actor
-/// a 32nd of its size, so these are the frames for the whole ring and for
-/// half an actor.
-#define RING_RESIZE_FRAMES 32
+/// A whirlwind widens or narrows by WHIRLWIND_RESIZE_STEP of its width a
+/// frame, and an actor by the same of its size: the frames for the whole
+/// whirlwind and for half an actor.
+#define WHIRLWIND_RESIZE_STEP (FIXED_ONE / 32)
+#define WHIRLWIND_RESIZE_FRAMES 32
 #define ACTOR_RESIZE_FRAMES 16
 
 /// Cyclone ("Conjure wind to scatter weeds."): the caster spins in a whirlwind
@@ -206,7 +207,7 @@ void FieldPsynergy_Cyclone(void) {
   FIXED spread = toFIXED(4);
   s32 step = toFIXED(7) / 8;
   struct CanvasSpriteWork *canvas;
-  struct Actor *ring;
+  struct Actor *whirlwind;
   u16 *offsets;
   u8 *pixels;
   u16 *palette;
@@ -248,15 +249,15 @@ void FieldPsynergy_Cyclone(void) {
   canvas->sprite.oam.palette = 0;
   offsets = Ram_HeapSlots->canvasMap;
   pixels = Ram_HeapSlots->battleCanvas;
-  ring = Actor_Spawn(SPRITE_WHIRLWIND, owner->x.fixed,
-                     owner->y.fixed - toFIXED(6), owner->z.fixed);
-  Actor_SelectAnimationFar(ring, 2);
-  ring->scaleX = FIXED_ONE * 3 / 2;
-  ring->scaleY = 0;
+  whirlwind = Actor_Spawn(SPRITE_WHIRLWIND, owner->x.fixed,
+                          owner->y.fixed - toFIXED(6), owner->z.fixed);
+  Actor_SelectAnimationFar(whirlwind, 2);
+  whirlwind->scaleX = FIXED_ONE * 3 / 2;
+  whirlwind->scaleY = 0;
   wait(1);
   Sound_PlayFar(SE_RUSH);
-  for (i = 0; i < CYCLONE_RING_RISE_FRAMES; i++) {
-    ring->scaleY = FIXED_ONE * i / CYCLONE_RING_RISE_FRAMES;
+  for (i = 0; i < CYCLONE_WHIRLWIND_RISE_FRAMES; i++) {
+    whirlwind->scaleY = FIXED_ONE * i / CYCLONE_WHIRLWIND_RISE_FRAMES;
     wait(1);
   }
   for (i = 0; i < CYCLONE_WHIRL_FRAMES; i++) {
@@ -273,7 +274,7 @@ void FieldPsynergy_Cyclone(void) {
     wait(1);
   }
   FieldPsynergy_FadeFromCastColor();
-  work->follower = ring;
+  work->follower = whirlwind;
   work->from[0] = owner->x.fixed;
   work->from[1] = owner->y.fixed;
   work->from[2] = owner->z.fixed;
@@ -322,7 +323,7 @@ void FieldPsynergy_Cyclone(void) {
     Task_Remove(Cyclone_LiftLeader);
     if (effect->childOption == 0)
       owner->scaleX = 0;
-    ring->scaleX = 0;
+    whirlwind->scaleX = 0;
     if (work->kind)
       BattleEffect_EndX();
   } else if (mode == CYCLONE_CELL_CARRY) {
@@ -352,22 +353,22 @@ void FieldPsynergy_Cyclone(void) {
     }
     Task_Remove(Cyclone_CarryLeader);
     for (i = 0; i < ACTOR_RESIZE_FRAMES; i++) {
-      owner->scaleX += -(FIXED_ONE / RING_RESIZE_FRAMES);
+      owner->scaleX += -WHIRLWIND_RESIZE_STEP;
       owner->scaleY = owner->scaleX;
       wait(1);
     }
     owner->scaleX = 0;
-    for (i = 0; i < RING_RESIZE_FRAMES; i++) {
-      ring->scaleX += -(FIXED_ONE / RING_RESIZE_FRAMES);
-      ring->scaleY += -(FIXED_ONE / 128);
+    for (i = 0; i < WHIRLWIND_RESIZE_FRAMES; i++) {
+      whirlwind->scaleX += -WHIRLWIND_RESIZE_STEP;
+      whirlwind->scaleY += -(FIXED_ONE / 128);
       wait(1);
     }
-    ring->scaleX = 0;
+    whirlwind->scaleX = 0;
     if (work->kind)
       BattleEffect_EndX();
   } else if (mode == CYCLONE_CELL_BURST) {
     Sound_PlayFar(SE_WHOOSH);
-    Actor_SelectAnimationFar(ring, 6);
+    Actor_SelectAnimationFar(whirlwind, 6);
     if (work->kind)
       ParticleBurst_Start();
     for (i = 0; i < CYCLONE_SPIN_FRAMES; i++) {
@@ -388,7 +389,7 @@ void FieldPsynergy_Cyclone(void) {
       BattleEffect_EndX();
   } else {
     Sound_PlayFar(SE_WHOOSH);
-    Actor_SelectAnimationFar(ring, 6);
+    Actor_SelectAnimationFar(whirlwind, 6);
     for (i = 0; i < CYCLONE_SPIN_FRAMES; i++) {
       owner->facing += FACING_STEP;
       canvas->angle += TRIG_TURN / 64;
@@ -397,7 +398,7 @@ void FieldPsynergy_Cyclone(void) {
     }
   }
   Sound_PlayFar(SE_WHOOSH);
-  Actor_ReleaseFar(ring);
+  Actor_ReleaseFar(whirlwind);
   owner->update = NULL;
   owner->facing = owner->timer;
   BattleEffect_EndCanvasSprite();
@@ -415,7 +416,7 @@ void Actor_DepartInRing(s32 actorId) {
   struct Actor *actor = Actor_GetById(actorId);
   s32 angle = actor->facing;
   u8 motionFlags = actor->motionFlags;
-  struct Actor *ring;
+  struct Actor *whirlwind;
   FIXED x, y, z;
   s32 spin;
   FIXED position[3];
@@ -424,11 +425,11 @@ void Actor_DepartInRing(s32 actorId) {
   FieldCamera_MoveWithinMapBounds(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0);
   actor->motionFlags = 0;
   actor->update = BattleEffect_SpinObject;
-  ring = Actor_Spawn(SPRITE_WHIRLWIND, actor->x.fixed, actor->y.fixed,
-                     actor->z.fixed);
-  Actor_SelectAnimationFar(ring, 2);
-  ring->scaleX = FIXED_ONE * 3 / 2;
-  ring->scaleY = FIXED_ONE;
+  whirlwind = Actor_Spawn(SPRITE_WHIRLWIND, actor->x.fixed, actor->y.fixed,
+                          actor->z.fixed);
+  Actor_SelectAnimationFar(whirlwind, 2);
+  whirlwind->scaleX = FIXED_ONE * 3 / 2;
+  whirlwind->scaleY = FIXED_ONE;
   x = actor->x.fixed;
   y = actor->y.fixed;
   z = actor->z.fixed;
@@ -444,15 +445,15 @@ void Actor_DepartInRing(s32 actorId) {
                           spin, position);
     SET_ACTOR_POSITION(actor, position[0], position[1], position[2]);
     spin += TRIG_TURN / 64;
-    SET_ACTOR_POSITION(ring, actor->x.fixed, actor->y.fixed - toFIXED(6),
+    SET_ACTOR_POSITION(whirlwind, actor->x.fixed, actor->y.fixed - toFIXED(6),
                        actor->z.fixed);
     wait(1);
   }
   Actor_SetPositionAndResetMotionFar(actor, x, y, z);
   Sound_PlayFar(SE_WHOOSH);
-  Actor_SelectAnimationFar(ring, 6);
+  Actor_SelectAnimationFar(whirlwind, 6);
   Event_Wait(15);
-  Actor_ReleaseFar(ring);
+  Actor_ReleaseFar(whirlwind);
   actor->update = NULL;
   actor->facing = angle;
   actor->motionFlags = motionFlags;
@@ -462,12 +463,12 @@ void Actor_DepartInRing(s32 actorId) {
 
 /// The actor arrives in a whirlwind, Actor_DepartInRing's counterpart: once
 /// the screen transition is done, a whirlwind (SPRITE_WHIRLWIND) widens on the
-/// unseen, spinning actor for RING_RESIZE_FRAMES, then vanishes with a whoosh
-/// as the actor grows back from half its size and shows again.
+/// unseen, spinning actor for WHIRLWIND_RESIZE_FRAMES, then vanishes with a
+/// whoosh as the actor grows back from half its size and shows again.
 void Actor_ArriveInRing(s32 actorId) {
   struct Actor *actor = Actor_GetById(actorId);
   s32 angle = actor->facing;
-  struct Actor *ring;
+  struct Actor *whirlwind;
   s32 i;
 
   actor->update = BattleEffect_SpinObject;
@@ -477,29 +478,28 @@ void Actor_ArriveInRing(s32 actorId) {
   Actor_SetSpriteFlagsFar(Actor_GetById(actorId), 0);
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
-  ring = Actor_Spawn(SPRITE_WHIRLWIND, actor->x.fixed, actor->y.fixed,
-                     actor->z.fixed);
-  Actor_SelectAnimationFar(ring, 2);
-  ring->scaleX = FIXED_ONE / 2;
-  ring->scaleY = FIXED_ONE * 3 / 4;
-  for (i = 0; i < RING_RESIZE_FRAMES; i++) {
-    ring->scaleX += FIXED_ONE / RING_RESIZE_FRAMES;
-    ring->scaleY += FIXED_ONE / 128;
+  whirlwind = Actor_Spawn(SPRITE_WHIRLWIND, actor->x.fixed, actor->y.fixed,
+                          actor->z.fixed);
+  Actor_SelectAnimationFar(whirlwind, 2);
+  whirlwind->scaleX = FIXED_ONE / 2;
+  whirlwind->scaleY = FIXED_ONE * 3 / 4;
+  for (i = 0; i < WHIRLWIND_RESIZE_FRAMES; i++) {
+    whirlwind->scaleX += WHIRLWIND_RESIZE_STEP;
+    whirlwind->scaleY += FIXED_ONE / 128;
     wait(1);
   }
-  ring->scaleX = FIXED_ONE * 3 / 2;
-  ring->scaleY = FIXED_ONE;
+  whirlwind->scaleX = FIXED_ONE * 3 / 2;
+  whirlwind->scaleY = FIXED_ONE;
   Sound_PlayFar(SE_WHOOSH);
-  Actor_SelectAnimationFar(ring, 6);
+  Actor_SelectAnimationFar(whirlwind, 6);
   actor->scaleY = actor->scaleX = FIXED_ONE / 2;
   for (i = 0; i < ACTOR_RESIZE_FRAMES; i++) {
-    actor->scaleY = actor->scaleX =
-        actor->scaleX + FIXED_ONE / RING_RESIZE_FRAMES;
+    actor->scaleY = actor->scaleX = actor->scaleX + WHIRLWIND_RESIZE_STEP;
     wait(1);
   }
   Actor_SetSpriteFlagsFar(Actor_GetById(actorId), 1);
   Event_Wait(10);
-  Actor_ReleaseFar(ring);
+  Actor_ReleaseFar(whirlwind);
   actor->update = NULL;
   actor->facing = angle;
 }
@@ -680,10 +680,11 @@ void Blaze_UpdateSpray(void) {
   }
 }
 
-#undef CYCLONE_RING_RISE_FRAMES
+#undef CYCLONE_WHIRLWIND_RISE_FRAMES
 #undef CYCLONE_WHIRL_FRAMES
 #undef CYCLONE_SPIN_FRAMES
-#undef RING_RESIZE_FRAMES
+#undef WHIRLWIND_RESIZE_STEP
+#undef WHIRLWIND_RESIZE_FRAMES
 #undef ACTOR_RESIZE_FRAMES
 #undef DEPART_FRAMES
 

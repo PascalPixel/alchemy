@@ -4,13 +4,16 @@
 // the forest's colours turned redder and darker, and both sets of colours kept
 // for the event where the curse lifts.
 
+/// Background colour `color` of palette `palette`, counted from colour 0.
+#define BG_COLOR_INDEX(palette, color) ((palette) * PALETTE_COLORS + (color))
+
 /// The healthy colours: the first 448 colours (896 bytes) of the colour buffer,
 /// kept by KolimaPalette_SaveHealthy; each scene defines the 1792 bytes.
 extern u8 gKolimaPalette_Healthy[];
 /// The cursed colours, kept by KolimaPalette_SaveCursed.
 extern u8 gKolimaPalette_Cursed[];
 
-static u16 KolimaPalette_AdjustColorChannels(u16 color, s32 adj);
+static u16 KolimaPalette_CurseColor(u16 color, s32 strength);
 static void KolimaPalette_SaveHealthy(void);
 static void KolimaPalette_SaveCursed(void);
 static void KolimaPalette_Capture(void);
@@ -22,10 +25,11 @@ void KolimaPalette_Curse(s32 strength) {
   u16 i;
 
   KolimaPalette_SaveHealthy();
-  for (i = 0; i < 224; i++) {
-    if ((i < 17 || i > 23) && (i < 193 || i > 200)) {
+  for (i = 0; i < PALETTE_FADE_BG_COLORS; i++) {
+    if ((i < BG_COLOR_INDEX(1, 1) || i > BG_COLOR_INDEX(1, 7)) &&
+        (i < BG_COLOR_INDEX(12, 1) || i > BG_COLOR_INDEX(12, 8))) {
       u16 *pal = (u16 *)&BG_PLTT[i];
-      *pal = KolimaPalette_AdjustColorChannels(*pal, strength);
+      *pal = KolimaPalette_CurseColor(*pal, strength);
     }
   }
   KolimaPalette_Capture();
@@ -33,22 +37,22 @@ void KolimaPalette_Curse(s32 strength) {
   PaletteFade_SetTarget(PALETTE_TINT_NONE, PALETTES_ALL);
 }
 
-/// One cursed colour: red gains a 4 * adj'th of itself (up to 31), and green
-/// and blue lose an adj'th.
-static u16 KolimaPalette_AdjustColorChannels(u16 color, s32 adj) {
+/// One cursed colour: red gains a (4 * strength)th of itself, up to
+/// RGB_LEVEL_MAX, and green and blue lose a strength'th.
+static u16 KolimaPalette_CurseColor(u16 color, s32 strength) {
   s16 green = RGB_GREEN(color);
   s16 red = RGB_RED(color);
   s16 blue = RGB_BLUE(color);
   u32 packed;
 
-  red = (red + Math_Divide(red, (adj << 2)));
-  green = (green - Math_Divide(green, adj));
-  blue = (blue - Math_Divide(blue, adj));
+  red = (red + Math_Divide(red, (strength << 2)));
+  green = (green - Math_Divide(green, strength));
+  blue = (blue - Math_Divide(blue, strength));
 
   if (red > RGB_LEVEL_MAX)
     red = RGB_LEVEL_MAX;
 
-  packed = red | ((blue << 10) | (green << 5));
+  packed = red | ((blue << BLUE_SHIFT) | (green << GREEN_SHIFT));
   return packed;
 }
 
@@ -72,7 +76,8 @@ static void KolimaPalette_Capture(void) {
   u16 *buf = gPaletteFadeWork->palette;
 
   Dma_Set((const void *)BG_PLTT, buf, DMA_COPY_WORDS(112), REG_DMA3);
-  Dma_Set((const void *)OBJ_PLTT, buf + 224, DMA_COPY_WORDS(112), REG_DMA3);
+  Dma_Set((const void *)OBJ_PLTT, buf + PALETTE_FADE_BG_COLORS,
+          DMA_COPY_WORDS(112), REG_DMA3);
   PaletteFade_SetSource(PALETTE_TINT_NONE, PALETTES_ALL);
 }
 
@@ -89,3 +94,5 @@ void KolimaPalette_Restore(s32 second) {
   PaletteFade_SetTarget(PALETTE_TINT_NONE, PALETTES_ALL);
   KolimaPalette_Capture();
 }
+
+#undef BG_COLOR_INDEX

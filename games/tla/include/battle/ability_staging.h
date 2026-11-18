@@ -61,13 +61,17 @@ enum BattleStaging {
 #define EFFECT_BY_ID_RANGE 0x4000 ///< BattleEffect_RunByIdRangeFar
 #define EFFECT_SUMMON 0x8000 ///< BattleEffect_RunSummonFar, acting unit's view
 #define EFFECT_ON_DOWNED 0x10000 ///< shown on downed targets too (revivals)
-/// Plays the effect on the side opposite its targets. Unused: no entry of
-/// gAbilityBattleEffects sets it and no code adds it, so the flip in
-/// BattleStaging_HideField never happens.
+/// Unused: no entry of gAbilityBattleEffects sets it and no code adds it, so
+/// BattleStaging_HideField's flip never happens. It would play the effect on
+/// the side opposite its targets.
 #define EFFECT_OTHER_SIDE 0x20000
 /// The camera takes the other side's view (an enemy's cast a view of its
 /// own), or turns right round.
 #define EFFECT_VIEW_ACROSS 0x40000
 #define EFFECT_VIEW_REVERSED 0x80000
+/// Unused: an effect kind no row of gAbilityBattleEffects gives, which
+/// BattleStaging_RunAttack would play with the status window's PP row hidden
+/// (Severe Blow is BATTLE_EFFECT_SEVERE_BLOW).
+#define EFFECT_ID_SEVERE_BLOW 135
 
 #endif

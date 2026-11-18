@@ -189,7 +189,8 @@ enum LuckyWheelsState {
 
 // Lucky Wheels' tables, the same in both games.
 
-/// Where each spark cell (a square 2 to 20 pixels on a side) starts.
+/// Where each spark picture (a square 2 to 20 pixels on a side) starts: size s
+/// (1 to 10) is a square 2s pixels a side, after the smaller squares' pixels.
 const u16 gLuckyWheels_SparkCellOffsets[] = {0,   4,   20,  56,  120,
                                              220, 364, 560, 816, 1140};
 

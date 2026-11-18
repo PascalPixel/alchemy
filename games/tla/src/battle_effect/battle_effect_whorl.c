@@ -38,9 +38,34 @@ struct StripQuad;
 /// The angle a frame the Jupiter Djinni's bob turns by as it rides the funnel.
 #define TWISTING_COLUMN_BOB_STEP 3304
 
-/// The angle a frame that lifts Lethe Albion's and Raging Flood's three bands
-/// of water and sets them down again over the cast.
-#define TWISTING_COLUMN_WAVE_RISE_STEP 630
+/// How far the Jupiter Djinni sways to either side as it rides the funnel, a
+/// sway every 32 frames.
+#define TWISTING_COLUMN_DJINNI_SWAY 16
+
+/// Whorl draws its target toward the Djinni, 1/128 of the way a frame at first,
+/// then 1/16 a frame as it shrinks toward a quarter of its size.
+#define TWISTING_COLUMN_DRIFT_STEPS 128
+#define TWISTING_COLUMN_LIFT_STEPS 16
+
+/// Lethe Albion's and Raging Flood's bands of water: 128 pixels long and 48
+/// wide, rippling up to 28 pixels from their axis.
+#define TWISTING_COLUMN_BAND_HALF_LENGTH 64
+#define TWISTING_COLUMN_BAND_WIDTH 48
+#define TWISTING_COLUMN_BAND_RIPPLE 28
+
+/// Poison Flow's stream ripples up to 64 pixels from its axis.
+#define TWISTING_COLUMN_STREAM_RIPPLE 64
+
+/// Whorl's and Gale's funnel widens to 80 pixels and ripples up to 96 from its
+/// axis.
+#define TWISTING_COLUMN_FUNNEL_HALF_WIDTH 40
+#define TWISTING_COLUMN_FUNNEL_RIPPLE 96
+
+/// Lethe Albion's and Raging Flood's three bands of water rise
+/// TWISTING_COLUMN_WAVE_RISE pixels and settle again over the cast's 52 frames,
+/// half a turn of a sine.
+#define TWISTING_COLUMN_WAVE_RISE 64
+#define TWISTING_COLUMN_WAVE_RISE_STEP (TRIG_TURN / 2 / 52)
 
 /// How far Whorl's and Gale's funnel turns about its length from the upright.
 #define TWISTING_COLUMN_LEAN 3096
@@ -48,8 +73,9 @@ struct StripQuad;
 /// A texture's scroll wraps within 128 texels.
 #define TWISTING_COLUMN_SCROLL_MASK 0x7f
 
-/// The pictures of FlashBurstSheet, a white flash burning down to embers, each
-/// shown for four frames.
+/// The pictures of FlashBurstSheet, a white flash swelling to a cloud that
+/// fades, each shown for four frames; drawn in the water spray's colours, they
+/// are clouds of spray.
 #define FLASH_BURST_PICTURES 6
 
 /// The twisting column shared by the Djinn Whorl and Gale, Lethe Albion,
@@ -57,8 +83,9 @@ struct StripQuad;
 /// For the Djinn the Jupiter Djinni rides the head of a pink funnel of wind
 /// that sweeps down on the target, carrying it up (Whorl) or blowing it away
 /// (Gale); Poison Flow's red stream sweeps out from the caster through the
-/// targets; and Lethe Albion's and Raging Flood's three bands of water rise
-/// over the target and fall, flashes bursting from it.
+/// targets; and Lethe Albion's and Raging Flood's three bands of water surge up
+/// over the targets' side and settle, as clouds of spray burst from the target
+/// and two swirls (Lethe Albion's runes) spin out over it.
 void BattleEffect_RunWaterColumn(struct BattleEffectParams *args, u32 mode) {
   struct BattleEffectWork *work;
   u8 *canvas;
@@ -239,7 +266,8 @@ void BattleEffect_RunWaterColumn(struct BattleEffectParams *args, u32 mode) {
       if (mode <= WATER_COLUMN_GALE) {
         s32 k = 4;
 
-        pos[0] = point[0] + Trig_Sin(frame * (TRIG_TURN / 32)) * 16;
+        pos[0] = point[0] + Trig_Sin(frame * (TRIG_TURN / 32)) *
+                                TWISTING_COLUMN_DJINNI_SWAY;
         if (frame > 39) {
           k = frame - 36;
         }
@@ -282,29 +310,32 @@ void BattleEffect_RunWaterColumn(struct BattleEffectParams *args, u32 mode) {
             target->verticalMotionStrength = mode;
             target->x +=
                 (pos[0] - work->particles[TWISTING_COLUMN_SAVED_TARGET].x) /
-                128;
+                TWISTING_COLUMN_DRIFT_STEPS;
             target->y +=
                 (pos[1] - work->particles[TWISTING_COLUMN_SAVED_TARGET].y) /
-                128;
+                TWISTING_COLUMN_DRIFT_STEPS;
             target->z +=
                 (pos[2] - work->particles[TWISTING_COLUMN_SAVED_TARGET].z) /
-                128;
+                TWISTING_COLUMN_DRIFT_STEPS;
           } else if (frame <= 31 && (args->variant == EFFECT_VARIANT_STRONGER ||
                                      frame <= 23)) {
             target->x +=
-                (pos[0] - work->particles[TWISTING_COLUMN_SAVED_TARGET].x) / 16;
+                (pos[0] - work->particles[TWISTING_COLUMN_SAVED_TARGET].x) /
+                TWISTING_COLUMN_LIFT_STEPS;
             target->y +=
-                (pos[1] - work->particles[TWISTING_COLUMN_SAVED_TARGET].y) / 16;
+                (pos[1] - work->particles[TWISTING_COLUMN_SAVED_TARGET].y) /
+                TWISTING_COLUMN_LIFT_STEPS;
             target->z +=
-                (pos[2] - work->particles[TWISTING_COLUMN_SAVED_TARGET].z) / 16;
+                (pos[2] - work->particles[TWISTING_COLUMN_SAVED_TARGET].z) /
+                TWISTING_COLUMN_LIFT_STEPS;
             target->scaleX +=
                 (FIXED_ONE / 4 -
                  work->particles[TWISTING_COLUMN_SAVED_TARGET].velocityX) /
-                16;
+                TWISTING_COLUMN_LIFT_STEPS;
             target->scaleY +=
                 (FIXED_ONE / 4 -
                  work->particles[TWISTING_COLUMN_SAVED_TARGET].velocityY) /
-                16;
+                TWISTING_COLUMN_LIFT_STEPS;
           }
         } else if (mode == WATER_COLUMN_GALE) {
           target->verticalMotionStrength = 0;
@@ -352,19 +383,19 @@ void BattleEffect_RunWaterColumn(struct BattleEffectParams *args, u32 mode) {
         for (j = 0; j != TWISTING_COLUMN_ROWS; j++) {
           s32 r = j;
 
-          if (r > 28) {
-            r = 28;
+          if (r > TWISTING_COLUMN_BAND_RIPPLE) {
+            r = TWISTING_COLUMN_BAND_RIPPLE;
           }
           for (i = 0; i != 2; i++) {
             /* FAKEMATCH(temporary): the row's 0 held in a local; as 0. */
             s32 zero = 0;
 
-            MAP_CELLS[j][i][0] = -j * 4 + 64;
+            MAP_CELLS[j][i][0] = -j * 4 + TWISTING_COLUMN_BAND_HALF_LENGTH;
             MAP_CELLS[j][i][1] =
                 (FIXEDtoINT(
                     Trig_Cos(j * (TRIG_TURN / 64) - frame * (TRIG_TURN / 32)) *
                     r)) +
-                i * 48 - 24;
+                i * TWISTING_COLUMN_BAND_WIDTH - TWISTING_COLUMN_BAND_WIDTH / 2;
             MAP_CELLS[j][i][2] = zero;
           }
         }
@@ -373,8 +404,8 @@ void BattleEffect_RunWaterColumn(struct BattleEffectParams *args, u32 mode) {
           s32 r = j * 4;
           s32 w = j * 2 + 4;
 
-          if (r > 64) {
-            r = 64;
+          if (r > TWISTING_COLUMN_STREAM_RIPPLE) {
+            r = TWISTING_COLUMN_STREAM_RIPPLE;
           }
           for (i = 0; i != 2; i++) {
             MAP_CELLS[j][i][0] = -j * 3;
@@ -391,17 +422,17 @@ void BattleEffect_RunWaterColumn(struct BattleEffectParams *args, u32 mode) {
           s32 r = j * 3;
           s32 w = j * 2;
 
-          if (r > 96) {
-            r = 96;
+          if (r > TWISTING_COLUMN_FUNNEL_RIPPLE) {
+            r = TWISTING_COLUMN_FUNNEL_RIPPLE;
           }
-          if (w > 40) {
-            w = 40;
+          if (w > TWISTING_COLUMN_FUNNEL_HALF_WIDTH) {
+            w = TWISTING_COLUMN_FUNNEL_HALF_WIDTH;
           }
           for (i = 0; i != 2; i++) {
             /* FAKEMATCH(temporary): the depth built on j + j; as -j * 4. */
             MAP_CELLS[j][i][0] = -(j + j) * 2;
             MAP_CELLS[j][i][1] =
-                (FIXEDtoINT(Trig_Cos((frame + j * 2) << 10) * r)) +
+                (FIXEDtoINT(Trig_Cos((frame + j * 2) * (TRIG_TURN / 64)) * r)) +
                 (i * w << 1) - w;
             MAP_CELLS[j][i][2] = 0;
           }
@@ -492,9 +523,9 @@ void BattleEffect_RunWaterColumn(struct BattleEffectParams *args, u32 mode) {
         model->scrollU = ~(frame << 3) & TWISTING_COLUMN_SCROLL_MASK;
         model->scrollV = 0;
         for (i = 0; i != 3; i++) {
-          s32 y =
-              64 -
-              FIXEDtoINT(Trig_Sin(frame * TWISTING_COLUMN_WAVE_RISE_STEP) * 64);
+          s32 y = TWISTING_COLUMN_WAVE_RISE -
+                  FIXEDtoINT(Trig_Sin(frame * TWISTING_COLUMN_WAVE_RISE_STEP) *
+                             TWISTING_COLUMN_WAVE_RISE);
 
           Matrix_Push();
           Matrix_Translate(0, INTtoFIXED(y - i * 8) + toFIXED(48), 0);
@@ -576,8 +607,8 @@ void BattleEffect_RunWaterColumn(struct BattleEffectParams *args, u32 mode) {
             Matrix_RotateY(DEGtoANG(180));
           }
           Matrix_RotateX(i * (TRIG_TURN / 2));
-          Matrix_RotateZ(
-              FIXEDtoINT(Trig_Sin((frame + i * 8) << 11) * (TRIG_TURN / 32)));
+          Matrix_RotateZ(FIXEDtoINT(
+              Trig_Sin((frame + i * 8) * (TRIG_TURN / 32)) * (TRIG_TURN / 32)));
           Matrix_Scale(85536, FIXED_ONE / 2, FIXED_ONE);
           Render_TransformVertices(gMapGridCellBuffer, vertices,
                                    TWISTING_COLUMN_VERTICES);
@@ -611,7 +642,7 @@ void BattleEffect_RunWaterColumn(struct BattleEffectParams *args, u32 mode) {
             }
             Matrix_RotateZ(i * (TRIG_TURN / 64) + TWISTING_COLUMN_LEAN);
             if (mode != WATER_COLUMN_GALE) {
-              Matrix_RotateX((frame + i * 4) << 11);
+              Matrix_RotateX((frame + i * 4) * (TRIG_TURN / 32));
             } else {
               Matrix_RotateX(i * (TRIG_TURN / 8) - frame * (TRIG_TURN / 32));
             }
@@ -672,6 +703,16 @@ void BattleEffect_RunCannon(struct BattleEffectParams *args) {
 #undef TWISTING_COLUMN_MOTES
 #undef FLASH_BURST_PICTURES
 #undef TWISTING_COLUMN_BOB_STEP
+#undef TWISTING_COLUMN_DJINNI_SWAY
+#undef TWISTING_COLUMN_DRIFT_STEPS
+#undef TWISTING_COLUMN_LIFT_STEPS
+#undef TWISTING_COLUMN_BAND_HALF_LENGTH
+#undef TWISTING_COLUMN_BAND_WIDTH
+#undef TWISTING_COLUMN_BAND_RIPPLE
+#undef TWISTING_COLUMN_STREAM_RIPPLE
+#undef TWISTING_COLUMN_FUNNEL_HALF_WIDTH
+#undef TWISTING_COLUMN_FUNNEL_RIPPLE
+#undef TWISTING_COLUMN_WAVE_RISE
 #undef TWISTING_COLUMN_WAVE_RISE_STEP
 #undef TWISTING_COLUMN_LEAN
 #undef TWISTING_COLUMN_SCROLL_MASK

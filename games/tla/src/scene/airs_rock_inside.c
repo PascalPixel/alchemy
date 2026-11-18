@@ -122,8 +122,6 @@ enum {
   HALL_LAST_NORTHEAST_ROOM_ENTRANCE = 13
 };
 
-#define BG_SCREEN_ROW_BYTES (32 * 2)
-
 /// The collision codes this scene reads by name. On the overhead layer a
 /// whirlwind ends where it reaches WHIRLWIND_END; on the ground a raised
 /// stake's top is STAKE_TOP; in the hall the tower's door is TOWER_DOOR, and
@@ -1903,7 +1901,7 @@ void AirsRockInside_FlickerTarget(struct Actor *actor) {
 /// the statue beside it, which starts breathing whirlwinds
 /// (FLAG_AIRS_ROCK_HALL_STATUE_WOKEN).
 void AirsRockInside_WakeHallStatue(void) {
-  u16 *buffer = Heap_Alloc(2048);
+  u16 *buffer = Heap_Alloc(LIGHTNING_TILES * TILE_SIZE_4BPP);
   u16 *cell;
   struct Actor *spark;
   u32 i;
@@ -1911,12 +1909,14 @@ void AirsRockInside_WakeHallStatue(void) {
   Event_Start();
   Event_ResolvePendingActions(0);
   REG_DISPCNT &= ~DISPCNT_BG0_ON;
-  Io_Write16(BGCNT_SCREEN_BASE(4), &REG_BG0CNT);
+  Io_Write16(BGCNT_SCREEN_BASE(LIGHTNING_SCREEN_BLOCK), &REG_BG0CNT);
   Decompress_TaggedLz(Resource_GetTableEntry(RESOURCE_LIGHTNING_TILES), buffer);
-  Dma_Set(buffer, (void *)BG_CHAR_BLOCK(0), DMA_COPY_WORDS(512), REG_DMA3);
+  Dma_Set(buffer, (void *)BG_CHAR_BLOCK(0),
+          DMA_COPY_WORDS(LIGHTNING_TILES * TILE_SIZE_4BPP / 4), REG_DMA3);
   Heap_Release(buffer);
-  Dma_Fill16(0, (void *)BG_SCREEN_BLOCK(4), 2048);
-  buffer = Heap_Alloc(LIGHTNING_MAP_ROWS * LIGHTNING_MAP_COLUMNS * 2);
+  Dma_Fill16(0, (void *)BG_SCREEN_BLOCK(LIGHTNING_SCREEN_BLOCK),
+             BG_SCREEN_SIZE);
+  buffer = Heap_Alloc(LIGHTNING_MAP_ROWS * LIGHTNING_MAP_COLUMNS * sizeof(u16));
   Decompress_TaggedLz(Resource_GetTableEntry(RESOURCE_LIGHTNING_MAP), buffer);
   cell = buffer;
   // The map's tile numbers less 512.
@@ -1926,8 +1926,10 @@ void AirsRockInside_WakeHallStatue(void) {
   }
   cell = buffer;
   for (i = 0; i != LIGHTNING_MAP_ROWS; i++) {
-    Dma_Set(cell, (void *)(BG_SCREEN_BLOCK(4) + i * BG_SCREEN_ROW_BYTES),
-            DMA_COPY_WORDS(LIGHTNING_MAP_COLUMNS / 2), REG_DMA3);
+    Dma_Set(
+        cell,
+        (void *)(BG_SCREEN_BLOCK(LIGHTNING_SCREEN_BLOCK) + i * MAP_ROW_BYTES),
+        DMA_COPY_WORDS(LIGHTNING_MAP_COLUMNS * sizeof(u16) / 4), REG_DMA3);
     cell += LIGHTNING_MAP_COLUMNS;
   }
   Heap_Release(buffer);
@@ -2200,7 +2202,7 @@ void AirsRockInside_FinishPushingPillar(void) {
 /// with the light it sends, which flashes across the room, opens the cells at
 /// (68, 84) and wakes the statue (FLAG_AIRS_ROCK_VIAL_CHEST_STATUE_WOKEN).
 void AirsRockInside_WakeVialChestStatue(void) {
-  u16 *buffer = Heap_Alloc(2048);
+  u16 *buffer = Heap_Alloc(LIGHTNING_TILES * TILE_SIZE_4BPP);
   u16 *cell;
   struct Actor *spark;
   u32 i;
@@ -2208,12 +2210,14 @@ void AirsRockInside_WakeVialChestStatue(void) {
   Event_Start();
   Event_ResolvePendingActions(0);
   REG_DISPCNT &= ~DISPCNT_BG0_ON;
-  Io_Write16(BGCNT_SCREEN_BASE(4), &REG_BG0CNT);
+  Io_Write16(BGCNT_SCREEN_BASE(LIGHTNING_SCREEN_BLOCK), &REG_BG0CNT);
   Decompress_TaggedLz(Resource_GetTableEntry(RESOURCE_LIGHTNING_TILES), buffer);
-  Dma_Set(buffer, (void *)BG_CHAR_BLOCK(0), DMA_COPY_WORDS(512), REG_DMA3);
+  Dma_Set(buffer, (void *)BG_CHAR_BLOCK(0),
+          DMA_COPY_WORDS(LIGHTNING_TILES * TILE_SIZE_4BPP / 4), REG_DMA3);
   Heap_Release(buffer);
-  Dma_Fill16(0, (void *)BG_SCREEN_BLOCK(4), 2048);
-  buffer = Heap_Alloc(LIGHTNING_MAP_ROWS * LIGHTNING_MAP_COLUMNS * 2);
+  Dma_Fill16(0, (void *)BG_SCREEN_BLOCK(LIGHTNING_SCREEN_BLOCK),
+             BG_SCREEN_SIZE);
+  buffer = Heap_Alloc(LIGHTNING_MAP_ROWS * LIGHTNING_MAP_COLUMNS * sizeof(u16));
   Decompress_TaggedLz(Resource_GetTableEntry(RESOURCE_LIGHTNING_MAP), buffer);
   cell = buffer;
   // The map's tile numbers less 512.
@@ -2223,8 +2227,10 @@ void AirsRockInside_WakeVialChestStatue(void) {
   }
   cell = buffer;
   for (i = 0; i != LIGHTNING_MAP_ROWS; i++) {
-    Dma_Set(cell, (void *)(BG_SCREEN_BLOCK(4) + i * BG_SCREEN_ROW_BYTES),
-            DMA_COPY_WORDS(LIGHTNING_MAP_COLUMNS / 2), REG_DMA3);
+    Dma_Set(
+        cell,
+        (void *)(BG_SCREEN_BLOCK(LIGHTNING_SCREEN_BLOCK) + i * MAP_ROW_BYTES),
+        DMA_COPY_WORDS(LIGHTNING_MAP_COLUMNS * sizeof(u16) / 4), REG_DMA3);
     cell += LIGHTNING_MAP_COLUMNS;
   }
   Heap_Release(buffer);

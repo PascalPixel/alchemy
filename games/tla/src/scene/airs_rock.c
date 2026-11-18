@@ -1292,10 +1292,10 @@ void AirsRock_WhirlwindOpensTheTop(void) {
   }
   cell = buffer;
   for (i = 0; i != LIGHTNING_MAP_ROWS; i++) {
-    Dma_Set(cell,
-            (void *)(BG_SCREEN_BLOCK(LIGHTNING_SCREEN_BLOCK) +
-                     i * BG_SCREEN_WIDTH * sizeof(u16)),
-            DMA_COPY_WORDS(LIGHTNING_MAP_COLUMNS * sizeof(u16) / 4), REG_DMA3);
+    Dma_Set(
+        cell,
+        (void *)(BG_SCREEN_BLOCK(LIGHTNING_SCREEN_BLOCK) + i * MAP_ROW_BYTES),
+        DMA_COPY_WORDS(LIGHTNING_MAP_COLUMNS * sizeof(u16) / 4), REG_DMA3);
     cell += LIGHTNING_MAP_COLUMNS;
   }
   Heap_Release(buffer);

@@ -28,7 +28,9 @@ enum {
   /// At the end of the prologue: the intro once more, then the game with
   /// Felix.
   TITLE_FROM_IDEJIMA = 3,
-  /// Credits_Run, then TITLE_PROLOGUE.
+  /// A new game, once the clear-data screen has its difficulty: the story
+  /// crawl ("Ages ago, or so the stories tell...") over Credits_Run's slide
+  /// show, then TITLE_PROLOGUE.
   TITLE_CREDITS = 8,
   /// Unused: nothing sends the party here. The Golden Sun logo with "To Be
   /// Continued" under it, held up to a minute, then TITLE_PROLOGUE.

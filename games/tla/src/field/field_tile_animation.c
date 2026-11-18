@@ -15,6 +15,7 @@
 #include "system/system.h"
 #include "system/frame.h"
 #include "graphics/palette_snapshots.h"
+#include "graphics/palette_buffers.h"
 #include "system/io_write_queue.h"
 #include "field/flag_call.h"
 #include "field/curve.h"
@@ -141,14 +142,15 @@ void WorldMap_PreloadCurrentTileBlock(void) {
     return;
   if (value != 0)
     return;
-  buffer = Heap_Alloc(512);
+  buffer = Heap_Alloc(BG_PLTT_SIZE);
   switch (perspective->reloadSteps) {
   case WORLD_MAP_RELOAD_STEPS: {
     s16 backdropColor = *(s16 *)BG_PLTT;
 
     Decompress_ByteLz(Resource_GetTableEntry(resources[0]), buffer);
     *(s16 *)buffer = backdropColor;
-    Dma_Set(buffer, (void *)BG_PLTT, DMA_COPY_WORDS(112), REG_DMA3);
+    Dma_Set(buffer, (void *)BG_PLTT, DMA_COPY_WORDS(PALETTE_FADE_BG_COLORS / 2),
+            REG_DMA3);
     {
       u8 *anim = MAPGRID_ANIMATION_SCRIPT;
       PaletteFade_LoadPaletteFar(buffer);
@@ -277,7 +279,8 @@ s32 WorldMap_LoadAreaGraphics(void) {
   value = *(s16 *)BG_PLTT;
   Decompress_ByteLz(Resource_GetTableEntry(resources[0]), buffer);
   *(s16 *)buffer = value;
-  Dma_Set(buffer, (void *)BG_PLTT, DMA_COPY_WORDS(112), REG_DMA3);
+  Dma_Set(buffer, (void *)BG_PLTT, DMA_COPY_WORDS(PALETTE_FADE_BG_COLORS / 2),
+          REG_DMA3);
   Decompress_TaggedLz(Resource_GetTableEntry(resources[3]), gBgTileBuffer);
   Decompress_TaggedLz(Resource_GetTableEntry(resources[4]),
                       WORLD_MAP_TILE_SET(1));

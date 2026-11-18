@@ -459,8 +459,10 @@ void BattleEffect_RunEclipse(struct BattleEffectParams *args) {
           Matrix_Scale(FIXED_ONE / 2, FIXED_ONE, FIXED_ONE);
           Matrix_RotateZ(TRIG_TURN * 5 / 32);
           if (frame >= ECLIPSE_BREATH_FADE) {
+            s32 fadeFrame = frame - ECLIPSE_BREATH_FADE;
+
             // Half a unit narrower a frame.
-            Matrix_Scale(FIXED_ONE * 8 - ((frame - ECLIPSE_BREATH_FADE) << 15),
+            Matrix_Scale(FIXED_ONE * 8 - fadeFrame * (FIXED_ONE / 2),
                          FIXED_ONE * 2, FIXED_ONE);
           } else {
             Matrix_Scale(FIXED_ONE * 8, FIXED_ONE * 2, FIXED_ONE);

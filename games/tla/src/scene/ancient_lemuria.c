@@ -1,7 +1,7 @@
 /// @file
 /// Ancient Lemuria, the shore before the hidden city, where the Lemurians meet
 /// the party that defeated Poseidon (AncientLemuria_MeetTheLemurians). Cyclone
-/// on the first bush brings out Rime, the Mercury Djinni, which hides in the
+/// on the first weeds brings out Rime, the Mercury Djinni, which hides in the
 /// blue statue until Tremor shakes it out (AncientLemuria_CycloneRevealsRime,
 /// AncientLemuria_TremorShakesOutRime).
 
@@ -35,13 +35,26 @@ void AncientLemuria_MeetTheLemurians(void);
 void Field_TryJumpForward(void);
 
 #include "text/msg_ids.h"
-/// The twelve colours, a frame in four, the water's shimmer takes in turn.
-extern s16 gAncientLemuria_ShimmerColors[];
+/// The shore's water: its two background palettes, from the first, the colours
+/// of each that rotate every four frames, the colour of the first that shines
+/// in the colours of gAncientLemuria_ShiningWaterColors in turn, and how many
+/// there are.
+#define FIRST_WATER_PALETTE 7
+#define WATER_FIRST_COLOR 1
+#define WATER_LAST_COLOR 14
+#define WATER_SHINING_COLOR 15
+#define SHINING_WATER_COLORS 12
 
-/// Rime's story: brought out of the first bush by Cyclone, hiding in the blue
-/// statue, which shakes, until Tremor shakes it out.
+extern s16 gAncientLemuria_ShiningWaterColors[SHINING_WATER_COLORS];
+
+/// The frames the statue Rime hides in takes to rock from side to side and
+/// back, clicking as each rock starts.
+#define STATUE_ROCK_FRAMES 16
+
+/// Rime's story: brought out of the first weeds by Cyclone, hiding in the blue
+/// statue, which rocks, until Tremor shakes it out.
 #define FLAG_RIME_REVEALED 0x96c
-#define FLAG_RIME_SHAKEN_OUT 0x96d
+#define FLAG_RIME_OUT_OF_THE_STATUE 0x96d
 #define FLAG_RIME_IN_THE_STATUE 0x96e
 
 /// Set once Move has pushed the blue statue onto cell (8, 36), where the
@@ -71,13 +84,14 @@ void AncientLemuria_RimeJoins(void) {
 }
 
 /// The update of the statue Rime hides in: it rocks from side to side,
-/// clicking every sixteenth frame.
-void AncientLemuria_ShakeTheStatue(struct Actor *actor) {
+/// clicking as each rock starts.
+void AncientLemuria_RockTheStatue(struct Actor *actor) {
   struct FieldSprite *sprite = actor->sprite;
   s16 time = actor->timer++;
 
-  sprite->rotation = Iwram_MulFX(Trig_Sin(time << 12), TRIG_TURN / 256);
-  if ((time & 15) == 0)
+  sprite->rotation = Iwram_MulFX(
+      Trig_Sin(time * (TRIG_TURN / STATUE_ROCK_FRAMES)), TRIG_TURN / 256);
+  if ((time & (STATUE_ROCK_FRAMES - 1)) == 0)
     Sound_Play(SE_SWITCH);
 }
 
@@ -135,12 +149,12 @@ static inline void Hop(s32 dx, s32 dz) {
   Event_Wait(3);
 }
 
-/// Cyclone on the first bush brings out Rime, once: it spins as it grows, hops
+/// Cyclone on the first weeds brings out Rime, once: it spins as it grows, hops
 /// away with the leader after it and hides in the blue statue, which starts to
-/// shake.
+/// rock.
 void AncientLemuria_CycloneRevealsRime(void) {
   struct Actor *actor;
-  s32 i;
+  s32 frame;
 
   FieldTileCopies_CopyTouchedCells(7, 13, 1, 1, 5, 13, 0);
   if (Event_GetFlag(FLAG_RIME_REVEALED))
@@ -153,7 +167,7 @@ void AncientLemuria_CycloneRevealsRime(void) {
   Actor_Jump(ACTOR_RIME, 9, 0);
   actor->scaleY = FIXED_ONE / 2;
   actor->scaleX = FIXED_ONE / 2;
-  for (i = 0; i < 30; i++) {
+  for (frame = 0; frame < 30; frame++) {
     actor->facing += TRIG_TURN / 16;
     if (actor->scaleX < FIXED_ONE)
       actor->scaleX += FIXED_ONE * 5 / 128;
@@ -188,32 +202,32 @@ void AncientLemuria_CycloneRevealsRime(void) {
   Hop(16, 0);
   Hop(16, 0);
   Actor_SetPosition(ACTOR_RIME, 0, 0);
-  Actor_GetById(ACTOR_RIMES_STATUE)->update = AncientLemuria_ShakeTheStatue;
+  Actor_GetById(ACTOR_RIMES_STATUE)->update = AncientLemuria_RockTheStatue;
   Actor_GetById(ACTOR_RIMES_STATUE)->timer = 0;
 }
 
-/// Cyclone on the second bush cuts it down; so for the next four.
-void AncientLemuria_CycloneSecondBush(void) {
+/// Cyclone on the second weeds scatters them; so for the next four.
+void AncientLemuria_CycloneSecondWeeds(void) {
   FieldTileCopies_CopyTouchedCells(9, 9, 2, 3, 8, 9, 0);
 }
 
-/// As AncientLemuria_CycloneSecondBush.
-void AncientLemuria_CycloneThirdBush(void) {
+/// As AncientLemuria_CycloneSecondWeeds.
+void AncientLemuria_CycloneThirdWeeds(void) {
   FieldTileCopies_CopyTouchedCells(38, 0, 5, 2, 12, 7, 0);
 }
 
-/// As AncientLemuria_CycloneSecondBush.
-void AncientLemuria_CycloneFourthBush(void) {
+/// As AncientLemuria_CycloneSecondWeeds.
+void AncientLemuria_CycloneFourthWeeds(void) {
   FieldTileCopies_CopyTouchedCells(39, 2, 4, 3, 14, 11, 0);
 }
 
-/// As AncientLemuria_CycloneSecondBush.
-void AncientLemuria_CycloneFifthBush(void) {
+/// As AncientLemuria_CycloneSecondWeeds.
+void AncientLemuria_CycloneFifthWeeds(void) {
   FieldTileCopies_CopyTouchedCells(39, 2, 3, 3, 21, 9, 0);
 }
 
-/// As AncientLemuria_CycloneSecondBush.
-void AncientLemuria_CycloneSixthBush(void) {
+/// As AncientLemuria_CycloneSecondWeeds.
+void AncientLemuria_CycloneSixthWeeds(void) {
   FieldTileCopies_CopyTouchedCells(39, 0, 4, 3, 25, 8, 0);
 }
 
@@ -226,14 +240,14 @@ void AncientLemuria_StartTremorOnTheStatue(void) {
 /// spinning as it grows back to its full size.
 void AncientLemuria_TremorShakesOutRime(void) {
   struct Actor *actor;
-  s32 i;
+  s32 frame;
 
-  if (Event_GetFlag(FLAG_RIME_SHAKEN_OUT))
+  if (Event_GetFlag(FLAG_RIME_OUT_OF_THE_STATUE))
     return;
   if (!GameFlag_Get(FLAG_RIME_REVEALED))
     return;
   actor = Actor_GetById(ACTOR_RIME);
-  GameFlag_Set(FLAG_RIME_SHAKEN_OUT);
+  GameFlag_Set(FLAG_RIME_OUT_OF_THE_STATUE);
   GameFlag_Clear(FLAG_RIME_IN_THE_STATUE);
   AncientLemuria_StillTheStatue(ACTOR_RIMES_STATUE);
   Actor_SetPosition(ACTOR_RIME, 270, 184);
@@ -243,7 +257,7 @@ void AncientLemuria_TremorShakesOutRime(void) {
   actor->scaleX = FIXED_ONE / 2;
   Actor_SetSpeed(ACTOR_RIME, 2.2);
   Actor_WalkTo(ACTOR_RIME, 312, 184);
-  for (i = 0; i < 24; i++) {
+  for (frame = 0; frame < 24; frame++) {
     actor->facing += TRIG_TURN / 8;
     if (actor->scaleX < FIXED_ONE)
       actor->scaleX += FIXED_ONE * 5 / 128;
@@ -297,27 +311,30 @@ void AncientLemuria_HeadForTheDock(void) {
 
 const struct Trigger *Scene_GetTriggers(void) { return gSceneEvents; }
 
-/// The water's shimmer: every four frames colours 1 to 14 of background
-/// palettes 7 and 8 rotate by one, and colour 15 of palette 7 takes the next of
-/// gAncientLemuria_ShimmerColors.
+/// The water's shine: every four frames the rotating colours of both water
+/// palettes move on by one, and the shining colour takes the next of
+/// gAncientLemuria_ShiningWaterColors.
 s32 AncientLemuria_CycleWaterColors(void) {
   if ((*Ram_FrameCount & 3) == 0) {
     s16 saved;
     s32 index;
 
-    saved = BG_PLTT_COLOR(7, 14);
-    for (index = 14; index != 1; index--)
-      BG_PLTT_COLOR(7, index) = BG_PLTT_COLOR(7, index - 1);
-    BG_PLTT_COLOR(7, 1) = saved;
-    saved = BG_PLTT_COLOR(8, 14);
-    for (index = 14; index != 1; index--)
-      BG_PLTT_COLOR(8, index) = BG_PLTT_COLOR(8, index - 1);
-    BG_PLTT_COLOR(8, 1) = saved;
+    saved = BG_PLTT_COLOR(FIRST_WATER_PALETTE, WATER_LAST_COLOR);
+    for (index = WATER_LAST_COLOR; index != WATER_FIRST_COLOR; index--)
+      BG_PLTT_COLOR(FIRST_WATER_PALETTE, index) =
+          BG_PLTT_COLOR(FIRST_WATER_PALETTE, index - 1);
+    BG_PLTT_COLOR(FIRST_WATER_PALETTE, WATER_FIRST_COLOR) = saved;
+    saved = BG_PLTT_COLOR(FIRST_WATER_PALETTE + 1, WATER_LAST_COLOR);
+    for (index = WATER_LAST_COLOR; index != WATER_FIRST_COLOR; index--)
+      BG_PLTT_COLOR(FIRST_WATER_PALETTE + 1, index) =
+          BG_PLTT_COLOR(FIRST_WATER_PALETTE + 1, index - 1);
+    BG_PLTT_COLOR(FIRST_WATER_PALETTE + 1, WATER_FIRST_COLOR) = saved;
   }
   {
-    s16 color = gAncientLemuria_ShimmerColors[(*Ram_FrameCount >> 2) % 12];
+    s16 color = gAncientLemuria_ShiningWaterColors[(*Ram_FrameCount >> 2) %
+                                                   SHINING_WATER_COLORS];
 
-    BG_PLTT_COLOR(7, 15) = color;
+    BG_PLTT_COLOR(FIRST_WATER_PALETTE, WATER_SHINING_COLOR) = color;
     return color;
   }
 }
@@ -334,11 +351,12 @@ s32 Scene_Initialize(void) {
     Actor_SetPosition(ACTOR_LEMURIAN, 0, 0);
     Actor_SetPosition(ACTOR_SECOND_LEMURIAN, 0, 0);
   }
-  if (Event_GetFlag(FLAG_RIME_SHAKEN_OUT))
+  if (Event_GetFlag(FLAG_RIME_OUT_OF_THE_STATUE))
     Actor_SetPosition(ACTOR_RIME, 312, 184);
-  if (gMainRoutineWork.entrance == 1 && !GameFlag_Get(FLAG_RIME_SHAKEN_OUT) &&
+  if (gMainRoutineWork.entrance == 1 &&
+      !GameFlag_Get(FLAG_RIME_OUT_OF_THE_STATUE) &&
       GameFlag_Get(FLAG_RIME_REVEALED)) {
-    Actor_GetById(ACTOR_RIMES_STATUE)->update = AncientLemuria_ShakeTheStatue;
+    Actor_GetById(ACTOR_RIMES_STATUE)->update = AncientLemuria_RockTheStatue;
     Actor_GetById(ACTOR_RIMES_STATUE)->timer = 0;
   }
   Actor_SetSpriteFlags(Actor_GetById(ACTOR_RIMES_STATUE), 0);
@@ -900,15 +918,15 @@ struct Trigger gSceneEvents[] = {
     {PSYNERGY_PHASE_ON_CELL(ABILITY_CYCLONE, PSYNERGY_PHASE_ACTS), 30,
      CONDITION_ALWAYS, EVENT(AncientLemuria_CycloneRevealsRime)},
     {PSYNERGY_PHASE_ON_CELL(ABILITY_CYCLONE, PSYNERGY_PHASE_ACTS), 31,
-     CONDITION_ALWAYS, EVENT(AncientLemuria_CycloneSecondBush)},
+     CONDITION_ALWAYS, EVENT(AncientLemuria_CycloneSecondWeeds)},
     {PSYNERGY_PHASE_ON_CELL(ABILITY_CYCLONE, PSYNERGY_PHASE_ACTS), 32,
-     CONDITION_ALWAYS, EVENT(AncientLemuria_CycloneThirdBush)},
+     CONDITION_ALWAYS, EVENT(AncientLemuria_CycloneThirdWeeds)},
     {PSYNERGY_PHASE_ON_CELL(ABILITY_CYCLONE, PSYNERGY_PHASE_ACTS), 33,
-     CONDITION_ALWAYS, EVENT(AncientLemuria_CycloneFourthBush)},
+     CONDITION_ALWAYS, EVENT(AncientLemuria_CycloneFourthWeeds)},
     {PSYNERGY_PHASE_ON_CELL(ABILITY_CYCLONE, PSYNERGY_PHASE_ACTS), 34,
-     CONDITION_ALWAYS, EVENT(AncientLemuria_CycloneFifthBush)},
+     CONDITION_ALWAYS, EVENT(AncientLemuria_CycloneFifthWeeds)},
     {PSYNERGY_PHASE_ON_CELL(ABILITY_CYCLONE, PSYNERGY_PHASE_ACTS), 35,
-     CONDITION_ALWAYS, EVENT(AncientLemuria_CycloneSixthBush)},
+     CONDITION_ALWAYS, EVENT(AncientLemuria_CycloneSixthWeeds)},
     {PSYNERGY_PHASE_ON_ACTOR(ABILITY_TREMOR, PSYNERGY_PHASE_BEFORE_CAST),
      ACTOR_RIMES_STATUE, IF_FLAG_SET(FLAG_RIME_IN_THE_STATUE),
      EVENT(AncientLemuria_StartTremorOnTheStatue)},
@@ -919,7 +937,7 @@ struct Trigger gSceneEvents[] = {
 };
 
 // clang-format off
-s16 gAncientLemuria_ShimmerColors[] = {
+s16 gAncientLemuria_ShiningWaterColors[SHINING_WATER_COLORS] = {
     RGB(12, 24, 23), RGB(8, 22, 24), RGB(4, 20, 25),
     RGB(0, 18, 26),  RGB(0, 16, 26), RGB(0, 14, 26),
     RGB(0, 12, 26),  RGB(0, 14, 26), RGB(0, 16, 26),

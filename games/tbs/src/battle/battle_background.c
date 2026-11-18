@@ -35,9 +35,9 @@
 /// tiles, 32 to a row.
 #define BACKGROUND_UPPER_HALF_LINES 64
 
-/// A battle background resource: its BATTLE_BG_PALETTE_COLORS colours, then
+/// A battle background resource: its BATTLE_BACKGROUND_COLORS colours, then
 /// its packed picture.
-#define BACKGROUND_PALETTE_BYTES (BATTLE_BG_PALETTE_COLORS * 2)
+#define BACKGROUND_PALETTE_BYTES (BATTLE_BACKGROUND_COLORS * 2)
 
 /// The fixed background's sideways pan in 8.8 pixels while the zoom is below
 /// 1; from 1 on it moves three 8.8 pixels a step of the camera's yaw, so the
@@ -59,12 +59,12 @@ void BattleBackground_SetPaletteLevel(s32 unused, s32 level) {
 
   if (level == 0) {
     Dma_Set(palette, BATTLE_BG_PALETTE,
-            DMA_COPY_HALFWORDS(BATTLE_BG_PALETTE_COLORS), REG_DMA3);
+            DMA_COPY_HALFWORDS(BATTLE_BACKGROUND_COLORS), REG_DMA3);
   } else {
     Graphics_ScaleRgb555Clamped(palette, BATTLE_BG_PALETTE,
                                 battle->brightness =
                                     FIXED_ONE - level * BACKGROUND_LEVEL_STEP,
-                                BATTLE_BG_PALETTE_COLORS);
+                                BATTLE_BACKGROUND_COLORS);
   }
   Irq_Unlock(&ime);
 }
@@ -92,13 +92,13 @@ void BattleBackground_SetMode(s32 mode, s32 unusedResource, s32 fade) {
 
   if (fade == BATTLE_BACKGROUND_FADE_RESTORE) {
     Dma_Set(gBattleWork->palette, BATTLE_BG_PALETTE,
-            DMA_COPY_HALFWORDS(BATTLE_BG_PALETTE_COLORS), REG_DMA3);
+            DMA_COPY_HALFWORDS(BATTLE_BACKGROUND_COLORS), REG_DMA3);
   } else if (fade != 0) {
     u16 *source = gBattleWork->palette;
     u16 *destination = BATTLE_BG_PALETTE;
     s32 colorIndex;
 
-    for (colorIndex = 0; colorIndex != BATTLE_BG_PALETTE_COLORS; colorIndex++) {
+    for (colorIndex = 0; colorIndex != BATTLE_BACKGROUND_COLORS; colorIndex++) {
       s32 red = RGB_RED(source[colorIndex]);
       s32 green = RGB_GREEN(source[colorIndex]);
       s32 blue = RGB_BLUE(source[colorIndex]);
@@ -166,7 +166,7 @@ void BattleBackground_Load(s32 mode, s32 resourceId, s32 level) {
     Graphics_ScaleRgb555Clamped(palette, BATTLE_BG_PALETTE,
                                 battle->brightness =
                                     FIXED_ONE - level * BACKGROUND_LEVEL_STEP,
-                                BATTLE_BG_PALETTE_COLORS);
+                                BATTLE_BACKGROUND_COLORS);
   Dma_Set(OBJ_PLTT, &BG_PLTT_COLOR(BASIC_COLORS_PALETTE, 0),
           DMA_COPY_HALFWORDS(16), REG_DMA3);
   BG_PLTT_COLOR(BASIC_COLORS_PALETTE, TEXT_BACKGROUND_COLOR) =

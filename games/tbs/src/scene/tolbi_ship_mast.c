@@ -110,7 +110,7 @@ static void TolbiShipMast_ShowMonsters(void);
 static void TolbiShipMast_InitializeDriftingActor(s32 actorId);
 static void TolbiShipMast_RunMonsterLanding(void);
 static void TolbiShipMast_AnnounceLand(void);
-static void TolbiShipMast_UpdateSway(void);
+static void TolbiShipMast_RockView(void);
 static s32 TolbiShipMast_GetRowingBalance(void);
 static s32 TolbiShipMast_GetSeatRowValue(u32 seat);
 
@@ -160,7 +160,7 @@ enum TolbiShipMastFirstAttackActorId {
 enum TolbiShipMastEnsembleActorId {
   /// The first of seven birds, all of one sprite (SPRITE_BIRD, a white bird in
   /// three wing poses). They flutter and bob about the mast
-  /// (TolbiShipMast_SwayActor).
+  /// (TolbiShipMast_DriftBird).
   ///
   /// One swoops at the lookout at the second attack. They scatter as the third
   /// attack's monster comes, and they fly off just before "Land ho!".
@@ -202,7 +202,7 @@ static s32 TolbiShipMast_FollowCameraAndRotate(struct Actor *actor) {
 }
 
 /// A random sample of 6 or 9 turns the lookout to either side of north.
-static s32 TolbiShipMast_RandomizeLookoutFacing(struct Actor *actor) {
+static s32 TolbiShipMast_TurnLookoutAtRandom(struct Actor *actor) {
   u32 sample = Random_Below(64);
 
   if (sample == 6) {
@@ -217,12 +217,12 @@ static s32 TolbiShipMast_RandomizeLookoutFacing(struct Actor *actor) {
 /// Grows both axes by the same amount until the actor reaches full scale.
 static void TolbiShipMast_GrowActorScale(struct Actor *actor) {
   if (actor->scaleX < FIXED_ONE) {
-    actor->scaleX += 160;
-    actor->scaleY += 160;
+    actor->scaleX += FIXED_ONE * 5 / 2048;
+    actor->scaleY += FIXED_ONE * 5 / 2048;
   }
 }
 
-/// Which way TolbiShipMast_SwayActor moves an actor along each axis. It is kept
+/// Which way TolbiShipMast_DriftBird moves an actor along each axis. It is kept
 /// in the actor's timer (the drift) and its work (the bob).
 enum TolbiShipMastSway {
   SWAY_INCREASING = 0, ///< the drift speeding up, or the bob rising
@@ -230,8 +230,12 @@ enum TolbiShipMastSway {
   SWAY_HELD = 9        ///< held at zero; nothing here sets it
 };
 
+/// The rowers' balance (TolbiShipMast_GetRowingBalance) that takes the ship off
+/// course, as world_map.c names it.
+enum { ROWING_BALANCE_OFF_COURSE = 11 };
+
 /// Randomly reverses horizontal drift and vertical bobbing at their limits.
-static s32 TolbiShipMast_SwayActor(struct Actor *actor) {
+static s32 TolbiShipMast_DriftBird(struct Actor *actor) {
   // The drift: riseBaseY is the speed added to x each frame.
   if (actor->timer == SWAY_HELD) {
     actor->riseBaseY = 0;
@@ -267,8 +271,9 @@ static s32 TolbiShipMast_SwayActor(struct Actor *actor) {
   return 1;
 }
 
-/// Shrinks both axes. Once small enough, clears the actor's position and speed.
-static s32 TolbiShipMast_ShrinkAndStopActor(struct Actor *actor) {
+/// A bird flies off into the distance, growing smaller each frame; once small
+/// enough it is put away at the origin, standing still.
+static s32 TolbiShipMast_FlyBirdAway(struct Actor *actor) {
   struct Sprite *sprite = actor->sprite;
 
   sprite->image.priority = 3;
@@ -312,7 +317,7 @@ const struct Trigger *Scene_GetTriggers(void) {
 
 /// Walking south onto the ladder at the mast's top
 /// (CELL_BEHAVIOR_TOLBI_SHIP_MAST_LADDER) has the leader climb down.
-static void TolbiShipMast_ClimbDownLadder(void) { Field_ClimbDown(); }
+static void TolbiShipMast_ClimbDownMast(void) { Field_ClimbDown(); }
 
 /// Searching the mast's top for the captain's anchor charm
 /// (CELL_BEHAVIOR_TOLBI_SHIP_MAST_ANCHOR_CHARM) gives the Anchor Charm once the
@@ -343,7 +348,7 @@ s32 Scene_Initialize(void) {
       GameFlag_Get(FLAG_TOLBI_SHIP_AT_ISLAND) == 0) {
     gTolbiShipMast_SwayX = (u16)Random_Next();
     gTolbiShipMast_SwayY = (u16)Random_Next();
-    Task_AddFrame(TolbiShipMast_UpdateSway, TASK_PASS_FRAME);
+    Task_AddFrame(TolbiShipMast_RockView, TASK_PASS_FRAME);
   }
   if (GameFlag_Get(FLAG_TOLBI_SHIP_ANCHOR_CHARM_RETURNED) != 0 &&
       GameFlag_Get(FLAG_TOLBI_SHIP_REACHED_TOLBI) == 0) {
@@ -812,11 +817,12 @@ static void TolbiShipMast_AnnounceLand(void) {
       SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_NOISE);
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();
-  // The rowing balance picks where the ship comes in: exactly 11 takes
+  // The rowing balance picks where the ship comes in:
+  // ROWING_BALANCE_OFF_COURSE takes
   // TOLBI_SHIP_MAST_TO_TOLBI_SHIP_DECK_OFF_COURSE, off course to the island.
   gMainRoutineWork.restartScene = SCENE_SHIP_ROOMS;
   gMainRoutineWork.restartEntrance = SHIP_ROOMS_PASSENGER_HOLD_FROM_ROWING_DECK;
-  if (TolbiShipMast_GetRowingBalance() == 11) {
+  if (TolbiShipMast_GetRowingBalance() == ROWING_BALANCE_OFF_COURSE) {
     Import_EventSetExitRequest(TOLBI_SHIP_MAST_TO_TOLBI_SHIP_DECK_OFF_COURSE);
   } else {
     Import_EventSetExitRequest(TOLBI_SHIP_MAST_TO_TOLBI_SHIP_DECK_LAND_SIGHTED);
@@ -824,8 +830,9 @@ static void TolbiShipMast_AnnounceLand(void) {
   Event_End();
 }
 
-/// Adds horizontal and vertical sway to the camera origin each frame.
-static void TolbiShipMast_UpdateSway(void) {
+/// Rocks the view with the ship: adds a random swing across and up and down to
+/// the camera's origin each frame.
+static void TolbiShipMast_RockView(void) {
   s32 *camera = ((struct MapGridScrollWork *)gMapGridWork[0])->origin;
   FIXED swayX = Trig_Cos(gTolbiShipMast_SwayX);
   s32 swayY = Trig_Sin(gTolbiShipMast_SwayY);
@@ -837,8 +844,8 @@ static void TolbiShipMast_UpdateSway(void) {
   gTolbiShipMast_DriftY += swayY;
   gTolbiShipMast_SwayX += Random_Below(384);
   gTolbiShipMast_SwayY += Random_Below(512);
-  gTolbiShipMast_SwayX &= 0xffff;
-  gTolbiShipMast_SwayY &= 0xffff;
+  gTolbiShipMast_SwayX &= TRIG_ANGLE_MASK;
+  gTolbiShipMast_SwayY &= TRIG_ANGLE_MASK;
 }
 
 /// The rowing balance of the chosen passengers. It is the values of those at
@@ -898,11 +905,11 @@ s32 gTolbiShipMast_FollowCameraActions[] = {
 };
 
 s32 gTolbiShipMast_LookoutActions[] = {
-    SC_CALL(TolbiShipMast_RandomizeLookoutFacing),
+    SC_CALL(TolbiShipMast_TurnLookoutAtRandom),
 };
 
 s32 gTolbiShipMast_DriftActions[] = {
-    SC_CALL(TolbiShipMast_SwayActor),
+    SC_CALL(TolbiShipMast_DriftBird),
 };
 
 s32 gTolbiShipMast_WaveActions[] = {
@@ -927,7 +934,7 @@ s32 gTolbiShipMast_BirdDepartureA[] = {
     SC_MOVE(72, 0, 216),
     SC_SYNC,
     SC_MOVE(152, 0, 196),
-    SC_CALL(TolbiShipMast_ShrinkAndStopActor),
+    SC_CALL(TolbiShipMast_FlyBirdAway),
     SC_END,
 };
 
@@ -935,7 +942,7 @@ s32 gTolbiShipMast_BirdDepartureB[] = {
     SC_MOVE(132, 0, 242),
     SC_SYNC,
     SC_MOVE(152, 0, 196),
-    SC_CALL(TolbiShipMast_ShrinkAndStopActor),
+    SC_CALL(TolbiShipMast_FlyBirdAway),
     SC_END,
 };
 
@@ -943,7 +950,7 @@ s32 gTolbiShipMast_BirdDepartureC[] = {
     SC_MOVE(88, 0, 166),
     SC_SYNC,
     SC_MOVE(152, 0, 196),
-    SC_CALL(TolbiShipMast_ShrinkAndStopActor),
+    SC_CALL(TolbiShipMast_FlyBirdAway),
     SC_END,
 };
 
@@ -951,7 +958,7 @@ s32 gTolbiShipMast_BirdDepartureD[] = {
     SC_MOVE(220, 0, 134),
     SC_SYNC,
     SC_MOVE(152, 0, 196),
-    SC_CALL(TolbiShipMast_ShrinkAndStopActor),
+    SC_CALL(TolbiShipMast_FlyBirdAway),
     SC_END,
 };
 
@@ -959,7 +966,7 @@ s32 gTolbiShipMast_BirdDepartureE[] = {
     SC_MOVE(264, 0, 228),
     SC_SYNC,
     SC_MOVE(152, 0, 196),
-    SC_CALL(TolbiShipMast_ShrinkAndStopActor),
+    SC_CALL(TolbiShipMast_FlyBirdAway),
     SC_END,
 };
 
@@ -967,7 +974,7 @@ s32 gTolbiShipMast_BirdDepartureF[] = {
     SC_MOVE(282, 0, 168),
     SC_SYNC,
     SC_MOVE(152, 0, 196),
-    SC_CALL(TolbiShipMast_ShrinkAndStopActor),
+    SC_CALL(TolbiShipMast_FlyBirdAway),
     SC_END,
 };
 
@@ -976,7 +983,7 @@ u32 gTolbiShipMast_BirdDepartureG[] = {
     SC_MOVE(154, 0, 135),
     SC_SYNC,
     SC_MOVE(152, 0, 196),
-    SC_CALL(TolbiShipMast_ShrinkAndStopActor),
+    SC_CALL(TolbiShipMast_FlyBirdAway),
     SC_END,
     // Unused: eight words after the script's end, which nothing reads.
     // XXX (no evidence): what they were; as sixteen halfwords they form no
@@ -1060,7 +1067,7 @@ struct ActorPlacement gTolbiShipMast_LandingActorPlacements[] = {
 };
 
 struct Trigger gTolbiShipMast_Triggers[] = {
-    { STEP_TRIGGER_WALKING_INTO(FACING_SOUTH), CELL_BEHAVIOR_TOLBI_SHIP_MAST_LADDER, CONDITION_ALWAYS, EVENT(TolbiShipMast_ClimbDownLadder) },
+    { STEP_TRIGGER_WALKING_INTO(FACING_SOUTH), CELL_BEHAVIOR_TOLBI_SHIP_MAST_LADDER, CONDITION_ALWAYS, EVENT(TolbiShipMast_ClimbDownMast) },
     { TRIGGER_TALK, ACTOR_LOOKOUT, FLAG_TOLBI_SHIP_FIRST_ATTACK_FOUGHT_OFF, MSGNO(MsgTolbiShipWatchSeasHelpKaja) },
     { TRIGGER_TALK, ACTOR_LOOKOUT, FLAG_TOLBI_SHIP_AT_ISLAND, MSGNO(MsgTolbiShipLookoutCannotRow) },
     { TRIGGER_TALK, ACTOR_LOOKOUT, CONDITION_ALWAYS, MSGNO(MsgTolbiShipMonstersAnywhereAroundHere) },

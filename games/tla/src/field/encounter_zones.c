@@ -203,7 +203,7 @@ const struct EncounterZone gEncounter_EnemyGroupTable[] = {
         .formations = {311, 312, 313, 314, 315, 316, 317, 318},
         .weights = {20, 20, 10, 10, 10, 5, 5},
     },
-    // Yampi Desert: SceneId_YampiDesertPsynergyStone, SceneId_YampiDesertTreasurePit, SceneId_YampiDesertOasisCave, SceneId_YampiDesertBlowMaceChest
+    // Yampi Desert: SceneId_YampiDesertPsynergyStone, SceneId_YampiDesertTreasurePit, SceneId_YampiDesertSpringCave, SceneId_YampiDesertBlowMaceChest
     {
         .rate = 60,
         .level = 9,

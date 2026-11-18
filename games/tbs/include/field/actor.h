@@ -17,11 +17,15 @@ enum ScreenTransitionStyle {
   TRANSITION_WINDOW = 2,        ///< a window shape the variant chooses
   TRANSITION_DISSOLVE = 3,
   /// Opening from, or closing to, the centre line; the variant picks how.
-  TRANSITION_CENTRE_LINE = 4
+  TRANSITION_CENTER_LINE = 4
 };
 
 /// A scene transition as FieldWork.transition holds it.
 #define SCENE_TRANSITION(style, variant) ((style) << 8 | (variant))
+/// The two bytes of a SCENE_TRANSITION: its enum ScreenTransitionStyle, and
+/// the variant that style reads.
+#define SCENE_TRANSITION_STYLE(transition) (((transition) >> 8) & 0xff)
+#define SCENE_TRANSITION_VARIANT(transition) ((transition) & 0xff)
 
 #include "field/field_coordinate.h"
 
@@ -212,13 +216,11 @@ enum ActorMotionFlag {
   ACTOR_KEEPS_SPEED_ON_SLOPES = 0x10,
   /// Unused: nothing sets or reads it; a jump clears it with
   /// ACTOR_FOLLOWS_TERRAIN.
-  ACTOR_MOTION_SPARE = 0x80
+  ACTOR_MOTION_SPARE = 0x80,
+  /// The motion flags a jump keeps as the actor leaves the ground: all but
+  /// ACTOR_FOLLOWS_TERRAIN and the spare bit.
+  ACTOR_JUMP_KEEPS_MOTION = (u8)~(ACTOR_FOLLOWS_TERRAIN | ACTOR_MOTION_SPARE)
 };
-
-/// The motion flags a jump keeps as the actor leaves the ground: all but
-/// ACTOR_FOLLOWS_TERRAIN and the spare bit.
-#define ACTOR_JUMP_KEEPS_MOTION                                                \
-  ((u8)~(ACTOR_FOLLOWS_TERRAIN | ACTOR_MOTION_SPARE))
 
 /// Actor.collisionFlags bits.
 enum ActorCollisionFlag {

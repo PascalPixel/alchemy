@@ -15,10 +15,22 @@
 #include "system/ram_buffer.h"
 #include "macros.h"
 
+/// The cell behaviors that raise a step trigger, as The Broken Seal names
+/// them.
+#define CELL_BEHAVIOR_EVENT_FIRST 1
+#define CELL_BEHAVIOR_EVENT_LAST 230
+/// MainRoutineWork.hazardDamage's amount, below HAZARD_DAMAGE_PERCENT.
+#define HAZARD_DAMAGE_AMOUNT 0xff
+/// A loss of more HP than this plays SE_HEAVY_IMPACT rather than SE_IMPACT.
+#define HEAVY_DAMAGE 10
+/// Poison takes 1/POISON_DAMAGE_DIVISOR of a character's maximum HP, rounded to
+/// the nearest, and venom ("deadly poison") 1/VENOM_DAMAGE_DIVISOR.
+#define POISON_DAMAGE_DIVISOR 20
+#define VENOM_DAMAGE_DIVISOR 10
+
 /// Unused: returns 0.
 UNUSED s32 FieldSequence_ReturnZero(void) { return 0; }
 
-// The fields of struct Unit that Field_UpdateWalking reads (see its tag).
 /// Clears the field's twelve pending requests (see struct FieldWork).
 void Field_ClearRequests(void) {
   struct FieldWork *work = gFieldWork;
@@ -74,7 +86,7 @@ void Field_UpdateHoverReady(void) {
 /// Returns the cell behavior of the map cell 16 pixels ahead of the party
 /// leader (a World Map cell picture on the World Map), or 0 without a leader.
 s32 Field_GetCollisionAheadOfLeader(void) {
-  struct FieldWork *block = Ram_HeapSlots->fieldWork;
+  struct FieldWork *work = Ram_HeapSlots->fieldWork;
   struct Actor *actor = Field_GetPartyActor();
   struct MapWork *map = Ram_HeapSlots->mapGrid;
   FIXED position[3];
@@ -86,7 +98,7 @@ s32 Field_GetCollisionAheadOfLeader(void) {
   position[1] = actor->y.fixed;
   position[2] = actor->z.fixed;
   Vector_AddPolarOffset(toFIXED(16), actor->facing, position);
-  if (block->mode == 3) {
+  if (work->mode == ACTOR_SYSTEM_WORLD_MAP) {
     s32 x, z;
 
     x = position[0];
@@ -107,7 +119,7 @@ s32 Field_GetCollisionAheadOfLeader(void) {
 /// The collision code of the cell under the leader (on the world map, of its
 /// block), or 0 with no leader. Teleport's triggers match it.
 s32 Field_GetCollisionUnderLeader(void) {
-  struct FieldWork *block = Ram_HeapSlots->fieldWork;
+  struct FieldWork *work = Ram_HeapSlots->fieldWork;
   struct Actor *actor = Field_GetPartyActor();
   struct MapWork *map = Ram_HeapSlots->mapGrid;
   struct Vector3 position;
@@ -116,20 +128,16 @@ s32 Field_GetCollisionUnderLeader(void) {
   if (actor == NULL)
     return 0;
   SET_POSITION(&position, actor->x.fixed, actor->y.fixed, actor->z.fixed);
-  if (block->mode == 3) {
-    // The block table at its fixed address: as the linked gCellPictures it
-    // loads
+  if (work->mode == ACTOR_SYSTEM_WORLD_MAP) {
     cell = (struct MapCell *)Ram_MapBlocks +
            (((position.x / toFIXED(32)) & 31) +
             ((position.z / toFIXED(32)) & 31) * 32);
   } else {
     cell = map->layers[0].cells;
-    cell += position.x / toFIXED(16) + position.z / toFIXED(16) * 128;
+    cell += position.x / toFIXED(16) + position.z / toFIXED(16) * MAPGRID_SIZE;
   }
   return cell->collisionCode;
 }
-
-// The overlay's entry table; entry 11 returns the map's region list.
 
 /// Takes the exit of the first of the scene's exit regions that contains the
 /// position (x, y, z), in 16.16 pixels, and whose condition holds: records the
@@ -226,7 +234,7 @@ void Field_UpdateWalking(u32 layer, FIXED x, FIXED y, FIXED z) {
       tile = map->layers[layer].cells;
     else
       tile = (struct MapCell *)Ram_MapCellBuffer;
-    tile = &tile[(x / toFIXED(16)) + ((z / toFIXED(16)) << 7)];
+    tile = &tile[x / toFIXED(16) + z / toFIXED(16) * MAPGRID_SIZE];
     event = tile->collisionCode;
     attributes = tile->attributeB;
   }
@@ -234,7 +242,8 @@ void Field_UpdateWalking(u32 layer, FIXED x, FIXED y, FIXED z) {
   work->currentCell = tile;
   if (attributes != 0)
     Field_CheckExitRegions(x, y, z);
-  if (event - 1 <= 229)
+  if (event - CELL_BEHAVIOR_EVENT_FIRST <=
+      CELL_BEHAVIOR_EVENT_LAST - CELL_BEHAVIOR_EVENT_FIRST)
     work->stepTrigger = event;
   if (attributes &
       (MAP_CELL_PUSH | MAP_CELL_LEDGE | MAP_CELL_CLIMBABLE | MAP_CELL_JUMP))
@@ -256,14 +265,17 @@ void Field_UpdateWalking(u32 layer, FIXED x, FIXED y, FIXED z) {
       work->encounter = Encounter_RollTerrain(zone, speed);
     }
 
+    // Every FIXED_ONE of distance walked (counted at half speed on ground whose
+    // encounter zone is 0), the party regains PP, Djinn recover, and poison
+    // hurts.
     step = Iwram_MulFX(work->walkingDistanceScale, leader->speedLimit);
     if (!zone)
       step /= 2;
     distance = work->walkingDistance + step;
     work->walkingDistance = distance;
-    if (distance > FIXED_ONE - 1) {
+    if (distance >= FIXED_ONE) {
       amount = distance / FIXED_ONE;
-      work->walkingDistance = distance & 0xffff;
+      work->walkingDistance = distance & (FIXED_ONE - 1);
       Party_AddPp(amount, 0);
       if (DjinnRecovery_CountDownFar())
         Sound_PlayFar(SE_DJINNI_SET);
@@ -302,10 +314,10 @@ void Field_UpdateWalking(u32 layer, FIXED x, FIXED y, FIXED z) {
                                             ATTACHED_EFFECT_REMOVE);
   }
   if ((s16)gMainRoutineWork.hazardSteps >= gMainRoutineWork.hazardLimit) {
-    // hazardDamage: bits 7 to 0 the amount, bit 8 a percentage of maximum HP.
     amount = gMainRoutineWork.hazardDamage;
     gMainRoutineWork.hazardSteps = 0;
-    Party_AddHp(-(amount & 255), amount & HAZARD_DAMAGE_PERCENT);
+    Party_AddHp(-(amount & HAZARD_DAMAGE_AMOUNT),
+                amount & HAZARD_DAMAGE_PERCENT);
     partyHurt++;
   }
 
@@ -347,7 +359,7 @@ void Party_AddHp(s32 amount, s32 scaled) {
   if (amount < 0) {
     PaletteFade_SetSource(RGB(31, 15, 0), 0);
     PaletteFade_StartInterpolation(4);
-    if (amount < -10)
+    if (amount < -HEAVY_DAMAGE)
       Sound_PlayFar(SE_HEAVY_IMPACT);
     else
       Sound_PlayFar(SE_IMPACT);
@@ -379,6 +391,8 @@ s32 Party_ApplyPoisonDamage(void) {
   s32 count = Party_CountMembersFar();
 
   if (result < count) {
+    /* FAKEMATCH(temporary): the party's offset held in a local and added to
+     * the work's address; as entry = gMainRoutineWork.party. */
     s32 offset = offsetof(struct MainRoutineWork, party);
     u8 *entry;
     s32 remaining;
@@ -391,15 +405,17 @@ s32 Party_ApplyPoisonDamage(void) {
       s32 amount;
 
       switch (object->poison) {
-      case 1:
-        amount = -((object->hpMax + 10) / 20);
+      case POISON_NORMAL:
+        amount = -((object->hpMax + POISON_DAMAGE_DIVISOR / 2) /
+                   POISON_DAMAGE_DIVISOR);
         if (amount == 0)
           amount = -1;
         if (result <= 0)
           result = 1;
         break;
-      case 2:
-        amount = -((object->hpMax + 5) / 10);
+      case POISON_VENOM:
+        amount = -((object->hpMax + VENOM_DAMAGE_DIVISOR / 2) /
+                   VENOM_DAMAGE_DIVISOR);
         if (amount == 0)
           amount = -1;
         if (result <= 1)
@@ -435,19 +451,17 @@ void WorldMap_Freeze(void) {
   // The mode and areaGraphicsPending read as one halfword.
   if (*(u16 *)&work->mode == ACTOR_SYSTEM_WORLD_MAP) {
     struct ScreenTransitionState *transition;
-    s32 zero;
 
     work->areaGraphicsPending = 1;
 
     work->camera->paused = 1;
-    zero = 0;
     transition =
         HeapSlot_AllocEwram(HEAP_SLOT_SCREEN_TRANSITION, sizeof(*transition));
     if (transition != NULL && transition->step != 0) {
-      transition->start = 80;
-      transition->end = zero;
+      transition->start = DISPLAY_HEIGHT / 2;
+      transition->end = 0;
       transition->duration = 1;
-      transition->step = zero;
+      transition->step = 0;
       wait(2);
     }
     WorldMap_StartStillPictureFar();
@@ -482,3 +496,10 @@ struct Actor *Field_GetPartyActor(void) {
     leader = work->actors[ACTOR_FIRST_PLACED];
   return leader;
 }
+
+#undef CELL_BEHAVIOR_EVENT_FIRST
+#undef CELL_BEHAVIOR_EVENT_LAST
+#undef HAZARD_DAMAGE_AMOUNT
+#undef HEAVY_DAMAGE
+#undef POISON_DAMAGE_DIVISOR
+#undef VENOM_DAMAGE_DIVISOR

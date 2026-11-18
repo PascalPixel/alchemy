@@ -59,8 +59,8 @@ extern u8 gSceneLocalState[];
 /// sourceY over the destination, then wait frames.
 #define MAPGRID_ANIMATION_STEP(sourceX, sourceY, width, height, frames)        \
   (sourceX), (sourceY), (width), (height), (frames)
-#define MAPGRID_ANIMATION_STEPS_END                                            \
-  0xffff ///< a source column that ends the steps
+/// A source column that ends the steps.
+#define MAPGRID_ANIMATION_STEPS_END 65535
 
 /// A cell animation, such as a door opening: its steps and the cell they are
 /// copied to (MapGrid_PlayMapEdit, which blocks until the last).
@@ -116,11 +116,13 @@ static inline void Actor_RunScriptAndWait(s32 actorId, const s32 *script) {
 }
 
 /// Two actors speak at once, each message and portrait at its own tile
-/// position, until A, B, L or R closes both (Event_ShowTwoMessagesAndWait).
-void Import_EventShowTwoMessagesAndWait(s32 speaker, s32 x, s32 y, s32 arg,
-                                        s32 extra, s32 other_speaker,
-                                        s32 otherX, s32 other_y, s32 other_arg,
-                                        s32 other_extra, s32 flags);
+/// position, until A, B, L or R closes both (Event_ShowTwoMessagesAndWait,
+/// which takes no `unused`).
+void Import_EventShowTwoMessagesAndWait(s32 speaker, s32 x, s32 y,
+                                        s32 portraitX, s32 portraitY,
+                                        s32 otherSpeaker, s32 otherX,
+                                        s32 otherY, s32 otherPortraitX,
+                                        s32 otherPortraitY, s32 unused);
 
 #ifdef FIELD_STAGED_ACTOR_IMPORTS
 void Sound_PlayFar(s32 id);
@@ -438,14 +440,16 @@ static inline void Actor_WalkToAndWait(s32 actorId, s32 x, s32 z) {
   Actor_WalkToAndWaitById(actorId, x, z);
 }
 
-/// Has two actors speak at once, each window placed by the event.
+/// Has two actors speak at once, each message and its portrait placed by the
+/// event, in tiles.
 static inline void
-FieldEvent_ShowTwoMessagesAndWait(s32 speaker, s32 x, s32 y, s32 arg, s32 extra,
-                                  s32 otherSpeaker, s32 otherX, s32 otherY,
-                                  s32 otherArg, s32 otherExtra, s32 flags) {
-  Import_EventShowTwoMessagesAndWait(speaker, x, y, arg, extra, otherSpeaker,
-                                     otherX, otherY, otherArg, otherExtra,
-                                     flags);
+FieldEvent_ShowTwoMessagesAndWait(s32 speaker, s32 x, s32 y, s32 portraitX,
+                                  s32 portraitY, s32 otherSpeaker, s32 otherX,
+                                  s32 otherY, s32 otherPortraitX,
+                                  s32 otherPortraitY, s32 unused) {
+  Import_EventShowTwoMessagesAndWait(speaker, x, y, portraitX, portraitY,
+                                     otherSpeaker, otherX, otherY,
+                                     otherPortraitX, otherPortraitY, unused);
 }
 
 #endif

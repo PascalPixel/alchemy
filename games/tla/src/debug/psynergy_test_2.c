@@ -267,7 +267,7 @@ void PsynergyTest2_StartRocks(void) {
     sprite->oam.fullColor = 1;
     sprite->oam.palette = 0;
     sprite->oam.priority = 0;
-    sprite->depth = 240;
+    sprite->depth = OAM_DEPTH_WINDOW;
     rock->variant = -1;
   }
   {

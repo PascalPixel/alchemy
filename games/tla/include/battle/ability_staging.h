@@ -16,10 +16,9 @@ extern const u8 gAbilityStaging[];
 /// Each ability's staging bits (BattlePlan.battleEffect), by ability id.
 extern const u32 gAbilityBattleEffects[];
 
-/// BattlePlan.staging: how
-/// BattleStaging_DispatchAction shows the action, set by BattleActionRun_Build
-/// from the ability (gAbilityStaging where it gives one). The Lost Age adds the
-/// stagings from STAGING_TEAM_STRIKE on.
+/// BattlePlan.staging: how BattleStaging_DispatchAction shows the action, set
+/// by BattleActionRun_Build from the ability (gAbilityStaging where it gives
+/// one).
 enum BattleStaging {
   STAGING_MESSAGES = 1, ///< no effect: each target's messages only
   STAGING_ATTACK = 2,   ///< the acting unit runs up and strikes
@@ -54,21 +53,25 @@ enum BattleStaging {
   STAGING_BEAST_PSYNERGY = 17
 };
 
-// BattlePlan.battleEffect: the effect kind
-// in the low twelve bits and its strength (a double or triple blow) above them;
-// then how the effect is staged.
+// BattlePlan.battleEffect: the effect kind in the low twelve bits and its
+// strength (a double or triple blow) above them; then how the effect is staged.
 #define EFFECT_ID_MASK 0xfff
 #define EFFECT_VARIANT_MASK 0x3000
 #define EFFECT_VARIANT_SHIFT 12
 #define EFFECT_BY_ID_RANGE 0x4000 ///< BattleEffect_RunByIdRangeFar
 #define EFFECT_SUMMON 0x8000 ///< BattleEffect_RunSummonFar, acting unit's view
 #define EFFECT_ON_DOWNED 0x10000 ///< shown on downed targets too (revivals)
-/// Plays the effect on the side opposite its targets. Unused: no entry of
-/// gAbilityBattleEffects in either game sets it and no code adds it.
+/// Unused: no entry of gAbilityBattleEffects sets it and no code adds it, so
+/// BattleStaging_HideField's flip never happens. It would play the effect on
+/// the side opposite its targets.
 #define EFFECT_OTHER_SIDE 0x20000
 /// The camera takes the other side's view (an enemy's cast a view of its
 /// own), or turns right round.
 #define EFFECT_VIEW_ACROSS 0x40000
 #define EFFECT_VIEW_REVERSED 0x80000
+/// Unused: an effect kind no row of gAbilityBattleEffects gives, which
+/// BattleStaging_RunAttack would play with the status window's PP row hidden
+/// (Severe Blow is BATTLE_EFFECT_SEVERE_BLOW).
+#define EFFECT_ID_SEVERE_BLOW 135
 
 #endif

@@ -17,6 +17,9 @@
 // scene's exits, one packed word each (and a flag word after it when
 // EXIT_HAS_FLAG is set).
 #define EXIT_SCENE_MASK 0xfff
+/// The scene of a table's first exit word, the destination when no exit
+/// matches: nine bits, where EXIT_SCENE_MASK takes twelve.
+#define EXIT_DEFAULT_SCENE_MASK 0x1ff
 #define ENTRANCE(word) (((word) & 0xff000) >> 12)
 #define EXIT_ID(word) (((word) & 0x0ff00000) >> 20)
 #define EXIT_HAS_FLAG 0x10000000
@@ -66,8 +69,7 @@ void Scene_TakeExit(s32 exitId) {
       if (flag)
         flag = *exitTable++;
       if (sceneId == SCENE_EXITS_END || kind == 0) {
-        destinationScene =
-            *firstExit & 0x1ff; // only 9 bits, unlike EXIT_SCENE_MASK
+        destinationScene = *firstExit & EXIT_DEFAULT_SCENE_MASK;
         break;
       }
       if (kind == EXIT_ID_ANY || kind == exitId) {
@@ -299,6 +301,9 @@ void Scene_LoadOverlay(s32 unused) {
 
 #define MAP_HEADER(id) (&gScenes[id])
 
+/// FLAG_AREA_VISITED has a flag for each of 128 areas.
+#define AREA_VISITED_MASK 0x7f
+
 /// Updates the flags and state that last for one scene or one area, on entering
 /// the current scene.
 void Scene_Arrive(s32 unused, s32 keep) {
@@ -337,7 +342,7 @@ void Scene_Arrive(s32 unused, s32 keep) {
     gMainRoutineWork.returnMusic = -1;
   }
   gMainRoutineWork.area = area;
-  GameFlag_SetFar(FLAG_AREA_VISITED(area & 0x7f));
+  GameFlag_SetFar(FLAG_AREA_VISITED(area & AREA_VISITED_MASK));
   gMainRoutineWork.sceneType = MAP_HEADER(gMainRoutineWork.next)->sceneType;
   if (gMainRoutineWork.sceneType == SCENE_TYPE_TOWN)
     GameFlag_SetFar(FLAG_IN_TOWN);
@@ -348,6 +353,8 @@ void Scene_Arrive(s32 unused, s32 keep) {
 void Scene_PlayMusic(void) { Sound_PlayFar(gMainRoutineWork.sceneMusic); }
 
 #undef EXIT_SCENE_MASK
+#undef EXIT_DEFAULT_SCENE_MASK
+#undef AREA_VISITED_MASK
 #undef ENTRANCE
 #undef EXIT_ID
 #undef EXIT_HAS_FLAG

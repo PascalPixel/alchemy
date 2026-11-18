@@ -51,7 +51,7 @@ enum SpriteId {
   SPRITE_OBABA,
   SPRITE_CHAUCHA,
   SPRITE_EOLEO,
-  SPRITE_CHAMPA_CREWMAN,
+  SPRITE_CHAMPA_SAILOR,
   SPRITE_SHAMAN_VILLAGER,
   SPRITE_MOAPA,
   SPRITE_MAHA,
@@ -171,6 +171,8 @@ enum SpriteId {
   SPRITE_PROX_MAN_WITH_GREEN_HAIR,
   SPRITE_LEMURIAN_WOMAN,
   SPRITE_LEMURIAN_GIRL,
+  /// Avimander, the salamander grown into a red beast with a spiked green tail.
+  SPRITE_AVIMANDER,
   SPRITE_POSEIDON = 159,
   SPRITE_LEMURIAN_MAN,
   SPRITE_GIRL_WITH_RED_BOW,
@@ -346,6 +348,7 @@ enum SpriteId {
   SPRITE_FLAME_PILLAR,
   SPRITE_LADY_STATUE,
   SPRITE_UNSEEN_BLOCK,
+  SPRITE_SALAMANDER, ///< Obaba's small red salamander
   SPRITE_ANGEL_STATUE = 339,
   SPRITE_ARCHER_STATUE,
   SPRITE_WHITE_WINGS,
@@ -355,6 +358,9 @@ enum SpriteId {
   SPRITE_MENARDIS_SHIP,
   SPRITE_GANGWAY,
   SPRITE_WATER_DROP,
+  /// A small blue orb of energy and the rings it bursts into: the Gabomba
+  /// Statue's charges, "the energy charge" that runs over its blocks.
+  SPRITE_ENERGY_CHARGE,
   SPRITE_STEAM_VENT = 351,
   SPRITE_POUND_FIST,
   SPRITE_SCOOP_HAND,
@@ -371,7 +377,10 @@ enum SpriteId {
   SPRITE_SMALL_FLAME,
   SPRITE_BLAZE_FLAME,
   SPRITE_BLAZE_FLICKER,
-  SPRITE_WOODEN_BENCH = 369,
+  /// Kibombo's signal fire: a stone fire pit glowing blue over red embers,
+  /// puffs of smoke rising, and the embers alone.
+  SPRITE_SIGNAL_FIRE,
+  SPRITE_PLANK_BRIDGE,
   SPRITE_LOG_PAIR,
   SPRITE_WOODEN_SIGN,
   SPRITE_SPROUTING_LEAVES,
@@ -380,9 +389,16 @@ enum SpriteId {
   SPRITE_SEATED_IDOL,
   SPRITE_CARVED_FACE,
   SPRITE_WIND_STATUE,
-  SPRITE_MOAI = 380,
-  SPRITE_TWISTER_ROCK = 382,
+  /// The grey cap with a yellow slit on top of a Magma Rock statue, which its
+  /// flame column raises.
+  SPRITE_STATUE_CAP = 379,
+  SPRITE_MOAI,
+  /// The water a Moai pours from its mouth once Douse fills it, a pool and a
+  /// stream added to its sprite (AquaRockInside_SetMoaiFace).
+  SPRITE_MOAI_WATER,
+  SPRITE_TWISTER_ROCK,
   SPRITE_WATER_DROP_LARGE,
+  SPRITE_GREAT_FIRE, ///< the great fire before Magma Rock's way in
   SPRITE_ALTAR = 385,
   SPRITE_LIT_CANDLESTICK,
   SPRITE_CANDLESTICK,
@@ -392,10 +408,15 @@ enum SpriteId {
   SPRITE_STONE_FACE_PILLAR_HALF_A,
   SPRITE_STONE_FACE_PILLAR,
   SPRITE_STONE_FACE_PILLAR_HALF_B,
-  SPRITE_DOLL = 397,
+  /// The Gabomba statue's eye: ringed with light, then plain.
+  SPRITE_GABOMBA_EYE = 395,
+  /// The Gabomba statue's tongue, stretching out and drawing back.
+  SPRITE_GABOMBA_TONGUE,
+  SPRITE_DOLL,
   SPRITE_BARREL,
   SPRITE_PENGUIN,
   SPRITE_PENGUIN_WITH_BOW,
+  SPRITE_FISH, ///< a small fish swimming, and curling
   SPRITE_ICY_SEA_ROCK = 402,
   SPRITE_FLAME_PUFF,
   SPRITE_BURST_PILLAR,
@@ -416,9 +437,14 @@ enum SpriteId {
   SPRITE_STONE_BASIN,
   SPRITE_STONE_BLOCK = 428,
   SPRITE_COILED_DRAGON_STATUE,
+  /// A grey stone block, concentric squares on its face, that carries a
+  /// glowing symbol in the Anemos Inner Sanctum.
+  SPRITE_SYMBOL_BLOCK,
   SPRITE_MIMIC_STONE = 431,
   SPRITE_ARROW_PANEL,
   SPRITE_WORLD_MAP_ISLAND,
+  /// A white gloved hand pointing down at something.
+  SPRITE_POINTING_HAND,
   SPRITE_WORLD_MAP_VILLAGE = 438,
   SPRITE_WORLD_MAP_TOWN,
   SPRITE_WORLD_MAP_STUMP_VILLAGE,
@@ -431,7 +457,7 @@ enum SpriteId {
   SPRITE_WORLD_MAP_MOUNTAIN,
   SPRITE_WORLD_MAP_BABI_LIGHTHOUSE,
   SPRITE_LARGE_WAGON,
-  SPRITE_SIGNPOST,
+  SPRITE_SIGN,
   SPRITE_WORLD_MAP_FOREST,
   SPRITE_WORLD_MAP_VENUS_LIGHTHOUSE,
   SPRITE_WORLD_MAP_DOCK,
@@ -448,6 +474,7 @@ enum SpriteId {
   SPRITE_WORLD_MAP_GAIA_ROCK,
   SPRITE_WORLD_MAP_MAGMA_ROCK,
   SPRITE_FLOWER_VASE,
+  SPRITE_WHITE_ROCK, ///< a pale round rock
   SPRITE_WORLD_MAP_TAOPO_SWAMP = 468,
   SPRITE_WORLD_MAP_ANKOHL_RUINS,
   SPRITE_WORLD_MAP_SHRINE_OF_THE_SEA_GOD,
@@ -645,6 +672,11 @@ enum SpriteId {
   SPRITE_HAURES,
   SPRITE_HAURES_FLAME,
   SPRITE_HAURES_DOT,
+  /// Daedalus's finned rocket, the second strike's
+  /// (BattleEffect_RunDaedalusStrike).
+  SPRITE_DAEDALUS_ROCKET,
+  /// A missile, sixteen of which Daedalus dives onto the foes.
+  SPRITE_DAEDALUS_MISSILE,
   SPRITE_TRIDENT = 664,
   SPRITE_SUN,
   SPRITE_MARS_BEACON,
@@ -665,6 +697,9 @@ enum SpriteId {
   SPRITE_KEY,
   SPRITE_JAIL_KEY,
   SPRITE_SANDSTORM,
+  /// Moapa's battle shadow: three ellipses, right of centre, left of it and
+  /// centred, where SPRITE_BATTLE_SHADOW has one centred.
+  SPRITE_MOAPA_SHADOW,
   SPRITE_BATTLE_SHADOW = 686,
   SPRITE_BATTLE_SHADOW_NARROW,
   SPRITE_STATUS_WIDE_POISON,
@@ -697,12 +732,29 @@ enum SpriteId {
   SPRITE_STATUS_GRIM_REAPER_7
 };
 
-/// SPRITE_STUMP's animations beyond its standing frame (stump.tsv), as The
-/// Broken Seal's.
+/// SPRITE_STUMP's animations beyond its standing frame (stump.tsv).
 enum StumpAnimation {
   /// Sinks until only its cut top shows, level with the ground or the water.
   STUMP_ANIMATION_SINK = 2,
   STUMP_ANIMATION_SPLASH = 3 ///< drops into water with a splash
 };
+
+/// The animations of SPRITE_FLOATING_LOG_WEST_EAST and
+/// SPRITE_FLOATING_LOG_NORTH_SOUTH (floating_log_west_east.tsv,
+/// floating_log_north_south.tsv), the logs the leader rides in the Islet Cave.
+enum FloatingLogAnimation {
+  FLOATING_LOG_ANIMATION_FLOAT = 1, ///< bobbing on the water
+  /// A dip under the leader's step, then FLOATING_LOG_ANIMATION_FLOAT.
+  FLOATING_LOG_ANIMATION_SETTLE = 2,
+  /// Rolling over as it rides east or south.
+  FLOATING_LOG_ANIMATION_ROLL_EAST_OR_SOUTH = 3,
+  /// Rolling over the other way, as it rides west or north.
+  FLOATING_LOG_ANIMATION_ROLL_WEST_OR_NORTH = 4
+};
+
+/// SPRITE_ENERGY_CHARGE's animation that bursts the orb into rings.
+#define ENERGY_CHARGE_ANIMATION_BURST 3
+/// SPRITE_ARROW_PANEL's animation with its arrow pointing up: a lift ready.
+#define ARROW_PANEL_ANIMATION_UP 2
 
 #endif

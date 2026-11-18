@@ -126,8 +126,10 @@ s32 Icon_DrawVariantWithTileOffset(struct Window *window, s32 x, s32 y,
   return 1;
 }
 
-/// Moves through the status grid's irregular rows and returns row * 9 + column.
-/// Nothing calls it.
+/// Moves the selection *cursor among `count` entries in rows of `columns`:
+/// left and right step and wrap, up and down move a row, the last row ending
+/// at the last entry. Returns 0 when it stays, 1 when it moves within its row
+/// and 2 when it reaches another row (another page of the party members).
 s32 Menu_MoveGridCursor(s32 *cursor, s32 count, s32 columns) {
   struct InputState *input = &gInput;
   s32 result = 0;
@@ -209,7 +211,8 @@ void Menu_SetPageArrowsB(s32 index, s32 count) {
 }
 
 /// Sets the page arrows for `index` and sets the chosen party member's figure
-/// apart from the others on its page of four: its y 30, theirs 26.
+/// apart from the others on its page of four: its y MENU_MEMBER_CHOSEN_Y,
+/// theirs MENU_MEMBER_Y.
 void Menu_HighlightPageEntry(s32 unused, s32 index, s32 count) {
   struct ItemMenuWork *menu = Ram_HeapSlots->menuWork;
   s32 top = index / 4 * 4;
@@ -218,9 +221,9 @@ void Menu_HighlightPageEntry(s32 unused, s32 index, s32 count) {
   Menu_SetPageArrowsA(index, count);
   for (i = 0; i <= 3; i++) {
     if (top + i == index)
-      menu->memberY[i] = 30;
+      menu->memberY[i] = MENU_MEMBER_CHOSEN_Y;
     else
-      menu->memberY[i] = 26;
+      menu->memberY[i] = MENU_MEMBER_Y;
   }
 }
 
@@ -290,7 +293,7 @@ void Menu_CreatePairEntryObjects(s32 first, s32 second) {
 }
 
 /// Replaces the menu's party figures with up to four party members' figures,
-/// from party place first on, standing (animation 1), and counts the party.
+/// from party place first on, standing (ANIM_STAND), and counts the party.
 void Menu_CreateOwnerEntryObjects(s32 first) {
   struct ItemMenuWork *menu = Ram_HeapSlots->menuWork;
   u16 owners[14];
@@ -306,7 +309,7 @@ void Menu_CreateOwnerEntryObjects(s32 first) {
     }
   }
   menu->sideCount[0] = Party_ListMembersFar(owners);
-  for (i = 0; i < 4 && owners[first + i] != 255; i++) {
+  for (i = 0; i < 4 && owners[first + i] != BATTLE_UNIT_LIST_END; i++) {
     menu->memberSpriteIds[i] = owners[first + i];
     object = Sprite_CreateFar(Party_GetCharacterSpriteFar(owners[first + i]));
     if (object != NULL) {
@@ -514,9 +517,8 @@ void MenuIcon_PushSlots(void) {
 extern u16 gStatusScreen_CommandIcons[5];
 
 /// Loads the Status screen's five command icons (gStatusScreen_CommandIcons)
-/// into free VRAM entries, gives
-/// each slot its sprite attributes and tile, keeps the entries for
-/// MenuIcon_ReleaseSlots and starts MenuIcon_PushSlots.
+/// into free VRAM entries, gives each slot its sprite attributes and tile,
+/// keeps the entries for MenuIcon_ReleaseSlots and starts MenuIcon_PushSlots.
 void MenuIcon_LoadSlots(void) {
   struct ItemMenuWork *menu = Ram_HeapSlots->menuWork;
   struct IconSprite *slot = menu->menuIcons;

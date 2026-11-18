@@ -161,7 +161,7 @@ enum CrossboneIsleBaneActorId {
   ///
   /// It is drawn in the sprite of McCoy's Palace's chests. It follows the
   /// pillar until the pillar reaches the ladder, where the chest's examine
-  /// trigger 107 takes its place. It is drawn open once
+  /// trigger, TREASURE_SPOT_DEMON_AXE, takes its place. It is drawn open once
   /// FLAG_CROSSBONE_ISLE_DEMON_AXE is set.
   ACTOR_SECOND_PILLAR_CHEST,
   /// Bane, a Venus Djinni, until it is caught.
@@ -169,6 +169,14 @@ enum CrossboneIsleBaneActorId {
 };
 
 enum { PASSAGE_INDEX_MASK = 0xff, PASSAGE_PLAY_OPENING = 0x100 };
+
+/// The Demon Axe chest's examine trigger, a treasure spot the code places
+/// where the second pillar stands.
+#define TREASURE_SPOT_DEMON_AXE (TREASURE_SPOT_FIRST_ID + 7)
+
+/// The step triggers round the corner where Bane keeps away from the leader,
+/// one for each row of gCrossboneIsleKeys_BaneWalkTargets.
+#define BANE_CORNER_FIRST_STEP 30
 
 #define FLAG_CROSSBONE_ISLE_BANE_PUDDLE_FROZEN FLAG_SCENE_TEMP_00
 /// CrossboneIsleBane: the chest on the second pillar has reached the ladder.
@@ -338,7 +346,7 @@ static void CrossboneIsleKeys_BaneLastEscape(void) {
 
     djinni = Actor_Get(ACTOR_BANE);
     djinni->sprite->rotation = 0;
-    Actor_SetAnimationSpeed(djinni, 16);
+    Actor_SetAnimationSpeed(djinni, ANIMATION_STEP_NORMAL);
     Sound_Play(SE_JUMP);
     Actor_Get(ACTOR_BANE)->velocityY = toFIXED(8);
     Actor_FaceDirection(ACTOR_BANE, FACING_WEST, 30);
@@ -390,7 +398,7 @@ static void CrossboneIsleKeys_BaneKeepsAway(void) {
       djinni->speedLimit = Actor_Get(ACTOR_PARTY_LEADER)->speedLimit;
       djinni = Actor_Get(ACTOR_BANE);
       djinni->acceleration = Actor_Get(ACTOR_PARTY_LEADER)->speedLimit;
-      target -= 30;
+      target -= BANE_CORNER_FIRST_STEP;
       Actor_WalkTo(ACTOR_BANE, gCrossboneIsleKeys_BaneWalkTargets[target][0],
                    gCrossboneIsleKeys_BaneWalkTargets[target][1]);
     }
@@ -512,7 +520,7 @@ static void CrossboneIsleKeys_OpenThirdBlueDoor(void) {
   CrossboneIsleKeys_UseBlueKey(2);
   if (Actor_Get(ACTOR_PARTY_LEADER)->facing == FACING_SOUTH) {
     blockedSteps = &gFieldWork->blockedSteps;
-    if (*blockedSteps > 12) {
+    if (*blockedSteps > FIELD_PUSH_FRAMES) {
       Field_TryJumpForward();
       *blockedSteps = resetSteps;
     }
@@ -528,7 +536,7 @@ static void CrossboneIsleKeys_OpenFourthBlueDoor(void) {
   CrossboneIsleKeys_UseBlueKey(3);
   if (Actor_Get(ACTOR_PARTY_LEADER)->facing == FACING_SOUTH) {
     blockedSteps = &gFieldWork->blockedSteps;
-    if (*blockedSteps > 12) {
+    if (*blockedSteps > FIELD_PUSH_FRAMES) {
       Field_TryJumpForward();
       *blockedSteps = resetSteps;
     }
@@ -1145,11 +1153,11 @@ static void CrossboneIsleKeys_FollowSecondPillar(void) {
   target->z.fixed = source->z.fixed + toFIXED(1);
 }
 
-/// Puts the chest's examine trigger 107 where the second pillar stands.
+/// Puts the chest's examine trigger where the second pillar stands.
 static void CrossboneIsleKeys_PositionSecondPillarMarker(void) {
   struct Actor *frame = Actor_Get(ACTOR_SECOND_PILLAR);
 
-  TreasureSpot_SetActorPosition(107, frame->x.fixed,
+  TreasureSpot_SetActorPosition(TREASURE_SPOT_DEMON_AXE, frame->x.fixed,
                                 frame->z.fixed + toFIXED(1));
 }
 
@@ -1309,7 +1317,7 @@ static void CrossboneIsleKeys_InitializeBane(void) {
   Actor_Get(ACTOR_SECOND_PILLAR_CHEST)->motionFlags = 0;
   Task_AddOrUpdateFrame(CrossboneIsleKeys_FollowSecondPillar, TASK_PASS_FRAME);
   Task_AddFrame(CrossboneIsleKeys_UpdatePillarPriorities, TASK_PASS_FRAME);
-  TreasureSpot_SetPosition(107, 0, 0);
+  TreasureSpot_SetPosition(TREASURE_SPOT_DEMON_AXE, 0, 0);
   if (GameFlag_Get(FLAG_CROSSBONE_ISLE_DEMON_AXE) != 0) {
     Actor_SetAnimation(ACTOR_SECOND_PILLAR_CHEST, 2);
   }
@@ -1338,7 +1346,7 @@ static void CrossboneIsleKeys_InitializeBane(void) {
       Actor_SetPosition(ACTOR_BANE, 888, 664);
       djinni = Actor_Get(ACTOR_BANE);
       djinni->sprite->rotation = 0;
-      Actor_SetAnimationSpeed(djinni, 16);
+      Actor_SetAnimationSpeed(djinni, ANIMATION_STEP_NORMAL);
     } else if (GameFlag_Get(FLAG_CROSSBONE_ISLE_BANE_FIRST_ESCAPE) != 0) {
       Actor_SetPosition(ACTOR_BANE, 584, 680);
     } else {
@@ -1378,8 +1386,8 @@ s32 gCrossboneIsleKeys_BaneSquashScript[] = {
     SC_LOOP(SC_FOREVER, SC_TOP),
 };
 
-/// Where Bane runs from each step trigger round its corner, 30 to 41, in
-/// pixels.
+/// Where Bane runs from each step trigger round its corner, from
+/// BANE_CORNER_FIRST_STEP on, in pixels.
 s32 gCrossboneIsleKeys_BaneWalkTargets[][2] = {
     { 888, 856 },
     { 872, 856 },
@@ -1567,29 +1575,29 @@ struct Trigger gCrossboneIsleBaneTriggers[] = {
      EVENT(CrossboneIsleKeys_BaneSecondEscape)},
     {TRIGGER_STEP, 22, FLAG_DJINNI(DJINNI_BANE),
      EVENT(CrossboneIsleKeys_BaneLastEscape)},
-    {TRIGGER_STEP, 30, FLAG_DJINNI(DJINNI_BANE),
+    {TRIGGER_STEP, BANE_CORNER_FIRST_STEP, FLAG_DJINNI(DJINNI_BANE),
      EVENT(CrossboneIsleKeys_BaneKeepsAway)},
-    {TRIGGER_STEP, 31, FLAG_DJINNI(DJINNI_BANE),
+    {TRIGGER_STEP, BANE_CORNER_FIRST_STEP + 1, FLAG_DJINNI(DJINNI_BANE),
      EVENT(CrossboneIsleKeys_BaneKeepsAway)},
-    {TRIGGER_STEP, 32, FLAG_DJINNI(DJINNI_BANE),
+    {TRIGGER_STEP, BANE_CORNER_FIRST_STEP + 2, FLAG_DJINNI(DJINNI_BANE),
      EVENT(CrossboneIsleKeys_BaneKeepsAway)},
-    {TRIGGER_STEP, 33, FLAG_DJINNI(DJINNI_BANE),
+    {TRIGGER_STEP, BANE_CORNER_FIRST_STEP + 3, FLAG_DJINNI(DJINNI_BANE),
      EVENT(CrossboneIsleKeys_BaneKeepsAway)},
-    {TRIGGER_STEP, 34, FLAG_DJINNI(DJINNI_BANE),
+    {TRIGGER_STEP, BANE_CORNER_FIRST_STEP + 4, FLAG_DJINNI(DJINNI_BANE),
      EVENT(CrossboneIsleKeys_BaneKeepsAway)},
-    {TRIGGER_STEP, 35, FLAG_DJINNI(DJINNI_BANE),
+    {TRIGGER_STEP, BANE_CORNER_FIRST_STEP + 5, FLAG_DJINNI(DJINNI_BANE),
      EVENT(CrossboneIsleKeys_BaneKeepsAway)},
-    {TRIGGER_STEP, 36, FLAG_DJINNI(DJINNI_BANE),
+    {TRIGGER_STEP, BANE_CORNER_FIRST_STEP + 6, FLAG_DJINNI(DJINNI_BANE),
      EVENT(CrossboneIsleKeys_BaneKeepsAway)},
-    {TRIGGER_STEP, 37, FLAG_DJINNI(DJINNI_BANE),
+    {TRIGGER_STEP, BANE_CORNER_FIRST_STEP + 7, FLAG_DJINNI(DJINNI_BANE),
      EVENT(CrossboneIsleKeys_BaneKeepsAway)},
-    {TRIGGER_STEP, 38, FLAG_DJINNI(DJINNI_BANE),
+    {TRIGGER_STEP, BANE_CORNER_FIRST_STEP + 8, FLAG_DJINNI(DJINNI_BANE),
      EVENT(CrossboneIsleKeys_BaneKeepsAway)},
-    {TRIGGER_STEP, 39, FLAG_DJINNI(DJINNI_BANE),
+    {TRIGGER_STEP, BANE_CORNER_FIRST_STEP + 9, FLAG_DJINNI(DJINNI_BANE),
      EVENT(CrossboneIsleKeys_BaneKeepsAway)},
-    {TRIGGER_STEP, 40, FLAG_DJINNI(DJINNI_BANE),
+    {TRIGGER_STEP, BANE_CORNER_FIRST_STEP + 10, FLAG_DJINNI(DJINNI_BANE),
      EVENT(CrossboneIsleKeys_BaneKeepsAway)},
-    {TRIGGER_STEP, 41, FLAG_DJINNI(DJINNI_BANE),
+    {TRIGGER_STEP, BANE_CORNER_FIRST_STEP + 11, FLAG_DJINNI(DJINNI_BANE),
      EVENT(CrossboneIsleKeys_BaneKeepsAway)},
     {TRIGGER_TALK_HALTED, ACTOR_BANE, CONDITION_ALWAYS,
      EVENT(CrossboneIsleKeys_BaneJoins)},
@@ -1615,8 +1623,8 @@ struct Trigger gCrossboneIsleBaneTriggers[] = {
      FLAG_CROSSBONE_ISLE_BANE_WATER_OF_LIFE, FIND_ITEM(ITEM_WATER_OF_LIFE)},
     {EXAMINE_TRIGGER(EXAMINE_CHEST), 106, FLAG_CROSSBONE_ISLE_BANE_ELIXIR,
      FIND_ITEM(ITEM_ELIXIR)},
-    {EXAMINE_TRIGGER(EXAMINE_CHEST), 107, FLAG_CROSSBONE_ISLE_DEMON_AXE,
-     FIND_ITEM(ITEM_DEMON_AXE)},
+    {EXAMINE_TRIGGER(EXAMINE_CHEST), TREASURE_SPOT_DEMON_AXE,
+     FLAG_CROSSBONE_ISLE_DEMON_AXE, FIND_ITEM(ITEM_DEMON_AXE)},
     {TRIGGER_TABLE_END},
 };
 

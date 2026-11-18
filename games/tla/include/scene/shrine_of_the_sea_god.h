@@ -18,7 +18,7 @@ struct ShrineOfTheSeaGodSpot {
 };
 
 void ShrineOfTheSeaGod_DjinniRunsWest(void);
-void ShrineOfTheSeaGod_SetUpFlatProp(s32 actor);
+void ShrineOfTheSeaGod_SetUpFloatingLog(s32 actor);
 
 void ShrineOfTheSeaGod_StartleRiki(void);
 
@@ -44,9 +44,9 @@ void ShrineOfTheSeaGod_DrawLeaderInFront(void);
 
 void ShrineOfTheSeaGod_DrawLeaderBehind(void);
 
-void ShrineOfTheSeaGod_TopplePillarIntoWater(void);
+void ShrineOfTheSeaGod_BreakCrossroadsBridge(void);
 
-void ShrineOfTheSeaGod_ToppleFirstPillar(void);
+void ShrineOfTheSeaGod_BreakFirstBridge(void);
 
 void ShrineOfTheSeaGod_HideStone(void);
 void ShrineOfTheSeaGod_ThrowRopeAgain(void);
@@ -64,14 +64,14 @@ void ShrineOfTheSeaGod_EndSand(void);
 
 extern u32 gFieldEffect_MediumScript[];
 
-void ShrineOfTheSeaGod_LandPillarAsLogs(struct Actor *actor, s32 base);
-void ShrineOfTheSeaGod_KeepFirstPillarWithLeader(void);
+void ShrineOfTheSeaGod_LandBrokenBridge(struct Actor *actor, s32 base);
+void ShrineOfTheSeaGod_KeepFirstBridgeWithLeader(void);
 
-void ShrineOfTheSeaGod_KeepSecondPillarWithLeader(void);
+void ShrineOfTheSeaGod_KeepSecondBridgeWithLeader(void);
 
-void ShrineOfTheSeaGod_HideSlideActors(void);
+void ShrineOfTheSeaGod_HideBlocks(void);
 void ShrineOfTheSeaGod_TrackUpperLevel(void);
-void ShrineOfTheSeaGod_LayerCrossroadsProps(void);
+void ShrineOfTheSeaGod_LayerCrossroadsBridges(void);
 
 void ShrineOfTheSeaGod_KeepFlameOnTorch(void);
 

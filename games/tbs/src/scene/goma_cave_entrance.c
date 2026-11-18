@@ -4,7 +4,7 @@
 ///
 /// A stump caught in ivy (ACTOR_STUMP, held by ACTOR_STUMP_IVY) blocks the
 /// way on. Until FLAG_GOMA_CAVE_IVAN_JOINED is set, Move on it runs
-/// GomaCaveEntrance_IvanRejoins. Garet says their Psynergy can't free it.
+/// GomaCaveEntrance_IvanJoins. Garet says their Psynergy can't free it.
 /// Only once the thieves in Vault are jailed (FLAG_VAULT_THIEVES_JAILED) does
 /// Ivan walk up, blow the ivy off with Whirlwind and rejoin with the Shaman's
 /// Rod equipped.
@@ -152,9 +152,13 @@ static void GomaCaveEntrance_MoveEastPillar(void) {
   }
 }
 
+/// The step triggers that push the west pillar east, from its west side, and
+/// west, from its east side.
+enum { TRIGGER_PUSH_WEST_PILLAR_EAST = 5, TRIGGER_PUSH_WEST_PILLAR_WEST = 6 };
+
 /// Walking into the west pillar at Goma Cave Entrance from the west
-/// (step trigger 5) or the east (step trigger 6): the leader leans on it and
-/// pushes it one step.
+/// (TRIGGER_PUSH_WEST_PILLAR_EAST) or the east (TRIGGER_PUSH_WEST_PILLAR_WEST):
+/// the leader leans on it and pushes it one step.
 static void GomaCaveEntrance_PushWestPillar(void) {
   struct FieldWork *work;
   s32 offsetX;
@@ -166,8 +170,10 @@ static void GomaCaveEntrance_PushWestPillar(void) {
   Actor_SetSpeed(ACTOR_PARTY_LEADER, 0.2);
   Actor_SetSpeed(ACTOR_WEST_PILLAR, 0.2);
   Sound_Play(SE_PUSH);
-  // 16 pixels east from step trigger 5, west from step trigger 6.
-  offsetX = (11 - (work->stepTrigger << 1)) << 4;
+  // A cell east or west, by the trigger.
+  offsetX = (TRIGGER_PUSH_WEST_PILLAR_EAST + TRIGGER_PUSH_WEST_PILLAR_WEST -
+             (work->stepTrigger << 1))
+            << 4;
   Actor_SetDestinationOffset(ACTOR_PARTY_LEADER, offsetX, 0);
   Actor_SetDestinationOffset(ACTOR_WEST_PILLAR, offsetX, 0);
   Actor_WaitForMoveById(ACTOR_PARTY_LEADER);
@@ -208,13 +214,13 @@ s32 Scene_Initialize(void) {
     record->collisionFlags = ACTOR_NEAR_PSYNERGY | record->collisionFlags;
   }
   // The player never targets the stump's ivy; only Ivan's Whirlwind in
-  // GomaCaveEntrance_IvanRejoins removes it.
+  // GomaCaveEntrance_IvanJoins removes it.
   {
     struct Actor *record = Actor_Get(ACTOR_STUMP_IVY);
 
     record->collisionFlags = ACTOR_NOT_TARGETED | record->collisionFlags;
   }
-  // The cells GomaCaveEntrance_IvanRejoins copies as it sets the flag, redrawn
+  // The cells GomaCaveEntrance_IvanJoins copies as it sets the flag, redrawn
   // on arrival.
   if (GameFlag_Get(FLAG_GOMA_CAVE_IVAN_JOINED) != 0) {
     MapGrid_CopyCellAttributes(74, 11, 1, 1, 73, 11);
@@ -251,8 +257,9 @@ s32 Scene_Initialize(void) {
 }
 
 /// Move on the stump at Goma Cave Entrance while the ivy holds it: Garet says
-/// their Psynergy is not strong enough.
-static void GomaCaveEntrance_IvanRejoins(void) {
+/// their Psynergy is not strong enough, and once the thieves in Vault are
+/// jailed Ivan comes, blows the ivy off and joins the party.
+static void GomaCaveEntrance_IvanJoins(void) {
   struct Actor *leader;
 
 #if TBS_PATCH_1
@@ -509,6 +516,11 @@ static void GomaCaveEntrance_SpinStump(struct Actor *actor) {
 
 #include "shared/actor_wait_below_height.c"
 
+/// The frames the stump tips before it leaps, and the puffs that burst round it
+/// as it lands.
+#define STUMP_TIP_FRAMES 18
+#define STUMP_LANDING_PUFFS 17
+
 /// The stump leaps out of the way and sinks in the pool.
 static void GomaCaveEntrance_LeapStump(s32 stumpId) {
   struct Vector3 dir;
@@ -518,7 +530,7 @@ static void GomaCaveEntrance_LeapStump(s32 stumpId) {
 
   stump = Actor_Get(stumpId);
   stump->motionFlags = 0;
-  for (i = 0; i <= 17; i++) {
+  for (i = 0; i < STUMP_TIP_FRAMES; i++) {
     wait(1);
     stump->sprite->rotation -= TRIG_TURN / 256;
     stump->x.fixed -= Trig_Cos(stump->sprite->rotation) / 2;
@@ -536,7 +548,7 @@ static void GomaCaveEntrance_LeapStump(s32 stumpId) {
   MapGrid_SetShake(5, 5, 1);
   Sound_Play(SE_RUMBLE);
   MapGrid_SetShake(SHAKE_KEEP, SHAKE_KEEP, 0.9);
-  for (i = 0; i <= 16; i++) {
+  for (i = 0; i < STUMP_LANDING_PUFFS; i++) {
     SET_POSITION(&dir, Trig_Cos(i * FACING_STEP), 0, Trig_Sin(i * FACING_STEP));
     dir.x -= dir.x / 4;
     dir.z -= dir.z / 2;
@@ -565,6 +577,10 @@ static void GomaCaveEntrance_LeapStump(s32 stumpId) {
 
 #include "shared/item_equip.c"
 
+/// The tries at making room for the Shaman's Rod before a slot is cleared by
+/// force.
+#define SHAMANS_ROD_TRIES 1000
+
 /// Gives Ivan the Shaman's Rod and equips it.
 static void GomaCaveEntrance_GiveShamansRod(void) {
   struct Unit *member;
@@ -575,7 +591,7 @@ static void GomaCaveEntrance_GiveShamansRod(void) {
   member = Unit_Get(IVAN);
   tries = 0;
 retry:
-  if (++tries > 1000) {
+  if (++tries > SHAMANS_ROD_TRIES) {
 #if TBS_PATCH_3
     for (i = 0; i <= INVENTORY_SLOTS - 1; i++) {
       item = Item_GetDirect(member->inventory[i]);
@@ -675,9 +691,9 @@ struct ActorPlacement gGomaCaveEntranceActorPlacements[] = {
 struct Trigger gGomaCaveEntranceTriggers[] = {
     { TRIGGER_EXIT, 1, CONDITION_ALWAYS, GOMA_CAVE_ENTRANCE_TO_GOMA_CAVE_STREAM },
     { TRIGGER_EXIT, 2, CONDITION_ALWAYS, GOMA_CAVE_ENTRANCE_TO_WORLD_MAP },
-    { STEP_TRIGGER_WALKING_INTO(FACING_EAST), 5, CONDITION_ALWAYS, EVENT(GomaCaveEntrance_PushWestPillar) },
-    { STEP_TRIGGER_WALKING_INTO(FACING_WEST), 6, CONDITION_ALWAYS, EVENT(GomaCaveEntrance_PushWestPillar) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_STUMP, FLAG_GOMA_CAVE_IVAN_JOINED, EVENT(GomaCaveEntrance_IvanRejoins) },
+    { STEP_TRIGGER_WALKING_INTO(FACING_EAST), TRIGGER_PUSH_WEST_PILLAR_EAST, CONDITION_ALWAYS, EVENT(GomaCaveEntrance_PushWestPillar) },
+    { STEP_TRIGGER_WALKING_INTO(FACING_WEST), TRIGGER_PUSH_WEST_PILLAR_WEST, CONDITION_ALWAYS, EVENT(GomaCaveEntrance_PushWestPillar) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_STUMP, FLAG_GOMA_CAVE_IVAN_JOINED, EVENT(GomaCaveEntrance_IvanJoins) },
     { PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_STUMP, FLAG_GOMA_CAVE_ENTRANCE_STUMP_MOVED, EVENT(GomaCaveEntrance_MoveStump) },
     { PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_WEST_PILLAR, CONDITION_ALWAYS, EVENT(GomaCaveEntrance_MoveWestPillar) },
     { PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_EAST_PILLAR, FLAG_GOMA_CAVE_ENTRANCE_EAST_PILLAR_IN_PLACE, EVENT(GomaCaveEntrance_MoveEastPillar) },

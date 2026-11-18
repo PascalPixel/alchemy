@@ -1143,6 +1143,13 @@ static void BabiPalace_HearSoldiersReport(void) {
   Event_End();
 }
 
+/// The waking's window round the leader (WINDOW_TRANSITION_LEADER): inside it
+/// every layer shows without the colour effect; outside it at first only BG0,
+/// then every layer once it is WAKE_WINDOW_OPEN.
+#define WAKE_WININ                                                             \
+  ((WININ_WIN0_ALL & ~WININ_WIN0_CLR) | (WININ_WIN1_ALL & ~WININ_WIN1_CLR))
+#define WAKE_WINDOW_OPEN 31
+
 /// Waking in the palace after the finals, the leader has slept long after
 /// fighting to the end. Babi wants to see the party.
 static void BabiPalace_WakeAfterFinals(void) {
@@ -1165,11 +1172,11 @@ static void BabiPalace_WakeAfterFinals(void) {
   work->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
   work->transitionFrames = 12;
   wait(1);
-  ScreenTransition_InitializeBattleEffectState(WINDOW_TRANSITION_LEADER);
+  ScreenTransition_StartHeldWindow(WINDOW_TRANSITION_LEADER);
   state = gScreenTransitionWork;
   state->value = 0;
-  state->mask = 0x1f1f;
-  state->active = 1;
+  state->mask = WAKE_WININ;
+  state->active = WINOUT_WIN01_BG0;
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
   for (step = 1; step <= 5; step++) {
@@ -1179,11 +1186,11 @@ static void BabiPalace_WakeAfterFinals(void) {
   Event_Wait(40);
   Actor_RunRepeatedMotion(ACTOR_PARTY_LEADER, 2);
   Event_Wait(30);
-  for (step = 5; step <= 31; step++) {
+  for (step = 5; step <= WAKE_WINDOW_OPEN; step++) {
     wait(3);
     state->value = step;
   }
-  state->active = 31;
+  state->active = WINOUT_WIN01_ALL & ~WINOUT_WIN01_CLR;
   work = gFieldWork;
   work->transition =
       SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER);

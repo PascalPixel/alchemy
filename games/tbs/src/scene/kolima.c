@@ -120,6 +120,9 @@ extern s32 gKolima_GoldenRingsScript[];
 extern s32 gKolima_RegionScript[];
 extern s32 gFallingEffectScript[];
 
+/// The puffs of dust the drawbridge throws up where it lands.
+enum { BRIDGE_DUST_PUFFS = 10 };
+
 static void Kolima_WitnessForestCurse(void);
 static void Kolima_ShowMessageAndWait(s32 actorId, s32 waitFrames);
 static void Kolima_FaceActorAndWait(s32 actorId, s32 facing, s32 waitFrames);
@@ -431,8 +434,9 @@ static void Kolima_LowerBridge(void) {
   MapGrid_CopyCellsTo(91, 13, 72, 9, 5, 6);
   Event_Wait(3);
   Sound_Play(SE_THUMP);
-  // Ten puffs of dust where it lands, thrown alternately left and right.
-  for (debrisIndex = 0; debrisIndex < 10; debrisIndex++) {
+  // Puffs of dust where it lands, 4 pixels apart, thrown alternately left and
+  // right.
+  for (debrisIndex = 0; debrisIndex < BRIDGE_DUST_PUFFS; debrisIndex++) {
     struct Actor *debris = FieldActor_Create(
         SPRITE_DUST_PUFF, toFIXED(148 + debrisIndex * 4), 0, toFIXED(258));
 
@@ -571,7 +575,6 @@ static void Kolima_WitnessForestCurse(void) {
   struct Actor *actor;
   s32 *partyLayout;
   // One staging word is reused for facing bytes, jump values and flags.
-  s32 stagingValue;
   const s32 *squashActions;
   const s32 *restoreScaleActions;
   s32 *miaInParty;
@@ -728,10 +731,9 @@ static void Kolima_WitnessForestCurse(void) {
   Event_Wait(60);
   Actor_FaceDirection(ACTOR_GARET, FACING_SOUTH, 0);
   Kolima_FaceActorAndWait(ACTOR_PARTY_LEADER, FACING_SOUTHWEST, 60);
-  stagingValue = 160;
   Kolima_FaceActorAndWait(ACTOR_MIA, FACING_SOUTHEAST, 10);
   Actor_FaceDirection(ACTOR_GARET, FACING_SOUTHEAST, 0);
-  Kolima_FaceActorAndWait(ACTOR_PARTY_LEADER, (stagingValue << 8), 10);
+  Kolima_FaceActorAndWait(ACTOR_PARTY_LEADER, FACING_NORTHWEST, 10);
   Actor_ShowEmote(ACTOR_GARET, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
   Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
   Event_Wait(40);
@@ -744,7 +746,7 @@ static void Kolima_WitnessForestCurse(void) {
   Actor_SetAnimationAndWait(ACTOR_IVAN, ANIM_NOD);
   Kolima_ShowMessageAndWait(ACTOR_IVAN, 20);
   Kolima_FaceActorAndWait(ACTOR_GARET, 0, 20);
-  Kolima_FaceActorAndWait(ACTOR_PARTY_LEADER, (stagingValue << 8), 40);
+  Kolima_FaceActorAndWait(ACTOR_PARTY_LEADER, FACING_NORTHWEST, 40);
   Kolima_FaceActorAndWait(ACTOR_GARET, FACING_SOUTH, 20);
   Kolima_FaceActorAndWait(ACTOR_PARTY_LEADER, FACING_SOUTHWEST, 30);
   Kolima_FaceActorAndWait(ACTOR_GARET, FACING_SOUTHWEST, 20);
@@ -787,34 +789,31 @@ static void Kolima_WitnessForestCurse(void) {
   }
   Event_Wait(20);
   if (gKolima_MiaInParty != 0) {
-    stagingValue = 128;
-    Actor_Get(ACTOR_MIA)->velocityY = (stagingValue << 10);
+    Actor_Get(ACTOR_MIA)->velocityY = toFIXED(2);
     Event_Wait(10);
-    Actor_SetSpeedFX(ACTOR_MIA, (stagingValue << 10), (stagingValue << 10));
+    Actor_SetSpeedFX(ACTOR_MIA, toFIXED(2), toFIXED(2));
     Actor_SetDestinationOffset(ACTOR_MIA, -2, 0);
     Actor_SetScript(ACTOR_MIA, gKolima_PartyRestoreScaleActions);
     Actor_SetSpriteFlags(Actor_Get(ACTOR_MIA), 0);
     Actor_SetAnimation(ACTOR_MIA, ANIM_COLLAPSE);
     Event_Wait(10);
   }
-  stagingValue = 128;
-  Actor_Get(ACTOR_PARTY_LEADER)->velocityY = (stagingValue << 10);
+  Actor_Get(ACTOR_PARTY_LEADER)->velocityY = toFIXED(2);
   Event_Wait(10);
-  Actor_SetSpeedFX(ACTOR_PARTY_LEADER, (stagingValue << 10),
-                   (stagingValue << 10));
+  Actor_SetSpeedFX(ACTOR_PARTY_LEADER, toFIXED(2), toFIXED(2));
   restoreScaleActions = gKolima_PartyRestoreScaleActions;
   Actor_SetScript(ACTOR_PARTY_LEADER, restoreScaleActions);
   Actor_SetSpriteFlags(Actor_Get(ACTOR_PARTY_LEADER), 0);
   Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_COLLAPSE);
   Event_Wait(20);
-  Actor_Get(ACTOR_GARET)->velocityY = (stagingValue << 10);
+  Actor_Get(ACTOR_GARET)->velocityY = toFIXED(2);
   Event_Wait(10);
-  Actor_SetSpeedFX(ACTOR_GARET, (stagingValue << 10), (stagingValue << 10));
+  Actor_SetSpeedFX(ACTOR_GARET, toFIXED(2), toFIXED(2));
   Actor_SetScript(ACTOR_GARET, restoreScaleActions);
   Actor_SetSpriteFlags(Actor_Get(ACTOR_GARET), 0);
   Actor_SetAnimation(ACTOR_GARET, ANIM_COLLAPSE);
   Event_Wait(40);
-  Actor_Get(ACTOR_IVAN)->velocityY = (stagingValue << 10);
+  Actor_Get(ACTOR_IVAN)->velocityY = toFIXED(2);
   Event_Wait(10);
   Actor_SetScript(ACTOR_IVAN, restoreScaleActions);
   Actor_SetSpriteFlags(Actor_Get(ACTOR_IVAN), 0);
@@ -877,9 +876,8 @@ static void Kolima_WitnessForestCurse(void) {
   Actor_SetSpritePriority(ACTOR_PARTY_LEADER, 3);
   Actor_SetSpritePriority(ACTOR_GARET, 3);
   Actor_SetSpritePriority(ACTOR_IVAN, 3);
-  stagingValue = 0;
   Actor_SetSpritePriority(ACTOR_MIA, 3);
-  gKolima_PendingPose = stagingValue;
+  gKolima_PendingPose = 0;
   Task_AddFrame(Kolima_AlternateProtectiveFieldHeights, TASK_PASS_FRAME);
   Sound_Play(SE_SHIMMER);
   Actor_Get(ACTOR_LEADER_PSYNERGY_FIELD)->priorityFlags &=
@@ -1011,9 +1009,8 @@ static void Kolima_WitnessForestCurse(void) {
   Event_Wait(40);
   Actor_RunRepeatedMotion(ACTOR_IVAN, 2);
   Event_Wait(20);
-  stagingValue = 1;
   Actor_SetSpritePriority(ACTOR_IVAN, 2);
-  Actor_Get(ACTOR_IVAN)->priorityFlags |= stagingValue;
+  Actor_Get(ACTOR_IVAN)->priorityFlags |= ACTOR_PRIORITY_AUTOMATIC;
   Actor_SetSpriteFlags(Actor_Get(ACTOR_IVAN), SPRITE_FLAG_SHADOW);
   Actor_Jump(ACTOR_IVAN, 4, 0);
   Actor_SetAnimation(ACTOR_IVAN, ANIM_STAND);
@@ -1021,7 +1018,7 @@ static void Kolima_WitnessForestCurse(void) {
   Actor_RunRepeatedMotion(ACTOR_PARTY_LEADER, 2);
   Event_Wait(10);
   Actor_SetSpritePriority(ACTOR_PARTY_LEADER, 2);
-  Actor_Get(ACTOR_PARTY_LEADER)->priorityFlags |= stagingValue;
+  Actor_Get(ACTOR_PARTY_LEADER)->priorityFlags |= ACTOR_PRIORITY_AUTOMATIC;
   Actor_SetSpriteFlags(Actor_Get(ACTOR_PARTY_LEADER), SPRITE_FLAG_SHADOW);
   Actor_Jump(ACTOR_PARTY_LEADER, 4, 0);
   Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_STAND);
@@ -1076,10 +1073,9 @@ static void Kolima_WitnessForestCurse(void) {
   Kolima_FaceActorAndWait(ACTOR_PARTY_LEADER, FACING_NORTHWEST, 10);
   Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_NOD);
   Actor_SetAnimationAndWait(ACTOR_GARET, ANIM_NOD);
-  stagingValue = 128;
   Event_Wait(20);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_SOUTHWEST, 0);
-  Kolima_FaceActorAndWait(ACTOR_GARET, (stagingValue << 7), 10);
+  Kolima_FaceActorAndWait(ACTOR_GARET, FACING_SOUTH, 10);
   Actor_SetAnimationAndWait(ACTOR_IVAN, ANIM_SHAKE_HEAD);
   Event_Wait(20);
   Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_WINCE, 0);
@@ -1089,7 +1085,7 @@ static void Kolima_WitnessForestCurse(void) {
   Kolima_ShowMessageAndWait(ACTOR_IVAN, 20);
   Actor_FaceDirection(ACTOR_GARET, FACING_SOUTHEAST, 0);
   Kolima_FaceActorAndWait(ACTOR_PARTY_LEADER, FACING_NORTHWEST, 40);
-  Actor_FaceDirection(ACTOR_GARET, (stagingValue << 7), 0);
+  Actor_FaceDirection(ACTOR_GARET, FACING_SOUTH, 0);
   Kolima_FaceActorAndWait(ACTOR_PARTY_LEADER, FACING_SOUTHWEST, 10);
   Kolima_FaceActorAndWait(ACTOR_IVAN, FACING_NORTH, 10);
   Actor_SetAnimationAndWait(ACTOR_IVAN, ANIM_NOD);
@@ -1283,12 +1279,11 @@ static void Kolima_WitnessForestCurse(void) {
   Actor_SetSpritePriority(ACTOR_PARTY_LEADER, 2);
   Actor_SetSpritePriority(ACTOR_GARET, 2);
   Actor_SetSpritePriority(ACTOR_IVAN, 2);
-  stagingValue = 1;
   Actor_SetSpritePriority(ACTOR_MIA, 2);
-  Actor_Get(ACTOR_PARTY_LEADER)->priorityFlags |= stagingValue;
-  Actor_Get(ACTOR_GARET)->priorityFlags |= stagingValue;
-  Actor_Get(ACTOR_IVAN)->priorityFlags |= stagingValue;
-  Actor_Get(ACTOR_MIA)->priorityFlags |= stagingValue;
+  Actor_Get(ACTOR_PARTY_LEADER)->priorityFlags |= ACTOR_PRIORITY_AUTOMATIC;
+  Actor_Get(ACTOR_GARET)->priorityFlags |= ACTOR_PRIORITY_AUTOMATIC;
+  Actor_Get(ACTOR_IVAN)->priorityFlags |= ACTOR_PRIORITY_AUTOMATIC;
+  Actor_Get(ACTOR_MIA)->priorityFlags |= ACTOR_PRIORITY_AUTOMATIC;
   Actor_RunRepeatedMotion(ACTOR_IVAN, 2);
   Kolima_FaceActorAndWait(ACTOR_IVAN, FACING_NORTHEAST, 10);
   Event_OpenMessage(ACTOR_IVAN, 0);

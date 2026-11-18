@@ -60,6 +60,31 @@ enum LemuriaPalaceActorId {
   ACTOR_KRADEN
 };
 
+/// The doors the leader opens by walking into them, by their exits: the hall's
+/// west and east doors, and the inner door of the north-east room.
+enum LemuriaPalaceDoorExit {
+  EXIT_WEST_DOOR = 2,
+  EXIT_EAST_DOOR = 3,
+  EXIT_INNER_DOOR = 16,
+};
+
+/// The glow palette: every sixth frame its rotating colours move along by one,
+/// and every four frames its glow colour takes the next of GLOW_STEPS steps.
+#define GLOW_PALETTE 12
+#define ROTATING_FIRST_COLOR 1
+#define ROTATING_LAST_COLOR 14
+#define GLOW_COLOR 15
+#define GLOW_STEPS 12
+
+/// The maps' pictures, 64 by 64 pixels of 256 colours each.
+#define MAP_PICTURE_BYTES (64 * 64)
+/// The steps of gLemuriaPalace_MapFadeLevels the shown map flickers through,
+/// eight frames apiece.
+#define MAP_FADE_STEPS 16
+/// The steps of gLemuriaPalace_MapBlendSteps, four frames apiece: the first map
+/// shows from the first and the second from the middle.
+#define MAP_BLEND_STEPS 28
+
 extern struct MapGridCellAnimation gLemuriaPalace_Doors[];
 extern struct MapGridCellAnimation gLemuriaPalace_InnerDoor;
 
@@ -112,14 +137,13 @@ void LemuriaPalace_OpenDoorAndEnter(const struct MapGridCellAnimation *door,
   Event_End();
 }
 
-/// The leader walks into one of the palace's doors: the first two are the
-/// hall's, exit 3 the second, exit 16 the inner door.
+/// The leader walks into one of the palace's doors, by its exit.
 void LemuriaPalace_EnterDoor(s32 exit) {
   const struct MapGridCellAnimation *door = gLemuriaPalace_Doors;
 
-  if (exit == 3)
+  if (exit == EXIT_EAST_DOOR)
     door++;
-  if (exit == 16)
+  if (exit == EXIT_INNER_DOOR)
     door = &gLemuriaPalace_InnerDoor;
   LemuriaPalace_OpenDoorAndEnter(door, exit, 0);
 }
@@ -128,23 +152,25 @@ const struct Trigger *Scene_GetTriggers(void) { return gSceneEvents; }
 
 extern s16 gLemuriaPalace_GlowColors[];
 
-/// Every sixth frame rotates colours 1-14 of background palette 12 by one
-/// place; every frame sets its colour 15 from a twelve-step glow.
+/// A task: every sixth frame the glow palette's rotating colours move along by
+/// one; every frame its glow colour takes the glow's step for the frame, each
+/// step four frames long.
 void LemuriaPalace_CycleGlowColors(void) {
   s32 color;
 
   if (gFrameCount % 6 == 0) {
     s32 index;
 
-    color = (s16)BG_PLTT_COLOR(12, 14);
-    index = 14;
+    color = (s16)BG_PLTT_COLOR(GLOW_PALETTE, ROTATING_LAST_COLOR);
+    index = ROTATING_LAST_COLOR;
     do {
-      BG_PLTT_COLOR(12, index) = BG_PLTT_COLOR(12, index - 1);
-    } while (--index != 1);
-    BG_PLTT_COLOR(12, 1) = color;
+      BG_PLTT_COLOR(GLOW_PALETTE, index) =
+          BG_PLTT_COLOR(GLOW_PALETTE, index - 1);
+    } while (--index != ROTATING_FIRST_COLOR);
+    BG_PLTT_COLOR(GLOW_PALETTE, ROTATING_FIRST_COLOR) = color;
   }
-  color = gLemuriaPalace_GlowColors[(gFrameCount >> 2) % 12];
-  BG_PLTT_COLOR(12, 15) = color;
+  color = gLemuriaPalace_GlowColors[(gFrameCount >> 2) % GLOW_STEPS];
+  BG_PLTT_COLOR(GLOW_PALETTE, GLOW_COLOR) = color;
 }
 
 /// The room's setup: it schedules the palette cycle
@@ -196,7 +222,7 @@ void LemuriaPalace_CastMapSparks(s32 actorId) {
   FieldEvent_Wait(30);
 }
 
-extern u16 gLemuriaPalace_MapCrossfade[];
+extern u16 gLemuriaPalace_MapBlendSteps[];
 
 /// A task: draws the maps the hall shows, fading between them by the map mode
 /// (1, the fade level by frame; 2, the cross-fade that flickers between them).
@@ -205,17 +231,17 @@ void LemuriaPalace_DrawMaps(void) {
   s8 mode = gLemuriaPalace_MapMode;
 
   if (mode == 1) {
-    s32 level =
-        gLemuriaPalace_MapFadeLevels[(gLemuriaPalace_MapTime >> 3) & 15];
+    s32 level = gLemuriaPalace_MapFadeLevels[(gLemuriaPalace_MapTime >> 3) &
+                                             (MAP_FADE_STEPS - 1)];
 
     Io_Write16(level << 8 | (BLEND_WEIGHT_MAX - level), &REG_BLDALPHA);
     gLemuriaPalace_MapTime++;
   } else if (mode == 2) {
     s32 *time = &gLemuriaPalace_MapTime;
-    s32 step = (*time >> 2) % 28;
+    s32 step = (*time >> 2) % MAP_BLEND_STEPS;
 
     {
-      s32 alpha = gLemuriaPalace_MapCrossfade[step];
+      s32 alpha = gLemuriaPalace_MapBlendSteps[step];
 
       REG_BLDALPHA = alpha;
     }
@@ -224,7 +250,7 @@ void LemuriaPalace_DrawMaps(void) {
       gLemuriaPalace_SecondMapShown = step;
       Event_PlaySound(SE_HIGH_JUMP);
     }
-    if (step == 14) {
+    if (step == MAP_BLEND_STEPS / 2) {
       gLemuriaPalace_FirstMapShown = 0;
       gLemuriaPalace_SecondMapShown = 1;
       Event_PlaySound(SE_HIGH_JUMP);
@@ -250,7 +276,7 @@ void LemuriaPalace_DrawMaps(void) {
 /// Loads the two maps the council shows the party, the ancient world and
 /// Lunpa's, and starts drawing them.
 void LemuriaPalace_LoadMaps(void) {
-  void *buffer = Heap_CallAlternatePool(Heap_Alloc, 4096);
+  void *buffer = Heap_CallAlternatePool(Heap_Alloc, MAP_PICTURE_BYTES);
   s32 *firstSlot;
   s32 *firstTile;
   s32 *secondSlot;
@@ -262,8 +288,9 @@ void LemuriaPalace_LoadMaps(void) {
   firstSlot = &gLemuriaPalace_FirstMapVram;
   *firstSlot = VramCache_FindFreeEntry();
   firstTile = &gLemuriaPalace_FirstMapTile;
-  *firstTile = Vram_Load(gLemuriaPalace_FirstMapVram, 4096, buffer);
-  EffectSprite_Init(&gLemuriaPalace_FirstMapSprite, 0, 0, 0xc0000000,
+  *firstTile =
+      Vram_Load(gLemuriaPalace_FirstMapVram, MAP_PICTURE_BYTES, buffer);
+  EffectSprite_Init(&gLemuriaPalace_FirstMapSprite, 0, 0, OBJ_SIZE_64X64,
                     gLemuriaPalace_FirstMapTile);
   gLemuriaPalace_FirstMapSprite.depth = 1;
   gLemuriaPalace_FirstMapSprite.oam.priority = 2;
@@ -274,8 +301,9 @@ void LemuriaPalace_LoadMaps(void) {
   secondSlot = &gLemuriaPalace_SecondMapVram;
   *secondSlot = VramCache_FindFreeEntry();
   secondTile = &gLemuriaPalace_SecondMapTile;
-  *secondTile = Vram_Load(gLemuriaPalace_SecondMapVram, 4096, buffer);
-  EffectSprite_Init(&gLemuriaPalace_SecondMapSprite, 0, 0, 0xc0000000,
+  *secondTile =
+      Vram_Load(gLemuriaPalace_SecondMapVram, MAP_PICTURE_BYTES, buffer);
+  EffectSprite_Init(&gLemuriaPalace_SecondMapSprite, 0, 0, OBJ_SIZE_64X64,
                     gLemuriaPalace_SecondMapTile);
   gLemuriaPalace_SecondMapSprite.depth = 2;
   gLemuriaPalace_SecondMapSprite.oam.priority = 2;
@@ -333,14 +361,13 @@ void LemuriaPalace_FadeMapsOut(void) {
 }
 
 void Event_Start();
-void Field_StartPaletteTransition();
 
 /// In the palace the party is stopped by a guard, then brought before King
 /// Hydros and his council, who have been waiting for the warriors Piers spoke
 /// of.
 /// "You are Lord Felix, correct?"
 s32 LemuriaPalace_MeetKingHydros(s32 a0, s32 a1, s32 a2, s32 a3) {
-  s32 answer, frame, i;
+  s32 answer, frame, framesLeft;
   struct Actor *target;
 
   Event_Start();
@@ -677,7 +704,7 @@ s32 LemuriaPalace_MeetKingHydros(s32 a0, s32 a1, s32 a2, s32 a3) {
   Event_PlaySound(SE_HIGH_JUMP);
   for (frame = 0; frame < 120; frame++) {
     wait(1);
-    if ((gLemuriaPalace_MapTime >> 2) % 14 == 0)
+    if ((gLemuriaPalace_MapTime >> 2) % (MAP_BLEND_STEPS / 2) == 0)
       break;
   }
   LemuriaPalace_FreeMaps();
@@ -979,12 +1006,12 @@ s32 LemuriaPalace_MeetKingHydros(s32 a0, s32 a1, s32 a2, s32 a3) {
   Actor_RunRepeatedMotion(ACTOR_LUNPA, 2);
   Event_Wait(10);
   Actor_Jump(ACTOR_LUNPA, 4, 20);
-  i = 15;
+  framesLeft = 15;
   do {
     Actor_GetById(FIELD_TREASURE_ACTOR)->scaleY += FIXED_ONE / 16;
-    i--;
+    framesLeft--;
     wait(1);
-  } while (i >= 0);
+  } while (framesLeft >= 0);
   Actor_GetById(FIELD_TREASURE_ACTOR)->scaleY = FIXED_ONE;
   Event_Wait(5);
   Actor_ShowEmote(ACTOR_JENNA, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
@@ -1234,22 +1261,22 @@ struct MapGridCellAnimation gLemuriaPalace_InnerDoor = {
 
 struct Trigger gSceneEvents[] = {
     {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
-    {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 2, CONDITION_ALWAYS, EVENT(LemuriaPalace_EnterDoor)},
-    {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 3, CONDITION_ALWAYS, EVENT(LemuriaPalace_EnterDoor)},
+    {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), EXIT_WEST_DOOR, CONDITION_ALWAYS, EVENT(LemuriaPalace_EnterDoor)},
+    {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), EXIT_EAST_DOOR, CONDITION_ALWAYS, EVENT(LemuriaPalace_EnterDoor)},
     {TRIGGER_EXIT, 4, CONDITION_ALWAYS, 4},
     {TRIGGER_EXIT, 5, CONDITION_ALWAYS, 5},
     {TRIGGER_EXIT, 6, CONDITION_ALWAYS, 6},
     {TRIGGER_EXIT, 7, CONDITION_ALWAYS, 7},
-    {TRIGGER_EXIT, ACTOR_GIRL_WAITING_ON_THE_KING, CONDITION_ALWAYS, 8},
-    {TRIGGER_EXIT, ACTOR_WOMAN_SHOWING_THE_WAY, CONDITION_ALWAYS, 9},
-    {TRIGGER_EXIT, ACTOR_MAN_ON_THE_KINGS_MOOD, CONDITION_ALWAYS, 10},
-    {TRIGGER_EXIT, ACTOR_LEMURIAN_WHO_HEARD_THE_YELLING, CONDITION_ALWAYS, 11},
-    {TRIGGER_EXIT, ACTOR_LEMURIAN_PRAISING_HYDROS, CONDITION_ALWAYS, 12},
-    {TRIGGER_EXIT, ACTOR_HYDROS, CONDITION_ALWAYS, 13},
-    {TRIGGER_EXIT, ACTOR_LUNPA, CONDITION_ALWAYS, 14},
-    {TRIGGER_EXIT, ACTOR_CONSERVATO, CONDITION_ALWAYS, 15},
-    {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), ACTOR_PALACE_GUARD, CONDITION_ALWAYS, EVENT(LemuriaPalace_EnterDoor)},
-    {TRIGGER_EXIT, ACTOR_KRADEN, CONDITION_ALWAYS, 17},
+    {TRIGGER_EXIT, 8, CONDITION_ALWAYS, 8},
+    {TRIGGER_EXIT, 9, CONDITION_ALWAYS, 9},
+    {TRIGGER_EXIT, 10, CONDITION_ALWAYS, 10},
+    {TRIGGER_EXIT, 11, CONDITION_ALWAYS, 11},
+    {TRIGGER_EXIT, 12, CONDITION_ALWAYS, 12},
+    {TRIGGER_EXIT, 13, CONDITION_ALWAYS, 13},
+    {TRIGGER_EXIT, 14, CONDITION_ALWAYS, 14},
+    {TRIGGER_EXIT, 15, CONDITION_ALWAYS, 15},
+    {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), EXIT_INNER_DOOR, CONDITION_ALWAYS, EVENT(LemuriaPalace_EnterDoor)},
+    {TRIGGER_EXIT, 17, CONDITION_ALWAYS, 17},
     {TRIGGER_STEP, 20, FLAG_MET_KING_HYDROS, EVENT(LemuriaPalace_MeetKingHydros)},
     {TRIGGER_TALK, ACTOR_GIRL_WAITING_ON_THE_KING, IF_FLAG_SET(FLAG_MET_KING_HYDROS), MSGNO(MsgLemuriaPalaceLordConservatoSeemedVeryAngry)},
     {TRIGGER_TALK, ACTOR_WOMAN_SHOWING_THE_WAY, IF_FLAG_SET(FLAG_MET_KING_HYDROS), MSGNO(MsgLemuriaPalaceBothLordConservatoAndKing)},
@@ -1289,7 +1316,7 @@ struct Trigger gSceneEvents[] = {
     {TRIGGER_TABLE_END},
 };
 
-/// The twelve colours of the glow, in turn.
+/// The glow's colours, in turn.
 s16 gLemuriaPalace_GlowColors[] = {
     RGB(0, 24, 30), RGB(0, 22, 29), RGB(0, 20, 28), RGB(0, 18, 27),
     RGB(0, 16, 26), RGB(0, 14, 25), RGB(0, 12, 24), RGB(0, 14, 25),
@@ -1298,11 +1325,9 @@ s16 gLemuriaPalace_GlowColors[] = {
 // clang-format on
 #undef BLEND_SET_ALPHA
 
-#undef BLEND_SET_ALPHA
-
 /// The blend weights the hall's two maps flicker between as one fades into
 /// the other.
-LATE_DATA ALIGNED(4) u16 gLemuriaPalace_MapCrossfade[] = {
+LATE_DATA ALIGNED(4) u16 gLemuriaPalace_MapBlendSteps[] = {
     BLEND_ALPHA(2, 14), BLEND_ALPHA(4, 12), BLEND_ALPHA(6, 10),
     BLEND_ALPHA(8, 8),  BLEND_ALPHA(10, 6), BLEND_ALPHA(12, 4),
     BLEND_ALPHA(16, 0), BLEND_ALPHA(16, 0), BLEND_ALPHA(12, 4),

@@ -56,6 +56,9 @@ struct MapGridCell {
   u8 shape;
 };
 
+/// The cell picture number in a map cell's low 12 bits.
+#define MAPGRID_CELL_PICTURE_ID_MASK 0x00000fff
+
 /// The map's running blend script, which sets the blend registers over time
 /// (BlendScript_Run, each frame from BlendScript_Start).
 struct BlendScriptState {

@@ -13,13 +13,13 @@ struct ProjectedPoint {
   s32 z;
 };
 
-// gCurrentMatrix contains twelve s32 values in 16.16 (1.0 = 0x10000).
+// gCurrentMatrix contains twelve s32 values in 16.16 (1.0 = FIXED_ONE).
 // Entries 0-8 form the 3x3 rotation; entries 9-11 hold the translation.
 // Iwram_MultiplyMatrix multiplies the supplied matrix into the current one.
 
 #define MATRIX_DMA DMA_COPY_WORDS(12) ///< DMA for one matrix.
 
-/// The Lost Age obtains cosine by looking up sine ninety degrees ahead.
+/// The cosine: the sine a quarter turn on.
 #define COS(a) Trig_Sin((a) + DEGtoANG(90))
 
 /// An empty routine.
@@ -111,8 +111,8 @@ void Matrix_Rotate(s32 *angles) {
   Iwram_MultiplyMatrix(matrix);
 }
 
-/// The unit matrix store of matrix.h's Matrix_SetUnit in ⚓️'s order,
-/// the 1.0 built before the zeros, as ⚓️'s Matrix_SetCurrentUnit builds it.
+/// Stores the unit matrix at `matrix`: three runs of 1.0 and three zeros, the
+/// rotation's diagonal and a translation of 0.
 static __inline__ void Matrix_StoreUnit(void *matrix) {
   CAMELOT_ASM("three stmia no C store or copy compiles to")
   __asm__ volatile(
@@ -365,7 +365,7 @@ void Matrix_BuildLookAt(FIXED *eye, FIXED *target, FIXED *out) {
   s32 ez;
   s32 length;
   FIXED levelSquared;
-  u32 num = 0x80000000; // Dividend 2^31 for calculating the reciprocal.
+  u32 num = 0x80000000; // 2^31, the dividend of each reciprocal
   /* FAKEMATCH(pin): divide fixed to a register. */
   register u32 (*divide)(u32 dividend, u32 divisor) asm("r9");
   /* FAKEMATCH(pin): mul fixed to a register. */
@@ -385,6 +385,8 @@ void Matrix_BuildLookAt(FIXED *eye, FIXED *target, FIXED *out) {
   dz = target[2] - eye[2];
   length =
       Iwram_Sqrt(dot(dx >> 8, dx >> 8, dy >> 8, dy >> 8, dz >> 8, dz >> 8));
+  // 2^31 / length >> 15 is FIXED_ONE / length, the length's reciprocal,
+  // negated to turn d round, from the target to the eye.
   scale = divide(num, length) >> 15;
   scale = -scale;
   /* FAKEMATCH(dead): the normalization in a once-only block. */
@@ -445,7 +447,7 @@ void Matrix_LookAt(FIXED *eye, FIXED *target) {
 }
 
 /// Sets the projection from a vertical field of view (1/65536 turns): the focal
-/// length, in 16.16 pixels, is 80 (half the screen height) over the tangent of
+/// length, in 16.16 pixels, is half the screen's height over the tangent of
 /// half the angle.
 void Projection_SetFieldOfView(s32 fieldOfView, FIXED nearDepth,
                                FIXED farDepth) {
@@ -455,7 +457,7 @@ void Projection_SetFieldOfView(s32 fieldOfView, FIXED nearDepth,
 
   halfAngle = fieldOfView / 2;
   sine = Trig_Sin(halfAngle);
-  // The cosine, as the sine a quarter turn on: 80 * cos / sin.
+  // The cosine, as the sine a quarter turn on: DISPLAY_HEIGHT / 2 * cos / sin.
   focal = Iwram_RatioMulQ14(sine, Trig_Sin(halfAngle + DEGtoANG(90)) *
                                       (DISPLAY_HEIGHT / 2));
   gProjection.near = nearDepth;
@@ -496,6 +498,8 @@ s32 Render_ProjectPoint(const void *point, struct ProjectedPoint *screen) {
     if (projection->focal != 0) {
       u32 shifted = (u32)depth >> 11;
 
+      // (focal << 5) / (depth >> 11) is focal * FIXED_ONE / depth, focal over
+      // depth in 16.16, the shifts keeping both within 32 bits.
       scale = Iwram_UnsignedDivide(projection->focal << 5, shifted);
     } else {
       scale = FIXED_ONE * 33 / 25; // 1.32

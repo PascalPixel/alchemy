@@ -4,14 +4,14 @@
 
 #include "game/inventory.h"
 
-/// Gives the character the item, then equip every slot of their 15 that holds
+/// Gives the character the item, then equips every inventory slot that holds
 /// it.
 UNUSED static void Scene_GiveAndEquipItem(s32 character, s32 item) {
   struct Unit *unit = Unit_Get(character);
   s32 i;
 
   Inventory_AddItem(character, item);
-  for (i = 0; i <= 14; i++) {
+  for (i = 0; i < INVENTORY_SLOTS; i++) {
     if (unit->inventory[i] == item) {
       Inventory_Equip(character, i);
     }

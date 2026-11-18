@@ -61,7 +61,7 @@ extern u16 gFileScreen_PasswordStackItems[];
 // exactly.
 // XXX (no evidence): why the other editions reserve 320; nothing in this game
 // writes or reads past 260, so the bytes show only the space.
-#if LANGUAGE != LANGUAGE_JAPANESE
+#if TBS_PATCH_1
 #define FILE_SCREEN_PASSWORD_BUFFER_SIZE 320
 #else
 #define FILE_SCREEN_PASSWORD_BUFFER_SIZE 260
@@ -178,13 +178,6 @@ extern u16 gFileScreen_PasswordStackItems[];
 #define SYMBOL_GA 46
 #define SYMBOL_DA 56
 #define SYMBOL_BA 59
-#define KANA_WO 134
-#define KANA_A 145
-#define KANA_KA 150
-#define KANA_TA 224
-#define KANA_TE 227
-#define KANA_TO 228
-#define KANA_HA 234
 #else
 #define SYMBOL_DIGITS 24
 #define SYMBOL_SMALL_LETTERS 32
@@ -230,7 +223,7 @@ static void FileScreen_LoadBackground(void) {
   u32 y;
   u16 tile;
   struct BgScroll *scroll;
-  s32 blankTile = LOGO_BLANK_TILE;
+  s32 offscreenTile = OFFSCREEN_TILE;
 
   resourceId = RESOURCE_GOLDEN_SUN_LOGO;
   ScreenFade_ToBlack(0);
@@ -241,17 +234,17 @@ static void FileScreen_LoadBackground(void) {
           REG_DMA3);
   resource += LOGO_PALETTE_COLORS * 2;
   FieldDecompress_TaggedLz(resource, Ram_MapGridCellBuffer);
-  // A screen's worth of 256-colour tiles.
   Dma_Set((void *)Ram_MapGridCellBuffer, LOGO_TILES,
-          DMA_COPY_WORDS(DISPLAY_WIDTH * DISPLAY_HEIGHT / 4), REG_DMA3);
-  // The logo's map, each row's two columns past the screen's edge blank.
+          DMA_COPY_WORDS(SCREEN_TILE_BYTES / 4), REG_DMA3);
+  // The logo's map, each row's two columns past the screen's edge, which never
+  // show.
   tilemap = LOGO_MAP;
   tile = LOGO_FIRST_TILE;
   for (y = 0; y < DISPLAY_TILE_HEIGHT; y++) {
     for (x = 0; x < DISPLAY_TILE_WIDTH; x++)
       *tilemap++ = tile++;
-    *tilemap++ = blankTile;
-    *tilemap++ = blankTile;
+    *tilemap++ = offscreenTile;
+    *tilemap++ = offscreenTile;
   }
   scroll = gBgScroll;
   for (y = 0; y <= 3; y++) {
@@ -943,13 +936,13 @@ leave:;
   return 0;
 }
 
-/// The block of the window tilemap the two unused routines below fill: 16 by
-/// 8 entries; the second's tiles start at TILE_BLOCK_FIRST_TILE.
-#define TILE_BLOCK_COLUMNS 16
-#define TILE_BLOCK_ROWS 8
-#define TILE_BLOCK_FIRST_TILE 32
+/// The grid of the window tilemap the two unused routines below fill: 16 by
+/// 8 entries; the second's tiles start at TILE_GRID_FIRST_TILE.
+#define TILE_GRID_COLUMNS 16
+#define TILE_GRID_ROWS 8
+#define TILE_GRID_FIRST_TILE 32
 
-/// Unused: unpacks the tiles into a scratch block, then fills a block of the
+/// Unused: unpacks the tiles into a scratch buffer, then fills a grid of the
 /// window tilemap, in VRAM and in its shadow, at the window's cell: each
 /// cell's tile the row times the window's width plus the column.
 UNUSED static void FileScreen_FillTileGrid(struct Window *window,
@@ -967,22 +960,22 @@ UNUSED static void FileScreen_FillTileGrid(struct Window *window,
   cell = window->y * BG_SCREEN_WIDTH + window->x;
   vram = (u16 *)WINDOW_TILEMAP_VRAM + cell;
   shadow += cell;
-  for (row = 0; row < TILE_BLOCK_ROWS; row++) {
-    for (col = 0; col < TILE_BLOCK_COLUMNS; col++) {
+  for (row = 0; row < TILE_GRID_ROWS; row++) {
+    for (col = 0; col < TILE_GRID_COLUMNS; col++) {
       s16 tile = WINDOW_TILE(window->width * row + col);
 
       *vram++ = tile;
       *shadow++ = tile;
     }
-    vram += BG_SCREEN_WIDTH - TILE_BLOCK_COLUMNS;
-    shadow += BG_SCREEN_WIDTH - TILE_BLOCK_COLUMNS;
+    vram += BG_SCREEN_WIDTH - TILE_GRID_COLUMNS;
+    shadow += BG_SCREEN_WIDTH - TILE_GRID_COLUMNS;
   }
   Heap_Release(decodedTiles);
 }
 
-/// Unused: fills a block of the window tilemap with the tiles from
-/// TILE_BLOCK_FIRST_TILE on.
-UNUSED static void FileScreen_FillTileBlock(const struct Window *window) {
+/// Unused: fills a grid of the window tilemap with the tiles from
+/// TILE_GRID_FIRST_TILE on.
+UNUSED static void FileScreen_FillTileGridInOrder(const struct Window *window) {
   s16 *mirror = ((struct WindowWork *)gWindowWork[0])->tilemap;
   s16 *buffer = Heap_AllocEwram(768);
   s16 *vram;
@@ -996,8 +989,8 @@ UNUSED static void FileScreen_FillTileBlock(const struct Window *window) {
   row = 0;
   base = 0;
   do {
-    s32 tile = base + TILE_BLOCK_FIRST_TILE;
-    s32 remaining = TILE_BLOCK_COLUMNS - 1;
+    s32 tile = base + TILE_GRID_FIRST_TILE;
+    s32 remaining = TILE_GRID_COLUMNS - 1;
 
     do {
       s16 value = WINDOW_TILE(tile);
@@ -1010,10 +1003,10 @@ UNUSED static void FileScreen_FillTileBlock(const struct Window *window) {
       mirror++;
     } while (remaining >= 0);
     row++;
-    vram += BG_SCREEN_WIDTH - TILE_BLOCK_COLUMNS;
-    mirror += BG_SCREEN_WIDTH - TILE_BLOCK_COLUMNS;
-    base += TILE_BLOCK_COLUMNS;
-  } while (row < TILE_BLOCK_ROWS);
+    vram += BG_SCREEN_WIDTH - TILE_GRID_COLUMNS;
+    mirror += BG_SCREEN_WIDTH - TILE_GRID_COLUMNS;
+    base += TILE_GRID_COLUMNS;
+  } while (row < TILE_GRID_ROWS);
   Heap_Release(buffer);
 }
 

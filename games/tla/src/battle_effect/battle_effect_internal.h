@@ -42,6 +42,7 @@
 #include "macros.h"
 
 #include "debug/debug.h"
+#include "window/window.h"
 #include "field/field.h"
 #include "game/game.h"
 #include "menu/menu.h"
@@ -247,6 +248,9 @@ extern const struct Scale gProcne_UnitScale; ///< the comets' unit scale
 /// The frames the battle background darkens behind an effect's canvas
 /// (work->fadeFrames, Palette_StepFadeTransfer).
 #define BACKGROUND_DARKEN_FRAMES 24
+/// The level BattleBackground_LoadFar darkens the battle's own background to
+/// as it comes back after an effect: as dark as the canvas's fade left it.
+#define BACKGROUND_DARKENED_LEVEL BACKGROUND_DARKEN_FRAMES
 
 /// A sheet resource opens with its 64 colours, ahead of its compressed
 /// pictures.
@@ -283,10 +287,9 @@ extern const struct Scale gProcne_UnitScale; ///< the comets' unit scale
 #define BATTLE_BACKGROUND_BYTES                                                \
   (BATTLE_BACKGROUND_WIDTH * BATTLE_BACKGROUND_HEIGHT)
 /// The battle background's colours, BG palettes 6 to 13.
-#define BATTLE_BACKGROUND_COLORS 128
-/// One step of the battle background's fade, about a sixtieth of the full
-/// colour.
-#define CANVAS_FADE_STEP 1092
+#define BATTLE_BACKGROUND_COLORS (8 * PALETTE_COLORS)
+/// One step of the battle background's fade, a sixtieth of the full colour.
+#define CANVAS_FADE_STEP (FIXED_ONE / 60)
 /// The bytes of one 16-colour palette.
 #define PALETTE_BANK_BYTES 32
 /// A word of two palette entries, both `color`, to fill a palette a word at a
@@ -409,6 +412,17 @@ enum RedCrescentPicture {
 #define FIRE_BLOB_HEIGHT 32
 #define CRYSTAL_WIDTH 32
 #define CRYSTAL_HEIGHT 64
+/// CrystalSheet's shard pictures, after its crystal, and the shards of
+/// gPrism_ShardStarts a crystal breaks into.
+#define CRYSTAL_SHARD_PICTURES PICTURE_BYTES(CRYSTAL)
+#define SHARDS_PER_CRYSTAL 16
+/// BoulderSheet's boulder, its first picture, and its shard pictures after it.
+#define BOULDER_WIDTH 34
+#define BOULDER_HEIGHT 62
+#define BOULDER_SHARD_PICTURES (BOULDER_WIDTH * BOULDER_HEIGHT)
+/// A shard turns through its three pictures, one each SHARD_TURN of its
+/// variant.
+#define SHARD_TURN 96
 
 /// LightningPillarSheet's pillar, in two pictures.
 #define LIGHTNING_PILLAR_WIDTH 48
@@ -448,6 +462,9 @@ enum RedCrescentPicture {
 #define SMOKE_PUFF_HEIGHT 48
 #define FLASH_BURST_WIDTH 32
 #define FLASH_BURST_HEIGHT 64
+/// FlashBurstSheet's six pictures: a white flash turning to a fireball that
+/// burns out to embers.
+#define FLASH_BURST_PICTURES 6
 /// BlueCloudPuffSheet: four 32x32 puffs of cloud.
 #define CLOUD_PUFF_WIDTH 32
 #define CLOUD_PUFF_HEIGHT 32
@@ -553,6 +570,9 @@ enum TargetStrikeStyle {
 #define EFFECT_WIN0_LAYERS                                                     \
   (WININ_WIN0_BG0 | WININ_WIN0_BG1 | WININ_WIN0_BG2 | WININ_WIN0_OBJ |         \
    WININ_WIN0_CLR)
+
+/// Outside the battle view: BG0 and blending only.
+#define EFFECT_WINOUT (WINOUT_WIN01_BG0 | WINOUT_WIN01_CLR | WINOUT_WINOBJ_ALL)
 
 /// Opens the canvas layer at its own width: BG2 shows it one pixel a pixel.
 #define EFFECT_START_NARROW_CANVAS(bgControl)                                  \
@@ -854,6 +874,12 @@ void BattleEffect_FlushPendingGraphicsTransfer(void);
 void BattleEffect_DrawClippedCanvasLine(s32 x0, s32 y0, s32 x1, s32 y1,
                                         s32 color);
 void BattleEffect_BuildCanvasTilemap(void);
+/// The 64x64 stamp Haures draws in 256 colours: the VRAM address of its
+/// sprite's tiles, past what struct BattleEffectWork names in the effect's
+/// work block (BATTLE_EFFECT_WORK_SIZE), and the picture drawn for them, the
+/// 4 KB before transferMode.
+#define STAMP_TILES(work) (*(u32 *)((u8 *)(work) + 31604))
+#define STAMP_CANVAS(work) ((u8 *)(work) + 26496)
 void BattleEffect_ProcessPendingStampTransfer(void);
 
 // mirrored_wall.c
@@ -1497,24 +1523,24 @@ extern const struct ModelVertex gSabreDance_DaggerCorners[];
 extern const u16 gFume_Levels[][FUME_COLUMNS];
 extern const s32 gOceanFist_DropGravity[4];
 extern const s32 gRushingStrike_Scales[];
-extern const s32 gMirroredWall_BurstScales[];
-extern const s32 gMirroredWall_BurstShades[];
+extern const s32 gMirroredWall_Scales[];
+extern const s32 gMirroredWall_Shades[];
 extern s8 gDaedalus_ShakeOffsets[];
-extern u8 gDaedalus_DriftPictures[];
-extern u8 gDaedalus_DriftStarts[][2];
-extern s32 gDaedalus_DriftSpeeds[][2];
-extern u8 gDaedalus_DriftFrames[];
+extern u8 gDaedalus_WingBeatPictures[];
+extern u8 gDaedalus_BirdStarts[][2];
+extern s32 gDaedalus_BirdSpeeds[][2];
+extern u8 gDaedalus_BirdFrames[];
 extern u16 gDaedalus_ClatterFrames[];
 extern u16 gDaedalus_RingStarts[];
 extern s8 gDaedalus_RingX[];
-extern u8 gDaedalus_SpritePoints[][2];
+extern u8 gDaedalus_RightLegPoints[][2];
 extern u8 gDaedalus_SplashPoints[][6][2];
-extern u16 gDaedalus_ParticleStarts[];
-extern const u8 gDaedalusAlt_StrikeFrames[];
-extern const u8 gVengeance_BladeStrikes[][7];
-extern const u16 gLifeShear_BladeMesh[];
-extern const u16 gLifeShear_HandleMesh[];
-extern const struct ModelVertex gLifeShear_ScytheCorners[];
+extern u16 gDaedalus_DiveStarts[];
+extern const u8 gDaedalusStrike_HitFrames[];
+extern const u8 gVengeance_ArrowStrikes[][7];
+extern const u16 gLifeShear_PaleBladeMesh[];
+extern const u16 gLifeShear_OrangeBladeMesh[];
+extern const struct ModelVertex gLifeShear_BladeCorners[];
 extern const s32 gGeyser_DropGravity[];
 extern const s8 gGeyser_DropMinSizes[];
 extern u8 gBubbleColumn_PictureWidths[];
@@ -1728,9 +1754,9 @@ extern u16 gFlora_SpritePalettes[];
 
 // ocean_fist.c
 
-extern const struct Scale gDaedalus_WaveScale;
-extern const struct Scale gDaedalus_ShipScale;
-extern const struct Scale gDaedalus_ParticleScale;
+extern const struct Scale gDaedalus_CanopyScale;
+extern const struct Scale gDaedalus_MachineScale;
+extern const struct Scale gDaedalus_MissileScale;
 
 extern const struct Scale gCoatlicue_UnitScale;
 

@@ -49,13 +49,6 @@ union PolarOffsetPosition {
 
 STATIC_ASSERT(sizeof(union PolarOffsetPosition) == 12);
 
-// A field Psynergy or item use, packed into one value (field_sequence_items.c,
-// field_sequence_psynergy.c), as work->psynergy and work->item hold it.
-// bits: 13..10 the user (13 is ACT_PACKED) | 9..0 the Psynergy or item.
-#define ABILITY_ID(c) ((c) & 0x3ff) ///< the Psynergy
-#define ACT_ITEM_ID(c) ((c) & 0x3ff)
-#define ACT_UNIT(c) (((c) >> 10) & 15) ///< who uses it
-#define ACT_PACKED (1 << 13)           ///< use it without paying PP
 /// No user named: Field_UsePsynergy takes ISAAC, and Field_UseItem
 /// whoever holds the item in the most inventory slots.
 #define UNIT_NONE 15

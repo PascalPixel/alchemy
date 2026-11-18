@@ -2012,6 +2012,19 @@ static void Kalay_PushTunnelStatue(void) {
   }
 }
 
+/// A passage's opening frames, copied in turn over its doorway: each one map
+/// column five cells tall from row 58, columns 67 to 74. The passage counts as
+/// open (FLAG_TUNNEL_FIRST_PASSAGE_OPEN, FLAG_TUNNEL_SECOND_PASSAGE_OPEN) from
+/// column 70's.
+#define PASSAGE_FIRST_FRAME_COLUMN 67
+#define PASSAGE_OPEN_FRAME_COLUMN 70
+#define PASSAGE_LAST_FRAME_COLUMN 74
+
+/// The half-cell column each statue must be pushed west to, or past, to open
+/// its passage.
+#define FIRST_STATUE_OPENING_HALF_CELL 29
+#define SECOND_STATUE_OPENING_HALF_CELL 87
+
 /// Each statue's passage opens once the statue is pushed far enough west.
 static void Kalay_UpdateTunnelPassages(void) {
   struct Actor *firstStatue;
@@ -2027,21 +2040,22 @@ static void Kalay_UpdateTunnelPassages(void) {
   firstStatue = Actor_Get(ACTOR_FIRST_STATUE);
   secondStatue = Actor_Get(ACTOR_SECOND_STATUE);
   firstPassageOpen = GameFlag_Get(FLAG_TUNNEL_FIRST_PASSAGE_OPEN);
-  if (firstPassageOpen == 0 && (firstStatue->x.fixed >> 19) <= 29) {
+  if (firstPassageOpen == 0 &&
+      FIELD_HALF_CELL(firstStatue->x.fixed) <= FIRST_STATUE_OPENING_HALF_CELL) {
     frostEffect = Actor_Get(ACTOR_PUDDLE);
     Event_Start();
     MapGrid_CopyCellAttributes(7, 44, 1, 1, firstPassageOpen, 1);
-    i = 67;
+    i = PASSAGE_FIRST_FRAME_COLUMN;
     width = 1;
     height = 5;
     do {
       MapGrid_CopyCellsTo(i, 58, 78, 41, width, height);
       Event_Wait(4);
-      if (i == 70) {
+      if (i == PASSAGE_OPEN_FRAME_COLUMN) {
         GameFlag_Set(FLAG_TUNNEL_FIRST_PASSAGE_OPEN);
       }
       i++;
-    } while (i <= 74);
+    } while (i <= PASSAGE_LAST_FRAME_COLUMN);
     span = 2;
     MapGrid_CopyCellsTo(16, 109, 13, 109, 3, span);
     Event_Wait(40);
@@ -2085,19 +2099,20 @@ static void Kalay_UpdateTunnelPassages(void) {
     Event_End();
   }
   if (GameFlag_Get(FLAG_TUNNEL_SECOND_PASSAGE_OPEN) == 0 &&
-      (secondStatue->x.fixed >> 19) <= 87) {
+      FIELD_HALF_CELL(secondStatue->x.fixed) <=
+          SECOND_STATUE_OPENING_HALF_CELL) {
     Event_Start();
-    i = 67;
+    i = PASSAGE_FIRST_FRAME_COLUMN;
     width = 1;
     height = 5;
     do {
       MapGrid_CopyCellsTo(i, 58, 107, 41, width, height);
       Event_Wait(4);
-      if (i == 70) {
+      if (i == PASSAGE_OPEN_FRAME_COLUMN) {
         GameFlag_Set(FLAG_TUNNEL_SECOND_PASSAGE_OPEN);
       }
       i++;
-    } while (i <= 74);
+    } while (i <= PASSAGE_LAST_FRAME_COLUMN);
     height = 2;
     MapGrid_CopyCellsTo(45, 109, 42, 109, 3, height);
     Event_Wait(40);

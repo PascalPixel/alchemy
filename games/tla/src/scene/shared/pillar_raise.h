@@ -1,4 +1,7 @@
-/// Raises the pillars of a list out of the ground, making their cells solid.
+/// Raises the cell under each listed pillar four height steps, to its top, and
+/// marks it MAP_CELL_JUMP and MAP_CELL_CLIMBABLE, and the cell south of it, its
+/// face, climbable; then puts the leader back on the ground if it rose over
+/// him.
 void Pillar_Raise(u16 *list) {
   struct MapWork *map = Ram_HeapSlots->mapGrid;
   struct Actor *leader;
@@ -17,7 +20,7 @@ void Pillar_Raise(u16 *list) {
     u8 newShape;
     u8 *grid;
 
-    level >>= 19;
+    level = CELL_HEIGHT_STEPS(level);
     index = Actor_GetCellIndex(actor);
     cells = (u8 *)map->layers[*layer].cells;
     grid = Ram_MapShapeGrid;
@@ -32,9 +35,9 @@ void Pillar_Raise(u16 *list) {
     index <<= 2;
     ((struct ShapeCell *)shapes)->shape = newShape;
     cells += index;
-    ((struct MapCell *)cells)->attributeB |= 192;
+    ((struct MapCell *)cells)->attributeB |= MAP_CELL_JUMP | MAP_CELL_CLIMBABLE;
     cells += MAPGRID_SIZE * sizeof(struct MapCell);
-    ((struct MapCell *)cells)->attributeB |= 64;
+    ((struct MapCell *)cells)->attributeB |= MAP_CELL_CLIMBABLE;
     list++;
   }
   leader = Actor_GetById(gMainRoutineWork.leaderActorId);

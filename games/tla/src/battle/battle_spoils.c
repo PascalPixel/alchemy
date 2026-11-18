@@ -8,10 +8,10 @@
 #include "battle/battle.h"
 #include "battle/presentation.h"
 
-// XXX: what this encodes, and whether item ids here are wider than The Broken
-// Seal's 9 bits; its callers would settle it.
-/// Returns an item's rank among the spoils: an indispensable item first, then a
-/// rare one, then the higher item id; 0 for none.
+/// Returns an item's rank among the spoils, by which the four kept are chosen
+/// and handed out best first: its item id (INVENTORY_ITEM_ID_MASK's nine
+/// bits), with ITEM_RARE's bit above it and ITEM_INDISPENSABLE's above that;
+/// 0 for none.
 u32 BattleSpoils_RankItem(u32 inventoryEntry) {
   u32 priority = 0;
   u32 itemId = inventoryEntry & INVENTORY_ITEM_ID_MASK;
@@ -30,6 +30,10 @@ u32 BattleSpoils_RankItem(u32 inventoryEntry) {
   }
   return priority;
 }
+
+/// Above every item's rank: the search for the lowest of the spoils' four
+/// starts here.
+#define SPOILS_RANK_CEILING (1 << 30)
 
 /// Empties the battle's spoils and the party's pending item. Called by
 /// Battle_Run.
@@ -59,12 +63,12 @@ void BattleSpoils_Clear(void) {
 #define FIRST_DIGIT_COUNT 9
 #endif
 
-/// Returns the first digit among the first 14 characters of s, counted from 1,
+/// Returns the first digit among the characters of the name s, counted from 1,
 /// or FIRST_DIGIT_COUNT when there is none.
 s32 String_FindFirstDigit(u8 *s) {
   s32 i;
 
-  for (i = 0; i <= 13; i++) {
+  for (i = 0; i < UNIT_NAME_SIZE - 1; i++) {
     if ((u8)(s[i] - FIRST_DIGIT_BASE) <= FIRST_DIGIT_COUNT - 1)
       return s[i] - FIRST_DIGIT_BASE;
   }
@@ -111,7 +115,8 @@ static __inline__ s32 BattleEnemy_CalculateExperienceReward(struct Unit *unit,
 /// BattleEnemy_RecordDefeat with the battle work from its heap slot. This game
 /// also keeps the last two defeated enemies (their ids and
 /// String_FindFirstDigit's first digit of their names, alternating slots, with
-/// a count up to 2) and sets the seen flag only for enemy ids below 0x200.
+/// a count up to 2) and sets the defeated flag only for the enemies that have
+/// one, below ENEMY_DEFEATED_FLAG_COUNT.
 s32 BattleEnemy_RecordDefeat(s32 unitId, s32 djinnBonus) {
   struct Unit *unit;
   const struct EnemyDefinition *enemy;
@@ -129,7 +134,7 @@ s32 BattleEnemy_RecordDefeat(s32 unitId, s32 djinnBonus) {
   unit = Unit_Get(unitId);
   battle = Ram_HeapSlots->battleWork;
   spoils = &battle->spoils;
-  if (unitId >= 0 && unitId < 8)
+  if (unitId >= 0 && unitId <= ALLY_MAX)
     return -1;
   if (unit->classId != CLASS_NONE)
     return -2;
@@ -163,7 +168,7 @@ s32 BattleEnemy_RecordDefeat(s32 unitId, s32 djinnBonus) {
   spoils->defeated++;
   if (GameFlag_Get(FLAG_MONSTER_BATTLE))
     return 0;
-  if (unit->enemyId < 512)
+  if (unit->enemyId < ENEMY_DEFEATED_FLAG_COUNT)
     GameFlag_Set(ENEMY_DEFEATED_FLAG(unit->enemyId));
   enemy = Enemy_GetDefinitionFar(unit->enemyId);
   if (djinnBonus != 0) {
@@ -191,9 +196,10 @@ s32 BattleEnemy_RecordDefeat(s32 unitId, s32 djinnBonus) {
       dropShift -= 2;
     if (dropShift < 0)
       dropShift = 0;
+    // Twice FIXED_ONE >> n against a 16-bit random number: 1 in 2^(n - 1).
     if ((FIXED_ONE * 2 >> dropShift) > (Battle_RandomFar() & 0xffff)) {
       lowestSlot = -1;
-      lowestItemPriority = 0x40000000;
+      lowestItemPriority = SPOILS_RANK_CEILING;
       for (itemOrClassIndex = 0; itemOrClassIndex <= 3; itemOrClassIndex++) {
         itemPriority = BattleSpoils_RankItem(spoils->items[itemOrClassIndex]);
         if (itemPriority < lowestItemPriority) {
@@ -207,6 +213,9 @@ s32 BattleEnemy_RecordDefeat(s32 unitId, s32 djinnBonus) {
   }
   return 0;
 }
+
+/// PsynergyEntry.encodedAction's top bit: the action comes from the class.
+#define PSYNERGY_FROM_CLASS_SHIFT 15
 
 /// Hands out the spoils after a victory: experience to each party member still
 /// standing, with every level gained, then the coins, then the items best
@@ -239,7 +248,7 @@ void Battle_AwardSpoils(void) {
     BattleMessage_WaitForAdvance();
   }
   list = units;
-  living = BattleUnit_ListLiving(1, list);
+  living = BattleUnit_ListLiving(BATTLE_SIDE_MASK_PARTY, list);
   count = BattleUnit_ListLivingWithReserve(BATTLE_SIDE_MASK_PARTY, list);
   backup = Heap_AllocEwram(sizeof(struct Unit));
   for (i = 0; i < count; i++) {
@@ -261,7 +270,9 @@ void Battle_AwardSpoils(void) {
       BattleMessage_WaitForAdvance();
       for (cnt = 0; cnt < PSYNERGY_SLOTS; cnt++) {
         learned = unit->psynergy[cnt].encodedAction;
-        if ((learned & ACTION_ID_MASK) && (learned >> 15)) {
+        // A class ability the copy lacks is newly learned.
+        if ((learned & ACTION_ID_MASK) &&
+            (learned >> PSYNERGY_FROM_CLASS_SHIFT)) {
           for (j = 0; j < PSYNERGY_SLOTS; j++) {
             if (learned == backup->psynergy[j].encodedAction)
               break;

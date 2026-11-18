@@ -27,7 +27,7 @@
 
 /// Lucky Wheels' own work (struct LuckyWheelsWork), in the heap slot Lucky Dice
 /// keeps its sprites in, beside the battle effect slots it borrows.
-#define LUCKY_WHEELS_HEAP_SLOT HEAP_SLOT_LUCKY_DICE_SPRITES
+#define LUCKY_WHEELS_HEAP_SLOT HEAP_SLOT_LUCKY_GAME
 
 /// The paylines' canvas: 256 x 128 pixels of 8-bit colour, shown on BG2 from
 /// its tile 212 in the rows of its map from LUCKY_WHEELS_CANVAS_TOP_ROW to
@@ -1605,7 +1605,7 @@ void LuckyWheels_Run(void) {
 #define PACK_CODE_DISTANCE_LOW 0xff
 
 /// Empties the LZ packer's hash chains and numbers its window nodes.
-void LzPack_ResetSlotBuckets(void) {
+void LzPack_ResetChains(void) {
   s32 index;
   struct LzPackNode **bucket;
 
@@ -1644,7 +1644,7 @@ void LzPack_RemoveSlotNode(s32 slot) {
 /// Reads count more input bytes into the window from position start, dropping
 /// the bytes they replace from their chains; past the end of the input the
 /// positions are marked empty (-1).
-void LzPack_ConsumeSlotBytes(s32 start, s32 count, const u8 *input) {
+void LzPack_ReadInput(s32 start, s32 count, const u8 *input) {
   s32 current = 0;
 
   if (current < count) {
@@ -1769,7 +1769,7 @@ static __inline__ void LzPack_FindWindowMatch(s32 start) {
 /// marking a match: two bytes of distance and length (lengths 2 to 16), or
 /// three for lengths up to 272; a match is put off by one byte when the next
 /// position matches further. A zero match ends the stream.
-UNUSED s32 LzPack_PackStream(const u8 *input, u8 *dst, s32 size) {
+UNUSED s32 LzPack_PackData(const u8 *input, u8 *dst, s32 size) {
   s32 defer;
   s32 len;
   s32 saveOffset;
@@ -1779,7 +1779,7 @@ UNUSED s32 LzPack_PackStream(const u8 *input, u8 *dst, s32 size) {
 
   defer = 0;
   gLzPackWork = (struct LzPackWork *)gMapGridCellBuffer;
-  LzPack_ResetSlotBuckets();
+  LzPack_ResetChains();
   gLzPackWork->inputLimit = size;
   gLzPackWork->position = 0;
   gLzPackWork->inputCursor = 0;
@@ -1787,7 +1787,7 @@ UNUSED s32 LzPack_PackStream(const u8 *input, u8 *dst, s32 size) {
   gLzPackWork->flagMask = PACK_FIRST_FLAG;
   gLzPackWork->outBuffer[0] = 0;
   gLzPackWork->outCount = 1;
-  LzPack_ConsumeSlotBytes(0, PACK_LOOKAHEAD, input);
+  LzPack_ReadInput(0, PACK_LOOKAHEAD, input);
 
   while (gLzPackWork->bucketBySlot[gLzPackWork->position] != -1) {
     LzPack_FindWindowMatch(gLzPackWork->position);
@@ -1835,8 +1835,8 @@ UNUSED s32 LzPack_PackStream(const u8 *input, u8 *dst, s32 size) {
       gLzPackWork->matchLength = 1;
     }
 
-    LzPack_ConsumeSlotBytes(gLzPackWork->position + PACK_LOOKAHEAD,
-                            gLzPackWork->matchLength, input);
+    LzPack_ReadInput(gLzPackWork->position + PACK_LOOKAHEAD,
+                     gLzPackWork->matchLength, input);
     gLzPackWork->position =
         (gLzPackWork->position + gLzPackWork->matchLength) & PACK_WINDOW_MASK;
     gLzPackWork->flagMask >>= 1;

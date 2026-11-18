@@ -21,10 +21,14 @@
 #define STATUS_SAVED_TILE_BYTES 2048
 #endif
 
-// A bit over the page mode of StatusScreen_DrawStatusAilments and
-// ItemMenu_DrawMemberStatus: draw without clearing the window first, as for a
+// The page modes of StatusScreen_DrawStatusAilments and
+// ItemMenu_DrawMemberStatus, in the mode's low byte: the party row's summary,
+// or the full status page, with the elemental levels, Power and Resist.
+enum { STATUS_PAGE_SUMMARY = 0, STATUS_PAGE_FULL = 1 };
+// A bit over the page mode: draw without clearing the window first, as for a
 // window just opened.
-#define STATUS_PAGE_NO_CLEAR 0x100
+#define STATUS_PAGE_NO_CLEAR (1 << 8)
+#define STATUS_PAGE_MODE_MASK (STATUS_PAGE_NO_CLEAR - 1)
 
 // The longest status help text, in characters.
 #if LANGUAGE != LANGUAGE_JAPANESE
@@ -95,9 +99,23 @@
 #define STATUS_EQUIPPED_NAME_X 16
 #endif
 
-/// The Djinn figures stand in a row 32 pixels apart, at y STATUS_FIGURE_ROW_Y.
+/// The Djinn figures stand in a row 32 pixels apart, at y STATUS_FIGURE_ROW_Y,
+/// over the status page's Djinn counts. On the full status page those stand
+/// three tiles higher, and the figures at STATUS_FIGURE_FULL_PAGE_ROW_Y; the
+/// Psynergy page puts them above the screen.
 #define STATUS_FIGURE_X(index) (130 + (index) * 32)
 #define STATUS_FIGURE_ROW_Y 128
+#define STATUS_FIGURE_FULL_PAGE_ROW_Y 104
+#define STATUS_FIGURE_HIDDEN_Y -16
+
+/// The Djinn list (DjinnMenu_ShowCurrentList): a column for each element, its
+/// Djinni figure standing over it.
+#define DJINN_LIST_COLUMN_WIDTH 56
+#define DJINN_LIST_FIGURE_X(element) (32 + (element) * DJINN_LIST_COLUMN_WIDTH)
+#define DJINN_LIST_FIGURE_Y 70
+/// The window map entry of the first element icon, in palette 1 as
+/// TILEMAP_ENTRY_ICON gives it; the four elements follow it in order.
+#define STATUS_ELEMENT_TILE (BG_TILE_PALETTE(1) | 1)
 
 /// The switch help's two lines, drawn above the status window's interior.
 #define SWITCH_HELP_Y -24
@@ -364,8 +382,8 @@ s32 DjinnMenu_ShowCurrentList(void) {
     s32 i;
 
     for (i = 0; i < 4; i++) {
-      menu->slotX[i] = 32 + i * 56;
-      menu->slotY[i] = 70;
+      menu->slotX[i] = DJINN_LIST_FIGURE_X(i);
+      menu->slotY[i] = DJINN_LIST_FIGURE_Y;
       menu->memberY[i] = MENU_MEMBER_Y;
     }
   }
@@ -379,9 +397,11 @@ s32 DjinnMenu_ShowCurrentList(void) {
       // FLAG_DJINN_FIRST on: one per Djinni found, DJINN_PER_ELEMENT to an
       // element.
       if (GameFlag_GetFar(FLAG_DJINNI(id))) {
-        Window_SetTilemapEntryFar(window, 0x1001 + element, element * 7 + 1,
-                                  djinn + 3, 0);
-        Text_DrawMessageAsTilesFar(MsgDjinnName + id, window, element * 56 + 16,
+        Window_SetTilemapEntryFar(window, STATUS_ELEMENT_TILE + element,
+                                  element * (DJINN_LIST_COLUMN_WIDTH / 8) + 1,
+                                  djinn + 3, TILEMAP_ENTRY_PLAIN);
+        Text_DrawMessageAsTilesFar(MsgDjinnName + id, window,
+                                   element * DJINN_LIST_COLUMN_WIDTH + 16,
                                    djinn * 8 + 24);
       }
     }
@@ -634,7 +654,7 @@ s32 PartyMemberChooser_MoveEntry(s32 selectedIndex, s32 direction) {
   {
     u32 fill = 0;
 #ifdef UBFIX
-    s32 clearIndex = 13;
+    s32 clearIndex = ARRAY_COUNT(reordered) - 1;
 
     // UB: the pointer walk below forms reordered - 1 after its last store and
     // compares the addresses as signed numbers; this clear counts an index
@@ -644,7 +664,7 @@ s32 PartyMemberChooser_MoveEntry(s32 selectedIndex, s32 direction) {
       clearIndex--;
     } while (clearIndex >= 0);
 #else
-    u32 *clear = &reordered[13];
+    u32 *clear = &reordered[ARRAY_COUNT(reordered) - 1];
 
     do {
       *clear = fill;
@@ -724,7 +744,7 @@ void StatusScreen_ShowMemberStatus(s32 member, s32 frame) {
     StatusScreen_DrawStatusAilments(window, member, STATUS_PAGE_NO_CLEAR);
     return;
   }
-  StatusScreen_DrawStatusAilments(window, member, 0);
+  StatusScreen_DrawStatusAilments(window, member, STATUS_PAGE_SUMMARY);
 }
 
 /// The party member's status page.
@@ -755,7 +775,7 @@ s32 StatusScreen_SelectCommand(void) {
   Window_UpdateOrCreate(&menu->helpWindow, 0, 0, 30, 5, 2);
   Task_Remove(Menu_PlacePartyFigures);
   for (i = 0; i < 4; i++)
-    menu->rowY[i] = 104;
+    menu->rowY[i] = STATUS_FIGURE_FULL_PAGE_ROW_Y;
   done = 0;
   MenuCursor_Slide(-10, 88);
 
@@ -763,7 +783,7 @@ s32 StatusScreen_SelectCommand(void) {
   while (done == 0 && GameFlag_GetFar(FLAG_MENU_START_PRESSED) == 0) {
     Unit_GetFar(menu->selectedIds[0]);
     StatusScreen_DrawStatusAilments(menu->statusWindow, menu->selectedIds[0],
-                                    1);
+                                    STATUS_PAGE_FULL);
     count = StatusScreen_BuildAvailability(entries, 1, menu->selectedIds[0]);
     hasAilments = 0;
     if (count == 0)
@@ -919,9 +939,9 @@ void StatusScreen_DrawSelectionCursor(s32 mode, s32 selected, u8 *entries,
     width = 20;
   }
 
-  // Palette 14 (highlighted) when invert is 0, 15 when it is 1.
+  // HIGHLIGHT_PALETTE when invert is 0, WINDOW_PALETTE when it is 1.
   different = 1 ^ invert;
-  palette = 15 - (((0u - different) | different) >> 31);
+  palette = WINDOW_PALETTE - (((0u - different) | different) >> 31);
   Render_SetTilemapFlagRect(menu->statusWindow, x, y, width, 1, palette);
 }
 
@@ -1014,7 +1034,7 @@ void StatusScreen_DrawStatusAilments(struct Window *window, s32 memberId,
   unit = Unit_GetFar(memberId);
   // The Djinn row, in tiles: higher on the full page (mode 1), which has the
   // elemental rows below it.
-  if ((mode & 0xff) == 1)
+  if ((mode & STATUS_PAGE_MODE_MASK) == STATUS_PAGE_FULL)
     djinnRow = 7;
   else
     djinnRow = 10;
@@ -1051,7 +1071,7 @@ void StatusScreen_DrawStatusAilments(struct Window *window, s32 memberId,
     Text_DrawMessageAsTilesFar(MsgNormalLabel, window, 0, STATUS_AILMENT_Y(0));
   StatusScreen_UpdateSelectionIcons(ailments);
   StatusScreen_ShowStatusIcons(ailments);
-  if (menu->page == 3)
+  if (menu->page == STATUS_SCREEN_PAGE_CHOOSER)
     return;
   if (keepDrawn == 0) {
     wait(1);
@@ -1060,7 +1080,7 @@ void StatusScreen_DrawStatusAilments(struct Window *window, s32 memberId,
   // The four element icons, then the Djinn counts and, in mode 1, the
   // elemental levels, Power and Resist.
   Text_SetColorFar(TEXT_COLOR_NORMAL);
-  if (mode == 1 || hasDjinn == 1) {
+  if (mode == STATUS_PAGE_FULL || hasDjinn == 1) {
     Window_SetTilemapEntryFar(window, 1, 15, djinnRow, TILEMAP_ENTRY_ICON);
     Window_SetTilemapEntryFar(window, 2, 19, djinnRow, TILEMAP_ENTRY_ICON);
     Window_SetTilemapEntryFar(window, 3, 23, djinnRow, TILEMAP_ENTRY_ICON);
@@ -1068,7 +1088,7 @@ void StatusScreen_DrawStatusAilments(struct Window *window, s32 memberId,
   }
   if (hasDjinn)
     Text_DrawMessageAsTilesFar(MsgDjinnLabel, window, 64, (djinnRow + 1) * 8);
-  if (mode == 1) {
+  if (mode == STATUS_PAGE_FULL) {
     if (!hasDjinn)
       djinnRow--;
     MENU_DRAW_STATUS_LABEL(gMenu_LvString, window, 64, (djinnRow + 2) * 8);
@@ -1080,7 +1100,7 @@ void StatusScreen_DrawStatusAilments(struct Window *window, s32 memberId,
     if (hasDjinn)
       Text_DrawNumberInWindowFar(unit->djinnHeldCounts[i], 1, window,
                                  STATUS_ELEMENT_X(i), (djinnRow + 1) * 8);
-    if ((mode & 0xff) == 1) {
+    if ((mode & STATUS_PAGE_MODE_MASK) == STATUS_PAGE_FULL) {
       if (hasDjinn) {
         Text_DrawNumberInWindowFar(unit->djinnSetCounts[i], 1, window,
                                    STATUS_ELEMENT_X(i) - 16,
@@ -1234,24 +1254,31 @@ s32 PagedList_Build(struct PagedList *result, s32 index) {
 
 static __inline__ u32 XorWord(u32 word, u32 mask) { return word ^ mask; }
 
-/// Builds the Psynergy range icons' tiles in the window tile area: two sets of
-/// six tile pairs (24 8x8 tiles), each a fill of WINDOW_BACKGROUND_COLOR with
-/// the rows of gMenu_PatternRowMasks XORed in, the first set growing row by row
-/// and the second skipping its top row.
+/// The Psynergy range icons' tiles: two sets of RANGE_ICON_PAIRS tile pairs,
+/// a pair RANGE_ICON_PAIR_WORDS of tile data, a word to a 4bpp tile row.
+/// RANGE_ICON_ALL, the last pair, stands for ABILITY_RANGE_ALL.
+enum {
+  RANGE_ICON_PAIRS = 6,
+  RANGE_ICON_PAIR_WORDS = 2 * TILE_SIZE_4BPP / 4,
+  RANGE_ICON_ALL = 2 * RANGE_ICON_PAIRS - 1
+};
+
+/// Builds the Psynergy range icons' tiles in the window tile area, each a fill
+/// of WINDOW_BACKGROUND_COLOR with the rows of gMenu_PatternRowMasks XORed in,
+/// the first set growing row by row and the second skipping its top row.
 void Menu_BuildPatternTiles(void) {
   u32 *vram = (u32 *)(BG_CHAR_BLOCK(0) +
                       (RANGE_ICON_TILE & TILE_NUMBER_MASK) * TILE_SIZE_4BPP);
   s32 set;
   s32 tileIndex;
 
-  // A 4bpp tile row is one word: a pair is 16 words (64 bytes), a set 96
-  // words (384 bytes).
   for (set = 0; set < 2; set++) {
-    for (tileIndex = 0; tileIndex < 6; tileIndex++) {
-      u32 *tile = vram + set * 96 + tileIndex * 16;
+    for (tileIndex = 0; tileIndex < RANGE_ICON_PAIRS; tileIndex++) {
+      u32 *tile = vram + set * RANGE_ICON_PAIRS * RANGE_ICON_PAIR_WORDS +
+                  tileIndex * RANGE_ICON_PAIR_WORDS;
       s32 rowIndex;
 
-      Iwram_FillWords(tile, 64, TEXT_CANVAS_BACKGROUND_WORD);
+      Iwram_FillWords(tile, 2 * TILE_SIZE_4BPP, TEXT_CANVAS_BACKGROUND_WORD);
       for (rowIndex = 1; rowIndex <= 7; rowIndex++) {
         s32 mask = tileIndex;
 
@@ -1276,8 +1303,8 @@ void Menu_BuildPatternTiles(void) {
 /// Draws a Psynergy range icon at tile (x, y) of window: three tiles from
 /// pair range of the range icon tiles (Menu_BuildPatternTiles), the side tile
 /// on both ends, mirrored on the left, and the centre tile between. range is
-/// the ability's range less one (0 for the aimed unit alone), or 11 for
-/// ABILITY_RANGE_ALL (PsynergyMenu_DrawListPage).
+/// the ability's range less one (0 for the aimed unit alone), or
+/// RANGE_ICON_ALL for ABILITY_RANGE_ALL (PsynergyMenu_DrawListPage).
 void PsynergyMenu_DrawRange(struct Window *window, s32 x, s32 y, s32 range,
                             s32 unused) {
   s32 iconIndex;
@@ -1436,10 +1463,10 @@ s32 PsynergyMenu_DrawListPage(struct Window *window, s32 unused,
       Text_DrawNumberAtOffsetFar(action->ppCost, 2, window, LIST_PP_NUMBER_X,
                                  y);
 
-      // ABILITY_RANGE_ALL takes the last range icon, 11; range n takes n - 1.
+      // Range n takes range icon n - 1.
       range = action->range;
       if (range == ABILITY_RANGE_ALL) {
-        range = 11;
+        range = RANGE_ICON_ALL;
       } else {
         range--;
       }
@@ -1491,16 +1518,16 @@ s32 PsynergyMenu_SelectAction(void) {
   // screen (y -16) while this page is up, until the party member row or the
   // status page puts them back.
   for (iconIndex = 0; iconIndex < 4; iconIndex++)
-    menu->slotY[iconIndex] = -16;
+    menu->slotY[iconIndex] = STATUS_FIGURE_HIDDEN_Y;
   {
-    s32 priority = 245;
+    s32 depth = OAM_DEPTH_WINDOW + 5;
     struct WindowSprite **icons = menu->entryIcons;
 
     for (iconIndex = 0; iconIndex < MENU_ENTRY_ICONS; iconIndex++) {
       struct WindowSprite *icon = *icons++;
 
       if (icon != 0)
-        icon->depth = priority;
+        icon->depth = depth;
     }
   }
   Task_Remove(Menu_PlacePartyFigures);
@@ -2035,8 +2062,12 @@ void Menu_PlaceEntryActorsInGrid(s32 originX, s32 originY, s32 columns) {
   }
 }
 
+/// The side of a cell of the grids Menu_PlaceEntryActorInGrid places icons in.
+#define ENTRY_ICON_CELL_SIZE 16
+
 /// Places icon at cell index (an index above 31 is taken as 0) of a grid of
-/// 16x16 cells, columns wide, from (originX, originY), and shows it.
+/// ENTRY_ICON_CELL_SIZE square cells, columns wide, from (originX, originY),
+/// and shows it.
 void Menu_PlaceEntryActorInGrid(struct WindowSprite *icon, s32 index,
                                 s32 originX, s32 originY, s32 columns) {
   s32 entryIndex;
@@ -2045,8 +2076,8 @@ void Menu_PlaceEntryActorInGrid(struct WindowSprite *icon, s32 index,
   if (entryIndex > MENU_ENTRY_ICONS - 1) {
     entryIndex = 0;
   }
-  icon->y = (entryIndex / columns * 16) + originY;
-  icon->x = (entryIndex % columns * 16) + originX;
+  icon->y = (entryIndex / columns * ENTRY_ICON_CELL_SIZE) + originY;
+  icon->x = (entryIndex % columns * ENTRY_ICON_CELL_SIZE) + originX;
   Icon_PrepareActor(icon);
 }
 
@@ -2177,7 +2208,10 @@ void ItemMenu_ResetCategory(void) {
   }
 }
 
-/// Loads each enabled status's icon into its category resource slot.
+/// Loads each enabled status's icon into its category resource slot: kind is
+/// the icon's number in gIcon_MiscIconPointers, the number the battle Status
+/// screen gives the same status (OWNER_CONDITION_DOWNED,
+/// OWNER_CONDITION_POISON, _DEADLY_POISON, _CURSED_ITEM and _HAUNT).
 s32 StatusScreen_UpdateSelectionIcons(const u8 *enabled) {
   struct ItemMenuWork *menu = gMenuWork;
   s32 index = 0;

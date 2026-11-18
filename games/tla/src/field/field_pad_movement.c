@@ -12,6 +12,11 @@
 #include "macros.h"
 #include "field/resource_slot.h"
 
+/// A world map camera turn of less than this either way is made at once.
+#define WORLD_MAP_YAW_SNAP 16
+/// The flying ship's camera turns toward the pad's yaw by at most this a frame.
+#define FLYING_YAW_STEP_MAX (TRIG_TURN / 2048)
+
 /// SC_WORLD: moves the player on the world map by the direction pad, as
 /// SC_PLAYER does on the field, and turns the world map camera with the pad.
 s32 Actor_MoveOnWorldMap(struct Actor *actor) {
@@ -149,7 +154,7 @@ update_object:
     yawStep = WORLD_MAP_YAW_STEP_MAX;
   if (yawStep < -WORLD_MAP_YAW_STEP_MAX)
     yawStep = -WORLD_MAP_YAW_STEP_MAX;
-  if (yawStep > -16 && yawStep < 16)
+  if (yawStep > -WORLD_MAP_YAW_SNAP && yawStep < WORLD_MAP_YAW_SNAP)
     yawStep = targetCameraYaw - camera->yaw;
   camera->yaw += yawStep;
 
@@ -528,13 +533,19 @@ s32 Actor_SailOnWorldMap(struct Actor *actor) {
   count = 0;
   terrain = WorldMap_GetCollision((struct WorldPosition *)&actor->x.fixed);
   worldWork = Ram_HeapSlots->fieldWork;
-  if (terrain >= 1 && terrain <= 3)
+  // FieldWork.terrainKind, which WorldMap_IsFlyable reads: 0 over the sea but
+  // its last kind, 1 over walkable ground up to shallow water, 2 over the sea's
+  // last kind, 3 over the rest of the walkable ground.
+  if (terrain >= WORLD_MAP_COLLISION_SEA_FIRST &&
+      terrain < WORLD_MAP_COLLISION_SEA_LAST)
     worldWork->terrainKind = 0;
-  if (terrain >= 5 && terrain <= 6)
+  if (terrain >= WORLD_MAP_COLLISION_WALKABLE_FIRST &&
+      terrain <= WORLD_MAP_COLLISION_SHALLOW_WATER)
     worldWork->terrainKind = 1;
-  if (terrain == 4)
+  if (terrain == WORLD_MAP_COLLISION_SEA_LAST)
     worldWork->terrainKind = 2;
-  if (terrain >= 7 && terrain <= 12)
+  if (terrain >= WORLD_MAP_COLLISION_DEFAULT &&
+      terrain <= WORLD_MAP_COLLISION_WALKABLE_LAST)
     worldWork->terrainKind = 3;
 
   collision = 0;
@@ -687,7 +698,7 @@ update_object:
     yawStep = WORLD_MAP_YAW_STEP_MAX;
   if (yawStep < -WORLD_MAP_YAW_STEP_MAX)
     yawStep = -WORLD_MAP_YAW_STEP_MAX;
-  if (yawStep > -16 && yawStep < 16)
+  if (yawStep > -WORLD_MAP_YAW_SNAP && yawStep < WORLD_MAP_YAW_SNAP)
     yawStep = targetCameraYaw - camera->yaw;
   camera->yaw += yawStep;
 
@@ -745,13 +756,16 @@ s32 Actor_FlyOnWorldMap(struct Actor *actor) {
   count = 0;
   terrain = WorldMap_GetCollision((struct WorldPosition *)&actor->x.fixed);
   worldWork = Ram_HeapSlots->fieldWork;
-  if (terrain >= 1 && terrain <= 3)
+  if (terrain >= WORLD_MAP_COLLISION_SEA_FIRST &&
+      terrain < WORLD_MAP_COLLISION_SEA_LAST)
     worldWork->terrainKind = 0;
-  if (terrain >= 5 && terrain <= 6)
+  if (terrain >= WORLD_MAP_COLLISION_WALKABLE_FIRST &&
+      terrain <= WORLD_MAP_COLLISION_SHALLOW_WATER)
     worldWork->terrainKind = 1;
-  if (terrain == 4)
+  if (terrain == WORLD_MAP_COLLISION_SEA_LAST)
     worldWork->terrainKind = 2;
-  if (terrain >= 7 && terrain <= 12)
+  if (terrain >= WORLD_MAP_COLLISION_DEFAULT &&
+      terrain <= WORLD_MAP_COLLISION_WALKABLE_LAST)
     worldWork->terrainKind = 3;
 
   actor->motionFlags = 0;
@@ -901,10 +915,10 @@ s32 Actor_FlyOnWorldMap(struct Actor *actor) {
   targetCameraYaw = Iwram_MulFX(gWorldMap_KeyYaws[DPAD_INDEX(gInput.held)],
                                 actor->y.fixed / 4 + FIXED_ONE);
   yawStep = (s16)(targetCameraYaw - camera->yaw) / 8;
-  if (yawStep > 32)
-    yawStep = 32;
-  if (yawStep < -32)
-    yawStep = -32;
+  if (yawStep > FLYING_YAW_STEP_MAX)
+    yawStep = FLYING_YAW_STEP_MAX;
+  if (yawStep < -FLYING_YAW_STEP_MAX)
+    yawStep = -FLYING_YAW_STEP_MAX;
   if (yawStep >= -1 && yawStep <= 1)
     yawStep = targetCameraYaw - camera->yaw;
   camera->yaw += yawStep;

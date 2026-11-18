@@ -89,12 +89,26 @@
 #include "enemy_ids.h"
 #include "item_ids.h"
 
-/// BattleEnemy_ClaimNameLetter returns the letter in ENEMY_LETTER_MASK, with
-/// ENEMY_LETTER_FIRST_TOO set for the second enemy of a class: its callers then
+/// BattleEnemy_ClaimNameLetter returns the letter in NAME_LETTER_MASK, with
+/// NAME_LETTER_FIRST_TOO set for the second enemy of a class: its callers then
 /// give the first one its letter too (BattleEnemy_LetterFirstOfKind) before
 /// passing the letter to BattleUnit_SetFar.
-#define ENEMY_LETTER_FIRST_TOO 0x8000
-#define ENEMY_LETTER_MASK 0x7fff
+#define NAME_LETTER_FIRST_TOO 0x8000
+#define NAME_LETTER_MASK 0x7fff
+/// The letters the Japanese edition names enemies with, A to Z; elsewhere they
+/// are nine digits (battle_formation.c's NAME_LETTER_COUNT).
+#define NAME_LETTER_ALPHABET 26
+
+/// A list place code's side bit, set for the enemies' list, and its place in
+/// the list (Battle_GetUnitAtPlace): PLACE_ENEMY is PLACE_PARTY with the side
+/// bit set.
+#define PLACE_ENEMY_SIDE 0x80
+#define PLACE_INDEX_MASK 0xf
+
+/// What an action that comes first adds to its priority (a Djinni that
+/// shields, guards or defends, an enemy's Counter or Guard Aura stance): more
+/// than any agility, so it is taken before every other action of the turn.
+#define PRIORITY_FIRST_IN_TURN 10000
 
 /// The length of a unit's name, its terminator excluded.
 #define UNIT_NAME_LENGTH 14
@@ -107,25 +121,14 @@
 /// gLinkStatus: both consoles are connected.
 #define LINK_BOTH_CONNECTED 3
 
-/// The frames a link battle tolerates without a connection before it gives
-/// up: a count above it pauses the battle (BattleWork.linkPaused) or fails
-/// the sync or transfer under way (battle_link.c, battle_turn.c).
-#define LINK_MAX_MISSED_FRAMES 24
-
 /// BattleAI_ChooseTarget's results when it picks no one: the side it
 /// may target lists no one, or no one there is worth the ability.
 #define TARGET_PICK_SIDE_EMPTY -2
 #define TARGET_PICK_NONE -1
 
-/// The list place codes the target pickers return (targeting.c,
-/// Battle_FindUnitPlace): a place in the party's list or the enemies',
-/// or'd with the side's tag.
-#define PLACE_PARTY 0x100
-#define PLACE_ENEMY 0x180
-
 /// BattleWork.placement of a unit with no place on the battlefield:
 /// BattleUnit_RefreshPlacement fills the list with it.
-#define BATTLE_OBJECT_NONE 0xff
+#define BATTLE_OBJECT_NONE 255
 
 // BattleWork.defeatState: whether the last enemy fell alone, or with others
 // before it, or a party member's action ended the battle with a single
@@ -139,6 +142,8 @@
 /// BattleEnemy_RecordDefeat outside the monster battles; the monster battles
 /// choose only formations of defeated enemies (BattleFormation_AverageLevel).
 #define ENEMY_DEFEATED_FLAG(classId) ((classId) + 0x600)
+/// The enemies that have a defeated flag, the flags 0x600 to 0x7ff.
+#define ENEMY_DEFEATED_FLAG_COUNT 512
 
 // Far calls the parts make, each passing its own view of the record:
 // Sprite_AddAnimation and SpriteAnimation_Start (field.c, resource_slot/)
@@ -238,6 +243,10 @@ struct BattleLinkedActionState {
 /// Inventory_GetEquippedItemFar's slot for the weapon.
 #define EQUIP_WEAPON 1
 
+/// A group's sprite word (ACTOR_SPRITE_GROUP) points to a table of four
+/// sprites.
+#define ACTOR_SPRITE_GROUP_SIZE 4
+
 // What BattleActionRun_Build returns besides 0, which stages the action.
 #define ACTION_REPORTED -1 ///< the action failed and its message is shown
 #define ACTION_NOTHING_TO_SHOW -2 ///< nothing to stage or show
@@ -268,6 +277,9 @@ enum BattleActionFailure {
 /// BattleStaging_HideField's mode bit that hides the acting unit too, as the
 /// summons do.
 #define STAGING_HIDE_ACTOR 1
+/// BattleStaging_HideField's mode bit for Daedalus's strike at the turn's
+/// end: the acting unit plays no cast, with no pose, sound or star field.
+#define STAGING_NO_CAST 2
 
 /// BattleStaging_RunAttack's mode bit for Meld: BattlePlan.partnerId runs in
 /// beside the attacker.
@@ -344,9 +356,9 @@ s32 BattleMessage_WaitForAdvanceAt(s32 x, s32 y);
 #define BATTLE_BG_PALETTE_COLORS (8 * 16)
 
 /// The battle background's darkening step (BattleBackground_SetPaletteLevel,
-/// BattleBackground_Load, the element glow): each level takes 1092 from the
-/// 16.16 brightness, so level 60 is almost black.
-#define BACKGROUND_LEVEL_STEP 1092
+/// BattleBackground_Load, the element glow): each level takes a sixtieth from
+/// the 16.16 brightness, so level 60 is black.
+#define BACKGROUND_LEVEL_STEP (FIXED_ONE / 60)
 
 /// BG1 during a battle: 256 colours, priority 3, its map in screen block 31.
 #define BATTLE_BG1CNT                                                          \

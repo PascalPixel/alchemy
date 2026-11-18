@@ -27,7 +27,7 @@
 /// out of sight.
 ///
 /// Talking to him or walking up to him while he waits (step trigger 11) makes
-/// him come along (GondowanCave_IodemRejoins). Until he has reached Babi
+/// him come along (GondowanCave_IodemJoinsParty). Until he has reached Babi
 /// Lighthouse (FLAG_BABI_LIGHTHOUSE_IODEM_ARRIVED), turning back
 /// (step trigger 10) brings him out to ask why
 /// (GondowanCave_IodemAsksWhyTurningBack). If he stays to wait, the saved place
@@ -40,7 +40,7 @@
 /// Both are kept in story flags, so the cave stays solved and
 /// Scene_Initialize puts them back. FLAG_GONDOWAN_CAVE_STUMP_MOVED is set
 /// once the stump has leapt in. FLAG_GONDOWAN_CAVE_PILLAR_DROPPED is set once
-/// the pillar has gone in past column 42, shown from then on by
+/// the pillar has dropped into the crevice, shown from then on by
 /// ACTOR_DROPPED_PILLAR.
 ///
 /// Cell (107, 17) of the map grid is cell (43, 17) of layout layer 2,
@@ -146,9 +146,16 @@ enum GondowanCaveActorId {
   ACTOR_BOULDER_GAP
 };
 
-// The leap script also runs after the shared pushed actor movement.
+/// The stump's column at the water's edge (its placement, x 496). Move west
+/// takes it off this column, and it leaps into the water.
+#define STUMP_COLUMN 31
+
+/// The crevice's column east of the pillar (x 696, where ACTOR_DROPPED_PILLAR
+/// stands). Pushed or moved this far, the pillar drops in.
+#define PILLAR_DROP_COLUMN 43
+
 static void GondowanCave_MovePillar(void);
-static void GondowanCave_RunSpinningLeap(s32 actorId);
+static void GondowanCave_LeapIntoWater(s32 actorId);
 
 #include "shared/field_effect_create.c"
 
@@ -238,19 +245,16 @@ static void GondowanCave_IodemAsksWhyTurningBack(void) {
     // "Why are you going back, Isaac? Do you need to get something..."
     Event_OpenMessage(ACTOR_IODEM, 0);
     if (Event_AskYesNoWithActorAnimation(0, 0) == 0) {
-      // "I see... In that case, I shall wait here for you to return." The
-      // saved place becomes Tolbi's.
       // "I see... In that case, I shall wait here for you to return."
       Event_ShowMessage(ACTOR_IODEM, 0);
       Actor_WalkTo(ACTOR_IODEM, 152, 232);
       Event_ClearFlag(FLAG_IODEM_FOLLOWING_PARTY);
       Actor_WaitForMoveById(ACTOR_IODEM);
       Actor_SetAnimation(ACTOR_IODEM, ANIM_STAND);
+      // A defeat now returns the party to the Tolbi Sanctum.
       gMainRoutineWork.restartScene = SCENE_STUCCO_ROOMS_B;
       gMainRoutineWork.restartEntrance = STUCCO_ROOMS_B_SANCTUM_NORTH;
     } else {
-      // "Then we should continue on our way to the lighthouse." He rejoins
-      // the party, and Isaac steps away from the step trigger.
       gFieldWork->message += 1;
       // "Then we should continue on our way to the lighthouse."
       Event_ShowMessage(ACTOR_IODEM, 0);
@@ -263,6 +267,7 @@ static void GondowanCave_IodemAsksWhyTurningBack(void) {
       Actor_WaitForMoveById(ACTOR_IODEM);
       Actor_SetPosition(ACTOR_IODEM, 0, 0);
       Event_Wait(30);
+      // Isaac steps back off the step trigger.
       Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_WALK);
       Actor_SetDestinationOffset(ACTOR_PARTY_LEADER, 0, 16);
       Actor_WaitForMoveById(ACTOR_PARTY_LEADER);
@@ -272,8 +277,8 @@ static void GondowanCave_IodemAsksWhyTurningBack(void) {
   }
 }
 
-/// Iodem comes along with the party from Gondowan Passage, where he waits.
-static void GondowanCave_IodemRejoins(void) {
+/// Iodem, waiting in Gondowan Passage, joins the party.
+static void GondowanCave_IodemJoinsParty(void) {
   Event_Start();
   Actor_FaceActor(ACTOR_IODEM, ACTOR_PARTY_LEADER, 0);
   Actor_FaceActor(ACTOR_PARTY_LEADER, ACTOR_IODEM, 0);
@@ -367,8 +372,8 @@ static void GondowanCave_MoveStump(void) {
   {
     struct Actor *actor = Actor_Get(ACTOR_STUMP);
 
-    if (FIELD_CELL(actor->x.fixed) <= 30) {
-      GondowanCave_RunSpinningLeap(ACTOR_STUMP);
+    if (FIELD_CELL(actor->x.fixed) < STUMP_COLUMN) {
+      GondowanCave_LeapIntoWater(ACTOR_STUMP);
       MapGrid_CopyCellAttributes(29, 19, 1, 1, 27, 19);
       GameFlag_Set(FLAG_GONDOWAN_CAVE_STUMP_MOVED);
     }
@@ -391,11 +396,11 @@ static inline void GondowanCave_PlaceDroppedPillar(s32 animation) {
   Actor_SetAnimation(ACTOR_DROPPED_PILLAR, animation);
 }
 
-/// Move on the pillar in GondowanCave, and after each push: past column 42 it
-/// drops into the water with a splash, for good.
+/// Move on the pillar in GondowanCave, and after each push: at the crevice's
+/// column it drops into the water with a splash, for good.
 static void GondowanCave_MovePillar(void) {
   Event_Start();
-  if (FIELD_CELL(Actor_Get(ACTOR_PILLAR)->x.fixed) > 42) {
+  if (FIELD_CELL(Actor_Get(ACTOR_PILLAR)->x.fixed) >= PILLAR_DROP_COLUMN) {
     s32 destinationCellX = 107;
     s32 destinationCellZ = 17;
 
@@ -412,35 +417,34 @@ static void GondowanCave_MovePillar(void) {
 /// Unused: an empty function nothing refers to.
 static UNUSED void GondowanCave_UnusedNoOpA(void) {}
 
-/// Rotates the sprite during the airborne part of the leap.
+/// Turns the sprite while the actor is in the air.
 static void GondowanCave_RotateLeapingActor(struct Actor *actor) {
   actor->sprite->rotation -= TRIG_TURN / 64;
 }
 
-/// Waits at most forty frames for the actor to descend to the height
-/// limit.
-static void GondowanCave_WaitForDescent(struct Actor *actor, s32 heightLimit) {
+/// Waits until the actor has come down to the height, forty frames at most.
+static void GondowanCave_WaitToLand(struct Actor *actor, s32 height) {
   s32 framesRemaining = 40;
 
   while (framesRemaining != 0) {
     wait(1);
     framesRemaining--;
-    if (actor->y.fixed <= heightLimit) {
+    if (actor->y.fixed <= height) {
       break;
     }
   }
 }
 
 /// The actor spins in place, leaps and lands with a shake and a ring of dust,
-/// then comes to rest a little further on.
-static void GondowanCave_RunSpinningLeap(s32 actorId) {
+/// then comes to rest a little further on, afloat in the water.
+static void GondowanCave_LeapIntoWater(s32 actorId) {
   struct Actor *actor;
   u32 stepIndex;
   struct Vector3 particleVelocity;
   s32 angle;
 
   actor = Actor_Get(actorId);
-  // Wind up the spin while horizontal motion is disabled.
+  // It winds up its spin in place.
   actor->motionFlags = 0;
   for (stepIndex = 0; stepIndex < 9; stepIndex++) {
     wait(1);
@@ -456,10 +460,10 @@ static void GondowanCave_RunSpinningLeap(s32 actorId) {
   actor->motionFlags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
   actor->layer = 0;
   Actor_WaitForMoveById(actorId);
-  GondowanCave_WaitForDescent(actor, toFIXED(32));
+  GondowanCave_WaitToLand(actor, toFIXED(32));
   MapGrid_SetShake(5, 5, 1);
   MapGrid_SetShake(SHAKE_KEEP, SHAKE_KEEP, 0.9);
-  for (stepIndex = 0; stepIndex < 17; stepIndex++) {
+  for (stepIndex = 0; stepIndex <= TRIG_TURN / FACING_STEP; stepIndex++) {
     angle = stepIndex * FACING_STEP;
     particleVelocity.x = Trig_Cos(angle);
     particleVelocity.y = 0;
@@ -472,7 +476,7 @@ static void GondowanCave_RunSpinningLeap(s32 actorId) {
   }
   Actor_SetDestination(actorId, 440, 308);
   Actor_WaitForMoveById(actorId);
-  GondowanCave_WaitForDescent(actor, toFIXED(32));
+  GondowanCave_WaitToLand(actor, toFIXED(32));
   actor->update = 0;
   actor->sprite->rotation = TRIG_TURN / 16;
   Sound_Play(SE_CAST);
@@ -650,11 +654,11 @@ struct Trigger gGondowanPassageTriggersWithIodem[] = {
     { TRIGGER_EXIT, 1, CONDITION_ALWAYS, GONDOWAN_PASSAGE_TO_WORLD_MAP_NORTH },
     { TRIGGER_EXIT, 2, CONDITION_ALWAYS, GONDOWAN_PASSAGE_TO_WORLD_MAP_SOUTH },
     { TRIGGER_STEP, 10, CONDITION_ALWAYS, EVENT(GondowanCave_IodemAsksWhyTurningBack) },
-    { TRIGGER_STEP, 11, FLAG_IODEM_FOLLOWING_PARTY, EVENT(GondowanCave_IodemRejoins) },
+    { TRIGGER_STEP, 11, FLAG_IODEM_FOLLOWING_PARTY, EVENT(GondowanCave_IodemJoinsParty) },
     { TRIGGER_TALK, ACTOR_FIRST_SOLDIER, CONDITION_ALWAYS, MSGNO(MsgGondowanCaveWhyWouldIodemChooseToWait) },
     { TRIGGER_TALK, ACTOR_SECOND_SOLDIER, CONDITION_ALWAYS, MSGNO(MsgGondowanCaveWeHaventSeenAnybodyUnusualCrossing) },
     { TRIGGER_TALK, ACTOR_THIRD_SOLDIER, CONDITION_ALWAYS, MSGNO(MsgGondowanCaveEvenIfYouGoEastFrom) },
-    { TRIGGER_TALK, ACTOR_IODEM, CONDITION_ALWAYS, EVENT(GondowanCave_IodemRejoins) },
+    { TRIGGER_TALK, ACTOR_IODEM, CONDITION_ALWAYS, EVENT(GondowanCave_IodemJoinsParty) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_FIRST_SOLDIER, CONDITION_ALWAYS, MSGNO(MsgGondowanCaveIodemIsGoingToBabiLighthouse) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_SECOND_SOLDIER, CONDITION_ALWAYS, MSGNO(MsgGondowanCaveItsALotOfStressBut) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_THIRD_SOLDIER, CONDITION_ALWAYS, MSGNO(MsgGondowanCaveEveryoneComesDownThisWayWhen) },

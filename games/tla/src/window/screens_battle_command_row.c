@@ -9,10 +9,10 @@
 
 /// Opens a message at (x, y), waits for its text to finish, and returns its
 /// window so the caller can hold it open for a separate prompt.
-s32 Message_ShowAndWait(s32 message, s32 x, s32 y) {
+struct Window *Message_ShowAndWait(s32 message, s32 x, s32 y) {
   struct Window *result;
 
-  result = Message_OpenWindow(message, x, y, 1);
+  result = Message_OpenWindow(message, x, y, MESSAGE_WINDOW_ZOOM);
   while (Message_AllTyped() == 0)
     wait(1);
   return result;
@@ -28,11 +28,17 @@ s32 Message_ShowAndWait(s32 message, s32 x, s32 y) {
 
 #define WINDOW_WORK ((struct WindowWork *)Ram_HeapSlots->windowWork)
 
-/// The command window's top tile row: it runs along the bottom three rows.
-#define COMMAND_ROW_TOP 17
-
 /// BG1's tile number of the command row's first icon tile.
 #define COMMAND_ROW_ICON_TILE (BG_CHAR_SIZE / (8 * 8))
+
+/// BG1's map in a battle, screen block 31.
+#define BATTLE_BG1_SCREEN_BLOCK 31
+/// BG1's map row shown on the command row's top row, at the battle
+/// background's scroll.
+#define COMMAND_ROW_BG1_ROW (COMMAND_ROW_TOP + BATTLE_BACKGROUND_SCROLL_Y / 8)
+
+/// The selected icon's smallest scale, 8.8 fixed point, as it pulses.
+#define PULSE_SCALE_MIN Q_8_8(1.1875)
 
 #include "system/bg_scroll.h"
 #include "system/main_routine_work.h"
@@ -69,13 +75,15 @@ s32 BattleCommandRow_Run(s32 mode, s32 fleeAllowed) {
   s32 kindCount;
 
   work = WINDOW_WORK;
-  iconSlot = VramCache_AllocEntry(1024);
+  // One 1 KB entry for the selected icon's 32x32, 256-colour sprite.
+  iconSlot = VramCache_AllocEntry(32 * 32);
   stripDirty = 1;
   tradeCount = 0;
   battleMenu = BATTLE_MENU_WORK;
   selectionUi = Heap_AllocEwram(sizeof(*selectionUi));
-  for (i = 255; i >= 0; i--)
-    selectionUi->palette.slot[i] = 255;
+  // No icon colour placed yet; the shared palette starts at BG entry 1.
+  for (i = ARRAY_COUNT(selectionUi->palette.slot) - 1; i >= 0; i--)
+    selectionUi->palette.slot[i] = GLYPH_PALETTE_SLOT_FREE;
   selectionUi->palette.count = 1;
   if (mode == COMMAND_ROW_PARTY)
     selectionUi->window = Window_Create(20, 17, 10, 3, 6);
@@ -122,7 +130,7 @@ s32 BattleCommandRow_Run(s32 mode, s32 fleeAllowed) {
   }
   selectionUi->iconCount = entryIndex;
   selectionUi->affine.scaleX = Q_8_8(1.25);
-  selectionUi->affine.scaleY = Q_8_8(19.0 / 16);
+  selectionUi->affine.scaleY = PULSE_SCALE_MIN;
   selectionUi->affine.angle = 0;
   entryIndex = 0;
   if (entryIndex < selectionUi->iconCount) {
@@ -136,15 +144,21 @@ s32 BattleCommandRow_Run(s32 mode, s32 fleeAllowed) {
       entryIndex++;
     } while (entryIndex < selectionUi->iconCount);
   }
+  // BG1 shows the icons: behind the other layers above the row, in front from
+  // its top line down (CommandRow_PutBg1Behind).
   Task_Add(CommandRow_PutBg1Behind, TASK_PASS_VBLANK);
   Irq_SetHandler(IRQ_VCOUNT, COMMAND_ROW_TOP * 8, CommandRow_PutBg1InFront);
 
   for (;;) {
+    // PULSE_SCALE_MIN to 1.3125 times, over 16 frames.
     pulseScale = gWindowSprite_BounceScales[(gFrameCount * 2) & 31];
-    pulseScale = (pulseScale - 256) / 4 + 304;
+    pulseScale = (pulseScale - Q_8_8(1)) / 4 + PULSE_SCALE_MIN;
     selectionUi->affine.scaleY = selectionUi->affine.scaleX = pulseScale;
     gBgScroll[1].x = 0;
-    gBgScroll[1].y = 32;
+    gBgScroll[1].y = BATTLE_BACKGROUND_SCROLL_Y;
+    // Draw the strip once, six panels of 3x3 tiles ending at the name window:
+    // the panels left empty as WINDOW_TILE_COMMAND_PANEL in the UI tilemap,
+    // then each icon's tiles in BG1's map, the UI tilemap cleared over them.
     if (stripDirty != 0) {
       stripDirty = 0;
       work->holdTilemapUpload = 1;
@@ -166,8 +180,9 @@ s32 BattleCommandRow_Run(s32 mode, s32 fleeAllowed) {
             s32 col;
 
             for (col = 0; col <= 2; col++) {
-              volatile u16 *vram = (volatile u16 *)BG_SCREEN_BLOCK(31) +
-                                   21 * BG_SCREEN_WIDTH + WINDOW_X;
+              volatile u16 *vram =
+                  (volatile u16 *)BG_SCREEN_BLOCK(BATTLE_BG1_SCREEN_BLOCK) +
+                  COMMAND_ROW_BG1_ROW * BG_SCREEN_WIDTH + WINDOW_X;
 
               vram[panel * 3 + entryIndex * BG_SCREEN_WIDTH + (col & 3) -
                    selectionUi->iconCount * 3] =
@@ -196,8 +211,9 @@ s32 BattleCommandRow_Run(s32 mode, s32 fleeAllowed) {
             s32 col;
 
             for (col = 0; col <= 2; col++) {
-              volatile u16 *vram = (volatile u16 *)BG_SCREEN_BLOCK(31) +
-                                   21 * BG_SCREEN_WIDTH + 20;
+              volatile u16 *vram =
+                  (volatile u16 *)BG_SCREEN_BLOCK(BATTLE_BG1_SCREEN_BLOCK) +
+                  COMMAND_ROW_BG1_ROW * BG_SCREEN_WIDTH + 20;
 
               vram[panel * 3 + entryIndex * BG_SCREEN_WIDTH + (col & 3) -
                    selectionUi->iconCount * 3] =
@@ -240,20 +256,23 @@ s32 BattleCommandRow_Run(s32 mode, s32 fleeAllowed) {
       }
     }
 
+    // The Djinn tutorial presses keys for the player: Felix is led to the Djinn
+    // and Summon commands, Jenna and Sheba defend, and the party's row takes
+    // Fight.
     keys = gInput.pressed;
     repeat = gInput.repeat;
     navigation = BATTLE_MENU_WORK;
     if (navigation->tutorialStep != 0) {
       keys = repeat = 0;
       if (navigation->tutorialDelay == 0) {
-        if ((u32)(navigation->commandActor - 5) <= 1) {
+        if ((u32)(navigation->commandActor - JENNA) <= SHEBA - JENNA) {
           if (selectionUi->commandKinds[selectionUi->selectedIndex] ==
               COMMAND_ICON_DEFEND)
             keys = repeat = KEY_A;
           else
             keys = repeat = KEY_LEFT;
           navigation->tutorialDelay = 30;
-        } else if (navigation->commandActor == 4) {
+        } else if (navigation->commandActor == FELIX) {
           s32 kind = selectionUi->commandKinds[selectionUi->selectedIndex];
 
           if (kind == COMMAND_ICON_SUMMON ||
@@ -319,6 +338,7 @@ s32 BattleCommandRow_Run(s32 mode, s32 fleeAllowed) {
           (selectionUi->selectedIndex + selectionUi->iconCount - 1) %
           selectionUi->iconCount;
     } else if (BATTLE_MENU_WORK->timer == 0) {
+      // The link battle's time is up.
       command = selectionUi->commandKinds[0];
       break;
     }
@@ -336,6 +356,7 @@ s32 BattleCommandRow_Run(s32 mode, s32 fleeAllowed) {
     VramCache_FreeEntry(selectionUi->entries[entryIndex].resource);
   work->holdTilemapUpload = 1;
   Window_Close(selectionUi->window, 1);
+  // Cover the strip again.
   {
     s32 panel;
 
@@ -404,7 +425,7 @@ void Window_HighlightRect(s32 x, s32 y, s32 width, s32 height, s32 paletteBit) {
       while (remaining != 0) {
         u32 tile = *cell;
         remaining--;
-        tile = (tile & ~0x1000) | paletteBit;
+        tile = (tile & ~BG_TILE_PALETTE(1)) | paletteBit;
         *cell = tile;
         cell++;
       }

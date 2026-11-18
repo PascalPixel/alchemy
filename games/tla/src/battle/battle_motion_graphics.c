@@ -1,7 +1,7 @@
 /// @file
-/// A unit's motion graphics in battle: setting its records' frames, the flash
-/// when it is hit, its removal from the formations and the graphics of a
-/// defeated unit, with routines around them not yet understood.
+/// A unit's part in the battle stagings: a beast called up, an attack, an
+/// item's use and a cast, the flash when a unit is hit, and a downed unit's
+/// removal from the formations and its graphics.
 // Part of battle.c.
 
 #include "battle_internal.h"
@@ -16,6 +16,27 @@
 #include "macros.h"
 
 void BattleObject_Reset(struct BattleObject *actor, s32 keep);
+
+/// The bit set in every enemy's unit id (FIRST_ENEMY_UNIT and up), and so the
+/// side a unit fights on.
+#define UNIT_ID_ENEMY_BIT FIRST_ENEMY_UNIT
+
+/// The sprite slot a called beast borrows, after the six enemy slots, and
+/// where a battle object's resource keeps its slot, above its sprite.
+#define BEAST_SPRITE_SLOT 7
+#define RESOURCE_SLOT_SHIFT 12
+
+/// The frames a called beast takes to drop in, and to rise away.
+#define BEAST_ARRIVAL_FRAMES 30
+#define BEAST_DEPARTURE_FRAMES 16
+
+/// Sprite.flags: the sprite keeps the picture it has, no longer drawn again
+/// from its layers, only mirrored as its facing turns.
+#define SPRITE_FLAG_PICTURE_KEPT (1 << 5)
+
+/// The Broken Seal's effect kind for Severe Blow, whose status window drops
+/// its PP row while it plays; no row of gAbilityBattleEffects gives it here.
+#define EFFECT_ID_SEVERE_BLOW 135
 
 /// The beasts called up in battle (ABILITY_WILD_WOLF to ABILITY_CALL_DULLAHAN):
 /// for a call that lands, saves the battle object it borrows and brings in the
@@ -40,7 +61,7 @@ BattleMotion_CallBeast(struct BattlePlan *plan,
       plan->failure != 0)
     return NULL;
   {
-    u8 sides = (plan->unitId ^ plan->targetIds[0]) & 0x80;
+    u8 sides = (plan->unitId ^ plan->targetIds[0]) & UNIT_ID_ENEMY_BIT;
     single = sides != 0;
   }
   saved = Heap_AllocEwram(sizeof(struct SavedBattleObject));
@@ -146,13 +167,14 @@ BattleMotion_CallBeast(struct BattlePlan *plan,
   }
   saved->classId = classId;
   if (!single) {
-    saved->unitId = (plan->unitId ^ 0x80) & 0x80;
+    saved->unitId = (plan->unitId ^ UNIT_ID_ENEMY_BIT) & UNIT_ID_ENEMY_BIT;
     if (BattleObject_Get(saved->unitId)->object == NULL) {
       saved->reactivate = 1;
 #ifdef UBFIX
       BattleObject_Reset(BattleObject_Get(saved->unitId), FALSE);
 #else
-      // UB: keep is left out, so the routine reads whatever r1 holds.
+      // UB: called without keep, so the routine reads an argument it was never
+      // given.
       ((void (*)())BattleObject_Reset)(BattleObject_Get(saved->unitId));
 #endif
       BattleObject_Get(saved->unitId)->scale = FIXED_ONE * 6 / 5;
@@ -198,11 +220,12 @@ BattleMotion_CallBeast(struct BattlePlan *plan,
     saved->buffer = Heap_AllocEwram(32768);
   else
     saved->buffer = gActorSpriteSlots;
-  i = SpritePictureCache_LoadFar(7, saved->buffer,
+  i = SpritePictureCache_LoadFar(BEAST_SPRITE_SLOT, saved->buffer,
                                  BattleSprite_GetSprite(saved->classId),
                                  BattleSprite_GetPalette(saved->classId));
   if (i != 0) {
-    battleObject->resource = BattleSprite_GetSprite(saved->classId) + 28672;
+    battleObject->resource = BattleSprite_GetSprite(saved->classId) +
+                             (BEAST_SPRITE_SLOT << RESOURCE_SLOT_SHIFT);
     if (!single)
       saved->buffer = NULL;
   } else {
@@ -217,11 +240,11 @@ BattleMotion_CallBeast(struct BattlePlan *plan,
   object->y = toFIXED(40);
   object->angle = plan->targetIds[0] <= ALLY_MAX ? 0 : DEGtoANG(180);
   BattleHighlight_SetSpriteMode(saved->unitId, SPRITE_SEMI_TRANSPARENT);
-  for (i = 0; i <= 29; i++) {
-    object->y = toFIXED((29 - i) * 3);
+  for (i = 0; i < BEAST_ARRIVAL_FRAMES; i++) {
+    object->y = toFIXED((BEAST_ARRIVAL_FRAMES - 1 - i) * 3);
     object->velocityY = 0;
-    // Four turns over the 30 frames.
-    object->angle += TRIG_TURN * 4 / 30;
+    // Four turns as it drops.
+    object->angle += TRIG_TURN * 4 / BEAST_ARRIVAL_FRAMES;
     if (i < BLEND_WEIGHT_MAX)
       REG_BLDALPHA = ((BLEND_WEIGHT_MAX - i) << 8) | i;
     wait(1);
@@ -242,7 +265,7 @@ void BattleMotion_ReleaseBuffer(struct SavedBattleObject *saved) {
     {
       struct Sprite *record = GetMotionRecord(object, 0);
 
-      record->flags = 0x20 | record->flags;
+      record->flags = SPRITE_FLAG_PICTURE_KEPT | record->flags;
     }
     Sprite_RemoveAnimationAtFar(GetMotionRecord(object, 0), 0);
   }
@@ -261,12 +284,13 @@ void BattleMotion_DismissBeast(struct SavedBattleObject *saved) {
   object = BattleObject_Get(unitId)->object;
   IoWriteQueue_Store16((u32)&REG_BLDCNT, BLDCNT_TGT2_ALL | BLDCNT_EFFECT_BLEND);
   BattleHighlight_SetSpriteMode(unitId, SPRITE_SEMI_TRANSPARENT);
-  for (i = 0; i != 16; i++) {
+  for (i = 0; i != BEAST_DEPARTURE_FRAMES; i++) {
     s32 fade;
 
+    // Two turns as it rises, fading out over the second half.
     object->y = toFIXED(i * 4);
     object->angle += DEGtoANG(45);
-    fade = i * 2 - 16;
+    fade = i * 2 - BEAST_DEPARTURE_FRAMES;
     if (fade < 0)
       fade = 0;
     if (fade < BLEND_WEIGHT_MAX)
@@ -280,7 +304,7 @@ void BattleMotion_DismissBeast(struct SavedBattleObject *saved) {
     BattleObject_MarkForRelease(unitId);
     BattleMotion_DestroyAllSlotObjects();
   }
-  SpritePictureCache_LoadFar(7, 0, 0, 0);
+  SpritePictureCache_LoadFar(BEAST_SPRITE_SLOT, 0, 0, 0);
   if (saved->single) {
     ids[0] = unitId;
     ids[1] = BATTLE_UNIT_LIST_END;
@@ -352,8 +376,8 @@ s32 BattleStaging_RunAttack(struct BattlePlan *plan, s32 mode) {
     if (actorId > ALLY_MAX)
       adjusted = angle + TRIG_TURN * 3 / 8;
   }
-  adjusted &= 0x7fff;
-  facingAngle = (adjusted - DEGtoANG(45)) / 2 + DEGtoANG(45);
+  adjusted &= DEGtoANG(180) - 1;
+  facingAngle = (adjusted - YAW_PARTY_ACTION) / 2 + YAW_PARTY_ACTION;
   if (view->targetYaw == facingAngle) {
     view->targetYaw = facingAngle;
     wait(1);
@@ -364,10 +388,12 @@ s32 BattleStaging_RunAttack(struct BattlePlan *plan, s32 mode) {
 
   BattleHighlight_SetModes(0, HIGHLIGHT_OFF);
   BattleStaging_BuildTargetList(plan, &work);
-  if (work.kind == 135)
-    PartyStatus_DrawFar(Ram_HeapSlots->battleWork->partyStatus & ~1);
+  if (work.kind == EFFECT_ID_SEVERE_BLOW)
+    PartyStatus_DrawFar(Ram_HeapSlots->battleWork->partyStatus &
+                        ~PARTY_STATUS_SHOW_PP);
   saved = BattleMotion_CallBeast(plan, &work);
   unit = Unit_Get(work.actor);
+  // DEAD: Unit_Get's result is not used; the ROM keeps the call.
   Unit_Get(work.actors[0]);
   critical = plan->targetCritical[0];
   missed = plan->targetMultiplier[0] == 0;
@@ -376,14 +402,15 @@ s32 BattleStaging_RunAttack(struct BattlePlan *plan, s32 mode) {
   animation = GetMotionRecord(object, 0);
   frames = SpriteAnimation_SumCommandLengthsFar(
       animation->entries[0]->animationId, 2, 1);
-  if (work.kind == 10)
+  // A class whose attack is the burst leaps where it stands.
+  if (work.kind == ATTACK_EFFECT_BURST)
     Actor_SelectAnimationFar(object, POSE_LEAP);
   else
     BattleMotion_ApproachTarget(
         work.actor, work.actors[0], frames,
         INTtoFIXED(BattleSprite_GetAttackHop(unit->enemyId)));
-  if ((mode & 32) && plan->unitId != plan->partnerId &&
-      plan->partnerId != (work.actors[0] & 0x80)) {
+  if ((mode & ATTACK_WITH_PARTNER) && plan->unitId != plan->partnerId &&
+      plan->partnerId != (work.actors[0] & UNIT_ID_ENEMY_BIT)) {
     object = BattleObject_Get(plan->partnerId);
 
     animation = GetMotionRecord(((struct BattleObject *)object)->object, 0);
@@ -432,7 +459,8 @@ s32 BattleStaging_RunAttack(struct BattlePlan *plan, s32 mode) {
       work.flags = 1;
     if (critical != 0)
       work.kind += EFFECT_ID_CRITICAL_OFFSET;
-    if (work.kind != EFFECT_ID_CRITICAL_OFFSET + 10 && critical != 0) {
+    if (work.kind != EFFECT_ID_CRITICAL_OFFSET + ATTACK_EFFECT_BURST &&
+        critical != 0) {
       zoomOnCritical = 1;
       view->flag = 1;
       criticalPair[0] = work.actor;
@@ -440,6 +468,9 @@ s32 BattleStaging_RunAttack(struct BattlePlan *plan, s32 mode) {
       criticalPair[2] = BATTLE_UNIT_LIST_END;
       BattleActor_SpawnObjectsForList(criticalPair, 0);
     }
+    // The battle effect starts 8 frames before the run up ends, at least one
+    // frame after it began; a critical hit zooms in on the pair meanwhile, from
+    // 100 to 130 percent.
     frames -= 8;
     if (frames <= 0)
       frames = 1;
@@ -618,12 +649,12 @@ s32 BattleStaging_RunItem(struct BattlePlan *plan, s32 unused,
 /// others, hiding every child's frame.
 void BattleObject_SetColorMode(struct MotionObject *object, s32 value) {
   s32 index = 0;
-  s32 child_index;
+  s32 childIndex;
   s32 count;
   struct Sprite *record;
   struct SpriteAnimation *child;
   struct SpriteAnimation **children;
-  u8 mask = 0xff;
+  u8 mask = SPRITE_PICTURE_NONE;
   u8 frame;
 
   while ((record = GetMotionRecord(object, index)) != NULL) {
@@ -632,11 +663,14 @@ void BattleObject_SetColorMode(struct MotionObject *object, s32 value) {
     frame = child->picture;
     count = record->count;
     child->colorMode = value;
+    // DEAD: each picture is read and ORed with SPRITE_PICTURE_NONE, which
+    // stores SPRITE_PICTURE_NONE whatever it was; the ROM keeps the loads and
+    // the ORs.
     child->picture = frame | mask;
-    for (child_index = 1; child_index < count; child_index++) {
+    for (childIndex = 1; childIndex < count; childIndex++) {
       child = *children++;
       child->colorMode = 0;
-      child->picture |= 0xff;
+      child->picture |= SPRITE_PICTURE_NONE;
     }
     index++;
   }
@@ -702,7 +736,7 @@ s32 BattleStaging_RunPsynergyCast(struct BattlePlan *plan, s32 mode) {
     work.flags = 1;
   BattleHighlight_SetModes(0, HIGHLIGHT_OFF);
   heap = Ram_HeapSlots;
-  PartyStatus_DrawFar(heap->battleWork->partyStatus & ~1);
+  PartyStatus_DrawFar(heap->battleWork->partyStatus & ~PARTY_STATUS_SHOW_PP);
   saved = BattleMotion_CallBeast(plan, &work);
   object = BattleObject_Get(work.actor)->object;
   Actor_SelectAnimationFar(object, heap->battleWork->actingAnimation);
@@ -737,7 +771,7 @@ s32 BattleStaging_RunPsynergyCast(struct BattlePlan *plan, s32 mode) {
     BattleBackground_RestorePalette();
   } else {
     // The word after the plan in BattleWork is skipPlayback.
-    if (((s32 *)plan)[25] == 0)
+    if (*(s32 *)(plan + 1) == 0)
       Task_Add(BattlePlayback_Run, TASK_PASS_FRAME);
     if (work.kind) {
       if (saved)
@@ -753,7 +787,7 @@ s32 BattleStaging_RunPsynergyCast(struct BattlePlan *plan, s32 mode) {
       BattleMotion_DismissBeast(saved);
       Heap_Release(saved);
     }
-    if (((s32 *)plan)[25] == 0)
+    if (*(s32 *)(plan + 1) == 0)
       BattlePlayback_WaitForReady();
     Actor_SelectAnimationFar(object, POSE_STANDING);
     for (targetIndex = 0; targetIndex != work.count; targetIndex++)
@@ -768,6 +802,7 @@ void BattleMotion_FlashHit(s32 id, s32 unusedA, s32 unusedB) {
   s32 target;
   s32 remaining;
 
+  // DEAD: Unit_Get's result is not used; the ROM keeps the call.
   Unit_Get(id);
   Actor_SelectAnimationFar(BattleObject_Get(id)->object, POSE_DAMAGE);
   for (remaining = 0; remaining < 2; remaining++) {
@@ -790,9 +825,8 @@ void BattleMotion_FlashHit(s32 id, s32 unusedA, s32 unusedB) {
 
 // Battle: clean up defeated units' graphics and formation entries.
 
-/// Removes the unit from the ally and enemy formations and the planned
-/// actions. Returns 0 on removal, or -1 if absent from both formations.
-/// id: unit ID.
+/// Removes unit id from the party's and the enemies' formations and from the
+/// planned actions. Returns 0 on removal, or -1 if absent from both formations.
 s32 BattleObject_RemoveFromLists(s32 id) {
   struct BattleWork *work;
   s32 i;
@@ -833,9 +867,9 @@ removed:
   return 0;
 }
 
-/// Defeated unit graphics: animation 4 for allies, 5 for enemies.
-/// Enemies wait four more frames, leave the formation, then erase pixel by
-/// pixel. id: unit ID.
+/// Shows unit id downed: a party member takes POSE_PARTY_HELD; an enemy takes
+/// POSE_ENEMY_DOWN, turns grey, and four frames later leaves the formation and
+/// dissolves pixel by pixel.
 void BattleMotion_ShowDowned(s32 id) {
   void *recs[4];
   struct Unit *unit;

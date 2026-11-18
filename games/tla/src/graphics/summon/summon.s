@@ -23,27 +23,27 @@ Summon_PinkPetalsTiles:
 	.incbin "games/tla/src/graphics/summon/pink_petals.parts.lz"
 	.byte 0xe1, 0xb1	@ PACKER: left in the buffer by Summon_SeaSerpentTiles+0x77a
 	.section .rodata.a
-	.global Summon_RedSlashTiles
-Summon_RedSlashTiles:
-	.incbin "games/tla/src/graphics/summon/red_slash.gbapal"
-	.incbin "games/tla/src/graphics/summon/red_slash.parts.lz"
+	.global Summon_RedDomeTiles
+Summon_RedDomeTiles:
+	.incbin "games/tla/src/graphics/summon/red_dome.gbapal"
+	.incbin "games/tla/src/graphics/summon/red_dome.parts.lz"
 	.byte 0xb2, 0x6a, 0xeb	@ PACKER: left in the buffer by Summon_CrimsonBeastTiles+0x529
-	.global Summon_RedCrescentTiles
-Summon_RedCrescentTiles:
-	.incbin "games/tla/src/graphics/summon/red_crescent.gbapal"
-	.incbin "games/tla/src/graphics/summon/red_crescent.parts.lz"
+	.global Summon_RedOrbTiles
+Summon_RedOrbTiles:
+	.incbin "games/tla/src/graphics/summon/red_orb.gbapal"
+	.incbin "games/tla/src/graphics/summon/red_orb.parts.lz"
 @ A 16-colour palette and one packed stream of 1,504 bytes. The game copies the
 @ palette to OBJ palette 15 and the stream's first 512 bytes to video memory as
-@ sixteen 8x8 sprites of 16 colours (white_arrows.png). It reads no more of the
+@ sixteen 8x8 sprites of 16 colours (tumbling_shard.png). It reads no more of the
 @ stream. The next 512 bytes are no picture of this summon: Camelot's converter
 @ left them in its buffer, and they are bytes 1,880 to 2,391 of
 @ Summon_PinkPetalsTiles' unpacked stream, the end of its petals and the start
-@ of its own leftover (white_arrows_leftover.tsv). The last 480 bytes are zero.
-	.global Summon_WhiteArrowsTiles
-Summon_WhiteArrowsTiles:
-	.incbin "games/tla/src/graphics/summon/white_arrows.gbapal"
-	.incbin "games/tla/src/graphics/summon/white_arrows.parts.lz"
-	.byte 0x34, 0x88	@ PACKER: left in the buffer by Summon_RedCrescentTiles+0x25a
+@ of its own leftover (tumbling_shard_leftover.tsv). The last 480 bytes are zero.
+	.global Summon_TumblingShardTiles
+Summon_TumblingShardTiles:
+	.incbin "games/tla/src/graphics/summon/tumbling_shard.gbapal"
+	.incbin "games/tla/src/graphics/summon/tumbling_shard.parts.lz"
+	.byte 0x34, 0x88	@ PACKER: left in the buffer by Summon_RedOrbTiles+0x25a
 @ A 16-colour palette and one packed stream of 4,576 bytes. The game copies the
 @ palette to OBJ palette 14 and at once fills that row with white, and copies
 @ the stream's first 2,048 bytes to video memory as one 64x64 sprite of 16
@@ -55,7 +55,7 @@ Summon_WhiteArrowsTiles:
 Summon_WhiteWispsTiles:
 	.incbin "games/tla/src/graphics/summon/white_wisps.gbapal"
 	.incbin "games/tla/src/graphics/summon/white_wisps.parts.lz"
-	.byte 0xfc	@ PACKER: left in the buffer by Summon_RedCrescentTiles+0x577
+	.byte 0xfc	@ PACKER: left in the buffer by Summon_RedOrbTiles+0x577
 	.section .rodata.b
 @ A 16-colour palette and one packed stream of 608 bytes. The game copies the
 @ palette to OBJ palette 14 and the stream's first 256 bytes to video memory, and
@@ -84,10 +84,10 @@ Summon_LeafWarriorTiles:
 	.incbin "games/tla/src/graphics/summon/leaf_warrior.gbapal"
 	.incbin "games/tla/src/graphics/summon/leaf_warrior.parts.lz"
 	.byte 0xe3, 0xf6, 0x14	@ PACKER: left in the buffer by Summon_RobedGoddessTiles+0x166d
-	.global Summon_BellMaidenTiles
-Summon_BellMaidenTiles:
-	.incbin "games/tla/src/graphics/summon/bell_maiden.gbapal"
-	.incbin "games/tla/src/graphics/summon/bell_maiden.parts.lz"
+	.global Summon_CoatlicueTiles
+Summon_CoatlicueTiles:
+	.incbin "games/tla/src/graphics/summon/coatlicue.gbapal"
+	.incbin "games/tla/src/graphics/summon/coatlicue.parts.lz"
 	.byte 0x4e, 0x39	@ PACKER: left in the buffer by Summon_RobedGoddessTiles+0x1d22
 	.global Summon_WingedKnightATiles
 Summon_WingedKnightATiles:

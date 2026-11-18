@@ -8,17 +8,21 @@
 // CELL_BEHAVIOR_MERCURY_LIGHTHOUSE_POOL_RIM takes the lights away, and Retreat
 // removes the column.
 
+/// A charging spark rises a pixel a frame for this many frames, its scale
+/// following half a turn of sine.
+#define SPARK_RISE_FRAMES 32
+
 /// Raises the spark while its scale follows a half-sine pulse.
 static s32 MercuryLighthouse_AdvanceAnchoredRiseFrame(struct Actor *effect) {
   struct Actor *anchor = effect->watchedActor;
   s16 step = ++effect->timer;
   FIXED scale;
 
-  if (step > 31) {
+  if (step >= SPARK_RISE_FRAMES) {
     return 0;
   }
 
-  scale = Trig_Sin(step << 10);
+  scale = Trig_Sin(step * (TRIG_TURN / 2 / SPARK_RISE_FRAMES));
   effect->scaleX = scale;
   effect->scaleY = scale;
   effect->x.fixed = anchor->x.fixed;
@@ -35,8 +39,8 @@ static s32 MercuryLighthouse_GrowLight(struct Actor *actor) {
   if (frame > 16) {
     return 0;
   }
-  actor->scaleX = (frame * 3) << 10;
-  actor->scaleY = (frame * 3) << 10;
+  actor->scaleX = frame * 3 * (FIXED_ONE / 64);
+  actor->scaleY = frame * 3 * (FIXED_ONE / 64);
   return 1;
 }
 
@@ -48,8 +52,8 @@ static s32 Actor_AdvanceScaleCounter(struct Actor *actor) {
   if (frame > 16) {
     return 0;
   }
-  actor->scaleX = (frame << 11) + FIXED_ONE;
-  actor->scaleY = (frame << 11) + FIXED_ONE;
+  actor->scaleX = frame * (FIXED_ONE / 32) + FIXED_ONE;
+  actor->scaleY = frame * (FIXED_ONE / 32) + FIXED_ONE;
   return 1;
 }
 
@@ -253,7 +257,7 @@ void MercuryLighthouse_HopAcrossPool(void) {
   s32 angle;
   u32 keys;
   s32 n;
-  s32 i;
+  s32 frame;
   struct FieldCoordinate pos[3];
 
   state = *(struct MercuryLighthouseLights **)HEAP_SLOT_BLOCK(
@@ -296,7 +300,7 @@ void MercuryLighthouse_HopAcrossPool(void) {
     if (obj != NULL) {
       sprite = obj->sprite;
       obj->groundHeight = source->groundHeight;
-      Actor_StartScript(obj, gMercuryLighthouse_RampScript);
+      Actor_StartScript(obj, gMercuryLighthouse_GrowLightScript);
       obj->motionFlags = 0;
       obj->timer = 0;
       obj->priorityFlags = ACTOR_PRIORITY_UNDERFOOT;
@@ -341,10 +345,10 @@ void MercuryLighthouse_HopAcrossPool(void) {
   if (to->behavior == state->poolBehavior && state->stepEffect == NULL) {
     Actor_SelectAnimation(actor, ANIM_LEADER_BATHE);
     Sound_Play(SE_WATER_MOVE);
-    for (i = 0;; i++) {
-      if ((i & 15) == 0)
+    for (frame = 0;; frame++) {
+      if ((frame & 15) == 0)
         MercuryLighthouse_SpawnRipple(actor);
-      if (i > 31 && gKeysPressed != 0)
+      if (frame > 31 && gKeysPressed != 0)
         break;
       wait(1);
     }

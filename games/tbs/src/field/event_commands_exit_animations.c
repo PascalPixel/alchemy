@@ -57,7 +57,7 @@ UNREAD_RESULT Field_StartEncounterTransition(s32 unused) {
     // WINDOW_TRANSITION_LEADER_INVERSE.
     Io_Write16(RGB_WHITE,
                (u16 *)&BG_PLTT_COLOR(WINDOW_PALETTE, WINDOW_BLACK_COLOR));
-    ScreenTransition_Finish(SCENE_TRANSITION(TRANSITION_CENTRE_LINE, 1), 16);
+    ScreenTransition_Finish(SCENE_TRANSITION(TRANSITION_CENTER_LINE, 1), 16);
     work->transitionActive = 0;
     wait(16);
     // Step the white down by 2 a frame: 30 to 0 in 16 frames.

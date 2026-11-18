@@ -1,3 +1,12 @@
+/// The raised trigger a whirlwind raises as it catches the leader, which each
+/// scene with whirlwinds answers with Whirlwind_CarryLeader.
+#define RAISED_TRIGGER_WHIRLWIND 200
+/// How near the leader a whirlwind catches it, in pixels across the ground and
+/// in height.
+#define WHIRLWIND_CATCH_REACH 12
+/// The sprite priority bits of an OAM attribute 2's high byte.
+#define ATTR2_HIGH_PRIORITY_MASK (OBJ_PRIORITY(3) >> 8)
+
 /// A whirlwind's update: it travels forward, catches the leader it reaches and
 /// ends off screen or at a wall.
 void Whirlwind_Update(struct Actor *self) {
@@ -15,35 +24,38 @@ void Whirlwind_Update(struct Actor *self) {
   Actor_SetAnimationSpeed(self, ANIMATION_STEP_NORMAL);
   if ((++*(u16 *)&self->timer & 31) == 31)
     Event_PlaySound(SE_WATER_LEVEL);
+  // The whirlwind takes the leader's sprite priority.
   {
     s8 *to = self->sprite;
     s8 *from = leader->sprite;
-    u32 a = from[9] & 12;
-    to[9] = (s8)((to[9] & ~12) | a);
+    u32 a = from[9] & ATTR2_HIGH_PRIORITY_MASK;
+    to[9] = (s8)((to[9] & ~ATTR2_HIGH_PRIORITY_MASK) | a);
   }
-  if (MapGrid_GetCellBehavior(self->x.fixed, self->z.fixed, 2) != 255) {
+  if (MapGrid_GetCellBehavior(self->x.fixed, self->z.fixed,
+                              MAPGRID_LAYER_OVERHEAD) != CELL_BEHAVIOR_WALL) {
     position[0] = self->x.fixed;
     position[1] = self->y.fixed;
     position[2] = self->z.fixed;
     Camera_WorldToScreen(position);
     distance = position[0];
-    if (distance <= toFIXED(272)) {
+    if (distance <= toFIXED(DISPLAY_WIDTH + 32)) {
       if (distance >= -toFIXED(32)) {
         if (self->riseCounter == 0) {
           distance = leader->y.fixed - self->y.fixed;
           if (distance < 0)
             distance = self->y.fixed - leader->y.fixed;
           near = 0;
-          if (Position_FlatDistance(&leader->x.fixed, &self->x.fixed) <= 12 &&
-              distance < toFIXED(12))
+          if (Position_FlatDistance(&leader->x.fixed, &self->x.fixed) <=
+                  WHIRLWIND_CATCH_REACH &&
+              distance < toFIXED(WHIRLWIND_CATCH_REACH))
             near = 1;
-          if (near && !Event_GetFlag(260)) {
+          if (near && !Event_GetFlag(FLAG_FIELD_HANDLING_REQUESTS)) {
             leader->facing = self->facing;
             leader->watchedActor = self;
             leader->priorityFlags &= ~ACTOR_PRIORITY_AUTOMATIC;
             {
-              s32 delay = 200;
-              work->raisedTrigger = delay;
+              s32 trigger = RAISED_TRIGGER_WHIRLWIND;
+              work->raisedTrigger = trigger;
             }
             gMainRoutineWork.movementMode = LEADER_MOVEMENT_WALK;
             self->riseCounter = 1;
@@ -72,3 +84,6 @@ void Whirlwind_Update(struct Actor *self) {
   Event_PlaySound(SE_SPARKLING_PASSAGE);
   gWhirlwindRiding = 0;
 }
+
+#undef WHIRLWIND_CATCH_REACH
+#undef ATTR2_HIGH_PRIORITY_MASK

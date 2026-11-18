@@ -117,7 +117,10 @@ enum SuhallaGateDewActorId {
   /// drawn in the frame Scene_Initialize gives it.
   ACTOR_FIRST_SPROUT = ACTOR_FIRST_PLACED,
   /// A Mercury Djinni.
-  ACTOR_DEW = ACTOR_FIRST_SPROUT + 5
+  ACTOR_DEW = ACTOR_FIRST_SPROUT + 5,
+  /// The eighth placed actor, where the scene places six: Scene_Initialize
+  /// stretches it all the same.
+  ACTOR_UNPLACED = ACTOR_FIRST_PLACED + 7
 };
 
 /// SPRITE_SPROUT's animations as the sprouts here stand, half grown or fully
@@ -228,11 +231,10 @@ s32 Scene_Initialize(void) {
     Actor_SetAnimation(ACTOR_FIRST_SPROUT + 3, SPROUT_ANIMATION_GROWN);
     Actor_SetAnimation(ACTOR_FIRST_SPROUT + 4, SPROUT_ANIMATION_HALF_GROWN);
     // UB: the scene places only actors up to ACTOR_DEW, so there is no
-    // actor 15 and Actor_GetById returns NULL (watched in tbs-en
-    // as the scene loads from each of its entrances); the store goes to
-    // the BIOS, which ignores it.
+    // ACTOR_UNPLACED and Actor_Get returns NULL; the store goes to the BIOS,
+    // which ignores it.
 #ifndef UBFIX
-    Actor_Get(15)->scaleY = 8 * FIXED_ONE / 5;
+    Actor_Get(ACTOR_UNPLACED)->scaleY = 8 * FIXED_ONE / 5;
 #endif
     MapGrid_CopyCellAttributes(108, 38, 1, 1, 102, 56);
   }
@@ -290,8 +292,6 @@ static void SuhallaGate_GuardsBlockPassage(void) {
 /// steps out of the party and demands to know what happened.
 static void SuhallaGate_IodemQuestionsGuards(void) {
   struct Actor *leader;
-#if !TBS_PATCH_3
-#endif
 
   Event_Start();
   Actor_SetSpeed(ACTOR_PARTY_LEADER, 1.6);
@@ -436,6 +436,10 @@ static void SuhallaGate_TalkToEastGuard(void) {
   Event_End();
 }
 
+/// The vanishing soldier's blinks: slow ones, four frames shown and four
+/// hidden, then fast ones, two and two.
+enum { SOLDIER_SLOW_BLINKS = 6, SOLDIER_FAST_BLINKS = 12 };
+
 /// The soldier east of the gate gasps out a warning and vanishes.
 static void SuhallaGate_SoldierVanishes(void) {
   unsigned int beat;
@@ -447,7 +451,6 @@ static void SuhallaGate_SoldierVanishes(void) {
   Event_ShowMessageThenWait(ACTOR_VANISHING_SOLDIER, 0, 10);
 
   beat = 0;
-  // Six slow blinks are followed by twelve fast ones.
   do {
     Actor_SetSpriteColorById(ACTOR_VANISHING_SOLDIER, SPRITE_COLOR_NORMAL);
     Actor_SetSpriteFlags(Actor_Get(ACTOR_VANISHING_SOLDIER),
@@ -458,9 +461,9 @@ static void SuhallaGate_SoldierVanishes(void) {
     Actor_SetSpriteFlags(Actor_Get(ACTOR_VANISHING_SOLDIER), 0);
     beat++;
     wait(4);
-  } while (beat <= 5);
+  } while (beat < SOLDIER_SLOW_BLINKS);
 
-  for (beat = 0; beat <= 11; beat++) {
+  for (beat = 0; beat < SOLDIER_FAST_BLINKS; beat++) {
     Actor_SetSpriteColorById(ACTOR_VANISHING_SOLDIER, SPRITE_COLOR_NORMAL);
     Actor_SetSpriteFlags(Actor_Get(ACTOR_VANISHING_SOLDIER),
                          SPRITE_FLAG_SHADOW);

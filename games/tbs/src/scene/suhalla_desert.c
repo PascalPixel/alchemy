@@ -158,7 +158,7 @@ enum {
 
 /// The sand haze, which is BG1 blended over every layer.
 ///
-/// Its weight rises from 0 to 16 as the first storm rises.
+/// Its weight rises from 0 to BLEND_WEIGHT_MAX as the first storm rises.
 #define SUHALLA_DESERT_HAZE_BLEND                                              \
   (BLDCNT_TGT1_BG1 | BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_ALL)
 
@@ -169,6 +169,10 @@ static u16 sSuhallaDesertSavedColor;
 
 /// The colour Reveal pulses, the last of BG palette 12.
 #define SUHALLA_REVEAL_PALETTE_COLOR BG_PLTT_COLOR(12, 15)
+
+/// Lalivero's area, whose FLAG_AREA_VISITED says the party has been there
+/// (gWorldPicture_AreaMarkers marks it at SCENE_LALIVERO).
+#define AREA_LALIVERO 55
 
 #include "shared/field_effect_create.c"
 #include "shared/field_effect_spawn.c"
@@ -371,11 +375,12 @@ static void SuhallaDesert_RaiseStorm(s32 stormId) {
   Event_Start();
   Sound_Play(SE_SANDSTORM);
   for (frame = 0; frame < 16; frame++) {
-    storm->scaleX = (frame << 11) + FIXED_ONE / 32;
-    storm->scaleY = (frame << 12) + FIXED_ONE / 16;
+    storm->scaleX = frame * (FIXED_ONE / 32) + FIXED_ONE / 32;
+    storm->scaleY = frame * (FIXED_ONE / 16) + FIXED_ONE / 16;
     if (hazeShown == 0) {
       weight = frame + 1;
-      IO_WRITE_QUEUE_PUSH((u32)&REG_BLDALPHA, BLEND_ALPHA(weight, 16 - weight),
+      IO_WRITE_QUEUE_PUSH((u32)&REG_BLDALPHA,
+                          BLEND_ALPHA(weight, BLEND_WEIGHT_MAX - weight),
                           IO_WRITE_HALFWORD);
     }
     wait(1);
@@ -470,9 +475,7 @@ static void SuhallaDesert_IodemAsksWhetherToPressOn(void) {
   struct Actor *leader;
 
   if (GameFlag_Get(FLAG_IODEM_FOLLOWING_PARTY) != 0 &&
-      // Area 55 is Lalivero's, by the scene table: the party has not yet been
-      // there.
-      GameFlag_Get(FLAG_AREA_VISITED(55)) == 0 &&
+      GameFlag_Get(FLAG_AREA_VISITED(AREA_LALIVERO)) == 0 &&
       GameFlag_Get(FLAG_IODEM_MET_WOUNDED_SOLDIERS) != 0) {
     GameFlag_Set(FLAG_SUHALLA_DESERT_TALKED_OF_SHEBA);
     Event_Start();
@@ -810,11 +813,12 @@ static void SuhallaDesert_SetUpFirstMapStorms(void) {
   IO_WRITE_QUEUE_PUSH((u32)&REG_BLDCNT, SUHALLA_DESERT_HAZE_BLEND,
                       IO_WRITE_HALFWORD);
   if (GameFlag_Get(FLAG_SUHALLA_DESERT_SANDSTORMS_RISEN)) {
-    hazeWeight = 16;
+    hazeWeight = BLEND_WEIGHT_MAX;
     Scene_QueueMusic(SE_SANDSTORM);
   }
   // The haze at full weight once a storm has risen, else not at all.
-  IO_WRITE_QUEUE_PUSH((u32)&REG_BLDALPHA, ((16 - hazeWeight) << 8) | hazeWeight,
+  IO_WRITE_QUEUE_PUSH((u32)&REG_BLDALPHA,
+                      ((BLEND_WEIGHT_MAX - hazeWeight) << 8) | hazeWeight,
                       IO_WRITE_HALFWORD);
 }
 
@@ -864,11 +868,12 @@ static void SuhallaDesert_SetUpSecondMapStorms(void) {
   IO_WRITE_QUEUE_PUSH((u32)&REG_BLDCNT, SUHALLA_DESERT_HAZE_BLEND,
                       IO_WRITE_HALFWORD);
   if (GameFlag_Get(FLAG_SUHALLA_DESERT_SANDSTORMS_RISEN)) {
-    hazeWeight = 16;
+    hazeWeight = BLEND_WEIGHT_MAX;
     Scene_QueueMusic(SE_SANDSTORM);
   }
   // The haze at full weight once a storm has risen, else not at all.
-  IO_WRITE_QUEUE_PUSH((u32)&REG_BLDALPHA, ((16 - hazeWeight) << 8) | hazeWeight,
+  IO_WRITE_QUEUE_PUSH((u32)&REG_BLDALPHA,
+                      ((BLEND_WEIGHT_MAX - hazeWeight) << 8) | hazeWeight,
                       IO_WRITE_HALFWORD);
 }
 

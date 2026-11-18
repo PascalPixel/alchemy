@@ -5,6 +5,19 @@
 
 #include "menu_internal.h"
 
+/// The Djinni figures of a give or trade preview hop across between the two
+/// party members once a second, a few frames into it: a hop takes
+/// DJINN_PREVIEW_HOP_FRAMES frames along half a sine wave of
+/// DJINN_PREVIEW_HOP_SINE_HEIGHT pixels, cut flat at DJINN_PREVIEW_HOP_HEIGHT.
+#define DJINN_PREVIEW_HOP_FRAMES 30
+#define DJINN_PREVIEW_HOP_DELAY 5
+#define DJINN_PREVIEW_HOP_SINE_HEIGHT 16
+#define DJINN_PREVIEW_HOP_HEIGHT 6
+
+/// The tilemap rows at the top of the screen that a tutorial message covers,
+/// saved before it opens and put back after it closes.
+#define DJINN_TUTORIAL_COVERED_ROWS 8
+
 /// Shows or hides the menu's cursor around a line of the Djinn tutorial: the
 /// four stores of its two message steps, in both games. The name is ours.
 #define DjinnTutorial_SetCursor(menu, value)                                   \
@@ -43,10 +56,10 @@ s32 PsynergyList_RunCompareLoop(u32 mode) {
   menu->cursor->motion = ICON_HIDDEN;
   selectedPages[1] = 0;
 
-  // The party figures go below the screen (y 200), except the two party members
+  // The party figures go below the screen, except the two party members
   // concerned: the first over the left window, the second over the right.
   for (memberIndex = 0; memberIndex < 4; memberIndex++) {
-    menu->memberY[memberIndex] = 200;
+    menu->memberY[memberIndex] = MENU_FIGURE_HIDDEN_Y;
   }
   menu->memberX[menu->selectedColumn[1]] = 120;
   menu->memberY[menu->selectedColumn[1]] = 32;
@@ -61,7 +74,9 @@ s32 PsynergyList_RunCompareLoop(u32 mode) {
   pageCounts[0] = 1;
   pageCounts[1] = 1;
 
-  // Measure the action-list pages using temporary unit mutations.
+  // Count the Psynergy lists' pages: make the change on each party member's
+  // unit, work the unit out again, compare its Psynergy with a copy taken
+  // before, and put the unit back from the copy.
   if (mode <= DJINN_COMPARE_GIVE) {
     u16 *diffWork;
     struct Unit *originalUnit;
@@ -214,7 +229,7 @@ s32 PsynergyList_RunCompareLoop(u32 mode) {
         menu->helpWindow,
         DJINN_ELEMENT(menu->pairEntries[1]) + DJINN_ELEMENT_TILE, 5, 2, mode);
     Text_SetColorFar(TEXT_COLOR_NORMAL);
-  } else if (mode - 2 <= 1) {
+  } else if (mode == DJINN_COMPARE_STANDBY || mode == DJINN_COMPARE_SET) {
     if ((menu->pairEntries[0] & DJINN_ENTRY_IS_SET) != 0) {
       Text_SetColorFar(TEXT_COLOR_RED);
     }
@@ -226,7 +241,12 @@ s32 PsynergyList_RunCompareLoop(u32 mode) {
         menu->helpWindow,
         DJINN_ELEMENT(menu->pairEntries[0]) + DJINN_ELEMENT_TILE, 5, 2, 0);
     Text_SetColorFar(TEXT_COLOR_NORMAL);
-    Window_SetTilemapEntryFar(menu->helpWindow, WINDOW_TILE(662), 7, 1, 0);
+    // The blinking down arrow between the two, a tile of BG character block
+    // 1, the block after the windows' own.
+    Window_SetTilemapEntryFar(
+        menu->helpWindow,
+        WINDOW_TILE(BG_CHAR_SIZE / TILE_SIZE_4BPP + DJINN_CHANGE_ARROW_TILE), 7,
+        1, 0);
   }
 
   for (;;) {
@@ -239,13 +259,13 @@ s32 PsynergyList_RunCompareLoop(u32 mode) {
     repeatedKeys = gKeysRepeat;
 
     // The tutorial presses A for the player after 100 frames, or shows
-    // its messages; around each message the first 512 bytes of the window
-    // work (the tilemap's top eight rows) are saved and put back.
-    if (backdrop->tutorialStep != 0) {
+    // its messages; the windows' tilemap rows a message covers are saved
+    // before it opens and put back after it closes.
+    if (backdrop->tutorialStep != DJINN_TUTORIAL_OFF) {
       s16 *saved;
       s32 size;
 
-      size = 512;
+      size = DJINN_TUTORIAL_COVERED_ROWS * BG_SCREEN_WIDTH * sizeof(u16);
       saved = Heap_AllocEwram(size);
       pressedKeys = 0;
       repeatedKeys = 0;
@@ -266,7 +286,9 @@ s32 PsynergyList_RunCompareLoop(u32 mode) {
         if (backdrop->tutorialTimer == 60) {
           struct Window *window;
 
-          Iwram_CopyWords(saved, work, size);
+          Iwram_CopyWords(saved, work->tilemap, size);
+          // "Setting a Djinni changes your attributes and maybe even your
+          // class."
           window = Message_OpenWindowFar(MsgDjinnTutorialSetChanges, 8, 0, 1);
           DjinnTutorial_SetCursor(menu, ICON_SHOWN);
           MenuCursor_Slide(2, 96);
@@ -275,7 +297,7 @@ s32 PsynergyList_RunCompareLoop(u32 mode) {
             wait(1);
           }
           Window_CloseFar(window, 1);
-          Iwram_CopyWords(work, saved, size);
+          Iwram_CopyWords(work->tilemap, saved, size);
           Window_MarkVisibleTextTilesFar();
           work->dirty = 1;
           redraw = 1;
@@ -288,7 +310,9 @@ s32 PsynergyList_RunCompareLoop(u32 mode) {
         if (backdrop->tutorialTimer == 60) {
           struct Window *window;
 
-          Iwram_CopyWords(saved, work, size);
+          Iwram_CopyWords(saved, work->tilemap, size);
+          // "When your class changes, the Psynergy you can use may also
+          // change."
           window =
               Message_OpenWindowFar(MsgDjinnTutorialClassPsynergy, 8, 0, 1);
           DjinnTutorial_SetCursor(menu, ICON_SHOWN);
@@ -298,7 +322,7 @@ s32 PsynergyList_RunCompareLoop(u32 mode) {
             wait(1);
           }
           Window_CloseFar(window, 1);
-          Iwram_CopyWords(work, saved, size);
+          Iwram_CopyWords(work->tilemap, saved, size);
           Window_MarkVisibleTextTilesFar();
           work->dirty = 1;
           wait(1);
@@ -406,31 +430,38 @@ s32 PsynergyList_RunCompareLoop(u32 mode) {
       }
     }
 
-    // The Djinni figures, at a fixed 3/4 size (phase -(FIXED_ONE * 3 / 4)),
-    // move once a second: step runs 0 to 29 over frames 5 to 34 of each 60 and
-    // holds.
+    // The Djinni figures, at a fixed 3/4 size (a negative phase), hop once a
+    // second: step runs through the hop's frames and holds at its end.
     frame++;
-    step = (frame % 60) - 5;
+    step = (frame % 60) - DJINN_PREVIEW_HOP_DELAY;
     if (step < 0) {
       step = 0;
     }
-    if (step > 29) {
-      step = 29;
+    if (step > DJINN_PREVIEW_HOP_FRAMES - 1) {
+      step = DJINN_PREVIEW_HOP_FRAMES - 1;
     }
-    DjinnFigures_SetSlotPhase(0, 0xffff4000);
-    DjinnFigures_SetSlotPhase(1, 0xffff4000);
+    DjinnFigures_SetSlotPhase(0, -(FIXED_ONE * 3 / 4));
+    DjinnFigures_SetSlotPhase(1, -(FIXED_ONE * 3 / 4));
 
+    // The given Djinni hops from the giver's side to the receiver's, two
+    // pixels a frame; in a trade the other one passes it the other way,
+    // dipping as far as the first one rises.
     if (mode <= DJINN_COMPARE_GIVE) {
-      FIXED rise;
+      s32 rise;
       s32 slide;
 
-      rise = -Iwram_MulFX(16, Trig_Sin((step % 30) * 1092));
-      if (rise < -6) {
-        rise = -6;
+      rise = -Iwram_MulFX(DJINN_PREVIEW_HOP_SINE_HEIGHT,
+                          Trig_Sin((step % DJINN_PREVIEW_HOP_FRAMES) *
+                                   (DEGtoANG(180) / DJINN_PREVIEW_HOP_FRAMES)));
+      if (rise < -DJINN_PREVIEW_HOP_HEIGHT) {
+        rise = -DJINN_PREVIEW_HOP_HEIGHT;
       }
+      // DEAD: rise is never positive, the hop's half sine wave staying above
+      // the line, so the bound of 12 never applies; the ROM keeps its test.
       if (rise > 12) {
         rise = 12;
       }
+      // step never reaches 35, so the slide never wraps.
       slide = (step % 35) * 2;
       DjinnFigures_SetSlotPosition(0, slide + 34, rise + 20, 0);
       if (mode == DJINN_COMPARE_TRADE) {
@@ -448,16 +479,15 @@ s32 PsynergyList_RunCompareLoop(u32 mode) {
     }
     MenuCursor_Position(confirmationChoice * 56 + 80, 16);
 
-    // Blink the backdrop's border tile (DJINN_BACKDROP_BORDER_TILE of BG
-    // character block 1), drawn and filled with colour 4 in
-    // turn every 4 frames.
+    // Blink the down arrow between a thing and what the change makes of it
+    // (DJINN_CHANGE_ARROW_TILE): drawn and blanked in turn every 4 frames.
     if ((frame & 3) == 0) {
       void *tile;
       u32 fill = TEXT_CANVAS_BACKGROUND_WORD;
 
-      tile = (void *)DJINN_BACKDROP_BORDER_VRAM;
+      tile = (void *)DJINN_CHANGE_ARROW_VRAM;
       if ((frame & 4) != 0) {
-        Iwram_CopyWords(tile, gMenu_BackdropBorderTile, 32);
+        Iwram_CopyWords(tile, gMenu_ChangeArrowTile, 32);
       } else {
         Iwram_FillWords(tile, 32, fill);
       }
@@ -565,7 +595,7 @@ s32 DjinnMenu_ShowMemberStatus(void) {
   menu->cursor->motion = ICON_HIDDEN;
   selectedPages[1] = selectedPages[0] = result;
   for (side = 0; side < 4; side++)
-    menu->memberY[side] = 200;
+    menu->memberY[side] = MENU_FIGURE_HIDDEN_Y;
   WindowSprite_ClearListFar(menu->listWindow);
   wait(1);
   // Count the party member's Psynergy by diffing their list with itself; saved,
@@ -626,22 +656,22 @@ s32 DjinnMenu_ShowMemberStatus(void) {
                                 0);
       Window_MarkTilemapRow(work, window->y);
     }
-    // blink is worked out as the preview's step is, and not used; the Djinni
-    // figure stays below the screen.
+    // blink is worked out as the preview's hop step is, and not used; the
+    // Djinni figure stays below the screen.
     frame++;
-    blink = frame % 60 - 5;
-    CLAMP(blink, 0, 29);
-    DjinnFigures_SetSlotPosition(0, 32, 200, 0);
+    blink = frame % 60 - DJINN_PREVIEW_HOP_DELAY;
+    CLAMP(blink, 0, DJINN_PREVIEW_HOP_FRAMES - 1);
+    DjinnFigures_SetSlotPosition(0, 32, MENU_FIGURE_HIDDEN_Y, 0);
     if (redraw) {
       redraw = 0;
       phase = Menu_WrapIndex(phase, 2);
     }
     if ((frame & 3) == 0) {
       if (frame & 4)
-        Iwram_CopyWords((void *)DJINN_BACKDROP_BORDER_VRAM,
-                        gMenu_BackdropBorderTile, 32);
+        Iwram_CopyWords((void *)DJINN_CHANGE_ARROW_VRAM, gMenu_ChangeArrowTile,
+                        32);
       else
-        Iwram_FillWords((void *)DJINN_BACKDROP_BORDER_VRAM, 32,
+        Iwram_FillWords((void *)DJINN_CHANGE_ARROW_VRAM, 32,
                         TEXT_CANVAS_BACKGROUND_WORD);
     }
     if (pressedKeys & KEY_START) {

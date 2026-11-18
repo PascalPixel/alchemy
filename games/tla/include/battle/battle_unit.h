@@ -14,7 +14,12 @@
 enum {
   /// Bytes in a struct Unit, which the code clears and copies whole.
   BATTLE_UNIT_SIZE = 332,
-  PSYNERGY_ABILITY_MASK = 0x3fff ///< PsynergyEntry.encodedAction's action id
+  PSYNERGY_ABILITY_MASK = 0x3fff, ///< PsynergyEntry.encodedAction's action id
+  /// PsynergyEntry.encodedAction's marks: the action comes from an equipped
+  /// item, or from the class (its top bit, PSYNERGY_FROM_CLASS_SHIFT).
+  PSYNERGY_FROM_ITEM = 0x4000,
+  PSYNERGY_FROM_CLASS = 0x8000,
+  PSYNERGY_FROM_CLASS_SHIFT = 15
 };
 
 /// An entry in a unit's action list: the action's id (PSYNERGY_ABILITY_MASK)
@@ -52,9 +57,9 @@ enum Element {
 /// AbilityFormula).
 #define ABILITY_FORMULA_MASK 15
 
-/// An ability kind picks what the ability's power does to each target, as
-/// The Broken Seal's: ABILITY_FORMULA_BLANK, ABILITY_FORMULA_EFFECT_ONLY and
-/// ABILITY_FORMULA_NO_POWER apply no power.
+/// An ability kind picks what the ability's power does to each target;
+/// ABILITY_FORMULA_BLANK, ABILITY_FORMULA_EFFECT_ONLY and
+/// ABILITY_FORMULA_NO_POWER apply none.
 enum AbilityFormula {
   ABILITY_FORMULA_BLANK = 0,             ///< no ability
   ABILITY_FORMULA_HEAL_HP = 1,           ///< Cure, Fizz, healing items
@@ -228,7 +233,7 @@ enum BattleActionUse {
   ACTION_USABLE_IN_BATTLE = 0x80 ///< can be used in battle
 };
 
-/// The curse bits of Unit.curse, as The Broken Seal's Unit.curse.
+/// The curse bits of Unit.curse.
 enum CurseFlag {
   CURSE_BOUND = 0x01,      ///< the unit is bound: one action in four is lost
   CURSE_ITEM = 0x02,       ///< a cursed item is equipped
@@ -271,6 +276,9 @@ enum CurseFlag {
 
 /// Unit ids from 128 are the enemies'.
 #define FIRST_ENEMY_UNIT 128
+/// The bit set in every enemy's unit id (FIRST_ENEMY_UNIT and up), and so the
+/// side a unit fights on.
+#define UNIT_ID_ENEMY_BIT FIRST_ENEMY_UNIT
 
 /// How many actions a unit's list holds (Unit.psynergy).
 #define PSYNERGY_SLOTS 32
@@ -290,8 +298,14 @@ struct BattleAIState {
 #define UNIT_GAUGE_SHIFT 14
 #define UNIT_GAUGE_FULL (1 << UNIT_GAUGE_SHIFT)
 
+/// The bits of Unit.baseActionCount that count the unit's actions a turn.
+#define UNIT_ACTION_COUNT_MASK 0xf
+
 /// A unit's name buffer: 14 characters and the 0 that ends them.
 #define UNIT_NAME_SIZE 15
+/// The Resistance each of a unit's battle Resistance stages
+/// (Unit.resistanceStage) adds to every element's.
+#define RESISTANCE_PER_STAGE 20
 
 /// A unit in battle: a party member's or an enemy's stats, Psynergy, items,
 /// Djinn and statuses.
@@ -393,7 +407,8 @@ struct Unit {
   u8 grimReaper; ///< the Grim Reaper's countdown, 7 when cursed
   /// The totals of equipment effects 23 (unleash chance) and 24 that
   /// Unit_Calculate sums.
-  // TBS never reads them back.
+  // Nothing reads them back but ScriptedBattle_SaveUnits and
+  // ScriptedBattle_RestoreUnits, which copy them out and back.
   u8 equipBonus[2];
   /// The extra action: 2 when cast, down one at each turn's end.
   u8 ready;
@@ -464,9 +479,9 @@ static __inline__ s32 Unit_ClampGauge(s32 ratio) {
 /// The eight characters' units, ISAAC to PIERS, kept in the save.
 extern struct Unit gCharacterUnits[PARTY_UNIT_COUNT];
 
-/// A unit's base stats from Unit.baseHp on, as The Broken Seal's: the
-/// formations copy the block before a level or strength change, and the Clear
-/// Data writes the imported and password members' stats through it.
+/// A unit's base stats from Unit.baseHp on: the formations copy the block
+/// before a level or strength change, and the Clear Data writes the imported
+/// and password members' stats through it.
 struct BattleBaseStats {
   s16 baseHp;
   s16 basePp;

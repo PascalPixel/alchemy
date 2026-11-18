@@ -121,8 +121,7 @@ s32 Inventory_AddItem(s32 unitId, s32 itemId) {
       s32 entry = unit->inventory[slot];
       u32 count = ((u32)entry >> INVENTORY_QUANTITY_SHIFT) + 1;
 
-      // A stack holds 30 at most.
-      if (count > 29)
+      if (count >= INVENTORY_STACK_MAX)
         return -1;
       {
         s32 value = INVENTORY_ENTRY_MASK;
@@ -388,27 +387,28 @@ u8 Item_GetTargetMode(s32 itemId) {
   return Ability_GetDirect(Item_GetDirect(itemId)->abilityId)->targetMode;
 }
 
-/// Adds `delta` to rare item counter `index`, kept between 0 and 99, and
-/// returns the new count (0 for an index past 127).
+/// Adds `delta` to rare item counter `index`, kept between 0 and
+/// ITEM_COUNTER_MAX, and returns the new count (0 for an index from
+/// ITEM_COUNTER_COUNT on).
 s32 RareItemStock_Adjust(s32 index, s32 delta) {
-  s32 counter_slot = index;
+  s32 counterSlot = index;
   u8 *data = gRareItemStock;
 
   index = 0;
-  if (counter_slot <= 127) {
-    s32 value = data[counter_slot];
+  if (counterSlot < ITEM_COUNTER_COUNT) {
+    s32 value = data[counterSlot];
 
     value += delta;
 
     if (value < 0) {
       value = 0;
-    } else if (value > 99) {
-      value = 99;
-      index = 99;
+    } else if (value > ITEM_COUNTER_MAX) {
+      value = ITEM_COUNTER_MAX;
+      index = ITEM_COUNTER_MAX;
     } else {
       index = value;
     }
-    data[counter_slot] = value;
+    data[counterSlot] = value;
   }
   return index;
 }

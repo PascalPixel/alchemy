@@ -114,8 +114,8 @@ void FieldPsynergy_Run(void) {
   else if (animation == FIELD_PSYNERGY_RING)
     FieldPsynergy_Ring();
   else if (animation == FIELD_PSYNERGY_HALT) {
-    // Let the object stopped last time go, then stop the nearest one that
-    // has an event to run; with none, play the fallback transition.
+    // Resume the actor stopped before, then stop the nearest one that has an
+    // event to run; with none, the stopwatch is thrown at nothing.
     struct MainRoutineWork *party = &gMainRoutineWork;
     s32 paused;
 
@@ -135,7 +135,7 @@ void FieldPsynergy_Run(void) {
       FieldPsynergy_Halt();
     }
   } else if (animation == FIELD_PSYNERGY_MIND_READ) {
-    // A wave still running from the last cast is reset first.
+    // The wave and colour effect, stopping a running Reveal first.
     if (event->revealActive != 0)
       FieldPsynergy_EndReveal();
     FieldPsynergy_StartMindReadWave(scene->firstActorId, targetId);
@@ -206,8 +206,8 @@ void FieldPsynergy_Dispatch(void) {
   else if (animation == FIELD_PSYNERGY_RING)
     FieldPsynergy_Ring();
   else if (animation == FIELD_PSYNERGY_MIND_READ) {
-    // A wave still running from the last cast is reset first; a target that
-    // is not the paused object stops walking while the wave runs.
+    // The wave and colour effect, stopping a running Reveal first; a target
+    // other than the halted actor stands still while the wave runs.
     struct MainRoutineWork *party;
 
     if (event->revealActive != 0)
@@ -217,7 +217,7 @@ void FieldPsynergy_Dispatch(void) {
       ((struct Actor *)scene->child)->paused = 1;
     FieldPsynergy_StartMindReadWave(scene->firstActorId, targetId);
   } else if (animation == FIELD_PSYNERGY_HALT) {
-    // Let the object stopped last time go, then stop the target.
+    // Resume the actor stopped before, then stop the target.
     struct MainRoutineWork *party = &gMainRoutineWork;
 
     if (party->haltedActor != -1) {
@@ -243,8 +243,8 @@ void FieldPsynergy_FinishMindRead(void) {
   }
 }
 
-/// The extra handler of Reveal, Cloak, Avoid, Sand, Hover and the unnamed kind
-/// 28: what each does when it ends.
+/// The extra handler of Reveal, Cloak, Avoid, Sand, Hover and the Ring: what
+/// each does when it ends.
 void FieldPsynergy_RunExtraHandler(void) {
   struct FieldEffectWork *scene = Ram_HeapSlots->fieldEffectWork;
 
@@ -270,8 +270,8 @@ void FieldPsynergy_RunExtraHandler(void) {
   }
 }
 
-/// Per-frame update: sets every part of an actor's sprite to colour mode
-/// frame % 6, which cycles its colours.
+/// Per-frame update: sets every part of an actor's sprite to the next of the
+/// six orders of its colour channels (SPRITE_COLOR_NORMAL to SPRITE_COLOR_BRG).
 void Actor_CycleSpriteColors(struct Actor *actor) {
   struct Sprite *sprite;
   s32 count;
@@ -282,7 +282,7 @@ void Actor_CycleSpriteColors(struct Actor *actor) {
     if (sprite != 0 && sprite->retainCacheEntry == 0) {
       count = sprite->count;
       for (i = 0; i < count; i++)
-        sprite->entries[i]->colorMode = gFrameCount % 6;
+        sprite->entries[i]->colorMode = gFrameCount % (SPRITE_COLOR_BRG + 1);
       sprite->dirty = 1;
     }
   }
@@ -308,13 +308,24 @@ s32 FieldPsynergy_GetCanvasPriority(struct Actor *actor, s32 facing) {
   return 0;
 }
 
-/// Returns the 2-bit OBJ priority of the object's animation record.
+/// Returns the OBJ priority of the actor's sprite.
 s32 BattleEffect_GetObjectPriority(struct Actor *actor) {
   return ((struct PlacedSprite *)actor->sprite)->priority;
 }
 
-/// Returns the object's sort depth: from its projected z on the world map
-/// (mode 3), otherwise from its y and z against the map's scroll.
+/// On the world map a sprite's depth slot is one more for each two pixels its
+/// point is nearer the camera than 512, about the camera's distance from the
+/// ground it looks at, where the slot is 128, as Render_PlaceProjectedSprite
+/// sorts a projected sprite.
+#define WORLD_MAP_GROUND_DEPTH 512
+#define WORLD_MAP_GROUND_SLOT 128
+/// On a scrolling map an actor's sprite takes its screen row on from this slot,
+/// as Render_ApplyProjectedPlacement places it.
+#define PLACEMENT_IMAGE_DEPTH 62
+
+/// Returns the depth slot the actor's sprite takes, so that a sprite drawn
+/// with it sorts with it: from its projected depth on the world map, otherwise
+/// from its screen row.
 s32 BattleEffect_GetObjectDepth(struct Actor *actor) {
   FIXED point[3];
   s32 screen[3];
@@ -325,7 +336,7 @@ s32 BattleEffect_GetObjectDepth(struct Actor *actor) {
     point[1] = actor->y.fixed;
     point[2] = actor->z.fixed;
     Render_ProjectPoint(point, screen);
-    depth = (512 - screen[2]) / 2 + 128;
+    depth = (WORLD_MAP_GROUND_DEPTH - screen[2]) / 2 + WORLD_MAP_GROUND_SLOT;
     if (depth <= 0)
       depth = 1;
   } else {
@@ -334,8 +345,8 @@ s32 BattleEffect_GetObjectDepth(struct Actor *actor) {
     s32 bias = view->z & FIELD_PIXEL_MASK;
     s32 base = map->origin->y;
 
-    depth =
-        FIXEDtoINT(actor->y.fixed - base + actor->z.fixed - base - bias) + 62;
+    depth = FIXEDtoINT(actor->y.fixed - base + actor->z.fixed - base - bias) +
+            PLACEMENT_IMAGE_DEPTH;
   }
   return depth;
 }
@@ -385,5 +396,7 @@ void FieldPsynergy_StartSceneSprite(void) {
     Task_Add(BattleEffect_DrawSceneSprite, TASK_PASS_FRAME);
   }
 }
-#undef CELL_MASK
+#undef WORLD_MAP_GROUND_DEPTH
+#undef WORLD_MAP_GROUND_SLOT
+#undef PLACEMENT_IMAGE_DEPTH
 #undef SIDE_TURN

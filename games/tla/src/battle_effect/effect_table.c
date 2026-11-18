@@ -1972,10 +1972,10 @@ const s32 gRushingStrike_Scales[] = {toFIXED(0.5), toFIXED(0.5), toFIXED(0.5),
                                      toFIXED(0.5), 55536,        52768};
 
 /// By mode: the quad's scale (16.16, doubled when used) and a second word.
-const s32 gMirroredWall_BurstScales[] = {39768, 44152, 44152, 55536};
+const s32 gMirroredWall_Scales[] = {39768, 44152, 44152, 55536};
 
 /// Each burst's shade.
-const s32 gMirroredWall_BurstShades[] = {-8, -8, -8, 0};
+const s32 gMirroredWall_Shades[] = {-8, -8, -8, 0};
 
 /// Each shake's offset.
 const s8 gDaedalus_ShakeOffsets[] = {0,  -1, 1,  -1, 0,  2,  1,  0,
@@ -1983,21 +1983,21 @@ const s8 gDaedalus_ShakeOffsets[] = {0,  -1, 1,  -1, 0,  2,  1,  0,
                                      -4, -3, -3, -3, -2, -2, -1, -1};
 
 /// Each drift picture's byte offset in Daedalus's sheet.
-const u8 gDaedalus_DriftPictures[] = {0, 1, 2, 3, 4, 5, 6, 5, 4, 3, 2, 1};
+const u8 gDaedalus_WingBeatPictures[] = {0, 1, 2, 3, 4, 5, 6, 5, 4, 3, 2, 1};
 
 /// The frame each drift starts on.
-const u8 gDaedalus_DriftStarts[][2] = {
+const u8 gDaedalus_BirdStarts[][2] = {
     {112, 128}, {128, 112}, {112, 128}, {128, 112}, {128, 112},
     {112, 112}, {180, 120}, {140, 120}, {140, 120}, {136, 120}};
 
 /// Each drift's speed.
-const s32 gDaedalus_DriftSpeeds[][2] = {
+const s32 gDaedalus_BirdSpeeds[][2] = {
     {-120000, -70000}, {-117000, -68000}, {-120000, -70000}, {-117000, -68000},
     {-80000, -80000},  {-80000, -95000},  {-100000, -80000}, {-100000, -90000},
     {-120000, -95000}, {-100000, -95000}};
 
 /// The drift frames.
-const u8 gDaedalus_DriftFrames[] = {16, 16, 40, 40, 40, 68, 40, 72, 72, 96};
+const u8 gDaedalus_BirdFrames[] = {16, 16, 40, 40, 40, 68, 40, 72, 72, 96};
 
 /// The clatter frames.
 const u16 gDaedalus_ClatterFrames[] = {16, 115, 243, 371, 499};
@@ -2009,7 +2009,7 @@ const u16 gDaedalus_RingStarts[] = {568, 5};
 const s8 gDaedalus_RingX[] = {66, 64};
 
 /// Each sprite's point, x and y.
-const u8 gDaedalus_SpritePoints[][2] = {
+const u8 gDaedalus_RightLegPoints[][2] = {
     {0, 0}, {32, 0}, {0, 32}, {32, 32}, {32, 64}};
 
 /// Each splash's point, x and y.
@@ -2020,29 +2020,29 @@ const u8 gDaedalus_SplashPoints[][6][2] = {
     {{60, 64}, {61, 64}, {62, 63}, {63, 62}, {64, 61}, {66, 60}}};
 
 /// The frame each particle starts on.
-const u16 gDaedalus_ParticleStarts[] = {0,  24, 8,  52, 16, 40, 36, 28,
-                                        32, 4,  20, 56, 60, 12, 44, 48};
+const u16 gDaedalus_DiveStarts[] = {0,  24, 8,  52, 16, 40, 36, 28,
+                                    32, 4,  20, 56, 60, 12, 44, 48};
 
 /// The seven strike frames.
-const u8 gDaedalusAlt_StrikeFrames[] = {80, 84, 86, 88, 90, 92, 94};
+const u8 gDaedalusStrike_HitFrames[] = {80, 84, 86, 88, 90, 92, 94};
 
 /// By level: which of the seven blades strike.
-const u8 gVengeance_BladeStrikes[][7] = {
+const u8 gVengeance_ArrowStrikes[][7] = {
     {0, 0, 1, 0, 0, 0, 1}, {1, 0, 1, 1, 0, 0, 1}, {1, 1, 1, 1, 1, 1, 1}};
 
 /// The blade's mesh: each triangle's three corners and their texture
 /// coordinates.
-const u16 gLifeShear_BladeMesh[] = {769, 2, 3711, 13695, 13568, 0,
-                                    256, 2, 3584, 3711,  13568, 0,
-                                    0,   0, 0,    0,     0,     0};
+const u16 gLifeShear_PaleBladeMesh[] = {769, 2, 3711, 13695, 13568, 0,
+                                        256, 2, 3584, 3711,  13568, 0,
+                                        0,   0, 0,    0,     0,     0};
 
 /// The handle's mesh: each triangle's three corners and their texture
 /// coordinates.
-const u16 gLifeShear_HandleMesh[] = {769, 2,    127, 8063, 7936, 0, 256, 2, 0,
-                                     127, 7936, 0,   0,    0,    0, 0,   0, 0};
+const u16 gLifeShear_OrangeBladeMesh[] = {
+    769, 2, 127, 8063, 7936, 0, 256, 2, 0, 127, 7936, 0, 0, 0, 0, 0, 0, 0};
 
 /// The scythe, 128 by 32 pixels: its four corners.
-const struct ModelVertex gLifeShear_ScytheCorners[] = {
+const struct ModelVertex gLifeShear_BladeCorners[] = {
     {-81, -16, 0}, {47, -16, 0}, {-81, 16, 0}, {47, 16, 0}};
 
 /// By mode: the drops' gravity, and their smallest picture.

@@ -138,6 +138,17 @@ enum SolSanctumLunaSolRoomsActorId {
 /// The cell behaviors of the floor cells the events answer.
 ///
 /// Behaviors 1 and 2 are the exits.
+/// The layout rows holding the Luna room's picture with its quarters lit (two
+/// rows, the picture of Sol) and unlit (the picture of Luna), which
+/// MapGrid_CopyCellsTo draws into the room.
+#define STATUE_LIGHTS_LIT_ROW 28
+#define STATUE_LIGHTS_DARK_ROW 30
+
+/// The map's two tileset animations that stay paused until the floor opens the
+/// way up to the Elemental Star Room.
+#define WAY_UP_ANIMATION_A 9
+#define WAY_UP_ANIMATION_B 10
+
 enum SolSanctumLunaSolRoomsCellBehavior {
   CELL_BEHAVIOR_SOL_SANCTUM_LUNA_SOL_ROOMS_BEFORE_KRADEN = 8,
   /// The way back out to SceneId_SolSanctumReliefs.
@@ -317,44 +328,44 @@ static inline void SolSanctumLunaSolRooms_DrawStatueLightTiles(s32 firstFlag,
 /// Draws the lights of the quarters lit now (the _SEAL_OPEN flags).
 static void SolSanctumLunaSolRooms_DrawCurrentStatueLights(void) {
   SolSanctumLunaSolRooms_DrawStatueLightTiles(
-      FLAG_SOL_SANCTUM_NORTHWEST_SEAL_OPEN, 28);
+      FLAG_SOL_SANCTUM_NORTHWEST_SEAL_OPEN, STATUE_LIGHTS_LIT_ROW);
 }
 
 /// Draws the lights the room last showed (the _LIGHT_SHOWN flags).
 static void SolSanctumLunaSolRooms_DrawSavedStatueLights(void) {
   SolSanctumLunaSolRooms_DrawStatueLightTiles(
-      FLAG_SOL_SANCTUM_NORTHWEST_LIGHT_SHOWN, 28);
+      FLAG_SOL_SANCTUM_NORTHWEST_LIGHT_SHOWN, STATUE_LIGHTS_LIT_ROW);
 }
 
-/// Draws the current lights using their alternate tile rows.
-static void SolSanctumLunaSolRooms_DrawAlternateCurrentStatueLights(void) {
+/// Draws the quarters lit now unlit again.
+static void SolSanctumLunaSolRooms_DarkenCurrentStatueLights(void) {
   SolSanctumLunaSolRooms_DrawStatueLightTiles(
-      FLAG_SOL_SANCTUM_NORTHWEST_SEAL_OPEN, 30);
+      FLAG_SOL_SANCTUM_NORTHWEST_SEAL_OPEN, STATUE_LIGHTS_DARK_ROW);
 }
 
-/// Draws the saved lights using their alternate tile rows.
-static void SolSanctumLunaSolRooms_DrawAlternateSavedStatueLights(void) {
+/// Draws the quarters the room last showed lit unlit again.
+static void SolSanctumLunaSolRooms_DarkenSavedStatueLights(void) {
   SolSanctumLunaSolRooms_DrawStatueLightTiles(
-      FLAG_SOL_SANCTUM_NORTHWEST_LIGHT_SHOWN, 30);
+      FLAG_SOL_SANCTUM_NORTHWEST_LIGHT_SHOWN, STATUE_LIGHTS_DARK_ROW);
 }
 
-/// Flashes both tile rows of the lit quarters' lights at this pace.
+/// Flashes the lit quarters' lights on and off at this pace.
 static inline void SolSanctumLunaSolRooms_FlashCurrentStatueLights(s32 frames) {
   Sound_Play(SE_GLITTER);
   SolSanctumLunaSolRooms_DrawCurrentStatueLights();
   Event_Wait(frames);
   Sound_Play(SE_GLITTER);
-  SolSanctumLunaSolRooms_DrawAlternateCurrentStatueLights();
+  SolSanctumLunaSolRooms_DarkenCurrentStatueLights();
   Event_Wait(frames);
 }
 
-/// Flashes both tile rows of the lights last shown at this pace.
+/// Flashes the lights last shown on and off at this pace.
 static inline void SolSanctumLunaSolRooms_FlashSavedStatueLights(s32 frames) {
   Sound_Play(SE_GLITTER);
   SolSanctumLunaSolRooms_DrawSavedStatueLights();
   Event_Wait(frames);
   Sound_Play(SE_GLITTER);
-  SolSanctumLunaSolRooms_DrawAlternateSavedStatueLights();
+  SolSanctumLunaSolRooms_DarkenSavedStatueLights();
   Event_Wait(frames);
 }
 
@@ -877,7 +888,7 @@ static void SolSanctumLunaSolRooms_SpringTrap(void) {
   for (flash = 0; flash != 12; flash++) {
     SolSanctumLunaSolRooms_FlashCurrentStatueLights(2);
   }
-  MapGrid_CopyCellsTo(45, 30, 34, 10, 4, 2);
+  MapGrid_CopyCellsTo(45, STATUE_LIGHTS_DARK_ROW, 34, 10, 4, 2);
   Actor_Jump(ACTOR_KRADEN, 6, 40);
   // Kraden: "Stop!!! You're about to make a big mistake!" He runs south.
   SolSanctumLunaSolRooms_ShowMessageAndWait(SPEAKER_WINDOW_BELOW | ACTOR_KRADEN,
@@ -911,7 +922,7 @@ static void SolSanctumLunaSolRooms_UnusedAnimateSavedStatueLights(void) {
   if (GameFlag_Get(FLAG_SOL_SANCTUM_NORTHWEST_SEAL_OPEN) != 0 &&
       Event_GetFlag(FLAG_SOL_SANCTUM_NORTHWEST_LIGHT_SHOWN) != 0) {
     GameFlag_Clear(FLAG_SOL_SANCTUM_NORTHWEST_LIGHT_SHOWN);
-    MapGrid_CopyCellsTo(45, 28, 34, 10, 2, 1);
+    MapGrid_CopyCellsTo(45, STATUE_LIGHTS_LIT_ROW, 34, 10, 2, 1);
   } else if (GameFlag_Get(FLAG_SOL_SANCTUM_NORTHWEST_SEAL_OPEN) != 0 &&
              Event_GetFlag(FLAG_SOL_SANCTUM_NORTHWEST_LIGHT_SHOWN) == 0) {
     GameFlag_Set(FLAG_SOL_SANCTUM_NORTHWEST_LIGHT_SHOWN);
@@ -919,7 +930,7 @@ static void SolSanctumLunaSolRooms_UnusedAnimateSavedStatueLights(void) {
   if (GameFlag_Get(FLAG_SOL_SANCTUM_NORTHEAST_SEAL_OPEN) != 0 &&
       Event_GetFlag(FLAG_SOL_SANCTUM_NORTHEAST_LIGHT_SHOWN) != 0) {
     GameFlag_Clear(FLAG_SOL_SANCTUM_NORTHEAST_LIGHT_SHOWN);
-    MapGrid_CopyCellsTo(47, 28, 36, 10, 2, 1);
+    MapGrid_CopyCellsTo(47, STATUE_LIGHTS_LIT_ROW, 36, 10, 2, 1);
   } else if (GameFlag_Get(FLAG_SOL_SANCTUM_NORTHEAST_SEAL_OPEN) != 0 &&
              Event_GetFlag(FLAG_SOL_SANCTUM_NORTHEAST_LIGHT_SHOWN) == 0) {
     GameFlag_Set(FLAG_SOL_SANCTUM_NORTHEAST_LIGHT_SHOWN);
@@ -927,7 +938,7 @@ static void SolSanctumLunaSolRooms_UnusedAnimateSavedStatueLights(void) {
   if (GameFlag_Get(FLAG_SOL_SANCTUM_SOUTHWEST_SEAL_OPEN) != 0 &&
       Event_GetFlag(FLAG_SOL_SANCTUM_SOUTHWEST_LIGHT_SHOWN) != 0) {
     GameFlag_Clear(FLAG_SOL_SANCTUM_SOUTHWEST_LIGHT_SHOWN);
-    MapGrid_CopyCellsTo(45, 29, 34, 11, 2, 1);
+    MapGrid_CopyCellsTo(45, STATUE_LIGHTS_LIT_ROW + 1, 34, 11, 2, 1);
   } else if (GameFlag_Get(FLAG_SOL_SANCTUM_SOUTHWEST_SEAL_OPEN) != 0 &&
              Event_GetFlag(FLAG_SOL_SANCTUM_SOUTHWEST_LIGHT_SHOWN) == 0) {
     GameFlag_Set(FLAG_SOL_SANCTUM_SOUTHWEST_LIGHT_SHOWN);
@@ -935,7 +946,7 @@ static void SolSanctumLunaSolRooms_UnusedAnimateSavedStatueLights(void) {
   if (GameFlag_Get(FLAG_SOL_SANCTUM_SOUTHEAST_SEAL_OPEN) != 0 &&
       Event_GetFlag(FLAG_SOL_SANCTUM_SOUTHEAST_LIGHT_SHOWN) != 0) {
     GameFlag_Clear(FLAG_SOL_SANCTUM_SOUTHEAST_LIGHT_SHOWN);
-    MapGrid_CopyCellsTo(47, 29, 36, 11, 2, 1);
+    MapGrid_CopyCellsTo(47, STATUE_LIGHTS_LIT_ROW + 1, 36, 11, 2, 1);
   } else if (GameFlag_Get(FLAG_SOL_SANCTUM_SOUTHEAST_SEAL_OPEN) != 0 &&
              Event_GetFlag(FLAG_SOL_SANCTUM_SOUTHEAST_LIGHT_SHOWN) == 0) {
     GameFlag_Set(FLAG_SOL_SANCTUM_SOUTHEAST_LIGHT_SHOWN);
@@ -1110,8 +1121,8 @@ static void SolSanctumLunaSolRooms_RiseToElementalStarRoom(void) {
       Event_Wait(10);
       MapGrid_CopyCellsTo(0, 32, 17, 42, 2, 3);
       Event_Wait(80);
-      TilesetAnim_Resume(9);
-      TilesetAnim_Resume(10);
+      TilesetAnim_Resume(WAY_UP_ANIMATION_A);
+      TilesetAnim_Resume(WAY_UP_ANIMATION_B);
       GameFlag_Set(FLAG_SOL_SANCTUM_STAR_ROOM_PASSAGE_OPEN);
     }
     Actor_FaceEachOther(ACTOR_KRADEN, ACTOR_PARTY_LEADER, 30);
@@ -1284,8 +1295,8 @@ s32 Scene_Initialize(void) {
       MapGrid_CopyCellsTo(30, 44, 30, 38, 12, 5);
       MapGrid_CopyCellsTo(30, 44, 34, 37, 4, 1);
       MapGrid_CopyCellsTo(14, 41, 32, 41, 8, 4);
-      MapGrid_CopyCellsTo(45, 28, 34, 10, 4, 2);
-      MapGrid_CopyCellsTo(45, 30, 16, 10, 4, 2);
+      MapGrid_CopyCellsTo(45, STATUE_LIGHTS_LIT_ROW, 34, 10, 4, 2);
+      MapGrid_CopyCellsTo(45, STATUE_LIGHTS_DARK_ROW, 16, 10, 4, 2);
       MapGrid_CopyCellsTo(14, 45, 14, 41, 8, 4);
       if (gMainRoutineWork.entrance !=
           SOL_SANCTUM_LUNA_SOL_ROOMS_FROM_SOL_SANCTUM_ERUPTION) {
@@ -1301,8 +1312,8 @@ s32 Scene_Initialize(void) {
           } else {
             MapGrid_CopyCellsTo(44, 59, 17, 37, 2, 6);
           }
-          TilesetAnim_Resume(9);
-          TilesetAnim_Resume(10);
+          TilesetAnim_Resume(WAY_UP_ANIMATION_A);
+          TilesetAnim_Resume(WAY_UP_ANIMATION_B);
         }
       }
       Actor_SetPosition(ACTOR_KRADEN, 0, 0);

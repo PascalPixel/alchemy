@@ -74,7 +74,7 @@ void FieldPsynergy_Reveal(void) {
 
   work = gFieldWork;
   Actor_SetRevealSpriteColor(6);
-  ScreenTransition_InitializeBattleEffectState(8);
+  ScreenTransition_StartHeldWindow(8);
   state = HEAP_SLOT_BLOCK(HEAP_SLOT_SCREEN_TRANSITION);
   target = Actor_Lookup(gMainRoutineWork.leaderActorId);
   state->centreX = target->x.fixed;

@@ -141,26 +141,31 @@ static void Vault_FaceActorAndWait(s32 actorId, s32 other, s32 delay);
 
 #include "shared/vault_nearby.c"
 
+/// How near in front of her, in pixels, the leader stops a walking villager,
+/// and how near while a talk is pending or Mind Read is on, as for the
+/// children round the well (shared/vault_nearby.c).
+#define STOP_RANGE 18
+#define TALK_STOP_RANGE 26
+
 /// The woman wanting the roof fixed walks about looking for the man who should
 /// be fixing it and stops to face the leader when near, or while a conversation
 /// holds the field.
-static UNREAD_RESULT
-Vault_UpdateRoofComplainerProximity(struct Actor *complainer) {
+static UNREAD_RESULT Vault_UpdateWomanWantingRoofFixed(struct Actor *woman) {
   struct WindowWork *window = (struct WindowWork *)gWindowWork[0];
   struct FieldWork *field = gFieldWork;
   s32 force = 0;
-  s32 range = 18;
+  s32 range = STOP_RANGE;
   struct Actor *leader;
 
-  if (complainer->targetX == ACTOR_NO_TARGET)
+  if (woman->targetX == ACTOR_NO_TARGET)
     RETURN_UNREAD(0);
 
   leader = Actor_Get(ACTOR_PARTY_LEADER);
   if ((s16)field->talk != 0 || window->mindRead != 0) {
-    range = 26;
+    range = TALK_STOP_RANGE;
     force = 1;
   }
-  Vault_StopIfFacingNear(complainer, leader, range, force);
+  Vault_StopIfFacingNear(woman, leader, range, force);
   RETURN_UNREAD(0);
 }
 
@@ -251,7 +256,7 @@ const struct Trigger *Scene_GetTriggers(void) {
 }
 
 /// Asks the current question and selects its ordinary or alternate reply.
-static inline void Vault_AskYesNoAndShowReply(s32 speaker) {
+static inline void Vault_AskYesNoAndShowAnswer(s32 speaker) {
   Event_OpenMessage(speaker, 0);
   if (Event_AskYesNoWithActorAnimation(ACTOR_PARTY_LEADER, 0) != 0)
     ++gFieldWork->message;
@@ -281,17 +286,17 @@ static void Vault_AskAboutFleeingTravelers(void) {
   Actor_SetAnimation(ACTOR_OLD_WOMAN_ON_THE_TRAVELERS, ANIM_STAND);
   Vault_FaceActorAndWait(ACTOR_OLD_WOMAN_ON_THE_TRAVELERS, ACTOR_PARTY_LEADER,
                          2);
-  Vault_AskYesNoAndShowReply(ACTOR_OLD_WOMAN_ON_THE_TRAVELERS);
+  Vault_AskYesNoAndShowAnswer(ACTOR_OLD_WOMAN_ON_THE_TRAVELERS);
   Event_End();
 }
 
 /// In Vault, one of the thieves loitering in town asks whether the party
 /// accuses them.
-static void Vault_ThiefDeniesTheft(void) {
+static void Vault_ThiefDeniesStealing(void) {
   Event_Start();
   Event_SetMessageId(MsgVaultAccusingUsStealingHammetsTreasured);
   Vault_FaceActorAndWait(ACTOR_THIEF_IN_TOWN, ACTOR_PARTY_LEADER, 2);
-  Vault_AskYesNoAndShowReply(ACTOR_THIEF_IN_TOWN);
+  Vault_AskYesNoAndShowAnswer(ACTOR_THIEF_IN_TOWN);
   Event_End();
 }
 
@@ -300,13 +305,13 @@ static void Vault_AskAboutAdventure(void) {
   Event_Start();
   Event_SetMessageId(MsgVaultOffOnAdventure);
   Vault_FaceActorAndWait(ACTOR_STRANDED_TRAVELER, ACTOR_PARTY_LEADER, 2);
-  Vault_AskYesNoAndShowReply(ACTOR_STRANDED_TRAVELER);
+  Vault_AskYesNoAndShowAnswer(ACTOR_STRANDED_TRAVELER);
   Event_End();
 }
 
 /// A townsperson says some folks got robbed in the chaos of the eruption.
 /// She says it while the rod is missing.
-static void Vault_TalkOfEruptionThefts(void) {
+static void Vault_TalkOfStealingInEruption(void) {
   Event_Start();
   Event_SetMessageId(MsgVaultGuessFolksGot);
   Vault_ShowStandingActorMessage(ACTOR_WOMAN_ON_STEALING);
@@ -370,7 +375,7 @@ static void Vault_TalkOfHammetsCaravan(void) {
 
 /// In Vault, once the suspects' minds are read, the woman wanting the roof
 /// fixed speaks.
-static void Vault_LookForRoofer(void) {
+static void Vault_LookForManFixingRoof(void) {
   Event_Start();
   Event_SetMessageId(MsgVaultFixingRoofCant);
   Vault_FaceActorAndWait(ACTOR_WOMAN_WANTING_THE_ROOF_FIXED, ACTOR_PARTY_LEADER,
@@ -399,7 +404,7 @@ static void Vault_AskAboutLeavingAgain(void) {
   Event_Start();
   Event_SetMessageId(MsgVaultYoureHittingRoadAgain);
   Vault_FaceActorAndWait(ACTOR_WELCOMING_YOUNG_MAN, ACTOR_PARTY_LEADER, 2);
-  Vault_AskYesNoAndShowReply(ACTOR_WELCOMING_YOUNG_MAN);
+  Vault_AskYesNoAndShowAnswer(ACTOR_WELCOMING_YOUNG_MAN);
   Event_End();
 }
 
@@ -476,7 +481,7 @@ static void Vault_AskAboutPrisoners(void) {
   Event_SetMessageId(MsgVaultThoseMenCapturedTheyreIn);
   Actor_SetAnimation(ACTOR_STRONGMAN_ON_WATCH, ANIM_STAND);
   Vault_FaceActorAndWait(ACTOR_STRONGMAN_ON_WATCH, ACTOR_PARTY_LEADER, 2);
-  Vault_AskYesNoAndShowReply(ACTOR_STRONGMAN_ON_WATCH);
+  Vault_AskYesNoAndShowAnswer(ACTOR_STRONGMAN_ON_WATCH);
   Event_End();
 }
 
@@ -486,7 +491,7 @@ static void Vault_AskWhoCapturedThieves(void) {
   Event_Start();
   Event_SetMessageId(MsgVaultOnesWhoCapturedThieves);
   Vault_FaceActorAndWait(ACTOR_STRANDED_TRAVELER, ACTOR_PARTY_LEADER, 2);
-  Vault_AskYesNoAndShowReply(ACTOR_STRANDED_TRAVELER);
+  Vault_AskYesNoAndShowAnswer(ACTOR_STRANDED_TRAVELER);
   Event_End();
 }
 
@@ -519,7 +524,7 @@ static void Vault_ThankBeforeDeparture(void) {
 
 /// In Vault, Mind Read on a townsperson. Stealing during an eruption is
 /// unforgivable, or how should the prisoners be punished?
-static void Vault_ReadMindOnTheft(void) {
+static void Vault_ReadMindOnStealing(void) {
   Event_Start();
   if (GameFlag_Get(FLAG_VAULT_THIEVES_JAILED) == 0)
     Event_SetMessageId(MsgVaultManShouldStealFromAnother);
@@ -796,7 +801,7 @@ s32 Scene_Initialize(void) {
   if (GameFlag_Get(FLAG_VAULT_THIEVES_JAILED) == 0) {
     if ((suspectsMindRead & 1) != 0) {
       Actor_Get(ACTOR_WOMAN_WANTING_THE_ROOF_FIXED)->update =
-          (void (*)(struct Actor *))Vault_UpdateRoofComplainerProximity;
+          (void (*)(struct Actor *))Vault_UpdateWomanWantingRoofFixed;
     }
   }
   // Back through the gates while Ivan waits in Vault: "Welcome back, you two!
@@ -883,6 +888,9 @@ static void Vault_FaceActorAndWait(s32 actorId, s32 other, s32 delay) {
   Event_Wait(delay);
 }
 
+/// A drifting sprite loses this share of each rate a frame: a 28th.
+#define DRIFT_DAMPING 28
+
 /// Applies drift and gradually damps both rates toward zero.
 static void Vault_UpdateDriftingEffect(struct Actor *effect) {
   s32 horizontalRate;
@@ -902,9 +910,11 @@ static void Vault_UpdateDriftingEffect(struct Actor *effect) {
   }
 
   horizontalRate = effect->speedLimit;
-  effect->speedLimit = horizontalRate - Math_Divide(horizontalRate, 28);
+  effect->speedLimit =
+      horizontalRate - Math_Divide(horizontalRate, DRIFT_DAMPING);
   verticalRate = effect->acceleration;
-  effect->acceleration = verticalRate - Math_Divide(verticalRate, 28);
+  effect->acceleration =
+      verticalRate - Math_Divide(verticalRate, DRIFT_DAMPING);
 }
 
 /// Spawns a drifting sprite near the dog, sharing its drawing priority.
@@ -1202,21 +1212,21 @@ struct Trigger gVault_Triggers[] = {
     { TRIGGER_TALK, ACTOR_WELCOMING_YOUNG_MAN, CONDITION_ALWAYS, MSGNO(MsgVaultWelcomeToVaultTheTownAt) },
     { TRIGGER_TALK, ACTOR_ERUPTION_WITNESS, CONDITION_ALWAYS, EVENT(Vault_AskAboutEruption) },
     { TRIGGER_TALK, ACTOR_VILLAGER_ON_HAMMET, CONDITION_ALWAYS, MSGNO(MsgVaultMasterHammetAWealthyLandownerAnd) },
-    { TRIGGER_TALK, ACTOR_WOMAN_ON_STEALING, CONDITION_ALWAYS, EVENT(Vault_TalkOfEruptionThefts) },
+    { TRIGGER_TALK, ACTOR_WOMAN_ON_STEALING, CONDITION_ALWAYS, EVENT(Vault_TalkOfStealingInEruption) },
     { TRIGGER_TALK, ACTOR_OLD_MAN_ON_HAMMETS_SERVANT, CONDITION_ALWAYS, MSGNO(MsgVaultMasterHammetsServantCantReturnTo) },
     { TRIGGER_TALK, ACTOR_OLD_WOMAN_ON_THE_TRAVELERS, CONDITION_ALWAYS, EVENT(Vault_AskAboutFleeingTravelers) },
     { TRIGGER_TALK, ACTOR_BOY_ROUND_THE_WELL, CONDITION_ALWAYS, EVENT(Vault_PityIvan) },
     { TRIGGER_TALK, ACTOR_GIRL_ROUND_THE_WELL, CONDITION_ALWAYS, EVENT(Vault_TalkOfHammetsCaravan) },
     { TRIGGER_TALK, ACTOR_STRONGMAN_ON_WATCH, CONDITION_ALWAYS, EVENT(Vault_StrongmanOnWatchSuspectsOutsiders) },
-    { TRIGGER_TALK, ACTOR_THIEF_IN_TOWN, CONDITION_ALWAYS, EVENT(Vault_ThiefDeniesTheft) },
+    { TRIGGER_TALK, ACTOR_THIEF_IN_TOWN, CONDITION_ALWAYS, EVENT(Vault_ThiefDeniesStealing) },
     { TRIGGER_TALK, ACTOR_STRANDED_TRAVELER, CONDITION_ALWAYS, EVENT(Vault_AskAboutAdventure) },
     { TRIGGER_TALK, ACTOR_VAULT_DOG, CONDITION_ALWAYS, EVENT(Vault_TalkToDog) },
     { TRIGGER_TALK, ACTOR_YOUNG_MAN_FIXING_THE_ROOF, CONDITION_ALWAYS, MSGNO(MsgVaultAFieryRockBurntAHole) },
-    { TRIGGER_TALK, ACTOR_WOMAN_WANTING_THE_ROOF_FIXED, CONDITION_ALWAYS, EVENT(Vault_LookForRoofer) },
+    { TRIGGER_TALK, ACTOR_WOMAN_WANTING_THE_ROOF_FIXED, CONDITION_ALWAYS, EVENT(Vault_LookForManFixingRoof) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_WELCOMING_YOUNG_MAN, CONDITION_ALWAYS, MSGNO(MsgVaultISupposeTheseChildrenCantGo) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_ERUPTION_WITNESS, CONDITION_ALWAYS, MSGNO(MsgVaultMtAlephsEruptionWasBeyondDescription) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_VILLAGER_ON_HAMMET, CONDITION_ALWAYS, MSGNO(MsgVaultWhyDoesAWealthyManLike) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_WOMAN_ON_STEALING, CONDITION_ALWAYS, EVENT(Vault_ReadMindOnTheft) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_WOMAN_ON_STEALING, CONDITION_ALWAYS, EVENT(Vault_ReadMindOnStealing) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_OLD_MAN_ON_HAMMETS_SERVANT, CONDITION_ALWAYS, MSGNO(MsgVaultPoorIvanButTheRodMay) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_OLD_WOMAN_ON_THE_TRAVELERS, CONDITION_ALWAYS, EVENT(Vault_ReadMindOnTravelers) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_BOY_ROUND_THE_WELL, CONDITION_ALWAYS, EVENT(Vault_ReadMindOnIvan) },
@@ -1262,7 +1272,7 @@ struct Trigger gVault_TriggersAfterThieves[] = {
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_WELCOMING_YOUNG_MAN, CONDITION_ALWAYS, MSGNO(MsgVaultYouveMadeOurTownPeacefulAt) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_ERUPTION_WITNESS, CONDITION_ALWAYS, MSGNO(MsgVaultNowMtAlephHasCalmedDown) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_VILLAGER_ON_HAMMET, CONDITION_ALWAYS, MSGNO(MsgVaultOfAllThePlacesWhyWould) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_WOMAN_ON_STEALING, CONDITION_ALWAYS, EVENT(Vault_ReadMindOnTheft) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_WOMAN_ON_STEALING, CONDITION_ALWAYS, EVENT(Vault_ReadMindOnStealing) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_OLD_MAN_ON_HAMMETS_SERVANT, CONDITION_ALWAYS, MSGNO(MsgVaultNobodyGetsIntoLunpaExceptFor) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_OLD_WOMAN_ON_THE_TRAVELERS, CONDITION_ALWAYS, EVENT(Vault_ReadMindOnTravelers) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_BOY_ROUND_THE_WELL, CONDITION_ALWAYS, EVENT(Vault_ReadMindOnIvan) },

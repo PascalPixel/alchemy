@@ -2,16 +2,17 @@
 #define ALCHEMY_ACTOR_STEP_H
 
 #include "macros.h"
+#include "field/pushed_actor.h"
 
 // The pushed-statue scenes (Bilibin, its cave, Kalay, Sol Sanctum's entrance,
 // the Vault's cave, Venus Lighthouse) and those of staged_actor.c.
 
-/// Sets `position` to one step from `actor`: `step` packs the step in x in its
-/// high half and the step in z in its low half, as the push tables do.
+/// Sets `position` to one step from `actor`: `step` is a DIRECTION_STEP, as
+/// the push tables hold them.
 static inline void Actor_StepFrom(struct FieldPosition *position,
                                   struct Actor *actor, s32 step) {
-  SET_POSITION(position, actor->x.fixed + (step & -0x10000), actor->y.fixed,
-               actor->z.fixed + toFIXED(step));
+  SET_POSITION(position, actor->x.fixed + DIRECTION_STEP_X_FIXED(step),
+               actor->y.fixed, actor->z.fixed + DIRECTION_STEP_Z_FIXED(step));
 }
 
 #endif

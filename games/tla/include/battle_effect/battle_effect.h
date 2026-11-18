@@ -19,9 +19,6 @@ struct MeshVertex;
 struct PoolEntry;
 struct StripQuad;
 
-/// The large effects BattleEffect_RunSummon runs, by kind: The Broken
-/// Seal's twelve summons, The Lost Age's twelve, and the scenes of Daedalus's
-/// second strike, Trident, Cruel Ruin and Meteor Blow.
 /// The summons' sprite formations (BattleEffect_PlaceFormationObjects and
 /// BattleEffect_RunImpactBurst), each named for the summon that keeps it.
 enum SummonFormation {
@@ -35,37 +32,41 @@ enum SummonFormation {
   SUMMON_FORMATION_TIAMAT_ALTERNATE
 };
 
+/// The large effects BattleEffect_RunSummon runs, by kind: the summons, Ramses
+/// to Iris, and the scenes of Daedalus's second strike, Trident, Cruel Ruin and
+/// Meteor Blow.
 enum SummonEffectId {
-  SUMMON_EFFECT_NONE,         ///< runs Meteor's effect
-  SUMMON_EFFECT_RAMSES,       ///< BattleEffect_RunRamses (ramses.c)
-  SUMMON_EFFECT_NEREID,       ///< BattleEffect_RunNereid (nereid.c)
-  SUMMON_EFFECT_KIRIN,        ///< BattleEffect_RunKirin (kirin.c)
-  SUMMON_EFFECT_ATALANTA,     ///< BattleEffect_RunAtalanta (atalanta.c)
-  SUMMON_EFFECT_CYBELE,       ///< BattleEffect_RunCybele (cybele.c)
-  SUMMON_EFFECT_NEPTUNE,      ///< BattleEffect_RunNeptune (neptune.c)
-  SUMMON_EFFECT_TIAMAT,       ///< BattleEffect_RunTiamat (procne.c)
-  SUMMON_EFFECT_PROCNE,       ///< BattleEffect_RunProcne (procne.c)
-  SUMMON_EFFECT_JUDGMENT,     ///< BattleEffect_RunJudgment (judgment.c)
-  SUMMON_EFFECT_BOREAS,       ///< BattleEffect_RunBoreas (boreas.c)
-  SUMMON_EFFECT_METEOR,       ///< BattleEffect_RunMeteor (particle_streams.c)
-  SUMMON_EFFECT_THOR,         ///< BattleEffect_RunThor (thor.c)
-  SUMMON_EFFECT_ZAGAN,        ///< BattleEffect_RunZagan (djinn_heal.c)
-  SUMMON_EFFECT_MEGAERA,      ///< BattleEffect_RunMegaera (thunder_mine.c)
-  SUMMON_EFFECT_FLORA,        ///< BattleEffect_RunFlora (flora.c)
-  SUMMON_EFFECT_MOLOCH,       ///< BattleEffect_RunMoloch (moloch.c)
-  SUMMON_EFFECT_ULYSSES,      ///< BattleEffect_RunUlysses (spider_web.c)
-  SUMMON_EFFECT_HAURES,       ///< BattleEffect_RunHaures (haures.c)
-  SUMMON_EFFECT_ECLIPSE,      ///< BattleEffect_RunEclipse (canvas.c)
-  SUMMON_EFFECT_COATLICUE,    ///< BattleEffect_RunCoatlicue (vengeance.c)
-  SUMMON_EFFECT_DAEDALUS,     ///< BattleEffect_RunDaedalus (daedalus.c)
-  SUMMON_EFFECT_AZUL,         ///< BattleEffect_RunAzul (azul.c)
-  SUMMON_EFFECT_CATASTROPHE,  ///< BattleEffect_RunCatastrophe (catastrophe.c)
-  SUMMON_EFFECT_CHARON,       ///< BattleEffect_RunCharon (charon.c)
-  SUMMON_EFFECT_IRIS,         ///< BattleEffect_RunIris (moloch.c)
-  SUMMON_EFFECT_DAEDALUS_ALT, ///< BattleEffect_RunDaedalusAlt (daedalus.c)
-  SUMMON_EFFECT_TRIDENT,      ///< BattleEffect_RunTrident (trident.c)
-  SUMMON_EFFECT_CRUEL_RUIN,   ///< BattleEffect_RunCruelRuin (cruel_ruin.c)
-  SUMMON_EFFECT_METEOR_BLOW   ///< BattleEffect_RunMeteorBlow (meteor_blow.c)
+  SUMMON_EFFECT_NONE,        ///< runs Meteor's effect
+  SUMMON_EFFECT_RAMSES,      ///< BattleEffect_RunRamses (ramses.c)
+  SUMMON_EFFECT_NEREID,      ///< BattleEffect_RunNereid (nereid.c)
+  SUMMON_EFFECT_KIRIN,       ///< BattleEffect_RunKirin (kirin.c)
+  SUMMON_EFFECT_ATALANTA,    ///< BattleEffect_RunAtalanta (atalanta.c)
+  SUMMON_EFFECT_CYBELE,      ///< BattleEffect_RunCybele (cybele.c)
+  SUMMON_EFFECT_NEPTUNE,     ///< BattleEffect_RunNeptune (neptune.c)
+  SUMMON_EFFECT_TIAMAT,      ///< BattleEffect_RunTiamat (procne.c)
+  SUMMON_EFFECT_PROCNE,      ///< BattleEffect_RunProcne (procne.c)
+  SUMMON_EFFECT_JUDGMENT,    ///< BattleEffect_RunJudgment (judgment.c)
+  SUMMON_EFFECT_BOREAS,      ///< BattleEffect_RunBoreas (boreas.c)
+  SUMMON_EFFECT_METEOR,      ///< BattleEffect_RunMeteor (particle_streams.c)
+  SUMMON_EFFECT_THOR,        ///< BattleEffect_RunThor (thor.c)
+  SUMMON_EFFECT_ZAGAN,       ///< BattleEffect_RunZagan (djinn_heal.c)
+  SUMMON_EFFECT_MEGAERA,     ///< BattleEffect_RunMegaera (thunder_mine.c)
+  SUMMON_EFFECT_FLORA,       ///< BattleEffect_RunFlora (flora.c)
+  SUMMON_EFFECT_MOLOCH,      ///< BattleEffect_RunMoloch (moloch.c)
+  SUMMON_EFFECT_ULYSSES,     ///< BattleEffect_RunUlysses (spider_web.c)
+  SUMMON_EFFECT_HAURES,      ///< BattleEffect_RunHaures (haures.c)
+  SUMMON_EFFECT_ECLIPSE,     ///< BattleEffect_RunEclipse (canvas.c)
+  SUMMON_EFFECT_COATLICUE,   ///< BattleEffect_RunCoatlicue (vengeance.c)
+  SUMMON_EFFECT_DAEDALUS,    ///< BattleEffect_RunDaedalus (daedalus.c)
+  SUMMON_EFFECT_AZUL,        ///< BattleEffect_RunAzul (azul.c)
+  SUMMON_EFFECT_CATASTROPHE, ///< BattleEffect_RunCatastrophe (catastrophe.c)
+  SUMMON_EFFECT_CHARON,      ///< BattleEffect_RunCharon (charon.c)
+  SUMMON_EFFECT_IRIS,        ///< BattleEffect_RunIris (moloch.c)
+  SUMMON_EFFECT_DAEDALUS_STRIKE, ///< BattleEffect_RunDaedalusStrike
+                                 ///< (daedalus.c)
+  SUMMON_EFFECT_TRIDENT,         ///< BattleEffect_RunTrident (trident.c)
+  SUMMON_EFFECT_CRUEL_RUIN,      ///< BattleEffect_RunCruelRuin (cruel_ruin.c)
+  SUMMON_EFFECT_METEOR_BLOW      ///< BattleEffect_RunMeteorBlow (meteor_blow.c)
 };
 
 /// Effect kinds: the kind an ability's gAbilityBattleEffects row selects for
@@ -471,21 +472,13 @@ union BattleBackgroundId {
   u8 bytes[6];
 };
 
-// The Lost Age numbers its blitter modes in the reverse of The Broken Seal's
-// order: BattleEffect_BuildBlitter builds additive for 0, max for 1,
-// transparent for 2.
-enum { BLITTER_ADDITIVE, BLITTER_MAX, BLITTER_TRANSPARENT, BLITTER_COPY };
-
-void BattleEffect_UpdatePhasePalette(
-    s32 frame, s32 redPhase, s32 greenPhase,
-    s32 bluePhase); // Graphics_UpdatePhasePalette
-/// The canvas layer and its helpers; the comments give The Broken Seal's
-/// names where the twin is known.
+void BattleEffect_UpdatePhasePalette(s32 frame, s32 redPhase, s32 greenPhase,
+                                     s32 bluePhase);
+/// The canvas layer and its helpers.
 void BattleEffect_StartCanvasLayer(s32 bgControl);
 void BattleEffect_EndCanvasLayer(void);
 void BattleEffect_CountDownBattlerTints(void);
-s32 BattleEffect_LoadBlitter(s32 slot,
-                             s32 modeAndFlags); // BattleEffect_BuildBlitter
+s32 BattleEffect_LoadBlitter(s32 slot, s32 modeAndFlags);
 void BattleEffect_TintBattler(s32 actor, s32 palette, s32 pose, s32 timerSlot,
                               s32 timerFrames);
 void BattleEffect_DrawShadedCircles(u8 *map, s32 size, FIXED scale);
@@ -497,8 +490,7 @@ struct PoolEntry *Render_AllocateModelList(s32 count);
 void Render_TransformVertices(const void *corners, void *vertices, s32 count);
 void EffectPosition_ProjectBattler(s32 id, struct ScreenPoint *position);
 void BattleEffect_SpawnObjects(s32 entryCount, s32 kind, u32 variant);
-void BattleEffect_SelectLivingTargets(
-    struct BattleEffectParams *party); // SelectLivingTargets
+void BattleEffect_SelectLivingTargets(struct BattleEffectParams *party);
 void BattleEffect_StartActorMotion(s32 id, s32 force, s32 acceleration,
                                    s32 speedLimit, s32 velocityY, s32 percent);
 void BattleEffect_FetchRectangleBlitters(s32 flip, void **out);
@@ -554,7 +546,7 @@ void BattleEffect_RunAzul(struct BattleEffectParams *effect);
 void BattleEffect_RunCatastrophe(struct BattleEffectParams *effect);
 void BattleEffect_RunCharon(struct BattleEffectParams *arg);
 void BattleEffect_RunIris(struct BattleEffectParams *effect);
-void BattleEffect_RunDaedalusAlt(struct BattleEffectParams *effect);
+void BattleEffect_RunDaedalusStrike(struct BattleEffectParams *effect);
 void BattleEffect_RunTrident(struct BattleEffectParams *effect);
 void BattleEffect_RunCruelRuin(struct BattleEffectParams *effect);
 void BattleEffect_RunMeteorBlow(struct BattleEffectParams *effect);
@@ -592,12 +584,15 @@ typedef struct {
   s32 reservedB[3];
   s16 values[1];
 } BattleEffectIndexWindow;
-/// BattleEffect_RunDjinniEntrance's longer entrance, added to the Djinni's
-/// element: 84 frames in place of 55.
-enum { DJINNI_ENTRANCE_LONG = ELEMENT_COUNT };
+/// What BattleEffect_RunDjinniEntrance takes added to its element; the element
+/// alone plays the 55-frame entrance.
+enum DjinniEntranceLength {
+  /// The long entrance: 84 frames instead of 55.
+  DJINNI_ENTRANCE_LONG = ELEMENT_COUNT
+};
 
-/// Where BattleEffect_RunDjinniEntrance's Djinni appears: the first five as The
-/// Broken Seal's, 60 pixels up, and this game's own after them.
+/// Where BattleEffect_RunDjinniEntrance's Djinni appears: the first five 60
+/// pixels up.
 enum DjinniEntranceAnchor {
   DJINNI_ANCHOR_OVER_TARGET, ///< over the first target
   DJINNI_ANCHOR_TARGET_X,    ///< at the first target's x, at depth 0

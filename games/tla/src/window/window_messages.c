@@ -5,9 +5,12 @@
 #include "window_internal.h"
 #include "resource_ids.h"
 
+/// The largest capacity, all bits but the sign's, which no message reaches.
+#define MESSAGE_NO_CAPACITY_LIMIT ((u32)-1 >> 1)
+
 /// Expands message into buffer without an upper length bound.
 void Message_DecodeRawUnbounded(s32 message, u16 *buffer) {
-  Message_DecodeRaw(message, buffer, 0x7fffffff);
+  Message_DecodeRaw(message, buffer, MESSAGE_NO_CAPACITY_LIMIT);
 }
 
 /// Builds message key's text entries and copies them to destination, at most
@@ -54,7 +57,7 @@ void Message_DecodeRaw(s32 message, u16 *text, s32 capacity) {
   decode = (s32 (*)(struct TextReader *))Ram_HeapSlots->messageDecoder;
   Message_Find(&reader, message);
 #if !defined(DECODE_EUROPEAN)
-  delta = 0xffff;
+  delta = -1;
 #endif
   while ((value = decode(&reader)) != 0) {
     switch (value) {
@@ -64,9 +67,9 @@ void Message_DecodeRaw(s32 message, u16 *text, s32 capacity) {
         goto done;
       *text++ = value;
 #if defined(DECODE_EUROPEAN)
-      value = decode(&reader) + 0xffff;
+      value = decode(&reader) + OPERAND_UNBIAS;
       *text++ = value;
-      value = decode(&reader) + 0xffff;
+      value = decode(&reader) + OPERAND_UNBIAS;
 #else
       *text++ = decode(&reader) + delta;
       value = decode(&reader) + delta;
@@ -85,7 +88,7 @@ void Message_DecodeRaw(s32 message, u16 *text, s32 capacity) {
       if (capacity <= 0)
         goto done;
       *text++ = value;
-      value = decode(&reader) + 0xffff;
+      value = decode(&reader) + OPERAND_UNBIAS;
       break;
     default:
       capacity--;
@@ -562,7 +565,7 @@ s32 Text_DrawMessageToCanvas(s32 message, u8 *canvas) {
         break;
       case 14:
       case TEXT_WINDOW_STATE:
-      case 28:
+      case TEXT_ACTOR_NAME_START:
         text++;
         goto skip;
       }
@@ -711,13 +714,13 @@ void Portrait_ClearSlots(void) {
   } while (index != 2);
 }
 
-extern const s16 gPortrait_CharacterMap[];
-extern const s16 gPortrait_SpriteMap[];
+/// A speaker below this is a character, found in gPortrait_CharacterMap; one
+/// from it on is a sprite, found in gPortrait_SpriteMap.
+#define PORTRAIT_FIRST_SPRITE_SPEAKER 16
 
-struct Window *Window_Create(s32 x, s32 y, s32 width, s32 height, s32 flags);
-
-/// Returns the portrait of a character (ids below 20) or another speaker's
-/// sprite (128 and up for those), or -1 when it has none.
+/// Returns the portrait of a character (ids below
+/// PORTRAIT_FIRST_SPRITE_SPEAKER) or another speaker's sprite (from
+/// PORTRAIT_FIRST_SPRITE_PORTRAIT for those), or -1 when it has none.
 s32 Portrait_GetForSpeaker(u32 value) {
   s32 result = -1;
   s32 i = 0;
@@ -749,7 +752,8 @@ s32 Portrait_GetForSpeaker(u32 value) {
     value = MIA;
     break;
   }
-  if (value < 16) {
+  // Both maps are {speaker, portrait} pairs ending in -1.
+  if (value < PORTRAIT_FIRST_SPRITE_SPEAKER) {
     for (;;) {
       s32 key = gPortrait_CharacterMap[i];
 
@@ -771,7 +775,7 @@ s32 Portrait_GetForSpeaker(u32 value) {
       if (key == value) {
         i++;
         result = gPortrait_SpriteMap[i];
-        result += 128;
+        result += PORTRAIT_FIRST_SPRITE_PORTRAIT;
         break;
       }
       i += 2;

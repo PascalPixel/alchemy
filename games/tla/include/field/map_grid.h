@@ -1,6 +1,7 @@
 #ifndef ALCHEMY_MAP_GRID_H
 #define ALCHEMY_MAP_GRID_H
 
+#include "field/field_coordinate.h"
 #include "fixed_math.h"
 #include "types.h"
 #include "static_assert.h"
@@ -24,27 +25,48 @@ struct MapAnimation {
   u16 paused;
 };
 
-/// The map grid: 128 by 128 cells, each 16 pixels square, wrapping at its
-/// edges.
+/// The map grid: 128 by 128 cells, each MAPGRID_CELL_PIXELS square, wrapping
+/// at its edges.
 #define MAPGRID_SIZE 128
-#define MAPGRID_CELL_PIXELS 16
 /// A layer window's row mask (MapLayer.maskY) over the whole grid, which wraps
 /// there rather than at a window of its own.
 #define MAPGRID_ROW_MASK ((MAPGRID_SIZE - 1) * MAPGRID_SIZE)
 /// The bytes between one layer's BG map and the next, from screen block 5.
 #define MAPGRID_LAYER_SCREEN_BYTES 2048
+/// The low four bits of a shape's first byte: its kind (enum TerrainKind),
+/// which height function reads its samples (gMapGrid_TerrainHeightFunctions).
+#define MAPGRID_SHAPE_KIND_MASK 0xf
+/// A 16.16 height in the 8-pixel steps MapGrid_SetCellHeight and the collision
+/// tags take.
+#define CELL_HEIGHT_STEPS(height) ((height) >> 19)
+/// The collision code in MapCell_GetAttributes's halfword, above its
+/// attribute byte.
+#define CELL_CODE(attributes) ((attributes) >> 8)
+/// MapCell_Get's halfword: the collision code over the second attribute byte
+/// (MapCell.attributeB), and the halfword built from the two.
+#define CELL_CODE_BITS 0xff00
+#define CELL_ATTRIBUTE_BITS 0xff
+#define CELL_ATTRIBUTES(code, bits) (((code) << 8) | (bits))
 
-/// A layout's three layers, by what they hold, as The Broken Seal's. Most
-/// layouts give them priorities 3, 2 and 1.
+/// Where a layout's blend script is decoded, in the map collision buffer after
+/// the collision and the tileset animations; a scene may copy its own there.
+#define MAPGRID_BLEND_SCRIPT (Ram_MapCollision + 7680)
+/// A blend script's commands besides its BLDCNT values: the end, which starts
+/// it over, and a jump, its low byte the halfword pair to go on from.
+#define BLEND_SCRIPT_LOOP 0xffff
+#define BLEND_SCRIPT_JUMP 0xfe00
+
+/// A layout's three layers, by what they hold. Most layouts give them
+/// priorities 3, 2 and 1.
 enum MapGridLayerIndex {
   MAPGRID_LAYER_GROUND = 0,   ///< `BG3`: the ground, at the back
   MAPGRID_LAYER_MIDDLE = 1,   ///< `BG2`: walls and edges, under the actors
   MAPGRID_LAYER_OVERHEAD = 2, ///< `BG1`: roofs and tree tops, over the actors
 };
 
-/// A cell's collision code, as The Broken Seal's enum CellBehavior: the codes
-/// The Lost Age's field code reads by name. Cloak, Sand, the Cyclone and Hover
-/// read theirs on the overhead layer (event_commands_field_psynergy.c).
+/// A cell's collision code: the codes the field code reads by name. Cloak,
+/// Sand, the Cyclone and Hover read theirs on the overhead layer
+/// (event_commands_field_psynergy.c).
 enum CellBehavior {
   CELL_BEHAVIOR_NORMAL = 0,  ///< open ground, where nothing happens
   CELL_BEHAVIOR_CLOAK = 231, ///< Cloak hides the leader there
@@ -94,6 +116,17 @@ struct MapCell {
   u8 collisionCode;
   u8 attributeB;
 };
+
+/// A struct MapCell read as one word, as code that ORs bits into a cell writes
+/// it: its collision code (the cell behavior), the attribute bits above it and
+/// the flags of its cell picture.
+#define MAP_CELL_WORD(behavior, attributes, pictureFlags)                      \
+  ((u32)(attributes) << 24 | (behavior) << 16 | (pictureFlags))
+/// A cell picture's flags for an actor standing on the cell: the sprite
+/// priority it is drawn at and the map layer it takes, which the actors'
+/// placement reads (bits 15..14 and 13..12 of cellPictureAndFlags).
+#define CELL_DRAWS_ACTOR(priority, layer)                                      \
+  ((priority) << 14 | ((layer) + 1) << 12)
 
 /// A row of gMaps: a layout's resources, each counted from ResourceId_EmptyMap.
 struct MapResources {
@@ -173,6 +206,11 @@ struct MapWork {
 /// field scrolls.
 #define MAPGRID_FIELD_WORK_SIZE offsetof(struct MapWork, layers[3])
 
+/// MapWork.groundEffects' kind of wading, its bits 3..2; none where nothing
+/// wades.
+#define GROUND_EFFECTS_WADING_MASK (3 << 2)
+#define GROUND_EFFECTS_WADING(effects) ((u32)((effects) << 28) >> 30)
+
 /// A view of the map work as the screen transitions read it: the display
 /// control bits, the window edges and interrupt lines of a transition, and
 /// the map's resources.
@@ -203,8 +241,8 @@ struct WorldPosition {
   FIXED y;
 };
 
-/// The world map's collision values (WorldMap_GetCollision), 1 to 15, as The
-/// Broken Seal's, with the sea this game sails.
+/// The world map's collision values (WorldMap_GetCollision), 1 to 15, the sea
+/// the ship sails among them.
 enum WorldMapCollision {
   /// The ship sails on WORLD_MAP_COLLISION_SEA_FIRST to
   /// WORLD_MAP_COLLISION_SEA_LAST and on shallow water (WorldMap_IsSailable).
@@ -225,8 +263,7 @@ enum WorldMapCollision {
 
 /// A world map battle environment (gWorldMap_TerrainBehaviorTable,
 /// WorldMap_GetBattleEnvironment): what its ground means for battles, named by
-/// the battle background BattleBackground_SelectForEnvironment gives it, as The
-/// Broken Seal's, with the sea and the blizzard this game adds.
+/// the battle background BattleBackground_SelectForEnvironment gives it.
 enum BattleEnvironment {
   BATTLE_ENVIRONMENT_NONE = 0,
   BATTLE_ENVIRONMENT_GRASSLAND = 1, ///< ResourceId_GrasslandBBackdrop
@@ -246,8 +283,12 @@ enum BattleEnvironment {
   BATTLE_ENVIRONMENT_SEA = 8,
   /// All the sea of the snowfield regions, where no rule gives encounters.
   BATTLE_ENVIRONMENT_SNOWFIELD_SEA = 9,
-  /// XXX: what WORLD_MAP_COLLISION_SEA_LAST is outside the snowfields, where no
-  /// rule gives encounters; seeing where the ship meets it would settle it.
+  /// WORLD_MAP_COLLISION_SEA_LAST outside the snowfields, where no rule gives
+  /// encounters; a battle there would take the ship deck's backdrop.
+  // XXX: which waters BATTLE_ENVIRONMENT_SEA_LAST covers; the World Map cells
+  // whose collision is WORLD_MAP_COLLISION_SEA_LAST outside the snowfield
+  // regions, read from its collision tiles (WorldMap_GetCollision), would
+  // settle it.
   BATTLE_ENVIRONMENT_SEA_LAST = 10,
   BATTLE_ENVIRONMENT_BLIZZARD = 11, ///< ResourceId_BlizzardBackdrop
   /// ResourceId_BlizzardBackdrop, for the blizzard's forest.

@@ -118,7 +118,7 @@ extern s32 gTreeRooms_GaretGathersActions[];
 extern s32 gTreeRooms_IvanGathersActions[];
 extern s32 gTreeRooms_MiaGathersActions[];
 extern s32 gTreeRooms_FaceSinksActions[];
-extern s32 gTreeRooms_RejoinLeaderActions[];
+extern s32 gTreeRooms_WalkBackToLeaderScript[];
 extern u32 gTreeRooms_TintSteps[];
 extern struct SceneEntrance gTreeRoomsEntrances[];
 extern struct SceneExitRegion gTreeRoomsRegions[];
@@ -149,9 +149,15 @@ enum {
 #define COCOON_FALL_SPIN_FRAMES 30
 #define SWIRL_SPARK_LAST_FRAME 79
 #define SWIRL_SPARK_SHRINK_LAST_FRAME 39
-#define TRET_TINT_COLOR_COUNT 63
+/// Tret's tint covers background palettes 1 to 4 but palette 4's last colour.
+#define TRET_TINT_COLOR_COUNT (4 * PALETTE_COLORS - 1)
 #define TRET_TINT_CHANNEL_MAX 31
 #define TRET_TINT_END 99
+
+/// The leader's fall from TREE_ROOMS_FROM_FIFTH_FLOOR_CENTER_COCOON takes the
+/// entrances ten apart, a floor at a time, down to TREE_ROOMS_FALL_LANDING.
+#define FALL_ENTRANCE_STEP                                                     \
+  (TREE_ROOMS_FALL_THROUGH_B - TREE_ROOMS_FALL_THROUGH_C)
 
 static void TretPalette_SaveMapColors(void);
 static void TretPalette_UpdateMapTint(void);
@@ -175,7 +181,7 @@ enum TreeRoomsGesture {
 static void TreeRooms_PlayGesture(s32 gesture);
 static void TreeRooms_SpawnSwirlSparks(void);
 static void TreeRooms_ApplyFlaggedMapPatches(void);
-static void TreeRooms_RunLandingDustEvent(void);
+static void TreeRooms_LandFromFall(void);
 
 static struct FieldPosition sSparkOrigin ALIGNED(8);
 static s32 sSparkFrame;
@@ -714,7 +720,7 @@ static void TreeRooms_PlayPostBattleConversation(void) {
   Actor_SetAnimation(ACTOR_GARET, ANIM_NOD);
   Actor_SetAnimation(ACTOR_MIA, ANIM_NOD);
   Actor_SetAnimationAndWait(ACTOR_IVAN, ANIM_NOD);
-  actions = gTreeRooms_RejoinLeaderActions;
+  actions = gTreeRooms_WalkBackToLeaderScript;
   Actor_SetScript(ACTOR_GARET, actions);
   if (hasMia != 0) {
     Actor_SetScript(ACTOR_MIA, actions);
@@ -819,7 +825,7 @@ s32 Scene_Initialize(void) {
     actor->groundHeight = -toFIXED(160);
     actor->gravity = toFIXED(1) / 2;
     Sound_Play(SE_DUST_PUFF);
-    Event_SetDestination(SCENE_TREE_ROOMS, entrance - 10);
+    Event_SetDestination(SCENE_TREE_ROOMS, entrance - FALL_ENTRANCE_STEP);
     Event_Wait(20);
     actor->layer = 2;
     Actor_SetSpritePriority(leaderActorId, 3);
@@ -829,7 +835,7 @@ s32 Scene_Initialize(void) {
     Event_Wait(8);
   } else if (entrance == TREE_ROOMS_FALL_LANDING) {
     if (!GameFlag_Get(FLAG_KEEP_PARTY_POSITION))
-      TreeRooms_RunLandingDustEvent();
+      TreeRooms_LandFromFall();
   } else if (entrance == TREE_ROOMS_AFTER_FIGHT_TRET) {
     TreeRooms_ApplyPostBattleState(1);
   }
@@ -865,22 +871,22 @@ static void TretPalette_UpdateMapTint(void) {
     return;
   if ((gFrameCount & 31) != 0)
     return;
-  sourceColors += 16;
+  sourceColors += PALETTE_COLORS;
   destinationColors = (u16 *)&BG_PLTT_COLOR(1, 0);
   for (colorIndex = 0; colorIndex < TRET_TINT_COLOR_COUNT;
        colorIndex++, sourceColors++) {
     redStep = gTreeRooms_TintSteps[gTreeRooms_TintIndex];
     greenStep = gTreeRooms_TintSteps[gTreeRooms_TintIndex + 1];
     blueStep = gTreeRooms_TintSteps[gTreeRooms_TintIndex + 2];
-    if (colorIndex > 47) {
+    if (colorIndex >= 3 * PALETTE_COLORS) {
       redStep -= redStep / 2 + redStep / 3;
       greenStep -= greenStep / 2 + greenStep / 3;
       blueStep -= blueStep / 2 + blueStep / 3;
-    } else if (colorIndex > 31) {
+    } else if (colorIndex >= 2 * PALETTE_COLORS) {
       redStep -= redStep / 3 + redStep / 4;
       greenStep -= greenStep / 3 + greenStep / 4;
       blueStep -= blueStep / 3 + blueStep / 4;
-    } else if (colorIndex > 15) {
+    } else if (colorIndex >= PALETTE_COLORS) {
       redStep -= redStep / 4 + redStep / 5;
       greenStep -= greenStep / 4 + greenStep / 5;
       blueStep -= blueStep / 4 + blueStep / 5;
@@ -1032,8 +1038,7 @@ static void TreeRooms_SpawnSwirlSparks(void) {
   case 30:
   case 40:
     Sound_Play(SE_SHIMMER);
-    // Waves contain 6, 5, 4, 3 and 2 sparks. Divide degrees before
-    // converting them to turns, preserving the original rounding.
+    // Waves of 6, 5, 4, 3 and 2 sparks, spread evenly round a turn.
     for (sparkIndex = 0; sparkIndex < 6 - wave; sparkIndex++) {
       spark = FieldActor_Create(SPRITE_SPARKLE, sSparkOrigin.x, sSparkOrigin.y,
                                 sSparkOrigin.z);
@@ -1045,7 +1050,7 @@ static void TreeRooms_SpawnSwirlSparks(void) {
         Actor_SetSpriteFlags(spark, 0);
         Actor_SelectAnimation(spark, 1);
         spark->timer = 0;
-        spark->userValue = ((360 / (u32)(6 - wave) * sparkIndex) << 16) / 360;
+        spark->userValue = DEGtoANG(360 / (u32)(6 - wave) * sparkIndex);
         spark->targetX = sSparkOrigin.x;
         spark->targetY = sSparkOrigin.y;
         spark->targetZ = sSparkOrigin.z;
@@ -1088,8 +1093,9 @@ static void TreeRooms_CastReveal(void) {
 
 #include "shared/field_effect_advance.c"
 
-/// Entrance 10, at the end of the fall from cocoon 50.
-static void TreeRooms_RunLandingDustEvent(void) {
+/// The leader lands at TREE_ROOMS_FALL_LANDING, at the end of the fall from
+/// the fifth floor's centre cocoon, in a ring of dust.
+static void TreeRooms_LandFromFall(void) {
   struct EffectOptions options;
   struct FieldPosition velocity;
   struct Actor *leader;
@@ -1116,7 +1122,8 @@ static void TreeRooms_RunLandingDustEvent(void) {
   options.update = FieldEffect_AdvanceMotion;
   options.startScaleX = 4 * FIXED_ONE / 5;
   options.startScaleY = 4 * FIXED_ONE / 5;
-  for (particleIndex = 0; particleIndex <= 16; particleIndex++) {
+  for (particleIndex = 0; particleIndex <= TRIG_TURN / FACING_STEP;
+       particleIndex++) {
     velocity.x = Trig_Cos(particleIndex * FACING_STEP);
     velocity.y = 0;
     velocityZ = Trig_Sin(particleIndex * FACING_STEP);
@@ -1233,7 +1240,7 @@ s32 gTreeRooms_FaceSinksActions[] = {
 };
 
 /// Garet, Ivan and Mia walk back to the leader and are put away.
-s32 gTreeRooms_RejoinLeaderActions[] = {
+s32 gTreeRooms_WalkBackToLeaderScript[] = {
     SC_ANIMATION(ANIM_WALK),
     SC_MOVE(166, 0, 80),
     SC_SYNC,

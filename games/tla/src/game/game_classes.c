@@ -6,10 +6,18 @@
 #include "game/game.h"
 #include "system/mul_fx.h"
 
-/// Writes ten times each element level: an enemy's from its preset, a
-/// character's from the Djinn set on it plus its own bonus. `source` points at
-/// the unit's Djinn bits (djinnHeld); the counts of set Djinn by element
-/// follow them in the unit.
+/// Element levels are counted in tenths: a Djinni set adds a whole level.
+#define ELEMENT_LEVEL_SCALE 10
+/// 2^32 / 10, rounded up: the high word of a product by it divides by 10.
+#define RECIPROCAL_OF_10 (0xffffffffU / 10 + 1)
+/// The highest whole element level, the last row of
+/// gElement_PowerResistByLevel.
+#define ELEMENT_LEVEL_MAX 15
+
+/// Writes each element level in tenths (ELEMENT_LEVEL_SCALE): an enemy's from
+/// its preset, a character's from the Djinn set on it plus its own bonus.
+/// `source` points at the unit's Djinn bits (djinnHeld); the counts of set
+/// Djinn by element follow them in the unit.
 s32 Unit_GetElementLevels(s32 record, const u8 *source, s32 output[4]) {
   if (record > PIERS) {
     const struct EnemyElementPreset *table;
@@ -23,14 +31,14 @@ s32 Unit_GetElementLevels(s32 record, const u8 *source, s32 output[4]) {
     table = gEnemy_ElementPresetTable;
     preset = &table[index];
     for (i = 0; i < ELEMENT_COUNT; i++)
-      output[i] = preset->elementLevels[i] * 10;
+      output[i] = preset->elementLevels[i] * ELEMENT_LEVEL_SCALE;
   } else {
     s32 i;
 
     for (i = 0; i < ELEMENT_COUNT; i++)
       output[i] = source[offsetof(struct Unit, djinnSetCounts) -
                          offsetof(struct Unit, djinnHeld) + i] *
-                  10;
+                  ELEMENT_LEVEL_SCALE;
     if (record <= PIERS) {
       const struct CharacterDefinition *definition =
           Character_GetDefinition(record);
@@ -51,7 +59,7 @@ s32 Unit_GetElementLevel(s32 unitId, s32 element) {
 
   if (element < ELEMENT_COUNT) {
     Unit_GetElementLevels(unit->enemyId, (const u8 *)unit->djinnHeld, levels);
-    result = levels[element] / 10;
+    result = levels[element] / ELEMENT_LEVEL_SCALE;
   }
   return result;
 }
@@ -103,12 +111,12 @@ void Unit_CalculateBaseElements(s32 unitId,
     s32 tenths;
     s32 level;
 
-    // levels[i] / 10, as a multiply by the reciprocal.
-    level = Math_UnsignedMulHigh(levels[i], 0x1999999a);
-    tenths = levels[i] - level * 10;
+    // levels[i] / ELEMENT_LEVEL_SCALE, as a multiply by the reciprocal.
+    level = Math_UnsignedMulHigh(levels[i], RECIPROCAL_OF_10);
+    tenths = levels[i] - level * ELEMENT_LEVEL_SCALE;
 
-    if (level > 15)
-      level = 15;
+    if (level > ELEMENT_LEVEL_MAX)
+      level = ELEMENT_LEVEL_MAX;
     if (level < 0)
       level = 0;
 
@@ -169,7 +177,7 @@ s32 Class_Determine(s32 character, u32 *djinn, s32 item) {
   }
   // A second element below level 1 does not count, and ties go to the lower
   // element.
-  if (levels[second] <= 9)
+  if (levels[second] < ELEMENT_LEVEL_SCALE)
     second = primary;
   series = gClass_SeriesByElements[primary][second];
   // Jenna and Piers have series of their own where the others would be a
@@ -189,7 +197,8 @@ s32 Class_Determine(s32 character, u32 *djinn, s32 item) {
     if (gClass_DefinitionTable[i].series != series)
       continue;
     for (j = 0; j < ELEMENT_COUNT; j++) {
-      if (levels[j] < gClass_DefinitionTable[i].required[j] * 10)
+      if (levels[j] <
+          gClass_DefinitionTable[i].required[j] * ELEMENT_LEVEL_SCALE)
         break;
     }
     if (j == ELEMENT_COUNT) {

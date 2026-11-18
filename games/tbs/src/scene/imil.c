@@ -558,8 +558,11 @@ static void Imil_ReadJustinsMind(void) {
   Event_End();
 }
 
-/// Walking north into one of Imil's six doors (step triggers 51 to 56):
-/// everyone stops, the door opens and the leader walks in.
+/// A door's cell behavior: DOOR_CELL_BEHAVIORS + the exit it leads through.
+enum { DOOR_CELL_BEHAVIORS = 50 };
+
+/// Walking north into one of Imil's six doors: everyone stops, the door opens
+/// and the leader walks in.
 static void Imil_OpenDoorAndExit(void) {
   struct FieldWork *work;
   struct Actor *actor;
@@ -574,7 +577,7 @@ static void Imil_OpenDoorAndExit(void) {
       actor->motionFlags = 0;
     }
   }
-  exit = (s16)(work->stepTrigger - 50);
+  exit = (s16)(work->stepTrigger - DOOR_CELL_BEHAVIORS);
   if (exit == IMIL_TO_ICE_ROOMS_NORTHEAST) {
     Sound_Play(SE_THUMP);
   } else {
@@ -1067,7 +1070,8 @@ UNUSED static void Imil_UpdateCountdownArc(struct Actor *actor) {
       buf[0] = gImil_ArcOrigin[0];
       buf[1] = gImil_ArcOrigin[1] + toFIXED(8);
       buf[2] = gImil_ArcOrigin[2];
-      Vector_AddPolarOffset(toFIXED(t), (t << 11) + (s16)actor->userValue, buf);
+      Vector_AddPolarOffset(toFIXED(t),
+                            t * (TRIG_TURN / 32) + (s16)actor->userValue, buf);
       actor->x.fixed = buf[0];
       actor->y.fixed = buf[1];
       actor->z.fixed = buf[2];
@@ -1084,8 +1088,9 @@ UNUSED static void Imil_SwayAndSpark(struct Actor *actor) {
   struct Actor *spark;
   s32 radius;
 
-  actor->x.fixed = gImil_ArcOrigin[0] +
-                   Iwram_MulFX(toFIXED(6), Trig_Sin(actor->timer << 10));
+  actor->x.fixed =
+      gImil_ArcOrigin[0] +
+      Iwram_MulFX(toFIXED(6), Trig_Sin(actor->timer * (TRIG_TURN / 64)));
   actor->timer++;
   actor->timer = (actor->timer + 64) % 64;
   if (gFrameCount % 3 == 0) {
@@ -1215,10 +1220,10 @@ static void Imil_UpdateFootprints(void) {
 
   actor = Actor_Get(ACTOR_PARTY_LEADER);
   x = actor->x.fixed;
-  // In units of 8 pixels.
-  column = x >> 19;
+  column = FIELD_HALF_CELL(x);
   if ((column >= 24 && column <= 31) ||
-      (((actor->z.fixed >> 19) >= 36 && (actor->z.fixed >> 19) <= 45) &&
+      ((FIELD_HALF_CELL(actor->z.fixed) >= 36 &&
+        FIELD_HALF_CELL(actor->z.fixed) <= 45) &&
        (column >= 22 && column <= 31))) {
     isSet = GameFlag_Get(zoneFlag);
     if (isSet != 0)
@@ -1463,7 +1468,7 @@ static void Imil_TurnSlidingActor(struct Actor *actor) {
     turn = -FACING_STEP;
   actor->facing = facing + turn;
   Actor_SelectAnimation(actor, ANIM_WALK);
-  Actor_SetAnimationSpeed(actor, 48);
+  Actor_SetAnimationSpeed(actor, ANIMATION_STEP_NORMAL * 3);
 }
 
 /// The leader slides along Imil's ice until something stops him.
@@ -1510,14 +1515,14 @@ static void Imil_RunIceSlide(void) {
     subject->timer = 0;
     FieldActor_SetMoveTargetFX(subject, x, subject->y.fixed, z);
     Actor_SelectAnimation(subject, ANIM_WALK);
-    Actor_SetAnimationSpeed(subject, 48);
+    Actor_SetAnimationSpeed(subject, ANIMATION_STEP_NORMAL * 3);
     Actor_WaitForMove(subject);
     subject->update = Imil_TurnSlidingActor;
 
     for (;;) {
       FieldVector_AddPolarOffset(16, heading, &probe);
-      if ((nextBehavior = MapGrid_GetCellBehaviorAt(subject->layer, probe.x,
-                                                    probe.z)) == 255) {
+      if ((nextBehavior = MapGrid_GetCellBehaviorAt(
+               subject->layer, probe.x, probe.z)) == CELL_BEHAVIOR_WALL) {
         break;
       }
       if (MapGrid_GetTerrainHeight(subject->layer, probe.x, probe.z) -
@@ -1800,12 +1805,12 @@ struct Trigger gImil_TownTriggers[] = {
     { TRIGGER_EXIT, 60, CONDITION_ALWAYS, IMIL_TO_WORLD_MAP_SOUTH },
     { TRIGGER_EXIT, 61, CONDITION_ALWAYS, IMIL_TO_WORLD_MAP_NORTH },
     { PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_SNOWMAN, FLAG_IMIL_NO_FOOTPRINTS, EVENT(Imil_PlaceMovedSnowman) },
-    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 51, CONDITION_ALWAYS, EVENT(Imil_OpenDoorAndExit) },
-    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 52, CONDITION_ALWAYS, EVENT(Imil_OpenDoorAndExit) },
-    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 53, CONDITION_ALWAYS, EVENT(Imil_OpenDoorAndExit) },
-    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 54, CONDITION_ALWAYS, EVENT(Imil_OpenDoorAndExit) },
-    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 55, CONDITION_ALWAYS, EVENT(Imil_OpenDoorAndExit) },
-    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 56, CONDITION_ALWAYS, EVENT(Imil_OpenDoorAndExit) },
+    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), DOOR_CELL_BEHAVIORS + IMIL_TO_HOUSE_SOUTHWEST, CONDITION_ALWAYS, EVENT(Imil_OpenDoorAndExit) },
+    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), DOOR_CELL_BEHAVIORS + IMIL_TO_INN, CONDITION_ALWAYS, EVENT(Imil_OpenDoorAndExit) },
+    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), DOOR_CELL_BEHAVIORS + IMIL_TO_HOUSE_WEST, CONDITION_ALWAYS, EVENT(Imil_OpenDoorAndExit) },
+    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), DOOR_CELL_BEHAVIORS + IMIL_TO_HOUSE_NORTHEAST, CONDITION_ALWAYS, EVENT(Imil_OpenDoorAndExit) },
+    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), DOOR_CELL_BEHAVIORS + IMIL_TO_ICE_ROOMS_EAST, CONDITION_ALWAYS, EVENT(Imil_OpenDoorAndExit) },
+    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), DOOR_CELL_BEHAVIORS + IMIL_TO_ICE_ROOMS_NORTHEAST, CONDITION_ALWAYS, EVENT(Imil_OpenDoorAndExit) },
     { TRIGGER_STEP, 4, CONDITION_ALWAYS, EVENT(Imil_LeaveNorth) },
     { TRIGGER_STEP, 90, CONDITION_ALWAYS, EVENT(Imil_StartIceSlide) },
     { TRIGGER_TALK, ACTOR_FREEZING_YOUNG_MAN, FLAG_SATUROS_BEATEN_AT_MERCURY, EVENT(Imil_TalkToFreezingYoungMan) },

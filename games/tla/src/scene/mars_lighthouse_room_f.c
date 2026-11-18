@@ -85,14 +85,14 @@
 #define FLAG_BUTTON_PRESSED FLAG_SCENE_TEMP_20
 #define FLAG_UPPER_PUDDLE_FROZEN FLAG_SCENE_TEMP_20
 #define FLAG_CENTER_PUDDLE_FROZEN FLAG_SCENE_TEMP_21
-/// The Mercury tower's pipes all in line: no flame thrower burns.
+/// The Mercury tower's pipes all in line: no fire bursts from the pipes' ends.
 #define FLAG_PIPELINE_MENDED FLAG_AREA_TEMP_50
 /// The camera has been shown the mended pipeline.
 #define FLAG_SAW_PIPELINE_MENDED FLAG_AREA_TEMP_51
 #define FLAG_BLOCK_DROPPED FLAG_AREA_TEMP_58
 
-/// The Jupiter tower's exit and entrance 16: its hole drops the party back to
-/// the tower's first room.
+/// The Jupiter tower's exit and entrance by its hole, which drops the party
+/// back to the tower's first room.
 #define JUPITER_TOWER_THROUGH_HOLE 16
 
 /// The Mars tower (F1). Its first rooms: the flame thrower the button sets
@@ -110,12 +110,12 @@ enum {
   ACTOR_CENTER_WALL = 14,
   ACTOR_MARS_PIPE_A = 15,
   ACTOR_MARS_PIPE_B = 16,
-  /// Where the fire bursts out: A and B are unseen points at the pipes' open
-  /// ends.
+  /// Where the fire bursts out: unseen points at the pipes' open ends, or,
+  /// once a pipe is pushed into line, the flame thrower it feeds.
   ACTOR_PIPE_FLAME_A = 18,
   ACTOR_PIPE_FLAME_B,
-  ACTOR_PIPE_FLAME_C,
-  ACTOR_PIPE_FLAME_D, ///< a white dragon head on the wall
+  ACTOR_MARS_PIPE_A_FLAME_THROWER, ///< a dragon head seen from the side
+  ACTOR_MARS_PIPE_B_FLAME_THROWER, ///< a white dragon head
   ACTOR_PIPE_STATUE
 };
 
@@ -982,7 +982,7 @@ extern struct Trigger gMarsLighthouseRoomF_JupiterTowerTriggers[];
 extern struct Trigger gMarsLighthouseRoomF_MercuryTowerTriggers[];
 void Leader_SlideOnIceFromEdge(void);
 
-/// A frozen puddle is solid ground.
+/// Frost turns a puddle into a pillar of ice that blocks the way.
 void MarsLighthouseRoomF_FreezePuddle(s32 id) {
   struct Actor *actor = Actor_Get(id);
   struct MapWork *map = Ram_HeapSlots->mapGrid;
@@ -1163,6 +1163,8 @@ s32 Scene_Initialize(void) {
       Event_PlaySound(SE_WHOOSH);
       Event_Wait(60);
       Flag_Set(FLAG_KEEP_PARTY_POSITION);
+      /* FAKEMATCH(signature): the exit request called as if it returned a
+       * value, which the set-up returns. */
       return ((s32 (*)())Import_EventSetExitRequest)(3);
     }
     if (Flag_IsSet(FLAG_PIPELINE_MENDED)) {
@@ -1460,7 +1462,7 @@ UNUSED s32 Ride_GetCounter(void) { return RIDE_WORK->counter; }
 
 #include "shared/actor_blink.h"
 
-#define KNOCK_BACK MarsLighthouseRoomF_KnockBack
+#define KNOCK_BACK Leader_KnockBack
 #define KNOCK_BACK_TAKE_DAMAGE Party_TakeFallDamage
 #define KNOCK_BACK_BLINK Actor_Blink
 #define KNOCK_BACK_SET_ANIMATION Actor_SelectAnimation
@@ -1477,7 +1479,7 @@ UNUSED s32 Ride_GetCounter(void) { return RIDE_WORK->counter; }
 /// Hit by the flames, the leader is knocked back.
 void MarsLighthouseRoomF_KnockBackIfHit(void) {
   if (RIDE_WORK->active)
-    MarsLighthouseRoomF_KnockBack();
+    Leader_KnockBack();
 }
 
 void ScreenTransition_Start(s32 mode, s32 frames);
@@ -1576,33 +1578,7 @@ void Actor_HoldDuringEvent(struct Actor *actor);
 
 void Actor_RollAndCrumble(struct Actor *actor);
 
-/// Launches a fireball 32 pixels ahead of the actor holding it, rolling the
-/// way it faces.
-void Actor_LaunchAhead(struct Actor *self) {
-  struct Actor *actor = Actor_Get(self->launchedActorId);
-  s32 angle = (s16)self->userValue;
-  struct FieldSprite *sprite = actor->sprite;
-  volatile s32 position[3];
-
-  position[0] = self->x.fixed;
-  position[1] = self->y.fixed - toFIXED(12);
-  position[2] = self->z.fixed;
-  FieldVector_AddPolarOffset(32, angle, (struct Vector3 *)position);
-  actor->facing = angle;
-  actor->motionFlags = 0;
-  FieldActor_SetPositionAndResetMotion(actor, position[0], position[1],
-                                       position[2]);
-  actor->update = Actor_RollAndCrumble;
-  actor->steeringFlags = 0;
-  actor->speedLimit = toFIXED(8);
-  actor->acceleration = toFIXED(1) / 8;
-  sprite->rotation = angle - DEGtoANG(90);
-  actor->scaleX = 0;
-  actor->scaleY = 0;
-  actor->timer = 0;
-  actor->watchedActor = self->watchedActor;
-  Event_PlaySound(SE_LAUNCH);
-}
+#include "shared/actor_launch_ahead.h"
 
 void Actor_SetSpritePriorityDirect(struct Actor *actor, s32 mode);
 
@@ -1710,6 +1686,7 @@ s32 PushTarget_FillFootprint(s32 id) {
 
   if ((u16)shape != gPushKinds[(u16)i]) {
     do {
+      // The kind's index steps as a 16.16 number.
       j = (u16)FIXEDtoINT(INTtoFIXED(i) + INTtoFIXED(1));
       i = j;
     } while (j <= PUSH_KINDS - 1 && (u16)shape != gPushKinds[j]);
@@ -1877,7 +1854,7 @@ static inline void *BumpAlloc(s32 size) { return Heap_Alloc(size); }
 
 #include "shared/light_sprites_add.h"
 
-/// Draws the glow sprites at a priority.
+/// Sets the priority the glow sprites are drawn at.
 void LightSprites_SetPriority(s32 value) { gLightSpritePriority = value; }
 
 /// The torches' script: their sprite flags cleared, nothing more.
@@ -2075,8 +2052,8 @@ u16 gMarsLighthouseRoomF_MarsButtonFlameStops[] = {
 u16 gMarsLighthouseRoomF_MarsPipeFlameThrowers[] = {
     ACTOR_PIPE_FLAME_A, FLAME_LANDING_FORWARD | 1,
     ACTOR_PIPE_FLAME_B, FLAME_BACKWARD | 1,
-    ACTOR_PIPE_FLAME_C, FLAME_LANDING_FORWARD | 3,
-    ACTOR_PIPE_FLAME_D, FLAME_FORWARD | 3,
+    ACTOR_MARS_PIPE_A_FLAME_THROWER, FLAME_LANDING_FORWARD | 3,
+    ACTOR_MARS_PIPE_B_FLAME_THROWER, FLAME_FORWARD | 3,
     0,
 };
 
@@ -2446,7 +2423,7 @@ LATE_DATA struct Trigger gMarsLighthouseRoomF_VenusTowerTriggers[] = {
     {PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_TRAP_STATUE_D, CONDITION_ALWAYS, EVENT(MarsLighthouseRoomF_CoverFlameThrower)},
     {PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_TRAP_STATUE_E, CONDITION_ALWAYS, EVENT(MarsLighthouseRoomF_CoverFlameThrower)},
     {PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_LOWER_DOORWAY_STATUE, CONDITION_ALWAYS, 0},
-    {TRIGGER_STEP, STEP_TRIGGER_FLAME_HIT, CONDITION_ALWAYS, EVENT(MarsLighthouseRoomF_KnockBack)},
+    {TRIGGER_STEP, STEP_TRIGGER_FLAME_HIT, CONDITION_ALWAYS, EVENT(Leader_KnockBack)},
     {TRIGGER_TABLE_END},
 };
 
@@ -2458,7 +2435,7 @@ LATE_DATA struct Trigger gMarsLighthouseRoomF_MarsTowerTriggers[] = {
     {TRIGGER_STEP, 33, FLAG_BUTTON_PRESSED, EVENT(MarsLighthouseRoomF_PressButton)},
     {STEP_TRIGGER_WALKING, 30, CONDITION_ALWAYS, EVENT(MarsLighthouseRoomF_PushPipe)},
     {TRIGGER_STEP, 30, CONDITION_ALWAYS, EVENT(MarsLighthouseRoomF_KnockBackIfHit)},
-    {TRIGGER_STEP, STEP_TRIGGER_FLAME_HIT, CONDITION_ALWAYS, EVENT(MarsLighthouseRoomF_KnockBack)},
+    {TRIGGER_STEP, STEP_TRIGGER_FLAME_HIT, CONDITION_ALWAYS, EVENT(Leader_KnockBack)},
     {PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_PIPE_STATUE, CONDITION_ALWAYS, 0},
     {PSYNERGY_PHASE_ON_CELL(ABILITY_BURST, PSYNERGY_PHASE_ACTS), 20, FLAG_WEST_WALL_BURST, EVENT(MarsLighthouseRoomF_BurstWestWall)},
     {PSYNERGY_PHASE_ON_CELL(ABILITY_BURST, PSYNERGY_PHASE_ACTS), 21, FLAG_EAST_WALL_BURST, EVENT(MarsLighthouseRoomF_BurstEastWall)},
@@ -2491,7 +2468,7 @@ LATE_DATA struct Trigger gMarsLighthouseRoomF_JupiterTowerTriggers[] = {
     {PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_JUPITER_STATUE, FLAG_JUPITER_STATUE_BLOCKS_FLAMES, EVENT(MarsLighthouseRoomF_MoveJupiterStatueIntoFlames)},
     {PSYNERGY_ANYWHERE(ABILITY_REVEAL, PSYNERGY_PHASE_ACTS), 0, CONDITION_ALWAYS, EVENT(MarsLighthouseRoomF_RevealSteppingStones)},
     {PSYNERGY_ANYWHERE(ABILITY_REVEAL, PSYNERGY_PHASE_FADES), 0, CONDITION_ALWAYS, EVENT(MarsLighthouseRoomF_HideSteppingStones)},
-    {TRIGGER_STEP, STEP_TRIGGER_FLAME_HIT, CONDITION_ALWAYS, EVENT(MarsLighthouseRoomF_KnockBack)},
+    {TRIGGER_STEP, STEP_TRIGGER_FLAME_HIT, CONDITION_ALWAYS, EVENT(Leader_KnockBack)},
     {TRIGGER_STEP, STEP_TRIGGER_FIREBALL_HIT, CONDITION_ALWAYS, EVENT(Fireball_CarryLeader)},
     {TRIGGER_STEP, 14, CONDITION_ALWAYS, EVENT(Fireball_CarryLeaderIfHit)},
     {TRIGGER_TABLE_END},
@@ -2509,7 +2486,7 @@ LATE_DATA struct Trigger gMarsLighthouseRoomF_MercuryTowerTriggers[] = {
     {TRIGGER_STEP, 30, CONDITION_ALWAYS, EVENT(Leader_SlideOnIce)},
     {STEP_TRIGGER_WALKING, 33, CONDITION_ALWAYS, EVENT(MarsLighthouseRoomF_PushPipeOrJump)},
     {TRIGGER_STEP, 33, CONDITION_ALWAYS, EVENT(MarsLighthouseRoomF_KnockBackIfHit)},
-    {TRIGGER_STEP, STEP_TRIGGER_FLAME_HIT, CONDITION_ALWAYS, EVENT(MarsLighthouseRoomF_KnockBack)},
+    {TRIGGER_STEP, STEP_TRIGGER_FLAME_HIT, CONDITION_ALWAYS, EVENT(Leader_KnockBack)},
     {PSYNERGY_PHASE_ON_ACTOR(ABILITY_BLAZE, PSYNERGY_PHASE_BEFORE_CAST), ACTOR_MERCURY_TORCH, CONDITION_ALWAYS, EVENT(MarsLighthouseRoomF_StartBlazeOnTorch)},
     {PSYNERGY_PHASE_ON_ACTOR(ABILITY_BLAZE, PSYNERGY_PHASE_HITS), ACTOR_MERCURY_FLAME_THROWER, CONDITION_ALWAYS, EVENT(MarsLighthouseRoomF_LightFlameThrower)},
     {PSYNERGY_PHASE_ON_ACTOR(ABILITY_BLAZE, PSYNERGY_PHASE_AFTER_END), ACTOR_MERCURY_FLAME_THROWER, CONDITION_ALWAYS, EVENT(MarsLighthouseRoomF_WatchFlameThrower)},

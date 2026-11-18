@@ -187,7 +187,7 @@ void BattleEffect_RunVengeance(struct BattleEffectParams *args) {
           arrow->velocityX = -toFIXED(12);
         }
         arrow->y = toFIXED(12);
-        strikes = gVengeance_BladeStrikes[args->variant][i];
+        strikes = gVengeance_ArrowStrikes[args->variant][i];
         if (strikes != 0) {
           strikes = 1;
         }
@@ -644,15 +644,15 @@ void BattleEffect_RunLifeShear(struct BattleEffectParams *args) {
         texture.logHeight = 5;
         texture.pixels = LIFE_SHEAR_ORANGE_BLADE;
         texture.logWidth = width;
-        model->mesh = gLifeShear_HandleMesh;
+        model->mesh = gLifeShear_OrangeBladeMesh;
         Matrix_Push();
         Matrix_RotateZ(
             (Trig_Sin(work->particles[0].velocityZ * (TRIG_TURN / 32)) >> 3) -
             DEGtoANG(45));
-        Render_TransformVertices(gLifeShear_ScytheCorners, vertices, 4);
+        Render_TransformVertices(gLifeShear_BladeCorners, vertices, 4);
         Render_DrawModelList(model);
         Matrix_Pop();
-        model->mesh = gLifeShear_BladeMesh;
+        model->mesh = gLifeShear_PaleBladeMesh;
         texture.logWidth = width;
         texture.logHeight = 6;
         texture.pixels = LIFE_SHEAR_PALE_BLADE;
@@ -660,7 +660,7 @@ void BattleEffect_RunLifeShear(struct BattleEffectParams *args) {
             DEGtoANG(45) -
             (Trig_Sin(work->particles[0].velocityZ * (TRIG_TURN / 32)) >> 3));
         Matrix_Scale(FIXED_ONE, 90000, FIXED_ONE);
-        Render_TransformVertices(gLifeShear_ScytheCorners, vertices, 4);
+        Render_TransformVertices(gLifeShear_BladeCorners, vertices, 4);
         Render_DrawModelList(model);
       }
 
@@ -806,15 +806,24 @@ void BattleEffect_RunGeyser(struct BattleEffectParams *args, s32 mode) {
 
       // The first frame clears every drop.
       if (frame == 0) {
-        s32 *life;
-
         spawned = 0;
-        i = 0;
-        life = &GEYSER_DROPS->variant;
-        for (; i != DROP_COUNT; i++) {
-          *life = -1;
-          life += sizeof(struct Particle) / sizeof(*life);
+        // UB: the lives are cleared through one s32 pointer stepped a whole
+        // drop at a time, past the drop's other members.
+#ifdef UBFIX
+        for (i = 0; i != DROP_COUNT; i++)
+          GEYSER_DROPS[i].variant = -1;
+#else
+        {
+          s32 *life;
+
+          i = 0;
+          life = &GEYSER_DROPS->variant;
+          for (; i != DROP_COUNT; i++) {
+            *life = -1;
+            life += sizeof(struct Particle) / sizeof(*life);
+          }
         }
+#endif
       }
 
       // Modes 1 and 2 step the palette three times a frame from frame 8:
@@ -970,6 +979,10 @@ void BattleEffect_RunMysticCall(struct BattleEffectParams *args) {
 #define STAR_NEAR_DEPTH 250
 #define STAR_DEPTH_STEP 64
 #define STAR_FAR_DEPTH (STAR_NEAR_DEPTH + 6 * STAR_DEPTH_STEP)
+/// A star's speed: STAR_SPEED_MIN and a random part, masked by
+/// STAR_SPEED_RANDOM.
+#define STAR_SPEED_MIN 128
+#define STAR_SPEED_RANDOM 255
 
 /// Swarms of stars over the targets. Each target gets a swarm, eight frames
 /// after the one before: its stars burst from a point that rises out of it,
@@ -1032,12 +1045,12 @@ void BattleEffect_RunStarSwarm(struct BattleEffectParams *args, s32 mode) {
       for (i = 0; i != STAR_TOTAL; i++) {
         struct Particle *star = &STARS[i];
         s32 angle = Random16() & TRIG_ANGLE_MASK;
-        s32 speed = 255;
+        s32 speed = STAR_SPEED_RANDOM;
 
-        // Each star flies off at a random angle and a speed of 128 to 383.
+        // Each star flies off at a random angle and a random speed.
         speed &= Random16();
         SET_POSITION(star, 0, INTtoFIXED((Random16() & 31) + 20), 0);
-        speed += 128;
+        speed += STAR_SPEED_MIN;
         star->velocityX = (Trig_Sin(angle) * speed) >> 5;
         star->velocityY = 0;
         star->velocityZ = (Trig_Cos(angle) * speed) >> 5;
@@ -1223,15 +1236,14 @@ void BattleEffect_RunBubbleColumn(struct BattleEffectParams *args) {
     for (i = 0; i != BUBBLE_COUNT; i++) {
       if (bubble->variant >= 0) {
         s32 cel = bubble->z;
-        u32 width;
-        u32 height;
+        u8 *src = work->sheet + gBubbleColumn_Pictures[cel];
+        s32 centerX = FIXED_INTEGER_PART(bubble->x);
+        u8 width = gBubbleColumn_PictureWidths[cel];
+        s32 x = centerX - (width >> 1);
+        s32 centerY = FIXED_INTEGER_PART(bubble->y);
+        u8 height = gBubbleColumn_PictureHeights[cel];
 
-        draw[0](canvas, work->sheet + gBubbleColumn_Pictures[cel],
-                FIXED_INTEGER_PART(bubble->x) -
-                    ((width = gBubbleColumn_PictureWidths[cel]) >> 1),
-                FIXED_INTEGER_PART(bubble->y) -
-                    ((height = gBubbleColumn_PictureHeights[cel]) >> 1),
-                width, height);
+        draw[0](canvas, src, x, centerY - (height >> 1), width, height);
         Particle_AdvanceWithGravity2D(bubble, 63, -toFIXED(1) / 4);
         if (bubble->y < -INTtoFIXED(gBubbleColumn_PictureHeights[cel]))
           bubble->variant = -1;
@@ -1269,30 +1281,35 @@ void BattleEffect_RunBubbleColumn(struct BattleEffectParams *args) {
 struct MeshTriangle;
 struct MeshVertex;
 
-#define EFFECT_STEPS ((struct Particle *)(Ram_MapCellBuffer + 20480))
-
-/// Fills the scanline gradient behind the serpent: dark rows above and below,
-/// a ramp shaded by level in between.
-#define FILL_GRADIENT(table, i, level, c)                                      \
+/// The backdrop's colour on each screen line, which DMA writes in the HBlank
+/// before the line: from BATTLE_VIEW_TOP - 1 a gradient over the battle view,
+/// each channel a level darker every so many lines, blue and green starting
+/// above red, all lifted by `lift`; black below it.
+#define GRADIENT_BLUE_LINES 15
+#define GRADIENT_GREEN_LINES 16
+#define GRADIENT_RED_LINES 17
+#define GRADIENT_BLUE_LIFT 32
+#define GRADIENT_GREEN_LIFT 16
+#define FILL_GRADIENT(table, i, lift, c)                                       \
   do {                                                                         \
-    for (; i != 135; i++) {                                                    \
-      s32 t_ = i - 15;                                                         \
-      s32 b_ = (level) - t_ / 15 + 32;                                         \
-      s32 g_ = (level) - t_ / 16 + 16;                                         \
-      s32 r_ = (level) - t_ / 17;                                              \
+    for (; i != BATTLE_VIEW_BOTTOM - 1; i++) {                                 \
+      s32 t_ = i - (BATTLE_VIEW_TOP - 1);                                      \
+      s32 b_ = (lift) - t_ / GRADIENT_BLUE_LINES + GRADIENT_BLUE_LIFT;         \
+      s32 g_ = (lift) - t_ / GRADIENT_GREEN_LINES + GRADIENT_GREEN_LIFT;       \
+      s32 r_ = (lift) - t_ / GRADIENT_RED_LINES;                               \
                                                                                \
       if (b_ < 0)                                                              \
         b_ = 0;                                                                \
-      if (b_ > 31)                                                             \
-        b_ = 31;                                                               \
+      if (b_ > RGB_LEVEL_MAX)                                                  \
+        b_ = RGB_LEVEL_MAX;                                                    \
       if (g_ < 0)                                                              \
         g_ = 0;                                                                \
-      if (g_ > 31)                                                             \
-        g_ = 31;                                                               \
+      if (g_ > RGB_LEVEL_MAX)                                                  \
+        g_ = RGB_LEVEL_MAX;                                                    \
       if (r_ < 0)                                                              \
         r_ = 0;                                                                \
-      if (r_ > 31)                                                             \
-        r_ = 31;                                                               \
+      if (r_ > RGB_LEVEL_MAX)                                                  \
+        r_ = RGB_LEVEL_MAX;                                                    \
       c = RGB(r_, g_, b_);                                                     \
       *table++ = c;                                                            \
     }                                                                          \
@@ -1301,8 +1318,8 @@ struct MeshVertex;
     }                                                                          \
   } while (0)
 
-/// Draws cell n of the stone sheet at offset base, centred on (x, y).
-#define BLIT_CELL(base, n, x, y)                                               \
+/// Draws bubble picture n of the copy at `base`, centred on (x, y).
+#define BLIT_BUBBLE(base, n, x, y)                                             \
   do {                                                                         \
     u8 *src_ = work->sheet + (base) + gCoatlicue_Pictures[n];                  \
     u8 w_ = gCoatlicue_PictureWidths[n];                                       \
@@ -1312,14 +1329,15 @@ struct MeshVertex;
     blit[0](canvas, src_, x_, (y) - (h_ >> 1), w_, h_);                        \
   } while (0)
 
-/// Draws one spark of the falling stone sheet and drops it when it leaves the
-/// top of the screen.
-#define DRAW_SPARK(p)                                                          \
+/// Draws a rising bubble, moves it on, and drops it once it has left the top
+/// of the canvas.
+#define DRAW_BUBBLE(p)                                                         \
   do {                                                                         \
     s32 n_ = (p)->z;                                                           \
                                                                                \
     {                                                                          \
-      u8 *src_ = work->sheet + COATLICUE_BUBBLES + gCoatlicue_Pictures[n_];    \
+      u8 *src_ =                                                               \
+          work->sheet + COATLICUE_BUBBLE_PICTURES + gCoatlicue_Pictures[n_];   \
       s32 x0_ = FIXED_INTEGER_PART((p)->x);                                    \
       u8 w_ = gCoatlicue_PictureWidths[n_];                                    \
       s32 x_ = x0_ - (w_ >> 1);                                                \
@@ -1334,19 +1352,81 @@ struct MeshVertex;
     }                                                                          \
   } while (0)
 
-/// Where ScaleTexture is decoded in the effect's pictures.
-#define COATLICUE_SCALES 16384
-/// BubbleAnimationSheet's fifteen pictures, then a copy of them at half
+/// Coatlicue's pictures in the effect's sheet: CogTexture's quarter mirrored
+/// into a whole cog, 128 by 128; ScaleTexture, 128 by 16; then
+/// BubbleAnimationSheet's fifteen pictures and a copy of them at half
 /// brightness.
-#define COATLICUE_BUBBLES 18432
+#define COATLICUE_COG 0
+#define COATLICUE_SCALES (128 * 128)
+#define COATLICUE_BUBBLE_PICTURES (COATLICUE_SCALES + 128 * 16)
 #define BUBBLE_SHEET_BYTES 3000
-#define COATLICUE_DIM_BUBBLES (COATLICUE_BUBBLES + BUBBLE_SHEET_BYTES)
+#define BUBBLE_PICTURE_COUNT 15
+#define COATLICUE_DIM_BUBBLE_PICTURES                                          \
+  (COATLICUE_BUBBLE_PICTURES + BUBBLE_SHEET_BYTES)
+/// The coils' band in the map cell buffer, past the fire ring's texture: its
+/// corners, two for each of its segments, and its mesh.
+#define COATLICUE_COIL_CORNERS (Ram_MapCellBuffer + 17408)
+#define COATLICUE_COIL_MESH (Ram_MapCellBuffer + 18432)
+#define COATLICUE_COIL_SEGMENTS 32
+/// Coatlicue's figure, CoatlicueTiles: twelve 32x32 sprites, three across.
+#define COATLICUE_SPRITES 12
+#define COATLICUE_COLUMNS 3
+#define COATLICUE_SPRITE_SIZE 32
+#define COATLICUE_BUBBLE_COUNT 384
+/// The bubbles of the cloud scattered at frame 310, the only ones drawn from
+/// frame 360, and after them those of the stream from frame 274, one a frame.
+#define COATLICUE_CLOUD_BUBBLES 80
+#define COATLICUE_STREAM_BUBBLES 24
+/// A bubble of the cloud is drawn at its kind's own picture at this depth,
+/// six pictures smaller for every COATLICUE_CLOUD_DEPTH_STEP deeper.
+#define COATLICUE_CLOUD_NEAR_DEPTH 228
+#define COATLICUE_CLOUD_DEPTH_STEP 50
+/// The bursts, columns of bubbles rising from the floor, each frame in
+/// gCoatlicue_BurstFrames, in the work's particles.
+#define COATLICUE_BURSTS 9
+#define COATLICUE_BURST_BUBBLES 7
+/// Pressing A or B whitens the canvas over these frames and ends the summon.
+#define COATLICUE_SKIP_FRAMES 18
+/// The canvas's level as it flashes.
+#define COATLICUE_FLASH_LEVEL 47
+/// The backdrop's brightness at its flare, from frame 300.
+#define COATLICUE_BACKDROP_FLARE 14
+/// How far the cog and the fire ring lean back, the cog at last
+/// COATLICUE_TILT_MIN; and how far the cog is rolled while it spins up.
+#define COATLICUE_TILT 4000
+#define COATLICUE_TILT_MIN 3000
+#define COATLICUE_COG_ROLL 74752
+/// The cog's scale as it settles, and once it has swollen from frame 274.
+#define COATLICUE_COG_SCALE 55536
+#define COATLICUE_COG_SCALE_MAX 85536
+/// The fire ring's flashes at gCoatlicue_RingFrames, as it shines at
+/// gCoatlicue_FlashFrames, the cog's glows at gCoatlicue_GlowFrames, and the
+/// two coils of scaled water.
+#define COATLICUE_RINGS 4
+#define COATLICUE_FLASHES 3
+#define COATLICUE_GLOWS 3
+#define COATLICUE_COILS 2
+/// Each coil leans forward by COATLICUE_COIL_TILT as it starts, the second at
+/// COATLICUE_SECOND_COIL_START, and leans back COATLICUE_COIL_TILT_SPEED a
+/// frame.
+#define COATLICUE_COIL_TILT 3000
+#define COATLICUE_COIL_TILT_SPEED 22
+#define COATLICUE_SECOND_COIL_START 82
+/// The healing's frames after the summon, and how far toward blue it lifts
+/// the battle background.
+#define COATLICUE_WASH_FRAMES 60
+#define COATLICUE_WASH_COGS 3
+#define COATLICUE_WASH_BLUE 11
 
 #define COATLICUE_FRAMES 602 ///< frames of the summon after its opening
 
-/// Coatlicue: under water among rising bubbles a ring of light spins and
-/// crosses a second; they settle into a ripple and burst in a froth of
-/// bubbles, Coatlicue rises among them, and a wash of light heals the party.
+/// Coatlicue: the battle gives way to deep blue, where two coils of scaled
+/// water turn and a ring of light flashes. From frame 210 a cog of light
+/// rises; a white flash at 273 brings Coatlicue in as a cyan silhouette among
+/// rising bubbles, and she takes her colours. The bubbles gather into a cloud
+/// that spins, flashes three times and is flung away as she leaves; then
+/// three cogs of blue light rise over the party, and each target flashes as
+/// it is healed. A or B skips the summon.
 ///
 /// Abilities: Coatlicue.
 void BattleEffect_RunCoatlicue(struct BattleEffectParams *args) {
@@ -1354,7 +1434,8 @@ void BattleEffect_RunCoatlicue(struct BattleEffectParams *args) {
   struct BattleEffectWork *work;
   u8 *sprites;
   u8 *cellBuffer = gMapGridCellBuffer;
-  // Only blit[0] is used; the array takes an 8-byte slot in the frame.
+  /* LEFTOVER(frame): blit[1], the pair's idle second blitter, which the ROM's
+   * frame reserves and never touches; as one DrawRectangle. */
   DrawRectangle blit[2];
   struct Point2D grid;
   s32 skip;
@@ -1363,14 +1444,14 @@ void BattleEffect_RunCoatlicue(struct BattleEffectParams *args) {
   s32 i;
   s32 k;
   s32 y;
-  s32 level;
+  s32 lift;
   s32 color;
   s32 s;
   s32 sh;
   s32 ty;
   s32 spin;
   s32 zero;
-  u8 *coilMesh = Ram_MapCellBuffer + 18432;
+  u8 *coilMesh = COATLICUE_COIL_MESH;
   s16 list[UNIT_MAX];
   FIXED place[4];
   struct Scale req;
@@ -1400,47 +1481,48 @@ void BattleEffect_RunCoatlicue(struct BattleEffectParams *args) {
   Resource_LoadAndDecompress(RESOURCE_PARTICLE_SPRITES_A, sprites, 0, 0);
   EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_THREE_QUARTERS);
   table = work->backdropLines;
-  level = -8;
+  lift = -8;
   color = 0;
-  for (i = 0; i != 15; i++) {
+  for (i = 0; i != BATTLE_VIEW_TOP - 1; i++) {
     *table++ = color;
   }
-  FILL_GRADIENT(table, i, level, color);
+  FILL_GRADIENT(table, i, lift, color);
   Task_Add(BattleEffect_ArmPaletteHBlankDma, TASK_PASS_VBLANK + 126);
   skip = 0;
-  Mesh_BuildCylinderBand(Ram_MapCellBuffer + 17408, coilMesh, 32);
+  Mesh_BuildCylinderBand(COATLICUE_COIL_CORNERS, coilMesh,
+                         COATLICUE_COIL_SEGMENTS);
   list[0] = BATTLE_UNIT_LIST_END;
   BattleActor_SpawnObjectsForListFar(list, 0);
   {
-    u8 *e = Resource_GetTableEntry(RESOURCE_BELL_MAIDEN_TILES);
+    u8 *e = Resource_GetTableEntry(RESOURCE_COATLICUE_TILES);
 
     Iwram_CopyWords((void *)OBJ_PLTT, e, OBJ_PLTT_SIZE);
-    Decompress_TaggedLz(e + 512, cellBuffer);
+    Decompress_TaggedLz(e + OBJ_PLTT_SIZE, cellBuffer);
     {
       u8 *cells;
 
       i = 0;
       cells = gMapGridCellBuffer;
-      for (; i != 12; cells += 1024, i++) {
+      for (; i != COATLICUE_SPRITES; cells += OBJ_32X32_8BPP_BYTES, i++) {
         obj = EffectSprite_CreateWithTiles(32, 32,
                                            OBJ_SIZE_32X32 | OBJ_256_COLORS, 0);
         obj->image.priority = 2;
         work->sprites[i] = obj;
-        Iwram_CopyWords((void *)OBJ_TILES(obj), cells, 1024);
+        Iwram_CopyWords((void *)OBJ_TILES(obj), cells, OBJ_32X32_8BPP_BYTES);
       }
     }
   }
   Graphics_LoadGreyRamp();
   Resource_LoadAndDecompress(RESOURCE_COG_TEXTURE, cellBuffer, 0, 0);
-  Picture_MirrorIntoQuadrants(cellBuffer, work->sheet, 64, 64);
+  Picture_MirrorIntoQuadrants(cellBuffer, work->sheet + COATLICUE_COG, 64, 64);
   Resource_LoadAndDecompress(RESOURCE_SCALE_TEXTURE,
                              work->sheet + COATLICUE_SCALES, 0, 0);
   {
-    u8 *src = work->sheet + COATLICUE_BUBBLES;
+    u8 *src = work->sheet + COATLICUE_BUBBLE_PICTURES;
 
     Resource_LoadAndDecompress(RESOURCE_BUBBLE_ANIMATION_SHEET, src, 0, 0);
     for (i = 0; i != BUBBLE_SHEET_BYTES; i++) {
-      work->sheet[COATLICUE_DIM_BUBBLES + i] = src[i] >> 1;
+      work->sheet[COATLICUE_DIM_BUBBLE_PICTURES + i] = src[i] >> 1;
     }
   }
   Resource_LoadAndDecompress(RESOURCE_FIRE_RING_TEXTURE, cellBuffer, 0, 0);
@@ -1455,27 +1537,28 @@ void BattleEffect_RunCoatlicue(struct BattleEffectParams *args) {
   REG_BLDCNT = BLDCNT_TGT1_BG2 | BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_ALL;
   REG_BLDALPHA = EFFECT_BLEND_ADD;
   for (frame = 0; frame != COATLICUE_FRAMES; frame++) {
-    spin = ((frame - 1) << 9) + 512;
+    // A 128th of a turn a frame.
+    spin = ((frame - 1) << 9) + TRIG_TURN / 128;
     if ((gInput.repeat & (KEY_A | KEY_B)) && frame <= 581 && skip == 0) {
       skip = 1;
     }
+    // Once skipped, the canvas whitens four levels a frame.
     if (skip > 0) {
       s32 *value = &work->transferValue;
-      s32 v = skip * 0x101;
+      s32 v = CANVAS_FILL_WORD(skip) << 2;
 
-      v = (v + INTtoFIXED(v)) << 2;
       *value = v;
-      if (v > 0x3f3f3f3f) {
-        *value = 0x3f3f3f3f;
+      if (v > CANVAS_FILL_WORD(CANVAS_LEVEL_BRIGHTEST)) {
+        *value = CANVAS_FILL_WORD(CANVAS_LEVEL_BRIGHTEST);
       }
       work->transferMode = CANVAS_COPY_AND_CLEAR;
-      if (++skip == 19) {
+      if (++skip == COATLICUE_SKIP_FRAMES + 1) {
         break;
       }
     }
     if (frame == 0) {
-      for (i = 0; i != 384; i++) {
-        EFFECT_STEPS[i].variant = -1;
+      for (i = 0; i != COATLICUE_BUBBLE_COUNT; i++) {
+        BUBBLES[i].variant = -1;
       }
       for (i = 0; i != ARRAY_COUNT(work->particles); i++) {
         work->particles[i].variant = -1;
@@ -1485,11 +1568,13 @@ void BattleEffect_RunCoatlicue(struct BattleEffectParams *args) {
       EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
     }
     if (frame == 82) {
-      Iwram_FillWordsEntry(canvas, CANVAS_BYTES, CANVAS_FILL_WORD(47));
+      Iwram_FillWordsEntry(canvas, CANVAS_BYTES,
+                           CANVAS_FILL_WORD(COATLICUE_FLASH_LEVEL));
       Sound_PlayFar(SE_PSYNERGY_START);
     }
     if (frame == 210) {
-      Iwram_FillWordsEntry(canvas, CANVAS_BYTES, CANVAS_FILL_WORD(47));
+      Iwram_FillWordsEntry(canvas, CANVAS_BYTES,
+                           CANVAS_FILL_WORD(COATLICUE_FLASH_LEVEL));
       Sound_PlayFar(SE_PSYNERGY_START);
     }
     if (frame == 274) {
@@ -1519,33 +1604,39 @@ void BattleEffect_RunCoatlicue(struct BattleEffectParams *args) {
     if (frame == 540) {
       Sound_PlayFar(SE_SOL_SANCTUM_LIGHT_UP);
     }
+    // The backdrop brightens a level every 32 frames until it is 8 up; it
+    // flares from frame 300, settles back from 312, and brightens from 540.
+    // DEAD: frame never reaches 1999999, so the test always passes; the ROM
+    // keeps its load and compare.
     if (frame <= 1999999) {
       u16 *row = work->backdropLines;
-      s32 shade = frame / 32 - 8;
+      s32 brightness = frame / 32 - 8;
 
-      if (shade > 8) {
-        shade = 8;
+      if (brightness > 8) {
+        brightness = 8;
       }
       color = 0;
-      for (i = 0; i != 15; i++) {
+      for (i = 0; i != BATTLE_VIEW_TOP - 1; i++) {
         *row++ = color;
       }
       if (frame > 539) {
-        shade = (frame - 540) / 2 + 8;
+        brightness = (frame - 540) / 2 + 8;
       } else if (frame > 311) {
-        shade = 14 - (frame - 312) / 4;
-        if (shade <= 7) {
-          shade = 8;
+        brightness = COATLICUE_BACKDROP_FLARE - (frame - 312) / 4;
+        if (brightness <= 7) {
+          brightness = 8;
         }
       } else if (frame > 299) {
-        shade += (frame - 300) / 2;
-        if (shade > 14) {
-          shade = 14;
+        brightness += (frame - 300) / 2;
+        if (brightness > COATLICUE_BACKDROP_FLARE) {
+          brightness = COATLICUE_BACKDROP_FLARE;
         }
       }
-      i = 15;
-      FILL_GRADIENT(row, i, shade, color);
+      i = BATTLE_VIEW_TOP - 1;
+      FILL_GRADIENT(row, i, brightness, color);
     }
+    // From frame 282 every sprite colour is one cyan, brightening: her
+    // silhouette.
     if ((u32)(frame - 282) <= 17) {
       s32 green = (frame - 282) / 2 + 14;
       u16 *dst = (u16 *)OBJ_PLTT;
@@ -1560,15 +1651,15 @@ void BattleEffect_RunCoatlicue(struct BattleEffectParams *args) {
       }
       i = 0;
       color = RGB(0, green, blue);
-      for (; i != 256; i++) {
+      for (; i != OBJ_PLTT_SIZE / 2; i++) {
         *dst++ = color;
       }
     }
-    // From frame 300 every sprite colour steps two levels a frame toward the
-    // maiden's own, lifted by redLift, greenLift and k in blue: first to white,
-    // then less, then to her colours.
+    // From frame 300 every sprite colour steps two levels a frame toward
+    // Coatlicue's own, lifted by redLift, greenLift and k in blue: first to
+    // white, then to a pale cyan, then to her colours.
     if (frame > 299) {
-      u16 *source = Resource_GetTableEntry(RESOURCE_BELL_MAIDEN_TILES);
+      u16 *source = Resource_GetTableEntry(RESOURCE_COATLICUE_TILES);
       u16 *dst = (u16 *)OBJ_PLTT;
       s32 redLift = RGB_LEVEL_MAX;
       s32 greenLift = RGB_LEVEL_MAX;
@@ -1585,7 +1676,7 @@ void BattleEffect_RunCoatlicue(struct BattleEffectParams *args) {
         greenLift = 0;
         k = 0;
       }
-      for (i = 0; i != 256; i++, source++, dst++) {
+      for (i = 0; i != OBJ_PLTT_SIZE / 2; i++, source++, dst++) {
         s32 blue = RGB_BLUE(*dst);
         s32 green = RGB_GREEN(*dst);
         s32 red = RGB_RED(*dst);
@@ -1629,17 +1720,16 @@ void BattleEffect_RunCoatlicue(struct BattleEffectParams *args) {
         *dst = RGB(red, green, blue);
       }
     }
-    // From frame 520 the maiden's colours brighten, red fastest and blue
-    // slowest.
+    // From frame 520 her colours brighten, red fastest and blue slowest.
     if (frame > 519) {
       s32 lift = frame - 520;
-      u16 *source = Resource_GetTableEntry(RESOURCE_BELL_MAIDEN_TILES);
+      u16 *source = Resource_GetTableEntry(RESOURCE_COATLICUE_TILES);
       u16 *dst = (u16 *)OBJ_PLTT;
       s32 half;
 
       i = 0;
       half = lift / 2;
-      for (; i != 256; i++, source++, dst++) {
+      for (; i != OBJ_PLTT_SIZE / 2; i++, source++, dst++) {
         s32 blue;
         s32 green;
         s32 red;
@@ -1660,6 +1750,9 @@ void BattleEffect_RunCoatlicue(struct BattleEffectParams *args) {
         *dst = RGB(red, green, blue);
       }
     }
+    // Her figure, twelve sprites, from frame 292: back in place at 360, it
+    // drifts a quarter pixel a frame from 396 to 507 and moves off 16 pixels
+    // a frame from 540.
     if ((u32)(frame - 292) <= 253) {
       req = gCoatlicue_UnitScale;
       place[1] = toFIXED(255);
@@ -1673,17 +1766,20 @@ void BattleEffect_RunCoatlicue(struct BattleEffectParams *args) {
       if (frame > 539) {
         grid.y += toFIXED(16);
       }
-      for (i = 0; i != 12; i++) {
-        place[0] = INTtoFIXED((i % 3) * 32) + grid.x;
-        place[2] = INTtoFIXED((i / 3) * 32) + grid.y;
+      for (i = 0; i != COATLICUE_SPRITES; i++) {
+        place[0] = INTtoFIXED((i % COATLICUE_COLUMNS) * COATLICUE_SPRITE_SIZE) +
+                   grid.x;
+        place[2] = INTtoFIXED((i / COATLICUE_COLUMNS) * COATLICUE_SPRITE_SIZE) +
+                   grid.y;
         Render_ApplyProjectedPlacementFar(work->sprites[i], place, (s32 *)&req,
                                           0);
       }
     }
+    // The stream, from frame 274.
     {
       s32 d = frame - 274;
-      if ((u32)d <= 23) {
-        struct Particle *p = &(&EFFECT_STEPS[80])[d];
+      if ((u32)d <= COATLICUE_STREAM_BUBBLES - 1) {
+        struct Particle *p = &(&BUBBLES[COATLICUE_CLOUD_BUBBLES])[d];
         {
           s32 x = INTtoFIXED((Random16() & 15) + 52);
 
@@ -1693,46 +1789,49 @@ void BattleEffect_RunCoatlicue(struct BattleEffectParams *args) {
         p->velocityX = ((Random16() & 31) - 16) << 12;
         p->velocityY = -((Random16() & 15) + 8) << 12;
         p->z = (Random16() & 7) + 5;
-        p->variant = 32;
+        p->variant = BUBBLE_FLOATING;
       }
     }
+    // The cloud, at frame 310.
     if (frame == 310) {
-      struct Particle *p = EFFECT_STEPS;
+      struct Particle *p = BUBBLES;
 
-      for (i = 0; i != 80; i++, p++) {
+      for (i = 0; i != COATLICUE_CLOUD_BUBBLES; i++, p++) {
         p->x = INTtoFIXED((Random16() & 63) + 28);
         p->y = INTtoFIXED(Random16() % 80 + 56);
         p->velocityX = ((Random16() & 31) - 16) << 12;
         p->velocityY = (8 - (Random16() & 31)) << 12;
         p->z = (Random16() & 7) + 5;
-        p->variant = 32;
+        p->variant = BUBBLE_FLOATING;
       }
     }
-    for (k = 0; k != 9; k++) {
+    for (k = 0; k != COATLICUE_BURSTS; k++) {
       if (frame == gCoatlicue_BurstFrames[k]) {
-        for (i = 0; i != 7; i++) {
-          struct Particle *p = &work->particles[(k % 9) * 7 + i];
+        for (i = 0; i != COATLICUE_BURST_BUBBLES; i++) {
+          struct Particle *p = &work->particles[(k % COATLICUE_BURSTS) *
+                                                    COATLICUE_BURST_BUBBLES +
+                                                i];
 
-          p->x =
-              (Random16() % gCoatlicue_BurstSpreadX[k] + gCoatlicue_BurstX[k])
-              << 16;
-          p->y = ((Random16() & 3) + i * gCoatlicue_BurstSpacingY[k] +
-                  gCoatlicue_BurstY[k])
-                 << 16;
-          p->velocityX = gCoatlicue_BurstVelocityX[k] << 12;
-          p->velocityY = gCoatlicue_BurstVelocityY[k] << 12;
+          p->x = INTtoFIXED(Random16() % gCoatlicue_BurstSpreadX[k] +
+                            gCoatlicue_BurstX[k]);
+          p->y = INTtoFIXED((Random16() & 3) + i * gCoatlicue_BurstSpacingY[k] +
+                            gCoatlicue_BurstY[k]);
+          p->velocityX = gCoatlicue_BurstVelocityX[k] * (toFIXED(1) / 16);
+          p->velocityY = gCoatlicue_BurstVelocityY[k] * (toFIXED(1) / 16);
           p->z = INTtoFIXED((Random16() & 3) + gCoatlicue_BurstZ[k]);
-          p->velocityZ = gCoatlicue_BurstVelocityZ[k] << 10;
+          p->velocityZ = gCoatlicue_BurstVelocityZ[k] * (toFIXED(1) / 64);
           p->variant = zero;
         }
       }
     }
+    // Until frame 360 the bubbles rise on the canvas; then the cloud's turn
+    // as one body, which spins from 454, flips at 518 and is flung up at 540.
     if (frame <= 359) {
-      p = EFFECT_STEPS;
+      p = BUBBLES;
 
-      for (i = 0; i != 384; i++, p++) {
+      for (i = 0; i != COATLICUE_BUBBLE_COUNT; i++, p++) {
         if (p->variant >= 0) {
-          DRAW_SPARK(p);
+          DRAW_BUBBLE(p);
         }
       }
     } else {
@@ -1743,16 +1842,17 @@ void BattleEffect_RunCoatlicue(struct BattleEffectParams *args) {
       } else if (frame > 517) {
         Matrix_Scale(0, 0, FIXED_ONE);
       } else if (frame > 485) {
-        s32 s = 1060864 - (frame << 11);
+        s32 s = 518 * (FIXED_ONE / 32) - frame * (FIXED_ONE / 32);
 
         Matrix_Scale(s, s, FIXED_ONE);
       }
       if (frame > 539) {
-        Matrix_RotateY(frame << 10);
+        Matrix_RotateY(frame * (TRIG_TURN / 64));
       } else if (frame > 517) {
         Matrix_RotateY(TRIG_TURN);
         Matrix_RotateX(DEGtoANG(180));
       } else if (frame > 453) {
+        // A 64th of a turn a frame, rocking as it turns.
         s32 a = (frame - 454) << 10;
 
         Matrix_RotateY(a);
@@ -1766,33 +1866,33 @@ void BattleEffect_RunCoatlicue(struct BattleEffectParams *args) {
           EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_FADE,
                               CANVAS_FADE_THREE_QUARTERS);
         }
-        p = EFFECT_STEPS;
-        for (i = 0; i != 384; i++, p++) {
+        p = BUBBLES;
+        for (i = 0; i != COATLICUE_BUBBLE_COUNT; i++, p++) {
           p->variant = Random16() & 3;
           SET_POSITION(p, INTtoFIXED(Random16() % 160 - 80),
                        INTtoFIXED(Random16() % 160 + 48),
                        INTtoFIXED(Random16() % 160 - 80));
           p->velocityX = zero;
+          // Each rises half a pixel to a pixel and a half a frame, and a
+          // pixel more for the first kind, half as much for each after.
           p->velocityY =
               (-((Random16() & 63) + 32) << 10) - (1 << (16 - p->variant));
           p->velocityZ = Random16();
         }
       }
       if (frame == 540) {
-        struct Particle *p = EFFECT_STEPS;
-        s32 m;
+        struct Particle *p = BUBBLES;
 
         i = 0;
-        m = 63;
-        for (; i != 384; i++, p++) {
+        for (; i != COATLICUE_BUBBLE_COUNT; i++, p++) {
           p->y = zero;
-          p->velocityY = -((Random16() & m) + 32) << 15;
+          p->velocityY = -((Random16() & 63) + 32) << 15;
         }
       }
       {
-        p = EFFECT_STEPS;
+        p = BUBBLES;
 
-        for (i = 0; i != 80; i++, p++) {
+        for (i = 0; i != COATLICUE_CLOUD_BUBBLES; i++, p++) {
           s32 n;
           struct ScreenPoint *q;
 
@@ -1801,13 +1901,14 @@ void BattleEffect_RunCoatlicue(struct BattleEffectParams *args) {
           }
           q = &pos;
           EffectPosition_ProjectPoint(p, q);
-          q->depth = FIXED_INTEGER_PART(q->depth) - 228;
-          n = q->depth * 6 / 50 + gCoatlicue_PictureBias[p->variant];
+          q->depth = FIXED_INTEGER_PART(q->depth) - COATLICUE_CLOUD_NEAR_DEPTH;
+          n = q->depth * 6 / COATLICUE_CLOUD_DEPTH_STEP +
+              gCoatlicue_PictureBias[p->variant];
           if (n < 0) {
             n = 0;
           }
-          if (n > 14) {
-            n = 14;
+          if (n > BUBBLE_PICTURE_COUNT - 1) {
+            n = BUBBLE_PICTURE_COUNT - 1;
           }
           {
             s32 x = FIXED_INTEGER_PART(q->x);
@@ -1825,9 +1926,9 @@ void BattleEffect_RunCoatlicue(struct BattleEffectParams *args) {
             q->y = q->y - frame + 534;
           }
           if (p->variant <= 1) {
-            BLIT_CELL(COATLICUE_BUBBLES, n, q->x, q->y);
+            BLIT_BUBBLE(COATLICUE_BUBBLE_PICTURES, n, q->x, q->y);
           } else {
-            BLIT_CELL(COATLICUE_DIM_BUBBLES, n, q->x, q->y);
+            BLIT_BUBBLE(COATLICUE_DIM_BUBBLE_PICTURES, n, q->x, q->y);
           }
           if (frame <= 453 || frame >= i / 16 + 540) {
             p->y += p->velocityY;
@@ -1835,16 +1936,23 @@ void BattleEffect_RunCoatlicue(struct BattleEffectParams *args) {
         }
       }
     }
-    for (k = 0; k != 9; k++) {
+    // Each burst rises as a column, its bubbles stacked from the lowest and
+    // swaying, until its last has left the top.
+    for (k = 0; k != COATLICUE_BURSTS; k++) {
       FIXED top = 0;
 
-      for (i = 0; i != 7; i++) {
-        struct Particle *step = &work->particles[k * 7 + i];
+      for (i = 0; i != COATLICUE_BURST_BUBBLES; i++) {
+        struct Particle *step =
+            &work->particles[k * COATLICUE_BURST_BUBBLES + i];
 
-        if (work->particles[k * 7 + 6].variant >= 0) {
-          s32 n = 14 - FIXED_INTEGER_PART(step->z);
-          s32 x = FIXEDtoINT(step->x +
-                             (Trig_Sin((frame - (i % 7) * 8) << 10) << 2));
+        if (work->particles[k * COATLICUE_BURST_BUBBLES +
+                            COATLICUE_BURST_BUBBLES - 1]
+                .variant >= 0) {
+          s32 n = BUBBLE_PICTURE_COUNT - 1 - FIXED_INTEGER_PART(step->z);
+          s32 x = FIXEDtoINT(
+              step->x + (Trig_Sin((frame - (i % COATLICUE_BURST_BUBBLES) * 8) *
+                                  (TRIG_TURN / 64))
+                         << 2));
 
           if (i == 0) {
             top = step->y;
@@ -1853,8 +1961,8 @@ void BattleEffect_RunCoatlicue(struct BattleEffectParams *args) {
             n = 0;
           }
           {
-            u8 *src =
-                work->sheet + COATLICUE_DIM_BUBBLES + gCoatlicue_Pictures[n];
+            u8 *src = work->sheet + COATLICUE_DIM_BUBBLE_PICTURES +
+                      gCoatlicue_Pictures[n];
             u8 w = gCoatlicue_PictureWidths[n];
             s32 x0 = x - (w >> 1);
             s32 y0 = FIXEDtoINT(top);
@@ -1866,7 +1974,8 @@ void BattleEffect_RunCoatlicue(struct BattleEffectParams *args) {
           if (step->z < 0) {
             step->z = zero;
           }
-          if (i == 6 && step->y < -INTtoFIXED(gCoatlicue_PictureHeights[n])) {
+          if (i == COATLICUE_BURST_BUBBLES - 1 &&
+              step->y < -INTtoFIXED(gCoatlicue_PictureHeights[n])) {
             step->variant = -1;
           }
           top = top + step->z + toFIXED(8);
@@ -1875,7 +1984,7 @@ void BattleEffect_RunCoatlicue(struct BattleEffectParams *args) {
     }
     {
       void *verts;
-      s32 t;
+      s32 cogFrame;
       struct RenderModel *model;
 
       verts = Heap_AllocEwram(512);
@@ -1885,35 +1994,38 @@ void BattleEffect_RunCoatlicue(struct BattleEffectParams *args) {
       texture.logHeight = 7;
       model->mesh = gBattleEffect_LargeSquareMesh;
       model->vertices = verts;
-      t = frame - 210;
-      if ((u32)t <= 107) {
+      // The cog, from frame 210: it rises and grows as it fades in, spinning,
+      // then from 274 rises and swells again, leaning back, and from 310
+      // fades away.
+      cogFrame = frame - 210;
+      if ((u32)cogFrame <= 107) {
         s32 pitch;
 
-        ty = (frame * 3 << 13) - toFIXED(315) / 4;
-        pitch = 4000;
+        ty = frame * (toFIXED(3) / 8) - toFIXED(315) / 4;
+        pitch = COATLICUE_TILT;
         if (ty > toFIXED(24)) {
           ty = toFIXED(24);
         }
-        s = frame * 611 - 111926;
-        if (s > 55536) {
-          s = 55536;
+        s = (frame - 210) * 611 + FIXED_ONE / 4;
+        if (s > COATLICUE_COG_SCALE) {
+          s = COATLICUE_COG_SCALE;
         }
         if (frame > 273) {
-          ty = (frame << 15) - toFIXED(113);
+          ty = frame * (toFIXED(1) / 2) - toFIXED(113);
           if (ty > toFIXED(32)) {
             ty = toFIXED(32);
           }
           pitch = 21536 - (frame << 6);
-          if (pitch <= 2999) {
-            pitch = 3000;
+          if (pitch < COATLICUE_TILT_MIN) {
+            pitch = COATLICUE_TILT_MIN;
           }
-          s = s + frame * 1875 - 513750;
-          if (s > 85536) {
-            s = 85536;
+          s = s + (frame - 274) * 1875;
+          if (s > COATLICUE_COG_SCALE_MAX) {
+            s = COATLICUE_COG_SCALE_MAX;
           }
         }
         model->kind = MODEL_SHADED_MAX;
-        texture.pixels = work->sheet;
+        texture.pixels = work->sheet + COATLICUE_COG;
         sh = (frame << 3) - 1744;
         if (sh > 0) {
           sh = 0;
@@ -1927,29 +2039,29 @@ void BattleEffect_RunCoatlicue(struct BattleEffectParams *args) {
         Matrix_Scale(FIXED_ONE / 2, FIXED_ONE, FIXED_ONE / 2);
         Matrix_ScaleUniform(s);
         if (frame <= 273) {
-          Matrix_RotateZ(spin - 74752);
+          Matrix_RotateZ(spin - COATLICUE_COG_ROLL);
         }
         Matrix_RotateX(pitch);
         Matrix_RotateY(spin);
         Render_TransformVertices(gBattleEffect_GroundSquareCorners, verts, 64);
         Render_DrawModelList(model);
       }
+      // A white flash from frame 273, four levels dimmer each frame.
       if ((u32)(frame - 273) <= 7 && skip == 0) {
         s32 d = frame - 273;
         s32 *value;
-        s32 v;
 
         work->transferMode = CANVAS_COPY_AND_CLEAR;
         value = &work->transferValue;
-        v = d * 0x101;
-        v = v + INTtoFIXED(v);
-        *value = 0x3f3f3f3f - (v << 2);
+        *value = CANVAS_FILL_WORD(CANVAS_LEVEL_BRIGHTEST) -
+                 (CANVAS_FILL_WORD(d) << 2);
       }
       if (frame == 281 && skip == 0) {
         EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
       }
+      // The fire ring, from frame 274, growing and spinning, fading from 294.
       if ((u32)(frame - 274) <= 27) {
-        s = (frame << 11) - 544768;
+        s = (frame - 266) * (FIXED_ONE / 32);
         texture.pixels = cellBuffer;
         model->kind = MODEL_SHADED_ADDITIVE;
         sh = 0;
@@ -1960,53 +2072,59 @@ void BattleEffect_RunCoatlicue(struct BattleEffectParams *args) {
         Matrix_Initialize();
         Matrix_Translate(0, toFIXED(28), 0);
         Matrix_ScaleUniform(s);
-        Matrix_RotateX(4000);
-        Matrix_RotateY(frame << 9);
+        Matrix_RotateX(COATLICUE_TILT);
+        Matrix_RotateY(frame * (TRIG_TURN / 128));
         Render_TransformVertices(gBattleEffect_GroundSquareCorners, verts, 64);
         Render_DrawModelList(model);
       }
+      // The fire ring flashes outward for ten frames from each of its frames,
+      // the last two about her.
       if (frame > 80) {
-        for (i = 0; i != 4; i++) {
-          s32 st = gCoatlicue_RingFrames[i];
+        for (i = 0; i != COATLICUE_RINGS; i++) {
+          s32 startFrame = gCoatlicue_RingFrames[i];
 
-          if (frame > st && frame < st + 10) {
+          if (frame > startFrame && frame < startFrame + 10) {
             s32 d;
 
             texture.pixels = gMapGridCellBuffer;
-            sh = -16;
-            d = frame - st;
+            sh = MODEL_SHADE_INVISIBLE / 4;
+            d = frame - startFrame;
             model->kind = MODEL_SHADED_MAX;
             model->shade = sh;
             Matrix_Initialize();
-            s = d << 13;
+            s = d * (FIXED_ONE / 8);
             if (i > 1) {
               s32 ty = -toFIXED(44);
 
+              // From frame 540 they move off with her.
               if (frame > 539) {
-                ty += (frame - 539) << 20;
+                ty += INTtoFIXED((frame - 539) * 16);
               }
               Matrix_Translate(-toFIXED(4), ty, 0);
               Matrix_Scale(s, s, s);
             } else {
-              Matrix_Scale(s, d << 14, s);
+              Matrix_Scale(s, d * (FIXED_ONE / 4), s);
             }
             Matrix_RotateX(DEGtoANG(90));
-            Matrix_RotateY(frame << 9);
+            Matrix_RotateY(frame * (TRIG_TURN / 128));
             Render_TransformVertices(gBattleEffect_GroundSquareCorners, verts,
                                      64);
             Render_DrawModelList(model);
           }
         }
       }
+      // At each of its flash frames the canvas flashes and the fire ring
+      // shines about her, shrinking, turned a quarter more each time.
       if (frame > 80) {
-        for (i = 0; i != 3; i++) {
+        for (i = 0; i != COATLICUE_FLASHES; i++) {
           if (frame == gCoatlicue_FlashFrames[i]) {
-            Iwram_FillWordsEntry(canvas, CANVAS_BYTES, CANVAS_FILL_WORD(47));
+            Iwram_FillWordsEntry(canvas, CANVAS_BYTES,
+                                 CANVAS_FILL_WORD(COATLICUE_FLASH_LEVEL));
           }
           if (frame > gCoatlicue_FlashFrames[i] &&
               frame < gCoatlicue_FlashFrames[i] + 10) {
             s32 d = frame - gCoatlicue_FlashFrames[i];
-            s = 81920 - (d << 13);
+            s = FIXED_ONE * 5 / 4 - d * (FIXED_ONE / 8);
             texture.pixels = cellBuffer;
             model->kind = MODEL_SHADED_ADDITIVE;
             sh = d * 16 - 56;
@@ -2019,41 +2137,54 @@ void BattleEffect_RunCoatlicue(struct BattleEffectParams *args) {
             Matrix_Scale(s, s << 1, s);
             Matrix_RotateZ(i * (DEGtoANG(90)) + DEGtoANG(45));
             Matrix_RotateX(-TRIG_TURN / 16);
-            Matrix_RotateY(frame << 9);
+            Matrix_RotateY(frame * (TRIG_TURN / 128));
             Render_TransformVertices(gBattleEffect_GroundSquareCorners, verts,
                                      64);
             Render_DrawModelList(model);
           }
         }
       }
+      // The cog glows about her from each of its glow frames, growing.
       if (frame > 80) {
-        for (i = 0; i != 3; i++) {
-          s32 st = gCoatlicue_GlowFrames[i];
+        // UB: the loop reads three glow frames from a table of one; the two
+        // after it are the coils' bytes, read as frames 20992 and 4096, which
+        // never come.
+#ifdef UBFIX
+        for (i = 0; i != 1; i++) {
+#else
+        for (i = 0; i != COATLICUE_GLOWS; i++) {
+#endif
+          s32 startFrame = gCoatlicue_GlowFrames[i];
 
-          if (frame > st && frame < st + 100) {
+          if (frame > startFrame && frame < startFrame + 100) {
             ty = -toFIXED(44);
-            s = (frame - st) * 2978;
-            if (s > 65535) {
+            s = (frame - startFrame) * 2978;
+            if (s > FIXED_ONE - 1) {
               s = FIXED_ONE;
             }
-            texture.pixels = work->sheet;
-            sh = -16;
+            texture.pixels = work->sheet + COATLICUE_COG;
+            sh = MODEL_SHADE_INVISIBLE / 4;
             model->kind = MODEL_SHADED_MAX;
             model->shade = sh;
             Matrix_Initialize();
+            // From frame 540 it moves off with her.
             if (frame > 539) {
-              ty = ((frame - 539) << 20) - toFIXED(44);
+              ty = INTtoFIXED((frame - 539) * 16) - toFIXED(44);
             }
             Matrix_Translate(-toFIXED(4), ty, 0);
             Matrix_Scale(s, s / 2, s);
             Matrix_RotateX(DEGtoANG(90));
-            Matrix_RotateY(frame << 11);
+            Matrix_RotateY(frame * (TRIG_TURN / 32));
             Render_TransformVertices(gBattleEffect_GroundSquareCorners, verts,
                                      64);
             Render_DrawModelList(model);
           }
         }
       }
+      // The coils, bands of scaled water about her: each grows from its start,
+      // the second sweeping in from the left and fading in; from frame 210
+      // they shrink with the cog's rise, from 274 swell and fade, and from
+      // 294 shrink away.
       texture.logWidth = 7;
       texture.logHeight = 4;
       texture.pixels = work->sheet + COATLICUE_SCALES;
@@ -2062,7 +2193,7 @@ void BattleEffect_RunCoatlicue(struct BattleEffectParams *args) {
       model->vertices = verts;
       model->scrollU = zero;
       model->scrollV = zero;
-      for (i = 0; i != 2; i++) {
+      for (i = 0; i != COATLICUE_COILS; i++) {
         if (frame < gCoatlicue_CoilStarts[i]) {
           continue;
         }
@@ -2073,25 +2204,25 @@ void BattleEffect_RunCoatlicue(struct BattleEffectParams *args) {
             s = gCoatlicue_CoilMaxScales[i];
           }
           if (frame > 209) {
-            s -= t * gCoatlicue_CoilGrowth[i];
+            s -= cogFrame * gCoatlicue_CoilGrowth[i];
           }
           Matrix_Initialize();
           Matrix_Scale(FIXED_ONE / 2, FIXED_ONE, FIXED_ONE / 2);
           if (frame > 273) {
-            s = s + (frame << 13) - 2244608;
+            s = s + (frame - 274) * (FIXED_ONE / 8);
           }
           Matrix_ScaleUniform(s);
           if (i == 0) {
             if (frame > 209) {
-              s32 v = t;
+              s32 distance = cogFrame;
 
-              if (v > 48) {
-                v = 48;
+              if (distance > 48) {
+                distance = 48;
               }
-              Matrix_Translate(0, INTtoFIXED(v), 0);
+              Matrix_Translate(0, INTtoFIXED(distance), 0);
             }
             Matrix_RotateZ(gCoatlicue_CoilRolls[i] - (frame << 8));
-            sh = -16;
+            sh = MODEL_SHADE_INVISIBLE / 4;
           } else {
             s32 x = -48;
 
@@ -2104,28 +2235,29 @@ void BattleEffect_RunCoatlicue(struct BattleEffectParams *args) {
             Matrix_Translate(INTtoFIXED(x), 0, 0);
             Matrix_RotateZ(gCoatlicue_CoilRolls[i] + (frame << 8));
             if (frame > 209) {
-              Matrix_RotateZ((frame << 8) - 53760);
+              Matrix_RotateZ((frame - 210) * (TRIG_TURN / 256));
             }
-            sh = ((frame - gCoatlicue_CoilStarts[i]) << 2) - 64;
-            if (sh > -16) {
-              sh = -16;
+            sh = ((frame - gCoatlicue_CoilStarts[i]) << 2) +
+                 MODEL_SHADE_INVISIBLE;
+            if (sh > MODEL_SHADE_INVISIBLE / 4) {
+              sh = MODEL_SHADE_INVISIBLE / 4;
             }
           }
           if (frame > 273) {
             sh = 1080 - (frame << 2);
             if (i == 0) {
-              Matrix_RotateZ((274 - frame) << 10);
+              Matrix_RotateZ((274 - frame) * (TRIG_TURN / 64));
             } else {
-              Matrix_RotateZ((frame << 9) - 140288);
+              Matrix_RotateZ((frame - 274) * (TRIG_TURN / 128));
             }
           }
         } else {
           sh = (frame << 2) - (i << 3) - 1240;
-          if (sh > -16) {
-            sh = -16;
+          if (sh > MODEL_SHADE_INVISIBLE / 4) {
+            sh = MODEL_SHADE_INVISIBLE / 4;
           }
-          s = i * 26384 - (frame << 12) + 1279760;
-          if (s <= 16383) {
+          s = i * 26384 - frame * (FIXED_ONE / 16) + 1279760;
+          if (s < FIXED_ONE / 4) {
             continue;
           }
           Matrix_Initialize();
@@ -2133,11 +2265,14 @@ void BattleEffect_RunCoatlicue(struct BattleEffectParams *args) {
           Matrix_Translate(0, toFIXED(32), 0);
           Matrix_ScaleUniform(s);
         }
-        if (sh > -64) {
+        if (sh > MODEL_SHADE_INVISIBLE) {
           model->shade = sh;
-          Matrix_RotateX((frame - i * 82) * 22 - 3000);
-          Matrix_RotateY(-frame << 10);
-          Render_TransformVertices(Ram_MapCellBuffer + 17408, verts, 64);
+          Matrix_RotateX((frame - i * COATLICUE_SECOND_COIL_START) *
+                             COATLICUE_COIL_TILT_SPEED -
+                         COATLICUE_COIL_TILT);
+          Matrix_RotateY(-frame * (TRIG_TURN / 64));
+          Render_TransformVertices(COATLICUE_COIL_CORNERS, verts,
+                                   2 * COATLICUE_COIL_SEGMENTS);
           Render_DrawModelList(model);
         }
       }
@@ -2151,7 +2286,7 @@ void BattleEffect_RunCoatlicue(struct BattleEffectParams *args) {
   Iwram_FillWords((void *)BG_CHAR_BLOCK(1), CANVAS_BYTES,
                   CANVAS_FILL_WORD(CANVAS_LEVEL_BRIGHTEST));
   IO_WRITE_QUEUE_PUSH((u32)&REG_DISPCNT, EFFECT_DISPCNT, IO_WRITE_HALFWORD);
-  for (i = 0; i != 12; i++) {
+  for (i = 0; i != COATLICUE_SPRITES; i++) {
     Sprite_DestroyFar(work->sprites[i]);
   }
   Palette_LoadBasicSpriteColors();
@@ -2168,14 +2303,16 @@ void BattleEffect_RunCoatlicue(struct BattleEffectParams *args) {
                        SHEET_PALETTE_BYTES);
   Iwram_FillWords(canvas, CANVAS_BYTES,
                   CANVAS_FILL_WORD(CANVAS_LEVEL_BRIGHTEST));
-  Palette_BrightenSavedBattleBg(0, 0, 11);
+  // The healing: the battle background lifted toward blue, bubbles rising,
+  // the targets flashing in turn, and three cogs of light rising over them.
+  Palette_BrightenSavedBattleBg(0, 0, COATLICUE_WASH_BLUE);
   frame = 0;
-  for (; frame != 60; frame++) {
+  for (; frame != COATLICUE_WASH_FRAMES; frame++) {
     s32 s;
-    s32 lift;
+    s32 height;
     struct RenderModel *washModel;
     void *washVertices;
-    s32 d;
+    s32 cogFrame;
 
     if (frame == 16) {
       EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_FADE,
@@ -2187,28 +2324,29 @@ void BattleEffect_RunCoatlicue(struct BattleEffectParams *args) {
     if (frame > 48) {
       s32 fade = frame - 48;
 
-      Palette_BrightenSavedBattleBg(-fade, -fade, 11 - fade * 2);
+      Palette_BrightenSavedBattleBg(-fade, -fade,
+                                    COATLICUE_WASH_BLUE - fade * 2);
     }
     if (frame == 0) {
       EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_DARKEN, CANVAS_FILL_WORD(4));
       {
-        struct Particle *p = EFFECT_STEPS;
+        struct Particle *p = BUBBLES;
 
-        for (i = 0; i != 256; i++, p++) {
+        for (i = 0; i != BUBBLE_COUNT; i++, p++) {
           p->x = INTtoFIXED(Random16() & 127);
           p->y = INTtoFIXED((Random16() & 255) + 120);
           p->velocityX = ((Random16() & 31) - 16) << 13;
           p->velocityY = (8 - (Random16() & 31)) << 12;
           p->z = (Random16() & 7) + 5;
-          p->variant = 32;
+          p->variant = BUBBLE_FLOATING;
         }
       }
     }
-    for (i = 0; i != 256; i++) {
-      struct Particle *p = &EFFECT_STEPS[i];
+    for (i = 0; i != BUBBLE_COUNT; i++) {
+      struct Particle *p = &BUBBLES[i];
 
       if (p->variant >= 0) {
-        DRAW_SPARK(p);
+        DRAW_BUBBLE(p);
       }
     }
     for (i = 0; i != args->targetCount; i++) {
@@ -2233,27 +2371,30 @@ void BattleEffect_RunCoatlicue(struct BattleEffectParams *args) {
     washModel->mesh = gBattleEffect_LargeSquareMesh;
     washModel->vertices = washVertices;
     washModel->kind = MODEL_SHADED_MAX;
-    washTexture.pixels = work->sheet;
+    washTexture.pixels = work->sheet + COATLICUE_COG;
+    // The cogs rise from frame 16, eight frames apart, each growing as it
+    // rises and fading after 16 frames.
     i = 0;
-    lift = frame * 8 - 128;
-    s = (frame << 13) - 131072;
-    d = frame - 16;
-    for (; i != 3; lift -= 64, s -= 65536, i++, d -= 8) {
-      if (d >= 0) {
+    height = frame * 8 - 128;
+    s = (frame - 16) * (FIXED_ONE / 8);
+    cogFrame = frame - 16;
+    for (; i != COATLICUE_WASH_COGS;
+         height -= 64, s -= FIXED_ONE, i++, cogFrame -= 8) {
+      if (cogFrame >= 0) {
         s32 washShade = 0;
 
-        if (d > 15) {
-          washShade = (16 - d) << 3;
+        if (cogFrame > 15) {
+          washShade = (16 - cogFrame) << 3;
         }
         washModel->shade = washShade;
         if (washShade > MODEL_SHADE_INVISIBLE) {
           Matrix_Initialize();
-          Matrix_Translate(0, INTtoFIXED(112 - lift), 0);
+          Matrix_Translate(0, INTtoFIXED(112 - height), 0);
           Matrix_Scale(FIXED_ONE / 2, FIXED_ONE, FIXED_ONE / 2);
           Matrix_ScaleUniform(s);
           Matrix_RotateZ(i * (DEGtoANG(90)) + DEGtoANG(45));
           Matrix_RotateX(-TRIG_TURN / 16);
-          Matrix_RotateY(frame << 10);
+          Matrix_RotateY(frame * (TRIG_TURN / 64));
           Render_TransformVertices(gBattleEffect_GroundSquareCorners,
                                    washVertices, 4);
           Render_DrawModelList(washModel);
@@ -2280,7 +2421,7 @@ void BattleEffect_RunCoatlicue(struct BattleEffectParams *args) {
 #undef STAR_TOTAL
 #undef BUBBLE_COUNT
 #undef BUBBLE_FRAMES
-#undef EFFECT_STEPS
+#undef BUBBLES
 #undef FILL_GRADIENT
-#undef BLIT_CELL
-#undef DRAW_SPARK
+#undef BLIT_BUBBLE
+#undef DRAW_BUBBLE

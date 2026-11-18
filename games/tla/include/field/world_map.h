@@ -95,6 +95,15 @@ const struct FlagEntry *FlagEntries_GetTable(void);
 
 /// The most places FlagEntries_GetTable lists.
 #define WORLD_PICTURE_PLACE_COUNT 128
+/// The step trigger the actor of gWorldMap_PlacedActors' first place raises
+/// when touched; each next place's actor raises the next.
+#define STEP_TRIGGER_AREA_BASE 100
+/// BG1's world picture of 256 colours: 32 by 24 tiles from char block 1 on,
+/// which it scrolls through, wrapping, its map numbering them from the fifth
+/// row, where the still picture starts.
+#define WORLD_PICTURE_FIRST_TILE (BG_CHAR_SIZE / TILE_SIZE_8BPP)
+#define WORLD_PICTURE_TILE_ROWS 24
+#define WORLD_PICTURE_MAP_START (4 * BG_SCREEN_WIDTH)
 
 /// A World Map position, in whole pixels, as a point on the world map
 /// picture.

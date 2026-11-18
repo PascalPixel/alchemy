@@ -101,8 +101,6 @@ enum { WINDOW_SPRITE_COUNT = 64 };
 /// The sprite palette of portrait slot 0; slot 1 uses the next.
 #define PORTRAIT_PALETTE 14
 
-/// The window system's work: the windows' tilemap, the windows, the three text
-/// messages, the 64 window sprites, and the decoded message and its arguments.
 /// The window tiles text is drawn into: TEXT_TILES from TEXT_TILE_FIRST, and
 /// with WindowWork.extraTextTiles as many more from TEXT_EXTRA_TILE_FIRST.
 #define TEXT_TILE_FIRST 128
@@ -112,6 +110,12 @@ enum { WINDOW_SPRITE_COUNT = 64 };
 /// WindowWork.glyphResource when no glyph resource is loaded.
 #define NO_GLYPH_RESOURCE 99
 
+/// The last code the main font draws (gFont_Glyphs, from TEXT_SPACE) and the
+/// window tiles cover; a code above it is a kanji (gFont_KanjiGlyphs).
+#define TEXT_LAST_FONT_CODE 255
+
+/// The window system's work: the windows' tilemap, the windows, the three text
+/// messages, the 64 window sprites, and the decoded message and its arguments.
 struct WindowWork {
   u16 tilemap[640]; ///< the windows' BG tilemap, 32 by 20 tiles
   struct Window windows[WINDOW_COUNT]; ///< 12 in Japanese, 8 in the others
@@ -157,11 +161,18 @@ struct WindowWork {
   /// pages once the sound is over.
   u8 waitingForSound;
   /// 1 for halting speech: a pause before each character, broken off with an
-  /// ellipsis after the first word (Message_SetDecodeFlags bit 0).
+  /// ellipsis after the first word (MESSAGE_DECODE_HALTING_SPEECH).
   u8 haltingSpeech;
   /// 1 puts code 222 after certain characters in English and Japanese
-  /// (Message_SetDecodeFlags bit 1).
+  /// (MESSAGE_DECODE_SPACING_AFTER).
   u8 spacingAfter;
+};
+
+/// Message_SetDecodeFlags' flags, which set WindowWork.haltingSpeech and
+/// spacingAfter for the messages decoded next.
+enum MessageDecodeFlag {
+  MESSAGE_DECODE_HALTING_SPEECH = 1, ///< a pause before each character
+  MESSAGE_DECODE_SPACING_AFTER = 2   ///< a wide gap after some characters
 };
 
 /// The byte of WindowWork that Mind Read sets, for the scenes that read it
@@ -217,7 +228,7 @@ enum {
 
 // The window colour settings (MainRoutineWork.windowHue and windowBrightness),
 // which WindowColor_Apply turns into WINDOW_PALETTE's colours 4 to 10.
-#define WINDOW_HUE_COUNT 24 ///< "Window color" takes 0 to 23
+#define WINDOW_COLOR_COUNT 24 ///< "Window color" takes 0 to 23
 /// "Window brightness" takes 0 to 14.
 #define WINDOW_BRIGHTNESS_COUNT 15
 /// The brightness that adds nothing to the hue's colour.
@@ -235,6 +246,12 @@ enum {
 /// The window palette's background colour, behind its text; in
 /// HIGHLIGHT_PALETTE, the selected row's.
 #define WINDOW_BACKGROUND_COLOR 4
+/// The window palette's white and black, of the font's and the border's tiles,
+/// and the two greys only the border's tiles use.
+#define WINDOW_WHITE_COLOR 1
+#define WINDOW_BLACK_COLOR 3
+#define WINDOW_BORDER_DARK_COLOR 11
+#define WINDOW_BORDER_LIGHT_COLOR 12
 /// Eight 4bpp pixels of WINDOW_BACKGROUND_COLOR, for filling the text canvas
 /// or a tile a word at a time.
 #define TEXT_CANVAS_BACKGROUND_WORD 0x44444444
@@ -572,6 +589,23 @@ struct Window *Message_OpenWindow(s32 message, s32 x, s32 y, u32 packed);
 /// Message_OpenWindow's packed argument: the speaker's voice in bits 16 to 27,
 /// above the window options.
 #define MESSAGE_WINDOW_VOICE(voice) ((voice) << 16)
+/// The speaker's voice in a packed argument, as Message_OpenWindow takes it
+/// out.
+#define MESSAGE_WINDOW_VOICE_OF(packed) (((u32)(packed) << 4) >> 20)
+/// The window options of a packed argument: the bits below the speaker's
+/// voice.
+#define MESSAGE_WINDOW_OPTIONS_MASK (MESSAGE_WINDOW_VOICE(1) - 1)
+
+/// Message_OpenWindow's window options, in packed's low bits.
+enum MessageWindowOption {
+  MESSAGE_WINDOW_ZOOM = 0x01, ///< zoom open rather than appear at once
+  /// Set by the shopkeepers' windows and some others; Message_OpenWindow never
+  /// reads it.
+  MESSAGE_WINDOW_UNREAD = 0x02,
+  MESSAGE_WINDOW_TEXT_CANVAS = 0x08,   ///< WINDOW_FLAG_TEXT_CANVAS
+  MESSAGE_WINDOW_ANCHOR_BOTTOM = 0x10, ///< WINDOW_FLAG_ANCHOR_BOTTOM
+  MESSAGE_WINDOW_FIXED_X = 0x20        ///< WINDOW_FLAG_FIXED_X
+};
 void FieldMessage_Show(s32 no, s32 flags);
 void WindowSystem_Update(void);
 #if LANGUAGE != LANGUAGE_JAPANESE
@@ -646,6 +680,8 @@ void Portrait_CloseWindow(u32 entry);
 
 #define WINDOW_WORK ((struct WindowWork *)gWindowWork[0])
 
+/// The action id in a PsynergyEntry's encodedAction, below the marks for an
+/// action the class or an equipped item gave (PSYNERGY_ABILITY_MASK).
 #define ACTION_ID_MASK 0x3fff
 
 /// Defines name(no, x, y, width, height): decodes message no and fits a window

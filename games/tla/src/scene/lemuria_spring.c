@@ -46,9 +46,11 @@
 /// number.
 enum LemuriaSpringActorId {
   ACTOR_LEMURIA_SPRING_COIN_SHADOW = ACTOR_FIRST_PLACED + 3,
-  ACTOR_LEMURIA_SPRING_COIN, ///< SPRITE_SPRING_COIN
+  /// The coin the party tosses (SPRITE_SPRING_COIN).
+  ACTOR_LEMURIA_SPRING_COIN,
   ACTOR_LEMURIA_SPRING_MEDAL_SHADOW = ACTOR_LEMURIA_SPRING_COIN + 4,
-  ACTOR_LEMURIA_SPRING_MEDAL, ///< SPRITE_SPRING_LUCKY_MEDAL
+  /// The Lucky Medal the party tosses (SPRITE_SPRING_LUCKY_MEDAL).
+  ACTOR_LEMURIA_SPRING_MEDAL,
   /// The four obstacles that move in the spring during a toss: two crabs,
   /// then two turtles.
   ACTOR_LEMURIA_SPRING_CRAB_A,
@@ -57,15 +59,20 @@ enum LemuriaSpringActorId {
   ACTOR_LEMURIA_SPRING_TURTLE_B,
   ACTOR_LEMURIA_SPRING_MEDAL_SIGN, ///< east of the spring
   ACTOR_LEMURIA_SPRING_COIN_SIGN,  ///< west of the spring
-  /// The tufts of grass at the foot of each sign.
-  ACTOR_LEMURIA_SPRING_EAST_SIGN_GRASS,
-  ACTOR_LEMURIA_SPRING_WEST_SIGN_GRASS,
-  /// "If you face away..."
+  /// The grey slabs at the foot of each sign: the signs' sprite in its second
+  /// picture, drawn underfoot (Scene_Initialize).
+  ACTOR_LEMURIA_SPRING_EAST_SIGN_SLAB,
+  ACTOR_LEMURIA_SPRING_WEST_SIGN_SLAB,
+  /// "If you face away from the spring, toss in a coin..."
   ACTOR_LEMURIA_SPRING_VISITOR_FACING_AWAY,
+  /// Unused: a man carrying a pack, placed at the map's corner, where no
+  /// trigger answers him; Tolbi's spring places him to ask for a medal.
   ACTOR_LEMURIA_SPRING_MAN_WITH_PACK,
   /// "I remember an outsider who came..."
   ACTOR_LEMURIA_SPRING_VISITOR_REMEMBERING_OUTSIDER,
-  ACTOR_LEMURIA_SPRING_PRIZE ///< the item won, shown as it is given
+  /// The stone tablet that brings Eclipse to the leader the first time a
+  /// medal lands in the middle of the target (LemuriaSpring_GivePrize).
+  ACTOR_LEMURIA_SPRING_SUMMON_TABLET
 };
 
 #define ACTOR_LEMURIA_SPRING_FIRST_OBSTACLE ACTOR_LEMURIA_SPRING_CRAB_A
@@ -73,10 +80,81 @@ enum LemuriaSpringActorId {
 #define LEMURIA_SPRING_COIN_TRAIL(n) (ACTOR_LEMURIA_SPRING_COIN_SHADOW - (n))
 #define LEMURIA_SPRING_MEDAL_TRAIL(n) (ACTOR_LEMURIA_SPRING_MEDAL_SHADOW - (n))
 
+/// What the party tosses, as the menu lists them.
+enum SpringTossKind { SPRING_TOSS_COIN, SPRING_TOSS_MEDAL };
+
+/// Animations of the spring's sprites, as The Broken Seal names Tolbi's. The
+/// coin's and the Lucky Medal's sheets (spring_coin.png,
+/// spring_lucky_medal.png) are drawn alike.
+enum LemuriaSpringAnimation {
+  ANIM_TOKEN_TUMBLE = 0, ///< turning over once as it is tossed
+  ANIM_TOKEN_FLOAT = 1,  ///< turning on the water as it drifts
+  ANIM_TOKEN_REST = 2,   ///< lying still
+  ANIM_TOKEN_SHADOW = 3, ///< a grey spot on the ground below it
+  /// A twinkle, as each of the three marks trailing a flying token.
+  ANIM_TOKEN_GLINT = 4,
+  ANIM_CRAB_SCUTTLE = 1,     ///< stepping sideways (crab.png)
+  ANIM_CRAB_RAISE_CLAWS = 3, ///< snapping its raised claws (crab.png)
+  ANIM_TURTLE_SWIM = 2,      ///< paddling (turtle.png)
+  ANIM_TURTLE_HIDE = 3,      ///< head and flippers drawn in (turtle.png)
+  /// The signpost sheet's second picture, a grey slab (signpost.png).
+  ANIM_SIGN_SLAB = 2
+};
+
+/// The leader's animation of swinging an arm out to throw, as he tosses the
+/// coin or medal (felix.tsv's animation 39).
+#define ANIM_LEADER_TOSS 39
+
+/// What searching answers at Lemuria's spring.
+enum LemuriaSpringCellBehavior {
+  /// The spring's rim: the party drinks from it while its target is hidden.
+  CELL_BEHAVIOR_LEMURIA_SPRING_RIM = 25,
+  /// The water before the spring's steps: searched to toss a coin or medal.
+  CELL_BEHAVIOR_LEMURIA_SPRING_WATER = 80
+};
+
+/// Set once the spring's water has faded to show the target at its bottom,
+/// for the rest of the visit.
+#define FLAG_LEMURIA_SPRING_TARGET_SHOWN FLAG_SCENE_TEMP_00
+
+/// The middle of the target, which the target pulls the tossed token toward.
+#define LEMURIA_SPRING_CENTER_X toFIXED(120)
+#define LEMURIA_SPRING_CENTER_Z toFIXED(71)
+
+/// Where a tossed token comes to rest: the target's four rings, the middle
+/// first, then none.
+enum SpringTossResult {
+  TOSS_RING_MIDDLE,
+  TOSS_RING_SECOND,
+  TOSS_RING_THIRD,
+  TOSS_RING_OUTER,
+  TOSS_RING_MISSED
+};
+
+/// How much of its speed a token on the water keeps each frame, in 256ths:
+/// while the target pulls it, and once it drifts free.
+#define SPEED_KEPT_SCALE 256
+#define PULLED_SPEED_KEPT 253
+#define DRIFT_SPEED_KEPT 220
+
+/// The frames the second crab waits at each end of its way.
+#define CRAB_TURN_PAUSE_FRAMES 30
+/// A turtle's slowest swim round its loop, a 1024th of a turn a frame.
+#define TURTLE_SWIM_TURN (TRIG_TURN / 1024)
+
+/// LemuriaSpring_GivePrize's item for the summon Eclipse.
+#define PRIZE_ECLIPSE (-1)
+
+/// The items a Lucky Medal can win.
+#define MEDAL_PRIZE_COUNT 15
+
+/// How far the water moves before it fades.
+#define WATER_SHIFT_PIXELS 16
+
 s32 LemuriaSpring_RunSpringGame(void);
 
 extern u16 gLemuriaSpring_CoinPrizes[];
-extern u32 gLemuriaSpring_MedalPrizes[];
+extern u32 gLemuriaSpring_MedalPrizes[MEDAL_PRIZE_COUNT];
 
 s32 LemuriaSpring_RunToss();
 
@@ -99,10 +177,10 @@ s32 Party_RestoreHpPp();
 void Summon_Learn(s32 summonId);
 
 struct SpringTossMotion gLemuriaSpring_Toss BSS_DATA ALIGNED(16);
-s32 gLemuriaSpring_TossChoice BSS_DATA;
+s32 gLemuriaSpring_TossKind BSS_DATA;
 struct SpringObstacle gLemuriaSpring_Obstacles[4] BSS_DATA ALIGNED(16);
 s32 gLemuriaSpring_TossFrame BSS_DATA;
-s32 gLemuriaSpring_TossDone BSS_DATA;
+s32 gLemuriaSpring_TossEnded BSS_DATA;
 s32 gLemuriaSpring_TossResult BSS_DATA;
 
 const struct SceneEntrance *Scene_GetEntrances(void) { return gSceneEntrances; }
@@ -116,8 +194,6 @@ const struct ActorPlacement *Scene_GetActorPlacements(void) {
 }
 
 /// The party drinks from the spring and its HP and PP are restored.
-/// "Felix and the others drank of the spring. Their HP and PP were fully
-/// replenished!"
 void LemuriaSpring_DrinkFromSpring(void) {
   // "Felix and the others drank of the spring. Their HP and PP were fully..."
   Message_ShowCentered((s32)MsgAndTheOthers, 1);
@@ -127,16 +203,17 @@ void LemuriaSpring_DrinkFromSpring(void) {
 
 extern u16 gLemuriaSpring_AlphaSteps[];
 
-/// Raises the spring's displayed layer and blends it into view, as Tolbi's
-/// does.
+/// The spring's water, the overhead layer, moves 16 pixels, a pixel every
+/// four frames, then fades away in eight steps to show the target at the
+/// bottom of the spring, as Tolbi's does.
 void LemuriaSpring_RiseAndFadeIn(void) {
   struct MapWork *map = Ram_HeapSlots->mapGrid;
   struct MapLayer *layer;
   s32 i;
 
   Event_PlaySound(SE_BURST);
-  layer = &map->layers[2];
-  for (i = 0; i < 16; i++) {
+  layer = &map->layers[MAPGRID_LAYER_OVERHEAD];
+  for (i = 0; i < WATER_SHIFT_PIXELS; i++) {
     layer->offsetY -= toFIXED(1);
     wait(4);
   }
@@ -148,13 +225,13 @@ void LemuriaSpring_RiseAndFadeIn(void) {
   }
 }
 
-/// Searching the spring lets the party toss a coin into it. The spring rises
-/// into view the first time in the visit (FLAG_SCENE_TEMP_00), as Tolbi's does.
+/// Searching the water lets the party toss a coin or a Lucky Medal into it.
+/// The first time in the visit, the water fades to show the target first.
 void LemuriaSpring_TossCoin(void) {
   s32 actor = gMainRoutineWork.leaderActorId;
 
-  if (!Event_GetFlag(FLAG_SCENE_TEMP_00)) {
-    Event_SetFlag(FLAG_SCENE_TEMP_00);
+  if (!Event_GetFlag(FLAG_LEMURIA_SPRING_TARGET_SHOWN)) {
+    Event_SetFlag(FLAG_LEMURIA_SPRING_TARGET_SHOWN);
     LemuriaSpring_RiseAndFadeIn();
   }
   Event_Start();
@@ -169,10 +246,9 @@ const struct Trigger *Scene_GetTriggers(void) { return gSceneEvents; }
 
 void LemuriaSpring_InitializeTossSimulation(void);
 
-/// Starts the scene: sets the colour blend, the grass at the signs' feet
-/// animated and drawn underfoot, and starts the screen transition; arriving by
-/// entrance 1, it sets the toss up and, once FLAG_SCENE_TEMP_00 is set, blends
-/// with weights 0 and 16.
+/// Starts the scene: the water blended over the target, the slabs at the
+/// signs' feet drawn underfoot; arriving from Lemuria, the toss is set up, and
+/// the water stays faded once the target has been shown.
 s32 Scene_Initialize(void) {
   struct Actor *leader;
   s32 blend;
@@ -188,18 +264,18 @@ s32 Scene_Initialize(void) {
   } while (0);
   alpha = BLEND_ALPHA(12, 8);
   REG_BLDALPHA = alpha;
-  Actor_SetAnimation(ACTOR_LEMURIA_SPRING_EAST_SIGN_GRASS, 2);
-  Actor_SetAnimation(ACTOR_LEMURIA_SPRING_WEST_SIGN_GRASS, 2);
-  Actor_Get(ACTOR_LEMURIA_SPRING_EAST_SIGN_GRASS)->priorityFlags =
+  Actor_SetAnimation(ACTOR_LEMURIA_SPRING_EAST_SIGN_SLAB, ANIM_SIGN_SLAB);
+  Actor_SetAnimation(ACTOR_LEMURIA_SPRING_WEST_SIGN_SLAB, ANIM_SIGN_SLAB);
+  Actor_Get(ACTOR_LEMURIA_SPRING_EAST_SIGN_SLAB)->priorityFlags =
       ACTOR_PRIORITY_UNDERFOOT;
-  Actor_Get(ACTOR_LEMURIA_SPRING_WEST_SIGN_GRASS)->priorityFlags =
+  Actor_Get(ACTOR_LEMURIA_SPRING_WEST_SIGN_SLAB)->priorityFlags =
       ACTOR_PRIORITY_UNDERFOOT;
   Event_StartScreenTransition();
-  if (gMainRoutineWork.entrance == 1) {
+  if (gMainRoutineWork.entrance == LEMURIA_SPRING_FROM_LEMURIA) {
     LemuriaSpring_InitializeTossSimulation();
-    if (Event_GetFlag(FLAG_SCENE_TEMP_00)) {
+    if (Event_GetFlag(FLAG_LEMURIA_SPRING_TARGET_SHOWN)) {
       Io_Write16(blend, &REG_BLDCNT);
-      Io_Write16(BLEND_ALPHA(0, 16), &REG_BLDALPHA);
+      Io_Write16(BLEND_ALPHA(0, BLEND_WEIGHT_MAX), &REG_BLDALPHA);
     }
   }
   return 0;
@@ -284,12 +360,12 @@ prompt:
     Event_End();
     return 0;
   }
-  if (choice == 0) {
+  if (choice == SPRING_TOSS_COIN) {
     if (coins != 0)
       goto toss;
     notice = message + 1;
   } else {
-    if (choice != 1)
+    if (choice != SPRING_TOSS_MEDAL)
       goto toss;
     if (medals != 0)
       goto full;
@@ -358,7 +434,7 @@ toss:
       Event_End();
       return 0;
     }
-    if (choice == 0) {
+    if (choice == SPRING_TOSS_COIN) {
       if (coins == 0) {
         Event_SetMessageId(message + 1);
         // "You don't have any coins!"
@@ -367,7 +443,7 @@ toss:
         continue;
       }
       Party_AdjustCoins(-1);
-    } else if (choice == 1) {
+    } else if (choice == SPRING_TOSS_MEDAL) {
       if (medals == 0) {
         Event_SetMessageId(message + 2);
         // "You have no Lucky Medals!"
@@ -409,15 +485,15 @@ toss:
 #endif
   if (result != -1) {
 #if TLA_PATCH_1
-    if (choice == 0) {
+    if (choice == SPRING_TOSS_COIN) {
       Party_AdjustCoins(minusOne);
-    } else if (choice == 1) {
+    } else if (choice == SPRING_TOSS_MEDAL) {
       PartyInventory_Remove(ITEM_LUCKY_MEDAL);
     }
 #endif
     result = LemuriaSpring_RunToss(choice);
-    if (choice == 0) {
-      if (result != 4) {
+    if (choice == SPRING_TOSS_COIN) {
+      if (result != TOSS_RING_MISSED) {
         Party_AdjustCoins(gLemuriaSpring_CoinPrizes[result]);
         Event_PlaySound(MUS_JINGLE_SMALL);
         MessageArgument_Push(gLemuriaSpring_CoinPrizes[result],
@@ -431,20 +507,21 @@ toss:
       }
     } else {
       total = 0;
-      if (result == 0 && Event_GetFlag(FLAG_LEMURIA_SPRING_ECLIPSE_WON) == 0) {
+      if (result == TOSS_RING_MIDDLE &&
+          Event_GetFlag(FLAG_LEMURIA_SPRING_ECLIPSE_WON) == 0) {
         Event_SetFlag(FLAG_LEMURIA_SPRING_ECLIPSE_WON);
         LemuriaSpring_GivePrize((s32)minusOne);
       } else {
         for (prize = 0; prize < result * 3 + 3; prize++)
           total += (s8)gMainRoutineWork.prizeWeights[prize];
         prizeRoll = Random_Below(total);
-        for (prize = 0; prize < 15; prize++) {
+        for (prize = 0; prize < MEDAL_PRIZE_COUNT; prize++) {
           prizeRoll -= WEIGHT(prize);
           if (prizeRoll < 0)
             break;
         }
-        if (prize == 15)
-          prize = 14;
+        if (prize == MEDAL_PRIZE_COUNT)
+          prize = MEDAL_PRIZE_COUNT - 1;
         LemuriaSpring_GivePrize(gLemuriaSpring_MedalPrizes[prize]);
         if (WEIGHT(prize) > 1)
           gMainRoutineWork.prizeWeights[prize] = WEIGHT(prize) / 2;
@@ -517,18 +594,18 @@ void LemuriaSpring_GivePrize(s32 item) {
   Event_PlaySound(SE_CAST);
   FieldEvent_Wait(70);
   Event_PlaySound(SE_RECOVERY);
-  if (item == -1) {
-    prize = Actor_Get(ACTOR_LEMURIA_SPRING_PRIZE);
-    Actor_MoveToObject(ACTOR_LEMURIA_SPRING_PRIZE,
+  if (item == PRIZE_ECLIPSE) {
+    prize = Actor_Get(ACTOR_LEMURIA_SPRING_SUMMON_TABLET);
+    Actor_MoveToObject(ACTOR_LEMURIA_SPRING_SUMMON_TABLET,
                        gMainRoutineWork.leaderActorId);
     prize->motionFlags = 0;
     prize->y.fixed = toFIXED(32);
     FieldActor_SetAnimation(gMainRoutineWork.leaderActorId,
                             ANIM_LEADER_ARMS_RAISED);
-    SummonTablet_PlayRunes(ACTOR_LEMURIA_SPRING_PRIZE);
+    SummonTablet_PlayRunes(ACTOR_LEMURIA_SPRING_SUMMON_TABLET);
     Summon_ShowLearnedMessage(SUMMON_ECLIPSE);
     Summon_Learn(SUMMON_ECLIPSE);
-    Actor_SetPosition(ACTOR_LEMURIA_SPRING_PRIZE, 0, 0);
+    Actor_SetPosition(ACTOR_LEMURIA_SPRING_SUMMON_TABLET, 0, 0);
     FieldActor_SetAnimation(gMainRoutineWork.leaderActorId, ANIM_STAND);
   } else {
     Call2(ItemDisplay_ShowItem, item, 3);
@@ -662,10 +739,12 @@ void LemuriaSpring_UpdateTossSimulation(void) {
       toss->trail[0].y = 0;
       if (toss->velocity.y != 0) {
         toss->velocity.y = 0;
-        if (gLemuriaSpring_TossChoice == 1) {
-          Actor_SelectAnimation(Actor_GetById(ACTOR_LEMURIA_SPRING_MEDAL), 1);
+        if (gLemuriaSpring_TossKind == SPRING_TOSS_MEDAL) {
+          Actor_SelectAnimation(Actor_GetById(ACTOR_LEMURIA_SPRING_MEDAL),
+                                ANIM_TOKEN_FLOAT);
         } else {
-          Actor_SelectAnimation(Actor_GetById(ACTOR_LEMURIA_SPRING_COIN), 1);
+          Actor_SelectAnimation(Actor_GetById(ACTOR_LEMURIA_SPRING_COIN),
+                                ANIM_TOKEN_FLOAT);
         }
       }
 
@@ -674,28 +753,35 @@ void LemuriaSpring_UpdateTossSimulation(void) {
         s32 deltaZ;
         s32 distance;
 
-        deltaX = toFIXED(120) - toss->trail[0].x;
-        deltaZ = toFIXED(71) - toss->trail[0].z;
+        deltaX = LEMURIA_SPRING_CENTER_X - toss->trail[0].x;
+        deltaZ = LEMURIA_SPRING_CENTER_Z - toss->trail[0].z;
         deltaX >>= 8;
         deltaZ >>= 8;
         distance = Iwram_Sqrt(deltaX * deltaX + deltaZ * deltaZ);
         toss->velocity.x += (toFIXED(0.1) * deltaX) / distance;
         toss->velocity.z += (toFIXED(0.1) * deltaZ) / distance;
-        toss->velocity.x = toss->velocity.x * 253 / 256;
-        toss->velocity.z = toss->velocity.z * 253 / 256;
+        toss->velocity.x =
+            toss->velocity.x * PULLED_SPEED_KEPT / SPEED_KEPT_SCALE;
+        toss->velocity.z =
+            toss->velocity.z * PULLED_SPEED_KEPT / SPEED_KEPT_SCALE;
         toss->attractionFrames = toss->attractionFrames - 1;
       } else {
-        toss->velocity.x = toss->velocity.x * 220 / 256;
-        toss->velocity.z = toss->velocity.z * 220 / 256;
-        if (toss->velocity.x > -1024 && toss->velocity.x < 1024) {
+        toss->velocity.x =
+            toss->velocity.x * DRIFT_SPEED_KEPT / SPEED_KEPT_SCALE;
+        toss->velocity.z =
+            toss->velocity.z * DRIFT_SPEED_KEPT / SPEED_KEPT_SCALE;
+        if (toss->velocity.x > -toFIXED(1) / 64 &&
+            toss->velocity.x < toFIXED(1) / 64) {
           toss->velocity.x = 0;
         }
-        if (toss->velocity.z > -1024 && toss->velocity.z < 1024) {
+        if (toss->velocity.z > -toFIXED(1) / 64 &&
+            toss->velocity.z < toFIXED(1) / 64) {
           toss->velocity.z = 0;
         }
         if (toss->velocity.x == 0 && toss->velocity.z == 0) {
-          if (gLemuriaSpring_TossChoice == 1) {
-            Actor_SelectAnimation(Actor_GetById(ACTOR_LEMURIA_SPRING_MEDAL), 2);
+          if (gLemuriaSpring_TossKind == SPRING_TOSS_MEDAL) {
+            Actor_SelectAnimation(Actor_GetById(ACTOR_LEMURIA_SPRING_MEDAL),
+                                  ANIM_TOKEN_REST);
             LemuriaSpring_SetSpriteStorageKind(LEMURIA_SPRING_MEDAL_TRAIL(1),
                                                0);
             LemuriaSpring_SetSpriteStorageKind(LEMURIA_SPRING_MEDAL_TRAIL(2),
@@ -703,27 +789,30 @@ void LemuriaSpring_UpdateTossSimulation(void) {
             LemuriaSpring_SetSpriteStorageKind(LEMURIA_SPRING_MEDAL_TRAIL(3),
                                                0);
           } else {
-            Actor_SelectAnimation(Actor_GetById(ACTOR_LEMURIA_SPRING_COIN), 2);
+            Actor_SelectAnimation(Actor_GetById(ACTOR_LEMURIA_SPRING_COIN),
+                                  ANIM_TOKEN_REST);
             LemuriaSpring_SetSpriteStorageKind(LEMURIA_SPRING_COIN_TRAIL(1), 0);
             LemuriaSpring_SetSpriteStorageKind(LEMURIA_SPRING_COIN_TRAIL(2), 0);
             LemuriaSpring_SetSpriteStorageKind(LEMURIA_SPRING_COIN_TRAIL(3), 0);
           }
           {
-            s32 deltaX = (toFIXED(120) - toss->trail[0].x) >> 16;
-            s32 deltaZ = (toFIXED(71) - toss->trail[0].z) >> 16;
+            s32 deltaX = FIXEDtoINT(LEMURIA_SPRING_CENTER_X - toss->trail[0].x);
+            s32 deltaZ = FIXEDtoINT(LEMURIA_SPRING_CENTER_Z - toss->trail[0].z);
             s32 distanceSquared = deltaX * deltaX + deltaZ * deltaZ;
 
-            gLemuriaSpring_TossDone = 1;
+            // The target's rings end at these squared distances, in square
+            // pixels, as the rings painted in the spring do.
+            gLemuriaSpring_TossEnded = 1;
             if (distanceSquared <= 224) {
-              gLemuriaSpring_TossResult = 0;
+              gLemuriaSpring_TossResult = TOSS_RING_MIDDLE;
             } else if (distanceSquared <= 624) {
-              gLemuriaSpring_TossResult = 1;
+              gLemuriaSpring_TossResult = TOSS_RING_SECOND;
             } else if (distanceSquared <= 1088) {
-              gLemuriaSpring_TossResult = 2;
+              gLemuriaSpring_TossResult = TOSS_RING_THIRD;
             } else if (distanceSquared <= 1680) {
-              gLemuriaSpring_TossResult = 3;
+              gLemuriaSpring_TossResult = TOSS_RING_OUTER;
             } else {
-              gLemuriaSpring_TossResult = 4;
+              gLemuriaSpring_TossResult = TOSS_RING_MISSED;
             }
           }
         }
@@ -828,15 +917,19 @@ void LemuriaSpring_UpdateTossSimulation(void) {
       }
       if (obstacle->reactionFrames > 0) {
         if (index == 0) {
-          Actor_SelectAnimation(Actor_GetById(ACTOR_LEMURIA_SPRING_CRAB_A), 3);
+          Actor_SelectAnimation(Actor_GetById(ACTOR_LEMURIA_SPRING_CRAB_A),
+                                ANIM_CRAB_RAISE_CLAWS);
         } else {
-          Actor_SelectAnimation(Actor_GetById(ACTOR_LEMURIA_SPRING_CRAB_B), 3);
+          Actor_SelectAnimation(Actor_GetById(ACTOR_LEMURIA_SPRING_CRAB_B),
+                                ANIM_CRAB_RAISE_CLAWS);
         }
       } else {
         if (index == 0) {
-          Actor_SelectAnimation(Actor_GetById(ACTOR_LEMURIA_SPRING_CRAB_A), 1);
+          Actor_SelectAnimation(Actor_GetById(ACTOR_LEMURIA_SPRING_CRAB_A),
+                                ANIM_CRAB_SCUTTLE);
         } else {
-          Actor_SelectAnimation(Actor_GetById(ACTOR_LEMURIA_SPRING_CRAB_B), 1);
+          Actor_SelectAnimation(Actor_GetById(ACTOR_LEMURIA_SPRING_CRAB_B),
+                                ANIM_CRAB_SCUTTLE);
         }
         if (obstacle->pauseOrPhase == 0) {
           s32 pos;
@@ -850,13 +943,13 @@ void LemuriaSpring_UpdateTossSimulation(void) {
           if (obstacle->position.x <= toFIXED(64)) {
             obstacle->heading = 0;
             if (index == 1) {
-              obstacle->pauseOrPhase = 30;
+              obstacle->pauseOrPhase = CRAB_TURN_PAUSE_FRAMES;
             }
           }
           if (obstacle->position.x > toFIXED(176) - 1) {
             obstacle->heading = 1;
             if (index == 1) {
-              obstacle->pauseOrPhase = 30;
+              obstacle->pauseOrPhase = CRAB_TURN_PAUSE_FRAMES;
             }
           }
         } else {
@@ -865,7 +958,7 @@ void LemuriaSpring_UpdateTossSimulation(void) {
       }
     } else if (index == 2) {
       speedMode = obstacle->speedMode;
-      motionStep = -64;
+      motionStep = -TURTLE_SWIM_TURN;
       if (speedMode == 1) {
         motionStep = motionStep * 2;
       }
@@ -873,9 +966,11 @@ void LemuriaSpring_UpdateTossSimulation(void) {
         motionStep = motionStep * 3;
       }
       if (obstacle->reactionFrames > 0) {
-        Actor_SelectAnimation(Actor_GetById(ACTOR_LEMURIA_SPRING_TURTLE_A), 3);
+        Actor_SelectAnimation(Actor_GetById(ACTOR_LEMURIA_SPRING_TURTLE_A),
+                              ANIM_TURTLE_HIDE);
       } else {
-        Actor_SelectAnimation(Actor_GetById(ACTOR_LEMURIA_SPRING_TURTLE_A), 2);
+        Actor_SelectAnimation(Actor_GetById(ACTOR_LEMURIA_SPRING_TURTLE_A),
+                              ANIM_TURTLE_SWIM);
         obstacle->position.x = Trig_Sin(obstacle->heading) * 48 + toFIXED(112);
         obstacle->position.z = Trig_Cos(obstacle->heading) * 40 + toFIXED(72);
         cycleFrame = (u16)obstacle->heading + motionStep;
@@ -885,7 +980,7 @@ void LemuriaSpring_UpdateTossSimulation(void) {
     } else {
       cycleFrame = obstacle->pauseOrPhase & 511;
       speedMode = obstacle->speedMode;
-      motionStep = 64;
+      motionStep = TURTLE_SWIM_TURN;
       if (speedMode == 1) {
         motionStep = motionStep * 2;
       }
@@ -893,14 +988,17 @@ void LemuriaSpring_UpdateTossSimulation(void) {
         motionStep = motionStep * 3;
       }
       if (obstacle->reactionFrames > 0) {
-        Actor_SelectAnimation(Actor_GetById(ACTOR_LEMURIA_SPRING_TURTLE_B), 3);
+        Actor_SelectAnimation(Actor_GetById(ACTOR_LEMURIA_SPRING_TURTLE_B),
+                              ANIM_TURTLE_HIDE);
       } else if (cycleFrame <= 383) {
         obstacle->position.x = Trig_Sin(obstacle->heading) * 52 + toFIXED(112);
         obstacle->position.z = Trig_Cos(obstacle->heading) * 24 + toFIXED(72);
         obstacle->heading = obstacle->heading + motionStep;
-        Actor_SelectAnimation(Actor_GetById(ACTOR_LEMURIA_SPRING_TURTLE_B), 2);
+        Actor_SelectAnimation(Actor_GetById(ACTOR_LEMURIA_SPRING_TURTLE_B),
+                              ANIM_TURTLE_SWIM);
       } else {
-        Actor_SelectAnimation(Actor_GetById(ACTOR_LEMURIA_SPRING_TURTLE_B), 3);
+        Actor_SelectAnimation(Actor_GetById(ACTOR_LEMURIA_SPRING_TURTLE_B),
+                              ANIM_TURTLE_HIDE);
       }
       obstacle->pauseOrPhase = obstacle->pauseOrPhase + 1;
     }
@@ -910,8 +1008,8 @@ void LemuriaSpring_UpdateTossSimulation(void) {
       s32 deltaX;
       s32 deltaZ;
 
-      deltaX = (obstacle->position.x - toss->trail[0].x) >> 16;
-      deltaZ = (obstacle->position.z - toss->trail[0].z) >> 16;
+      deltaX = FIXEDtoINT(obstacle->position.x - toss->trail[0].x);
+      deltaZ = FIXEDtoINT(obstacle->position.z - toss->trail[0].z);
       distanceSquared = deltaX * deltaX + deltaZ * deltaZ;
       if (distanceSquared <= 119 && toss->attractionFrames > 30) {
         s32 nextMode;
@@ -982,7 +1080,7 @@ void LemuriaSpring_UpdateTossSimulation(void) {
   toss->shadow.y = 0;
   toss->shadow.z = toss->trail[0].z;
 
-  if (gLemuriaSpring_TossChoice == 1) {
+  if (gLemuriaSpring_TossKind == SPRING_TOSS_MEDAL) {
     LemuriaSpring_SetActorAppearance(ACTOR_LEMURIA_SPRING_MEDAL,
                                      &toss->trail[0].x, 0, 0,
                                      ANIMATION_STEP_NORMAL);
@@ -998,9 +1096,12 @@ void LemuriaSpring_UpdateTossSimulation(void) {
     LemuriaSpring_SetActorAppearance(LEMURIA_SPRING_MEDAL_TRAIL(3),
                                      &toss->trail[3].x, 0, 0,
                                      ANIMATION_STEP_NORMAL);
-    Actor_SelectAnimation(Actor_GetById(LEMURIA_SPRING_MEDAL_TRAIL(1)), 4);
-    Actor_SelectAnimation(Actor_GetById(LEMURIA_SPRING_MEDAL_TRAIL(2)), 4);
-    Actor_SelectAnimation(Actor_GetById(LEMURIA_SPRING_MEDAL_TRAIL(3)), 4);
+    Actor_SelectAnimation(Actor_GetById(LEMURIA_SPRING_MEDAL_TRAIL(1)),
+                          ANIM_TOKEN_GLINT);
+    Actor_SelectAnimation(Actor_GetById(LEMURIA_SPRING_MEDAL_TRAIL(2)),
+                          ANIM_TOKEN_GLINT);
+    Actor_SelectAnimation(Actor_GetById(LEMURIA_SPRING_MEDAL_TRAIL(3)),
+                          ANIM_TOKEN_GLINT);
   } else {
     LemuriaSpring_SetActorAppearance(ACTOR_LEMURIA_SPRING_COIN,
                                      &toss->trail[0].x, 0, 0,
@@ -1017,9 +1118,12 @@ void LemuriaSpring_UpdateTossSimulation(void) {
     LemuriaSpring_SetActorAppearance(LEMURIA_SPRING_COIN_TRAIL(3),
                                      &toss->trail[3].x, 0, 0,
                                      ANIMATION_STEP_NORMAL);
-    Actor_SelectAnimation(Actor_GetById(LEMURIA_SPRING_COIN_TRAIL(1)), 4);
-    Actor_SelectAnimation(Actor_GetById(LEMURIA_SPRING_COIN_TRAIL(2)), 4);
-    Actor_SelectAnimation(Actor_GetById(LEMURIA_SPRING_COIN_TRAIL(3)), 4);
+    Actor_SelectAnimation(Actor_GetById(LEMURIA_SPRING_COIN_TRAIL(1)),
+                          ANIM_TOKEN_GLINT);
+    Actor_SelectAnimation(Actor_GetById(LEMURIA_SPRING_COIN_TRAIL(2)),
+                          ANIM_TOKEN_GLINT);
+    Actor_SelectAnimation(Actor_GetById(LEMURIA_SPRING_COIN_TRAIL(3)),
+                          ANIM_TOKEN_GLINT);
   }
 
   if (toss->launchFrame != -1) {
@@ -1037,94 +1141,101 @@ void LemuriaSpring_UpdateTossSimulation(void);
 /// Places the four actors from their tables, resets the ride and installs
 /// its task.
 void LemuriaSpring_InitializeTossSimulation(void) {
-  struct SpringTossMotion *ride = &gLemuriaSpring_Toss;
-  s32 i = 0;
-  u8 *xtbl;
-  u16 *htbl;
-  struct SpringObstacle *rec;
-  u8 *ztbl;
+  struct SpringTossMotion *toss = &gLemuriaSpring_Toss;
+  s32 obstacleIndex = 0;
+  u8 *startX;
+  u16 *headings;
+  struct SpringObstacle *obstacle;
+  u8 *startZ;
   s32 zero;
 
-  htbl = gLemuriaSpring_ObstacleHeadings;
-  ztbl = gLemuriaSpring_ObstacleStartZ;
-  xtbl = gLemuriaSpring_ObstacleStartX;
-  rec = gLemuriaSpring_Obstacles;
+  headings = gLemuriaSpring_ObstacleHeadings;
+  startZ = gLemuriaSpring_ObstacleStartZ;
+  startX = gLemuriaSpring_ObstacleStartX;
+  obstacle = gLemuriaSpring_Obstacles;
 
   do {
     zero = 0;
-    rec->position.x = *xtbl << 16;
+    obstacle->position.x = INTtoFIXED(*startX);
     /* FAKEMATCH(barrier): the x store ends the first group. */
     __asm__("");
-    rec->position.z = *ztbl << 16;
-    rec->position.y = zero;
-    rec->heading = *htbl;
-    rec->pauseOrPhase = zero;
-    rec->speedMode = zero;
-    rec->reactionFrames = zero;
-    rec->hitCooldownFrames = zero;
-    i++;
-    xtbl++;
-    ztbl++;
-    htbl++;
-    rec++;
-  } while (i != 4);
+    obstacle->position.z = INTtoFIXED(*startZ);
+    obstacle->position.y = zero;
+    obstacle->heading = *headings;
+    obstacle->pauseOrPhase = zero;
+    obstacle->speedMode = zero;
+    obstacle->reactionFrames = zero;
+    obstacle->hitCooldownFrames = zero;
+    obstacleIndex++;
+    startX++;
+    startZ++;
+    headings++;
+    obstacle++;
+  } while (obstacleIndex != 4);
 
-  ride->trail[0].x = -toFIXED(30);
-  ride->trail[0].y = 0;
-  ride->trail[0].z = toFIXED(100);
-  ride->velocity.x = 0;
-  ride->velocity.y = 0;
-  ride->velocity.z = 0;
-  ride->attractionFrames = 0;
+  toss->trail[0].x = -toFIXED(30);
+  toss->trail[0].y = 0;
+  toss->trail[0].z = toFIXED(100);
+  toss->velocity.x = 0;
+  toss->velocity.y = 0;
+  toss->velocity.z = 0;
+  toss->attractionFrames = 0;
 
-  Actor_SelectAnimation(Actor_Get(ACTOR_LEMURIA_SPRING_TURTLE_A), 2);
-  Actor_SelectAnimation(Actor_Get(ACTOR_LEMURIA_SPRING_TURTLE_B), 2);
+  Actor_SelectAnimation(Actor_Get(ACTOR_LEMURIA_SPRING_TURTLE_A),
+                        ANIM_TURTLE_SWIM);
+  Actor_SelectAnimation(Actor_Get(ACTOR_LEMURIA_SPRING_TURTLE_B),
+                        ANIM_TURTLE_SWIM);
 
   Task_AddFrame((TaskFunc)LemuriaSpring_UpdateTossSimulation,
                 TASK_PASS_FRAME + 3);
 }
 
-/// Runs the spring ride from one side until it ends, and returns its result.
-s32 LemuriaSpring_RunToss(s32 side) {
-  struct SpringTossMotion *ride;
+/// Tosses the chosen coin or medal and waits for it to come to rest; returns
+/// the ring it rests in.
+s32 LemuriaSpring_RunToss(s32 tossKind) {
+  struct SpringTossMotion *toss;
 
-  ride = &gLemuriaSpring_Toss;
-  ride->trail[0].y = 0;
-  ride->trail[1].y = 0;
-  ride->trail[2].y = 0;
-  ride->trail[3].y = 0;
-  gLemuriaSpring_TossChoice = side;
-  gLemuriaSpring_TossDone = 0;
-  ride->launchFrame = -1;
+  toss = &gLemuriaSpring_Toss;
+  toss->trail[0].y = 0;
+  toss->trail[1].y = 0;
+  toss->trail[2].y = 0;
+  toss->trail[3].y = 0;
+  gLemuriaSpring_TossKind = tossKind;
+  gLemuriaSpring_TossEnded = 0;
+  toss->launchFrame = -1;
   for (gLemuriaSpring_TossFrame = 0;; gLemuriaSpring_TossFrame++) {
     if (gLemuriaSpring_TossFrame == 50)
       Event_PlaySound(SE_TOLBI_SPRING_TOSS);
     if (gLemuriaSpring_TossFrame == 16) {
-      Actor_SetAnimation(gMainRoutineWork.leaderActorId, 39);
-      ride->launchFrame = 0;
-      ride->velocity.x = toFIXED(13) / 10;
-      ride->velocity.y = toFIXED(4);
-      ride->velocity.z = -toFIXED(2);
-      ride->trail[0].x = toFIXED(120);
-      ride->trail[0].y = toFIXED(16);
-      ride->trail[0].z = toFIXED(152);
-      ride->attractionFrames = 300;
-      if (gLemuriaSpring_TossChoice == 1) {
-        Actor_SelectAnimation(Actor_Get(ACTOR_LEMURIA_SPRING_MEDAL_SHADOW), 3);
-        Actor_SelectAnimation(Actor_Get(ACTOR_LEMURIA_SPRING_MEDAL), 0);
+      Actor_SetAnimation(gMainRoutineWork.leaderActorId, ANIM_LEADER_TOSS);
+      toss->launchFrame = 0;
+      toss->velocity.x = toFIXED(13) / 10;
+      toss->velocity.y = toFIXED(4);
+      toss->velocity.z = -toFIXED(2);
+      toss->trail[0].x = toFIXED(120);
+      toss->trail[0].y = toFIXED(16);
+      toss->trail[0].z = toFIXED(152);
+      toss->attractionFrames = 300;
+      if (gLemuriaSpring_TossKind == SPRING_TOSS_MEDAL) {
+        Actor_SelectAnimation(Actor_Get(ACTOR_LEMURIA_SPRING_MEDAL_SHADOW),
+                              ANIM_TOKEN_SHADOW);
+        Actor_SelectAnimation(Actor_Get(ACTOR_LEMURIA_SPRING_MEDAL),
+                              ANIM_TOKEN_TUMBLE);
         LemuriaSpring_SetSpriteStorageKind(LEMURIA_SPRING_MEDAL_TRAIL(1), 1);
         LemuriaSpring_SetSpriteStorageKind(LEMURIA_SPRING_MEDAL_TRAIL(2), 1);
         LemuriaSpring_SetSpriteStorageKind(LEMURIA_SPRING_MEDAL_TRAIL(3), 1);
       } else {
-        Actor_SelectAnimation(Actor_Get(ACTOR_LEMURIA_SPRING_COIN_SHADOW), 3);
-        Actor_SelectAnimation(Actor_Get(ACTOR_LEMURIA_SPRING_COIN), 0);
+        Actor_SelectAnimation(Actor_Get(ACTOR_LEMURIA_SPRING_COIN_SHADOW),
+                              ANIM_TOKEN_SHADOW);
+        Actor_SelectAnimation(Actor_Get(ACTOR_LEMURIA_SPRING_COIN),
+                              ANIM_TOKEN_TUMBLE);
         LemuriaSpring_SetSpriteStorageKind(LEMURIA_SPRING_COIN_TRAIL(1), 1);
         LemuriaSpring_SetSpriteStorageKind(LEMURIA_SPRING_COIN_TRAIL(2), 1);
         LemuriaSpring_SetSpriteStorageKind(LEMURIA_SPRING_COIN_TRAIL(3), 1);
       }
     }
     System_Wait(1);
-    if (gLemuriaSpring_TossDone == 1)
+    if (gLemuriaSpring_TossEnded == 1)
       break;
   }
   return gLemuriaSpring_TossResult;
@@ -1178,14 +1289,14 @@ struct ActorPlacement gActorPlacements[] = {
                     0, FACING_SOUTH, TALK_FACING_PARTY, 0),
     ACTOR_PLACEMENT(SPRITE_TURTLE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0,
                     0, FACING_SOUTH, TALK_FACING_PARTY, 0),
-    ACTOR_PLACEMENT(SPRITE_SIGNPOST, CONDITION_ALWAYS, 7, 176, 0, 144,
-                    FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
-    ACTOR_PLACEMENT(SPRITE_SIGNPOST, CONDITION_ALWAYS, 7, 72, 0, 144,
-                    FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
-    ACTOR_PLACEMENT(SPRITE_SIGNPOST, CONDITION_ALWAYS, 7, 176, 0, 168,
-                    FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
-    ACTOR_PLACEMENT(SPRITE_SIGNPOST, CONDITION_ALWAYS, 7, 72, 0, 168,
-                    FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(SPRITE_SIGN, CONDITION_ALWAYS, 7, 176, 0, 144, FACING_SOUTH,
+                    TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(SPRITE_SIGN, CONDITION_ALWAYS, 7, 72, 0, 144, FACING_SOUTH,
+                    TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(SPRITE_SIGN, CONDITION_ALWAYS, 7, 176, 0, 168, FACING_SOUTH,
+                    TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(SPRITE_SIGN, CONDITION_ALWAYS, 7, 72, 0, 168, FACING_SOUTH,
+                    TALK_FACING_PARTY_AND_BACK, 0),
     ACTOR_PLACEMENT(SPRITE_LEMURIAN_MAN, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
                     48, 0, 136, FACING_NORTH, TALK_FACING_PARTY_AND_BACK, 0),
     ACTOR_PLACEMENT(SPRITE_MAN_CARRYING_A_PACK, CONDITION_ALWAYS,
@@ -1216,16 +1327,20 @@ struct Trigger gSceneEvents[] = {
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_LEMURIA_SPRING_VISITOR_FACING_AWAY, CONDITION_ALWAYS, MSGNO(MsgLemuriaSpringIdLoveToTest)},
     {TRIGGER_TALK, ACTOR_LEMURIA_SPRING_VISITOR_REMEMBERING_OUTSIDER, CONDITION_ALWAYS, MSGNO(MsgLemuriaSpringIRememberOutsiderWhoCame)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_LEMURIA_SPRING_VISITOR_REMEMBERING_OUTSIDER, CONDITION_ALWAYS, MSGNO(MsgLemuriaSpringHeHadSuchGoodTime)},
-    {TRIGGER_EXAMINE, ACTOR_LEMURIA_SPRING_WEST_SIGN_GRASS, FLAG_SCENE_TEMP_00, EVENT(LemuriaSpring_DrinkFromSpring)},
-    {TRIGGER_EXAMINE, 80, CONDITION_ALWAYS, EVENT(LemuriaSpring_TossCoin)},
+    {TRIGGER_EXAMINE, CELL_BEHAVIOR_LEMURIA_SPRING_RIM, FLAG_LEMURIA_SPRING_TARGET_SHOWN, EVENT(LemuriaSpring_DrinkFromSpring)},
+    {TRIGGER_EXAMINE, CELL_BEHAVIOR_LEMURIA_SPRING_WATER, CONDITION_ALWAYS, EVENT(LemuriaSpring_TossCoin)},
     {TRIGGER_TABLE_END},
 };
 
-/// The items a medal can win, drawn by the weights in gMainRoutineWork.
-u32 gLemuriaSpring_MedalPrizes[] = {
-    280, 359, 335, 380, 302, 342,
-    387, 372, 320, 395, 364, 341,
-    183, 186, 189,
+/// The items a medal can win, drawn by the weights in gMainRoutineWork: the
+/// middle ring draws from the first three, each ring further out from three
+/// more.
+u32 gLemuriaSpring_MedalPrizes[MEDAL_PRIZE_COUNT] = {
+    ITEM_HESTIA_BLADE, ITEM_AEGIS_SHIELD, ITEM_EREBUS_ARMOR,
+    ITEM_MINERVA_HELM, ITEM_MIGHTY_AXE, ITEM_FLORAL_DRESS,
+    ITEM_CROWN_OF_GLORY, ITEM_LEDAS_BRACELET, ITEM_FIREMANS_POLE,
+    ITEM_BRILLIANT_CIRCLET, ITEM_CRAFTED_GLOVES, ITEM_WILD_COAT,
+    ITEM_POTION, ITEM_PSY_CRYSTAL, ITEM_WATER_OF_LIFE,
 };
 
 /// The coins a coin wins by where it lands, the middle first; 0 for a miss.
@@ -1253,7 +1368,8 @@ u8 gLemuriaSpring_ObstacleStartZ[] = {
     32, 104, 68, 72,
 };
 
-/// The way each obstacle starts heading.
+/// The way each obstacle starts heading: the crabs by 0 east and 1 west, the
+/// turtles by their angle round their loops.
 u16 gLemuriaSpring_ObstacleHeadings[] = {
     0, 1, 0, DEGtoANG(180),
 };

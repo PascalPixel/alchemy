@@ -25,8 +25,14 @@ enum {
   BGM_RESTORE_DELAY_VBLANKS = 10,
   /// Sound_WaitForBgmRestore gives up after this many frames, about
   /// five seconds.
-  BGM_WAIT_TIMEOUT_FRAMES = 300
+  BGM_WAIT_TIMEOUT_FRAMES = 300,
+  /// gCurrentBgm before any music: an id no music has, so the first music
+  /// always plays.
+  BGM_NONE = 255
 };
+
+/// The semitones of an octave.
+#define SEMITONES_PER_OCTAVE 12
 
 /// Plays a sound number, the game's one way of playing a sound: a fade control,
 /// a sound effect, a jingle or music, as the README's "What a sound number
@@ -143,12 +149,13 @@ void Sound_UpdateBgmRamps(void) {
       gBgmTempoPitch = gBgmTempoPitchTarget;
     }
     // The tempo scale and the pitch move together, like a record played at
-    // another speed, but in a straight line: 12 semitones for each 256 of
-    // scale (pitch is in 1/256 semitone), so 512 plays an octave up and
-    // 128 half an octave down.
+    // another speed, but in a straight line: an octave for each
+    // BGM_UNITY_SCALE of scale (pitch is in 1/256 semitone), so twice
+    // BGM_UNITY_SCALE plays an octave up and half of it half an octave down.
     m4aMPlayTempoControl(&gMPlayInfo_BGM, gBgmTempoPitch);
     m4aMPlayPitchControl(&gMPlayInfo_BGM, TRACKS_ALL,
-                         (s16)gBgmTempoPitch * 12 - 12 * BGM_UNITY_SCALE);
+                         (s16)gBgmTempoPitch * SEMITONES_PER_OCTAVE -
+                             SEMITONES_PER_OCTAVE * BGM_UNITY_SCALE);
   }
   // Count down the VBlanks left in the PCM buffer and restart the FIFO DMAs
   // from its start when they run out (SoundInfo.transferCountdown).
@@ -218,8 +225,7 @@ void Sound_Initialize(void) {
   s32 i;
 
   m4aSoundInit();
-  // No music is sound 0xff, so the first music always plays.
-  gCurrentBgm = 0xff;
+  gCurrentBgm = BGM_NONE;
   gBgmRestoreDelay = 0;
   gBgmVolumeTarget = BGM_UNITY_SCALE;
   gBgmVolume = BGM_UNITY_SCALE;

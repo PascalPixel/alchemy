@@ -3,12 +3,12 @@
 
 #include "fixed_math.h"
 #include "types.h"
+#include "game/game.h"
 
 /// @file
-/// The work of the Mars Lighthouse rooms' flame throwers and the fireballs that
-/// knock the leader back or carry him along when they hit him, kept in the
-/// inventory snapshot's spare space. The Ride_ names are older than that
-/// reading; the struct and the routines that move a flame have taken it.
+/// The work of the Mars Lighthouse rooms' flame throwers and of the fireballs
+/// that knock the leader back, or carry him along on a ride, when they hit him;
+/// it is kept in the inventory snapshot's spare space.
 
 struct Actor;
 
@@ -22,6 +22,10 @@ enum FlameThrowerFlags {
   FLAME_THROWER_DRY = 0x40,      ///< nothing comes out of it
   FLAME_SPARK = 0x80             ///< Ride_SpawnSpark
 };
+/// A flame thrower's packed state: the flame's reach in the low four bits,
+/// enum FlameThrowerFlags in the next four.
+#define FLAME_THROWER_REACH_BITS 0xf
+#define FLAME_THROWER_FLAG_BITS 0xf0
 
 /// One of the work's four flame throwers.
 struct RideEntry {
@@ -35,8 +39,7 @@ struct RideEntry {
   FIXED reach; ///< 16.16, the low nibble of flags << 16
 };
 
-/// The way a ride last moved along x and z, 1 or -1 (0xffff); the other axis
-/// is 0.
+/// The way a ride last moved along x and z, 1 or -1; the other axis is 0.
 struct RideDirection {
   u16 x;
   u16 z;
@@ -78,9 +81,8 @@ enum {
   STEP_TRIGGER_FIREBALL_HIT = STEP_TRIGGER_FLAME_HIT + 2
 };
 
-extern u8 gInventorySnapshot[];
-
 /// The flame-hit work, in the inventory snapshot's spare space.
-#define RIDE_WORK ((struct FlameHitWork *)(gInventorySnapshot + 392))
+#define RIDE_WORK                                                              \
+  ((struct FlameHitWork *)(gInventorySnapshot + INVENTORY_SNAPSHOT_SPARE))
 
 #endif

@@ -35,7 +35,7 @@
 ///
 /// A water beast spits water at the houses. It is drawn with its green and blue
 /// swapped (SPRITE_COLOR_RBG), and its sound and its spray
-/// (Altin_SprayInitialize) run from Altin_ApplyWaterLevel. When the party steps
+/// (Altin_InitializeSpew) run from Altin_ApplyWaterLevel. When the party steps
 /// near it (Altin_ScareOffBeast) it stops, cries out and hops away into the
 /// flood for good (FLAG_ALTIN_WATER_BEAST_LEFT).
 ///
@@ -44,13 +44,13 @@
 /// exit of its number. The Sanctum's wide door is redrawn by hand. Coming back
 /// out of the Sanctum (ALTIN_FROM_SANCTUM) the area name is not shown again.
 ///
-/// Three doorways (step triggers 10 to 12, Altin_WalkThroughDoorway) and the
+/// Three doorways (step triggers 10 to 12, Altin_WalkIntoMine) and the
 /// exit ALTIN_TO_ALTIN_PEAK_SPRITZ lead into the mine, to Altin Peak's
 /// AltinPeakFirstWaterBeast, AltinPeakSouthEntrance, AltinPeakJunction and
 /// AltinPeakSpritz.
 ///
-/// A pillar that Move pushes to column 22 stays there
-/// (FLAG_ALTIN_PILLAR_MOVED).
+/// The stone statue that Move pushes to STONE_STATUE_MOVED_COLUMN stays there
+/// (FLAG_ALTIN_STATUE_MOVED).
 ///
 /// Inside, in Cottage rooms D (CottageRoomsD), two families shelter in the
 /// inn's Room One and Room Two, as the game calls them. The first and the
@@ -131,10 +131,10 @@ enum AltinVillageActorId {
   ACTOR_STRONGMAN_GUARDIAN_STATUES,
   /// A bent old man with a cane (SPRITE_OLD_MAN_WITH_CANE), who wanders.
   ACTOR_OLD_MAN_ROCK_FLUSHED_OUT,
-  /// The beast spitting water at the houses until FLAG_ALTIN_WATER_BEAST_LEFT.
+  /// The beast spewing water at the houses until FLAG_ALTIN_WATER_BEAST_LEFT.
   ACTOR_WATER_BEAST,
-  /// SPRITE_STONE_STATUE, which Move pushes to column 22
-  /// (Altin_CheckPillarMoved).
+  /// SPRITE_STONE_STATUE, which Move pushes to STONE_STATUE_MOVED_COLUMN
+  /// (Altin_CheckStatueMoved).
   ACTOR_STONE_STATUE,
   /// The armor and item merchants, waiting outside while their shops are
   /// under water.
@@ -219,8 +219,10 @@ enum {
 };
 
 #define WATER_BEAST_HOP_PERIOD 60
-#define WATER_SPRAY_LIFETIME 20
-#define WATER_SPRAY_START_SCALE (3 * FIXED_ONE / 10)
+/// The map column the stone statue stands in once moved, at (360, 168).
+#define STONE_STATUE_MOVED_COLUMN 22
+#define SPEW_LIFETIME 20
+#define SPEW_START_SCALE (3 * FIXED_ONE / 10)
 
 // UB: the facing test overflows a signed left shift for many headings.
 #ifdef UBFIX
@@ -234,16 +236,14 @@ enum {
 // UB: the random wobble can be negative. Both factors fit in signed32 bits
 // for the actor's signed16-bit timer and wobble values.
 #ifdef UBFIX
-#define WATER_SPRAY_LATERAL_STEP(timer, wobble)                                \
-  ((timer) * 4096 + (wobble) * 32768)
+#define SPEW_LATERAL_STEP(timer, wobble) ((timer) * 4096 + (wobble) * 32768)
 #else
-#define WATER_SPRAY_LATERAL_STEP(timer, wobble)                                \
-  (((timer) << 12) + ((wobble) << 15))
+#define SPEW_LATERAL_STEP(timer, wobble) (((timer) << 12) + ((wobble) << 15))
 #endif
 
 static void Altin_ApplyWaterLevel(void);
 static void CottageRoomsD_PlaceSheltering(void);
-static void Altin_BeastSpawnSpray(void);
+static void Altin_BeastSpewWater(void);
 
 const struct SceneEntrance *Scene_GetEntrances(void) {
   s16 sceneId = gMainRoutineWork.next;
@@ -619,7 +619,7 @@ static void Altin_EnterDoor(void) {
 
 /// The leader walks out through one of the doorways of Altin's village that
 /// lead into the mine, on walking north into it.
-static void Altin_WalkThroughDoorway(void) {
+static void Altin_WalkIntoMine(void) {
   struct FieldWork *work;
 
   work = gFieldWork;
@@ -693,15 +693,15 @@ static void Altin_BeastHopAway(void) {
   Actor_SetAnimation(ACTOR_WATER_BEAST, ANIM_STAND);
 }
 
-/// After Move, remembers whether the pillar now stands in map column 22, the
-/// spot it is pushed to.
-static void Altin_CheckPillarMoved(void) {
-  struct Actor *pillar = Actor_Get(ACTOR_STONE_STATUE);
+/// After Move, remembers whether the stone statue now stands in
+/// STONE_STATUE_MOVED_COLUMN, the spot it is pushed to.
+static void Altin_CheckStatueMoved(void) {
+  struct Actor *statue = Actor_Get(ACTOR_STONE_STATUE);
 
-  if (FIELD_CELL(pillar->x.fixed) == 22) {
-    GameFlag_Set(FLAG_ALTIN_PILLAR_MOVED);
+  if (FIELD_CELL(statue->x.fixed) == STONE_STATUE_MOVED_COLUMN) {
+    GameFlag_Set(FLAG_ALTIN_STATUE_MOVED);
   } else {
-    GameFlag_Clear(FLAG_ALTIN_PILLAR_MOVED);
+    GameFlag_Clear(FLAG_ALTIN_STATUE_MOVED);
   }
 }
 
@@ -768,13 +768,13 @@ static void Altin_ApplyWaterLevel(void) {
     Scene_QueueMusic(SE_AMBIENT_WATER);
     Actor_SetSpriteColorById(ACTOR_WATER_BEAST, SPRITE_COLOR_RBG);
     Actor_SetAnimation(ACTOR_WATER_BEAST, WATER_BEAST_ANIMATION_SPIT);
-    Task_AddFrame(Altin_BeastSpawnSpray, TASK_PASS_FRAME);
+    Task_AddFrame(Altin_BeastSpewWater, TASK_PASS_FRAME);
   }
   if (gMainRoutineWork.entrance == ALTIN_FROM_SANCTUM) {
     GameFlag_Clear(FLAG_SHOW_AREA_NAME);
   }
   MapGrid_CopyCellAttributes(0, 33, 4, 3, 20, 41);
-  if (GameFlag_Get(FLAG_ALTIN_PILLAR_MOVED) != 0) {
+  if (GameFlag_Get(FLAG_ALTIN_STATUE_MOVED) != 0) {
     Actor_SetPosition(ACTOR_STONE_STATUE, 360, 168);
   }
   Actor_SetSpriteFlags(Actor_Get(ACTOR_STONE_STATUE), 0);
@@ -829,55 +829,56 @@ static void CottageRoomsD_PlaceSheltering(void) {
   }
 }
 
-/// Gives a new spray particle its look.
-static void Altin_SprayInitialize(struct Actor *spray) {
-  spray->motionFlags = 0;
-  spray->sprite->image.priority = 1;
-  Actor_SetSpriteColor(spray, SPRITE_COLOR_BGR);
-  Actor_SetSpriteFlags(spray, 0);
-  spray->scaleX = WATER_SPRAY_START_SCALE;
-  spray->scaleY = WATER_SPRAY_START_SCALE;
+/// Gives a new drop of spewed water its look.
+static void Altin_InitializeSpew(struct Actor *drop) {
+  drop->motionFlags = 0;
+  drop->sprite->image.priority = 1;
+  Actor_SetSpriteColor(drop, SPRITE_COLOR_BGR);
+  Actor_SetSpriteFlags(drop, 0);
+  drop->scaleX = SPEW_START_SCALE;
+  drop->scaleY = SPEW_START_SCALE;
 }
 
-/// Update routine of a spray particle.
-static void Altin_SprayDrift(struct Actor *spray) {
-  spray->x.fixed +=
-      WATER_SPRAY_LATERAL_STEP(spray->timer, (s16)((s32)(Random_Below(2)) - 1));
-  if (spray->timer <= 3) {
-    spray->z.fixed -= Random_Below(toFIXED(1) / 2) + toFIXED(1);
-    spray->scaleX += 3 * FIXED_ONE / 20;
-    spray->scaleY -= FIXED_ONE / 25;
+/// Update routine of a drop of spewed water.
+static void Altin_DriftSpew(struct Actor *drop) {
+  drop->x.fixed +=
+      SPEW_LATERAL_STEP(drop->timer, (s16)((s32)(Random_Below(2)) - 1));
+  if (drop->timer <= 3) {
+    drop->z.fixed -= Random_Below(toFIXED(1) / 2) + toFIXED(1);
+    drop->scaleX += 3 * FIXED_ONE / 20;
+    drop->scaleY -= FIXED_ONE / 25;
   } else {
-    spray->z.fixed += toFIXED(2);
-    spray->scaleX += 3 * FIXED_ONE / 100;
-    spray->scaleY += 3 * FIXED_ONE / 100;
+    drop->z.fixed += toFIXED(2);
+    drop->scaleX += 3 * FIXED_ONE / 100;
+    drop->scaleY += 3 * FIXED_ONE / 100;
   }
-  if (Random_Below(spray->timer) == 0)
-    Actor_SetSpriteColor(spray, SPRITE_COLOR_WHITE);
-  if (spray->timer != 0)
-    spray->timer--;
+  if (Random_Below(drop->timer) == 0)
+    Actor_SetSpriteColor(drop, SPRITE_COLOR_WHITE);
+  if (drop->timer != 0)
+    drop->timer--;
   else
-    spray->timer = (Random_Below(5)) * 2 + 2;
-  if (--((struct FieldEffect *)spray)->countdown == 0) {
-    spray->update = 0;
-    Actor_Release(spray);
+    drop->timer = (Random_Below(5)) * 2 + 2;
+  if (--((struct FieldEffect *)drop)->countdown == 0) {
+    drop->update = 0;
+    Actor_Release(drop);
   }
 }
 
-/// Task while the water beast spits. Every fourth frame a spray particle starts
-/// from its spout, living 20 frames.
-static void Altin_BeastSpawnSpray(void) {
-  struct Actor *spray;
+/// Task while the water beast spews ("We can't drink the water the monsters
+/// spew!"): every fourth frame a drop of water starts from its spout, living
+/// SPEW_LIFETIME frames.
+static void Altin_BeastSpewWater(void) {
+  struct Actor *drop;
   if ((gFrameCount & 3) == 0) {
-    spray = ((struct Actor *)FieldActor_Create(SPRITE_DUST_PUFF, toFIXED(64), 0,
-                                               toFIXED(400)));
-    if (spray != NULL) {
-      spray->timer = WATER_SPRAY_LIFETIME;
-      spray->userValue = 0;
-      ((struct FieldEffect *)spray)->countdown = WATER_SPRAY_LIFETIME;
-      Altin_SprayInitialize(spray);
-      spray->update = Altin_SprayDrift;
-      Actor_SelectAnimation(spray, 1);
+    drop = ((struct Actor *)FieldActor_Create(SPRITE_DUST_PUFF, toFIXED(64), 0,
+                                              toFIXED(400)));
+    if (drop != NULL) {
+      drop->timer = SPEW_LIFETIME;
+      drop->userValue = 0;
+      ((struct FieldEffect *)drop)->countdown = SPEW_LIFETIME;
+      Altin_InitializeSpew(drop);
+      drop->update = Altin_DriftSpew;
+      Actor_SelectAnimation(drop, 1);
     }
   }
 }
@@ -890,9 +891,9 @@ static void Altin_ScareOffBeast(void) {
   FieldCamera_WaitForArrival();
   Event_Wait(30);
   Actor_SetAnimation(ACTOR_WATER_BEAST, ANIM_STAND);
-  // The spitting stops: its sound and its spray end.
+  // The spewing stops: its sound and its water end.
   Scene_QueueMusic(-1);
-  Task_Remove(Altin_BeastSpawnSpray);
+  Task_Remove(Altin_BeastSpewWater);
   Event_Wait(20);
   Actor_FaceActor(ACTOR_PARTY_LEADER, ACTOR_WATER_BEAST, 0);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_SOUTH, 0);
@@ -1143,9 +1144,9 @@ struct Trigger gAltin_NoTriggers[] = {
 };
 
 struct Trigger gAltin_Triggers[] = {
-    {STEP_TRIGGER_FACING(FACING_NORTH), 10, CONDITION_ALWAYS, EVENT(Altin_WalkThroughDoorway)},
-    {STEP_TRIGGER_FACING(FACING_NORTH), 11, CONDITION_ALWAYS, EVENT(Altin_WalkThroughDoorway)},
-    {STEP_TRIGGER_FACING(FACING_NORTH), 12, CONDITION_ALWAYS, EVENT(Altin_WalkThroughDoorway)},
+    {STEP_TRIGGER_FACING(FACING_NORTH), 10, CONDITION_ALWAYS, EVENT(Altin_WalkIntoMine)},
+    {STEP_TRIGGER_FACING(FACING_NORTH), 11, CONDITION_ALWAYS, EVENT(Altin_WalkIntoMine)},
+    {STEP_TRIGGER_FACING(FACING_NORTH), 12, CONDITION_ALWAYS, EVENT(Altin_WalkIntoMine)},
     {TRIGGER_EXIT, 13, CONDITION_ALWAYS, ALTIN_TO_ALTIN_PEAK_SPRITZ},
     {TRIGGER_EXIT, 1, CONDITION_ALWAYS, ALTIN_TO_WORLD_MAP},
     {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 2, CONDITION_ALWAYS,
@@ -1224,7 +1225,7 @@ struct Trigger gAltin_Triggers[] = {
         MSGNO(MsgAltinAllMyArmorInventoryIsRusting)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_FLOODED_ITEM_MERCHANT, CONDITION_ALWAYS,
         MSGNO(MsgAltinIfMyGoodsAreWetIll)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_STONE_STATUE, CONDITION_ALWAYS, EVENT(Altin_CheckPillarMoved)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_STONE_STATUE, CONDITION_ALWAYS, EVENT(Altin_CheckStatueMoved)},
     {TRIGGER_STEP, CELL_BEHAVIOR_ALTIN_NEAR_BEAST, FLAG_ALTIN_WATER_BEAST_LEFT, EVENT(Altin_ScareOffBeast)},
     {TRIGGER_TABLE_END},
 };

@@ -3,7 +3,7 @@
 
 /// @file
 /// 16.16 fixed-point constants and pixels, sine and cosine, and the library
-/// division, as The Broken Seal's fixed_math.h.
+/// division.
 
 #include "types.h"
 
@@ -13,11 +13,17 @@ typedef s32 FIXED;
 /// One in the game's signed 16.16 fixed-point format.
 #define FIXED_ONE (1 << 16)
 
+/// A damping is a fraction of a speed kept each frame, out of DAMPING_SCALE:
+/// speed * damping / DAMPING_SCALE.
+#define DAMPING_SCALE 64
+
 /// Whole pixels as 16.16, for arithmetic on a stored position or speed.
 #define INTtoFIXED(value) ((value) << 16)
 /// The whole pixels of a 16.16 value, toFIXED() undone: an arithmetic shift, so
 /// a negative value rounds down.
 #define FIXEDtoINT(value) ((value) >> 16)
+/// Twice a 16.16 value, as a whole number: FIXEDtoINT a shift short.
+#define FIXEDtoINT_TWICE(value) ((value) >> 15)
 
 /// A whole or decimal number as 16.16, for the macros that take plain pixels
 /// and decimal speeds: toFIXED(0.8) is 52428. It multiplies where toFIXED()

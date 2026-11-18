@@ -24,9 +24,6 @@
 #define STAT_STAGE_MAX 4
 /// Zephyr's Agility stage, beyond the usual highest: twice the Agility.
 #define AGILITY_STAGE_DOUBLED 8
-/// A Resistance stage adds 20 to the resistance to every element
-/// (Unit_Calculate).
-#define RESISTANCE_PER_STAGE 20
 
 // The turns a stat change or a status lasts; a status or a lowered stat may end
 // sooner.
@@ -847,8 +844,8 @@ s32 BattleAbility_ApplyToTarget(struct BattlePlan *plan, s32 slot) {
   savedTarget = Heap_Alloc(unitSize);
 
   // Meld and Mold strike with the stats of the unit that joins the user.
-  // BUG: abilityId is tested before it is read from the plan, so this sees
-  // whatever the register held.
+  // BUG: abilityId is tested before it is read from the plan, so this reads a
+  // local not yet set.
   if (abilityId == ABILITY_MELD || abilityId == ABILITY_MOLD)
     unitId = plan->partnerId;
   else
@@ -930,7 +927,8 @@ s32 BattleAbility_ApplyToTarget(struct BattlePlan *plan, s32 slot) {
   else
     elementPower = ITEM_ELEMENT_POWER;
 
-  // 2. The Djinn bonus, and whether the effect lands.
+  // 2. The Djinn bonus, and whether the effect lands: a chance of the user's
+  // power less the target's resistance, plus 30, in percent.
   if (plan->command == COMMAND_DJINN &&
       (plan->element >= ELEMENT_VENUS && plan->element <= ELEMENT_JUPITER) &&
       affinity > 0) {
@@ -1000,10 +998,10 @@ s32 BattleAbility_ApplyToTarget(struct BattlePlan *plan, s32 slot) {
       // already there takes a letter too.
       if (suffix == -1) {
         suffix = BattleEnemy_ClaimNameLetter(classId, 1);
-        if (suffix & ENEMY_LETTER_FIRST_TOO)
+        if (suffix & NAME_LETTER_FIRST_TOO)
           BattleEnemy_LetterFirstOfKind(classId);
       }
-      BattleUnit_SetFar(newUnitId, classId, suffix & ENEMY_LETTER_MASK);
+      BattleUnit_SetFar(newUnitId, classId, suffix & NAME_LETTER_MASK);
       if (ability->effect == ABILITY_EFFECT_CALL_QUEUED) {
         battle->spoils.queueCount--;
         battle->spoils.queueHead = (battle->spoils.queueHead + 1) % 2;
@@ -2325,6 +2323,9 @@ u32 Ability_IsPsynergy(s32 abilityId) {
 
 #define AI_BATTLE ((struct BattleWork *)Ram_HeapSlots->battleWork)
 
+/// The choices an enemy may fail to carry out before it defends instead.
+#define AI_MAX_FAILED_CHOICES 16
+
 /// Chooses an enemy's action: one of the eight in its definition, picked by its
 /// action strategy, with an item instead where its item mask says so, and a
 /// target worth the ability. Called with retry 0 for each enemy as the turn is
@@ -2534,7 +2535,7 @@ select_again:
     case ABILITY_EFFECT_COUNTER:
     case ABILITY_EFFECT_GUARD_AURA:
       if (retry == 0)
-        request->priority += 10000;
+        request->priority += PRIORITY_FIRST_IN_TURN;
       break;
     }
 
@@ -2647,7 +2648,7 @@ select_again:
   if (retry == 0)
     needsChoice = 0;
 next_candidate:
-  if (needsChoice != 0 && failedChoices > 16) {
+  if (needsChoice != 0 && failedChoices > AI_MAX_FAILED_CHOICES) {
     request->command = COMMAND_DEFEND;
     needsChoice = 0;
   }

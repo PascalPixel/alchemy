@@ -59,16 +59,27 @@ FIXED Party_GetPpRatio(void);
 #define GLOW_GRID_SIZE 64
 #define GLOW_LEVEL_MAX (PALETTE_COLORS - 1)
 /// Two pixels of colour 1, the glow's darkest: the tiles' blank rows.
-#define GLOW_BLANK_PAIR 0x11
+#define GLOW_BLANK_PAIR ((u8)PIXELS_4BPP(1))
 /// The beams' brighter colours, in the palette after the picture's.
 #define BEAMS_LIGHT_PALETTE (PICTURE_PALETTE + 1)
+/// The meeting beams' tiles, loaded from tile 0 of character block 0.
+#define BEAMS_TILES 256
+/// The picture layer's tiles the glow clears before it is drawn.
+#define GLOW_CLEARED_TILES 256
+/// Where the four beams meet, in pixels from where the last flight ends: the
+/// light there stands west and north of it.
+#define BEAMS_MEET_OFFSET_X (-50)
+#define BEAMS_MEET_OFFSET_Z (-30)
+/// The camera's turn back each frame of the flight home, and each frame of the
+/// flight out until the turn ends.
+#define FLIGHT_TURN_STEP (TRIG_TURN / 2048)
 
 extern s32 gStaffCredit_BeamsLightPalette[];
 
 u16 gStaffCredit_BlendLevel BSS_DATA;
 u16 gStaffCredit_BlendSteady BSS_DATA;
 struct Actor *gWorldMap_PlacedActors[128] BSS_DATA;
-u16 gStaffCredit_PictureBlend BSS_DATA;
+u16 gStaffCredit_TransitionBlend BSS_DATA;
 s16 gGauge_Shown BSS_DATA ALIGNED(4);
 s16 gGauge_Vram BSS_DATA;
 s16 gGauge_Countdown BSS_DATA;
@@ -80,7 +91,7 @@ extern u8 gStaffCredit_BeamsPalette[];
 extern u8 gStaffCredit_BeamsMaps[];
 extern u8 gStaffCredit_BeamsTiles[];
 void StaffCredit_RunCredits(s32 value);
-s32 WorldMap_GetBlockPlace(s32 *position);
+s32 WorldMap_GetBlockCellBehavior(s32 *position);
 
 const struct SceneEntrance *Scene_GetEntrances(void) { return gSceneEntrances; }
 
@@ -138,10 +149,11 @@ void StaffCredit_StepPaletteColors(u16 *colors, s32 count, s32 red, s32 green,
 /// Draws the beacon's glow as rings of light about a corner, brightest at the
 /// middle.
 void StaffCredit_DrawGlowRings(u8 *grid, s32 count, s32 scale) {
-  // Through a local pointer: the routine's address loads before the arguments.
+  /* FAKEMATCH(temporary): Iwram_FillWordsEntry called through the local fill.
+   */
   s32 (*fill)(void *destination, s32 size, u32 value) = Iwram_FillWordsEntry;
   s32 i = 0;
-  // The corner the rings are centred on; each holds 63 for its whole life.
+  // The corner the rings are centred on.
   s32 cornerColumn = GLOW_GRID_SIZE - 1;
   s32 cornerRow = GLOW_GRID_SIZE - 1;
 
@@ -155,7 +167,7 @@ void StaffCredit_DrawGlowRings(u8 *grid, s32 count, s32 scale) {
     s32 x = i;
     s32 error = i;
 
-    level = (Trig_Cos((i << 14) / last) * GLOW_LEVEL_MAX) >> 16;
+    level = FIXEDtoINT(Trig_Cos(i * (TRIG_TURN / 4) / last) * GLOW_LEVEL_MAX);
     level = level * scale / FIXED_ONE;
     if (level > GLOW_LEVEL_MAX)
       level = GLOW_LEVEL_MAX;
@@ -196,12 +208,9 @@ extern s32 gStaffCredit_EndZooms[];
 extern u8 gStaffCredit_FlightFrames[];
 extern u8 gStaffCredit_FlightTurns[];
 extern u16 gStaffCredit_GlowFadeIn[];
-extern s8 gStaffCredit_GlowScrolls[][2];
-
-static __inline__ void Camera_MoveWithinMapBounds_(FIXED x, FIXED z,
-                                                   FIXED mode) {
-  FieldCamera_MoveToFX(x, -1, z, mode);
-}
+/// The glow layer's scroll as each stage starts, which sets it over its
+/// lighthouse.
+extern s8 gStaffCredit_GlowPositions[][2];
 
 /// The lighthouses whose beacons the credits fly to, in the order they are
 /// shown, and last the four beams meeting over Mt. Aleph.
@@ -213,7 +222,9 @@ enum BeaconStage {
   BEACON_BEAMS_MEET
 };
 
-/// The staff credits' one placed actor: the beacon atop Mars Lighthouse.
+/// The staff credits' one placed actor, a beacon's glow (SPRITE_MARS_BEACON)
+/// placed atop Mars Lighthouse; StaffCredit_ShowBeacon puts it out of sight,
+/// and in the last stage grows it where the four beams meet.
 enum { ACTOR_BEACON = ACTOR_FIRST_PLACED };
 
 /// Flies the camera to a lit lighthouse and shows its beacon's glow, then flies
@@ -240,8 +251,9 @@ void StaffCredit_ShowBeacon(s32 stage) {
     palette = 0;
   gBgScroll[0].y = 0;
   gBgScroll[0].x = 0;
-  Camera_MoveWithinMapBounds_(toFIXED(gStaffCredit_FlightStarts[stage][0]),
-                              toFIXED(gStaffCredit_FlightStarts[stage][1]), 0);
+  FieldCamera_MoveToFX(toFIXED(gStaffCredit_FlightStarts[stage][0]),
+                       CAMERA_KEEP,
+                       toFIXED(gStaffCredit_FlightStarts[stage][1]), 0);
   WorldMap_UpdateCurrentTileBlock();
   FieldEffect_ScheduleRatioTransition(gStaffCredit_StartZooms[stage], 1);
   map->yaw = TRIG_TURN / 16;
@@ -252,13 +264,13 @@ void StaffCredit_ShowBeacon(s32 stage) {
   Actor_GetById(gMainRoutineWork.leaderActorId)->spriteStorageKind = 0;
   gFieldWork->transitionFrames = 64;
   Event_StartScreenTransition();
-  Camera_MoveWithinMapBounds_(toFIXED(gStaffCredit_FlightEnds[stage][0]),
-                              toFIXED(gStaffCredit_FlightEnds[stage][1]), 1);
+  FieldCamera_MoveToFX(toFIXED(gStaffCredit_FlightEnds[stage][0]), CAMERA_KEEP,
+                       toFIXED(gStaffCredit_FlightEnds[stage][1]), 1);
   for (frame = 0; frame != gStaffCredit_FlightFrames[stage]; frame++) {
     {
       s32 length = gStaffCredit_FlightFrames[stage];
 
-      map->yaw = (length - frame) << 5;
+      map->yaw = (length - frame) * FLIGHT_TURN_STEP;
       if (frame == length - 59)
         FieldEffect_ScheduleRatioTransition(gStaffCredit_EndZooms[stage], 60);
     }
@@ -277,7 +289,7 @@ void StaffCredit_ShowBeacon(s32 stage) {
     Decompress_TaggedLz(gStaffCredit_BeamsTiles, buffer);
     Decompress_TaggedLz(gStaffCredit_BeamsMaps, frames);
     IO_WRITE_QUEUE_PUSH(VRAM, (u32)buffer,
-                        DMA_COPY_WORDS(256 * TILE_SIZE_4BPP / 4));
+                        DMA_COPY_WORDS(BEAMS_TILES * TILE_SIZE_4BPP / 4));
     IO_WRITE_QUEUE_PUSH(PICTURE_MAP, (u32)frames,
                         DMA_COPY_WORDS(PICTURE_FRAME_SIZE / 4));
     grid = frames;
@@ -290,13 +302,17 @@ void StaffCredit_ShowBeacon(s32 stage) {
         (u32)(gStaffCredit_BeaconPalettes + palette * PALETTE_COLORS * 2),
         DMA_COPY_HALFWORDS(PALETTE_COLORS));
     {
+      /* FAKEMATCH(temporary): Iwram_ClearWordsEntry called through the local
+       * clear, with its arguments in locals. */
       void (*clear)(void *, s32) = (void (*)(void *, s32))Iwram_ClearWordsEntry;
-      s32 size = 256 * TILE_SIZE_4BPP;
+      s32 size = GLOW_CLEARED_TILES * TILE_SIZE_4BPP;
       void *tilesAt = (void *)PICTURE_TILES;
 
       clear(tilesAt, size);
     }
     wait(1);
+    // The glow's map: its quarter drawn four times, mirrored across and down
+    // into a whole disc, and blank rows below.
     for (y = 0; y != 8; y++) {
       for (x = 0; x != 16; x++) {
         s32 tile = y * 16 + x + PICTURE_FIRST_TILE;
@@ -336,8 +352,8 @@ void StaffCredit_ShowBeacon(s32 stage) {
                             (u32)gStaffCredit_BeamsLightPalette,
                             DMA_COPY_HALFWORDS(PALETTE_COLORS));
       } else {
-        gBgScroll[0].x = gStaffCredit_GlowScrolls[stage][0];
-        gBgScroll[0].y = gStaffCredit_GlowScrolls[stage][1];
+        gBgScroll[0].x = gStaffCredit_GlowPositions[stage][0];
+        gBgScroll[0].y = gStaffCredit_GlowPositions[stage][1];
         IO_WRITE_QUEUE_PUSH(
             (u32)&BG_PLTT_COLOR(PICTURE_PALETTE, 0),
             (u32)(gStaffCredit_BeaconPalettes + palette * PALETTE_COLORS * 2),
@@ -347,24 +363,25 @@ void StaffCredit_ShowBeacon(s32 stage) {
     if (stage == BEACON_BEAMS_MEET) {
 
       {
-        s16 *camera = (s16 *)gStaffCredit_FlightEnds;
-        s32 top;
-        s32 left;
-        FIXED z;
-        FIXED x0;
-        top = camera[8];
-        left = camera[9];
-        z = toFIXED(-30);
-        x0 = toFIXED(-50);
+        s16 *flightEnds = (s16 *)gStaffCredit_FlightEnds;
+        s32 endX;
+        s32 endZ;
+        FIXED offsetZ;
+        FIXED offsetX;
+        endX = flightEnds[BEACON_BEAMS_MEET * 2];
+        endZ = flightEnds[BEACON_BEAMS_MEET * 2 + 1];
+        offsetZ = toFIXED(BEAMS_MEET_OFFSET_Z);
+        offsetX = toFIXED(BEAMS_MEET_OFFSET_X);
 
-        Actor_SetPositionFX(ACTOR_BEACON, toFIXED(top) + x0, toFIXED(left) + z);
+        Actor_SetPositionFX(ACTOR_BEACON, toFIXED(endX) + offsetX,
+                            toFIXED(endZ) + offsetZ);
       }
       Actor_SetBlendMode(Actor_GetById(ACTOR_BEACON), 1);
       Actor_SetAnimation(ACTOR_BEACON, 0);
       Actor_GetById(ACTOR_BEACON)->scaleX = 0;
       Actor_GetById(ACTOR_BEACON)->scaleY = 0;
       if (frame > 22) {
-        s32 scale = (frame << 10) - (21 << 10);
+        s32 scale = (frame - 21) * (FIXED_ONE / 64);
 
         if (scale > FIXED_ONE)
           scale = FIXED_ONE;
@@ -489,6 +506,8 @@ void StaffCredit_ShowBeacon(s32 stage) {
       u16 *alpha = &gStaffCredit_BlendLevel;
       u32 scrollFrames = frame - 32;
 
+      // DEAD: the fade-in's level, at once overwritten with full strength;
+      // the ROM keeps the table read and its store.
       *alpha = frame <= 6 ? gStaffCredit_GlowFadeIn[frame % 6]
                           : BLEND_ALPHA(0, BLEND_WEIGHT_MAX);
       gStaffCredit_BlendLevel = BLEND_ALPHA(0, BLEND_WEIGHT_MAX);
@@ -509,12 +528,12 @@ void StaffCredit_ShowBeacon(s32 stage) {
   if (stage != BEACON_BEAMS_MEET) {
     FieldCamera_SetSpeed(6);
     WorldMap_ReloadPendingAreaGraphics();
-    Camera_MoveWithinMapBounds_(toFIXED(gStaffCredit_FlightReturns[stage][0]),
-                                toFIXED(gStaffCredit_FlightReturns[stage][1]),
-                                1);
+    FieldCamera_MoveToFX(toFIXED(gStaffCredit_FlightReturns[stage][0]),
+                         CAMERA_KEEP,
+                         toFIXED(gStaffCredit_FlightReturns[stage][1]), 1);
     FieldEffect_ScheduleRatioTransition(FIXED_ONE * 7 / 10, 60);
     for (frame = 0; frame != 124;) {
-      map->yaw -= 32;
+      map->yaw -= FLIGHT_TURN_STEP;
       if (frame == 60) {
         gFieldWork->transitionFrames = 64;
         Event_FinishScreenTransition();
@@ -546,6 +565,14 @@ enum StaffCreditEntrance {
   STAFF_CREDIT_BEAMS_MEET ///< the four beams over Mt. Aleph, then the summit
 };
 
+/// Credits_Run's mode for the scrolling credits from the given page (mode 1 is
+/// the title's slide show).
+#define CREDITS_FROM_PAGE(page) ((page) + 2)
+
+/// The summit's entrances the credits return to (mt_aleph_summit.c): Alex sees
+/// the Golden Sun begin to form, and Alex takes the Golden Sun's power.
+enum { SUMMIT_GOLDEN_SUN_FORMS = 2, SUMMIT_ALEX_TAKES_THE_POWER = 3 };
+
 /// Chooses where the credits go next by the entrance they were entered from:
 /// each beacon's entrance first shows its lighthouse's beacon, the last the
 /// beams meeting, and each but the last runs the next stretch of credits.
@@ -563,41 +590,41 @@ s32 Scene_Initialize(void) {
   switch (gMainRoutineWork.entrance) {
   case STAFF_CREDIT_OPENING:
     Resource_ReservedNoOp(RESOURCE_CREDITS_FAR_CALLS);
-    StaffCredit_RunCredits(2);
-    Event_SetDestination(SCENE_MT_ALEPH_SUMMIT, 2);
+    StaffCredit_RunCredits(CREDITS_FROM_PAGE(0));
+    Event_SetDestination(SCENE_MT_ALEPH_SUMMIT, SUMMIT_GOLDEN_SUN_FORMS);
     break;
   case STAFF_CREDIT_TO_BEACONS:
     Resource_ReservedNoOp(RESOURCE_CREDITS_FAR_CALLS);
-    StaffCredit_RunCredits(3);
+    StaffCredit_RunCredits(CREDITS_FROM_PAGE(1));
     Event_SetDestination(SCENE_STAFF_CREDIT, STAFF_CREDIT_MARS_BEACON);
     break;
   case STAFF_CREDIT_MARS_BEACON:
     StaffCredit_ShowBeacon(BEACON_MARS);
     Resource_ReservedNoOp(RESOURCE_CREDITS_FAR_CALLS);
-    StaffCredit_RunCredits(4);
+    StaffCredit_RunCredits(CREDITS_FROM_PAGE(2));
     Event_SetDestination(SCENE_STAFF_CREDIT, STAFF_CREDIT_MERCURY_BEACON);
     break;
   case STAFF_CREDIT_MERCURY_BEACON:
     StaffCredit_ShowBeacon(BEACON_MERCURY);
     Resource_ReservedNoOp(RESOURCE_CREDITS_FAR_CALLS);
-    StaffCredit_RunCredits(5);
+    StaffCredit_RunCredits(CREDITS_FROM_PAGE(3));
     Event_SetDestination(SCENE_STAFF_CREDIT, STAFF_CREDIT_VENUS_BEACON);
     break;
   case STAFF_CREDIT_VENUS_BEACON:
     StaffCredit_ShowBeacon(BEACON_VENUS);
     Resource_ReservedNoOp(RESOURCE_CREDITS_FAR_CALLS);
-    StaffCredit_RunCredits(6);
+    StaffCredit_RunCredits(CREDITS_FROM_PAGE(4));
     Event_SetDestination(SCENE_STAFF_CREDIT, STAFF_CREDIT_JUPITER_BEACON);
     break;
   case STAFF_CREDIT_JUPITER_BEACON:
     StaffCredit_ShowBeacon(BEACON_JUPITER);
     Resource_ReservedNoOp(RESOURCE_CREDITS_FAR_CALLS);
-    StaffCredit_RunCredits(7);
+    StaffCredit_RunCredits(CREDITS_FROM_PAGE(5));
     Event_SetDestination(SCENE_STAFF_CREDIT, STAFF_CREDIT_BEAMS_MEET);
     break;
   case STAFF_CREDIT_BEAMS_MEET:
     StaffCredit_ShowBeacon(BEACON_BEAMS_MEET);
-    Event_SetDestination(SCENE_MT_ALEPH_SUMMIT, 3);
+    Event_SetDestination(SCENE_MT_ALEPH_SUMMIT, SUMMIT_ALEX_TAKES_THE_POWER);
     break;
   }
   return 0;
@@ -612,9 +639,9 @@ s32 Scene_PrepareMap(void) { return 0; }
 /// The ship's flicker and its sparks while it powers up (flight mode 1).
 void StaffCredit_FlashPoweringUp(struct Actor *actor) {
   if ((gFrameCount & 2) != 0) {
-    Actor_SetSpriteColorMode(actor, 7);
+    Actor_SetSpriteColorMode(actor, SPRITE_COLOR_WHITE);
   } else {
-    Actor_SetSpriteColorMode(actor, 0);
+    Actor_SetSpriteColorMode(actor, SPRITE_COLOR_NORMAL);
   }
   if ((gFrameCount & 15) == 0) {
     WorldMap_SpawnSparkPair(actor);
@@ -640,7 +667,7 @@ void StaffCredit_GlowInFlight(struct Actor *actor) {
 void Actor_SetFlightMode(struct Actor *actor, s32 mode) {
   if (mode == 0) {
     actor->update = 0;
-    Actor_SetSpriteColorMode(actor, 0);
+    Actor_SetSpriteColorMode(actor, SPRITE_COLOR_NORMAL);
     Event_PlaySound(SOUND_FADE_OUT_ACTION_SE);
   } else if (mode == 1) {
     actor->update = (void (*)(void))StaffCredit_FlashPoweringUp;
@@ -657,16 +684,18 @@ UNUSED void StaffCredit_EndFlight(void) {
   Actor_SetFlightMode(Actor_Get(FieldParty_GetLeaderActor()), 0);
 }
 
-/// Sets the layer blend, switching its alpha every two frames.
-void StaffCredit_BlendPicture(void) {
+/// The copy of the world map's WorldMap_UpdateTransitionBlend, which
+/// StaffCredit_PlayLighthouseTransition runs each frame: every other two
+/// frames the blend alternates between two strengths.
+void StaffCredit_UpdateTransitionBlend(void) {
   Scene_QueueIoWrite16((u32)&REG_BLDCNT,
                        BLDCNT_TGT1_BG0 | BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_ALL);
   if (gFrameCount & 2) {
     Scene_QueueIoWrite16((u32)&REG_BLDALPHA,
-                         gStaffCredit_PictureBlend | (BLEND_WEIGHT_MAX - 4));
+                         gStaffCredit_TransitionBlend | (BLEND_WEIGHT_MAX - 4));
   } else {
     Scene_QueueIoWrite16((u32)&REG_BLDALPHA,
-                         gStaffCredit_PictureBlend | BLEND_WEIGHT_MAX);
+                         gStaffCredit_TransitionBlend | BLEND_WEIGHT_MAX);
   }
 }
 
@@ -683,8 +712,9 @@ static inline void CameraMove(FIXED x, FIXED y, FIXED z, s32 mode) {
       (u32)(buffer + PICTURES_FIRST_FRAME + (frame) * PICTURES_FRAME_STRIDE),  \
       DMA_COPY_WORDS(PICTURE_FRAME_SIZE / 4))
 
-/// Unused: fades out the field and plays the beacon picture's frames.
-UNUSED void StaffCredit_ShowPicture(s32 mode) {
+/// Unused: the copy of the world map's WorldMap_PlayLighthouseTransition, the
+/// view of a lighthouse lit, which the credits never call.
+UNUSED void StaffCredit_PlayLighthouseTransition(s32 mode) {
   u8 *buffer;
 
   System_Wait(1);
@@ -723,29 +753,29 @@ UNUSED void StaffCredit_ShowPicture(s32 mode) {
     }
     IRQ_UNLOCK(saved);
   }
-  Task_AddFrame(StaffCredit_BlendPicture, TASK_PASS_FRAME);
+  Task_AddFrame(StaffCredit_UpdateTransitionBlend, TASK_PASS_FRAME);
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
   Event_PlaySound(SE_GLITTER);
-  gStaffCredit_PictureBlend = BLEND_ALPHA(0, 14);
+  gStaffCredit_TransitionBlend = BLEND_ALPHA(0, 14);
   PUSH_PICTURE(6);
   FieldEvent_Wait(2);
-  gStaffCredit_PictureBlend = BLEND_ALPHA(0, 13);
+  gStaffCredit_TransitionBlend = BLEND_ALPHA(0, 13);
   PUSH_PICTURE(5);
   FieldEvent_Wait(2);
-  gStaffCredit_PictureBlend = BLEND_ALPHA(0, 12);
+  gStaffCredit_TransitionBlend = BLEND_ALPHA(0, 12);
   PUSH_PICTURE(4);
   FieldEvent_Wait(2);
-  gStaffCredit_PictureBlend = BLEND_ALPHA(0, 11);
+  gStaffCredit_TransitionBlend = BLEND_ALPHA(0, 11);
   PUSH_PICTURE(3);
   FieldEvent_Wait(2);
-  gStaffCredit_PictureBlend = BLEND_ALPHA(0, 10);
+  gStaffCredit_TransitionBlend = BLEND_ALPHA(0, 10);
   PUSH_PICTURE(2);
   FieldEvent_Wait(2);
-  gStaffCredit_PictureBlend = BLEND_ALPHA(0, 9);
+  gStaffCredit_TransitionBlend = BLEND_ALPHA(0, 9);
   PUSH_PICTURE(1);
   FieldEvent_Wait(2);
-  gStaffCredit_PictureBlend = BLEND_ALPHA(0, 8);
+  gStaffCredit_TransitionBlend = BLEND_ALPHA(0, 8);
   PUSH_PICTURE(0);
   FieldEvent_Wait(140);
   PUSH_PICTURE(1);
@@ -754,57 +784,57 @@ UNUSED void StaffCredit_ShowPicture(s32 mode) {
   FieldEvent_Wait(4);
   PUSH_PICTURE(3);
   FieldEvent_Wait(4);
-  gStaffCredit_PictureBlend = BLEND_ALPHA(0, 9);
+  gStaffCredit_TransitionBlend = BLEND_ALPHA(0, 9);
   PUSH_PICTURE(4);
   FieldEvent_Wait(4);
-  gStaffCredit_PictureBlend = BLEND_ALPHA(0, 10);
+  gStaffCredit_TransitionBlend = BLEND_ALPHA(0, 10);
   PUSH_PICTURE(5);
   FieldEvent_Wait(4);
-  gStaffCredit_PictureBlend = BLEND_ALPHA(0, 11);
+  gStaffCredit_TransitionBlend = BLEND_ALPHA(0, 11);
   PUSH_PICTURE(6);
   FieldEvent_Wait(4);
-  gStaffCredit_PictureBlend = BLEND_ALPHA(0, 12);
+  gStaffCredit_TransitionBlend = BLEND_ALPHA(0, 12);
   PUSH_PICTURE(7);
   if (mode == 1) {
     MapGrid_SetShake(2, 2, 1);
     Event_PlaySound(SE_RUMBLE);
-    gStaffCredit_PictureBlend = BLEND_ALPHA(0, 13);
+    gStaffCredit_TransitionBlend = BLEND_ALPHA(0, 13);
     FieldEvent_Wait(4);
-    gStaffCredit_PictureBlend = BLEND_ALPHA(0, 14);
+    gStaffCredit_TransitionBlend = BLEND_ALPHA(0, 14);
     FieldEvent_Wait(4);
-    gStaffCredit_PictureBlend = BLEND_ALPHA(0, 15);
+    gStaffCredit_TransitionBlend = BLEND_ALPHA(0, 15);
     FieldEvent_Wait(4);
-    gStaffCredit_PictureBlend = BLEND_ALPHA(0, BLEND_WEIGHT_MAX);
+    gStaffCredit_TransitionBlend = BLEND_ALPHA(0, BLEND_WEIGHT_MAX);
     FieldEvent_Wait(45);
-    FieldTask_Remove(StaffCredit_BlendPicture);
+    FieldTask_Remove(StaffCredit_UpdateTransitionBlend);
     DebugText_Clear();
-    Scene_QueueIoWrite16((u32)&REG_BLDALPHA, gStaffCredit_PictureBlend);
+    Scene_QueueIoWrite16((u32)&REG_BLDALPHA, gStaffCredit_TransitionBlend);
     Scene_QueueIoWrite16((u32)&REG_BLDCNT, 0);
   } else {
-    gStaffCredit_PictureBlend = BLEND_ALPHA(0, 13);
+    gStaffCredit_TransitionBlend = BLEND_ALPHA(0, 13);
     FieldEvent_Wait(4);
-    gStaffCredit_PictureBlend = BLEND_ALPHA(0, 14);
+    gStaffCredit_TransitionBlend = BLEND_ALPHA(0, 14);
     FieldEvent_Wait(4);
-    gStaffCredit_PictureBlend = BLEND_ALPHA(0, 15);
+    gStaffCredit_TransitionBlend = BLEND_ALPHA(0, 15);
     FieldEvent_Wait(4);
-    gStaffCredit_PictureBlend = BLEND_ALPHA(0, BLEND_WEIGHT_MAX);
+    gStaffCredit_TransitionBlend = BLEND_ALPHA(0, BLEND_WEIGHT_MAX);
     FieldEvent_Wait(45);
-    FieldTask_Remove(StaffCredit_BlendPicture);
+    FieldTask_Remove(StaffCredit_UpdateTransitionBlend);
     DebugText_Clear();
-    Scene_QueueIoWrite16((u32)&REG_BLDALPHA, gStaffCredit_PictureBlend);
+    Scene_QueueIoWrite16((u32)&REG_BLDALPHA, gStaffCredit_TransitionBlend);
     Scene_QueueIoWrite16((u32)&REG_BLDCNT, 0);
   }
   Heap_Release(buffer);
   Event_SetFlag(FLAG_SKIP_SCENE_CHANGE_SOUND);
 }
 
-/// Unused: an update that flashes an actor every other two frames and sends
-/// out a growing pair of sparks every sixteenth frame.
-UNUSED void StaffCredit_FlashAndEmit(struct Actor *actor) {
+/// Unused: the copy of the world map's WorldMap_FlashWithSparks: the actor
+/// flashes white, with a pair of sparks every sixteenth frame.
+UNUSED void StaffCredit_FlashWithSparks(struct Actor *actor) {
   if ((gFrameCount & 2) != 0) {
-    Actor_SetSpriteColorMode(actor, 7);
+    Actor_SetSpriteColorMode(actor, SPRITE_COLOR_WHITE);
   } else {
-    Actor_SetSpriteColorMode(actor, 0);
+    Actor_SetSpriteColorMode(actor, SPRITE_COLOR_NORMAL);
   }
   if ((gFrameCount & 15) == 0) {
     StaffCredit_SpawnGrowingPair(actor);
@@ -874,7 +904,7 @@ void StaffCredit_SpawnGrowingPair(struct Actor *parent) {
 
     sp->priority = 1;
     p->update = (void *)Actor_GrowUp;
-    p->priorityFlags = 2;
+    p->priorityFlags = ACTOR_PRIORITY_UNDERFOOT;
   }
 }
 
@@ -895,7 +925,7 @@ u32 gWorldMap_ParticleScript[] = {
 };
 
 u32 gStaffCredit_GlowColorModes[] = {
-    0, 9, 0, 6,
+    SPRITE_COLOR_NORMAL, SPRITE_COLOR_BLUE_TINT, SPRITE_COLOR_NORMAL, SPRITE_COLOR_GREY,
 };
 // clang-format on
 
@@ -1043,14 +1073,13 @@ LATE_DATA u16 gStaffCredit_GlowFadeIn[] = {
 };
 // clang-format on
 
-LATE_DATA s8 gStaffCredit_GlowScrolls[][2] = {
+LATE_DATA s8 gStaffCredit_GlowPositions[][2] = {
     {22, -4}, {8, -8}, {2, -28}, {14, 12}, {8, 8}, {0, 0},
 };
 
 LATE_DATA s32 gWorldMap_PlacedActorScript[] = {
-    46,
-    (s32)TileSprite_Reset,
-    17,
+    SC_CALL(TileSprite_Reset),
+    SC_END,
     0,
 };
 

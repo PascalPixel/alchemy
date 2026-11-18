@@ -56,11 +56,11 @@ other, and that scene's exit b leads back to entrance a, so in each scene the
 entrance and the exit of one number are one door and share its name. An entrance no exit reaches, or a way between rooms of one map,
 keeps its number. An entrance can also give a box the camera must stay
 inside, which is how a room drawn beside others on one map stays out of their
-sight. The house on the pier's islet, entrance 8 of Champa's houses, is one:
+sight. The tent on an islet, entrance 8 of Champa's rooms, is one:
 
 ```c
-{ENTRANCE_PIER_ISLET_HOUSE, CONDITION_ALWAYS, 416, 0, 664, FACING_NORTH, 0,
- 288, 536, 528, 696, 0},
+{CHAMPA_ROOMS_FROM_SOUTHEAST_ANGARA_ISLET, CONDITION_ALWAYS, 416, 0, 664,
+ FACING_NORTH, 0, 288, 536, 528, 696, 0},
 ```
 
 ### Exits
@@ -107,8 +107,8 @@ here: what kind of action, on which actor or cell, under what condition,
 and what runs.
 
 ```c
-{TRIGGER_TALK, ACTOR_WEAPON_MERCHANT, CONDITION_ALWAYS,
- EVENT(GarohRooms_TalkToWeaponMerchant)},
+{TRIGGER_TALK, ACTOR_WEAPONS_VENDOR, CONDITION_ALWAYS,
+ EVENT(GarohRooms_TalkToWeaponsVendor)},
 {PSYNERGY_ON_ACTOR(ABILITY_FROST), ACTOR_FIFTH_PUDDLE,
  FLAG_DAILA_PUDDLE_FROZEN_FIRST + 4, EVENT(Scene_RaiseHeldActor)},
 ```
@@ -268,7 +268,7 @@ same village twice, with different people about.
   routine headers above, and the larger routines a scene includes where
   its copy sits, such as the ice slide six scenes share
   ([`slide_on_ice_from_edge.c`](shared/slide_on_ice_from_edge.c)), the
-  flames' knock-back in three Mars Lighthouse rooms
+  flames' knock-back in four Mars Lighthouse rooms
   ([`leader_knock_back.c`](shared/leader_knock_back.c)) and the World
   Map's placed objects, which the staff credits keep too
   ([`world_map_objects.c`](shared/world_map_objects.c)). A few small field

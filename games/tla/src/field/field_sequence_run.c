@@ -30,6 +30,23 @@ s32 Leader_StepOffRope(void);
 s32 Leader_StepOntoTightrope(void);
 s32 Leader_StepOffTightrope(void);
 
+/// The two nibbles of a scene's attributes (Field_GetSceneAttributes).
+#define NIBBLE_LOW(value) ((value) & 15)
+#define NIBBLE_HIGH(value) (((value) >> 4) & 15)
+/// The hazard count's limit each scene starts with, as The Broken Seal's.
+#define HAZARD_LIMIT_DEFAULT 16
+/// A Teleport destination's World Picture marker (FlagEntry.value's high
+/// nibble): 1 for a place the party walks to; 2 for Lemuria's, which it
+/// reaches aboard the ship.
+#define PLACE_MARKER_ON_FOOT (1 << 4)
+#define PLACE_MARKER_ABOARD (2 << 4)
+/// Felix's own collapse when the whole party falls: he slumps and falls on his
+/// face; any other leader plays ANIM_COLLAPSE.
+#define ANIM_LEADER_FALL_ON_FACE 36
+/// The sprite VRAM blocks the pause menu needs free, or the field's sprites
+/// stop drawing while it runs.
+#define PAUSE_MENU_VRAM_BLOCKS 136
+
 /// The field sequence: runs the current scene, which the party entered by
 /// entrance, until it leaves; returns the exit kind it left by, for
 /// Scene_TakeExit, or EXIT_KEEP_DESTINATION when the next scene is already in
@@ -100,6 +117,8 @@ s32 FieldSequence_Run(void) {
     SCENE_ENTRIES->prepareMap();
     MapGrid_CenterOnFollowedPointFar();
   }
+  // Flag 0x11f is cleared as each scene starts; nothing in the game sets or
+  // reads it.
   GameFlag_Clear(0x11f);
   PaletteFade_Initialize();
   PaletteFade_SetTarget(PALETTE_TINT_NONE, 0);
@@ -120,7 +139,7 @@ s32 FieldSequence_Run(void) {
   work->previousCell = gMapGridCellBuffer;
   if (!GameFlag_Get(FLAG_KEEP_PARTY_POSITION)) {
     Scene_SetRestartPoint();
-    gMainRoutineWork.hazardLimit = 16;
+    gMainRoutineWork.hazardLimit = HAZARD_LIMIT_DEFAULT;
     gMainRoutineWork.hazardMode = HAZARD_COUNT_ON_CELLS;
     gMainRoutineWork.hazardDamage = 1;
     gMainRoutineWork.haltedActor = -1;
@@ -128,8 +147,8 @@ s32 FieldSequence_Run(void) {
   }
   FieldPsynergy_ResumeCloakCheck();
   value = Field_GetSceneAttributes(gMainRoutineWork.next);
-  work->sceneAttributeHigh = (value >> 4) & 15;
-  work->sceneAttributeLow = value & 15;
+  work->sceneAttributeHigh = NIBBLE_HIGH(value);
+  work->sceneAttributeLow = NIBBLE_LOW(value);
 
   if (gMainRoutineWork.teleportState == 2) {
     Actor_GetById(Party_GetLeaderActor())->scaleX = 0;
@@ -180,10 +199,10 @@ s32 FieldSequence_Run(void) {
         /* FAKEMATCH(barrier): an empty asm. */
         asm("" : : : "r0");
         if ((value = FlagEntries_GetValue(gMainRoutineWork.teleportEntrance)) &
-            16)
+            PLACE_MARKER_ON_FOOT)
         clearOwner:
           gMainRoutineWork.ownerOverride = zero;
-        else if (value & 32)
+        else if (value & PLACE_MARKER_ABOARD)
           gMainRoutineWork.ownerOverride = 1;
       } while (0);
       Event_SetDestination(gMainRoutineWork.teleportScene,
@@ -248,7 +267,7 @@ s32 FieldSequence_Run(void) {
           }
           if (work->survivorCount == 0) {
             if (*leaderId == ACTOR_FELIX)
-              Actor_SelectAnimationFar(leader, 36);
+              Actor_SelectAnimationFar(leader, ANIM_LEADER_FALL_ON_FACE);
             else
               Actor_SelectAnimationFar(leader, ANIM_COLLAPSE);
             Sound_PlayFar(MUS_DEFEAT);
@@ -431,7 +450,7 @@ s32 FieldSequence_Run(void) {
           AreaNameWindow_HideFar();
           party->returnMusic = Sound_GetCurrentBgmFar();
           if (!GameFlag_Get(FLAG_IN_BATTLE_ARENA)) {
-            // With fewer than 136 of the 512 sprite VRAM blocks (64 bytes each)
+            // With fewer than PAUSE_MENU_VRAM_BLOCKS of the sprite VRAM blocks
             // free, sprite drawing stays suspended while the menu runs, and a
             // frame passes so that the field's sprites give their VRAM back
             // before it opens.
@@ -440,11 +459,11 @@ s32 FieldSequence_Run(void) {
             s32 freeBlocks = 0;
             s32 n;
 
-            for (n = 0; n < 512; n++) {
+            for (n = 0; n < VRAM_BLOCK_COUNT; n++) {
               if (*owner++ == VRAM_BLOCK_OWNER_FREE)
                 freeBlocks++;
             }
-            if (freeBlocks - 136 < 0) {
+            if (freeBlocks - PAUSE_MENU_VRAM_BLOCKS < 0) {
               system->suspended = 1;
               wait(1);
             }
@@ -578,7 +597,7 @@ s32 Scene_ApplyEntrance(s32 findEntrance) {
 
   if (!GameFlag_Get(FLAG_KEEP_PARTY_POSITION)) {
     SET_POSITION(&gMainRoutineWork, toFIXED(entry->x), toFIXED(entry->y),
-                 entry->z << 16);
+                 toFIXED(entry->z));
     gMainRoutineWork.heading = entry->facing;
     gMainRoutineWork.layer = 0;
   }
@@ -593,12 +612,19 @@ s32 Scene_ApplyEntrance(s32 findEntrance) {
   if (entry->cameraBottom != -1)
     map->maxZ = toFIXED(entry->cameraBottom);
 
-  if (map->minX + toFIXED(240) > map->maxX)
-    map->minX = map->maxX - toFIXED(240);
-  if (map->minZ + toFIXED(160) > map->maxZ)
-    map->minZ = map->maxZ - toFIXED(160);
+  if (map->minX + toFIXED(DISPLAY_WIDTH) > map->maxX)
+    map->minX = map->maxX - toFIXED(DISPLAY_WIDTH);
+  if (map->minZ + toFIXED(DISPLAY_HEIGHT) > map->maxZ)
+    map->minZ = map->maxZ - toFIXED(DISPLAY_HEIGHT);
   return 1;
 }
+
+/// A map entrance's flags byte: the party's facing in sixteenths of a turn,
+/// then whether it stands 8 pixels up and whether the camera keeps the bounds
+/// it has.
+#define MAP_ENTRANCE_FACING_MASK 15
+#define MAP_ENTRANCE_RAISED (1 << 4)
+#define MAP_ENTRANCE_KEEP_BOUNDS (1 << 5)
 
 /// Reads the map's entrance stream (gMapScene) for the current entrance,
 /// places the party there unless FLAG_KEEP_PARTY_POSITION keeps it, then sets
@@ -642,18 +668,18 @@ s32 Field_PlaceAtEntrance(void) {
       z = Stream_ReadS16(&cursor);
       xFixed = toFIXED(x);
       zFixed = toFIXED(z);
-      height = MapGrid_GetTerrainHeightFar(0, xFixed, zFixed) >> 16;
+      height = FIXEDtoINT(MapGrid_GetTerrainHeightFar(0, xFixed, zFixed));
       flags = *cursor;
       base = (s32)gMapScene;
       if (!GameFlag_Get(FLAG_KEEP_PARTY_POSITION)) {
         gMainRoutineWork.x = xFixed;
         gMainRoutineWork.z = zFixed;
-        *angle = (flags & 15) << 12;
+        *angle = (flags & MAP_ENTRANCE_FACING_MASK) * (TRIG_TURN / 16);
         *layer = 0;
-        if (flags & 16)
+        if (flags & MAP_ENTRANCE_RAISED)
           gMainRoutineWork.y = toFIXED(8);
       }
-      if (flags & 32)
+      if (flags & MAP_ENTRANCE_KEEP_BOUNDS)
         return 1;
 
       cursor = gMapSceneBoundsOffset;
@@ -678,10 +704,10 @@ s32 Field_PlaceAtEntrance(void) {
             map->minZ = FIELD_CELL_ORIGIN(top);
             map->maxX = FIELD_CELL_ORIGIN(right);
             map->maxZ = FIELD_CELL_ORIGIN(bottom);
-            if (map->minX + toFIXED(240) > map->maxX)
-              map->minX = map->maxX - toFIXED(240);
-            if (map->minZ + toFIXED(160) > map->maxZ)
-              map->minZ = map->maxZ - toFIXED(160);
+            if (map->minX + toFIXED(DISPLAY_WIDTH) > map->maxX)
+              map->minX = map->maxX - toFIXED(DISPLAY_WIDTH);
+            if (map->minZ + toFIXED(DISPLAY_HEIGHT) > map->maxZ)
+              map->minZ = map->maxZ - toFIXED(DISPLAY_HEIGHT);
             break;
           }
         }
@@ -722,3 +748,13 @@ void BattleMap_ApplySceneEntranceView(void) {
   if (done == 0)
     Scene_ApplyEntrance(0);
 }
+#undef NIBBLE_LOW
+#undef NIBBLE_HIGH
+#undef HAZARD_LIMIT_DEFAULT
+#undef PLACE_MARKER_ON_FOOT
+#undef PLACE_MARKER_ABOARD
+#undef ANIM_LEADER_FALL_ON_FACE
+#undef PAUSE_MENU_VRAM_BLOCKS
+#undef MAP_ENTRANCE_FACING_MASK
+#undef MAP_ENTRANCE_RAISED
+#undef MAP_ENTRANCE_KEEP_BOUNDS

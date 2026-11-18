@@ -8,10 +8,9 @@
 #include "gamepak/far_call/battle.h"
 #include "battle/motobj.h"
 
-/// Classifies an ability's effect for target selection.
-/// 0 other, 1 restore HP, 2 restore PP, 3 cure poison, 4 cure an ailment,
-/// 5 revive, 6 cure all ailments.
-/// act: ability data.
+/// Classifies ability `act`'s effect for target selection: the hint
+/// BattleTarget_RunSelection shows on a party member and starts on (enum
+/// BattleTargetHint).
 s32 Battle_ClassifyEntryKind(const struct AbilityDefinition *act) {
   s32 abilityKind;
   s32 targetKind;
@@ -60,6 +59,7 @@ s32 BattleParty_ChooseReserve(s32 slot) {
     menu = Ram_HeapSlots->battleMenuWork;
     if (count <= 0)
       return -1;
+    // The party place is the slot's low byte.
     slot &= 0xff;
     current = battle->partyUnits[slot];
     Sound_PlayFar(SE_MENU_CONFIRM);
@@ -173,7 +173,8 @@ s32 BattleParty_SplitChoosers(u16 *ready, struct BattleActionRecord **cursor,
         entry->priority = unit->agi;
         entry->command = COMMAND_NONE;
         entry->parameter = 0;
-        entry->target = 384;
+        // The other side's place 0, as a lost action's target.
+        entry->target = PLACE_ENEMY;
         forced++;
       } else {
         ready[readyCount++] = unitIds[i];
@@ -185,4 +186,3 @@ s32 BattleParty_SplitChoosers(u16 *ready, struct BattleActionRecord **cursor,
   *cursor = entries;
   return readyCount;
 }
-#undef INPUT

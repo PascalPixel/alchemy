@@ -25,8 +25,12 @@ enum FieldShortcutKind {
   FIELD_SHORTCUT_ITEM = 1      ///< FieldWork.item
 };
 
-/// A shortcut assignment's request, bits 13..0.
+/// A shortcut assignment's request, bits 13..0, and its kind above them.
 #define FIELD_SHORTCUT_ID_MASK 0x3fff
+#define FIELD_SHORTCUT_KIND_SHIFT 14
+/// MapWork.groundEffects' footprints, its bits 1..0: whether the leader leaves
+/// them.
+#define GROUND_EFFECTS_FOOTPRINTS_MASK 0x03
 
 #define FIELD_SHORTCUT_KEYS gKeysHeld
 #define WORLD_MAP_PROBE_RADIUS toFIXED(8)
@@ -331,7 +335,7 @@ counted:
 /// request.
 s32 Field_RequestShortcut(u32 assignment) {
   struct FieldWork *work = Ram_HeapSlots->fieldWork;
-  u32 kind = assignment >> 14;
+  u32 kind = assignment >> FIELD_SHORTCUT_KIND_SHIFT;
   s32 request = assignment & FIELD_SHORTCUT_ID_MASK;
 
   if (GameFlag_Get(FLAG_MENUS_RAISE_TRIGGER) != 0) {
@@ -418,15 +422,15 @@ s32 Field_CheckSpheresOverlap(FIXED *firstPosition, s32 radiusA,
   return -1;
 }
 
-/// A splash at the feet of an actor wading through water (cell attribute 16):
-/// sprite 14 started on its splash script, its sound every other step; mode is
-/// the map's ground effect kind, and kind 2 takes another picture.
+/// A splash at the feet of an actor wading through water (MAP_CELL_WATER):
+/// SPRITE_WADING_SPLASH started on its splash script, its sound every other
+/// step; mode is the map's kind of wading, and kind 2 takes another picture.
 void Actor_SpawnWaterSplash(struct Actor *actor, s32 mode) {
   struct Actor *created;
   struct Child *sprite;
 
-  created = Actor_Create(14, actor->x.fixed, actor->y.fixed + toFIXED(4),
-                         actor->z.fixed);
+  created = Actor_Create(SPRITE_WADING_SPLASH, actor->x.fixed,
+                         actor->y.fixed + toFIXED(4), actor->z.fixed);
   sprite = actor->sprite;
   if (!(actor->userValue & 1))
     Sound_PlayFar(SE_WADE);
@@ -741,7 +745,7 @@ counted:
 
   // Ground that wades: hide the lower half of the sprite while on it, and
   // leave the wading effect as the leader moves.
-  if (map->groundEffects & 12) {
+  if (map->groundEffects & GROUND_EFFECTS_WADING_MASK) {
     struct MapCell *cells;
 
     if (actor->layer <= 2)
@@ -752,14 +756,15 @@ counted:
         actor->x.fixed / toFIXED(16) + (actor->z.fixed / toFIXED(16)) * 128;
     attribute = cells->attributeB;
     oldFlags = sprite->flags;
-    if (attribute & 16) {
+    if (attribute & MAP_CELL_WATER) {
       if (!(oldFlags & SPRITE_FLAG_SUNK)) {
         sprite->sunkRows = 4;
         sprite->flags =
             ((u8)oldFlags | SPRITE_FLAG_SHADED) & ~SPRITE_FLAG_SHADOW;
       }
       if (actor->timer == 0 && collision == 0 && !onObject) {
-        Actor_SpawnWaterSplash(actor, (u32)(map->groundEffects << 28) >> 30);
+        Actor_SpawnWaterSplash(actor,
+                               GROUND_EFFECTS_WADING(map->groundEffects));
         if (movementAnimation == ANIM_LEADER_RUN)
           actor->timer = 8;
         else
@@ -775,7 +780,8 @@ counted:
 
   // Footprints on maps that show them, alternating left and right.
   footprintAngle = (u16)angle;
-  if ((map->groundEffects & 3) && actor->timer == 0 && collision == 0) {
+  if ((map->groundEffects & GROUND_EFFECTS_FOOTPRINTS_MASK) &&
+      actor->timer == 0 && collision == 0) {
     struct Actor *effect;
 
     effect = Actor_Create(SPRITE_FOOTPRINTS, actor->x.fixed, actor->y.fixed,

@@ -231,15 +231,15 @@ enum DjinnSelectMode {
   DJINN_SELECT_ACTION = 1  ///< what to do with the Djinni chosen
 };
 
-/// The window map entry of the first element icon, in palette 5; the four
-/// elements follow it in order.
-#define DJINN_ELEMENT_TILE 0x5001
+/// The window map entry of the first element icon, in BASIC_COLORS_PALETTE;
+/// the four elements follow it in order (enum Element).
+#define DJINN_ELEMENT_TILE (BG_TILE_PALETTE(BASIC_COLORS_PALETTE) | 1)
 
 /// The tile of BG character block 1 the Djinn backdrop's border tile is copied
 /// to (menu_djinn.c); the preview screens blink it (menu_djinn_preview.c).
-#define DJINN_BACKDROP_BORDER_TILE 150
-#define DJINN_BACKDROP_BORDER_VRAM                                             \
-  (BG_CHAR_BLOCK(1) + DJINN_BACKDROP_BORDER_TILE * TILE_SIZE_4BPP)
+#define DJINN_CHANGE_ARROW_TILE 150
+#define DJINN_CHANGE_ARROW_VRAM                                                \
+  (BG_CHAR_BLOCK(1) + DJINN_CHANGE_ARROW_TILE * TILE_SIZE_4BPP)
 
 /// A Djinn list entry's party member, element and index (DJINN_ENTRY_MEMBER,
 /// _ELEMENT and _INDEX), shifted down.

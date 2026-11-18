@@ -29,6 +29,12 @@ struct ParchPuff {
 
 /// The puffs of steam Parch keeps, a power of two: the next wraps by a mask.
 #define PARCH_PUFF_COUNT 64
+/// The disc's tiles, this many tiles after the window sprites' glyph tiles.
+#define PARCH_DISC_TILE_OFFSET 128
+/// The disc's colours, the last 32 of the sprite palette, which glow as the
+/// Ring's do (GLOW_RED and the rest); the white flash of drying water raises
+/// them all.
+#define PARCH_GLOW_COLORS 32
 
 /// What Parch finds before the caster.
 enum ParchResult {
@@ -120,7 +126,7 @@ void FieldPsynergy_Parch(void) {
                                    actor->radius - 2) >= 0) {
       result = PARCH_DRIES;
       found = i;
-      Actor_GetById(i)->priorityFlags |= 2;
+      Actor_GetById(i)->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
       goto loaded;
     }
   }
@@ -141,7 +147,8 @@ void FieldPsynergy_Parch(void) {
 loaded:
   {
     void *source = Resource_GetTableEntry(RESOURCE_GLOW_DISC);
-    dst = (u8 *)OBJ_VRAM0 + 4096 + vramWork->glyphTiles * 32;
+    dst = (u8 *)OBJ_VRAM0 + PARCH_DISC_TILE_OFFSET * TILE_SIZE_4BPP +
+          vramWork->glyphTiles * TILE_SIZE_4BPP;
     Decompress_TaggedLz(source, work);
   }
   Dma_Set(work, dst, DMA_COPY_WORDS(1024), REG_DMA3);
@@ -160,7 +167,7 @@ loaded:
   for (i = 0; i < PARCH_PUFF_COUNT; i++) {
     fresh = &work->sprites[i];
     EffectSprite_Init(fresh, 8, 15, OBJ_SIZE_16X16, tile);
-    fresh->depth = 250;
+    fresh->depth = EFFECT_SPRITE_FRONT_DEPTH;
     fresh->oam.priority = 0;
     fresh->oam.fullColor = 1;
     fresh->oam.palette = 0;
@@ -222,16 +229,16 @@ loaded:
       particle++;
     }
 
-    for (i = 0; i <= 31; i++) {
+    for (i = 0; i < PARCH_GLOW_COLORS; i++) {
       if (fade == -1)
         add = 0;
       else
         add = fade / 4;
-      blue = Trig_Sin((frame / 2 + i) << 11); // blue reused for green's sine
-      green = (blue * 8 >> 16) + 23;
-      blue = Trig_Sin(((frame / 4 + i) << 11) + TRIG_TURN * 9 / 32);
-      blue = (blue * 10 >> 16) + 12;
-      red = add + 28;
+      blue = Trig_Sin((frame / 2 + i) * (TRIG_TURN / 32)); // green's sine
+      green = FIXEDtoINT(blue * GLOW_GREEN_SWING) + GLOW_GREEN;
+      blue = Trig_Sin((frame / 4 + i) * (TRIG_TURN / 32) + TRIG_TURN * 9 / 32);
+      blue = FIXEDtoINT(blue * GLOW_BLUE_SWING) + GLOW_BLUE;
+      red = add + GLOW_RED;
       if (red > RGB_LEVEL_MAX)
         red = RGB_LEVEL_MAX;
       green += add;
@@ -240,7 +247,7 @@ loaded:
       blue += add;
       if (blue > RGB_LEVEL_MAX)
         blue = RGB_LEVEL_MAX;
-      Io_Write16((blue << 10) | (green << 5) | red, &OBJ_PLTT[255 - i]);
+      Io_Write16(RGB(red, green, blue), &OBJ_PLTT[OBJ_PLTT_SIZE / 2 - 1 - i]);
     }
     if (fade != -1 && fade <= 126)
       fade++;
@@ -249,7 +256,7 @@ loaded:
     y = work->discY;
     scaleX = work->discScaleX;
     scaleY = work->discScaleY;
-    packed = vramWork->glyphTiles + 128;
+    packed = vramWork->glyphTiles + PARCH_DISC_TILE_OFFSET;
     sprite = &work->disc;
     EffectSprite_Init(sprite, 31, 31, OBJ_SIZE_64X64, packed);
     sprite->oam.fullColor = 1;
@@ -389,8 +396,11 @@ void Canvas_PlotPolarPixel(s32 unused, FIXED radius, s32 angle, s32 color) {
 
 extern const u16 gParch_PictureTiles[];
 
-/// Copy a 16x16 image to the BG map, clipping cells outside the 30x20-tile
-/// screen.
+/// The picture BgMap_DrawClipped16x16 draws, 16 tiles square.
+#define CLIPPED_PICTURE_TILES 16
+
+/// Copies a 16x16-tile picture to BG0's map, leaving out the tiles that would
+/// fall outside the 30x20-tile screen at (x, y).
 void BgMap_DrawClipped16x16(s32 x, s32 y) {
   const u16 *tiles = gParch_PictureTiles;
   s32 row;
@@ -401,17 +411,21 @@ void BgMap_DrawClipped16x16(s32 x, s32 y) {
   x /= 8;
   y /= 8;
   IWRAM_FILL_WORDS((void *)BG_SCREEN_BLOCK(4), 1024, 0);
-  for (row = 0, sy = y; row < 16; row++, sy++) {
+  for (row = 0, sy = y; row < CLIPPED_PICTURE_TILES; row++, sy++) {
     if (sy < 0)
       continue;
-    if (sy > 19)
+    if (sy > DISPLAY_TILE_HEIGHT - 1)
       break;
-    for (sx = x, column = 0; column < 16; column++, sx++) {
+    for (sx = x, column = 0; column < CLIPPED_PICTURE_TILES; column++, sx++) {
       if (sx < 0)
         continue;
-      if (sx > 29)
+      if (sx > DISPLAY_TILE_WIDTH - 1)
         break;
-      ((u16 *)BG_SCREEN_BLOCK(4))[row * 32 + column] = tiles[row * 16 + column];
+      ((u16 *)BG_SCREEN_BLOCK(4))[row * BG_SCREEN_WIDTH + column] =
+          tiles[row * CLIPPED_PICTURE_TILES + column];
     }
   }
 }
+#undef PARCH_DISC_TILE_OFFSET
+#undef PARCH_GLOW_COLORS
+#undef CLIPPED_PICTURE_TILES

@@ -22,11 +22,11 @@
 
 /// RopeNode.kind and TightropeNode.kind.
 enum RopeNodeKind {
-  ROPE_NODE_FREE,     ///< in the pool, on no rope
-  ROPE_NODE_WALKABLE, ///< laid along a rope, for the leader to step onto
-  /// In a coil, or otherwise not to be walked: a tied rope's end wound round
-  /// its far post, every node of a settled tightrope.
-  ROPE_NODE_COILED
+  ROPE_NODE_FREE,      ///< in the pool, on no rope
+  ROPE_NODE_CROSSABLE, ///< laid along a rope, for the leader to step onto
+  /// Laid but not to be crossed: a coil, a tied rope's end wound round its far
+  /// post, every node of a settled tightrope.
+  ROPE_NODE_UNCROSSABLE
 };
 
 /// The animations of a rope's or tightrope's post (SPRITE_TIGHTROPE_POST).
@@ -43,11 +43,11 @@ enum PostAnimation {
 
 // The ropes Lash ties (HEAP_SLOT_ROPE): eight slots, each a chain of nodes
 // between two posts, coiled at the first post until tied; tied, the rope runs
-// to the far post and is wound round it. A tied rope can be walked (render
-// mode 3). Pushing at a rope's post for ROPE_PUSH_STEPS steps raises
-// FIELD_RAISED_TRIGGER_ROPE_ON, whose scene event puts the leader on the rope;
-// on it, it raises FIELD_RAISED_TRIGGER_ROPE_OFF. Each step along it
-// (Actor_CrossRope) adds half a pixel to the rope's swing, up to two: the
+// to the far post and is wound round it. A tied rope can be crossed hand over
+// hand (LEADER_MOVEMENT_ROPE). Pushing at a rope's post for ROPE_PUSH_STEPS
+// steps raises FIELD_RAISED_TRIGGER_ROPE_ON, whose scene event puts the leader
+// on the rope; on it, it raises FIELD_RAISED_TRIGGER_ROPE_OFF. Each step along
+// it (Actor_CrossRope) adds half a pixel to the rope's swing, up to two: the
 // middle of the rope bobs that far either way of its line, a cycle of 16
 // frames that loses a twentieth a frame.
 
@@ -288,9 +288,9 @@ s32 Rope_LayTied(s32 index, s32 x1, s32 y1, s32 z1, s32 x2, s32 y2, s32 z2) {
                  z1 + i * dz / count);
     node->slot = index + 1;
     if (i == count)
-      node->kind = ROPE_NODE_COILED;
+      node->kind = ROPE_NODE_UNCROSSABLE;
     else
-      node->kind = ROPE_NODE_WALKABLE;
+      node->kind = ROPE_NODE_CROSSABLE;
     *link = node;
     link = &node->next;
   }
@@ -315,8 +315,8 @@ void Rope_SwingBetween(s32 index, s32 from, s32 to, FIXED height) {
                   b->x.fixed, b->y.fixed + toFIXED(8), b->z.fixed, height);
 }
 
-/* VIEW(ropes): Trig_Atan as returning s16; system/system.h has it return
- * s32. */
+/* VIEW(ropes): routine Trig_Atan as returning s16; system/system.h has it
+ * return s32. */
 extern s16 Trig_AtanHalfword(s32 x, s32 y) __asm__("Trig_Atan");
 
 /// Lays a rope's nodes along the line between two points again, bowed by half a
@@ -334,7 +334,7 @@ s32 Rope_LayBowed(s32 index, s32 x, s32 y, s32 z, s32 toX, s32 toY, s32 toZ,
   FIXED cos = Trig_Cos(angle);
   s32 segments = slot->segments;
   s32 i;
-  s32 kind = ROPE_NODE_WALKABLE;
+  s32 kind = ROPE_NODE_CROSSABLE;
 
   for (i = 0; i <= segments; i++) {
     FIXED bow = Iwram_MulFX(Trig_Sin(i * (TRIG_TURN / 2) / segments), height);
@@ -387,7 +387,7 @@ s32 Rope_LayCoil(s32 index, s32 x, s32 y, s32 z, s32 toX, s32 toY, s32 toZ) {
   s32 angle = 0;
   FIXED radius = toFIXED(4);
   s32 i;
-  s32 kind = ROPE_NODE_COILED;
+  s32 kind = ROPE_NODE_UNCROSSABLE;
 
   slot->segments = segments;
   for (i = 0; i <= segments; i++) {
@@ -548,7 +548,7 @@ s32 Rope_Throw(s32 index, s32 x, s32 y, s32 z, s32 toX, s32 toY, s32 toZ) {
           node->y = lastY + (node->y - lastY) * 6 / ex;
           lastY = node->y;
           node->z = lastZ + (node->z - lastZ) * 6 / ex;
-          node->kind = ROPE_NODE_WALKABLE;
+          node->kind = ROPE_NODE_CROSSABLE;
           lastZ = node->z;
         }
       }
@@ -588,9 +588,10 @@ void Rope_Untie(s32 index, s32 fromId, s32 toId) {
 }
 
 /// Pulls a thrown rope back into its coil at the first point, one node a frame,
-/// clearing its flag, once the rope has unwound from both posts.
+/// clearing its flag, starting four frames after both posts start to unwind.
 s32 Rope_Recoil(s32 index, s32 x, s32 y, s32 z) {
   struct RopeWork *work = ROPE_WORK;
+  /* FAKEMATCH(temporary): zero held in a local; as 0. */
   s32 zero = 0;
   struct RopeSlot *slot = &work->slots[index];
   struct RopeNode *node = slot->head;
@@ -641,7 +642,7 @@ s32 Rope_Recoil(s32 index, s32 x, s32 y, s32 z) {
         lastY = node->y;
         node->z = z + Iwram_MulFX(Trig_Sin(angle), radius);
         lastZ = node->z;
-        node->kind = ROPE_NODE_COILED;
+        node->kind = ROPE_NODE_UNCROSSABLE;
         step = Trig_Atan(toFIXED(6), radius);
         angle += step;
         radius += step * 4;
@@ -660,7 +661,7 @@ s32 Rope_Recoil(s32 index, s32 x, s32 y, s32 z) {
         node->y = lastY + (node->y - lastY) * 6 / radius;
         lastY = node->y;
         node->z = lastZ + (node->z - lastZ) * 6 / radius;
-        node->kind = ROPE_NODE_COILED;
+        node->kind = ROPE_NODE_UNCROSSABLE;
         lastZ = node->z;
       }
     }
@@ -771,8 +772,9 @@ void Rope_Place(s32 index, s32 flag, s32 firstId, s32 secondId) {
 }
 
 // The tightropes (HEAP_SLOT_TIGHTROPE): ropes stretched straight from post to
-// post across a drop, as in Champa, that the party walks (render mode 4) and
-// that wobble underfoot. The family copies the ropes' routines.
+// post across a drop, as in Champa, that the party walks
+// (LEADER_MOVEMENT_TIGHTROPE) and that wobble underfoot. The family copies the
+// ropes' routines.
 
 /// Allocates the tightropes' work, loads their node picture and starts
 /// Tightrope_Draw and Tightrope_Update.
@@ -975,9 +977,9 @@ s32 Tightrope_Lay(s32 index, s32 x, s32 y, s32 z, s32 toX, s32 toY, s32 toZ) {
     SET_POSITION(node, x + i * dx / segments, y + i * dy / segments,
                  z + i * dz / segments);
     if (i == segments)
-      node->kind = ROPE_NODE_COILED;
+      node->kind = ROPE_NODE_UNCROSSABLE;
     else
-      node->kind = ROPE_NODE_WALKABLE;
+      node->kind = ROPE_NODE_CROSSABLE;
     *link = node;
     link = &node->next;
   }
@@ -1016,6 +1018,8 @@ s32 Tightrope_LayBowed(s32 index, s32 x, s32 y, s32 z, s32 toX, s32 toY,
                  1;
   struct TightropeNode *node = work->slots[index].head;
   s32 i;
+  /* FAKEMATCH(temporary): one held in a local, the step and the nodes' kind;
+   * as i++ and ROPE_NODE_CROSSABLE. */
   s32 one = 1;
 
   for (i = 0; i <= segments; i += one) {
@@ -1061,7 +1065,7 @@ s32 Tightrope_LayCoil(s32 index, s32 x, s32 y, s32 z, s32 toX, s32 toY,
   s32 angle = 0;
   FIXED radius = toFIXED(4);
   s32 i;
-  s32 kind = ROPE_NODE_COILED;
+  s32 kind = ROPE_NODE_UNCROSSABLE;
 
   for (i = 0; i <= segments; i++) {
     struct TightropeNode *node = (struct TightropeNode *)Rope_AllocNode();
@@ -1169,7 +1173,7 @@ s32 Tightrope_Throw(s32 index, s32 x, s32 y, s32 z, s32 toX, s32 toY, s32 toZ) {
         lastX = node->x = lastX + (node->x - lastX) * 6 / height;
         lastY = node->y = lastY + (node->y - lastY) * 6 / height;
         lastZ = node->z = lastZ + (node->z - lastZ) * 6 / height;
-        node->kind = ROPE_NODE_WALKABLE;
+        node->kind = ROPE_NODE_CROSSABLE;
       }
     }
     wait(1);
@@ -1252,7 +1256,7 @@ s32 Tightrope_Recoil(s32 slot, s32 x1, s32 y1, s32 z1, s32 x2, s32 y2, s32 z2,
         x = node->x = x1 + Iwram_MulFX(Trig_Cos(angle), dist);
         y = node->y = y1;
         z = node->z = z1 + Iwram_MulFX(Trig_Sin(angle), dist);
-        node->kind = ROPE_NODE_COILED;
+        node->kind = ROPE_NODE_UNCROSSABLE;
         {
           u16 step = Trig_Atan(toFIXED(6), dist);
 
@@ -1270,7 +1274,7 @@ s32 Tightrope_Recoil(s32 slot, s32 x1, s32 y1, s32 z1, s32 x2, s32 y2, s32 z2,
         x = node->x = x + (node->x - x) * 6 / dist;
         y = node->y = y + (node->y - y) * 6 / dist;
         node->z = z + (node->z - z) * 6 / dist;
-        node->kind = ROPE_NODE_COILED;
+        node->kind = ROPE_NODE_UNCROSSABLE;
         z = node->z;
       }
     }
@@ -1298,7 +1302,7 @@ void Tightrope_Settle(s32 index) {
   struct TightropeNode *node;
 
   for (node = work->slots[index].head; node != NULL; node = node->next)
-    node->kind = ROPE_NODE_COILED;
+    node->kind = ROPE_NODE_UNCROSSABLE;
   work->slots[index].wobbling = 0;
 }
 
@@ -1483,6 +1487,9 @@ void HangingVine_Update(void) {
   s32 sway;
   s32 radius;
   s32 angle;
+#ifdef BUGFIX
+  s32 slotIndex;
+#endif
 
   i = 0;
   leader = Actor_GetById(Party_GetLeaderActor());
@@ -1511,6 +1518,9 @@ void HangingVine_Update(void) {
     // the first active vine the loop goes on only while the next slot holds an
     // active vine too.
     link = link->next;
+#ifdef BUGFIX
+    slotIndex = i;
+#endif
     for (i = 1, sway = swing; i <= 5; i++) {
       radius = i * slot->spacing;
       angle = Iwram_MulFX(Trig_Sin(slot->phase - i * VINE_LINK_LAG),
@@ -1521,6 +1531,9 @@ void HangingVine_Update(void) {
       link->z = z;
       link = link->next;
     }
+#ifdef BUGFIX
+    i = slotIndex;
+#endif
 
     // Ease the swing towards the target.
     if (slot->swing > target)

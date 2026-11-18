@@ -682,6 +682,10 @@ static void Bilibin_RestoreVillageActors(void) {
   }
 }
 
+/// The cell the village statue first stands on, over the way down to the
+/// Bilibin Treasury.
+enum { TREASURY_WAY_COLUMN = 16, TREASURY_WAY_ROW = 13 };
+
 /// Updates the cells around the statue in Bilibin after it moves. It runs after
 /// Move, a push, or entry.
 static void Bilibin_UpdateVillageStatueCells(void) {
@@ -703,18 +707,20 @@ static void Bilibin_UpdateVillageStatueCells(void) {
   MapGrid_CopyCellAttributes(15, 11, 3, 1, 15, 13);
   MapGrid_CopyCellAttributes(15, 11, 3, 1, 15, 14);
   MapGrid_CopyCellAttributes(1, 0, 1, 1, FIELD_CELL(statueX), statueRow);
-  if (FIELD_CELL(statueX) != 16 || statueRow != 13) {
-    MapGrid_CopyCellAttributes(0, 0, 1, 1, 16, 13);
+  if (FIELD_CELL(statueX) != TREASURY_WAY_COLUMN ||
+      statueRow != TREASURY_WAY_ROW) {
+    MapGrid_CopyCellAttributes(0, 0, 1, 1, TREASURY_WAY_COLUMN,
+                               TREASURY_WAY_ROW);
   }
   // The statue may have moved onto the leader while this event was running.
-  if (leaderColumn == 16) {
-    if (leaderRow == 13) {
+  if (leaderColumn == TREASURY_WAY_COLUMN) {
+    if (leaderRow == TREASURY_WAY_ROW) {
       Event_Start();
       Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_EXCLAMATION,
                       20);
       Actor_SetSpeed(ACTOR_PARTY_LEADER, 2);
       Actor_Jump(ACTOR_PARTY_LEADER, 6, 0);
-      if (statueRow == 13) {
+      if (statueRow == TREASURY_WAY_ROW) {
         Actor_MoveToAndWait(ACTOR_PARTY_LEADER, 262, 196);
         Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_SOUTH, 20);
       } else {
@@ -792,8 +798,12 @@ static void Bilibin_RestoreRiverActors(void) {
   Bilibin_UpdateCratesCells();
 }
 
+/// The cells of the crates' lane, as gBilibin_CratesLaneCells lists them.
+#define CRATES_LANE_CELLS 10
+
 /// After the crates at the Bilibin Barricade move (Move, a push, or entry),
-/// restores the ten cells of their lane, then marks the cell they stand on.
+/// restores the CRATES_LANE_CELLS cells of their lane, then marks the cell they
+/// stand on.
 static void Bilibin_UpdateCratesCells(void) {
   struct Actor *actor;
   s32 cratesColumn;
@@ -804,7 +814,7 @@ static void Bilibin_UpdateCratesCells(void) {
   cratesColumn = FIELD_CELL(actor->x.fixed);
   cratesRow = FIELD_CELL(actor->z.fixed);
 
-  for (i = 0; i < 2 * 10; i += 2) {
+  for (i = 0; i < 2 * CRATES_LANE_CELLS; i += 2) {
     MapGrid_CopyCellAttributes(1, 0, 1, 1, gBilibin_CratesLaneCells[i],
                                gBilibin_CratesLaneCells[i + 1]);
   }

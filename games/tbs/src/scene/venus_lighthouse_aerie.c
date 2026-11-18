@@ -138,8 +138,7 @@ enum {
   ACTOR_MENARDI = 19,
   ACTOR_SATUROS = 20,
   ACTOR_FELIX = 21,
-  /// A blank actor (SPRITE_BLANK) that runs across the floor under the
-  /// Venus
+  /// A blank actor (SPRITE_BLANK) that runs across the floor under the Venus
   /// Star as Saturos throws it into the beacon, so that only its shadow shows,
   /// the star's shadow.
   ACTOR_VENUS_STAR_SHADOW = 22,
@@ -217,7 +216,7 @@ enum VenusLighthouseAerieCellBehavior {
 
 /// A child value that makes an actor blink rather than set its colour
 /// mode (Actor_ConfigureSpriteColor).
-enum { CHILD_VALUE_BLINK = 0x100 };
+enum { CHILD_VALUE_BLINK = 1 << 8 };
 
 /// Animations the aerie plays by number beyond enum ActorAnimation.
 ///
@@ -278,6 +277,10 @@ static s32 VenusLighthouseAerie_PulseActorScale(struct Actor *actor) {
   return 1;
 }
 
+/// A drifting particle loses a PARTICLE_DRAG_X-th of its x speed and a
+/// PARTICLE_DRAG_Z-th of its z speed each frame.
+enum { PARTICLE_DRAG_X = 22, PARTICLE_DRAG_Z = 20 };
+
 /// Moves a particle, damps its horizontal velocity and updates its scale and
 /// spin.
 static void VenusLighthouseAerie_UpdateDriftingParticle(struct Actor *actor) {
@@ -289,8 +292,8 @@ static void VenusLighthouseAerie_UpdateDriftingParticle(struct Actor *actor) {
   effect->y += effect->velocity.y;
   velocityZ = effect->velocity.z;
   effect->z += velocityZ;
-  effect->velocity.x = velocityX - velocityX / 22;
-  effect->velocity.z = velocityZ - velocityZ / 20;
+  effect->velocity.x = velocityX - velocityX / PARTICLE_DRAG_X;
+  effect->velocity.z = velocityZ - velocityZ / PARTICLE_DRAG_Z;
   effect->scaleX += effect->scaleRateX;
   effect->scaleY += effect->scaleRateY;
   effect->sprite->rotation += effect->spin;
@@ -1218,26 +1221,29 @@ static void VenusLighthouseAerie_ConfrontSaturosAndMenardi(void) {
   GameFlag_Set(FLAG_AERIE_FIRST_BATTLE_BEGUN);
 }
 
-/// Flashes the actor white two frames in four, with Psynergy rings every 15
-/// frames.
+/// The frames between the Psynergy rings round a flashing actor.
+enum { PSYNERGY_RINGS_INTERVAL = 15 };
+
+/// Flashes the actor white two frames in four, with Psynergy rings every
+/// PSYNERGY_RINGS_INTERVAL frames.
 static void VenusLighthouseAerie_FlashActorPalette(struct Actor *actor) {
   if (gFrameCount & 2) {
     Actor_SetColorMode(actor, SPRITE_COLOR_WHITE);
   } else {
     Actor_SetColorMode(actor, SPRITE_COLOR_NORMAL);
   }
-  if (Math_RemainderUnsigned(gFrameCount, 15) == 0) {
+  if (Math_RemainderUnsigned(gFrameCount, PSYNERGY_RINGS_INTERVAL) == 0) {
     Scene_SpawnPsynergyRings(actor);
   }
 }
 
-/// Cycles the actor through palettes 0 to 5, with Psynergy rings every 15
-/// frames.
+/// Cycles the actor through palettes 0 to 5, with Psynergy rings every
+/// PSYNERGY_RINGS_INTERVAL frames.
 static void VenusLighthouseAerie_CycleActorPalette(struct Actor *actor) {
   if (gFrameCount & 1) {
     Actor_SetColorMode(actor, Math_RemainderUnsigned(gFrameCount >> 1, 6));
   }
-  if (Math_RemainderUnsigned(gFrameCount, 15) == 0) {
+  if (Math_RemainderUnsigned(gFrameCount, PSYNERGY_RINGS_INTERVAL) == 0) {
     Scene_SpawnPsynergyRings(actor);
   }
 }
@@ -1250,6 +1256,10 @@ static void VenusLighthouseAerie_CycleActorPalette(struct Actor *actor) {
 static void VenusLighthouseAerie_UpdateShebaPalette(void) {
   VenusLighthouseAerie_CycleActorPalette(Actor_Get(ACTOR_SHEBA));
 }
+
+/// A burst of particles flies out in BURST_DIRECTIONS directions round a
+/// turn, the first one twice.
+enum { BURST_DIRECTIONS = 16 };
 
 /// Builds the horizontal velocity for an elliptical radial particle burst.
 static inline void VenusLighthouseAerie_AimBurst(s32 velocity[3], s32 angle) {
@@ -1289,7 +1299,7 @@ static void VenusLighthouseAerie_CombineSaturosAndMenardi(void) {
   struct Actor *star = NULL;
   struct Actor *starShadow;
   struct Sprite *sprite;
-  u8 *iconPixels;
+  GlyphTransfer *transfer;
   u32 answeredYes;
 
   Event_Start();
@@ -1474,11 +1484,10 @@ static void VenusLighthouseAerie_CombineSaturosAndMenardi(void) {
     star->retainSpriteCache = 1;
     star->speedLimit = toFIXED(8) / 5;
     star->acceleration = toFIXED(4) / 5;
-    iconPixels =
-        HeapSlot_Alloc(HEAP_SLOT_GLYPH_TRANSFER, sizeof(GlyphTransfer));
+    transfer = HeapSlot_Alloc(HEAP_SLOT_GLYPH_TRANSFER, sizeof(GlyphTransfer));
     // Display the Venus Star icon before sending it toward the beacon.
     Item_LoadIcon(ITEM_VENUS_STAR);
-    Vram_Load(sprite->slot, 128, iconPixels + 1024);
+    Vram_Load(sprite->slot, ICON_TILE_BYTES, transfer->tiles);
     HeapSlot_Release(HEAP_SLOT_GLYPH_TRANSFER);
   }
   Actor_SetSpritePriority(ACTOR_VENUS_STAR_SHADOW, 1);
@@ -1755,8 +1764,9 @@ static void VenusLighthouseAerie_CombineSaturosAndMenardi(void) {
   menardiBurst.update = VenusLighthouseAerie_UpdateDriftingParticle;
   menardiBurst.startScaleX = FIXED_ONE;
   menardiBurst.startScaleY = FIXED_ONE;
-  for (answeredYes = 0; answeredYes <= 16; answeredYes++) {
-    VenusLighthouseAerie_AimBurst(velocity, answeredYes << 12);
+  for (answeredYes = 0; answeredYes <= BURST_DIRECTIONS; answeredYes++) {
+    VenusLighthouseAerie_AimBurst(velocity,
+                                  answeredYes * (TRIG_TURN / BURST_DIRECTIONS));
     FieldEffect_Spawn(menardi->x.fixed, menardi->y.fixed, menardi->z.fixed,
                       velocity[0], velocity[1], velocity[2],
                       EFFECT_USE_UPDATE | EFFECT_USE_START_SCALE |
@@ -1771,8 +1781,9 @@ static void VenusLighthouseAerie_CombineSaturosAndMenardi(void) {
   saturosBurst.update = VenusLighthouseAerie_UpdateDriftingParticle;
   saturosBurst.startScaleX = FIXED_ONE;
   saturosBurst.startScaleY = FIXED_ONE;
-  for (answeredYes = 0; answeredYes <= 16; answeredYes++) {
-    VenusLighthouseAerie_AimBurst(velocity, answeredYes << 12);
+  for (answeredYes = 0; answeredYes <= BURST_DIRECTIONS; answeredYes++) {
+    VenusLighthouseAerie_AimBurst(velocity,
+                                  answeredYes * (TRIG_TURN / BURST_DIRECTIONS));
     FieldEffect_Spawn(saturos->x.fixed, saturos->y.fixed, saturos->z.fixed,
                       velocity[0], velocity[1], velocity[2],
                       EFFECT_USE_UPDATE | EFFECT_USE_START_SCALE |
@@ -1834,7 +1845,7 @@ static void VenusLighthouseAerie_UpdateUpperOrbit(struct Actor *effect) {
   effect->z.fixed = center->z.fixed + Trig_Sin(angle) * 2;
   effect->targetX = effect->x.fixed;
   effect->targetZ = effect->z.fixed;
-  effect->timer -= 2048;
+  effect->timer -= TRIG_TURN / 32;
 }
 
 /// Orbits a particle around the rising beam using its rise counter as a radius.
@@ -1860,7 +1871,7 @@ static void VenusLighthouseAerie_UpdateRisingOrbit(struct Actor *actor) {
 
   {
     s32 next = (u16)actor->timer;
-    next += 0xfffff800;
+    next -= TRIG_TURN / 32;
     actor->timer = next;
   }
 }
@@ -3035,7 +3046,7 @@ static void VenusLighthouseAerie_UpdateBeaconRise(void) {
       effect->riseCounter = Random_Below(8);
       effect->update = VenusLighthouseAerie_UpdateRisingOrbit;
       effect->speedLimit = Trig_Sin(Random_Below(TRIG_TURN - 1) >> 4) * 24;
-      effect->speedLimit = center->speedLimit >> 16;
+      effect->speedLimit = FIXEDtoINT(center->speedLimit);
       sprite->flags = 0;
       sprite->image.priority = 1;
     }
@@ -3049,6 +3060,9 @@ static void VenusLighthouseAerie_UpdateBeaconRise(void) {
   VenusLighthouseAerie_AdvanceActorRise(Actor_Get(ACTOR_SHEBA));
 }
 
+/// An actor the light lifts rises this many quarter pixels, one a frame.
+enum { RISE_QUARTER_PIXELS = 32 };
+
 /// Raises an enabled actor according to its gated rise counter.
 static void VenusLighthouseAerie_AdvanceActorRise(struct Actor *actor) {
   if (actor->riseEnabled != 0) {
@@ -3059,7 +3073,7 @@ static void VenusLighthouseAerie_AdvanceActorRise(struct Actor *actor) {
     VenusLighthouseAerie_StopActorMotion(actor);
 
     if (actor->riseCounter != 0) {
-      if (actor->riseCounter <= 31) {
+      if (actor->riseCounter < RISE_QUARTER_PIXELS) {
         ++actor->riseCounter;
       }
     }
@@ -3077,7 +3091,7 @@ static void VenusLighthouseAerie_SpawnSideOrbitParticles(void) {
   s32 phase;
   s32 angle;
 
-  center = (Actor_Get(23));
+  center = Actor_Get(ACTOR_BEACON_ORB);
   grid = gMapGridWork[0];
   drift = toFIXED(Random_Below(48));
   if ((s16)(FIXEDtoINT(grid->view[1])) <= 129) {
@@ -3102,7 +3116,7 @@ static void VenusLighthouseAerie_SpawnSideOrbitParticles(void) {
       FieldActor_Create(SPRITE_PARTICLE, center->x.fixed + toFIXED(8),
                         center->y.fixed + drift + toFIXED(8), center->z.fixed);
   drift /= toFIXED(6);
-  drift <<= 16;
+  drift = INTtoFIXED(drift);
   if (effect == NULL)
     return;
   sprite = effect->sprite;
@@ -3114,7 +3128,7 @@ static void VenusLighthouseAerie_SpawnSideOrbitParticles(void) {
   effect->userValue = phase;
   effect->watchedActor = center;
   effect->update = VenusLighthouseAerie_UpdateOrbitingEffect;
-  effect->speedLimit = Trig_Sin((drift & 0xfffff) >> 4) * 24 >> 16;
+  effect->speedLimit = FIXEDtoINT(Trig_Sin((drift & 0xfffff) >> 4) * 24);
   sprite->flags = 0;
   sprite->image.priority = center->sprite->image.priority;
 }

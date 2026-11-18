@@ -19,6 +19,13 @@
 #include "gamepak/far_call.h"
 #include "system/heap.h"
 
+/// The map entry a screen-wide picture gives each row's two columns past the
+/// screen's edge, which never show.
+#define OFFSCREEN_TILE 511
+/// The Nintendo, Camelot and Golden Sun logos' pictures each begin with their
+/// 224 background colours.
+#define LOGO_PALETTE_COLORS 224
+
 /// Which way the screen fade goes: 0 towards black, 1 towards white.
 extern u8 gScreenFadeToWhite;
 // volatile: ScreenFade_Update, which the VBlank handler runs, counts it down to

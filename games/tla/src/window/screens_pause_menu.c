@@ -76,7 +76,7 @@ UNUSED void Window_SetTextTileBitRect(const struct Window *window, s32 x, s32 y,
       s32 remaining = width;
       while (remaining != 0) {
         u32 entry = *cell;
-        entry &= ~0x1000;
+        entry &= ~BG_TILE_PALETTE(1);
         entry |= set;
         remaining--;
         *cell = entry;
@@ -89,12 +89,19 @@ UNUSED void Window_SetTextTileBitRect(const struct Window *window, s32 x, s32 y,
   }
 }
 
+/// The icon browser's kinds (items, Psynergy and status patterns), and its
+/// pages of ICON_BROWSER_PAGE_ICONS icons, ICON_BROWSER_ROW_ICONS to a row.
+#define ICON_BROWSER_KINDS 3
+#define ICON_BROWSER_PAGES 12
+#define ICON_BROWSER_PAGE_ICONS 32
+#define ICON_BROWSER_ROW_ICONS 8
+
 /// Browses pages of item, Psynergy and status-pattern icons, suspending the
 /// field's actor system while the browser owns its window and cache entries.
-/// L and R switch the kind, Left and Right turn its 8 pages of 32 icons
-/// (item and Psynergy icons page * 32 on; the status patterns are 0 to 31 on
-/// every page, whatever the heading says), A or B closes it. Returns 0. The
-/// debug menus open it (debug/test.c, debug/level.c).
+/// L and R switch the kind, Left and Right turn its pages (item and Psynergy
+/// icons from page * ICON_BROWSER_PAGE_ICONS on; the status patterns are the
+/// first page's on every page, whatever the heading says), A or B closes it.
+/// Returns 0. The debug menus open it (debug/test.c, debug/level.c).
 s32 DebugBrowser_Icons(void) {
   s32 redraw;
   s32 tile;
@@ -138,8 +145,8 @@ s32 DebugBrowser_Icons(void) {
       break;
     if (redraw != 0) {
       redraw = 0;
-      page = (page + 12) % 12;
-      mode = (mode + 3) % 3;
+      page = (page + ICON_BROWSER_PAGES) % ICON_BROWSER_PAGES;
+      mode = (mode + ICON_BROWSER_KINDS) % ICON_BROWSER_KINDS;
       Window_Close(window, 2);
       window = Window_Create(10, 0, 18, 12, WINDOW_FLAG_INSTANT);
       if (mode == 0)
@@ -150,14 +157,15 @@ s32 DebugBrowser_Icons(void) {
         Text_DrawStringInWindow(gWorkspace_StatusTitle, window, 0, 0);
       Text_DrawStringInWindow(gWorkspace_PageLabel, window, 0, 8);
       Text_DrawNumberInWindow(page, 0, window, 40, 8);
-      base = page << 5;
+      base = page * ICON_BROWSER_PAGE_ICONS;
       Text_DrawNumberInWindow(base, 3, window, 64, 8);
       Text_DrawStringInWindow(gWorkspace_RangeDash, window, 88, 8);
-      Text_DrawNumberInWindow(base + 31, 3, window, 96, 8);
-      for (i = 0; i <= 31; i++) {
+      Text_DrawNumberInWindow(base + ICON_BROWSER_PAGE_ICONS - 1, 3, window, 96,
+                              8);
+      for (i = 0; i < ICON_BROWSER_PAGE_ICONS; i++) {
         slot = -1;
-        row = i / 8;
-        x = (i - row * 8) * 16;
+        row = i / ICON_BROWSER_ROW_ICONS;
+        x = (i - row * ICON_BROWSER_ROW_ICONS) * 16;
         y = row * 16 + 16;
         if (mode == 0) {
           Icon_BuildItemIconTiles(base + i, 1, &slot, &tile, mode);
@@ -180,8 +188,9 @@ s32 DebugBrowser_Icons(void) {
 }
 
 /// A debug browser of the portraits: left and right step through
-/// gPortrait_CharacterMap and then gPortrait_SpriteMap, L and R by ten, each
-/// drawn with its number and its name from MsgTestName; A or B leaves.
+/// gPortrait_CharacterMap and then gPortrait_SpriteMap, L and R by
+/// DEBUG_LARGE_STEP, each drawn with its number and its name from MsgTestName;
+/// A or B leaves.
 s32 DebugBrowser_Portraits(void) {
   struct WindowWork *work;
   struct Window *portrait;
@@ -222,11 +231,11 @@ s32 DebugBrowser_Portraits(void) {
     }
     if (gInput.repeat & KEY_L) {
       redraw = 1;
-      index -= 10;
+      index -= DEBUG_LARGE_STEP;
     }
     if (gInput.repeat & KEY_R) {
       redraw = 1;
-      index += 10;
+      index += DEBUG_LARGE_STEP;
     }
     if (gInput.repeat & KEY_A)
       break;
@@ -239,7 +248,8 @@ s32 DebugBrowser_Portraits(void) {
       if (index < characterCount)
         glyph = gPortrait_CharacterMap[index * 2 + 1];
       else
-        glyph = gPortrait_SpriteMap[(index - characterCount) * 2 + 1] + 128;
+        glyph = gPortrait_SpriteMap[(index - characterCount) * 2 + 1] +
+                PORTRAIT_FIRST_SPRITE_PORTRAIT;
       slot = *(u16 *)((u8 *)work + slotOffset);
       Icon_LoadWithPalette(glyph, 0, &slot, &tile, palette, 1);
       Text_DrawNumberInWindow(index, 2, window, 0, 0);

@@ -25,6 +25,15 @@ enum {
 /// ActorSnapshot.
 enum { ACTOR_SNAPSHOT_CAPACITY = 32, ACTOR_SNAPSHOT_EMPTY = 255 };
 
+/// A placement row's sprite: 0 to 7 is a party member, who keeps that actor id;
+/// one up to this takes the next free slot, and one above it, which no table
+/// names, takes the slot of the row before.
+#define PLACEMENT_SPRITE_MAX 9989
+
+/// The ids Actor_Lookup answers: more than the FIELD_ACTOR_COUNT slots, so one
+/// past them reads the field work's members after the slots.
+#define LOOKUP_ID_COUNT 192
+
 /// Picks the sprite a scene placement's character id shows: character 8, the
 /// ship, is SPRITE_WINGED_SHIP_SMALL on the world map and SPRITE_WINGED_SHIP
 /// elsewhere, each one's flying picture once FLAG_SHIP_FLIES is set.
@@ -74,7 +83,7 @@ void Event_SpawnObjectTable(struct ActorPlacement *entry, s32 slot) {
 
     if (entry->sprite <= 7)
       actorIndex = entry->sprite;
-    else if (entry->sprite <= 9989)
+    else if (entry->sprite <= PLACEMENT_SPRITE_MAX)
       actorIndex = slot++;
     condition = entry->condition;
     if (!GameFlag_IsConditionActive(condition))
@@ -156,8 +165,8 @@ void Event_SpawnObjectTable(struct ActorPlacement *entry, s32 slot) {
       actor->facing = entry->facing;
       actor->collisionFlags = ACTOR_SOLID;
       Actor_SetMovementType(actor, entry->behavior);
-      ((struct SpawnActor *)actor)->homeX = actor->x.fixed / FIXED_ONE;
-      ((struct SpawnActor *)actor)->homeZ = actor->z.fixed / FIXED_ONE;
+      actor->homeX = actor->x.fixed / FIXED_ONE;
+      actor->homeZ = actor->z.fixed / FIXED_ONE;
       // An actor placement with a height is lifted half a pixel more and
       // floats: it neither follows the ground nor falls.
       if (actor->y.fixed != 0) {
@@ -250,7 +259,7 @@ void Actor_ResetForLeader(s32 table) {
       actor->groundHeight = y;
     }
   }
-  Event_SpawnObjectTable((struct ActorPlacement *)table, 8);
+  Event_SpawnObjectTable((struct ActorPlacement *)table, ACTOR_FIRST_PLACED);
 
   actor = work->actors[leader];
   actor->layer = gMainRoutineWork.layer;
@@ -286,7 +295,7 @@ void Actor_ResetForLeader(s32 table) {
   }
 
   if (gMainRoutineWork.ownerOverride != 0) {
-    struct Actor *stand = work->actors[8];
+    struct Actor *stand = work->actors[ACTOR_FIRST_PLACED];
 
     SET_ACTOR_POSITION(stand, actor->x.fixed, actor->y.fixed, actor->z.fixed);
     stand->groundHeight = actor->groundHeight;
@@ -296,8 +305,8 @@ void Actor_ResetForLeader(s32 table) {
     actor = stand;
   }
 
-  camera = Actor_CreateFar(ACTOR_CREATE_NO_SPRITE << 12, actor->x.fixed,
-                           actor->y.fixed, actor->z.fixed);
+  camera = Actor_CreateFar(ACTOR_CREATE_KIND(ACTOR_CREATE_NO_SPRITE),
+                           actor->x.fixed, actor->y.fixed, actor->z.fixed);
   camera->groundHeight = actor->groundHeight;
   Actor_StartCameraFar(camera, actor);
   if (work->mode == ACTOR_SYSTEM_WORLD_MAP) {
@@ -368,13 +377,13 @@ void ObjectTable_Clear(void) {
     work->actors[i] = NULL;
 }
 
-/// Returns the actor in slot objectId (below 192), or NULL.
-struct Actor *Actor_Lookup(u32 objectId) {
+/// Returns the actor in slot actorId (below LOOKUP_ID_COUNT), or NULL.
+struct Actor *Actor_Lookup(u32 actorId) {
   struct FieldWork *work = Ram_HeapSlots->fieldWork;
 
-  if (objectId > 191)
+  if (actorId > LOOKUP_ID_COUNT - 1)
     return NULL;
-  return work->actors[objectId];
+  return work->actors[actorId];
 }
 
 /// Saves up to 32 actors into gSnapshotObjects, with each one's slot,
@@ -474,3 +483,6 @@ void Actor_Restore(void) {
     index = *indices++;
   }
 }
+
+#undef PLACEMENT_SPRITE_MAX
+#undef LOOKUP_ID_COUNT

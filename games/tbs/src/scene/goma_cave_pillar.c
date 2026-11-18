@@ -128,7 +128,7 @@ enum GomaCavePillarActorId {
 enum { ENTRANCE_STUMP_FALL = 99 };
 
 /// The trigger the man's timer raises once Forge has joined the party
-/// (GomaCavePillar_FidgetWhileForgeFights).
+/// (GomaCavePillar_WatchForgeJoin).
 enum GomaCavePillarRaisedTrigger { RAISED_FORGE_JOINED = 99 };
 
 #include "shared/staged_actor.c"
@@ -176,7 +176,16 @@ static s32 GomaCavePillar_FinishFragment(struct Actor *actor) {
   return 0;
 }
 
-/// Creates a fragment with two axis rates, a script and packed plane/priority.
+/// A fragment's style: its script (and its animation, the next number) in the
+/// low bits, and its sprite colour from bit 16.
+#define FRAGMENT_SCRIPT(style) ((style) & 0xf)
+#define FRAGMENT_COLOR(style) (((u32)(style) >> 16) & 0xf)
+/// A fragment's place: its map plane in the low half, and its sprite priority
+/// (0 for the leader's) in the high half.
+#define FRAGMENT_PRIORITY(place) ((u32)(place) >> 16)
+
+/// Creates a fragment with two axis rates, a style (FRAGMENT_SCRIPT,
+/// FRAGMENT_COLOR) and a place (its plane and FRAGMENT_PRIORITY).
 static void GomaCavePillar_SpawnFragment(s32 x, s32 y, s32 z, s32 firstRate,
                                          s32 secondRate,
                                          s32 scriptAndChildValue,
@@ -193,16 +202,17 @@ static void GomaCavePillar_SpawnFragment(s32 x, s32 y, s32 z, s32 firstRate,
   if (fragment == NULL)
     return;
   sprite = fragment->sprite;
-  Actor_SelectAnimation(fragment, (scriptAndChildValue + 1) & 15);
-  Actor_StartScript(fragment, table.script[scriptAndChildValue & 15]);
-  Actor_SetSpriteColor(fragment, ((u32)scriptAndChildValue >> 16) & 15);
+  Actor_SelectAnimation(fragment, FRAGMENT_SCRIPT(scriptAndChildValue + 1));
+  Actor_StartScript(fragment,
+                    table.script[FRAGMENT_SCRIPT(scriptAndChildValue)]);
+  Actor_SetSpriteColor(fragment, FRAGMENT_COLOR(scriptAndChildValue));
   fragment->motionFlags = 0;
   sprite->flags = 0;
   fragment->update = GomaCavePillar_UpdateFragment;
   fragment->speedLimit = firstRate;
   fragment->acceleration = secondRate;
   fragment->userValue = (u16)planeAndPriority;
-  priority = (u32)planeAndPriority >> 16;
+  priority = FRAGMENT_PRIORITY(planeAndPriority);
   switch (priority) {
   case 0:
     sprite->image.priority = leader->sprite->image.priority;
@@ -255,7 +265,7 @@ static void GomaCavePillar_MoveWestPillar(void) {
 
 /// While the stump teeters, dust falls from it: one fragment every eighth
 /// frame, two on every sixteenth.
-static void GomaCavePillar_SpawnStumpDust(void) {
+static void GomaCavePillar_DropStumpFragments(void) {
   s32 framePhase;
   FIXED fixedX;
   FIXED fixedZ;
@@ -335,7 +345,7 @@ static void GomaCavePillar_PushStumpOver(void) {
     Actor_SetPosition(ACTOR_MASK_FOR_STUMP, 414, 240);
     Event_Wait(10);
     // Dust falls while the stump rocks on the edge.
-    Task_AddFrame(GomaCavePillar_SpawnStumpDust, TASK_PASS_FRAME);
+    Task_AddFrame(GomaCavePillar_DropStumpFragments, TASK_PASS_FRAME);
     Sound_Play(SE_RUMBLE);
     Actor_SetDestinationOffset(ACTOR_STUMP, 1, 0);
     Actor_WaitForMoveById(ACTOR_STUMP);
@@ -350,7 +360,7 @@ static void GomaCavePillar_PushStumpOver(void) {
     Sound_Play(SE_STOP_ACTION_SE);
     Actor_SetDestination(ACTOR_STUMP, 416, 200);
     Actor_SetSpriteFlags(Actor_Get(ACTOR_STUMP), 0);
-    Task_Remove(GomaCavePillar_SpawnStumpDust);
+    Task_Remove(GomaCavePillar_DropStumpFragments);
     Event_Wait(12);
     Sound_Play(SE_STONE_GRIND);
     fixedX = Actor_Get(ACTOR_STUMP)->x.fixed + INTtoFIXED(Random_Below(12));
@@ -482,9 +492,9 @@ const struct Trigger *Scene_GetTriggers(void) {
   return gGomaCavePillar_Triggers;
 }
 
-/// Back from a won battle with Forge, the man reacts on a timer while the
-/// Djinni joins the party.
-static void GomaCavePillar_FidgetWhileForgeFights(void) {
+/// Back from a won battle with Forge, the man who fought it reacts on a timer
+/// while the Djinni joins the party.
+static void GomaCavePillar_WatchForgeJoin(void) {
   struct FieldWork *work;
   s32 frame;
 
@@ -513,7 +523,7 @@ static void GomaCavePillar_FidgetWhileForgeFights(void) {
 /// Raised in Goma Cave once Forge has joined the party: the man who fought it
 /// is amazed.
 static void GomaCavePillar_WitnessCheersForgeCaught(void) {
-  Task_Remove(GomaCavePillar_FidgetWhileForgeFights);
+  Task_Remove(GomaCavePillar_WatchForgeJoin);
   Event_Start();
   Actor_ShowEmote(ACTOR_WITNESS, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 30);
   Actor_RunRepeatedMotion(ACTOR_WITNESS, 2);
@@ -581,7 +591,7 @@ s32 Scene_Initialize(void) {
   // Coming back from a Djinni battle: the man reacts until it is over.
   if (gMainRoutineWork.pendingDjinni != 0) {
     gGomaCavePillar_WitnessFrames = 0;
-    Task_AddFrame(GomaCavePillar_FidgetWhileForgeFights, TASK_PASS_FRAME);
+    Task_AddFrame(GomaCavePillar_WatchForgeJoin, TASK_PASS_FRAME);
   }
   return 0;
 }

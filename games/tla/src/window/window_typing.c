@@ -6,7 +6,7 @@
 
 #define CANVAS_COLUMNS 30
 #define CANVAS_COLUMN_WORDS 32
-#define CANVAS_KEPT_ROWS 8 ///< the top 8 pixel rows stay put
+#define CANVAS_KEPT_ROWS 8 ///< the top pixel rows, which stay put
 
 /// What Message_Type reports.
 enum {
@@ -15,9 +15,9 @@ enum {
   CHANNEL_STEP_CLOSE = 9,   ///< the text is dismissed: close the window
 };
 
-/// Scrolls the message canvas up by 6 pixel rows per step, below its top 8
-/// rows, and clears the rows this uncovers. A typing message calls it with
-/// step 1 on each frame of a line scroll.
+/// Scrolls the message canvas up by 6 pixel rows per step, below its top
+/// CANVAS_KEPT_ROWS, and clears the rows this uncovers. A typing message calls
+/// it with step 1 on each frame of a line scroll.
 void Text_ScrollCanvasUp(s32 step) {
   s32 shift = step * 6;
   u32 *base = TEXT_CANVAS_VRAM;
@@ -327,10 +327,10 @@ s32 Message_Type(struct UiChannelSlot *channel) {
       nextCode = work->textBuffer[nextEntryIndex];
 #if LANGUAGE == LANGUAGE_JAPANESE || LANGUAGE == LANGUAGE_ENGLISH
       if (nextCode == TEXT_MARK_VOICED) {
-        code |= 1 << 14;
+        code |= TEXT_CODE_VOICED;
         channel->entry = (channel->entry + 1) & TEXT_BUFFER_MASK;
       } else if (nextCode == TEXT_MARK_SEMIVOICED) {
-        code |= 2 << 14;
+        code |= TEXT_CODE_SEMIVOICED;
         channel->entry = (channel->entry + 1) & TEXT_BUFFER_MASK;
       }
 #endif

@@ -24,6 +24,9 @@ struct Window;
 /// corner, until a screen places it.
 #define MENU_ICON_HIDDEN_X (DISPLAY_WIDTH + 8)
 #define MENU_ICON_HIDDEN_Y (DISPLAY_HEIGHT + 8)
+/// The y a party or Djinni figure is parked at, below the screen, while a
+/// screen has no place for it.
+#define MENU_FIGURE_HIDDEN_Y 200
 
 /// The item menu's work, in the HEAP_SLOT_MENU heap slot: its windows, the
 /// party figures, the items listed and the two choices a command makes.
@@ -91,7 +94,7 @@ struct ItemMenuWork {
   u8 unusedAfterFigures[6]; ///< DjinnMenuWork's pair; not named here
   s16 messageOffset;        ///< the item use's result, after MsgItemUseResult
   s8 equipPreview; ///< 1 while the stats preview a removal, not an equip
-  u8 listMode;     ///< the command chosen last (ItemMenuCommand); 0xff for none
+  u8 listMode;     ///< the command chosen last (ItemMenuCommand); -1 for none
   u8 unusedAfterListMode[2];   ///< no view of the menu work names it
   s8 selectedIndexByMember[8]; ///< each party member's entry chosen last
   u8 mode;           ///< not named through this struct; PsynergyMenuWork.mode

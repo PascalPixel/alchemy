@@ -6,11 +6,17 @@
 #include "field_psynergy_internal.h"
 #include "stddef.h"
 
+/// A 16.16 height in the 8-pixel steps a collision tag's height counts.
+#define HEIGHT_STEPS(height) (FIXEDtoINT(height) >> 3)
+/// A block's height, 32 pixels, in those steps.
+#define BLOCK_HEIGHT_STEPS 4
+
 /// Makes each listed actor (ids, ended by ACTOR_LIST_END) a block in the map:
-/// its cell's shape is tagged 32 pixels above the ground, so the party can
-/// stand on it, its cell is marked raised (the old mark kept in the actor) and
-/// layer 2 blocks it. A leader below the new ground is lifted onto it. Scenes
-/// call it as they start, for the blocks Move pushes.
+/// its cell's shape is tagged BLOCK_HEIGHT_STEPS above the ground, so the party
+/// can stand on it, its cell is marked MAP_CELL_JUMP, a gap to jump onto from
+/// another block (the old mark kept in the actor), and layer 2 blocks it. A
+/// leader below the new ground is lifted onto it. Scenes call it as they
+/// start, for the blocks Move pushes.
 void Actor_PlaceBlocks(u16 *actors) {
   struct MapWork *map = Ram_HeapSlots->mapGrid;
   struct MapCell *blocks = map->layers[2].cells;
@@ -22,13 +28,12 @@ void Actor_PlaceBlocks(u16 *actors) {
     struct Actor *actor = Actor_GetById(*actors);
     u32 key =
         MapGrid_GetTerrainKindFar(actor->layer, actor->x.fixed, actor->z.fixed);
-    s32 level = MapGrid_GetTerrainHeightFar(actor->layer, actor->x.fixed,
-                                            actor->z.fixed) >>
-                19;
+    s32 level = HEIGHT_STEPS(MapGrid_GetTerrainHeightFar(
+        actor->layer, actor->x.fixed, actor->z.fixed));
     s32 slot = Actor_GetCellIndex(actor);
     struct MapCell *cells = map->layers[actor->layer].cells;
-    // The row's address as an integer sum, index first: &grid[row] adds the
-    // grid first.
+    /* FAKEMATCH(temporary): the layer's row of the shape grid as an integer
+     * sum, its index first; as &grid[(cells - Ram_MapCellBuffer) / 4]. */
     u8 *shapes =
         (u8 *)((((s32)cells - (s32)Ram_MapCellBuffer) >> 2) + (s32)grid);
     struct MapCell *cell;
@@ -39,13 +44,13 @@ void Actor_PlaceBlocks(u16 *actors) {
     actor->collisionFlags = 0;
     Actor_SetSpriteFlagsFar(actor, 0);
     shapes += slot;
-    tag = MapCollision_FindOrAddTag(actor->layer, key, level + 4);
+    tag = MapCollision_FindOrAddTag(actor->layer, key,
+                                    level + BLOCK_HEIGHT_STEPS);
     cell = &cells[slot];
     flags = cell->attributeB;
     actor->riseBaseY = flags;
-    cell->attributeB = flags | 0x80;
+    cell->attributeB = flags | MAP_CELL_JUMP;
     *shapes = tag;
-    // Reused for the block in layer 2's table.
     cell = &blocks[slot];
     cell->collisionCode = CELL_BEHAVIOR_WALL;
   }
@@ -89,7 +94,8 @@ void Actor_LiftTargetBlock(u16 *actors) {
       s32 tag;
 
       shapes += slot;
-      tag = MapCollision_FindOrAddTag(target->layer, key, (level >> 19) - 4);
+      tag = MapCollision_FindOrAddTag(target->layer, key,
+                                      HEIGHT_STEPS(level) - BLOCK_HEIGHT_STEPS);
       cells += slot;
       blocks += slot;
       ((struct ShapeCell *)shapes)->shape = tag;
@@ -134,12 +140,13 @@ void Actor_PlaceMovedBlock(void) {
     }
     slot = Actor_GetCellIndex(target);
     shapes += slot;
-    tag = MapCollision_FindOrAddTag(target->layer, key, (level >> 19) + 4);
+    tag = MapCollision_FindOrAddTag(target->layer, key,
+                                    HEIGHT_STEPS(level) + BLOCK_HEIGHT_STEPS);
     ((struct ShapeCell *)shapes)->shape = tag;
     cells += slot;
     flags = cells->attributeB;
     target->riseBaseY = flags;
-    cells->attributeB = flags | 0x80;
+    cells->attributeB = flags | MAP_CELL_JUMP;
     blocks += slot;
     blocks->collisionCode = CELL_BEHAVIOR_WALL;
   }
@@ -152,32 +159,33 @@ struct Actor *Actor_FindAtCell(s32 *position, s32 check_y);
 struct Actor *Leader_FindActorAhead(void) {
   struct Actor *leader = Actor_GetById(gMainRoutineWork.leaderActorId);
   FIXED position[3];
-  s32 angle = ((leader->facing >> 12) + 2) & 12;
+  // The leader's facing rounded to the nearest quarter turn, in sixteenths.
+  s32 angle = (leader->facing / FACING_STEP + 2) & 12;
   struct Actor *found;
 
   position[0] = leader->x.fixed;
   position[1] = leader->y.fixed;
   position[2] = leader->z.fixed;
-  Vector_AddPolarOffset(toFIXED(16), angle << 12, position);
+  Vector_AddPolarOffset(toFIXED(16), angle * FACING_STEP, position);
   found = Actor_FindAtCell(position, 1);
   if (found != NULL)
     return found;
   position[0] = leader->x.fixed;
   position[1] = leader->y.fixed;
   position[2] = leader->z.fixed;
-  Vector_AddPolarOffset(toFIXED(32), angle << 12, position);
+  Vector_AddPolarOffset(toFIXED(32), angle * FACING_STEP, position);
   found = Actor_FindAtCell(position, 1);
   if (found != NULL)
     return found;
   return NULL;
 }
 
-/// Returns the first of event objects 8 to 63 on position's cell, at its
-/// height too when checkY is set, or NULL.
+/// Returns the first of the placed actors (not the treasure spots) on
+/// position's cell, at its height too when checkY is set, or NULL.
 struct Actor *Actor_FindAtCell(s32 *position, s32 checkY) {
   u32 i;
 
-  for (i = 8; i < 64; i++) {
+  for (i = ACTOR_FIRST_PLACED; i < FIELD_TREASURE_ACTOR; i++) {
     struct FieldWork *event = Ram_HeapSlots->fieldWork;
     struct Actor *actor = event->actors[i];
 
@@ -195,8 +203,13 @@ struct Actor *Actor_FindAtCell(s32 *position, s32 checkY) {
   return NULL;
 }
 
-/// The width and height of each OAM shape and size, in pixels.
+/// The width and height of each OAM shape and size, in pixels, by the shape
+/// times 4 plus the size.
 extern const u8 gOam_ShapeSizes[][2];
+/// Where an attr01 word holds a sprite's size (attribute 1's top two bits) and
+/// shape (attribute 0's).
+#define OBJ_SIZE_SHIFT 30
+#define OBJ_SHAPE_SHIFT 14
 
 /// Fills an effect sprite: OAM attributes 0 and 1 as given (no affine matrix,
 /// 256 colours), the tiles, unscaled and unrotated at depth 255, and the
@@ -214,13 +227,16 @@ void EffectSprite_Init(struct EffectSprite *sprite, s32 pivotX, s32 pivotY,
   sprite->depth = OAM_DEPTH_FRONT;
   sprite->pivotX = pivotX;
   sprite->pivotY = pivotY;
-  shape = ((attributes >> 30) | (attributes >> 12)) & 15;
+  shape =
+      ((attributes >> OBJ_SIZE_SHIFT) | (attributes >> (OBJ_SHAPE_SHIFT - 2))) &
+      15;
   sprite->width = gOam_ShapeSizes[shape][0];
   sprite->height = gOam_ShapeSizes[shape][1];
   words = (u32 *)&sprite->oam;
   *words++ = attributes;
   *words = 0;
-  // Through the OAM's address: as sprite->oam.fullColor, 2 of 57 differ.
+  /* FAKEMATCH(temporary): the OAM reached through its own address; as
+   * sprite->oam.fullColor. */
   (&sprite->oam)->fullColor = 1;
   sprite->oam.index = tile;
 }
@@ -306,8 +322,8 @@ void EffectSprite_Draw(struct EffectSprite *sprite) {
   // The box on screen; skip it when none of it shows.
   screenX = FIXEDtoINT(x) - left;
   screenY = FIXEDtoINT(y) - top;
-  if (screenX + width < 0 || screenX > 239 || screenY + height <= 0 ||
-      screenY > 159)
+  if (screenX + width < 0 || screenX >= DISPLAY_WIDTH ||
+      screenY + height <= 0 || screenY >= DISPLAY_HEIGHT)
     return;
 
   sprite->oam.x = screenX;
@@ -333,3 +349,8 @@ void EffectSprite_DrawAtWorldPosition(struct EffectSprite *sprite,
     EffectSprite_Draw(sprite);
   }
 }
+
+#undef HEIGHT_STEPS
+#undef BLOCK_HEIGHT_STEPS
+#undef OBJ_SIZE_SHIFT
+#undef OBJ_SHAPE_SHIFT

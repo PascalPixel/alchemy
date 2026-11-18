@@ -11,12 +11,18 @@
 #define DEBUG_ROW_VALUE_MAX 324
 #define DEBUG_ROW_SUB_MAX 99
 
+/// The flag browser's pages of DEBUG_FLAG_ROWS rows of DEBUG_FLAGS_PER_ROW
+/// flags, 256 a page: every game flag.
+#define DEBUG_FLAG_PAGES 16
+#define DEBUG_FLAG_ROWS 16
+#define DEBUG_FLAGS_PER_ROW 16
+
 /// Edits the debug scene or entrance, returning -1 to exit and -2 to
 /// cancel, else the scene after this frame's keys. Up and Down switch the
 /// field (`mode`: 0 scene, 1 entrance), Left and Right step by one and wrap
-/// at either end. R and L step a scene by ten, setting the entrance to 0, and
-/// past either end go to the other; they step an entrance by ten, wrapping by
-/// 99 (95 + 10 gives 6).
+/// at either end. R and L step a scene by DEBUG_LARGE_STEP, setting the
+/// entrance to 0, and past either end go to the other; they step an entrance
+/// as far, wrapping by DEBUG_ROW_SUB_MAX (95 + 10 gives 6).
 s32 DebugSceneSelect_HandleRowInput(s32 arg, s16 value, s16 *sub, s16 *mode) {
   if (gInput.repeat & KEY_A)
     return -1;
@@ -51,9 +57,9 @@ s32 DebugSceneSelect_HandleRowInput(s32 arg, s16 value, s16 *sub, s16 *mode) {
   } else if (gInput.repeat & KEY_R) {
     if (*mode == 0) {
       *sub = 0;
-      value += 10;
+      value += DEBUG_LARGE_STEP;
     } else {
-      *sub += 10;
+      *sub += DEBUG_LARGE_STEP;
       if (*sub > DEBUG_ROW_SUB_MAX)
         *sub -= DEBUG_ROW_SUB_MAX;
     }
@@ -63,9 +69,9 @@ s32 DebugSceneSelect_HandleRowInput(s32 arg, s16 value, s16 *sub, s16 *mode) {
   } else if (gInput.repeat & KEY_L) {
     if (*mode == 0) {
       *sub = 0;
-      value -= 10;
+      value -= DEBUG_LARGE_STEP;
     } else {
-      *sub -= 10;
+      *sub -= DEBUG_LARGE_STEP;
       if (*sub < 0)
         *sub += DEBUG_ROW_SUB_MAX;
     }
@@ -76,10 +82,8 @@ s32 DebugSceneSelect_HandleRowInput(s32 arg, s16 value, s16 *sub, s16 *mode) {
   return value;
 }
 
-// Menu: flag list (move the cursor and press A to toggle).
-
-/// Shows 16x16 flags per page and takes input until closed, starting on page
-/// 8. Returns 0.
+/// The flag browser: shows a page of flags and takes input until closed,
+/// starting on page 8. Returns 0.
 s32 DebugFlagEditor_Run(void) {
   struct MenuSprite cursorSprite; // Cursor sprite
   s32 cursor[2];                  // Cursor column and row
@@ -121,7 +125,7 @@ void String_FormatHexDigits(u32 value, u32 count, u8 *out) {
     count = 5;
 
   for (i = 0; i != count; i++) {
-    u32 digit = value & 15;
+    u32 digit = value & 0xf;
     if (digit <= 9)
       digits[i] = digit + '0';
     else
@@ -143,8 +147,8 @@ void DebugFlagEditor_DrawTable(s32 window, s32 startFlag) {
   u8 label[5];
   char bits[17];
 
-  // UB: called with no argument; r0 still holds window, the window it
-  // redraws.
+  // UB: called with no argument; the window it redraws is this one, left
+  // where the argument would be.
 #ifdef UBFIX
   WindowSprite_PrepareForRedraw(window);
 #else
@@ -153,7 +157,7 @@ void DebugFlagEditor_DrawTable(s32 window, s32 startFlag) {
   Text_DrawStringInWindow((s32)gMenu_HexDigitsString, window, 48, 0);
 
   flag = startFlag << 8;
-  for (row = 0; row != 16; row++) {
+  for (row = 0; row != DEBUG_FLAG_ROWS; row++) {
     s32 i;
 
     y = row * 8 + 16;
@@ -165,7 +169,7 @@ void DebugFlagEditor_DrawTable(s32 window, s32 startFlag) {
     Text_DrawStringInWindow((s32)label, window, 0, y);
     Text_DrawStringInWindow((s32)gMenu_ColonString, window, 32, y);
 
-    for (i = 0; i < 16; i++) {
+    for (i = 0; i < DEBUG_FLAGS_PER_ROW; i++) {
       s32 set = GameFlag_Get(flag);
       bits[i] = (set != 0) + '0';
       flag++;
@@ -178,8 +182,8 @@ void DebugFlagEditor_DrawTable(s32 window, s32 startFlag) {
 /// Moves within the flag grid, changes pages, or toggles the selected flag.
 /// Returns 1 when flags/page need redrawing, -1 to close, and 0 otherwise.
 /// A toggles flag page * 256 + row * 16 + column; B or Select closes. L and
-/// R turn a page, wrapping 0 to 15; with Start held they jump ten, to the
-/// other end when that passes it (5 - 10 gives 15).
+/// R turn a page, wrapping at either end; with Start held they jump
+/// DEBUG_LARGE_STEP, to the other end when that passes it (5 - 10 gives 15).
 s32 DebugFlagEditor_HandleInput(s32 window, s32 *page, s32 *cursor) {
   s32 *row = &cursor[1];
 
@@ -196,32 +200,32 @@ s32 DebugFlagEditor_HandleInput(s32 window, s32 *page, s32 *cursor) {
     return -1;
   if (gInput.repeat & KEY_UP) {
     if (--*row < 0)
-      *row = 15;
+      *row = DEBUG_FLAG_ROWS - 1;
   } else if (gInput.repeat & KEY_DOWN) {
-    if (++*row > 15)
+    if (++*row > DEBUG_FLAG_ROWS - 1)
       *row = 0;
   } else if (gInput.repeat & KEY_LEFT) {
     if (--cursor[0] < 0)
-      cursor[0] = 15;
+      cursor[0] = DEBUG_FLAGS_PER_ROW - 1;
   } else if (gInput.repeat & KEY_RIGHT) {
-    if (++cursor[0] > 15)
+    if (++cursor[0] > DEBUG_FLAGS_PER_ROW - 1)
       cursor[0] = 0;
   } else if ((gInput.repeat & KEY_L) && (gInput.repeat & KEY_START)) {
-    *page -= 10;
+    *page -= DEBUG_LARGE_STEP;
     if (*page < 0)
-      *page = 15;
+      *page = DEBUG_FLAG_PAGES - 1;
     return 1;
   } else if ((gInput.repeat & KEY_R) && (gInput.repeat & KEY_START)) {
-    *page += 10;
-    if (*page > 15)
+    *page += DEBUG_LARGE_STEP;
+    if (*page > DEBUG_FLAG_PAGES - 1)
       *page = 0;
     return 1;
   } else if (gInput.repeat & KEY_L) {
     if (--*page < 0)
-      *page = 15;
+      *page = DEBUG_FLAG_PAGES - 1;
     return 1;
   } else if (gInput.repeat & KEY_R) {
-    if (++*page > 15)
+    if (++*page > DEBUG_FLAG_PAGES - 1)
       *page = 0;
     return 1;
   }

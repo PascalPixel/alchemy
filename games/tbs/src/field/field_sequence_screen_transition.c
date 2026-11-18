@@ -35,7 +35,7 @@
 /// values of the shown page into WININ, WINOUT, WIN0H and WIN1H, and has DMA 0
 /// copy the rest into WIN0H and WIN1H one word each HBlank, so that every line
 /// of the screen gets its own window edges.
-void FieldEffect_StartWindowHBlankDma(void) {
+void ScreenTransition_StartWindowHBlankDma(void) {
   struct ScreenTransitionState *work = gScreenTransitionWork;
   u16 *scanlineData = work->pages[work->page];
   volatile u16 *dma0 = REG_DMA0;
@@ -102,7 +102,7 @@ void ScreenTransition_UpdateScanlineTable(void) {
         } else {
           REG_DISPCNT &= ~(DISPCNT_WIN0_ON | DISPCNT_WIN1_ON);
         }
-        Task_Remove((TaskFunc)FieldEffect_StartWindowHBlankDma);
+        Task_Remove((TaskFunc)ScreenTransition_StartWindowHBlankDma);
         Task_Remove((TaskFunc)ScreenTransition_UpdateScanlineTable);
         {
           volatile u16 *dma0 = REG_DMA0;
@@ -522,7 +522,7 @@ void ScreenTransition_UpdateScanlineTable(void) {
 
 /// Starts window transition mode at value 0, with no duration: the caller moves
 /// it.
-void ScreenTransition_InitializeBattleEffectState(s32 mode) {
+void ScreenTransition_StartHeldWindow(s32 mode) {
   struct ScreenTransitionState *state =
       HeapSlot_AllocEwram(HEAP_SLOT_SCREEN_TRANSITION, sizeof(*state));
 
@@ -532,14 +532,14 @@ void ScreenTransition_InitializeBattleEffectState(s32 mode) {
   state->mask = WININ_WIN0_ALL | WININ_WIN1_ALL;
   state->active = WINOUT_WIN01_BG0;
   Task_Add(ScreenTransition_UpdateScanlineTable, TASK_PASS_FRAME);
-  Task_Add(FieldEffect_StartWindowHBlankDma, TASK_PASS_VBLANK);
+  Task_Add(ScreenTransition_StartWindowHBlankDma, TASK_PASS_VBLANK);
 }
 
 /// Unused: suspends the window transition's two tasks. Nothing calls it,
 /// by name, far-call entry or table.
 UNUSED void ScreenTransition_SuspendCallbacks(void) {
   Task_SuspendAll(&ScreenTransition_UpdateScanlineTable);
-  Task_SuspendAll(&FieldEffect_StartWindowHBlankDma);
+  Task_SuspendAll(&ScreenTransition_StartWindowHBlankDma);
 }
 
 /// Allocates the screen transition state (HEAP_SLOT_SCREEN_TRANSITION) and
@@ -589,7 +589,7 @@ void ScreenTransition_Start(s32 mode, s32 frames) {
     state->mask = WININ_WIN0_ALL;
     state->active = WINOUT_WIN01_BG0;
     Task_Add(ScreenTransition_UpdateScanlineTable, TASK_PASS_FRAME);
-    Task_Add(FieldEffect_StartWindowHBlankDma, TASK_PASS_VBLANK);
+    Task_Add(ScreenTransition_StartWindowHBlankDma, TASK_PASS_VBLANK);
     wait(1);
     IO_WRITE_QUEUE_PUSH((u32)&REG_DISPCNT, REG_DISPCNT | display->dispcnt,
                         IO_WRITE_HALFWORD);
@@ -616,7 +616,7 @@ void ScreenTransition_Start(s32 mode, s32 frames) {
     state->step = 0;
     return;
   }
-  case TRANSITION_CENTRE_LINE: {
+  case TRANSITION_CENTER_LINE: {
     struct ScreenTransitionState *state;
 
     display = gMapGridWork[0];
@@ -671,7 +671,7 @@ void ScreenTransition_Finish(s32 mode, s32 frames) {
     state->mask = WININ_WIN0_ALL;
     state->active = WINOUT_WIN01_BG0;
     Task_Add(ScreenTransition_UpdateScanlineTable, TASK_PASS_FRAME);
-    Task_Add(FieldEffect_StartWindowHBlankDma, TASK_PASS_VBLANK);
+    Task_Add(ScreenTransition_StartWindowHBlankDma, TASK_PASS_VBLANK);
     wait(1);
     state->start = TRANSITION_OPEN;
     state->end = TRANSITION_CLOSED;
@@ -694,7 +694,7 @@ void ScreenTransition_Finish(s32 mode, s32 frames) {
     state->step = 0;
     break;
   }
-  case TRANSITION_CENTRE_LINE: {
+  case TRANSITION_CENTER_LINE: {
     struct ScreenTransitionState *state =
         ScreenTransition_AllocateAndClearState();
     if (variant == 0) {

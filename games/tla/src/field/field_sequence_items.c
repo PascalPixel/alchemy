@@ -36,8 +36,8 @@ void Event_ResolvePendingActions(s32 skip) {
     Field_RunPsynergyEndEvents(ABILITY_SAND | ACT_PACKED);
 }
 
-/// Returns the leader's actor id, or 8 while gMainRoutineWork.ownerOverride is
-/// set.
+/// Returns the leader's actor id, or ACTOR_FIRST_PLACED while
+/// gMainRoutineWork.ownerOverride is set.
 s32 Party_GetLeaderActor(void) {
   struct MainRoutineWork *state = &gMainRoutineWork;
   s32 actor;
@@ -50,14 +50,15 @@ s32 Party_GetLeaderActor(void) {
 }
 
 /// Returns 1 when itemId answers filter: the item itself, ITEM_FILTER_ANY any
-/// item, or ITEM_FILTER_EQUIPMENT any item of types 1 to 4; else 0.
+/// item, or ITEM_FILTER_EQUIPMENT any weapon, armor, shield or helm; else 0.
 s32 Item_MatchesFilter(s32 filter, s32 itemId) {
   if (filter == itemId)
     return 1;
   if (filter == ITEM_FILTER_ANY)
     return 1;
   if (filter == ITEM_FILTER_EQUIPMENT &&
-      (u32)(Item_GetDirectFar(itemId)->type - 1) <= 3)
+      (u32)(Item_GetDirectFar(itemId)->type - ITEM_TYPE_WEAPON) <=
+          ITEM_TYPE_HELM - ITEM_TYPE_WEAPON)
     return 1;
   return 0;
 }
@@ -88,6 +89,7 @@ const struct Trigger *Field_FindItemTrigger(s32 source) {
         (hasFacing == 0 ||
          (u16)(highValue - facing + (TRIG_TURN * 3 / 32 - 1)) <=
              TRIG_TURN * 3 / 16 - 2)) {
+      // The item, as USE_ITEM packs it above the trigger's kind.
       s32 item = (u16)((s32)trigger->control / 256);
 
       if (source == 0 || Item_MatchesFilter(item, source)) {
@@ -121,7 +123,6 @@ s32 Field_UseItem(s32 packedItem, s32 slot) {
   s32 result;
   s32 itemId;
   s32 actor;
-  s32 actorMask;
   struct Unit *unit;
   const struct Trigger *trigger;
   s32 j;
@@ -132,10 +133,8 @@ s32 Field_UseItem(s32 packedItem, s32 slot) {
   struct FieldWork *runtime;
 
   result = -1;
-  itemId = 0x3ff;
-  actorMask = 0xf;
-  itemId &= packedItem;
-  actor = (packedItem >> 10) & actorMask;
+  itemId = ACT_ITEM_ID(packedItem);
+  actor = ACT_UNIT(packedItem);
   {
     best = 0;
     count = Party_CountMembersFar();
@@ -225,7 +224,8 @@ s32 Field_UseItem(s32 packedItem, s32 slot) {
       runtime->psynergyActing = 0;
       FieldPsynergy_End();
 
-      if (Item_GetDirectFar(itemId)->useType & 1)
+      // ITEM_USE_TEACHES has ITEM_USE_CONSUMED's bit too: both are used up.
+      if (Item_GetDirectFar(itemId)->useType & ITEM_USE_CONSUMED)
         GameFlag_Set(FLAG_ITEM_USED_UP);
     }
   }
@@ -236,6 +236,10 @@ s32 Field_UseItem(s32 packedItem, s32 slot) {
     Inventory_RemoveFar(actor, slot);
   return result;
 }
+
+/// A distance beyond any field Psynergy's reach, as field_sequence_targets.c
+/// writes it.
+#define BEYOND_REACH 9999
 
 /// Chooses what a Psynergy of the given kind acts on, for
 /// Scene_FindPsynergyTrigger: among the scene's Psynergy triggers for that
@@ -249,7 +253,7 @@ s32 Scene_SelectPsynergyTarget(s32 kind) {
   u32 facing = Actor_Lookup(Party_GetLeaderActor())->facing;
   s32 focused = Field_GetCollisionAheadOfLeader();
   s32 special = Field_GetCollisionUnderLeader();
-  s32 best = 9999;
+  s32 best = BEYOND_REACH;
   // Default: -1, though every path below sets it.
   s32 result = -1;
   s32 selected = -1;
@@ -381,3 +385,5 @@ s32 Field_RunPsynergyEndEvents(u32 packed) {
   FieldPsynergy_End();
   return 0;
 }
+
+#undef BEYOND_REACH

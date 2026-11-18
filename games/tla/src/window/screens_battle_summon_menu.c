@@ -155,7 +155,7 @@ s32 BattleSummonMenu_Run(s32 unusedA, s32 unusedB, const u8 *standby) {
         Text_DrawWideStringAtOffset(text, description, 0, 4);
         drawnRow = selectedRow;
         mask = 0;
-        for (element = 0; element <= 3; element++) {
+        for (element = 0; element < ELEMENT_COUNT; element++) {
           if (definition->djinnRequired[element] != 0)
             mask |= 1 << element;
         }
@@ -252,15 +252,17 @@ s32 BattleSummonMenu_Run(s32 unusedA, s32 unusedB, const u8 *standby) {
     Oam_AddSpriteAtDepth(sprite, OAM_DEPTH_WINDOW + 2);
 
     {
-      s32 element, tile, blink;
+      s32 element, palette, blink;
 
+      // The elements the summon under the cursor needs Djinn of blink.
       blink = gFrameCount & 8;
-      for (element = 0; element <= 3; element++) {
-        tile = 15 - (blink != 0);
+      for (element = 0; element < ELEMENT_COUNT; element++) {
+        // HIGHLIGHT_PALETTE, one below, while the blink is on.
+        palette = WINDOW_PALETTE - (blink != 0);
         if ((1 << element & mask) == 0)
-          tile = 15;
+          palette = WINDOW_PALETTE;
         Window_HighlightRect((s16)counts->x + element * 2 + 1,
-                             (s16)counts->y + 1, 2, 1, tile);
+                             (s16)counts->y + 1, 2, 1, palette);
       }
     }
 

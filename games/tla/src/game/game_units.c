@@ -83,10 +83,6 @@ void Memory_CopyBytesDirectional(u8 *first, u8 *second, s32 count,
 /// A scaling effect's number among the eight, from EQUIP_EFFECT_SCALE_HP.
 #define SCALE_EFFECT(kind) ((kind) - EQUIP_EFFECT_SCALE_HP)
 
-/// The Resistance each of a unit's battle Resistance stages adds to every
-/// element's.
-#define RESISTANCE_PER_STAGE 20
-
 /// Works out a unit's stats from its base stats, equipment, set Djinn, class
 /// and battle stat levels; its HP and PP keep their share of a new maximum.
 void Unit_Calculate(s32 unitId) {
@@ -528,7 +524,7 @@ static __inline__ void WaitDma(struct DmaRegisters volatile *channel) {
 /// The two tables a new game fills just after gRareItemStock's
 /// ITEM_COUNTER_COUNT counters, as places in gSceneLocalState: 32 rows of eight
 /// random numbers 0 to 4, SCENE_STATE_RANDOM_ROW_BYTES apart, then a copy of
-/// Data_080b1f2c.
+/// gNewGame_SceneStateTable.
 #define SCENE_STATE_RANDOM_ROWS 4536
 #define SCENE_STATE_RANDOM_ROW_COUNT 32
 #define SCENE_STATE_RANDOM_ROW_BYTES 12
@@ -639,7 +635,7 @@ void MainRoutineWork_InitializeDefaults(void) {
   for (i = 0; i < 4; i++) {
     for (j = 0; j < 5; j++)
       gSceneLocalState[SCENE_STATE_TABLE_COPY + i * 5 + j] =
-          Data_080b1f2c[i][j];
+          gNewGame_SceneStateTable[i][j];
   }
 }
 
@@ -853,10 +849,10 @@ void DataTransfer_Apply(u8 *save, s32 byPassword) {
     else
       GameFlag_Clear(FLAG_TRANSFERRED_DODONPA_LOCKED_UP + i);
   }
-  if (GameFlag_Get(FLAG_TRANSFERRED_HSU_RESCUED_BY_PARTY))
-    GameFlag_Clear(FLAG_TRANSFERRED_HSU_RESCUED_BY_PARTY);
+  if (GameFlag_Get(FLAG_TRANSFERRED_ISAAC_SAVED_ULMUCH))
+    GameFlag_Clear(FLAG_TRANSFERRED_ISAAC_SAVED_ULMUCH);
   else
-    GameFlag_Set(FLAG_TRANSFERRED_HSU_RESCUED_BY_PARTY);
+    GameFlag_Set(FLAG_TRANSFERRED_ISAAC_SAVED_ULMUCH);
 
   state = &gMainRoutineWork;
   state->transferredCoins = party->coins;
@@ -1163,7 +1159,6 @@ UNIT_DEFINE_ADD(s16, Unit_AddPp, pp, ppMax)
 #undef SCALE_EFFECT
 #undef DMA3
 #undef DMA3_BUSY
-#undef RESISTANCE_PER_STAGE
 #undef SCENE_STATE_WORDS
 #undef NEW_GAME_COINS
 #undef SCENE_STATE_RANDOM_ROWS

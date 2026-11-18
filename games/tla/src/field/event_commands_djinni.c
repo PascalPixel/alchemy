@@ -16,6 +16,8 @@
 #include "macros.h"
 
 #define DJINNI_CLONE_MAX 8 ///< afterimages of the leaping Djinni
+/// sequenceResult after a battle the party fled (battle_run.c).
+#define BATTLE_OUTCOME_FLED 999
 /// The states of a Jupiter Djinni's light particle, in order.
 enum DjinniLightState {
   DJINNI_LIGHT_WIDENING = 0, ///< circles as its radius grows
@@ -30,25 +32,23 @@ void FieldEffect_AdvanceSpinAngle(struct Actor *actor) {
   actor->facing += DEGtoANG(45);
 }
 
-// Objects: follow a watched object.
+/// Per-frame update: halves the actor's distance to its watched actor along x,
+/// y and z.
+void Actor_MoveHalfwayTowardTarget(struct Actor *actor) {
+  struct Actor *target = actor->watchedActor;
 
-/// Halves the distance to the watched object along x, y and z.
-/// obj: object to move.
-void Actor_MoveHalfwayTowardTarget(struct Actor *obj) {
-  struct Actor *target = obj->watchedActor;
-
-  obj->x.fixed += (target->x.fixed - obj->x.fixed) / 2;
+  actor->x.fixed += (target->x.fixed - actor->x.fixed) / 2;
   {
-    s32 position = obj->y.fixed;
+    s32 position = actor->y.fixed;
 
     position += (target->y.fixed - position) / 2;
-    obj->y.fixed = position;
+    actor->y.fixed = position;
   }
   {
-    FIXED position = obj->z.fixed;
+    FIXED position = actor->z.fixed;
 
     position += (target->z.fixed - position) / 2;
-    obj->z.fixed = position;
+    actor->z.fixed = position;
   }
 }
 
@@ -112,16 +112,18 @@ void Djinn_RunBattleStartHop(s32 djinniId) {
 
   djinni->update = NULL;
   djinni->facing = back;
+  // Afterimages of the same sprite at AFTERIMAGE_SCALE, each closing half the
+  // distance to the one before it every frame, tinted by the Djinni's sprite.
   sprite = ((struct Sprite *)djinni->sprite)->entries[0]->animationId;
-  tint = 9;
+  tint = SPRITE_COLOR_BLUE_TINT;
   if (sprite == SPRITE_VENUS_DJINNI)
-    tint = 2;
+    tint = SPRITE_COLOR_RBG;
   if (sprite == SPRITE_MARS_DJINNI)
-    tint = 10;
-  // DEAD: tint is already 9 for SPRITE_MERCURY_DJINNI; the ROM keeps the test
-  // and the store.
+    tint = SPRITE_COLOR_RED_TINT;
+  // DEAD: tint is already SPRITE_COLOR_BLUE_TINT for SPRITE_MERCURY_DJINNI; the
+  // ROM keeps the test and the store.
   if (sprite == SPRITE_MERCURY_DJINNI)
-    tint = 9;
+    tint = SPRITE_COLOR_BLUE_TINT;
   sharedSprite = NULL;
   prev = djinni;
   for (i = 0; i < DJINNI_CLONE_MAX; i++) {
@@ -166,7 +168,7 @@ void Djinn_RunBattleStartHop(s32 djinniId) {
   djinni->targetX = TARGET_UNSET;
   djinni->targetZ = TARGET_UNSET;
   djinni->targetY = TARGET_UNSET;
-  Actor_SelectAnimationFar(djinni, 0);
+  Actor_SelectAnimationFar(djinni, ANIM_STILL);
   ((struct Sprite *)djinni->sprite)->image.priority = 2;
 #if TLA_PATCH_1
   djinni->gravity = toFIXED(1);
@@ -174,17 +176,18 @@ void Djinn_RunBattleStartHop(s32 djinniId) {
   Event_End();
 }
 
-/// A Djinni joins. Djinni 19 means the one recorded for the element in the
-/// save (none: nothing happens). With flag 366 set it joins the current owner
-/// by its flag (48 + element * 20 + djinni), otherwise the least loaded owner;
-/// if it found one, the element's join effect plays at the actor (none for
-/// actor -1), the Djinni is added, and the actor's event slot is cleared
-/// (from patch 1; the Japanese release leaves it set).
+/// A Djinni joins. The element's last Djinni stands for the one of The Broken
+/// Seal's chosen for it (SCENE_STATE_CHOSEN_DJINN; none: nothing happens).
+/// While FLAG_DJINN_LESSON is set it joins the leader by its flag alone,
+/// otherwise the party member with the fewest; if it found one, the element's
+/// join effect plays at the actor (none for actor -1), the Djinni is added,
+/// and the actor's event slot is cleared (from patch 1; the Japanese release
+/// leaves it set).
 void Djinn_JoinParty(s32 actor, s32 element, s32 djinni) {
   s32 owner;
 
-  if (djinni == 19) {
-    s32 recorded = gSceneLocalState[element + 6480];
+  if (djinni == DJINN_PER_ELEMENT - 1) {
+    s32 recorded = gSceneLocalState[element + SCENE_STATE_CHOSEN_DJINN];
 
     if (recorded == 0)
       return;
@@ -273,9 +276,9 @@ void Djinn_RestoreActorAfterBattle(void) {
 }
 
 /// Settles a pending Djinni battle as a scene loads, from the battle's result
-/// in sequenceResult (the enemies defeated, 999 when the party fled, -1 when it
-/// lost), as The Broken Seal's; a mimic chest's event (CONDITION_FLAG_SET)
-/// falls through to the clear.
+/// in sequenceResult (the enemies defeated, BATTLE_OUTCOME_FLED when the party
+/// fled, -1 when it lost), as The Broken Seal's; a mimic chest's event
+/// (CONDITION_FLAG_SET) falls through to the clear.
 void Djinn_ResolvePending(s32 shown) {
   struct MainRoutineWork *st = &gMainRoutineWork;
   s16 *pending = &st->pendingDjinni;
@@ -288,14 +291,14 @@ void Djinn_ResolvePending(s32 shown) {
       if (flag < DJINNI_BATTLE_EVENT_FIRST ||
           flag > DJINNI_BATTLE_EVENT_FIRST + ELEMENT_COUNT * DJINN_PER_ELEMENT)
         return;
-      if (st->sequenceResult > 0 && st->sequenceResult != 999)
+      if (st->sequenceResult > 0 && st->sequenceResult != BATTLE_OUTCOME_FLED)
         return;
       GameFlag_Set(flag -
                    (DJINNI_BATTLE_EVENT_FIRST - FLAG_DJINN_HIDING_FIRST));
       *pending = kind;
       return;
     } else if (kind == CONDITION_FLAG_SET) {
-      if (st->sequenceResult > 0 && st->sequenceResult != 999)
+      if (st->sequenceResult > 0 && st->sequenceResult != BATTLE_OUTCOME_FLED)
         GameFlag_Set(flag);
     } else
       return;
@@ -327,14 +330,14 @@ void Djinn_ResolvePending(s32 shown) {
   gMainRoutineWork.pendingDjinni = 0;
 }
 
-/// Task: updates the 24 field effect sprites.
+/// Task: updates the field effect sprites.
 void FieldEffect_UpdateAllSlots(void) {
   struct FieldEffectWork *scene;
   struct FieldParticle *slot;
   s32 remainingSlots;
 
   scene = Ram_HeapSlots->fieldEffectWork;
-  remainingSlots = 24 - 1;
+  remainingSlots = ARRAY_COUNT(scene->particles) - 1;
   slot = scene->particles;
   do {
     remainingSlots -= 1;
@@ -361,7 +364,7 @@ void FieldEffect_ReleaseSlots(void) {
   s32 i;
 
   Task_Remove(FieldEffect_UpdateAllSlots);
-  for (i = 0; i < 24; i++) {
+  for (i = 0; i < (s32)ARRAY_COUNT(scene->particles); i++) {
     slot = &scene->particles[i];
     if (slot->active != 0)
       FieldEffect_ClearOwnedSlot(slot);
@@ -428,3 +431,6 @@ void FieldEffect_RunAngledApproachPhases(struct FieldParticle *particle) {
   particle->x = position.x;
   particle->z = position.z;
 }
+
+#undef DJINNI_CLONE_MAX
+#undef BATTLE_OUTCOME_FLED

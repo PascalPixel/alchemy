@@ -4,7 +4,7 @@
 // background's scrolling, changed line by line in the horizontal blank.
 
 static inline void WaitDma(volatile u32 *channel) {
-  while (channel[2] & 0x80000000) {
+  while (channel[2] & DMA_BUSY) {
   }
 }
 

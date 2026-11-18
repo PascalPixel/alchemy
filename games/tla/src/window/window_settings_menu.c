@@ -313,14 +313,14 @@ struct Window *SettingsMenu_Open(void) {
 // width in tiles, then, in pixels from the settings window's left, where the
 // choices' fields start and end.
 #if LANGUAGE == LANGUAGE_JAPANESE
-#define HELP_WINDOW_X 2
-#define HELP_WINDOW_WIDTH 26
+#define SETTINGS_HELP_WINDOW_X 2
+#define SETTINGS_HELP_WINDOW_WIDTH 26
 #define CHOICE_X 168
 #define CHOICE_RIGHT 192
 #define FIRST_CHOICE_RIGHT 192
 #else
-#define HELP_WINDOW_X 1
-#define HELP_WINDOW_WIDTH 28
+#define SETTINGS_HELP_WINDOW_X 1
+#define SETTINGS_HELP_WINDOW_WIDTH 28
 #define CHOICE_X 160
 #define CHOICE_RIGHT 184
 // The first choice's field is wider in German, French and Italian.
@@ -379,8 +379,9 @@ s32 SettingsMenu_Run(void) {
   selectedOption = 0;
   SettingsMenu_InitializeWork();
   work = Ram_HeapSlots->settingsMenu;
-  helpWindow = Window_Create(HELP_WINDOW_X, 2, HELP_WINDOW_WIDTH, 3,
-                             WINDOW_FLAG_INSTANT);
+  helpWindow =
+      Window_Create(SETTINGS_HELP_WINDOW_X, 2, SETTINGS_HELP_WINDOW_WIDTH, 3,
+                    WINDOW_FLAG_INSTANT);
   settingsWindow = SettingsMenu_Open();
   pair = MenuTitle_Create(SETTINGS_HEADING, settingsWindow, 64, -48);
   wait(1);
@@ -781,8 +782,8 @@ s32 PauseMenu_Choose(s32 initial) {
 #undef OPTION_DIVIDER_END
 #undef OPTION_SLIDER_X
 #undef OPTION_CHOICE_X
-#undef HELP_WINDOW_X
-#undef HELP_WINDOW_WIDTH
+#undef SETTINGS_HELP_WINDOW_X
+#undef SETTINGS_HELP_WINDOW_WIDTH
 #undef CHOICE_X
 #undef CHOICE_RIGHT
 #undef FIRST_CHOICE_RIGHT

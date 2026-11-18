@@ -734,10 +734,6 @@ void BattleEffect_EndElementStreaks(void) {
   HeapSlot_Release(HEAP_SLOT_BATTLE_EFFECT);
 }
 
-#define ALT_BLITTER ((DrawRectangle)Ram_HeapSlots->ramCodePaired)
-#define WAIT_TRANSFER(work)                                                    \
-  while ((work)->vblanksSinceTransfer, (work)->vblanksSinceTransfer <= 1)
-
 /// Where Cruel Ruin's pictures are built or decoded in the effect's pictures:
 /// SwirlTexture; GlowBandTextureA (GlowBandTextureB in the second act) and
 /// GlowBandTextureB; PinkBarSheet; the ten shaded circles, 2 to 20 wide, at
@@ -1887,12 +1883,9 @@ void BattleEffect_RunCruelRuin(struct BattleEffectParams *args) {
   Palette_LoadBasicSpriteColors();
   EFFECT_FINISH_CANVAS_ONE_BLITTER();
 }
-#undef BLITTER
 #undef PLOT
 #undef STREAK_SEEDS
 #undef STREAKS
 #undef STREAK_START_DISTANCE
 #undef STREAK_LENGTH
-#undef ALT_BLITTER
-#undef WAIT_TRANSFER
 #undef TEXTURE_SCROLL_MASK

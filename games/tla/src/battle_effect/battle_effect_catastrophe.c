@@ -1821,4 +1821,3 @@ void BattleEffect_RunCatastrophe(struct BattleEffectParams *args) {
     EFFECT_FINISH_CANVAS_ONE_BLITTER();
   }
 }
-#undef BLITTER

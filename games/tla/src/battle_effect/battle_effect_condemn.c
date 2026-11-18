@@ -12,8 +12,8 @@
 /// How far the reaper sways across and up and down as it circles, in pixels.
 #define CONDEMN_SWAY_X 16
 #define CONDEMN_SWAY_Y 4
-/// A line's sideways sway, in quarter canvas pixels (toFIXED(4) to a pixel),
-/// as the BG2X value of the effect's bg2xLines table.
+/// The header's CANVAS_WAVE_BG2X again: battle_effect_streaks.c and
+/// battle_effect_planet_diver.c #undef it before this part.
 #define CANVAS_WAVE_BG2X(sway) ((sway) >> 10)
 
 /// The pictures Condemn draws: the reaper raised and swinging, the crescent
@@ -242,7 +242,6 @@ void BattleEffect_RunCondemn(struct BattleEffectParams *args) {
 #undef CONDEMN_SWING_FRAME
 #undef CONDEMN_SWAY_X
 #undef CONDEMN_SWAY_Y
-#undef CANVAS_WAVE_BG2X
 #undef CONDEMN_PICTURES
 #undef CONDEMN_PICTURE_X
 #undef CONDEMN_PICTURE_Y

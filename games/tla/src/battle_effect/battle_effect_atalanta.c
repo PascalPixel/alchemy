@@ -64,7 +64,6 @@ enum SlashSheetPicture {
 
 /// The trail particles' random rotations, after the particles in PARTICLES.
 #define ATALANTA_MATRICES (Ram_MapCellBuffer + 14336)
-#define OBJ_VRAM ((u8 *)OBJ_VRAM0)
 
 /// Atalanta's sprites: four rows of three 32x32 pieces, the last row two.
 #define ATALANTA_PIECES 11
@@ -425,7 +424,6 @@ void BattleEffect_RunAtalanta(struct BattleEffectParams *args) {
 }
 
 #undef ATALANTA_MATRICES
-#undef OBJ_VRAM
 #undef ATALANTA_PIECES
 #undef ATALANTA_PLACED_SHAFTS
 #undef ATALANTA_TRAIL_DROP

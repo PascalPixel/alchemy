@@ -11,23 +11,28 @@
 // that falls back into the waves frees its slot.
 
 #define NEREID_FRAMES 124
-
-#define NEREID_OBJECTS 12 ///< the sprites that draw Nereid on her turtle
-/// Wrapping columns of water.
-#define NEREID_COLUMNS 3
-#define NEREID_DROPS 1024          ///< drops of spray in the map cell buffer
-#define NEREID_COLUMN_PICTURE 1764 ///< the column of water in the sheet
-#define NEREID_COLUMN_WIDTH 34
-#define NEREID_COLUMN_HEIGHT 104
-
 /// The columns of water rise among the targets, from the crash to the clatter.
 #define NEREID_COLUMNS_FRAME 32
 #define NEREID_COLUMNS_END_FRAME 80
 
+#define NEREID_OBJECTS 12 ///< the sprites that draw Nereid on her turtle
+/// Wrapping columns of water.
+#define NEREID_COLUMNS 3
+#define NEREID_DROPS PARTICLE_POOL_COUNT ///< drops of spray in PARTICLES
+#define NEREID_COLUMN_PICTURE 1764       ///< the column of water in the sheet
+/// The drops burst up: every free one of the first NEREID_BURST_DROPS as the
+/// columns gather, then NEREID_DROPS_A_FRAME a frame while they rise.
+#define NEREID_BURST_DROPS 256
+#define NEREID_DROPS_A_FRAME 16
+/// The canvas line below which a falling drop has sunk into the waves.
+#define NEREID_WAVES_Y 104
+/// Particles given a place and a delay that nothing reads again.
+#define NEREID_UNREAD_FIRST 24
+#define NEREID_UNREAD_COUNT 16
+
 /// Nereid rides in on her turtle over rising waves, columns of water and spray
-/// rise over the targets, and she bursts away. At frame 28, and every frame
-/// from 32 to 79, spray bursts up beside her and falls back, and every twelve
-/// frames the targets flash and jump. A or B skips frames 33 to 97.
+/// rise over the targets, and she bursts away. A or B skips ahead to her
+/// leaving.
 ///
 /// Abilities: Nereid.
 void BattleEffect_RunNereid(struct BattleEffectParams *args) {
@@ -57,7 +62,6 @@ void BattleEffect_RunNereid(struct BattleEffectParams *args) {
     struct Particle *point;
     struct Particle *drop;
     struct Particle *drops;
-    s32 *life;
 
     // Nereid rides in from the right.
     rise = 0;
@@ -65,23 +69,16 @@ void BattleEffect_RunNereid(struct BattleEffectParams *args) {
     focus.y = toFIXED(88);
     velocity.x = -toFIXED(16);
     velocity.y = -toFIXED(4);
-    // Particles 24 to 39 are given a place and a delay that nothing reads
-    // again.
     EFFECT_FREE_PARTICLES(k, work->particles, 64);
-    for (k = 0; k != 16; k++) {
-      point = &work->particles[24 + k];
+    for (k = 0; k != NEREID_UNREAD_COUNT; k++) {
+      point = &work->particles[NEREID_UNREAD_FIRST + k];
       point->x = Random16() & 127;
       point->y = (Random16() & 7) + 56;
       point->variant = -(Random16() & 15);
     }
 
-    // Every drop in the map cell buffer starts free.
-    life = &((struct Particle *)Ram_MapCellBuffer)->variant;
-    for (k = 0; k != NEREID_DROPS; k++) {
-      *life = -1;
-      life += sizeof(struct Particle) / 4;
-    }
-    drops = (struct Particle *)Ram_MapCellBuffer;
+    EFFECT_FREE_PARTICLES(k, PARTICLES, NEREID_DROPS);
+    drops = PARTICLES;
     BattleEffect_SelectLivingTargets(work->args);
     wait(1);
     BattleEffect_SpawnObjects(NEREID_OBJECTS, SPRITE_NEREID, 2);
@@ -108,10 +105,9 @@ void BattleEffect_RunNereid(struct BattleEffectParams *args) {
       BattleEffect_PlaceFormationObjects(SUMMON_FORMATION_NEREID, focus.x,
                                          focus.y);
 
-      // Drops burst up among the targets: every free one at frame 28, then
-      // sixteen a frame from 32 to 79.
+      // Drops burst up among the targets.
       if (frame == 28) {
-        for (k = 0; k != 256; k++) {
+        for (k = 0; k != NEREID_BURST_DROPS; k++) {
           drop = &drops[k];
           if (drop->variant == -1) {
             s32 radius = Random16() & 63;
@@ -140,7 +136,7 @@ void BattleEffect_RunNereid(struct BattleEffectParams *args) {
             drop->velocityY = (-(Random16() & 63) - 8) << 13;
             drop->variant = 0;
             spawned++;
-            if (spawned == 16)
+            if (spawned == NEREID_DROPS_A_FRAME)
               break;
           }
         }
@@ -155,15 +151,15 @@ void BattleEffect_RunNereid(struct BattleEffectParams *args) {
       // The columns of water scroll up.
       if (frame >= NEREID_COLUMNS_FRAME && frame < NEREID_COLUMNS_END_FRAME) {
         for (k = 0; k != NEREID_COLUMNS; k++) {
-          s32 span = (frame * 16 - 256 + k * 25) % NEREID_COLUMN_HEIGHT;
+          s32 span = (frame * 16 - 256 + k * 25) % FIRE_PILLAR_HEIGHT;
 
           draw[0](canvas, work->sheet + NEREID_COLUMN_PICTURE,
-                  gNereid_Columns[k * 2] - NEREID_COLUMN_WIDTH / 2,
-                  gNereid_Columns[k * 2 + 1] - span - NEREID_COLUMN_HEIGHT,
-                  NEREID_COLUMN_WIDTH, NEREID_COLUMN_HEIGHT);
+                  gNereid_Columns[k * 2] - FIRE_PILLAR_WIDTH / 2,
+                  gNereid_Columns[k * 2 + 1] - span - FIRE_PILLAR_HEIGHT,
+                  FIRE_PILLAR_WIDTH, FIRE_PILLAR_HEIGHT);
           draw[0](canvas, work->sheet + NEREID_COLUMN_PICTURE,
-                  gNereid_Columns[k * 2] - NEREID_COLUMN_WIDTH / 2,
-                  gNereid_Columns[k * 2 + 1] - span, NEREID_COLUMN_WIDTH, span);
+                  gNereid_Columns[k * 2] - FIRE_PILLAR_WIDTH / 2,
+                  gNereid_Columns[k * 2 + 1] - span, FIRE_PILLAR_WIDTH, span);
         }
       }
 
@@ -175,7 +171,7 @@ void BattleEffect_RunNereid(struct BattleEffectParams *args) {
       }
 
       // Drops swell as they clear: they fall under gravity until frame 80, then
-      // rise away, and a falling drop that reaches y = 104 is freed.
+      // rise away, and a falling drop that sinks into the waves is freed.
       for (k = 0; k != NEREID_DROPS; k++) {
         drop = &drops[k];
         if (drop->variant >= 0) {
@@ -192,11 +188,10 @@ void BattleEffect_RunNereid(struct BattleEffectParams *args) {
           if (frame > 74 && size <= 8)
             size = 9;
           if (frame > 76)
-            size = 10;
-          draw[drop->velocityY > 0](
-              canvas, graphics + gBattleEffect_MotePictures[size - 1],
-              FIXED_INTEGER_PART(drop->x) - size / 2,
-              FIXED_INTEGER_PART(drop->y) - size, size, size * 2);
+            size = MOTE_PICTURES;
+          EFFECT_DRAW_MOTE(draw[drop->velocityY > 0], canvas, graphics,
+                           FIXED_INTEGER_PART(drop->x),
+                           FIXED_INTEGER_PART(drop->y), size);
           drop->x += drop->velocityX;
           drop->y += drop->velocityY;
           if (frame > 80)
@@ -206,12 +201,13 @@ void BattleEffect_RunNereid(struct BattleEffectParams *args) {
           drop->velocityX = drop->velocityX * 62 / DAMPING_SCALE;
           drop->velocityY = drop->velocityY * 62 / DAMPING_SCALE;
           drop->variant++;
-          if (drop->velocityY > 0 && FIXED_INTEGER_PART(drop->y) > 104)
+          if (drop->velocityY > 0 &&
+              FIXED_INTEGER_PART(drop->y) > NEREID_WAVES_Y)
             drop->variant = -1;
         }
       }
 
-      // The targets bounce and flash white every twelve frames from frame 30.
+      // The targets bounce and flash white.
       if (frame <= 79) {
         for (k = 0; k != args->targetCount; k++) {
           if (frame > 29) {
@@ -224,7 +220,7 @@ void BattleEffect_RunNereid(struct BattleEffectParams *args) {
               BattleEffect_TintBattler(args->targets[k], SPRITE_COLOR_WHITE,
                                        POSE_DAMAGE, TINT_KEEP, 0);
               target->velocityY = toFIXED(9) / 2;
-              target->verticalMotionStrength = toFIXED(0.67);
+              target->verticalMotionStrength = BATTLE_UNIT_GRAVITY;
             }
             if (phase == 6)
               BattleEffect_TintBattler(args->targets[k], SPRITE_COLOR_NORMAL,
@@ -244,3 +240,17 @@ void BattleEffect_RunNereid(struct BattleEffectParams *args) {
   }
   BattleEffect_EndCanvasLayer();
 }
+
+#undef NEREID_FRAMES
+#undef NEREID_COLUMNS_FRAME
+#undef NEREID_COLUMNS_END_FRAME
+#undef NEREID_OBJECTS
+#undef NEREID_DROPS
+#undef NEREID_COLUMN_PICTURE
+#undef NEREID_BURST_DROPS
+#undef NEREID_DROPS_A_FRAME
+#undef NEREID_WAVES_Y
+#undef NEREID_UNREAD_FIRST
+#undef NEREID_UNREAD_COUNT
+// NEREID_COLUMNS stays defined: particle_streams.c draws its copy's columns by
+// it.

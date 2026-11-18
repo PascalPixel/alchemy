@@ -96,10 +96,11 @@ enum KibomboMountainsWaftActorId {
   ACTOR_BONE,
   ACTOR_WAFT,
   /// Unused: an unseen marker under the trees south of the dog's pillar. It
-  /// draws nothing, no trigger or event names it, and Scene_Initialize only
-  /// takes away its shadow and collision. The room watched beside it (render
-  /// guide moment, MOMENT_PLACE=107,4 MOMENT_STAND=712,640 MOMENT_ACTORS=19)
-  /// shows it among the trees, changing nothing on screen.
+  /// draws nothing and no trigger or event names it; Scene_Initialize only
+  /// takes away its shadow and collision, fixes its sprite priority at 1 and
+  /// sorts it as underfoot (ACTOR_PRIORITY_UNDERFOOT). The room watched beside
+  /// it (render guide moment, MOMENT_PLACE=107,4 MOMENT_STAND=712,640
+  /// MOMENT_ACTORS=19) shows it among the trees, changing nothing on screen.
   ACTOR_UNSEEN_MARKER
 };
 

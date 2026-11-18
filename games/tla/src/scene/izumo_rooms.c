@@ -35,6 +35,10 @@
 #define FLAG_UZUMES_PRAYER_READ 0x923
 #define FLAG_KUSHINADA_ASKED_SUSA_NOT_TO_COME 0x925
 #define FLAG_UZUME_MIND_READ 0x92b
+/// Set as Izumo recognizes the heroes in Susa's house, and cleared by entering
+/// any other room: while it is set, the two dancers and the old men by the
+/// drums stay off stage.
+#define FLAG_HEROES_JUST_RECOGNIZED FLAG_AREA_TEMP_50
 
 extern struct ActorPlacement gIzumoRooms_ActorPlacements[];
 extern struct ActorPlacement gIzumoRooms_SusasHouseActorPlacements[];
@@ -1198,7 +1202,7 @@ void IzumoRooms_RecognizeTheHeroes(s32 mode) {
   Actor_WaitForMoveById(ACTOR_KRADEN);
   Actor_SetPosition(ACTOR_KRADEN, 0, 0);
   GameFlag_Set(FLAG_IZUMO_RECOGNIZED_THE_HEROES);
-  GameFlag_Set(FLAG_AREA_TEMP_50);
+  GameFlag_Set(FLAG_HEROES_JUST_RECOGNIZED);
   Event_End();
 }
 
@@ -1311,8 +1315,8 @@ void IzumoRooms_GiveUzumeTheDoll(void) {
 s32 Scene_Initialize(void) {
   gFieldWork->transition =
       SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_SHAPE);
-  if (gMainRoutineWork.entrance != 7)
-    Event_ClearFlag(FLAG_AREA_TEMP_50);
+  if (gMainRoutineWork.entrance != IZUMO_ROOMS_FROM_IZUMO_NORTH)
+    Event_ClearFlag(FLAG_HEROES_JUST_RECOGNIZED);
   if (GameFlag_Get(FLAG_SERPENT_SLAIN) &&
       !GameFlag_Get(FLAG_IZUMO_RECOGNIZED_THE_HEROES) &&
       gMainRoutineWork.entrance == IZUMO_ROOMS_FROM_IZUMO_NORTH) {
@@ -1327,14 +1331,15 @@ s32 Scene_Initialize(void) {
   if (GameFlag_Get(FLAG_SERPENT_SLAIN) &&
       GameFlag_Get(FLAG_IZUMO_RECOGNIZED_THE_HEROES) &&
       gMainRoutineWork.entrance == IZUMO_ROOMS_FROM_IZUMO_NORTH &&
-      GameFlag_Get(FLAG_AREA_TEMP_50)) {
+      GameFlag_Get(FLAG_HEROES_JUST_RECOGNIZED)) {
     Event_PlaySound(MUS_IZUMO);
     Actor_SetPosition(ACTOR_FIRST_DANCER, 0, 0);
     Actor_SetPosition(ACTOR_SECOND_DANCER, 0, 0);
     Actor_SetPosition(ACTOR_WEST_VILLAGER, 0, 0);
     Actor_SetPosition(ACTOR_EAST_VILLAGER, 0, 0);
   }
-  if (gMainRoutineWork.entrance == 5 && !GameFlag_Get(FLAG_SERPENT_SLAIN)) {
+  if (gMainRoutineWork.entrance == IZUMO_ROOMS_FROM_IZUMO_NORTHWEST &&
+      !GameFlag_Get(FLAG_SERPENT_SLAIN)) {
     Actor_SetAnimation(ACTOR_KUSHINADA, 5);
     Actor_SetAttachedEffect(ACTOR_KUSHINADA,
                             ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ATTACH);
@@ -1503,6 +1508,7 @@ s32 gIzumoRooms_HeavingScript[] = {
     SC_WAIT(30),
     SC_LOOP(SC_FOREVER, SC_TO(1)),
     SC_END,
+    // Unused: a walk north and back again, which nothing starts.
     SC_SET(SW_COLLISION, ACTOR_BLOCKED_BY_SOLID | ACTOR_PUSHABLE | ACTOR_SOLID),
     SC_ACCELERATION(0.1),
     SC_SPEED(0.3),
@@ -1561,6 +1567,7 @@ s32 gIzumoRooms_KushinadaHeavingScript[] = {
     SC_WAIT(90),
     SC_LOOP(SC_FOREVER, SC_TO(1)),
     SC_END,
+    // Unused: a hop, which nothing starts.
     SC_SET(SW_COLLISION, ACTOR_BLOCKED_BY_SOLID | ACTOR_SOLID),
     SC_ACCELERATION(0.2),
     SC_SET(SW_GRAVITY, toFIXED(0.1)),
@@ -1577,13 +1584,20 @@ s32 gIzumoRooms_KushinadaHeavingScript[] = {
 
 u32 gSceneExits[] = {
     SCENE_EXITS(IzumoRooms),
-    SCENE_EXIT_UNLESS(1, Izumo, 2, EXIT_FLAG_NONE),
-    SCENE_EXIT_UNLESS(2, Izumo, 3, EXIT_FLAG_NONE),
-    SCENE_EXIT_UNLESS(3, Izumo, 4, EXIT_FLAG_NONE),
-    SCENE_EXIT_UNLESS(4, Izumo, 5, EXIT_FLAG_NONE),
-    SCENE_EXIT_UNLESS(5, Izumo, 6, EXIT_FLAG_NONE),
-    SCENE_EXIT_UNLESS(6, Izumo, 7, EXIT_FLAG_NONE),
-    SCENE_EXIT_UNLESS(7, Izumo, 8, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(IZUMO_ROOMS_TO_IZUMO_SOUTHEAST_A, Izumo,
+                      IZUMO_FROM_IZUMO_ROOMS_SOUTHEAST_A, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(IZUMO_ROOMS_TO_IZUMO_SOUTHEAST_B, Izumo,
+                      IZUMO_FROM_IZUMO_ROOMS_SOUTHEAST_B, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(IZUMO_ROOMS_TO_IZUMO_SOUTHWEST, Izumo,
+                      IZUMO_FROM_IZUMO_ROOMS_SOUTHWEST, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(IZUMO_ROOMS_TO_IZUMO_SOUTH, Izumo,
+                      IZUMO_FROM_IZUMO_ROOMS_SOUTH, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(IZUMO_ROOMS_TO_IZUMO_NORTHWEST, Izumo,
+                      IZUMO_FROM_IZUMO_ROOMS_NORTHWEST, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(IZUMO_ROOMS_TO_IZUMO_NORTHEAST, Izumo,
+                      IZUMO_FROM_IZUMO_ROOMS_NORTHEAST, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(IZUMO_ROOMS_TO_IZUMO_NORTH, Izumo,
+                      IZUMO_FROM_IZUMO_ROOMS_NORTH, EXIT_FLAG_NONE),
     SCENE_EXITS_END,
 };
 

@@ -1590,11 +1590,16 @@ void Clear_ApplyImportedData(s32 mode, u8 *in) {
   s32 position;
   s32 bit;
 
+  // Bytes 0 to 6 hold the four levels, seven bits each, then the 28 Djinn, a
+  // bit each, sharing byte 3.
   levelBits = in[0] | in[1] << 8 | in[2] << 16 | (in[3] & 0xf0) << 20;
   djinnBits = (in[3] & 0x0f) | in[4] << 4 | in[5] << 12 | in[6] << 20;
   flagBits = in[PASSWORD_FLAGS_BYTE];
   keyItemBits = in[PASSWORD_KEY_ITEMS_BYTE];
 
+  // Silver and Gold carry the stats rows. Each packs two party members in
+  // PASSWORD_STATS_ROW_BYTES: each one's first word and the top 28 bits of its
+  // second, whose low four bits are always 0.
   if (mode != PASSWORD_LEVEL_BRONZE) {
     s32 statsOffset = PASSWORD_KEY_ITEMS_BYTE + (mode != PASSWORD_LEVEL_GOLD);
 
@@ -1836,6 +1841,8 @@ UNUSED s32 Clear_PackPasswordData(s32 unused, s32 mode, u8 *out) {
     levelBits |= unit->level << (i * 7);
     for (j = 0; j != 4; j++)
       djinnBits += unit->djinnHeld[j] << (j * 7);
+    // Which of the eight Psynergy items (gClear_PasswordKeyItems) any party
+    // member carries.
     for (j = 0; j != INVENTORY_SLOTS; j++) {
       s32 item = unit->inventory[j] & INVENTORY_ITEM_ID_MASK;
 
@@ -1846,6 +1853,7 @@ UNUSED s32 Clear_PackPasswordData(s32 unused, s32 mode, u8 *out) {
     }
     outputIndex += 8;
   }
+  // The largest password also carries inventories, stack counts and coins.
   if (mode == PASSWORD_LEVEL_GOLD) {
     outputIndex = PASSWORD_ITEMS_BYTE;
     bitOffset = 0;
@@ -1898,6 +1906,9 @@ UNUSED s32 Clear_PackPasswordData(s32 unused, s32 mode, u8 *out) {
     out[PASSWORD_COINS_BYTE + 1] = (u32)gMainRoutineWork.coins >> 8;
     out[PASSWORD_COINS_BYTE + 2] = gMainRoutineWork.coins;
   }
+  // Silver and Gold carry the stats rows. Each packs two party members in
+  // PASSWORD_STATS_ROW_BYTES: each one's first word and the top 28 bits of its
+  // second, whose low four bits are always 0.
   if (mode != PASSWORD_LEVEL_BRONZE) {
     s32 statsOffset = PASSWORD_KEY_ITEMS_BYTE + (mode != PASSWORD_LEVEL_GOLD);
 

@@ -9,48 +9,48 @@
 struct StripQuad;
 
 /// The column's rows of vertices, two (x, y, z, pad) each, as the strip's
-/// quads join them: WATER_COLUMN_QUADS quads, one row more.
+/// quads join them: TWISTING_COLUMN_QUADS quads, one row more.
 #define MAP_CELLS ((s8 (*)[2][4])Ram_MapCellBuffer)
-#define WATER_COLUMN_QUADS 32
-#define WATER_COLUMN_ROWS (WATER_COLUMN_QUADS + 1)
-#define WATER_COLUMN_VERTICES (WATER_COLUMN_ROWS * 2)
+#define TWISTING_COLUMN_QUADS 32
+#define TWISTING_COLUMN_ROWS (TWISTING_COLUMN_QUADS + 1)
+#define TWISTING_COLUMN_VERTICES (TWISTING_COLUMN_ROWS * 2)
 
 /// The column's transformed corners, its strip's mesh and the second sheet, in
 /// the map cell buffer.
-#define WATER_COLUMN_TRANSFORMED (Ram_MapCellBuffer + 4096)
-#define WATER_COLUMN_MESH (Ram_MapCellBuffer + 8192)
-#define WATER_COLUMN_SHEET (Ram_MapCellBuffer + 16384)
+#define TWISTING_COLUMN_TRANSFORMED (Ram_MapCellBuffer + 4096)
+#define TWISTING_COLUMN_MESH (Ram_MapCellBuffer + 8192)
+#define TWISTING_COLUMN_SHEET (Ram_MapCellBuffer + 16384)
 
 /// Where JupiterDjinnSmallSheet is decoded in the effect's pictures.
-#define WATER_COLUMN_JUPITER_DJINN_SMALL_PICTURES 8192
+#define TWISTING_COLUMN_JUPITER_DJINN_SMALL_PICTURES 8192
 
 /// Where FlashBurstSheet is decoded in the map cell buffer.
-#define WATER_COLUMN_FLASH_BURST 20480
+#define TWISTING_COLUMN_FLASH_BURST 20480
 
 /// The last particle keeps the target's position, and its scale in velocityX
 /// and velocityY, to restore when the column ends; the particles before it are
 /// the motes and flashes.
-#define WATER_COLUMN_SAVED_TARGET 63
+#define TWISTING_COLUMN_SAVED_TARGET 63
 
 /// The motes that trail the funnel of Whorl and Gale.
-#define WATER_COLUMN_MOTES 16
+#define TWISTING_COLUMN_MOTES 16
 
 /// The angle a frame the Jupiter Djinni's bob turns by as it rides the funnel.
-#define WATER_COLUMN_BOB_STEP 3304
+#define TWISTING_COLUMN_BOB_STEP 3304
 
 /// The angle a frame that lifts Lethe Albion's and Raging Flood's three bands
 /// of water and sets them down again over the cast.
-#define WATER_COLUMN_WAVE_RISE_STEP 630
+#define TWISTING_COLUMN_WAVE_RISE_STEP 630
 
 /// How far Whorl's and Gale's funnel turns about its length from the upright.
-#define WATER_COLUMN_LEAN 3096
+#define TWISTING_COLUMN_LEAN 3096
 
 /// A texture's scroll wraps within 128 texels.
-#define WATER_COLUMN_SCROLL_MASK 0x7f
+#define TWISTING_COLUMN_SCROLL_MASK 0x7f
 
 /// The pictures of FlashBurstSheet, a white flash burning down to embers, each
 /// shown for four frames.
-#define WATER_COLUMN_FLASH_BURST_PICTURES 6
+#define FLASH_BURST_PICTURES 6
 
 /// The twisting column shared by the Djinn Whorl and Gale, Lethe Albion,
 /// Poison Flow and Raging Flood, a textured strip turned about its length.
@@ -79,9 +79,9 @@ void BattleEffect_RunWaterColumn(struct BattleEffectParams *args, u32 mode) {
   s32 j;
   // Where the sheets' palettes are copied.
   void *palette = (void *)BG_PLTT;
-  void *vertices = WATER_COLUMN_TRANSFORMED;
-  u8 *sheet = WATER_COLUMN_SHEET;
-  void *mesh = WATER_COLUMN_MESH;
+  void *vertices = TWISTING_COLUMN_TRANSFORMED;
+  u8 *sheet = TWISTING_COLUMN_SHEET;
+  void *mesh = TWISTING_COLUMN_MESH;
   s32 point[3];
   s32 screen[3];
   s32 pos[3];
@@ -117,13 +117,13 @@ void BattleEffect_RunWaterColumn(struct BattleEffectParams *args, u32 mode) {
       Iwram_ClearWordsEntry(sheet, size);
       for (row = 0; row != RUNE_HALF_HEIGHT; row++) {
         for (k = 0; k != RUNE_HALF_WIDTH; k++) {
-          (WATER_COLUMN_SHEET +
+          (TWISTING_COLUMN_SHEET +
            RUNE_TEXTURE_RUNE)[row * RUNE_TEXTURE_SIZE + k] =
-              sheet[(row * 2 + row) * 8 +
+              sheet[row * RUNE_HALF_WIDTH +
                     RUNE_TEXTURE_SIZE * RUNE_TEXTURE_SIZE + k];
           sheet[row * RUNE_TEXTURE_SIZE +
                 (RUNE_TEXTURE_RUNE + 2 * RUNE_HALF_WIDTH - 1) - k] =
-              sheet[(row * 2 + row) * 8 +
+              sheet[row * RUNE_HALF_WIDTH +
                     RUNE_TEXTURE_SIZE * RUNE_TEXTURE_SIZE + k];
         }
       }
@@ -137,8 +137,8 @@ void BattleEffect_RunWaterColumn(struct BattleEffectParams *args, u32 mode) {
     pos[1] = caster->y;
     pos[2] = caster->z;
     Resource_LoadAndDecompress(RESOURCE_FLASH_BURST_SHEET,
-                               Ram_MapCellBuffer + WATER_COLUMN_FLASH_BURST, 1,
-                               0);
+                               Ram_MapCellBuffer + TWISTING_COLUMN_FLASH_BURST,
+                               1, 0);
     frames = 52;
   } else {
     REG_BG2CNT = BGCNT_PRIORITY(1) | BGCNT_CHAR_BASE(1) | BGCNT_256_COLORS |
@@ -155,11 +155,11 @@ void BattleEffect_RunWaterColumn(struct BattleEffectParams *args, u32 mode) {
   REG_BLDALPHA = EFFECT_BLEND_ADD;
   EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
   target = BattleObject_GetFar(args->targets[0])->object;
-  work->particles[WATER_COLUMN_SAVED_TARGET].x = target->x;
-  work->particles[WATER_COLUMN_SAVED_TARGET].y = target->y;
-  work->particles[WATER_COLUMN_SAVED_TARGET].z = target->z;
-  work->particles[WATER_COLUMN_SAVED_TARGET].velocityX = target->scaleX;
-  work->particles[WATER_COLUMN_SAVED_TARGET].velocityY = target->scaleY;
+  work->particles[TWISTING_COLUMN_SAVED_TARGET].x = target->x;
+  work->particles[TWISTING_COLUMN_SAVED_TARGET].y = target->y;
+  work->particles[TWISTING_COLUMN_SAVED_TARGET].z = target->z;
+  work->particles[TWISTING_COLUMN_SAVED_TARGET].velocityX = target->scaleX;
+  work->particles[TWISTING_COLUMN_SAVED_TARGET].velocityY = target->scaleY;
   if (mode == WATER_COLUMN_LETHE_ALBION || mode == WATER_COLUMN_RAGING_FLOOD) {
     Resource_LoadAndDecompress(RESOURCE_EMBER_TEXTURE, work->sheet, 0, 0);
   } else {
@@ -168,7 +168,7 @@ void BattleEffect_RunWaterColumn(struct BattleEffectParams *args, u32 mode) {
   Resource_LoadAndDecompress(RESOURCE_PARTICLE_SPRITES_A, sprites, 0, 0);
   Resource_LoadAndDecompress(
       RESOURCE_JUPITER_DJINN_SMALL_SHEET,
-      work->sheet + WATER_COLUMN_JUPITER_DJINN_SMALL_PICTURES, 1, 1);
+      work->sheet + TWISTING_COLUMN_JUPITER_DJINN_SMALL_PICTURES, 1, 1);
   if (mode == WATER_COLUMN_POISON_FLOW) {
     Iwram_CopyWordsEntry(palette,
                          Resource_GetTableEntry(RESOURCE_MARS_DJINN_SHEET),
@@ -183,7 +183,7 @@ void BattleEffect_RunWaterColumn(struct BattleEffectParams *args, u32 mode) {
       (mode == WATER_COLUMN_LETHE_ALBION || mode == WATER_COLUMN_RAGING_FLOOD)
           ? 8
           : 4;
-  Render_BuildQuadStrip(mesh, columns, 32, WATER_COLUMN_QUADS);
+  Render_BuildQuadStrip(mesh, columns, 32, TWISTING_COLUMN_QUADS);
 
   frame = 0;
   if (frames != 0) {
@@ -195,13 +195,15 @@ void BattleEffect_RunWaterColumn(struct BattleEffectParams *args, u32 mode) {
         Sound_PlayFar(SE_CURSE_FALL);
       }
       if (frame == 0) {
-        target->x = work->particles[WATER_COLUMN_SAVED_TARGET].x;
-        target->y = work->particles[WATER_COLUMN_SAVED_TARGET].y;
-        target->z = work->particles[WATER_COLUMN_SAVED_TARGET].z;
-        target->scaleX = work->particles[WATER_COLUMN_SAVED_TARGET].velocityX;
-        target->scaleY = work->particles[WATER_COLUMN_SAVED_TARGET].velocityY;
+        target->x = work->particles[TWISTING_COLUMN_SAVED_TARGET].x;
+        target->y = work->particles[TWISTING_COLUMN_SAVED_TARGET].y;
+        target->z = work->particles[TWISTING_COLUMN_SAVED_TARGET].z;
+        target->scaleX =
+            work->particles[TWISTING_COLUMN_SAVED_TARGET].velocityX;
+        target->scaleY =
+            work->particles[TWISTING_COLUMN_SAVED_TARGET].velocityY;
         if (mode == WATER_COLUMN_WHORL) {
-          for (i = 0; i != WATER_COLUMN_SAVED_TARGET; i++) {
+          for (i = 0; i != TWISTING_COLUMN_SAVED_TARGET; i++) {
             struct Particle *q = &work->particles[i];
 
             if (args->side == EFFECT_SIDE_PARTY) {
@@ -219,7 +221,7 @@ void BattleEffect_RunWaterColumn(struct BattleEffectParams *args, u32 mode) {
           {
             struct Particle *q = work->particles;
 
-            for (i = 0; i != WATER_COLUMN_SAVED_TARGET; i++, q++) {
+            for (i = 0; i != TWISTING_COLUMN_SAVED_TARGET; i++, q++) {
               SET_POSITION(q, point[0],
                            INTtoFIXED(Random16() & 31) + toFIXED(64), 0);
               q->velocityX = ((Random16() & 63) + 64) << 13;
@@ -242,7 +244,7 @@ void BattleEffect_RunWaterColumn(struct BattleEffectParams *args, u32 mode) {
           k = frame - 36;
         }
         pos[1] = point[1] + INTtoFIXED(k) -
-                 Trig_Cos(frame * WATER_COLUMN_BOB_STEP) * k;
+                 Trig_Cos(frame * TWISTING_COLUMN_BOB_STEP) * k;
         if (frame > 27) {
           pos[1] = pos[1] + frame * toFIXED(4) - toFIXED(112);
         }
@@ -253,7 +255,7 @@ void BattleEffect_RunWaterColumn(struct BattleEffectParams *args, u32 mode) {
           pos[2] = point[2];
           EffectPosition_ProjectPoint(pos, (struct ScreenPoint *)out);
           blit[0](canvas,
-                  work->sheet + WATER_COLUMN_JUPITER_DJINN_SMALL_PICTURES,
+                  work->sheet + TWISTING_COLUMN_JUPITER_DJINN_SMALL_PICTURES,
                   out[0] / 2 - 10, out[1] - 20, SMALL_DJINNI_WIDTH,
                   SMALL_DJINNI_HEIGHT);
         }
@@ -270,35 +272,38 @@ void BattleEffect_RunWaterColumn(struct BattleEffectParams *args, u32 mode) {
               work->shakeFrames = 8;
               EFFECT_SHOW_DAMAGE(SE_HEAVY_IMPACT);
               target->scaleX =
-                  work->particles[WATER_COLUMN_SAVED_TARGET].velocityX;
+                  work->particles[TWISTING_COLUMN_SAVED_TARGET].velocityX;
               target->scaleY =
-                  work->particles[WATER_COLUMN_SAVED_TARGET].velocityY;
+                  work->particles[TWISTING_COLUMN_SAVED_TARGET].velocityY;
               BattleEffect_StartActorMotion(args->targets[0], 1, toFIXED(2),
                                             toFIXED(8), toFIXED(4), 150);
             }
           } else if (frame <= 19) {
             target->verticalMotionStrength = mode;
             target->x +=
-                (pos[0] - work->particles[WATER_COLUMN_SAVED_TARGET].x) / 128;
+                (pos[0] - work->particles[TWISTING_COLUMN_SAVED_TARGET].x) /
+                128;
             target->y +=
-                (pos[1] - work->particles[WATER_COLUMN_SAVED_TARGET].y) / 128;
+                (pos[1] - work->particles[TWISTING_COLUMN_SAVED_TARGET].y) /
+                128;
             target->z +=
-                (pos[2] - work->particles[WATER_COLUMN_SAVED_TARGET].z) / 128;
+                (pos[2] - work->particles[TWISTING_COLUMN_SAVED_TARGET].z) /
+                128;
           } else if (frame <= 31 && (args->variant == EFFECT_VARIANT_STRONGER ||
                                      frame <= 23)) {
             target->x +=
-                (pos[0] - work->particles[WATER_COLUMN_SAVED_TARGET].x) / 16;
+                (pos[0] - work->particles[TWISTING_COLUMN_SAVED_TARGET].x) / 16;
             target->y +=
-                (pos[1] - work->particles[WATER_COLUMN_SAVED_TARGET].y) / 16;
+                (pos[1] - work->particles[TWISTING_COLUMN_SAVED_TARGET].y) / 16;
             target->z +=
-                (pos[2] - work->particles[WATER_COLUMN_SAVED_TARGET].z) / 16;
+                (pos[2] - work->particles[TWISTING_COLUMN_SAVED_TARGET].z) / 16;
             target->scaleX +=
                 (FIXED_ONE / 4 -
-                 work->particles[WATER_COLUMN_SAVED_TARGET].velocityX) /
+                 work->particles[TWISTING_COLUMN_SAVED_TARGET].velocityX) /
                 16;
             target->scaleY +=
                 (FIXED_ONE / 4 -
-                 work->particles[WATER_COLUMN_SAVED_TARGET].velocityY) /
+                 work->particles[TWISTING_COLUMN_SAVED_TARGET].velocityY) /
                 16;
           }
         } else if (mode == WATER_COLUMN_GALE) {
@@ -324,7 +329,7 @@ void BattleEffect_RunWaterColumn(struct BattleEffectParams *args, u32 mode) {
         {
           struct Particle *q = work->particles;
 
-          for (i = 0; i != WATER_COLUMN_MOTES; i++, q++) {
+          for (i = 0; i != TWISTING_COLUMN_MOTES; i++, q++) {
             if (frame >= i && frame < i + 30) {
               s32 n = (i & 3) + 1;
 
@@ -344,7 +349,7 @@ void BattleEffect_RunWaterColumn(struct BattleEffectParams *args, u32 mode) {
 
       if (mode == WATER_COLUMN_LETHE_ALBION ||
           mode == WATER_COLUMN_RAGING_FLOOD) {
-        for (j = 0; j != WATER_COLUMN_ROWS; j++) {
+        for (j = 0; j != TWISTING_COLUMN_ROWS; j++) {
           s32 r = j;
 
           if (r > 28) {
@@ -364,7 +369,7 @@ void BattleEffect_RunWaterColumn(struct BattleEffectParams *args, u32 mode) {
           }
         }
       } else if (mode == WATER_COLUMN_POISON_FLOW) {
-        for (j = 0; j != WATER_COLUMN_ROWS; j++) {
+        for (j = 0; j != TWISTING_COLUMN_ROWS; j++) {
           s32 r = j * 4;
           s32 w = j * 2 + 4;
 
@@ -382,8 +387,8 @@ void BattleEffect_RunWaterColumn(struct BattleEffectParams *args, u32 mode) {
           }
         }
       } else {
-        for (j = 0; j != WATER_COLUMN_ROWS; j++) {
-          s32 r = j * 2 + j;
+        for (j = 0; j != TWISTING_COLUMN_ROWS; j++) {
+          s32 r = j * 3;
           s32 w = j * 2;
 
           if (r > 96) {
@@ -393,6 +398,7 @@ void BattleEffect_RunWaterColumn(struct BattleEffectParams *args, u32 mode) {
             w = 40;
           }
           for (i = 0; i != 2; i++) {
+            /* FAKEMATCH(temporary): the depth built on j + j; as -j * 4. */
             MAP_CELLS[j][i][0] = -(j + j) * 2;
             MAP_CELLS[j][i][1] =
                 (FIXEDtoINT(Trig_Cos((frame + j * 2) << 10) * r)) +
@@ -453,7 +459,7 @@ void BattleEffect_RunWaterColumn(struct BattleEffectParams *args, u32 mode) {
           {
             struct Particle *q = work->particles;
 
-            for (i = 0; i != WATER_COLUMN_SAVED_TARGET; i++, q++) {
+            for (i = 0; i != TWISTING_COLUMN_SAVED_TARGET; i++, q++) {
               s32 r = (Random16() & 255) + 256;
               s32 a = (Random16() & 0x7fff) + DEGtoANG(90);
 
@@ -470,9 +476,9 @@ void BattleEffect_RunWaterColumn(struct BattleEffectParams *args, u32 mode) {
             struct Particle *q = work->particles;
 
             for (i = 0; i != 8; i++, q++) {
-              if (q->variant < WATER_COLUMN_FLASH_BURST_PICTURES * 4) {
+              if (q->variant < FLASH_BURST_PICTURES * 4) {
                 blit[0](canvas,
-                        (Ram_MapCellBuffer + WATER_COLUMN_FLASH_BURST) +
+                        (Ram_MapCellBuffer + TWISTING_COLUMN_FLASH_BURST) +
                             q->variant / 4 * PICTURE_BYTES(FLASH_BURST),
                         (s16)(FIXEDtoINT(q->x)) - FLASH_BURST_WIDTH / 2,
                         (s16)(FIXEDtoINT(q->y)) - FLASH_BURST_HEIGHT / 2,
@@ -483,11 +489,12 @@ void BattleEffect_RunWaterColumn(struct BattleEffectParams *args, u32 mode) {
             }
           }
         }
-        model->scrollU = ~(frame << 3) & WATER_COLUMN_SCROLL_MASK;
+        model->scrollU = ~(frame << 3) & TWISTING_COLUMN_SCROLL_MASK;
         model->scrollV = 0;
         for (i = 0; i != 3; i++) {
-          s32 y = 64 - FIXEDtoINT(
-                           Trig_Sin(frame * WATER_COLUMN_WAVE_RISE_STEP) * 64);
+          s32 y =
+              64 -
+              FIXEDtoINT(Trig_Sin(frame * TWISTING_COLUMN_WAVE_RISE_STEP) * 64);
 
           Matrix_Push();
           Matrix_Translate(0, INTtoFIXED(y - i * 8) + toFIXED(48), 0);
@@ -498,7 +505,7 @@ void BattleEffect_RunWaterColumn(struct BattleEffectParams *args, u32 mode) {
           Matrix_RotateX(i * (TRIG_TURN / 8) - frame * (TRIG_TURN / 32));
           Matrix_Scale(137072, FIXED_ONE, FIXED_ONE);
           Render_TransformVertices(gMapGridCellBuffer, vertices,
-                                   WATER_COLUMN_VERTICES);
+                                   TWISTING_COLUMN_VERTICES);
           Render_DrawModelList(model);
           Matrix_Pop();
         }
@@ -560,7 +567,7 @@ void BattleEffect_RunWaterColumn(struct BattleEffectParams *args, u32 mode) {
         for (i = 0; i != 1; i++) {
           s32 scroll = ~((frame + i * 6) << 3);
 
-          scroll &= WATER_COLUMN_SCROLL_MASK;
+          scroll &= TWISTING_COLUMN_SCROLL_MASK;
           model->scrollU = scroll;
           Matrix_Initialize();
           Matrix_Translate(INTtoFIXED(spos.x / 2 - 64),
@@ -573,7 +580,7 @@ void BattleEffect_RunWaterColumn(struct BattleEffectParams *args, u32 mode) {
               FIXEDtoINT(Trig_Sin((frame + i * 8) << 11) * (TRIG_TURN / 32)));
           Matrix_Scale(85536, FIXED_ONE / 2, FIXED_ONE);
           Render_TransformVertices(gMapGridCellBuffer, vertices,
-                                   WATER_COLUMN_VERTICES);
+                                   TWISTING_COLUMN_VERTICES);
           Render_DrawModelList(model);
         }
       } else {
@@ -590,9 +597,9 @@ void BattleEffect_RunWaterColumn(struct BattleEffectParams *args, u32 mode) {
           Matrix_Scale(FIXED_ONE / 2, FIXED_ONE, FIXED_ONE);
           gProjection.centerX = 60;
           if (mode == WATER_COLUMN_WHORL) {
-            model->scrollU = (frame << 3) & WATER_COLUMN_SCROLL_MASK;
+            model->scrollU = (frame << 3) & TWISTING_COLUMN_SCROLL_MASK;
           } else {
-            model->scrollU = ~(frame << 3) & WATER_COLUMN_SCROLL_MASK;
+            model->scrollU = ~(frame << 3) & TWISTING_COLUMN_SCROLL_MASK;
           }
           model->scrollV = 0;
           Matrix_TranslateVector(pos);
@@ -602,7 +609,7 @@ void BattleEffect_RunWaterColumn(struct BattleEffectParams *args, u32 mode) {
             if (args->side == EFFECT_SIDE_PARTY) {
               Matrix_RotateY(DEGtoANG(180));
             }
-            Matrix_RotateZ(i * (TRIG_TURN / 64) + WATER_COLUMN_LEAN);
+            Matrix_RotateZ(i * (TRIG_TURN / 64) + TWISTING_COLUMN_LEAN);
             if (mode != WATER_COLUMN_GALE) {
               Matrix_RotateX((frame + i * 4) << 11);
             } else {
@@ -610,7 +617,7 @@ void BattleEffect_RunWaterColumn(struct BattleEffectParams *args, u32 mode) {
             }
             Matrix_Scale(FIXED_ONE * 4, FIXED_ONE, FIXED_ONE);
             Render_ProjectVertices(gMapGridCellBuffer, vertices,
-                                   WATER_COLUMN_VERTICES);
+                                   TWISTING_COLUMN_VERTICES);
             Render_DrawModelList(model);
             Matrix_Pop();
           }
@@ -631,11 +638,11 @@ void BattleEffect_RunWaterColumn(struct BattleEffectParams *args, u32 mode) {
 
   if (unit->classId != CLASS_NONE && mode == WATER_COLUMN_WHORL &&
       args->variant == EFFECT_VARIANT_STRONGER) {
-    target->x = work->particles[WATER_COLUMN_SAVED_TARGET].x;
-    target->y = work->particles[WATER_COLUMN_SAVED_TARGET].y;
-    target->z = work->particles[WATER_COLUMN_SAVED_TARGET].z;
-    target->scaleX = work->particles[WATER_COLUMN_SAVED_TARGET].velocityX;
-    target->scaleY = work->particles[WATER_COLUMN_SAVED_TARGET].velocityY;
+    target->x = work->particles[TWISTING_COLUMN_SAVED_TARGET].x;
+    target->y = work->particles[TWISTING_COLUMN_SAVED_TARGET].y;
+    target->z = work->particles[TWISTING_COLUMN_SAVED_TARGET].z;
+    target->scaleX = work->particles[TWISTING_COLUMN_SAVED_TARGET].velocityX;
+    target->scaleY = work->particles[TWISTING_COLUMN_SAVED_TARGET].velocityY;
   }
   HeapSlot_Release(HEAP_SLOT_RAM_CODE);
   Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
@@ -653,18 +660,18 @@ void BattleEffect_RunCannon(struct BattleEffectParams *args) {
 }
 #undef BLITTER
 #undef MAP_CELLS
-#undef WATER_COLUMN_QUADS
-#undef WATER_COLUMN_ROWS
-#undef WATER_COLUMN_VERTICES
-#undef WATER_COLUMN_TRANSFORMED
-#undef WATER_COLUMN_MESH
-#undef WATER_COLUMN_SHEET
-#undef WATER_COLUMN_JUPITER_DJINN_SMALL_PICTURES
-#undef WATER_COLUMN_FLASH_BURST
-#undef WATER_COLUMN_SAVED_TARGET
-#undef WATER_COLUMN_MOTES
-#undef WATER_COLUMN_FLASH_BURST_PICTURES
-#undef WATER_COLUMN_BOB_STEP
-#undef WATER_COLUMN_WAVE_RISE_STEP
-#undef WATER_COLUMN_LEAN
-#undef WATER_COLUMN_SCROLL_MASK
+#undef TWISTING_COLUMN_QUADS
+#undef TWISTING_COLUMN_ROWS
+#undef TWISTING_COLUMN_VERTICES
+#undef TWISTING_COLUMN_TRANSFORMED
+#undef TWISTING_COLUMN_MESH
+#undef TWISTING_COLUMN_SHEET
+#undef TWISTING_COLUMN_JUPITER_DJINN_SMALL_PICTURES
+#undef TWISTING_COLUMN_FLASH_BURST
+#undef TWISTING_COLUMN_SAVED_TARGET
+#undef TWISTING_COLUMN_MOTES
+#undef FLASH_BURST_PICTURES
+#undef TWISTING_COLUMN_BOB_STEP
+#undef TWISTING_COLUMN_WAVE_RISE_STEP
+#undef TWISTING_COLUMN_LEAN
+#undef TWISTING_COLUMN_SCROLL_MASK

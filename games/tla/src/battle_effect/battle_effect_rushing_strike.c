@@ -291,7 +291,7 @@ struct CornerRow {
 #define SEGMENTS 33
 #define RISING_DRAGON_ENEMY_BODY_WIDTH 20
 #define RISING_DRAGON_ENEMY_ROW_PHASE 2018
-#define RISING_DRAGON_ENEMY_BODY_SCALE 137072
+#define RISING_DRAGON_ENEMY_BODY_SCALE toFIXED(2.09156)
 #define RISING_DRAGON_ENEMY_SWAY_STEP (TRIG_TURN / 64)
 
 /// Where FlashBurstSheet is decoded in the effect's pictures.
@@ -449,7 +449,9 @@ void BattleEffect_RunRisingDragonEnemy(struct BattleEffectParams *args) {
       }
       if (frame == 60) {
         u16 *color;
-        s32 max; // One constant, set in the for: red is masked with it.
+        /* FAKEMATCH(temporary): RGB_LEVEL_MAX held in a local, set in the for;
+         * as RGB_LEVEL_MAX. */
+        s32 max;
 
         // Into the sky: the red haze, each colour's blue made its red and its
         // red its green and blue, which turns it teal.

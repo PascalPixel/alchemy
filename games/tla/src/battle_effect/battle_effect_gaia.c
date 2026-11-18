@@ -340,7 +340,8 @@ void BattleEffect_RunGaia(struct BattleEffectParams *args) {
         }
       }
     }
-    if (frame < 90 || frame > 160)
+    // While the wall stands the screen shakes hard, otherwise softly.
+    if (frame < 90 || frame > GAIA_WALL_SINK_FRAME)
       BattleCamera_Shake(2, 2);
     else
       BattleCamera_Shake(8, 8);

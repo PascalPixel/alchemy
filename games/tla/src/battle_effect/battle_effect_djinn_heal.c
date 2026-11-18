@@ -35,11 +35,12 @@
 #define TUMBLING_QUADS_LINE_HEIGHT 128
 #define TUMBLING_QUADS_LINE_LEVEL 40
 
-/// The revival of Balm, Tinder and Phoenix: sixteen comets or feathers, each a
-/// textured quad, tumble down round the targets in a widening circle, or for
-/// Phoenix rise from them, three frames apart; with a prelude the Djinni
-/// circles above, then climbs away, and a ring of light lines spreads out. At
-/// frame 56 every target flashes and the quads fade.
+/// The revival of Balm, Tinder and Phoenix: TUMBLING_QUADS comets or
+/// feathers, each a textured quad, tumble down round the targets in a widening
+/// circle, or for Phoenix rise from them, TUMBLING_QUADS_DELAY frames apart;
+/// with a prelude the Djinni circles above, then climbs away, and a ring of
+/// light lines spreads out. At TUMBLING_QUADS_FLASH_FRAME every target flashes
+/// and the quads fade.
 ///
 /// Balm, Tinder and Phoenix run it in their modes.
 void BattleEffect_RunTumblingQuads(struct BattleEffectParams *args, s32 mode) {
@@ -289,10 +290,11 @@ void BattleEffect_RunTumblingQuads(struct BattleEffectParams *args, s32 mode) {
 
 /// "Earth's might enflamed." The battle flashes away to a white field and
 /// streaks blow across it; Zagan gallops in from the right in an orange blaze
-/// as the field darkens to the battle's own backdrop, and rears. At frame 157
-/// the screen flashes white, a crescent of light sweeps the targets and Zagan's
-/// axe falls, striking them four times while the screen shakes and rings of
-/// fire spread. Holding A or B draws only every other frame.
+/// as the field darkens to the battle's own backdrop, and rears. At
+/// ZAGAN_BLOW_FRAME the screen flashes white, a crescent of light sweeps the
+/// targets and Zagan's axe falls, striking them four times while the screen
+/// shakes and rings of fire spread. Holding A or B draws only every other
+/// frame.
 void BattleEffect_RunZagan(struct BattleEffectParams *args) {
   struct BattleWork *battle;
   void *canvas;
@@ -346,7 +348,8 @@ void BattleEffect_RunZagan(struct BattleEffectParams *args) {
                            BATTLE_BACKGROUND_COLORS * 2, COLOR_PAIR(RGB_WHITE));
       Resource_LoadAndDecompress(RESOURCE_PARTICLE_SPRITES_A, work->sheet, 0,
                                  0);
-      // Ever-fainter copies of one mote, which Zagan never draws.
+      // DEAD: ever-fainter copies of one mote, which Zagan never draws; the
+      // ROM keeps the copies.
       for (j = 0; j != ZAGAN_FAINT_MOTES; j++) {
         size = 4;
         for (i = 0; i != size * size * 2; i++) {

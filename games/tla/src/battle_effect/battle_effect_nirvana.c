@@ -15,8 +15,8 @@
 /// distance between them.
 #define NIRVANA_PULL(distance) ((distance) >> 10)
 
-/// Unleashed by a staff: an orb leaves the first target, drawn as rings of
-/// sparks turning about it, and is pulled back into the user, who flashes
+/// The Meditation Rod's unleash: an orb leaves the first target, drawn as rings
+/// of sparks turning about it, and is pulled back into the user, who flashes
 /// white.
 ///
 /// Abilities: Nirvana.
@@ -136,8 +136,8 @@ static inline s16 *Fixed_Halves(FIXED *value) {
 /// this much.
 #define STONE_JUSTICE_SPIN_STEP 96
 
-/// Unleashed by an axe: rocks rise in a column beside the user and spin as
-/// they fly; at frame 64 they are hurled across the screen into the target
+/// Themis' Axe's unleash: rocks rise in a column beside the user and spin as
+/// they fly; then they are hurled across the screen into the target
 /// while the battle background slides after them, and every rock that reaches
 /// the target shakes the screen and knocks it back.
 ///
@@ -294,7 +294,7 @@ void BattleEffect_RunStoneJustice(struct BattleEffectParams *args) {
 #define SOUL_SHATTER_SPARK_FRAMES 29
 #define SOUL_SHATTER_MOTES 32
 
-/// Unleashed by a long sword: a column bursts up under the target in a spray
+/// The Soul Brand's unleash: a column bursts up under the target in a spray
 /// of sparks and throws it into the air; the user glows, and from frame 32
 /// motes of the target's soul fly out and are drawn back into the user, who
 /// flashes white. The column rises from frame 8, stands at its full height
@@ -546,8 +546,8 @@ struct ProjectedPoint {
 #define SERAC_SPIRE_RINGS 8
 #define SERAC_SPIRE_SIDES 8
 #define SERAC_SPIRE_QUAD_TEXELS 16
-#define SERAC_SPIRE_GROWTH 10000
-#define SERAC_SPIRE_SCALE 60000
+#define SERAC_SPIRE_GROWTH toFIXED(0.1526)
+#define SERAC_SPIRE_SCALE toFIXED(0.91553)
 
 /// The camera circles the spire SERAC_CAMERA_TURN a frame, slowing from
 /// frame 64, and turns no further than SERAC_CAMERA_YAW_MAX either way.
@@ -564,8 +564,8 @@ struct ProjectedPoint {
 /// SERAC_RING_START_SCALE and grows by its growth times SERAC_RING_GROWTH a
 /// frame.
 #define SERAC_RINGS_FRAME 22
-#define SERAC_RING_START_SCALE 16768
-#define SERAC_RING_GROWTH 1500
+#define SERAC_RING_START_SCALE toFIXED(0.25586)
+#define SERAC_RING_GROWTH toFIXED(0.0229)
 
 /// "Strike a chilling finishing blow." The Mercury Djinni drops onto the
 /// target, dust bursting where it lands; a spire of ice (its mesh built on the

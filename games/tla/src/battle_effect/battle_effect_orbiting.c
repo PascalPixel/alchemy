@@ -1,27 +1,33 @@
 /// @file
-/// Swirling stars, orbiting skulls and target bursts.
+/// Swirling stars and target bursts.
 // Part of battle_effect.c.
 
 #include "battle_effect_internal.h"
 
-#define STARS ((struct Particle *)Ram_MapCellBuffer)
-
-// Sixty-four stars swirl about a point in front of the camera and are
-// drawn in.
+// Neither effect here is called or named by any table: nothing in the game
+// reaches them.
 
 #define SWIRLING_STARS_FRAMES 160
-
-#define SWIRLING_STARS_COUNT 64 ///< stars that swirl
+#define SWIRLING_STARS_COUNT 64   ///< stars that swirl
+#define SWIRLING_STARS_PLACED 256 ///< stars given a place, the first to swirl
+/// A star is drawn SWIRLING_STAR_LARGEST pixels wide (and twice as tall) at
+/// the nearest depth, a pixel narrower for every SWIRLING_STAR_DEPTH_STEP
+/// farther, its depth clamped from SWIRLING_STAR_DEPTH_NEAR to
+/// SWIRLING_STAR_DEPTH_FAR.
+#define SWIRLING_STAR_LARGEST 9
+#define SWIRLING_STAR_DEPTH_NEAR 250
+#define SWIRLING_STAR_DEPTH_FAR 634
+#define SWIRLING_STAR_DEPTH_STEP 64
 /// The angle star `i` turns each frame about its axis: each later star faster.
 #define SWIRLING_STAR_SPIN(i) (((i) + 32) * 8)
 
 /// Swirling stars: stars spin about a point above the field, each on its own
 /// axis, then are drawn back towards it.
-void BattleEffect_RunSwirlingStars(struct BattleEffectParams *args) {
+UNUSED void BattleEffect_RunSwirlingStars(struct BattleEffectParams *args) {
   struct BattleEffectWork *work;
   void *canvas;
-  FIXED record[3];
-  struct ScreenPoint pos;
+  FIXED center[3];
+  struct ScreenPoint screen;
   DrawRectangle draw[2];
   struct Particle *star;
   s32 i;
@@ -32,30 +38,23 @@ void BattleEffect_RunSwirlingStars(struct BattleEffectParams *args) {
   BattleEffect_StartCanvasLayer(0);
   Resource_LoadAndDecompress(RESOURCE_STAR_DOT_SHEET, work->sheet, 1, 1);
   BattleEffect_FetchRectangleBlitters(args->side ^ 1, draw);
-  for (i = 0; i != 256; i++) {
-    star = &STARS[i];
+  for (i = 0; i != SWIRLING_STARS_PLACED; i++) {
+    star = &PARTICLES[i];
     SET_POSITION(star, INTtoFIXED((Random16() & 0xff) - 127),
                  INTtoFIXED((Random16() & 0xff) - 127),
                  INTtoFIXED((Random16() & 0xff) - 127));
-    star->velocityX = 0;
-    star->velocityY = 0;
-    star->velocityZ = 0;
+    SET_VELOCITY(star, 0, 0, 0);
     star->variant = 0;
   }
   EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_CLEAR, 0);
-  record[0] = 0;
-  record[1] = toFIXED(80);
-  record[2] = 0;
+  SET_VECTOR(center, 0, toFIXED(80), 0);
   for (frame = 0; frame != SWIRLING_STARS_FRAMES; frame++) {
-    struct BattleCamera *camera;
+    struct BattleCamera *camera = Ram_HeapSlots->cameraWork;
 
-    // The stars turn about a point 80 pixels in front of the camera.
-    camera = Ram_HeapSlots->cameraWork;
-    Matrix_Initialize();
-    Matrix_SetLookAt(camera->eye, camera->focus);
-    Matrix_TranslateVector(record);
-    star = STARS;
-    for (i = 0; i != SWIRLING_STARS_COUNT; i++, star++) {
+    EFFECT_VIEW_FROM_CAMERA(camera);
+    Matrix_TranslateVector(center);
+    for (i = 0; i != SWIRLING_STARS_COUNT; i++) {
+      star = &PARTICLES[i];
       if (frame > i / 4 && star->variant == 0) {
         s32 size;
 
@@ -75,23 +74,19 @@ void BattleEffect_RunSwirlingStars(struct BattleEffectParams *args) {
           Matrix_RotateZ(-frame * SWIRLING_STAR_SPIN(i));
           break;
         }
-        EffectPosition_ProjectPoint((s32 *)star, &pos);
-        pos.x >>= 1;
+        EffectPosition_ProjectPoint(star, &screen);
+        screen.x >>= 1;
         Matrix_Pop();
-
-        // Depth 250-634 gives sizes 9 down to 3.
-        if (pos.depth < 250)
-          pos.depth = 250;
-        if (pos.depth > 634)
-          pos.depth = 634;
-        size = 9 - (pos.depth - 250) / 64;
+        CLAMP(screen.depth, SWIRLING_STAR_DEPTH_NEAR, SWIRLING_STAR_DEPTH_FAR);
+        size =
+            SWIRLING_STAR_LARGEST - (screen.depth - SWIRLING_STAR_DEPTH_NEAR) /
+                                        SWIRLING_STAR_DEPTH_STEP;
         draw[0](canvas,
                 work->sheet + ((i & 3) * MOTE_SET_BYTES +
                                gBattleEffect_MotePictures[size - 1]),
-                pos.x - size / 2, pos.y - size, size, size * 2);
+                screen.x - size / 2, screen.y - size, size, size * 2);
         Particle_AdvanceWithGravity3D(star, 60, 0);
-
-        // Thirty frames in, the star is drawn toward the center.
+        // After 30 frames a star springs back towards the centre.
         if (frame > i / 4 + 30) {
           s32 dx = -star->x >> 8;
           s32 dy = -star->y >> 8;
@@ -108,23 +103,24 @@ void BattleEffect_RunSwirlingStars(struct BattleEffectParams *args) {
   EFFECT_FINISH_CANVAS();
 }
 
+/// The burst's six pictures in the sheet, after the smoke's six.
 #define TARGET_BURST_PICTURES (6 * PICTURE_BYTES(SMOKE_PUFF))
 
 #define TARGET_BURSTS_FRAMES 96
 
 /// Target bursts: on each target in turn a burst flares while puffs of smoke
 /// scatter around it.
-void BattleEffect_RunTargetBursts(struct BattleEffectParams *args) {
+UNUSED void BattleEffect_RunTargetBursts(struct BattleEffectParams *args) {
   struct BattleEffectWork *work;
   void *canvas;
   void *palette;
   s32 frame;
-  DrawRectangle rectangleB;
-  DrawRectangle rectangleA;
-  struct Particle *step;
+  DrawRectangle drawSmoke;
+  DrawRectangle drawBurst;
+  struct Particle *puff;
   s32 i;
   struct ScreenPoint screen;
-  FIXED record[3];
+  FIXED point[3];
 
   work = Ram_HeapSlots->battleEffect;
   canvas = Ram_HeapSlots->battleCanvas;
@@ -135,75 +131,68 @@ void BattleEffect_RunTargetBursts(struct BattleEffectParams *args) {
   palette = Resource_GetTableEntry(RESOURCE_PINK_BURST_SHEET);
   Iwram_CopyWordsEntry((void *)BG_PLTT, palette, SHEET_PALETTE_BYTES);
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, BLITTER_ADDITIVE);
-  rectangleA = (DrawRectangle)Ram_HeapSlots->ramCode;
+  drawBurst = (DrawRectangle)Ram_HeapSlots->ramCode;
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED, EFFECT_CLIP_BOUNDS,
                       BLITTER_MAX);
-  rectangleB = (DrawRectangle)Ram_HeapSlots->ramCodePaired;
+  drawSmoke = (DrawRectangle)Ram_HeapSlots->ramCodePaired;
 
   for (i = 0; i != ARRAY_COUNT(work->particles); i++) {
     s32 angle;
-    s32 magnitude;
+    s32 speed;
 
-    step = &work->particles[i];
+    puff = &work->particles[i];
     angle = Random16() & TRIG_ANGLE_MASK;
-    magnitude = Random16() & 0xff;
-    SET_POSITION(step, 0, 0, 0);
+    speed = Random16() & 0xff;
+    SET_POSITION(puff, 0, 0, 0);
     if (i % 6 == 5) {
-      step->velocityX = 0;
-      step->velocityY = 0;
+      puff->velocityX = 0;
+      puff->velocityY = 0;
     } else {
-      step->velocityX = (Trig_Sin(angle) * magnitude) >> 7;
-      step->velocityY = (Trig_Cos(angle) * magnitude) >> 9;
+      puff->velocityX = (Trig_Sin(angle) * speed) >> 7;
+      puff->velocityY = (Trig_Cos(angle) * speed) >> 9;
     }
-    step->velocityZ = 0;
-    step->variant = 0;
+    puff->velocityZ = 0;
+    puff->variant = 0;
   }
 
   EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_THREE_QUARTERS);
 
   for (frame = 0; frame != TARGET_BURSTS_FRAMES; frame++) {
     s32 member;
-    struct BattleCamera *camera;
+    struct BattleCamera *camera = Ram_HeapSlots->cameraWork;
 
-    camera = Ram_HeapSlots->cameraWork;
-    for (member = 0; member != args->targetCount; member++) {
-      struct MotionObject *memberObject;
+    EFFECT_FOR_EACH_TARGET(member, args) {
+      struct MotionObject *target;
 
-      // The puffs rise from 40 pixels above the target.
-      memberObject = BattleObject_GetFar(args->targets[member])->object;
-      Matrix_Initialize();
-      Matrix_SetLookAt(camera->eye, camera->focus);
-      record[0] = memberObject->x;
-      record[1] = toFIXED(20);
-      record[2] = memberObject->z;
-      Matrix_TranslateVector(record);
+      target = BattleObject_GetFar(args->targets[member])->object;
+      EFFECT_VIEW_FROM_CAMERA(camera);
+      SET_VECTOR(point, target->x, toFIXED(20), target->z);
+      Matrix_TranslateVector(point);
       if (frame >= member * 8 && frame < member * 8 + 40) {
-        struct Particle *p;
-
         for (i = 0; i != 6; i++) {
-          s32 cel;
+          s32 picture;
 
           // A picture every six frames, holding the last.
-          p = &work->particles[member * 6 + i];
-          cel = p->variant / 6;
-          if (cel > 5)
-            cel = 5;
-          EffectPosition_ProjectPoint((s32 *)p, &screen);
+          puff = &work->particles[member * 6 + i];
+          picture = puff->variant / 6;
+          if (picture > 5)
+            picture = 5;
+          EffectPosition_ProjectPoint(puff, &screen);
           screen.x >>= 1;
           if (i == 5) {
-            Particle_AdvanceWithGravity3D(p, 62, toFIXED(1) / 32);
-            rectangleA(canvas,
-                       work->sheet + cel * PICTURE_BYTES(SMOKE_PUFF) +
-                           TARGET_BURST_PICTURES,
-                       screen.x - 12, screen.y - 36, SMOKE_PUFF_WIDTH,
-                       SMOKE_PUFF_HEIGHT);
+            Particle_AdvanceWithGravity3D(puff, 62, toFIXED(1) / 32);
+            drawBurst(canvas,
+                      work->sheet + picture * PICTURE_BYTES(SMOKE_PUFF) +
+                          TARGET_BURST_PICTURES,
+                      screen.x - SMOKE_PUFF_WIDTH / 2, screen.y - 36,
+                      SMOKE_PUFF_WIDTH, SMOKE_PUFF_HEIGHT);
           } else {
-            Particle_AdvanceWithGravity3D(p, 60, toFIXED(1) / 128);
-            rectangleB(canvas, work->sheet + cel * PICTURE_BYTES(SMOKE_PUFF),
-                       screen.x - 12, screen.y - 36, SMOKE_PUFF_WIDTH,
-                       SMOKE_PUFF_HEIGHT);
+            Particle_AdvanceWithGravity3D(puff, 60, toFIXED(1) / 128);
+            drawSmoke(canvas, work->sheet + picture * PICTURE_BYTES(SMOKE_PUFF),
+                      screen.x - SMOKE_PUFF_WIDTH / 2, screen.y - 36,
+                      SMOKE_PUFF_WIDTH, SMOKE_PUFF_HEIGHT);
           }
-          p->variant += 1;
+          puff->variant++;
         }
       }
     }
@@ -212,6 +201,15 @@ void BattleEffect_RunTargetBursts(struct BattleEffectParams *args) {
   EFFECT_FINISH_CANVAS();
 }
 
+#undef SWIRLING_STARS_FRAMES
+#undef SWIRLING_STARS_COUNT
+#undef SWIRLING_STARS_PLACED
+#undef SWIRLING_STAR_LARGEST
+#undef SWIRLING_STAR_DEPTH_NEAR
+#undef SWIRLING_STAR_DEPTH_FAR
+#undef SWIRLING_STAR_DEPTH_STEP
+#undef SWIRLING_STAR_SPIN
+#undef TARGET_BURST_PICTURES
+#undef TARGET_BURSTS_FRAMES
+// Cybele's trails end here, before Atalanta's.
 #undef TRAILS
-
-#undef STARS

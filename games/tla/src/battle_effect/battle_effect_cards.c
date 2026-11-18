@@ -5,12 +5,12 @@
 #include "battle_effect_internal.h"
 #include "sounds.h"
 
-/// The card's picture, 32 pixels wide and 64 tall, in the map cell buffer;
-/// SheepCardSheet's four 32x32 sheep follow it.
+/// The card's picture, CARD_WIDTH by CARD_HEIGHT, in the map cell buffer;
+/// SheepCardSheet's four sheep follow it.
 #define CARD (gMapGridCellBuffer + 24638)
-#define CARD_WIDTH 32
-#define CARD_HEIGHT 64
 #define CARD_SHEEP (Ram_MapCellBuffer + 24638 + CARD_WIDTH * CARD_HEIGHT)
+/// The header's SHEEP_WIDTH and SHEEP_HEIGHT again:
+/// battle_effect_target_motes.c #undefs them before this part.
 #define SHEEP_WIDTH 32
 #define SHEEP_HEIGHT 32
 /// After the Death and Sword cards' pictures: the step of the dissolve, 0 to
@@ -51,15 +51,12 @@
 #define SWORD_CARD_SHARD_FRAMES 36
 #define SWORD_CARD_SHARD_TOP 48
 #define SWORD_CARD_SHARD_SPEED 64
-/// The stat reduction's shard pictures (PaletteRampImage, drawn through
-/// gStatChange_ShardPictures) in the sheet, followed by seven copies of them,
-/// each SWORD_CARD_SHARD_DIMMING levels darker than the one before but never
-/// blank.
-#define STAT_REDUCTION_SHARD_PICTURES 9600
-#define STAT_REDUCTION_SHARD_BYTES 696 ///< bytes in each copy
-#define STAT_REDUCTION_SHARD_COPIES 8  ///< the pictures and their darker copies
+/// Each darker copy of the stat reduction's shard pictures
+/// (STAT_REDUCTION_SHARD_PICTURES) is this many levels darker than the one
+/// before, but never blank.
 #define SWORD_CARD_SHARD_DIMMING 6
-/// A line's 16.16 sideways sway as its BG2X value in work->bg2xLines.
+/// The header's CANVAS_WAVE_BG2X again: battle_effect_gasp.c #undefs it before
+/// this part.
 #define CANVAS_WAVE_BG2X(sway) ((sway) >> 10)
 
 /// The four cards (Sleep, Baffle, Death and Sword Card): a card flies from
@@ -524,11 +521,7 @@ void BattleEffect_RunCards(struct BattleEffectParams *args, s32 mode) {
   EFFECT_FINISH_CANVAS_ONE_BLITTER();
 }
 #undef CARD
-#undef CARD_WIDTH
-#undef CARD_HEIGHT
 #undef CARD_SHEEP
-#undef SHEEP_WIDTH
-#undef SHEEP_HEIGHT
 #undef CARD_DISSOLVE_STEPS
 #undef CARD_FLIGHT_FRAMES
 #undef CARD_SQUARE_FRAME
@@ -545,8 +538,4 @@ void BattleEffect_RunCards(struct BattleEffectParams *args, s32 mode) {
 #undef SWORD_CARD_SHARD_FRAMES
 #undef SWORD_CARD_SHARD_TOP
 #undef SWORD_CARD_SHARD_SPEED
-#undef STAT_REDUCTION_SHARD_PICTURES
-#undef STAT_REDUCTION_SHARD_BYTES
-#undef STAT_REDUCTION_SHARD_COPIES
 #undef SWORD_CARD_SHARD_DIMMING
-#undef CANVAS_WAVE_BG2X

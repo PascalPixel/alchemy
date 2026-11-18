@@ -464,6 +464,13 @@ enum RedCrescentPicture {
 /// SpiralSheet's pictures.
 #define SPIRAL_WIDTH 32
 #define SPIRAL_HEIGHT 32
+/// A card's picture, as the Sleep, Baffle, Death and Sword Cards and the
+/// Bramble, Frost, Flame and Thunder Cards draw it.
+#define CARD_WIDTH 32
+#define CARD_HEIGHT 64
+/// SheepCardSheet's sheep, four pictures of it tumbling after its card.
+#define SHEEP_WIDTH 32
+#define SHEEP_HEIGHT 32
 
 /// FlameballSheet and FireballSheet's pictures.
 #define FLAMEBALL_WIDTH 40

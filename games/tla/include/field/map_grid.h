@@ -53,7 +53,7 @@ struct MapAnimation {
 #define MAPGRID_BLEND_SCRIPT (Ram_MapCollision + 7680)
 /// A blend script's commands besides its BLDCNT values: the end, which starts
 /// it over, and a jump, its low byte the halfword pair to go on from.
-#define BLEND_SCRIPT_LOOP 0xffff
+#define BLEND_SCRIPT_LOOP 65535
 #define BLEND_SCRIPT_JUMP 0xfe00
 
 /// A layout's three layers, by what they hold. Most layouts give them
@@ -152,9 +152,12 @@ struct MapLayer {
   FIXED scaleX, scaleY;   ///< 16.16 fixed point, FIXED_ONE moves with the view
   FIXED speedX, speedY;   ///< 16.16 fixed-point pixels per frame
   FIXED phaseX, phaseY;   ///< 16.16 fixed-point pixels
-  u16 maskX, maskY;       ///< a drifting layer's wrap mask, in 8-pixel tiles
-  u16 originX, originY;   ///< the cell column and row of the layer's window
-  struct MapCell *cells;  ///< the layer's first cell in the map cell buffer
+  /// The window's wrap masks over its cell columns and rows, maskY's a row
+  /// times MAPGRID_SIZE: MAPGRID_SIZE - 1 and MAPGRID_ROW_MASK for the whole
+  /// grid.
+  u16 maskX, maskY;
+  u16 originX, originY;  ///< the cell column and row of the layer's window
+  struct MapCell *cells; ///< the layer's first cell in the map cell buffer
   u8 *terrainIds;
 };
 

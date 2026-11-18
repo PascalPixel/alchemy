@@ -14,6 +14,9 @@
 #include "system/mul_fx.h"
 
 #define ACTOR_SLOTS 8 ///< script-driven actors updated each frame
+/// The highest script word run as a command, an index of
+/// gActorScript_CommandTable; a larger one is stepped over.
+#define SCRIPT_COMMAND_MAX 63
 #define TARGET_UNSET ((s32)0x80000000) ///< no movement target
 #define TURN_MAX (TRIG_TURN / 16)      ///< the most an actor turns in one frame
 
@@ -74,7 +77,7 @@ void Actor_UpdateAll(void) {
         u32 command = actor->script->word[cursor];
 #endif
 
-        if (command <= 63) {
+        if (command <= SCRIPT_COMMAND_MAX) {
           if (gActorScript_CommandTable[command]((struct Actor *)actor) == 0)
             break;
         } else {
@@ -96,8 +99,8 @@ void Actor_UpdateAll(void) {
       arrived = 0;
       if (actor->targetX != TARGET_UNSET) {
         // Accelerate towards the target.
-        deltaX = (actor->targetX - x) / 65536;
-        deltaZ = (actor->targetZ - z) / 65536;
+        deltaX = (actor->targetX - x) / FIXED_ONE;
+        deltaZ = (actor->targetZ - z) / FIXED_ONE;
         distance = toFIXED(IwramSqrt(deltaX * deltaX + deltaZ * deltaZ));
         if (distance <= toFIXED(256) - 1) {
           deltaX = actor->targetX - x;
@@ -150,7 +153,8 @@ void Actor_UpdateAll(void) {
         }
       }
 
-      // Gravity, and a bounce that loses energy on landing.
+      // Gravity for an actor that falls (ACTOR_FALLS), and a bounce that
+      // loses energy on landing.
       if (actor->motionFlags & 2) {
         groundY = actor->groundHeight;
         if (y > groundY)
@@ -205,11 +209,12 @@ void Actor_UpdateAll(void) {
       actor->targetX = TARGET_UNSET;
       actor->targetY = TARGET_UNSET;
       actor->targetZ = TARGET_UNSET;
-      actor->arrivalAxis = 0;
+      actor->arrivalAxis = ARRIVAL_AXIS_NONE;
     }
     SET_POSITION(actor, x, y, z);
 
-    // Turn to face the direction of travel.
+    // An actor that faces its motion (ACTOR_FACES_MOTION) turns toward its
+    // direction of travel.
     if (actor->steeringFlags & 1) {
       x = actor->velocityX;
       z = actor->velocityZ;

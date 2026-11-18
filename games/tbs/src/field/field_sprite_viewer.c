@@ -16,9 +16,6 @@ enum {
   UI_SPRITE_VIEWER_FAST_STEP = 10
 };
 
-/// A sprite id with the sprite picture cache its pictures load into, as a
-/// SpritePictureCache's tag holds them.
-#define SPRITE_PICTURE_TAG(slot, id) ((id) + ((slot) << 12))
 /// An angle's bits: shifted up and back down, a value keeps only them.
 #define ANGLE_BITS 16
 
@@ -670,5 +667,4 @@ void SpriteViewer_PlaceRing(void) {
 }
 
 #undef UI_DEFINE_SET_GRID_COLUMN
-#undef SPRITE_PICTURE_TAG
 #undef ANGLE_BITS

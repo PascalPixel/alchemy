@@ -42,6 +42,14 @@ UNUSED void BattleEffect_StartActorMotionRandomDistance(s32 id) {
   Actor_SelectAnimationFar(object, POSE_DAMAGE);
 }
 
+/// Nereid's spray: the first burst, at frame 28, takes every free drop of the
+/// first NEREID_BURST_DROPS; from NEREID_COLUMNS_FRAME the next
+/// NEREID_DROPS_A_FRAME free ones burst up each frame; a falling drop that
+/// passes NEREID_SINK_Y has sunk back into the waves.
+#define NEREID_BURST_DROPS 256
+#define NEREID_DROPS_A_FRAME 16
+#define NEREID_SINK_Y 104
+
 /// Unused: nothing reaches it (no handler, summon case or call). A second copy
 /// of BattleEffect_RunNereid, with its names: Nereid rides in on her turtle
 /// over rising waves, columns of water and spray rise over the targets, and
@@ -89,9 +97,9 @@ UNUSED void BattleEffect_RunNereidCopy(struct BattleEffectParams *args) {
     focus.y = toFIXED(88);
     velocity.x = -toFIXED(16);
     velocity.y = -toFIXED(4);
-    // Particles 24 to 39 are given a place and a delay that nothing reads
-    // again.
     EFFECT_FREE_PARTICLES(k, work->particles, 64);
+    // DEAD: a place and a delay for particles 24 to 39, which nothing reads;
+    // the ROM keeps their stores.
     for (k = 0; k != 16; k++) {
       point = &work->particles[24 + k];
       point->x = Random16() & 127;
@@ -131,10 +139,9 @@ UNUSED void BattleEffect_RunNereidCopy(struct BattleEffectParams *args) {
       BattleEffect_PlaceFormationObjects(SUMMON_FORMATION_NEREID, focus.x,
                                          focus.y);
 
-      // Drops burst up among the targets: every free one of the first 256 at
-      // frame 28, then sixteen a frame from 32 to 79.
+      // Drops burst up among the targets.
       if (frame == 28) {
-        for (k = 0; k != 256; k++) {
+        for (k = 0; k != NEREID_BURST_DROPS; k++) {
           drop = &drops[k];
           if (drop->variant == -1) {
             s32 radius = Random16() & 63;
@@ -163,7 +170,7 @@ UNUSED void BattleEffect_RunNereidCopy(struct BattleEffectParams *args) {
             drop->velocityY = (-(Random16() & 63) - 8) << 13;
             drop->variant = 0;
             spawned++;
-            if (spawned == 16)
+            if (spawned == NEREID_DROPS_A_FRAME)
               break;
           }
         }
@@ -199,7 +206,7 @@ UNUSED void BattleEffect_RunNereidCopy(struct BattleEffectParams *args) {
       }
 
       // Drops swell as they clear: they fall under gravity until frame 80, then
-      // rise away, and a falling drop that reaches y = 104 is freed.
+      // rise away, and a falling drop that sinks into the waves is freed.
       for (k = 0; k != NEREID_DROPS; k++) {
         drop = &drops[k];
         if (drop->variant >= 0) {
@@ -216,11 +223,10 @@ UNUSED void BattleEffect_RunNereidCopy(struct BattleEffectParams *args) {
           if (frame > 74 && size <= 8)
             size = 9;
           if (frame > 76)
-            size = 10;
-          draw[drop->velocityY > 0](
-              canvas, cells + gBattleEffect_MotePictures[size - 1],
-              FIXED_INTEGER_PART(drop->x) - size / 2,
-              FIXED_INTEGER_PART(drop->y) - size, size, size * 2);
+            size = MOTE_PICTURES;
+          EFFECT_DRAW_MOTE(draw[drop->velocityY > 0], canvas, cells,
+                           FIXED_INTEGER_PART(drop->x),
+                           FIXED_INTEGER_PART(drop->y), size);
           drop->x += drop->velocityX;
           drop->y += drop->velocityY;
           if (frame > NEREID_COLUMNS_END_FRAME)
@@ -230,7 +236,8 @@ UNUSED void BattleEffect_RunNereidCopy(struct BattleEffectParams *args) {
           drop->velocityX = drop->velocityX * 62 / DAMPING_SCALE;
           drop->velocityY = drop->velocityY * 62 / DAMPING_SCALE;
           drop->variant++;
-          if (drop->velocityY > 0 && FIXED_INTEGER_PART(drop->y) > 104)
+          if (drop->velocityY > 0 &&
+              FIXED_INTEGER_PART(drop->y) > NEREID_SINK_Y)
             drop->variant = -1;
         }
       }
@@ -274,6 +281,7 @@ extern const struct Scale gFormationObjects_LargeScale;
 
 /// The grid formations' sprites stand this many pixels apart.
 #define FORMATION_SPACING 32
+#define MEGAERA_OBJECTS 11 ///< the sprites that draw Megaera
 
 /// Arranges work->sprites in a formation (enum SummonFormation); x and z are
 /// its origin in 16.16 pixels.
@@ -332,7 +340,7 @@ void BattleEffect_PlaceFormationObjects(s32 formation, s32 x, s32 z) {
     }
     break;
   case SUMMON_FORMATION_MEGAERA:
-    for (i = 0; i != 11; i++) {
+    for (i = 0; i != MEGAERA_OBJECTS; i++) {
       pos[0] = INTtoFIXED(gFormationObjects_WideX[i]) + x;
       pos[2] = INTtoFIXED(gFormationObjects_WideZ[i]) + z;
       Render_ApplyProjectedPlacementFar(work->sprites[i], pos, &normal.x, 0);
@@ -354,6 +362,9 @@ void BattleEffect_PlaceFormationObjects(s32 formation, s32 x, s32 z) {
 #define IMPACT_BURST_SMALL_SPARKS 64 ///< small sparks thrown
 /// the first fragment in work->particles
 #define IMPACT_BURST_FIRST_FRAGMENT 61
+#define IMPACT_BURST_FRAGMENT_SPEED 32 ///< in the units of a spark's speed
+/// A spark shrinks a size each time this many frames of its life run out.
+#define IMPACT_BURST_SHRINK_FRAMES 16
 
 /// Opens an impact flash and scatters sparks and fragments, keeping the
 /// effect's sprites in formation for the first 36 frames.
@@ -406,9 +417,9 @@ void BattleEffect_RunImpactBurst(s32 formation, s32 x, FIXED y) {
     work->particles[IMPACT_BURST_FIRST_FRAGMENT + i].x = x;
     work->particles[IMPACT_BURST_FIRST_FRAGMENT + i].y = y;
     work->particles[IMPACT_BURST_FIRST_FRAGMENT + i].velocityX =
-        (Trig_Sin(i * (DEGtoANG(120))) * 32) >> 6;
+        (Trig_Sin(i * (DEGtoANG(120))) * IMPACT_BURST_FRAGMENT_SPEED) >> 6;
     work->particles[IMPACT_BURST_FIRST_FRAGMENT + i].velocityY =
-        -((Trig_Cos(i * (DEGtoANG(120))) * 32) >> 5);
+        -((Trig_Cos(i * (DEGtoANG(120))) * IMPACT_BURST_FRAGMENT_SPEED) >> 5);
   }
 
   // Small sparks fly.
@@ -464,11 +475,10 @@ void BattleEffect_RunImpactBurst(s32 formation, s32 x, FIXED y) {
 
         p->variant--;
         Particle_AdvanceWithGravity2D(p, 60, 0);
-        size = p->variant / 16 + 3;
+        size = p->variant / IMPACT_BURST_SHRINK_FRAMES + 3;
         px = FIXED_INTEGER_PART(p->x);
         py = FIXED_INTEGER_PART(p->y);
-        additive(canvas, sheet + gBattleEffect_MotePictures[size - 1],
-                 px - size / 2, py - size, size, size * 2);
+        EFFECT_DRAW_MOTE(additive, canvas, sheet, px, py, size);
       }
     }
 
@@ -480,11 +490,10 @@ void BattleEffect_RunImpactBurst(s32 formation, s32 x, FIXED y) {
 
         p->variant--;
         Particle_AdvanceWithGravity2D(p, 60, 0);
-        size = p->variant / 16 + 1;
+        size = p->variant / IMPACT_BURST_SHRINK_FRAMES + 1;
         px = FIXED_INTEGER_PART(p->x);
         py = FIXED_INTEGER_PART(p->y);
-        additive(canvas, sheet + gBattleEffect_MotePictures[size - 1],
-                 px - size / 2, py - size, size, size * 2);
+        EFFECT_DRAW_MOTE(additive, canvas, sheet, px, py, size);
       }
     }
 
@@ -1265,7 +1274,11 @@ void BattleEffect_RunParticleStreams(struct BattleEffectParams *args,
   BattleEffect_EndCanvasLayer();
 }
 
+#undef NEREID_BURST_DROPS
+#undef NEREID_DROPS_A_FRAME
+#undef NEREID_SINK_Y
 #undef FORMATION_SPACING
+#undef MEGAERA_OBJECTS
 #undef PARTICLE_STREAMS_FALL_FRAMES
 #undef PARTICLE_STREAMS_BURST_FRAMES
 #undef PARTICLE_STREAMS_DAMAGE_FRAME

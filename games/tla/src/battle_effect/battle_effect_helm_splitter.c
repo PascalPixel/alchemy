@@ -5,17 +5,20 @@
 #include "battle_effect_internal.h"
 
 #define HELM_SPLITTER_FRAMES 70
-
+#define HELM_SPLITTER_LEAP_FRAMES 16  ///< the user's leap at the target
 #define HELM_SPLITTER_STRIKE_FRAME 18 ///< the swirl strikes the target
 /// FireSwirlSheet's bytes; the sparks' pictures, PinkStarSheet's stars or
 /// SkullSheet's skulls, follow them.
 #define HELM_SPLITTER_SWIRL_BYTES 16000
 #define HELM_SPLITTER_SPARK_PICTURES HELM_SPLITTER_SWIRL_BYTES
-#define HELM_SPLITTER_SPARKS 64
-#define HELM_SPLITTER_STAR_SIZE 16 ///< PinkStarSheet's six stars
+#define HELM_SPLITTER_SPARKS 16      ///< sparks the strike scatters, a variant
+#define HELM_SPLITTER_SPARK_SLOTS 64 ///< spark slots moved and drawn
+#define HELM_SPLITTER_STAR_SIZE 16   ///< PinkStarSheet's six stars
 
 /// The user leaps at the first target and strikes through a fire swirl; the
-/// target reels and sparks scatter, bouncing off the ground.
+/// target reels and sparks scatter, bouncing off the ground: stars for Helm
+/// Splitter, and for Skull Splitter twice as many skulls from a swirl of blue
+/// flame.
 ///
 /// Abilities: Helm Splitter, Skull Splitter.
 void BattleEffect_RunHelmSplitter(struct BattleEffectParams *args) {
@@ -48,9 +51,9 @@ void BattleEffect_RunHelmSplitter(struct BattleEffectParams *args) {
 
     for (i = 0; i != HELM_SPLITTER_SWIRL_BYTES; i++) {
       if (pixels[i] != 0) {
-        pixels[i] = pixels[i] * 2 + 32;
-        if (pixels[i] > 63)
-          pixels[i] = 63;
+        pixels[i] = pixels[i] * 2 + (CANVAS_LEVEL_BRIGHTEST + 1) / 2;
+        if (pixels[i] > CANVAS_LEVEL_BRIGHTEST)
+          pixels[i] = CANVAS_LEVEL_BRIGHTEST;
       }
     }
     Resource_LoadAndDecompress(
@@ -65,18 +68,19 @@ void BattleEffect_RunHelmSplitter(struct BattleEffectParams *args) {
   BattleEffect_FetchRectangleBlitters(args->side, draw);
 
   // No spark is alive yet.
-  for (i = 0, life = &work->particles[0].variant; i != HELM_SPLITTER_SPARKS;
-       i++) {
+  for (i = 0, life = &work->particles[0].variant;
+       i != HELM_SPLITTER_SPARK_SLOTS; i++) {
     *life = 0;
-    life += 7;
+    life += sizeof(struct Particle) / sizeof(*life);
   }
   sparks = work->particles;
 
-  // The caster dashes at the target.
-  BattleMotion_ApproachTargetFar(args->user, args->targets[0], 16, toFIXED(7));
+  // The user leaps at the target.
+  BattleMotion_ApproachTargetFar(args->user, args->targets[0],
+                                 HELM_SPLITTER_LEAP_FRAMES, toFIXED(7));
 
   for (frame = 0; frame != HELM_SPLITTER_FRAMES; frame++) {
-    // Frames 8-23: the swirl grows, one cell every second frame.
+    // The swirl grows, a picture every second frame.
     if (args->variant == EFFECT_VARIANT_BASIC) {
       EffectPosition_ProjectBattler(args->user, &position);
       if (args->side == EFFECT_SIDE_ENEMIES)
@@ -84,57 +88,59 @@ void BattleEffect_RunHelmSplitter(struct BattleEffectParams *args) {
       else
         REG_BG2X = (32 - position.x) << 8;
       if (frame >= 8 && frame <= 23) {
-        s32 cell = (frame - 8) / 2;
+        s32 picture = (frame - 8) / 2;
 
-        if (cell > 6)
-          cell = 6;
+        if (picture > 6)
+          picture = 6;
         if (args->side == EFFECT_SIDE_ENEMIES) {
-          draw[0](canvas, work->sheet + gHelmSplitter_Pictures[cell],
-                  gHelmSplitter_PictureBiasX[cell] + 30,
-                  gHelmSplitter_PictureBiasY[cell] + position.y - 60,
-                  gHelmSplitter_PictureWidths[cell],
-                  gHelmSplitter_PictureHeights[cell]);
+          draw[0](canvas, work->sheet + gHelmSplitter_Pictures[picture],
+                  gHelmSplitter_PictureBiasX[picture] + 30,
+                  gHelmSplitter_PictureBiasY[picture] + position.y - 60,
+                  gHelmSplitter_PictureWidths[picture],
+                  gHelmSplitter_PictureHeights[picture]);
         } else {
-          draw[0](canvas, work->sheet + gHelmSplitter_Pictures[cell],
-                  -gHelmSplitter_PictureBiasX[cell] -
-                      gHelmSplitter_PictureWidths[cell] + 98,
-                  gHelmSplitter_PictureBiasY[cell] + position.y - 60,
-                  gHelmSplitter_PictureWidths[cell],
-                  gHelmSplitter_PictureHeights[cell]);
+          draw[0](canvas, work->sheet + gHelmSplitter_Pictures[picture],
+                  -gHelmSplitter_PictureBiasX[picture] -
+                      gHelmSplitter_PictureWidths[picture] + 98,
+                  gHelmSplitter_PictureBiasY[picture] + position.y - 60,
+                  gHelmSplitter_PictureWidths[picture],
+                  gHelmSplitter_PictureHeights[picture]);
         }
       }
     } else {
       EffectPosition_ProjectBattler(args->targets[0], &position);
       if (frame >= 8 && frame <= 23) {
-        s32 cell = (frame - 8) / 2;
+        s32 picture = (frame - 8) / 2;
 
-        if (cell > 6)
-          cell = 6;
+        if (picture > 6)
+          picture = 6;
         if (args->side == EFFECT_SIDE_ENEMIES) {
-          draw[0](canvas, work->sheet + gHelmSplitter_Pictures[cell],
-                  position.x / 2 + gHelmSplitter_PictureBiasX[cell] - 16,
-                  gHelmSplitter_PictureBiasY[cell] + position.y - 92,
-                  gHelmSplitter_PictureWidths[cell],
-                  gHelmSplitter_PictureHeights[cell]);
+          draw[0](canvas, work->sheet + gHelmSplitter_Pictures[picture],
+                  position.x / 2 + gHelmSplitter_PictureBiasX[picture] - 16,
+                  gHelmSplitter_PictureBiasY[picture] + position.y - 92,
+                  gHelmSplitter_PictureWidths[picture],
+                  gHelmSplitter_PictureHeights[picture]);
         } else {
-          draw[0](canvas, work->sheet + gHelmSplitter_Pictures[cell],
-                  position.x / 2 - gHelmSplitter_PictureBiasX[cell] -
-                      gHelmSplitter_PictureWidths[cell] + 16,
-                  gHelmSplitter_PictureBiasY[cell] + position.y - 92,
-                  gHelmSplitter_PictureWidths[cell],
-                  gHelmSplitter_PictureHeights[cell]);
+          draw[0](canvas, work->sheet + gHelmSplitter_Pictures[picture],
+                  position.x / 2 - gHelmSplitter_PictureBiasX[picture] -
+                      gHelmSplitter_PictureWidths[picture] + 16,
+                  gHelmSplitter_PictureBiasY[picture] + position.y - 92,
+                  gHelmSplitter_PictureWidths[picture],
+                  gHelmSplitter_PictureHeights[picture]);
         }
       }
     }
 
-    // Frame 18: the hit. The target flashes and reels, the screen shakes and
-    // the swirl bursts into sparks.
+    // The strike: the target flashes and reels, the screen shakes and the
+    // swirl bursts into sparks.
     if (frame == HELM_SPLITTER_STRIKE_FRAME) {
       EffectPosition_ProjectBattler(args->targets[0], &position);
       EFFECT_SHOW_DAMAGE(SE_HEAVY_IMPACT);
       EFFECT_STRIKE_TARGET(args, 0, 8, KNOCKBACK_BOUNCE);
       work->shakeFrames = 4;
-      for (i = 0; i != args->variant * 16 + 16; i++) {
+      for (i = 0;
+           i != args->variant * HELM_SPLITTER_SPARKS + HELM_SPLITTER_SPARKS;
+           i++) {
         s32 force = (Random16() & 255) + 256;
         s32 angle = Random16() & TRIG_ANGLE_MASK;
 
@@ -151,7 +157,7 @@ void BattleEffect_RunHelmSplitter(struct BattleEffectParams *args) {
     }
 
     // The sparks fall, bounce off the ground at y = 104 and fade out.
-    for (i = 0; i != HELM_SPLITTER_SPARKS; i++) {
+    for (i = 0; i != HELM_SPLITTER_SPARK_SLOTS; i++) {
       spark = &sparks[i];
       if (spark->variant > 0) {
         spark->variant--;
@@ -168,13 +174,15 @@ void BattleEffect_RunHelmSplitter(struct BattleEffectParams *args) {
                     work->sheet + HELM_SPLITTER_SPARK_PICTURES +
                         ((frame + i) / 4 % 6) * HELM_SPLITTER_STAR_SIZE *
                             HELM_SPLITTER_STAR_SIZE,
-                    sx - 8, sy - 8, HELM_SPLITTER_STAR_SIZE,
+                    sx - HELM_SPLITTER_STAR_SIZE / 2,
+                    sy - HELM_SPLITTER_STAR_SIZE / 2, HELM_SPLITTER_STAR_SIZE,
                     HELM_SPLITTER_STAR_SIZE);
           else
             draw[0](canvas,
                     work->sheet + HELM_SPLITTER_SPARK_PICTURES +
                         i % 3 * PICTURE_BYTES(SKULL),
-                    sx - 12, sy - 12, SKULL_WIDTH, SKULL_HEIGHT);
+                    sx - SKULL_WIDTH / 2, sy - SKULL_HEIGHT / 2, SKULL_WIDTH,
+                    SKULL_HEIGHT);
         }
       }
     }
@@ -186,7 +194,16 @@ void BattleEffect_RunHelmSplitter(struct BattleEffectParams *args) {
   EFFECT_FINISH_CANVAS();
 }
 
-/// The sparks live in the map cell buffer's second 16 KB: 128 at the target,
-/// 128 thrown up at the start and 128 shed by the head.
+#undef HELM_SPLITTER_FRAMES
+#undef HELM_SPLITTER_LEAP_FRAMES
+#undef HELM_SPLITTER_STRIKE_FRAME
+#undef HELM_SPLITTER_SWIRL_BYTES
+#undef HELM_SPLITTER_SPARK_PICTURES
+#undef HELM_SPLITTER_SPARKS
+#undef HELM_SPLITTER_SPARK_SLOTS
+#undef HELM_SPLITTER_STAR_SIZE
+
+// Dragon Cloud's sparks, which the next part, dragon_cloud.c, reads: 128 at
+// the target, 128 thrown up at the start and 128 shed by the head.
 #define SPARKS ((struct Particle *)(Ram_MapCellBuffer + 16384))
 #define SPARK_COUNT 512

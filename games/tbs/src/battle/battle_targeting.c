@@ -406,7 +406,9 @@ s32 BattleAI_ChooseTarget(s32 userId, struct AbilityDefinition *action) {
       }
     }
 
-    // Weighted toward the front; five or more fall through to an even roll.
+    // Weighted toward the front: of a roll's outcomes the first target takes
+    // 6, the second 5, the third 4 and the fourth 3; five or more fall
+    // through to an even roll.
     switch (targetCount) {
     case 1:
       selected = 0;

@@ -27,7 +27,7 @@ s32 Item_RaisesStat(s32 id) {
 
 /// The first halfword of gInventorySnapshot while it holds the party's
 /// equipment, put aside while the Trial Road takes it away.
-#define INVENTORY_SNAPSHOT_SENTINEL 0x6774
+#define INVENTORY_SNAPSHOT_SENTINEL 26484
 
 /// Saves characters 4 to 7's inventories (Felix's party), the shortcuts and
 /// the party order as the leader and Moapa set off on the Trial Road

@@ -30,7 +30,8 @@
 #include "window/message_argument.h"
 #include "text/msg_ids.h"
 
-/// Sunshine is at work on the party's material; a night at the inn finishes it.
+/// Sunshine is at work on the party's material; a night at the inn, or leaving
+/// Yallam, finishes it.
 #define FLAG_SUNSHINE_FORGING FLAG_AREA_TEMP_01
 
 void MessageArgument_Push(u32 value, u32 kind);
@@ -54,8 +55,9 @@ enum YallamRoomsInnActorId {
   ACTOR_SUNSHINE,
   ACTOR_SUNSHINES_WIFE,
   ACTOR_SUNSHINES_CHILD,
-  /// The counter in front of Sunshine's bed, talked to across.
-  ACTOR_SUNSHINES_COUNTER
+  /// An unseen marker at the far end of Sunshine's bed, so that he answers
+  /// from either end as he lies there.
+  ACTOR_SUNSHINES_BED
 };
 
 /// The shops' actors (SceneId_YallamRoomsShops), numbering the rows of
@@ -68,7 +70,8 @@ enum YallamRoomsShopsActorId {
   ACTOR_WEAPON_MERCHANT,
   ACTOR_ARMOR_MERCHANT,
   ACTOR_ITEM_MERCHANT,
-  /// The three counters the merchants are talked to across.
+  /// Unseen markers on the three counters, so that talking across one reaches
+  /// its merchant.
   ///@{
   ACTOR_WEAPON_COUNTER,
   ACTOR_ARMOR_COUNTER,
@@ -328,9 +331,10 @@ void YallamRooms_TalkToInnkeeper(s32 actor) {
   }
 }
 
-/// The healer tends the party at the Sanctum across the counter, and otherwise
-/// speaks of the hope a Sanctum brings to far-off shores.
-void YallamRooms_TalkToHealer(s32 actor) {
+/// Unused: Yallam has no Sanctum, and no trigger talks to its priest. The
+/// priest tends the party across the counter, and otherwise speaks of the hope
+/// a Sanctum brings to far-off shores.
+UNUSED void YallamRooms_TalkToPriest(s32 actor) {
   u16 facing = Actor_GetById(gMainRoutineWork.leaderActorId)->facing;
 
   if (FACING_NEAREST_CARDINAL(facing) == FACING_NORTH) {
@@ -345,8 +349,10 @@ void YallamRooms_TalkToHealer(s32 actor) {
   }
 }
 
+/// Unused: Sunshine asks whether the party wants something forged, and either
+/// way will only work in the rain; no trigger runs it.
 /// "Ah, so you want me to make you a little something special?"
-void YallamRooms_OfferToForge(void) {
+UNUSED void YallamRooms_OfferToForge(void) {
   s32 msg;
 
   Event_Start();
@@ -458,7 +464,8 @@ void YallamRooms_TalkToSunshine(void) {
         Actor_GetById(ACTOR_SUNSHINE)->priorityFlags |=
             ACTOR_PRIORITY_AUTOMATIC;
 #if TLA_PATCH_1
-        Actor_SetPosition(ACTOR_SUNSHINES_COUNTER, 0, 0);
+        // The bed no longer answers for him while he works.
+        Actor_SetPosition(ACTOR_SUNSHINES_BED, 0, 0);
 #endif
         Event_SetFlag(FLAG_SUNSHINE_FORGING);
       } else {
@@ -545,12 +552,12 @@ s32 Scene_Initialize(void) {
       Actor_SetPosition(ACTOR_SUNSHINES_CHILD, 632, 346);
       Actor_FaceDirection(ACTOR_SUNSHINES_CHILD, FACING_SOUTH, 0);
 #if TLA_PATCH_1
-      Actor_SetPosition(ACTOR_SUNSHINES_COUNTER, 0, 0);
+      Actor_SetPosition(ACTOR_SUNSHINES_BED, 0, 0);
 #endif
     } else {
       Actor_FallOverById(ACTOR_SUNSHINE, 0);
     }
-    Actor_SetSpriteFlags(Actor_GetById(ACTOR_SUNSHINES_COUNTER), 0);
+    Actor_SetSpriteFlags(Actor_GetById(ACTOR_SUNSHINES_BED), 0);
     Actor_SetSpritePriority(ACTOR_RAINY_SEASON_VILLAGER, 2);
   }
   if (gMainRoutineWork.next == SCENE_YALLAM_ROOMS_SHOPS) {
@@ -571,7 +578,7 @@ s32 Scene_PrepareMap(void) { return 0; }
 /// The villager who asks about children's songs wanders between two corners of
 /// the room.
 u32 gYallamRooms_SongLoverWanders[] = {
-    SC_SET(SW_COLLISION, 131),
+    SC_SET(SW_COLLISION, ACTOR_BLOCKED_BY_SOLID | ACTOR_PUSHABLE | ACTOR_SOLID),
     SC_ACCELERATION(0.1),
     SC_SPEED(0.3),
     SC_LABEL(1),
@@ -593,7 +600,9 @@ u32 gYallamRooms_SongLoverWanders[] = {
     SC_WAIT(20),
     SC_LOOP(SC_FOREVER, SC_TO(1)),
     SC_END,
-    SC_SET(SW_COLLISION, 129),
+    // Unused: a second walk, between two spots of the east house, which no
+    // row takes.
+    SC_SET(SW_COLLISION, ACTOR_BLOCKED_BY_SOLID | ACTOR_SOLID),
     SC_ACCELERATION(0.1),
     SC_SPEED(0.3),
     SC_LABEL(1),
@@ -619,18 +628,19 @@ u32 gYallamRooms_SongLoverWanders[] = {
 
 u32 gSceneExits[] = {
     SCENE_EXITS(YallamRoomsInn),
-    SCENE_EXIT_UNLESS(1, Yallam, 1, EXIT_FLAG_NONE),
-    SCENE_EXIT_UNLESS(2, Yallam, 2, EXIT_FLAG_NONE),
-    SCENE_EXIT_UNLESS(3, Yallam, 7, EXIT_FLAG_NONE),
-    SCENE_EXIT_UNLESS(4, Yallam, 4, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(YALLAM_ROOMS_INN_TO_YALLAM_SOUTHEAST, Yallam, YALLAM_FROM_YALLAM_ROOMS_INN_SOUTHEAST, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(YALLAM_ROOMS_INN_TO_YALLAM_SOUTH, Yallam, YALLAM_FROM_YALLAM_ROOMS_INN_SOUTH, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(YALLAM_ROOMS_INN_TO_YALLAM_NORTHEAST, Yallam, YALLAM_FROM_YALLAM_ROOMS_INN_NORTHEAST, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(YALLAM_ROOMS_INN_TO_YALLAM_WEST, Yallam, YALLAM_FROM_YALLAM_ROOMS_INN_WEST, EXIT_FLAG_NONE),
     SCENE_EXITS(YallamRoomsShops),
-    SCENE_EXIT_UNLESS(1, Yallam, 3, EXIT_FLAG_NONE),
-    SCENE_EXIT_UNLESS(2, Yallam, 6, EXIT_FLAG_NONE),
-    SCENE_EXIT_UNLESS(3, Yallam, 5, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(YALLAM_ROOMS_SHOPS_TO_YALLAM_EAST, Yallam, YALLAM_FROM_YALLAM_ROOMS_SHOPS_EAST, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(YALLAM_ROOMS_SHOPS_TO_YALLAM_WEST, Yallam, YALLAM_FROM_YALLAM_ROOMS_SHOPS_WEST, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(YALLAM_ROOMS_SHOPS_TO_YALLAM_NORTH, Yallam, YALLAM_FROM_YALLAM_ROOMS_SHOPS_NORTH, EXIT_FLAG_NONE),
     SCENE_EXITS_END,
 };
 
-/// No room but the inn and the shops places actors.
+/// Unused: the actors of a room that is neither the inn nor the shops, which
+/// this overlay has none of.
 struct ActorPlacement gYallamRooms_Placements[] = {
     {SCENE_TABLE_END},
 };
@@ -687,7 +697,7 @@ struct ActorPlacement gYallamRoomsShopsPlacements[] = {
     {SCENE_TABLE_END},
 };
 
-/// The other rooms' two exits.
+/// Unused: the exits of a room that is neither the inn nor the shops.
 struct Trigger gYallamRooms_Triggers[] = {
     {TRIGGER_EXIT, 10, CONDITION_ALWAYS, 10},
     {TRIGGER_EXIT, 11, CONDITION_ALWAYS, 11},
@@ -697,10 +707,14 @@ struct Trigger gYallamRooms_Triggers[] = {
 
 /// The inn's exits, its people talked to and read, and the forge's oven.
 struct Trigger gYallamRoomsInnTriggers[] = {
-    {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
-    {TRIGGER_EXIT, 2, CONDITION_ALWAYS, 2},
-    {TRIGGER_EXIT, 3, CONDITION_ALWAYS, 3},
-    {TRIGGER_EXIT, 4, CONDITION_ALWAYS, 4},
+    {TRIGGER_EXIT, YALLAM_ROOMS_INN_TO_YALLAM_SOUTHEAST, CONDITION_ALWAYS,
+     YALLAM_ROOMS_INN_TO_YALLAM_SOUTHEAST},
+    {TRIGGER_EXIT, YALLAM_ROOMS_INN_TO_YALLAM_SOUTH, CONDITION_ALWAYS,
+     YALLAM_ROOMS_INN_TO_YALLAM_SOUTH},
+    {TRIGGER_EXIT, YALLAM_ROOMS_INN_TO_YALLAM_NORTHEAST, CONDITION_ALWAYS,
+     YALLAM_ROOMS_INN_TO_YALLAM_NORTHEAST},
+    {TRIGGER_EXIT, YALLAM_ROOMS_INN_TO_YALLAM_WEST, CONDITION_ALWAYS,
+     YALLAM_ROOMS_INN_TO_YALLAM_WEST},
     {TRIGGER_TALK, ACTOR_YEPP_SONGS_VILLAGER, CONDITION_ALWAYS,
      MSGNO(MsgYallamInteriorsYeppHadThreeDifferent)},
     {TRIGGER_TALK, ACTOR_CHILDRENS_SONGS_VILLAGER, CONDITION_ALWAYS,
@@ -719,7 +733,7 @@ struct Trigger gYallamRoomsInnTriggers[] = {
      EVENT(YallamRooms_TalkToSunshinesWife)},
     {TRIGGER_TALK, ACTOR_SUNSHINES_CHILD, CONDITION_ALWAYS,
      EVENT(YallamRooms_TalkToSunshinesChild)},
-    {TRIGGER_TALK, ACTOR_SUNSHINES_COUNTER, CONDITION_ALWAYS,
+    {TRIGGER_TALK, ACTOR_SUNSHINES_BED, CONDITION_ALWAYS,
      EVENT(YallamRooms_TalkToSunshine)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_YEPP_SONGS_VILLAGER,
      CONDITION_ALWAYS, MSGNO(MsgYallamInteriorsTheSongsAreSupposed)},
@@ -739,7 +753,7 @@ struct Trigger gYallamRoomsInnTriggers[] = {
      CONDITION_ALWAYS, EVENT(YallamRooms_MindReadSunshinesWife)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_SUNSHINES_CHILD,
      CONDITION_ALWAYS, EVENT(YallamRooms_MindReadSunshinesChild)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_SUNSHINES_COUNTER,
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_SUNSHINES_BED,
      CONDITION_ALWAYS, EVENT(YallamRooms_MindReadSunshine)},
     {EXAMINE_TRIGGER(EXAMINE_OVEN), 200, CONDITION_ALWAYS,
      FIND_MESSAGE(MSGNO(MsgYallamInteriorsTheSteelRestingIn))},
@@ -749,9 +763,12 @@ struct Trigger gYallamRoomsInnTriggers[] = {
 /// The shops' exits and their people, talked to and read; each merchant answers
 /// across his counter too.
 struct Trigger gYallamRoomsShopsTriggers[] = {
-    {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
-    {TRIGGER_EXIT, 2, CONDITION_ALWAYS, 2},
-    {TRIGGER_EXIT, 3, CONDITION_ALWAYS, 3},
+    {TRIGGER_EXIT, YALLAM_ROOMS_SHOPS_TO_YALLAM_EAST, CONDITION_ALWAYS,
+     YALLAM_ROOMS_SHOPS_TO_YALLAM_EAST},
+    {TRIGGER_EXIT, YALLAM_ROOMS_SHOPS_TO_YALLAM_WEST, CONDITION_ALWAYS,
+     YALLAM_ROOMS_SHOPS_TO_YALLAM_WEST},
+    {TRIGGER_EXIT, YALLAM_ROOMS_SHOPS_TO_YALLAM_NORTH, CONDITION_ALWAYS,
+     YALLAM_ROOMS_SHOPS_TO_YALLAM_NORTH},
     {TRIGGER_TALK, ACTOR_COMPLAINT_VILLAGER, CONDITION_ALWAYS,
      MSGNO(MsgYallamInteriorsSunshineHasStartedComplaining)},
     {TRIGGER_TALK, ACTOR_BLACKSMITH_VILLAGER, CONDITION_ALWAYS,

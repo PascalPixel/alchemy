@@ -5,19 +5,21 @@
 #include "battle_effect_internal.h"
 #include "sounds.h"
 
+#define RAY_FRAMES 64 ///< frames of the bolts' approach
+
 #define RAY_SPARK_COUNT PARTICLE_POOL_COUNT ///< sparks in PARTICLES
 
 #define RAY_PICTURES 1550 ///< the bolt pictures in the sheet
-#define BOLT_SIZE 2880    ///< one 24x120 bolt
 #define RAY_COUNT 4       ///< bolts
 
-// Four lightning bolts turn and close in on the targets, throwing sparks
-// from their feet.
-
-#define RAY_FRAMES 64 ///< frames of the bolts' approach
+/// The level the canvas flashes to every five frames while the bolts strike.
+#define RAY_FLASH_LEVEL 16
+/// How far Destruct Ray's canvas, at twice its width, is scrolled towards the
+/// targets' side, in canvas pixels.
+#define RAY_WIDE_CANVAS_SHIFT 16
 
 /// Four bolts close in, turning towards the centre and scattering sparks from
-/// their roots.
+/// their roots, while the canvas flashes.
 ///
 /// Abilities: Ray, Storm Ray, Destruct Ray.
 void BattleEffect_RunRay(struct BattleEffectParams *args) {
@@ -26,16 +28,16 @@ void BattleEffect_RunRay(struct BattleEffectParams *args) {
   s32 frame;
   u8 *sheet;
   s32 bolt;
-  s32 xOffset;
-  s32 count;
-  DrawRectangle draw[2];
+  s32 edgeShift;
+  s32 thrown;
+  BlitterPair draw;
   struct ScreenPoint midpoint;
   s32 i;
 
   work = Ram_HeapSlots->battleEffect;
   canvas = Ram_HeapSlots->battleCanvas;
   sheet = Ram_HeapSlots->battleSheet;
-  xOffset = 0;
+  edgeShift = 0;
   if (args->side == EFFECT_SIDE_ENEMIES)
     BattleEffect_StartTiledCanvasFilled(BGCNT_WRAP | BGCNT_PRIORITY(1));
   else
@@ -53,27 +55,28 @@ void BattleEffect_RunRay(struct BattleEffectParams *args) {
                              work->sheet + RAY_PICTURES, 1, 1);
   Resource_LoadAndDecompress(RESOURCE_PARTICLE_SPRITES_A, sheet, 0, 0);
 
-  // Scroll the canvas: a fixed offset for the wide variant, else onto the
-  // targets' midpoint.
+  // Destruct Ray's wide canvas is scrolled towards the targets' side; the
+  // others' is centred on the targets and kept on the screen, and where it
+  // meets an edge the bolts shift by what is left over.
   if (args->variant == EFFECT_VARIANT_STRONGEST) {
     if (work->args->side == EFFECT_SIDE_PARTY)
-      REG_BG2X = -(16 << 8);
+      REG_BG2X = -(RAY_WIDE_CANVAS_SHIFT << 8);
     else
-      REG_BG2X = 16 << 8;
+      REG_BG2X = RAY_WIDE_CANVAS_SHIFT << 8;
   } else {
     BattleEffect_GetTargetsMidpoint(&midpoint);
-    midpoint.x -= 64;
+    midpoint.x -= CANVAS_SIZE / 2;
     if (midpoint.x < 0) {
-      xOffset = midpoint.x;
+      edgeShift = midpoint.x;
       midpoint.x = 0;
-    } else if (midpoint.x > 112) {
-      xOffset = midpoint.x - 112;
-      midpoint.x = 112;
+    } else if (midpoint.x > NARROW_CANVAS_PARTY_X) {
+      edgeShift = midpoint.x - NARROW_CANVAS_PARTY_X;
+      midpoint.x = NARROW_CANVAS_PARTY_X;
     }
     REG_BG2X = -midpoint.x << 8;
   }
 
-  // The sparks wait at the center.
+  // Every spark waits to be thrown.
   for (i = 0; i != RAY_SPARK_COUNT; i++) {
     struct Particle *spark = &PARTICLES[i];
     s32 speed;
@@ -93,32 +96,37 @@ void BattleEffect_RunRay(struct BattleEffectParams *args) {
   for (frame = 0; frame != RAY_FRAMES; frame++) {
     if (frame == 20)
       EFFECT_SHOW_DAMAGE(SE_IMPACT);
+    // The bolts, over the first 16 frames.
     if (frame < 16) {
-      // Wipe the canvas every five frames.
       if (frame % 5 == 2)
-        Iwram_FillWordsEntry(canvas, CANVAS_BYTES, CANVAS_FILL_WORD(16));
+        Iwram_FillWordsEntry(canvas, CANVAS_BYTES,
+                             CANVAS_FILL_WORD(RAY_FLASH_LEVEL));
       for (bolt = 0; bolt != RAY_COUNT; bolt++) {
         s32 angle;
         s32 x;
         s32 y;
 
         // The radius across shrinks from 32 a pixel a frame.
-        count = 0;
-        angle = ((frame << 11) + DEGtoANG(90)) * bolt;
-        x = (FIXEDtoINT((32 - frame) * Trig_Sin(angle))) + 64;
-        y = -(FIXEDtoINT(Trig_Cos(angle) << 3)) - 8;
+        thrown = 0;
+        angle = (frame * (TRIG_TURN / 32) + DEGtoANG(90)) * bolt;
+        x = FIXEDtoINT((32 - frame) * Trig_Sin(angle)) + 64;
+        y = -FIXEDtoINT(Trig_Cos(angle) * 8) - 8;
         if (args->variant == EFFECT_VARIANT_BASIC)
           draw[0](canvas,
-                  work->sheet + (Random16() & 3) * BOLT_SIZE + RAY_PICTURES,
-                  xOffset + x + (Random16() & 7) - 16, y, LIGHTNING_BOLT_WIDTH,
-                  LIGHTNING_BOLT_HEIGHT);
+                  work->sheet +
+                      (Random16() & 3) * LIGHTNING_BOLT_PICTURE_BYTES +
+                      RAY_PICTURES,
+                  edgeShift + x + (Random16() & 7) - 16, y,
+                  LIGHTNING_BOLT_WIDTH, LIGHTNING_BOLT_HEIGHT);
         else
-          draw[bolt & 1](
-              canvas, work->sheet + (Random16() & 3) * BOLT_SIZE + RAY_PICTURES,
-              xOffset + x + (Random16() & 7) - 16, y, LIGHTNING_BOLT_WIDTH,
-              LIGHTNING_BOLT_HEIGHT);
+          draw[bolt & 1](canvas,
+                         work->sheet +
+                             (Random16() & 3) * LIGHTNING_BOLT_PICTURE_BYTES +
+                             RAY_PICTURES,
+                         edgeShift + x + (Random16() & 7) - 16, y,
+                         LIGHTNING_BOLT_WIDTH, LIGHTNING_BOLT_HEIGHT);
 
-        // Throw sparks from the bolt's foot.
+        // Sparks fly from the bolt's root.
         for (i = 0; i != RAY_SPARK_COUNT; i++) {
           struct Particle *spark = &PARTICLES[i];
 
@@ -133,8 +141,8 @@ void BattleEffect_RunRay(struct BattleEffectParams *args) {
             spark->velocityX = (Trig_Sin(spread) * speed) >> 9;
             spark->velocityY = -(Trig_Cos(spread) * speed * 2) >> 7;
             spark->variant = (Random16() & 7) + 32;
-            count++;
-            if (count == gRay_Sparks[args->variant][1])
+            thrown++;
+            if (thrown == gRay_Sparks[args->variant][1])
               break;
           }
         }
@@ -142,7 +150,7 @@ void BattleEffect_RunRay(struct BattleEffectParams *args) {
       work->shakeFrames = 1;
     }
 
-    // The sparks fall and bounce off the bottom (y 120).
+    // Sparks bounce off the bottom.
     for (i = 0; i != RAY_SPARK_COUNT; i++) {
       struct Particle *spark = &PARTICLES[i];
 
@@ -156,15 +164,14 @@ void BattleEffect_RunRay(struct BattleEffectParams *args) {
           s32 y = FIXEDtoINT(spark->y);
           s32 size = spark->variant / 8 + 1;
 
-          draw[0](canvas, sheet + gBattleEffect_MotePictures[size - 1],
-                  xOffset + x - size / 2, y - size, size, size * 2);
+          EFFECT_DRAW_MOTE(draw[0], canvas, sheet, edgeShift + x, y, size);
         }
       }
     }
 
-    // The targets are hit four frames apart.
+    // The targets are hit 4 frames apart.
     if (frame >= 4 && frame < 96) {
-      for (i = 0; i != args->targetCount; i++) {
+      EFFECT_FOR_EACH_TARGET(i, args) {
         if (frame == i * 4 + 4)
           BattleEffect_TintBattler(args->targets[i], SPRITE_COLOR_WHITE,
                                    POSE_DAMAGE, i, 10);
@@ -176,3 +183,10 @@ void BattleEffect_RunRay(struct BattleEffectParams *args) {
 
   EFFECT_FINISH_CANVAS();
 }
+
+#undef RAY_FRAMES
+#undef RAY_SPARK_COUNT
+#undef RAY_PICTURES
+#undef RAY_COUNT
+#undef RAY_FLASH_LEVEL
+#undef RAY_WIDE_CANVAS_SHIFT

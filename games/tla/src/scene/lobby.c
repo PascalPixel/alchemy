@@ -11,6 +11,7 @@
 #include "sound/sound_driver_symbols.h"
 #include "flags.h"
 #include "field/field.h"
+#include "field/field_sequence.h"
 #include "game/game.h"
 #include "graphics/graphics.h"
 #include "system/math_table.h"
@@ -172,12 +173,12 @@ enum LobbyRaisedTrigger {
 /// The last linked battle was won.
 #define FLAG_LINK_LOBBY_LINK_BATTLE_WON FLAG_AREA_TEMP_05
 
-/// gLinkStatus bits 0 and 1. Both consoles were heard this frame, as the battle
-/// code's LINK_BOTH_CONNECTED.
+/// gLinkStatus bits 0 and 1: both consoles were heard this frame.
 #define LOBBY_LINK_READY_MASK 3
 
-/// The most monster battles won in a row that count: each adds a level to the
-/// next monster's over the party's average (battle_formation.c).
+/// The highest level bonus a monster series reaches (FLAG_MONSTER_BATTLE_WINS,
+/// raised by every third win in a row), which battle_formation.c adds to the
+/// next monster's level over the party's average.
 enum { LEVEL_BONUS_MAX = 90 };
 
 /// The lobby's entrances after a battle, which no exit leads to: back from a
@@ -544,7 +545,7 @@ s32 LinkLobby_SendPartyRecords(void) {
 
       Iwram_CopyWordsEntry(heap, Unit_Get(memberIds[i]), size);
       ((struct Unit *)heap)->side = BATTLE_SIDE_PARTY;
-      peerSlots[memberIds[i]] = i - FIRST_ENEMY_UNIT;
+      peerSlots[memberIds[i]] = FIRST_ENEMY_UNIT + i;
       if ((transferResult = Serial_StartSend(heap, size)) == -1) {
         result = transferResult;
         goto done;
@@ -818,8 +819,8 @@ s32 LinkLobby_EnterBattle(void) {
     table[1] = 'X';
     table[2] = 'E';
     table[3] = 'C';
-    // The six units go to the battle's actor sprite slots, 32 KB into the map
-    // cell buffer (gActorSpriteSlots), where the battle takes them from.
+    // The six units go to the battle's actor sprite slots, where the battle
+    // takes them from.
     for (i = 0; i < 6 * BATTLE_UNIT_SIZE; i++)
       (Ram_MapCellBuffer + 32 * 1024)[i] = buf[i];
     HeapSlot_Release(HEAP_SLOT_ENEMY_UNITS);
@@ -1371,7 +1372,8 @@ s32 LinkLobby_Initialize(void) {
   gMainRoutineWork.secondShortcut = 0;
   gLinkLobby_CallFrames = 0;
   gLinkLobby_WaitFrames = 0;
-  gFieldWork->transition = SCENE_TRANSITION(TRANSITION_WINDOW, 1);
+  gFieldWork->transition =
+      SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_SHAPE);
   Sound_LoadReverbCode(2);
   LinkLobby_DrawThreeDigitValue(
       gMainRoutineWork.linkTallies[LINK_TALLY_LINKED_BEST_STREAK]);

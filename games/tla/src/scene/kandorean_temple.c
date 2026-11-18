@@ -150,8 +150,8 @@ enum KandoreanTempleFogRoomActorId {
 /// The temple gate's actors (SceneId_KandoreanTempleGate), numbering the rows
 /// of gKandoreanTemple_GatePlacements.
 enum KandoreanTempleGateActorId {
-  /// The leafy plant over the mouth of the cave, which Whirlwind blows away.
-  ACTOR_PLANT_OVER_THE_CAVE = ACTOR_FIRST_PLACED,
+  /// The weeds over the mouth of the cave, which Whirlwind scatters.
+  ACTOR_WEEDS_OVER_THE_CAVE = ACTOR_FIRST_PLACED,
   /// "Have you come to see Master Poi?"
   ACTOR_STUDENT_ASKING_ABOUT_POI,
   /// "Once the period of meditation has begun, none may enter the temple
@@ -1788,7 +1788,7 @@ void KandoreanTemple_OpenTheWellPassage(void) {
   Event_End();
 }
 
-/// Whirlwind has blown the bush away: the passage behind it opens and Kraden
+/// Whirlwind has scattered the weeds: the passage behind them opens and Kraden
 /// follows the leader in.
 void KandoreanTemple_FindTheHiddenPassage(void) {
   struct Actor *actor;
@@ -2645,10 +2645,10 @@ void KandoreanTemple_StartMeditating(s32 id, s32 delay) {
 void KandoreanTemple_StartGate(void) {
   gFieldWork->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
   if (GameFlag_Get(FLAG_HIDDEN_PASSAGE_FOUND)) {
-    Actor_SetPosition(ACTOR_PLANT_OVER_THE_CAVE, 0, 0);
+    Actor_SetPosition(ACTOR_WEEDS_OVER_THE_CAVE, 0, 0);
     MapGrid_CopyCellAttributes(0, 0, 1, 1, 5, 13);
   } else {
-    Actor_DisableById(ACTOR_PLANT_OVER_THE_CAVE);
+    Actor_DisableById(ACTOR_WEEDS_OVER_THE_CAVE);
   }
   if (GameFlag_Get(FLAG_MET_POI)) {
     MapGrid_CopyCellAttributes(2, 0, 2, 3, 17, 24);
@@ -3760,8 +3760,8 @@ struct Trigger gKandoreanTemple_GateEvents[] = {
      EVENT(KandoreanTemple_OpenTheWellPassage)},
     {TRIGGER_EXAMINE, 10, CONDITION_ALWAYS,
      EVENT(KandoreanTemple_TryTheLockedDoor)},
-    {PSYNERGY_ON_ACTOR(ABILITY_WHIRLWIND), 8, CONDITION_ALWAYS,
-     EVENT(KandoreanTemple_FindTheHiddenPassage)},
+    {PSYNERGY_ON_ACTOR(ABILITY_WHIRLWIND), ACTOR_WEEDS_OVER_THE_CAVE,
+     CONDITION_ALWAYS, EVENT(KandoreanTemple_FindTheHiddenPassage)},
     {PSYNERGY_PHASE_ON_CELL(ABILITY_CYCLONE, PSYNERGY_PHASE_ACTS), 30,
      CONDITION_ALWAYS, EVENT(KandoreanTemple_CycloneFirstPatch)},
     {PSYNERGY_PHASE_ON_CELL(ABILITY_CYCLONE, PSYNERGY_PHASE_ACTS), 31,

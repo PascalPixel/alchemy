@@ -65,20 +65,19 @@ enum NorthernReachesActorId {
   ACTOR_KRADEN
 };
 
-struct IceShard;
-
 void NorthernReaches_ShatterIceWall(s32 unused, FIXED *position,
                                     void (*callback)(void));
 
 void EffectSprite_DrawAtWorldPosition(struct EffectSprite *sprite,
-                                      struct IceShard *shard);
+                                      s32 *position);
 
 extern s32 gNorthernReaches_ShipAtRest[];
 
 void RisingParticles_Start(void);
 
-/// One of the ice wall's shards: its place and speed in 16.16 pixels, and how
-/// many frames it has flown.
+/// One of the ice wall's shards: its place and speed in 16.16 pixels, as a
+/// struct Particle has them, and how many frames it has flown, counted
+/// unsigned.
 struct IceShard {
   FIXED x;
   FIXED y;
@@ -379,7 +378,7 @@ s32 Scene_PrepareMap(void) {
   return 0;
 }
 
-void BattleEffect_StepVector3(struct IceShard *shard, s32 damping, s32 gravity);
+void BattleEffect_StepVector3(s32 *vector, s32 damping, s32 gravity);
 
 /// The Magma Ball's explosion over the ice wall: sparks fly, the screen fades
 /// to white, `callback` draws the wall gone and its shards fly apart from
@@ -466,8 +465,8 @@ void NorthernReaches_ShatterIceWall(s32 unused, FIXED *position,
       flySprite = work->sprites;
       for (i = ICE_SHARD_COUNT - 1; i >= 0; i--) {
         if (shard->age < ICE_SHARD_FRAMES) {
-          EffectSprite_DrawAtWorldPosition(flySprite, shard);
-          BattleEffect_StepVector3(shard, 63, -toFIXED(3) / 16);
+          EffectSprite_DrawAtWorldPosition(flySprite, &shard->x);
+          BattleEffect_StepVector3(&shard->x, 63, -toFIXED(3) / 16);
           shard->age++;
         }
         flySprite++;

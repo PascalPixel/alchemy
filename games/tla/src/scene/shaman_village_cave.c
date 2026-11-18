@@ -1,5 +1,5 @@
 /// @file
-/// The cave by the Shaman Village: ivy Whirlwind blows away, a pillar Move
+/// The cave by the Shaman Village: weeds Whirlwind scatters, a pillar Move
 /// pushes into a gap, boulders Lift raises, a puddle Frost freezes, Eddy the
 /// Mercury Djinni who hops away from the party, and in a linked game the three
 /// gladiators Isaac beat at Colosso.
@@ -18,6 +18,7 @@
 #include "field/call.h"
 #include "field/event_inline.h"
 #include "field/field.h"
+#include "field/field_sequence.h"
 #include "field/field_sequence_event.h"
 #include "field/field_sprite.h"
 #include "field/scene_tables.h"
@@ -34,10 +35,12 @@
 
 /// Set once Move has pushed the stone pillar into the gap at column 38.
 #define FLAG_SHAMAN_VILLAGE_CAVE_PILLAR_DROPPED 0x9a8
-/// Set once Whirlwind has blown away the first ivy (ACTOR_FIRST_IVY).
-#define FLAG_SHAMAN_VILLAGE_CAVE_FIRST_IVY_BLOWN_AWAY 0x9a9
-/// Set once Whirlwind has blown away the second ivy (ACTOR_SECOND_IVY).
-#define FLAG_SHAMAN_VILLAGE_CAVE_SECOND_IVY_BLOWN_AWAY 0x9aa
+/// Set once Whirlwind has scattered the first clump of weeds
+/// (ACTOR_FIRST_WEEDS).
+#define FLAG_SHAMAN_VILLAGE_CAVE_FIRST_WEEDS_SCATTERED 0x9a9
+/// Set once Whirlwind has scattered the second clump of weeds
+/// (ACTOR_SECOND_WEEDS).
+#define FLAG_SHAMAN_VILLAGE_CAVE_SECOND_WEEDS_SCATTERED 0x9aa
 /// Set as the gladiators from Colosso find the party: "I found Isaac!"
 #define FLAG_SHAMAN_VILLAGE_CAVE_FOUND_BY_GLADIATORS 0xa70
 /// Set while the party has lost to the gladiators, who wait for a rematch.
@@ -75,14 +78,14 @@ void Message_CloseFinishedWindows(void);
 
 /// The cave's actors, numbering the rows of gActorPlacements.
 enum ShamanVillageCaveActorId {
-  /// The ivy Whirlwind blows off the wall below the first room's west passage,
-  /// over the holds that climb it (SPRITE_IVY).
-  ACTOR_FIRST_IVY = ACTOR_FIRST_PLACED,
+  /// The weeds Whirlwind scatters from the wall below the first room's west
+  /// passage, over the holds that climb it (SPRITE_IVY).
+  ACTOR_FIRST_WEEDS = ACTOR_FIRST_PLACED,
   /// A round boulder placed in the map's top left corner, above every room's
   /// view; nothing moves it.
   ACTOR_HIDDEN_BOULDER,
-  /// The second ivy, in the second room.
-  ACTOR_SECOND_IVY,
+  /// The second clump of weeds, in the second room.
+  ACTOR_SECOND_WEEDS,
   /// Four round boulders standing in the gaps between the second room's
   /// ledges (SPRITE_ROUND_BOULDER).
   ACTOR_FIRST_BOULDER,
@@ -111,7 +114,7 @@ extern s32 gShamanVillageCave_GladiatorFollowsOut[];
 
 void Field_TryJumpForward();
 
-extern s32 gShamanVillageCave_IvyScript[];
+extern s32 gShamanVillageCave_WeedsScript[];
 extern u32 gShamanVillageCave_PillarScript[];
 
 s32 Event_PickUpItem();
@@ -122,15 +125,15 @@ const struct SceneRegion *Scene_GetExitRegions(void) { return 0; }
 
 const u32 *Scene_GetExits(void) { return gSceneExits; }
 
-/// Whirlwind blows one of the two ivies away for good, opening the cell behind
-/// it.
-void ShamanVillageCave_BlowAwayIvy(s32 unused, s32 ivy) {
-  if (ivy == ACTOR_FIRST_IVY) {
-    Event_SetFlag(FLAG_SHAMAN_VILLAGE_CAVE_FIRST_IVY_BLOWN_AWAY);
+/// Whirlwind scatters one of the two clumps of weeds for good, opening the cell
+/// behind it.
+void ShamanVillageCave_ScatterWeeds(s32 unused, s32 weeds) {
+  if (weeds == ACTOR_FIRST_WEEDS) {
+    Event_SetFlag(FLAG_SHAMAN_VILLAGE_CAVE_FIRST_WEEDS_SCATTERED);
     MapGrid_CopyCellAttributes(0, 2, 1, 1, 2, 8);
   }
-  if (ivy == ACTOR_SECOND_IVY) {
-    Event_SetFlag(FLAG_SHAMAN_VILLAGE_CAVE_SECOND_IVY_BLOWN_AWAY);
+  if (weeds == ACTOR_SECOND_WEEDS) {
+    Event_SetFlag(FLAG_SHAMAN_VILLAGE_CAVE_SECOND_WEEDS_SCATTERED);
     MapGrid_CopyCellAttributes(0, 32, 1, 1, 14, 38);
   }
 }
@@ -259,9 +262,9 @@ void ShamanVillageCave_FightEddy(void) {
   Event_RequestDjinnBattle(ACTOR_EDDY, DJINNI_EDDY);
 }
 
-/// The call gShamanVillageCave_IvyScript makes: the ivy casts no shadow, is
-/// drawn at priority 2 and stands still.
-s32 ShamanVillageCave_SetUpIvy(struct Actor *actor) {
+/// The call gShamanVillageCave_WeedsScript makes: the weeds cast no shadow, are
+/// drawn at priority 2 and stand still.
+s32 ShamanVillageCave_SetUpWeeds(struct Actor *actor) {
   Actor_SetSpriteFlags(actor, 0);
   ((struct FieldSprite *)actor->sprite)->priority = 2;
   actor->motionFlags = 0;
@@ -681,11 +684,12 @@ void ShamanVillageCave_EnterPassage(void) {
 s32 Scene_Initialize(void) {
   struct Actor *actor;
 
-  gFieldWork->transition = SCENE_TRANSITION(TRANSITION_WINDOW, 4);
-  if (Event_GetFlag(FLAG_SHAMAN_VILLAGE_CAVE_FIRST_IVY_BLOWN_AWAY))
-    Actor_SetPosition(ACTOR_FIRST_IVY, 0, 0);
-  if (Event_GetFlag(FLAG_SHAMAN_VILLAGE_CAVE_SECOND_IVY_BLOWN_AWAY))
-    Actor_SetPosition(ACTOR_SECOND_IVY, 0, 0);
+  gFieldWork->transition =
+      SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE);
+  if (Event_GetFlag(FLAG_SHAMAN_VILLAGE_CAVE_FIRST_WEEDS_SCATTERED))
+    Actor_SetPosition(ACTOR_FIRST_WEEDS, 0, 0);
+  if (Event_GetFlag(FLAG_SHAMAN_VILLAGE_CAVE_SECOND_WEEDS_SCATTERED))
+    Actor_SetPosition(ACTOR_SECOND_WEEDS, 0, 0);
   if (Event_GetFlag(FLAG_DJINNI(DJINNI_EDDY)) ||
       Event_GetFlag(FLAG_DJINNI_HIDING(DJINNI_EDDY)))
     Event_SetFlag(FLAG_SHAMAN_VILLAGE_CAVE_EDDY_STOPS_FLEEING);
@@ -738,15 +742,16 @@ s32 Scene_Initialize(void) {
 }
 
 s32 Scene_PrepareMap(void) {
-  s32 firstBlownAway;
-  s32 secondBlownAway;
+  s32 firstScattered;
+  s32 secondScattered;
 
-  firstBlownAway = Event_GetFlag(FLAG_SHAMAN_VILLAGE_CAVE_FIRST_IVY_BLOWN_AWAY);
-  if (firstBlownAway != 0)
+  firstScattered =
+      Event_GetFlag(FLAG_SHAMAN_VILLAGE_CAVE_FIRST_WEEDS_SCATTERED);
+  if (firstScattered != 0)
     MapGrid_CopyCellAttributes(0, 2, 1, 1, 2, 8);
-  secondBlownAway =
-      Event_GetFlag(FLAG_SHAMAN_VILLAGE_CAVE_SECOND_IVY_BLOWN_AWAY);
-  if (secondBlownAway != 0)
+  secondScattered =
+      Event_GetFlag(FLAG_SHAMAN_VILLAGE_CAVE_SECOND_WEEDS_SCATTERED);
+  if (secondScattered != 0)
     MapGrid_CopyCellAttributes(0, 32, 1, 1, 14, 38);
   return 0;
 }
@@ -773,11 +778,11 @@ u32 gSceneExits[] = {
     SCENE_EXITS_END,
 };
 
-/// The ivy's script: it stands half as tall again, and is set up by
-/// ShamanVillageCave_SetUpIvy.
-s32 gShamanVillageCave_IvyScript[] = {
+/// The weeds' script: they stand half as tall again, and are set up by
+/// ShamanVillageCave_SetUpWeeds.
+s32 gShamanVillageCave_WeedsScript[] = {
     SC_SET(SW_SCALE_Y_DUPLICATE, FIXED_ONE * 3 / 2),
-    SC_CALL(ShamanVillageCave_SetUpIvy),
+    SC_CALL(ShamanVillageCave_SetUpWeeds),
     SC_END,
 };
 
@@ -789,9 +794,9 @@ u32 gShamanVillageCave_PillarScript[] = {
 };
 
 struct ActorPlacement gActorPlacements[] = {
-    ACTOR_PLACEMENT(SPRITE_IVY, CONDITION_ALWAYS, (s32)gShamanVillageCave_IvyScript, 40, 0, 128, FACING_NORTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_IVY, CONDITION_ALWAYS, (s32)gShamanVillageCave_WeedsScript, 40, 0, 128, FACING_NORTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(SPRITE_ROUND_BOULDER, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 8, 0, 8, FACING_NORTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(SPRITE_IVY, CONDITION_ALWAYS, (s32)gShamanVillageCave_IvyScript, 232, 0, 608, FACING_NORTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_IVY, CONDITION_ALWAYS, (s32)gShamanVillageCave_WeedsScript, 232, 0, 608, FACING_NORTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(SPRITE_ROUND_BOULDER, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 136, 0, 808, FACING_NORTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(SPRITE_ROUND_BOULDER, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 216, 0, 808, FACING_NORTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(SPRITE_ROUND_BOULDER, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 296, 0, 792, FACING_NORTH, TALK_FACING_KEEP, 0),
@@ -830,8 +835,8 @@ struct Trigger gSceneEvents[] = {
     {TRIGGER_TALK, ACTOR_AZART, CONDITION_ALWAYS, EVENT(ShamanVillageCave_FightGladiators)},
     {TRIGGER_TALK, ACTOR_NAVAMPA, CONDITION_ALWAYS, EVENT(ShamanVillageCave_FightGladiators)},
     {TRIGGER_TALK, ACTOR_GOLDEN_SHIRT, CONDITION_ALWAYS, EVENT(ShamanVillageCave_TakeGoldenShirt)},
-    {PSYNERGY_ON_ACTOR(ABILITY_WHIRLWIND), ACTOR_FIRST_IVY, CONDITION_ALWAYS, EVENT(ShamanVillageCave_BlowAwayIvy)},
-    {PSYNERGY_ON_ACTOR(ABILITY_WHIRLWIND), ACTOR_SECOND_IVY, CONDITION_ALWAYS, EVENT(ShamanVillageCave_BlowAwayIvy)},
+    {PSYNERGY_ON_ACTOR(ABILITY_WHIRLWIND), ACTOR_FIRST_WEEDS, CONDITION_ALWAYS, EVENT(ShamanVillageCave_ScatterWeeds)},
+    {PSYNERGY_ON_ACTOR(ABILITY_WHIRLWIND), ACTOR_SECOND_WEEDS, CONDITION_ALWAYS, EVENT(ShamanVillageCave_ScatterWeeds)},
     {PSYNERGY_ON_ACTOR(ABILITY_LIFT), ACTOR_FIRST_BOULDER, FLAG_SHAMAN_VILLAGE_CAVE_BOULDER_LIFTED(0), EVENT(ShamanVillageCave_LiftFirstBoulder)},
     {PSYNERGY_ON_ACTOR(ABILITY_LIFT), ACTOR_FIRST_BOULDER + 1, FLAG_SHAMAN_VILLAGE_CAVE_BOULDER_LIFTED(1), EVENT(ShamanVillageCave_LiftSecondBoulder)},
     {PSYNERGY_ON_ACTOR(ABILITY_LIFT), ACTOR_FIRST_BOULDER + 2, FLAG_SHAMAN_VILLAGE_CAVE_BOULDER_LIFTED(2), EVENT(ShamanVillageCave_LiftThirdBoulder)},

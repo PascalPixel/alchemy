@@ -495,7 +495,7 @@ s32 Scene_Initialize(void) {
   if (Event_GetFlag(FLAG_GABOMBA_MESSAGE_CARRIED)) {
     Madra_SealHole();
   } else {
-    // The worker stands down in the hole, his sprite sunk eight rows.
+    // The worker stands down in the hole.
     Actor_SetSpriteFlags(Actor_GetById(ACTOR_HOLE_WORKER), 0);
     actor = Actor_GetById(ACTOR_HOLE_WORKER);
     actor->radius = Actor_GetById(ACTOR_HOLE_WORKER)->radius * 4 / 3;

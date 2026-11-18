@@ -432,9 +432,11 @@ s32 Scene_Initialize(void) {
   struct MainRoutineWork *party = &gMainRoutineWork;
 
 #if !TLA_PATCH_1
-  gFieldWork->transition = SCENE_TRANSITION(TRANSITION_WINDOW, 4);
+  gFieldWork->transition =
+      SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE);
 #else
-  gFieldWork->transition = SCENE_TRANSITION(TRANSITION_WINDOW, 1);
+  gFieldWork->transition =
+      SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_SHAPE);
 #endif
   if (party->next != SCENE_CHAMPA_CLIFF_CAVES_BRIGGS)
     Actor_GetById(party->leaderActorId)->priorityFlags |=
@@ -1137,7 +1139,8 @@ void ChampaCliffCaves_AskIfBriggsLearned(void) {
   Event_ShowMessageThenWait(ACTOR_OBABA, 0, 20);
   work = Ram_HeapSlots->fieldWork;
   work->transitionFrames = 40;
-  work->transition = SCENE_TRANSITION(TRANSITION_WINDOW, 9);
+  work->transition =
+      SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER);
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();
   Event_SetDestination((s16)gMainRoutineWork.restartScene,
@@ -2268,8 +2271,8 @@ LATE_DATA struct ActorPlacement gChampaCliffCaves_ObabaPlacementsBriggsHome[] =
         {SCENE_TABLE_END},
 };
 
-/* FAKEMATCH(signature): placement rows declared as halfwords, so the table
-   starts on a halfword as the ROM's does. */
+/* FAKEMATCH(signature): placement rows declared as halfwords; as struct
+   ActorPlacement the table starts on a word. */
 LATE_DATA s16 gChampaCliffCaves_AvimanderPlacementsBriggsHome[] = {
     ACTOR_PLACEMENT_HALVES(SPRITE_OBABA, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 736, 0, 248, FACING_WEST, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT_HALVES(SPRITE_SUNSHINES_CHILD, CONDITION_ALWAYS, MOVEMENT_TYPE_SQUASH, 216, 0, 464, FACING_NORTH_NORTHEAST, TALK_FACING_PARTY_AND_BACK, 0),
@@ -2338,8 +2341,8 @@ LATE_DATA struct ActorPlacement
         {SCENE_TABLE_END},
 };
 
-/* FAKEMATCH(signature): placement rows declared as halfwords, so the table
-   starts on a halfword as the ROM's does. */
+/* FAKEMATCH(signature): placement rows declared as halfwords; as struct
+   ActorPlacement the table starts on a word. */
 LATE_DATA s16 gChampaCliffCaves_AvimanderPlacementsAfterAvimander[] = {
     ACTOR_PLACEMENT_HALVES(SPRITE_OBABA, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 648, 0, 188, FACING_SOUTH_SOUTHWEST, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT_HALVES(SPRITE_SUNSHINES_CHILD, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 216, 0, 464, FACING_SOUTH_SOUTHWEST, TALK_FACING_PARTY_THEN_WATCH, 0),

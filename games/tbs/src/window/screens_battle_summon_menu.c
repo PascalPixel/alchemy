@@ -88,11 +88,11 @@ s32 BattleSummonMenu_Run(s32 unusedA, s32 unusedB, const u8 *standby) {
 
       k = learnedSummons[i];
       definition = SummonDefinition_Get(k);
-      for (n = 0; n <= 3; n++) {
+      for (n = 0; n < ELEMENT_COUNT; n++) {
         if (definition->djinnRequired[n] > standby[n])
           break;
       }
-      if (n == 4) {
+      if (n == ELEMENT_COUNT) {
         orderedSummons[orderedCount++] = k;
         learnedSummons[i] = SUMMON_END;
       }
@@ -133,7 +133,7 @@ s32 BattleSummonMenu_Run(s32 unusedA, s32 unusedB, const u8 *standby) {
         Text_DrawWideStringAtOffset(text, (struct Window *)description, 0, 4);
         drawnRow = selectedRow;
         mask = 0;
-        for (element = 0; element <= 3; element++) {
+        for (element = 0; element < ELEMENT_COUNT; element++) {
           if (definition->djinnRequired[element] != 0)
             mask |= 1 << element;
         }
@@ -145,7 +145,7 @@ s32 BattleSummonMenu_Run(s32 unusedA, s32 unusedB, const u8 *standby) {
         {
           s32 element;
 
-          for (element = 0; element <= 3; element++) {
+          for (element = 0; element < ELEMENT_COUNT; element++) {
             Window_SetTilemapEntry(counts, element + LIST_TILE_SUMMON_ELEMENT,
                                    element * 2, 0, 0);
             Window_PutGlyph(counts, standby[element] + '0', element * 2 + 1, 0,
@@ -160,7 +160,7 @@ s32 BattleSummonMenu_Run(s32 unusedA, s32 unusedB, const u8 *standby) {
           next:
             summon = SummonDefinition_Get(id);
             col = 0;
-            for (element = 0; element <= 3; element++) {
+            for (element = 0; element < ELEMENT_COUNT; element++) {
               if (summon->djinnRequired[element] > standby[element])
                 break;
             }
@@ -175,7 +175,7 @@ s32 BattleSummonMenu_Run(s32 unusedA, s32 unusedB, const u8 *standby) {
             Text_DrawMessageAsTiles(SummonDefinition_Get(id)->abilityId +
                                         MsgAbilityName,
                                     window, 16, index * 16);
-            for (element = 0; element <= 3; element++) {
+            for (element = 0; element < ELEMENT_COUNT; element++) {
               if (summon->djinnRequired[element] != 0) {
                 Window_SetTilemapEntry(window,
                                        element + LIST_TILE_SUMMON_ELEMENT,
@@ -230,17 +230,19 @@ s32 BattleSummonMenu_Run(s32 unusedA, s32 unusedB, const u8 *standby) {
     sprite = &cursorStorage;
     Oam_AddSpriteAtDepth(sprite, OAM_DEPTH_WINDOW + 2);
 
-    // Blink required elements' standby counts every eight frames.
+    // The standby counts of the elements the summon under the cursor needs
+    // blink every eight frames.
     {
-      s32 element, tile, blink;
+      s32 element, palette, blink;
 
       blink = gFrameCount & 8;
-      for (element = 0; element <= 3; element++) {
-        tile = 15 - (blink != 0);
+      for (element = 0; element < ELEMENT_COUNT; element++) {
+        // HIGHLIGHT_PALETTE, one below, while the blink is on.
+        palette = WINDOW_PALETTE - (blink != 0);
         if ((1 << element & mask) == 0)
-          tile = 15;
+          palette = WINDOW_PALETTE;
         Window_HighlightRect(counts->x + element * 2 + 1, counts->y + 1, 2, 1,
-                             tile);
+                             palette);
       }
     }
 

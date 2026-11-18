@@ -8,9 +8,11 @@
 
 struct StripQuad;
 
-/// The column's rows of vertices, two (x, y, z, pad) each, as the strip's
-/// quads join them: TWISTING_COLUMN_QUADS quads, one row more.
-#define MAP_CELLS ((s8 (*)[2][4])Ram_MapCellBuffer)
+/// The column's rows of corners, two (x, y, z, pad) each, as the strip's
+/// quads join them: TWISTING_COLUMN_QUADS quads, one row more. They are built
+/// at the start of the map cell buffer, which the transform reads as
+/// gMapGridCellBuffer.
+#define TWISTING_COLUMN_CORNERS ((s8 (*)[2][4])Ram_MapCellBuffer)
 #define TWISTING_COLUMN_QUADS 32
 #define TWISTING_COLUMN_ROWS (TWISTING_COLUMN_QUADS + 1)
 #define TWISTING_COLUMN_VERTICES (TWISTING_COLUMN_ROWS * 2)
@@ -390,13 +392,14 @@ void BattleEffect_RunWaterColumn(struct BattleEffectParams *args, u32 mode) {
             /* FAKEMATCH(temporary): the row's 0 held in a local; as 0. */
             s32 zero = 0;
 
-            MAP_CELLS[j][i][0] = -j * 4 + TWISTING_COLUMN_BAND_HALF_LENGTH;
-            MAP_CELLS[j][i][1] =
+            TWISTING_COLUMN_CORNERS[j][i][0] =
+                -j * 4 + TWISTING_COLUMN_BAND_HALF_LENGTH;
+            TWISTING_COLUMN_CORNERS[j][i][1] =
                 (FIXEDtoINT(
                     Trig_Cos(j * (TRIG_TURN / 64) - frame * (TRIG_TURN / 32)) *
                     r)) +
                 i * TWISTING_COLUMN_BAND_WIDTH - TWISTING_COLUMN_BAND_WIDTH / 2;
-            MAP_CELLS[j][i][2] = zero;
+            TWISTING_COLUMN_CORNERS[j][i][2] = zero;
           }
         }
       } else if (mode == WATER_COLUMN_POISON_FLOW) {
@@ -408,13 +411,13 @@ void BattleEffect_RunWaterColumn(struct BattleEffectParams *args, u32 mode) {
             r = TWISTING_COLUMN_STREAM_RIPPLE;
           }
           for (i = 0; i != 2; i++) {
-            MAP_CELLS[j][i][0] = -j * 3;
-            MAP_CELLS[j][i][1] =
+            TWISTING_COLUMN_CORNERS[j][i][0] = -j * 3;
+            TWISTING_COLUMN_CORNERS[j][i][1] =
                 (FIXEDtoINT(
                     Trig_Cos(j * (TRIG_TURN / 64) - frame * (TRIG_TURN / 32)) *
                     r)) +
                 (i * w << 1) - w;
-            MAP_CELLS[j][i][2] = 0;
+            TWISTING_COLUMN_CORNERS[j][i][2] = 0;
           }
         }
       } else {
@@ -430,11 +433,11 @@ void BattleEffect_RunWaterColumn(struct BattleEffectParams *args, u32 mode) {
           }
           for (i = 0; i != 2; i++) {
             /* FAKEMATCH(temporary): the depth built on j + j; as -j * 4. */
-            MAP_CELLS[j][i][0] = -(j + j) * 2;
-            MAP_CELLS[j][i][1] =
+            TWISTING_COLUMN_CORNERS[j][i][0] = -(j + j) * 2;
+            TWISTING_COLUMN_CORNERS[j][i][1] =
                 (FIXEDtoINT(Trig_Cos((frame + j * 2) * (TRIG_TURN / 64)) * r)) +
                 (i * w << 1) - w;
-            MAP_CELLS[j][i][2] = 0;
+            TWISTING_COLUMN_CORNERS[j][i][2] = 0;
           }
         }
       }
@@ -689,8 +692,7 @@ void BattleEffect_RunCore(struct BattleEffectParams *args) {
 void BattleEffect_RunCannon(struct BattleEffectParams *args) {
   BattleEffect_RunDjinniCharge(args, DJINNI_CHARGE_CANNON);
 }
-#undef BLITTER
-#undef MAP_CELLS
+#undef TWISTING_COLUMN_CORNERS
 #undef TWISTING_COLUMN_QUADS
 #undef TWISTING_COLUMN_ROWS
 #undef TWISTING_COLUMN_VERTICES

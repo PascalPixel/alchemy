@@ -74,6 +74,7 @@
 #include "field/scene.h"
 #include "field/scene_tables.h"
 #include "scene/colosso_story_flags.h"
+#include "scene/vault_range.h"
 #include "system/heap.h"
 #include "system/iwram_call.h"
 #include "window/screens.h"
@@ -246,13 +247,6 @@ static s32 Tolbi_KidStopForTarget(struct Actor *kid, struct Actor *target,
   }
   return stopped;
 }
-
-/// How near in front of it, in pixels, a child stops for the other, and for the
-/// leader: STOP_RANGE, or TALK_STOP_RANGE while a talk is pending or Mind Read
-/// is on, as Vault's villagers do (shared/vault_nearby.c).
-#define PARTNER_STOP_RANGE 32
-#define STOP_RANGE 18
-#define TALK_STOP_RANGE 26
 
 /// The update of the two children running their loop. Each stops when it runs
 /// up behind the other, and otherwise when the party leader is in its way.

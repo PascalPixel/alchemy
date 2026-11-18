@@ -3,13 +3,6 @@
 /// about together (ACTOR_BOY_ROUND_THE_WELL and ACTOR_GIRL_ROUND_THE_WELL,
 /// as both scenes name them).
 
-/// How near in front of it, in pixels, a villager stops for its partner, and
-/// for the leader: STOP_RANGE, or TALK_STOP_RANGE while a talk is pending or
-/// Mind Read is on.
-#define PARTNER_STOP_RANGE 32
-#define STOP_RANGE 18
-#define TALK_STOP_RANGE 26
-
 /// The bits of a child round the well's timer.
 enum {
   /// Set for ACTOR_BOY_ROUND_THE_WELL, whose partner is

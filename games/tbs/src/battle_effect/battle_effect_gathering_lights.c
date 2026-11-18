@@ -33,6 +33,12 @@ void BattleEffect_RunHaunting(struct BattleEffectParams *args) {
 /// MemberBurstImage's three lights.
 #define MEMBER_BURST_WIDTH 20
 #define MEMBER_BURST_HEIGHT 32
+/// How far the canvas's ripple sways each line, in pixels either side of its
+/// middle; the wave moves a 64th of a turn a line and a frame.
+#define GATHERING_LIGHTS_RIPPLE 16
+/// A line's 16.16 sideways sway as the BG2X value of the effect's bg2xLines,
+/// which the wave HBlank DMA writes line by line.
+#define CANVAS_WAVE_BG2X(sway) ((sway) >> 10)
 
 /// For each target in turn, lights burst out of the user and are pulled into
 /// the middle of the target's body, which is struck as they arrive; the effect
@@ -104,7 +110,9 @@ void BattleEffect_RunGatheringLights(struct BattleEffectParams *args,
     // Ripple the canvas line by line.
     row = work->bg2xLines;
     for (i = 0; i != DISPLAY_HEIGHT; i++)
-      *row++ = (toFIXED(16) - Trig_Sin((frame + i) << 10) * 16) >> 10;
+      *row++ = CANVAS_WAVE_BG2X(toFIXED(GATHERING_LIGHTS_RIPPLE) -
+                                Trig_Sin((frame + i) * (TRIG_TURN / 64)) *
+                                    GATHERING_LIGHTS_RIPPLE);
 
     EFFECT_FOR_EACH_TARGET(k, work->args) {
       struct Actor *target =
@@ -127,7 +135,9 @@ void BattleEffect_RunGatheringLights(struct BattleEffectParams *args,
              i++) {
           struct Particle *mote = &PARTICLES[k * GATHERING_LIGHTS_SLOTS + i];
 
-          if (frame > (k * 10 + i) * 2 && mote->variant >= 0) {
+          // Each light leaves two frames after the one before it.
+          if (frame > (k * (GATHERING_LIGHTS_TARGET_FRAMES / 2) + i) * 2 &&
+              mote->variant >= 0) {
             Projection_Point(mote, &screenPosition);
             screenPosition.x >>= 1;
             draw[0](canvas, work->sheet + i % 3 * PICTURE_BYTES(MEMBER_BURST),
@@ -160,3 +170,5 @@ void BattleEffect_RunGatheringLights(struct BattleEffectParams *args,
 }
 
 #undef GATHERING_LIGHTS_SLOTS
+#undef GATHERING_LIGHTS_RIPPLE
+#undef CANVAS_WAVE_BG2X

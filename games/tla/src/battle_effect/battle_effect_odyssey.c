@@ -1,32 +1,66 @@
 /// @file
-/// Odyssey, the turning cloud swirl, and the screen wipe and teardown of summon
-/// 25.
+/// Odyssey, a cloud swirl nothing shows, Iris's screen wipe and teardown, and
+/// the shade ramps Iris's textures are filled with.
 // Part of battle_effect.c.
 
 #include "battle_effect_internal.h"
 #include "sounds.h"
 
-#define KIND125_FRAMES 114
+#define ODYSSEY_FRAMES 114
 
-/// Where DustBlobSheet is decoded in the effect's pictures.
-#define ODYSSEY_DUST_BLOB_PICTURES 12048
+/// The effect's pictures: GiantSwordSheet's sword at their start, then
+/// GiantSwordBladeSheet's top half of the colossal sword, then DustBlobSheet.
+#define ODYSSEY_SWORD_WIDTH 40
+#define ODYSSEY_SWORD_HEIGHT 80
+#define ODYSSEY_COLOSSAL_SWORD PICTURE_BYTES(ODYSSEY_SWORD)
+#define ODYSSEY_COLOSSAL_SWORD_WIDTH 158
+#define ODYSSEY_COLOSSAL_SWORD_HEIGHT 56
+#define ODYSSEY_DUST_BLOB                                                      \
+  (ODYSSEY_COLOSSAL_SWORD + PICTURE_BYTES(ODYSSEY_COLOSSAL_SWORD))
 
-/// Where FlameGradientTexture is decoded in the map cell buffer.
-#define ODYSSEY_FLAME_GRADIENT 16384
+/// Where FlameGradientTexture is decoded in the map cell buffer, after
+/// FireRingTexture's 128 by 128 texels.
+#define ODYSSEY_FLAME_GRADIENT (128 * 128)
 
-/// Where GiantSwordBladeSheet is decoded in the effect's pictures.
-#define ODYSSEY_SWORD_BLADE 3200
 /// The shards the hit scatters, in the map cell buffer.
 #define ODYSSEY_SHARDS ((struct Particle *)(Ram_MapCellBuffer + 24576))
 #define ODYSSEY_SHARD_COUNT 128
+/// The shards' canvas levels, eight from this one.
+#define ODYSSEY_SHARD_LEVEL 32
 
-/// 114 frames. The screen turns to a scrolling red haze
-/// with only the caster and the target on it (frame 2); two textured flashes
-/// rise from the caster, two claws strike the target from above and below
-/// (frames 24-89, sparks at each hit); at 84 the caster charges across, at 86
-/// a great slash crosses the screen and at 90 the target is struck and 128
-/// flat shards scatter, tumbling; from frame 100 everything fades to white,
-/// and at the end the battle backdrop returns.
+/// The two swords plunge onto the target ODYSSEY_SWORD_INTERVAL frames apart
+/// from ODYSSEY_SWORD_FRAME, the first from above and the second from below;
+/// each strikes ODYSSEY_SWORD_PLUNGE_FRAMES later and stays until the
+/// colossal sword's blow.
+#define ODYSSEY_SWORDS 2
+#define ODYSSEY_SWORD_FRAME 24
+#define ODYSSEY_SWORD_INTERVAL 16
+#define ODYSSEY_SWORD_PLUNGE_FRAMES 8
+#define ODYSSEY_SWORD_HIT_FRAME                                                \
+  (ODYSSEY_SWORD_FRAME + ODYSSEY_SWORD_PLUNGE_FRAMES)
+/// The sparks each sword's hit scatters, in its half of the particles.
+#define ODYSSEY_SWORD_SPARKS 16
+
+/// The rings of light, FireRingTexture flashing out from the caster as the
+/// effect starts and from the target as each sword strikes. Each is drawn for
+/// ODYSSEY_RING_FRAMES: it shines for ODYSSEY_RING_SHINE_FRAMES, then fades 8
+/// levels a frame.
+#define ODYSSEY_RING_FRAMES 16
+#define ODYSSEY_RING_SHINE_FRAMES 8
+
+/// From ODYSSEY_GATHER_FRAME, two rings of light close in on the caster, each
+/// for ODYSSEY_GATHER_RING_FRAMES, and the caster flashes white with each.
+#define ODYSSEY_GATHER_FRAME 64
+#define ODYSSEY_GATHER_RING_FRAMES 11
+
+/// "Pierce a foe with a colossal sword." The red haze, turned blue, scrolls
+/// behind the caster and the target alone; two rings of light flash out from
+/// the caster, and two swords plunge onto the target, one from above and one
+/// from below, each with a ring and a burst of sparks. Rings close in on the
+/// caster, who charges (frame 84); the colossal sword sweeps across the screen
+/// (86) and pierces the target (90), scattering 128 tumbling shards, and from
+/// frame 100 everything fades to white before the battle's own backdrop
+/// returns.
 ///
 /// Abilities: Odyssey.
 void BattleEffect_RunOdyssey(struct BattleEffectParams *args) {
@@ -58,8 +92,10 @@ void BattleEffect_RunOdyssey(struct BattleEffectParams *args) {
   REG_BLDALPHA = EFFECT_BLEND_ADD;
   Resource_LoadAndDecompress(RESOURCE_PARTICLE_SPRITES_A, graphics, 0, 0);
   Resource_LoadAndDecompress(RESOURCE_GIANT_SWORD_SHEET, work->sheet, 0, 0);
+  // DEAD: DustBlobSheet, which Megiddo draws, is decoded and never drawn; the
+  // ROM keeps the load.
   Resource_LoadAndDecompress(RESOURCE_DUST_BLOB_SHEET,
-                             work->sheet + ODYSSEY_DUST_BLOB_PICTURES, 1, 0);
+                             work->sheet + ODYSSEY_DUST_BLOB, 1, 0);
   EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
   // The blitter faces the caster's side.
   if (args->side == EFFECT_SIDE_ENEMIES)
@@ -72,7 +108,7 @@ void BattleEffect_RunOdyssey(struct BattleEffectParams *args) {
   transition = Ram_HeapSlots->battleBackground;
   savedScrollX = gBgScroll[1].x;
 
-  for (frame = 0; frame != KIND125_FRAMES; frame++) {
+  for (frame = 0; frame != ODYSSEY_FRAMES; frame++) {
     EffectPosition_ProjectScaledBattler(args->user, &from);
     EffectPosition_ProjectScaledBattler(args->targets[0], &to);
 
@@ -81,16 +117,19 @@ void BattleEffect_RunOdyssey(struct BattleEffectParams *args) {
                            CANVAS_FILL_WORD(CANVAS_LEVEL_BRIGHTEST));
       Resource_LoadAndDecompress(RESOURCE_FIRE_RING_TEXTURE, gMapGridCellBuffer,
                                  0, 0);
+      // DEAD: FlameGradientTexture, which Megiddo draws, is decoded and never
+      // drawn; the ROM keeps the load.
       Resource_LoadAndDecompress(RESOURCE_FLAME_GRADIENT_TEXTURE,
                                  Ram_MapCellBuffer + ODYSSEY_FLAME_GRADIENT, 0,
                                  0);
       Graphics_LoadGreyRamp();
       REG_BLDALPHA = EFFECT_BLEND_ADD;
-      EFFECT_FREE_PARTICLES(i, work->particles, 64);
+      EFFECT_FREE_PARTICLES(i, work->particles, ARRAY_COUNT(work->particles));
     }
 
-    // Frame 2: only the caster and the target over the red haze, whose
-    // colours (entries 96 on) lose their green and take red into blue.
+    // Frame 2: only the caster and the target, over the red haze turned blue:
+    // each colour's red becomes its blue and half its green, and its blue its
+    // red.
     if (frame == 2) {
       u16 *palette;
 
@@ -118,7 +157,7 @@ void BattleEffect_RunOdyssey(struct BattleEffectParams *args) {
         red = red > RGB_LEVEL_MAX ? RGB_LEVEL_MAX : red;
         green = green > RGB_LEVEL_MAX ? RGB_LEVEL_MAX : green;
         blue = blue > RGB_LEVEL_MAX ? RGB_LEVEL_MAX : blue;
-        *palette++ = red << 10 | ((u16)red >> 1) << 5 | blue;
+        *palette++ = RGB(blue, (u16)red >> 1, red);
       }
       transition->busy = 1;
     }
@@ -129,7 +168,7 @@ void BattleEffect_RunOdyssey(struct BattleEffectParams *args) {
       Iwram_FillWordsEntry(canvas, CANVAS_VIEW_BYTES,
                            CANVAS_FILL_WORD(CANVAS_LEVEL_BRIGHTEST));
       step = work->particles;
-      for (i = 0; i != 64; i++) {
+      for (i = 0; i != ARRAY_COUNT(work->particles); i++) {
         step->x = Random16() % 216 - 96;
         step->y = Random16() % 216;
         step++;
@@ -137,17 +176,18 @@ void BattleEffect_RunOdyssey(struct BattleEffectParams *args) {
     }
     if (frame == 86)
       Resource_LoadAndDecompress(RESOURCE_GIANT_SWORD_BLADE_SHEET,
-                                 work->sheet + ODYSSEY_SWORD_BLADE, 1, 1);
+                                 work->sheet + ODYSSEY_COLOSSAL_SWORD, 1, 1);
 
     // Frame 84: the caster charges at the target.
     if (frame == 84) {
       Sound_PlayFar(SE_POWER_UP);
-      Actor_SelectAnimationFar(caster, 2);
+      Actor_SelectAnimationFar(caster, POSE_LEAP);
       Actor_SetAnimationSpeedFar(caster, ANIMATION_STEP_NORMAL * 3);
       BattleEffect_SetApproachMotion(args->user, args->targets[0], 7, 80);
     }
 
-    // Frame 90: the hit, and 128 shards scatter away from the caster.
+    // Frame 90: the colossal sword's blow, and the shards scatter away from
+    // the caster.
     if (frame == 90) {
       struct Particle *shard;
 
@@ -170,12 +210,13 @@ void BattleEffect_RunOdyssey(struct BattleEffectParams *args) {
         shard->velocityY = -(Trig_Cos(angle) * speed) >> 5;
         shard->z = Random16();
         shard->velocityZ = (Random16() & 0x3ff) + toFIXED(1) / 64;
-        shard->variant = (Random16() & 0x3fff) + 8192;
+        shard->variant = (Random16() & 0x3fff) + FIXED_ONE / 8;
         shard++;
       }
     }
 
-    // From frame 86: the slash crosses the screen in two mirrored halves.
+    // From frame 86: the colossal sword sweeps across the screen, drawn in two
+    // halves, the lower one mirrored.
     if (frame > 85) {
       s32 x;
 
@@ -188,7 +229,8 @@ void BattleEffect_RunOdyssey(struct BattleEffectParams *args) {
         if (x > 0)
           x = 0;
       }
-      draw[0](canvas, work->sheet + ODYSSEY_SWORD_BLADE, x, 8, 158, 56);
+      draw[0](canvas, work->sheet + ODYSSEY_COLOSSAL_SWORD, x, 8,
+              ODYSSEY_COLOSSAL_SWORD_WIDTH, ODYSSEY_COLOSSAL_SWORD_HEIGHT);
       if (args->side == EFFECT_SIDE_ENEMIES)
         EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED,
                             EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_Y, BLITTER_MAX);
@@ -196,13 +238,15 @@ void BattleEffect_RunOdyssey(struct BattleEffectParams *args) {
         EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED,
                             EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP, BLITTER_MAX);
       draw[1] = (DrawRectangle)Ram_HeapSlots->ramCodePaired;
-      draw[1](canvas, work->sheet + ODYSSEY_SWORD_BLADE, x, 64, 158, 56);
+      draw[1](canvas, work->sheet + ODYSSEY_COLOSSAL_SWORD, x, 64,
+              ODYSSEY_COLOSSAL_SWORD_WIDTH, ODYSSEY_COLOSSAL_SWORD_HEIGHT);
       HeapSlot_Release(HEAP_SLOT_RAM_CODE_PAIRED);
     }
 
-    // Until frame 89: the sparks of the claws' hits, shrinking.
+    // Until frame 89: the sparks of the swords' hits, shrinking.
     if (frame <= 89) {
-      for (i = 0, step = work->particles; i != 64; i++) {
+      for (i = 0, step = work->particles; i != ARRAY_COUNT(work->particles);
+           i++) {
         if (step->variant >= 0) {
           s32 size = (step->variant >> 2) + 1;
 
@@ -216,15 +260,16 @@ void BattleEffect_RunOdyssey(struct BattleEffectParams *args) {
       }
     }
 
-    // Two claws, from frames 24 and 40: one sweeps down onto the target,
-    // the other (flipped) up from below; sixteen sparks at each hit.
-    for (i = 0; i != 2; i++) {
-      s32 start = i * 16 + 24;
+    // The two swords, the second flipped, each scattering its sparks as it
+    // hits.
+    for (i = 0; i != ODYSSEY_SWORDS; i++) {
+      s32 start = i * ODYSSEY_SWORD_INTERVAL + ODYSSEY_SWORD_FRAME;
 
-      if (frame == i * 16 + 28)
+      if (frame == i * ODYSSEY_SWORD_INTERVAL + ODYSSEY_SWORD_FRAME +
+                       ODYSSEY_SWORD_PLUNGE_FRAMES / 2)
         Sound_PlayFar(SE_POWER_UP);
-      if (frame == i * 16 + 32) {
-        for (k = 0; k != 16; k++) {
+      if (frame == i * ODYSSEY_SWORD_INTERVAL + ODYSSEY_SWORD_HIT_FRAME) {
+        for (k = 0; k != ODYSSEY_SWORD_SPARKS; k++) {
           struct Particle *spark;
           s32 speed = (Random16() & 255) + 128;
           s32 angle = Random16() & 0x3fff;
@@ -237,7 +282,9 @@ void BattleEffect_RunOdyssey(struct BattleEffectParams *args) {
           } else {
             angle += DEGtoANG(180);
           }
-          spark = &work->particles[i * 32 + k];
+          spark = &work->particles[i * (ARRAY_COUNT(work->particles) /
+                                        ODYSSEY_SWORDS) +
+                                   k];
           spark->x = INTtoFIXED(to.x / 2);
           spark->y = INTtoFIXED(to.y);
           spark->velocityX = (Trig_Sin(angle) * speed) >> 6;
@@ -254,7 +301,7 @@ void BattleEffect_RunOdyssey(struct BattleEffectParams *args) {
         s32 x;
         s32 y;
 
-        if (age <= 8) {
+        if (age <= ODYSSEY_SWORD_PLUNGE_FRAMES) {
           if (args->side == EFFECT_SIDE_ENEMIES)
             x = to.x / 2 - age * 10 + 80;
           else
@@ -282,7 +329,8 @@ void BattleEffect_RunOdyssey(struct BattleEffectParams *args) {
                                 BLITTER_MAX);
           draw[1] = (DrawRectangle)Ram_HeapSlots->ramCodePaired;
         }
-        draw[i](canvas, work->sheet, x - 20, y, 40, 80);
+        draw[i](canvas, work->sheet, x - ODYSSEY_SWORD_WIDTH / 2, y,
+                ODYSSEY_SWORD_WIDTH, ODYSSEY_SWORD_HEIGHT);
         if (i == 1)
           HeapSlot_Release(HEAP_SLOT_RAM_CODE_PAIRED);
       }
@@ -301,18 +349,18 @@ void BattleEffect_RunOdyssey(struct BattleEffectParams *args) {
     for (i = 0; i != 2; i++) {
       s32 start;
 
-      // Two flashes rise from the caster (frames 2 and 8).
+      // Two rings of light flash out from the caster (frames 2 and 8).
       start = i * 6 + 2;
       if (frame == start)
         Sound_PlayFar(SE_POWER_UP);
-      if (frame >= start && frame < i * 6 + 18) {
+      if (frame >= start && frame < i * 6 + 2 + ODYSSEY_RING_FRAMES) {
         s32 age = frame - start;
-        s32 shade = 64 - age * 8;
+        s32 shade = ODYSSEY_RING_SHINE_FRAMES * 8 - age * 8;
 
         if (shade > 0)
           shade = 0;
         if (shade > MODEL_SHADE_INVISIBLE) {
-          s32 scale = (age << 14) + FIXED_ONE / 4;
+          s32 scale = age * (FIXED_ONE / 4) + FIXED_ONE / 4;
 
           model->shade = shade;
           Matrix_Initialize();
@@ -325,8 +373,8 @@ void BattleEffect_RunOdyssey(struct BattleEffectParams *args) {
         }
       }
 
-      // Frames 64-82: the caster gathers itself, flashing.
-      start = i * 8 + 64;
+      // Rings of light close in on the caster, who flashes white.
+      start = i * 8 + ODYSSEY_GATHER_FRAME;
       if (frame == i * 8 + 68)
         Sound_PlayFar(SE_POWER_UP);
       if (frame == i * 8 + 72) {
@@ -337,8 +385,8 @@ void BattleEffect_RunOdyssey(struct BattleEffectParams *args) {
       } else if (frame == i * 8 + 76)
         BattleEffect_TintBattler(args->user, SPRITE_COLOR_NORMAL, TINT_KEEP, 0,
                                  0);
-      if (frame >= start && frame < start + 11) {
-        s32 scale = FIXED_ONE * 3 - ((frame - start) << 14);
+      if (frame >= start && frame < start + ODYSSEY_GATHER_RING_FRAMES) {
+        s32 scale = FIXED_ONE * 3 - (frame - start) * (FIXED_ONE / 4);
 
         model->shade = 0;
         Matrix_Initialize();
@@ -350,16 +398,18 @@ void BattleEffect_RunOdyssey(struct BattleEffectParams *args) {
         Render_DrawModelList(model);
       }
 
-      // A flash at the target with each claw's hit.
-      start = i * 16 + 32;
-      if (frame >= start && frame < i * 16 + 48) {
+      // A ring of light at the target with each sword's hit.
+      start = i * ODYSSEY_SWORD_INTERVAL + ODYSSEY_SWORD_HIT_FRAME;
+      if (frame >= start && frame < i * ODYSSEY_SWORD_INTERVAL +
+                                        ODYSSEY_SWORD_HIT_FRAME +
+                                        ODYSSEY_RING_FRAMES) {
         s32 age = frame - start;
-        s32 shade = 64 - age * 8;
+        s32 shade = ODYSSEY_RING_SHINE_FRAMES * 8 - age * 8;
 
         if (shade > 0)
           shade = 0;
         if (shade > MODEL_SHADE_INVISIBLE) {
-          FIXED scale = (age << 14) + FIXED_ONE / 4;
+          FIXED scale = age * (FIXED_ONE / 4) + FIXED_ONE / 4;
 
           model->shade = shade;
           Matrix_Initialize();
@@ -373,10 +423,10 @@ void BattleEffect_RunOdyssey(struct BattleEffectParams *args) {
       }
     }
 
-    // From frame 90: the shards, flat triangles in eight colours; from 100
-    // the screen fades to white.
-    fillMode = 1;
-    flatKind = 3;
+    // From frame 90: the shards, flat triangles in eight shades; from 100 the
+    // screen fades to white.
+    fillMode = CANVAS_COPY_AND_CLEAR;
+    flatKind = MODEL_SOLID_ADDITIVE;
     if (frame > 89) {
       u8 color[1];
       FIXED center;
@@ -390,7 +440,7 @@ void BattleEffect_RunOdyssey(struct BattleEffectParams *args) {
         Palette_BrightenBgEntries(2, 2, 2);
       }
       for (i = 0, step = ODYSSEY_SHARDS; i != ODYSSEY_SHARD_COUNT; i++) {
-        color[0] = (i & 7) + 32;
+        color[0] = (i & 7) + ODYSSEY_SHARD_LEVEL;
         model->shade = (long)color;
         Matrix_Initialize();
         x = step->x;
@@ -418,12 +468,25 @@ void BattleEffect_RunOdyssey(struct BattleEffectParams *args) {
   transition->busy = 0;
   gBgScroll[1].x = savedScrollX;
   BattleBackground_LoadFar(BATTLE_BACKGROUND_FIXED,
-                           BATTLE_BACKGROUND_ID(Ram_HeapSlots->battleWork), 24);
+                           BATTLE_BACKGROUND_ID(Ram_HeapSlots->battleWork),
+                           BACKGROUND_DARKEN_FRAMES);
   EFFECT_FINISH_CANVAS_ONE_BLITTER();
 }
 
 /// The swirl runs until A is pressed, at most this many frames.
 #define SWIRL_MAX_FRAMES 312000
+
+/// The swirl's colours are BG palettes 6 on, the battle background's.
+#define SWIRL_FIRST_COLOR (6 * PALETTE_COLORS)
+
+/// BG2 turns the swirl about this point of the screen, where the canvas's
+/// centre stays.
+#define SWIRL_CENTER_X (DISPLAY_WIDTH / 2)
+#define SWIRL_CENTER_Y 72
+
+/// BG2 shows the swirl at about twice its size: the steps of its matrix are
+/// the 16.16 sine and cosine of its turn divided by this.
+#define SWIRL_STEP_DIVISOR 532
 
 /// Draws a size by size square of the swirl at x along the top of the buffer.
 static inline s32 Swirl_Draw(DrawRectangle draw, void *buffer,
@@ -431,12 +494,12 @@ static inline s32 Swirl_Draw(DrawRectangle draw, void *buffer,
   return draw(buffer, canvas, x, 0, size, size);
 }
 
-/// A turning cloud swirl on BG2, shown from BattleEffect_RunBackgroundFadeIn.
-/// The cloud sheet is drawn once into the canvas (its colours moved to palette
-/// entries 96 on) and copied twice across the map buffer; then BG2 turns about
-/// the screen's centre while BG1 scrolls, the palette flashes white at the
-/// start, steps toward the swirl's own colours every fourth frame and from
-/// frame 120 dims. B starts it over and A ends it.
+/// Unused: reached only from BattleEffect_RunBackgroundFadeIn, which nothing
+/// refers to. A turning cloud swirl on BG2: the cloud sheet is drawn once into
+/// the canvas in the battle background's colours and copied twice across the
+/// map buffer; then BG2 turns about the screen while BG1 scrolls, the palette
+/// flashes white at the start, steps toward BlueFlameSheet's colours every
+/// fourth frame and from frame 120 dims. B starts it over and A ends it.
 void BattleEffect_RunCloudSwirl(struct BattleEffectParams *args) {
   BlitterPair sheetDraw;
   s32 savedScrollX;
@@ -465,8 +528,8 @@ void BattleEffect_RunCloudSwirl(struct BattleEffectParams *args) {
   REG_BG1CNT |= 0;
   EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
 
-  // The cloud sheet, recoloured to palette entries 96 on, drawn into the
-  // canvas through the copy blitter.
+  // The cloud sheet, moved to the battle background's palettes (which take
+  // EmberStreakSheet's colours), drawn into the canvas.
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, BLITTER_MAX);
   sheetDraw[0] = (DrawRectangle)Ram_HeapSlots->ramCode;
   palette = Resource_GetTableEntry(RESOURCE_CLOUD_SWIRL_SHEET);
@@ -476,9 +539,9 @@ void BattleEffect_RunCloudSwirl(struct BattleEffectParams *args) {
   palette = Resource_GetTableEntry(RESOURCE_EMBER_STREAK_SHEET);
   Iwram_CopyWords((void *)&BG_PLTT_COLOR(6, 0), palette, SHEET_PALETTE_BYTES);
   for (i = 0; i != CANVAS_BYTES; i++)
-    work->sheet[i] += 96;
+    work->sheet[i] += SWIRL_FIRST_COLOR;
   Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_VBLANK);
-  sheetDraw[0](canvas, work->sheet, 0, 0, 128, 128);
+  sheetDraw[0](canvas, work->sheet, 0, 0, CANVAS_SIZE, CANVAS_SIZE);
   EFFECT_PRESENT_CANVAS(work);
   Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
   HeapSlot_Release(HEAP_SLOT_RAM_CODE);
@@ -501,8 +564,8 @@ void BattleEffect_RunCloudSwirl(struct BattleEffectParams *args) {
   transition->busy = enabled;
   /* FAKEMATCH(wrapper): the blit through Swirl_Draw with the constant buffer.
    */
-  Swirl_Draw(draw, Ram_MapCellBuffer, canvas, 0, 128);
-  draw(Ram_MapCellBuffer, canvas, 128, 0, 128, 128);
+  Swirl_Draw(draw, Ram_MapCellBuffer, canvas, 0, CANVAS_SIZE);
+  draw(Ram_MapCellBuffer, canvas, CANVAS_SIZE, 0, CANVAS_SIZE, CANVAS_SIZE);
   work->transferPending = enabled;
   wait(1);
 
@@ -521,24 +584,28 @@ void BattleEffect_RunCloudSwirl(struct BattleEffectParams *args) {
       BattleEffect_StepPaletteToResource(RESOURCE_BLUE_FLAME_SHEET);
     gBgScroll[1].x = frame / 2;
 
-    // BG2 turns a 1024th of a circle a frame, at 1/532 of the sine's scale
-    // (about half size), about the screen's centre (120, 72).
-    sine = Trig_Sin(frame << 6) / 532;
-    cosine = Trig_Cos(frame << 6) / 532;
+    // BG2 turns a 1024th of a turn a frame. Its steps are 8.8, so the 16.16
+    // centre is scaled by Q_8_8(1) for the products to come out 16.16.
+    sine = Trig_Sin(frame * (TRIG_TURN / 1024)) / SWIRL_STEP_DIVISOR;
+    cosine = Trig_Cos(frame * (TRIG_TURN / 1024)) / SWIRL_STEP_DIVISOR;
     IO_WRITE_QUEUE_PUSH((u32)&REG_BG2PA, cosine, IO_WRITE_HALFWORD);
     IO_WRITE_QUEUE_PUSH((u32)&REG_BG2PB, sine, IO_WRITE_HALFWORD);
     IO_WRITE_QUEUE_PUSH((u32)&REG_BG2PC, -sine, IO_WRITE_HALFWORD);
     IO_WRITE_QUEUE_PUSH((u32)&REG_BG2PD, cosine, IO_WRITE_HALFWORD);
-    IO_WRITE_QUEUE_PUSH((u32)&REG_BG2X,
-                        (Iwram_MulFX(-120 << 24, cosine) +
-                         Iwram_MulFX(-72 << 24, sine) + toFIXED(64)) >>
-                            8,
-                        IO_WRITE_WORD);
-    IO_WRITE_QUEUE_PUSH((u32)&REG_BG2Y,
-                        (Iwram_MulFX(-120 << 24, -sine) +
-                         Iwram_MulFX(-72 << 24, cosine) + toFIXED(64)) >>
-                            8,
-                        IO_WRITE_WORD);
+    IO_WRITE_QUEUE_PUSH(
+        (u32)&REG_BG2X,
+        (Iwram_MulFX(toFIXED(-SWIRL_CENTER_X) * Q_8_8(1), cosine) +
+         Iwram_MulFX(toFIXED(-SWIRL_CENTER_Y) * Q_8_8(1), sine) +
+         toFIXED(CANVAS_SIZE / 2)) >>
+            8,
+        IO_WRITE_WORD);
+    IO_WRITE_QUEUE_PUSH(
+        (u32)&REG_BG2Y,
+        (Iwram_MulFX(toFIXED(-SWIRL_CENTER_X) * Q_8_8(1), -sine) +
+         Iwram_MulFX(toFIXED(-SWIRL_CENTER_Y) * Q_8_8(1), cosine) +
+         toFIXED(CANVAS_SIZE / 2)) >>
+            8,
+        IO_WRITE_WORD);
     wait(1);
   }
 
@@ -549,61 +616,69 @@ void BattleEffect_RunCloudSwirl(struct BattleEffectParams *args) {
   BattleEffect_EndCanvasLayer();
 }
 
-/// Iris's screen wipe: a soft-edged grey band, drawn once into the
-/// canvas, slides across the screen on BG2 at speed pixels per frame, from
-/// the left or (when the low bit of side is set) from the right. Halfway
-/// through, while the band covers the screen, it calls midpoint to change
-/// the scene behind it.
+/// The wipe's band slides this far along BG2, from just off one edge of the
+/// screen until it has passed the other.
+#define WIPE_DISTANCE 192
+/// The band brightens over this many columns at its left and dims over as
+/// many at its right.
+#define WIPE_EDGE_WIDTH 32
+
+/// Iris's screen wipe: a soft-edged white band, drawn once into the canvas and
+/// stretched across BG2, slides over the screen from the right (side 0, a
+/// positive speed) or from the left (side 1, a negative speed), speed of its
+/// pixels a frame. Halfway through, while the band covers the screen, it calls
+/// midpoint to change the scene behind it.
 void Iris_WipeScreen(u8 side, u8 speed, void (*midpoint)(void)) {
   s32 scrollX;
   u8 *canvas;
   struct BattleEffectWork *work;
-  u16 ramp[63];
+  u16 ramp[CANVAS_LEVEL_BRIGHTEST];
   s32 half;
-  s32 x;
+  s32 y;
   s32 i;
 
-  scrollX = (side & 1) * 192 - 64;
+  scrollX = (side & 1) * WIPE_DISTANCE - 64;
   canvas = Ram_HeapSlots->battleCanvas;
   work = Ram_HeapSlots->battleEffect;
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, BLITTER_ADDITIVE);
-  EFFECT_SET_TRANSFER(work, CANVAS_COPY, 75);
-  REG_BG2PA = 0x48;
+  EFFECT_SET_TRANSFER(work, CANVAS_COPY, CANVAS_FADE_THREE_QUARTERS);
+  REG_BG2PA = Q_8_8(0.28125); // about 3.6 times as wide
 
-  // The band: colours 0 to 62 rising over the first 32 rows, 63 through the
-  // middle 64 and falling again over the last 32, in 8x8 256-colour tiles.
-  for (i = 0; i != 128; i++) {
-    for (x = 0; x != 128; x++) {
-      s32 line = i & 7;
+  // The band, column i: rising to the brightest level over the left edge,
+  // the brightest through the middle and falling again over the right.
+  for (i = 0; i != CANVAS_SIZE; i++) {
+    for (y = 0; y != CANVAS_SIZE; y++) {
+      s32 tileX = i & 7;
       s32 color;
-      s32 row;
+      s32 columnOffset;
 
-      if (i <= 31)
+      if (i < WIPE_EDGE_WIDTH)
         color = i * 2;
       else {
-        color = 63 - ((i - 96) << 1);
-        if (i <= 95)
-          color = 63;
+        color = CANVAS_LEVEL_BRIGHTEST -
+                ((i - (CANVAS_SIZE - WIPE_EDGE_WIDTH)) << 1);
+        if (i < CANVAS_SIZE - WIPE_EDGE_WIDTH)
+          color = CANVAS_LEVEL_BRIGHTEST;
       }
-      row = line + (i >> 3) * 64;
-      canvas[row + ((x & 7) << 3) + ((x >> 3) << 10)] = color;
+      columnOffset = tileX + (i >> 3) * CANVAS_TILE_BYTES;
+      canvas[columnOffset + ((y & 7) << 3) + ((y >> 3) << 10)] = color;
     }
   }
 
-  // Colours 1 to 63: a grey ramp from black to half white.
-  for (i = 0; i != 63; i++) {
+  // Colours 1 to 63: a grey ramp from black to white.
+  for (i = 0; i != CANVAS_LEVEL_BRIGHTEST; i++) {
     s32 level = i >> 1;
 
     ramp[i] = RGB(level, level, level);
   }
   IO_WRITE_QUEUE_PUSH((u32)&BG_PLTT_COLOR(0, 1), (u32)ramp,
-                      DMA_COPY_HALFWORDS(63));
+                      DMA_COPY_HALFWORDS(CANVAS_LEVEL_BRIGHTEST));
 
   REG_BG2X = scrollX << 8;
-  // x, done with the band, now counts the slide's frames.
-  x = 192 / ((s8)speed < 0 ? -(s8)speed : (s8)speed) + 1;
-  half = (x - 1) >> 1;
-  for (i = 0; i != x; i++) {
+  // y, done with the band, now counts the slide's frames.
+  y = WIPE_DISTANCE / ((s8)speed < 0 ? -(s8)speed : (s8)speed) + 1;
+  half = (y - 1) >> 1;
+  for (i = 0; i != y; i++) {
     scrollX += (s8)speed;
     REG_BG2X = scrollX << 8;
     EFFECT_PRESENT_CANVAS(work);
@@ -627,10 +702,10 @@ UNUSED void Sprite_SetColorMode(struct Sprite *sprite, s32 mode) {
   sprite->dirty = 1;
 }
 
-/// Fills count bytes of table with a rising shade ramp (0 to
-/// CANVAS_LEVEL_BRIGHTEST, by a step scaled by scale), then repeats it seven
-/// more times.
-void BattleEffect_BuildShadeRamp(u8 *table, u32 count, s32 scale) {
+/// Unused: nothing calls it. Fills count bytes of table with a rising shade
+/// ramp (0 to CANVAS_LEVEL_BRIGHTEST, by a step scaled by scale), then repeats
+/// it seven more times.
+UNUSED void BattleEffect_BuildShadeRamp(u8 *table, u32 count, s32 scale) {
   u32 step = count * 2;
   s32 total = 0;
   u32 i;
@@ -656,10 +731,10 @@ void BattleEffect_BuildShadeRamp(u8 *table, u32 count, s32 scale) {
   }
 }
 
-/// Fills table with a shade ramp that rises over count bytes and falls back,
-/// repeated repeats times.
-void BattleEffect_BuildShadeRampWave(u8 *table, u32 count, u32 repeats,
-                                     s32 scale) {
+/// Unused: nothing calls it. Fills table with a shade ramp that rises over
+/// count bytes and falls back, repeated repeats times.
+UNUSED void BattleEffect_BuildShadeRampWave(u8 *table, u32 count, u32 repeats,
+                                            s32 scale) {
   s32 total = 0;
   u32 step = count * 2;
   u32 i;
@@ -718,11 +793,10 @@ void BattleEffect_BuildSteepShadeRampWave(u8 *table, u32 count, u32 repeats,
   }
 }
 
-/// Iris's teardown: sets each target back on the ground at the battle
-/// origin with the usual bounce
-/// and restarts its idle motion, ends the presentation transition, centres the
-/// camera at (120, 120), reloads the battle palette and redraws the battle's
-/// own backdrop over the summon's.
+/// Iris's teardown: sets each target back on the ground at the battle origin
+/// with the usual bounce, frees the battle background, centres the projection
+/// again, reloads the sprites' basic colours and brings back the battle's own
+/// backdrop.
 void Iris_RestoreBattle(void) {
   struct BattleEffectWork *work = Ram_HeapSlots->battleEffect;
   struct BattleBackgroundWork *transition = Ram_HeapSlots->battleBackground;
@@ -741,10 +815,34 @@ void Iris_RestoreBattle(void) {
   gProjection.centerX = BATTLE_PROJECTION_CENTER_X;
   gProjection.centerY = BATTLE_PROJECTION_CENTER_Y;
   Palette_LoadBasicSpriteColors();
-  // The battle's background.
-  BattleBackground_LoadFar(BATTLE_BACKGROUND_FIXED, battle->background, 24);
+  BattleBackground_LoadFar(BATTLE_BACKGROUND_FIXED, battle->background,
+                           BACKGROUND_DARKEN_FRAMES);
 }
-#undef KIND125_FRAMES
+#undef ODYSSEY_FRAMES
+#undef ODYSSEY_SWORD_WIDTH
+#undef ODYSSEY_SWORD_HEIGHT
+#undef ODYSSEY_COLOSSAL_SWORD
+#undef ODYSSEY_COLOSSAL_SWORD_WIDTH
+#undef ODYSSEY_COLOSSAL_SWORD_HEIGHT
+#undef ODYSSEY_DUST_BLOB
+#undef ODYSSEY_FLAME_GRADIENT
 #undef ODYSSEY_SHARDS
 #undef ODYSSEY_SHARD_COUNT
+#undef ODYSSEY_SHARD_LEVEL
+#undef ODYSSEY_SWORDS
+#undef ODYSSEY_SWORD_FRAME
+#undef ODYSSEY_SWORD_INTERVAL
+#undef ODYSSEY_SWORD_PLUNGE_FRAMES
+#undef ODYSSEY_SWORD_HIT_FRAME
+#undef ODYSSEY_SWORD_SPARKS
+#undef ODYSSEY_RING_FRAMES
+#undef ODYSSEY_RING_SHINE_FRAMES
+#undef ODYSSEY_GATHER_FRAME
+#undef ODYSSEY_GATHER_RING_FRAMES
 #undef SWIRL_MAX_FRAMES
+#undef SWIRL_FIRST_COLOR
+#undef SWIRL_CENTER_X
+#undef SWIRL_CENTER_Y
+#undef SWIRL_STEP_DIVISOR
+#undef WIPE_DISTANCE
+#undef WIPE_EDGE_WIDTH

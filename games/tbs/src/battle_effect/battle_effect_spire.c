@@ -9,6 +9,12 @@
 /// The shard pictures in the sheet, after the boulder.
 #define SPIRE_SHARD_PICTURES (SPIRE_ROCK_WIDTH * SPIRE_ROCK_HEIGHT)
 #define SPIRE_SHARDS 21 ///< shards per rock
+/// The shard shapes, each drawn in SPIRE_SHARD_TUMBLE_PICTURES as it tumbles.
+#define SPIRE_SHARD_SHAPES 5
+#define SPIRE_SHARD_TUMBLE_PICTURES 3
+/// How far a shard turns between its pictures; it turns by its spin (its z,
+/// from 32 slowing to 1) each frame.
+#define SPIRE_SHARD_TUMBLE_STEP 96
 /// Frames a boulder falls before it lands and strikes the targets.
 #define SPIRE_FALL_FRAMES 18
 
@@ -78,7 +84,9 @@ void BattleEffect_RunSpire(struct BattleEffectParams *args) {
       if (frame >= gSpire_DropFrames[i] + SPIRE_FALL_FRAMES) {
         for (j = 0; j != SPIRE_SHARDS; j++) {
           shard = &PARTICLES[i * SPIRE_SHARDS + j];
-          picture = (j % 5) * 3 + shard->variant / 96 % 3;
+          picture = (j % SPIRE_SHARD_SHAPES) * SPIRE_SHARD_TUMBLE_PICTURES +
+                    shard->variant / SPIRE_SHARD_TUMBLE_STEP %
+                        SPIRE_SHARD_TUMBLE_PICTURES;
           // UB: width is assigned in one argument and read in another.
 #ifdef UBFIX
           width = gSpire_ShardWidths[picture];
@@ -132,4 +140,7 @@ void BattleEffect_RunSpire(struct BattleEffectParams *args) {
 #undef SPIRE_ROCK_HEIGHT
 #undef SPIRE_SHARD_PICTURES
 #undef SPIRE_SHARDS
+#undef SPIRE_SHARD_SHAPES
+#undef SPIRE_SHARD_TUMBLE_PICTURES
+#undef SPIRE_SHARD_TUMBLE_STEP
 #undef SPIRE_FALL_FRAMES

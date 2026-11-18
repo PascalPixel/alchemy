@@ -1474,10 +1474,6 @@ void BattleEffect_CountDownBattlerTints(void) {
   } while (actorIndex != 8);
 }
 
-/// The header's CANVAS_BLEND_LEVEL again: battle_effect_display.c #undefs it
-/// before this part.
-#define CANVAS_BLEND_LEVEL 14
-
 /// Shows the canvas on BG2 stretched to twice its width across the battle
 /// view, blended over the battle, with windows 0 and 1 over the battle view.
 void BattleEffect_SetupCanvasWindows(void) {

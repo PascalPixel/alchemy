@@ -1059,15 +1059,6 @@ static inline void Cursor_Show(struct MenuCursor *cursor, s32 x, s32 y) {
   MenuCursor_Advance(cursor);
 }
 
-/// The page numbers under the grid: 20 tiles from this one of character block
-/// 0, which Graphics_ExpandVramTilesByColorTable builds from the UI's digits
-/// '0' to '9', first with colour 1 drawn as 10, then in their own colours; and
-/// their tilemap entries, + n giving page n + 1's number, the page shown lit
-/// (The Broken Seal's window/window.h names).
-#define PAGE_DIGITS_TILE 768
-#define PAGE_NUMBER_TILE WINDOW_TILE(PAGE_DIGITS_TILE + 1)
-#define PAGE_NUMBER_LIT_TILE WINDOW_TILE(PAGE_DIGITS_TILE + 10 + 1)
-
 #if (LANGUAGE == LANGUAGE_JAPANESE)
 /// The Japanese grid has 20 columns of kana and its side column is 20.
 #define SIDE_COLUMN 20
@@ -2120,9 +2111,6 @@ s16 gClear_ExtraCodeHeld = 0;
 #undef CHECK_WINDOW_WIDTH
 #undef CURSOR_ON_SIDE_COLUMN
 #undef DRAW_KEYS
-#undef PAGE_DIGITS_TILE
-#undef PAGE_NUMBER_TILE
-#undef PAGE_NUMBER_LIT_TILE
 #undef TILE_GRID_COLUMNS
 #undef TILE_GRID_ROWS
 #undef TILE_GRID_FIRST_TILE

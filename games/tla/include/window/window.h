@@ -197,6 +197,15 @@ void Text_DrawMessage(s32 message, s32 window, s32 x, s32 y);
 #define PAGE_ARROW_LEFT WINDOW_TILE(PAGE_ARROW_TILE)
 #define PAGE_ARROW_RIGHT WINDOW_TILE(PAGE_ARROW_TILE + 1)
 
+/// The page numbers of a paged list, the battle lists' and the File Screen
+/// password grid's: 20 tiles from this one of character block 0, which
+/// Graphics_ExpandVramTilesByColorTable builds from the UI's digits '0' to '9',
+/// first with colour 1 drawn as 10, then in their own colours; and their
+/// tilemap entries, + n giving page n + 1's number, the page shown lit.
+#define PAGE_DIGITS_TILE 768
+#define PAGE_NUMBER_TILE WINDOW_TILE(PAGE_DIGITS_TILE + 1)
+#define PAGE_NUMBER_LIT_TILE WINDOW_TILE(PAGE_DIGITS_TILE + 10 + 1)
+
 /// How Window_SetTilemapEntry writes its value: as it is, not at all, or as a
 /// tile in one of three palettes.
 enum TilemapEntryMode {

@@ -203,19 +203,10 @@ void MenuCursor_SetFar(void *cursor, s32 x, s32 y, s32 mode);
 /// Places a menu cursor at (x, y) at once.
 void MenuCursor_SetPositionImmediateFar(void *cursor, s32 x, s32 y);
 
-/// The first of the 20 digit tiles Graphics_ExpandVramTilesByColorTable
-/// builds for the battle lists' page numbers: the UI digits '0' to '9' with
-/// colour 1 drawn as 10, then the same digits in their own colours.
-#define LIST_PAGE_DIGITS_TILE 768
-
-/// Tiles the battle lists draw over their window's top edge: the page numbers
-/// and arrows.
+/// Tiles the battle lists draw over their window's top edge beside the page
+/// numbers (PAGE_NUMBER_TILE and PAGE_NUMBER_LIT_TILE, window/window.h): the
+/// arrows.
 enum {
-  /// Page n's number: + n gives digit n + 1, from LIST_PAGE_DIGITS_TILE + 1,
-  /// the UI digits with colour 1 drawn as 10.
-  LIST_TILE_PAGE_NUMBER = WINDOW_TILE(LIST_PAGE_DIGITS_TILE + 1),
-  /// The current page's number, the same digits in their own colours.
-  LIST_TILE_PAGE_NUMBER_LIT = WINDOW_TILE(LIST_PAGE_DIGITS_TILE + 10 + 1),
   /// Left arrow, tile 820, which Link_DrawPageArrows slides.
   LIST_TILE_PAGES_LEFT = WINDOW_TILE(820),
   LIST_TILE_PAGES_RIGHT = WINDOW_TILE(821), ///< Right arrow, tile 821

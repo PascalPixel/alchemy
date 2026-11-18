@@ -184,9 +184,9 @@ s32 BattleItemMenu_Run(s32 member, u16 *entries, s32 count) {
       }
       if (count > BATTLE_LIST_ROWS) {
         for (i = 0; i < (count + 4) / BATTLE_LIST_ROWS; i++) {
-          iconTile = i + LIST_TILE_PAGE_NUMBER;
+          iconTile = i + PAGE_NUMBER_TILE;
           if (i == firstEntry / BATTLE_LIST_ROWS)
-            iconTile = i + LIST_TILE_PAGE_NUMBER_LIT;
+            iconTile = i + PAGE_NUMBER_LIT_TILE;
           Window_SetTilemapEntry(
               window, iconTile,
               window->width - (count + 4) / BATTLE_LIST_ROWS + i - 2, -1, 0);
@@ -201,10 +201,10 @@ s32 BattleItemMenu_Run(s32 member, u16 *entries, s32 count) {
 
     if (count > BATTLE_LIST_ROWS) {
       for (i = 0; i < (count + 4) / BATTLE_LIST_ROWS; i++) {
-        iconTile = i + LIST_TILE_PAGE_NUMBER;
+        iconTile = i + PAGE_NUMBER_TILE;
         if ((gFrameCount & 15) <= 11) {
           if (i == firstEntry / BATTLE_LIST_ROWS)
-            iconTile = i + LIST_TILE_PAGE_NUMBER_LIT;
+            iconTile = i + PAGE_NUMBER_LIT_TILE;
         }
         Window_SetTilemapEntry(
             window, iconTile,

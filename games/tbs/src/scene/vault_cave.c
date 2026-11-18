@@ -638,8 +638,9 @@ static void VaultCave_RunRumble(void) {
   frame = 0;
   // The pool's blend is built as a colour is, lowFadeLevel, fadeLevel and its
   // first value in RGB's three fields: REG_BLDALPHA takes lowFadeLevel as the
-  // water's weight and 24, above full, as the floor's, so the water thins away
-  // in four steps over the drained floor below it.
+  // water's weight and 24, above full, as the floor's. The recording of the
+  // switch shows the floor coming through at full and the water's blue then
+  // thinning away over it in four steps, one every 20 frames.
   upperFadeBits = fadeLevel << BLUE_SHIFT;
   do {
     IoWriteQueue_Store16((u32)&REG_BLDALPHA, upperFadeBits |

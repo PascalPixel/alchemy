@@ -20,8 +20,6 @@
 #define PRISM_CAMERA_SLOWING 96
 #define PRISM_CAMERA_STOP 104
 #define SHARDS_PER_CRYSTAL 16
-/// How far a shard spins (its variant) on each of its three pictures.
-#define SHARD_TURN 96
 /// The x in gPrism_ShardStarts under the middle of the crystal.
 #define SHARD_STARTS_MIDDLE_X 40
 #define PRISM_GROUND_Y toFIXED(56) ///< y 56, where the crystals shatter
@@ -177,7 +175,6 @@ void BattleEffect_RunPrism(struct BattleEffectParams *args) {
 #undef PRISM_CAMERA_TURN
 #undef PRISM_CAMERA_SLOWING
 #undef PRISM_CAMERA_STOP
-#undef SHARD_TURN
 #undef SHARD_STARTS_MIDDLE_X
 #undef PRISM_GROUND_Y
 

@@ -676,7 +676,7 @@ s32 BattleStaging_RunItem(struct BattleActionRun *plan, s32 unused,
 
         battle->brightness = value;
         Graphics_ScaleRgb555Clamped(palette, BATTLE_BG_PALETTE, value,
-                                    BATTLE_BG_PALETTE_COLORS);
+                                    BATTLE_BACKGROUND_COLORS);
       }
       wait(1);
       targetOrFadeIndex++;

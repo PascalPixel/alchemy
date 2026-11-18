@@ -163,10 +163,10 @@ s32 FieldMessage_ShowAtActor(s32 localId, s32 unused) {
       if (extra != 0)
         handle = Message_OpenWindowFar(message, left, top + extra - 1,
                                        MESSAGE_WINDOW_ANCHOR_BOTTOM |
-                                           MESSAGE_WINDOW_UNUSED);
+                                           MESSAGE_WINDOW_UNREAD);
       else
         handle =
-            Message_OpenWindowFar(message, left, top, MESSAGE_WINDOW_UNUSED);
+            Message_OpenWindowFar(message, left, top, MESSAGE_WINDOW_UNREAD);
     } else {
       s32 voice = Speaker_GetVoice(sprite);
 

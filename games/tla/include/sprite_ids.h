@@ -673,7 +673,7 @@ enum SpriteId {
   SPRITE_HAURES_FLAME,
   SPRITE_HAURES_DOT,
   /// Daedalus's finned rocket, the second strike's
-  /// (BattleEffect_RunDaedalusAlt).
+  /// (BattleEffect_RunDaedalusStrike).
   SPRITE_DAEDALUS_ROCKET,
   /// A missile, sixteen of which Daedalus dives onto the foes.
   SPRITE_DAEDALUS_MISSILE,

@@ -6,6 +6,7 @@
 /// Serpent, Susa asks here whether the party will tell Kushinada they slew it.
 
 #include "shared/tables.h"
+#include "shared/gaia_rock.h"
 #include "scene/event_layer.h"
 #include "battle/battle.h"
 #include "field/field_sequence.h"
@@ -80,8 +81,8 @@ enum {
 #define FLAG_FIRST_PILLAR_DROPPED 0x920
 #define FLAG_SECOND_PILLAR_DROPPED 0x921
 
-/// The whirlwind's circling leaves, and the rocks a rising statue throws out.
-enum { WHIRLWIND_LEAVES = 16, STATUE_DEBRIS = 16 };
+/// The whirlwind's circling leaves.
+enum { WHIRLWIND_LEAVES = 16 };
 
 struct Actor;
 
@@ -648,7 +649,7 @@ void GaiaRock_StatueRisesUnderLeader(s32 id, s32 flag) {
   statue = Actor_Get(id);
   GaiaRock_PlaceStatue(id, leader->x.fixed, leader->y.fixed, leader->z.fixed);
   Actor_StartScript(statue, gGaiaRock_StatueRiseScript);
-  for (i = 0; i < STATUE_DEBRIS; i++) {
+  for (i = 0; i < STATUE_ROCKS; i++) {
     struct Actor *debris =
         FieldActor_Create(SPRITE_ROCK, leader->x.fixed,
                           leader->y.fixed + toFIXED(16), leader->z.fixed);

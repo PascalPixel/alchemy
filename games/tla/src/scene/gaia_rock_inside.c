@@ -45,6 +45,7 @@
 #include "field/actor_view.h"
 #include "field/map_grid.h"
 #include "shared/tables.h"
+#include "shared/gaia_rock.h"
 #include "system/task.h"
 #include "field/actor_script.h"
 #include "../field/actor_set_sprite_priority.c"
@@ -3353,9 +3354,6 @@ void GaiaRockInside_PlaceStatue(s32 id, s32 x, s32 y, s32 z) {
 
 extern s32 gGaiaRockInside_StatueRiseScript[];
 extern u32 gGaiaRockInside_FlyingRockScript[];
-
-/// The rocks that burst out as a statue rises.
-enum { STATUE_ROCKS = 16 };
 
 /// A statue rises under the leader in a burst of rocks, lifting him with it;
 /// he lands on top, and its flag is set.

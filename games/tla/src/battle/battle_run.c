@@ -107,7 +107,7 @@ void Battle_ChangeEnemyForm(s32 id) {
   BattleUnit_SetFar(FIRST_ENEMY_UNIT, unit, NAME_LETTER_NONE);
   work->enemyIds[0] = FIRST_ENEMY_UNIT;
   work->enemyIds[1] = BATTLE_UNIT_LIST_END;
-  Enemy_Update();
+  BattlePlacement_RelayoutEnemies();
   object = BattleObject_Get(FIRST_ENEMY_UNIT);
   BattleObject_Make(object, FIRST_ENEMY_UNIT, object->anchorX / FIXED_ONE,
                     object->anchorZ / FIXED_ONE);

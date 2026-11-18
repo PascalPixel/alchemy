@@ -1037,7 +1037,7 @@ s32 BattleAbility_ApplyToTarget(struct BattlePlan *plan, s32 slot) {
       }
       // Lay the enemies out again and put the newcomer's sprite in place
       // (the anchors are 16.16 fixed point).
-      Enemy_Update();
+      BattlePlacement_RelayoutEnemies();
       {
         struct BattleObject *battleObject;
 

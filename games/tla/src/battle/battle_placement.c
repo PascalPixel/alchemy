@@ -537,10 +537,9 @@ s32 Enemy_GetFreeUnitId(void) {
 }
 
 /// Lays the enemies out again and moves each one's battle object anchor to its
-/// new place, as The Broken Seal's BattlePlacement_RelayoutEnemies; this game
-/// skips the removed places before the first enemy, and lays out up to the last
-/// one still there.
-void Enemy_Update(void) {
+/// new place, skipping the removed places before the first enemy and laying
+/// out up to the last one still there.
+void BattlePlacement_RelayoutEnemies(void) {
   struct BattleWork *work = Ram_HeapSlots->battleWork;
   u16 unitIds[UNIT_MAX];
   s32 x[ENEMY_BATTLE_SIZE];

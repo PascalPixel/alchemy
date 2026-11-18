@@ -333,7 +333,7 @@ s32 BattleStaging_DispatchAction(struct BattleActionRecord *request,
   BattleMotion_DestroyAllSlotObjects();
   BattleUnit_ProcessActionEnd(&battle->plan);
   BattleObject_Put();
-  Enemy_Update();
+  BattlePlacement_RelayoutEnemies();
   BattleParty_ReturnAllToSpots();
   request->unitId = BATTLE_UNIT_LIST_END;
 finish:

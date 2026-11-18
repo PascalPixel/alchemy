@@ -87,9 +87,7 @@ enum {
   ENTRANCE_HALL_SOUTH_END = 1,
   ENTRANCE_CORRIDOR_WEST_DOORWAY,
   ENTRANCE_CORRIDOR_EAST_DOORWAY,
-  ENTRANCE_SMALL_ROOM_SOUTH_END,
-  /// Where the battle with the Flame Dragons returns the party.
-  ENTRANCE_AFTER_BATTLE = 20
+  ENTRANCE_SMALL_ROOM_SOUTH_END
 };
 
 enum {
@@ -356,7 +354,7 @@ s32 Scene_Initialize(void) {
         CrackedTile_DropIn();
     }
     if (entrance == ENTRANCE_HALL_SOUTH_END ||
-        entrance == ENTRANCE_AFTER_BATTLE) {
+        entrance == MARS_LIGHTHOUSE_STAR_ROOM_AFTER_FLAME_DRAGONS_BATTLE) {
       if (!Event_GetFlag(FLAG_MARS_LIGHTHOUSE_THAWED)) {
         FieldActor_SetSpritePriority(ACTOR_AGATIO_DRAGON, 3);
         FieldActor_SetSpritePriority(ACTOR_KARST_DRAGON, 3);
@@ -388,7 +386,8 @@ s32 Scene_Initialize(void) {
           MapGrid_CopyCellAttributes(39, 22, 2, 1, 43, 13);
           MapGrid_CopyCellAttributes(31, 21, 2, 2, 40, 12);
         }
-      } else if (entrance == ENTRANCE_AFTER_BATTLE) {
+      } else if (entrance ==
+                 MARS_LIGHTHOUSE_STAR_ROOM_AFTER_FLAME_DRAGONS_BATTLE) {
         MarsLighthouseStarRoom_WakeAfterBattle();
       }
     }
@@ -403,7 +402,8 @@ s32 Scene_PrepareMap(void) {
     Map_CopyPalette(gMainRoutineWork.mapId +
                         (SCENE_MARS_LIGHTHOUSE_JUPITER_LEDGE - SCENE_PROX),
                     (s32)BG_PLTT);
-  if (gMainRoutineWork.entrance == ENTRANCE_AFTER_BATTLE)
+  if (gMainRoutineWork.entrance ==
+      MARS_LIGHTHOUSE_STAR_ROOM_AFTER_FLAME_DRAGONS_BATTLE)
     Event_SetFlag(FLAG_FLAME_DRAGONS_BEATEN);
   return 0;
 }
@@ -448,8 +448,9 @@ void MarsLighthouseStarRoom_WakeFlameDragons(void) {
   Actor_SetAnimation(ACTOR_KARST_DRAGON, 4);
   FieldEvent_Wait(60);
   gMainRoutineWork.battleType = BATTLE_TYPE_NO_ESCAPE;
-  FieldEvent_SetAfterBattleDestination((s32)&SceneId_MarsLighthouseStarRoom,
-                                       ENTRANCE_AFTER_BATTLE);
+  FieldEvent_SetAfterBattleDestination(
+      (s32)&SceneId_MarsLighthouseStarRoom,
+      MARS_LIGHTHOUSE_STAR_ROOM_AFTER_FLAME_DRAGONS_BATTLE);
   gMainRoutineWork.battleBackground = SCENE_GONDOWAN_CLIFFS_HIDEOUT;
   Field_RequestBattleFromEncounterTable(102, 0);
 }

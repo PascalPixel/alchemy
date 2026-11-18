@@ -119,7 +119,7 @@ void Mikasalla_EnterDoor(void) {
 
   Event_Start();
   Event_ResolvePendingActions(0);
-  for (id = ACTOR_FIRST_PLACED; id <= 63; id++) {
+  for (id = ACTOR_FIRST_PLACED; id < FIELD_TREASURE_ACTOR; id++) {
     struct Actor *actor = Actor_GetById(id);
 
     if (actor != NULL)

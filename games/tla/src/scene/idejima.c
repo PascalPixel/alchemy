@@ -896,7 +896,7 @@ void Idejima_UpdateWaveLines(void) {
             << 9) +
         FIXED_ONE;
 
-    line[i] = FIXEDtoINT(layer->y) + (wave >> 15);
+    line[i] = FIXEDtoINT(layer->y) + FIXEDtoINT_TWICE(wave);
   }
   gIdejima_WaveBuffer ^= 1;
   gIdejima_WavePhase++;
@@ -1821,28 +1821,33 @@ void Idejima_LayDownTheOthers(void) {
     Idejima_FelixWakes();
 }
 
-// clang-format off
-u32 gIdejima_KradenToTheShipScript[] = {                                                               
-      SC_ANIMATION(2), SC_MOVE(216, 0, 172),                           
-      SC_SYNC,   SC_MOVE(264, 0, 164),                           
-      SC_SYNC,   SC_ANIMATION(1),                                                    
-      SC_END,                                                                  
-  };
+u32 gIdejima_KradenToTheShipScript[] = {
+    SC_ANIMATION(ANIM_WALK),
+    SC_MOVE(216, 0, 172),
+    SC_SYNC,
+    SC_MOVE(264, 0, 164),
+    SC_SYNC,
+    SC_ANIMATION(ANIM_STAND),
+    SC_END,
+};
 
-u32 gIdejima_JennaToTheShipScript[] = {                                                               
-      SC_ANIMATION(2), SC_MOVE(216, 0, 182),                           
-      SC_SYNC,   SC_MOVE(242, 0, 164),                           
-      SC_SYNC,   SC_ANIMATION(1),                                                    
-      SC_END,                                                                  
-  };
+u32 gIdejima_JennaToTheShipScript[] = {
+    SC_ANIMATION(ANIM_WALK),
+    SC_MOVE(216, 0, 182),
+    SC_SYNC,
+    SC_MOVE(242, 0, 164),
+    SC_SYNC,
+    SC_ANIMATION(ANIM_STAND),
+    SC_END,
+};
 
 u32 gIdejima_AlexLeadsTheWayScript[] = {
-    SC_ANIMATION(2),
+    SC_ANIMATION(ANIM_WALK),
     SC_MOVE(224, 0, 172),
     SC_SYNC,
     SC_MOVE(392, 0, 172),
     SC_SYNC,
-    SC_ANIMATION(1),
+    SC_ANIMATION(ANIM_STAND),
     SC_WAIT(1),
     SC_SET(SW_FACING, FACING_WEST),
     SC_WAIT(1),
@@ -1850,14 +1855,14 @@ u32 gIdejima_AlexLeadsTheWayScript[] = {
 };
 
 u32 gIdejima_KradenFollowsAlexScript[] = {
-    SC_ANIMATION(2),
+    SC_ANIMATION(ANIM_WALK),
     SC_MOVE(224, 0, 172),
     SC_SYNC,
     SC_MOVE(304, 0, 172),
     SC_SYNC,
     SC_MOVE(336, 0, 192),
     SC_SYNC,
-    SC_ANIMATION(1),
+    SC_ANIMATION(ANIM_STAND),
     SC_WAIT(1),
     SC_SET(SW_FACING, FACING_EAST),
     SC_WAIT(1),
@@ -1865,14 +1870,14 @@ u32 gIdejima_KradenFollowsAlexScript[] = {
 };
 
 u32 gIdejima_JennaFollowsAlexScript[] = {
-    SC_ANIMATION(2),
+    SC_ANIMATION(ANIM_WALK),
     SC_MOVE(216, 0, 172),
     SC_SYNC,
     SC_MOVE(296, 0, 172),
     SC_SYNC,
     SC_MOVE(316, 0, 208),
     SC_SYNC,
-    SC_ANIMATION(1),
+    SC_ANIMATION(ANIM_STAND),
     SC_WAIT(1),
     SC_SET(SW_FACING, FACING_EAST),
     SC_WAIT(1),
@@ -1880,38 +1885,60 @@ u32 gIdejima_JennaFollowsAlexScript[] = {
     SC_END,
 };
 
-u32 gIdejima_KradenRunsToFelixScript[] =                                                                 
-      {                                                                        
-          SC_ANIMATION(2), SC_MOVE(420, 0, 200), SC_SYNC, SC_ANIMATION(1),   
-          SC_END,                                                              
-  };
+u32 gIdejima_KradenRunsToFelixScript[] = {
+    SC_ANIMATION(ANIM_WALK),
+    SC_MOVE(420, 0, 200),
+    SC_SYNC,
+    SC_ANIMATION(ANIM_STAND),
+    SC_END,
+};
 
-u32 gIdejima_JennaRunsToFelixScript[] =                                                                 
-      {                                                                        
-          SC_ANIMATION(2), SC_MOVE(408, 0, 232), SC_SYNC, SC_ANIMATION(1),   
-          SC_END,                                                              
-  };
+u32 gIdejima_JennaRunsToFelixScript[] = {
+    SC_ANIMATION(ANIM_WALK),
+    SC_MOVE(408, 0, 232),
+    SC_SYNC,
+    SC_ANIMATION(ANIM_STAND),
+    SC_END,
+};
 
-u32 gIdejima_JennaToTheShoreScript[] = {                                                               
-      SC_ANIMATION(2),   SC_MOVE(424, 0, 200), SC_SYNC,     SC_ANIMATION(1), 
-      SC_WAIT(1), SC_SET(SW_FACING, FACING_EAST),     SC_WAIT(1), SC_END,    
-  };
+u32 gIdejima_JennaToTheShoreScript[] = {
+    SC_ANIMATION(ANIM_WALK),
+    SC_MOVE(424, 0, 200),
+    SC_SYNC,
+    SC_ANIMATION(ANIM_STAND),
+    SC_WAIT(1),
+    SC_SET(SW_FACING, FACING_EAST),
+    SC_WAIT(1),
+    SC_END,
+};
 
-u32 gIdejima_ShebaToTheShoreScript[] = {                                                               
-      SC_ANIMATION(2),   SC_MOVE(408, 0, 228), SC_SYNC,     SC_ANIMATION(1), 
-      SC_WAIT(1), SC_SET(SW_FACING, FACING_EAST),     SC_WAIT(1), SC_END,    
-  };
+u32 gIdejima_ShebaToTheShoreScript[] = {
+    SC_ANIMATION(ANIM_WALK),
+    SC_MOVE(408, 0, 228),
+    SC_SYNC,
+    SC_ANIMATION(ANIM_STAND),
+    SC_WAIT(1),
+    SC_SET(SW_FACING, FACING_EAST),
+    SC_WAIT(1),
+    SC_END,
+};
 
-u32 gIdejima_KradenToTheShoreScript[] = {                                                               
-      SC_ANIMATION(2),   SC_MOVE(400, 0, 214), SC_SYNC,     SC_ANIMATION(1), 
-      SC_WAIT(1), SC_SET(SW_FACING, FACING_EAST),     SC_WAIT(1), SC_END,    
-  };
+u32 gIdejima_KradenToTheShoreScript[] = {
+    SC_ANIMATION(ANIM_WALK),
+    SC_MOVE(400, 0, 214),
+    SC_SYNC,
+    SC_ANIMATION(ANIM_STAND),
+    SC_WAIT(1),
+    SC_SET(SW_FACING, FACING_EAST),
+    SC_WAIT(1),
+    SC_END,
+};
 
 u32 gIdejima_FelixToTheShoreScript[] = {
-    SC_ANIMATION(2),
+    SC_ANIMATION(ANIM_WALK),
     SC_MOVE(412, 0, 248),
     SC_SYNC,
-    SC_ANIMATION(1),
+    SC_ANIMATION(ANIM_STAND),
     SC_WAIT(1),
     SC_SET(SW_FACING, FACING_EAST),
     SC_WAIT(1),
@@ -1949,10 +1976,10 @@ s32 gIdejima_StretchScript[] = {
 u32 gIdejima_KradenStepsAsideScript[] = {
     SC_POSITION(152, 0, 756),
     SC_WAIT(1),
-    SC_ANIMATION(2),
+    SC_ANIMATION(ANIM_WALK),
     SC_MOVE(146, 0, 736),
     SC_SYNC,
-    SC_ANIMATION(1),
+    SC_ANIMATION(ANIM_STAND),
     SC_WAIT(1),
     SC_SET(SW_FACING, FACING_NORTHEAST),
     SC_WAIT(1),
@@ -1960,20 +1987,20 @@ u32 gIdejima_KradenStepsAsideScript[] = {
 };
 
 u32 gIdejima_JoinTheLeaderScript[] = {
-    SC_ANIMATION(2),
+    SC_ANIMATION(ANIM_WALK),
     SC_MOVE(152, 0, 756),
     SC_SYNC,
-    SC_ANIMATION(1),
+    SC_ANIMATION(ANIM_STAND),
     SC_POSITION_ORIGIN,
     SC_WAIT(1),
     SC_END,
 };
 
 u32 gIdejima_GoAfterAlexScript[] = {
-    SC_ANIMATION(2),
+    SC_ANIMATION(ANIM_WALK),
     SC_MOVE(104, 0, 728),
     SC_SYNC,
-    SC_ANIMATION(1),
+    SC_ANIMATION(ANIM_STAND),
     SC_POSITION_ORIGIN,
     SC_WAIT(1),
     SC_END,
@@ -1984,6 +2011,7 @@ struct SceneEntrance gIdejimaEntrances[] = {
     {SCENE_TABLE_END},
 };
 
+// clang-format off
 u32 gIdejimaExits[] = {
     SCENE_EXITS(Idejima),
     SCENE_EXIT(EXIT_DOOR, Idejima, ENTRANCE_FROM_DOOR_AGAIN),

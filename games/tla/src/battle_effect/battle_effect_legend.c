@@ -42,7 +42,7 @@
 #define LEGEND_SWORD_START_DISTANCE 80
 #define LEGEND_FRAMES 86 ///< with one sword; each further one adds an interval
 
-/// Legend, the Long Sword's unleash: a fan of flames opens over the target
+/// Legend, Excalibur's unleash: a fan of flames opens over the target
 /// until the first sword falls, while a rune, mirrored from one corner, rises
 /// and turns behind it. Then one sword for each step of the variant (variant +
 /// 1 in all) falls on the target from above the user's side: it strikes,
@@ -709,7 +709,9 @@ void BattleEffect_RunElementCards(struct BattleEffectParams *args, s32 mode) {
 
         texture.pixels = work->sheet + step->z;
         Matrix_Initialize();
-        Matrix_Translate(INTtoFIXED(step->x - 60), INTtoFIXED(step->y - 64), 0);
+        // Each vine or bolt stands 4 pixels across from its corner.
+        Matrix_Translate(INTtoFIXED(step->x + 4 - CANVAS_SIZE / 2),
+                         INTtoFIXED(step->y - CANVAS_SIZE / 2), 0);
         Matrix_Scale(FIXED_ONE / 2, FIXED_ONE, FIXED_ONE / 2);
         if (args->side == EFFECT_SIDE_PARTY)
           Matrix_RotateY(DEGtoANG(180));

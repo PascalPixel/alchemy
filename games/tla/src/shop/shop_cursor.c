@@ -40,7 +40,7 @@ void QuantityBar_Fill(s32 itemCount, s32 paletteSelector, u8 *tileBuffer) {
 /// source bytes: two bytes of each of its four rows in the digit's tile, and
 /// two more in the same row of the next.
 void Shop_CopyGlyphs(s32 digit, u8 *tileBuffer, u32 digitPosition) {
-  u8 *src = gShop_GlyphBytes + ((u32)digit << 5);
+  u8 *src = gShop_GlyphBytes + digit * TILE_SIZE_4BPP;
   u8 *dst = tileBuffer + gShop_PriceDigitTileOffsets[digitPosition] + 2;
   s32 count;
 
@@ -101,21 +101,24 @@ struct WindowSprite *Shop_CreatePriceSprite(s32 value, struct Window *window,
   return priceSprite;
 }
 
-/// Saves the field colours in the field work and fades to `layer` over
-/// SHOP_TINT_FRAMES frames.
+/// Saves the field's background colours in the field work and fades to `layer`
+/// over SHOP_TINT_FRAMES frames.
 void Shop_SaveAndTintFieldPalette(s32 layer) {
   struct FieldWork *field = Ram_HeapSlots->fieldWork;
   struct PaletteFade *paletteBuffers = Ram_HeapSlots->paletteFade;
   u16 *savedPalette = paletteBuffers->target;
 
-  Dma_Set(savedPalette, field->savedFadeTarget, DMA_COPY_WORDS(336), REG_DMA3);
+  Dma_Set(savedPalette, field->savedFadeTarget,
+          DMA_COPY_WORDS(PALETTE_FADE_BG_COLORS * 3 * sizeof(u16) / 4),
+          REG_DMA3);
   Dma_Set(savedPalette, paletteBuffers->current,
           DMA_COPY_WORDS(sizeof(paletteBuffers->current) / 4), REG_DMA3);
   PaletteFade_SetTargetFar(layer, 1);
   PaletteFade_StartInterpolationFar(SHOP_TINT_FRAMES);
 }
 
-/// Fades back to the colours Shop_SaveAndTintFieldPalette saved.
+/// Fades back to the colours Shop_SaveAndTintFieldPalette saved, over
+/// SHOP_TINT_FRAMES frames.
 void Shop_RestoreFieldPalette(void) {
   PaletteFade_SetTargetFar((s32)gFieldWork->savedFadeTarget, 1);
   PaletteFade_StartInterpolationFar(SHOP_TINT_FRAMES);
@@ -128,7 +131,6 @@ void MenuCursor_Advance(struct MenuCursor *cursor) {
   s32 frame;
   s32 cursorX;
   s32 cursorY;
-  u32 mask;
 
   if (cursor == NULL)
     return;
@@ -140,9 +142,7 @@ void MenuCursor_Advance(struct MenuCursor *cursor) {
   cursorX =
       cursor->x + (cursor->targetX - (s16)cursor->x) * frame / durationFrames;
   sprite->x = cursorX;
-  mask = 0x1ff;
-  mask &= cursorX;
-  sprite->sprite.oam.x = mask;
+  sprite->sprite.oam.x = cursorX & OBJ_X_MASK;
   cursorY =
       cursor->y + (cursor->targetY - (s16)cursor->y) * frame / durationFrames;
   sprite->y = cursorY;
@@ -242,7 +242,7 @@ void MenuCursor_Place(struct Window *window, s32 x, s32 y) {
   struct ShopWork *shop = Ram_HeapSlots->menuWork;
 
   // A window's position is in tiles, and its interior starts one tile (its
-  // frame) in
+  // frame) in.
   if (window != NULL) {
     x += (s16)window->x * 8 + 8;
     y += (s16)window->y * 8 + 8;
@@ -264,3 +264,5 @@ void VramBlock_LoadResource(s32 entryId, s32 size, s32 resourceId) {
   VramCache_Load(entryId, size, buffer);
   Heap_Release(buffer);
 }
+
+#undef SHOP_TINT_FRAMES

@@ -36,6 +36,7 @@
 #include "gamepak/far_call/window.h"
 #include "system/ram_buffer.h"
 #include "fixed_math.h"
+#include "macros.h"
 #include "window/window.h"
 #include "flags.h"
 #include "resource_ids.h"
@@ -921,8 +922,6 @@ void EndingPicture_CopyMap(const u8 *source, u8 *destination, s32 position) {
     destination += ENDING_PICTURE_SCREEN_BYTES;
   }
 }
-
-#define ABS(v) ((v) < 0 ? -(v) : (v))
 
 /// The ending picture's VBlank task: fades the new picture in over 64
 /// frames, moves the row toward gEndingPicture_TargetRow by at most

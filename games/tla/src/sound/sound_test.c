@@ -142,10 +142,6 @@ void SoundFlag_Clear(s32 sound) {
 
 s32 __divsi3(s32 numerator, s32 denominator);
 
-/// The CPU cycles of a VBlank: 228 lines of 1232 cycles, as driver.c
-/// counts them.
-#define SOUND_CYCLES_PER_VBLANK (228 * 1232)
-
 enum {
   SOUND_FIXED_RATE = 31536, ///< samples a second: SOUND_MODE_FREQ_GAME's rate
   /// SOUND_FIXED_RATE over the 59.7275 VBlanks a second, rounded.

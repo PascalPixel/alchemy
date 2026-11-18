@@ -27,8 +27,6 @@ void Clear64byte(void *block) {
 /// VBlanks a second.
 #define SOUND_VBLANK_RATE_E4 597275
 #define SOUND_RATE_E4_UNIT 10000
-/// CPU cycles from one VBlank to the next: 228 lines of 1232 cycles.
-#define SOUND_CYCLES_PER_VBLANK (228 * 1232)
 /// 1.0 in the 24-bit fixed point SampleFreqSet takes the rate's reciprocal in.
 #define SOUND_RATE_STEP_ONE (1 << 24)
 

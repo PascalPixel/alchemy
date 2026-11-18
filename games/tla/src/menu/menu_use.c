@@ -40,12 +40,6 @@ s32 Item_Use(s32 slot, s32 memberId, s32 targetId) {
 
 s32 Battle_CalculateRecoveryFar(s32 value, s32 selector, s32 multiplier);
 
-/// The element power at which healing is neither stronger nor weaker, and the
-/// multiplier that keeps an amount as it is, as game_battle_arithmetic.c's
-/// Battle_CalculateRecovery takes them.
-#define HEALING_BASE_POWER 100
-#define BATTLE_MULTIPLIER_ONE 256
-
 /// Applies the healing, curing, revival or lasting stat rise of action
 /// effectId, used by party member sourceId, to targetId, or to every party
 /// member when the action's range is ABILITY_RANGE_ALL.
@@ -359,6 +353,3 @@ s32 Ability_PlayUseAnimation(s32 action) {
     break;
   }
 }
-
-#undef HEALING_BASE_POWER
-#undef BATTLE_MULTIPLIER_ONE

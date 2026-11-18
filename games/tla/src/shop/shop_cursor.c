@@ -7,9 +7,6 @@
 #include "shop/shop.h"
 #include "window/cursor.h"
 
-/// The bytes of one pixel row of a 16-colour tile.
-#define TILE_ROW_SIZE_4BPP (TILE_SIZE_4BPP / 8)
-
 /// The frames the field's colours take to fade to a shop's tint and back.
 #define SHOP_TINT_FRAMES 16
 

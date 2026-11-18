@@ -386,10 +386,10 @@ void Djinn_AdvanceSpinAngle(struct Actor *djinni) {
 /// pixel a frame. The slot's origin is the centre, in screen coordinates
 /// (Camera_WorldToScreen).
 void FieldEffect_RunAngledApproachPhases(struct FieldParticle *particle) {
-  struct Actor *owner;
+  struct Actor *target;
   struct Vector3 position;
 
-  owner = Actor_GetById(gMainRoutineWork.leaderActorId);
+  target = Actor_GetById(gMainRoutineWork.leaderActorId);
   if (particle->state == DJINNI_LIGHT_WIDENING) {
     particle->orbitRadius += 1;
     particle->orbitAngle += 1;
@@ -405,8 +405,9 @@ void FieldEffect_RunAngledApproachPhases(struct FieldParticle *particle) {
     }
   } else if (particle->state == DJINNI_LIGHT_DRIFTING) {
     particle->orbitAngle += 1;
-    SET_POSITION(&position, owner->x.fixed, owner->y.fixed + 20 * FIXED_ONE,
-                 owner->z.fixed);
+    SET_POSITION(&position, target->x.fixed, target->y.fixed + toFIXED(20),
+                 target->z.fixed);
+    // The centre moves 1/8 of the way to the leader's screen point a frame.
     Camera_WorldToScreen(&position);
     particle->originX += (position.x - particle->originX) / 8;
     particle->originZ += (position.z - particle->originZ) / 8;
@@ -426,7 +427,7 @@ void FieldEffect_RunAngledApproachPhases(struct FieldParticle *particle) {
   }
   position.x = particle->originX;
   position.z = particle->originZ;
-  Vector_AddPolarOffset(INTtoFIXED(particle->orbitRadius),
+  Vector_AddPolarOffset(toFIXED(particle->orbitRadius),
                         particle->orbitAngle * (TRIG_TURN / 32), &position);
   particle->x = position.x;
   particle->z = position.z;

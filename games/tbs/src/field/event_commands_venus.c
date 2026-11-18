@@ -4,6 +4,9 @@
 
 #include "event_commands_internal.h"
 
+/// The motes that circle down onto the leader, evenly spread round a circle.
+#define VENUS_DESCENDING_MOTES 24
+
 /// A Venus Djinni joins the party: it hops twice, spins and leaps, then shrinks
 /// away; the leader turns to the camera and plays ANIM_LEADER_ARMS_RAISED while
 /// 24 particles rise round it (FieldEffect_UpdateRadialSpread).
@@ -57,9 +60,9 @@ void Djinn_RunVenusJoinEffect(s32 djinniId) {
   position.z = djinni->z.fixed;
   Camera_WorldToScreen(&position);
 
-  // One rising particle a frame into each of the 24 field effect sprites.
+  // One rising particle a frame into each of the field effect sprites.
   effect = effectWork->particles;
-  remaining = 23;
+  remaining = PSYNERGY_EFFECT_SLOT_COUNT - 1;
   do {
     FieldParticle_Initialize(effect, SPRITE_PARTICLE, position.x, position.z);
     FieldParticle_SetCallback(effect, FieldEffect_UpdateRadialSpread);
@@ -82,8 +85,8 @@ void Djinn_RunVenusJoinEffect(s32 djinniId) {
   MapGrid_SetScreenShakeFar(1, 1, 1);
   wait(30);
 
-  // 24 motes, evenly spread round a circle, 120 pixels above the leader.
-  for (remaining = 0; remaining <= 23; remaining++) {
+  // The motes, 120 pixels above the leader.
+  for (remaining = 0; remaining < VENUS_DESCENDING_MOTES; remaining++) {
     position.x = leader->x.fixed;
     position.y = leader->y.fixed + toFIXED(120);
     position.z = leader->z.fixed;
@@ -93,7 +96,7 @@ void Djinn_RunVenusJoinEffect(s32 djinniId) {
       djinni->scaleY = scale;
       djinni->scaleX = scale;
       djinni->orbitFrames = 100;
-      djinni->orbitAngle = (remaining << 16) / 24;
+      djinni->orbitAngle = remaining * TRIG_TURN / VENUS_DESCENDING_MOTES;
       djinni->update = FieldEffect_UpdateDescendingOrbitActor;
       djinni->motionFlags = 0;
       Actor_SelectAnimationFar(djinni, 7);
@@ -195,3 +198,5 @@ void FieldEffect_UpdateRandomTargetParticle(struct FieldParticle *effect) {
 void FieldEffect_HalveDistanceToTarget(struct Actor *actor) {
   FieldEffect_MoveAfterimageHalfway(actor);
 }
+
+#undef VENUS_DESCENDING_MOTES

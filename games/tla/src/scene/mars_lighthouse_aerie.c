@@ -2920,12 +2920,6 @@ void MarsLighthouseAerie_HaltJennasFather(void) {
 
 void Actor_SetSpriteColorMode(struct Actor *actor, s32 value);
 
-/// How far a ring climbs, in pixels, how many frames apart the rings start,
-/// and the height of one not yet started.
-#define RING_CLIMB 32
-#define RING_INTERVAL 16
-#define RING_NOT_STARTED 999
-
 /// Each frame of an actor's rings: a ring climbs RING_CLIMB pixels up the
 /// actor, swelling and shrinking as it goes, and the next starts with a chime
 /// RING_INTERVAL frames later, two at a time, while the actor's colours cycle.

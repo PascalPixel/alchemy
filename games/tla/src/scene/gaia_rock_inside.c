@@ -55,15 +55,10 @@
 
 #include "../field/field_effect_move.c"
 
-#define EFFECT_SPAWN FieldEffect_Spawn
-#define EFFECT_CREATE Import_ActorCreate
 #define EFFECT_SET_MODE Actor_SelectAnimation
 #define EFFECT_SET_SCRIPT Actor_StartScript
-#define EFFECT_SCRIPTS gFieldEffect_DurationScripts
 #define EFFECT_SPRITE_PRIORITY
 #include "../field/field_effect_spawn.c"
-
-#undef EFFECT_SPAWN
 
 /// The four beams of sunlight that reach the Serpent's lair: a carved face
 /// slides aside when the doll dances on its altar, and Cyclone clears the
@@ -1117,8 +1112,6 @@ s32 Orbiter_Spiral(struct Orbiter *orbiter) {
 // Moves around in a circle.
 #include "shared/orbit_update.h"
 
-#define BYTE_AT(base, offset) (*(u8 *)((u8 *)(base) + (offset)))
-
 #include "shared/actor_aim_at_watched.h"
 
 #include "shared/actor_step_to_watched.h"
@@ -1128,7 +1121,6 @@ void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
                        const struct EffectOptions *options);
 
 #include "shared/actor_emit_bubbles.h"
-#undef BYTE_AT
 
 #include "text/msg_ids.h"
 
@@ -1285,9 +1277,6 @@ void GaiaRockInside_FelixLearnsSand(s32 idA, s32 idB) {
 void Actor_MoveToObject(s32 id, s32 target);
 void BlendScript_Suspend(void);
 void BlendScript_Resume(void);
-
-/// REG_BLDALPHA's low byte, the top target's weight.
-#define BLEND_ALPHA_TOP_MASK 0xff
 
 /// Talking to the slate: Kraden urges Felix to touch it, the ground shakes and
 /// the slate teaches him Sand (GaiaRockInside_FelixLearnsSand), and Kraden
@@ -4111,11 +4100,8 @@ s32 gGaiaRockInside_StatueRiseScript[] = {
     SC_END,
 };
 // clang-format on
-#undef EFFECT_SPAWN
-#undef EFFECT_CREATE
 #undef EFFECT_SET_MODE
 #undef EFFECT_SET_SCRIPT
-#undef EFFECT_SCRIPTS
 #undef EFFECT_SPRITE_PRIORITY
 #undef Test
 #undef C1

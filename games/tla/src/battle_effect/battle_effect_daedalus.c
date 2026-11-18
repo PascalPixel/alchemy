@@ -237,9 +237,6 @@ typedef void (*BlitFunc)(void *, const void *, s32, s32, s32, s32);
 #define CANOPY_Y 132
 #define DAEDALUS_CLIMB 29
 
-/// A sprite's tile number, attribute 2's low ten bits.
-#define OBJ_TILE_MASK 0x3ff
-
 /// RocketFlameSheet: six 12x24 flames, each dimmer than the last.
 #define ROCKET_FLAME_WIDTH 12
 #define ROCKET_FLAME_HEIGHT 24
@@ -310,6 +307,29 @@ typedef void (*BlitFunc)(void *, const void *, s32, s32, s32, s32);
 #define ROCKET_LEAD_START 230
 #define ROCKET_SCALE toFIXED(1.01561)
 
+/// The rocket's flight, in frames from its launch. It sinks a little faster
+/// over its first ROCKET_SINK_FRAMES and speeds forward from
+/// ROCKET_THRUST_START. It lifts from ROCKET_LIFT_START to ROCKET_LIFT_END,
+/// tipping its nose up from ROCKET_NOSE_UP_START to ROCKET_NOSE_UP_END. From
+/// ROCKET_TURN_START to ROCKET_TURN_END it turns its nose up as it climbs, the
+/// nose dipping a moment from ROCKET_DIP_START to ROCKET_DIP_END; it climbs
+/// more gently until ROCKET_SOAR_START and steeply after. Bursts rise from the
+/// foot of the view every fourth frame while its nose tips up, and again from
+/// ROCKET_BURSTS_START to ROCKET_BURSTS_END.
+#define ROCKET_THRUST_START 30
+#define ROCKET_LIFT_START 40
+#define ROCKET_NOSE_UP_START 50
+#define ROCKET_NOSE_UP_END 60
+#define ROCKET_LIFT_END 68
+#define ROCKET_SINK_FRAMES 80
+#define ROCKET_TURN_START 108
+#define ROCKET_BURSTS_START 113
+#define ROCKET_DIP_START 120
+#define ROCKET_DIP_END 123
+#define ROCKET_TURN_END 140
+#define ROCKET_SOAR_START 160
+#define ROCKET_BURSTS_END 200
+
 /// The ring of flames the machine sends out as it fires: FLAME_RING_COUNT
 /// flames round a ring centred on gDaedalus_RingX and FLAME_RING_Y, its radius
 /// spreading for FLAME_RING_FRAMES frames while each flame burns down through
@@ -335,6 +355,9 @@ typedef void (*BlitFunc)(void *, const void *, s32, s32, s32, s32);
 #define FALL_BURST_SLOTS 8
 #define FALL_TRAILS 256
 #define FALL_TRAIL_LENGTH 16
+/// The angle a missile's dive turns by for each unit of its velocityZ, a
+/// spread the fall leaves at 0.
+#define FALL_DIVE_SPREAD 40
 
 /// The missiles fire in pairs, the first DAEDALUS_VOLLEY_START frames after
 /// their cover flies off and the next every DAEDALUS_VOLLEY_STEP frames.
@@ -1070,8 +1093,10 @@ void BattleEffect_RunDaedalus(struct BattleEffectParams *args) {
                        ROCKET_NOZZLE -
                    toFIXED(ROCKET_FLAME_HEIGHT / 2);
           }
-          if (((p->variant >= 50 && p->variant < 60) ||
-               (p->variant >= 113 && p->variant < 200)) &&
+          if (((p->variant >= ROCKET_NOSE_UP_START &&
+                p->variant < ROCKET_NOSE_UP_END) ||
+               (p->variant >= ROCKET_BURSTS_START &&
+                p->variant < ROCKET_BURSTS_END)) &&
               (p->variant & 3) == 0) {
             struct Particle *q;
 
@@ -1107,27 +1132,28 @@ void BattleEffect_RunDaedalus(struct BattleEffectParams *args) {
             p->velocityX = p->velocityX * 63 / DAMPING_SCALE;
             p->velocityY = p->velocityY * 63 / DAMPING_SCALE + ROCKET_GRAVITY;
           }
-          if (p->variant < 80)
+          if (p->variant < ROCKET_SINK_FRAMES)
             p->velocityY += toFIXED(1) / 128;
-          if (p->variant > 29)
+          if (p->variant >= ROCKET_THRUST_START)
             p->velocityX -= toFIXED(1) / 4;
-          if (p->variant >= 40 && p->variant < 68)
+          if (p->variant >= ROCKET_LIFT_START && p->variant < ROCKET_LIFT_END)
             p->velocityY -= toFIXED(1) / 16;
-          if (p->variant >= 50 && p->variant < 60) {
+          if (p->variant >= ROCKET_NOSE_UP_START &&
+              p->variant < ROCKET_NOSE_UP_END) {
             DAEDALUS_SPRITE(DAEDALUS_ROCKET)->rotation =
                 (p->variant << 7) - TRIG_TURN * 89 / 256;
             p->velocityY -= toFIXED(1) / 16;
           }
-          if (p->variant >= 108 && p->variant < 140) {
-            if (p->variant >= 120 && p->variant < 123)
+          if (p->variant >= ROCKET_TURN_START && p->variant < ROCKET_TURN_END) {
+            if (p->variant >= ROCKET_DIP_START && p->variant < ROCKET_DIP_END)
               DAEDALUS_SPRITE(DAEDALUS_ROCKET)->rotation -= TRIG_TURN * 3 / 512;
             else
               DAEDALUS_SPRITE(DAEDALUS_ROCKET)->rotation += TRIG_TURN / 256;
             p->velocityY -= toFIXED(1) / 16;
           }
-          if (p->variant >= 140 && p->variant < 160)
+          if (p->variant >= ROCKET_TURN_END && p->variant < ROCKET_SOAR_START)
             p->velocityY -= toFIXED(1) / 32;
-          if (p->variant > 159)
+          if (p->variant >= ROCKET_SOAR_START)
             p->velocityY -= toFIXED(1) / 8;
           for (i = 0; i != DAEDALUS_EXHAUST_FLAMES; i++) {
             struct Particle *q;
@@ -1454,9 +1480,10 @@ void BattleEffect_RunDaedalus(struct BattleEffectParams *args) {
       Sprite_DestroyFar(work->sprites[i]);
     battle->arrowTiles = VramCache_AllocEntry(128);
     Palette_LoadBasicSpriteColors();
-    Dma_Set((void *)OBJ_PLTT, (void *)&BG_PLTT_COLOR(5, 0),
-            DMA_COPY_HALFWORDS(16), REG_DMA3);
-    BG_PLTT_COLOR(5, 14) = BG_PLTT_COLOR(15, 4);
+    Dma_Set((void *)OBJ_PLTT, (void *)&BG_PLTT_COLOR(BASIC_COLORS_PALETTE, 0),
+            DMA_COPY_HALFWORDS(PALETTE_COLORS), REG_DMA3);
+    BG_PLTT_COLOR(BASIC_COLORS_PALETTE, TEXT_BACKGROUND_COLOR) =
+        BG_PLTT_COLOR(WINDOW_PALETTE, WINDOW_BACKGROUND_COLOR);
     EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
     REG_BG2X = 0;
     REG_BLDCNT = BLDCNT_TGT1_BG2 | BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_ALL;
@@ -1466,7 +1493,7 @@ void BattleEffect_RunDaedalus(struct BattleEffectParams *args) {
     args->targets[args->targetCount] = BATTLE_UNIT_LIST_END;
     BattleActor_SpawnObjectsForListFar(args->targets, 0);
     // The fall: sixteen missiles dive onto the foes.
-    BattleEffect_SpawnObjects(1, 663, 1);
+    BattleEffect_SpawnObjects(1, SPRITE_DAEDALUS_MISSILE, 1);
     for (i = 0; i != DAEDALUS_MISSILE_COPIES; i++) {
       work->sprites[1 + i] =
           EffectSprite_Acquire(32, 16, OBJ_SIZE_32X16 | OBJ_256_COLORS, 0);
@@ -1507,7 +1534,8 @@ void BattleEffect_RunDaedalus(struct BattleEffectParams *args) {
           p->velocityZ = radius;
           /* FAKEMATCH(volatile): velocityZ read back through a volatile view;
            * as p->velocityZ. */
-          p->z = z - (*(volatile s32 *)&p->velocityZ * 40) - TRIG_TURN / 32;
+          p->z = z - (*(volatile s32 *)&p->velocityZ * FALL_DIVE_SPREAD) -
+                 TRIG_TURN / 32;
           p->velocityX = -Trig_Cos(p->z) * 8;
           p->velocityY = -Trig_Sin(p->z) * 8;
           p->x = INTtoFIXED(Random16() % 80 + 80) - p->velocityX * 24;
@@ -1666,11 +1694,12 @@ struct StrikeRocket {
 #define DAEDALUS_STRIKE_GLOW_BAND 16384
 
 /// Daedalus's second strike, at the end of the turn after the summon: its
-/// rocket (sprite 662) dives from above the screen and settles while, from
-/// frame 56, a disc of light swells beneath it and rays of light spin out. At
-/// frame 80 the canvas flashes and eight bursts of eight sparks scatter, one
-/// a frame, and at the seven frames of gDaedalusStrike_HitFrames every target
-/// is knocked back and flashes.
+/// rocket (SPRITE_DAEDALUS_ROCKET) dives from above the screen and settles
+/// while, from DAEDALUS_STRIKE_GLOW_START, a disc of light swells beneath it
+/// and rays of light spin out. At DAEDALUS_STRIKE_SPARK_FRAME the canvas
+/// flashes and a burst of sparks scatters each frame of DAEDALUS_STRIKE_BURSTS,
+/// and at the frames of gDaedalusStrike_HitFrames every target is knocked back
+/// and flashes.
 ///
 /// Abilities: Daedalus (its second strike).
 void BattleEffect_RunDaedalusStrike(struct BattleEffectParams *args) {
@@ -1701,7 +1730,7 @@ void BattleEffect_RunDaedalusStrike(struct BattleEffectParams *args) {
               WININ_WIN1_BG2 | WININ_WIN1_CLR;
   BattleEffect_StartCanvasLayer(0);
   REG_BLDALPHA = EFFECT_BLEND_ADD;
-  BattleEffect_SpawnObjects(1, 662, 3);
+  BattleEffect_SpawnObjects(1, SPRITE_DAEDALUS_ROCKET, 3);
   BattleEffect_SelectLivingTargets(work->args);
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, BLITTER_ADDITIVE);
   draw[0] = BLITTER;
@@ -1959,6 +1988,7 @@ void BattleEffect_RunDaedalusStrike(struct BattleEffectParams *args) {
 #undef CORE_GLOW_GREEN
 #undef FALL_BURST_SLOTS
 #undef FALL_TRAILS
+#undef FALL_DIVE_SPREAD
 #undef FALL_TRAIL_LENGTH
 #undef FLAME_RING_COUNT
 #undef FLAME_RING_FRAMES
@@ -1972,4 +2002,17 @@ void BattleEffect_RunDaedalusStrike(struct BattleEffectParams *args) {
 #undef ROCKET_LEAD_START
 #undef ROCKET_NOZZLE
 #undef ROCKET_SCALE
+#undef ROCKET_THRUST_START
+#undef ROCKET_LIFT_START
+#undef ROCKET_NOSE_UP_START
+#undef ROCKET_NOSE_UP_END
+#undef ROCKET_LIFT_END
+#undef ROCKET_SINK_FRAMES
+#undef ROCKET_TURN_START
+#undef ROCKET_BURSTS_START
+#undef ROCKET_DIP_START
+#undef ROCKET_DIP_END
+#undef ROCKET_TURN_END
+#undef ROCKET_SOAR_START
+#undef ROCKET_BURSTS_END
 #undef STRIKE_SPARKS

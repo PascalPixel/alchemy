@@ -567,6 +567,31 @@ struct Window;
 /// puffs land on.
 #define VENTS_MAX 16
 #define VENT_IDS_MAX 4
+
+/// One vent: whether it blows, the frames to its next puff, its position and
+/// its gust's speed, in 16.16 pixels a frame.
+struct VentEntry {
+  s16 active;
+  s16 timer;
+  FIXED x;
+  FIXED y;
+  FIXED z;
+  FIXED value;
+};
+
+/// The vents of the room, in the inventory snapshot's spare space (VENT_WORK):
+/// their frame counter, the room's hook run each frame, its vents and the
+/// actors their puffs land on, besides the leader.
+struct VentWork {
+  s32 counter;
+  s32 (*hook)(void);
+  struct VentEntry entries[VENTS_MAX];
+  u16 ids[VENT_IDS_MAX];
+};
+
+/// The vents' work, kept in the inventory snapshot's spare space.
+#define VENT_WORK                                                              \
+  ((struct VentWork *)(gInventorySnapshot + INVENTORY_SNAPSHOT_SPARE))
 /// How far apart a and b are, never negative, as a vent's thrown object tests
 /// whether it rests on another in x and z (field/actor_vent_bounce.c). Each is
 /// read twice.

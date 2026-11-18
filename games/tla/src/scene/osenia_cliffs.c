@@ -41,7 +41,7 @@ void OseniaCliffs_CyclePalette(void);
 
 /// Set once the party has lashed the second rope, which stays tied for the
 /// visit.
-#define FLAG_OSENIA_CLIFFS_ROPE_LASHED 0x203
+#define FLAG_OSENIA_CLIFFS_ROPE_LASHED FLAG_SCENE_TEMP_03
 
 /// The actors, numbering the rows of gActorPlacements.
 enum OseniaCliffsActorId {

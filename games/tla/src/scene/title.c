@@ -36,11 +36,11 @@
 
 extern s16 gTitleVramBlock;
 
-void Credits_Run(s32 value);
+s32 Credits_Run(s32 mode);
 
-s32 Title_ShowIntro(s32 value);
+s32 Title_ShowIntro(s32 prompt);
 
-void TitleIntro_Run(s32 value);
+void TitleIntro_Run(s32 unused);
 
 static void Title_RevealScreen(s32 unused);
 static void Title_LoadBackground(void);
@@ -77,8 +77,8 @@ const struct ActorPlacement *Scene_GetActorPlacements(void) {
 const struct Trigger *Scene_GetTriggers(void) { return gSceneEvents; }
 
 s32 Save_ScanFileSummaries(void);
-void Title_ShowNintendoLogo(s32 value);
-void Title_ShowCamelotLogo(s32 value);
+s32 Title_ShowNintendoLogo(s32 mode);
+void Title_ShowCamelotLogo(s32 unused);
 
 /// The title's entrances, named by what each plays; TITLE_FROM_IDEJIMA, at the
 /// end of the prologue, plays the intro once more, then the game with Felix.
@@ -97,7 +97,7 @@ enum {
 
 /// The overlay's initialize entry, which plays what the entrance asks for.
 s32 Scene_Initialize(void) {
-  s32 frames;
+  s32 waitFrames;
 
   if (gMainRoutineWork.entrance == TITLE_TO_BE_CONTINUED) {
     Actor_GetById(gMainRoutineWork.leaderActorId)->motionFlags = 0;
@@ -106,7 +106,7 @@ s32 Scene_Initialize(void) {
     // After 120 frames, the logo waits up to 3600 frames (a minute) for a key
     // press.
     wait(120);
-    for (frames = 0; frames < 3600; frames++) {
+    for (waitFrames = 0; waitFrames < 3600; waitFrames++) {
       wait(1);
       if (gInput.pressed != 0)
         break;
@@ -138,7 +138,7 @@ s32 Scene_Initialize(void) {
           Event_PlaySound(SOUND_FADE_OUT_BGM);
           ScreenFade_ToBlack(30);
           ScreenFade_Wait();
-          for (frames = 0; frames <= 119; frames++) {
+          for (waitFrames = 0; waitFrames <= 119; waitFrames++) {
             wait(1);
             if (gInput.pressed != 0)
               break;
@@ -184,23 +184,24 @@ enum { LETTERING_PALETTE = 15 };
 
 /// Loads the logo's lettering sprites and their palette.
 void Title_LoadSprites(s32 unused) {
-  u8 *buffer;
-  volatile s32 *dma;
+  u8 *decodedSprites;
+  volatile s32 *dma3;
 
   // The decoded data opens with its 16-colour palette, then 40 4-bit tiles of
   // lettering.
-  buffer = Heap_AllocEwram(PALETTE_COLORS * 2 + 40 * TILE_SIZE_4BPP);
+  decodedSprites = Heap_AllocEwram(PALETTE_COLORS * 2 + 40 * TILE_SIZE_4BPP);
   if (gTitleVramBlock == -1)
     gTitleVramBlock = VramCache_FindFreeEntry();
-  Decompress_TaggedLz(Resource_GetTableEntry(RESOURCE_INTRO_TILES_B), buffer);
-  Dma_Set(buffer, (void *)&OBJ_PLTT_COLOR(LETTERING_PALETTE, 0),
+  Decompress_TaggedLz(Resource_GetTableEntry(RESOURCE_INTRO_TILES_B),
+                      decodedSprites);
+  Dma_Set(decodedSprites, (void *)&OBJ_PLTT_COLOR(LETTERING_PALETTE, 0),
           DMA_COPY_WORDS(PALETTE_COLORS / 2), REG_DMA3);
   VramCache_Load(gTitleVramBlock, 40 * TILE_SIZE_4BPP,
-                 buffer + PALETTE_COLORS * 2);
-  dma = (volatile s32 *)REG_DMA3;
-  while (dma[2] & DMA_BUSY)
+                 decodedSprites + PALETTE_COLORS * 2);
+  dma3 = (volatile s32 *)REG_DMA3;
+  while (dma3[2] & DMA_BUSY)
     ;
-  Heap_Release(buffer);
+  Heap_Release(decodedSprites);
 }
 
 /// The task that queues the logo's lettering sprites each frame, revealing
@@ -224,6 +225,11 @@ void Title_UpdateSpriteReveal(void) {
     s32 screenY = 136;
 
     screenX = 232 - (18 - column) * 8;
+#ifdef UBFIX
+    // Stay inside each sprite's three-word array instead of walking into the
+    // next struct.
+    attributes = gTitleSprites[column].attr;
+#endif
     *attributes++ = 0;
     *attributes++ = OBJ_X(screenX) | screenY | OBJ_SIZE_8X16 |
                     OBJ_MODE(OBJ_MODE_SEMI_TRANSPARENT);
@@ -243,7 +249,7 @@ void Title_UpdateSpriteReveal(void) {
 /// Shows the Golden Sun logo for entrance 10: its "To Be Continued" lettering
 /// is revealed from the left while the logo brightens out of black.
 static void Title_RevealScreen(s32 unused) {
-  s32 i;
+  s32 brightnessStep;
 
   Title_LoadBackground();
   Event_Wait(30);
@@ -268,8 +274,9 @@ static void Title_RevealScreen(s32 unused) {
                       BLEND_ALPHA(BLEND_WEIGHT_MAX, BLEND_WEIGHT_MAX),
                       IO_WRITE_HALFWORD);
   Event_Wait(120);
-  for (i = 0; i <= BLEND_FADE_MAX; i++) {
-    IO_WRITE_QUEUE_PUSH((u32)&REG_BLDY, BLEND_FADE_MAX - i, IO_WRITE_HALFWORD);
+  for (brightnessStep = 0; brightnessStep <= BLEND_FADE_MAX; brightnessStep++) {
+    IO_WRITE_QUEUE_PUSH((u32)&REG_BLDY, BLEND_FADE_MAX - brightnessStep,
+                        IO_WRITE_HALFWORD);
     wait(3);
   }
   gFieldWork->transition = 0;

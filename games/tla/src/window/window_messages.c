@@ -5,23 +5,32 @@
 #include "window_internal.h"
 #include "resource_ids.h"
 
-/// The largest capacity, all bits but the sign's, which no message reaches.
-#define MESSAGE_NO_CAPACITY_LIMIT ((u32)-1 >> 1)
+/// A capacity no message reaches: the largest s32.
+#define MESSAGE_CAPACITY_UNLIMITED ((u32)-1 >> 1)
 
-/// Expands message into buffer without an upper length bound.
-void Message_DecodeRawUnbounded(s32 message, u16 *buffer) {
-  Message_DecodeRaw(message, buffer, MESSAGE_NO_CAPACITY_LIMIT);
+/// The previous code's low byte, which picks a symbol's tree in its bank.
+#define SYMBOL_TREE_MASK 0xff
+/// A byte of the bit stream as it is read from: the first bit taken, the seven
+/// left, and a stop bit above them that reads as the last 1 with nothing left,
+/// when the next byte is loaded.
+#define BIT_STREAM_STOP (1 << 7)
+
+/// Decodes message into text (a u16 string) with no length limit: text must
+/// have room for the whole message and its terminator.
+void Message_DecodeRawUnbounded(s32 message, u16 *text) {
+  Message_DecodeRaw(message, text, MESSAGE_CAPACITY_UNLIMITED);
 }
 
-/// Builds message key's text entries and copies them to destination, at most
-/// capacity - 1 characters and a terminator; returns the characters copied.
-s32 Message_CopyExpanded(s32 key, u16 *destination, u32 capacity) {
+/// Decodes message into destination as a zero-terminated string of at most
+/// capacity entries, and returns its length. capacity counts halfwords
+/// including the terminator and must be at least 1.
+s32 Message_CopyExpanded(s32 message, u16 *destination, u32 capacity) {
   struct WindowWork *work;
   u32 count;
 
   work = WINDOW_WORK;
   work->textBufferEnd = 0;
-  Message_Decode(key, 1);
+  Message_Decode(message, 1);
   for (count = 0; count < capacity - 1 &&
                   (destination[count] = work->textBuffer[count]) != 0;
        count++) {
@@ -40,7 +49,6 @@ extern u8 Text_DecodeSymbolCodeSize[];
 
 /// Decodes message into text as a zero-terminated string of 16-bit codes, with
 /// at most capacity entries, keeping style codes with their operands.
-/// capacity includes the terminating halfword.
 void Message_DecodeRaw(s32 message, u16 *text, s32 capacity) {
   struct TextReader reader;
   void *original;
@@ -115,55 +123,59 @@ s32 *Memory_ClearWordIfSet(s32 *p) {
 /// Closes every window: first the messages' windows, waiting until they have
 /// closed, then the windows opened directly, which it does not wait for.
 void Window_CloseAll(void) {
-  struct WindowWork *state;
-  struct UiChannelSlot *channel;
-  struct Window *direct;
+  struct WindowWork *work;
+  struct UiChannelSlot *message;
+  struct Window *win;
   u32 done;
-  struct Window *work;
-  struct Window *pollWork;
-  s32 index;
+  struct Window *window;
+  struct Window *pollWindow;
+  s32 i;
 
-  state = WINDOW_WORK;
-  channel = state->channels;
-  direct = state->windows;
-  index = 0;
+  work = WINDOW_WORK;
+  message = work->channels;
+  win = work->windows;
+  i = 0;
   do {
-    work = channel->work;
-    if (work != 0 && work->flags != 0)
-      Window_Close(work, 0);
-    index++;
-    channel++;
-  } while (index != 3);
+    window = message->work;
+    if (window != 0 && window->flags != 0)
+      Window_Close(window, 0);
+    i++;
+    message++;
+  } while (i != ARRAY_COUNT(work->channels));
 
+  // Free each message whose window has closed; while one is still closing,
+  // wait a frame. The zoom's stage and duration are read as one word.
   for (;;) {
     done = 1;
-    channel = state->channels;
-    index = 0;
+    message = work->channels;
+    i = 0;
     do {
-      pollWork = channel->work;
-      if (pollWork != 0) {
-        if ((*(s32 *)&pollWork->zoomStage) == 0) {
-          if (pollWork->flags == 0)
-            channel->work = NULL;
+      pollWindow = message->work;
+      if (pollWindow != 0) {
+        if ((*(s32 *)&pollWindow->zoomStage) == 0) {
+          if (pollWindow->flags == 0)
+            message->work = NULL;
           else
             done = 0;
         } else {
           done = 0;
         }
       }
-      index++;
-      channel++;
-    } while (index != 3);
-    index = 0;
+      i++;
+      message++;
+    } while (i != ARRAY_COUNT(work->channels));
+    i = 0;
     if (done)
       break;
     wait(1);
   }
-  while (index != WINDOW_COUNT) {
-    if (direct->flags != 0)
-      Window_Close(direct, 0);
-    direct++;
-    index++;
+
+  // Then the windows opened directly.
+  while (i != WINDOW_COUNT) {
+    if (win->flags != 0)
+      Window_Close(win, 0);
+    win++;
+    i++;
   }
 }
 
@@ -192,34 +204,35 @@ void Window_ShowFlashFrame(struct Window **window, s32 offset) {
 /// flashes through the flash border's pictures as the countdown runs, the plain
 /// border returns two frames before its end, and the flash tiles are restored
 /// at the end.
-void Window_StepSwellEffect(struct UiChannelSlot *window) {
-  if (window->work->animation == WINDOW_ANIMATION_SWELL) {
-    if (window->countdown == 10)
-      Window_ShowFlashFrame(&window->work, 3 * FLASH_FRAME_BYTES);
-    else if (window->countdown == 9)
-      Window_ShowFlashFrame(&window->work, 2 * FLASH_FRAME_BYTES);
-    else if (window->countdown == 8)
-      Window_ShowFlashFrame(&window->work, 1 * FLASH_FRAME_BYTES);
-    else if (window->countdown == 6)
-      Window_ShowFlashFrame(&window->work, 2 * FLASH_FRAME_BYTES);
-    else if (window->countdown == 4)
-      Window_ShowFlashFrame(&window->work, 3 * FLASH_FRAME_BYTES);
-    if (window->countdown == 2) {
-      struct Window *rect = window->work;
+void Window_StepSwellEffect(struct UiChannelSlot *message) {
+  if (message->work->animation == WINDOW_ANIMATION_SWELL) {
+    if (message->countdown == 10)
+      Window_ShowFlashFrame(&message->work, 3 * FLASH_FRAME_BYTES);
+    else if (message->countdown == 9)
+      Window_ShowFlashFrame(&message->work, 2 * FLASH_FRAME_BYTES);
+    else if (message->countdown == 8)
+      Window_ShowFlashFrame(&message->work, 1 * FLASH_FRAME_BYTES);
+    else if (message->countdown == 6)
+      Window_ShowFlashFrame(&message->work, 2 * FLASH_FRAME_BYTES);
+    else if (message->countdown == 4)
+      Window_ShowFlashFrame(&message->work, 3 * FLASH_FRAME_BYTES);
+    if (message->countdown == 2) {
+      struct Window *window = message->work;
 
-      Window_DrawBorder((s16)rect->x, (s16)rect->y, rect->width, rect->height);
+      Window_DrawBorder((s16)window->x, (s16)window->y, window->width,
+                        window->height);
     }
-    window->countdown--;
-    if (window->countdown == 0) {
+    message->countdown--;
+    if (message->countdown == 0) {
       Dma_Set(Resource_GetTableEntry(RESOURCE_WINDOW_BORDER_FLASH),
               (void *)FLASH_FRAME_TILES, DMA_COPY_WORDS(FLASH_FRAME_BYTES / 4),
               REG_DMA3);
-      window->work->animation = 0;
+      message->work->animation = 0;
     }
   }
 }
 
-/// Clears the eight-entry table of values substituted into messages.
+/// Empties the table of message arguments.
 void MessageArgument_ClearAll(void) {
   s32 no;
   struct WindowWork *work;
@@ -234,8 +247,8 @@ void MessageArgument_ClearAll(void) {
   } while (no != MESSAGE_ARGUMENT_COUNT);
 }
 
-/// Inserts value of type kind in a free entry; does nothing if the table is
-/// full.
+/// Adds a message argument of kind (MESSAGE_ARGUMENT_) with value to the first
+/// free place of the argument table; when all eight are in use it is dropped.
 void MessageArgument_Push(u32 value, u32 kind) {
   struct WindowWork *work = WINDOW_WORK;
   u32 no = 0;
@@ -255,15 +268,15 @@ void MessageArgument_Push(u32 value, u32 kind) {
 /// or 0 when there is none.
 u32 MessageArgument_Lookup(u32 kind, u32 clear) {
   struct WindowWork *work = WINDOW_WORK;
-  u32 index;
+  u32 i;
   u32 value = 0;
 
-  for (index = 0; index < MESSAGE_ARGUMENT_COUNT; index++) {
-    if (work->argumentKinds[index] == kind) {
-      value = work->argumentValues[index];
+  for (i = 0; i < MESSAGE_ARGUMENT_COUNT; i++) {
+    if (work->argumentKinds[i] == kind) {
+      value = work->argumentValues[i];
       if (clear != 0) {
-        work->argumentValues[index] = 0;
-        work->argumentKinds[index] = MESSAGE_ARGUMENT_NONE;
+        work->argumentValues[i] = 0;
+        work->argumentKinds[i] = MESSAGE_ARGUMENT_NONE;
       }
       break;
     }
@@ -271,48 +284,49 @@ u32 MessageArgument_Lookup(u32 kind, u32 clear) {
   return value;
 }
 
-/// Ends a message wait (clearing the channel's countdown and returning 1) when
-/// the window's voice has finished or A, B or a shoulder button is held.
-s32 Text_CheckPauseSkipped(struct UiChannelSlot *ch) {
+/// Ends a message's pause early: when the message waits on a sound that has
+/// finished, or while A, B, L or R is held.
+s32 Text_CheckPauseSkipped(struct UiChannelSlot *message) {
   struct WindowWork *work = WINDOW_WORK;
-  s32 cancel = 0;
+  s32 cancelKeys = 0;
 
   if (work->waitingForSound != 0 && Sound_GetBgmRestoreDelayFar() == 0)
-    cancel = 1;
+    cancelKeys = 1;
   if (gInput.held & (KEY_A | KEY_B | KEYS_SHOULDERS))
-    cancel = 1;
+    cancelKeys = 1;
   if (gInput.held & KEY_B)
-    cancel = 1;
-  if (cancel) {
-    ch->countdown = 0;
+    cancelKeys = 1;
+  if (cancelKeys) {
+    message->countdown = 0;
     return 1;
   }
   return 0;
 }
 
-/// As Text_CheckPauseSkipped, but on newly pressed A, B or shoulder buttons
-/// (the pending presses in a window mode); while B is held the wait ends only
-/// at countdown 1, and otherwise the countdown is set to 2.
-s32 Text_CheckTextDismissed(struct UiChannelSlot *ch) {
+/// As Text_CheckPauseSkipped, but on a newly pressed button (the latched
+/// presses while WindowWork.mindRead is set). While B is held the text also
+/// goes on by itself once the wait's countdown runs down
+/// (gMessageSpeed_HeldPageDelays); while it is up the countdown stays at 2.
+s32 Text_CheckTextDismissed(struct UiChannelSlot *message) {
   struct WindowWork *work = WINDOW_WORK;
-  s32 cancel = 0;
-  u32 keys;
+  s32 cancelKeys = 0;
+  u32 pressedKeys;
 
   if (work->waitingForSound != 0 && Sound_GetBgmRestoreDelayFar() == 0)
-    cancel = 1;
-  keys = gInput.pressed;
+    cancelKeys = 1;
+  pressedKeys = gInput.pressed;
   if (work->mindRead != 0)
-    keys = gInput.pendingPressed;
-  if (keys & (KEY_A | KEY_B | KEYS_SHOULDERS))
-    cancel = 1;
+    pressedKeys = gInput.pendingPressed;
+  if (pressedKeys & (KEY_A | KEY_B | KEYS_SHOULDERS))
+    cancelKeys = 1;
   if (gInput.held & KEY_B) {
-    if (ch->countdown == 1)
-      cancel = 1;
+    if (message->countdown == 1)
+      cancelKeys = 1;
   } else {
-    ch->countdown = 2;
+    message->countdown = 2;
   }
-  if (cancel) {
-    ch->countdown = 0;
+  if (cancelKeys) {
+    message->countdown = 0;
     return 1;
   }
   return 0;
@@ -320,33 +334,28 @@ s32 Text_CheckTextDismissed(struct UiChannelSlot *ch) {
 
 /// Closes each message's window whose text has ended, then waits ten frames.
 void Message_CloseFinishedWindows(void) {
-  s32 slotIndex;
-  struct UiChannelSlot *slot;
-  struct Window *work;
+  s32 i;
+  struct UiChannelSlot *message;
+  struct Window *window;
 
-  slot = WINDOW_WORK->channels;
-  slotIndex = 0;
+  message = WINDOW_WORK->channels;
+  i = 0;
   do {
-    work = slot->work;
+    window = message->work;
     // The zoom's stage and duration are read as one word: both zero.
-    if (work != NULL && *(s32 *)&work->zoomStage == 0 && work->flags != 0 &&
-        work->state != 0) {
-      Window_Close(work, WINDOW_FLAG_INSTANT & work->flags);
+    if (window != NULL && *(s32 *)&window->zoomStage == 0 &&
+        window->flags != 0 && window->state != 0) {
+      Window_Close(window, WINDOW_FLAG_INSTANT & window->flags);
     }
-    slotIndex++;
-    slot++;
-  } while (slotIndex != 3);
+    i++;
+    message++;
+  } while (i != ARRAY_COUNT(WINDOW_WORK->channels));
   wait(10);
 }
 
-s32 Message_Decode(s32 key, s32 mode);
-struct Window *Window_Create(s32 x, s32 y, s32 width, s32 height, s32 attrs);
-s32 Message_AllTyped(void);
-s32 Window_IsClosed(struct Window *window);
-
 /// Shows a message centred across the screen and in its top 15 rows (yOffset
 /// tiles lower) and waits until it is typed out, then closes it, in the window
-/// mode `mode` gives.
+/// mode (CENTERED_MESSAGE_) gives.
 void FieldMessage_ShowCentered(s32 message, s32 mode, s32 yOffset) {
   struct WindowWork *work;
   struct Window *window;
@@ -354,14 +363,14 @@ void FieldMessage_ShowCentered(s32 message, s32 mode, s32 yOffset) {
   s32 y;
   s32 width;
   s32 height;
-  s32 entry;
+  s32 entryIndex;
 
   work = WINDOW_WORK;
   x = 8;
   y = 8;
   window = NULL;
-  entry = Message_Decode(message, 1);
-  if (work->textBuffer[entry] != 0) {
+  entryIndex = Message_Decode(message, 1);
+  if (work->textBuffer[entryIndex] != 0) {
     Text_GetMessageSize(message, &x, &y, (u32 *)&width, (u32 *)&height);
     x = (DISPLAY_TILE_WIDTH - width) >> 1;
     y = ((15 - height) >> 1) + yOffset;
@@ -372,7 +381,7 @@ void FieldMessage_ShowCentered(s32 message, s32 mode, s32 yOffset) {
       window->width = mode;
       window->height = mode;
     }
-    if (Message_Start(window, entry, 0, 0, 0, 0) == 0)
+    if (Message_Start(window, entryIndex, 0, 0, 0, 0) == 0)
       Window_Close(window, 1);
     else {
       while (Message_AllTyped() == 0)
@@ -389,13 +398,10 @@ void FieldMessage_ShowCentered(s32 message, s32 mode, s32 yOffset) {
   }
 }
 
-s32 Message_Decode(s32 message, s32 mode);
-
-/// Decodes message into the text buffer, using up each message argument it
-/// reads, and returns where its text starts there.
+/// Decodes message and empties the argument table; returns where its
+/// decoded text starts. The Djinn and party join messages
+/// (screens_joined.c) use it.
 s32 Message_DecodeMode1(s32 message) { return Message_Decode(message, 1); }
-
-s32 Message_Decode(s32 message, s32 mode);
 
 /// Decodes message after the text decoded last, over its terminator.
 void Message_DecodeAppend(s32 message) {
@@ -439,8 +445,6 @@ void Text_PlotGlyphRows(u16 *rows, u8 *dst, s32 color) {
     dst += CRAWL_CANVAS_WIDTH;
   }
 }
-
-void Text_PlotGlyphRows(u16 *rows, u8 *dst, s32 color);
 
 #if (LANGUAGE == LANGUAGE_JAPANESE)
 
@@ -498,9 +502,6 @@ s32 Text_DrawGlyphToCanvas(u8 *canvas, s32 ch, s32 x, s32 row) {
   return width;
 }
 #endif
-
-s32 Message_Decode(s32 message, s32 mode);
-void Text_ResetStyle(void);
 
 /// Draws message centred in a 192-pixel canvas of one byte a pixel, as the
 /// story crawl draws its lines. A line of dashes draws nothing and returns how
@@ -601,10 +602,6 @@ void Message_Find(struct TextReader *reader, s32 message) {
 
 extern const void *const Text_MessageContexts[][2];
 
-/// Set above a refilled byte's remaining bits: a bit buffer that has shifted
-/// down to it is empty.
-#define BIT_BUFFER_MARKER 0x80
-
 /// Decodes the next symbol of a message. Messages are Huffman coded with one
 /// tree per previous symbol: the previous code picks the tree, the message's
 /// bits walk it to a leaf, and the leaf's 12-bit symbol is returned and
@@ -634,7 +631,7 @@ UNUSED s32 Text_DecodeSymbolInC(struct TextReader *reader) {
   // tree runs forwards from base; its leaves' symbols run backwards from
   // base - 1.
   contextBank = code >> 8;
-  code &= 0xff;
+  code &= SYMBOL_TREE_MASK;
   base = Text_MessageContexts[contextBank][0];
   base += ((const u16 *)Text_MessageContexts[contextBank][1])[code];
   tree = base;
@@ -642,7 +639,7 @@ UNUSED s32 Text_DecodeSymbolInC(struct TextReader *reader) {
   rank = 0;
   // The tree is its shape in preorder, a bit a node: 0 a branch, 1 a leaf.
   // Bits are read from each byte's lowest up; a buffer that has shifted down
-  // to its marker bit (BIT_BUFFER_MARKER) is empty.
+  // to its stop bit (BIT_STREAM_STOP) is empty.
   // A text bit of 0 takes the left branch; 1 skips the left subtree,
   // counting its leaves in rank, and takes the right.
   for (;;) {
@@ -651,7 +648,7 @@ UNUSED s32 Text_DecodeSymbolInC(struct TextReader *reader) {
     if (bit != 0 && treeBits == 0) {
       treeBits = *tree++;
       bit = treeBits & 1;
-      treeBits = (treeBits >> 1) | BIT_BUFFER_MARKER;
+      treeBits = (treeBits >> 1) | BIT_STREAM_STOP;
     }
     if (bit != 0)
       break;
@@ -660,7 +657,7 @@ UNUSED s32 Text_DecodeSymbolInC(struct TextReader *reader) {
     if (bit != 0 && textBits == 0) {
       textBits = *text++;
       bit = textBits & 1;
-      textBits = (textBits >> 1) | BIT_BUFFER_MARKER;
+      textBits = (textBits >> 1) | BIT_STREAM_STOP;
     }
     if (bit == 0)
       continue;
@@ -671,7 +668,7 @@ UNUSED s32 Text_DecodeSymbolInC(struct TextReader *reader) {
       if (bit != 0 && treeBits == 0) {
         treeBits = *tree++;
         bit = treeBits & 1;
-        treeBits = (treeBits >> 1) | BIT_BUFFER_MARKER;
+        treeBits = (treeBits >> 1) | BIT_STREAM_STOP;
       }
       if (bit == 0)
         depth++;
@@ -704,8 +701,6 @@ UNUSED s32 Text_DecodeSymbolInC(struct TextReader *reader) {
 extern const s16 gPortrait_CharacterMap[];
 extern const s16 gPortrait_SpriteMap[];
 
-struct Window *Window_Create(s32 x, s32 y, s32 width, s32 height, s32 flags);
-
 /// Marks both portrait slots free (resource 999). Only the window system's
 /// setup calls it.
 void Portrait_ClearSlots(void) {
@@ -715,7 +710,7 @@ void Portrait_ClearSlots(void) {
   do {
     work->portraitPictures[index] = PORTRAIT_SLOT_EMPTY;
     index++;
-  } while (index != 2);
+  } while (index != ARRAY_COUNT(work->portraitPictures));
 }
 
 /// A speaker below this is a character, found in gPortrait_CharacterMap; one
@@ -727,7 +722,7 @@ void Portrait_ClearSlots(void) {
 /// PORTRAIT_FIRST_SPRITE_PORTRAIT for those), or -1 when it has none.
 s32 Portrait_GetForSpeaker(u32 value) {
   s32 result = -1;
-  s32 i = 0;
+  s32 portraitIndex = 0;
 
   // The party members' small sprites speak as the party members.
   switch (value) {
@@ -759,30 +754,30 @@ s32 Portrait_GetForSpeaker(u32 value) {
   // Both maps are {speaker, portrait} pairs ending in -1.
   if (value < PORTRAIT_FIRST_SPRITE_SPEAKER) {
     for (;;) {
-      s32 key = gPortrait_CharacterMap[i];
+      s32 speakerId = gPortrait_CharacterMap[portraitIndex];
 
-      if (key == -1)
+      if (speakerId == -1)
         break;
-      if (key == value) {
-        i++;
-        result = gPortrait_CharacterMap[i];
+      if (speakerId == value) {
+        portraitIndex++;
+        result = gPortrait_CharacterMap[portraitIndex];
         break;
       }
-      i += 2;
+      portraitIndex += 2;
     }
   } else {
     for (;;) {
-      s32 key = gPortrait_SpriteMap[i];
+      s32 speakerId = gPortrait_SpriteMap[portraitIndex];
 
-      if (key == -1)
+      if (speakerId == -1)
         break;
-      if (key == value) {
-        i++;
-        result = gPortrait_SpriteMap[i];
+      if (speakerId == value) {
+        portraitIndex++;
+        result = gPortrait_SpriteMap[portraitIndex];
         result += PORTRAIT_FIRST_SPRITE_PORTRAIT;
         break;
       }
-      i += 2;
+      portraitIndex += 2;
     }
   }
   return result;
@@ -793,59 +788,67 @@ s32 Portrait_GetForSpeaker(u32 value) {
 /// which ignores it.
 struct Window *Portrait_OpenWindow(s32 speaker, s32 portraitOption, s32 x,
                                    s32 y) {
-  struct Window *win;
-  s32 minusFour;
-  s32 offset;
+  struct Window *window;
+  s32 portraitY;
+  s32 portraitX;
   struct WindowWork *work;
 
   work = WINDOW_WORK;
   if (Portrait_GetForSpeaker(speaker) == -1) {
     return 0;
   }
-  minusFour = -4;
-  offset = minusFour;
+  portraitY = -4;
+  portraitX = portraitY;
   if (work->mindRead != 0) {
-    win = Window_Create(x, y, 6, 5, WINDOW_FLAG_INSTANT);
-    offset = 0;
+    window = Window_Create(x, y, 6, 5, WINDOW_FLAG_INSTANT);
+    portraitX = 0;
   } else {
-    win = Window_Create(x, y, 5, 5, WINDOW_FLAG_INSTANT);
+    window = Window_Create(x, y, 5, 5, WINDOW_FLAG_INSTANT);
   }
-  if (win != 0) {
-    Portrait_Create(speaker, portraitOption, -1, win, offset, minusFour);
+  if (window != 0) {
+    Portrait_Create(speaker, portraitOption, -1, window, portraitX, portraitY);
   }
-  return win;
+  return window;
 }
 
 /// Closes the portrait window showing speaker entry, if one is open, at once.
 /// portraitPictures selects the portrait slot, then portraitSprites identifies
 /// its window sprite, found as the first sprite of some window.
-void Portrait_CloseWindow(s32 id) {
+void Portrait_CloseWindow(s32 speaker) {
   struct WindowWork *state;
-  struct Window *work;
-  s32 index;
-  s32 i;
-  struct WindowSprite *entity;
+  struct Window *window;
+  s32 resourceId;
+  s32 portraitSlot;
+  s32 windowIndex;
+  struct WindowSprite *portraitSprite;
 
   state = WINDOW_WORK;
-  work = state->windows;
-  id = Portrait_GetForSpeaker(id);
-  if (id == -1)
+  window = state->windows;
+  resourceId = Portrait_GetForSpeaker(speaker);
+  if (resourceId == -1)
     return;
 
-  if (state->portraitPictures[1] == id) {
-    index = 1;
-  } else if (state->portraitPictures[0] == id) {
-    index = 0;
+  if (state->portraitPictures[1] == resourceId) {
+    portraitSlot = 1;
+  } else if (state->portraitPictures[0] == resourceId) {
+    portraitSlot = 0;
   } else {
     return;
   }
 
-  id = state->portraitSprites[index];
+  resourceId = state->portraitSprites[portraitSlot];
 
-  for (i = 0; i != WINDOW_COUNT; i++, work++) {
-    entity = work->sprites.head;
-    if ((u8)entity->kind == WINDOW_SPRITE_PORTRAIT && (u8)entity->index == id) {
-      Window_Close(work, 2);
+  for (windowIndex = 0; windowIndex != WINDOW_COUNT; windowIndex++, window++) {
+    portraitSprite = window->sprites.head;
+#ifdef UBFIX
+    // Window_Create and the closing update leave empty heads NULL. Skip them
+    // before reading kind: dereferencing that NULL pointer is undefined.
+    if (portraitSprite == NULL)
+      continue;
+#endif
+    if ((u8)portraitSprite->kind == WINDOW_SPRITE_PORTRAIT &&
+        (u8)portraitSprite->index == resourceId) {
+      Window_Close(window, WINDOW_FLAG_INSTANT);
       return;
     }
   }
@@ -853,4 +856,6 @@ void Portrait_CloseWindow(s32 id) {
 
 #undef DECODE_EUROPEAN
 #undef PLOT_GLYPH_ROWS
-#undef BIT_BUFFER_MARKER
+#undef SYMBOL_TREE_MASK
+#undef BIT_STREAM_STOP
+#undef MESSAGE_CAPACITY_UNLIMITED

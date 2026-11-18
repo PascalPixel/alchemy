@@ -282,10 +282,10 @@ typedef void (*BlitFunc)(void *, const void *, s32, s32, s32, s32);
 #define DAEDALUS_GLOW_START 542
 #define DAEDALUS_GLOW_END 558
 
-/// The machine sways round a circle of DAEDALUS_SWAY pixels, a turn every 256
-/// frames, rising and never sinking below its place, until DAEDALUS_SWAY_STOP.
-/// It lurches as its core glows and again as it fires, each lurch half a turn
-/// of a sine over 16 frames.
+/// Until DAEDALUS_SWAY_STOP the machine's legs swing DAEDALUS_SWAY pixels to
+/// and fro, opposite ways, once every 256 frames, and it bobs up twice a swing,
+/// never below its place. It lurches as its core glows and again as it fires,
+/// each lurch half a turn of a sine over 16 frames.
 #define DAEDALUS_SWAY 4
 #define DAEDALUS_SWAY_STEP (TRIG_TURN / 256)
 #define DAEDALUS_SWAY_STOP 538
@@ -298,7 +298,7 @@ typedef void (*BlitFunc)(void *, const void *, s32, s32, s32, s32);
 
 /// The rocket: where it rests in the machine and leaves from, how far its
 /// nozzle is from its middle, the pull of its flight, from which frame of it
-/// the rocket draws ahead of the camera, and its scale, a little over one so
+/// the camera would let it draw ahead, and its scale, a little over one so
 /// that it turns in a sprite box twice its size and keeps its fins.
 #define DAEDALUS_ROCKET_X 152
 #define DAEDALUS_ROCKET_Y 92
@@ -409,12 +409,12 @@ typedef void (*BlitFunc)(void *, const void *, s32, s32, s32, s32);
 #define DAEDALUS_RING_MOTION 30
 #define DAEDALUS_MISSILE_MOTIONS 32
 
-/// Daedalus: the battle flashes away to a violet sky over a forest. In the sky
-/// scene the bronze machine climbs into view among birds, throws off the cover
-/// of its missiles and its blade as the sixteen missiles fly, sheds its hull
-/// plates, and its core glows until it sends out a ring of fire and launches
-/// its rocket; A or B skips the scene. Then the battle comes back and the
-/// missiles dive onto the foes in bursts of fire. Its second strike
+/// Daedalus: the battle flashes away to a cloudy blue sky over a forest. In the
+/// sky scene the bronze machine climbs into view among birds, throws off the
+/// cover of its missiles and its blade as the sixteen missiles fly, sheds its
+/// hull plates, and its core glows until it sends out a ring of fire and
+/// launches its rocket; A or B skips the scene. Then the battle comes back and
+/// the missiles dive onto the foes in bursts of fire. Its second strike
 /// (BattleEffect_RunDaedalusStrike) comes at the end of the next turn.
 ///
 /// Abilities: Daedalus.
@@ -1113,8 +1113,11 @@ void BattleEffect_RunDaedalus(struct BattleEffectParams *args) {
             struct Particle *f;
 
             // The camera follows the rocket, keeping it where it left the
-            // machine, until it draws ahead two pixels a frame.
+            // machine.
             f = &work->particles[DAEDALUS_ROCKET_MOTION];
+            // DEAD: the lead of two pixels a frame from ROCKET_LEAD_START,
+            // which is 0 on the one frame that reaches it, the sky scene's
+            // last; the ROM keeps its test and its sum.
             if (f->variant >= ROCKET_LEAD_START)
               camera +=
                   (toFIXED(DAEDALUS_ROCKET_X) -

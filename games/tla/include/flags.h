@@ -1160,8 +1160,9 @@
 /// (WorldMap_ShowGoldenBoots), cleared as they are picked up.
 #define FLAG_GOLDEN_BOOTS_ON_MAP 0xa77
 /// Unused: nothing sets it but the debug flag editor. In the Japanese release,
-/// set, Text_MeasureDecoded keeps each line's character count, by which the
-/// line is spread across its window; clear, it reads what the stack held.
+/// while it is set, every line of a message but its last is spread across the
+/// window (Text_MeasureDecoded keeps each line's character count); clear, the
+/// count is read from what the stack held.
 #define FLAG_SPREAD_LINES 0xc00
 
 #endif

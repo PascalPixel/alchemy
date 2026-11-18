@@ -5,7 +5,6 @@
 #include "screens_internal.h"
 
 #define COUNTDOWN_START_FRAMES 900 ///< 15 seconds
-#define FRAMES_PER_SECOND 60
 
 /// The partner console's link signature (gLinkPeerSignatures) as the timer
 /// reads it: halfwords 4 to 7 read "EDVS" once the partner has chosen its

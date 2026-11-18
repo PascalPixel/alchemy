@@ -323,9 +323,13 @@ s32 MapCell_Swap(u32 layer, s32 x, s32 y, s32 value) {
 void MapGrid_SetCellHeight();
 void Teleport_PlayWhirl(void);
 void Teleport_PlaySparks(void);
-/// Set while a whirlwind carries the leader, in the rooms that have one (the
-/// Jupiter Lighthouse rooms and Room F); this room has none, and its set-up's
-/// clear is all that touches it.
+/// Set while a whirlwind carries the leader in the two Jupiter Lighthouse rooms
+/// that raise one (jupiter_lighthouse_room_m.c and
+/// jupiter_lighthouse_room_phaetons_blade_chest.c); shared/whirlwind_update.h
+/// clears it as the ride ends. The rooms of this overlay have no whirlwind,
+/// and only Scene_Initialize's clear touches the word here: in the linked
+/// overlay (objdump -D of out/tla-en/overlays/resource_6aa.elf, and tla-ja's)
+/// its address is loaded once, from that clear's literal pool.
 s32 gWhirlwindRiding BSS_DATA;
 u16 gPaletteCycleBright BSS_DATA;
 u16 *gPaletteCycleSlots BSS_DATA;

@@ -219,8 +219,13 @@ enum YampiDesertScorpionActorId {
   ACTOR_KING_SCORPION_ROOM_KING_SCORPION = STAKE(13),
   ACTOR_KING_SCORPION_ROOM_SAND_RIPPLE,
   // In a render of the room's north end with the King Scorpion cornered there
-  // (entrance 4, FLAG_YAMPI_DESERT_SCORPION_CORNERED set), the scorpion, its
-  // sand ripple and the thirteen stakes are on stage, and this boulder is not.
+  // (render probe --only scene --scene YampiDesertKingScorpion --entrance 4
+  // --set 0x889 --set 0x88a --set 0x88b --edition tla-en: entrance 4, with
+  // FLAG_YAMPI_DESERT_SCORPION_STIRRED,
+  // FLAG_YAMPI_DESERT_SCORPION_STIRRED_AGAIN and
+  // FLAG_YAMPI_DESERT_SCORPION_CORNERED set, as the game sets them in turn),
+  // the scorpion, its sand ripple and the thirteen stakes are on stage, and
+  // this boulder is not.
   /// Unused: a brown boulder placed at the origin, which nothing moves, so it
   /// is never on stage.
   ACTOR_KING_SCORPION_ROOM_BOULDER
@@ -243,11 +248,15 @@ enum YampiDesertTrainersWhipChestActorId {
 /// Scorpion is fought.
 enum YampiDesertScorpionPitActorId {
   ACTOR_KING_SCORPION = ACTOR_FIRST_PLACED,
-  // In a render of the room once the pit is dug
-  // (FLAG_YAMPI_DESERT_ROCK_PIT_DUG_UP set), it stands at (232, 200) in the
-  // middle of the pit, and the photo differs from one before the dig only in
-  // the pit's nine cells: nothing of it shows. YampiDesert_SetUpScorpionPit's
-  // Geyser_Add raises the geyser from it.
+  // In a render of the room once the pit is dug (render probe --only scene
+  // --scene YampiDesertScorpionPit --entrance 0 --set 0x8ed --edition tla-en,
+  // FLAG_YAMPI_DESERT_ROCK_PIT_DUG_UP set), it stands at (232, 200) in the
+  // middle of the pit, where the photo differs from one before the dig only in
+  // the pit's nine cells, its own among them. Nothing of it is drawn:
+  // SPRITE_UNSEEN_MARKER draws BLANK's picture (graphics/sprite/pictures.tsv),
+  // which is all transparent, and YampiDesert_SetUpScorpionPit's Geyser_Add,
+  // which raises the geyser from it, clears its shadow
+  // (Actor_SetSpriteFlags(actor, 0)).
   /// The unseen point the geyser rises from, moved between the four
   /// rocks once Scoop has dug the pit there.
   ACTOR_GEYSER

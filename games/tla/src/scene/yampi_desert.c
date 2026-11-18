@@ -2419,7 +2419,8 @@ struct GeyserWork {
   void *block;
 };
 
-#define GEYSER_WORK ((struct GeyserWork *)(gInventorySnapshot + 392))
+#define GEYSER_WORK                                                            \
+  ((struct GeyserWork *)(gInventorySnapshot + INVENTORY_SNAPSHOT_SPARE))
 
 void Geyser_Start(s32 unused, s32 firstTerrain);
 struct Geyser *Geyser_Add(s32 slot, s32 id, s32 timer, s32 minHeight,

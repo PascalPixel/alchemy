@@ -202,7 +202,8 @@ struct GeyserWork {
   void *block;
 };
 
-#define GEYSER_WORK ((struct GeyserWork *)(gInventorySnapshot + 392))
+#define GEYSER_WORK                                                            \
+  ((struct GeyserWork *)(gInventorySnapshot + INVENTORY_SNAPSHOT_SPARE))
 
 void GondowanCliffs_FreezeSecondPuddle(void);
 void GondowanCliffs_BlowAwayFoliage(void);

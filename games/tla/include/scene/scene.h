@@ -495,6 +495,10 @@ extern const u8 gField_GeyserTiles[];
 /// The terrain id and collision slot of the first geyser: the geysers take the
 /// last GEYSER_ENTRIES of the 256 terrain ids.
 #define GEYSER_FIRST_TERRAIN (256 - GEYSER_ENTRIES)
+/// The geysers' work (each scene's struct GeyserWork), kept in the inventory
+/// snapshot's spare space.
+#define GEYSER_WORK                                                            \
+  ((struct GeyserWork *)(gInventorySnapshot + INVENTORY_SNAPSHOT_SPARE))
 
 /// See gField_CachedTilesA (graphics/field/cached_b.png).
 extern u8 gField_CachedTilesB[];
@@ -502,7 +506,14 @@ extern u8 gField_CachedTilesB[];
 /// See gField_CachedTilesA (graphics/field/cached_c.png).
 extern u8 gField_CachedTilesC[];
 
-// The cell stampers keep their last cell and the block they copy.
+/// The cell stampers of Air's Rock's and Magma Rock's insides keep the last
+/// cell they stamped under the leader in one word, x in the high half and z in
+/// the low (AirsRockInside_StampCellUnderLeader,
+/// MagmaRockInside_StampStepCell): the word for cell (x, z), and the x and z a
+/// word holds.
+#define CELL_KEY(x, z) (((x) << 16) + (z))
+#define CELL_KEY_X(key) ((key) >> 16)
+#define CELL_KEY_Z(key) ((key) & 0xffff)
 
 void LineScroll_InitWave(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f, s32 g);
 
@@ -545,6 +556,11 @@ struct Window;
 /// colour and how many.
 #define FIRST_WATER_COLOR 12
 #define WATER_COLORS 4
+
+/// The frames a puff of smoke from a chimney or a cooking fire rises and
+/// swells before it is released: Prox's, Kalt Island's (the Settlements),
+/// Shaman Village's and Kibombo's, each scene's own copy of the same drift.
+#define SMOKE_FRAMES 60
 
 /// The vents of Aqua Rock and Taopo Swamp (struct VentWork, shared/vent_*.h):
 /// the most vents a room has, and the most actors besides the leader their

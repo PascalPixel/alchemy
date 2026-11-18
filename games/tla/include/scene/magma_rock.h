@@ -17,6 +17,11 @@ enum MagmaRockFireStopCell {
   MAGMA_ROCK_CELL_LAVA_FALL = 222
 };
 
+/// Set while a statue's fire bursts where it lands, so that Burst there does
+/// not target the statue again (MagmaRock_FireFromStatue,
+/// MagmaRockInside_FireFromStatue).
+#define FLAG_FIRE_BURST_PLAYING FLAG_SCENE_TEMP_F0
+
 /// A crumbling pillar of Magma Rock (MagmaRock_CrumblePillar): its actor and
 /// its flag.
 struct MagmaRockCrumblingPillar {

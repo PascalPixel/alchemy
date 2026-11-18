@@ -1279,8 +1279,8 @@ void Islets_SetDeckBlocksByHeight(void) {
   }
 }
 
-/// The bytes before the wave lines, which the ROM starts on 16 bytes; the
-/// Japanese release's code ends 4 bytes short of where the others' does.
+/// Unused: the bytes between gIslets_WaveTableIndex and the wave lines, which
+/// nothing reads; the editions after the Japanese one leave four more.
 #if TLA_PATCH_1
 #define WAVE_LINES_PADDING 11
 #else
@@ -2567,7 +2567,6 @@ void Islets_BirdReturnsToNest(void);
 void Islets_FinishPushingCrate(void);
 void Islets_EnterDoor(void);
 
-// clang-format off
 struct ActionScript gIslets_SpinScript = {{
     SC_ADD(SW_FACING, FACING_STEP),
     SC_WAIT(1),
@@ -2575,25 +2574,25 @@ struct ActionScript gIslets_SpinScript = {{
     SC_END,
 }};
 
-s32 gIslets_EnterDoorScript[] = {                                                               
-      SC_SET(SW_MOTION, 0),                                                    
-      SC_ADD(SW_Z, toFIXED(-0.5)),                                                   
-      SC_ADD(SW_SCALE_X, -FIXED_ONE / 64),                                               
-      SC_ADD(SW_SCALE_Y, -FIXED_ONE / 64),                                               
-      SC_WAIT(1),                                                              
-      SC_LOOP(24, SC_TOP),                                                     
-      SC_END,                                                                  
-  };
+s32 gIslets_EnterDoorScript[] = {
+    SC_SET(SW_MOTION, 0),
+    SC_ADD(SW_Z, toFIXED(-0.5)),
+    SC_ADD(SW_SCALE_X, -FIXED_ONE / 64),
+    SC_ADD(SW_SCALE_Y, -FIXED_ONE / 64),
+    SC_WAIT(1),
+    SC_LOOP(24, SC_TOP),
+    SC_END,
+};
 
 u16 gPushKinds[PUSH_KINDS] = {
-    SPRITE_LOG_WEST_EAST, SPRITE_LOG_NORTH_SOUTH,
-    SPRITE_PIPE_WEST_EAST, SPRITE_PIPE_NORTH_SOUTH,
+    SPRITE_LOG_WEST_EAST,           SPRITE_LOG_NORTH_SOUTH,
+    SPRITE_PIPE_WEST_EAST,          SPRITE_PIPE_NORTH_SOUTH,
     SPRITE_FALLEN_COLUMN_WEST_EAST, SPRITE_FALLEN_COLUMN_NORTH_SOUTH,
 };
 
 s8 gPushFootprints[][4] = {
-    {-32, -8, 32, 8}, {-8, -32, 8, 32}, {-32, -16, 32, 0}, {-8, -32, 8, 32},
-    {-32, -8, 32, 8}, {-8, -32, 8, 32},
+    {-32, -8, 32, 8}, {-8, -32, 8, 32}, {-32, -16, 32, 0},
+    {-8, -32, 8, 32}, {-32, -8, 32, 8}, {-8, -32, 8, 32},
 };
 
 #include "shared/push_leader_steps.c"
@@ -2607,21 +2606,21 @@ u32 gIslets_EastTundariaWalkScript[] = {
     SC_ACCELERATION(0.4),
 #endif
     SC_SPEED(0.4),
-    SC_ANIMATION(2),
+    SC_ANIMATION(ANIM_WALK),
     SC_MOVE(376, 0, 216),
     SC_SYNC,
     SC_MOVE(392, 0, 224),
     SC_SYNC,
-    SC_ANIMATION(1),
+    SC_ANIMATION(ANIM_STAND),
     SC_WAIT(1),
     SC_SET(SW_FACING, FACING_SOUTH_SOUTHEAST),
     SC_WAIT(80),
-    SC_ANIMATION(2),
+    SC_ANIMATION(ANIM_WALK),
     SC_MOVE(376, 0, 216),
     SC_SYNC,
     SC_MOVE(376, 0, 184),
     SC_SYNC,
-    SC_ANIMATION(1),
+    SC_ANIMATION(ANIM_STAND),
     SC_WAIT(40),
     SC_LOOP(SC_FOREVER, SC_TOP),
 };
@@ -2654,20 +2653,10 @@ u32 gIslets_BirdCirclesScript[] = {
 /// A loop round the snow that Pengus and Pengulina both waddle, Pengus the
 /// faster, so that he chases her.
 u32 gIslets_PengusChasesPengulinaScript[] = {
-    SC_ANIMATION(2),
-    SC_MOVE(234, 0, 240),
-    SC_SYNC,
-    SC_MOVE(276, 0, 222),
-    SC_SYNC,
-    SC_MOVE(308, 0, 256),
-    SC_SYNC,
-    SC_MOVE(252, 0, 256),
-    SC_SYNC,
-    SC_MOVE(264, 0, 208),
-    SC_SYNC,
-    SC_MOVE(232, 0, 184),
-    SC_SYNC,
-    SC_LOOP(SC_FOREVER, SC_TOP),
+    SC_ANIMATION(2), SC_MOVE(234, 0, 240),        SC_SYNC, SC_MOVE(276, 0, 222),
+    SC_SYNC,         SC_MOVE(308, 0, 256),        SC_SYNC, SC_MOVE(252, 0, 256),
+    SC_SYNC,         SC_MOVE(264, 0, 208),        SC_SYNC, SC_MOVE(232, 0, 184),
+    SC_SYNC,         SC_LOOP(SC_FOREVER, SC_TOP),
 };
 
 s32 gIslets_DogHopsFacingWestScript[] = {
@@ -2735,50 +2724,34 @@ u32 gIslets_WadingSplashScript[] = {
     SC_RELEASE,
 };
 
-u32 gIslets_GeorgeSwimsToSecretSpotScript[] = {                                                               
-      SC_MOVE(248, 0, 686),                                     
-      SC_SYNC,                                                                 
-      SC_MOVE(248, 0, 768),                                     
-      SC_SYNC,                                                                 
-      SC_MOVE(152, 0, 768),                                      
-      SC_SYNC,                                                                 
-      SC_SET(SW_RISE_ENABLED, 1),                                                   
-      SC_END,                                                                  
-  };
+u32 gIslets_GeorgeSwimsToSecretSpotScript[] = {
+    SC_MOVE(248, 0, 686), SC_SYNC, SC_MOVE(248, 0, 768),       SC_SYNC,
+    SC_MOVE(152, 0, 768), SC_SYNC, SC_SET(SW_RISE_ENABLED, 1), SC_END,
+};
 
-u32 gIslets_LilTurtleSwimsToSecretSpotScript[] = {                                                               
-      SC_ANIMATION(2), SC_MOVE(248, 0, 686),                           
-      SC_SYNC,   SC_MOVE(248, 0, 768),                           
-      SC_SYNC,   SC_MOVE(176, 0, 777),                           
-      SC_SYNC,   SC_ANIMATION(1),                                                    
-      SC_END,                                                                  
-  };
+u32 gIslets_LilTurtleSwimsToSecretSpotScript[] = {
+    SC_ANIMATION(2), SC_MOVE(248, 0, 686), SC_SYNC, SC_MOVE(248, 0, 768),
+    SC_SYNC,         SC_MOVE(176, 0, 777), SC_SYNC, SC_ANIMATION(1),
+    SC_END,
+};
 
-u32 gIslets_GeorgeSwimsBackScript[] = {                                                               
-      SC_MOVE(248, 0, 768),                                     
-      SC_SYNC,                                                                 
-      SC_MOVE(248, 0, 686),                                     
-      SC_SYNC,                                                                 
-      SC_MOVE(248, 0, 584),                                      
-      SC_SYNC,                                                                 
-      SC_SET(SW_RISE_ENABLED, 1),                                                   
-      SC_END,                                                                  
-  };
+u32 gIslets_GeorgeSwimsBackScript[] = {
+    SC_MOVE(248, 0, 768), SC_SYNC, SC_MOVE(248, 0, 686),       SC_SYNC,
+    SC_MOVE(248, 0, 584), SC_SYNC, SC_SET(SW_RISE_ENABLED, 1), SC_END,
+};
 
-u32 gIslets_LilTurtleSwimsBackScript[] = {                                                               
-      SC_ANIMATION(2), SC_MOVE(248, 0, 768),                           
-      SC_SYNC,   SC_MOVE(248, 0, 686),                           
-      SC_SYNC,   SC_MOVE(240, 0, 600),                           
-      SC_SYNC,   SC_ANIMATION(1),                                                    
-      SC_END,                                                                  
-  };
+u32 gIslets_LilTurtleSwimsBackScript[] = {
+    SC_ANIMATION(2), SC_MOVE(248, 0, 768), SC_SYNC, SC_MOVE(248, 0, 686),
+    SC_SYNC,         SC_MOVE(240, 0, 600), SC_SYNC, SC_ANIMATION(1),
+    SC_END,
+};
 
 /// The sailor's other son pacing West Indra Islet's dock, east and back.
 u32 gIslets_PacingSonScript[] = {
-    SC_ANIMATION(2),
+    SC_ANIMATION(ANIM_WALK),
     SC_MOVE(184, 0, 936),
     SC_SYNC,
-    SC_ANIMATION(1),
+    SC_ANIMATION(ANIM_STAND),
 #ifdef BUGFIX
     SC_WAIT(80),
 #else
@@ -2788,17 +2761,16 @@ u32 gIslets_PacingSonScript[] = {
     SC_SYNC,
     80,
 #endif
-    SC_ANIMATION(2),
+    SC_ANIMATION(ANIM_WALK),
     SC_MOVE(88, 0, 936),
     SC_SYNC,
-    SC_ANIMATION(1),
+    SC_ANIMATION(ANIM_STAND),
     SC_WAIT(80),
     SC_LOOP(SC_FOREVER, SC_TOP),
 };
 
 u16 gIslets_DoorFrames[] = {
-    92, 10, 1, 2, 6, 92, 8, 1,
-    2, 6, -1,
+    92, 10, 1, 2, 6, 92, 8, 1, 2, 6, -1,
 };
 
 u16 gIslets_NoDoorFrames[] = {
@@ -2815,6 +2787,7 @@ struct SceneEntrance gSceneEntrances[] = {
     {SCENE_TABLE_END},
 };
 
+// clang-format off
 u32 gSceneExits[] = {
     SCENE_EXITS(WestIndraIslet),
     SCENE_EXIT(WEST_INDRA_ISLET_TO_WORLD_MAP, WorldMap, WORLD_MAP_FROM_WEST_INDRA_ISLET),

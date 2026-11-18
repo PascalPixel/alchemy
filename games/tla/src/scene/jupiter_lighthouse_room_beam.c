@@ -53,7 +53,7 @@
 #include "fixed_math.h"
 
 /// The energy block lies in its gap, lighting the path.
-#define FLAG_ENERGY_BLOCK_IN_GAP 0xa02
+#define FLAG_BEAM_ROOM_ENERGY_BLOCK_IN_GAP 0xa02
 /// The fifth grey block, Moved onto the empty socket, has risen to hover over
 /// it.
 #define FLAG_BEAM_ROOM_SOCKET_BLOCK_RAISED 0xa03
@@ -75,12 +75,13 @@ enum JupiterLighthouseRoomBeamActorId {
   ACTOR_ENERGY_BLOCK
 };
 
-/// The gap at the head of the path below the east ledge.
-#define ENERGY_BLOCK_GAP_CELL_X 20
-#define ENERGY_BLOCK_GAP_CELL_Z 39
+/// The gap at the head of the path below the east ledge, which the energy block
+/// fills.
+#define BEAM_ROOM_GAP_CELL_X 20
+#define BEAM_ROOM_GAP_CELL_Z 39
 /// The empty socket at the east end of the grey blocks' row.
-#define EMPTY_SOCKET_CELL_X 18
-#define EMPTY_SOCKET_CELL_Z 6
+#define BEAM_ROOM_EMPTY_SOCKET_CELL_X 18
+#define BEAM_ROOM_EMPTY_SOCKET_CELL_Z 6
 /// The room's own cell behaviors.
 enum JupiterLighthouseRoomBeamCellBehavior {
   /// The beam floor's east doorway, whose cell answers exit 4 (to the north
@@ -416,8 +417,8 @@ void JupiterLighthouse_DropEnergyBlock(s32 unused, s32 id) {
   Actor_Get(id)->priorityFlags |= ACTOR_PRIORITY_AUTOMATIC;
   party = &gMainRoutineWork;
   Actor_Get(party->leaderActorId)->priorityFlags |= ACTOR_PRIORITY_AUTOMATIC;
-  if (FIELD_CELL(actor->x.fixed) == ENERGY_BLOCK_GAP_CELL_X &&
-      FIELD_CELL(actor->z.fixed) == ENERGY_BLOCK_GAP_CELL_Z)
+  if (FIELD_CELL(actor->x.fixed) == BEAM_ROOM_GAP_CELL_X &&
+      FIELD_CELL(actor->z.fixed) == BEAM_ROOM_GAP_CELL_Z)
     FieldActor_SetSpritePriority(id, 3);
   if (actor->groundHeight !=
       Map_GetTerrainHeight(actor->layer, actor->x.fixed, actor->z.fixed)) {
@@ -428,18 +429,18 @@ void JupiterLighthouse_DropEnergyBlock(s32 unused, s32 id) {
       System_Wait(1);
     Event_PlaySound(SE_THUMP);
   }
-  if (FIELD_CELL(actor->x.fixed) == ENERGY_BLOCK_GAP_CELL_X &&
-      FIELD_CELL(actor->z.fixed) == ENERGY_BLOCK_GAP_CELL_Z) {
-    Event_SetFlag(FLAG_ENERGY_BLOCK_IN_GAP);
+  if (FIELD_CELL(actor->x.fixed) == BEAM_ROOM_GAP_CELL_X &&
+      FIELD_CELL(actor->z.fixed) == BEAM_ROOM_GAP_CELL_Z) {
+    Event_SetFlag(FLAG_BEAM_ROOM_ENERGY_BLOCK_IN_GAP);
     Actor_SetSpriteFlags(Actor_Get(id), 0);
     FieldActor_SetSpritePriority(id, 3);
     Actor_SetPosition(id, 0, 0);
     // The filled gap from just past the room's east edge, then the lit path
     // down from it on the middle layer (from column 64), to the Hover pad.
-    MapGrid_CopyCellAttributes(28, 39, 1, 1, ENERGY_BLOCK_GAP_CELL_X,
-                               ENERGY_BLOCK_GAP_CELL_Z);
-    MapGrid_CopyCellsLayered(28, 39, 1, 1, ENERGY_BLOCK_GAP_CELL_X,
-                             ENERGY_BLOCK_GAP_CELL_Z);
+    MapGrid_CopyCellAttributes(28, 39, 1, 1, BEAM_ROOM_GAP_CELL_X,
+                               BEAM_ROOM_GAP_CELL_Z);
+    MapGrid_CopyCellsLayered(28, 39, 1, 1, BEAM_ROOM_GAP_CELL_X,
+                             BEAM_ROOM_GAP_CELL_Z);
     MapGrid_CopyCellsLayered(92, 39, 1, 1, 84, 39);
     FieldEvent_Wait(30);
     Event_PlaySound(SE_MAP_TRANSITION);
@@ -467,8 +468,8 @@ void JupiterLighthouse_RaiseSocketBlock(s32 unused, s32 id) {
   s32 frame;
 
   if (Event_GetFlag(FLAG_JUPITER_LIGHTHOUSE_ACTIVATED) &&
-      FIELD_CELL(actor->x.fixed) == EMPTY_SOCKET_CELL_X &&
-      FIELD_CELL(actor->z.fixed) == EMPTY_SOCKET_CELL_Z) {
+      FIELD_CELL(actor->x.fixed) == BEAM_ROOM_EMPTY_SOCKET_CELL_X &&
+      FIELD_CELL(actor->z.fixed) == BEAM_ROOM_EMPTY_SOCKET_CELL_Z) {
     actor->motionFlags = 0;
     for (frame = 0; frame < 16; frame++) {
       actor->y.fixed += toFIXED(2);
@@ -559,12 +560,12 @@ s32 Scene_Initialize(void) {
         (s32)&gJupiterLighthouse_GlowSprite, 0, 0, OBJ_SIZE_32X32);
   JupiterLighthouse_SetLayerCellsByLeader();
   JupiterLighthouse_SpawnBeamParticles();
-  if (Event_GetFlag(FLAG_ENERGY_BLOCK_IN_GAP)) {
+  if (Event_GetFlag(FLAG_BEAM_ROOM_ENERGY_BLOCK_IN_GAP)) {
     Actor_SetPosition(ACTOR_ENERGY_BLOCK, 0, 0);
-    MapGrid_CopyCellAttributes(28, 39, 1, 1, ENERGY_BLOCK_GAP_CELL_X,
-                               ENERGY_BLOCK_GAP_CELL_Z);
-    MapGrid_CopyCellsLayered(28, 39, 1, 1, ENERGY_BLOCK_GAP_CELL_X,
-                             ENERGY_BLOCK_GAP_CELL_Z);
+    MapGrid_CopyCellAttributes(28, 39, 1, 1, BEAM_ROOM_GAP_CELL_X,
+                               BEAM_ROOM_GAP_CELL_Z);
+    MapGrid_CopyCellsLayered(28, 39, 1, 1, BEAM_ROOM_GAP_CELL_X,
+                             BEAM_ROOM_GAP_CELL_Z);
     MapGrid_CopyCellsLayered(92, 39, 2, 3, 84, 39);
     FieldMapGrid_SetCellBehavior(toFIXED(336), toFIXED(656),
                                  MAPGRID_LAYER_OVERHEAD, CELL_BEHAVIOR_HOVER);

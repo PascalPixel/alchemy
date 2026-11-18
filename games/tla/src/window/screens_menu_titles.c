@@ -493,7 +493,7 @@ void BattleCommandRow_LoadIconTiles(struct GlyphPalette *palette, s32 glyph,
   destination = remapped;
   for (i = 0; i < 32 * 32; i++) {
     index = *source++;
-    if (palette->slot[index] == 255) {
+    if (palette->slot[index] == GLYPH_PALETTE_SLOT_FREE) {
       palette->slot[index] = palette->count;
       if (palette->count < COMMAND_ICON_COLORS) {
         BG_PLTT[palette->count] = OBJ_PLTT[index];
@@ -523,10 +523,6 @@ void BattleCommandRow_LoadIcon(struct BattleCommandRowWork *work, s32 index,
   entry->sprite.oam.f.tile =
       Resource_LoadIndexedIntoBuffer(work->entries[index].resource, icon);
 }
-
-/// The command window's top tile row: it runs along the bottom three rows (as
-/// screens_battle_command_row.c also defines it).
-#define COMMAND_ROW_TOP 17
 
 /// Puts BG1 behind the other layers (priority 3). The command row runs it as
 /// a task each VBlank, in the VBlank pass, with CommandRow_PutBg1InFront at

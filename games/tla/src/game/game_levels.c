@@ -174,7 +174,8 @@ s32 Unit_LearnPsynergy(s32 owner, s32 ability) {
   s32 found = -1;
   s32 index;
 
-  for (index = 0; index <= 30; index++) {
+  // Learning never takes the list's last slot.
+  for (index = 0; index < PSYNERGY_SLOTS - 1; index++) {
     s32 masked = unit->psynergy[index].encodedAction & PSYNERGY_ABILITY_MASK;
 
     if ((masked ^ key) == 0) {
@@ -185,7 +186,7 @@ s32 Unit_LearnPsynergy(s32 owner, s32 ability) {
   }
 
   if (found < 0) {
-    for (index = 0; index <= 30; index++) {
+    for (index = 0; index < PSYNERGY_SLOTS - 1; index++) {
       s32 action = unit->psynergy[index].encodedAction;
 
       if (action == 0) {
@@ -306,12 +307,12 @@ u32 Unit_GetExperienceForLevel(s32 unitId, s32 level) {
   return -1;
 }
 
-/// Raises a character one level (up to 99), adding to each base stat the
-/// growth between the two points of its growth curve around the new level
-/// (one point every 20 levels), a twentieth of it per level with a random
-/// part. Writes the unit's level, base stats and, if short, its experience,
-/// then rebuilds its Psynergy and stats. The gains go to `gains`, which is
-/// returned.
+/// Raises a character one level (up to UNIT_LEVEL_MAX), adding to each base
+/// stat the growth between the two points of its growth curve around the new
+/// level (a point every GROWTH_BAND_LEVELS levels), a twentieth of it per level
+/// with a random part. Writes the unit's level, base stats and, if short, its
+/// experience, then rebuilds its Psynergy and stats. The gains go to `gains`,
+/// which is returned.
 struct LevelUpResult *Unit_LevelUp(s32 unitId, struct LevelUpResult *gains) {
   struct Unit *unit;
   struct LevelUpWork *work;

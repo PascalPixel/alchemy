@@ -10,12 +10,6 @@
 #include "battle/presentation.h"
 #include "macros.h"
 
-/// A list place code's side bit, set for the enemies' list, and its place in
-/// the list (Battle_GetUnitAtPlace): PLACE_ENEMY is PLACE_PARTY with the side
-/// bit set.
-#define PLACE_ENEMY_SIDE 0x80
-#define PLACE_INDEX_MASK 0xf
-
 /// The odds of fleeing in hundredths of a percent, against a roll below
 /// FLEE_ROLL_RANGE: FLEE_BASE_CHANCE, FLEE_CHANCE_PER_FAILURE more for each
 /// failed attempt, and FLEE_CHANCE_PER_LEVEL for each level of the party's
@@ -30,9 +24,6 @@ enum FleeChance {
 /// The random swaps that shuffle the enemies' order each turn.
 #define TURN_ORDER_SWAPS 32
 
-/// What a Djinni that shields, guards or defends adds to its priority, to act
-/// ahead of the turn order.
-#define PRIORITY_AHEAD 10000
 /// An empty action's priority, below every other as the sort reads it (s16).
 #define PRIORITY_LOWEST 32768
 
@@ -260,6 +251,7 @@ void BattleActionOrder_Sort(struct BattleActionRecord *entries, s32 count) {
     if (entry->command == COMMAND_DJINN) {
       struct AbilityDefinition *action;
 
+      // DEAD: Unit_Get's result is not used; the ROM keeps the call.
       Unit_Get(entry->unitId);
       action = Ability_Get(
           Djinn_GetAbilityIdFar(DJINN_COMMAND_ELEMENT(entry->parameter),
@@ -275,7 +267,7 @@ void BattleActionOrder_Sort(struct BattleActionRecord *entries, s32 count) {
           action->effect == ABILITY_EFFECT_GROUND) {
         u32 priority = entry->priority;
 
-        entry->priority = priority + PRIORITY_AHEAD;
+        entry->priority = priority + PRIORITY_FIRST_IN_TURN;
       }
     }
   }

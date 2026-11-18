@@ -9,13 +9,6 @@ void Text_MeasureAllPages(s32 entryIndex, u32 *outWidth, u32 *outHeight,
 void Text_MeasureDecoded(s32 entryIndex, u32 *outWidth, u32 *outHeight,
                          u16 *spacing);
 
-/// A space's width in pixels.
-#if LANGUAGE == LANGUAGE_JAPANESE
-#define WINDOW_SPRITE_SPACE_WIDTH 7
-#else
-#define WINDOW_SPRITE_SPACE_WIDTH 5
-#endif
-
 /// The pixels of a window's two border tiles, left and right.
 #define WINDOW_BORDER_WIDTH 16
 /// The widest gap between characters that spreads a line across its window,
@@ -28,12 +21,12 @@ void Text_MeasureDecoded(s32 entryIndex, u32 *outWidth, u32 *outHeight,
 #define WINDOW_PAD_X (WINDOW_BORDER_WIDTH + 3)
 #define WINDOW_PAD_Y 15
 
-/// Sizes a window for decoded text no and moves (*windowX, *windowY) so the
-/// window fits on the screen. flags: bit 0 measures every page
+/// Sizes a window for decoded text entryIndex and moves (*windowX, *windowY) so
+/// the window fits on the screen. flags: bit 0 measures every page
 /// (Text_MeasureAllPages) rather than the first; bit 1 takes the size in
-/// *windowWidth and *windowHeight as given, in tiles, instead of measuring.
-/// In the Japanese release, while a mind-read window is open, a measured
-/// window is 2 tiles wider and kept off the screen's last column.
+/// *windowWidth and *windowHeight as given, in tiles, instead of measuring. In
+/// the Japanese release, while a mind-read window is open, a measured window is
+/// 2 tiles wider and kept off the screen's last column.
 void Window_FitOnScreen(s32 entryIndex, s32 *windowX, s32 *windowY,
                         u32 *windowWidth, u32 *windowHeight, u16 *spacing,
                         u32 flags) {
@@ -139,14 +132,13 @@ void Text_ResetStyle(void);
 
 /// Measures decoded text from entryIndex to its first page's end: returns the
 /// width of the longest line and the height (TEXT_LINE_HEIGHT a line) in
-/// pixels. With
-/// spacing set, fills one entry per line with the extra gap between characters,
-/// in 1/256 pixel, that spreads the line to fill the window. spacing, when
-/// non-NULL, has room for four line entries. A page of more than four lines
-/// keeps measuring into the fourth. It sets WindowWork.outline to each
-/// TEXT_OUTLINE operand it passes and leaves it at the last, the style the
-/// next glyphs are drawn in unless the style is reset first (Window_Create
-/// resets it).
+/// pixels. With spacing set, fills one entry per line with the extra gap
+/// between characters, in 1/256 pixel, that spreads the line to fill the
+/// window. spacing, when non-NULL, has room for four line entries. A page of
+/// more than four lines keeps measuring into the fourth. It sets
+/// WindowWork.outline to each TEXT_OUTLINE operand it passes and leaves it at
+/// the last, the style the next glyphs are drawn in unless the style is reset
+/// first (Window_Create resets it).
 void Text_MeasureDecoded(s32 entryIndex, u32 *outWidth, u32 *outHeight,
                          u16 *spacing) {
   struct WindowWork *work;
@@ -245,7 +237,7 @@ void Text_MeasureDecoded(s32 entryIndex, u32 *outWidth, u32 *outHeight,
     case TEXT_END:
       goto done;
     case 14:
-    case 28:
+    case TEXT_ACTOR_NAME_START:
       entryIndex = (entryIndex + 1) & TEXT_BUFFER_MASK;
     case TEXT_COLOR:
     case TEXT_LINE_SPACING:
@@ -457,7 +449,7 @@ void Text_MeasureAllPages(s32 entryIndex, u32 *outWidth, u32 *outHeight,
       Text_ResetStyle();
       break;
     case 14:
-    case 28:
+    case TEXT_ACTOR_NAME_START:
       entryIndex = (entryIndex + 1) & TEXT_BUFFER_MASK;
     case TEXT_COLOR:
     case TEXT_LINE_SPACING:

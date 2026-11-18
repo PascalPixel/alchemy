@@ -33,6 +33,9 @@ s32 FieldSequence_Run(s32 entrance);
 // EXIT_HAS_FLAG is set). Scene id SCENE_EXITS_END ends the exits of a scene and
 // the whole table.
 #define EXIT_SCENE_MASK 0xfff
+/// The scene of a table's first exit word, the destination when no exit
+/// matches: nine bits, where EXIT_SCENE_MASK takes twelve.
+#define EXIT_DEFAULT_SCENE_MASK 0x1ff
 #define ENTRANCE(word) (((word) & 0xff000) >> 12)
 #define EXIT_ID(word) (((word) & 0x0ff00000) >> 20)
 #define EXIT_HAS_FLAG 0x10000000
@@ -86,8 +89,7 @@ void Scene_TakeExit(s32 exitId) {
       if (flag)
         flag = *exitTable++;
       if (sceneId == SCENE_EXITS_END || kind == 0) {
-        destinationScene =
-            *firstExit & 0x1ff; // only 9 bits, unlike EXIT_SCENE_MASK
+        destinationScene = *firstExit & EXIT_DEFAULT_SCENE_MASK;
         break;
       }
       if (kind == EXIT_ID_ANY || kind == exitId) {
@@ -207,6 +209,10 @@ enum {
     Heap_Release(saved);                                                       \
   }
 
+/// The debug start's entrance into Venus Lighthouse's grounds: the path south
+/// of the round stone platform.
+#define DEBUG_VENUS_LIGHTHOUSE_START 10
+
 /// The main routine: runs one sequence after another and never returns. mode,
 /// an enum GameStart, chooses the first scene. As The Broken Seal's, with this
 /// game's four debug starts, rendering re-enabled after DMA 0 stops, and three
@@ -220,7 +226,7 @@ void MainRoutine_Run(s32 mode) {
   // Choose the first scene before initializing the per-scene runtime.
   if (gDebugMode && mode == GAME_START_DEBUG_VENUS_LIGHTHOUSE) {
     gMainRoutineWork.next = SCENE_VENUS_LIGHTHOUSE_ENTRANCE;
-    gMainRoutineWork.entrance = 10;
+    gMainRoutineWork.entrance = DEBUG_VENUS_LIGHTHOUSE_START;
   } else if (gDebugMode && mode == GAME_START_DEBUG_CLEAR) {
     gMainRoutineWork.next = SCENE_CLEAR;
     gMainRoutineWork.entrance = 1;

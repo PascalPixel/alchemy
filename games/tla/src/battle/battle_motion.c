@@ -153,8 +153,7 @@ void BattleMotion_ApplyKnockback(s32 id, s32 variant) {
       enemyId != ENEMY_DOOM_DRAGON_E && enemyId != ENEMY_DOOM_DRAGON_H) {
     object->acceleration = gBattleKnockback_Acceleration[variant];
     object->speedLimit = gBattleKnockback_SpeedLimit[variant];
-    // A unit already in the air keeps its hop, except from KNOCKBACK_SKID (5)
-    // on.
+    // A unit already in the air keeps its hop, except from KNOCKBACK_SKID on.
     if (object->y == 0 || variant > 4)
       object->velocityY = gBattleKnockback_VelocityY[variant];
     Actor_StartIdleFar(object);
@@ -200,8 +199,8 @@ void BattleMotion_ApproachTarget(s32 actorId, s32 targetId, s32 travelDivisor,
   object->speedLimit = dist;
   object->snapToTarget = 1;
 
-  // The test is for a floating unit (ACTOR_FLOATS); both paths store the same
-  // hop.
+  // DEAD: the store under ACTOR_FLOATS is overwritten at once; the ROM keeps
+  // the test and its store.
   if (object->motionFlags & ACTOR_FLOATS)
     object->velocityY = initialVelocityY;
   object->velocityY = initialVelocityY;
@@ -334,8 +333,8 @@ s32 BattleMotion_ProjectConditionalPosition(s32 slot, s32 *screen) {
 /// Returns the height above a unit where its battle effects play, in 16.16
 /// pixels: its class's own, else EFFECT_HEIGHT_SMALL for a small enemy and
 /// EFFECT_HEIGHT_LARGE for others.
-s32 BattleUnit_GetEffectHeight(s32 unitId) {
-  s32 value =
+FIXED BattleUnit_GetEffectHeight(s32 unitId) {
+  FIXED value =
       toFIXED((u8)BattleSprite_GetEffectHeight(Unit_Get(unitId)->enemyId));
 
   if (value == 0) {

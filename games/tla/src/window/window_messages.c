@@ -56,8 +56,6 @@ void Message_DecodeRaw(s32 message, u16 *text, s32 capacity) {
                      Text_DecodeSymbolCodeSize);
   decode = (s32 (*)(struct TextReader *))Ram_HeapSlots->messageDecoder;
   Message_Find(&reader, message);
-  // An operand is stored one more than its value, so that none is 0, the end
-  // code; adding (u16)-1 takes the one off in the halfword written.
 #if !defined(DECODE_EUROPEAN)
   delta = -1;
 #endif
@@ -69,9 +67,9 @@ void Message_DecodeRaw(s32 message, u16 *text, s32 capacity) {
         goto done;
       *text++ = value;
 #if defined(DECODE_EUROPEAN)
-      value = decode(&reader) + (u16)-1;
+      value = decode(&reader) + OPERAND_UNBIAS;
       *text++ = value;
-      value = decode(&reader) + (u16)-1;
+      value = decode(&reader) + OPERAND_UNBIAS;
 #else
       *text++ = decode(&reader) + delta;
       value = decode(&reader) + delta;
@@ -90,7 +88,7 @@ void Message_DecodeRaw(s32 message, u16 *text, s32 capacity) {
       if (capacity <= 0)
         goto done;
       *text++ = value;
-      value = decode(&reader) + (u16)-1;
+      value = decode(&reader) + OPERAND_UNBIAS;
       break;
     default:
       capacity--;
@@ -567,7 +565,7 @@ s32 Text_DrawMessageToCanvas(s32 message, u8 *canvas) {
         break;
       case 14:
       case TEXT_WINDOW_STATE:
-      case 28:
+      case TEXT_ACTOR_NAME_START:
         text++;
         goto skip;
       }
@@ -719,10 +717,6 @@ void Portrait_ClearSlots(void) {
 /// A speaker below this is a character, found in gPortrait_CharacterMap; one
 /// from it on is a sprite, found in gPortrait_SpriteMap.
 #define PORTRAIT_FIRST_SPRITE_SPEAKER 16
-/// A sprite speaker's portrait is numbered 128 more than its entry in
-/// gPortrait_SpriteMap: Icon_LoadWithPalette takes portrait 128 + n from icon
-/// 16 + n.
-#define PORTRAIT_FIRST_SPRITE_PORTRAIT 128
 
 /// Returns the portrait of a character (ids below
 /// PORTRAIT_FIRST_SPRITE_SPEAKER) or another speaker's sprite (from

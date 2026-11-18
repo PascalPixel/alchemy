@@ -68,8 +68,7 @@ void GameFlag_Clear(s32 flag) {
   bytes[flag] &= ~mask;
 }
 
-/// Flips `flag` and returns its new value. Nothing calls it or its far-call
-/// export.
+/// Unused: flips `flag` and returns its new value.
 u32 GameFlag_Toggle(s32 flag) {
   s32 mask;
   u8 *bytes;
@@ -99,8 +98,8 @@ u32 GameFlag_SetByte(u32 flag, u8 value) {
 /// The most a counter byte among the flags holds.
 #define GAME_FLAG_BYTE_MAX 255
 
-/// Adds 1 to the byte `flag` is in, stopping at GAME_FLAG_BYTE_MAX, and returns
-/// it. Nothing calls it or its far-call export.
+/// Unused: adds 1 to the byte `flag` is in, stopping at GAME_FLAG_BYTE_MAX, and
+/// returns it.
 u8 GameFlag_IncrementByte(s32 flag) {
   u8 *bytes = gGameFlagBytes;
 
@@ -124,7 +123,7 @@ u8 GameFlag_DecrementByte(s32 flag) {
 /// The bits of a nibble flag, low or high in its byte by its number's bit 2.
 #define GAME_FLAG_NIBBLE 0xf
 
-/// Returns the four bits a flag is in, 0 to 15. Nothing calls it.
+/// Unused: returns the four bits a flag is in, 0 to 15.
 s32 GameFlag_GetNibble(u32 flag) {
   s32 shift = flag & 4;
   s32 mask = GAME_FLAG_NIBBLE << shift;
@@ -133,7 +132,7 @@ s32 GameFlag_GetNibble(u32 flag) {
   return (gGameFlagBytes[flag] & mask) >> shift;
 }
 
-/// Sets the four bits `flag` is in. Nothing calls it or its far-call export.
+/// Unused: sets the four bits `flag` is in.
 void GameFlag_SetNibble(s32 flag, s32 value) {
   s32 fieldMask = GAME_FLAG_NIBBLE;
   s32 shift = 4 & flag;

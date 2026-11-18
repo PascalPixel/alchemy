@@ -6,6 +6,9 @@
 #include "gamepak/flash.h"
 #include "gamepak/flash_data.h"
 
+/// The id the Atmel chip answers with: its device id above its maker id.
+#define FLASH_ID_ATMEL (0x3d << 8 | 0x1f)
+
 // clang-format off
 /// The Atmel chip's waits by timing: milliseconds, the timer's reload value
 /// and its control.
@@ -26,7 +29,7 @@ const struct FlashSetupInfo gFlash_ChipAtmel = {
     .type = {.romSize = 65536,
              .sector = {.size = 4096, .shift = 12, .count = 16, .top = 0},
              .wait = {3, 3},
-             .id = {.joined = 0x3d1f}},
+             .id = {.joined = FLASH_ID_ATMEL}},
 };
 
 const struct FlashSetupInfo gFlash_ChipAtmelLayout = {
@@ -40,5 +43,5 @@ const struct FlashSetupInfo gFlash_ChipAtmelLayout = {
     .type = {.romSize = 65536,
              .sector = {.size = 128, .shift = 7, .count = 512, .top = 0},
              .wait = {3, 3},
-             .id = {.joined = 0x3d1f}},
+             .id = {.joined = FLASH_ID_ATMEL}},
 };

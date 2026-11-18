@@ -65,7 +65,6 @@ void BattleCamera_Update(void) {
   SET_POSITION(&eyeOffset, 0, 0, camera->distance);
   Iwram_TransformVector(&eyeOffset.x, (s32 *)camera);
 
-  // The view centred at (120, 120) in 16.16 pixels, at scale 1.
   if (transition->flag == 0) {
     BattleCamera_SetRange(toFIXED(120), toFIXED(120), 0, 0, FIXED_ONE);
   }

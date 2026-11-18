@@ -11,14 +11,15 @@ enum {
 };
 
 /// Starts a new frame of sprites: frees the affine matrices and clears the
-/// masks of the 256 depth slots sprites are linked into.
+/// masks of the depth slots sprites are linked into, a bit a slot.
 void Oam_ResetFrame(void) {
   gOamMatrixCount = 0;
   Iwram_ClearWordsEntry(gOamBucketMasks, RENDER_DEPTH_SLOT_COUNT / 8);
 }
 
-/// Takes the next of the 32 sprite affine matrices and fills it with the
-/// rotation and scale of source; returns its index, or 31 when all are taken.
+/// Hands out the next OAM affine matrix for a sprite drawn with `source`'s
+/// scale and rotation and fills it in. Returns the matrix number, or the last
+/// (OBJ_AFFINE_MATRIX_COUNT - 1) when all are taken.
 s32 OamMatrix_AllocFromTransform(struct AffineTransform *source) {
   union AffineMatrix *matrix;
   s16 *coefficient;
@@ -46,9 +47,13 @@ s32 OamMatrix_AllocFromTransform(struct AffineTransform *source) {
     if (xScale == -yScale)
       xReciprocal = -reciprocal;
 
+    // A scale alone: pa and pd its reciprocals, pb and pc 0, two halfwords to
+    // a row.
     matrix->rows[0] = (u16)xReciprocal;
     matrix->rows[1] = reciprocal << 16;
   } else {
+    // The inverse of rotate-then-scale: a 16.16 sine over an 8.8 scale is an
+    // 8.8 coefficient.
     FIXED sine;
     FIXED cosine;
 
@@ -66,18 +71,18 @@ s32 OamMatrix_AllocFromTransform(struct AffineTransform *source) {
   return index;
 }
 
-/// As Oam_AddSpriteAtDepth, with the depth clamped to 0-239 in place of
-/// 0-255: links entry at the head of its priority bucket.
+/// As Oam_AddSpriteAtDepth, with the depth clamped below OAM_DEPTH_WINDOW, so
+/// that the sprite stays behind the windows' sprites.
 void Oam_AddSpriteAtDepthClamped(void *entry, s32 slot) {
   u8 *mask;
   void **buckets;
   s32 bit;
 
-  if ((u32)slot > 239) {
+  if ((u32)slot > OAM_DEPTH_WINDOW - 1) {
     if (slot < 0)
       slot = 0;
     else
-      slot = 239;
+      slot = OAM_DEPTH_WINDOW - 1;
   }
   mask = &gOamBucketMasks[(u32)slot >> 3];
   bit = slot & 7;
@@ -95,7 +100,8 @@ void Oam_AddSpriteAtDepthClamped(void *entry, s32 slot) {
   }
 }
 
-/// Link entry at the head of its priority bucket.
+/// Links a sprite entry at the head of depth slot `slot`'s list (clamped to the
+/// RENDER_DEPTH_SLOT_COUNT slots) for this frame, and marks the slot taken.
 void Oam_AddSpriteAtDepth(void *entry, s32 slot) {
   u8 *mask;
   void **head;

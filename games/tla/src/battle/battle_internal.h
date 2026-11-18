@@ -244,11 +244,6 @@ struct BattleLinkedActionState {
 #define ACTION_REPORTED -1 ///< the action failed and its message is shown
 #define ACTION_NOTHING_TO_SHOW -2 ///< nothing to stage or show
 
-// COMMAND_DJINN's parameter: the Djinni's element in bits 11..8, its index in
-// bits 7..0.
-#define DJINN_ELEMENT(v) (((v) >> 8) & 0xf)
-#define DJINN_INDEX(v) ((v) & 0xff)
-
 /// BattlePlan.targetCritical: the critical hit rolled for each target.
 enum BattleCritical {
   CRITICAL_NONE,

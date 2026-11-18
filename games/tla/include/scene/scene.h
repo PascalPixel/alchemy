@@ -501,4 +501,11 @@ extern const u8 gWorldMapPackedTilesC[];
 struct Vector3;
 struct Window;
 
+/// Plays an actor's animation and lets frames pass before the event goes on.
+#define Actor_AnimateThenWait(id, animation, frames)                           \
+  do {                                                                         \
+    Actor_SetAnimation(id, animation);                                         \
+    FieldEvent_Wait(frames);                                                   \
+  } while (0)
+
 #endif

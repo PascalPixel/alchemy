@@ -16,12 +16,6 @@
 #include "field/object.h"
 #include "system/ram_buffer.h"
 
-/// The sixteenth of a turn a facing lies in, what is past it dropped, as The
-/// Broken Seal's.
-#define FACING_SIXTEENTH(facing) ((facing) & 0xf000)
-/// A squared distance in pixels beyond any rope node, to start a search for
-/// the nearest.
-#define ROPE_NODE_DISTANCE_NONE (1 << 28)
 /// The leader going hand over hand along a rope (felix.tsv's pictures 32 to
 /// 34, the rope held over his head).
 #define ANIM_LEADER_CROSS_ROPE 29
@@ -880,8 +874,6 @@ update_object:
   return 1;
 }
 
-#undef FACING_SIXTEENTH
-#undef ROPE_NODE_DISTANCE_NONE
 #undef ANIM_LEADER_CROSS_ROPE
 #undef STEP_IS_CLEAR
 #undef SET_CLIMB_STEP

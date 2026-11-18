@@ -17,9 +17,6 @@
 #include "macros.h"
 #include "window/item_icon.h"
 
-/// Full size in an AffineTransform's 8.8 scales.
-#define AFFINE_SCALE_ONE (1 << 8)
-
 /// RopeNode.kind and TightropeNode.kind.
 enum RopeNodeKind {
   ROPE_NODE_FREE,      ///< in the pool, on no rope

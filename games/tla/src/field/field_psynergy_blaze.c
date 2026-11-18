@@ -22,9 +22,6 @@ void Field_StartColorTransition(s32 frames, s32 color);
 #define ACTOR_FIRST_LAYER(actor)                                               \
   (((struct Sprite *)(actor)->sprite)->entries[0])
 
-/// A distance beyond any field Psynergy's reach, as field_sequence_targets.c
-/// writes it.
-#define BEYOND_REACH 9999
 /// The jet's longest spray, in frames; B ends it sooner.
 #define BLAZE_SPRAY_FRAMES 80
 /// How far in front of the caster the jet's drops are drawn.
@@ -281,6 +278,5 @@ s32 Actor_CheckBlocked(struct Actor *actor) {
   return result;
 }
 
-#undef BEYOND_REACH
 #undef BLAZE_SPRAY_FRAMES
 #undef BLAZE_DROP_DEPTH

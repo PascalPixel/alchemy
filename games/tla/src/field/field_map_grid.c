@@ -324,8 +324,6 @@ s32 MapGrid_LoadMap(s32 index) {
   return 2;
 }
 
-#define ABS(v) ((v) < 0 ? -(v) : (v))
-
 /// Centres the camera on the point the map follows (origin: x, height, z), or
 /// on (0, 0) when there is none, and scrolls the layers there.
 void MapGrid_CenterOnFollowedPoint(void) {

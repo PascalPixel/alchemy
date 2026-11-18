@@ -383,10 +383,8 @@ void Render_PlaceSpritePartPair(struct Sprite *sprite, FIXED screenX,
   shadow->y = y;
 }
 
-/// Render_ApplyProjectedPlacement's depth slots: a sprite's screen row on from
-/// slot 62, so a sprite lower on the screen draws in front and those up to 62
-/// rows above it keep their order; its shadow two slots behind.
-#define PLACEMENT_IMAGE_DEPTH 62
+/// The depth slot Render_ApplyProjectedPlacement gives a sprite's shadow: two
+/// behind the sprite's own, PLACEMENT_IMAGE_DEPTH (field/field.h).
 #define PLACEMENT_SHADOW_DEPTH (PLACEMENT_IMAGE_DEPTH - 2)
 
 /// Places a sprite for the scrolling camera and queues it for drawing: the

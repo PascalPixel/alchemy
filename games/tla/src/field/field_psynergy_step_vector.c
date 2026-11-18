@@ -38,7 +38,7 @@ void BattleEffect_PlotCanvasPixel(s32 x, s32 y, s32 color) {
   u8 *canvas = Ram_HeapSlots->battleCanvas;
 
   if (x > 63) {
-    canvas += CANVAS_SIZE;
+    canvas += CANVAS_SPRITE_BYTES;
     x -= 64;
   }
   canvas[map[(y << 6) + x]] = color;
@@ -202,7 +202,7 @@ void ColorBuffer_DarkenFourLevels(u8 *buffer, s32 count) {
 #define TILE_SIZE 32
 
 /// The canvas in words, as one 32-bit DMA.
-#define CANVAS_DMA DMA_COPY_WORDS(CANVAS_SIZE / 4)
+#define CANVAS_DMA DMA_COPY_WORDS(CANVAS_SPRITE_BYTES / 4)
 
 /// The canvas's frame callback: counts the frame and carries out the command
 /// the effect left for it, copying the canvas into the sprite's tiles (or to
@@ -219,22 +219,23 @@ void BattleEffect_UploadCanvas(void) {
     break;
   case CANVAS_UPLOAD_AND_CLEAR:
     Dma_Set(canvas, tiles, CANVAS_DMA, REG_DMA3);
-    Iwram_FillWords(canvas, CANVAS_SIZE, 0);
+    Iwram_FillWords(canvas, CANVAS_SPRITE_BYTES, 0);
     break;
   case CANVAS_UPLOAD_AND_DARKEN_ONE_LEVEL:
     Dma_Set(canvas, tiles, CANVAS_DMA, REG_DMA3);
-    ColorBuffer_DarkenOneLevel(canvas, CANVAS_SIZE);
+    ColorBuffer_DarkenOneLevel(canvas, CANVAS_SPRITE_BYTES);
     break;
   case CANVAS_UPLOAD_AND_DARKEN_TWO_LEVELS:
     Dma_Set(canvas, tiles, CANVAS_DMA, REG_DMA3);
-    ColorBuffer_DarkenTwoLevels(canvas, CANVAS_SIZE);
+    ColorBuffer_DarkenTwoLevels(canvas, CANVAS_SPRITE_BYTES);
     break;
   case CANVAS_UPLOAD_AND_DARKEN_FOUR_LEVELS:
     Dma_Set(canvas, tiles, CANVAS_DMA, REG_DMA3);
-    ColorBuffer_DarkenFourLevels(canvas, CANVAS_SIZE);
+    ColorBuffer_DarkenFourLevels(canvas, CANVAS_SPRITE_BYTES);
     break;
   case CANVAS_UPLOAD_TO_BG:
-    Dma_Set(canvas, BG_VRAM, DMA_COPY_WORDS(CANVAS_SIZE * 2 / 4), REG_DMA3);
+    Dma_Set(canvas, BG_VRAM, DMA_COPY_WORDS(CANVAS_SPRITE_BYTES * 2 / 4),
+            REG_DMA3);
     break;
   }
   work->command = 0;
@@ -303,7 +304,7 @@ void BattleEffect_StartCanvasSprite(void) {
       (struct WindowWork *)Ram_HeapSlots->windowWork;
   struct CanvasSpriteWork *work =
       HeapSlot_Alloc(HEAP_SLOT_CANVAS_SPRITE, sizeof(*work));
-  u8 *canvas = HeapSlot_Alloc(HEAP_SLOT_BATTLE_CANVAS, CANVAS_SIZE);
+  u8 *canvas = HeapSlot_Alloc(HEAP_SLOT_BATTLE_CANVAS, CANVAS_SPRITE_BYTES);
   u16 *map;
   s32 y;
   s32 x;
@@ -318,9 +319,9 @@ void BattleEffect_StartCanvasSprite(void) {
   work->scaleY = FIXED_ONE;
   work->priority = 1;
   work->depth = CANVAS_SPRITE_DEPTH;
-  Iwram_FillWordsEntry(canvas, CANVAS_SIZE, 0);
+  Iwram_FillWordsEntry(canvas, CANVAS_SPRITE_BYTES, 0);
   Dma_Set(canvas, CANVAS_OBJ_TILES + work->tile * TILE_SIZE,
-          DMA_COPY_WORDS(CANVAS_SIZE / 4), REG_DMA3);
+          DMA_COPY_WORDS(CANVAS_SPRITE_BYTES / 4), REG_DMA3);
 
   // Where each pixel of the canvas sits in its 8x8 tiles.
   map = HeapSlot_AllocEwram(HEAP_SLOT_CANVAS_MAP,

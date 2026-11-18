@@ -157,6 +157,10 @@ enum CastingImpact {
 /// The flame Forcible Arm and Truncheon Fist drop.
 #define FALLING_FLAME_WIDTH 32
 #define FALLING_FLAME_HEIGHT 64
+/// Bad Omen's skulls rise faster by the frame, the slowest by toFIXED(1) / 32
+/// more a frame, written as a shift of 1, and each of the next three twice as
+/// fast as the one before.
+#define BAD_OMEN_SKULL_LIFT_SHIFT 11
 
 /// Where Mortal Danger draws `picture`, one of the reaper's seven pictures
 /// (REAPER_PICTURE_X), for the casting `side`.
@@ -1163,6 +1167,8 @@ void BattleEffect_RunCastingImpact(struct BattleEffectParams *args, s32 mode) {
         s32 imageY;
         if (frame <= 5) {
           if (work->args->side == EFFECT_SIDE_ENEMIES) {
+            /* FAKEMATCH(temporary): imageX halves targetPos.x written out, its
+             * sign bit added before the shift, in both arms. */
             imageX = targetPos.x;
             imageX += (u32)imageX >> 31;
             imageX >>= 1;
@@ -1198,8 +1204,8 @@ void BattleEffect_RunCastingImpact(struct BattleEffectParams *args, s32 mode) {
                             projected.x - SKULL_WIDTH / 2,
                             projected.y - SKULL_HEIGHT / 2, SKULL_WIDTH,
                             SKULL_HEIGHT);
-            // Each of four skulls rises twice as fast as the one before.
-            Particle_AdvanceWithGravity3D(step, 60, 1 << ((i & 3) + 11));
+            Particle_AdvanceWithGravity3D(
+                step, 60, 1 << ((i & 3) + BAD_OMEN_SKULL_LIFT_SHIFT));
             step->variant++;
           }
         }
@@ -1323,3 +1329,4 @@ void BattleEffect_RunCastingImpact(struct BattleEffectParams *args, s32 mode) {
 #undef CASTING_IMPACT_IMPACT_PARTICLES
 #undef CASTING_IMPACT_IMPACT_PARTICLE_COUNT
 #undef CASTING_IMPACT_PICTURE_X
+#undef BAD_OMEN_SKULL_LIFT_SHIFT

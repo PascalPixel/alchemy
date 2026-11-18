@@ -71,8 +71,8 @@ enum VenusLighthouseEntranceEntrance {
   ENTRANCE_JENNA_TAKES_OVER = 90,
   /// After a lost battle in the prologue: Jenna wakes by the door.
   ENTRANCE_DEFEAT = 98,
-  /// Back from the Ruffian's battle.
-  ENTRANCE_AFTER_BATTLE = 99
+  /// Back from the battle with the Ruffian who waited for backup.
+  ENTRANCE_AFTER_RUFFIAN_BATTLE = 99
 };
 
 /// The scene's placed actors, in the rows of gActorPlacements.
@@ -243,7 +243,7 @@ s32 Scene_Initialize(void) {
     Party_RestoreHpPp(1);
     VenusLighthouseEntrance_WakeUp();
   }
-  if (gMainRoutineWork.entrance == ENTRANCE_AFTER_BATTLE) {
+  if (gMainRoutineWork.entrance == ENTRANCE_AFTER_RUFFIAN_BATTLE) {
     Event_SetFlag(FLAG_VENUS_LIGHTHOUSE_RUFFIAN_BEATEN);
   }
   if (gMainRoutineWork.entrance == ENTRANCE_JENNA_TAKES_OVER) {
@@ -1068,7 +1068,7 @@ void VenusLighthouseEntrance_RuffianWaitsForBackup(void) {
   FieldEvent_Wait(8);
   Actor_SetAnimation(ACTOR_WAITING_RUFFIAN, ANIM_STAND);
   FieldEvent_SetAfterBattleDestination(SCENE_VENUS_LIGHTHOUSE_ENTRANCE,
-                                       ENTRANCE_AFTER_BATTLE);
+                                       ENTRANCE_AFTER_RUFFIAN_BATTLE);
   Event_SetDefeatDestination(SCENE_VENUS_LIGHTHOUSE_ENTRANCE, ENTRANCE_DEFEAT);
   Battle_SetType(BATTLE_TYPE_NO_ESCAPE);
   Field_RequestBattleFromEncounterTable(9, 0);
@@ -1547,8 +1547,8 @@ struct SceneEntrance gSceneEntrances[] = {
      -1, -1, -1, -1, 0},
     {ENTRANCE_DEFEAT, CONDITION_ALWAYS, 384, 0, 168, FACING_SOUTH, 0, -1, -1,
      -1, -1, 0},
-    {ENTRANCE_AFTER_BATTLE, CONDITION_ALWAYS, 72, 0, 264, FACING_WEST, 0, -1,
-     -1, -1, -1, 0},
+    {ENTRANCE_AFTER_RUFFIAN_BATTLE, CONDITION_ALWAYS, 72, 0, 264, FACING_WEST,
+     0, -1, -1, -1, -1, 0},
     {SCENE_TABLE_END},
 };
 

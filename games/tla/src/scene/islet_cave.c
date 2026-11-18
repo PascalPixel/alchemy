@@ -217,7 +217,7 @@ enum { ACTOR_SENTINEL = 8, ACTOR_FIRST_FIRE = 9 };
 #define FLAG_SERAC_REVEALED FLAG_SCENE_TEMP_30
 
 /// The Sentinel's room's entrance the battle with it returns the party to.
-enum { ENTRANCE_AFTER_BATTLE = 2 };
+enum { ENTRANCE_AFTER_SENTINEL_BATTLE = 2 };
 
 /// Talking to Serac once Tremor has shaken him out starts the battle with him,
 /// a Mercury Djinni.
@@ -432,7 +432,7 @@ s32 Scene_Initialize(void) {
                       gIsletCave_CycleColors, gIsletCave_CycleSlots);
   } else if (gMainRoutineWork.next == SCENE_ISLET_CAVE_SENTINEL) {
     Actor_SetSpriteFlags(Actor_GetById(ACTOR_FIRST_FIRE), 0);
-    if (gMainRoutineWork.entrance == ENTRANCE_AFTER_BATTLE) {
+    if (gMainRoutineWork.entrance == ENTRANCE_AFTER_SENTINEL_BATTLE) {
       Actor_SetPosition(ACTOR_SENTINEL, 0, 0);
       GameFlag_Set(FLAG_SENTINEL_DEFEATED);
     }
@@ -824,7 +824,7 @@ void IsletCave_SentinelAwaits(void) {
   }
   Event_Wait(20);
   FieldEvent_SetAfterBattleDestination(SCENE_ISLET_CAVE_SENTINEL,
-                                       ENTRANCE_AFTER_BATTLE);
+                                       ENTRANCE_AFTER_SENTINEL_BATTLE);
   Battle_SetType(BATTLE_TYPE_NO_ESCAPE);
   Field_RequestBattleFromEncounterTable(ENCOUNTER_TABLE_HIDDEN_BOSSES,
                                         HIDDEN_BOSS_SENTINEL);

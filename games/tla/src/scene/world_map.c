@@ -1551,7 +1551,7 @@ void WorldMap_MeetEcho(void) {
     Actor_Jump(ACTOR_ECHO, 2, 20);
     Actor_Jump(ACTOR_ECHO, 2, 20);
     Event_SetMessageId(TUTORIAL_MESSAGE(MsgEvenIKnow));
-    i = 15;
+    i = TRIG_TURN / FACING_STEP - 1;
     Event_ShowMessageAndWait(ACTOR_ECHO, 0);
     FieldActor_ShowEmote(owner, EMOTE_IN_FRONT | EMOTE_WINCE, 30);
     Event_ShowMessageAndWait(ACTOR_ECHO, 0);
@@ -1563,8 +1563,9 @@ void WorldMap_MeetEcho(void) {
     Event_ShowMessageAndWait(ACTOR_ECHO, 0);
     djinni->motionFlags = 0;
     FieldActor_SetMoveTargetFX(djinni, x, toFIXED(16), z);
+    // A whole turn as he rises, then half a turn as he drops.
     while (i >= 0) {
-      djinni->facing += TRIG_TURN / 16;
+      djinni->facing += FACING_STEP;
       wait(1);
       i--;
     }
@@ -1573,9 +1574,9 @@ void WorldMap_MeetEcho(void) {
     djinni->motionFlags = ACTOR_FALLS;
     djinni->velocityY = 0;
     djinni->groundHeight = 0;
-    i = 7;
+    i = TRIG_TURN / 2 / FACING_STEP - 1;
     while (i >= 0) {
-      djinni->facing += TRIG_TURN / 16;
+      djinni->facing += FACING_STEP;
       wait(1);
       i--;
     }
@@ -2288,17 +2289,19 @@ void WorldMap_TakeOff(void) {
   Event_End();
 }
 
-/// A sparkle of the trail flickers through the colour modes at random.
-s32 WorldMap_TwinkleTrail(struct Actor *actor) {
+/// A sparkle of the party's path to Aqua Rock: each frame, one time in four,
+/// it takes one of the eight colour modes at random.
+s32 WorldMap_ChangeSparkleColor(struct Actor *actor) {
   if (Random16() < 16384)
     Actor_SetSpriteColorMode(actor, Random_Below(8));
   return 0;
 }
 
-extern s32 gWorldMap_AquaRockTrailScript[];
+extern s32 gWorldMap_AquaRockSparkleScript[];
 
-/// Every eighth frame, a sparkle in the party's trail to Aqua Rock.
-void WorldMap_SpawnAquaRockTrail(struct Actor *parent) {
+/// The hidden leader's update as the party is carried to Aqua Rock: every
+/// eighth frame it leaves a sparkle where it is, which lasts about two seconds.
+void WorldMap_SpawnAquaRockSparkle(struct Actor *parent) {
   if ((gFrameCount & 7) == 0) {
     FIXED x = parent->x.fixed;
     FIXED y = parent->y.fixed;
@@ -2306,7 +2309,7 @@ void WorldMap_SpawnAquaRockTrail(struct Actor *parent) {
     struct Actor *actor = (FieldActor_Create(SPRITE_SPARKLE, x, y, z));
 
     if (actor != NULL) {
-      Actor_StartScript(actor, gWorldMap_AquaRockTrailScript);
+      Actor_StartScript(actor, gWorldMap_AquaRockSparkleScript);
       Actor_SelectAnimation(actor, 1);
       Actor_SetSpriteFlags(actor, 0);
       actor->motionFlags = 0;
@@ -2325,7 +2328,7 @@ void WorldMap_CarryPartyToAquaRock(void) {
                             SPRITE_COLOR_HIDDEN);
   Actor_SetSpriteFlags(Actor_Get(gMainRoutineWork.leaderActorId), 0);
   Actor_Get(gMainRoutineWork.leaderActorId)->update =
-      WorldMap_SpawnAquaRockTrail;
+      WorldMap_SpawnAquaRockSparkle;
   Actor_Get(gMainRoutineWork.leaderActorId)->acceleration = toFIXED(1) / 8;
   Actor_Get(gMainRoutineWork.leaderActorId)->speedLimit = toFIXED(2);
   System_Wait(5);
@@ -2658,7 +2661,8 @@ void WorldMap_SpawnTwinSparks(struct Actor *parent) {
         VramCache_FreeEntry(sprite->slot);
         sprite->slot = work->vramBlock;
         ((struct SpriteCacheBits *)&sprite->cacheBits)->retainCacheEntry = 1;
-        sprite->tile = (gVramCacheEntries[sprite->slot].offset >> 5) & 0x3ff;
+        sprite->tile =
+            (gVramCacheEntries[sprite->slot].offset >> 5) & OBJ_TILE_MASK;
         sprite->fullColor = 0;
         sprite->shape = 1;
         ((struct WorldMapOam *)sprite)->size = 2;
@@ -2738,15 +2742,11 @@ s32 gWorldMap_IdejimaWakeScript[] = {
     SC_RELEASE,
 };
 
-s32 gWorldMap_AquaRockTrailScript[] = {
-    46,
-    (s32)WorldMap_TwinkleTrail,
-    0,
-    1,
-    13,
-    120,
-    0,
-    38,
+s32 gWorldMap_AquaRockSparkleScript[] = {
+    SC_CALL(WorldMap_ChangeSparkleColor),
+    SC_WAIT(1),
+    SC_LOOP(120, SC_TOP),
+    SC_RELEASE,
 };
 
 s32 gWorldMap_SparkScript[] = {
@@ -3020,15 +3020,13 @@ LATE_DATA u32 gSceneExits[] = {
 };
 
 LATE_DATA s32 gWorldMap_TileSpriteScript[] = {
-    46,
-    (s32)TileSprite_Reset,
-    17,
+    SC_CALL(TileSprite_Reset),
+    SC_END,
 };
 
 LATE_DATA s32 gWorldMap_EchoScript[] = {
-    46,
-    (s32)WorldMap_SetUpEcho,
-    17,
+    SC_CALL(WorldMap_SetUpEcho),
+    SC_END,
 };
 
 LATE_DATA struct ActorPlacement gWorldMapActorPlacements[] = {
@@ -3097,13 +3095,14 @@ LATE_DATA struct ActorPlacement gWorldMap_CollapsePlacements[] = {
 };
 
 LATE_DATA s32 gWorldMap_IslandScript[] = {
-    46,
-    (s32)WorldMap_SetIslandTile,
-    17,
+    SC_CALL(WorldMap_SetIslandTile),
+    SC_END,
 };
 
 LATE_DATA s32 gWorldMap_TidalWaveScript[] = {
-    46, (s32)WorldMap_SetUpWave, 46, (s32)WorldMap_SendWaveIn, 17,
+    SC_CALL(WorldMap_SetUpWave),
+    SC_CALL(WorldMap_SendWaveIn),
+    SC_END,
 };
 
 LATE_DATA struct ActorPlacement gWorldMap_DriftPlacements[] = {
@@ -3276,9 +3275,8 @@ LATE_DATA u32 gWorldMap_CollapseDustScript[] = {
 };
 
 LATE_DATA s32 gWorldMap_PlacedActorScript[] = {
-    46,
-    (s32)WorldMap_SetPlacedActorTile,
-    17,
+    SC_CALL(WorldMap_SetPlacedActorTile),
+    SC_END,
     0,
 };
 

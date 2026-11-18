@@ -5,27 +5,47 @@
 #include "battle_effect_internal.h"
 #include "sounds.h"
 
-/// The sparks live in the map cell buffer's second 16 KB, 128 for each sword.
+/// The sparks live in the map cell buffer's second 16 KB, 128 for each sword;
+/// they bounce once on the ground at SPARK_GROUND_Y.
 #define SPARKS ((struct Particle *)(Ram_MapCellBuffer + 16384))
 #define SPARK_COUNT 512
+#define SPARK_GROUND_Y 104
 #define LEGEND_SWORD_SPARKS 128
 
-// A texture for the model kernels: its size as powers of two, then its
-// pixels.
-
-/// Where BladeSheet is decoded in the effect's pictures.
+/// BladeSheet's sword, point down, in the effect's pictures; it is drawn cut
+/// off at SPARK_GROUND_Y, stuck in the ground.
 #define LEGEND_BLADE_PICTURES 16384
+#define LEGEND_BLADE_WIDTH 40
+#define LEGEND_BLADE_HEIGHT 80
 
 /// Where FlameGradientTexture is decoded in the effect's pictures.
 #define LEGEND_FLAME_GRADIENT 20480
 
-/// Legend: a fan of eight blades opens over the target for
-/// 50 frames while a rune, mirrored from one corner, rises and turns behind
-/// it. Then one sword for each step of the variant (variant + 1 in all, 16
-/// frames apart) falls on the target from above the user's side: it strikes
-/// at 59 frames plus its delay, throwing 128 sparks that bounce on the ground,
-/// while a flash grows and fades where it lands. The effect lasts 86 frames
-/// and 16 more for each further sword.
+/// The fan of LEGEND_FAN_FLAMES flames, FlameGradientTexture's dark red to
+/// white, tilted LEGEND_FAN_TILT.
+#define LEGEND_FAN_FLAMES 8
+#define LEGEND_FAN_TILT 18384
+/// Each sword's flash grows by this share of its size a frame, from half.
+#define LEGEND_FLASH_GROWTH 12384
+
+/// The swords set out LEGEND_SWORD_INTERVAL frames apart; each falls from
+/// LEGEND_SWORD_FALL_FRAME frames after it sets out, and strikes
+/// LEGEND_SWORD_STRIKE_FRAME frames after.
+#define LEGEND_SWORD_INTERVAL 16
+#define LEGEND_SWORD_FALL_FRAME 50
+#define LEGEND_SWORD_STRIKE_FRAME 59
+/// Each sword falls for LEGEND_SWORD_FALL_FRAMES frames, from 80 pixels above
+/// and beside the target.
+#define LEGEND_SWORD_FALL_FRAMES 12
+#define LEGEND_SWORD_START_DISTANCE 80
+#define LEGEND_FRAMES 86 ///< with one sword; each further sword adds 16
+
+/// Legend, the Long Sword's unleash: a fan of eight flames opens over the
+/// target for 50 frames while a rune, mirrored from one corner, rises and
+/// turns behind it. Then one sword for each step of the variant (variant + 1
+/// in all) falls on the target from above the user's side: it strikes,
+/// throwing sparks that bounce on the ground, while a flash grows and fades
+/// where it lands.
 ///
 /// Abilities: Legend.
 void BattleEffect_RunLegend(struct BattleEffectParams *args) {
@@ -69,37 +89,39 @@ void BattleEffect_RunLegend(struct BattleEffectParams *args) {
   Resource_LoadAndDecompress(RESOURCE_FIRE_RING_TEXTURE, cells, 0, 0);
   EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
 
-  for (frame = 0; frame != args->variant * 16 + 86; frame++) {
-    // Frame 0: the swords set out from 80 pixels above and beside the
-    // target, on the user's side, toward it.
+  for (frame = 0;
+       frame != args->variant * LEGEND_SWORD_INTERVAL + LEGEND_FRAMES;
+       frame++) {
+    // Frame 0: the swords set out from above and beside the target, on the
+    // user's side, toward it.
     if (frame == 0) {
       EffectPosition_ProjectBattler(args->targets[0], &target);
       if (args->side == EFFECT_SIDE_ENEMIES)
-        start.x = target.x + 80;
+        start.x = target.x + LEGEND_SWORD_START_DISTANCE;
       else
-        start.x = target.x - 80;
-      start.y = target.y - 80;
+        start.x = target.x - LEGEND_SWORD_START_DISTANCE;
+      start.y = target.y - LEGEND_SWORD_START_DISTANCE;
       for (i = 0; i != 3; i++) {
         step = &work->particles[i];
-        step->x = start.x << 15;
+        step->x = start.x * (FIXED_ONE / 2);
         step->y = INTtoFIXED(start.y);
-        step->velocityX = (target.x - start.x) << 11;
-        step->velocityY = (target.y - start.y) << 12;
+        step->velocityX = (target.x - start.x) * (FIXED_ONE / 32);
+        step->velocityY = (target.y - start.y) * (FIXED_ONE / 16);
         step->variant = 0;
       }
       for (i = 0; i != SPARK_COUNT; i++)
         SPARKS[i].variant = -1;
     }
 
-    // The swords, 16 frames apart.
+    // The swords, one each LEGEND_SWORD_INTERVAL frames.
     for (i = 0; i != args->variant + 1; i++) {
       step = &work->particles[i];
-      if (frame == i * 16 + 54)
+      if (frame == i * LEGEND_SWORD_INTERVAL + 54)
         Sound_PlayFar(SE_POWER_UP);
 
-      // The strike: the target reels and flashes, and 128 sparks fly up
-      // from it. The last sword ends the action.
-      if (frame == i * 16 + 59) {
+      // The strike: the target reels and flashes, and sparks fly up from it.
+      // The last sword ends the action.
+      if (frame == i * LEGEND_SWORD_INTERVAL + LEGEND_SWORD_STRIKE_FRAME) {
         if (i == args->variant)
           EFFECT_SHOW_DAMAGE(SE_CLATTER);
         else
@@ -113,7 +135,7 @@ void BattleEffect_RunLegend(struct BattleEffectParams *args) {
           s32 angle;
           s32 force;
 
-          spark->x = target.x << 15;
+          spark->x = target.x * (FIXED_ONE / 2);
           spark->y = toFIXED(96);
           angle = Random16() % (TRIG_TURN * 3 / 4) + DEGtoANG(45);
           force = Random16() & 127;
@@ -123,37 +145,36 @@ void BattleEffect_RunLegend(struct BattleEffectParams *args) {
         }
       }
 
-      // From frame 50 plus its delay the sword falls, faster each frame,
-      // until it sticks in the ground 12 frames later.
-      if (frame >= i * 16 + 50) {
-        s32 x = FIXED_INTEGER_PART(step->x) - 20;
+      // The sword falls, faster each frame, until it sticks in the ground.
+      if (frame >= i * LEGEND_SWORD_INTERVAL + LEGEND_SWORD_FALL_FRAME) {
+        s32 x = FIXED_INTEGER_PART(step->x) - LEGEND_BLADE_WIDTH / 2;
         s32 y = FIXED_INTEGER_PART(step->y) - 50;
-        s32 height = 80;
+        s32 height = LEGEND_BLADE_HEIGHT;
 
-        if (y > 24)
-          height = 104 - y;
-        draw[0](canvas, work->sheet + LEGEND_BLADE_PICTURES, x, y, 40, height);
-        if (step->variant <= 12) {
+        if (y > SPARK_GROUND_Y - LEGEND_BLADE_HEIGHT)
+          height = SPARK_GROUND_Y - y;
+        draw[0](canvas, work->sheet + LEGEND_BLADE_PICTURES, x, y,
+                LEGEND_BLADE_WIDTH, height);
+        if (step->variant <= LEGEND_SWORD_FALL_FRAMES) {
           step->x += step->velocityX;
           step->y += step->velocityY;
-          step->velocityX += (target.x - start.x) << 9;
-          step->velocityY += (target.y - start.y) << 10;
+          step->velocityX += (target.x - start.x) * (FIXED_ONE / 128);
+          step->velocityY += (target.y - start.y) * (FIXED_ONE / 64);
         }
         step->variant++;
       }
     }
 
-    // The sparks bounce once on the ground at y = 104.
+    // The sparks bounce on the ground.
     for (i = 0; i != SPARK_COUNT; i++) {
       step = &SPARKS[i];
       if (step->variant >= 0) {
         s32 size = (step->variant >> 2) + 1;
 
-        draw[0](canvas, graphics + gBattleEffect_MotePictures[size - 1],
-                FIXED_INTEGER_PART(step->x) - size / 2,
-                FIXED_INTEGER_PART(step->y) - size, size, size * 2);
-        if (step->y > toFIXED(104)) {
-          step->y = toFIXED(104);
+        EFFECT_DRAW_MOTE(draw[0], canvas, graphics, FIXED_INTEGER_PART(step->x),
+                         FIXED_INTEGER_PART(step->y), size);
+        if (step->y > toFIXED(SPARK_GROUND_Y)) {
+          step->y = toFIXED(SPARK_GROUND_Y);
           step->velocityY = -step->velocityY / 2;
         }
         Particle_AdvanceWithGravity2D(step, 62, toFIXED(1) / 4);
@@ -172,8 +193,7 @@ void BattleEffect_RunLegend(struct BattleEffectParams *args) {
       texture.logWidth = 7;
       texture.logHeight = 7;
       texture.pixels = work->sheet;
-      // Stored as an integer: as a pointer this store follows the kind store.
-      *(s32 *)&model->mesh = (s32)gBattleEffect_LargeSquareMesh;
+      model->mesh = gBattleEffect_LargeSquareMesh;
       model->kind = MODEL_SHADED_ADDITIVE;
       model->texture = &texture;
       model->vertices = vertices;
@@ -183,13 +203,13 @@ void BattleEffect_RunLegend(struct BattleEffectParams *args) {
         s32 height = frame * 2 - 96;
         s32 alpha = 0;
 
-        scale = (frame << 13) - FIXED_ONE * 2;
+        scale = frame * (FIXED_ONE / 8) - FIXED_ONE * 2;
         if (height > -48)
           height = -48;
-        if (frame >= args->variant * 16 + 60)
-          // Spelled with + -240 so that the negation is not folded into 240 -
-          // x.
-          alpha = -((frame - args->variant * 16) * 4 + -240);
+        // It fades from 60 frames after the last sword sets out: 240 less 4 a
+        // frame, written as a negated sum.
+        if (frame >= args->variant * LEGEND_SWORD_INTERVAL + 60)
+          alpha = -((frame - args->variant * LEGEND_SWORD_INTERVAL) * 4 + -240);
         if (scale > FIXED_ONE * 2)
           scale = FIXED_ONE * 2;
         model->shade = alpha;
@@ -201,24 +221,25 @@ void BattleEffect_RunLegend(struct BattleEffectParams *args) {
           Matrix_RotateY(TRIG_TURN * 25 / 256);
         else
           Matrix_RotateY(-TRIG_TURN * 25 / 256);
-        Matrix_RotateZ(frame << 9);
+        Matrix_RotateZ(frame * (TRIG_TURN / 128));
         Matrix_ScaleUniform(scale);
         Matrix_Scale(FIXED_ONE, FIXED_ONE, FIXED_ONE);
         Render_TransformVertices(gBattleEffect_SquareCorners, vertices, 4);
         Render_DrawModelList(model);
       }
 
-      // Each sword's flash grows where it lands and fades over 16 frames.
+      // Each sword's flash, FireRingTexture's ring, grows where it lands,
+      // holds 8 frames and fades over 8.
       texture.pixels = cells;
       for (i = 0; i != args->variant + 1; i++) {
-        if (frame >= i * 16 + 50) {
-          s32 age = frame - i * 16 - 50;
-          s32 alpha = 64 - age * 8;
+        if (frame >= i * LEGEND_SWORD_INTERVAL + LEGEND_SWORD_FALL_FRAME) {
+          s32 age = frame - i * LEGEND_SWORD_INTERVAL - LEGEND_SWORD_FALL_FRAME;
+          s32 alpha = -MODEL_SHADE_INVISIBLE - age * 8;
 
           if (alpha > 0)
             alpha = 0;
-          if (alpha > -64) {
-            scale = age * 12384 + FIXED_ONE / 2;
+          if (alpha > MODEL_SHADE_INVISIBLE) {
+            scale = age * LEGEND_FLASH_GROWTH + FIXED_ONE / 2;
             model->shade = alpha;
             Matrix_Initialize();
             Matrix_Scale(FIXED_ONE / 2, FIXED_ONE, FIXED_ONE / 2);
@@ -228,7 +249,7 @@ void BattleEffect_RunLegend(struct BattleEffectParams *args) {
               Matrix_RotateY(TRIG_TURN * 25 / 256);
             else
               Matrix_RotateY(-TRIG_TURN * 25 / 256);
-            Matrix_RotateZ(frame << 9);
+            Matrix_RotateZ(frame * (TRIG_TURN / 128));
             Matrix_ScaleUniform(scale);
             Render_TransformVertices(gBattleEffect_SquareCorners, vertices, 4);
             Render_DrawModelList(model);
@@ -236,24 +257,24 @@ void BattleEffect_RunLegend(struct BattleEffectParams *args) {
         }
       }
 
-      // Frames 0-49: the fan of eight blades opens, pulsing, and closes.
-      if (frame <= 49) {
+      // Until the swords fall: the fan of flames opens, pulsing, and closes.
+      if (frame < LEGEND_SWORD_FALL_FRAME) {
         texture.logWidth = 5;
         texture.logHeight = 6;
         texture.pixels = work->sheet + LEGEND_FLAME_GRADIENT;
         model->mesh = gBattleEffect_TallMesh;
-        for (i = 0; i != 8; i++) {
+        for (i = 0; i != LEGEND_FAN_FLAMES; i++) {
           model->shade = 0;
           Matrix_Initialize();
           Matrix_Scale(FIXED_ONE / 2, FIXED_ONE, FIXED_ONE / 2);
           Matrix_Translate(INTtoFIXED(start.x - 128), -toFIXED(80), 0);
-          Matrix_RotateX(18384);
+          Matrix_RotateX(LEGEND_FAN_TILT);
           Matrix_RotateZ((frame + i * 16) << 9);
-          scale = (frame << 12) - FIXED_ONE / 4;
+          scale = frame * (FIXED_ONE / 16) - FIXED_ONE / 4;
           if (scale > FIXED_ONE)
             scale = FIXED_ONE;
           if (frame > 31)
-            scale = FIXED_ONE * 3 - (frame << 12);
+            scale = FIXED_ONE * 3 - frame * (FIXED_ONE / 16);
           Matrix_Scale(FIXED_ONE / 2, FIXED_ONE,
                        (Trig_Sin((frame + i * 8) << 9) / 8 + scale) * 2);
           Render_TransformVertices(gLegend_WingCorners, vertices, 4);
@@ -290,24 +311,59 @@ void BattleEffect_RunThunderCard(struct BattleEffectParams *args) {
   BattleEffect_RunElementCards(args, CARD_THUNDER);
 }
 
-/// Where the card's element pictures are decoded in the effect's pictures:
-/// CrystalSheet, FlashBurstSheet, SmokeSheet or JaggedStreakSheet.
-#define ELEMENT_CARDS_PICTURES 2048
+/// A card's picture, at its sheet's start; the Bramble Card's sheet has its
+/// three vines after it, 32 by 128 as JaggedStreakSheet's streaks are.
+#define CARD_WIDTH 32
+#define CARD_HEIGHT 64
+#define CARD_STREAK_WIDTH 32
+#define CARD_STREAK_HEIGHT 128
+/// Where the card's element pictures are decoded in the effect's pictures,
+/// after the card: CrystalSheet, FlashBurstSheet, SmokeSheet or
+/// JaggedStreakSheet.
+#define ELEMENT_CARDS_PICTURES PICTURE_BYTES(CARD)
 /// The work's particles: the shards, smoke or pictures the card throws, then
 /// one strike countdown for each target. Each target has its own run of the
 /// sparks, and a strike throws up the next free 16 of them.
 #define CARD_PIECES 56
-#define CARD_FIRST_STRIKE CARD_PIECES
+#define CARD_STRIKE_TIMERS CARD_PIECES
 #define CARD_SPARKS_PER_TARGET 64
 #define CARD_STRIKE_SPARKS 16
 
-/// The four cards (Bramble, Frost, Flame and Thunder Card): a card rises from
-/// the user, spinning and growing, for 48 frames, then shows its picture.
-/// From frame 48 the background takes the card's colours; the Frost and
-/// Flame cards throw shards or smoke at the targets, and the Bramble and
-/// Thunder cards spread four pictures over the field. Each target is struck
-/// every five frames for a while, reeling, flashing and throwing up sparks.
-/// From frame 96 the card shrinks away.
+/// The card rises and grows for CARD_RISE_FRAMES frames, then shows its
+/// picture; from CARD_SHRINK_FRAME it rises faster and shrinks away. It swings
+/// from side to side once every 96 frames as it rises, and leans
+/// CARD_TILT.
+#define CARD_RISE_FRAMES 48
+#define CARD_SHRINK_FRAME 96
+#define CARD_TILT 6000
+/// The shards and smoke land on the ground at CARD_GROUND_Y. A Frost Card's
+/// shard starts tumbling CARD_SHARD_TUMBLE_SPEED a frame, slowing by one every
+/// other frame, and is drawn until its tumble reaches CARD_SHARD_TUMBLE_END.
+/// The smoke plays its six pictures over CARD_SMOKE_FRAMES frames.
+#define CARD_GROUND_Y 96
+#define CARD_SHARD_TUMBLE_SPEED 32
+#define CARD_SHARD_TUMBLE_END 1024
+#define CARD_SMOKE_FRAMES 24
+/// The frames the strikes run between: the Thunder Card's start first and the
+/// Bramble Card's end first.
+#define CARD_STRIKES_FROM 68
+#define CARD_THUNDER_STRIKES_FROM 52
+#define CARD_BRAMBLE_STRIKES_FROM 60
+#define CARD_STRIKES_UNTIL 110
+#define CARD_BRAMBLE_STRIKES_UNTIL 96
+/// The vines lean CARD_VINE_ANGLE, each swaying TRIG_TURN / CARD_VINE_SWAY
+/// either way from its own phase.
+#define CARD_VINE_ANGLE 12192
+#define CARD_VINE_SWAY 16
+
+/// The cards of the four suits (Bramble, Frost, Flame and Thunder Card): a
+/// card rises from the user, spinning, swinging and growing, then shows its
+/// picture, and the background takes its colours. The Frost Card throws
+/// crystal shards and the Flame Card puffs of fiery smoke at the targets,
+/// while the Bramble Card's thorny vines and the Thunder Card's bolts of
+/// lightning reach out over them. Each target is struck every five frames for
+/// a while, reeling, flashing and throwing up sparks, before the card shrinks
+/// away.
 void BattleEffect_RunElementCards(struct BattleEffectParams *args, s32 mode) {
   struct BattleEffectWork *work;
   void *canvas;
@@ -364,7 +420,7 @@ void BattleEffect_RunElementCards(struct BattleEffectParams *args, s32 mode) {
       Sound_PlayFar(SE_WARP);
       EFFECT_FREE_PARTICLES(i, work->particles, CARD_PIECES);
       for (i = 0; i != args->targetCount; i++)
-        work->particles[CARD_FIRST_STRIKE + i].variant = (Random16() & 3) + 2;
+        work->particles[CARD_STRIKE_TIMERS + i].variant = (Random16() & 3) + 2;
       for (i = 0; i != SPARK_COUNT; i++)
         SPARKS[i].variant = -1;
       EffectPosition_ProjectSprite(args->user, &card);
@@ -375,21 +431,20 @@ void BattleEffect_RunElementCards(struct BattleEffectParams *args, s32 mode) {
       scale = FIXED_ONE / 4;
     }
 
-    // The card rises and grows for 48 frames, and from frame 96 rises
-    // faster and shrinks.
-    if (frame <= 47) {
+    // The card rises and grows, and later rises faster and shrinks.
+    if (frame < CARD_RISE_FRAMES) {
       card.y--;
       scale += FIXED_ONE / 128;
       if (scale > FIXED_ONE / 2)
         scale = FIXED_ONE / 2;
     }
-    if (frame > 95) {
+    if (frame >= CARD_SHRINK_FRAME) {
       scale -= FIXED_ONE / 128;
       card.y -= 2;
     }
 
-    // Frame 48: the card shows its picture.
-    if (frame == 48) {
+    // The card shows its picture.
+    if (frame == CARD_RISE_FRAMES) {
       if (mode == CARD_BRAMBLE)
         Sound_PlayFar(SE_BOSS_ROAR);
       if (mode == CARD_FROST)
@@ -404,7 +459,7 @@ void BattleEffect_RunElementCards(struct BattleEffectParams *args, s32 mode) {
       }
     }
 
-    if (frame > 47) {
+    if (frame >= CARD_RISE_FRAMES) {
       // The background steps toward the card's colours.
       if (mode != CARD_BRAMBLE) {
         if (mode == CARD_FROST)
@@ -415,8 +470,8 @@ void BattleEffect_RunElementCards(struct BattleEffectParams *args, s32 mode) {
           BattleEffect_StepPaletteToResource(RESOURCE_ORANGE_PALETTE_B);
       }
 
-      // The Frost and Flame cards throw one particle a frame at a target in
-      // turn, until frame 95.
+      // The Frost and Flame cards throw one shard or puff of smoke a frame at
+      // a target in turn, until the card shrinks.
       if (mode == CARD_FROST || mode == CARD_FLAME) {
         s32 member = frame % args->targetCount;
 
@@ -425,14 +480,14 @@ void BattleEffect_RunElementCards(struct BattleEffectParams *args, s32 mode) {
           aim.y = targets[member].y + (Random16() & 255) - 96;
         else if (mode == CARD_FLAME)
           aim.y = targets[member].y + (Random16() & 63) + 32;
-        if (frame <= 95) {
+        if (frame < CARD_SHRINK_FRAME) {
           struct Particle *step = &work->particles[frame % CARD_PIECES];
 
-          step->x = card.x << 15;
+          step->x = card.x * (FIXED_ONE / 2);
           step->y = INTtoFIXED(card.y);
-          step->velocityX = (aim.x - card.x) << 11;
-          step->velocityY = (aim.y - card.y) << 11;
-          step->z = 32;
+          step->velocityX = (aim.x - card.x) * (FIXED_ONE / 32);
+          step->velocityY = (aim.y - card.y) * (FIXED_ONE / 32);
+          step->z = CARD_SHARD_TUMBLE_SPEED;
           step->variant = 0;
         }
       }
@@ -442,15 +497,24 @@ void BattleEffect_RunElementCards(struct BattleEffectParams *args, s32 mode) {
         for (i = 0; i != CARD_PIECES; i++) {
           struct Particle *step = &work->particles[i];
 
-          if ((u32)step->variant <= 1023) {
-            s32 cell = i % 5 * 3 + step->variant / 96 % 3;
+          if (step->variant >= 0 && step->variant < CARD_SHARD_TUMBLE_END) {
+            s32 cell = i % 5 * 3 + step->variant / SHARD_TURN % 3;
 
-            draw[0](canvas, work->sheet + gPrism_ShardPictures[cell] + 4096,
-                    FIXED_INTEGER_PART(step->x) - gPrism_ShardWidths[cell] / 2,
-                    FIXED_INTEGER_PART(step->y) - gPrism_ShardHeights[cell] / 2,
-                    gPrism_ShardWidths[cell], gPrism_ShardHeights[cell]);
+            // UB: a fifth of the shards (i % 5 == 4) take cells 12 to 14, past
+            // the end of gPrism_ShardPictures' twelve; the heights read there
+            // are 0, so they draw nothing.
+#ifdef UBFIX
+            if (i % 5 != 4)
+#endif
+              draw[0](
+                  canvas,
+                  work->sheet + gPrism_ShardPictures[cell] +
+                      ELEMENT_CARDS_PICTURES + CRYSTAL_SHARD_PICTURES,
+                  FIXED_INTEGER_PART(step->x) - gPrism_ShardWidths[cell] / 2,
+                  FIXED_INTEGER_PART(step->y) - gPrism_ShardHeights[cell] / 2,
+                  gPrism_ShardWidths[cell], gPrism_ShardHeights[cell]);
             Particle_AdvanceWithGravity2D(step, PARTICLE_DAMPING_NONE, 0);
-            if (step->y > toFIXED(96))
+            if (step->y > toFIXED(CARD_GROUND_Y))
               step->velocityY = -step->velocityY / 2;
             step->variant += step->z;
             if (step->z > 1 && (frame & 1))
@@ -472,12 +536,12 @@ void BattleEffect_RunElementCards(struct BattleEffectParams *args, s32 mode) {
                       SMOKE_PUFF_HEIGHT);
             step->x += step->velocityX;
             step->y += step->velocityY;
-            if (step->y > toFIXED(96)) {
-              step->y = toFIXED(96);
+            if (step->y > toFIXED(CARD_GROUND_Y)) {
+              step->y = toFIXED(CARD_GROUND_Y);
               step->velocityY = 0;
             }
             step->variant++;
-            if (step->variant == 24)
+            if (step->variant == CARD_SMOKE_FRAMES)
               step->variant = -1;
           }
         }
@@ -487,20 +551,20 @@ void BattleEffect_RunElementCards(struct BattleEffectParams *args, s32 mode) {
     // The strikes: every five frames each target in turn reels, flashes and
     // throws up 16 sparks.
     if (mode == CARD_THUNDER)
-      firstHit = 52;
+      firstHit = CARD_THUNDER_STRIKES_FROM;
     else if (mode == CARD_BRAMBLE)
-      firstHit = 60;
+      firstHit = CARD_BRAMBLE_STRIKES_FROM;
     else
-      firstHit = 68;
+      firstHit = CARD_STRIKES_FROM;
     if (mode == CARD_BRAMBLE)
-      lastHit = 96;
+      lastHit = CARD_BRAMBLE_STRIKES_UNTIL;
     else
-      lastHit = 110;
+      lastHit = CARD_STRIKES_UNTIL;
     if (frame >= firstHit && frame < lastHit) {
-      s32 speed = (frame - 68) * 3;
+      s32 speed = (frame - CARD_STRIKES_FROM) * 3;
 
       for (i = 0; i != args->targetCount; i++) {
-        struct Particle *step = &work->particles[CARD_FIRST_STRIKE + i];
+        struct Particle *step = &work->particles[CARD_STRIKE_TIMERS + i];
 
         if (--step->variant == 0) {
           s32 burst;
@@ -529,7 +593,7 @@ void BattleEffect_RunElementCards(struct BattleEffectParams *args, s32 mode) {
               s32 angle;
               s32 force;
 
-              spark->x = aim.x << 15;
+              spark->x = aim.x * (FIXED_ONE / 2);
               spark->y = INTtoFIXED(aim.y + 8);
               angle = Random16() % (TRIG_TURN * 3 / 4) + DEGtoANG(45);
               force = Random16() & 127;
@@ -564,15 +628,15 @@ void BattleEffect_RunElementCards(struct BattleEffectParams *args, s32 mode) {
       Matrix_Scale(FIXED_ONE / 2, FIXED_ONE, FIXED_ONE / 2);
       Matrix_Translate(INTtoFIXED(card.x) - toFIXED(128),
                        INTtoFIXED(card.y) - toFIXED(64), 0);
-      if (frame <= 47) {
-        Matrix_RotateX((48 - frame) << 10);
+      if (frame < CARD_RISE_FRAMES) {
+        Matrix_RotateX((CARD_RISE_FRAMES - frame) * (TRIG_TURN / 64));
         if (args->side == EFFECT_SIDE_ENEMIES)
-          Matrix_Translate(-Trig_Sin(frame * 682) << 7, 0, 0);
+          Matrix_Translate(-Trig_Sin(frame * (TRIG_TURN / 96)) << 7, 0, 0);
         else
-          Matrix_Translate(Trig_Sin(frame * 682) << 7, 0, 0);
+          Matrix_Translate(Trig_Sin(frame * (TRIG_TURN / 96)) << 7, 0, 0);
       }
-      Matrix_RotateY(6000);
-      Matrix_RotateZ(frame << 10);
+      Matrix_RotateY(CARD_TILT);
+      Matrix_RotateZ(frame * (TRIG_TURN / 64));
       Matrix_ScaleUniform(scale);
       Matrix_Scale(FIXED_ONE, FIXED_ONE * 2, FIXED_ONE);
       Render_TransformVertices(gBattleEffect_SquareCorners, vertices, 4);
@@ -583,13 +647,13 @@ void BattleEffect_RunElementCards(struct BattleEffectParams *args, s32 mode) {
       }
     }
 
-    // The Bramble and Thunder cards spread four pictures from the card's
-    // corners for 64 frames; the Thunder Card's fade from frame 96.
+    // The Bramble Card's vines and the Thunder Card's bolts reach out from the
+    // card's corners for 64 frames; the bolts fade as the card shrinks.
     if ((mode == CARD_THUNDER || mode == CARD_BRAMBLE) &&
-        (frame >= 48 && frame <= 111)) {
+        (frame >= CARD_RISE_FRAMES && frame <= 111)) {
       s32 alpha = 0;
 
-      if (mode == CARD_THUNDER && frame > 95)
+      if (mode == CARD_THUNDER && frame >= CARD_SHRINK_FRAME)
         alpha = frame * -4 + 384;
       texture.logWidth = 5;
       texture.logHeight = 7;
@@ -606,15 +670,18 @@ void BattleEffect_RunElementCards(struct BattleEffectParams *args, s32 mode) {
           for (i = 0; i != 4; i++) {
             struct Particle *step = &work->particles[i];
 
-            step->velocityY = i << 13;
-            step->z = ((first + i) % 3 << 12) + 2048;
+            step->velocityY = i * (TRIG_TURN / 8);
+            step->z = (first + i) % 3 * PICTURE_BYTES(CARD_STREAK) +
+                      PICTURE_BYTES(CARD);
           }
         }
         for (i = 0; i != 4; i++) {
           struct Particle *step = &work->particles[i];
 
           step->velocityZ =
-              Trig_Sin(step->velocityY + (frame << 10)) / 16 + 12192;
+              Trig_Sin(step->velocityY + frame * (TRIG_TURN / 64)) /
+                  CARD_VINE_SWAY +
+              CARD_VINE_ANGLE;
         }
       } else {
         // The bolts flicker every other frame.
@@ -626,7 +693,8 @@ void BattleEffect_RunElementCards(struct BattleEffectParams *args, s32 mode) {
             struct Particle *step = &work->particles[i];
 
             step->velocityZ = (Random16() & 0x1fff) + 8096;
-            step->z = ((first + i) % 3 << 12) + 2048;
+            step->z = (first + i) % 3 * PICTURE_BYTES(CARD_STREAK) +
+                      ELEMENT_CARDS_PICTURES;
           }
         }
       }
@@ -645,12 +713,12 @@ void BattleEffect_RunElementCards(struct BattleEffectParams *args, s32 mode) {
           Matrix_RotateY(DEGtoANG(180));
         Matrix_RotateZ(step->velocityZ);
         if (mode == CARD_BRAMBLE) {
-          s32 length = (frame << 13) - FIXED_ONE * 6;
+          s32 length = frame * (FIXED_ONE / 8) - FIXED_ONE * 6;
 
           if (length > FIXED_ONE * 2)
             length = FIXED_ONE * 2;
-          if (frame > 95)
-            length = length - (frame << 13) + FIXED_ONE * 12;
+          if (frame >= CARD_SHRINK_FRAME)
+            length = length - frame * (FIXED_ONE / 8) + FIXED_ONE * 12;
           Matrix_Scale(FIXED_ONE * 4, length, FIXED_ONE);
         } else {
           Matrix_Scale(FIXED_ONE * 2, FIXED_ONE * 2, FIXED_ONE);
@@ -662,7 +730,7 @@ void BattleEffect_RunElementCards(struct BattleEffectParams *args, s32 mode) {
     Heap_Release(model);
     Heap_Release(vertices);
 
-    // The sparks bounce once on the ground at y = 104.
+    // The sparks bounce on the ground.
     for (i = 0; i != SPARK_COUNT; i++) {
       struct Particle *step = &SPARKS[i];
 
@@ -675,11 +743,11 @@ void BattleEffect_RunElementCards(struct BattleEffectParams *args, s32 mode) {
         else
           size += 3;
         for (j = 0; j != gElementCards_SparkMotions[mode].steps; j++) {
-          draw[0](canvas, graphics + gBattleEffect_MotePictures[size - 1],
-                  FIXED_INTEGER_PART(step->x) - size / 2,
-                  FIXED_INTEGER_PART(step->y) - size, size, size * 2);
-          if (step->y > toFIXED(104)) {
-            step->y = toFIXED(104);
+          EFFECT_DRAW_MOTE(draw[0], canvas, graphics,
+                           FIXED_INTEGER_PART(step->x),
+                           FIXED_INTEGER_PART(step->y), size);
+          if (step->y > toFIXED(SPARK_GROUND_Y)) {
+            step->y = toFIXED(SPARK_GROUND_Y);
             step->velocityY = -step->velocityY / 2;
           }
           Particle_AdvanceWithGravity2D(
@@ -718,3 +786,39 @@ void BattleEffect_RunSwordCard(struct BattleEffectParams *args) {
 #undef BLITTER
 #undef SPARKS
 #undef SPARK_COUNT
+#undef SPARK_GROUND_Y
+#undef LEGEND_SWORD_SPARKS
+#undef LEGEND_BLADE_PICTURES
+#undef LEGEND_BLADE_WIDTH
+#undef LEGEND_BLADE_HEIGHT
+#undef LEGEND_FLAME_GRADIENT
+#undef LEGEND_FAN_FLAMES
+#undef LEGEND_FAN_TILT
+#undef LEGEND_FLASH_GROWTH
+#undef LEGEND_SWORD_INTERVAL
+#undef LEGEND_SWORD_FALL_FRAME
+#undef LEGEND_SWORD_STRIKE_FRAME
+#undef LEGEND_SWORD_FALL_FRAMES
+#undef LEGEND_SWORD_START_DISTANCE
+#undef LEGEND_FRAMES
+#undef CARD_STREAK_WIDTH
+#undef CARD_STREAK_HEIGHT
+#undef ELEMENT_CARDS_PICTURES
+#undef CARD_PIECES
+#undef CARD_STRIKE_TIMERS
+#undef CARD_SPARKS_PER_TARGET
+#undef CARD_STRIKE_SPARKS
+#undef CARD_RISE_FRAMES
+#undef CARD_SHRINK_FRAME
+#undef CARD_TILT
+#undef CARD_GROUND_Y
+#undef CARD_SHARD_TUMBLE_SPEED
+#undef CARD_SHARD_TUMBLE_END
+#undef CARD_SMOKE_FRAMES
+#undef CARD_STRIKES_FROM
+#undef CARD_THUNDER_STRIKES_FROM
+#undef CARD_BRAMBLE_STRIKES_FROM
+#undef CARD_STRIKES_UNTIL
+#undef CARD_BRAMBLE_STRIKES_UNTIL
+#undef CARD_VINE_ANGLE
+#undef CARD_VINE_SWAY

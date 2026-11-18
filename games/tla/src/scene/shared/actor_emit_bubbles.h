@@ -1,20 +1,22 @@
-/// Bubbles rise from an actor every eighth frame.
+/// Sparkles rising about an actor, as about an Adept a tablet has taught
+/// Psynergy: every eighth frame a white sparkle starts within 16 pixels to
+/// either side of it, 8 to 39 pixels up, and rises half a pixel a frame.
 void Actor_EmitBubbles(struct Actor *actor) {
   s32 phase = gFrameCount & 7;
 
   if (phase == 0) {
-    struct EffectOptions options;
+    struct EffectOptions sparkle;
     FIXED position[3];
 
-    options.palette = 7;
-    options.type = 673;
-    options.priority = 1;
-    position[0] = actor->x.fixed + (((Random16() & 31) - 16) << 16);
-    position[1] = actor->y.fixed + ((Random16() & 31) << 16) + toFIXED(8);
+    sparkle.palette = SPRITE_COLOR_WHITE;
+    sparkle.type = SPRITE_SPARKLE;
+    sparkle.priority = 1;
+    position[0] = actor->x.fixed + toFIXED((Random16() & 31) - 16);
+    position[1] = actor->y.fixed + toFIXED(Random16() & 31) + toFIXED(8);
     position[2] = actor->z.fixed;
     FieldEffect_Spawn(
         position[0], position[1], position[2] + toFIXED(4), 0, toFIXED(0.5),
         phase, EFFECT_USE_TYPE | EFFECT_USE_PRIORITY | EFFECT_USE_PALETTE,
-        &options);
+        &sparkle);
   }
 }

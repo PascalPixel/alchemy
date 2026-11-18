@@ -247,10 +247,6 @@ enum CastingImpact {
 #define HAMMERSPHERE_BALL 2048
 #define HAMMERSPHERE_BALL_WIDTH 48
 #define HAMMERSPHERE_BALL_HEIGHT 96
-/// TwelveModeImage's four 18x48 pictures, each half of the bite: drawn once,
-/// then mirrored beside it.
-#define BITE_HALF_WIDTH 18
-#define BITE_HALF_HEIGHT 48
 
 /// Where SmokeSheet is decoded in the effect's pictures.
 #define CASTING_IMPACT_SMOKE_PICTURES 6153
@@ -1799,16 +1795,18 @@ void BattleEffect_RunCastingImpact(struct BattleEffectParams *action,
             flags = EFFECT_CLIP_BOUNDS;
             EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, flags, BLITTER_ADDITIVE);
             ((DrawRectangle)Ram_HeapSlots->ramCode)(
-                canvas, pictures + m * PICTURE_BYTES(BITE_HALF),
-                targetPos.x / 2 - BITE_HALF_WIDTH, 56, BITE_HALF_WIDTH,
-                BITE_HALF_HEIGHT);
+                canvas, pictures + m * PICTURE_BYTES(TARGET_STRIKE_BITE),
+                targetPos.x / 2 - TARGET_STRIKE_BITE_WIDTH,
+                TARGET_STRIKE_BITE_Y, TARGET_STRIKE_BITE_WIDTH,
+                TARGET_STRIKE_BITE_HEIGHT);
             HeapSlot_Release(HEAP_SLOT_RAM_CODE);
             flags = EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X;
             EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, flags, BLITTER_ADDITIVE);
           }
           ((DrawRectangle)Ram_HeapSlots->ramCode)(
-              canvas, pictures + m * PICTURE_BYTES(BITE_HALF), targetPos.x / 2,
-              56, BITE_HALF_WIDTH, BITE_HALF_HEIGHT);
+              canvas, pictures + m * PICTURE_BYTES(TARGET_STRIKE_BITE),
+              targetPos.x / 2, TARGET_STRIKE_BITE_Y, TARGET_STRIKE_BITE_WIDTH,
+              TARGET_STRIKE_BITE_HEIGHT);
           HeapSlot_Release(HEAP_SLOT_RAM_CODE);
           BattleEffect_FetchRectangleBlitters(action->side, blitters);
         }
@@ -3121,8 +3119,6 @@ void BattleEffect_RunCastingImpact(struct BattleEffectParams *action,
 #undef HAMMERSPHERE_BALL
 #undef HAMMERSPHERE_BALL_WIDTH
 #undef HAMMERSPHERE_BALL_HEIGHT
-#undef BITE_HALF_WIDTH
-#undef BITE_HALF_HEIGHT
 #undef CASTING_IMPACT_SMOKE_PICTURES
 #undef CASTING_IMPACT_FLASH_BURST_PICTURES
 #undef CASTING_IMPACT_RUNE_PICTURES

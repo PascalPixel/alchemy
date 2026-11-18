@@ -20,12 +20,6 @@
   (((color) << BRIGHTNESS_RED_SHIFT) & (RED_BITS << BRIGHTNESS_RED_SHIFT))
 #define GREEN_CHANNEL_QUADRUPLED(color)                                        \
   (((color) << BRIGHTNESS_GREEN_SHIFT) & (GREEN_BITS << BRIGHTNESS_GREEN_SHIFT))
-/// PALETTE_TINT_SEPIA's shade is a colour's R + G + B over this, 0 to 9.
-#define SEPIA_SHADE_DIVISOR 10
-/// PALETTE_TINT_CUSTOM gives each channel the brightness 2R + 4G + B times the
-/// tint's level over this, so white reaches full level under a tint level of
-/// 14.
-#define CUSTOM_TINT_DIVISOR 96
 
 /// Sets each channel of step (three for each of the 448 colours) to the amount
 /// to add each frame for source to reach target in frames frames; with frames
@@ -460,5 +454,3 @@ s32 PaletteFade_ClampShiftedChannel(s32 value) {
 #undef RED_CHANNEL
 #undef RED_CHANNEL_DOUBLED
 #undef GREEN_CHANNEL_QUADRUPLED
-#undef SEPIA_SHADE_DIVISOR
-#undef CUSTOM_TINT_DIVISOR

@@ -175,11 +175,6 @@ void FieldPsynergy_Carry(void);
 /// wall before it runs, jumps or climbs (FieldWork.blockedSteps).
 #define FIELD_PUSH_FRAMES 12
 
-/// Where a field Psynergy or item use (FieldWork.psynergy and FieldWork.item)
-/// keeps the party member who uses it: bits 13 to 10, above the Psynergy or
-/// item.
-#define ACT_UNIT_SHIFT 10
-
 //--------------------------------------------------------------------------
 // The map's treasure spots (chests and Psynergy Stones)
 //--------------------------------------------------------------------------

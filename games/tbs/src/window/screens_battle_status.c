@@ -15,6 +15,8 @@
 /// The places of the status icons in a row beside the party member's name, 15
 /// pixels apart.
 #define OWNER_STATUS_ICON_PLACES 11
+/// The status icons shown at most.
+#define OWNER_STATUS_ICONS_MAX 8
 
 #if LANGUAGE == LANGUAGE_SPANISH || LANGUAGE == LANGUAGE_ITALIAN
 #define OWNER_STATUS_LABEL(row) (MsgOwnerStatusAttack + (row))
@@ -105,12 +107,12 @@ struct StatusCursor {
 /// PP, class, stats, Djinn, elements and statuses, with a help line for the
 /// item under the cursor.
 s32 BattleStatusScreen_Run(u16 *list, s32 listCount, s32 member) {
-  struct MenuSprite portraitSprite;
+  struct MenuSprite figureSprite;
   struct MenuSprite cursorSprite;
   s32 statusSlots[OWNER_STATUS_ICON_PLACES];
   s8 statusKinds[OWNER_STATUS_ICON_PLACES];
   struct MenuSprite statusSprites[OWNER_STATUS_ICON_PLACES];
-  struct MenuSprite nameSprite;
+  struct MenuSprite portraitSprite;
   struct StatusCursor cursor;
   struct WindowWork *work;
   struct Window *statusWindow;
@@ -197,14 +199,14 @@ s32 BattleStatusScreen_Run(u16 *list, s32 listCount, s32 member) {
     keys = gKeysRepeat;
 
     // The party member's 32x32 portrait at the top left.
-    nameSprite.oam.word.attr01 =
+    portraitSprite.oam.word.attr01 =
         OBJ_SIZE_32X32 | OBJ_MODE(OBJ_MODE_SEMI_TRANSPARENT);
-    nameSprite.oam.word.attr23 = 0;
-    nameSprite.oam.f.tile = Portrait_Load(member, portraitSlot);
-    nameSprite.oam.f.x = 8;
-    nameSprite.oam.f.y = 24;
-    nameSprite.oam.f.palette = 14;
-    Oam_AddSpriteAtDepth(&nameSprite, OAM_DEPTH_WINDOW);
+    portraitSprite.oam.word.attr23 = 0;
+    portraitSprite.oam.f.tile = Portrait_Load(member, portraitSlot);
+    portraitSprite.oam.f.x = 8;
+    portraitSprite.oam.f.y = 24;
+    portraitSprite.oam.f.palette = PORTRAIT_PALETTE;
+    Oam_AddSpriteAtDepth(&portraitSprite, OAM_DEPTH_WINDOW);
 
     // The group follows the help shown: the general rows have 9 stops with
     // Djinn, 7 without.
@@ -338,20 +340,20 @@ s32 BattleStatusScreen_Run(u16 *list, s32 listCount, s32 member) {
     // The party member's battle figure: its battle object's first sprite
     // record, as a 64x64, 256-colour sprite at (172, 56).
     {
-      struct MenuSprite *face =
+      struct MenuSprite *figure =
           (struct MenuSprite *)GetBattleObjectSlotFar(member)->actor->sprite;
 
-      portraitSprite.oam.word.attr01 =
+      figureSprite.oam.word.attr01 =
           OBJ_SIZE_64X64 | OBJ_256_COLORS | OBJ_MODE(OBJ_MODE_SEMI_TRANSPARENT);
-      portraitSprite.oam.word.attr23 = 0;
+      figureSprite.oam.word.attr23 = 0;
 #if TBS_PATCH_4
       /* FAKEMATCH(barrier): an empty asm. */
       __asm__("");
 #endif
-      portraitSprite.oam.f.tile = face->oam.f.tile;
-      portraitSprite.oam.f.x = 172;
-      portraitSprite.oam.f.y = 56;
-      Oam_AddSpriteAtDepth(&portraitSprite, OAM_DEPTH_WINDOW);
+      figureSprite.oam.f.tile = figure->oam.f.tile;
+      figureSprite.oam.f.x = 172;
+      figureSprite.oam.f.y = 56;
+      Oam_AddSpriteAtDepth(&figureSprite, OAM_DEPTH_WINDOW);
     }
 
     cursorSprite.oam.word.attr01 =
@@ -480,7 +482,7 @@ s32 BattleStatusScreen_Run(u16 *list, s32 listCount, s32 member) {
         Text_DrawMessageAsTiles(OWNER_STATUS_LABEL(OWNER_STATUS_LABEL_RESIST),
                                 statusWindow, 0, 96);
 
-        for (j = 0; j <= 3; j++) {
+        for (j = 0; j < ELEMENT_COUNT; j++) {
           s32 pal;
 
           pal = 1;
@@ -505,10 +507,11 @@ s32 BattleStatusScreen_Run(u16 *list, s32 listCount, s32 member) {
                                   40 + j * 32, 96);
         }
 
-        // The status icons, at most eight, in this order: downed, cursed
-        // item, Grim Reaper, poison, deadly poison, Psynergy sealed, stun,
-        // sleep, haunt, delusion, then Attack, Defense and Resistance raised
-        // or lowered, and Agility. OWNER_CONDITION_NORMAL alone means none.
+        // The status icons, at most OWNER_STATUS_ICONS_MAX, in this order:
+        // downed, cursed item, Grim Reaper, poison, deadly poison, Psynergy
+        // sealed, stun, sleep, haunt, delusion, then Attack, Defense and
+        // Resistance raised or lowered, and Agility. OWNER_CONDITION_NORMAL
+        // alone means none.
         i = 0;
         if (unit->hp == 0) {
           statusKinds[0] = OWNER_CONDITION_DOWNED;
@@ -518,55 +521,55 @@ s32 BattleStatusScreen_Run(u16 *list, s32 listCount, s32 member) {
           if (unit->curse != 0) {
             statusKinds[i++] = OWNER_CONDITION_CURSED_ITEM;
           }
-          if (i > 7) {
+          if (i >= OWNER_STATUS_ICONS_MAX) {
             break;
           }
           if (unit->grimReaper != 0) {
             statusKinds[i++] = OWNER_CONDITION_GRIM_REAPER;
           }
-          if (i > 7) {
+          if (i >= OWNER_STATUS_ICONS_MAX) {
             break;
           }
           if (unit->poison == 1) {
             statusKinds[i++] = OWNER_CONDITION_POISON;
           }
-          if (i > 7) {
+          if (i >= OWNER_STATUS_ICONS_MAX) {
             break;
           }
           if (unit->poison == 2) {
             statusKinds[i++] = OWNER_CONDITION_DEADLY_POISON;
           }
-          if (i > 7) {
+          if (i >= OWNER_STATUS_ICONS_MAX) {
             break;
           }
           if (unit->psySeal != 0) {
             statusKinds[i++] = OWNER_CONDITION_PSYNERGY_SEALED;
           }
-          if (i > 7) {
+          if (i >= OWNER_STATUS_ICONS_MAX) {
             break;
           }
           if (unit->stun != 0) {
             statusKinds[i++] = OWNER_CONDITION_STUN;
           }
-          if (i > 7) {
+          if (i >= OWNER_STATUS_ICONS_MAX) {
             break;
           }
           if (unit->sleep != 0) {
             statusKinds[i++] = OWNER_CONDITION_SLEEP;
           }
-          if (i > 7) {
+          if (i >= OWNER_STATUS_ICONS_MAX) {
             break;
           }
           if (unit->haunt != 0) {
             statusKinds[i++] = OWNER_CONDITION_HAUNT;
           }
-          if (i > 7) {
+          if (i >= OWNER_STATUS_ICONS_MAX) {
             break;
           }
           if (unit->delusion != 0) {
             statusKinds[i++] = OWNER_CONDITION_DELUSION;
           }
-          if (i > 7) {
+          if (i >= OWNER_STATUS_ICONS_MAX) {
             break;
           }
           if (unit->attackTurns != 0) {
@@ -577,7 +580,7 @@ s32 BattleStatusScreen_Run(u16 *list, s32 listCount, s32 member) {
               statusKinds[i++] = OWNER_CONDITION_ATTACK_DOWN;
             }
           }
-          if (i > 7) {
+          if (i >= OWNER_STATUS_ICONS_MAX) {
             break;
           }
           if (unit->defenseTurns != 0) {
@@ -588,7 +591,7 @@ s32 BattleStatusScreen_Run(u16 *list, s32 listCount, s32 member) {
               statusKinds[i++] = OWNER_CONDITION_DEFENSE_DOWN;
             }
           }
-          if (i > 7) {
+          if (i >= OWNER_STATUS_ICONS_MAX) {
             break;
           }
           if (unit->resistanceTurns != 0) {
@@ -599,7 +602,7 @@ s32 BattleStatusScreen_Run(u16 *list, s32 listCount, s32 member) {
               statusKinds[i++] = OWNER_CONDITION_RESISTANCE_DOWN;
             }
           }
-          if (i > 7) {
+          if (i >= OWNER_STATUS_ICONS_MAX) {
             break;
           }
           if (unit->agilityStage > 0) {
@@ -641,7 +644,7 @@ s32 BattleStatusScreen_Run(u16 *list, s32 listCount, s32 member) {
         // A status's help carries a number: the Grim Reaper's turns left,
         // what the stat stages add (the stats less those recalculated with
         // the stages cleared, after which the unit is restored from a copy),
-        // or 20 for each Resistance stage.
+        // or RESISTANCE_PER_STAGE for each Resistance stage.
         savedUnit = (struct Unit *)Heap_Alloc(sizeof(*unit));
         helpValue = 0;
         Iwram_CopyWords(savedUnit, unit, sizeof(*unit));
@@ -683,7 +686,7 @@ s32 BattleStatusScreen_Run(u16 *list, s32 listCount, s32 member) {
           break;
         case OWNER_CONDITION_RESISTANCE_UP:
         case OWNER_CONDITION_RESISTANCE_DOWN:
-          helpValue = unit->resistanceStage * 20;
+          helpValue = unit->resistanceStage * RESISTANCE_PER_STAGE;
 #if TBS_PATCH_4
           if (helpValue < 0) {
             helpValue = -helpValue;

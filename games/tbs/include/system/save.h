@@ -92,8 +92,9 @@ STATIC_ASSERT(offsetof(struct SaveFileSummary, secondPartPlayTime) == 56);
 /// save operations.
 #define gSaveWork (*(struct SaveWork **)&gHeapSlots[HEAP_SLOT_SAVE])
 
-/// The word of gSceneLocalState, which opens a file's second part, that holds
-/// the second copy of the play time (Save_BuildFileSummary).
+/// The word, counted from gSceneLocalState (system/ewram.s), which opens a
+/// file's second part, that holds the second copy of the play time
+/// (Save_BuildFileSummary): gInventorySnapshot's last, past gSceneLocalState.
 #define SECOND_PART_PLAY_TIME_WORD 64
 
 /// Starts a DMA 3 transfer; control_ is the unit count with the DMA_ flags

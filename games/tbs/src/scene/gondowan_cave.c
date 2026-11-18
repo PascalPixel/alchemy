@@ -681,7 +681,8 @@ struct Trigger gGondowanCaveRiverTriggers[] = {
     { TRIGGER_TABLE_END },
 };
 
-/// FLAG_SCENE_TEMP_05 ends Move on the pillar.
+/// Move on the pillar would end on FLAG_SCENE_TEMP_05, which nothing sets; once
+/// the pillar has dropped, it stands at (0, 0), out of reach.
 struct Trigger gGondowanCaveTriggers[] = {
     { TRIGGER_STEP, 1, CONDITION_ALWAYS, EVENT(GondowanCave_LeaveToWorldMapEast) },
     { TRIGGER_EXIT, 2, CONDITION_ALWAYS, GONDOWAN_CAVE_TO_GONDOWAN_CAVE_RIVER_NORTH },

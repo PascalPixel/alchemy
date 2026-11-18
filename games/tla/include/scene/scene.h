@@ -501,6 +501,16 @@ extern const u8 gWorldMapPackedTilesC[];
 struct Vector3;
 struct Window;
 
+/// The lightning bolt's picture (RESOURCE_LIGHTNING_TILES and
+/// RESOURCE_LIGHTNING_MAP), shown on BG0 for the strike: its tiles at the start
+/// of character block 0, and its map, LIGHTNING_MAP_ROWS rows of
+/// LIGHTNING_MAP_COLUMNS numbered from tile 512, on screen block
+/// LIGHTNING_SCREEN_BLOCK.
+#define LIGHTNING_TILES 64
+#define LIGHTNING_MAP_ROWS 16
+#define LIGHTNING_MAP_COLUMNS 4
+#define LIGHTNING_SCREEN_BLOCK 4
+
 /// Plays an actor's animation and lets frames pass before the event goes on.
 #define Actor_AnimateThenWait(id, animation, frames)                           \
   do {                                                                         \

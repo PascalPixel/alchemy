@@ -47,8 +47,6 @@
 #define FLAG_AIRS_ROCK_WALL_CLEARED 0x858
 #define FLAG_AIRS_ROCK_FOG_CLEARED 0x87a
 #define FLAG_AIRS_ROCK_TOP_OPENED 0x87b
-/// The leader rides a statue's whirlwind.
-#define FLAG_RIDING_WHIRLWIND FLAG_SCENE_TEMP_50
 
 /// The raised trigger a statue's whirlwind sets as it picks up the leader
 /// (AirsRock_RideWhirlwind).
@@ -1271,16 +1269,6 @@ void AirsRock_CrumbleRock(s32 x, s32 z) {
   MapGrid_SetShake(5, 7, 1);
   MapGrid_SetShake(SHAKE_KEEP, SHAKE_KEEP, 0.9);
 }
-
-/// The lightning bolt's picture (RESOURCE_LIGHTNING_TILES and
-/// RESOURCE_LIGHTNING_MAP), shown on BG0 for the strike: its tiles at the start
-/// of character block 0, and its map, LIGHTNING_MAP_ROWS rows of
-/// LIGHTNING_MAP_COLUMNS numbered from tile 512, on screen block
-/// LIGHTNING_SCREEN_BLOCK.
-#define LIGHTNING_TILES 64
-#define LIGHTNING_MAP_ROWS 16
-#define LIGHTNING_MAP_COLUMNS 4
-#define LIGHTNING_SCREEN_BLOCK 4
 
 /// Whirlwind on the twister rock at the top: it glows, the light turns yellow,
 /// lightning strikes the pile of rocks below it twice and they crumble with a

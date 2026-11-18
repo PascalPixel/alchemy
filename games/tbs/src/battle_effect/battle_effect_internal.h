@@ -160,9 +160,6 @@ static inline void Dma_Stop(volatile u16 *channel) {
 #define SHEET_PALETTE_COLORS 64
 #define SHEET_PALETTE_BYTES (SHEET_PALETTE_COLORS * 2)
 
-/// A damping is a fraction of a speed kept each frame, out of DAMPING_SCALE:
-/// speed * damping / DAMPING_SCALE.
-#define DAMPING_SCALE 64
 /// Particle_AdvanceWithGravity3D's and 2D's damping that keeps a particle's
 /// whole speed.
 #define PARTICLE_DAMPING_NONE DAMPING_SCALE

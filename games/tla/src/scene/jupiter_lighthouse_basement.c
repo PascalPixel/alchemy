@@ -57,7 +57,7 @@
 
 /// The side room's sparks, which take turns at the particle sheet's two
 /// swells.
-#define SPARK_COUNT 16
+#define JUPITER_LIGHTHOUSE_BASEMENT_SPARK_COUNT 16
 /// How long a spark lives before it starts again: a slow swell and the 12
 /// frames it stays gone after, or a quick one.
 enum { SPARK_SLOW_LIFETIME = 212, SPARK_QUICK_LIFETIME = 116 };
@@ -262,7 +262,7 @@ void JupiterLighthouse_SpawnSparks(void) {
       actor->userValue = 0;
     }
     i++;
-  } while (i != SPARK_COUNT);
+  } while (i != JUPITER_LIGHTHOUSE_BASEMENT_SPARK_COUNT);
 }
 
 /// Sets up the basement room being entered: the teleporters' palettes, cycling
@@ -374,11 +374,8 @@ void LightSprites_SetPriority(s32 value) { gLightSpritePriority = value; }
 
 extern const s32 *gFieldEffect_DurationScripts[];
 
-#define EFFECT_SPAWN FieldEffect_Spawn
-#define EFFECT_CREATE Import_ActorCreate
 #define EFFECT_SET_MODE Actor_SelectAnimation
 #define EFFECT_SET_SCRIPT Actor_StartScript
-#define EFFECT_SCRIPTS gFieldEffect_DurationScripts
 #include "../field/field_effect_spawn.c"
 
 #define CELL_PUSH_SLOT_ENTRY Oam_AddSpriteAtDepthClamped

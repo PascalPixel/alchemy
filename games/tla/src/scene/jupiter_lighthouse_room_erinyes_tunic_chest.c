@@ -40,6 +40,7 @@
 #include "system/frame.h"
 #include "field/field_effect.h"
 #include "macros.h"
+#include "fixed_math.h"
 #include "field/actor_script.h"
 
 /// Where a pushed object comes to rest, read by the push that follows.
@@ -323,8 +324,6 @@ void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
 
 extern s8 gPushFootprints[][4];
 
-#define ABS(x) ((x) < 0 ? -(x) : (x))
-
 /// Makes the cells under a pushable actor solid, by its footprint: its sprite
 /// picks one of the footprints in gPushFootprints, and the cells' own
 /// behaviors are kept in the map's spare area for when it moves. Returns 0 for
@@ -377,17 +376,12 @@ s32 PushTarget_FillFootprint(s32 id) {
 
 extern s32 gPushLeaderSteps[];
 
-#define ABS(x) ((x) < 0 ? -(x) : (x))
-
 static inline s32 PushTarget_CheckCollision(struct Actor *actor,
                                             s32 *position) {
   return MapGrid_CheckCollision(actor, position);
 }
 
 #include "shared/push_target_find_slide.h"
-
-/// The whole-pixel half of a 16.16 coordinate.
-#define PIXEL_PART(v) (((s16 *)&(v))[1])
 
 #include "shared/push_target_find_ahead.h"
 
@@ -551,9 +545,6 @@ s8 gPushFootprints[][4] = {
 #undef FLAG_COLUMN_OFF_LEDGE
 #undef FLAG_LEFT_PILLAR_IN_GAP
 #undef FLAG_RIGHT_PILLAR_IN_GAP
-#undef ABS
-#define ABS(v) ((v) < 0 ? -(v) : (v))
-#undef PIXEL_PART
 // Its copy of the effect spawner, and the cracked tiles, found, cracked and
 // fallen through.
 
@@ -561,11 +552,8 @@ void CrackedTile_Update(void);
 
 extern const s32 *gFieldEffect_DurationScripts[];
 
-#define EFFECT_SPAWN FieldEffect_Spawn
-#define EFFECT_CREATE Import_ActorCreate
 #define EFFECT_SET_MODE Actor_SelectAnimation
 #define EFFECT_SET_SCRIPT Actor_StartScript
-#define EFFECT_SCRIPTS gFieldEffect_DurationScripts
 #include "../field/field_effect_spawn.c"
 
 #define CELL_PUSH_SLOT_ENTRY Oam_AddSpriteAtDepthClamped

@@ -147,7 +147,7 @@ extern struct Actor *gYampiDesert_SandRipple;
 void YampiDesert_ClearRaisedEvent(void);
 void YampiDesert_PlayScorpionRumble(void);
 void YampiDesert_SetUpPsynergyStoneScorpion(void);
-void YampiDesert_ReadyStake(s32 id);
+void YampiDesert_SetStakeSunk(s32 id);
 void YampiDesert_CheckUpperLevelFromLower(void);
 void Actor_SetCellOpen(s32 id, u32 kind, s32 flag, s32 layer);
 
@@ -176,7 +176,7 @@ static inline void YampiDesert_ReturnHome(s32 mode, s32 actorId, s32 flag) {
 #define STAKE(n) (ACTOR_FIRST_PLACED + (n))
 #define FLAG_YAMPI_DESERT_STAKE_POUNDED(n) (FLAG_SCENE_TEMP_00 + (n))
 /// A row of a room's stake list, as Pound_SinkTarget and Actor_SetCellOpen read
-/// it: the stake, its kind of poses (0, a stake's) and its flag. A list ends at
+/// it: the stake, its look (0, wood) and its flag. A list ends at
 /// ACTOR_LIST_END.
 #define STAKE_ROW(n) STAKE(n), 0, FLAG_YAMPI_DESERT_STAKE_POUNDED(n)
 
@@ -200,6 +200,9 @@ enum YampiDesertTravelersActorId {
   ACTOR_MAYOR
 };
 
+/// Blitz's room's last stake, standing at the foot of the cliff before a
+/// climbable wall, which shows once Pound has sunk it.
+#define ACTOR_CLIMBABLE_WALL_STAKE STAKE(10)
 /// Blitz, the Jupiter Djinni, after Blitz's room's stakes.
 #define ACTOR_BLITZ STAKE(11)
 
@@ -211,14 +214,6 @@ enum YampiDesertScorpionActorId {
   ACTOR_PSYNERGY_STONE_ROOM_SAND_RIPPLE,
   ACTOR_KING_SCORPION_ROOM_KING_SCORPION = STAKE(13),
   ACTOR_KING_SCORPION_ROOM_SAND_RIPPLE,
-  // In a render of the room's north end with the King Scorpion cornered there
-  // (render probe --only scene --scene YampiDesertKingScorpion --entrance 4
-  // --set 0x889 --set 0x88a --set 0x88b --edition tla-en: entrance 4, with
-  // FLAG_YAMPI_DESERT_SCORPION_STIRRED,
-  // FLAG_YAMPI_DESERT_SCORPION_STIRRED_AGAIN and
-  // FLAG_YAMPI_DESERT_SCORPION_CORNERED set, as the game sets them in turn),
-  // the scorpion, its sand ripple and the thirteen stakes are on stage, and
-  // this boulder is not.
   /// Unused: a brown boulder placed at the origin, which nothing moves, so it
   /// is never on stage.
   ACTOR_KING_SCORPION_ROOM_BOULDER
@@ -241,23 +236,14 @@ enum YampiDesertTrainersWhipChestActorId {
 /// Scorpion is fought.
 enum YampiDesertScorpionPitActorId {
   ACTOR_KING_SCORPION = ACTOR_FIRST_PLACED,
-  // In a render of the room once the pit is dug (render probe --only scene
-  // --scene YampiDesertScorpionPit --entrance 0 --set 0x8ed --edition tla-en,
-  // FLAG_YAMPI_DESERT_ROCK_PIT_DUG_UP set), it stands at (232, 200) in the
-  // middle of the pit, where the photo differs from one before the dig only in
-  // the pit's nine cells, its own among them. Nothing of it is drawn:
-  // SPRITE_UNSEEN_MARKER draws BLANK's picture (graphics/sprite/pictures.tsv),
-  // which is all transparent, and YampiDesert_SetUpScorpionPit's Geyser_Add,
-  // which raises the geyser from it, clears its shadow
-  // (Actor_SetSpriteFlags(actor, 0)).
-  /// The unseen point the geyser rises from, moved between the four
-  /// rocks once Scoop has dug the pit there.
+  /// The unseen point the geyser rises from, moved to the middle of the four
+  /// rocks once Scoop has dug the pit there; Geyser_Add takes its shadow off.
   ACTOR_GEYSER
 };
 
-/// The room's first treasure, numbered from 64 by its item table: the hint in
-/// the rocks, the medal's spot, the pit's find.
-enum { ACTOR_HIDDEN_TREASURE = 64 };
+/// The room's first treasure spot: the hint in the rocks, the medal's spot, the
+/// pit's find.
+enum { ACTOR_HIDDEN_TREASURE = FIELD_TREASURE_ACTOR };
 
 /// The Blow Mace chest's room's actors after its stake
 /// (SceneId_YampiDesertBlowMaceChest): seven unseen blocks by the sand's flow,
@@ -757,7 +743,7 @@ void YampiDesert_BurstSand(s32 x, s32 y, s32 z) {
     velocity[0] += (u16)(Random16() << 1) - toFIXED(1);
     velocity[2] += (u16)Random16() - toFIXED(1) / 2;
     FieldEffect_Spawn(x, y, z, velocity[0], velocity[1], velocity[2],
-                      EFFECT_USE_UPDATE | 1, &options);
+                      EFFECT_USE_UPDATE | EFFECT_SCRIPT_MEDIUM, &options);
   }
 }
 
@@ -1531,7 +1517,7 @@ void YampiDesert_UpdateSandFlow(void) {
 }
 
 /// Notes whether the leader stands on the upper level; in Blitz's room, keeps
-/// its tall stake drawn as the leader is.
+/// the stake before the climbable wall drawn as the leader is.
 void YampiDesert_CheckUpperLevel(void) {
   struct Actor *leader = Actor_GetById(gMainRoutineWork.leaderActorId);
   FIXED x;
@@ -1544,7 +1530,7 @@ void YampiDesert_CheckUpperLevel(void) {
   else
     gMainRoutineWork.onUpperLevel = 0;
   if (gMainRoutineWork.next == SCENE_YAMPI_DESERT_BLITZ) {
-    Actor_SetSpritePriority(STAKE(10),
+    Actor_SetSpritePriority(ACTOR_CLIMBABLE_WALL_STAKE,
                             ((struct FieldSprite *)leader->sprite)->priority);
     x = leader->x.fixed;
     if (x > toFIXED(472)) {
@@ -1629,42 +1615,57 @@ s32 YampiDesert_HasArrived(struct Actor *actor) {
   return 0;
 }
 
+/// A step of the buried King Scorpion's rounds, kept in its riseCounter: sends
+/// it toward a point, in pixels, and goes on to the next step, which waits for
+/// it there.
+#define WALK(state_, x, z)                                                     \
+  case state_:                                                                 \
+    FieldActor_SetMoveTarget((s32)actor, x, 0, z);                             \
+    *state = state_ + 1;                                                       \
+    break;
+
+/// As WALK, after YampiDesert_ClearRaisedEvent.
+#define WALK_ON(state_, x, z)                                                  \
+  case state_:                                                                 \
+    YampiDesert_ClearRaisedEvent();                                            \
+    FieldActor_SetMoveTarget((s32)actor, x, 0, z);                             \
+    *state = state_ + 1;                                                       \
+    break;
+
+/// Waits for the actor to arrive, then goes on to step next.
+#define ARRIVE(state_, next)                                                   \
+  case state_:                                                                 \
+    if (YampiDesert_HasArrived(actor))                                         \
+      *state = next;                                                           \
+    break;
+
+/// Waits for the actor to arrive, then goes on to step turn once the flag is
+/// set and to step next while it is not.
+#define ARRIVE_OR(state_, flag, turn, next)                                    \
+  case state_:                                                                 \
+    if (YampiDesert_HasArrived(actor)) {                                       \
+      if (GameFlag_Get(flag))                                                  \
+        *state = turn;                                                         \
+      else                                                                     \
+        *state = next;                                                         \
+    }                                                                          \
+    break;
+
 /// The buried King Scorpion's round in the Psynergy Stone's room, a loop of
-/// steps: an even step sends it toward a point, the odd one after waits for it
-/// there. Once Pound has sunk stake 3, it stops at the stake's south side and
-/// raises RAISED_STIR_SCORPION.
+/// steps, two to each point: an even step sends it toward the point, the odd
+/// one after waits for it there. Once Pound has sunk stake 3, it stops at the
+/// stake's south side and raises RAISED_STIR_SCORPION.
 void YampiDesert_ScorpionRoamsPsynergyStone(struct Actor *actor) {
   u8 *state = &actor->riseCounter;
 
   switch (*state) {
-  case 0:
-    FieldActor_SetMoveTarget((s32)actor, 280, 0, 200);
-    *state = 1;
-    break;
-  case 1:
-    if (YampiDesert_HasArrived(actor))
-      *state = 2;
-    break;
-  case 2:
-    FieldActor_SetMoveTarget((s32)actor, 280, 0, 264);
-    *state = 3;
-    break;
-  case 3:
-    if (YampiDesert_HasArrived(actor))
-      *state = 4;
-    break;
-  case 4:
-    FieldActor_SetMoveTarget((s32)actor, 184, 0, 264);
-    *state = 5;
-    break;
-  case 5:
-    if (YampiDesert_HasArrived(actor))
-      *state = 6;
-    break;
-  case 6:
-    FieldActor_SetMoveTarget((s32)actor, 184, 0, 248);
-    *state = 7;
-    break;
+    WALK(0, 280, 200)
+    ARRIVE(1, 2)
+    WALK(2, 280, 264)
+    ARRIVE(3, 4)
+    WALK(4, 184, 264)
+    ARRIVE(5, 6)
+    WALK(6, 184, 248)
   case 7:
     if (YampiDesert_HasArrived(actor)) {
       if (GameFlag_Get(FLAG_YAMPI_DESERT_STAKE_POUNDED(3))) {
@@ -1675,14 +1676,8 @@ void YampiDesert_ScorpionRoamsPsynergyStone(struct Actor *actor) {
       }
     }
     break;
-  case 8:
-    FieldActor_SetMoveTarget((s32)actor, 184, 0, 200);
-    *state = 9;
-    break;
-  case 9:
-    if (YampiDesert_HasArrived(actor))
-      *state = 0;
-    break;
+    WALK(8, 184, 200)
+    ARRIVE(9, 0)
   }
 }
 
@@ -1719,20 +1714,6 @@ void YampiDesert_SetUpPsynergyStoneScorpion(void) {
   Task_Add(YampiDesert_RippleFollowsScorpion, TASK_PASS_FRAME);
 }
 
-/// Sends the actor toward a point and moves to the next state.
-#define WALK(state_, x, z)                                                     \
-  case state_:                                                                 \
-    FieldActor_SetMoveTargetFX((s32)actor, x, 0, z);                           \
-    *state = state_ + 1;                                                       \
-    break;
-
-/// Waits for the actor to arrive before moving to the given state.
-#define ARRIVE(state_, next)                                                   \
-  case state_:                                                                 \
-    if (YampiDesert_HasArrived(actor))                                         \
-      *state = next;                                                           \
-    break;
-
 /// The buried King Scorpion's round in the King Scorpion's room, about stake 0:
 /// once Pound has sunk the stake, it stops at its east side and raises
 /// RAISED_STIR_SCORPION_AGAIN, or, past that point, keeps from step 32 to a
@@ -1741,11 +1722,11 @@ void YampiDesert_ScorpionRoamsKingScorpion(struct Actor *actor) {
   u8 *state = &actor->riseCounter;
 
   switch (*state) {
-    WALK(0, toFIXED(312), toFIXED(664))
+    WALK(0, 312, 664)
     ARRIVE(1, 2)
-    WALK(2, toFIXED(312), toFIXED(728))
+    WALK(2, 312, 728)
     ARRIVE(3, 4)
-    WALK(4, toFIXED(246), toFIXED(728))
+    WALK(4, 246, 728)
   case 5:
     if (YampiDesert_HasArrived(actor)) {
       if (GameFlag_Get(FLAG_YAMPI_DESERT_STAKE_POUNDED(0))) {
@@ -1756,17 +1737,17 @@ void YampiDesert_ScorpionRoamsKingScorpion(struct Actor *actor) {
       }
     }
     break;
-    WALK(6, toFIXED(184), toFIXED(728))
+    WALK(6, 184, 728)
     ARRIVE(7, 8)
-    WALK(8, toFIXED(184), toFIXED(712))
+    WALK(8, 184, 712)
     ARRIVE(9, 10)
-    WALK(10, toFIXED(280), toFIXED(712))
+    WALK(10, 280, 712)
     ARRIVE(11, 12)
-    WALK(12, toFIXED(280), toFIXED(760))
+    WALK(12, 280, 760)
     ARRIVE(13, 14)
-    WALK(14, toFIXED(232), toFIXED(760))
+    WALK(14, 232, 760)
     ARRIVE(15, 16)
-    WALK(16, toFIXED(232), toFIXED(744))
+    WALK(16, 232, 744)
   case 17:
     if (YampiDesert_HasArrived(actor)) {
       if (!GameFlag_Get(FLAG_YAMPI_DESERT_STAKE_POUNDED(0)))
@@ -1775,19 +1756,15 @@ void YampiDesert_ScorpionRoamsKingScorpion(struct Actor *actor) {
         *state = 32;
     }
     break;
-    WALK(18, toFIXED(232), toFIXED(664))
+    WALK(18, 232, 664)
     ARRIVE(19, 0)
-  case 32:
-    YampiDesert_ClearRaisedEvent();
-    FieldActor_SetMoveTarget((s32)actor, 296, 0, 744);
-    *state = 33;
-    break;
+    WALK_ON(32, 296, 744)
     ARRIVE(33, 34)
-    WALK(34, toFIXED(296), toFIXED(760))
+    WALK(34, 296, 760)
     ARRIVE(35, 36)
-    WALK(36, toFIXED(232), toFIXED(760))
+    WALK(36, 232, 760)
     ARRIVE(37, 38)
-    WALK(38, toFIXED(232), toFIXED(744))
+    WALK(38, 232, 744)
     ARRIVE(39, 32)
   }
 }
@@ -1826,25 +1803,6 @@ void YampiDesert_SetUpKingScorpionScorpion(void) {
   Task_Add(YampiDesert_RippleFollowsScorpion, TASK_PASS_FRAME);
 }
 
-/// As WALK, after YampiDesert_ClearRaisedEvent.
-#define WALK_ON(state_, x, z)                                                  \
-  case state_:                                                                 \
-    YampiDesert_ClearRaisedEvent();                                            \
-    FieldActor_SetMoveTargetFX((s32)actor, x, 0, z);                           \
-    *state = state_ + 1;                                                       \
-    break;
-
-/// Waits for the actor to arrive, then turns off by a flag.
-#define ARRIVE_OR(state_, flag, turn, next)                                    \
-  case state_:                                                                 \
-    if (YampiDesert_HasArrived(actor)) {                                       \
-      if (GameFlag_Get(flag))                                                  \
-        *state = turn;                                                         \
-      else                                                                     \
-        *state = next;                                                         \
-    }                                                                          \
-    break;
-
 /// The buried King Scorpion's round in the King Scorpion's room once stirred
 /// again, between stakes 1 and 2 of the trap: stopped by stake 2 sunk to its
 /// west, it loops east of that stake from step 32, by stake 1 sunk to its east,
@@ -1855,21 +1813,21 @@ void YampiDesert_ScorpionRoamsToTrap(struct Actor *actor) {
   u8 *state = &actor->riseCounter;
 
   switch (*state) {
-    WALK(0, toFIXED(312), toFIXED(264))
+    WALK(0, 312, 264)
     ARRIVE(1, 2)
-    WALK(2, toFIXED(312), toFIXED(344))
+    WALK(2, 312, 344)
     ARRIVE(3, 4)
-    WALK(4, toFIXED(296), toFIXED(344))
+    WALK(4, 296, 344)
     ARRIVE_OR(5, FLAG_YAMPI_DESERT_STAKE_POUNDED(2), 32, 6)
-    WALK(6, toFIXED(168), toFIXED(344))
+    WALK(6, 168, 344)
     ARRIVE(7, 8)
-    WALK(8, toFIXED(168), toFIXED(296))
+    WALK(8, 168, 296)
     ARRIVE(9, 10)
-    WALK(10, toFIXED(184), toFIXED(296))
+    WALK(10, 184, 296)
     ARRIVE_OR(11, FLAG_YAMPI_DESERT_STAKE_POUNDED(1), 48, 12)
-    WALK(12, toFIXED(280), toFIXED(296))
+    WALK(12, 280, 296)
     ARRIVE(13, 14)
-    WALK(14, toFIXED(280), toFIXED(328))
+    WALK(14, 280, 328)
   case 15:
     if (YampiDesert_HasArrived(actor)) {
       if (GameFlag_Get(FLAG_YAMPI_DESERT_STAKE_POUNDED(2))) {
@@ -1880,29 +1838,29 @@ void YampiDesert_ScorpionRoamsToTrap(struct Actor *actor) {
       }
     }
     break;
-    WALK(16, toFIXED(280), toFIXED(360))
+    WALK(16, 280, 360)
     ARRIVE(17, 18)
-    WALK(18, toFIXED(200), toFIXED(360))
+    WALK(18, 200, 360)
     ARRIVE(19, 20)
-    WALK(20, toFIXED(200), toFIXED(312))
+    WALK(20, 200, 312)
     ARRIVE_OR(21, FLAG_YAMPI_DESERT_STAKE_POUNDED(1), 34, 22)
-    WALK(22, toFIXED(200), toFIXED(264))
+    WALK(22, 200, 264)
     ARRIVE(23, 0)
-    WALK_ON(32, toFIXED(296), toFIXED(312))
+    WALK_ON(32, 296, 312)
     ARRIVE(33, 34)
-    WALK_ON(34, toFIXED(328), toFIXED(312))
+    WALK_ON(34, 328, 312)
     ARRIVE(35, 36)
-    WALK(36, toFIXED(328), toFIXED(376))
+    WALK(36, 328, 376)
     ARRIVE(37, 38)
-    WALK(38, toFIXED(296), toFIXED(376))
+    WALK(38, 296, 376)
     ARRIVE(39, 32)
-    WALK_ON(48, toFIXED(184), toFIXED(344))
+    WALK_ON(48, 184, 344)
     ARRIVE(49, 50)
-    WALK(50, toFIXED(168), toFIXED(344))
+    WALK(50, 168, 344)
     ARRIVE(51, 52)
-    WALK(52, toFIXED(168), toFIXED(296))
+    WALK(52, 168, 296)
     ARRIVE(53, 54)
-    WALK(54, toFIXED(184), toFIXED(296))
+    WALK(54, 184, 296)
     ARRIVE(55, 48)
   }
 }
@@ -2068,7 +2026,7 @@ void YampiDesert_BurstSand(s32 x, s32 y, s32 z);
 void YampiDesert_LandAndFightKingScorpion(void) {
   struct MainRoutineWork *party = &gMainRoutineWork;
   struct Actor *leader = Actor_GetById(party->leaderActorId);
-  struct Actor *actor8 = Actor_GetById(ACTOR_KING_SCORPION);
+  struct Actor *scorpion = Actor_GetById(ACTOR_KING_SCORPION);
 
   Event_Start();
   Event_ResolvePendingActions(0);
@@ -2085,10 +2043,10 @@ void YampiDesert_LandAndFightKingScorpion(void) {
   Actor_SetSpriteFlags(Actor_GetById(ACTOR_KING_SCORPION), 0);
   YampiDesert_SetPositionAndFacing(ACTOR_KING_SCORPION, toFIXED(232),
                                    toFIXED(148), FACING_SOUTH);
-  actor8->motionFlags = 0;
-  actor8->y.fixed = toFIXED(130);
-  actor8->gravity = FIXED_ONE / 2;
-  actor8->bounce = 0;
+  scorpion->motionFlags = 0;
+  scorpion->y.fixed = toFIXED(130);
+  scorpion->gravity = FIXED_ONE / 2;
+  scorpion->bounce = 0;
   wait(1);
   gFieldWork->transition =
       SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_CIRCLE);
@@ -2102,20 +2060,21 @@ void YampiDesert_LandAndFightKingScorpion(void) {
   Sound_Play(SE_THUMP);
   FieldEffect_SetAttached(party->leaderActorId,
                           ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ATTACH);
-  Actor_SetAnimationAndWait(party->leaderActorId, 49);
+  Actor_SetAnimationAndWait(party->leaderActorId, ANIM_LEADER_SIT);
   Sound_Play(SE_DUST_PUFF);
-  actor8->motionFlags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
+  scorpion->motionFlags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
   Actor_SetSpriteFlags(Actor_GetById(ACTOR_KING_SCORPION), SPRITE_FLAG_SHADOW);
   FieldEvent_Wait(24);
-  YampiDesert_BurstSand(actor8->x.fixed, actor8->y.fixed, actor8->z.fixed);
+  YampiDesert_BurstSand(scorpion->x.fixed, scorpion->y.fixed,
+                        scorpion->z.fixed);
   Sound_Play(SE_THUMP);
   Actor_FaceDirectionById(party->leaderActorId, TRIG_TURN * 3 / 4, 0);
   FieldEvent_Wait(40);
   Sound_Play(SE_BEAST_CRY);
   Actor_SetAnimationById(ACTOR_KING_SCORPION, 3);
   FieldEvent_Wait(20);
-  actor8->velocityY = FIXED_ONE * 8;
-  actor8->gravity = toFIXED(9) / 10;
+  scorpion->velocityY = toFIXED(8);
+  scorpion->gravity = toFIXED(9) / 10;
   Actor_SetSpeed(ACTOR_KING_SCORPION, 1.6);
   Actor_MoveToAndWaitById(ACTOR_KING_SCORPION, 232, 184);
   party->battleType = BATTLE_TYPE_NO_ESCAPE;
@@ -2233,8 +2192,10 @@ void YampiDesert_SetUpBlitz(void) {
   FieldTask_AddFrame(YampiDesert_LayerStakesWithLeader, TASK_PASS_FRAME);
 }
 
-/// Sets up a stake: behind the leader, disabled, in its standing animation.
-void YampiDesert_ReadyStake(s32 id) {
+/// Sets up a stake that stands sunk to its top from the start: drawn underfoot
+/// and behind the party in its sunk wooden pose, with no shadow, and neither
+/// moving nor colliding.
+void YampiDesert_SetStakeSunk(s32 id) {
   Actor_GetById(id)->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
   Actor_SetSpritePriority(id, 3);
   Actor_DisableById(id);
@@ -2258,10 +2219,10 @@ void YampiDesert_SetUpPsynergyStone(void) {
     YampiDesert_StepOntoStakeTops();
     wait(10);
   }
-  YampiDesert_ReadyStake(STAKE(4));
-  YampiDesert_ReadyStake(STAKE(5));
-  YampiDesert_ReadyStake(STAKE(6));
-  YampiDesert_ReadyStake(STAKE(7));
+  YampiDesert_SetStakeSunk(STAKE(4));
+  YampiDesert_SetStakeSunk(STAKE(5));
+  YampiDesert_SetStakeSunk(STAKE(6));
+  YampiDesert_SetStakeSunk(STAKE(7));
   if (gMainRoutineWork.entrance ==
           YAMPI_DESERT_PSYNERGY_STONE_FROM_YAMPI_DESERT_BLITZ ||
       gMainRoutineWork.entrance == 2)
@@ -2275,16 +2236,16 @@ void YampiDesert_SetUpPsynergyStone(void) {
 void YampiDesert_SetUpKingScorpion(void) {
   FieldEffect_StartBlankOverlay(0);
   YampiDesert_PlaceStakes(gYampiDesertKingScorpionStakes);
-  YampiDesert_ReadyStake(STAKE(3));
-  YampiDesert_ReadyStake(STAKE(4));
-  YampiDesert_ReadyStake(STAKE(5));
-  YampiDesert_ReadyStake(STAKE(6));
-  YampiDesert_ReadyStake(STAKE(7));
-  YampiDesert_ReadyStake(STAKE(8));
-  YampiDesert_ReadyStake(STAKE(9));
-  YampiDesert_ReadyStake(STAKE(10));
-  YampiDesert_ReadyStake(STAKE(11));
-  YampiDesert_ReadyStake(STAKE(12));
+  YampiDesert_SetStakeSunk(STAKE(3));
+  YampiDesert_SetStakeSunk(STAKE(4));
+  YampiDesert_SetStakeSunk(STAKE(5));
+  YampiDesert_SetStakeSunk(STAKE(6));
+  YampiDesert_SetStakeSunk(STAKE(7));
+  YampiDesert_SetStakeSunk(STAKE(8));
+  YampiDesert_SetStakeSunk(STAKE(9));
+  YampiDesert_SetStakeSunk(STAKE(10));
+  YampiDesert_SetStakeSunk(STAKE(11));
+  YampiDesert_SetStakeSunk(STAKE(12));
   if (gMainRoutineWork.entrance ==
           YAMPI_DESERT_KING_SCORPION_FROM_YAMPI_DESERT_PSYNERGY_STONE ||
       gMainRoutineWork.entrance == 2) {
@@ -2728,10 +2689,6 @@ u32 gYampiDesert_FlowDust[] = {
 // clang-format on
 
 #undef MOVE_LEADER_TO
-#undef WALK
-#undef ARRIVE
-#undef WALK_ON
-#undef ARRIVE_OR
 #undef Actor_SetAnimationAndWait
 #undef Actor_SetMovementTypeAndWaitById
 

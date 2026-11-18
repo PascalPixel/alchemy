@@ -181,6 +181,12 @@ enum LobbyRaisedTrigger {
 /// next monster's level over the party's average.
 enum { LEVEL_BONUS_MAX = 90 };
 
+/// The attendant's last offer of the next monster after a monster battle won,
+/// "Unbelievable!!! Would you like to fight the next monster?"
+/// (MsgLobbyNotBadWouldYouLike + 14); each line before it praises less, and
+/// the one after it offers a stronger monster.
+enum { MONSTER_OFFER_UNBELIEVABLE = 14 };
+
 /// The lobby's entrances after a battle, which no exit leads to: back from a
 /// monster battle won or lost, and from a linked battle won (or broken off) or
 /// lost.
@@ -1066,8 +1072,8 @@ UNUSED void LinkLobby_DoNothing(void) {}
 extern u8 MsgLobbyYouHaveSongRequest[];
 extern u8 MsgLobbyComeBackWhenYoureReady[];
 /// The sounds the song request offers, numbered from 0 in its window.
-#define REQUESTABLE_SOUNDS 97
-extern u16 gLinkLobby_RequestableSounds[REQUESTABLE_SOUNDS];
+#define SONG_REQUEST_SOUNDS 97
+extern u16 gLinkLobby_SongRequestSounds[SONG_REQUEST_SOUNDS];
 
 void Event_Start(void);
 void Event_End(void);
@@ -1078,8 +1084,8 @@ void Text_DrawNumber(s32 value, s32 digits, s32 window, s32 x, s32 y);
 void Window_Close(s32 window, s32 release);
 
 /// A song request: the player picks a sound by number, only the ones already
-/// heard unless all are unlocked (L, R and Select held as it opens), and
-/// hears it, until B.
+/// heard unless all are unlocked (Start, Up and L held as it opens, or this
+/// game or a file on the cartridge cleared), and hears it, until B.
 /// "You have a song request?"
 void LinkLobby_TakeSongRequest(s32 actor) {
   s32 window;
@@ -1117,12 +1123,12 @@ void LinkLobby_TakeSongRequest(s32 actor) {
       for (; step != 0;) {
         song += step;
         if (song < 0)
-          song = REQUESTABLE_SOUNDS - 1;
-        if ((u32)song > REQUESTABLE_SOUNDS - 1)
+          song = SONG_REQUEST_SOUNDS - 1;
+        if ((u32)song > SONG_REQUEST_SOUNDS - 1)
           song = 0;
         if (all != 0 || gMainRoutineWork.sendFlag != 0 || gAnyFileCleared != 0)
           break;
-        if (SoundFlag_Test(gLinkLobby_RequestableSounds[song]) != 0)
+        if (SoundFlag_Test(gLinkLobby_SongRequestSounds[song]) != 0)
           break;
       }
       if (gInput.pressed & KEY_A)
@@ -1136,7 +1142,7 @@ void LinkLobby_TakeSongRequest(s32 actor) {
     Window_Close(window, 1);
     if (song < 0)
       break;
-    Event_PlaySound(gLinkLobby_RequestableSounds[song]);
+    Event_PlaySound(gLinkLobby_SongRequestSounds[song]);
   }
   Event_PlaySound(SOUND_FADE_OUT_BGM);
   wait(120);
@@ -1334,15 +1340,19 @@ s32 LinkLobby_SaveMonsterBattleResults(void) {
   FieldMessage_Show(MsgLobbyMonsterBattleResultsWereSaved, 1);
 }
 
-/// Draws value, at most 999, as three digits from right to left.
-void LinkLobby_DrawThreeDigitValue(s32 value) {
-  s32 i;
+/// The most the wall board's three digits show.
+#define WALL_BOARD_MAX 999
 
-  if (value > 999)
-    value = 999;
-  for (i = 0; i <= 2; i++) {
-    MapGrid_CopyCellsTo(27, value % 10, 16 - i, 8, 1, 1);
-    value /= 10;
+/// Shows value, at most WALL_BOARD_MAX, on the wall board, as three digits
+/// from right to left.
+void LinkLobby_DrawThreeDigitValue(s32 value) {
+  s32 digit;
+
+  if (value > WALL_BOARD_MAX)
+    value = WALL_BOARD_MAX;
+  for (digit = 0; digit <= 2; digit++) {
+    MapGrid_CopyCellsTo(27, value % 10, 16 - digit, 8, 1, 1);
+    value = value / 10;
   }
   MapGrid_CenterOnFollowedPoint();
 }
@@ -1408,13 +1418,14 @@ s32 LinkLobby_Initialize(void) {
     gMainRoutineWork.linkTallies[LINK_TALLY_MONSTER_WINS]++;
     gMainRoutineWork.linkTallies[LINK_TALLY_MONSTER_STREAK]++;
     // The offer has two lines a level (FLAG_MONSTER_BATTLE_WINS, -1 when a
-    // series starts), the even line capped at 14. FLAG_AREA_TEMP_E8's byte
-    // counts the victories 0 to 2; the third raises the level and takes the
-    // next, odd line (at most 15), which promises a stronger monster.
+    // series starts), the even line capped at MONSTER_OFFER_UNBELIEVABLE.
+    // FLAG_AREA_TEMP_E8's byte counts the victories 0 to 2; the third raises
+    // the level and takes the next, odd line, which promises a stronger
+    // monster.
     wins = (s8)GameFlag_GetByte(FLAG_MONSTER_BATTLE_WINS);
     msg = wins * 2 + 2;
-    if (msg > 14)
-      msg = 14;
+    if (msg > MONSTER_OFFER_UNBELIEVABLE)
+      msg = MONSTER_OFFER_UNBELIEVABLE;
     v = FieldGameFlag_GetByte(FLAG_AREA_TEMP_E8);
     if (v == 2) {
       FieldGameFlag_SetByte(FLAG_AREA_TEMP_E8, 0);
@@ -1600,7 +1611,7 @@ u8 gLinkLobby_SlotColumns[] = {
     0, 1, 1, 1, 1, 0,
 };
 
-u16 gLinkLobby_RequestableSounds[] = {
+u16 gLinkLobby_SongRequestSounds[] = {
     MUS_LEMURIA_SPRING,
     MUS_ENDING,
     MUS_CLEAR,

@@ -607,6 +607,9 @@ enum TargetStrikeStyle {
 
 #define EFFECT_CLIP_BOUNDS (COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y)
 
+/// The second blitter, the drawing routine in the paired heap slot.
+#define ALT_BLITTER ((DrawRectangle)Ram_HeapSlots->ramCodePaired)
+
 /// The second blitter slot read as what it holds, a drawing routine.
 #define ALTERNATE_BLITTER_SLOT                                                 \
   (((struct {                                                                  \
@@ -657,6 +660,12 @@ enum CanvasFadeShare { CANVAS_FADE_HALF = 50, CANVAS_FADE_THREE_QUARTERS = 75 };
 
 /// Presents the canvas and waits for the next frame.
 #define EFFECT_PRESENT_CANVAS(work) ((work)->transferPending = 1, wait(1))
+
+/// Waits until a VBlank has passed since the one that last copied the canvas.
+// DEAD: each test reads the count twice and drops the first read; the ROM
+// keeps both loads.
+#define WAIT_TRANSFER(work)                                                    \
+  while ((work)->vblanksSinceTransfer, (work)->vblanksSinceTransfer <= 1)
 
 /// The usual end of an effect's frame: counts down the targets' flash timers,
 /// then presents the canvas.

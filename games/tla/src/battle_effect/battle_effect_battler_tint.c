@@ -1,5 +1,5 @@
 /// @file
-/// Tinting a battler, and the routine before it, not yet understood.
+/// Bringing the battle back behind a cleared canvas, and tinting a battler.
 // Part of battle_effect.c.
 
 #include "battle_effect_internal.h"
@@ -7,18 +7,26 @@
 #include "gamepak/far_call/battle.h"
 #include "gamepak/far_call/field.h"
 
-/// Shows the battle background behind a cleared canvas.
+/// The canvas's usual weight over the battle, in sixteenths.
+#define CANVAS_BLEND_LEVEL 14
+/// The header's level the battle background comes back at, which
+/// battle_effect_canvas.c's #undef takes from the parts after it.
+#define BACKGROUND_DARKENED_LEVEL BACKGROUND_DARKEN_FRAMES
+
+/// Shows the battle background, as dark as the canvas's fade left it, behind a
+/// cleared canvas, and fades out the action's sound effects.
 void BattleEffect_SetupBlendedDisplay(void) {
   struct BattleWork *battle = Ram_HeapSlots->battleWork;
-  void *buffer = Ram_HeapSlots->battleCanvas;
+  u8 *canvas = Ram_HeapSlots->battleCanvas;
 
   REG_DISPCNT = DISPCNT_MODE_1;
   gBgScroll[1].y = BATTLE_BACKGROUND_SCROLL_Y;
-  BattleBackground_LoadFar(BATTLE_BACKGROUND_FIXED, battle->background, 24);
-  IWRAM_FILL_WORDS(buffer, CANVAS_BYTES, 0);
+  BattleBackground_LoadFar(BATTLE_BACKGROUND_FIXED, battle->background,
+                           BACKGROUND_DARKENED_LEVEL);
+  IWRAM_FILL_WORDS(canvas, CANVAS_BYTES, 0);
   IWRAM_FILL_WORDS((void *)BG_CHAR_BLOCK(1), CANVAS_BYTES, 0);
   wait(1);
-  REG_BLDALPHA = EFFECT_BLEND_CANVAS(14);
+  REG_BLDALPHA = EFFECT_BLEND_CANVAS(CANVAS_BLEND_LEVEL);
   REG_BLDCNT =
       BLDCNT_TGT1_BG1 | BLDCNT_TGT1_BG2 | BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_ALL;
   REG_DISPCNT = EFFECT_DISPCNT;
@@ -26,56 +34,51 @@ void BattleEffect_SetupBlendedDisplay(void) {
   Sound_PlayFar(SOUND_FADE_OUT_ACTION_SE);
 }
 
-/// How many sprite animations a sprite holds.
-static __inline__ u8 GroupCount(struct Sprite *group) { return group->count; }
-
-/// Updates every effect group of one unit's battle object: its palette, its
-/// pose (reset only when it changes) and the timer slot's frames.
-void BattleEffect_TintBattler(s32 setId, s32 objectValue, s32 groupValue,
-                              s32 stateSlot, s32 stateValue) {
-  struct BattleObject *set;
+/// Tints one unit's battle object and sets its pose, for every sprite it is
+/// made of, and starts that unit's flash timer.
+///
+/// palette: a SpriteColorMode, SPRITE_COLOR_NORMAL for the unit's own palette,
+///          or TINT_KEEP.
+/// animation: the pose to start, or TINT_KEEP.
+/// timerSlot: the work->actorTimers entry to set to timerFrames, or TINT_KEEP.
+void BattleEffect_TintBattler(s32 unitId, s32 palette, s32 animation,
+                              s32 timerSlot, s32 timerFrames) {
+  struct BattleObject *slot;
   struct Sprite *group;
-  struct BattleEffectWork *state;
+  struct BattleEffectWork *work;
   s32 groupIndex;
 
-  set = BattleObject_GetFar(setId);
-  state = Ram_HeapSlots->battleEffect;
+  slot = BattleObject_GetFar(unitId);
+  work = Ram_HeapSlots->battleEffect;
   groupIndex = 0;
 
-  while ((group = GetMotionRecordFar(set->object, groupIndex)) != NULL) {
-    if (stateSlot != -1)
-      state->actorTimers[stateSlot] = ((u8 *)&stateValue)[0];
-    if (set->fading == 0) {
-      if (objectValue != -1) {
-        s32 objectIndex;
+  while ((group = GetMotionRecordFar(slot->object, groupIndex)) != NULL) {
+    if (timerSlot != TINT_KEEP)
+      work->actorTimers[timerSlot] = timerFrames;
+    if (slot->fading == 0) {
+      if (palette != TINT_KEEP) {
+        s32 partIndex;
 
-        objectIndex = 0;
-        if (GroupCount(group) != 0) {
-          struct SpriteAnimation **objects;
+        for (partIndex = 0; partIndex != group->count; partIndex++) {
+          struct SpriteAnimation *part = group->entries[partIndex];
 
-          objects = group->entries;
-          do {
-            struct SpriteAnimation *object;
+          if (part != NULL && part != slot->shadowEntry &&
+              part != slot->animationEntry) {
+            u8 oldPalette = part->colorMode;
 
-            object = *objects++;
-            if (object != NULL && object != set->shadowEntry &&
-                object != set->animationEntry) {
-              u8 old = object->colorMode;
-
-              if (objectValue == 0)
-                object->colorMode = BattleMotion_GetSlotPaletteFar(setId);
-              else
-                object->colorMode = objectValue;
-              if (object->colorMode != old)
-                object->picture = SPRITE_PICTURE_NONE;
-            }
-            objectIndex++;
-          } while (objectIndex != GroupCount(group));
+            if (palette == SPRITE_COLOR_NORMAL)
+              part->colorMode = BattleMotion_GetSlotPaletteFar(unitId);
+            else
+              part->colorMode = palette;
+            if (part->colorMode != oldPalette)
+              part->picture = SPRITE_PICTURE_NONE;
+          }
         }
       }
-      if (groupValue != -1)
-        Sprite_StartAnimationFar(group, groupValue);
+      if (animation != TINT_KEEP)
+        Sprite_StartAnimationFar(group, animation);
     }
     groupIndex++;
   }
 }
+#undef CANVAS_BLEND_LEVEL

@@ -323,9 +323,9 @@ s32 MapCell_Swap(u32 layer, s32 x, s32 y, s32 value) {
 void MapGrid_SetCellHeight();
 void Teleport_PlayWhirl(void);
 void Teleport_PlaySparks(void);
-/// Set while a whirlwind carries the leader, as in the Jupiter Lighthouse rooms
-/// that keep it here and clear it in their set-up; nothing in this overlay
-/// rides one.
+/// Set while a whirlwind carries the leader, in the rooms that have one (the
+/// Jupiter Lighthouse rooms and Room F); this room has none, and its set-up's
+/// clear is all that touches it.
 s32 gWhirlwindRiding BSS_DATA;
 u16 gPaletteCycleBright BSS_DATA;
 u16 *gPaletteCycleSlots BSS_DATA;
@@ -1630,11 +1630,7 @@ extern u32 gEmbers_Script[];
 
 #include "shared/actor_hold_during_event.c"
 
-#define ABS(x) ((x) < 0 ? -(x) : (x))
-
 #include "shared/actor_roll_and_crumble.c"
-#undef WORK
-#undef ABS
 
 void Map_CopyPalette(s32 scene, s32 a1);
 
@@ -1697,19 +1693,7 @@ void Leader_SetSlideStopped(s32 value) { gSlideOnIce_Stopped = value; }
 
 #include "../field/field_effect_move.c"
 
-#undef RIDE_WORK
 #undef DEFINE_BURST_ICE_SHEET
-#undef SET_SPRITE_WINDOW_LAYERS
-#undef IWRAM
-#undef KNOCK_BACK
-#undef KNOCK_BACK_TAKE_DAMAGE
-#undef KNOCK_BACK_BLINK
-#undef KNOCK_BACK_SET_ANIMATION
-#undef KNOCK_BACK_CELL_ATTRIBUTE
-#undef KNOCK_BACK_CHECK_COLLISION
-#undef WORK
-#undef ABS
-#undef Position
 extern s32 gFieldEffect_DurationScripts[];
 
 void Actor_SetSpriteFlags(struct Actor *actor, u32 value);

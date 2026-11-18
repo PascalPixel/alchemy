@@ -87,25 +87,24 @@ void Window_OverlayTilePattern(u16 *entry, u16 *mirror, s32 pattern,
     *entry = WINDOW_TILE(slot);
     *mirror = WINDOW_TILE(slot);
   }
-  Dma_Set(pixels, BG_CHAR_BLOCK(0) + slot * TILE_SIZE_4BPP, DMA_COPY_WORDS(8),
-          REG_DMA3);
+  Dma_Set(pixels, BG_CHAR_BLOCK(0) + slot * TILE_SIZE_4BPP,
+          DMA_COPY_WORDS(TILE_SIZE_4BPP / 4), REG_DMA3);
 }
 
-// A new line in tile text advances by a space's width, a fixed 8 pixels in
-// Japanese: tile text is one line. In the Japanese window tiles the voiced and
-// semi-voiced marks are glyphs TILE_TEXT_MARK_GLYPH and the one after it,
-// TILE_TEXT_MARK_WIDTH pixels wide, drawn that far back over their kana, and
-// the glyphs past TILE_TEXT_PROPORTIONAL_LAST are 8 pixels wide.
-#if LANGUAGE == LANGUAGE_JAPANESE
-#define TEXT_JAPANESE_FONT 1
+// A new line in tile text advances by a space's width: tile text is one line.
+#if LANGUAGE != LANGUAGE_JAPANESE
+#define TILE_TEXT_NEWLINE_WIDTH gFont_GlyphWidths[0]
+#else
 #define TILE_TEXT_NEWLINE_WIDTH 8
+#endif
+
+/// In Japanese, the codes above TILE_TEXT_NARROW_LAST (the kana) are a whole
+/// tile wide; a kana's mark is drawn from a tile glyph of its own,
+/// TILE_TEXT_MARK_GLYPH for the voiced mark and the one after it for the
+/// semi-voiced, three pixels wide and three pixels back over its kana.
+#define TILE_TEXT_NARROW_LAST 128
 #define TILE_TEXT_MARK_GLYPH 254
 #define TILE_TEXT_MARK_WIDTH 3
-#define TILE_TEXT_PROPORTIONAL_LAST 128
-#else
-#define TEXT_JAPANESE_FONT 0
-#define TILE_TEXT_NEWLINE_WIDTH gFont_GlyphWidths[0]
-#endif
 
 // A label's end tile advances three pixels: the HP label's in every font, and
 // the PP label's own in the French, Spanish and Italian fonts.
@@ -195,7 +194,7 @@ s32 Text_DrawStringAsTiles(u16 *text, u16 *tiles, u16 *mirror, s32 x) {
         case 11:
         case 12:
         case TEXT_ACTOR_NAME:
-#if !TEXT_JAPANESE_FONT
+#if LANGUAGE != LANGUAGE_JAPANESE
         case TEXT_ARTICLE_CLASS:
 #endif
           text++;
@@ -205,7 +204,7 @@ s32 Text_DrawStringAsTiles(u16 *text, u16 *tiles, u16 *mirror, s32 x) {
         // A tilemap code (such as WINDOW_TILE_HP_LABEL) draws window tile
         // glyphCode & 0xff.
         glyphCode &= 0xFF;
-#if TEXT_JAPANESE_FONT
+#if LANGUAGE == LANGUAGE_JAPANESE
         if (glyphCode - TEXT_MARK_VOICED <= 1) {
           x -= TILE_TEXT_MARK_WIDTH;
           glyphCode += TILE_TEXT_MARK_GLYPH - TEXT_MARK_VOICED;
@@ -239,8 +238,8 @@ s32 Text_DrawStringAsTiles(u16 *text, u16 *tiles, u16 *mirror, s32 x) {
         else if (TEXT_IS_NARROW_TILE(code))
           x += 3;
         else {
-#if TEXT_JAPANESE_FONT
-          if (glyphCode > TILE_TEXT_PROPORTIONAL_LAST)
+#if LANGUAGE == LANGUAGE_JAPANESE
+          if (glyphCode > TILE_TEXT_NARROW_LAST)
             glyphWidth = glyphCode - TILE_TEXT_MARK_GLYPH <= 1
                              ? TILE_TEXT_MARK_WIDTH
                              : 8;
@@ -347,7 +346,7 @@ void Window_ClearTextTilesInRect(s32 x, s32 y, u32 width, u32 height) {
 }
 
 /// Marks the text tiles the tilemap shows, and frees those it no longer shows:
-/// a tile taken but not marked shown (attribute exactly 1).
+/// a tile taken but not marked shown (its state exactly TEXT_TILE_TAKEN).
 void Window_MarkVisibleTextTiles(void) {
   u8 *base = Ram_HeapSlots->windowWork;
   u32 alternate = ((struct WindowWork *)base)->extraTextTiles;
@@ -356,9 +355,11 @@ void Window_MarkVisibleTextTiles(void) {
   s32 row;
   s32 x;
 
-  // The cursor never skips the two hidden columns that end each 32-entry
-  // row, so the scan covers the tilemap's first 600 entries in order: row 18
-  // from column 24 on and row 19 are never marked shown.
+  // BUG: the cursor never skips the two hidden columns that end each row of
+  // BG_SCREEN_WIDTH entries, so the scan covers the tilemap's first
+  // DISPLAY_TILE_WIDTH * DISPLAY_TILE_HEIGHT entries in order, and the text
+  // tiles of the last row and a half are never marked shown: the loop below
+  // frees them while they are still on the screen.
   for (row = DISPLAY_TILE_HEIGHT; row != 0; row--) {
     for (x = 0; x < width; x++) {
       u32 tile = *cursor++ & TILE_NUMBER_MASK;
@@ -371,6 +372,9 @@ void Window_MarkVisibleTextTiles(void) {
         ((struct WindowWork *)base)->textTileState[index] |= TEXT_TILE_SHOWN;
       }
     }
+#ifdef BUGFIX
+    cursor += BG_SCREEN_WIDTH - width;
+#endif
   }
 
   for (row = 0; row < 2 * TEXT_TILES; row++, base++) {
@@ -379,10 +383,9 @@ void Window_MarkVisibleTextTiles(void) {
   }
 }
 
-/// Frees the text tiles of the second range (attributes 128 to 255, tiles 512
-/// to 639), and with allowAlternateTiles set lets text tiles take that range
-/// too; the first range's tiles keep their state. The flag, once read, holds
-/// the zero the tiles are cleared with.
+/// Frees the text tiles of the second range (the TEXT_TILES tiles from
+/// TEXT_EXTRA_TILE_FIRST), and with allowAlternateTiles set lets text take that
+/// range too; the first range's tiles keep their state.
 void Text_UseExtraTiles(s32 allowAlternateTiles) {
   struct WindowWork *work = WINDOW_WORK;
   s32 i;
@@ -401,7 +404,7 @@ void Text_UseExtraTiles(s32 allowAlternateTiles) {
   }
 }
 
-/// Unused: nothing calls it. Does nothing.
+/// Unused: does nothing.
 UNUSED void Window_ReservedNoOp(void) {}
 
 /// Draws a divider from (x1, y1) to (x2, y2), one of which must agree,
@@ -563,8 +566,7 @@ void Window_DrawDividerLine(struct Window *win, u32 x1, u32 y1, u32 x2,
 }
 
 /// Sets the text colour (0 to 15) of drawn text. The menus colour the HP
-/// figures with it (menu/menu_shared.c, window/screens_party_status.c), and
-/// set TEXT_COLOR_WHITE back after.
+/// figures with it, and set TEXT_COLOR_WHITE back after.
 void Text_SetColor(s32 param) {
   struct WindowWork *work = WINDOW_WORK;
 
@@ -579,9 +581,6 @@ void Text_SetStyle(s32 value) {
 
   work->outline = value;
 }
-
-void Text_DrawWideStringAtOffset(u16 *text, struct Window *window, s32 x,
-                                 s32 y);
 
 /// Decodes a message and draws it into a text canvas window at pixel (x, y),
 /// all at once.
@@ -600,11 +599,9 @@ void Text_DrawMessage(s32 message, s32 window, s32 x, s32 y) {
 
 /// Decodes a message and draws it as tiles in a window at pixel (offsetX,
 /// offsetY) of its interior. offsetY is rounded down to a tile row; offsetX
-/// picks the tile, and its remainder is where the text starts in it. As
-/// Text_DrawMessage, it decodes from the ring's start. Nothing is drawn
-/// when the place falls outside the tilemap's 32 by 20 entries.
-void Text_DrawMessageAsTiles(s32 character, struct Window *position,
-                             u32 offsetX, u32 offsetY) {
+/// picks the tile, and its remainder is where the text starts in it.
+void Text_DrawMessageAsTiles(s32 message, struct Window *window, u32 offsetX,
+                             u32 offsetY) {
   s32 byteOffset;
   s32 vramAddress;
   u16 *text;
@@ -617,19 +614,19 @@ void Text_DrawMessageAsTiles(s32 character, struct Window *position,
   counter = &canvas->textBufferEnd;
   zero = 0;
   *counter = zero;
-  Message_Decode(character, 1);
+  Message_Decode(message, 1);
 
   canvas->textBuffer[*counter] = zero;
   *counter = (u16)((*counter + 1) & TEXT_BUFFER_MASK);
 
-  cell = (((s16)position->y + (offsetY >> 3) + 1) << 5) +
-         ((s16)position->x + (offsetX >> 3)) + 1;
+  cell = (((s16)window->y + (offsetY >> 3) + 1) << 5) +
+         ((s16)window->x + (offsetX >> 3)) + 1;
   if (cell < BG_SCREEN_WIDTH * DISPLAY_TILE_HEIGHT) {
     byteOffset = cell * 2;
     vramAddress = byteOffset + (s32)WINDOW_TILEMAP_VRAM;
     text = canvas->textBuffer;
-    Text_DrawStringAsTiles(text, (s32)((u8 *)canvas->tilemap + byteOffset),
-                           vramAddress, 7 & offsetX);
+    Text_DrawStringAsTiles(text, (u16 *)((u8 *)canvas->tilemap + byteOffset),
+                           (u16 *)vramAddress, 7 & offsetX);
   }
 }
 
@@ -649,9 +646,9 @@ void Text_DrawString(u8 *text, s32 window, s32 x, s32 y) {
   Heap_Release(buffer);
 }
 
-/// Draws a byte string as tiles in window work at pixel (offsetX, offsetY) of
-/// its interior.
-void Text_DrawStringAtOffset(u8 *text, struct Window *work, s32 offsetX,
+/// Draws a byte string as tiles in window at pixel (offsetX, offsetY) of its
+/// interior.
+void Text_DrawStringAtOffset(u8 *text, struct Window *window, s32 offsetX,
                              s32 offsetY) {
   u16 *buffer;
   u16 *output;
@@ -672,8 +669,8 @@ void Text_DrawStringAtOffset(u8 *text, struct Window *work, s32 offsetX,
   }
   *output = 0;
 
-  cell = (((s16)work->y + ((u32)offsetY >> 3) + 1) << 5) +
-         ((s16)work->x + ((u32)offsetX >> 3)) + 1;
+  cell = (((s16)window->y + ((u32)offsetY >> 3) + 1) << 5) +
+         ((s16)window->x + ((u32)offsetX >> 3)) + 1;
   if (cell < BG_SCREEN_WIDTH * DISPLAY_TILE_HEIGHT) {
     vram = (s32)WINDOW_TILEMAP_VRAM;
     cell *= 2;
@@ -732,17 +729,16 @@ void Text_DrawNumberInWindow(s32 value, s32 width, s32 window, s32 x, s32 y) {
                           x, y);
 }
 
-#undef TEXT_JAPANESE_FONT
 #undef TILE_TEXT_NEWLINE_WIDTH
+#undef TILE_TEXT_NARROW_LAST
 #undef TILE_TEXT_MARK_GLYPH
 #undef TILE_TEXT_MARK_WIDTH
-#undef TILE_TEXT_PROPORTIONAL_LAST
 #undef TEXT_IS_NARROW_TILE
 
-/// Draws a four-digit number after a two-tile label as tiles in window work at
+/// Draws a four-digit number after a two-tile label as tiles in window at
 /// pixel (offsetX, offsetY): the HP label for variant 0, the party status
 /// window's HP; the PP label for variant 1, its PP.
-void Text_DrawPrefixedNumberAtOffset(s32 value, struct Window *work,
+void Text_DrawPrefixedNumberAtOffset(s32 value, struct Window *window,
                                      s32 offsetX, s32 offsetY, s32 variant) {
   u8 formatted[TEXT_NUMBER_BUFFER_SIZE];
   u16 output[8];
@@ -770,8 +766,8 @@ void Text_DrawPrefixedNumberAtOffset(s32 value, struct Window *work,
     output[index + 2] = text[index];
   }
   output[6] = 0;
-  cell = (((s16)work->y + ((u32)offsetY >> 3) + 1) << 5) +
-         ((s16)work->x + ((u32)offsetX >> 3)) + 1;
+  cell = (((s16)window->y + ((u32)offsetY >> 3) + 1) << 5) +
+         ((s16)window->x + ((u32)offsetX >> 3)) + 1;
   if (cell < BG_SCREEN_WIDTH * DISPLAY_TILE_HEIGHT) {
     vram = (s32)WINDOW_TILEMAP_VRAM;
     cell *= 2;

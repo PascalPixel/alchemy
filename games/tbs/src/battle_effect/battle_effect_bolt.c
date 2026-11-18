@@ -9,8 +9,8 @@
 
 /// The columns of a gBolt_Counts row.
 enum {
-  BOLT_SPARKS,       ///< sparks thrown from each bolt's foot, at most the
-                     ///< 128 of its target's run of PARTICLES
+  BOLT_SPARKS,       ///< sparks thrown from each bolt's foot, at most
+                     ///< BOLT_SPARKS_PER_TARGET
   BOLT_GLINTS,       ///< glints a frame around each target
   BOLT_GLINT_SPREAD, ///< how high and wide the glints spread, in pixels
   BOLT_STRIKES       ///< bolts drawn over each other
@@ -18,6 +18,15 @@ enum {
 
 /// Where the bolt pictures start in the sheet, after the six glints.
 #define BOLT_PICTURES GLINT_SET_BYTES
+/// The targets are struck this many frames apart.
+#define BOLT_INTERVAL 8
+/// Each target's run of PARTICLES for its sparks.
+#define BOLT_SPARKS_PER_TARGET 128
+/// The canvas row the bolts reach down to and the sparks bounce off.
+#define BOLT_GROUND_Y 104
+/// A spark is drawn a size smaller for every this many frames less it has to
+/// live.
+#define BOLT_SPARK_SHRINK_FRAMES 16
 
 /// A bolt of lightning strikes each target in turn, and sparks fly up from
 /// where it lands while glints flicker there.
@@ -52,16 +61,17 @@ void BattleEffect_RunBolt(struct BattleEffectParams *args) {
   EFFECT_FREE_PARTICLES(j, work->particles, 64);
   EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_THREE_QUARTERS);
   Sound_PlayFar(SE_ITEM_BREAK);
-  for (frame = 0; frame != work->args->targetCount * 8 + 40; frame++) {
+  for (frame = 0; frame != work->args->targetCount * BOLT_INTERVAL + 40;
+       frame++) {
     if (frame == 24)
       EFFECT_SHOW_DAMAGE(SE_IMPACT);
     // The canvas flashes as each target's turn starts.
     EFFECT_FOR_EACH_TARGET(i, work->args) {
-      if (frame == i * 8)
+      if (frame == i * BOLT_INTERVAL)
         Iwram_FillWords(canvas, CANVAS_BYTES, CANVAS_FILL_WORD(16));
     }
     EFFECT_FOR_EACH_TARGET(i, work->args) {
-      s32 start = i * 8;
+      s32 start = i * BOLT_INTERVAL;
 
       Projection_Unit(work->args->targets[i], &screen);
       screen.x /= 2;
@@ -78,27 +88,28 @@ void BattleEffect_RunBolt(struct BattleEffectParams *args) {
       if (frame >= start && frame < start + 16) {
         s32 height = (frame - start) << 6;
 
-        if (height > 104)
-          height = 104;
+        if (height > BOLT_GROUND_Y)
+          height = BOLT_GROUND_Y;
         for (j = 0; j != gBolt_Counts[work->args->variant][BOLT_STRIKES]; j++) {
           draw[0](canvas,
                   work->sheet +
                       (((i + frame + j) / 2) & 3) *
                           LIGHTNING_BOLT_PICTURE_BYTES +
                       BOLT_PICTURES,
-                  screen.x - 12, 0, 24, height);
+                  screen.x - LIGHTNING_BOLT_WIDTH / 2, 0, LIGHTNING_BOLT_WIDTH,
+                  height);
         }
 
         // Sparks fly up from its foot.
         if (frame == start + 2) {
           for (j = 0; j != gBolt_Counts[work->args->variant][BOLT_SPARKS];
                j++) {
-            struct Particle *spark = &PARTICLES[i * 128 + j];
+            struct Particle *spark = &PARTICLES[i * BOLT_SPARKS_PER_TARGET + j];
             s32 speed = (Random16() & 0x1ff) + 64;
             s32 angle = (Random16() & 0x7fff) - DEGtoANG(90);
 
             spark->x = INTtoFIXED(screen.x);
-            spark->y = toFIXED(104);
+            spark->y = toFIXED(BOLT_GROUND_Y);
             spark->velocityX = (Trig_Sin(angle) * speed) >> 5;
             spark->velocityY = -(Trig_Cos(angle) * speed) >> 6;
             spark->variant = (Random16() & 7) + 32;
@@ -143,11 +154,11 @@ void BattleEffect_RunBolt(struct BattleEffectParams *args) {
       if (spark->variant > 0) {
         spark->variant--;
         Particle_AdvanceWithGravity2D(spark, 60, toFIXED(1) / 16);
-        if (spark->y > toFIXED(104)) {
+        if (spark->y > toFIXED(BOLT_GROUND_Y)) {
           spark->velocityY = -spark->velocityY / 2;
         } else if ((spark->x >= 0 && spark->x < toFIXED(127)) &&
                    spark->y >= 0) {
-          s32 size = spark->variant / 16 + 1;
+          s32 size = spark->variant / BOLT_SPARK_SHRINK_FRAMES + 1;
           s32 x = FIXEDtoINT(spark->x);
           s32 y = FIXEDtoINT(spark->y);
 
@@ -163,3 +174,7 @@ void BattleEffect_RunBolt(struct BattleEffectParams *args) {
 
 #undef BOLT_GLINT_BLITTER
 #undef BOLT_PICTURES
+#undef BOLT_INTERVAL
+#undef BOLT_SPARKS_PER_TARGET
+#undef BOLT_GROUND_Y
+#undef BOLT_SPARK_SHRINK_FRAMES

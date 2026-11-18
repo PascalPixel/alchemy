@@ -75,11 +75,6 @@ struct StripQuad;
 /// A texture's scroll wraps within 128 texels.
 #define TWISTING_COLUMN_SCROLL_MASK 0x7f
 
-/// The pictures of FlashBurstSheet, a white flash swelling to a cloud that
-/// fades, each shown for four frames; drawn in the water spray's colours, they
-/// are clouds of spray.
-#define FLASH_BURST_PICTURES 6
-
 /// The twisting column shared by the Djinn Whorl and Gale, Lethe Albion,
 /// Poison Flow and Raging Flood, a textured strip turned about its length.
 /// For the Djinn the Jupiter Djinni rides the head of a pink funnel of wind
@@ -505,12 +500,14 @@ void BattleEffect_RunWaterColumn(struct BattleEffectParams *args, u32 mode) {
             }
           }
         }
+        // Clouds of spray: FlashBurstSheet's bursts in the water spray's
+        // colours, four frames a picture.
         if (frame > 15) {
           {
             struct Particle *q = work->particles;
 
             for (i = 0; i != 8; i++, q++) {
-              if (q->variant < FLASH_BURST_PICTURES * 4) {
+              if (q->variant < FLASH_BURST_PICTURE_COUNT * 4) {
                 blit[0](canvas,
                         (Ram_MapCellBuffer + TWISTING_COLUMN_FLASH_BURST) +
                             q->variant / 4 * PICTURE_BYTES(FLASH_BURST),
@@ -703,7 +700,6 @@ void BattleEffect_RunCannon(struct BattleEffectParams *args) {
 #undef TWISTING_COLUMN_FLASH_BURST
 #undef TWISTING_COLUMN_SAVED_TARGET
 #undef TWISTING_COLUMN_MOTES
-#undef FLASH_BURST_PICTURES
 #undef TWISTING_COLUMN_BOB_STEP
 #undef TWISTING_COLUMN_DJINNI_SWAY
 #undef TWISTING_COLUMN_DRIFT_STEPS

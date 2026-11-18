@@ -590,14 +590,15 @@ s32 JupiterLighthouse_KeepGaretHanging(void) {
   struct Actor *actor = Actor_Get(ACTOR_GARET);
 
   if (actor != NULL) {
-    struct FieldSprite *sprite = actor->sprite;
+    struct Sprite *sprite = actor->sprite;
 
     if ((gFrameCount & 127) == 0)
       Actor_SetAttachedEffect(ACTOR_GARETS_GRIP,
                               ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
     if (sprite != NULL) {
-      sprite->box[3] = 30;
-      sprite->box[2] = -4;
+      // Drawn down and to the left of his point, below his grip.
+      sprite->offsetY = 30;
+      sprite->offsetX = -4;
       sprite->rotation =
           Math_Sin(gFrameCount * DEGtoANG(4)) / GARET_SWING_DIVISOR -
           TRIG_TURN / 32;

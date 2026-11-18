@@ -262,10 +262,14 @@ s32 Event_AskYesNoAndShowResponse(s32 object, s32 message) {
 /// An empty hook; it does nothing in the released game.
 void Event_NoOpUpdate(void) {}
 
-/// Opens the next message for the speaker and waits until its window is idle.
+/// Unused: nothing calls it. It would record the speaker, open the message near
+/// it and wait unless fast-forwarding, then advance the message index. Like
+/// Event_ShowMessageAtPosition it moves the position 32 away from the middle
+/// and clamps it to 8..312 and 20..220, ranges larger than the 240 by 160
+/// screen, before passing it to a window routine that takes tiles; with no
+/// caller, the units it expected can't be told.
 void Event_ShowSpeakerMessage(s32 speaker) {
-  // BUG: the position is never set; the window is placed from whatever the
-  // two registers hold.
+  // BUG: the lookup's result is discarded, and pos is left unset.
   struct {
     s32 x, y;
   } pos;
@@ -275,22 +279,22 @@ void Event_ShowSpeakerMessage(s32 speaker) {
   Actor_Lookup(speaker);
   work->speaker = speaker;
   if (work->fastForward == 0) {
-    s32 px = pos.x;
-    s32 py = pos.y;
+    s32 windowX = pos.x;
+    s32 windowY = pos.y;
     s32 window;
 
-    if (py > 119)
-      py += 32;
+    if (windowY > 119)
+      windowY += 32;
     else
-      py -= 32;
-    px = px < 8 ? 8 : px;
-    if (px > 312)
-      px = 312;
-    py = py < 20 ? 20 : py;
-    if (py > 220)
-      py = 220;
-    window =
-        Message_OpenWindowFar((s16)work->message, px, py, MESSAGE_WINDOW_ZOOM);
+      windowY -= 32;
+    windowX = windowX < 8 ? 8 : windowX;
+    if (windowX > 312)
+      windowX = 312;
+    windowY = windowY < 20 ? 20 : windowY;
+    if (windowY > 220)
+      windowY = 220;
+    window = Message_OpenWindowFar((s16)work->message, windowX, windowY,
+                                   MESSAGE_WINDOW_ZOOM);
     work->messageWindow = window;
     while (Window_IsClosedFar(window) == 0)
       wait(1);
@@ -298,14 +302,15 @@ void Event_ShowSpeakerMessage(s32 speaker) {
   work->message++;
 }
 
-/// Shows a message at a position of the screen (Event_ShowMessageAtPosition).
+/// Unused: nothing calls it; forwards its arguments to
+/// Event_ShowMessageAtPosition.
 void Event_ShowCounter(s32 a, s32 b, s32 c, s32 d) {
   Event_ShowMessageAtPosition(a, b, c, d);
 }
 
-/// Unused: reached only through a bare veneer in field_sequence.s. It would
-/// open the event's message at (x, y), wait for it and advance the message
-/// index; its units are as unknown as Event_ShowSpeakerMessage's.
+/// Unused: nothing calls it. It would open the event's message at (x, y), wait
+/// for it and advance the message index; its units are as unknown as
+/// Event_ShowSpeakerMessage's.
 void Event_ShowMessageAtPosition(s32 unusedA, s32 unusedB, s32 x, s32 y) {
   struct FieldWork *state = gFieldWork;
   s32 windowY = y;
@@ -331,11 +336,6 @@ void Event_ShowMessageAtPosition(s32 unusedA, s32 unusedB, s32 x, s32 y) {
     wait(1);
   state->message++;
 }
-
-// Field helpers, in ROM order: ending the window of an actor's speaker, the
-// field camera (following an actor, its speed, the map bounds it keeps inside,
-// waiting for it to arrive), copying a watched object's position, spawning an
-// effect object that follows another, and a test of an actor's animation 108.
 
 /// Closes the portrait of an actor's sprite, if it has one.
 void Actor_ClosePortrait(s32 actorId) {

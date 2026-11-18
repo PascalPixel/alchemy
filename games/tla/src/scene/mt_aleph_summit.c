@@ -63,9 +63,7 @@ enum {
 
 #include "../field/field_effect_move.c"
 
-/// The background colours the palette fade keeps, palettes 0 to 13, and the
-/// fade's three channels of one 16-colour palette.
-#define FADED_BG_COLORS (14 * PALETTE_COLORS)
+/// The palette fade's three channels of one 16-colour palette.
 #define PALETTE_CHANNELS (3 * PALETTE_COLORS)
 
 #include "shared/tables.h"
@@ -417,7 +415,7 @@ s32 Scene_Initialize(void) {
     slots = Ram_HeapSlots;
     fade = slots->paletteFade;
     Iwram_CopyWords(buffer, (void *)&BG_PLTT_COLOR(0, 0),
-                    FADED_BG_COLORS * sizeof(u16));
+                    PALETTE_FADE_BG_COLORS * sizeof(u16));
     FieldCamera_MoveTo(256, CAMERA_KEEP, 144, 0);
     FieldCamera_SetSpeed(1);
     Actor_SetAnimation(ACTOR_ALEX, 14);
@@ -462,7 +460,7 @@ s32 Scene_Initialize(void) {
       if (j == POWER_TREMOR) {
         Event_PlaySound(SE_TREMOR);
         Iwram_CopyWordsEntry(buffer, (void *)&BG_PLTT_COLOR(0, 0),
-                             FADED_BG_COLORS * sizeof(u16));
+                             PALETTE_FADE_BG_COLORS * sizeof(u16));
         Iwram_CopyWordsEntry(&fade->target[4 * PALETTE_CHANNELS],
                              &fade->target[6 * PALETTE_CHANNELS],
                              PALETTE_CHANNELS * sizeof(u16));
@@ -483,8 +481,8 @@ s32 Scene_Initialize(void) {
         MtAlephSummit_StepColorsToward((u16 *)&BG_PLTT_COLOR(4, 0),
                                        (u16 *)&BG_PLTT_COLOR(6, 0), 16);
       if (j >= POWER_WHITEN)
-        MtAlephSummit_ShiftColors((u16 *)&BG_PLTT_COLOR(0, 0), FADED_BG_COLORS,
-                                  1);
+        MtAlephSummit_ShiftColors((u16 *)&BG_PLTT_COLOR(0, 0),
+                                  PALETTE_FADE_BG_COLORS, 1);
       System_Wait(4);
     }
     FieldActor_SetSpritePriority(ACTOR_ALEX, 3);
@@ -502,7 +500,7 @@ s32 Scene_Initialize(void) {
     j = 0;
     do {
       MtAlephSummit_StepColorsToward((u16 *)&BG_PLTT_COLOR(0, 0), buffer,
-                                     FADED_BG_COLORS);
+                                     PALETTE_FADE_BG_COLORS);
       System_Wait(4);
       j++;
     } while (j != RGB_LEVEL_MAX + 1);

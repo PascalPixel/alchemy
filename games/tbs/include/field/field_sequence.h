@@ -148,6 +148,8 @@ void FieldPsynergy_Carry(void);
 #define ACT_ITEM_ID(c) ((c) & ACT_ID_MASK)
 #define ACT_UNIT(c) (((c) >> ACT_UNIT_SHIFT) & 15) ///< who uses it
 #define ACT_PACKED 0x2000                          ///< use it without paying PP
+/// The Psynergy request that ends Cloak, without paying PP.
+#define CLOAK_END (ACT_PACKED | ABILITY_CLOAK)
 
 /// A 16.16 coordinate's whole cell: a map grid cell is 16 pixels square.
 #define FIELD_CELL_MASK 0xfff00000

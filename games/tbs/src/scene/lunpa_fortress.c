@@ -37,7 +37,7 @@
 /// one of the RAISED_*_SPOTTED triggers. Its event has the guard challenge the
 /// party and throw it out to the gates (LunpaFortress_GuardThrowsPartyOut,
 /// EXIT_THROWN_OUT). A cloaked leader within four cells of a patrolling guard
-/// makes the watcher request CLOAK_NEAR_GUARD.
+/// makes the watcher request CLOAK_END, which ends Cloak.
 ///
 /// The patrolling guards walk actor scripts (gLunpaFortressFirstPatrolRoute and
 /// the others). They stop while a menu, Psynergy or an item is in use. They
@@ -285,9 +285,6 @@ enum LunpaFortressRaisedTrigger {
 /// Where a party caught by a guard is sent: the Lunpa Fortress Gates.
 enum { EXIT_THROWN_OUT = 60 };
 
-/// What a guard close to the cloaked leader requests of Cloak.
-enum { CLOAK_NEAR_GUARD = 0x2000 | ABILITY_CLOAK };
-
 /// The first of the flags that remember which cell doors the Cell Key opened,
 /// per scene: one for each door trigger from
 /// CELL_BEHAVIOR_LUNPA_FORTRESS_FIRST_DOOR.
@@ -309,7 +306,7 @@ enum {
 
 /// The paired patrol's layer origin across, 136 pixels, written in floating
 /// point.
-#define PAIRED_PATROL_LAYER_ORIGIN_X (136.0 * 65536)
+#define PAIRED_PATROL_LAYER_ORIGIN_X (136.0 * FIXED_ONE)
 
 static s32 LunpaFortress_TryTakeChestItem(s32 actorId, s32 itemId);
 static void LunpaFortress_CheckSecondEntranceSentry(void);
@@ -338,9 +335,11 @@ static void LunpaFortress_RestoreToadonpaDoors(void);
 /// Donpa's attendant has shown the party his reward, Tonic, and stands beside
 /// it.
 #define FLAG_LUNPA_FORTRESS_REWARD_SHOWN FLAG_AREA_TEMP_14
-/// A guard has spotted the party. FLAG_SCENE_TEMP_15 is set beside it and never
-/// read.
+/// A guard has spotted the party.
 #define FLAG_LUNPA_FORTRESS_PARTY_SPOTTED FLAG_SCENE_TEMP_14
+/// Unused: set beside FLAG_LUNPA_FORTRESS_PARTY_SPOTTED whenever a guard sees
+/// the leader, and never read.
+#define FLAG_LUNPA_FORTRESS_UNUSED_SPOTTED FLAG_SCENE_TEMP_15
 /// LunpaFortressCave's first switch is still hidden by its ivy.
 #define FLAG_LUNPA_FORTRESS_FIRST_SWITCH_UNDER_IVY FLAG_SCENE_TEMP_17
 /// LunpaFortressCave's second switch is still hidden by its ivy.
@@ -761,22 +760,22 @@ static void LunpaFortress_CheckPatrolPair(void) {
       if (gMainRoutineWork.cloaked != 0) {
         if (LunpaFortress_IsLeaderNearGuard(ACTOR_UPPER_FLOOR_FIRST_PATROL) &&
             gMainRoutineWork.cloaked != 0) {
-          work->psynergy = CLOAK_NEAR_GUARD;
+          work->psynergy = CLOAK_END;
           return;
         }
         if (LunpaFortress_IsLeaderNearGuard(ACTOR_UPPER_FLOOR_SECOND_PATROL) &&
             gMainRoutineWork.cloaked != 0) {
-          work->psynergy = CLOAK_NEAR_GUARD;
+          work->psynergy = CLOAK_END;
           return;
         }
       }
       if (gMainRoutineWork.cloaked == 0) {
         if (LunpaFortress_CanGuardSeeLeader(ACTOR_UPPER_FLOOR_FIRST_PATROL)) {
-          GameFlag_Set(FLAG_SCENE_TEMP_15);
+          GameFlag_Set(FLAG_LUNPA_FORTRESS_UNUSED_SPOTTED);
           GameFlag_Set(FLAG_LUNPA_FORTRESS_PARTY_SPOTTED);
         }
         if (LunpaFortress_CanGuardSeeLeader(ACTOR_UPPER_FLOOR_SECOND_PATROL)) {
-          GameFlag_Set(FLAG_SCENE_TEMP_15);
+          GameFlag_Set(FLAG_LUNPA_FORTRESS_UNUSED_SPOTTED);
           GameFlag_Set(FLAG_LUNPA_FORTRESS_PARTY_SPOTTED);
         }
       }
@@ -851,12 +850,12 @@ static void LunpaFortress_CheckHallPatrol(void) {
       LunpaFortress_IsGuardNearViewCenter(ACTOR_UPPER_FLOOR_HALL_PATROL);
       if (LunpaFortress_IsLeaderNearGuard(ACTOR_UPPER_FLOOR_HALL_PATROL) &&
           gMainRoutineWork.cloaked != 0) {
-        work->psynergy = CLOAK_NEAR_GUARD;
+        work->psynergy = CLOAK_END;
         return;
       }
       if (gMainRoutineWork.cloaked == 0) {
         if (LunpaFortress_CanGuardSeeLeader(ACTOR_UPPER_FLOOR_HALL_PATROL)) {
-          GameFlag_Set(FLAG_SCENE_TEMP_15);
+          GameFlag_Set(FLAG_LUNPA_FORTRESS_UNUSED_SPOTTED);
           GameFlag_Set(FLAG_LUNPA_FORTRESS_PARTY_SPOTTED);
         }
       }
@@ -923,12 +922,12 @@ static void LunpaFortress_CheckGroundFloorPatrol(void) {
     if (!LunpaFortress_IsLeaderHiddenFromGroundFloorPatrol()) {
       if (LunpaFortress_IsLeaderNearGuard(ACTOR_GROUND_FLOOR_PATROL_GUARD) &&
           gMainRoutineWork.cloaked != 0) {
-        work->psynergy = CLOAK_NEAR_GUARD;
+        work->psynergy = CLOAK_END;
         return;
       }
       if (gMainRoutineWork.cloaked == 0) {
         if (LunpaFortress_CanGuardSeeLeader(ACTOR_GROUND_FLOOR_PATROL_GUARD)) {
-          GameFlag_Set(FLAG_SCENE_TEMP_15);
+          GameFlag_Set(FLAG_LUNPA_FORTRESS_UNUSED_SPOTTED);
           GameFlag_Set(FLAG_LUNPA_FORTRESS_PARTY_SPOTTED);
         }
       }
@@ -970,7 +969,7 @@ static void LunpaFortress_CheckUpperHallGuard(void) {
       if (gMainRoutineWork.cloaked == 0) {
         if (LunpaFortress_CanGuardSeeLeader(
                 ACTOR_GROUND_FLOOR_UPPER_HALL_GUARD) != 0) {
-          GameFlag_Set(FLAG_SCENE_TEMP_15);
+          GameFlag_Set(FLAG_LUNPA_FORTRESS_UNUSED_SPOTTED);
           GameFlag_Set(FLAG_LUNPA_FORTRESS_PARTY_SPOTTED);
         }
       }

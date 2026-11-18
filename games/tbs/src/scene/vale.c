@@ -492,7 +492,7 @@ static void Vale_ArgueWithGaretsSister(void) {
 
 /// Talking to Dora in Vale before the party leaves has her speak of the hole in
 /// the roof.
-static void Vale_DoraTalksAboutTheRoof(void) {
+static void Vale_DoraTalksAboutTheHole(void) {
   Event_Start();
   if (GameFlag_Get(FLAG_VALE_ROOF_JUST_MENDED) != 0) {
     Event_SetMessageId(MsgValeIToldGaretItWas);
@@ -3533,7 +3533,7 @@ struct Trigger gVale_Triggers[] = {
     { TRIGGER_TALK, ACTOR_WOMAN_ON_THE_WAY_TO_KRADEN, CONDITION_ALWAYS, EVENT(Vale_WarnAboutGoingBeyondKradensCottage) },
     { TRIGGER_TALK, ACTOR_GARETS_SISTER, CONDITION_ALWAYS, EVENT(Vale_ArgueWithGaretsSister) },
     { TRIGGER_TALK, ACTOR_GARETS_BROTHER, CONDITION_ALWAYS, MSGNO(MsgValeYoureInTroubleNowGaretYour) },
-    { TRIGGER_TALK, ACTOR_DORA, CONDITION_ALWAYS, EVENT(Vale_DoraTalksAboutTheRoof) },
+    { TRIGGER_TALK, ACTOR_DORA, CONDITION_ALWAYS, EVENT(Vale_DoraTalksAboutTheHole) },
     { TRIGGER_TALK, ACTOR_MAN_GUARDING_MT_ALEPH, CONDITION_ALWAYS, MSGNO(MsgValeMtAlephIsASacredPeak) },
     { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 1, CONDITION_ALWAYS, EVENT(Vale_EnterSanctum) },
     { TRIGGER_STEP, 2, CONDITION_ALWAYS, EVENT(Vale_ApproachMtAleph) },

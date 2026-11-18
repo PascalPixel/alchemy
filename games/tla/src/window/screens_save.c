@@ -31,6 +31,15 @@
 /// digits keep their leading zero.
 #define WITH_LEADING_ZERO(n) ((n) + 100)
 
+/// The words from gGameFlagBytes that a file's checksum sums.
+#define SAVE_CHECKSUM_WORDS 968
+
+/// The file list's glow: the middle colour that HIGHLIGHT_PALETTE's colours 8
+/// to 11 sway round, red twice as far as green and blue.
+#define FILE_LIST_GLOW_RED 22
+#define FILE_LIST_GLOW_GREEN 16
+#define FILE_LIST_GLOW_BLUE 20
+
 /// The file list shows the chosen file's party as standing sprites in a row,
 /// and four Djinn sprites, one for each element, over the file's Djinn counts.
 #define FILE_LIST_SPRITE_SPACING 3
@@ -432,8 +441,8 @@ s32 Save_BuildFileSummary(void) {
     word = (u32 *)gGameFlagBytes;
     /* FAKEMATCH(barrier): an empty asm reading frames and word. */
     __asm__("" : : "r"(frames), "r"(word));
-    // The checksum covers 242 * 4 = 968 words (3872 bytes) from the flags.
-    n = 242;
+    // The checksum's words, counted in fours and multiplied back below.
+    n = SAVE_CHECKSUM_WORDS / 4;
     i = 0;
     n <<= 2;
     summary->frames = frames;
@@ -477,7 +486,7 @@ s32 Save_ProcessSelectedFile(void) {
   s32 progress;
 
   result = 0;
-  part = Heap_AllocEwram(12288);
+  part = Heap_AllocEwram(SAVE_SECTORS_PER_PART * SAVE_SECTOR_SIZE);
   value = gSaveSlot;
   if (value != -1) {
     error = Save_InitializeWork();
@@ -733,7 +742,7 @@ void FileList_UpdatePulse(void) {
 #ifdef UBFIX
     // Wrap the frame phase before Trig_Sin takes its low sixteen bits.
     sine = Trig_Sin((((u32)*vblankCount + i * 8U) * (TRIG_TURN * 3 / 256U)) &
-                    0xffffU);
+                    TRIG_ANGLE_MASK);
 #else
     sine = Trig_Sin((*vblankCount + i * 8) * (TRIG_TURN * 3 / 256));
 #endif
@@ -747,9 +756,9 @@ void FileList_UpdatePulse(void) {
 #endif
       u32 green = colour;
 
-      red += 22;
-      green += 16;
-      colour += 20;
+      red += FILE_LIST_GLOW_RED;
+      green += FILE_LIST_GLOW_GREEN;
+      colour += FILE_LIST_GLOW_BLUE;
       Io_Write16(RGB(red, green, colour), palette++);
     }
   } while (++i <= 3);
@@ -788,12 +797,19 @@ void Window_FillTilemapRect(struct Window *window, s32 x, s32 y, s32 width,
     height += y;
     y = 0;
   }
-  if (y + height > 29)
+  // BUG: the bottom is tested against the screen's width, so a rectangle
+  // ending below row DISPLAY_TILE_HEIGHT writes past WindowWork.tilemap; the
+  // one caller, the file list's highlight, never does.
+#ifdef BUGFIX
+  if (y + height > DISPLAY_TILE_HEIGHT - 1)
+#else
+  if (y + height > DISPLAY_TILE_WIDTH - 1)
+#endif
     height = DISPLAY_TILE_HEIGHT - y;
 
   if (width > 0 && height > 0) {
-    // Byte offsets: 32 entries of 2 bytes a row.
-    s32 yOffset = y << 6;
+    // Byte offsets: BG_SCREEN_WIDTH entries of 2 bytes a row.
+    s32 yOffset = y * (BG_SCREEN_WIDTH * 2);
     s32 xOffset = x << 1;
     s32 offset = yOffset + ((s32)work + xOffset);
     do {
@@ -1208,3 +1224,7 @@ done:
 #undef FILE_LIST_LEADER_X
 #undef FILE_LIST_AREA_X
 #undef SAVE_MENU_NO_FILE
+#undef SAVE_CHECKSUM_WORDS
+#undef FILE_LIST_GLOW_RED
+#undef FILE_LIST_GLOW_GREEN
+#undef FILE_LIST_GLOW_BLUE

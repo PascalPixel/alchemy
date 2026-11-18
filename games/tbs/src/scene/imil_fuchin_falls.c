@@ -1534,6 +1534,13 @@ static s32 FuchinFallsCave_SetDustPalette(struct Actor *actor) {
   return 0;
 }
 
+/// The spawn flags that ask for one of struct EffectOptions' fields
+/// (EFFECT_USE_PALETTE and up), as field_effect_spawn.c names them.
+#define EFFECT_OPTION_MASK 0xffff0000
+/// The word of a dust script holding its SC_LOOP count, the frames the dust
+/// grows over.
+#define EFFECT_SCRIPT_REPEAT_COUNT 3
+
 /// Creates scripted cave dust with the requested velocity, palette and scale.
 void ImilFuchinFalls_SpawnDust(FIXED x, FIXED y, FIXED z, s32 velocityX,
                                s32 velocityY, s32 velocityZ, u32 flags,
@@ -1563,7 +1570,7 @@ void ImilFuchinFalls_SpawnDust(FIXED x, FIXED y, FIXED z, s32 velocityX,
   effect->scaleRateX = 0;
   effect->scaleRateY = 0;
   sprite->image.priority = 1;
-  if ((flags & 0xffff0000) == 0 || extra == NULL)
+  if ((flags & EFFECT_OPTION_MASK) == 0 || extra == NULL)
     return;
   if (flags & EFFECT_USE_PALETTE)
     Actor_SetSpriteColor((struct Actor *)effect, extra->palette);
@@ -1578,11 +1585,15 @@ void ImilFuchinFalls_SpawnDust(FIXED x, FIXED y, FIXED z, s32 velocityX,
   if (flags & EFFECT_SCALE_TO_TARGET) {
     script = scripts[flags & EFFECT_SCRIPT_MASK];
     if (flags & EFFECT_USE_START_SCALE) {
-      effect->scaleRateX = (extra->targetScaleX - effect->scaleX) / script[3];
-      effect->scaleRateY = (extra->targetScaleY - effect->scaleY) / script[3];
+      effect->scaleRateX = (extra->targetScaleX - effect->scaleX) /
+                           script[EFFECT_SCRIPT_REPEAT_COUNT];
+      effect->scaleRateY = (extra->targetScaleY - effect->scaleY) /
+                           script[EFFECT_SCRIPT_REPEAT_COUNT];
     } else {
-      effect->scaleRateX = (extra->targetScaleX - FIXED_ONE) / script[3];
-      effect->scaleRateY = (extra->targetScaleY - FIXED_ONE) / script[3];
+      effect->scaleRateX = (extra->targetScaleX - FIXED_ONE) /
+                           script[EFFECT_SCRIPT_REPEAT_COUNT];
+      effect->scaleRateY = (extra->targetScaleY - FIXED_ONE) /
+                           script[EFFECT_SCRIPT_REPEAT_COUNT];
     }
   }
 }
@@ -1606,10 +1617,11 @@ static void ImilFuchinFalls_BlowCaveMouthDust(void) {
     Sound_Play(SE_WHOOSH);
   velocityX = -toFIXED(1) - toFIXED(Random_Below(2));
   velocityY = -((Random_Below(3)) * (toFIXED(1) / 5));
-  ImilFuchinFalls_SpawnDust(
-      toFIXED(308), toFIXED(64), toFIXED(222), velocityX, velocityY, framePhase,
-      1 | EFFECT_USE_PALETTE | EFFECT_USE_START_SCALE | EFFECT_SCALE_TO_TARGET,
-      (const struct EffectOptions *)&options);
+  ImilFuchinFalls_SpawnDust(toFIXED(308), toFIXED(64), toFIXED(222), velocityX,
+                            velocityY, framePhase,
+                            EFFECT_SCRIPT_MEDIUM | EFFECT_USE_PALETTE |
+                                EFFECT_USE_START_SCALE | EFFECT_SCALE_TO_TARGET,
+                            (const struct EffectOptions *)&options);
 }
 
 /// Using the Dragon's Eye on the dragon statue in Fuchin Falls Cave (trigger

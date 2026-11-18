@@ -8,6 +8,7 @@
 #include "system/frame.h"
 #include "field/event_commands.h"
 #include "field/object.h"
+#include "system/field_effect.h"
 
 /// Returns an actor, or NULL if it does not exist.
 struct Actor *Actor_GetById(u32 actorId) {
@@ -335,8 +336,8 @@ void Actor_MoveToObject(u32 actorId, u32 otherId) {
   }
 }
 
-/// The event command "set actor animation" (1 stands, 2 walks, 3 nods, 4 shakes
-/// the head and so on).
+/// The event command "set actor animation" (an enum ActorAnimation: ANIM_STAND,
+/// ANIM_WALK, ANIM_NOD, ANIM_SHAKE_HEAD and so on).
 void Actor_SetAnimationById(u32 actorId, s32 animation) {
   struct Actor *actor = Actor_Lookup(actorId);
 
@@ -353,8 +354,8 @@ void Actor_SetAnimationSpeedById(s32 actorId, s32 steps) {
 }
 
 /// Waits, at most 90 frames, for an actor's animation to change or for its
-/// first sprite animation's script to reach its hold command (241). Only an
-/// actor drawn as one sprite is waited for.
+/// first sprite animation's script to reach its hold command (ANIMCMD_HOLD).
+/// Only an actor drawn as a sprite (ACTOR_SPRITE_ONE) is waited for.
 void Actor_WaitForAnimationChange(u32 actorId) {
   struct Actor *actor = Actor_Lookup(actorId);
   struct Sprite *sprite;
@@ -402,19 +403,26 @@ void Actor_Jump(s32 actorId, s32 speed, s32 frames) {
   }
 }
 
+/// The most squash-and-spring motions gActor_VariantScripts holds: it plays the
+/// motion that many times over, REPEATED_MOTION_SCRIPT_BYTES (32 words) each.
+#define REPEATED_MOTION_MAX 3
+#define REPEATED_MOTION_SCRIPT_BYTES (32 * sizeof(s32))
+
 /// The event command "start repeated motion": the actor squashes and springs
-/// back count times (1 to 3), through gActor_VariantScripts.
+/// back count times (1 to REPEATED_MOTION_MAX), through gActor_VariantScripts.
 void Actor_StartRepeatedMotion(u32 actorId, s32 count) {
   struct Actor *actor;
 
   actor = Actor_Lookup(actorId);
   if (actor != NULL && count > 0) {
-    if (count > 3) {
-      count = 3;
+    if (count > REPEATED_MOTION_MAX) {
+      count = REPEATED_MOTION_MAX;
     }
-    // Each count is 32 words of the script; start that many from its end.
-    Actor_StartScriptFar(
-        actor, (const s32 *)(gActor_VariantScripts + ((3 - count) << 7)));
+    // Start count motions from the script's end.
+    Actor_StartScriptFar(actor,
+                         (const s32 *)(gActor_VariantScripts +
+                                       (REPEATED_MOTION_MAX - count) *
+                                           REPEATED_MOTION_SCRIPT_BYTES));
   }
 }
 
@@ -424,11 +432,6 @@ void Actor_RunRepeatedMotion(u32 actorId, s32 count) {
   Actor_StartRepeatedMotion(actorId, count);
   Actor_WaitForScriptEndById(actorId);
 }
-
-/// The share of a dust puff's x and z velocity that drag takes each frame, as
-/// one part in this many.
-#define DUST_PUFF_DRAG_X 18
-#define DUST_PUFF_DRAG_Z 16
 
 /// Moves a dust puff of FieldEffect_SpawnDustPuff: it drifts with its x and z
 /// velocity (kept in speed and acceleration), which drag slows each frame, and
@@ -440,8 +443,8 @@ void FieldEffect_UpdateDustPuff(struct Actor *particle) {
   particle->x.fixed += velocityX;
   particle->z.fixed += velocityZ;
   particle->y.fixed += toFIXED(1) / 64;
-  particle->speedLimit = velocityX - velocityX / DUST_PUFF_DRAG_X;
-  particle->acceleration = velocityZ - velocityZ / DUST_PUFF_DRAG_Z;
+  particle->speedLimit = velocityX - velocityX / FIELD_EFFECT_DRAG_X;
+  particle->acceleration = velocityZ - velocityZ / FIELD_EFFECT_DRAG_Z;
 }
 
 /// Kicks up a dust puff (SPRITE_DUST_CLOUD) where source stands: it flies off
@@ -636,8 +639,8 @@ void Actor_ReleaseById(s32 actorId) {
 }
 
 /// The event command "set actor sprite param": gives every sprite animation of
-/// the actor param (Actor_SetSpriteColor); with bit 8 set the actor blinks
-/// instead (Actor_UpdateBlink).
+/// the actor param (Actor_SetSpriteColor); with SPRITE_COLOR_BLINK the actor
+/// blinks instead (Actor_UpdateBlink).
 void Actor_ConfigureSpriteColor(s32 actorId, s32 param) {
   struct Actor *actor;
 
@@ -674,8 +677,8 @@ void Actor_UpdateBlink(struct Actor *actor) {
 }
 
 /// Sets the colour mode (SpriteColorMode) of every running sprite animation of
-/// an actor's sprite. Events set 0 or 15, and alternate the two to make an
-/// actor flash.
+/// an actor's sprite. Events set SPRITE_COLOR_NORMAL or SPRITE_COLOR_HIDDEN,
+/// and alternate the two to make an actor flash.
 void Actor_SetSpriteColor(struct Actor *actor, s32 colorMode) {
   struct Sprite *sprite;
   struct SpriteAnimation *animation;
@@ -697,10 +700,13 @@ void Actor_SetSpriteColor(struct Actor *actor, s32 colorMode) {
 /// the watcher's own motion.
 #define ACTOR_WATCH_ACTOR_MASK 0xff
 enum ActorWatchFlag { ACTOR_WATCH_KEEP_MOTION = 0x10000 };
+/// The distance, in pixels, a follower stays behind the actor it watches
+/// (Actor_MoveTowardTarget reads it from the follower's timer).
+#define FOLLOW_DISTANCE 40
 
 /// Makes an actor follow the actor in targetId's ACTOR_WATCH_ACTOR_MASK bits
 /// and starts script on it. Unless targetId has ACTOR_WATCH_KEEP_MOTION it
-/// takes a follow distance of 40 pixels, the target's top speed with twice its
+/// keeps FOLLOW_DISTANCE, takes the target's top speed with twice its
 /// acceleration, to keep up with it, and no collision flags, so it cannot block
 /// the target.
 void Actor_WatchAndStartScript(u32 actorId, s32 targetId, const void *script) {
@@ -712,7 +718,7 @@ void Actor_WatchAndStartScript(u32 actorId, s32 targetId, const void *script) {
     if (!(targetId & ACTOR_WATCH_KEEP_MOTION)) {
       u16 none = 0;
 
-      follower->timer = 40;
+      follower->timer = FOLLOW_DISTANCE;
       follower->acceleration = target->acceleration * 2;
       follower->speedLimit = target->speedLimit;
       follower->collisionFlags = none;

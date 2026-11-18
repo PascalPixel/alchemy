@@ -374,9 +374,6 @@ s32 PsynergyMenu_SelectPartySlot(s32 partySlot) {
   return result;
 }
 
-// The pressed keys, read again at each test.
-#define KEYS_PRESSED (((struct InputState *)&gInput)->pressed)
-
 void PsynergyMenu_RefreshMemberPsynergy(s32 ownerId);
 
 s32 PsynergyMenu_DrawShortcuts(s32 window, s32 owner);
@@ -437,7 +434,7 @@ s32 PsynergyMenu_SelectMember(u16 *ownerIds, u16 *unused) {
     }
     MenuCursor_Position((selection % 4) * 24 - 10, 16);
     wait(1);
-    if (KEYS_PRESSED & KEY_A) {
+    if (gInput.pressed & KEY_A) {
       if (menu->psynergyCount) {
         Sound_PlayFar(SE_MENU_CONFIRM);
         result = ownerIds[selection];
@@ -445,9 +442,9 @@ s32 PsynergyMenu_SelectMember(u16 *ownerIds, u16 *unused) {
       }
       Sound_PlayFar(SE_MENU_ERROR);
     }
-    if ((KEYS_PRESSED & KEY_L) || (KEYS_PRESSED & KEY_R)) {
+    if ((gInput.pressed & KEY_L) || (gInput.pressed & KEY_R)) {
       result = ownerIds[selection];
-      if (KEYS_PRESSED & KEY_L)
+      if (gInput.pressed & KEY_L)
         menu->mode = PSYNERGY_MODE_SET_L;
       else
         menu->mode = PSYNERGY_MODE_SET_R;
@@ -464,7 +461,7 @@ s32 PsynergyMenu_SelectMember(u16 *ownerIds, u16 *unused) {
         break;
       }
     }
-    if (KEYS_PRESSED & KEY_B) {
+    if (gInput.pressed & KEY_B) {
       Sound_PlayFar(SE_MENU_CANCEL);
       result = -1;
       break;
@@ -478,8 +475,6 @@ s32 PsynergyMenu_SelectMember(u16 *ownerIds, u16 *unused) {
   menu->pageArrows[1]->motion = ICON_HIDDEN;
   return result;
 }
-
-#undef KEYS_PRESSED
 
 void PsynergyMenu_DrawPsynergyIcons(u16 *psynergies);
 
@@ -933,18 +928,16 @@ s32 PsynergyMenu_DrawDetailPage(s32 window, s32 *work,
   return 1;
 }
 
-// The Japanese page draws its help line, page icons, heading and names at
-// other columns.
+// The Japanese page draws its page icons, PP heading and names at other
+// columns.
 #if LANGUAGE == LANGUAGE_JAPANESE
-#define HELP_X 16
-#define PAGE_X 120
-#define HEADING_X 72
-#define NAME_X 32
+#define PSYNERGY_PAGE_ICONS_X 120
+#define PSYNERGY_PP_HEADING_X 72
+#define PSYNERGY_NAME_X 32
 #else
-#define HELP_X 0
-#define PAGE_X 112
-#define HEADING_X 96
-#define NAME_X 16
+#define PSYNERGY_PAGE_ICONS_X 112
+#define PSYNERGY_PP_HEADING_X 96
+#define PSYNERGY_NAME_X 16
 #endif
 
 // The psynergy menu work block, as this function reads it.
@@ -970,8 +963,8 @@ s32 PsynergyMenu_DrawActionPage(s32 window, s32 unused,
   if (PSYNERGY_MENU_SHORTCUT_HELP & menu->flags) {
     Text_DrawMessageAsTilesFar((s32)MsgShortcutSetL - 1, window, 0, 88);
   } else {
-    Text_DrawMessageAsTilesFar((s32)MsgArrangeItemsHelp + 2, window, HELP_X,
-                               88);
+    Text_DrawMessageAsTilesFar((s32)MsgChangeCharacterHelp, window,
+                               CHANGE_HELP_X, 88);
   }
 
   firstEntry = state->page * LIST_PAGE_SIZE;
@@ -980,11 +973,12 @@ s32 PsynergyMenu_DrawActionPage(s32 window, s32 unused,
     visibleCount = LIST_PAGE_SIZE;
   }
 
-  Menu_SetPageIcons(LIST_PAGE_SIZE, firstEntry, window, PAGE_X, 34);
+  Menu_SetPageIcons(LIST_PAGE_SIZE, firstEntry, window, PSYNERGY_PAGE_ICONS_X,
+                    34);
   PagedList_DrawPageNumbers(window, state->entryCount, LIST_PAGE_SIZE,
                             state->page, PAGE_NUMBERS_RIGHT);
   Text_DrawMessageAsTilesFar((s32)MsgPsynergyChooseTarget + 2, window,
-                             HEADING_X, 0);
+                             PSYNERGY_PP_HEADING_X, 0);
 
   row = 0;
   if (visibleCount > row) {
@@ -1005,7 +999,7 @@ s32 PsynergyMenu_DrawActionPage(s32 window, s32 unused,
       Text_DrawMessageAsTilesFar(
           (PSYNERGY_ABILITY_MASK & menu->psynergies[cursor]) +
               (s32)MsgAbilityName,
-          window, NAME_X, row * 16 + 8);
+          window, PSYNERGY_NAME_X, row * 16 + 8);
       Text_DrawNumberAtOffsetFar(ability->ppCost, 2, window, 104, row * 16 + 8);
       Text_SetColorFar(TEXT_COLOR_NORMAL);
 
@@ -1017,17 +1011,15 @@ s32 PsynergyMenu_DrawActionPage(s32 window, s32 unused,
   return 1;
 }
 
-#undef PAGE_X
-#undef HEADING_X
-#undef NAME_X
+#undef PSYNERGY_PAGE_ICONS_X
+#undef PSYNERGY_PP_HEADING_X
+#undef PSYNERGY_NAME_X
 
-// The Japanese list puts its cursor and its help line at other columns.
+// The Japanese list puts its cursor further right.
 #if LANGUAGE == LANGUAGE_JAPANESE
-#define CURSOR_X 98
-#define CHANGE_HELP_X 16
+#define PSYNERGY_LIST_CURSOR_X 98
 #else
-#define CURSOR_X 88
-#define CHANGE_HELP_X 0
+#define PSYNERGY_LIST_CURSOR_X 88
 #endif
 
 s32 PsynergyMenu_IsActionRestricted(s32 actionEntry);
@@ -1077,7 +1069,7 @@ s32 PsynergyMenu_RunList(s32 paneIndex) {
     menu->sideIcon[paneIndex]->motion = ICON_SHOWN;
 
     while (!GameFlag_Get(FLAG_MENU_START_PRESSED)) {
-      MenuCursor_Position(CURSOR_X, state.row * 16 + 36);
+      MenuCursor_Position(PSYNERGY_LIST_CURSOR_X, state.row * 16 + 36);
 
       if (changed != 0) {
         changed = 0;
@@ -1253,8 +1245,7 @@ s32 PsynergyMenu_RunList(s32 paneIndex) {
   return result;
 }
 
-#undef CURSOR_X
-#undef CHANGE_HELP_X
+#undef PSYNERGY_LIST_CURSOR_X
 
 /// A Psynergy entry's action id, its PSYNERGY_ABILITY_MASK bits, taken out by
 /// shifts.

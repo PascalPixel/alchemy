@@ -64,9 +64,10 @@
 #define FLAG_KALT_ISLAND_APPLE_TAKEN 0xf5d
 /// Kalt Island's rope, tied by Lash, for this visit.
 #define FLAG_KALT_ROPE_TIED FLAG_SCENE_TEMP_03
-/// Kalt Island: the leader is on the ice, where each step slides
+/// Kalt Island: set by a step onto a cell of step code 10 and cleared by one
+/// onto code 11; while it is set, the ice's cells (code 20) start no slide
 /// (Leader_SlideOnIce).
-#define FLAG_ON_ICE FLAG_SCENE_TEMP_01
+#define FLAG_ICE_SLIDES_STOPPED FLAG_SCENE_TEMP_01
 /// SW Atteka Islet: the pillar has sunk into the river at (11, 12), and river
 /// stone K stands in its place.
 #define FLAG_PILLAR_SUNK FLAG_SCENE_TEMP_04
@@ -231,9 +232,9 @@ void Settlements_StepOntoLadderFromEast(void);
 
 void Settlements_TurnAndClimbDownLadder(void);
 
-void Settlements_StepOntoIce(void);
+void Settlements_StopIceSlides(void);
 
-void Settlements_StepOffIce(void);
+void Settlements_ResumeIceSlides(void);
 void Settlements_StepOnIceSlide(void);
 void Settlements_LashRope(void);
 
@@ -546,6 +547,9 @@ const struct Trigger *Scene_GetTriggers(void) {
   return gSettlements_Triggers;
 }
 
+/// The frames a puff of smoke rises before it is released, as Prox's do.
+#define SMOKE_FRAMES 60
+
 /// Drifts a chimney's puff sideways ever faster, raises and widens it, and
 /// releases it when its frames run out.
 void Settlements_DriftSmoke(struct Actor *actor) {
@@ -577,7 +581,7 @@ void Settlements_SpawnSmoke(s32 x, s32 y, s32 z) {
     Actor_SetSpriteFlags(actor, 0);
     actor->scaleX = FIXED_ONE / 2;
     actor->scaleY = FIXED_ONE / 2;
-    *(s32 *)&actor->watchedActor = 60;
+    *(s32 *)&actor->watchedActor = SMOKE_FRAMES;
     actor->update = (void (*)(void))Settlements_DriftSmoke;
     Actor_SelectAnimation(actor, 5);
     Actor_SetBlendMode(actor, 1);
@@ -734,13 +738,15 @@ s32 Scene_PrepareMap(void) {
   return 0;
 }
 
-/// On Kalt Island's ice: the slide starts.
-void Settlements_StepOntoIce(void) { GameFlag_Set(FLAG_ON_ICE); }
+/// Stops Kalt Island's ice from sliding the leader.
+void Settlements_StopIceSlides(void) { GameFlag_Set(FLAG_ICE_SLIDES_STOPPED); }
 
-/// Off Kalt Island's ice.
-void Settlements_StepOffIce(void) { GameFlag_Clear(FLAG_ON_ICE); }
+/// Lets Kalt Island's ice slide the leader again.
+void Settlements_ResumeIceSlides(void) {
+  GameFlag_Clear(FLAG_ICE_SLIDES_STOPPED);
+}
 
-/// Steps the leader's slide on Kalt Island's ice.
+/// A step onto Kalt Island's ice slides the leader across it.
 void Settlements_StepOnIceSlide(void) { Leader_SlideOnIce(); }
 
 /// Goes into a settlement's cave: the placed actors stop, the door opens and
@@ -1471,9 +1477,10 @@ struct Trigger gSettlements_KaltIslandTriggers[] = {
     {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
     {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 2, CONDITION_ALWAYS,
      EVENT(Settlements_EnterCave)},
-    {TRIGGER_STEP, 10, CONDITION_ALWAYS, EVENT(Settlements_StepOntoIce)},
-    {TRIGGER_STEP, 11, CONDITION_ALWAYS, EVENT(Settlements_StepOffIce)},
-    {TRIGGER_STEP, 20, FLAG_ON_ICE, EVENT(Settlements_StepOnIceSlide)},
+    {TRIGGER_STEP, 10, CONDITION_ALWAYS, EVENT(Settlements_StopIceSlides)},
+    {TRIGGER_STEP, 11, CONDITION_ALWAYS, EVENT(Settlements_ResumeIceSlides)},
+    {TRIGGER_STEP, 20, FLAG_ICE_SLIDES_STOPPED,
+     EVENT(Settlements_StepOnIceSlide)},
     {PSYNERGY_ON_ACTOR(ABILITY_LASH), ACTOR_ROPE_POST_A, FLAG_KALT_ROPE_TIED,
      EVENT(Settlements_LashRope)},
     {TRIGGER_TALK, ACTOR_GEL, CONDITION_ALWAYS, EVENT(Settlements_MeetGel)},

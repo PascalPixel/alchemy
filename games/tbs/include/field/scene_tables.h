@@ -365,6 +365,9 @@ enum PsynergyEventTarget {
 /// searched across.
 #define EXAMINE_TRIGGER_FACING(facing)                                         \
   (TRIGGER_EXAMINE | TRIGGER_FLAG_FACING | (facing))
+/// A chest searched while facing the given way.
+#define EXAMINE_CHEST_FACING(facing)                                           \
+  (EXAMINE_TRIGGER(EXAMINE_CHEST) | TRIGGER_FLAG_FACING | (facing))
 /// A talk trigger that answers only while the leader faces the given way, so
 /// one actor can answer differently from each side.
 #define TALK_TRIGGER_FACING(facing)                                            \

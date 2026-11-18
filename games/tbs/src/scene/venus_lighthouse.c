@@ -244,8 +244,8 @@ enum VenusLighthouseCellBehavior {
 #define VENUS_LIGHTHOUSE_FIXED_OFFSET(value, bits) ((value) << (bits))
 #endif
 
-// UB: this calls a void function through an s32 function type, the call the
-// bytes show; UBFIX calls it as declared.
+// UB: this calls a void function through an s32 function type; UBFIX calls it
+// as declared.
 #ifdef UBFIX
 #define VENUS_LIGHTHOUSE_ARRIVE_THROUGH_SPARK_PASSAGE                          \
   VenusLighthouse_ArriveThroughSparkPassage

@@ -28,6 +28,7 @@
 #include "field/field_event.h"
 #include "field/field_sequence.h"
 #include "field/field_sequence_event.h"
+#include "field/field_sprite.h"
 #include "field/flag_call.h"
 #include "field/map_grid.h"
 #include "field/object.h"
@@ -571,8 +572,8 @@ void YampiDesert_StepOntoStakeTops(void) {
           (u8 *)((((s32)cells - (s32)Ram_MapCellBuffer) >> 2) + (s32)grid);
       s32 index = Actor_GetCellIndex(actor);
       s32 shape = MapGrid_GetTerrainKind(layer, actor->x.fixed, actor->z.fixed);
-      s32 height =
-          Map_GetTerrainHeight(layer, actor->x.fixed, actor->z.fixed) >> 19;
+      s32 height = CELL_HEIGHT_STEPS(
+          Map_GetTerrainHeight(layer, actor->x.fixed, actor->z.fixed));
 
       cells += index;
       shapes += index;
@@ -611,8 +612,8 @@ void YampiDesert_StepOffStakeTops(void) {
           (u8 *)((((s32)cells - (s32)Ram_MapCellBuffer) >> 2) + (s32)grid);
       s32 index = Actor_GetCellIndex(actor);
       s32 shape = MapGrid_GetTerrainKind(layer, actor->x.fixed, actor->z.fixed);
-      s32 height =
-          Map_GetTerrainHeight(layer, actor->x.fixed, actor->z.fixed) >> 19;
+      s32 height = CELL_HEIGHT_STEPS(
+          Map_GetTerrainHeight(layer, actor->x.fixed, actor->z.fixed));
 
       cells += index;
       shapes += index;
@@ -2392,6 +2393,11 @@ struct Geyser {
 #define GEYSER_SPRITES 80
 /// The geysers a room can have.
 #define GEYSER_ENTRIES 16
+/// A geyser's six-second round, and the frames of it at which it starts to rise
+/// and to fall.
+#define GEYSER_PERIOD_FRAMES 360
+#define GEYSER_RISE_FRAME 60
+#define GEYSER_FALL_FRAME 240
 /// The terrain id and collision slot of the first geyser: the geysers take the
 /// last GEYSER_ENTRIES of the 256 terrain ids.
 #define GEYSER_FIRST_TERRAIN (256 - GEYSER_ENTRIES)
@@ -2408,7 +2414,8 @@ struct GeyserWork {
 #define GEYSER_WORK ((struct GeyserWork *)(gInventorySnapshot + 392))
 
 void Geyser_Start(s32 unused, s32 firstTerrain);
-struct Geyser *Geyser_Add(s32 slot, s32 id, s32 timer, s32 low, s32 high);
+struct Geyser *Geyser_Add(s32 slot, s32 id, s32 timer, s32 minHeight,
+                          s32 maxHeight);
 
 /// Sets up the scorpion pit: dropped in, the King Scorpion's battle; back from
 /// it, the Scoop Gem; and the geyser between the four rocks once dug.
@@ -2571,9 +2578,9 @@ void Geyser_Draw(void) {
   s32 *view = &map->viewX;
   s32 viewX, viewZ, originY;
   struct Actor *actor;
-  s32 h, x;
+  s32 pieceY, x;
   FIXED y;
-  s32 sy;
+  s32 screenY;
   FIXED z;
   s32 depth;
   u32 *p;
@@ -2587,23 +2594,23 @@ void Geyser_Draw(void) {
       continue;
     actor = Actor_GetById(entry->id);
     frame = (gFrameCount % 12) / 3 * 8 + 32;
-    for (h = 0; h < entry->height; h += 16) {
+    for (pieceY = 0; pieceY < entry->height; pieceY += 16) {
       if (count >= GEYSER_SPRITES)
         continue;
       x = actor->x.fixed - viewX;
-      y = actor->y.fixed + toFIXED(h) - originY;
+      y = actor->y.fixed + toFIXED(pieceY) - originY;
       z = actor->z.fixed - viewZ - originY;
-      sy = z - y;
+      screenY = z - y;
       x = FIXEDtoINT(x) - 8;
-      sy = FIXEDtoINT(sy) - 16;
-      depth = FIXEDtoINT(y + z) + 58;
-      if ((u32)(x + 15) > 334 || sy <= -16 || sy > 239)
+      screenY = FIXEDtoINT(screenY) - 16;
+      depth = FIXEDtoINT(y + z) + SCENE_SPRITE_DEPTH;
+      if ((u32)(x + 15) > 334 || screenY <= -16 || screenY > 239)
         continue;
-      x &= 0x1ff;
-      sy &= 0xff;
+      x &= OBJ_X_MASK;
+      screenY &= OBJ_Y_MASK;
       p = oam;
       *p++ = 0;
-      *p++ = sy | OBJ_X(x) | OBJ_SIZE_16X16 | OBJ_256_COLORS;
+      *p++ = screenY | OBJ_X(x) | OBJ_SIZE_16X16 | OBJ_256_COLORS;
       *p = (tile + frame) | OBJ_PRIORITY(2);
       Oam_AddSpriteAtDepthClamped(oam, depth);
       oam += 3;
@@ -2614,19 +2621,20 @@ void Geyser_Draw(void) {
     x = actor->x.fixed - viewX;
     y = actor->y.fixed + toFIXED(entry->height) - originY;
     z = actor->z.fixed - viewZ - originY;
-    sy = z - y;
+    screenY = z - y;
     x = FIXEDtoINT(x) - 8;
-    sy = ((sy + Math_MulFX(-toFIXED(2), Trig_Sin(entry->phase)) - toFIXED(2)) >>
-          16) -
-         4;
-    depth = FIXEDtoINT(y + z) + 58;
-    if ((u32)(x + 15) > 334 || sy <= -16 || sy > 239)
+    screenY =
+        FIXEDtoINT(screenY + Math_MulFX(-toFIXED(2), Trig_Sin(entry->phase)) -
+                   toFIXED(2)) -
+        4;
+    depth = FIXEDtoINT(y + z) + SCENE_SPRITE_DEPTH;
+    if ((u32)(x + 15) > 334 || screenY <= -16 || screenY > 239)
       continue;
-    x &= 0x1ff;
-    sy &= 0xff;
+    x &= OBJ_X_MASK;
+    screenY &= OBJ_Y_MASK;
     p = oam;
     *p++ = 0;
-    *p++ = sy | OBJ_X(x) | OBJ_SIZE_16X16 | OBJ_256_COLORS;
+    *p++ = screenY | OBJ_X(x) | OBJ_SIZE_16X16 | OBJ_256_COLORS;
     *p = (tile + frame - 32) | OBJ_PRIORITY(2);
     Oam_AddSpriteAtDepthClamped(oam, depth);
     oam += 3;
@@ -2655,31 +2663,34 @@ void Geyser_Start(s32 unused, s32 firstTerrain) {
       ACTOR_PRIORITY_WALKS_ON_PLATFORMS;
 }
 
-/// Makes actor id the geyser of entry slot, rising from low to high pixels
-/// every six seconds, with an unseen platform at its top for the leader.
-struct Geyser *Geyser_Add(s32 slot, s32 id, s32 timer, s32 low, s32 high) {
+/// Makes actor id the geyser of entry slot, rising from minHeight to maxHeight
+/// pixels every six seconds, starting timer frames into its round, with an
+/// unseen platform at its top for the leader.
+struct Geyser *Geyser_Add(s32 slot, s32 id, s32 timer, s32 minHeight,
+                          s32 maxHeight) {
   struct GeyserWork *work = GEYSER_WORK;
   struct Geyser *entry = &work->entries[slot];
   struct Actor *actor = Actor_GetById(id);
   struct Actor *rider;
 
+  // DEAD: the actor looked up again and dropped; the ROM keeps the call.
   Actor_GetById(id);
   Actor_SetSpriteFlags(actor, 0);
   if (!GameFlag_Get(FLAG_KEEP_PARTY_POSITION)) {
-    if (high < low) {
-      s32 swap = low;
+    if (maxHeight < minHeight) {
+      s32 swap = minHeight;
 
-      low = high;
-      high = swap;
+      minHeight = maxHeight;
+      maxHeight = swap;
     }
     entry->id = id;
     entry->height = 0;
     entry->timer = timer;
-    entry->period = 360;
-    entry->max = high;
-    entry->riseAt = 60;
-    entry->fallAt = 240;
-    entry->min = low;
+    entry->period = GEYSER_PERIOD_FRAMES;
+    entry->max = maxHeight;
+    entry->riseAt = GEYSER_RISE_FRAME;
+    entry->fallAt = GEYSER_FALL_FRAME;
+    entry->min = minHeight;
     entry->unreadSetToOne = 1;
     actor->motionFlags = 0;
     actor->collisionFlags = ACTOR_NOT_TARGETED;
@@ -2688,8 +2699,8 @@ struct Geyser *Geyser_Add(s32 slot, s32 id, s32 timer, s32 low, s32 high) {
     entry->unreadCleared = 0;
     actor->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
   }
-  rider = Import_ActorCreate(ACTOR_CREATE_NO_SPRITE << 12, actor->x.fixed,
-                             actor->y.fixed, actor->z.fixed);
+  rider = Import_ActorCreate(ACTOR_CREATE_KIND(ACTOR_CREATE_NO_SPRITE),
+                             actor->x.fixed, actor->y.fixed, actor->z.fixed);
   rider->collisionFlags = 0;
   rider->motionFlags = 0;
   rider->priorityFlags |= ACTOR_PRIORITY_PLATFORM;

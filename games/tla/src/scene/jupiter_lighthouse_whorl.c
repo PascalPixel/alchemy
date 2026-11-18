@@ -224,9 +224,8 @@ s32 JupiterLighthouse_FindBlockGap(void) {
 
   straight = Actor_Get(ACTOR_STRAIGHT_PATH_BLOCK);
   corner = Actor_Get(ACTOR_CORNER_PATH_BLOCK);
-  place = 1;
+  place = -1;
   x = FIELD_CELL(straight->x.fixed);
-  place = -place;
   z = FIELD_CELL(straight->z.fixed);
   if (x == EAST_GAP_CELL_X && z == EAST_GAP_CELL_Z &&
       !Event_GetFlag(FLAG_PATH_BLOCK_PLACED(CORNER_BLOCK_IN_EAST_GAP))) {
@@ -374,7 +373,7 @@ void JupiterLighthouse_LightWestPath(s32 mode) {
     i = 0;
     do {
       actor = Actor_Get(ACTOR_FIRST_GREY_BLOCK + i);
-      actor->motionFlags = 3;
+      actor->motionFlags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
       i++;
       actor->y.fixed = actor->groundHeight;
     } while (i <= 5);
@@ -404,7 +403,7 @@ void JupiterLighthouse_LightWestPath(s32 mode) {
     do {
       actor = Actor_Get(ACTOR_FIRST_GREY_BLOCK + i);
       if (JupiterLighthouse_IsOnWestPath(actor)) {
-        actor->motionFlags = 4;
+        actor->motionFlags = ACTOR_FLOATS;
         actor->y.fixed = toFIXED(65) / 2;
       }
     } while (++i <= 5);
@@ -438,7 +437,7 @@ void JupiterLighthouse_PlacePathBlock(s32 unused, s32 id) {
 
   if (actor->groundHeight !=
       Map_GetTerrainHeight(actor->layer, actor->x.fixed, actor->z.fixed)) {
-    actor->motionFlags = 3;
+    actor->motionFlags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
     wait(2);
     i = 0;
     if (actor->y.fixed > actor->groundHeight || actor->velocityY != 0) {
@@ -533,7 +532,7 @@ void JupiterLighthouse_ThrowOutBlock(s32 id, s32 x, s32 z, s32 dx, s32 dz) {
   struct Actor *actor = Actor_Get(id);
 
   Actor_SetPositionFX(id, FIELD_CELL_CENTER(x), FIELD_CELL_CENTER(z));
-  actor->motionFlags = 3;
+  actor->motionFlags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
   actor->groundHeight = GAP_FLOOR_HEIGHT;
   actor->y.fixed = GAP_FLOOR_HEIGHT;
   actor->velocityY = toFIXED(8);
@@ -644,7 +643,7 @@ void JupiterLighthouse_JumpOrPushBlock(void) {
   s32 z;
   s32 facing;
 
-  facing = (leader->facing + DEGtoANG(45)) & TRIG_TURN * 3 / 4;
+  facing = (leader->facing + DEGtoANG(45)) & 0xc000;
   position[0] = leader->x.fixed;
   position[1] = leader->y.fixed;
   position[2] = leader->z.fixed;

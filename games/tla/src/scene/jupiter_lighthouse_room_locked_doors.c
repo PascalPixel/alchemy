@@ -409,8 +409,9 @@ void Actor_SetSpriteColorMode(struct Actor *actor, s32 value);
 /// The aerie beacon's actors, which the unused copy below of
 /// jupiter_lighthouse_aerie_beacon.c's JupiterLighthouse_PlaceAngelsAndLid
 /// places, and the frames jupiter_lighthouse_aerie.c's
-/// JupiterLighthouse_EnergizeAngels raises an angel and tilts the lid (64),
-/// then lifts all three once both angels are energized (256).
+/// JupiterLighthouse_EnergizeAngels raises an angel and tilts the lid
+/// (ANGEL_RISE_FRAMES), then lifts all three once both angels are energized
+/// (LID_LIFT_FRAMES).
 enum {
   ACTOR_LEFT_ANGEL = 9,
   ACTOR_RIGHT_ANGEL,

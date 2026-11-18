@@ -7,8 +7,8 @@
 /// ship's (EasternAlhafraShip_BriggsIsCaught). His wife Chaucha and their baby
 /// Eoleo then stay aboard, where Eoleo lifts a vase of flowers with Psynergy
 /// (EasternAlhafraShip_EoleoLifts). Move or a push shifts the tall crate from
-/// the back room's door, and Tremor shakes Large Bread down from the crates
-/// stacked inside (EasternAlhafraShip_ShakeDownTheBread).
+/// the back room's door, and Tremor knocks Large Bread down from the crates
+/// stacked inside (EasternAlhafraShip_KnockDownTheBread).
 
 #include "shared/tables.h"
 #include "battle/battle.h"
@@ -97,7 +97,7 @@ void EasternAlhafraShip_BriggsIsCaught(void);
 extern u32 gEasternAlhafraShip_BriggsRunsScript[];
 extern s32 gEasternAlhafraShip_MateRunsScript[];
 
-void EasternAlhafraShip_ShakeDownTheBread(void);
+void EasternAlhafraShip_KnockDownTheBread(void);
 
 void Event_PickUpItem();
 
@@ -129,7 +129,7 @@ void EasternAlhafraShip_FinishMovingCrate(s32 unused, s32 id) {
 
 /// Tremor on the stacked crates: the leader hops back as they shift down beside
 /// the crate under them, and the Large Bread falls to the floor.
-void EasternAlhafraShip_ShakeDownTheBread(void) {
+void EasternAlhafraShip_KnockDownTheBread(void) {
   GameFlag_Set(FLAG_BREAD_KNOCKED_DOWN);
   Actor_GetById(gMainRoutineWork.leaderActorId)->velocityY = toFIXED(6);
   Actor_SetSpeed(gMainRoutineWork.leaderActorId, 2);
@@ -258,12 +258,10 @@ s32 Scene_PrepareMap(void) { return 0; }
 
 extern u32 gEasternAlhafraShip_QuestionMarkScript[];
 
-/// Pops a "?" bubble up at (x, y, z), in 16.16 pixels, tilted by rotation,
-/// for the given frames.
-void EasternAlhafraShip_PopQuestionMark(x, y, z, rotation, frames) s32 x, y, z;
-s16 rotation;
-s32 frames;
-{
+/// Pops a "?" bubble up at (x, y, z), tilted by rotation, for the given
+/// frames.
+void EasternAlhafraShip_PopQuestionMark(FIXED x, FIXED y, FIXED z, u16 rotation,
+                                        s32 frames) {
   struct Actor *object;
   struct Sprite *sprite;
 
@@ -281,7 +279,7 @@ s32 frames;
 
 /// Four "?" bubbles pop up over an actor in turn, to its right and its left,
 /// each tilted, a quarter of a second apart.
-void Actor_PopQuestionMarks(s32 id) {
+void EasternAlhafraShip_PopQuestionMarks(s32 id) {
   struct Actor *actor = Actor_GetById(id);
 
   EasternAlhafraShip_PopQuestionMark(actor->x.fixed + toFIXED(8),
@@ -414,7 +412,7 @@ void EasternAlhafraShip_MayorArrives(void) {
   Event_Wait(40);
   Actor_FaceDirectionById(ACTOR_BRIGGS_MATE, FACING_SOUTH_SOUTHEAST, 0);
   Event_Wait(30);
-  Actor_PopQuestionMarks(ACTOR_BRIGGS_MATE);
+  EasternAlhafraShip_PopQuestionMarks(ACTOR_BRIGGS_MATE);
   Sound_Play(SE_LIGHT_APPEAR);
   Actor_ShowEmote(ACTOR_BRIGGS_MATE, EMOTE_IN_FRONT | EMOTE_QUESTION, 40);
   Actor_FaceDirectionById(ACTOR_BRIGGS_MATE, FACING_NORTH_NORTHEAST, 0);
@@ -1559,7 +1557,7 @@ void EasternAlhafraShip_BriggsIsCaught(void) {
   Actor_ShowEmote(ACTOR_MADRAS_MAYOR, EMOTE_IN_FRONT | EMOTE_SWEAT_DROP, 30);
   // "So, what shall we do?"
   Event_ShowMessageThenWait(ACTOR_MADRAS_MAYOR, 0, 10);
-  Actor_PopQuestionMarks(ACTOR_MADRAS_MAYOR);
+  EasternAlhafraShip_PopQuestionMarks(ACTOR_MADRAS_MAYOR);
   Actor_ShowEmote(ACTOR_MADRAS_MAYOR, EMOTE_IN_FRONT | EMOTE_LIGHT_BULB, 40);
   // "I know... Come to Madra after our boat has been fixed and we've..."
   Event_ShowMessageThenWait(ACTOR_MADRAS_MAYOR, 0, 10);
@@ -1836,7 +1834,7 @@ struct Trigger gSceneEvents[] = {
     {TRIGGER_PUSHED, 30, CONDITION_ALWAYS,
      EVENT(EasternAlhafraShip_FinishMovingCrate)},
     {PSYNERGY_ON_ACTOR(ABILITY_TREMOR), ACTOR_STACKED_CRATES,
-     FLAG_BREAD_KNOCKED_DOWN, EVENT(EasternAlhafraShip_ShakeDownTheBread)},
+     FLAG_BREAD_KNOCKED_DOWN, EVENT(EasternAlhafraShip_KnockDownTheBread)},
     {TRIGGER_TABLE_END},
 };
 

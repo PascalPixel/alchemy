@@ -277,7 +277,7 @@ void JupiterLighthouse_FlashSky(void) {
     p += LIGHTNING_MAP_COLUMNS;
   }
   Heap_Release(buffer);
-  REG_BLDALPHA = BLEND_ALPHA(16, 16);
+  REG_BLDALPHA = BLEND_ALPHA(BLEND_WEIGHT_MAX, BLEND_WEIGHT_MAX);
   REG_BLDCNT = BLDCNT_TGT1_BG0 | BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_ALL;
   gBgScroll[0].x = -104;
   gBgScroll[0].y = 16;

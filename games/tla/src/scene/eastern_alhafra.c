@@ -1291,12 +1291,10 @@ void EasternAlhafra_AskIfFinished(void) {
 
 extern u32 gEasternAlhafra_QuestionMarkScript[];
 
-/// Pops up a question mark bubble at (x, y, z), tilted by `angle`, for
-/// `frames` frames.
-void EasternAlhafra_SpawnQuestionMark(x, y, z, angle, frames) s32 x, y, z;
-s16 angle;
-s32 frames;
-{
+/// Pops a "?" bubble up at (x, y, z), tilted by rotation, for the given
+/// frames.
+void EasternAlhafra_PopQuestionMark(FIXED x, FIXED y, FIXED z, u16 rotation,
+                                    s32 frames) {
   struct Actor *mark;
   struct Sprite *sprite;
 
@@ -1309,33 +1307,33 @@ s32 frames;
     mark->motionFlags = 0;
     mark->wait = frames;
     sprite->flags = 0;
-    sprite->rotation = angle;
+    sprite->rotation = rotation;
   }
 }
 
 /// Four question marks pop up over the actor's head in turn, right and left,
 /// as Briggs tries to remember what he swore to do.
-void EasternAlhafra_ShowQuestionMarks(s32 id) {
+void EasternAlhafra_PopQuestionMarks(s32 id) {
   struct Actor *actor = Actor_Get(id);
 
-  EasternAlhafra_SpawnQuestionMark(actor->x.fixed + toFIXED(8),
-                                   actor->y.fixed + toFIXED(28), actor->z.fixed,
-                                   TRIG_TURN / 16, 15);
+  EasternAlhafra_PopQuestionMark(actor->x.fixed + toFIXED(8),
+                                 actor->y.fixed + toFIXED(28), actor->z.fixed,
+                                 TRIG_TURN / 16, 15);
   Event_PlaySound(SE_LIGHT_APPEAR);
   FieldEvent_Wait(15);
-  EasternAlhafra_SpawnQuestionMark(actor->x.fixed - toFIXED(8),
-                                   actor->y.fixed + toFIXED(28), actor->z.fixed,
-                                   TRIG_TURN * 15 / 16, 15);
+  EasternAlhafra_PopQuestionMark(actor->x.fixed - toFIXED(8),
+                                 actor->y.fixed + toFIXED(28), actor->z.fixed,
+                                 TRIG_TURN * 15 / 16, 15);
   Event_PlaySound(SE_LIGHT_APPEAR);
   FieldEvent_Wait(15);
-  EasternAlhafra_SpawnQuestionMark(actor->x.fixed + toFIXED(8),
-                                   actor->y.fixed + toFIXED(28), actor->z.fixed,
-                                   TRIG_TURN / 16, 15);
+  EasternAlhafra_PopQuestionMark(actor->x.fixed + toFIXED(8),
+                                 actor->y.fixed + toFIXED(28), actor->z.fixed,
+                                 TRIG_TURN / 16, 15);
   Event_PlaySound(SE_LIGHT_APPEAR);
   FieldEvent_Wait(15);
-  EasternAlhafra_SpawnQuestionMark(actor->x.fixed - toFIXED(8),
-                                   actor->y.fixed + toFIXED(28), actor->z.fixed,
-                                   TRIG_TURN * 15 / 16, 15);
+  EasternAlhafra_PopQuestionMark(actor->x.fixed - toFIXED(8),
+                                 actor->y.fixed + toFIXED(28), actor->z.fixed,
+                                 TRIG_TURN * 15 / 16, 15);
   Event_PlaySound(SE_LIGHT_APPEAR);
   FieldEvent_Wait(15);
 }
@@ -1921,7 +1919,7 @@ void EasternAlhafra_BriggsStealsShip(void) {
   FieldEvent_ShowMessageThenWait(ACTOR_CHAUCHA, 0, 10);
   Actor_FaceDirection(ACTOR_BRIGGS, FACING_SOUTH_SOUTHWEST, 0);
   FieldEvent_Wait(30);
-  EasternAlhafra_ShowQuestionMarks(ACTOR_BRIGGS);
+  EasternAlhafra_PopQuestionMarks(ACTOR_BRIGGS);
   Event_PlaySound(SE_CURSE);
   FieldActor_ShowEmote(ACTOR_BRIGGS, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 50);
   Actor_FaceDirectionById(ACTOR_BRIGGS, FACING_EAST, 0);
@@ -1931,7 +1929,7 @@ void EasternAlhafra_BriggsStealsShip(void) {
   FieldEvent_ShowMessageThenWait(ACTOR_CHAUCHA, 0, 10);
   Actor_FaceDirection(ACTOR_BRIGGS, FACING_SOUTH_SOUTHWEST, 0);
   FieldEvent_Wait(30);
-  EasternAlhafra_ShowQuestionMarks(ACTOR_BRIGGS);
+  EasternAlhafra_PopQuestionMarks(ACTOR_BRIGGS);
   FieldActor_ShowEmote(ACTOR_BRIGGS, EMOTE_IN_FRONT | EMOTE_LIGHT_BULB, 50);
   Actor_FaceDirectionById(ACTOR_BRIGGS, FACING_EAST, 0);
   FieldEvent_Wait(20);

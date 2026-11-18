@@ -8,6 +8,7 @@
 #include "flags.h"
 #include "battle/battle.h"
 #include "field/field.h"
+#include "field/field_sequence.h"
 #include "game/game.h"
 #include "graphics/graphics.h"
 #include "system/math_table.h"
@@ -316,7 +317,8 @@ s32 Scene_Initialize(void) {
   FIXED cameraZ = toFIXED(320);
   s16 *entrance;
 
-  gFieldWork->transition = SCENE_TRANSITION(TRANSITION_WINDOW, 9);
+  gFieldWork->transition =
+      SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER);
   Actor_GetById(ACTOR_OLD_MAN_ON_INDRA)->update =
       AlhafraManor_KeepToTheLeadersLayer;
   if (gMainRoutineWork.entrance == ENTRANCE_BACK_FROM_THE_VIEW) {
@@ -778,7 +780,8 @@ void AlhafraManor_BriggsEscapes(void) {
   FieldCamera_FollowActor(gMainRoutineWork.leaderActorId, 1);
   Event_End();
   gFieldWork->transitionFrames = 16;
-  gFieldWork->transition = SCENE_TRANSITION(TRANSITION_WINDOW, 9);
+  gFieldWork->transition =
+      SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER);
   GameFlag_Clear(FLAG_SHOW_AREA_NAME);
 }
 
@@ -803,7 +806,7 @@ u32 gSceneExits[] = {
     SCENE_EXIT_UNLESS(ALHAFRA_MANOR_TO_ALHAFRA, Alhafra,
                       ALHAFRA_FROM_ALHAFRA_MANOR, EXIT_FLAG_NONE),
     SCENE_EXIT_UNLESS(2, AlhafraManor, 7, EXIT_FLAG_NONE),
-    SCENE_EXIT_UNLESS(3, AlhafraManor, 8, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(3, AlhafraManor, ENTRANCE_MAYORS_ROOM, EXIT_FLAG_NONE),
     SCENE_EXIT_UNLESS(4, AlhafraManor, 9, EXIT_FLAG_NONE),
     SCENE_EXIT_UNLESS(5, AlhafraManor, 10, EXIT_FLAG_NONE),
     SCENE_EXIT_UNLESS(6, AlhafraManor, 15, EXIT_FLAG_NONE),
@@ -813,7 +816,7 @@ u32 gSceneExits[] = {
     SCENE_EXIT_UNLESS(10, AlhafraManor, 5, EXIT_FLAG_NONE),
     SCENE_EXIT_UNLESS(11, AlhafraManor, 12, EXIT_FLAG_NONE),
     SCENE_EXIT_UNLESS(12, AlhafraManor, 11, EXIT_FLAG_NONE),
-    SCENE_EXIT_UNLESS(13, AlhafraManor, 14, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(13, AlhafraManor, ENTRANCE_WATCHTOWER, EXIT_FLAG_NONE),
     SCENE_EXIT_UNLESS(14, AlhafraManor, 13, EXIT_FLAG_NONE),
     SCENE_EXIT_UNLESS(15, AlhafraManor, 6, EXIT_FLAG_NONE),
     SCENE_EXIT_UNLESS(16, AlhafraManor, 17, EXIT_FLAG_NONE),

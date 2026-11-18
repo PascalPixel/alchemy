@@ -63,16 +63,16 @@ enum MikasallaRoomsActorId {
 /// those of the Apojii Islands, by entrance 5, and Yallam, by entrance 4, which
 /// this scene also holds; by the rows of gMikasallaRooms_SanctumPlacements.
 enum MikasallaRoomsSanctumActorId {
-  /// The priests of Mikasalla's and the Apojii Islands' sanctums.
-  ACTOR_MIKASALLA_PRIEST = ACTOR_FIRST_PLACED,
-  ACTOR_APOJII_PRIEST,
+  /// The healers of Mikasalla's and the Apojii Islands' sanctums.
+  ACTOR_MIKASALLA_HEALER = ACTOR_FIRST_PLACED,
+  ACTOR_APOJII_HEALER,
   /// Two Apojii islanders tired of their island paradise.
   ACTOR_ISLANDER_SICK_OF_PARADISE,
   ACTOR_ISLANDER_LONGING_FOR_LAND,
-  /// The priest of Yallam's sanctum.
-  ACTOR_YALLAM_PRIEST,
+  /// The healer of Yallam's sanctum.
+  ACTOR_YALLAM_HEALER,
   /// Blank actors on the counters of Mikasalla's and the Apojii sanctums, so
-  /// the priests answer from across them.
+  /// the healers answer from across them.
   ACTOR_MIKASALLA_COUNTER,
   ACTOR_APOJII_COUNTER
 };
@@ -104,27 +104,27 @@ const struct ActorPlacement *Scene_GetActorPlacements(void) {
   return gMikasallaRooms_HousesPlacements;
 }
 
-/// Mind Read on Mikasalla's sanctum counter: the priest wonders about
+/// Mind Read on Mikasalla's sanctum counter: the healer wonders about
 /// werewolves beyond Garoh.
-s32 MikasallaRooms_ReadPriestsMind(void) {
+s32 MikasallaRooms_ReadHealersMind(void) {
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
   FieldEvent_SetMessageId((s32)MsgMikasallaInteriorsIWonderIfThere);
   // "I wonder if there are werewolves beyond those in Garoh... I also..."
-  Event_ShowMessage(ACTOR_MIKASALLA_PRIEST, 0);
+  Event_ShowMessage(ACTOR_MIKASALLA_HEALER, 0);
   Event_End();
   return 0;
 }
 
-/// Mind Read on the Apojii sanctum's counter: the priest thinks of the
+/// Mind Read on the Apojii sanctum's counter: the healer thinks of the
 /// islanders' complaints.
-s32 MikasallaRooms_ReadApojiiPriestsMind(void) {
+s32 MikasallaRooms_ReadApojiiHealersMind(void) {
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
   FieldEvent_SetMessageId(
       (s32)MsgMikasallaInteriorsWheneverVisitorsComeOutIslanders);
   // "Whenever visitors come out, the islanders start to complain about..."
-  Event_ShowMessage(ACTOR_APOJII_PRIEST, 0);
+  Event_ShowMessage(ACTOR_APOJII_HEALER, 0);
   Event_End();
   return 0;
 }
@@ -193,9 +193,9 @@ void MikasallaRooms_TalkToInnkeeper(s32 speaker) {
   }
 }
 
-/// Mikasalla's priest heals across the counter, and otherwise asks whether the
-/// party has been to Garoh.
-void MikasallaRooms_TalkToPriest(s32 speaker) {
+/// Mikasalla's healer offers the Sanctum across the counter, and otherwise asks
+/// whether the party has been to Garoh.
+void MikasallaRooms_TalkToHealer(s32 speaker) {
   u16 facing;
 
   facing = FACING_NEAREST_CARDINAL(
@@ -221,9 +221,9 @@ void MikasallaRooms_TalkToPriest(s32 speaker) {
   }
 }
 
-/// The Apojii Islands' priest heals across the counter, and otherwise talks of
-/// the little island.
-void MikasallaRooms_TalkToApojiiPriest(s32 speaker) {
+/// The Apojii Islands' healer offers the Sanctum across the counter, and
+/// otherwise talks of the little island.
+void MikasallaRooms_TalkToApojiiHealer(s32 speaker) {
   u16 facing;
 
   facing = FACING_NEAREST_CARDINAL(
@@ -240,9 +240,9 @@ void MikasallaRooms_TalkToApojiiPriest(s32 speaker) {
   }
 }
 
-/// Yallam's priest heals across the counter, and otherwise talks of the
-/// far-off shores.
-void MikasallaRooms_TalkToYallamPriest(s32 speaker) {
+/// Yallam's healer offers the Sanctum across the counter, and otherwise talks
+/// of the far-off shores.
+void MikasallaRooms_TalkToYallamHealer(s32 speaker) {
   u16 facing;
 
   facing = FACING_NEAREST_CARDINAL(
@@ -262,7 +262,7 @@ void MikasallaRooms_TalkToYallamPriest(s32 speaker) {
 /// Opens the rooms around the leader. In the houses, Galahad stands in the inn
 /// in a game linked to one where Isaac won at Colosso, from his meeting with
 /// the party until it leaves the area, and before the party is reunited. In
-/// the sanctums, the priests of Mikasalla and the Apojii Islands answer from
+/// the sanctums, the healers of Mikasalla and the Apojii Islands answer from
 /// across their counters, and the Apojii and Yallam sanctums, which this
 /// scene holds, show no area name.
 s32 Scene_Initialize(void) {
@@ -287,12 +287,12 @@ s32 Scene_Initialize(void) {
     s32 entrance = gMainRoutineWork.entrance;
 
     if (entrance == MIKASALLA_ROOMS_SANCTUM_FROM_MIKASALLA) {
-      Actor_Get(ACTOR_MIKASALLA_PRIEST)->collisionFlags |= ACTOR_NEAR_TALK;
-      FieldActor_SetSpritePriority(ACTOR_MIKASALLA_PRIEST, 2);
+      Actor_Get(ACTOR_MIKASALLA_HEALER)->collisionFlags |= ACTOR_NEAR_TALK;
+      FieldActor_SetSpritePriority(ACTOR_MIKASALLA_HEALER, 2);
     } else if (entrance == MIKASALLA_ROOMS_SANCTUM_FROM_APOJII_ISLANDS) {
       Event_ClearFlag(FLAG_SHOW_AREA_NAME);
-      Actor_Get(ACTOR_APOJII_PRIEST)->collisionFlags |= ACTOR_NEAR_TALK;
-      FieldActor_SetSpritePriority(ACTOR_APOJII_PRIEST, 2);
+      Actor_Get(ACTOR_APOJII_HEALER)->collisionFlags |= ACTOR_NEAR_TALK;
+      FieldActor_SetSpritePriority(ACTOR_APOJII_HEALER, 2);
     } else if (entrance == MIKASALLA_ROOMS_SANCTUM_FROM_YALLAM) {
       Event_ClearFlag(FLAG_SHOW_AREA_NAME);
     }
@@ -516,7 +516,7 @@ struct Trigger gMikasallaRooms_HousesTriggers[] = {
 };
 // clang-format on
 
-/// The three sanctums' priests, the islanders and the counters' Mind Read.
+/// The three sanctums' healers, the islanders and the counters' Mind Read.
 struct Trigger gMikasallaRooms_SanctumTriggers[] = {
     {TRIGGER_EXIT, MIKASALLA_ROOMS_SANCTUM_TO_MIKASALLA, CONDITION_ALWAYS,
      MIKASALLA_ROOMS_SANCTUM_TO_MIKASALLA},
@@ -527,32 +527,32 @@ struct Trigger gMikasallaRooms_SanctumTriggers[] = {
     {TRIGGER_EXIT, MIKASALLA_ROOMS_SANCTUM_TO_APOJII_ISLANDS, CONDITION_ALWAYS,
      MIKASALLA_ROOMS_SANCTUM_TO_APOJII_ISLANDS},
     {TRIGGER_EXIT, 6, CONDITION_ALWAYS, 6},
-    {TRIGGER_TALK, ACTOR_MIKASALLA_PRIEST, CONDITION_ALWAYS,
-     EVENT(MikasallaRooms_TalkToPriest)},
-    {TRIGGER_TALK, ACTOR_APOJII_PRIEST, CONDITION_ALWAYS,
-     EVENT(MikasallaRooms_TalkToApojiiPriest)},
+    {TRIGGER_TALK, ACTOR_MIKASALLA_HEALER, CONDITION_ALWAYS,
+     EVENT(MikasallaRooms_TalkToHealer)},
+    {TRIGGER_TALK, ACTOR_APOJII_HEALER, CONDITION_ALWAYS,
+     EVENT(MikasallaRooms_TalkToApojiiHealer)},
     {TRIGGER_TALK, ACTOR_ISLANDER_SICK_OF_PARADISE, CONDITION_ALWAYS,
      MSGNO(MsgMikasallaInteriorsImSickOfLiving)},
     {TRIGGER_TALK, ACTOR_ISLANDER_LONGING_FOR_LAND, CONDITION_ALWAYS,
      MSGNO(MsgMikasallaInteriorsIdLoveToGo)},
-    {TRIGGER_TALK, ACTOR_YALLAM_PRIEST, CONDITION_ALWAYS,
-     EVENT(MikasallaRooms_TalkToYallamPriest)},
+    {TRIGGER_TALK, ACTOR_YALLAM_HEALER, CONDITION_ALWAYS,
+     EVENT(MikasallaRooms_TalkToYallamHealer)},
     {TRIGGER_TALK, ACTOR_MIKASALLA_COUNTER, CONDITION_ALWAYS,
-     EVENT(MikasallaRooms_TalkToPriest)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_MIKASALLA_PRIEST,
+     EVENT(MikasallaRooms_TalkToHealer)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_MIKASALLA_HEALER,
      CONDITION_ALWAYS, MSGNO(MsgMikasallaInteriorsIWonderIfThere)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_APOJII_PRIEST,
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_APOJII_HEALER,
      CONDITION_ALWAYS,
      MSGNO(MsgMikasallaInteriorsWheneverVisitorsComeOutIslanders)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_ISLANDER_SICK_OF_PARADISE,
      CONDITION_ALWAYS, MSGNO(MsgMikasallaInteriorsMaybeTheyllTakeMe)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_ISLANDER_LONGING_FOR_LAND,
      CONDITION_ALWAYS, MSGNO(MsgMikasallaInteriorsIWonderWhatItsLike)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_YALLAM_PRIEST,
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_YALLAM_HEALER,
      CONDITION_ALWAYS, MSGNO(MsgMikasallaInteriorsOnceThisWasThrivingVillage)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_MIKASALLA_COUNTER,
-     CONDITION_ALWAYS, EVENT(MikasallaRooms_ReadPriestsMind)},
+     CONDITION_ALWAYS, EVENT(MikasallaRooms_ReadHealersMind)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_APOJII_COUNTER,
-     CONDITION_ALWAYS, EVENT(MikasallaRooms_ReadApojiiPriestsMind)},
+     CONDITION_ALWAYS, EVENT(MikasallaRooms_ReadApojiiHealersMind)},
     {TRIGGER_TABLE_END},
 };

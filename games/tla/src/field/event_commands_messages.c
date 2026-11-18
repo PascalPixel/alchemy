@@ -15,6 +15,9 @@
 /// Message_SetVoiceFromActor's key for no voice: it clears the voice.
 #define MESSAGE_VOICE_NONE 0x80000000
 
+/// Portrait_OpenWindow's window is 5 tiles square.
+#define PORTRAIT_WINDOW_TILES 5
+
 /// The event command "open message": opens the event's current message in a
 /// speech window next to the speaking actor, with the speaker's portrait beside
 /// it when it has one, and moves on to the next message.
@@ -106,6 +109,7 @@ s32 FieldMessage_ShowAtActor(s32 localId, s32 unused) {
         top = y + 4;
     }
 
+    // Place the portrait beside the speaker, on the side with more room.
     if (win->mindRead != 0)
       margin = 5;
     column = x;
@@ -117,7 +121,7 @@ s32 FieldMessage_ShowAtActor(s32 localId, s32 unused) {
       column += 2;
       if (column + margin > DISPLAY_TILE_WIDTH - 1)
         column = DISPLAY_TILE_WIDTH - 1 - margin;
-    } else if (column <= 15) {
+    } else if (column <= DISPLAY_TILE_WIDTH / 2) {
       column = column - margin - 2;
       if (column < 0)
         column = x + 2;
@@ -127,18 +131,21 @@ s32 FieldMessage_ShowAtActor(s32 localId, s32 unused) {
         column = x - margin - 2;
     }
 
+    // A speaker with a portrait: put the portrait just above or below the
+    // message, within the screen's rows, and grow the message to the
+    // portrait's height.
     found = Portrait_GetForSpeakerFar(sprite);
     if (found != -1) {
       Text_GetMessageSizeAltFar(message, &left, &top, &width, &height);
       message = -1;
       if (top > y)
-        portraitTop = top - 5;
+        portraitTop = top - PORTRAIT_WINDOW_TILES;
       else
         portraitTop = top + height;
       if (portraitTop < 0)
         portraitTop = top + height;
-      else if (portraitTop + 5 > DISPLAY_TILE_HEIGHT - 1)
-        portraitTop = top - 5;
+      else if (portraitTop + PORTRAIT_WINDOW_TILES > DISPLAY_TILE_HEIGHT - 1)
+        portraitTop = top - PORTRAIT_WINDOW_TILES;
       if (top < portraitTop) {
         s32 lines = height;
 
@@ -158,6 +165,7 @@ s32 FieldMessage_ShowAtActor(s32 localId, s32 unused) {
     else if (column + margin > DISPLAY_TILE_WIDTH - 1)
       column = DISPLAY_TILE_WIDTH - 1 - margin;
 
+    // Open the message and the portrait, and wait until the text is typed out.
     if (win->mindRead != 0) {
       wait(8);
       if (extra != 0)
@@ -262,12 +270,21 @@ s32 Event_AskYesNoAndShowResponse(s32 object, s32 message) {
 /// An empty hook; it does nothing in the released game.
 void Event_NoOpUpdate(void) {}
 
+/// Event_ShowSpeakerMessage and Event_ShowMessageAtPosition move a position
+/// MESSAGE_POSITION_SHIFT away from the middle row of a MESSAGE_POSITION_WIDTH
+/// by MESSAGE_POSITION_HEIGHT area, larger than the 240 by 160 screen, and hold
+/// it MESSAGE_POSITION_MARGIN_X and MESSAGE_POSITION_MARGIN_Y inside the area.
+#define MESSAGE_POSITION_WIDTH 320
+#define MESSAGE_POSITION_HEIGHT 240
+#define MESSAGE_POSITION_MARGIN_X 8
+#define MESSAGE_POSITION_MARGIN_Y 20
+#define MESSAGE_POSITION_SHIFT 32
+
 /// Unused: nothing calls it. It would record the speaker, open the message near
-/// it and wait unless fast-forwarding, then advance the message index. Like
-/// Event_ShowMessageAtPosition it moves the position 32 away from the middle
-/// and clamps it to 8..312 and 20..220, ranges larger than the 240 by 160
-/// screen, before passing it to a window routine that takes tiles; with no
-/// caller, the units it expected can't be told.
+/// it and wait unless fast-forwarding, then advance the message index. It
+/// places the message as Event_ShowMessageAtPosition does, before passing the
+/// position to a window routine that takes tiles; with no caller, the units it
+/// expected can't be told.
 void Event_ShowSpeakerMessage(s32 speaker) {
   // BUG: the lookup's result is discarded, and pos is left unset.
   struct {
@@ -283,16 +300,18 @@ void Event_ShowSpeakerMessage(s32 speaker) {
     s32 windowY = pos.y;
     s32 window;
 
-    if (windowY > 119)
-      windowY += 32;
+    if (windowY > MESSAGE_POSITION_HEIGHT / 2 - 1)
+      windowY += MESSAGE_POSITION_SHIFT;
     else
-      windowY -= 32;
-    windowX = windowX < 8 ? 8 : windowX;
-    if (windowX > 312)
-      windowX = 312;
-    windowY = windowY < 20 ? 20 : windowY;
-    if (windowY > 220)
-      windowY = 220;
+      windowY -= MESSAGE_POSITION_SHIFT;
+    windowX = windowX < MESSAGE_POSITION_MARGIN_X ? MESSAGE_POSITION_MARGIN_X
+                                                  : windowX;
+    if (windowX > MESSAGE_POSITION_WIDTH - MESSAGE_POSITION_MARGIN_X)
+      windowX = MESSAGE_POSITION_WIDTH - MESSAGE_POSITION_MARGIN_X;
+    windowY = windowY < MESSAGE_POSITION_MARGIN_Y ? MESSAGE_POSITION_MARGIN_Y
+                                                  : windowY;
+    if (windowY > MESSAGE_POSITION_HEIGHT - MESSAGE_POSITION_MARGIN_Y)
+      windowY = MESSAGE_POSITION_HEIGHT - MESSAGE_POSITION_MARGIN_Y;
     window = Message_OpenWindowFar((s16)work->message, windowX, windowY,
                                    MESSAGE_WINDOW_ZOOM);
     work->messageWindow = window;
@@ -315,20 +334,20 @@ void Event_ShowMessageAtPosition(s32 unusedA, s32 unusedB, s32 x, s32 y) {
   struct FieldWork *state = gFieldWork;
   s32 windowY = y;
   s32 windowX = x;
-  s32 minX = 8;
-  s32 minY = 20;
+  s32 minX = MESSAGE_POSITION_MARGIN_X;
+  s32 minY = MESSAGE_POSITION_MARGIN_Y;
   s32 window;
 
-  if (windowY > 119)
-    windowY += 32;
+  if (windowY > MESSAGE_POSITION_HEIGHT / 2 - 1)
+    windowY += MESSAGE_POSITION_SHIFT;
   else
-    windowY -= 32;
+    windowY -= MESSAGE_POSITION_SHIFT;
 
   if (x < minX)
     windowX = minX;
-  if (windowX > 312)
-    windowX = 312;
-  CLAMP(windowY, minY, 220);
+  if (windowX > MESSAGE_POSITION_WIDTH - MESSAGE_POSITION_MARGIN_X)
+    windowX = MESSAGE_POSITION_WIDTH - MESSAGE_POSITION_MARGIN_X;
+  CLAMP(windowY, minY, MESSAGE_POSITION_HEIGHT - MESSAGE_POSITION_MARGIN_Y);
 
   window = (s32)Message_OpenWindowFar(state->message, windowX, windowY,
                                       MESSAGE_WINDOW_ZOOM);
@@ -452,3 +471,9 @@ void Camera_SetSpeedParameters(FIXED first, FIXED second) {
   work->camera->acceleration = second;
 }
 #undef MESSAGE_VOICE_NONE
+#undef PORTRAIT_WINDOW_TILES
+#undef MESSAGE_POSITION_WIDTH
+#undef MESSAGE_POSITION_HEIGHT
+#undef MESSAGE_POSITION_MARGIN_X
+#undef MESSAGE_POSITION_MARGIN_Y
+#undef MESSAGE_POSITION_SHIFT
